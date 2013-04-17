@@ -23,10 +23,81 @@ struct _Ecore_Audio_Sndfile
 {
   SNDFILE *handle;
   SF_INFO sfinfo;
-  Ecore_Audio_Vio *vio;
 };
 
 typedef struct _Ecore_Audio_Sndfile Ecore_Audio_Sndfile;
+
+/* Virtual IO wrapper functions */
+
+static sf_count_t _wrap_get_filelen(void *data)
+{
+  Eo *eo_obj = data;
+  Ecore_Audio_Object *ea_obj = eo_data_get(eo_obj, ECORE_AUDIO_OBJ_CLASS);
+
+  if (!ea_obj->vio->vio)
+    goto error;
+
+  if (ea_obj->vio->vio->get_length)
+    return ea_obj->vio->vio->get_length(ea_obj->vio->data, eo_obj);
+
+error:
+  return -1;
+}
+
+static sf_count_t _wrap_seek(sf_count_t offset, int whence, void *data)
+{
+  Eo *eo_obj = data;
+  Ecore_Audio_Object *ea_obj = eo_data_get(eo_obj, ECORE_AUDIO_OBJ_CLASS);
+
+  if (!ea_obj->vio->vio)
+    goto error;
+
+  if (ea_obj->vio->vio->seek)
+    return ea_obj->vio->vio->seek(ea_obj->vio->data, eo_obj, offset, whence);
+
+error:
+  return -1;
+}
+
+static sf_count_t _wrap_read(void *buffer, sf_count_t count, void *data)
+{
+  Eo *eo_obj = data;
+  Ecore_Audio_Object *ea_obj = eo_data_get(eo_obj, ECORE_AUDIO_OBJ_CLASS);
+
+  if (!ea_obj->vio->vio)
+    goto error;
+
+  if (ea_obj->vio->vio->read)
+    return ea_obj->vio->vio->read(ea_obj->vio->data, eo_obj, buffer, count);
+
+error:
+  return 0;
+}
+
+static sf_count_t _wrap_tell(void *data)
+{
+  Eo *eo_obj = data;
+  Ecore_Audio_Object *ea_obj = eo_data_get(eo_obj, ECORE_AUDIO_OBJ_CLASS);
+
+  if (!ea_obj->vio->vio)
+    goto error;
+
+  if (ea_obj->vio->vio->tell)
+    return ea_obj->vio->vio->tell(ea_obj->vio->data, eo_obj);
+
+error:
+  return -1;
+}
+
+static SF_VIRTUAL_IO vio_wrapper = {
+    .get_filelen = _wrap_get_filelen,
+    .seek = _wrap_seek,
+    .read = _wrap_read,
+    .write = NULL,
+    .tell = _wrap_tell,
+};
+
+/* End virtual IO wrapper functions */
 
 static void _read(Eo *eo_obj, void *_pd, va_list *list)
 {
@@ -85,6 +156,7 @@ static void _source_set(Eo *eo_obj, void *_pd, va_list *list)
     return;
   }
 
+  ea_obj->seekable = EINA_TRUE;
   in_obj->length = (double)obj->sfinfo.frames / obj->sfinfo.samplerate;
 
   in_obj->samplerate =  obj->sfinfo.samplerate;
@@ -151,6 +223,72 @@ static void _format_get(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
     *ret = obj->format;
 }
 
+static void _free_vio(Ecore_Audio_Object *ea_obj)
+{
+  if (ea_obj->vio->free_func)
+    ea_obj->vio->free_func(ea_obj->vio->data);
+
+  free(ea_obj->vio);
+  ea_obj->vio = NULL;
+}
+
+static void _vio_set(Eo *eo_obj, void *_pd, va_list *list)
+{
+  Ecore_Audio_Sndfile *obj = _pd;
+  Ecore_Audio_Object *ea_obj = eo_data_get(eo_obj, ECORE_AUDIO_OBJ_CLASS);
+  Ecore_Audio_Input *in_obj = eo_data_get(eo_obj, ECORE_AUDIO_OBJ_IN_CLASS);
+
+  Ecore_Audio_Vio *vio = va_arg(*list, Ecore_Audio_Vio *);
+  void *data = va_arg(*list, Ecore_Audio_Vio *);
+  eo_base_data_free_func free_func = va_arg(*list, eo_base_data_free_func);
+
+  if (obj->handle) {
+    sf_close(obj->handle);
+    obj->handle = NULL;
+  }
+
+  eina_stringshare_replace(&ea_obj->source, "VIO");
+
+  if (!ea_obj->source)
+    return;
+  if (ea_obj->vio)
+    _free_vio(ea_obj);
+
+  ea_obj->seekable = EINA_FALSE;
+
+  if (!vio)
+    return;
+
+  ea_obj->vio = calloc(1, sizeof(Ecore_Audio_Vio_Internal));
+  ea_obj->vio->vio = vio;
+  ea_obj->vio->data = data;
+  ea_obj->vio->free_func = free_func;
+  ea_obj->seekable = (vio->seek != NULL);
+
+  obj->handle = sf_open_virtual(&vio_wrapper, SFM_READ, &obj->sfinfo, eo_obj);
+
+  if (!obj->handle) {
+    eina_stringshare_del(ea_obj->source);
+    ea_obj->source = NULL;
+    return;
+  }
+
+  ea_obj->seekable = EINA_TRUE;
+  in_obj->length = (double)obj->sfinfo.frames / obj->sfinfo.samplerate;
+
+  in_obj->samplerate =  obj->sfinfo.samplerate;
+  in_obj->channels =  obj->sfinfo.channels;
+
+  if (obj->sfinfo.format& SF_FORMAT_WAV)
+    ea_obj->format = ECORE_AUDIO_FORMAT_WAV;
+  else if (obj->sfinfo.format& SF_FORMAT_OGG)
+    ea_obj->format = ECORE_AUDIO_FORMAT_OGG;
+  else if (obj->sfinfo.format& SF_FORMAT_FLAC)
+    ea_obj->format = ECORE_AUDIO_FORMAT_FLAC;
+  else
+    ea_obj->format = ECORE_AUDIO_FORMAT_AUTO;
+}
+
 static void _constructor(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
 {
   eo_do_super(eo_obj, MY_CLASS, eo_constructor());
@@ -171,6 +309,7 @@ static void _class_constructor(Eo_Class *klass)
 
       EO_OP_FUNC(ECORE_AUDIO_OBJ_IN_ID(ECORE_AUDIO_OBJ_IN_SUB_ID_SEEK), _seek),
       EO_OP_FUNC(ECORE_AUDIO_OBJ_IN_ID(ECORE_AUDIO_OBJ_IN_SUB_ID_READ_INTERNAL), _read),
+      EO_OP_FUNC(ECORE_AUDIO_OBJ_ID(ECORE_AUDIO_OBJ_SUB_ID_VIO_SET), _vio_set),
 
       EO_OP_FUNC_SENTINEL
   };
