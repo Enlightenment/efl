@@ -23,6 +23,8 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {NULL, NULL}
 };
 
+static void _item_select(Elm_Toolbar_Item *it);
+
 static int
 _toolbar_item_prio_compare_cb(const void *i1,
                               const void *i2)
@@ -262,7 +264,7 @@ _items_size_fit(Evas_Object *obj, Evas_Coord *bl, Evas_Coord view)
 }
 
 static Eina_Bool
-_elm_toolbar_item_coordinates_calc(Elm_Object_Item *item,
+_elm_toolbar_item_coordinates_calc(Elm_Toolbar_Item *item,
                                    Elm_Toolbar_Item_Scrollto_Type type,
                                    Evas_Coord *x,
                                    Evas_Coord *y,
@@ -563,17 +565,65 @@ _elm_toolbar_smart_on_focus(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_TOOLBAR_DATA_GET(obj, sd);
 
    if (elm_widget_focus_get(obj))
      evas_object_focus_set(wd->resize_obj, EINA_TRUE);
    else
-     evas_object_focus_set(wd->resize_obj, EINA_FALSE);
+     {
+        if (sd->highlighted_item)
+          {
+             edje_object_signal_emit(VIEW(sd->highlighted_item), "elm,highlight,off", "elm");
+             sd->highlighted_item = NULL;
+          }
+        evas_object_focus_set(wd->resize_obj, EINA_FALSE);
+     }
 
    if (ret) *ret = EINA_TRUE;
 }
 
+static Elm_Toolbar_Item *
+_highlight_next_item_get(Evas_Object *obj, Evas_Object *box, Eina_Bool reverse)
+{
+   ELM_TOOLBAR_DATA_GET(obj, sd);
+   Eina_List *list = NULL;
+   Elm_Toolbar_Item *it = NULL;
+   Evas_Object *it_obj = NULL;
+
+   list = evas_object_box_children_get(box);
+   if (reverse)
+     list = eina_list_reverse(list);
+
+   if (sd->highlighted_item)
+     {
+        list = eina_list_data_find_list(list, VIEW(sd->highlighted_item));
+        if (list) list = eina_list_next(list);
+     }
+   it_obj = eina_list_data_get(list);
+   if (it_obj) it = evas_object_data_get(it_obj, "item");
+   else it = NULL;
+
+   while (it &&
+          (it->separator ||
+           elm_object_item_disabled_get((Elm_Object_Item *)it)))
+     {
+        if (list) list = eina_list_next(list);
+        if (!list)
+          {
+             it = NULL;
+             break;
+          }
+        it_obj = eina_list_data_get(list);
+        if (it_obj) it = evas_object_data_get(it_obj, "item");
+        else it = NULL;
+     }
+
+   return it;
+}
+
+
 static void
-_elm_toolbar_smart_event(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+_elm_toolbar_smart_event(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
    Evas_Object *src = va_arg(*list, Evas_Object *);
    (void) src;
@@ -582,12 +632,90 @@ _elm_toolbar_smart_event(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *li
    void *event_info = va_arg(*list, void *);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    if (ret) *ret = EINA_FALSE;
+   Elm_Toolbar_Item *it = NULL;
+   Evas_Coord x, y, w, h;
+
+   ELM_TOOLBAR_DATA_GET(obj, sd);
 
    Evas_Event_Key_Down *ev = event_info;
 
+   if (elm_widget_disabled_get(obj)) return;
+   if (type != EVAS_CALLBACK_KEY_DOWN) return;
+   if (!sd->items) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
 
-   //TODO: Key Down Event precess for toolbar
+   if ((!strcmp(ev->keyname, "Return")) ||
+            ((!strcmp(ev->keyname, "KP_Enter")) && !ev->string))
+     {
+        if (sd->highlighted_item)
+          _item_select(sd->highlighted_item);
+        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+        if (ret) *ret = EINA_TRUE;
+        return;
+     }
+   else if ((!strcmp(ev->keyname, "Left")) ||
+            ((!strcmp(ev->keyname, "KP_Left")) && !ev->string))
+     {
+        if (!sd->vertical)
+          it = _highlight_next_item_get(obj, sd->bx, EINA_TRUE);
+        else
+          {
+             if (ret) *ret = EINA_FALSE;
+             return;
+          }
+     }
+   else if ((!strcmp(ev->keyname, "Right")) ||
+            ((!strcmp(ev->keyname, "KP_Right")) && !ev->string))
+     {
+        if (!sd->vertical)
+          it = _highlight_next_item_get(obj, sd->bx, EINA_FALSE);
+        else
+          {
+             if (ret) *ret = EINA_FALSE;
+             return;
+          }
+     }
+   else if ((!strcmp(ev->keyname, "Up")) ||
+            ((!strcmp(ev->keyname, "KP_Up")) && !ev->string))
+     {
+        if (sd->vertical)
+          it = _highlight_next_item_get(obj, sd->bx, EINA_TRUE);
+        else
+          {
+             if (ret) *ret = EINA_FALSE;
+             return;
+          }
+     }
+   else if ((!strcmp(ev->keyname, "Down")) ||
+            ((!strcmp(ev->keyname, "KP_Down")) && !ev->string))
+     {
+        if (sd->vertical)
+          it = _highlight_next_item_get(obj, sd->bx, EINA_FALSE);
+        else
+          {
+             if (ret) *ret = EINA_FALSE;
+             return;
+          }
+     }
+
+   if (!it)
+     {
+        if (ret) *ret = EINA_FALSE;
+        return;
+     }
+
+   if (sd->highlighted_item)
+     edje_object_signal_emit(VIEW(sd->highlighted_item), "elm,highlight,off", "elm");
+   sd->highlighted_item = it;
+   edje_object_signal_emit(VIEW(sd->highlighted_item), "elm,highlight,on", "elm");
+
+   if (_elm_toolbar_item_coordinates_calc(
+         sd->highlighted_item, ELM_TOOLBAR_ITEM_SCROLLTO_IN, &x, &y, &w, &h))
+     eo_do(obj, elm_scrollable_interface_region_bring_in(x, y, w, h));
+
+   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+   if (ret) *ret = EINA_TRUE;
+   return;
 }
 
 static void
@@ -1914,6 +2042,7 @@ _item_new(Evas_Object *obj,
    it->base.data = data;
 
    VIEW(it) = edje_object_add(evas_object_evas_get(obj));
+   evas_object_data_set(VIEW(it), "item", it);
 
    if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
      _access_widget_item_register(it);
@@ -3746,7 +3875,7 @@ elm_toolbar_item_show(Elm_Object_Item *it, Elm_Toolbar_Item_Scrollto_Type type)
 
    ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(it);
 
-   if (_elm_toolbar_item_coordinates_calc(it, type, &x, &y, &w, &h))
+   if (_elm_toolbar_item_coordinates_calc(item, type, &x, &y, &w, &h))
      eo_do(WIDGET(item), elm_scrollable_interface_content_region_show
      (x, y, w, h));
 }
@@ -3759,7 +3888,7 @@ elm_toolbar_item_bring_in(Elm_Object_Item *it, Elm_Toolbar_Item_Scrollto_Type ty
 
    ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(it);
 
-   if (_elm_toolbar_item_coordinates_calc(it, type, &x, &y, &w, &h))
+   if (_elm_toolbar_item_coordinates_calc(item, type, &x, &y, &w, &h))
      eo_do(WIDGET(item), elm_scrollable_interface_region_bring_in
      (x, y, w, h));
 }

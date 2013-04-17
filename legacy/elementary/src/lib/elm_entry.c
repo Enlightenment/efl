@@ -463,11 +463,15 @@ _elm_entry_smart_disable(Eo *obj, void *_pd, va_list *list)
    if (elm_object_disabled_get(obj))
      {
         edje_object_signal_emit(sd->entry_edje, "elm,state,disabled", "elm");
+        if (sd->scroll)
+          eo_do(obj, elm_scrollable_interface_freeze_set(EINA_TRUE));
         sd->disabled = EINA_TRUE;
      }
    else
      {
         edje_object_signal_emit(sd->entry_edje, "elm,state,enabled", "elm");
+        if (sd->scroll)
+          eo_do(obj, elm_scrollable_interface_freeze_set(EINA_FALSE));
         sd->disabled = EINA_FALSE;
      }
 
@@ -1158,6 +1162,7 @@ _cut_cb(void *data,
 {
    ELM_ENTRY_DATA_GET(data, sd);
 
+   evas_object_smart_callback_call(data, SIG_SELECTION_CUT, NULL);
    /* Store it */
    sd->sel_mode = EINA_FALSE;
    if (!_elm_config->desktop_entry)
@@ -1180,6 +1185,7 @@ _copy_cb(void *data,
 {
    ELM_ENTRY_DATA_GET(data, sd);
 
+   evas_object_smart_callback_call(data, SIG_SELECTION_COPY, NULL);
    sd->sel_mode = EINA_FALSE;
    if (!_elm_config->desktop_entry)
      {
@@ -1711,7 +1717,6 @@ _entry_copy_notify_signal_cb(void *data,
                              const char *emission __UNUSED__,
                              const char *source __UNUSED__)
 {
-   evas_object_smart_callback_call(data, SIG_SELECTION_COPY, NULL);
    _copy_cb(data, NULL, NULL);
 }
 
@@ -1721,7 +1726,6 @@ _entry_cut_notify_signal_cb(void *data,
                             const char *emission __UNUSED__,
                             const char *source __UNUSED__)
 {
-   evas_object_smart_callback_call(data, SIG_SELECTION_CUT, NULL);
    _cut_cb(data, NULL, NULL);
 }
 
@@ -3075,7 +3079,6 @@ _elm_entry_smart_theme_enable(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_lis
    Eina_Bool *enable = va_arg(*list, Eina_Bool *);
    *enable = EINA_FALSE;
 }
-
 
 EAPI Evas_Object *
 elm_entry_add(Evas_Object *parent)
@@ -5231,6 +5234,7 @@ _anchor_hover_end(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
    sd->anchor_hover.hover = NULL;
    sd->anchor_hover.pop = NULL;
 }
+/* END - ANCHOR HOVER */
 
 static void
 _elm_entry_smart_focus_next_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
@@ -5479,4 +5483,3 @@ static const Eo_Class_Description class_desc = {
 };
 
 EO_DEFINE_CLASS(elm_obj_entry_class_get, &class_desc, ELM_OBJ_LAYOUT_CLASS, ELM_SCROLLABLE_INTERFACE, EVAS_SMART_CLICKABLE_INTERFACE, NULL);
-/* END - ANCHOR HOVER */

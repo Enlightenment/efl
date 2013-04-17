@@ -60,6 +60,7 @@ Additions:
    * Add the API elm_scroller_page_scroll_limit_set/get.
    * Add elm_mapbuf_auto_set/get.
    * Add the API elm_scroller_single_direction_set/get.
+   * Add the feature for key events.
 
 Improvements:
 
@@ -206,6 +207,8 @@ Fixes:
    * Fix elc_player crash issue.
    * Fix the region_show/region_bring_in don't have a limit at a paging movement.
    * Fix the calculation double type number.
+   * Fix the policy is not changed when the theme is changed.
+   * When entry is disabled, scrolling is also disabled.
 
 Removals:
 

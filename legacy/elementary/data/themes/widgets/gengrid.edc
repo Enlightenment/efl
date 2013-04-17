@@ -124,8 +124,16 @@ group { name: "elm/gengrid/item/default/default";
          }
       }
       part { name: "elm.swallow.icon";
-         clip_to: "disclip";
+         clip_to: "elm.swallow.icon.area";
          type: SWALLOW;
+         description { state: "default" 0.0;
+            rel1.to: "elm.swallow.icon.area";
+            rel2.to: "elm.swallow.icon.area";
+         }
+	  }
+      part { name: "elm.swallow.icon.area";
+         clip_to: "disclip";
+         type: RECT;
          description { state: "default" 0.0;
             fixed: 1 0;
             align: 0.5 0.5;

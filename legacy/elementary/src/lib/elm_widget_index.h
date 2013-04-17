@@ -31,7 +31,9 @@ struct _Elm_Index_Smart_Data
    Evas_Coord            dx, dy;
    Ecore_Timer          *delay;
    double                delay_change_time;
-   Eina_Bool             level_active[2];
+   Eina_Bool             level_active[2]; /**< a flag for the activeness of a
+                                            level. activeness means the box is
+                                            filled with contents. */
 
    Eina_Bool             down : 1;
    Eina_Bool             horizontal : 1;
@@ -52,7 +54,7 @@ struct _Elm_Index_Item
    Eina_List       *omitted;
    Elm_Index_Item  *head;
 
-   Eina_Bool        selected : 1;
+   Eina_Bool        selected : 1; /**< a flag that remembers an item is selected. this is set true when mouse down/move occur above an item and when elm_index_item_selected_set() API is called. */
 };
 
 typedef struct _Elm_Index_Omit Elm_Index_Omit;
