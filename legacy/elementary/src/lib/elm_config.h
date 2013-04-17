@@ -423,6 +423,67 @@ EAPI double       elm_config_scroll_thumbscroll_sensitivity_friction_get(void);
 EAPI void         elm_config_scroll_thumbscroll_sensitivity_friction_set(double friction);
 
 /**
+ * Get the minimum speed of mouse cursor movement which will accelerate
+ * scrolling velocity after a mouse up event
+ * (pixels/second).
+ *
+ * @return the thumb scroll acceleration threshold
+ *
+ * @ingroup Scrolling
+ */
+EAPI double       elm_config_scroll_thumbscroll_acceleration_threshold_get(void);
+
+/**
+ * Set the minimum speed of mouse cursor movement which will accelerate
+ * scrolling velocity after a mouse up event
+ * (pixels/second).
+ *
+ * @param threshold the thumb scroll acceleration threshold
+ *
+ * @see elm_config_thumbscroll_acceleration_threshold_get()
+ * @ingroup Scrolling
+ */
+EAPI void         elm_config_scroll_thumbscroll_acceleration_threshold_set(double threshold);
+
+/**
+ * Get the time limit for accelerating velocity.
+ *
+ * @return the thumb scroll acceleration time limit
+ *
+ * @ingroup Scrolling
+ */
+EAPI double       elm_config_scroll_thumbscroll_acceleration_time_limit_get(void);
+
+/**
+ * Set the time limit for accelerating velocity.
+ *
+ * @param threshold the thumb scroll acceleration time limit
+ *
+ * @see elm_config_thumbscroll_acceleration_time_limit_get()
+ * @ingroup Scrolling
+ */
+EAPI void         elm_config_scroll_thumbscroll_acceleration_time_limit_set(double time_limit);
+
+/**
+ * Get the weight for the acceleration.
+ *
+ * @return the thumb scroll acceleration weight
+ *
+ * @ingroup Scrolling
+ */
+EAPI double       elm_config_scroll_thumbscroll_acceleration_weight_get(void);
+
+/**
+ * Set the weight for the acceleration.
+ *
+ * @param threshold the thumb scroll acceleration weight
+ *
+ * @see elm_config_thumbscroll_acceleration_weight_get()
+ * @ingroup Scrolling
+ */
+EAPI void         elm_config_scroll_thumbscroll_acceleration_weight_set(double weight);
+
+/**
  * @}
  */
 

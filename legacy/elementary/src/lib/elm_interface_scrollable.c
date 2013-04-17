@@ -2390,18 +2390,20 @@ _elm_scroll_mouse_up_event_cb(void *data,
                             else
                               sid->down.extra_time = 0.0;
 
-                            if (abs(sid->down.dx) > 500 && (dtt < 0.7) &&
+                            if (abs(sid->down.dx) > _elm_config->thumbscroll_acceleration_threshold &&
+                                (dtt < _elm_config->thumbscroll_acceleration_time_limit) &&
                                 (((sid->down.dx > 0) && (sid->down.pdx > 0)) ||
                                 ((sid->down.dx < 0) && (sid->down.pdx < 0))))
                               if (px > minx && px < mx)
-                                sid->down.dx += (double)sid->down.pdx * 1.5;
-                            // FIXME: > 500, < 0.7, * 1.5 - probably should be config
-                            if (abs(sid->down.dy) > 500 && (dtt < 0.7) &&
+                                sid->down.dx += (double)sid->down.pdx * _elm_config->thumbscroll_acceleration_weight;
+                            if (abs(sid->down.dy) > _elm_config->thumbscroll_acceleration_threshold &&
+                                (dtt < _elm_config->thumbscroll_acceleration_time_limit) &&
                                 (((sid->down.dy > 0) && (sid->down.pdy > 0)) ||
                                 ((sid->down.dy < 0) && (sid->down.pdy < 0))))
                               if (py > miny && py < my)
-                                sid->down.dy += (double)sid->down.pdy * 1.5;
-                            // FIXME: > 500, < 0.7, * 1.5 - probably should be config
+                              {
+                                sid->down.dy += (double)sid->down.pdy * _elm_config->thumbscroll_acceleration_weight;
+                              }
                             sid->down.pdx = sid->down.dx;
                             sid->down.pdy = sid->down.dy;
                             ox = -sid->down.dx;

@@ -357,6 +357,9 @@ _desc_init(void)
    ELM_CONFIG_VAL(D, T, thumbscroll_bounce_friction, T_DOUBLE);
    ELM_CONFIG_VAL(D, T, thumbscroll_border_friction, T_DOUBLE);
    ELM_CONFIG_VAL(D, T, thumbscroll_sensitivity_friction, T_DOUBLE);
+   ELM_CONFIG_VAL(D, T, thumbscroll_acceleration_threshold, T_DOUBLE);
+   ELM_CONFIG_VAL(D, T, thumbscroll_acceleration_time_limit, T_DOUBLE);
+   ELM_CONFIG_VAL(D, T, thumbscroll_acceleration_weight, T_DOUBLE);
    ELM_CONFIG_VAL(D, T, page_scroll_friction, T_DOUBLE);
    ELM_CONFIG_VAL(D, T, bring_in_scroll_friction, T_DOUBLE);
    ELM_CONFIG_VAL(D, T, zoom_friction, T_DOUBLE);
@@ -1062,6 +1065,9 @@ _config_load(void)
    _elm_config->thumbscroll_friction = 1.0;
    _elm_config->thumbscroll_bounce_friction = 0.5;
    _elm_config->thumbscroll_bounce_enable = EINA_TRUE;
+   _elm_config->thumbscroll_acceleration_threshold = 500.0;
+   _elm_config->thumbscroll_acceleration_time_limit = 0.7;
+   _elm_config->thumbscroll_acceleration_weight = 1.5;
    _elm_config->page_scroll_friction = 0.5;
    _elm_config->bring_in_scroll_friction = 0.5;
    _elm_config->zoom_friction = 0.5;
@@ -1479,6 +1485,12 @@ _env_get(void)
    if (s) _elm_config->thumbscroll_bounce_enable = !!atoi(s);
    s = getenv("ELM_THUMBSCROLL_BOUNCE_FRICTION");
    if (s) _elm_config->thumbscroll_bounce_friction = _elm_atof(s);
+   s = getenv("ELM_THUMBSCROLL_ACCELERATION_THRESHOLD");
+   if (s) _elm_config->thumbscroll_acceleration_threshold = _elm_atof(s);
+   s = getenv("ELM_THUMBSCROLL_ACCELERATION_TIME_LIMIT");
+   if (s) _elm_config->thumbscroll_acceleration_time_limit = _elm_atof(s);
+   s = getenv("ELM_THUMBSCROLL_ACCELERATION_WEIGHT");
+   if (s) _elm_config->thumbscroll_acceleration_weight = _elm_atof(s);
    s = getenv("ELM_PAGE_SCROLL_FRICTION");
    if (s) _elm_config->page_scroll_friction = _elm_atof(s);
    s = getenv("ELM_BRING_IN_SCROLL_FRICTION");
@@ -2167,6 +2179,42 @@ elm_config_scroll_thumbscroll_sensitivity_friction_set(double friction)
    if (friction < 0.1) friction = 0.1;
    if (friction > 1.0) friction = 1.0;
    _elm_config->thumbscroll_sensitivity_friction = friction;
+}
+
+EAPI double
+elm_config_scroll_thumbscroll_acceleration_threshold_get(void)
+{
+   return _elm_config->thumbscroll_acceleration_threshold;
+}
+
+EAPI void
+elm_config_scroll_thumbscroll_acceleration_threshold_set(double threshold)
+{
+   _elm_config->thumbscroll_acceleration_threshold = threshold;
+}
+
+EAPI double
+elm_config_scroll_thumbscroll_acceleration_time_limit_get(void)
+{
+   return _elm_config->thumbscroll_acceleration_time_limit;
+}
+
+EAPI void
+elm_config_scroll_thumbscroll_acceleration_time_limit_set(double time_limit)
+{
+   _elm_config->thumbscroll_acceleration_time_limit = time_limit;
+}
+
+EAPI double
+elm_config_scroll_thumbscroll_acceleration_weight_get(void)
+{
+   return _elm_config->thumbscroll_acceleration_weight;
+}
+
+EAPI void
+elm_config_scroll_thumbscroll_acceleration_weight_set(double weight)
+{
+   _elm_config->thumbscroll_acceleration_weight = weight;
 }
 
 EAPI void
