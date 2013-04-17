@@ -667,6 +667,10 @@ EAPI Elm_Object_Select_Mode       elm_list_select_mode_get(const Evas_Object *ob
  * If such function isn't needed, just passing
  * @c NULL as @p func is enough. The same should be done for @p data.
  *
+ * @note Remember that the label parameter is copied inside the list. So if an
+ * application dynamically allocated the label, the application should free the
+ * label after this call.
+ *
  * Simple example (with no function callback or data associated):
  * @code
  * li = elm_list_add(win);
@@ -718,6 +722,10 @@ EAPI Elm_Object_Item               *elm_list_item_append(Evas_Object *obj, const
  * If such function isn't needed, just passing
  * @c NULL as @p func is enough. The same should be done for @p data.
  *
+ * @note Remember that the label parameter is copied inside the list. So if an
+ * application dynamically allocated the label, the application should free the
+ * label after this call.
+ *
  * @see elm_list_item_append() for a simple code example.
  * @see elm_list_select_mode_set()
  * @see elm_object_item_del()
@@ -760,6 +768,10 @@ EAPI Elm_Object_Item               *elm_list_item_prepend(Evas_Object *obj, cons
  * If such function isn't needed, just passing
  * @c NULL as @p func is enough. The same should be done for @p data.
  *
+ * @note Remember that the label parameter is copied inside the list. So if an
+ * application dynamically allocated the label, the application should free the
+ * label after this call.
+ *
  * @see elm_list_item_append() for a simple code example.
  * @see elm_list_select_mode_set()
  * @see elm_object_item_del()
@@ -801,6 +813,10 @@ EAPI Elm_Object_Item               *elm_list_item_insert_before(Evas_Object *obj
  * user clicks over an item (already selected or not).
  * If such function isn't needed, just passing
  * @c NULL as @p func is enough. The same should be done for @p data.
+ *
+ * @note Remember that the label parameter is copied inside the list. So if an
+ * application dynamically allocated the label, the application should free the
+ * label after this call.
  *
  * @see elm_list_item_append() for a simple code example.
  * @see elm_list_select_mode_set()
@@ -851,6 +867,10 @@ EAPI Elm_Object_Item               *elm_list_item_insert_after(Evas_Object *obj,
  * user clicks over an item (already selected or not).
  * If such function isn't needed, just passing
  * @c NULL as @p func is enough. The same should be done for @p data.
+ *
+ * @note Remember that the label parameter is copied inside the list. So if an
+ * application dynamically allocated the label, the application should free the
+ * label after this call.
  *
  * @see elm_list_item_append() for a simple code example.
  * @see elm_list_select_mode_set()
