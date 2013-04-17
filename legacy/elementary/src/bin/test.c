@@ -7,6 +7,8 @@
 #include "test.h"
 #ifndef ELM_LIB_QUICKLAUNCH
 
+int _log_domain = -1;
+
 /* all tests prototypes */
 void test_bg_plain(void *data, Evas_Object *obj, void *event_info);
 void test_bg_image(void *data, Evas_Object *obj, void *event_info);
@@ -792,6 +794,8 @@ elm_main(int argc, char **argv)
    Eina_Bool test_win_only = EINA_FALSE;
    char *autorun = NULL;
    struct elm_test *t = NULL;
+
+   _log_domain = eina_log_domain_register("elementary_test", NULL);
 
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
 
