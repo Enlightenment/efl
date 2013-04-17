@@ -11,18 +11,21 @@
 #include <Ecore_Audio.h>
 #include <math.h>
 
-Ecore_Audio_Object *in = NULL;
-Ecore_Audio_Object *out = NULL;
+Eo *in = NULL;
+Eo *out = NULL;
 unsigned char volume = 255;
 
 
-int read_cb(void *user_data, void *data, int len)
+int read_cb(void *data EINA_UNUSED, Eo *eo_obj, void *buf, int len)
 {
   static long int phase1 = 0, phase2 = 0;
   static int modulation = 0;
 
-  float *val = data;
+  double volume;
+  float *val = buf;
   int i;
+
+  eo_do(eo_obj, ecore_audio_obj_volume_get(&volume));
 
   for(i=0; i<len/4; i++, phase1++)
     {
@@ -33,22 +36,15 @@ int read_cb(void *user_data, void *data, int len)
             phase2++;
          }
 
-       val[i++] = sin(2 * M_PI * (440+modulation) * (phase1) / 44100.0);
-       val[i] = sin(2 * M_PI * (440+modulation) * (phase1) / 44100.0);
+       val[i] = sin(2 * M_PI * (440+modulation) * (phase1) / 44100.0) * volume;
     }
 
   return len;
 }
 
-Eina_Bool
-output_add(void *data)
-{
-   out = ecore_audio_output_add(ECORE_AUDIO_TYPE_PULSE);
-   ecore_audio_output_input_add(out, in);
-//   ecore_event_handler_add(ECORE_AUDIO_EVENT_SOURCE_DONE, _play_finished, NULL);
-
-   return EINA_FALSE;
-}
+Ecore_Audio_Vio vio = {
+    .read = read_cb,
+};
 
 int
 main(int argc, const char *argv[])
@@ -56,16 +52,21 @@ main(int argc, const char *argv[])
    ecore_init();
    ecore_audio_init();
 
-   in = ecore_audio_input_add(ECORE_AUDIO_TYPE_CUSTOM);
+   out = eo_add(ECORE_AUDIO_OBJ_OUT_PULSE_CLASS, NULL);
+
+   in = eo_add(ECORE_AUDIO_OBJ_IN_CLASS, NULL);
    if (!in)
      {
         printf("error when creating ecore audio source.\n");
         goto end;
      }
-   ecore_audio_input_name_set(in, "custom");
-   ecore_audio_input_callback_setup(in, read_cb, NULL);
+   eo_do(in, ecore_audio_obj_name_set("wail"));
+   eo_do(in, ecore_audio_obj_in_samplerate_set(44100));
+   eo_do(in, ecore_audio_obj_in_channels_set(1));
+   eo_do(in, ecore_audio_obj_volume_set(0.7));
+   eo_do(in, ecore_audio_obj_vio_set(&vio, NULL, NULL));
 
-   ecore_timer_add(1, output_add, NULL);
+   eo_do(out, ecore_audio_obj_out_input_attach(in));
 
    ecore_main_loop_begin();
 

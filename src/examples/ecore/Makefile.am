@@ -75,7 +75,8 @@ $(top_builddir)/src/lib/eina/libeina.la \
 if HAVE_ECORE_AUDIO
 EXTRA_PROGRAMS += \
 ecore_audio_playback \
-ecore_audio_to_ogg
+ecore_audio_to_ogg \
+ecore_audio_custom
 
 ECORE_AUDIO_COMMON_LDADD = \
 $(top_builddir)/src/lib/ecore_audio/libecore_audio.la \
