@@ -33,6 +33,8 @@ extern "C"
  * @{
  */
 
+#define ECORE_AUDIO_ATTR_TONE_FREQ "ecore_audio_freq"
+
 #define ECORE_AUDIO_OBJ_IN_TONE_CLASS ecore_audio_obj_in_tone_class_get()
 
 const Eo_Class *ecore_audio_obj_in_tone_class_get() EINA_CONST;

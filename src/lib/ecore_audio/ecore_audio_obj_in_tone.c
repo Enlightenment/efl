@@ -146,6 +146,49 @@ static void _format_get(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
     *ret = obj->format;
 }
 
+static void _length_set(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
+{
+  Ecore_Audio_Input *in_obj = eo_data_get(eo_obj, ECORE_AUDIO_OBJ_IN_CLASS);
+
+  double length= va_arg(*list, double);
+
+  in_obj->length = length;
+}
+
+static void _data_set(Eo *eo_obj, void *_pd, va_list *list)
+{
+  Ecore_Audio_Tone *obj = _pd;
+
+  const char *key = va_arg(*list, const char *);
+  const void *val = va_arg(*list, const void *);
+  eo_base_data_free_func func = va_arg(*list, eo_base_data_free_func);
+
+  if (!key) return;
+
+  if (!strcmp(key, ECORE_AUDIO_ATTR_TONE_FREQ)) {
+      obj->freq = *(int *)val;
+  } else {
+      eo_do_super(eo_obj, MY_CLASS, eo_base_data_set(key, val, func));
+  }
+
+}
+
+static void _data_get(Eo *eo_obj, void *_pd, va_list *list)
+{
+  Ecore_Audio_Tone *obj = _pd;
+
+  const char *key = va_arg(*list, const char*);
+  void **ret = va_arg(*list, void **);
+
+  if (!strcmp(key, ECORE_AUDIO_ATTR_TONE_FREQ)) {
+      if (ret)
+        *(int *)ret = obj->freq;
+  } else {
+      eo_do_super(eo_obj, MY_CLASS, eo_base_data_get(key, ret));
+  }
+
+}
+
 static void _constructor(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
 {
   Ecore_Audio_Tone *obj = _pd;
@@ -167,11 +210,15 @@ static void _class_constructor(Eo_Class *klass)
       EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
       //EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DESTRUCTOR), _destructor),
 
+      EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DATA_GET), _data_get),
+      EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DATA_SET), _data_set),
+
       EO_OP_FUNC(ECORE_AUDIO_OBJ_ID(ECORE_AUDIO_OBJ_SUB_ID_SOURCE_SET), _source_set),
       EO_OP_FUNC(ECORE_AUDIO_OBJ_ID(ECORE_AUDIO_OBJ_SUB_ID_SOURCE_GET), _source_get),
       EO_OP_FUNC(ECORE_AUDIO_OBJ_ID(ECORE_AUDIO_OBJ_SUB_ID_FORMAT_SET), _format_set),
       EO_OP_FUNC(ECORE_AUDIO_OBJ_ID(ECORE_AUDIO_OBJ_SUB_ID_FORMAT_GET), _format_get),
 
+      EO_OP_FUNC(ECORE_AUDIO_OBJ_IN_ID(ECORE_AUDIO_OBJ_IN_SUB_ID_LENGTH_SET), _length_set),
       EO_OP_FUNC(ECORE_AUDIO_OBJ_IN_ID(ECORE_AUDIO_OBJ_IN_SUB_ID_SEEK), _seek),
       EO_OP_FUNC(ECORE_AUDIO_OBJ_IN_ID(ECORE_AUDIO_OBJ_IN_SUB_ID_READ_INTERNAL), _read),
 
