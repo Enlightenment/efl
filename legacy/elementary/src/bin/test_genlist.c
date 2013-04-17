@@ -1170,10 +1170,6 @@ test_genlist5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_smart_callback_add(gl, "drag,start,down", item_drag_down, NULL);
    evas_object_smart_callback_add(gl, "drag,start,left", item_drag_left, NULL);
    evas_object_smart_callback_add(gl, "drag,start,right", item_drag_right, NULL);
-   evas_object_smart_callback_add(gl, "scroll,edge,top", scroll_top, NULL);
-   evas_object_smart_callback_add(gl, "scroll,edge,bottom", scroll_bottom, NULL);
-   evas_object_smart_callback_add(gl, "scroll,edge,left", scroll_left, NULL);
-   evas_object_smart_callback_add(gl, "scroll,edge,right", scroll_right, NULL);
    evas_object_smart_callback_add(gl, "drag", item_drag, NULL);
    evas_object_smart_callback_add(gl, "drag,stop", item_drag_stop, NULL);
    evas_object_smart_callback_add(gl, "longpressed", item_longpress, NULL);
@@ -1363,6 +1359,10 @@ test_genlist6(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(gl);
    elm_genlist_tree_effect_enabled_set(gl, EINA_TRUE);
+   evas_object_smart_callback_add(gl, "edge,left", scroll_left, NULL);
+   evas_object_smart_callback_add(gl, "edge,right", scroll_right, NULL);
+   evas_object_smart_callback_add(gl, "edge,top", scroll_top, NULL);
+   evas_object_smart_callback_add(gl, "edge,bottom", scroll_bottom, NULL);
 
    itc1 = elm_genlist_item_class_new();
    itc1->item_style     = "default";

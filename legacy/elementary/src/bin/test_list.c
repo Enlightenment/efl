@@ -433,10 +433,8 @@ test_list(void        *data __UNUSED__,
    evas_object_resize(win, 320, 300);
    evas_object_show(win);
 
-   evas_object_smart_callback_add(li, "scroll,edge,top", scroll_top, NULL);
-   evas_object_smart_callback_add(li, "scroll,edge,bottom", scroll_bottom, NULL);
-   evas_object_smart_callback_add(li, "scroll,edge,left", scroll_left, NULL);
-   evas_object_smart_callback_add(li, "scroll,edge,right", scroll_right, NULL);
+   evas_object_smart_callback_add(li, "edge,top", scroll_top, NULL);
+   evas_object_smart_callback_add(li, "edge,bottom", scroll_bottom, NULL);
 }
 
 void
@@ -456,6 +454,9 @@ test_list_horizontal(void        *data __UNUSED__,
    elm_list_mode_set(li, ELM_LIST_LIMIT);
    evas_object_size_hint_weight_set(li, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, li);
+
+   evas_object_smart_callback_add(li, "edge,left", scroll_left, NULL);
+   evas_object_smart_callback_add(li, "edge,right", scroll_right, NULL);
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
