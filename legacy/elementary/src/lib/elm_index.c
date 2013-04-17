@@ -48,7 +48,10 @@ _item_free(Elm_Index_Item *it)
      it->omitted = eina_list_free(it->omitted);
 
    if (it->letter)
-     eina_stringshare_del(it->letter);
+     {
+        eina_stringshare_del(it->letter);
+        it->letter = NULL;
+     }
 }
 
 static void
@@ -974,17 +977,12 @@ _elm_index_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 static void
 _elm_index_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
-   Elm_Index_Item *it;
    Elm_Index_Omit *o;
 
    Elm_Index_Smart_Data *sd = _pd;
 
    while (sd->items)
-     {
-        it = sd->items->data;
-        _item_free(it);
-        elm_widget_item_del(it);
-     }
+     elm_widget_item_del(sd->items->data);
 
    EINA_LIST_FREE(sd->omit, o)
      free(o);
@@ -1502,7 +1500,6 @@ _item_sorted_insert(Eo *obj, void *_pd, va_list *list)
              Elm_Index_Item *p_it = eina_list_data_get(lnear);
              if (cmp_data_func(p_it->base.data, it->base.data) >= 0)
                p_it->base.data = it->base.data;
-             _item_free(it);
              elm_widget_item_del(it);
              it = NULL;
           }
@@ -1555,10 +1552,7 @@ _item_clear(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
         clear = eina_list_append(clear, it);
      }
    EINA_LIST_FREE(clear, it)
-     {
-        _item_free(it);
-        elm_widget_item_del(it);
-     }
+     elm_widget_item_del(it);
 }
 
 EAPI void
