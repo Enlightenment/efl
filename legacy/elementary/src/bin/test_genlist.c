@@ -2555,7 +2555,8 @@ gl15_normal_mode(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNU
 
 void gl15_del(void *data __UNUSED__, Evas_Object *obj __UNUSED__)
 {
-   printf("item deleted.\n");
+   Testitem *ti = data;
+   printf("item deleted. (# %d)\n", ti->mode);
 }
 
 static Elm_Genlist_Item_Class *itc15;
