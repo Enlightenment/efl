@@ -22,9 +22,9 @@ static int _eeze_sensor_fake_log_dom = -1;
 #endif
 #define ERR(...)  EINA_LOG_DOM_ERR(_eeze_sensor_fake_log_dom, __VA_ARGS__)
 
-Eeze_Sensor_Module *esensor_module;
+static Eeze_Sensor_Module *esensor_module;
 
-Eina_Bool
+static Eina_Bool
 fake_init(void)
 {
    /* For the fake module we prepare a list with all potential sensors. Even if
@@ -45,13 +45,13 @@ fake_init(void)
 /* We don't have anything to clear when we get unregistered from the core here.
  * This is different in other modules.
  */
-Eina_Bool
+static Eina_Bool
 fake_shutdown(void)
 {
    return EINA_TRUE;
 }
 
-Eina_Bool
+static Eina_Bool
 fake_read(Eeze_Sensor_Type sensor_type, Eeze_Sensor_Obj *lobj)
 {
    Eeze_Sensor_Obj *obj = NULL;
@@ -101,7 +101,7 @@ fake_read(Eeze_Sensor_Type sensor_type, Eeze_Sensor_Obj *lobj)
    return EINA_TRUE;
 }
 
-Eina_Bool
+static Eina_Bool
 fake_async_read(Eeze_Sensor_Type sensor_type, void *user_data EINA_UNUSED)
 {
    Eeze_Sensor_Obj *obj = NULL;
@@ -177,7 +177,7 @@ fake_async_read(Eeze_Sensor_Type sensor_type, void *user_data EINA_UNUSED)
  * entry point to anything in this module. After setting ourself up we register
  * into the core of eeze sensor to make our functionality available.
  */
-Eina_Bool
+static Eina_Bool
 sensor_fake_init(void)
 {
 
@@ -214,7 +214,7 @@ sensor_fake_init(void)
 /* Cleanup when the module gets unloaded. Unregister ourself from the core to
  * avoid calls into a not loaded module.
  */
-void
+static void
 sensor_fake_shutdown(void)
 {
    Eeze_Sensor_Obj *sens;
@@ -223,10 +223,11 @@ sensor_fake_shutdown(void)
    EINA_LIST_FREE(esensor_module->sensor_list, sens)
       free(sens);
 
+   eina_log_domain_unregister(_eeze_sensor_fake_log_dom);
+
    free(esensor_module);
    esensor_module = NULL;
 
-   eina_log_domain_unregister(_eeze_sensor_fake_log_dom);
    _eeze_sensor_fake_log_dom = -1;
 }
 

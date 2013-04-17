@@ -20,9 +20,9 @@ static int _eeze_sensor_tizen_log_dom = -1;
 #endif
 #define ERR(...)  EINA_LOG_DOM_ERR(_eeze_sensor_tizen_log_dom, __VA_ARGS__)
 
-Eeze_Sensor_Module *esensor_module;
+static Eeze_Sensor_Module *esensor_module;
 /* Tizen sensor handle */
-sensor_h sensor_handle;
+static sensor_h sensor_handle;
 
 /* The Tizen sensor type ENUM has shown to not be stable regarding its
  * numbering scheme so we better translate between the Tizen types and the
@@ -168,7 +168,7 @@ tizen_to_eeze(sesnor_type_e type)
 /* We receive the timestamp in nanoseconds from the Tizen system lib. Convert
  * it to seconds as floating point value which is used in our public API.
   */
-double
+static double
 clock_convert(unsigned long long timestamp)
 {
    return ((double)timestamp) / 1000000000.0;
@@ -183,7 +183,7 @@ clock_convert(unsigned long long timestamp)
  * new data is available and then stop the sensor server to safe power. It will be
  * started again the next time data gets requested.
  */
-void
+static void
 accelerometer_cb(unsigned long long timestamp, sensor_data_accuracy_e accuracy, float x, float y, float z, void *user_data)
 {
    Eeze_Sensor_Obj *obj = NULL;
@@ -203,7 +203,7 @@ accelerometer_cb(unsigned long long timestamp, sensor_data_accuracy_e accuracy, 
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_ACCELEROMETER));
 }
 
-void
+static void
 gravity_cb(unsigned long long timestamp, sensor_data_accuracy_e accuracy, float x, float y, float z, void *user_data)
 {
    Eeze_Sensor_Obj *obj = NULL;
@@ -223,7 +223,7 @@ gravity_cb(unsigned long long timestamp, sensor_data_accuracy_e accuracy, float 
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_GRAVITY));
 }
 
-void
+static void
 linear_acceleration_cb(unsigned long long timestamp, sensor_data_accuracy_e accuracy, float x, float y, float z, void *user_data)
 {
    Eeze_Sensor_Obj *obj = NULL;
@@ -243,7 +243,7 @@ linear_acceleration_cb(unsigned long long timestamp, sensor_data_accuracy_e accu
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_LINEAR_ACCELERATION));
 }
 
-void
+static void
 device_orientation_cb(unsigned long long timestamp, sensor_data_accuracy_e accuracy, float yaw,
                       float pitch, float roll, void *user_data)
 {
@@ -264,7 +264,7 @@ device_orientation_cb(unsigned long long timestamp, sensor_data_accuracy_e accur
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_DEVICE_ORIENTATION));
 }
 
-void
+static void
 magnetic_cb(unsigned long long timestamp, sensor_data_accuracy_e accuracy, float x, float y, float z, void *user_data)
 {
    Eeze_Sensor_Obj *obj = NULL;
@@ -284,7 +284,7 @@ magnetic_cb(unsigned long long timestamp, sensor_data_accuracy_e accuracy, float
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_MAGNETIC));
 }
 
-void
+static void
 orientation_cb(unsigned long long timestamp, sensor_data_accuracy_e accuracy, float azimuth, float pitch, float roll, void *user_data)
 {
    Eeze_Sensor_Obj *obj = NULL;
@@ -304,7 +304,7 @@ orientation_cb(unsigned long long timestamp, sensor_data_accuracy_e accuracy, fl
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_ORIENTATION));
 }
 
-void
+static void
 gyroscope_cb(unsigned long long timestamp, sensor_data_accuracy_e accuracy, float x, float y, float z, void *user_data)
 {
    Eeze_Sensor_Obj *obj = NULL;
@@ -324,7 +324,7 @@ gyroscope_cb(unsigned long long timestamp, sensor_data_accuracy_e accuracy, floa
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_GYROSCOPE));
 }
 
-void
+static void
 light_cb(unsigned long long timestamp, float lux, void *user_data)
 {
    Eeze_Sensor_Obj *obj = NULL;
@@ -343,7 +343,7 @@ light_cb(unsigned long long timestamp, float lux, void *user_data)
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_LIGHT));
 }
 
-void
+static void
 proximity_cb(unsigned long long timestamp, float distance, void *user_data)
 {
    Eeze_Sensor_Obj *obj = NULL;
@@ -362,7 +362,7 @@ proximity_cb(unsigned long long timestamp, float distance, void *user_data)
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_PROXIMITY));
 }
 
-void
+static void
 snap_cb(unsigned long long timestamp, sensor_motion_snap_e snap, void *user_data)
 {
    Eeze_Sensor_Obj *obj = NULL;
@@ -381,7 +381,7 @@ snap_cb(unsigned long long timestamp, sensor_motion_snap_e snap, void *user_data
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_MOTION_SNAP));
 }
 
-void
+static void
 shake_cb(unsigned long long timestamp, sensor_motion_shake_e shake, void *user_data)
 {
    Eeze_Sensor_Obj *obj = NULL;
@@ -400,7 +400,7 @@ shake_cb(unsigned long long timestamp, sensor_motion_shake_e shake, void *user_d
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_MOTION_SHAKE));
 }
 
-void
+static void
 panning_cb(unsigned long long timestamp, int x, int y, void *user_data)
 {
    Eeze_Sensor_Obj *obj = NULL;
@@ -420,7 +420,7 @@ panning_cb(unsigned long long timestamp, int x, int y, void *user_data)
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_MOTION_PANNING));
 }
 
-void
+static void
 panning_browse_cb(unsigned long long timestamp, int x, int y, void *user_data)
 {
    Eeze_Sensor_Obj *obj = NULL;
@@ -440,7 +440,7 @@ panning_browse_cb(unsigned long long timestamp, int x, int y, void *user_data)
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_MOTION_PANNING_BROWSE));
 }
 
-void
+static void
 tilt_cb(unsigned long long timestamp, int x, int y, void *user_data)
 {
    Eeze_Sensor_Obj *obj = NULL;
@@ -460,7 +460,7 @@ tilt_cb(unsigned long long timestamp, int x, int y, void *user_data)
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_MOTION_TILT));
 }
 
-void
+static void
 facedown_cb(unsigned long long timestamp, void *user_data)
 {
    Eeze_Sensor_Obj *obj = NULL;
@@ -480,7 +480,7 @@ facedown_cb(unsigned long long timestamp, void *user_data)
     */
 }
 
-void
+static void
 directcall_cb(unsigned long long timestamp, void *user_data)
 {
    Eeze_Sensor_Obj *obj = NULL;
@@ -500,7 +500,7 @@ directcall_cb(unsigned long long timestamp, void *user_data)
     */
 }
 
-void
+static void
 smart_alert_cb(unsigned long long timestamp, void *user_data)
 {
    Eeze_Sensor_Obj *obj = NULL;
@@ -520,7 +520,7 @@ smart_alert_cb(unsigned long long timestamp, void *user_data)
     */
 }
 
-void
+static void
 no_move_cb(unsigned long long timestamp, void *user_data)
 {
    Eeze_Sensor_Obj *obj = NULL;
@@ -540,7 +540,7 @@ no_move_cb(unsigned long long timestamp, void *user_data)
     */
 }
 
-void
+static void
 doubletap_cb(unsigned long long timestamp, void *user_data)
 {
    Eeze_Sensor_Obj *obj = NULL;
@@ -560,7 +560,7 @@ doubletap_cb(unsigned long long timestamp, void *user_data)
     */
 }
 
-void
+static void
 accelerometer_read_cb(unsigned long long timestamp, sensor_data_accuracy_e accuracy, float x, float y, float z, void *user_data)
 {
    Eeze_Sensor_Obj *obj = NULL;
@@ -582,7 +582,7 @@ accelerometer_read_cb(unsigned long long timestamp, sensor_data_accuracy_e accur
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_ACCELEROMETER));
 }
 
-void
+static void
 gravity_read_cb(unsigned long long timestamp, sensor_data_accuracy_e accuracy, float x, float y, float z, void *user_data)
 {
    Eeze_Sensor_Obj *obj = NULL;
@@ -604,7 +604,7 @@ gravity_read_cb(unsigned long long timestamp, sensor_data_accuracy_e accuracy, f
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_GRAVITY));
 }
 
-void
+static void
 linear_acceleration_read_cb(unsigned long long timestamp, sensor_data_accuracy_e accuracy, float x, float y, float z, void *user_data)
 {
    Eeze_Sensor_Obj *obj = NULL;
@@ -626,7 +626,7 @@ linear_acceleration_read_cb(unsigned long long timestamp, sensor_data_accuracy_e
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_LINEAR_ACCELERATION));
 }
 
-void
+static void
 device_orientation_read_cb(unsigned long long timestamp, sensor_data_accuracy_e accuracy, float yaw,
                            float pitch, float roll, void *user_data)
 {
@@ -649,7 +649,7 @@ device_orientation_read_cb(unsigned long long timestamp, sensor_data_accuracy_e 
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_DEVICE_ORIENTATION));
 }
 
-void
+static void
 magnetic_read_cb(unsigned long long timestamp, sensor_data_accuracy_e accuracy, float x, float y, float z, void *user_data)
 {
    Eeze_Sensor_Obj *obj = NULL;
@@ -671,7 +671,7 @@ magnetic_read_cb(unsigned long long timestamp, sensor_data_accuracy_e accuracy, 
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_MAGNETIC));
 }
 
-void
+static void
 orientation_read_cb(unsigned long long timestamp, sensor_data_accuracy_e accuracy, float azimuth, float pitch, float roll, void *user_data)
 {
    Eeze_Sensor_Obj *obj = NULL;
@@ -693,7 +693,7 @@ orientation_read_cb(unsigned long long timestamp, sensor_data_accuracy_e accurac
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_ORIENTATION));
 }
 
-void
+static void
 gyroscope_read_cb(unsigned long long timestamp, sensor_data_accuracy_e accuracy, float x, float y, float z, void *user_data)
 {
    Eeze_Sensor_Obj *obj = NULL;
@@ -715,7 +715,7 @@ gyroscope_read_cb(unsigned long long timestamp, sensor_data_accuracy_e accuracy,
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_GYROSCOPE));
 }
 
-void
+static void
 light_read_cb(unsigned long long timestamp, float lux, void *user_data)
 {
    Eeze_Sensor_Obj *obj = NULL;
@@ -736,7 +736,7 @@ light_read_cb(unsigned long long timestamp, float lux, void *user_data)
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_LIGHT));
 }
 
-void
+static void
 proximity_read_cb(unsigned long long timestamp, float distance, void *user_data)
 {
    Eeze_Sensor_Obj *obj = NULL;
@@ -757,7 +757,7 @@ proximity_read_cb(unsigned long long timestamp, float distance, void *user_data)
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_PROXIMITY));
 }
 
-void
+static void
 snap_read_cb(unsigned long long timestamp, sensor_motion_snap_e snap, void *user_data)
 {
    Eeze_Sensor_Obj *obj = NULL;
@@ -778,7 +778,7 @@ snap_read_cb(unsigned long long timestamp, sensor_motion_snap_e snap, void *user
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_MOTION_SNAP));
 }
 
-void
+static void
 shake_read_cb(unsigned long long timestamp, sensor_motion_shake_e shake, void *user_data)
 {
    Eeze_Sensor_Obj *obj = NULL;
@@ -799,7 +799,7 @@ shake_read_cb(unsigned long long timestamp, sensor_motion_shake_e shake, void *u
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_MOTION_SHAKE));
 }
 
-void
+static void
 doubletap_read_cb(unsigned long long timestamp, void *user_data)
 {
    Eeze_Sensor_Obj *obj = NULL;
@@ -819,7 +819,7 @@ doubletap_read_cb(unsigned long long timestamp, void *user_data)
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_MOTION_DOUBLETAP));
 }
 
-void
+static void
 panning_read_cb(unsigned long long timestamp, int x, int y, void *user_data)
 {
    Eeze_Sensor_Obj *obj = NULL;
@@ -841,7 +841,7 @@ panning_read_cb(unsigned long long timestamp, int x, int y, void *user_data)
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_MOTION_PANNING));
 }
 
-void
+static void
 panning_browse_read_cb(unsigned long long timestamp, int x, int y, void *user_data)
 {
    Eeze_Sensor_Obj *obj = NULL;
@@ -863,7 +863,7 @@ panning_browse_read_cb(unsigned long long timestamp, int x, int y, void *user_da
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_MOTION_PANNING_BROWSE));
 }
 
-void
+static void
 tilt_read_cb(unsigned long long timestamp, int x, int y, void *user_data)
 {
    Eeze_Sensor_Obj *obj = NULL;
@@ -885,7 +885,7 @@ tilt_read_cb(unsigned long long timestamp, int x, int y, void *user_data)
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_MOTION_TILT));
 }
 
-void
+static void
 facedown_read_cb(unsigned long long timestamp, void *user_data)
 {
    Eeze_Sensor_Obj *obj = NULL;
@@ -905,7 +905,7 @@ facedown_read_cb(unsigned long long timestamp, void *user_data)
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_MOTION_FACEDOWN));
 }
 
-void
+static void
 directcall_read_cb(unsigned long long timestamp, void *user_data)
 {
    Eeze_Sensor_Obj *obj = NULL;
@@ -925,7 +925,7 @@ directcall_read_cb(unsigned long long timestamp, void *user_data)
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_MOTION_DIRECT_CALL));
 }
 
-void
+static void
 smart_alert_read_cb(unsigned long long timestamp, void *user_data)
 {
    Eeze_Sensor_Obj *obj = NULL;
@@ -945,7 +945,7 @@ smart_alert_read_cb(unsigned long long timestamp, void *user_data)
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_MOTION_SMART_ALERT));
 }
 
-void
+static void
 no_move_read_cb(unsigned long long timestamp, void *user_data)
 {
    Eeze_Sensor_Obj *obj = NULL;
@@ -970,7 +970,7 @@ no_move_read_cb(unsigned long long timestamp, void *user_data)
  * might take quite some time depending on the sensor and how it is connected to
  * the system. Normally it is better to use the asynchronous reading functions.
  */
-Eina_Bool
+static Eina_Bool
 eeze_sensor_tizen_read(Eeze_Sensor_Type sensor_type, Eeze_Sensor_Obj *lobj)
 {
    sensor_data_accuracy_e accuracy;
@@ -1095,7 +1095,7 @@ eeze_sensor_tizen_read(Eeze_Sensor_Type sensor_type, Eeze_Sensor_Obj *lobj)
 
 // FIXME ho to handle this without explicit callback setting
 #if 0
-Eina_Bool
+static Eina_Bool
 eeze_sensor_tizen_cb_set(Eeze_Sensor *handle, Eeze_Sensor_Type sensor_type, void *cb_function, void *user_data)
 {
    sensor_type_e type;
@@ -1198,7 +1198,7 @@ eeze_sensor_tizen_cb_set(Eeze_Sensor *handle, Eeze_Sensor_Type sensor_type, void
  * event. The public API function does actually return right away with the cached
  * data. This is handled in the core and not in the different modules though.
  */
-Eina_Bool
+static Eina_Bool
 eeze_sensor_tizen_async_read(Eeze_Sensor_Type sensor_type, void *user_data)
 {
    sensor_type_e type;
@@ -1315,7 +1315,7 @@ eeze_sensor_tizen_sensors_find(void)
 }
 
 /* Cleanup when getting the shutdown callback from core */
-Eina_Bool
+static Eina_Bool
 eeze_sensor_tizen_shutdown(void)
 {
    Eeze_Sensor_Obj *obj;
@@ -1337,7 +1337,7 @@ eeze_sensor_tizen_shutdown(void)
 /* Callback from core once we registered as a module. Create the Tizen sensor
  * handle and find all available sensors.
  */
-Eina_Bool
+static Eina_Bool
 eeze_sensor_tizen_init(void)
 {
 
@@ -1362,7 +1362,7 @@ eeze_sensor_tizen_init(void)
  * entry point to anything in this module. After setting ourself up we register
  * into the core of eeze sensor to make our functionality available.
  */
-Eina_Bool
+static Eina_Bool
 sensor_tizen_init(void)
 {
 
@@ -1396,7 +1396,7 @@ sensor_tizen_init(void)
 /* Cleanup when the module gets unloaded. Unregister ourself from the core to
  * avoid calls into a not loaded module.
  */
-void
+static void
 sensor_tizen_shutdown(void)
 {
    Eeze_Sensor_Obj *sens;
@@ -1407,10 +1407,11 @@ sensor_tizen_shutdown(void)
    EINA_LIST_FREE(esensor_module->sensor_list, sens)
       free(sens);
 
+   eina_log_domain_unregister(_eeze_sensor_tizen_log_dom);
+
    free(esensor_module);
    esensor_module = NULL;
 
-   eina_log_domain_unregister(_eeze_sensor_tizen_log_dom);
    _eeze_sensor_tizen_log_dom = -1;
 }
 

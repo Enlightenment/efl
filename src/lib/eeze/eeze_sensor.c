@@ -131,9 +131,6 @@ eeze_sensor_module_register(const char *name, Eeze_Sensor_Module *mod)
 
    if (!mod) return EINA_FALSE;
 
-   module = calloc(1, sizeof(Eeze_Sensor_Module));
-   if (!module) return EINA_FALSE;
-
    module = mod;
 
    if (!module->init) return EINA_FALSE;
@@ -155,6 +152,8 @@ eeze_sensor_module_unregister(const char *name)
    Eeze_Sensor_Module *module = NULL;
 
    module = eina_hash_find(g_handle->modules, name);
+   if (!module) return EINA_FALSE;
+   
    if (module->shutdown)
      module->shutdown();
 

@@ -18,11 +18,11 @@ static int _eeze_sensor_udev_log_dom = -1;
 #endif
 #define ERR(...)  EINA_LOG_DOM_ERR(_eeze_sensor_udev_log_dom, __VA_ARGS__)
 
-Eeze_Sensor_Module *esensor_module;
+static Eeze_Sensor_Module *esensor_module;
 
-Eina_List *devices;
+static Eina_List *devices;
 
-Eina_Bool
+static Eina_Bool
 udev_init(void)
 {
    /* We only offer a temperature sensor right now */
@@ -35,7 +35,7 @@ udev_init(void)
    return EINA_TRUE;
 }
 
-Eina_Bool
+static Eina_Bool
 udev_shutdown(void)
 {
    char *data;
@@ -46,7 +46,7 @@ udev_shutdown(void)
    return EINA_TRUE;
 }
 
-double
+static double
 _udev_read(void)
 {
    Eina_List *l;
@@ -88,7 +88,7 @@ _udev_read(void)
    return temp;
 }
 
-Eina_Bool
+static Eina_Bool
 udev_read(Eeze_Sensor_Type sensor_type, Eeze_Sensor_Obj *lobj)
 {
    Eeze_Sensor_Obj *obj = NULL;
@@ -122,7 +122,7 @@ udev_read(Eeze_Sensor_Type sensor_type, Eeze_Sensor_Obj *lobj)
    return EINA_TRUE;
 }
 
-Eina_Bool
+static Eina_Bool
 udev_async_read(Eeze_Sensor_Type sensor_type, void *user_data EINA_UNUSED)
 {
    Eeze_Sensor_Obj *obj = NULL;
@@ -157,7 +157,7 @@ udev_async_read(Eeze_Sensor_Type sensor_type, void *user_data EINA_UNUSED)
  * entry point to anything in this module. After setting ourself up we register
  * into the core of eeze sensor to make our functionality available.
  */
-Eina_Bool
+static Eina_Bool
 sensor_udev_init(void)
 {
 
@@ -183,7 +183,7 @@ sensor_udev_init(void)
    esensor_module->read = udev_read;
    esensor_module->async_read = udev_async_read;
 
-   if (!eeze_sensor_module_register("fake", esensor_module))
+   if (!eeze_sensor_module_register("udev", esensor_module))
      {
         ERR("Failed to register udev module.");
         return EINA_FALSE;
@@ -194,7 +194,7 @@ sensor_udev_init(void)
 /* Cleanup when the module gets unloaded. Unregister ourself from the core to
  * avoid calls into a not loaded module.
  */
-void
+static void
 sensor_udev_shutdown(void)
 {
    Eeze_Sensor_Obj *sens;
@@ -203,10 +203,11 @@ sensor_udev_shutdown(void)
    EINA_LIST_FREE(esensor_module->sensor_list, sens)
       free(sens);
 
+   eina_log_domain_unregister(_eeze_sensor_udev_log_dom);
+
    free(esensor_module);
    esensor_module = NULL;
 
-   eina_log_domain_unregister(_eeze_sensor_udev_log_dom);
    _eeze_sensor_udev_log_dom = -1;
 }
 
