@@ -104,7 +104,7 @@ enum Ecore_Audio_Obj_In_Sub_Ids
 
 #define ecore_audio_obj_in_length_get(ret) ECORE_AUDIO_OBJ_IN_ID(ECORE_AUDIO_OBJ_IN_SUB_ID_LENGTH_GET), EO_TYPECHECK(double *, ret)
 
-#define ecore_audio_obj_in_read(buf, len, ret) ECORE_AUDIO_OBJ_IN_ID(ECORE_AUDIO_OBJ_IN_SUB_ID_READ), EO_TYPECHECK(char *, buf), EO_TYPECHECK(int, len), EO_TYPECHECK(int *, ret)
+#define ecore_audio_obj_in_read(buf, len, ret) ECORE_AUDIO_OBJ_IN_ID(ECORE_AUDIO_OBJ_IN_SUB_ID_READ), EO_TYPECHECK(char *, buf), EO_TYPECHECK(size_t, len), EO_TYPECHECK(ssize_t *, ret)
 
 #define ecore_audio_obj_in_seek(offs, mode, ret) ECORE_AUDIO_OBJ_IN_ID(ECORE_AUDIO_OBJ_IN_SUB_ID_SEEK), EO_TYPECHECK(double, offs), EO_TYPECHECK(int, mode), EO_TYPECHECK(double *, ret)
 
