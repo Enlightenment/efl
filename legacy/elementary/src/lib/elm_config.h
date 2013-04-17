@@ -513,14 +513,14 @@ typedef enum _Elm_Softcursor_Mode
 /**
  * Set the mode used for software provided mouse cursors inline in the window
  * canvas.
- * 
+ *
  * A software rendered cursor can be provided for rendering inline inside the
  * canvas windows in the event the native display system does not provide one
- * or the native oneis not wanted.
+ * or the native one is not wanted.
  *
  * @param lonpress_timeout Timeout for long press event
  * @ingroup Softcursor
- * 
+ *
  * @see elm_config_softcursor_mode_get()
  * @since 1.7
  */
@@ -531,12 +531,11 @@ EAPI void         elm_config_softcursor_mode_set(Elm_Softcursor_Mode mode);
  *
  * @return The mode used for software cursors
  * @ingroup Softcursor
- * 
+ *
  * @see elm_config_softcursor_mode_set()
  * @since 1.7
  */
 EAPI Elm_Softcursor_Mode elm_config_softcursor_mode_get(void);
-
 
 /**
  * Get the duration after which tooltip will be shown.
@@ -814,7 +813,7 @@ EAPI void             elm_config_font_overlay_set(const char *text_class, const 
  *
  * @since 1.7
  *
- * @ingroup Access 
+ * @ingroup Access
  *
  * @see elm_config_access_set()
  */
@@ -831,7 +830,7 @@ EAPI Eina_Bool        elm_config_access_get(void);
  *
  * @since 1.7
  *
- * @ingroup Access 
+ * @ingroup Access
  *
  * @see elm_config_access_get()
  */
@@ -844,7 +843,7 @@ EAPI void             elm_config_access_set(Eina_Bool is_access);
  *
  * @since 1.7
  *
- * @ingroup Selection 
+ * @ingroup Selection
  *
  * @see elm_config_selection_unfocused_clear_set()
  */
@@ -858,7 +857,7 @@ EAPI Eina_Bool        elm_config_selection_unfocused_clear_get(void);
  *
  * @since 1.7
  *
- * @ingroup Selection 
+ * @ingroup Selection
  *
  * @see elm_config_selection_unfocused_clear_get()
  */
@@ -906,7 +905,6 @@ EAPI Evas_Coord elm_config_finger_size_get(void);
  * @ingroup Fingers
  */
 EAPI void       elm_config_finger_size_set(Evas_Coord size);
-
 
 /**
  * Get the configured cache flush interval time
@@ -1006,7 +1004,6 @@ EAPI int       elm_config_cache_image_cache_size_get(void);
  * @ingroup Caches
  */
 EAPI void       elm_config_cache_image_cache_size_set(int size);
-
 
 /**
  * Get the configured edje file cache size.
