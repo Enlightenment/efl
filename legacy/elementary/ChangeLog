@@ -1340,3 +1340,7 @@
 2013-05-06 WooHyun Jung
 
         * Add elm_entry smart callback - "text,set,done".
+
+2013-05-09 Seunggyun Kim
+
+        * Fix remained ecore timer issue when gesture layer was deleted.

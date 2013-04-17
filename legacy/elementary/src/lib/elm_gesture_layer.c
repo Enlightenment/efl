@@ -3638,6 +3638,11 @@ _elm_gesture_layer_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
           free(sd->gesture[i]);
        }
+   if (sd->gest_taps_timeout)
+     {
+        ecore_timer_del(sd->gest_taps_timeout);
+        sd->gest_taps_timeout = NULL;
+     }
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
