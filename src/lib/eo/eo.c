@@ -291,19 +291,20 @@ _eo_kls_itr_func_get(const Eo_Class *cur_klass, Eo_Op op)
    return NULL;
 }
 
-#define _EO_OP_ERR_NO_OP_PRINT(op, klass) \
+#define _EO_OP_ERR_NO_OP_PRINT(file, line, op, klass) \
    do \
       { \
          const Eo_Class *op_klass = _eo_op_class_get(op); \
          const char *_dom_name = (op_klass) ? op_klass->desc->name : NULL; \
-         ERR("Can't find func for op 0x%x (%s:%s) for class '%s'. Aborting.", \
-               op, _dom_name, _eo_op_id_name_get(op), \
+         ERR("in %s:%d: Can't find func for op 0x%x (%s:%s) for class '%s'. Aborting.", \
+               file, line, op, _dom_name, _eo_op_id_name_get(op), \
                (klass) ? klass->desc->name : NULL); \
       } \
    while (0)
 
 static Eina_Bool
-_eo_op_internal(Eo *obj, const Eo_Class *cur_klass, Eo_Op_Type op_type, Eo_Op op, va_list *p_list)
+_eo_op_internal(const char *file, int line, Eo *obj, const Eo_Class *cur_klass,
+                Eo_Op_Type op_type, Eo_Op op, va_list *p_list)
 {
 #ifdef EO_DEBUG
    const Eo_Op_Description *op_desc = _eo_op_id_desc_get(op);
@@ -312,7 +313,8 @@ _eo_op_internal(Eo *obj, const Eo_Class *cur_klass, Eo_Op_Type op_type, Eo_Op op
      {
         if (op_desc->op_type == EO_OP_TYPE_CLASS)
           {
-             ERR("Tried calling a class op '%s' (0x%x) from a non-class context.", (op_desc) ? op_desc->name : NULL, op);
+             ERR("in %s:%d: Tried calling a class op '%s' (0x%x) from a non-class context.",
+                 file, line, (op_desc) ? op_desc->name : NULL, op);
              return EINA_FALSE;
           }
      }
@@ -335,7 +337,7 @@ _eo_op_internal(Eo *obj, const Eo_Class *cur_klass, Eo_Op_Type op_type, Eo_Op op
         EINA_LIST_FOREACH(obj->composite_objects, itr, emb_obj)
           {
              /* FIXME: Clean this up a bit. */
-             if (_eo_op_internal(emb_obj, emb_obj->klass, op_type, op, p_list))
+             if (_eo_op_internal(file, line, emb_obj, emb_obj->klass, op_type, op, p_list))
                {
                   return EINA_TRUE;
                }
@@ -345,7 +347,7 @@ _eo_op_internal(Eo *obj, const Eo_Class *cur_klass, Eo_Op_Type op_type, Eo_Op op
 }
 
 static inline Eina_Bool
-_eo_dov_internal(Eo *obj, Eo_Op_Type op_type, va_list *p_list)
+_eo_dov_internal(const char *file, int line, Eo *obj, Eo_Op_Type op_type, va_list *p_list)
 {
    Eina_Bool prev_error;
    Eina_Bool ret = EINA_TRUE;
@@ -357,9 +359,9 @@ _eo_dov_internal(Eo *obj, Eo_Op_Type op_type, va_list *p_list)
    op = va_arg(*p_list, Eo_Op);
    while (op)
      {
-        if (!_eo_op_internal(obj, obj->klass, op_type, op, p_list))
+        if (!_eo_op_internal(file, line, obj, obj->klass, op_type, op, p_list))
           {
-             _EO_OP_ERR_NO_OP_PRINT(op, obj->klass);
+             _EO_OP_ERR_NO_OP_PRINT(file, line, op, obj->klass);
              ret = EINA_FALSE;
              break;
           }
@@ -377,7 +379,7 @@ _eo_dov_internal(Eo *obj, Eo_Op_Type op_type, va_list *p_list)
 }
 
 EAPI Eina_Bool
-eo_do_internal(Eo *obj, Eo_Op_Type op_type, ...)
+eo_do_internal(const char *file, int line, Eo *obj, Eo_Op_Type op_type, ...)
 {
    Eina_Bool ret = EINA_TRUE;
    va_list p_list;
@@ -386,7 +388,7 @@ eo_do_internal(Eo *obj, Eo_Op_Type op_type, ...)
 
    va_start(p_list, op_type);
 
-   ret = _eo_dov_internal(obj, op_type, &p_list);
+   ret = _eo_dov_internal(file, line, obj, op_type, &p_list);
 
    va_end(p_list);
 
@@ -394,15 +396,16 @@ eo_do_internal(Eo *obj, Eo_Op_Type op_type, ...)
 }
 
 EAPI Eina_Bool
-eo_vdo_internal(Eo *obj, Eo_Op_Type op_type, va_list *ops)
+eo_vdo_internal(const char *file, int line, Eo *obj, Eo_Op_Type op_type, va_list *ops)
 {
    EO_MAGIC_RETURN_VAL(obj, EO_EINA_MAGIC, EINA_FALSE);
 
-   return _eo_dov_internal(obj, op_type, ops);
+   return _eo_dov_internal(file, line, obj, op_type, ops);
 }
 
 EAPI Eina_Bool
-eo_do_super_internal(Eo *obj, const Eo_Class *cur_klass, Eo_Op_Type op_type, Eo_Op op, ...)
+eo_do_super_internal(const char *file, int line, Eo *obj, const Eo_Class *cur_klass,
+                     Eo_Op_Type op_type, Eo_Op op, ...)
 {
    const Eo_Class *nklass;
    Eina_Bool ret = EINA_TRUE;
@@ -414,9 +417,9 @@ eo_do_super_internal(Eo *obj, const Eo_Class *cur_klass, Eo_Op_Type op_type, Eo_
    nklass = _eo_kls_itr_next(obj->klass, cur_klass, op);
 
    va_start(p_list, op);
-   if (!_eo_op_internal(obj, nklass, op_type, op, &p_list))
+   if (!_eo_op_internal(file, line, obj, nklass, op_type, op, &p_list))
      {
-        _EO_OP_ERR_NO_OP_PRINT(op, nklass);
+        _EO_OP_ERR_NO_OP_PRINT(file, line, op, nklass);
         ret = EINA_FALSE;
      }
    va_end(p_list);
@@ -428,7 +431,8 @@ eo_do_super_internal(Eo *obj, const Eo_Class *cur_klass, Eo_Op_Type op_type, Eo_
 }
 
 static Eina_Bool
-_eo_class_op_internal(Eo_Class *klass, const Eo_Class *cur_klass, Eo_Op op, va_list *p_list)
+_eo_class_op_internal(const char *file, int line, Eo_Class *klass, const Eo_Class *cur_klass,
+                      Eo_Op op, va_list *p_list)
 {
 #ifdef EO_DEBUG
    const Eo_Op_Description *op_desc = _eo_op_id_desc_get(op);
@@ -437,10 +441,14 @@ _eo_class_op_internal(Eo_Class *klass, const Eo_Class *cur_klass, Eo_Op op, va_l
      {
         if (op_desc->op_type != EO_OP_TYPE_CLASS)
           {
-             ERR("Tried calling an instance op '%s' (0x%x) from a class context.", (op_desc) ? op_desc->name : NULL, op);
+             ERR("in %s:%d: Tried calling an instance op '%s' (0x%x) from a class context.",
+                 file, line, (op_desc) ? op_desc->name : NULL, op);
              return EINA_FALSE;
           }
      }
+#else
+   (void) file;
+   (void) line;
 #endif
 
      {
@@ -456,7 +464,7 @@ _eo_class_op_internal(Eo_Class *klass, const Eo_Class *cur_klass, Eo_Op op, va_l
 }
 
 EAPI Eina_Bool
-eo_class_do_internal(const Eo_Class *klass, ...)
+eo_class_do_internal(const char *file, int line, const Eo_Class *klass, ...)
 {
    Eina_Bool ret = EINA_TRUE;
    Eo_Op op = EO_NOOP;
@@ -469,9 +477,9 @@ eo_class_do_internal(const Eo_Class *klass, ...)
    op = va_arg(p_list, Eo_Op);
    while (op)
      {
-        if (!_eo_class_op_internal((Eo_Class *) klass, klass, op, &p_list))
+        if (!_eo_class_op_internal(file, line, (Eo_Class *) klass, klass, op, &p_list))
           {
-             _EO_OP_ERR_NO_OP_PRINT(op, klass);
+             _EO_OP_ERR_NO_OP_PRINT(file, line, op, klass);
              ret = EINA_FALSE;
              break;
           }
@@ -484,7 +492,8 @@ eo_class_do_internal(const Eo_Class *klass, ...)
 }
 
 EAPI Eina_Bool
-eo_class_do_super_internal(const Eo_Class *klass, const Eo_Class *cur_klass, Eo_Op op, ...)
+eo_class_do_super_internal(const char *file, int line, const Eo_Class *klass,
+                           const Eo_Class *cur_klass, Eo_Op op, ...)
 {
    const Eo_Class *nklass;
    Eina_Bool ret = EINA_TRUE;
@@ -496,9 +505,9 @@ eo_class_do_super_internal(const Eo_Class *klass, const Eo_Class *cur_klass, Eo_
    nklass = _eo_kls_itr_next(klass, cur_klass, op);
 
    va_start(p_list, op);
-   if (!_eo_class_op_internal((Eo_Class *) klass, nklass, op, &p_list))
+   if (!_eo_class_op_internal(file, line, (Eo_Class *) klass, nklass, op, &p_list))
      {
-        _EO_OP_ERR_NO_OP_PRINT(op, nklass);
+        _EO_OP_ERR_NO_OP_PRINT(file, line, op, nklass);
         ret = EINA_FALSE;
      }
    va_end(p_list);
@@ -1076,7 +1085,7 @@ eo_parent_set(Eo *obj, const Eo *parent)
 }
 
 EAPI Eo *
-eo_add_internal(const Eo_Class *klass, Eo *parent, ...)
+eo_add_internal(const char *file, int line, const Eo_Class *klass, Eo *parent, ...)
 {
    Eina_Bool do_err;
    EO_MAGIC_RETURN_VAL(klass, EO_CLASS_EINA_MAGIC, NULL);
@@ -1085,7 +1094,7 @@ eo_add_internal(const Eo_Class *klass, Eo *parent, ...)
 
    if (EINA_UNLIKELY(klass->desc->type != EO_CLASS_TYPE_REGULAR))
      {
-        ERR("Class '%s' is not instantiate-able. Aborting.", klass->desc->name);
+        ERR("in %s:%d: Class '%s' is not instantiate-able. Aborting.", file, line, klass->desc->name);
         return NULL;
      }
 
@@ -1106,19 +1115,21 @@ eo_add_internal(const Eo_Class *klass, Eo *parent, ...)
      {
         va_list p_list;
         va_start(p_list, parent);
-        do_err = !_eo_dov_internal(obj, EO_OP_TYPE_REGULAR, &p_list);
+        do_err = !_eo_dov_internal(file, line, obj, EO_OP_TYPE_REGULAR, &p_list);
         va_end(p_list);
      }
 
    if (EINA_UNLIKELY(do_err))
      {
-        ERR("Object of class '%s' - One of the object constructors have failed.", klass->desc->name);
+        ERR("in %s:%d, Object of class '%s' - One of the object constructors have failed.",
+            file, line, klass->desc->name);
         goto fail;
      }
 
    if (!obj->condtor_done)
      {
-        ERR("Object of class '%s' - Not all of the object constructors have been executed.", klass->desc->name);
+        ERR("in %s:%d: Object of class '%s' - Not all of the object constructors have been executed.",
+            file, line, klass->desc->name);
         goto fail;
      }
 
@@ -1142,7 +1153,7 @@ typedef struct
 } Eo_Xref_Node;
 
 EAPI Eo *
-eo_xref_internal(Eo *obj, const Eo *ref_obj, const char *file, int line)
+eo_xref_internal(const char *file, int line, Eo *obj, const Eo *ref_obj)
 {
    EO_MAGIC_RETURN_VAL(obj, EO_EINA_MAGIC, obj);
 
@@ -1209,7 +1220,7 @@ eo_ref(const Eo *_obj)
 }
 
 static inline void
-_eo_del_internal(Eo *obj)
+_eo_del_internal(const char *file, int line, Eo *obj)
 {
    Eina_Bool do_err;
    /* We need that for the event callbacks that may ref/unref. */
@@ -1224,12 +1235,14 @@ _eo_del_internal(Eo *obj)
    do_err = eo_do(obj, eo_destructor());
    if (EINA_UNLIKELY(!do_err))
      {
-        ERR("Object of class '%s' - One of the object destructors have failed.", klass->desc->name);
+        ERR("in %s:%d: Object of class '%s' - One of the object destructors have failed.",
+            file, line, klass->desc->name);
      }
 
    if (!obj->condtor_done)
      {
-        ERR("Object of class '%s' - Not all of the object destructors have been executed.", klass->desc->name);
+        ERR("in %s:%d: Object of class '%s' - Not all of the object destructors have been executed.",
+            file, line, klass->desc->name);
      }
    /*FIXME: add eo_class_unref(klass) ? - just to clear the caches. */
 
@@ -1270,7 +1283,7 @@ _eo_unref(Eo *obj)
              return;
           }
 
-        _eo_del_internal(obj);
+        _eo_del_internal(__FILE__, __LINE__, obj);
 
 #ifdef EO_DEBUG
         /* If for some reason it's not empty, clear it. */

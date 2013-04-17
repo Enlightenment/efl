@@ -570,21 +570,21 @@ EAPI Eina_Bool eo_shutdown(void);
  * A convenience wrapper around eo_do_internal()
  * @see eo_do_internal
  */
-#define eo_do(obj, ...) eo_do_internal(obj, EO_OP_TYPE_REGULAR, __VA_ARGS__, EO_NOOP)
+#define eo_do(obj, ...) eo_do_internal(__FILE__, __LINE__, obj, EO_OP_TYPE_REGULAR, __VA_ARGS__, EO_NOOP)
 
 /**
  * @def eo_vdo
  * A convenience wrapper around eo_vdo_internal()
  * @see eo_vdo_internal
  */
-#define eo_vdo(obj, args) eo_vdo_internal(obj, EO_OP_TYPE_REGULAR, args)
+#define eo_vdo(obj, args) eo_vdo_internal(__FILE__, __LINE__, obj, EO_OP_TYPE_REGULAR, args)
 
 /**
  * @def eo_class_do
  * A convenience wrapper around eo_class_do_internal()
  * @see eo_class_do_internal
  */
-#define eo_class_do(klass, ...) eo_class_do_internal(klass, __VA_ARGS__, EO_NOOP)
+#define eo_class_do(klass, ...) eo_class_do_internal(__FILE__, __LINE__, klass, __VA_ARGS__, EO_NOOP)
 
 /**
  * @brief Calls op functions of an object
@@ -598,7 +598,7 @@ EAPI Eina_Bool eo_shutdown(void);
  *
  * @see #eo_do
  */
-EAPI Eina_Bool eo_do_internal(Eo *obj, Eo_Op_Type op_type, ...);
+EAPI Eina_Bool eo_do_internal(const char *file, int line, Eo *obj, Eo_Op_Type op_type, ...);
 
 /**
  * @brief Calls op functions of an object
@@ -612,7 +612,7 @@ EAPI Eina_Bool eo_do_internal(Eo *obj, Eo_Op_Type op_type, ...);
  *
  * @see #eo_vdo
  */
-EAPI Eina_Bool eo_vdo_internal(Eo *obj, Eo_Op_Type op_type, va_list *ops);
+EAPI Eina_Bool eo_vdo_internal(const char *file, int line, Eo *obj, Eo_Op_Type op_type, va_list *ops);
   
 /**
  * @brief Calls op functions of a class.
@@ -625,7 +625,7 @@ EAPI Eina_Bool eo_vdo_internal(Eo *obj, Eo_Op_Type op_type, va_list *ops);
  *
  * @see #eo_class_do
  */
-EAPI Eina_Bool eo_class_do_internal(const Eo_Class *klass, ...);
+EAPI Eina_Bool eo_class_do_internal(const char *file, int line, const Eo_Class *klass, ...);
 
 /**
  * @brief Calls the super function for the specific op.
@@ -638,7 +638,7 @@ EAPI Eina_Bool eo_class_do_internal(const Eo_Class *klass, ...);
  *
  * @see #eo_do
  */
-#define eo_do_super(obj, cur_klass, ...) eo_do_super_internal(obj, cur_klass, EO_OP_TYPE_REGULAR, __VA_ARGS__)
+#define eo_do_super(obj, cur_klass, ...) eo_do_super_internal(__FILE__, __LINE__, obj, cur_klass, EO_OP_TYPE_REGULAR, __VA_ARGS__)
 
 /**
  * @brief Calls the super function for the specific op.
@@ -651,7 +651,7 @@ EAPI Eina_Bool eo_class_do_internal(const Eo_Class *klass, ...);
  *
  * @see #eo_class_do
  */
-#define eo_class_do_super(klass, cur_klass, ...) eo_class_do_super_internal(klass, cur_klass, __VA_ARGS__)
+#define eo_class_do_super(klass, cur_klass, ...) eo_class_do_super_internal(__FILE__, __LINE__, klass, cur_klass, __VA_ARGS__)
 
 /**
  * @brief Calls the super function for the specific op.
@@ -667,7 +667,7 @@ EAPI Eina_Bool eo_class_do_internal(const Eo_Class *klass, ...);
  * @see #eo_do
  * @see #eo_do_super
  */
-EAPI Eina_Bool eo_do_super_internal(Eo *obj, const Eo_Class *cur_klass, Eo_Op_Type op_type, Eo_Op op, ...);
+EAPI Eina_Bool eo_do_super_internal(const char *file, int line, Eo *obj, const Eo_Class *cur_klass, Eo_Op_Type op_type, Eo_Op op, ...);
 
 /**
  * @brief Calls the super function for the specific op.
@@ -682,7 +682,7 @@ EAPI Eina_Bool eo_do_super_internal(Eo *obj, const Eo_Class *cur_klass, Eo_Op_Ty
  * @see #eo_class_do
  * @see #eo_class_do_super
  */
-EAPI Eina_Bool eo_class_do_super_internal(const Eo_Class *klass, const Eo_Class *cur_klass, Eo_Op op, ...);
+EAPI Eina_Bool eo_class_do_super_internal(const char *file, int line, const Eo_Class *klass, const Eo_Class *cur_klass, Eo_Op op, ...);
 
 /**
  * @brief Gets the class of the object.
@@ -719,7 +719,7 @@ EAPI void eo_error_set_internal(const Eo *obj, const char *file, int line);
 #define eo_add(klass, parent, ...) \
    ({ \
     const Eo_Class *_tmp_klass = klass; \
-    eo_add_internal(_tmp_klass, parent, eo_constructor(), ## __VA_ARGS__, EO_NOOP); \
+    eo_add_internal(__FILE__, __LINE__, _tmp_klass, parent, eo_constructor(), ## __VA_ARGS__, EO_NOOP); \
     })
 
 /**
@@ -735,7 +735,7 @@ EAPI void eo_error_set_internal(const Eo *obj, const char *file, int line);
 #define eo_add_custom(klass, parent, ...) \
    ({ \
     const Eo_Class *_tmp_klass = klass; \
-    eo_add_internal(_tmp_klass, parent, ## __VA_ARGS__, EO_NOOP); \
+    eo_add_internal(__FILE__, __LINE__, _tmp_klass, parent, ## __VA_ARGS__, EO_NOOP); \
     })
 
 /**
@@ -750,7 +750,7 @@ EAPI void eo_error_set_internal(const Eo *obj, const char *file, int line);
  *
  * @see #eo_add
  */
-EAPI Eo *eo_add_internal(const Eo_Class *klass, Eo *parent, ...);
+EAPI Eo *eo_add_internal(const char *file, int line, const Eo_Class *klass, Eo *parent, ...);
 
 /**
  * @brief Get the parent of an object
@@ -837,7 +837,7 @@ EAPI void eo_del(const Eo *obj);
  * Convenience macro around eo_xref_internal()
  * @see eo_xref()
  */
-#define eo_xref(obj, ref_obj) eo_xref_internal(obj, ref_obj, __FILE__, __LINE__)
+#define eo_xref(obj, ref_obj) eo_xref_internal(__FILE__, __LINE__, obj, ref_obj)
 
 /**
  * @brief Increment the object's reference count by 1 (and associate the ref with ref_obj)
@@ -853,7 +853,7 @@ EAPI void eo_del(const Eo *obj);
  *
  * @see eo_xunref()
  */
-EAPI Eo *eo_xref_internal(Eo *obj, const Eo *ref_obj, const char *file, int line);
+EAPI Eo *eo_xref_internal(const char *file, int line, Eo *obj, const Eo *ref_obj);
 
 /**
  * @brief Decrement the object's reference count by 1 and free it if needed. Will free the ref associated with ref_obj).
