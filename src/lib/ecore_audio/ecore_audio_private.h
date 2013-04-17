@@ -91,6 +91,13 @@ struct _Ecore_Audio_Module
    struct output_api *out_ops;
 };
 
+struct _Ecore_Audio_Vio_Internal {
+    Ecore_Audio_Vio *vio;
+    void *data;
+    eo_base_data_free_func free_func;
+};
+typedef struct _Ecore_Audio_Vio_Internal Ecore_Audio_Vio_Internal;
+
 /**
  * @brief A common structure, could be input or output
  */
@@ -99,10 +106,11 @@ struct _Ecore_Audio_Object
    const char         *name;
    const char         *source;
 
+   Eina_Bool           seekable;
    Eina_Bool           paused;
    double              volume;
    Ecore_Audio_Format  format;
-
+   Ecore_Audio_Vio_Internal *vio;
 };
 
 /**

@@ -137,6 +137,7 @@ static const Eo_Op_Description op_desc[] = {
     EO_OP_DESCRIPTION(ECORE_AUDIO_OBJ_SUB_ID_SOURCE_GET, "Gets the source of the object."),
     EO_OP_DESCRIPTION(ECORE_AUDIO_OBJ_SUB_ID_FORMAT_SET, "Sets the format of the object."),
     EO_OP_DESCRIPTION(ECORE_AUDIO_OBJ_SUB_ID_FORMAT_GET, "Gets the format of the object."),
+    EO_OP_DESCRIPTION(ECORE_AUDIO_OBJ_SUB_ID_VIO_SET, "Sets virtual IO callbacks for this object."),
     EO_OP_DESCRIPTION_SENTINEL
 };
 

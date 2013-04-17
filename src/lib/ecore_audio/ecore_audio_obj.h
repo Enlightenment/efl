@@ -51,6 +51,7 @@ enum Ecore_Audio_Obj_Sub_Ids
    ECORE_AUDIO_OBJ_SUB_ID_SOURCE_GET,
    ECORE_AUDIO_OBJ_SUB_ID_FORMAT_SET,
    ECORE_AUDIO_OBJ_SUB_ID_FORMAT_GET,
+   ECORE_AUDIO_OBJ_SUB_ID_VIO_SET,
    ECORE_AUDIO_OBJ_SUB_ID_LAST
 };
 
@@ -91,6 +92,8 @@ enum Ecore_Audio_Obj_Sub_Ids
 #define ecore_audio_obj_format_set(format) ECORE_AUDIO_OBJ_ID(ECORE_AUDIO_OBJ_SUB_ID_FORMAT_SET), EO_TYPECHECK(Ecore_Audio_Format, format)
 
 #define ecore_audio_obj_format_get(ret) ECORE_AUDIO_OBJ_ID(ECORE_AUDIO_OBJ_SUB_ID_FORMAT_GET), EO_TYPECHECK(Ecore_Audio_Format *, ret)
+
+#define ecore_audio_obj_vio_set(vio, data, free_func) ECORE_AUDIO_OBJ_ID(ECORE_AUDIO_OBJ_SUB_ID_VIO_SET), EO_TYPECHECK(Ecore_Audio_Vio *, vio), EO_TYPECHECK(void *, data), EO_TYPECHECK(eo_base_data_free_func, free_func)
 
 /**
  * @}

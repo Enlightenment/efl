@@ -76,11 +76,11 @@ typedef struct _Ecore_Audio_Object Ecore_Audio_Object;  /**< The audio object */
 typedef int (*Ecore_Audio_Read_Callback)(void *user_data, void *data, int len);
 
 struct _Ecore_Audio_Vio {
-    int (*get_length)(Ecore_Audio_Object *in);
-    int (*seek)(Ecore_Audio_Object *in, int offset, int whence);
-    int (*tell)(Ecore_Audio_Object *in);
-    int (*read)(Ecore_Audio_Object *in, void *buffer, int length);
-    int (*write)(Ecore_Audio_Object *out, const void *buffer, int length);
+    int (*get_length)(void *data, Eo *eo_obj);
+    int (*seek)(void *data, Eo *eo_obj, int offset, int whence);
+    int (*tell)(void *data, Eo *eo_obj);
+    int (*read)(void *data, Eo *eo_obj, void *buffer, int length);
+    int (*write)(void *data, Eo *eo_obj, const void *buffer, int length);
 };
 
 typedef struct _Ecore_Audio_Vio Ecore_Audio_Vio; /**< Functions to implement IO virtually */
