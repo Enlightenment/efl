@@ -85,7 +85,7 @@ _index_box_clear(Evas_Object *obj,
         VIEW(it) = NULL;
      }
 
-   sd->level_active[level] = 0;
+   sd->level_active[level] = EINA_FALSE;
 }
 
 static char *
@@ -310,7 +310,7 @@ _index_box_auto_fill(Evas_Object *obj,
      }
 
    evas_object_smart_calculate(box);
-   sd->level_active[level] = 1;
+   sd->level_active[level] = EINA_TRUE;
 }
 
 static void

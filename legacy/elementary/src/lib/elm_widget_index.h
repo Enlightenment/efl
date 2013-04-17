@@ -31,7 +31,9 @@ struct _Elm_Index_Smart_Data
    Evas_Coord            dx, dy;
    Ecore_Timer          *delay;
    double                delay_change_time;
-   Eina_Bool             level_active[2];
+   Eina_Bool             level_active[2]; /**< a flag for the activeness of a
+                                            level. activeness means the box is
+                                            filled with contents. */
 
    Eina_Bool             down : 1;
    Eina_Bool             horizontal : 1;
