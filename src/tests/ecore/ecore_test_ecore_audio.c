@@ -305,6 +305,62 @@ START_TEST(ecore_test_ecore_audio_custom)
 END_TEST
 #endif
 
+static Eina_Bool _finished_cb(void *data EINA_UNUSED, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+  ecore_main_loop_quit();
+
+  return EINA_FALSE;
+}
+
+START_TEST(ecore_test_ecore_audio_obj_tone)
+{
+   Eo *in, *out;
+   double len;
+   int channel, rate, freq;
+
+   in = eo_add(ECORE_AUDIO_OBJ_IN_TONE_CLASS, NULL);
+   fail_if(!in);
+
+   eo_do(in, ecore_audio_obj_name_set("tone"));
+
+   eo_do(in, ecore_audio_obj_in_channels_get(&channel));
+   fail_if(channel != 1);
+   eo_do(in, ecore_audio_obj_in_samplerate_get(&rate));
+   fail_if(rate != 44100);
+   eo_do(in, ecore_audio_obj_in_length_get(&len));
+   fail_if(len != 1);
+
+   eo_do(in, ecore_audio_obj_in_length_set(2.5));
+   eo_do(in, ecore_audio_obj_in_length_get(&len));
+   fail_if(len != 2.5);
+
+   eo_do(in, eo_base_data_get(ECORE_AUDIO_ATTR_TONE_FREQ, (void **)&freq));
+   fail_if(freq != 1000);
+
+   freq = 2000;
+   eo_do(in, eo_base_data_set(ECORE_AUDIO_ATTR_TONE_FREQ, &freq, NULL));
+
+   eo_do(in, eo_base_data_get(ECORE_AUDIO_ATTR_TONE_FREQ, (void **)&freq));
+   fail_if(freq != 2000);
+
+   out = eo_add(ECORE_AUDIO_OBJ_OUT_SNDFILE_CLASS, NULL);
+   fail_if(!out);
+
+   eo_do(out, ecore_audio_obj_name_set("tmp.wav"));
+   eo_do(out, ecore_audio_obj_format_set(ECORE_AUDIO_FORMAT_WAV));
+   eo_do(out, ecore_audio_obj_source_set(SOUNDS_DIR"/tmp.wav"));
+
+   eo_do(out, ecore_audio_obj_out_input_attach(in));
+
+   eo_do(in, eo_event_callback_add(ECORE_AUDIO_EV_IN_STOPPED, _finished_cb, NULL));
+
+   ecore_main_loop_begin();
+
+   eo_del(in);
+   eo_del(out);
+}
+END_TEST
+
 START_TEST(ecore_test_ecore_audio_obj_sndfile)
 {
    Eo *in;
@@ -469,6 +525,7 @@ ecore_test_ecore_audio(TCase *tc)
    tcase_add_test(tc, ecore_test_ecore_audio_obj);
    tcase_add_test(tc, ecore_test_ecore_audio_obj_in_out);
    tcase_add_test(tc, ecore_test_ecore_audio_obj_sndfile);
+   tcase_add_test(tc, ecore_test_ecore_audio_obj_tone);
 
 /*
    tcase_add_test(tc, ecore_test_ecore_audio_default);
