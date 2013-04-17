@@ -1617,9 +1617,17 @@ _item_pop(Eo *obj, void *_pd, va_list *list)
    it = (Elm_Naviframe_Item *)elm_naviframe_top_item_get(obj);
    if (!it) return;
 
+   if (it->animator || it->popping) return;
+
+   it->popping = EINA_TRUE;
+
    if (it->pop_cb)
      {
-        if (!it->pop_cb(it->pop_data, (Elm_Object_Item *)it)) return;
+        if (!it->pop_cb(it->pop_data, (Elm_Object_Item *)it))
+          {
+             it->popping = EINA_FALSE;
+             return;
+          }
      }
 
    if (sd->preserve)

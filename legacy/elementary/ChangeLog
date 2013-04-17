@@ -1260,3 +1260,7 @@
 2013-04-16  WooHyun Jung
 
         * When entry is disabled, scrolling is also disabled.
+
+2013-04-17  ChunEon Park
+
+        * Don't try to pop the naviframe item multiple times.
