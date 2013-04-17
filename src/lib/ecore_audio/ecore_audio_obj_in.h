@@ -118,6 +118,9 @@ extern const Eo_Event_Description _ECORE_AUDIO_EV_IN_LOOPED;
 extern const Eo_Event_Description _ECORE_AUDIO_EV_IN_STOPPED;
 #define ECORE_AUDIO_EV_IN_STOPPED (&(_ECORE_AUDIO_EV_IN_STOPPED))
 
+extern const Eo_Event_Description _ECORE_AUDIO_EV_IN_SAMPLERATE_CHANGED;
+#define ECORE_AUDIO_EV_IN_SAMPLERATE_CHANGED (&(_ECORE_AUDIO_EV_IN_SAMPLERATE_CHANGED))
+
 /**
  * @}
  */

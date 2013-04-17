@@ -20,6 +20,8 @@ EAPI const Eo_Event_Description _ECORE_AUDIO_EV_IN_LOOPED =
          EO_EVENT_DESCRIPTION("in,looped", "Called when an input has looped.");
 EAPI const Eo_Event_Description _ECORE_AUDIO_EV_IN_STOPPED =
          EO_EVENT_DESCRIPTION("in,stopped", "Called when an input has stopped playing.");
+EAPI const Eo_Event_Description _ECORE_AUDIO_EV_IN_SAMPLERATE_CHANGED =
+         EO_EVENT_DESCRIPTION("in,samplerate,changed", "Called when the input samplerate has changed.");
 
 #define MY_CLASS ECORE_AUDIO_OBJ_IN_CLASS
 #define MY_CLASS_NAME "ecore_audio_obj_in"
@@ -37,8 +39,7 @@ static void _speed_set(Eo *eo_obj, void *_pd, va_list *list)
 
   obj->speed = speed;
 
-  /* TODO: Notify output */
-
+  eo_do(eo_obj, eo_event_callback_call(ECORE_AUDIO_EV_IN_SAMPLERATE_CHANGED, NULL, NULL));
 }
 
 static void _speed_get(Eo *eo_obj, void *_pd, va_list *list)
@@ -59,8 +60,7 @@ static void _samplerate_set(Eo *eo_obj, void *_pd, va_list *list)
 
   obj->samplerate = samplerate;
 
-  /* TODO: Notify output */
-
+  eo_do(eo_obj, eo_event_callback_call(ECORE_AUDIO_EV_IN_SAMPLERATE_CHANGED, NULL, NULL));
 }
 
 static void _samplerate_get(Eo *eo_obj, void *_pd, va_list *list)
@@ -251,6 +251,7 @@ static const Eo_Op_Description op_desc[] = {
 static const Eo_Event_Description *event_desc[] = {
     ECORE_AUDIO_EV_IN_LOOPED,
     ECORE_AUDIO_EV_IN_STOPPED,
+    ECORE_AUDIO_EV_IN_SAMPLERATE_CHANGED,
     NULL
 };
 
