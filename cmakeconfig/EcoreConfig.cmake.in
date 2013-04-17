@@ -1,9 +1,19 @@
 # - Try to find ecore
 # Once done this will define
+#
 #  ECORE_FOUND - System has ecore
 #  ECORE_INCLUDE_DIRS - The ecore include directories
 #  ECORE_LIBRARIES - The libraries needed to use ecore
 #  ECORE_DEFINITIONS - Compiler switches required for using ecore
+#
+# When the COMPONENTS keyword was passed to find_package(),
+# the following variables are defined for additional Ecore modules
+# such as Evas, X, Imf.
+#
+#  ECORE_*_FOUND        - System has ecore *
+#  ECORE_*_INCLUDE_DIRS - The ecore include directories
+#  ECORE_*_LIBRARIES    - The libraries needed to use ecore
+#  ECORE_*_DEFINITIONS  - Compiler switches required for using ecore * module.
 
 set(MY_PKG ecore)
 
@@ -30,20 +40,27 @@ find_package_handle_standard_args(${MY_PKG} DEFAULT_MSG
 
 mark_as_advanced(ECORE_INCLUDE_DIRS ECORE_LIBRARY ECORE_LIBRARIES ECORE_DEFINITIONS)
 
-if (ECORE_USE_ECORE-X)
-   pkg_check_modules(PC_LIBECORE_X ${_QUIET} ecore-x)
+if (Ecore_FIND_COMPONENTS)
+   foreach(_component ${Ecore_FIND_COMPONENTS})
+      string(TOUPPER ${_component} _COMPONENT)
+      string(TOLOWER ${_component} _component)
+      set(_MODULE_PKGNAME ecore-${_component})
 
-   find_library(ECORE_X_LIBRARY
-      NAMES ${PC_LIBECORE_X_LIBRARIES}
-      HINTS ${PC_LIBECORE_X_LIBDIR} ${PC_LIBECORE_LIBRARY_DIRS} )
+      pkg_check_modules(PC_LIBECORE_${_COMPONENT} ${_QUIET} ${_MODULE_PKGNAME})
 
-   set(ECORE_X_DEFINITIONS ${PC_LIBECORE_CFLAGS_OTHER})
-   set(ECORE_X_LIBRARIES ${ECORE_LIBRARY})
-   set(ECORE_X_INCLUDE_DIRS ${PC_LIBECORE_INCLUDE_DIRS})
+      find_library(ECORE_${_COMPONENT}_LIBRARY
+         NAMES ${PC_LIBECORE_${_COMPONENT}_LIBRARIES}
+         HINTS ${PC_LIBECORE_${_COMPONENT}_LIBDIR}
+               ${PC_LIBECORE_${_COMPONENT}_LIBRARY_DIRS})
 
-   include(FindPackageHandleStandardArgs)
-   # handle the QUIETLY and REQUIRED arguments and set ECORE_X_FOUND to TRUE
-   # if all listed variables are TRUE
-   find_package_handle_standard_args(ecore_x DEFAULT_MSG
-      ECORE_X_LIBRARIES ECORE_INCLUDE_DIRS)
-endif (ECORE_USE_ECORE-X)
+      set(ECORE_${_COMPONENT}_DEFINITIONS ${PC_LIBECORE_${_COMPONENT}_CFLAGS_OTHER})
+      set(ECORE_${_COMPONENT}_LIBRARIES ${ECORE_${_COMPONENT}_LIBRARY})
+      set(ECORE_${_COMPONENT}_INCLUDE_DIRS ${PC_LIBECORE_${_COMPONENT}_INCLUDE_DIRS})
+
+      include(FindPackageHandleStandardArgs)
+      # handle the QUIETLY and REQUIRED arguments and set ECORE_*_FOUND to TRUE
+      # if all listed variables are TRUE
+      find_package_handle_standard_args(ecore_${_component} DEFAULT_MSG
+         ECORE_${_COMPONENT}_LIBRARIES ECORE_${_COMPONENT}_INCLUDE_DIRS)
+   endforeach(_component)
+endif(Ecore_FIND_COMPONENTS)
