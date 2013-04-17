@@ -576,4 +576,6 @@ EAPI void                ecore_audio_input_callback_setup(Ecore_Audio_Object *in
 
 #include <ecore_audio_obj_in_tone.h>
 
+#include <ecore_audio_obj_out_pulse.h>
+
 #endif
