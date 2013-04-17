@@ -141,7 +141,19 @@ main(void)
    else
      printf("Could not find a light sensor!\n");
 
-   printf("=== Test snyc read update: ===\n");
+   sens = eeze_sensor_new(EEZE_SENSOR_TYPE_TEMPERATURE);
+   if (sens)
+     {
+         if (!eeze_sensor_x_get(sens, &x)) printf("fail get x\n");
+         if (!eeze_sensor_accuracy_get(sens, &acc)) printf("fail get accuracy\n");
+         if (!eeze_sensor_timestamp_get(sens, &timestamp)) printf("fail get timestamp\n");
+         printf("Temperature output: accuracy %i, temperature %f °C at time: %f\n", acc, x, timestamp);
+         eeze_sensor_free(sens);
+     }
+   else
+     printf("Could not find a temperature sensor!\n");
+
+   printf("=== Test sync read update: ===\n");
    /* Get updated values on a sensor. This readout is synchronous. This way we
     * can force a read out of the physical sensor instead of using the cached
     * values. Depending on the hardware this can take a long time. If you don't have special
