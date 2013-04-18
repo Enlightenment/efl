@@ -2192,7 +2192,7 @@ eng_image_native_set(void *data, void *image, void *native)
                                   {
                                      glXGetFBConfigAttrib(re->win->disp, configs[j],
                                                           GLX_BUFFER_SIZE, &val);
-                                     if (val != depth) continue;
+                                     if (val != (int) depth) continue;
                                   }
                                 glXGetFBConfigAttrib(re->win->disp, configs[j],
                                                      GLX_DRAWABLE_TYPE, &val);
