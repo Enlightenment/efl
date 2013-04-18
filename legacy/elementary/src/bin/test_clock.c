@@ -19,10 +19,21 @@ enum _api_state
    CLOCK_EDIT_MIN,
    CLOCK_EDIT_HOUR,
    CLOCK_EDIT_ALL,
-   CLOCK_EDIT_ALL_ARMY,
+   CLOCK_HIDE_AM_PM,
    API_STATE_LAST
 };
 typedef enum _api_state api_state;
+
+static const char* api_state_description[] = {
+   "Hide Sec",
+   "Show AM/PM",
+   "Show Sec",
+   "Edit Min",
+   "Edit Hour",
+   "Edit All",
+   "Hide AM/PM",
+   NULL
+};
 
 static void
 set_api_state(api_data *api)
@@ -35,40 +46,42 @@ set_api_state(api_data *api)
    /* use elm_box_children_get() to get list of children */
    switch(api->state)
      { /* Put all api-changes under switch */
-        case CLOCK_HIDE_SEC:
-           elm_clock_show_seconds_set(ck, EINA_FALSE);
-           break;
+      case CLOCK_HIDE_SEC:
+        elm_clock_show_seconds_set(ck, EINA_FALSE);
+        break;
 
-          case CLOCK_SHOW_AM_PM:
-           elm_clock_show_am_pm_set(ck,  EINA_TRUE);
-           break;
+      case CLOCK_SHOW_AM_PM:
+        elm_clock_show_am_pm_set(ck,  EINA_TRUE);
+        break;
 
-          case CLOCK_SHOW_SEC:
-           elm_clock_show_seconds_set(ck, EINA_TRUE);
-           break;
+      case CLOCK_SHOW_SEC:
+        elm_clock_show_seconds_set(ck, EINA_TRUE);
+        break;
 
-          case CLOCK_EDIT_MIN:
-           elm_clock_edit_set(ck, ELM_CLOCK_EDIT_MIN_DECIMAL | ELM_CLOCK_EDIT_MIN_UNIT);
-           break;
+      case CLOCK_EDIT_MIN:
+        elm_clock_edit_set(ck, EINA_TRUE);
+        elm_clock_edit_mode_set(ck, ELM_CLOCK_EDIT_MIN_DECIMAL | ELM_CLOCK_EDIT_MIN_UNIT);
+        break;
 
-          case CLOCK_EDIT_HOUR:
-           elm_clock_edit_set(ck, ELM_CLOCK_EDIT_DEFAULT);
-           elm_clock_edit_set(ck, ELM_CLOCK_EDIT_HOUR_DECIMAL | ELM_CLOCK_EDIT_HOUR_UNIT);
-           break;
+      case CLOCK_EDIT_HOUR:
+        elm_clock_edit_set(ck, EINA_TRUE);
+        elm_clock_edit_mode_set(ck, ELM_CLOCK_EDIT_HOUR_DECIMAL | ELM_CLOCK_EDIT_HOUR_UNIT);
+        break;
 
-          case CLOCK_EDIT_ALL:
-           elm_clock_edit_set(ck, ELM_CLOCK_EDIT_ALL);
-           break;
+      case CLOCK_EDIT_ALL:
+        elm_clock_edit_set(ck, EINA_TRUE);
+        elm_clock_edit_mode_set(ck, ELM_CLOCK_EDIT_ALL);
+        break;
 
-          case CLOCK_EDIT_ALL_ARMY:
-           elm_clock_show_am_pm_set(ck,  EINA_FALSE);
-           break;
+      case CLOCK_HIDE_AM_PM:
+        elm_clock_show_am_pm_set(ck,  EINA_FALSE);
+        break;
 
       case API_STATE_LAST:
 
-         break;
+        break;
       default:
-         return;
+        return;
      }
 }
 
@@ -79,7 +92,7 @@ _api_bt_clicked(void *data, Evas_Object *obj, void *event_info __UNUSED__)
    api_data *a = data;
    char str[128];
 
-   printf("clicked event on API Button: api_state=<%d>\n", a->state);
+   printf("clicked event on API Button: api_state=<%s>\n", api_state_description[a->state]);
    set_api_state(a);
    a->state++;
    sprintf(str, "Next API function (%u)", a->state);
