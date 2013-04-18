@@ -90,12 +90,9 @@ err:
     *ret = -1.0;
 }
 
-static void _source_set(Eo *eo_obj, void *_pd, va_list *list)
+static void _source_set(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
 {
-  Ecore_Audio_Tone *obj = _pd;
-
   Ecore_Audio_Object *ea_obj = eo_data_get(eo_obj, ECORE_AUDIO_OBJ_CLASS);
-  Ecore_Audio_Input *in_obj = eo_data_get(eo_obj, ECORE_AUDIO_OBJ_IN_CLASS);
 
   const char *source = va_arg(*list, const char *);
 

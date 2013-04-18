@@ -160,10 +160,8 @@ static void _format_get(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
     *ret = obj->format;
 }
 
-static void _constructor(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
+static void _constructor(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-  Ecore_Audio_Sndfile *obj = _pd;
-
   eo_do_super(eo_obj, MY_CLASS, eo_constructor());
 
   eo_do(eo_obj, ecore_audio_obj_format_set(ECORE_AUDIO_FORMAT_OGG));

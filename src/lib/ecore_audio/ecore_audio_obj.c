@@ -20,16 +20,16 @@ EAPI Eo_Op ECORE_AUDIO_OBJ_BASE_ID = EO_NOOP;
 #define MY_CLASS ECORE_AUDIO_OBJ_CLASS
 #define MY_CLASS_NAME "ecore_audio_obj"
 
-static void _name_set(Eo *eo_obj, void *_pd, va_list *list)
+static void _name_set(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
 {
-  const Ecore_Audio_Object *obj = _pd;
+  Ecore_Audio_Object *obj = _pd;
 
   const char *name = va_arg(*list, const char *);
 
   eina_stringshare_replace(&obj->name, name);
 }
 
-static void _name_get(Eo *eo_obj, void *_pd, va_list *list)
+static void _name_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
 {
   const Ecore_Audio_Object *obj = _pd;
 
@@ -39,7 +39,7 @@ static void _name_get(Eo *eo_obj, void *_pd, va_list *list)
     *name = obj->name;
 }
 
-static void _paused_set(Eo *eo_obj, void *_pd, va_list *list)
+static void _paused_set(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
 {
   Ecore_Audio_Object *obj = _pd;
 
@@ -48,7 +48,7 @@ static void _paused_set(Eo *eo_obj, void *_pd, va_list *list)
   obj->paused = paused;
 }
 
-static void _paused_get(Eo *eo_obj, void *_pd, va_list *list)
+static void _paused_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
 {
   const Ecore_Audio_Object *obj = _pd;
 
@@ -58,7 +58,7 @@ static void _paused_get(Eo *eo_obj, void *_pd, va_list *list)
     *ret = obj->paused;
 }
 
-static void _volume_set(Eo *eo_obj, void *_pd, va_list *list)
+static void _volume_set(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
 {
   Ecore_Audio_Object *obj = _pd;
 
@@ -67,26 +67,7 @@ static void _volume_set(Eo *eo_obj, void *_pd, va_list *list)
   obj->volume = volume;
 }
 
-static void _volume_get(Eo *eo_obj, void *_pd, va_list *list)
-{
-  const Ecore_Audio_Object *obj = _pd;
-
-  double *ret = va_arg(*list, double *);
-
-  if (ret)
-    *ret = obj->volume;
-}
-
-static void _format_set(Eo *eo_obj, void *_pd, va_list *list)
-{
-  Ecore_Audio_Object *obj = _pd;
-
-  double volume = va_arg(*list, double);
-
-  obj->volume = volume;
-}
-
-static void _format_get(Eo *eo_obj, void *_pd, va_list *list)
+static void _volume_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
 {
   const Ecore_Audio_Object *obj = _pd;
 

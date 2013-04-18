@@ -15,7 +15,7 @@
 double volume = 1;
 Eina_List *inputs = NULL;
 
-static Eina_Bool _play_finished(void *data, Eo *obj, const Eo_Event_Description *desc, void *event_info)
+static Eina_Bool _play_finished(void *data EINA_UNUSED, Eo *obj, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
   const char *name;
   Eo *out;
@@ -33,9 +33,8 @@ static Eina_Bool _play_finished(void *data, Eo *obj, const Eo_Event_Description 
 }
 
 int
-main(int argc, const char *argv[])
+main(int argc, char *argv[])
 {
-   int ret;
    Eo *out;
    Eo *in;
 
@@ -62,7 +61,6 @@ main(int argc, const char *argv[])
 
    ecore_main_loop_begin();
 
-end:
    ecore_audio_shutdown();
    ecore_shutdown();
 

@@ -24,7 +24,6 @@ Eina_List *ecore_audio_modules;
 EAPI int
 ecore_audio_init(void)
 {
-   Ecore_Audio_Module *mod;
 
    if (++_ecore_audio_init_count != 1)
      return _ecore_audio_init_count;

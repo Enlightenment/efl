@@ -42,7 +42,7 @@ static void _input_attach(Eo *eo_obj, void *_pd, va_list *list)
     *ret = EINA_TRUE;
 }
 
-static void _input_detach(Eo *eo_obj, void *_pd, va_list *list)
+static void _input_detach(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
 {
   Ecore_Audio_Output *obj = _pd;
   Ecore_Audio_Input *in;
@@ -61,7 +61,7 @@ static void _input_detach(Eo *eo_obj, void *_pd, va_list *list)
 
 }
 
-static void _inputs_get(Eo *eo_obj, void *_pd, va_list *list)
+static void _inputs_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
 {
   const Ecore_Audio_Output *obj = _pd;
 
@@ -72,10 +72,8 @@ static void _inputs_get(Eo *eo_obj, void *_pd, va_list *list)
 }
 
 
-static void _constructor(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
+static void _constructor(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-  const Ecore_Audio_Output *obj = _pd;
-
   eo_do_super(eo_obj, MY_CLASS, eo_constructor());
 
 }

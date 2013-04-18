@@ -113,7 +113,7 @@ static void _read(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
     *ret = read;
 }
 
-static void _seek(Eo *eo_obj, void *_pd, va_list *list)
+static void _seek(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
 {
   Ecore_Audio_Sndfile *obj = _pd;
   sf_count_t count, pos;
@@ -289,7 +289,7 @@ static void _vio_set(Eo *eo_obj, void *_pd, va_list *list)
     ea_obj->format = ECORE_AUDIO_FORMAT_AUTO;
 }
 
-static void _constructor(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
+static void _constructor(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
   eo_do_super(eo_obj, MY_CLASS, eo_constructor());
 

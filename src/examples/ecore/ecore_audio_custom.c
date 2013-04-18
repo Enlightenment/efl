@@ -52,6 +52,8 @@ main(int argc, const char *argv[])
    ecore_init();
    ecore_audio_init();
 
+   ecore_app_args_set(argc, argv);
+
    out = eo_add(ECORE_AUDIO_OBJ_OUT_PULSE_CLASS, NULL);
 
    in = eo_add(ECORE_AUDIO_OBJ_IN_CLASS, NULL);

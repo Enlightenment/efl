@@ -83,7 +83,7 @@ static void _write_cb(pa_stream *stream, size_t len, void *data)
 
   eo_do(in, ecore_audio_obj_in_read(buf, len, &bread));
   pa_stream_write(stream, buf, bread, free, 0, PA_SEEK_RELATIVE);
-  if (bread < len)
+  if (bread < (int)len)
     {
       pa_operation_unref(pa_stream_trigger(stream, NULL, NULL));
       //in->ended = EINA_TRUE;
@@ -91,9 +91,8 @@ static void _write_cb(pa_stream *stream, size_t len, void *data)
     }
 }
 
-static Eina_Bool _update_samplerate_cb(void *data, Eo *eo_obj, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
+static Eina_Bool _update_samplerate_cb(void *data EINA_UNUSED, Eo *eo_obj, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-  Eo *out = data;
   pa_stream *stream;
   int samplerate;
   double speed;
@@ -101,9 +100,11 @@ static Eina_Bool _update_samplerate_cb(void *data, Eo *eo_obj, const Eo_Event_De
   eo_do(eo_obj, ecore_audio_obj_in_samplerate_get(&samplerate));
   eo_do(eo_obj, ecore_audio_obj_in_speed_get(&speed));
 
-  eo_do(eo_obj, eo_base_data_get("pulse_data", &stream));
+  eo_do(eo_obj, eo_base_data_get("pulse_data", (void **)&stream));
 
   pa_operation_unref(pa_stream_update_sample_rate(stream, samplerate * speed, NULL, NULL));
+
+  return EINA_TRUE;
 }
 
 static Eina_Bool _input_attach_internal(Eo *eo_obj, Eo *in)
@@ -116,9 +117,9 @@ static Eina_Bool _input_attach_internal(Eo *eo_obj, Eo *in)
   Ecore_Audio_Object *ea_obj = eo_data_get(eo_obj, ECORE_AUDIO_OBJ_CLASS);
 
   ss.format = PA_SAMPLE_FLOAT32LE;
-  eo_do(in, ecore_audio_obj_in_samplerate_get(&ss.rate));
+  eo_do(in, ecore_audio_obj_in_samplerate_get((int *)&ss.rate));
   eo_do(in, ecore_audio_obj_in_speed_get(&speed));
-  eo_do(in, ecore_audio_obj_in_channels_get(&ss.channels));
+  eo_do(in, ecore_audio_obj_in_channels_get((int *)&ss.channels));
   eo_do(in, ecore_audio_obj_name_get(&name));
 
   ss.rate = ss.rate * speed;
@@ -135,10 +136,12 @@ static Eina_Bool _input_attach_internal(Eo *eo_obj, Eo *in)
 
   eo_do(in, eo_base_data_set("pulse_data", stream, NULL));
 
-  //FIXME: Handle paused state
 
   pa_stream_set_write_callback(stream, _write_cb, in);
   pa_stream_connect_playback(stream, NULL, NULL, PA_STREAM_VARIABLE_RATE, NULL, NULL);
+
+  if (ea_obj->paused)
+    pa_operation_unref(pa_stream_cork(stream, 1, NULL, NULL));
 
   return ret;
 }

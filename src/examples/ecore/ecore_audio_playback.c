@@ -159,7 +159,7 @@ handle_cmd(char *cmd, size_t bread)
 }
 
 Eina_Bool
-handle_input(void *data, Ecore_Fd_Handler *handler)
+handle_input(void *data EINA_UNUSED, Ecore_Fd_Handler *handler)
 {
    size_t bread;
    char buf[20];
@@ -182,17 +182,6 @@ handle_input(void *data, Ecore_Fd_Handler *handler)
    handle_cmd(buf, bread);
 
    return EINA_TRUE;
-}
-
-static Eina_Bool _play_started(void *data, int type, void *event)
-{
-  const char *name;
-  Eo *in = event;
-
-  eo_do(in, ecore_audio_obj_name_get(&name));
-  printf("Start: %s\n", name);
-
-  return EINA_TRUE;
 }
 
 static Eina_Bool _play_finished(void *data EINA_UNUSED, Eo *in, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
@@ -279,7 +268,9 @@ main(int argc, const char *argv[])
                  printf("error when creating ecore audio source.\n");
                  goto end;
               }
-            eo_do(in, ecore_audio_obj_name_set(basename(argv[i])));
+            tmp = strdup(argv[i]);
+            eo_do(in, ecore_audio_obj_name_set(basename(tmp)));
+            free(tmp);
             eo_do(in, ecore_audio_obj_source_set(argv[i]));
          }
        eo_do(in, eo_event_callback_add(ECORE_AUDIO_EV_IN_STOPPED, _play_finished, NULL));
