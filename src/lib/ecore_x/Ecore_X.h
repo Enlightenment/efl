@@ -1270,7 +1270,8 @@ typedef enum _Ecore_X_Illume_Indicator_Type_Mode
 {
    ECORE_X_ILLUME_INDICATOR_TYPE_UNKNOWN = 0,
    ECORE_X_ILLUME_INDICATOR_TYPE_1,
-   ECORE_X_ILLUME_INDICATOR_TYPE_2
+   ECORE_X_ILLUME_INDICATOR_TYPE_2,
+   ECORE_X_ILLUME_INDICATOR_TYPE_3
 } Ecore_X_Illume_Indicator_Type_Mode; /**< @since 1.8 */
 
 typedef enum _Ecore_X_Illume_Window_State

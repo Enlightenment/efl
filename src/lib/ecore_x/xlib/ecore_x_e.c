@@ -1850,6 +1850,9 @@ _ecore_x_e_indicator_type_atom_get(Ecore_X_Illume_Indicator_Type_Mode mode)
       case ECORE_X_ILLUME_INDICATOR_TYPE_2:
         return ECORE_X_ATOM_E_ILLUME_INDICATOR_TYPE_2;
 
+      case ECORE_X_ILLUME_INDICATOR_TYPE_3:
+        return ECORE_X_ATOM_E_ILLUME_INDICATOR_TYPE_3;
+
       default:
         break;
      }
@@ -1864,6 +1867,9 @@ _ecore_x_e_indicator_type_get(Ecore_X_Atom atom)
 
    if (atom == ECORE_X_ATOM_E_ILLUME_INDICATOR_TYPE_2)
      return ECORE_X_ILLUME_INDICATOR_TYPE_2;
+
+   if (atom == ECORE_X_ATOM_E_ILLUME_INDICATOR_TYPE_3)
+     return ECORE_X_ILLUME_INDICATOR_TYPE_3;
 
    return ECORE_X_ILLUME_INDICATOR_TYPE_UNKNOWN;
 }
