@@ -2185,32 +2185,43 @@ eng_image_native_set(void *data, void *image, void *native)
                         {
                            int j = 0, val = 0;
                            
-                           tex_format = GLX_TEXTURE_FORMAT_RGB_EXT;
-                           glXGetFBConfigAttrib(re->win->disp, configs[j],
-                                                GLX_ALPHA_SIZE, &val);
-                           if (val > 0)
+                           for (j = 0; j < num; j++)
                              {
                                 glXGetFBConfigAttrib(re->win->disp, configs[j],
-                                                     GLX_BIND_TO_TEXTURE_RGBA_EXT, &val);
-                                if (val) tex_format = GLX_TEXTURE_FORMAT_RGBA_EXT;
-                             }
-                           else
-                             {
+                                                     GLX_BUFFER_SIZE, &val);
+                                if (val != depth) continue;
                                 glXGetFBConfigAttrib(re->win->disp, configs[j],
-                                                     GLX_BIND_TO_TEXTURE_RGB_EXT, &val);
-                                if (val) tex_format = GLX_TEXTURE_FORMAT_RGB_EXT;
+                                                     GLX_DRAWABLE_TYPE, &val);
+                                if (!(val & GLX_PIXMAP_BIT)) continue;
+                                tex_format = GLX_TEXTURE_FORMAT_RGB_EXT;
+                                glXGetFBConfigAttrib(re->win->disp, configs[j],
+                                                     GLX_ALPHA_SIZE, &val);
+                                if ((depth == 32) && (!val)) continue;
+                                if (val > 0)
+                                  {
+                                     glXGetFBConfigAttrib(re->win->disp, configs[j],
+                                                          GLX_BIND_TO_TEXTURE_RGBA_EXT, &val);
+                                     if (val) tex_format = GLX_TEXTURE_FORMAT_RGBA_EXT;
+                                  }
+                                else
+                                  {
+                                     glXGetFBConfigAttrib(re->win->disp, configs[j],
+                                                          GLX_BIND_TO_TEXTURE_RGB_EXT, &val);
+                                     if (val) tex_format = GLX_TEXTURE_FORMAT_RGB_EXT;
+                                  }
+                                glXGetFBConfigAttrib(re->win->disp, configs[j],
+                                                     GLX_Y_INVERTED_EXT, &val);
+                                yinvert = val;
+                                glXGetFBConfigAttrib(re->win->disp, configs[j],
+                                                     GLX_BIND_TO_TEXTURE_TARGETS_EXT,
+                                                     &val);
+                                tex_target = val;
+                                glXGetFBConfigAttrib(re->win->disp, configs[j],
+                                                     GLX_BIND_TO_MIPMAP_TEXTURE_EXT, &val);
+                                mipmap = val;
+                                n->fbc = configs[j];
+                                break;
                              }
-                           glXGetFBConfigAttrib(re->win->disp, configs[j],
-                                                GLX_Y_INVERTED_EXT, &val);
-                           yinvert = val;
-                           glXGetFBConfigAttrib(re->win->disp, configs[j],
-                                                GLX_BIND_TO_TEXTURE_TARGETS_EXT,
-                                                &val);
-                           tex_target = val;
-                           glXGetFBConfigAttrib(re->win->disp, configs[j],
-                                                GLX_BIND_TO_MIPMAP_TEXTURE_EXT, &val);
-                           mipmap = val;
-                           n->fbc = configs[j];
                            XFree(configs);
                         }
                       
