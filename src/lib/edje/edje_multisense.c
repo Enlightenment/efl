@@ -119,7 +119,7 @@ _edje_multisense_internal_sound_sample_play(Edje *ed, const char *sample_name, c
             if (!out)
               out = eo_add(ECORE_AUDIO_OBJ_OUT_PULSE_CLASS, NULL);
 
-            eo_do(out, ecore_audio_obj_out_input_attach(in));
+            eo_do(out, ecore_audio_obj_out_input_attach(in, NULL));
          }
      }
    return EINA_TRUE;
@@ -162,7 +162,7 @@ _edje_multisense_internal_sound_tone_play(Edje *ed, const char *tone_name, const
              if (!out)
                out = eo_add(ECORE_AUDIO_OBJ_OUT_PULSE_CLASS, NULL);
 
-             eo_do(out, ecore_audio_obj_out_input_attach(in));
+             eo_do(out, ecore_audio_obj_out_input_attach(in, NULL));
           }
      }
    return EINA_TRUE;

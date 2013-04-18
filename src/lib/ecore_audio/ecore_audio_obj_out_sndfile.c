@@ -66,8 +66,9 @@ static void _input_attach(Eo *eo_obj, void *_pd, va_list *list)
   Ecore_Audio_Output *out_obj = eo_data_get(eo_obj, ECORE_AUDIO_OBJ_OUT_CLASS);
 
   Eo *in = va_arg(*list, Eo *);
+  Eina_Bool *ret = va_arg(*list, Eina_Bool *);
 
-  eo_do_super(eo_obj, MY_CLASS, ecore_audio_obj_out_input_attach(in));
+  eo_do_super(eo_obj, MY_CLASS, ecore_audio_obj_out_input_attach(in, ret));
 
   eo_do(in, ecore_audio_obj_in_samplerate_get(&obj->sfinfo.samplerate));
   eo_do(in, ecore_audio_obj_in_channels_get(&obj->sfinfo.channels));

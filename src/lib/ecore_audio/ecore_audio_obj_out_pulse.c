@@ -106,12 +106,13 @@ static Eina_Bool _update_samplerate_cb(void *data, Eo *eo_obj, const Eo_Event_De
   pa_operation_unref(pa_stream_update_sample_rate(stream, samplerate * speed, NULL, NULL));
 }
 
-static void _input_attach_internal(Eo *eo_obj, Eo *in)
+static Eina_Bool _input_attach_internal(Eo *eo_obj, Eo *in)
 {
   const char *name;
   pa_sample_spec ss;
   double speed;
   pa_stream *stream;
+  Eina_Bool ret;
   Ecore_Audio_Object *ea_obj = eo_data_get(eo_obj, ECORE_AUDIO_OBJ_CLASS);
 
   ss.format = PA_SAMPLE_FLOAT32LE;
@@ -125,10 +126,10 @@ static void _input_attach_internal(Eo *eo_obj, Eo *in)
   stream = pa_stream_new(class_vars.context, name, &ss, NULL);
   if (!stream) {
       ERR("Could not create stream");
-      return;
+      return EINA_FALSE;
   }
 
-  eo_do_super(eo_obj, MY_CLASS, ecore_audio_obj_out_input_attach(in));
+  eo_do_super(eo_obj, MY_CLASS, ecore_audio_obj_out_input_attach(in, &ret));
 
   eo_do(in, eo_event_callback_add(ECORE_AUDIO_EV_IN_SAMPLERATE_CHANGED, _update_samplerate_cb, eo_obj));
 
@@ -138,6 +139,8 @@ static void _input_attach_internal(Eo *eo_obj, Eo *in)
 
   pa_stream_set_write_callback(stream, _write_cb, in);
   pa_stream_connect_playback(stream, NULL, NULL, PA_STREAM_VARIABLE_RATE, NULL, NULL);
+
+  return ret;
 }
 
 static Eina_Bool _delayed_attach_cb(void *data, Eo *eo_obj, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
@@ -152,14 +155,19 @@ static Eina_Bool _delayed_attach_cb(void *data, Eo *eo_obj, const Eo_Event_Descr
 
 static void _input_attach(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
 {
+  Eina_Bool retval = EINA_TRUE;
+
   Eo *in = va_arg(*list, Eo *);
+  Eina_Bool *ret = va_arg(*list, Eina_Bool *);
 
   if (class_vars.state != PA_CONTEXT_READY) {
     DBG("Delaying input_attach because PA context is not ready.");
     eo_do(eo_obj, eo_event_callback_add(ECORE_AUDIO_EV_OUT_PULSE_CONTEXT_READY, _delayed_attach_cb, in));
   } else {
-    _input_attach_internal(eo_obj, in);
+    retval = _input_attach_internal(eo_obj, in);
   }
+  if (ret)
+    *ret = retval;
 }
 
 static void _drain_cb(pa_stream *stream, int success EINA_UNUSED, void *data EINA_UNUSED)

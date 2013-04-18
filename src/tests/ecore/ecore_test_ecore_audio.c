@@ -350,7 +350,7 @@ START_TEST(ecore_test_ecore_audio_obj_tone)
    eo_do(out, ecore_audio_obj_format_set(ECORE_AUDIO_FORMAT_WAV));
    eo_do(out, ecore_audio_obj_source_set(SOUNDS_DIR"/tmp.wav"));
 
-   eo_do(out, ecore_audio_obj_out_input_attach(in));
+   eo_do(out, ecore_audio_obj_out_input_attach(in, NULL));
 
    eo_do(in, eo_event_callback_add(ECORE_AUDIO_EV_IN_STOPPED, _finished_cb, NULL));
 
@@ -407,7 +407,7 @@ START_TEST(ecore_test_ecore_audio_obj_in_out)
 
   fail_if(eina_list_count(in3) != 0);
 
-  fail_if(!eo_do(out, ecore_audio_obj_out_input_attach(in)));
+  fail_if(!eo_do(out, ecore_audio_obj_out_input_attach(in, NULL)));
 
   fail_if(!eo_do(in, ecore_audio_obj_in_output_get(&out2)));
 
@@ -418,7 +418,7 @@ START_TEST(ecore_test_ecore_audio_obj_in_out)
   fail_if(eina_list_count(in3) != 1);
   fail_if(eina_list_data_get(in3) != in);
 
-  fail_if(!eo_do(out, ecore_audio_obj_out_input_attach(in2)));
+  fail_if(!eo_do(out, ecore_audio_obj_out_input_attach(in2, NULL)));
 
   fail_if(!eo_do(out, ecore_audio_obj_out_inputs_get(&in3)));
 

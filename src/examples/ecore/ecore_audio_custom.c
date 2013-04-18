@@ -66,7 +66,7 @@ main(int argc, const char *argv[])
    eo_do(in, ecore_audio_obj_volume_set(0.7));
    eo_do(in, ecore_audio_obj_vio_set(&vio, NULL, NULL));
 
-   eo_do(out, ecore_audio_obj_out_input_attach(in));
+   eo_do(out, ecore_audio_obj_out_input_attach(in, NULL));
 
    ecore_main_loop_begin();
 

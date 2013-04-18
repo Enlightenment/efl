@@ -25,6 +25,7 @@ static void _input_attach(Eo *eo_obj, void *_pd, va_list *list)
   Ecore_Audio_Input *in;
 
   Eo *input = va_arg(*list, Eo *);
+  Eina_Bool *ret = va_arg(*list, Eina_Bool *);
 
   in = eo_data_get(input, ECORE_AUDIO_OBJ_IN_CLASS);
 
@@ -37,6 +38,8 @@ static void _input_attach(Eo *eo_obj, void *_pd, va_list *list)
 
   obj->inputs = eina_list_append(obj->inputs, input);
 
+  if (ret)
+    *ret = EINA_TRUE;
 }
 
 static void _input_detach(Eo *eo_obj, void *_pd, va_list *list)

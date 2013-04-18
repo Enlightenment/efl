@@ -64,7 +64,7 @@ handle_cmd(char *cmd, size_t bread)
                    ecore_audio_obj_in_length_get(&length));
 
              printf("Start: %s (%0.2fs)\n", name, length);
-             eo_do(out, ecore_audio_obj_out_input_attach(in));
+             eo_do(out, ecore_audio_obj_out_input_attach(in, NULL));
           }
        else
          {
@@ -83,7 +83,7 @@ handle_cmd(char *cmd, size_t bread)
                    ecore_audio_obj_in_length_get(&length));
 
              printf("Start: %s (%0.2fs)\n", name, length);
-             eo_do(out, ecore_audio_obj_out_input_attach(in));
+             eo_do(out, ecore_audio_obj_out_input_attach(in, NULL));
           }
      }
    else if (!strncmp(cmd, "l", bread))
@@ -214,7 +214,7 @@ static Eina_Bool _play_finished(void *data EINA_UNUSED, Eo *in, const Eo_Event_D
 
       eo_do(in, ecore_audio_obj_name_get(&name));
       printf("Start: %s\n", name);
-      eo_do(out, ecore_audio_obj_out_input_attach(in));
+      eo_do(out, ecore_audio_obj_out_input_attach(in, NULL));
     }
   else
     {
@@ -296,7 +296,7 @@ main(int argc, const char *argv[])
    printf("Start: %s (%0.2fs)\n", name, length);
 
    out = eo_add(ECORE_AUDIO_OBJ_OUT_PULSE_CLASS, NULL);
-   eo_do(out, ecore_audio_obj_out_input_attach(in));
+   eo_do(out, ecore_audio_obj_out_input_attach(in, NULL));
 
 
    /* Disable canonical mode for stdin */

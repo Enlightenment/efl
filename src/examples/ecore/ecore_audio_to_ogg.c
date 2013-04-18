@@ -58,7 +58,7 @@ main(int argc, const char *argv[])
    out = eo_add(ECORE_AUDIO_OBJ_OUT_SNDFILE_CLASS, NULL);
    eo_do(out, ecore_audio_obj_source_set("foo.ogg"));
 
-   eo_do(out, ecore_audio_obj_out_input_attach(in));
+   eo_do(out, ecore_audio_obj_out_input_attach(in, NULL));
 
    ecore_main_loop_begin();
 
