@@ -1653,6 +1653,8 @@ _ecore_x_sync_magic_send(int val,
    xev.xclient.data.l[0] = 0x7162534;
    xev.xclient.data.l[1] = 0x10000000 + val;
    xev.xclient.data.l[2] = swin;
+   xev.xclient.data.l[3] = 0;
+   xev.xclient.data.l[4] = 0;
    XSendEvent(_ecore_x_disp, _ecore_x_private_win, False, NoEventMask, &xev);
 }
 
