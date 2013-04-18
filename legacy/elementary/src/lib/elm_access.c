@@ -5,8 +5,25 @@
 
 #define MY_CLASS_NAME "elm_access"
 
+struct _Func_Data
+{
+   void                *user_data; /* Holds user data to CB */
+   Elm_Access_Action_Cb cb;
+};
+
+typedef struct _Func_Data Func_Data;
+
+struct _Action_Info
+{
+   Evas_Object      *obj;
+   Func_Data         fn[ELM_ACCESS_ACTION_LAST + 1]; /* Callback for specific action */
+};
+
+typedef struct _Action_Info Action_Info;
+
 static Eina_Bool mouse_event_enable = EINA_TRUE;
 static Eina_Bool read_mode = EINA_FALSE;
+static Elm_Access_Action_Type action_by = ELM_ACCESS_ACTION_FIRST;
 
 static Evas_Object * _elm_access_add(Evas_Object *parent);
 
@@ -18,6 +35,38 @@ _elm_access_smart_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
    elm_widget_can_focus_set(obj, EINA_TRUE);
 }
 
+static Eina_Bool
+_access_action_callback_call(Evas_Object *obj,
+                             Elm_Access_Action_Type type,
+                             Elm_Access_Action_Info *action_info)
+{
+   Elm_Access_Action_Info *ai = NULL;
+   Action_Info *a;
+   Eina_Bool ret;
+
+   ret = EINA_FALSE;
+   a = evas_object_data_get(obj, "_elm_access_action_info");
+
+   if (!action_info)
+     {
+        ai = calloc(1, sizeof(Elm_Access_Action_Info));
+        action_info = ai;
+     }
+
+   action_info->action_type = type;
+
+   if ((type == ELM_ACCESS_ACTION_HIGHLIGHT) &&
+       (action_by != ELM_ACCESS_ACTION_FIRST))
+     action_info->action_by = action_by;
+
+   if (a && (a->fn[type].cb))
+     ret = a->fn[type].cb(a->fn[type].user_data, obj, action_info);
+
+   if (ai) free(ai);
+
+   return ret;
+}
+
 static void
 _elm_access_smart_activate(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
@@ -25,6 +74,53 @@ _elm_access_smart_activate(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    if (ret) *ret = EINA_FALSE;
 
+   int type = ELM_ACCESS_ACTION_FIRST;
+
+   Action_Info *a;
+   a = evas_object_data_get(obj, "_elm_access_action_info");
+
+   switch (act)
+     {
+      case ELM_ACTIVATE_DEFAULT:
+        type = ELM_ACCESS_ACTION_ACTIVATE;
+        break;
+
+      case ELM_ACTIVATE_UP:
+        type = ELM_ACCESS_ACTION_UP;
+        break;
+
+      case ELM_ACTIVATE_DOWN:
+        type = ELM_ACCESS_ACTION_DOWN;
+        break;
+
+      case ELM_ACTIVATE_RIGHT:
+        break;
+
+      case ELM_ACTIVATE_LEFT:
+        break;
+
+      case ELM_ACTIVATE_BACK:
+        type = ELM_ACCESS_ACTION_BACK;
+        break;
+
+      default:
+        break;
+     }
+
+   if (type == ELM_ACCESS_ACTION_FIRST) return;
+
+   /* if an access object has a callback, it would have the intention to do
+      something. so, check here and return EINA_TRUE. */
+   if ((a) && (type > ELM_ACCESS_ACTION_FIRST) &&
+              (type < ELM_ACCESS_ACTION_LAST) &&
+              (a->fn[type].cb))
+     {
+        _access_action_callback_call(obj, type, NULL);
+        if (ret) *ret = EINA_TRUE;
+        return;
+     }
+
+   /* TODO: deprecate below? */
    if (act != ELM_ACTIVATE_DEFAULT) return;
 
    Elm_Access_Info *ac = evas_object_data_get(obj, "_elm_access");
@@ -380,6 +476,66 @@ _elm_access_widget_item_access_order_unset(Elm_Widget_Item *item)
         item->access_order = eina_list_remove_list(item->access_order, l);
      }
 }
+
+static Eina_Bool
+_access_highlight_next_get(Evas_Object *obj, Elm_Focus_Direction dir)
+{
+   int type;
+   Evas_Object *ho, *parent, *target;
+   Elm_Widget_Smart_Data *wd;
+   Eina_Bool ret;
+
+   target = NULL;
+   ret = EINA_FALSE;
+
+   if (!elm_widget_is(obj)) return ret;
+
+   ho = _access_highlight_object_get(obj);
+   if (!ho) ho = obj;
+
+   parent = ho;
+
+   /* find highlight root */
+   do
+     {
+        wd = eo_data_get(parent, ELM_OBJ_WIDGET_CLASS);
+        if (wd->highlight_root)
+          {
+             /* change highlight root */
+             obj = parent;
+             break;
+          }
+        parent = elm_widget_parent_get(parent);
+     }
+   while (parent);
+
+   _elm_access_read_mode_set(EINA_TRUE);
+
+   ret = elm_widget_focus_next_get(obj, dir, &target);
+   if (ret && target)
+     {
+        if (dir == ELM_FOCUS_NEXT)
+          type = ELM_ACCESS_ACTION_HIGHLIGHT_NEXT;
+        else
+          type = ELM_ACCESS_ACTION_HIGHLIGHT_PREV;
+
+        if (!_access_action_callback_call(ho, type, NULL))
+          {
+             /* this value is used in _elm_access_object_highlight();
+                to inform the target object of how to get highlight */
+             action_by = type;
+
+             _elm_access_highlight_set(target);
+
+             action_by = ELM_ACCESS_ACTION_FIRST;
+          }
+     }
+
+   _elm_access_read_mode_set(EINA_FALSE);
+
+   return ret;
+}
+
 //-------------------------------------------------------------------------//
 EAPI void
 _elm_access_highlight_set(Evas_Object* obj)
@@ -476,27 +632,43 @@ _elm_access_highlight_object_activate(Evas_Object *obj, Elm_Activate act)
 EAPI void
 _elm_access_highlight_cycle(Evas_Object *obj, Elm_Focus_Direction dir)
 {
+   int type;
+   Evas_Object *ho, *parent;
    Elm_Widget_Smart_Data *wd;
-   Evas_Object *ho;
+
    ho = _access_highlight_object_get(obj);
    if (!ho) return;
+
+   parent = ho;
 
    /* find highlight root */
    do
      {
-        wd = eo_data_get(ho, ELM_OBJ_WIDGET_CLASS);
+        wd = eo_data_get(parent, ELM_OBJ_WIDGET_CLASS);
         if (wd->highlight_root)
           {
              /* change highlight root */
-             obj = ho;
+             obj = parent;
              break;
           }
-        ho = elm_widget_parent_get(ho);
+        parent = elm_widget_parent_get(parent);
      }
-   while (ho);
+   while (parent);
 
    _elm_access_read_mode_set(EINA_TRUE);
-   elm_widget_focus_cycle(obj, dir);
+
+   if (dir == ELM_FOCUS_NEXT)
+     type = ELM_ACCESS_ACTION_HIGHLIGHT_NEXT;
+   else
+     type = ELM_ACCESS_ACTION_HIGHLIGHT_PREV;
+
+   action_by = type;
+
+   if (!_access_action_callback_call(ho, type, NULL))
+     elm_widget_focus_cycle(obj, dir);
+
+   action_by = ELM_ACCESS_ACTION_FIRST;
+
    _elm_access_read_mode_set(EINA_FALSE);
 }
 
@@ -623,7 +795,13 @@ _elm_access_object_hilight(Evas_Object *obj)
    evas_object_geometry_get(obj, &x, &y, &w, &h);
    evas_object_move(o, x, y);
    evas_object_resize(o, w, h);
-   evas_object_show(o);
+
+   /* use callback, should an access object do below every time when
+    * a window gets a client message ECORE_X_ATOM_E_ILLMUE_ACTION_READ? */
+   if (!_access_action_callback_call(obj, ELM_ACCESS_ACTION_HIGHLIGHT, NULL))
+     evas_object_show(o);
+   else
+     evas_object_hide(o);
 }
 
 EAPI void
@@ -840,6 +1018,10 @@ _elm_access_object_unregister(Evas_Object *obj, Evas_Object *hoverobj)
         _elm_access_clear(ac);
         free(ac);
      }
+
+   Action_Info *a;
+   a = evas_object_data_get(obj, "_elm_access_action_info");
+   if (a) free(a);
 }
 
 EAPI void
@@ -1005,6 +1187,95 @@ elm_access_highlight_set(Evas_Object* obj)
    _elm_access_highlight_set(obj);
 }
 
+EAPI Eina_Bool
+elm_access_action(Evas_Object *obj, const Elm_Access_Action_Type type, Elm_Access_Action_Info *action_info)
+{
+   Evas *evas;
+   Evas_Object *ho;
+   Elm_Access_Action_Info *a;
+
+   a = (Elm_Access_Action_Info *) action_info;
+
+   switch (type)
+     {
+      case ELM_ACCESS_ACTION_READ:
+      case ELM_ACCESS_ACTION_HIGHLIGHT:
+        evas = evas_object_evas_get(obj);
+        if (!evas) return EINA_FALSE;
+
+        _elm_access_mouse_event_enabled_set(EINA_TRUE);
+
+        evas_event_feed_mouse_in(evas, 0, NULL);
+        evas_event_feed_mouse_move(evas, a->x, a->y, 0, NULL);
+        _elm_access_mouse_event_enabled_set(EINA_FALSE);
+
+        ho = _access_highlight_object_get(obj);
+        if (ho)
+          _access_action_callback_call(ho, ELM_ACCESS_ACTION_READ, a);
+        break;
+
+      case ELM_ACCESS_ACTION_UNHIGHLIGHT:
+        evas = evas_object_evas_get(obj);
+        if (!evas) return EINA_FALSE;
+        _elm_access_object_hilight_disable(evas);
+        break;
+
+      case ELM_ACCESS_ACTION_HIGHLIGHT_NEXT:
+        if (a->highlight_cycle)
+          _elm_access_highlight_cycle(obj, ELM_FOCUS_NEXT);
+        else
+          return _access_highlight_next_get(obj, ELM_FOCUS_NEXT);
+        break;
+
+      case ELM_ACCESS_ACTION_HIGHLIGHT_PREV:
+        if (a->highlight_cycle)
+          _elm_access_highlight_cycle(obj, ELM_FOCUS_PREVIOUS);
+        else
+          return _access_highlight_next_get(obj, ELM_FOCUS_PREVIOUS);
+        break;
+
+      case ELM_ACCESS_ACTION_ACTIVATE:
+        _elm_access_highlight_object_activate(obj, ELM_ACTIVATE_DEFAULT);
+        break;
+
+      case ELM_ACCESS_ACTION_UP:
+        _elm_access_highlight_object_activate(obj, ELM_ACTIVATE_UP);
+        break;
+
+      case ELM_ACCESS_ACTION_DOWN:
+        _elm_access_highlight_object_activate(obj, ELM_ACTIVATE_DOWN);
+        break;
+
+      case ELM_ACCESS_ACTION_SCROLL:
+        //TODO: SCROLL HIGHLIGHT OBJECT
+        break;
+
+      case ELM_ACCESS_ACTION_BACK:
+        break;
+
+      default:
+        break;
+     }
+
+   return EINA_TRUE;
+}
+
+EAPI void
+elm_access_action_cb_set(Evas_Object *obj, const Elm_Access_Action_Type type, const Elm_Access_Action_Cb cb, const void *data)
+{
+   Action_Info *a;
+   a =  evas_object_data_get(obj, "_elm_access_action_info");
+
+   if (!a)
+     {
+        a = calloc(1, sizeof(Action_Info));
+        evas_object_data_set(obj, "_elm_access_action_info", a);
+     }
+
+   a->obj = obj;
+   a->fn[type].cb = cb;
+   a->fn[type].user_data = (void *)data;
+}
 EAPI void
 elm_access_external_info_set(Evas_Object *obj, const char *text)
 {

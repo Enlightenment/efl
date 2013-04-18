@@ -24,12 +24,76 @@ enum _Elm_Access_Info_Type
 };
 
 /**
+ * @since 1.8
  * @typedef Elm_Access_Info_Type
  */
 typedef enum _Elm_Access_Info_Type Elm_Access_Info_Type;
 
+/**
+ * @enum _Elm_Access_Action_Type
+ * Enum of supported access action types.
+ */
+enum _Elm_Access_Action_Type
+{
+   ELM_ACCESS_ACTION_FIRST = -1,
+
+   ELM_ACCESS_ACTION_HIGHLIGHT, /* highlight an object */
+   ELM_ACCESS_ACTION_UNHIGHLIGHT, /* unhighlight an object */
+   ELM_ACCESS_ACTION_HIGHLIGHT_NEXT, /* set highlight to next object */
+   ELM_ACCESS_ACTION_HIGHLIGHT_PREV, /* set highlight to previous object */
+   ELM_ACCESS_ACTION_ACTIVATE, /* activate a highlight object */
+   ELM_ACCESS_ACTION_SCROLL, /* scroll if one of highlight object parents
+                              * is scrollable */
+   ELM_ACCESS_ACTION_UP, /* change value up of highlight object */
+   ELM_ACCESS_ACTION_DOWN, /* change value down of highlight object */
+   ELM_ACCESS_ACTION_BACK, /* go back to a previous view
+                              ex: pop naviframe item */
+   ELM_ACCESS_ACTION_READ, /* highlight an object */
+
+   ELM_ACCESS_ACTION_LAST
+};
+
+/**
+ * @since 1.8
+ * @typedef Elm_Access_Action_Type
+ */
+typedef enum _Elm_Access_Action_Type Elm_Access_Action_Type;
+
+struct _Elm_Access_Action_Info
+{
+   Evas_Coord   x;
+   Evas_Coord   y;
+   unsigned int mouse_type; /* 0: mouse down
+                               1: mouse move
+                               2: mouse up   */
+
+   Elm_Access_Action_Type action_type;
+   Elm_Access_Action_Type action_by;
+   Eina_Bool              highlight_cycle : 1;
+};
+
+/**
+ * @since 1.8
+ * @typedef Elm_Access_Action_Info
+ */
+typedef struct _Elm_Access_Action_Info Elm_Access_Action_Info;
+
+/**
+ * @since 1.8
+ * @typedef Elm_Access_Action_Cb
+ *
+ * User callback to make access object do specific action
+ *
+ * @param data user data
+ * @param action_info information to classify the action
+ * Returns EINA_TRUE on success, EINA FALSE otherwise
+ *
+ */
+typedef Eina_Bool (*Elm_Access_Action_Cb)(void *data, Evas_Object *obj, Elm_Access_Action_Info *action_info);
+
 typedef char *(*Elm_Access_Info_Cb)(void *data, Evas_Object *obj);
 typedef void (*Elm_Access_Activate_Cb)(void *data, Evas_Object *part_obj, Elm_Object_Item *item);
+
 
 /**
  * @brief Register evas object as an accessible object.
@@ -146,3 +210,34 @@ EAPI void elm_access_say(const char *text);
  * @ingroup Access
  */
 EAPI void elm_access_highlight_set(Evas_Object* obj);
+
+/**
+ * @brief Do the accessibility action base on given object.
+ * @since 1.8
+ *
+ * @param obj The object that could be an any object. it would be useful to use a container widget.
+ * @param type The type of accessibility action.
+ * @param action_info The action information of action @p type to give more specific information.
+ *
+ * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise
+ *
+ * The return value would be useful, when the @type is ELM_ACCESS_ACTION_HIGHLIGHT_NEXT
+ * or ELM_ACCESS_ACTION_HIGHLIGHT_PREV. If there is no way to give a highlight,
+ * @c EINA_FALSE will be returned.
+ *
+ * @ingroup Access
+ */
+EAPI Eina_Bool elm_access_action(Evas_Object *obj, const Elm_Access_Action_Type type, Elm_Access_Action_Info *action_info);
+
+/**
+ * @brief Set a callback function to a given accessibility action type
+ * @since 1.8
+ *
+ * @param obj The object to attach a callback to
+ * @param type The type of accessibility action.
+ * @param cb The callback function to be called when the accessibility action is triggered.
+ * @param data The data pointer to be passed to @p cb
+ *
+ * @ingroup Access
+ */
+EAPI void elm_access_action_cb_set(Evas_Object *obj, const Elm_Access_Action_Type type, const Elm_Access_Action_Cb cb, const void *data);

@@ -1264,3 +1264,7 @@
 2013-04-17  ChunEon Park
 
         * Don't try to pop the naviframe item multiple times.
+
+2013-04-18  Shinwoo Kim
+
+        * Add elm_access_action(), elm_access_action_cb_set()
