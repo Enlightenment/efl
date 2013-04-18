@@ -1920,8 +1920,8 @@ _dbg_info_get(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
    EO_DBG_INFO_APPEND(group, "Has clipees", EINA_VALUE_TYPE_CHAR, clipees_has);
 
    Evas_Object *clipper = NULL;
-   eo_do((Eo *)eo_obj, evas_obj_clip_get(&clipper));
-   EO_DBG_INFO_APPEND(group, "Clipper", EINA_VALUE_TYPE_INT, (int)clipper);
+   eo_do(eo_obj, evas_obj_clip_get(&clipper));
+   EO_DBG_INFO_APPEND(group, "Clipper", EINA_VALUE_TYPE_UINT64, (uintptr_t) clipper);
 
    const Evas_Map *map = evas_object_map_get(eo_obj);
    if (map)
