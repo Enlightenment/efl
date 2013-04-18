@@ -2116,6 +2116,32 @@ ecore_x_pointer_xy_get(Ecore_X_Window win,
    if (y) *y = wy;
 }
 
+EAPI void
+ecore_x_pointer_root_xy_get(int *x, int *y)
+{
+   Ecore_X_Window *root;
+   Window rwin, cwin;
+   int rx, ry, wx, wy, ret;
+   int i, num;
+   unsigned int mask;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   root = ecore_x_window_root_list(&num);
+   for (i = 0; i < num; i++) 
+     {
+        ret = XQueryPointer(_ecore_x_disp, root[i], &rwin, &cwin,
+                            &rx, &ry, &wx, &wy, &mask);
+        if (ret) break;
+     }
+
+   if (!ret)
+     rx = ry = -1;
+
+   if (x) *x = rx;
+   if (y) *y = ry;
+   free(root);
+}
+
 /**
  * Retrieve the Visual ID from a given Visual.
  *
