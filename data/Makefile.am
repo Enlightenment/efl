@@ -40,6 +40,7 @@ eogdb_SCRIPTS = eo/eo_gdb.py
 
 # Borrowed from gobject
 eo/libeo-gdb.py: eo/libeo-gdb.py.in
+	$(MKDIR_P) eo
 	$(AM_V_GEN) $(SED) -e "s|\@datadir\@|$(datadir)|" $(srcdir)/eo/libeo-gdb.py.in > $(builddir)/eo/libeo-gdb.py
 
 install-data-hook: eo/libeo-gdb.py
