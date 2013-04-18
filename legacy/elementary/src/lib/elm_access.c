@@ -580,6 +580,7 @@ _elm_access_text_set(Elm_Access_Info *ac, int type, const char *text)
 {
    Elm_Access_Item *ai = _access_add_set(ac, type);
    if (!ai) return;
+   ai->func = NULL;
    ai->data = eina_stringshare_add(text);
 }
 
