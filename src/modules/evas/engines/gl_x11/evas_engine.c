@@ -2183,13 +2183,17 @@ eng_image_native_set(void *data, void *image, void *native)
                                                   &num);
                       if (configs)
                         {
-                           int j = 0, val = 0;
+                           int j = 0, val = 0, found = 0;
                            
+                           try_again:
                            for (j = 0; j < num; j++)
                              {
-                                glXGetFBConfigAttrib(re->win->disp, configs[j],
-                                                     GLX_BUFFER_SIZE, &val);
-                                if (val != depth) continue;
+                                if (found == 0)
+                                  {
+                                     glXGetFBConfigAttrib(re->win->disp, configs[j],
+                                                          GLX_BUFFER_SIZE, &val);
+                                     if (val != depth) continue;
+                                  }
                                 glXGetFBConfigAttrib(re->win->disp, configs[j],
                                                      GLX_DRAWABLE_TYPE, &val);
                                 if (!(val & GLX_PIXMAP_BIT)) continue;
@@ -2220,7 +2224,13 @@ eng_image_native_set(void *data, void *image, void *native)
                                                      GLX_BIND_TO_MIPMAP_TEXTURE_EXT, &val);
                                 mipmap = val;
                                 n->fbc = configs[j];
+                                found = 1;
                                 break;
+                             }
+                           if (found == 0)
+                             {
+                                found = -1;
+                                goto try_again;
                              }
                            XFree(configs);
                         }
