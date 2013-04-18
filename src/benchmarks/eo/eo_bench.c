@@ -20,6 +20,7 @@ struct _Eina_Benchmark_Case
 
 static const Eina_Benchmark_Case etc[] = {
    { "eo_do", eo_bench_eo_do },
+   { "eo_add", eo_bench_eo_add },
    { NULL, NULL }
 };
 
