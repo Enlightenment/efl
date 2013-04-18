@@ -1,5 +1,5 @@
 group { name: "elm/naviframe/item/basic/default";
-   alias: "elm/naviframe/item/basic/pager";
+   alias: "elm/naviframe/item/basic/pager"; /**< this was remained for the backward compatibility */
 
    images {
       image: "naviframe-base.jpg" COMP;
@@ -460,7 +460,7 @@ group { name: "elm/naviframe/item/basic/default";
  *  - contents follows below title
  */
 group { name: "elm/naviframe/item/overlap/default";
-   alias: "elm/naviframe/item/overlap/pager";
+   alias: "elm/naviframe/item/overlap/pager"; /**< this was remained for the backward compatibility */
 
    images {
       image: "naviframe-base.jpg" COMP;
