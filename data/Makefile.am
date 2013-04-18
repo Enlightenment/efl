@@ -50,6 +50,8 @@ install-data-hook: eo/libeo-gdb.py
 uninstall-hook:
 	rm -f $(DESTDIR)$(datadir)/gdb/auto-load/$(libdir)/libeo.so.@VMAJ@.@VMIN@.@VMIC@-gdb.py
 
+CLEANFILES += eo/libeo-gdb.py
+
 EXTRA_DIST += $(eogdb_SCRIPTS) eo/libeo-gdb.py.in
 
 ########################################################################
