@@ -2886,7 +2886,7 @@ _status_config_scrolling(Evas_Object *win,
    elm_slider_span_size_set(sl, 120);
    elm_slider_unit_format_set(sl, "%1.1f");
    elm_slider_indicator_format_set(sl, "%1.1f");
-   elm_slider_min_max_set(sl, 0.0, 10.0);
+   elm_slider_min_max_set(sl, 1.0, 10.0);
    elm_slider_value_set(sl, elm_config_scroll_thumbscroll_acceleration_weight_get());
    elm_box_pack_end(bx, sl);
    evas_object_show(sl);
