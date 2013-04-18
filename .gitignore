@@ -331,3 +331,4 @@ tags
 /src/tests/eo/check-results.xml
 /src/tests/evas/check-results.xml
 /coverage
+/data/eo/libeo-gdb.py
