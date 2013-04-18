@@ -164,6 +164,7 @@ _constructor(Eo *eo_obj, void *class_data, va_list *list EINA_UNUSED)
    EVAS_ARRAY_SET(e, obscuring_objects);
    EVAS_ARRAY_SET(e, temporary_objects);
    EVAS_ARRAY_SET(e, calculate_objects);
+   EVAS_ARRAY_SET(e, clipped_objects);
    EVAS_ARRAY_SET(e, clip_changes);
    EVAS_ARRAY_SET(e, scie_unref_queue);
    EVAS_ARRAY_SET(e, image_unref_queue);
@@ -276,6 +277,7 @@ _destructor(Eo *eo_e, void *_pd, va_list *list EINA_UNUSED)
    eina_array_flush(&e->obscuring_objects);
    eina_array_flush(&e->temporary_objects);
    eina_array_flush(&e->calculate_objects);
+   eina_array_flush(&e->clipped_objects);
    eina_array_flush(&e->clip_changes);
    eina_array_flush(&e->scie_unref_queue);
    eina_array_flush(&e->image_unref_queue);
