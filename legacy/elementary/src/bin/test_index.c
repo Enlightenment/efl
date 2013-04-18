@@ -164,10 +164,22 @@ id_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
    printf("Current Index : %s\n", elm_index_item_letter_get((const Elm_Object_Item *)event_info));
 }
 
+static void
+_omit_check_changed_cb(void *data, Evas_Object *obj,
+                       void *event_info __UNUSED__)
+{
+   Evas_Object *id = data;
+   Eina_Bool omit = elm_check_state_get(obj);
+   if (!id) return;
+
+   printf("Omit feature enabled : %d\n", omit);
+   elm_index_omit_enabled_set(id, omit);
+}
+
 void
 test_index(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bxx, *gl, *id, *bt, *tb;
+   Evas_Object *win, *bxx, *gl, *id, *bt, *tb, *ck;
    Elm_Object_Item *glit;
    int i, j;
    api_data *api = calloc(1, sizeof(api_data));
@@ -207,6 +219,14 @@ test_index(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
 
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    
+
+   ck = elm_check_add(win);
+   elm_object_text_set(ck, "Omit mode : ");
+   elm_object_style_set(ck, "toggle");
+   elm_box_pack_end(bxx, ck);
+   evas_object_smart_callback_add(ck, "changed", _omit_check_changed_cb, id);
+   evas_object_show(ck);
+
    elm_box_pack_end(bxx, tb);
 
    evas_object_show(id);
