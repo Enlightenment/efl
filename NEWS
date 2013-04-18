@@ -249,4 +249,4 @@ Fixes:
     * Evas: fix gif bug related with scale down decode.
     * Evas textblock: Fixed a bug with deletion of ranges that end just a visual format.
     * Evas: If an object goes to be hidden without replacing the cur/prev state info, the object context can be corrupted at the next show time. Now it replaces the cur/prev in that rare case.
-
+    * Evas: Fix evas gl_x11 in 16bpp and lower depths than 24/32 bpp.

@@ -669,7 +669,7 @@ eng_best_visual_get(Evas_Engine_Info_GL_X11 *einfo)
              config_attrs[i++] = GLX_RED_SIZE;
              config_attrs[i++] = 1;
              config_attrs[i++] = GLX_GREEN_SIZE;
-             config_attrs[i++] =1;
+             config_attrs[i++] = 1;
              config_attrs[i++] = GLX_BLUE_SIZE;
              config_attrs[i++] = 1;
              if (alpha)
@@ -715,11 +715,17 @@ eng_best_visual_get(Evas_Engine_Info_GL_X11 *einfo)
                   if (!alpha)
                     {
                        config = configs[i];
-                       _evas_gl_x11_vi = malloc(sizeof(XVisualInfo));
-                       memcpy(_evas_gl_x11_vi, visinfo, sizeof(XVisualInfo));
-                       fbconf = config;
-                       XFree(visinfo);
-                       break;
+                       // ensure depth matches default depth!
+                       if (DefaultDepth(einfo->info.display, 0) ==
+                           visinfo->depth)
+                         {
+                            _evas_gl_x11_vi = malloc(sizeof(XVisualInfo));
+                            memcpy(_evas_gl_x11_vi, visinfo,
+                                   sizeof(XVisualInfo));
+                            fbconf = config;
+                            XFree(visinfo);
+                            break;
+                         }
                     }
                   else
                     {

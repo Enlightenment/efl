@@ -1,3 +1,8 @@
+2013-04-14  Carsten Haitzler (The Rasterman)
+
+        * Evas: Fix evas gl_x11 to use default depth when visual
+        matching so lower depth displays work
+
 2013-04-15  ChunEon Park
         * Evas: If an object goes to be hidden without replacing the cur/prev
         state info, the object context can be corrupted at the next show time.
