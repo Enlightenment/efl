@@ -723,6 +723,8 @@ EAPI double                    elm_index_delay_change_time_get(const Evas_Object
  *
  * @see elm_index_omit_enabled_get()
  *
+ * @since 1.8
+ *
  * @ingroup Index
  */
 EAPI void                      elm_index_omit_enabled_set(Evas_Object *obj, Eina_Bool enabled);
@@ -733,7 +735,9 @@ EAPI void                      elm_index_omit_enabled_set(Evas_Object *obj, Eina
  * @param obj The index object
  * @return @c EINA_TRUE, if omit feature is enabled, @c EINA_FALSE otherwise
  *
- * @see elm_index_omit_enabled_set() for more details
+ * @see elm_index_omit_enabled_set()
+ *
+ * @since 1.8
  *
  * @ingroup Index
  */
