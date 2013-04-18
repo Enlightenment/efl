@@ -822,6 +822,80 @@ START_TEST(eo_add_do_and_custom)
 }
 END_TEST
 
+START_TEST(eo_pointers_indirection)
+{
+#ifdef HAVE_EO_ID
+   eo_init();
+
+   static const Eo_Class_Description class_desc = {
+        EO_VERSION,
+        "Simple",
+        EO_CLASS_TYPE_REGULAR,
+        EO_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
+        NULL,
+        0,
+        NULL,
+        NULL
+   };
+
+   const Eo_Class *klass = eo_class_new(&class_desc, EO_BASE_CLASS, NULL);
+   fail_if(!klass);
+
+   /* Check simple id validity */
+   Eo *obj = eo_add(klass, NULL);
+   fail_if(!obj);
+   fail_if(!eo_isa(obj, klass));
+   obj = (Eo *)((char *)(obj) + 1);
+   fail_if(eo_isa(obj, klass));
+   obj = (Eo *)((char *)(obj) - 1);
+   fail_if(!eo_isa(obj, klass));
+   eo_unref(obj);
+   fail_if(eo_isa(obj, klass));
+
+   /* Check id invalidity after deletion */
+   Eo *obj1 = eo_add(klass, NULL);
+   fail_if(!obj1);
+   eo_unref(obj1);
+   Eo *obj2 = eo_add(klass, NULL);
+   fail_if(!obj2);
+   fail_if(!eo_isa(obj2, klass));
+   fail_if(eo_isa(obj1, klass));
+   eo_unref(obj2);
+
+#define NB_OBJS 100
+   unsigned int obj_id;
+   Eo **objs = calloc(NB_OBJS, sizeof(Eo *));
+   fail_if(!objs);
+   /* Creation of the objects */
+   for ( obj_id = 0; obj_id < NB_OBJS; obj_id++)
+     {
+        objs[obj_id] = eo_add(klass, NULL);
+        fail_if(!objs[obj_id]);
+        fail_if(!eo_isa(objs[obj_id], klass));
+     }
+   /* Deletion of half of the objects */
+   for ( obj_id = 0; obj_id < NB_OBJS; obj_id+=2)
+     {
+        eo_unref(objs[obj_id]);
+        fail_if(eo_isa(objs[obj_id], klass));
+     }
+   /* Creation of half of the objects */
+   for ( obj_id = 0; obj_id < NB_OBJS; obj_id+=2)
+     {
+        objs[obj_id] = eo_add(klass, NULL);
+        fail_if(!objs[obj_id]);
+        fail_if(!eo_isa(objs[obj_id], klass));
+     }
+   /* Deletion of all the objects */
+   for ( obj_id = 0; obj_id < NB_OBJS; obj_id++)
+      eo_unref(objs[obj_id]);
+   free(objs);
+
+   eo_shutdown();
+#endif
+}
+END_TEST
+
 void eo_test_general(TCase *tc)
 {
    tcase_add_test(tc, eo_generic_data);
@@ -837,4 +911,5 @@ void eo_test_general(TCase *tc)
    tcase_add_test(tc, eo_multiple_do);
    tcase_add_test(tc, eo_add_do_and_custom);
    tcase_add_test(tc, eo_signals);
+   tcase_add_test(tc, eo_pointers_indirection);
 }

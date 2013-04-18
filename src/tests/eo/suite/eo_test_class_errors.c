@@ -437,7 +437,11 @@ START_TEST(eo_op_types)
    fail_if(!klass);
 
    TEST_EO_ERROR("eo_class_name_get", NULL);
+#ifdef HAVE_EO_ID
+   ctx.expected_level = EINA_LOG_LEVEL_ERR;
+#else
    ctx.expected_level = EINA_LOG_LEVEL_CRITICAL;
+#endif
    /* Add class checks here... */
    Eo *obj = eo_add(klass, NULL);
    eo_do(obj, simple_a_set(7), simple_a_print(), simple_class_hi_print());
