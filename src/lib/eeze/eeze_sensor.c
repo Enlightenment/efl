@@ -13,13 +13,14 @@ static Eeze_Sensor *g_handle;
 static Eina_Prefix *pfx;
 
 /* Priority order for modules. The one with the highest order of the available
- * ones will be used. This in good enough for now as we only have two modules
+ * ones will be used. This in good enough for now as we only have three modules
  * and one is a test harness anyway. If the number of modules grows we might
  * re-think the priority handling, but we should do this when the need arise.
  */
 static const char *_module_priority[] = {
    "tizen",
    "fake",
+   "udev",
    NULL
 };
 
@@ -82,10 +83,9 @@ eeze_sensor_modules_load(void)
     */
    if (getenv("EFL_RUN_IN_TREE"))
      {
-        const char *modules[] = { "tizen", "fake", NULL };
         const char **itr;
 
-        for (itr = modules; *itr != NULL; itr++)
+        for (itr = _module_priority; *itr != NULL; itr++)
           {
              snprintf(buf, sizeof(buf),
                       PACKAGE_BUILD_DIR "/src/modules/eeze/sensor/%s/.libs",
