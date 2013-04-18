@@ -11,8 +11,6 @@
 #include <Ecore.h>
 #include <Ecore_Audio.h>
 
-#define SOUNDS_DIR TESTS_SRC_DIR
-
 #if 0
 Eina_Bool
 seek(void *data)
@@ -348,7 +346,7 @@ START_TEST(ecore_test_ecore_audio_obj_tone)
 
    eo_do(out, ecore_audio_obj_name_set("tmp.wav"));
    eo_do(out, ecore_audio_obj_format_set(ECORE_AUDIO_FORMAT_WAV));
-   eo_do(out, ecore_audio_obj_source_set(SOUNDS_DIR"/tmp.wav"));
+   eo_do(out, ecore_audio_obj_source_set(TESTS_BUILD_DIR"/tmp.wav"));
 
    eo_do(out, ecore_audio_obj_out_input_attach(in, NULL));
 
@@ -358,6 +356,9 @@ START_TEST(ecore_test_ecore_audio_obj_tone)
 
    eo_del(in);
    eo_del(out);
+
+   //TODO: Compare and fail
+   ecore_file_remove(TESTS_BUILD_DIR"/tmp.wav");
 }
 END_TEST
 
@@ -371,7 +372,7 @@ START_TEST(ecore_test_ecore_audio_obj_sndfile)
    fail_if(!in);
 
    eo_do(in, ecore_audio_obj_name_set("sms.ogg"));
-   eo_do(in, ecore_audio_obj_source_set(SOUNDS_DIR"/sms.ogg"));
+   eo_do(in, ecore_audio_obj_source_set(TESTS_SRC_DIR"/sms.ogg"));
 
    eo_do(in, ecore_audio_obj_in_channels_get(&channel));
    fail_if(channel != 2);
