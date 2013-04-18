@@ -37,7 +37,7 @@ static Eina_Bool _write_cb(void *data)
   Ecore_Audio_Sndfile *obj = eo_data_get(eo_obj, ECORE_AUDIO_OBJ_OUT_SNDFILE_CLASS);
   Ecore_Audio_Output *out_obj = eo_data_get(eo_obj, ECORE_AUDIO_OBJ_OUT_CLASS);
 
-  int written, bread;
+  ssize_t written, bread;
   float buf[1024];
 
   /* TODO: Support mixing of multiple inputs */

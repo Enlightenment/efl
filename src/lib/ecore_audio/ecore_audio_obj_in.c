@@ -146,7 +146,7 @@ static void _read(Eo *eo_obj, void *_pd, va_list *list)
   ssize_t len_read = 0;
   const Ecore_Audio_Object *ea_obj = eo_data_get(eo_obj, ECORE_AUDIO_OBJ_CLASS);
 
-  char *buf = va_arg(*list, char *);
+  void *buf = va_arg(*list, void *);
   size_t len = va_arg(*list, size_t);
   ssize_t *ret = va_arg(*list, ssize_t *);
 
@@ -171,13 +171,12 @@ static void _read(Eo *eo_obj, void *_pd, va_list *list)
     *ret = len_read;
 }
 
-static void _read_internal(Eo *eo_obj, void *_pd, va_list *list)
+static void _read_internal(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
 {
-  const Ecore_Audio_Input *obj = _pd;
   ssize_t len_read = 0;
   const Ecore_Audio_Object *ea_obj = eo_data_get(eo_obj, ECORE_AUDIO_OBJ_CLASS);
 
-  char *buf = va_arg(*list, char *);
+  void *buf = va_arg(*list, void *);
   size_t len = va_arg(*list, size_t);
   ssize_t *ret = va_arg(*list, ssize_t *);
 

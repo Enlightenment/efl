@@ -99,13 +99,13 @@ static SF_VIRTUAL_IO vio_wrapper = {
 
 /* End virtual IO wrapper functions */
 
-static void _read(Eo *eo_obj, void *_pd, va_list *list)
+static void _read(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
 {
   Ecore_Audio_Sndfile *obj = _pd;
   int read;
   void *data = va_arg(*list, void *);
-  int len = va_arg(*list, int);
-  int *ret = va_arg(*list, int *);
+  size_t len = va_arg(*list, size_t);
+  ssize_t *ret = va_arg(*list, ssize_t *);
 
   read = sf_read_float(obj->handle, data, len/4)*4;
 
