@@ -338,6 +338,8 @@ AC_SUBST([EINA_SIZEOF_WCHAR_T])
 AC_CHECK_SIZEOF(int, 4)
 AC_CHECK_SIZEOF(long, 4)
 
+AC_CHECK_SIZEOF([uintptr_t])
+
 AC_CHECK_TYPES([siginfo_t], [], [],
    [[
 #include <signal.h>
@@ -1035,6 +1037,19 @@ AC_ARG_ENABLE([fribidi],
     fi
    ],
    [want_fribidi="yes"])
+
+# Eo Id
+AC_ARG_ENABLE([eo_id],
+   [AC_HELP_STRING([--disable-eo-id],
+       [disable Eo indirection. @<:@default=enabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_eo_id="yes"
+    else
+       want_eo_id="no"
+    fi
+   ],
+   [want_eo_id="yes"])
 
 # Harfbuzz
 AC_ARG_ENABLE([harfbuzz],
@@ -3103,6 +3118,10 @@ dnl TODO: remove these ifdefs from code!
 AC_DEFINE([HAVE_EIO], [1], [Have eio library])
 #### End of Eio
 
+# Eo Id
+if test "x${want_eo_id}" = "xyes" ; then
+   AC_DEFINE([HAVE_EO_ID], [1], [Have eo id])
+fi
 
 #### EDBus
 EFL_LIB_START([EDBus])
@@ -3723,6 +3742,8 @@ AC_OUTPUT
 
 #### Info
 
+EFL_ADD_FEATURE([EO], [eo-id], [${want_eo_id}])
+
 case $host_cpu in
   i*86|x86_64|amd64)
     EFL_ADD_FEATURE([cpu], [mmx], [${build_cpu_mmx}])
@@ -3775,6 +3796,7 @@ echo "  Image Loaders.: ${features_evas_loader}"
 if test "x${have_pixman}" = "xyes" ; then
 echo "  Pixman........: ${features_evas_pixman}"
 fi
+echo "Eo..............: yes (${features_eo})"
 echo "Eina............: yes (${features_eina})"
 echo "Ecore...........: yes (${features_ecore})"
 echo "Ecore_Con.......: yes (${features_ecore_con})"

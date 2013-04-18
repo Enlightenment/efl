@@ -218,7 +218,8 @@ EAPI void eo_dbg_info_free(Eo_Dbg_Info *info);
  * @typedef Eo
  * The basic Object type.
  */
-typedef struct _Eo Eo;
+typedef struct _Eo_Opaque Eo;
+
 /**
  * @typedef Eo_Op
  * The Eo operation type id.
@@ -230,14 +231,7 @@ typedef unsigned int Eo_Op;
  * The basic Object class type.
  * @ingroup Eo_Class
  */
-typedef struct _Eo_Class Eo_Class;
-
-/**
- * @typedef Eo_Class_Id
- * An Id of a class.
- * @ingroup Eo_Class
- */
-typedef size_t Eo_Class_Id;
+typedef struct _Eo_Class_Opaque Eo_Class;
 
 /**
  * @def EO_NOOP

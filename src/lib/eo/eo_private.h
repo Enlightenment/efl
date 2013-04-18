@@ -56,4 +56,6 @@ extern int _eo_log_dom;
 
 void _eo_condtor_done(Eo *obj);
 
+typedef struct _Eo_Internal _Eo;
+
 #endif
