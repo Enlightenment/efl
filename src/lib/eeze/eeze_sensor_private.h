@@ -57,7 +57,7 @@ typedef struct _Eeze_Sensor_Module
    Eina_Bool (*init)(void); /**< Pointer to module init function */
    Eina_Bool (*shutdown)(void); /**< Pointer to module shutdown function */
    Eina_Bool (*async_read)(Eeze_Sensor_Type sensor_type, void *user_data); /**< Pointer to module async_read function */
-   Eina_Bool (*read)(Eeze_Sensor_Type sensor_type, Eeze_Sensor_Obj *obj); /**< Pointer to module read function */
+   Eina_Bool (*read)(Eeze_Sensor_Obj *obj); /**< Pointer to module read function */
    Eina_List *sensor_list; /**< List of sensor objects attached to the module */
 } Eeze_Sensor_Module;
 

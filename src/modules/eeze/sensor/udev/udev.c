@@ -89,18 +89,9 @@ _udev_read(void)
 }
 
 static Eina_Bool
-udev_read(Eeze_Sensor_Type sensor_type, Eeze_Sensor_Obj *lobj)
+udev_read(Eeze_Sensor_Obj *obj)
 {
-   Eeze_Sensor_Obj *obj = NULL;
-
-   obj = eeze_sensor_obj_get(sensor_type);
-   if (obj == NULL)
-     {
-        ERR("No matching sensor object found in list");
-        return EINA_FALSE;
-     }
-
-   switch (sensor_type)
+   switch (obj->type)
      {
       case EEZE_SENSOR_TYPE_TEMPERATURE:
         obj->accuracy = -1;
@@ -112,12 +103,8 @@ udev_read(Eeze_Sensor_Type sensor_type, Eeze_Sensor_Obj *lobj)
 
       default:
         ERR("Not possible to read from this sensor type.");
-        free(obj);
         return EINA_FALSE;
      }
-
-   memcpy(lobj, obj, sizeof(Eeze_Sensor_Obj));
-   free(obj);
 
    return EINA_TRUE;
 }

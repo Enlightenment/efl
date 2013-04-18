@@ -971,16 +971,15 @@ no_move_read_cb(unsigned long long timestamp, void *user_data)
  * the system. Normally it is better to use the asynchronous reading functions.
  */
 static Eina_Bool
-eeze_sensor_tizen_read(Eeze_Sensor_Type sensor_type, Eeze_Sensor_Obj *lobj)
+eeze_sensor_tizen_read(Eeze_Sensor_Obj *obj)
 {
    sensor_data_accuracy_e accuracy;
    float x, y, z;
    float azimuth, pitch, roll, lux, distance, yaw;
    bool supported;
    sensor_type_e type;
-   Eeze_Sensor_Obj *obj;
 
-   type = eeze_to_tizen(sensor_type);
+   type = eeze_to_tizen(obj->type);
 
    /* Don't attempt to do anything if the sensor is not available on the system
     * we are running on.
@@ -993,12 +992,6 @@ eeze_sensor_tizen_read(Eeze_Sensor_Type sensor_type, Eeze_Sensor_Obj *lobj)
      }
 
    sensor_start(sensor_handle, type);
-   obj = eeze_sensor_obj_get(sensor_type);
-   if (obj == NULL)
-     {
-        ERR("No matching sensor object found in list.");
-        return EINA_FALSE;
-     }
 
    switch (type)
      {
@@ -1083,12 +1076,9 @@ eeze_sensor_tizen_read(Eeze_Sensor_Type sensor_type, Eeze_Sensor_Obj *lobj)
 
       default:
         ERR("Not possible to read from this sensor type.");
-        free(obj);
         return EINA_FALSE;
      }
 
-   memcpy(lobj, obj, sizeof(Eeze_Sensor_Obj));
-   free(obj);
    sensor_stop(sensor_handle, type);
    return EINA_TRUE;
 }

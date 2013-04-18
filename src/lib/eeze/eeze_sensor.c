@@ -153,7 +153,7 @@ eeze_sensor_module_unregister(const char *name)
 
    module = eina_hash_find(g_handle->modules, name);
    if (!module) return EINA_FALSE;
-   
+
    if (module->shutdown)
      module->shutdown();
 
@@ -196,7 +196,7 @@ eeze_sensor_new(Eeze_Sensor_Type type)
     * the downside that the sensor creation takes longer. But that is only a
     *initial cost.
     */
-   if (module->read(sens->type, sens))
+   if (module->read(sens))
       return sens;
 
    free(sens);
@@ -277,7 +277,7 @@ eeze_sensor_read(Eeze_Sensor_Obj *sens)
    if (!module) return EINA_FALSE;
 
    if (module->read)
-     return module->read(sens->type, sens);
+     return module->read(sens);
 
    return EINA_FALSE;
 }
