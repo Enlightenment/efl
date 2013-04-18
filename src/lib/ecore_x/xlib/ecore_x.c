@@ -2123,7 +2123,7 @@ ecore_x_pointer_root_xy_get(int *x, int *y)
 {
    Ecore_X_Window *root;
    Window rwin, cwin;
-   int rx, ry, wx, wy, ret;
+   int rx, ry, wx, wy, ret = 0;
    int i, num;
    unsigned int mask;
 
