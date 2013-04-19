@@ -128,11 +128,10 @@ static void _length_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
 static void _remaining_get(Eo *eo_obj, void *_pd, va_list *list)
 {
   const Ecore_Audio_Input *obj = _pd;
-  Ecore_Audio_Object *ea_obj = eo_data_get(eo_obj, ECORE_AUDIO_OBJ_CLASS);
 
   double *ret = va_arg(*list, double *);
 
-  if (!ea_obj->seekable && ret) {
+  if (!obj->seekable && ret) {
       *ret = -1;
   } else if (ret) {
     eo_do(eo_obj, ecore_audio_obj_in_seek(0, SEEK_CUR, ret));
@@ -156,7 +155,7 @@ static void _read(Eo *eo_obj, void *_pd, va_list *list)
   } else {
       eo_do(eo_obj, ecore_audio_obj_in_read_internal(buf, len, &len_read));
       if (len_read == 0) {
-          if (!obj->looped || !ea_obj->seekable) {
+          if (!obj->looped || !obj->seekable) {
               eo_do(eo_obj, eo_event_callback_call(ECORE_AUDIO_EV_IN_STOPPED, NULL, NULL));
           } else {
               eo_do(eo_obj, ecore_audio_obj_in_seek(0, SEEK_SET, NULL));
@@ -207,8 +206,9 @@ static void _free_vio(Ecore_Audio_Object *ea_obj)
   ea_obj->vio = NULL;
 }
 
-static void _vio_set(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
+static void _vio_set(Eo *eo_obj, void *_pd, va_list *list)
 {
+  Ecore_Audio_Input *obj = _pd;
   Ecore_Audio_Object *ea_obj = eo_data_get(eo_obj, ECORE_AUDIO_OBJ_CLASS);
 
   Ecore_Audio_Vio *vio = va_arg(*list, Ecore_Audio_Vio *);
@@ -226,7 +226,7 @@ static void _vio_set(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
   ea_obj->vio->data = data;
   ea_obj->vio->free_func = free_func;
   //FIXME: Save previous value
-  ea_obj->seekable = (vio->seek != NULL);
+  obj->seekable = (vio->seek != NULL);
 }
 
 static void _constructor(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)

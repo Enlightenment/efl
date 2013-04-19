@@ -85,6 +85,7 @@ static void _seek(Eo *eo_obj, void *_pd, va_list *list)
   if (ret)
     *ret = (double)obj->phase / in_obj->samplerate;
 
+  return;
 err:
   if (ret)
     *ret = -1.0;
@@ -196,6 +197,7 @@ static void _constructor(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
   in_obj->channels = 1;
   in_obj->samplerate = 44100;
   in_obj->length = 1;
+  in_obj->seekable = EINA_TRUE;
 
   obj->freq = 1000;
 }

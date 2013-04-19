@@ -106,7 +106,6 @@ struct _Ecore_Audio_Object
    const char         *name;
    const char         *source;
 
-   Eina_Bool           seekable;
    Eina_Bool           paused;
    double              volume;
    Ecore_Audio_Format  format;
@@ -129,6 +128,7 @@ struct _Ecore_Audio_Output
 struct _Ecore_Audio_Input
 {
    Eina_Bool           paused; /**< Is the input paused? */
+   Eina_Bool           seekable;
 
    Eo                 *output; /**< The output this input is connected to */
 

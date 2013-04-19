@@ -156,7 +156,7 @@ static void _source_set(Eo *eo_obj, void *_pd, va_list *list)
     return;
   }
 
-  ea_obj->seekable = EINA_TRUE;
+  in_obj->seekable = EINA_TRUE;
   in_obj->length = (double)obj->sfinfo.frames / obj->sfinfo.samplerate;
 
   in_obj->samplerate =  obj->sfinfo.samplerate;
@@ -254,7 +254,7 @@ static void _vio_set(Eo *eo_obj, void *_pd, va_list *list)
   if (ea_obj->vio)
     _free_vio(ea_obj);
 
-  ea_obj->seekable = EINA_FALSE;
+  in_obj->seekable = EINA_FALSE;
 
   if (!vio)
     return;
@@ -263,7 +263,7 @@ static void _vio_set(Eo *eo_obj, void *_pd, va_list *list)
   ea_obj->vio->vio = vio;
   ea_obj->vio->data = data;
   ea_obj->vio->free_func = free_func;
-  ea_obj->seekable = (vio->seek != NULL);
+  in_obj->seekable = (vio->seek != NULL);
 
   obj->handle = sf_open_virtual(&vio_wrapper, SFM_READ, &obj->sfinfo, eo_obj);
 
@@ -273,7 +273,7 @@ static void _vio_set(Eo *eo_obj, void *_pd, va_list *list)
     return;
   }
 
-  ea_obj->seekable = EINA_TRUE;
+  in_obj->seekable = EINA_TRUE;
   in_obj->length = (double)obj->sfinfo.frames / obj->sfinfo.samplerate;
 
   in_obj->samplerate =  obj->sfinfo.samplerate;
