@@ -40,7 +40,6 @@ eogdb_SCRIPTS = eo/eo_gdb.py
 
 # Borrowed from gobject
 libeo.so.@VMAJ@.@VMIN@.@VMIC@-gdb.py: eo/libeo-gdb.py.in
-	$(MKDIR_P) eo
 	$(AM_V_GEN) $(SED) -e "s|\@datadir\@|$(datadir)|" $(srcdir)/eo/libeo-gdb.py.in > $(builddir)/libeo.so.@VMAJ@.@VMIN@.@VMIC@-gdb.py
 
 eogdbloaddir = $(datadir)/gdb/auto-load/$(libdir)
