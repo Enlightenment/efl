@@ -2442,9 +2442,6 @@ EFL_OPTIONAL_DEPEND_PKG([ECORE_AUDIO], [${want_alsa}], [ALSA], [alsa])
 EFL_OPTIONAL_DEPEND_PKG([ECORE_AUDIO], [${want_pulseaudio}], [PULSE], [libpulse])
 EFL_OPTIONAL_DEPEND_PKG([ECORE_AUDIO], [${want_sndfile}], [SNDFILE], [sndfile])
 
-AM_CONDITIONAL([HAVE_ECORE_AUDIO_PULSE], [test "${want_pulseaudio}" = "yes"])
-AM_CONDITIONAL([HAVE_ECORE_AUDIO_SNDFILE], [test "${want_sndfile}" = "yes"])
-
 EFL_EVAL_PKGS([ECORE_AUDIO])
 
 EFL_ADD_FEATURE([ECORE_AUDIO], [alsa])
@@ -2464,6 +2461,9 @@ EFL_ADD_FEATURE([ECORE_AUDIO], [sndfile])
 ### Checks for library functions
 
 EFL_LIB_END_OPTIONAL([Ecore_Audio])
+AM_CONDITIONAL([HAVE_ECORE_AUDIO_PULSE], [test "x${want_pulseaudio}" = "xyes"])
+AM_CONDITIONAL([HAVE_ECORE_AUDIO_SNDFILE], [test "x${want_sndfile}" = "xyes"])
+
 #### End of Ecore_Audio
 
 #### Ecore_Win32
