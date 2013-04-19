@@ -444,8 +444,8 @@ _ecore_evas_ews_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int layer, i
 static void
 _ecore_evas_ews_layer_set(Ecore_Evas *ee, int layer)
 {
-   if (layer < EVAS_LAYER_MIN + 1)
-     layer = EVAS_LAYER_MIN + 1;
+   if (layer < EVAS_LAYER_MIN + 2)
+     layer = EVAS_LAYER_MIN + 2;
    else if (layer > EVAS_LAYER_MAX)
      layer = EVAS_LAYER_MAX;
 
@@ -1416,7 +1416,7 @@ ecore_evas_ews_background_set(Evas_Object *o)
 
    if (_ews_ee)
      {
-        Evas_Coord w, h;
+        Evas_Coord w, h, fw, fh;
         Evas *e = ecore_evas_get(_ews_ee);
 
         if (e != evas_object_evas_get(o))
@@ -1426,9 +1426,10 @@ ecore_evas_ews_background_set(Evas_Object *o)
           }
 
         evas_output_viewport_get(e, NULL, NULL, &w, &h);
+        evas_output_framespace_get(e, NULL, NULL, &fw, &fh);
         evas_object_move(o, 0, 0);
-        evas_object_resize(o, w, h);
-        evas_object_layer_set(o, EVAS_LAYER_MIN);
+        evas_object_resize(o, w - fw, h - fh);
+        evas_object_layer_set(o, EVAS_LAYER_MIN + 1);
         evas_object_lower(o);
         evas_object_show(o);
 
