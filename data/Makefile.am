@@ -39,18 +39,14 @@ eogdbdir = $(datadir)/eo/gdb
 eogdb_SCRIPTS = eo/eo_gdb.py
 
 # Borrowed from gobject
-eo/libeo-gdb.py: eo/libeo-gdb.py.in
+libeo.so.@VMAJ@.@VMIN@.@VMIC@-gdb.py: eo/libeo-gdb.py.in
 	$(MKDIR_P) eo
-	$(AM_V_GEN) $(SED) -e "s|\@datadir\@|$(datadir)|" $(srcdir)/eo/libeo-gdb.py.in > $(builddir)/eo/libeo-gdb.py
+	$(AM_V_GEN) $(SED) -e "s|\@datadir\@|$(datadir)|" $(srcdir)/eo/libeo-gdb.py.in > $(builddir)/libeo.so.@VMAJ@.@VMIN@.@VMIC@-gdb.py
 
-install-data-hook: eo/libeo-gdb.py
-	$(MKDIR_P) $(DESTDIR)$(datadir)/gdb/auto-load/$(libdir)
-	$(INSTALL) $(builddir)/eo/libeo-gdb.py $(DESTDIR)$(datadir)/gdb/auto-load/$(libdir)/libeo.so.@VMAJ@.@VMIN@.@VMIC@-gdb.py
+eogdbloaddir = $(datadir)/gdb/auto-load/$(libdir)
+eogdbload_SCRIPTS = libeo.so.@VMAJ@.@VMIN@.@VMIC@-gdb.py
 
-uninstall-hook:
-	rm -f $(DESTDIR)$(datadir)/gdb/auto-load/$(libdir)/libeo.so.@VMAJ@.@VMIN@.@VMIC@-gdb.py
-
-CLEANFILES += eo/libeo-gdb.py
+CLEANFILES += libeo.so.@VMAJ@.@VMIN@.@VMIC@-gdb.py
 
 EXTRA_DIST += $(eogdb_SCRIPTS) eo/libeo-gdb.py.in
 
