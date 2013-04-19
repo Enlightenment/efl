@@ -10,10 +10,7 @@ lib/ecore_audio/Ecore_Audio.h \
 lib/ecore_audio/ecore_audio_obj.h \
 lib/ecore_audio/ecore_audio_obj_in.h \
 lib/ecore_audio/ecore_audio_obj_out.h \
-lib/ecore_audio/ecore_audio_obj_in_sndfile.h \
-lib/ecore_audio/ecore_audio_obj_out_sndfile.h \
 lib/ecore_audio/ecore_audio_obj_in_tone.h \
-lib/ecore_audio/ecore_audio_obj_out_pulse.h \
 lib/ecore_audio/ecore_audio_protected.h
 
 
@@ -22,16 +19,31 @@ lib/ecore_audio/ecore_audio.c \
 lib/ecore_audio/ecore_audio_obj.c \
 lib/ecore_audio/ecore_audio_obj_in.c \
 lib/ecore_audio/ecore_audio_obj_out.c \
-lib/ecore_audio/ecore_audio_obj_in_sndfile.c \
-lib/ecore_audio/ecore_audio_obj_out_sndfile.c \
 lib/ecore_audio/ecore_audio_obj_in_tone.c \
-lib/ecore_audio/ecore_audio_pulse_ml.c \
-lib/ecore_audio/ecore_audio_obj_out_pulse.c \
 lib/ecore_audio/ecore_audio_private.h
 
 lib_ecore_audio_libecore_audio_la_CPPFLAGS = @ECORE_AUDIO_CFLAGS@
 lib_ecore_audio_libecore_audio_la_LIBADD = @ECORE_AUDIO_LIBS@
 lib_ecore_audio_libecore_audio_la_DEPENDENCIES = @ECORE_AUDIO_INTERNAL_LIBS@
 lib_ecore_audio_libecore_audio_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
+
+if HAVE_ECORE_AUDIO_PULSE
+dist_installed_ecoreaudiomainheaders_DATA += \
+lib/ecore_audio/ecore_audio_obj_out_pulse.h
+
+lib_ecore_audio_libecore_audio_la_SOURCES += \
+lib/ecore_audio/ecore_audio_pulse_ml.c \
+lib/ecore_audio/ecore_audio_obj_out_pulse.c
+endif
+
+if HAVE_ECORE_AUDIO_SNDFILE
+dist_installed_ecoreaudiomainheaders_DATA += \
+lib/ecore_audio/ecore_audio_obj_in_sndfile.h \
+lib/ecore_audio/ecore_audio_obj_out_sndfile.h
+
+lib_ecore_audio_libecore_audio_la_SOURCES += \
+lib/ecore_audio/ecore_audio_obj_in_sndfile.c \
+lib/ecore_audio/ecore_audio_obj_out_sndfile.c
+endif
 
 endif
