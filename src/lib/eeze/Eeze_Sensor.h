@@ -148,6 +148,7 @@ typedef struct _Eeze_Sensor_Obj
    float data[3]; /**< Sensor data depending on the sensor type */
    double timestamp; /**< Timestamp of data read */
    Eina_Bool continuous_flow; /**< FUTURE USE: Continuous flow of sensor read out */
+   void *user_data; /**< Data pointer used for passing data to the asynchronous callback */
 } Eeze_Sensor_Obj;
 
 #ifdef __cplusplus
@@ -296,6 +297,9 @@ EAPI Eina_Bool eeze_sensor_read(Eeze_Sensor_Obj *sens);
  * downside of it is that it blocks until the data was read out from the
  * physical sensor. That might be a long time depending on the hardware and its
  * interface.
+ *
+ * The extra data passed in as user_data here will be available in the user_data
+ * pointer of the sensor object when the ecore event arrives.
  *
  * @since 1.8
  */

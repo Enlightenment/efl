@@ -24,6 +24,14 @@ static int _eeze_sensor_fake_log_dom = -1;
 
 static Eeze_Sensor_Module *esensor_module;
 
+static void
+_dummy_free(void *user_data EINA_UNUSED, void *func_data EINA_UNUSED)
+{
+/* Don't free the event data after dispatching the event. We keep track of
+ * it on our own
+ */
+}
+
 static Eina_Bool
 fake_init(void)
 {
@@ -89,16 +97,10 @@ fake_read(Eeze_Sensor_Obj *obj)
 }
 
 static Eina_Bool
-fake_async_read(Eeze_Sensor_Type sensor_type, void *user_data EINA_UNUSED)
+fake_async_read(Eeze_Sensor_Obj *obj, void *user_data)
 {
-   Eeze_Sensor_Obj *obj = NULL;
-
-   obj = eeze_sensor_obj_get(sensor_type);
-   if (obj == NULL)
-     {
-        ERR("No matching sensor object found in list.");
-        return EINA_FALSE;
-     }
+   if (user_data)
+     obj->user_data = user_data;
 
    /* Default values for sensor objects with three data points */
    obj->accuracy = -1;
@@ -107,54 +109,53 @@ fake_async_read(Eeze_Sensor_Type sensor_type, void *user_data EINA_UNUSED)
    obj->data[2] = 42;
    obj->timestamp = ecore_time_get();
 
-   switch (sensor_type)
+   switch (obj->type)
      {
       case EEZE_SENSOR_TYPE_ACCELEROMETER:
-        ecore_event_add(EEZE_SENSOR_EVENT_ACCELEROMETER, obj, NULL, NULL);
+        ecore_event_add(EEZE_SENSOR_EVENT_ACCELEROMETER, obj, _dummy_free, NULL);
         break;
       case EEZE_SENSOR_TYPE_GRAVITY:
-        ecore_event_add(EEZE_SENSOR_EVENT_GRAVITY, obj, NULL, NULL);
+        ecore_event_add(EEZE_SENSOR_EVENT_GRAVITY, obj, _dummy_free, NULL);
         break;
       case EEZE_SENSOR_TYPE_LINEAR_ACCELERATION:
-        ecore_event_add(EEZE_SENSOR_EVENT_LINEAR_ACCELERATION, obj, NULL, NULL);
+        ecore_event_add(EEZE_SENSOR_EVENT_LINEAR_ACCELERATION, obj, _dummy_free, NULL);
         break;
       case EEZE_SENSOR_TYPE_DEVICE_ORIENTATION:
-        ecore_event_add(EEZE_SENSOR_EVENT_DEVICE_ORIENTATION, obj, NULL, NULL);
+        ecore_event_add(EEZE_SENSOR_EVENT_DEVICE_ORIENTATION, obj, _dummy_free, NULL);
         break;
       case EEZE_SENSOR_TYPE_MAGNETIC:
-        ecore_event_add(EEZE_SENSOR_EVENT_MAGNETIC, obj, NULL, NULL);
+        ecore_event_add(EEZE_SENSOR_EVENT_MAGNETIC, obj, _dummy_free, NULL);
         break;
       case EEZE_SENSOR_TYPE_ORIENTATION:
-        ecore_event_add(EEZE_SENSOR_EVENT_ORIENTATION, obj, NULL, NULL);
+        ecore_event_add(EEZE_SENSOR_EVENT_ORIENTATION, obj, _dummy_free, NULL);
         break;
       case EEZE_SENSOR_TYPE_GYROSCOPE:
-        ecore_event_add(EEZE_SENSOR_EVENT_GYROSCOPE, obj, NULL, NULL);
+        ecore_event_add(EEZE_SENSOR_EVENT_GYROSCOPE, obj, _dummy_free, NULL);
         break;
       case EEZE_SENSOR_TYPE_LIGHT:
         /* Reset values that are not used for sensor object with one data point */
         obj->data[1] = 0;
         obj->data[2] = 0;
-        ecore_event_add(EEZE_SENSOR_EVENT_LIGHT, obj, NULL, NULL);
+        ecore_event_add(EEZE_SENSOR_EVENT_LIGHT, obj, _dummy_free, NULL);
         break;
       case EEZE_SENSOR_TYPE_PROXIMITY:
         obj->data[1] = 0;
         obj->data[2] = 0;
-        ecore_event_add(EEZE_SENSOR_EVENT_PROXIMITY, obj, NULL, NULL);
+        ecore_event_add(EEZE_SENSOR_EVENT_PROXIMITY, obj, _dummy_free, NULL);
         break;
       case EEZE_SENSOR_TYPE_BAROMETER:
         obj->data[1] = 0;
         obj->data[2] = 0;
-        ecore_event_add(EEZE_SENSOR_EVENT_BAROMETER, obj, NULL, NULL);
+        ecore_event_add(EEZE_SENSOR_EVENT_BAROMETER, obj, _dummy_free, NULL);
         break;
       case EEZE_SENSOR_TYPE_TEMPERATURE:
         obj->data[1] = 0;
         obj->data[2] = 0;
-        ecore_event_add(EEZE_SENSOR_EVENT_TEMPERATURE, obj, NULL, NULL);
+        ecore_event_add(EEZE_SENSOR_EVENT_TEMPERATURE, obj, _dummy_free, NULL);
         break;
 
       default:
         ERR("Not possible to read from this sensor type.");
-        free(obj);
         return EINA_FALSE;
      }
    return EINA_TRUE;

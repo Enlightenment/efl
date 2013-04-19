@@ -24,6 +24,15 @@ static Eeze_Sensor_Module *esensor_module;
 /* Tizen sensor handle */
 static sensor_h sensor_handle;
 
+static void
+_dummy_free(void *user_data EINA_UNUSED, void *func_data EINA_UNUSED)
+{
+/* Don't free the event data after dispatching the event. We keep track of
+ * it on our own
+ */
+}
+
+
 /* The Tizen sensor type ENUM has shown to not be stable regarding its
  * numbering scheme so we better translate between the Tizen types and the
  * ones we use here.
@@ -98,7 +107,7 @@ eeze_to_tizen(Eeze_Sensor_Type type)
 
 /* Reverse mapping from Tizen to eeze sensor types */
 static Eeze_Sensor_Type
-tizen_to_eeze(sesnor_type_e type)
+tizen_to_eeze(sensor_type_e type)
 {
    switch (type)
      {
@@ -186,12 +195,11 @@ clock_convert(unsigned long long timestamp)
 static void
 accelerometer_cb(unsigned long long timestamp, sensor_data_accuracy_e accuracy, float x, float y, float z, void *user_data)
 {
-   Eeze_Sensor_Obj *obj = NULL;
+   Eeze_Sensor_Obj *obj = user_data;
 
-   obj = eeze_sensor_obj_get(EEZE_SENSOR_TYPE_ACCELEROMETER);
    if (obj == NULL)
      {
-        ERR("No matching sensor object found in list.");
+        ERR("No matching sensor object given.");
         return;
      }
    obj->accuracy = accuracy;
@@ -199,19 +207,18 @@ accelerometer_cb(unsigned long long timestamp, sensor_data_accuracy_e accuracy, 
    obj->data[1] = y;
    obj->data[2] = z;
    obj->timestamp = clock_convert(timestamp);
-   ecore_event_add(EEZE_SENSOR_EVENT_ACCELEROMETER, obj, NULL, NULL);
+   ecore_event_add(EEZE_SENSOR_EVENT_ACCELEROMETER, obj, _dummy_free, NULL);
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_ACCELEROMETER));
 }
 
 static void
 gravity_cb(unsigned long long timestamp, sensor_data_accuracy_e accuracy, float x, float y, float z, void *user_data)
 {
-   Eeze_Sensor_Obj *obj = NULL;
+   Eeze_Sensor_Obj *obj = user_data;
 
-   obj = eeze_sensor_obj_get(EEZE_SENSOR_TYPE_GRAVITY);
    if (obj == NULL)
      {
-        ERR("No matching sensor object found in list.");
+        ERR("No matching sensor object given.");
         return;
      }
    obj->accuracy = accuracy;
@@ -219,19 +226,18 @@ gravity_cb(unsigned long long timestamp, sensor_data_accuracy_e accuracy, float 
    obj->data[1] = y;
    obj->data[2] = z;
    obj->timestamp = clock_convert(timestamp);
-   ecore_event_add(EEZE_SENSOR_EVENT_GRAVITY, obj, NULL, NULL);
+   ecore_event_add(EEZE_SENSOR_EVENT_GRAVITY, obj, _dummy_free, NULL);
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_GRAVITY));
 }
 
 static void
 linear_acceleration_cb(unsigned long long timestamp, sensor_data_accuracy_e accuracy, float x, float y, float z, void *user_data)
 {
-   Eeze_Sensor_Obj *obj = NULL;
+   Eeze_Sensor_Obj *obj = user_data;
 
-   obj = eeze_sensor_obj_get(EEZE_SENSOR_TYPE_LINEAR_ACCELERATION);
    if (obj == NULL)
      {
-        ERR("No matching sensor object found in list.");
+        ERR("No matching sensor object given.");
         return;
      }
    obj->accuracy = accuracy;
@@ -239,7 +245,7 @@ linear_acceleration_cb(unsigned long long timestamp, sensor_data_accuracy_e accu
    obj->data[1] = y;
    obj->data[2] = z;
    obj->timestamp = clock_convert(timestamp);
-   ecore_event_add(EEZE_SENSOR_EVENT_LINEAR_ACCELERATION, obj, NULL, NULL);
+   ecore_event_add(EEZE_SENSOR_EVENT_LINEAR_ACCELERATION, obj, _dummy_free, NULL);
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_LINEAR_ACCELERATION));
 }
 
@@ -247,12 +253,11 @@ static void
 device_orientation_cb(unsigned long long timestamp, sensor_data_accuracy_e accuracy, float yaw,
                       float pitch, float roll, void *user_data)
 {
-   Eeze_Sensor_Obj *obj = NULL;
+   Eeze_Sensor_Obj *obj = user_data;
 
-   obj = eeze_sensor_obj_get(EEZE_SENSOR_TYPE_DEVICE_ORIENTATION);
    if (obj == NULL)
      {
-        ERR("No matching sensor object found in list.");
+        ERR("No matching sensor object given.");
         return;
      }
    obj->accuracy = accuracy;
@@ -260,19 +265,18 @@ device_orientation_cb(unsigned long long timestamp, sensor_data_accuracy_e accur
    obj->data[1] = pitch;
    obj->data[2] = roll;
    obj->timestamp = clock_convert(timestamp);
-   ecore_event_add(EEZE_SENSOR_EVENT_DEVICE_ORIENTATION, obj, NULL, NULL);
+   ecore_event_add(EEZE_SENSOR_EVENT_DEVICE_ORIENTATION, obj, _dummy_free, NULL);
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_DEVICE_ORIENTATION));
 }
 
 static void
 magnetic_cb(unsigned long long timestamp, sensor_data_accuracy_e accuracy, float x, float y, float z, void *user_data)
 {
-   Eeze_Sensor_Obj *obj = NULL;
+   Eeze_Sensor_Obj *obj = user_data;
 
-   obj = eeze_sensor_obj_get(EEZE_SENSOR_TYPE_MAGNETIC);
    if (obj == NULL)
      {
-        ERR("No matching sensor object found in list.");
+        ERR("No matching sensor object given.");
         return;
      }
    obj->accuracy = accuracy;
@@ -280,19 +284,18 @@ magnetic_cb(unsigned long long timestamp, sensor_data_accuracy_e accuracy, float
    obj->data[1] = y;
    obj->data[2] = z;
    obj->timestamp = clock_convert(timestamp);
-   ecore_event_add(EEZE_SENSOR_EVENT_MAGNETIC, obj, NULL, NULL);
+   ecore_event_add(EEZE_SENSOR_EVENT_MAGNETIC, obj, _dummy_free, NULL);
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_MAGNETIC));
 }
 
 static void
 orientation_cb(unsigned long long timestamp, sensor_data_accuracy_e accuracy, float azimuth, float pitch, float roll, void *user_data)
 {
-   Eeze_Sensor_Obj *obj = NULL;
+   Eeze_Sensor_Obj *obj = user_data;
 
-   obj = eeze_sensor_obj_get(EEZE_SENSOR_TYPE_ORIENTATION);
    if (obj == NULL)
      {
-        ERR("No matching sensor object found in list.");
+        ERR("No matching sensor object given.");
         return;
      }
    obj->accuracy = accuracy;
@@ -300,19 +303,18 @@ orientation_cb(unsigned long long timestamp, sensor_data_accuracy_e accuracy, fl
    obj->data[1] = pitch;
    obj->data[2] = roll;
    obj->timestamp = clock_convert(timestamp);
-   ecore_event_add(EEZE_SENSOR_EVENT_ORIENTATION, obj, NULL, NULL);
+   ecore_event_add(EEZE_SENSOR_EVENT_ORIENTATION, obj, _dummy_free, NULL);
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_ORIENTATION));
 }
 
 static void
 gyroscope_cb(unsigned long long timestamp, sensor_data_accuracy_e accuracy, float x, float y, float z, void *user_data)
 {
-   Eeze_Sensor_Obj *obj = NULL;
+   Eeze_Sensor_Obj *obj = user_data;
 
-   obj = eeze_sensor_obj_get(EEZE_SENSOR_TYPE_GYROSCOPE);
    if (obj == NULL)
      {
-        ERR("No matching sensor object found in list.");
+        ERR("No matching sensor object given.");
         return;
      }
    obj->accuracy = accuracy;
@@ -320,95 +322,90 @@ gyroscope_cb(unsigned long long timestamp, sensor_data_accuracy_e accuracy, floa
    obj->data[1] = y;
    obj->data[2] = z;
    obj->timestamp = clock_convert(timestamp);
-   ecore_event_add(EEZE_SENSOR_EVENT_GYROSCOPE, obj, NULL, NULL);
+   ecore_event_add(EEZE_SENSOR_EVENT_GYROSCOPE, obj, _dummy_free, NULL);
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_GYROSCOPE));
 }
 
 static void
 light_cb(unsigned long long timestamp, float lux, void *user_data)
 {
-   Eeze_Sensor_Obj *obj = NULL;
+   Eeze_Sensor_Obj *obj = user_data;
 
-   obj = eeze_sensor_obj_get(EEZE_SENSOR_TYPE_LIGHT);
    if (obj == NULL)
      {
-        ERR("No matching sensor object found in list.");
+        ERR("No matching sensor object given.");
         return;
      }
    /* We have to set this ourselves because we don't get it for this type */
    obj->accuracy = -1;
    obj->data[0] = lux;
    obj->timestamp = clock_convert(timestamp);
-   ecore_event_add(EEZE_SENSOR_EVENT_LIGHT, obj, NULL, NULL);
+   ecore_event_add(EEZE_SENSOR_EVENT_LIGHT, obj, _dummy_free, NULL);
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_LIGHT));
 }
 
 static void
 proximity_cb(unsigned long long timestamp, float distance, void *user_data)
 {
-   Eeze_Sensor_Obj *obj = NULL;
+   Eeze_Sensor_Obj *obj = user_data;
 
-   obj = eeze_sensor_obj_get(EEZE_SENSOR_TYPE_PROXIMITY);
    if (obj == NULL)
      {
-        ERR("No matching sensor object found in list.");
+        ERR("No matching sensor object given.");
         return;
      }
    /* We have to set this ourselves because we don't get it for this type */
    obj->accuracy = -1;
    obj->data[0] = distance;
    obj->timestamp = clock_convert(timestamp);
-   ecore_event_add(EEZE_SENSOR_EVENT_PROXIMITY, obj, NULL, NULL);
+   ecore_event_add(EEZE_SENSOR_EVENT_PROXIMITY, obj, _dummy_free, NULL);
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_PROXIMITY));
 }
 
 static void
 snap_cb(unsigned long long timestamp, sensor_motion_snap_e snap, void *user_data)
 {
-   Eeze_Sensor_Obj *obj = NULL;
+   Eeze_Sensor_Obj *obj = user_data;
 
-   obj = eeze_sensor_obj_get(EEZE_SENSOR_TYPE_MOTION_SNAP);
    if (obj == NULL)
      {
-        ERR("No matching sensor object found in list.");
+        ERR("No matching sensor object given.");
         return;
      }
    /* We have to set this ourselves because we don't get it for this type */
    obj->accuracy = -1;
    obj->data[0] = snap;
    obj->timestamp = clock_convert(timestamp);
-   ecore_event_add(EEZE_SENSOR_EVENT_SNAP, obj, NULL, NULL);
+   ecore_event_add(EEZE_SENSOR_EVENT_SNAP, obj, _dummy_free, NULL);
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_MOTION_SNAP));
 }
 
 static void
 shake_cb(unsigned long long timestamp, sensor_motion_shake_e shake, void *user_data)
 {
-   Eeze_Sensor_Obj *obj = NULL;
+   Eeze_Sensor_Obj *obj = user_data;
 
-   obj = eeze_sensor_obj_get(EEZE_SENSOR_TYPE_MOTION_SHAKE);
    if (obj == NULL)
      {
-        ERR("No matching sensor object found in list.");
+        ERR("No matching sensor object given.");
         return;
      }
    /* We have to set this ourselves because we don't get it for this type */
    obj->accuracy = -1;
    obj->data[0] = shake;
    obj->timestamp = clock_convert(timestamp);
-   ecore_event_add(EEZE_SENSOR_EVENT_SHAKE, obj, NULL, NULL);
+   ecore_event_add(EEZE_SENSOR_EVENT_SHAKE, obj, _dummy_free, NULL);
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_MOTION_SHAKE));
 }
 
 static void
 panning_cb(unsigned long long timestamp, int x, int y, void *user_data)
 {
-   Eeze_Sensor_Obj *obj = NULL;
+   Eeze_Sensor_Obj *obj = user_data;
 
-   obj = eeze_sensor_obj_get(EEZE_SENSOR_TYPE_MOTION_PANNING);
    if (obj == NULL)
      {
-        ERR("No matching sensor object found in list.");
+        ERR("No matching sensor object given.");
         return;
      }
    /* We have to set this ourselves because we don't get it for this type */
@@ -416,19 +413,18 @@ panning_cb(unsigned long long timestamp, int x, int y, void *user_data)
    obj->data[0] = x;
    obj->data[1] = y;
    obj->timestamp = clock_convert(timestamp);
-   ecore_event_add(EEZE_SENSOR_EVENT_PANNING, obj, NULL, NULL);
+   ecore_event_add(EEZE_SENSOR_EVENT_PANNING, obj, _dummy_free, NULL);
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_MOTION_PANNING));
 }
 
 static void
 panning_browse_cb(unsigned long long timestamp, int x, int y, void *user_data)
 {
-   Eeze_Sensor_Obj *obj = NULL;
+   Eeze_Sensor_Obj *obj = user_data;
 
-   obj = eeze_sensor_obj_get(EEZE_SENSOR_TYPE_MOTION_PANNING_BROWSE);
    if (obj == NULL)
      {
-        ERR("No matching sensor object found in list.");
+        ERR("No matching sensor object given.");
         return;
      }
    /* We have to set this ourselves because we don't get it for this type */
@@ -436,19 +432,18 @@ panning_browse_cb(unsigned long long timestamp, int x, int y, void *user_data)
    obj->data[0] = x;
    obj->data[1] = y;
    obj->timestamp = clock_convert(timestamp);
-   ecore_event_add(EEZE_SENSOR_EVENT_PANNING_BROWSE, obj, NULL, NULL);
+   ecore_event_add(EEZE_SENSOR_EVENT_PANNING_BROWSE, obj, _dummy_free, NULL);
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_MOTION_PANNING_BROWSE));
 }
 
 static void
 tilt_cb(unsigned long long timestamp, int x, int y, void *user_data)
 {
-   Eeze_Sensor_Obj *obj = NULL;
+   Eeze_Sensor_Obj *obj = user_data;
 
-   obj = eeze_sensor_obj_get(EEZE_SENSOR_TYPE_MOTION_TILT);
    if (obj == NULL)
      {
-        ERR("No matching sensor object found in list.");
+        ERR("No matching sensor object given.");
         return;
      }
    /* We have to set this ourselves because we don't get it for this type */
@@ -456,25 +451,24 @@ tilt_cb(unsigned long long timestamp, int x, int y, void *user_data)
    obj->data[0] = x;
    obj->data[1] = y;
    obj->timestamp = clock_convert(timestamp);
-   ecore_event_add(EEZE_SENSOR_EVENT_TILT, obj, NULL, NULL);
+   ecore_event_add(EEZE_SENSOR_EVENT_TILT, obj, _dummy_free, NULL);
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_MOTION_TILT));
 }
 
 static void
 facedown_cb(unsigned long long timestamp, void *user_data)
 {
-   Eeze_Sensor_Obj *obj = NULL;
+   Eeze_Sensor_Obj *obj = user_data;
 
-   obj = eeze_sensor_obj_get(EEZE_SENSOR_TYPE_MOTION_FACEDOWN);
    if (obj == NULL)
      {
-        ERR("No matching sensor object found in list.");
+        ERR("No matching sensor object given.");
         return;
      }
    /* We have to set this ourselves because we don't get it for this type */
    obj->accuracy = -1;
    obj->timestamp = clock_convert(timestamp);
-   ecore_event_add(EEZE_SENSOR_EVENT_FACEDOWN, obj, NULL, NULL);
+   ecore_event_add(EEZE_SENSOR_EVENT_FACEDOWN, obj, _dummy_free, NULL);
    /* We are not stopping the sensor here because we want to keep it as a motion
     * event coming in at any time.
     */
@@ -483,18 +477,17 @@ facedown_cb(unsigned long long timestamp, void *user_data)
 static void
 directcall_cb(unsigned long long timestamp, void *user_data)
 {
-   Eeze_Sensor_Obj *obj = NULL;
+   Eeze_Sensor_Obj *obj = user_data;
 
-   obj = eeze_sensor_obj_get(EEZE_SENSOR_TYPE_MOTION_DIRECT_CALL);
    if (obj == NULL)
      {
-        ERR("No matching sensor object found in list.");
+        ERR("No matching sensor object given.");
         return;
      }
    /* We have to set this ourselves because we don't get it for this type */
    obj->accuracy = -1;
    obj->timestamp = clock_convert(timestamp);
-   ecore_event_add(EEZE_SENSOR_EVENT_DIRECT_CALL, obj, NULL, NULL);
+   ecore_event_add(EEZE_SENSOR_EVENT_DIRECT_CALL, obj, _dummy_free, NULL);
    /* We are not stopping the sensor here because we want to keep it as a motion
     * event coming in at any time.
     */
@@ -503,18 +496,17 @@ directcall_cb(unsigned long long timestamp, void *user_data)
 static void
 smart_alert_cb(unsigned long long timestamp, void *user_data)
 {
-   Eeze_Sensor_Obj *obj = NULL;
+   Eeze_Sensor_Obj *obj = user_data;
 
-   obj = eeze_sensor_obj_get(EEZE_SENSOR_TYPE_MOTION_SMART_ALERT);
    if (obj == NULL)
      {
-        ERR("No matching sensor object found in list.");
+        ERR("No matching sensor object given.");
         return;
      }
    /* We have to set this ourselves because we don't get it for this type */
    obj->accuracy = -1;
    obj->timestamp = clock_convert(timestamp);
-   ecore_event_add(EEZE_SENSOR_EVENT_SMART_ALERT, obj, NULL, NULL);
+   ecore_event_add(EEZE_SENSOR_EVENT_SMART_ALERT, obj, _dummy_free, NULL);
    /* We are not stopping the sensor here because we want to keep it as a motion
     * event coming in at any time.
     */
@@ -523,18 +515,17 @@ smart_alert_cb(unsigned long long timestamp, void *user_data)
 static void
 no_move_cb(unsigned long long timestamp, void *user_data)
 {
-   Eeze_Sensor_Obj *obj = NULL;
+   Eeze_Sensor_Obj *obj = user_data;
 
-   obj = eeze_sensor_obj_get(EEZE_SENSOR_TYPE_MOTION_NO_MOVE);
    if (obj == NULL)
      {
-        ERR("No matching sensor object found in list.");
+        ERR("No matching sensor object given.");
         return;
      }
    /* We have to set this ourselves because we don't get it for this type */
    obj->accuracy = -1;
    obj->timestamp = clock_convert(timestamp);
-   ecore_event_add(EEZE_SENSOR_EVENT_NO_MOVE, obj, NULL, NULL);
+   ecore_event_add(EEZE_SENSOR_EVENT_NO_MOVE, obj, _dummy_free, NULL);
    /* We are not stopping the sensor here because we want to keep it as a motion
     * event coming in at any time.
     */
@@ -543,18 +534,17 @@ no_move_cb(unsigned long long timestamp, void *user_data)
 static void
 doubletap_cb(unsigned long long timestamp, void *user_data)
 {
-   Eeze_Sensor_Obj *obj = NULL;
+   Eeze_Sensor_Obj *obj = user_data;
 
-   obj = eeze_sensor_obj_get(EEZE_SENSOR_TYPE_MOTION_DOUBLETAP);
    if (obj == NULL)
      {
-        ERR("No matching sensor object found in list.");
+        ERR("No matching sensor object given.");
         return;
      }
    /* We have to set this ourselves because we don't get it for this type */
    obj->accuracy = -1;
    obj->timestamp = clock_convert(timestamp);
-   ecore_event_add(EEZE_SENSOR_EVENT_DOUBLETAP, obj, NULL, NULL);
+   ecore_event_add(EEZE_SENSOR_EVENT_DOUBLETAP, obj, _dummy_free, NULL);
    /* We are not stopping the sensor here because we want to keep it as a motion
     * event coming in at any time.
     */
@@ -563,14 +553,13 @@ doubletap_cb(unsigned long long timestamp, void *user_data)
 static void
 accelerometer_read_cb(unsigned long long timestamp, sensor_data_accuracy_e accuracy, float x, float y, float z, void *user_data)
 {
-   Eeze_Sensor_Obj *obj = NULL;
+   Eeze_Sensor_Obj *obj = user_data;
 
    sensor_accelerometer_unset_cb(sensor_handle);
 
-   obj = eeze_sensor_obj_get(EEZE_SENSOR_TYPE_ACCELEROMETER);
    if (obj == NULL)
      {
-        ERR("No matching sensor object found in list.");
+        ERR("No matching sensor object given.");
         return;
      }
    obj->accuracy = accuracy;
@@ -578,21 +567,20 @@ accelerometer_read_cb(unsigned long long timestamp, sensor_data_accuracy_e accur
    obj->data[1] = y;
    obj->data[2] = z;
    obj->timestamp = clock_convert(timestamp);
-   ecore_event_add(EEZE_SENSOR_EVENT_ACCELEROMETER, obj, NULL, NULL);
+   ecore_event_add(EEZE_SENSOR_EVENT_ACCELEROMETER, obj, _dummy_free, NULL);
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_ACCELEROMETER));
 }
 
 static void
 gravity_read_cb(unsigned long long timestamp, sensor_data_accuracy_e accuracy, float x, float y, float z, void *user_data)
 {
-   Eeze_Sensor_Obj *obj = NULL;
+   Eeze_Sensor_Obj *obj = user_data;
 
    sensor_gravity_unset_cb(sensor_handle);
 
-   obj = eeze_sensor_obj_get(EEZE_SENSOR_TYPE_GRAVITY);
    if (obj == NULL)
      {
-        ERR("No matching sensor object found in list.");
+        ERR("No matching sensor object given.");
         return;
      }
    obj->accuracy = accuracy;
@@ -600,21 +588,20 @@ gravity_read_cb(unsigned long long timestamp, sensor_data_accuracy_e accuracy, f
    obj->data[1] = y;
    obj->data[2] = z;
    obj->timestamp = clock_convert(timestamp);
-   ecore_event_add(EEZE_SENSOR_EVENT_GRAVITY, obj, NULL, NULL);
+   ecore_event_add(EEZE_SENSOR_EVENT_GRAVITY, obj, _dummy_free, NULL);
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_GRAVITY));
 }
 
 static void
 linear_acceleration_read_cb(unsigned long long timestamp, sensor_data_accuracy_e accuracy, float x, float y, float z, void *user_data)
 {
-   Eeze_Sensor_Obj *obj = NULL;
+   Eeze_Sensor_Obj *obj = user_data;
 
    sensor_linear_acceleration_unset_cb(sensor_handle);
 
-   obj = eeze_sensor_obj_get(EEZE_SENSOR_TYPE_LINEAR_ACCELERATION);
    if (obj == NULL)
      {
-        ERR("No matching sensor object found in list.");
+        ERR("No matching sensor object given.");
         return;
      }
    obj->accuracy = accuracy;
@@ -622,7 +609,7 @@ linear_acceleration_read_cb(unsigned long long timestamp, sensor_data_accuracy_e
    obj->data[1] = y;
    obj->data[2] = z;
    obj->timestamp = clock_convert(timestamp);
-   ecore_event_add(EEZE_SENSOR_EVENT_LINEAR_ACCELERATION, obj, NULL, NULL);
+   ecore_event_add(EEZE_SENSOR_EVENT_LINEAR_ACCELERATION, obj, _dummy_free, NULL);
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_LINEAR_ACCELERATION));
 }
 
@@ -630,14 +617,13 @@ static void
 device_orientation_read_cb(unsigned long long timestamp, sensor_data_accuracy_e accuracy, float yaw,
                            float pitch, float roll, void *user_data)
 {
-   Eeze_Sensor_Obj *obj = NULL;
+   Eeze_Sensor_Obj *obj = user_data;
 
    sensor_device_orientation_unset_cb(sensor_handle);
 
-   obj = eeze_sensor_obj_get(EEZE_SENSOR_TYPE_DEVICE_ORIENTATION);
    if (obj == NULL)
      {
-        ERR("No matching sensor object found in list.");
+        ERR("No matching sensor object given.");
         return;
      }
    obj->accuracy = accuracy;
@@ -645,21 +631,20 @@ device_orientation_read_cb(unsigned long long timestamp, sensor_data_accuracy_e 
    obj->data[1] = pitch;
    obj->data[2] = roll;
    obj->timestamp = clock_convert(timestamp);
-   ecore_event_add(EEZE_SENSOR_EVENT_DEVICE_ORIENTATION, obj, NULL, NULL);
+   ecore_event_add(EEZE_SENSOR_EVENT_DEVICE_ORIENTATION, obj, _dummy_free, NULL);
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_DEVICE_ORIENTATION));
 }
 
 static void
 magnetic_read_cb(unsigned long long timestamp, sensor_data_accuracy_e accuracy, float x, float y, float z, void *user_data)
 {
-   Eeze_Sensor_Obj *obj = NULL;
+   Eeze_Sensor_Obj *obj = user_data;
 
    sensor_magnetic_unset_cb(sensor_handle);
 
-   obj = eeze_sensor_obj_get(EEZE_SENSOR_TYPE_MAGNETIC);
    if (obj == NULL)
      {
-        ERR("No matching sensor object found in list.");
+        ERR("No matching sensor object given.");
         return;
      }
    obj->accuracy = accuracy;
@@ -667,21 +652,20 @@ magnetic_read_cb(unsigned long long timestamp, sensor_data_accuracy_e accuracy, 
    obj->data[1] = y;
    obj->data[2] = z;
    obj->timestamp = clock_convert(timestamp);
-   ecore_event_add(EEZE_SENSOR_EVENT_MAGNETIC, obj, NULL, NULL);
+   ecore_event_add(EEZE_SENSOR_EVENT_MAGNETIC, obj, _dummy_free, NULL);
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_MAGNETIC));
 }
 
 static void
 orientation_read_cb(unsigned long long timestamp, sensor_data_accuracy_e accuracy, float azimuth, float pitch, float roll, void *user_data)
 {
-   Eeze_Sensor_Obj *obj = NULL;
+   Eeze_Sensor_Obj *obj = user_data;
 
    sensor_orientation_unset_cb(sensor_handle);
 
-   obj = eeze_sensor_obj_get(EEZE_SENSOR_TYPE_ORIENTATION);
    if (obj == NULL)
      {
-        ERR("No matching sensor object found in list.");
+        ERR("No matching sensor object given.");
         return;
      }
    obj->accuracy = accuracy;
@@ -689,21 +673,20 @@ orientation_read_cb(unsigned long long timestamp, sensor_data_accuracy_e accurac
    obj->data[1] = pitch;
    obj->data[2] = roll;
    obj->timestamp = clock_convert(timestamp);
-   ecore_event_add(EEZE_SENSOR_EVENT_ORIENTATION, obj, NULL, NULL);
+   ecore_event_add(EEZE_SENSOR_EVENT_ORIENTATION, obj, _dummy_free, NULL);
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_ORIENTATION));
 }
 
 static void
 gyroscope_read_cb(unsigned long long timestamp, sensor_data_accuracy_e accuracy, float x, float y, float z, void *user_data)
 {
-   Eeze_Sensor_Obj *obj = NULL;
+   Eeze_Sensor_Obj *obj = user_data;
 
    sensor_gyroscope_unset_cb(sensor_handle);
 
-   obj = eeze_sensor_obj_get(EEZE_SENSOR_TYPE_GYROSCOPE);
    if (obj == NULL)
      {
-        ERR("No matching sensor object found in list.");
+        ERR("No matching sensor object given.");
         return;
      }
    obj->accuracy = accuracy;
@@ -711,125 +694,119 @@ gyroscope_read_cb(unsigned long long timestamp, sensor_data_accuracy_e accuracy,
    obj->data[1] = y;
    obj->data[2] = z;
    obj->timestamp = clock_convert(timestamp);
-   ecore_event_add(EEZE_SENSOR_EVENT_GYROSCOPE, obj, NULL, NULL);
+   ecore_event_add(EEZE_SENSOR_EVENT_GYROSCOPE, obj, _dummy_free, NULL);
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_GYROSCOPE));
 }
 
 static void
 light_read_cb(unsigned long long timestamp, float lux, void *user_data)
 {
-   Eeze_Sensor_Obj *obj = NULL;
+   Eeze_Sensor_Obj *obj = user_data;
 
    sensor_light_unset_cb(sensor_handle);
 
-   obj = eeze_sensor_obj_get(EEZE_SENSOR_TYPE_LIGHT);
    if (obj == NULL)
      {
-        ERR("No matching sensor object found in list.");
+        ERR("No matching sensor object given.");
         return;
      }
    /* We have to set this ourselves because we don't get it for this type */
    obj->accuracy = -1;
    obj->data[0] = lux;
    obj->timestamp = clock_convert(timestamp);
-   ecore_event_add(EEZE_SENSOR_EVENT_LIGHT, obj, NULL, NULL);
+   ecore_event_add(EEZE_SENSOR_EVENT_LIGHT, obj, _dummy_free, NULL);
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_LIGHT));
 }
 
 static void
 proximity_read_cb(unsigned long long timestamp, float distance, void *user_data)
 {
-   Eeze_Sensor_Obj *obj = NULL;
+   Eeze_Sensor_Obj *obj = user_data;
 
    sensor_proximity_unset_cb(sensor_handle);
 
-   obj = eeze_sensor_obj_get(EEZE_SENSOR_TYPE_PROXIMITY);
    if (obj == NULL)
      {
-        ERR("No matching sensor object found in list.");
+        ERR("No matching sensor object given.");
         return;
      }
    /* We have to set this ourselves because we don't get it for this type */
    bj->accuracy = -1;
    obj->data[0] = distance;
    obj->timestamp = clock_convert(timestamp);
-   ecore_event_add(EEZE_SENSOR_EVENT_PROXIMITY, obj, NULL, NULL);
+   ecore_event_add(EEZE_SENSOR_EVENT_PROXIMITY, obj, _dummy_free, NULL);
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_PROXIMITY));
 }
 
 static void
 snap_read_cb(unsigned long long timestamp, sensor_motion_snap_e snap, void *user_data)
 {
-   Eeze_Sensor_Obj *obj = NULL;
+   Eeze_Sensor_Obj *obj = user_data;
 
    sensor_motion_snap_unset_cb(sensor_handle);
 
-   obj = eeze_sensor_obj_get(EEZE_SENSOR_TYPE_MOTION_SNAP);
    if (obj == NULL)
      {
-        ERR("No matching sensor object found in list.");
+        ERR("No matching sensor object given.");
         return;
      }
    /* We have to set this ourselves because we don't get it for this type */
    obj->accuracy = -1;
    obj->data[0] = snap;
    obj->timestamp = clock_convert(timestamp);
-   ecore_event_add(EEZE_SENSOR_EVENT_SNAP, obj, NULL, NULL);
+   ecore_event_add(EEZE_SENSOR_EVENT_SNAP, obj, _dummy_free, NULL);
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_MOTION_SNAP));
 }
 
 static void
 shake_read_cb(unsigned long long timestamp, sensor_motion_shake_e shake, void *user_data)
 {
-   Eeze_Sensor_Obj *obj = NULL;
+   Eeze_Sensor_Obj *obj = user_data;
 
    sensor_motion_shake_unset_cb(sensor_handle);
 
-   obj = eeze_sensor_obj_get(EEZE_SENSOR_TYPE_MOTION_SHAKE);
    if (obj == NULL)
      {
-        ERR("No matching sensor object found in list.");
+        ERR("No matching sensor object given.");
         return;
      }
    /* We have to set this ourselves because we don't get it for this type */
    obj->accuracy = -1;
    obj->data[0] = shake;
    obj->timestamp = clock_convert(timestamp);
-   ecore_event_add(EEZE_SENSOR_EVENT_SHAKE, obj, NULL, NULL);
+   ecore_event_add(EEZE_SENSOR_EVENT_SHAKE, obj, _dummy_free, NULL);
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_MOTION_SHAKE));
 }
 
 static void
 doubletap_read_cb(unsigned long long timestamp, void *user_data)
 {
-   Eeze_Sensor_Obj *obj = NULL;
+   Eeze_Sensor_Obj *obj = user_data;
 
    sensor_motion_doubletap_unset_cb(sensor_handle);
 
-   obj = eeze_sensor_obj_get(EEZE_SENSOR_TYPE_MOTION_DOUBLETAP);
    if (obj == NULL)
      {
-        ERR("No matching sensor object found in list.");
+        ERR("No matching sensor object given.");
         return;
      }
    /* We have to set this ourselves because we don't get it for this type */
    obj->accuracy = -1;
    obj->timestamp = clock_convert(timestamp);
-   ecore_event_add(EEZE_SENSOR_EVENT_DOUBLETAP, obj, NULL, NULL);
+   ecore_event_add(EEZE_SENSOR_EVENT_DOUBLETAP, obj, _dummy_free, NULL);
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_MOTION_DOUBLETAP));
 }
 
 static void
 panning_read_cb(unsigned long long timestamp, int x, int y, void *user_data)
 {
-   Eeze_Sensor_Obj *obj = NULL;
+   Eeze_Sensor_Obj *obj = user_data;
 
    sensor_motion_panning_unset_cb(sensor_handle);
 
-   obj = eeze_sensor_obj_get(EEZE_SENSOR_TYPE_MOTION_PANNING);
    if (obj == NULL)
      {
-        ERR("No matching sensor object found in list.");
+        ERR("No matching sensor object given.");
         return;
      }
    /* We have to set this ourselves because we don't get it for this type */
@@ -837,21 +814,20 @@ panning_read_cb(unsigned long long timestamp, int x, int y, void *user_data)
    obj->data[0] = x;
    obj->data[1] = y;
    obj->timestamp = clock_convert(timestamp);
-   ecore_event_add(EEZE_SENSOR_EVENT_PANNING, obj, NULL, NULL);
+   ecore_event_add(EEZE_SENSOR_EVENT_PANNING, obj, _dummy_free, NULL);
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_MOTION_PANNING));
 }
 
 static void
 panning_browse_read_cb(unsigned long long timestamp, int x, int y, void *user_data)
 {
-   Eeze_Sensor_Obj *obj = NULL;
+   Eeze_Sensor_Obj *obj = user_data;
 
    sensor_motion_panning_browse_unset_cb(sensor_handle);
 
-   obj = eeze_sensor_obj_get(EEZE_SENSOR_TYPE_MOTION_PANNING_BROWSE);
    if (obj == NULL)
      {
-        ERR("No matching sensor object found in list.");
+        ERR("No matching sensor object given.");
         return;
      }
    /* We have to set this ourselves because we don't get it for this type */
@@ -859,21 +835,20 @@ panning_browse_read_cb(unsigned long long timestamp, int x, int y, void *user_da
    obj->data[0] = x;
    obj->data[1] = y;
    obj->timestamp = clock_convert(timestamp);
-   ecore_event_add(EEZE_SENSOR_EVENT_PANNING_BROWSE, obj, NULL, NULL);
+   ecore_event_add(EEZE_SENSOR_EVENT_PANNING_BROWSE, obj, _dummy_free, NULL);
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_MOTION_PANNING_BROWSE));
 }
 
 static void
 tilt_read_cb(unsigned long long timestamp, int x, int y, void *user_data)
 {
-   Eeze_Sensor_Obj *obj = NULL;
+   Eeze_Sensor_Obj *obj = user_data;
 
    sensor_motion_tilt_unset_cb(sensor_handle);
 
-   obj = eeze_sensor_obj_get(EEZE_SENSOR_TYPE_MOTION_TILT);
    if (obj == NULL)
      {
-        ERR("No matching sensor object found in list.");
+        ERR("No matching sensor object given.");
         return;
      }
    /* We have to set this ourselves because we don't get it for this type */
@@ -881,87 +856,83 @@ tilt_read_cb(unsigned long long timestamp, int x, int y, void *user_data)
    obj->data[0] = x;
    obj->data[1] = y;
    obj->timestamp = clock_convert(timestamp);
-   ecore_event_add(EEZE_SENSOR_EVENT_TILT, obj, NULL, NULL);
+   ecore_event_add(EEZE_SENSOR_EVENT_TILT, obj, _dummy_free, NULL);
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_MOTION_TILT));
 }
 
 static void
 facedown_read_cb(unsigned long long timestamp, void *user_data)
 {
-   Eeze_Sensor_Obj *obj = NULL;
+   Eeze_Sensor_Obj *obj = user_data;
 
    sensor_motion_facedown_unset_cb(sensor_handle);
 
-   obj = eeze_sensor_obj_get(EEZE_SENSOR_TYPE_MOTION_FACEDOWN);
    if (obj == NULL)
      {
-        ERR("No matching sensor object found in list.");
+        ERR("No matching sensor object given.");
         return;
      }
    /* We have to set this ourselves because we don't get it for this type */
    obj->accuracy = -1;
    obj->timestamp = clock_convert(timestamp);
-   ecore_event_add(EEZE_SENSOR_EVENT_FACEDOWN, obj, NULL, NULL);
+   ecore_event_add(EEZE_SENSOR_EVENT_FACEDOWN, obj, _dummy_free, NULL);
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_MOTION_FACEDOWN));
 }
 
 static void
 directcall_read_cb(unsigned long long timestamp, void *user_data)
 {
-   Eeze_Sensor_Obj *obj = NULL;
+   Eeze_Sensor_Obj *obj = user_data;
 
    sensor_motion_directcall_unset_cb(sensor_handle);
 
-   obj = eeze_sensor_obj_get(EEZE_SENSOR_TYPE_MOTION_DIRECT_CALL);
    if (obj == NULL)
      {
-        ERR("No matching sensor object found in list.");
+        ERR("No matching sensor object given.");
         return;
      }
    /* We have to set this ourselves because we don't get it for this type */
    obj->accuracy = -1;
    obj->timestamp = clock_convert(timestamp);
-   ecore_event_add(EEZE_SENSOR_EVENT_DIRECT_CALL, obj, NULL, NULL);
+   ecore_event_add(EEZE_SENSOR_EVENT_DIRECT_CALL, obj, _dummy_free, NULL);
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_MOTION_DIRECT_CALL));
 }
 
 static void
 smart_alert_read_cb(unsigned long long timestamp, void *user_data)
 {
-   Eeze_Sensor_Obj *obj = NULL;
+   Eeze_Sensor_Obj *obj = user_data;
 
    sensor_motion_smart_alert_unset_cb(sensor_handle);
 
-   obj = eeze_sensor_obj_get(EEZE_SENSOR_TYPE_MOTION_SMART_ALERT);
    if (obj == NULL)
      {
-        ERR("No matching sensor object found in list.");
+        ERR("No matching sensor object given.");
         return;
      }
    /* We have to set this ourselves because we don't get it for this type */
    obj->accuracy = -1;
    obj->timestamp = clock_convert(timestamp);
-   ecore_event_add(EEZE_SENSOR_EVENT_SMART_ALERT, obj, NULL, NULL);
+   ecore_event_add(EEZE_SENSOR_EVENT_SMART_ALERT, obj, _dummy_free, NULL);
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_MOTION_SMART_ALERT));
 }
 
 static void
 no_move_read_cb(unsigned long long timestamp, void *user_data)
 {
-   Eeze_Sensor_Obj *obj = NULL;
+   Eeze_Sensor_Obj *obj = user_data;
 
    sensor_motion_no_move_unset_cb(sensor_handle);
 
-   obj = eeze_sensor_obj_get(EEZE_SENSOR_TYPE_MOTION_NO_MOVE);
    if (obj == NULL)
      {
-        ERR("No matching sensor object found in list.");
+        ERR("No matching sensor object given.");
         return;
      }
    /* We have to set this ourselves because we don't get it for this type */
    obj->accuracy = -1;
    obj->timestamp = clock_convert(timestamp);
-   ecore_event_add(EEZE_SENSOR_EVENT_NO_MOVE, obj, NULL, NULL);
+   ecore_event_add(EEZE_SENSOR_EVENT_NO_MOVE, obj, _dummy_free, NULL);
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_MOTION_NO_MOVE));
 }
 
@@ -1189,90 +1160,93 @@ eeze_sensor_tizen_cb_set(Eeze_Sensor *handle, Eeze_Sensor_Type sensor_type, void
  * data. This is handled in the core and not in the different modules though.
  */
 static Eina_Bool
-eeze_sensor_tizen_async_read(Eeze_Sensor_Type sensor_type, void *user_data)
+eeze_sensor_tizen_async_read(Eeze_Sensor_Obj *obj, void *user_data)
 {
    sensor_type_e type;
 
-   type = eeze_to_tizen(sensor_type);
+   if (user_data)
+     obj->user_data = user_data;
+
+   type = eeze_to_tizen(obj->type);
 
    sensor_start(sensor_handle, type);
 
    switch (type)
      {
       case SENSOR_ACCELEROMETER:
-        sensor_accelerometer_set_cb(sensor_handle, 0, accelerometer_read_cb, NULL);
+        sensor_accelerometer_set_cb(sensor_handle, 0, accelerometer_read_cb, obj);
         break;
 
       case SENSOR_GRAVITY:
-        sensor_gravity_set_cb(sensor_handle, 0, gravity_read_cb, NULL);
+        sensor_gravity_set_cb(sensor_handle, 0, gravity_read_cb, obj);
         break;
 
       case SENSOR_LINEAR_ACCELERATION:
-        sensor_linear_acceleration_set_cb(sensor_handle, 0, linear_acceleration_read_cb, NULL);
+        sensor_linear_acceleration_set_cb(sensor_handle, 0, linear_acceleration_read_cb, obj);
         break;
 
       case SENSOR_DEVICE_ORIENTATION:
-        sensor_device_orientation_set_cb(sensor_handle, 0, device_orientation_read_cb, NULL);
+        sensor_device_orientation_set_cb(sensor_handle, 0, device_orientation_read_cb, obj);
         break;
 
       case SENSOR_MAGNETIC:
-        sensor_magnetic_set_cb(sensor_handle, 0, magnetic_read_cb, NULL);
+        sensor_magnetic_set_cb(sensor_handle, 0, magnetic_read_cb, obj);
         break;
 
       case SENSOR_ORIENTATION:
-        sensor_orientation_set_cb(sensor_handle, 0, orientation_read_cb, NULL);
+        sensor_orientation_set_cb(sensor_handle, 0, orientation_read_cb, obj);
         break;
 
       case SENSOR_GYROSCOPE:
-        sensor_gyroscope_set_cb(sensor_handle, 0, gyroscope_read_cb, NULL);
+        sensor_gyroscope_set_cb(sensor_handle, 0, gyroscope_read_cb, obj);
         break;
 
       case SENSOR_LIGHT:
-        sensor_light_set_cb(sensor_handle, 0, light_read_cb, NULL);
+        sensor_light_set_cb(sensor_handle, 0, light_read_cb, obj);
         break;
 
       case SENSOR_PROXIMITY:
-        sensor_proximity_set_cb(sensor_handle, 0, proximity_read_cb, NULL);
+        sensor_proximity_set_cb(sensor_handle, 0, proximity_read_cb, obj);
         break;
 
       case SENSOR_MOTION_SNAP:
-        sensor_motion_snap_set_cb(sensor_handle, snap_read_cb, NULL);
+        sensor_motion_snap_set_cb(sensor_handle, snap_read_cb, obj);
         break;
 
       case SENSOR_MOTION_SHAKE:
-        sensor_motion_shake_set_cb(sensor_handle, shake_read_cb, NULL);
+        sensor_motion_shake_set_cb(sensor_handle, shake_read_cb, obj);
         break;
 
       case SENSOR_MOTION_DOUBLETAP:
-        sensor_motion_doubletap_set_cb(sensor_handle, doubletap_read_cb, NULL);
+        sensor_motion_doubletap_set_cb(sensor_handle, doubletap_read_cb, obj);
         break;
 
       case SENSOR_MOTION_PANNING:
-        sensor_motion_panning_set_cb(sensor_handle, panning_read_cb, NULL);
+        sensor_motion_panning_set_cb(sensor_handle, panning_read_cb, obj);
         break;
 
       case SENSOR_MOTION_PANNING_BROWSE:
-        sensor_motion_panning_browse_set_cb(sensor_handle, panning_browse_read_cb, NULL);
+        sensor_motion_panning_browse_set_cb(sensor_handle, panning_browse_read_cb, obj);
         break;
 
       case SENSOR_MOTION_TILT:
-        sensor_motion_tilt_set_cb(sensor_handle, tilt_read_cb, NULL);
+        sensor_motion_tilt_set_cb(sensor_handle, tilt_read_cb, obj);
         break;
 
       case SENSOR_MOTION_FACEDOWN:
-        sensor_motion_facedown_set_cb(sensor_handle, facedown_read_cb, NULL);
+        sensor_motion_facedown_set_cb(sensor_handle, facedown_read_cb, obj);
         break;
 
       case SENSOR_MOTION_DIRECTCALL:
-        sensor_motion_directcall_set_cb(sensor_handle, directcall_read_cb, NULL);
+        sensor_motion_directcall_set_cb(sensor_handle, directcall_read_cb, obj);
         break;
 
       case SENSOR_MOTION_SMART_ALERT:
-        sensor_motion_smart_alert_set_cb(sensor_handle, smart_alert_read_cb, NULL);
+        sensor_motion_smart_alert_set_cb(sensor_handle, smart_alert_read_cb, obj);
         break;
 
       case SENSOR_MOTION_NO_MOVE:
-        sensor_motion_no_move_set_cb(sensor_handle, no_move_read_cb, NULL);
+        sensor_motion_no_move_set_cb(sensor_handle, no_move_read_cb, obj);
         break;
 
       default:
@@ -1341,8 +1315,10 @@ eeze_sensor_tizen_init(void)
    /* FIXME add other motion events in here */
    sensor_start(sensor_handle, SENSOR_MOTION_FACEDOWN);
    sensor_start(sensor_handle, SENSOR_MOTION_DOUBLETAP);
-   sensor_motion_doubletap_set_cb(sensor_handle, doubletap_cb, NULL);
-   sensor_motion_facedown_set_cb(sensor_handle, facedown_cb, NULL);
+   sensor_motion_doubletap_set_cb(sensor_handle, doubletap_cb,
+                                  eeze_sensor_obj_get(EEZE_SENSOR_TYPE_DOUBLETAP));
+   sensor_motion_facedown_set_cb(sensor_handle, facedown_cb,
+                                 eeze_sensor_obj_get(EEZE_SENSOR_TYPE_FACEDOWN));
 
    return EINA_TRUE;
 }

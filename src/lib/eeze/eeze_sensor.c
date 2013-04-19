@@ -295,7 +295,7 @@ eeze_sensor_async_read(Eeze_Sensor_Obj *sens, void *user_data)
    module = _highest_priority_module_get();
    if (!module) return EINA_FALSE;
    if (module->async_read)
-     return module->async_read(sens->type, user_data);
+     return module->async_read(sens, user_data);
 
    return EINA_FALSE;
 }

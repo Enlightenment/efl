@@ -22,6 +22,14 @@ static Eeze_Sensor_Module *esensor_module;
 
 static Eina_List *devices;
 
+static void
+_dummy_free(void *user_data EINA_UNUSED, void *func_data EINA_UNUSED)
+{
+/* Don't free the event data after dispatching the event. We keep track of
+ * it on our own
+ */
+}
+
 static Eina_Bool
 udev_init(void)
 {
@@ -110,18 +118,12 @@ udev_read(Eeze_Sensor_Obj *obj)
 }
 
 static Eina_Bool
-udev_async_read(Eeze_Sensor_Type sensor_type, void *user_data EINA_UNUSED)
+udev_async_read(Eeze_Sensor_Obj *obj, void *user_data)
 {
-   Eeze_Sensor_Obj *obj = NULL;
+   if (user_data)
+     obj->user_data = user_data;
 
-   obj = eeze_sensor_obj_get(sensor_type);
-   if (obj == NULL)
-     {
-        ERR("No matching sensor object found in list.");
-        return EINA_FALSE;
-     }
-
-   switch (sensor_type)
+   switch (obj->type)
      {
       case EEZE_SENSOR_TYPE_TEMPERATURE:
         obj->accuracy = -1;
@@ -129,12 +131,11 @@ udev_async_read(Eeze_Sensor_Type sensor_type, void *user_data EINA_UNUSED)
         obj->data[1] = 0;
         obj->data[2] = 0;
         obj->timestamp = ecore_time_get();
-        ecore_event_add(EEZE_SENSOR_EVENT_TEMPERATURE, obj, NULL, NULL);
+        ecore_event_add(EEZE_SENSOR_EVENT_TEMPERATURE, obj, _dummy_free, NULL);
         break;
 
       default:
         ERR("Not possible to read from this sensor type.");
-        free(obj);
         return EINA_FALSE;
      }
    return EINA_TRUE;
