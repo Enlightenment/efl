@@ -1320,10 +1320,6 @@ _edje_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
      }
 #endif
 
-   if ((!strcmp(ev->keyname, "Escape")) ||
-       (!strcmp(ev->keyname, "Return")) || (!strcmp(ev->keyname, "KP_Enter")))
-     _edje_entry_imf_context_reset(rp);
-
    old_cur_pos = evas_textblock_cursor_pos_get(en->cursor);
 
    control = evas_key_modifier_is_set(ev->modifiers, "Control");

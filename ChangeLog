@@ -1,3 +1,7 @@
+2013-04-19  Jihoon Kim (jihoon)
+
+        * Edje: Remove code to call ecore_imf_context_reset in case of pressing ESC, Return key
+
 2013-04-14  Carsten Haitzler (The Rasterman)
 
         * Evas: Fix evas gl_x11 to use default depth when visual
