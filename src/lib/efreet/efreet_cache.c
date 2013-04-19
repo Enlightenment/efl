@@ -203,9 +203,6 @@ efreet_cache_shutdown(void)
     util_cache = efreet_cache_close(util_cache);
     IF_RELEASE(util_cache_file);
 
-    eina_log_domain_unregister(_efreet_cache_log_dom);
-    _efreet_cache_log_dom = -1;
-
     /*
      * TODO: Needed??
     edbus_name_owner_changed_callback_del(conn, BUS, on_name_owner_changed, conn);
@@ -219,6 +216,9 @@ efreet_cache_shutdown(void)
       }
 
     edbus_shutdown();
+
+    eina_log_domain_unregister(_efreet_cache_log_dom);
+    _efreet_cache_log_dom = -1;
 }
 
 /*
