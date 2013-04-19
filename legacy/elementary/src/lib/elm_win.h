@@ -1537,7 +1537,7 @@ EAPI void                  elm_win_title_set(Evas_Object *obj, const char *title
  * Get the title of the window
  *
  * The returned string is an internal one and should not be freed or
- * modified. It will also be rendered invalid if a new title is set or if
+ * modified. It will also be invalid if a new title is set or if
  * the window is destroyed.
  *
  * @param obj The window object
@@ -1561,7 +1561,7 @@ EAPI void                  elm_win_icon_name_set(Evas_Object *obj, const char *i
  * Get the icon name of the window
  *
  * The returned string is an internal one and should not be freed or
- * modified. It will also be rendered invalid if a new icon name is set or if
+ * modified. It will also be invalid if a new icon name is set or if
  * the window is destroyed.
  *
  * @param obj The window object
@@ -1585,7 +1585,7 @@ EAPI void                  elm_win_role_set(Evas_Object *obj, const char *role);
  * Get the role of the window
  *
  * The returned string is an internal one and should not be freed or
- * modified. It will also be rendered invalid if a new role is set or if
+ * modified. It will also be invalid if a new role is set or if
  * the window is destroyed.
  *
  * @param obj The window object
