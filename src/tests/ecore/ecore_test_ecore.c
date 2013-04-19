@@ -13,6 +13,9 @@
 #define FP_ERR (0.0000001)
 #define CHECK_FP(a, b) ((a - b) < FP_ERR)
 
+#define ECORE_EVENT_CUSTOM_1 1
+#define ECORE_EVENT_CUSTOM_2 2
+
 static int _log_dom;
 #define INF(...) EINA_LOG_DOM_INFO(_log_dom, __VA_ARGS__)
 
@@ -251,41 +254,210 @@ START_TEST(ecore_test_ecore_main_loop_fd_handler)
 END_TEST
 
 static Eina_Bool
-_event_handler_cb(void *data, int type EINA_UNUSED, void *event EINA_UNUSED)
+_event_handler_cb(void *data, int type, void *event)
 {
-   /* FIXME: why setting val if it is overwritten just after and what is its purpose ??? */
-   Eina_Bool *val = data;
+   int *did = data;
 
-   *val = EINA_TRUE;
-   ecore_main_loop_quit();
-   return EINA_FALSE;
+   int t1 = type;
+   int *e1 = event;
+
+   int t2 = ecore_event_current_type_get();
+   int *e2 = ecore_event_current_event_get();
+
+   if (t1 == t2)
+      (*did)++;
+
+   if (*e1 == *e2 && (ECORE_EVENT_CUSTOM_1 == *e1 || ECORE_EVENT_CUSTOM_2 == *e1))
+      (*did)++;
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_event_handler_cb2(void *data, int type EINA_UNUSED, void *event EINA_UNUSED)
+{
+   int *did = data;
+   (*did)++;
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_event_handler_cb3(void *data, int type EINA_UNUSED, void *event EINA_UNUSED)
+{
+   int *did = data;
+   (*did)++;
+   return EINA_TRUE;
+}
+
+static int *
+_event_new(int id)
+{
+   int *ev = malloc(sizeof(int));
+
+   switch(id)
+   {
+   case ECORE_EVENT_CUSTOM_1:
+      *ev = ECORE_EVENT_CUSTOM_1;
+      break;
+
+   case ECORE_EVENT_CUSTOM_2:
+      *ev = ECORE_EVENT_CUSTOM_2;
+      break;
+
+   default:
+      *ev = ECORE_EVENT_NONE;
+   }
+
+   return ev;
+}
+
+static void
+_event_free(void *user_data, void *func_data)
+{
+   int *did = user_data;
+   int *ev = func_data;
+
+   if (ECORE_EVENT_CUSTOM_1 == *ev || ECORE_EVENT_CUSTOM_2 == *ev)
+      (*did)++;
+
+   free(ev);
+}
+
+static void*
+_filter_start(void *data)
+{
+   int *did = data;
+   (*did)++;
+   return NULL;
+}
+
+static Eina_Bool
+_filter(void *data, void *loop_data EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   Eina_Bool res = EINA_TRUE;
+   int *did = data;
+   int *ev = event;
+
+   if (NULL != event)
+   {
+      /* Ignore second event */
+      if (ECORE_EVENT_CUSTOM_2 == *ev)
+      {
+         res = EINA_FALSE;
+      }
+   }
+
+   (*did)++;
+
+   return res;
+}
+
+static void
+_filter_end(void *user_data, void *func_data EINA_UNUSED)
+{
+   int *did = user_data;
+   (*did)++;
 }
 
 START_TEST(ecore_test_ecore_main_loop_event)
 {
-   Eina_Bool did = EINA_FALSE;
-   Ecore_Event_Handler *handler;
+   Ecore_Event_Handler *handler, *handler2, *handler3;
+   Ecore_Event_Filter *filter_handler;
    Ecore_Event *event;
-   int ret, type;
+   int res_counter;
+   int type, type2;
+   int *ev = NULL;
+   int did = 0;
+   int filter = 0;
 
-   ret = ecore_init();
-   fail_if(ret != 1);
+   res_counter = ecore_init();
+   fail_if(res_counter != 1);
 
+   /* Create 2 new event types */
    type = ecore_event_type_new();
    fail_if(type < 1);
 
+   type2 = ecore_event_type_new();
+   fail_if(type < 1);
+
+   /* Add handler for new type of event */
    handler = ecore_event_handler_add(type, _event_handler_cb, &did);
    fail_if(handler == NULL);
 
-   event = ecore_event_add(type, NULL, NULL, NULL);
+   /* Add another handler for event which will be deleted in next step */
+   handler2 = ecore_event_handler_add(type, _event_handler_cb2, &did);
+   fail_if(handler2 == NULL);
+
+   /* Add handler for event which will be filtered */
+   handler3 = ecore_event_handler_add(type2, _event_handler_cb3, &did);
+   fail_if(handler3 == NULL);
+
+   /* Add filtering mechanism */
+   filter_handler = ecore_event_filter_add(_filter_start, _filter, _filter_end, &filter);
+
+   /* Add into main loop three events: one to process, one to filter, one to quit */
+   ev = _event_new(ECORE_EVENT_CUSTOM_1);
+   event = ecore_event_add(type, ev, _event_free, &did);
+   fail_if(event == NULL);
+
+   ev = _event_new(ECORE_EVENT_CUSTOM_2);
+   event = ecore_event_add(type2, ev, _event_free, &did);
+   fail_if(event == NULL);
+
+   event = ecore_event_add(ECORE_EVENT_SIGNAL_EXIT, NULL, NULL, NULL);
    fail_if(event == NULL);
 
    ecore_main_loop_begin();
 
-   fail_if(did == EINA_FALSE);
+   /*
+      Check internal fail cases:
+       event_cbx - 3 increments (4th should be ignored)
+       free      - 2 increments
+   */
+   fail_if(did != 3 + 2); // 5
 
-   ret = ecore_shutdown();
-   fail_if(ret != 0);
+   /*
+      Check filter procedures calls:
+       start  - 1 call
+       filter - 3 calls
+       end    - 1 call
+   */
+   fail_if(filter != 1 + 3 + 1); // 5
+
+   /* New loop but with new data and without filter and one callback procedure */
+   int did2 = 0;
+   filter = 0;
+
+   int *old = ecore_event_handler_data_set(handler, &did2);
+   int *new = ecore_event_handler_data_get(handler);
+
+   ecore_event_handler_del(handler2);
+   ecore_event_filter_del(filter_handler);
+
+   fail_if(*old != did);
+   fail_if(*new != did2);
+
+   ev = _event_new(ECORE_EVENT_CUSTOM_1);
+   event = ecore_event_add(type, ev, _event_free, &did2);
+   fail_if(event == NULL);
+
+   event = ecore_event_add(ECORE_EVENT_SIGNAL_EXIT, NULL, NULL, NULL);
+   fail_if(event == NULL);
+
+   ecore_main_loop_begin();
+
+   /*
+      Check internal fail cases:
+       event_cb - 2 increments in first callback (another one was deleted)
+       free     - 1 increment
+   */
+   fail_if(did2 != 2 + 1); // 3
+
+   /* Filter counter shouldn't change */
+   fail_if(filter != 0); // 0
+
+   res_counter = ecore_shutdown();
+   fail_if(res_counter != 0);
 }
 END_TEST
 
