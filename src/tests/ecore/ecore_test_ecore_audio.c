@@ -412,6 +412,7 @@ START_TEST(ecore_test_ecore_audio_obj_in_out)
 {
   Eo *out2;
   Eina_List *in3;
+  Eina_Bool attached;
 
   Eo *in = eo_add(ECORE_AUDIO_OBJ_IN_CLASS, NULL);
   Eo *in2 = eo_add(ECORE_AUDIO_OBJ_IN_CLASS, NULL);
@@ -429,7 +430,11 @@ START_TEST(ecore_test_ecore_audio_obj_in_out)
 
   fail_if(eina_list_count(in3) != 0);
 
-  fail_if(!eo_do(out, ecore_audio_obj_out_input_attach(in, NULL)));
+  fail_if(!eo_do(out, ecore_audio_obj_out_input_attach(in, &attached)));
+  fail_if(!attached);
+
+  fail_if(!eo_do(out, ecore_audio_obj_out_input_attach(in, &attached)));
+  fail_if(attached);
 
   fail_if(!eo_do(in, ecore_audio_obj_in_output_get(&out2)));
 

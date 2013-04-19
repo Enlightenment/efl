@@ -29,6 +29,12 @@ static void _input_attach(Eo *eo_obj, void *_pd, va_list *list)
 
   in = eo_data_get(input, ECORE_AUDIO_OBJ_IN_CLASS);
 
+  if (ret)
+    *ret = EINA_FALSE;
+
+  if (in->output == eo_obj)
+    return;
+
   if (in->output) eo_do(in->output, ecore_audio_obj_out_input_detach(input));
   in->output = eo_obj;
 

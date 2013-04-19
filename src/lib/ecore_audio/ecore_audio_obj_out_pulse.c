@@ -116,6 +116,10 @@ static Eina_Bool _input_attach_internal(Eo *eo_obj, Eo *in)
   Eina_Bool ret;
   Ecore_Audio_Object *ea_obj = eo_data_get(eo_obj, ECORE_AUDIO_OBJ_CLASS);
 
+  eo_do_super(eo_obj, MY_CLASS, ecore_audio_obj_out_input_attach(in, &ret));
+  if (!ret)
+    return EINA_FALSE;
+
   ss.format = PA_SAMPLE_FLOAT32LE;
   eo_do(in, ecore_audio_obj_in_samplerate_get((int *)&ss.rate));
   eo_do(in, ecore_audio_obj_in_speed_get(&speed));
@@ -127,10 +131,9 @@ static Eina_Bool _input_attach_internal(Eo *eo_obj, Eo *in)
   stream = pa_stream_new(class_vars.context, name, &ss, NULL);
   if (!stream) {
       ERR("Could not create stream");
+      eo_do_super(eo_obj, MY_CLASS, ecore_audio_obj_out_input_detach(in));
       return EINA_FALSE;
   }
-
-  eo_do_super(eo_obj, MY_CLASS, ecore_audio_obj_out_input_attach(in, &ret));
 
   eo_do(in, eo_event_callback_add(ECORE_AUDIO_EV_IN_SAMPLERATE_CHANGED, _update_samplerate_cb, eo_obj));
 
