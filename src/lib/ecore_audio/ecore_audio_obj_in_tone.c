@@ -91,59 +91,6 @@ err:
     *ret = -1.0;
 }
 
-static void _source_set(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
-{
-  Ecore_Audio_Object *ea_obj = eo_data_get(eo_obj, ECORE_AUDIO_OBJ_CLASS);
-
-  const char *source = va_arg(*list, const char *);
-
-  eina_stringshare_replace(&ea_obj->source, source);
-
-  if (!ea_obj->source)
-    return;
-
-  ea_obj->format = ECORE_AUDIO_FORMAT_AUTO;
-}
-
-static void _source_get(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
-{
-  Ecore_Audio_Object *obj = eo_data_get(eo_obj, ECORE_AUDIO_OBJ_CLASS);
-
-  const char **ret = va_arg(*list, const char **);
-
-  if (ret)
-    *ret = obj->source;
-}
-
-static void _format_set(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
-{
-  Ecore_Audio_Object *ea_obj = eo_data_get(eo_obj, ECORE_AUDIO_OBJ_CLASS);
-
-  Ecore_Audio_Format format= va_arg(*list, Ecore_Audio_Format);
-
-  if (ea_obj->source) {
-      ERR("Input is already open - cannot change format");
-      return;
-  }
-
-  switch (format) {
-    default:
-      ERR("Format not supported!");
-      return;
-  }
-  ea_obj->format = format;
-}
-
-static void _format_get(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
-{
-  Ecore_Audio_Object *obj = eo_data_get(eo_obj, ECORE_AUDIO_OBJ_CLASS);
-
-  Ecore_Audio_Format *ret = va_arg(*list, Ecore_Audio_Format *);
-
-  if (ret)
-    *ret = obj->format;
-}
-
 static void _length_set(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
 {
   Ecore_Audio_Input *in_obj = eo_data_get(eo_obj, ECORE_AUDIO_OBJ_IN_CLASS);
@@ -211,11 +158,6 @@ static void _class_constructor(Eo_Class *klass)
 
       EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DATA_GET), _data_get),
       EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DATA_SET), _data_set),
-
-      EO_OP_FUNC(ECORE_AUDIO_OBJ_ID(ECORE_AUDIO_OBJ_SUB_ID_SOURCE_SET), _source_set),
-      EO_OP_FUNC(ECORE_AUDIO_OBJ_ID(ECORE_AUDIO_OBJ_SUB_ID_SOURCE_GET), _source_get),
-      EO_OP_FUNC(ECORE_AUDIO_OBJ_ID(ECORE_AUDIO_OBJ_SUB_ID_FORMAT_SET), _format_set),
-      EO_OP_FUNC(ECORE_AUDIO_OBJ_ID(ECORE_AUDIO_OBJ_SUB_ID_FORMAT_GET), _format_get),
 
       EO_OP_FUNC(ECORE_AUDIO_OBJ_IN_ID(ECORE_AUDIO_OBJ_IN_SUB_ID_LENGTH_SET), _length_set),
       EO_OP_FUNC(ECORE_AUDIO_OBJ_IN_ID(ECORE_AUDIO_OBJ_IN_SUB_ID_SEEK), _seek),
