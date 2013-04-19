@@ -1313,9 +1313,8 @@ eeze_sensor_tizen_shutdown(void)
    EINA_LIST_FREE(esensor_module->sensor_list, obj)
      free(obj);
 
-   sensor_start(sensor_handle, SENSOR_MOTION_FACEDOWN);
-   sensor_start(sensor_handle, SENSOR_MOTION_DOUBLETAP);
-   sensor_start(sensor_handle, SENSOR_MOTION_SHAKE);
+   sensor_stop(sensor_handle, SENSOR_MOTION_FACEDOWN);
+   sensor_stop(sensor_handle, SENSOR_MOTION_DOUBLETAP);
    if (sensor_destroy(sensor_handle) != 0)
      {
         ERR("Failing to destroy sensor handle.");
@@ -1391,8 +1390,6 @@ sensor_tizen_shutdown(void)
 {
    Eeze_Sensor_Obj *sens;
 
-   sensor_stop(sensor_handle, SENSOR_MOTION_FACEDOWN);
-   sensor_stop(sensor_handle, SENSOR_MOTION_DOUBLETAP);
    eeze_sensor_module_unregister("tizen");
    EINA_LIST_FREE(esensor_module->sensor_list, sens)
       free(sens);
