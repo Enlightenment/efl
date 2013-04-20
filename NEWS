@@ -252,3 +252,4 @@ Fixes:
     * Evas: Fix evas gl_x11 in 16bpp and lower depths than 24/32 bpp.
     * Edje: Fix useless ecore_imf_context_reset call in case of pressing ESC and Return key
     * Edje: When selected word exists, selection is cleared and cursor remains on the current entry by additional key input.
+    * Ecore-X: Fix selection parser to not overrun buffer read by using longs on 64bit.

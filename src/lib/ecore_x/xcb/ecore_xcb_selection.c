@@ -865,13 +865,13 @@ _ecore_xcb_selection_parser_targets(const char *target EINA_UNUSED,
                                     int         format EINA_UNUSED)
 {
    Ecore_X_Selection_Data_Targets *sel;
-   unsigned long *targets;
+   int *targets;
    int i = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    CHECK_XCB_CONN;
 
-   if (!(targets = (unsigned long *)data)) return NULL;
+   if (!(targets = data)) return NULL;
 
    sel = calloc(1, sizeof(Ecore_X_Selection_Data_Targets));
    if (!sel) return NULL;

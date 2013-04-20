@@ -3,6 +3,13 @@
         * Edje: When selected word exists, selection is cleared and cursor
 		remains on the current edje_entry by additional key input.
 
+2013-04-20  Carsten Haitzler (The Rasterman)
+
+        * Ecore-X: Fix selection parser to not use longs - wrong on
+        64bit as the rest of ecore-x keeps types to their REAL sizes (ints),
+        but xlib uses longs (change size - eg 64bit even though protocol-wise
+        the data is DEFINEd as 32bit)
+
 2013-04-19  Jihoon Kim (jihoon)
 
         * Edje: Remove code to call ecore_imf_context_reset in case of pressing ESC, Return key
