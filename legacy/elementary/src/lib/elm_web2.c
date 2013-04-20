@@ -75,7 +75,7 @@ _view_add(Evas_Object *parent)
           }
      }
 
-   view = ewk_view_smart_add(canvas, smart, ewk_context_default_get());
+   view = ewk_view_smart_add(canvas, smart, ewk_context_default_get(), ewk_page_group_create(0));
    if (!view)
      {
         ERR("Could not create smart object object for view");
