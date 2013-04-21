@@ -1500,7 +1500,11 @@ void
 _evgld_glShaderSource(GLuint shader, GLsizei count, const char* const * string, const GLint* length)
 {
    EVGL_FUNC_BEGIN();
-   glShaderSource(shader, count, string, length);
+#ifdef GL_GLES 
+   glShaderSource(shader, count, (const GLchar * const *) string, length);
+#else
+   glShaderSource(shader, count, (const GLchar **) string, length);
+#endif
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    EVGL_FUNC_END();
 }
