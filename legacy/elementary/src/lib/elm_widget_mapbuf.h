@@ -20,9 +20,13 @@
 typedef struct _Elm_Mapbuf_Smart_Data Elm_Mapbuf_Smart_Data;
 struct _Elm_Mapbuf_Smart_Data
 {
+   Evas_Object          *self;
    Evas_Object          *content;
 
+   Ecore_Idler          *idler;
+
    Eina_Bool             enabled : 1;
+   Eina_Bool             smooth_saved : 1;
    Eina_Bool             smooth : 1;
    Eina_Bool             alpha : 1;
    Eina_Bool             automode : 1;
