@@ -388,7 +388,6 @@ struct _Evas_Public_Data
    Eina_Array     obscuring_objects;
    Eina_Array     temporary_objects;
    Eina_Array     calculate_objects;
-   Eina_Array     clipped_objects; // to the framespace clipper
    Eina_Array     clip_changes;
    Eina_Array     scie_unref_queue;
    Eina_Array     image_unref_queue;
