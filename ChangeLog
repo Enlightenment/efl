@@ -1,3 +1,8 @@
+2013-04-22  WooHyun Jung
+
+        * Edje: When selected word exists, selection is cleared and cursor
+		remains on the current edje_entry by additional key input.
+
 2013-04-19  Jihoon Kim (jihoon)
 
         * Edje: Remove code to call ecore_imf_context_reset in case of pressing ESC, Return key
