@@ -121,6 +121,7 @@ struct _Evas_Object_Image
    Eina_Bool         video_surface : 1;
    Eina_Bool         video_visible : 1;
    Eina_Bool         created : 1;
+   Eina_Bool         proxyerror : 1;
 };
 
 /* private methods for image objects */
@@ -2225,6 +2226,7 @@ _image_load_size_set(Eo *eo_obj, void *_pd, va_list *list)
         o->changed = EINA_TRUE;
 	evas_object_change(eo_obj, obj);
      }
+   o->proxyerror = 0;
 }
 
 EAPI void
@@ -3124,6 +3126,7 @@ _proxy_set(Evas_Object *eo_proxy, Evas_Object *eo_src)
      state_write->source = eo_src;
    EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
    o->load_error = EVAS_LOAD_ERROR_NONE;
+   o->proxyerror = 0;
 
    EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, src->proxy, Evas_Object_Proxy_Data, proxy_src_write)
      {
@@ -3142,17 +3145,14 @@ _proxy_error(Evas_Object *eo_proxy, void *context, void *output, void *surface,
              int x, int y, Eina_Bool do_async)
 {
    Evas_Func *func;
-   int r = rand() % 255;
-   int g = rand() % 255;
-   int b = rand() % 255;
+   Evas_Object_Image *o = eo_data_get(eo_proxy, MY_CLASS);
 
-   /* XXX: Eina log error or something I'm sure
-    * If it bugs you, just fix it.  Don't tell me */
-   if (VERBOSE_PROXY_ERROR) printf("Err: Argh! Recursive proxies.\n");
+   if (!o->proxyerror) printf("Err: Argh! Recursive proxies.\n");
+   o->proxyerror = 1;
 
    Evas_Object_Protected_Data *proxy = eo_data_get(eo_proxy, EVAS_OBJ_CLASS);
    func = proxy->layer->evas->engine.func;
-   func->context_color_set(output, context, r, g, b, 255);
+   func->context_color_set(output, context, 0, 0, 0, 255);
    func->context_multiplier_unset(output, context);
    func->context_render_op_set(output, context, proxy->cur->render_op);
    func->rectangle_draw(output, context, surface, proxy->cur->geometry.x + x,

@@ -1,3 +1,7 @@
+2013-04-22  Mike Blumenkrantz
+
+        * Evas: Fix recursive proxy image rendering to just render black
+
 2013-04-22  WooHyun Jung
 
         * Edje: When selected word exists, selection is cleared and cursor
