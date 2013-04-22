@@ -70,6 +70,7 @@ void _ecore_evas_wl_common_state_change(void *data);
 void _ecore_evas_wl_common_render_updates(void *data, Evas *evas, void *event);
 
 Evas_Object * _ecore_evas_wl_common_frame_add(Evas *evas);
+void _ecore_evas_wl_common_frame_border_size_set(Evas_Object *obj, int fx, int fy, int fw, int fh);
 
 #ifdef BUILD_ECORE_EVAS_WAYLAND_SHM
 void _ecore_evas_wayland_shm_resize(Ecore_Evas *ee, int location);

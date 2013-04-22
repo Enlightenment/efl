@@ -14,9 +14,10 @@ typedef struct _EE_Wl_Smart_Data EE_Wl_Smart_Data;
 struct _EE_Wl_Smart_Data
 {
    Evas_Object_Smart_Clipped_Data base;
-   Evas_Object *frame;
    Evas_Object *text;
    Evas_Coord x, y, w, h;
+   Evas_Object *border[4]; // 0 = top, 1 = bottom, 2 = left, 3 = right
+   Evas_Coord border_size[4]; // same as border
 };
 
 static const Evas_Smart_Cb_Description _smart_callbacks[] =
@@ -454,11 +455,66 @@ _ecore_evas_wl_common_move(Ecore_Evas *ee, int x, int y)
      }
 }
 
+/* Frame border:
+ *
+ * |------------------------------------------|
+ * |                top border                |
+ * |------------------------------------------|
+ * |       |                         |        |
+ * |       |                         |        |
+ * |       |                         |        |
+ * |       |                         |        |
+ * |left   |                         | right  |
+ * |border |                         | border |
+ * |       |                         |        |
+ * |       |                         |        |
+ * |       |                         |        |
+ * |------------------------------------------|
+ * |                bottom border             |
+ * |------------------------------------------|
+ */
+static void
+_border_size_eval(Evas_Object *obj EINA_UNUSED, EE_Wl_Smart_Data *sd)
+{
+
+   /* top border */
+   if (sd->border[0])
+     {
+        evas_object_move(sd->border[0], sd->x, sd->y);
+        evas_object_resize(sd->border[0], sd->w, sd->border_size[0]);
+     }
+
+   /* bottom border */
+   if (sd->border[1])
+     {
+        evas_object_move(sd->border[1], sd->x, sd->y + sd->h - sd->border_size[1]);
+        evas_object_resize(sd->border[1], sd->w, sd->border_size[1]);
+     }
+
+   /* left border */
+   if (sd->border[2])
+     {
+        evas_object_move(sd->border[2], sd->x, sd->y + sd->border_size[0]);
+        evas_object_resize(sd->border[2], sd->border_size[2],
+                           sd->h - sd->border_size[0] - sd->border_size[1]);
+     }
+
+   /* right border */
+   if (sd->border[3])
+     {
+        evas_object_move(sd->border[3], sd->x + sd->w - sd->border_size[3],
+                         sd->y + sd->border_size[0]);
+        evas_object_resize(sd->border[3], sd->border_size[3],
+                           sd->h - sd->border_size[0] - sd->border_size[1]);
+     }
+}
+
 static void
 _ecore_evas_wl_common_smart_add(Evas_Object *obj)
 {
    EE_Wl_Smart_Data *sd;
    Evas *evas;
+   int i;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -475,10 +531,11 @@ _ecore_evas_wl_common_smart_add(Evas_Object *obj)
    sd->w = 1;
    sd->h = 1;
 
-   sd->frame = evas_object_rectangle_add(evas);
-   evas_object_color_set(sd->frame, 249, 249, 249, 255);
-   evas_object_show(sd->frame);
-   evas_object_smart_member_add(sd->frame, obj);
+   for (i = 0; i < 4; i++)
+     {
+        sd->border[i] = NULL;
+        sd->border_size[i] = 0;
+     }
 
    sd->text = evas_object_text_add(evas);
    evas_object_color_set(sd->text, 0, 0, 0, 255);
@@ -493,13 +550,34 @@ static void
 _ecore_evas_wl_common_smart_del(Evas_Object *obj)
 {
    EE_Wl_Smart_Data *sd;
+   int i;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!(sd = evas_object_smart_data_get(obj))) return;
    evas_object_del(sd->text);
-   evas_object_del(sd->frame);
+   for (i = 0; i < 4; i++)
+     {
+        evas_object_del(sd->border[i]);
+     }
    _ecore_evas_wl_frame_parent_sc->del(obj);
+}
+
+static void
+_ecore_evas_wl_common_smart_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
+{
+   EE_Wl_Smart_Data *sd;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   _ecore_evas_wl_frame_parent_sc->move(obj, x, y);
+
+   if (!(sd = evas_object_smart_data_get(obj))) return;
+   if ((sd->x == x) && (sd->y == y)) return;
+   sd->x = x;
+   sd->y = y;
+
+   evas_object_smart_changed(obj);
 }
 
 static void
@@ -513,7 +591,20 @@ _ecore_evas_wl_common_smart_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
    if ((sd->w == w) && (sd->h == h)) return;
    sd->w = w;
    sd->h = h;
-   evas_object_resize(sd->frame, w, h);
+
+   evas_object_smart_changed(obj);
+}
+
+void
+_ecore_evas_wl_common_smart_calculate(Evas_Object *obj)
+{
+   EE_Wl_Smart_Data *sd;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!(sd = evas_object_smart_data_get(obj))) return;
+
+   _border_size_eval(obj, sd);
 }
 
 static void
@@ -521,7 +612,9 @@ _ecore_evas_wl_frame_smart_set_user(Evas_Smart_Class *sc)
 {
    sc->add = _ecore_evas_wl_common_smart_add;
    sc->del = _ecore_evas_wl_common_smart_del;
+   sc->move = _ecore_evas_wl_common_smart_move;
    sc->resize = _ecore_evas_wl_common_smart_resize;
+   sc->calculate = _ecore_evas_wl_common_smart_calculate;
 }
 
 Evas_Object *
@@ -530,6 +623,47 @@ _ecore_evas_wl_common_frame_add(Evas *evas)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    return evas_object_smart_add(evas, _ecore_evas_wl_frame_smart_class_new());
+}
+
+/*
+ * Size is received in the same format as it is used to set the framespace
+ * offset size.
+ */
+void
+_ecore_evas_wl_common_frame_border_size_set(Evas_Object *obj, int fx, int fy, int fw, int fh)
+{
+   EE_Wl_Smart_Data *sd;
+   Evas *e;
+   int i;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!(sd = evas_object_smart_data_get(obj))) return;
+
+   e = evas_object_evas_get(obj);
+
+   sd->border_size[0] = fy;
+   sd->border_size[1] = fh - fy;
+   sd->border_size[2] = fx;
+   sd->border_size[3] = fw - fx;
+
+   for (i = 0; i < 4; i++)
+     {
+        if ((sd->border_size[i] <= 0) && (sd->border[i]))
+          {
+             evas_object_del(sd->border[i]);
+             sd->border[i] = NULL;
+          }
+        else if ((sd->border_size[i] > 0) && (!sd->border[i]))
+          {
+             sd->border[i] = evas_object_rectangle_add(e);
+             evas_object_is_frame_object_set(sd->border[i], EINA_TRUE);
+             evas_object_color_set(sd->border[i], 249, 249, 249, 255);
+             evas_object_show(sd->border[i]);
+             evas_object_smart_member_add(sd->border[i], obj);
+          }
+     }
+   evas_object_raise(sd->text);
 }
 
 void
