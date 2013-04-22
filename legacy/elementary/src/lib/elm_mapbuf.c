@@ -144,7 +144,7 @@ _mapbuf_auto_eval(Evas_Object *obj)
    
    vis = evas_object_visible_get(obj);
    evas_object_geometry_get(obj, &x, &y, &w, &h);
-   evas_output_viewport_get(obj, &vx, &vy, &vw, &vh);
+   evas_output_viewport_get(evas_object_evas_get(obj), &vx, &vy, &vw, &vh);
    if ((vis) && (ELM_RECTS_INTERSECT(x, y, w, h, vx, vy, vw, vh)))
      on = EINA_TRUE;
    elm_mapbuf_enabled_set(obj, on);
