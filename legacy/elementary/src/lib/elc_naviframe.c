@@ -215,25 +215,6 @@ _access_object_get(Elm_Naviframe_Item *it, const char* part)
 }
 
 static void
-_access_focus_set(Elm_Naviframe_Item *it)
-{
-   Evas_Object *ao;
-
-   if (!it->title_visible)
-     {
-        elm_object_focus_set(it->content, EINA_TRUE);
-        return;
-     }
-
-   ao =_access_object_get(it, TITLE_ACCESS_PART);
-   if (ao) elm_object_focus_set(ao, EINA_TRUE);
-   else if ((it->title_icon) &&
-            (elm_widget_can_focus_get(it->title_icon) ||
-             elm_widget_child_can_focus_get(it->title_icon)))
-     elm_object_focus_set(it->title_icon, EINA_TRUE);
-}
-
-static void
 _item_signals_emit(Elm_Naviframe_Item *it)
 {
    _item_text_signals_emit(it);
@@ -272,9 +253,6 @@ _item_style_set(Elm_Naviframe_Item *it,
 static void
 _item_title_visible_update(Elm_Naviframe_Item *nit)
 {
-   /* access */
-   if (_elm_config->access_mode) _access_focus_set(nit);
-
    if (nit->title_visible)
      elm_object_signal_emit(VIEW(nit), "elm,state,title,show", "elm");
    else
@@ -1477,9 +1455,6 @@ _item_push(Eo *obj, void *_pd, va_list *list)
    sd->stack = eina_inlist_append(sd->stack, EINA_INLIST_GET(it));
    evas_object_raise(VIEW(it));
 
-   /* access */
-   if (_elm_config->access_mode) _access_focus_set(it);
-
    elm_layout_sizing_eval(obj);
 
    *ret = (Elm_Object_Item *)it;
@@ -1586,9 +1561,6 @@ _item_insert_after(Eo *obj, void *_pd, va_list *list)
         elm_object_focus_set(VIEW(it), EINA_TRUE);
      }
 
-   /* access */
-   if (_elm_config->access_mode) _access_focus_set(it);
-
    elm_layout_sizing_eval(obj);
 
    *ret = (Elm_Object_Item *)it;
@@ -1655,9 +1627,6 @@ _item_pop(Eo *obj, void *_pd, va_list *list)
 
         elm_widget_resize_object_set(obj, VIEW(prev_it));
         evas_object_raise(VIEW(prev_it));
-
-        /* access */
-        if (_elm_config->access_mode) _access_focus_set(prev_it);
 
         /* these 2 signals MUST take place simultaneously */
         elm_object_signal_emit(VIEW(it), "elm,state,cur,popped", "elm");
@@ -1759,9 +1728,6 @@ elm_naviframe_item_promote(Elm_Object_Item *it)
    edje_object_message_signal_process(elm_layout_edje_get(VIEW(nit)));
    if (nit->animator) ecore_animator_del(nit->animator);
    nit->animator = ecore_animator_add(_push_transition_cb, nit);
-
-   /* access */
-   if (_elm_config->access_mode) _access_focus_set(nit);
 }
 
 EAPI void
