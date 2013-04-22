@@ -6287,10 +6287,10 @@ _edje_real_part_swallow_hints_update(Edje_Real_Part *rp)
         edje_object_size_min_get(rp->typedata.swallow->swallowed_object, &w, &h);
         rp->typedata.swallow->swallow_params.min.w = w;
         rp->typedata.swallow->swallow_params.min.h = h;
-#endif
         edje_object_size_max_get(rp->typedata.swallow->swallowed_object, &w, &h);
         rp->typedata.swallow->swallow_params.max.w = w;
         rp->typedata.swallow->swallow_params.max.h = h;
+#endif
      }
    else if (eo_isa(rp->typedata.swallow->swallowed_object, EVAS_OBJ_TEXT_CLASS) ||
 	    eo_isa(rp->typedata.swallow->swallowed_object, EVAS_OBJ_POLYGON_CLASS) ||
