@@ -1268,3 +1268,7 @@
 2013-04-18  Shinwoo Kim
 
         * Add elm_access_action(), elm_access_action_cb_set()
+
+2013-04-22  Shinwoo Kim
+
+        * Make access object unfocusable when Aaccessibility is disabled.

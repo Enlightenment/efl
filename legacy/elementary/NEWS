@@ -211,6 +211,7 @@ Fixes:
    * Fix the calculation double type number.
    * Fix the policy is not changed when the theme is changed.
    * When entry is disabled, scrolling is also disabled.
+   * Make access object unfocusable when Aaccessibility is disabled.
 
 Removals:
 
