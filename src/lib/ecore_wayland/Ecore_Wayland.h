@@ -146,8 +146,11 @@ struct _Ecore_Wl_Input
    struct wl_touch *touch;
 
    const char *cursor_name;
+   struct wl_cursor *cursor;
    struct wl_surface *cursor_surface;
    struct wl_callback *cursor_frame_cb;
+   Ecore_Timer *cursor_timer;
+   unsigned int cursor_current_index;
 
    struct wl_data_device *data_device;
 

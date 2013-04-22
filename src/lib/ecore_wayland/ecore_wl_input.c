@@ -165,26 +165,77 @@ ecore_wl_input_ungrab(Ecore_Wl_Input *input)
    input->grab_button = 0;
 }
 
+static void
+_pointer_update_stop(Ecore_Wl_Input *input)
+{
+   if (!input->cursor_timer) return;
+
+   ecore_timer_del(input->cursor_timer);
+   input->cursor_timer = NULL;
+}
+
 EAPI void
 ecore_wl_input_pointer_set(Ecore_Wl_Input *input, struct wl_surface *surface, int hot_x, int hot_y)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   if (input)
-     wl_pointer_set_cursor(input->pointer, input->pointer_enter_serial, 
-                           surface, hot_x, hot_y);
+   if (!input) return;
+
+   _pointer_update_stop(input);
+   wl_pointer_set_cursor(input->pointer, input->pointer_enter_serial,
+                         surface, hot_x, hot_y);
+}
+
+static Eina_Bool
+_ecore_wl_input_cursor_update(void *data)
+{
+   struct wl_cursor_image *cursor_image;
+   struct wl_buffer *buffer;
+   Ecore_Wl_Input *input = data;
+   unsigned int delay;
+
+   cursor_image = input->cursor->images[input->cursor_current_index];
+   if ((buffer = wl_cursor_image_get_buffer(cursor_image)))
+     {
+        ecore_wl_input_pointer_set(input, input->cursor_surface,
+                                   cursor_image->hotspot_x,
+                                   cursor_image->hotspot_y);
+        wl_surface_attach(input->cursor_surface, buffer, 0, 0);
+        wl_surface_damage(input->cursor_surface, 0, 0,
+                          cursor_image->width, cursor_image->height);
+        wl_surface_commit(input->cursor_surface);
+
+        if (!input->cursor_frame_cb)
+          _ecore_wl_input_cb_pointer_frame(input, NULL, 0);
+     }
+
+   if (input->cursor->image_count <= 1)
+     return ECORE_CALLBACK_CANCEL;
+
+   delay = cursor_image->delay;
+   input->cursor_current_index =
+      (input->cursor_current_index + 1) % input->cursor->image_count;
+
+   if (!input->cursor_timer)
+     input->cursor_timer =
+        ecore_timer_loop_add(delay / 1000.0,
+                             _ecore_wl_input_cursor_update, input);
+   else
+     ecore_timer_interval_set(input->cursor_timer, delay / 1000.0);
+
+   return ECORE_CALLBACK_RENEW;
 }
 
 EAPI void
 ecore_wl_input_cursor_from_name_set(Ecore_Wl_Input *input, const char *cursor_name)
 {
-   struct wl_cursor_image *cursor_image;
-   struct wl_buffer *buffer;
    struct wl_cursor *cursor;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!input) return;
+
+   _pointer_update_stop(input);
 
    eina_stringshare_replace(&input->cursor_name, cursor_name);
 
@@ -200,26 +251,17 @@ ecore_wl_input_cursor_from_name_set(Ecore_Wl_Input *input, const char *cursor_na
           return;
      }
 
+   input->cursor = cursor;
+
    if ((!cursor->images) || (!cursor->images[0]))
      {
         ecore_wl_input_pointer_set(input, NULL, 0, 0);
         return;
      }
 
-   cursor_image = cursor->images[0];
-   if ((buffer = wl_cursor_image_get_buffer(cursor_image)))
-     {
-        ecore_wl_input_pointer_set(input, input->cursor_surface, 
-                                   cursor_image->hotspot_x, 
-                                   cursor_image->hotspot_y);
-        wl_surface_attach(input->cursor_surface, buffer, 0, 0);
-        wl_surface_damage(input->cursor_surface, 0, 0, 
-                          cursor_image->width, cursor_image->height);
-        wl_surface_commit(input->cursor_surface);
+   input->cursor_current_index = 0;
 
-        if (!input->cursor_frame_cb)
-          _ecore_wl_input_cb_pointer_frame(input, NULL, 0);
-     }
+   _ecore_wl_input_cursor_update(input);
 }
 
 EAPI void
@@ -288,6 +330,8 @@ void
 _ecore_wl_input_del(Ecore_Wl_Input *input)
 {
    if (!input) return;
+
+   _pointer_update_stop(input);
 
    if (input->cursor_name) eina_stringshare_del(input->cursor_name);
    input->cursor_name = NULL;
