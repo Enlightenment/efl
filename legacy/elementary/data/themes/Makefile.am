@@ -139,6 +139,7 @@ images/flip_shad.png \
 images/flip_t.png \
 images/flip_b.png \
 images/head.png \
+images/item_highlight.png \
 images/sb_runnerh.png \
 images/sb_runnerv.png \
 images/seg_single_pressed.png \
