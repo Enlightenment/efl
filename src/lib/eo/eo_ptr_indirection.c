@@ -45,16 +45,16 @@
 
 #if SIZEOF_UINTPTR_T == 4
 /* 32 bits */
-# define BITS_FOR_IDS_TABLE 8
-# define BITS_FOR_IDS_INTER_TABLE 4
-# define BITS_FOR_ID_IN_TABLE 10
+# define BITS_FOR_IDS_TABLE           8
+# define BITS_FOR_IDS_INTER_TABLE     4
+# define BITS_FOR_ID_IN_TABLE        10
 # define BITS_FOR_GENERATION_COUNTER 10
 #else
 /* 64 bits */
-# define BITS_FOR_IDS_TABLE 8
-# define BITS_FOR_IDS_INTER_TABLE 20
-# define BITS_FOR_ID_IN_TABLE 16
-# define BITS_FOR_GENERATION_COUNTER 20
+# define BITS_FOR_IDS_TABLE          11
+# define BITS_FOR_IDS_INTER_TABLE    11
+# define BITS_FOR_ID_IN_TABLE        12
+# define BITS_FOR_GENERATION_COUNTER 30
 #endif
 
 typedef uintptr_t Table_Index;
@@ -69,10 +69,10 @@ typedef uintptr_t Table_Index;
 #define SHIFT_FOR_ID_IN_TABLE (BITS_FOR_GENERATION_COUNTER)
 
 /* Maximum ranges */
-#define MAX_IDS_TABLES (1 << BITS_FOR_IDS_TABLE)
+#define MAX_IDS_TABLES       (1 << BITS_FOR_IDS_TABLE)
 #define MAX_IDS_INTER_TABLES (1 << BITS_FOR_IDS_INTER_TABLE)
-#define MAX_IDS_PER_TABLE (1 << BITS_FOR_ID_IN_TABLE)
-#define MAX_GENERATIONS (1 << BITS_FOR_GENERATION_COUNTER)
+#define MAX_IDS_PER_TABLE    (1 << BITS_FOR_ID_IN_TABLE)
+#define MAX_GENERATIONS      (1 << BITS_FOR_GENERATION_COUNTER)
 
 /* Table */
 typedef struct
