@@ -10,7 +10,8 @@ dist_installed_eezemainheaders_DATA = \
 lib/eeze/Eeze.h \
 lib/eeze/Eeze_Net.h \
 lib/eeze/Eeze_Sensor.h \
-lib/eeze/Eeze_Disk.h
+lib/eeze/Eeze_Disk.h \
+bin/eeze/eeze_scanner.h
 
 # libeeze.la
 lib_eeze_libeeze_la_SOURCES = \
