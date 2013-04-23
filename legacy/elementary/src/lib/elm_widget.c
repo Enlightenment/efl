@@ -3338,9 +3338,12 @@ _elm_widget_show_region_set(Eo *obj, void *_pd, va_list *list)
         sd->on_show_region
            (sd->on_show_region_data, obj);
 
-        eo_do(obj, elm_scrollable_interface_content_pos_get(&nx, &ny));
-        x -= nx;
-        y -= ny;
+        if (_elm_scrollable_is(obj))
+          {
+             eo_do(obj, elm_scrollable_interface_content_pos_get(&nx, &ny));
+             x -= nx;
+             y -= ny;
+          }
      }
 
    do
