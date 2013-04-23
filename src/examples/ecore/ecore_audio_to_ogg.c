@@ -39,9 +39,9 @@ main(int argc, char *argv[])
    Eo *in;
    Eina_Bool ret;
 
-   if (argc < 2)
+   if (argc < 3)
      {
-       printf("Please provide a filename\n");
+       printf("Usage: ./example <infile> <outfile>\n");
        exit(EXIT_FAILURE);
      }
 
@@ -61,9 +61,9 @@ main(int argc, char *argv[])
    eo_do(in, eo_event_callback_add(ECORE_AUDIO_EV_IN_STOPPED, _play_finished, NULL));
 
    out = eo_add(ECORE_AUDIO_OBJ_OUT_SNDFILE_CLASS, NULL);
-   eo_do(out, ecore_audio_obj_source_set("foo.ogg", &ret));
+   eo_do(out, ecore_audio_obj_source_set(argv[2], &ret));
    if (!ret) {
-     printf("Could not set %s as output\n", "foo.ogg");
+     printf("Could not set %s as output\n", argv[2]);
      eo_del(in);
      eo_del(out);
      return 1;
