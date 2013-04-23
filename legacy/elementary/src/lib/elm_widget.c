@@ -5143,6 +5143,36 @@ _elm_widget_item_translatable_part_text_get(const Elm_Widget_Item *item,
    return NULL;
 }
 
+EAPI void
+_elm_widget_item_domain_part_text_translatable_set(Elm_Widget_Item *item,
+                                                   const char *part,
+                                                   const char *domain,
+                                                   Eina_Bool translatable)
+{
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
+   Elm_Translate_String_Data *ts;
+   const char *text;
+
+   ts = _part_text_translatable_set(&item->translate_strings, part,
+                                    translatable, EINA_TRUE);
+   if (!ts) return;
+   if (!ts->domain) ts->domain = eina_stringshare_add(domain);
+   else eina_stringshare_replace(&ts->domain, domain);
+
+   text = _elm_widget_item_part_text_get(item, part);
+   if (!text || !text[0]) return;
+
+   if (!ts->string) ts->string = eina_stringshare_add(text);
+
+//Try to translate text since we don't know the text is already translated.
+#ifdef HAVE_GETTEXT
+   text = dgettext(domain, text);
+#endif
+   item->on_translate = EINA_TRUE;
+   _elm_widget_item_part_text_set(item, part, text);
+   item->on_translate = EINA_FALSE;
+}
+
 typedef struct _Elm_Widget_Item_Tooltip Elm_Widget_Item_Tooltip;
 
 struct _Elm_Widget_Item_Tooltip
@@ -5716,11 +5746,13 @@ _elm_widget_item_translate(Elm_Widget_Item *item)
 #ifdef HAVE_GETTEXT
    Elm_Translate_String_Data *ts;
    const Eina_List *l;
-
    EINA_LIST_FOREACH(item->translate_strings, l, ts)
      {
+        if (!ts->string) continue;
         const char *s = dgettext(ts->domain, ts->string);
+        item->on_translate = EINA_TRUE;
         _elm_widget_item_part_text_set(item, ts->id, s);
+        item->on_translate = EINA_FALSE;
      }
 #endif
 }

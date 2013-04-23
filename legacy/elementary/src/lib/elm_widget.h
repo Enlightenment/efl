@@ -765,6 +765,7 @@ EAPI void             _elm_widget_item_del_pre_hook_set(Elm_Widget_Item *item, E
 EAPI void             _elm_widget_item_domain_translatable_part_text_set(Elm_Widget_Item *item, const char *part, const char *domain, const char *label);
 EAPI const char *     _elm_widget_item_translatable_part_text_get(const Elm_Widget_Item *item, const char *part);
 EAPI void             _elm_widget_item_translate(Elm_Widget_Item *item);
+EAPI void             _elm_widget_item_domain_part_text_translatable_set(Elm_Widget_Item *item, const char *part, const char *domain, Eina_Bool translatable);
 
 /**
  * Function to operate on a given widget's scrollabe children when necessary.

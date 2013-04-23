@@ -1574,6 +1574,12 @@ elm_object_item_translatable_part_text_get(const Elm_Object_Item *it, const char
 }
 
 EAPI void
+elm_object_item_domain_part_text_translatable_set(Elm_Object_Item *it, const char *part, const char *domain, Eina_Bool translatable)
+{
+   _elm_widget_item_domain_part_text_translatable_set((Elm_Widget_Item *)it, part, domain, translatable);
+}
+
+EAPI void
 elm_object_access_info_set(Evas_Object *obj, const char *txt)
 {
    elm_widget_access_info_set(obj, txt);

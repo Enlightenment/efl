@@ -171,6 +171,34 @@ EAPI const char *elm_object_item_translatable_part_text_get(const Elm_Object_Ite
 
 #define elm_object_item_translatable_text_get(it) elm_object_item_translatable_part_text_get((it), NULL)
 
+/**
+ * Mark the part text to be transltable or not.
+ *
+ * Once you mark the part text to be translatable, the text will be translated
+ * internally regardless of elm_object_item_part_text_set() and
+ * elm_object_item_domain_translatable_part_text_set(). In other case, if you
+ * set the Elementary policy that all text will be translatable in default, you
+ * can set the part text to not be translated by calling this API.
+ *
+ * @param it The object item containing the text part
+ * @param part The part name of the translatable text
+ * @param domain The translation domain to use
+ * @param translatable @c EINA_TRUE, the part text will be translated
+ *        internally. @c EINA_FALSE, otherwise.
+ *
+ * @see elm_object_item_domain_translatable_part_text_set()
+ * @see elm_object_item_part_text_set()
+ * @see elm_policy()
+ *
+ * @since 1.8
+ *
+ * @ingroup General
+ */
+EAPI void elm_object_item_domain_part_text_translatable_set(Elm_Object_Item *it, const char *part, const char *domain, Eina_Bool translatable);
+
+#define elm_object_item_part_text_translatable_set(it, part, translatable) elm_object_item_domain_part_text_translatable_set((it), (part), NULL, (translatable))
+
+#define elm_object_item_domain_text_translatable_set(it, domain, translatable) elm_object_item_domain_part_text_translatable_set((it), NULL, (domain), (translatable))
 
 /**
  * Set the text to read out when in accessibility mode

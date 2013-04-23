@@ -98,7 +98,7 @@ EAPI const char *elm_object_translatable_part_text_get(const Evas_Object *obj, c
  * @param translatable @c EINA_TRUE, the part text will be translated
  *        internally. @c EINA_FALSE, otherwise.
  *
- * @see elm_object_domain_part_text_translatable_set()
+ * @see elm_object_domain_translatable_part_text_set()
  * @see elm_object_part_text_set()
  * @see elm_policy()
  *
