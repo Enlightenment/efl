@@ -3320,7 +3320,7 @@ _elm_widget_show_region_set(Eo *obj, void *_pd, va_list *list)
    Eina_Bool forceshow = va_arg(*list, int);
 
    Evas_Object *parent_obj, *child_obj;
-   Evas_Coord px, py, cx, cy;
+   Evas_Coord px, py, cx, cy, nx, ny;
 
    Elm_Widget_Smart_Data *sd = _pd;
 
@@ -3334,8 +3334,14 @@ _elm_widget_show_region_set(Eo *obj, void *_pd, va_list *list)
    sd->rw = w;
    sd->rh = h;
    if (sd->on_show_region)
-     sd->on_show_region
-       (sd->on_show_region_data, obj);
+     {
+        sd->on_show_region
+           (sd->on_show_region_data, obj);
+
+        eo_do(obj, elm_scrollable_interface_content_pos_get(&nx, &ny));
+        x -= nx;
+        y -= ny;
+     }
 
    do
      {

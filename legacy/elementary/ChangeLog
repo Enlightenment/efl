@@ -1276,3 +1276,8 @@
 2013-04-23  ChunEon Park
 
         * Added elm_object_domain_part_text_translatable_set().
+
+2013-04-23  Jaehwan Kim
+
+        * Fix the scrolled entry in scroller is located wrong position when the cursor is changed.
+        It is a scroller in scroller. In this case, it moved twice.

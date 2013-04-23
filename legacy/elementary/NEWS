@@ -213,6 +213,7 @@ Fixes:
    * Fix the policy is not changed when the theme is changed.
    * When entry is disabled, scrolling is also disabled.
    * Make access object unfocusable when Aaccessibility is disabled.
+   * Fix the scrolled entry in scroller is located wrong position when the cursor is changed.
 
 Removals:
 
