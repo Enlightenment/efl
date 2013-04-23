@@ -15,6 +15,20 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 };
 
 static void
+_elm_menu_smart_translate(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Elm_Menu_Smart_Data *sd = _pd;
+   Elm_Menu_Item *it;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(sd->items, l, it)
+     elm_widget_item_translate(it);
+
+   if (ret) *ret = EINA_TRUE;
+}
+
+static void
 _item_del(Elm_Menu_Item *item)
 {
    Elm_Menu_Item *child;
@@ -1268,6 +1282,7 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_SHOW), _elm_menu_smart_show),
 
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME), _elm_menu_smart_theme),
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_TRANSLATE), _elm_menu_smart_translate),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_PARENT_SET), _parent_set),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_PARENT_GET), _parent_get),
 

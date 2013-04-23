@@ -20,10 +20,17 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 };
 
 static void
-_elm_ctxpopup_smart_translate(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+_elm_ctxpopup_smart_translate(Eo *obj, void *_pd, va_list *list)
 {
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Elm_Ctxpopup_Smart_Data *sd = _pd;
+   Eina_List *l;
+   Elm_Ctxpopup_Item *it;
+
    evas_object_hide(obj);
+
+   EINA_LIST_FOREACH(sd->items, l, it)
+     elm_widget_item_translate(it);
 
    if (ret) *ret = EINA_TRUE;
 }

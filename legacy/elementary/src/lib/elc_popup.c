@@ -27,6 +27,20 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 static void  _on_content_del(void *data, Evas *e, Evas_Object *obj, void *event_info);
 
 static void
+_elm_popup_smart_translate(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+{
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Elm_Popup_Smart_Data *sd = _pd;
+   Elm_Popup_Item *it;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(sd->items, l, it)
+      elm_widget_item_translate(it);
+
+   if (ret) *ret = EINA_TRUE;
+}
+
+static void
 _visuals_set(Evas_Object *obj)
 {
    ELM_POPUP_DATA_GET(obj, sd);
@@ -1857,6 +1871,7 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_PARENT_SET), _elm_popup_smart_parent_set),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_EVENT), _elm_popup_smart_event),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME), _elm_popup_smart_theme),
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_TRANSLATE), _elm_popup_smart_translate),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_NEXT_MANAGER_IS), _elm_popup_smart_focus_next_manager_is),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_NEXT),  _elm_popup_smart_focus_next),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ACCESS), _elm_popup_smart_access),

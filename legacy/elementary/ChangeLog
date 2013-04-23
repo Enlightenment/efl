@@ -1282,3 +1282,8 @@
 
         * Fix the scrolled entry in scroller is located wrong position when the cursor is changed.
         It is a scroller in scroller. In this case, it moved twice.
+
+2013-04-23  ChunEon Park
+
+        * Support language change for widget items (Ctxpopup, Hoversel, Naviframe, Diskselector, List,
+        Menu, Segment_Control, Toolbar, Popup, MultibuttonEntry)																 

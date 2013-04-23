@@ -360,9 +360,16 @@ _elm_list_smart_event(Eo *obj, void *_pd, va_list *list)
 }
 
 static void
-_elm_list_smart_translate(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+_elm_list_smart_translate(Eo *obj, void *_pd, va_list *list)
 {
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Elm_List_Smart_Data *sd = _pd;
+   Elm_List_Item *it;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(sd->items, l, it)
+     elm_widget_item_translate(it);
+
    evas_object_smart_callback_call(obj, SIG_LANG_CHANGED, NULL);
 
    if (ret) *ret = EINA_TRUE;

@@ -1361,9 +1361,15 @@ _item_content_unset_hook(Elm_Object_Item *it,
 }
 
 static void
-_elm_toolbar_smart_translate(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+_elm_toolbar_smart_translate(Eo *obj, void *_pd, va_list *list)
 {
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Elm_Toolbar_Smart_Data *sd = _pd;
+   Elm_Toolbar_Item *it;
+
+   EINA_INLIST_FOREACH(sd->items, it)
+     elm_widget_item_translate(it);
+
    evas_object_smart_callback_call(obj, SIG_LANG_CHANGED, NULL);
 
    if (ret) *ret = EINA_TRUE;

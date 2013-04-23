@@ -37,6 +37,20 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 };
 
 static void
+_elm_multibuttonentry_smart_translate(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Elm_Multibuttonentry_Smart_Data *sd = _pd;
+   Elm_Multibuttonentry_Item *it;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(sd->items, l, it)
+     elm_widget_item_translate(it);
+
+   if (ret) *ret = EINA_TRUE;
+}
+
+static void
 _elm_multibuttonentry_smart_theme(Eo *obj, void *_pd, va_list *list)
 {
    Eina_List *l;
@@ -2178,6 +2192,7 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_DEL), _elm_multibuttonentry_smart_del),
 
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME), _elm_multibuttonentry_smart_theme),
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_TRANSLATE), _elm_multibuttonentry_smart_translate),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_EVENT), _elm_multibuttonentry_smart_event),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ON_FOCUS), _elm_multibuttonentry_smart_on_focus),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_NEXT_MANAGER_IS), _elm_multibuttonentry_smart_focus_next_manager_is),

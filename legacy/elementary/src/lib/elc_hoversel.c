@@ -17,6 +17,20 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 };
 
 static void
+_elm_hoversel_smart_translate(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Elm_Hoversel_Smart_Data *sd = _pd;
+   Elm_Hoversel_Item *it;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(sd->items, l, it)
+     elm_widget_item_translate(it);
+
+   if (ret) *ret = EINA_TRUE;
+}
+
+static void
 _elm_hoversel_smart_theme(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
@@ -544,6 +558,7 @@ _class_constructor(Eo_Class *klass)
            EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_HIDE), _elm_hoversel_smart_hide),
 
            EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME), _elm_hoversel_smart_theme),
+           EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_TRANSLATE), _elm_hoversel_smart_translate),
            EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_PARENT_SET), _elm_hoversel_smart_parent_set),
 
            EO_OP_FUNC(ELM_OBJ_BUTTON_ID(ELM_OBJ_BUTTON_SUB_ID_ADMITS_AUTOREPEAT_GET), _elm_hoversel_smart_admits_autorepeat_get),
