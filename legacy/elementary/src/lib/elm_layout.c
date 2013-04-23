@@ -1571,6 +1571,7 @@ elm_layout_text_set(Evas_Object *obj,
 {
    ELM_LAYOUT_CHECK(obj) EINA_FALSE;
    Eina_Bool ret = EINA_FALSE;
+   text = elm_widget_part_text_translate(obj, part, text);
    eo_do(obj, elm_obj_layout_text_set(part, text, &ret));
    return ret;
 }

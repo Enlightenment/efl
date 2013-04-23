@@ -1100,6 +1100,13 @@ elm_object_translatable_part_text_get(const Evas_Object *obj, const char *part)
    return elm_widget_translatable_part_text_get(obj, part);
 }
 
+EAPI void
+elm_object_domain_part_text_translatable_set(Evas_Object *obj, const char *part, const char *domain, Eina_Bool translatable)
+{
+   EINA_SAFETY_ON_NULL_RETURN(obj);
+   elm_widget_domain_part_text_translatable_set(obj, part, domain, translatable);
+}
+
 EINA_DEPRECATED EAPI void
 elm_object_domain_translatable_text_part_set(Evas_Object *obj, const char *part, const char *domain, const char *text)
 {

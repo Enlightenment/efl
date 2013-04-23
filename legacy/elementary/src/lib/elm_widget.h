@@ -435,6 +435,7 @@ typedef struct _Elm_Widget_Smart_Data
    Eina_Bool                     can_access : 1;
    Eina_Bool                     highlighted : 1;
    Eina_Bool                     highlight_root : 1;
+   Eina_Bool                     on_translate : 1;
 } Elm_Widget_Smart_Data;
 
 /**
@@ -575,6 +576,7 @@ struct _Elm_Widget_Item
    Eina_List                     *signals;
 
    Eina_Bool                      disabled : 1;
+   Eina_Bool                      on_translate : 1;
 };
 
 struct _Elm_Object_Item
@@ -706,6 +708,9 @@ EAPI void             elm_widget_part_text_set(Evas_Object *obj, const char *par
 EAPI const char      *elm_widget_part_text_get(const Evas_Object *obj, const char *part);
 EAPI void             elm_widget_domain_translatable_part_text_set(Evas_Object *obj, const char *part, const char *domain, const char *text);
 EAPI const char      *elm_widget_translatable_part_text_get(const Evas_Object *obj, const char *part);
+EAPI void             elm_widget_domain_part_text_translatable_set(Evas_Object *obj, const char *part, const char *domain, Eina_Bool translatable);
+EAPI const char *     elm_widget_part_text_translate(Evas_Object *obj, const char *part, const char *text);
+EAPI const char *     elm_widget_part_text_translate(Evas_Object *obj, const char *part, const char *text);
 EAPI void             elm_widget_content_part_set(Evas_Object *obj, const char *part, Evas_Object *content);
 EAPI Evas_Object     *elm_widget_content_part_get(const Evas_Object *obj, const char *part);
 EAPI Evas_Object     *elm_widget_content_part_unset(Evas_Object *obj, const char *part);
@@ -1096,6 +1101,8 @@ enum
    ELM_WIDGET_SUB_ID_TEXT_PART_GET,
    ELM_WIDGET_SUB_ID_DOMAIN_TRANSLATABLE_PART_TEXT_SET,
    ELM_WIDGET_SUB_ID_TRANSLATABLE_PART_TEXT_GET,
+   ELM_WIDGET_SUB_ID_DOMAIN_PART_TEXT_TRANSLATABLE_SET,
+   ELM_WIDGET_SUB_ID_PART_TEXT_TRANSLATE,
    ELM_WIDGET_SUB_ID_ACCESS_INFO_SET,
    ELM_WIDGET_SUB_ID_ACCESS_INFO_GET,
 
@@ -1843,6 +1850,31 @@ typedef void * (*list_data_get_func_type)(const Eina_List * l);
  */
 #define elm_wdg_translatable_part_text_get(part, ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_TRANSLATABLE_PART_TEXT_GET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(const char **, ret)
 
+/**
+ * @def elm_wdg_domain_part_text_translatable_set
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] part
+ * @param[in] domain
+ * @param[in] translatable
+ *
+ */
+#define elm_wdg_domain_part_text_translatable_set(part, domain, translatable) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_DOMAIN_PART_TEXT_TRANSLATABLE_SET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(const char *, domain), EO_TYPECHECK(Eina_Bool, translatable)
+
+/**
+ * @def elm_wdg_part_text_translate
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] part
+ * @param[in] text
+ * @param[out] ret
+ *
+ */
+#define elm_wdg_part_text_translate(part, text, ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_PART_TEXT_TRANSLATE), EO_TYPECHECK(const char *, part), EO_TYPECHECK(const char *, text), EO_TYPECHECK(const char **, ret)
 
 /**
  * @def elm_wdg_access_info_set

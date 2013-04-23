@@ -62,6 +62,7 @@ Additions:
    * Add the API elm_scroller_single_direction_set/get.
    * Add the feature for key events.
    * Add elm_access_action(), elm_access_action_cb_set()
+	* Add elm_object_domain_part_text_translatable_set()
 
 Improvements:
 

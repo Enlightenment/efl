@@ -84,6 +84,35 @@ EAPI const char *elm_object_translatable_part_text_get(const Evas_Object *obj, c
 #define elm_object_translatable_text_get(obj) elm_object_translatable_part_text_get((obj), NULL)
 
 /**
+ * Mark the part text to be transltable or not.
+ *
+ * Once you mark the part text to be translatable, the text will be translated
+ * internally regardless of elm_object_part_text_set() and
+ * elm_object_domain_translatable_part_text_set(). In other case, if you set the
+ * Elementary policy that all text will be translatable in default, you can set
+ * the part text to not be translated by calling this API.
+ *
+ * @param obj The object containing the text part
+ * @param part The part name of the translatable text
+ * @param domain The translation domain to use
+ * @param translatable @c EINA_TRUE, the part text will be translated
+ *        internally. @c EINA_FALSE, otherwise.
+ *
+ * @see elm_object_domain_part_text_translatable_set()
+ * @see elm_object_part_text_set()
+ * @see elm_policy()
+ *
+ * @since 1.8
+ *
+ * @ingroup General
+ */
+EAPI void elm_object_domain_part_text_translatable_set(Evas_Object *obj, const char *part, const char *domain, Eina_Bool translatable);
+
+#define elm_object_part_text_translatable_set(obj, part, translatable) elm_object_domain_part_text_translatable_set((obj), (part), NULL, (translatable))
+
+#define elm_object_domain_text_translatable_set(obj, domain, translatable) elm_object_domain_part_text_translatable_set((obj), NULL, (domain), (translatable))
+
+/**
  * Set the content on part of a given container widget
  *
  * @param obj The Elementary container widget

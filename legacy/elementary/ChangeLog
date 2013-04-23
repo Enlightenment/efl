@@ -1272,3 +1272,7 @@
 2013-04-22  Shinwoo Kim
 
         * Make access object unfocusable when Aaccessibility is disabled.
+
+2013-04-23  ChunEon Park
+
+        * Added elm_object_domain_part_text_translatable_set().
