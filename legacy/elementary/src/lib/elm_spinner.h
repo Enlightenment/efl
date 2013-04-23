@@ -31,6 +31,7 @@
  *    the user.  This will be called only when the user stops dragging
  *    for a very short period or when they release their finger/mouse,
  *    so it avoids possibly expensive reactions to the value change.
+ * - @c "language,changed" - the program's language changed
  *
  * Available styles for it:
  * - @c "default";

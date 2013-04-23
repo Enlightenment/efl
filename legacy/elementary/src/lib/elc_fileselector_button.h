@@ -36,6 +36,7 @@
  * - @c "file,chosen" - the user has selected a path, whose string
  *   pointer comes as the @c event_info data (a stringshared
  *   string)
+ * - @c "language,changed" - the program's language changed
  *
  * Default text parts of the fileselector_button widget that you can use for
  * are:

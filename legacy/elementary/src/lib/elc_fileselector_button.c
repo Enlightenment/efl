@@ -11,10 +11,21 @@ EAPI Eo_Op ELM_OBJ_FILESELECTOR_BUTTON_BASE_ID = EO_NOOP;
 #define DEFAULT_WINDOW_TITLE "Select a file"
 
 static const char SIG_FILE_CHOSEN[] = "file,chosen";
+static const char SIG_LANG_CHANGED[] = "language,changed";
+
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_FILE_CHOSEN, "s"},
+   {SIG_LANG_CHANGED, ""},
    {NULL, NULL}
 };
+
+static void
+_elm_fileselector_smart_translate(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+{
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   evas_object_smart_callback_call(obj, SIG_LANG_CHANGED, NULL);
+   if (ret) *ret = EINA_TRUE;
+}
 
 static void
 _elm_fileselector_button_smart_theme(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
@@ -492,6 +503,7 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_DEL), _elm_fileselector_button_smart_del),
 
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME), _elm_fileselector_button_smart_theme),
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_TRANSLATE), _elm_fileselector_smart_translate),
 
         EO_OP_FUNC(ELM_OBJ_BUTTON_ID(ELM_OBJ_BUTTON_SUB_ID_ADMITS_AUTOREPEAT_GET), _elm_fileselector_button_smart_admits_autorepeat_get),
 
