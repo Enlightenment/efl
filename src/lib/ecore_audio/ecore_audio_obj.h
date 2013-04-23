@@ -85,11 +85,11 @@ enum Ecore_Audio_Obj_Sub_Ids
 
 #define ecore_audio_obj_volume_get(ret) ECORE_AUDIO_OBJ_ID(ECORE_AUDIO_OBJ_SUB_ID_VOLUME_GET), EO_TYPECHECK(double *, ret)
 
-#define ecore_audio_obj_source_set(source) ECORE_AUDIO_OBJ_ID(ECORE_AUDIO_OBJ_SUB_ID_SOURCE_SET), EO_TYPECHECK(const char *, source)
+#define ecore_audio_obj_source_set(source, ret) ECORE_AUDIO_OBJ_ID(ECORE_AUDIO_OBJ_SUB_ID_SOURCE_SET), EO_TYPECHECK(const char *, source), EO_TYPECHECK(Eina_Bool *, ret)
 
 #define ecore_audio_obj_source_get(source) ECORE_AUDIO_OBJ_ID(ECORE_AUDIO_OBJ_SUB_ID_SOURCE_GET), EO_TYPECHECK(const char **, source)
 
-#define ecore_audio_obj_format_set(format) ECORE_AUDIO_OBJ_ID(ECORE_AUDIO_OBJ_SUB_ID_FORMAT_SET), EO_TYPECHECK(Ecore_Audio_Format, format)
+#define ecore_audio_obj_format_set(format, ret) ECORE_AUDIO_OBJ_ID(ECORE_AUDIO_OBJ_SUB_ID_FORMAT_SET), EO_TYPECHECK(Ecore_Audio_Format, format), EO_TYPECHECK(Eina_Bool *, ret)
 
 #define ecore_audio_obj_format_get(ret) ECORE_AUDIO_OBJ_ID(ECORE_AUDIO_OBJ_SUB_ID_FORMAT_GET), EO_TYPECHECK(Ecore_Audio_Format *, ret)
 

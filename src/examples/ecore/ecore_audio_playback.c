@@ -23,7 +23,7 @@ handle_cmd(char *cmd, size_t bread)
    const char *name;
    Eina_List *out_inputs, *input;
    Eo *in;
-   Eina_Bool paused;
+   Eina_Bool paused, ret;
    double pos, length;
    int min;
 
@@ -53,7 +53,10 @@ handle_cmd(char *cmd, size_t bread)
    else if (!strncmp(cmd, "n", bread))
      {
         in = eina_list_data_get(out_inputs);
-        eo_do(out, ecore_audio_obj_out_input_detach(in));
+        eo_do(out, ecore_audio_obj_out_input_detach(in, &ret));
+        if (!ret)
+          printf("Could not detach input\n");
+
         inputs = eina_list_remove(inputs, in);
 
         if (eina_list_count(inputs) > 0)
@@ -64,7 +67,9 @@ handle_cmd(char *cmd, size_t bread)
                    ecore_audio_obj_in_length_get(&length));
 
              printf("Start: %s (%0.2fs)\n", name, length);
-             eo_do(out, ecore_audio_obj_out_input_attach(in, NULL));
+             eo_do(out, ecore_audio_obj_out_input_attach(in, &ret));
+             if (!ret)
+               printf("Could not attach input %s\n", name);
           }
        else
          {
@@ -83,7 +88,9 @@ handle_cmd(char *cmd, size_t bread)
                    ecore_audio_obj_in_length_get(&length));
 
              printf("Start: %s (%0.2fs)\n", name, length);
-             eo_do(out, ecore_audio_obj_out_input_attach(in, NULL));
+             eo_do(out, ecore_audio_obj_out_input_attach(in, &ret));
+             if (!ret)
+               printf("Could not attach input %s\n", name);
           }
      }
    else if (!strncmp(cmd, "l", bread))
@@ -187,13 +194,17 @@ handle_input(void *data EINA_UNUSED, Ecore_Fd_Handler *handler)
 static Eina_Bool _play_finished(void *data EINA_UNUSED, Eo *in, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
   const char *name;
+  Eina_Bool ret;
 
   eo_do(in, ecore_audio_obj_name_get(&name));
   printf("Done: %s\n", name);
 
   inputs = eina_list_remove(inputs, in);
-  eo_do(out, ecore_audio_obj_out_input_detach(in));
+  eo_do(out, ecore_audio_obj_out_input_detach(in, &ret));
   eo_del(in);
+
+  if (!ret)
+    printf("Could not detach input %s\n", name);
 
 
   if (eina_list_count(inputs) > 0)
@@ -203,7 +214,9 @@ static Eina_Bool _play_finished(void *data EINA_UNUSED, Eo *in, const Eo_Event_D
 
       eo_do(in, ecore_audio_obj_name_get(&name));
       printf("Start: %s\n", name);
-      eo_do(out, ecore_audio_obj_out_input_attach(in, NULL));
+      eo_do(out, ecore_audio_obj_out_input_attach(in, &ret));
+      if (!ret)
+        printf("Could not attach input %s\n", name);
     }
   else
     {
@@ -219,6 +232,7 @@ main(int argc, const char *argv[])
 {
    int i, freq;
 
+   Eina_Bool ret;
    struct termios tcorig, tcnew;
    Eo *in;
    char *tmp, *tmp2, *val;
@@ -271,7 +285,11 @@ main(int argc, const char *argv[])
             tmp = strdup(argv[i]);
             eo_do(in, ecore_audio_obj_name_set(basename(tmp)));
             free(tmp);
-            eo_do(in, ecore_audio_obj_source_set(argv[i]));
+            eo_do(in, ecore_audio_obj_source_set(argv[i], &ret));
+            if (!ret) {
+              printf("Could not set %s as input\n", argv[i]);
+              continue;
+            }
          }
        eo_do(in, eo_event_callback_add(ECORE_AUDIO_EV_IN_STOPPED, _play_finished, NULL));
        inputs = eina_list_append(inputs, in);
@@ -281,13 +299,18 @@ main(int argc, const char *argv[])
    double length;
    in = (Eo *)eina_list_data_get(inputs);
 
+   if (!in)
+     return 1;
+
    eo_do(in, ecore_audio_obj_name_get(&name),
          ecore_audio_obj_in_length_get(&length));
 
    printf("Start: %s (%0.2fs)\n", name, length);
 
    out = eo_add(ECORE_AUDIO_OBJ_OUT_PULSE_CLASS, NULL);
-   eo_do(out, ecore_audio_obj_out_input_attach(in, NULL));
+   eo_do(out, ecore_audio_obj_out_input_attach(in, &ret));
+   if (!ret)
+     printf("Could not attach input %s\n", name);
 
 
    /* Disable canonical mode for stdin */

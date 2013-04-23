@@ -131,7 +131,7 @@ static Eina_Bool _input_attach_internal(Eo *eo_obj, Eo *in)
   stream = pa_stream_new(class_vars.context, name, &ss, NULL);
   if (!stream) {
       ERR("Could not create stream");
-      eo_do_super(eo_obj, MY_CLASS, ecore_audio_obj_out_input_detach(in));
+      eo_do_super(eo_obj, MY_CLASS, ecore_audio_obj_out_input_detach(in, NULL));
       return EINA_FALSE;
   }
 
@@ -185,15 +185,25 @@ static void _drain_cb(pa_stream *stream, int success EINA_UNUSED, void *data EIN
 static void _input_detach(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
 {
   pa_stream *stream;
+  Eina_Bool ret2;
 
   Eo *in = va_arg(*list, Eo *);
+  Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+
+  if (ret)
+    *ret = EINA_FALSE;
+
+  eo_do_super(eo_obj, MY_CLASS, ecore_audio_obj_out_input_detach(in, &ret2));
+  if (!ret2)
+    return;
 
   eo_do(in, eo_base_data_get("pulse_data", (void **)&stream));
 
   pa_stream_set_write_callback(stream, NULL, NULL);
   pa_operation_unref(pa_stream_drain(stream, _drain_cb, NULL));
 
-  eo_do_super(eo_obj, MY_CLASS, ecore_audio_obj_out_input_detach(in));
+  if (ret)
+    *ret = EINA_TRUE;
 }
 
 static void _state_cb(pa_context *context, void *data EINA_UNUSED)

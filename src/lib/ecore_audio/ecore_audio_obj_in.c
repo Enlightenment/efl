@@ -243,7 +243,7 @@ static void _destructor(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
   Ecore_Audio_Input *obj = _pd;
 
   if(obj->output)
-    eo_do(obj->output, ecore_audio_obj_out_input_detach(eo_obj));
+    eo_do(obj->output, ecore_audio_obj_out_input_detach(eo_obj, NULL));
 
   eo_do_super(eo_obj, MY_CLASS, eo_destructor());
 }

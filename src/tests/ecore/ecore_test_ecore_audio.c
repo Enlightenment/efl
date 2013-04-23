@@ -315,6 +315,7 @@ START_TEST(ecore_test_ecore_audio_obj_tone)
    Eo *in, *out;
    double len;
    int channel, rate, freq;
+   Eina_Bool ret;
 
    in = eo_add(ECORE_AUDIO_OBJ_IN_TONE_CLASS, NULL);
    fail_if(!in);
@@ -366,10 +367,13 @@ START_TEST(ecore_test_ecore_audio_obj_tone)
    fail_if(!out);
 
    eo_do(out, ecore_audio_obj_name_set("tmp.wav"));
-   eo_do(out, ecore_audio_obj_format_set(ECORE_AUDIO_FORMAT_WAV));
-   eo_do(out, ecore_audio_obj_source_set(TESTS_BUILD_DIR"/tmp.wav"));
+   eo_do(out, ecore_audio_obj_format_set(ECORE_AUDIO_FORMAT_WAV, &ret));
+   fail_if(!ret);
+   eo_do(out, ecore_audio_obj_source_set(TESTS_BUILD_DIR"/tmp.wav", &ret));
+   fail_if(!ret);
 
-   eo_do(out, ecore_audio_obj_out_input_attach(in, NULL));
+   eo_do(out, ecore_audio_obj_out_input_attach(in, &ret));
+   fail_if(!ret);
 
    eo_do(in, eo_event_callback_add(ECORE_AUDIO_EV_IN_STOPPED, _finished_cb, NULL));
 
@@ -388,12 +392,14 @@ START_TEST(ecore_test_ecore_audio_obj_sndfile)
    Eo *in;
    double len, rem;
    int channel, rate;
+   Eina_Bool ret;
 
    in = eo_add(ECORE_AUDIO_OBJ_IN_SNDFILE_CLASS, NULL);
    fail_if(!in);
 
    eo_do(in, ecore_audio_obj_name_set("sms.ogg"));
-   eo_do(in, ecore_audio_obj_source_set(TESTS_SRC_DIR"/sms.ogg"));
+   eo_do(in, ecore_audio_obj_source_set(TESTS_SRC_DIR"/sms.ogg", &ret));
+   fail_if(!ret);
 
    eo_do(in, ecore_audio_obj_in_channels_get(&channel));
    fail_if(channel != 2);
@@ -445,7 +451,8 @@ START_TEST(ecore_test_ecore_audio_obj_in_out)
   fail_if(eina_list_count(in3) != 1);
   fail_if(eina_list_data_get(in3) != in);
 
-  fail_if(!eo_do(out, ecore_audio_obj_out_input_attach(in2, NULL)));
+  fail_if(!eo_do(out, ecore_audio_obj_out_input_attach(in2, &attached)));
+  fail_if(!attached);
 
   fail_if(!eo_do(out, ecore_audio_obj_out_inputs_get(&in3)));
 
@@ -639,8 +646,14 @@ ecore_test_ecore_audio(TCase *tc)
    tcase_add_test(tc, ecore_test_ecore_audio_obj);
    tcase_add_test(tc, ecore_test_ecore_audio_obj_in);
    tcase_add_test(tc, ecore_test_ecore_audio_obj_in_out);
-   tcase_add_test(tc, ecore_test_ecore_audio_obj_sndfile);
    tcase_add_test(tc, ecore_test_ecore_audio_obj_tone);
+
+#ifdef HAVE_SNDFILE
+   tcase_add_test(tc, ecore_test_ecore_audio_obj_sndfile);
+#endif
+#ifdef HAVE_PUSE
+   tcase_add_test(tc, ecore_test_ecore_audio_obj_pulse);
+#endif
 
 /*
    tcase_add_test(tc, ecore_test_ecore_audio_default);

@@ -64,11 +64,17 @@ static void _input_attach(Eo *eo_obj, void *_pd, va_list *list)
   Ecore_Audio_Sndfile *obj = _pd;
   Ecore_Audio_Object *ea_obj = eo_data_get(eo_obj, ECORE_AUDIO_OBJ_CLASS);
   Ecore_Audio_Output *out_obj = eo_data_get(eo_obj, ECORE_AUDIO_OBJ_OUT_CLASS);
+  Eina_Bool ret2;
 
   Eo *in = va_arg(*list, Eo *);
   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
 
-  eo_do_super(eo_obj, MY_CLASS, ecore_audio_obj_out_input_attach(in, ret));
+  if (ret)
+    *ret = EINA_FALSE;
+
+  eo_do_super(eo_obj, MY_CLASS, ecore_audio_obj_out_input_attach(in, &ret2));
+  if (!ret2)
+    return;
 
   eo_do(in, ecore_audio_obj_in_samplerate_get(&obj->sfinfo.samplerate));
   eo_do(in, ecore_audio_obj_in_channels_get(&obj->sfinfo.channels));
@@ -78,8 +84,12 @@ static void _input_attach(Eo *eo_obj, void *_pd, va_list *list)
   if (!obj->handle) {
     eina_stringshare_del(ea_obj->source);
     ea_obj->source = NULL;
+    eo_do_super(eo_obj, MY_CLASS, ecore_audio_obj_out_input_detach(in, NULL));
     return;
   }
+
+  if (ret)
+    *ret = EINA_TRUE;
 
   if (ea_obj->paused)
     return;
@@ -96,6 +106,10 @@ static void _source_set(Eo *eo_obj, void *_pd, va_list *list)
   Ecore_Audio_Object *ea_obj = eo_data_get(eo_obj, ECORE_AUDIO_OBJ_CLASS);
 
   const char *source = va_arg(*list, const char *);
+  Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+
+  if (ret)
+    *ret = EINA_FALSE;
 
   if (obj->handle) {
     sf_close(obj->handle);
@@ -106,6 +120,11 @@ static void _source_set(Eo *eo_obj, void *_pd, va_list *list)
 
   if (!ea_obj->source)
     return;
+
+  //FIXME: Open the file here
+
+  if (ret)
+    *ret = EINA_TRUE;
 
 }
 
@@ -125,9 +144,12 @@ static void _format_set(Eo *eo_obj, void *_pd, va_list *list)
   Ecore_Audio_Object *ea_obj = eo_data_get(eo_obj, ECORE_AUDIO_OBJ_CLASS);
 
   Ecore_Audio_Format format= va_arg(*list, Ecore_Audio_Format);
+  Eina_Bool *ret = va_arg(*list, Eina_Bool *);
 
   if (ea_obj->source) {
       ERR("Input is already open - cannot change format");
+      if (ret)
+        *ret = EINA_FALSE;
       return;
   }
 
@@ -145,9 +167,13 @@ static void _format_set(Eo *eo_obj, void *_pd, va_list *list)
       break;
     default:
       ERR("Format not supported!");
+      if (ret)
+        *ret = EINA_FALSE;
       return;
   }
   ea_obj->format = format;
+  if (ret)
+    *ret = EINA_TRUE;
 }
 
 static void _format_get(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
@@ -164,7 +190,7 @@ static void _constructor(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list EINA_U
 {
   eo_do_super(eo_obj, MY_CLASS, eo_constructor());
 
-  eo_do(eo_obj, ecore_audio_obj_format_set(ECORE_AUDIO_FORMAT_OGG));
+  eo_do(eo_obj, ecore_audio_obj_format_set(ECORE_AUDIO_FORMAT_OGG, NULL));
 }
 
 static void _destructor(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)

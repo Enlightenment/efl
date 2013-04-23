@@ -37,6 +37,7 @@ main(int argc, char *argv[])
 {
    Eo *out;
    Eo *in;
+   Eina_Bool ret;
 
    if (argc < 2)
      {
@@ -50,14 +51,31 @@ main(int argc, char *argv[])
 
    in = eo_add(ECORE_AUDIO_OBJ_IN_SNDFILE_CLASS, NULL);
    eo_do(in, ecore_audio_obj_name_set(basename(argv[1])));
-   eo_do(in, ecore_audio_obj_source_set(argv[1]));
+   eo_do(in, ecore_audio_obj_source_set(argv[1], &ret));
+   if (!ret) {
+     printf("Could not set %s as input\n", argv[1]);
+     eo_del(in);
+     return 1;
+   }
 
    eo_do(in, eo_event_callback_add(ECORE_AUDIO_EV_IN_STOPPED, _play_finished, NULL));
 
    out = eo_add(ECORE_AUDIO_OBJ_OUT_SNDFILE_CLASS, NULL);
-   eo_do(out, ecore_audio_obj_source_set("foo.ogg"));
+   eo_do(out, ecore_audio_obj_source_set("foo.ogg", &ret));
+   if (!ret) {
+     printf("Could not set %s as output\n", "foo.ogg");
+     eo_del(in);
+     eo_del(out);
+     return 1;
+   }
 
-   eo_do(out, ecore_audio_obj_out_input_attach(in, NULL));
+   eo_do(out, ecore_audio_obj_out_input_attach(in, &ret));
+   if (!ret) {
+     printf("Could not attach input\n");
+     eo_del(out);
+     eo_del(in);
+     return 1;
+   }
 
    ecore_main_loop_begin();
 

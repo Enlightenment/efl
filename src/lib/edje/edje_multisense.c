@@ -78,6 +78,7 @@ _edje_multisense_internal_sound_sample_play(Edje *ed, const char *sample_name, c
    Edje_Sound_Sample *sample;
    char snd_id_str[255];
    int i;
+   Eina_Bool ret;
 
     if (!sample_name)
       {
@@ -119,7 +120,12 @@ _edje_multisense_internal_sound_sample_play(Edje *ed, const char *sample_name, c
             if (!out)
               out = eo_add(ECORE_AUDIO_OBJ_OUT_PULSE_CLASS, NULL);
 
-            eo_do(out, ecore_audio_obj_out_input_attach(in, NULL));
+            eo_do(out, ecore_audio_obj_out_input_attach(in, &ret));
+            if (!ret) {
+              ERR("Could not attach input");
+              eo_del(in);
+              return EINA_FALSE;
+            }
          }
      }
    return EINA_TRUE;
@@ -138,11 +144,12 @@ _edje_multisense_internal_sound_tone_play(Edje *ed, const char *tone_name, const
 #ifdef ENABLE_MULTISENSE
    unsigned int i;
    Edje_Sound_Tone *tone;
+   Eina_Bool ret;
 
    Eo *in;
    if (!tone_name)
      {
-        ERR("Given Tone Name is NULL\n");
+        ERR("Given Tone Name is NULL");
         return EINA_FALSE;
      }
    if ((!ed) || (!ed->file) || (!ed->file->sound_dir))
@@ -162,7 +169,12 @@ _edje_multisense_internal_sound_tone_play(Edje *ed, const char *tone_name, const
              if (!out)
                out = eo_add(ECORE_AUDIO_OBJ_OUT_PULSE_CLASS, NULL);
 
-             eo_do(out, ecore_audio_obj_out_input_attach(in, NULL));
+             eo_do(out, ecore_audio_obj_out_input_attach(in, &ret));
+             if (!ret) {
+               ERR("Could not attach input");
+               eo_del(in);
+               return EINA_FALSE;
+             }
           }
      }
    return EINA_TRUE;

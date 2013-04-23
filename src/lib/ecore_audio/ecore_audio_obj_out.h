@@ -51,7 +51,7 @@ enum Ecore_Audio_Obj_Out_Sub_Ids
 
 #define ecore_audio_obj_out_input_attach(input, ret) ECORE_AUDIO_OBJ_OUT_ID(ECORE_AUDIO_OBJ_OUT_SUB_ID_INPUT_ATTACH), EO_TYPECHECK(Eo *, input), EO_TYPECHECK(Eina_Bool *, ret)
 
-#define ecore_audio_obj_out_input_detach(input) ECORE_AUDIO_OBJ_OUT_ID(ECORE_AUDIO_OBJ_OUT_SUB_ID_INPUT_DETACH), EO_TYPECHECK(Eo *, input)
+#define ecore_audio_obj_out_input_detach(input, ret) ECORE_AUDIO_OBJ_OUT_ID(ECORE_AUDIO_OBJ_OUT_SUB_ID_INPUT_DETACH), EO_TYPECHECK(Eo *, input), EO_TYPECHECK(Eina_Bool *, ret)
 
 #define ecore_audio_obj_out_inputs_get(input) ECORE_AUDIO_OBJ_OUT_ID(ECORE_AUDIO_OBJ_OUT_SUB_ID_INPUTS_GET), EO_TYPECHECK(Eina_List **, input)
 

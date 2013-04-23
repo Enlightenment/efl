@@ -137,6 +137,10 @@ static void _source_set(Eo *eo_obj, void *_pd, va_list *list)
   Ecore_Audio_Input *in_obj = eo_data_get(eo_obj, ECORE_AUDIO_OBJ_IN_CLASS);
 
   const char *source = va_arg(*list, const char *);
+  Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+
+  if (ret)
+    *ret = EINA_FALSE;
 
   if (obj->handle) {
     sf_close(obj->handle);
@@ -155,6 +159,9 @@ static void _source_set(Eo *eo_obj, void *_pd, va_list *list)
     ea_obj->source = NULL;
     return;
   }
+
+  if (ret)
+    *ret = EINA_TRUE;
 
   in_obj->seekable = EINA_TRUE;
   in_obj->length = (double)obj->sfinfo.frames / obj->sfinfo.samplerate;
@@ -188,6 +195,7 @@ static void _format_set(Eo *eo_obj, void *_pd, va_list *list)
   Ecore_Audio_Object *ea_obj = eo_data_get(eo_obj, ECORE_AUDIO_OBJ_CLASS);
 
   Ecore_Audio_Format format= va_arg(*list, Ecore_Audio_Format);
+  Eina_Bool *ret = va_arg(*list, Eina_Bool *);
 
   if (ea_obj->source) {
       ERR("Input is already open - cannot change format");
@@ -208,9 +216,14 @@ static void _format_set(Eo *eo_obj, void *_pd, va_list *list)
       break;
     default:
       ERR("Format not supported!");
+      if (ret)
+        *ret = EINA_FALSE;
       return;
   }
   ea_obj->format = format;
+
+  if (ret)
+    *ret = EINA_TRUE;
 }
 
 static void _format_get(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)

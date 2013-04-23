@@ -35,7 +35,7 @@ static void _input_attach(Eo *eo_obj, void *_pd, va_list *list)
   if (in->output == eo_obj)
     return;
 
-  if (in->output) eo_do(in->output, ecore_audio_obj_out_input_detach(input));
+  if (in->output) eo_do(in->output, ecore_audio_obj_out_input_detach(input, NULL));
   in->output = eo_obj;
 
   /* TODO: Check type is input
@@ -48,14 +48,21 @@ static void _input_attach(Eo *eo_obj, void *_pd, va_list *list)
     *ret = EINA_TRUE;
 }
 
-static void _input_detach(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
+static void _input_detach(Eo *eo_obj, void *_pd, va_list *list)
 {
   Ecore_Audio_Output *obj = _pd;
   Ecore_Audio_Input *in;
 
   Eo *input = va_arg(*list, Eo *);
+  Eina_Bool *ret = va_arg(*list, Eina_Bool *);
 
   in = eo_data_get(input, ECORE_AUDIO_OBJ_IN_CLASS);
+
+  if (ret)
+    *ret = EINA_FALSE;
+
+  if (in->output != eo_obj)
+    return;
 
   in->output = NULL;
 
@@ -65,6 +72,8 @@ static void _input_detach(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
 
   obj->inputs = eina_list_remove(obj->inputs, input);
 
+  if (ret)
+    *ret = EINA_TRUE;
 }
 
 static void _inputs_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
@@ -91,7 +100,7 @@ static void _destructor(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
   Eo *in;
 
   EINA_LIST_FOREACH_SAFE(obj->inputs, cur, tmp, in) {
-      eo_do(eo_obj, ecore_audio_obj_out_input_detach(in));
+      eo_do(eo_obj, ecore_audio_obj_out_input_detach(in, NULL));
   }
 
   eo_do_super(eo_obj, MY_CLASS, eo_destructor());

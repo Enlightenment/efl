@@ -49,6 +49,8 @@ Ecore_Audio_Vio vio = {
 int
 main(int argc, const char *argv[])
 {
+   Eina_Bool ret;
+
    ecore_init();
    ecore_audio_init();
 
@@ -68,7 +70,11 @@ main(int argc, const char *argv[])
    eo_do(in, ecore_audio_obj_volume_set(0.7));
    eo_do(in, ecore_audio_obj_vio_set(&vio, NULL, NULL));
 
-   eo_do(out, ecore_audio_obj_out_input_attach(in, NULL));
+   eo_do(out, ecore_audio_obj_out_input_attach(in, &ret));
+   if (!ret) {
+     printf("Could not attach input");
+     goto end;
+   }
 
    ecore_main_loop_begin();
 
