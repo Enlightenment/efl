@@ -3,6 +3,12 @@
 #endif
 
 #include "eo_ptr_indirection.h"
+#ifdef __linux__
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <sys/mman.h>
+#endif
 
 /* Start of pointer indirection:
  *
@@ -73,6 +79,68 @@ typedef uintptr_t Table_Index;
 #define MAX_IDS_INTER_TABLES (1 << BITS_FOR_IDS_INTER_TABLE)
 #define MAX_IDS_PER_TABLE    (1 << BITS_FOR_ID_IN_TABLE)
 #define MAX_GENERATIONS      (1 << BITS_FOR_GENERATION_COUNTER)
+
+#define MEM_HEADER_SIZE 16
+#define MEM_PAGE_SIZE   4096
+#define MEM_MAGIC       0x3f61ec8a
+
+typedef struct _Mem_Header
+{
+   size_t size;
+   size_t magic;
+} Mem_Header;
+
+static void *
+_eo_id_mem_alloc(size_t size)
+{
+#ifdef __linux__
+   void *ptr;
+   Mem_Header *hdr;
+   size_t newsize;
+   newsize = MEM_PAGE_SIZE * ((size + MEM_HEADER_SIZE + MEM_PAGE_SIZE - 1) / 
+                              MEM_PAGE_SIZE);
+   ptr = mmap(NULL, newsize, PROT_READ | PROT_WRITE,
+              MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+   if (ptr == MAP_FAILED)
+     {
+        ERR("mmap of eo id table region failed!");
+        return NULL;
+     }
+   hdr = ptr;
+   hdr->size = size;
+   hdr->magic = MEM_MAGIC;
+   return (void *)(((unsigned char *)ptr) + MEM_HEADER_SIZE);
+#else
+   return malloc(size);
+#endif   
+}
+
+static void *
+_eo_id_mem_calloc(size_t num, size_t size)
+{
+   void *ptr = _eo_id_mem_alloc(num * size);
+   if (!ptr) return NULL;
+   memset(ptr, 0, num * size);
+   return ptr;
+}
+
+static void
+_eo_id_mem_free(void *ptr)
+{
+#ifdef __linux__
+   Mem_Header *hdr;
+   if (!ptr) return;
+   hdr = (Mem_Header *)(((unsigned char *)ptr) - MEM_HEADER_SIZE);
+   if (hdr->magic != MEM_MAGIC)
+     {
+        ERR("unmap of eo table region has bad magic!");
+        return;
+     }
+   munmap(hdr, hdr->size);
+#else
+   free(ptr);
+#endif
+}
 
 /* Table */
 typedef struct
@@ -158,7 +226,7 @@ _eo_id_allocate(const _Eo *obj)
         if (!_eo_ids_tables[table_id])
           {
              /* We allocate a new table */
-             _eo_ids_tables[table_id] = calloc(MAX_IDS_INTER_TABLES, sizeof(_Eo_Ids_Table*));
+             _eo_ids_tables[table_id] = _eo_id_mem_calloc(MAX_IDS_INTER_TABLES, sizeof(_Eo_Ids_Table*));
           }
         for (Table_Index int_table_id = 0; int_table_id < MAX_IDS_INTER_TABLES; int_table_id++)
           {
@@ -166,7 +234,7 @@ _eo_id_allocate(const _Eo *obj)
              if (!ID_TABLE)
                {
                   /* We allocate a new intermediate table */
-                  ID_TABLE = calloc(1, sizeof(_Eo_Ids_Table));
+                  ID_TABLE = _eo_id_mem_calloc(1, sizeof(_Eo_Ids_Table));
                   eina_trash_init(&(ID_TABLE->queue));
                   /* We select directly the first entry of the new table */
                   ptr = &(ID_TABLE->ptrs[0]);
@@ -242,10 +310,10 @@ _eo_free_ids_tables()
                {
                   if (ID_TABLE)
                     {
-                       free(ID_TABLE);
+                       _eo_id_mem_free(ID_TABLE);
                     }
                }
-             free(_eo_ids_tables[table_id]);
+             _eo_id_mem_free(_eo_ids_tables[table_id]);
           }
         _eo_ids_tables[table_id] = NULL;
      }
