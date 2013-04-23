@@ -35,15 +35,15 @@ static Elm_Systray_Private_Data _item = {
    .menu_obj        = NULL
 };
 
-#ifdef ELM_EDBUS2
+#ifdef ELM_ELDBUS
 
 #define OBJ_PATH  "/org/ayatana/NotificationItem/StatusNotifierItem"
 #define INTERFACE "org.kde.StatusNotifierItem"
 
 static Eina_Bool _elm_need_systray = EINA_FALSE;
 
-static EDBus_Connection        *_conn  = NULL;
-static EDBus_Service_Interface *_iface = NULL;
+static Eldbus_Connection        *_conn  = NULL;
+static Eldbus_Service_Interface *_iface = NULL;
 
 static const char *_Elm_Systray_Cat_Str[] = {
    [ELM_SYSTRAY_CATEGORY_APP_STATUS]     = "ApplicationStatus",
@@ -65,31 +65,31 @@ static const char *_Elm_Systray_Status_Str[] = {
 // =============================================================================
 // Methods
 // =============================================================================
-static EDBus_Message *
-_empty_method(const EDBus_Service_Interface *iface EINA_UNUSED,
-        const EDBus_Message *msg)
+static Eldbus_Message *
+_empty_method(const Eldbus_Service_Interface *iface EINA_UNUSED,
+        const Eldbus_Message *msg)
 {
-   return edbus_message_method_return_new(msg);
+   return eldbus_message_method_return_new(msg);
 }
 
-static const EDBus_Method methods[] = {
+static const Eldbus_Method methods[] = {
       {
          "Scroll",
-         EDBUS_ARGS({"i", "delta"}, {"s", "orientation"}),
+         ELDBUS_ARGS({"i", "delta"}, {"s", "orientation"}),
          NULL,
          _empty_method,
          0
       },
       {
          "SecondaryActivate",
-         EDBUS_ARGS({"i", "x"}, {"i", "y"}),
+         ELDBUS_ARGS({"i", "x"}, {"i", "y"}),
          NULL,
          _empty_method,
          0
       },
       {
          "XAyatanaSecondaryActivate",
-         EDBUS_ARGS({"u", "timestamp"}),
+         ELDBUS_ARGS({"u", "timestamp"}),
          NULL,
          _empty_method,
          0
@@ -111,9 +111,9 @@ typedef enum _Elm_Systray_Service_Signals
 } Elm_Systray_Service_Signals;
 
 #define _elm_systray_signal_emit(sig, ...)            \
-   edbus_service_signal_emit(_iface, sig, __VA_ARGS__)
+   eldbus_service_signal_emit(_iface, sig, __VA_ARGS__)
 
-static const EDBus_Signal signals[] = {
+static const Eldbus_Signal signals[] = {
      [ELM_SYSTRAY_SIGNAL_NEWATTENTIONICON] = {
           "NewAttentionIcon", NULL, 0
      },
@@ -121,16 +121,16 @@ static const EDBus_Signal signals[] = {
           "NewIcon", NULL, 0
      },
      [ELM_SYSTRAY_SIGNAL_NEWICONTHEMEPATH] = {
-          "NewIconThemePath", EDBUS_ARGS({"s", "icon_theme_path"}), 0
+          "NewIconThemePath", ELDBUS_ARGS({"s", "icon_theme_path"}), 0
      },
      [ELM_SYSTRAY_SIGNAL_NEWSTATUS] = {
-          "NewStatus", EDBUS_ARGS({"s", "status"}), 0
+          "NewStatus", ELDBUS_ARGS({"s", "status"}), 0
      },
      [ELM_SYSTRAY_SIGNAL_NEWTITLE] = {
           "NewTitle", NULL, 0
      },
      [ELM_SYSTRAY_SIGNAL_XAYATANANEWLABEL] = {
-          "XAyatanaNewLabel", EDBUS_ARGS({"s", "label"}, {"s", "guide"}), 0
+          "XAyatanaNewLabel", ELDBUS_ARGS({"s", "label"}, {"s", "guide"}), 0
      },
      { NULL, NULL, 0 }
 };
@@ -139,139 +139,139 @@ static const EDBus_Signal signals[] = {
 // Properties
 // =============================================================================
 static Eina_Bool
-_prop_str_empty_get(const EDBus_Service_Interface *iface EINA_UNUSED,
+_prop_str_empty_get(const Eldbus_Service_Interface *iface EINA_UNUSED,
                     const char *propname EINA_UNUSED,
-                    EDBus_Message_Iter *iter,
-                    const EDBus_Message *request_msg EINA_UNUSED,
-                    EDBus_Message **error EINA_UNUSED)
+                    Eldbus_Message_Iter *iter,
+                    const Eldbus_Message *request_msg EINA_UNUSED,
+                    Eldbus_Message **error EINA_UNUSED)
 {
-   edbus_message_iter_basic_append(iter, 's', "");
+   eldbus_message_iter_basic_append(iter, 's', "");
 
    return EINA_TRUE;
 }
 
 static Eina_Bool
-_prop_attention_icon_name_get(const EDBus_Service_Interface *iface EINA_UNUSED,
+_prop_attention_icon_name_get(const Eldbus_Service_Interface *iface EINA_UNUSED,
                               const char *propname EINA_UNUSED,
-                              EDBus_Message_Iter *iter,
-                              const EDBus_Message *request_msg EINA_UNUSED,
-                              EDBus_Message **error EINA_UNUSED)
+                              Eldbus_Message_Iter *iter,
+                              const Eldbus_Message *request_msg EINA_UNUSED,
+                              Eldbus_Message **error EINA_UNUSED)
 {
    const char *s = _item.att_icon_name ? _item.att_icon_name : "";
 
-   edbus_message_iter_basic_append(iter, 's', s);
+   eldbus_message_iter_basic_append(iter, 's', s);
 
    return EINA_TRUE;
 }
 
 static Eina_Bool
-_prop_category_get(const EDBus_Service_Interface *iface EINA_UNUSED,
+_prop_category_get(const Eldbus_Service_Interface *iface EINA_UNUSED,
                    const char *propname EINA_UNUSED,
-                   EDBus_Message_Iter *iter,
-                   const EDBus_Message *request_msg EINA_UNUSED,
-                   EDBus_Message **error EINA_UNUSED)
+                   Eldbus_Message_Iter *iter,
+                   const Eldbus_Message *request_msg EINA_UNUSED,
+                   Eldbus_Message **error EINA_UNUSED)
 {
-   edbus_message_iter_basic_append(iter, 's', _Elm_Systray_Cat_Str[_item.cat]);
+   eldbus_message_iter_basic_append(iter, 's', _Elm_Systray_Cat_Str[_item.cat]);
 
    return EINA_TRUE;
 }
 
 static Eina_Bool
-_prop_icon_name_get(const EDBus_Service_Interface *iface EINA_UNUSED,
+_prop_icon_name_get(const Eldbus_Service_Interface *iface EINA_UNUSED,
                     const char *propname EINA_UNUSED,
-                    EDBus_Message_Iter *iter,
-                    const EDBus_Message *request_msg EINA_UNUSED,
-                    EDBus_Message **error EINA_UNUSED)
+                    Eldbus_Message_Iter *iter,
+                    const Eldbus_Message *request_msg EINA_UNUSED,
+                    Eldbus_Message **error EINA_UNUSED)
 {
    const char *s = _item.icon_name ? _item.icon_name : "";
 
-   edbus_message_iter_basic_append(iter, 's', s);
+   eldbus_message_iter_basic_append(iter, 's', s);
 
    return EINA_TRUE;
 }
 
 static Eina_Bool
-_prop_icon_theme_path_get(const EDBus_Service_Interface *iface EINA_UNUSED,
+_prop_icon_theme_path_get(const Eldbus_Service_Interface *iface EINA_UNUSED,
                           const char *propname EINA_UNUSED,
-                          EDBus_Message_Iter *iter,
-                          const EDBus_Message *request_msg EINA_UNUSED,
-                          EDBus_Message **error EINA_UNUSED)
+                          Eldbus_Message_Iter *iter,
+                          const Eldbus_Message *request_msg EINA_UNUSED,
+                          Eldbus_Message **error EINA_UNUSED)
 {
    const char *s = _item.icon_theme_path ? _item.icon_theme_path : "";
 
-   edbus_message_iter_basic_append(iter, 's', s);
+   eldbus_message_iter_basic_append(iter, 's', s);
 
    return EINA_TRUE;
 }
 
 static Eina_Bool
-_prop_id_get(const EDBus_Service_Interface *iface EINA_UNUSED,
+_prop_id_get(const Eldbus_Service_Interface *iface EINA_UNUSED,
              const char *propname EINA_UNUSED,
-             EDBus_Message_Iter *iter,
-             const EDBus_Message *request_msg EINA_UNUSED,
-             EDBus_Message **error EINA_UNUSED)
+             Eldbus_Message_Iter *iter,
+             const Eldbus_Message *request_msg EINA_UNUSED,
+             Eldbus_Message **error EINA_UNUSED)
 {
    const char *s = _item.id ? _item.id : "";
 
-   edbus_message_iter_basic_append(iter, 's', s);
+   eldbus_message_iter_basic_append(iter, 's', s);
 
    return EINA_TRUE;
 }
 
 static Eina_Bool
-_prop_menu_get(const EDBus_Service_Interface *iface EINA_UNUSED,
+_prop_menu_get(const Eldbus_Service_Interface *iface EINA_UNUSED,
                const char *propname EINA_UNUSED,
-               EDBus_Message_Iter *iter,
-               const EDBus_Message *request_msg EINA_UNUSED,
-               EDBus_Message **error EINA_UNUSED)
+               Eldbus_Message_Iter *iter,
+               const Eldbus_Message *request_msg EINA_UNUSED,
+               Eldbus_Message **error EINA_UNUSED)
 {
    const char *s = _item.menu ? _item.menu : "/";
 
-   edbus_message_iter_basic_append(iter, 'o', s);
+   eldbus_message_iter_basic_append(iter, 'o', s);
 
    return EINA_TRUE;
 }
 
 static Eina_Bool
-_prop_status_get(const EDBus_Service_Interface *iface EINA_UNUSED,
+_prop_status_get(const Eldbus_Service_Interface *iface EINA_UNUSED,
                  const char *propname EINA_UNUSED,
-                 EDBus_Message_Iter *iter,
-                 const EDBus_Message *request_msg EINA_UNUSED,
-                 EDBus_Message **error EINA_UNUSED)
+                 Eldbus_Message_Iter *iter,
+                 const Eldbus_Message *request_msg EINA_UNUSED,
+                 Eldbus_Message **error EINA_UNUSED)
 {
-   edbus_message_iter_basic_append(iter, 's',
+   eldbus_message_iter_basic_append(iter, 's',
                                    _Elm_Systray_Status_Str[_item.status]);
 
    return EINA_TRUE;
 }
 
 static Eina_Bool
-_prop_title_get(const EDBus_Service_Interface *iface EINA_UNUSED,
+_prop_title_get(const Eldbus_Service_Interface *iface EINA_UNUSED,
                 const char *propname EINA_UNUSED,
-                EDBus_Message_Iter *iter,
-                const EDBus_Message *request_msg EINA_UNUSED,
-                EDBus_Message **error EINA_UNUSED)
+                Eldbus_Message_Iter *iter,
+                const Eldbus_Message *request_msg EINA_UNUSED,
+                Eldbus_Message **error EINA_UNUSED)
 {
    const char *s = _item.title ? _item.title : "";
 
-   edbus_message_iter_basic_append(iter, 's', s);
+   eldbus_message_iter_basic_append(iter, 's', s);
 
    return EINA_TRUE;
 }
 
 static Eina_Bool
-_prop_xayatana_orderindex_get(const EDBus_Service_Interface *iface EINA_UNUSED,
+_prop_xayatana_orderindex_get(const Eldbus_Service_Interface *iface EINA_UNUSED,
                               const char *propname EINA_UNUSED,
-                              EDBus_Message_Iter *iter,
-                              const EDBus_Message *request_msg EINA_UNUSED,
-                              EDBus_Message **error EINA_UNUSED)
+                              Eldbus_Message_Iter *iter,
+                              const Eldbus_Message *request_msg EINA_UNUSED,
+                              Eldbus_Message **error EINA_UNUSED)
 {
-   edbus_message_iter_basic_append(iter, 'u', 0);
+   eldbus_message_iter_basic_append(iter, 'u', 0);
 
    return EINA_TRUE;
 }
 
-static const EDBus_Property properties[] = {
+static const Eldbus_Property properties[] = {
        { "AttentionAcessibleDesc", "s", _prop_str_empty_get, NULL, 0 },
        { "AttentionIconName", "s", _prop_attention_icon_name_get, NULL, 0 },
        { "Category", "s", _prop_category_get, NULL, 0 },
@@ -288,7 +288,7 @@ static const EDBus_Property properties[] = {
        { NULL, NULL, NULL, NULL, 0 }
 };
 
-static const EDBus_Service_Interface_Desc _iface_desc = {
+static const Eldbus_Service_Interface_Desc _iface_desc = {
      INTERFACE, methods, signals, properties, NULL, NULL
 };
 #endif
@@ -304,8 +304,8 @@ _menu_died(void *data EINA_UNUSED,
 
    eina_stringshare_replace(&(_item.menu), NULL);
 
-#ifdef ELM_EDBUS2
-   edbus_service_property_changed(_iface, "Menu");
+#ifdef ELM_ELDBUS
+   eldbus_service_property_changed(_iface, "Menu");
 #endif
 }
 
@@ -317,8 +317,8 @@ _category_set(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED, va_list *args)
    if (_item.cat == cat) return;
 
    _item.cat = cat;
-#ifdef ELM_EDBUS2
-   edbus_service_property_changed(_iface, "Category");
+#ifdef ELM_ELDBUS
+   eldbus_service_property_changed(_iface, "Category");
 #endif
 }
 
@@ -338,8 +338,8 @@ _status_set(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED, va_list *args)
    if (_item.status == st) return;
 
    _item.status = st;
-#ifdef ELM_EDBUS2
-   edbus_service_property_changed(_iface, "Status");
+#ifdef ELM_ELDBUS
+   eldbus_service_property_changed(_iface, "Status");
    _elm_systray_signal_emit(ELM_SYSTRAY_SIGNAL_NEWSTATUS,
                             _Elm_Systray_Status_Str[_item.status]);
 #endif
@@ -359,8 +359,8 @@ _att_icon_name_set(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED, va_list *args)
 
    if (!eina_stringshare_replace(&(_item.att_icon_name), att_icon_name)) return;
 
-#ifdef ELM_EDBUS2
-   edbus_service_property_changed(_iface, "AttentionIconName");
+#ifdef ELM_ELDBUS
+   eldbus_service_property_changed(_iface, "AttentionIconName");
    _elm_systray_signal_emit(ELM_SYSTRAY_SIGNAL_NEWATTENTIONICON, NULL);
 #endif
 }
@@ -379,8 +379,8 @@ _icon_name_set(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED, va_list *args)
 
    if (!eina_stringshare_replace(&(_item.icon_name), icon_name)) return;
 
-#ifdef ELM_EDBUS2
-   edbus_service_property_changed(_iface, "IconName");
+#ifdef ELM_ELDBUS
+   eldbus_service_property_changed(_iface, "IconName");
    _elm_systray_signal_emit(ELM_SYSTRAY_SIGNAL_NEWICON, NULL);
 #endif
 }
@@ -400,8 +400,8 @@ _icon_theme_path_set(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED, va_list *args)
    if (!eina_stringshare_replace(&(_item.icon_theme_path), icon_theme_path))
      return;
 
-#ifdef ELM_EDBUS2
-   edbus_service_property_changed(_iface, "IconThemePath");
+#ifdef ELM_ELDBUS
+   eldbus_service_property_changed(_iface, "IconThemePath");
    _elm_systray_signal_emit(ELM_SYSTRAY_SIGNAL_NEWICONTHEMEPATH,
                             _item.icon_theme_path);
 #endif
@@ -421,8 +421,8 @@ _id_set(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED, va_list *args)
 
    if (!eina_stringshare_replace(&(_item.id), id)) return;
 
-#ifdef ELM_EDBUS2
-   edbus_service_property_changed(_iface, "Id");
+#ifdef ELM_ELDBUS
+   eldbus_service_property_changed(_iface, "Id");
 #endif
 }
 
@@ -440,8 +440,8 @@ _title_set(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED, va_list *args)
 
    if (!eina_stringshare_replace(&(_item.title), title)) return;
 
-#ifdef ELM_EDBUS2
-   edbus_service_property_changed(_iface, "Title");
+#ifdef ELM_ELDBUS
+   eldbus_service_property_changed(_iface, "Title");
    _elm_systray_signal_emit(ELM_SYSTRAY_SIGNAL_NEWTITLE, NULL);
 #endif
 }
@@ -476,8 +476,8 @@ _menu_set(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED, va_list *args)
 
    _item.menu_obj = menu_obj;
 
-#ifdef ELM_EDBUS2
-   edbus_service_property_changed(_iface, "Menu");
+#ifdef ELM_ELDBUS
+   eldbus_service_property_changed(_iface, "Menu");
 #endif
 }
 
@@ -492,7 +492,7 @@ static void
 _register(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED, va_list *args)
 {
    Eina_Bool *ret = va_arg(*args, Eina_Bool *);
-#ifdef ELM_EDBUS2
+#ifdef ELM_ELDBUS
    if (!_elm_need_systray) goto err;
 
    *ret = _elm_systray_watcher_status_notifier_item_register(OBJ_PATH);
@@ -506,20 +506,20 @@ err:
 EAPI Eina_Bool
 elm_need_systray(void)
 {
-#ifdef ELM_EDBUS2
+#ifdef ELM_ELDBUS
    if (_elm_need_systray) return EINA_TRUE;
 
-   if (!elm_need_edbus()) return EINA_FALSE;
+   if (!elm_need_eldbus()) return EINA_FALSE;
 
    if (!ELM_EVENT_SYSTRAY_READY)
      ELM_EVENT_SYSTRAY_READY = ecore_event_type_new();
 
    if (!_elm_systray_watcher_init()) return EINA_FALSE;
 
-   _conn = edbus_connection_get(EDBUS_CONNECTION_TYPE_SESSION);
+   _conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
    if (!_conn) goto err;
 
-   _iface = edbus_service_interface_register(_conn, OBJ_PATH, &_iface_desc);
+   _iface = eldbus_service_interface_register(_conn, OBJ_PATH, &_iface_desc);
    if (!_iface) goto err;
 
    _elm_need_systray = EINA_TRUE;
@@ -528,7 +528,7 @@ elm_need_systray(void)
 err:
    if (_conn)
      {
-        edbus_connection_unref(_conn);
+        eldbus_connection_unref(_conn);
         _conn = NULL;
      }
 
@@ -540,14 +540,14 @@ err:
 void
 _elm_unneed_systray(void)
 {
-#ifdef ELM_EDBUS2
+#ifdef ELM_ELDBUS
    if (!_elm_need_systray) return;
 
    _elm_need_systray = EINA_FALSE;
 
-   edbus_service_interface_unregister(_iface);
+   eldbus_service_interface_unregister(_iface);
 
-   edbus_connection_unref(_conn);
+   eldbus_connection_unref(_conn);
 
    _elm_systray_watcher_shutdown();
 

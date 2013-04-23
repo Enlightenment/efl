@@ -482,33 +482,33 @@ if test "x$want_elementary_wayland" = "xyes" -a "x$have_elementary_wayland" = "x
     AC_MSG_ERROR([ecore-wayland support requested, but not found by pkg-config.])
 fi
 
-ELM_EDBUS2_DEF="#undef"
-have_elementary_edbus2="no"
-want_elementary_edbus2="auto"
-AC_ARG_ENABLE([edbus2],
-   [AC_HELP_STRING([--disable-edbus2], [disable edbus2 support. @<:@default=detect@:>@])],
-   [want_elementary_edbus2=$enableval], [])
+ELM_ELDBUS_DEF="#undef"
+have_elementary_eldbus="no"
+want_elementary_eldbus="auto"
+AC_ARG_ENABLE([eldbus],
+   [AC_HELP_STRING([--disable-eldbus], [disable eldbus support. @<:@default=detect@:>@])],
+   [want_elementary_eldbus=$enableval], [])
 
-if test "x$want_elementary_edbus2" != "xno"; then
-    PKG_CHECK_MODULES([ELEMENTARY_EDBUS2],
+if test "x$want_elementary_eldbus" != "xno"; then
+    PKG_CHECK_MODULES([ELEMENTARY_ELDBUS],
        [
-        edbus2 >= 1.6.99
+        eldbus >= 1.6.99
        ],
        [
-        AC_DEFINE(HAVE_ELEMENTARY_EDBUS2, 1, [EDbus2 support for Elementary])
-        have_elementary_edbus2="yes"
-        ELM_EDBUS2_DEF="#define"
-        requirement_elm="edbus2 >= 1.6.99 ${requirement_elm}"
+        AC_DEFINE(HAVE_ELEMENTARY_ELDBUS, 1, [Eldbus support for Elementary])
+        have_elementary_eldbus="yes"
+        ELM_ELDBUS_DEF="#define"
+        requirement_elm="eldbus >= 1.6.99 ${requirement_elm}"
        ],
-       [have_elementary_edbus2="no"]
+       [have_elementary_eldbus="no"]
     )
 else
-    have_elementary_edbus2="no"
+    have_elementary_eldbus="no"
 fi
-if test "x$want_elementary_edbus2" = "xyes" -a "x$have_elementary_edbus2" = "xno"; then
-    AC_MSG_ERROR([EDBus (v2) support requested, but no edbus2 found by pkg-config.])
+if test "x$want_elementary_eldbus" = "xyes" -a "x$have_elementary_eldbus" = "xno"; then
+    AC_MSG_ERROR([Eldbus (v2) support requested, but no eldbus found by pkg-config.])
 fi
-AC_SUBST(ELM_EDBUS2_DEF)
+AC_SUBST(ELM_ELDBUS_DEF)
 
 ELM_ELOCATION_DEF="#undef"
 have_elementary_elocation="no"
@@ -534,7 +534,7 @@ else
     have_elementary_elocation="no"
 fi
 if test "x$want_elementary_elocation" = "xyes" -a "x$have_elementary_elocation" = "xno"; then
-    AC_MSG_ERROR([EDBus (v2) support requested, but no elocation found by pkg-config.])
+    AC_MSG_ERROR([Eldbus (v2) support requested, but no elocation found by pkg-config.])
 fi
 AC_SUBST(ELM_ELOCATION_DEF)
 
@@ -857,7 +857,7 @@ echo
 echo "  Features:"
 echo "    Ecore_IMF..............: ${have_ecore_imf}"
 echo "    Ecore_Con..............: ${have_ecore_con}"
-echo "    EDBus..................: v2=${have_elementary_edbus2}"
+echo "    Eldbus..................: v2=${have_elementary_eldbus}"
 echo "    EFreet.................: ${have_elementary_efreet}"
 echo "    EWeather...............: ${have_elementary_eweather}"
 echo "    EMap...................: ${have_elementary_emap}"

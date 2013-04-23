@@ -155,7 +155,7 @@ elm_main(int argc, char **argv)
         "Eet",
         "Ecore",
         "Efreet",
-        "Edbus"
+        "Eldbus"
      };
 
    win = elm_win_add(NULL, "flipselector", ELM_WIN_BASIC);

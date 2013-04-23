@@ -8,12 +8,12 @@
 EAPI int ELM_EVENT_SYS_NOTIFY_NOTIFICATION_CLOSED = 0;
 EAPI int ELM_EVENT_SYS_NOTIFY_ACTION_INVOKED      = 0;
 
-#ifdef ELM_EDBUS2
+#ifdef ELM_ELDBUS
 static Eina_Bool _elm_need_sys_notify = EINA_FALSE;
 
-static EDBus_Connection *_elm_sysnotif_conn  = NULL;
-static EDBus_Object     *_elm_sysnotif_obj   = NULL;
-static EDBus_Proxy      *_elm_sysnotif_proxy = NULL;
+static Eldbus_Connection *_elm_sysnotif_conn  = NULL;
+static Eldbus_Object     *_elm_sysnotif_obj   = NULL;
+static Eldbus_Proxy      *_elm_sysnotif_proxy = NULL;
 
 static Eina_Bool _has_markup = EINA_FALSE;
 
@@ -24,49 +24,49 @@ typedef struct _Elm_Sys_Notify_Send_Data
 } Elm_Sys_Notify_Send_Data;
 
 static void
-_elm_sys_notify_marshal_dict_byte(EDBus_Message_Iter *array,
+_elm_sys_notify_marshal_dict_byte(Eldbus_Message_Iter *array,
                                   const char *key,
                                   const char value)
 {
-   EDBus_Message_Iter *var, *entry;
+   Eldbus_Message_Iter *var, *entry;
 
-   edbus_message_iter_arguments_append(array, "{sv}", &entry);
-   edbus_message_iter_basic_append(entry, 's', key);
+   eldbus_message_iter_arguments_append(array, "{sv}", &entry);
+   eldbus_message_iter_basic_append(entry, 's', key);
 
-   var = edbus_message_iter_container_new(entry, 'v', "y");
-   edbus_message_iter_basic_append(var, 'y', value);
-   edbus_message_iter_container_close(entry, var);
-   edbus_message_iter_container_close(array, entry);
+   var = eldbus_message_iter_container_new(entry, 'v', "y");
+   eldbus_message_iter_basic_append(var, 'y', value);
+   eldbus_message_iter_container_close(entry, var);
+   eldbus_message_iter_container_close(array, entry);
 }
 
 static void
-_elm_sys_notify_marshal_dict_string(EDBus_Message_Iter *array,
+_elm_sys_notify_marshal_dict_string(Eldbus_Message_Iter *array,
                                    const char *key,
                                    const char *value)
 {
-   EDBus_Message_Iter *var, *entry;
+   Eldbus_Message_Iter *var, *entry;
 
-   edbus_message_iter_arguments_append(array, "{sv}", &entry);
-   edbus_message_iter_basic_append(entry, 's', key);
+   eldbus_message_iter_arguments_append(array, "{sv}", &entry);
+   eldbus_message_iter_basic_append(entry, 's', key);
 
-   var = edbus_message_iter_container_new(entry, 'v', "s");
-   edbus_message_iter_basic_append(var, 's', value);
-   edbus_message_iter_container_close(entry, var);
-   edbus_message_iter_container_close(array, entry);
+   var = eldbus_message_iter_container_new(entry, 'v', "s");
+   eldbus_message_iter_basic_append(var, 's', value);
+   eldbus_message_iter_container_close(entry, var);
+   eldbus_message_iter_container_close(array, entry);
 }
 
 static void
 _get_capabilities_cb(void *data EINA_UNUSED,
-                     const EDBus_Message *msg,
-                     EDBus_Pending *pending EINA_UNUSED)
+                     const Eldbus_Message *msg,
+                     Eldbus_Pending *pending EINA_UNUSED)
 {
    char *val;
-   EDBus_Message_Iter *arr;
+   Eldbus_Message_Iter *arr;
 
-   if (edbus_message_error_get(msg, NULL, NULL) ||
-       !edbus_message_arguments_get(msg, "as", &arr)) goto end;
+   if (eldbus_message_error_get(msg, NULL, NULL) ||
+       !eldbus_message_arguments_get(msg, "as", &arr)) goto end;
 
-   while(edbus_message_iter_get_and_next(arr, 's', &val))
+   while(eldbus_message_iter_get_and_next(arr, 's', &val))
      if (!strcmp(val, "body-markup"))
        {
           _has_markup = EINA_TRUE;
@@ -82,24 +82,24 @@ _elm_sys_notify_capabilities_get(void)
 {
    EINA_SAFETY_ON_NULL_RETURN(_elm_sysnotif_proxy);
 
-   if (!edbus_proxy_call(_elm_sysnotif_proxy, "GetCapabilities",
+   if (!eldbus_proxy_call(_elm_sysnotif_proxy, "GetCapabilities",
                          _get_capabilities_cb, NULL, -1, ""))
      ERR("Error sending message: "INTERFACE".GetCapabilities.");
 }
 
 static void
 _close_notification_cb(void *data EINA_UNUSED,
-                       const EDBus_Message *msg,
-                       EDBus_Pending *pending EINA_UNUSED)
+                       const Eldbus_Message *msg,
+                       Eldbus_Pending *pending EINA_UNUSED)
 {
    const char *errname, *errmsg;
 
-   if (edbus_message_error_get(msg, &errname, &errmsg))
+   if (eldbus_message_error_get(msg, &errname, &errmsg))
      {
         if (errmsg && errmsg[0] == '\0')
           INF("Notification no longer exists.");
         else
-          ERR("Edbus Error: %s %s", errname, errmsg);
+          ERR("Eldbus Error: %s %s", errname, errmsg);
      }
 }
 #endif
@@ -107,11 +107,11 @@ _close_notification_cb(void *data EINA_UNUSED,
 EAPI void
 elm_sys_notify_close(unsigned int id)
 {
-#ifdef ELM_EDBUS2
+#ifdef ELM_ELDBUS
    EINA_SAFETY_ON_FALSE_RETURN(_elm_need_sys_notify);
    EINA_SAFETY_ON_NULL_RETURN(_elm_sysnotif_proxy);
 
-   if (!edbus_proxy_call(_elm_sysnotif_proxy, "CloseNotification",
+   if (!eldbus_proxy_call(_elm_sysnotif_proxy, "CloseNotification",
                          _close_notification_cb, NULL, -1, "u", id))
      ERR("Error sending message: "INTERFACE".CloseNotification.");
 #else
@@ -119,19 +119,19 @@ elm_sys_notify_close(unsigned int id)
 #endif
 }
 
-#ifdef ELM_EDBUS2
+#ifdef ELM_ELDBUS
 static void
 _notify_cb(void *data,
-           const EDBus_Message *msg,
-           EDBus_Pending *pending EINA_UNUSED)
+           const Eldbus_Message *msg,
+           Eldbus_Pending *pending EINA_UNUSED)
 {
    const char *errname, *errmsg;
    Elm_Sys_Notify_Send_Data *d = data;
    unsigned int id = 0;
 
-   if (edbus_message_error_get(msg, &errname, &errmsg))
+   if (eldbus_message_error_get(msg, &errname, &errmsg))
      ERR("Error: %s %s", errname, errmsg);
-   else if (!edbus_message_arguments_get(msg, "u", &id))
+   else if (!eldbus_message_arguments_get(msg, "u", &id))
      {
         ERR("Error getting return values of "INTERFACE".Notify.");
         id = 0;
@@ -148,9 +148,9 @@ elm_sys_notify_send(unsigned int replaces_id, const char *icon,
                     Elm_Sys_Notify_Urgency urgency, int timeout,
                     Elm_Sys_Notify_Send_Cb cb, const void *cb_data)
 {
-#ifdef ELM_EDBUS2
-   EDBus_Message *msg;
-   EDBus_Message_Iter *iter, *actions, *hints;
+#ifdef ELM_ELDBUS
+   Eldbus_Message *msg;
+   Eldbus_Message_Iter *iter, *actions, *hints;
    Elm_Sys_Notify_Send_Data *data;
    char *body_free = NULL;
    char *desk_free = NULL;
@@ -172,16 +172,16 @@ elm_sys_notify_send(unsigned int replaces_id, const char *icon,
    else if (!_has_markup)
      body = body_free = elm_entry_markup_to_utf8(body);
 
-   msg = edbus_proxy_method_call_new(_elm_sysnotif_proxy, "Notify");
+   msg = eldbus_proxy_method_call_new(_elm_sysnotif_proxy, "Notify");
 
-   iter = edbus_message_iter_get(msg);
-   edbus_message_iter_arguments_append(iter, "susssas", appname, replaces_id,
+   iter = eldbus_message_iter_get(msg);
+   eldbus_message_iter_arguments_append(iter, "susssas", appname, replaces_id,
                                        icon, summary, body, &actions);
    /* actions */
-   edbus_message_iter_container_close(iter, actions);
+   eldbus_message_iter_container_close(iter, actions);
 
    /* hints */
-   edbus_message_iter_arguments_append(iter, "a{sv}", &hints);
+   eldbus_message_iter_arguments_append(iter, "a{sv}", &hints);
    _elm_sys_notify_marshal_dict_byte(hints, "urgency", (char) urgency);
 
    if (strcmp(deskentry, ""))
@@ -190,12 +190,12 @@ elm_sys_notify_send(unsigned int replaces_id, const char *icon,
         deskentry = desk_free = ecore_file_strip_ext(deskentry);
         _elm_sys_notify_marshal_dict_string(hints, "desktop_entry", deskentry);
      }
-   edbus_message_iter_container_close(iter, hints);
+   eldbus_message_iter_container_close(iter, hints);
 
    /* timeout */
-   edbus_message_iter_arguments_append(iter, "i", timeout);
+   eldbus_message_iter_arguments_append(iter, "i", timeout);
 
-   edbus_proxy_send(_elm_sysnotif_proxy, msg, _notify_cb, data, -1);
+   eldbus_proxy_send(_elm_sysnotif_proxy, msg, _notify_cb, data, -1);
    free(desk_free);
    free(body_free);
    return;
@@ -212,24 +212,24 @@ error:
    if (cb) cb((void *)cb_data, 0);
 }
 
-#ifdef ELM_EDBUS2
+#ifdef ELM_ELDBUS
 static void
 _on_notification_closed(void *data EINA_UNUSED,
-                        const EDBus_Message *msg)
+                        const Eldbus_Message *msg)
 {
    const char *errname;
    const char *errmsg;
    Elm_Sys_Notify_Notification_Closed *d;
 
-   if (edbus_message_error_get(msg, &errname, &errmsg))
+   if (eldbus_message_error_get(msg, &errname, &errmsg))
      {
-        ERR("Edbus Error: %s %s", errname, errmsg);
+        ERR("Eldbus Error: %s %s", errname, errmsg);
         return;
      }
 
    d = malloc(sizeof(*d));
 
-   if (!edbus_message_arguments_get(msg, "uu", &(d->id), &(d->reason)))
+   if (!eldbus_message_arguments_get(msg, "uu", &(d->id), &(d->reason)))
      {
         ERR("Error processing signal: "INTERFACE".NotificationClosed.");
         goto cleanup;
@@ -256,22 +256,22 @@ _ev_action_invoked_free(void *data EINA_UNUSED,
 
 static void
 _on_action_invoked(void *data EINA_UNUSED,
-                   const EDBus_Message *msg)
+                   const Eldbus_Message *msg)
 {
    const char *errname;
    const char *aux;
 
    Elm_Sys_Notify_Action_Invoked *d;
 
-   if (edbus_message_error_get(msg, &errname, &aux))
+   if (eldbus_message_error_get(msg, &errname, &aux))
      {
-        ERR("Edbus Error: %s %s", errname, aux);
+        ERR("Eldbus Error: %s %s", errname, aux);
         return;
      }
 
    d = malloc(sizeof(*d));
 
-   if (!edbus_message_arguments_get(msg, "us", &(d->id), &aux))
+   if (!eldbus_message_arguments_get(msg, "us", &(d->id), &aux))
      {
         ERR("Error processing signal: "INTERFACE".ActionInvoked.");
         goto cleanup;
@@ -294,13 +294,13 @@ _release(void)
 {
    if (_elm_sysnotif_proxy)
      {
-        edbus_proxy_unref(_elm_sysnotif_proxy);
+        eldbus_proxy_unref(_elm_sysnotif_proxy);
         _elm_sysnotif_proxy = NULL;
      }
 
    if (_elm_sysnotif_obj)
      {
-        edbus_object_unref(_elm_sysnotif_obj);
+        eldbus_object_unref(_elm_sysnotif_obj);
         _elm_sysnotif_obj = NULL;
      }
 }
@@ -309,26 +309,26 @@ static void
 _update(void)
 {
    _release();
-   _elm_sysnotif_obj = edbus_object_get(_elm_sysnotif_conn, BUS, OBJ);
-   _elm_sysnotif_proxy = edbus_proxy_get(_elm_sysnotif_obj, INTERFACE);
+   _elm_sysnotif_obj = eldbus_object_get(_elm_sysnotif_conn, BUS, OBJ);
+   _elm_sysnotif_proxy = eldbus_proxy_get(_elm_sysnotif_obj, INTERFACE);
    _elm_sys_notify_capabilities_get();
 
-   edbus_proxy_signal_handler_add(_elm_sysnotif_proxy, "NotificationClosed",
+   eldbus_proxy_signal_handler_add(_elm_sysnotif_proxy, "NotificationClosed",
                                   _on_notification_closed, NULL);
 
-   edbus_proxy_signal_handler_add(_elm_sysnotif_proxy, "ActionInvoked",
+   eldbus_proxy_signal_handler_add(_elm_sysnotif_proxy, "ActionInvoked",
                                   _on_action_invoked, NULL);
 }
 
 static void
 _name_owner_get_cb(void *data EINA_UNUSED,
-                   const EDBus_Message *msg,
-                   EDBus_Pending *pending EINA_UNUSED)
+                   const Eldbus_Message *msg,
+                   Eldbus_Pending *pending EINA_UNUSED)
 {
    const char *errname, *errmsg;
 
-   if (edbus_message_error_get(msg, &errname, &errmsg))
-     ERR("Edbus Error: %s %s", errname, errmsg);
+   if (eldbus_message_error_get(msg, &errname, &errmsg))
+     ERR("Eldbus Error: %s %s", errname, errmsg);
    else
      _update();
 }
@@ -349,10 +349,10 @@ _name_owner_changed_cb(void *data EINA_UNUSED,
 EAPI Eina_Bool
 elm_need_sys_notify(void)
 {
-#ifdef ELM_EDBUS2
+#ifdef ELM_ELDBUS
    if (_elm_need_sys_notify) return EINA_TRUE;
 
-   if (!elm_need_edbus()) return EINA_FALSE;
+   if (!elm_need_eldbus()) return EINA_FALSE;
 
    if (!ELM_EVENT_SYS_NOTIFY_NOTIFICATION_CLOSED)
      ELM_EVENT_SYS_NOTIFY_NOTIFICATION_CLOSED = ecore_event_type_new();
@@ -360,13 +360,13 @@ elm_need_sys_notify(void)
    if (!ELM_EVENT_SYS_NOTIFY_ACTION_INVOKED)
      ELM_EVENT_SYS_NOTIFY_ACTION_INVOKED = ecore_event_type_new();
 
-   _elm_sysnotif_conn = edbus_connection_get(EDBUS_CONNECTION_TYPE_SESSION);
+   _elm_sysnotif_conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
 
-   edbus_name_owner_changed_callback_add(_elm_sysnotif_conn, BUS,
+   eldbus_name_owner_changed_callback_add(_elm_sysnotif_conn, BUS,
                                          _name_owner_changed_cb, NULL,
                                          EINA_FALSE);
 
-   edbus_name_owner_get(_elm_sysnotif_conn, BUS, _name_owner_get_cb, NULL);
+   eldbus_name_owner_get(_elm_sysnotif_conn, BUS, _name_owner_get_cb, NULL);
 
    _elm_need_sys_notify = EINA_TRUE;
 
@@ -379,14 +379,14 @@ elm_need_sys_notify(void)
 void
 _elm_unneed_sys_notify(void)
 {
-#ifdef ELM_EDBUS2
+#ifdef ELM_ELDBUS
    if (!_elm_need_sys_notify) return;
 
    _elm_need_sys_notify = EINA_FALSE;
 
    _release();
 
-   edbus_connection_unref(_elm_sysnotif_conn);
+   eldbus_connection_unref(_elm_sysnotif_conn);
    _elm_sysnotif_conn  = NULL;
 #endif
 }

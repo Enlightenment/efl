@@ -366,11 +366,11 @@ elm_need_e_dbus(void)
    int (*init_func)(void) = NULL;
 
    if (_elm_need_e_dbus) return EINA_TRUE;
-   /* We use RTLD_NOLOAD when available, so we are sure to use the 'libedbus' that was linked to the binary */
+   /* We use RTLD_NOLOAD when available, so we are sure to use the 'libeldbus' that was linked to the binary */
 #ifndef RTLD_NOLOAD
 # define RTLD_NOLOAD RTLD_GLOBAL
 #endif
-   if (!e_dbus_handle) e_dbus_handle = dlopen("libedbus.so", RTLD_LAZY | RTLD_NOLOAD);
+   if (!e_dbus_handle) e_dbus_handle = dlopen("libeldbus.so", RTLD_LAZY | RTLD_NOLOAD);
    if (!e_dbus_handle) return EINA_FALSE;
    init_func = dlsym(e_dbus_handle, "e_dbus_init");
    if (!init_func) return EINA_FALSE;
@@ -394,16 +394,16 @@ _elm_unneed_e_dbus(void)
    e_dbus_handle = NULL;
 }
 
-#ifdef ELM_EDBUS2
-static Eina_Bool _elm_need_edbus = EINA_FALSE;
+#ifdef ELM_ELDBUS
+static Eina_Bool _elm_need_eldbus = EINA_FALSE;
 #endif
 EAPI Eina_Bool
-elm_need_edbus(void)
+elm_need_eldbus(void)
 {
-#ifdef ELM_EDBUS2
-   if (_elm_need_edbus) return EINA_TRUE;
-   _elm_need_edbus = EINA_TRUE;
-   edbus_init();
+#ifdef ELM_ELDBUS
+   if (_elm_need_eldbus) return EINA_TRUE;
+   _elm_need_eldbus = EINA_TRUE;
+   eldbus_init();
    return EINA_TRUE;
 #else
    return EINA_FALSE;
@@ -411,12 +411,12 @@ elm_need_edbus(void)
 }
 
 static void
-_elm_unneed_edbus(void)
+_elm_unneed_eldbus(void)
 {
-#ifdef ELM_EDBUS2
-   if (!_elm_need_edbus) return;
-   _elm_need_edbus = EINA_FALSE;
-   edbus_shutdown();
+#ifdef ELM_ELDBUS
+   if (!_elm_need_eldbus) return;
+   _elm_need_eldbus = EINA_FALSE;
+   eldbus_shutdown();
 #endif
 }
 
@@ -442,7 +442,7 @@ _elm_unneed_elocation(void)
 #ifdef ELM_ELOCATION
    if (!_elm_need_elocation) return;
    _elm_need_elocation = EINA_FALSE;
-   edbus_shutdown();
+   eldbus_shutdown();
 #endif
 }
 
@@ -662,7 +662,7 @@ elm_quicklaunch_shutdown(void)
    _elm_unneed_sys_notify();
    _elm_unneed_efreet();
    _elm_unneed_e_dbus();
-   _elm_unneed_edbus();
+   _elm_unneed_eldbus();
    _elm_unneed_elocation();
    _elm_unneed_ethumb();
    _elm_unneed_web();

@@ -92,7 +92,7 @@ test_flipselector(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
         "Eet",
         "Ecore",
         "Efreet",
-        "Edbus"
+        "Eldbus"
    };
 
    win = elm_win_util_standard_add("flipselector", "Flip Selector");

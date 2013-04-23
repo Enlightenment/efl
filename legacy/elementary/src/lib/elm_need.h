@@ -48,7 +48,7 @@ EAPI Eina_Bool elm_need_sys_notify(void);
  *
  * @return EINA_TRUE if support exists and initialization succeeded.
  *
- * @deprecated use elm_need_edbus() for EDBus (v2) support. Old API is
+ * @deprecated use elm_need_eldbus() for Eldbus (v2) support. Old API is
  * deprecated.
  *
  * @ingroup E_dbus
@@ -56,19 +56,19 @@ EAPI Eina_Bool elm_need_sys_notify(void);
 EAPI Eina_Bool elm_need_e_dbus(void) EINA_DEPRECATED;
 
 /**
- * Request that your elementary application needs edbus
+ * Request that your elementary application needs eldbus
  *
- * This initializes the edbus (aka v2) library when called and if
+ * This initializes the eldbus (aka v2) library when called and if
  * support exists it returns EINA_TRUE, otherwise returns
- * EINA_FALSE. This must be called before any edbus calls.
+ * EINA_FALSE. This must be called before any eldbus calls.
  *
  * @return EINA_TRUE if support exists and initialization succeeded.
  *
  * @since 1.8.0
  *
- * @ingroup edbus
+ * @ingroup eldbus
  */
-EAPI Eina_Bool elm_need_edbus(void);
+EAPI Eina_Bool elm_need_eldbus(void);
 
 /**
  * Request that your elementary application needs elocation
@@ -81,7 +81,7 @@ EAPI Eina_Bool elm_need_edbus(void);
  *
  * @since 1.8.0
  *
- * @ingroup edbus
+ * @ingroup eldbus
  */
 EAPI Eina_Bool elm_need_elocation(void);
 

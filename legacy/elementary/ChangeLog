@@ -741,8 +741,8 @@
 
 2012-12-03 Gustavo Sverzut Barbieri (k-s)
 
-        * Add elm_need_edbus(), deprecate elm_need_e_dbus(), integrating
-        edbus (v2).
+        * Add elm_need_eldbus(), deprecate elm_need_e_dbus(), integrating
+        eldbus.
 
 2012-12-04  Cedric Bail
 

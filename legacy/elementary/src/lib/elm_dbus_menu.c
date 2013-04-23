@@ -4,7 +4,7 @@
 #include "elm_widget_menu.h"
 #include "elm_widget_icon.h"
 
-#ifdef ELM_EDBUS2
+#ifdef ELM_ELDBUS
 
 #define DBUS_PATH           "/com/canonical/dbusmenu"
 #define DBUS_INTERFACE      "com.canonical.dbusmenu"
@@ -21,10 +21,10 @@ typedef struct _Callback_Data Callback_Data;
 
 struct _Elm_DBus_Menu
 {
-#ifdef ELM_EDBUS2
+#ifdef ELM_ELDBUS
    Eo                      *menu;
-   EDBus_Connection        *bus;
-   EDBus_Service_Interface *iface;
+   Eldbus_Connection        *bus;
+   Eldbus_Service_Interface *iface;
    unsigned                 timestamp;
    Eina_Hash               *elements;
    Ecore_Idler             *signal_idler;
@@ -32,8 +32,8 @@ struct _Elm_DBus_Menu
 #endif
 };
 
-#ifdef ELM_EDBUS2
-static const EDBus_Service_Interface_Desc _interface;
+#ifdef ELM_ELDBUS
+static const Eldbus_Service_Interface_Desc _interface;
 static unsigned last_object_path;
 
 typedef enum _Elm_DBus_Property
@@ -56,7 +56,7 @@ struct _Callback_Data
 {
    void (*result_cb)(Eina_Bool, void *);
    void          *data;
-   EDBus_Pending *pending_register;
+   Eldbus_Pending *pending_register;
    Ecore_X_Window xid;
 };
 
@@ -83,8 +83,8 @@ _menu_add_recursive(Elm_DBus_Menu *dbus_menu, Elm_Menu_Item *item)
 }
 
 static void
-_app_register_cb(void *data, const EDBus_Message *msg,
-                 EDBus_Pending *pending EINA_UNUSED)
+_app_register_cb(void *data, const Eldbus_Message *msg,
+                 Eldbus_Pending *pending EINA_UNUSED)
 {
    Elm_DBus_Menu *menu = data;
    Callback_Data *cd = menu->app_menu_data;
@@ -93,8 +93,8 @@ _app_register_cb(void *data, const EDBus_Message *msg,
 
    cd->pending_register = NULL;
 
-   result = !edbus_message_error_get(msg, &error_name, NULL);
-   if (!result && !strcmp(error_name, EDBUS_ERROR_PENDING_CANCELED))
+   result = !eldbus_message_error_get(msg, &error_name, NULL);
+   if (!result && !strcmp(error_name, ELDBUS_ERROR_PENDING_CANCELED))
      {
         DBG("Register canceled");
         return;
@@ -109,24 +109,24 @@ _app_menu_watch_cb(void *data, const char *bus EINA_UNUSED,
 {
    Elm_DBus_Menu *menu = data;
    Callback_Data *cd = menu->app_menu_data;
-   EDBus_Message *msg;
+   Eldbus_Message *msg;
    const char *obj_path;
 
    if (!strcmp(new_id, ""))
      {
-        if (cd->pending_register) edbus_pending_cancel(cd->pending_register);
+        if (cd->pending_register) eldbus_pending_cancel(cd->pending_register);
 
         if (cd->result_cb) cd->result_cb(EINA_FALSE, cd->data);
      }
    else
      {
-        msg = edbus_message_method_call_new(REGISTRAR_NAME, REGISTRAR_PATH,
+        msg = eldbus_message_method_call_new(REGISTRAR_NAME, REGISTRAR_PATH,
                                             REGISTRAR_INTERFACE,
                                             "RegisterWindow");
-        obj_path = edbus_service_object_path_get(menu->iface);
-        edbus_message_arguments_append(msg, "uo", (unsigned)cd->xid,
+        obj_path = eldbus_service_object_path_get(menu->iface);
+        eldbus_message_arguments_append(msg, "uo", (unsigned)cd->xid,
                                        obj_path);
-        cd->pending_register = edbus_connection_send(menu->bus, msg,
+        cd->pending_register = eldbus_connection_send(menu->bus, msg,
                                                      _app_register_cb, data, -1);
      }
 }
@@ -136,7 +136,7 @@ _layout_idler(void *data)
 {
    Elm_DBus_Menu *dbus_menu = data;
 
-   edbus_service_signal_emit(dbus_menu->iface, ELM_DBUS_SIGNAL_LAYOUT_UPDATED,
+   eldbus_service_signal_emit(dbus_menu->iface, ELM_DBUS_SIGNAL_LAYOUT_UPDATED,
                              dbus_menu->timestamp, 0);
 
    dbus_menu->signal_idler = NULL;
@@ -227,16 +227,16 @@ _property_exists(Elm_Menu_Item *item,
 static void
 _property_append(Elm_Menu_Item *item,
                  Elm_DBus_Property property,
-                 EDBus_Message_Iter *iter)
+                 Eldbus_Message_Iter *iter)
 {
-   EDBus_Message_Iter *variant = NULL;
+   Eldbus_Message_Iter *variant = NULL;
    Elm_Object_Item *item_obj = (Elm_Object_Item *)item;
    const char *t;
 
    switch (property)
      {
       case ELM_DBUS_PROPERTY_LABEL:
-        variant = edbus_message_iter_container_new(iter, 'v', "s");
+        variant = eldbus_message_iter_container_new(iter, 'v', "s");
         t = elm_object_item_part_text_get(item_obj, NULL);
         if (!t)
           {
@@ -244,27 +244,27 @@ _property_append(Elm_Menu_Item *item,
              if (!t) t = "";
           }
 
-        edbus_message_iter_basic_append(variant, 's', t);
+        eldbus_message_iter_basic_append(variant, 's', t);
         break;
 
       case ELM_DBUS_PROPERTY_CHILDREN_DISPLAY:
-        variant = edbus_message_iter_container_new(iter, 'v', "s");
-        edbus_message_iter_basic_append(variant, 's', "submenu");
+        variant = eldbus_message_iter_container_new(iter, 'v', "s");
+        eldbus_message_iter_basic_append(variant, 's', "submenu");
         break;
 
       case ELM_DBUS_PROPERTY_ENABLED:
-        variant = edbus_message_iter_container_new(iter, 'v', "b");
-        edbus_message_iter_basic_append(variant, 'b', EINA_FALSE);
+        variant = eldbus_message_iter_container_new(iter, 'v', "b");
+        eldbus_message_iter_basic_append(variant, 'b', EINA_FALSE);
         break;
 
       case ELM_DBUS_PROPERTY_TYPE:
-        variant = edbus_message_iter_container_new(iter, 'v', "s");
-        edbus_message_iter_basic_append(variant, 's', "separator");
+        variant = eldbus_message_iter_container_new(iter, 'v', "s");
+        eldbus_message_iter_basic_append(variant, 's', "separator");
         break;
 
       case ELM_DBUS_PROPERTY_ICON_NAME:
-        variant = edbus_message_iter_container_new(iter, 'v', "s");
-        edbus_message_iter_basic_append(variant, 's', item->icon_str);
+        variant = eldbus_message_iter_container_new(iter, 'v', "s");
+        eldbus_message_iter_basic_append(variant, 's', item->icon_str);
         break;
 
       case ELM_DBUS_PROPERTY_UNKNOWN:
@@ -272,19 +272,19 @@ _property_append(Elm_Menu_Item *item,
         return;
      }
 
-   edbus_message_iter_container_close(iter, variant);
+   eldbus_message_iter_container_close(iter, variant);
 }
 
 static void
 _property_dict_build(Elm_Menu_Item *item,
-                     Eina_List *property_list, EDBus_Message_Iter *iter)
+                     Eina_List *property_list, Eldbus_Message_Iter *iter)
 {
    char *propstr;
    Elm_DBus_Property property;
-   EDBus_Message_Iter *array, *pair;
+   Eldbus_Message_Iter *array, *pair;
    Eina_List *l;
 
-   array = edbus_message_iter_container_new(iter, 'a', "{sv}");
+   array = eldbus_message_iter_container_new(iter, 'a', "{sv}");
 
    EINA_LIST_FOREACH (property_list, l, propstr)
      {
@@ -293,76 +293,76 @@ _property_dict_build(Elm_Menu_Item *item,
         if (property == ELM_DBUS_PROPERTY_UNKNOWN) continue;
         if (!_property_exists(item, property)) continue;
 
-        pair = edbus_message_iter_container_new(array, 'e', NULL);
-        edbus_message_iter_basic_append(pair, 's', propstr);
+        pair = eldbus_message_iter_container_new(array, 'e', NULL);
+        eldbus_message_iter_basic_append(pair, 's', propstr);
         _property_append(item, property, pair);
-        edbus_message_iter_container_close(array, pair);
+        eldbus_message_iter_container_close(array, pair);
      }
 
-   edbus_message_iter_container_close(iter, array);
+   eldbus_message_iter_container_close(iter, array);
 }
 
 static void
 _layout_build_recursive(Elm_Menu_Item *item,
                         Eina_List *property_list, unsigned recursion_depth,
-                        EDBus_Message_Iter *iter)
+                        Eldbus_Message_Iter *iter)
 {
    Eina_List *l;
    Elm_Menu_Item *subitem;
-   EDBus_Message_Iter *layout, *array, *variant;
+   Eldbus_Message_Iter *layout, *array, *variant;
 
-   layout = edbus_message_iter_container_new(iter, 'r', NULL);
-   edbus_message_iter_basic_append(layout, 'i', item->dbus_idx);
+   layout = eldbus_message_iter_container_new(iter, 'r', NULL);
+   eldbus_message_iter_basic_append(layout, 'i', item->dbus_idx);
    _property_dict_build(item, property_list, layout);
-   array = edbus_message_iter_container_new(layout, 'a', "v");
+   array = eldbus_message_iter_container_new(layout, 'a', "v");
 
    if (recursion_depth > 0)
      {
         EINA_LIST_FOREACH (item->submenu.items, l, subitem)
           {
-             variant = edbus_message_iter_container_new(array, 'v',
+             variant = eldbus_message_iter_container_new(array, 'v',
                                                         "(ia{sv}av)");
              _layout_build_recursive(subitem, property_list,
                                      recursion_depth - 1, variant);
-             edbus_message_iter_container_close(array, variant);
+             eldbus_message_iter_container_close(array, variant);
           }
      }
 
-   edbus_message_iter_container_close(layout, array);
-   edbus_message_iter_container_close(iter, layout);
+   eldbus_message_iter_container_close(layout, array);
+   eldbus_message_iter_container_close(iter, layout);
 }
 
 static void
 _root_layout_build(Elm_DBus_Menu *dbus_menu, Eina_List *property_list,
-                   unsigned recursion_depth, EDBus_Message_Iter *iter)
+                   unsigned recursion_depth, Eldbus_Message_Iter *iter)
 {
    char *property;
-   EDBus_Message_Iter *layout, *array, *pair, *variant;
+   Eldbus_Message_Iter *layout, *array, *pair, *variant;
    const Eina_List *ret = NULL;
    Eina_List *items;
    Eina_List *l;
    Elm_Menu_Item *item;
 
-   layout = edbus_message_iter_container_new(iter, 'r', NULL);
-   edbus_message_iter_basic_append(layout, 'i', 0);
-   array = edbus_message_iter_container_new(layout, 'a', "{sv}");
+   layout = eldbus_message_iter_container_new(iter, 'r', NULL);
+   eldbus_message_iter_basic_append(layout, 'i', 0);
+   array = eldbus_message_iter_container_new(layout, 'a', "{sv}");
 
    EINA_LIST_FOREACH (property_list, l, property)
      {
         if (!strcmp(property, "children-display"))
           {
-             pair = edbus_message_iter_container_new(array, 'e', NULL);
-             edbus_message_iter_basic_append(pair, 's', property);
-             variant = edbus_message_iter_container_new(pair, 'v', "s");
-             edbus_message_iter_basic_append(variant, 's', "submenu");
-             edbus_message_iter_container_close(pair, variant);
-             edbus_message_iter_container_close(array, pair);
+             pair = eldbus_message_iter_container_new(array, 'e', NULL);
+             eldbus_message_iter_basic_append(pair, 's', property);
+             variant = eldbus_message_iter_container_new(pair, 'v', "s");
+             eldbus_message_iter_basic_append(variant, 's', "submenu");
+             eldbus_message_iter_container_close(pair, variant);
+             eldbus_message_iter_container_close(array, pair);
              break;
           }
      }
 
-   edbus_message_iter_container_close(layout, array);
-   array = edbus_message_iter_container_new(layout, 'a', "v");
+   eldbus_message_iter_container_close(layout, array);
+   array = eldbus_message_iter_container_new(layout, 'a', "v");
 
    if (recursion_depth > 0)
      {
@@ -370,16 +370,16 @@ _root_layout_build(Elm_DBus_Menu *dbus_menu, Eina_List *property_list,
         items = (Eina_List *)ret;
         EINA_LIST_FOREACH (items, l, item)
           {
-             variant = edbus_message_iter_container_new(array, 'v',
+             variant = eldbus_message_iter_container_new(array, 'v',
                                                         "(ia{sv}av)");
              _layout_build_recursive(item, property_list,
                                      recursion_depth - 1, variant);
-             edbus_message_iter_container_close(array, variant);
+             eldbus_message_iter_container_close(array, variant);
           }
      }
 
-   edbus_message_iter_container_close(layout, array);
-   edbus_message_iter_container_close(iter, layout);
+   eldbus_message_iter_container_close(layout, array);
+   eldbus_message_iter_container_close(iter, layout);
 }
 
 static Eina_List *
@@ -397,16 +397,16 @@ _empty_properties_handle(Eina_List *property_list)
 }
 
 static Eina_Bool
-_event_handle(Elm_DBus_Menu *dbus_menu, EDBus_Message_Iter *iter, int *error_id)
+_event_handle(Elm_DBus_Menu *dbus_menu, Eldbus_Message_Iter *iter, int *error_id)
 {
    Elm_Menu_Item *item;
    const char *event;
    int id;
    int32_t i;
-   EDBus_Message_Iter *data;
+   Eldbus_Message_Iter *data;
    unsigned *timestamp;
 
-   edbus_message_iter_arguments_get(iter, "isvu", &id, &event, &data,
+   eldbus_message_iter_arguments_get(iter, "isvu", &id, &event, &data,
                                     &timestamp);
    i = id;
    item = eina_hash_find(dbus_menu->elements, &i);
@@ -474,9 +474,9 @@ error_menu:
 // =============================================================================
 // Methods
 // =============================================================================
-static EDBus_Message *
-_method_layout_get(const EDBus_Service_Interface *iface,
-                   const EDBus_Message *msg)
+static Eldbus_Message *
+_method_layout_get(const Eldbus_Service_Interface *iface,
+                   const Eldbus_Message *msg)
 {
    int parent_id;
    int32_t id;
@@ -484,19 +484,19 @@ _method_layout_get(const EDBus_Service_Interface *iface,
    unsigned recursion_depth;
    char *property;
    Eina_List *property_list = NULL;
-   EDBus_Message *reply;
-   EDBus_Message_Iter *iter, *array;
+   Eldbus_Message *reply;
+   Eldbus_Message_Iter *iter, *array;
    Elm_DBus_Menu *dbus_menu;
    Elm_Menu_Item *item = NULL;
 
-   dbus_menu = edbus_service_object_data_get(iface, DBUS_DATA_KEY);
+   dbus_menu = eldbus_service_object_data_get(iface, DBUS_DATA_KEY);
 
-   if (!edbus_message_arguments_get(msg, "iias", &parent_id, &r, &array))
+   if (!eldbus_message_arguments_get(msg, "iias", &parent_id, &r, &array))
      ERR("Invalid arguments in D-Bus message");
 
    recursion_depth = r;
 
-   while (edbus_message_iter_get_and_next(array, 's', &property))
+   while (eldbus_message_iter_get_and_next(array, 's', &property))
      property_list = eina_list_append(property_list, property);
 
    property_list = _empty_properties_handle(property_list);
@@ -507,15 +507,15 @@ _method_layout_get(const EDBus_Service_Interface *iface,
         item = eina_hash_find(dbus_menu->elements, &id);
         if (!item)
           {
-             reply = edbus_message_error_new(msg, DBUS_INTERFACE ".Error",
+             reply = eldbus_message_error_new(msg, DBUS_INTERFACE ".Error",
                                              "Invalid parent");
              return reply;
           }
      }
 
-   reply = edbus_message_method_return_new(msg);
-   iter = edbus_message_iter_get(reply);
-   edbus_message_iter_basic_append(iter, 'u', dbus_menu->timestamp);
+   reply = eldbus_message_method_return_new(msg);
+   iter = eldbus_message_iter_get(reply);
+   eldbus_message_iter_basic_append(iter, 'u', dbus_menu->timestamp);
 
    if (parent_id)
      _layout_build_recursive(item, property_list, recursion_depth, iter);
@@ -526,14 +526,14 @@ _method_layout_get(const EDBus_Service_Interface *iface,
    return reply;
 }
 
-static EDBus_Message *
-_method_group_properties_get(const EDBus_Service_Interface *iface,
-                             const EDBus_Message *msg)
+static Eldbus_Message *
+_method_group_properties_get(const Eldbus_Service_Interface *iface,
+                             const Eldbus_Message *msg)
 {
    Eina_Iterator *hash_iter;
-   EDBus_Message *reply;
-   EDBus_Message_Iter *ids, *property_names;
-   EDBus_Message_Iter *iter, *array, *tuple;
+   Eldbus_Message *reply;
+   Eldbus_Message_Iter *ids, *property_names;
+   Eldbus_Message_Iter *iter, *array, *tuple;
    Eina_List *property_list = NULL;
    Elm_DBus_Menu *dbus_menu;
    Elm_Menu_Item *item;
@@ -542,31 +542,31 @@ _method_group_properties_get(const EDBus_Service_Interface *iface,
    int32_t i;
    void *data;
 
-   dbus_menu = edbus_service_object_data_get(iface, DBUS_DATA_KEY);
+   dbus_menu = eldbus_service_object_data_get(iface, DBUS_DATA_KEY);
 
-   if (!edbus_message_arguments_get(msg, "aias", &ids, &property_names))
+   if (!eldbus_message_arguments_get(msg, "aias", &ids, &property_names))
      ERR("Invalid arguments in D-Bus message");
 
-   while (edbus_message_iter_get_and_next(property_names, 's', &property))
+   while (eldbus_message_iter_get_and_next(property_names, 's', &property))
      property_list = eina_list_append(property_list, property);
 
    property_list = _empty_properties_handle(property_list);
 
-   reply = edbus_message_method_return_new(msg);
-   iter = edbus_message_iter_get(reply);
-   array = edbus_message_iter_container_new(iter, 'a', "(ia{sv})");
+   reply = eldbus_message_method_return_new(msg);
+   iter = eldbus_message_iter_get(reply);
+   array = eldbus_message_iter_container_new(iter, 'a', "(ia{sv})");
 
-   if (!edbus_message_iter_get_and_next(ids, 'i', &id))
+   if (!eldbus_message_iter_get_and_next(ids, 'i', &id))
      {
         hash_iter = eina_hash_iterator_data_new(dbus_menu->elements);
 
         while (eina_iterator_next(hash_iter, &data))
           {
              item = data;
-             tuple = edbus_message_iter_container_new(array, 'r', NULL);
-             edbus_message_iter_basic_append(tuple, 'i', item->dbus_idx);
+             tuple = eldbus_message_iter_container_new(array, 'r', NULL);
+             eldbus_message_iter_basic_append(tuple, 'i', item->dbus_idx);
              _property_dict_build(item, property_list, tuple);
-             edbus_message_iter_container_close(array, tuple);
+             eldbus_message_iter_container_close(array, tuple);
           }
 
         eina_iterator_free(hash_iter);
@@ -578,25 +578,25 @@ _method_group_properties_get(const EDBus_Service_Interface *iface,
           item = eina_hash_find(dbus_menu->elements, &i);
           if (!item) continue;
 
-          tuple = edbus_message_iter_container_new(array, 'r', NULL);
-          edbus_message_iter_basic_append(tuple, 'i', item->dbus_idx);
+          tuple = eldbus_message_iter_container_new(array, 'r', NULL);
+          eldbus_message_iter_basic_append(tuple, 'i', item->dbus_idx);
           _property_dict_build(item, property_list, tuple);
-          edbus_message_iter_container_close(array, tuple);
+          eldbus_message_iter_container_close(array, tuple);
        }
-     while (edbus_message_iter_get_and_next(ids, 'i', &id));
+     while (eldbus_message_iter_get_and_next(ids, 'i', &id));
 
-   edbus_message_iter_container_close(iter, array);
+   eldbus_message_iter_container_close(iter, array);
    eina_list_free(property_list);
 
    return reply;
 }
 
-static EDBus_Message *
-_method_property_get(const EDBus_Service_Interface *iface,
-                     const EDBus_Message *msg)
+static Eldbus_Message *
+_method_property_get(const Eldbus_Service_Interface *iface,
+                     const Eldbus_Message *msg)
 {
-   EDBus_Message *reply;
-   EDBus_Message_Iter *iter, *variant;
+   Eldbus_Message *reply;
+   Eldbus_Message_Iter *iter, *variant;
    Elm_DBus_Property property;
    Elm_DBus_Menu *dbus_menu;
    Elm_Menu_Item *item;
@@ -604,16 +604,16 @@ _method_property_get(const EDBus_Service_Interface *iface,
    int32_t i;
    char *name;
 
-   dbus_menu = edbus_service_object_data_get(iface, DBUS_DATA_KEY);
+   dbus_menu = eldbus_service_object_data_get(iface, DBUS_DATA_KEY);
 
-   if (!edbus_message_arguments_get(msg, "is", &id, &name))
+   if (!eldbus_message_arguments_get(msg, "is", &id, &name))
      ERR("Invalid arguments in D-Bus message");
 
    property = _str_to_property(name);
 
    if (property == ELM_DBUS_PROPERTY_UNKNOWN)
      {
-        reply = edbus_message_error_new(msg, DBUS_INTERFACE ".Error",
+        reply = eldbus_message_error_new(msg, DBUS_INTERFACE ".Error",
                                         "Property not found");
         return reply;
      }
@@ -621,15 +621,15 @@ _method_property_get(const EDBus_Service_Interface *iface,
    if (!id)
      {
         if (property != ELM_DBUS_PROPERTY_CHILDREN_DISPLAY)
-          reply = edbus_message_error_new(msg, DBUS_INTERFACE ".Error",
+          reply = eldbus_message_error_new(msg, DBUS_INTERFACE ".Error",
                                           "Property not found");
         else
           {
-             reply = edbus_message_method_return_new(msg);
-             iter = edbus_message_iter_get(reply);
-             variant = edbus_message_iter_container_new(iter, 'v', "s");
-             edbus_message_iter_basic_append(variant, 's', "submenu");
-             edbus_message_iter_container_close(iter, variant);
+             reply = eldbus_message_method_return_new(msg);
+             iter = eldbus_message_iter_get(reply);
+             variant = eldbus_message_iter_container_new(iter, 'v', "s");
+             eldbus_message_iter_basic_append(variant, 's', "submenu");
+             eldbus_message_iter_container_close(iter, variant);
           }
 
         return reply;
@@ -640,136 +640,136 @@ _method_property_get(const EDBus_Service_Interface *iface,
 
    if (!item)
      {
-        reply = edbus_message_error_new(msg, DBUS_INTERFACE ".Error",
+        reply = eldbus_message_error_new(msg, DBUS_INTERFACE ".Error",
                                         "Invalid menu identifier");
         return reply;
      }
 
    if (!_property_exists(item, property))
      {
-        reply = edbus_message_error_new(msg, DBUS_INTERFACE ".Error",
+        reply = eldbus_message_error_new(msg, DBUS_INTERFACE ".Error",
                                         "Property not found");
         return reply;
      }
 
-   reply = edbus_message_method_return_new(msg);
-   iter = edbus_message_iter_get(reply);
+   reply = eldbus_message_method_return_new(msg);
+   iter = eldbus_message_iter_get(reply);
    _property_append(item, property, iter);
 
    return reply;
 }
 
-static EDBus_Message *
-_method_event(const EDBus_Service_Interface *iface,
-              const EDBus_Message *msg)
+static Eldbus_Message *
+_method_event(const Eldbus_Service_Interface *iface,
+              const Eldbus_Message *msg)
 {
    Elm_DBus_Menu *dbus_menu;
-   EDBus_Message *reply;
+   Eldbus_Message *reply;
 
-   reply = edbus_message_method_return_new(msg);
-   dbus_menu = edbus_service_object_data_get(iface, DBUS_DATA_KEY);
+   reply = eldbus_message_method_return_new(msg);
+   dbus_menu = eldbus_service_object_data_get(iface, DBUS_DATA_KEY);
 
-   if (!_event_handle(dbus_menu, edbus_message_iter_get(msg), NULL))
-     reply = edbus_message_error_new(msg, DBUS_INTERFACE ".Error",
+   if (!_event_handle(dbus_menu, eldbus_message_iter_get(msg), NULL))
+     reply = eldbus_message_error_new(msg, DBUS_INTERFACE ".Error",
                                      "Invalid menu");
    else
-     reply = edbus_message_method_return_new(msg);
+     reply = eldbus_message_method_return_new(msg);
 
    return reply;
 }
 
-static EDBus_Message *
-_method_event_group(const EDBus_Service_Interface *iface,
-                    const EDBus_Message *msg)
+static Eldbus_Message *
+_method_event_group(const Eldbus_Service_Interface *iface,
+                    const Eldbus_Message *msg)
 {
-   EDBus_Message *reply;
-   EDBus_Message_Iter *iter, *array, *tuple, *errors;
+   Eldbus_Message *reply;
+   Eldbus_Message_Iter *iter, *array, *tuple, *errors;
    int id;
    Elm_DBus_Menu *dbus_menu;
    Eina_Bool return_error = EINA_TRUE;
 
-   dbus_menu = edbus_service_object_data_get(iface, DBUS_DATA_KEY);
+   dbus_menu = eldbus_service_object_data_get(iface, DBUS_DATA_KEY);
 
-   if (!edbus_message_arguments_get(msg, "a(isvu)", &array))
+   if (!eldbus_message_arguments_get(msg, "a(isvu)", &array))
      ERR("Invalid arguments in D-Bus message");
 
-   reply = edbus_message_method_return_new(msg);
-   iter = edbus_message_iter_get(reply);
-   errors = edbus_message_iter_container_new(iter, 'a', "i");
+   reply = eldbus_message_method_return_new(msg);
+   iter = eldbus_message_iter_get(reply);
+   errors = eldbus_message_iter_container_new(iter, 'a', "i");
 
-   while (edbus_message_iter_get_and_next(array, 'r', &tuple))
+   while (eldbus_message_iter_get_and_next(array, 'r', &tuple))
      {
         if (_event_handle(dbus_menu, tuple, &id))
           return_error = EINA_FALSE;
         else
-          edbus_message_iter_basic_append(errors, 'i', id);
+          eldbus_message_iter_basic_append(errors, 'i', id);
      }
 
    if (return_error)
      {
-        edbus_message_unref(reply);
-        reply = edbus_message_error_new(msg, DBUS_INTERFACE ".Error",
+        eldbus_message_unref(reply);
+        reply = eldbus_message_error_new(msg, DBUS_INTERFACE ".Error",
                                         "Invalid menu identifiers");
      }
    else
-     edbus_message_iter_container_close(iter, errors);
+     eldbus_message_iter_container_close(iter, errors);
 
    return reply;
 }
 
-static EDBus_Message *
-_method_about_to_show(const EDBus_Service_Interface *iface EINA_UNUSED,
-                      const EDBus_Message *msg)
+static Eldbus_Message *
+_method_about_to_show(const Eldbus_Service_Interface *iface EINA_UNUSED,
+                      const Eldbus_Message *msg)
 {
-   EDBus_Message *reply = edbus_message_method_return_new(msg);
-   edbus_message_arguments_append(reply, "b", EINA_TRUE);
+   Eldbus_Message *reply = eldbus_message_method_return_new(msg);
+   eldbus_message_arguments_append(reply, "b", EINA_TRUE);
 
    return reply;
 }
 
-static EDBus_Message *
-_method_about_to_show_group(const EDBus_Service_Interface *iface EINA_UNUSED,
-                            const EDBus_Message *msg)
+static Eldbus_Message *
+_method_about_to_show_group(const Eldbus_Service_Interface *iface EINA_UNUSED,
+                            const Eldbus_Message *msg)
 {
-   EDBus_Message *reply = edbus_message_method_return_new(msg);
-   EDBus_Message_Iter *iter, *array;
+   Eldbus_Message *reply = eldbus_message_method_return_new(msg);
+   Eldbus_Message_Iter *iter, *array;
 
-   iter = edbus_message_iter_get(reply);
-   array = edbus_message_iter_container_new(iter, 'a', "i");
-   edbus_message_iter_container_close(iter, array);
-   array = edbus_message_iter_container_new(iter, 'a', "i");
-   edbus_message_iter_container_close(iter, array);
+   iter = eldbus_message_iter_get(reply);
+   array = eldbus_message_iter_container_new(iter, 'a', "i");
+   eldbus_message_iter_container_close(iter, array);
+   array = eldbus_message_iter_container_new(iter, 'a', "i");
+   eldbus_message_iter_container_close(iter, array);
 
    return reply;
 }
 
-static const EDBus_Method _methods[] = {
+static const Eldbus_Method _methods[] = {
    {
       "GetLayout",
-      EDBUS_ARGS({"i", "parentId"},
+      ELDBUS_ARGS({"i", "parentId"},
                  {"i", "recursionDepth"},
                  {"as", "propertyNames"}),
-      EDBUS_ARGS({"u", "revision"}, {"(ia{sv}av)", "layout"}),
+      ELDBUS_ARGS({"u", "revision"}, {"(ia{sv}av)", "layout"}),
       _method_layout_get,
       0
    },
    {
       "GetGroupProperties",
-      EDBUS_ARGS({"ai", "ids"}, {"as", "propertyNames"}),
-      EDBUS_ARGS({"a(ia{sv})", "properties"}),
+      ELDBUS_ARGS({"ai", "ids"}, {"as", "propertyNames"}),
+      ELDBUS_ARGS({"a(ia{sv})", "properties"}),
       _method_group_properties_get,
       0
    },
    {
       "GetProperty",
-      EDBUS_ARGS({"i", "id"}, {"s", "name"}),
-      EDBUS_ARGS({"v", "value"}),
+      ELDBUS_ARGS({"i", "id"}, {"s", "name"}),
+      ELDBUS_ARGS({"v", "value"}),
       _method_property_get,
       0
    },
    {
       "Event",
-      EDBUS_ARGS({"i", "id"},
+      ELDBUS_ARGS({"i", "id"},
                  {"s", "eventId"},
                  {"v", "data"},
                  {"u", "timestamp"}),
@@ -779,22 +779,22 @@ static const EDBus_Method _methods[] = {
    },
    {
       "EventGroup",
-      EDBUS_ARGS({"a(isvu)", "events"}),
-      EDBUS_ARGS({"ai", "idErrors"}),
+      ELDBUS_ARGS({"a(isvu)", "events"}),
+      ELDBUS_ARGS({"ai", "idErrors"}),
       _method_event_group,
       0
    },
    {
       "AboutToShow",
-      EDBUS_ARGS({"i", "id"}),
-      EDBUS_ARGS({"b", "needUpdate"}),
+      ELDBUS_ARGS({"i", "id"}),
+      ELDBUS_ARGS({"b", "needUpdate"}),
       _method_about_to_show,
       0
    },
    {
       "AboutToShowGroup",
-      EDBUS_ARGS({"ai", "ids"}),
-      EDBUS_ARGS({"ai", "updatesNeeded"}, {"ai", "idErrors"}),
+      ELDBUS_ARGS({"ai", "ids"}),
+      ELDBUS_ARGS({"ai", "updatesNeeded"}, {"ai", "idErrors"}),
       _method_about_to_show_group,
       0
    },
@@ -805,12 +805,12 @@ static const EDBus_Method _methods[] = {
 // =============================================================================
 // Signals
 // =============================================================================
-static const EDBus_Signal _signals[] = {
+static const Eldbus_Signal _signals[] = {
    [ELM_DBUS_SIGNAL_LAYOUT_UPDATED] = {
-      "LayoutUpdated", EDBUS_ARGS({"u", "revision"}, {"i", "parent"}), 0
+      "LayoutUpdated", ELDBUS_ARGS({"u", "revision"}, {"i", "parent"}), 0
    },
    [ELM_DBUS_SIGNAL_ITEM_ACTIVATION_REQUESTED] = {
-      "ItemActivationRequested", EDBUS_ARGS({"i", "id"}, {"u", "timestamp"}), 0
+      "ItemActivationRequested", ELDBUS_ARGS({"i", "id"}, {"u", "timestamp"}), 0
    },
    {NULL, NULL, 0}
 };
@@ -819,61 +819,61 @@ static const EDBus_Signal _signals[] = {
 // Properties
 // =============================================================================
 static Eina_Bool
-_prop_version_get(const EDBus_Service_Interface *iface EINA_UNUSED,
+_prop_version_get(const Eldbus_Service_Interface *iface EINA_UNUSED,
                   const char *propname EINA_UNUSED,
-                  EDBus_Message_Iter *iter,
-                  const EDBus_Message *request_msg EINA_UNUSED,
-                  EDBus_Message **error EINA_UNUSED)
+                  Eldbus_Message_Iter *iter,
+                  const Eldbus_Message *request_msg EINA_UNUSED,
+                  Eldbus_Message **error EINA_UNUSED)
 {
-   edbus_message_iter_basic_append(iter, 'u', DBUS_MENU_VERSION);
+   eldbus_message_iter_basic_append(iter, 'u', DBUS_MENU_VERSION);
 
    return EINA_TRUE;
 }
 
 static Eina_Bool
-_prop_text_direction_get(const EDBus_Service_Interface *iface EINA_UNUSED,
+_prop_text_direction_get(const Eldbus_Service_Interface *iface EINA_UNUSED,
                          const char *propname EINA_UNUSED,
-                         EDBus_Message_Iter *iter,
-                         const EDBus_Message *request_msg EINA_UNUSED,
-                         EDBus_Message **error EINA_UNUSED)
+                         Eldbus_Message_Iter *iter,
+                         const Eldbus_Message *request_msg EINA_UNUSED,
+                         Eldbus_Message **error EINA_UNUSED)
 {
    if (_elm_config->is_mirrored)
-     edbus_message_iter_basic_append(iter, 's', "rtl");
+     eldbus_message_iter_basic_append(iter, 's', "rtl");
    else
-     edbus_message_iter_basic_append(iter, 's', "ltr");
+     eldbus_message_iter_basic_append(iter, 's', "ltr");
 
    return EINA_TRUE;
 }
 
 static Eina_Bool
-_prop_status_get(const EDBus_Service_Interface *iface EINA_UNUSED,
+_prop_status_get(const Eldbus_Service_Interface *iface EINA_UNUSED,
                  const char *propname EINA_UNUSED,
-                 EDBus_Message_Iter *iter,
-                 const EDBus_Message *request_msg EINA_UNUSED,
-                 EDBus_Message **error EINA_UNUSED)
+                 Eldbus_Message_Iter *iter,
+                 const Eldbus_Message *request_msg EINA_UNUSED,
+                 Eldbus_Message **error EINA_UNUSED)
 {
    static const char *normal = "normal";
-   edbus_message_iter_basic_append(iter, 's', normal);
+   eldbus_message_iter_basic_append(iter, 's', normal);
 
    return EINA_TRUE;
 }
 
 static Eina_Bool
-_prop_icon_theme_path_get(const EDBus_Service_Interface *iface EINA_UNUSED,
+_prop_icon_theme_path_get(const Eldbus_Service_Interface *iface EINA_UNUSED,
                           const char *propname EINA_UNUSED,
-                          EDBus_Message_Iter *iter,
-                          const EDBus_Message *request_msg EINA_UNUSED,
-                          EDBus_Message **error EINA_UNUSED)
+                          Eldbus_Message_Iter *iter,
+                          const Eldbus_Message *request_msg EINA_UNUSED,
+                          Eldbus_Message **error EINA_UNUSED)
 {
-   EDBus_Message_Iter *actions;
-   edbus_message_iter_arguments_append(iter, "as", &actions);
-   edbus_message_iter_arguments_append(actions, "s", ICON_DIR);
-   edbus_message_iter_container_close(iter, actions);
+   Eldbus_Message_Iter *actions;
+   eldbus_message_iter_arguments_append(iter, "as", &actions);
+   eldbus_message_iter_arguments_append(actions, "s", ICON_DIR);
+   eldbus_message_iter_container_close(iter, actions);
 
    return EINA_TRUE;
 }
 
-static const EDBus_Property _properties[] = {
+static const Eldbus_Property _properties[] = {
    { "Version", "u", _prop_version_get, NULL, 0 },
    { "TextDirection", "s", _prop_text_direction_get, NULL, 0 },
    { "Status", "s", _prop_status_get, NULL, 0 },
@@ -881,7 +881,7 @@ static const EDBus_Property _properties[] = {
    { NULL, NULL, NULL, NULL, 0 },
 };
 
-static const EDBus_Service_Interface_Desc _interface = {
+static const Eldbus_Service_Interface_Desc _interface = {
    DBUS_INTERFACE, _methods, _signals, _properties, NULL, NULL
 };
 // =============================================================================
@@ -893,22 +893,22 @@ _elm_dbus_menu_register(Eo *obj)
    ELM_MENU_CHECK(obj) NULL;
    ELM_MENU_DATA_GET(obj, sd);
 
-   elm_need_edbus();
+   elm_need_eldbus();
 
    if (sd->dbus_menu)
      goto end;
 
    sd->dbus_menu = _elm_dbus_menu_add(obj);
-   sd->dbus_menu->bus = edbus_connection_get(EDBUS_CONNECTION_TYPE_SESSION);
+   sd->dbus_menu->bus = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
    snprintf(buf, sizeof(buf), "%s/%u", DBUS_PATH, ++last_object_path);
-   sd->dbus_menu->iface = edbus_service_interface_register(sd->dbus_menu->bus,
+   sd->dbus_menu->iface = eldbus_service_interface_register(sd->dbus_menu->bus,
                                                            buf,
                                                            &_interface);
-   edbus_service_object_data_set(sd->dbus_menu->iface, DBUS_DATA_KEY,
+   eldbus_service_object_data_set(sd->dbus_menu->iface, DBUS_DATA_KEY,
                                  sd->dbus_menu);
 
 end:
-   return edbus_service_object_path_get(sd->dbus_menu->iface);
+   return eldbus_service_object_path_get(sd->dbus_menu->iface);
 }
 
 void
@@ -923,8 +923,8 @@ _elm_dbus_menu_unregister(Eo *obj)
 
    if (sd->dbus_menu->app_menu_data)
      _elm_dbus_menu_app_menu_unregister(obj);
-   edbus_service_interface_unregister(sd->dbus_menu->iface);
-   edbus_connection_unref(sd->dbus_menu->bus);
+   eldbus_service_interface_unregister(sd->dbus_menu->iface);
+   eldbus_connection_unref(sd->dbus_menu->bus);
    if (sd->dbus_menu->signal_idler)
      ecore_idler_del(sd->dbus_menu->signal_idler);
 
@@ -963,7 +963,7 @@ _elm_dbus_menu_app_menu_register(Ecore_X_Window xid, Eo *obj,
    cd->data = data;
    cd->pending_register = NULL;
    cd->xid = xid;
-   edbus_name_owner_changed_callback_add(sd->dbus_menu->bus, REGISTRAR_NAME,
+   eldbus_name_owner_changed_callback_add(sd->dbus_menu->bus, REGISTRAR_NAME,
                                          _app_menu_watch_cb, sd->dbus_menu,
                                          EINA_TRUE);
 }
@@ -971,7 +971,7 @@ _elm_dbus_menu_app_menu_register(Ecore_X_Window xid, Eo *obj,
 void
 _elm_dbus_menu_app_menu_unregister(Eo *obj)
 {
-   EDBus_Message *msg;
+   Eldbus_Message *msg;
    Callback_Data *cd;
 
    ELM_MENU_CHECK(obj);
@@ -988,13 +988,13 @@ _elm_dbus_menu_app_menu_unregister(Eo *obj)
    if (!cd) return;
 
    if (cd->pending_register)
-     edbus_pending_cancel(cd->pending_register);
+     eldbus_pending_cancel(cd->pending_register);
 
-   msg = edbus_message_method_call_new(REGISTRAR_NAME, REGISTRAR_PATH,
+   msg = eldbus_message_method_call_new(REGISTRAR_NAME, REGISTRAR_PATH,
                                        REGISTRAR_INTERFACE, "UnregisterWindow");
-   edbus_message_arguments_append(msg, "u", (unsigned)cd->xid);
-   edbus_connection_send(sd->dbus_menu->bus, msg, NULL, NULL, -1);
-   edbus_name_owner_changed_callback_del(sd->dbus_menu->bus, REGISTRAR_NAME,
+   eldbus_message_arguments_append(msg, "u", (unsigned)cd->xid);
+   eldbus_connection_send(sd->dbus_menu->bus, msg, NULL, NULL, -1);
+   eldbus_name_owner_changed_callback_del(sd->dbus_menu->bus, REGISTRAR_NAME,
                                          _app_menu_watch_cb, sd->dbus_menu);
    free(cd);
    sd->dbus_menu->app_menu_data = NULL;
