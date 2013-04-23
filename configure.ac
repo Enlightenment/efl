@@ -3124,8 +3124,8 @@ if test "x${want_eo_id}" = "xyes" ; then
    AC_DEFINE([HAVE_EO_ID], [1], [Have eo id])
 fi
 
-#### EDBus
-EFL_LIB_START([EDBus])
+#### Eldbus
+EFL_LIB_START([Eldbus])
 
 ### Additional options to configure
 
@@ -3134,16 +3134,16 @@ EFL_LIB_START([EDBus])
 ### Checks for programs
 
 ## Compatibility layers
-EFL_PLATFORM_DEPEND([EDBUS], [evil])
+EFL_PLATFORM_DEPEND([ELDBUS], [evil])
 
 ### Checks for libraries
-EFL_INTERNAL_DEPEND_PKG([EDBUS], [ecore])
-EFL_INTERNAL_DEPEND_PKG([EDBUS], [eo])
-EFL_INTERNAL_DEPEND_PKG([EDBUS], [eina])
+EFL_INTERNAL_DEPEND_PKG([ELDBUS], [ecore])
+EFL_INTERNAL_DEPEND_PKG([ELDBUS], [eo])
+EFL_INTERNAL_DEPEND_PKG([ELDBUS], [eina])
 
-EFL_DEPEND_PKG([EDBUS], [DBUS], [dbus-1])
+EFL_DEPEND_PKG([ELDBUS], [DBUS], [dbus-1])
 
-EFL_EVAL_PKGS([EDBUS])
+EFL_EVAL_PKGS([ELDBUS])
 
 ### Checks for header files
 
@@ -3157,8 +3157,8 @@ EFL_EVAL_PKGS([EDBUS])
 
 ### Checks for library functions
 
-EFL_LIB_END([EDBus])
-#### End of EDBus
+EFL_LIB_END([Eldbus])
+#### End of Eldbus
 
 
 #### Efreet
@@ -3179,7 +3179,7 @@ EFL_PLATFORM_DEPEND([EFREET], [evil])
 EFL_INTERNAL_DEPEND_PKG([EFREET], [eet])
 EFL_INTERNAL_DEPEND_PKG([EFREET], [ecore])
 EFL_INTERNAL_DEPEND_PKG([EFREET], [ecore-file])
-EFL_INTERNAL_DEPEND_PKG([EFREET], [edbus])
+EFL_INTERNAL_DEPEND_PKG([EFREET], [eldbus])
 EFL_INTERNAL_DEPEND_PKG([EFREET], [eo])
 EFL_INTERNAL_DEPEND_PKG([EFREET], [eina])
 
@@ -3611,7 +3611,7 @@ EFL_PLATFORM_DEPEND([ETHUMB_CLIENT], [evil])
 EFL_INTERNAL_DEPEND_PKG([ETHUMB_CLIENT], [eina])
 EFL_INTERNAL_DEPEND_PKG([ETHUMB_CLIENT], [eo])
 EFL_INTERNAL_DEPEND_PKG([ETHUMB_CLIENT], [ecore])
-EFL_INTERNAL_DEPEND_PKG([ETHUMB_CLIENT], [edbus])
+EFL_INTERNAL_DEPEND_PKG([ETHUMB_CLIENT], [eldbus])
 EFL_INTERNAL_DEPEND_PKG([ETHUMB_CLIENT], [ethumb])
 
 EFL_EVAL_PKGS([ETHUMB_CLIENT])
@@ -3662,7 +3662,7 @@ src/examples/eo/Makefile
 src/examples/evas/Makefile
 src/examples/ecore/Makefile
 src/examples/eio/Makefile
-src/examples/edbus/Makefile
+src/examples/eldbus/Makefile
 src/examples/ephysics/Makefile
 src/examples/edje/Makefile
 src/examples/emotion/Makefile
@@ -3709,7 +3709,7 @@ pc/ecore-imf-evas.pc
 pc/ecore-audio.pc
 pc/embryo.pc
 pc/eio.pc
-pc/edbus2.pc
+pc/eldbus.pc
 pc/efreet.pc
 pc/efreet-mime.pc
 pc/efreet-trash.pc

@@ -137,9 +137,9 @@ depname="$2"
 libdirname="m4_defn([DOWNOTHER])"
 libname="m4_defn([DOWNOTHER])"
 case "m4_defn([DOWNOTHER])" in
-   edbus)
-      depname="edbus2"
-      libname="edbus2"
+   eldbus)
+      depname="eldbus"
+      libname="eldbus"
       ;;
    ethumb_client)
       depname="ethumb_client"
@@ -357,8 +357,8 @@ m4_pushdef([UP], m4_translit([$1], [-a-z], [_A-Z]))dnl
 libdirname="m4_defn([DOWN])"
 libname="m4_defn([DOWN])"
 case "m4_defn([DOWN])" in
-   edbus)
-      libname="edbus2"
+   eldbus)
+      libname="eldbus"
       ;;
 esac
 

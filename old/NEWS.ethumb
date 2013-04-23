@@ -4,7 +4,7 @@ Changes since Ethumb 1.7.0:
 
 Additions:
 
-        - Port to edbus (v2), added new dependency.
+        - Port to eldbus, added new dependency.
 
 Fixes:
 

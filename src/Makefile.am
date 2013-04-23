@@ -42,7 +42,7 @@ include Makefile_Ecore_Evas.am
 include Makefile_Ecore_Audio.am
 include Makefile_Embryo.am
 include Makefile_Eio.am
-include Makefile_EDBus.am
+include Makefile_Eldbus.am
 include Makefile_Efreet.am
 include Makefile_Eeze.am
 include Makefile_EPhysics.am
@@ -71,7 +71,7 @@ examples/eet \
 examples/evas \
 examples/ecore \
 examples/eio \
-examples/edbus \
+examples/eldbus \
 examples/ephysics \
 examples/edje \
 examples/emotion \

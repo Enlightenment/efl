@@ -1,0 +1,55 @@
+ABOUT:
+-----
+
+Eldbus provides easy access to D-Bus from EFL applications.
+
+Eldbus allows connecting to both system and session buses acting as
+both client and service roles.
+
+Many official D-Bus specifications and interfaces are supported, namely:
+
+        - org.freedesktop.DBus.Peer: full support (Ping and GetMachineId).
+        - org.freedesktop.DBus.Introspectable: full support.
+        - org.freedesktop.DBus.Properties: full support.
+        - org.freedesktop.DBus.ObjectManager: partial support (under dev).
+
+One can create client-side objects using the low-level methods from
+Eldbus_Connection and Eldbus_Object, or go high level with
+Eldbus_Proxy.
+
+
+RELATION TO OLD E_DBUS:
+-----------------------
+
+This is a replacement for old library "e_dbus". Its main purpose is to
+fix some core bugs and completely encapsulating D-Bus without exposing
+libdbus to end-user. One day libdbus may be completely removed as a
+dependency.
+
+
+REQUIREMENTS:
+-------------
+
+        - libdbus-1
+        - eina >= 1.7
+        - ecore >= 1.7
+
+
+CONTACT:
+--------
+
+Bugs, questions, ideas and comments should be addressed to:
+
+        enlightenment-devel@lists.sourceforge.net
+
+
+
+COMPILING AND INSTALLING:
+-------------------------
+
+Standard autotools process:
+
+        ./autogen.sh    # if trying development
+        ./configure     # if running from release tarball
+        make
+        sudo make install

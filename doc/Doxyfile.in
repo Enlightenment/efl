@@ -601,7 +601,7 @@ INPUT                  = @top_srcdir@/src/lib \
                          @srcdir@/evas_examples.dox \
                          @srcdir@/eo_tutorial.dox \
                          @srcdir@/eio_examples.dox \
-                         @srcdir@/edbus_examples.dox \
+                         @srcdir@/eldbus_examples.dox \
                          @srcdir@/ephysics_examples.dox \
                          @srcdir@/edje_examples.dox \
                          @top_srcdir@/src/bin/edje/edje_cc_handlers.c \
@@ -815,7 +815,7 @@ evas_ _evas_ Evas_ _Evas_ EVAS_ _EVAS_ \
 eet_ _eet_ Eet_ _Eet_ EET_ _EET_ \
 ecore_ _ecore_ Ecore_ _Ecore_ ECORE_ _ECORE_ \
 eio_ _eio_ Eio_ _Eio_ EIO_ _EIO_ \
-edbus_ _edbus_ EDBus_ _EDBus_ EDBUS_ _EDBUS_ \
+eldbus_ _eldbus_ Eldbus_ _Eldbus_ ELDBUS_ _ELDBUS_ \
 efreet_ _efreet_ Efreet_ _Efreet_ EFREET_ _EFREET_ \
 eeze_ _eeze_ Eeze_ _Eeze_ EEZE_ _EEZE_ \
 ephysics_ _ephysics_ EPhysics_ _EPhysics_ EPHYSICS_ _EPHYSICS_ \

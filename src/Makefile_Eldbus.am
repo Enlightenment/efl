@@ -1,0 +1,85 @@
+
+### Library
+
+lib_LTLIBRARIES += lib/eldbus/libeldbus.la
+
+installed_eldbusmainheadersdir = $(includedir)/eldbus-@VMAJ@
+dist_installed_eldbusmainheaders_DATA = \
+lib/eldbus/Eldbus.h \
+lib/eldbus/eldbus_connection.h \
+lib/eldbus/eldbus_freedesktop.h \
+lib/eldbus/eldbus_message.h \
+lib/eldbus/eldbus_object.h \
+lib/eldbus/eldbus_pending.h \
+lib/eldbus/eldbus_proxy.h \
+lib/eldbus/eldbus_service.h \
+lib/eldbus/eldbus_signal_handler.h \
+lib/eldbus/eldbus_message_helper.h \
+lib/eldbus/eldbus_message_eina_value.h
+
+lib_eldbus_libeldbus_la_SOURCES = \
+lib/eldbus/eldbus_private.h \
+lib/eldbus/eldbus_private_types.h \
+lib/eldbus/eldbus_proxy.c \
+lib/eldbus/eldbus_core.c \
+lib/eldbus/eldbus_message.c \
+lib/eldbus/eldbus_object.c \
+lib/eldbus/eldbus_pending.c \
+lib/eldbus/eldbus_freedesktop.c \
+lib/eldbus/eldbus_service.c \
+lib/eldbus/eldbus_signal_handler.c \
+lib/eldbus/eldbus_message_helper.c \
+lib/eldbus/eldbus_message_to_eina_value.c \
+lib/eldbus/eldbus_message_from_eina_value.c
+
+lib_eldbus_libeldbus_la_CPPFLAGS = \
+-include $(top_builddir)/config.h \
+@ELDBUS_CFLAGS@
+lib_eldbus_libeldbus_la_LIBADD = @ELDBUS_LIBS@
+lib_eldbus_libeldbus_la_DEPENDENCIES = @ELDBUS_INTERNAL_LIBS@
+lib_eldbus_libeldbus_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
+
+### Binary
+
+bin_PROGRAMS += bin/eldbus/eldbus-codegen
+
+bin_eldbus_eldbus_codegen_SOURCES = \
+bin/eldbus/codegen.h \
+bin/eldbus/utils.c \
+bin/eldbus/parser.c \
+bin/eldbus/dbus.c \
+bin/eldbus/source_client.c \
+bin/eldbus/client.c
+
+bin_eldbus_eldbus_codegen_CPPFLAGS = \
+-DPACKAGE_BIN_DIR=\"$(bindir)\" \
+-DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DPACKAGE_DATA_DIR=\"$(datadir)/eldbus\" \
+@ELDBUS_CFLAGS@
+
+if HAVE_WIN32
+bin_eldbus_eldbus_codegen_LDADD = -L$(top_builddir)/src/lib/evil @USE_ELDBUS_LIBS@
+else
+bin_eldbus_eldbus_codegen_LDADD = @USE_ELDBUS_LIBS@
+endif
+bin_eldbus_eldbus_codegen_DEPENDENCIES = @USE_ELDBUS_INTERNAL_LIBS@
+
+### Unit tests
+
+if EFL_ENABLE_TESTS
+
+check_PROGRAMS += tests/eldbus/eldbus_suite
+TESTS += tests/eldbus/eldbus_suite
+
+tests_eldbus_eldbus_suite_SOURCES = \
+tests/eldbus/eldbus_suite.c \
+tests/eldbus/eldbus_test_eldbus_init.c \
+tests/eldbus/eldbus_suite.h
+
+tests_eldbus_eldbus_suite_CPPFLAGS = @CHECK_CFLAGS@ @ELDBUS_CFLAGS@ \
+-DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/eldbus\"
+
+tests_eldbus_eldbus_suite_LDADD = @CHECK_LIBS@ @USE_ELDBUS_LIBS@
+tests_eldbus_eldbus_suite_DEPENDENCIES = @USE_ELDBUS_INTERNAL_LIBS@
+
+endif

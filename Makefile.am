@@ -92,7 +92,7 @@ old/NEWS.ethumb \
 old/NEWS.evas \
 old/NEWS.evil \
 old/README.ecore \
-old/README.edbus \
+old/README.eldbus \
 old/README.edje \
 old/README.eet \
 old/README.eeze \
@@ -136,7 +136,7 @@ pc/ecore-imf-evas.pc \
 pc/ecore-evas.pc \
 pc/embryo.pc \
 pc/eio.pc \
-pc/edbus2.pc \
+pc/eldbus.pc \
 pc/efreet.pc \
 pc/efreet-mime.pc \
 pc/efreet-trash.pc \

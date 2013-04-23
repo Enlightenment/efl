@@ -76,7 +76,7 @@
 
 #include <Eina.h>
 #include <eina_safety_checks.h>
-#include <EDBus.h>
+#include <Eldbus.h>
 #include <Ethumb.h>
 #include <Ecore.h>
 
@@ -100,7 +100,7 @@ struct _Ethumb_Client
    Ethumb                *ethumb;
    int                    id_count;
    Ethumb                *old_ethumb_conf;
-   EDBus_Connection      *conn;
+   Eldbus_Connection      *conn;
    struct
    {
       Ethumb_Client_Connect_Cb cb;
@@ -116,7 +116,7 @@ struct _Ethumb_Client
       void                *data;
       Eina_Free_Cb         free_data;
    } die;
-   EDBus_Proxy           *proxy;
+   Eldbus_Proxy           *proxy;
    EINA_REFCOUNT;
    Eina_Bool              connected : 1;
    Eina_Bool              server_started : 1;
@@ -132,7 +132,7 @@ struct _ethumb_pending_add
    Ethumb_Client_Generate_Cb generated_cb;
    void                     *data;
    Eina_Free_Cb              free_data;
-   EDBus_Pending            *pending_call;
+   Eldbus_Pending            *pending_call;
    Ethumb_Client            *client;
 };
 
@@ -187,7 +187,7 @@ static const char _ethumb_dbus_path[] = "/org/enlightenment/Ethumb";
 static int _initcount = 0;
 static Eina_Hash *_exists_request = NULL;
 
-static void _ethumb_client_generated_cb(void *data, const EDBus_Message *msg);
+static void _ethumb_client_generated_cb(void *data, const Eldbus_Message *msg);
 static void _ethumb_client_call_new(Ethumb_Client *client);
 static void _ethumb_client_name_owner_changed(void *context, const char *bus, const char *old_id, const char *new_id);
 
@@ -195,7 +195,7 @@ static void
 _ethumb_client_free(Ethumb_Client *client)
 {
    void *data;
-   EDBus_Object *obj;
+   Eldbus_Object *obj;
 
    if (!client->connected)
      goto end_connection;
@@ -203,7 +203,7 @@ _ethumb_client_free(Ethumb_Client *client)
    EINA_LIST_FREE(client->pending_add, data)
      {
         struct _ethumb_pending_add *pending = data;
-        edbus_pending_cancel(pending->pending_call);
+        eldbus_pending_cancel(pending->pending_call);
      }
 
    EINA_LIST_FREE(client->pending_gen, data)
@@ -232,13 +232,13 @@ end_connection:
 
    ethumb_free(client->ethumb);
 
-   edbus_name_owner_changed_callback_del(client->conn, _ethumb_dbus_bus_name,
+   eldbus_name_owner_changed_callback_del(client->conn, _ethumb_dbus_bus_name,
                                          _ethumb_client_name_owner_changed,
                                          client);
-   obj = edbus_proxy_object_get(client->proxy);
-   edbus_proxy_unref(client->proxy);
-   edbus_object_unref(obj);
-   edbus_connection_unref(client->conn);
+   obj = eldbus_proxy_object_get(client->proxy);
+   eldbus_proxy_unref(client->proxy);
+   eldbus_object_unref(obj);
+   eldbus_connection_unref(client->conn);
 
    if (client->connect.free_data)
      client->connect.free_data(client->connect.data);
@@ -317,30 +317,30 @@ _ethumb_client_report_connect(Ethumb_Client *client, Eina_Bool success)
 }
 
 static void
-_ethumb_client_new_cb(void *data, const EDBus_Message *msg, EDBus_Pending *pending EINA_UNUSED)
+_ethumb_client_new_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUSED)
 {
    const char *errname, *errmsg;
    const char *opath;
    Ethumb_Client *client = data;
-   EDBus_Object *obj;
+   Eldbus_Object *obj;
 
-   if (edbus_message_error_get(msg, &errname, &errmsg))
+   if (eldbus_message_error_get(msg, &errname, &errmsg))
      {
         ERR("Error: %s %s", errname, errmsg);
         _ethumb_client_report_connect(client, 0);
         return;
      }
 
-   if (!edbus_message_arguments_get(msg, "o", &opath))
+   if (!eldbus_message_arguments_get(msg, "o", &opath))
      {
         ERR("Error: could not get entry contents");
         _ethumb_client_report_connect(client, 0);
         return;
      }
 
-   obj = edbus_object_get(client->conn, _ethumb_dbus_bus_name, opath);
-   client->proxy = edbus_proxy_get(obj, _ethumb_dbus_objects_interface);
-   edbus_proxy_signal_handler_add(client->proxy, "generated",
+   obj = eldbus_object_get(client->conn, _ethumb_dbus_bus_name, opath);
+   client->proxy = eldbus_proxy_get(obj, _ethumb_dbus_objects_interface);
+   eldbus_proxy_signal_handler_add(client->proxy, "generated",
                                   _ethumb_client_generated_cb, client);
    _ethumb_client_report_connect(client, 1);
 }
@@ -348,11 +348,11 @@ _ethumb_client_new_cb(void *data, const EDBus_Message *msg, EDBus_Pending *pendi
 static void
 _ethumb_client_call_new(Ethumb_Client *client)
 {
-   EDBus_Message *msg;
-   msg = edbus_message_method_call_new(_ethumb_dbus_bus_name,
+   Eldbus_Message *msg;
+   msg = eldbus_message_method_call_new(_ethumb_dbus_bus_name,
                                        _ethumb_dbus_path,
                                        _ethumb_dbus_interface, "new");
-   edbus_connection_send(client->conn, msg, _ethumb_client_new_cb, client, -1);
+   eldbus_connection_send(client->conn, msg, _ethumb_client_new_cb, client, -1);
 }
 
 static void
@@ -434,7 +434,7 @@ ethumb_client_init(void)
      }
 
    ethumb_init();
-   edbus_init();
+   eldbus_init();
 
    _exists_request = eina_hash_stringshared_new(_ethumb_async_delete);
 
@@ -468,7 +468,7 @@ ethumb_client_shutdown(void)
    eina_hash_free(_exists_request);
    _exists_request = NULL;
 
-   edbus_shutdown();
+   eldbus_shutdown();
    ethumb_shutdown();
    eina_log_domain_unregister(_log_dom);
    _log_dom = -1;
@@ -540,15 +540,15 @@ ethumb_client_connect(Ethumb_Client_Connect_Cb connect_cb, const void *data, Ein
         goto ethumb_new_err;
      }
 
-   eclient->conn = edbus_connection_get(EDBUS_CONNECTION_TYPE_SESSION);
+   eclient->conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
    if (!eclient->conn)
      {
         ERR("could not connect to session bus.");
         goto connection_err;
      }
 
-   edbus_name_start(eclient->conn, _ethumb_dbus_bus_name, 0, NULL, NULL);
-   edbus_name_owner_changed_callback_add(eclient->conn, _ethumb_dbus_bus_name,
+   eldbus_name_start(eclient->conn, _ethumb_dbus_bus_name, 0, NULL, NULL);
+   eldbus_name_owner_changed_callback_add(eclient->conn, _ethumb_dbus_bus_name,
                                          _ethumb_client_name_owner_changed,
                                          eclient, EINA_TRUE);
    EINA_REFCOUNT_INIT(eclient);
@@ -623,18 +623,18 @@ ethumb_client_on_server_die_callback_set(Ethumb_Client *client, Ethumb_Client_Di
  */
 
 static void
-_ethumb_client_ethumb_setup_cb(void *data EINA_UNUSED, const EDBus_Message *msg, EDBus_Pending *pending EINA_UNUSED)
+_ethumb_client_ethumb_setup_cb(void *data EINA_UNUSED, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUSED)
 {
    const char *errname, *errmsg;
    Eina_Bool result = 0;
 
-   if (edbus_message_error_get(msg, &errname, &errmsg))
+   if (eldbus_message_error_get(msg, &errname, &errmsg))
      {
         ERR("Error: %s %s", errname, errmsg);
         return;
      }
 
-   if (!edbus_message_arguments_get(msg, "b", &result))
+   if (!eldbus_message_arguments_get(msg, "b", &result))
      {
         ERR("Error getting arguments");
         return;
@@ -643,58 +643,58 @@ _ethumb_client_ethumb_setup_cb(void *data EINA_UNUSED, const EDBus_Message *msg,
 }
 
 static const char *
-_ethumb_client_dbus_get_bytearray(EDBus_Message_Iter *array)
+_ethumb_client_dbus_get_bytearray(Eldbus_Message_Iter *array)
 {
    int length;
    const char *result;
 
-   if (edbus_message_iter_fixed_array_get(array, 'y', &result, &length))
+   if (eldbus_message_iter_fixed_array_get(array, 'y', &result, &length))
      return eina_stringshare_add_length(result, length);
    else
      {
         ERR("Not byte array. Signature: %s",
-            edbus_message_iter_signature_get(array));
+            eldbus_message_iter_signature_get(array));
         return NULL;
      }
 }
 
 static void
-_ethumb_client_dbus_append_bytearray(EDBus_Message_Iter *parent, const char *string)
+_ethumb_client_dbus_append_bytearray(Eldbus_Message_Iter *parent, const char *string)
 {
    int i, size;
-   EDBus_Message_Iter *array;
+   Eldbus_Message_Iter *array;
 
    if (!string)
      string = "";
 
-   array = edbus_message_iter_container_new(parent, 'a', "y");
+   array = eldbus_message_iter_container_new(parent, 'a', "y");
    size = strlen(string) + 1;
    for (i = 0; i < size; i++)
-     edbus_message_iter_basic_append(array, 'y', string[i]);
-   edbus_message_iter_container_close(parent, array);
+     eldbus_message_iter_basic_append(array, 'y', string[i]);
+   eldbus_message_iter_container_close(parent, array);
 }
 
 /**
  * @endcond
  */
 
-static EDBus_Message_Iter *
-_setup_iterator_open(EDBus_Message_Iter *array, EDBus_Message_Iter **entry, const char *key, const char *type)
+static Eldbus_Message_Iter *
+_setup_iterator_open(Eldbus_Message_Iter *array, Eldbus_Message_Iter **entry, const char *key, const char *type)
 {
-   EDBus_Message_Iter *variant, *_struct;
-   edbus_message_iter_arguments_append(array, "{sv}", &_struct);
-   edbus_message_iter_basic_append(_struct, 's', key);
-   variant = edbus_message_iter_container_new(_struct, 'v', type);
+   Eldbus_Message_Iter *variant, *_struct;
+   eldbus_message_iter_arguments_append(array, "{sv}", &_struct);
+   eldbus_message_iter_basic_append(_struct, 's', key);
+   variant = eldbus_message_iter_container_new(_struct, 'v', type);
 
    *entry = _struct;
    return variant;
 }
 
 static void
-_setup_iterator_close(EDBus_Message_Iter *array, EDBus_Message_Iter *entry, EDBus_Message_Iter *variant)
+_setup_iterator_close(Eldbus_Message_Iter *array, Eldbus_Message_Iter *entry, Eldbus_Message_Iter *variant)
 {
-   edbus_message_iter_container_close(entry, variant);
-   edbus_message_iter_container_close(array, entry);
+   eldbus_message_iter_container_close(entry, variant);
+   eldbus_message_iter_container_close(array, entry);
 }
 
 /**
@@ -709,10 +709,10 @@ _setup_iterator_close(EDBus_Message_Iter *array, EDBus_Message_Iter *entry, EDBu
 EAPI void
 ethumb_client_ethumb_setup(Ethumb_Client *client)
 {
-   EDBus_Message *msg;
-   EDBus_Message_Iter *array, *main_iter;
-   EDBus_Message_Iter *entry, *variant;
-   EDBus_Message_Iter *sub_struct;
+   Eldbus_Message *msg;
+   Eldbus_Message_Iter *array, *main_iter;
+   Eldbus_Message_Iter *entry, *variant;
+   Eldbus_Message_Iter *sub_struct;
    Ethumb *e = client->ethumb;
    int tw, th, format, aspect, orientation, quality, compress;
    float cx, cy;
@@ -724,57 +724,57 @@ ethumb_client_ethumb_setup(Ethumb_Client *client)
    EINA_SAFETY_ON_NULL_RETURN(client);
    EINA_SAFETY_ON_FALSE_RETURN(client->connected);
 
-   msg = edbus_proxy_method_call_new(client->proxy, "ethumb_setup");
-   main_iter = edbus_message_iter_get(msg);
-   edbus_message_iter_arguments_append(main_iter, "a{sv}", &array);
+   msg = eldbus_proxy_method_call_new(client->proxy, "ethumb_setup");
+   main_iter = eldbus_message_iter_get(msg);
+   eldbus_message_iter_arguments_append(main_iter, "a{sv}", &array);
 
    /* starting array elements */
    variant = _setup_iterator_open(array, &entry, "size", "(ii)");
-   edbus_message_iter_arguments_append(variant, "(ii)", &sub_struct);
+   eldbus_message_iter_arguments_append(variant, "(ii)", &sub_struct);
    ethumb_thumb_size_get(e, &tw, &th);
-   edbus_message_iter_arguments_append(sub_struct, "ii", tw, th);
-   edbus_message_iter_container_close(variant, sub_struct);
+   eldbus_message_iter_arguments_append(sub_struct, "ii", tw, th);
+   eldbus_message_iter_container_close(variant, sub_struct);
    _setup_iterator_close(array, entry, variant);
 
    variant = _setup_iterator_open(array, &entry, "format", "i");
    format = ethumb_thumb_format_get(e);
-   edbus_message_iter_arguments_append(variant, "i", format);
+   eldbus_message_iter_arguments_append(variant, "i", format);
    _setup_iterator_close(array, entry, variant);
 
    variant = _setup_iterator_open(array, &entry, "aspect", "i");
    aspect = ethumb_thumb_aspect_get(e);
-   edbus_message_iter_arguments_append(variant, "i", aspect);
+   eldbus_message_iter_arguments_append(variant, "i", aspect);
    _setup_iterator_close(array, entry, variant);
 
    variant = _setup_iterator_open(array, &entry, "orientation", "i");
    orientation = ethumb_thumb_orientation_get(e);
-   edbus_message_iter_arguments_append(variant, "i", orientation);
+   eldbus_message_iter_arguments_append(variant, "i", orientation);
    _setup_iterator_close(array, entry, variant);
 
    variant = _setup_iterator_open(array, &entry, "crop", "(dd)");
-   edbus_message_iter_arguments_append(variant, "(dd)", &sub_struct);
+   eldbus_message_iter_arguments_append(variant, "(dd)", &sub_struct);
    ethumb_thumb_crop_align_get(e, &cx, &cy);
-   edbus_message_iter_arguments_append(sub_struct, "dd", (double)cx, (double)cy);
-   edbus_message_iter_container_close(variant, sub_struct);
+   eldbus_message_iter_arguments_append(sub_struct, "dd", (double)cx, (double)cy);
+   eldbus_message_iter_container_close(variant, sub_struct);
    _setup_iterator_close(array, entry, variant);
 
    variant = _setup_iterator_open(array, &entry, "quality", "i");
    quality = ethumb_thumb_quality_get(e);
-   edbus_message_iter_arguments_append(variant, "i", quality);
+   eldbus_message_iter_arguments_append(variant, "i", quality);
    _setup_iterator_close(array, entry, variant);
 
    variant = _setup_iterator_open(array, &entry, "compress", "i");
    compress = ethumb_thumb_quality_get(e);
-   edbus_message_iter_arguments_append(variant, "i", compress);
+   eldbus_message_iter_arguments_append(variant, "i", compress);
    _setup_iterator_close(array, entry, variant);
 
    variant = _setup_iterator_open(array, &entry, "frame", "(ayayay)");
-   edbus_message_iter_arguments_append(variant, "(ayayay)", &sub_struct);
+   eldbus_message_iter_arguments_append(variant, "(ayayay)", &sub_struct);
    ethumb_frame_get(e, &theme_file, &group, &swallow);
    _ethumb_client_dbus_append_bytearray(sub_struct, theme_file);
    _ethumb_client_dbus_append_bytearray(sub_struct, group);
    _ethumb_client_dbus_append_bytearray(sub_struct, swallow);
-   edbus_message_iter_container_close(variant, sub_struct);
+   eldbus_message_iter_container_close(variant, sub_struct);
    _setup_iterator_close(array, entry, variant);
 
    variant = _setup_iterator_open(array, &entry, "directory", "ay");
@@ -789,37 +789,37 @@ ethumb_client_ethumb_setup(Ethumb_Client *client)
 
    variant = _setup_iterator_open(array, &entry, "video_time", "d");
    video_time = ethumb_video_time_get(e);
-   edbus_message_iter_arguments_append(variant, "d", video_time);
+   eldbus_message_iter_arguments_append(variant, "d", video_time);
    _setup_iterator_close(array, entry, variant);
 
    variant = _setup_iterator_open(array, &entry, "video_start", "d");
    video_start = ethumb_video_start_get(e);
-   edbus_message_iter_arguments_append(variant, "d", video_start);
+   eldbus_message_iter_arguments_append(variant, "d", video_start);
    _setup_iterator_close(array, entry, variant);
 
    variant = _setup_iterator_open(array, &entry, "video_interval", "d");
    video_interval = ethumb_video_interval_get(e);
-   edbus_message_iter_arguments_append(variant, "d", video_interval);
+   eldbus_message_iter_arguments_append(variant, "d", video_interval);
    _setup_iterator_close(array, entry, variant);
 
    variant = _setup_iterator_open(array, &entry, "video_ntimes", "u");
    video_ntimes = ethumb_video_ntimes_get(e);
-   edbus_message_iter_arguments_append(variant, "u", video_ntimes);
+   eldbus_message_iter_arguments_append(variant, "u", video_ntimes);
    _setup_iterator_close(array, entry, variant);
 
    variant = _setup_iterator_open(array, &entry, "video_fps", "u");
    video_fps = ethumb_video_fps_get(e);
-   edbus_message_iter_arguments_append(variant, "u", video_fps);
+   eldbus_message_iter_arguments_append(variant, "u", video_fps);
    _setup_iterator_close(array, entry, variant);
 
    variant = _setup_iterator_open(array, &entry, "document_page", "u");
    document_page = ethumb_document_page_get(e);
-   edbus_message_iter_arguments_append(variant, "u", document_page);
+   eldbus_message_iter_arguments_append(variant, "u", document_page);
    _setup_iterator_close(array, entry, variant);
 
-   edbus_message_iter_container_close(main_iter, array);
+   eldbus_message_iter_container_close(main_iter, array);
 
-   edbus_proxy_send(client->proxy, msg, _ethumb_client_ethumb_setup_cb,
+   eldbus_proxy_send(client->proxy, msg, _ethumb_client_ethumb_setup_cb,
                     client, -1);
 }
 
@@ -827,18 +827,18 @@ ethumb_client_ethumb_setup(Ethumb_Client *client)
  * @cond LOCAL
  */
 static void
-_ethumb_client_generated_cb(void *data, const EDBus_Message *msg)
+_ethumb_client_generated_cb(void *data, const Eldbus_Message *msg)
 {
    int id = -1;
    Ethumb_Client *client = data;
-   EDBus_Message_Iter *thumb_iter;
-   EDBus_Message_Iter *thumb_key_iter;
+   Eldbus_Message_Iter *thumb_iter;
+   Eldbus_Message_Iter *thumb_key_iter;
    Eina_Bool success;
    int found;
    struct _ethumb_pending_gen *pending;
    Eina_List *l;
 
-   if (!edbus_message_arguments_get(msg, "iayayb", &id, &thumb_iter,
+   if (!eldbus_message_arguments_get(msg, "iayayb", &id, &thumb_iter,
                                     &thumb_key_iter, &success))
      {
         ERR("Error getting data from signal.");
@@ -882,7 +882,7 @@ _ethumb_client_generated_cb(void *data, const EDBus_Message *msg)
 }
 
 static void
-_ethumb_client_queue_add_cb(void *data, const EDBus_Message *msg, EDBus_Pending *edbus_pending EINA_UNUSED)
+_ethumb_client_queue_add_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *eldbus_pending EINA_UNUSED)
 {
    const char *errname, *errmsg;
    int32_t id;
@@ -892,13 +892,13 @@ _ethumb_client_queue_add_cb(void *data, const EDBus_Message *msg, EDBus_Pending 
 
    client->pending_add = eina_list_remove(client->pending_add, pending);
 
-   if (edbus_message_error_get(msg, &errname, &errmsg))
+   if (eldbus_message_error_get(msg, &errname, &errmsg))
      {
         ERR("Error: %s %s", errname, errmsg);
         goto end;
      }
 
-   if (!edbus_message_arguments_get(msg, "i", &id))
+   if (!eldbus_message_arguments_get(msg, "i", &id))
      {
         ERR("Error getting arguments.");
         goto end;
@@ -931,8 +931,8 @@ end:
 static int
 _ethumb_client_queue_add(Ethumb_Client *client, const char *file, const char *key, const char *thumb, const char *thumb_key, Ethumb_Client_Generate_Cb generated_cb, const void *data, Eina_Free_Cb free_data)
 {
-   EDBus_Message *msg;
-   EDBus_Message_Iter *main_itr;
+   Eldbus_Message *msg;
+   Eldbus_Message_Iter *main_itr;
    struct _ethumb_pending_add *pending;
 
    pending = calloc(1, sizeof(*pending));
@@ -948,15 +948,15 @@ _ethumb_client_queue_add(Ethumb_Client *client, const char *file, const char *ke
 
    client->id_count = (client->id_count + 1) % MAX_ID;
 
-   msg = edbus_proxy_method_call_new(client->proxy, "queue_add");
-   main_itr = edbus_message_iter_get(msg);
-   edbus_message_iter_basic_append(main_itr, 'i', pending->id);
+   msg = eldbus_proxy_method_call_new(client->proxy, "queue_add");
+   main_itr = eldbus_message_iter_get(msg);
+   eldbus_message_iter_basic_append(main_itr, 'i', pending->id);
    _ethumb_client_dbus_append_bytearray(main_itr, file);
    _ethumb_client_dbus_append_bytearray(main_itr, key);
    _ethumb_client_dbus_append_bytearray(main_itr, thumb);
    _ethumb_client_dbus_append_bytearray(main_itr, thumb_key);
 
-   pending->pending_call = edbus_proxy_send(client->proxy, msg,
+   pending->pending_call = eldbus_proxy_send(client->proxy, msg,
                                             _ethumb_client_queue_add_cb,
                                             pending, -1);
    client->pending_add = eina_list_append(client->pending_add, pending);
@@ -965,7 +965,7 @@ _ethumb_client_queue_add(Ethumb_Client *client, const char *file, const char *ke
 }
 
 static void
-_ethumb_client_queue_remove_cb(void *data, const EDBus_Message *msg, EDBus_Pending *edbus_pending EINA_UNUSED)
+_ethumb_client_queue_remove_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *eldbus_pending EINA_UNUSED)
 {
    Eina_Bool success = EINA_FALSE;
    struct _ethumb_pending_remove *pending = data;
@@ -974,13 +974,13 @@ _ethumb_client_queue_remove_cb(void *data, const EDBus_Message *msg, EDBus_Pendi
 
    client->pending_remove = eina_list_remove(client->pending_remove, pending);
 
-   if (edbus_message_error_get(msg, &errname, &errmsg))
+   if (eldbus_message_error_get(msg, &errname, &errmsg))
      {
         ERR("Error: %s %s", errname, errmsg);
         goto end;
      }
 
-   if (edbus_message_arguments_get(msg, "b", &success))
+   if (eldbus_message_arguments_get(msg, "b", &success))
      {
         ERR("Error getting arguments.");
         goto end;
@@ -1030,7 +1030,7 @@ ethumb_client_generate_cancel(Ethumb_Client *client, int id, Ethumb_Client_Gener
    pending->free_data = free_data;
    pending->client = client;
 
-   edbus_proxy_call(client->proxy, "queue_remove",
+   eldbus_proxy_call(client->proxy, "queue_remove",
                     _ethumb_client_queue_remove_cb, pending, -1, "i", pending->id);
    client->pending_remove = eina_list_append(client->pending_remove, pending);
 
@@ -1049,7 +1049,7 @@ ethumb_client_generate_cancel(Ethumb_Client *client, int id, Ethumb_Client_Gener
              l = l->next;
              continue;
           }
-        edbus_pending_cancel(pending_add->pending_call);
+        eldbus_pending_cancel(pending_add->pending_call);
         found = 1;
         break;
      }
@@ -1096,7 +1096,7 @@ ethumb_client_generate_cancel_all(Ethumb_Client *client)
    EINA_LIST_FREE(client->pending_add, data)
      {
         struct _ethumb_pending_add *pending = data;
-        edbus_pending_cancel(pending->pending_call);
+        eldbus_pending_cancel(pending->pending_call);
      }
 
    EINA_LIST_FREE(client->pending_gen, data)
@@ -1111,7 +1111,7 @@ ethumb_client_generate_cancel_all(Ethumb_Client *client)
         free(pending);
      }
 
-   edbus_proxy_call(client->proxy, "queue_clear", NULL, NULL, -1, "");
+   eldbus_proxy_call(client->proxy, "queue_clear", NULL, NULL, -1, "");
 }
 
 /**

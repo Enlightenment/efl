@@ -16,7 +16,7 @@
  * @li @ref escape_main playstation3 portability layer.
  * @li @ref evil_main microsoft windows portability layer.
  * @li @ref eio_main asynchronous input/output
- * @li @ref edbus_main d-bus integration.
+ * @li @ref eldbus_main d-bus integration.
  * @li @ref efreet_main freedesktop.org (xdg) menu and desktop integration.
  * @li @ref eeze_main hardware device manipulation and notification.
  * @li @ref ephysics_main physics simulation integration and visual effects.
@@ -205,7 +205,7 @@
  */
 
 /**
- * @defgroup EDBus
+ * @defgroup Eldbus
  *
  * @brief D-Bus integration with EFL (Ecore).
  */

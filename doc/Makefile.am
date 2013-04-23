@@ -38,7 +38,7 @@ e.css \
 head.html \
 foot.html \
 ecore_examples.dox \
-edbus_examples.dox \
+eldbus_examples.dox \
 edje_examples.dox \
 eet_examples.dox \
 eina_examples.dox \
