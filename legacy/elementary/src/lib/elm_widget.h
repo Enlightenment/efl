@@ -710,7 +710,6 @@ EAPI void             elm_widget_domain_translatable_part_text_set(Evas_Object *
 EAPI const char      *elm_widget_translatable_part_text_get(const Evas_Object *obj, const char *part);
 EAPI void             elm_widget_domain_part_text_translatable_set(Evas_Object *obj, const char *part, const char *domain, Eina_Bool translatable);
 EAPI const char *     elm_widget_part_text_translate(Evas_Object *obj, const char *part, const char *text);
-EAPI const char *     elm_widget_part_text_translate(Evas_Object *obj, const char *part, const char *text);
 EAPI void             elm_widget_content_part_set(Evas_Object *obj, const char *part, Evas_Object *content);
 EAPI Evas_Object     *elm_widget_content_part_get(const Evas_Object *obj, const char *part);
 EAPI Evas_Object     *elm_widget_content_part_unset(Evas_Object *obj, const char *part);
