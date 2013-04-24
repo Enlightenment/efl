@@ -1053,7 +1053,8 @@ _elm_dbus_menu_unregister(Eo *obj EINA_UNUSED)
 }
 
 void
-_elm_dbus_menu_app_menu_register(Ecore_X_Window xid EINA_UNUSED, Eo *obj EINA_UNUSED)
+_elm_dbus_menu_app_menu_register(Ecore_X_Window xid EINA_UNUSED, Eo *obj EINA_UNUSED,
+                                 void (*result_cb)(Eina_Bool, void *) EINA_UNUSED, void *data EINA_UNUSED)
 {
 }
 
