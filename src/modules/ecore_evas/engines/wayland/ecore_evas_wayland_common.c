@@ -275,10 +275,26 @@ _ecore_evas_wl_common_rotation_set(Ecore_Evas *ee, int rotation, int resize)
                {
                   int fw, fh;
                   evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
-                  ecore_wl_window_resize(wdata->win, ee->h + fh, ee->w + fw, 0);
-                  ecore_wl_window_update_size(wdata->win, ee->h + fh, ee->w + fw);
-                  evas_output_size_set(ee->evas, ee->req.w + fw, ee->req.h + fh);
-                  evas_output_viewport_set(ee->evas, 0, 0, ee->req.w + fw, ee->req.h + fh);
+                  if ((rotation == 0) || (rotation == 180))
+                    {
+                       ecore_wl_window_resize(wdata->win, ee->h + fw, ee->w + fh, 0);
+                       ecore_wl_window_update_size(wdata->win, ee->h + fw, ee->w + fh);
+                    }
+                  else
+                    {
+                       ecore_wl_window_resize(wdata->win, ee->h + fh, ee->w + fw, 0);
+                       ecore_wl_window_update_size(wdata->win, ee->h + fh, ee->w + fw);
+                    }
+                  if ((ee->rotation == 0) || (ee->rotation == 180))
+                    {
+                       evas_output_size_set(ee->evas, ee->w + fw, ee->h + fh);
+                       evas_output_viewport_set(ee->evas, 0, 0, ee->w + fw, ee->h + fh);
+                    }
+                  else
+                    {
+                       evas_output_size_set(ee->evas, ee->h + fw, ee->w + fh);
+                       evas_output_viewport_set(ee->evas, 0, 0, ee->h + fw, ee->w + fh);
+                    }
                }
              else
                {
