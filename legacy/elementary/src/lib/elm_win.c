@@ -22,7 +22,7 @@ static const Elm_Win_Trap *trap = NULL;
   while (0)
 
 #define ELM_WIN_DATA_GET(o, sd) \
-  Elm_Win_Smart_Data * sd = eo_data_get(o, MY_CLASS)
+  Elm_Win_Smart_Data * sd = eo_data_scope_get(o, MY_CLASS)
 
 #define ELM_WIN_DATA_GET_OR_RETURN(o, ptr)           \
   ELM_WIN_DATA_GET(o, ptr);                          \
@@ -486,7 +486,7 @@ _shot_do(Elm_Win_Smart_Data *sd)
 static Eina_Bool
 _shot_delay(void *data)
 {
-   Elm_Win_Smart_Data *sd = data;
+   ELM_WIN_DATA_GET(data, sd);
 
    _shot_do(sd);
    if (sd->shot.repeat_count)
@@ -514,7 +514,7 @@ _shot_handle(Elm_Win_Smart_Data *sd)
 {
    if (!sd->shot.info) return;
 
-   sd->shot.timer = ecore_timer_add(_shot_delay_get(sd), _shot_delay, sd);
+   sd->shot.timer = ecore_timer_add(_shot_delay_get(sd), _shot_delay, sd->obj);
 }
 
 /* elm-win specific associate, does the trap while ecore_evas_object_associate()
@@ -523,21 +523,22 @@ _shot_handle(Elm_Win_Smart_Data *sd)
 static Elm_Win_Smart_Data *
 _elm_win_associate_get(const Ecore_Evas *ee)
 {
-   return ecore_evas_data_get(ee, "elm_win");
+   ELM_WIN_DATA_GET(ecore_evas_data_get(ee, "elm_win"), sd);
+   return sd;
 }
 
 /* Interceptors Callbacks */
 static void
 _elm_win_obj_intercept_raise(void *data, Evas_Object *obj __UNUSED__)
 {
-   Elm_Win_Smart_Data *sd = data;
+   ELM_WIN_DATA_GET(data, sd);
    TRAP(sd, raise);
 }
 
 static void
 _elm_win_obj_intercept_lower(void *data, Evas_Object *obj __UNUSED__)
 {
-   Elm_Win_Smart_Data *sd = data;
+   ELM_WIN_DATA_GET(data, sd);
    TRAP(sd, lower);
 }
 
@@ -556,7 +557,7 @@ _elm_win_obj_intercept_stack_below(void *data __UNUSED__, Evas_Object *obj __UNU
 static void
 _elm_win_obj_intercept_layer_set(void *data, Evas_Object *obj __UNUSED__, int l)
 {
-   Elm_Win_Smart_Data *sd = data;
+   ELM_WIN_DATA_GET(data, sd);
    TRAP(sd, layer_set, l);
 }
 
@@ -565,7 +566,7 @@ _elm_win_obj_intercept_layer_set(void *data, Evas_Object *obj __UNUSED__, int l)
 static void
 _elm_win_obj_callback_changed_size_hints(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
-   Elm_Win_Smart_Data *sd = data;
+   ELM_WIN_DATA_GET(data, sd);
    Evas_Coord w, h;
 
    evas_object_size_hint_min_get(obj, &w, &h);
@@ -595,7 +596,7 @@ _elm_win_move(Ecore_Evas *ee)
 static void
 _elm_win_resize_job(void *data)
 {
-   Elm_Win_Smart_Data *sd = data;
+   ELM_WIN_DATA_GET(data, sd);
    int w, h;
 
    sd->deferred_resize_job = NULL;
@@ -628,7 +629,7 @@ _elm_win_resize(Ecore_Evas *ee)
    EINA_SAFETY_ON_NULL_RETURN(sd);
 
    if (sd->deferred_resize_job) ecore_job_del(sd->deferred_resize_job);
-   sd->deferred_resize_job = ecore_job_add(_elm_win_resize_job, sd);
+   sd->deferred_resize_job = ecore_job_add(_elm_win_resize_job, sd->obj);
 }
 
 static void
@@ -792,7 +793,8 @@ the_end:
 static void
 _elm_win_focus_highlight_reconfigure_job(void *data)
 {
-   _elm_win_focus_highlight_reconfigure((Elm_Win_Smart_Data *)data);
+   ELM_WIN_DATA_GET(data, sd);
+   _elm_win_focus_highlight_reconfigure(sd);
 }
 
 static void
@@ -802,7 +804,7 @@ _elm_win_focus_highlight_reconfigure_job_start(Elm_Win_Smart_Data *sd)
      ecore_job_del(sd->focus_highlight.reconf_job);
 
    sd->focus_highlight.reconf_job = ecore_job_add(
-       _elm_win_focus_highlight_reconfigure_job, sd);
+       _elm_win_focus_highlight_reconfigure_job, sd->obj);
 }
 
 static void
@@ -1058,7 +1060,7 @@ _elm_win_smart_focus_next(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    if (ret) *ret = EINA_FALSE;
 
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    const Eina_List *items;
    void *(*list_data_get)(const Eina_List *list);
@@ -1107,7 +1109,7 @@ _elm_win_smart_focus_direction(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    const Eina_List *items;
    void *(*list_data_get)(const Eina_List *list);
 
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    /* Focus chain */
    if (wd->subobjs)
@@ -1256,7 +1258,7 @@ _elm_win_on_parent_del(void *data,
                        Evas_Object *obj,
                        void *event_info __UNUSED__)
 {
-   Elm_Win_Smart_Data *sd = data;
+   ELM_WIN_DATA_GET(data, sd);
 
    if (obj == sd->parent) sd->parent = NULL;
 }
@@ -1267,7 +1269,7 @@ _elm_win_focus_target_move(void *data,
                            Evas_Object *obj __UNUSED__,
                            void *event_info __UNUSED__)
 {
-   Elm_Win_Smart_Data *sd = data;
+   ELM_WIN_DATA_GET(data, sd);
 
    sd->focus_highlight.geometry_changed = EINA_TRUE;
    _elm_win_focus_highlight_reconfigure_job_start(sd);
@@ -1279,7 +1281,7 @@ _elm_win_focus_target_resize(void *data,
                              Evas_Object *obj __UNUSED__,
                              void *event_info __UNUSED__)
 {
-   Elm_Win_Smart_Data *sd = data;
+   ELM_WIN_DATA_GET(data, sd);
 
    sd->focus_highlight.geometry_changed = EINA_TRUE;
    _elm_win_focus_highlight_reconfigure_job_start(sd);
@@ -1291,7 +1293,7 @@ _elm_win_focus_target_del(void *data,
                           Evas_Object *obj __UNUSED__,
                           void *event_info __UNUSED__)
 {
-   Elm_Win_Smart_Data *sd = data;
+   ELM_WIN_DATA_GET(data, sd);
 
    sd->focus_highlight.cur.target = NULL;
 
@@ -1332,11 +1334,11 @@ _elm_win_focus_target_callbacks_add(Elm_Win_Smart_Data *sd)
    if (!obj) return;
 
    evas_object_event_callback_add
-     (obj, EVAS_CALLBACK_MOVE, _elm_win_focus_target_move, sd);
+     (obj, EVAS_CALLBACK_MOVE, _elm_win_focus_target_move, sd->obj);
    evas_object_event_callback_add
-     (obj, EVAS_CALLBACK_RESIZE, _elm_win_focus_target_resize, sd);
+     (obj, EVAS_CALLBACK_RESIZE, _elm_win_focus_target_resize, sd->obj);
    evas_object_event_callback_add
-     (obj, EVAS_CALLBACK_DEL, _elm_win_focus_target_del, sd);
+     (obj, EVAS_CALLBACK_DEL, _elm_win_focus_target_del, sd->obj);
 }
 
 static void
@@ -1345,11 +1347,11 @@ _elm_win_focus_target_callbacks_del(Elm_Win_Smart_Data *sd)
    Evas_Object *obj = sd->focus_highlight.cur.target;
 
    evas_object_event_callback_del_full
-     (obj, EVAS_CALLBACK_MOVE, _elm_win_focus_target_move, sd);
+     (obj, EVAS_CALLBACK_MOVE, _elm_win_focus_target_move, sd->obj);
    evas_object_event_callback_del_full
-     (obj, EVAS_CALLBACK_RESIZE, _elm_win_focus_target_resize, sd);
+     (obj, EVAS_CALLBACK_RESIZE, _elm_win_focus_target_resize, sd->obj);
    evas_object_event_callback_del_full
-     (obj, EVAS_CALLBACK_DEL, _elm_win_focus_target_del, sd);
+     (obj, EVAS_CALLBACK_DEL, _elm_win_focus_target_del, sd->obj);
 }
 
 static void
@@ -1358,7 +1360,7 @@ _elm_win_object_focus_in(void *data,
                          void *event_info)
 {
    Evas_Object *obj = event_info, *target;
-   Elm_Win_Smart_Data *sd = data;
+   ELM_WIN_DATA_GET(data, sd);
 
    if (sd->focus_highlight.cur.target == obj)
      return;
@@ -1378,7 +1380,7 @@ _elm_win_object_focus_out(void *data,
                           Evas *e __UNUSED__,
                           void *event_info __UNUSED__)
 {
-   Elm_Win_Smart_Data *sd = data;
+   ELM_WIN_DATA_GET(data, sd);
 
    if (!sd->focus_highlight.cur.target)
      return;
@@ -1409,10 +1411,10 @@ _elm_win_focus_highlight_shutdown(Elm_Win_Smart_Data *sd)
 
    evas_event_callback_del_full
      (sd->evas, EVAS_CALLBACK_CANVAS_OBJECT_FOCUS_IN,
-     _elm_win_object_focus_in, sd);
+     _elm_win_object_focus_in, sd->obj);
    evas_event_callback_del_full
      (sd->evas, EVAS_CALLBACK_CANVAS_OBJECT_FOCUS_OUT,
-     _elm_win_object_focus_out, sd);
+     _elm_win_object_focus_out, sd->obj);
 }
 
 static void
@@ -1421,7 +1423,7 @@ _elm_win_on_img_obj_del(void *data,
                         Evas_Object *obj __UNUSED__,
                         void *event_info __UNUSED__)
 {
-   Elm_Win_Smart_Data *sd = data;
+   ELM_WIN_DATA_GET(data, sd);
    sd->img_obj = NULL;
 }
 
@@ -1445,7 +1447,7 @@ _elm_win_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    if (sd->parent)
      {
         evas_object_event_callback_del_full
-          (sd->parent, EVAS_CALLBACK_DEL, _elm_win_on_parent_del, sd);
+          (sd->parent, EVAS_CALLBACK_DEL, _elm_win_on_parent_del, obj);
         sd->parent = NULL;
      }
 
@@ -1475,7 +1477,7 @@ _elm_win_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    if (sd->img_obj)
      {
         evas_object_event_callback_del_full
-           (sd->img_obj, EVAS_CALLBACK_DEL, _elm_win_on_img_obj_del, sd);
+           (sd->img_obj, EVAS_CALLBACK_DEL, _elm_win_on_img_obj_del, obj);
         sd->img_obj = NULL;
      }
    else
@@ -1526,7 +1528,7 @@ static void
 _elm_win_obj_intercept_show(void *data,
                             Evas_Object *obj)
 {
-   Elm_Win_Smart_Data *sd = data;
+   ELM_WIN_DATA_GET(data, sd);
 
    // this is called to make sure all smart containers have calculated their
    // sizes BEFORE we show the window to make sure it initially appears at
@@ -1933,7 +1935,7 @@ _elm_win_client_message(void *data,
                         int type __UNUSED__,
                         void *event)
 {
-   Elm_Win_Smart_Data *sd = data;
+   ELM_WIN_DATA_GET(data, sd);
    Ecore_X_Event_Client_Message *e = event;
 
    if (e->format != 32) return ECORE_CALLBACK_PASS_ON;
@@ -2064,7 +2066,7 @@ _elm_win_focus_highlight_anim_end(void *data,
                                   const char *emission __UNUSED__,
                                   const char *source __UNUSED__)
 {
-   Elm_Win_Smart_Data *sd = data;
+   ELM_WIN_DATA_GET(data, sd);
 
    _elm_win_focus_highlight_simple_setup(sd, obj);
 }
@@ -2073,10 +2075,10 @@ static void
 _elm_win_focus_highlight_init(Elm_Win_Smart_Data *sd)
 {
    evas_event_callback_add(sd->evas, EVAS_CALLBACK_CANVAS_OBJECT_FOCUS_IN,
-                           _elm_win_object_focus_in, sd);
+                           _elm_win_object_focus_in, sd->obj);
    evas_event_callback_add(sd->evas,
                            EVAS_CALLBACK_CANVAS_OBJECT_FOCUS_OUT,
-                           _elm_win_object_focus_out, sd);
+                           _elm_win_object_focus_out, sd->obj);
 
    sd->focus_highlight.cur.target = evas_focus_get(sd->evas);
 
@@ -2087,7 +2089,7 @@ _elm_win_focus_highlight_init(Elm_Win_Smart_Data *sd)
                                    _elm_win_focus_highlight_hide, NULL);
    edje_object_signal_callback_add(sd->focus_highlight.top,
                                    "elm,action,focus,anim,end", "",
-                                   _elm_win_focus_highlight_anim_end, sd);
+                                   _elm_win_focus_highlight_anim_end, sd->obj);
    _elm_win_focus_highlight_reconfigure_job_start(sd);
 }
 
@@ -2097,9 +2099,9 @@ _elm_win_frame_cb_move_start(void *data,
                              const char *sig __UNUSED__,
                              const char *source __UNUSED__)
 {
-   Elm_Win_Smart_Data *sd;
+   ELM_WIN_DATA_GET(data, sd);
 
-   if (!(sd = data)) return;
+   if (!sd) return;
    /* FIXME: Change mouse pointer */
 
    /* NB: Wayland handles moving surfaces by itself so we cannot
@@ -2141,9 +2143,9 @@ _elm_win_frame_cb_resize_show(void *data,
                               const char *sig __UNUSED__,
                               const char *source)
 {
-   Elm_Win_Smart_Data *sd;
+   ELM_WIN_DATA_GET(data, sd);
 
-   if (!(sd = data)) return;
+   if (!sd) return;
    if (sd->resizing) return;
 
 #ifdef HAVE_ELEMENTARY_WAYLAND
@@ -2186,9 +2188,9 @@ _elm_win_frame_cb_resize_hide(void *data,
                               const char *sig __UNUSED__,
                               const char *source __UNUSED__)
 {
-   Elm_Win_Smart_Data *sd;
+   ELM_WIN_DATA_GET(data, sd);
 
-   if (!(sd = data)) return;
+   if (!sd) return;
    if (sd->resizing) return;
 
 #ifdef HAVE_ELEMENTARY_WAYLAND
@@ -2203,10 +2205,10 @@ _elm_win_frame_cb_resize_start(void *data,
                                const char *source)
 {
 #ifdef HAVE_ELEMENTARY_WAYLAND
-   Elm_Win_Smart_Data *sd;
+   ELM_WIN_DATA_GET(data, sd);
    int i;
 
-   if (!(sd = data)) return;
+   if (!sd) return;
    if (sd->resizing) return;
 
    sd->resizing = EINA_TRUE;
@@ -2241,9 +2243,9 @@ _elm_win_frame_cb_minimize(void *data,
                            const char *sig __UNUSED__,
                            const char *source __UNUSED__)
 {
-   Elm_Win_Smart_Data *sd;
+   ELM_WIN_DATA_GET(data, sd);
 
-   if (!(sd = data)) return;
+   if (!sd) return;
 //   sd->iconified = EINA_TRUE;
    TRAP(sd, iconified_set, EINA_TRUE);
 }
@@ -2254,9 +2256,9 @@ _elm_win_frame_cb_maximize(void *data,
                            const char *sig __UNUSED__,
                            const char *source __UNUSED__)
 {
-   Elm_Win_Smart_Data *sd;
+   ELM_WIN_DATA_GET(data, sd);
 
-   if (!(sd = data)) return;
+   if (!sd) return;
    if (sd->maximized) sd->maximized = EINA_FALSE;
    else sd->maximized = EINA_TRUE;
    TRAP(sd, maximized_set, sd->maximized);
@@ -2268,7 +2270,7 @@ _elm_win_frame_cb_close(void *data,
                         const char *sig __UNUSED__,
                         const char *source __UNUSED__)
 {
-   Elm_Win_Smart_Data *sd;
+   ELM_WIN_DATA_GET(data, sd);
    Evas_Object *win;
 
    /* FIXME: After the current freeze, this should be handled differently.
@@ -2284,7 +2286,7 @@ _elm_win_frame_cb_close(void *data,
     * way which does not break API or the freeze. - dh
     */
 
-   if (!(sd = data)) return;
+   if (!sd) return;
 
    win = sd->obj;
 
@@ -2318,24 +2320,24 @@ _elm_win_frame_add(Elm_Win_Smart_Data *sd,
 
    edje_object_signal_callback_add
      (sd->frame_obj, "elm,action,move,start", "elm",
-     _elm_win_frame_cb_move_start, sd);
+     _elm_win_frame_cb_move_start, obj);
    edje_object_signal_callback_add
      (sd->frame_obj, "elm,action,resize,show", "*",
-     _elm_win_frame_cb_resize_show, sd);
+     _elm_win_frame_cb_resize_show, obj);
    edje_object_signal_callback_add
      (sd->frame_obj, "elm,action,resize,hide", "*",
-     _elm_win_frame_cb_resize_hide, sd);
+     _elm_win_frame_cb_resize_hide, obj);
    edje_object_signal_callback_add
      (sd->frame_obj, "elm,action,resize,start", "*",
-     _elm_win_frame_cb_resize_start, sd);
+     _elm_win_frame_cb_resize_start, obj);
    edje_object_signal_callback_add
      (sd->frame_obj, "elm,action,minimize", "elm",
-     _elm_win_frame_cb_minimize, sd);
+     _elm_win_frame_cb_minimize, obj);
    edje_object_signal_callback_add
      (sd->frame_obj, "elm,action,maximize", "elm",
-     _elm_win_frame_cb_maximize, sd);
+     _elm_win_frame_cb_maximize, obj);
    edje_object_signal_callback_add
-     (sd->frame_obj, "elm,action,close", "elm", _elm_win_frame_cb_close, sd);
+     (sd->frame_obj, "elm,action,close", "elm", _elm_win_frame_cb_close, obj);
 
    if (sd->title)
      {
@@ -2404,9 +2406,7 @@ _win_img_hide(void *data,
               Evas_Object *obj __UNUSED__,
               void *event_info __UNUSED__)
 {
-   Elm_Win_Smart_Data *sd = data;
-
-   elm_widget_focus_hide_handle(sd->obj);
+   elm_widget_focus_hide_handle(data);
 }
 
 static void
@@ -2415,10 +2415,9 @@ _win_img_mouse_up(void *data,
                   Evas_Object *obj __UNUSED__,
                   void *event_info)
 {
-   Elm_Win_Smart_Data *sd = data;
    Evas_Event_Mouse_Up *ev = event_info;
    if (!(ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD))
-     elm_widget_focus_mouse_up_handle(sd->obj);
+     elm_widget_focus_mouse_up_handle(data);
 }
 
 static void
@@ -2427,8 +2426,7 @@ _win_img_focus_in(void *data,
                   Evas_Object *obj __UNUSED__,
                   void *event_info __UNUSED__)
 {
-   Elm_Win_Smart_Data *sd = data;
-   elm_widget_focus_steal(sd->obj);
+   elm_widget_focus_steal(data);
 }
 
 static void
@@ -2437,8 +2435,7 @@ _win_img_focus_out(void *data,
                    Evas_Object *obj __UNUSED__,
                    void *event_info __UNUSED__)
 {
-   Elm_Win_Smart_Data *sd = data;
-   elm_widget_focused_object_clear(sd->obj);
+   elm_widget_focused_object_clear(data);
 }
 
 static void
@@ -2448,15 +2445,15 @@ _win_inlined_image_set(Elm_Win_Smart_Data *sd)
    evas_object_image_filled_set(sd->img_obj, EINA_TRUE);
 
    evas_object_event_callback_add
-     (sd->img_obj, EVAS_CALLBACK_DEL, _elm_win_on_img_obj_del, sd);
+     (sd->img_obj, EVAS_CALLBACK_DEL, _elm_win_on_img_obj_del, sd->obj);
    evas_object_event_callback_add
-     (sd->img_obj, EVAS_CALLBACK_HIDE, _win_img_hide, sd);
+     (sd->img_obj, EVAS_CALLBACK_HIDE, _win_img_hide, sd->obj);
    evas_object_event_callback_add
-     (sd->img_obj, EVAS_CALLBACK_MOUSE_UP, _win_img_mouse_up, sd);
+     (sd->img_obj, EVAS_CALLBACK_MOUSE_UP, _win_img_mouse_up, sd->obj);
    evas_object_event_callback_add
-     (sd->img_obj, EVAS_CALLBACK_FOCUS_IN, _win_img_focus_in, sd);
+     (sd->img_obj, EVAS_CALLBACK_FOCUS_IN, _win_img_focus_in, sd->obj);
    evas_object_event_callback_add
-     (sd->img_obj, EVAS_CALLBACK_FOCUS_OUT, _win_img_focus_out, sd);
+     (sd->img_obj, EVAS_CALLBACK_FOCUS_OUT, _win_img_focus_out, sd->obj);
 }
 
 static void
@@ -2465,7 +2462,7 @@ _elm_win_on_icon_del(void *data,
                      Evas_Object *obj,
                      void *event_info __UNUSED__)
 {
-   Elm_Win_Smart_Data *sd = data;
+   ELM_WIN_DATA_GET(data, sd);
 
    if (sd->icon == obj) sd->icon = NULL;
 }
@@ -2803,9 +2800,9 @@ _win_constructor(Eo *obj, void *_pd, va_list *list)
             ENGINE_COMPARE(ELM_OPENGL_X11))
      {
         sd->x.client_message_handler = ecore_event_handler_add
-            (ECORE_X_EVENT_CLIENT_MESSAGE, _elm_win_client_message, sd);
+            (ECORE_X_EVENT_CLIENT_MESSAGE, _elm_win_client_message, obj);
         sd->x.property_handler = ecore_event_handler_add
-            (ECORE_X_EVENT_WINDOW_PROPERTY, _elm_win_property_change, sd);
+            (ECORE_X_EVENT_WINDOW_PROPERTY, _elm_win_property_change, obj);
      }
 #endif
 
@@ -2846,7 +2843,7 @@ _win_constructor(Eo *obj, void *_pd, va_list *list)
 
    if (sd->parent)
      evas_object_event_callback_add
-       (sd->parent, EVAS_CALLBACK_DEL, _elm_win_on_parent_del, sd);
+       (sd->parent, EVAS_CALLBACK_DEL, _elm_win_on_parent_del, obj);
 
    sd->evas = ecore_evas_get(sd->ee);
 
@@ -2860,24 +2857,24 @@ _win_constructor(Eo *obj, void *_pd, va_list *list)
      elm_widget_parent2_set(obj, parent);
 
    /* use own version of ecore_evas_object_associate() that does TRAP() */
-   ecore_evas_data_set(sd->ee, "elm_win", sd);
+   ecore_evas_data_set(sd->ee, "elm_win", obj);
 
    evas_object_event_callback_add
      (obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-      _elm_win_obj_callback_changed_size_hints, sd);
+      _elm_win_obj_callback_changed_size_hints, obj);
 
    evas_object_intercept_raise_callback_add
-     (obj, _elm_win_obj_intercept_raise, sd);
+     (obj, _elm_win_obj_intercept_raise, obj);
    evas_object_intercept_lower_callback_add
-     (obj, _elm_win_obj_intercept_lower, sd);
+     (obj, _elm_win_obj_intercept_lower, obj);
    evas_object_intercept_stack_above_callback_add
-     (obj, _elm_win_obj_intercept_stack_above, sd);
+     (obj, _elm_win_obj_intercept_stack_above, obj);
    evas_object_intercept_stack_below_callback_add
-     (obj, _elm_win_obj_intercept_stack_below, sd);
+     (obj, _elm_win_obj_intercept_stack_below, obj);
    evas_object_intercept_layer_set_callback_add
-     (obj, _elm_win_obj_intercept_layer_set, sd);
+     (obj, _elm_win_obj_intercept_layer_set, obj);
    evas_object_intercept_show_callback_add
-     (obj, _elm_win_obj_intercept_show, sd);
+     (obj, _elm_win_obj_intercept_show, obj);
 
    TRAP(sd, name_class_set, name, _elm_appname);
    ecore_evas_callback_delete_request_set(sd->ee, _elm_win_delete_request);
@@ -2887,8 +2884,8 @@ _win_constructor(Eo *obj, void *_pd, va_list *list)
    ecore_evas_callback_focus_out_set(sd->ee, _elm_win_focus_out);
    ecore_evas_callback_move_set(sd->ee, _elm_win_move);
    ecore_evas_callback_state_change_set(sd->ee, _elm_win_state_change);
-   evas_object_event_callback_add(obj, EVAS_CALLBACK_HIDE, _elm_win_cb_hide, sd);
-   evas_object_event_callback_add(obj, EVAS_CALLBACK_SHOW, _elm_win_cb_show, sd);
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_HIDE, _elm_win_cb_hide, NULL);
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_SHOW, _elm_win_cb_show, NULL);
 
    evas_image_cache_set(sd->evas, (_elm_config->image_cache * 1024));
    evas_font_cache_set(sd->evas, (_elm_config->font_cache * 1024));
@@ -2926,7 +2923,7 @@ _win_constructor(Eo *obj, void *_pd, va_list *list)
 #ifdef ELM_DEBUG
    Evas_Modifier_Mask mask = evas_key_modifier_mask_get(sd->evas, "Control");
    evas_object_event_callback_add
-     (obj, EVAS_CALLBACK_KEY_DOWN, _debug_key_down, sd);
+     (obj, EVAS_CALLBACK_KEY_DOWN, _debug_key_down, NULL);
 
    if (evas_object_key_grab(obj, "F12", mask, 0, EINA_TRUE))
      INF("Ctrl+F12 key combination exclusive for dot tree generation\n");
@@ -3165,18 +3162,18 @@ elm_win_icon_object_set(Evas_Object *obj,
 }
 
 static void
-_icon_object_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+_icon_object_set(Eo *obj, void *_pd, va_list *list)
 {
    Evas_Object *icon = va_arg(*list, Evas_Object *);
    Elm_Win_Smart_Data *sd = _pd;
 
    if (sd->icon)
      evas_object_event_callback_del_full
-       (sd->icon, EVAS_CALLBACK_DEL, _elm_win_on_icon_del, sd);
+       (sd->icon, EVAS_CALLBACK_DEL, _elm_win_on_icon_del, obj);
    sd->icon = icon;
    if (sd->icon)
      evas_object_event_callback_add
-       (sd->icon, EVAS_CALLBACK_DEL, _elm_win_on_icon_del, sd);
+       (sd->icon, EVAS_CALLBACK_DEL, _elm_win_on_icon_del, obj);
 #ifdef HAVE_ELEMENTARY_X
    _elm_win_xwin_update(sd);
 #endif

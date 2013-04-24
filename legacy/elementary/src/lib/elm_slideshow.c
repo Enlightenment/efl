@@ -81,7 +81,7 @@ _elm_slideshow_smart_event(Eo *obj, void *_pd, va_list *list)
 static void
 _elm_slideshow_smart_sizing_eval(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
    Evas_Coord minw = -1, minh = -1;
 
    edje_object_size_min_calc(wd->resize_obj, &minw, &minh);
@@ -310,7 +310,7 @@ _elm_slideshow_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
    Elm_Slideshow_Smart_Data *priv = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    priv->count_item_pre_before = 2;
    priv->count_item_pre_after = 2;

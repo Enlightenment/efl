@@ -251,7 +251,7 @@ _icon_thumb_apply_cb(void *data,
                      int type __UNUSED__,
                      void *ev __UNUSED__)
 {
-   Elm_Icon_Smart_Data *sd = data;
+   ELM_ICON_DATA_GET(data, sd);
 
    _icon_thumb_apply(sd);
 
@@ -368,7 +368,7 @@ _elm_icon_smart_file_set(Eo *obj, void *_pd, va_list *list)
    Evas_Object *pclip;
 
    Elm_Icon_Smart_Data *sd = _pd;
-   Elm_Image_Smart_Data *id = eo_data_get(obj, ELM_OBJ_IMAGE_CLASS);
+   Elm_Image_Smart_Data *id = eo_data_scope_get(obj, ELM_OBJ_IMAGE_CLASS);
 
    const char *file = va_arg(*list, const char *);
    const char *key = va_arg(*list, const char *);
@@ -578,13 +578,13 @@ _elm_icon_standard_resize_cb(void *data,
                              Evas_Object *obj,
                              void *event_info __UNUSED__)
 {
-   Elm_Icon_Smart_Data *sd = data;
+   ELM_ICON_DATA_GET(data, sd);
    const char *refup = eina_stringshare_ref(sd->stdicon);
    Eina_Bool fdo = EINA_FALSE;
 
    if (!_elm_icon_standard_set(obj, sd->stdicon, &fdo) || (!fdo))
      evas_object_event_callback_del_full
-       (obj, EVAS_CALLBACK_RESIZE, _elm_icon_standard_resize_cb, sd);
+       (obj, EVAS_CALLBACK_RESIZE, _elm_icon_standard_resize_cb, data);
    eina_stringshare_del(refup);
 }
 
@@ -595,7 +595,7 @@ _elm_icon_thumb_resize_cb(void *data,
                           Evas_Object *obj,
                           void *event_info __UNUSED__)
 {
-   Elm_Icon_Smart_Data *sd = data;
+   ELM_ICON_DATA_GET(data, sd);
 
    if (sd->thumb.file.path)
      elm_icon_thumb_set(obj, sd->thumb.file.path, sd->thumb.file.key);
@@ -652,7 +652,7 @@ _elm_icon_signal_emit(Evas_Object *obj,
                       const char *source)
 {
 
-   Elm_Image_Smart_Data *id = eo_data_get(obj, ELM_OBJ_IMAGE_CLASS);
+   Elm_Image_Smart_Data *id = eo_data_scope_get(obj, ELM_OBJ_IMAGE_CLASS);
 
    if (!id->edje) return;
 
@@ -681,7 +681,7 @@ _elm_icon_signal_callback_add(Evas_Object *obj,
    Edje_Signal_Data *esd;
 
    ELM_ICON_DATA_GET(obj, sd);
-   Elm_Image_Smart_Data *id = eo_data_get(obj, ELM_OBJ_IMAGE_CLASS);
+   Elm_Image_Smart_Data *id = eo_data_scope_get(obj, ELM_OBJ_IMAGE_CLASS);
 
    if (!id->edje) return;
 
@@ -712,7 +712,7 @@ _elm_icon_signal_callback_del(Evas_Object *obj,
    Eina_List *l;
 
    ELM_ICON_DATA_GET(obj, sd);
-   Elm_Image_Smart_Data *id = eo_data_get(obj, ELM_OBJ_IMAGE_CLASS);
+   Elm_Image_Smart_Data *id = eo_data_scope_get(obj, ELM_OBJ_IMAGE_CLASS);
 
    if (!id->edje) return NULL;
 
@@ -817,12 +817,12 @@ _thumb_set(Eo *obj, void *_pd, va_list *list)
    Elm_Icon_Smart_Data *sd = _pd;
 
    evas_object_event_callback_del_full
-     (obj, EVAS_CALLBACK_RESIZE, _elm_icon_standard_resize_cb, sd);
+     (obj, EVAS_CALLBACK_RESIZE, _elm_icon_standard_resize_cb, obj);
    evas_object_event_callback_del_full
-     (obj, EVAS_CALLBACK_RESIZE, _elm_icon_thumb_resize_cb, sd);
+     (obj, EVAS_CALLBACK_RESIZE, _elm_icon_thumb_resize_cb, obj);
 
    evas_object_event_callback_add
-     (obj, EVAS_CALLBACK_RESIZE, _elm_icon_thumb_resize_cb, sd);
+     (obj, EVAS_CALLBACK_RESIZE, _elm_icon_thumb_resize_cb, obj);
 
    eina_stringshare_replace(&sd->thumb.file.path, file);
    eina_stringshare_replace(&sd->thumb.file.key, group);
@@ -836,7 +836,7 @@ _thumb_set(Eo *obj, void *_pd, va_list *list)
    if (!sd->thumb.eeh)
      {
         sd->thumb.eeh = ecore_event_handler_add
-            (ELM_ECORE_EVENT_ETHUMB_CONNECT, _icon_thumb_apply_cb, sd);
+            (ELM_ECORE_EVENT_ETHUMB_CONNECT, _icon_thumb_apply_cb, obj);
      }
 #else
    (void)obj;
@@ -900,11 +900,8 @@ elm_icon_standard_set(Evas_Object *obj,
 }
 
 static void
-_standard_set(Eo *obj, void *_pd, va_list *list)
+_standard_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
-
-   Elm_Icon_Smart_Data *sd = _pd;
-
    Eina_Bool fdo = EINA_FALSE;
    const char *name = va_arg(*list, const char *);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
@@ -916,13 +913,13 @@ _standard_set(Eo *obj, void *_pd, va_list *list)
      }
 
    evas_object_event_callback_del_full
-     (obj, EVAS_CALLBACK_RESIZE, _elm_icon_standard_resize_cb, sd);
+     (obj, EVAS_CALLBACK_RESIZE, _elm_icon_standard_resize_cb, obj);
 
    Eina_Bool int_ret = _elm_icon_standard_set(obj, name, &fdo);
 
    if (fdo)
      evas_object_event_callback_add
-       (obj, EVAS_CALLBACK_RESIZE, _elm_icon_standard_resize_cb, sd);
+       (obj, EVAS_CALLBACK_RESIZE, _elm_icon_standard_resize_cb, obj);
 
    if (ret) *ret = int_ret;
 }

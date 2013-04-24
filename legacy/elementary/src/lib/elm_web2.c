@@ -107,7 +107,7 @@ elm_need_web(void)
 static void
 _elm_web_smart_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
 #ifdef HAVE_ELEMENTARY_WEB
    elm_widget_resize_object_set(obj, _view_add(obj));
@@ -159,7 +159,7 @@ static void
 _webkit_view_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
    Evas_Object **ret = va_arg(*list, Evas_Object **);
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
    *ret = wd->resize_obj;
 }
 
@@ -378,7 +378,7 @@ elm_web_uri_set(Evas_Object *obj,
 static void
 _uri_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    const char *uri = va_arg(*list, const char *);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
@@ -401,7 +401,7 @@ static void
 _uri_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
    const char **ret = va_arg(*list, const char **);
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
    *ret = ewk_view_url_get(wd->resize_obj);
 }
 
@@ -418,7 +418,7 @@ static void
 _title_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
    const char **ret = va_arg(*list, const char **);
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
    *ret = ewk_view_title_get(wd->resize_obj);
 }
 

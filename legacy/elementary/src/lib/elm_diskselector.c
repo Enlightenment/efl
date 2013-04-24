@@ -288,7 +288,7 @@ _resize_cb(void *data __UNUSED__,
    Evas_Coord w, h;
 
    ELM_DISKSELECTOR_DATA_GET(obj, sd);
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    if ((sd->minw == -1) && (sd->minh == -1))
      elm_coords_finger_size_adjust(6, &sd->minw, 1, &sd->minh);
@@ -875,7 +875,7 @@ _elm_diskselector_smart_on_focus(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret = EINA_FALSE;
 
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    eo_do_super(obj, MY_CLASS, elm_wdg_on_focus(&int_ret));
    if (!int_ret) return;

@@ -60,7 +60,7 @@ struct _Elm_Icon_Smart_Data
  */
 
 #define ELM_ICON_DATA_GET(o, sd) \
-  Elm_Icon_Smart_Data * sd = eo_data_get(o, ELM_OBJ_ICON_CLASS)
+  Elm_Icon_Smart_Data * sd = eo_data_scope_get(o, ELM_OBJ_ICON_CLASS)
 
 #define ELM_ICON_DATA_GET_OR_RETURN(o, ptr)          \
   ELM_ICON_DATA_GET(o, ptr);                         \

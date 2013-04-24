@@ -42,7 +42,7 @@ struct _Elm_Bg_Smart_Data
  */
 
 #define ELM_BG_DATA_GET(o, sd) \
-  Elm_Bg_Smart_Data * sd = eo_data_get(o, ELM_OBJ_BG_CLASS)
+  Elm_Bg_Smart_Data * sd = eo_data_scope_get(o, ELM_OBJ_BG_CLASS)
 
 #define ELM_BG_DATA_GET_OR_RETURN(o, ptr)            \
   ELM_BG_DATA_GET(o, ptr);                           \

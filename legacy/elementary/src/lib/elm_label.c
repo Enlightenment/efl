@@ -28,7 +28,7 @@ static void
 _recalc(void *data)
 {
    ELM_LABEL_DATA_GET(data, sd);
-   Elm_Widget_Smart_Data *wd = eo_data_get(data, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(data, ELM_OBJ_WIDGET_CLASS);
 
    Evas_Coord minw = -1, minh = -1;
    Evas_Coord resw;
@@ -76,7 +76,7 @@ _label_slide_change(Evas_Object *obj)
    int plainlen = 0;
 
    ELM_LABEL_DATA_GET(obj, sd);
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    edje_object_signal_emit(wd->resize_obj, "elm,state,slide,stop", "elm");
 
@@ -157,7 +157,7 @@ _elm_label_smart_theme(Eo *obj, void *_pd, va_list *list)
    Eina_Bool int_ret = EINA_FALSE;
 
    Elm_Label_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    evas_event_freeze(evas_object_evas_get(obj));
 
@@ -181,7 +181,7 @@ _elm_label_smart_sizing_eval(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_
    Evas_Coord resw, resh;
 
    ELM_LABEL_DATA_GET(obj, sd);
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    if (sd->linewrap)
      {
@@ -319,7 +319,7 @@ static void
 _elm_label_smart_text_set(Eo *obj, void *_pd, va_list *list)
 {
    Elm_Label_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
    const char *item = va_arg(*list, const char *);
    const char *label = va_arg(*list, const char *);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
@@ -374,7 +374,7 @@ static void
 _elm_label_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Label_Smart_Data *priv = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 
@@ -444,7 +444,7 @@ _line_wrap_set(Eo *obj, void *_pd, va_list *list)
    int len;
 
    Elm_Label_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    if (sd->linewrap == wrap) return;
 
@@ -511,7 +511,7 @@ _wrap_width_set(Eo *obj, void *_pd, va_list *list)
 {
    Evas_Coord w = va_arg(*list, Evas_Coord);
    Elm_Label_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    if (w < 0) w = 0;
 
@@ -558,7 +558,7 @@ _ellipsis_set(Eo *obj, void *_pd, va_list *list)
    const char *text;
 
    Elm_Label_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    if (sd->ellipsis == ellipsis) return;
    sd->ellipsis = ellipsis;

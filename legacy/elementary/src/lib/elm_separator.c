@@ -16,7 +16,7 @@ _elm_separator_smart_theme(Eo *obj, void *_pd, va_list *list)
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret;
-   Elm_Layout_Smart_Data *ld = eo_data_get(obj, ELM_OBJ_LAYOUT_CLASS);
+   Elm_Layout_Smart_Data *ld = eo_data_scope_get(obj, ELM_OBJ_LAYOUT_CLASS);
 
    if (sd->horizontal)
      eina_stringshare_replace(&ld->group, "horizontal");
@@ -34,7 +34,7 @@ _elm_separator_smart_sizing_eval(Eo *obj, void *_pd EINA_UNUSED, va_list *list E
 {
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
 
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    edje_object_size_min_calc(wd->resize_obj, &minw, &minh);
    evas_object_size_hint_min_set(obj, minw, minh);

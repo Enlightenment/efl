@@ -65,7 +65,7 @@ struct _Elm_Calendar_Mark
  */
 
 #define ELM_CALENDAR_DATA_GET(o, sd) \
-  Elm_Calendar_Smart_Data * sd = eo_data_get(o, ELM_OBJ_CALENDAR_CLASS)
+  Elm_Calendar_Smart_Data * sd = eo_data_scope_get(o, ELM_OBJ_CALENDAR_CLASS)
 
 #define ELM_CALENDAR_CHECK(obj)                       \
   if (!eo_isa((obj), ELM_OBJ_CALENDAR_CLASS)) \

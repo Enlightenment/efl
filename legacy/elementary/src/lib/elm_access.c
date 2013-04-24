@@ -498,7 +498,7 @@ _access_highlight_next_get(Evas_Object *obj, Elm_Focus_Direction dir)
    /* find highlight root */
    do
      {
-        wd = eo_data_get(parent, ELM_OBJ_WIDGET_CLASS);
+        wd = eo_data_scope_get(parent, ELM_OBJ_WIDGET_CLASS);
         if (wd->highlight_root)
           {
              /* change highlight root */
@@ -645,7 +645,7 @@ _elm_access_highlight_cycle(Evas_Object *obj, Elm_Focus_Direction dir)
    /* find highlight root */
    do
      {
-        wd = eo_data_get(parent, ELM_OBJ_WIDGET_CLASS);
+        wd = eo_data_scope_get(parent, ELM_OBJ_WIDGET_CLASS);
         if (wd->highlight_root)
           {
              /* change highlight root */

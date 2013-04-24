@@ -44,7 +44,7 @@ _elm_bubble_smart_sizing_eval(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA
 {
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
 
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
    edje_object_size_min_restricted_calc
@@ -74,7 +74,7 @@ _elm_bubble_smart_focus_next(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
    Evas_Object *content;
 
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    Elm_Focus_Direction dir = va_arg(*list, Elm_Focus_Direction);
    Evas_Object **next = va_arg(*list, Evas_Object **);
@@ -193,7 +193,7 @@ static void
 _elm_bubble_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Bubble_Smart_Data *priv = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 
@@ -266,7 +266,7 @@ _pos_set(Eo *obj, void *_pd, va_list *list)
 {
    Elm_Bubble_Pos pos = va_arg(*list, Elm_Bubble_Pos);
    Elm_Bubble_Smart_Data *sd = _pd;
-   Elm_Layout_Smart_Data *ld = eo_data_get(obj, ELM_OBJ_LAYOUT_CLASS);
+   Elm_Layout_Smart_Data *ld = eo_data_scope_get(obj, ELM_OBJ_LAYOUT_CLASS);
 
    if (pos < ELM_BUBBLE_POS_TOP_LEFT || pos > ELM_BUBBLE_POS_BOTTOM_RIGHT)
      return;

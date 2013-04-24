@@ -43,7 +43,7 @@ struct _Elm_Player_Smart_Data
  */
 
 #define ELM_PLAYER_DATA_GET(o, sd) \
-  Elm_Player_Smart_Data * sd = eo_data_get(o, ELM_OBJ_PLAYER_CLASS)
+  Elm_Player_Smart_Data * sd = eo_data_scope_get(o, ELM_OBJ_PLAYER_CLASS)
 
 #define ELM_PLAYER_DATA_GET_OR_RETURN(o, ptr)        \
   ELM_PLAYER_DATA_GET(o, ptr);                       \

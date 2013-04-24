@@ -25,7 +25,7 @@ struct _Elm_Label_Smart_Data
 };
 
 #define ELM_LABEL_DATA_GET(o, sd) \
-  Elm_Label_Smart_Data * sd = eo_data_get(o, ELM_OBJ_LABEL_CLASS)
+  Elm_Label_Smart_Data * sd = eo_data_scope_get(o, ELM_OBJ_LABEL_CLASS)
 
 #define ELM_LABEL_DATA_GET_OR_RETURN(o, ptr)         \
   ELM_LABEL_DATA_GET(o, ptr);                        \

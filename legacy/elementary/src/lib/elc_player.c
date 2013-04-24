@@ -144,7 +144,7 @@ _elm_player_smart_sizing_eval(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA
 {
    Evas_Coord w, h;
 
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    edje_object_size_min_get(wd->resize_obj, &w, &h);
    edje_object_size_min_restricted_calc

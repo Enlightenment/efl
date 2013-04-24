@@ -130,7 +130,7 @@ typedef enum _Length_Unit
  */
 
 #define ELM_ENTRY_DATA_GET(o, sd) \
-  Elm_Entry_Smart_Data * sd = eo_data_get(o, ELM_OBJ_ENTRY_CLASS)
+  Elm_Entry_Smart_Data * sd = eo_data_scope_get(o, ELM_OBJ_ENTRY_CLASS)
 
 #define ELM_ENTRY_DATA_GET_OR_RETURN(o, ptr)         \
   ELM_ENTRY_DATA_GET(o, ptr);                        \

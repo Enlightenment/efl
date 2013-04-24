@@ -82,7 +82,7 @@ _mapbuf(Evas_Object *obj)
    Evas_Coord x, y, w, h;
 
    ELM_MAPBUF_DATA_GET(obj, sd);
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    evas_object_geometry_get(wd->resize_obj, &x, &y, &w, &h);
    evas_object_resize(sd->content, w, h);
@@ -111,7 +111,7 @@ static void
 _configure(Evas_Object *obj, Eina_Bool update_force)
 {
    ELM_MAPBUF_DATA_GET(obj, sd);
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    if (!sd->content) return;
    Evas_Coord x, y, w, h, x2, y2, w2, h2;
@@ -194,7 +194,7 @@ static void
 _elm_mapbuf_smart_content_set(Eo *obj, void *_pd, va_list *list)
 {
    Elm_Mapbuf_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
    const char *part = va_arg(*list, const char *);
    Evas_Object *content = va_arg(*list, Evas_Object *);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
@@ -252,7 +252,7 @@ _elm_mapbuf_smart_content_unset(Eo *obj, void *_pd, va_list *list)
    if (ret) *ret = NULL;
 
    Elm_Mapbuf_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    if (part && strcmp(part, "default")) return;
    if (!sd->content) return;

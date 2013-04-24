@@ -50,7 +50,7 @@ _on_mouse_up(void *data,
 static Eina_Bool
 _elm_image_animate_cb(void *data)
 {
-   Elm_Image_Smart_Data *sd = data;
+   ELM_IMAGE_DATA_GET(data, sd);
 
    if (!sd->anim) return ECORE_CALLBACK_CANCEL;
 
@@ -1489,7 +1489,7 @@ elm_image_animated_play_set(Evas_Object *obj,
 }
 
 static void
-_elm_image_smart_animated_play_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+_elm_image_smart_animated_play_set(Eo *obj, void *_pd, va_list *list)
 {
    Eina_Bool play = va_arg(*list, int);
    Elm_Image_Smart_Data *sd = _pd;
@@ -1502,7 +1502,7 @@ _elm_image_smart_animated_play_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list
    if (play)
      {
         sd->anim_timer = ecore_timer_add
-            (sd->frame_duration, _elm_image_animate_cb, sd);
+            (sd->frame_duration, _elm_image_animate_cb, obj);
      }
    else
      {

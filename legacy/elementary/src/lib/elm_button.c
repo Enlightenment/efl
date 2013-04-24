@@ -63,7 +63,7 @@ _activate(Evas_Object *obj)
 static void
 _elm_button_smart_sizing_eval(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
    Evas_Coord minw = -1, minh = -1;
 
    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
@@ -287,10 +287,9 @@ _access_state_cb(void *data __UNUSED__, Evas_Object *obj)
 }
 
 static void
-_elm_button_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+_elm_button_smart_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   Elm_Button_Smart_Data *priv = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 
@@ -312,7 +311,7 @@ _elm_button_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    _elm_access_callback_set
      (_elm_access_object_get(obj), ELM_ACCESS_INFO, _access_info_cb, NULL);
    _elm_access_callback_set
-     (_elm_access_object_get(obj), ELM_ACCESS_STATE, _access_state_cb, priv);
+     (_elm_access_object_get(obj), ELM_ACCESS_STATE, _access_state_cb, obj);
 
    elm_widget_can_focus_set(obj, EINA_TRUE);
    if (!elm_layout_theme_set(obj, "button", "base", elm_widget_style_get(obj)))

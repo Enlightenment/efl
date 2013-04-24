@@ -166,7 +166,7 @@ _on_clock_val_change_stop(void *data,
                           const char *emission __UNUSED__,
                           const char *source __UNUSED__)
 {
-   Elm_Clock_Smart_Data *sd = data;
+   ELM_CLOCK_DATA_GET(data, sd);
 
    if (sd->spin) ecore_timer_del(sd->spin);
    sd->spin = NULL;
@@ -334,7 +334,7 @@ static void
 _time_update(Evas_Object *obj)
 {
    ELM_CLOCK_DATA_GET(obj, sd);
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    Edje_Message_Int msg;
    int ampm = 0;
@@ -406,13 +406,13 @@ _time_update(Evas_Object *obj)
                _on_clock_val_up_start, obj);
              edje_object_signal_callback_add
                (sd->digit[i], "elm,action,up,stop", "",
-               _on_clock_val_change_stop, sd);
+               _on_clock_val_change_stop, obj);
              edje_object_signal_callback_add
                (sd->digit[i], "elm,action,down,start", "",
                _on_clock_val_down_start, obj);
              edje_object_signal_callback_add
                (sd->digit[i], "elm,action,down,stop", "",
-               _on_clock_val_change_stop, sd);
+               _on_clock_val_change_stop, obj);
 
              mw = mh = -1;
              elm_coords_finger_size_adjust(1, &mw, 2, &mh);
@@ -440,13 +440,13 @@ _time_update(Evas_Object *obj)
                _on_clock_val_up_start, obj);
              edje_object_signal_callback_add
                (sd->am_pm_obj, "elm,action,up,stop", "",
-               _on_clock_val_change_stop, sd);
+               _on_clock_val_change_stop, obj);
              edje_object_signal_callback_add
                (sd->am_pm_obj, "elm,action,down,start", "",
                _on_clock_val_down_start, obj);
              edje_object_signal_callback_add
                (sd->am_pm_obj, "elm,action,down,stop", "",
-               _on_clock_val_change_stop, sd);
+               _on_clock_val_change_stop, obj);
 
              mw = mh = -1;
              elm_coords_finger_size_adjust(1, &mw, 2, &mh);
@@ -670,7 +670,7 @@ static void
 _elm_clock_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Clock_Smart_Data *priv = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 
@@ -790,7 +790,7 @@ _elm_clock_smart_focus_next(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 static void
 _access_obj_process(Evas_Object *obj, Eina_Bool is_access)
 {
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    /* clock object */
    evas_object_propagate_events_set(obj, !is_access);

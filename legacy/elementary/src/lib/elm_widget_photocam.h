@@ -132,10 +132,10 @@ struct _Elm_Photocam_Pan_Smart_Data
  */
 
 #define ELM_PHOTOCAM_DATA_GET(o, sd) \
-  Elm_Photocam_Smart_Data * sd = eo_data_get(o, ELM_OBJ_PHOTOCAM_CLASS)
+  Elm_Photocam_Smart_Data * sd = eo_data_scope_get(o, ELM_OBJ_PHOTOCAM_CLASS)
 
 #define ELM_PHOTOCAM_PAN_DATA_GET(o, sd) \
-  Elm_Photocam_Pan_Smart_Data * sd = eo_data_get(o, ELM_OBJ_PHOTOCAM_PAN_CLASS)
+  Elm_Photocam_Pan_Smart_Data * sd = eo_data_scope_get(o, ELM_OBJ_PHOTOCAM_PAN_CLASS)
 
 #define ELM_PHOTOCAM_DATA_GET_OR_RETURN(o, ptr)      \
   ELM_PHOTOCAM_DATA_GET(o, ptr);                     \

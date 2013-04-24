@@ -579,7 +579,7 @@ _grid_item_in_viewport(Grid_Item *gi)
 static Eina_Bool
 _loaded_timeout_cb(void *data)
 {
-   Elm_Map_Smart_Data *sd = data;
+   ELM_MAP_DATA_GET(data, sd);
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(data, EINA_FALSE);
 
@@ -621,7 +621,7 @@ _grid_item_update(Grid_Item *gi)
      }
 
    if (gi->wsd->loaded_timer) ecore_timer_del(gi->wsd->loaded_timer);
-   gi->wsd->loaded_timer = ecore_timer_add(0.25, _loaded_timeout_cb, gi->wsd);
+   gi->wsd->loaded_timer = ecore_timer_add(0.25, _loaded_timeout_cb, gi->wsd->obj);
 }
 
 static void
@@ -761,7 +761,7 @@ _downloaded_cb(void *data,
           ((gi->wsd)->obj, SIG_TILE_LOADED_FAIL, NULL);
      }
 
-   Elm_Widget_Smart_Data *wwd = eo_data_get(gi->wsd->obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wwd = eo_data_scope_get(gi->wsd->obj, ELM_OBJ_WIDGET_CLASS);
    gi->job = NULL;
    gi->wsd->download_num--;
    if (!gi->wsd->download_num)
@@ -772,11 +772,12 @@ _downloaded_cb(void *data,
 static Eina_Bool
 _download_job(void *data)
 {
-   Elm_Map_Smart_Data *sd = data;
+   Evas_Object *obj = data;
+   ELM_MAP_DATA_GET(obj, sd);
    Eina_List *l, *ll;
    Grid_Item *gi;
 
-   Elm_Widget_Smart_Data *wd = eo_data_get(sd->obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    if (!eina_list_count(sd->download_list))
      {
@@ -807,7 +808,7 @@ _download_job(void *data)
            sd->try_num++;
            sd->download_num++;
            evas_object_smart_callback_call
-             (sd->obj, SIG_TILE_LOAD, NULL);
+             (obj, SIG_TILE_LOAD, NULL);
            if (sd->download_num == 1)
              edje_object_signal_emit(wd->resize_obj,
                                      "elm,state,busy,start", "elm");
@@ -913,7 +914,7 @@ _grid_place(Elm_Map_Smart_Data *sd)
         else _grid_unload(g);
      }
    if (!sd->download_idler)
-     sd->download_idler = ecore_idler_add(_download_job, sd);
+     sd->download_idler = ecore_idler_add(_download_job, sd->obj);
 }
 
 static void
@@ -1060,7 +1061,7 @@ _smooth_update(Elm_Map_Smart_Data *sd)
 static Eina_Bool
 _zoom_timeout_cb(void *data)
 {
-   Elm_Map_Smart_Data *sd = data;
+   ELM_MAP_DATA_GET(data, sd);
 
    _smooth_update(sd);
    sd->zoom_timer = NULL;
@@ -1125,7 +1126,7 @@ _zoom_do(Elm_Map_Smart_Data *sd,
      evas_object_smart_callback_call
        (sd->obj, SIG_ZOOM_START, NULL);
 
-   sd->zoom_timer = ecore_timer_add(0.25, _zoom_timeout_cb, sd);
+   sd->zoom_timer = ecore_timer_add(0.25, _zoom_timeout_cb, sd->obj);
    evas_object_smart_callback_call
      (sd->obj, SIG_ZOOM_CHANGE, NULL);
 
@@ -1136,7 +1137,7 @@ _zoom_do(Elm_Map_Smart_Data *sd,
 static Eina_Bool
 _zoom_anim_cb(void *data)
 {
-   Elm_Map_Smart_Data *sd = data;
+   ELM_MAP_DATA_GET(data, sd);
 
    if (sd->ani.cnt <= 0)
      {
@@ -1166,16 +1167,16 @@ _zoom_with_animation(Elm_Map_Smart_Data *sd,
    sd->ani.zoom = sd->zoom;
    sd->ani.diff = (double)(zoom - sd->zoom) / cnt;
    if (sd->zoom_animator) ecore_animator_del(sd->zoom_animator);
-   sd->zoom_animator = ecore_animator_add(_zoom_anim_cb, sd);
+   sd->zoom_animator = ecore_animator_add(_zoom_anim_cb, sd->obj);
 }
 
 static void
-_sizing_eval(Elm_Map_Smart_Data *sd)
+_sizing_eval(Evas_Object *obj)
 {
    Evas_Coord maxw = -1, maxh = -1;
 
-   evas_object_size_hint_max_get(sd->obj, &maxw, &maxh);
-   evas_object_size_hint_max_set(sd->obj, maxw, maxh);
+   evas_object_size_hint_max_get(obj, &maxw, &maxh);
+   evas_object_size_hint_max_set(obj, maxw, maxh);
 }
 
 static void
@@ -1190,7 +1191,7 @@ _changed_size_hints_cb(void *data,
 static Eina_Bool
 _scr_timeout_cb(void *data)
 {
-   Elm_Map_Smart_Data *sd = data;
+   ELM_MAP_DATA_GET(data, sd);
 
    _smooth_update(sd);
    sd->scr_timer = NULL;
@@ -1210,7 +1211,7 @@ _scroll_cb(Evas_Object *obj,
    else
      evas_object_smart_callback_call
        (sd->obj, SIG_SCROLL_DRAG_START, NULL);
-   sd->scr_timer = ecore_timer_add(0.25, _scr_timeout_cb, sd);
+   sd->scr_timer = ecore_timer_add(0.25, _scr_timeout_cb, obj);
    evas_object_smart_callback_call(sd->obj, SIG_SCROLL, NULL);
 }
 
@@ -1237,7 +1238,7 @@ _scroll_animate_stop_cb(Evas_Object *obj,
 static Eina_Bool
 _long_press_cb(void *data)
 {
-   Elm_Map_Smart_Data *sd = data;
+   ELM_MAP_DATA_GET(data, sd);
 
    sd->long_timer = NULL;
    evas_object_smart_callback_call
@@ -1252,7 +1253,7 @@ _mouse_down_cb(void *data,
                Evas_Object *obj __UNUSED__,
                void *event_info)
 {
-   Elm_Map_Smart_Data *sd = data;
+   ELM_MAP_DATA_GET(data, sd);
    Evas_Event_Mouse_Down *ev = event_info;
 
    if (ev->button != 1) return;
@@ -1269,7 +1270,7 @@ _mouse_down_cb(void *data,
    if (sd->long_timer) ecore_timer_del(sd->long_timer);
    sd->ev = *ev;
    sd->long_timer =
-     ecore_timer_add(_elm_config->longpress_timeout, _long_press_cb, sd);
+     ecore_timer_add(_elm_config->longpress_timeout, _long_press_cb, data);
 }
 
 static void
@@ -1278,7 +1279,7 @@ _mouse_up_cb(void *data,
              Evas_Object *obj __UNUSED__,
              void *event_info)
 {
-   Elm_Map_Smart_Data *sd = data;
+   ELM_MAP_DATA_GET(data, sd);
    Evas_Event_Mouse_Up *ev = event_info;
 
    EINA_SAFETY_ON_NULL_RETURN(ev);
@@ -1306,7 +1307,7 @@ _mouse_wheel_cb(void *data,
                 Evas_Object *obj __UNUSED__,
                 void *event_info)
 {
-   Elm_Map_Smart_Data *sd = data;
+   ELM_MAP_DATA_GET(data, sd);
 
    if (!sd->paused)
      {
@@ -2982,7 +2983,7 @@ _route_cb(void *data,
 
    route = data;
    sd = route->wsd;
-   Elm_Widget_Smart_Data *wd = eo_data_get(sd->obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(sd->obj, ELM_OBJ_WIDGET_CLASS);
 
    route->job = NULL;
    if (status == 200)
@@ -3019,7 +3020,7 @@ _name_cb(void *data,
 
    name = data;
    sd = name->wsd;
-   Elm_Widget_Smart_Data *wd = eo_data_get(sd->obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(sd->obj, ELM_OBJ_WIDGET_CLASS);
 
    name->job = NULL;
    if (status == 200)
@@ -3055,7 +3056,7 @@ _name_list_cb(void *data,
 
    name_list = data;
    sd = name_list->wsd;
-   Elm_Widget_Smart_Data *wd = eo_data_get(sd->obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(sd->obj, ELM_OBJ_WIDGET_CLASS);
 
    name_list->job = NULL;
    if (status == 200)
@@ -3121,7 +3122,7 @@ _name_request(const Evas_Object *obj,
 
    ELM_MAP_DATA_GET(obj, sd);
    EINA_SAFETY_ON_NULL_RETURN_VAL(sd->src_name, NULL);
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    fname = _prepare_download();
    url = sd->src_name->url_cb
@@ -3185,7 +3186,7 @@ _name_list_request(const Evas_Object *obj,
 
    ELM_MAP_DATA_GET(obj, sd);
    EINA_SAFETY_ON_NULL_RETURN_VAL(sd->src_name, NULL);
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    fname = _prepare_download();
    url = sd->src_name->url_cb
@@ -3228,7 +3229,7 @@ static Evas_Event_Flags
 _pinch_zoom_start_cb(void *data,
                      void *event_info __UNUSED__)
 {
-   Elm_Map_Smart_Data *sd = data;
+   ELM_MAP_DATA_GET(data, sd);
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(data, EVAS_EVENT_FLAG_NONE);
 
@@ -3241,7 +3242,7 @@ static Evas_Event_Flags
 _pinch_zoom_cb(void *data,
                void *event_info)
 {
-   Elm_Map_Smart_Data *sd = data;
+   ELM_MAP_DATA_GET(data, sd);
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(sd, EVAS_EVENT_FLAG_NONE);
 
@@ -3259,7 +3260,7 @@ static Evas_Event_Flags
 _pinch_rotate_cb(void *data,
                  void *event_info)
 {
-   Elm_Map_Smart_Data *sd = data;
+   ELM_MAP_DATA_GET(data, sd);
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(sd, EVAS_EVENT_FLAG_NONE);
 
@@ -3284,7 +3285,7 @@ static Evas_Event_Flags
 _pinch_rotate_end_cb(void *data,
                      void *event_info __UNUSED__)
 {
-   Elm_Map_Smart_Data *sd = data;
+   ELM_MAP_DATA_GET(data, sd);
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(sd, EVAS_EVENT_FLAG_NONE);
 
@@ -3767,7 +3768,7 @@ _elm_map_pan_smart_resize(Eo *obj, void *_pd, va_list *list)
 
    Elm_Map_Pan_Smart_Data *psd = _pd;
 
-   _sizing_eval(psd->wsd);
+   _sizing_eval(psd->wsd->obj);
    elm_map_zoom_mode_set(psd->wobj, psd->wsd->mode);
    evas_object_smart_changed(obj);
 }
@@ -3801,7 +3802,7 @@ _elm_map_smart_on_focus(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    if (ret) *ret = EINA_FALSE;
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    if (elm_widget_focus_get(obj))
      {
@@ -3820,9 +3821,19 @@ _elm_map_smart_on_focus(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 }
 
 static void
+_elm_map_pan_destructor(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+{
+   Elm_Map_Pan_Smart_Data *psd = _pd;
+   eo_data_unref(psd->wobj, psd->wsd);
+   eo_do_super(obj, MY_PAN_CLASS, eo_destructor());
+}
+
+static void
 _elm_map_pan_class_constructor(Eo_Class *klass)
 {
       const Eo_Op_Func_Description func_desc[] = {
+           EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DESTRUCTOR), _elm_map_pan_destructor),
+
            EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_RESIZE), _elm_map_pan_smart_resize),
            EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_MOVE), _elm_map_pan_smart_move),
            EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_CALCULATE), _elm_map_pan_smart_calculate),
@@ -3852,17 +3863,16 @@ static const Eo_Class_Description _elm_map_pan_class_desc = {
 EO_DEFINE_CLASS(elm_obj_map_pan_class_get, &_elm_map_pan_class_desc, ELM_OBJ_PAN_CLASS, NULL);
 
 static void
-_elm_map_smart_theme(Eo *obj, void *_pd, va_list *list)
+_elm_map_smart_theme(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret = EINA_FALSE;
-   Elm_Map_Smart_Data *sd = _pd;
 
    eo_do_super(obj, MY_CLASS, elm_wdg_theme(&int_ret));
    if (!int_ret) return;
 
-   _sizing_eval(sd);
+   _sizing_eval(obj);
 
    if (ret) *ret = EINA_TRUE;
 }
@@ -3979,11 +3989,11 @@ _elm_map_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    elm_widget_can_focus_set(obj, EINA_TRUE);
 
    evas_object_event_callback_add
-     (obj, EVAS_CALLBACK_MOUSE_DOWN, _mouse_down_cb, priv);
+     (obj, EVAS_CALLBACK_MOUSE_DOWN, _mouse_down_cb, obj);
    evas_object_event_callback_add
-     (obj, EVAS_CALLBACK_MOUSE_UP, _mouse_up_cb, priv);
+     (obj, EVAS_CALLBACK_MOUSE_UP, _mouse_up_cb, obj);
    evas_object_event_callback_add
-     (obj, EVAS_CALLBACK_MOUSE_WHEEL, _mouse_wheel_cb, priv);
+     (obj, EVAS_CALLBACK_MOUSE_WHEEL, _mouse_wheel_cb, obj);
 
    eo_do(obj,
          elm_scrollable_interface_objects_set(edje, priv->hit_rect),
@@ -3993,7 +4003,7 @@ _elm_map_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
             _elm_config->thumbscroll_bounce_enable));
 
    evas_object_event_callback_add(obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-                                  _changed_size_hints_cb, priv);
+                                  _changed_size_hints_cb, obj);
 
    eo_do(obj,
          elm_scrollable_interface_animate_start_cb_set(_scroll_animate_start_cb),
@@ -4001,7 +4011,8 @@ _elm_map_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
          elm_scrollable_interface_scroll_cb_set(_scroll_cb));
 
    priv->pan_obj = eo_add(MY_PAN_CLASS, evas_object_evas_get(obj));
-   pan_data = eo_data_get(priv->pan_obj, MY_PAN_CLASS);
+   pan_data = eo_data_scope_get(priv->pan_obj, MY_PAN_CLASS);
+   eo_data_ref(obj, NULL);
    pan_data->wobj = obj;
    pan_data->wsd = priv;
 
@@ -4017,19 +4028,19 @@ _elm_map_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    elm_gesture_layer_attach(priv->g_layer, obj);
    elm_gesture_layer_cb_set
      (priv->g_layer, ELM_GESTURE_ZOOM, ELM_GESTURE_STATE_START,
-     _pinch_zoom_start_cb, priv);
+     _pinch_zoom_start_cb, obj);
    elm_gesture_layer_cb_set
      (priv->g_layer, ELM_GESTURE_ZOOM, ELM_GESTURE_STATE_MOVE,
-     _pinch_zoom_cb, priv);
+     _pinch_zoom_cb, obj);
    elm_gesture_layer_cb_set
      (priv->g_layer, ELM_GESTURE_ROTATE, ELM_GESTURE_STATE_MOVE,
-     _pinch_rotate_cb, priv);
+     _pinch_rotate_cb, obj);
    elm_gesture_layer_cb_set
      (priv->g_layer, ELM_GESTURE_ROTATE, ELM_GESTURE_STATE_END,
-     _pinch_rotate_end_cb, priv);
+     _pinch_rotate_end_cb, obj);
    elm_gesture_layer_cb_set
      (priv->g_layer, ELM_GESTURE_ROTATE, ELM_GESTURE_STATE_ABORT,
-     _pinch_rotate_end_cb, priv);
+     _pinch_rotate_end_cb, obj);
 
    priv->sep_maps_overlays =
      evas_object_rectangle_add(evas_object_evas_get(obj));
@@ -4520,7 +4531,7 @@ _paused_set(Eo *obj, void *_pd, va_list *list)
    Eina_Bool paused = va_arg(*list, int);
 #ifdef HAVE_ELEMENTARY_ECORE_CON
    Elm_Map_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    if (sd->paused == !!paused) return;
    sd->paused = !!paused;
@@ -4653,10 +4664,10 @@ _wheel_disabled_set(Eo *obj, void *_pd, va_list *list)
 
    if ((!sd->wheel_disabled) && (disabled))
      evas_object_event_callback_del_full
-       (obj, EVAS_CALLBACK_MOUSE_WHEEL, _mouse_wheel_cb, sd);
+       (obj, EVAS_CALLBACK_MOUSE_WHEEL, _mouse_wheel_cb, obj);
    else if ((sd->wheel_disabled) && (!disabled))
      evas_object_event_callback_add
-       (obj, EVAS_CALLBACK_MOUSE_WHEEL, _mouse_wheel_cb, sd);
+       (obj, EVAS_CALLBACK_MOUSE_WHEEL, _mouse_wheel_cb, obj);
    sd->wheel_disabled = !!disabled;
 #else
    (void)obj;
@@ -4973,7 +4984,7 @@ _route_add(Eo *obj, void *_pd, va_list *list)
    char fname[PATH_MAX], fname2[PATH_MAX];
 
    Elm_Map_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    EINA_SAFETY_ON_NULL_RETURN(sd->src_route);
 

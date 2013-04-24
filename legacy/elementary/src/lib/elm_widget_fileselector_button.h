@@ -47,7 +47,7 @@ struct _Elm_Fileselector_Button_Smart_Data
  */
 
 #define ELM_FILESELECTOR_BUTTON_DATA_GET(o, sd) \
-  Elm_Fileselector_Button_Smart_Data * sd = eo_data_get(o, ELM_OBJ_FILESELECTOR_BUTTON_CLASS)
+  Elm_Fileselector_Button_Smart_Data * sd = eo_data_scope_get(o, ELM_OBJ_FILESELECTOR_BUTTON_CLASS)
 
 #define ELM_FILESELECTOR_BUTTON_DATA_GET_OR_RETURN(o, ptr) \
   ELM_FILESELECTOR_BUTTON_DATA_GET(o, ptr);                \

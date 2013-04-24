@@ -98,7 +98,7 @@ struct _Elm_Color_Item
  */
 
 #define ELM_COLORSELECTOR_DATA_GET(o, sd) \
-  Elm_Colorselector_Smart_Data * sd = eo_data_get(o, ELM_OBJ_COLORSELECTOR_CLASS)
+  Elm_Colorselector_Smart_Data * sd = eo_data_scope_get(o, ELM_OBJ_COLORSELECTOR_CLASS)
 
 #define ELM_COLORSELECTOR_DATA_GET_OR_RETURN(o, ptr) \
   ELM_COLORSELECTOR_DATA_GET(o, ptr);                \

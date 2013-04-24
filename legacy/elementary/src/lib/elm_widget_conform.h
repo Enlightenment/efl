@@ -62,7 +62,7 @@ enum _Conformant_Part_Type
  */
 
 #define ELM_CONFORMANT_DATA_GET(o, sd) \
-  Elm_Conformant_Smart_Data * sd = eo_data_get(o, ELM_OBJ_CONFORMANT_CLASS)
+  Elm_Conformant_Smart_Data * sd = eo_data_scope_get(o, ELM_OBJ_CONFORMANT_CLASS)
 
 #define ELM_CONFORMANT_DATA_GET_OR_RETURN(o, ptr)    \
   ELM_CONFORMANT_DATA_GET(o, ptr);                   \

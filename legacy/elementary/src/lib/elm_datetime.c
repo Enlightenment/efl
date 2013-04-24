@@ -300,7 +300,7 @@ _reload_format(Evas_Object *obj)
    char *dt_fmt;
 
    ELM_DATETIME_DATA_GET(obj, sd);
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    // FIXME: provide nl_langinfo on Windows if possible
    // fetch the default format from Libc.
@@ -467,7 +467,7 @@ _elm_datetime_smart_sizing_eval(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    unsigned int idx, field_count = 0;
 
    Elm_Datetime_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    for (idx = 0; idx < ELM_DATETIME_TYPE_COUNT; idx++)
      {
@@ -494,7 +494,7 @@ _elm_datetime_smart_theme(Eo *obj, void *_pd, va_list *list)
    unsigned int idx;
 
    Elm_Datetime_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    eo_do_super(obj, MY_CLASS, elm_wdg_theme(&int_ret));
    if (!int_ret) return;

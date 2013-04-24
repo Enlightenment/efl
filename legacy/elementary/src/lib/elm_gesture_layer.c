@@ -53,7 +53,7 @@ _glayer_buf_dup(void *buf, size_t size)
   ((sd->gesture[T]) ? sd->gesture[T]->test : EINA_FALSE)
 
 #define ELM_GESTURE_LAYER_DATA_GET(o, sd) \
-  Elm_Gesture_Layer_Smart_Data * sd = eo_data_get(o, MY_CLASS)
+  Elm_Gesture_Layer_Smart_Data * sd = eo_data_scope_get(o, MY_CLASS)
 
 #define ELM_GESTURE_LAYER_DATA_GET_OR_RETURN(o, ptr) \
   ELM_GESTURE_LAYER_DATA_GET(o, ptr);                \

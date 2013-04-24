@@ -51,7 +51,7 @@ _mouse_down_cb(void *data,
                Evas_Object *obj,
                void *event_info)
 {
-   Elm_Thumb_Smart_Data *sd = data;
+   ELM_THUMB_DATA_GET(data, sd);
    Evas_Event_Mouse_Down *ev = event_info;
 
    if (ev->button != 1) return;
@@ -70,7 +70,7 @@ _mouse_up_cb(void *data,
              Evas_Object *obj,
              void *event_info)
 {
-   Elm_Thumb_Smart_Data *sd = data;
+   ELM_THUMB_DATA_GET(data, sd);
    Evas_Event_Mouse_Up *ev = event_info;
 
    if (ev->button != 1) return;
@@ -91,7 +91,7 @@ _thumb_ready_inform(Elm_Thumb_Smart_Data *sd,
    Evas_Coord mw, mh;
    Evas_Coord aw, ah;
 
-   Elm_Widget_Smart_Data *wd = eo_data_get(sd->obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(sd->obj, ELM_OBJ_WIDGET_CLASS);
 
    if ((sd->is_video) && (sd->thumb.format == ETHUMB_THUMB_EET))
      {
@@ -125,7 +125,7 @@ _on_thumb_preloaded(void *data,
                     Evas_Object *obj __UNUSED__,
                     void *event_info __UNUSED__)
 {
-   Elm_Thumb_Smart_Data *sd = data;
+   ELM_THUMB_DATA_GET(data, sd);
    const char *thumb_path;
    const char *thumb_key;
 
@@ -205,7 +205,7 @@ _thumb_finish(Elm_Thumb_Smart_Data *sd,
    Evas *evas;
    int r;
 
-   Elm_Widget_Smart_Data *wd = eo_data_get(sd->obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(sd->obj, ELM_OBJ_WIDGET_CLASS);
    evas = evas_object_evas_get(sd->obj);
    if ((sd->view) && (sd->is_video ^ sd->was_video))
      {
@@ -235,6 +235,7 @@ _thumb_finish(Elm_Thumb_Smart_Data *sd,
              sd->thumb.retry = EINA_TRUE;
 
              retry = eina_list_append(retry, sd);
+             eo_data_ref(sd->obj, NULL);
              return;
           }
      }
@@ -265,6 +266,7 @@ _thumb_finish(Elm_Thumb_Smart_Data *sd,
              sd->thumb.retry = EINA_TRUE;
 
              retry = eina_list_append(retry, sd);
+             eo_data_ref(sd->obj, NULL);
              return;
           }
 
@@ -277,12 +279,17 @@ _thumb_finish(Elm_Thumb_Smart_Data *sd,
    EINA_LIST_FOREACH_SAFE(retry, l, ll, sd)
      {
         if (_thumb_retry(sd))
-          retry = eina_list_remove_list(retry, l);
+          {
+             retry = eina_list_remove_list(retry, l);
+             eo_data_unref(sd->obj, sd);
+          }
+
      }
 
    if (pending_request == 0)
      EINA_LIST_FREE(retry, sd)
        {
+          eo_data_unref(sd->obj, sd);
           eina_stringshare_del(sd->thumb.thumb_path);
           sd->thumb.thumb_path = NULL;
 
@@ -292,7 +299,7 @@ _thumb_finish(Elm_Thumb_Smart_Data *sd,
           evas_object_del(sd->view);
           sd->view = NULL;
 
-          wd = eo_data_get(sd->obj, ELM_OBJ_WIDGET_CLASS);
+          wd = eo_data_scope_get(sd->obj, ELM_OBJ_WIDGET_CLASS);
           elm_layout_signal_emit
             (wd->resize_obj, EDJE_SIGNAL_LOAD_ERROR, "elm");
           evas_object_smart_callback_call
@@ -314,7 +321,7 @@ _on_ethumb_thumb_done(Ethumb_Client *client __UNUSED__,
                       const char *thumb_key,
                       void *data)
 {
-   Elm_Thumb_Smart_Data *sd = data;
+   ELM_THUMB_DATA_GET(data, sd);
 
    if (EINA_UNLIKELY(!sd->thumb.request))
      {
@@ -332,7 +339,7 @@ static void
 _on_ethumb_thumb_error(Ethumb_Client *client __UNUSED__,
                        void *data)
 {
-   Elm_Thumb_Smart_Data *sd = data;
+   ELM_THUMB_DATA_GET(data, sd);
 
    if (EINA_UNLIKELY(!sd->thumb.request))
      {
@@ -346,7 +353,7 @@ _on_ethumb_thumb_error(Ethumb_Client *client __UNUSED__,
    ERR("could not generate thumbnail for %s (key: %s)",
        sd->thumb.file, sd->thumb.key ? sd->thumb.key : "");
 
-   Elm_Widget_Smart_Data *wd = eo_data_get(sd->obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(data, ELM_OBJ_WIDGET_CLASS);
    elm_layout_signal_emit
      (wd->resize_obj, EDJE_SIGNAL_GENERATE_ERROR, "elm");
    evas_object_smart_callback_call
@@ -364,12 +371,13 @@ _thumb_start(Elm_Thumb_Smart_Data *sd)
    if (sd->thumb.retry)
      {
         retry = eina_list_remove(retry, sd);
+        eo_data_unref(sd->obj, sd);
         sd->thumb.retry = EINA_FALSE;
      }
 
    if (!sd->file) return;
 
-   Elm_Widget_Smart_Data *wd = eo_data_get(sd->obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(sd->obj, ELM_OBJ_WIDGET_CLASS);
    elm_layout_signal_emit
      (wd->resize_obj, EDJE_SIGNAL_PULSE_START, "elm");
    elm_layout_signal_emit
@@ -388,7 +396,8 @@ _thumbnailing_available_cb(void *data,
                            int type __UNUSED__,
                            void *ev __UNUSED__)
 {
-   _thumb_start(data);
+   ELM_THUMB_DATA_GET(data, sd);
+   _thumb_start(sd);
 
    return ECORE_CALLBACK_RENEW;
 }
@@ -396,7 +405,7 @@ _thumbnailing_available_cb(void *data,
 static void
 _thumb_show(Elm_Thumb_Smart_Data *sd)
 {
-   Elm_Widget_Smart_Data *wd = eo_data_get(sd->obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(sd->obj, ELM_OBJ_WIDGET_CLASS);
    evas_object_show(wd->resize_obj);
 
    if (elm_thumb_ethumb_client_connected_get())
@@ -407,7 +416,7 @@ _thumb_show(Elm_Thumb_Smart_Data *sd)
 
    if (!sd->eeh)
      sd->eeh = ecore_event_handler_add
-         (ELM_ECORE_EVENT_ETHUMB_CONNECT, _thumbnailing_available_cb, sd);
+         (ELM_ECORE_EVENT_ETHUMB_CONNECT, _thumbnailing_available_cb, sd->obj);
 }
 
 #endif
@@ -434,7 +443,7 @@ _elm_thumb_smart_hide(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 #else
    (void) _pd;
 #endif
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_hide());
 
@@ -455,6 +464,7 @@ _elm_thumb_smart_hide(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    if (sd->thumb.retry)
      {
         retry = eina_list_remove(retry, sd);
+        eo_data_unref(sd->obj, sd);
         sd->thumb.retry = EINA_FALSE;
      }
 
@@ -528,7 +538,7 @@ _elm_thumb_smart_theme(Eo *obj, void *_pd __UNUSED__, va_list *list)
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret = EINA_FALSE;
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    eo_do_super(obj, MY_CLASS, elm_wdg_theme(&int_ret));
    if (!int_ret) return;
@@ -562,10 +572,9 @@ elm_need_ethumb(void)
 }
 
 static void
-_elm_thumb_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+_elm_thumb_smart_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   Elm_Thumb_Smart_Data *priv = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 
@@ -577,9 +586,9 @@ _elm_thumb_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
 #ifdef HAVE_ELEMENTARY_ETHUMB
    evas_object_event_callback_add
-     (obj, EVAS_CALLBACK_MOUSE_DOWN, _mouse_down_cb, priv);
+     (obj, EVAS_CALLBACK_MOUSE_DOWN, _mouse_down_cb, obj);
    evas_object_event_callback_add
-     (obj, EVAS_CALLBACK_MOUSE_UP, _mouse_up_cb, priv);
+     (obj, EVAS_CALLBACK_MOUSE_UP, _mouse_up_cb, obj);
 #else
    (void) priv;
 #endif
@@ -601,6 +610,7 @@ _elm_thumb_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    if (sd->thumb.retry)
      {
         retry = eina_list_remove(retry, sd);
+        eo_data_unref(sd->obj, sd);
         sd->thumb.retry = EINA_FALSE;
      }
 

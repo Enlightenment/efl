@@ -179,7 +179,7 @@ _sizing_eval(Evas_Object *obj)
    evas_object_size_hint_max_set(sd->location, bw, h_p);
    elm_hover_target_set(sd->hv, sd->location);
 
-   hover = eo_data_get(sd->hv, ELM_OBJ_WIDGET_CLASS);
+   hover = eo_data_scope_get(sd->hv, ELM_OBJ_WIDGET_CLASS);
    edje_object_part_geometry_get(hover->resize_obj, "bottom", NULL,
 				 NULL, &bw, &bh);
    evas_object_size_hint_min_set(obj, bw, bh);
@@ -343,7 +343,7 @@ _parent_del_cb(void *data,
                void *event_info __UNUSED__)
 {
    ELM_MENU_DATA_GET(data, sd);
-   Elm_Widget_Smart_Data *wd = eo_data_get(data, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(data, ELM_OBJ_WIDGET_CLASS);
 
    evas_object_event_callback_del_full
      (obj, EVAS_CALLBACK_RESIZE, _parent_resize_cb, wd->obj);

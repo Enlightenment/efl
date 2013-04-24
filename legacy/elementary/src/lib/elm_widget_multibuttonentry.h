@@ -107,7 +107,7 @@ struct _Elm_Multibuttonentry_Smart_Data
  */
 
 #define ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN(o, ptr) \
-  Elm_Multibuttonentry_Smart_Data *ptr = eo_data_get(o, ELM_OBJ_MULTIBUTTONENTRY_CLASS); \
+  Elm_Multibuttonentry_Smart_Data *ptr = eo_data_scope_get(o, ELM_OBJ_MULTIBUTTONENTRY_CLASS); \
   if (!ptr)                                             \
     {                                                   \
        CRITICAL("No widget data for object %p (%s)",    \
@@ -116,7 +116,7 @@ struct _Elm_Multibuttonentry_Smart_Data
     }
 
 #define ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
-  Elm_Multibuttonentry_Smart_Data * ptr = eo_data_get(o, ELM_OBJ_MULTIBUTTONENTRY_CLASS); \
+  Elm_Multibuttonentry_Smart_Data * ptr = eo_data_scope_get(o, ELM_OBJ_MULTIBUTTONENTRY_CLASS); \
   if (!ptr)                                                      \
     {                                                            \
        CRITICAL("No widget data for object %p (%s)",             \

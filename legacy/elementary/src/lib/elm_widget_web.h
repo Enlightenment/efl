@@ -123,7 +123,7 @@ struct _View_Smart_Data
  */
 
 #define ELM_WEB_DATA_GET(o, sd) \
-  Elm_Web_Smart_Data * sd = eo_data_get(o, ELM_OBJ_WEB_CLASS)
+  Elm_Web_Smart_Data * sd = eo_data_scope_get(o, ELM_OBJ_WEB_CLASS)
 
 #define ELM_WEB_DATA_GET_OR_RETURN(o, ptr)           \
   ELM_WEB_DATA_GET(o, ptr);                          \

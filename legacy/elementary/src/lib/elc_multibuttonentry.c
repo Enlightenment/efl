@@ -128,7 +128,7 @@ _shrink_mode_set(Evas_Object *obj,
    Evas_Coord button_min_width = 0;
 
    ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN(obj, sd);
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    if (sd->view_state == MULTIBUTTONENTRY_VIEW_ENTRY)
      evas_object_hide(sd->entry);
@@ -873,7 +873,7 @@ _elm_multibuttonentry_smart_sizing_eval(Eo *obj, void *_pd, va_list *list EINA_U
    Evas_Coord left, right, top, bottom;
 
    Elm_Multibuttonentry_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    evas_object_size_hint_min_get(sd->box, &minw, &minh);
    edje_object_part_geometry_get
@@ -913,7 +913,7 @@ _box_resize_cb(void *data,
                Evas_Object *obj __UNUSED__,
                void *event __UNUSED__)
 {
-   Elm_Multibuttonentry_Smart_Data *sd = data;
+   ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN(data, sd);
    Evas_Coord w, h;
 
    evas_object_geometry_get(sd->box, NULL, NULL, &w, &h);
@@ -935,7 +935,7 @@ _entry_resize_cb(void *data,
                  Evas_Object *obj __UNUSED__,
                  void *event_info __UNUSED__)
 {
-   Elm_Multibuttonentry_Smart_Data *sd = data;
+   ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN(data, sd);
    Evas_Coord en_x, en_y, en_w, en_h;
 
    evas_object_geometry_get(sd->entry, &en_x, &en_y, &en_w, &en_h);
@@ -949,7 +949,7 @@ _entry_changed_cb(void *data,
                   Evas_Object *obj __UNUSED__,
                   void *event_info __UNUSED__)
 {
-   Elm_Multibuttonentry_Smart_Data *sd = data;
+   ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN(data, sd);
    const char *str;
 
    str = elm_object_text_get(sd->entry);
@@ -962,7 +962,7 @@ _entry_focus_in_cb(void *data,
                    void *event_info __UNUSED__)
 {
    Elm_Multibuttonentry_Item *item = NULL;
-   Elm_Multibuttonentry_Smart_Data *sd = data;
+   ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN(data, sd);
 
    if (sd->selected_it)
      {
@@ -977,7 +977,7 @@ _entry_focus_out_cb(void *data,
                     Evas_Object *obj __UNUSED__,
                     void *event_info __UNUSED__)
 {
-   Elm_Multibuttonentry_Smart_Data *sd = data;
+   ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN(data, sd);
    const char *str;
 
    str = elm_object_text_get(sd->entry);
@@ -990,7 +990,7 @@ _entry_clicked_cb(void *data,
                   Evas_Object *obj __UNUSED__,
                   void *event_info __UNUSED__)
 {
-   Elm_Multibuttonentry_Smart_Data *sd = data;
+   ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN(data, sd);
 
    _current_button_state_change(sd->parent, MULTIBUTTONENTRY_BUTTON_STATE_DEFAULT);
    elm_object_focus_set(sd->entry, EINA_TRUE);
@@ -1003,7 +1003,7 @@ _layout_key_up_cb(void *data,
                   void *event_info)
 {
    Elm_Multibuttonentry_Item *item = NULL;
-   Elm_Multibuttonentry_Smart_Data *sd = data;
+   ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN(data, sd);
    Evas_Event_Key_Up *ev = (Evas_Event_Key_Up *)event_info;
 
    if (!sd->box) return;
@@ -1040,7 +1040,7 @@ _entry_key_down_cb(void *data,
                    Evas_Object *obj __UNUSED__,
                    void *event_info)
 {
-   Elm_Multibuttonentry_Smart_Data *sd = data;
+   ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN(data, sd);
    Evas_Event_Key_Down *ev = (Evas_Event_Key_Down *)event_info;
 
    if (sd->n_str == 1 &&
@@ -1054,7 +1054,7 @@ _entry_key_up_cb(void *data,
                  Evas_Object *obj __UNUSED__,
                  void *event_info)
 {
-   Elm_Multibuttonentry_Smart_Data *sd = data;
+   ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN(data, sd);
    Evas_Event_Key_Up *ev = (Evas_Event_Key_Up *)event_info;
    const char *str;
 
@@ -1074,7 +1074,7 @@ static void
 _callbacks_register(Evas_Object *obj)
 {
    ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN(obj, sd);
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    elm_layout_signal_callback_add
      (obj, "mouse,clicked,1", "*", _mouse_clicked_signal_cb, sd);
@@ -1084,22 +1084,22 @@ _callbacks_register(Evas_Object *obj)
      _layout_key_up_cb, sd);
 
    evas_object_event_callback_add
-     (sd->box, EVAS_CALLBACK_RESIZE, _box_resize_cb, sd);
+     (sd->box, EVAS_CALLBACK_RESIZE, _box_resize_cb, obj);
 
    evas_object_event_callback_add
-     (sd->entry, EVAS_CALLBACK_KEY_UP, _entry_key_up_cb, sd);
+     (sd->entry, EVAS_CALLBACK_KEY_UP, _entry_key_up_cb, obj);
    evas_object_event_callback_add
-     (sd->entry, EVAS_CALLBACK_KEY_DOWN, _entry_key_down_cb, sd);
+     (sd->entry, EVAS_CALLBACK_KEY_DOWN, _entry_key_down_cb, obj);
    evas_object_event_callback_add
-     (sd->entry, EVAS_CALLBACK_RESIZE, _entry_resize_cb, sd);
+     (sd->entry, EVAS_CALLBACK_RESIZE, _entry_resize_cb, obj);
    evas_object_smart_callback_add
-     (sd->entry, "changed", _entry_changed_cb, sd);
+     (sd->entry, "changed", _entry_changed_cb, obj);
    evas_object_smart_callback_add
-     (sd->entry, "focused", _entry_focus_in_cb, sd);
+     (sd->entry, "focused", _entry_focus_in_cb, obj);
    evas_object_smart_callback_add
-     (sd->entry, "unfocused", _entry_focus_out_cb, sd);
+     (sd->entry, "unfocused", _entry_focus_out_cb, obj);
    evas_object_smart_callback_add
-     (sd->entry, "clicked", _entry_clicked_cb, sd);
+     (sd->entry, "clicked", _entry_clicked_cb, obj);
 }
 
 static void
@@ -1371,7 +1371,7 @@ static void
 _view_init(Evas_Object *obj, Elm_Multibuttonentry_Smart_Data *sd)
 {
    const char *end_type;
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    sd->box = elm_box_add(obj);
 
@@ -1525,7 +1525,7 @@ static void
 _elm_multibuttonentry_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Multibuttonentry_Smart_Data *priv = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 

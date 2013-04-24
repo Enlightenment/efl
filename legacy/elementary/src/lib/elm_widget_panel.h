@@ -34,7 +34,7 @@ struct _Elm_Panel_Smart_Data
  */
 
 #define ELM_PANEL_DATA_GET(o, sd) \
-  Elm_Panel_Smart_Data * sd = eo_data_get(o, ELM_OBJ_PANEL_CLASS)
+  Elm_Panel_Smart_Data * sd = eo_data_scope_get(o, ELM_OBJ_PANEL_CLASS)
 
 #define ELM_PANEL_DATA_GET_OR_RETURN(o, ptr)         \
   ELM_PANEL_DATA_GET(o, ptr);                        \

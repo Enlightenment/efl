@@ -53,7 +53,7 @@ struct _Elm_Clock_Smart_Data
  */
 
 #define ELM_CLOCK_DATA_GET(o, sd) \
-  Elm_Clock_Smart_Data * sd = eo_data_get(o, ELM_OBJ_CLOCK_CLASS)
+  Elm_Clock_Smart_Data * sd = eo_data_scope_get(o, ELM_OBJ_CLOCK_CLASS)
 
 #define ELM_CLOCK_DATA_GET_OR_RETURN(o, ptr)         \
   ELM_CLOCK_DATA_GET(o, ptr);                        \

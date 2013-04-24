@@ -213,7 +213,7 @@ _index_box_auto_fill(Evas_Object *obj,
 
    if (sd->level_active[level]) return;
 
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
    evas_object_geometry_get(wd->resize_obj, NULL, NULL, NULL, &ih);
 
    rtl = elm_widget_mirrored_get(obj);
@@ -335,8 +335,8 @@ _elm_index_smart_theme(Eo *obj, void *_pd, va_list *list)
    Eina_Bool int_ret = EINA_FALSE;
 
    Elm_Index_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
-   Elm_Layout_Smart_Data *ld = eo_data_get(obj, ELM_OBJ_LAYOUT_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Layout_Smart_Data *ld = eo_data_scope_get(obj, ELM_OBJ_LAYOUT_CLASS);
 
    _index_box_clear(obj, sd->bx[0], 0);
    _index_box_clear(obj, sd->bx[1], 1);
@@ -420,7 +420,7 @@ _elm_index_smart_sizing_eval(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_
 {
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
 
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    edje_object_size_min_calc(wd->resize_obj, &minw, &minh);
    evas_object_size_hint_min_set(obj, minw, minh);
@@ -503,7 +503,7 @@ _sel_eval(Evas_Object *obj,
    int i, j, size, dh, dx, dy;
 
    ELM_INDEX_DATA_GET(obj, sd);
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    for (i = 0; i <= sd->level; i++)
      {
@@ -702,7 +702,7 @@ _on_mouse_down(void *data,
    Evas_Coord x, y, w;
 
    ELM_INDEX_DATA_GET(data, sd);
-   Elm_Widget_Smart_Data *wd = eo_data_get(data, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(data, ELM_OBJ_WIDGET_CLASS);
 
    if (ev->button != 1) return;
    sd->down = 1;
@@ -763,7 +763,7 @@ _on_mouse_move(void *data,
    char buf[1024];
 
    ELM_INDEX_DATA_GET(data, sd);
-   Elm_Widget_Smart_Data *wd = eo_data_get(data, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(data, ELM_OBJ_WIDGET_CLASS);
 
    if (!sd->down) return;
    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
@@ -901,7 +901,7 @@ _elm_index_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    Evas_Coord minw, minh;
 
    Elm_Index_Smart_Data *priv = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 

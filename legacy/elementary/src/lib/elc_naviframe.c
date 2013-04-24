@@ -1259,7 +1259,7 @@ static void
 _elm_naviframe_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Naviframe_Smart_Data *priv = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 

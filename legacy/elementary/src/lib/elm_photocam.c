@@ -65,7 +65,7 @@ _sizing_eval(Evas_Object *obj)
 {
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
 
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    evas_object_size_hint_max_get
      (wd->resize_obj, &maxw, &maxh);
@@ -173,7 +173,7 @@ _grid_load(Evas_Object *obj,
    Evas_Coord ox, oy, ow, oh, cvx, cvy, cvw, cvh, gw, gh, tx, ty;
 
    ELM_PHOTOCAM_DATA_GET(obj, sd);
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    evas_object_geometry_get(sd->pan_obj, &ox, &oy, &ow, &oh);
    evas_output_viewport_get(evas_object_evas_get(obj), &cvx, &cvy, &cvw, &cvh);
@@ -320,7 +320,7 @@ _elm_photocam_pan_smart_calculate(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    Evas_Coord ox, oy, ow, oh;
 
    Elm_Photocam_Pan_Smart_Data *psd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_get(psd->wobj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(psd->wobj, ELM_OBJ_WIDGET_CLASS);
 
    evas_object_geometry_get(obj, &ox, &oy, &ow, &oh);
    _image_place(
@@ -400,9 +400,19 @@ _elm_photocam_pan_smart_content_size_get(Eo *obj EINA_UNUSED, void *_pd, va_list
 }
 
 static void
+_elm_photocam_pan_destructor(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+{
+   Elm_Photocam_Pan_Smart_Data *psd = _pd;
+   eo_data_unref(psd->wobj, psd->wsd);
+   eo_do_super(obj, MY_PAN_CLASS, eo_destructor());
+}
+
+static void
 _photocam_pan_class_constructor(Eo_Class *klass)
 {
       const Eo_Op_Func_Description func_desc[] = {
+           EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DESTRUCTOR), _elm_photocam_pan_destructor),
+
            EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_RESIZE), _elm_photocam_pan_smart_resize),
            EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_MOVE), _elm_photocam_pan_smart_move),
            EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_CALCULATE), _elm_photocam_pan_smart_calculate),
@@ -452,7 +462,7 @@ _grid_clear(Evas_Object *obj,
    int x, y;
 
    ELM_PHOTOCAM_DATA_GET(obj, sd);
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    if (!g->grid) return;
    for (y = 0; y < g->gh; y++)
@@ -492,7 +502,7 @@ _tile_preloaded_cb(void *data,
 {
    Elm_Photocam_Grid_Item *git = data;
    ELM_PHOTOCAM_DATA_GET(git->obj, sd);
-   Elm_Widget_Smart_Data *wd = eo_data_get(git->obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(git->obj, ELM_OBJ_WIDGET_CLASS);
 
    if (git->want)
      {
@@ -689,7 +699,7 @@ _main_img_preloaded_cb(void *data,
    Elm_Phocam_Grid *g;
 
    ELM_PHOTOCAM_DATA_GET(data, sd);
-   Elm_Widget_Smart_Data *wd = eo_data_get(data, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(data, ELM_OBJ_WIDGET_CLASS);
 
    evas_object_show(sd->img);
    sd->main_load_pending = 0;
@@ -851,7 +861,7 @@ static void
 _elm_photocam_smart_on_focus(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    if (elm_widget_focus_get(obj))
      {
@@ -1182,7 +1192,7 @@ static Evas_Event_Flags
 _g_layer_zoom_move_cb(void *data,
                       void *event_info)
 {
-   Elm_Photocam_Smart_Data *sd = eo_data_get(data, MY_CLASS);
+   Elm_Photocam_Smart_Data *sd = eo_data_scope_get(data, MY_CLASS);
    Elm_Gesture_Zoom_Info *p = event_info;
 
    _g_layer_zoom_do(data, sd->zoom_point_x, sd->zoom_point_y, p);
@@ -1276,7 +1286,7 @@ _g_layer_zoom_end_cb(void *data,
           _elm_config->page_scroll_friction;
 
         sd->g_layer_zoom.bounce.animator =
-          ecore_animator_add(_bounce_eval, sd);
+          ecore_animator_add(_bounce_eval, obj);
      }
    else
      {
@@ -1328,7 +1338,8 @@ _elm_photocam_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    eo_do(obj, elm_scrollable_interface_bounce_allow_set(bounce, bounce));
 
    priv->pan_obj = eo_add(MY_PAN_CLASS, evas_object_evas_get(obj));
-   pan_data = eo_data_get(priv->pan_obj, MY_PAN_CLASS);
+   pan_data = eo_data_scope_get(priv->pan_obj, MY_PAN_CLASS);
+   eo_data_ref(obj, NULL);
    pan_data->wobj = obj;
    pan_data->wsd = priv;
 
@@ -1468,7 +1479,7 @@ _file_set(Eo *obj, void *_pd, va_list *list)
    if (ret) *ret = EVAS_LOAD_ERROR_NONE;
 
    Elm_Photocam_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    if (!eina_stringshare_replace(&sd->file, file)) return;
    _grid_clear_all(obj);

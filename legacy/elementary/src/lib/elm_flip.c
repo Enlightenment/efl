@@ -487,7 +487,7 @@ _slice_obj_vert_color_merge(Slice *s1,
 static int
 _state_update(Evas_Object *obj)
 {
-   Elm_Flip_Smart_Data *sd = eo_data_get(obj, MY_CLASS);
+   Elm_Flip_Smart_Data *sd = eo_data_scope_get(obj, MY_CLASS);
    Slice *sl;
    Vertex3 *tvo, *tvol;
    Evas_Object *front, *back;
@@ -1510,7 +1510,7 @@ _update_job(void *data)
 {
    Elm_Flip_Mode m = ELM_FLIP_ROTATE_X_CENTER_AXIS;
    Evas_Object *obj = data;
-   Elm_Flip_Smart_Data *sd = eo_data_get(obj, MY_CLASS);
+   Elm_Flip_Smart_Data *sd = eo_data_scope_get(obj, MY_CLASS);
    int rev = 0;
    double p;
 

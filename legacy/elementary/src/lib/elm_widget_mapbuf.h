@@ -33,7 +33,7 @@ struct _Elm_Mapbuf_Smart_Data
  */
 
 #define ELM_MAPBUF_DATA_GET(o, sd) \
-  Elm_Mapbuf_Smart_Data * sd = eo_data_get(o, ELM_OBJ_MAPBUF_CLASS)
+  Elm_Mapbuf_Smart_Data * sd = eo_data_scope_get(o, ELM_OBJ_MAPBUF_CLASS)
 
 #define ELM_MAPBUF_DATA_GET_OR_RETURN(o, ptr)        \
   ELM_MAPBUF_DATA_GET(o, ptr);                       \

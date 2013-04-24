@@ -109,7 +109,7 @@ _elm_fileselector_entry_smart_sizing_eval(Eo *obj, void *_pd EINA_UNUSED, va_lis
 {
    Evas_Coord minw = -1, minh = -1;
 
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    edje_object_size_min_calc(wd->resize_obj, &minw, &minh);
    evas_object_size_hint_min_set(obj, minw, minh);
@@ -195,7 +195,7 @@ _elm_fileselector_entry_smart_theme(Eo *obj, void *_pd, va_list *list)
    char buf[1024];
 
    Elm_Fileselector_Entry_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    Eina_Bool int_ret;
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);

@@ -80,7 +80,7 @@ struct _Elm_Naviframe_Text_Item_Pair
  */
 
 #define ELM_NAVIFRAME_DATA_GET(o, sd) \
-  Elm_Naviframe_Smart_Data * sd = eo_data_get(o, ELM_OBJ_NAVIFRAME_CLASS)
+  Elm_Naviframe_Smart_Data * sd = eo_data_scope_get(o, ELM_OBJ_NAVIFRAME_CLASS)
 
 #define ELM_NAVIFRAME_DATA_GET_OR_RETURN(o, ptr)     \
   ELM_NAVIFRAME_DATA_GET(o, ptr);                    \

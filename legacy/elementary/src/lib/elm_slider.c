@@ -53,7 +53,7 @@ _val_fetch(Evas_Object *obj)
    double posx = 0.0, posy = 0.0, pos = 0.0, val;
 
    ELM_SLIDER_DATA_GET(obj, sd);
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    edje_object_part_drag_value_get
      (wd->resize_obj, "elm.dragable.slider", &posx, &posy);
@@ -98,7 +98,7 @@ _val_set(Evas_Object *obj)
                 (sd->horizontal && !sd->inverted))))
      pos = 1.0 - pos;
 
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
    edje_object_part_drag_value_set
      (wd->resize_obj, "elm.dragable.slider", pos, pos);
 }
@@ -222,7 +222,7 @@ _drag_up(void *data,
 
    if (sd->inverted) step *= -1.0;
 
-   Elm_Widget_Smart_Data *wd = eo_data_get(data, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(data, ELM_OBJ_WIDGET_CLASS);
    edje_object_part_drag_step
      (wd->resize_obj, "elm.dragable.slider", step, step);
 }
@@ -240,7 +240,7 @@ _drag_down(void *data,
 
    if (sd->inverted) step *= -1.0;
 
-   Elm_Widget_Smart_Data *wd = eo_data_get(data, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(data, ELM_OBJ_WIDGET_CLASS);
    edje_object_part_drag_step
      (wd->resize_obj, "elm.dragable.slider", step, step);
 }
@@ -429,8 +429,8 @@ _elm_slider_smart_theme(Eo *obj, void *_pd, va_list *list)
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret;
-   Elm_Layout_Smart_Data *ld = eo_data_get(obj, ELM_OBJ_LAYOUT_CLASS);
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Layout_Smart_Data *ld = eo_data_scope_get(obj, ELM_OBJ_LAYOUT_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    if (sd->horizontal)
      {
@@ -494,7 +494,7 @@ _elm_slider_smart_theme(Eo *obj, void *_pd, va_list *list)
 static void
 _elm_slider_smart_sizing_eval(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
 
@@ -536,7 +536,7 @@ _spacer_down_cb(void *data,
         if (button_y < 0) button_y = 0;
      }
 
-   Elm_Widget_Smart_Data *wd = eo_data_get(data, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(data, ELM_OBJ_WIDGET_CLASS);
    edje_object_part_drag_value_set
      (wd->resize_obj, "elm.dragable.slider",
      button_x, button_y);
@@ -601,7 +601,7 @@ _spacer_move_cb(void *data,
              if (button_y < 0) button_y = 0;
           }
 
-        Elm_Widget_Smart_Data *wd = eo_data_get(data, ELM_OBJ_WIDGET_CLASS);
+        Elm_Widget_Smart_Data *wd = eo_data_scope_get(data, ELM_OBJ_WIDGET_CLASS);
         edje_object_part_drag_value_set
           (wd->resize_obj, "elm.dragable.slider",
           button_x, button_y);
@@ -754,7 +754,7 @@ static void
 _elm_slider_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Slider_Smart_Data *priv = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 
@@ -822,7 +822,7 @@ _elm_slider_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    _elm_access_callback_set
      (_elm_access_object_get(obj), ELM_ACCESS_INFO, _access_info_cb, NULL);
    _elm_access_callback_set
-     (_elm_access_object_get(obj), ELM_ACCESS_STATE, _access_state_cb, priv);
+     (_elm_access_object_get(obj), ELM_ACCESS_STATE, _access_state_cb, NULL);
    
    evas_object_smart_changed(obj);
 }
@@ -938,7 +938,7 @@ _elm_slider_unit_format_set(Eo *obj, void *_pd, va_list *list)
 {
    const char *units = va_arg(*list, const char *);
    Elm_Slider_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    eina_stringshare_replace(&sd->units, units);
    if (units)
@@ -1150,7 +1150,7 @@ _elm_slider_inverted_set(Eo *obj, void *_pd, va_list *list)
 {
    Eina_Bool inverted = va_arg(*list, int);
    Elm_Slider_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    inverted = !!inverted;
    if (sd->inverted == inverted) return;

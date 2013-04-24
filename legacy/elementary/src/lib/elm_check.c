@@ -126,7 +126,7 @@ _elm_check_smart_sizing_eval(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_
 {
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
 
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
    edje_object_size_min_restricted_calc
@@ -172,7 +172,7 @@ _elm_check_smart_theme(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    Eina_Bool int_ret = EINA_FALSE;
 
    Elm_Check_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    eo_do_super(obj, MY_CLASS, elm_wdg_theme(&int_ret));
    if (!int_ret) return;
@@ -206,7 +206,7 @@ _access_info_cb(void *data __UNUSED__, Evas_Object *obj)
 static char *
 _access_state_cb(void *data, Evas_Object *obj)
 {
-   Elm_Check_Smart_Data *sd = eo_data_get(data, MY_CLASS);
+   Elm_Check_Smart_Data *sd = eo_data_scope_get(data, MY_CLASS);
    const char *on_text, *off_text;
 
    if (elm_widget_disabled_get(obj))
@@ -281,10 +281,9 @@ _on_check_toggle(void *data,
 }
 
 static void
-_elm_check_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+_elm_check_smart_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   Elm_Check_Smart_Data *priv = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 
@@ -302,7 +301,7 @@ _elm_check_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    _elm_access_text_set
      (_elm_access_object_get(obj), ELM_ACCESS_TYPE, E_("Check"));
    _elm_access_callback_set
-     (_elm_access_object_get(obj), ELM_ACCESS_INFO, _access_info_cb, priv);
+     (_elm_access_object_get(obj), ELM_ACCESS_INFO, _access_info_cb, obj);
    _elm_access_callback_set
      (_elm_access_object_get(obj), ELM_ACCESS_STATE, _access_state_cb, obj);
 
@@ -361,7 +360,7 @@ _elm_check_smart_state_set(Eo *obj, void *_pd, va_list *list)
 {
    Eina_Bool state = va_arg(*list, int);
    Elm_Check_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    if (state != sd->state)
      {

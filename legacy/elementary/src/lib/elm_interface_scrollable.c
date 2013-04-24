@@ -9,7 +9,7 @@ EAPI Eo_Op ELM_OBJ_PAN_BASE_ID = EO_NOOP;
 #define MY_PAN_CLASS_NAME "elm_pan"
 
 #define ELM_PAN_DATA_GET_OR_RETURN(o, ptr)                      \
-  Elm_Pan_Smart_Data *ptr = eo_data_get(o, MY_PAN_CLASS);       \
+  Elm_Pan_Smart_Data *ptr = eo_data_scope_get(o, MY_PAN_CLASS);       \
   if (!ptr)                                                     \
     {                                                           \
        CRITICAL("No smart data for object %p (%s)",             \
@@ -18,7 +18,7 @@ EAPI Eo_Op ELM_OBJ_PAN_BASE_ID = EO_NOOP;
     }
 
 #define ELM_PAN_DATA_GET_OR_RETURN_VAL(o, ptr, val)             \
-  Elm_Pan_Smart_Data *ptr = eo_data_get(o, MY_PAN_CLASS);       \
+  Elm_Pan_Smart_Data *ptr = eo_data_scope_get(o, MY_PAN_CLASS);       \
   if (!ptr)                                                     \
     {                                                           \
        CRITICAL("No smart data for object %p (%s)",             \
@@ -385,7 +385,7 @@ EAPI Eo_Op ELM_SCROLLABLE_INTERFACE_BASE_ID = EO_NOOP;
 #define ELM_SCROLL_IFACE_DATA_GET_OR_RETURN(o, ptr)     \
   Elm_Scrollable_Smart_Interface_Data *ptr =		\
     (!eo_isa(o, MY_SCROLLABLE_INTERFACE) ? NULL :	\
-     eo_data_get(o, MY_SCROLLABLE_INTERFACE));		\
+     eo_data_scope_get(o, MY_SCROLLABLE_INTERFACE));		\
   if (!ptr)                                             \
     {                                                   \
        CRITICAL("No interface data for object %p (%s)", \
@@ -396,7 +396,7 @@ EAPI Eo_Op ELM_SCROLLABLE_INTERFACE_BASE_ID = EO_NOOP;
 #define ELM_SCROLL_IFACE_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
   Elm_Scrollable_Smart_Interface_Data *ptr =		     \
     (!eo_isa(o, MY_SCROLLABLE_INTERFACE) ? NULL :	     \
-     eo_data_get(o, MY_SCROLLABLE_INTERFACE));		     \
+     eo_data_scope_get(o, MY_SCROLLABLE_INTERFACE));		     \
   if (!ptr)                                                  \
     {                                                        \
        CRITICAL("No interface data for object %p (%s)",      \
@@ -1286,11 +1286,10 @@ _elm_scroll_momentum_end(Elm_Scrollable_Smart_Interface_Data *sid)
 static Eina_Bool
 _elm_scroll_bounce_x_animator(void *data)
 {
-   Elm_Scrollable_Smart_Interface_Data *sid;
+   ELM_SCROLL_IFACE_DATA_GET_OR_RETURN_VAL(data, sid, EINA_FALSE);
    Evas_Coord x, y, dx, w, odx, ed, md;
    double t, p, dt, pd, r;
 
-   sid = data;
    t = ecore_loop_time_get();
    dt = t - sid->down.anim_start2;
    if (dt >= 0.0)
@@ -1343,11 +1342,10 @@ _elm_scroll_bounce_x_animator(void *data)
 static Eina_Bool
 _elm_scroll_bounce_y_animator(void *data)
 {
-   Elm_Scrollable_Smart_Interface_Data *sid;
+   ELM_SCROLL_IFACE_DATA_GET_OR_RETURN_VAL(data, sid, EINA_FALSE);
    Evas_Coord x, y, dy, h, ody, ed, md;
    double t, p, dt, pd, r;
 
-   sid = data;
    t = ecore_loop_time_get();
    dt = t - sid->down.anim_start3;
    if (dt >= 0.0)
@@ -1446,7 +1444,7 @@ _elm_scroll_bounce_eval(Elm_Scrollable_Smart_Interface_Data *sid)
                        sid->scrollto.x.animator = NULL;
                     }
                   sid->down.bounce_x_animator =
-                    ecore_animator_add(_elm_scroll_bounce_x_animator, sid);
+                    ecore_animator_add(_elm_scroll_bounce_x_animator, sid->obj);
                   sid->down.anim_start2 = ecore_loop_time_get();
                   sid->down.bx = bx;
                   sid->down.bx0 = bx;
@@ -1470,7 +1468,7 @@ _elm_scroll_bounce_eval(Elm_Scrollable_Smart_Interface_Data *sid)
                        sid->scrollto.y.animator = NULL;
                     }
                   sid->down.bounce_y_animator =
-                    ecore_animator_add(_elm_scroll_bounce_y_animator, sid);
+                    ecore_animator_add(_elm_scroll_bounce_y_animator, sid->obj);
                   sid->down.anim_start3 = ecore_loop_time_get();
                   sid->down.by = by;
                   sid->down.by0 = by;

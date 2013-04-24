@@ -133,10 +133,10 @@ struct _Elm_Gengrid_Pan_Smart_Data
  */
 
 #define ELM_GENGRID_DATA_GET(o, sd) \
-  Elm_Gengrid_Smart_Data * sd = eo_data_get(o, ELM_OBJ_GENGRID_CLASS)
+  Elm_Gengrid_Smart_Data * sd = eo_data_scope_get(o, ELM_OBJ_GENGRID_CLASS)
 
 #define ELM_GENGRID_PAN_DATA_GET(o, sd) \
-  Elm_Gengrid_Pan_Smart_Data * sd = eo_data_get(o, ELM_OBJ_GENGRID_PAN_CLASS)
+  Elm_Gengrid_Pan_Smart_Data * sd = eo_data_scope_get(o, ELM_OBJ_GENGRID_PAN_CLASS)
 
 #define ELM_GENGRID_DATA_GET_OR_RETURN(o, ptr)       \
   ELM_GENGRID_DATA_GET(o, ptr);                      \

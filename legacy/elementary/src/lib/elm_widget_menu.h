@@ -59,7 +59,7 @@ struct _Elm_Menu_Item
  */
 
 #define ELM_MENU_DATA_GET(o, sd) \
-  Elm_Menu_Smart_Data * sd = eo_data_get(o, ELM_OBJ_MENU_CLASS)
+  Elm_Menu_Smart_Data * sd = eo_data_scope_get(o, ELM_OBJ_MENU_CLASS)
 
 #define ELM_MENU_DATA_GET_OR_RETURN(o, ptr)          \
   ELM_MENU_DATA_GET(o, ptr);                         \

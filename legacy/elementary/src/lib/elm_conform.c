@@ -231,7 +231,7 @@ _conformant_parts_swallow(Evas_Object *obj)
 
    ELM_CONFORMANT_DATA_GET(obj, sd);
 
-   wd = eo_data_get(obj, ELM_OBJ_WIDGET_CLASS);
+   wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
    e = evas_object_evas_get(obj);
 
    sd->scroller = NULL;
@@ -304,7 +304,7 @@ static Eina_Bool
 _port_indicator_connect_cb(void *data)
 {
    const char   *indicator_serv_name;
-   Elm_Conformant_Smart_Data *sd = data;
+   ELM_CONFORMANT_DATA_GET(data, sd);
    int rot;
 
    if (!sd) return ECORE_CALLBACK_CANCEL;
@@ -335,7 +335,7 @@ static Eina_Bool
 _land_indicator_connect_cb(void *data)
 {
    const char   *indicator_serv_name;
-   Elm_Conformant_Smart_Data *sd = data;
+   ELM_CONFORMANT_DATA_GET(data, sd);
    int rot;
 
    if (!sd) return ECORE_CALLBACK_CANCEL;
@@ -370,7 +370,7 @@ _land_indicator_disconnected(void *data,
 
    ELM_CONFORMANT_DATA_GET(conform, sd);
 
-   sd->land_indi_timer = ecore_timer_add(1, _land_indicator_connect_cb, sd);
+   sd->land_indi_timer = ecore_timer_add(1, _land_indicator_connect_cb, conform);
 }
 
 static void
@@ -382,7 +382,7 @@ _port_indicator_disconnected(void *data,
 
    ELM_CONFORMANT_DATA_GET(conform, sd);
 
-   sd->port_indi_timer = ecore_timer_add(1, _port_indicator_connect_cb, sd);
+   sd->port_indi_timer = ecore_timer_add(1, _port_indicator_connect_cb, conform);
 }
 
 
@@ -466,7 +466,7 @@ _indicator_mode_set(Evas_Object *conformant, Elm_Win_Indicator_Mode indmode)
    Elm_Widget_Smart_Data *wd;
 
    ELM_CONFORMANT_DATA_GET(conformant, sd);
-   wd = eo_data_get(conformant, ELM_OBJ_WIDGET_CLASS);
+   wd = eo_data_scope_get(conformant, ELM_OBJ_WIDGET_CLASS);
 
    sd->indmode = indmode;
 
