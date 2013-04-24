@@ -354,9 +354,6 @@ static void
 _ecore_evas_wl_rotation_set(Ecore_Evas *ee, int rotation, int resize)
 {
    Evas_Engine_Info_Wayland_Shm *einfo;
-   Ecore_Evas_Engine_Wl_Data *wdata;
-   int rot_dif;
-
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (ee->rotation == rotation) return;
@@ -365,97 +362,12 @@ _ecore_evas_wl_rotation_set(Ecore_Evas *ee, int rotation, int resize)
    if (!einfo)
      return;
    einfo->info.rotation = rotation;
+   if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+   {
+       ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
+   }
 
-   wdata = ee->engine.data;
-
-   rot_dif = ee->rotation - rotation;
-   if (rot_dif < 0) rot_dif = -rot_dif;
-
-   if (rot_dif != 180)
-     {
-        int minw, minh, maxw, maxh, basew, baseh, stepw, steph;
-        int ww, hh;
-
-        if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
-          {
-             ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
-          }
-
-        if (!resize)
-          {
-             // wdata->configure_coming = 1;
-             if (!ee->prop.fullscreen)
-               {
-                  int fw, fh;
-                  evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
-                  ecore_wl_window_resize(wdata->win, ee->h + fh, ee->w + fw, 0);
-                  ecore_wl_window_update_size(wdata->win, ee->h + fh, ee->w + fw);
-                  evas_output_size_set(ee->evas, ee->req.w + fw, ee->req.h + fh);
-                  evas_output_viewport_set(ee->evas, 0, 0, ee->req.w + fw, ee->req.h + fh);
-               }
-             else
-               {
-                  evas_output_size_set(ee->evas, ee->req.w, ee->req.h);
-                  evas_output_viewport_set(ee->evas, 0, 0, ee->req.w, ee->req.h);
-                  if (ee->func.fn_resize) ee->func.fn_resize(ee);
-               }
-             if ((ee->rotation == 90) || (ee->rotation == 270))
-               evas_damage_rectangle_add(ee->evas, 0, 0, ee->req.h, ee->req.w);
-             else
-               evas_damage_rectangle_add(ee->evas, 0, 0, ee->req.w, ee->req.h);
-             ww = ee->h;
-             hh = ee->w;
-             ee->w = ww;
-             ee->h = hh;
-             ee->req.w = ww;
-             ee->req.h = hh;
-          }
-        else
-          {
-             if ((rotation == 0) || (rotation == 180))
-               {
-                  evas_output_size_set(ee->evas, ee->w, ee->h);
-                  evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
-               }
-             else
-               {
-                  evas_output_size_set(ee->evas, ee->h, ee->w);
-                  evas_output_viewport_set(ee->evas, 0, 0, ee->h, ee->w);
-               }
-             if (ee->func.fn_resize) ee->func.fn_resize(ee);
-             if ((ee->rotation == 90) || (ee->rotation == 270))
-               evas_damage_rectangle_add(ee->evas, 0, 0, ee->h, ee->w);
-             else
-               evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
-          }
-        ecore_evas_size_min_get(ee, &minw, &minh);
-        ecore_evas_size_max_get(ee, &maxw, &maxh);
-        ecore_evas_size_base_get(ee, &basew, &baseh);
-        ecore_evas_size_step_get(ee, &stepw, &steph);
-        ee->rotation = rotation;
-        ecore_evas_size_min_set(ee, minh, minw);
-        ecore_evas_size_max_set(ee, maxh, maxw);
-        ecore_evas_size_base_set(ee, baseh, basew);
-        ecore_evas_size_step_set(ee, steph, stepw);
-        _ecore_evas_mouse_move_process(ee, ee->mouse.x, ee->mouse.y,
-                                       ecore_loop_time_get());
-     }
-   else
-     {
-        if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
-          {
-             ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
-          }
-        ee->rotation = rotation;
-        // _ecore_evas_mouse_move_process(ee, ee->mouse.x, ee->mouse.y,
-        //                                ecore_x_current_time_get());
-        if (ee->func.fn_resize) ee->func.fn_resize(ee);
-
-        if ((ee->rotation == 90) || (ee->rotation == 270))
-          evas_damage_rectangle_add(ee->evas, 0, 0, ee->h, ee->w);
-        else
-          evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
-     }
+   _ecore_evas_wl_common_rotation_set(ee, rotation, resize);
 }
 
 static void

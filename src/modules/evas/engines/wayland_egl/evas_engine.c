@@ -894,7 +894,10 @@ eng_output_resize(void *data, int w, int h)
         else
           dy = 0;
 
-        wl_egl_window_resize(re->win->win, w, h, dx, dy);
+        if ((re->win->rot == 90) || (re->win->rot == 270))
+          wl_egl_window_resize(re->win->win, h, w, dy, dx);
+        else
+          wl_egl_window_resize(re->win->win, w, h, dx, dy);
      }
 
    evas_gl_common_context_resize(re->win->gl_context, w, h, re->win->rot);

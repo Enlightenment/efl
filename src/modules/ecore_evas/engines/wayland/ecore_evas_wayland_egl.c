@@ -15,6 +15,7 @@ static void _ecore_evas_wl_show(Ecore_Evas *ee);
 static void _ecore_evas_wl_hide(Ecore_Evas *ee);
 static void _ecore_evas_wl_alpha_set(Ecore_Evas *ee, int alpha);
 static void _ecore_evas_wl_transparent_set(Ecore_Evas *ee, int transparent);
+static void _ecore_evas_wl_rotation_set(Ecore_Evas *ee, int rotation, int resize);
 
 static Ecore_Evas_Engine_Func _ecore_wl_engine_func = 
 {
@@ -37,7 +38,7 @@ static Ecore_Evas_Engine_Func _ecore_wl_engine_func =
    NULL, // managed_move
    _ecore_evas_wl_resize,
    NULL, // move_resize
-   NULL, // rotation_set
+   _ecore_evas_wl_rotation_set,
    NULL, // shaped_set
    _ecore_evas_wl_show,
    _ecore_evas_wl_hide,
@@ -263,8 +264,16 @@ _ecore_evas_wl_resize(Ecore_Evas *ee, int w, int h)
         orig_h = h;
 
         evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
-        w += fw;
-        h += fh;
+        if ((ee->rotation == 90) || (ee->rotation == 270))
+          {
+             w += fh;
+             h += fw;
+          }
+        else
+          {
+             w += fw;
+             h += fh;
+          }
      }
 
    if ((ee->w != w) || (ee->h != h))
@@ -311,6 +320,26 @@ _ecore_evas_wl_resize(Ecore_Evas *ee, int w, int h)
 
         if (ee->func.fn_resize) ee->func.fn_resize(ee);
      }
+}
+
+static void
+_ecore_evas_wl_rotation_set(Ecore_Evas *ee, int rotation, int resize)
+{
+   Evas_Engine_Info_Wayland_Egl *einfo;
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (ee->rotation == rotation) return;
+
+   einfo = (Evas_Engine_Info_Wayland_Egl *)evas_engine_info_get(ee->evas);
+   if (!einfo)
+     return;
+   einfo->info.rotation = rotation;
+   if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+   {
+       ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
+   }
+
+   _ecore_evas_wl_common_rotation_set(ee, rotation, resize);
 }
 
 static void 
