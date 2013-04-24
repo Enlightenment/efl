@@ -731,7 +731,7 @@ proximity_read_cb(unsigned long long timestamp, float distance, void *user_data)
         return;
      }
    /* We have to set this ourselves because we don't get it for this type */
-   bj->accuracy = -1;
+   obj->accuracy = -1;
    obj->data[0] = distance;
    obj->timestamp = clock_convert(timestamp);
    ecore_event_add(EEZE_SENSOR_EVENT_PROXIMITY, obj, _dummy_free, NULL);
@@ -1316,9 +1316,9 @@ eeze_sensor_tizen_init(void)
    sensor_start(sensor_handle, SENSOR_MOTION_FACEDOWN);
    sensor_start(sensor_handle, SENSOR_MOTION_DOUBLETAP);
    sensor_motion_doubletap_set_cb(sensor_handle, doubletap_cb,
-                                  eeze_sensor_obj_get(EEZE_SENSOR_TYPE_DOUBLETAP));
+                                  eeze_sensor_obj_get(EEZE_SENSOR_TYPE_MOTION_DOUBLETAP));
    sensor_motion_facedown_set_cb(sensor_handle, facedown_cb,
-                                 eeze_sensor_obj_get(EEZE_SENSOR_TYPE_FACEDOWN));
+                                 eeze_sensor_obj_get(EEZE_SENSOR_TYPE_MOTION_FACEDOWN));
 
    return EINA_TRUE;
 }
