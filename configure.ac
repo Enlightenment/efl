@@ -19,6 +19,36 @@ AC_USE_SYSTEM_EXTENSIONS
 AM_INIT_AUTOMAKE([1.6 dist-bzip2 -Wall color-tests])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
+#### Apply configuring with legacy api's only, eo api's or both.
+
+EFL_API_LEGACY_DEF="#define EFL_NOLEGACY_API_SUPPORT"
+EFL_API_EO_DEF="#define EFL_EO_API_SUPPORT"
+efl_api="both"
+
+AC_ARG_WITH([api],
+   [AC_HELP_STRING([--with-api=@<:@eo/legacy/both@:>@], [Select the EFL API Model @<:@default=both@:>@])],
+   [efl_api=${withval}],
+   [efl_api="both"])
+
+case "$efl_api" in
+    eo)
+        EFL_API_LEGACY_DEF="#define EFL_NOLEGACY_API_SUPPORT"
+        EFL_API_EO_DEF="#define EFL_EO_API_SUPPORT"
+        ;;
+    legacy)
+        EFL_API_LEGACY_DEF=""
+        EFL_API_EO_DEF=""
+        ;;
+    both)
+        EFL_API_LEGACY_DEF=""
+        EFL_API_EO_DEF="#define EFL_EO_API_SUPPORT"
+        ;;
+    *) AC_MSG_ERROR([Invalid web backend: must be eo, legacy or both]) ;;
+esac
+
+AC_SUBST(EFL_API_LEGACY_DEF)
+AC_SUBST(EFL_API_EO_DEF)
+
 #### Additional options to configure
 
 AC_ARG_WITH([profile],
@@ -3786,6 +3816,7 @@ else
 fi
 
 echo "Configuration...: ${COLOR_OTHER}profile=${build_profile} os=${osname}${COLOR_RESET}"
+echo "  EFL API Set...: ${efl_api}"
 echo "  CPU Extensions: ${host_cpu} (${features_cpu})"
 echo "  System Feature: ${features_system}"
 echo "  Threads.......: ${efl_have_threads} (${features_thread})"
