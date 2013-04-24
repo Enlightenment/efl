@@ -172,7 +172,7 @@ EAPI const char *elm_object_item_translatable_part_text_get(const Elm_Object_Ite
 #define elm_object_item_translatable_text_get(it) elm_object_item_translatable_part_text_get((it), NULL)
 
 /**
- * Mark the part text to be transltable or not.
+ * Mark the part text to be translatable or not.
  *
  * Once you mark the part text to be translatable, the text will be translated
  * internally regardless of elm_object_item_part_text_set() and
