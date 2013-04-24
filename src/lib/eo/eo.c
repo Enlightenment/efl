@@ -21,7 +21,7 @@ int _eo_log_dom = -1;
  * An Id of a class.
  * @ingroup Eo_Class
  */
-typedef size_t Eo_Class_Id;
+typedef uintptr_t Eo_Class_Id;
 
 typedef struct _Eo_Class _Eo_Class;
 
