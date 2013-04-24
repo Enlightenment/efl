@@ -33,6 +33,7 @@ ECORE_EVAS_COMMON_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_srcdir)/src/lib/ecore_input \
 -I$(top_srcdir)/src/lib/ecore_evas \
+-I$(top_builddir)/src/lib/efl \
 -I$(top_builddir)/src/lib/eina \
 -I$(top_builddir)/src/lib/eo \
 -I$(top_builddir)/src/lib/evas \
@@ -53,6 +54,7 @@ $(top_builddir)/src/lib/evas/libevas.la \
 
 # EDJE_COMMON_* is similar to src/examples/edje/Makefile.am
 EDJE_COMMON_CPPFLAGS = \
+-I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/eina \
 -I$(top_builddir)/src/lib/eina \
 -I$(top_srcdir)/src/lib/eo \
