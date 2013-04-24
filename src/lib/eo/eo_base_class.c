@@ -618,7 +618,7 @@ _eo_dbg_info_copy(const Eina_Value_Type *type EINA_UNUSED, const void *_src, voi
 {
    const Eo_Dbg_Info **src = (const Eo_Dbg_Info **) _src;
    Eo_Dbg_Info **dst = _dst;
-   *dst = calloc(1, sizeof(*dst));
+   *dst = calloc(1, sizeof(Eo_Dbg_Info));
    (*dst)->name = eina_stringshare_ref((*src)->name);
    eina_value_copy(&((*src)->value), &((*dst)->value));
    return EINA_TRUE;
