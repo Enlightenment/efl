@@ -881,21 +881,30 @@ eng_output_resize(void *data, int w, int h)
 
    if (re->win->win)
      {
-        int aw, ah, dx, dy;
-
-        wl_egl_window_get_attached_size(re->win->win, &aw, &ah);
-
-        if (re->info->info.edges & 4) // resize from left
-          dx = aw - w;
-        else
-          dx = 0;
-        if (re->info->info.edges & 1) // resize from top
-          dy = ah - h;
-        else
-          dy = 0;
+        int aw, ah, dx = 0, dy = 0;
 
         if ((re->win->rot == 90) || (re->win->rot == 270))
-          wl_egl_window_resize(re->win->win, h, w, dy, dx);
+          wl_egl_window_get_attached_size(re->win->win, &ah, &aw);
+        else
+          wl_egl_window_get_attached_size(re->win->win, &aw, &ah);
+
+        if (re->info->info.edges & 4) // resize from left
+          {
+             if ((re->win->rot == 90) || (re->win->rot == 270))
+               dx = ah - h;
+             else
+               dx = aw - w;
+          }
+        if (re->info->info.edges & 1) // resize from top
+          {
+             if ((re->win->rot == 90) || (re->win->rot == 270))
+               dy = aw - w;
+             else
+               dy = ah - h;
+          }
+
+        if ((re->win->rot == 90) || (re->win->rot == 270))
+          wl_egl_window_resize(re->win->win, h, w, dx, dy);
         else
           wl_egl_window_resize(re->win->win, w, h, dx, dy);
      }
