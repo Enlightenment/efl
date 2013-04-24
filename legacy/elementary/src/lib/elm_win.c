@@ -2110,6 +2110,30 @@ _elm_win_frame_cb_move_start(void *data,
    ecore_evas_wayland_move(sd->ee, sd->screen.x, sd->screen.y);
 }
 
+#ifdef HAVE_ELEMENTARY_WAYLAND
+struct _resize_info
+{
+   const char *name;
+   int location;
+};
+
+static struct _resize_info _border_side[4] =
+{
+     { ELM_CURSOR_TOP_SIDE, 1 },
+     { ELM_CURSOR_LEFT_SIDE, 4 },
+     { ELM_CURSOR_BOTTOM_SIDE, 2 },
+     { ELM_CURSOR_RIGHT_SIDE, 8 },
+};
+
+static struct _resize_info _border_corner[4] =
+{
+     { ELM_CURSOR_TOP_LEFT_CORNER, 5 },
+     { ELM_CURSOR_BOTTOM_LEFT_CORNER, 6 },
+     { ELM_CURSOR_BOTTOM_RIGHT_CORNER, 10 },
+     { ELM_CURSOR_TOP_RIGHT_CORNER, 9 },
+};
+#endif
+
 static void
 _elm_win_frame_cb_resize_show(void *data,
                               Evas_Object *obj __UNUSED__,
@@ -2122,26 +2146,32 @@ _elm_win_frame_cb_resize_show(void *data,
    if (sd->resizing) return;
 
 #ifdef HAVE_ELEMENTARY_WAYLAND
+   int i;
+   i = sd->rot / 90;
    if (!strcmp(source, "elm.event.resize.t"))
-     ecore_wl_window_cursor_from_name_set(sd->wl.win, ELM_CURSOR_TOP_SIDE);
+     ecore_wl_window_cursor_from_name_set(sd->wl.win,
+                                          _border_side[(0 + i) % 4].name);
    else if (!strcmp(source, "elm.event.resize.b"))
-     ecore_wl_window_cursor_from_name_set(sd->wl.win, ELM_CURSOR_BOTTOM_SIDE);
+     ecore_wl_window_cursor_from_name_set(sd->wl.win,
+                                          _border_side[(2 + i) % 4].name);
    else if (!strcmp(source, "elm.event.resize.l"))
-     ecore_wl_window_cursor_from_name_set(sd->wl.win, ELM_CURSOR_LEFT_SIDE);
+     ecore_wl_window_cursor_from_name_set(sd->wl.win,
+                                          _border_side[(1 + i) % 4].name);
    else if (!strcmp(source, "elm.event.resize.r"))
-     ecore_wl_window_cursor_from_name_set(sd->wl.win, ELM_CURSOR_RIGHT_SIDE);
+     ecore_wl_window_cursor_from_name_set(sd->wl.win,
+                                          _border_side[(3 + i) % 4].name);
    else if (!strcmp(source, "elm.event.resize.tl"))
      ecore_wl_window_cursor_from_name_set(sd->wl.win,
-                                          ELM_CURSOR_TOP_LEFT_CORNER);
+                                          _border_corner[(0 + i) % 4].name);
    else if (!strcmp(source, "elm.event.resize.tr"))
      ecore_wl_window_cursor_from_name_set(sd->wl.win,
-                                          ELM_CURSOR_TOP_RIGHT_CORNER);
+                                          _border_corner[(3 + i) % 4].name);
    else if (!strcmp(source, "elm.event.resize.bl"))
      ecore_wl_window_cursor_from_name_set(sd->wl.win,
-                                          ELM_CURSOR_BOTTOM_LEFT_CORNER);
+                                          _border_corner[(1 + i) % 4].name);
    else if (!strcmp(source, "elm.event.resize.br"))
      ecore_wl_window_cursor_from_name_set(sd->wl.win,
-                                          ELM_CURSOR_BOTTOM_RIGHT_CORNER);
+                                          _border_corner[(2 + i) % 4].name);
    else
      ecore_wl_window_cursor_default_restore(sd->wl.win);
 #else
@@ -2171,34 +2201,37 @@ _elm_win_frame_cb_resize_start(void *data,
                                const char *sig __UNUSED__,
                                const char *source)
 {
+#ifdef HAVE_ELEMENTARY_WAYLAND
    Elm_Win_Smart_Data *sd;
+   int i;
 
    if (!(sd = data)) return;
    if (sd->resizing) return;
 
    sd->resizing = EINA_TRUE;
-
+   i = sd->rot / 90;
    if (!strcmp(source, "elm.event.resize.t"))
-     sd->resize_location = 1;
+     sd->resize_location = _border_side[(0 + i) % 4].location;
    else if (!strcmp(source, "elm.event.resize.b"))
-     sd->resize_location = 2;
+     sd->resize_location = _border_side[(2 + i) % 4].location;
    else if (!strcmp(source, "elm.event.resize.l"))
-     sd->resize_location = 4;
+     sd->resize_location = _border_side[(1 + i) % 4].location;
    else if (!strcmp(source, "elm.event.resize.r"))
-     sd->resize_location = 8;
+     sd->resize_location = _border_side[(3 + i) % 4].location;
    else if (!strcmp(source, "elm.event.resize.tl"))
-     sd->resize_location = 5;
+     sd->resize_location = _border_corner[(0 + i) % 4].location;
    else if (!strcmp(source, "elm.event.resize.tr"))
-     sd->resize_location = 9;
+     sd->resize_location = _border_corner[(3 + i) % 4].location;
    else if (!strcmp(source, "elm.event.resize.bl"))
-     sd->resize_location = 6;
+     sd->resize_location = _border_corner[(1 + i) % 4].location;
    else if (!strcmp(source, "elm.event.resize.br"))
-     sd->resize_location = 10;
+     sd->resize_location = _border_corner[(2 + i) % 4].location;
    else
      sd->resize_location = 0;
 
    if (sd->resize_location > 0)
      ecore_evas_wayland_resize(sd->ee, sd->resize_location);
+#endif
 }
 
 static void
