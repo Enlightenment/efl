@@ -12,11 +12,10 @@ START_TEST(eo_value)
 {
    eo_init();
    char *str, *str2;
-   Eina_Value_List eo_list;
 
    Eina_Value val2, eo_val;
    void *tmpp = NULL;
-   Eo_Dbg_Info *eo_dbg_info, *tmp_dbg_info;
+   Eo_Dbg_Info *eo_dbg_info;
    Eo *obj = eo_add(SIMPLE_CLASS, NULL);
 
    eo_dbg_info = EO_DBG_INFO_LIST_APPEND(NULL, "Root");
@@ -26,6 +25,7 @@ START_TEST(eo_value)
    str = eina_value_to_string(&eo_dbg_info->value);
    ck_assert_str_eq(str, "[[8]]");
 
+   eina_value_setup(&val2, EO_DBG_INFO_TYPE);
    eina_value_copy(&eo_dbg_info->value, &val2);
    str2 = eina_value_to_string(&val2);
    ck_assert_str_eq(str, str2);
