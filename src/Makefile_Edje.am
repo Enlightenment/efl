@@ -3,7 +3,7 @@
 
 lib_LTLIBRARIES += lib/edje/libedje.la
 
-EDJE_COMMON_CPPFLAGS = \
+EDJE_COMMON_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_builddir) \
 -I$(top_srcdir)/src/lib/edje \
 -I$(top_builddir)/src/lib/edje \
@@ -52,7 +52,7 @@ lib/edje/edje_util.c \
 lib/edje/edje_var.c \
 lib/edje/edje_signal.c
 
-lib_edje_libedje_la_CPPFLAGS = $(EDJE_COMMON_CPPFLAGS)
+lib_edje_libedje_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl $(EDJE_COMMON_CPPFLAGS)
 lib_edje_libedje_la_LIBADD = @EDJE_LIBS@
 lib_edje_libedje_la_DEPENDENCIES = @EDJE_INTERNAL_LIBS@
 lib_edje_libedje_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
@@ -62,7 +62,7 @@ if ENABLE_MULTISENSE
 # edjemoduleXXX_LTLIBRARIES = modules/edje/XXX/module.la
 #
 # modules_edje_XXX_module_la_SOURCES = modules/edje/XXX/XXX.c
-# modules_edje_XXX_module_la_CPPFLAGS = $(EDJE_COMMON_CPPFLAGS) @XXX_LIBS@
+# modules_edje_XXX_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl $(EDJE_COMMON_CPPFLAGS) @XXX_LIBS@
 # modules_edje_XXX_module_la_LIBADD = $(EDJE_COMMON_USER_LIBADD)
 # modules_edje_XXX_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
 # modules_edje_XXX_module_la_LIBTOOLFLAGS = --tag=disable-static
@@ -72,7 +72,7 @@ if ENABLE_MULTISENSE
 #
 # modules_edje_multisense_factory_module_la_SOURCES = \
 # modules/edje/multisense_factory/multisense_factory.c
-# modules_edje_multisense_factory_module_la_CPPFLAGS = \
+# modules_edje_multisense_factory_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 # $(EDJE_COMMON_CPPFLAGS) \
 # @REMIX_CFLAGS@
 # modules_edje_multisense_factory_module_la_LIBADD = \
@@ -111,7 +111,7 @@ bin/edje/edje_cc_mem.c \
 bin/edje/edje_cc_handlers.c \
 bin/edje/edje_cc_sources.c \
 bin/edje/edje_multisense_convert.c
-bin_edje_edje_cc_CPPFLAGS = $(EDJE_COMMON_CPPFLAGS)
+bin_edje_edje_cc_CPPFLAGS = -I$(top_builddir)/src/lib/efl $(EDJE_COMMON_CPPFLAGS)
 bin_edje_edje_cc_LDADD =  $(USE_EDJE_BIN_LIBS)
 bin_edje_edje_cc_DEPENDENCIES = \
 @USE_EDJE_INTERNAL_LIBS@ \
@@ -122,37 +122,37 @@ bin/edje/edje_decc.c \
 bin/edje/edje_decc.h \
 bin/edje/edje_cc_mem.c \
 bin/edje/edje_cc_sources.c
-bin_edje_edje_decc_CPPFLAGS = $(EDJE_COMMON_CPPFLAGS)
+bin_edje_edje_decc_CPPFLAGS = -I$(top_builddir)/src/lib/efl $(EDJE_COMMON_CPPFLAGS)
 bin_edje_edje_decc_LDADD =  $(USE_EDJE_BIN_LIBS)
 bin_edje_edje_decc_DEPENDENCIES = @USE_EDJE_INTERNAL_LIBS@
 
 bin_edje_edje_player_SOURCES = bin/edje/edje_player.c
-bin_edje_edje_player_CPPFLAGS = $(EDJE_COMMON_CPPFLAGS)
+bin_edje_edje_player_CPPFLAGS = -I$(top_builddir)/src/lib/efl $(EDJE_COMMON_CPPFLAGS)
 bin_edje_edje_player_LDADD =  $(USE_EDJE_BIN_LIBS)
 bin_edje_edje_player_DEPENDENCIES = @USE_EDJE_INTERNAL_LIBS@
 
 bin_edje_edje_inspector_SOURCES = bin/edje/edje_inspector.c
-bin_edje_edje_inspector_CPPFLAGS = $(EDJE_COMMON_CPPFLAGS)
+bin_edje_edje_inspector_CPPFLAGS = -I$(top_builddir)/src/lib/efl $(EDJE_COMMON_CPPFLAGS)
 bin_edje_edje_inspector_LDADD =  $(USE_EDJE_BIN_LIBS)
 bin_edje_edje_inspector_DEPENDENCIES = @USE_EDJE_INTERNAL_LIBS@
 
 bin_edje_edje_external_inspector_SOURCES = bin/edje/edje_external_inspector.c
-bin_edje_edje_external_inspector_CPPFLAGS = $(EDJE_COMMON_CPPFLAGS)
+bin_edje_edje_external_inspector_CPPFLAGS = -I$(top_builddir)/src/lib/efl $(EDJE_COMMON_CPPFLAGS)
 bin_edje_edje_external_inspector_LDADD =  $(USE_EDJE_BIN_LIBS)
 bin_edje_edje_external_inspector_DEPENDENCIES = @USE_EDJE_INTERNAL_LIBS@
 
 bin_edje_edje_codegen_SOURCES = bin/edje/edje_codegen.c
-bin_edje_edje_codegen_CPPFLAGS = $(EDJE_COMMON_CPPFLAGS)
+bin_edje_edje_codegen_CPPFLAGS = -I$(top_builddir)/src/lib/efl $(EDJE_COMMON_CPPFLAGS)
 bin_edje_edje_codegen_LDADD =  $(USE_EDJE_BIN_LIBS)
 bin_edje_edje_codegen_DEPENDENCIES = @USE_EDJE_INTERNAL_LIBS@
 
 bin_edje_edje_pick_SOURCES = bin/edje/edje_pick.c
-bin_edje_edje_pick_CPPFLAGS = $(EDJE_COMMON_CPPFLAGS)
+bin_edje_edje_pick_CPPFLAGS = -I$(top_builddir)/src/lib/efl $(EDJE_COMMON_CPPFLAGS)
 bin_edje_edje_pick_LDADD =  $(USE_EDJE_BIN_LIBS)
 bin_edje_edje_pick_DEPENDENCIES = @USE_EDJE_INTERNAL_LIBS@
 
 bin_edje_edje_watch_SOURCES = bin/edje/edje_watch.c
-bin_edje_edje_watch_CPPFLAGS = $(EDJE_COMMON_CPPFLAGS)
+bin_edje_edje_watch_CPPFLAGS = -I$(top_builddir)/src/lib/efl $(EDJE_COMMON_CPPFLAGS)
 bin_edje_edje_watch_LDADD =  $(USE_EDJE_BIN_LIBS)
 bin_edje_edje_watch_DEPENDENCIES = @USE_EDJE_INTERNAL_LIBS@
 
@@ -170,7 +170,7 @@ bin/edje/epp/cpplib.c \
 bin/edje/epp/cppmain.c
 
 # Note: eina is included only because of EINA_UNUSED
-bin_edje_epp_epp_CPPFLAGS = \
+bin_edje_epp_epp_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_builddir) \
 -I$(top_srcdir)/src/lib/eina \
 -I$(top_builddir)/src/lib/eina \
@@ -226,7 +226,7 @@ tests/edje/edje_suite.c \
 tests/edje/edje_test_edje.c \
 tests/edje/edje_suite.h
 
-tests_edje_edje_suite_CPPFLAGS = \
+tests_edje_edje_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 $(EDJE_COMMON_CPPFLAGS) \
 -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/edje\" \
 @CHECK_CFLAGS@

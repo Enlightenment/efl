@@ -15,6 +15,8 @@ check_PROGRAMS =
 TESTS =
 EXTRA_DIST =
 
+include Makefile_Efl.am
+
 include Makefile_Evil.am
 include Makefile_Escape.am
 

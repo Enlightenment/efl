@@ -108,7 +108,7 @@ endif
 
 lib_evil_libdl_la_SOURCES = lib/evil/dlfcn.c
 
-lib_evil_libdl_la_CPPFLAGS = \
+lib_evil_libdl_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 @EVIL_CFLAGS@ \
 @EVIL_DLFCN_CPPFLAGS@
 lib_evil_libdl_la_LIBADD = \
@@ -150,7 +150,7 @@ bin_evil_evil_suite_SOURCES +=  bin/evil/memcpy_glibc_arm.S
 #suite_SOURCES +=  bin/evil/memcpy_glibc_i686.S # see EXTRA_DIST below!
 endif
 
-bin_evil_evil_suite_CPPFLAGS = @EVIL_CFLAGS@
+bin_evil_evil_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EVIL_CFLAGS@
 bin_evil_evil_suite_LDADD = @USE_EVIL_LIBS@ @DL_LIBS@ -lm
 
 bin_evil_test_evil_SOURCES = bin/evil/test_evil.c

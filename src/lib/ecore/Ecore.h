@@ -281,6 +281,8 @@
 #ifndef _ECORE_H
 #define _ECORE_H
 
+#include <Efl_Config.h>
+
 #ifdef _MSC_VER
 # include <Evil.h>
 #endif

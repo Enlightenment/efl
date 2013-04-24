@@ -190,7 +190,7 @@ lib/evas/common/language/evas_script_table.h \
 lib/evas/common/evas_text_utils.h \
 lib/evas/common/evas_font_ot.h
 
-lib_evas_libevas_la_CPPFLAGS = \
+lib_evas_libevas_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/common \
 -I$(top_srcdir)/src/lib/evas/cserve2 \
 -I$(top_srcdir)/src/lib/evas/file \
@@ -210,7 +210,7 @@ noinst_LTLIBRARIES += lib/evas/common/libevas_op_blend_sse3.la
 lib_evas_common_libevas_op_blend_sse3_la_SOURCES = \
 lib/evas/common/evas_op_blend/op_blend_master_sse3.c
 
-lib_evas_common_libevas_op_blend_sse3_la_CPPFLAGS = \
+lib_evas_common_libevas_op_blend_sse3_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 $(lib_evas_libevas_la_CPPFLAGS) \
 @SSE3_CFLAGS@
 
@@ -360,7 +360,7 @@ else
 enginesoftwaregenericpkgdir = $(libdir)/evas/modules/engines/software_generic/$(MODULE_ARCH)
 enginesoftwaregenericpkg_LTLIBRARIES = modules/evas/engines/software_generic/module.la
 modules_evas_engines_software_generic_module_la_SOURCES = modules/evas/engines/software_generic/evas_engine.c
-modules_evas_engines_software_generic_module_la_CPPFLAGS = \
+modules_evas_engines_software_generic_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/include \
 -I$(top_srcdir)/src/lib/evas/cserve2 \
 @EVAS_CFLAGS@
@@ -382,7 +382,7 @@ else
 enginebufferpkgdir = $(libdir)/evas/modules/engines/buffer/$(MODULE_ARCH)
 enginebufferpkg_LTLIBRARIES = modules/evas/engines/buffer/module.la
 modules_evas_engines_buffer_module_la_SOURCES = $(BUFFER_SOURCES)
-modules_evas_engines_buffer_module_la_CPPFLAGS = \
+modules_evas_engines_buffer_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/include \
 -I$(top_srcdir)/src/lib/evas/cserve2 \
 @EVAS_CFLAGS@
@@ -409,7 +409,7 @@ else
 enginefbpkgdir = $(libdir)/evas/modules/engines/fb/$(MODULE_ARCH)
 enginefbpkg_LTLIBRARIES = modules/evas/engines/fb/module.la
 modules_evas_engines_fb_module_la_SOURCES = $(FB_SOURCES)
-modules_evas_engines_fb_module_la_CPPFLAGS = \
+modules_evas_engines_fb_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/include \
 -I$(top_srcdir)/src/lib/evas/cserve2 \
 @evas_engine_fb_cflags@ \
@@ -602,7 +602,7 @@ lib_evas_libevas_la_LIBADD += @evas_engine_gl_common_libs@
 else
 noinst_LTLIBRARIES += modules/evas/engines/gl_common/libevas_engine_gl_common.la
 modules_evas_engines_gl_common_libevas_engine_gl_common_la_SOURCES = $(GL_COMMON_SOURCES)
-modules_evas_engines_gl_common_libevas_engine_gl_common_la_CPPFLAGS = \
+modules_evas_engines_gl_common_libevas_engine_gl_common_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/include \
 -I$(top_srcdir)/src/lib/evas/cserve2 \
 @EVAS_CFLAGS@
@@ -632,7 +632,7 @@ else
 engineglcocoapkgdir = $(libdir)/evas/modules/engines/gl_cocoa/$(MODULE_ARCH)
 engineglcocoapkg_LTLIBRARIES = modules/evas/engines/gl_cocoa/module.la
 modules_evas_engines_gl_cocoa_module_la_SOURCES = $(GL_COCOA_SOURCES)
-modules_evas_engines_gl_cocoa_module_la_CPPFLAGS = \
+modules_evas_engines_gl_cocoa_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/include \
 -I$(top_srcdir)/src/lib/evas/cserve2 \
 -I$(top_srcdir)/src/modules/evas/engines/gl_common \
@@ -667,7 +667,7 @@ else
 engineglsdlpkgdir = $(libdir)/evas/modules/engines/gl_sdl/$(MODULE_ARCH)
 engineglsdlpkg_LTLIBRARIES = modules/evas/engines/gl_sdl/module.la
 modules_evas_engines_gl_sdl_module_la_SOURCES = $(GL_SDL_SOURCES)
-modules_evas_engines_gl_sdl_module_la_CPPFLAGS = \
+modules_evas_engines_gl_sdl_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/include \
 -I$(top_srcdir)/src/lib/evas/cserve2 \
 -I$(top_srcdir)/src/modules/evas/engines/gl_common \
@@ -706,7 +706,7 @@ else
 engineglx11pkgdir = $(libdir)/evas/modules/engines/gl_x11/$(MODULE_ARCH)
 engineglx11pkg_LTLIBRARIES = modules/evas/engines/gl_x11/module.la
 modules_evas_engines_gl_x11_module_la_SOURCES = $(GL_X11_SOURCES)
-modules_evas_engines_gl_x11_module_la_CPPFLAGS = \
+modules_evas_engines_gl_x11_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/include \
 -I$(top_srcdir)/src/lib/evas/cserve2 \
 -I$(top_srcdir)/src/modules/evas/engines/gl_common \
@@ -745,7 +745,7 @@ else
 enginepsl1ghtpkgdir = $(libdir)/evas/modules/engines/psl1ght/$(MODULE_ARCH)
 enginepsl1ghtpkg_LTLIBRARIES = modules/evas/engines/psl1ght/module.la
 modules_evas_engines_psl1ght_module_la_SOURCES = $(PSL1GHT_SOURCES)
-modules_evas_engines_psl1ght_module_la_CPPFLAGS = \
+modules_evas_engines_psl1ght_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/include \
 -I$(top_srcdir)/src/lib/evas/cserve2 \
 @EVAS_CFLAGS@ \
@@ -776,7 +776,7 @@ else
 enginesoftwareddrawpkgdir = $(libdir)/evas/modules/engines/software_ddraw/$(MODULE_ARCH)
 enginesoftwareddrawpkg_LTLIBRARIES = modules/evas/engines/software_ddraw/module.la
 modules_evas_engines_software_ddraw_module_la_SOURCES = $(SOFTWARE_DDRAW_SOURCES)
-modules_evas_engines_software_ddraw_module_la_CPPFLAGS = \
+modules_evas_engines_software_ddraw_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/include \
 -I$(top_srcdir)/src/lib/evas/cserve2 \
 @EVAS_CFLAGS@ \
@@ -807,7 +807,7 @@ else
 enginesoftwaregdipkgdir = $(libdir)/evas/modules/engines/software_gdi/$(MODULE_ARCH)
 enginesoftwaregdipkg_LTLIBRARIES = modules/evas/engines/software_gdi/module.la
 modules_evas_engines_software_gdi_module_la_SOURCES = $(SOFTWARE_GDI_SOURCES)
-modules_evas_engines_software_gdi_module_la_CPPFLAGS = \
+modules_evas_engines_software_gdi_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/include \
 -I$(top_srcdir)/src/lib/evas/cserve2 \
 @EVAS_CFLAGS@ \
@@ -828,7 +828,7 @@ modules/evas/engines/software_x11/evas_engine.c \
 modules/evas/engines/software_x11/evas_engine.h \
 modules/evas/engines/software_x11/evas_x_egl.c \
 modules/evas/engines/software_x11/evas_x_egl.h
-SOFTWARE_X11_CPPFLAGS = \
+SOFTWARE_X11_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/include \
 -I$(top_srcdir)/src/lib/evas/cserve2 \
 @EVAS_CFLAGS@
@@ -871,7 +871,7 @@ else
 enginesoftwarex11pkgdir = $(libdir)/evas/modules/engines/software_x11/$(MODULE_ARCH)
 enginesoftwarex11pkg_LTLIBRARIES = modules/evas/engines/software_x11/module.la
 modules_evas_engines_software_x11_module_la_SOURCES = $(SOFTWARE_X11_SOURCES)
-modules_evas_engines_software_x11_module_la_CPPFLAGS = $(SOFTWARE_X11_CPPFLAGS)
+modules_evas_engines_software_x11_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl $(SOFTWARE_X11_CPPFLAGS)
 modules_evas_engines_software_x11_module_la_LIBADD = @USE_EVAS_LIBS@ $(SOFTWARE_X11_LIBADD)
 modules_evas_engines_software_x11_module_la_DEPENDENCIES = @USE_EVAS_INTERNAL_LIBS@
 modules_evas_engines_software_x11_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
@@ -895,7 +895,7 @@ else
 enginewaylandeglpkgdir = $(libdir)/evas/modules/engines/wayland_egl/$(MODULE_ARCH)
 enginewaylandeglpkg_LTLIBRARIES = modules/evas/engines/wayland_egl/module.la
 modules_evas_engines_wayland_egl_module_la_SOURCES = $(WAYLAND_EGL_SOURCES)
-modules_evas_engines_wayland_egl_module_la_CPPFLAGS = \
+modules_evas_engines_wayland_egl_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/include \
 -I$(top_srcdir)/src/lib/evas/cserve2 \
 -I$(top_srcdir)/src/modules/evas/engines/gl_common \
@@ -931,7 +931,7 @@ else
 enginewaylandshmpkgdir = $(libdir)/evas/modules/engines/wayland_shm/$(MODULE_ARCH)
 enginewaylandshmpkg_LTLIBRARIES = modules/evas/engines/wayland_shm/module.la
 modules_evas_engines_wayland_shm_module_la_SOURCES = $(WAYLAND_SHM_SOURCES)
-modules_evas_engines_wayland_shm_module_la_CPPFLAGS = \
+modules_evas_engines_wayland_shm_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/include \
 -I$(top_srcdir)/src/lib/evas/cserve2 \
 @EVAS_CFLAGS@ \
@@ -956,7 +956,7 @@ else
 loaderbmppkgdir = $(libdir)/evas/modules/loaders/bmp/$(MODULE_ARCH)
 loaderbmppkg_LTLIBRARIES = modules/evas/loaders/bmp/module.la
 modules_evas_loaders_bmp_module_la_SOURCES = modules/evas/loaders/bmp/evas_image_load_bmp.c
-modules_evas_loaders_bmp_module_la_CPPFLAGS = \
+modules_evas_loaders_bmp_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/include \
 @EVAS_CFLAGS@ \
 @evas_image_loader_bmp_cflags@
@@ -978,7 +978,7 @@ else
 loadereetpkgdir = $(libdir)/evas/modules/loaders/eet/$(MODULE_ARCH)
 loadereetpkg_LTLIBRARIES = modules/evas/loaders/eet/module.la
 modules_evas_loaders_eet_module_la_SOURCES = modules/evas/loaders/eet/evas_image_load_eet.c
-modules_evas_loaders_eet_module_la_CPPFLAGS = \
+modules_evas_loaders_eet_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/include \
 @EVAS_CFLAGS@ \
 @evas_image_loader_eet_cflags@
@@ -1000,7 +1000,7 @@ else
 loadergenericpkgdir = $(libdir)/evas/modules/loaders/generic/$(MODULE_ARCH)
 loadergenericpkg_LTLIBRARIES = modules/evas/loaders/generic/module.la
 modules_evas_loaders_generic_module_la_SOURCES = modules/evas/loaders/generic/evas_image_load_generic.c
-modules_evas_loaders_generic_module_la_CPPFLAGS = \
+modules_evas_loaders_generic_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/include \
 @EVAS_CFLAGS@ \
 @evas_image_loader_generic_cflags@
@@ -1022,7 +1022,7 @@ else
 loadergifpkgdir = $(libdir)/evas/modules/loaders/gif/$(MODULE_ARCH)
 loadergifpkg_LTLIBRARIES = modules/evas/loaders/gif/module.la
 modules_evas_loaders_gif_module_la_SOURCES = modules/evas/loaders/gif/evas_image_load_gif.c
-modules_evas_loaders_gif_module_la_CPPFLAGS = \
+modules_evas_loaders_gif_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/include \
 @EVAS_CFLAGS@ \
 @evas_image_loader_gif_cflags@
@@ -1044,7 +1044,7 @@ else
 loadericopkgdir = $(libdir)/evas/modules/loaders/ico/$(MODULE_ARCH)
 loadericopkg_LTLIBRARIES = modules/evas/loaders/ico/module.la
 modules_evas_loaders_ico_module_la_SOURCES = modules/evas/loaders/ico/evas_image_load_ico.c
-modules_evas_loaders_ico_module_la_CPPFLAGS = \
+modules_evas_loaders_ico_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/include \
 @EVAS_CFLAGS@ \
 @evas_image_loader_ico_cflags@
@@ -1069,7 +1069,7 @@ else
 loaderjpegpkgdir = $(libdir)/evas/modules/loaders/jpeg/$(MODULE_ARCH)
 loaderjpegpkg_LTLIBRARIES = modules/evas/loaders/jpeg/module.la
 modules_evas_loaders_jpeg_module_la_SOURCES = modules/evas/loaders/jpeg/evas_image_load_jpeg.c
-modules_evas_loaders_jpeg_module_la_CPPFLAGS = \
+modules_evas_loaders_jpeg_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/include \
 @EVAS_CFLAGS@ \
 @evas_image_loader_jpeg_cflags@
@@ -1083,7 +1083,7 @@ if BUILD_SAVER_JPEG
 saverjpegpkgdir = $(libdir)/evas/modules/savers/jpeg/$(MODULE_ARCH)
 saverjpegpkg_LTLIBRARIES = modules/evas/savers/jpeg/module.la
 modules_evas_savers_jpeg_module_la_SOURCES = modules/evas/savers/jpeg/evas_image_save_jpeg.c
-modules_evas_savers_jpeg_module_la_CPPFLAGS = \
+modules_evas_savers_jpeg_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/include \
 @EVAS_CFLAGS@ \
 @evas_image_loader_jpeg_cflags@
@@ -1106,7 +1106,7 @@ else
 loaderpmapspkgdir = $(libdir)/evas/modules/loaders/pmaps/$(MODULE_ARCH)
 loaderpmapspkg_LTLIBRARIES = modules/evas/loaders/pmaps/module.la
 modules_evas_loaders_pmaps_module_la_SOURCES = modules/evas/loaders/pmaps/evas_image_load_pmaps.c
-modules_evas_loaders_pmaps_module_la_CPPFLAGS = \
+modules_evas_loaders_pmaps_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/include \
 @EVAS_CFLAGS@ \
 @evas_image_loader_pmaps_cflags@
@@ -1128,7 +1128,7 @@ else
 loaderpngpkgdir = $(libdir)/evas/modules/loaders/png/$(MODULE_ARCH)
 loaderpngpkg_LTLIBRARIES = modules/evas/loaders/png/module.la
 modules_evas_loaders_png_module_la_SOURCES = modules/evas/loaders/png/evas_image_load_png.c
-modules_evas_loaders_png_module_la_CPPFLAGS = \
+modules_evas_loaders_png_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/include \
 @EVAS_CFLAGS@ \
 @evas_image_loader_png_cflags@
@@ -1142,7 +1142,7 @@ modules_evas_loaders_png_module_la_LIBTOOLFLAGS = --tag=disable-static
 saverpngpkgdir = $(libdir)/evas/modules/savers/png/$(MODULE_ARCH)
 saverpngpkg_LTLIBRARIES = modules/evas/savers/png/module.la
 modules_evas_savers_png_module_la_SOURCES = modules/evas/savers/png/evas_image_save_png.c
-modules_evas_savers_png_module_la_CPPFLAGS = \
+modules_evas_savers_png_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/include \
 @EVAS_CFLAGS@ \
 @evas_image_loader_png_cflags@
@@ -1164,7 +1164,7 @@ else
 loaderpsdpkgdir = $(libdir)/evas/modules/loaders/psd/$(MODULE_ARCH)
 loaderpsdpkg_LTLIBRARIES = modules/evas/loaders/psd/module.la
 modules_evas_loaders_psd_module_la_SOURCES = modules/evas/loaders/psd/evas_image_load_psd.c
-modules_evas_loaders_psd_module_la_CPPFLAGS = \
+modules_evas_loaders_psd_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/include \
 @EVAS_CFLAGS@ \
 @evas_image_loader_psd_cflags@
@@ -1186,7 +1186,7 @@ else
 loadersvgpkgdir = $(libdir)/evas/modules/loaders/svg/$(MODULE_ARCH)
 loadersvgpkg_LTLIBRARIES = modules/evas/loaders/svg/module.la
 modules_evas_loaders_svg_module_la_SOURCES = modules/evas/loaders/svg/evas_image_load_esvg.c
-modules_evas_loaders_svg_module_la_CPPFLAGS = \
+modules_evas_loaders_svg_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/include \
 @EVAS_CFLAGS@ \
 @evas_image_loader_svg_cflags@
@@ -1208,7 +1208,7 @@ else
 loadertgapkgdir = $(libdir)/evas/modules/loaders/tga/$(MODULE_ARCH)
 loadertgapkg_LTLIBRARIES = modules/evas/loaders/tga/module.la
 modules_evas_loaders_tga_module_la_SOURCES = modules/evas/loaders/tga/evas_image_load_tga.c
-modules_evas_loaders_tga_module_la_CPPFLAGS = \
+modules_evas_loaders_tga_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/include \
 @EVAS_CFLAGS@ \
 @evas_image_loader_tga_cflags@
@@ -1230,7 +1230,7 @@ else
 loadertiffpkgdir = $(libdir)/evas/modules/loaders/tiff/$(MODULE_ARCH)
 loadertiffpkg_LTLIBRARIES = modules/evas/loaders/tiff/module.la
 modules_evas_loaders_tiff_module_la_SOURCES = modules/evas/loaders/tiff/evas_image_load_tiff.c
-modules_evas_loaders_tiff_module_la_CPPFLAGS = \
+modules_evas_loaders_tiff_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/include \
 @EVAS_CFLAGS@ \
 @evas_image_loader_tiff_cflags@
@@ -1244,7 +1244,7 @@ modules_evas_loaders_tiff_module_la_LIBTOOLFLAGS = --tag=disable-static
 savertiffpkgdir = $(libdir)/evas/modules/savers/tiff/$(MODULE_ARCH)
 savertiffpkg_LTLIBRARIES = modules/evas/savers/tiff/module.la
 modules_evas_savers_tiff_module_la_SOURCES = modules/evas/savers/tiff/evas_image_save_tiff.c
-modules_evas_savers_tiff_module_la_CPPFLAGS = \
+modules_evas_savers_tiff_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/include \
 @EVAS_CFLAGS@ \
 @evas_image_loader_tiff_cflags@
@@ -1266,7 +1266,7 @@ else
 loaderwbmppkgdir = $(libdir)/evas/modules/loaders/wbmp/$(MODULE_ARCH)
 loaderwbmppkg_LTLIBRARIES = modules/evas/loaders/wbmp/module.la
 modules_evas_loaders_wbmp_module_la_SOURCES = modules/evas/loaders/wbmp/evas_image_load_wbmp.c
-modules_evas_loaders_wbmp_module_la_CPPFLAGS = \
+modules_evas_loaders_wbmp_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/include \
 @EVAS_CFLAGS@ \
 @evas_image_loader_wbmp_cflags@
@@ -1288,7 +1288,7 @@ else
 loaderwebppkgdir = $(libdir)/evas/modules/loaders/webp/$(MODULE_ARCH)
 loaderwebppkg_LTLIBRARIES = modules/evas/loaders/webp/module.la
 modules_evas_loaders_webp_module_la_SOURCES = modules/evas/loaders/webp/evas_image_load_webp.c
-modules_evas_loaders_webp_module_la_CPPFLAGS = \
+modules_evas_loaders_webp_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/include \
 @EVAS_CFLAGS@ \
 @evas_image_loader_webp_cflags@
@@ -1302,7 +1302,7 @@ modules_evas_loaders_webp_module_la_LIBTOOLFLAGS = --tag=disable-static
 saverwebppkgdir = $(libdir)/evas/modules/savers/webp/$(MODULE_ARCH)
 saverwebppkg_LTLIBRARIES = modules/evas/savers/webp/module.la
 modules_evas_savers_webp_module_la_SOURCES = modules/evas/savers/webp/evas_image_save_webp.c
-modules_evas_savers_webp_module_la_CPPFLAGS = \
+modules_evas_savers_webp_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/include \
 @EVAS_CFLAGS@ \
 @evas_image_loader_webp_cflags@
@@ -1324,7 +1324,7 @@ else
 loaderxpmpkgdir = $(libdir)/evas/modules/loaders/xpm/$(MODULE_ARCH)
 loaderxpmpkg_LTLIBRARIES = modules/evas/loaders/xpm/module.la
 modules_evas_loaders_xpm_module_la_SOURCES = modules/evas/loaders/xpm/evas_image_load_xpm.c
-modules_evas_loaders_xpm_module_la_CPPFLAGS = \
+modules_evas_loaders_xpm_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/include \
 @EVAS_CFLAGS@ \
 @evas_image_loader_xpm_cflags@
@@ -1369,7 +1369,7 @@ bin/evas/evas_cserve2_main_loop_linux.c \
 lib/evas/cserve2/evas_cs2_utils.h \
 lib/evas/cserve2/evas_cs2_utils.c
 
-bin_evas_evas_cserve2_CPPFLAGS = \
+bin_evas_evas_cserve2_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/include \
 -I$(top_srcdir)/src/lib/evas/cserve2 \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
@@ -1382,7 +1382,7 @@ bin_evas_evas_cserve2_DEPENDENCIES = @USE_EVAS_INTERNAL_LIBS@
 
 bin_evas_evas_cserve2_client_SOURCES = \
 bin/evas/evas_cserve2_client.c
-bin_evas_evas_cserve2_client_CPPFLAGS = \
+bin_evas_evas_cserve2_client_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/cserve2 \
 @EINA_CFLAGS@
 bin_evas_evas_cserve2_client_LDADD = @USE_EINA_LIBS@
@@ -1390,7 +1390,7 @@ bin_evas_evas_cserve2_client_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@
 
 bin_evas_evas_cserve2_usage_SOURCES = \
 bin/evas/evas_cserve2_usage.c
-bin_evas_evas_cserve2_usage_CPPFLAGS = \
+bin_evas_evas_cserve2_usage_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/cserve2 \
 @EINA_CFLAGS@
 bin_evas_evas_cserve2_usage_LDADD = @USE_EINA_LIBS@
@@ -1398,7 +1398,7 @@ bin_evas_evas_cserve2_usage_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@
 
 bin_evas_evas_cserve2_debug_SOURCES = \
 bin/evas/evas_cserve2_debug.c
-bin_evas_evas_cserve2_debug_CPPFLAGS = \
+bin_evas_evas_cserve2_debug_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/cserve2 \
 @EINA_CFLAGS@
 bin_evas_evas_cserve2_debug_LDADD = @USE_EINA_LIBS@
@@ -1408,7 +1408,7 @@ bin_evas_evas_cserve2_slave_SOURCES = \
 bin/evas/evas_cserve2_slave.c \
 bin/evas/evas_cserve2_utils.c
 
-bin_evas_evas_cserve2_slave_CPPFLAGS = \
+bin_evas_evas_cserve2_slave_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/include \
 -I$(top_srcdir)/src/lib/evas/cserve2 \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
@@ -1423,7 +1423,7 @@ bin_evas_evas_cserve2_slave_LDFLAGS = -export-dynamic
 bin_evas_dummy_slave_SOURCES = \
 bin/evas/dummy_slave.c
 
-bin_evas_dummy_slave_CPPFLAGS = \
+bin_evas_dummy_slave_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/include \
 -I$(top_srcdir)/src/lib/evas/cserve2 \
 @EVAS_CFLAGS@
@@ -1438,7 +1438,7 @@ if BUILD_LOADER_BMP
 cserve2bmppkgdir = $(libdir)/evas/cserve2/loaders/bmp/$(MODULE_ARCH)
 cserve2bmppkg_LTLIBRARIES = bin/evas/loaders/bmp/module.la
 bin_evas_loaders_bmp_module_la_SOURCES = bin/evas/loaders/bmp/evas_image_load_bmp.c
-bin_evas_loaders_bmp_module_la_CPPFLAGS = \
+bin_evas_loaders_bmp_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/include \
 -I$(top_srcdir)/src/lib/evas/cserve2 \
 -I$(top_srcdir)/src/bin/evas \
@@ -1454,7 +1454,7 @@ if BUILD_LOADER_EET
 cserve2eetpkgdir = $(libdir)/evas/cserve2/loaders/eet/$(MODULE_ARCH)
 cserve2eetpkg_LTLIBRARIES = bin/evas/loaders/eet/module.la
 bin_evas_loaders_eet_module_la_SOURCES = bin/evas/loaders/eet/evas_image_load_eet.c
-bin_evas_loaders_eet_module_la_CPPFLAGS = \
+bin_evas_loaders_eet_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/include \
 -I$(top_srcdir)/src/lib/evas/cserve2 \
 -I$(top_srcdir)/src/bin/evas \
@@ -1475,7 +1475,7 @@ if BUILD_LOADER_ICO
 cserve2icopkgdir = $(libdir)/evas/cserve2/loaders/ico/$(MODULE_ARCH)
 cserve2icopkg_LTLIBRARIES = bin/evas/loaders/ico/module.la
 bin_evas_loaders_ico_module_la_SOURCES = bin/evas/loaders/ico/evas_image_load_ico.c
-bin_evas_loaders_ico_module_la_CPPFLAGS = \
+bin_evas_loaders_ico_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/include \
 -I$(top_srcdir)/src/lib/evas/cserve2 \
 -I$(top_srcdir)/src/bin/evas \
@@ -1491,7 +1491,7 @@ if BUILD_LOADER_JPEG
 cserve2jpegpkgdir = $(libdir)/evas/cserve2/loaders/jpeg/$(MODULE_ARCH)
 cserve2jpegpkg_LTLIBRARIES = bin/evas/loaders/jpeg/module.la
 bin_evas_loaders_jpeg_module_la_SOURCES = bin/evas/loaders/jpeg/evas_image_load_jpeg.c
-bin_evas_loaders_jpeg_module_la_CPPFLAGS = \
+bin_evas_loaders_jpeg_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/include \
 -I$(top_srcdir)/src/lib/evas/cserve2 \
 -I$(top_srcdir)/src/bin/evas \
@@ -1507,7 +1507,7 @@ if BUILD_LOADER_PMAPS
 cserve2pmapspkgdir = $(libdir)/evas/cserve2/loaders/pmaps/$(MODULE_ARCH)
 cserve2pmapspkg_LTLIBRARIES = bin/evas/loaders/pmaps/module.la
 bin_evas_loaders_pmaps_module_la_SOURCES = bin/evas/loaders/pmaps/evas_image_load_pmaps.c
-bin_evas_loaders_pmaps_module_la_CPPFLAGS = \
+bin_evas_loaders_pmaps_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/bin/evas \
 -I$(top_srcdir)/src/lib/evas/include \
 -I$(top_srcdir)/src/lib/evas/cserve2 \
@@ -1523,7 +1523,7 @@ if BUILD_LOADER_PNG
 cserve2pngpkgdir = $(libdir)/evas/cserve2/loaders/png/$(MODULE_ARCH)
 cserve2pngpkg_LTLIBRARIES = bin/evas/loaders/png/module.la
 bin_evas_loaders_png_module_la_SOURCES = bin/evas/loaders/png/evas_image_load_png.c
-bin_evas_loaders_png_module_la_CPPFLAGS = \
+bin_evas_loaders_png_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/include \
 -I$(top_srcdir)/src/lib/evas/cserve2 \
 -I$(top_srcdir)/src/bin/evas \
@@ -1539,7 +1539,7 @@ if BUILD_LOADER_PSD
 cserve2psdpkgdir = $(libdir)/evas/cserve2/loaders/psd/$(MODULE_ARCH)
 cserve2psdpkg_LTLIBRARIES = bin/evas/loaders/psd/module.la
 bin_evas_loaders_psd_module_la_SOURCES = bin/evas/loaders/psd/evas_image_load_psd.c
-bin_evas_loaders_psd_module_la_CPPFLAGS = \
+bin_evas_loaders_psd_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/include \
 -I$(top_srcdir)/src/lib/evas/cserve2 \
 -I$(top_srcdir)/src/bin/evas \
@@ -1555,7 +1555,7 @@ if BUILD_LOADER_TGA
 cserve2tgapkgdir = $(libdir)/evas/cserve2/loaders/tga/$(MODULE_ARCH)
 cserve2tgapkg_LTLIBRARIES = bin/evas/loaders/tga/module.la
 bin_evas_loaders_tga_module_la_SOURCES = bin/evas/loaders/tga/evas_image_load_tga.c
-bin_evas_loaders_tga_module_la_CPPFLAGS = \
+bin_evas_loaders_tga_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/include \
 -I$(top_srcdir)/src/lib/evas/cserve2 \
 -I$(top_srcdir)/src/bin/evas \
@@ -1571,7 +1571,7 @@ if BUILD_LOADER_TIFF
 cserve2tiffpkgdir = $(libdir)/evas/cserve2/loaders/tiff/$(MODULE_ARCH)
 cserve2tiffpkg_LTLIBRARIES = bin/evas/loaders/tiff/module.la
 bin_evas_loaders_tiff_module_la_SOURCES = bin/evas/loaders/tiff/evas_image_load_tiff.c
-bin_evas_loaders_tiff_module_la_CPPFLAGS = \
+bin_evas_loaders_tiff_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/include \
 -I$(top_srcdir)/src/lib/evas/cserve2 \
 -I$(top_srcdir)/src/bin/evas \
@@ -1587,7 +1587,7 @@ if BUILD_LOADER_WBMP
 cserve2wbmppkgdir = $(libdir)/evas/cserve2/loaders/wbmp/$(MODULE_ARCH)
 cserve2wbmppkg_LTLIBRARIES = bin/evas/loaders/wbmp/module.la
 bin_evas_loaders_wbmp_module_la_SOURCES = bin/evas/loaders/wbmp/evas_image_load_wbmp.c
-bin_evas_loaders_wbmp_module_la_CPPFLAGS = \
+bin_evas_loaders_wbmp_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/include \
 -I$(top_srcdir)/src/lib/evas/cserve2 \
 -I$(top_srcdir)/src/bin/evas \
@@ -1603,7 +1603,7 @@ if BUILD_LOADER_WEBP
 cserve2webppkgdir = $(libdir)/evas/cserve2/loaders/webp/$(MODULE_ARCH)
 cserve2webppkg_LTLIBRARIES = bin/evas/loaders/webp/module.la
 bin_evas_loaders_webp_module_la_SOURCES = bin/evas/loaders/webp/evas_image_load_webp.c
-bin_evas_loaders_webp_module_la_CPPFLAGS = \
+bin_evas_loaders_webp_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/include \
 -I$(top_srcdir)/src/lib/evas/cserve2 \
 -I$(top_srcdir)/src/bin/evas \
@@ -1619,7 +1619,7 @@ if BUILD_LOADER_XPM
 cserve2xpmpkgdir = $(libdir)/evas/cserve2/loaders/xpm/$(MODULE_ARCH)
 cserve2xpmpkg_LTLIBRARIES = bin/evas/loaders/xpm/module.la
 bin_evas_loaders_xpm_module_la_SOURCES = bin/evas/loaders/xpm/evas_image_load_xpm.c
-bin_evas_loaders_xpm_module_la_CPPFLAGS = \
+bin_evas_loaders_xpm_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/include \
 -I$(top_srcdir)/src/lib/evas/cserve2 \
 -I$(top_srcdir)/src/bin/evas \
@@ -1650,7 +1650,7 @@ tests/evas/evas_test_render_engines.c \
 tests/evas/evas_tests_helpers.h \
 tests/evas/evas_suite.h
 
-tests_evas_evas_suite_CPPFLAGS = \
+tests_evas_evas_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/evas\" \
 -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/evas\" \
 @CHECK_CFLAGS@ \

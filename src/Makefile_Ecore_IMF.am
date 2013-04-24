@@ -14,7 +14,7 @@ lib/ecore_imf/ecore_imf_context.c \
 lib/ecore_imf/ecore_imf_module.c \
 lib/ecore_imf/ecore_imf_private.h
 
-lib_ecore_imf_libecore_imf_la_CPPFLAGS = \
+lib_ecore_imf_libecore_imf_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/ecore_imf\" \
@@ -35,7 +35,7 @@ modules_ecore_imf_ibus_module_la_SOURCES = \
 modules/ecore_imf/ibus/ibus_module.c \
 modules/ecore_imf/ibus/ibus_imcontext.c \
 modules/ecore_imf/ibus/ibus_imcontext.h
-modules_ecore_imf_ibus_module_la_CPPFLAGS = \
+modules_ecore_imf_ibus_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 @ECORE_IMF_CFLAGS@ \
 @ECORE_EVAS_CFLAGS@ \
 @ECORE_X_CFLAGS@ \
@@ -62,7 +62,7 @@ modules_ecore_imf_scim_module_la_SOURCES = \
 modules/ecore_imf/scim/scim_module.cpp \
 modules/ecore_imf/scim/scim_imcontext.cpp \
 modules/ecore_imf/scim/scim_imcontext.h
-modules_ecore_imf_scim_module_la_CPPFLAGS = \
+modules_ecore_imf_scim_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 @ECORE_IMF_CFLAGS@ \
 @ECORE_EVAS_CFLAGS@ \
 @ECORE_X_CFLAGS@ \
@@ -87,7 +87,7 @@ ecoreimfximpkgdir = $(libdir)/ecore_imf/modules/xim/$(MODULE_ARCH)
 ecoreimfximpkg_LTLIBRARIES = modules/ecore_imf/xim/module.la
 modules_ecore_imf_xim_module_la_SOURCES = \
 modules/ecore_imf/xim/ecore_imf_xim.c
-modules_ecore_imf_xim_module_la_CPPFLAGS = \
+modules_ecore_imf_xim_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 @ECORE_IMF_CFLAGS@ \
 @ECORE_X_CFLAGS@ \
 @ecore_imf_xim_cflags@

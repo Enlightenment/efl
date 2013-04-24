@@ -32,7 +32,7 @@ lib/eldbus/eldbus_message_helper.c \
 lib/eldbus/eldbus_message_to_eina_value.c \
 lib/eldbus/eldbus_message_from_eina_value.c
 
-lib_eldbus_libeldbus_la_CPPFLAGS = \
+lib_eldbus_libeldbus_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -include $(top_builddir)/config.h \
 @ELDBUS_CFLAGS@
 lib_eldbus_libeldbus_la_LIBADD = @ELDBUS_LIBS@
@@ -51,7 +51,7 @@ bin/eldbus/dbus.c \
 bin/eldbus/source_client.c \
 bin/eldbus/client.c
 
-bin_eldbus_eldbus_codegen_CPPFLAGS = \
+bin_eldbus_eldbus_codegen_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/eldbus\" \
@@ -76,7 +76,7 @@ tests/eldbus/eldbus_suite.c \
 tests/eldbus/eldbus_test_eldbus_init.c \
 tests/eldbus/eldbus_suite.h
 
-tests_eldbus_eldbus_suite_CPPFLAGS = @CHECK_CFLAGS@ @ELDBUS_CFLAGS@ \
+tests_eldbus_eldbus_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl @CHECK_CFLAGS@ @ELDBUS_CFLAGS@ \
 -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/eldbus\"
 
 tests_eldbus_eldbus_suite_LDADD = @CHECK_LIBS@ @USE_ELDBUS_LIBS@

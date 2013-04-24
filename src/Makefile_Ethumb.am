@@ -14,7 +14,7 @@ lib/ethumb/md5.h \
 lib/ethumb/ethumb.c \
 lib/ethumb/md5.c
 
-lib_ethumb_libethumb_la_CPPFLAGS = \
+lib_ethumb_libethumb_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/ethumb\" \
@@ -31,7 +31,7 @@ ethumbmoduleemotiondir = $(libdir)/ethumb/modules/emotion/$(MODULE_ARCH)
 ethumbmoduleemotion_LTLIBRARIES = modules/ethumb/emotion/module.la
 modules_ethumb_emotion_module_la_SOURCES = \
 modules/ethumb/emotion/emotion.c
-modules_ethumb_emotion_module_la_CPPFLAGS = \
+modules_ethumb_emotion_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/ethumb\" \
@@ -65,7 +65,7 @@ bin_PROGRAMS += \
 bin/ethumb/ethumb
 
 bin_ethumb_ethumb_SOURCES = bin/ethumb/ethumb.c
-bin_ethumb_ethumb_CPPFLAGS = @ETHUMB_CFLAGS@
+bin_ethumb_ethumb_CPPFLAGS = -I$(top_builddir)/src/lib/efl @ETHUMB_CFLAGS@
 if HAVE_WIN32
 bin_ethumb_ethumb_LDADD = -L$(top_builddir)/src/lib/evil @USE_ETHUMB_LIBS@
 else

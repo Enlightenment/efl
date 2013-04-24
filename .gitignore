@@ -72,6 +72,7 @@ tags
 /src/bin/evas/evas_cserve2_usage
 /src/lib/eina/eina_config.h
 /src/lib/ecore_x/ecore_x_version.h
+/src/lib/efl/Efl_Config.h
 /src/bin/eldbus/eldbus-codegen
 /src/bin/efreet/efreet_desktop_cache_create
 /src/bin/efreet/efreet_icon_cache_create

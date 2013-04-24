@@ -13,7 +13,7 @@ lib/eo/eo_ptr_indirection.h \
 lib/eo/eo_base_class.c \
 lib/eo/eo_private.h
 
-lib_eo_libeo_la_CPPFLAGS = @EO_CFLAGS@
+lib_eo_libeo_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EO_CFLAGS@
 lib_eo_libeo_la_LIBADD = @EO_LIBS@
 lib_eo_libeo_la_DEPENDENCIES = @EO_INTERNAL_LIBS@
 lib_eo_libeo_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
@@ -38,7 +38,7 @@ tests/eo/access/access_main.c \
 tests/eo/access/access_simple.c \
 tests/eo/access/access_simple.h \
 tests/eo/access/access_simple_protected.h
-tests_eo_test_access_CPPFLAGS = @EO_CFLAGS@
+tests_eo_test_access_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EO_CFLAGS@
 tests_eo_test_access_LDADD = @USE_EO_LIBS@
 tests_eo_test_access_DEPENDENCIES = @USE_EO_INTERNAL_LIBS@
 TESTS += tests/eo/test_access
@@ -49,7 +49,7 @@ tests/eo/composite_objects/composite_objects_comp.h \
 tests/eo/composite_objects/composite_objects_main.c \
 tests/eo/composite_objects/composite_objects_simple.c \
 tests/eo/composite_objects/composite_objects_simple.h
-tests_eo_test_composite_objects_CPPFLAGS = @EO_CFLAGS@
+tests_eo_test_composite_objects_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EO_CFLAGS@
 tests_eo_test_composite_objects_LDADD = @USE_EO_LIBS@
 tests_eo_test_composite_objects_DEPENDENCIES = @USE_EO_INTERNAL_LIBS@
 TESTS += tests/eo/test_composite_objects
@@ -72,7 +72,7 @@ tests/eo/constructors/constructors_simple6.c \
 tests/eo/constructors/constructors_simple6.h \
 tests/eo/constructors/constructors_simple7.c \
 tests/eo/constructors/constructors_simple7.h
-tests_eo_test_constructors_CPPFLAGS = @EO_CFLAGS@
+tests_eo_test_constructors_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EO_CFLAGS@
 tests_eo_test_constructors_LDADD = @USE_EO_LIBS@
 tests_eo_test_constructors_DEPENDENCIES = @USE_EO_INTERNAL_LIBS@
 TESTS += tests/eo/test_constructors
@@ -85,7 +85,7 @@ tests/eo/suite/eo_suite.h \
 tests/eo/suite/eo_test_class_errors.c \
 tests/eo/suite/eo_test_general.c \
 tests/eo/suite/eo_test_init.c
-tests_eo_eo_suite_CPPFLAGS = \
+tests_eo_eo_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/eo\" \
 @CHECK_CFLAGS@ \
 @EO_CFLAGS@
@@ -104,7 +104,7 @@ tests/eo/function_overrides/function_overrides_inherit3.h \
 tests/eo/function_overrides/function_overrides_main.c \
 tests/eo/function_overrides/function_overrides_simple.c \
 tests/eo/function_overrides/function_overrides_simple.h
-tests_eo_test_function_overrides_CPPFLAGS = @EO_CFLAGS@
+tests_eo_test_function_overrides_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EO_CFLAGS@
 tests_eo_test_function_overrides_LDADD = @USE_EO_LIBS@
 tests_eo_test_function_overrides_DEPENDENCIES = @USE_EO_INTERNAL_LIBS@
 TESTS += tests/eo/test_function_overrides
@@ -117,7 +117,7 @@ tests/eo/interface/interface_interface2.h \
 tests/eo/interface/interface_main.c \
 tests/eo/interface/interface_simple.c \
 tests/eo/interface/interface_simple.h
-tests_eo_test_interface_CPPFLAGS = @EO_CFLAGS@
+tests_eo_test_interface_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EO_CFLAGS@
 tests_eo_test_interface_LDADD = @USE_EO_LIBS@
 tests_eo_test_interface_DEPENDENCIES = @USE_EO_INTERNAL_LIBS@
 TESTS += tests/eo/test_interface
@@ -136,7 +136,7 @@ tests/eo/mixin/mixin_mixin4.c \
 tests/eo/mixin/mixin_mixin4.h \
 tests/eo/mixin/mixin_simple.c \
 tests/eo/mixin/mixin_simple.h
-tests_eo_test_mixin_CPPFLAGS = @EO_CFLAGS@
+tests_eo_test_mixin_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EO_CFLAGS@
 tests_eo_test_mixin_LDADD = @USE_EO_LIBS@
 tests_eo_test_mixin_DEPENDENCIES = @USE_EO_INTERNAL_LIBS@
 TESTS += tests/eo/test_mixin
@@ -145,7 +145,7 @@ tests_eo_test_signals_SOURCES = \
 tests/eo/signals/signals_main.c \
 tests/eo/signals/signals_simple.c \
 tests/eo/signals/signals_simple.h
-tests_eo_test_signals_CPPFLAGS = @EO_CFLAGS@
+tests_eo_test_signals_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EO_CFLAGS@
 tests_eo_test_signals_LDADD = @USE_EO_LIBS@
 tests_eo_test_signals_DEPENDENCIES = @USE_EO_INTERNAL_LIBS@
 TESTS += tests/eo/test_signals

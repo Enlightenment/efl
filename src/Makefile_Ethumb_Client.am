@@ -9,7 +9,7 @@ lib/ethumb_client/Ethumb_Client.h
 
 # libethumb_client.la
 lib_ethumb_client_libethumb_client_la_SOURCES = lib/ethumb_client/ethumb_client.c
-lib_ethumb_client_libethumb_client_la_CPPFLAGS = @ETHUMB_CLIENT_CFLAGS@
+lib_ethumb_client_libethumb_client_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @ETHUMB_CLIENT_CFLAGS@
 lib_ethumb_client_libethumb_client_la_LIBADD = @ETHUMB_CLIENT_LIBS@
 lib_ethumb_client_libethumb_client_la_DEPENDENCIES = @ETHUMB_CLIENT_INTERNAL_LIBS@
 lib_ethumb_client_libethumb_client_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
@@ -34,7 +34,7 @@ bin/ethumb_client/ethumbd_slave
 bin_ethumb_client_ethumbd_SOURCES = \
 bin/ethumb_client/ethumbd_private.h \
 bin/ethumb_client/ethumbd.c
-bin_ethumb_client_ethumbd_CPPFLAGS = \
+bin_ethumb_client_ethumbd_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/ethumb_client\" \
@@ -44,7 +44,7 @@ bin_ethumb_client_ethumbd_LDADD = $(USE_ETHUMB_CLIENT_BIN_LIBS)
 bin_ethumb_client_ethumbd_DEPENDENCIES = @USE_ETHUMB_CLIENT_INTERNAL_LIBS@
 
 bin_ethumb_client_ethumbd_client_SOURCES = bin/ethumb_client/ethumbd_client.c
-bin_ethumb_client_ethumbd_client_CPPFLAGS = @ETHUMB_CLIENT_CFLAGS@
+bin_ethumb_client_ethumbd_client_CPPFLAGS = -I$(top_builddir)/src/lib/efl @ETHUMB_CLIENT_CFLAGS@
 bin_ethumb_client_ethumbd_client_LDADD = $(USE_ETHUMB_CLIENT_BIN_LIBS)
 bin_ethumb_client_ethumbd_client_DEPENDENCIES = @USE_ETHUMB_CLIENT_INTERNAL_LIBS@
 
@@ -52,6 +52,6 @@ bin_ethumb_client_ethumbd_client_DEPENDENCIES = @USE_ETHUMB_CLIENT_INTERNAL_LIBS
 bin_ethumb_client_ethumbd_slave_SOURCES = \
 bin/ethumb_client/ethumbd_private.h \
 bin/ethumb_client/ethumbd_slave.c
-bin_ethumb_client_ethumbd_slave_CPPFLAGS = @ETHUMB_CFLAGS@
+bin_ethumb_client_ethumbd_slave_CPPFLAGS = -I$(top_builddir)/src/lib/efl @ETHUMB_CFLAGS@
 bin_ethumb_client_ethumbd_slave_LDADD = $(USE_ETHUMB_CLIENT_BIN_LIBS)
 bin_ethumb_client_ethumbd_slave_DEPENDENCIES = @USE_ETHUMB_CLIENT_INTERNAL_LIBS@ @USE_ETHUMB_INTERNAL_LIBS@

@@ -52,7 +52,7 @@ lib_ecore_libecore_la_SOURCES += lib/ecore/ecore_signal.c lib/ecore/ecore_exe.c
 endif
 endif
 
-lib_ecore_libecore_la_CPPFLAGS = @ECORE_CFLAGS@
+lib_ecore_libecore_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @ECORE_CFLAGS@
 lib_ecore_libecore_la_LIBADD = @ECORE_LIBS@
 lib_ecore_libecore_la_DEPENDENCIES = @ECORE_INTERNAL_LIBS@
 lib_ecore_libecore_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
@@ -75,7 +75,7 @@ tests/ecore/ecore_test_timer.c \
 tests/ecore/ecore_test_ecore_evas.c \
 tests/ecore/ecore_suite.h
 
-tests_ecore_ecore_suite_CPPFLAGS = \
+tests_ecore_ecore_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/ecore\" \
 -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/ecore\" \
 @CHECK_CFLAGS@ \

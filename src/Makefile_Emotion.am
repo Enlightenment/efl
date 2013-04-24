@@ -15,7 +15,7 @@ lib/emotion/emotion_webcam.c \
 lib/emotion/emotion_modules.c \
 lib/emotion/emotion_main.c
 
-lib_emotion_libemotion_la_CPPFLAGS = \
+lib_emotion_libemotion_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/emotion\" \
@@ -40,7 +40,7 @@ if EMOTION_BUILD_XINE
 emotionmodulexinedir = $(libdir)/emotion/modules/xine/$(MODULE_ARCH)
 emotionmodulexine_LTLIBRARIES = modules/emotion/xine/module.la
 modules_emotion_xine_module_la_SOURCES = $(EMOTION_XINE_SOURCES)
-modules_emotion_xine_module_la_CPPFLAGS = \
+modules_emotion_xine_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 @EMOTION_CFLAGS@ \
 @EMOTION_MODULE_XINE_CFLAGS@
 modules_emotion_xine_module_la_LIBADD = \
@@ -68,7 +68,7 @@ if EMOTION_BUILD_GSTREAMER
 emotionmodulegstreamerdir = $(libdir)/emotion/modules/gstreamer/$(MODULE_ARCH)
 emotionmodulegstreamer_LTLIBRARIES = modules/emotion/gstreamer/module.la
 modules_emotion_gstreamer_module_la_SOURCES = $(EMOTION_GSTREAMER_SOURCES)
-modules_emotion_gstreamer_module_la_CPPFLAGS = \
+modules_emotion_gstreamer_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 @EMOTION_CFLAGS@ \
 @EMOTION_MODULE_GSTREAMER_CFLAGS@
 modules_emotion_gstreamer_module_la_LIBADD = \
@@ -97,7 +97,7 @@ if EMOTION_BUILD_GENERIC
 emotionmodulegenericdir = $(libdir)/emotion/modules/generic/$(MODULE_ARCH)
 emotionmodulegeneric_LTLIBRARIES = modules/emotion/generic/module.la
 modules_emotion_generic_module_la_SOURCES = $(EMOTION_GENERIC_SOURCES)
-modules_emotion_generic_module_la_CPPFLAGS = \
+modules_emotion_generic_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 @EMOTION_CFLAGS@ \
 @EMOTION_MODULE_GENERIC_CFLAGS@ \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
@@ -124,7 +124,7 @@ emotionedjeexternal_LTLIBRARIES = edje_external/emotion/module.la
 
 edje_external_emotion_module_la_SOURCES = \
 edje_external/emotion/emotion.c
-edje_external_emotion_module_la_CPPFLAGS = \
+edje_external_emotion_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 @EDJE_CFLAGS@ \
 @EMOTION_CFLAGS@ \
 -DPACKAGE_DATA_DIR=\"$(datadir)/emotion\"
@@ -148,7 +148,7 @@ bin_PROGRAMS += tests/emotion/emotion_test
 tests_emotion_emotion_test_SOURCES = \
 tests/emotion/emotion_test_main.c
 
-tests_emotion_emotion_test_CPPFLAGS = \
+tests_emotion_emotion_test_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/emotion\" \

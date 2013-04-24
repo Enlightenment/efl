@@ -1,0 +1,6 @@
+#ifndef EFL_CONFIG_H
+#define EFL_CONFIG_H
+
+#define XYXYXY 1
+
+#endif

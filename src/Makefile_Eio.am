@@ -26,7 +26,7 @@ lib_eio_libeio_la_SOURCES += lib/eio/eio_monitor_win32.c
 endif
 endif
 
-lib_eio_libeio_la_CPPFLAGS = @EIO_CFLAGS@
+lib_eio_libeio_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EIO_CFLAGS@
 lib_eio_libeio_la_LIBADD = @EIO_LIBS@
 lib_eio_libeio_la_DEPENDENCIES = @EIO_INTERNAL_LIBS@
 lib_eio_libeio_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@

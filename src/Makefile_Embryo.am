@@ -16,7 +16,7 @@ lib/embryo/embryo_str.c \
 lib/embryo/embryo_time.c \
 lib/embryo/embryo_private.h
 
-lib_embryo_libembryo_la_CPPFLAGS = \
+lib_embryo_libembryo_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/embryo\" \
@@ -46,7 +46,7 @@ bin/embryo/embryo_cc_scvars.c \
 bin/embryo/embryo_cc_prefix.c \
 bin/embryo/embryo_cc_prefix.h
 
-bin_embryo_embryo_cc_CPPFLAGS = \
+bin_embryo_embryo_cc_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/embryo\" \

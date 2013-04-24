@@ -22,7 +22,7 @@ static_libs/lz4/lz4.h \
 static_libs/lz4/lz4hc.c \
 static_libs/lz4/lz4hc.h
 
-lib_eet_libeet_la_CPPFLAGS = \
+lib_eet_libeet_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/static_libs/lz4 \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
@@ -40,7 +40,7 @@ bin_PROGRAMS += bin/eet/eet
 
 bin_eet_eet_SOURCES = bin/eet/eet_main.c
 
-bin_eet_eet_CPPFLAGS = \
+bin_eet_eet_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/eet\" \
@@ -65,7 +65,7 @@ tests/eet/eet_suite.c \
 tests/eet/eet_data_suite.c \
 tests/eet/eet_suite.h
 
-tests_eet_eet_suite_CPPFLAGS = \
+tests_eet_eet_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DTESTS_WD=\"`pwd`\" \
 -DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/eet\" \
 -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/eet\" \

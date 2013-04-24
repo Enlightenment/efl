@@ -205,7 +205,7 @@ modules_eina_mp_pass_through_pass_through_module_la_LIBTOOLFLAGS = --tag=disable
 modules_eina_mp_pass_through_pass_through_module_la_SOURCES = modules/eina/mp/pass_through/eina_pass_through.c
 endif
 
-lib_eina_libeina_la_CPPFLAGS = \
+lib_eina_libeina_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 @EINA_CFLAGS@ \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
@@ -270,7 +270,7 @@ tests/eina/eina_test_barrier.c \
 tests/eina/eina_test_tmpstr.c
 # tests/eina/eina_test_model.c
 
-tests_eina_eina_suite_CPPFLAGS = \
+tests_eina_eina_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DTESTS_WD=\"`pwd`\" \
 -DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/eina\" \
 -DPACKAGE_BUILD_DIR=\"`pwd`/$(top_builddir)/src/tests/eina\" \
@@ -281,14 +281,14 @@ tests_eina_eina_suite_LDADD = @CHECK_LIBS@ @USE_EINA_LIBS@
 tests_eina_eina_suite_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@
 
 tests_eina_cxx_compile_test_SOURCES = tests/eina/cxx_compile_test.cxx
-tests_eina_cxx_compile_test_CPPFLAGS = @EINA_CFLAGS@
+tests_eina_cxx_compile_test_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EINA_CFLAGS@
 tests_eina_cxx_compile_test_LDADD = @USE_EINA_LIBS@
 tests_eina_cxx_compile_test_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@
 
 check_LTLIBRARIES = tests/eina/module_dummy.la
 
 tests_eina_module_dummy_la_SOURCES = tests/eina/eina_test_module_dummy.c
-tests_eina_module_dummy_la_CPPFLAGS = \
+tests_eina_module_dummy_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DPACKAGE_BUILD_DIR=\"`pwd`/$(top_builddir)/src/tests/eina\" \
 @CHECK_CFLAGS@ \
 @EINA_CFLAGS@
