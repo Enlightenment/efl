@@ -9,6 +9,7 @@ dist_installed_eomainheaders_DATA = lib/eo/Eo.h
 lib_eo_libeo_la_SOURCES = \
 lib/eo/eo.c \
 lib/eo/eo_ptr_indirection.c \
+lib/eo/eo_ptr_indirection.h \
 lib/eo/eo_base_class.c \
 lib/eo/eo_private.h
 
