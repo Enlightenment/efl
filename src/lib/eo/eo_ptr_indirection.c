@@ -51,9 +51,9 @@
 
 #if SIZEOF_UINTPTR_T == 4
 /* 32 bits */
-# define BITS_FOR_IDS_TABLE           8
-# define BITS_FOR_IDS_INTER_TABLE     4
-# define BITS_FOR_ID_IN_TABLE        10
+# define BITS_FOR_IDS_TABLE           5
+# define BITS_FOR_IDS_INTER_TABLE     5
+# define BITS_FOR_ID_IN_TABLE        12
 # define BITS_FOR_GENERATION_COUNTER 10
 #else
 /* 64 bits */
