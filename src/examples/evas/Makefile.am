@@ -3,6 +3,7 @@ MAINTAINERCLEANFILES = Makefile.in
 include ../../Makefile_Edje_Helper.am
 
 AM_CPPFLAGS = \
+-I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/eina \
 -I$(top_srcdir)/src/lib/eo \
 -I$(top_srcdir)/src/lib/evas \

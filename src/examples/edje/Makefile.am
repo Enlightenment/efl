@@ -102,6 +102,7 @@ edje-multisense.c
 EXTRA_DIST = $(DIST_EDCS) $(DATA_FILES)
 
 AM_CPPFLAGS = \
+-I$(top_builddir)/src/lib/efl \
 -I. \
 -I$(builddir) \
 -I$(top_srcdir)/src/lib/eina \
