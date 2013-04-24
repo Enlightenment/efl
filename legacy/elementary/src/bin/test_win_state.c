@@ -10,6 +10,7 @@ typedef struct _Testitem
 } Testitem;
 
 static int rotate_with_resize = 0;
+static Eina_Bool fullscreen = EINA_FALSE;
 
 static void
 my_bt_38_alpha_on(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
@@ -109,6 +110,14 @@ my_bt_38_rot_270(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNU
      elm_win_rotation_with_resize_set(win, 270);
    else
      elm_win_rotation_set(win, 270);
+}
+
+static void
+my_ck_38_fullscreen(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   Evas_Object *win = data;
+   fullscreen = elm_check_state_get(obj);
+   elm_win_fullscreen_set(win, fullscreen);
 }
 
 static void
@@ -235,6 +244,15 @@ test_win_state(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    elm_object_text_set(ck, "resize");
    elm_check_state_set(ck, rotate_with_resize);
    evas_object_smart_callback_add(ck, "changed", my_ck_38_resize, win);
+   evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(ck, 0.02, 0.99);
+   evas_object_show(ck);
+   elm_box_pack_end(bx, ck);
+
+   ck = elm_check_add(win);
+   elm_object_text_set(ck, "fullscreen");
+   elm_check_state_set(ck, fullscreen);
+   evas_object_smart_callback_add(ck, "changed", my_ck_38_fullscreen, win);
    evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(ck, 0.02, 0.99);
    evas_object_show(ck);
