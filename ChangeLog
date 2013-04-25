@@ -1,3 +1,8 @@
+2013-04-25  Tom Hacohen
+
+        * Evas textblock: Fixed line size calculation when using multiple
+	fonts.
+
 2013-04-25  Jihoon Kim
 
         * Edje entry: remove duplicated ecore_imf_context_reset in adjusting the selection
