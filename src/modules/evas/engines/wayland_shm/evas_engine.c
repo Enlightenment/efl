@@ -243,7 +243,6 @@ eng_setup(Evas *eo_evas, void *einfo)
           return 0;
         re->info = info;
      }
-
    else
      {
         int ponebuf = 0;
