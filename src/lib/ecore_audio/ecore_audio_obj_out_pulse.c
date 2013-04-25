@@ -78,16 +78,16 @@ static void _write_cb(pa_stream *stream, size_t len, void *data)
 
   void *buf;
   ssize_t bread;
+  size_t wlen = len;
 
-  buf = malloc(len);
+  pa_stream_begin_write(stream, &buf, &wlen);
 
-  eo_do(in, ecore_audio_obj_in_read(buf, len, &bread));
-  pa_stream_write(stream, buf, bread, free, 0, PA_SEEK_RELATIVE);
+  eo_do(in, ecore_audio_obj_in_read(buf, wlen, &bread));
+
+  pa_stream_write(stream, buf, bread, NULL, 0, PA_SEEK_RELATIVE);
   if (bread < (int)len)
     {
       pa_operation_unref(pa_stream_trigger(stream, NULL, NULL));
-      //in->ended = EINA_TRUE;
-      //pa_operation_unref(pa_stream_drain(stream, NULL, NULL));
     }
 }
 
