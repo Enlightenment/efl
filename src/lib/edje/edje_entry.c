@@ -538,6 +538,8 @@ _sel_enable(Edje *ed, Evas_Textblock_Cursor *c EINA_UNUSED,
         free(en->selection);
         en->selection = NULL;
      }
+
+   _edje_entry_imf_context_reset(en->rp);
    _edje_emit(ed, "selection,start", en->rp->part->name);
 }
 
@@ -545,7 +547,6 @@ static void
 _sel_extend(Edje *ed, Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
 {
    if (!en->sel_end) return;
-   _edje_entry_imf_context_reset(en->rp);
    _sel_enable(ed, c, o, en);
    if (!evas_textblock_cursor_compare(c, en->sel_end)) return;
    evas_textblock_cursor_copy(c, en->sel_end);
@@ -564,7 +565,6 @@ static void
 _sel_preextend(Edje *ed, Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
 {
    if (!en->sel_end) return;
-   _edje_entry_imf_context_reset(en->rp);
    _sel_enable(ed, c, o, en);
    if (!evas_textblock_cursor_compare(c, en->sel_start)) return;
    evas_textblock_cursor_copy(c, en->sel_start);
@@ -2786,8 +2786,6 @@ _edje_entry_select_begin(Edje_Real_Part *rp)
    en = rp->typedata.text->entry_data;
    if (!en) return;
 
-   _edje_entry_imf_context_reset(rp);
-
    _sel_clear(en->ed, en->cursor, rp->object, en);
    _sel_enable(en->ed, en->cursor, rp->object, en);
    _sel_start(en->cursor, rp->object, en);
@@ -2805,7 +2803,6 @@ _edje_entry_select_extend(Edje_Real_Part *rp)
        (!rp->typedata.text)) return;
    en = rp->typedata.text->entry_data;
    if (!en) return;
-   _edje_entry_imf_context_reset(rp);
    _sel_extend(en->ed, en->cursor, rp->object, en);
 
    _edje_entry_real_part_configure(en->ed, rp);

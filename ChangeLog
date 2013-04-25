@@ -1,3 +1,7 @@
+2013-04-25  Jihoon Kim
+
+        * Edje entry: remove duplicated ecore_imf_context_reset in adjusting the selection
+
 2013-04-22  Mike Blumenkrantz
 
         * Evas: Fix recursive proxy image rendering to just render black
