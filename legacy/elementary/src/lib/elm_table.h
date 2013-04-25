@@ -17,9 +17,9 @@
  * table = elm_table_add(win);
  * evas_object_show(table);
  * elm_table_padding_set(table, space_between_columns, space_between_rows);
- * elm_table_pack(table, table_content_object, x_coord, y_coord, colspan, rowspan);
- * elm_table_pack(table, table_content_object, next_x_coord, next_y_coord, colspan, rowspan);
- * elm_table_pack(table, table_content_object, other_x_coord, other_y_coord, colspan, rowspan);
+ * elm_table_pack(table, table_content_object, column, row, colspan, rowspan);
+ * elm_table_pack(table, table_content_object, next_column, next_row, colspan, rowspan);
+ * elm_table_pack(table, table_content_object, other_column, other_row, colspan, rowspan);
  * @endcode
  *
  * The following are examples of how to use a table:

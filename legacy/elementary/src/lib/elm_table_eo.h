@@ -86,16 +86,16 @@ enum
  * @brief Add a subobject on the table with the coordinates passed
  *
  * @param[in] subobj
- * @param[in] x
- * @param[in] y
- * @param[in] w
- * @param[in] h
+ * @param[in] column
+ * @param[in] row
+ * @param[in] colspan
+ * @param[in] rowspan
  *
  * @see elm_table_pack
  *
  * @ingroup Table
  */
-#define elm_obj_table_pack(subobj, x, y, w, h) ELM_OBJ_TABLE_ID(ELM_OBJ_TABLE_SUB_ID_PACK), EO_TYPECHECK(Evas_Object *, subobj), EO_TYPECHECK(int, x), EO_TYPECHECK(int, y), EO_TYPECHECK(int, w), EO_TYPECHECK(int, h)
+#define elm_obj_table_pack(subobj, column, row, colspan, rowspan) ELM_OBJ_TABLE_ID(ELM_OBJ_TABLE_SUB_ID_PACK), EO_TYPECHECK(Evas_Object *, subobj), EO_TYPECHECK(int, col), EO_TYPECHECK(int, row), EO_TYPECHECK(int, colspan), EO_TYPECHECK(int, rowspan)
 
 /**
  * @def elm_obj_table_unpack
@@ -118,16 +118,16 @@ enum
  * @brief Set the packing location of an existing child of the table
  *
  * @param[in] subobj
- * @param[in] x
- * @param[in] y
- * @param[in] w
- * @param[in] h
+ * @param[in] column
+ * @param[in] row
+ * @param[in] colspan
+ * @param[in] rowspan
  *
  * @see elm_table_pack_set
  *
  * @ingroup Table
  */
-#define elm_obj_table_pack_set(subobj, x, y, w, h) ELM_OBJ_TABLE_ID(ELM_OBJ_TABLE_SUB_ID_PACK_SET), EO_TYPECHECK(Evas_Object *, subobj), EO_TYPECHECK(int, x), EO_TYPECHECK(int, y), EO_TYPECHECK(int, w), EO_TYPECHECK(int, h)
+#define elm_obj_table_pack_set(subobj, col, row, colspan, rowspan) ELM_OBJ_TABLE_ID(ELM_OBJ_TABLE_SUB_ID_PACK_SET), EO_TYPECHECK(Evas_Object *, subobj), EO_TYPECHECK(int, col), EO_TYPECHECK(int, row), EO_TYPECHECK(int, colspan), EO_TYPECHECK(int, rowspan)
 
 /**
  * @def elm_obj_table_pack_get
@@ -136,16 +136,16 @@ enum
  * @brief Get the packing location of an existing child of the table
  *
  * @param[in] subobj
- * @param[out] x
- * @param[out] y
- * @param[out] w
- * @param[out] h
+ * @param[out] column
+ * @param[out] row
+ * @param[out] colspan
+ * @param[out] rowspan
  *
  * @see elm_table_pack_get
  *
  * @ingroup Table
  */
-#define elm_obj_table_pack_get(subobj, x, y, w, h) ELM_OBJ_TABLE_ID(ELM_OBJ_TABLE_SUB_ID_PACK_GET), EO_TYPECHECK(Evas_Object *, subobj), EO_TYPECHECK(int *, x), EO_TYPECHECK(int *, y), EO_TYPECHECK(int *, w), EO_TYPECHECK(int *, h)
+#define elm_obj_table_pack_get(subobj, col, row, colspan, rowspan) ELM_OBJ_TABLE_ID(ELM_OBJ_TABLE_SUB_ID_PACK_GET), EO_TYPECHECK(Evas_Object *, subobj), EO_TYPECHECK(int *, col), EO_TYPECHECK(int *, row), EO_TYPECHECK(int *, colspan), EO_TYPECHECK(int *, rowspan)
 
 /**
  * @def elm_obj_table_clear

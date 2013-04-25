@@ -59,10 +59,10 @@ EAPI void      elm_table_padding_get(const Evas_Object *obj, Evas_Coord *horizon
  *
  * @param obj The table object
  * @param subobj The subobject to be added to the table
- * @param x Row number
- * @param y Column number
- * @param w colspan
- * @param h rowspan
+ * @param col Column number
+ * @param row Row number
+ * @param colspan colspan
+ * @param rowspan rowspan
  *
  * @note All positioning inside the table is relative to rows and columns, so
  * a value of 0 for x and y, means the top left cell of the table, and a
@@ -70,7 +70,7 @@ EAPI void      elm_table_padding_get(const Evas_Object *obj, Evas_Coord *horizon
  *
  * @ingroup Table
  */
-EAPI void      elm_table_pack(Evas_Object *obj, Evas_Object *subobj, int x, int y, int w, int h);
+EAPI void      elm_table_pack(Evas_Object *obj, Evas_Object *subobj, int col, int row, int colspan, int rowspan);
 
 /**
  * @brief Remove child from table.
@@ -86,35 +86,35 @@ EAPI void      elm_table_unpack(Evas_Object *obj, Evas_Object *subobj);
  * @brief Set the packing location of an existing child of the table
  *
  * @param subobj The subobject to be modified in the table
- * @param x Row number
- * @param y Column number
- * @param w rowspan
- * @param h colspan
+ * @param col Column number
+ * @param row Row number
+ * @param colspan colspan
+ * @param rowspan rowspan
  *
  * Modifies the position of an object already in the table.
  *
  * @note All positioning inside the table is relative to rows and columns, so
- * a value of 0 for x and y, means the top left cell of the table, and a
- * value of 1 for w and h means @p subobj only takes that 1 cell.
+ * a value of 0 for col and row, means the top left cell of the table, and a
+ * value of 1 for colspan and rowspan means @p subobj only takes that 1 cell.
  *
  * @ingroup Table
  */
-EAPI void      elm_table_pack_set(Evas_Object *subobj, int x, int y, int w, int h);
+EAPI void      elm_table_pack_set(Evas_Object *subobj, int col, int row, int colspan, int rowspan);
 
 /**
  * @brief Get the packing location of an existing child of the table
  *
  * @param subobj The subobject to be modified in the table
- * @param x Row number
- * @param y Column number
- * @param w rowspan
- * @param h colspan
+ * @param col Column number
+ * @param row Row number
+ * @param colspan colspan
+ * @param rowspan rowspan
  *
  * @see elm_table_pack_set()
  *
  * @ingroup Table
  */
-EAPI void      elm_table_pack_get(Evas_Object *subobj, int *x, int *y, int *w, int *h);
+EAPI void      elm_table_pack_get(Evas_Object *subobj, int *col, int *row, int *colspan, int *rowspan);
 
 /**
  * @brief Faster way to remove all child objects from a table object.

@@ -322,27 +322,27 @@ _padding_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 EAPI void
 elm_table_pack(Evas_Object *obj,
                Evas_Object *subobj,
-               int x,
-               int y,
-               int w,
-               int h)
+               int col,
+               int row,
+               int colspan,
+               int rowspan)
 {
    ELM_TABLE_CHECK(obj);
-   eo_do(obj, elm_obj_table_pack(subobj, x, y, w, h));
+   eo_do(obj, elm_obj_table_pack(subobj, col, row, colspan, rowspan));
 }
 
 static void
 _pack(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
    Evas_Object *subobj = va_arg(*list, Evas_Object *);
-   int x = va_arg(*list, int);
-   int y = va_arg(*list, int);
-   int w = va_arg(*list, int);
-   int h = va_arg(*list, int);
+   int col = va_arg(*list, int);
+   int row = va_arg(*list, int);
+   int colspan = va_arg(*list, int);
+   int rowspan = va_arg(*list, int);
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    elm_widget_sub_object_add(obj, subobj);
-   evas_object_table_pack(wd->resize_obj, subobj, x, y, w, h);
+   evas_object_table_pack(wd->resize_obj, subobj, col, row, colspan, rowspan);
 }
 
 EAPI void
@@ -365,61 +365,61 @@ _unpack(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 
 EAPI void
 elm_table_pack_set(Evas_Object *subobj,
-                   int x,
-                   int y,
-                   int w,
-                   int h)
+                   int col,
+                   int row,
+                   int colspan,
+                   int rowspan)
 {
    Evas_Object *obj = elm_widget_parent_widget_get(subobj);
 
    ELM_TABLE_CHECK(obj);
-   eo_do(obj, elm_obj_table_pack_set(subobj, x, y, w, h));
+   eo_do(obj, elm_obj_table_pack_set(subobj, col, row, colspan, rowspan));
 }
 
 static void
 _pack_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
    Evas_Object *subobj = va_arg(*list, Evas_Object *);
-   int x = va_arg(*list, int);
-   int y = va_arg(*list, int);
-   int w = va_arg(*list, int);
-   int h = va_arg(*list, int);
+   int col = va_arg(*list, int);
+   int row = va_arg(*list, int);
+   int colspan = va_arg(*list, int);
+   int rowspan = va_arg(*list, int);
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   evas_object_table_pack(wd->resize_obj, subobj, x, y, w, h);
+   evas_object_table_pack(wd->resize_obj, subobj, col, row, colspan, rowspan);
 }
 
 EAPI void
 elm_table_pack_get(Evas_Object *subobj,
-                   int *x,
-                   int *y,
-                   int *w,
-                   int *h)
+                   int *col,
+                   int *row,
+                   int *colspan,
+                   int *rowspan)
 {
    Evas_Object *obj = elm_widget_parent_widget_get(subobj);
    ELM_TABLE_CHECK(obj);
-   eo_do(obj, elm_obj_table_pack_get(subobj, x, y, w, h));
+   eo_do(obj, elm_obj_table_pack_get(subobj, col, row, colspan, rowspan));
 }
 
 static void
 _pack_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
    Evas_Object *subobj = va_arg(*list, Evas_Object *);
-   int *x = va_arg(*list, int *);
-   int *y = va_arg(*list, int *);
-   int *w = va_arg(*list, int *);
-   int *h = va_arg(*list, int *);
+   int *col = va_arg(*list, int *);
+   int *row = va_arg(*list, int *);
+   int *colspan = va_arg(*list, int *);
+   int *rowspan = va_arg(*list, int *);
 
-   unsigned short ix, iy, iw, ih;
+   unsigned short icol, irow, icolspan, irowspan;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    evas_object_table_pack_get
-     (wd->resize_obj, subobj, &ix, &iy, &iw, &ih);
-   if (x) *x = ix;
-   if (y) *y = iy;
-   if (w) *w = iw;
-   if (h) *h = ih;
+     (wd->resize_obj, subobj, &icol, &irow, &icolspan, &irowspan);
+   if (col) *col = icol;
+   if (row) *row = irow;
+   if (colspan) *colspan = icolspan;
+   if (rowspan) *rowspan = irowspan;
 }
 
 EAPI void
