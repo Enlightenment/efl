@@ -155,10 +155,10 @@ ecore_evas_wayland_shm_new_internal(const char *disp_name, unsigned int parent, 
    ee->prop.draw_frame = frame;
    ee->alpha = EINA_FALSE;
 
-   /* if (getenv("ECORE_EVAS_FORCE_SYNC_RENDER")) */
-   ee->can_async_render = 0;
-   /* else */
-   /*   ee->can_async_render = 1; */
+   if (getenv("ECORE_EVAS_FORCE_SYNC_RENDER"))
+     ee->can_async_render = 0;
+   else
+     ee->can_async_render = 1;
 
    /* frame offset and size */
    fx = 4;
