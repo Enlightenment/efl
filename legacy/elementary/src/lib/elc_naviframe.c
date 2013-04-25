@@ -451,15 +451,14 @@ _item_del_pre_hook(Elm_Object_Item *it)
         elm_widget_tree_unfocusable_set(VIEW(nit), EINA_TRUE);
      }
 
-   if (sd->stack->last->prev)
-     prev_it = EINA_INLIST_CONTAINER_GET
-         (sd->stack->last->prev, Elm_Naviframe_Item);
-
    sd->stack = eina_inlist_remove(sd->stack, EINA_INLIST_GET(nit));
    if (!sd->stack) elm_widget_resize_object_set(WIDGET(it), sd->dummy_edje);
 
    if (top && !sd->on_deletion) /* must raise another one */
      {
+        if (sd->stack && sd->stack->last)
+          prev_it = EINA_INLIST_CONTAINER_GET(sd->stack->last,
+                                              Elm_Naviframe_Item);
         if (!prev_it) goto end;
 
         if (sd->freeze_events)

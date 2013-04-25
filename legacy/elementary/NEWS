@@ -215,6 +215,7 @@ Improvements:
    * When entry is disabled, scrolling is also disabled.
    * Make access object unfocusable when Aaccessibility is disabled.
    * Fix the scrolled entry in scroller is located wrong position when the cursor is changed.
+   * Fix null pointer access on naviframe item deletion.
 
 Removals:
 

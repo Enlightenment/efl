@@ -1261,7 +1261,7 @@
 
         * When entry is disabled, scrolling is also disabled.
 
-2013-04-17  ChunEon Park
+2013-04-17  ChunEon Park (Hermet)
 
         * Don't try to pop the naviframe item multiple times.
 
@@ -1273,7 +1273,7 @@
 
         * Make access object unfocusable when Aaccessibility is disabled.
 
-2013-04-23  ChunEon Park
+2013-04-23  ChunEon Park (Hermet)
 
         * Added elm_object_domain_part_text_translatable_set(),
         elm_object_item_domain_part_text_translatable_set().
@@ -1284,13 +1284,17 @@
         cursor is changed. It is a scroller in scroller. In this case, it moved
         twice.
 
-2013-04-23  ChunEon Park
+2013-04-23  ChunEon Park (Hermet)
 
         * Support language change for widget items (Ctxpopup, Hoversel,
         Naviframe, Diskselector, List, Menu, Segment_Control, Toolbar, Popup,
         MultibuttonEntry)
 
-2013-04-23  ChunEon Park
+2013-04-23  ChunEon Park (Hermet)
 
         * Support language,changed callback (Fileselector_Button,
         Fileselector Entry, Spinner
+
+2013-04-25  ChunEon Park (Hermet)
+
+        * Fix null pointer access on naviframe item deletion.
