@@ -13,20 +13,10 @@
 #include "evas_common.h"
 #include "evas_private.h"
 
-static Eina_Bool evas_image_load_file_head_webp(Image_Entry *ie, const char *file, const char *key, int *error) EINA_ARG_NONNULL(1, 2, 4);
-static Eina_Bool evas_image_load_file_data_webp(Image_Entry *ie, const char *file, const char *key, int *error) EINA_ARG_NONNULL(1, 2, 4);
-
-static Evas_Image_Load_Func evas_image_load_webp_func =
-{
-  EINA_TRUE,
-  evas_image_load_file_head_webp,
-  evas_image_load_file_data_webp,
-  NULL,
-  EINA_FALSE
-};
-
 static Eina_Bool
-evas_image_load_file_check(Eina_File *f, void *map, Image_Entry *ie, int *error)
+evas_image_load_file_check(Eina_File *f, void *map,
+			   unsigned int *w, unsigned int *h, Eina_Bool *alpha,
+			   int *error)
 {
    WebPDecoderConfig config;
 
@@ -43,37 +33,32 @@ evas_image_load_file_check(Eina_File *f, void *map, Image_Entry *ie, int *error)
       return EINA_FALSE;
    }
 
-   ie->w = config.input.width;
-   ie->h = config.input.height;
-   ie->flags.alpha = config.input.has_alpha;
+   *w = config.input.width;
+   *h = config.input.height;
+   *alpha = config.input.has_alpha;
 
    return EINA_TRUE;
 }
 
 static Eina_Bool
-evas_image_load_file_head_webp(Image_Entry *ie, const char *file, const char *key EINA_UNUSED, int *error)
+evas_image_load_file_head_webp(Eina_File *f, const char *key EINA_UNUSED,
+			       Evas_Image_Property *prop,
+			       Evas_Image_Load_Opts *opts EINA_UNUSED,
+			       Evas_Image_Animated *animated EINA_UNUSED,
+			       int *error)
 {
-   Eina_File *f;
    Eina_Bool r;
    void *data;
-
-   // XXX: use eina_file to mmap things
-   f = eina_file_open(file, EINA_FALSE);
-   if (!f)
-   {
-      *error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
-      return EINA_FALSE;
-   }
 
    *error = EVAS_LOAD_ERROR_NONE;
 
    data = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
 
-   r = evas_image_load_file_check(f, data, ie, error);
+   r = evas_image_load_file_check(f, data,
+				  &prop->w, &prop->h, &prop->alpha,
+				  error);
 
    if (data) eina_file_map_free(f, data);
-   eina_file_close(f);
-
    return r;
 }
 
@@ -85,6 +70,7 @@ evas_image_load_file_data_webp(Image_Entry *ie, const char *file, const char *ke
    void *decoded = NULL;
    void *surface = NULL;
    int width, height;
+   Eina_Bool alpha;
 
    // XXX: use eina_file to mmap things
    f = eina_file_open(file, EINA_FALSE);
@@ -96,9 +82,11 @@ evas_image_load_file_data_webp(Image_Entry *ie, const char *file, const char *ke
 
    data = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
 
-   if (!evas_image_load_file_check(f, data, ie, error))
+   if (!evas_image_load_file_check(f, data, &ie->w, &ie->h, &alpha, error))
      goto free_data;
 
+   ie->flags.alpha = alpha;
+   
    evas_cache_image_surface_alloc(ie, ie->w, ie->h);
    surface = evas_cache_image_pixels(ie);
    if (!surface)
@@ -126,6 +114,15 @@ evas_image_load_file_data_webp(Image_Entry *ie, const char *file, const char *ke
 
    return EINA_TRUE;
 }
+
+static Evas_Image_Load_Func evas_image_load_webp_func =
+{
+  EINA_TRUE,
+  evas_image_load_file_head_webp,
+  evas_image_load_file_data_webp,
+  NULL,
+  EINA_FALSE
+};
 
 static int
 module_open(Evas_Module *em)

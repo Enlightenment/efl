@@ -29,10 +29,13 @@ static int _get_orientation_app0(char *app0_head, size_t remain_length);
 static int _get_orientation_app1(char *app1_head, size_t remain_length);
 static int _get_orientation(void *map, size_t length);
 
-static Eina_Bool evas_image_load_file_head_jpeg_internal(Image_Entry *ie,
+static Eina_Bool evas_image_load_file_head_jpeg_internal(unsigned int *w,
+							 unsigned int *h,
+							 unsigned char *scale,
+							 Evas_Image_Load_Opts *opts,
                                                          void *map,
                                                          size_t len,
-                                                         int *error) EINA_ARG_NONNULL(1, 2, 4);
+                                                         int *error);
 static Eina_Bool evas_image_load_file_data_jpeg_internal(Image_Entry *ie,
                                                          void *map,
                                                          size_t len,
@@ -41,7 +44,7 @@ static Eina_Bool evas_image_load_file_data_jpeg_internal(Image_Entry *ie,
 static int evas_image_load_file_data_jpeg_alpha_internal(Image_Entry *ie, FILE *f) EINA_ARG_NONNULL(1, 2);
 #endif
 
-static Eina_Bool evas_image_load_file_head_jpeg(Image_Entry *ie, const char *file, const char *key, int *error) EINA_ARG_NONNULL(1, 2, 4);
+static Eina_Bool evas_image_load_file_head_jpeg(Eina_File *f, const char *key, Evas_Image_Property *prop, Evas_Image_Load_Opts *opts, Evas_Image_Animated *animated, int *error);
 static Eina_Bool evas_image_load_file_data_jpeg(Image_Entry *ie, const char *file, const char *key, int *error) EINA_ARG_NONNULL(1, 2, 4);
 
 static Evas_Image_Load_Func evas_image_load_jpeg_func =
@@ -305,17 +308,19 @@ _get_orientation(void *map, size_t length)
 }
 
 static Eina_Bool
-evas_image_load_file_head_jpeg_internal(Image_Entry *ie,
+evas_image_load_file_head_jpeg_internal(unsigned int *w, unsigned int *h,
+					unsigned char *scale,
+					Evas_Image_Load_Opts *opts,
                                         void *map, size_t length,
                                         int *error)
 {
-   unsigned int w, h, scalew, scaleh;
+   unsigned int scalew, scaleh;
    struct jpeg_decompress_struct cinfo;
    struct _JPEG_error_mgr jerr;
 
    /* for rotation decoding */
    int degree = 0;
-   Eina_Bool change_wh = EINA_FALSE;
+   Eina_Bool change_wh = EINA_FALSE, rotated = EINA_FALSE;
    unsigned int load_opts_w = 0, load_opts_h = 0;
 
    memset(&cinfo, 0, sizeof(cinfo));
@@ -351,13 +356,13 @@ evas_image_load_file_head_jpeg_internal(Image_Entry *ie,
    jpeg_start_decompress(&cinfo);
 
    /* rotation decoding */
-   if (ie->load_opts.orientation)
+   if (opts->orientation)
      {
         degree = _get_orientation(map, length);
         if (degree != 0)
           {
-             ie->load_opts.degree = degree;
-             ie->flags.rotated = EINA_TRUE;
+             opts->degree = degree;
+	     rotated = EINA_TRUE;
 
              if (degree == 90 || degree == 270)
                change_wh = EINA_TRUE;
@@ -366,89 +371,89 @@ evas_image_load_file_head_jpeg_internal(Image_Entry *ie,
      }
 
    /* head decoding */
-   w = cinfo.output_width;
-   h = cinfo.output_height;
-   if ((w < 1) || (h < 1) || (w > IMG_MAX_SIZE) || (h > IMG_MAX_SIZE) ||
-       (IMG_TOO_BIG(w, h)))
+   *w = cinfo.output_width;
+   *h = cinfo.output_height;
+   if ((*w < 1) || (*h < 1) || (*w > IMG_MAX_SIZE) || (*h > IMG_MAX_SIZE) ||
+       (IMG_TOO_BIG(*w, *h)))
      {
         jpeg_destroy_decompress(&cinfo);
         _evas_jpeg_membuf_src_term(&cinfo);
-	if (IMG_TOO_BIG(w, h))
+	if (IMG_TOO_BIG(*w, *h))
 	  *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
 	else
 	  *error = EVAS_LOAD_ERROR_GENERIC;
 	return EINA_FALSE;
      }
-   if (ie->load_opts.scale_down_by > 1)
+   if (opts->scale_down_by > 1)
      {
-	w /= ie->load_opts.scale_down_by;
-	h /= ie->load_opts.scale_down_by;
+	*w /= opts->scale_down_by;
+	*h /= opts->scale_down_by;
      }
-   else if (ie->load_opts.dpi > 0.0)
+   else if (opts->dpi > 0.0)
      {
-	w = (w * ie->load_opts.dpi) / 90.0;
-	h = (h * ie->load_opts.dpi) / 90.0;
+	*w = (*w * opts->dpi) / 90.0;
+	*h = (*h * opts->dpi) / 90.0;
      }
-   else if ((ie->load_opts.w > 0) && (ie->load_opts.h > 0))
+   else if ((opts->w > 0) && (opts->h > 0))
      {
-        unsigned int w2 = w, h2 = h;
+        unsigned int w2 = *w, h2 = *h;
         /* user set load_opts' w,h on the assumption
            that image already rotated according to it's orientation info */
         if (change_wh)
           {
-             load_opts_w = ie->load_opts.w;
-             load_opts_h = ie->load_opts.h;
-             ie->load_opts.w = load_opts_h;
-             ie->load_opts.h = load_opts_w;
+             load_opts_w = opts->w;
+             load_opts_h = opts->h;
+             opts->w = load_opts_h;
+             opts->h = load_opts_w;
           }
 
-	if (ie->load_opts.w > 0)
+	if (opts->w > 0)
 	  {
-	     w2 = ie->load_opts.w;
-	     h2 = (ie->load_opts.w * h) / w;
-	     if ((ie->load_opts.h > 0) && (h2 > ie->load_opts.h))
+	     w2 = opts->w;
+	     h2 = (opts->w * *h) / *w;
+	     if ((opts->h > 0) && (h2 > opts->h))
 	       {
 	          unsigned int w3;
-		  h2 = ie->load_opts.h;
-		  w3 = (ie->load_opts.h * w) / h;
+		  h2 = opts->h;
+		  w3 = (opts->h * *w) / *h;
 		  if (w3 > w2)
 		    w2 = w3;
 	       }
 	  }
-	else if (ie->load_opts.h > 0)
+	else if (opts->h > 0)
 	  {
-	     h2 = ie->load_opts.h;
-	     w2 = (ie->load_opts.h * w) / h;
+	     h2 = opts->h;
+	     w2 = (opts->h * *w) / *h;
 	  }
-	w = w2;
-	h = h2;
+	*w = w2;
+	*h = h2;
         if (change_wh)
           {
-             ie->load_opts.w = load_opts_w;
-             ie->load_opts.h = load_opts_h;
+             opts->w = load_opts_w;
+             opts->h = load_opts_h;
           }
      }
-   if (w < 1) w = 1;
-   if (h < 1) h = 1;
+   if (*w < 1) *w = 1;
+   if (*h < 1) *h = 1;
 
-   if ((w != cinfo.output_width) || (h != cinfo.output_height))
+   if ((*w != cinfo.output_width) || (*h != cinfo.output_height))
      {
-	scalew = cinfo.output_width / w;
-	scaleh = cinfo.output_height / h;
+	scalew = cinfo.output_width / *w;
+	scaleh = cinfo.output_height / *h;
 
-	ie->scale = scalew;
-	if (scaleh < scalew) ie->scale = scaleh;
+	*scale = scalew;
+	if (scaleh < scalew) *scale = scaleh;
 
-	if      (ie->scale > 8) ie->scale = 8;
-	else if (ie->scale < 1) ie->scale = 1;
+	if      (*scale > 8) *scale = 8;
+	else if (*scale < 1) *scale = 1;
 
-	if      (ie->scale == 3) ie->scale = 2;
-	else if (ie->scale == 5) ie->scale = 4;
-	else if (ie->scale == 6) ie->scale = 4;
-	else if (ie->scale == 7) ie->scale = 4;
+	if      (*scale == 3) *scale = 2;
+	else if (*scale == 5) *scale = 4;
+	else if (*scale == 6) *scale = 4;
+	else if (*scale == 7) *scale = 4;
      }
 
-   if (ie->scale > 1)
+   if (*scale > 1)
      {
 	jpeg_destroy_decompress(&cinfo);
         _evas_jpeg_membuf_src_term(&cinfo);
@@ -466,68 +471,68 @@ evas_image_load_file_head_jpeg_internal(Image_Entry *ie,
 	cinfo.do_fancy_upsampling = FALSE;
 	cinfo.do_block_smoothing = FALSE;
 	cinfo.scale_num = 1;
-	cinfo.scale_denom = ie->scale;
+	cinfo.scale_denom = *scale;
 	jpeg_calc_output_dimensions(&(cinfo));
 	jpeg_start_decompress(&cinfo);
      }
 
-   ie->w = cinfo.output_width;
-   ie->h = cinfo.output_height;
+   *w = cinfo.output_width;
+   *h = cinfo.output_height;
    
    // be nice and clip region to image. if its totally outside, fail load
-   if ((ie->load_opts.region.w > 0) && (ie->load_opts.region.h > 0))
+   if ((opts->region.w > 0) && (opts->region.h > 0))
      {
         unsigned int load_region_x = 0, load_region_y = 0;
         unsigned int load_region_w = 0, load_region_h = 0;
-        if (ie->flags.rotated)
+        if (rotated)
           {
-             load_region_x = ie->load_opts.region.x;
-             load_region_y = ie->load_opts.region.y;
-             load_region_w = ie->load_opts.region.w;
-             load_region_h = ie->load_opts.region.h;
+             load_region_x = opts->region.x;
+             load_region_y = opts->region.y;
+             load_region_w = opts->region.w;
+             load_region_h = opts->region.h;
 
              switch (degree)
                {
                 case 90:
-                   ie->load_opts.region.x = load_region_y;
-                   ie->load_opts.region.y = h - (load_region_x + load_region_w);
-                   ie->load_opts.region.w = load_region_h;
-                   ie->load_opts.region.h = load_region_w;
+                   opts->region.x = load_region_y;
+                   opts->region.y = *h - (load_region_x + load_region_w);
+                   opts->region.w = load_region_h;
+                   opts->region.h = load_region_w;
                    break;
                 case 180:
-                   ie->load_opts.region.x = w - (load_region_x+ load_region_w);
-                   ie->load_opts.region.y = h - (load_region_y + load_region_h);
+                   opts->region.x = *w - (load_region_x+ load_region_w);
+                   opts->region.y = *h - (load_region_y + load_region_h);
 
                    break;
                 case 270:
-                   ie->load_opts.region.x = w - (load_region_y + load_region_h);
-                   ie->load_opts.region.y = load_region_x;
-                   ie->load_opts.region.w = load_region_h;
-                   ie->load_opts.region.h = load_region_w;
+                   opts->region.x = *w - (load_region_y + load_region_h);
+                   opts->region.y = load_region_x;
+                   opts->region.w = load_region_h;
+                   opts->region.h = load_region_w;
                    break;
                 default:
                    break;
                }
 
           }
-        RECTS_CLIP_TO_RECT(ie->load_opts.region.x, ie->load_opts.region.y,
-                           ie->load_opts.region.w, ie->load_opts.region.h,
-                           0, 0, ie->w, ie->h);
-        if ((ie->load_opts.region.w <= 0) || (ie->load_opts.region.h <= 0))
+        RECTS_CLIP_TO_RECT(opts->region.x, opts->region.y,
+                           opts->region.w, opts->region.h,
+                           0, 0, *w, *h);
+        if ((opts->region.w <= 0) || (opts->region.h <= 0))
           {
              jpeg_destroy_decompress(&cinfo);
              _evas_jpeg_membuf_src_term(&cinfo);
 	     *error = EVAS_LOAD_ERROR_GENERIC;
 	     return EINA_FALSE;
           }
-        ie->w = ie->load_opts.region.w;
-        ie->h = ie->load_opts.region.h;
-        if (ie->flags.rotated)
+        *w = opts->region.w;
+        *h = opts->region.h;
+        if (rotated)
           {
-             ie->load_opts.region.x = load_region_x;
-             ie->load_opts.region.y = load_region_y;
-             ie->load_opts.region.w = load_region_w;
-             ie->load_opts.region.h = load_region_h;
+             opts->region.x = load_region_x;
+             opts->region.y = load_region_y;
+             opts->region.w = load_region_w;
+             opts->region.h = load_region_h;
           }
      }
 /* end head decoding */
@@ -535,9 +540,9 @@ evas_image_load_file_head_jpeg_internal(Image_Entry *ie,
    if (change_wh)
      {
         unsigned int tmp;
-        tmp = ie->w;
-        ie->w = ie->h;
-        ie->h = tmp;
+        tmp = *w;
+        *w = *h;
+        *h = tmp;
      }
    jpeg_destroy_decompress(&cinfo);
    _evas_jpeg_membuf_src_term(&cinfo);
@@ -1243,20 +1248,11 @@ evas_image_load_file_data_jpeg_alpha_internal(Image_Entry *ie, FILE *f, int *err
 #endif
 
 static Eina_Bool
-evas_image_load_file_head_jpeg(Image_Entry *ie,
-                               const char *file, const char *key EINA_UNUSED,
-                               int *error)
+evas_image_load_file_head_jpeg(Eina_File *f, const char *key EINA_UNUSED, Evas_Image_Property *prop, Evas_Image_Load_Opts *opts, Evas_Image_Animated *animated EINA_UNUSED, int *error)
 {
-   Eina_File *f;
    void *map;
    Eina_Bool val = EINA_FALSE;
 
-   f = eina_file_open(file, EINA_FALSE);
-   if (!f)
-     {
-	*error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
-	return EINA_FALSE;
-     }
    map = eina_file_map_all(f, EINA_FILE_WILLNEED);
    if (!map)
      {
@@ -1264,14 +1260,15 @@ evas_image_load_file_head_jpeg(Image_Entry *ie,
         goto on_error;
      }
 
-   val = evas_image_load_file_head_jpeg_internal(ie,
+   val = evas_image_load_file_head_jpeg_internal(&prop->w, &prop->h,
+						 &prop->scale,
+						 opts,
                                                  map, eina_file_size_get(f),
                                                  error);
 
    eina_file_map_free(f, map);
 
  on_error:
-   eina_file_close(f);
    return val;
 }
 

@@ -147,51 +147,47 @@ is_psd(PSD_Header *header)
 }
 
 static Eina_Bool
-evas_image_load_file_head_psd(Image_Entry *ie, const char *FileName, 
-                              const char *key EINA_UNUSED, int *error)
+evas_image_load_file_head_psd(Eina_File *f, const char *key EINA_UNUSED,
+			      Evas_Image_Property *prop,
+			      Evas_Image_Load_Opts *opts EINA_UNUSED,
+			      Evas_Image_Animated *animated EINA_UNUSED,
+			      int *error)
 {
-   Eina_File *f;
    void *map;
    size_t length;
    size_t position;
    PSD_Header header;
    Eina_Bool correct;
+   Eina_Bool r = EINA_FALSE;
 
    *error = EVAS_LOAD_ERROR_NONE;
-
-   f = eina_file_open(FileName, 0);
-   if (f == NULL)
-     {
-        *error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
-        return EINA_FALSE;
-     }
 
    map = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
    length = eina_file_size_get(f);
    position = 0;
    if (!map || length < 1)
      {
-        eina_file_close(f);
         *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
-        return EINA_FALSE;
+	goto on_error;
      }
+
    correct = psd_get_header(&header, map, length, &position);
-
-   eina_file_map_free(f, map);
-   eina_file_close(f);
-
    if (!correct || !is_psd(&header))
      {
         *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
-        return EINA_FALSE;
+	goto on_error;
      }
 
-   ie->w = header.width;
-   ie->h = header.height;
-   if (header.channels == 3) ie->flags.alpha = 0;
-   else ie->flags.alpha = 1;
+   prop->w = header.width;
+   prop->h = header.height;
+   if (header.channels != 3)
+     prop->alpha = 1;
 
-   return EINA_TRUE;
+   r = EINA_TRUE;
+
+ on_error:
+   eina_file_map_free(f, map);
+   return r;
 }
 
 static unsigned int

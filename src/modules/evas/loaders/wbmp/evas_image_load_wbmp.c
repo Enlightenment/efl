@@ -11,7 +11,7 @@
 #include "evas_common.h"
 #include "evas_private.h"
 
-static Eina_Bool evas_image_load_file_head_wbmp(Image_Entry *ie, const char *file, const char *key, int *error) EINA_ARG_NONNULL(1, 2, 4);
+static Eina_Bool evas_image_load_file_head_wbmp(Eina_File *f, const char *key, Evas_Image_Property *prop, Evas_Image_Load_Opts *opts, Evas_Image_Animated *animated, int *error);
 static Eina_Bool evas_image_load_file_data_wbmp(Image_Entry *ie, const char *file, const char *key, int *error) EINA_ARG_NONNULL(1, 2, 4);
 
 static Evas_Image_Load_Func evas_image_load_wbmp_func =
@@ -43,22 +43,19 @@ read_mb(unsigned int *data, void *map, size_t length, size_t *position)
 }
 
 static Eina_Bool
-evas_image_load_file_head_wbmp(Image_Entry *ie, const char *file, const char *key EINA_UNUSED, int *error)
+evas_image_load_file_head_wbmp(Eina_File *f, const char *key EINA_UNUSED,
+			       Evas_Image_Property *prop,
+			       Evas_Image_Load_Opts *opts EINA_UNUSED,
+			       Evas_Image_Animated *animated EINA_UNUSED,
+			       int *error)
 {
-   Eina_File *f;
    void *map = NULL;
    size_t position = 0;
    size_t length;
    unsigned int type, w, h;
+   Eina_Bool r = EINA_FALSE;
 
    *error = EVAS_LOAD_ERROR_GENERIC;
-   f = eina_file_open(file, 0);
-   if (!f)
-     {
-        *error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
-        return EINA_FALSE;
-     }
-
    length = eina_file_size_get(f);
    if (length <= 4) goto bail;
 
@@ -83,17 +80,15 @@ evas_image_load_file_head_wbmp(Image_Entry *ie, const char *file, const char *ke
         goto bail;
      }
 
-   eina_file_map_free(f, map);
-   eina_file_close(f);
-   ie->w = w;
-   ie->h = h;
+   prop->w = w;
+   prop->h = h;
 
    *error = EVAS_LOAD_ERROR_NONE;
-   return EINA_TRUE;
-bail:
+   r = EINA_TRUE;
+
+ bail:
    if (map) eina_file_map_free(f, map);
-   eina_file_close(f);
-   return EINA_FALSE;
+   return r;
 }
 
 static Eina_Bool

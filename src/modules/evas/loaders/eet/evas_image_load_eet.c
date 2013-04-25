@@ -8,8 +8,9 @@
 #include "evas_private.h"
 
 
-static Eina_Bool evas_image_load_file_head_eet(Image_Entry *ie, const char *file, const char *key, int *error) EINA_ARG_NONNULL(1, 2, 4);
-static Eina_Bool evas_image_load_file_data_eet(Image_Entry *ie, const char *file, const char *key, int *error) EINA_ARG_NONNULL(1, 2, 4);
+static Eina_Bool
+evas_image_load_file_head_eet(Eina_File *f, const char *key, Evas_Image_Property *prop, Evas_Image_Load_Opts *opts, Evas_Image_Animated *animated, int *error);
+static Eina_Bool evas_image_load_file_data_eet(Image_Entry *ie, const char *file, const char *key, int *error);
 
 Evas_Image_Load_Func evas_image_load_eet_func =
 {
@@ -21,26 +22,21 @@ Evas_Image_Load_Func evas_image_load_eet_func =
 };
 
 static Eina_Bool
-evas_image_load_file_head_eet(Image_Entry *ie, const char *file, const char *key, int *error)
+evas_image_load_file_head_eet(Eina_File *f, const char *key,
+			      Evas_Image_Property *prop,
+			      Evas_Image_Load_Opts *opts EINA_UNUSED,
+			      Evas_Image_Animated *animated EINA_UNUSED,
+			      int *error)
 {
-   int                  alpha, compression, quality, lossy;
-   unsigned int         w, h;
-   Eina_File           *f = NULL;
-   Eet_File            *ef = NULL;
-   int                  ok;
-   Eina_Bool		res = EINA_FALSE;
+   Eet_File *ef = NULL;
+   int       a, compression, quality, lossy;
+   int       ok;
+   Eina_Bool res = EINA_FALSE;
 
    if (!key)
      {
 	*error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
 	return EINA_FALSE;
-     }
-
-   f = eina_file_open(file, EINA_FALSE);
-   if (!f)
-     {
-        *error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
-        return EINA_FALSE;
      }
 
    ef = eet_mmap(f);
@@ -50,26 +46,23 @@ evas_image_load_file_head_eet(Image_Entry *ie, const char *file, const char *key
 	goto on_error;
      }
    ok = eet_data_image_header_read(ef, key,
-				   &w, &h, &alpha, &compression, &quality, &lossy);
+				   &prop->w, &prop->h, &a, &compression, &quality, &lossy);
    if (!ok)
      {
 	*error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
 	goto on_error;
      }
-   if (IMG_TOO_BIG(w, h))
+   if (IMG_TOO_BIG(prop->w, prop->h))
      {
 	*error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
 	goto on_error;
      }
-   if (alpha) ie->flags.alpha = 1;
-   ie->w = w;
-   ie->h = h;
+   prop->alpha = !!a;
    res = EINA_TRUE;
    *error = EVAS_LOAD_ERROR_NONE;
 
  on_error:
    if (ef) eet_close(ef);
-   eina_file_close(f);
    return res;
 }
 

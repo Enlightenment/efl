@@ -11,7 +11,7 @@
 #include "evas_common.h"
 #include "evas_private.h"
 
-static Eina_Bool evas_image_load_file_head_ico(Image_Entry *ie, const char *file, const char *key, int *error) EINA_ARG_NONNULL(1, 2, 4);
+static Eina_Bool evas_image_load_file_head_ico(Eina_File *f, const char *key, Evas_Image_Property *prop, Evas_Image_Load_Opts *opts, Evas_Image_Animated *animated, int *error);
 static Eina_Bool evas_image_load_file_data_ico(Image_Entry *ie, const char *file, const char *key, int *error) EINA_ARG_NONNULL(1, 2, 4);
 
 static Evas_Image_Load_Func evas_image_load_ico_func =
@@ -80,14 +80,18 @@ enum
 };
 
 static Eina_Bool
-evas_image_load_file_head_ico(Image_Entry *ie, const char *file, const char *key, int *error)
+evas_image_load_file_head_ico(Eina_File *f, const char *key,
+			      Evas_Image_Property *prop,
+			      Evas_Image_Load_Opts *opts,
+			      Evas_Image_Animated *animated EINA_UNUSED,
+			      int *error)
 {
-   Eina_File *f;
    void *map = NULL;
    size_t position = 0;
    unsigned short word;
    unsigned char byte;
-   int wanted_w = 0, wanted_h = 0, w, h, cols, i, planes = 0,
+   unsigned wanted_w = 0, wanted_h = 0;
+   int cols, i, planes = 0,
       bpp = 0, pdelta, search = -1, have_choice = 0,
       hasa = 1;
    unsigned int bmoffset, bmsize, fsize;
@@ -100,13 +104,7 @@ evas_image_load_file_head_ico(Image_Entry *ie, const char *file, const char *key
       int hot_x, hot_y;
       unsigned int bmoffset, bmsize;
    } chosen = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-
-   f = eina_file_open(file, EINA_FALSE);
-   if (!f)
-     {
-	*error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
-	return EINA_FALSE;
-     }
+   Eina_Bool r = EINA_FALSE;
 
    *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
    fsize = eina_file_size_get(f);
@@ -125,10 +123,10 @@ evas_image_load_file_head_ico(Image_Entry *ie, const char *file, const char *key
    //   more ?
 
    search = BIGGEST;
-   if ((ie->load_opts.w > 0) && (ie->load_opts.h > 0))
+   if ((opts->w > 0) && (opts->h > 0))
      {
-        wanted_w = ie->load_opts.w;
-        wanted_h = ie->load_opts.h;
+        wanted_w = opts->w;
+        wanted_h = opts->h;
         search = SMALLER;
      }
 
@@ -171,11 +169,11 @@ evas_image_load_file_head_ico(Image_Entry *ie, const char *file, const char *key
      {
         unsigned char tw = 0, th = 0, tcols = 0;
         if (!read_uchar(map, fsize, &position, &tw)) goto close_file;
-        w = tw;
-        if (w <= 0) w = 256;
+        prop->w = tw;
+        if (prop->w <= 0) prop->w = 256;
         if (!read_uchar(map, fsize, &position, &th)) goto close_file;
-        h = th;
-        if (h <= 0) h = 256;
+        prop->h = th;
+        if (prop->h <= 0) prop->h = 256;
         if (!read_uchar(map, fsize, &position, &tcols)) goto close_file;
         cols = tcols;
         if (cols <= 0) cols = 256;
@@ -191,7 +189,7 @@ evas_image_load_file_head_ico(Image_Entry *ie, const char *file, const char *key
         if ((bmsize <= 0) || (bmoffset <= 0) || (bmoffset >= fsize)) goto close_file;
         if (search == BIGGEST)
           {
-             pdelta = w * h;
+             pdelta = prop->w * prop->h;
              if ((!have_choice) ||
                  ((pdelta >= chosen.pdelta) &&
                      (((bpp >= 3) && (bpp >= chosen.bpp)) ||
@@ -199,8 +197,8 @@ evas_image_load_file_head_ico(Image_Entry *ie, const char *file, const char *key
                {
                   have_choice = 1;
                   chosen.pdelta = pdelta;
-                  chosen.w = w;
-                  chosen.h = h;
+                  chosen.w = prop->w;
+                  chosen.h = prop->h;
                   chosen.cols = cols;
                   chosen.bpp = bpp;
                   chosen.planes = planes;
@@ -212,7 +210,7 @@ evas_image_load_file_head_ico(Image_Entry *ie, const char *file, const char *key
           {
              if (search == SMALLEST)
                {
-                  pdelta = w * h;
+                  pdelta = prop->w * prop->h;
                   if ((!have_choice) ||
                        ((pdelta <= chosen.pdelta) &&
                            (((bpp >= 3) && (bpp >= chosen.bpp)) ||
@@ -220,8 +218,8 @@ evas_image_load_file_head_ico(Image_Entry *ie, const char *file, const char *key
                     {
                        have_choice = 1;
                        chosen.pdelta = pdelta;
-                       chosen.w = w;
-                       chosen.h = h;
+                       chosen.w = prop->w;
+                       chosen.h = prop->h;
                        chosen.cols = cols;
                        chosen.bpp = bpp;
                        chosen.planes = planes;
@@ -231,9 +229,9 @@ evas_image_load_file_head_ico(Image_Entry *ie, const char *file, const char *key
                }
              else if (search == SMALLER)
                {
-                  pdelta = (wanted_w * wanted_h) - (w * h);
+                  pdelta = (wanted_w * wanted_h) - (prop->w * prop->h);
                   if ((!have_choice) ||
-                      ((w <= wanted_w) && (h <= wanted_h) &&
+                      ((prop->w <= wanted_w) && (prop->h <= wanted_h) &&
                           (pdelta <= chosen.pdelta) &&
                           (((bpp >= 3) && (bpp >= chosen.bpp)) ||
                               ((bpp < 3) && (cols >= chosen.cols)))))
@@ -241,8 +239,8 @@ evas_image_load_file_head_ico(Image_Entry *ie, const char *file, const char *key
                         have_choice = 1;
                         if (pdelta < 0) pdelta = 0x7fffffff;
                         chosen.pdelta = pdelta;
-                        chosen.w = w;
-                        chosen.h = h;
+                        chosen.w = prop->w;
+                        chosen.h = prop->h;
                         chosen.cols = cols;
                         chosen.bpp = bpp;
                         chosen.planes = planes;
@@ -252,9 +250,9 @@ evas_image_load_file_head_ico(Image_Entry *ie, const char *file, const char *key
                }
              else if (search == BIGGER)
                {
-                  pdelta = (w * h) - (wanted_w * wanted_h);
+                  pdelta = (prop->w * prop->h) - (wanted_w * wanted_h);
                   if ((!have_choice) ||
-                      ((w >= wanted_w) && (h >= wanted_h) &&
+                      ((prop->w >= wanted_w) && (prop->h >= wanted_h) &&
                           (pdelta <= chosen.pdelta) &&
                           (((bpp >= 3) && (bpp >= chosen.bpp)) ||
                               ((bpp < 3) && (cols >= chosen.cols)))))
@@ -262,8 +260,8 @@ evas_image_load_file_head_ico(Image_Entry *ie, const char *file, const char *key
                         have_choice = 1;
                         if (pdelta < 0) pdelta = 0x7fffffff;
                         chosen.pdelta = pdelta;
-                        chosen.w = w;
-                        chosen.h = h;
+                        chosen.w = prop->w;
+                        chosen.h = prop->h;
                         chosen.cols = cols;
                         chosen.bpp = bpp;
                         chosen.planes = planes;
@@ -276,33 +274,29 @@ evas_image_load_file_head_ico(Image_Entry *ie, const char *file, const char *key
    if (chosen.bmoffset == 0) goto close_file;
    position = chosen.bmoffset;
 
-   w = chosen.w;
-   h = chosen.h;
-   if ((w > 256) || (h > 256)) goto close_file;
-   if ((w < 1) || (h < 1) || (w > IMG_MAX_SIZE) || (h > IMG_MAX_SIZE) ||
-       IMG_TOO_BIG(w, h))
+   prop->w = chosen.w;
+   prop->h = chosen.h;
+   if ((prop->w > 256) || (prop->h > 256)) goto close_file;
+   if ((prop->w < 1) || (prop->h < 1) ||
+       (prop->w > IMG_MAX_SIZE) || (prop->h > IMG_MAX_SIZE) ||
+       IMG_TOO_BIG(prop->w, prop->h))
      {
-        if (IMG_TOO_BIG(w, h))
+        if (IMG_TOO_BIG(prop->w, prop->h))
            *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
         else
            *error = EVAS_LOAD_ERROR_GENERIC;
         goto close_file;
      }
 
-   ie->w = w;
-   ie->h = h;
-   if (hasa) ie->flags.alpha = 1;
-
-   eina_file_map_free(f, map);
-   eina_file_close(f);
+   if (hasa) prop->alpha = 1;
 
    *error = EVAS_LOAD_ERROR_NONE;
-   return EINA_TRUE;
+   r = EINA_TRUE;
 
  close_file:
    if (map) eina_file_map_free(f, map);
-   eina_file_close(f);
-   return EINA_FALSE;
+
+   return r;
 }
 
 static Eina_Bool

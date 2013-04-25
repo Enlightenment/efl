@@ -137,34 +137,83 @@ struct evas_image_foreach_loader_data
    Evas_Module *em;
 };
 
+static Eina_Bool
+_evas_image_file_header(Evas_Module *em, Image_Entry *ie, int *error)
+{
+   Evas_Image_Load_Func *evas_image_load_func = NULL;
+   Eina_Bool r = EINA_TRUE;
+   
+   if (!evas_module_load(em)) goto load_error;
+   evas_image_load_func = em->functions;
+   evas_module_use(em);
+   *error = EVAS_LOAD_ERROR_NONE;
+   if (evas_image_load_func)
+     {
+        Evas_Image_Property property;
+        Eina_File *f;
+
+        f = eina_file_open(ie->file, EINA_FALSE);
+        if (!f)
+          {
+             *error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
+             return EINA_TRUE;
+          }
+
+        memset(&property, 0, sizeof (Evas_Image_Property));
+        if (evas_image_load_func->file_head(f, ie->key, &property,
+                                            &ie->load_opts, &ie->animated,
+                                            error) &&
+            (*error == EVAS_LOAD_ERROR_NONE))
+          {
+             DBG("loaded file head using module '%s' (%p): %s",
+                 em->definition->name, em, ie->file);
+
+             ie->w = property.w;
+             ie->h = property.h;
+             ie->scale = property.scale;
+             ie->flags.alpha = property.alpha;
+	     if (ie->load_opts.orientation &&
+		 ie->load_opts.degree != 0)
+	       ie->flags.rotated = EINA_TRUE;
+             r = EINA_FALSE;
+          }
+        else
+          {
+             evas_module_unload(em);
+             INF("failed to load file head using module '%s' (%p): "
+                 "%s (%s)",
+                 em->definition->name, em, ie->file, evas_load_error_str(*error));
+          }
+        eina_file_close(f);
+     }
+   else
+     {
+     load_error:
+        evas_module_unload(em);
+        WRN("failed to load module '%s'.", em->definition->name);
+     }
+
+   return r;
+}
 
 static Eina_Bool
 _evas_image_foreach_loader(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, void *data, void *fdata)
 {
-   Evas_Image_Load_Func *evas_image_load_func = NULL;
-   Evas_Module *em = data;
    struct evas_image_foreach_loader_data *d = fdata;
+   Evas_Module *em = data;
    Image_Entry *ie = d->ie;
+   Eina_Bool r;
 
-   if (!evas_module_load(em)) return EINA_TRUE;
-   evas_image_load_func = em->functions;
-   evas_module_use(em);
-   *(d->error) = EVAS_LOAD_ERROR_NONE;
-   if (evas_image_load_func &&
-       evas_image_load_func->file_head(ie, ie->file, ie->key, d->error) &&
-       (*(d->error) == EVAS_LOAD_ERROR_NONE))
-     {
-	d->em = em;
-	return EINA_FALSE;
-     }
+   r = _evas_image_file_header(em, ie, d->error);
 
-   return EINA_TRUE;
+   if (!r)
+     d->em = em;
+   return r;
 }
 
 EAPI int
 evas_common_load_rgba_image_module_from_file(Image_Entry *ie)
 {
-   Evas_Image_Load_Func *evas_image_load_func = NULL;
    const char           *loader = NULL, *end;
    Evas_Module          *em;
    struct stat		 st;
@@ -212,24 +261,8 @@ evas_common_load_rgba_image_module_from_file(Image_Entry *ie)
 	if (em)
 	  {
 	     DBG("found image loader '%s' (%p)", loader, em);
-	     if (evas_module_load(em))
-	       {
-		  evas_module_use(em);
-		  evas_image_load_func = em->functions;
-		  ret = EVAS_LOAD_ERROR_NONE;
-		  if (evas_image_load_func->file_head(ie, ie->file, ie->key, &ret))
-		    {
-		       DBG("loaded file head using module '%s' (%p): %s",
-			   loader, em, ie->file);
-		       goto end;
-		    }
-		  evas_module_unload(em);
-		  INF("failed to load file head using module '%s' (%p): "
-		      "%s (%s)",
-		      loader, em, ie->file, evas_load_error_str(ret));
-	       }
-	     else
-	       WRN("failed to load module '%s' (%p)", loader, em);
+             if (!_evas_image_file_header(em, ie, &ret))
+               goto end;
 	  }
 	else
 	  INF("image loader '%s' is not enabled or missing!", loader);
@@ -241,7 +274,6 @@ evas_common_load_rgba_image_module_from_file(Image_Entry *ie)
    ret = EVAS_LOAD_ERROR_NONE;
    evas_module_foreach_image_loader(_evas_image_foreach_loader, &fdata);
    em = fdata.em;
-   evas_image_load_func = em ? em->functions : NULL;
    if (em) goto end;
 
    /* This is our last chance, try all known image loader. */
@@ -251,26 +283,8 @@ evas_common_load_rgba_image_module_from_file(Image_Entry *ie)
 	em = evas_module_find_type(EVAS_MODULE_TYPE_IMAGE_LOADER, loaders_name[i]);
 	if (em)
 	  {
-	     if (evas_module_load(em))
-	       {
-		  evas_module_use(em);
-		  evas_image_load_func = em->functions;
-		  ret = EVAS_LOAD_ERROR_NONE;
-		  if (evas_image_load_func->file_head(ie, ie->file, ie->key, &ret))
-		    {
-                       DBG("brute force loader '%s' (%p) worked on %s",
-			   loaders_name[i], em, ie->file);
-		       goto end;
-		    }
-		  else
-		    INF("brute force loader '%s' (%p) failed on %s (%s)",
-			loaders_name[i], em, ie->file,
-			evas_load_error_str(ret));
-
-		  evas_module_unload(em);
-	       }
-	     else
-	       INF("failed to load module '%s' (%p)", loaders_name[i], em);
+             if (!_evas_image_file_header(em, ie, &ret))
+               goto end;
 	  }
 	else
 	  DBG("could not find module '%s'", loaders_name[i]);
@@ -304,7 +318,7 @@ evas_common_load_rgba_image_module_from_file(Image_Entry *ie)
        ie->file);
 
    ie->info.module = (void*) em;
-   ie->info.loader = (void*) evas_image_load_func;
+   ie->info.loader = (void*) em ? em->functions : NULL;
    evas_module_ref((Evas_Module*) ie->info.module);
    return ret;
 }
@@ -315,7 +329,7 @@ evas_common_load_rgba_image_data_from_file(Image_Entry *ie)
    Evas_Image_Load_Func *evas_image_load_func = NULL;
    int ret = EVAS_LOAD_ERROR_NONE;
 
-   if ((ie->flags.loaded) && (!ie->flags.animated)) return EVAS_LOAD_ERROR_GENERIC;
+   if ((ie->flags.loaded) && (!ie->animated.animated)) return EVAS_LOAD_ERROR_GENERIC;
 
 #ifdef EVAS_CSERVE2
    if (ie->data1)

@@ -12,7 +12,7 @@
 #define FILE_BUFFER_SIZE 1024 * 32
 #define FILE_BUFFER_UNREAD_SIZE 16
 
-static Eina_Bool evas_image_load_file_head_pmaps(Image_Entry *ie, const char *file, const char *key, int *error) EINA_ARG_NONNULL(1, 2, 4);
+static Eina_Bool evas_image_load_file_head_pmaps(Eina_File *f, const char *key, Evas_Image_Property *prop, Evas_Image_Load_Opts *opts, Evas_Image_Animated *animated, int *error);
 static Eina_Bool evas_image_load_file_data_pmaps(Image_Entry *ie, const char *file, const char *key, int *error) EINA_ARG_NONNULL(1, 2, 4);
 
 Evas_Image_Load_Func evas_image_load_pmaps_func = {
@@ -52,7 +52,7 @@ struct Pmaps_Buffer
 };
 
 /* internal used functions */
-static Eina_Bool pmaps_buffer_open(Pmaps_Buffer *b, const char *filename, int *error);
+static Eina_Bool pmaps_buffer_open(Pmaps_Buffer *b, Eina_File *f, int *error);
 static void pmaps_buffer_close(Pmaps_Buffer *b);
 static Eina_Bool pmaps_buffer_header_parse(Pmaps_Buffer *b, int *error);
 static int pmaps_buffer_plain_int_get(Pmaps_Buffer *b, int *val);
@@ -67,11 +67,15 @@ static size_t pmaps_buffer_raw_update(Pmaps_Buffer *b);
 static int pmaps_buffer_comment_skip(Pmaps_Buffer *b);
 
 static Eina_Bool
-evas_image_load_file_head_pmaps(Image_Entry *ie, const char *file, const char *key EINA_UNUSED, int *error)
+evas_image_load_file_head_pmaps(Eina_File *f, const char *key EINA_UNUSED,
+                                Evas_Image_Property *prop,
+                                Evas_Image_Load_Opts *opts EINA_UNUSED,
+                                Evas_Image_Animated *animated EINA_UNUSED,
+                                int *error)
 {
    Pmaps_Buffer b;
 
-   if (!pmaps_buffer_open(&b, file, error))
+   if (!pmaps_buffer_open(&b, f, error))
      {
 	pmaps_buffer_close(&b);
 	return EINA_FALSE;
@@ -83,8 +87,8 @@ evas_image_load_file_head_pmaps(Image_Entry *ie, const char *file, const char *k
 	return EINA_FALSE;
      }
 
-   ie->w = b.w;
-   ie->h = b.h;
+   prop->w = b.w;
+   prop->h = b.h;
 
    pmaps_buffer_close(&b);
    *error = EVAS_LOAD_ERROR_NONE;
@@ -94,21 +98,24 @@ evas_image_load_file_head_pmaps(Image_Entry *ie, const char *file, const char *k
 static Eina_Bool
 evas_image_load_file_data_pmaps(Image_Entry *ie, const char *file, const char *key EINA_UNUSED, int *error)
 {
+   Eina_File *f;
    Pmaps_Buffer b;
    int pixels;
    DATA32 *ptr;
+   Eina_Bool r = EINA_FALSE;
 
-   if (!pmaps_buffer_open(&b, file, error))
+   f = eina_file_open(file, EINA_FALSE);
+   if (!f)
      {
-	pmaps_buffer_close(&b);
+	*error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
 	return EINA_FALSE;
      }
+
+   if (!pmaps_buffer_open(&b, f, error))
+     goto on_error;
 
    if (!pmaps_buffer_header_parse(&b, error))
-     {
-	pmaps_buffer_close(&b);
-	return EINA_FALSE;
-     }
+     goto on_error;
 
    pixels = b.w * b.h;
 
@@ -116,9 +123,8 @@ evas_image_load_file_data_pmaps(Image_Entry *ie, const char *file, const char *k
    ptr = evas_cache_image_pixels(ie);
    if (!ptr)
      {
-	pmaps_buffer_close(&b);
 	*error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
-	return EINA_FALSE;
+        goto on_error;
      }
 
    if (b.type[1] != '4')
@@ -151,25 +157,22 @@ evas_image_load_file_data_pmaps(Image_Entry *ie, const char *file, const char *k
 
    /* if there are some pix missing, give them a proper default */
    memset(ptr, 0xff, 4 * pixels);
-   pmaps_buffer_close(&b);
-
    *error = EVAS_LOAD_ERROR_NONE;
-   return EINA_TRUE;
+   r = EINA_TRUE;
+
+ on_error:
+   pmaps_buffer_close(&b);
+   eina_file_close(f);
+   return r;
 }
 
 /* internal used functions */
 static Eina_Bool
-pmaps_buffer_open(Pmaps_Buffer *b, const char *filename, int *error)
+pmaps_buffer_open(Pmaps_Buffer *b, Eina_File *f, int *error)
 {
    size_t len;
 
-   b->file = eina_file_open(filename, EINA_FALSE);
-   if (!b->file)
-     {
-	*error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
-	return EINA_FALSE;
-     }
-
+   b->file = f;
    b->map = eina_file_map_all(b->file, EINA_FILE_SEQUENTIAL);
    if (!b->map)
      {
@@ -215,7 +218,6 @@ pmaps_buffer_close(Pmaps_Buffer *b)
      {
         if (b->map) eina_file_map_free(b->file, b->map);
         b->map = NULL;
-        eina_file_close(b->file);
         b->file = NULL;
      }
 }

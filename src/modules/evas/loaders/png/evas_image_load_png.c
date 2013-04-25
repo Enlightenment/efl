@@ -15,7 +15,7 @@
 
 #define PNG_BYTES_TO_CHECK 4
 
-static Eina_Bool evas_image_load_file_head_png(Image_Entry *ie, const char *file, const char *key, int *error) EINA_ARG_NONNULL(1, 2, 4);
+static Eina_Bool evas_image_load_file_head_png(Eina_File *f, const char *key, Evas_Image_Property *prop, Evas_Image_Load_Opts *opts, Evas_Image_Animated *animated, int *error);
 static Eina_Bool evas_image_load_file_data_png(Image_Entry *ie, const char *file, const char *key, int *error) EINA_ARG_NONNULL(1, 2, 4);
 
 static Evas_Image_Load_Func evas_image_load_png_func =
@@ -49,9 +49,12 @@ _evas_image_png_read(png_structp png_ptr, png_bytep out, png_size_t count)
 }
 
 static Eina_Bool
-evas_image_load_file_head_png(Image_Entry *ie, const char *file, const char *key EINA_UNUSED, int *error)
+evas_image_load_file_head_png(Eina_File *f, const char *key EINA_UNUSED,
+			      Evas_Image_Property *prop,
+			      Evas_Image_Load_Opts *opts,
+			      Evas_Image_Animated *animated EINA_UNUSED,
+			      int *error)
 {
-   Eina_File *f;
    Evas_PNG_Info epi;
    png_structp png_ptr = NULL;
    png_infop info_ptr = NULL;
@@ -61,13 +64,6 @@ evas_image_load_file_head_png(Image_Entry *ie, const char *file, const char *key
    Eina_Bool r = EINA_FALSE;
 
    hasa = 0;
-   f = eina_file_open(file, EINA_FALSE);
-   if (!f)
-     {
-	*error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
-	return EINA_FALSE;
-     }
-
    epi.map = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
    if (!epi.map)
      {
@@ -124,11 +120,11 @@ evas_image_load_file_head_png(Image_Entry *ie, const char *file, const char *key
 	  *error = EVAS_LOAD_ERROR_GENERIC;
 	goto close_file;
      }
-   if (ie->load_opts.scale_down_by > 1)
+   if (opts->scale_down_by > 1)
      {
-        ie->w = (int) w32 / ie->load_opts.scale_down_by;
-        ie->h = (int) h32 / ie->load_opts.scale_down_by;
-        if ((ie->w < 1) || (ie->h < 1))
+        prop->w = (int) w32 / opts->scale_down_by;
+        prop->h = (int) h32 / opts->scale_down_by;
+        if ((prop->w < 1) || (prop->h < 1))
           {
              *error = EVAS_LOAD_ERROR_GENERIC;
              goto close_file;
@@ -136,13 +132,13 @@ evas_image_load_file_head_png(Image_Entry *ie, const char *file, const char *key
      }
    else
      {
-        ie->w = (int) w32;
-        ie->h = (int) h32;
+        prop->w = (int) w32;
+        prop->h = (int) h32;
      }
    if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS)) hasa = 1;
    if (color_type == PNG_COLOR_TYPE_RGB_ALPHA) hasa = 1;
    if (color_type == PNG_COLOR_TYPE_GRAY_ALPHA) hasa = 1;
-   if (hasa) ie->flags.alpha = 1;
+   if (hasa) prop->alpha = 1;
 
    *error = EVAS_LOAD_ERROR_NONE;
    r = EINA_TRUE;
@@ -152,7 +148,6 @@ evas_image_load_file_head_png(Image_Entry *ie, const char *file, const char *key
                                         info_ptr ? &info_ptr : NULL,
                                         NULL);
    if (epi.map) eina_file_map_free(f, epi. map);
-   eina_file_close(f);
 
    return r;
 }

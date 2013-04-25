@@ -13,7 +13,8 @@
 #include "evas_common.h"
 #include "evas_private.h"
 
-static Eina_Bool evas_image_load_file_head_bmp(Image_Entry *ie, const char *file, const char *key, int *error) EINA_ARG_NONNULL(1, 2, 4);
+static Eina_Bool
+evas_image_load_file_head_bmp(Eina_File *f, const char *key EINA_UNUSED, Evas_Image_Property *prop, Evas_Image_Load_Opts *load_opts, Evas_Image_Animated *animated, int *error);
 static Eina_Bool evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key, int *error) EINA_ARG_NONNULL(1, 2, 4);
 
 static Evas_Image_Load_Func evas_image_load_bmp_func =
@@ -101,24 +102,21 @@ read_mem(unsigned char *map, size_t length, size_t *position, void *buffer, int 
 }
 
 static Eina_Bool
-evas_image_load_file_head_bmp(Image_Entry *ie, const char *file, const char *key EINA_UNUSED, int *error)
+evas_image_load_file_head_bmp(Eina_File *f, const char *key EINA_UNUSED,
+                              Evas_Image_Property *prop,
+                              Evas_Image_Load_Opts *load_opts,
+                              Evas_Image_Animated *animated EINA_UNUSED,
+                              int *error)
 {
-   Eina_File *f;
    void *map = NULL;
    size_t position = 0;
    char hasa = 0;
-   int w = 0, h = 0, bit_count = 0, image_size = 0, comp = 0;
+   int width = 0, height = 0, bit_count = 0, image_size = 0, comp = 0;
    unsigned int offset, head_size, amask = 0;
    size_t fsize;
    unsigned int bmpsize;
    unsigned short res1, res2;
-
-   f = eina_file_open(file, 0);
-   if (!f)
-     {
-	*error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
-	return EINA_FALSE;
-     }
+   Eina_Bool r = EINA_FALSE;
 
    *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
    fsize = eina_file_size_get(f);
@@ -141,9 +139,9 @@ evas_image_load_file_head_bmp(Image_Entry *ie, const char *file, const char *key
         short tmp;
 
         if (!read_short(map, fsize, &position, &tmp)) goto close_file;
-        w = tmp; // width
+        width = tmp; // width
         if (!read_short(map, fsize, &position, &tmp)) goto close_file;
-        h = tmp; // height
+        height = tmp; // height
         if (!read_short(map, fsize, &position, &tmp)) goto close_file;
         //planes = tmp; // must be 1
         if (!read_short(map, fsize, &position, &tmp)) goto close_file;
@@ -155,9 +153,9 @@ evas_image_load_file_head_bmp(Image_Entry *ie, const char *file, const char *key
         int tmp2;
 
         if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        w = tmp2; // width
+        width = tmp2; // width
         if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        h = tmp2; // height
+        height = tmp2; // height
         if (!read_short(map, fsize, &position, &tmp)) goto close_file;
         //planes = tmp; // must be 1
         if (!read_short(map, fsize, &position, &tmp)) goto close_file;
@@ -183,9 +181,9 @@ evas_image_load_file_head_bmp(Image_Entry *ie, const char *file, const char *key
         int tmp2;
 
         if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        w = tmp2; // width
+        width = tmp2; // width
         if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        h = tmp2; // height
+        height = tmp2; // height
         if (!read_short(map, fsize, &position, &tmp)) goto close_file;
         //planes = tmp; // must be 1
         if (!read_short(map, fsize, &position, &tmp)) goto close_file;
@@ -211,9 +209,9 @@ evas_image_load_file_head_bmp(Image_Entry *ie, const char *file, const char *key
         int tmp2;
 
         if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        w = tmp2; // width
+        width = tmp2; // width
         if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        h = tmp2; // height
+        height = tmp2; // height
         if (!read_short(map, fsize, &position, &tmp)) goto close_file;
         //planes = tmp; // must be 1
         if (!read_short(map, fsize, &position, &tmp)) goto close_file;
@@ -249,9 +247,9 @@ evas_image_load_file_head_bmp(Image_Entry *ie, const char *file, const char *key
         int tmp2;
 
         if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        w = tmp2; // width
+        width = tmp2; // width
         if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        h = tmp2; // height
+        height = tmp2; // height
         if (!read_short(map, fsize, &position, &tmp)) goto close_file;
         //planes = tmp; // must be 1
         if (!read_short(map, fsize, &position, &tmp)) goto close_file;
@@ -285,16 +283,17 @@ evas_image_load_file_head_bmp(Image_Entry *ie, const char *file, const char *key
    else
      goto close_file;
 
-   if (h < 0)
+   if (height < 0)
      {
-        h = -h;
+        height = -height;
         //right_way_up = 1;
      }
 
-   if ((w < 1) || (h < 1) || (w > IMG_MAX_SIZE) || (h > IMG_MAX_SIZE) ||
-       IMG_TOO_BIG(w, h))
+   if ((width < 1) || (height < 1) ||
+       (width > IMG_MAX_SIZE) || (height > IMG_MAX_SIZE) ||
+       IMG_TOO_BIG(width, height))
      {
-        if (IMG_TOO_BIG(w, h))
+        if (IMG_TOO_BIG(width, height))
           *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
         else
           *error = EVAS_LOAD_ERROR_GENERIC;
@@ -302,10 +301,10 @@ evas_image_load_file_head_bmp(Image_Entry *ie, const char *file, const char *key
      }
    /* It is not bad idea that bmp loader support scale down decoding 
     * because of memory issue in mobile world.*/
-   if (ie->load_opts.scale_down_by > 1)
+   if (load_opts->scale_down_by > 1)
      {
-        w /= ie->load_opts.scale_down_by;
-        h /= ie->load_opts.scale_down_by;
+        width /= load_opts->scale_down_by;
+        height /= load_opts->scale_down_by;
      }
 
    if (bit_count < 16)
@@ -363,19 +362,16 @@ evas_image_load_file_head_bmp(Image_Entry *ie, const char *file, const char *key
    else
      goto close_file;
 
-   ie->w = w;
-   ie->h = h;
-   if (hasa) ie->flags.alpha = 1;
+   prop->w = width;
+   prop->h = height;
+   if (hasa) prop->alpha = 1;
 
-   eina_file_map_free(f, map);
-   eina_file_close(f);
    *error = EVAS_LOAD_ERROR_NONE;
-   return EINA_TRUE;
+   r = EINA_TRUE;
 
  close_file:
    if (map) eina_file_map_free(f, map);
-   eina_file_close(f);
-   return EINA_FALSE;
+   return r;
 }
 
 static Eina_Bool

@@ -56,8 +56,7 @@ struct _tga_footer
    char                null;
 } __attribute__((packed));
 
-
-static Eina_Bool evas_image_load_file_head_tga(Image_Entry *ie, const char *file, const char *key, int *error) EINA_ARG_NONNULL(1, 2, 4);
+static Eina_Bool evas_image_load_file_head_tga(Eina_File *f, const char *key, Evas_Image_Property *prop, Evas_Image_Load_Opts *opts, Evas_Image_Animated *animated, int *error);
 static Eina_Bool evas_image_load_file_data_tga(Image_Entry *ie, const char *file, const char *key, int *error) EINA_ARG_NONNULL(1, 2, 4);
 
 static Evas_Image_Load_Func evas_image_load_tga_func =
@@ -70,19 +69,19 @@ static Evas_Image_Load_Func evas_image_load_tga_func =
 };
 
 static Eina_Bool
-evas_image_load_file_head_tga(Image_Entry *ie, const char *file, const char *key EINA_UNUSED, int *error)
+evas_image_load_file_head_tga(Eina_File *f, const char *key EINA_UNUSED,
+			      Evas_Image_Property *prop,
+			      Evas_Image_Load_Opts *opts EINA_UNUSED,
+			      Evas_Image_Animated *animated EINA_UNUSED,
+			      int *error)
 {
-   Eina_File *f;
    unsigned char *seg = NULL, *filedata;
    tga_header *header;
    tga_footer *footer, tfooter;
    char hasa = 0;
-   int w = 0, h = 0, bpp;
+   int w, h, bpp;
    int x, y;
-
-   f = eina_file_open(file, EINA_FALSE);
-   *error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
-   if (f == NULL) return EINA_FALSE;
+   Eina_Bool r = EINA_FALSE;
 
    *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
    if (eina_file_size_get(f) < (off_t)(sizeof(tga_header) + sizeof(tga_footer)))
@@ -153,19 +152,16 @@ evas_image_load_file_head_tga(Image_Entry *ie, const char *file, const char *key
        IMG_TOO_BIG(w, h))
      goto close_file;
    
-   ie->w = w;
-   ie->h = h;
-   if (hasa) ie->flags.alpha = 1;
+   prop->w = w;
+   prop->h = h;
+   if (hasa) prop->alpha = 1;
 
-   eina_file_map_free(f, seg);
-   eina_file_close(f);
    *error = EVAS_LOAD_ERROR_NONE;
-   return EINA_TRUE;
+   r = EINA_TRUE;
 
 close_file:
    if (seg != NULL) eina_file_map_free(f, seg);
-   eina_file_close(f);
-   return EINA_FALSE;
+   return r;
 }
 
 static Eina_Bool

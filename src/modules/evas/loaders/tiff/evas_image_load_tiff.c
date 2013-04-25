@@ -26,7 +26,7 @@ static int _evas_loader_tiff_log_dom = -1;
 #endif
 #define INF(...) EINA_LOG_DOM_INFO(_evas_loader_tiff_log_dom, __VA_ARGS__)
 
-static Eina_Bool evas_image_load_file_head_tiff(Image_Entry *ie, const char *file, const char *key, int *error) EINA_ARG_NONNULL(1, 2, 4);
+static Eina_Bool evas_image_load_file_head_tiff(Eina_File *f, const char *key, Evas_Image_Property *prop, Evas_Image_Load_Opts *opts, Evas_Image_Animated *animated, int *error);
 static Eina_Bool evas_image_load_file_data_tiff(Image_Entry *ie, const char *file, const char *key, int *error) EINA_ARG_NONNULL(1, 2, 4);
 
 static Evas_Image_Load_Func evas_image_load_tiff_func =
@@ -98,22 +98,18 @@ _evas_tiff_UnmapProc(thandle_t handle, tdata_t data, toff_t size EINA_UNUSED)
 }
 
 static Eina_Bool
-evas_image_load_file_head_tiff(Image_Entry *ie, const char *file, const char *key EINA_UNUSED, int *error)
+evas_image_load_file_head_tiff(Eina_File *f, const char *key EINA_UNUSED,
+			       Evas_Image_Property *prop,
+			       Evas_Image_Load_Opts *opts EINA_UNUSED,
+			       Evas_Image_Animated *animated EINA_UNUSED,
+			       int *error)
 {
-   char                txt[1024];
-   TIFFRGBAImage       tiff_image;
-   TIFF               *tif = NULL;
-   Eina_File          *f;
-   unsigned char      *map;
-   uint16              magic_number;
-   Eina_Bool           r = EINA_FALSE;
-
-   f = eina_file_open(file, EINA_FALSE);
-   if (!f)
-     {
-	*error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
-	return EINA_FALSE;
-     }
+   char           txt[1024];
+   TIFFRGBAImage  tiff_image;
+   TIFF          *tif = NULL;
+   unsigned char *map;
+   uint16         magic_number;
+   Eina_Bool      r = EINA_FALSE;
 
    map = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
    if (!map || eina_file_size_get(f) < 3)
@@ -156,7 +152,7 @@ evas_image_load_file_head_tiff(Image_Entry *ie, const char *file, const char *ke
      }
 
    if (tiff_image.alpha != EXTRASAMPLE_UNSPECIFIED)
-     ie->flags.alpha = 1;
+     prop->alpha = 1;
    if ((tiff_image.width < 1) || (tiff_image.height < 1) ||
        (tiff_image.width > IMG_MAX_SIZE) || (tiff_image.height > IMG_MAX_SIZE) ||
        IMG_TOO_BIG(tiff_image.width, tiff_image.height))
@@ -167,8 +163,8 @@ evas_image_load_file_head_tiff(Image_Entry *ie, const char *file, const char *ke
 	  *error = EVAS_LOAD_ERROR_GENERIC;
         goto on_error_end;
      }
-   ie->w = tiff_image.width;
-   ie->h = tiff_image.height;
+   prop->w = tiff_image.width;
+   prop->h = tiff_image.height;
 
    *error = EVAS_LOAD_ERROR_NONE;
    r = EINA_TRUE;
@@ -178,7 +174,6 @@ evas_image_load_file_head_tiff(Image_Entry *ie, const char *file, const char *ke
  on_error:
    if (tif) TIFFClose(tif);
    if (map) eina_file_map_free(f, map);
-   eina_file_close(f);
    return r;
 }
 
