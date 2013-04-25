@@ -213,6 +213,11 @@ group { name: "elm/toolbar/base/default";
    }
 }
 
+/* this style is used for toolbar more layout background.
+ * how to test:
+ *   elementary_test -> toolbar 8 -> click 'open'
+ *   the whole expanded layout is elm/toolbar/more/default layout.
+ */
 group { name: "elm/toolbar/more/default";
    images {
       image: "toolbar_separator_h.png" COMP;
