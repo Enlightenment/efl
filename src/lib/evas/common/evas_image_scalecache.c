@@ -849,7 +849,7 @@ evas_common_rgba_image_scalecache_do_cbs(Image_Entry *ie, RGBA_Image *dst,
              didpop = 1;
           }
      }
-   if (sci->im && !ie->flags.animated)
+   if (sci->im && !ie->animated.animated)
      {
         if (!didpop)
           {

@@ -339,9 +339,9 @@ _image_opened_cb(void *data, const void *msg_received)
    ie->w = msg->image.w;
    ie->h = msg->image.h;
    ie->flags.alpha = msg->image.alpha;
-   ie->loop_hint = msg->image.loop_hint;
-   ie->loop_count = msg->image.loop_count;
-   ie->frame_count = msg->image.frame_count;
+   ie->animated.loop_hint = msg->image.loop_hint;
+   ie->animated.loop_count = msg->image.loop_count;
+   ie->animated.frame_count = msg->image.frame_count;
 }
 
 static void

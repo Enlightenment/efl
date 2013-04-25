@@ -352,6 +352,8 @@ typedef unsigned short			DATA16;
 typedef unsigned char                   DATA8;
 
 typedef struct _Image_Entry             Image_Entry;
+typedef struct _Image_Entry_Property    Image_Entry_Property;
+typedef struct _Image_Entry_Animated    Image_Entry_Animated;
 typedef struct _Image_Entry_Flags       Image_Entry_Flags;
 typedef struct _Image_Entry_Frame       Image_Entry_Frame;
 typedef struct _Image_Timestamp         Image_Timestamp;
@@ -514,24 +516,24 @@ struct _RGBA_Image_Loadopts
 
 struct _Image_Entry_Flags
 {
-   Eina_Bool loaded       : 1;
-   Eina_Bool in_progress  : 1;
-   Eina_Bool dirty        : 1;
-   Eina_Bool activ        : 1;
+   Eina_Bool loaded        : 1;
+   Eina_Bool in_progress   : 1;
+   Eina_Bool dirty         : 1;
+   Eina_Bool activ         : 1;
 
-   Eina_Bool need_data    : 1;
-   Eina_Bool lru_nodata   : 1;
-   Eina_Bool cached       : 1;
-   Eina_Bool alpha        : 1;
+   Eina_Bool need_data     : 1;
+   Eina_Bool lru_nodata    : 1;
+   Eina_Bool cached        : 1;
+   Eina_Bool alpha         : 1;
 
-   Eina_Bool lru          : 1;
-   Eina_Bool alpha_sparse : 1;
-   Eina_Bool preload_done : 1;
-   Eina_Bool delete_me    : 1;
+   Eina_Bool lru           : 1;
+   Eina_Bool alpha_sparse  : 1;
+   Eina_Bool preload_done  : 1;
+   Eina_Bool delete_me     : 1;
    
-   Eina_Bool pending      : 1;
-   Eina_Bool animated     : 1;
-   Eina_Bool rotated      : 1;
+   Eina_Bool pending       : 1;
+   Eina_Bool rotated       : 1;
+   Eina_Bool unload_cancel : 1;
 };
 
 struct _Image_Entry_Frame
@@ -540,6 +542,17 @@ struct _Image_Entry_Frame
    DATA32   *data;     /* frame decoding data */
    void     *info;     /* special image type info */
    Eina_Bool loaded       : 1;
+};
+
+struct _Image_Entry_Animated
+{
+   Eina_List *frames;
+   Evas_Image_Animated_Loop_Hint loop_hint;
+   int        frame_count;
+   int        loop_count;
+   int        cur_frame;
+
+   Eina_Bool  animated : 1;   
 };
 
 struct _Evas_Cache_Target
@@ -557,6 +570,16 @@ struct _Image_Timestamp
 #ifdef _STAT_VER_LINUX
    unsigned long int mtime_nsec;
 #endif
+};
+
+struct _Image_Entry_Property
+{
+   unsigned int  w;
+   unsigned int  h;
+   
+   unsigned char scale;
+
+   Eina_Bool     alpha;
 };
 
 struct _Image_Entry
@@ -584,12 +607,13 @@ struct _Image_Entry
    RGBA_Pipe           *pipe;
 #endif
 
-   unsigned char          scale;
-
    RGBA_Image_Loadopts    load_opts;
    int                    space;
+
    unsigned int           w;
    unsigned int           h;
+
+   unsigned char          scale;
 
    struct
      {
@@ -605,7 +629,6 @@ struct _Image_Entry
 
    LK(lock);
    LK(lock_cancel);
-   Eina_Bool unload_cancel : 1;
 
    Image_Entry_Flags      flags;
    Evas_Image_Scale_Hint  scale_hint;
@@ -619,11 +642,7 @@ struct _Image_Entry
    int                    load_error;
 
    /* for animation feature */
-   int                    frame_count;
-   Evas_Image_Animated_Loop_Hint loop_hint;
-   int                    loop_count;
-   int                    cur_frame;
-   Eina_List             *frames;
+   Image_Entry_Animated   animated;
 };
 
 struct _Engine_Image_Entry

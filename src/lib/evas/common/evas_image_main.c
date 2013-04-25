@@ -203,11 +203,11 @@ _evas_common_rgba_image_delete(Image_Entry *ie)
    // if (ie->data1) evas_cserve2_image_free(ie);
 #endif
 
-   if (ie->frames)
+   if (ie->animated.frames)
      {
         Eina_List *l;
         Image_Entry_Frame *frame;
-        EINA_LIST_FOREACH(ie->frames, l, frame)
+        EINA_LIST_FOREACH(ie->animated.frames, l, frame)
           {
            if (frame)
              {

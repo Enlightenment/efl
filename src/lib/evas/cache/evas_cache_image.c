@@ -321,9 +321,9 @@ _evas_cache_image_async_heavy(void *data)
    current->channel = pchannel;
    // check the unload cancel flag
    LKL(current->lock_cancel);
-   if (current->unload_cancel)
+   if (current->flags.unload_cancel)
      {
-        current->unload_cancel = EINA_FALSE;
+        current->flags.unload_cancel = EINA_FALSE;
         cache->func.surface_delete(current);
         current->flags.loaded = 0;
         current->flags.preload_done = 0;
@@ -963,7 +963,7 @@ evas_cache_image_load_data(Image_Entry *im)
    Eina_Bool preload = EINA_FALSE;
    int error = EVAS_LOAD_ERROR_NONE;
 
-   if ((im->flags.loaded) && (!im->flags.animated)) return error;
+   if ((im->flags.loaded) && (!im->animated.animated)) return error;
    if (im->preload)
      {
         preload = EINA_TRUE;
@@ -987,7 +987,7 @@ evas_cache_image_load_data(Image_Entry *im)
         LKU(wakeup);
      }
 
-   if ((im->flags.loaded) && (!im->flags.animated)) return error;
+   if ((im->flags.loaded) && (!im->animated.animated)) return error;
    
    LKL(im->lock);
    im->flags.in_progress = EINA_TRUE;
@@ -1015,7 +1015,7 @@ evas_cache_image_unload_data(Image_Entry *im)
    LKL(im->lock_cancel);
    if (LKT(im->lock) == EINA_FALSE) /* can't get image lock - busy async load */
      {
-        im->unload_cancel = EINA_TRUE;
+        im->flags.unload_cancel = EINA_TRUE;
         LKU(im->lock_cancel);
         return;
      }
