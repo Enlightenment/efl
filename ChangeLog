@@ -1,3 +1,7 @@
+2013-05-06  Cedric Bail
+
+        * Evas: Remove SVG loader from inside the merged tree.
+
 2013-05-06  ChunEon Park (Hermet)
 
         * Evas: update the map smart members really when it needs to render.

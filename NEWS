@@ -120,6 +120,7 @@ Deprecations:
 Removed:
     * directfb support: ecore_directfb and evas directfb engine.
     * Removed XRender, WinCE, Glew, Direct3d, X11-16 and X11-8 ecore_evas support.
+    * Removed svg from inside merged tree.
 
 Improvements:
     * Reduced number of enqueued font commands when rendering textgrid objects
