@@ -1,3 +1,7 @@
+2013-04-26  ChunEon Park (Hermet)
+
+        * Evas: Fix the proxy object to not be clipped by source clipper.
+
 2013-04-25  Tom Hacohen
 
         * Evas textblock: Fixed line size calculation when using multiple

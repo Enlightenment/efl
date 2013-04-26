@@ -969,17 +969,28 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
    RD("      { evas_render_mapped(%p, %p,   %p, %p,   %i, %i,   %i,   %i)\n", e, obj, context, surface, off_x, off_y, mapped, level);
    if (mapped)
      {
-        if ((!evas_object_is_visible(eo_obj, obj)) || (obj->clip.clipees) ||
-            (obj->cur->have_clipees))
+        if (obj->clip.clipees || obj->cur->have_clipees)
           {
-             RDI(level);
-             RD("      }\n");
-             return clean_them;
+             if (!proxy_render)
+               {
+                  if (!evas_object_is_visible(eo_obj, obj))
+                    {
+                       RDI(level);
+                       RD("      }\n");
+                       return clean_them;
+                    }
+               }
+             else
+               {
+                  RDI(level);
+                  RD("      }\n");
+                  return clean_them;
+               }
           }
      }
-   else if (!(((evas_object_is_active(eo_obj, obj) && (!obj->clip.clipees) &&
-                (_evas_render_can_render(eo_obj, obj))))
-             ))
+   else if (!(evas_object_is_active(eo_obj, obj) &&
+              (!obj->clip.clipees) &&
+              _evas_render_can_render(eo_obj, obj)))
      {
         RDI(level);
         RD("      }\n");
@@ -1263,7 +1274,8 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
                {
                   RDI(level);
 
-                  if (obj->cur->clipper)
+                  //FIXME: Consider to clip by the proxy clipper.
+                  if (!proxy_render && obj->cur->clipper)
                     {
                        RD("        clip: %i %i %ix%i [%i %i %ix%i]\n",
                           obj->cur->cache.clip.x + off_x,
@@ -1307,7 +1319,8 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
           }
         else
           {
-             if (obj->cur->clipper)
+             //FIXME: Consider to clip by the proxy clipper.
+             if (!proxy_render && obj->cur->clipper)
                {
                   int x, y, w, h;
 
