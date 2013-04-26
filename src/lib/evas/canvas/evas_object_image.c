@@ -3254,7 +3254,8 @@ _proxy_subrender(Evas *eo_e, Evas_Object *eo_source, Eina_Bool do_async)
         evas_render_mapped(e, eo_source, source, ctx, proxy_write->surface,
                            -source->cur->geometry.x,
                            -source->cur->geometry.y,
-                           1, 0, 0, e->output.w, e->output.h, EINA_TRUE
+                           1, 0, 0, e->output.w, e->output.h, EINA_TRUE,
+                           EINA_TRUE
 #ifdef REND_DBG
                            , 1
 #endif

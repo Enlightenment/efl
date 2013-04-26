@@ -950,7 +950,8 @@ Eina_Bool
 evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
                    Evas_Object_Protected_Data *obj, void *context,
                    void *surface, int off_x, int off_y, int mapped, int ecx,
-                   int ecy, int ecw, int ech, Eina_Bool proxy_render
+                   int ecy, int ecw, int ech, Eina_Bool proxy_render,
+                   Eina_Bool proxy_src_clip
 #ifdef REND_DBG
                    , int level
 #endif
@@ -971,7 +972,7 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
      {
         if (obj->clip.clipees || obj->cur->have_clipees)
           {
-             if (!proxy_render)
+             if (!proxy_render || proxy_src_clip)
                {
                   if (!evas_object_is_visible(eo_obj, obj))
                     {
@@ -1132,7 +1133,8 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
                                                            obj->map->surface,
                                                            off_x2, off_y2, 1,
                                                            ecx, ecy, ecw, ech,
-                                                           proxy_render
+                                                           proxy_render,
+                                                           proxy_src_clip
 #ifdef REND_DBG
                                                            , level + 1
 #endif
@@ -1263,7 +1265,8 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
                                                            obj2, ctx, surface,
                                                            off_x, off_y, 1,
                                                            ecx, ecy, ecw, ech,
-                                                           proxy_render
+                                                           proxy_render,
+                                                           proxy_src_clip
 #ifdef REND_DBG
                                                            , level + 1
 #endif
@@ -1275,7 +1278,7 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
                   RDI(level);
 
                   //FIXME: Consider to clip by the proxy clipper.
-                  if (!proxy_render && obj->cur->clipper)
+                  if ((!proxy_render || proxy_src_clip) && obj->cur->clipper)
                     {
                        RD("        clip: %i %i %ix%i [%i %i %ix%i]\n",
                           obj->cur->cache.clip.x + off_x,
@@ -1320,7 +1323,7 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
         else
           {
              //FIXME: Consider to clip by the proxy clipper.
-             if (!proxy_render && obj->cur->clipper)
+             if ((!proxy_render || proxy_src_clip) && obj->cur->clipper)
                {
                   int x, y, w, h;
 
@@ -1742,6 +1745,7 @@ evas_render_updates_internal(Evas *eo_e,
                                                              surface, off_x,
                                                              off_y, 0,
                                                              cx, cy, cw, ch,
+                                                             EINA_FALSE,
                                                              EINA_FALSE
 #ifdef REND_DBG
                                                              , 1
