@@ -375,7 +375,7 @@ eina_str_has_prefix(const char *str, const char *prefix)
    str_len = strlen(str);
    prefix_len = eina_strlen_bounded(prefix, str_len);
    if (prefix_len == (size_t)-1)
-      return EINA_FALSE;
+     return EINA_FALSE;
 
    return (strncmp(str, prefix, prefix_len) == 0);
 }
@@ -421,7 +421,7 @@ eina_str_join_len(char *dst,
    size_t off;
 
    if (size < 1)
-      return ret;
+     return ret;
 
    if (size <= a_len)
      {
@@ -449,7 +449,7 @@ eina_str_join_len(char *dst,
         return ret;
      }
 
-        memcpy(dst + off, b, b_len);
+   memcpy(dst + off, b, b_len);
    dst[off + b_len] = '\0';
    return ret;
 }
