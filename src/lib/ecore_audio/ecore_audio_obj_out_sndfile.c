@@ -26,7 +26,6 @@ struct _Ecore_Audio_Sndfile
   SNDFILE *handle;
   SF_INFO sfinfo;
   Ecore_Audio_Vio *vio;
-  Ecore_Idler *idler;
 };
 
 typedef struct _Ecore_Audio_Sndfile Ecore_Audio_Sndfile;
@@ -38,6 +37,7 @@ static Eina_Bool _write_cb(void *data)
 
   Ecore_Audio_Sndfile *obj = eo_data_get(eo_obj, ECORE_AUDIO_OBJ_OUT_SNDFILE_CLASS);
   Ecore_Audio_Output *out_obj = eo_data_get(eo_obj, ECORE_AUDIO_OBJ_OUT_CLASS);
+  Ecore_Audio_Object *ea_obj = eo_data_get(eo_obj, ECORE_AUDIO_OBJ_CLASS);
 
   ssize_t written, bread;
   float buf[1024];
@@ -49,8 +49,8 @@ static Eina_Bool _write_cb(void *data)
 
   if (bread == 0) {
       sf_write_sync(obj->handle);
-      out_obj->paused = EINA_TRUE;
-      obj->idler = NULL;
+      ea_obj->paused = EINA_TRUE;
+      out_obj->write_idler = NULL;
       return EINA_FALSE;
   }
   written = sf_write_float(obj->handle, buf, bread/4)*4;
@@ -97,7 +97,7 @@ static void _input_attach(Eo *eo_obj, void *_pd, va_list *list)
     return;
 
   if (out_obj->inputs) {
-    obj->idler = ecore_idler_add(_write_cb, eo_obj);
+    out_obj->write_idler = ecore_idler_add(_write_cb, eo_obj);
   }
 }
 
@@ -198,11 +198,12 @@ static void _constructor(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list EINA_U
 static void _destructor(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
 {
   Ecore_Audio_Sndfile *obj = _pd;
+  Ecore_Audio_Output *out_obj = eo_data_get(eo_obj, ECORE_AUDIO_OBJ_OUT_CLASS);
 
   if (obj->handle)
     sf_close(obj->handle);
-  if (obj->idler)
-    ecore_idler_del(obj->idler);
+  if (out_obj->write_idler)
+    ecore_idler_del(out_obj->write_idler);
 
   eo_do_super(eo_obj, MY_CLASS, eo_destructor());
 }

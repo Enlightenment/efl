@@ -117,9 +117,8 @@ struct _Ecore_Audio_Object
  */
 struct _Ecore_Audio_Output
 {
-   Eina_Bool           paused;
-
    Eina_List          *inputs; /**< The inputs that are connected to this output */
+   Ecore_Idler        *write_idler;
 };
 
 /**
