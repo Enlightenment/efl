@@ -183,6 +183,7 @@ dnl managed by evil
         have_dlopen="yes"
       else
         AC_CHECK_LIB(dl, dlopen, res=yes, res=no)
+        AC_CHECK_LIB(m, sincos)
         if test "x$res" = "xyes"; then
           AC_CHECK_LIB(dl, dladdr, AC_DEFINE(HAVE_DLADDR))
           dlopen_libs=-ldl
