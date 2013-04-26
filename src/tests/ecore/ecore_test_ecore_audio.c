@@ -618,6 +618,15 @@ START_TEST(ecore_test_ecore_audio_obj_in)
       fail_if(buf[i] != 0xaa);
   }
 
+  fail_if(!eo_do(in, ecore_audio_obj_paused_set(EINA_TRUE)));
+
+  fail_if(!eo_do(in, ecore_audio_obj_in_read(buf, 10, &read)));
+  fail_if(read != 10);
+
+  for (i=0; i<10; i++) {
+      fail_if(buf[i] != 0x00);
+  }
+
   eo_del(in);
 }
 END_TEST
