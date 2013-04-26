@@ -486,6 +486,66 @@ START_TEST(ecore_test_ecore_audio_obj_in_out)
 }
 END_TEST
 
+static int read_cb(void *data EINA_UNUSED, Eo *eo_obj EINA_UNUSED, void *buffer, int len)
+{
+  static int i = 0;
+  int j;
+  uint8_t *buf = buffer;
+
+  for (j=0;j<len; j++) {
+      buf[j] = i++ %256;
+  }
+  return len;
+}
+
+static int write_cb(void *data EINA_UNUSED, Eo *eo_obj EINA_UNUSED, const void *buffer, int len)
+{
+  static int i = 0;
+  int j;
+  const uint8_t *buf = buffer;
+
+  for (j=0;j<len; j++) {
+      if (buf[j] != i%256)
+        fail_if(buf[j] != i%256);
+      i++;
+  }
+
+  if (i > 100000)
+    ecore_main_loop_quit();
+
+  return len;
+}
+
+Ecore_Audio_Vio in_vio = {
+    .read = read_cb,
+};
+
+Ecore_Audio_Vio out_vio = {
+    .write = write_cb,
+};
+
+START_TEST(ecore_test_ecore_audio_obj_vio)
+{
+  Eo *in, *out;
+
+  in = eo_add(ECORE_AUDIO_OBJ_IN_CLASS, NULL);
+  fail_if(!in);
+
+  out = eo_add(ECORE_AUDIO_OBJ_OUT_CLASS, NULL);
+  fail_if(!out);
+
+  eo_do(in, ecore_audio_obj_vio_set(&in_vio, NULL, NULL));
+  eo_do(out, ecore_audio_obj_vio_set(&out_vio, NULL, NULL));
+
+  eo_do(out, ecore_audio_obj_out_input_attach(in, NULL));
+
+  ecore_main_loop_begin();
+
+  eo_del(out);
+  eo_del(in);
+}
+END_TEST
+
 START_TEST(ecore_test_ecore_audio_obj_in)
 {
   int i;
@@ -655,6 +715,7 @@ ecore_test_ecore_audio(TCase *tc)
 
    tcase_add_test(tc, ecore_test_ecore_audio_obj);
    tcase_add_test(tc, ecore_test_ecore_audio_obj_in);
+   tcase_add_test(tc, ecore_test_ecore_audio_obj_vio);
    tcase_add_test(tc, ecore_test_ecore_audio_obj_in_out);
    tcase_add_test(tc, ecore_test_ecore_audio_obj_tone);
 
