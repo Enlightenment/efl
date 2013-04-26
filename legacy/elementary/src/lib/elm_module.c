@@ -1,4 +1,9 @@
+#ifdef HAVE_CONFIG_H
+# include "elementary_config.h"
+#endif
+
 #include <Elementary.h>
+
 #include "elm_priv.h"
 
 /* what are moodules in elementary for? for modularising behavior and features
@@ -24,11 +29,6 @@
  * is an api slot for entry modules to modify behavior and hook to
  * creation/deletion of the entry as well as replace the longpress behavior.
  */
-
-#ifdef HAVE_CONFIG_H
-# include "elementary_config.h"
-#endif
-
 static Eina_Hash *modules = NULL;
 static Eina_Hash *modules_as = NULL;
 

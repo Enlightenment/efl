@@ -1,6 +1,12 @@
+#ifdef HAVE_CONFIG_H
+# include "elementary_config.h"
+#endif
+
 #include <fnmatch.h>
+
 #include <Elementary.h>
 #include <Elementary_Cursor.h>
+
 #include "elm_priv.h"
 #include "elm_widget_genlist.h"
 #include "elm_interface_scrollable.h"

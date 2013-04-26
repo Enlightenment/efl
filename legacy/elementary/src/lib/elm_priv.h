@@ -1,8 +1,5 @@
 #ifndef ELM_PRIV_H
 #define ELM_PRIV_H
-#ifdef HAVE_CONFIG_H
-#include "elementary_config.h"
-#endif
 #ifdef HAVE_ELEMENTARY_X
 #include <Ecore_X.h>
 #endif
