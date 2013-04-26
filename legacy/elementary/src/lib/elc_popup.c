@@ -50,7 +50,7 @@ _visuals_set(Evas_Object *obj)
    else
      elm_layout_signal_emit(obj, "elm,state,title_area,visible", "elm");
 
-   if (sd->button_count)
+   if (sd->action_area)
      elm_layout_signal_emit(obj, "elm,state,action_area,visible", "elm");
    else
      elm_layout_signal_emit(obj, "elm,state,action_area,hidden", "elm");
@@ -139,7 +139,7 @@ _scroller_size_calc(Evas_Object *obj)
    if (sd->title_text || sd->title_icon)
      edje_object_part_geometry_get(wd->resize_obj,
                                    "elm.bg.title", NULL, NULL, NULL, &h_title);
-   if (sd->button_count)
+   if (sd->action_area)
      {
         action_area_height = edje_object_data_get(
             elm_layout_edje_get(sd->action_area), "action_area_height");
@@ -307,7 +307,7 @@ _elm_popup_smart_theme(Eo *obj, void *_pd, va_list *list)
 
    elm_object_style_set(sd->notify, elm_widget_style_get(obj));
 
-   if (sd->button_count)
+   if (sd->action_area)
      {
         snprintf(buf, sizeof(buf), "buttons%u", sd->button_count);
         if (!elm_layout_theme_set(sd->action_area, "popup", buf,
@@ -553,7 +553,8 @@ _button_remove(Evas_Object *obj,
         _visuals_set(obj);
         edje_object_part_unswallow
           (obj, edje_object_part_swallow_get(obj, "elm.swallow.action_area"));
-        evas_object_hide(sd->action_area);
+        evas_object_del(sd->action_area);
+        sd->action_area = NULL;
         edje_object_message_signal_process(wd->resize_obj);
      }
    else
@@ -1102,8 +1103,23 @@ _action_button_set(Evas_Object *obj,
      }
 
    snprintf(buf, sizeof(buf), "buttons%u", sd->button_count);
-   if (!elm_layout_theme_set
-       (sd->action_area, "popup", buf, elm_widget_style_get(obj)))
+   if (!sd->action_area)
+     {
+        sd->action_area = elm_layout_add(obj);
+        evas_object_size_hint_weight_set
+          (sd->action_area, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        evas_object_size_hint_align_set
+          (sd->action_area, EVAS_HINT_FILL, EVAS_HINT_FILL);
+        evas_object_event_callback_add
+          (sd->action_area, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+           _size_hints_changed_cb, obj);
+
+        edje_object_part_swallow
+          (wd->resize_obj, "elm.swallow.action_area", sd->action_area);
+     }
+
+   if (!elm_layout_theme_set(sd->action_area, "popup", buf,
+                             elm_widget_style_get(obj)))
      CRITICAL("Failed to set layout!");
 
    adata = ELM_NEW(Action_Area_Data);
@@ -1120,9 +1136,6 @@ _action_button_set(Evas_Object *obj,
      (sd->action_area, buf, sd->buttons[idx]->btn);
    evas_object_show(sd->buttons[i]->btn);
 
-   edje_object_part_swallow
-     (wd->resize_obj, "elm.swallow.action_area",
-     sd->action_area);
    if (sd->button_count == 1) _visuals_set(obj);
 
    edje_object_message_signal_process(wd->resize_obj);
@@ -1195,7 +1208,7 @@ _action_button_get(const Evas_Object *obj,
    Evas_Object *button = NULL;
 
    ELM_POPUP_DATA_GET(obj, sd);
-   if (!sd->button_count) return NULL;
+   if (!sd->action_area) return NULL;
 
    if (sd->buttons[idx])
      button = sd->buttons[idx]->btn;
@@ -1344,7 +1357,7 @@ _elm_popup_smart_focus_next(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    if (sd->content) items = eina_list_append(items, sd->content_area);
 
    /* action area */
-   if (sd->button_count) items = eina_list_append(items, sd->action_area);
+   if (sd->action_area) items = eina_list_append(items, sd->action_area);
 
    elm_widget_focus_list_next_get
            (obj, items, eina_list_data_get, dir, next);
@@ -1391,7 +1404,7 @@ _elm_popup_smart_focus_direction(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    if (sd->content) items = eina_list_append(items, sd->content_area);
 
    /* action area */
-   if (sd->button_count) items = eina_list_append(items, sd->action_area);
+   if (sd->action_area) items = eina_list_append(items, sd->action_area);
 
    elm_widget_focus_list_direction_get
      (obj, base, items, eina_list_data_get, degree, direction, weight);
@@ -1501,17 +1514,6 @@ _elm_popup_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    if (!elm_layout_theme_set
        (priv->content_area, "popup", "content", elm_widget_style_get(obj)))
      CRITICAL("Failed to set layout!");
-   priv->action_area = elm_layout_add(obj);
-   if (!elm_layout_theme_set(priv->action_area, "popup", "buttons0",
-                             elm_widget_style_get(obj)))
-     CRITICAL("Failed to set layout!");
-   evas_object_size_hint_weight_set(priv->action_area, EVAS_HINT_EXPAND,
-                                    EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(priv->action_area, EVAS_HINT_FILL,
-                                   EVAS_HINT_FILL);
-   evas_object_event_callback_add
-     (priv->action_area, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-     _size_hints_changed_cb, obj);
    evas_object_event_callback_add
      (priv->content_area, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
      _size_hints_changed_cb, obj);
