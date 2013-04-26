@@ -190,9 +190,14 @@ static void _format_get(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
 
 static void _constructor(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
+  Ecore_Audio_Output *out_obj = eo_data_get(eo_obj, ECORE_AUDIO_OBJ_OUT_CLASS);
+
   eo_do_super(eo_obj, MY_CLASS, eo_constructor());
 
   eo_do(eo_obj, ecore_audio_obj_format_set(ECORE_AUDIO_FORMAT_OGG, NULL));
+
+  // FIXME: Use writer from output
+  out_obj->need_writer = EINA_FALSE;
 }
 
 static void _destructor(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)

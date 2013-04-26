@@ -230,8 +230,11 @@ static void _constructor(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list EINA_U
 {
   int argc;
   char **argv;
+  Ecore_Audio_Output *out_obj = eo_data_get(eo_obj, ECORE_AUDIO_OBJ_OUT_CLASS);
 
   eo_do_super(eo_obj, MY_CLASS, eo_constructor());
+
+  out_obj->need_writer = EINA_FALSE;
 
   if (!class_vars.context) {
     ecore_app_args_get(&argc, &argv);
