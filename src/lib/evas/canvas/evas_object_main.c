@@ -676,23 +676,13 @@ _position_set(Eo *eo_obj, void *_pd, va_list *list)
    Eina_Bool is, was = EINA_FALSE;
    Eina_Bool pass = EINA_FALSE, freeze = EINA_FALSE;
    Eina_Bool source_invisible = EINA_FALSE;
-   int nx, ny;
 
    if (obj->delete_me) return;
    if (!obj->layer) return;
-   
-   nx = x;
-   ny = y;
 
    evas = obj->layer->evas;
 
-   if ((!obj->is_frame) && (eo_obj != evas->framespace.clip))
-     {
-        nx += evas->framespace.x;
-        ny += evas->framespace.y;
-     }
-
-   if (evas_object_intercept_call_move(eo_obj, obj, nx, ny)) return;
+   if (evas_object_intercept_call_move(eo_obj, obj, x, y)) return;
 
    if (obj->doing.in_move > 0)
      {
@@ -700,7 +690,7 @@ _position_set(Eo *eo_obj, void *_pd, va_list *list)
         return;
      }
 
-   if ((obj->cur->geometry.x == nx) && (obj->cur->geometry.y == ny)) return;
+   if ((obj->cur->geometry.x == x) && (obj->cur->geometry.y == y)) return;
 
    if (!(obj->layer->evas->is_frozen))
      {
@@ -721,8 +711,8 @@ _position_set(Eo *eo_obj, void *_pd, va_list *list)
 
    EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
      {
-        state_write->geometry.x = nx;
-        state_write->geometry.y = ny;
+        state_write->geometry.x = x;
+        state_write->geometry.y = y;
      }
    EINA_COW_STATE_WRITE_END(obj, state_write, cur);
 
@@ -858,9 +848,6 @@ evas_object_geometry_get(const Evas_Object *eo_obj, Evas_Coord *x, Evas_Coord *y
 static void
 _position_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
 {
-   Evas_Public_Data *evas;
-   int nx = 0, ny = 0;
-
    const Evas_Object_Protected_Data *obj = _pd;
 
    Evas_Coord *x = va_arg(*list, Evas_Coord *);
@@ -872,19 +859,8 @@ _position_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
         return;
      }
 
-   nx = obj->cur->geometry.x;
-   ny = obj->cur->geometry.y;
-
-   evas = obj->layer->evas;
-
-   if ((!obj->is_frame) && (eo_obj != evas->framespace.clip))
-     {
-        nx -= evas->framespace.x;
-        ny -= evas->framespace.y;
-     }
-
-   if (x) *x = nx;
-   if (y) *y = ny;
+   if (x) *x = obj->cur->geometry.x;
+   if (y) *y = obj->cur->geometry.y;
 }
 
 static void
