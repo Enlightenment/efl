@@ -137,10 +137,6 @@ depname="$2"
 libdirname="m4_defn([DOWNOTHER])"
 libname="m4_defn([DOWNOTHER])"
 case "m4_defn([DOWNOTHER])" in
-   eldbus)
-      depname="eldbus"
-      libname="eldbus"
-      ;;
    ethumb_client)
       depname="ethumb_client"
       ;;
@@ -356,11 +352,6 @@ m4_pushdef([UP], m4_translit([$1], [-a-z], [_A-Z]))dnl
 
 libdirname="m4_defn([DOWN])"
 libname="m4_defn([DOWN])"
-case "m4_defn([DOWN])" in
-   eldbus)
-      libname="eldbus"
-      ;;
-esac
 
 m4_defn([UP])_LDFLAGS="${EFL_COV_LDFLAGS} ${EFL_LDFLAGS} ${m4_defn([UP])_LDFLAGS}"
 m4_defn([UP])_LIBS=" ${m4_defn([UP])_LDFLAGS} ${EFL_COV_LIBS} ${EFL_LIBS} ${m4_defn([UP])_LIBS} ${requirements_internal_libs_[]m4_defn([DOWN])} ${requirements_internal_deps_libs_[]m4_defn([DOWN])} ${requirements_public_libs_[]m4_defn([DOWN])} ${requirements_libs_[]m4_defn([DOWN])} ${requirements_libs_efl} "
