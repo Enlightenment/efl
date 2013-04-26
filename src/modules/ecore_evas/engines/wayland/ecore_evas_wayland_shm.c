@@ -524,12 +524,12 @@ _ecore_evas_wayland_shm_resize(Ecore_Evas *ee, int location)
      {
         int fw, fh;
         Evas_Engine_Info_Wayland_Shm *einfo;
-        wdata->win->resizing = EINA_TRUE;
 
+        wdata->win->resizing = EINA_TRUE;
         if ((ee->rotation == 90) || (ee->rotation == 270))
           evas_output_framespace_get(ee->evas, NULL, NULL, &fh, &fw);
         else
-          evas_output_framespace_get(ee->evas, NULL, NULL, &fh, &fw);
+          evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
 
         if ((einfo = (Evas_Engine_Info_Wayland_Shm *)evas_engine_info_get(ee->evas)))
         if ((ee->rotation == 90) || (ee->rotation == 270))
@@ -538,7 +538,6 @@ _ecore_evas_wayland_shm_resize(Ecore_Evas *ee, int location)
           ecore_wl_window_resize(wdata->win, ee->w + fw, ee->h + fh, location);
 
         einfo->info.edges = location;
-
      }
 }
 #endif
