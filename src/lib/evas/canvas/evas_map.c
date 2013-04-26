@@ -153,7 +153,6 @@ _evas_map_copy(Evas_Map *dst, const Evas_Map *src)
    dst->smooth = src->smooth;
    dst->alpha = src->alpha;
    dst->persp = src->persp;
-   dst->offset_applied = src->offset_applied;
    return EINA_TRUE;
 }
 
@@ -166,7 +165,6 @@ _evas_map_dup(const Evas_Map *orig)
    copy->smooth = orig->smooth;
    copy->alpha = orig->alpha;
    copy->persp = orig->persp;
-   copy->offset_applied = orig->offset_applied;
    return copy;
 }
 
@@ -537,31 +535,6 @@ evas_object_map_set(Evas_Object *eo_obj, const Evas_Map *map)
    eo_do(eo_obj, evas_obj_map_set(map));
 }
 
-static void
-_evas_map_coord_offset_update(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Map *m)
-{
-   Evas_Public_Data *evas;
-   Evas_Map_Point *p, *p_end;
-
-   if (m->offset_applied)
-     return;
-
-   evas = obj->layer->evas;
-
-   if (obj->is_frame || (eo_obj == evas->framespace.clip))
-     return;
-
-   p = m->points;
-   p_end = p + m->count;
-   for (; p < p_end; p++)
-     {
-        p->x += evas->framespace.x;
-        p->px += evas->framespace.x;
-        p->y += evas->framespace.y;
-        p->py += evas->framespace.y;
-     }
-}
-
 void
 _map_set(Eo *eo_obj, void *_pd, va_list *list)
 {
@@ -642,18 +615,12 @@ _map_set(Eo *eo_obj, void *_pd, va_list *list)
 
    // We do have the same exact count of point in this map, so just copy it
    if ((obj->map->cur.map) && (obj->map->cur.map->count == map->count))
-     {
-        _evas_map_copy(obj->map->cur.map, map);
-        _evas_map_coord_offset_update(eo_obj, obj, obj->map->cur.map);
-     }
+     _evas_map_copy(obj->map->cur.map, map);
    else
      {
-        Evas_Map *m;
         if (obj->map->cur.map) _evas_map_free(eo_obj, obj->map->cur.map);
-        m = _evas_map_dup(map);
-        _evas_map_coord_offset_update(eo_obj, obj, m);
         EINA_COW_WRITE_BEGIN(evas_object_map_cow, obj->map, Evas_Object_Map_Data, map_write)
-          map_write->cur.map = m;
+          map_write->cur.map = _evas_map_dup(map);
         EINA_COW_WRITE_END(evas_object_map_cow, obj->map, map_write);
         if (obj->map->cur.usemap)
            evas_object_mapped_clip_across_mark(eo_obj, obj);
@@ -892,7 +859,6 @@ evas_map_util_points_populate_from_object_full(Evas_Map *m, const Evas_Object *e
 EAPI void
 evas_map_util_points_populate_from_object(Evas_Map *m, const Evas_Object *eo_obj)
 {
-   Evas_Coord x, y, w, h;
    MAGIC_CHECK(m, Evas_Map, MAGIC_MAP);
    return;
    MAGIC_CHECK_END();
@@ -908,9 +874,8 @@ evas_map_util_points_populate_from_object(Evas_Map *m, const Evas_Object *eo_obj
         ERR("map has count=%d where 4 was expected.", m->count);
         return;
      }
-
-   evas_object_geometry_get(eo_obj, &x, &y, &w, &h);
-   _evas_map_util_points_populate(m, x, y, w, h, 0);
+   _evas_map_util_points_populate(m, obj->cur->geometry.x, obj->cur->geometry.y,
+                                  obj->cur->geometry.w, obj->cur->geometry.h, 0);
 }
 
 EAPI void

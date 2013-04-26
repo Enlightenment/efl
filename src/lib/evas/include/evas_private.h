@@ -501,7 +501,6 @@ struct _Evas_Map
    } persp;
    Eina_Bool             alpha : 1;
    Eina_Bool             smooth : 1;
-   Eina_Bool             offset_applied : 1; // whether the framespace offset was applied already or not.
    Evas_Map_Point        points[]; // actual points
 };
 
