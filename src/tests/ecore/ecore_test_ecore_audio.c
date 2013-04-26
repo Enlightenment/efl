@@ -307,7 +307,14 @@ static Eina_Bool _finished_cb(void *data EINA_UNUSED, Eo *obj EINA_UNUSED, const
 {
   ecore_main_loop_quit();
 
-  return EINA_FALSE;
+  return EINA_TRUE;
+}
+
+static Eina_Bool _looped_cb(void *data EINA_UNUSED, Eo *obj, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+  eo_do(obj, ecore_audio_obj_in_looped_set(EINA_FALSE));
+
+  return EINA_TRUE;
 }
 
 START_TEST(ecore_test_ecore_audio_obj_tone)
@@ -332,6 +339,8 @@ START_TEST(ecore_test_ecore_audio_obj_tone)
    eo_do(in, ecore_audio_obj_in_length_set(2.5));
    eo_do(in, ecore_audio_obj_in_length_get(&len));
    fail_if(len != 2.5);
+
+   eo_do(in, ecore_audio_obj_in_looped_set(EINA_TRUE));
 
    eo_do(in, ecore_audio_obj_in_remaining_get(&len));
    fail_if(len != 2.5);
@@ -375,6 +384,7 @@ START_TEST(ecore_test_ecore_audio_obj_tone)
    eo_do(out, ecore_audio_obj_out_input_attach(in, &ret));
    fail_if(!ret);
 
+   eo_do(in, eo_event_callback_add(ECORE_AUDIO_EV_IN_LOOPED, _looped_cb, NULL));
    eo_do(in, eo_event_callback_add(ECORE_AUDIO_EV_IN_STOPPED, _finished_cb, NULL));
 
    ecore_main_loop_begin();
