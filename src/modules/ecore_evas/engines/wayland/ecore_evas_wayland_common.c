@@ -769,7 +769,6 @@ _ecore_evas_wl_common_frame_border_size_set(Evas_Object *obj, int fx, int fy, in
         else if ((sd->border_size[i] > 0) && (!sd->border[i]))
           {
              sd->border[i] = evas_object_rectangle_add(e);
-             evas_object_is_frame_object_set(sd->border[i], EINA_TRUE);
              evas_object_color_set(sd->border[i], 249, 249, 249, 255);
              evas_object_show(sd->border[i]);
              evas_object_smart_member_add(sd->border[i], obj);

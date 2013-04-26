@@ -168,23 +168,27 @@ evas_object_is_active(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 {
    if (evas_object_is_visible(eo_obj, obj) || evas_object_was_visible(eo_obj, obj))
      {
+        Evas_Public_Data *e = obj->layer->evas;
+        int fx, fy;
+        fx = e->framespace.x;
+        fy = e->framespace.y;
         if (obj->is_smart)
           {
              int mapsmt = 0;
              if (obj->map->cur.map && obj->map->cur.usemap) mapsmt = 1;
              if (!mapsmt) return 1;
-             if (evas_object_is_in_output_rect(eo_obj, obj, 0, 0, obj->layer->evas->output.w,
-                                               obj->layer->evas->output.h) ||
-                 evas_object_was_in_output_rect(eo_obj, obj, 0, 0, obj->layer->evas->output.w,
-                                                obj->layer->evas->output.h))
+             if (evas_object_is_in_output_rect(eo_obj, obj, -fx, -fy,
+                                               e->output.w, e->output.h) ||
+                 evas_object_was_in_output_rect(eo_obj, obj, -fx, -fy,
+                                                e->output.w, e->output.h))
                return 1;
           }
         else
           {
-             if (evas_object_is_in_output_rect(eo_obj, obj, 0, 0, obj->layer->evas->output.w,
-                                               obj->layer->evas->output.h) ||
-                 evas_object_was_in_output_rect(eo_obj, obj, 0, 0, obj->layer->evas->output.w,
-                                                obj->layer->evas->output.h))
+             if (evas_object_is_in_output_rect(eo_obj, obj, -fx, -fy,
+                                               e->output.w, e->output.h) ||
+                 evas_object_was_in_output_rect(eo_obj, obj, -fx, -fy,
+                                                e->output.w, e->output.h))
                return 1;
           }
      }

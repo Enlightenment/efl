@@ -4311,7 +4311,9 @@ evas_object_image_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *ob
                                 obj->cur->clipper->cur->cache.clip.h);
           }
         e->engine.func->output_redraws_rect_del(e->engine.data.output,
-                                                x, y, w, h);
+                                                x + e->framespace.x,
+                                                y + e->framespace.y,
+                                                w, h);
      }
    done:
    evas_object_render_pre_effect_updates(&e->clip_changes, eo_obj, is_v, was_v);

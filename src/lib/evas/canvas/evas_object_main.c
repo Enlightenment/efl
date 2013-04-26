@@ -408,6 +408,8 @@ evas_object_render_pre_effect_updates(Eina_Array *rects, Evas_Object *eo_obj, in
    /* FIXME: was_v isn't used... why? */
    if (!obj->clip.clipees)
      {
+        Evas_Public_Data *e;
+        e = obj->layer->evas;
         EINA_ARRAY_ITER_NEXT(rects, i, r, it)
           {
              /* get updates and clip to current clip */
@@ -421,8 +423,10 @@ evas_object_render_pre_effect_updates(Eina_Array *rects, Evas_Object *eo_obj, in
                                 obj->cur->cache.clip.w,
                                 obj->cur->cache.clip.h);
              if ((w > 0) && (h > 0))
-               obj->layer->evas->engine.func->output_redraws_rect_add(obj->layer->evas->engine.data.output,
-                                                                      x, y, w, h);
+               obj->layer->evas->engine.func->output_redraws_rect_add(e->engine.data.output,
+                                                                      x + e->framespace.x,
+                                                                      y + e->framespace.y,
+                                                                      w, h);
              /* get updates and clip to previous clip */
              x = r->x;
              y = r->y;
@@ -434,8 +438,10 @@ evas_object_render_pre_effect_updates(Eina_Array *rects, Evas_Object *eo_obj, in
                                 obj->prev->cache.clip.w,
                                 obj->prev->cache.clip.h);
              if ((w > 0) && (h > 0))
-               obj->layer->evas->engine.func->output_redraws_rect_add(obj->layer->evas->engine.data.output,
-                                                                      x, y, w, h);
+               obj->layer->evas->engine.func->output_redraws_rect_add(e->engine.data.output,
+                                                                      x + e->framespace.x,
+                                                                      y + e->framespace.y,
+                                                                      w, h);
           }
         /* if the object is actually visible, take any parent clip changes */
         if (is_v)
@@ -455,8 +461,10 @@ evas_object_render_pre_effect_updates(Eina_Array *rects, Evas_Object *eo_obj, in
                                           obj->cur->cache.clip.w,
                                           obj->cur->cache.clip.h);
                        if ((w > 0) && (h > 0))
-                         obj->layer->evas->engine.func->output_redraws_rect_add(obj->layer->evas->engine.data.output,
-                                                                                x, y, w, h);
+                         obj->layer->evas->engine.func->output_redraws_rect_add(e->engine.data.output,
+                                                                                x + e->framespace.x,
+                                                                                y + e->framespace.y,
+                                                                                w, h);
                        /* get updates and clip to previous clip */
                        x = r->x; y = r->y; w = r->w; h = r->h;
                        RECTS_CLIP_TO_RECT(x, y, w, h,
@@ -465,8 +473,10 @@ evas_object_render_pre_effect_updates(Eina_Array *rects, Evas_Object *eo_obj, in
                                           obj->prev->cache.clip.w,
                                           obj->prev->cache.clip.h);
                        if ((w > 0) && (h > 0))
-                         obj->layer->evas->engine.func->output_redraws_rect_add(obj->layer->evas->engine.data.output,
-                                                                                x, y, w, h);
+                         obj->layer->evas->engine.func->output_redraws_rect_add(e->engine.data.output,
+                                                                                x + e->framespace.x,
+                                                                                y + e->framespace.y,
+                                                                                w, h);
                     }
                   clipper = clipper->cur->clipper;
                }
@@ -672,15 +682,12 @@ _position_set(Eo *eo_obj, void *_pd, va_list *list)
    Evas_Coord x = va_arg(*list, Evas_Coord);
    Evas_Coord y = va_arg(*list, Evas_Coord);
 
-   Evas_Public_Data *evas;
    Eina_Bool is, was = EINA_FALSE;
    Eina_Bool pass = EINA_FALSE, freeze = EINA_FALSE;
    Eina_Bool source_invisible = EINA_FALSE;
 
    if (obj->delete_me) return;
    if (!obj->layer) return;
-
-   evas = obj->layer->evas;
 
    if (evas_object_intercept_call_move(eo_obj, obj, x, y)) return;
 

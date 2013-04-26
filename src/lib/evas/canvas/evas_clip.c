@@ -192,6 +192,7 @@ _clip_set(Eo *eo_obj, void *_pd, va_list *list)
    Evas_Object_Protected_Data *clip;
    Evas_Object *eo_clip = va_arg(*list, Evas_Object *);
    Evas_Object_Protected_Data *obj = _pd;
+   Evas_Public_Data *e;
 
    if (!eo_clip)
      {
@@ -256,10 +257,11 @@ _clip_set(Eo *eo_obj, void *_pd, va_list *list)
                }
              EINA_COW_STATE_WRITE_END(obj->cur->clipper, state_write, cur);
 
+             e = obj->cur->clipper->layer->evas;
              if (obj->cur->clipper->cur->visible)
-               evas_damage_rectangle_add(obj->cur->clipper->layer->evas->evas,
-                                         obj->cur->clipper->cur->geometry.x,
-                                         obj->cur->clipper->cur->geometry.y,
+               evas_damage_rectangle_add(e->evas,
+                                         obj->cur->clipper->cur->geometry.x + e->framespace.x,
+                                         obj->cur->clipper->cur->geometry.y + e->framespace.y,
                                          obj->cur->clipper->cur->geometry.w,
                                          obj->cur->clipper->cur->geometry.h);
           }
@@ -277,9 +279,11 @@ _clip_set(Eo *eo_obj, void *_pd, va_list *list)
      {
         /* Basically it just went invisible */
         clip->changed = 1;
-        clip->layer->evas->changed = 1;
-        evas_damage_rectangle_add(clip->layer->evas->evas,
-                                  clip->cur->geometry.x, clip->cur->geometry.y,
+        e = clip->layer->evas;
+        e->changed = 1;
+        evas_damage_rectangle_add(e->evas,
+                                  clip->cur->geometry.x + e->framespace.x,
+                                  clip->cur->geometry.y + e->framespace.y,
                                   clip->cur->geometry.w, clip->cur->geometry.h);
      }
    EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
@@ -387,11 +391,14 @@ _clip_unset(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
              EINA_COW_STATE_WRITE_END(obj->cur->clipper, state_write, cur);
 
              if (obj->cur->clipper->cur->visible)
-                evas_damage_rectangle_add(obj->cur->clipper->layer->evas->evas,
-                                         obj->cur->clipper->cur->geometry.x,
-                                         obj->cur->clipper->cur->geometry.y,
-                                         obj->cur->clipper->cur->geometry.w,
-                                         obj->cur->clipper->cur->geometry.h);
+               {
+                  Evas_Public_Data *e = obj->cur->clipper->layer->evas;
+                  evas_damage_rectangle_add(e->evas,
+                                            obj->cur->clipper->cur->geometry.x + e->framespace.x,
+                                            obj->cur->clipper->cur->geometry.y + e->framespace.y,
+                                            obj->cur->clipper->cur->geometry.w,
+                                            obj->cur->clipper->cur->geometry.h);
+               }
           }
 	evas_object_change(obj->cur->clipper->object, obj->cur->clipper);
      }

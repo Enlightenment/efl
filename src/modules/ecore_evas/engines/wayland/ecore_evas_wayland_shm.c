@@ -214,8 +214,7 @@ ecore_evas_wayland_shm_new_internal(const char *disp_name, unsigned int parent, 
      {
         wdata->frame = _ecore_evas_wl_common_frame_add(ee->evas);
         _ecore_evas_wl_common_frame_border_size_set(wdata->frame, fx, fy, fw, fh);
-        evas_object_is_frame_object_set(wdata->frame, EINA_TRUE);
-        evas_object_move(wdata->frame, 0, 0);
+        evas_object_move(wdata->frame, -fx, -fy);
         evas_object_layer_set(wdata->frame, EVAS_LAYER_MAX - 1);
      }
 

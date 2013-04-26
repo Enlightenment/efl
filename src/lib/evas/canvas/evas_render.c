@@ -220,13 +220,13 @@ static void
 _evas_render_prev_cur_clip_cache_add(Evas_Public_Data *e, Evas_Object_Protected_Data *obj)
 {
    e->engine.func->output_redraws_rect_add(e->engine.data.output,
-                                           obj->prev->cache.clip.x,
-                                           obj->prev->cache.clip.y,
+                                           obj->prev->cache.clip.x + e->framespace.x,
+                                           obj->prev->cache.clip.y + e->framespace.y,
                                            obj->prev->cache.clip.w,
                                            obj->prev->cache.clip.h);
    e->engine.func->output_redraws_rect_add(e->engine.data.output,
-                                           obj->cur->cache.clip.x,
-                                           obj->cur->cache.clip.y,
+                                           obj->cur->cache.clip.x + e->framespace.x,
+                                           obj->cur->cache.clip.y + e->framespace.y,
                                            obj->cur->cache.clip.w,
                                            obj->cur->cache.clip.h);
 }
@@ -249,7 +249,8 @@ _evas_render_cur_clip_cache_del(Evas_Public_Data *e, Evas_Object_Protected_Data 
                            obj->cur->clipper->cur->cache.clip.h);
      }
    e->engine.func->output_redraws_rect_del(e->engine.data.output,
-                                           x, y, w, h);
+                                           x + e->framespace.x,
+                                           y + e->framespace.y, w, h);
 }
 
 static void
@@ -1629,6 +1630,8 @@ evas_render_updates_internal(Evas *eo_e,
    if (do_draw)
      {
         unsigned int offset = 0;
+        int fx = e->framespace.x;
+        int fy = e->framespace.y;
 
         while ((surface =
                 e->engine.func->output_redraws_next_update_get
@@ -1672,13 +1675,13 @@ evas_render_updates_internal(Evas *eo_e,
                   obj = (Evas_Object_Protected_Data *)eina_array_data_get
                      (&e->obscuring_objects, i);
                   eo_obj = obj->object;
-                  if (evas_object_is_in_output_rect(eo_obj, obj, ux, uy, uw, uh))
+                  if (evas_object_is_in_output_rect(eo_obj, obj, ux - fx, uy - fy, uw, uh))
                     {
                        eina_array_push(&e->temporary_objects, obj);
 
                        /* reset the background of the area if needed (using cutout and engine alpha flag to help) */
                        if (alpha)
-                         _evas_render_cutout_add(e, obj, off_x, off_y);
+                         _evas_render_cutout_add(e, obj, off_x + fx, off_y + fy);
                     }
                }
              if (alpha)
@@ -1709,7 +1712,7 @@ evas_render_updates_internal(Evas *eo_e,
 
                   /* if it's in our outpout rect and it doesn't clip anything */
                   RD("    OBJ: [%p] '%s' %i %i %ix%i\n", obj, obj->type, obj->cur->geometry.x, obj->cur->geometry.y, obj->cur->geometry.w, obj->cur->geometry.h);
-                  if ((evas_object_is_in_output_rect(eo_obj, obj, ux, uy, uw, uh) ||
+                  if ((evas_object_is_in_output_rect(eo_obj, obj, ux - fx, uy - fy, uw, uh) ||
                        (obj->is_smart)) &&
                       (!obj->clip.clipees) &&
                       (obj->cur->visible) &&
@@ -1730,8 +1733,8 @@ evas_render_updates_internal(Evas *eo_e,
                             if (!obj->is_smart)
                               {
                                  RECTS_CLIP_TO_RECT(x, y, w, h,
-                                                    obj->cur->cache.clip.x + off_x,
-                                                    obj->cur->cache.clip.y + off_y,
+                                                    obj->cur->cache.clip.x + off_x + fx,
+                                                    obj->cur->cache.clip.y + off_y + fy,
                                                     obj->cur->cache.clip.w,
                                                     obj->cur->cache.clip.h);
                               }
@@ -1746,12 +1749,12 @@ evas_render_updates_internal(Evas *eo_e,
 
                                  obj2 = (Evas_Object_Protected_Data *)eina_array_data_get
                                    (&e->temporary_objects, j);
-                                 _evas_render_cutout_add(e, obj2, off_x, off_y);
+                                 _evas_render_cutout_add(e, obj2, off_x + fx, off_y + fy);
                               }
 #endif
                             clean_them |= evas_render_mapped(e, eo_obj, obj, e->engine.data.context,
-                                                             surface, off_x,
-                                                             off_y, 0,
+                                                             surface, off_x + fx,
+                                                             off_y + fy, 0,
                                                              cx, cy, cw, ch,
                                                              NULL
 #ifdef REND_DBG
