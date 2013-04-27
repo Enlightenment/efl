@@ -107,7 +107,7 @@ _eo_id_mem_alloc(size_t size)
         return NULL;
      }
    hdr = ptr;
-   hdr->size = size;
+   hdr->size = newsize;
    hdr->magic = MEM_MAGIC;
    return (void *)(((unsigned char *)ptr) + MEM_HEADER_SIZE);
 #else
