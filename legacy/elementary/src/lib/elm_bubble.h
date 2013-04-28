@@ -59,101 +59,13 @@
  * @{
  */
 
-#define ELM_OBJ_BUBBLE_CLASS elm_obj_bubble_class_get()
-
-const Eo_Class *elm_obj_bubble_class_get(void) EINA_CONST;
-
-extern EAPI Eo_Op ELM_OBJ_BUBBLE_BASE_ID;
-
-enum
-{
-   ELM_OBJ_BUBBLE_SUB_ID_POS_SET,
-   ELM_OBJ_BUBBLE_SUB_ID_POS_GET,
-   ELM_OBJ_BUBBLE_SUB_ID_LAST
-};
-
-#define ELM_OBJ_BUBBLE_ID(sub_id) (ELM_OBJ_BUBBLE_BASE_ID + sub_id)
-
-
-/**
- * @def elm_obj_bubble_pos_set
- * @since 1.8
- *
- * Set the corner of the bubble
- *
- * @param[in] pos
- *
- * @see elm_bubble_pos_set
- */
-#define elm_obj_bubble_pos_set(pos) ELM_OBJ_BUBBLE_ID(ELM_OBJ_BUBBLE_SUB_ID_POS_SET), EO_TYPECHECK(Elm_Bubble_Pos, pos)
-
-/**
- * @def elm_obj_bubble_pos_get
- * @since 1.8
- *
- * Get the corner of the bubble
- *
- * @param[out] ret
- *
- * @see elm_bubble_pos_get
- */
-#define elm_obj_bubble_pos_get(ret) ELM_OBJ_BUBBLE_ID(ELM_OBJ_BUBBLE_SUB_ID_POS_GET), EO_TYPECHECK(Elm_Bubble_Pos *, ret)
-
-
-/**
- * Defines the corner values for a bubble.
- *
- * The corner will be used to determine where the arrow of the
- * bubble points to.
- */
-typedef enum
-{
-  ELM_BUBBLE_POS_INVALID = -1, /**< invalid corner */
-  ELM_BUBBLE_POS_TOP_LEFT, /**< the arrow of the bubble points to the top left corner. */
-  ELM_BUBBLE_POS_TOP_RIGHT, /**< the arrow of the bubble points to the top right corner. */
-  ELM_BUBBLE_POS_BOTTOM_LEFT, /**< the arrow of the bubble points to the bottom left corner. */
-  ELM_BUBBLE_POS_BOTTOM_RIGHT, /**< the arrow of the bubble points to the bottom right corner. */
-} Elm_Bubble_Pos;
-
-/**
- * Add a new bubble to the parent
- *
- * @param parent The parent object
- * @return The new object or NULL if it cannot be created
- *
- * This function adds a text bubble to the given parent evas object.
- *
- * @ingroup Bubble
- */
-EAPI Evas_Object                 *elm_bubble_add(Evas_Object *parent);
-
-/**
- * Set the corner of the bubble
- *
- * @param obj The bubble object.
- * @param pos The given corner for the bubble.
- *
- * This function sets the corner of the bubble. The corner will be used to
- * determine where the arrow in the frame points to and where label, icon and
- * info are shown.
- *
- *
- * @ingroup Bubble
- */
-EAPI void  elm_bubble_pos_set(Evas_Object *obj, Elm_Bubble_Pos pos);
-
-/**
- * Get the corner of the bubble
- *
- * @param obj The bubble object.
- * @return The given corner for the bubble.
- *
- * This function gets the selected corner of the bubble.
- *
- * @ingroup Bubble
- */
-EAPI Elm_Bubble_Pos elm_bubble_pos_get(const Evas_Object *obj);
-
+#include "elm_bubble_common.h"
+#ifdef EFL_EO_API_SUPPORT
+#include "elm_bubble_eo.h"
+#endif
+#ifndef EFL_NOLEGACY_API_SUPPORT
+#include "elm_bubble_legacy.h"
+#endif
 /**
  * @}
  */
