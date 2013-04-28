@@ -1,0 +1,8 @@
+typedef enum
+{
+   ELM_ACTIONSLIDER_NONE = 0,
+   ELM_ACTIONSLIDER_LEFT = 1 << 0,
+   ELM_ACTIONSLIDER_CENTER = 1 << 1,
+   ELM_ACTIONSLIDER_RIGHT = 1 << 2,
+   ELM_ACTIONSLIDER_ALL = (1 << 3) - 1
+} Elm_Actionslider_Pos;
