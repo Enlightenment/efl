@@ -56,110 +56,12 @@
  * @{
  */
 
-#define ELM_OBJ_CHECK_CLASS elm_obj_check_class_get()
-
-const Eo_Class *elm_obj_check_class_get(void) EINA_CONST;
-
-extern EAPI Eo_Op ELM_OBJ_CHECK_BASE_ID;
-
-enum
-{
-      ELM_OBJ_CHECK_SUB_ID_STATE_SET,
-      ELM_OBJ_CHECK_SUB_ID_STATE_GET,
-      ELM_OBJ_CHECK_SUB_ID_STATE_POINTER_SET,
-      ELM_OBJ_CHECK_SUB_ID_LAST
-};
-
-#define ELM_OBJ_CHECK_ID(sub_id) (ELM_OBJ_CHECK_BASE_ID + sub_id)
-
-
-/**
- * @def elm_obj_check_state_set
- * @since 1.8
- *
- * @brief Set the on/off state of the check object
- *
- * @param[in] state
- *
- * @see elm_check_state_set
- */
-#define elm_obj_check_state_set(state) ELM_OBJ_CHECK_ID(ELM_OBJ_CHECK_SUB_ID_STATE_SET), EO_TYPECHECK(Eina_Bool, state)
-
-/**
- * @def elm_obj_check_state_get
- * @since 1.8
- *
- * @brief Get the state of the check object
- *
- * @param[out] ret
- *
- * @see elm_check_state_get
- */
-#define elm_obj_check_state_get(ret) ELM_OBJ_CHECK_ID(ELM_OBJ_CHECK_SUB_ID_STATE_GET), EO_TYPECHECK(Eina_Bool *, ret)
-
-/**
- * @def elm_obj_check_state_pointer_set
- * @since 1.8
- *
- * @brief Set a convenience pointer to a boolean to change
- *
- * @param[in] statep
- *
- * @see elm_check_state_pointer_set
- */
-#define elm_obj_check_state_pointer_set(statep) ELM_OBJ_CHECK_ID(ELM_OBJ_CHECK_SUB_ID_STATE_POINTER_SET), EO_TYPECHECK(Eina_Bool *, statep)
-
-/**
- * @brief Add a new Check object
- *
- * @param parent The parent object
- * @return The new object or NULL if it cannot be created
- *
- * @ingroup Check
- */
-EAPI Evas_Object *                elm_check_add(Evas_Object *parent);
-
-/**
- * @brief Set the on/off state of the check object
- *
- * @param obj The check object
- * @param state The state to use (1 == on, 0 == off)
- *
- * This sets the state of the check. If set with elm_check_state_pointer_set()
- * the state of that variable is also changed. Calling this @b doesn't cause
- * the "changed" signal to be emitted.
- *
- * @ingroup Check
- */
-EAPI void                         elm_check_state_set(Evas_Object *obj, Eina_Bool state);
-
-/**
- * @brief Get the state of the check object
- *
- * @param obj The check object
- * @return The boolean state
- *
- * @ingroup Check
- */
-EAPI Eina_Bool                    elm_check_state_get(const Evas_Object *obj);
-
-/**
- * @brief Set a convenience pointer to a boolean to change
- *
- * @param obj The check object
- * @param statep Pointer to the boolean to modify
- *
- * This sets a pointer to a boolean, that, in addition to the check objects
- * state will also be modified directly. To stop setting the object pointed
- * to simply use NULL as the @p statep parameter. If @p statep is not NULL,
- * then when this is called, the check objects state will also be modified to
- * reflect the value of the boolean @p statep points to, just like calling
- * elm_check_state_set().
- *
- * @ingroup Check
- */
-EAPI void                         elm_check_state_pointer_set(Evas_Object *obj, Eina_Bool *statep);
-
+#ifdef EFL_EO_API_SUPPORT
+#include "elm_check_eo.h"
+#endif
+#ifndef EFL_NOLEGACY_API_SUPPORT
+#include "elm_check_legacy.h"
+#endif
 /**
  * @}
  */
