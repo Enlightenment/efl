@@ -221,7 +221,13 @@ elm_frame_legacy.h \
 elm_gen.h \
 elm_general.h \
 elm_gengrid.h \
+elm_gengrid_common.h \
+elm_gengrid_eo.h \
+elm_gengrid_legacy.h \
 elm_genlist.h \
+elm_genlist_common.h \
+elm_genlist_eo.h \
+elm_genlist_legacy.h \
 elm_gesture_layer.h \
 elm_gesture_layer_common.h \
 elm_gesture_layer_eo.h \
@@ -232,6 +238,8 @@ elm_glview_common.h \
 elm_glview_eo.h \
 elm_glview_legacy.h \
 elm_grid.h \
+elm_grid_eo.h \
+elm_grid_legacy.h \
 elm_hover.h \
 elm_hover_common.h \
 elm_hover_eo.h \
@@ -241,7 +249,13 @@ elm_icon_common.h \
 elm_icon_eo.h \
 elm_icon_legacy.h \
 elm_image.h \
+elm_image_common.h \
+elm_image_eo.h \
+elm_image_legacy.h \
 elm_index.h \
+elm_index_common.h \
+elm_index_eo.h \
+elm_index_legacy.h \
 elm_intro.h \
 elm_inwin.h \
 elm_inwin_eo.h \
