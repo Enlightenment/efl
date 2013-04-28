@@ -7,7 +7,7 @@ noinst_LTLIBRARIES =
 installed_evasmainheadersdir = $(includedir)/evas-@VMAJ@
 dist_installed_evasmainheaders_DATA = \
 lib/evas/Evas.h \
-lib/evas/Evas_Common.h \
+lib/evas/Evas_Common_Header.h \
 lib/evas/Evas_Eo.h \
 lib/evas/Evas_Legacy.h \
 lib/evas/Evas_GL.h
