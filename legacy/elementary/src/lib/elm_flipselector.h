@@ -54,6 +54,7 @@
  * @{
  */
 
+#include "elm_flipselector_common.h"
 #ifdef EFL_EO_API_SUPPORT
 #include "elm_flipselector_eo.h"
 #endif

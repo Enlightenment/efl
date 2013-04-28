@@ -154,6 +154,21 @@ EAPI void                   elm_photocam_image_region_get(const Evas_Object *obj
 EAPI void                   elm_photocam_image_region_show(Evas_Object *obj, int x, int y, int w, int h);
 
 /**
+ * @brief Bring in the viewed portion of the image
+ *
+ * @param obj The photocam object
+ * @param x X-coordinate of region in image original pixels
+ * @param y Y-coordinate of region in image original pixels
+ * @param w Width of region in image original pixels
+ * @param h Height of region in image original pixels
+ *
+ * This shows the region of the image using animation.
+ *
+ * @ingroup Photocam
+ */
+EAPI void                   elm_photocam_image_region_bring_in(Evas_Object *obj, int x, int y, int w, int h);
+
+/**
  * @brief Set the paused state for photocam
  *
  * @param obj The photocam object
