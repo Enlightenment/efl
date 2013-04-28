@@ -63,6 +63,8 @@
 #endif
 
 /* EFL headers */
+#include "Efl_Config.h"
+
 #include <Eina.h>
 #include <Eet.h>
 #include <Evas.h>
