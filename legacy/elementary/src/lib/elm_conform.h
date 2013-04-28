@@ -45,35 +45,17 @@
  * @ref conformant_example
  */
 
-#define ELM_OBJ_CONFORMANT_CLASS elm_obj_conformant_class_get()
-
-const Eo_Class *elm_obj_conformant_class_get(void) EINA_CONST;
-
-extern EAPI Eo_Op ELM_OBJ_CONFORMANT_BASE_ID;
-
-enum
-{
-   ELM_OBJ_CONFORMANT_SUB_ID_LAST
-};
-
 /**
  * @addtogroup Conformant
  * @{
  */
 
-/**
- * Add a new conformant widget to the given parent Elementary
- * (container) object.
- *
- * @param parent The parent object.
- * @return A new conformant widget handle or @c NULL, on errors.
- *
- * This function inserts a new conformant widget on the canvas.
- *
- * @ingroup Conformant
- */
-EAPI Evas_Object                 *elm_conformant_add(Evas_Object *parent);
-
+#ifdef EFL_EO_API_SUPPORT
+#include "elm_conform_eo.h"
+#endif
+#ifndef EFL_NOLEGACY_API_SUPPORT
+#include "elm_conform_legacy.h"
+#endif
 /**
  * @}
  */
