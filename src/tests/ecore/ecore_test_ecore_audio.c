@@ -2,6 +2,8 @@
 #include <config.h>
 #endif
 
+#include <math.h>
+
 #include <Ecore_Audio.h>
 #include <Ecore_File.h>
 
@@ -316,6 +318,50 @@ static Eina_Bool _looped_cb(void *data EINA_UNUSED, Eo *obj, const Eo_Event_Desc
 
   return EINA_TRUE;
 }
+
+#ifdef HAVE_PULSE
+static Eina_Bool
+_seek_vol(void *data)
+{
+   double len;
+   Eo *in = data;
+
+   eo_do(in, ecore_audio_obj_volume_set(0.4));
+   eo_do(in, ecore_audio_obj_in_seek(-0.3, SEEK_END, &len));
+   fail_if(len < 0);
+
+   return EINA_FALSE;
+}
+
+START_TEST(ecore_test_ecore_audio_obj_pulse)
+{
+   Eo *in, *out;
+   Eina_Bool ret;
+
+   in = eo_add(ECORE_AUDIO_OBJ_IN_SNDFILE_CLASS, NULL);
+   fail_if(!in);
+
+   eo_do(in, ecore_audio_obj_name_set("modem.wav"));
+   eo_do(in, ecore_audio_obj_source_set(TESTS_SRC_DIR"/modem.wav", &ret));
+   fail_if(!ret);
+
+   out = eo_add(ECORE_AUDIO_OBJ_OUT_PULSE_CLASS, NULL);
+   fail_if(!out);
+
+   ecore_timer_add(0.3, _seek_vol, in);
+
+   eo_do(in, eo_event_callback_add(ECORE_AUDIO_EV_IN_STOPPED, _finished_cb, NULL));
+
+   eo_do(out, ecore_audio_obj_out_input_attach(in, &ret));
+   fail_if(!ret);
+
+   ecore_main_loop_begin();
+
+   eo_del(out);
+   eo_del(in);
+}
+END_TEST
+#endif
 
 START_TEST(ecore_test_ecore_audio_obj_tone)
 {
@@ -747,7 +793,7 @@ ecore_test_ecore_audio(TCase *tc)
 #ifdef HAVE_SNDFILE
    tcase_add_test(tc, ecore_test_ecore_audio_obj_sndfile);
 #endif
-#ifdef HAVE_PUSE
+#ifdef HAVE_PULSE
    tcase_add_test(tc, ecore_test_ecore_audio_obj_pulse);
 #endif
 
