@@ -546,6 +546,13 @@ START_TEST(ecore_test_ecore_audio_obj_vio)
 }
 END_TEST
 
+static void _myfree(void *data)
+{
+  Eina_Bool *freed = data;
+
+  *freed = EINA_TRUE;
+}
+
 START_TEST(ecore_test_ecore_audio_obj_in)
 {
   int i;
@@ -556,9 +563,18 @@ START_TEST(ecore_test_ecore_audio_obj_in)
   ssize_t read;
   uint8_t buf[10];
 
+  Ecore_Audio_Vio vio;
+  Eina_Bool freed = EINA_FALSE;
+
   Eo *in = eo_add(ECORE_AUDIO_OBJ_IN_CLASS, NULL);
 
   fail_if(!in);
+
+  fail_if(!eo_do(in, ecore_audio_obj_vio_set(&vio, &freed, _myfree)));
+  fail_if(freed);
+
+  fail_if(!eo_do(in, ecore_audio_obj_vio_set(NULL, NULL, NULL)));
+  fail_if(!freed);
 
   fail_if(!eo_do(in, ecore_audio_obj_in_speed_get(&speed)));
   fail_if(speed != 1.0);
