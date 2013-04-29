@@ -1566,15 +1566,15 @@ _item_transition_start
 (Elm_Toolbar_Item *it, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
 {
    Evas_Coord tx, ty;
-   Evas_Object *obj = WIDGET(it);
+   Evas_Object *obj = WIDGET(it), *img = NULL;
    ELM_TOOLBAR_DATA_GET(obj, sd);
 
    it->proxy = elm_image_add(obj);
+   img = elm_image_object_get(it->proxy);
    elm_image_aspect_fixed_set(it->proxy, EINA_FALSE);
-   evas_object_image_source_set(elm_image_object_get(it->proxy), VIEW(it));
-   evas_object_image_source_visible_set(elm_image_object_get(it->proxy), EINA_FALSE);
-   evas_object_image_source_clip_set(elm_image_object_get(it->proxy),
-                                     EINA_FALSE);
+   evas_object_image_source_set(img, VIEW(it));
+   evas_object_image_source_visible_set(img, EINA_FALSE);
+   evas_object_image_source_clip_set(img, EINA_FALSE);
 
    it->trans = elm_transit_add();
    elm_transit_object_add(it->trans, it->proxy);
@@ -1741,7 +1741,7 @@ _mouse_up_reorder(Elm_Toolbar_Item *it,
 static void
 _item_reorder_start(Elm_Toolbar_Item *item)
 {
-   Evas_Object *obj = WIDGET(item);
+   Evas_Object *obj = WIDGET(item), *img = NULL;
    Evas_Coord x, y, w, h;
 
    ELM_TOOLBAR_DATA_GET(obj, sd);
@@ -1749,11 +1749,11 @@ _item_reorder_start(Elm_Toolbar_Item *item)
    sd->reorder_empty = sd->reorder_item = item;
 
    item->proxy = elm_image_add(obj);
+   img = elm_image_object_get(item->proxy);
    elm_image_aspect_fixed_set(item->proxy, EINA_FALSE);
-   evas_object_image_source_set(elm_image_object_get(item->proxy), VIEW(item));
-   evas_object_image_source_visible_set(elm_image_object_get(item->proxy), EINA_FALSE);
-   evas_object_image_source_clip_set(elm_image_object_get(item->proxy),
-                                     EINA_FALSE);
+   evas_object_image_source_set(img, VIEW(item));
+   evas_object_image_source_visible_set(img, EINA_FALSE);
+   evas_object_image_source_clip_set(img, EINA_FALSE);
 
    evas_object_layer_set(item->proxy, 100);
    edje_object_signal_emit(VIEW(item), "elm,state,moving", "elm");
