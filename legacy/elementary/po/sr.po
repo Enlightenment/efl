@@ -1,0 +1,233 @@
+#
+# Саша Петровић <salepetronije@gmail.com>, 2012.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: а\n"
+"Report-Msgid-Bugs-To: $MSGID_BUGS_ADDRESS\n"
+"POT-Creation-Date: 2013-04-24 11:50+0200\n"
+"PO-Revision-Date: 2013-04-11 16:30+0000\n"
+"Last-Translator: Саша Петровић <salepetronije@gmail.com>\n"
+"Language-Team: српски <xfce-i18n@xfce.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Launchpad-Export-Date: 2013-04-25 05:27+0000\n"
+"X-Generator: Launchpad (build 16580)\n"
+"Language: \n"
+
+#: src/lib/elc_fileselector.c:774
+msgid "Up"
+msgstr "Горе"
+
+#: src/lib/elc_fileselector.c:789
+msgid "Home"
+msgstr "Лична фасцикла"
+
+#: src/lib/elc_fileselector.c:1016 src/lib/elm_entry.c:1285
+#: src/lib/elm_entry.c:1310
+msgid "Cancel"
+msgstr "Откажи"
+
+#: src/lib/elc_fileselector.c:1025
+msgid "OK"
+msgstr "У реду"
+
+#: src/lib/elm_bubble.c:211
+msgid "Bubble"
+msgstr "Мехур"
+
+#: src/lib/elm_button.c:56
+msgid "Clicked"
+msgstr "Кликнуто"
+
+#: src/lib/elm_button.c:284 src/lib/elm_check.c:213 src/lib/elm_gengrid.c:701
+#: src/lib/elm_genlist.c:1421 src/lib/elm_list.c:1389 src/lib/elm_radio.c:257
+#: src/lib/elm_spinner.c:521 src/lib/elm_toolbar.c:1931
+msgid "State: Disabled"
+msgstr "Стање: онемогућено"
+
+#: src/lib/elm_button.c:311
+msgid "Button"
+msgstr "Дугме"
+
+#: src/lib/elm_calendar.c:135
+msgid "%B %Y"
+msgstr "%B %Y"
+
+#: src/lib/elm_calendar.c:144
+msgid "%B"
+msgstr "%B"
+
+#: src/lib/elm_calendar.c:153
+msgid "%Y"
+msgstr "%Y"
+
+#: src/lib/elm_calendar.c:267
+msgid "calendar item"
+msgstr "ставка календара"
+
+#: src/lib/elm_calendar.c:293
+msgid "calendar decrement month button"
+msgstr "дугме померања месеца календара  уназад"
+
+#: src/lib/elm_calendar.c:298
+msgid "calendar decrement year button"
+msgstr "дугме померања година календара уназад"
+
+#: src/lib/elm_calendar.c:303
+msgid "calendar increment month button"
+msgstr "дугме померања месеца календара унапред"
+
+#: src/lib/elm_calendar.c:308
+msgid "calendar increment year button"
+msgstr "дугме померања година календара унапред"
+
+#: src/lib/elm_calendar.c:313
+msgid "calendar month"
+msgstr "месечни календар"
+
+#: src/lib/elm_calendar.c:318
+msgid "calendar year"
+msgstr "година календара"
+
+#: src/lib/elm_check.c:45 src/lib/elm_check.c:226 src/lib/elm_radio.c:84
+#: src/lib/elm_radio.c:258
+msgid "State: On"
+msgstr "Стање : укључен"
+
+#: src/lib/elm_check.c:51 src/lib/elm_check.c:238 src/lib/elm_radio.c:260
+msgid "State: Off"
+msgstr "Стање: искључен"
+
+#: src/lib/elm_check.c:222 src/lib/elm_check.c:235
+msgid "State"
+msgstr "Стање"
+
+#: src/lib/elm_check.c:303
+msgid "Check"
+msgstr "Провера"
+
+#: src/lib/elm_clock.c:295
+msgid "clock increment button for am,pm"
+msgstr "дугме за увећање часовника са am,pm"
+
+#: src/lib/elm_clock.c:303
+msgid "clock decrement button for am,pm"
+msgstr "дугме за смањивање часовника са am,pm"
+
+#: src/lib/elm_clock.c:664
+msgid "State: Editable"
+msgstr "Стање: уредиво"
+
+#: src/lib/elm_clock.c:699
+msgid "Clock"
+msgstr "Сат"
+
+#: src/lib/elm_colorselector.c:1350
+msgid "color selector palette item"
+msgstr "ставка избирача палете боја"
+
+#: src/lib/elm_config.c:2286
+msgid "default:LTR"
+msgstr "задато:слева на десно"
+
+#: src/lib/elm_diskselector.c:665
+msgid "diskselector item"
+msgstr "ставка одабира диска"
+
+#: src/lib/elm_entry.c:1278
+msgid "Copy"
+msgstr "Умножи"
+
+#: src/lib/elm_entry.c:1282
+msgid "Cut"
+msgstr "Исеци"
+
+#: src/lib/elm_entry.c:1297
+msgid "Select"
+msgstr "Изаберите"
+
+#: src/lib/elm_entry.c:1304
+msgid "Paste"
+msgstr "Прилепи"
+
+#: src/lib/elm_entry.c:2951
+msgid "Entry"
+msgstr "Улаз"
+
+#: src/lib/elm_gengrid.c:731
+msgid "Gengrid Item"
+msgstr "Ставка родне мреже"
+
+#: src/lib/elm_index.c:99
+msgid "Index"
+msgstr "Садржина"
+
+#: src/lib/elm_index.c:126
+msgid "Index Item"
+msgstr "Ставка садржине"
+
+#: src/lib/elm_label.c:402
+msgid "Label"
+msgstr "Натпис"
+
+#: src/lib/elm_panel.c:42
+msgid "state: opened"
+msgstr "стање: отворено"
+
+#: src/lib/elm_panel.c:43
+msgid "state: closed"
+msgstr "стање: затворено"
+
+#: src/lib/elm_panel.c:106
+msgid "panel button"
+msgstr "дугме плоче"
+
+#: src/lib/elm_progressbar.c:267
+msgid "progressbar"
+msgstr "трака напретка"
+
+#: src/lib/elm_radio.c:288
+msgid "Radio"
+msgstr "Радио"
+
+#: src/lib/elm_slider.c:821
+msgid "slider"
+msgstr "клизач"
+
+#: src/lib/elm_spinner.c:610
+msgid "spinner increment button"
+msgstr "стрелица избирача увећaња"
+
+#: src/lib/elm_spinner.c:619
+msgid "spinner decrement button"
+msgstr "стрелица избирача смањења"
+
+#: src/lib/elm_spinner.c:627
+msgid "spinner"
+msgstr "избирач са стрелицама"
+
+#: src/lib/elm_toolbar.c:1428 src/lib/elm_toolbar.c:1992
+msgid "Selected"
+msgstr "Изабрано"
+
+#: src/lib/elm_toolbar.c:1929
+msgid "Separator"
+msgstr "Одвајач"
+
+#: src/lib/elm_toolbar.c:1933
+msgid "State: Selected"
+msgstr "Стање: означено"
+
+#: src/lib/elm_toolbar.c:1935
+msgid "Has menu"
+msgstr "Има изборник"
+
+#: src/lib/elm_toolbar.c:1987
+msgid "Unselected"
+msgstr "Неозначено"
+
+#: src/lib/elm_toolbar.c:2004
+msgid "Toolbar Item"
+msgstr "Ставка траке алата"
