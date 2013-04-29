@@ -37,8 +37,6 @@ _evas_event_framespace_adjust(Evas_Object *eo_obj, Evas_Coord *x, Evas_Coord *y)
   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
   Evas_Public_Data *evas;
 
-  if (obj->is_frame) return;
-
   evas = obj->layer->evas;
   if (x) *x -= evas->framespace.x;
   if (y) *y -= evas->framespace.y;
@@ -883,6 +881,9 @@ evas_event_objects_event_list(Evas *eo_e, Evas_Object *stop, int x, int y)
    Eina_List *in = NULL;
 
    if ((!e->layers) || (e->is_frozen)) return NULL;
+
+   x -= e->framespace.x;
+   y -= e->framespace.y;
    EINA_INLIST_REVERSE_FOREACH((EINA_INLIST_GET(e->layers)), lay)
      {
         int no_rep = 0;
