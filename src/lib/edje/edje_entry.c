@@ -216,7 +216,9 @@ _text_filter_markup_prepend_internal(Edje *ed, Entry *en, Evas_Textblock_Cursor 
 #ifdef HAVE_ECORE_IMF
    // For skipping useless commit
    if (en->have_preedit && (!text || !strcmp(text, "")))
-      en->commit_cancel = EINA_TRUE;
+     en->commit_cancel = EINA_TRUE;
+   else
+     en->commit_cancel = EINA_FALSE;
 #endif
    if (text)
      {
