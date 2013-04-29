@@ -369,6 +369,7 @@ START_TEST(ecore_test_ecore_audio_obj_tone)
    double len;
    int channel, rate, freq;
    Eina_Bool ret;
+   char *tmp;
 
    in = eo_add(ECORE_AUDIO_OBJ_IN_TONE_CLASS, NULL);
    fail_if(!in);
@@ -399,6 +400,16 @@ START_TEST(ecore_test_ecore_audio_obj_tone)
 
    eo_do(in, eo_base_data_get(ECORE_AUDIO_ATTR_TONE_FREQ, (void **)&freq));
    fail_if(freq != 2000);
+
+   eo_do(in, eo_base_data_set("foo", "bar", NULL));
+   eo_do(in, eo_base_data_get("foo", (void **)&tmp));
+   ck_assert_str_eq(tmp, "bar");
+
+   eo_do(in, ecore_audio_obj_in_seek(5.0, SEEK_SET, &len));
+   fail_if(len != -1);
+
+   eo_do(in, ecore_audio_obj_in_seek(1.0, 42, &len));
+   fail_if(len != -1);
 
    eo_do(in, ecore_audio_obj_in_seek(1.0, SEEK_SET, &len));
    fail_if(len != 1.0);
@@ -445,17 +456,37 @@ END_TEST
 
 START_TEST(ecore_test_ecore_audio_obj_sndfile)
 {
-   Eo *in;
+   Eo *in, *out;
    double len, rem;
    int channel, rate;
    Eina_Bool ret;
+   Ecore_Audio_Format fmt;
+   const char *src;
 
    in = eo_add(ECORE_AUDIO_OBJ_IN_SNDFILE_CLASS, NULL);
    fail_if(!in);
 
+   eo_do(in, ecore_audio_obj_format_get(&fmt));
+   fail_if(fmt != ECORE_AUDIO_FORMAT_AUTO);
+
+   eo_do(in, ecore_audio_obj_format_set(ECORE_AUDIO_FORMAT_FLAC, &ret));
+   fail_if(!ret);
+
+   eo_do(in, ecore_audio_obj_format_get(&fmt));
+   fail_if(fmt != ECORE_AUDIO_FORMAT_FLAC);
+
+   eo_do(in, ecore_audio_obj_format_set(ECORE_AUDIO_FORMAT_AUTO, &ret));
+   fail_if(!ret);
+
    eo_do(in, ecore_audio_obj_name_set("sms.ogg"));
    eo_do(in, ecore_audio_obj_source_set(TESTS_SRC_DIR"/sms.ogg", &ret));
    fail_if(!ret);
+
+   eo_do(in, ecore_audio_obj_source_get(&src));
+   ck_assert_str_eq(src, TESTS_SRC_DIR"/sms.ogg");
+
+   eo_do(in, ecore_audio_obj_format_get(&fmt));
+   fail_if(fmt != ECORE_AUDIO_FORMAT_OGG);
 
    eo_do(in, ecore_audio_obj_in_channels_get(&channel));
    fail_if(channel != 2);
@@ -466,7 +497,50 @@ START_TEST(ecore_test_ecore_audio_obj_sndfile)
    eo_do(in, ecore_audio_obj_in_remaining_get(&rem));
    fail_if(len != rem);
 
+   eo_do(in, ecore_audio_obj_format_get(&fmt));
+   fail_if(fmt != ECORE_AUDIO_FORMAT_OGG);
+
+   eo_do(in, ecore_audio_obj_in_seek(0.5, SEEK_SET, &len));
+   fail_if(len != 0.5);
+
+   eo_do(in, ecore_audio_obj_in_seek(0.5, SEEK_CUR, &len));
+   fail_if(len != 1.0);
+
+   eo_do(in, ecore_audio_obj_in_seek(-1.0, SEEK_END, &len));
+   fail_if(fabs(rem - 1 - len) > 0.1);
+
+   out = eo_add(ECORE_AUDIO_OBJ_OUT_SNDFILE_CLASS, NULL);
+   fail_if(!out);
+
+   eo_do(out, ecore_audio_obj_name_set("tmp.wav"));
+   eo_do(out, ecore_audio_obj_format_set(ECORE_AUDIO_FORMAT_WAV, &ret));
+   fail_if(!ret);
+
+   eo_do(out, ecore_audio_obj_format_get(&fmt));
+   fail_if(fmt != ECORE_AUDIO_FORMAT_WAV);
+
+
+//   eo_do(out, ecore_audio_obj_source_set("/tmp/file/does/not/exist/hopefully.wav", &ret));
+//   fail_if(ret);
+
+   eo_do(out, ecore_audio_obj_source_set(TESTS_BUILD_DIR"/tmp.wav", &ret));
+   fail_if(!ret);
+
+   eo_do(out, ecore_audio_obj_source_get(&src));
+   ck_assert_str_eq(src, TESTS_BUILD_DIR"/tmp.wav");
+
+   eo_do(out, ecore_audio_obj_out_input_attach(in, &ret));
+   fail_if(!ret);
+
+   eo_do(in, eo_event_callback_add(ECORE_AUDIO_EV_IN_STOPPED, _finished_cb, NULL));
+
+   ecore_main_loop_begin();
+
    eo_del(in);
+   eo_del(out);
+
+   //TODO: Compare and fail
+   ecore_file_remove(TESTS_BUILD_DIR"/tmp.wav");
 }
 END_TEST
 
