@@ -1041,6 +1041,19 @@ dnl    test cocoa requirements (objc and Cocoa/Cocoa.h)
 dnl fi
 want_cocoa="no"
 
+# Drm
+AC_ARG_ENABLE([drm],
+   [AC_HELP_STRING([--enable-drm],
+       [enable drm engine. @<:@default=disabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_drm="yes"
+    else
+       want_drm="no"
+    fi
+   ],
+   [want_drm="no"])
+
 
 # Fontconfig
 AC_ARG_ENABLE([fontconfig],
@@ -1396,6 +1409,7 @@ EVAS_CHECK_ENGINE([software-gdi], [${want_evas_engine_software_gdi}], [no], [Sof
 EVAS_CHECK_ENGINE([software-ddraw], [${want_evas_engine_software_ddraw}], [no], [Software DirectDraw])
 EVAS_CHECK_ENGINE([wayland-egl], [${want_evas_engine_wayland_egl}], [no], [Wayland Egl])
 EVAS_CHECK_ENGINE([wayland-shm], [${want_wayland}], [no], [Wayland Shm])
+EVAS_CHECK_ENGINE([drm], [${want_drm}], [no], [Drm])
 
 # Software XCB
 
