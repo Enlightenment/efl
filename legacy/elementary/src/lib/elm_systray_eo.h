@@ -1,3 +1,8 @@
+/**
+ * @ingroup Systray
+ *
+ * @{
+ */
 #define ELM_OBJ_SYSTRAY_CLASS elm_obj_systray_class_get()
 
 const Eo_Class *elm_obj_systray_class_get(void) EINA_CONST;
@@ -284,3 +289,6 @@ enum
 #define elm_obj_systray_register(ret)                        \
         ELM_OBJ_SYSTRAY_ID(ELM_OBJ_SYSTRAY_SUB_ID_REGISTER), \
         EO_TYPECHECK(Eina_Bool *, ret)
+/**
+ * @}
+ */

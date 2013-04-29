@@ -1,3 +1,8 @@
+/**
+ * @ingroup Genlist
+ *
+ * @{
+ */
 #define ELM_OBJ_GENLIST_PAN_CLASS elm_obj_genlist_pan_class_get()
 
 const Eo_Class *elm_obj_genlist_pan_class_get(void) EINA_CONST;
@@ -505,4 +510,7 @@ enum
  */
 #define elm_obj_genlist_tree_effect_enabled_get(ret) ELM_OBJ_GENLIST_ID(ELM_OBJ_GENLIST_SUB_ID_TREE_EFFECT_ENABLED_GET), EO_TYPECHECK(Eina_Bool *, ret)
 
+/**
+ * @}
+ */
 

@@ -1,3 +1,8 @@
+/**
+ * @ingroup Fileselector
+ *
+ * @{
+ */
 #define ELM_OBJ_FILESELECTOR_CLASS elm_obj_fileselector_class_get()
 
 const Eo_Class *elm_obj_fileselector_class_get(void) EINA_CONST;
@@ -201,3 +206,6 @@ enum
  * @see elm_fileselector_selected_set
  */
 #define elm_obj_fileselector_selected_set(_path, ret) ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_SELECTED_SET), EO_TYPECHECK(const char *, _path), EO_TYPECHECK(Eina_Bool *, ret)
+/**
+ * @}
+ */

@@ -1,3 +1,8 @@
+/**
+ * @ingroup Prefs
+ *
+ * @{
+ */
 #define ELM_OBJ_PREFS_CLASS elm_obj_prefs_class_get()
 
 const Eo_Class *elm_obj_prefs_class_get(void) EINA_CONST;
@@ -347,3 +352,6 @@ enum
         EO_TYPECHECK(const char *,name),                       \
         EO_TYPECHECK(Evas_Object **, ret)
 //FIXME: ret == EObject?
+/**
+ * @}
+ */

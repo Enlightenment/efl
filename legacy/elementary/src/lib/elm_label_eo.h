@@ -1,3 +1,8 @@
+/**
+ * @ingroup Label
+ *
+ * @{
+ */
 #define ELM_OBJ_LABEL_CLASS elm_obj_label_class_get()
 
 const Eo_Class *elm_obj_label_class_get(void) EINA_CONST;
@@ -174,3 +179,6 @@ enum
  * @ingroup Label
  */
 #define elm_obj_label_slide_go() ELM_OBJ_LABEL_ID(ELM_OBJ_LABEL_SUB_ID_SLIDE_GO)
+/**
+ * @}
+ */

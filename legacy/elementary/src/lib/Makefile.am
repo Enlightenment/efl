@@ -265,13 +265,21 @@ elm_label_common.h \
 elm_label_eo.h \
 elm_label_legacy.h \
 elm_layout.h \
+elm_layout_common.h \
+elm_layout_eo.h \
+elm_layout_legacy.h \
 elm_list.h \
+elm_list_common.h \
+elm_list_eo.h \
+elm_list_legacy.h \
 elm_macros.h \
 elm_map.h \
 elm_map_common.h \
 elm_map_eo.h \
 elm_map_legacy.h \
 elm_mapbuf.h \
+elm_mapbuf_eo.h \
+elm_mapbuf_legacy.h \
 elm_menu.h \
 elm_menu_common.h \
 elm_menu_eo.h \
@@ -279,6 +287,9 @@ elm_menu_legacy.h \
 elm_mirroring.h \
 elm_need.h \
 elm_notify.h \
+elm_notify_common.h \
+elm_notify_eo.h \
+elm_notify_legacy.h \
 elm_object.h \
 elm_object_item.h \
 elm_panel.h \
@@ -289,6 +300,8 @@ elm_panes.h \
 elm_panes_eo.h \
 elm_panes_legacy.h \
 elm_photo.h \
+elm_photo_eo.h \
+elm_photo_legacy.h \
 elm_photocam.h \
 elm_photocam_eo.h \
 elm_photocam_legacy.h \
@@ -312,6 +325,9 @@ elm_route_legacy.h \
 elm_scale.h \
 elm_scroll.h \
 elm_scroller.h \
+elm_scroller_common.h \
+elm_scroller_eo.h \
+elm_scroller_legacy.h \
 elm_segment_control.h \
 elm_segment_control_common.h \
 elm_segment_control_eo.h \
@@ -344,6 +360,9 @@ elm_thumb_common.h \
 elm_thumb_eo.h \
 elm_thumb_legacy.h \
 elm_toolbar.h \
+elm_toolbar_common.h \
+elm_toolbar_eo.h \
+elm_toolbar_legacy.h \
 elm_tooltip.h \
 elm_transit.h \
 elm_video.h \
@@ -353,7 +372,10 @@ elm_web.h \
 elm_web_common.h \
 elm_web_eo.h \
 elm_web_legacy.h \
-elm_win.h
+elm_win.h \
+elm_win_common.h \
+elm_win_eo.h \
+elm_win_legacy.h
 includesubdir = $(includedir)/elementary-@VMAJ@/
 
 libelementary_la_SOURCES = \

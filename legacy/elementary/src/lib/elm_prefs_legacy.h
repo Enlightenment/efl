@@ -1,3 +1,8 @@
+/**
+ * @ingroup Prefs
+ *
+ * @{
+ */
 EAPI Eina_Bool elm_prefs_page_widget_common_add(Evas_Object *prefs,
                                                 Evas_Object *obj);
 /**
@@ -366,3 +371,6 @@ EAPI Eina_Bool          elm_prefs_item_swallow(Evas_Object *obj,
  */
 EAPI Evas_Object       *elm_prefs_item_unswallow(Evas_Object *obj,
                                                  const char *name);
+/**
+ * @}
+ */

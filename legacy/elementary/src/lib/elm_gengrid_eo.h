@@ -1,3 +1,8 @@
+/**
+ * @ingroup Gengrid
+ *
+ * @{
+ */
 #define ELM_OBJ_GENGRID_PAN_CLASS elm_obj_gengrid_pan_class_get()
 
 const Eo_Class *elm_obj_gengrid_pan_class_get(void) EINA_CONST;
@@ -599,4 +604,7 @@ enum
 #define elm_obj_gengrid_highlight_mode_get(ret) ELM_OBJ_GENGRID_ID(ELM_OBJ_GENGRID_SUB_ID_HIGHLIGHT_MODE_GET), EO_TYPECHECK(Eina_Bool *, ret)
 
 
+/**
+ * @}
+ */
 

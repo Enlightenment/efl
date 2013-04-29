@@ -1,3 +1,8 @@
+/**
+ * @ingroup Popup
+ *
+ * @{
+ */
 #define ELM_OBJ_POPUP_CLASS elm_obj_popup_class_get()
 
 const Eo_Class *elm_obj_popup_class_get(void) EINA_CONST;
@@ -133,3 +138,6 @@ enum
  * @see elm_popup_item_append
  */
 #define elm_obj_popup_item_append(label, icon, func, data, ret) ELM_OBJ_POPUP_ID(ELM_OBJ_POPUP_SUB_ID_ITEM_APPEND), EO_TYPECHECK(const char *, label), EO_TYPECHECK(Evas_Object *, icon), EO_TYPECHECK(Evas_Smart_Cb, func), EO_TYPECHECK(const void *, data), EO_TYPECHECK(Elm_Object_Item **, ret)
+/**
+ * @}
+ */
