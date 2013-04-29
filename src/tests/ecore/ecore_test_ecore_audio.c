@@ -14,71 +14,6 @@
 #include <Ecore_Audio.h>
 
 #if 0
-Eina_Bool
-seek(void *data)
-{
-  double offs;
-  fail_if(ecore_audio_input_seek(in, 0, SEEK_SET) != 0);
-  fail_if(ecore_audio_input_seek(in, 1, SEEK_CUR) != 1);
-  offs = ecore_audio_input_seek(in, -1, SEEK_END);
-  fail_if((offs > 1.001) || (offs < 0.999));
-
-  fail_if(ecore_audio_input_seek(in, SEEK_CUR, 10) != -1);
-  fail_if(ecore_audio_input_seek(in, 5, 0) != -1);
-
-  fail_if(ecore_audio_input_seek(in, 0, SEEK_SET) != 0);
-}
-
-Eina_Bool
-input_del(void *data)
-{
-   printf("Deleting input\n");
-
-   ecore_audio_input_del(in);
-
-   return EINA_FALSE;
-}
-
-Eina_Bool
-output_add(void *data)
-{
-   out = ecore_audio_output_add(ECORE_AUDIO_TYPE_SNDFILE);
-   fail_if(!out);
-   ecore_audio_output_sndfile_filename_set(out, SOUNDS_DIR"tmp.ogg");
-
-   printf("Adding input\n");
-   ecore_audio_output_input_add(out, in);
-
-   return EINA_FALSE;
-}
-
-Eina_Bool
-_quit(void *data)
-{
-   printf("Deleting output\n");
-   ecore_audio_output_del(out);
-
-   printf("Quitting\n");
-   ecore_main_loop_quit();
-}
-
-START_TEST(ecore_test_ecore_audio_cleanup)
-{
-   in = ecore_audio_input_add(ECORE_AUDIO_TYPE_TONE);
-   fail_if(!in);
-   ecore_audio_input_tone_frequency_set(in, 1000);
-   ecore_audio_input_tone_duration_set(in, 2);
-
-   ecore_timer_add(1, output_add, NULL);
-   ecore_timer_add(2, seek, NULL);
-   ecore_timer_add(3.3, input_del, NULL);
-   ecore_timer_add(4, _quit, NULL);
-
-   ecore_main_loop_begin();
-
-   ecore_file_remove(SOUNDS_DIR"tmp.ogg");
-}
-END_TEST
 
 
 Eina_Bool
@@ -362,6 +297,52 @@ START_TEST(ecore_test_ecore_audio_obj_pulse)
 }
 END_TEST
 #endif
+
+static Eina_Bool _quit(void *data EINA_UNUSED)
+{
+  ecore_main_loop_quit();
+
+  return EINA_FALSE;
+}
+
+static Eina_Bool
+_idle_del(void *data)
+{
+   Eo *in = data;
+   eo_del(in);
+   ecore_idler_add(_quit, NULL);
+
+   return EINA_FALSE;
+}
+
+START_TEST(ecore_test_ecore_audio_cleanup)
+{
+   Eo *in, *out;
+   int freq = 1000;
+   Eina_Bool ret;
+
+   in = eo_add(ECORE_AUDIO_OBJ_IN_TONE_CLASS, NULL);
+   fail_if(!in);
+   eo_do(in, eo_base_data_set(ECORE_AUDIO_ATTR_TONE_FREQ, &freq, NULL));
+   eo_do(in, ecore_audio_obj_in_length_set(2));
+
+   out = eo_add(ECORE_AUDIO_OBJ_OUT_SNDFILE_CLASS, NULL);
+   fail_if(!out);
+   eo_do(out, ecore_audio_obj_format_set(ECORE_AUDIO_FORMAT_OGG, &ret));
+   fail_if(!ret);
+   eo_do(out, ecore_audio_obj_source_set(TESTS_BUILD_DIR"/tmp.ogg", &ret));
+   fail_if(!ret);
+
+   eo_do(out, ecore_audio_obj_out_input_attach(in, &ret));
+   fail_if(!ret);
+
+   ecore_idler_add(_idle_del, in);
+
+   ecore_main_loop_begin();
+
+   ecore_file_remove(TESTS_BUILD_DIR"/tmp.ogg");
+}
+END_TEST
 
 START_TEST(ecore_test_ecore_audio_obj_tone)
 {
@@ -866,6 +847,7 @@ ecore_test_ecore_audio(TCase *tc)
 
 #ifdef HAVE_SNDFILE
    tcase_add_test(tc, ecore_test_ecore_audio_obj_sndfile);
+   tcase_add_test(tc, ecore_test_ecore_audio_cleanup);
 #endif
 #ifdef HAVE_PULSE
    tcase_add_test(tc, ecore_test_ecore_audio_obj_pulse);
@@ -875,7 +857,6 @@ ecore_test_ecore_audio(TCase *tc)
    tcase_add_test(tc, ecore_test_ecore_audio_default);
    tcase_add_test(tc, ecore_test_ecore_audio_sndfile_vio);
    tcase_add_test(tc, ecore_test_ecore_audio_custom);
-   tcase_add_test(tc, ecore_test_ecore_audio_cleanup);
 */
 }
 
