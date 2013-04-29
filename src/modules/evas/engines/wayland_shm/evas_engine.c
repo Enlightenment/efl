@@ -268,6 +268,7 @@ eng_setup(Evas *eo_evas, void *einfo)
              re->outbuf_idle_flush = evas_swapbuf_idle_flush;
           }
 
+        re->info = info;
         if ((re) && (re->ob)) re->ob->onebuf = ponebuf;
      }
 
@@ -338,6 +339,7 @@ eng_output_resize(void *data, int w, int h)
    re->outbuf_reconfigure(re->ob, dx, dy, w, h,
                           info->info.rotation, info->info.depth,
                           info->info.destination_alpha);
+
    evas_common_tilebuf_free(re->tb);
    if ((re->tb = evas_common_tilebuf_new(w, h)))
      evas_common_tilebuf_set_tile_size(re->tb, TILESIZE, TILESIZE);
