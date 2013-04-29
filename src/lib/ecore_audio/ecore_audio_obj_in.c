@@ -218,6 +218,8 @@ static void _vio_set(Eo *eo_obj, void *_pd, va_list *list)
   if (ea_obj->vio)
     _free_vio(ea_obj);
 
+  obj->seekable = obj->seekable_prev;
+
   if (!vio)
     return;
 
@@ -225,7 +227,8 @@ static void _vio_set(Eo *eo_obj, void *_pd, va_list *list)
   ea_obj->vio->vio = vio;
   ea_obj->vio->data = data;
   ea_obj->vio->free_func = free_func;
-  //FIXME: Save previous value
+
+  obj->seekable_prev = obj->seekable;
   obj->seekable = (vio->seek != NULL);
 }
 

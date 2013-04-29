@@ -129,6 +129,7 @@ struct _Ecore_Audio_Input
 {
    Eina_Bool           paused; /**< Is the input paused? */
    Eina_Bool           seekable;
+   Eina_Bool           seekable_prev;
 
    Eo                 *output; /**< The output this input is connected to */
 
