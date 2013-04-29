@@ -326,15 +326,20 @@ eng_output_resize(void *data, int w, int h)
    if (!(info = re->info)) return;
 
    if (info->info.edges & 4)
-     if ((info->info.rotation == 90) || (info->info.rotation == 270))
-       dx = re->ob->h - h;
-     else
-       dx = re->ob->w - w;
+     {
+        if ((info->info.rotation == 90) || (info->info.rotation == 270))
+          dx = re->ob->h - h;
+        else
+          dx = re->ob->w - w;
+     }
+
    if (info->info.edges & 1)
-     if ((info->info.rotation == 90) || (info->info.rotation == 270))
-       dy = re->ob->w - w;
-     else
-       dy = re->ob->h - h;
+     {
+        if ((info->info.rotation == 90) || (info->info.rotation == 270))
+          dy = re->ob->w - w;
+        else
+          dy = re->ob->h - h;
+     }
 
    re->outbuf_reconfigure(re->ob, dx, dy, w, h,
                           info->info.rotation, info->info.depth,
