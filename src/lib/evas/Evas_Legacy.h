@@ -4856,8 +4856,7 @@ EAPI void evas_object_image_source_events_set(Evas_Object *obj, Eina_Bool source
  * Determine whether an object is set to source events.
  *
  * @param obj Proxy (image) object.
- * @return source whether @p obj is set to source events (@c EINA_TRUE) or not
- * (@c EINA_FALSE)
+ * @return @c EINA_TRUE if source object has events, @c EINA_FALSE otherwise.
  *
  * @see evas_object_image_source_set()
  * @see evas_object_image_source_visible_set()
