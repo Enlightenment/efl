@@ -1573,6 +1573,8 @@ _item_transition_start
    elm_image_aspect_fixed_set(it->proxy, EINA_FALSE);
    evas_object_image_source_set(elm_image_object_get(it->proxy), VIEW(it));
    evas_object_image_source_visible_set(elm_image_object_get(it->proxy), EINA_FALSE);
+   evas_object_image_source_clip_set(elm_image_object_get(it->proxy),
+                                     EINA_FALSE);
 
    it->trans = elm_transit_add();
    elm_transit_object_add(it->trans, it->proxy);
@@ -1750,6 +1752,9 @@ _item_reorder_start(Elm_Toolbar_Item *item)
    elm_image_aspect_fixed_set(item->proxy, EINA_FALSE);
    evas_object_image_source_set(elm_image_object_get(item->proxy), VIEW(item));
    evas_object_image_source_visible_set(elm_image_object_get(item->proxy), EINA_FALSE);
+   evas_object_image_source_clip_set(elm_image_object_get(item->proxy),
+                                     EINA_FALSE);
+
    evas_object_layer_set(item->proxy, 100);
    edje_object_signal_emit(VIEW(item), "elm,state,moving", "elm");
 

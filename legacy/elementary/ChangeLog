@@ -1298,3 +1298,7 @@
 2013-04-25  ChunEon Park (Hermet)
 
         * Fix null pointer access on naviframe item deletion.
+
+2013-04-29  ChunEon Park (Hermet)
+
+        * Fix toolbar item clipped problem on reordering toolbar item.
