@@ -610,10 +610,11 @@ _elm_win_resize_job(void *data)
 
    if (sd->frame_obj)
      {
-        int fw, fh;
+        int fx, fy, fw, fh;
 
-        evas_output_framespace_get(sd->evas, NULL, NULL, &fw, &fh);
+        evas_output_framespace_get(sd->evas, &fx, &fy, &fw, &fh);
         evas_object_resize(sd->frame_obj, w + fw, h + fh);
+        evas_object_move(sd->frame_obj, -fx, -fy);
      }
 
    evas_object_resize(sd->obj, w, h);
@@ -2312,7 +2313,6 @@ _elm_win_frame_add(Elm_Win_Smart_Data *sd,
    elm_widget_theme_object_set
      (sd->obj, sd->frame_obj, "border", "base", style);
 
-   evas_object_is_frame_object_set(sd->frame_obj, EINA_TRUE);
    evas_object_move(sd->frame_obj, 0, 0);
    evas_object_resize(sd->frame_obj, 1, 1);
 
