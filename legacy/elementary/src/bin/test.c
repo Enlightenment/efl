@@ -829,7 +829,6 @@ elm_main(int argc, char **argv)
    EINA_LIST_FREE(tests, t)
      free(t);
 
-   elm_shutdown(); /* clean up and shut down */
    /* exit code */
    return 0;
 }
