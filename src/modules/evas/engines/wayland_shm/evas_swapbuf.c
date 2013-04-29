@@ -151,20 +151,21 @@ evas_swapbuf_update_region_new(Outbuf *ob, int x, int y, int w, int h, int *cx, 
      {
         if (!(img = ob->priv.onebuf))
           {
+             int bw = 0, bh = 0;
              void *data;
 
-             data = evas_swapper_buffer_map(ob->priv.swapper, NULL, NULL);
+             data = evas_swapper_buffer_map(ob->priv.swapper, &bw, &bh);
 
 #ifdef EVAS_CSERVE2
              if (evas_cserve2_use_get())
                img = (RGBA_Image *)evas_cache2_image_data(evas_common_image_cache2_get(),
-                                                          ob->w, ob->h, data, 
+                                                          bw, bh, data, 
                                                           ob->priv.destination_alpha, 
                                                           EVAS_COLORSPACE_ARGB8888);
              else
 #endif
                img = (RGBA_Image *)evas_cache_image_data(evas_common_image_cache_get(),
-                                                         ob->w, ob->h, data, 
+                                                         bw, bh, data, 
                                                          ob->priv.destination_alpha, 
                                                          EVAS_COLORSPACE_ARGB8888);
 
@@ -312,7 +313,6 @@ evas_swapbuf_update_region_push(Outbuf *ob, RGBA_Image *update, int x, int y, in
    /* check for valid update image data */
    if (!(src = update->image.data)) return;
 
-
    bpp = depth / 8;
    if (bpp <= 0) return;
 
@@ -360,7 +360,7 @@ evas_swapbuf_update_region_push(Outbuf *ob, RGBA_Image *update, int x, int y, in
    dst += (bpl * rect.y) + (rect.x * bpp);
 
    func(src, dst, (update->cache_entry.w - w), (wid - rect.w),
-        rect.w, rect.h, x, y, NULL);
+        rect.w, rect.h, x + rx, y + ry, NULL);
 }
 
 void 
