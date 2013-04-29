@@ -3,22 +3,22 @@
 # batden <batden@orange.fr>, 2011.
 # dazibao <dazibao@sfr.fr>, 2011.
 #
-#: src/lib/elm_config.c:2222
 msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
-"Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-04-10 00:10+0900\n"
-"PO-Revision-Date: 2011-11-08 07:57+0100\n"
-"Last-Translator: dazibao <dazibao@sfr.fr>\n"
+"Report-Msgid-Bugs-To: $MSGID_BUGS_ADDRESS\n"
+"POT-Creation-Date: 2013-04-24 11:50+0200\n"
+"PO-Revision-Date: 2013-03-18 08:05+0000\n"
+"Last-Translator: Eliovir <Unknown>\n"
 "Language-Team: French <sansgourou@gmail.com>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=n>1;\n"
-"X-Poedit-Language: French\n"
+"X-Launchpad-Export-Date: 2013-04-25 05:27+0000\n"
+"X-Generator: Launchpad (build 16580)\n"
 "X-Poedit-Country: FRANCE\n"
+"Language: \n"
+"X-Poedit-Language: French\n"
 "X-Poedit-SourceCharset: utf-8\n"
 
 #: src/lib/elc_fileselector.c:774
@@ -29,8 +29,8 @@ msgstr "Monter"
 msgid "Home"
 msgstr "Home"
 
-#: src/lib/elc_fileselector.c:1016 src/lib/elm_entry.c:1279
-#: src/lib/elm_entry.c:1304
+#: src/lib/elc_fileselector.c:1016 src/lib/elm_entry.c:1285
+#: src/lib/elm_entry.c:1310
 msgid "Cancel"
 msgstr "Annuler"
 
@@ -47,8 +47,8 @@ msgid "Clicked"
 msgstr "Cliqué"
 
 #: src/lib/elm_button.c:284 src/lib/elm_check.c:213 src/lib/elm_gengrid.c:701
-#: src/lib/elm_genlist.c:1421 src/lib/elm_list.c:1382 src/lib/elm_radio.c:257
-#: src/lib/elm_spinner.c:510 src/lib/elm_toolbar.c:1797
+#: src/lib/elm_genlist.c:1421 src/lib/elm_list.c:1389 src/lib/elm_radio.c:257
+#: src/lib/elm_spinner.c:521 src/lib/elm_toolbar.c:1931
 msgid "State: Disabled"
 msgstr "État : désactivé"
 
@@ -122,43 +122,42 @@ msgid "clock decrement button for am,pm"
 msgstr ""
 
 #: src/lib/elm_clock.c:664
-#, fuzzy
 msgid "State: Editable"
-msgstr "État : désactivé"
+msgstr ""
 
 #: src/lib/elm_clock.c:699
 msgid "Clock"
 msgstr ""
 
-#: src/lib/elm_colorselector.c:1340
+#: src/lib/elm_colorselector.c:1350
 msgid "color selector palette item"
 msgstr ""
 
-#: src/lib/elm_config.c:2238
+#: src/lib/elm_config.c:2286
 msgid "default:LTR"
 msgstr "LTR par défaut"
 
-#: src/lib/elm_diskselector.c:651
+#: src/lib/elm_diskselector.c:665
 msgid "diskselector item"
 msgstr ""
 
-#: src/lib/elm_entry.c:1272
+#: src/lib/elm_entry.c:1278
 msgid "Copy"
 msgstr "Copier"
 
-#: src/lib/elm_entry.c:1276
+#: src/lib/elm_entry.c:1282
 msgid "Cut"
 msgstr "Couper"
 
-#: src/lib/elm_entry.c:1291
+#: src/lib/elm_entry.c:1297
 msgid "Select"
 msgstr "Sélectionner"
 
-#: src/lib/elm_entry.c:1298
+#: src/lib/elm_entry.c:1304
 msgid "Paste"
 msgstr "Coller"
 
-#: src/lib/elm_entry.c:2947
+#: src/lib/elm_entry.c:2951
 msgid "Entry"
 msgstr ""
 
@@ -166,12 +165,12 @@ msgstr ""
 msgid "Gengrid Item"
 msgstr ""
 
-#: src/lib/elm_index.c:112
-msgid "Index Item"
+#: src/lib/elm_index.c:99
+msgid "Index"
 msgstr ""
 
-#: src/lib/elm_index.c:862
-msgid "Index"
+#: src/lib/elm_index.c:126
+msgid "Index Item"
 msgstr ""
 
 #: src/lib/elm_label.c:402
@@ -179,14 +178,12 @@ msgid "Label"
 msgstr ""
 
 #: src/lib/elm_panel.c:42
-#, fuzzy
 msgid "state: opened"
-msgstr "État : sélectionné"
+msgstr ""
 
 #: src/lib/elm_panel.c:43
-#, fuzzy
 msgid "state: closed"
-msgstr "État : désactivé"
+msgstr ""
 
 #: src/lib/elm_panel.c:106
 msgid "panel button"
@@ -204,46 +201,38 @@ msgstr "Radio"
 msgid "slider"
 msgstr ""
 
-#: src/lib/elm_spinner.c:599
+#: src/lib/elm_spinner.c:610
 msgid "spinner increment button"
 msgstr ""
 
-#: src/lib/elm_spinner.c:608
+#: src/lib/elm_spinner.c:619
 msgid "spinner decrement button"
 msgstr ""
 
-#: src/lib/elm_spinner.c:616
+#: src/lib/elm_spinner.c:627
 msgid "spinner"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:1294 src/lib/elm_toolbar.c:1858
+#: src/lib/elm_toolbar.c:1428 src/lib/elm_toolbar.c:1992
 msgid "Selected"
 msgstr "Sélectionné"
 
-#: src/lib/elm_toolbar.c:1795
+#: src/lib/elm_toolbar.c:1929
 msgid "Separator"
 msgstr "Séparateur"
 
-#: src/lib/elm_toolbar.c:1799
+#: src/lib/elm_toolbar.c:1933
 msgid "State: Selected"
 msgstr "État : sélectionné"
 
-#: src/lib/elm_toolbar.c:1801
+#: src/lib/elm_toolbar.c:1935
 msgid "Has menu"
 msgstr "Possède un menu"
 
-#: src/lib/elm_toolbar.c:1853
-#, fuzzy
+#: src/lib/elm_toolbar.c:1987
 msgid "Unselected"
-msgstr "Sélectionné"
+msgstr ""
 
-#: src/lib/elm_toolbar.c:1870
-#, fuzzy
+#: src/lib/elm_toolbar.c:2004
 msgid "Toolbar Item"
-msgstr "Élément outil"
-
-#~ msgid "ON"
-#~ msgstr "OUI"
-
-#~ msgid "OFF"
-#~ msgstr "NON"
+msgstr ""
