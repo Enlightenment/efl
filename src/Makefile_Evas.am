@@ -950,6 +950,34 @@ modules_evas_engines_wayland_shm_module_la_LIBTOOLFLAGS = --tag=disable-static
 endif
 endif
 
+if BUILD_ENGINE_DRM
+dist_installed_evasmainheaders_DATA += modules/evas/engines/drm/Evas_Engine_Drm.h
+DRM_SOURCES = \
+modules/evas/engines/drm/evas_engine.c \
+modules/evas/engines/drm/evas_engine.h
+if EVAS_STATIC_BUILD_DRM
+lib_evas_libevas_la_SOURCES += $(DRM_SOURCES)
+lib_evas_libevas_la_CPPFLAGS += @evas_engine_drm_cflags@
+lib_evas_libevas_la_LIBADD += @evas_engine_drm_libs@
+else
+enginedrmpkgdir = $(libdir)/evas/modules/engines/drm/$(MODULE_ARCH)
+enginedrmpkg_LTLIBRARIES = modules/evas/engines/drm/module.la
+modules_evas_engines_drm_module_la_SOURCES = $(DRM_SOURCES)
+modules_evas_engines_drm_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-I$(top_srcdir)/src/lib/evas/include \
+-I$(top_srcdir)/src/lib/evas/cserve2 \
+@EVAS_CFLAGS@ \
+@evas_engine_drm_cflags@
+modules_evas_engines_drm_module_la_LIBADD = \
+@USE_EVAS_LIBS@ \
+@evas_engine_drm_libs@
+modules_evas_engines_drm_module_la_DEPENDENCIES = @USE_EVAS_INTERNAL_LIBS@
+modules_evas_engines_drm_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
+modules_evas_engines_drm_module_la_LIBTOOLFLAGS = --tag=disable-static
+endif
+endif
+
+
 ### Loaders and savers
 
 if BUILD_LOADER_BMP
