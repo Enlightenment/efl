@@ -961,11 +961,16 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
    Eina_Bool clean_them = EINA_FALSE;
    Eina_Bool proxy_src_clip = EINA_FALSE;
 
-   if ((!proxy_obj) && (evas_object_is_source_invisible(eo_obj, obj)))
-     return clean_them;
-
-   if (proxy_obj)
-     eo_do(proxy_obj, evas_obj_image_source_clip_get(&proxy_src_clip));
+   if (!proxy_obj)
+     {
+        if ((evas_object_is_source_invisible(eo_obj, obj)))
+          return clean_them;
+     }
+   else
+     {
+        if (proxy_obj == obj)
+          eo_do(proxy_obj, evas_obj_image_source_clip_get(&proxy_src_clip));
+     }
 
    evas_object_clip_recalc(obj);
 
