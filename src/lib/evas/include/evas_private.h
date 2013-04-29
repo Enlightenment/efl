@@ -1239,7 +1239,7 @@ Eina_Bool evas_render_mapped(Evas_Public_Data *e, Evas_Object *obj,
                              Evas_Object_Protected_Data *source_pd,
                              void *context, void *surface, int off_x, int off_y,
                              int mapped, int ecx, int ecy, int ecw, int ech,
-                             Eina_Bool proxy_render
+                             Evas_Object *proxy_obj
 #ifdef REND_DBG
                              , int level
 #endif

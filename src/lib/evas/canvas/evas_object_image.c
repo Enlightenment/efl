@@ -122,6 +122,7 @@ struct _Evas_Object_Image
    Eina_Bool         video_visible : 1;
    Eina_Bool         created : 1;
    Eina_Bool         proxyerror : 1;
+   Eina_Bool         proxy_src_clip : 1;
 };
 
 /* private methods for image objects */
@@ -311,6 +312,7 @@ _constructor(Eo *eo_obj, void *class_data, va_list *list EINA_UNUSED)
    o->pixels = eina_cow_alloc(evas_object_image_pixels_cow);
    o->cur = eina_cow_alloc(evas_object_image_state_cow);
    o->prev = eina_cow_alloc(evas_object_image_state_cow);
+   o->proxy_src_clip = EINA_TRUE;
 
    cspace = obj->layer->evas->engine.func->image_colorspace_get(obj->layer->evas->engine.data.output,
                                                                 o->engine_data);
@@ -732,6 +734,54 @@ evas_object_image_source_unset(Evas_Object *eo_obj)
    Eina_Bool result = EINA_FALSE;
    eo_do(eo_obj, evas_obj_image_source_set(NULL, &result));
    return result;
+}
+
+EAPI void
+evas_object_image_source_clip_set(Evas_Object *eo_obj, Eina_Bool source_clip)
+{
+   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+
+   eo_do(eo_obj, evas_obj_image_source_clip_set(source_clip));
+}
+
+static void
+_image_source_clip_set(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Evas_Object_Image *o = _pd;
+   Eina_Bool source_clip = va_arg(*list, int);
+   Evas_Object_Protected_Data *src_obj;
+
+   source_clip = !!source_clip;
+   if (o->proxy_src_clip == source_clip) return;
+   o->proxy_src_clip = source_clip;
+
+   if (!o->cur->source) return;
+
+   src_obj = eo_data_get(o->cur->source, EVAS_OBJ_CLASS);
+   evas_object_change(o->cur->source, src_obj);
+}
+
+EAPI Eina_Bool
+evas_object_image_source_clip_get(const Evas_Object *eo_obj)
+{
+   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
+   return EINA_FALSE;
+   MAGIC_CHECK_END();
+
+   Eina_Bool source_clip;
+   eo_do((Eo*)eo_obj, evas_obj_image_source_clip_get(&source_clip));
+
+   return source_clip;
+}
+
+static void
+_image_source_clip_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Evas_Object_Image *o = _pd;
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   *ret = o->proxy_src_clip;
 }
 
 EAPI void
@@ -3204,7 +3254,7 @@ _proxy_subrender_recurse(Evas_Object *eo_obj, Evas_Object *clip, void *output, v
  * Used to force a draw if necessary, else just makes sures it's available.
  */
 static void
-_proxy_subrender(Evas *eo_e, Evas_Object *eo_source, Eina_Bool do_async)
+_proxy_subrender(Evas *eo_e, Evas_Object *eo_source, Evas_Object *eo_proxy, Eina_Bool do_async)
 {
    Evas_Public_Data *e = eo_data_get(eo_e, EVAS_CLASS);
    Evas_Object_Protected_Data *source;
@@ -3254,7 +3304,7 @@ _proxy_subrender(Evas *eo_e, Evas_Object *eo_source, Eina_Bool do_async)
         evas_render_mapped(e, eo_source, source, ctx, proxy_write->surface,
                            -source->cur->geometry.x,
                            -source->cur->geometry.y,
-                           1, 0, 0, e->output.w, e->output.h, EINA_TRUE
+                           1, 0, 0, e->output.w, e->output.h, eo_proxy
 #ifdef REND_DBG
                            , 1
 #endif
@@ -3689,7 +3739,8 @@ evas_object_image_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, v
    else
      {
         o->proxyrendering = EINA_TRUE;
-        _proxy_subrender(obj->layer->evas->evas, o->cur->source, EINA_FALSE);
+        _proxy_subrender(obj->layer->evas->evas, o->cur->source, eo_obj,
+                         EINA_FALSE);
         pixels = source->proxy->surface;
         imagew = source->proxy->w;
         imageh = source->proxy->h;
@@ -4568,7 +4619,8 @@ evas_object_image_is_inside(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj
    else
      {
         o->proxyrendering = EINA_TRUE;
-        _proxy_subrender(obj->layer->evas->evas, o->cur->source, EINA_FALSE);
+        _proxy_subrender(obj->layer->evas->evas, o->cur->source, eo_obj,
+                         EINA_FALSE);
         pixels = source->proxy->surface;
         imagew = source->proxy->w;
         imageh = source->proxy->h;
@@ -5155,6 +5207,8 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_SOURCE_VISIBLE_GET), _image_source_visible_get),
         EO_OP_FUNC(EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_SOURCE_EVENTS_SET), _image_source_events_set),
         EO_OP_FUNC(EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_SOURCE_EVENTS_GET), _image_source_events_get),
+        EO_OP_FUNC(EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_SOURCE_CLIP_SET), _image_source_clip_set),
+        EO_OP_FUNC(EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_SOURCE_CLIP_GET), _image_source_clip_get),
         EO_OP_FUNC_SENTINEL
    };
 
@@ -5231,6 +5285,8 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(EVAS_OBJ_IMAGE_SUB_ID_SOURCE_VISIBLE_GET, "Get the source object visibility of a given image object being used as a proxy."),
      EO_OP_DESCRIPTION(EVAS_OBJ_IMAGE_SUB_ID_SOURCE_EVENTS_SET, "Set the events to be repeated to the source object."),
      EO_OP_DESCRIPTION(EVAS_OBJ_IMAGE_SUB_ID_SOURCE_EVENTS_GET, "Get the state of the source events."),
+     EO_OP_DESCRIPTION(EVAS_OBJ_IMAGE_SUB_ID_SOURCE_CLIP_SET, "Apply the source object's clip to the proxy"),
+     EO_OP_DESCRIPTION(EVAS_OBJ_IMAGE_SUB_ID_SOURCE_CLIP_GET, "Get the state of the source clip"),
      EO_OP_DESCRIPTION_SENTINEL
 };
 

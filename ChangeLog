@@ -1,6 +1,6 @@
-2013-04-26  ChunEon Park (Hermet)
+2013-04-29  ChunEon Park (Hermet)
 
-        * Evas: Fix the proxy object to not be clipped by source clipper.
+        * Evas: Added evas_object_image_source_clip_set()/get().
 
 2013-04-25  Tom Hacohen
 

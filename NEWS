@@ -102,6 +102,7 @@ Additions:
        ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_BACK
        ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_SCROLL
        ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_MOUSE
+    * Add evas_object_image_source_clip_set()/get()
 
 Deprecations:
     * ecore_x:
@@ -256,5 +257,3 @@ Fixes:
     * Ecore-X: Fix selection parser to not overrun buffer read by using longs on 64bit.
     * Evas: Fix recursive proxy image rendering to just render black
     * Evas textblock: Fixed line size calculation when using multiple fonts.
-    * Evas: Fix the proxy object to not be clipped by source clipper.
-

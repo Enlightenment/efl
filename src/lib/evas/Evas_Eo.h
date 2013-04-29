@@ -5497,6 +5497,8 @@ enum
    EVAS_OBJ_IMAGE_SUB_ID_SOURCE_VISIBLE_GET,
    EVAS_OBJ_IMAGE_SUB_ID_SOURCE_EVENTS_SET,
    EVAS_OBJ_IMAGE_SUB_ID_SOURCE_EVENTS_GET,
+   EVAS_OBJ_IMAGE_SUB_ID_SOURCE_CLIP_SET,
+   EVAS_OBJ_IMAGE_SUB_ID_SOURCE_CLIP_GET,
    EVAS_OBJ_IMAGE_SUB_ID_LAST
 };
 
@@ -5590,7 +5592,7 @@ enum
  *
  * @param[in] visible in
  *
- * @see evas_object_image_source_visible_get
+ * @see evas_object_image_source_visible_set
  */
 #define evas_obj_image_source_visible_set(visible) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_SOURCE_VISIBLE_SET), EO_TYPECHECK(Eina_Bool, visible)
 
@@ -5602,7 +5604,7 @@ enum
  *
  * @param[out] visible out
  *
- * @see evas_obj_image_source_visible_set
+ * @see evas_object_image_source_visible_get
  */
 #define evas_obj_image_source_visible_get(visible) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_SOURCE_VISIBLE_GET), EO_TYPECHECK(Eina_Bool *, visible)
 
@@ -5614,7 +5616,7 @@ enum
  *
  * @param[in] source in
  *
- * @see evas_object_image_source_events_get
+ * @see evas_object_image_source_events_set
  */
 #define evas_obj_image_source_events_set(source) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_SOURCE_EVENTS_SET), EO_TYPECHECK(Eina_Bool, source)
 
@@ -5626,9 +5628,33 @@ enum
  *
  * @param[out] source out
  *
- * @see evas_obj_image_source_event_set
+ * @see evas_object_image_source_event_get
  */
 #define evas_obj_image_source_events_get(source) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_SOURCE_EVENTS_GET), EO_TYPECHECK(Eina_Bool *, source)
+
+/**
+ * @def evas_obj_image_source_clip_set
+ * @since 1.8
+ *
+ * Apply the source object's clip to the proxy
+ *
+ * @param[in] clip in
+ *
+ * @see evas_object_image_source_clip_set
+ */
+#define evas_obj_image_source_clip_set(source_clip) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_SOURCE_CLIP_SET), EO_TYPECHECK(Eina_Bool, source_clip)
+
+/**
+ * @def evas_obj_image_source_clip_get
+ * @since 1.8
+ *
+ * Get the state of the source clip
+ *
+ * @param[out] source clip out
+ *
+ * @see evas_object_image_source_clip_get
+ */
+#define evas_obj_image_source_clip_get(source_clip) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_SOURCE_CLIP_GET), EO_TYPECHECK(Eina_Bool *, source_clip)
 
 /**
  * @def evas_obj_image_border_set
