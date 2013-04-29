@@ -421,7 +421,7 @@ _evas_swapper_buffer_free(Wl_Buffer *wb)
    wb->buffer = NULL;
 
    /* unmap the buffer data */
-   if (wb->data) munmap(wb->data, wb->size);
+   /* if (wb->data) munmap(wb->data, wb->size); */
    wb->data = NULL;
 }
 
