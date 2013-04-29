@@ -120,7 +120,7 @@ typedef Eina_Bool             (*Elm_Event_Cb)(void *data, Evas_Object *obj, Evas
 extern EAPI double _elm_startup_time;
 
 #ifndef ELM_LIB_QUICKLAUNCH
-#define ELM_MAIN() int main(int argc, char **argv) { _elm_startup_time = ecore_time_unix_get(); elm_init(argc, argv); return elm_main(argc, argv); } /**< macro to be used after the elm_main() function */
+#define ELM_MAIN() int main(int argc, char **argv) { int ret; _elm_startup_time = ecore_time_unix_get(); elm_init(argc, argv); ret = elm_main(argc, argv); return ret; } /**< macro to be used after the elm_main() function */
 #else
 #define ELM_MAIN() int main(int argc, char **argv) { _elm_startup_time = ecore_time_unix_get(); return elm_quicklaunch_fallback(argc, argv); } /**< macro to be used after the elm_main() function */
 #endif
