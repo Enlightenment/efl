@@ -260,8 +260,11 @@ _seek_vol(void *data)
 {
    double len;
    Eo *in = data;
+   Eo *out;
 
-   eo_do(in, ecore_audio_obj_volume_set(0.4));
+   eo_do(in, ecore_audio_obj_in_output_get(&out));
+
+   eo_do(out, ecore_audio_obj_volume_set(0.4));
    eo_do(in, ecore_audio_obj_in_seek(-0.3, SEEK_END, &len));
    fail_if(len < 0);
 
