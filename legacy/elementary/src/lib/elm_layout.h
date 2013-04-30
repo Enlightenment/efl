@@ -153,7 +153,8 @@
  *
  * This widget emits the following signals:
  *
- * @li "theme,changed": The theme was changed.
+ * @li "theme,changed" - The theme was changed.
+ * @li "language,changed" - the program's language changed
  *
  * @section secExamples Examples
  *

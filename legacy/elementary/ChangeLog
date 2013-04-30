@@ -1307,3 +1307,8 @@
 
         * Add the config elm_scroll_smooth_start_enable.
         There's no tick when scroller starts scroll if it's set.
+
+2013-04-30  ChunEon Park (Hermet)
+
+        * Layout supports "language,changed" smart callback.
+
