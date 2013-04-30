@@ -28,4 +28,16 @@ extern int _evas_engine_drm_log_dom;
 # endif
 # define CRIT(...) EINA_LOG_DOM_CRIT(_evas_engine_drm_log_dom, __VA_ARGS__)
 
+typedef struct _Outbuf Outbuf;
+
+struct _Outbuf
+{
+   unsigned int depth;
+   int w, h, rotation;
+   Eina_Bool destination_alpha : 1;
+};
+
+Outbuf *evas_outbuf_setup(int w, int h, unsigned int rotation, unsigned int depth, Eina_Bool alpha);
+void evas_outbuf_free(Outbuf *ob);
+
 #endif
