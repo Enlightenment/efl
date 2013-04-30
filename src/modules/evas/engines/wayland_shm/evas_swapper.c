@@ -414,7 +414,7 @@ _evas_swapper_buffer_free(Wl_Buffer *wb)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    /* check for valid buffer */
-   if (!wb) return;
+   if ((!wb) || (wb->valid)) return;
 
    /* kill the wl_buffer */
    if (wb->buffer) wl_buffer_destroy(wb->buffer);
@@ -478,9 +478,6 @@ _evas_swapper_buffer_put(Wl_Swapper *ws, Wl_Buffer *wb, Eina_Rectangle *rects, u
         ws->dy = 0;
         sent = wb;
      }
-
-   /* surface damage */
-   /* printf("Damage Surface: %d %d %d %d\n", rect->x, rect->y, rect->w, rect->h); */
 
    wl_surface_damage(ws->surface, rect->x, rect->y, rect->w, rect->h);
 
