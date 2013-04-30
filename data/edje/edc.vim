@@ -49,6 +49,7 @@ syn keyword	cLabel		mass density material restitution friction
 syn keyword	cLabel		ignore_part_pos light_on damping sleep
 syn keyword	cLabel		physics_body hardness linear angular
 syn keyword	cLabel		backface_cull gravity rate z depth
+syn keyword	cLabel		sounds sample
 
 syn keyword	cConditional	if else switch
 syn keyword	cRepeat		while for do
@@ -80,6 +81,7 @@ syn keyword	cConstant	BOX_RIGHT BOX_TOP BOX_BOTTOM
 syn keyword	cConstant	CYLINDER_MIDDLE_FRONT CYLINDER_MIDDLE_BACK
 syn keyword	cConstant	CYLINDER_FRONT CYLINDER_BACK CYLINDER_CURVED
 syn keyword	cConstant	CLOTH_FRONT CLOTH_BACK SPHERE_FRONT SPHERE_BACK
+syn keyword	cConstant	PLAY_SAMPLE
 
 syn keyword	cTodo		contained TODO FIXME XXX
 
