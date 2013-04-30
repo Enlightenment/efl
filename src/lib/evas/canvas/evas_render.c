@@ -969,7 +969,7 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
      }
    else
      {
-        if (proxy_obj == obj)
+        if (proxy_obj == eo_obj)
           eo_do(proxy_obj, evas_obj_image_source_clip_get(&proxy_src_clip));
      }
 
