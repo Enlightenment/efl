@@ -75,8 +75,8 @@ struct _Eo_Internal {
 #define OP_CLASS_OFFSET_GET(x) (((x) >> EO_OP_CLASS_OFFSET) & 0xffff)
 
 #define ID_CLASS_GET(id) ({ \
-      (_Eo_Class *) ((id <= _eo_classes_last_id) && (id > 0)) ? \
-      (_eo_classes[id - 1]) : NULL; \
+      (_Eo_Class *) (((id <= _eo_classes_last_id) && (id > 0)) ? \
+      (_eo_classes[id - 1]) : NULL); \
       })
 
 #define EO_ALIGN_SIZE(size) eina_mempool_alignof(size)
