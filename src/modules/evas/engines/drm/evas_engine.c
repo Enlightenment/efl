@@ -171,6 +171,22 @@ eng_setup(Evas *evas, void *einfo)
    return 1;
 }
 
+static void 
+eng_output_free(void *data)
+{
+   Render_Engine *re;
+
+   if ((re = data))
+     {
+        if (re->ob) evas_outbuf_free(re->ob);
+        if (re->tb) evas_common_tilebuf_free(re->tb);
+        free(re);
+     }
+
+   evas_common_font_shutdown();
+   evas_common_image_shutdown();
+}
+
 /* module api functions */
 static int
 module_open(Evas_Module *em)
@@ -199,6 +215,7 @@ module_open(Evas_Module *em)
    EVAS_API_OVERRIDE(info, &func, eng_);
    EVAS_API_OVERRIDE(info_free, &func, eng_);
    EVAS_API_OVERRIDE(setup, &func, eng_);
+   EVAS_API_OVERRIDE(output_free, &func, eng_);
 
    /* advertise our engine functions */
    em->functions = (void *)(&func);
