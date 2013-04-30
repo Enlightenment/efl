@@ -157,24 +157,24 @@ ecore_wl_window_resize(Ecore_Wl_Window *win, int w, int h, int location)
 
    if (!win) return;
 
-   if (win->type != ECORE_WL_WINDOW_TYPE_FULLSCREEN)
-     {
-        win->allocation.w = w;
-        win->allocation.h = h;
+   /* if (win->type != ECORE_WL_WINDOW_TYPE_FULLSCREEN) */
+   /*   { */
+   /*      win->allocation.w = w; */
+   /*      win->allocation.h = h; */
 
-        win->region.input = 
-          wl_compositor_create_region(_ecore_wl_disp->wl.compositor);
-        wl_region_add(win->region.input, win->allocation.x, win->allocation.y, 
-                      win->allocation.w, win->allocation.h);
-     }
+        /* win->region.input =  */
+        /*   wl_compositor_create_region(_ecore_wl_disp->wl.compositor); */
+        /* wl_region_add(win->region.input, win->allocation.x, win->allocation.y,  */
+        /*               win->allocation.w, win->allocation.h); */
+     /* } */
 
-   if (!win->transparent)
-     {
-        win->region.opaque = 
-          wl_compositor_create_region(_ecore_wl_disp->wl.compositor);
-        wl_region_add(win->region.opaque, win->allocation.x, win->allocation.y, 
-                      win->allocation.w, win->allocation.h);
-     }
+   /* if (!win->transparent) */
+   /*   { */
+   /*      win->region.opaque =  */
+   /*        wl_compositor_create_region(_ecore_wl_disp->wl.compositor); */
+   /*      wl_region_add(win->region.opaque, win->allocation.x, win->allocation.y,  */
+   /*                    win->allocation.w, win->allocation.h); */
+   /*   } */
 
    if (win->shell_surface)
      {
@@ -237,11 +237,9 @@ ecore_wl_window_buffer_attach(Ecore_Wl_Window *win, struct wl_buffer *buffer, in
 
              win->edges = 0;
 
-             /* if (buffer) */
              wl_surface_attach(win->surface, buffer, x, y);
-             wl_surface_damage(win->surface, 0, 0, 
-                               win->allocation.w, win->allocation.h);
-             wl_surface_commit(win->surface);
+             ecore_wl_window_damage(win, 0, 0, 
+                                    win->allocation.w, win->allocation.h);
 
              win->server_allocation = win->allocation;
           }
@@ -451,14 +449,14 @@ ecore_wl_window_update_size(Ecore_Wl_Window *win, int w, int h)
    win->allocation.w = w;
    win->allocation.h = h;
 
-   if ((!win->transparent) || (!win->alpha))
-     {
-        if (win->region.opaque) wl_region_destroy(win->region.opaque);
-        win->region.opaque = 
-          wl_compositor_create_region(_ecore_wl_disp->wl.compositor);
-        wl_region_add(win->region.opaque, win->allocation.x, win->allocation.y, 
-                      win->allocation.w, win->allocation.h);
-     }
+   /* if (!win->transparent) */
+   /*   { */
+   /*      if (win->region.opaque) wl_region_destroy(win->region.opaque); */
+   /*      win->region.opaque =  */
+   /*        wl_compositor_create_region(_ecore_wl_disp->wl.compositor); */
+   /*      wl_region_add(win->region.opaque, win->allocation.x, win->allocation.y,  */
+   /*                    win->allocation.w, win->allocation.h); */
+   /*   } */
 }
 
 EAPI void 
@@ -594,6 +592,7 @@ _ecore_wl_window_cb_configure(void *data, struct wl_shell_surface *shell_surface
      {
         if (win->type == ECORE_WL_WINDOW_TYPE_TOPLEVEL)
           win->edges = edges;
+
         if (win->region.input) wl_region_destroy(win->region.input);
         win->region.input = NULL;
         if (win->region.opaque) wl_region_destroy(win->region.opaque);
