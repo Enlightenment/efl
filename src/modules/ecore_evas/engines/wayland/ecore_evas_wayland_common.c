@@ -162,8 +162,10 @@ static Eina_Bool
 _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Evas *ee;
+   Ecore_Evas_Engine_Wl_Data *wdata;
    Ecore_Wl_Event_Window_Configure *ev;
    int nw = 0, nh = 0;
+   Eina_Bool prev_max, prev_full;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -171,6 +173,21 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
    ee = ecore_event_window_match(ev->win);
    if (!ee) return ECORE_CALLBACK_PASS_ON;
    if (ev->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
+
+   wdata = ee->engine.data;
+   if (!wdata) return ECORE_CALLBACK_PASS_ON;
+
+   prev_max = ee->prop.maximized;
+   prev_full = ee->prop.fullscreen;
+   ee->prop.maximized = ecore_wl_window_maximized_get(wdata->win);
+   ee->prop.fullscreen = ecore_wl_window_fullscreen_get(wdata->win);
+
+   if ((prev_max != ee->prop.maximized) ||
+       (prev_full != ee->prop.fullscreen))
+     {
+        if (ee->func.fn_state_change)
+          ee->func.fn_state_change(ee);
+     }
 
    if (ee->prop.fullscreen)
      {
@@ -957,7 +974,6 @@ _ecore_evas_wl_common_maximized_set(Ecore_Evas *ee, int max)
    if (!ee) return;
    wdata = ee->engine.data;
    if (ee->prop.maximized == max) return;
-   ee->prop.maximized = max;
    ecore_wl_window_maximized_set(wdata->win, max);
 }
 
@@ -971,7 +987,6 @@ _ecore_evas_wl_common_fullscreen_set(Ecore_Evas *ee, int full)
    if (!ee) return;
    if (ee->prop.fullscreen == full) return;
    wdata = ee->engine.data;
-   ee->prop.fullscreen = full;
    ecore_wl_window_fullscreen_set(wdata->win, full);
 }
 
@@ -1224,13 +1239,4 @@ _ecore_evas_wl_interface_new(void)
    iface->window_get = _ecore_evas_wayland_window_get;
 
    return iface;
-}
-
-void
-_ecore_evas_wl_common_state_change(void *data)
-{
-   Ecore_Evas *ee = data;
-
-   if (ee->func.fn_state_change)
-     ee->func.fn_state_change(ee);
 }

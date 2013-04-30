@@ -189,8 +189,6 @@ ecore_evas_wayland_shm_new_internal(const char *disp_name, unsigned int parent, 
    wdata->win = 
      ecore_wl_window_new(p, x, y, w, h, ECORE_WL_WINDOW_BUFFER_TYPE_SHM);
    ee->prop.window = wdata->win->id;
-   ecore_wl_window_state_changed_cb_set(wdata->win, 
-                                        _ecore_evas_wl_common_state_change, ee);
 
    if ((einfo = (Evas_Engine_Info_Wayland_Shm *)evas_engine_info_get(ee->evas)))
      {

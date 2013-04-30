@@ -12,7 +12,6 @@ static void _ecore_wl_window_cb_surface_enter(void *data, struct wl_surface *sur
 static void _ecore_wl_window_cb_surface_leave(void *data, struct wl_surface *surface, struct wl_output *output EINA_UNUSED);
 static void _ecore_wl_window_configure_send(Ecore_Wl_Window *win, int w, int h);
 static char *_ecore_wl_window_id_str_get(unsigned int win_id);
-static void _ecore_wl_window_state_changed(Ecore_Wl_Window *win);
 
 /* local variables */
 static Eina_Hash *_windows = NULL;
@@ -109,12 +108,6 @@ ecore_wl_window_free(Ecore_Wl_Window *win)
    win->frame_callback = NULL;
    if (win->surface) wl_surface_destroy(win->surface);
    win->surface = NULL;
-
-   if (win->state_changed_job)
-     {
-        ecore_job_del(win->state_changed_job);
-        win->state_changed_job = NULL;
-     }
 
    /* HMMM, why was this disabled ? */
    free(win);
@@ -323,8 +316,6 @@ ecore_wl_window_show(Ecore_Wl_Window *win)
         break;
      }
 
-   _ecore_wl_window_state_changed(win);
-
    /* if (win->type != ECORE_WL_WINDOW_TYPE_FULLSCREEN) */
    /*   { */
    /*      win->region.input =  */
@@ -352,7 +343,6 @@ ecore_wl_window_hide(Ecore_Wl_Window *win)
    win->shell_surface = NULL;
    if (win->surface) wl_surface_destroy(win->surface);
    win->surface = NULL;
-   _ecore_wl_window_state_changed(win);
 }
 
 EAPI void 
@@ -363,7 +353,6 @@ ecore_wl_window_raise(Ecore_Wl_Window *win)
    if (!win) return;
    if (win->shell_surface) 
      wl_shell_surface_set_toplevel(win->shell_surface);
-   _ecore_wl_window_state_changed(win);
 }
 
 EAPI void 
@@ -390,7 +379,6 @@ ecore_wl_window_maximized_set(Ecore_Wl_Window *win, Eina_Bool maximized)
                                         win->saved_allocation.h);
      }
    win->edges = 0;
-   _ecore_wl_window_state_changed(win);
 }
 
 EAPI Eina_Bool
@@ -431,7 +419,6 @@ ecore_wl_window_fullscreen_set(Ecore_Wl_Window *win, Eina_Bool fullscreen)
                                         win->saved_allocation.h);
      }
    win->edges = 0;
-   _ecore_wl_window_state_changed(win);
 }
 
 EAPI Eina_Bool
@@ -463,7 +450,6 @@ ecore_wl_window_transparent_set(Ecore_Wl_Window *win, Eina_Bool transparent)
         wl_region_add(win->region.opaque, win->allocation.x, win->allocation.y, 
                       win->allocation.w, win->allocation.h);
      }
-   _ecore_wl_window_state_changed(win);
 }
 
 EAPI Eina_Bool
@@ -590,21 +576,6 @@ ecore_wl_window_parent_set(Ecore_Wl_Window *win, Ecore_Wl_Window *parent)
    win->parent = parent;
 }
 
-/* @since 1.8 */
-EAPI void
-ecore_wl_window_state_changed_cb_set(Ecore_Wl_Window *win, void (*cb)(void *), void *cb_data)
-{
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
-
-   if (!win) return;
-
-   win->state_changed_cb = cb;
-   if (cb)
-     win->state_changed_cb_data = cb_data;
-   else
-     win->state_changed_cb_data = NULL;
-}
-
 /* local functions */
 static void 
 _ecore_wl_window_cb_ping(void *data EINA_UNUSED, struct wl_shell_surface *shell_surface, unsigned int serial)
@@ -708,27 +679,4 @@ _ecore_wl_window_id_str_get(unsigned int win_id)
    id[8] = 0;
 
    return id;
-}
-
-static void
-_ecore_wl_window_state_changed_job(void *data)
-{
-   Ecore_Wl_Window *win = data;
-
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
-
-   if (win->state_changed_cb)
-     win->state_changed_cb(win->state_changed_cb_data);
-
-   win->state_changed_job = NULL;
-}
-
-static void
-_ecore_wl_window_state_changed(Ecore_Wl_Window *win)
-{
-   if (win->state_changed_job)
-     return;
-
-   win->state_changed_job =
-      ecore_job_add(_ecore_wl_window_state_changed_job, win);
 }

@@ -225,9 +225,6 @@ struct _Ecore_Wl_Window
    /* FIXME: Shouldn't these attributes be private to the Ecore_Wl_Window? */
    Eina_Bool frame_pending;
    struct wl_callback *frame_callback;
-   void (*state_changed_cb)(void *);
-   void *state_changed_cb_data;
-   Ecore_Job *state_changed_job;
    /* FIXME: Ideally we should record the cursor name for this window 
     * so we can compare and avoid unnecessary cursor set calls to wayland */
 
@@ -634,7 +631,6 @@ EAPI void ecore_wl_window_pointer_set(Ecore_Wl_Window *win, struct wl_surface *s
 EAPI void ecore_wl_window_cursor_from_name_set(Ecore_Wl_Window *win, const char *cursor_name);
 EAPI void ecore_wl_window_cursor_default_restore(Ecore_Wl_Window *win);
 EAPI void ecore_wl_window_parent_set(Ecore_Wl_Window *win, Ecore_Wl_Window *parent);
-EAPI void ecore_wl_window_state_changed_cb_set(Ecore_Wl_Window *win, void (*cb)(void *), void *cb_data);
 
 /** @since 1.7 */
 EAPI Eina_Bool ecore_wl_dnd_set_selection(Ecore_Wl_Dnd *dnd, const char **types_offered);
