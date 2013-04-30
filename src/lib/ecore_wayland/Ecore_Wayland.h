@@ -619,8 +619,11 @@ EAPI void ecore_wl_window_hide(Ecore_Wl_Window *win);
  */
 EAPI void ecore_wl_window_raise(Ecore_Wl_Window *win);
 EAPI void ecore_wl_window_maximized_set(Ecore_Wl_Window *win, Eina_Bool maximized);
+EAPI Eina_Bool ecore_wl_window_maximized_get(Ecore_Wl_Window *win);
 EAPI void ecore_wl_window_fullscreen_set(Ecore_Wl_Window *win, Eina_Bool fullscreen);
+EAPI Eina_Bool ecore_wl_window_fullscreen_get(Ecore_Wl_Window *win);
 EAPI void ecore_wl_window_transparent_set(Ecore_Wl_Window *win, Eina_Bool transparent);
+EAPI Eina_Bool ecore_wl_window_transparent_get(Ecore_Wl_Window *win);
 EAPI void ecore_wl_window_update_size(Ecore_Wl_Window *win, int w, int h);
 EAPI void ecore_wl_window_update_location(Ecore_Wl_Window *win, int x, int y);
 EAPI struct wl_surface *ecore_wl_window_surface_get(Ecore_Wl_Window *win);

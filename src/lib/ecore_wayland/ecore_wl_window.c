@@ -393,6 +393,19 @@ ecore_wl_window_maximized_set(Ecore_Wl_Window *win, Eina_Bool maximized)
    _ecore_wl_window_state_changed(win);
 }
 
+EAPI Eina_Bool
+ecore_wl_window_maximized_get(Ecore_Wl_Window *win)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!win) return EINA_FALSE;
+
+   if (win->type == ECORE_WL_WINDOW_TYPE_MAXIMIZED)
+     return EINA_TRUE;
+
+   return EINA_FALSE;
+}
+
 EAPI void 
 ecore_wl_window_fullscreen_set(Ecore_Wl_Window *win, Eina_Bool fullscreen)
 {
@@ -421,6 +434,19 @@ ecore_wl_window_fullscreen_set(Ecore_Wl_Window *win, Eina_Bool fullscreen)
    _ecore_wl_window_state_changed(win);
 }
 
+EAPI Eina_Bool
+ecore_wl_window_fullscreen_get(Ecore_Wl_Window *win)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!win) return EINA_FALSE;
+
+   if (win->type == ECORE_WL_WINDOW_TYPE_FULLSCREEN)
+     return EINA_TRUE;
+
+   return EINA_FALSE;
+}
+
 EAPI void 
 ecore_wl_window_transparent_set(Ecore_Wl_Window *win, Eina_Bool transparent)
 {
@@ -438,6 +464,16 @@ ecore_wl_window_transparent_set(Ecore_Wl_Window *win, Eina_Bool transparent)
                       win->allocation.w, win->allocation.h);
      }
    _ecore_wl_window_state_changed(win);
+}
+
+EAPI Eina_Bool
+ecore_wl_window_transparent_get(Ecore_Wl_Window *win)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!win) return EINA_FALSE;
+
+   return win->transparent;
 }
 
 EAPI void 
