@@ -953,6 +953,7 @@ endif
 if BUILD_ENGINE_DRM
 dist_installed_evasmainheaders_DATA += modules/evas/engines/drm/Evas_Engine_Drm.h
 DRM_SOURCES = \
+modules/evas/engines/drm/evas_outbuf.c \
 modules/evas/engines/drm/evas_engine.c \
 modules/evas/engines/drm/evas_engine.h
 if EVAS_STATIC_BUILD_DRM
