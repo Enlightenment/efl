@@ -2638,6 +2638,7 @@ _elm_scroll_mouse_down_event_cb(void *data,
 #else
         sid->down.history[0].timestamp = ecore_loop_time_get();
 #endif
+        sid->down.dragged_began_timestamp = sid->down.history[0].timestamp;
         sid->down.history[0].x = ev->canvas.x;
         sid->down.history[0].y = ev->canvas.y;
      }
@@ -2817,27 +2818,31 @@ _elm_scroll_hold_animator(void *data)
         twin = _elm_config->scroll_smooth_time_window;
         for (i = 0; i < 60; i++)
           {
-             // oldest point is sd->down.history[i]
-             // newset is sd->down.history[0]
-             dt = t - sid->down.history[i].timestamp;
-             if (dt > twin)
+             if (sid->down.history[i].timestamp >
+                 sid->down.dragged_began_timestamp)
                {
-                  i--;
-                  break;
+                  // oldest point is sd->down.history[i]
+                  // newset is sd->down.history[0]
+                  dt = t - sid->down.history[i].timestamp;
+                  if (dt > twin)
+                    {
+                       i--;
+                       break;
+                    }
+                  x = sid->down.history[i].x;
+                  y = sid->down.history[i].y;
+                  _elm_scroll_down_coord_eval(sid, &x, &y);
+                  if (i == 0)
+                    {
+                       basex = x;
+                       basey = y;
+                    }
+                  pos[i].x = x - basex;
+                  pos[i].y = y - basey;
+                  pos[i].t = sid->down.history[i].timestamp - sid->down.history[0].timestamp;
+                  count++;
                }
-             x = sid->down.history[i].x;
-             y = sid->down.history[i].y;
-             _elm_scroll_down_coord_eval(sid, &x, &y);
-             if (i == 0)
-               {
-                  basex = x;
-                  basey = y;
-               }
-             pos[i].x = x - basex;
-             pos[i].y = y - basey;
-             pos[i].t = sid->down.history[i].timestamp - sid->down.history[0].timestamp;
-             count++;
-           }
+          }
         count = i;
         if (count >= 2)
           {
@@ -3081,8 +3086,19 @@ _elm_scroll_mouse_move_event_cb(void *data,
         if ((sid->down.dragged) ||
             (((x * x) + (y * y)) >
              (_elm_config->thumbscroll_threshold *
-                   _elm_config->thumbscroll_threshold)))
+              _elm_config->thumbscroll_threshold)))
           {
+             if (!sid->down.dragged_began &&
+                 _elm_config->scroll_smooth_start_enable)
+               {
+                  sid->down.x = ev->cur.canvas.x;
+                  sid->down.y = ev->cur.canvas.y;
+#ifdef EVTIME
+                  sid->down.dragged_began_timestamp = ev->timestamp / 1000.0;
+#else
+                  sid->down.dragged_began_timestamp = ecore_loop_time_get();
+#endif
+               }
              sid->down.dragged_began = EINA_TRUE;
              if (!sid->down.dragged)
                {

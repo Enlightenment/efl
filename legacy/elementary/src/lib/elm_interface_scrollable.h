@@ -1001,6 +1001,7 @@ struct _Elm_Scrollable_Smart_Interface_Data
          double est_timestamp_diff;
       } hist;
 
+      double          dragged_began_timestamp;
       double          anim_start;
       double          anim_start2;
       double          anim_start3;

@@ -1302,3 +1302,8 @@
 2013-04-29  ChunEon Park (Hermet)
 
         * Fix toolbar item clipped problem on reordering toolbar item.
+
+2013-04-30  Jaehwan Kim
+
+        * Add the config elm_scroll_smooth_start_enable.
+        There's no tick when scroller starts scroll if it's set.
