@@ -139,13 +139,22 @@ eng_setup(Evas *evas, void *einfo)
                                  info->info.rotation, info->info.depth, 
                                  info->info.destination_alpha, swap)))
           return 0;
-
-        re->info = info;
      }
    else
      {
+        /* if we have an existing outbuf, free it */
+        if (re->ob) evas_outbuf_free(re->ob);
 
+        /* try to create a new outbuf */
+        if (!(re->ob = 
+              evas_outbuf_setup(epd->output.w, epd->output.h, 
+                                info->info.rotation, info->info.depth, 
+                                info->info.destination_alpha)))
+          return 0;
      }
+
+   /* update the info structure pointer */
+   re->info = info;
 
    /* reassign engine output */
    epd->engine.data.output = re;
