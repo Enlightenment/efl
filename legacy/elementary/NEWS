@@ -66,6 +66,7 @@ Additions:
    * Support language,changed callback (Fileselector_Button, Fileselector Entry, Spinner.
    * Add the config elm_scroll_smooth_start_enable.
    * Add elm_layout smart callback - "language,changed".
+   * The momentum animation time is changed as the amount of flick.
 
 Improvements:
 

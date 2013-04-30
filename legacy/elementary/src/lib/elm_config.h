@@ -371,6 +371,50 @@ EAPI double       elm_config_scroll_thumbscroll_friction_get(void);
 EAPI void         elm_config_scroll_thumbscroll_friction_set(double friction);
 
 /**
+ * Get the min amount of inertia a scroller will impose at self scrolling
+ * animations.
+ *
+ * @return the thumb scroll min friction
+ *
+ * @ingroup Scrolling
+ */
+EAPI double       elm_config_scroll_thumbscroll_min_friction_get(void);
+
+/**
+ * Set the min amount of inertia a scroller will impose at self scrolling
+ * animations.
+ *
+ * @param friction the thumb scroll min friction
+ *
+ * @see elm_config_thumbscroll_min_friction_get()
+ * @ingroup Scrolling
+ */
+EAPI void         elm_config_scroll_thumbscroll_min_friction_set(double friction);
+
+/**
+ * Get the standard velocity of the scroller. The scroll animation time is
+ * same with thumbscroll friction, if the velocity is same with standard
+ * velocity.
+ *
+ * @return the thumb scroll friction
+ *
+ * @ingroup Scrolling
+ */
+EAPI double       elm_config_scroll_thumbscroll_friction_standard_get(void);
+
+/**
+ * Set the standard velocity of the scroller. The scroll animation time is
+ * same with thumbscroll friction, if the velocity is same with standard
+ * velocity.
+ *
+ * @param friction the thumb scroll friction standard
+ *
+ * @see elm_config_thumbscroll_friction_standard_get()
+ * @ingroup Scrolling
+ */
+EAPI void         elm_config_scroll_thumbscroll_friction_standard_set(double standard);
+
+/**
  * Get the amount of lag between your actual mouse cursor dragging
  * movement and a scroller's view movement itself, while pushing it
  * into bounce state manually.

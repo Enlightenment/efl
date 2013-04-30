@@ -1312,3 +1312,6 @@
 
         * Layout supports "language,changed" smart callback.
 
+2013-04-30  Jaehwan Kim
+
+        * The momentum animation time is changed as the amount of flick.

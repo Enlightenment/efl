@@ -7,6 +7,8 @@ group "Elm_Config" struct {
   value "thumbscroll_hold_threshold" int: 100;
   value "thumbscroll_momentum_threshold" double: 100.0;
   value "thumbscroll_friction" double: 1.0;
+  value "thumbscroll_min_friction" double: 0.3;
+  value "thumbscroll_friction_standard" double: 3000.0;
   value "thumbscroll_bounce_friction" double: 0.5;
   value "thumbscroll_bounce_enable" uchar: 1;
   value "thumbscroll_acceleration_threshold" double: 2000.0;

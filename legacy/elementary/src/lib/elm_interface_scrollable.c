@@ -1966,7 +1966,7 @@ _paging_is_enabled(Elm_Scrollable_Smart_Interface_Data *sid)
 static Eina_Bool
 _elm_scroll_momentum_animator(void *data)
 {
-   double t, dt, p;
+   double t, at, dt, p, r;
    Elm_Scrollable_Smart_Interface_Data *sid = data;
    Evas_Coord x, y, dx, dy, px, py, maxx, maxy, minx, miny;
    Eina_Bool no_bounce_x_end = EINA_FALSE, no_bounce_y_end = EINA_FALSE;
@@ -1977,7 +1977,14 @@ _elm_scroll_momentum_animator(void *data)
    dt = t - sid->down.anim_start;
    if (dt >= 0.0)
      {
-        dt = dt / (_elm_config->thumbscroll_friction + sid->down.extra_time);
+        r = _elm_config->thumbscroll_min_friction / _elm_config->thumbscroll_friction;
+        at = (double)sqrt(
+           (sid->down.dx * sid->down.dx) + (sid->down.dy * sid->down.dy));
+        at = at < ((1.0 - r) * _elm_config->thumbscroll_friction_standard) ?
+           at : (1.0 - r) * _elm_config->thumbscroll_friction_standard;
+        at = ((at / _elm_config->thumbscroll_friction_standard) + r) *
+           (_elm_config->thumbscroll_friction + sid->down.extra_time);
+        dt = dt / at;
         if (dt > 1.0) dt = 1.0;
         p = 1.0 - ((1.0 - dt) * (1.0 - dt));
         dx = (sid->down.dx * (_elm_config->thumbscroll_friction +

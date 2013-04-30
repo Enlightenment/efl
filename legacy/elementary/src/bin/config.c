@@ -372,6 +372,56 @@ tsf_change(void *data       __UNUSED__,
 }
 
 static void
+tsmf_round(void *data       __UNUSED__,
+           Evas_Object     *obj,
+           void *event_info __UNUSED__)
+{
+   double val = elm_slider_value_get(obj);
+   double v;
+
+   v = ((double)((int)(val * 10.0))) / 10.0;
+   if (v != val) elm_slider_value_set(obj, v);
+}
+
+static void
+tsmf_change(void *data       __UNUSED__,
+            Evas_Object     *obj,
+            void *event_info __UNUSED__)
+{
+   double tsmf = elm_config_scroll_thumbscroll_min_friction_get();
+   double val = elm_slider_value_get(obj);
+
+   if (tsmf == val) return;
+   elm_config_scroll_thumbscroll_min_friction_set(val);
+   elm_config_all_flush();
+}
+
+static void
+tsfs_round(void *data       __UNUSED__,
+           Evas_Object     *obj,
+           void *event_info __UNUSED__)
+{
+   double val = elm_slider_value_get(obj);
+   double v;
+
+   v = ((double)((int)(val * 10.0))) / 10.0;
+   if (v != val) elm_slider_value_set(obj, v);
+}
+
+static void
+tsfs_change(void *data       __UNUSED__,
+            Evas_Object     *obj,
+            void *event_info __UNUSED__)
+{
+   double tsfs = elm_config_scroll_thumbscroll_friction_standard_get();
+   double val = elm_slider_value_get(obj);
+
+   if (tsfs == val) return;
+   elm_config_scroll_thumbscroll_friction_standard_set(val);
+   elm_config_all_flush();
+}
+
+static void
 tsbf_round(void *data       __UNUSED__,
            Evas_Object     *obj,
            void *event_info __UNUSED__)
@@ -2793,6 +2843,47 @@ _status_config_scrolling(Evas_Object *win,
 
    evas_object_smart_callback_add(sl, "changed", tsf_round, NULL);
    evas_object_smart_callback_add(sl, "delay,changed", tsf_change, NULL);
+
+   LABEL_FRAME_ADD("<hilight>Thumb scroll min friction</>");
+
+   sl = elm_slider_add(win);
+   elm_object_tooltip_text_set(sl, "This is the min amount of inertia a<br/>"
+                                   "scroller will impose at self scrolling<br/>"
+                                   "animations");
+   evas_object_data_set(win, "thumbscroll_min_friction_slider", sl);
+   evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);
+   elm_slider_span_size_set(sl, 120);
+   elm_slider_unit_format_set(sl, "%1.1f");
+   elm_slider_indicator_format_set(sl, "%1.1f");
+   elm_slider_min_max_set(sl, 0.0, 15.0);
+   elm_slider_value_set(sl, elm_config_scroll_thumbscroll_min_friction_get());
+   elm_box_pack_end(bx, sl);
+   evas_object_show(sl);
+
+   evas_object_smart_callback_add(sl, "changed", tsmf_round, NULL);
+   evas_object_smart_callback_add(sl, "delay,changed", tsmf_change, NULL);
+
+   LABEL_FRAME_ADD("<hilight>Thumb scroll friction standard</>");
+
+   sl = elm_slider_add(win);
+   elm_object_tooltip_text_set(sl, "This is the standard velocity of the scroller."
+                                   "<br/>The scroll animation time is same<br/>"
+                                   "with thumbscroll friction, if the velocity"
+                                   "<br/>is same with standard velocity.");
+   evas_object_data_set(win, "thumbscroll_friction_standard_slider", sl);
+   evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);
+   elm_slider_span_size_set(sl, 120);
+   elm_slider_unit_format_set(sl, "%1.0f pixel/s");
+   elm_slider_indicator_format_set(sl, "%1.0f");
+   elm_slider_min_max_set(sl, 10.0, 5000.0);
+   elm_slider_value_set(sl, elm_config_scroll_thumbscroll_friction_standard_get());
+   elm_box_pack_end(bx, sl);
+   evas_object_show(sl);
+
+   evas_object_smart_callback_add(sl, "changed", tsfs_round, NULL);
+   evas_object_smart_callback_add(sl, "delay,changed", tsfs_change, NULL);
 
    LABEL_FRAME_ADD("<hilight>Thumb scroll border friction</>");
 
