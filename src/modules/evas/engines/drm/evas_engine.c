@@ -56,6 +56,12 @@ _output_setup(int w, int h, unsigned int rotation, unsigned int depth, Eina_Bool
         if (re->ob) evas_outbuf_free(re->ob);
 
         /* try to create new outbuf */
+        if (!(re->ob = evas_outbuf_setup(w, h, rotation, depth, alpha)))
+          {
+             if (re->tb) evas_common_tilebuf_free(re->tb);
+             free(re);
+             return NULL;
+          }
      }
 
    /* return the allocated render_engine structure */
