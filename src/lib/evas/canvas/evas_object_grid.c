@@ -47,7 +47,7 @@ struct _Evas_Object_Grid_Accessor
 };
 
 #define EVAS_OBJECT_GRID_DATA_GET(o, ptr)			\
-  Evas_Object_Grid_Data *ptr = eo_data_get(o, MY_CLASS)
+  Evas_Object_Grid_Data *ptr = eo_data_scope_get(o, MY_CLASS)
 
 #define EVAS_OBJECT_GRID_DATA_GET_OR_RETURN(o, ptr)			\
   EVAS_OBJECT_GRID_DATA_GET(o, ptr);					\
@@ -170,7 +170,7 @@ _evas_object_grid_smart_add(Evas_Object *o)
    priv = evas_object_smart_data_get(o);
    if (!priv)
      {
-        priv = eo_data_get(o, MY_CLASS);
+        priv = eo_data_ref(o, MY_CLASS);
         evas_object_smart_data_set(o, priv);
      }
 

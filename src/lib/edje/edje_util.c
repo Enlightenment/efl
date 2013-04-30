@@ -5262,7 +5262,7 @@ _edje_real_part_box_remove_at(Edje *ed, Edje_Real_Part *rp, unsigned int pos)
    Evas_Object_Box_Data *priv;
    Evas_Object *child_obj;
 
-   priv = eo_data_get(rp->object, EVAS_OBJ_BOX_CLASS);
+   priv = eo_data_scope_get(rp->object, EVAS_OBJ_BOX_CLASS);
    opt = eina_list_nth(priv->children, pos);
    if (!opt) return NULL;
    child_obj = opt->obj;
@@ -5485,7 +5485,7 @@ _edje_perspective_obj_del(void *data, EINA_UNUSED Evas *e, EINA_UNUSED Evas_Obje
      {
         Edje *ed;
 
-        ed = eo_data_get(o, EDJE_OBJ_CLASS);
+        ed = eo_data_scope_get(o, EDJE_OBJ_CLASS);
         if (!ed) continue;
         ed->persp = NULL;
         ed->dirty = EINA_TRUE;
@@ -5538,7 +5538,7 @@ edje_perspective_set(Edje_Perspective *ps, Evas_Coord px, Evas_Coord py, Evas_Co
      {
         Edje *ed;
 
-        ed = eo_data_get(o, EDJE_OBJ_CLASS);
+        ed = eo_data_scope_get(o, EDJE_OBJ_CLASS);
         if (!ed) continue;
         if (!ed->persp)
           {
@@ -5553,7 +5553,7 @@ edje_perspective_set(Edje_Perspective *ps, Evas_Coord px, Evas_Coord py, Evas_Co
           {
              Edje *ed;
 
-             ed = eo_data_get(o, EDJE_OBJ_CLASS);
+             ed = eo_data_scope_get(o, EDJE_OBJ_CLASS);
              if (!ed) continue;
              if (!ed->persp)
                {
@@ -5587,7 +5587,7 @@ edje_perspective_global_set(Edje_Perspective *ps, Eina_Bool global)
      {
         Edje *ed;
 
-        ed = eo_data_get(o, EDJE_OBJ_CLASS);
+        ed = eo_data_scope_get(o, EDJE_OBJ_CLASS);
         if (!ed) continue;
         if (!ed->persp)
           {
@@ -6185,7 +6185,7 @@ _edje_fetch(const Evas_Object *obj)
 
    if (!obj || !eo_isa(obj, EDJE_OBJ_CLASS))
      return NULL;
-   ed = eo_data_get(obj, EDJE_OBJ_CLASS);
+   ed = eo_data_scope_get(obj, EDJE_OBJ_CLASS);
    if ((ed) && (ed->delete_me)) return NULL;
    return ed;
 }

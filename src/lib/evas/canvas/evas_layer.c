@@ -4,7 +4,7 @@
 static void _evas_layer_free(Evas_Layer *lay);
 
 void
-evas_object_inject(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, Evas *e)
+evas_object_inject(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas *e)
 {
    Evas_Layer *lay;
 
@@ -18,6 +18,7 @@ evas_object_inject(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *
         lay->layer = obj->cur->layer;
         evas_layer_add(lay);
      }
+   eo_data_ref(eo_obj, NULL);
    lay->objects = (Evas_Object_Protected_Data *)eina_inlist_append(EINA_INLIST_GET(lay->objects), EINA_INLIST_GET(obj));
    lay->usage++;
    obj->layer = lay;
@@ -25,10 +26,11 @@ evas_object_inject(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *
 }
 
 void
-evas_object_release(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, int clean_layer)
+evas_object_release(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, int clean_layer)
 {
    if (!obj->in_layer) return;
    obj->layer->objects = (Evas_Object_Protected_Data *)eina_inlist_remove(EINA_INLIST_GET(obj->layer->objects), EINA_INLIST_GET(obj));
+   eo_data_unref(eo_obj, obj);
    obj->layer->usage--;
    if (clean_layer)
      {
@@ -45,7 +47,7 @@ evas_object_release(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Data 
 Evas_Layer *
 evas_layer_new(Evas *eo_e)
 {
-   Evas_Public_Data *e = eo_data_get(eo_e, EVAS_CLASS);
+   Evas_Public_Data *e = eo_data_ref(eo_e, EVAS_CLASS);
    Evas_Layer *lay;
 
    lay = calloc(1, sizeof(Evas_Layer));
@@ -87,7 +89,7 @@ evas_layer_free_objects(Evas_Layer *lay)
 void
 evas_layer_clean(Evas *eo_e)
 {
-   Evas_Public_Data *e = eo_data_get(eo_e, EVAS_CLASS);
+   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CLASS);
    Evas_Layer *tmp;
 
    while (e->layers)
@@ -101,7 +103,7 @@ evas_layer_clean(Evas *eo_e)
 Evas_Layer *
 evas_layer_find(Evas *eo_e, short layer_num)
 {
-   Evas_Public_Data *e = eo_data_get(eo_e, EVAS_CLASS);
+   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CLASS);
    Evas_Layer *layer;
 
    EINA_INLIST_FOREACH(e->layers, layer)
@@ -136,13 +138,16 @@ evas_layer_del(Evas_Layer *lay)
 
    e = lay->evas;
    e->layers = (Evas_Layer *)eina_inlist_remove(EINA_INLIST_GET(e->layers), EINA_INLIST_GET(lay));
+
+   eo_data_unref(e->evas, e);
+   lay->evas = NULL;
 }
 
 static void
 _evas_object_layer_set_child(Evas_Object *eo_obj, Evas_Object *par, short l)
 {
-   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
-   Evas_Object_Protected_Data *par_obj = eo_data_get(par, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *par_obj = eo_data_scope_get(par, EVAS_OBJ_CLASS);
 
    if (obj->delete_me) return;
    if (obj->cur->layer == l) return;
@@ -257,7 +262,7 @@ _layer_get(Eo *eo_obj EINA_UNUSED, void *_obj, va_list *list)
    const Evas_Object_Protected_Data *obj = _obj;
    if (obj->smart.parent)
      {
-        Evas_Object_Protected_Data *smart_parent_obj = eo_data_get(obj->smart.parent, EVAS_OBJ_CLASS);
+        Evas_Object_Protected_Data *smart_parent_obj = eo_data_scope_get(obj->smart.parent, EVAS_OBJ_CLASS);
         *layer = smart_parent_obj->cur->layer;
      }
    *layer = obj->cur->layer;

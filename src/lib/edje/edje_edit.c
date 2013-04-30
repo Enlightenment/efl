@@ -33,7 +33,7 @@ EAPI Eina_Error EDJE_EDIT_ERROR_GROUP_DOES_NOT_EXIST = 0;
    Edje_Edit *eed; \
    if (!eo_isa(obj, MY_CLASS)) \
      return RET; \
-   eed = eo_data_get(obj, MY_CLASS); \
+   eed = eo_data_scope_get(obj, MY_CLASS); \
    if (!eed) return RET;
 
 /* Get ed(Edje*) from obj(Evas_Object*) */
@@ -41,7 +41,7 @@ EAPI Eina_Error EDJE_EDIT_ERROR_GROUP_DOES_NOT_EXIST = 0;
    Edje *ed; \
    if (!eo_isa(obj, EDJE_OBJ_CLASS)) \
      return RET; \
-   ed = eo_data_get(obj, EDJE_OBJ_CLASS); \
+   ed = eo_data_scope_get(obj, EDJE_OBJ_CLASS); \
 
 /* Get rp(Edje_Real_Part*) from obj(Evas_Object*) and part(char*) */
 #define GET_RP_OR_RETURN(RET) \
@@ -254,13 +254,20 @@ static void
 _edje_edit_constructor(Eo *obj, void *class_data, va_list *list EINA_UNUSED)
 {
    Edje_Edit *eed = class_data;
-   eed->base = eo_data_get(obj, EDJE_OBJ_CLASS);
+   eed->base = eo_data_ref(obj, EDJE_OBJ_CLASS);
 
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eina_error_set(0);
 
    if (!EDJE_EDIT_ERROR_GROUP_DOES_NOT_EXIST)
      _edje_edit_error_register();
+}
+
+static void
+_edje_edit_destructor(Eo *obj, void *class_data, va_list *list EINA_UNUSED)
+{
+   eo_do_super(obj, MY_CLASS, eo_destructor());
+   eo_data_unref(obj, class_data);
 }
 /* End of Edje_Edit smart stuff */
 
@@ -7191,7 +7198,7 @@ _edje_generate_source_of_group(Edje *ed, Edje_Part_Collection_Directory_Entry *p
         return EINA_FALSE;
      }
 
-   eed = eo_data_get(obj, MY_CLASS);
+   eed = eo_data_scope_get(obj, MY_CLASS);
    pc = eed->base->collection;
 
    BUF_APPENDF(I1"group { name: \"%s\";\n", group);
@@ -7826,6 +7833,7 @@ _edje_edit_class_constructor(Eo_Class *klass)
 {
    const Eo_Op_Func_Description func_desc[] = {
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _edje_edit_constructor),
+        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DESTRUCTOR), _edje_edit_destructor),
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_DEL), _edje_edit_smart_del),
         EO_OP_FUNC(EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_FILE_SET), _edje_edit_smart_file_set),
         EO_OP_FUNC_SENTINEL

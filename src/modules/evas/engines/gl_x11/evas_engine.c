@@ -803,7 +803,7 @@ _re_winfree(Render_Engine *re)
 static int
 eng_setup(Evas *eo_e, void *in)
 {
-   Evas_Public_Data *e = eo_data_get(eo_e, EVAS_CLASS);
+   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CLASS);
    Render_Engine *re;
    Evas_Engine_Info_GL_X11 *info;
    const char *s;
