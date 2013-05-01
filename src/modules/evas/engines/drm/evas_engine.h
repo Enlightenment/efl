@@ -30,6 +30,14 @@ extern int _evas_engine_drm_log_dom;
 
 typedef struct _Outbuf Outbuf;
 
+enum
+{
+   MODE_FULL,
+   MODE_COPY,
+   MODE_DOUBLE,
+   MODE_TRIPLE
+};
+
 struct _Outbuf
 {
    int w, h;
