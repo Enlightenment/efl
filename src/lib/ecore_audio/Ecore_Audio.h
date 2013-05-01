@@ -35,6 +35,7 @@ extern "C"
    @section Classes
    Ecore_Audio provides the following Eo classes:
    @li @ref ecore_audio_obj
+   @li @ref ecore_audio_obj_in
 
  * @since 1.8
  *
