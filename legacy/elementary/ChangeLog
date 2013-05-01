@@ -1315,3 +1315,8 @@
 2013-04-30  Jaehwan Kim
 
         * The momentum animation time is changed as the amount of flick.
+
+2012-05-01 Ryuan Choi (ryuan)
+
+        * Fix elm_object_cursor_theme_search_enabled_set to do as it's name described.
+

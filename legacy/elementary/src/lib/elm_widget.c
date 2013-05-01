@@ -5512,7 +5512,7 @@ _elm_widget_item_cursor_engine_only_set(Elm_Widget_Item *item,
                                         Eina_Bool engine_only)
 {
    ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
-   elm_object_cursor_theme_search_enabled_set(item->view, engine_only);
+   elm_object_cursor_theme_search_enabled_set(item->view, !engine_only);
 }
 
 /**
@@ -5531,7 +5531,7 @@ EAPI Eina_Bool
 _elm_widget_item_cursor_engine_only_get(const Elm_Widget_Item *item)
 {
    ELM_WIDGET_ITEM_CHECK_OR_RETURN(item, EINA_FALSE);
-   return elm_object_cursor_theme_search_enabled_get(item->view);
+   return !elm_object_cursor_theme_search_enabled_get(item->view);
 }
 
 EAPI void

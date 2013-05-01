@@ -92,26 +92,24 @@ EAPI const char *elm_object_cursor_style_get(const Evas_Object *obj);
  * Set if the cursor set should be searched on the theme or should use
  * the provided by the engine, only.
  *
- * @note before you set engine_only you should define a cursor with
+ * @note before you set theme_search you should define a cursor with
  * elm_object_cursor_set(). By default it will only look for cursors
  * provided by the engine.
  *
  * @param obj an object with cursor already set.
- * @param theme_search boolean to define if cursors should be looked only
- * between the provided by the engine or searched on widget's theme as well.
+ * @param theme_search boolean to define if cursors should be searched
+ * on widget's theme.
  *
  * @ingroup Cursors
  */
 EAPI void elm_object_cursor_theme_search_enabled_set(Evas_Object *obj, Eina_Bool theme_search);
 
 /**
- * Get the cursor engine only usage for this object cursor.
+ * Get if the cursor set should be searched on the theme for this object cursor.
  *
  * @param obj an object with cursor already set.
- * @return engine_only boolean to define it cursors should be
- * looked only between the provided by the engine or searched on
- * widget's theme as well. If the object does not have a cursor
- * set, then EINA_FALSE is returned.
+ * @return EINA_TRUE if the cursor set should be searched on widget's theme,
+ * EINA_FALSE otherwise.
  *
  * @ingroup Cursors
  */

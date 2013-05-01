@@ -215,7 +215,7 @@ _part_cursor_part_apply(const Elm_Layout_Sub_Object_Cursor *pc)
 {
    elm_object_cursor_set(pc->obj, pc->cursor);
    elm_object_cursor_style_set(pc->obj, pc->style);
-   elm_object_cursor_theme_search_enabled_set(pc->obj, pc->engine_only);
+   elm_object_cursor_theme_search_enabled_set(pc->obj, !pc->engine_only);
 }
 
 static void
@@ -2037,7 +2037,7 @@ _elm_layout_smart_part_cursor_engine_only_set(Eo *obj EINA_UNUSED, void *_pd, va
    EINA_SAFETY_ON_NULL_RETURN(pc->obj);
 
    pc->engine_only = !!engine_only;
-   elm_object_cursor_theme_search_enabled_set(pc->obj, pc->engine_only);
+   elm_object_cursor_theme_search_enabled_set(pc->obj, !pc->engine_only);
 
    if (ret) *ret = EINA_TRUE;
 }
@@ -2066,7 +2066,7 @@ _elm_layout_smart_part_cursor_engine_only_get(Eo *obj EINA_UNUSED, void *_pd, va
    EINA_SAFETY_ON_NULL_RETURN(pc);
    EINA_SAFETY_ON_NULL_RETURN(pc->obj);
 
-   *ret = elm_object_cursor_theme_search_enabled_get(pc->obj);
+   *ret = !elm_object_cursor_theme_search_enabled_get(pc->obj);
 }
 
 static const Elm_Layout_Part_Alias_Description _text_aliases[] =

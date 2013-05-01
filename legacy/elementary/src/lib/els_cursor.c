@@ -148,7 +148,7 @@ struct _Elm_Cursor
 
    Eina_Bool visible:1;
    Eina_Bool use_engine:1;
-   Eina_Bool engine_only:1;
+   Eina_Bool theme_search:1;
 };
 
 static void
@@ -212,7 +212,7 @@ _elm_cursor_mouse_in(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSE
    if (cur->visible) return;
    evas_event_freeze(cur->evas);
    cur->visible = EINA_TRUE;
-   if ((!cur->engine_only) && (!cur->use_engine))
+   if (!cur->use_engine)
      {
         if (!cur->obj)
           _elm_cursor_obj_add(cur->eventarea, cur);
@@ -261,7 +261,7 @@ _elm_cursor_mouse_out(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUS
         return;
      }
 
-   if ((!cur->engine_only) || (!cur->use_engine))
+   if (!cur->use_engine)
      ecore_evas_object_cursor_set(cur->ee, NULL, ELM_OBJECT_LAYER_CURSOR,
                                   cur->hot_x, cur->hot_y);
    else
@@ -297,7 +297,7 @@ _elm_cursor_strcmp(const void *data1, const void *data2)
 static void
 _elm_cursor_cur_set(Elm_Cursor *cur)
 {
-   if (cur->engine_only)
+   if (!cur->theme_search)
      {
         INF("Using only engine cursors");
         cur->use_engine = EINA_TRUE;
@@ -383,7 +383,7 @@ elm_object_sub_cursor_set(Evas_Object *eventarea, Evas_Object *owner, const char
 
    cur->owner = owner;
    cur->eventarea = eventarea;
-   cur->engine_only = _elm_config->cursor_engine_only;
+   cur->theme_search = !_elm_config->cursor_engine_only;
    cur->visible = EINA_FALSE;
 
    cur->cursor_name = eina_stringshare_add(cursor);
@@ -512,7 +512,7 @@ EAPI void
 elm_object_cursor_theme_search_enabled_set(Evas_Object *obj, Eina_Bool theme_search)
 {
    ELM_CURSOR_GET_OR_RETURN(cur, obj);
-   cur->engine_only = theme_search;
+   cur->theme_search = theme_search;
    if (cur->obj)
      {
         evas_object_del(cur->obj);
@@ -526,5 +526,5 @@ EAPI Eina_Bool
 elm_object_cursor_theme_search_enabled_get(const Evas_Object *obj)
 {
    ELM_CURSOR_GET_OR_RETURN(cur, obj, EINA_FALSE);
-   return cur->engine_only;
+   return cur->theme_search;
 }
