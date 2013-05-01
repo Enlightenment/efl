@@ -1475,7 +1475,7 @@ _eo_data_scope_get(const _Eo *obj, const _Eo_Class *klass)
 static inline void *
 _eo_data_xref_internal(const char *file, int line, _Eo *obj, const _Eo_Class *klass, const _Eo *ref_obj)
 {
-   void *data;
+   void *data = NULL;
    if (klass != NULL)
      {
         data = _eo_data_scope_get(obj, klass);
