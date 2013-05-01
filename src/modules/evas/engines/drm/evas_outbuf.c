@@ -16,6 +16,7 @@ evas_outbuf_setup(int w, int h, unsigned int rotation, unsigned int depth, Eina_
    ob->h = h;
    ob->rotation = rotation;
    ob->depth = depth;
+   ob->destination_alpha = alpha;
 
    /* return the allocated outbuf structure */
    return ob;
@@ -40,5 +41,5 @@ evas_outbuf_reconfigure(Outbuf *ob, int w, int h, unsigned int rotation, unsigne
    ob->h = h;
    ob->rotation = rotation;
    ob->depth = depth;
-   ob->alpha = alpha;
+   ob->destination_alpha = alpha;
 }
