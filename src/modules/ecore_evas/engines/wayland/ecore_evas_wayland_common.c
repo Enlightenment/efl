@@ -164,6 +164,7 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
    Ecore_Evas *ee;
    Ecore_Evas_Engine_Wl_Data *wdata;
    Ecore_Wl_Event_Window_Configure *ev;
+   Ecore_Evas_Engine_Wl_Data *wdata;
    int nw = 0, nh = 0;
    Eina_Bool prev_max, prev_full;
 
@@ -192,8 +193,7 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
    if (ee->prop.fullscreen)
      {
         _ecore_evas_wl_common_move(ee, ev->x, ev->y);
-        if (ee->engine.func->fn_resize) 
-          ee->engine.func->fn_resize(ee, ev->w, ev->h);
+        ee->engine.func->fn_resize(ee, ev->w, ev->h);
 
         return ECORE_CALLBACK_PASS_ON;
      }
@@ -202,7 +202,7 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
      {
         ee->req.x = ee->x;
         ee->req.y = ee->y;
-        _ecore_evas_wl_common_move(ee, ev->x, ev->y);
+        if (ee->func.fn_move) ee->func.fn_move(ee);
      }
 
    nw = ev->w;
@@ -237,6 +237,34 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
         ee->w = nw;
         ee->h = nh;
         if (ee->func.fn_resize) ee->func.fn_resize(ee);
+
+        if ((ee->rotation == 90) || (ee->rotation == 270))
+          {
+             evas_output_size_set(ee->evas, ev->h, ev->w);
+             evas_output_viewport_set(ee->evas, 0, 0, ev->h, ev->w);
+          }
+        else
+          {
+             evas_output_size_set(ee->evas, ev->w, ev->h);
+             evas_output_viewport_set(ee->evas, 0, 0, ev->w, ev->h);
+          }
+
+        wdata = ee->engine.data;
+
+        if (wdata->win)
+          {
+             Ecore_Wl_Window *win;
+
+             win = wdata->win;
+
+             win->server_allocation = win->allocation;
+             ecore_wl_window_update_size(wdata->win, ev->w, ev->h);
+
+             _ecore_evas_wayland_resize(ee, win->edges);
+          }
+
+        if (wdata->frame)
+          evas_object_resize(wdata->frame, ev->w, ev->h);
      }
 
    return ECORE_CALLBACK_PASS_ON;
@@ -263,46 +291,38 @@ _ecore_evas_wl_common_rotation_set(Ecore_Evas *ee, int rotation, int resize)
              if (!ee->prop.fullscreen)
                {
                   int fw, fh;
-
                   evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
-
                   if ((rotation == 0) || (rotation == 180))
                     {
-                       ecore_wl_window_resize(wdata->win, ee->h + fw, 
-                                              ee->w + fh, 0);
-                       ecore_wl_window_update_size(wdata->win, ee->h + fw, 
-                                                   ee->w + fh);
-
-                       evas_output_size_set(ee->evas, ee->w + fw, ee->h + fh);
-                       evas_output_viewport_set(ee->evas, 0, 0, ee->w + fw, 
-                                                ee->h + fh);
+                       ecore_wl_window_resize(wdata->win, ee->h + fw, ee->w + fh, 0);
+                       ecore_wl_window_update_size(wdata->win, ee->h + fw, ee->w + fh);
                     }
                   else
                     {
-                       ecore_wl_window_resize(wdata->win, ee->h + fh, 
-                                              ee->w + fw, 0);
-                       ecore_wl_window_update_size(wdata->win, ee->h + fh, 
-                                                   ee->w + fw);
-
+                       ecore_wl_window_resize(wdata->win, ee->h + fh, ee->w + fw, 0);
+                       ecore_wl_window_update_size(wdata->win, ee->h + fh, ee->w + fw);
+                    }
+                  if ((ee->rotation == 0) || (ee->rotation == 180))
+                    {
+                       evas_output_size_set(ee->evas, ee->w + fw, ee->h + fh);
+                       evas_output_viewport_set(ee->evas, 0, 0, ee->w + fw, ee->h + fh);
+                    }
+                  else
+                    {
                        evas_output_size_set(ee->evas, ee->h + fw, ee->w + fh);
-                       evas_output_viewport_set(ee->evas, 0, 0, ee->h + fw, 
-                                                ee->w + fh);
+                       evas_output_viewport_set(ee->evas, 0, 0, ee->h + fw, ee->w + fh);
                     }
                }
              else
                {
                   evas_output_size_set(ee->evas, ee->req.w, ee->req.h);
-                  evas_output_viewport_set(ee->evas, 0, 0, 
-                                           ee->req.w, ee->req.h);
-
+                  evas_output_viewport_set(ee->evas, 0, 0, ee->req.w, ee->req.h);
                   if (ee->func.fn_resize) ee->func.fn_resize(ee);
                }
-
              if ((ee->rotation == 90) || (ee->rotation == 270))
                evas_damage_rectangle_add(ee->evas, 0, 0, ee->req.h, ee->req.w);
              else
                evas_damage_rectangle_add(ee->evas, 0, 0, ee->req.w, ee->req.h);
-
              ww = ee->h;
              hh = ee->w;
              ee->w = ww;
@@ -322,9 +342,7 @@ _ecore_evas_wl_common_rotation_set(Ecore_Evas *ee, int rotation, int resize)
                   evas_output_size_set(ee->evas, ee->h, ee->w);
                   evas_output_viewport_set(ee->evas, 0, 0, ee->h, ee->w);
                }
-
              if (ee->func.fn_resize) ee->func.fn_resize(ee);
-
              if ((ee->rotation == 90) || (ee->rotation == 270))
                evas_damage_rectangle_add(ee->evas, 0, 0, ee->h, ee->w);
              else
@@ -460,17 +478,8 @@ _ecore_evas_wl_common_resize(Ecore_Evas *ee, int w, int h)
         else if (h > ee->prop.max.h) h = ee->prop.max.h;
 
         evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
-
-        if ((ee->rotation == 90) || (ee->rotation == 270))
-          {
-             w += fh;
-             h += fw;
-          }
-        else
-          {
-             w += fw;
-             h += fh;
-          }
+        w += fw;
+        h += fh;
      }
 
    if ((ee->w != w) || (ee->h != h))
@@ -596,6 +605,7 @@ _ecore_evas_wl_common_move(Ecore_Evas *ee, int x, int y)
 static void
 _border_size_eval(Evas_Object *obj EINA_UNUSED, EE_Wl_Smart_Data *sd)
 {
+
    /* top border */
    if (sd->border[0])
      {
