@@ -39,5 +39,6 @@ struct _Outbuf
 
 Outbuf *evas_outbuf_setup(int w, int h, unsigned int rotation, unsigned int depth, Eina_Bool alpha);
 void evas_outbuf_free(Outbuf *ob);
+void evas_outbuf_reconfigure(Outbuf *ob, int w, int h, unsigned int rotation, unsigned int depth, Eina_Bool alpha);
 
 #endif
