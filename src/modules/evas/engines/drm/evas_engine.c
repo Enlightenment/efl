@@ -180,6 +180,13 @@ eng_output_free(void *data)
      {
         if (re->ob) evas_outbuf_free(re->ob);
         if (re->tb) evas_common_tilebuf_free(re->tb);
+        if (re->rects) evas_common_tilebuf_free_render_rects(re->rects);
+        if (re->prev_rects[0])
+          evas_common_tilebuf_free_render_rects(re->prev_rects[0]);
+        if (re->prev_rects[1])
+          evas_common_tilebuf_free_render_rects(re->prev_rects[1]);
+        if (re->prev_rects[2])
+          evas_common_tilebuf_free_render_rects(re->prev_rects[2]);
         free(re);
      }
 
