@@ -142,11 +142,6 @@ struct _Ecore_Audio_Input
    Eina_Bool           ended;
 };
 
-struct _Ecore_Audio_Callback {
-    Ecore_Audio_Read_Callback read_cb;
-    void *data;
-};
-
 extern Eina_List *ecore_audio_modules;
 
 #ifdef HAVE_ALSA
@@ -170,11 +165,6 @@ void                ecore_audio_pulse_shutdown(void);
 
 #ifdef HAVE_SNDFILE
 /* ecore_audio_sndfile */
-struct _Ecore_Audio_Sndfile_Private
-{
-   SF_VIRTUAL_IO vio_wrapper;
-};
-
 Ecore_Audio_Module *ecore_audio_sndfile_init(void);
 void                ecore_audio_sndfile_shutdown(void);
 #endif /* HAVE_SNDFILE */
