@@ -2234,6 +2234,9 @@ _elm_win_frame_cb_resize_start(void *data,
 
    if (sd->resize_location > 0)
      ecore_evas_wayland_resize(sd->ee, sd->resize_location);
+#else
+   (void)data;
+   (void)source;
 #endif
 }
 
