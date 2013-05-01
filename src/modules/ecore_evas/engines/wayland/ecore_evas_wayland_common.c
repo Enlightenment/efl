@@ -164,7 +164,6 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
    Ecore_Evas *ee;
    Ecore_Evas_Engine_Wl_Data *wdata;
    Ecore_Wl_Event_Window_Configure *ev;
-   Ecore_Evas_Engine_Wl_Data *wdata;
    int nw = 0, nh = 0;
    Eina_Bool prev_max, prev_full;
 
@@ -248,8 +247,6 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
              evas_output_size_set(ee->evas, ev->w, ev->h);
              evas_output_viewport_set(ee->evas, 0, 0, ev->w, ev->h);
           }
-
-        wdata = ee->engine.data;
 
         if (wdata->win)
           {
