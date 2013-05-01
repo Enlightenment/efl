@@ -16,9 +16,12 @@ struct _Render_Engine
 
    Outbuf *ob;
 
+   short mode;
+
    Eina_Inlist *cur_rect;
 
    Eina_Bool end : 1;
+   Eina_Bool lost_back : 1;
 };
 
 /* local function prototypes */
