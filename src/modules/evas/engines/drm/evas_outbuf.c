@@ -27,3 +27,18 @@ evas_outbuf_free(Outbuf *ob)
    /* free the allocated outbuf structure */
    free(ob);
 }
+
+void 
+evas_outbuf_reconfigure(Outbuf *ob, int w, int h, unsigned int rotation, unsigned int depth, Eina_Bool alpha)
+{
+   /* check for changes */
+   if ((ob->w == w) && (ob->h == h) && (ob->alpha == alpha) && 
+       (ob->rotation == rotation) && (ob->depth == depth)) return;
+
+   /* set new outbuf properties */
+   ob->w = w;
+   ob->h = h;
+   ob->rotation = rotation;
+   ob->depth = depth;
+   ob->alpha = alpha;
+}
