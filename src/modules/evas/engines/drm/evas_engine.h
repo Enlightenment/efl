@@ -32,8 +32,8 @@ typedef struct _Outbuf Outbuf;
 
 struct _Outbuf
 {
-   unsigned int depth;
-   int w, h, rotation;
+   int w, h;
+   unsigned int rotation, depth;
    Eina_Bool destination_alpha : 1;
 };
 
