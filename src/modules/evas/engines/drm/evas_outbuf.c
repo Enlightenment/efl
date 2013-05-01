@@ -33,7 +33,7 @@ void
 evas_outbuf_reconfigure(Outbuf *ob, int w, int h, unsigned int rotation, unsigned int depth, Eina_Bool alpha)
 {
    /* check for changes */
-   if ((ob->w == w) && (ob->h == h) && (ob->alpha == alpha) && 
+   if ((ob->w == w) && (ob->h == h) && (ob->destination_alpha == alpha) && 
        (ob->rotation == rotation) && (ob->depth == depth)) return;
 
    /* set new outbuf properties */
