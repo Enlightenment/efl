@@ -20,7 +20,7 @@
 
 /**
  * @file ecore_audio_obj_in_tone.h
- * @brief Audio Module
+ * @brief Ecore_Audio tone input
  */
 
 #ifdef __cplusplus
@@ -29,14 +29,25 @@ extern "C"
 #endif
 
 /**
- * @addtogroup Ecore_Audio_Group
+ * @defgroup ecore_audio_obj_in_tone - Ecore_Audio tone input
+ * @ingroup Ecore_Audio_Group
  * @{
  */
 
+/**
+ * @brief The frequency of the tone in Hz
+ *
+ * Set with @ref eo_base_data_set()
+ */
 #define ECORE_AUDIO_ATTR_TONE_FREQ "ecore_audio_freq"
 
-#define ECORE_AUDIO_OBJ_IN_TONE_CLASS ecore_audio_obj_in_tone_class_get()
+#define ECORE_AUDIO_OBJ_IN_TONE_CLASS ecore_audio_obj_in_tone_class_get() /**< Ecore_Audio tone input */
 
+/**
+ * @brief Get the Eo class ID 
+ *
+ * @return The Eo class ID
+ */
 const Eo_Class *ecore_audio_obj_in_tone_class_get() EINA_CONST;
 
 extern EAPI Eo_Op ECORE_AUDIO_OBJ_IN_TONE_BASE_ID;

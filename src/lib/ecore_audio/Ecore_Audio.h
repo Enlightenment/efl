@@ -32,12 +32,6 @@ extern "C"
  * @defgroup Ecore_Audio_Group Ecore_Audio - Convenience audio API
  * @ingroup Ecore
 
-   @section Classes
-   Ecore_Audio provides the following Eo classes:
-   @li @ref ecore_audio_obj
-   @li @ref ecore_audio_obj_in
-   @li @ref ecore_audio_obj_out
-
  * @since 1.8
  *
  * @{

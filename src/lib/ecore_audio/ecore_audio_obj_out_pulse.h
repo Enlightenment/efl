@@ -20,7 +20,7 @@
 
 /**
  * @file ecore_audio_obj_out_pulse.h
- * @brief Audio Module
+ * @brief Ecore_Audio pulseaudio output
  */
 
 #ifdef __cplusplus
@@ -29,12 +29,18 @@ extern "C"
 #endif
 
 /**
- * @addtogroup Ecore_Audio_Group
+ * @defgroup ecore_audio_obj_out_pulse - Ecore_Audio pulseaudio output
+ * @intogroup Ecore_Audio_Group
  * @{
  */
 
-#define ECORE_AUDIO_OBJ_OUT_PULSE_CLASS ecore_audio_obj_out_pulse_class_get()
+#define ECORE_AUDIO_OBJ_OUT_PULSE_CLASS ecore_audio_obj_out_pulse_class_get() /**< Ecore_Audio pulseaudio output */
 
+/**
+ * @brief Get the Eo class ID 
+ *
+ * @return The Eo class ID
+ */
 const Eo_Class *ecore_audio_obj_out_pulse_class_get() EINA_CONST;
 
 extern EAPI Eo_Op ECORE_AUDIO_OBJ_OUT_PULSE_BASE_ID;

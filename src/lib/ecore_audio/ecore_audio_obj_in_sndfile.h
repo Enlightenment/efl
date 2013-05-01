@@ -20,7 +20,7 @@
 
 /**
  * @file ecore_audio_obj_in_sndfile.h
- * @brief Audio Module
+ * @brief Ecore_Audio sndfile input
  */
 
 #ifdef __cplusplus
@@ -29,12 +29,18 @@ extern "C"
 #endif
 
 /**
- * @addtogroup Ecore_Audio_Group
+ * @defgroup ecore_audio_obj_in_sndfile - Ecore_Audio sndfile input
+ * @ingroup Ecore_Audio_Group
  * @{
  */
 
-#define ECORE_AUDIO_OBJ_IN_SNDFILE_CLASS ecore_audio_obj_in_sndfile_class_get()
+#define ECORE_AUDIO_OBJ_IN_SNDFILE_CLASS ecore_audio_obj_in_sndfile_class_get() /**< Ecore_Audio sndfile input */
 
+/**
+ * @brief Get the Eo class ID 
+ *
+ * @return The Eo class ID
+ */
 const Eo_Class *ecore_audio_obj_in_sndfile_class_get() EINA_CONST;
 
 extern EAPI Eo_Op ECORE_AUDIO_OBJ_IN_SNDFILE_BASE_ID;
