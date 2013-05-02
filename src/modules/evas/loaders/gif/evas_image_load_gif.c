@@ -43,7 +43,6 @@ struct _Gif_Frame
    int bg_val;
 };
 
-static double evas_image_load_frame_duration_gif(Image_Entry *ie, const char *file, int start_frame, int frame_num) ;
 static Eina_Bool evas_image_load_specific_frame(Eina_File *f, const Evas_Image_Load_Opts *opts, Evas_Image_Property *prop, Evas_Image_Animated *animated, int frame_index, int *error);
 
 #define byte2_to_int(a,b)         (((b)<<8)|(a))
@@ -969,10 +968,10 @@ evas_image_load_file_data_gif(Eina_File *f, const char *key EINA_UNUSED,
 }
 
 static double
-evas_image_load_frame_duration_gif(Image_Entry *ie, const char *file, const int start_frame, const int frame_num)
+evas_image_load_frame_duration_gif(Eina_File *f, Evas_Image_Animated *animated,
+				   int start_frame, int frame_num)
 {
    Evas_GIF_Info  egi;
-   Eina_File     *f;
    GifFileType   *gif = NULL;
    GifRecordType  rec;
    int            current_frame = 1;
@@ -980,14 +979,11 @@ evas_image_load_frame_duration_gif(Image_Entry *ie, const char *file, const int 
    double         duration = -1;
    int            frame_count = 0;
 
-   frame_count = ie->animated.frame_count;
+   frame_count = animated->frame_count;
 
-   if (!ie->animated.animated) return -1;
+   if (!animated->animated) return -1;
    if ((start_frame + frame_num) > frame_count) return -1;
    if (frame_num < 0) return -1;
-
-   f = eina_file_open(file, EINA_FALSE);
-   if (!f) return -1;
 
    egi.map = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
    if (!egi.map) goto on_error;
@@ -1058,7 +1054,6 @@ evas_image_load_frame_duration_gif(Image_Entry *ie, const char *file, const int 
  on_error:
    if (gif) DGifCloseFile(gif);
    if (egi.map) eina_file_map_free(f, egi.map);
-   eina_file_close(f);
    return duration;
 }
 

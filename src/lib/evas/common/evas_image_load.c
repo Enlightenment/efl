@@ -420,7 +420,19 @@ evas_common_load_rgba_image_frame_duration_from_file(Image_Entry *ie, const int 
    evas_image_load_func = ie->info.loader;
    evas_module_use((Evas_Module*) ie->info.module);
    if (evas_image_load_func->frame_duration)
-     return evas_image_load_func->frame_duration(ie, ie->file, start, frame_num);
+     {
+        Eina_File *f;
+        double r;
+
+        f = eina_file_open(ie->file, EINA_FALSE);
+        if (!f) return -1;
+        
+        r = evas_image_load_func->frame_duration(f, &ie->animated, start, frame_num);
+
+        eina_file_close(f);
+
+        return r;
+     }
    return -1;
 }
 

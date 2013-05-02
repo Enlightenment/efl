@@ -914,7 +914,9 @@ struct _Evas_Image_Load_Func
 			  Evas_Image_Animated *animated,
 			  void *pixels,
 			  int *error);
-  double    (*frame_duration) (Image_Entry *ie, const char *file, const int start, const int frame_num);
+  double    (*frame_duration) (Eina_File *f,
+			       Evas_Image_Animated *animated,
+			       int start, int frame_num);
   Eina_Bool do_region;
 };
 
