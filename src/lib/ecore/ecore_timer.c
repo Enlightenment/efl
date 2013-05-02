@@ -603,7 +603,7 @@ EAPI void
 _ecore_timer_delay(Ecore_Timer *obj,
                    double       add)
 {
-   Ecore_Timer_Private_Data *timer = eo_data_scope_get(obj, MY_CLASS);
+   Ecore_Timer_Private_Data *timer = eo_data_get(obj, MY_CLASS);
 
    if (timer->frozen)
      {
@@ -612,7 +612,6 @@ _ecore_timer_delay(Ecore_Timer *obj,
    else
      {
         timers = (Ecore_Timer_Private_Data *)eina_inlist_remove(EINA_INLIST_GET(timers), EINA_INLIST_GET(timer));
-        eo_data_unref(obj, timer);
         _ecore_timer_set(obj, timer->at + add, timer->in, timer->func, timer->data);
      }
 }
@@ -620,13 +619,12 @@ _ecore_timer_delay(Ecore_Timer *obj,
 void *
 _ecore_timer_del(Ecore_Timer *obj)
 {
-   Ecore_Timer_Private_Data *timer = eo_data_scope_get(obj, MY_CLASS);
+   Ecore_Timer_Private_Data *timer = eo_data_get(obj, MY_CLASS);
 
    if (timer->frozen && !timer->references)
      {
         void *data = timer->data;
 
-        eo_data_unref(obj, timer);
         suspended = (Ecore_Timer_Private_Data *)eina_inlist_remove(EINA_INLIST_GET(suspended), EINA_INLIST_GET(timer));
 
         if (timer->delete_me)
@@ -670,7 +668,6 @@ _ecore_timer_shutdown(void)
      {
         timers = (Ecore_Timer_Private_Data *)eina_inlist_remove(EINA_INLIST_GET(timers), EINA_INLIST_GET(timers));
 
-        eo_data_unref(timer->obj, timer);
         eo_parent_set(timer->obj, NULL);
         if (eo_destructed_is(timer->obj))
           eo_manual_free(timer->obj);
@@ -682,7 +679,6 @@ _ecore_timer_shutdown(void)
      {
         suspended = (Ecore_Timer_Private_Data *)eina_inlist_remove(EINA_INLIST_GET(suspended), EINA_INLIST_GET(suspended));
 
-        eo_data_unref(timer->obj, timer);
         eo_parent_set(timer->obj, NULL);
         if (eo_destructed_is(timer->obj))
           eo_manual_free(timer->obj);
@@ -714,7 +710,6 @@ _ecore_timer_cleanup(void)
                }
              timers = (Ecore_Timer_Private_Data *)eina_inlist_remove(EINA_INLIST_GET(timers), EINA_INLIST_GET(timer));
 
-             eo_data_unref(timer->obj, timer);
              eo_parent_set(timer->obj, NULL);
              if (eo_destructed_is(timer->obj))
                eo_manual_free(timer->obj);
@@ -739,7 +734,6 @@ _ecore_timer_cleanup(void)
                }
              suspended = (Ecore_Timer_Private_Data *)eina_inlist_remove(EINA_INLIST_GET(suspended), EINA_INLIST_GET(timer));
 
-             eo_data_unref(timer->obj, timer);
              eo_parent_set(timer->obj, NULL);
              if (eo_destructed_is(timer->obj))
                 eo_manual_free(timer->obj);
@@ -800,7 +794,7 @@ static inline Ecore_Timer *
 _ecore_timer_after_get(Ecore_Timer *obj)
 {
    Ecore_Timer *ret = NULL;
-   Ecore_Timer_Private_Data *base = eo_data_scope_get(obj, MY_CLASS);
+   Ecore_Timer_Private_Data *base = eo_data_get(obj, MY_CLASS);
 
    Ecore_Timer_Private_Data *timer = (Ecore_Timer_Private_Data *)EINA_INLIST_GET(base)->next;
    Ecore_Timer_Private_Data *valid_timer = NULL;
@@ -832,7 +826,7 @@ _ecore_timer_next_get(void)
    second_obj = _ecore_timer_after_get(first_obj);
    if (second_obj) first_obj = second_obj;
 
-   first = eo_data_scope_get(first_obj, MY_CLASS);
+   first = eo_data_get(first_obj, MY_CLASS);
 
    now = ecore_loop_time_get();
    in = first->at - now;
@@ -844,11 +838,10 @@ static inline void
 _ecore_timer_reschedule(Ecore_Timer *obj,
                         double       when)
 {
-   Ecore_Timer_Private_Data *timer = eo_data_scope_get(obj, MY_CLASS);
+   Ecore_Timer_Private_Data *timer = eo_data_get(obj, MY_CLASS);
    if ((timer->delete_me) || (timer->frozen)) return;
 
    timers = (Ecore_Timer_Private_Data *)eina_inlist_remove(EINA_INLIST_GET(timers), EINA_INLIST_GET(timer));
-   eo_data_unref(obj, timer);
 
    /* if the timer would have gone off more than 15 seconds ago,
     * assume that the system hung and set the timer to go off
@@ -939,7 +932,7 @@ _ecore_timer_set(Ecore_Timer  *obj,
 {
    Ecore_Timer_Private_Data *t2;
 
-   Ecore_Timer_Private_Data *timer = eo_data_ref(obj, MY_CLASS);
+   Ecore_Timer_Private_Data *timer = eo_data_get(obj, MY_CLASS);
 
    timers_added = 1;
    timer->at = at;

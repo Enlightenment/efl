@@ -109,7 +109,7 @@ _line_xy_set(Eo *eo_obj, void *_pd, va_list *list)
    if ((x1 == o->cur.x1) && (y1 == o->cur.y1) &&
        (x2 == o->cur.x2) && (y2 == o->cur.y2)) return;
 
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
    if (!(obj->layer->evas->is_frozen))
      {
         if (!evas_event_passes_through(eo_obj, obj) &&
@@ -203,7 +203,7 @@ _line_xy_get(Eo *eo_obj, void *_pd, va_list *list)
    Evas_Coord *x2 = va_arg(*list, Evas_Coord *);
    Evas_Coord *y2 = va_arg(*list, Evas_Coord *);
 
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
    if (x1) *x1 = obj->cur->geometry.x + o->cur.x1;
    if (y1) *y1 = obj->cur->geometry.y + o->cur.y1;
    if (x2) *x2 = obj->cur->geometry.x + o->cur.x2;
@@ -214,7 +214,7 @@ _line_xy_get(Eo *eo_obj, void *_pd, va_list *list)
 static void
 evas_object_line_init(Evas_Object *eo_obj)
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
    /* set up methods (compulsory) */
    obj->func = &object_func;
    obj->type = o_type;
@@ -225,7 +225,7 @@ _constructor(Eo *eo_obj, void *class_data, va_list *list EINA_UNUSED)
 {
    eo_do_super(eo_obj, MY_CLASS, eo_constructor());
 
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
    evas_object_line_init(eo_obj);
    evas_object_inject(eo_obj, obj, evas_object_evas_get(eo_parent_get(eo_obj)));
 
@@ -247,7 +247,7 @@ _destructor(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 static void
 evas_object_line_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, void *output, void *context, void *surface, int x, int y, Eina_Bool do_async)
 {
-   Evas_Object_Line *o = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Object_Line *o = eo_data_get(eo_obj, MY_CLASS);
 
    /* render object to surface with context, and offxet by x,y */
 
@@ -276,7 +276,7 @@ evas_object_line_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, vo
 static void
 evas_object_line_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 {
-   Evas_Object_Line *o = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Object_Line *o = eo_data_get(eo_obj, MY_CLASS);
    int is_v, was_v;
    Eina_Bool changed_color = EINA_FALSE;
 
@@ -360,7 +360,7 @@ evas_object_line_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj
 static void
 evas_object_line_render_post(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj EINA_UNUSED)
 {
-   Evas_Object_Line *o = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Object_Line *o = eo_data_get(eo_obj, MY_CLASS);
 
    /* this moves the current data to the previous state parts of the object */
    /* in whatever way is safest for the object. also if we don't need object */
@@ -374,21 +374,21 @@ evas_object_line_render_post(Evas_Object *eo_obj, Evas_Object_Protected_Data *ob
 
 static unsigned int evas_object_line_id_get(Evas_Object *eo_obj)
 {
-   Evas_Object_Line *o = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Object_Line *o = eo_data_get(eo_obj, MY_CLASS);
    if (!o) return 0;
    return MAGIC_OBJ_LINE;
 }
 
 static unsigned int evas_object_line_visual_id_get(Evas_Object *eo_obj)
 {
-   Evas_Object_Line *o = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Object_Line *o = eo_data_get(eo_obj, MY_CLASS);
    if (!o) return 0;
    return MAGIC_OBJ_SHAPE;
 }
 
 static void *evas_object_line_engine_data_get(Evas_Object *eo_obj)
 {
-   Evas_Object_Line *o = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Object_Line *o = eo_data_get(eo_obj, MY_CLASS);
    return o->engine_data;
 }
 
@@ -429,7 +429,7 @@ evas_object_line_was_inside(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protect
 static void
 evas_object_line_coords_recalc(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 {
-   Evas_Object_Line *o = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Object_Line *o = eo_data_get(eo_obj, MY_CLASS);
 
    o->cur.cache.x1 = obj->cur->geometry.x + o->cur.x1;
    o->cur.cache.y1 = obj->cur->geometry.y + o->cur.y1;

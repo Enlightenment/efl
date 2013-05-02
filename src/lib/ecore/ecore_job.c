@@ -124,7 +124,7 @@ ecore_job_del(Ecore_Job *obj)
 
    if (!obj) return NULL;
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
-   Ecore_Job_Private_Data *job = eo_data_scope_get(obj, MY_CLASS);
+   Ecore_Job_Private_Data *job = eo_data_get(obj, MY_CLASS);
    data = job->data;
    ecore_event_del(job->event);
    eo_parent_set(obj, NULL);

@@ -31,7 +31,7 @@ static void _read(Eo *eo_obj, void *_pd, va_list *list)
 {
   int i, remain;
   Ecore_Audio_Tone *obj = _pd;
-  Ecore_Audio_Input *in_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_OBJ_IN_CLASS);
+  Ecore_Audio_Input *in_obj = eo_data_get(eo_obj, ECORE_AUDIO_OBJ_IN_CLASS);
 
 
   void *data = va_arg(*list, void *);
@@ -58,7 +58,7 @@ static void _seek(Eo *eo_obj, void *_pd, va_list *list)
 {
   int tmp;
   Ecore_Audio_Tone *obj = _pd;
-  Ecore_Audio_Input *in_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_OBJ_IN_CLASS);
+  Ecore_Audio_Input *in_obj = eo_data_get(eo_obj, ECORE_AUDIO_OBJ_IN_CLASS);
 
   double offs = va_arg(*list, double);
   int mode = va_arg(*list, int);
@@ -93,7 +93,7 @@ err:
 
 static void _length_set(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
 {
-  Ecore_Audio_Input *in_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_OBJ_IN_CLASS);
+  Ecore_Audio_Input *in_obj = eo_data_get(eo_obj, ECORE_AUDIO_OBJ_IN_CLASS);
 
   double length= va_arg(*list, double);
 
@@ -137,7 +137,7 @@ static void _data_get(Eo *eo_obj, void *_pd, va_list *list)
 static void _constructor(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
 {
   Ecore_Audio_Tone *obj = _pd;
-  Ecore_Audio_Input *in_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_OBJ_IN_CLASS);
+  Ecore_Audio_Input *in_obj = eo_data_get(eo_obj, ECORE_AUDIO_OBJ_IN_CLASS);
 
   eo_do_super(eo_obj, MY_CLASS, eo_constructor());
 

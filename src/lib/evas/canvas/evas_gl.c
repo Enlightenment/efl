@@ -35,7 +35,7 @@ evas_gl_new(Evas *e)
    if (!evas_gl) return NULL;
 
    evas_gl->magic = MAGIC_EVAS_GL;
-   evas_gl->evas = eo_data_ref(e, EVAS_CLASS);
+   evas_gl->evas = eo_data_get(e, EVAS_CLASS);
 
    if (!evas_gl->evas->engine.func->gl_context_create)
      {
@@ -63,7 +63,6 @@ evas_gl_free(Evas_GL *evas_gl)
    while (evas_gl->contexts)
      evas_gl_context_destroy(evas_gl, evas_gl->contexts->data);
 
-   eo_data_unref(evas_gl->evas->evas, evas_gl->evas);
    evas_gl->magic = 0;
    free(evas_gl);
 }

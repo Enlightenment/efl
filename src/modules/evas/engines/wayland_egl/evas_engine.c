@@ -650,7 +650,7 @@ _destroy_internal_glue_resources(void *data)
 static int
 eng_setup(Evas *eo_e, void *in)
 {
-   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CLASS);
+   Evas_Public_Data *e = eo_data_get(eo_e, EVAS_CLASS);
    Render_Engine *re;
    Evas_Engine_Info_Wayland_Egl *info;
    Evas_GL_Wl_Window *new_win = NULL;
@@ -3050,7 +3050,7 @@ compute_gl_coordinates(Evas_Object *eo_obj, int rot, int clip,
                        int x, int y, int width, int height,
                        int imgc[4], int objc[4])
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
    if (rot == 0)
      {
         // oringinal image object coordinate in gl coordinate

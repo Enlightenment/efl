@@ -7,7 +7,7 @@ EAPI Eo_Op EVAS_OBJ_SMART_CLIPPED_BASE_ID = EO_NOOP;
 
 #define CSO_DATA_GET(eo_obj, ptr)                                           \
   Evas_Object_Smart_Clipped_Data *ptr = (eo_isa(eo_obj, MY_CLASS) ?         \
-        eo_data_scope_get(eo_obj, MY_CLASS) :                               \
+        eo_data_get(eo_obj, MY_CLASS) :                                     \
         evas_object_smart_data_get(eo_obj));
 
 #define CSO_DATA_GET_OR_RETURN(eo_obj, ptr)                                 \

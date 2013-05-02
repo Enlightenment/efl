@@ -24,8 +24,8 @@ static Eina_Bool _write_cb(void *data)
   Eo *eo_obj = data;
   Eo *in;
 
-  Ecore_Audio_Output *out_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_OBJ_OUT_CLASS);
-  Ecore_Audio_Object *ea_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_OBJ_CLASS);
+  Ecore_Audio_Output *out_obj = eo_data_get(eo_obj, ECORE_AUDIO_OBJ_OUT_CLASS);
+  Ecore_Audio_Object *ea_obj = eo_data_get(eo_obj, ECORE_AUDIO_OBJ_CLASS);
 
   ssize_t written, bread;
   float buf[1024];
@@ -56,12 +56,12 @@ static void _input_attach(Eo *eo_obj, void *_pd, va_list *list)
   Ecore_Audio_Output *obj = _pd;
   Ecore_Audio_Input *in;
 
-  Ecore_Audio_Object *ea_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_OBJ_CLASS);
+  Ecore_Audio_Object *ea_obj = eo_data_get(eo_obj, ECORE_AUDIO_OBJ_CLASS);
 
   Eo *input = va_arg(*list, Eo *);
   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
 
-  in = eo_data_scope_get(input, ECORE_AUDIO_OBJ_IN_CLASS);
+  in = eo_data_get(input, ECORE_AUDIO_OBJ_IN_CLASS);
 
   if (ret)
     *ret = EINA_FALSE;
@@ -93,7 +93,7 @@ static void _input_detach(Eo *eo_obj, void *_pd, va_list *list)
   Eo *input = va_arg(*list, Eo *);
   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
 
-  in = eo_data_scope_get(input, ECORE_AUDIO_OBJ_IN_CLASS);
+  in = eo_data_get(input, ECORE_AUDIO_OBJ_IN_CLASS);
 
   if (ret)
     *ret = EINA_FALSE;
@@ -134,7 +134,7 @@ static void _free_vio(Ecore_Audio_Object *ea_obj)
 
 static void _vio_set(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
 {
-  Ecore_Audio_Object *ea_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_OBJ_CLASS);
+  Ecore_Audio_Object *ea_obj = eo_data_get(eo_obj, ECORE_AUDIO_OBJ_CLASS);
 
   Ecore_Audio_Vio *vio = va_arg(*list, Ecore_Audio_Vio *);
   void *data = va_arg(*list, Ecore_Audio_Vio *);

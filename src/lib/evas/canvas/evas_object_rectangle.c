@@ -87,7 +87,7 @@ _constructor(Eo *eo_obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED
 {
    eo_do_super(eo_obj, MY_CLASS, eo_constructor());
 
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
    evas_object_rectangle_init(eo_obj);
    evas_object_inject(eo_obj, obj, evas_object_evas_get(eo_parent_get(eo_obj)));
 }
@@ -96,7 +96,7 @@ _constructor(Eo *eo_obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED
 static void
 evas_object_rectangle_init(Evas_Object *eo_obj)
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
    /* set up methods (compulsory) */
    obj->func = &object_func;
    obj->type = o_type;
@@ -280,21 +280,21 @@ evas_object_rectangle_was_opaque(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Pr
 
 static unsigned int evas_object_rectangle_id_get(Evas_Object *eo_obj)
 {
-   Evas_Object_Rectangle *o = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Object_Rectangle *o = eo_data_get(eo_obj, MY_CLASS);
    if (!o) return 0;
    return MAGIC_OBJ_RECTANGLE;
 }
 
 static unsigned int evas_object_rectangle_visual_id_get(Evas_Object *eo_obj)
 {
-   Evas_Object_Rectangle *o = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Object_Rectangle *o = eo_data_get(eo_obj, MY_CLASS);
    if (!o) return 0;
    return MAGIC_OBJ_SHAPE;
 }
 
 static void *evas_object_rectangle_engine_data_get(Evas_Object *eo_obj)
 {
-   Evas_Object_Rectangle *o = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Object_Rectangle *o = eo_data_get(eo_obj, MY_CLASS);
    return o->engine_data;
 }
 

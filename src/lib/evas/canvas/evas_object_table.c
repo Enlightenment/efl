@@ -97,7 +97,7 @@ struct _Evas_Object_Table_Accessor
 };
 
 #define EVAS_OBJECT_TABLE_DATA_GET(o, ptr)                              \
-   Evas_Object_Table_Data *ptr = eo_data_scope_get(o, MY_CLASS)
+   Evas_Object_Table_Data *ptr = eo_data_get(o, MY_CLASS)
 
 #define EVAS_OBJECT_TABLE_DATA_GET_OR_RETURN(o, ptr)                    \
    EVAS_OBJECT_TABLE_DATA_GET(o, ptr);                                  \

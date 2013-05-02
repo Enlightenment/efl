@@ -32,7 +32,7 @@ _constructor(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Evas_Out_Public_Data *eo_dat = _pd;
    Eo *eo_parent = eo_parent_get(eo_obj);
-   Evas_Public_Data *e = eo_data_scope_get(eo_parent, EVAS_CLASS);
+   Evas_Public_Data *e = eo_data_get(eo_parent, EVAS_CLASS);
    eo_do_super(eo_obj, MY_CLASS, eo_constructor());
    if (!e) return;
    e->outputs = eina_list_append(e->outputs, eo_obj);
@@ -53,7 +53,7 @@ _destructor(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Evas_Out_Public_Data *eo_dat = _pd;
    Eo *eo_parent = eo_parent_get(eo_obj);
-   Evas_Public_Data *e = eo_data_scope_get(eo_parent, EVAS_CLASS);
+   Evas_Public_Data *e = eo_data_get(eo_parent, EVAS_CLASS);
    // XXX: need to free output and context one they get allocated one day   
    // e->engine.func->context_free(eo_dat->output, eo_dat->context);
    // e->engine.func->output_free(eo_dat->output);

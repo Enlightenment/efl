@@ -400,7 +400,7 @@ ecore_animator_del(Ecore_Animator *obj)
 
    if (!obj) return NULL;
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
-   Ecore_Animator_Private_Data *animator = eo_data_scope_get(obj, MY_CLASS);
+   Ecore_Animator_Private_Data *animator = eo_data_get(obj, MY_CLASS);
    _ecore_lock();
 
    if (!animator) goto unlock;
@@ -570,7 +570,7 @@ static Eina_Bool
 _ecore_animator_run(void *data)
 {
    Ecore_Animator *obj = data;
-   Ecore_Animator_Private_Data *animator = eo_data_scope_get(obj, MY_CLASS);
+   Ecore_Animator_Private_Data *animator = eo_data_get(obj, MY_CLASS);
 
    double pos = 0.0, t;
    Eina_Bool run_ret;

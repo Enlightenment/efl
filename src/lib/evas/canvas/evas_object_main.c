@@ -91,7 +91,7 @@ _constructor(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
 void
 evas_object_change_reset(Evas_Object *eo_obj)
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, MY_CLASS);
    if (!obj) return;
    obj->changed = EINA_FALSE;
    obj->changed_move = EINA_FALSE;
@@ -104,7 +104,7 @@ evas_object_change_reset(Evas_Object *eo_obj)
 void
 evas_object_cur_prev(Evas_Object *eo_obj)
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, MY_CLASS);
    if (!obj) return;
    if (!obj->map->prev.valid_map && obj->map->prev.map)
      {
@@ -140,7 +140,7 @@ evas_object_cur_prev(Evas_Object *eo_obj)
 void
 evas_object_free(Evas_Object *eo_obj, int clean_layer)
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, MY_CLASS);
    if (!obj) return;
    obj->clean_layer = clean_layer;
 
@@ -228,14 +228,14 @@ evas_object_change(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
      }
    EINA_LIST_FOREACH(obj->proxy->proxies, l, eo_obj2)
      {
-        obj2 = eo_data_scope_get(eo_obj2, MY_CLASS);
+        obj2 = eo_data_get(eo_obj2, MY_CLASS);
 
 	if (!obj2) continue;
         evas_object_change(eo_obj2, obj2);
      }
    if (obj->smart.parent)
      {
-        Evas_Object_Protected_Data *smart_parent = eo_data_scope_get(obj->smart.parent, MY_CLASS);
+        Evas_Object_Protected_Data *smart_parent = eo_data_get(obj->smart.parent, MY_CLASS);
         if (!smart_parent) return;
         evas_object_change(obj->smart.parent, smart_parent);
      }
@@ -264,7 +264,7 @@ evas_object_content_change(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 void
 evas_object_render_pre_visible_change(Eina_Array *rects, Evas_Object *eo_obj, int is_v, int was_v)
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, MY_CLASS);
 
    if (!obj) return;
    if (obj->is_smart) return;
@@ -290,7 +290,7 @@ evas_object_render_pre_visible_change(Eina_Array *rects, Evas_Object *eo_obj, in
 void
 evas_object_render_pre_clipper_change(Eina_Array *rects, Evas_Object *eo_obj)
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, MY_CLASS);
 
    if (!obj) return;
    if (obj->is_smart) return;
@@ -382,7 +382,7 @@ evas_object_render_pre_prev_cur_add(Eina_Array *rects, Evas_Object *eo_obj EINA_
 void
 evas_object_clip_changes_clean(Evas_Object *eo_obj)
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, MY_CLASS);
    if (!obj) return;
 
    Eina_Rectangle *r;
@@ -394,7 +394,7 @@ evas_object_clip_changes_clean(Evas_Object *eo_obj)
 void
 evas_object_render_pre_effect_updates(Eina_Array *rects, Evas_Object *eo_obj, int is_v, int was_v EINA_UNUSED)
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, MY_CLASS);
    Eina_Rectangle *r;
    Eina_List *l;
    unsigned int i;
@@ -551,7 +551,7 @@ evas_object_ref(Evas_Object *eo_obj)
 
    eo_ref(eo_obj);
 
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, MY_CLASS);
    if (!obj) return;
    obj->ref++;
 }
@@ -563,7 +563,7 @@ evas_object_unref(Evas_Object *eo_obj)
    return;
    MAGIC_CHECK_END();
 
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, MY_CLASS);
    if (!obj) return;
 
    if (obj->ref == 0) return;
@@ -580,7 +580,7 @@ evas_object_ref_get(const Evas_Object *eo_obj)
    return 0;
    MAGIC_CHECK_END();
 
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, MY_CLASS);
    if (!obj) return 0;
    return obj->ref;
 }
@@ -593,7 +593,7 @@ evas_object_del(Evas_Object *eo_obj)
    return;
    MAGIC_CHECK_END();
 
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, MY_CLASS);
 
    if (!obj) return;
    if (obj->delete_me || obj->eo_del_called) return;
@@ -910,7 +910,7 @@ evas_object_size_hint_display_mode_get(const Evas_Object *eo_obj)
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return EVAS_DISPLAY_MODE_NONE;
    MAGIC_CHECK_END();
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, MY_CLASS);
    if (!obj) return EVAS_DISPLAY_MODE_NONE;
    if ((!obj->size_hints) || obj->delete_me)
      return EVAS_DISPLAY_MODE_NONE;
@@ -923,7 +923,7 @@ evas_object_size_hint_display_mode_set(Evas_Object *eo_obj, Evas_Display_Mode di
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, MY_CLASS);
    if (!obj) return;
    if (obj->delete_me) return;
    _evas_object_size_hint_alloc(eo_obj, obj);
@@ -2005,7 +2005,7 @@ _canvas_object_top_at_xy_get(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list)
 EAPI Evas_Object *
 evas_object_top_at_pointer_get(const Evas *eo_e)
 {
-   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CLASS);
+   Evas_Public_Data *e = eo_data_get(eo_e, EVAS_CLASS);
    Evas_Object *ret = NULL;
    if (!e) return NULL;
    eo_do((Eo *)eo_e, evas_canvas_object_top_at_xy_get(e->pointer.x, e->pointer.y, EINA_TRUE,
@@ -2361,7 +2361,7 @@ _is_frame_object_get(Eo *eo_obj  EINA_UNUSED, void *_pd, va_list *list)
 static void
 _smart_parent_get(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
    if (!obj) return;
    Evas_Object **smart_parent = va_arg(*list, Evas_Object **);
    if (smart_parent) *smart_parent = obj->smart.parent;

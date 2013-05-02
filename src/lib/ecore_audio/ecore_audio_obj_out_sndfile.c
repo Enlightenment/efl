@@ -35,9 +35,9 @@ static Eina_Bool _write_cb(void *data)
   Eo *eo_obj = data;
   Eo *in;
 
-  Ecore_Audio_Sndfile *obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_OBJ_OUT_SNDFILE_CLASS);
-  Ecore_Audio_Output *out_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_OBJ_OUT_CLASS);
-  Ecore_Audio_Object *ea_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_OBJ_CLASS);
+  Ecore_Audio_Sndfile *obj = eo_data_get(eo_obj, ECORE_AUDIO_OBJ_OUT_SNDFILE_CLASS);
+  Ecore_Audio_Output *out_obj = eo_data_get(eo_obj, ECORE_AUDIO_OBJ_OUT_CLASS);
+  Ecore_Audio_Object *ea_obj = eo_data_get(eo_obj, ECORE_AUDIO_OBJ_CLASS);
 
   ssize_t written, bread;
   float buf[1024];
@@ -64,8 +64,8 @@ static Eina_Bool _write_cb(void *data)
 static void _input_attach(Eo *eo_obj, void *_pd, va_list *list)
 {
   Ecore_Audio_Sndfile *obj = _pd;
-  Ecore_Audio_Object *ea_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_OBJ_CLASS);
-  Ecore_Audio_Output *out_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_OBJ_OUT_CLASS);
+  Ecore_Audio_Object *ea_obj = eo_data_get(eo_obj, ECORE_AUDIO_OBJ_CLASS);
+  Ecore_Audio_Output *out_obj = eo_data_get(eo_obj, ECORE_AUDIO_OBJ_OUT_CLASS);
   Eina_Bool ret2;
 
   Eo *in = va_arg(*list, Eo *);
@@ -105,7 +105,7 @@ static void _source_set(Eo *eo_obj, void *_pd, va_list *list)
 {
   Ecore_Audio_Sndfile *obj = _pd;
 
-  Ecore_Audio_Object *ea_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_OBJ_CLASS);
+  Ecore_Audio_Object *ea_obj = eo_data_get(eo_obj, ECORE_AUDIO_OBJ_CLASS);
 
   const char *source = va_arg(*list, const char *);
   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
@@ -132,7 +132,7 @@ static void _source_set(Eo *eo_obj, void *_pd, va_list *list)
 
 static void _source_get(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
 {
-  Ecore_Audio_Object *obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_OBJ_CLASS);
+  Ecore_Audio_Object *obj = eo_data_get(eo_obj, ECORE_AUDIO_OBJ_CLASS);
 
   const char **ret = va_arg(*list, const char **);
 
@@ -143,7 +143,7 @@ static void _source_get(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
 static void _format_set(Eo *eo_obj, void *_pd, va_list *list)
 {
   Ecore_Audio_Sndfile *obj = _pd;
-  Ecore_Audio_Object *ea_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_OBJ_CLASS);
+  Ecore_Audio_Object *ea_obj = eo_data_get(eo_obj, ECORE_AUDIO_OBJ_CLASS);
 
   Ecore_Audio_Format format= va_arg(*list, Ecore_Audio_Format);
   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
@@ -180,7 +180,7 @@ static void _format_set(Eo *eo_obj, void *_pd, va_list *list)
 
 static void _format_get(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
 {
-  Ecore_Audio_Object *obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_OBJ_CLASS);
+  Ecore_Audio_Object *obj = eo_data_get(eo_obj, ECORE_AUDIO_OBJ_CLASS);
 
   Ecore_Audio_Format *ret = va_arg(*list, Ecore_Audio_Format *);
 
@@ -190,7 +190,7 @@ static void _format_get(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
 
 static void _constructor(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-  Ecore_Audio_Output *out_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_OBJ_OUT_CLASS);
+  Ecore_Audio_Output *out_obj = eo_data_get(eo_obj, ECORE_AUDIO_OBJ_OUT_CLASS);
 
   eo_do_super(eo_obj, MY_CLASS, eo_constructor());
 
@@ -203,7 +203,7 @@ static void _constructor(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list EINA_U
 static void _destructor(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
 {
   Ecore_Audio_Sndfile *obj = _pd;
-  Ecore_Audio_Output *out_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_OBJ_OUT_CLASS);
+  Ecore_Audio_Output *out_obj = eo_data_get(eo_obj, ECORE_AUDIO_OBJ_OUT_CLASS);
 
   if (obj->handle)
     sf_close(obj->handle);
