@@ -13,17 +13,29 @@
 #include "evas_common.h"
 #include "evas_private.h"
 
-static Eina_Bool
-evas_image_load_file_head_bmp(Eina_File *f, const char *key EINA_UNUSED, Evas_Image_Property *prop, Evas_Image_Load_Opts *load_opts, Evas_Image_Animated *animated, int *error);
-static Eina_Bool evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key, int *error) EINA_ARG_NONNULL(1, 2, 4);
-
-static Evas_Image_Load_Func evas_image_load_bmp_func =
+typedef struct _BMP_Header BMP_Header;
+struct _BMP_Header
 {
-  EINA_TRUE,
-  evas_image_load_file_head_bmp,
-  evas_image_load_file_data_bmp,
-  NULL,
-  EINA_FALSE
+   unsigned int bmpsize;
+   unsigned short res1;
+   unsigned short res2;
+   unsigned int offset;
+   unsigned int head_size;
+   int width;
+   int height;
+   unsigned short bit_count;
+   int comp;
+   // hdpi
+   // vdpi
+   int palette_size;
+   // important_colors
+
+   unsigned int rmask;
+   unsigned int gmask;
+   unsigned int bmask;
+   unsigned int amask;
+
+   Eina_Bool hasa;
 };
 
 static Eina_Bool
@@ -102,6 +114,180 @@ read_mem(unsigned char *map, size_t length, size_t *position, void *buffer, int 
 }
 
 static Eina_Bool
+_evas_image_load_file_header(void *map, size_t fsize, size_t *position, int *image_size,
+                             BMP_Header *header, int *error)
+{
+   if (strncmp(map, "BM", 2)) return EINA_FALSE; // magic number
+   *position += 2;
+   *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
+   if (!read_uint(map, fsize, position, &header->bmpsize)) return EINA_FALSE;
+   if (!read_ushort(map, fsize, position, &header->res1)) return EINA_FALSE;
+   if (!read_ushort(map, fsize, position, &header->res2)) return EINA_FALSE;
+   if (!read_uint(map, fsize, position, &header->offset)) return EINA_FALSE;
+   if (!read_uint(map, fsize, position, &header->head_size)) return EINA_FALSE;
+   if (header->offset > fsize) return EINA_FALSE;
+
+   switch (header->head_size)
+     {
+      case  12: // OS/2 V1 + Windows 3.0
+        {
+           short tmp;
+
+           if (!read_short(map, fsize, position, &tmp)) return EINA_FALSE;
+           header->width = tmp; // width
+           if (!read_short(map, fsize, position, &tmp)) return EINA_FALSE;
+           header->height = tmp; // height
+           if (!read_short(map, fsize, position, &tmp)) return EINA_FALSE;
+           //planes = tmp; // must be 1
+           if (!read_short(map, fsize, position, &tmp)) return EINA_FALSE;
+           header->bit_count = tmp; // bits per pixel: 1, 4, 8 & 24
+           break;
+        }
+      case 64: // OS/2 V2
+        {
+           short tmp;
+           int tmp2;
+
+           if (!read_int(map, fsize, position, &tmp2)) return EINA_FALSE;
+           header->width = tmp2; // width
+           if (!read_int(map, fsize, position, &tmp2)) return EINA_FALSE;
+           header->height = tmp2; // height
+           if (!read_short(map, fsize, position, &tmp)) return EINA_FALSE;
+           //planes = tmp; // must be 1
+           if (!read_short(map, fsize, position, &tmp)) return EINA_FALSE;
+           header->bit_count = tmp; // bits per pixel: 1, 4, 8, 16, 24 & 32
+           if (!read_int(map, fsize, position, &tmp2)) return EINA_FALSE;
+           header->comp = tmp2; // compression method
+           if (!read_int(map, fsize, position, &tmp2)) return EINA_FALSE;
+           if (tmp2 <= *image_size) *image_size = tmp2; // bitmap data size, GIMP can handle image size error
+           if (!read_int(map, fsize, position, &tmp2)) return EINA_FALSE;
+           //hdpi = (tmp2 * 254) / 10000; // horizontal pixels/meter
+           if (!read_int(map, fsize, position, &tmp2)) return EINA_FALSE;
+           //vdpi = (tmp2 * 254) / 10000; // vertical pixles/meter
+           if (!read_int(map, fsize, position, &tmp2)) return EINA_FALSE;
+           header->palette_size = tmp2; // number of palette colors power (2^n - so 0 - 8)
+           if (!read_int(map, fsize, position, &tmp2)) return EINA_FALSE;
+           //important_colors = tmp2; // number of important colors - 0 if all
+           if (!read_skip(fsize, position, 24)) return EINA_FALSE; // skip unused header
+           if (*image_size == 0) *image_size = fsize - header->offset;
+           break;
+        }
+      case 40: // Windows 3.0 + (v3)
+        {
+           short tmp;
+           int tmp2;
+
+           if (!read_int(map, fsize, position, &tmp2)) return EINA_FALSE;
+           header->width = tmp2; // width
+           if (!read_int(map, fsize, position, &tmp2)) return EINA_FALSE;
+           header->height = tmp2; // height
+           if (!read_short(map, fsize, position, &tmp)) return EINA_FALSE;
+           //planes = tmp; // must be 1
+           if (!read_short(map, fsize, position, &tmp)) return EINA_FALSE;
+           header->bit_count = tmp; // bits per pixel: 1, 4, 8, 16, 24 & 32
+           if (!read_int(map, fsize, position, &tmp2)) return EINA_FALSE;
+           header->comp = tmp2; // compression method
+           if (!read_int(map, fsize, position, &tmp2)) return EINA_FALSE;
+           if (tmp2 <= *image_size) *image_size = tmp2; // bitmap data size, GIMP can handle image size error
+           if (!read_int(map, fsize, position, &tmp2)) return EINA_FALSE;
+           //hdpi = (tmp2 * 254) / 10000; // horizontal pixels/meter
+           if (!read_int(map, fsize, position, &tmp2)) return EINA_FALSE;
+           //vdpi = (tmp2 * 254) / 10000; // vertical pixles/meter
+           if (!read_int(map, fsize, position, &tmp2)) return EINA_FALSE;
+           header->palette_size = tmp2; // number of palette colors power (2^n - so 0 - 8)
+           if (!read_int(map, fsize, position, &tmp2)) return EINA_FALSE;
+           //important_colors = tmp2; // number of important colors - 0 if all
+           if (*image_size == 0) *image_size = fsize - header->offset;
+           if ((header->comp == 0) && (header->bit_count == 32)) header->hasa = 1; // GIMP seems to store it this way
+           break;
+        }
+      case 108: // Windows 95/NT4 + (v4)
+        {
+           short tmp;
+           int tmp2;
+
+           if (!read_int(map, fsize, position, &tmp2)) return EINA_FALSE;
+           header->width = tmp2; // width
+           if (!read_int(map, fsize, position, &tmp2)) return EINA_FALSE;
+           header->height = tmp2; // height
+           if (!read_short(map, fsize, position, &tmp)) return EINA_FALSE;
+           //planes = tmp; // must be 1
+           if (!read_short(map, fsize, position, &tmp)) return EINA_FALSE;
+           header->bit_count = tmp; // bits per pixel: 1, 4, 8, 16, 24 & 32
+           if (!read_int(map, fsize, position, &tmp2)) return EINA_FALSE;
+           header->comp = tmp2; // compression method
+           if (!read_int(map, fsize, position, &tmp2)) return EINA_FALSE;
+           if (tmp2 <= *image_size) *image_size = tmp2; // bitmap data size, GIMP can handle image size error
+           if (!read_int(map, fsize, position, &tmp2)) return EINA_FALSE;
+           //hdpi = (tmp2 * 254) / 10000; // horizontal pixels/meter
+           if (!read_int(map, fsize, position, &tmp2)) return EINA_FALSE;
+           //vdpi = (tmp2 * 254) / 10000; // vertical pixles/meter
+           if (!read_int(map, fsize, position, &tmp2)) return EINA_FALSE;
+           header->palette_size = tmp2; // number of palette colors power (2^n - so 0 - 8)
+           if (!read_int(map, fsize, position, &tmp2)) return EINA_FALSE;
+           //important_colors = tmp2; // number of important colors - 0 if all
+           if (!read_int(map, fsize, position, &tmp2)) return EINA_FALSE;
+           header->rmask = tmp2; // red mask
+           if (!read_int(map, fsize, position, &tmp2)) return EINA_FALSE;
+           header->gmask = tmp2; // green mask
+           if (!read_int(map, fsize, position, &tmp2)) return EINA_FALSE;
+           header->bmask = tmp2; // blue mask
+           if (!read_int(map, fsize, position, &tmp2)) return EINA_FALSE;
+           header->amask = tmp2; // alpha mask
+           if (!read_skip(fsize, position, 36)) return EINA_FALSE; // skip unused cie
+           if (!read_skip(fsize, position, 12)) return EINA_FALSE; // skip unused gamma
+           if (*image_size == 0) *image_size = fsize - header->offset;
+           if ((header->amask) && (header->bit_count == 32)) header->hasa = 1;
+           break;
+        }
+      case 124: // Windows 98/2000 + (v5)
+        {
+           short tmp;
+           int tmp2;
+
+           if (!read_int(map, fsize, position, &tmp2)) return EINA_FALSE;
+           header->width = tmp2; // width
+           if (!read_int(map, fsize, position, &tmp2)) return EINA_FALSE;
+           header->height = tmp2; // height
+           if (!read_short(map, fsize, position, &tmp)) return EINA_FALSE;
+           //planes = tmp; // must be 1
+           if (!read_short(map, fsize, position, &tmp)) return EINA_FALSE;
+           header->bit_count = tmp; // bits per pixel: 1, 4, 8, 16, 24 & 32
+           if (!read_int(map, fsize, position, &tmp2)) return EINA_FALSE;
+           header->comp = tmp2; // compression method
+           if (!read_int(map, fsize, position, &tmp2)) return EINA_FALSE;
+           if (tmp2 <= *image_size) *image_size = tmp2; // bitmap data size, GIMP can handle image size error
+           if (!read_int(map, fsize, position, &tmp2)) return EINA_FALSE;
+           //hdpi = (tmp2 * 254) / 10000; // horizontal pixels/meter
+           if (!read_int(map, fsize, position, &tmp2)) return EINA_FALSE;
+           //vdpi = (tmp2 * 254) / 10000; // vertical pixles/meter
+           if (!read_int(map, fsize, position, &tmp2)) return EINA_FALSE;
+           header->palette_size = tmp2; // number of palette colors power (2^n - so 0 - 8)
+           if (!read_int(map, fsize, position, &tmp2)) return EINA_FALSE;
+           //important_colors = tmp2; // number of important colors - 0 if all
+           if (!read_int(map, fsize, position, &tmp2)) return EINA_FALSE;
+           header->rmask = tmp2; // red mask
+           if (!read_int(map, fsize, position, &tmp2)) return EINA_FALSE;
+           header->gmask = tmp2; // green mask
+           if (!read_int(map, fsize, position, &tmp2)) return EINA_FALSE;
+           header->bmask = tmp2; // blue mask
+           if (!read_int(map, fsize, position, &tmp2)) return EINA_FALSE;
+           header->amask = tmp2; // alpha mask
+           if (!read_skip(fsize, position, 36)) return EINA_FALSE; // skip unused cie
+           if (!read_skip(fsize, position, 12)) return EINA_FALSE; // skip unused gamma
+           if (!read_skip(fsize, position, 16)) return EINA_FALSE; // skip others
+           if (*image_size == 0) *image_size = fsize - header->offset;
+           if ((header->amask) && (header->bit_count == 32)) header->hasa = 1;
+           break;
+        }
+      default:
+         return EINA_FALSE;
+     }
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
 evas_image_load_file_head_bmp(Eina_File *f, const char *key EINA_UNUSED,
                               Evas_Image_Property *prop,
                               Evas_Image_Load_Opts *load_opts,
@@ -110,12 +296,9 @@ evas_image_load_file_head_bmp(Eina_File *f, const char *key EINA_UNUSED,
 {
    void *map = NULL;
    size_t position = 0;
-   char hasa = 0;
-   int width = 0, height = 0, bit_count = 0, image_size = 0, comp = 0;
-   unsigned int offset, head_size, amask = 0;
+   BMP_Header header;
+   int image_size = 0;
    size_t fsize;
-   unsigned int bmpsize;
-   unsigned short res1, res2;
    Eina_Bool r = EINA_FALSE;
 
    *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
@@ -125,175 +308,22 @@ evas_image_load_file_head_bmp(Eina_File *f, const char *key EINA_UNUSED,
    map = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
    if (!map) goto close_file;
 
-   if (strncmp(map, "BM", 2)) goto close_file; // magic number
-   position += 2;
-   *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
-   if (!read_uint(map, fsize, &position, &bmpsize)) goto close_file;
-   if (!read_ushort(map, fsize, &position, &res1)) goto close_file;
-   if (!read_ushort(map, fsize, &position, &res2)) goto close_file;
-   if (!read_uint(map, fsize, &position, &offset)) goto close_file;
-   if (!read_uint(map, fsize, &position, &head_size)) goto close_file;
-   if (offset > fsize) goto close_file;
-   if (head_size == 12) // OS/2 V1 + Windows 3.0
-     {
-        short tmp;
+   memset(&header, 0, sizeof (header));
 
-        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
-        width = tmp; // width
-        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
-        height = tmp; // height
-        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
-        //planes = tmp; // must be 1
-        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
-        bit_count = tmp; // bits per pixel: 1, 4, 8 & 24
-     }
-   else if (head_size == 64) // OS/2 V2
-     {
-        short tmp;
-        int tmp2;
-
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        width = tmp2; // width
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        height = tmp2; // height
-        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
-        //planes = tmp; // must be 1
-        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
-        bit_count = tmp; // bits per pixel: 1, 4, 8, 16, 24 & 32
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        comp = tmp2; // compression method
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        image_size = tmp2; // bitmap data size
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        //hdpi = (tmp2 * 254) / 10000; // horizontal pixels/meter
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        //vdpi = (tmp2 * 254) / 10000; // vertical pixles/meter
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        //palette_size = tmp2; // number of palette colors power (2^n - so 0 - 8)
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        //important_colors = tmp2; // number of important colors - 0 if all
-	if (!read_skip(fsize, &position, 24)) goto close_file; // skip unused header
-        if (image_size == 0) image_size = fsize - offset;
-     }
-   else if (head_size == 40) // Windows 3.0 + (v3)
-     {
-        short tmp;
-        int tmp2;
-
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        width = tmp2; // width
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        height = tmp2; // height
-        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
-        //planes = tmp; // must be 1
-        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
-        bit_count = tmp; // bits per pixel: 1, 4, 8, 16, 24 & 32
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        comp = tmp2; // compression method
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        image_size = tmp2; // bitmap data size
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        //hdpi = (tmp2 * 254) / 10000; // horizontal pixels/meter
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        //vdpi = (tmp2 * 254) / 10000; // vertical pixles/meter
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        //palette_size = tmp2; // number of palette colors power (2^n - so 0 - 8)
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        //important_colors = tmp2; // number of important colors - 0 if all
-        if (image_size == 0) image_size = fsize - offset;
-        if ((comp == 0) && (bit_count == 32)) hasa = 1; // GIMP seems to store it this way
-     }
-   else if (head_size == 108) // Windows 95/NT4 + (v4)
-     {
-        short tmp;
-        int tmp2;
-
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        width = tmp2; // width
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        height = tmp2; // height
-        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
-        //planes = tmp; // must be 1
-        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
-        bit_count = tmp; // bits per pixel: 1, 4, 8, 16, 24 & 32
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        comp = tmp2; // compression method
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        image_size = tmp2; // bitmap data size
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        //hdpi = (tmp2 * 254) / 10000; // horizontal pixels/meter
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        //vdpi = (tmp2 * 254) / 10000; // vertical pixles/meter
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        //palette_size = tmp2; // number of palette colors power (2^n - so 0 - 8)
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        //important_colors = tmp2; // number of important colors - 0 if all
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        //rmask = tmp2; // red mask
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        //gmask = tmp2; // green mask
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        //bmask = tmp2; // blue mask
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        amask = tmp2; // alpha mask
-        if (!read_skip(fsize, &position, 36)) goto close_file; // skip unused cie
-        if (!read_skip(fsize, &position, 12)) goto close_file; // skip unused gamma
-        if (image_size == 0) image_size = fsize - offset;
-        if ((amask) && (bit_count == 32)) hasa = 1;
-     }
-   else if (head_size == 124) // Windows 98/2000 + (v5)
-     {
-        short tmp;
-        int tmp2;
-
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        width = tmp2; // width
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        height = tmp2; // height
-        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
-        //planes = tmp; // must be 1
-        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
-        bit_count = tmp; // bits per pixel: 1, 4, 8, 16, 24 & 32
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        comp = tmp2; // compression method
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        //image_size = tmp2; // bitmap data size
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        //hdpi = (tmp2 * 254) / 10000; // horizontal pixels/meter
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        //vdpi = (tmp2 * 254) / 10000; // vertical pixles/meter
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        //palette_size = tmp2; // number of palette colors power (2^n - so 0 - 8)
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        //important_colors = tmp2; // number of important colors - 0 if all
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        //rmask = tmp2; // red mask
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        //gmask = tmp2; // green mask
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        //bmask = tmp2; // blue mask
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        amask = tmp2; // alpha mask
-        if (!read_skip(fsize, &position, 36)) goto close_file; // skip unused cie
-        if (!read_skip(fsize, &position, 12)) goto close_file; // skip unused gamma
-        if (!read_skip(fsize, &position, 16)) goto close_file; // skip others
-        if (image_size == 0) image_size = fsize - offset;
-        if ((amask) && (bit_count == 32)) hasa = 1;
-     }
-   else
+   if (!_evas_image_load_file_header(map, fsize, &position, &image_size, &header, error))
      goto close_file;
 
-   if (height < 0)
+   if (header.height < 0)
      {
-        height = -height;
+        header.height = -header.height;
         //right_way_up = 1;
      }
 
-   if ((width < 1) || (height < 1) ||
-       (width > IMG_MAX_SIZE) || (height > IMG_MAX_SIZE) ||
-       IMG_TOO_BIG(width, height))
+   if ((header.width < 1) || (header.height < 1) ||
+       (header.width > IMG_MAX_SIZE) || (header.height > IMG_MAX_SIZE) ||
+       IMG_TOO_BIG(header.width, header.height))
      {
-        if (IMG_TOO_BIG(width, height))
+        if (IMG_TOO_BIG(header.width, header.height))
           *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
         else
           *error = EVAS_LOAD_ERROR_GENERIC;
@@ -303,58 +333,58 @@ evas_image_load_file_head_bmp(Eina_File *f, const char *key EINA_UNUSED,
     * because of memory issue in mobile world.*/
    if (load_opts->scale_down_by > 1)
      {
-        width /= load_opts->scale_down_by;
-        height /= load_opts->scale_down_by;
+        header.width /= load_opts->scale_down_by;
+        header.height /= load_opts->scale_down_by;
      }
 
-   if (bit_count < 16)
+   if (header.bit_count < 16)
      {
         //if ((palette_size < 0) || (palette_size > 256)) pal_num = 256;
         //else pal_num = palette_size;
-        if (bit_count == 1)
+        if (header.bit_count == 1)
           {
-             if (comp == 0) // no compression
+             if (header.comp == 0) // no compression
                {
                }
              else
                goto close_file;
           }
-        else if (bit_count == 4)
+        else if (header.bit_count == 4)
           {
-             if (comp == 0) // no compression
+             if (header.comp == 0) // no compression
                {
                }
-             else if (comp == 2) // rle 4bit/pixel
+             else if (header.comp == 2) // rle 4bit/pixel
                {
                }
              else
                goto close_file;
           }
-        else if (bit_count == 8)
+        else if (header.bit_count == 8)
           {
-             if (comp == 0) // no compression
+             if (header.comp == 0) // no compression
                {
                }
-             else if (comp == 1) // rle 8bit/pixel
+             else if (header.comp == 1) // rle 8bit/pixel
                {
                }
              else
                goto close_file;
           }
      }
-   else if ((bit_count == 16) || (bit_count == 24) || (bit_count == 32))
+   else if ((header.bit_count == 16) || (header.bit_count == 24) || (header.bit_count == 32))
      {
-        if (comp == 0) // no compression
+        if (header.comp == 0) // no compression
           {
              // handled
           }
-        else if (comp == 3) // bit field
+        else if (header.comp == 3) // bit field
           {
              // handled
           }
-        else if (comp == 4) // jpeg - only printer drivers
+        else if (header.comp == 4) // jpeg - only printer drivers
           goto close_file;
-        else if (comp == 3) // png - only printer drivers
+        else if (header.comp == 3) // png - only printer drivers
           goto close_file;
         else
           goto close_file;
@@ -362,9 +392,9 @@ evas_image_load_file_head_bmp(Eina_File *f, const char *key EINA_UNUSED,
    else
      goto close_file;
 
-   prop->w = width;
-   prop->h = height;
-   if (hasa) prop->alpha = 1;
+   prop->w = header.width;
+   prop->h = header.height;
+   if (header.hasa) prop->alpha = 1;
 
    *error = EVAS_LOAD_ERROR_NONE;
    r = EINA_TRUE;
@@ -375,23 +405,22 @@ evas_image_load_file_head_bmp(Eina_File *f, const char *key EINA_UNUSED,
 }
 
 static Eina_Bool
-evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key EINA_UNUSED, int *error)
+evas_image_load_file_data_bmp(Eina_File *f, const char *key EINA_UNUSED,
+                              Evas_Image_Property *prop,
+			      Evas_Image_Load_Opts *opts,
+			      Evas_Image_Animated *animated EINA_UNUSED,
+			      void *pixels,
+			      int *error)
 {
-   Eina_File *f;
+   BMP_Header header;
    void *map = NULL;
    size_t position = 0;
    unsigned char *buffer = NULL, *buffer_end = NULL, *p;
-   char hasa = 0;
-   int x = 0, y = 0, w = 0, h = 0, bit_count = 0, image_size = 0,
-     comp = 0, palette_size = -1;
-   unsigned int offset = 0, head_size = 0;
-   unsigned int *pal = NULL, pal_num = 0, *pix = NULL, *surface = NULL, fix,
-     rmask = 0, gmask = 0, bmask = 0, amask = 0;
+   int x = 0, y = 0, image_size = 0;
+   unsigned int *pal = NULL, pal_num = 0, *pix = NULL, fix, *surface = pixels;
    int right_way_up = 0;
    unsigned char r, g, b, a;
    size_t fsize;
-   unsigned int bmpsize;
-   unsigned short res1, res2;
 
    /* for scale decoding */
    unsigned int *scale_surface = NULL, *scale_pix = NULL;
@@ -399,190 +428,28 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
    int row_size = 0; /* Row size is rounded up to a multiple of 4bytes */
    int read_line = 0; /* total read line */
 
-   f = eina_file_open(file, 0);
-   if (!f)
-     {
-	*error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
-	return EINA_FALSE;
-     }
-
    *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
    fsize = eina_file_size_get(f);
    if (fsize < 2) goto close_file;
 
    map = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
    if (!map) goto close_file;
-   
-   if (strncmp(map, "BM", 2)) goto close_file; // magic number
-   position += 2;
-   *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
-   if (!read_uint(map, fsize, &position, &bmpsize)) goto close_file;
-   if (!read_ushort(map, fsize, &position, &res1)) goto close_file;
-   if (!read_ushort(map, fsize, &position, &res2)) goto close_file;
-   if (!read_uint(map, fsize, &position, &offset)) goto close_file;
-   if (!read_uint(map, fsize, &position, &head_size)) goto close_file;
-   if (offset > fsize) goto close_file;
-   image_size = fsize - offset;
-   if (image_size < 1) goto close_file;
 
-   if (head_size == 12) // OS/2 V1 + Windows 3.0
-     {
-        short tmp;
+   memset(&header, 0, sizeof (header));
+   header.palette_size = -1;
 
-        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
-        w = tmp; // width
-        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
-        h = tmp; // height
-        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
-        //planes = tmp; // must be 1
-        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
-        bit_count = tmp; // bits per pixel: 1, 4, 8 & 24
-     }
-   else if (head_size == 64) // OS/2 V2
-     {
-        short tmp;
-        int tmp2;
-
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        w = tmp2; // width
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        h = tmp2; // height
-        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
-        //planes = tmp; // must be 1
-        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
-        bit_count = tmp; // bits per pixel: 1, 4, 8, 16, 24 & 32
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        comp = tmp2; // compression method
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        if (tmp2 <= image_size) image_size = tmp2; // bitmap data size, GIMP can handle image size error
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        //hdpi = (tmp2 * 254) / 10000; // horizontal pixels/meter
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        //vdpi = (tmp2 * 254) / 10000; // vertical pixles/meter
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        palette_size = tmp2; // number of palette colors power (2^n - so 0 - 8)
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        //important_colors = tmp2; // number of important colors - 0 if all
-        if (!read_skip(fsize, &position, 24)) goto close_file; // skip unused header
-        if (image_size == 0) image_size = fsize - offset;
-     }
-   else if (head_size == 40) // Windows 3.0 + (v3)
-     {
-        short tmp;
-        int tmp2;
-
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        w = tmp2; // width
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        h = tmp2; // height
-        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
-        //planes = tmp; // must be 1
-        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
-        bit_count = tmp; // bits per pixel: 1, 4, 8, 16, 24 & 32
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        comp = tmp2; // compression method
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        if (tmp2 <= image_size) image_size = tmp2; // bitmap data size, GIMP can handle image size error
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        //hdpi = (tmp2 * 254) / 10000; // horizontal pixels/meter
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        //vdpi = (tmp2 * 254) / 10000; // vertical pixles/meter
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        palette_size = tmp2; // number of palette colors power (2^n - so 0 - 8)
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        //important_colors = tmp2; // number of important colors - 0 if all
-        if (image_size == 0) image_size = fsize - offset;
-        if ((comp == 0) && (bit_count == 32)) hasa = 1; // GIMP seems to store it this way
-     }
-   else if (head_size == 108) // Windows 95/NT4 + (v4)
-     {
-        short tmp;
-        int tmp2;
-
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        w = tmp2; // width
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        h = tmp2; // height
-        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
-        //planes = tmp; // must be 1
-        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
-        bit_count = tmp; // bits per pixel: 1, 4, 8, 16, 24 & 32
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        comp = tmp2; // compression method
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        if (tmp2 <= image_size) image_size = tmp2; // bitmap data size, GIMP can handle image size error
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        //hdpi = (tmp2 * 254) / 10000; // horizontal pixels/meter
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        //vdpi = (tmp2 * 254) / 10000; // vertical pixles/meter
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        palette_size = tmp2; // number of palette colors power (2^n - so 0 - 8)
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        //important_colors = tmp2; // number of important colors - 0 if all
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        rmask = tmp2; // red mask
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        gmask = tmp2; // green mask
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        bmask = tmp2; // blue mask
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        amask = tmp2; // alpha mask
-        if (!read_skip(fsize, &position, 36)) goto close_file; // skip unused cie
-        if (!read_skip(fsize, &position, 12)) goto close_file; // skip unused gamma
-        if (image_size == 0) image_size = fsize - offset;
-        if ((amask) && (bit_count == 32)) hasa = 1;
-     }
-   else if (head_size == 124) // Windows 98/2000 + (v5)
-     {
-        short tmp;
-        int tmp2;
-
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        w = tmp2; // width
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        h = tmp2; // height
-        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
-        //planes = tmp; // must be 1
-        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
-        bit_count = tmp; // bits per pixel: 1, 4, 8, 16, 24 & 32
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        comp = tmp2; // compression method
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        if (tmp2 <= image_size) image_size = tmp2; // bitmap data size, GIMP can handle image size error
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        //hdpi = (tmp2 * 254) / 10000; // horizontal pixels/meter
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        //vdpi = (tmp2 * 254) / 10000; // vertical pixles/meter
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        palette_size = tmp2; // number of palette colors power (2^n - so 0 - 8)
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        //important_colors = tmp2; // number of important colors - 0 if all
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        rmask = tmp2; // red mask
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        gmask = tmp2; // green mask
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        bmask = tmp2; // blue mask
-        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        amask = tmp2; // alpha mask
-        if (!read_skip(fsize, &position, 36)) goto close_file; // skip unused cie
-        if (!read_skip(fsize, &position, 12)) goto close_file; // skip unused gamma
-        if (!read_skip(fsize, &position, 16)) goto close_file; // skip others
-        if (image_size == 0) image_size = fsize - offset;
-        if ((amask) && (bit_count == 32)) hasa = 1;
-     }
-   else
+   if (!_evas_image_load_file_header(map, fsize, &position, &image_size, &header, error))
      goto close_file;
 
-   if (h < 0)
+   if (header.height < 0)
      {
-        h = -h;
+        header.height = -header.height;
         right_way_up = 1;
      }
-   if ((w < 1) || (h < 1) || (w > IMG_MAX_SIZE) || (h > IMG_MAX_SIZE) ||
-       IMG_TOO_BIG(w, h))
+   if ((header.width < 1) || (header.height < 1) || (header.width > IMG_MAX_SIZE) || (header.height > IMG_MAX_SIZE) ||
+       IMG_TOO_BIG(header.width, header.height))
      {
-        if (IMG_TOO_BIG(w, h))
+        if (IMG_TOO_BIG(header.width, header.height))
           *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
         else
           *error = EVAS_LOAD_ERROR_GENERIC;
@@ -590,58 +457,51 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
      }
    /* It is not bad idea that bmp loader support scale down decoding 
     * because of memory issue in mobile world. */
-   if (ie->load_opts.scale_down_by > 1)
-     scale_ratio = ie->load_opts.scale_down_by;
-   image_w = w;
-   image_h = h;
+   if (opts->scale_down_by > 1)
+     scale_ratio = opts->scale_down_by;
+   image_w = header.width;
+   image_h = header.height;
 
    if (scale_ratio > 1)
      {
-        w /= scale_ratio;
-        h /= scale_ratio;
+        header.width /= scale_ratio;
+        header.height /= scale_ratio;
 
-        if ((w < 1) || (h < 1) )
+        if ((header.width < 1) || (header.height < 1) )
           {
              *error = EVAS_LOAD_ERROR_GENERIC;
              goto close_file;
           }
      }
 
-   if ((w != (int)ie->w) || (h != (int)ie->h))
+   if ((header.width != (int)prop->w) || (header.height != (int)prop->h))
      {
 	*error = EVAS_LOAD_ERROR_GENERIC;
 	goto close_file;
      }
-   evas_cache_image_surface_alloc(ie, ie->w, ie->h);
-   surface = evas_cache_image_pixels(ie);
-   if (!surface)
-     {
-	*error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
-	goto close_file;
-     }
 
-   row_size = ceil((double)(image_w * bit_count) / 32) * 4;
-   if (image_size != row_size * h)
-     image_size = row_size * h;
+   row_size = ceil((double)(image_w * header.bit_count) / 32) * 4;
+   if (image_size != row_size * header.height)
+     image_size = row_size * header.height;
 
-   if (bit_count < 16)
+   if (header.bit_count < 16)
      {
         unsigned int i;
 
-        if (bit_count == 1)
+        if (header.bit_count == 1)
           {
-             if ((palette_size <= 0) || (palette_size > 2)) pal_num = 2;
-             else pal_num = palette_size;
+             if ((header.palette_size <= 0) || (header.palette_size > 2)) pal_num = 2;
+             else pal_num = header.palette_size;
           }
-        else if (bit_count == 4)
+        else if (header.bit_count == 4)
           {
-             if ((palette_size <= 0) || (palette_size > 16)) pal_num = 16;
-             else pal_num = palette_size;
+             if ((header.palette_size <= 0) || (header.palette_size > 16)) pal_num = 16;
+             else pal_num = header.palette_size;
           }
-        else if (bit_count == 8)
+        else if (header.bit_count == 8)
           {
-             if ((palette_size <= 0) || (palette_size > 256)) pal_num = 256;
-             else pal_num = palette_size;
+             if ((header.palette_size <= 0) || (header.palette_size > 256)) pal_num = 256;
+             else pal_num = header.palette_size;
           }
         pal = alloca(256 * 4);
         for (i = 0; i < pal_num; i++)
@@ -649,16 +509,16 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
              if (!read_uchar(map, fsize, &position, &b)) goto close_file;
              if (!read_uchar(map, fsize, &position, &g)) goto close_file;
              if (!read_uchar(map, fsize, &position, &r)) goto close_file;
-             if ((head_size != 12) /*&& (palette_size != 0)*/)
+             if ((header.head_size != 12) /*&& (palette_size != 0)*/)
                { // OS/2 V1 doesn't do the pad byte
                   if (!read_uchar(map, fsize, &position, &a)) goto close_file;
                }
              a = 0xff; // fillin a as solid for paletted images
              pal[i] = ARGB_JOIN(a, r, g, b);
           }
-        position = offset;
+        position = header.offset;
 
-        if ((scale_ratio == 1) || (comp !=0))
+        if ((scale_ratio == 1) || (header.comp !=0))
           buffer = malloc(image_size + 8); // add 8 for padding to avoid checks
         else
           {
@@ -676,13 +536,13 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
              *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
              goto close_file;
           }
-        if ((scale_ratio == 1) || (comp !=0))
+        if ((scale_ratio == 1) || (header.comp !=0))
           buffer_end = buffer + image_size;
         else
           buffer_end = buffer + row_size;
         p = buffer;
 
-        if ((scale_ratio == 1) || (comp !=0))
+        if ((scale_ratio == 1) || (header.comp !=0))
           {
              if (!read_mem(map, fsize, &position, buffer, image_size)) goto close_file;
           }
@@ -691,15 +551,15 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
              if (!read_mem(map, fsize, &position, buffer, row_size)) goto close_file;
           }
 
-        if (bit_count == 1)
+        if (header.bit_count == 1)
           {
-             if (comp == 0) // no compression
+             if (header.comp == 0) // no compression
                {
                   pix = surface;
 
-                  for (y = 0; y < h; y++)
+                  for (y = 0; y < header.height; y++)
                     {
-                       if (!right_way_up) pix = surface + ((h - 1 - y) * w);
+                       if (!right_way_up) pix = surface + ((header.height - 1 - y) * header.width);
                        if (scale_ratio > 1) pix = scale_surface; // one line decoding
 
                        for (x = 0; x < image_w; x++)
@@ -743,11 +603,11 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
 
                        if (scale_ratio > 1)
                          {
-                            if (!right_way_up) scale_pix = surface + ((h - 1 - y) * w);
-                            else scale_pix = surface + (y * w);
+                            if (!right_way_up) scale_pix = surface + ((header.height - 1 - y) * header.width);
+                            else scale_pix = surface + (y * header.width);
 
                             pix = scale_surface;
-                            for (x = 0; x < w; x++)
+                            for (x = 0; x < header.width; x++)
                               {
                                  *scale_pix = *pix;
                                  scale_pix ++;
@@ -773,14 +633,14 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
              else
                goto close_file;
           }
-        else if (bit_count == 4)
+        else if (header.bit_count == 4)
           {
-             if (comp == 0) // no compression
+             if (header.comp == 0) // no compression
                {
                   pix = surface;
-                  for (y = 0; y < h; y++)
+                  for (y = 0; y < header.height; y++)
                     {
-                       if (!right_way_up) pix = surface + ((h - 1 - y) * w);
+                       if (!right_way_up) pix = surface + ((header.height - 1 - y) * header.width);
                        if (scale_ratio > 1) pix = scale_surface; // one line decoding
                        for (x = 0; x < image_w; x++)
                          {
@@ -798,11 +658,11 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
                          }
                        if (scale_ratio > 1)
                          {
-                            if (!right_way_up) scale_pix = surface + ((h - 1 - y) * w);
-                            else scale_pix = surface + (y * w);
+                            if (!right_way_up) scale_pix = surface + ((header.height - 1 - y) * header.width);
+                            else scale_pix = surface + (y * header.width);
 
                             pix = scale_surface;
-                            for (x = 0; x < w; x++)
+                            for (x = 0; x < header.width; x++)
                               {
                                  *scale_pix = *pix;
                                  scale_pix ++;
@@ -825,14 +685,14 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
                          }
                     }
                }
-             else if (comp == 2) // rle 4bit/pixel
+             else if (header.comp == 2) // rle 4bit/pixel
                {
                   int count = 0, done = 0, wpad;
                   int scale_x = 0, scale_y = 0;
                   Eina_Bool scale_down_line = EINA_TRUE;
 
                   pix = surface;
-                  if (!right_way_up) pix = surface + ((h - 1 - y) * w);
+                  if (!right_way_up) pix = surface + ((header.height - 1 - y) * header.width);
                   wpad = ((image_w + 1) / 2) * 2;
                   while (p < buffer_end)
                     {
@@ -848,9 +708,9 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
                                       count = p[0] / 2;
                                       while (count > 0)
                                         {
-                                           if (x < w)
+                                           if (x < header.width)
                                              {
-                                                if (((x % scale_ratio) == 0) && (scale_x < w))
+                                                if (((x % scale_ratio) == 0) && (scale_x < header.width))
                                                   {
                                                      *pix = col1;
                                                      pix++;
@@ -858,9 +718,9 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
                                                   }
                                                 x++;
                                              }
-                                           if (x < w)
+                                           if (x < header.width)
                                              {
-                                                if (((x % scale_ratio) == 0) && (scale_x < w))
+                                                if (((x % scale_ratio) == 0) && (scale_x < header.width))
                                                   {
                                                      *pix = col2;
                                                      pix++;
@@ -872,7 +732,7 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
                                         }
                                       if (p[0] & 0x1)
                                         {
-                                           if (((x % scale_ratio) == 0) && (scale_x < w))
+                                           if (((x % scale_ratio) == 0) && (scale_x < header.width))
                                              {
                                                 *pix = col1;
                                                 pix++;
@@ -897,13 +757,13 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
                                        scale_y++;
                                        scale_down_line = EINA_TRUE;
                                        if (!right_way_up)
-                                         pix = surface + ((h - 1 - scale_y) * w);
+                                         pix = surface + ((header.height - 1 - scale_y) * header.width);
                                        else
-                                         pix = surface + (scale_y * w);
+                                         pix = surface + (scale_y * header.width);
                                     }
                                   else
                                     scale_down_line = EINA_FALSE;
-                                  if (scale_y >= h)
+                                  if (scale_y >= header.height)
                                     {
                                        p = buffer_end;
                                     }
@@ -917,20 +777,20 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
                                   y += p[3];
                                   scale_x = x / scale_ratio;
                                   scale_y = y / scale_ratio;
-                                  if ((scale_x >= w) || (scale_y >= h))
+                                  if ((scale_x >= header.width) || (scale_y >= header.height))
                                     {
                                        p = buffer_end;
                                     }
                                   if (!right_way_up)
-                                    pix = surface + scale_x + ((h - 1 - scale_y) * w);
+                                    pix = surface + scale_x + ((header.height - 1 - scale_y) * header.width);
                                   else
-                                    pix = surface + scale_x + (scale_y * w);
+                                    pix = surface + scale_x + (scale_y * header.width);
                                   p += 4;
                                   break;
                                default:
                                   count = p[1];
                                   if (((p + count) > buffer_end) ||
-                                      ((x + count) > w))
+                                      ((x + count) > header.width))
                                     {
                                        p = buffer_end;
                                        break;
@@ -940,14 +800,14 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
                                   count /= 2;
                                   while (count > 0)
                                     {
-                                       if (((x % scale_ratio) == 0) && (scale_x < w))
+                                       if (((x % scale_ratio) == 0) && (scale_x < header.width))
                                          {
                                             *pix = pal[*p >> 4];
                                             pix++;
                                             scale_x++;
                                          }
                                        x++;
-                                       if (((x % scale_ratio) == 0) && (scale_x < w))
+                                       if (((x % scale_ratio) == 0) && (scale_x < header.width))
                                          {
                                             *pix = pal[*p & 0xf];
                                             pix++;
@@ -961,7 +821,7 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
 
                                   if (done & 0x1)
                                     {
-                                       if (((x % scale_ratio) == 0) && (scale_x < w))
+                                       if (((x % scale_ratio) == 0) && (scale_x < header.width))
                                          {
                                             *pix = pal[*p >> 4];
                                             scale_x++;
@@ -981,15 +841,15 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
              else
                goto close_file;
           }
-        else if (bit_count == 8)
+        else if (header.bit_count == 8)
           {
-             if (comp == 0) // no compression
+             if (header.comp == 0) // no compression
                {
                   pix = surface;
-                  for (y = 0; y < h; y++)
+                  for (y = 0; y < header.height; y++)
                     {
-                       if (!right_way_up) pix = surface + ((h - 1 - y) * w);
-                       for (x = 0; x < w; x++)
+                       if (!right_way_up) pix = surface + ((header.height - 1 - y) * header.width);
+                       for (x = 0; x < header.width; x++)
                          {
                             *pix = pal[*p];
                             p += scale_ratio;
@@ -1014,14 +874,14 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
                          }
                     }
                }
-             else if (comp == 1) // rle 8bit/pixel
+             else if (header.comp == 1) // rle 8bit/pixel
                {
                   int count = 0, done = 0;
                   int scale_x = 0, scale_y = 0;
                   Eina_Bool scale_down_line = EINA_TRUE;
 
                   pix = surface;
-                  if (!right_way_up) pix = surface + ((h - 1 - y) * w);
+                  if (!right_way_up) pix = surface + ((header.height - 1 - y) * header.width);
 
                   while (p < buffer_end)
                     {
@@ -1036,7 +896,7 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
                                       count = p[0];
                                       while (count > 0)
                                         {
-                                           if (((x % scale_ratio) == 0) && (scale_x < w))
+                                           if (((x % scale_ratio) == 0) && (scale_x < header.width))
                                              {
                                                 *pix = col;
                                                 pix++;
@@ -1062,14 +922,14 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
                                        scale_y++;
                                        scale_down_line = EINA_TRUE;
                                        if (!right_way_up)
-                                         pix = surface + ((h - 1 - scale_y) * w);
+                                         pix = surface + ((header.height - 1 - scale_y) * header.width);
                                        else
-                                         pix = surface + (scale_y * w);
+                                         pix = surface + (scale_y * header.width);
                                     }
                                   else
                                     scale_down_line = EINA_FALSE;
 
-                                  if (scale_y >= h)
+                                  if (scale_y >= header.height)
                                     {
                                        p = buffer_end;
                                     }
@@ -1083,14 +943,14 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
                                   y += p[3];
                                   scale_x = x / scale_ratio;
                                   scale_y = y / scale_ratio;
-                                  if ((scale_x >= w) || (scale_y >= h))
+                                  if ((scale_x >= header.width) || (scale_y >= header.height))
                                     {
                                        p = buffer_end;
                                     }
                                   if (!right_way_up)
-                                    pix = surface + scale_x + ((h - 1 - scale_y) * w);
+                                    pix = surface + scale_x + ((header.height - 1 - scale_y) * header.width);
                                   else
-                                    pix = surface + scale_x + (scale_y * w);
+                                    pix = surface + scale_x + (scale_y * header.width);
                                   p += 4;
                                   break;
                                default:
@@ -1105,7 +965,7 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
                                   done = count;
                                   while (count > 0)
                                     {
-                                       if (((x % scale_ratio) == 0) && (scale_x < w))
+                                       if (((x % scale_ratio) == 0) && (scale_x < header.width))
                                          {
                                             *pix = pal[*p];
                                             pix++;
@@ -1125,11 +985,11 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
                goto close_file;
           }
      }
-   else if ((bit_count == 16) || (bit_count == 24) || (bit_count == 32))
+   else if ((header.bit_count == 16) || (header.bit_count == 24) || (header.bit_count == 32))
      {
-        if (comp == 0) // no compression
+        if (header.comp == 0) // no compression
           {
-             position = offset;
+             position = header.offset;
              if (scale_ratio == 1)
                buffer = malloc(image_size + 8); // add 8 for padding to avoid checks
              else
@@ -1153,15 +1013,15 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
                {
                   if (!read_mem(map, fsize, &position, buffer, row_size)) goto close_file;
                }
-             if (bit_count == 16)
+             if (header.bit_count == 16)
                {
                   unsigned short tmp;
 
                   pix = surface;
-                  for (y = 0; y < h; y++)
+                  for (y = 0; y < header.height; y++)
                     {
-                       if (!right_way_up) pix = surface + ((h - 1 - y) * w);
-                       for (x = 0; x < w; x++)
+                       if (!right_way_up) pix = surface + ((header.height - 1 - y) * header.width);
+                       for (x = 0; x < header.width; x++)
                          {
                             tmp = *((unsigned short *)(p));
 
@@ -1170,7 +1030,7 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
                             b = (tmp << 3) & 0xf8; b |= b >> 5;
                             *pix = ARGB_JOIN(0xff, r, g, b);
 
-                              p += 2 * scale_ratio;
+                            p += 2 * scale_ratio;
 
                             if (p >= buffer_end) break;
                             pix++;
@@ -1193,13 +1053,13 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
                          }
                     }
                }
-             else if (bit_count == 24)
+             else if (header.bit_count == 24)
                {
                   pix = surface;
-                  for (y = 0; y < h; y++)
+                  for (y = 0; y < header.height; y++)
                     {
-                       if (!right_way_up) pix = surface + ((h - 1 - y) * w);
-                       for (x = 0; x < w; x++)
+                       if (!right_way_up) pix = surface + ((header.height - 1 - y) * header.width);
+                       for (x = 0; x < header.width; x++)
                          {
                             b = p[0];
                             g = p[1];
@@ -1227,21 +1087,21 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
                          }
                     }
                }
-             else if (bit_count == 32)
+             else if (header.bit_count == 32)
                {
                   int none_zero_alpha = 0;
                   pix = surface;
-                  for (y = 0; y < h; y++)
+                  for (y = 0; y < header.height; y++)
                     {
-                       if (!right_way_up) pix = surface + ((h - 1 - y) * w);
-                       for (x = 0; x < w; x++)
+                       if (!right_way_up) pix = surface + ((header.height - 1 - y) * header.width);
+                       for (x = 0; x < header.width; x++)
                          {
                             b = p[0];
                             g = p[1];
                             r = p[2];
                             a = p[3];
                             if (a) none_zero_alpha = 1;
-                            if (!hasa) a = 0xff;
+                            if (!header.hasa) a = 0xff;
                             *pix = ARGB_JOIN(a, r, g, b);
                             p += 4 * scale_ratio;
 
@@ -1267,10 +1127,10 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
                     }
                   if (!none_zero_alpha)
                     {
-                       ie->flags.alpha = 0;
-                       if (hasa)
+                       prop->alpha = 0;
+                       if (header.hasa)
                          {
-                            unsigned int *pixend = surface + (w * h);
+                            unsigned int *pixend = surface + (header.width * header.height);
 
                             for (pix = surface; pix < pixend; pix++)
                                A_VAL(pix) = 0xff;
@@ -1280,13 +1140,13 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
              else
                goto close_file;
           }
-        else if (comp == 3) // bit field
+        else if (header.comp == 3) // bit field
           {
-             if (!read_uint(map, fsize, &position, &rmask)) goto close_file;
-             if (!read_uint(map, fsize, &position, &gmask)) goto close_file;
-             if (!read_uint(map, fsize, &position, &bmask)) goto close_file;
+             if (!read_uint(map, fsize, &position, &header.rmask)) goto close_file;
+             if (!read_uint(map, fsize, &position, &header.gmask)) goto close_file;
+             if (!read_uint(map, fsize, &position, &header.bmask)) goto close_file;
 
-             position = offset;
+             position = header.offset;
              if (scale_ratio == 1)
                buffer = malloc(image_size + 8); // add 8 for padding to avoid checks
              else
@@ -1312,17 +1172,17 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
                   if (!read_mem(map, fsize, &position, buffer, row_size)) goto close_file;
                }
 
-             if ((bit_count == 16) &&
-                 (rmask == 0xf800) && (gmask == 0x07e0) && (bmask == 0x001f)
+             if ((header.bit_count == 16) &&
+                 (header.rmask == 0xf800) && (header.gmask == 0x07e0) && (header.bmask == 0x001f)
                  )
                {
                   unsigned short tmp;
 
                   pix = surface;
-                  for (y = 0; y < h; y++)
+                  for (y = 0; y < header.height; y++)
                     {
-                       if (!right_way_up) pix = surface + ((h - 1 - y) * w);
-                       for (x = 0; x < w; x++)
+                       if (!right_way_up) pix = surface + ((header.height - 1 - y) * header.width);
+                       for (x = 0; x < header.width; x++)
                          {
                             tmp = *((unsigned short *)(p));
 
@@ -1354,16 +1214,16 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
                          }
                     }
                }
-             else if ((bit_count == 16) && 
-                      (rmask == 0x7c00) && (gmask == 0x03e0) && (bmask == 0x001f)
+             else if ((header.bit_count == 16) && 
+                      (header.rmask == 0x7c00) && (header.gmask == 0x03e0) && (header.bmask == 0x001f)
                      )
                {
                   unsigned short tmp;
                   pix = surface;
-                  for (y = 0; y < h; y++)
+                  for (y = 0; y < header.height; y++)
                     {
-                       if (!right_way_up) pix = surface + ((h - 1 - y) * w);
-                       for (x = 0; x < w; x++)
+                       if (!right_way_up) pix = surface + ((header.height - 1 - y) * header.width);
+                       for (x = 0; x < header.width; x++)
                          {
                             tmp = *((unsigned short *)(p));
 
@@ -1371,7 +1231,7 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
                             g = (tmp >> 2) & 0xf8; g |= g >> 5;
                             b = (tmp << 3) & 0xf8; b |= b >> 5;
                             *pix = ARGB_JOIN(0xff, r, g, b);
-                              p += 2 * scale_ratio;
+                            p += 2 * scale_ratio;
 
                             if (p >= buffer_end) break;
                             pix++;
@@ -1394,19 +1254,19 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
                          }
                     }
                }
-             else if (bit_count == 32)
+             else if (header.bit_count == 32)
                {
                   pix = surface;
-                  for (y = 0; y < h; y++)
+                  for (y = 0; y < header.height; y++)
                     {
-                       if (!right_way_up) pix = surface + ((h - 1 - y) * w);
-                       for (x = 0; x < w; x++)
+                       if (!right_way_up) pix = surface + ((header.height - 1 - y) * header.width);
+                       for (x = 0; x < header.width; x++)
                          {
                             b = p[0];
                             g = p[1];
                             r = p[2];
                             a = p[3];
-                            if (!hasa) a = 0xff;
+                            if (!header.hasa) a = 0xff;
                             *pix = ARGB_JOIN(a, r, g, b);
 
                               p += 4 * scale_ratio;
@@ -1435,11 +1295,11 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
              else
                goto close_file;
           }
-        else if (comp == 4) // jpeg - only printer drivers
+        else if (header.comp == 4) // jpeg - only printer drivers
           {
              goto close_file;
           }
-        else if (comp == 3) // png - only printer drivers
+        else if (header.comp == 3) // png - only printer drivers
           {
              goto close_file;
           }
@@ -1453,9 +1313,8 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
    if (scale_surface) free(scale_surface);
 
    eina_file_map_free(f, map);
-   eina_file_close(f);
 
-   evas_common_image_premul(ie);
+   prop->premul = EINA_TRUE;
    *error = EVAS_LOAD_ERROR_NONE;
    return EINA_TRUE;
 
@@ -1463,9 +1322,17 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
    if (buffer) free(buffer);
    if (scale_surface) free(scale_surface);
    if (map) eina_file_map_free(f, map);
-   eina_file_close(f);
    return EINA_FALSE;
 }
+
+static Evas_Image_Load_Func evas_image_load_bmp_func =
+{
+  EINA_TRUE,
+  evas_image_load_file_head_bmp,
+  evas_image_load_file_data_bmp,
+  NULL,
+  EINA_FALSE
+};
 
 static int
 module_open(Evas_Module *em)

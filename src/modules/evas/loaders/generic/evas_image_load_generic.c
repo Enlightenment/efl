@@ -16,18 +16,6 @@
 #include <fcntl.h>
 #include <ctype.h>
 
-static Eina_Bool evas_image_load_file_head_generic(Image_Entry *ie, const char *file, const char *key, int *error) EINA_ARG_NONNULL(1, 2, 4);
-static Eina_Bool evas_image_load_file_data_generic(Image_Entry *ie, const char *file, const char *key, int *error) EINA_ARG_NONNULL(1, 2, 4);
-
-Evas_Image_Load_Func evas_image_load_generic_func =
-{
-  EINA_TRUE,
-  evas_image_load_file_head_generic,
-  evas_image_load_file_data_generic,
-  NULL,
-  EINA_FALSE
-};
-
 static Eina_Bool
 illegal_char(const char *str)
 {
@@ -104,7 +92,11 @@ dotcat(char *dest, const char *src)
 }
 
 static Eina_Bool
-_load(Image_Entry *ie, const char *file, const char *key, int *error, Eina_Bool get_data)
+_load(Eina_File *ef, const char *key,
+      Evas_Image_Property *prop,
+      Evas_Image_Load_Opts *opts,
+      void *pixels,
+      int *error, Eina_Bool get_data)
 {
    Eina_Bool res = EINA_FALSE;
    int w = 0, h = 0, alpha = 0;
@@ -129,18 +121,18 @@ _load(Image_Entry *ie, const char *file, const char *key, int *error, Eina_Bool 
 
    // params excluding file, key and loadopts
    cmd_len += 1024;
-   cmd_len += strlen(file) * 2;
+   cmd_len += strlen(eina_file_filename_get(ef)) * 2;
    if (key) cmd_len += strlen(key) * 2;
    cmd = alloca(cmd_len + 1);
 
-   len = strlen(file);
+   len = strlen(eina_file_filename_get(ef));
    if (len < 1)
      {
         *error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
 	return EINA_FALSE;
      }
-   end = file + len;
-   for (p = end - 1; p >= file; p--)
+   end = eina_file_filename_get(ef) + len;
+   for (p = end - 1; p >= eina_file_filename_get(ef); p--)
      {
         if      ((!dot1) && (*p == '.')) dot1 = p;
         else if ((!dot2) && (*p == '.')) dot2 = p;
@@ -196,7 +188,7 @@ _load(Image_Entry *ie, const char *file, const char *key, int *error, Eina_Bool 
         strcat(cmd, " ");
         // filename first arg
         len = strlen(cmd);
-        escape_copy(file, cmd + len);
+        escape_copy(eina_file_filename_get(ef), cmd + len);
         if (!get_data)
           {
              strcat(cmd, " -head ");
@@ -207,23 +199,23 @@ _load(Image_Entry *ie, const char *file, const char *key, int *error, Eina_Bool 
              len = strlen(cmd);
              escape_copy(key, cmd + len);
           }
-        if (ie->load_opts.scale_down_by > 1)
+        if (opts->scale_down_by > 1)
           {
              strcat(cmd, " -opt-scale-down-by ");
-             snprintf(buf, sizeof(buf), "%i", ie->load_opts.scale_down_by);
+             snprintf(buf, sizeof(buf), "%i", opts->scale_down_by);
              strcat(cmd, buf);
           }
-        if (ie->load_opts.dpi > 0.0)
+        if (opts->dpi > 0.0)
           {
              strcat(cmd, " -opt-dpi ");
-             snprintf(buf, sizeof(buf), "%i", (int)(ie->load_opts.dpi * 1000.0));
+             snprintf(buf, sizeof(buf), "%i", (int)(opts->dpi * 1000.0));
              strcat(cmd, buf);
           }
-        if ((ie->load_opts.w > 0) &&
-            (ie->load_opts.h > 0))
+        if ((opts->w > 0) &&
+            (opts->h > 0))
           {
              strcat(cmd, " -opt-size ");
-             snprintf(buf, sizeof(buf), "%i %i", ie->load_opts.w, ie->load_opts.h);
+             snprintf(buf, sizeof(buf), "%i %i", opts->w, opts->h);
              strcat(cmd, buf);
          }
         f = popen(cmd, "r");
@@ -300,28 +292,22 @@ getdata:
 	*error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
 	goto on_error;
      }
-   body = evas_cache_image_pixels(ie);
-   if (body)
-     {
-        if ((w != (int)ie->w) || (h != (int)ie->h))
-          {
-             *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
-             goto on_error;
-          }
-     }
-   if (alpha) ie->flags.alpha = 1;
-   ie->w = w;
-   ie->h = h;
 
-   if (get_data)
+   if (!get_data)
      {
-        if (!body) evas_cache_image_surface_alloc(ie, ie->w, ie->h);
-        body = evas_cache_image_pixels(ie);
-        if (!body)
+        if (alpha) prop->alpha = 1;
+        prop->w = w;
+        prop->h = h;
+     }
+   else
+     {
+        if ((int)prop->w != w ||
+            (int)prop->h != h)
           {
              *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
              goto on_error;
           }
+        body = pixels;
 
         if ((tmpfname) || (shmfname))
           {
@@ -387,21 +373,34 @@ getdata:
 }
 
 static Eina_Bool
-evas_image_load_file_head_generic(Image_Entry *ie, const char *file, const char *key, int *error)
+evas_image_load_file_head_generic(Eina_File *f, const char *key,
+                                  Evas_Image_Property *prop,
+                                  Evas_Image_Load_Opts *opts,
+                                  Evas_Image_Animated *animated EINA_UNUSED,
+                                  int *error)
 {
-   return _load(ie, file, key, error, EINA_FALSE);
+   return _load(f, key, prop, opts, NULL, error, EINA_FALSE);
 }
 
 static Eina_Bool
-evas_image_load_file_data_generic(Image_Entry *ie, const char *file, const char *key, int *error)
+evas_image_load_file_data_generic(Eina_File *f, const char *key,
+                                  Evas_Image_Property *prop,
+                                  Evas_Image_Load_Opts *opts,
+                                  Evas_Image_Animated *animated EINA_UNUSED,
+                                  void *pixels,
+                                  int *error)
 {
-   DATA32 *body;
-
-   body = evas_cache_image_pixels(ie);
-   if (!body) return _load(ie, file, key, error, EINA_TRUE);
-   *error = EVAS_LOAD_ERROR_NONE;
-   return EINA_TRUE;
+   return _load(f, key, prop, opts, pixels, error, EINA_TRUE);
 }
+
+Evas_Image_Load_Func evas_image_load_generic_func =
+{
+  EINA_TRUE,
+  evas_image_load_file_head_generic,
+  evas_image_load_file_data_generic,
+  NULL,
+  EINA_FALSE
+};
 
 static int
 module_open(Evas_Module *em)

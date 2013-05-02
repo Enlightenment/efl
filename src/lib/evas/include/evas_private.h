@@ -904,9 +904,16 @@ struct _Evas_Image_Load_Func
 {
   Eina_Bool threadable;
   Eina_Bool (*file_head) (Eina_File *f, const char *key,
-			  Evas_Image_Property *prop, Evas_Image_Load_Opts *opts, Evas_Image_Animated *animated,
+			  Evas_Image_Property *prop,
+			  Evas_Image_Load_Opts *opts,
+			  Evas_Image_Animated *animated,
 			  int *error);
-  Eina_Bool (*file_data) (Image_Entry *ie, const char *file, const char *key, int *error);
+  Eina_Bool (*file_data) (Eina_File *f, const char *key,
+			  Evas_Image_Property *prop,
+			  Evas_Image_Load_Opts *opts,
+			  Evas_Image_Animated *animated,
+			  void *pixels,
+			  int *error);
   double    (*frame_duration) (Image_Entry *ie, const char *file, const int start, const int frame_num);
   Eina_Bool do_region;
 };

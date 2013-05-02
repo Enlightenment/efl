@@ -16,18 +16,6 @@ static int _evas_loader_xpm_log_dom = -1;
 #endif
 #define ERR(...) EINA_LOG_DOM_ERR(_evas_loader_xpm_log_dom, __VA_ARGS__)
 
-static Eina_Bool evas_image_load_file_head_xpm(Image_Entry *ie, const char *file, const char *key, int *error) EINA_ARG_NONNULL(1, 2, 4);
-static Eina_Bool evas_image_load_file_data_xpm(Image_Entry *ie, const char *file, const char *key, int *error) EINA_ARG_NONNULL(1, 2, 4);
-
-static Evas_Image_Load_Func evas_image_load_xpm_func =
-{
-  EINA_FALSE,
-  evas_image_load_file_head_xpm,
-  evas_image_load_file_data_xpm,
-  NULL,
-  EINA_FALSE
-};
-
 static Eina_File *rgb_txt;
 static void *rgb_txt_map;
 
@@ -149,10 +137,9 @@ _cmap_cmp_key_cb(const Eina_Rbtree *node, const void *key, int length EINA_UNUSE
 
 /** FIXME: clean this up and make more efficient  **/
 static Eina_Bool
-evas_image_load_file_xpm(Image_Entry *ie, const char *file, const char *key EINA_UNUSED, int load_data, int *error)
+evas_image_load_file_xpm(Eina_File *f, Evas_Image_Property *prop, void *pixels, int load_data, int *error)
 {
    DATA32      *ptr, *end, *head = NULL;
-   Eina_File   *f;
    const char  *map;
    size_t       length;
    size_t       position;
@@ -166,7 +153,8 @@ evas_image_load_file_xpm(Image_Entry *ie, const char *file, const char *key EINA
    Eina_Rbtree *root = NULL;
 
    short        lookup[128 - 32][128 - 32];
-   int          count, pixels;
+   int          count, size;
+   Eina_Bool    res = EINA_FALSE;
 
    done = 0;
 //   transp = -1;
@@ -175,33 +163,20 @@ evas_image_load_file_xpm(Image_Entry *ie, const char *file, const char *key EINA
    /* if immediate_load is 1, then dont delay image laoding as below, or */
    /* already data in this image - dont load it again */
 
-   f = eina_file_open(file, 0);
-   if (!f)
-     {
-        if (load_data)
-          ERR("XPM ERROR: file failed to open");
-	*error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
-	return EINA_FALSE;
-     }
    length = eina_file_size_get(f);
    position = 0;
+   *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
    if (length < 9)
      {
-        if (load_data)
-          ERR("XPM ERROR: file size, %zd, is to small", length);
-        eina_file_close(f);
-	*error = EVAS_LOAD_ERROR_CORRUPT_FILE;
-	return EINA_FALSE;
+        ERR("XPM ERROR: file size, %zd, is to small", length);
+        goto on_error;
      }
 
    map = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
    if (!map)
      {
-        if (load_data)
-          ERR("XPM ERROR: file failed to mmap");
-        eina_file_close(f);
-	*error = EVAS_LOAD_ERROR_CORRUPT_FILE;
-	return EINA_FALSE;
+        ERR("XPM ERROR: file failed to mmap");
+        goto on_error;
      }
 
    if (strncmp("/* XPM */", map, 9))
@@ -221,7 +196,7 @@ evas_image_load_file_xpm(Image_Entry *ie, const char *file, const char *key EINA
    comment = 0;
    quote = 0;
    context = 0;
-   pixels = 0;
+   size = 0;
    count = 0;
    line = malloc(lsz);
    if (!line)
@@ -304,8 +279,19 @@ evas_image_load_file_xpm(Image_Entry *ie, const char *file, const char *key EINA
                                 goto on_error;
                               }
                          }
-                       ie->w = w;
-                       ie->h = h;
+
+                       if (!load_data)
+                         {
+                            prop->w = w;
+                            prop->h = h;
+                         }
+                       else if ((int) prop->w != w ||
+                                (int) prop->h != h)
+                         {
+                            *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+                            goto on_error;
+                         }
+
 
                        j = 0;
                        context++;
@@ -418,20 +404,19 @@ evas_image_load_file_xpm(Image_Entry *ie, const char *file, const char *key EINA
                             context++;
                          }
 
-                       if (transp) ie->flags.alpha = 1;
+                       if (transp) prop->alpha = 1;
 
                        if (load_data)
                          {
-                            evas_cache_image_surface_alloc(ie, w, h);
-                            ptr = evas_cache_image_pixels(ie);
+                            ptr = pixels;
                             head = ptr;
                             if (!ptr)
                               {
 				 *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
                                  goto on_error;
                               }
-                            pixels = w * h;
-                            end = ptr + pixels;
+                            size = w * h;
+                            end = ptr + size;
                          }
                        else
                          {
@@ -648,38 +633,50 @@ evas_image_load_file_xpm(Image_Entry *ie, const char *file, const char *key EINA
 	     line = tl;
           }
         if (((ptr) && ((ptr - head) >= (w * h * (int)sizeof(DATA32)))) ||
-            ((context > 1) && (count >= pixels)))
+            ((context > 1) && (count >= size)))
 	  break;
      }
 
  on_success:
-   free(cmap);
-   free(line);
-
-   eina_file_map_free(f, (void*) map);
-   eina_file_close(f);
-
    *error = EVAS_LOAD_ERROR_NONE;
-   return EINA_TRUE;
+   res = EINA_TRUE;
 
  on_error:
+   if (map) eina_file_map_free(f, (void*) map);
+   free(cmap);
    free(line);
-   eina_file_map_free(f, (void*) map);
-   eina_file_close(f);
-   return EINA_FALSE;
+   return res;
 }
 
 static Eina_Bool
-evas_image_load_file_head_xpm(Image_Entry *ie, const char *file, const char *key, int *error)
+evas_image_load_file_head_xpm(Eina_File *f, const char *key EINA_UNUSED,
+			      Evas_Image_Property *prop,
+			      Evas_Image_Load_Opts *opts EINA_UNUSED,
+			      Evas_Image_Animated *animated EINA_UNUSED,
+			      int *error)
 {
-   return evas_image_load_file_xpm(ie, file, key, 0, error);
+   return evas_image_load_file_xpm(f, prop, NULL, 0, error);
 }
 
 static Eina_Bool
-evas_image_load_file_data_xpm(Image_Entry *ie, const char *file, const char *key, int *error)
+evas_image_load_file_data_xpm(Eina_File *f, const char *key EINA_UNUSED,
+			      Evas_Image_Property *prop,
+			      Evas_Image_Load_Opts *opts EINA_UNUSED,
+			      Evas_Image_Animated *animated EINA_UNUSED,
+			      void *pixels,
+			      int *error)
 {
-   return evas_image_load_file_xpm(ie, file, key, 1, error);
+   return evas_image_load_file_xpm(f, prop, pixels, 1, error);
 }
+
+static Evas_Image_Load_Func evas_image_load_xpm_func =
+{
+  EINA_FALSE,
+  evas_image_load_file_head_xpm,
+  evas_image_load_file_data_xpm,
+  NULL,
+  EINA_FALSE
+};
 
 static int
 module_open(Evas_Module *em)

@@ -26,23 +26,10 @@ static int _evas_loader_tiff_log_dom = -1;
 #endif
 #define INF(...) EINA_LOG_DOM_INFO(_evas_loader_tiff_log_dom, __VA_ARGS__)
 
-static Eina_Bool evas_image_load_file_head_tiff(Eina_File *f, const char *key, Evas_Image_Property *prop, Evas_Image_Load_Opts *opts, Evas_Image_Animated *animated, int *error);
-static Eina_Bool evas_image_load_file_data_tiff(Image_Entry *ie, const char *file, const char *key, int *error) EINA_ARG_NONNULL(1, 2, 4);
-
-static Evas_Image_Load_Func evas_image_load_tiff_func =
-{
-  EINA_TRUE,
-  evas_image_load_file_head_tiff,
-  evas_image_load_file_data_tiff,
-  NULL,
-  EINA_FALSE
-};
-
 typedef struct TIFFRGBAImage_Extra TIFFRGBAImage_Extra;
 
 struct TIFFRGBAImage_Extra {
    TIFFRGBAImage       rgba;
-   Image_Entry        *image;
    char                pper;
    uint32              num_pixels;
    uint32              py;
@@ -178,25 +165,22 @@ evas_image_load_file_head_tiff(Eina_File *f, const char *key EINA_UNUSED,
 }
 
 static Eina_Bool
-evas_image_load_file_data_tiff(Image_Entry *ie, const char *file, const char *key EINA_UNUSED, int *error)
+evas_image_load_file_data_tiff(Eina_File *f, const char *key EINA_UNUSED,
+			       Evas_Image_Property *prop,
+			       Evas_Image_Load_Opts *opts EINA_UNUSED,
+			       Evas_Image_Animated *animated EINA_UNUSED,
+			       void *pixels,
+			       int *error)
 {
    char                txt[1024];
    TIFFRGBAImage_Extra rgba_image;
    TIFF               *tif = NULL;
-   Eina_File          *f;
    unsigned char      *map;
    uint32             *rast = NULL;
    uint32              num_pixels;
    int                 x, y;
    uint16              magic_number;
    Eina_Bool           res = EINA_FALSE;
-
-   f = eina_file_open(file, EINA_FALSE);
-   if (!f)
-     {
-        *error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
-	return EINA_FALSE;
-     }
 
    map = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
    if (!map || eina_file_size_get(f) < 3)
@@ -237,25 +221,17 @@ evas_image_load_file_data_tiff(Image_Entry *ie, const char *file, const char *ke
 	*error = EVAS_LOAD_ERROR_CORRUPT_FILE;
         goto on_error;
      }
-   rgba_image.image = ie;
 
    if (rgba_image.rgba.alpha != EXTRASAMPLE_UNSPECIFIED)
-     ie->flags.alpha = 1;
-   if ((rgba_image.rgba.width != ie->w) ||
-       (rgba_image.rgba.height != ie->h))
+     prop->alpha = 1;
+   if ((rgba_image.rgba.width != prop->w) ||
+       (rgba_image.rgba.height != prop->h))
      {
 	*error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
         goto on_error_end;
      }
 
-   evas_cache_image_surface_alloc(ie, rgba_image.rgba.width, rgba_image.rgba.height);
-   if (!evas_cache_image_pixels(ie))
-     {
-	*error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
-        goto on_error_end;
-     }
-
-   rgba_image.num_pixels = num_pixels = ie->w * ie->h;
+   rgba_image.num_pixels = num_pixels = prop->w * prop->h;
 
    rgba_image.pper = rgba_image.py = 0;
    rast = (uint32 *) _TIFFmalloc(sizeof(uint32) * num_pixels);
@@ -282,23 +258,24 @@ evas_image_load_file_data_tiff(Image_Entry *ie, const char *file, const char *ke
         INF("channel bits == %i", (int)rgba_image.rgba.samplesperpixel);
      }
    /* process rast -> image rgba. really same as prior code anyway just simpler */
-   for (y = 0; y < (int)ie->h; y++)
+   for (y = 0; y < (int)prop->h; y++)
      {
         DATA32 *pix, *pd;
         uint32 *ps, pixel;
         unsigned int a, r, g, b;
+	unsigned int nas = 0;
         
-        pix = evas_cache_image_pixels(ie);
-        pd = pix + ((ie->h - y - 1) * ie->w);
-        ps = rast + (y * ie->w);
-        for (x = 0; x < (int)ie->w; x++)
+        pix = pixels;
+        pd = pix + ((prop->h - y - 1) * prop->w);
+        ps = rast + (y * prop->w);
+        for (x = 0; x < (int)prop->w; x++)
           {
              pixel = *ps;
              a = TIFFGetA(pixel);
              r = TIFFGetR(pixel);
              g = TIFFGetG(pixel);
              b = TIFFGetB(pixel);
-             if (!ie->flags.alpha) a = 255;
+             if (!prop->alpha) a = 255;
              if ((rgba_image.rgba.alpha == EXTRASAMPLE_UNASSALPHA) &&
                  (a < 255))
                {
@@ -307,14 +284,18 @@ evas_image_load_file_data_tiff(Image_Entry *ie, const char *file, const char *ke
                   b = (b * (a + 1)) >> 8;
                }
              *pd = ARGB_JOIN(a, r, g, b);
+
+	     if (a == 0xff) nas++;
              ps++;
              pd++;
           }
+
+	if ((ALPHA_SPARSE_INV_FRACTION * nas) >= (prop->w * prop->h))
+	  prop->alpha_sparse = EINA_TRUE;
      }
 
    _TIFFfree(rast);
 
-   evas_common_image_set_alpha_sparse(ie);
    *error = EVAS_LOAD_ERROR_NONE;
    res = EINA_TRUE;
 
@@ -323,9 +304,17 @@ evas_image_load_file_data_tiff(Image_Entry *ie, const char *file, const char *ke
  on_error:
    if (tif) TIFFClose(tif);
    if (map) eina_file_map_free(f, map);
-   eina_file_close(f);
    return res;
 }
+
+static Evas_Image_Load_Func evas_image_load_tiff_func =
+{
+  EINA_TRUE,
+  evas_image_load_file_head_tiff,
+  evas_image_load_file_data_tiff,
+  NULL,
+  EINA_FALSE
+};
 
 static int
 module_open(Evas_Module *em)

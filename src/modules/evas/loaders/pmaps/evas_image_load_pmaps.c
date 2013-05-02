@@ -12,17 +12,6 @@
 #define FILE_BUFFER_SIZE 1024 * 32
 #define FILE_BUFFER_UNREAD_SIZE 16
 
-static Eina_Bool evas_image_load_file_head_pmaps(Eina_File *f, const char *key, Evas_Image_Property *prop, Evas_Image_Load_Opts *opts, Evas_Image_Animated *animated, int *error);
-static Eina_Bool evas_image_load_file_data_pmaps(Image_Entry *ie, const char *file, const char *key, int *error) EINA_ARG_NONNULL(1, 2, 4);
-
-Evas_Image_Load_Func evas_image_load_pmaps_func = {
-   EINA_TRUE,
-   evas_image_load_file_head_pmaps,
-   evas_image_load_file_data_pmaps,
-   NULL,
-   EINA_FALSE
-};
-
 /* The buffer to load pmaps images */
 typedef struct Pmaps_Buffer Pmaps_Buffer;
 
@@ -96,20 +85,17 @@ evas_image_load_file_head_pmaps(Eina_File *f, const char *key EINA_UNUSED,
 }
 
 static Eina_Bool
-evas_image_load_file_data_pmaps(Image_Entry *ie, const char *file, const char *key EINA_UNUSED, int *error)
+evas_image_load_file_data_pmaps(Eina_File *f, const char *key EINA_UNUSED,
+				Evas_Image_Property *prop,
+				Evas_Image_Load_Opts *opts EINA_UNUSED,
+				Evas_Image_Animated *animated EINA_UNUSED,
+				void *pixels,
+				int *error)
 {
-   Eina_File *f;
    Pmaps_Buffer b;
-   int pixels;
+   int size;
    DATA32 *ptr;
    Eina_Bool r = EINA_FALSE;
-
-   f = eina_file_open(file, EINA_FALSE);
-   if (!f)
-     {
-	*error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
-	return EINA_FALSE;
-     }
 
    if (!pmaps_buffer_open(&b, f, error))
      goto on_error;
@@ -117,52 +103,47 @@ evas_image_load_file_data_pmaps(Image_Entry *ie, const char *file, const char *k
    if (!pmaps_buffer_header_parse(&b, error))
      goto on_error;
 
-   pixels = b.w * b.h;
+   size = b.w * b.h;
+   if ((int) prop->w != b.w ||
+       (int) prop->h != b.h)
+     goto on_error;
 
-   evas_cache_image_surface_alloc(ie, b.w, b.h);
-   ptr = evas_cache_image_pixels(ie);
-   if (!ptr)
-     {
-	*error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
-        goto on_error;
-     }
-
+   ptr = pixels;
    if (b.type[1] != '4')
      {
-	while (pixels > 0 && b.color_get(&b, ptr))
+	while (size > 0 && b.color_get(&b, ptr))
 	  {
-	     pixels--;
+	     size--;
 	     ptr++;
 	  }
      }
    else
      {
-	while (pixels > 0
+	while (size > 0
 	       && (b.current != b.end || pmaps_buffer_raw_update(&b)))
 	  {
 	     int i;
 
-	     for (i = 7; i >= 0 && pixels > 0; i--)
+	     for (i = 7; i >= 0 && size > 0; i--)
 	       {
 		  if (*b.current & (1 << i))
 		     *ptr = 0xff000000;
 		  else
 		     *ptr = 0xffffffff;
 		  ptr++;
-		  pixels--;
+		  size--;
 	       }
 	     b.current++;
 	  }
      }
 
    /* if there are some pix missing, give them a proper default */
-   memset(ptr, 0xff, 4 * pixels);
+   memset(ptr, 0xff, 4 * size);
    *error = EVAS_LOAD_ERROR_NONE;
    r = EINA_TRUE;
 
  on_error:
    pmaps_buffer_close(&b);
-   eina_file_close(f);
    return r;
 }
 
@@ -561,6 +542,14 @@ pmaps_buffer_plain_bw_get(Pmaps_Buffer *b, DATA32 *val)
 }
 
 /* external functions */
+Evas_Image_Load_Func evas_image_load_pmaps_func = {
+   EINA_TRUE,
+   evas_image_load_file_head_pmaps,
+   evas_image_load_file_data_pmaps,
+   NULL,
+   EINA_FALSE
+};
+
 static int
 module_open(Evas_Module *em)
 {

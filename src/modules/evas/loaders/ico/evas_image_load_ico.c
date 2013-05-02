@@ -11,18 +11,6 @@
 #include "evas_common.h"
 #include "evas_private.h"
 
-static Eina_Bool evas_image_load_file_head_ico(Eina_File *f, const char *key, Evas_Image_Property *prop, Evas_Image_Load_Opts *opts, Evas_Image_Animated *animated, int *error);
-static Eina_Bool evas_image_load_file_data_ico(Image_Entry *ie, const char *file, const char *key, int *error) EINA_ARG_NONNULL(1, 2, 4);
-
-static Evas_Image_Load_Func evas_image_load_ico_func =
-{
-  EINA_TRUE,
-  evas_image_load_file_head_ico,
-  evas_image_load_file_data_ico,
-  NULL,
-  EINA_FALSE
-};
-
 static Eina_Bool
 read_ushort(unsigned char *map, size_t length, size_t *position, unsigned short *ret)
 {
@@ -300,9 +288,13 @@ evas_image_load_file_head_ico(Eina_File *f, const char *key,
 }
 
 static Eina_Bool
-evas_image_load_file_data_ico(Image_Entry *ie, const char *file, const char *key, int *error)
+evas_image_load_file_data_ico(Eina_File *f, const char *key,
+			      Evas_Image_Property *prop,
+			      Evas_Image_Load_Opts *opts,
+			      Evas_Image_Animated *animated EINA_UNUSED,
+			      void *pixels,
+			      int *error)
 {
-   Eina_File *f;
    void *map = NULL;
    size_t position = 0;
    unsigned short word;
@@ -323,13 +315,7 @@ evas_image_load_file_data_ico(Image_Entry *ie, const char *file, const char *key
       int hot_x, hot_y;
       unsigned int bmoffset, bmsize;
    } chosen = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-
-   f = eina_file_open(file, EINA_FALSE);
-   if (!f)
-     {
-	*error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
-	return EINA_FALSE;
-     }
+   Eina_Bool res = EINA_FALSE;
 
    *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
    fsize = eina_file_size_get(f);
@@ -348,10 +334,10 @@ evas_image_load_file_data_ico(Image_Entry *ie, const char *file, const char *key
    //   more ?
 
    search = BIGGEST;
-   if ((ie->load_opts.w > 0) && (ie->load_opts.h > 0))
+   if ((opts->w > 0) && (opts->h > 0))
      {
-        wanted_w = ie->load_opts.w;
-        wanted_h = ie->load_opts.h;
+        wanted_w = opts->w;
+        wanted_h = opts->h;
         search = SMALLER;
      }
 
@@ -504,7 +490,7 @@ evas_image_load_file_data_ico(Image_Entry *ie, const char *file, const char *key
    cols = chosen.cols;
    bpp = chosen.bpp;
    // changed since we loaded header?
-   if (((int)ie->w != w) || ((int)ie->h != h)) goto close_file;
+   if (((int)prop->w != w) || ((int)prop->h != h)) goto close_file;
    
    // read bmp header time... let's do some checking
    if (!read_uint(map, fsize, &position, &dword)) goto close_file; // headersize - dont care
@@ -531,7 +517,7 @@ evas_image_load_file_data_ico(Image_Entry *ie, const char *file, const char *key
         ERR("Broken ICO file: %s - "
             "  Reporting size of %ix%i in index, but bitmap is %ix%i. "
             "  May be expanded or cropped.",
-            file, ie->w, ie->h, w, h);
+            eina_file_filename_get(f), prop->w, prop->h, w, h);
      }
    if (!read_ushort(map, fsize, &position, &word)) goto close_file; // planes
    //planes2 = word;
@@ -548,14 +534,8 @@ evas_image_load_file_data_ico(Image_Entry *ie, const char *file, const char *key
    if (!read_uint(map, fsize, &position, &dword)) goto close_file; // colors important
    //colorsimportant = dword;
 
-   evas_cache_image_surface_alloc(ie, ie->w, ie->h);
-   surface = evas_cache_image_pixels(ie);
-   if (!surface)
-     {
-        *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
-        goto close_file;
-     }
-   memset(surface, 0, ie->w * ie->h * 4);
+   surface = pixels;
+   memset(surface, 0, prop->w * prop->h * 4);
 
    if (!((bitcount == 1) || (bitcount == 4) || (bitcount == 8) ||
          (bitcount == 24) || (bitcount == 32)))
@@ -591,14 +571,14 @@ evas_image_load_file_data_ico(Image_Entry *ie, const char *file, const char *key
         pstride = stride * 4;
         for (i = 0; i < h; i++)
           {
-             pix = surface + (i * ie->w);
-             if (!right_way_up) pix = surface + ((ie->h - 1 - i) * ie->w);
+             pix = surface + (i * w);
+             if (!right_way_up) pix = surface + ((h - 1 - i) * w);
              if (!read_mem(map, fsize, &position, pixbuf, pstride)) goto close_file;
              p = pixbuf;
-             if (i >= (int)ie->h) continue;
+             if (i >= h) continue;
              for (j = 0; j < w; j++)
                {
-                  if (j >= (int)ie->w) break;
+                  if (j >= w) break;
                   if ((j & 0x7) == 0x0)
                     {
                        *pix = pal[*p >> 7];
@@ -641,14 +621,14 @@ evas_image_load_file_data_ico(Image_Entry *ie, const char *file, const char *key
         pstride = ((w + 7) / 8) * 4;
         for (i = 0; i < h; i++)
           {
-             pix = surface + (i * ie->w);
-             if (!right_way_up) pix = surface + ((ie->h - 1 - i) * ie->w);
+             pix = surface + (i * w);
+             if (!right_way_up) pix = surface + ((h - 1 - i) * w);
              if (!read_mem(map, fsize, &position, pixbuf, pstride)) goto close_file;
              p = pixbuf;
-             if (i >= (int)ie->h) continue;
+             if (i >= h) continue;
              for (j = 0; j < w; j++)
                {
-                  if (j >= (int)ie->w) break;
+                  if (j >= w) break;
                   if ((j & 0x1) == 0x1)
                     {
                        *pix = pal[*p & 0x0f];
@@ -667,14 +647,14 @@ evas_image_load_file_data_ico(Image_Entry *ie, const char *file, const char *key
         pstride = ((w + 3) / 4) * 4;
         for (i = 0; i < h; i++)
           {
-             pix = surface + (i * ie->w);
-             if (!right_way_up) pix = surface + ((ie->h - 1 - i) * ie->w);
+             pix = surface + (i * w);
+             if (!right_way_up) pix = surface + ((h - 1 - i) * w);
              if (!read_mem(map, fsize, &position, pixbuf, pstride)) goto close_file;
              p = pixbuf;
-             if (i >= (int)ie->h) continue;
+             if (i >= h) continue;
              for (j = 0; j < w; j++)
                {
-                  if (j >= (int)ie->w) break;
+                  if (j >= w) break;
                   *pix = pal[*p];
                   p++;
                   pix++;
@@ -686,16 +666,16 @@ evas_image_load_file_data_ico(Image_Entry *ie, const char *file, const char *key
         pstride = w * 3;
         for (i = 0; i < h; i++)
           {
-             pix = surface + (i * ie->w);
-             if (!right_way_up) pix = surface + ((ie->h - 1 - i) * ie->w);
+             pix = surface + (i * w);
+             if (!right_way_up) pix = surface + ((h - 1 - i) * w);
              if (!read_mem(map, fsize, &position, pixbuf, pstride)) goto close_file;
              p = pixbuf;
-             if (i >= (int)ie->h) continue;
+             if (i >= h) continue;
              for (j = 0; j < w; j++)
                {
                   unsigned char a, r, g, b;
 
-                  if (j >= (int)ie->w) break;
+                  if (j >= w) break;
                   b = p[0];
                   g = p[1];
                   r = p[2];
@@ -711,16 +691,16 @@ evas_image_load_file_data_ico(Image_Entry *ie, const char *file, const char *key
         pstride = w * 4;
         for (i = 0; i < h; i++)
           {
-             pix = surface + (i * ie->w);
-             if (!right_way_up) pix = surface + ((ie->h - 1 - i) * ie->w);
+             pix = surface + (i * w);
+             if (!right_way_up) pix = surface + ((h - 1 - i) * w);
              if (!read_mem(map, fsize, &position, pixbuf, pstride)) goto close_file;
              p = pixbuf;
-             if (i >= (int)ie->h) continue;
+             if (i >= h) continue;
              for (j = 0; j < w; j++)
                {
                   unsigned char a, r, g, b;
 
-                  if (j >= (int)ie->w) break;
+                  if (j >= w) break;
                   b = p[0];
                   g = p[1];
                   r = p[2];
@@ -741,13 +721,13 @@ evas_image_load_file_data_ico(Image_Entry *ie, const char *file, const char *key
           {
              unsigned char *m;
 
-             pix = surface + (i * ie->w);
-             if (!right_way_up) pix = surface + ((ie->h - 1 - i) * ie->w);
+             pix = surface + (i * w);
+             if (!right_way_up) pix = surface + ((h - 1 - i) * w);
              m = maskbuf + (stride * i * 4);
-             if (i >= (int)ie->h) continue;
+             if (i >= h) continue;
              for (j = 0; j < w; j++)
                {
-                  if (j >= (int)ie->w) break;
+                  if (j >= w) break;
                   if (*m & (1 << (7 - (j & 0x7))))
                      A_VAL(pix) = 0x00;
                   else
@@ -758,18 +738,26 @@ evas_image_load_file_data_ico(Image_Entry *ie, const char *file, const char *key
           }
      }
 
-   eina_file_map_free(f, map);
-   eina_file_close(f);
 
-   evas_common_image_premul(ie);
+   prop->premul = EINA_TRUE;
    *error = EVAS_LOAD_ERROR_NONE;
-   return EINA_TRUE;
+
+   res = EINA_TRUE;
 
  close_file:
    if (map) eina_file_map_free(f, map);
-   eina_file_close(f);
-   return EINA_FALSE;
+
+   return res;
 }
+
+static Evas_Image_Load_Func evas_image_load_ico_func =
+{
+  EINA_TRUE,
+  evas_image_load_file_head_ico,
+  evas_image_load_file_data_ico,
+  NULL,
+  EINA_FALSE
+};
 
 static int
 module_open(Evas_Module *em)

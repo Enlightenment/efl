@@ -56,18 +56,6 @@ struct _tga_footer
    char                null;
 } __attribute__((packed));
 
-static Eina_Bool evas_image_load_file_head_tga(Eina_File *f, const char *key, Evas_Image_Property *prop, Evas_Image_Load_Opts *opts, Evas_Image_Animated *animated, int *error);
-static Eina_Bool evas_image_load_file_data_tga(Image_Entry *ie, const char *file, const char *key, int *error) EINA_ARG_NONNULL(1, 2, 4);
-
-static Evas_Image_Load_Func evas_image_load_tga_func =
-{
-  EINA_TRUE,
-  evas_image_load_file_head_tga,
-  evas_image_load_file_data_tga,
-  NULL,
-  EINA_FALSE
-};
-
 static Eina_Bool
 evas_image_load_file_head_tga(Eina_File *f, const char *key EINA_UNUSED,
 			      Evas_Image_Property *prop,
@@ -165,9 +153,13 @@ close_file:
 }
 
 static Eina_Bool
-evas_image_load_file_data_tga(Image_Entry *ie, const char *file, const char *key EINA_UNUSED, int *error)
+evas_image_load_file_data_tga(Eina_File *f, const char *key EINA_UNUSED,
+			      Evas_Image_Property *prop,
+			      Evas_Image_Load_Opts *opts EINA_UNUSED,
+			      Evas_Image_Animated *animated EINA_UNUSED,
+			      void *pixels,
+			      int *error)
 {
-   Eina_File *f;
    unsigned char *seg = NULL, *filedata;
    tga_header *header;
    tga_footer *footer, tfooter;
@@ -178,10 +170,7 @@ evas_image_load_file_data_tga(Image_Entry *ie, const char *file, const char *key
    unsigned int  datasize;
    unsigned char *bufptr, *bufend;
    int abits;
-
-   f = eina_file_open(file, EINA_FALSE);
-   *error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
-   if (f == NULL) return EINA_FALSE;
+   Eina_Bool res = EINA_FALSE;
 
    *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
    if (eina_file_size_get(f) < (off_t)(sizeof(tga_header) + sizeof(tga_footer)))
@@ -253,24 +242,17 @@ evas_image_load_file_data_tga(Image_Entry *ie, const char *file, const char *key
        IMG_TOO_BIG(w, h))
      goto close_file;
    
-   if ((w != (int)ie->w) || (h != (int)ie->h))
+   if ((w != (int)prop->w) || (h != (int)prop->h))
      {
 	*error = EVAS_LOAD_ERROR_GENERIC;
 	goto close_file;
      }
-   evas_cache_image_surface_alloc(ie, w, h);
-   surface = evas_cache_image_pixels(ie);
-   if (!surface)
-     {
-	*error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
-	goto close_file;
-     }
+   surface = pixels;
 
    datasize = size - sizeof(tga_header) - header->idLength;
    if (footer_present)
-     datasize = size - sizeof(tga_header) - header->idLength - 
-     sizeof(tga_footer);
-   
+     datasize -= sizeof(tga_footer);
+
    bufptr = filedata + header->idLength;
    bufend = filedata + datasize;
 
@@ -544,19 +526,25 @@ evas_image_load_file_data_tga(Image_Entry *ie, const char *file, const char *key
                }                                        
           }
      }
-   
-   evas_common_image_premul(ie);
 
-   eina_file_map_free(f, seg);
-   eina_file_close(f);
+   prop->premul = EINA_TRUE;
+
    *error = EVAS_LOAD_ERROR_NONE;
-   return EINA_TRUE;
+   res = EINA_TRUE;
 
-close_file:
+ close_file:
    if (seg != NULL) eina_file_map_free(f, seg);
-   eina_file_close(f);
-   return EINA_FALSE;
+   return res;
 }
+
+static Evas_Image_Load_Func evas_image_load_tga_func =
+{
+  EINA_TRUE,
+  evas_image_load_file_head_tga,
+  evas_image_load_file_data_tga,
+  NULL,
+  EINA_FALSE
+};
 
 static int
 module_open(Evas_Module *em)

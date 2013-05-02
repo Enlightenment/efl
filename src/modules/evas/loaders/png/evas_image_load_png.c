@@ -15,18 +15,6 @@
 
 #define PNG_BYTES_TO_CHECK 4
 
-static Eina_Bool evas_image_load_file_head_png(Eina_File *f, const char *key, Evas_Image_Property *prop, Evas_Image_Load_Opts *opts, Evas_Image_Animated *animated, int *error);
-static Eina_Bool evas_image_load_file_data_png(Image_Entry *ie, const char *file, const char *key, int *error) EINA_ARG_NONNULL(1, 2, 4);
-
-static Evas_Image_Load_Func evas_image_load_png_func =
-{
-  EINA_TRUE,
-  evas_image_load_file_head_png,
-  evas_image_load_file_data_png,
-  NULL,
-  EINA_FALSE
-};
-
 typedef struct _Evas_PNG_Info Evas_PNG_Info;
 struct _Evas_PNG_Info
 {
@@ -153,9 +141,13 @@ evas_image_load_file_head_png(Eina_File *f, const char *key EINA_UNUSED,
 }
 
 static Eina_Bool
-evas_image_load_file_data_png(Image_Entry *ie, const char *file, const char *key EINA_UNUSED, int *error)
+evas_image_load_file_data_png(Eina_File *f, const char *key EINA_UNUSED,
+			      Evas_Image_Property *prop,
+			      Evas_Image_Load_Opts *opts,
+			      Evas_Image_Animated *animated EINA_UNUSED,
+			      void *pixels,
+			      int *error)
 {
-   Eina_File *f;
    unsigned char *surface;
    unsigned char **lines;
    unsigned char *tmp_line;
@@ -172,12 +164,6 @@ evas_image_load_file_data_png(Image_Entry *ie, const char *file, const char *key
    Eina_Bool r = EINA_FALSE;
 
    hasa = 0;
-   f = eina_file_open(file, EINA_FALSE);
-   if (!f)
-     {
-	*error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
-	return EINA_FALSE;
-     }
 
    epi.map = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
    if (!epi.map)
@@ -229,28 +215,24 @@ evas_image_load_file_data_png(Image_Entry *ie, const char *file, const char *key
 		(png_uint_32 *) (&h32), &bit_depth, &color_type,
 		&interlace_type, NULL, NULL);
    image_w = w32;
-   if (ie->load_opts.scale_down_by > 1)
+   if (opts->scale_down_by > 1)
      {
-        scale_ratio = ie->load_opts.scale_down_by;
+        scale_ratio = opts->scale_down_by;
         w32 /= scale_ratio;
         h32 /= scale_ratio;
      }
-   evas_cache_image_surface_alloc(ie, w32, h32);
-   surface = (unsigned char *) evas_cache_image_pixels(ie);
-   if (!surface)
-     {
-	*error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
-	goto close_file;
-     }
-   if ((w32 != ie->w) || (h32 != ie->h))
+   if (prop->w != w32 ||
+       prop->h != h32)
      {
 	*error = EVAS_LOAD_ERROR_GENERIC;
 	goto close_file;
      }
+
+   surface = pixels;
    if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS)) hasa = 1;
    if (color_type == PNG_COLOR_TYPE_RGB_ALPHA) hasa = 1;
    if (color_type == PNG_COLOR_TYPE_GRAY_ALPHA) hasa = 1;
-   if (hasa) ie->flags.alpha = 1;
+   if (hasa) prop->alpha = 1;
 
    /* Prep for transformations...  ultimately we want ARGB */
    /* expand palette -> RGB if necessary */
@@ -270,8 +252,8 @@ evas_image_load_file_data_png(Image_Entry *ie, const char *file, const char *key
    /* pack all pixels to byte boundaries */
    png_set_packing(png_ptr);
 
-   w = ie->w;
-   h = ie->h;
+   w = w32;
+   h = h32;
    /* we want ARGB */
 #ifdef WORDS_BIGENDIAN
    png_set_swap_alpha(png_ptr);
@@ -311,7 +293,7 @@ evas_image_load_file_data_png(Image_Entry *ie, const char *file, const char *key
           }
      }
 
-   evas_common_image_premul(ie);
+   prop->premul = EINA_TRUE;
 
    *error = EVAS_LOAD_ERROR_NONE;
    r = EINA_TRUE;
@@ -321,9 +303,17 @@ evas_image_load_file_data_png(Image_Entry *ie, const char *file, const char *key
                                         info_ptr ? &info_ptr : NULL,
                                         NULL);
    if (epi.map) eina_file_map_free(f, epi.map);
-   eina_file_close(f);
    return r;
 }
+
+static Evas_Image_Load_Func evas_image_load_png_func =
+{
+  EINA_TRUE,
+  evas_image_load_file_head_png,
+  evas_image_load_file_data_png,
+  NULL,
+  EINA_FALSE
+};
 
 static int
 module_open(Evas_Module *em)

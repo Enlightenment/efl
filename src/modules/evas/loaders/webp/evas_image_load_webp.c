@@ -63,37 +63,21 @@ evas_image_load_file_head_webp(Eina_File *f, const char *key EINA_UNUSED,
 }
 
 static Eina_Bool
-evas_image_load_file_data_webp(Image_Entry *ie, const char *file, const char *key EINA_UNUSED, int *error)
+evas_image_load_file_data_webp(Eina_File *f, const char *key EINA_UNUSED,
+			       Evas_Image_Property *prop,
+			       Evas_Image_Load_Opts *opts EINA_UNUSED,
+			       Evas_Image_Animated *animated EINA_UNUSED,
+			       void *pixels,
+			       int *error)
 {
-   Eina_File *f;
    void *data = NULL;
    void *decoded = NULL;
    void *surface = NULL;
    int width, height;
-   Eina_Bool alpha;
-
-   // XXX: use eina_file to mmap things
-   f = eina_file_open(file, EINA_FALSE);
-   if (!f)
-     {
-        *error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
-        return EINA_FALSE;
-     }
 
    data = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
 
-   if (!evas_image_load_file_check(f, data, &ie->w, &ie->h, &alpha, error))
-     goto free_data;
-
-   ie->flags.alpha = alpha;
-   
-   evas_cache_image_surface_alloc(ie, ie->w, ie->h);
-   surface = evas_cache_image_pixels(ie);
-   if (!surface)
-     {
-        *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
-        goto free_data;
-     }
+   surface = pixels;
 
    decoded = WebPDecodeBGRA(data, eina_file_size_get(f), &width, &height);
    if (!decoded)
@@ -103,13 +87,16 @@ evas_image_load_file_data_webp(Image_Entry *ie, const char *file, const char *ke
      }
    *error = EVAS_LOAD_ERROR_NONE;
 
+   if ((int) prop->w != width ||
+       (int) prop->h != height)
+     goto free_data;
+
    // XXX: this copy of the surface is inefficient
    memcpy(surface, decoded, width * height * 4);
-   evas_common_image_premul(ie);
+   prop->premul = EINA_TRUE;
 
  free_data:
    if (data) eina_file_map_free(f, data);
-   eina_file_close(f);
    free(decoded);
 
    return EINA_TRUE;

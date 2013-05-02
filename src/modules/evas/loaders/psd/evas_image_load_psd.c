@@ -240,8 +240,7 @@ read_compressed_channel(const unsigned char *map, size_t length, size_t *positio
 
 
 Eina_Bool
-psd_get_data(Image_Entry *ie EINA_UNUSED,
-	     PSD_Header *head,
+psd_get_data(PSD_Header *head,
              const unsigned char *map, size_t length, size_t *position,
 	     unsigned char *buffer, Eina_Bool compressed,
 	     int *error)
@@ -495,8 +494,7 @@ psd_get_data(Image_Entry *ie EINA_UNUSED,
 
 
 Eina_Bool
-get_single_channel(Image_Entry *ie EINA_UNUSED,
-		   PSD_Header *head,
+get_single_channel(PSD_Header *head,
 		   const unsigned char *map, size_t length, size_t *position,
 		   unsigned char *buffer,
 		   Eina_Bool compressed)
@@ -556,11 +554,10 @@ get_single_channel(Image_Entry *ie EINA_UNUSED,
 }
 
 Eina_Bool
-read_psd_grey(Image_Entry *ie, PSD_Header *head, const unsigned char *map, size_t length, size_t *position, int *error)
+read_psd_grey(void *pixels, PSD_Header *head, const unsigned char *map, size_t length, size_t *position, int *error)
 {
    unsigned int color_mode, resource_size, misc_info;
    unsigned short compressed;
-   void *surface = NULL;
 
    *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
 
@@ -580,11 +577,6 @@ read_psd_grey(Image_Entry *ie, PSD_Header *head, const unsigned char *map, size_
 
    CHECK_RET(read_ushort(map, length, position, &compressed));
 
-   ie->w = head->width;
-   ie->h = head->height;
-   if (head->channels == 3) ie->flags.alpha = 0;
-   else ie->flags.alpha = 1;
-
    head->channel_num = head->channels;
    // Temporary to read only one channel...some greyscale .psd files have 2.
    head->channels = 1;
@@ -599,15 +591,7 @@ read_psd_grey(Image_Entry *ie, PSD_Header *head, const unsigned char *map, size_
          return EINA_FALSE;
      }
 
-   evas_cache_image_surface_alloc(ie, ie->w, ie->h);
-   surface = evas_cache_image_pixels(ie);
-   if (!surface)
-     {
-        *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
-        goto cleanup_error;
-     }
-
-   if (!psd_get_data(ie, head, map, length, position, surface, compressed, error))
+   if (!psd_get_data(head, map, length, position, pixels, compressed, error))
      goto cleanup_error;
 
    return EINA_TRUE;
@@ -620,11 +604,10 @@ read_psd_grey(Image_Entry *ie, PSD_Header *head, const unsigned char *map, size_
 
 
 Eina_Bool
-read_psd_indexed(Image_Entry *ie, PSD_Header *head, const unsigned char *map, size_t length, size_t *position, int *error)
+read_psd_indexed(void *pixels, PSD_Header *head, const unsigned char *map, size_t length, size_t *position, int *error)
 {
    unsigned int color_mode, resource_size, misc_info;
    unsigned short compressed;
-   void *surface;
 
    *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
 
@@ -659,20 +642,7 @@ read_psd_indexed(Image_Entry *ie, PSD_Header *head, const unsigned char *map, si
      }
    head->channel_num = head->channels;
 
-   ie->w = head->width;
-   ie->h = head->height;
-   if (head->channels == 3) ie->flags.alpha = 0;
-   else ie->flags.alpha = 1;
-
-   evas_cache_image_surface_alloc(ie, ie->w, ie->h);
-   surface = evas_cache_image_pixels(ie);
-   if (!surface)
-     {
-        *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
-        return EINA_FALSE;
-     }
-
-   if (!psd_get_data(ie, head, map, length, position, surface, compressed, error))
+   if (!psd_get_data(head, map, length, position, pixels, compressed, error))
      return EINA_FALSE;
    return EINA_TRUE;
 
@@ -680,11 +650,10 @@ read_psd_indexed(Image_Entry *ie, PSD_Header *head, const unsigned char *map, si
 }
 
 Eina_Bool
-read_psd_rgb(Image_Entry *ie, PSD_Header *head, const unsigned char *map, size_t length, size_t *position, int *error)
+read_psd_rgb(void *pixels, PSD_Header *head, const unsigned char *map, size_t length, size_t *position, int *error)
 {
    unsigned int color_mode, resource_size, misc_info;
    unsigned short compressed;
-   void *surface;
 
 #define CHECK_RET(Call)                  \
    if (!Call) return EINA_FALSE;
@@ -713,39 +682,23 @@ read_psd_rgb(Image_Entry *ie, PSD_Header *head, const unsigned char *map, size_t
          *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
          return EINA_FALSE;
      }
-   ie->w = head->width;
-   ie->h = head->height;
-   if (head->channels == 3) ie->flags.alpha = 0;
-   else ie->flags.alpha = 1;
 
-   evas_cache_image_surface_alloc(ie, ie->w, ie->h);
-   surface = evas_cache_image_pixels(ie);
-   if (!surface)
-     {
-        *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
-        goto cleanup_error;
-     }
+   if (!psd_get_data(head, map, length, position, pixels, compressed, error))
+     return EINA_FALSE;
 
-   if (!psd_get_data(ie, head, map, length, position, surface, compressed, error))
-     goto cleanup_error;
-
-   evas_common_image_premul(ie);
    return EINA_TRUE;
 
 #undef CHECK_RET
-
- cleanup_error:
-   return EINA_FALSE;
 }
 
 Eina_Bool
-read_psd_cmyk(Image_Entry *ie, PSD_Header *head, const unsigned char *map, size_t length, size_t *position, int *error)
+read_psd_cmyk(Evas_Image_Property *prop, void *pixels, PSD_Header *head, const unsigned char *map, size_t length, size_t *position, int *error)
 {
    unsigned int color_mode, resource_size, misc_info, size, j, data_size;
    unsigned short compressed;
    unsigned int format, type;
    unsigned char *kchannel = NULL;
-   void *surface;
+   Eina_Bool r = EINA_FALSE;
 
    *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
 
@@ -795,33 +748,20 @@ read_psd_cmyk(Image_Entry *ie, PSD_Header *head, const unsigned char *map, size_
          return EINA_FALSE;
      }
 
-   ie->w = head->width;
-   ie->h = head->height;
-   if (head->channels == 3) ie->flags.alpha = 0;
-   else ie->flags.alpha = 1;
-
-   evas_cache_image_surface_alloc(ie, ie->w, ie->h);
-   surface = evas_cache_image_pixels(ie);
-   if (!surface)
-     {
-        *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
-        goto cleanup_error;
-     }
-
-   if (!psd_get_data(ie, head, map, length, position, surface, compressed, error))
+   if (!psd_get_data(head, map, length, position, pixels, compressed, error))
      goto cleanup_error;
 
-   size = type * ie->w * ie->h;
+   size = type * prop->w * prop->h;
    kchannel = malloc(size);
    if (kchannel == NULL)
      goto cleanup_error;
-   if (!get_single_channel(ie, head, map, length, position, kchannel, compressed))
+   if (!get_single_channel(head, map, length, position, kchannel, compressed))
      goto cleanup_error;
 
-   data_size = head->channels * type * ie->w * ie->h;
+   data_size = head->channels * type * prop->w * prop->h;
    if (format == 0x1907)
      {
-        unsigned char *tmp = surface;
+        unsigned char *tmp = pixels;
         const unsigned char *limit = tmp + data_size;
 
         for (j = 0; tmp < limit; tmp++, j++)
@@ -836,7 +776,7 @@ read_psd_cmyk(Image_Entry *ie, PSD_Header *head, const unsigned char *map, size_
      }
    else
      {  // RGBA
-        unsigned char *tmp = surface;
+        unsigned char *tmp = pixels;
         const unsigned char *limit = tmp + data_size;
 
         // The KChannel array really holds the alpha channel on this one.
@@ -849,80 +789,67 @@ read_psd_cmyk(Image_Entry *ie, PSD_Header *head, const unsigned char *map, size_
           }
      }
 
-   free(kchannel);
-
-   evas_common_image_premul(ie);
-   return EINA_TRUE;
+   r = EINA_TRUE;
 
  cleanup_error:
    free(kchannel);
-   return EINA_FALSE;
+   return r;
 }
 
 static Eina_Bool
-evas_image_load_file_data_psd(Image_Entry *ie,
-                              const char *file,
-                              const char *key EINA_UNUSED,
-                              int *error)
+evas_image_load_file_data_psd(Eina_File *f, const char *key EINA_UNUSED,
+			      Evas_Image_Property *prop,
+			      Evas_Image_Load_Opts *opts EINA_UNUSED,
+			      Evas_Image_Animated *animated EINA_UNUSED,
+			      void *pixels,
+			      int *error)
 {
-   Eina_File *f;
    void *map;
    size_t length;
    size_t position;
    PSD_Header header;
    Eina_Bool bpsd = EINA_FALSE;
 
-   f = eina_file_open(file, 0);
-   if (f == NULL)
-     {
-        *error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
-        return bpsd;
-     }
-
    map = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
    length = eina_file_size_get(f);
    position = 0;
+   *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
    if (!map || length < 1)
-     {
-        eina_file_close(f);
-        *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
-        return EINA_FALSE;
-     }
+     goto on_error;
 
+   *error = EVAS_LOAD_ERROR_GENERIC;
    if (!psd_get_header(&header, map, length, &position) || !is_psd(&header))
-     {
-        eina_file_map_free(f, map);
-        eina_file_close(f);
-        *error = EVAS_LOAD_ERROR_GENERIC;
-        return EINA_FALSE;
-     }
+     goto on_error;
 
-   ie->w = header.width;
-   ie->h = header.height;
+   if (header.width != prop->w ||
+       header.height != prop->h)
+     goto on_error;
 
    *error = EVAS_LOAD_ERROR_NONE;
 
    switch (header.mode)
      {
       case PSD_GREYSCALE:  // Greyscale
-         bpsd = read_psd_grey(ie, &header, map, length, &position, error);
+         bpsd = read_psd_grey(pixels, &header, map, length, &position, error);
          break;
       case PSD_INDEXED:  // Indexed
-         bpsd = read_psd_indexed(ie, &header, map, length, &position, error);
+         bpsd = read_psd_indexed(pixels, &header, map, length, &position, error);
          break;
       case PSD_RGB:  // RGB
-         bpsd = read_psd_rgb(ie, &header, map, length, &position, error);
+         bpsd = read_psd_rgb(pixels, &header, map, length, &position, error);
+	 prop->premul = EINA_TRUE;
          break;
       case PSD_CMYK:  // CMYK
-         bpsd = read_psd_cmyk(ie, &header, map, length, &position, error);
+         bpsd = read_psd_cmyk(prop, pixels, &header, map, length, &position, error);
+         prop->premul = EINA_TRUE;
          break;
       default :
          *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
          bpsd = EINA_FALSE;
      }
 
-   eina_file_map_free(f, map);
-   eina_file_close(f);
+ on_error:
+   if (map) eina_file_map_free(f, map);
 
    return bpsd;
 }

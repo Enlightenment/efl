@@ -579,7 +579,10 @@ struct _Image_Entry_Property
    
    unsigned char scale;
 
+   Eina_Bool     rotated;
    Eina_Bool     alpha;
+   Eina_Bool     premul;
+   Eina_Bool     alpha_sparse;
 };
 
 struct _Image_Entry

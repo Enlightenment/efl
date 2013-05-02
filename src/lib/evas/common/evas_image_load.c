@@ -326,7 +326,10 @@ evas_common_load_rgba_image_module_from_file(Image_Entry *ie)
 EAPI int
 evas_common_load_rgba_image_data_from_file(Image_Entry *ie)
 {
+   void *pixels;
+   Eina_File *f;
    Evas_Image_Load_Func *evas_image_load_func = NULL;
+   Evas_Image_Property property;
    int ret = EVAS_LOAD_ERROR_NONE;
 
    if ((ie->flags.loaded) && (!ie->animated.animated)) return EVAS_LOAD_ERROR_GENERIC;
@@ -359,15 +362,52 @@ evas_common_load_rgba_image_data_from_file(Image_Entry *ie)
            
    evas_image_load_func = ie->info.loader;
    evas_module_use((Evas_Module*) ie->info.module);
-   if (!evas_image_load_func->file_data(ie, ie->file, ie->key, &ret))
+
+   f = eina_file_open(ie->file, EINA_FALSE);
+   if (!f) return EVAS_LOAD_ERROR_DOES_NOT_EXIST;
+
+   memset(&property, 0, sizeof (Evas_Image_Property));
+   if (!(evas_image_load_func->file_head(f, ie->key, &property,
+                                         &ie->load_opts, &ie->animated,
+                                         &ret) &&
+         (ret == EVAS_LOAD_ERROR_NONE)))
+     goto on_error;
+
+   ie->w = property.w;
+   ie->h = property.h;
+   ie->scale = property.scale;
+   ie->flags.alpha = property.alpha;
+   if (ie->load_opts.orientation &&
+       ie->load_opts.degree != 0)
+     ie->flags.rotated = EINA_TRUE;
+
+   evas_cache_image_surface_alloc(ie, ie->w, ie->h);
+
+   pixels = evas_cache_image_pixels(ie);
+   if (!pixels)
      {
-        return ret;
+        ret = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+        goto on_error;
      }
 
+   evas_image_load_func->file_data(f, ie->key,
+                                   &property,
+                                   &ie->load_opts,
+                                   &ie->animated,
+                                   pixels,
+                                   &ret);
+
+   ie->flags.alpha_sparse = property.alpha_sparse;
+
+   if (property.premul)
+     evas_common_image_premul(ie);
 //   evas_module_unref((Evas_Module*) ie->info.module);
 //   ie->info.module = NULL;
 
-   return EVAS_LOAD_ERROR_NONE;
+ on_error:
+   eina_file_close(f);
+
+   return ret;
 }
 
 EAPI double
