@@ -4303,16 +4303,55 @@ elm_entry_filter_accept_set(void *data,
         int cmp_idx, cmp_char;
         Eina_Bool in_set = EINA_FALSE;
 
-        cmp_idx = evas_string_char_next_get(set, 0, &cmp_char);
-        while (cmp_char)
+        if (read_char == '<')
           {
-             if (read_char == cmp_char)
-               {
-                  in_set = EINA_TRUE;
-                  break;
-               }
-             cmp_idx = evas_string_char_next_get(set, cmp_idx, &cmp_char);
+             while (read_char && (read_char != '>'))
+               read_idx = evas_string_char_next_get(*text, read_idx, &read_char);
+
+             if (goes_in) in_set = EINA_TRUE;
+             else in_set = EINA_FALSE;
           }
+        else
+          {
+             if (read_char == '&')
+               {
+                  while (read_char && (read_char != ';'))
+                    read_idx = evas_string_char_next_get(*text, read_idx, &read_char);
+
+                  if (!read_char)
+                    {
+                       if (goes_in) in_set = EINA_TRUE;
+                       else in_set = EINA_FALSE;
+                       goto inserting;
+                    }
+                  if (read_char == ';')
+                    {
+                       char *tag;
+                       tag = malloc(read_idx - last_read_idx + 1);
+                       if (tag)
+                         {
+                            strncpy(tag, (*text) + last_read_idx, read_idx - last_read_idx);
+                            tag[read_idx - last_read_idx] = 0;
+                            read_char = *(elm_entry_markup_to_utf8(tag));
+                            free(tag);
+                         }
+                    }
+               }
+
+             cmp_idx = evas_string_char_next_get(set, 0, &cmp_char);
+             while (cmp_char)
+               {
+                  if (read_char == cmp_char)
+                    {
+                       in_set = EINA_TRUE;
+                       break;
+                    }
+                  cmp_idx = evas_string_char_next_get(set, cmp_idx, &cmp_char);
+               }
+          }
+
+inserting:
+
         if (in_set == goes_in)
           {
              int size = read_idx - last_read_idx;
@@ -4321,8 +4360,12 @@ elm_entry_filter_accept_set(void *data,
                memcpy(insert, *text + last_read_idx, size);
              insert += size;
           }
-        last_read_idx = read_idx;
-        read_idx = evas_string_char_next_get(*text, read_idx, &read_char);
+
+        if (read_char)
+          {
+             last_read_idx = read_idx;
+             read_idx = evas_string_char_next_get(*text, read_idx, &read_char);
+          }
      }
    *insert = 0;
 }

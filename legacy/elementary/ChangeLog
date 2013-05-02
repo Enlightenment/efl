@@ -1320,3 +1320,6 @@
 
         * Fix elm_object_cursor_theme_search_enabled_set to do as it's name described.
 
+2012-05-02 WooHyun Jung
+
+        * elm_entry_filter_accept_set function not can recognize tags.
