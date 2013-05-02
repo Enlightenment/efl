@@ -282,8 +282,8 @@ _elm_genlist_pan_smart_resize(Eo *obj, void *_pd, va_list *list)
    psd->wsd->pan_changed = EINA_TRUE;
    evas_object_smart_changed(obj);
    if (psd->wsd->calc_job) ecore_job_del(psd->wsd->calc_job);
-   // if the widht changed we may have to resize content if scrollbar went
-   // away or appesared to queue a job to deal with it. it should settle in
+   // if the width changed we may have to resize content if scrollbar went
+   // away or appeared to queue a job to deal with it. it should settle in
    // the end to a steady-state
    if (ow != w)
      psd->wsd->calc_job = ecore_job_add(_calc_job, psd->wobj);
