@@ -1365,7 +1365,7 @@ _eo_unref(_Eo *obj)
           {
              Eina_Inlist *nitr = obj->data_xrefs->next;
              Eo_Xref_Node *xref = EINA_INLIST_CONTAINER_GET(obj->data_xrefs, Eo_Xref_Node);
-             ERR("Data of object 0x%p is still referenced by object 0x%X", obj->obj_id, xref->ref_obj);
+             ERR("Data of object 0x%lx is still referenced by object %p", (unsigned long)obj->obj_id, xref->ref_obj);
 
              free(xref);
              obj->data_xrefs = nitr;
@@ -1508,14 +1508,14 @@ _eo_data_xunref_internal(_Eo *obj, void *data, const _Eo *ref_obj)
                EO_ALIGN_SIZE(klass->desc->data_size) + klass->extn_data_size)));
    if (!in_range)
      {
-        ERR("Data %p is not in the data range of the object 0x%X (%s).", data, obj->obj_id, obj->klass->desc->name);
+        ERR("Data %p is not in the data range of the object %p (%s).", data, (Eo *)obj->obj_id, obj->klass->desc->name);
      }
 #else
    (void) data;
 #endif
    if (obj->datarefcount == 0)
      {
-        ERR("Data for object 0x%X (%s) is already not referenced.", obj->obj_id, obj->klass->desc->name);
+        ERR("Data for object %lx (%s) is already not referenced.", (unsigned long)obj->obj_id, obj->klass->desc->name);
      }
    else
      {
@@ -1536,7 +1536,7 @@ _eo_data_xunref_internal(_Eo *obj, void *data, const _Eo *ref_obj)
      }
    else
      {
-        ERR("ref_obj (0x%X) does not reference data (%p) of obj (0x%X).", ref_obj->obj_id, data, obj->obj_id);
+        ERR("ref_obj (0x%lx) does not reference data (%p) of obj (0x%lx).", (unsigned long)ref_obj->obj_id, data, (unsigned long)obj->obj_id);
      }
 #else
    (void) ref_obj;
