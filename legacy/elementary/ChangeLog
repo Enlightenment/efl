@@ -1322,4 +1322,4 @@
 
 2012-05-02 WooHyun Jung
 
-        * elm_entry_filter_accept_set function not can recognize tags.
+        * elm_entry_filter_accept_set function now can recognize tags.
