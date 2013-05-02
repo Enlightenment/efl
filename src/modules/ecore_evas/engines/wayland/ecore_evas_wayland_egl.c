@@ -184,7 +184,7 @@ ecore_evas_wayland_egl_new_internal(const char *disp_name, unsigned int parent,
 
    wdata->parent = p;
    wdata->win = 
-     ecore_wl_window_new(p, x, y, w, h, ECORE_WL_WINDOW_BUFFER_TYPE_EGL_WINDOW);
+     ecore_wl_window_new(p, x, y, w + fw, h + fh, ECORE_WL_WINDOW_BUFFER_TYPE_EGL_WINDOW);
    ee->prop.window = wdata->win->id;
 
    if ((einfo = (Evas_Engine_Info_Wayland_Egl *)evas_engine_info_get(ee->evas)))
