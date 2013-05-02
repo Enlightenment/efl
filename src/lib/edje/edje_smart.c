@@ -29,11 +29,18 @@ static void
 _edje_smart_constructor(Eo *obj, void *class_data, va_list *list EINA_UNUSED)
 {
    Edje *ed = class_data;
-   ed->base = eo_data_get(obj, EVAS_OBJ_SMART_CLIPPED_CLASS);
+   ed->base = eo_data_ref(obj, EVAS_OBJ_SMART_CLIPPED_CLASS);
 
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj, evas_obj_type_set(MY_CLASS_NAME));
    _edje_lib_ref();
+}
+
+static void
+_edje_smart_destructor(Eo *obj, void *class_data, va_list *list EINA_UNUSED)
+{
+   eo_do_super(obj, MY_CLASS, eo_destructor());
+   eo_data_unref(obj, class_data);
 }
 
 static void
@@ -341,6 +348,7 @@ _edje_smart_class_constructor(Eo_Class *klass)
 {
    const Eo_Op_Func_Description func_desc[] = {
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _edje_smart_constructor),
+        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DESTRUCTOR), _edje_smart_destructor),
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DBG_INFO_GET), _dbg_info_get),
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_ADD), _edje_smart_add),
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_DEL), _edje_smart_del),

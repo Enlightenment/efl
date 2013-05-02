@@ -125,7 +125,7 @@ ecore_idle_exiter_del(Ecore_Idle_Exiter *idle_exiter)
 static void *
 _ecore_idle_exiter_del(Ecore_Idle_Exiter *obj)
 {
-   Ecore_Idle_Exiter_Private_Data *idle_exiter = eo_data_get(obj, MY_CLASS);
+   Ecore_Idle_Exiter_Private_Data *idle_exiter = eo_data_scope_get(obj, MY_CLASS);
    EINA_SAFETY_ON_TRUE_RETURN_VAL(idle_exiter->delete_me, NULL);
    idle_exiter->delete_me = 1;
    idle_exiters_delete_me = 1;

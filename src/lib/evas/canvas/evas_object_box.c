@@ -46,7 +46,7 @@ static const Evas_Smart_Cb_Description _signals[] =
 static void _sizing_eval(Evas_Object *obj);
 
 #define EVAS_OBJECT_BOX_DATA_GET(o, ptr) \
-   Evas_Object_Box_Data *ptr = eo_data_get(o, MY_CLASS)
+   Evas_Object_Box_Data *ptr = eo_data_scope_get(o, MY_CLASS)
 
 #define EVAS_OBJECT_BOX_DATA_GET_OR_RETURN(o, ptr)                      \
    EVAS_OBJECT_BOX_DATA_GET(o, ptr);                                    \

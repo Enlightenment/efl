@@ -9,7 +9,7 @@ static void evas_object_intercept_deinit(Evas_Object *eo_obj);
 static void
 evas_object_intercept_init(Evas_Object *eo_obj)
 {
-   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    if (!obj->interceptors)
      obj->interceptors = evas_mem_calloc(sizeof(Evas_Intercept_Func));
 }
@@ -17,7 +17,7 @@ evas_object_intercept_init(Evas_Object *eo_obj)
 static void
 evas_object_intercept_deinit(Evas_Object *eo_obj)
 {
-   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    if (!obj->interceptors) return;
    if ((obj->interceptors->show.func) ||
        (obj->interceptors->hide.func) ||
@@ -41,14 +41,14 @@ evas_object_intercept_deinit(Evas_Object *eo_obj)
 void
 evas_object_intercept_cleanup(Evas_Object *eo_obj)
 {
-   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    if (obj->interceptors) free(obj->interceptors);
 }
 
 int
 evas_object_intercept_call_show(Evas_Object *eo_obj)
 {
-   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    int ret;
 
    if (!obj->interceptors) return 0;
@@ -64,7 +64,7 @@ evas_object_intercept_call_show(Evas_Object *eo_obj)
 int
 evas_object_intercept_call_hide(Evas_Object *eo_obj)
 {
-   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    int ret;
 
    if (!obj->interceptors) return 0;
@@ -95,7 +95,7 @@ evas_object_intercept_call_move(Evas_Object *eo_obj, Evas_Object_Protected_Data 
 int
 evas_object_intercept_call_resize(Evas_Object *eo_obj, Evas_Coord w, Evas_Coord h)
 {
-   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    int ret;
 
    if (!obj->interceptors) return 0;
@@ -111,7 +111,7 @@ evas_object_intercept_call_resize(Evas_Object *eo_obj, Evas_Coord w, Evas_Coord 
 int
 evas_object_intercept_call_raise(Evas_Object *eo_obj)
 {
-   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    int ret;
 
    if (!obj->interceptors) return 0;
@@ -127,7 +127,7 @@ evas_object_intercept_call_raise(Evas_Object *eo_obj)
 int
 evas_object_intercept_call_lower(Evas_Object *eo_obj)
 {
-   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    int ret;
 
    if (!obj->interceptors) return 0;
@@ -143,7 +143,7 @@ evas_object_intercept_call_lower(Evas_Object *eo_obj)
 int
 evas_object_intercept_call_stack_above(Evas_Object *eo_obj, Evas_Object *above)
 {
-   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    int ret;
 
    if (!obj->interceptors) return 0;
@@ -159,7 +159,7 @@ evas_object_intercept_call_stack_above(Evas_Object *eo_obj, Evas_Object *above)
 int
 evas_object_intercept_call_stack_below(Evas_Object *eo_obj, Evas_Object *below)
 {
-   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    int ret;
 
    if (!obj->interceptors) return 0;
@@ -175,7 +175,7 @@ evas_object_intercept_call_stack_below(Evas_Object *eo_obj, Evas_Object *below)
 int
 evas_object_intercept_call_layer_set(Evas_Object *eo_obj, int l)
 {
-   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    int ret;
 
    if (!obj->interceptors) return 0;
@@ -191,7 +191,7 @@ evas_object_intercept_call_layer_set(Evas_Object *eo_obj, int l)
 int
 evas_object_intercept_call_color_set(Evas_Object *eo_obj, int r, int g, int b, int a)
 {
-   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    int ret;
 
    if (!obj->interceptors) return 0;
@@ -222,7 +222,7 @@ evas_object_intercept_call_clip_set(Evas_Object *eo_obj, Evas_Object_Protected_D
 int
 evas_object_intercept_call_clip_unset(Evas_Object *eo_obj)
 {
-   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    int ret;
 
    if (!obj->interceptors) return 0;
@@ -243,7 +243,7 @@ evas_object_intercept_show_callback_add(Evas_Object *eo_obj, Evas_Object_Interce
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
-   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    if (!func) return;
    evas_object_intercept_init(eo_obj);
    if (!obj->interceptors) return;
@@ -259,7 +259,7 @@ evas_object_intercept_show_callback_del(Evas_Object *eo_obj, Evas_Object_Interce
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return NULL;
    MAGIC_CHECK_END();
-   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    if (!func) return NULL;
    if (!obj->interceptors) return NULL;
    obj->interceptors->show.func = NULL;
@@ -275,7 +275,7 @@ evas_object_intercept_hide_callback_add(Evas_Object *eo_obj, Evas_Object_Interce
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
-   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    if (!func) return;
    evas_object_intercept_init(eo_obj);
    if (!obj->interceptors) return;
@@ -286,7 +286,7 @@ evas_object_intercept_hide_callback_add(Evas_Object *eo_obj, Evas_Object_Interce
 EAPI void *
 evas_object_intercept_hide_callback_del(Evas_Object *eo_obj, Evas_Object_Intercept_Hide_Cb func)
 {
-   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    void *data;
 
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
@@ -307,7 +307,7 @@ evas_object_intercept_move_callback_add(Evas_Object *eo_obj, Evas_Object_Interce
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
-   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    if (!func) return;
    evas_object_intercept_init(eo_obj);
    if (!obj->interceptors) return;
@@ -318,7 +318,7 @@ evas_object_intercept_move_callback_add(Evas_Object *eo_obj, Evas_Object_Interce
 EAPI void *
 evas_object_intercept_move_callback_del(Evas_Object *eo_obj, Evas_Object_Intercept_Move_Cb func)
 {
-   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    void *data;
 
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
@@ -339,7 +339,7 @@ evas_object_intercept_resize_callback_add(Evas_Object *eo_obj, Evas_Object_Inter
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
-   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    if (!func) return;
    evas_object_intercept_init(eo_obj);
    if (!obj->interceptors) return;
@@ -350,7 +350,7 @@ evas_object_intercept_resize_callback_add(Evas_Object *eo_obj, Evas_Object_Inter
 EAPI void *
 evas_object_intercept_resize_callback_del(Evas_Object *eo_obj, Evas_Object_Intercept_Resize_Cb func)
 {
-   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    void *data;
 
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
@@ -371,7 +371,7 @@ evas_object_intercept_raise_callback_add(Evas_Object *eo_obj, Evas_Object_Interc
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
-   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    if (!func) return;
    evas_object_intercept_init(eo_obj);
    if (!obj->interceptors) return;
@@ -382,7 +382,7 @@ evas_object_intercept_raise_callback_add(Evas_Object *eo_obj, Evas_Object_Interc
 EAPI void *
 evas_object_intercept_raise_callback_del(Evas_Object *eo_obj, Evas_Object_Intercept_Raise_Cb func)
 {
-   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    void *data;
 
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
@@ -403,7 +403,7 @@ evas_object_intercept_lower_callback_add(Evas_Object *eo_obj, Evas_Object_Interc
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
-   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    if (!func) return;
    evas_object_intercept_init(eo_obj);
    if (!obj->interceptors) return;
@@ -414,7 +414,7 @@ evas_object_intercept_lower_callback_add(Evas_Object *eo_obj, Evas_Object_Interc
 EAPI void *
 evas_object_intercept_lower_callback_del(Evas_Object *eo_obj, Evas_Object_Intercept_Lower_Cb func)
 {
-   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    void *data;
 
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
@@ -435,7 +435,7 @@ evas_object_intercept_stack_above_callback_add(Evas_Object *eo_obj, Evas_Object_
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
-   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    if (!func) return;
    evas_object_intercept_init(eo_obj);
    if (!obj->interceptors) return;
@@ -446,7 +446,7 @@ evas_object_intercept_stack_above_callback_add(Evas_Object *eo_obj, Evas_Object_
 EAPI void *
 evas_object_intercept_stack_above_callback_del(Evas_Object *eo_obj, Evas_Object_Intercept_Stack_Above_Cb func)
 {
-   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    void *data;
 
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
@@ -467,7 +467,7 @@ evas_object_intercept_stack_below_callback_add(Evas_Object *eo_obj, Evas_Object_
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
-   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    if (!func) return;
    evas_object_intercept_init(eo_obj);
    if (!obj->interceptors) return;
@@ -478,7 +478,7 @@ evas_object_intercept_stack_below_callback_add(Evas_Object *eo_obj, Evas_Object_
 EAPI void *
 evas_object_intercept_stack_below_callback_del(Evas_Object *eo_obj, Evas_Object_Intercept_Stack_Below_Cb func)
 {
-   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    void *data;
 
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
@@ -499,7 +499,7 @@ evas_object_intercept_layer_set_callback_add(Evas_Object *eo_obj, Evas_Object_In
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
-   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    if (!func) return;
    evas_object_intercept_init(eo_obj);
    if (!obj->interceptors) return;
@@ -510,7 +510,7 @@ evas_object_intercept_layer_set_callback_add(Evas_Object *eo_obj, Evas_Object_In
 EAPI void *
 evas_object_intercept_layer_set_callback_del(Evas_Object *eo_obj, Evas_Object_Intercept_Layer_Set_Cb func)
 {
-   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    void *data;
 
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
@@ -531,7 +531,7 @@ evas_object_intercept_color_set_callback_add(Evas_Object *eo_obj, Evas_Object_In
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
-   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    if (!func) return;
    evas_object_intercept_init(eo_obj);
    if (!obj->interceptors) return;
@@ -542,7 +542,7 @@ evas_object_intercept_color_set_callback_add(Evas_Object *eo_obj, Evas_Object_In
 EAPI void *
 evas_object_intercept_color_set_callback_del(Evas_Object *eo_obj, Evas_Object_Intercept_Color_Set_Cb func)
 {
-   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    void *data;
 
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
@@ -563,7 +563,7 @@ evas_object_intercept_clip_set_callback_add(Evas_Object *eo_obj, Evas_Object_Int
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
-   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    if (!func) return;
    evas_object_intercept_init(eo_obj);
    if (!obj->interceptors) return;
@@ -574,7 +574,7 @@ evas_object_intercept_clip_set_callback_add(Evas_Object *eo_obj, Evas_Object_Int
 EAPI void *
 evas_object_intercept_clip_set_callback_del(Evas_Object *eo_obj, Evas_Object_Intercept_Clip_Set_Cb func)
 {
-   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    void *data;
 
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
@@ -595,7 +595,7 @@ evas_object_intercept_clip_unset_callback_add(Evas_Object *eo_obj, Evas_Object_I
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
-   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    if (!func) return;
    evas_object_intercept_init(eo_obj);
    if (!obj->interceptors) return;
@@ -606,7 +606,7 @@ evas_object_intercept_clip_unset_callback_add(Evas_Object *eo_obj, Evas_Object_I
 EAPI void *
 evas_object_intercept_clip_unset_callback_del(Evas_Object *eo_obj, Evas_Object_Intercept_Clip_Unset_Cb func)
 {
-   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    void *data;
 
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);

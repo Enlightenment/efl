@@ -53,7 +53,7 @@ static void _volume_set(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
   Eina_List *input;
   uint32_t idx;
   pa_cvolume pa_volume;
-  Ecore_Audio_Output *out_obj = eo_data_get(eo_obj, ECORE_AUDIO_OBJ_OUT_CLASS);
+  Ecore_Audio_Output *out_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_OBJ_OUT_CLASS);
 
   double volume = va_arg(*list, double);
 
@@ -114,7 +114,7 @@ static Eina_Bool _input_attach_internal(Eo *eo_obj, Eo *in)
   double speed;
   pa_stream *stream;
   Eina_Bool ret;
-  Ecore_Audio_Object *ea_obj = eo_data_get(eo_obj, ECORE_AUDIO_OBJ_CLASS);
+  Ecore_Audio_Object *ea_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_OBJ_CLASS);
 
   eo_do_super(eo_obj, MY_CLASS, ecore_audio_obj_out_input_attach(in, &ret));
   if (!ret)
@@ -230,7 +230,7 @@ static void _constructor(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list EINA_U
 {
   int argc;
   char **argv;
-  Ecore_Audio_Output *out_obj = eo_data_get(eo_obj, ECORE_AUDIO_OBJ_OUT_CLASS);
+  Ecore_Audio_Output *out_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_OBJ_OUT_CLASS);
 
   eo_do_super(eo_obj, MY_CLASS, eo_constructor());
 

@@ -91,7 +91,7 @@ _constructor(Eo *eo_obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED
 {
    eo_do_super(eo_obj, MY_CLASS, eo_constructor());
 
-   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    evas_object_polygon_init(eo_obj);
    evas_object_inject(eo_obj, obj, evas_object_evas_get(eo_parent_get(eo_obj)));
 }
@@ -108,7 +108,7 @@ evas_object_polygon_point_add(Evas_Object *eo_obj, Evas_Coord x, Evas_Coord y)
 static void
 _polygon_point_add(Eo *eo_obj, void *_pd, va_list *list)
 {
-   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    Evas_Object_Polygon *o = _pd;
    Evas_Polygon_Point *p;
    Evas_Coord min_x, max_x, min_y, max_y;
@@ -226,7 +226,7 @@ evas_object_polygon_points_clear(Evas_Object *eo_obj)
 static void
 _polygon_points_clear(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
 {
-   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    Evas_Object_Polygon *o = _pd;
    void *list_data;
    int is, was;
@@ -270,7 +270,7 @@ _polygon_points_clear(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
 static void
 evas_object_polygon_init(Evas_Object *eo_obj)
 {
-   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    /* set up methods (compulsory) */
    obj->func = &object_func;
    obj->type = o_type;
@@ -279,7 +279,7 @@ evas_object_polygon_init(Evas_Object *eo_obj)
 static void
 _destructor(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    evas_object_polygon_free(eo_obj, obj);
    eo_do_super(eo_obj, MY_CLASS, eo_destructor());
 }
@@ -287,7 +287,7 @@ _destructor(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 static void
 evas_object_polygon_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 {
-   Evas_Object_Polygon *o = eo_data_get(eo_obj, MY_CLASS);
+   Evas_Object_Polygon *o = eo_data_scope_get(eo_obj, MY_CLASS);
    void *list_data;
    /* free obj */
    EINA_LIST_FREE(o->points, list_data)
@@ -302,7 +302,7 @@ evas_object_polygon_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 static void
 evas_object_polygon_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, void *output, void *context, void *surface, int x, int y, Eina_Bool do_async)
 {
-   Evas_Object_Polygon *o = eo_data_get(eo_obj, MY_CLASS);
+   Evas_Object_Polygon *o = eo_data_scope_get(eo_obj, MY_CLASS);
    Eina_List *l;
    Evas_Polygon_Point *p;
 
@@ -345,7 +345,7 @@ evas_object_polygon_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj,
 static void
 evas_object_polygon_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 {
-   Evas_Object_Polygon *o = eo_data_get(eo_obj, MY_CLASS);
+   Evas_Object_Polygon *o = eo_data_scope_get(eo_obj, MY_CLASS);
    int is_v, was_v;
 
    /* dont pre-render the obj twice! */
@@ -446,21 +446,21 @@ evas_object_polygon_render_post(Evas_Object *eo_obj, Evas_Object_Protected_Data 
 
 static unsigned int evas_object_polygon_id_get(Evas_Object *eo_obj)
 {
-   Evas_Object_Polygon *o = eo_data_get(eo_obj, MY_CLASS);
+   Evas_Object_Polygon *o = eo_data_scope_get(eo_obj, MY_CLASS);
    if (!o) return 0;
    return MAGIC_OBJ_POLYGON;
 }
 
 static unsigned int evas_object_polygon_visual_id_get(Evas_Object *eo_obj)
 {
-   Evas_Object_Polygon *o = eo_data_get(eo_obj, MY_CLASS);
+   Evas_Object_Polygon *o = eo_data_scope_get(eo_obj, MY_CLASS);
    if (!o) return 0;
    return MAGIC_OBJ_SHAPE;
 }
 
 static void *evas_object_polygon_engine_data_get(Evas_Object *eo_obj)
 {
-   Evas_Object_Polygon *o = eo_data_get(eo_obj, MY_CLASS);
+   Evas_Object_Polygon *o = eo_data_scope_get(eo_obj, MY_CLASS);
    return o->engine_data;
 }
 
@@ -486,7 +486,7 @@ evas_object_polygon_was_opaque(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Prot
 static int
 evas_object_polygon_is_inside(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj EINA_UNUSED, Evas_Coord x, Evas_Coord y)
 {
-   Evas_Object_Polygon *o = eo_data_get(eo_obj, MY_CLASS);
+   Evas_Object_Polygon *o = eo_data_scope_get(eo_obj, MY_CLASS);
    int num_edges = 0; /* Number of edges we crossed */
    Eina_List *itr;
    Evas_Polygon_Point *p;

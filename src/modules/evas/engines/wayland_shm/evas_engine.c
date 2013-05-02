@@ -205,7 +205,7 @@ eng_setup(Evas *eo_evas, void *einfo)
      return 0;
 
    /* try to get evas public data from the canvas */
-   if (!(epd = eo_data_get(eo_evas, EVAS_CLASS)))
+   if (!(epd = eo_data_scope_get(eo_evas, EVAS_CLASS)))
      return 0;
 
    /* test for valid engine output */

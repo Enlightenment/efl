@@ -170,7 +170,7 @@ evas_object_textgrid_textprop_get(Evas_Object *eo_obj, Evas_Object_Textgrid *o, 
         Evas_Script_Type script;
 
         script = evas_common_language_script_type_get(&codepoint, 1);
-        Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+        Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
         ENFN->font_run_end_get(ENDT, o->font, &script_fi, &cur_fi, script, &codepoint, 1);
         memset(&(glyph->props[idx]), 0, sizeof(Evas_Text_Props));
         evas_common_text_props_script_set(&(glyph->props[idx]), script);
@@ -341,12 +341,12 @@ evas_object_textgrid_textprop_int_to(Evas_Object_Textgrid *o, int props)
 static void
 evas_object_textgrid_init(Evas_Object *eo_obj)
 {
-   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    /* set up methods (compulsory) */
    obj->func = &object_func;
    obj->type = o_type;
 
-   Evas_Object_Textgrid *o = eo_data_get(eo_obj, MY_CLASS);
+   Evas_Object_Textgrid *o = eo_data_scope_get(eo_obj, MY_CLASS);
    o->magic = MAGIC_OBJ_TEXTGRID;
    o->prev = o->cur;
    eina_array_step_set(&o->cur.palette_standard, sizeof (Eina_Array), 16);
@@ -393,7 +393,7 @@ evas_object_textgrid_rows_clear(Evas_Object *eo_obj)
 {
    int i;
 
-   Evas_Object_Textgrid *o = eo_data_get(eo_obj, MY_CLASS);
+   Evas_Object_Textgrid *o = eo_data_scope_get(eo_obj, MY_CLASS);
    if (!o->cur.rows) return;
    for (i = 0; i < o->cur.h; i++)
      {
@@ -407,7 +407,7 @@ static void
 evas_object_textgrid_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 {
    Evas_Object_Textgrid_Color *c;
-   Evas_Object_Textgrid *o = eo_data_get(eo_obj, MY_CLASS);
+   Evas_Object_Textgrid *o = eo_data_scope_get(eo_obj, MY_CLASS);
 
    /* free obj */
    evas_object_textgrid_rows_clear(eo_obj);
@@ -456,7 +456,7 @@ evas_object_textgrid_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 static void
 _destructor(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    evas_object_textgrid_free(eo_obj, obj);
    eo_do_super(eo_obj, MY_CLASS, eo_destructor());
 }
@@ -564,7 +564,7 @@ evas_object_textgrid_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj
    int rr = 0, rg = 0, rb = 0, ra = 0, rx = 0, rw = 0, run;
 
    /* render object to surface with context, and offset by x,y */
-   Evas_Object_Textgrid *o = eo_data_get(eo_obj, MY_CLASS);
+   Evas_Object_Textgrid *o = eo_data_scope_get(eo_obj, MY_CLASS);
    ENFN->context_multiplier_unset(output, context);
    ENFN->context_render_op_set(output, context, obj->cur->render_op);
 
@@ -789,7 +789,7 @@ evas_object_textgrid_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data 
    /* elsewhere, decoding video etc. */
    /* then when this is done the object needs to figure if it changed and */
    /* if so what and where and add thr appropriate redraw rectangles */
-   Evas_Object_Textgrid *o = eo_data_get(eo_obj, MY_CLASS);
+   Evas_Object_Textgrid *o = eo_data_scope_get(eo_obj, MY_CLASS);
    /* if someone is clipping this obj - go calculate the clipper */
    if (obj->cur->clipper)
      {
@@ -907,7 +907,7 @@ evas_object_textgrid_render_post(Evas_Object *eo_obj, Evas_Object_Protected_Data
    /* this moves the current data to the previous state parts of the object */
    /* in whatever way is safest for the object. also if we don't need object */
    /* data anymore we can free it if the object deems this is a good idea */
-   Evas_Object_Textgrid *o = eo_data_get(eo_obj, MY_CLASS);
+   Evas_Object_Textgrid *o = eo_data_scope_get(eo_obj, MY_CLASS);
    /* remove those pesky changes */
    evas_object_clip_changes_clean(eo_obj);
    /* move cur to prev safely for object data */
@@ -938,7 +938,7 @@ evas_object_textgrid_render_post(Evas_Object *eo_obj, Evas_Object_Protected_Data
 static unsigned int
 evas_object_textgrid_id_get(Evas_Object *eo_obj)
 {
-   Evas_Object_Textgrid *o = eo_data_get(eo_obj, MY_CLASS);
+   Evas_Object_Textgrid *o = eo_data_scope_get(eo_obj, MY_CLASS);
    if (!o) return 0;
    return MAGIC_OBJ_TEXTGRID;
 }
@@ -946,7 +946,7 @@ evas_object_textgrid_id_get(Evas_Object *eo_obj)
 static unsigned int
 evas_object_textgrid_visual_id_get(Evas_Object *eo_obj)
 {
-   Evas_Object_Textgrid *o = eo_data_get(eo_obj, MY_CLASS);
+   Evas_Object_Textgrid *o = eo_data_scope_get(eo_obj, MY_CLASS);
    if (!o) return 0;
    return MAGIC_OBJ_SHAPE;
 }
@@ -954,7 +954,7 @@ evas_object_textgrid_visual_id_get(Evas_Object *eo_obj)
 static void *
 evas_object_textgrid_engine_data_get(Evas_Object *eo_obj)
 {
-   Evas_Object_Textgrid *o = eo_data_get(eo_obj, MY_CLASS);
+   Evas_Object_Textgrid *o = eo_data_scope_get(eo_obj, MY_CLASS);
    if (!o) return NULL;
    return o->font;
 }
@@ -981,7 +981,7 @@ evas_object_textgrid_scale_update(Evas_Object *eo_obj)
    int font_size;
    const char *font_name;
 
-   Evas_Object_Textgrid *o = eo_data_get(eo_obj, MY_CLASS);
+   Evas_Object_Textgrid *o = eo_data_scope_get(eo_obj, MY_CLASS);
    font_name = eina_stringshare_add(o->cur.font_name);
    font_size = o->cur.font_size;
    if (o->cur.font_name) eina_stringshare_del(o->cur.font_name);
@@ -1012,7 +1012,7 @@ _constructor(Eo *eo_obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED
 {
    eo_do_super(eo_obj, MY_CLASS, eo_constructor());
 
-   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    evas_object_textgrid_init(eo_obj);
    evas_object_inject(eo_obj, obj, evas_object_evas_get(eo_parent_get(eo_obj)));
 }
@@ -1068,7 +1068,7 @@ _size_set(Eo *eo_obj, void *_pd, va_list *list)
    o->cur.h = h;
    o->changed = 1;
    o->core_change = 1;
-   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    evas_object_change(eo_obj, obj);
 }
 
@@ -1122,7 +1122,7 @@ _font_source_set(Eo *eo_obj, void *_pd, va_list *list)
    eina_stringshare_replace(&o->cur.font_source, font_source);
    o->changed = 1;
    o->core_change = 1;
-   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    evas_object_change(eo_obj, obj);
 }
 
@@ -1157,7 +1157,7 @@ evas_object_textgrid_font_set(Evas_Object *eo_obj, const char *font_name, Evas_F
 static void
 _font_set(Eo *eo_obj, void *_pd, va_list *list)
 {
-   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    const char *font_name = va_arg(*list, const char *);
    Evas_Font_Size font_size = va_arg(*list, Evas_Font_Size);
    Eina_Bool is, was = EINA_FALSE;
@@ -1439,7 +1439,7 @@ _palette_set(Eo *eo_obj, void *_pd, va_list *list)
    o->changed = 1;
    o->pal_change = 1;
    evas_object_textgrid_rows_clear(eo_obj);
-   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    evas_object_change(eo_obj, obj);
 }
 
@@ -1513,7 +1513,7 @@ _supported_font_styles_set(Eo *eo_obj, void *_pd, va_list *list)
    /* FIXME: to do */
    if (styles)
      {
-        Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+        Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
         o->changed = 1;
         evas_object_change(eo_obj, obj);
      }
@@ -1623,7 +1623,7 @@ _update_add(Eo *eo_obj, void *_pd, va_list *list)
      }
    o->row_change = 1;
    o->changed = 1;
-   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    evas_object_change(eo_obj, obj);
 }
 

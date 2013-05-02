@@ -160,7 +160,7 @@ compute_gl_coordinates(Evas_Object *obj, int rot, int clip,
                        int x, int y, int width, int height,
                        int imgc[4], int objc[4])
 {
-   Evas_Object_Protected_Data *pd = eo_data_get(obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *pd = eo_data_scope_get(obj, EVAS_OBJ_CLASS);
    if (rot == 0)
      {
         // oringinal image object coordinate in gl coordinate
@@ -365,7 +365,7 @@ _evgl_glGetIntegerv(GLenum pname, GLint* params)
         // Only need to handle it if it's directly rendering to the window
         if (!(rsc->current_ctx->current_fbo))
           {
-             img = eo_data_get(rsc->direct_img_obj, EVAS_OBJ_CLASS);
+             img = eo_data_scope_get(rsc->direct_img_obj, EVAS_OBJ_CLASS);
 
              if (pname == GL_SCISSOR_BOX)
                {
