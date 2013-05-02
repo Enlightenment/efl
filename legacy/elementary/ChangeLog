@@ -1323,3 +1323,7 @@
 2012-05-02 WooHyun Jung
 
         * elm_entry_filter_accept_set function now can recognize tags.
+
+2012-05-02 ChunEon Park (Hermet)
+
+        * Don't be dead even if a ctxpopup item callback function is null.

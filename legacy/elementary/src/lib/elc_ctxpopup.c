@@ -1327,6 +1327,7 @@ static void
 _item_wrap_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Elm_Ctxpopup_Item *item = data;
+   if (!item->wcb.org_func_cb) return;
    item->wcb.org_func_cb((void *)item->wcb.org_data, item->wcb.cobj, item);
 }
 
