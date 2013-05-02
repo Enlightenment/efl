@@ -787,8 +787,6 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
      {
         int mode = MODE_COPY;
 
-        if (re->outbuf_swap_mode_get) mode = re->outbuf_swap_mode_get(re->ob);
-        re->mode = mode;
 	re->rects = evas_common_tilebuf_get_render_rects(re->tb);
         if (re->rects)
           {
@@ -808,6 +806,9 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
              re->rects_prev[1] = re->rects_prev[0];
              re->rects_prev[0] = re->rects;
              re->rects = NULL;
+             if (re->outbuf_swap_mode_get) mode = re->outbuf_swap_mode_get(re->ob);
+             re->mode = mode;
+
              switch (re->mode)
                {
                 case MODE_FULL:
