@@ -1441,7 +1441,10 @@ _item_push(Eo *obj, void *_pd, va_list *list)
    evas_object_show(VIEW(it));
    elm_widget_resize_object_set(obj, VIEW(it));
    if (prev_it)
-     elm_widget_sub_object_add(obj, VIEW(prev_it));
+     {
+        elm_widget_focused_object_clear(VIEW(prev_it));
+        elm_widget_sub_object_add(obj, VIEW(prev_it));
+     }
 
    if (prev_it)
      {
@@ -1567,6 +1570,7 @@ _item_insert_after(Eo *obj, void *_pd, va_list *list)
    if (top_inserted)
      {
         elm_widget_resize_object_set(obj, VIEW(it));
+        elm_widget_focused_object_clear(VIEW(after));
         elm_widget_sub_object_add(obj, VIEW(after));
         evas_object_show(VIEW(it));
         evas_object_hide(VIEW(after));
@@ -1714,6 +1718,7 @@ elm_naviframe_item_promote(Elm_Object_Item *it)
    sd->stack = eina_inlist_demote(sd->stack, EINA_INLIST_GET(nit));
 
    elm_widget_resize_object_set(WIDGET(it), VIEW(nit));
+   elm_widget_focused_object_clear(VIEW(prev_top));
    elm_widget_sub_object_add(WIDGET(it), VIEW(prev_top));
 
    /* this was the previous top one */
