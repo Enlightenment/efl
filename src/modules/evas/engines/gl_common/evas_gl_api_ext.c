@@ -66,12 +66,24 @@ char _gl_ext_string[10240] = { 0 };
 static void *
 evgl_evasglCreateImage(int target, void* buffer, int *attrib_list)
 {
-   EVGL_Engine *ee = evgl_engine;
    EGLDisplay dpy = EGL_NO_DISPLAY;
+   EVGL_Resource *rsc;
 
-   if ((ee) && (ee->funcs->display_get))
+   if (!(rsc=_evgl_tls_resource_get()))
      {
-        dpy = (EGLDisplay)ee->funcs->display_get(ee->engine_data);
+        ERR("Unable to execute GL command. Error retrieving tls");
+        return;
+     }
+
+   if (!rsc->current_eng)
+     {
+        ERR("Unable to retrive Current Engine");
+        return;
+     }
+
+   if ((evgl_engine) && (evgl_engine->funcs->display_get))
+     {
+        dpy = (EGLDisplay)evgl_engine->funcs->display_get(rsc->current_eng);
         return EXT_FUNC(eglCreateImage)(dpy, EGL_NO_CONTEXT, target, buffer, attrib_list);
      }
    else
@@ -84,12 +96,24 @@ evgl_evasglCreateImage(int target, void* buffer, int *attrib_list)
 static void
 evgl_evasglDestroyImage(EvasGLImage image)
 {
-   EVGL_Engine *ee = evgl_engine;
    EGLDisplay dpy = EGL_NO_DISPLAY;
+   EVGL_Resource *rsc;
 
-   if ((ee) && (ee->funcs->display_get))
+   if (!(rsc=_evgl_tls_resource_get()))
      {
-        dpy = (EGLDisplay)ee->funcs->display_get(ee->engine_data);
+        ERR("Unable to execute GL command. Error retrieving tls");
+        return;
+     }
+
+   if (!rsc->current_eng)
+     {
+        ERR("Unable to retrive Current Engine");
+        return;
+     }
+
+   if ((evgl_engine) && (evgl_engine->funcs->display_get))
+     {
+        dpy = (EGLDisplay)evgl_engine->funcs->display_get(rsc->current_eng);
         EXT_FUNC(eglDestroyImage)(dpy, image);
      }
    else

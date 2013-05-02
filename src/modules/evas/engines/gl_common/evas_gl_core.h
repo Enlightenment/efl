@@ -18,22 +18,22 @@ typedef struct _EVGL_Surface_Cap    EVGL_Surface_Cap;
 typedef struct _EVGL_Surface_Format EVGL_Surface_Format;
 
 
-extern EVGL_Engine *evgl_engine_create(EVGL_Interface *efunc, void *engine_data);
-extern int          evgl_engine_destroy(EVGL_Engine *ee);
+extern EVGL_Engine *evgl_engine_init(void *eng_data, EVGL_Interface *efunc);
+extern void         evgl_engine_shutdown(void *eng_data);
 
-extern void        *evgl_surface_create(EVGL_Engine *ee, Evas_GL_Config *cfg, int w, int h);
-extern int          evgl_surface_destroy(EVGL_Engine *ee, EVGL_Surface *sfc);
-extern void        *evgl_context_create(EVGL_Engine *ee, EVGL_Context *share_ctx);
-extern int          evgl_context_destroy(EVGL_Engine *ee, EVGL_Context *ctx);
-extern int          evgl_make_current(EVGL_Engine *ee, EVGL_Surface *sfc, EVGL_Context *ctx);
-extern const char  *evgl_string_query(EVGL_Engine *ee, int name);
+extern void        *evgl_surface_create(void *eng_data, Evas_GL_Config *cfg, int w, int h);
+extern int          evgl_surface_destroy(void *eng_data, EVGL_Surface *sfc);
+extern void        *evgl_context_create(void *eng_data, EVGL_Context *share_ctx);
+extern int          evgl_context_destroy(void *eng_data, EVGL_Context *ctx);
+extern int          evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx);
+
+extern const char  *evgl_string_query(int name);
 extern void        *evgl_proc_address_get(const char *name);
-extern int          evgl_native_surface_get(EVGL_Engine *ee, EVGL_Surface *sfc, Evas_Native_Surface *ns);
-extern Evas_GL_API *evgl_api_get(EVGL_Engine *ee);
-
-extern int          evgl_direct_rendered(EVGL_Engine *ee);
-extern void         evgl_direct_img_obj_set(EVGL_Engine *ee, Evas_Object *img);
-extern Evas_Object *evgl_direct_img_obj_get(EVGL_Engine *ee);
+extern int          evgl_native_surface_get(EVGL_Surface *sfc, Evas_Native_Surface *ns);
+extern Evas_GL_API *evgl_api_get();
+extern int          evgl_direct_rendered();
+extern void         evgl_direct_img_obj_set(Evas_Object *img, int alpha, int rot);
+extern Evas_Object *evgl_direct_img_obj_get();
 
 
 #endif //_EVAS_GL_CORE_H

@@ -35,11 +35,11 @@ evas_gl_common_file_cache_mkpath_if_not_exists(const char *path)
    struct stat st;
 
    if (stat(path, &st) < 0)
-     return evas_gl_common_file_cache_mkdir(path);
+      return evas_gl_common_file_cache_mkdir(path);
    else if (!S_ISDIR(st.st_mode))
-     return EINA_FALSE;
+      return EINA_FALSE;
    else
-     return EINA_TRUE;
+      return EINA_TRUE;
 }
 
 Eina_Bool
@@ -57,7 +57,7 @@ evas_gl_common_file_cache_mkpath(const char *path)
           {
              ss[i] = 0;
              if (!evas_gl_common_file_cache_mkpath_if_not_exists(ss))
-               return EINA_FALSE;
+                return EINA_FALSE;
           }
      }
    ss[i] = 0;

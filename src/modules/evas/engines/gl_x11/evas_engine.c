@@ -52,8 +52,6 @@ struct _Render_Engine
    int                      vsync;
    int                      lost_back;
    int                      prev_age;
-
-   EVGL_Engine             *evgl_engine;
 };
 
 static int initted = 0;
@@ -255,7 +253,7 @@ evgl_eng_make_current(void *data, void *surface, void *context, int flush)
 
    if ((!context) && (!surface))
      {
-        ret = glXMakeCurrent(re->info->info.display, None, NULL); 
+        ret = glXMakeCurrent(re->info->info.display, None, NULL);
         if (!ret)
           {
              ERR("glXMakeCurrent() failed!");
@@ -858,12 +856,9 @@ eng_setup(Evas *eo_e, void *in)
              evas_common_draw_init();
              evas_common_tilebuf_init();
              gl_extn_veto(re);
+             evgl_engine_init(re, &evgl_funcs);
              initted = 1;
           }
-
-        re->evgl_engine = evgl_engine_create(&evgl_funcs, (void*)re);
-        if (!re->evgl_engine)
-          ERR("Error Creating Evas_GL Engine. Evas GL will not be supported!");
      }
    else
      {
@@ -1039,10 +1034,6 @@ eng_output_free(void *data)
                glsym_glXReleaseBuffersMESA(disp, win);
 #endif
              gl_wins--;
-
-             // NEW_EVAS_GL
-             if (gl_wins == 0)
-               evgl_engine_destroy(re->evgl_engine);
           }
         
         evas_common_tilebuf_free(re->tb);
@@ -1050,6 +1041,9 @@ eng_output_free(void *data)
         if (re->rects_prev[0]) evas_common_tilebuf_free_render_rects(re->rects_prev[0]);
         if (re->rects_prev[1]) evas_common_tilebuf_free_render_rects(re->rects_prev[1]);
         if (re->rects_prev[2]) evas_common_tilebuf_free_render_rects(re->rects_prev[2]);
+
+        if (gl_wins == 0) evgl_engine_shutdown(re);
+        
         free(re);
      }
    if ((initted == 1) && (gl_wins == 0))
@@ -2794,10 +2788,10 @@ eng_image_draw(void *data, void *context, void *surface, void *image, int src_x,
 
    if ((n) && (n->ns.type == EVAS_NATIVE_SURFACE_OPENGL) &&
        (n->ns.data.opengl.framebuffer_id == 0) &&
-       (evgl_direct_rendered(re->evgl_engine)))
+       (evgl_direct_rendered()))
      {
-        DBG("Rendering Directly to the window");
-        evas_object_image_pixels_dirty_set(evgl_direct_img_obj_get(re->evgl_engine), EINA_TRUE);
+        DBG("Rendering Directly to the window: %p", data);
+        evas_object_image_pixels_dirty_set(evgl_direct_img_obj_get(), EINA_TRUE);
      }
    else
      {
@@ -3004,54 +2998,48 @@ eng_canvas_alpha_get(void *data, void *info EINA_UNUSED)
 static void *
 eng_gl_surface_create(void *data, void *config, int w, int h)
 {
-   Render_Engine  *re  = (Render_Engine *)data;
    Evas_GL_Config *cfg = (Evas_GL_Config *)config;
 
-   return evgl_surface_create(re->evgl_engine, cfg, w, h);
+   return evgl_surface_create(data, cfg, w, h);
 }
 
 static int
 eng_gl_surface_destroy(void *data, void *surface)
 {
-   Render_Engine *re  = (Render_Engine *)data;
    EVGL_Surface  *sfc = (EVGL_Surface *)surface;
 
-   return evgl_surface_destroy(re->evgl_engine, sfc);
+   return evgl_surface_destroy(data, sfc);
 }
 
 static void *
 eng_gl_context_create(void *data, void *share_context)
 {
-   Render_Engine *re   = (Render_Engine *)data;
    EVGL_Context  *sctx = (EVGL_Context *)share_context;
-   return evgl_context_create(re->evgl_engine, sctx);
+
+   return evgl_context_create(data, sctx);
 }
 
 static int
 eng_gl_context_destroy(void *data, void *context)
 {
-   Render_Engine *re  = (Render_Engine *)data;
    EVGL_Context  *ctx = (EVGL_Context *)context;
 
-   return evgl_context_destroy(re->evgl_engine, ctx);
+   return evgl_context_destroy(data, ctx);
 }
 
 static int
 eng_gl_make_current(void *data, void *surface, void *context)
 {
-   Render_Engine *re  = (Render_Engine *)data;
    EVGL_Surface  *sfc = (EVGL_Surface *)surface;
    EVGL_Context  *ctx = (EVGL_Context *)context;
 
-   return evgl_make_current(re->evgl_engine, sfc, ctx);
+   return evgl_make_current(data, sfc, ctx);
 }
 
 static void *
-eng_gl_string_query(void *data, int name)
+eng_gl_string_query(void *data EINA_UNUSED, int name)
 {
-   Render_Engine *re  = (Render_Engine *)data;
-
-   return (void *)evgl_string_query(re->evgl_engine, name);
+   return (void *)evgl_string_query(name);
 }
 
 // Need to deprecate this function..
@@ -3062,39 +3050,26 @@ eng_gl_proc_address_get(void *data EINA_UNUSED, const char *name EINA_UNUSED)
 }
 
 static int
-eng_gl_native_surface_get(void *data, void *surface, void *native_surface)
+eng_gl_native_surface_get(void *data EINA_UNUSED, void *surface, void *native_surface)
 {
-   Render_Engine *re  = (Render_Engine *)data;
    EVGL_Surface  *sfc = (EVGL_Surface *)surface;
    Evas_Native_Surface *ns = (Evas_Native_Surface *)native_surface;
 
-   return evgl_native_surface_get(re->evgl_engine, sfc, ns);
+   return evgl_native_surface_get(sfc, ns);
 }
 
 static void *
-eng_gl_api_get(void *data)
+eng_gl_api_get(void *data EINA_UNUSED)
 {
-   Render_Engine *re = (Render_Engine *)data;
-
-   return evgl_api_get(re->evgl_engine);
+   return evgl_api_get();
 }
 
 static void
-eng_gl_img_obj_set(void *data, void *image, int has_alpha)
+eng_gl_img_obj_set(void *data EINA_UNUSED, void *image, int has_alpha)
 {
    Render_Engine *re = (Render_Engine *)data;
 
-   // Normally direct rendering isn't allowed if alpha is on and
-   // rotation is not 0.  BUT, if override is on, allow it.
-   if ((has_alpha) || (re->win->gl_context->rot!=0))
-     {
-        if (re->evgl_engine->direct_override)
-           evgl_direct_img_obj_set(re->evgl_engine, image);
-        else
-           evgl_direct_img_obj_set(re->evgl_engine, NULL);
-     }
-   else
-      evgl_direct_img_obj_set(re->evgl_engine, image);
+   evgl_direct_img_obj_set(image, has_alpha, re->win->gl_context->rot);
 }
 //--------------------------------//
 

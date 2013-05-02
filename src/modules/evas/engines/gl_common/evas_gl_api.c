@@ -36,7 +36,7 @@ void _direct_rendering_check(const char *api)
         return;
      }
 
-   if (_evgl_not_in_pixel_get(evgl_engine))
+   if (_evgl_not_in_pixel_get())
      {
         CRIT("\e[1;33m%s\e[m: This API is being called outside Pixel Get Callback Function.", api);
      }
@@ -68,7 +68,7 @@ _evgl_glBindFramebuffer(GLenum target, GLuint framebuffer)
    // Take care of BindFramebuffer 0 issue
    if (framebuffer==0)
      {
-        if (_evgl_direct_enabled(evgl_engine))
+        if (_evgl_direct_enabled())
            glBindFramebuffer(target, 0);
         else
            glBindFramebuffer(target, ctx->surface_fbo);
@@ -250,16 +250,21 @@ compute_gl_coordinates(Evas_Object *obj, int rot, int clip,
 static void
 _evgl_glClear(GLbitfield mask)
 {
-   EVGL_Engine *ee = evgl_engine;
    EVGL_Resource *rsc;
    EVGL_Context *ctx;
    Evas_Object *img;
    int rot = 0;
    int oc[4] = {0,0,0,0}, nc[4] = {0,0,0,0};
 
-   if (!(rsc=_evgl_tls_resource_get(ee)))
+   if (!(rsc=_evgl_tls_resource_get()))
      {
         ERR("Unable to execute GL command. Error retrieving tls");
+        return;
+     }
+
+   if (!rsc->current_eng)
+     {
+        ERR("Unable to retrive Current Engine");
         return;
      }
 
@@ -270,7 +275,7 @@ _evgl_glClear(GLbitfield mask)
         return;
      }
 
-   if (_evgl_direct_enabled(evgl_engine))
+   if (_evgl_direct_enabled())
      {
         if (!(rsc->current_ctx->current_fbo))
           {
@@ -281,7 +286,7 @@ _evgl_glClear(GLbitfield mask)
                }
 
              img = rsc->direct_img_obj;
-             rot = ee->funcs->rotation_angle_get(ee->engine_data);
+             rot = evgl_engine->funcs->rotation_angle_get(rsc->current_eng);
 
              compute_gl_coordinates(img, rot, 0, 0, 0, 0, 0, oc, nc);
 
@@ -346,12 +351,11 @@ _evgl_glDisable(GLenum cap)
 void
 _evgl_glGetIntegerv(GLenum pname, GLint* params)
 {
-   EVGL_Engine *ee = evgl_engine;
    EVGL_Resource *rsc;
    EVGL_Context *ctx;
    Evas_Object_Protected_Data *img;
 
-   if (_evgl_direct_enabled(evgl_engine))
+   if (_evgl_direct_enabled())
      {
         if (!params)
           {
@@ -359,8 +363,18 @@ _evgl_glGetIntegerv(GLenum pname, GLint* params)
              return;
           }
 
-        rsc = _evgl_tls_resource_get(ee);
+        if (!(rsc=_evgl_tls_resource_get()))
+          {
+             ERR("Unable to execute GL command. Error retrieving tls");
+             return;
+          }
+
         ctx = rsc->current_ctx;
+        if (!ctx)
+          {
+             ERR("Unable to retrive Current Context");
+             return;
+          }
 
         // Only need to handle it if it's directly rendering to the window
         if (!(rsc->current_ctx->current_fbo))
@@ -403,16 +417,22 @@ _evgl_glGetIntegerv(GLenum pname, GLint* params)
 static void
 _evgl_glReadPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, void* pixels)
 {
-   EVGL_Engine *ee = evgl_engine;
    EVGL_Resource *rsc;
    EVGL_Context *ctx;
    Evas_Object *img;
    int rot = 0;
    int oc[4] = {0,0,0,0}, nc[4] = {0,0,0,0};
 
-   if (!(rsc=_evgl_tls_resource_get(ee)))
+
+   if (!(rsc=_evgl_tls_resource_get()))
      {
         ERR("Unable to execute GL command. Error retrieving tls");
+        return;
+     }
+
+   if (!rsc->current_eng)
+     {
+        ERR("Unable to retrive Current Engine");
         return;
      }
 
@@ -423,13 +443,13 @@ _evgl_glReadPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum forma
         return;
      }
 
-   if (_evgl_direct_enabled(evgl_engine))
+   if (_evgl_direct_enabled())
      {
 
         if (!(rsc->current_ctx->current_fbo))
           {
              img = rsc->direct_img_obj;
-             rot = ee->funcs->rotation_angle_get(ee->engine_data);
+             rot = evgl_engine->funcs->rotation_angle_get(rsc->current_eng);
 
              compute_gl_coordinates(img, rot, 1, x, y, width, height, oc, nc);
              glReadPixels(nc[0], nc[1], nc[2], nc[3], format, type, pixels);
@@ -448,16 +468,21 @@ _evgl_glReadPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum forma
 static void
 _evgl_glScissor(GLint x, GLint y, GLsizei width, GLsizei height)
 {
-   EVGL_Engine *ee = evgl_engine;
    EVGL_Resource *rsc;
    EVGL_Context *ctx;
    Evas_Object *img;
    int rot = 0;
    int oc[4] = {0,0,0,0}, nc[4] = {0,0,0,0};
 
-   if (!(rsc=_evgl_tls_resource_get(ee)))
+   if (!(rsc=_evgl_tls_resource_get()))
      {
         ERR("Unable to execute GL command. Error retrieving tls");
+        return;
+     }
+
+   if (!rsc->current_eng)
+     {
+        ERR("Unable to retrive Current Engine");
         return;
      }
 
@@ -468,7 +493,7 @@ _evgl_glScissor(GLint x, GLint y, GLsizei width, GLsizei height)
         return;
      }
 
-   if (_evgl_direct_enabled(evgl_engine))
+   if (_evgl_direct_enabled())
      {
         if (!(rsc->current_ctx->current_fbo))
           {
@@ -478,7 +503,7 @@ _evgl_glScissor(GLint x, GLint y, GLsizei width, GLsizei height)
                }
 
              img = rsc->direct_img_obj;
-             rot = ee->funcs->rotation_angle_get(ee->engine_data);
+             rot = evgl_engine->funcs->rotation_angle_get(rsc->current_eng);
              
              compute_gl_coordinates(img, rot, 1, x, y, width, height, oc, nc);
              glScissor(nc[0], nc[1], nc[2], nc[3]);
@@ -528,16 +553,21 @@ _evgl_glScissor(GLint x, GLint y, GLsizei width, GLsizei height)
 static void
 _evgl_glViewport(GLint x, GLint y, GLsizei width, GLsizei height)
 {
-   EVGL_Engine *ee = evgl_engine;
    EVGL_Resource *rsc;
    EVGL_Context *ctx;
    Evas_Object *img;
    int rot = 0;
    int oc[4] = {0,0,0,0}, nc[4] = {0,0,0,0};
 
-   if (!(rsc=_evgl_tls_resource_get(ee)))
+   if (!(rsc=_evgl_tls_resource_get()))
      {
         ERR("Unable to execute GL command. Error retrieving tls");
+        return;
+     }
+
+   if (!rsc->current_eng)
+     {
+        ERR("Unable to retrive Current Engine");
         return;
      }
 
@@ -548,7 +578,7 @@ _evgl_glViewport(GLint x, GLint y, GLsizei width, GLsizei height)
         return;
      }
 
-   if (_evgl_direct_enabled(evgl_engine))
+   if (_evgl_direct_enabled())
      {
         if (!(rsc->current_ctx->current_fbo))
           {
@@ -559,7 +589,7 @@ _evgl_glViewport(GLint x, GLint y, GLsizei width, GLsizei height)
                }
 
              img = rsc->direct_img_obj;
-             rot = ee->funcs->rotation_angle_get(ee->engine_data);
+             rot = evgl_engine->funcs->rotation_angle_get(rsc->current_eng);
 
              compute_gl_coordinates(img, rot, 0, x, y, width, height, oc, nc);
 
