@@ -2109,6 +2109,8 @@ _elm_genlist_pan_smart_calculate(Eo *obj EINA_UNUSED, void *_pd, va_list *list E
 
    if (psd->wsd->pan_changed)
      {
+        if (psd->wsd->calc_job) ecore_job_del(psd->wsd->calc_job);
+        psd->wsd->calc_job = NULL;
         _calc_job(psd->wsd->obj);
         psd->wsd->pan_changed = EINA_FALSE;
      }
