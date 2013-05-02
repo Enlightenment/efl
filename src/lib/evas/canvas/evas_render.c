@@ -1901,6 +1901,20 @@ evas_render_updates_internal(Evas *eo_e,
         e->invalidate = EINA_TRUE;
      }
 
+   /* delete all objects flagged for deletion now */
+   for (i = 0; i < e->delete_objects.count; ++i)
+     {
+        obj = eina_array_data_get(&e->delete_objects, i);
+        eo_obj = obj->object;
+        evas_object_free(eo_obj, 1);
+     }
+   eina_array_clean(&e->delete_objects);
+   /* if we deleted no objects this frame or we deleted a lot (> 1024) then
+    * try and reset the deleted objects array to empty (no mem used) for
+    * efficiency */
+   if ((e->delete_objects.count == 0) || (e->delete_objects.count > 1024))
+     eina_array_flush(&e->delete_objects);
+     
    evas_module_clean();
 
    if (!do_async)
