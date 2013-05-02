@@ -93,7 +93,7 @@ ecore_evas_wayland_egl_new_internal(const char *disp_name, unsigned int parent,
    Ecore_Evas_Engine_Wl_Data *wdata;
    Ecore_Evas *ee;
    int method = 0, count = 0;
-   int fx, fy, fw, fh;
+   int fx = 0, fy = 0, fw = 0, fh = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -159,10 +159,13 @@ ecore_evas_wayland_egl_new_internal(const char *disp_name, unsigned int parent,
    ee->alpha = EINA_FALSE;
 
    /* frame offset and size */
-   fx = 4;
-   fy = 18;
-   fw = 8;
-   fh = 22;
+   if (ee->prop.draw_frame)
+     {
+        fx = 4;
+        fy = 18;
+        fw = 8;
+        fh = 22;
+     }
 
    ee->evas = evas_new();
    evas_data_attach_set(ee->evas, ee);
