@@ -278,8 +278,13 @@ struct _Elm_Genlist_Pan_Smart_Data
  * @}
  */
 
+#define GL_IT(_it) (_it->item)
+
 #define ELM_GENLIST_DATA_GET(o, sd) \
   Elm_Genlist_Smart_Data * sd = eo_data_scope_get(o, ELM_OBJ_GENLIST_CLASS)
+
+#define ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd) \
+  Elm_Genlist_Smart_Data * sd = GL_IT(it)->wsd
 
 #define ELM_GENLIST_PAN_DATA_GET(o, sd) \
   Elm_Genlist_Pan_Smart_Data * sd = eo_data_scope_get(o, ELM_OBJ_GENLIST_PAN_CLASS)
