@@ -1098,10 +1098,13 @@ _font_overlay_change(void *data       __UNUSED__,
 static void
 _config_display_update(Evas_Object *win)
 {
-   int flush_interval, font_c, image_c, edje_file_c, edje_col_c, ts_threshould, ts_hold_threshold;
-   double scale, s_bounce_friction, ts_momentum_threshold, ts_friction, ts_border_friction,
-          ts_sensitivity_friction, ts_acceleration_threshold, ts_acceleration_time_limit,
-          ts_acceleration_weight, page_friction, bring_in_friction, zoom_friction;
+   int flush_interval, font_c, image_c, edje_file_c, edje_col_c, ts_threshould,
+       ts_hold_threshold;
+   double scale, s_bounce_friction, ts_momentum_threshold, ts_friction,
+          ts_min_friction, ts_friction_standard, ts_border_friction,
+          ts_sensitivity_friction, ts_acceleration_threshold,
+          ts_acceleration_time_limit, ts_acceleration_weight, page_friction,
+          bring_in_friction, zoom_friction;
    const char *curr_theme, *curr_engine;
    const Eina_List *l_items, *l;
    Eina_Bool s_bounce, ts;
@@ -1124,6 +1127,8 @@ _config_display_update(Evas_Object *win)
    ts_hold_threshold = elm_config_scroll_thumbscroll_hold_threshold_get();
    ts_momentum_threshold = elm_config_scroll_thumbscroll_momentum_threshold_get();
    ts_friction = elm_config_scroll_thumbscroll_friction_get();
+   ts_min_friction = elm_config_scroll_thumbscroll_min_friction_get();
+   ts_friction_standard = elm_config_scroll_thumbscroll_friction_standard_get();
    ts_border_friction = elm_config_scroll_thumbscroll_border_friction_get();
    ts_sensitivity_friction = elm_config_scroll_thumbscroll_sensitivity_friction_get();
    ts_acceleration_threshold = elm_config_scroll_thumbscroll_acceleration_threshold_get();
@@ -1166,6 +1171,12 @@ _config_display_update(Evas_Object *win)
                         ts_momentum_threshold);
    elm_slider_value_set(evas_object_data_get(win,
                                              "thumbscroll_friction_slider"),
+                        ts_friction);
+   elm_slider_value_set(evas_object_data_get(win,
+                                             "thumbscroll_min_friction_slider"),
+                        ts_min_friction);
+   elm_slider_value_set(evas_object_data_get(win,
+                                             "thumbscroll_friction__standard_slider"),
                         ts_friction);
    elm_slider_value_set(evas_object_data_get(win, "ts_border_friction_slider"),
                         ts_border_friction);
