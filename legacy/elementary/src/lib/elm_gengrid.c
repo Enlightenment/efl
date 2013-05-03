@@ -4012,6 +4012,9 @@ _class_constructor(Eo_Class *klass)
    };
    eo_class_funcs_set(klass, func_desc);
 
+   if (_elm_config->access_mode)
+      _elm_gengrid_smart_focus_next_enable = EINA_TRUE;
+
    evas_smart_legacy_type_register(MY_CLASS_NAME, klass);
 }
 static const Eo_Op_Description op_desc[] = {

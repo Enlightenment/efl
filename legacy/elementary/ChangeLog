@@ -1327,3 +1327,7 @@
 2012-05-02 ChunEon Park (Hermet)
 
         * Don't be dead even if a ctxpopup item callback function is null.
+
+2012-05-03 Shinwoo Kim
+
+        * Fix gengrid does not work under the accessibility.
