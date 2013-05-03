@@ -16,6 +16,8 @@
 
 int _ecore_audio_log_dom = -1;
 static int _ecore_audio_init_count = 0;
+Eina_List *ecore_audio_modules;
+
 
 /* externally accessible functions */
 
@@ -42,6 +44,8 @@ ecore_audio_init(void)
      }
 
    DBG("Ecore_Audio init");
+   ecore_audio_modules = NULL;
+
 
    eina_log_timing(_ecore_audio_log_dom,
 		   EINA_LOG_STATE_STOP,
@@ -62,6 +66,8 @@ ecore_audio_shutdown(void)
 		   EINA_LOG_STATE_START,
 		   EINA_LOG_STATE_SHUTDOWN);
 
+
+   eina_list_free(ecore_audio_modules);
 
    eina_log_domain_unregister(_ecore_audio_log_dom);
    _ecore_audio_log_dom = -1;

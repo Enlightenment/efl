@@ -71,9 +71,25 @@ extern int _ecore_audio_log_dom;
  * @{
  */
 
-typedef struct _Ecore_Audio_Object Ecore_Audio_Object;
 typedef struct _Ecore_Audio_Input Ecore_Audio_Input;
 typedef struct _Ecore_Audio_Output Ecore_Audio_Output;
+
+/**
+ * @brief The structure representing an Ecore_Audio module
+ */
+struct _Ecore_Audio_Module
+{
+   ECORE_MAGIC;
+   Ecore_Audio_Type type;
+   char              *name;
+   Eina_List         *inputs;
+   Eina_List         *outputs;
+
+   void              *priv;
+
+   struct input_api  *in_ops;
+   struct output_api *out_ops;
+};
 
 struct _Ecore_Audio_Vio_Internal {
     Ecore_Audio_Vio *vio;
@@ -125,6 +141,31 @@ struct _Ecore_Audio_Input
    Eina_Bool           preloaded;
    Eina_Bool           ended;
 };
+
+extern Eina_List *ecore_audio_modules;
+
+#ifdef HAVE_ALSA
+/* ecore_audio_alsa */
+Ecore_Audio_Module *ecore_audio_alsa_init(void);
+void                ecore_audio_alsa_shutdown(void);
+#endif /* HAVE_ALSA */
+
+#ifdef HAVE_PULSE
+Ecore_Audio_Module *ecore_audio_pulse_init(void);
+void                ecore_audio_pulse_shutdown(void);
+#endif /* HAVE_PULSE */
+
+#ifdef HAVE_SNDFILE
+/* ecore_audio_sndfile */
+Ecore_Audio_Module *ecore_audio_sndfile_init(void);
+void                ecore_audio_sndfile_shutdown(void);
+#endif /* HAVE_SNDFILE */
+
+Ecore_Audio_Module *ecore_audio_tone_init(void);
+void                ecore_audio_tone_shutdown(void);
+
+Ecore_Audio_Module *ecore_audio_custom_init(void);
+void                ecore_audio_custom_shutdown(void);
 
 /**
  * @}
