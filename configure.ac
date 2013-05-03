@@ -2461,19 +2461,8 @@ EFL_LIB_START_OPTIONAL([Ecore_Audio], [test "${want_audio}" = "yes"])
 
 ### Additional options to configure
 
-# ALSA support is not well tested, disable by default
-AC_ARG_ENABLE([alsa],
-   [AC_HELP_STRING([--enable-alsa],
-       [enable alsa sound support. @<:@default=enabled@:>@])],
-   [
-    if test "x${enableval}" = "xyes" ; then
-       want_alsa="yes"
-    else
-       want_alsa="no"
-    fi
-   ],
-   [want_alsa="no"])
-
+# ALSA support is still not there, thus no option for it yet.
+want_alsa="no"
 
 # sndfile is mandatory otherwise it won't read from/write to files.
 # TODO: if confirmed sndfile is mandatory, remove this variable
@@ -2531,7 +2520,6 @@ EFL_ADD_FEATURE([ECORE_AUDIO], [sndfile])
 ### Checks for library functions
 
 EFL_LIB_END_OPTIONAL([Ecore_Audio])
-AM_CONDITIONAL([HAVE_ECORE_AUDIO_ALSA], [test "x${want_alsa}" = "xyes"])
 AM_CONDITIONAL([HAVE_ECORE_AUDIO_PULSE], [test "x${want_pulseaudio}" = "xyes"])
 AM_CONDITIONAL([HAVE_ECORE_AUDIO_SNDFILE], [test "x${want_sndfile}" = "xyes"])
 

@@ -212,8 +212,6 @@ EAPI int                 ecore_audio_shutdown(void);
 
 #include <ecore_audio_obj_out_pulse.h>
 
-#include <ecore_audio_obj_out_alsa.h>
-
 /**
  * @}
  */
