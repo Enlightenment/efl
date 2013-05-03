@@ -3,6 +3,7 @@
 #endif
 
 #include "eo_ptr_indirection.h"
+#include <assert.h>
 #ifdef __linux__
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -32,22 +33,27 @@
  * occur when accessing with the old id.
  *
  * Each table is composed of:
- * - entries composed of
+ * - an index 'start' indicating which entry is the next one to use.
+ * - 2 indexes 'queue_head' and 'queue_tail' defining a queue (fifo),
+ *   that will help us to store the entries to be reused. It stores only the
+ *   entries that have been used at least one time. The entries that have
+ *   never been used are "pointed" by the start parameter.
+ * - entries composed of:
  *    - a pointer to the object
  *    - a flag indicating if the entry is active
  *    - a generation assigned to the object
- * - an index 'start' indicating which entry is the next one to use.
- * - a queue that will help us to store the unused entries. It stores only the
- *   entries that have been used at least one time. The entries that have
- *   never been used are "pointed" by the start parameter.
- * When an entry is searched into a table, we first try to pop from the
- * queue. If a NULL value is returned, we have to use one of the entries that
- * have never been used. If a such entry doesn't exist, we pass to the next
- * table. Otherwise, we reserve this entry to the object pointer and create
+ *    - an index 'next_in_queue' used to chain the entries in the queue
+ * When an entry is searched into a table, we first use one of the entries that
+ * has never been used. If there is none, we try to pop from the queue.
+ * If a such entry doesn't exist, we pass to the next table.
+ * When an entry is found, we reserve it to the object pointer and create
  * the id with the table id, the intermediate table id, the entry and a
  * generation.
- * When an object is freed, the entry into the table is released by pushing
- * it into the queue.
+ * When an object is freed, the entry into the table is released by appending
+ * it to the queue.
+ * Assigning all the entries of a table before trying to reuse them from
+ * the fifo ensures that we are not going to soon recycle a released entry,
+ * thus minimize the risks of an aggressive del() then use() on a single entry.
  */
 
 #if SIZEOF_UINTPTR_T == 4
@@ -56,15 +62,17 @@
 # define BITS_FOR_IDS_INTER_TABLE     5
 # define BITS_FOR_ID_IN_TABLE        12
 # define BITS_FOR_GENERATION_COUNTER 10
+typedef int16_t Table_Index;
+typedef uint16_t Generation_Counter;
 #else
 /* 64 bits */
 # define BITS_FOR_IDS_TABLE          11
 # define BITS_FOR_IDS_INTER_TABLE    11
 # define BITS_FOR_ID_IN_TABLE        12
 # define BITS_FOR_GENERATION_COUNTER 30
+typedef int16_t Table_Index;
+typedef uint32_t Generation_Counter;
 #endif
-
-typedef uintptr_t Table_Index;
 
 /* Shifts macros to manipulate the Eo id */
 #define SHIFT_FOR_IDS_TABLE \
@@ -152,6 +160,9 @@ typedef struct
    unsigned int active     : 1;
    /* Generation */
    unsigned int generation : BITS_FOR_GENERATION_COUNTER;
+   /* Indicates where to find the next entry to recycle */
+   Table_Index next_in_queue;
+
 } _Eo_Id_Entry;
 
 /* Table */
@@ -159,31 +170,33 @@ typedef struct
 {
    /* Entries of the table holding real pointers and generations */
    _Eo_Id_Entry entries[MAX_IDS_PER_TABLE];
-   /* Queue to handle free entries */
-   Eina_Trash *queue;
    /* Indicates where start the "never used" entries */
    Table_Index start;
+   /* Indicates where to find the next entry to recycle */
+   Table_Index queue_head;
+   /* Indicates where to add an entry to recycle */
+   Table_Index queue_tail;
 } _Eo_Ids_Table;
 
 /* Tables handling pointers indirection */
 _Eo_Ids_Table **_eo_ids_tables[MAX_IDS_TABLES] = { NULL };
 
 /* Next generation to use when assigning a new entry to a Eo pointer */
-Table_Index _eo_generation_counter;
+Generation_Counter _eo_generation_counter;
 
 /* Macro used to compose an Eo id */
-#define EO_COMPOSE_ID(TABLE, INTER_TABLE, ENTRY, GENERATION)                        \
-   (Eo_Id)(((TABLE & (MAX_IDS_TABLES - 1)) << SHIFT_FOR_IDS_TABLE) |                \
-         ((INTER_TABLE & (MAX_IDS_INTER_TABLES - 1)) << SHIFT_FOR_IDS_INTER_TABLE) |\
-         ((ENTRY & (MAX_IDS_PER_TABLE - 1)) << SHIFT_FOR_ID_IN_TABLE) |             \
-         (GENERATION & (MAX_GENERATIONS - 1) ))
+#define EO_COMPOSE_ID(TABLE, INTER_TABLE, ENTRY, GENERATION)                              \
+   (((Eo_Id)(TABLE & (MAX_IDS_TABLES - 1)) << SHIFT_FOR_IDS_TABLE)                     |  \
+    ((Eo_Id)(INTER_TABLE & (MAX_IDS_INTER_TABLES - 1)) << SHIFT_FOR_IDS_INTER_TABLE)   |  \
+    ((ENTRY & (MAX_IDS_PER_TABLE - 1)) << SHIFT_FOR_ID_IN_TABLE)                       |  \
+    (GENERATION & (MAX_GENERATIONS - 1) ))
 
 /* Macro to extract from an Eo id the indexes of the tables */
-#define EO_DECOMPOSE_ID(ID, TABLE, INTER_TABLE, ENTRY, GENERATION) \
-   TABLE = (ID >> SHIFT_FOR_IDS_TABLE) & (MAX_IDS_TABLES - 1); \
+#define EO_DECOMPOSE_ID(ID, TABLE, INTER_TABLE, ENTRY, GENERATION)               \
+   TABLE = (ID >> SHIFT_FOR_IDS_TABLE) & (MAX_IDS_TABLES - 1);                   \
    INTER_TABLE = (ID >> SHIFT_FOR_IDS_INTER_TABLE) & (MAX_IDS_INTER_TABLES - 1); \
-   ENTRY = (ID >> SHIFT_FOR_ID_IN_TABLE) & (MAX_IDS_PER_TABLE - 1); \
-   GENERATION = ID & (MAX_GENERATIONS - 1); \
+   ENTRY = (ID >> SHIFT_FOR_ID_IN_TABLE) & (MAX_IDS_PER_TABLE - 1);              \
+   GENERATION = ID & (MAX_GENERATIONS - 1);                                      \
 
 /* Macro used for readability */
 #define ID_TABLE _eo_ids_tables[table_id][int_table_id]
@@ -193,9 +206,10 @@ _eo_obj_pointer_get(const Eo_Id obj_id)
 {
 #ifdef HAVE_EO_ID
    _Eo_Id_Entry *entry;
-   Table_Index table_id, int_table_id, entry_id, generation;
+   Generation_Counter generation;
+   Table_Index table_id, int_table_id, entry_id;
 
-   EO_DECOMPOSE_ID((Table_Index) obj_id, table_id, int_table_id, entry_id, generation);
+   EO_DECOMPOSE_ID(obj_id, table_id, int_table_id, entry_id, generation);
 
    /* Checking the validity of the entry */
    if (_eo_ids_tables[table_id] && ID_TABLE)
@@ -218,50 +232,59 @@ Eo_Id
 _eo_id_allocate(const _Eo *obj)
 {
 #ifdef HAVE_EO_ID
+   _Eo_Ids_Table *table;
    _Eo_Id_Entry *entry = NULL;
    for (Table_Index table_id = 1; table_id < MAX_IDS_TABLES; table_id++)
      {
         if (!_eo_ids_tables[table_id])
           {
-             /* We allocate a new table */
+             /* We allocate a new intermediate table */
              _eo_ids_tables[table_id] = _eo_id_mem_calloc(MAX_IDS_INTER_TABLES, sizeof(_Eo_Ids_Table*));
           }
         for (Table_Index int_table_id = 0; int_table_id < MAX_IDS_INTER_TABLES; int_table_id++)
           {
-             if (!ID_TABLE)
+             table = ID_TABLE;
+             if (!table)
                {
-                  /* We allocate a new intermediate table */
-                  ID_TABLE = _eo_id_mem_calloc(1, sizeof(_Eo_Ids_Table));
-                  eina_trash_init(&(ID_TABLE->queue));
+                  /* We allocate a new table */
+                  table = _eo_id_mem_calloc(1, sizeof(_Eo_Ids_Table));
+                  table->start = 1;
+                  table->queue_head = table->queue_tail = -1;
+                  ID_TABLE = table;
                   /* We select directly the first entry of the new table */
-                  entry = &(ID_TABLE->entries[0]);
-                  ID_TABLE->start = 1;
+                  entry = &(table->entries[0]);
+               }
+             else if (table->start < MAX_IDS_PER_TABLE)
+               {
+                  /* We use an empty entries in the table */
+                  entry = &(table->entries[table->start]);
+                  table->start++;
+               }
+             else if (table->queue_head != -1)
+               {
+                  /* We pop an unused entry from the queue */
+                  entry = &(table->entries[table->queue_head]);
+                  if (entry->next_in_queue == -1)
+                    table->queue_head = table->queue_tail = -1;
+                  else
+                     table->queue_head = entry->next_in_queue;
                }
              else
                {
-                  /* We try to pop from the queue an unused entry */
-                  entry = (_Eo_Id_Entry *)eina_trash_pop(&(ID_TABLE->queue));
+                  /* Table is full of actives entries */
+                  continue;
                }
 
-             if (!entry && ID_TABLE->start < MAX_IDS_PER_TABLE)
-               {
-                  /* No more unused entries in the trash but still empty entries in the table */
-                  entry = &(ID_TABLE->entries[ID_TABLE->start]);
-                  ID_TABLE->start++;
-               }
-
-             if (entry)
-               {
-                  /* An entry was found - need to find the entry id and fill it */
-                  entry->ptr = (_Eo *)obj;
-                  entry->active = 1;
-                  entry->generation = _eo_generation_counter;
-                  _eo_generation_counter++;
-                  _eo_generation_counter %= MAX_GENERATIONS;
-                  return EO_COMPOSE_ID(table_id, int_table_id,
-                                       (entry - ID_TABLE->entries),
-                                       entry->generation);
-               }
+             assert(entry);
+             /* An entry was found - need to find the entry id and fill it */
+             entry->ptr = (_Eo *)obj;
+             entry->active = 1;
+             entry->generation = _eo_generation_counter;
+             _eo_generation_counter++;
+             _eo_generation_counter %= MAX_GENERATIONS;
+             return EO_COMPOSE_ID(table_id, int_table_id,
+                                  (entry - table->entries),
+                                  entry->generation);
           }
      }
    return 0;
@@ -274,20 +297,31 @@ void
 _eo_id_release(const Eo_Id obj_id)
 {
 #ifdef HAVE_EO_ID
+   _Eo_Ids_Table *table;
    _Eo_Id_Entry *entry;
-   Table_Index table_id, int_table_id, entry_id, generation;
-   EO_DECOMPOSE_ID((Table_Index) obj_id, table_id, int_table_id, entry_id, generation);
+   Generation_Counter generation;
+   Table_Index table_id, int_table_id, entry_id;
+   EO_DECOMPOSE_ID(obj_id, table_id, int_table_id, entry_id, generation);
 
    /* Checking the validity of the entry */
-   if (_eo_ids_tables[table_id] && ID_TABLE)
+   if (_eo_ids_tables[table_id] && (table = ID_TABLE))
      {
-        entry = &(ID_TABLE->entries[entry_id]);
+        entry = &(table->entries[entry_id]);
         if (entry && entry->active && (entry->generation == generation))
           {
              /* Disable the entry */
              entry->active = 0;
+             entry->next_in_queue = -1;
              /* Push the entry into the queue */
-             eina_trash_push(&(ID_TABLE->queue), entry);
+            if (table->queue_tail == -1)
+              {
+                 table->queue_head = table->queue_tail = entry_id;
+              }
+            else
+              {
+                 table->entries[table->queue_tail].next_in_queue = entry_id;
+                 table->queue_tail = entry_id;
+              }
              return;
           }
      }
