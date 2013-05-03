@@ -909,6 +909,7 @@ evas_gl_common_context_newframe(Evas_Engine_GL_Context *gc)
         if (getenv("EVAS_GL_DBG")) dbgflushnum = 1;
      }
    if (dbgflushnum) printf("----prev-flushnum: %i -----------------------------------\n", gc->flushnum);
+   fprintf(stderr, "------------------------\n");
 
    gc->flushnum = 0;
    gc->state.current.cur_prog = 0;
@@ -2817,9 +2818,9 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
           {
              unsigned char *x;
 
-# define VERTEX_SIZE (gc->pipe[i].array.alloc * sizeof(GLshort) * 3)
-# define COLOR_SIZE (gc->pipe[i].array.alloc * sizeof(GLubyte) * 4)
-# define TEX_SIZE (gc->pipe[i].array.alloc * sizeof(GLfloat) * 2)
+# define VERTEX_SIZE (gc->pipe[i].array.num * sizeof(GLshort) * 3)
+# define COLOR_SIZE (gc->pipe[i].array.num * sizeof(GLubyte) * 4)
+# define TEX_SIZE (gc->pipe[i].array.num * sizeof(GLfloat) * 2)
              vertex_ptr = NULL;
              color_ptr = vertex_ptr + VERTEX_SIZE;
              texuv_ptr = color_ptr + COLOR_SIZE;
@@ -2856,6 +2857,20 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                     memcpy(x + (unsigned long)texm_ptr, gc->pipe[i].array.texm, TEX_SIZE);
                   if (gc->pipe[i].array.use_texsam)
                     memcpy(x + (unsigned long)texsam_ptr, gc->pipe[i].array.texsam, TEX_SIZE);
+/*                  
+                  fprintf(stderr, "copy %i bytes [%i/%i slots] [%i + %i + %i + %i + %i + %i + %i] <%i %i %i %i %i %i %i>\n",
+                          (int)((unsigned char *)END_POINTER),
+                          gc->pipe[i].array.num,
+                          gc->pipe[i].array.alloc,
+                          VERTEX_SIZE, COLOR_SIZE, TEX_SIZE, TEX_SIZE, TEX_SIZE, TEX_SIZE, TEX_SIZE,
+                          gc->pipe[i].array.use_vertex,
+                          gc->pipe[i].array.use_color,
+                          gc->pipe[i].array.use_texuv,
+                          gc->pipe[i].array.use_texuv2,
+                          gc->pipe[i].array.use_texuv3,
+                          gc->pipe[i].array.use_texm,
+                          gc->pipe[i].array.use_texsam);
+ */
                   glsym_glUnmapBuffer(GL_ARRAY_BUFFER);
                }
           }
