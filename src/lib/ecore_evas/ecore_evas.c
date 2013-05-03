@@ -2591,13 +2591,13 @@ _ecore_evas_mouse_move_process(Ecore_Evas *ee, int x, int y, unsigned int timest
                            ee->w + fh - x - fy - 1 - ee->prop.cursor.hot.y);
      }
    if (ee->rotation == 0)
-     evas_event_feed_mouse_move(ee->evas, x, y, timestamp, NULL);
+     evas_event_input_mouse_move(ee->evas, x, y, timestamp, NULL);
    else if (ee->rotation == 90)
-     evas_event_feed_mouse_move(ee->evas, ee->h + fw - y - 1, x, timestamp, NULL);
+     evas_event_input_mouse_move(ee->evas, ee->h + fw - y - 1, x, timestamp, NULL);
    else if (ee->rotation == 180)
-     evas_event_feed_mouse_move(ee->evas, ee->w + fw - x - 1, ee->h + fh - y - 1, timestamp, NULL);
+     evas_event_input_mouse_move(ee->evas, ee->w + fw - x - 1, ee->h + fh - y - 1, timestamp, NULL);
    else if (ee->rotation == 270)
-     evas_event_feed_mouse_move(ee->evas, y, ee->w + fh - x - 1, timestamp, NULL);
+     evas_event_input_mouse_move(ee->evas, y, ee->w + fh - x - 1, timestamp, NULL);
 }
 
 EAPI void

@@ -412,7 +412,7 @@ ecore_event_evas_mouse_move(void *data EINA_UNUSED, int type EINA_UNUSED, void *
         if (lookup->move_mouse)
            lookup->move_mouse(lookup->window, e->x, e->y, e->timestamp);
         else
-           evas_event_feed_mouse_move(lookup->evas, e->x, e->y, e->timestamp,
+           evas_event_input_mouse_move(lookup->evas, e->x, e->y, e->timestamp,
                                       NULL);
      }
    else
