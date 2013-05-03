@@ -191,6 +191,7 @@ enum
    EVAS_CANVAS_SUB_ID_EVENT_FEED_MOUSE_OUT,
    EVAS_CANVAS_SUB_ID_EVENT_FEED_MULTI_DOWN,
    EVAS_CANVAS_SUB_ID_EVENT_FEED_MULTI_UP,
+   EVAS_CANVAS_SUB_ID_EVENT_INPUT_MULTI_MOVE,
    EVAS_CANVAS_SUB_ID_EVENT_FEED_MULTI_MOVE,
    EVAS_CANVAS_SUB_ID_EVENT_FEED_KEY_DOWN,
    EVAS_CANVAS_SUB_ID_EVENT_FEED_KEY_UP,
@@ -994,6 +995,29 @@ enum
  * @see evas_event_feed_multi_up
  */
 #define evas_canvas_event_feed_multi_up(d, x, y, rad, radx, rady, pres, ang, fx, fy, flags, timestamp, data) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_EVENT_FEED_MULTI_UP), EO_TYPECHECK(int, d), EO_TYPECHECK(int, x), EO_TYPECHECK(int, y), EO_TYPECHECK(double, rad), EO_TYPECHECK(double, radx), EO_TYPECHECK(double, rady), EO_TYPECHECK(double, pres), EO_TYPECHECK(double, ang), EO_TYPECHECK(double, fx), EO_TYPECHECK(double, fy), EO_TYPECHECK(Evas_Button_Flags, flags), EO_TYPECHECK(unsigned int, timestamp), EO_TYPECHECK(const void *, data)
+
+/**
+ * @def evas_canvas_event_input_multi_move
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] d
+ * @param[in] x
+ * @param[in] y
+ * @param[in] rad
+ * @param[in] radx
+ * @param[in] rady
+ * @param[in] pres
+ * @param[in] ang
+ * @param[in] fx
+ * @param[in] fy
+ * @param[in] timestamp
+ * @param[in] data
+ *
+ * @see evas_event_feed_multi_move
+ */
+#define evas_canvas_event_input_multi_move(d, x, y, rad, radx, rady, pres, ang, fx, fy, timestamp, data) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_EVENT_INPUT_MULTI_MOVE), EO_TYPECHECK(int, d), EO_TYPECHECK(int, x), EO_TYPECHECK(int, y), EO_TYPECHECK(double, rad), EO_TYPECHECK(double, radx), EO_TYPECHECK(double, rady), EO_TYPECHECK(double, pres), EO_TYPECHECK(double, ang), EO_TYPECHECK(double, fx), EO_TYPECHECK(double, fy), EO_TYPECHECK(unsigned int, timestamp), EO_TYPECHECK(const void *, data)
 
 /**
  * @def evas_canvas_event_feed_multi_move

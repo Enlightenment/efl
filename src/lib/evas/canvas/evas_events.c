@@ -2373,37 +2373,14 @@ _canvas_event_feed_multi_up(Eo *eo_e, void *_pd, va_list *list)
    _evas_unwalk(e);
 }
 
-EAPI void
-evas_event_feed_multi_move(Evas *eo_e,
-                           int d, int x, int y,
-                           double rad, double radx, double rady,
-                           double pres, double ang,
-                           double fx, double fy,
-                           unsigned int timestamp, const void *data)
+static void
+_canvas_event_feed_multi_move_internal(Eo *eo_e, void *_pd, int d, int x,
+                                       int y, double rad, double radx,
+                                       double rady, double pres, double ang,
+                                       double fx, double fy,
+                                       unsigned int timestamp,
+                                       const void *data)
 {
-   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
-   return;
-   MAGIC_CHECK_END();
-
-   eo_do(eo_e, evas_canvas_event_feed_multi_move(d, x, y, rad, radx, rady, pres, ang, fx, fy, timestamp, data));
-}
-
-void
-_canvas_event_feed_multi_move(Eo *eo_e, void *_pd, va_list *list)
-{
-   int d = va_arg(*list, int);
-   int x = va_arg(*list, int);
-   int y = va_arg(*list, int);
-   double rad = va_arg(*list, double);
-   double radx = va_arg(*list, double);
-   double rady = va_arg(*list, double);
-   double pres = va_arg(*list, double);
-   double ang = va_arg(*list, double);
-   double fx = va_arg(*list, double);
-   double fy = va_arg(*list, double);
-   unsigned int timestamp = va_arg(*list, unsigned int);
-   const void *data = va_arg(*list, const void *);
-
    Evas_Public_Data *e = _pd;
 
    if (e->is_frozen) return;
@@ -2566,6 +2543,83 @@ _canvas_event_feed_multi_move(Eo *eo_e, void *_pd, va_list *list)
         if (ev.dev) _evas_device_unref(ev.dev);
      }
    _evas_unwalk(e);
+}
+
+EAPI void
+evas_event_input_multi_move(Evas *eo_e,
+                           int d, int x, int y,
+                           double rad, double radx, double rady,
+                           double pres, double ang,
+                           double fx, double fy,
+                           unsigned int timestamp, const void *data)
+{
+   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
+   return;
+   MAGIC_CHECK_END();
+
+   eo_do(eo_e, evas_canvas_event_input_multi_move(d, x, y, rad, radx, rady,
+                                                  pres, ang, fx, fy, timestamp,
+                                                  data));
+}
+
+void
+_canvas_event_input_multi_move(Eo *eo_e, void *_pd, va_list *list)
+{
+   int d = va_arg(*list, int);
+   int x = va_arg(*list, int);
+   int y = va_arg(*list, int);
+   double rad = va_arg(*list, double);
+   double radx = va_arg(*list, double);
+   double rady = va_arg(*list, double);
+   double pres = va_arg(*list, double);
+   double ang = va_arg(*list, double);
+   double fx = va_arg(*list, double);
+   double fy = va_arg(*list, double);
+   unsigned int timestamp = va_arg(*list, unsigned int);
+   const void *data = va_arg(*list, const void *);
+   Evas_Public_Data *e = _pd;
+
+   _canvas_event_feed_multi_move_internal(eo_e, _pd, d,
+                                          x - e->framespace.x, y - e->framespace.y,
+                                          rad, radx, rady,
+                                          pres, ang, fx, fy, timestamp, data);
+}
+
+EAPI void
+evas_event_feed_multi_move(Evas *eo_e,
+                           int d, int x, int y,
+                           double rad, double radx, double rady,
+                           double pres, double ang,
+                           double fx, double fy,
+                           unsigned int timestamp, const void *data)
+{
+   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
+   return;
+   MAGIC_CHECK_END();
+
+   eo_do(eo_e, evas_canvas_event_feed_multi_move(d, x, y, rad, radx, rady,
+                                                 pres, ang, fx, fy, timestamp,
+                                                 data));
+}
+
+void
+_canvas_event_feed_multi_move(Eo *eo_e, void *_pd, va_list *list)
+{
+   int d = va_arg(*list, int);
+   int x = va_arg(*list, int);
+   int y = va_arg(*list, int);
+   double rad = va_arg(*list, double);
+   double radx = va_arg(*list, double);
+   double rady = va_arg(*list, double);
+   double pres = va_arg(*list, double);
+   double ang = va_arg(*list, double);
+   double fx = va_arg(*list, double);
+   double fy = va_arg(*list, double);
+   unsigned int timestamp = va_arg(*list, unsigned int);
+   const void *data = va_arg(*list, const void *);
+
+   _canvas_event_feed_multi_move_internal(eo_e, _pd, d, x, y, rad, radx, rady,
+                                          pres, ang, fx, fy, timestamp, data);
 }
 
 EAPI void

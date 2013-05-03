@@ -1137,6 +1137,7 @@ void _canvas_event_feed_mouse_in(Eo *e, void *_pd, va_list *list);
 void _canvas_event_feed_mouse_out(Eo *e, void *_pd, va_list *list);
 void _canvas_event_feed_multi_down(Eo *e, void *_pd, va_list *list);
 void _canvas_event_feed_multi_up(Eo *e, void *_pd, va_list *list);
+void _canvas_event_input_multi_move(Eo *e, void *_pd, va_list *list);
 void _canvas_event_feed_multi_move(Eo *e, void *_pd, va_list *list);
 void _canvas_event_feed_key_down(Eo *e, void *_pd, va_list *list);
 void _canvas_event_feed_key_up(Eo *e, void *_pd, va_list *list);

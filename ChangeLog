@@ -1,6 +1,7 @@
 2013-04-03  Rafael Antognolli
 
         * Evas: Added evas_event_input_mouse_move() for internal use only.
+        * Evas: Added evas_event_input_multi_move() for internal use only.
 
 2013-04-29  ChunEon Park (Hermet)
 
