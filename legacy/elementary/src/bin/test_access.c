@@ -10,8 +10,220 @@ _cleanup_cb(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUSED
    elm_config_access_set(EINA_FALSE);
 }
 
+typedef struct _Item_Data
+{
+   Elm_Object_Item *item;
+   int index;
+} Item_Data;
+
+static Elm_Genlist_Item_Class *itc1, *itc2;
+char *gl_access_text_get(void *data, Evas_Object *obj __UNUSED__, const char *part __UNUSED__)
+{
+   char buf[256];
+   Item_Data *id = data;
+   snprintf(buf, sizeof(buf), "Item # %d", id->index);
+   return strdup(buf);
+}
+
+Evas_Object *gl_access_content_get(void *data __UNUSED__, Evas_Object *obj, const char *part)
+{
+   char buf[PATH_MAX];
+   Evas_Object *bt;
+
+   if (!strcmp(part, "elm.swallow.end"))
+     {
+        bt = elm_button_add(obj);
+        evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+        evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        elm_layout_text_set(bt, NULL, "OK");
+     }
+   else
+     {
+        bt = elm_icon_add(obj);
+        snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
+        elm_image_file_set(bt, buf, NULL);
+        evas_object_size_hint_aspect_set(bt, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
+     }
+
+   return bt;
+}
+
+static Elm_Gengrid_Item_Class *gic;
+
+Evas_Object *
+grid_access_content_get(void *data, Evas_Object *obj, const char *part)
+{
+   char buf[PATH_MAX];
+   Evas_Object *ic;
+   const Item_Data *id = data;
+
+   if (!strcmp(part, "elm.swallow.icon"))
+     {
+        ic = elm_icon_add(obj);
+        elm_object_scale_set(ic, 0.5);
+        snprintf(buf, sizeof(buf), "%s/images/icon_%02i.png", elm_app_data_dir_get(), (id->index % 4));
+        elm_image_file_set(ic, buf, NULL);
+        elm_image_resizable_set(ic, 0, 0);
+        evas_object_size_hint_weight_set(ic, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        evas_object_size_hint_align_set(ic, 0.5, 0.5);
+        evas_object_show(ic);
+        return ic;
+     }
+   return NULL;
+}
+
+Evas_Object *gl_access_content_full_get(void *data __UNUSED__, Evas_Object *obj, const char *part)
+{
+   int i;
+   Evas_Object *grid;
+
+   if (strcmp(part, "elm.swallow.content") != 0) return NULL;
+
+   grid = elm_gengrid_add(obj);
+   elm_gengrid_item_size_set(grid,
+                             elm_config_scale_get() * 100,
+                             elm_config_scale_get() * 100);
+   elm_gengrid_horizontal_set(grid, EINA_FALSE);
+   elm_gengrid_reorder_mode_set(grid, EINA_TRUE);
+   evas_object_size_hint_weight_set(grid, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(grid, EVAS_HINT_FILL, EVAS_HINT_FILL);
+
+   gic = elm_gengrid_item_class_new();
+   gic->item_style = "default";
+   gic->func.text_get = NULL;
+   gic->func.content_get = grid_access_content_get;
+   gic->func.state_get = NULL;
+   gic->func.del = NULL;
+
+   for (i = 0; i < 4; i++)
+     {
+        Item_Data *id = calloc(sizeof(Item_Data), 1);
+        id->index = i;
+
+        elm_gengrid_item_append(grid, gic, id, NULL, NULL);
+     }
+   elm_gengrid_item_class_free(gic);
+
+   evas_object_size_hint_min_set(grid, 300 * elm_config_scale_get(),
+                                 150 * elm_config_scale_get());
+   return grid;
+}
+
+static void _realized(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *ei)
+{
+   Evas_Object *content, *bt;
+   Eina_List *items;
+   items = NULL;
+
+   if (!ei) return;
+   Elm_Object_Item *item = ei;
+
+
+   const Elm_Genlist_Item_Class *itc = elm_genlist_item_item_class_get(item);
+
+   if (!strcmp(itc->item_style, "full"))
+     {
+        /* unregister item itself */
+        elm_object_item_access_unregister(item);
+
+        /* convey highlight to its content */
+        content = elm_object_item_part_content_get(item, "elm.swallow.content");
+        if (!content) return;
+
+        items = eina_list_append(items, content);
+     }
+   else
+     {
+        bt = elm_object_item_part_content_get(item, "elm.swallow.end");
+        if (!bt) return;
+
+        items = eina_list_append(items, bt);
+     }
+
+   elm_object_item_access_order_set(item, items);
+}
+
 void
 test_access(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   int i;
+   Evas_Object *win, *bx, *gl;
+
+   win = elm_win_util_standard_add("access", "Access");
+   elm_win_autodel_set(win, EINA_TRUE);
+   evas_object_event_callback_add(win, EVAS_CALLBACK_FREE, _cleanup_cb, NULL);
+
+   elm_config_access_set(EINA_TRUE);
+
+   bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_homogeneous_set(bx, EINA_TRUE);
+   elm_box_horizontal_set(bx, EINA_TRUE);
+   elm_win_resize_object_add(win, bx);
+   evas_object_show(bx);
+
+   gl = elm_genlist_add(win);
+   evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(bx, gl);
+   evas_object_show(gl);
+
+   evas_object_smart_callback_add(gl, "realized", _realized, NULL);
+
+   itc1 = elm_genlist_item_class_new();
+   itc1->item_style     = "default";
+   itc1->func.text_get = gl_access_text_get;
+   itc1->func.content_get  = gl_access_content_get;
+   itc1->func.state_get = NULL;
+   itc1->func.del       = NULL;
+
+   itc2 = elm_genlist_item_class_new();
+   itc2->item_style     = "full";
+   itc2->func.text_get = NULL;
+   itc2->func.content_get  = gl_access_content_full_get;
+   itc2->func.state_get = NULL;
+   itc2->func.del       = NULL;
+
+   for (i = 1; i < 10; i++)
+     {
+        Item_Data *id = calloc(sizeof(Item_Data), 1);
+        id->index = i;
+
+        if (i % 4)
+          {
+             elm_genlist_item_append(
+               gl,
+               itc1,
+               id,
+               NULL/* parent */,
+               ELM_GENLIST_ITEM_NONE,
+               NULL/* func */,
+               NULL/* func data */
+               );
+          }
+        else
+          {
+             elm_genlist_item_append(
+               gl,
+               itc2,
+               id,
+               NULL/* parent */,
+               ELM_GENLIST_ITEM_NONE,
+               NULL/* func */,
+               NULL/* func data */
+               );
+          }
+     }
+
+   elm_genlist_item_class_free(itc1);
+   elm_genlist_item_class_free(itc2);
+   evas_object_resize(win, 500, 400);
+   evas_object_show(win);
+}
+
+void
+test_access2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    int i, j, k;
    char buf[PATH_MAX];
