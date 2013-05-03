@@ -1176,8 +1176,8 @@ _config_display_update(Evas_Object *win)
                                              "thumbscroll_min_friction_slider"),
                         ts_min_friction);
    elm_slider_value_set(evas_object_data_get(win,
-                                             "thumbscroll_friction__standard_slider"),
-                        ts_friction);
+                                             "thumbscroll_friction_standard_slider"),
+                        ts_friction_standard);
    elm_slider_value_set(evas_object_data_get(win, "ts_border_friction_slider"),
                         ts_border_friction);
    elm_slider_value_set(evas_object_data_get(win, "ts_sensitivity_friction_slider"),
@@ -2799,7 +2799,7 @@ _status_config_scrolling(Evas_Object *win,
    elm_object_tooltip_text_set(sl, "This is the number of pixels the range<br/>"
                                    "which can be scrolled, while the scroller<br/>"
                                    "is holed");
-   evas_object_data_set(win, "thumbscroll_hold_threshold_slider", sl);
+   evas_object_data_set(win, "ts_hold_threshold_slider", sl);
    evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);
    elm_slider_span_size_set(sl, 120);
