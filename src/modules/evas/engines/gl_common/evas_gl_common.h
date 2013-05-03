@@ -350,6 +350,11 @@ struct _Evas_Engine_GL_Context
          int             clip;
       } current;
    } state;
+   
+   struct {
+      int                x, y, w, h;
+      Eina_Bool          enabled : 1;
+   } master_clip;
 
    struct {
       struct {

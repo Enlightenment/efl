@@ -1314,6 +1314,11 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
              *cw = rect->w;
              *ch = rect->h;
              re->cur_rect = re->cur_rect->next;
+             re->win->gl_context->master_clip.enabled = EINA_TRUE;
+             re->win->gl_context->master_clip.x = rect->x;
+             re->win->gl_context->master_clip.y = rect->y;
+             re->win->gl_context->master_clip.w = rect->w;
+             re->win->gl_context->master_clip.h = rect->h;
              break;
            case MODE_FULL:
              re->cur_rect = NULL;
@@ -1325,6 +1330,7 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
              if (cy) *cy = 0;
              if (cw) *cw = re->win->w;
              if (ch) *ch = re->win->h;
+             re->win->gl_context->master_clip.enabled = EINA_FALSE;
              break;
            default:
              break;
