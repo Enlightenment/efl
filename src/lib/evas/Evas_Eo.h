@@ -185,6 +185,7 @@ enum
    EVAS_CANVAS_SUB_ID_EVENT_FEED_MOUSE_UP,
    EVAS_CANVAS_SUB_ID_EVENT_FEED_MOUSE_CANCEL,
    EVAS_CANVAS_SUB_ID_EVENT_FEED_MOUSE_WHEEL,
+   EVAS_CANVAS_SUB_ID_EVENT_INPUT_MOUSE_MOVE,
    EVAS_CANVAS_SUB_ID_EVENT_FEED_MOUSE_MOVE,
    EVAS_CANVAS_SUB_ID_EVENT_FEED_MOUSE_IN,
    EVAS_CANVAS_SUB_ID_EVENT_FEED_MOUSE_OUT,
@@ -889,6 +890,21 @@ enum
  * @see evas_event_feed_mouse_wheel
  */
 #define evas_canvas_event_feed_mouse_wheel(direction, z, timestamp, data) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_EVENT_FEED_MOUSE_WHEEL), EO_TYPECHECK(int, direction), EO_TYPECHECK(int, z), EO_TYPECHECK(unsigned int, timestamp), EO_TYPECHECK(const void *, data)
+
+/**
+ * @def evas_canvas_event_input_mouse_move
+ * @since 1.8
+ *
+ * Mouse move event feed from input.
+ *
+ * @param[in] x
+ * @param[in] y
+ * @param[in] timestamp
+ * @param[in] data
+ *
+ * @see evas_event_input_mouse_move
+ */
+#define evas_canvas_event_input_mouse_move(x, y, timestamp, data) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_EVENT_INPUT_MOUSE_MOVE), EO_TYPECHECK(int, x), EO_TYPECHECK(int, y), EO_TYPECHECK(unsigned int, timestamp), EO_TYPECHECK(const void *, data)
 
 /**
  * @def evas_canvas_event_feed_mouse_move

@@ -1487,24 +1487,9 @@ _canvas_event_feed_mouse_wheel(Eo *eo_e, void *_pd, va_list *list)
    _evas_unwalk(e);
 }
 
-EAPI void
-evas_event_feed_mouse_move(Evas *eo_e, int x, int y, unsigned int timestamp, const void *data)
+static void
+_canvas_event_feed_mouse_move_internal(Eo *eo_e, void *_pd, int x, int y, unsigned int timestamp, const void *data)
 {
-   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
-   return;
-   MAGIC_CHECK_END();
-
-   eo_do(eo_e, evas_canvas_event_feed_mouse_move(x, y, timestamp, data));
-}
-
-void
-_canvas_event_feed_mouse_move(Eo *eo_e, void *_pd, va_list *list)
-{
-   int x = va_arg(*list, int);
-   int y = va_arg(*list, int);
-   unsigned int timestamp = va_arg(*list, unsigned int);
-   const void *data = va_arg(*list, const void *);
-
    Evas_Public_Data *e = _pd;
    Evas_Object *nogrep_obj = NULL;
    int px, py;
@@ -2007,6 +1992,49 @@ nogrep:
         if (ev.dev) _evas_device_unref(ev.dev);
      }
    _evas_unwalk(e);
+}
+
+EAPI void
+evas_event_input_mouse_move(Evas *eo_e, int x, int y, unsigned int timestamp, const void *data)
+{
+   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
+   return;
+   MAGIC_CHECK_END();
+
+   eo_do(eo_e, evas_canvas_event_input_mouse_move(x, y, timestamp, data));
+}
+
+void
+_canvas_event_input_mouse_move(Eo *eo_e, void *_pd, va_list *list)
+{
+   int x = va_arg(*list, int);
+   int y = va_arg(*list, int);
+   unsigned int timestamp = va_arg(*list, unsigned int);
+   const void *data = va_arg(*list, const void *);
+   Evas_Public_Data *e = _pd;
+
+   _canvas_event_feed_mouse_move_internal(eo_e, _pd, x - e->framespace.x, y - e->framespace.y, timestamp, data);
+}
+
+EAPI void
+evas_event_feed_mouse_move(Evas *eo_e, int x, int y, unsigned int timestamp, const void *data)
+{
+   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
+   return;
+   MAGIC_CHECK_END();
+
+   eo_do(eo_e, evas_canvas_event_feed_mouse_move(x, y, timestamp, data));
+}
+
+void
+_canvas_event_feed_mouse_move(Eo *eo_e, void *_pd, va_list *list)
+{
+   int x = va_arg(*list, int);
+   int y = va_arg(*list, int);
+   unsigned int timestamp = va_arg(*list, unsigned int);
+   const void *data = va_arg(*list, const void *);
+
+   _canvas_event_feed_mouse_move_internal(eo_e, _pd, x, y, timestamp, data);
 }
 
 EAPI void

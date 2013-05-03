@@ -1,3 +1,7 @@
+2013-04-03  Rafael Antognolli
+
+        * Evas: Added evas_event_input_mouse_move() for internal use only.
+
 2013-04-29  ChunEon Park (Hermet)
 
         * Evas: Added evas_object_image_source_clip_set()/get().

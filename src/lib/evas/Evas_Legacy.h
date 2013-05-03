@@ -1105,6 +1105,27 @@ EAPI void evas_event_feed_mouse_down(Evas *e, int b, Evas_Button_Flags flags, un
 EAPI void evas_event_feed_mouse_up(Evas *e, int b, Evas_Button_Flags flags, unsigned int timestamp, const void *data) EINA_ARG_NONNULL(1);
 
 /**
+ * Mouse move event feed from input.
+ *
+ * @param e The given canvas pointer.
+ * @param x The horizontal position of the mouse pointer relative to the 0,0 of
+ * the window/surface.
+ * @param y The vertical position of the mouse pointer relative to the 0,0 of
+ * the window/surface.
+ * @param timestamp The timestamp of the mouse move event.
+ * @param data The data for canvas.
+ *
+ * Similar to the evas_event_feed_mouse_move(), this function will inform Evas
+ * about mouse move events which were received by the input system, relative to
+ * the 0,0 of the window, not to the canvas 0,0. It will take care of doing any
+ * special transformation like adding the framespace offset to the mouse event.
+ *
+ * @since 1.8
+ * @see evas_event_feed_mouse_move
+ */
+EAPI void evas_event_input_mouse_move(Evas *e, int x, int y, unsigned int timestamp, const void *data) EINA_ARG_NONNULL(1);
+
+/**
  * Mouse move event feed.
  *
  * @param e The given canvas pointer.
