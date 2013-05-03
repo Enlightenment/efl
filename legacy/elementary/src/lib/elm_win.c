@@ -2041,7 +2041,7 @@ _elm_win_property_change(void *data,
                          int type __UNUSED__,
                          void *event)
 {
-   Elm_Win_Smart_Data *sd = data;
+   ELM_WIN_DATA_GET(data, sd);
    Ecore_X_Event_Window_Property *e = event;
 
    if (e->atom == ECORE_X_ATOM_E_ILLUME_INDICATOR_STATE)
