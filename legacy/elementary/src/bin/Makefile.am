@@ -45,6 +45,7 @@ EXTRA_PROGRAMS = elementary_test elementary_config elementary_codegen elm_prefs_
 elementary_test_SOURCES = \
 test.c \
 test_3d.c \
+test_access.c \
 test_actionslider.c \
 test_anim.c \
 test_bg.c \

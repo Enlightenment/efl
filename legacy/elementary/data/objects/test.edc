@@ -708,4 +708,99 @@ collections {
             }
       }
    }
+   group { name: "access_page";
+      parts {
+         part { name: "slot.0.0"; type: SWALLOW;
+            description { state: "default" 0.0;
+              rel1 { relative: 0.0  0.0;
+              }
+              rel2 { relative: 0.33 0.33;
+              }
+            }
+         }
+         part { name: "slot.1.0"; type: SWALLOW;
+            description { state: "default" 0.0;
+              rel1 { relative: 0.33 0.0;
+              }
+              rel2 { relative: 0.66 0.33;
+              }
+            }
+         }
+         part { name: "slot.2.0"; type: SWALLOW;
+            description { state: "default" 0.0;
+              rel1 { relative: 0.66 0.0;
+              }
+              rel2 { relative: 1.0. 0.33;
+              }
+            }
+         }
+         part { name: "slot.0.1"; type: SWALLOW;
+            description { state: "default" 0.0;
+              rel1 { relative: 0.0  0.33;
+              }
+              rel2 { relative: 0.33 0.66;
+              }
+            }
+         }
+         part { name: "slot.1.1"; type: SWALLOW;
+            description { state: "default" 0.0;
+              rel1 { relative: 0.33 0.33;
+              }
+              rel2 { relative: 0.66 0.66;
+              }
+            }
+         }
+         part { name: "slot.2.1"; type: SWALLOW;
+            description { state: "default" 0.0;
+              rel1 { relative: 0.63 0.33;
+              }
+              rel2 { relative: 1.0 0.66;
+              }
+            }
+         }
+         part { name: "slot.0.2"; type: SWALLOW;
+            description { state: "default" 0.0;
+              rel1 { relative: 0.0  0.66;
+              }
+              rel2 { relative: 0.33 1.0;
+              }
+            }
+         }
+         part { name: "slot.1.2"; type: SWALLOW;
+            description { state: "default" 0.0;
+              rel1 { relative: 0.33 0.66;
+              }
+              rel2 { relative: 0.66 1.0;
+              }
+            }
+         }
+         part { name: "slot.2.2"; type: SWALLOW;
+            description { state: "default" 0.0;
+              rel1 { relative: 0.66 0.66;
+              }
+              rel2 { relative: 1.0 1.0;
+              }
+            }
+         }
+      }
+   }
+   group { name: "access_icon";
+      parts {
+         part { name: "slot"; type: SWALLOW;
+            description { state: "default" 0.0;
+              rel1 { relative: 0.0 0.0;
+              }
+              rel2 { relative: 1.00 1.00;
+              }
+            }
+         }
+         part { name: "access"; type: RECT;
+            description { state: "default" 0.0;
+              rel1.to: "slot";
+              rel2.to: "slot";
+              color: 0 0 0 0;
+            }
+		 }
+      }
+   }
 }
