@@ -1043,6 +1043,14 @@ _config_load(void)
      {
         if (_elm_config->config_version < ELM_CONFIG_VERSION)
           _config_update();
+
+        /* set the default value if the configuration was just added and the
+         * value is zero which means it was not supported before and invalid. */
+        if (_elm_config->thumbscroll_min_friction == 0.0)
+          _elm_config->thumbscroll_min_friction = 0.5;
+        if (_elm_config->thumbscroll_friction_standard == 0.0)
+          _elm_config->thumbscroll_friction_standard = 1000.0;
+
         return;
      }
 
