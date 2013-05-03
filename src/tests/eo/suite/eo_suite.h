@@ -7,5 +7,6 @@ void eo_test_init(TCase *tc);
 void eo_test_general(TCase *tc);
 void eo_test_class_errors(TCase *tc);
 void eo_test_value(TCase *tc);
+void eo_test_ptr_ind(TCase *tc);
 
 #endif /* _EO_SUITE_H */
