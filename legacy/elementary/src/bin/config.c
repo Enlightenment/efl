@@ -1161,7 +1161,7 @@ _config_display_update(Evas_Object *win)
                         s_bounce_friction);
    elm_check_state_set(evas_object_data_get(win, "thumbscroll_check"), ts);
    elm_slider_value_set(evas_object_data_get(win,
-                                             "thumbscroll_threshold_slider"),
+                                             "ts_threshold_slider"),
                         ts_threshould);
    elm_slider_value_set(evas_object_data_get(win,
                                              "ts_hold_threshold_slider"),
@@ -1170,13 +1170,13 @@ _config_display_update(Evas_Object *win)
                                              "ts_momentum_threshold_slider"),
                         ts_momentum_threshold);
    elm_slider_value_set(evas_object_data_get(win,
-                                             "thumbscroll_friction_slider"),
+                                             "ts_friction_slider"),
                         ts_friction);
    elm_slider_value_set(evas_object_data_get(win,
-                                             "thumbscroll_min_friction_slider"),
+                                             "ts_min_friction_slider"),
                         ts_min_friction);
    elm_slider_value_set(evas_object_data_get(win,
-                                             "thumbscroll_friction_standard_slider"),
+                                             "ts_friction_standard_slider"),
                         ts_friction_standard);
    elm_slider_value_set(evas_object_data_get(win, "ts_border_friction_slider"),
                         ts_border_friction);
@@ -2779,7 +2779,7 @@ _status_config_scrolling(Evas_Object *win,
    elm_object_tooltip_text_set(sl, "This is the number of pixels one should<br/>"
                                    "travel while dragging a scroller's view<br/>"
                                    "to actually trigger scrolling");
-   evas_object_data_set(win, "thumbscroll_threshold_slider", sl);
+   evas_object_data_set(win, "ts_threshold_slider", sl);
    evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);
    elm_slider_span_size_set(sl, 120);
@@ -2841,7 +2841,7 @@ _status_config_scrolling(Evas_Object *win,
    elm_object_tooltip_text_set(sl, "This is the amount of inertia a<br/>"
                                    "scroller will impose at self scrolling<br/>"
                                    "animations");
-   evas_object_data_set(win, "thumbscroll_friction_slider", sl);
+   evas_object_data_set(win, "ts_friction_slider", sl);
    evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);
    elm_slider_span_size_set(sl, 120);
@@ -2861,7 +2861,7 @@ _status_config_scrolling(Evas_Object *win,
    elm_object_tooltip_text_set(sl, "This is the min amount of inertia a<br/>"
                                    "scroller will impose at self scrolling<br/>"
                                    "animations");
-   evas_object_data_set(win, "thumbscroll_min_friction_slider", sl);
+   evas_object_data_set(win, "ts_min_friction_slider", sl);
    evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);
    elm_slider_span_size_set(sl, 120);
@@ -2882,7 +2882,7 @@ _status_config_scrolling(Evas_Object *win,
                                    "<br/>The scroll animation time is same<br/>"
                                    "with thumbscroll friction, if the velocity"
                                    "<br/>is same with standard velocity.");
-   evas_object_data_set(win, "thumbscroll_friction_standard_slider", sl);
+   evas_object_data_set(win, "ts_friction_standard_slider", sl);
    evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);
    elm_slider_span_size_set(sl, 120);
