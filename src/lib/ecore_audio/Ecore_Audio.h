@@ -37,17 +37,6 @@ extern "C"
  * @{
  */
 
-  /** @since 1.8
-   */
-enum _Ecore_Audio_Type {
-    ECORE_AUDIO_TYPE_PULSE,   /**< Use Pulseaudio module */
-    ECORE_AUDIO_TYPE_ALSA,    /**< Use ALSA module*/
-    ECORE_AUDIO_TYPE_SNDFILE, /**< Use libsndfile module */
-    ECORE_AUDIO_TYPE_TONE,    /**< Use tone module */
-    ECORE_AUDIO_TYPE_CUSTOM,  /**< Use custom module */
-    ECORE_AUDIO_MODULE_LAST,  /**< Sentinel */
-};
-
 /**
  * @since 1.8
  */
@@ -71,15 +60,6 @@ enum _Ecore_Audio_Format {
  */
 typedef enum _Ecore_Audio_Format Ecore_Audio_Format;
 /**< The format of the audio data */
-
-  /** @since 1.8
-   */
-typedef struct _Ecore_Audio_Module Ecore_Audio_Module;
-/**< The audio module */
-
-  /** @since 1.8
-   */
-typedef struct _Ecore_Audio_Object Ecore_Audio_Object;  /**< The audio object */
 
 /*
  * @since 1.8
