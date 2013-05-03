@@ -909,7 +909,7 @@ evas_gl_common_context_newframe(Evas_Engine_GL_Context *gc)
         if (getenv("EVAS_GL_DBG")) dbgflushnum = 1;
      }
    if (dbgflushnum) printf("----prev-flushnum: %i -----------------------------------\n", gc->flushnum);
-   fprintf(stderr, "------------------------\n");
+//   fprintf(stderr, "------------------------\n");
 
    gc->flushnum = 0;
    gc->state.current.cur_prog = 0;
