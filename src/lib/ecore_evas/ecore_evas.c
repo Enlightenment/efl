@@ -2611,7 +2611,7 @@ _ecore_evas_mouse_multi_move_process(Ecore_Evas *ee, int device,
                                      unsigned int timestamp)
 {
    if (ee->rotation == 0)
-      evas_event_feed_multi_move(ee->evas, device,
+     evas_event_input_multi_move(ee->evas, device,
                                  x, y,
                                  radius,
                                  radius_x, radius_y,
@@ -2620,7 +2620,7 @@ _ecore_evas_mouse_multi_move_process(Ecore_Evas *ee, int device,
                                  mx, my,
                                  timestamp, NULL);
    else if (ee->rotation == 90)
-      evas_event_feed_multi_move(ee->evas, device,
+     evas_event_input_multi_move(ee->evas, device,
                                  ee->h - y - 1, x,
                                  radius,
                                  radius_y, radius_x,
@@ -2629,7 +2629,7 @@ _ecore_evas_mouse_multi_move_process(Ecore_Evas *ee, int device,
                                  ee->h - my - 1, mx,
                                  timestamp, NULL);
    else if (ee->rotation == 180)
-      evas_event_feed_multi_move(ee->evas, device,
+     evas_event_input_multi_move(ee->evas, device,
                                  ee->w - x - 1, ee->h - y - 1,
                                  radius,
                                  radius_x, radius_y,
@@ -2638,7 +2638,7 @@ _ecore_evas_mouse_multi_move_process(Ecore_Evas *ee, int device,
                                  ee->w - mx - 1, ee->h - my - 1,
                                  timestamp, NULL);
    else if (ee->rotation == 270)
-      evas_event_feed_multi_move(ee->evas, device,
+     evas_event_input_multi_move(ee->evas, device,
                                  y, ee->w - x - 1,
                                  radius,
                                  radius_y, radius_x,

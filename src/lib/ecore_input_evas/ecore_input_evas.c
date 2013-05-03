@@ -424,7 +424,7 @@ ecore_event_evas_mouse_move(void *data EINA_UNUSED, int type EINA_UNUSED, void *
                               e->multi.pressure, e->multi.angle,
                               e->multi.x, e->multi.y, e->timestamp);
         else
-           evas_event_feed_multi_move(lookup->evas, e->multi.device,
+          evas_event_input_multi_move(lookup->evas, e->multi.device,
                                       e->x, e->y, e->multi.radius,
                                       e->multi.radius_x, e->multi.radius_y,
                                       e->multi.pressure, e->multi.angle,
