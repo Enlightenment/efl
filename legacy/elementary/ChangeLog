@@ -1331,3 +1331,4 @@
 2012-05-03 Shinwoo Kim
 
         * Fix gengrid does not work under the accessibility.
+        * Fix do not append NULL to genlist focus list.
