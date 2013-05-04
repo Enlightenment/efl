@@ -6618,7 +6618,7 @@ void             *evas_object_smart_interface_data_get(const Evas_Object *obj, c
  * @param obj The given Evas smart object
  *
  * This will flag the given object as needing recalculation,
- * forcefully. As an effect, on the next rendering cycle it's @b
+ * forcefully. As an effect, on the next rendering cycle its @b
  * calculate() (see #Evas_Smart_Class) smart function will be called.
  *
  * @see evas_object_smart_need_recalculate_set().
@@ -6647,8 +6647,7 @@ EAPI void         evas_object_smart_changed(Evas_Object *obj) EINA_ARG_NONNULL(1
  * @note just setting this flag will not make the canvas' whole scene
  *       dirty, by itself, and evas_render() will have no effect. To
  *       force that, use evas_object_smart_changed(), that will also
- *       automatically call this function automatically, with
- *       @c EINA_TRUE as parameter.
+ *       call this function automatically, with @c EINA_TRUE as parameter.
  *
  * @see evas_object_smart_need_recalculate_get()
  * @see evas_object_smart_calculate()
