@@ -313,15 +313,15 @@ _eo_id_release(const Eo_Id obj_id)
              entry->active = 0;
              entry->next_in_queue = -1;
              /* Push the entry into the queue */
-            if (table->queue_tail == -1)
-              {
-                 table->queue_head = table->queue_tail = entry_id;
-              }
-            else
-              {
-                 table->entries[table->queue_tail].next_in_queue = entry_id;
-                 table->queue_tail = entry_id;
-              }
+             if (table->queue_tail == -1)
+               {
+                  table->queue_head = table->queue_tail = entry_id;
+               }
+             else
+               {
+                  table->entries[table->queue_tail].next_in_queue = entry_id;
+                  table->queue_tail = entry_id;
+               }
              return;
           }
      }
