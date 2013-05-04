@@ -1,3 +1,7 @@
+2013-05-30  Jiyoun Park (jypark)
+
+        * Evas: Fix gif loader can't load image which has normal frames and error frames
+
 2013-04-03  Rafael Antognolli
 
         * Evas: Added evas_event_input_mouse_move() for internal use only.

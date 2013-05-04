@@ -8,6 +8,10 @@
 
 #include <gif_lib.h>
 
+#ifndef MIN
+# define MIN(a, b) (((a) < (b)) ? (a) : (b))
+#endif
+
 typedef struct _Gif_Frame Gif_Frame;
 
 typedef enum _Frame_Load_Type
@@ -699,6 +703,10 @@ evas_image_load_file_head_gif(Image_Entry *ie, const char *file, const char *key
    int            alpha;
    int            loop_count = -1;
    Eina_Bool      r = EINA_FALSE;
+   Eina_Bool      animated = EINA_FALSE;
+   //it is possible which gif file have error midle of frames,
+   //in that case we should play gif file until meet error frame.
+   int            image_count = 0;
 
    w = 0;
    h = 0;
@@ -753,6 +761,7 @@ evas_image_load_file_head_gif(Image_Entry *ie, const char *file, const char *key
      {
         if (DGifGetRecordType(gif, &rec) == GIF_ERROR)
           {
+             if (image_count > 1) break; //we should show normal frames.
              /* PrintGifError(); */
              *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
              goto on_error;
@@ -782,6 +791,7 @@ evas_image_load_file_head_gif(Image_Entry *ie, const char *file, const char *key
                   img = NULL;
                   DGifGetCodeNext(gif, &img);
                }
+             image_count++;
           }
         else if (rec == EXTENSION_RECORD_TYPE)
           {
@@ -820,12 +830,15 @@ evas_image_load_file_head_gif(Image_Entry *ie, const char *file, const char *key
 
    if (alpha >= 0) ie->flags.alpha = 1;
 
-   if (gif->ImageCount > 1)
+   if ((gif->ImageCount > 1) || (image_count > 1))
+     animated = EINA_TRUE;
+
+   if (animated)
      {
         ie->flags.animated = 1;
         ie->loop_count = loop_count;
         ie->loop_hint = EVAS_IMAGE_ANIMATED_HINT_LOOP;
-        ie->frame_count = gif->ImageCount;
+        ie->frame_count = MIN(gif->ImageCount, image_count);
         ie->frames = NULL;
      }
 
