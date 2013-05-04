@@ -1067,7 +1067,7 @@ _first_interval_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    double interval = va_arg(*list, double);
    Elm_Clock_Smart_Data *sd = _pd;
 
-   sd->first_interval = !!interval;
+   sd->first_interval = interval;
 }
 
 EAPI double

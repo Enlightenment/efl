@@ -225,6 +225,7 @@ Fixes:
    * Don't be dead even if a ctxpopup item callback is null.
    * Fix gengrid does not work under the accessibility.
    * Fix do not append NULL to genlist focus list.
+   * Fix elm_clock_first_interval_set writes wrong value.
 
 Removals:
 
