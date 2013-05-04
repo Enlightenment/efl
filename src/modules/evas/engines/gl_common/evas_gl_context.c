@@ -2742,13 +2742,14 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                        ch = gc->master_clip.h;
                     }
                }
-             if ((gc->pipe[i].shader.clip) || (gc->master_clip.enabled))
+             if ((gc->pipe[i].shader.clip) || 
+                 ((gc->master_clip.enabled) && (!fbo)))
                {
                   glEnable(GL_SCISSOR_TEST);
                   if (!fbo)
-                     scissor_rot(gc, gc->rot, gw, gh, cx, gh - cy - ch, cw, ch);
+                    scissor_rot(gc, gc->rot, gw, gh, cx, gh - cy - ch, cw, ch);
                   else
-                     glScissor(cx, cy, cw, ch);
+                    glScissor(cx, cy, cw, ch);
                   setclip = 1;
                   gc->state.current.cx = cx;
                   gc->state.current.cy = cy;
@@ -2766,7 +2767,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                }
           }
         if (((gc->pipe[i].shader.clip) && (!setclip)) ||
-            (gc->master_clip.enabled))
+            ((gc->master_clip.enabled) && (!fbo)))
           {
              int cx, cy, cw, ch;
              
@@ -2796,9 +2797,9 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                  (ch != gc->state.current.ch))
                {
                   if (!fbo)
-                     scissor_rot(gc, gc->rot, gw, gh, cx, gh - cy - ch, cw, ch);
+                    scissor_rot(gc, gc->rot, gw, gh, cx, gh - cy - ch, cw, ch);
                   else
-                     glScissor(cx, cy, cw, ch);
+                    glScissor(cx, cy, cw, ch);
                   gc->state.current.cx = cx;
                   gc->state.current.cy = cy;
                   gc->state.current.cw = cw;
