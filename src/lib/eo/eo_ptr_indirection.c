@@ -246,7 +246,7 @@ _eo_obj_pointer_get(const Eo_Id obj_id)
 }
 
 static inline _Eo_Id_Entry *
-get_available_entry(_Eo_Ids_Table *table)
+_get_available_entry(_Eo_Ids_Table *table)
 {
    _Eo_Id_Entry *entry = NULL;
 
@@ -270,7 +270,7 @@ get_available_entry(_Eo_Ids_Table *table)
 }
 
 static inline _Eo_Id_Entry *
-search_tables()
+_search_tables()
 {
    _Eo_Ids_Table *table;
    _Eo_Id_Entry *entry;
@@ -297,9 +297,7 @@ search_tables()
                   entry = &(table->entries[0]);
                }
              else
-               {
-                  entry = get_available_entry(table);
-               }
+               entry = _get_available_entry(table);
 
              if (entry)
                {
@@ -324,11 +322,11 @@ _eo_id_allocate(const _Eo *obj)
    _Eo_Id_Entry *entry = NULL;
 
    if (current_table.table)
-     entry = get_available_entry(current_table.table);
+     entry = _get_available_entry(current_table.table);
 
    if (!entry)
      {
-        entry = search_tables();
+        entry = _search_tables();
         if (!entry)
           return 0;
      }
