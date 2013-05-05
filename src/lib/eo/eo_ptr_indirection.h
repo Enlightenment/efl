@@ -41,14 +41,14 @@ void _eo_free_ids_tables();
 #define EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, ret) \
    _Eo *obj; \
    do { \
-        obj = _eo_obj_pointer_get(obj_id); \
+        obj = _eo_obj_pointer_get((Eo_Id)obj_id); \
         EO_MAGIC_RETURN_VAL(obj, EO_EINA_MAGIC, ret);  \
    } while (0)
 
 #define EO_OBJ_POINTER_RETURN(obj_id, obj)   \
    _Eo *obj; \
    do { \
-        obj = _eo_obj_pointer_get(obj_id);   \
+        obj = _eo_obj_pointer_get((Eo_Id)obj_id);   \
         EO_MAGIC_RETURN(obj, EO_EINA_MAGIC);  \
    } while (0)
 
