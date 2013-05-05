@@ -288,6 +288,7 @@
 #endif
 
 #include <Eina.h>
+#include <Eo.h>
 
 #ifdef EAPI
 # undef EAPI

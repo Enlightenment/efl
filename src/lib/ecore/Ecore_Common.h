@@ -2,7 +2,6 @@
 extern "C" {
 #endif
 
-#include <Eo.h>
 /**
  * @defgroup Ecore_Init_Group Ecore initialization, shutdown functions and reset on fork.
  * @ingroup Ecore
