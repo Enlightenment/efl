@@ -979,7 +979,6 @@ Eina_Bool
 _smart_members_changed_check(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 {
    Evas_Object_Protected_Data *o2;
-   Eina_Bool changed = EINA_FALSE;
 
    if (!evas_object_is_visible(eo_obj, obj) &&
        !evas_object_was_visible(eo_obj, obj))
@@ -992,11 +991,10 @@ _smart_members_changed_check(Evas_Object *eo_obj, Evas_Object_Protected_Data *ob
    EINA_INLIST_FOREACH(evas_object_smart_members_get_direct(eo_obj), o2)
      {
         if (!o2->changed) continue;
-        changed |= _smart_members_changed_check(o2->object, o2);
-        if (changed) return EINA_TRUE;
+        if (_smart_members_changed_check(o2->object, o2)) return EINA_TRUE;
      }
 
-   return changed;
+   return EINA_FALSE;
 }
 
 Eina_Bool
