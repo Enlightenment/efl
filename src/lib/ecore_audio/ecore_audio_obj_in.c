@@ -139,7 +139,7 @@ static void _remaining_get(Eo *eo_obj, void *_pd, va_list *list)
   }
 }
 
-static void _read(Eo *eo_obj, void *_pd, va_list *list)
+static void _in_read(Eo *eo_obj, void *_pd, va_list *list)
 {
   const Ecore_Audio_Input *obj = _pd;
   ssize_t len_read = 0;
@@ -271,7 +271,7 @@ static void _class_constructor(Eo_Class *klass)
       EO_OP_FUNC(ECORE_AUDIO_OBJ_IN_ID(ECORE_AUDIO_OBJ_IN_SUB_ID_LOOPED_GET), _looped_get),
       EO_OP_FUNC(ECORE_AUDIO_OBJ_IN_ID(ECORE_AUDIO_OBJ_IN_SUB_ID_LENGTH_GET), _length_get),
       EO_OP_FUNC(ECORE_AUDIO_OBJ_IN_ID(ECORE_AUDIO_OBJ_IN_SUB_ID_REMAINING_GET), _remaining_get),
-      EO_OP_FUNC(ECORE_AUDIO_OBJ_IN_ID(ECORE_AUDIO_OBJ_IN_SUB_ID_READ), _read),
+      EO_OP_FUNC(ECORE_AUDIO_OBJ_IN_ID(ECORE_AUDIO_OBJ_IN_SUB_ID_READ), _in_read),
       EO_OP_FUNC(ECORE_AUDIO_OBJ_IN_ID(ECORE_AUDIO_OBJ_IN_SUB_ID_READ_INTERNAL), _read_internal),
       EO_OP_FUNC(ECORE_AUDIO_OBJ_IN_ID(ECORE_AUDIO_OBJ_IN_SUB_ID_OUTPUT_GET), _output_get),
 

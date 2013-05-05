@@ -27,7 +27,7 @@ struct _Ecore_Audio_Tone
 
 typedef struct _Ecore_Audio_Tone Ecore_Audio_Tone;
 
-static void _read(Eo *eo_obj, void *_pd, va_list *list)
+static void _tone_read(Eo *eo_obj, void *_pd, va_list *list)
 {
   int i, remain;
   Ecore_Audio_Tone *obj = _pd;
@@ -161,7 +161,7 @@ static void _class_constructor(Eo_Class *klass)
 
       EO_OP_FUNC(ECORE_AUDIO_OBJ_IN_ID(ECORE_AUDIO_OBJ_IN_SUB_ID_LENGTH_SET), _length_set),
       EO_OP_FUNC(ECORE_AUDIO_OBJ_IN_ID(ECORE_AUDIO_OBJ_IN_SUB_ID_SEEK), _seek),
-      EO_OP_FUNC(ECORE_AUDIO_OBJ_IN_ID(ECORE_AUDIO_OBJ_IN_SUB_ID_READ_INTERNAL), _read),
+      EO_OP_FUNC(ECORE_AUDIO_OBJ_IN_ID(ECORE_AUDIO_OBJ_IN_SUB_ID_READ_INTERNAL), _tone_read),
 
       EO_OP_FUNC_SENTINEL
   };

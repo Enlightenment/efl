@@ -29,7 +29,7 @@ struct _Ecore_Audio_Sndfile
 
 typedef struct _Ecore_Audio_Sndfile Ecore_Audio_Sndfile;
 
-static void _read(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
+static void _sndfile_read(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
 {
   Ecore_Audio_Sndfile *obj = _pd;
   int read;
@@ -251,7 +251,7 @@ static void _class_constructor(Eo_Class *klass)
       EO_OP_FUNC(ECORE_AUDIO_OBJ_ID(ECORE_AUDIO_OBJ_SUB_ID_FORMAT_GET), _format_get),
 
       EO_OP_FUNC(ECORE_AUDIO_OBJ_IN_ID(ECORE_AUDIO_OBJ_IN_SUB_ID_SEEK), _seek),
-      EO_OP_FUNC(ECORE_AUDIO_OBJ_IN_ID(ECORE_AUDIO_OBJ_IN_SUB_ID_READ_INTERNAL), _read),
+      EO_OP_FUNC(ECORE_AUDIO_OBJ_IN_ID(ECORE_AUDIO_OBJ_IN_SUB_ID_READ_INTERNAL), _sndfile_read),
       EO_OP_FUNC(ECORE_AUDIO_OBJ_ID(ECORE_AUDIO_OBJ_SUB_ID_VIO_SET), _vio_set),
 
       EO_OP_FUNC_SENTINEL
