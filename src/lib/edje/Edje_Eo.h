@@ -1,5 +1,3 @@
-#include <Eo.h>
-
 #define EDJE_OBJ_CLASS edje_object_class_get()
 
 const Eo_Class *edje_object_class_get(void) EINA_CONST;

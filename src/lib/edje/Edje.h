@@ -213,6 +213,7 @@ param in edje programs
 #include <limits.h>
 
 #include <Evas.h>
+#include <Eo.h>
 
 #ifdef EAPI
 # undef EAPI
