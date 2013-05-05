@@ -258,3 +258,4 @@ Fixes:
     * Evas: Fix recursive proxy image rendering to just render black
     * Evas textblock: Fixed line size calculation when using multiple fonts.
     * Evas: Fix gif loader can't load image which has normal frames and error frames
+    * Ecore_Input_Evas: Fix ecore_input_evas didn't check the device id of mouse event

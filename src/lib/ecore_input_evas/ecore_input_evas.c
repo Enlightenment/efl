@@ -38,6 +38,7 @@ struct _Ecore_Input_Last
    Ecore_Event_Mouse_Button *ev;
    Ecore_Timer *timer;
 
+   unsigned int device;
    unsigned int buttons;
    Ecore_Input_State state;
 
@@ -57,20 +58,22 @@ static Eina_Bool _ecore_event_evas_mouse_button(Ecore_Event_Mouse_Button *e,
                                                 Eina_Bool faked);
 
 static Ecore_Event_Last *
-_ecore_event_evas_lookup(unsigned int buttons)
+_ecore_event_evas_lookup(unsigned int device, unsigned int buttons, Eina_Bool create_new)
 {
    Ecore_Event_Last *eel;
    Eina_List *l;
 
+   //the number of last event is small, simple check is ok.
    EINA_LIST_FOREACH(_last_events, l, eel)
-     if (eel->buttons == buttons)
+     if ((eel->device == device) && (eel->buttons == buttons))
        return eel;
-
+   if (!create_new) return NULL;
    eel = malloc(sizeof (Ecore_Event_Last));
    if (!eel) return NULL;
 
    eel->timer = NULL;
    eel->ev = NULL;
+   eel->device = device;
    eel->buttons = buttons;
    eel->state = ECORE_INPUT_NONE;
    eel->faked = EINA_FALSE;
@@ -113,7 +116,7 @@ _ecore_event_evas_push_mouse_button(Ecore_Event_Mouse_Button *e, Ecore_Event_Pre
 
    if (!_last_events_enable) return ;
 
-   eel = _ecore_event_evas_lookup(e->buttons);
+   eel = _ecore_event_evas_lookup(e->multi.device, e->buttons, EINA_TRUE);
    if (!eel) return ;
 
    switch (eel->state)
@@ -345,9 +348,20 @@ _ecore_event_evas_mouse_button(Ecore_Event_Mouse_Button *e, Ecore_Event_Press pr
    if (!lookup) return ECORE_CALLBACK_PASS_ON;
    if (e->double_click) flags |= EVAS_BUTTON_DOUBLE_CLICK;
    if (e->triple_click) flags |= EVAS_BUTTON_TRIPLE_CLICK;
+   INF("\tButtonEvent:ecore_event_evas press(%d), device(%d), button(%d), fake(%d)", press, e->multi.device, e->buttons, faked);
+   if (_last_events_enable)
+     {
+        //error handle: if ecore up without ecore down
+        if ((press == ECORE_UP) && (!_ecore_event_evas_lookup(e->multi.device, e->buttons, EINA_FALSE)))
+        {
+           INF("ButtonEvent: up event without down event.");
+           return ECORE_CALLBACK_PASS_ON;
+        }
+     }
+
+   if (!faked) _ecore_event_evas_push_mouse_button(e, press);
    if (e->multi.device == 0)
      {
-        if (!faked) _ecore_event_evas_push_mouse_button(e, press);
         ecore_event_evas_modifier_lock_update(lookup->evas, e->modifiers);
         if (press == ECORE_DOWN)
           evas_event_feed_mouse_down(lookup->evas, e->buttons, flags,

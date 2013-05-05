@@ -1,4 +1,8 @@
-2013-05-30  Jiyoun Park (jypark)
+2013-05-05  Jiyoun Park (jypark)
+
+        * Ecore_Input_Evas: Fix ecore_input_evas didn't check the device id of mouse event
+
+2013-05-05  Jiyoun Park (jypark)
 
         * Evas: Fix gif loader can't load image which has normal frames and error frames
 
