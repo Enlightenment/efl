@@ -157,6 +157,7 @@ Improvements:
     * Evas textblock : Added split cursor for BiDi text
     * Evas works around MESA/intel xorg bug where alpha channel of non-argb windows is not filled in with 0xff.
     * edje entry: remove duplicated ecore_imf_context_reset in adjusting the selection
+    * Evas: update the map smart members really when it needs to render.
 
 Fixes:
     * Fix a memory leak in ecore_con_dns when using ecore_con_server_connect

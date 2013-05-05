@@ -1,3 +1,7 @@
+2013-05-06  ChunEon Park (Hermet)
+
+        * Evas: update the map smart members really when it needs to render.
+
 2013-05-05  Jiyoun Park (jypark)
 
         * Ecore_Input_Evas: Fix ecore_input_evas didn't check the device id of mouse event

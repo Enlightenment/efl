@@ -976,6 +976,30 @@ _evas_render_can_use_overlay(Evas_Public_Data *e, Evas_Object *eo_obj)
 }
 
 Eina_Bool
+_smart_members_changed_check(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
+{
+   Evas_Object_Protected_Data *o2;
+   Eina_Bool changed = EINA_FALSE;
+
+   if (!evas_object_is_visible(eo_obj, obj) &&
+       !evas_object_was_visible(eo_obj, obj))
+     return EINA_FALSE;
+
+   if (!obj->smart.smart) return EINA_TRUE;
+   if (obj->changed_color) return EINA_TRUE;
+   if ((obj->changed_pchange) && (obj->changed_map)) return EINA_TRUE;
+
+   EINA_INLIST_FOREACH(evas_object_smart_members_get_direct(eo_obj), o2)
+     {
+        if (!o2->changed) continue;
+        changed |= _smart_members_changed_check(o2->object, o2);
+        if (changed) return EINA_TRUE;
+     }
+
+   return changed;
+}
+
+Eina_Bool
 evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
                    Evas_Object_Protected_Data *obj, void *context,
                    void *surface, int off_x, int off_y, int mapped, int ecx,
@@ -1099,22 +1123,14 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
           }
         if (obj->is_smart)
           {
-             Evas_Object *eo_o2;
              Evas_Object_Protected_Data *o2;
 
-             EINA_INLIST_FOREACH(evas_object_smart_members_get_direct(eo_obj), o2)
+             EINA_INLIST_FOREACH(evas_object_smart_members_get_direct(eo_obj),
+                                 o2)
                {
-                  eo_o2 = o2->object;
-                  if (!evas_object_is_visible(eo_o2, o2) &&
-                      !evas_object_was_visible(eo_o2, o2))
-                    {
-                       continue;
-                    }
-                  if (o2->changed)
-                    {
-                       changed = EINA_TRUE;
-                       break;
-                    }
+                  if (!o2->changed) continue;
+                  changed = _smart_members_changed_check(o2->object, o2);
+                  if (changed) break;
                }
              if (obj->changed_color) changed = EINA_TRUE;
           }
