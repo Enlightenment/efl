@@ -124,7 +124,7 @@ efreet_trash_dir_get(const char *file)
 
         if (path[0])
         {
-            snprintf(buf, sizeof(buf), "%s/.Trash-%d", path, getuid());
+            snprintf(buf, sizeof(buf), "%s/.Trash-%u", path, (unsigned int) getuid());
             if (!ecore_file_exists(buf) && !ecore_file_mkpath(buf))
                 return NULL;
 
