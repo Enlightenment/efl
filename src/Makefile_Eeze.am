@@ -133,8 +133,8 @@ bin_eeze_eeze_scanner_LDADD = @USE_EEZE_LIBS@
 bin_eeze_eeze_scanner_DEPENDENCIES = @USE_EEZE_INTERNAL_LIBS@
 
 setuid_root_mode = a=rx,u+xs
-install-data-hook::
-	@chmod $(setuid_root_mode) $(DESTDIR)$(bindir)/eeze_scanner$(EXEEXT) || true
+
+EFL_INSTALL_DATA_HOOK+=@chmod $(setuid_root_mode) $(DESTDIR)$(bindir)/eeze_scanner$(EXEEXT) || true;
 
 
 ### Unit tests
