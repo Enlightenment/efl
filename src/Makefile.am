@@ -99,3 +99,11 @@ clean-local:
 	find . -type f -name '*.gcno' -delete
 	find . -type f -name '*.gcda' -delete
 	find . -type f -name check-results.xml -delete
+
+install-data-hook:
+	echo $(DESTDIR)
+	echo $(libdir)
+	for i in $(lib_LTLIBRARIES); do \
+		export file=`basename $$i`; \
+		sed -e "s/-luuid//" $(DESTDIR)/${libdir}/$$file > $(DESTDIR)/${libdir}/$$file.tmp && mv $(DESTDIR)/${libdir}/$$file.tmp $(DESTDIR)/${libdir}/$$file; \
+	done
