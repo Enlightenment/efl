@@ -43,17 +43,20 @@
  *    - a flag indicating if the entry is active
  *    - a generation assigned to the object
  *    - an index 'next_in_queue' used to chain the entries in the queue
+ *
  * When an entry is searched into a table, we first use one of the entries that
  * has never been used. If there is none, we try to pop from the queue.
+ * Assigning all the entries of a table before trying to reuse them from
+ * the fifo ensures that we are not going to soon recycle a released entry,
+ * thus minimize the risks of an aggressive del() then use() on a single entry.
  * If a such entry doesn't exist, we pass to the next table.
  * When an entry is found, we reserve it to the object pointer and create
  * the id with the table id, the intermediate table id, the entry and a
  * generation.
+ * The indexes and a reference to the last table which served an entry is kept
+ * and is reused prior to the others untill it is full.
  * When an object is freed, the entry into the table is released by appending
  * it to the queue.
- * Assigning all the entries of a table before trying to reuse them from
- * the fifo ensures that we are not going to soon recycle a released entry,
- * thus minimize the risks of an aggressive del() then use() on a single entry.
  */
 
 #if SIZEOF_UINTPTR_T == 4
@@ -178,8 +181,22 @@ typedef struct
    Table_Index queue_tail;
 } _Eo_Ids_Table;
 
+/* Table Info */
+typedef struct
+{
+   /* Table pointer */
+   _Eo_Ids_Table *table;
+   /* Top table index */
+   Table_Index table_id;
+   /* Intermediate table index */
+   Table_Index int_table_id;
+} _Eo_Table_Info;
+
 /* Tables handling pointers indirection */
-_Eo_Ids_Table **_eo_ids_tables[MAX_IDS_TABLES] = { NULL };
+static _Eo_Ids_Table **_eo_ids_tables[MAX_IDS_TABLES] = { NULL };
+
+/* Current table used for following allocations */
+static _Eo_Table_Info current_table = { NULL, 0, 0 };
 
 /* Next generation to use when assigning a new entry to a Eo pointer */
 Generation_Counter _eo_generation_counter;
@@ -228,66 +245,104 @@ _eo_obj_pointer_get(const Eo_Id obj_id)
 #endif
 }
 
-Eo_Id
-_eo_id_allocate(const _Eo *obj)
+static inline _Eo_Id_Entry *
+get_available_entry(_Eo_Ids_Table *table)
 {
-#ifdef HAVE_EO_ID
-   _Eo_Ids_Table *table;
    _Eo_Id_Entry *entry = NULL;
+
+   if (table->start != MAX_IDS_PER_TABLE)
+     {
+        /* Serve never used entries first */
+        entry = &(table->entries[table->start]);
+        table->start++;
+     }
+   else if (table->queue_head != -1)
+     {
+        /* Pop an unused entry from the queue */
+        entry = &(table->entries[table->queue_head]);
+        if (entry->next_in_queue == -1)
+          table->queue_head = table->queue_tail = -1;
+        else
+          table->queue_head = entry->next_in_queue;
+     }
+
+   return entry;
+}
+
+static inline _Eo_Id_Entry *
+search_tables()
+{
+   _Eo_Ids_Table *table;
+   _Eo_Id_Entry *entry;
+
    for (Table_Index table_id = 1; table_id < MAX_IDS_TABLES; table_id++)
      {
         if (!_eo_ids_tables[table_id])
           {
-             /* We allocate a new intermediate table */
+             /* Allocate a new intermediate table */
              _eo_ids_tables[table_id] = _eo_id_mem_calloc(MAX_IDS_INTER_TABLES, sizeof(_Eo_Ids_Table*));
           }
+
         for (Table_Index int_table_id = 0; int_table_id < MAX_IDS_INTER_TABLES; int_table_id++)
           {
              table = ID_TABLE;
+
              if (!table)
                {
-                  /* We allocate a new table */
+                  /* Allocate a new table and reserve the first entry */
                   table = _eo_id_mem_calloc(1, sizeof(_Eo_Ids_Table));
                   table->start = 1;
                   table->queue_head = table->queue_tail = -1;
                   ID_TABLE = table;
-                  /* We select directly the first entry of the new table */
                   entry = &(table->entries[0]);
-               }
-             else if (table->start < MAX_IDS_PER_TABLE)
-               {
-                  /* We use an empty entries in the table */
-                  entry = &(table->entries[table->start]);
-                  table->start++;
-               }
-             else if (table->queue_head != -1)
-               {
-                  /* We pop an unused entry from the queue */
-                  entry = &(table->entries[table->queue_head]);
-                  if (entry->next_in_queue == -1)
-                    table->queue_head = table->queue_tail = -1;
-                  else
-                     table->queue_head = entry->next_in_queue;
                }
              else
                {
-                  /* Table is full of actives entries */
-                  continue;
+                  entry = get_available_entry(table);
                }
 
-             assert(entry);
-             /* An entry was found - need to find the entry id and fill it */
-             entry->ptr = (_Eo *)obj;
-             entry->active = 1;
-             entry->generation = _eo_generation_counter;
-             _eo_generation_counter++;
-             _eo_generation_counter %= MAX_GENERATIONS;
-             return EO_COMPOSE_ID(table_id, int_table_id,
-                                  (entry - table->entries),
-                                  entry->generation);
+             if (entry)
+               {
+                  /* Store table info into current table */
+                  current_table.table = table;
+                  current_table.table_id = table_id;
+                  current_table.int_table_id = int_table_id;
+                  return entry;
+               }
           }
      }
-   return 0;
+
+   ERR("no more available entries to store eo objects");
+   current_table.table = NULL;
+   return NULL;
+}
+
+Eo_Id
+_eo_id_allocate(const _Eo *obj)
+{
+#ifdef HAVE_EO_ID
+   _Eo_Id_Entry *entry = NULL;
+
+   if (current_table.table)
+     entry = get_available_entry(current_table.table);
+
+   if (!entry)
+     {
+        entry = search_tables();
+        if (!entry)
+          return 0;
+     }
+
+   /* An entry was found - fill it */
+   entry->ptr = (_Eo *)obj;
+   entry->active = 1;
+   entry->generation = _eo_generation_counter;
+   _eo_generation_counter++;
+   _eo_generation_counter %= MAX_GENERATIONS;
+   return EO_COMPOSE_ID(current_table.table_id,
+                        current_table.int_table_id,
+                        (entry - current_table.table->entries),
+                        entry->generation);
 #else
    return (Eo_Id)obj;
 #endif
@@ -350,6 +405,7 @@ _eo_free_ids_tables()
           }
         _eo_ids_tables[table_id] = NULL;
      }
+   current_table.table = NULL;
 }
 
 #ifdef EFL_DEBUG
