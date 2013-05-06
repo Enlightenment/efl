@@ -553,10 +553,7 @@ _ecore_evas_wayland_shm_resize(Ecore_Evas *ee, int location)
         Evas_Engine_Info_Wayland_Shm *einfo;
 
         wdata->win->resizing = EINA_TRUE;
-        if ((ee->rotation == 90) || (ee->rotation == 270))
-          evas_output_framespace_get(ee->evas, NULL, NULL, &fh, &fw);
-        else
-          evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
+        evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
 
         if ((ee->rotation == 90) || (ee->rotation == 270))
           ecore_wl_window_resize(wdata->win, ee->w + fh, ee->h + fw, location);
