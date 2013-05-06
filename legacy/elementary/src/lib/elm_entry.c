@@ -4331,13 +4331,20 @@ elm_entry_filter_accept_set(void *data,
                   if (read_char == ';')
                     {
                        char *tag;
+                       int utf8;
                        tag = malloc(read_idx - last_read_idx + 1);
                        if (tag)
                          {
                             strncpy(tag, (*text) + last_read_idx, read_idx - last_read_idx);
-                            tag[read_idx - last_read_idx] = 0;
-                            read_char = *(elm_entry_markup_to_utf8(tag));
+                            tag[read_idx - last_read_idx] = 0;                            
+                            utf8 = *(elm_entry_markup_to_utf8(tag));
                             free(tag);
+                            if (!utf8)
+                              {
+                                 in_set = EINA_FALSE;
+                                 goto inserting;
+                              }
+                            read_char = utf8;
                          }
                     }
                }
