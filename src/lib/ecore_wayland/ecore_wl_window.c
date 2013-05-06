@@ -455,6 +455,34 @@ ecore_wl_window_transparent_set(Ecore_Wl_Window *win, Eina_Bool transparent)
 }
 
 EAPI Eina_Bool
+ecore_wl_window_alpha_get(Ecore_Wl_Window *win)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!win) return EINA_FALSE;
+
+   return win->alpha;
+}
+
+EAPI void
+ecore_wl_window_alpha_set(Ecore_Wl_Window *win, Eina_Bool alpha)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!win) return;
+   win->alpha = alpha;
+   if (win->region.opaque) wl_region_destroy(win->region.opaque);
+   win->region.opaque = NULL;
+   if ((!win->transparent) && (!win->alpha))
+     {
+        win->region.opaque =
+          wl_compositor_create_region(_ecore_wl_disp->wl.compositor);
+        wl_region_add(win->region.opaque, win->allocation.x, win->allocation.y,
+                      win->allocation.w, win->allocation.h);
+     }
+}
+
+EAPI Eina_Bool
 ecore_wl_window_transparent_get(Ecore_Wl_Window *win)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);

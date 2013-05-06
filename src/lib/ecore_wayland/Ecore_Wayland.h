@@ -649,6 +649,9 @@ EAPI Eina_Bool ecore_wl_dnd_selection_has_owner(Ecore_Wl_Dnd *dnd);
  */
 EAPI struct wl_surface *ecore_wl_window_surface_create(Ecore_Wl_Window *win);
 
+EAPI void ecore_wl_window_alpha_set(Ecore_Wl_Window *win, Eina_Bool alpha);
+EAPI Eina_Bool ecore_wl_window_alpha_get(Ecore_Wl_Window *win);
+
 #ifdef __cplusplus
 }
 #endif

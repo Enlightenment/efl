@@ -424,16 +424,22 @@ _ecore_evas_wl_hide(Ecore_Evas *ee)
    if (ee->func.fn_hide) ee->func.fn_hide(ee);
 }
 
-static void 
+static void
 _ecore_evas_wl_alpha_set(Ecore_Evas *ee, int alpha)
 {
    Evas_Engine_Info_Wayland_Egl *einfo;
+   Ecore_Evas_Engine_Wl_Data *wdata;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!ee) return;
    if ((ee->alpha == alpha)) return;
    ee->alpha = alpha;
+
+   wdata = ee->engine.data;
+   if (wdata->win)
+     ecore_wl_window_alpha_set(wdata->win, alpha);
+
    if ((einfo = (Evas_Engine_Info_Wayland_Egl *)evas_engine_info_get(ee->evas)))
      {
         int fw, fh;
