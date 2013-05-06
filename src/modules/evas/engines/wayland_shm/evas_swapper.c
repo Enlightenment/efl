@@ -17,6 +17,7 @@
 typedef struct _Wl_Buffer Wl_Buffer;
 struct _Wl_Buffer
 {
+   Wl_Swapper *ws;
    int w, h;
    struct wl_buffer *buffer;
    void *data;
@@ -28,6 +29,7 @@ struct _Wl_Buffer
 struct _Wl_Swapper
 {
    Wl_Buffer buff[3];
+   int in_use;
    int dx, dy, w, h, depth;
    int buff_cur, buff_num;
    struct wl_shm *shm;
@@ -38,6 +40,7 @@ struct _Wl_Swapper
    void *data;
    Eina_Bool alpha : 1;
    Eina_Bool mapped : 1;
+   Eina_Bool delete_me : 1;
 };
 
 /* local function prototypes */
@@ -179,6 +182,7 @@ evas_swapper_swap(Wl_Swapper *ws, Eina_Rectangle *rects, unsigned int count)
    n = ws->buff_cur;
    _evas_swapper_buffer_put(ws, &(ws->buff[n]), rects, count);
    ws->buff[n].valid = EINA_TRUE;
+   ws->in_use++;
    ws->buff_cur = (ws->buff_cur + 1) % ws->buff_num;
 }
 
@@ -195,6 +199,12 @@ evas_swapper_free(Wl_Swapper *ws)
    /* loop the swapper's buffers and free them */
    for (i = 0; i < ws->buff_num; i++)
      _evas_swapper_buffer_free(&(ws->buff[i]));
+
+   if (ws->in_use)
+     {
+        ws->delete_me = EINA_TRUE;
+        return;
+     }
 
    /* free the shm pool */
    _evas_swapper_shm_pool_free(ws);
@@ -404,6 +414,8 @@ _evas_swapper_buffer_new(Wl_Swapper *ws, Wl_Buffer *wb)
 
    ws->used_size += size;
 
+   wb->ws = ws;
+
    /* return allocated buffer */
    return EINA_TRUE;
 }
@@ -489,6 +501,7 @@ static void
 _evas_swapper_buffer_release(void *data, struct wl_buffer *buffer EINA_UNUSED)
 {
    Wl_Buffer *wb = NULL;
+   Wl_Swapper *ws = NULL;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -497,4 +510,9 @@ _evas_swapper_buffer_release(void *data, struct wl_buffer *buffer EINA_UNUSED)
 
    /* invalidate buffer */
    wb->valid = EINA_FALSE;
+
+   ws = wb->ws;
+   ws->in_use--;
+   if (ws->delete_me && (ws->in_use <= 0))
+     evas_swapper_free(ws);
 }
