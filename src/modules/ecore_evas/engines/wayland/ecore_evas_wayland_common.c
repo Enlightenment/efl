@@ -38,6 +38,9 @@ static void _ecore_evas_wayland_resize(Ecore_Evas *ee, int location);
 /* local function prototypes */
 static int _ecore_evas_wl_common_render_updates_process(Ecore_Evas *ee, Eina_List *updates);
 void _ecore_evas_wl_common_render_updates(void *data, Evas *evas EINA_UNUSED, void *event);
+static void _rotation_do(Ecore_Evas *ee, int rotation, int resize);
+static void _ecore_evas_wayland_alpha_do(Ecore_Evas *ee, int alpha);
+static void _ecore_evas_wayland_transparent_do(Ecore_Evas *ee, int transparent);
 
 /* Frame listener */
 static void _ecore_evas_wl_frame_complete(void *data, struct wl_callback *callback, uint32_t tm);
@@ -267,8 +270,8 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
    return ECORE_CALLBACK_PASS_ON;
 }
 
-void
-_ecore_evas_wl_common_rotation_set(Ecore_Evas *ee, int rotation, int resize)
+static void
+_rotation_do(Ecore_Evas *ee, int rotation, int resize)
 {
    Ecore_Evas_Engine_Wl_Data *wdata;
    int rot_dif;
@@ -369,6 +372,19 @@ _ecore_evas_wl_common_rotation_set(Ecore_Evas *ee, int rotation, int resize)
         else
           evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
      }
+}
+
+void
+_ecore_evas_wl_common_rotation_set(Ecore_Evas *ee, int rotation, int resize)
+{
+   if (ee->in_async_render)
+     {
+        ee->delayed.rotation = rotation;
+        ee->delayed.rotation_resize = resize;
+        ee->delayed.rotation_changed = EINA_TRUE;
+        return;
+     }
+   _rotation_do(ee, rotation, resize);
 }
 
 int
@@ -1046,6 +1062,22 @@ _ecore_evas_wl_common_render_updates(void *data, Evas *evas EINA_UNUSED, void *e
    ee->in_async_render = EINA_FALSE;
 
    _ecore_evas_wl_common_render_updates_process(ee, ev->updated_area);
+
+   if (ee->delayed.alpha_changed)
+     {
+        _ecore_evas_wayland_alpha_do(ee, ee->delayed.alpha);
+        ee->delayed.alpha_changed = EINA_FALSE;
+     }
+   if (ee->delayed.transparent_changed)
+     {
+        _ecore_evas_wayland_transparent_do(ee, ee->delayed.transparent);
+        ee->delayed.transparent_changed = EINA_FALSE;
+     }
+   if (ee->delayed.rotation_changed)
+     {
+        _rotation_do(ee, ee->delayed.rotation, ee->delayed.rotation_resize);
+        ee->delayed.rotation_changed = EINA_FALSE;
+     }
 }
 
 void
@@ -1179,6 +1211,30 @@ _ecore_evas_wayland_resize(Ecore_Evas *ee, int location)
      {
 #ifdef BUILD_ECORE_EVAS_WAYLAND_EGL
         _ecore_evas_wayland_egl_resize(ee, location);
+#endif
+     }
+}
+
+static void
+_ecore_evas_wayland_alpha_do(Ecore_Evas *ee, int alpha)
+{
+   if (!ee) return;
+   if (!strcmp(ee->driver, "wayland_shm"))
+     {
+#ifdef BUILD_ECORE_EVAS_WAYLAND_SHM
+        _ecore_evas_wayland_shm_alpha_do(ee, alpha);
+#endif
+     }
+}
+
+static void
+_ecore_evas_wayland_transparent_do(Ecore_Evas *ee, int transparent)
+{
+   if (!ee) return;
+   if (!strcmp(ee->driver, "wayland_shm"))
+     {
+#ifdef BUILD_ECORE_EVAS_WAYLAND_SHM
+        _ecore_evas_wayland_shm_transparent_do(ee, transparent);
 #endif
      }
 }

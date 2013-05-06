@@ -74,6 +74,8 @@ void _ecore_evas_wl_common_frame_border_size_set(Evas_Object *obj, int fx, int f
 
 #ifdef BUILD_ECORE_EVAS_WAYLAND_SHM
 void _ecore_evas_wayland_shm_resize(Ecore_Evas *ee, int location);
+void _ecore_evas_wayland_shm_transparent_do(Ecore_Evas *ee, int transparent);
+void _ecore_evas_wayland_shm_alpha_do(Ecore_Evas *ee, int transparent);
 #endif
 
 #ifdef BUILD_ECORE_EVAS_WAYLAND_EGL

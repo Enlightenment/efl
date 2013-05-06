@@ -445,8 +445,8 @@ _ecore_evas_wl_hide(Ecore_Evas *ee)
    if (ee->func.fn_hide) ee->func.fn_hide(ee);
 }
 
-static void 
-_ecore_evas_wl_alpha_set(Ecore_Evas *ee, int alpha)
+void
+_ecore_evas_wayland_shm_alpha_do(Ecore_Evas *ee, int alpha)
 {
    Evas_Engine_Info_Wayland_Shm *einfo;
    Ecore_Evas_Engine_Wl_Data *wdata;
@@ -483,8 +483,20 @@ _ecore_evas_wl_alpha_set(Ecore_Evas *ee, int alpha)
      ecore_wl_window_update_size(win, ee->w + fw, ee->h + fh);
 }
 
-static void 
-_ecore_evas_wl_transparent_set(Ecore_Evas *ee, int transparent)
+static void
+_ecore_evas_wl_alpha_set(Ecore_Evas *ee, int alpha)
+{
+   if (ee->in_async_render)
+     {
+        ee->delayed.alpha = alpha;
+        ee->delayed.alpha_changed = EINA_TRUE;
+        return;
+     }
+   _ecore_evas_wayland_shm_alpha_do(ee, alpha);
+}
+
+void
+_ecore_evas_wayland_shm_transparent_do(Ecore_Evas *ee, int transparent)
 {
    Evas_Engine_Info_Wayland_Shm *einfo;
    Ecore_Evas_Engine_Wl_Data *wdata;
@@ -512,6 +524,18 @@ _ecore_evas_wl_transparent_set(Ecore_Evas *ee, int transparent)
 
    if (wdata->win)
      ecore_wl_window_update_size(wdata->win, ee->w + fw, ee->h + fh);
+}
+
+static void
+_ecore_evas_wl_transparent_set(Ecore_Evas *ee, int transparent)
+{
+   if (ee->in_async_render)
+     {
+        ee->delayed.transparent = transparent;
+        ee->delayed.transparent_changed = EINA_TRUE;
+        return;
+     }
+   _ecore_evas_wayland_shm_transparent_do(ee, transparent);
 }
 
 void 
