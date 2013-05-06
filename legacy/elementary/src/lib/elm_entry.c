@@ -47,8 +47,8 @@ static const char SIG_SELECTION_COPY[] = "selection,copy";
 static const char SIG_SELECTION_CUT[] = "selection,cut";
 static const char SIG_SELECTION_PASTE[] = "selection,paste";
 static const char SIG_SELECTION_START[] = "selection,start";
-static const char SIG_THEME_CHANGED[] = "theme,changed";
 static const char SIG_TEXT_SET_DONE[] = "text,set,done";
+static const char SIG_THEME_CHANGED[] = "theme,changed";
 static const char SIG_UNDO_REQUEST[] = "undo,request";
 static const char SIG_UNFOCUSED[] = "unfocused";
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
@@ -80,8 +80,8 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_SELECTION_CUT, ""},
    {SIG_SELECTION_PASTE, ""},
    {SIG_SELECTION_START, ""},
-   {SIG_THEME_CHANGED, ""},
    {SIG_TEXT_SET_DONE, ""},
+   {SIG_THEME_CHANGED, ""},
    {SIG_UNDO_REQUEST, ""},
    {SIG_UNFOCUSED, ""},
    {NULL, NULL}
