@@ -189,14 +189,6 @@ ecore_wl_window_resize(Ecore_Wl_Window *win, int w, int h, int location)
         wl_region_destroy(win->region.input);
         win->region.input = NULL;
      }
-
-   if (win->surface)
-     wl_surface_set_opaque_region(win->surface, win->region.opaque);
-   if (win->region.opaque)
-     {
-        wl_region_destroy(win->region.opaque);
-        win->region.opaque = NULL;
-     }
 }
 
 EAPI void 
@@ -437,15 +429,7 @@ ecore_wl_window_transparent_set(Ecore_Wl_Window *win, Eina_Bool transparent)
 
    if (!win) return;
    win->transparent = transparent;
-   if (win->region.opaque) wl_region_destroy(win->region.opaque);
-   win->region.opaque = NULL;
-   if ((!win->transparent) && (!win->alpha))
-     {
-        win->region.opaque = 
-          wl_compositor_create_region(_ecore_wl_disp->wl.compositor);
-        wl_region_add(win->region.opaque, win->allocation.x, win->allocation.y, 
-                      win->allocation.w, win->allocation.h);
-     }
+   ecore_wl_window_update_size(win, win->allocation.w, win->allocation.h);
 }
 
 EAPI Eina_Bool
@@ -465,15 +449,7 @@ ecore_wl_window_alpha_set(Ecore_Wl_Window *win, Eina_Bool alpha)
 
    if (!win) return;
    win->alpha = alpha;
-   if (win->region.opaque) wl_region_destroy(win->region.opaque);
-   win->region.opaque = NULL;
-   if ((!win->transparent) && (!win->alpha))
-     {
-        win->region.opaque =
-          wl_compositor_create_region(_ecore_wl_disp->wl.compositor);
-        wl_region_add(win->region.opaque, win->allocation.x, win->allocation.y,
-                      win->allocation.w, win->allocation.h);
-     }
+   ecore_wl_window_update_size(win, win->allocation.w, win->allocation.h);
 }
 
 EAPI Eina_Bool
@@ -489,24 +465,25 @@ ecore_wl_window_transparent_get(Ecore_Wl_Window *win)
 EAPI void 
 ecore_wl_window_update_size(Ecore_Wl_Window *win, int w, int h)
 {
+   struct wl_region *opaque = NULL;
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!win) return;
    win->allocation.w = w;
    win->allocation.h = h;
 
-   if (win->region.opaque) wl_region_destroy(win->region.opaque);
-
    if ((!win->transparent) && (!win->alpha))
      {
-        win->region.opaque = 
-          wl_compositor_create_region(_ecore_wl_disp->wl.compositor);
-        wl_region_add(win->region.opaque, win->allocation.x, win->allocation.y, 
+        opaque = wl_compositor_create_region(_ecore_wl_disp->wl.compositor);
+        wl_region_add(opaque, win->allocation.x, win->allocation.y,
                       win->allocation.w, win->allocation.h);
      }
-   else
-     win->region.opaque = NULL;
 
+   if (win->surface)
+     wl_surface_set_opaque_region(win->surface, opaque);
+
+   if (opaque)
+        wl_region_destroy(opaque);
 }
 
 EAPI void 
