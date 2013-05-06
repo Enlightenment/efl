@@ -862,7 +862,7 @@ START_TEST(eo_pointers_indirection)
    fail_if(eo_isa(obj1, klass));
    eo_unref(obj2);
 
-#define NB_OBJS 100
+#define NB_OBJS 10000
    unsigned int obj_id;
    Eo **objs = calloc(NB_OBJS, sizeof(Eo *));
    fail_if(!objs);
@@ -889,6 +889,8 @@ START_TEST(eo_pointers_indirection)
    /* Deletion of all the objects */
    for ( obj_id = 0; obj_id < NB_OBJS; obj_id++)
       eo_unref(objs[obj_id]);
+   /* Just be sure that we trigger an already freed error */
+   eo_unref(objs[0]);
    free(objs);
 
    eo_shutdown();
