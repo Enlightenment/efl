@@ -146,13 +146,26 @@ is_psd(PSD_Header *header)
    return EINA_TRUE;
 }
 
-static Eina_Bool
-evas_image_load_file_head_psd(Eina_File *f, const char *key EINA_UNUSED,
-			      Evas_Image_Property *prop,
+static void *
+evas_image_load_file_open_psd(Eina_File *f, const char *key EINA_UNUSED,
 			      Evas_Image_Load_Opts *opts EINA_UNUSED,
 			      Evas_Image_Animated *animated EINA_UNUSED,
+			      int *error EINA_UNUSED)
+{
+   return f;
+}
+
+static void
+evas_image_load_file_close_psd(void *loader_data EINA_UNUSED)
+{
+}
+
+static Eina_Bool
+evas_image_load_file_head_psd(void *loader_data,
+			      Evas_Image_Property *prop,
 			      int *error)
 {
+   Eina_File *f = loader_data;
    void *map;
    size_t length;
    size_t position;
@@ -797,13 +810,13 @@ read_psd_cmyk(Evas_Image_Property *prop, void *pixels, PSD_Header *head, const u
 }
 
 static Eina_Bool
-evas_image_load_file_data_psd(Eina_File *f, const char *key EINA_UNUSED,
+evas_image_load_file_data_psd(void *loader_data,
 			      Evas_Image_Property *prop,
-			      Evas_Image_Load_Opts *opts EINA_UNUSED,
-			      Evas_Image_Animated *animated EINA_UNUSED,
 			      void *pixels,
 			      int *error)
 {
+   Eina_File *f = loader_data;
+
    void *map;
    size_t length;
    size_t position;
@@ -884,6 +897,8 @@ get_compressed_channels_length(PSD_Header *head,
 
 static const Evas_Image_Load_Func evas_image_load_psd_func = {
   EINA_TRUE,
+  evas_image_load_file_open_psd,
+  evas_image_load_file_close_psd,
   evas_image_load_file_head_psd,
   evas_image_load_file_data_psd,
   NULL,

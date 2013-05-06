@@ -7,17 +7,20 @@
 #include "evas_common.h"
 #include "evas_private.h"
 
-static Eina_Bool
-evas_image_load_file_head_eet(Eina_File *f, const char *key,
-			      Evas_Image_Property *prop,
-			      Evas_Image_Load_Opts *opts EINA_UNUSED,
-			      Evas_Image_Animated *animated EINA_UNUSED,
-			      int *error)
+typedef struct _Evas_Loader_Internal Evas_Loader_Internal;
+struct _Evas_Loader_Internal
 {
-   Eet_File *ef = NULL;
-   int       a, compression, quality, lossy;
-   int       ok;
-   Eina_Bool res = EINA_FALSE;
+   Eet_File *ef;
+   const char *key;
+};
+
+static void *
+evas_image_load_file_open_eet(Eina_File *f, const char *key,
+                              Evas_Image_Load_Opts *opts EINA_UNUSED,
+                              Evas_Image_Animated *animated EINA_UNUSED,
+                              int *error)
+{
+   Evas_Loader_Internal *loader;
 
    if (!key)
      {
@@ -25,66 +28,80 @@ evas_image_load_file_head_eet(Eina_File *f, const char *key,
 	return EINA_FALSE;
      }
 
-   ef = eet_mmap(f);
-   if (!ef)
+   loader = calloc(1, sizeof (Evas_Loader_Internal));
+   if (!loader)
      {
-	*error = EVAS_LOAD_ERROR_CORRUPT_FILE;
-	goto on_error;
+        *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+        return NULL;
      }
-   ok = eet_data_image_header_read(ef, key,
+
+   loader->ef = eet_mmap(f);
+   if (!loader->ef)
+     {
+        free(loader);
+        *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
+        return NULL;
+     }
+
+   loader->key = eina_stringshare_ref(key);
+   return loader;
+}
+
+static void
+evas_image_load_file_close_eet(void *loader_data)
+{
+   Evas_Loader_Internal *loader = loader_data;
+
+   eet_close(loader->ef);
+   eina_stringshare_del(loader->key);
+   free(loader);
+}
+
+static inline Eina_Bool
+_evas_image_load_return_error(int err, int *error)
+{
+   *error = err;
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+evas_image_load_file_head_eet(void *loader_data,
+			      Evas_Image_Property *prop,
+			      int *error)
+{
+   Evas_Loader_Internal *loader = loader_data;
+   int       a, compression, quality, lossy;
+   int       ok;
+
+   ok = eet_data_image_header_read(loader->ef, loader->key,
 				   &prop->w, &prop->h, &a, &compression, &quality, &lossy);
    if (!ok)
-     {
-	*error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
-	goto on_error;
-     }
+     return _evas_image_load_return_error(EVAS_LOAD_ERROR_DOES_NOT_EXIST, error);
    if (IMG_TOO_BIG(prop->w, prop->h))
-     {
-	*error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
-	goto on_error;
-     }
+     return _evas_image_load_return_error(EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED, error);
+
    prop->alpha = !!a;
-   res = EINA_TRUE;
    *error = EVAS_LOAD_ERROR_NONE;
 
- on_error:
-   if (ef) eet_close(ef);
-   return res;
+   return EINA_TRUE;
 }
 
 Eina_Bool
-evas_image_load_file_data_eet(Eina_File *f, const char *key,
-			      Evas_Image_Property *prop,
-                              Evas_Image_Load_Opts *opts EINA_UNUSED,
-			      Evas_Image_Animated *animated EINA_UNUSED,
-			      void *pixels,
+evas_image_load_file_data_eet(void *loader_data,
+                              Evas_Image_Property *prop,
+                              void *pixels,
 			      int *error)
 {
+   Evas_Loader_Internal *loader = loader_data;
    int       alpha, compression, quality, lossy, ok;
-   Eet_File *ef;
    DATA32   *body, *p, *end;
    DATA32    nas = 0;
-   Eina_Bool res = EINA_FALSE;
 
-   if (!key)
-     {
-	*error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
-	return EINA_FALSE;
-     }
-   ef = eet_mmap(f);
-   if (!ef)
-     {
-	*error = EVAS_LOAD_ERROR_CORRUPT_FILE;
-        goto on_error;
-     }
-   ok = eet_data_image_read_to_surface(ef, key, 0, 0,
+   ok = eet_data_image_read_to_surface(loader->ef, loader->key, 0, 0,
 				       pixels, prop->w, prop->h, prop->w * 4,
 				       &alpha, &compression, &quality, &lossy);
    if (!ok)
-     {
-	*error = EVAS_LOAD_ERROR_GENERIC;
-	goto on_error;
-     }
+     return _evas_image_load_return_error(EVAS_LOAD_ERROR_GENERIC, error);
    
    if (alpha)
      {
@@ -112,16 +129,15 @@ evas_image_load_file_data_eet(Eina_File *f, const char *key,
 // result is already premultiplied now if u compile with edje
 //   evas_common_image_premul(im);
    *error = EVAS_LOAD_ERROR_NONE;
-   res = EINA_TRUE;
 
- on_error:
-   if (ef) eet_close(ef);
-   return res;
+   return EINA_TRUE;
 }
 
 Evas_Image_Load_Func evas_image_load_eet_func =
 {
   EINA_TRUE,
+  evas_image_load_file_open_eet,
+  evas_image_load_file_close_eet,
   evas_image_load_file_head_eet,
   evas_image_load_file_data_eet,
   NULL,

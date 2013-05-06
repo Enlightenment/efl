@@ -40,13 +40,26 @@ evas_image_load_file_check(Eina_File *f, void *map,
    return EINA_TRUE;
 }
 
-static Eina_Bool
-evas_image_load_file_head_webp(Eina_File *f, const char *key EINA_UNUSED,
-			       Evas_Image_Property *prop,
+static void *
+evas_image_load_file_open_webp(Eina_File *f, const char *key EINA_UNUSED,
 			       Evas_Image_Load_Opts *opts EINA_UNUSED,
 			       Evas_Image_Animated *animated EINA_UNUSED,
+			       int *error EINA_UNUSED)
+{
+   return f;
+}
+
+static void
+evas_image_load_file_close_webp(void *loader_data EINA_UNUSED)
+{
+}
+
+static Eina_Bool
+evas_image_load_file_head_webp(void *loader_data,
+			       Evas_Image_Property *prop,
 			       int *error)
 {
+   Eina_File *f = loader_data;
    Eina_Bool r;
    void *data;
 
@@ -63,13 +76,12 @@ evas_image_load_file_head_webp(Eina_File *f, const char *key EINA_UNUSED,
 }
 
 static Eina_Bool
-evas_image_load_file_data_webp(Eina_File *f, const char *key EINA_UNUSED,
+evas_image_load_file_data_webp(void *loader_data,
 			       Evas_Image_Property *prop,
-			       Evas_Image_Load_Opts *opts EINA_UNUSED,
-			       Evas_Image_Animated *animated EINA_UNUSED,
 			       void *pixels,
 			       int *error)
 {
+   Eina_File *f = loader_data;
    void *data = NULL;
    void *decoded = NULL;
    void *surface = NULL;
@@ -105,6 +117,8 @@ evas_image_load_file_data_webp(Eina_File *f, const char *key EINA_UNUSED,
 static Evas_Image_Load_Func evas_image_load_webp_func =
 {
   EINA_TRUE,
+  evas_image_load_file_open_webp,
+  evas_image_load_file_close_webp,
   evas_image_load_file_head_webp,
   evas_image_load_file_data_webp,
   NULL,

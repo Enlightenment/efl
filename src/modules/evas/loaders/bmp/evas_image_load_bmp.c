@@ -38,6 +38,13 @@ struct _BMP_Header
    Eina_Bool hasa;
 };
 
+typedef struct _Evas_Loader_Internal Evas_Loader_Internal;
+struct _Evas_Loader_Internal
+{
+   Eina_File *f;
+   Evas_Image_Load_Opts *opts;
+};
+
 static Eina_Bool
 read_short(unsigned char *map, size_t length, size_t *position, short *ret)
 {
@@ -287,19 +294,51 @@ _evas_image_load_file_header(void *map, size_t fsize, size_t *position, int *ima
    return EINA_TRUE;
 }
 
-static Eina_Bool
-evas_image_load_file_head_bmp(Eina_File *f, const char *key EINA_UNUSED,
-                              Evas_Image_Property *prop,
-                              Evas_Image_Load_Opts *load_opts,
+static void *
+evas_image_load_file_open_bmp(Eina_File *f, const char *key EINA_UNUSED,
+                              Evas_Image_Load_Opts *opts,
                               Evas_Image_Animated *animated EINA_UNUSED,
                               int *error)
 {
+   Evas_Loader_Internal *loader;
+
+   loader = calloc(1, sizeof (Evas_Loader_Internal));
+   if (!loader)
+     {
+        *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+        return NULL;
+     }
+
+   loader->f = f;
+   loader->opts = opts;
+
+   return loader;
+}
+
+static void
+evas_image_load_file_close_bmp(void *loader_data)
+{
+   free(loader_data);
+}
+
+static Eina_Bool
+evas_image_load_file_head_bmp(void *loader_data,
+                              Evas_Image_Property *prop,
+                              int *error)
+{
+   Evas_Loader_Internal *loader;
+   Evas_Image_Load_Opts *load_opts;
+   Eina_File *f;
    void *map = NULL;
    size_t position = 0;
    BMP_Header header;
    int image_size = 0;
    size_t fsize;
    Eina_Bool r = EINA_FALSE;
+
+   loader = loader_data;
+   f = loader->f;
+   load_opts = loader->opts;
 
    *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
    fsize = eina_file_size_get(f);
@@ -405,13 +444,14 @@ evas_image_load_file_head_bmp(Eina_File *f, const char *key EINA_UNUSED,
 }
 
 static Eina_Bool
-evas_image_load_file_data_bmp(Eina_File *f, const char *key EINA_UNUSED,
+evas_image_load_file_data_bmp(void *loader_data,
                               Evas_Image_Property *prop,
-			      Evas_Image_Load_Opts *opts,
-			      Evas_Image_Animated *animated EINA_UNUSED,
 			      void *pixels,
 			      int *error)
 {
+   Evas_Loader_Internal *loader;
+   Evas_Image_Load_Opts *opts;
+   Eina_File *f;
    BMP_Header header;
    void *map = NULL;
    size_t position = 0;
@@ -427,6 +467,10 @@ evas_image_load_file_data_bmp(Eina_File *f, const char *key EINA_UNUSED,
    int scale_ratio = 1, image_w = 0, image_h = 0;
    int row_size = 0; /* Row size is rounded up to a multiple of 4bytes */
    int read_line = 0; /* total read line */
+
+   loader = loader_data;
+   f = loader->f;
+   opts = loader->opts;
 
    *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
    fsize = eina_file_size_get(f);
@@ -1328,6 +1372,8 @@ evas_image_load_file_data_bmp(Eina_File *f, const char *key EINA_UNUSED,
 static Evas_Image_Load_Func evas_image_load_bmp_func =
 {
   EINA_TRUE,
+  evas_image_load_file_open_bmp,
+  evas_image_load_file_close_bmp,
   evas_image_load_file_head_bmp,
   evas_image_load_file_data_bmp,
   NULL,

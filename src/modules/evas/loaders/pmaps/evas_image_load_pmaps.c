@@ -55,13 +55,26 @@ static size_t pmaps_buffer_plain_update(Pmaps_Buffer *b);
 static size_t pmaps_buffer_raw_update(Pmaps_Buffer *b);
 static int pmaps_buffer_comment_skip(Pmaps_Buffer *b);
 
+static void *
+evas_image_load_file_open_pmaps(Eina_File *f, const char *key EINA_UNUSED,
+				Evas_Image_Load_Opts *opts EINA_UNUSED,
+				Evas_Image_Animated *animated EINA_UNUSED,
+				int *error EINA_UNUSED)
+{
+   return f;
+}
+
+static void
+evas_image_load_file_close_pmaps(void *loader_data EINA_UNUSED)
+{
+}
+
 static Eina_Bool
-evas_image_load_file_head_pmaps(Eina_File *f, const char *key EINA_UNUSED,
+evas_image_load_file_head_pmaps(void *loader_data,
                                 Evas_Image_Property *prop,
-                                Evas_Image_Load_Opts *opts EINA_UNUSED,
-                                Evas_Image_Animated *animated EINA_UNUSED,
                                 int *error)
 {
+   Eina_File *f = loader_data;
    Pmaps_Buffer b;
 
    if (!pmaps_buffer_open(&b, f, error))
@@ -85,13 +98,12 @@ evas_image_load_file_head_pmaps(Eina_File *f, const char *key EINA_UNUSED,
 }
 
 static Eina_Bool
-evas_image_load_file_data_pmaps(Eina_File *f, const char *key EINA_UNUSED,
+evas_image_load_file_data_pmaps(void *loader_data,
 				Evas_Image_Property *prop,
-				Evas_Image_Load_Opts *opts EINA_UNUSED,
-				Evas_Image_Animated *animated EINA_UNUSED,
 				void *pixels,
 				int *error)
 {
+   Eina_File *f = loader_data;
    Pmaps_Buffer b;
    int size;
    DATA32 *ptr;
@@ -544,6 +556,8 @@ pmaps_buffer_plain_bw_get(Pmaps_Buffer *b, DATA32 *val)
 /* external functions */
 Evas_Image_Load_Func evas_image_load_pmaps_func = {
    EINA_TRUE,
+   evas_image_load_file_open_pmaps,
+   evas_image_load_file_close_pmaps,
    evas_image_load_file_head_pmaps,
    evas_image_load_file_data_pmaps,
    NULL,

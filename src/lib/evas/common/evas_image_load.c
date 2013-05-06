@@ -150,18 +150,25 @@ _evas_image_file_header(Evas_Module *em, Image_Entry *ie, int *error)
    if (evas_image_load_func)
      {
         Evas_Image_Property property;
-        Eina_File *f;
 
-        f = eina_file_open(ie->file, EINA_FALSE);
-        if (!f)
+        if (!ie->f) ie->f = eina_file_open(ie->file, EINA_FALSE);
+        if (!ie->f)
           {
              *error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
-             return EINA_TRUE;
+             goto load_error;
           }
 
+	ie->loader_data = evas_image_load_func->file_open(ie->f, ie->key,
+							  &ie->load_opts,
+							  &ie->animated,
+							  error);
+	if (!ie->loader_data)
+	  {
+             goto load_error;
+	  }
+
         memset(&property, 0, sizeof (Evas_Image_Property));
-        if (evas_image_load_func->file_head(f, ie->key, &property,
-                                            &ie->load_opts, &ie->animated,
+        if (evas_image_load_func->file_head(ie->loader_data, &property,
                                             error) &&
             (*error == EVAS_LOAD_ERROR_NONE))
           {
@@ -184,7 +191,6 @@ _evas_image_file_header(Evas_Module *em, Image_Entry *ie, int *error)
                  "%s (%s)",
                  em->definition->name, em, ie->file, evas_load_error_str(*error));
           }
-        eina_file_close(f);
      }
    else
      {
@@ -327,7 +333,6 @@ EAPI int
 evas_common_load_rgba_image_data_from_file(Image_Entry *ie)
 {
    void *pixels;
-   Eina_File *f;
    Evas_Image_Load_Func *evas_image_load_func = NULL;
    Evas_Image_Property property;
    int ret = EVAS_LOAD_ERROR_NONE;
@@ -363,39 +368,23 @@ evas_common_load_rgba_image_data_from_file(Image_Entry *ie)
    evas_image_load_func = ie->info.loader;
    evas_module_use((Evas_Module*) ie->info.module);
 
-   f = eina_file_open(ie->file, EINA_FALSE);
-   if (!f) return EVAS_LOAD_ERROR_DOES_NOT_EXIST;
+   if (!ie->f) return EVAS_LOAD_ERROR_DOES_NOT_EXIST;
 
    memset(&property, 0, sizeof (Evas_Image_Property));
-   if (!(evas_image_load_func->file_head(f, ie->key, &property,
-                                         &ie->load_opts, &ie->animated,
-                                         &ret) &&
-         (ret == EVAS_LOAD_ERROR_NONE)))
-     goto on_error;
-
-   ie->w = property.w;
-   ie->h = property.h;
-   ie->scale = property.scale;
-   ie->flags.alpha = property.alpha;
-   if (ie->load_opts.orientation &&
-       ie->load_opts.degree != 0)
-     ie->flags.rotated = EINA_TRUE;
+   property.w = ie->w;
+   property.h = ie->h;
+   property.scale = property.scale;
+   property.rotated = ie->flags.rotated;
+   property.premul = EINA_FALSE;
+   property.alpha_sparse = EINA_FALSE;
 
    evas_cache_image_surface_alloc(ie, ie->w, ie->h);
 
    pixels = evas_cache_image_pixels(ie);
    if (!pixels)
-     {
-        ret = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
-        goto on_error;
-     }
+     return EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
 
-   evas_image_load_func->file_data(f, ie->key,
-                                   &property,
-                                   &ie->load_opts,
-                                   &ie->animated,
-                                   pixels,
-                                   &ret);
+   evas_image_load_func->file_data(ie->loader_data, &property, pixels, &ret);
 
    ie->flags.alpha_sparse = property.alpha_sparse;
 
@@ -403,9 +392,6 @@ evas_common_load_rgba_image_data_from_file(Image_Entry *ie)
      evas_common_image_premul(ie);
 //   evas_module_unref((Evas_Module*) ie->info.module);
 //   ie->info.module = NULL;
-
- on_error:
-   eina_file_close(f);
 
    return ret;
 }
@@ -421,17 +407,9 @@ evas_common_load_rgba_image_frame_duration_from_file(Image_Entry *ie, const int 
    evas_module_use((Evas_Module*) ie->info.module);
    if (evas_image_load_func->frame_duration)
      {
-        Eina_File *f;
-        double r;
+        if (!ie->f) return -1;
 
-        f = eina_file_open(ie->file, EINA_FALSE);
-        if (!f) return -1;
-        
-        r = evas_image_load_func->frame_duration(f, &ie->animated, start, frame_num);
-
-        eina_file_close(f);
-
-        return r;
+        return evas_image_load_func->frame_duration(ie->loader_data, start, frame_num);
      }
    return -1;
 }

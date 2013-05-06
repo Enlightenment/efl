@@ -84,13 +84,26 @@ _evas_tiff_UnmapProc(thandle_t handle, tdata_t data, toff_t size EINA_UNUSED)
    eina_file_map_free(f, data);
 }
 
-static Eina_Bool
-evas_image_load_file_head_tiff(Eina_File *f, const char *key EINA_UNUSED,
-			       Evas_Image_Property *prop,
+static void *
+evas_image_load_file_open_tiff(Eina_File *f, const char *key EINA_UNUSED,
 			       Evas_Image_Load_Opts *opts EINA_UNUSED,
 			       Evas_Image_Animated *animated EINA_UNUSED,
+			       int *error EINA_UNUSED)
+{
+   return f;
+}
+
+static void
+evas_image_load_file_close_tiff(void *loader_data EINA_UNUSED)
+{
+}
+
+static Eina_Bool
+evas_image_load_file_head_tiff(void *loader_data,
+			       Evas_Image_Property *prop,
 			       int *error)
 {
+   Eina_File *f = loader_data;
    char           txt[1024];
    TIFFRGBAImage  tiff_image;
    TIFF          *tif = NULL;
@@ -165,13 +178,12 @@ evas_image_load_file_head_tiff(Eina_File *f, const char *key EINA_UNUSED,
 }
 
 static Eina_Bool
-evas_image_load_file_data_tiff(Eina_File *f, const char *key EINA_UNUSED,
+evas_image_load_file_data_tiff(void *loader_data,
 			       Evas_Image_Property *prop,
-			       Evas_Image_Load_Opts *opts EINA_UNUSED,
-			       Evas_Image_Animated *animated EINA_UNUSED,
-			       void *pixels,
+                               void *pixels,
 			       int *error)
 {
+   Eina_File          *f = loader_data;
    char                txt[1024];
    TIFFRGBAImage_Extra rgba_image;
    TIFF               *tif = NULL;
@@ -310,6 +322,8 @@ evas_image_load_file_data_tiff(Eina_File *f, const char *key EINA_UNUSED,
 static Evas_Image_Load_Func evas_image_load_tiff_func =
 {
   EINA_TRUE,
+  evas_image_load_file_open_tiff,
+  evas_image_load_file_close_tiff,
   evas_image_load_file_head_tiff,
   evas_image_load_file_data_tiff,
   NULL,

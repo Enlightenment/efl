@@ -633,6 +633,13 @@ struct _Image_Entry
    LK(lock);
    LK(lock_cancel);
 
+   /* for animation feature */
+   Image_Entry_Animated   animated;
+
+   /* Reference to the file */
+   Eina_File             *f;
+   void                  *loader_data;
+  
    Image_Entry_Flags      flags;
    Evas_Image_Scale_Hint  scale_hint;
    void                  *data1, *data2;
@@ -643,9 +650,6 @@ struct _Image_Entry
    int                    connect_num;
    int                    channel;
    int                    load_error;
-
-   /* for animation feature */
-   Image_Entry_Animated   animated;
 };
 
 struct _Engine_Image_Entry

@@ -56,13 +56,26 @@ struct _tga_footer
    char                null;
 } __attribute__((packed));
 
-static Eina_Bool
-evas_image_load_file_head_tga(Eina_File *f, const char *key EINA_UNUSED,
-			      Evas_Image_Property *prop,
+static void *
+evas_image_load_file_open_tga(Eina_File *f, const char *key EINA_UNUSED,
 			      Evas_Image_Load_Opts *opts EINA_UNUSED,
 			      Evas_Image_Animated *animated EINA_UNUSED,
+			      int *error EINA_UNUSED)
+{
+   return f;
+}
+
+static void
+evas_image_load_file_close_tga(void *loader_data EINA_UNUSED)
+{
+}
+
+static Eina_Bool
+evas_image_load_file_head_tga(void *loader_data,
+			      Evas_Image_Property *prop,
 			      int *error)
 {
+   Eina_File *f = loader_data;
    unsigned char *seg = NULL, *filedata;
    tga_header *header;
    tga_footer *footer, tfooter;
@@ -153,13 +166,12 @@ close_file:
 }
 
 static Eina_Bool
-evas_image_load_file_data_tga(Eina_File *f, const char *key EINA_UNUSED,
+evas_image_load_file_data_tga(void *loader_data,
 			      Evas_Image_Property *prop,
-			      Evas_Image_Load_Opts *opts EINA_UNUSED,
-			      Evas_Image_Animated *animated EINA_UNUSED,
 			      void *pixels,
 			      int *error)
 {
+   Eina_File *f = loader_data;
    unsigned char *seg = NULL, *filedata;
    tga_header *header;
    tga_footer *footer, tfooter;
@@ -540,6 +552,8 @@ evas_image_load_file_data_tga(Eina_File *f, const char *key EINA_UNUSED,
 static Evas_Image_Load_Func evas_image_load_tga_func =
 {
   EINA_TRUE,
+  evas_image_load_file_open_tga,
+  evas_image_load_file_close_tga,
   evas_image_load_file_head_tga,
   evas_image_load_file_data_tga,
   NULL,

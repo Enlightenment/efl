@@ -16,6 +16,14 @@
 #include <fcntl.h>
 #include <ctype.h>
 
+typedef struct _Evas_Loader_Internal Evas_Loader_Internal;
+struct _Evas_Loader_Internal
+{
+   Eina_File *f;
+   const char *key;
+   Evas_Image_Load_Opts *opts;
+};
+
 static Eina_Bool
 illegal_char(const char *str)
 {
@@ -372,30 +380,62 @@ getdata:
    return res;
 }
 
-static Eina_Bool
-evas_image_load_file_head_generic(Eina_File *f, const char *key,
-                                  Evas_Image_Property *prop,
-                                  Evas_Image_Load_Opts *opts,
-                                  Evas_Image_Animated *animated EINA_UNUSED,
-                                  int *error)
+static void *
+evas_image_load_file_open_generic(Eina_File *f, const char *key,
+				  Evas_Image_Load_Opts *opts,
+				  Evas_Image_Animated *animated EINA_UNUSED,
+				  int *error)
 {
-   return _load(f, key, prop, opts, NULL, error, EINA_FALSE);
+   Evas_Loader_Internal *loader;
+
+   loader = calloc(1, sizeof (Evas_Loader_Internal));
+   if (!loader)
+     {
+        *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+        return NULL;
+     }
+
+   loader->f = f;
+   loader->key = eina_stringshare_ref(key);
+   loader->opts = opts;
+   return loader;
+}
+
+static void
+evas_image_load_file_close_generic(void *loader_data)
+{
+   Evas_Loader_Internal *loader = loader_data;
+
+   eina_stringshare_del(loader->key);
+   free(loader);
 }
 
 static Eina_Bool
-evas_image_load_file_data_generic(Eina_File *f, const char *key,
+evas_image_load_file_head_generic(void *loader_data,
                                   Evas_Image_Property *prop,
-                                  Evas_Image_Load_Opts *opts,
-                                  Evas_Image_Animated *animated EINA_UNUSED,
+                                  int *error)
+{
+   Evas_Loader_Internal *loader = loader_data;
+
+   return _load(loader->f, loader->key, prop, loader->opts, NULL, error, EINA_FALSE);
+}
+
+static Eina_Bool
+evas_image_load_file_data_generic(void *loader_data,
+                                  Evas_Image_Property *prop,
                                   void *pixels,
                                   int *error)
 {
-   return _load(f, key, prop, opts, pixels, error, EINA_TRUE);
+   Evas_Loader_Internal *loader = loader_data;
+
+   return _load(loader->f, loader->key, prop, loader->opts, pixels, error, EINA_TRUE);
 }
 
 Evas_Image_Load_Func evas_image_load_generic_func =
 {
   EINA_TRUE,
+  evas_image_load_file_open_generic,
+  evas_image_load_file_close_generic,
   evas_image_load_file_head_generic,
   evas_image_load_file_data_generic,
   NULL,

@@ -23,6 +23,13 @@ struct _Evas_PNG_Info
    size_t position;
 };
 
+typedef struct _Evas_Loader_Internal Evas_Loader_Internal;
+struct _Evas_Loader_Internal
+{
+   Eina_File *f;
+   Evas_Image_Load_Opts *opts;
+};
+
 static void
 _evas_image_png_read(png_structp png_ptr, png_bytep out, png_size_t count)
 {
@@ -36,13 +43,41 @@ _evas_image_png_read(png_structp png_ptr, png_bytep out, png_size_t count)
    epi->position += count;
 }
 
-static Eina_Bool
-evas_image_load_file_head_png(Eina_File *f, const char *key EINA_UNUSED,
-			      Evas_Image_Property *prop,
-			      Evas_Image_Load_Opts *opts,
-			      Evas_Image_Animated *animated EINA_UNUSED,
-			      int *error)
+static void *
+evas_image_load_file_open_png(Eina_File *f, const char *key EINA_UNUSED,
+                              Evas_Image_Load_Opts *opts,
+                              Evas_Image_Animated *animated EINA_UNUSED,
+                              int *error)
 {
+   Evas_Loader_Internal *loader;
+
+   loader = calloc(1, sizeof (Evas_Loader_Internal));
+   if (!loader)
+     {
+        *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+        return NULL;
+     }
+
+   loader->f = f;
+   loader->opts = opts;
+   return loader;
+}
+
+static void
+evas_image_load_file_close_png(void *loader_data)
+{
+   free(loader_data);
+}
+
+static Eina_Bool
+evas_image_load_file_head_png(void *loader_data,
+                              Evas_Image_Property *prop,
+                              int *error)
+{
+   Evas_Loader_Internal *loader = loader_data;
+   Evas_Image_Load_Opts *opts;
+   Eina_File *f;
+
    Evas_PNG_Info epi;
    png_structp png_ptr = NULL;
    png_infop info_ptr = NULL;
@@ -50,6 +85,9 @@ evas_image_load_file_head_png(Eina_File *f, const char *key EINA_UNUSED,
    int bit_depth, color_type, interlace_type;
    char hasa;
    Eina_Bool r = EINA_FALSE;
+
+   opts = loader->opts;
+   f = loader->f;
 
    hasa = 0;
    epi.map = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
@@ -141,13 +179,15 @@ evas_image_load_file_head_png(Eina_File *f, const char *key EINA_UNUSED,
 }
 
 static Eina_Bool
-evas_image_load_file_data_png(Eina_File *f, const char *key EINA_UNUSED,
-			      Evas_Image_Property *prop,
-			      Evas_Image_Load_Opts *opts,
-			      Evas_Image_Animated *animated EINA_UNUSED,
-			      void *pixels,
+evas_image_load_file_data_png(void *loader_data,
+                              Evas_Image_Property *prop,
+                              void *pixels,
 			      int *error)
 {
+   Evas_Loader_Internal *loader = loader_data;
+   Evas_Image_Load_Opts *opts;
+   Eina_File *f;
+
    unsigned char *surface;
    unsigned char **lines;
    unsigned char *tmp_line;
@@ -162,6 +202,9 @@ evas_image_load_file_data_png(Eina_File *f, const char *key EINA_UNUSED,
    int i, j;
    int scale_ratio = 1, image_w = 0;
    Eina_Bool r = EINA_FALSE;
+
+   opts = loader->opts;
+   f = loader->f;
 
    hasa = 0;
 
@@ -309,6 +352,8 @@ evas_image_load_file_data_png(Eina_File *f, const char *key EINA_UNUSED,
 static Evas_Image_Load_Func evas_image_load_png_func =
 {
   EINA_TRUE,
+  evas_image_load_file_open_png,
+  evas_image_load_file_close_png,
   evas_image_load_file_head_png,
   evas_image_load_file_data_png,
   NULL,

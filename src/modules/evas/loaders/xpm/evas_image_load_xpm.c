@@ -648,30 +648,46 @@ evas_image_load_file_xpm(Eina_File *f, Evas_Image_Property *prop, void *pixels, 
    return res;
 }
 
-static Eina_Bool
-evas_image_load_file_head_xpm(Eina_File *f, const char *key EINA_UNUSED,
-			      Evas_Image_Property *prop,
+static void *
+evas_image_load_file_open_xpm(Eina_File *f, const char *key EINA_UNUSED,
 			      Evas_Image_Load_Opts *opts EINA_UNUSED,
 			      Evas_Image_Animated *animated EINA_UNUSED,
+			      int *error EINA_UNUSED)
+{
+  return f;
+}
+
+static void
+evas_image_load_file_close_xpm(void *loader_data EINA_UNUSED)
+{
+}
+
+static Eina_Bool
+evas_image_load_file_head_xpm(void *loader_data,
+			      Evas_Image_Property *prop,
 			      int *error)
 {
+   Eina_File *f = loader_data;
+
    return evas_image_load_file_xpm(f, prop, NULL, 0, error);
 }
 
 static Eina_Bool
-evas_image_load_file_data_xpm(Eina_File *f, const char *key EINA_UNUSED,
+evas_image_load_file_data_xpm(void *loader_data,
 			      Evas_Image_Property *prop,
-			      Evas_Image_Load_Opts *opts EINA_UNUSED,
-			      Evas_Image_Animated *animated EINA_UNUSED,
 			      void *pixels,
 			      int *error)
 {
+   Eina_File *f = loader_data;
+
    return evas_image_load_file_xpm(f, prop, pixels, 1, error);
 }
 
 static Evas_Image_Load_Func evas_image_load_xpm_func =
 {
   EINA_FALSE,
+  evas_image_load_file_open_xpm,
+  evas_image_load_file_close_xpm,
   evas_image_load_file_head_xpm,
   evas_image_load_file_data_xpm,
   NULL,

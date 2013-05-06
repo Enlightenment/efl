@@ -11,6 +11,14 @@
 #include "evas_common.h"
 #include "evas_private.h"
 
+typedef struct _Evas_Loader_Internal Evas_Loader_Internal;
+struct _Evas_Loader_Internal
+{
+   Eina_File *f;
+   const char *key;
+   Evas_Image_Load_Opts *opts;
+};
+
 static Eina_Bool
 read_ushort(unsigned char *map, size_t length, size_t *position, unsigned short *ret)
 {
@@ -67,13 +75,47 @@ enum
    CURSOR = 2
 };
 
+static void *
+evas_image_load_file_open_ico(Eina_File *f, const char *key,
+                              Evas_Image_Load_Opts *opts,
+                              Evas_Image_Animated *animated EINA_UNUSED,
+                              int *error)
+{
+   Evas_Loader_Internal *loader;
+
+   loader = calloc(1, sizeof (Evas_Loader_Internal));
+   if (!loader)
+     {
+        *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+        return NULL;
+     }
+
+   loader->f = f;
+   loader->key = eina_stringshare_ref(key);
+   loader->opts = opts;
+
+   return loader;
+}
+
+static void
+evas_image_load_file_close_ico(void *loader_data)
+{
+   Evas_Loader_Internal *loader = loader_data;
+
+   eina_stringshare_del(loader->key);
+   free(loader);
+}
+
 static Eina_Bool
-evas_image_load_file_head_ico(Eina_File *f, const char *key,
+evas_image_load_file_head_ico(void *loader_data,
 			      Evas_Image_Property *prop,
-			      Evas_Image_Load_Opts *opts,
-			      Evas_Image_Animated *animated EINA_UNUSED,
 			      int *error)
 {
+   Evas_Loader_Internal *loader = loader_data;
+   Evas_Image_Load_Opts *opts;
+   const char *key;
+   Eina_File *f;
+
    void *map = NULL;
    size_t position = 0;
    unsigned short word;
@@ -93,6 +135,10 @@ evas_image_load_file_head_ico(Eina_File *f, const char *key,
       unsigned int bmoffset, bmsize;
    } chosen = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
    Eina_Bool r = EINA_FALSE;
+
+   opts = loader->opts;
+   f = loader->f;
+   key = loader->key;   
 
    *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
    fsize = eina_file_size_get(f);
@@ -288,13 +334,16 @@ evas_image_load_file_head_ico(Eina_File *f, const char *key,
 }
 
 static Eina_Bool
-evas_image_load_file_data_ico(Eina_File *f, const char *key,
-			      Evas_Image_Property *prop,
-			      Evas_Image_Load_Opts *opts,
-			      Evas_Image_Animated *animated EINA_UNUSED,
-			      void *pixels,
+evas_image_load_file_data_ico(void *loader_data,
+                              Evas_Image_Property *prop,
+                              void *pixels,
 			      int *error)
 {
+   Evas_Loader_Internal *loader = loader_data;
+   Evas_Image_Load_Opts *opts;   
+   const char *key;
+   Eina_File *f;
+			      
    void *map = NULL;
    size_t position = 0;
    unsigned short word;
@@ -316,6 +365,10 @@ evas_image_load_file_data_ico(Eina_File *f, const char *key,
       unsigned int bmoffset, bmsize;
    } chosen = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
    Eina_Bool res = EINA_FALSE;
+
+   opts = loader->opts;
+   key = loader->key;
+   f = loader->f;
 
    *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
    fsize = eina_file_size_get(f);
@@ -753,6 +806,8 @@ evas_image_load_file_data_ico(Eina_File *f, const char *key,
 static Evas_Image_Load_Func evas_image_load_ico_func =
 {
   EINA_TRUE,
+  evas_image_load_file_open_ico,
+  evas_image_load_file_close_ico,
   evas_image_load_file_head_ico,
   evas_image_load_file_data_ico,
   NULL,

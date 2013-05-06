@@ -43,6 +43,14 @@ struct _Gif_Frame
    int bg_val;
 };
 
+typedef struct _Evas_Loader_Internal Evas_Loader_Internal;
+struct _Evas_Loader_Internal
+{
+   Eina_File *f;
+   Evas_Image_Load_Opts *opts;
+   Evas_Image_Animated *animated;
+};
+
 static Eina_Bool evas_image_load_specific_frame(Eina_File *f, const Evas_Image_Load_Opts *opts, Evas_Image_Property *prop, Evas_Image_Animated *animated, int frame_index, int *error);
 
 #define byte2_to_int(a,b)         (((b)<<8)|(a))
@@ -655,14 +663,44 @@ _evas_image_load_file_read(GifFileType* gft, GifByteType *buf,int length)
 
    return length;
 }
+static void *
+evas_image_load_file_open_gif(Eina_File *f, const char *key EINA_UNUSED,
+                               Evas_Image_Load_Opts *opts,
+                               Evas_Image_Animated *animated,
+                               int *error)
+{
+   Evas_Loader_Internal *loader;
+
+   loader = calloc(1, sizeof (Evas_Loader_Internal));
+   if (!loader)
+     {
+        *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+        return NULL;
+     }
+
+   loader->f = f;
+   loader->opts = opts;
+   loader->animated = animated;
+
+   return loader;
+}
+
+static void
+evas_image_load_file_close_gif(void *loader_data)
+{
+   free(loader_data);
+}
 
 static Eina_Bool
-evas_image_load_file_head_gif(Eina_File *f, const char *key EINA_UNUSED,
+evas_image_load_file_head_gif(void *loader_data,
 			      Evas_Image_Property *prop,
-			      Evas_Image_Load_Opts *load_opts,
-			      Evas_Image_Animated *animated,
 			      int *error)
 {
+   Evas_Loader_Internal *loader = loader_data;
+   Evas_Image_Load_Opts *load_opts;
+   Evas_Image_Animated *animated;
+   Eina_File *f;
+
    Evas_GIF_Info  egi;
    GifRecordType  rec;
    GifFileType   *gif = NULL;
@@ -672,6 +710,10 @@ evas_image_load_file_head_gif(Eina_File *f, const char *key EINA_UNUSED,
    //it is possible which gif file have error midle of frames,
    //in that case we should play gif file until meet error frame.
    int            image_count = 0;
+
+   f = loader->f;
+   load_opts = loader->opts;
+   animated = loader->animated;
 
    prop->w = 0;
    prop->h = 0;
@@ -871,16 +913,22 @@ evas_image_load_specific_frame(Eina_File *f,
 }
 
 static Eina_Bool
-evas_image_load_file_data_gif(Eina_File *f, const char *key EINA_UNUSED,
-			      Evas_Image_Property *prop,
-			      Evas_Image_Load_Opts *opts,
-			      Evas_Image_Animated *animated,
-			      void *pixels,
-			      int *error)
+evas_image_load_file_data_gif(void *loader_data,
+                              Evas_Image_Property *prop,
+                              void *pixels, int *error)
 {
+   Evas_Loader_Internal *loader = loader_data;
+   Evas_Image_Load_Opts *opts;
+   Evas_Image_Animated *animated;
+   Eina_File *f;
+
    Image_Entry_Frame *frame = NULL;
    int cur_frame_index;
    Eina_Bool hit;
+
+   opts = loader->opts;
+   animated = loader->animated;
+   f = loader->f;
 
    if(!animated->animated)
      cur_frame_index = 1;
@@ -968,9 +1016,13 @@ evas_image_load_file_data_gif(Eina_File *f, const char *key EINA_UNUSED,
 }
 
 static double
-evas_image_load_frame_duration_gif(Eina_File *f, Evas_Image_Animated *animated,
+evas_image_load_frame_duration_gif(void *loader_data,
 				   int start_frame, int frame_num)
 {
+   Evas_Loader_Internal *loader = loader_data;
+   Evas_Image_Animated *animated;
+   Eina_File *f;
+
    Evas_GIF_Info  egi;
    GifFileType   *gif = NULL;
    GifRecordType  rec;
@@ -979,6 +1031,8 @@ evas_image_load_frame_duration_gif(Eina_File *f, Evas_Image_Animated *animated,
    double         duration = -1;
    int            frame_count = 0;
 
+   animated = loader->animated;
+   f = loader->f;
    frame_count = animated->frame_count;
 
    if (!animated->animated) return -1;
@@ -1060,7 +1114,9 @@ evas_image_load_frame_duration_gif(Eina_File *f, Evas_Image_Animated *animated,
 static Evas_Image_Load_Func evas_image_load_gif_func =
 {
   EINA_TRUE,
-  evas_image_load_file_head_gif,
+  evas_image_load_file_open_gif,
+  evas_image_load_file_close_gif,
+  evas_image_load_file_head_gif, 
   evas_image_load_file_data_gif,
   evas_image_load_frame_duration_gif,
   EINA_FALSE

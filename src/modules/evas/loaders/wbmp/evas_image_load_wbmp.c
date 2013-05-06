@@ -29,13 +29,26 @@ read_mb(unsigned int *data, void *map, size_t length, size_t *position)
    return 0;
 }
 
-static Eina_Bool
-evas_image_load_file_head_wbmp(Eina_File *f, const char *key EINA_UNUSED,
-			       Evas_Image_Property *prop,
+static void *
+evas_image_load_file_open_wbmp(Eina_File *f, const char *key EINA_UNUSED,
 			       Evas_Image_Load_Opts *opts EINA_UNUSED,
 			       Evas_Image_Animated *animated EINA_UNUSED,
+			       int *error EINA_UNUSED)
+{
+   return f;
+}
+
+static void
+evas_image_load_file_close_wbmp(void *loader_data EINA_UNUSED)
+{
+}
+
+static Eina_Bool
+evas_image_load_file_head_wbmp(void *loader_data,
+			       Evas_Image_Property *prop,
 			       int *error)
 {
+   Eina_File *f = loader_data;
    void *map = NULL;
    size_t position = 0;
    size_t length;
@@ -79,13 +92,12 @@ evas_image_load_file_head_wbmp(Eina_File *f, const char *key EINA_UNUSED,
 }
 
 static Eina_Bool
-evas_image_load_file_data_wbmp(Eina_File *f, const char *key EINA_UNUSED,
+evas_image_load_file_data_wbmp(void *loader_data,
 			       Evas_Image_Property *prop,
-			       Evas_Image_Load_Opts *opts EINA_UNUSED,
-			       Evas_Image_Animated *animated EINA_UNUSED,
 			       void *pixels,
 			       int *error)
 {
+   Eina_File *f = loader_data;
    void *map = NULL;
    size_t position = 0;
    size_t length;
@@ -157,6 +169,8 @@ evas_image_load_file_data_wbmp(Eina_File *f, const char *key EINA_UNUSED,
 static Evas_Image_Load_Func evas_image_load_wbmp_func =
 {
    EINA_TRUE,
+   evas_image_load_file_open_wbmp,
+   evas_image_load_file_close_wbmp,
    evas_image_load_file_head_wbmp,
    evas_image_load_file_data_wbmp,
    NULL,

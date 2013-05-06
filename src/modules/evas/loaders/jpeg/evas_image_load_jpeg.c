@@ -14,13 +14,20 @@
 #include "evas_common.h"
 #include "evas_private.h"
 
-
 typedef struct _JPEG_error_mgr *emptr;
 struct _JPEG_error_mgr
 {
    struct     jpeg_error_mgr pub;
    jmp_buf    setjmp_buffer;
 };
+
+typedef struct _Evas_Loader_Internal Evas_Loader_Internal;
+struct _Evas_Loader_Internal
+{
+  Eina_File *f;
+  Evas_Image_Load_Opts *opts;
+};
+
 
 static void _JPEGFatalErrorHandler(j_common_ptr cinfo);
 static void _JPEGErrorHandler(j_common_ptr cinfo);
@@ -1213,17 +1220,52 @@ evas_image_load_file_data_jpeg_alpha_internal(Image_Entry *ie, FILE *f, int *err
 }
 #endif
 
-static Eina_Bool
-evas_image_load_file_head_jpeg(Eina_File *f, const char *key EINA_UNUSED, Evas_Image_Property *prop, Evas_Image_Load_Opts *opts, Evas_Image_Animated *animated EINA_UNUSED, int *error)
+static void *
+evas_image_load_file_open_jpeg(Eina_File *f, const char *key EINA_UNUSED,
+			       Evas_Image_Load_Opts *opts,
+			       Evas_Image_Animated *animated EINA_UNUSED,
+			       int *error)
 {
+   Evas_Loader_Internal *loader;
+
+   loader = calloc(1, sizeof (Evas_Loader_Internal));
+   if (!loader)
+     {
+        *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+        return NULL;
+     }
+
+   loader->f = f;
+   loader->opts = opts;
+
+   return loader;
+}
+
+static void
+evas_image_load_file_close_jpeg(void *loader_data)
+{
+   free(loader_data);
+}
+
+static Eina_Bool
+evas_image_load_file_head_jpeg(void *loader_data,
+                               Evas_Image_Property *prop,
+                               int *error)
+{
+   Evas_Loader_Internal *loader = loader_data;
+   Evas_Image_Load_Opts *opts;
+   Eina_File *f;
    void *map;
-   Eina_Bool val = EINA_FALSE;
+   Eina_Bool val;
+
+   opts = loader->opts;
+   f = loader->f;
 
    map = eina_file_map_all(f, EINA_FILE_WILLNEED);
    if (!map)
      {
 	*error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
-        goto on_error;
+        return EINA_FALSE;
      }
 
    val = evas_image_load_file_head_jpeg_internal(&prop->w, &prop->h,
@@ -1234,20 +1276,23 @@ evas_image_load_file_head_jpeg(Eina_File *f, const char *key EINA_UNUSED, Evas_I
 
    eina_file_map_free(f, map);
 
- on_error:
    return val;
 }
 
 static Eina_Bool
-evas_image_load_file_data_jpeg(Eina_File *f, const char *key EINA_UNUSED,
-			       Evas_Image_Property *prop,
-			       Evas_Image_Load_Opts *opts,
-			       Evas_Image_Animated *animated EINA_UNUSED,
+evas_image_load_file_data_jpeg(void *loader_data,
+                               Evas_Image_Property *prop,
 			       void *pixels,
 			       int *error)
 {
+   Evas_Loader_Internal *loader = loader_data;
+   Evas_Image_Load_Opts *opts;
+   Eina_File *f;
    void *map;
    Eina_Bool val = EINA_FALSE;
+
+   f = loader->f;
+   opts = loader->opts;
 
    map = eina_file_map_all(f, EINA_FILE_WILLNEED);
    if (!map)
@@ -1269,6 +1314,8 @@ evas_image_load_file_data_jpeg(Eina_File *f, const char *key EINA_UNUSED,
 static Evas_Image_Load_Func evas_image_load_jpeg_func =
 {
   EINA_TRUE,
+  evas_image_load_file_open_jpeg,
+  evas_image_load_file_close_jpeg,
   evas_image_load_file_head_jpeg,
   evas_image_load_file_data_jpeg,
   NULL,
