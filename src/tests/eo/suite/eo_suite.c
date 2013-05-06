@@ -21,7 +21,6 @@ static const Eo_Test_Case etc[] = {
   { "Eo general", eo_test_general },
   { "Eo class errors", eo_test_class_errors },
   { "Eo eina value", eo_test_value },
-  { "Eo pointer indirection", eo_test_ptr_ind },
   { NULL, NULL }
 };
 
