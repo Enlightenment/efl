@@ -121,6 +121,14 @@ my_ck_38_fullscreen(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 }
 
 static void
+my_ck_38_borderless(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   Evas_Object *win = data;
+   Eina_Bool borderless = elm_check_state_get(obj);
+   elm_win_borderless_set(win, borderless);
+}
+
+static void
 my_win_move(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Evas_Coord x, y;
@@ -253,6 +261,15 @@ test_win_state(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    elm_object_text_set(ck, "fullscreen");
    elm_check_state_set(ck, fullscreen);
    evas_object_smart_callback_add(ck, "changed", my_ck_38_fullscreen, win);
+   evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(ck, 0.02, 0.99);
+   evas_object_show(ck);
+   elm_box_pack_end(bx, ck);
+
+   ck = elm_check_add(win);
+   elm_object_text_set(ck, "borderless");
+   elm_check_state_set(ck, fullscreen);
+   evas_object_smart_callback_add(ck, "changed", my_ck_38_borderless, win);
    evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(ck, 0.02, 0.99);
    evas_object_show(ck);

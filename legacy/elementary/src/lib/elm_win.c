@@ -2313,6 +2313,7 @@ _elm_win_frame_add(Elm_Win_Smart_Data *sd,
                    const char *style)
 {
    Evas_Object *obj = sd->obj;
+   int w, h;
    short layer;
 
    // FIXME: Don't use hardcoded framespace values, get it from theme
@@ -2352,11 +2353,15 @@ _elm_win_frame_add(Elm_Win_Smart_Data *sd,
         edje_object_part_text_escaped_set
           (sd->frame_obj, "elm.text.title", sd->title);
      }
+
+   ecore_evas_geometry_get(sd->ee, NULL, NULL, &w, &h);
+   ecore_evas_resize(sd->ee, w, h);
 }
 
 static void
 _elm_win_frame_del(Elm_Win_Smart_Data *sd)
 {
+   int w, h;
    if (sd->frame_obj)
      {
         edje_object_signal_callback_del
@@ -2384,6 +2389,10 @@ _elm_win_frame_del(Elm_Win_Smart_Data *sd)
         evas_object_del(sd->frame_obj);
         sd->frame_obj = NULL;
      }
+
+   evas_output_framespace_set(sd->evas, 0, 0, 0, 0);
+   ecore_evas_geometry_get(sd->ee, NULL, NULL, &w, &h);
+   ecore_evas_resize(sd->ee, w, h);
 }
 
 #ifdef ELM_DEBUG
@@ -3329,6 +3338,21 @@ _borderless_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Eina_Bool borderless = va_arg(*list, int);
    Elm_Win_Smart_Data *sd = _pd;
+
+   if (borderless)
+     {
+        if (EE_ENGINE_COMPARE(sd->ee, ELM_WAYLAND_SHM) ||
+            EE_ENGINE_COMPARE(sd->ee, ELM_WAYLAND_EGL))
+          _elm_win_frame_del(sd);
+     }
+   else
+     {
+        if (EE_ENGINE_COMPARE(sd->ee, ELM_WAYLAND_SHM) ||
+            EE_ENGINE_COMPARE(sd->ee, ELM_WAYLAND_EGL))
+          _elm_win_frame_add(sd, "default");
+
+        evas_object_show(sd->frame_obj);
+     }
 
    TRAP(sd, borderless_set, borderless);
 #ifdef HAVE_ELEMENTARY_X
