@@ -507,12 +507,10 @@ _ecore_evas_wayland_egl_resize(Ecore_Evas *ee, int location)
         if ((ee->rotation == 0) || (ee->rotation == 180))
           {
              ecore_wl_window_resize(wdata->win, ee->w + fw, ee->h + fh, location);
-             ecore_wl_window_update_size(wdata->win, ee->w + fw, ee->h + fh);
           }
         else
           {
              ecore_wl_window_resize(wdata->win, ee->w + fh, ee->h + fw, location);
-             ecore_wl_window_update_size(wdata->win, ee->w + fh, ee->h + fw);
           }
      }
 }

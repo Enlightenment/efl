@@ -295,12 +295,10 @@ _rotation_do(Ecore_Evas *ee, int rotation, int resize)
                   if ((rotation == 0) || (rotation == 180))
                     {
                        ecore_wl_window_resize(wdata->win, ee->h + fw, ee->w + fh, 0);
-                       ecore_wl_window_update_size(wdata->win, ee->h + fw, ee->w + fh);
                     }
                   else
                     {
                        ecore_wl_window_resize(wdata->win, ee->h + fh, ee->w + fw, 0);
-                       ecore_wl_window_update_size(wdata->win, ee->h + fh, ee->w + fw);
                     }
                   if ((ee->rotation == 0) || (ee->rotation == 180))
                     {

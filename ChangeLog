@@ -1,3 +1,8 @@
+2013-05-06  Rafael Antognolli
+
+        * Ecore/Wayland: Add ecore_wl_window_alpha_set/get().
+        * Ecore/Wayland: Fix alpha windows on EGL backend.
+
 2013-05-06  Cedric Bail
 
         * Evas: Remove SVG loader from inside the merged tree.

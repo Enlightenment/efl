@@ -161,13 +161,7 @@ ecore_wl_window_resize(Ecore_Wl_Window *win, int w, int h, int location)
                       win->allocation.w, win->allocation.h);
      }
 
-   if (!win->transparent)
-     {
-        win->region.opaque = 
-          wl_compositor_create_region(_ecore_wl_disp->wl.compositor);
-        wl_region_add(win->region.opaque, win->allocation.x, win->allocation.y, 
-                      win->allocation.w, win->allocation.h);
-     }
+   ecore_wl_window_update_size(win, w, h);
 
    if (win->shell_surface)
      {
@@ -186,6 +180,22 @@ ecore_wl_window_resize(Ecore_Wl_Window *win, int w, int h, int location)
 
         wl_shell_surface_resize(win->shell_surface, input->seat, 
                                 input->display->serial, location);
+     }
+
+   if (win->region.input)
+     {
+        if (win->surface)
+          wl_surface_set_input_region(win->surface, win->region.input);
+        wl_region_destroy(win->region.input);
+        win->region.input = NULL;
+     }
+
+   if (win->surface)
+     wl_surface_set_opaque_region(win->surface, win->region.opaque);
+   if (win->region.opaque)
+     {
+        wl_region_destroy(win->region.opaque);
+        win->region.opaque = NULL;
      }
 }
 
@@ -241,22 +251,6 @@ ecore_wl_window_buffer_attach(Ecore_Wl_Window *win, struct wl_buffer *buffer, in
         break;
       default:
         return;
-     }
-
-   if (win->region.input)
-     {
-        if (win->surface)
-          wl_surface_set_input_region(win->surface, win->region.input);
-        wl_region_destroy(win->region.input);
-        win->region.input = NULL;
-     }
-
-   if (win->region.opaque)
-     {
-        if (win->surface)
-          wl_surface_set_opaque_region(win->surface, win->region.opaque);
-        wl_region_destroy(win->region.opaque);
-        win->region.opaque = NULL;
      }
 }
 
@@ -445,7 +439,7 @@ ecore_wl_window_transparent_set(Ecore_Wl_Window *win, Eina_Bool transparent)
    win->transparent = transparent;
    if (win->region.opaque) wl_region_destroy(win->region.opaque);
    win->region.opaque = NULL;
-   if (!win->transparent)
+   if ((!win->transparent) && (!win->alpha))
      {
         win->region.opaque = 
           wl_compositor_create_region(_ecore_wl_disp->wl.compositor);
@@ -501,14 +495,18 @@ ecore_wl_window_update_size(Ecore_Wl_Window *win, int w, int h)
    win->allocation.w = w;
    win->allocation.h = h;
 
-   if ((!win->transparent) || (!win->alpha))
+   if (win->region.opaque) wl_region_destroy(win->region.opaque);
+
+   if ((!win->transparent) && (!win->alpha))
      {
-        if (win->region.opaque) wl_region_destroy(win->region.opaque);
         win->region.opaque = 
           wl_compositor_create_region(_ecore_wl_disp->wl.compositor);
         wl_region_add(win->region.opaque, win->allocation.x, win->allocation.y, 
                       win->allocation.w, win->allocation.h);
      }
+   else
+     win->region.opaque = NULL;
+
 }
 
 EAPI void 

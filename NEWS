@@ -53,6 +53,7 @@ Additions:
      - Add #ifdef __cplusplus to Ecore_Wayland.h so C++ programs can link to
        and use the API.
      - Add support for double and triple click.
+     - Add ecore_wl_window_alpha_set/get().
     * ecore_evas:
      - ecore_evas_window_profile_supported_get()
      - ecore_evas_window_profile_set()
