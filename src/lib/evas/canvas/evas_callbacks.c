@@ -7,111 +7,112 @@ EVAS_MEMPOOL(_mp_pc);
 
 extern Eina_Hash* signals_hash_table;
 
-EAPI const Eo_Event_Description _EVAS_EVENT_MOUSE_IN =
+EAPI const Eo_Event_Description _EVAS_OBJECT_EVENT_MOUSE_IN =
    EO_EVENT_DESCRIPTION("Mouse In", "Mouse In Event");
-EAPI const Eo_Event_Description _EVAS_EVENT_MOUSE_OUT =
+EAPI const Eo_Event_Description _EVAS_OBJECT_EVENT_MOUSE_OUT =
    EO_EVENT_DESCRIPTION("Mouse Out", "Mouse Out Event");
-EAPI const Eo_Event_Description _EVAS_EVENT_MOUSE_DOWN =
+EAPI const Eo_Event_Description _EVAS_OBJECT_EVENT_MOUSE_DOWN =
    EO_EVENT_DESCRIPTION("Mouse Down", "Mouse Button Down Event");
-EAPI const Eo_Event_Description _EVAS_EVENT_MOUSE_UP =
+EAPI const Eo_Event_Description _EVAS_OBJECT_EVENT_MOUSE_UP =
    EO_EVENT_DESCRIPTION("Mouse Up", "Mouse Button Up Event");
-EAPI const Eo_Event_Description _EVAS_EVENT_MOUSE_MOVE =
+EAPI const Eo_Event_Description _EVAS_OBJECT_EVENT_MOUSE_MOVE =
    EO_EVENT_DESCRIPTION("Mouse Move", "Mouse Move Event");
-EAPI const Eo_Event_Description _EVAS_EVENT_MOUSE_WHEEL =
+EAPI const Eo_Event_Description _EVAS_OBJECT_EVENT_MOUSE_WHEEL =
    EO_EVENT_DESCRIPTION("Mouse Wheel", "Mouse Wheel Event");
-EAPI const Eo_Event_Description _EVAS_EVENT_MULTI_DOWN =
+EAPI const Eo_Event_Description _EVAS_OBJECT_EVENT_MULTI_DOWN =
    EO_EVENT_DESCRIPTION("Multi Down", "Mouse-touch Down Event");
-EAPI const Eo_Event_Description _EVAS_EVENT_MULTI_UP =
+EAPI const Eo_Event_Description _EVAS_OBJECT_EVENT_MULTI_UP =
    EO_EVENT_DESCRIPTION("Multi Up", "Mouse-touch Up Event");
-EAPI const Eo_Event_Description _EVAS_EVENT_MULTI_MOVE =
+EAPI const Eo_Event_Description _EVAS_OBJECT_EVENT_MULTI_MOVE =
    EO_EVENT_DESCRIPTION("Multi Move", "Multi-touch Move Event");
-EAPI const Eo_Event_Description _EVAS_EVENT_FREE =
+EAPI const Eo_Event_Description _EVAS_OBJECT_EVENT_FREE =
    EO_EVENT_DESCRIPTION("Free", "Object Being Freed (Called after Del)");
-EAPI const Eo_Event_Description _EVAS_EVENT_KEY_DOWN =
+EAPI const Eo_Event_Description _EVAS_OBJECT_EVENT_KEY_DOWN =
    EO_EVENT_DESCRIPTION("Key Down", "Key Press Event");
-EAPI const Eo_Event_Description _EVAS_EVENT_KEY_UP =
+EAPI const Eo_Event_Description _EVAS_OBJECT_EVENT_KEY_UP =
    EO_EVENT_DESCRIPTION("Key Up", "Key Release Event");
-EAPI const Eo_Event_Description _EVAS_EVENT_FOCUS_IN =
+EAPI const Eo_Event_Description _EVAS_OBJECT_EVENT_FOCUS_IN =
    EO_EVENT_DESCRIPTION("Focus In", "Focus In Event");
-EAPI const Eo_Event_Description _EVAS_EVENT_FOCUS_OUT =
+EAPI const Eo_Event_Description _EVAS_OBJECT_EVENT_FOCUS_OUT =
    EO_EVENT_DESCRIPTION("Focus Out", "Focus Out Event");
-EAPI const Eo_Event_Description _EVAS_EVENT_SHOW =
+EAPI const Eo_Event_Description _EVAS_OBJECT_EVENT_SHOW =
    EO_EVENT_DESCRIPTION("Show", "Show Event");
-EAPI const Eo_Event_Description _EVAS_EVENT_HIDE =
+EAPI const Eo_Event_Description _EVAS_OBJECT_EVENT_HIDE =
    EO_EVENT_DESCRIPTION("Hide", "Hide Event");
-EAPI const Eo_Event_Description _EVAS_EVENT_MOVE =
+EAPI const Eo_Event_Description _EVAS_OBJECT_EVENT_MOVE =
    EO_EVENT_DESCRIPTION("Move", "Move Event");
-EAPI const Eo_Event_Description _EVAS_EVENT_RESIZE =
+EAPI const Eo_Event_Description _EVAS_OBJECT_EVENT_RESIZE =
    EO_EVENT_DESCRIPTION("Resize", "Resize Event");
-EAPI const Eo_Event_Description _EVAS_EVENT_RESTACK =
+EAPI const Eo_Event_Description _EVAS_OBJECT_EVENT_RESTACK =
    EO_EVENT_DESCRIPTION("Restack", "Restack Event");
-EAPI const Eo_Event_Description _EVAS_EVENT_DEL =
+EAPI const Eo_Event_Description _EVAS_OBJECT_EVENT_DEL =
    EO_EVENT_DESCRIPTION("Del", "Object Being Deleted (called before Free)");
-EAPI const Eo_Event_Description _EVAS_EVENT_HOLD =
+EAPI const Eo_Event_Description _EVAS_OBJECT_EVENT_HOLD =
    EO_EVENT_DESCRIPTION("Hold", "Events go on/off hold");
-EAPI const Eo_Event_Description _EVAS_EVENT_CHANGED_SIZE_HINTS =
+EAPI const Eo_Event_Description _EVAS_OBJECT_EVENT_CHANGED_SIZE_HINTS =
    EO_EVENT_DESCRIPTION("Changed Size Hints", "Size hints changed event");
-EAPI const Eo_Event_Description _EVAS_EVENT_IMAGE_PRELOADED =
+EAPI const Eo_Event_Description _EVAS_OBJECT_EVENT_IMAGE_PRELOADED =
    EO_EVENT_DESCRIPTION("Image Preloaded", "Image has been preloaded");
-EAPI const Eo_Event_Description _EVAS_EVENT_IMAGE_RESIZE=
+EAPI const Eo_Event_Description _EVAS_OBJECT_EVENT_IMAGE_RESIZE=
    EO_EVENT_DESCRIPTION("Image Resize", "Image resize");
-EAPI const Eo_Event_Description _EVAS_EVENT_CANVAS_FOCUS_IN =
-   EO_EVENT_DESCRIPTION("Canvas Focus In", "Canvas got focus as a whole");
-EAPI const Eo_Event_Description _EVAS_EVENT_CANVAS_FOCUS_OUT =
-   EO_EVENT_DESCRIPTION("Canvas Focus Out", "Canvas lost focus as a whole");
-EAPI const Eo_Event_Description _EVAS_EVENT_RENDER_FLUSH_PRE =
-   EO_EVENT_DESCRIPTION("Render Flush Pre", "Called just before rendering is updated on the canvas target");
-EAPI const Eo_Event_Description _EVAS_EVENT_RENDER_FLUSH_POST =
-   EO_EVENT_DESCRIPTION("Render Flush Post", "Called just after rendering is updated on the canvas target");
-EAPI const Eo_Event_Description _EVAS_EVENT_CANVAS_OBJECT_FOCUS_IN =
-   EO_EVENT_DESCRIPTION("Canvas Object Focus In", "Canvas object got focus");
-EAPI const Eo_Event_Description _EVAS_EVENT_CANVAS_OBJECT_FOCUS_OUT =
-   EO_EVENT_DESCRIPTION("Canvas Object Focus Out", "Canvas object lost focus");
-EAPI const Eo_Event_Description _EVAS_EVENT_IMAGE_UNLOADED =
+EAPI const Eo_Event_Description _EVAS_OBJECT_EVENT_IMAGE_UNLOADED =
    EO_EVENT_DESCRIPTION("Image Unloaded", "Image data has been unloaded (by some mechanism in Evas that throw out original image data)");
-EAPI const Eo_Event_Description _EVAS_EVENT_RENDER_PRE =
+EAPI const Eo_Event_Description _EVAS_OBJECT_EVENT_RENDER_PRE =
    EO_EVENT_DESCRIPTION("Render Pre", "Called just before rendering starts on the canvas target @since 1.2");
-EAPI const Eo_Event_Description _EVAS_EVENT_RENDER_POST =
+EAPI const Eo_Event_Description _EVAS_OBJECT_EVENT_RENDER_POST =
    EO_EVENT_DESCRIPTION("Render Post", "Called just after rendering stops on the canvas target @since 1.2");
+
+EAPI const Eo_Event_Description _EVAS_CANVAS_EVENT_FOCUS_IN =
+   EO_EVENT_DESCRIPTION("Canvas Focus In", "Canvas got focus as a whole");
+EAPI const Eo_Event_Description _EVAS_CANVAS_EVENT_FOCUS_OUT =
+   EO_EVENT_DESCRIPTION("Canvas Focus Out", "Canvas lost focus as a whole");
+EAPI const Eo_Event_Description _EVAS_CANVAS_EVENT_RENDER_FLUSH_PRE =
+   EO_EVENT_DESCRIPTION("Render Flush Pre", "Called just before rendering is updated on the canvas target");
+EAPI const Eo_Event_Description _EVAS_CANVAS_EVENT_RENDER_FLUSH_POST =
+   EO_EVENT_DESCRIPTION("Render Flush Post", "Called just after rendering is updated on the canvas target");
+EAPI const Eo_Event_Description _EVAS_CANVAS_EVENT_OBJECT_FOCUS_IN =
+   EO_EVENT_DESCRIPTION("Canvas Object Focus In", "Canvas object got focus");
+EAPI const Eo_Event_Description _EVAS_CANVAS_EVENT_OBJECT_FOCUS_OUT =
+   EO_EVENT_DESCRIPTION("Canvas Object Focus Out", "Canvas object lost focus");
 
 /**
  * Evas events descriptions for Eo.
  */
 static const Eo_Event_Description *_legacy_evas_callback_table[EVAS_CALLBACK_LAST] =
 {
-   EVAS_EVENT_MOUSE_IN,
-   EVAS_EVENT_MOUSE_OUT,
-   EVAS_EVENT_MOUSE_DOWN,
-   EVAS_EVENT_MOUSE_UP,
-   EVAS_EVENT_MOUSE_MOVE,
-   EVAS_EVENT_MOUSE_WHEEL,
-   EVAS_EVENT_MULTI_DOWN,
-   EVAS_EVENT_MULTI_UP,
-   EVAS_EVENT_MULTI_MOVE,
-   EVAS_EVENT_FREE,
-   EVAS_EVENT_KEY_DOWN,
-   EVAS_EVENT_KEY_UP,
-   EVAS_EVENT_FOCUS_IN,
-   EVAS_EVENT_FOCUS_OUT,
-   EVAS_EVENT_SHOW,
-   EVAS_EVENT_HIDE,
-   EVAS_EVENT_MOVE,
-   EVAS_EVENT_RESIZE,
-   EVAS_EVENT_RESTACK,
-   EVAS_EVENT_DEL,
-   EVAS_EVENT_HOLD,
-   EVAS_EVENT_CHANGED_SIZE_HINTS,
-   EVAS_EVENT_IMAGE_PRELOADED,
-   EVAS_EVENT_IMAGE_RESIZE,
-   EVAS_EVENT_CANVAS_FOCUS_IN,
-   EVAS_EVENT_CANVAS_FOCUS_OUT,
-   EVAS_EVENT_RENDER_FLUSH_PRE,
-   EVAS_EVENT_RENDER_FLUSH_POST,
-   EVAS_EVENT_CANVAS_OBJECT_FOCUS_IN,
-   EVAS_EVENT_CANVAS_OBJECT_FOCUS_OUT,
-   EVAS_EVENT_IMAGE_UNLOADED,
-   EVAS_EVENT_RENDER_PRE,
-   EVAS_EVENT_RENDER_POST
+   EVAS_OBJECT_EVENT_MOUSE_IN,
+   EVAS_OBJECT_EVENT_MOUSE_OUT,
+   EVAS_OBJECT_EVENT_MOUSE_DOWN,
+   EVAS_OBJECT_EVENT_MOUSE_UP,
+   EVAS_OBJECT_EVENT_MOUSE_MOVE,
+   EVAS_OBJECT_EVENT_MOUSE_WHEEL,
+   EVAS_OBJECT_EVENT_MULTI_DOWN,
+   EVAS_OBJECT_EVENT_MULTI_UP,
+   EVAS_OBJECT_EVENT_MULTI_MOVE,
+   EVAS_OBJECT_EVENT_FREE,
+   EVAS_OBJECT_EVENT_KEY_DOWN,
+   EVAS_OBJECT_EVENT_KEY_UP,
+   EVAS_OBJECT_EVENT_FOCUS_IN,
+   EVAS_OBJECT_EVENT_FOCUS_OUT,
+   EVAS_OBJECT_EVENT_SHOW,
+   EVAS_OBJECT_EVENT_HIDE,
+   EVAS_OBJECT_EVENT_MOVE,
+   EVAS_OBJECT_EVENT_RESIZE,
+   EVAS_OBJECT_EVENT_RESTACK,
+   EVAS_OBJECT_EVENT_DEL,
+   EVAS_OBJECT_EVENT_HOLD,
+   EVAS_OBJECT_EVENT_CHANGED_SIZE_HINTS,
+   EVAS_OBJECT_EVENT_IMAGE_PRELOADED,
+   EVAS_OBJECT_EVENT_IMAGE_RESIZE,
+   EVAS_CANVAS_EVENT_FOCUS_IN,
+   EVAS_CANVAS_EVENT_FOCUS_OUT,
+   EVAS_CANVAS_EVENT_RENDER_FLUSH_PRE,
+   EVAS_CANVAS_EVENT_RENDER_FLUSH_POST,
+   EVAS_CANVAS_EVENT_OBJECT_FOCUS_IN,
+   EVAS_CANVAS_EVENT_OBJECT_FOCUS_OUT,
+   EVAS_OBJECT_EVENT_IMAGE_UNLOADED,
+   EVAS_OBJECT_EVENT_RENDER_PRE,
+   EVAS_OBJECT_EVENT_RENDER_POST
 };
 
 typedef struct
