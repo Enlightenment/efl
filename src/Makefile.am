@@ -106,5 +106,5 @@ install-data-hook:
 	$(EFL_INSTALL_DATA_HOOK)
 	for i in $(lib_LTLIBRARIES); do \
 		export file=`basename $$i`; \
-		sed -e "s/-luuid//" $(DESTDIR)/${libdir}/$$file > $(DESTDIR)/${libdir}/$$file.tmp && mv $(DESTDIR)/${libdir}/$$file.tmp $(DESTDIR)/${libdir}/$$file; \
+		sed -e "s/-luuid//" $(DESTDIR)${libdir}/$$file > $(DESTDIR)${libdir}/$$file.tmp && mv $(DESTDIR)${libdir}/$$file.tmp $(DESTDIR)${libdir}/$$file; \
 	done
