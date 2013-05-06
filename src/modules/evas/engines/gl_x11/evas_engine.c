@@ -1450,10 +1450,43 @@ eng_output_flush(void *data, Evas_Render_Mode render_mode)
              i = 0;
              EINA_INLIST_FOREACH(EINA_INLIST_GET(re->rects), r)
                {
-                  rects[i + 0] = r->x;
-                  rects[i + 1] = r->y;
-                  rects[i + 2] = r->w;
-                  rects[i + 3] = r->h;
+                  int gw, gh;
+                  
+                  gw = re->win->gl_context->w;
+                  gh = re->win->gl_context->h;
+                  switch (re->win->rot)
+                    {
+                     case 0:
+                       rects[i + 0] = r->x;
+                       rects[i + 1] = r->y;
+                       rects[i + 2] = r->w;
+                       rects[i + 3] = r->h;
+                       break;
+                     case 90:
+                       rects[i + 0] = r->y;
+                       rects[i + 1] = gh - (r->x + r->w);
+                       rects[i + 2] = r->h;
+                       rects[i + 3] = r->w;
+                       break;
+                     case 180:
+                       rects[i + 0] = gw - (r->x + r->w);
+                       rects[i + 1] = gh - (r->y + r->h);
+                       rects[i + 2] = r->w;
+                       rects[i + 3] = r->h;
+                       break;
+                     case 270:
+                       rects[i + 0] = gh - (r->y + r->h);
+                       rects[i + 1] = r->x;
+                       rects[i + 2] = r->h;
+                       rects[i + 3] = r->w;
+                       break;
+                     default:
+                       rects[i + 0] = r->x;
+                       rects[i + 1] = r->y;
+                       rects[i + 2] = r->w;
+                       rects[i + 3] = r->h;
+                       break;
+                    }
                   i += 4;
                }
              glsym_eglSwapBuffersRegion(re->win->egl_disp,
