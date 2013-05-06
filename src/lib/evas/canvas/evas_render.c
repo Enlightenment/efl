@@ -1119,24 +1119,28 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
              RD("        fisrt surf: %ix%i\n", sw, sh);
              changed = EINA_TRUE;
           }
-        if (obj->is_smart)
-          {
-             Evas_Object_Protected_Data *o2;
 
-             EINA_INLIST_FOREACH(evas_object_smart_members_get_direct(eo_obj),
-                                 o2)
-               {
-                  if (!o2->changed) continue;
-                  changed = _smart_members_changed_check(o2->object, o2);
-                  if (changed) break;
-               }
-             if (obj->changed_color) changed = EINA_TRUE;
-          }
-        else if (obj->changed)
+        if (!changed)
           {
-             if (((obj->changed_pchange) && (obj->changed_map)) ||
-                 (obj->changed_color))
-               changed = EINA_TRUE;
+             if (obj->is_smart)
+               {
+                  Evas_Object_Protected_Data *o2;
+
+                  EINA_INLIST_FOREACH(
+                     evas_object_smart_members_get_direct(eo_obj), o2)
+                    {
+                       if (!o2->changed) continue;
+                       changed = _smart_members_changed_check(o2->object, o2);
+                       if (changed) break;
+                    }
+                  if (obj->changed_color) changed = EINA_TRUE;
+               }
+             else if (obj->changed)
+               {
+                  if (((obj->changed_pchange) && (obj->changed_map)) ||
+                      (obj->changed_color))
+                    changed = EINA_TRUE;
+               }
           }
 
         /* mark the old map as invalid, so later we don't reuse it as a
