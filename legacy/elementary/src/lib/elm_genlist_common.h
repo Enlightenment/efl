@@ -230,7 +230,7 @@ EAPI int                           elm_genlist_item_index_get(const Elm_Object_I
 /**
  * Create a new genlist item class in a given genlist widget.
  *
- * @return New allocated a genlist item class.
+ * @return New allocated genlist item class.
  *
  * This adds genlist item class for the genlist widget. When adding an item,
  * genlist_item_{append, prepend, insert} function needs item class of the item.

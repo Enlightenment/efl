@@ -3525,5 +3525,5 @@ elm_main(int    argc,
 }
 
 #endif
-/* All emelentary apps should use this. Put it right after elm_main() */
+/* All elementary apps should use this. Put it right after elm_main() */
 ELM_MAIN()
