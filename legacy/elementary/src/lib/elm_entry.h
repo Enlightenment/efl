@@ -241,6 +241,7 @@
  * parameter for the callback will be an #Elm_Entry_Anchor_Info.
  * @li "preedit,changed": The preedit string has changed.
  * @li "language,changed": Program language changed.
+ * @li "text,set,done": Whole text has been set to the entry.
  *
  * Default content parts of the entry items that you can use for are:
  * @li "icon" - An icon in the entry

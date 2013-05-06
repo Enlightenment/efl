@@ -48,6 +48,7 @@ static const char SIG_SELECTION_CUT[] = "selection,cut";
 static const char SIG_SELECTION_PASTE[] = "selection,paste";
 static const char SIG_SELECTION_START[] = "selection,start";
 static const char SIG_THEME_CHANGED[] = "theme,changed";
+static const char SIG_TEXT_SET_DONE[] = "text,set,done";
 static const char SIG_UNDO_REQUEST[] = "undo,request";
 static const char SIG_UNFOCUSED[] = "unfocused";
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
@@ -80,6 +81,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_SELECTION_PASTE, ""},
    {SIG_SELECTION_START, ""},
    {SIG_THEME_CHANGED, ""},
+   {SIG_TEXT_SET_DONE, ""},
    {SIG_UNDO_REQUEST, ""},
    {SIG_UNFOCUSED, ""},
    {NULL, NULL}
@@ -2315,6 +2317,7 @@ _text_append_idler(void *data)
         free(sd->append_text_left);
         sd->append_text_left = NULL;
         sd->append_text_idler = NULL;
+        evas_object_smart_callback_call(obj, SIG_TEXT_SET_DONE, NULL);
         return ECORE_CALLBACK_CANCEL;
      }
 }
@@ -2576,6 +2579,7 @@ _elm_entry_smart_text_set(Eo *obj, void *_pd, va_list *list)
    else
      {
         edje_object_part_text_set(sd->entry_edje, "elm.text", entry);
+        evas_object_smart_callback_call(obj, SIG_TEXT_SET_DONE, NULL);
      }
 
    if (len > 0)

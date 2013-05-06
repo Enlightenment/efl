@@ -1316,23 +1316,27 @@
 
         * The momentum animation time is changed as the amount of flick.
 
-2012-05-01 Ryuan Choi (ryuan)
+2013-05-01 Ryuan Choi (ryuan)
 
         * Fix elm_object_cursor_theme_search_enabled_set to do as it's name described.
 
-2012-05-02 WooHyun Jung
+2013-05-02 WooHyun Jung
 
         * elm_entry_filter_accept_set function now can recognize tags.
 
-2012-05-02 ChunEon Park (Hermet)
+2013-05-02 ChunEon Park (Hermet)
 
         * Don't be dead even if a ctxpopup item callback function is null.
 
-2012-05-03 Shinwoo Kim
+2013-05-03 Shinwoo Kim
 
         * Fix gengrid does not work under the accessibility.
         * Fix do not append NULL to genlist focus list.
 
-2012-05-01 Ryuan Choi (ryuan)
+2013-05-01 Ryuan Choi (ryuan)
 
         * Fix elm_clock_first_interval_set writes wrong value.
+
+2013-05-06 WooHyun Jung
+
+        * Add elm_entry smart callback - "text,set,done".

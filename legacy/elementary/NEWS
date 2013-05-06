@@ -67,6 +67,7 @@ Additions:
    * Add the config elm_scroll_smooth_start_enable.
    * Add elm_layout smart callback - "language,changed".
    * The momentum animation time is changed as the amount of flick.
+   * Add elm_entry smart callback - "text,set,done".
 
 Improvements:
 
