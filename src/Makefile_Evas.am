@@ -1211,28 +1211,6 @@ modules_evas_loaders_psd_module_la_LIBTOOLFLAGS = --tag=disable-static
 endif
 endif
 
-if BUILD_LOADER_SVG
-if EVAS_STATIC_BUILD_SVG
-lib_evas_libevas_la_SOURCES += modules/evas/loaders/svg/evas_image_load_esvg.c
-lib_evas_libevas_la_CPPFLAGS += @evas_image_loader_svg_cflags@
-lib_evas_libevas_la_LIBADD += @evas_image_loader_svg_libs@
-else
-loadersvgpkgdir = $(libdir)/evas/modules/loaders/svg/$(MODULE_ARCH)
-loadersvgpkg_LTLIBRARIES = modules/evas/loaders/svg/module.la
-modules_evas_loaders_svg_module_la_SOURCES = modules/evas/loaders/svg/evas_image_load_esvg.c
-modules_evas_loaders_svg_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
--I$(top_srcdir)/src/lib/evas/include \
-@EVAS_CFLAGS@ \
-@evas_image_loader_svg_cflags@
-modules_evas_loaders_svg_module_la_LIBADD = \
-@USE_EVAS_LIBS@ \
-@evas_image_loader_svg_libs@
-modules_evas_loaders_svg_module_la_DEPENDENCIES = @USE_EVAS_INTERNAL_LIBS@
-modules_evas_loaders_svg_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
-modules_evas_loaders_svg_module_la_LIBTOOLFLAGS = --tag=disable-static
-endif
-endif
-
 if BUILD_LOADER_TGA
 if EVAS_STATIC_BUILD_TGA
 lib_evas_libevas_la_SOURCES += modules/evas/loaders/tga/evas_image_load_tga.c

@@ -1236,21 +1236,6 @@ AC_ARG_ENABLE([image-loader-gif],
    ],
    [want_evas_image_loader_gif="yes"])
 
-AC_ARG_ENABLE([image-loader-svg],
-   [AC_HELP_STRING([--enable-image-loader-svg], [enable SVG image loader. @<:@default=disabled@:>@])],
-   [
-    if test "x${enableval}" = "xyes" ; then
-       want_evas_image_loader_svg="yes"
-    else
-       if test "x${enableval}" = "xstatic" ; then
-          want_evas_image_loader_svg="static"
-       else
-          want_evas_image_loader_svg="no"
-       fi
-    fi
-   ],
-   [want_evas_image_loader_svg="no"])
-
 AC_ARG_ENABLE([image-loader-tiff],
    [AC_HELP_STRING([--enable-image-loader-tiff], [enable Tiff image loader. @<:@default=enabled@:>@])],
    [
@@ -1302,7 +1287,6 @@ want_evas_image_loader_jpeg="static"
 want_evas_image_loader_pmaps="static"
 want_evas_image_loader_png="static"
 want_evas_image_loader_psd="static"
-#want_evas_image_loader_svg="yes"
 want_evas_image_loader_tga="static"
 #want_evas_image_loader_tiff="yes"
 want_evas_image_loader_wbmp="static"
@@ -1312,7 +1296,6 @@ want_evas_image_loader_xpm="static"
 if test "${have_wince}" = "yes"; then
    want_fontconfig="no"
    want_evas_image_loader_gif="no"
-   want_evas_image_loader_svg="no"
    want_evas_image_loader_tiff="no"
    want_evas_image_loader_webp="no"
 fi
@@ -1573,7 +1556,6 @@ EVAS_CHECK_IMAGE_LOADER([JPEG],    [${want_evas_image_loader_jpeg}])
 EVAS_CHECK_IMAGE_LOADER([PMAPS],   [${want_evas_image_loader_pmaps}])
 EVAS_CHECK_IMAGE_LOADER([PNG],     [${want_evas_image_loader_png}])
 EVAS_CHECK_IMAGE_LOADER([PSD],     [${want_evas_image_loader_psd}])
-EVAS_CHECK_IMAGE_LOADER([SVG],     [${want_evas_image_loader_svg}])
 EVAS_CHECK_IMAGE_LOADER([Tga],     [${want_evas_image_loader_tga}])
 EVAS_CHECK_IMAGE_LOADER([Tiff],    [${want_evas_image_loader_tiff}])
 EVAS_CHECK_IMAGE_LOADER([WBMP],    [${want_evas_image_loader_wbmp}])
