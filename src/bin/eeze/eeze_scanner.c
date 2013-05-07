@@ -295,10 +295,10 @@ cb_vol_chg(const char *device, Eeze_Udev_Event ev, void *data EINA_UNUSED, Eeze_
 
    DBG("device='%s'", device);
 
-   if (ev == EEZE_UDEV_EVENT_ONLINE) ev = EEZE_SCANNER_EVENT_TYPE_ADD;
-   else if (ev == EEZE_UDEV_EVENT_OFFLINE) ev = EEZE_SCANNER_EVENT_TYPE_REMOVE;
+   if (ev == EEZE_UDEV_EVENT_ONLINE) ev = EEZE_UDEV_EVENT_ADD;
+   else if (ev == EEZE_UDEV_EVENT_OFFLINE) ev = EEZE_UDEV_EVENT_REMOVE;
 
-   event_send(device, ev, EINA_TRUE);
+   event_send(device, (Eeze_Scanner_Event_Type)ev, EINA_TRUE);
    switch (ev)
      {
         case EEZE_UDEV_EVENT_ADD:
@@ -344,7 +344,7 @@ cb_stor_chg(const char *device, Eeze_Udev_Event ev, void *data EINA_UNUSED, Eeze
         case EEZE_UDEV_EVENT_ADD:
         case EEZE_UDEV_EVENT_ONLINE:
           INF("Added device '%s'", device);
-          event_send(device, ev, EINA_FALSE);
+          event_send(device, (Eeze_Scanner_Event_Type)ev, EINA_FALSE);
           str = eeze_udev_syspath_get_property(device, "ID_CDROM");
           if (!str)
             {
@@ -367,7 +367,7 @@ cb_stor_chg(const char *device, Eeze_Udev_Event ev, void *data EINA_UNUSED, Eeze
                if ((!dev) || (dev->device != device)) return;
             }
           INF("Removed device '%s'", device);
-          event_send(device, ev, EINA_FALSE);
+          event_send(device, (Eeze_Scanner_Event_Type)ev, EINA_FALSE);
           EINA_LIST_FOREACH(storage_cdrom, l, dev)
             if (device == dev->device)
               {
