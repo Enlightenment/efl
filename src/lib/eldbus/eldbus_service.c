@@ -395,7 +395,7 @@ cb_introspect(const Eldbus_Service_Interface *_iface, const Eldbus_Message *mess
 }
 
 static const Eldbus_Method introspect = {
-   "Introspect", NULL, ELDBUS_ARGS({ "s", "xml" }), cb_introspect
+   "Introspect", NULL, ELDBUS_ARGS({ "s", "xml" }), cb_introspect, 0
 };
 
 static void
@@ -435,22 +435,22 @@ _default_interfaces_free(void)
 static const Eldbus_Method _property_methods[] = {
    {
     "Get", ELDBUS_ARGS({"s", "interface"}, {"s", "property"}),
-    ELDBUS_ARGS({"v", "value"}), _cb_property_get
+    ELDBUS_ARGS({"v", "value"}), _cb_property_get, 0
    },
    {
     "Set", ELDBUS_ARGS({"s", "interface"}, {"s", "property"}, {"v", "value"}),
-    NULL, _cb_property_set
+    NULL, _cb_property_set, 0
    },
    {
     "GetAll", ELDBUS_ARGS({"s", "interface"}), ELDBUS_ARGS({"a{sv}", "props"}),
-    _cb_property_getall
+    _cb_property_getall, 0
    }
 };
 
 static const Eldbus_Signal _properties_signals[] = {
    {
     "PropertiesChanged",
-    ELDBUS_ARGS({"s", "interface"}, {"a{sv}", "changed_properties"}, {"as", "invalidated_properties"})
+    ELDBUS_ARGS({"s", "interface"}, {"a{sv}", "changed_properties"}, {"as", "invalidated_properties"}), 0
    }
 };
 
@@ -570,15 +570,15 @@ _cb_managed_objects(const Eldbus_Service_Interface *iface, const Eldbus_Message 
 
 static Eldbus_Method get_managed_objects = {
    "GetManagedObjects", NULL, ELDBUS_ARGS({"a{oa{sa{sv}}}", "objects"}),
-   _cb_managed_objects
+   _cb_managed_objects, 0
 };
 
 static const Eldbus_Signal _object_manager_signals[] = {
    {
-    "InterfacesAdded", ELDBUS_ARGS({"o", "object"}, {"a{sa{sv}}", "interfaces"})
+    "InterfacesAdded", ELDBUS_ARGS({"o", "object"}, {"a{sa{sv}}", "interfaces"}), 0
    },
    {
-    "InterfacesRemoved", ELDBUS_ARGS({"o", "object"}, {"as", "interfaces"})
+    "InterfacesRemoved", ELDBUS_ARGS({"o", "object"}, {"as", "interfaces"}), 0
    }
 };
 
