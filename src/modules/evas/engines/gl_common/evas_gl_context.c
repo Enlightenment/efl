@@ -662,6 +662,11 @@ evas_gl_common_context_new(void)
              else if (strstr(s, "NVIDIA Tegra"))
                 shared->info.tune.pipes.max = DEF_PIPES_TEGRA_2;
           }
+        if (!getenv("EVAS_GL_MAPBUFFER"))
+          {
+             glsym_glMapBuffer = NULL;
+             glsym_glUnmapBuffer= NULL;
+          }
 
 #define GETENVOPT(name, tune_param, min, max) \
         do { \
