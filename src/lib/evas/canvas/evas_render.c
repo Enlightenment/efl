@@ -1027,7 +1027,7 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
 
    if (mapped)
      {
-        if (!proxy_obj || proxy_src_clip)
+        if (proxy_src_clip)
           {
              if ((!evas_object_is_visible(eo_obj, obj)) || (obj->clip.clipees)
                  || (obj->cur->have_clipees))
@@ -1329,43 +1329,45 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
                {
                   RDI(level);
 
-                  //FIXME: Consider to clip by the proxy clipper.
-                  if (obj->cur->clipper && (!proxy_obj || proxy_src_clip))
+                  if (obj->cur->clipper)
                     {
-                       RD("        clip: %i %i %ix%i [%i %i %ix%i]\n",
-                          obj->cur->cache.clip.x + off_x,
-                          obj->cur->cache.clip.y + off_y,
-                          obj->cur->cache.clip.w,
-                          obj->cur->cache.clip.h,
-                          obj->cur->geometry.x + off_x,
-                          obj->cur->geometry.y + off_y,
-                          obj->cur->geometry.w,
-                          obj->cur->geometry.h);
-
-                       RD("        clipper: %i %i %ix%i\n",
-                          obj->cur->clipper->cur->cache.clip.x + off_x,
-                          obj->cur->clipper->cur->cache.clip.y + off_y,
-                          obj->cur->clipper->cur->cache.clip.w,
-                          obj->cur->clipper->cur->cache.clip.h);
-
                        int x, y, w, h;
 
-                       if (_evas_render_has_map(eo_obj, obj))
-                         evas_object_clip_recalc(obj);
+                       if (proxy_src_clip)
+                         {
+                            if (_evas_render_has_map(eo_obj, obj))
+                              evas_object_clip_recalc(obj);
 
-                       x = obj->cur->cache.clip.x + off_x;
-                       y = obj->cur->cache.clip.y + off_y;
-                       w = obj->cur->cache.clip.w;
-                       h = obj->cur->cache.clip.h;
+                            x = obj->cur->cache.clip.x + off_x;
+                            y = obj->cur->cache.clip.y + off_y;
+                            w = obj->cur->cache.clip.w;
+                            h = obj->cur->cache.clip.h;
 
-                       RECTS_CLIP_TO_RECT(x, y, w, h,
-                                          obj->cur->clipper->cur->cache.clip.x + off_x,
-                                          obj->cur->clipper->cur->cache.clip.y + off_y,
-                                          obj->cur->clipper->cur->cache.clip.w,
-                                          obj->cur->clipper->cur->cache.clip.h);
+                            RECTS_CLIP_TO_RECT(x, y, w, h,
+                                               obj->cur->clipper->cur->cache.clip.x + off_x,
+                                               obj->cur->clipper->cur->cache.clip.y + off_y,
+                                               obj->cur->clipper->cur->cache.clip.w,
+                                               obj->cur->clipper->cur->cache.clip.h);
 
-                       e->engine.func->context_clip_set(e->engine.data.output,
-                                                        ctx, x, y, w, h);
+                            e->engine.func->context_clip_set(e->engine.data.output,
+                                                             ctx, x, y, w, h);
+                         }
+                       else
+                         {
+                            //FIXME: Consider to clip by the proxy clipper.
+                            if (proxy_obj && (proxy_obj != obj))
+                              {
+                                 if (_evas_render_has_map(eo_obj, obj))
+                                   evas_object_clip_recalc(obj);
+
+                                 x = obj->cur->clipper->cur->geometry.x + off_x;
+                                 y = obj->cur->clipper->cur->geometry.y + off_y;
+                                 w = obj->cur->clipper->cur->geometry.w;
+                                 h = obj->cur->clipper->cur->geometry.h;
+                                 e->engine.func->context_clip_set(e->engine.data.output,
+                                                                  ctx, x, y, w, h);
+                              }
+                         }
                     }
                   obj->func->render(eo_obj, obj, e->engine.data.output, ctx,
                                     surface, off_x, off_y, EINA_FALSE);
@@ -1374,8 +1376,7 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
           }
         else
           {
-             //FIXME: Consider to clip by the proxy clipper.
-             if (obj->cur->clipper && (!proxy_obj || proxy_src_clip))
+             if (obj->cur->clipper)
                {
                   int x, y, w, h;
 
