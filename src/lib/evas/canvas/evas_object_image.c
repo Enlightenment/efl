@@ -151,7 +151,7 @@ static int evas_object_image_can_map(Evas_Object *eo_obj);
 static void *evas_object_image_data_convert_internal(Evas_Object_Image *o, void *data, Evas_Colorspace to_cspace);
 static void evas_object_image_filled_resize_listener(void *data, Evas *eo_e, Evas_Object *eo_obj, void *einfo);
 
-static void _proxy_unset(Evas_Object *proxy);
+static void _proxy_unset(Evas_Object *proxy, Evas_Object_Protected_Data *obj, Evas_Object_Image *o);
 static void _proxy_set(Evas_Object *proxy, Evas_Object *src);
 static void _proxy_error(Evas_Object *proxy, void *context, void *output, void *surface, int x, int y, Eina_Bool do_async);
 
@@ -256,7 +256,7 @@ _evas_object_image_cleanup(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj,
                                                                  eo_obj);
      }
    if (o->pixels->tmpf) _cleanup_tmpf(eo_obj);
-   if (o->cur->source) _proxy_unset(eo_obj);
+   if (o->cur->source) _proxy_unset(eo_obj, obj, o);
 }
 
 static Eina_Bool
@@ -518,7 +518,7 @@ _image_file_set(Eo *eo_obj, void *_pd, va_list *list)
 							      o->engine_data,
 							      eo_obj);
  */
-   if (o->cur->source) _proxy_unset(eo_obj);
+   if (o->cur->source) _proxy_unset(eo_obj, obj, o);
 
    EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
      {
@@ -703,7 +703,7 @@ _image_source_set(Eo *eo_obj, void *_pd, va_list *list)
       evas_object_image_file_set(eo_obj, NULL, NULL);
 
    if (eo_src) _proxy_set(eo_obj, eo_src);
-   else _proxy_unset(eo_obj);
+   else _proxy_unset(eo_obj, obj, o);
 
    if (result) *result = EINA_TRUE;
 }
@@ -3110,21 +3110,25 @@ _canvas_image_max_size_get(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list)
 
 /* all nice and private */
 static void
-_proxy_unset(Evas_Object *proxy)
+_proxy_unset(Evas_Object *proxy, Evas_Object_Protected_Data *cur_proxy, Evas_Object_Image *o)
 {
-   Evas_Object_Image *o = eo_data_scope_get(proxy, MY_CLASS);
    Evas_Object_Protected_Data *cur_source;
-   Evas_Object_Protected_Data *cur_proxy;
 
    if (!o->cur->source) return;
 
    cur_source = eo_data_scope_get(o->cur->source, EVAS_OBJ_CLASS);
-   cur_proxy = eo_data_scope_get(proxy, EVAS_OBJ_CLASS);
 
    EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, cur_source->proxy, Evas_Object_Proxy_Data, proxy_source_write)
      {
        proxy_source_write->proxies = eina_list_remove(proxy_source_write->proxies,
 						      proxy);
+
+       if (eina_list_count(proxy_source_write->proxies) == 0)
+          {
+             cur_proxy->layer->evas->engine.func->image_map_surface_free(cur_proxy->layer->evas->engine.data.output,
+                                                                         proxy_source_write->surface);
+             proxy_source_write->surface = NULL;
+          }
 
        if (proxy_source_write->src_invisible)
 	 {
@@ -3557,7 +3561,7 @@ evas_object_image_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
    _cleanup_tmpf(eo_obj);
    if (o->cur->file) eina_stringshare_del(o->cur->file);
    if (o->cur->key) eina_stringshare_del(o->cur->key);
-   if (o->cur->source) _proxy_unset(eo_obj);
+   if (o->cur->source) _proxy_unset(eo_obj, obj, o);
    if (obj->layer && obj->layer->evas)
      {
        if (o->engine_data)
