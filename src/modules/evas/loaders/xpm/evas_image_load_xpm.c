@@ -140,7 +140,7 @@ static Eina_Bool
 evas_image_load_file_xpm(Eina_File *f, Evas_Image_Property *prop, void *pixels, int load_data, int *error)
 {
    DATA32      *ptr, *end, *head = NULL;
-   const char  *map;
+   const char  *map = NULL;
    size_t       length;
    size_t       position;
 
