@@ -1284,6 +1284,7 @@ _edje_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
      return;
    if (!ev->keyname) return;
 
+   _edje_emit(ed, "entry,keydown", rp->part->name);
 #ifdef HAVE_ECORE_IMF
    if (en->imf_context)
      {
@@ -1835,6 +1836,7 @@ _edje_key_up_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, v
        (rp->part->entry_mode < EDJE_ENTRY_EDIT_MODE_EDITABLE))
      return;
 
+   _edje_emit(ed, "entry,keyup", rp->part->name);
 #ifdef HAVE_ECORE_IMF
    if (en->imf_context)
      {
