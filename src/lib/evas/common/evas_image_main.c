@@ -222,7 +222,8 @@ _evas_common_rgba_image_delete(Image_Entry *ie)
         Evas_Image_Load_Func *evas_image_load_func = NULL;
 
         evas_image_load_func = ie->info.loader;
-        evas_image_load_func->file_close(ie->loader_data);
+        if (evas_image_load_func)
+          evas_image_load_func->file_close(ie->loader_data);
      }
    if (ie->f) eina_file_close(ie->f);
    free(im);
