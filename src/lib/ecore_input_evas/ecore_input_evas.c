@@ -382,7 +382,7 @@ _ecore_event_evas_mouse_button(Ecore_Event_Mouse_Button *e, Ecore_Event_Press pr
                                    e->multi.x, e->multi.y, flags,
                                    e->timestamp);
              else
-                evas_event_feed_multi_down(lookup->evas, e->multi.device,
+               evas_event_input_multi_down(lookup->evas, e->multi.device,
                                            e->x, e->y, e->multi.radius,
                                            e->multi.radius_x, e->multi.radius_y,
                                            e->multi.pressure, e->multi.angle,
@@ -399,7 +399,7 @@ _ecore_event_evas_mouse_button(Ecore_Event_Mouse_Button *e, Ecore_Event_Press pr
                                  e->multi.x, e->multi.y, flags,
                                  e->timestamp);
              else
-                evas_event_feed_multi_up(lookup->evas, e->multi.device,
+               evas_event_input_multi_up(lookup->evas, e->multi.device,
                                          e->x, e->y, e->multi.radius,
                                          e->multi.radius_x, e->multi.radius_y,
                                          e->multi.pressure, e->multi.angle,

@@ -2154,8 +2154,8 @@ _canvas_event_feed_mouse_out(Eo *eo_e, void *_pd, va_list *list)
    _evas_unwalk(e);
 }
 
-EAPI void
-evas_event_feed_multi_down(Evas *eo_e,
+static void
+_canvas_event_feed_multi_down_internal(Evas *eo_e, void *_pd,
                            int d, int x, int y,
                            double rad, double radx, double rady,
                            double pres, double ang,
@@ -2163,30 +2163,6 @@ evas_event_feed_multi_down(Evas *eo_e,
                            Evas_Button_Flags flags, unsigned int timestamp,
                            const void *data)
 {
-   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
-   return;
-   MAGIC_CHECK_END();
-
-   eo_do(eo_e, evas_canvas_event_feed_multi_down(d, x, y, rad, radx, rady, pres, ang, fx, fy, flags, timestamp, data));
-}
-
-void
-_canvas_event_feed_multi_down(Eo *eo_e, void *_pd, va_list *list)
-{
-   int d = va_arg(*list, int);
-   int x = va_arg(*list, int);
-   int y = va_arg(*list, int);
-   double rad = va_arg(*list, double);
-   double radx = va_arg(*list, double);
-   double rady = va_arg(*list, double);
-   double pres = va_arg(*list, double);
-   double ang = va_arg(*list, double);
-   double fx = va_arg(*list, double);
-   double fy = va_arg(*list, double);
-   Evas_Button_Flags flags = va_arg(*list, Evas_Button_Flags);
-   unsigned int timestamp = va_arg(*list, unsigned int);
-   const void *data = va_arg(*list, const void *);
-
    Evas_Public_Data *e = _pd;
    Eina_List *l, *copy;
    Evas_Event_Multi_Down ev;
@@ -2222,7 +2198,7 @@ _canvas_event_feed_multi_down(Eo *eo_e, void *_pd, va_list *list)
    ev.event_flags = e->default_event_flags;
    ev.dev = _evas_device_top_get(eo_e);
    if (ev.dev) _evas_device_ref(ev.dev);
-   
+
    _evas_walk(e);
    /* append new touch point to the touch point list */
    _evas_touch_point_append(eo_e, d, x, y);
@@ -2268,23 +2244,66 @@ _canvas_event_feed_multi_down(Eo *eo_e, void *_pd, va_list *list)
 }
 
 EAPI void
-evas_event_feed_multi_up(Evas *eo_e,
-                         int d, int x, int y,
-                         double rad, double radx, double rady,
-                         double pres, double ang,
-                         double fx, double fy,
-                         Evas_Button_Flags flags, unsigned int timestamp,
-                         const void *data)
+evas_event_input_multi_down(Evas *eo_e,
+                           int d, int x, int y,
+                           double rad, double radx, double rady,
+                           double pres, double ang,
+                           double fx, double fy,
+                           Evas_Button_Flags flags, unsigned int timestamp,
+                           const void *data)
 {
    MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
    return;
    MAGIC_CHECK_END();
 
-   eo_do(eo_e, evas_canvas_event_feed_multi_up(d, x, y, rad, radx, rady, pres, ang, fx, fy, flags, timestamp, data));
+   eo_do(eo_e, evas_canvas_event_input_multi_down(d, x, y, rad, radx, rady,
+                                                  pres, ang, fx, fy, flags,
+                                                  timestamp, data));
 }
 
 void
-_canvas_event_feed_multi_up(Eo *eo_e, void *_pd, va_list *list)
+_canvas_event_input_multi_down(Eo *eo_e, void *_pd, va_list *list)
+{
+   int d = va_arg(*list, int);
+   int x = va_arg(*list, int);
+   int y = va_arg(*list, int);
+   double rad = va_arg(*list, double);
+   double radx = va_arg(*list, double);
+   double rady = va_arg(*list, double);
+   double pres = va_arg(*list, double);
+   double ang = va_arg(*list, double);
+   double fx = va_arg(*list, double);
+   double fy = va_arg(*list, double);
+   Evas_Button_Flags flags = va_arg(*list, Evas_Button_Flags);
+   unsigned int timestamp = va_arg(*list, unsigned int);
+   const void *data = va_arg(*list, const void *);
+   Evas_Public_Data *e = _pd;
+
+   _canvas_event_feed_multi_down_internal(eo_e, _pd, d,
+                                          x - e->framespace.x,
+                                          y - e->framespace.y,
+                                          rad, radx, rady, pres, ang,
+                                          fx, fy, flags, timestamp, data);
+}
+
+EAPI void
+evas_event_feed_multi_down(Evas *eo_e,
+                           int d, int x, int y,
+                           double rad, double radx, double rady,
+                           double pres, double ang,
+                           double fx, double fy,
+                           Evas_Button_Flags flags, unsigned int timestamp,
+                           const void *data)
+{
+   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
+   return;
+   MAGIC_CHECK_END();
+
+   eo_do(eo_e, evas_canvas_event_feed_multi_down(d, x, y, rad, radx, rady, pres, ang, fx, fy, flags, timestamp, data));
+}
+
+void
+_canvas_event_feed_multi_down(Eo *eo_e, void *_pd, va_list *list)
 {
    int d = va_arg(*list, int);
    int x = va_arg(*list, int);
@@ -2300,6 +2319,21 @@ _canvas_event_feed_multi_up(Eo *eo_e, void *_pd, va_list *list)
    unsigned int timestamp = va_arg(*list, unsigned int);
    const void *data = va_arg(*list, const void *);
 
+   _canvas_event_feed_multi_down_internal(eo_e, _pd,
+                                          d, x, y, rad, radx, rady, pres, ang,
+                                          fx, fy, flags, timestamp, data);
+}
+
+static void
+_canvas_event_feed_multi_up_internal(Evas *eo_e, void *_pd,
+                                     int d, int x, int y,
+                                     double rad, double radx, double rady,
+                                     double pres, double ang,
+                                     double fx, double fy,
+                                     Evas_Button_Flags flags,
+                                     unsigned int timestamp,
+                                     const void *data)
+{
    Evas_Public_Data *e = _pd;
    Eina_List *l, *copy;
    Evas_Event_Multi_Up ev;
@@ -2371,6 +2405,87 @@ _canvas_event_feed_multi_up(Eo *eo_e, void *_pd, va_list *list)
    _evas_touch_point_remove(eo_e, d);
    if (ev.dev) _evas_device_unref(ev.dev);
    _evas_unwalk(e);
+}
+
+EAPI void
+evas_event_input_multi_up(Evas *eo_e,
+                         int d, int x, int y,
+                         double rad, double radx, double rady,
+                         double pres, double ang,
+                         double fx, double fy,
+                         Evas_Button_Flags flags, unsigned int timestamp,
+                         const void *data)
+{
+   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
+   return;
+   MAGIC_CHECK_END();
+
+   eo_do(eo_e, evas_canvas_event_input_multi_up(d, x, y, rad, radx, rady, pres,
+                                                ang, fx, fy, flags, timestamp,
+                                                data));
+}
+
+void
+_canvas_event_input_multi_up(Eo *eo_e, void *_pd, va_list *list)
+{
+   int d = va_arg(*list, int);
+   int x = va_arg(*list, int);
+   int y = va_arg(*list, int);
+   double rad = va_arg(*list, double);
+   double radx = va_arg(*list, double);
+   double rady = va_arg(*list, double);
+   double pres = va_arg(*list, double);
+   double ang = va_arg(*list, double);
+   double fx = va_arg(*list, double);
+   double fy = va_arg(*list, double);
+   Evas_Button_Flags flags = va_arg(*list, Evas_Button_Flags);
+   unsigned int timestamp = va_arg(*list, unsigned int);
+   const void *data = va_arg(*list, const void *);
+   Evas_Public_Data *e = _pd;
+
+   _canvas_event_feed_multi_up_internal(eo_e, _pd, d,
+                                        x - e->framespace.x,
+                                        y - e->framespace.y,
+                                        rad, radx, rady,
+                                        pres, ang, fx, fy, flags, timestamp,
+                                        data);
+}
+
+EAPI void
+evas_event_feed_multi_up(Evas *eo_e,
+                         int d, int x, int y,
+                         double rad, double radx, double rady,
+                         double pres, double ang,
+                         double fx, double fy,
+                         Evas_Button_Flags flags, unsigned int timestamp,
+                         const void *data)
+{
+   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
+   return;
+   MAGIC_CHECK_END();
+
+   eo_do(eo_e, evas_canvas_event_feed_multi_up(d, x, y, rad, radx, rady, pres, ang, fx, fy, flags, timestamp, data));
+}
+
+void
+_canvas_event_feed_multi_up(Eo *eo_e, void *_pd, va_list *list)
+{
+   int d = va_arg(*list, int);
+   int x = va_arg(*list, int);
+   int y = va_arg(*list, int);
+   double rad = va_arg(*list, double);
+   double radx = va_arg(*list, double);
+   double rady = va_arg(*list, double);
+   double pres = va_arg(*list, double);
+   double ang = va_arg(*list, double);
+   double fx = va_arg(*list, double);
+   double fy = va_arg(*list, double);
+   Evas_Button_Flags flags = va_arg(*list, Evas_Button_Flags);
+   unsigned int timestamp = va_arg(*list, unsigned int);
+   const void *data = va_arg(*list, const void *);
+
+   _canvas_event_feed_multi_up_internal(eo_e, _pd, d, x, y, rad, radx, rady,
+                                        pres, ang, fx, fy, flags, timestamp, data);
 }
 
 static void

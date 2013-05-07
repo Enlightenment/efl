@@ -1,3 +1,7 @@
+2013-05-07  Rafael Antognolli
+
+        * Evas: Added evas_event_input_multi_up/down().
+
 2013-05-06  Rafael Antognolli
 
         * Ecore/Wayland: Add ecore_wl_window_alpha_set/get().
