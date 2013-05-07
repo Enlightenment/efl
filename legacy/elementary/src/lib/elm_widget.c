@@ -1279,6 +1279,18 @@ _elm_widget_can_focus_set(Eo *obj, void *_pd, va_list *list)
    sd->can_focus = can_focus;
    if (sd->can_focus)
      {
+        /* update child_can_focus of parents */
+        Evas_Object *o = obj;
+
+        for (;;)
+          {
+             o = elm_widget_parent_get(o);
+             if (!o) break;
+             sd = eo_data_scope_get(o, MY_CLASS);
+             if (!sd || sd->child_can_focus) break;
+             sd->child_can_focus = EINA_TRUE;
+          }
+
         evas_object_event_callback_add(obj, EVAS_CALLBACK_KEY_DOWN,
                                        _propagate_event,
                                        (void *)(long)EVAS_CALLBACK_KEY_DOWN);
@@ -1288,21 +1300,6 @@ _elm_widget_can_focus_set(Eo *obj, void *_pd, va_list *list)
         evas_object_event_callback_add(obj, EVAS_CALLBACK_MOUSE_WHEEL,
                                        _propagate_event,
                                        (void *)(long)EVAS_CALLBACK_MOUSE_WHEEL);
-
-        /* update child focusable-ness on parents, now that a
-         * focusable child got in */
-        Elm_Widget_Smart_Data *sdp = sd;
-        if (!sdp->child_can_focus)
-          {
-             sdp->child_can_focus = EINA_TRUE;
-             while (sdp->parent_obj)
-               {
-                  if (sdp->child_can_focus) break;
-
-                  sdp->child_can_focus = EINA_TRUE;
-                  sdp = eo_data_scope_get(sdp->parent_obj, MY_CLASS);
-               }
-          }
      }
    else
      {
