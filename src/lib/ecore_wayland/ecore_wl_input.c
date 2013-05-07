@@ -43,6 +43,7 @@ typedef struct _Ecore_Wl_Mouse_Down_Info
    int last_last_win;
    int last_event_win;
    int last_last_event_win;
+   int sx, sy;
    unsigned int last_time;
    unsigned int last_last_time;
    Eina_Bool did_double : 1;
@@ -1016,6 +1017,7 @@ static void
 _ecore_wl_input_mouse_move_send(Ecore_Wl_Input *input, Ecore_Wl_Window *win, unsigned int timestamp, int device)
 {
    Ecore_Event_Mouse_Move *ev;
+   Ecore_Wl_Mouse_Down_Info *down_info;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -1035,6 +1037,12 @@ _ecore_wl_input_mouse_move_send(Ecore_Wl_Input *input, Ecore_Wl_Window *win, uns
    ev->multi.angle = 0.0;
    ev->multi.x = input->sx;
    ev->multi.y = input->sy;
+
+   if ((down_info = _ecore_wl_mouse_down_info_get(device)))
+     {
+        down_info->sx = input->sx;
+        down_info->sy = input->sy;
+     }
 
    if (win)
      {
@@ -1154,6 +1162,8 @@ _ecore_wl_input_mouse_down_send(Ecore_Wl_Input *input, Ecore_Wl_Window *win, int
     * devices */
    if ((down_info = _ecore_wl_mouse_down_info_get(device)))
      {
+        down_info->sx = input->sx;
+        down_info->sy = input->sy;
         if (down_info->did_triple)
           {
              down_info->last_win = 0;
@@ -1260,6 +1270,13 @@ _ecore_wl_input_mouse_up_send(Ecore_Wl_Input *input, Ecore_Wl_Window *win, int d
           ev->double_click = 1;
         if (down_info->did_triple)
           ev->triple_click = 1;
+        ev->multi.x = down_info->sx;
+        ev->multi.y = down_info->sy;
+     }
+   else
+     {
+        ev->multi.x = input->sx;
+        ev->multi.y = input->sy;
      }
 
    ev->multi.device = device;
@@ -1268,8 +1285,6 @@ _ecore_wl_input_mouse_up_send(Ecore_Wl_Input *input, Ecore_Wl_Window *win, int d
    ev->multi.radius_y = 1;
    ev->multi.pressure = 1.0;
    ev->multi.angle = 0.0;
-   ev->multi.x = input->sx;
-   ev->multi.y = input->sy;
 
    if (win)
      {
