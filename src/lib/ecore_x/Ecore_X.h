@@ -397,6 +397,14 @@ typedef enum _Ecore_X_Error_Code
    ECORE_X_ERROR_CODE_BAD_IMPLEMENTATION = 17,
 } Ecore_X_Error_Code;
 
+typedef enum _Ecore_X_Dpms_Mode
+{
+   ECORE_X_DPMS_MODE_ON = 0,
+   ECORE_X_DPMS_MODE_STANDBY = 1,
+   ECORE_X_DPMS_MODE_SUSPEND = 2,
+   ECORE_X_DPMS_MODE_OFF = 3
+} Ecore_X_Dpms_Mode;
+
 typedef struct _Ecore_X_Event_Mouse_In                     Ecore_X_Event_Mouse_In;
 typedef struct _Ecore_X_Event_Mouse_Out                    Ecore_X_Event_Mouse_Out;
 typedef struct _Ecore_X_Event_Window_Focus_In              Ecore_X_Event_Window_Focus_In;
@@ -2360,6 +2368,7 @@ EAPI Eina_Bool      ecore_x_dpms_query(void);
 EAPI Eina_Bool      ecore_x_dpms_capable_get(void);
 EAPI Eina_Bool      ecore_x_dpms_enabled_get(void);
 EAPI void           ecore_x_dpms_enabled_set(int enabled);
+EAPI Ecore_X_Dpms_Mode  ecore_x_dpms_power_level_get(void);
 EAPI void           ecore_x_dpms_timeouts_get(unsigned int *standby, unsigned int *suspend, unsigned int *off);
 EAPI Eina_Bool      ecore_x_dpms_timeouts_set(unsigned int standby, unsigned int suspend, unsigned int off);
 EAPI unsigned int   ecore_x_dpms_timeout_standby_get(void);
