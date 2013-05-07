@@ -32,9 +32,11 @@ EAPI Eo_Op ELM_OBJ_GENLIST_BASE_ID = EO_NOOP;
 #define SWIPE_TIME 0.4
 #define SCR_HOLD_TIME 0.1
 
-#define ERR_ABORT(_msg) \
-  ERR(_msg);            \
-  if (getenv("ELM_ERROR_ABORT")) abort();
+#define ERR_ABORT(_msg)                         \
+   do {                                         \
+        ERR(_msg);                              \
+        if (getenv("ELM_ERROR_ABORT")) abort(); \
+   } while (0)
 
 static const char SIG_ACTIVATED[] = "activated";
 static const char SIG_CLICKED_DOUBLE[] = "clicked,double";
