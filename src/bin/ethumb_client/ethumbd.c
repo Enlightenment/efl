@@ -231,7 +231,7 @@ enum
 static const Eldbus_Signal _ethumb_dbus_objects_signals[] = {
   [ETHUMB_DBUS_OBJECTS_SIGNAL_GENERATED] = { "generated",
        ELDBUS_ARGS({ "i", "id" }, { "ay", "paths" }, { "ay", "keys" },
-                  { "b", "success" }) },
+                  { "b", "success" }), 0 },
   { }
 };
 
@@ -896,7 +896,7 @@ _name_owner_changed_cb(void *context, const char *bus, const char *old_id, const
 
 static const Eldbus_Service_Interface_Desc client_desc = {
    _ethumb_dbus_objects_interface, _ethumb_dbus_objects_methods,
-   _ethumb_dbus_objects_signals
+   _ethumb_dbus_objects_signals, NULL, NULL, NULL
 };
 
 static Eldbus_Message *
@@ -1614,7 +1614,7 @@ _ethumb_dbus_generated_signal(Ethumbd *ed, int *id, const char *thumb_path, cons
 }
 
 static const Eldbus_Service_Interface_Desc server_desc = {
-   _ethumb_dbus_interface, _ethumb_dbus_methods
+   _ethumb_dbus_interface, _ethumb_dbus_methods, NULL, NULL, NULL, NULL
 };
 
 static void
