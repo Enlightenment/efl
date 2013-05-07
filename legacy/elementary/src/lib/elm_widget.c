@@ -2809,8 +2809,8 @@ _elm_widget_focus_list_next_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    const Eina_List *start = l;
    Evas_Object *to_focus = NULL;
 
-   /* Interate sub items */
-   /* Go to end of list */
+   /* Iterate sub items */
+   /* Go to the end of list */
    for (; l; l = list_next(l))
      {
         Evas_Object *tmp = NULL;
