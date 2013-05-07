@@ -215,7 +215,7 @@ _evas_cache_image_entry_new(Evas_Cache_Image *cache,
                             Image_Timestamp *tstamp,
                             const char *file,
                             const char *key,
-                            RGBA_Image_Loadopts *lo,
+                            Evas_Image_Load_Opts *lo,
                             int *error)
 {
    Image_Entry  *ie;
@@ -565,7 +565,7 @@ evas_cache_image_shutdown(Evas_Cache_Image *cache)
 
 EAPI Image_Entry *
 evas_cache_image_request(Evas_Cache_Image *cache, const char *file, 
-                         const char *key, RGBA_Image_Loadopts *lo, int *error)
+                         const char *key, Evas_Image_Load_Opts *lo, int *error)
 {
    const char           *ckey = "(null)";
    char                 *hkey;

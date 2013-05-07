@@ -467,7 +467,7 @@ struct _Evas_GL_Image
    Evas_Engine_GL_Context *gc;
    RGBA_Image      *im;
    Evas_GL_Texture *tex;
-   RGBA_Image_Loadopts load_opts;
+   Evas_Image_Load_Opts load_opts;
    int              references;
    // if im->im == NULL, it's a render-surface so these here are used
    int              w, h;

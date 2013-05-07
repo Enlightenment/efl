@@ -222,7 +222,7 @@ _evas_cache_image_entry_new(Evas_Cache2 *cache,
                             Image_Timestamp *tstamp,
                             const char *file,
                             const char *key,
-                            RGBA_Image_Loadopts *lo,
+                            Evas_Image_Load_Opts *lo,
                             int *error)
 {
    Image_Entry  *ie;
@@ -534,7 +534,7 @@ evas_cache2_shutdown(Evas_Cache2 *cache)
 }
 
 static void
-_create_hash_key(char *hkey, const char *path, size_t pathlen, const char *key, size_t keylen, RGBA_Image_Loadopts *lo)
+_create_hash_key(char *hkey, const char *path, size_t pathlen, const char *key, size_t keylen, Evas_Image_Load_Opts *lo)
 {
    const char *ckey = "(null)";
    size_t size;
@@ -618,7 +618,7 @@ _create_hash_key(char *hkey, const char *path, size_t pathlen, const char *key, 
 }
 
 EAPI Image_Entry *
-evas_cache2_image_open(Evas_Cache2 *cache, const char *path, const char *key, RGBA_Image_Loadopts *lo, int *error)
+evas_cache2_image_open(Evas_Cache2 *cache, const char *path, const char *key, Evas_Image_Load_Opts *lo, int *error)
 {
    size_t                size;
    size_t                pathlen;
@@ -628,14 +628,15 @@ evas_cache2_image_open(Evas_Cache2 *cache, const char *path, const char *key, RG
    int                   stat_done = 0, stat_failed = 0;
    struct stat           st;
    Image_Timestamp       tstamp;
-   Evas_Image_Load_Opts  prevent = { 0, 0.0, 0, 0, 0, { 0, 0, 0, 0 },
-                                     { 0, 0, 0, 0, 0, 0, 0, 0 }, EINA_FALSE };
+   Evas_Image_Load_Opts  prevent;
 
    if ((!path) || ((!path) && (!key)))
      {
         *error = EVAS_LOAD_ERROR_GENERIC;
         return NULL;
      }
+
+   memset(&prevent, 0, sizeof (Evas_Image_Load_Opts));
 
    pathlen = strlen(path);
    keylen = key ? strlen(key) : 6;
@@ -775,7 +776,7 @@ _scaled_image_find(Image_Entry *im, int src_x, int src_y, int src_w, int src_h, 
 {
    size_t               pathlen, keylen, size;
    char                 *hkey;
-   RGBA_Image_Loadopts  lo;
+   Evas_Image_Load_Opts  lo;
    Image_Entry          *ret;
 
    if (((!im->file) || ((!im->file) && (!im->key))) || (!im->data1) ||
@@ -837,7 +838,7 @@ evas_cache2_image_scale_load(Image_Entry *im, int src_x, int src_y, int src_w, i
 {
    size_t               pathlen, keylen, size;
    char                 *hkey;
-   RGBA_Image_Loadopts  lo;
+   Evas_Image_Load_Opts lo;
    int                  error = EVAS_LOAD_ERROR_NONE;
    Image_Entry          *ret;
 

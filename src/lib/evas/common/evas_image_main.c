@@ -755,7 +755,7 @@ evas_common_image_get_cache(void)
 }
 
 EAPI RGBA_Image *
-evas_common_load_image_from_file(const char *file, const char *key, RGBA_Image_Loadopts *lo, int *error)
+evas_common_load_image_from_file(const char *file, const char *key, Evas_Image_Load_Opts *lo, int *error)
 {
    if (!file)
      {

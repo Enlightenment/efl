@@ -301,7 +301,7 @@ evas_cache_engine_image_shutdown(Evas_Cache_Engine_Image *cache)
 EAPI Engine_Image_Entry *
 evas_cache_engine_image_request(Evas_Cache_Engine_Image *cache,
                                 const char *file, const char *key,
-                                RGBA_Image_Loadopts *lo, void *data, int *error)
+                                Evas_Image_Load_Opts *lo, void *data, int *error)
 {
    Engine_Image_Entry   *eim;
    Image_Entry          *im;

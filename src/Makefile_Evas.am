@@ -10,7 +10,8 @@ lib/evas/Evas.h \
 lib/evas/Evas_Common_Header.h \
 lib/evas/Evas_Eo.h \
 lib/evas/Evas_Legacy.h \
-lib/evas/Evas_GL.h
+lib/evas/Evas_GL.h \
+lib/evas/Evas_Loader.h
 
 noinst_HEADERS = \
 lib/evas/include/evas_inline.x \

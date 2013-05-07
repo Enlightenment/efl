@@ -9,6 +9,7 @@
 #include <eina_safety_checks.h>
 
 #include "Evas.h"
+#include "Evas_Loader.h"
 
 #include "../file/evas_module.h"
 #include "../file/evas_path.h"
@@ -32,11 +33,7 @@ typedef struct _Evas_Font                   Evas_Font;
 typedef struct _Evas_Font_Alias             Evas_Font_Alias;
 typedef struct _Evas_Font_Description       Evas_Font_Description;
 typedef struct _Evas_Data_Node              Evas_Data_Node;
-typedef RGBA_Image_Loadopts                 Evas_Image_Load_Opts;
-typedef Image_Entry_Animated		    Evas_Image_Animated;
-typedef Image_Entry_Property		    Evas_Image_Property;
 typedef struct _Evas_Func                   Evas_Func;
-typedef struct _Evas_Image_Load_Func        Evas_Image_Load_Func;
 typedef struct _Evas_Image_Save_Func        Evas_Image_Save_Func;
 typedef struct _Evas_Object_Func            Evas_Object_Func;
 typedef struct _Evas_Intercept_Func         Evas_Intercept_Func;
@@ -898,27 +895,6 @@ struct _Evas_Func
    Eina_Bool (*multi_font_draw)          (void *data, void *context, void *surface, Evas_Font_Set *font, int x, int y, int w, int h, int ow, int oh, Evas_Font_Array *texts, Eina_Bool do_async);
 
    Eina_Bool (*pixel_alpha_get)          (void *image, int x, int y, DATA8 *alpha, int src_region_x, int src_region_y, int src_region_w, int src_region_h, int dst_region_x, int dst_region_y, int dst_region_w, int dst_region_h);
-};
-
-struct _Evas_Image_Load_Func
-{
-  Eina_Bool threadable;
-  void     *(*file_open) (Eina_File *f, const char *key,
-			  Evas_Image_Load_Opts *opts,
-			  Evas_Image_Animated *animated,
-			  int *error);
-  void     (*file_close) (void *loader_data);
-
-  Eina_Bool (*file_head) (void *loader_data,
-			  Evas_Image_Property *prop,
-			  int *error);
-  Eina_Bool (*file_data) (void *loader_data,
-			  Evas_Image_Property *prop,
-			  void *pixels, int *error);
-  double    (*frame_duration) (void *loader_data,
-			       int start, int frame_num);
-
-  Eina_Bool do_region;
 };
 
 struct _Evas_Image_Save_Func

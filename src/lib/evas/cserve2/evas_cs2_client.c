@@ -483,7 +483,7 @@ _build_absolute_path(const char *path, char buf[], int size)
 }
 
 static unsigned int
-_image_open_server_send(Image_Entry *ie, const char *file, const char *key, RGBA_Image_Loadopts *lopt EINA_UNUSED)
+_image_open_server_send(Image_Entry *ie, const char *file, const char *key, Evas_Image_Load_Opts *lopt EINA_UNUSED)
 {
    int flen, klen;
    int size;
@@ -727,7 +727,7 @@ _image_unload_server_send(Image_Entry *ie)
 }
 
 Eina_Bool
-evas_cserve2_image_load(Image_Entry *ie, const char *file, const char *key, RGBA_Image_Loadopts *lopt)
+evas_cserve2_image_load(Image_Entry *ie, const char *file, const char *key, Evas_Image_Load_Opts *lopt)
 {
    unsigned int rid;
 

@@ -50,6 +50,7 @@
 #include <Eina.h>
 #include "Evas.h"
 //#include "Evas_GL.h"
+#include "Evas_Loader.h"
 
 #ifndef HAVE_LROUND
 /* right now i dont care about rendering bugs on platforms without lround
@@ -352,8 +353,6 @@ typedef unsigned short			DATA16;
 typedef unsigned char                   DATA8;
 
 typedef struct _Image_Entry             Image_Entry;
-typedef struct _Image_Entry_Property    Image_Entry_Property;
-typedef struct _Image_Entry_Animated    Image_Entry_Animated;
 typedef struct _Image_Entry_Flags       Image_Entry_Flags;
 typedef struct _Image_Entry_Frame       Image_Entry_Frame;
 typedef struct _Image_Timestamp         Image_Timestamp;
@@ -361,7 +360,6 @@ typedef struct _Engine_Image_Entry      Engine_Image_Entry;
 typedef struct _Evas_Cache_Target       Evas_Cache_Target;
 typedef struct _Evas_Preload_Pthread    Evas_Preload_Pthread;
 
-typedef struct _RGBA_Image_Loadopts   RGBA_Image_Loadopts;
 #ifdef BUILD_PIPE_RENDER
 typedef struct _RGBA_Pipe_Op          RGBA_Pipe_Op;
 typedef struct _RGBA_Pipe             RGBA_Pipe;
@@ -495,25 +493,6 @@ typedef enum _Font_Rend_Flags
 
 /*****************************************************************************/
 
-struct _RGBA_Image_Loadopts
-{
-   int                  scale_down_by; // if > 1 then use this
-   double               dpi; // if > 0.0 use this
-   unsigned int         w, h; // if > 0 use this
-   unsigned int         degree;//if>0 there is some info related with rotation
-   struct {
-      unsigned int      x, y, w, h;
-   } region;
-   struct {
-      int src_x, src_y, src_w, src_h;
-      int dst_w, dst_h;
-      int smooth;
-      Evas_Image_Scale_Hint scale_hint;
-   } scale_load;
-
-   Eina_Bool            orientation; // if EINA_TRUE => should honor orientation information provided by file (like jpeg exif info)
-};
-
 struct _Image_Entry_Flags
 {
    Eina_Bool loaded        : 1;
@@ -544,17 +523,6 @@ struct _Image_Entry_Frame
    Eina_Bool loaded       : 1;
 };
 
-struct _Image_Entry_Animated
-{
-   Eina_List *frames;
-   Evas_Image_Animated_Loop_Hint loop_hint;
-   int        frame_count;
-   int        loop_count;
-   int        cur_frame;
-
-   Eina_Bool  animated : 1;   
-};
-
 struct _Evas_Cache_Target
 {
   EINA_INLIST;
@@ -570,19 +538,6 @@ struct _Image_Timestamp
 #ifdef _STAT_VER_LINUX
    unsigned long int mtime_nsec;
 #endif
-};
-
-struct _Image_Entry_Property
-{
-   unsigned int  w;
-   unsigned int  h;
-   
-   unsigned char scale;
-
-   Eina_Bool     rotated;
-   Eina_Bool     alpha;
-   Eina_Bool     premul;
-   Eina_Bool     alpha_sparse;
 };
 
 struct _Image_Entry
@@ -610,7 +565,7 @@ struct _Image_Entry
    RGBA_Pipe           *pipe;
 #endif
 
-   RGBA_Image_Loadopts    load_opts;
+   Evas_Image_Load_Opts   load_opts;
    int                    space;
 
    unsigned int           w;
@@ -634,7 +589,7 @@ struct _Image_Entry
    LK(lock_cancel);
 
    /* for animation feature */
-   Image_Entry_Animated   animated;
+   Evas_Image_Animated   animated;
 
    /* Reference to the file */
    Eina_File             *f;

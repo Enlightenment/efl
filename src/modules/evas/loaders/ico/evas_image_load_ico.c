@@ -805,12 +805,12 @@ evas_image_load_file_data_ico(void *loader_data,
 
 static Evas_Image_Load_Func evas_image_load_ico_func =
 {
-  EINA_TRUE,
   evas_image_load_file_open_ico,
   evas_image_load_file_close_ico,
   evas_image_load_file_head_ico,
   evas_image_load_file_data_ico,
   NULL,
+  EINA_TRUE,
   EINA_FALSE
 };
 

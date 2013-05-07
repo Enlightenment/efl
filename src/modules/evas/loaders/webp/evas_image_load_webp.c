@@ -116,12 +116,12 @@ evas_image_load_file_data_webp(void *loader_data,
 
 static Evas_Image_Load_Func evas_image_load_webp_func =
 {
-  EINA_TRUE,
   evas_image_load_file_open_webp,
   evas_image_load_file_close_webp,
   evas_image_load_file_head_webp,
   evas_image_load_file_data_webp,
   NULL,
+  EINA_TRUE,
   EINA_FALSE
 };
 
