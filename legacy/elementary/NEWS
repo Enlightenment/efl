@@ -227,6 +227,7 @@ Fixes:
    * Fix gengrid does not work under the accessibility.
    * Fix do not append NULL to genlist focus list.
    * Fix elm_clock_first_interval_set writes wrong value.
+   * Focus cannot be stolen when one of parents is invisible or disabled.
 
 Removals:
 

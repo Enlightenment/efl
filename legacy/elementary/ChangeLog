@@ -1340,3 +1340,7 @@
 2013-05-06 WooHyun Jung
 
         * Add elm_entry smart callback - "text,set,done".
+
+2013-05-07 WooHyun Jung
+
+        * Focus cannot be stolen when one of parents is invisible or disabled.
