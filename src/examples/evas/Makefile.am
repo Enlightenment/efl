@@ -165,6 +165,11 @@ evas_table_SOURCES = evas-table.c
 evas_table_LDADD = $(ECORE_EVAS_COMMON_LDADD)
 evas_table_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
 
+EXTRA_PROGRAMS += evas_multi_touch
+evas_multi_touch_SOURCES = evas-multi-touch.c
+evas_multi_touch_LDADD = $(ECORE_EVAS_COMMON_LDADD)
+evas_multi_touch_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
+
 .edc.edj:
 	$(AM_V_EDJ)$(EDJE_CC) $(EDJE_CC_FLAGS) $< $(builddir)/$(@F)
 
@@ -193,6 +198,7 @@ evas-smart-interface.c \
 evas-smart-object.c \
 evas-stacking.c \
 evas-table.c \
+evas-multi-touch.c \
 evas-text.c
 
 DATA_FILES = \
