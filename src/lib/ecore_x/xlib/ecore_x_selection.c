@@ -624,7 +624,7 @@ ecore_x_selection_converter_text(char *target,
    if (Xutf8TextListToTextProperty(_ecore_x_disp, &mystr, 1, style,
                                    &text_prop) == Success)
      {
-        int bufsize = strlen((char *)text_prop.value) + 1;
+        int bufsize = strlen((char *)text_prop.value);
         *data_ret = malloc(bufsize);
         if (!*data_ret)
           {
@@ -640,7 +640,7 @@ ecore_x_selection_converter_text(char *target,
    if (XmbTextListToTextProperty(_ecore_x_disp, &mystr, 1, style,
                                  &text_prop) == Success)
      {
-        int bufsize = strlen(text_prop.value) + 1;
+        int bufsize = strlen(text_prop.value);
         *data_ret = malloc(bufsize);
         if (!*data_ret) return EINA_FALSE;
         memcpy(*data_ret, text_prop.value, bufsize);

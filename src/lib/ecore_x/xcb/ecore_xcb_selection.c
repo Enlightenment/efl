@@ -706,7 +706,7 @@ ecore_x_selection_converter_text(char         *target,
      {
         int size = 0;
 
-        size = (strlen((char *)ret.value) + 1);
+        size = (strlen((char *)ret.value));
         *data_ret = malloc(size);
         if (!*data_ret) return EINA_FALSE;
         memcpy(*data_ret, ret.value, size);
@@ -719,7 +719,7 @@ ecore_x_selection_converter_text(char         *target,
      {
         int size = 0;
 
-        size = (strlen((char *)ret.value) + 1);
+        size = (strlen((char *)ret.value));
         *data_ret = malloc(size);
         if (!*data_ret) return EINA_FALSE;
         memcpy(*data_ret, ret.value, size);
