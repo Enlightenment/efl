@@ -1087,6 +1087,17 @@ _item_dispmode_set(Elm_Naviframe_Item *it, Evas_Display_Mode dispmode)
    it->dispmode = dispmode;
 }
 
+static char *
+_access_prev_btn_info_cb(void *data, Evas_Object *obj __UNUSED__)
+{
+   Elm_Naviframe_Item *it = (Elm_Naviframe_Item *)data;
+
+   if (it->dispmode == EVAS_DISPLAY_MODE_COMPRESS)
+     return strdup(E_("Close Keyboard"));
+   else
+     return strdup(E_("Back"));
+}
+
 static Elm_Naviframe_Item *
 _item_new(Evas_Object *obj,
           const Elm_Naviframe_Item *prev_it,
@@ -1149,8 +1160,9 @@ _item_new(Evas_Object *obj,
         _item_content_set_hook((Elm_Object_Item *)it, PREV_BTN_PART, prev_btn);
 
         if (!elm_layout_text_get(prev_btn, NULL))
-          _elm_access_text_set
-            (_elm_access_object_get(prev_btn), ELM_ACCESS_INFO, E_("Back"));
+          _elm_access_callback_set
+            (_elm_access_object_get(prev_btn), ELM_ACCESS_INFO,
+             _access_prev_btn_info_cb, it);
      }
 
    if (next_btn)
