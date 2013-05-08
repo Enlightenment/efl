@@ -467,7 +467,6 @@ struct _Edje_File
    Edje_Patterns		  *collection_patterns;
 
    Eet_File                       *ef;
-   Eina_File                      *f;
 
 #ifdef HAVE_EIO
    Eio_Monitor                    *monitor;
