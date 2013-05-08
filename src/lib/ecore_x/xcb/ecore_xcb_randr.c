@@ -2134,6 +2134,23 @@ ecore_x_randr_crtc_info_get(Ecore_X_Window root, const Ecore_X_Randr_Crtc crtc)
    return ret;
 }
 
+EAPI void 
+ecore_x_randr_crtc_info_free(Ecore_X_Randr_Crtc_Info *info)
+{
+#ifdef ECORE_XCB_RANDR
+   if (_randr_version >= RANDR_1_2)
+     {
+        if (info)
+          {
+             if (info->outputs) free(info->outputs);
+             if (info->possible) free(info->possible);
+             free(info);
+             info = NULL;
+          }
+     }
+#endif
+}
+
 EAPI Ecore_X_Randr_Refresh_Rate
 ecore_x_randr_crtc_refresh_rate_get(Ecore_X_Window     root,
                                     Ecore_X_Randr_Crtc crtc,
