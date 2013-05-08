@@ -299,7 +299,7 @@ _edje_file_change(void *data, int ev_type EINA_UNUSED, void *event)
 #endif
 
 static Edje_File *
-_edje_file_open(const char *file, const char *coll, int *error_ret, Edje_Part_Collection **edc_ret, time_t mtime)
+_edje_file_open(Eina_File *f, const char *coll, int *error_ret, Edje_Part_Collection **edc_ret, time_t mtime)
 {
    Edje_Color_Class *cc;
    Edje_File *edf;
@@ -310,7 +310,7 @@ _edje_file_open(const char *file, const char *coll, int *error_ret, Edje_Part_Co
    Ecore_Event_Handler *ev;
 #endif
 
-   ef = eet_open(file, EET_FILE_MODE_READ);
+   ef = eet_mmap(f);
    if (!ef)
      {
 	*error_ret = EDJE_LOAD_ERROR_UNKNOWN_FORMAT;
@@ -324,10 +324,11 @@ _edje_file_open(const char *file, const char *coll, int *error_ret, Edje_Part_Co
 	return NULL;
      }
 
+   edf->f = f;
    edf->ef = ef;
    edf->mtime = mtime;
 #ifdef HAVE_EIO
-   edf->monitor = eio_monitor_add(file);
+   edf->monitor = eio_monitor_add(eina_file_filename_get(f));
    ev = ecore_event_handler_add(EIO_MONITOR_FILE_DELETED, _edje_file_change, edf);
    edf->handlers = eina_list_append(edf->handlers, ev);
    ev = ecore_event_handler_add(EIO_MONITOR_FILE_MODIFIED, _edje_file_change, edf);
@@ -353,10 +354,11 @@ _edje_file_open(const char *file, const char *coll, int *error_ret, Edje_Part_Co
 
    if (edf->minor > EDJE_FILE_MINOR)
      {
-	WRN("`%s` may use feature from a newer edje and could not show up as expected.", file);
+	WRN("`%s` may use feature from a newer edje and could not show up as expected.",
+            eina_file_filename_get(f));
      }
 
-   edf->path = eina_stringshare_add(file);
+   edf->path = eina_stringshare_add(eina_file_filename_get(f));
    edf->references = 1;
 
    /* This should be done at edje generation time */
@@ -379,30 +381,34 @@ _edje_file_open(const char *file, const char *coll, int *error_ret, Edje_Part_Co
    return edf;
 }
 
+#if 0
+// FIXME: find a way to remove dangling file earlier
 static void
 _edje_file_dangling(Edje_File *edf)
 {
    if (edf->dangling) return;
    edf->dangling = EINA_TRUE;
 
-   eina_hash_del(_edje_file_hash, edf->path, edf);
+   eina_hash_del(_edje_file_hash, edf->f, edf);
    if (!eina_hash_population(_edje_file_hash))
      {
        eina_hash_free(_edje_file_hash);
        _edje_file_hash = NULL;
      }
 }
+#endif
 
 Edje_File *
 _edje_cache_file_coll_open(const char *file, const char *coll, int *error_ret, Edje_Part_Collection **edc_ret, Edje *ed)
 {
+   Eina_File *f;
    Edje_File *edf;
    Eina_List *l, *hist;
    Edje_Part_Collection *edc;
    Edje_Part *ep;
-   struct stat st;
 
-   if (stat(file, &st) != 0)
+   f = eina_file_open(file, EINA_FALSE);
+   if (!f)
      {
         *error_ret = EDJE_LOAD_ERROR_DOES_NOT_EXIST;
         return NULL;
@@ -410,18 +416,14 @@ _edje_cache_file_coll_open(const char *file, const char *coll, int *error_ret, E
 
    if (!_edje_file_hash)
      {
-	_edje_file_hash = eina_hash_string_small_new(NULL);
+	_edje_file_hash = eina_hash_pointer_new(NULL);
 	goto find_list;
      }
 
-   edf = eina_hash_find(_edje_file_hash, file);
+   edf = eina_hash_find(_edje_file_hash, f);
    if (edf)
      {
-	if (edf->mtime != st.st_mtime)
-	  {
-	     _edje_file_dangling(edf);
-	     goto open_new;
-	  }
+        eina_file_close(f);
 
 	edf->references++;
 	goto open;
@@ -430,29 +432,23 @@ _edje_cache_file_coll_open(const char *file, const char *coll, int *error_ret, E
 find_list:
    EINA_LIST_FOREACH(_edje_file_cache, l, edf)
      {
-	if (!strcmp(edf->path, file))
+	if (edf->f == f)
 	  {
-	     if (edf->mtime != st.st_mtime)
-	       {
-		  _edje_file_cache = eina_list_remove_list(_edje_file_cache, l);
-		  _edje_file_free(edf);
-		  goto open_new;
-	       }
+             eina_file_close(f);
 
 	     edf->references = 1;
 	     _edje_file_cache = eina_list_remove_list(_edje_file_cache, l);
-	     eina_hash_add(_edje_file_hash, file, edf);
+	     eina_hash_direct_add(_edje_file_hash, f, edf);
 	     goto open;
 	  }
      }
 
-open_new:
-   if (!_edje_file_hash)
-      _edje_file_hash = eina_hash_string_small_new(NULL);
-
-   edf = _edje_file_open(file, coll, error_ret, edc_ret, st.st_mtime);
+   edf = _edje_file_open(f, coll, error_ret, edc_ret, eina_file_mtime_get(f));
    if (!edf)
-      return NULL;
+     {
+        eina_file_close(f);
+        return NULL;
+     }
 
 #ifdef HAVE_EIO
    if (ed) edf->edjes = eina_list_append(edf->edjes, ed);
@@ -460,8 +456,8 @@ open_new:
    (void) ed;
 #endif
 
-   eina_hash_add(_edje_file_hash, file, edf);
-   return edf;
+   eina_hash_direct_add(_edje_file_hash, f, edf);
+   /* return edf; */
 
 open:
    if (!coll)
@@ -675,7 +671,7 @@ _edje_cache_file_unref(Edje_File *edf)
 	return;
      }
 
-   eina_hash_del(_edje_file_hash, edf->path, edf);
+   eina_hash_del(_edje_file_hash, edf->f, edf);
    if (!eina_hash_population(_edje_file_hash))
      {
        eina_hash_free(_edje_file_hash);
