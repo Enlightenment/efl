@@ -97,114 +97,114 @@ _ecore_xcb_input_handle_event(xcb_generic_event_t * event EINA_UNUSED)
    switch (ev->event_type)
      {
       case XCB_INPUT_DEVICE_MOTION_NOTIFY:
-      {
-         xcb_input_device_motion_notify_event_t *de;
-         unsigned int child_win = 0;
+          {
+             xcb_input_device_motion_notify_event_t *de;
+             unsigned int child_win = 0;
 
-         de = (xcb_input_device_motion_notify_event_t *)ev->pad1;
-         child_win = (de->child ? de->child : de->event);
-         _ecore_xcb_event_mouse_move(de->time, de->state, de->event_x,
-                                     de->event_y, de->root_x, de->root_y,
-                                     de->event, child_win, de->root,
-                                     de->same_screen, de->device_id,
-                                     1, 1, 1.0, 0.0,
-                                     de->event_x, de->event_y,
-                                     de->root_x, de->root_y);
-      }
-      break;
+             de = (xcb_input_device_motion_notify_event_t *)ev->pad1;
+             child_win = (de->child ? de->child : de->event);
+             _ecore_xcb_event_mouse_move(de->time, de->state, de->event_x,
+                                         de->event_y, de->root_x, de->root_y,
+                                         de->event, child_win, de->root,
+                                         de->same_screen, de->device_id,
+                                         1, 1, 1.0, 0.0,
+                                         de->event_x, de->event_y,
+                                         de->root_x, de->root_y);
+          }
+        break;
 
       case XCB_INPUT_DEVICE_BUTTON_PRESS:
-      {
-         xcb_input_device_button_press_event_t *de;
-         unsigned int child_win = 0;
+          {
+             xcb_input_device_button_press_event_t *de;
+             unsigned int child_win = 0;
 
-         de = (xcb_input_device_button_press_event_t *)ev->pad1;
-         child_win = (de->child ? de->child : de->event);
-         _ecore_xcb_event_mouse_button(ECORE_EVENT_MOUSE_BUTTON_DOWN,
-                                       de->time, de->state, de->detail,
-                                       de->event_x, de->event_y,
-                                       de->root_x, de->root_y, de->event,
-                                       child_win, de->root,
-                                       de->same_screen, de->device_id,
-                                       1, 1, 1.0, 0.0,
-                                       de->event_x, de->event_y,
-                                       de->root_x, de->root_y);
-      }
-      break;
+             de = (xcb_input_device_button_press_event_t *)ev->pad1;
+             child_win = (de->child ? de->child : de->event);
+             _ecore_xcb_event_mouse_button(ECORE_EVENT_MOUSE_BUTTON_DOWN,
+                                           de->time, de->state, de->detail,
+                                           de->event_x, de->event_y,
+                                           de->root_x, de->root_y, de->event,
+                                           child_win, de->root,
+                                           de->same_screen, de->device_id,
+                                           1, 1, 1.0, 0.0,
+                                           de->event_x, de->event_y,
+                                           de->root_x, de->root_y);
+          }
+        break;
 
       case XCB_INPUT_DEVICE_BUTTON_RELEASE:
-      {
-         xcb_input_device_button_release_event_t *de;
-         unsigned int child_win = 0;
+          {
+             xcb_input_device_button_release_event_t *de;
+             unsigned int child_win = 0;
 
-         de = (xcb_input_device_button_release_event_t *)ev->pad1;
-         child_win = (de->child ? de->child : de->event);
-         _ecore_xcb_event_mouse_button(ECORE_EVENT_MOUSE_BUTTON_UP,
-                                       de->time, de->state, de->detail,
-                                       de->event_x, de->event_y,
-                                       de->root_x, de->root_y, de->event,
-                                       child_win, de->root,
-                                       de->same_screen, de->device_id,
-                                       1, 1, 1.0, 0.0,
-                                       de->event_x, de->event_y,
-                                       de->root_x, de->root_y);
-      }
-      break;
+             de = (xcb_input_device_button_release_event_t *)ev->pad1;
+             child_win = (de->child ? de->child : de->event);
+             _ecore_xcb_event_mouse_button(ECORE_EVENT_MOUSE_BUTTON_UP,
+                                           de->time, de->state, de->detail,
+                                           de->event_x, de->event_y,
+                                           de->root_x, de->root_y, de->event,
+                                           child_win, de->root,
+                                           de->same_screen, de->device_id,
+                                           1, 1, 1.0, 0.0,
+                                           de->event_x, de->event_y,
+                                           de->root_x, de->root_y);
+          }
+        break;
 
       case XCB_INPUT_DEVICE_TOUCH_UPDATE:
-      {
-         xcb_input_device_motion_notify_event_t *de;
-         unsigned int child_win = 0;
+          {
+             xcb_input_device_motion_notify_event_t *de;
+             unsigned int child_win = 0;
 
-         de = (xcb_input_device_motion_notify_event_t *)ev->pad1;
-         child_win = (de->child ? de->child : de->event);
-         _ecore_xcb_event_mouse_move(de->time, de->state, de->event_x,
-                                     de->event_y, de->root_x, de->root_y,
-                                     de->event, child_win, de->root,
-                                     de->same_screen, de->device_id,
-                                     1, 1, 1.0, 0.0,
-                                     de->event_x, de->event_y,
-                                     de->root_x, de->root_y);
-      }
-      break;
+             de = (xcb_input_device_motion_notify_event_t *)ev->pad1;
+             child_win = (de->child ? de->child : de->event);
+             _ecore_xcb_event_mouse_move(de->time, de->state, de->event_x,
+                                         de->event_y, de->root_x, de->root_y,
+                                         de->event, child_win, de->root,
+                                         de->same_screen, de->device_id,
+                                         1, 1, 1.0, 0.0,
+                                         de->event_x, de->event_y,
+                                         de->root_x, de->root_y);
+          }
+        break;
 
       case XCB_INPUT_DEVICE_TOUCH_BEGIN:
-      {
-         xcb_input_device_button_press_event_t *de;
-         unsigned int child_win = 0;
+          {
+             xcb_input_device_button_press_event_t *de;
+             unsigned int child_win = 0;
 
-         de = (xcb_input_device_button_press_event_t *)ev->pad1;
-         child_win = (de->child ? de->child : de->event);
-         _ecore_xcb_event_mouse_button(ECORE_EVENT_MOUSE_BUTTON_DOWN,
-                                       de->time, de->state, de->detail,
-                                       de->event_x, de->event_y,
-                                       de->root_x, de->root_y, de->event,
-                                       child_win, de->root,
-                                       de->same_screen, de->device_id,
-                                       1, 1, 1.0, 0.0,
-                                       de->event_x, de->event_y,
-                                       de->root_x, de->root_y);
-      }
-      break;
+             de = (xcb_input_device_button_press_event_t *)ev->pad1;
+             child_win = (de->child ? de->child : de->event);
+             _ecore_xcb_event_mouse_button(ECORE_EVENT_MOUSE_BUTTON_DOWN,
+                                           de->time, de->state, de->detail,
+                                           de->event_x, de->event_y,
+                                           de->root_x, de->root_y, de->event,
+                                           child_win, de->root,
+                                           de->same_screen, de->device_id,
+                                           1, 1, 1.0, 0.0,
+                                           de->event_x, de->event_y,
+                                           de->root_x, de->root_y);
+          }
+        break;
 
       case XCB_INPUT_DEVICE_TOUCH_END:
-      {
-         xcb_input_device_button_release_event_t *de;
-         unsigned int child_win = 0;
+          {
+             xcb_input_device_button_release_event_t *de;
+             unsigned int child_win = 0;
 
-         de = (xcb_input_device_button_release_event_t *)ev->pad1;
-         child_win = (de->child ? de->child : de->event);
-         _ecore_xcb_event_mouse_button(ECORE_EVENT_MOUSE_BUTTON_UP,
-                                       de->time, de->state, de->detail,
-                                       de->event_x, de->event_y,
-                                       de->root_x, de->root_y, de->event,
-                                       child_win, de->root,
-                                       de->same_screen, de->device_id,
-                                       1, 1, 1.0, 0.0,
-                                       de->event_x, de->event_y,
-                                       de->root_x, de->root_y);
-      }
-      break;
+             de = (xcb_input_device_button_release_event_t *)ev->pad1;
+             child_win = (de->child ? de->child : de->event);
+             _ecore_xcb_event_mouse_button(ECORE_EVENT_MOUSE_BUTTON_UP,
+                                           de->time, de->state, de->detail,
+                                           de->event_x, de->event_y,
+                                           de->root_x, de->root_y, de->event,
+                                           child_win, de->root,
+                                           de->same_screen, de->device_id,
+                                           1, 1, 1.0, 0.0,
+                                           de->event_x, de->event_y,
+                                           de->root_x, de->root_y);
+          }
+        break;
 
       default:
         break;
@@ -241,14 +241,14 @@ ecore_x_input_multi_select(Ecore_X_Window win)
      {
         xcb_input_device_info_t *dev;
         const xcb_input_event_class_t iclass[] =
-        {
-           XCB_INPUT_DEVICE_BUTTON_PRESS,
-           XCB_INPUT_DEVICE_BUTTON_RELEASE,
-           XCB_INPUT_DEVICE_MOTION_NOTIFY,
-           XCB_INPUT_DEVICE_TOUCH_BEGIN,
-           XCB_INPUT_DEVICE_TOUCH_END,
-           XCB_INPUT_DEVICE_TOUCH_UPDATE
-        };
+          {
+             XCB_INPUT_DEVICE_BUTTON_PRESS,
+             XCB_INPUT_DEVICE_BUTTON_RELEASE,
+             XCB_INPUT_DEVICE_MOTION_NOTIFY,
+             XCB_INPUT_DEVICE_TOUCH_BEGIN,
+             XCB_INPUT_DEVICE_TOUCH_END,
+             XCB_INPUT_DEVICE_TOUCH_UPDATE
+          };
 
         dev = diter.data;
         if (dev->device_use == XCB_INPUT_DEVICE_USE_IS_X_EXTENSION_DEVICE)
@@ -272,3 +272,9 @@ ecore_x_input_multi_select(Ecore_X_Window win)
    win = 0;
 }
 
+EAPI Eina_Bool 
+ecore_x_input_raw_select(Ecore_X_Window win EINA_UNUSED)
+{
+   /* NB: FIXME: This is just a placeholder. XCB does not have XInput2 yet */
+   return EINA_FALSE;
+}
