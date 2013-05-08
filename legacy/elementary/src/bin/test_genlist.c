@@ -361,7 +361,12 @@ my_gl_add(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
    Evas_Object *gl = data;
    static int i = 0;
 
-   if (!itc1) itc1 = elm_genlist_item_class_new();
+   if (!itc1)
+     {
+        ERR("Genlist item class should not be null. Something very bad is happening!!");
+        return;
+     }
+
    itc1->item_style     = "default";
    itc1->func.text_get = gl_text_get;
    itc1->func.content_get  = gl_content_get;
@@ -384,7 +389,12 @@ my_gl_insert_before(void *data, Evas_Object *obj __UNUSED__, void *event_info __
    static int i = 0;
    Elm_Object_Item *gli_selected;
 
-   if (!itc1) itc1 = elm_genlist_item_class_new();
+   if (!itc1)
+     {
+        ERR("Genlist item class should not be null. Something very bad is happening!!");
+        return;
+     }
+
    itc1->item_style     = "default";
    itc1->func.text_get = gl_text_get;
    itc1->func.content_get  = gl_content_get;
@@ -415,7 +425,12 @@ my_gl_insert_after(void *data, Evas_Object *obj __UNUSED__, void *event_info __U
    static int i = 0;
    Elm_Object_Item *gli_selected;
 
-   if (!itc1) itc1 = elm_genlist_item_class_new();
+   if (!itc1)
+     {
+        ERR("Genlist item class should not be null. Something very bad is happening!!");
+        return;
+     }
+
    itc1->item_style     = "default";
    itc1->func.text_get = gl_text_get;
    itc1->func.content_get  = gl_content_get;
@@ -513,6 +528,15 @@ static void
 my_gl_flush(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    ecore_timer_add(1.2, my_gl_flush_delay, NULL);
+}
+
+static void
+_genlist_del_cb(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__,
+                void *event_info __UNUSED__)
+{
+   if (!data) return;
+
+   elm_genlist_item_class_free(data);
 }
 
 void
@@ -681,9 +705,7 @@ test_genlist2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    elm_box_pack_end(bx, bx3);
    evas_object_show(bx3);
 
-   /* item_class_ref is needed for itc1. some items can be added in callbacks */
-   elm_genlist_item_class_ref(itc1);
-   elm_genlist_item_class_free(itc1);
+   evas_object_event_callback_add(gl, EVAS_CALLBACK_DEL, _genlist_del_cb, itc1);
 
    evas_object_resize(win, 320, 320);
    evas_object_show(win);
