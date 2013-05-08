@@ -3541,6 +3541,8 @@ _fullscreen_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
      {
 //        sd->fullscreen = fullscreen;
 
+        TRAP(sd, fullscreen_set, fullscreen);
+
         if (fullscreen)
           {
              if (EE_ENGINE_COMPARE(sd->ee, ELM_WAYLAND_SHM) ||
@@ -3555,8 +3557,6 @@ _fullscreen_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 
              evas_object_show(sd->frame_obj);
           }
-
-        TRAP(sd, fullscreen_set, fullscreen);
 #ifdef HAVE_ELEMENTARY_X
         _elm_win_xwin_update(sd);
 #endif
