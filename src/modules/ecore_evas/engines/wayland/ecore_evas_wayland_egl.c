@@ -280,7 +280,6 @@ _ecore_evas_wl_resize(Ecore_Evas *ee, int w, int h)
 
    evas_output_size_get(ee->evas, &ow, &oh);
    if ((ow != w) || (oh != h))
-   if ((ee->w != w) || (ee->h != h))
      {
         ee->w = orig_w;
         ee->h = orig_h;
