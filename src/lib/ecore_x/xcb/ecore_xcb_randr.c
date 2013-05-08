@@ -1992,6 +1992,64 @@ ecore_x_randr_crtc_size_get(Ecore_X_Window     root,
 #endif
 }
 
+EAPI Eina_Bool 
+ecore_x_randr_crtc_clone_set(Ecore_X_Window root, Ecore_X_Randr_Crtc original, Ecore_X_Randr_Crtc cln)
+{
+   Eina_Bool ret = EINA_FALSE;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
+
+#ifdef ECORE_XCB_RANDR
+   RANDR_CHECK_1_2_RET(EINA_FALSE);
+
+   if (_randr_version >= RANDR_1_3)
+     {
+        xcb_randr_get_screen_resources_current_reply_t *reply;
+        xcb_timestamp_t stamp = 0;
+
+        reply = _ecore_xcb_randr_13_get_resources(root);
+        if (reply)
+          {
+             xcb_randr_get_crtc_info_cookie_t rcookie;
+             xcb_randr_get_crtc_info_reply_t *rreply;
+
+             if (_randr_version >= RANDR_1_3)
+               stamp = _ecore_xcb_randr_13_get_resource_timestamp(root);
+             else if (_randr_version == RANDR_1_2)
+               stamp = _ecore_xcb_randr_12_get_resource_timestamp(root);
+
+             rcookie =
+               xcb_randr_get_crtc_info_unchecked(_ecore_xcb_conn, original,
+                                                 stamp);
+
+             rreply = xcb_randr_get_crtc_info_reply(_ecore_xcb_conn,
+                                                    rcookie, NULL);
+             if (rreply)
+               {
+                  int ox = 0, oy = 0;
+                  Ecore_X_Randr_Orientation orient = 0;
+                  Ecore_X_Randr_Mode mode = -1;
+
+                  ox = rreply->x;
+                  oy = rreply->y;
+                  orient = rreply->rotation;
+                  mode = rreply->mode;
+
+                  free(rreply);
+
+                  ret = ecore_x_randr_crtc_settings_set(root, cln, NULL, -1, 
+                                                        ox, oy, mode, orient);
+               }
+
+             free(reply);
+          }
+     }
+#endif
+
+   return ret;
+}
+
 EAPI Ecore_X_Randr_Crtc_Info *
 ecore_x_randr_crtc_info_get(Ecore_X_Window root, const Ecore_X_Randr_Crtc crtc)
 {
@@ -2029,7 +2087,6 @@ ecore_x_randr_crtc_info_get(Ecore_X_Window root, const Ecore_X_Randr_Crtc crtc)
                                                     rcookie, NULL);
              if (rreply)
                {
-
                   if ((ret = malloc(sizeof(Ecore_X_Randr_Crtc_Info))))
                     {
                        ret->timestamp = rreply->timestamp;
