@@ -33,3 +33,18 @@ class Eo_backtrace(gdb.Command):
             print line
 
 Eo_backtrace()
+
+# ugly alias of eo_backtrace.
+# Very crude, but works for the meanwhile
+class Eo_bt(gdb.Command):
+   def __init__(self):
+      gdb.Command.__init__(self, "eo_bt", gdb.COMMAND_OBSCURE)
+
+   def invoke (self, arg, from_tty):
+      btrace = gdb.execute("backtrace", False, to_string=True).split('\n')
+
+      for line in btrace:
+         if line.find("libeo.so") == -1 and line.find("lib/eo/") == -1:
+            print line
+
+Eo_bt()
