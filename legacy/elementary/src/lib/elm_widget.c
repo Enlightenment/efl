@@ -3195,20 +3195,15 @@ _elm_widget_focus_steal(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    if (sd->disabled) return;
    if (!sd->can_focus) return;
    if (sd->tree_unfocusable) return;
-   parent2 = parent = obj;
+   parent = obj;
    for (;; )
      {
-        o = elm_widget_parent_get(parent2);
-        if (!o)
-          {
-             parent = parent2;
-             break;
-          }
-        if (!evas_object_visible_get(o)) return;
+        o = elm_widget_parent_get(parent);
+        if (!o) break;
         sd = eo_data_scope_get(o, MY_CLASS);
         if (sd->disabled || sd->tree_unfocusable) return;
-        if (sd->focused) parent = o;
-        parent2 = o;
+        if (sd->focused) break;
+        parent = o;
      }
    if ((!elm_widget_parent_get(parent)) &&
        (!elm_widget_parent2_get(parent)))
