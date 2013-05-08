@@ -893,19 +893,19 @@ Eina_Bool gl3_state_get(void *data __UNUSED__, Evas_Object *obj __UNUSED__, cons
 
 static void _realized(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *ei)
 {
-	Evas_Object *check;
-    Eina_List *items;
-	items = NULL;
+   Evas_Object *check;
+   Eina_List *items;
+   items = NULL;
 
-	if (!ei) return;
-	Elm_Object_Item *item = ei;
+   if (!ei) return;
+   Elm_Object_Item *item = ei;
 
-	check = elm_object_item_part_content_get(item, "elm.swallow.end");
+   check = elm_object_item_part_content_get(item, "elm.swallow.end");
 
-	if (!check) return;
+   if (!check) return;
 
-	items = eina_list_append(items, check);
-	elm_object_item_access_order_set(item, items);
+   items = eina_list_append(items, check);
+   elm_object_item_access_order_set(item, items);
 }
 
 void
