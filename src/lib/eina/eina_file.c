@@ -464,7 +464,10 @@ eina_file_shutdown(void)
 
         it = eina_hash_iterator_key_new(_eina_file_cache);
         EINA_ITERATOR_FOREACH(it, key)
-          ERR("File [%s] still open !", key);
+	  {
+             Eina_File *f = eina_hash_find(_eina_file_cache, key);
+             ERR("File [%s] still open %i times !", key, f->refcount);
+          }
         eina_iterator_free(it);
      }
 
