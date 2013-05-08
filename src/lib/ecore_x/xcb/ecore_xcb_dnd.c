@@ -376,10 +376,7 @@ ecore_x_dnd_callback_pos_update_set(void (*cb)(void *, Ecore_X_Xdnd_Position *da
 }
 
 static Eina_Bool
-_ecore_x_dnd_begin(Ecore_X_Window source,
-                   Eina_Bool self;
-                   unsigned char *data,
-                   int            size)
+_ecore_x_dnd_begin(Ecore_X_Window source, Eina_Bool self, unsigned char *data, int size)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
