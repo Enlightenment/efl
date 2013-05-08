@@ -181,7 +181,7 @@ EAPI time_t
 eina_file_mtime_get(Eina_File *file)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(file, 0);
-  return file->mtime;
+   return file->mtime;
 }
 
 EAPI const char *
