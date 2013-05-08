@@ -95,6 +95,10 @@ _ecore_evas_wl_common_cb_mouse_in(void *data EINA_UNUSED, int type EINA_UNUSED, 
    if ((!ee) || (ee->ignore_events)) return ECORE_CALLBACK_PASS_ON;
    if (ev->window != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
    if (ee->func.fn_mouse_in) ee->func.fn_mouse_in(ee);
+
+   if (ee->in)
+     return ECORE_CALLBACK_PASS_ON;
+
    ecore_event_evas_modifier_lock_update(ee->evas, ev->modifiers);
    evas_event_feed_mouse_in(ee->evas, ev->timestamp, NULL);
    _ecore_evas_mouse_move_process(ee, ev->x, ev->y, ev->timestamp);
