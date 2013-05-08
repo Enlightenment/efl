@@ -56,7 +56,7 @@ static Ecore_Evas_Engine_Func _ecore_wl_engine_func =
    _ecore_evas_wl_common_layer_set,
    NULL, // focus set
    _ecore_evas_wl_common_iconified_set,
-   NULL, // borderless set
+   _ecore_evas_wl_common_borderless_set,
    NULL, // override set
    _ecore_evas_wl_common_maximized_set,
    _ecore_evas_wl_common_fullscreen_set,

@@ -31,6 +31,7 @@ struct _Ecore_Evas_Engine_Wl_Data
 {
    Ecore_Wl_Window *parent, *win;
    Evas_Object *frame;
+   int fx, fy, fw, fh;
 };
 
 Ecore_Evas_Interface_Wayland *_ecore_evas_wl_interface_new(void);
@@ -68,6 +69,7 @@ void _ecore_evas_wl_common_screen_geometry_get(const Ecore_Evas *ee, int *x, int
 void _ecore_evas_wl_common_screen_dpi_get(const Ecore_Evas *ee, int *xdpi, int *ydpi);
 void _ecore_evas_wl_common_render_updates(void *data, Evas *evas, void *event);
 void _ecore_evas_wl_common_rotation_set(Ecore_Evas *ee, int rotation, int resize);
+void _ecore_evas_wl_common_borderless_set(Ecore_Evas *ee, int borderless);
 
 Evas_Object * _ecore_evas_wl_common_frame_add(Evas *evas);
 void _ecore_evas_wl_common_frame_border_size_set(Evas_Object *obj, int fx, int fy, int fw, int fh);

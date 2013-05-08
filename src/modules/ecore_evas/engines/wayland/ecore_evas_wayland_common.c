@@ -41,6 +41,7 @@ void _ecore_evas_wl_common_render_updates(void *data, Evas *evas EINA_UNUSED, vo
 static void _rotation_do(Ecore_Evas *ee, int rotation, int resize);
 static void _ecore_evas_wayland_alpha_do(Ecore_Evas *ee, int alpha);
 static void _ecore_evas_wayland_transparent_do(Ecore_Evas *ee, int transparent);
+static void _ecore_evas_wl_common_border_update(Ecore_Evas *ee);
 
 /* Frame listener */
 static void _ecore_evas_wl_frame_complete(void *data, struct wl_callback *callback, uint32_t tm);
@@ -194,6 +195,9 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
      {
         if (ee->func.fn_state_change)
           ee->func.fn_state_change(ee);
+
+        if (prev_full != ee->prop.fullscreen)
+          _ecore_evas_wl_common_border_update(ee);
      }
 
    if (ee->prop.fullscreen)
@@ -810,6 +814,20 @@ _ecore_evas_wl_common_frame_border_size_set(Evas_Object *obj, int fx, int fy, in
 }
 
 void
+_ecore_evas_wl_common_frame_border_size_get(Evas_Object *obj, int *fx, int *fy, int *fw, int *fh)
+{
+   EE_Wl_Smart_Data *sd;
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!(sd = evas_object_smart_data_get(obj))) return;
+
+   if (fx) *fx = sd->border_size[2];
+   if (fy) *fy = sd->border_size[0];
+   if (fw) *fw = sd->border_size[2] + sd->border_size[3];
+   if (fh) *fh = sd->border_size[0] + sd->border_size[1];
+}
+
+void
 _ecore_evas_wl_common_raise(Ecore_Evas *ee)
 {
    Ecore_Evas_Engine_Wl_Data *wdata;
@@ -987,6 +1005,42 @@ _ecore_evas_wl_common_iconified_set(Ecore_Evas *ee, int iconify)
    if (ee->prop.iconified == iconify) return;
    ee->prop.iconified = iconify;
    /* FIXME: Implement this in Wayland someshow */
+}
+
+static void
+_ecore_evas_wl_common_border_update(Ecore_Evas *ee)
+{
+   Ecore_Evas_Engine_Wl_Data *wdata;
+
+   wdata = ee->engine.data;
+   if (!wdata->frame)
+     return;
+
+   if (ee->prop.borderless || ee->prop.fullscreen)
+     {
+        evas_object_hide(wdata->frame);
+        evas_output_framespace_set(ee->evas, 0, 0, 0, 0);
+     }
+   else
+     {
+        int fx, fy, fw, fh;
+        evas_object_show(wdata->frame);
+        _ecore_evas_wl_common_frame_border_size_get(wdata->frame,
+                                                    &fx, &fy, &fw, &fh);
+        evas_output_framespace_set(ee->evas, fx, fy, fw, fh);
+     }
+}
+
+void
+_ecore_evas_wl_common_borderless_set(Ecore_Evas *ee, int borderless)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!ee) return;
+   if (ee->prop.borderless == borderless) return;
+   ee->prop.borderless = borderless;
+
+   _ecore_evas_wl_common_border_update(ee);
 }
 
 void
