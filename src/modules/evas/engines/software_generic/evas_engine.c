@@ -958,6 +958,26 @@ eng_image_load(void *data EINA_UNUSED, const char *file, const char *key, int *e
 }
 
 static void *
+eng_image_mmap(void *data EINA_UNUSED, Eina_File *f, const char *key, int *error, Evas_Image_Load_Opts *lo)
+{
+   *error = EVAS_LOAD_ERROR_NONE;
+#ifdef EVAS_CSERVE2
+   // FIXME: Need to pass fd to make that useful, so just get the filename for now.
+   if (evas_cserve2_use_get())
+     {
+        Image_Entry *ie;
+        ie = evas_cache2_image_open(evas_common_image_cache2_get(),
+                                    eina_file_filename_get(f), key, lo, error);
+        if (ie)
+          evas_cache2_image_open_wait(ie);
+
+        return ie;
+     }
+#endif
+   return evas_common_load_image_from_mmap(f, key, lo, error);
+}
+
+static void *
 eng_image_new_from_data(void *data EINA_UNUSED, int w, int h, DATA32 *image_data, int alpha, int cspace)
 {
 #ifdef EVAS_CSERVE2
@@ -2568,6 +2588,7 @@ static Evas_Func func =
      eng_polygon_draw,
      /* image draw funcs */
      eng_image_load,
+     eng_image_mmap,
      eng_image_new_from_data,
      eng_image_new_from_copied_data,
      eng_image_free,

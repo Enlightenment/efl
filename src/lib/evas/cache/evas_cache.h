@@ -55,6 +55,12 @@ struct _Evas_Cache_Image
    Eina_Inlist                  *lru_nodata;
    Eina_Hash                    *inactiv;
    Eina_Hash                    *activ;
+
+   Eina_Hash                    *mmap_activ;
+   Eina_Hash                    *mmap_inactiv;
+   Eina_Inlist                  *mmap_lru;
+   Eina_Inlist                  *mmap_lru_nodata;
+
    void                         *data;
 
    int                           usage;
@@ -90,14 +96,14 @@ struct _Evas_Cache_Engine_Image
 {
    Evas_Cache_Engine_Image_Func func;
 
-   Eina_Inlist*			dirty;
+   Eina_Inlist                 *dirty;
 
-   Eina_Hash*                   activ;
-   Eina_Hash*                   inactiv;
-   Eina_Inlist*		        lru;
+   Eina_Hash                   *activ;
+   Eina_Hash                   *inactiv;
+   Eina_Inlist                 *lru;
 
-   Evas_Cache_Image*            parent;
-   Evas_Cache_Engine_Image*     brother;
+   Evas_Cache_Image            *parent;
+   Evas_Cache_Engine_Image     *brother;
 
    int                          usage;
    int                          limit;
@@ -114,6 +120,7 @@ extern "C" {
 EAPI Evas_Cache_Image*        evas_cache_image_init(const Evas_Cache_Image_Func *cb);
 EAPI void                     evas_cache_image_shutdown(Evas_Cache_Image *cache);
 EAPI Image_Entry*             evas_cache_image_request(Evas_Cache_Image *cache, const char *file, const char *key, Evas_Image_Load_Opts *lo, int *error);
+EAPI Image_Entry*             evas_cache_image_mmap_request(Evas_Cache_Image *cache, Eina_File *f, const char *key, Evas_Image_Load_Opts *lo, int *error);
 EAPI void                     evas_cache_image_ref(Image_Entry *im);
 EAPI void                     evas_cache_image_drop(Image_Entry *im);
 EAPI void                     evas_cache_image_data_not_needed(Image_Entry *im);

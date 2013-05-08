@@ -85,6 +85,7 @@ struct _Evas_Object_Image_State
    Evas_Map      *defmap;
    const char    *file;
    const char    *key;
+   Eina_File     *f;
    int            frame;
    int             spread;
 
@@ -196,7 +197,7 @@ static const Evas_Object_Image_State default_state = {
   { 0, 0, 0 }, // image
   { 1.0, 0, 0, 0, 0, 1 }, // border
 
-  NULL, NULL, NULL, NULL,
+  NULL, NULL, NULL, NULL, NULL,
   0,
   EVAS_TEXTURE_REPEAT,
   EVAS_COLORSPACE_ARGB8888,
@@ -483,51 +484,18 @@ _image_memfile_set(Eo *eo_obj, void *_pd, va_list *list)
      }
 }
 
-EAPI void
-evas_object_image_file_set(Evas_Object *eo_obj, const char *file, const char *key)
-{
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return;
-   MAGIC_CHECK_END();
-   eo_do(eo_obj, evas_obj_image_file_set(file, key));
-}
-
 static void
-_image_file_set(Eo *eo_obj, void *_pd, va_list *list)
+_image_init_set(Eina_File *f, const char *file, const char *key,
+                Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Object_Image *o,
+                Evas_Image_Load_Opts *lo)
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
-   Evas_Object_Image *o = _pd;
-   Evas_Image_Load_Opts lo;
-   Eina_Bool resize_call = EINA_FALSE;
-
-   const char *file = va_arg(*list, const char*);
-   const char *key = va_arg(*list, const char*);
-
-   if ((o->pixels->tmpf) && (file != o->pixels->tmpf)) _cleanup_tmpf(eo_obj);
-   if ((o->cur->file) && (file) && (!strcmp(o->cur->file, file)))
-     {
-        if ((!o->cur->key) && (!key))
-          return;
-        if ((o->cur->key) && (key) && (!strcmp(o->cur->key, key)))
-          return;
-     }
-   /*
-    * WTF? why cancel a null image preload? this is just silly (tm)
-    if (!o->engine_data)
-     obj->layer->evas->engine.func->image_data_preload_cancel(obj->layer->evas->engine.data.output,
-							      o->engine_data,
-							      eo_obj);
- */
    if (o->cur->source) _proxy_unset(eo_obj, obj, o);
 
    EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
      {
-        if (o->cur->file) eina_stringshare_del(state_write->file);
-        if (o->cur->key) eina_stringshare_del(o->cur->key);
-        if (file) state_write->file = eina_stringshare_add(file);
-        else state_write->file = NULL;
-        if (key) state_write->key = eina_stringshare_add(key);
-        else state_write->key = NULL;
+        eina_stringshare_replace(&state_write->file, file);
+        eina_stringshare_replace(&state_write->key, key);
+        state_write->f = f;
      }
    EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
 
@@ -535,9 +503,10 @@ _image_file_set(Eo *eo_obj, void *_pd, va_list *list)
      {
         state_write->file = NULL;
         state_write->key = NULL;
+        state_write->f = NULL;
      }
    EINA_COW_WRITE_END(evas_object_image_state_cow, o->prev, state_write);
-
+   
    if (o->engine_data)
      {
         if (o->preloading)
@@ -548,28 +517,30 @@ _image_file_set(Eo *eo_obj, void *_pd, va_list *list)
         obj->layer->evas->engine.func->image_free(obj->layer->evas->engine.data.output, o->engine_data);
      }
    o->load_error = EVAS_LOAD_ERROR_NONE;
-   lo.scale_down_by = o->load_opts->scale_down_by;
-   lo.dpi = o->load_opts->dpi;
-   lo.w = o->load_opts->w;
-   lo.h = o->load_opts->h;
-   lo.region.x = o->load_opts->region.x;
-   lo.region.y = o->load_opts->region.y;
-   lo.region.w = o->load_opts->region.w;
-   lo.region.h = o->load_opts->region.h;
-   lo.scale_load.src_x = o->load_opts->scale_load.src_x;
-   lo.scale_load.src_y = o->load_opts->scale_load.src_y;
-   lo.scale_load.src_w = o->load_opts->scale_load.src_w;
-   lo.scale_load.src_h = o->load_opts->scale_load.src_h;
-   lo.scale_load.dst_w = o->load_opts->scale_load.dst_w;
-   lo.scale_load.dst_h = o->load_opts->scale_load.dst_h;
-   lo.scale_load.smooth = o->load_opts->scale_load.smooth;
-   lo.scale_load.scale_hint = o->load_opts->scale_load.scale_hint;
-   lo.orientation = o->load_opts->orientation;
-   o->engine_data = obj->layer->evas->engine.func->image_load(obj->layer->evas->engine.data.output,
-                                                              o->cur->file,
-                                                              o->cur->key,
-                                                              &o->load_error,
-                                                              &lo);
+   lo->scale_down_by = o->load_opts->scale_down_by;
+   lo->dpi = o->load_opts->dpi;
+   lo->w = o->load_opts->w;
+   lo->h = o->load_opts->h;
+   lo->region.x = o->load_opts->region.x;
+   lo->region.y = o->load_opts->region.y;
+   lo->region.w = o->load_opts->region.w;
+   lo->region.h = o->load_opts->region.h;
+   lo->scale_load.src_x = o->load_opts->scale_load.src_x;
+   lo->scale_load.src_y = o->load_opts->scale_load.src_y;
+   lo->scale_load.src_w = o->load_opts->scale_load.src_w;
+   lo->scale_load.src_h = o->load_opts->scale_load.src_h;
+   lo->scale_load.dst_w = o->load_opts->scale_load.dst_w;
+   lo->scale_load.dst_h = o->load_opts->scale_load.dst_h;
+   lo->scale_load.smooth = o->load_opts->scale_load.smooth;
+   lo->scale_load.scale_hint = o->load_opts->scale_load.scale_hint;
+   lo->orientation = o->load_opts->orientation;
+}
+
+static void
+_image_done_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Object_Image *o)
+{
+   Eina_Bool resize_call = EINA_FALSE;
+
    if (o->engine_data)
      {
         int w, h;
@@ -617,6 +588,83 @@ _image_file_set(Eo *eo_obj, void *_pd, va_list *list)
    o->changed = EINA_TRUE;
    if (resize_call) evas_object_inform_call_image_resize(eo_obj);
    evas_object_change(eo_obj, obj);
+}
+
+EAPI void
+evas_object_image_mmap_set(Evas_Object *eo_obj, Eina_File *f, const char *key)
+{
+   eo_do(eo_obj, evas_obj_image_mmap_set(f, key));
+}
+
+static void
+_image_mmap_set(Eo *eo_obj, void *_pd, va_list *list)
+{
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Image *o = _pd;
+   Evas_Image_Load_Opts lo;
+
+   Eina_File *f = va_arg(*list, Eina_File *);
+   const char *key = va_arg(*list, const char*);
+
+   if (o->pixels->tmpf) _cleanup_tmpf(eo_obj);
+   if (o->cur->f == f)
+     {
+        if ((!o->cur->key) && (!key))
+          return;
+        if ((o->cur->key) && (key) && (!strcmp(o->cur->key, key)))
+          return;
+     }
+
+   _image_init_set(f, NULL, key, eo_obj, obj, o, &lo);
+   o->engine_data = obj->layer->evas->engine.func->image_mmap(obj->layer->evas->engine.data.output,
+							      o->cur->f,
+							      o->cur->key,
+							      &o->load_error,
+							      &lo);
+   _image_done_set(eo_obj, obj, o);
+}
+
+EAPI void
+evas_object_image_file_set(Evas_Object *eo_obj, const char *file, const char *key)
+{
+   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+   eo_do(eo_obj, evas_obj_image_file_set(file, key));
+}
+
+static void
+_image_file_set(Eo *eo_obj, void *_pd, va_list *list)
+{
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Image *o = _pd;
+   Evas_Image_Load_Opts lo;
+
+   const char *file = va_arg(*list, const char*);
+   const char *key = va_arg(*list, const char*);
+
+   if ((o->pixels->tmpf) && (file != o->pixels->tmpf)) _cleanup_tmpf(eo_obj);
+   if ((o->cur->file) && (file) && (!strcmp(o->cur->file, file)))
+     {
+        if ((!o->cur->key) && (!key))
+          return;
+        if ((o->cur->key) && (key) && (!strcmp(o->cur->key, key)))
+          return;
+     }
+   /*
+    * WTF? why cancel a null image preload? this is just silly (tm)
+    if (!o->engine_data)
+     obj->layer->evas->engine.func->image_data_preload_cancel(obj->layer->evas->engine.data.output,
+							      o->engine_data,
+							      eo_obj);
+ */
+   _image_init_set(NULL, file, key, eo_obj, obj, o, &lo);
+   o->engine_data = obj->layer->evas->engine.func->image_load(obj->layer->evas->engine.data.output,
+                                                              o->cur->file,
+                                                              o->cur->key,
+                                                              &o->load_error,
+                                                              &lo);
+   _image_done_set(eo_obj, obj, o);
 }
 
 EAPI void
@@ -5146,6 +5194,7 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DBG_INFO_GET), _dbg_info_get),
         EO_OP_FUNC(EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_MEMFILE_SET), _image_memfile_set),
         EO_OP_FUNC(EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_FILE_SET), _image_file_set),
+        EO_OP_FUNC(EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_MMAP_SET), _image_mmap_set),
         EO_OP_FUNC(EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_FILE_GET), _image_file_get),
         EO_OP_FUNC(EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_SOURCE_SET), _image_source_set),
         EO_OP_FUNC(EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_SOURCE_GET), _image_source_get),
@@ -5224,6 +5273,7 @@ _class_constructor(Eo_Class *klass)
 static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(EVAS_OBJ_IMAGE_SUB_ID_MEMFILE_SET, "Sets the data for an image from memory to be loaded"),
      EO_OP_DESCRIPTION(EVAS_OBJ_IMAGE_SUB_ID_FILE_SET, "Set the source file from where an image object must fetch the real"),
+     EO_OP_DESCRIPTION(EVAS_OBJ_IMAGE_SUB_ID_MMAP_SET, "Set the source mmaped file from where an image object must fetch the real"),
      EO_OP_DESCRIPTION(EVAS_OBJ_IMAGE_SUB_ID_FILE_GET, "Retrieve the source file from where an image object is to fetch the"),
      EO_OP_DESCRIPTION(EVAS_OBJ_IMAGE_SUB_ID_SOURCE_SET, "Set the source object on an image object to used as a @b proxy."),
      EO_OP_DESCRIPTION(EVAS_OBJ_IMAGE_SUB_ID_SOURCE_GET, "Get the current source object of an image object."),

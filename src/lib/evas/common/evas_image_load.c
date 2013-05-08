@@ -150,8 +150,17 @@ _evas_image_file_header(Evas_Module *em, Image_Entry *ie, int *error)
    if (evas_image_load_func)
      {
         Evas_Image_Property property;
+        const char *file;
 
-        if (!ie->f) ie->f = eina_file_open(ie->file, EINA_FALSE);
+        if (!ie->f)
+          {
+             ie->f = eina_file_open(ie->file, EINA_FALSE);
+             file = ie->file;
+          }
+        else
+          {
+             file = eina_file_filename_get(ie->f);
+          }
         if (!ie->f)
           {
              *error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
@@ -173,7 +182,7 @@ _evas_image_file_header(Evas_Module *em, Image_Entry *ie, int *error)
             (*error == EVAS_LOAD_ERROR_NONE))
           {
              DBG("loaded file head using module '%s' (%p): %s",
-                 em->definition->name, em, ie->file);
+                 em->definition->name, em, file);
 
              ie->w = property.w;
              ie->h = property.h;
@@ -189,7 +198,7 @@ _evas_image_file_header(Evas_Module *em, Image_Entry *ie, int *error)
              evas_module_unload(em);
              INF("failed to load file head using module '%s' (%p): "
                  "%s (%s)",
-                 em->definition->name, em, ie->file, evas_load_error_str(*error));
+                 em->definition->name, em, file, evas_load_error_str(*error));
           }
      }
    else
@@ -221,8 +230,8 @@ EAPI int
 evas_common_load_rgba_image_module_from_file(Image_Entry *ie)
 {
    const char           *loader = NULL, *end;
+   const char           *file;
    Evas_Module          *em;
-   struct stat		 st;
    unsigned int          i;
    int                   len, ret = EVAS_LOAD_ERROR_NONE;
    struct evas_image_foreach_loader_data fdata;
@@ -240,14 +249,27 @@ evas_common_load_rgba_image_module_from_file(Image_Entry *ie)
         //   }
      }
 #endif
-   if (stat(ie->file, &st) != 0 || S_ISDIR(st.st_mode))
+   if (ie->f)
      {
-        DBG("trying to open directory '%s' !", ie->file);
-        return EVAS_LOAD_ERROR_DOES_NOT_EXIST;
+        len = strlen(eina_file_filename_get(ie->f));
+        end = eina_file_filename_get(ie->f) + len;
+        file = eina_file_filename_get(ie->f);
+     }
+   else
+     {
+        struct stat st;
+
+        if (stat(ie->file, &st) != 0 || S_ISDIR(st.st_mode))
+          {
+             DBG("trying to open directory '%s' !", ie->file);
+             return EVAS_LOAD_ERROR_DOES_NOT_EXIST;
+          }
+
+        len = strlen(ie->file);
+        end = ie->file + len;
+        file = ie->file;
      }
 
-   len = strlen(ie->file);
-   end = ie->file + len;
    for (i = 0; i < (sizeof (loaders) / sizeof(struct ext_loader_s)); i++)
      {
         int len2 = strlen(loaders[i].extension);
@@ -256,7 +278,7 @@ evas_common_load_rgba_image_module_from_file(Image_Entry *ie)
           {
              loader = loaders[i].loader;
              DBG("known loader '%s' handles extension '%s' of file '%s'",
-                 loader, end - len2, ie->file);
+                 loader, end - len2, file);
              break;
           }
      }
@@ -296,10 +318,10 @@ evas_common_load_rgba_image_module_from_file(Image_Entry *ie)
 	  DBG("could not find module '%s'", loaders_name[i]);
      }
 
-   INF("exhausted all means to load image '%s'", ie->file);
+   INF("exhausted all means to load image '%s'", file);
    return EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
 
-   end:
+ end:
 
    if (ret != EVAS_LOAD_ERROR_NONE)
      {
@@ -313,7 +335,7 @@ evas_common_load_rgba_image_module_from_file(Image_Entry *ie)
 	WRN("loader '%s' (version %d) "
 	    "handled file '%s', key '%s' with errors: %s",
 	    modname ? modname : "<UNKNOWN>", modversion,
-	    ie->file, ie->key ? ie->key : "",
+	    file, ie->key ? ie->key : "",
 	    evas_load_error_str(ret));
 	goto end;
      }
@@ -321,7 +343,7 @@ evas_common_load_rgba_image_module_from_file(Image_Entry *ie)
    DBG("loader '%s' used for file %s",
        (em && em->definition && em->definition->name) ?
        em->definition->name : "<UNKNOWN>",
-       ie->file);
+       file);
 
    ie->info.module = (void*) em;
    ie->info.loader = (void*) em ? em->functions : NULL;

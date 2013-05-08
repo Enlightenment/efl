@@ -96,15 +96,11 @@ evas_gl_common_image_unref(Evas_GL_Image *im)
      }
 }
 
-Evas_GL_Image *
-evas_gl_common_image_load(Evas_Engine_GL_Context *gc, const char *file, const char *key, Evas_Image_Load_Opts *lo, int *error)
+static Evas_GL_Image *
+_evas_gl_common_image(Evas_Engine_GL_Context *gc, RGBA_Image *im_im, Evas_Image_Load_Opts *lo, int *error)
 {
-   Evas_GL_Image        *im;
-   RGBA_Image           *im_im;
-   Eina_List            *l;
-
-   im_im = evas_common_load_image_from_file(file, key, lo, error);
-   if (!im_im) return NULL;
+   Evas_GL_Image *im;
+   Eina_List     *l;
 
    /* i'd LOVe to do this, but we can't because we load to load header
     * to get image size to know if its too big or not! so this disallows
@@ -151,7 +147,29 @@ evas_gl_common_image_load(Evas_Engine_GL_Context *gc, const char *file, const ch
    im->h = im->im->cache_entry.h;
    if (lo) im->load_opts = *lo;
    gc->shared->images = eina_list_prepend(gc->shared->images, im);
-   return im;
+   return im;   
+}
+
+Evas_GL_Image *
+evas_gl_common_image_load(Evas_Engine_GL_Context *gc, const char *file, const char *key, Evas_Image_Load_Opts *lo, int *error)
+{
+   RGBA_Image *im_im;
+
+   im_im = evas_common_load_image_from_file(file, key, lo, error);
+   if (!im_im) return NULL;
+
+   return _evas_gl_common_image(gc, im_im, lo, error);
+}
+
+Evas_GL_Image *
+evas_gl_common_image_mmap(Evas_Engine_GL_Context *gc, Eina_File *f, const char *key, Evas_Image_Load_Opts *lo, int *error)
+{
+   RGBA_Image *im_im;
+
+   im_im = evas_common_load_image_from_mmap(f, key, lo, error);
+   if (!im_im) return NULL;
+
+   return _evas_gl_common_image(gc, im_im, lo, error);
 }
 
 Evas_GL_Image *

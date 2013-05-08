@@ -33,6 +33,7 @@ EAPI void              evas_common_image_alpha_line_buffer_release (RGBA_Image *
 EAPI void              evas_common_image_alpha_line_buffer_free    (RGBA_Image *im);
 
 EAPI RGBA_Image       *evas_common_load_image_from_file            (const char *file, const char *key, Evas_Image_Load_Opts *lo, int *error);
+EAPI RGBA_Image       *evas_common_load_image_from_mmap            (Eina_File *f, const char *key, Evas_Image_Load_Opts *lo, int *error);
 EAPI int               evas_common_save_image_to_file              (RGBA_Image *im, const char *file, const char *key, int quality, int compress);
 
 EAPI void evas_common_rgba_image_scalecache_init(Image_Entry *ie);

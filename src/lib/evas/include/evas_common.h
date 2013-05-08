@@ -513,6 +513,7 @@ struct _Image_Entry_Flags
    Eina_Bool pending       : 1;
    Eina_Bool rotated       : 1;
    Eina_Bool unload_cancel : 1;
+   Eina_Bool given_mmap    : 1;
 };
 
 struct _Image_Entry_Frame

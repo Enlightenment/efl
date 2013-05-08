@@ -187,6 +187,15 @@ _evas_common_rgba_image_delete(Image_Entry *ie)
 #ifdef BUILD_PIPE_RENDER
    evas_common_pipe_free(im);
 #endif
+   if (ie->loader_data)
+     {
+        Evas_Image_Load_Func *evas_image_load_func = NULL;
+
+        evas_image_load_func = ie->info.loader;
+        if (evas_image_load_func)
+	  evas_image_load_func->file_close(ie->loader_data);
+	ie->loader_data = NULL;
+     }
    evas_common_rgba_image_scalecache_shutdown(&im->cache_entry);
    if (ie->info.module) evas_module_unref((Evas_Module *)ie->info.module);
    /* memset the image to 0x99 because i recently saw a segv where an
@@ -217,15 +226,7 @@ _evas_common_rgba_image_delete(Image_Entry *ie)
              }
           }
      }
-   if (ie->loader_data)
-     {
-        Evas_Image_Load_Func *evas_image_load_func = NULL;
-
-        evas_image_load_func = ie->info.loader;
-        if (evas_image_load_func)
-          evas_image_load_func->file_close(ie->loader_data);
-     }
-   if (ie->f) eina_file_close(ie->f);
+   if (ie->f && !ie->flags.given_mmap) eina_file_close(ie->f);
    free(im);
 }
 
@@ -269,7 +270,7 @@ evas_common_rgba_image_unload(Image_Entry *ie)
 
    if (!ie->flags.loaded) return;
    if ((!ie->info.module) && (!ie->data1)) return;
-   if (!ie->file) return;
+   if (!ie->file && !ie->f) return;
    if (ie->references > 0) return;
 
    ie->flags.loaded = 0;
@@ -763,6 +764,17 @@ evas_common_load_image_from_file(const char *file, const char *key, Evas_Image_L
 	return NULL;
      }
    return (RGBA_Image *) evas_cache_image_request(eci, file, key, lo, error);
+}
+
+EAPI RGBA_Image *
+evas_common_load_image_from_mmap(Eina_File *f, const char *key, Evas_Image_Load_Opts *lo, int *error)
+{
+   if (!f)
+     {
+	*error = EVAS_LOAD_ERROR_GENERIC;
+	return NULL;
+     }
+   return (RGBA_Image *) evas_cache_image_mmap_request(eci, f, key, lo, error);
 }
 
 EAPI void
