@@ -1579,6 +1579,17 @@ eng_image_load(void *data, const char *file, const char *key, int *error, Evas_I
 }
 
 static void *
+eng_image_mmap(void *data, Eina_File *f, const char *key, int *error, Evas_Image_Load_Opts *lo)
+{
+   Render_Engine *re;
+
+   re = (Render_Engine *)data;
+   *error = EVAS_LOAD_ERROR_NONE;
+   eng_window_use(re->win);
+   return evas_gl_common_image_mmap(re->win->gl_context, f, key, lo, error);
+}
+
+static void *
 eng_image_new_from_data(void *data, int w, int h, DATA32 *image_data, int alpha, int cspace)
 {
    Render_Engine *re;
@@ -3733,6 +3744,7 @@ module_open(Evas_Module *em)
    ORD(polygon_draw);
 
    ORD(image_load);
+   ORD(image_mmap);
    ORD(image_new_from_data);
    ORD(image_new_from_copied_data);
    ORD(image_free);
