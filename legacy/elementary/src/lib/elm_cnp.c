@@ -1588,13 +1588,14 @@ _x11_elm_cnp_selection_set(Evas_Object *obj, Elm_Sel_Type selection, Elm_Sel_For
         if (format == ELM_SEL_FORMAT_IMAGE)
           {
              // selbuf is actual image data, not text/string
-             sel->selbuf = malloc(buflen);
+             sel->selbuf = malloc(buflen + 1);
              if (!sel->selbuf)
                {
                   elm_object_cnp_selection_clear(obj, selection);
                   return EINA_FALSE;
                }
              memcpy(sel->selbuf, selbuf, buflen);
+             sel->selbuf[buflen] = 0;
           }
         else
           sel->selbuf = strdup((char*)selbuf);
@@ -2139,7 +2140,7 @@ struct _Local_Selinfo
 {
    Elm_Sel_Format format;
    struct {
-      void *buf;
+      char *buf;
       size_t size;
    } sel;
    struct {
@@ -2218,10 +2219,11 @@ _local_elm_cnp_selection_set(Evas_Object *obj __UNUSED__,
    if (_local_selinfo[selection].sel.buf)
      free(_local_selinfo[selection].sel.buf);
    _local_selinfo[selection].format = format;
-   _local_selinfo[selection].sel.buf = malloc(buflen);
+   _local_selinfo[selection].sel.buf = malloc(buflen + 1);
    if (_local_selinfo[selection].sel.buf)
      {
         memcpy(_local_selinfo[selection].sel.buf, selbuf, buflen);
+        _local_selinfo[selection].sel.buf[buflen] = 0;
         _local_selinfo[selection].sel.size = buflen;
      }
    else
