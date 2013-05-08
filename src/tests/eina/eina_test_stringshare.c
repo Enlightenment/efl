@@ -89,6 +89,8 @@ START_TEST(eina_stringshare_small)
         fail_if((int)strlen(buf) != eina_stringshare_strlen(t0));
         fail_if((int)strlen(buf) != eina_stringshare_strlen(t1));
 
+        eina_stringshare_ref(t0);
+        eina_stringshare_del(t0);
         eina_stringshare_del(t0);
         eina_stringshare_del(t1);
      }
@@ -190,6 +192,47 @@ START_TEST(eina_stringshare_collision)
 }
 END_TEST
 
+static const char*
+my_vprintf(const char *fmt, ...)
+{
+   const char *ret;
+   va_list ap;
+   va_start(ap, fmt);
+   ret = eina_stringshare_vprintf(fmt, ap);
+   va_end(ap);
+   return ret;
+}
+
+START_TEST(eina_stringshare_print)
+{
+   const char *t1;
+   const char *t2;
+   const char *t3;
+
+   fail_if(eina_stringshare_printf(0) != NULL);
+   fail_if(eina_stringshare_printf("%s", "") != NULL);
+   fail_if(eina_stringshare_nprintf(0, "%s", "") != NULL);
+
+   t1 = eina_stringshare_printf("x%sy", TEST1);
+   t2 = my_vprintf("x%sy", TEST1);
+   t3 = eina_stringshare_nprintf(10, "x%sy", TEST1);
+   fail_if(t1 == NULL);
+   fail_if(t2 == NULL);
+   fail_if(t3 == NULL);
+   fail_if(strcmp(t1, "x"TEST1"y") != 0);
+   fail_if(strcmp(t2, "x"TEST1"y") != 0);
+   fail_if(strcmp(t3, "x"TEST1"y") != 0);
+   fail_if(((int)strlen(TEST1) + 2) != eina_stringshare_strlen(t1));
+   fail_if(((int)strlen(TEST1) + 2) != eina_stringshare_strlen(t2));
+   fail_if(10 != eina_stringshare_strlen(t3));
+   eina_stringshare_del(t1);
+   eina_stringshare_del(t2);
+   eina_stringshare_del(t3);
+
+
+}
+END_TEST
+
 void
 eina_test_stringshare(TCase *tc)
 {
@@ -198,4 +241,5 @@ eina_test_stringshare(TCase *tc)
    tcase_add_test(tc, eina_stringshare_test_share);
    tcase_add_test(tc, eina_stringshare_collision);
    tcase_add_test(tc, eina_stringshare_putstuff);
+   tcase_add_test(tc, eina_stringshare_print);
 }
