@@ -3173,8 +3173,9 @@ _proxy_unset(Evas_Object *proxy, Evas_Object_Protected_Data *cur_proxy, Evas_Obj
 
        if (eina_list_count(proxy_source_write->proxies) == 0)
           {
-             cur_proxy->layer->evas->engine.func->image_map_surface_free(cur_proxy->layer->evas->engine.data.output,
-                                                                         proxy_source_write->surface);
+             if (proxy_source_write->surface)
+               cur_proxy->layer->evas->engine.func->image_map_surface_free(cur_proxy->layer->evas->engine.data.output,
+                                                                           proxy_source_write->surface);
              proxy_source_write->surface = NULL;
           }
 
