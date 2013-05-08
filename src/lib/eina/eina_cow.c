@@ -598,7 +598,6 @@ eina_cow_memcpy(Eina_Cow *cow,
 EAPI Eina_Bool
 eina_cow_gc(Eina_Cow *cow)
 {
-   Eina_Cow_Ptr *ref;
    Eina_Cow_GC *gc;
    Eina_Iterator *it;
    void *data;
@@ -619,11 +618,11 @@ eina_cow_gc(Eina_Cow *cow)
    data = EINA_COW_DATA_GET(gc->ref);
 
 #ifndef NVALGRIND
-   VALGRIND_MAKE_MEM_DEFINED(gc->ref, sizeof (*ref));
+   VALGRIND_MAKE_MEM_DEFINED(gc->ref, sizeof (Eina_Cow_Ptr));
 #endif
    _eina_cow_gc(cow, gc->ref, gc->dst, data);
 #ifndef NVALGRIND
-   VALGRIND_MAKE_MEM_NOACCESS(gc->ref, sizeof (*ref));
+   VALGRIND_MAKE_MEM_NOACCESS(gc->ref, sizeof (Eina_Cow_Ptr));
 #endif
 
    eina_hash_del(cow->togc, &gc->ref, gc);
