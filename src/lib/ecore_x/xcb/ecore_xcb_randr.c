@@ -1992,6 +1992,91 @@ ecore_x_randr_crtc_size_get(Ecore_X_Window     root,
 #endif
 }
 
+EAPI Ecore_X_Randr_Crtc_Info *
+ecore_x_randr_crtc_info_get(Ecore_X_Window root, const Ecore_X_Randr_Crtc crtc)
+{
+   Ecore_X_Randr_Crtc_Info *ret = NULL;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
+
+#ifdef ECORE_XCB_RANDR
+   RANDR_CHECK_1_2_RET(NULL);
+
+   if (!_ecore_xcb_randr_crtc_validate(root, crtc)) return NULL;
+
+   if (_randr_version >= RANDR_1_3)
+     {
+        xcb_randr_get_screen_resources_current_reply_t *reply;
+        xcb_timestamp_t stamp = 0;
+
+        reply = _ecore_xcb_randr_13_get_resources(root);
+        if (reply)
+          {
+             xcb_randr_get_crtc_info_cookie_t rcookie;
+             xcb_randr_get_crtc_info_reply_t *rreply;
+
+             if (_randr_version >= RANDR_1_3)
+               stamp = _ecore_xcb_randr_13_get_resource_timestamp(root);
+             else if (_randr_version == RANDR_1_2)
+               stamp = _ecore_xcb_randr_12_get_resource_timestamp(root);
+
+             rcookie =
+               xcb_randr_get_crtc_info_unchecked(_ecore_xcb_conn, crtc,
+                                                 stamp);
+
+             rreply = xcb_randr_get_crtc_info_reply(_ecore_xcb_conn,
+                                                    rcookie, NULL);
+             if (rreply)
+               {
+
+                  if ((ret = malloc(sizeof(Ecore_X_Randr_Crtc_Info))))
+                    {
+                       ret->timestamp = rreply->timestamp;
+                       ret->x = rreply->x;
+                       ret->y = rreply->y;
+                       ret->width = rreply->width;
+                       ret->height = rreply->height;
+                       ret->mode = rreply->mode;
+                       ret->rotation = rreply->rotation;
+                       ret->noutput = 
+                         xcb_randr_get_crtc_info_outputs_length(rreply);
+                       ret->npossible = 
+                         xcb_randr_get_crtc_info_possible_length(rreply);
+
+                       if ((ret->outputs = 
+                            malloc(ret->noutput * sizeof(Ecore_X_Randr_Output))))
+                         {
+                            xcb_randr_output_t *outs;
+                            int i = 0;
+
+                            outs = xcb_randr_get_crtc_info_outputs(rreply);
+                            for (i = 0; i < ret->noutput; i++)
+                              ret->outputs[i] = outs[i];
+                         }
+
+                       if ((ret->possible = 
+                            malloc(ret->npossible * sizeof(Ecore_X_Randr_Output))))
+                         {
+                            xcb_randr_output_t *outs;
+                            int i = 0;
+
+                            outs = xcb_randr_get_crtc_info_possible(rreply);
+                            for (i = 0; i < ret->npossible; i++)
+                              ret->possible[i] = outs[i];
+                         }
+                    }
+                  free(rreply);
+               }
+
+             free(reply);
+          }
+     }
+#endif
+
+   return ret;
+}
+
 EAPI Ecore_X_Randr_Refresh_Rate
 ecore_x_randr_crtc_refresh_rate_get(Ecore_X_Window     root,
                                     Ecore_X_Randr_Crtc crtc,
