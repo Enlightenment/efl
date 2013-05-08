@@ -654,7 +654,7 @@ eet_shutdown(void)
 
         for (i = 0; i < num; i++)
           {
-             ERR("File '%s' is still open !", closelist[i]->path);
+             ERR("File '%s' is still open %i times !", closelist[i]->path, closelist[i]->references);
              eet_internal_close(closelist[i], EINA_TRUE);
           }
      }
