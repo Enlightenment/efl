@@ -1,7 +1,7 @@
 #ifndef __EMOTION_GSTREAMER_H__
 #define __EMOTION_GSTREAMER_H__
 
-#include "Emotion_Module.h"
+#include "emotion_modules.h"
 
 typedef void (*Evas_Video_Convert_Cb)(unsigned char *evas_data,
                                       const unsigned char *gst_data,

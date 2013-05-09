@@ -6,7 +6,7 @@
 #include <Evas.h>
 #include <Ecore.h>
 
-#include "Emotion_Module.h"
+#include "emotion_modules.h"
 #include "emotion_xine.h"
 
 int _emotion_xine_log_domain = -1;

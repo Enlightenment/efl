@@ -21,7 +21,7 @@ extern Eina_Prefix *_emotion_pfx;
 #define ERR(...) EINA_LOG_DOM_ERR(_emotion_log_domain, __VA_ARGS__)
 #define CRITICAL(...) EINA_LOG_DOM_CRIT(_emotion_log_domain, __VA_ARGS__)
 
-#include "Emotion_Module.h"
+#include "emotion_modules.h"
 
 typedef struct _Emotion_Engine_Instance Emotion_Engine_Instance;
 

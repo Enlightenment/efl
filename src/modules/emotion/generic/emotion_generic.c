@@ -14,7 +14,7 @@
 #include <Evas.h>
 #include <Ecore.h>
 
-#include "Emotion_Module.h"
+#include "emotion_modules.h"
 #include "emotion_generic.h"
 
 static Eina_Prefix *pfx = NULL;
