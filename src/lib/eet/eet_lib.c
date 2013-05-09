@@ -1436,7 +1436,11 @@ eet_mmap(Eina_File *file)
      }
 
    ef = eet_cache_find(path, eet_readers, eet_readers_num);
-   if (ef && ef->readfp == file) goto done;
+   if (ef && ef->readfp == file)
+     {
+        ef->references++;
+        goto done;
+     }
 
    /* Allocate struct for eet file and have it zero'd out */
    ef = eet_file_malloc(1);
@@ -1470,7 +1474,6 @@ eet_mmap(Eina_File *file)
      goto on_error;
 
  done:
-   ef->references++;
    UNLOCK_CACHE;
    return ef;
 
