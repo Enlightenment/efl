@@ -1444,6 +1444,7 @@ eet_mmap(Eina_File *file)
 
    /* fill some of the members */
    INIT_FILE(ef);
+   ef->ed = NULL;
    ef->key = NULL;
    ef->readfp = file;
    ef->path = eina_stringshare_add(path);
