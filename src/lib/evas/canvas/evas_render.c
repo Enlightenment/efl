@@ -1355,7 +1355,7 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
                        else
                          {
                             //FIXME: Consider to clip by the proxy clipper.
-                            if (proxy_obj && (proxy_obj != obj))
+                            if (proxy_obj && (proxy_obj != eo_obj))
                               {
                                  if (_evas_render_has_map(eo_obj, obj))
                                    evas_object_clip_recalc(obj);
