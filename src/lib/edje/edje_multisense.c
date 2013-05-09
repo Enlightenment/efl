@@ -16,6 +16,7 @@ static Eina_Bool _play_finished(void *data EINA_UNUSED, Eo *in, const Eo_Event_D
 struct _edje_multisense_eet_data
 {
    sf_count_t  offset, length;
+   Eet_File *ef;
    const char *data;
    Ecore_Audio_Vio vio;
 };
@@ -73,7 +74,9 @@ static void _free(void *data)
 {
   struct _edje_multisense_eet_data *eet_data = data;
 
-  free(eet_data->data);
+  if (eet_data->ef) eet_close(eet_data->ef);
+// don't free if eet_data->data  comes from eet_read_direct   
+//  free(eet_data->data);
   free(data);
 }
 #endif
@@ -111,7 +114,17 @@ _edje_multisense_internal_sound_sample_play(Edje *ed, const char *sample_name, c
 
             eet_data = calloc(1, sizeof(struct _edje_multisense_eet_data));
 
-            eet_data->data = eet_read_direct(ed->file->ef, snd_id_str, (int *)&eet_data->length);
+            if (!eet_data)
+              {
+                 ERR("Out of memory in allocating multisense sample info");
+                 return EINA_FALSE;
+              }
+            // open eet file again to esnure we have  reference because we
+            // use eet_read_direct to avoid duplicating/copying into memory
+            // by relying on a direct mmap, but this means we need to close
+            // the eet file handle instead of freeing data
+            eet_data->ef = eet_open(ed->path, EET_FILE_MODE_READ);
+            eet_data->data = eet_read_direct(eet_data->ef, snd_id_str, (int *)&eet_data->length);
 
             /* action->speed */
 
