@@ -1334,12 +1334,12 @@ evas_gl_common_context_line_push(Evas_Engine_GL_Context *gc,
                                  int r, int g, int b, int a)
 {
    int pnum, nv, nc, i;
-   Eina_Bool blend = 0;
+   Eina_Bool blend = EINA_FALSE;
    GLuint prog = gc->shared->shader[SHADER_RECT].prog;
    int pn = 0;
 
-   if (a < 255) blend = 1;
-   if (gc->dc->render_op == EVAS_RENDER_COPY) blend = 0;
+   if (!(gc->dc->render_op == EVAS_RENDER_COPY) && (a < 255))
+     blend = EINA_TRUE;
 
    shader_array_flush(gc);
    vertex_array_size_check(gc, gc->state.top_pipe, 2);
@@ -1393,12 +1393,12 @@ evas_gl_common_context_rectangle_push(Evas_Engine_GL_Context *gc,
                                       int r, int g, int b, int a)
 {
    int pnum, nv, nc, i;
-   Eina_Bool blend = 0;
+   Eina_Bool blend = EINA_FALSE;
    GLuint prog = gc->shared->shader[SHADER_RECT].prog;
    int pn = 0;
 
-   if (a < 255) blend = 1;
-   if (gc->dc->render_op == EVAS_RENDER_COPY) blend = 0;
+   if (!(gc->dc->render_op == EVAS_RENDER_COPY) && (a < 255))
+     blend = EINA_TRUE;
 
 again:
    vertex_array_size_check(gc, gc->state.top_pipe, 6);
@@ -1537,12 +1537,12 @@ evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
 {
    int pnum, nv, nc, nu, ns, i;
    GLfloat tx1, tx2, ty1, ty2;
-   Eina_Bool blend = EINA_TRUE;
+   Eina_Bool blend = EINA_FALSE;
    GLuint prog = gc->shared->shader[SHADER_IMG].prog;
    int pn = 0, sam = 0;
 
-   if ((gc->dc->render_op == EVAS_RENDER_COPY) ||
-       ((a == 255) && (!tex->alpha))) blend = EINA_FALSE;
+   if (!(gc->dc->render_op == EVAS_RENDER_COPY) &&
+       ((a < 255) || (tex->alpha))) blend = EINA_TRUE;
 
    if (gc->filter_prog)
      {
@@ -2288,7 +2288,7 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
    const int points[6] = { 0, 1, 2, 0, 2, 3 };
    int x = 0, y = 0, w = 0, h = 0, px = 0, py = 0;
    GLfloat tx[4], ty[4], t2x[4], t2y[4];
-   Eina_Bool blend = EINA_TRUE;
+   Eina_Bool blend = EINA_FALSE;
    DATA32 cmul;
    GLuint prog = gc->shared->shader[SHADER_IMG].prog;
    Eina_Bool utexture = EINA_FALSE;
@@ -2296,8 +2296,8 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
    int pn = 0;
    int flat = 0;
 
-   if ((gc->dc->render_op == EVAS_RENDER_COPY) ||
-       ((a == 255) && (!tex->alpha))) blend = EINA_FALSE;
+   if (!(gc->dc->render_op == EVAS_RENDER_COPY) &&
+       ((a < 255) || (tex->alpha))) blend = EINA_TRUE;
 
    if (npoints != 4)
      {
