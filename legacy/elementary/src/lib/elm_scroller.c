@@ -1211,6 +1211,27 @@ elm_scroller_gravity_get(const Evas_Object *obj,
 }
 
 EAPI void
+elm_scroller_movement_block_set(Evas_Object *obj,
+                                Elm_Scroller_Movement_Block block)
+{
+   ELM_SCROLLABLE_CHECK(obj);
+
+   eo_do(obj, elm_scrollable_interface_movement_block_set(block));
+}
+
+EAPI Elm_Scroller_Movement_Block
+elm_scroller_movement_block_get(const Evas_Object *obj)
+{
+   Elm_Scroller_Movement_Block block;
+
+   ELM_SCROLLABLE_CHECK(obj, ELM_SCROLLER_SINGLE_DIRECTION_NONE);
+
+   eo_do((Eo *) obj, elm_scrollable_interface_movement_block_get(&block));
+
+   return block;
+}
+
+EAPI void
 elm_scroller_propagate_events_set(Evas_Object *obj,
                                   Eina_Bool propagation)
 {

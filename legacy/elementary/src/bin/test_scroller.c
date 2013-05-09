@@ -46,6 +46,58 @@ my_bt_hold_toggle(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 }
 
 void
+my_bt_block_movements_x_axis(void *data, Evas_Object *obj,
+                             void *event_info __UNUSED__)
+{
+   Elm_Scroller_Movement_Block block;
+
+   block = elm_scroller_movement_block_get((Evas_Object *)data);
+
+   if (elm_check_state_get(obj))
+     {
+        elm_scroller_movement_block_set((Evas_Object *)data,
+                                        ELM_SCROLLER_MOVEMENT_BLOCK_HORIZONTAL |
+                                        block);
+     }
+   else if (block & ELM_SCROLLER_MOVEMENT_BLOCK_VERTICAL)
+     {
+        elm_scroller_movement_block_set((Evas_Object *)data,
+                                        ELM_SCROLLER_MOVEMENT_BLOCK_VERTICAL);
+     }
+   else
+     {
+        elm_scroller_movement_block_set((Evas_Object *)data,
+                                        ELM_SCROLLER_MOVEMENT_NO_BLOCK);
+     }
+}
+
+void
+my_bt_block_movements_y_axis(void *data, Evas_Object *obj,
+                             void *event_info __UNUSED__)
+{
+   Elm_Scroller_Movement_Block block;
+
+   block = elm_scroller_movement_block_get((Evas_Object *)data);
+
+   if (elm_check_state_get(obj))
+     {
+        elm_scroller_movement_block_set((Evas_Object *)data,
+                                        ELM_SCROLLER_MOVEMENT_BLOCK_VERTICAL |
+                                        block);
+     }
+   else if (block & ELM_SCROLLER_MOVEMENT_BLOCK_HORIZONTAL)
+     {
+        elm_scroller_movement_block_set((Evas_Object *)data,
+                                        ELM_SCROLLER_MOVEMENT_BLOCK_HORIZONTAL);
+     }
+   else
+     {
+        elm_scroller_movement_block_set((Evas_Object *)data,
+                                        ELM_SCROLLER_MOVEMENT_NO_BLOCK);
+     }
+}
+
+void
 _sc_move_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Evas_Coord x = 0, y = 0;
@@ -64,7 +116,7 @@ _sc_resize_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info
 void
 test_scroller(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg2, *tb, *tb2, *sc, *bt, *ck1, *ck2, *bx, *bx2, *fr;
+   Evas_Object *win, *bg2, *tb, *tb2, *sc, *bt, *ck1, *ck2, *bx, *bx2, *fr, *ck3, *ck4;
    int i, j, n;
    char buf[PATH_MAX];
    Evas_Coord x = 0, y = 0, w = 0, h = 0;
@@ -111,6 +163,16 @@ test_scroller(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    elm_box_pack_end(bx2, ck2);
    evas_object_show(ck2);
 
+   ck3 = elm_check_add(win);
+   elm_object_text_set(ck3, "Block movements in X axis");
+   elm_box_pack_end(bx2, ck3);
+   evas_object_show(ck3);
+
+   ck4 = elm_check_add(win);
+   elm_object_text_set(ck4, "Block movements in Y axis");
+   elm_box_pack_end(bx2, ck4);
+   evas_object_show(ck4);
+
    sc = elm_scroller_add(win);
    evas_object_size_hint_weight_set(sc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(sc, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -145,6 +207,10 @@ test_scroller(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
    evas_object_smart_callback_add(ck1, "changed", my_bt_freeze_toggle, tb);
    evas_object_smart_callback_add(ck2, "changed", my_bt_hold_toggle, tb);
+   evas_object_smart_callback_add(ck3, "changed", my_bt_block_movements_x_axis,
+                                  sc);
+   evas_object_smart_callback_add(ck4, "changed", my_bt_block_movements_y_axis,
+                                  sc);
 
    tb2 = elm_table_add(win);
 

@@ -1874,6 +1874,10 @@ _elm_scroll_wheel_event_cb(void *data,
    sid = data;
    ev = event_info;
    direction = ev->direction;
+
+   if (sid->block & ELM_SCROLLER_MOVEMENT_BLOCK_VERTICAL)
+     return;
+
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
    if ((evas_key_modifier_is_set(ev->modifiers, "Control")) ||
        (evas_key_modifier_is_set(ev->modifiers, "Alt")) ||
@@ -2301,6 +2305,10 @@ _elm_scroll_mouse_up_event_cb(void *data,
 
    if (!sid->pan_obj) return;
 
+   if ((sid->block & ELM_SCROLLER_MOVEMENT_BLOCK_VERTICAL) &&
+       (sid->block & ELM_SCROLLER_MOVEMENT_BLOCK_HORIZONTAL))
+     return;
+
 #ifdef SMOOTHDBG
    if (_elm_scroll_smooth_debug) _elm_scroll_smooth_debug_shutdown();
 #endif
@@ -2461,7 +2469,9 @@ _elm_scroll_mouse_up_event_cb(void *data,
                          (sid->obj)))
                     {
                        pgx = _elm_scroll_page_x_get(sid, ox, EINA_TRUE);
-                       if (pgx != x)
+                       if (pgx != x &&
+                           !(sid->block &
+                            ELM_SCROLLER_MOVEMENT_BLOCK_HORIZONTAL))
                          {
                             ev->event_flags |= EVAS_EVENT_FLAG_ON_SCROLL;
                             _elm_scroll_scroll_to_x
@@ -2473,7 +2483,9 @@ _elm_scroll_mouse_up_event_cb(void *data,
                          (sid->obj)))
                     {
                        pgy = _elm_scroll_page_y_get(sid, oy, EINA_TRUE);
-                       if (pgy != y)
+                       if (pgy != y &&
+                           !(sid->block &
+                            ELM_SCROLLER_MOVEMENT_BLOCK_VERTICAL))
                          {
                             ev->event_flags |= EVAS_EVENT_FLAG_ON_SCROLL;
                             _elm_scroll_scroll_to_y
@@ -2559,6 +2571,10 @@ _elm_scroll_mouse_down_event_cb(void *data,
 
    sid = data;
    ev = event_info;
+
+   if ((sid->block & ELM_SCROLLER_MOVEMENT_BLOCK_VERTICAL) &&
+       (sid->block & ELM_SCROLLER_MOVEMENT_BLOCK_HORIZONTAL))
+     return;
 
 #ifdef SMOOTHDBG
    if (getenv("ELS_SCROLLER_SMOOTH_DEBUG")) _elm_scroll_smooth_debug = 1;
@@ -2977,6 +2993,10 @@ _elm_scroll_mouse_move_event_cb(void *data,
 
    if (!sid->pan_obj) return;
 
+   if ((sid->block & ELM_SCROLLER_MOVEMENT_BLOCK_VERTICAL) &&
+       (sid->block & ELM_SCROLLER_MOVEMENT_BLOCK_HORIZONTAL))
+     return;
+
    ev = event_info;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
      sid->down.hold_parent = EINA_TRUE;
@@ -2988,7 +3008,8 @@ _elm_scroll_mouse_move_event_cb(void *data,
 
    if (!sid->down.now) return;
 
-   if ((sid->scrollto.x.animator) && (!sid->hold) && (!sid->freeze))
+   if ((sid->scrollto.x.animator) && (!sid->hold) && (!sid->freeze) &&
+       !(sid->block & ELM_SCROLLER_MOVEMENT_BLOCK_HORIZONTAL))
      {
         Evas_Coord px;
         ecore_animator_del(sid->scrollto.x.animator);
@@ -2998,7 +3019,8 @@ _elm_scroll_mouse_move_event_cb(void *data,
         sid->down.x = sid->down.history[0].x;
      }
 
-   if ((sid->scrollto.y.animator) && (!sid->hold) && (!sid->freeze))
+   if ((sid->scrollto.y.animator) && (!sid->hold) && (!sid->freeze) &&
+       !(sid->block & ELM_SCROLLER_MOVEMENT_BLOCK_VERTICAL))
      {
         Evas_Coord py;
         ecore_animator_del(sid->scrollto.y.animator);
@@ -3053,20 +3075,36 @@ _elm_scroll_mouse_move_event_cb(void *data,
                        int dodir = 0;
                        if (x > (y * 2))
                          {
-                            sid->down.dir_x = EINA_TRUE;
+                            if (!(sid->block &
+                                  ELM_SCROLLER_MOVEMENT_BLOCK_HORIZONTAL))
+                              {
+                                 sid->down.dir_x = EINA_TRUE;
+                              }
                             sid->down.dir_y = EINA_FALSE;
                             dodir++;
                          }
                        if (y > (x * 2))
                          {
                             sid->down.dir_x = EINA_FALSE;
-                            sid->down.dir_y = EINA_TRUE;
+                            if (!(sid->block &
+                                  ELM_SCROLLER_MOVEMENT_BLOCK_VERTICAL))
+                              {
+                                 sid->down.dir_y = EINA_TRUE;
+                              }
                             dodir++;
                          }
                        if (!dodir)
                          {
-                            sid->down.dir_x = EINA_TRUE;
-                            sid->down.dir_y = EINA_TRUE;
+                            if (!(sid->block &
+                                  ELM_SCROLLER_MOVEMENT_BLOCK_HORIZONTAL))
+                              {
+                                 sid->down.dir_x = EINA_TRUE;
+                              }
+                            if (!(sid->block &
+                                  ELM_SCROLLER_MOVEMENT_BLOCK_VERTICAL))
+                              {
+                                 sid->down.dir_y = EINA_TRUE;
+                              }
                          }
                     }
                   else if (sid->one_direction_at_a_time ==
@@ -3074,21 +3112,37 @@ _elm_scroll_mouse_move_event_cb(void *data,
                     {
                        if (x > y)
                          {
-                            sid->down.dir_x = EINA_TRUE;
+                            if (!(sid->block &
+                                  ELM_SCROLLER_MOVEMENT_BLOCK_HORIZONTAL))
+                              {
+                                 sid->down.dir_x = EINA_TRUE;
+                              }
                             sid->down.dir_y = EINA_FALSE;
                          }
                        if (y > x)
                          {
                             sid->down.dir_x = EINA_FALSE;
-                            sid->down.dir_y = EINA_TRUE;
+                            if (!(sid->block &
+                                  ELM_SCROLLER_MOVEMENT_BLOCK_VERTICAL))
+                              {
+                                 sid->down.dir_y = EINA_TRUE;
+                              }
                          }
                     }
                }
           }
         else
           {
-             sid->down.dir_x = EINA_TRUE;
-             sid->down.dir_y = EINA_TRUE;
+             if (!(sid->block &
+                   ELM_SCROLLER_MOVEMENT_BLOCK_HORIZONTAL))
+               {
+                  sid->down.dir_x = EINA_TRUE;
+               }
+             if (!(sid->block &
+                   ELM_SCROLLER_MOVEMENT_BLOCK_VERTICAL))
+               {
+                  sid->down.dir_y = EINA_TRUE;
+               }
           }
      }
    if ((!sid->hold) && (!sid->freeze))
@@ -4300,6 +4354,27 @@ _elm_scroll_gravity_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *lis
 }
 
 static void
+_elm_scroll_movement_block_set(Eo *obj __UNUSED__, void *_pd, va_list *list)
+{
+   Elm_Scrollable_Smart_Interface_Data *sid = _pd;
+
+   Elm_Scroller_Movement_Block block = va_arg(*list,
+                                               Elm_Scroller_Movement_Block);
+
+   sid->block = block;
+}
+
+static void
+_elm_scroll_movement_block_get(Eo *obj __UNUSED__, void *_pd, va_list *list)
+{
+   Elm_Scrollable_Smart_Interface_Data *sid = _pd;
+   Elm_Scroller_Movement_Block *block = va_arg(*list,
+                                                Elm_Scroller_Movement_Block *);
+
+   *block = sid->block;
+}
+
+static void
 _elm_scroll_interface_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Scrollable_Smart_Interface_Data *sid = _pd;
@@ -4329,6 +4404,7 @@ _elm_scroll_interface_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    sid->one_direction_at_a_time = ELM_SCROLLER_SINGLE_DIRECTION_SOFT;
    sid->momentum_animator_disabled = EINA_FALSE;
    sid->bounce_animator_disabled = EINA_FALSE;
+   sid->block = ELM_SCROLLER_MOVEMENT_NO_BLOCK;
 
    _elm_scroll_scroll_bar_reset(sid);
 
@@ -4434,6 +4510,8 @@ _elm_scrollable_interface_constructor(Eo_Class *klass)
            EO_OP_FUNC(ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_BOUNCE_ANIMATOR_DISABLED_GET), _elm_scroll_bounce_animator_disabled_get),
            EO_OP_FUNC(ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_WHEEL_DISABLED_GET), _elm_scroll_wheel_disabled_get),
            EO_OP_FUNC(ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_WHEEL_DISABLED_SET), _elm_scroll_wheel_disabled_set),
+           EO_OP_FUNC(ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_MOVEMENT_BLOCK_SET), _elm_scroll_movement_block_set),
+           EO_OP_FUNC(ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_MOVEMENT_BLOCK_GET), _elm_scroll_movement_block_get),
            EO_OP_FUNC_SENTINEL
       };
       eo_class_funcs_set(klass, func_desc);
@@ -4504,6 +4582,8 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_BOUNCE_ANIMATOR_DISABLED_GET, "description here"),
      EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_WHEEL_DISABLED_GET, "description here"),
      EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_WHEEL_DISABLED_SET, "description here"),
+     EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_MOVEMENT_BLOCK_SET, "Set movement block in a axis"),
+     EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_MOVEMENT_BLOCK_GET, "Get the movement block"),
      EO_OP_DESCRIPTION_SENTINEL
 };
 

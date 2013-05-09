@@ -24,4 +24,18 @@ typedef enum
    ELM_SCROLLER_SINGLE_DIRECTION_LAST
 } Elm_Scroller_Single_Direction;
 
+/**
+ * @brief Type that blocks the scroll movement in one or more direction.
+ *
+ * @see elm_scroller_movement_block()
+ *
+ * @since 1.8
+ */
+typedef enum
+{
+    ELM_SCROLLER_MOVEMENT_NO_BLOCK = 1 << 0, /**< Do not block movements */
+    ELM_SCROLLER_MOVEMENT_BLOCK_VERTICAL = 1 << 1, /**< Block vertical movements */
+    ELM_SCROLLER_MOVEMENT_BLOCK_HORIZONTAL = 1 << 2 /**< Block horizontal movements */
+} Elm_Scroller_Movement_Block;
+
 

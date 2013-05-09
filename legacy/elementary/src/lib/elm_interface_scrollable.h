@@ -211,6 +211,8 @@ enum
    ELM_SCROLLABLE_INTERFACE_SUB_ID_BOUNCE_ANIMATOR_DISABLED_GET,
    ELM_SCROLLABLE_INTERFACE_SUB_ID_WHEEL_DISABLED_GET,
    ELM_SCROLLABLE_INTERFACE_SUB_ID_WHEEL_DISABLED_SET,
+   ELM_SCROLLABLE_INTERFACE_SUB_ID_MOVEMENT_BLOCK_SET,
+   ELM_SCROLLABLE_INTERFACE_SUB_ID_MOVEMENT_BLOCK_GET,
    ELM_SCROLLABLE_INTERFACE_SUB_ID_LAST
 };
 
@@ -940,6 +942,29 @@ enum
 #define elm_scrollable_interface_wheel_disabled_set(disabled) ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_WHEEL_DISABLED_SET), EO_TYPECHECK(Eina_Bool, disabled)
 
 /**
+ * @def elm_scrollable_interface_movement_block_set
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] block
+ *
+ */
+#define elm_scrollable_interface_movement_block_set(block) ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_MOVEMENT_BLOCK_SET), EO_TYPECHECK(Elm_Scroller_Movement_Block, block)
+
+/**
+ * @def elm_scrollable_interface_movement_block_set
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] block
+ *
+ */
+#define elm_scrollable_interface_movement_block_get(block) ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_MOVEMENT_BLOCK_GET), EO_TYPECHECK(Elm_Scroller_Movement_Block *, block)
+
+
+/**
  * Elementary scroller panning base smart data.
  */
 typedef struct _Elm_Pan_Smart_Data Elm_Pan_Smart_Data;
@@ -976,6 +1001,7 @@ struct _Elm_Scrollable_Smart_Interface_Data
 
    Elm_Scroller_Policy           hbar_flags, vbar_flags;
    Elm_Scroller_Single_Direction one_direction_at_a_time;
+   Elm_Scroller_Movement_Block block;
 
    struct
    {

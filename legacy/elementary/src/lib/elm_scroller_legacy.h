@@ -446,3 +446,40 @@ EAPI void                          elm_scroller_gravity_set(Evas_Object *obj, do
  */
 EAPI void                          elm_scroller_gravity_get(const Evas_Object *obj, double *x, double *y);
 
+/**
+ * @brief Set blocking of scrolling (per axis) on a given scroller
+ *
+ * @param obj The scroller object
+ * @param block The axis to block
+ *
+ * This function will block scrolling movement (by input of a user) in
+ * a given direction. One can disable movements in the X axis, the Y
+ * axis or both. The default value is @c ELM_SCROLLER_MOVEMENT_NO_BLOCK,
+ * where movements are allowed in both directions.
+ *
+ * What makes this function different from
+ * elm_object_scroll_freeze_push(), elm_object_scroll_hold_push() and
+ * elm_object_scroll_lock_x_set() (or elm_object_scroll_lock_y_set())
+ * is that it @b doesn't propagate its effects to any parent or child
+ * widget of @a obj. Only the target scrollable widget will be locked
+ * with regard to scrolling.
+ *
+ * @since 1.8
+ *
+ * @ingroup Scroller
+ */
+EAPI void                         elm_scroller_movement_block_set(Evas_Object *obj, Elm_Scroller_Movement_Block block);
+
+/**
+ * @brief Get a scroller's scroll blocking state
+ *
+ * @param parent The scroller object
+ * @return The blocking state
+ *
+ * @since 1.8
+ *
+ * @see elm_scroller_movement_block_set() for more details
+ *
+ * @ingroup Scroller
+ */
+EAPI Elm_Scroller_Movement_Block  elm_scroller_movement_block_get(const Evas_Object *obj);
