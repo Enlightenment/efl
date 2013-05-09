@@ -550,16 +550,16 @@ evas_cache_image_shutdown(Evas_Cache_Image *cache)
         _evas_cache_image_entry_preload_remove(im, NULL);
      }
    evas_async_events_process();
-   while (cache->lru)
-     {
-        im = (Image_Entry *)cache->lru;
-        _evas_cache_image_entry_delete(cache, im);
-     }
-   while (cache->lru_nodata)
-     {
-        im = (Image_Entry *)cache->lru_nodata;
-        _evas_cache_image_entry_delete(cache, im);
-     }
+
+   EINA_INLIST_FREE(cache->lru, im)
+     _evas_cache_image_entry_delete(cache, im);
+   EINA_INLIST_FREE(cache->lru_nodata, im)
+     _evas_cache_image_entry_delete(cache, im);
+   EINA_INLIST_FREE(cache->mmap_lru, im)
+     _evas_cache_image_entry_delete(cache, im);
+   EINA_INLIST_FREE(cache->mmap_lru_nodata, im)
+     _evas_cache_image_entry_delete(cache, im);
+
    /* This is mad, I am about to destroy image still alive, but we need to prevent leak. */
    while (cache->dirty)
      {
@@ -569,8 +569,6 @@ evas_cache_image_shutdown(Evas_Cache_Image *cache)
    delete_list = NULL;
    eina_hash_foreach(cache->activ, _evas_cache_image_free_cb, &delete_list);
    eina_hash_foreach(cache->mmap_activ, _evas_cache_image_free_cb, &delete_list);
-   eina_hash_foreach(cache->inactiv, _evas_cache_image_free_cb, &delete_list);
-   eina_hash_foreach(cache->mmap_inactiv, _evas_cache_image_free_cb, &delete_list);
    while (delete_list)
      {
         _evas_cache_image_entry_delete(cache, eina_list_data_get(delete_list));
