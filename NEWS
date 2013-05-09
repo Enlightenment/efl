@@ -84,6 +84,7 @@ Additions:
     * Edje:
      - textblock: Added support for size_range.
      - table: Added spread.{w,h} to repeat and automatically name an item in a TABLE part.
+     - add embryo fill support for proxy parts
     * Ecore_x: Add atom related with indicator type. 
     * Ecore_x: Add manual render code before deiconify
     * Eeze: Add a dummy libmount replacement for when libmount is not there.

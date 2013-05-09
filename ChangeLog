@@ -1,6 +1,7 @@
 2013-05-08  Mike Blumenkrantz
 
         * Edje: fix custom states for proxy parts
+        * Edje: add embryo fill support for proxy parts
 
 2013-05-07  Rafael Antognolli
 

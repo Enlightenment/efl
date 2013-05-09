@@ -2011,45 +2011,79 @@ _edje_embryo_fn_set_state_val(Embryo_Program *ep, Embryo_Cell *params)
       case EDJE_STATE_PARAM_FILL_SMOOTH:
 	{
 	   Edje_Part_Description_Image *img;
+	   Edje_Part_Description_Proxy *proxy;
 
-	   if ( (rp->part->type != EDJE_PART_TYPE_IMAGE) ) return 0;
+	   if ( (rp->part->type != EDJE_PART_TYPE_IMAGE) && (rp->part->type != EDJE_PART_TYPE_PROXY) ) return 0;
 	   CHKPARAM(3);
 
-	   img = (Edje_Part_Description_Image*) rp->custom->description;
-
-	   GETINT(img->image.fill.smooth, params[3]);
+    if (rp->part->type == EDJE_PART_TYPE_IMAGE)
+      {
+         img = (Edje_Part_Description_Image*) rp->custom->description;
+         GETINT(img->image.fill.smooth, params[3]);
+      }
+    else
+      {
+	        proxy = (Edje_Part_Description_Proxy*) rp->custom->description;
+         GETINT(proxy->proxy.fill.smooth, params[3]);
+      }
 
 	   break;
 	}
       case EDJE_STATE_PARAM_FILL_POS:
 	{
 	   Edje_Part_Description_Image *img;
+    Edje_Part_Description_Proxy *proxy;
 
-	   if ( (rp->part->type != EDJE_PART_TYPE_IMAGE) ) return 0;
+	   if ( (rp->part->type != EDJE_PART_TYPE_IMAGE) && (rp->part->type != EDJE_PART_TYPE_PROXY) ) return 0;
 	   CHKPARAM(6);
 
-	   img = (Edje_Part_Description_Image*) rp->custom->description;
+    if (rp->part->type == EDJE_PART_TYPE_IMAGE)
+      {
+         img = (Edje_Part_Description_Image*) rp->custom->description;
 
-	   GETFLOAT_T(img->image.fill.pos_rel_x, params[3]);
-	   GETFLOAT_T(img->image.fill.pos_rel_y, params[4]);
-	   GETINT(img->image.fill.pos_abs_x, params[5]);
-	   GETINT(img->image.fill.pos_abs_y, params[6]);
+         GETFLOAT_T(img->image.fill.pos_rel_x, params[3]);
+         GETFLOAT_T(img->image.fill.pos_rel_y, params[4]);
+         GETINT(img->image.fill.pos_abs_x, params[5]);
+         GETINT(img->image.fill.pos_abs_y, params[6]);
+      }
+    else
+      {
+         proxy = (Edje_Part_Description_Proxy*) rp->custom->description;
+
+         GETFLOAT_T(proxy->proxy.fill.pos_rel_x, params[3]);
+         GETFLOAT_T(proxy->proxy.fill.pos_rel_y, params[4]);
+         GETINT(proxy->proxy.fill.pos_abs_x, params[5]);
+         GETINT(proxy->proxy.fill.pos_abs_y, params[6]);
+      }
 
 	   break;
 	}
       case EDJE_STATE_PARAM_FILL_SIZE:
 	{
 	   Edje_Part_Description_Image *img;
+    Edje_Part_Description_Proxy *proxy;
 
-	   if ( (rp->part->type != EDJE_PART_TYPE_IMAGE) ) return 0;
+	   if ( (rp->part->type != EDJE_PART_TYPE_IMAGE) && (rp->part->type != EDJE_PART_TYPE_PROXY) ) return 0;
 	   CHKPARAM(6);
 
-	   img = (Edje_Part_Description_Image*) rp->custom->description;
+    if (rp->part->type == EDJE_PART_TYPE_IMAGE)
+      {
+         img = (Edje_Part_Description_Image*) rp->custom->description;
 
-	   GETFLOAT_T(img->image.fill.rel_x, params[3]);
-	   GETFLOAT_T(img->image.fill.rel_y, params[4]);
-	   GETINT(img->image.fill.abs_x, params[5]);
-	   GETINT(img->image.fill.abs_y, params[6]);
+         GETFLOAT_T(img->image.fill.rel_x, params[3]);
+         GETFLOAT_T(img->image.fill.rel_y, params[4]);
+         GETINT(img->image.fill.abs_x, params[5]);
+         GETINT(img->image.fill.abs_y, params[6]);
+      }
+    else
+      {
+         proxy = (Edje_Part_Description_Proxy*) rp->custom->description;
+
+         GETFLOAT_T(proxy->proxy.fill.rel_x, params[3]);
+         GETFLOAT_T(proxy->proxy.fill.rel_y, params[4]);
+         GETINT(proxy->proxy.fill.abs_x, params[5]);
+         GETINT(proxy->proxy.fill.abs_y, params[6]);
+      }
 
 	   break;
 	}
@@ -2540,45 +2574,81 @@ _edje_embryo_fn_get_state_val(Embryo_Program *ep, Embryo_Cell *params)
       case EDJE_STATE_PARAM_FILL_SMOOTH:
 	{
 	   Edje_Part_Description_Image *img;
+	   Edje_Part_Description_Proxy *proxy;
 
-	   if ( (rp->part->type != EDJE_PART_TYPE_IMAGE) ) return 0;
+	   if ( (rp->part->type != EDJE_PART_TYPE_IMAGE) && (rp->part->type != EDJE_PART_TYPE_PROXY) ) return 0;
 	   CHKPARAM(3);
 
-	   img = (Edje_Part_Description_Image*) rp->custom->description;
+    if (rp->part->type == EDJE_PART_TYPE_IMAGE)
+      {
+         img = (Edje_Part_Description_Image*) rp->custom->description;
 
-	   SETINT(img->image.fill.smooth, params[3]);
+         SETINT(img->image.fill.smooth, params[3]);
+      }
+    else
+      {
+         proxy = (Edje_Part_Description_Proxy*) rp->custom->description;
+
+         SETINT(proxy->proxy.fill.smooth, params[3]);
+      }
 
 	   break;
 	}
       case EDJE_STATE_PARAM_FILL_POS:
 	{
 	   Edje_Part_Description_Image *img;
+	   Edje_Part_Description_Proxy *proxy;
 
-	   if ( (rp->part->type != EDJE_PART_TYPE_IMAGE) ) return 0;
+	   if ( (rp->part->type != EDJE_PART_TYPE_IMAGE) && (rp->part->type != EDJE_PART_TYPE_PROXY) ) return 0;
 	   CHKPARAM(6);
 
-	   img = (Edje_Part_Description_Image*) rp->custom->description;
+    if (rp->part->type == EDJE_PART_TYPE_IMAGE)
+      {
+         img = (Edje_Part_Description_Image*) rp->custom->description;
 
-	   SETFLOAT_T(img->image.fill.pos_rel_x, params[3]);
-	   SETFLOAT_T(img->image.fill.pos_rel_y, params[4]);
-	   SETINT(img->image.fill.pos_abs_x, params[5]);
-	   SETINT(img->image.fill.pos_abs_y, params[6]);
+         SETFLOAT_T(img->image.fill.pos_rel_x, params[3]);
+         SETFLOAT_T(img->image.fill.pos_rel_y, params[4]);
+         SETINT(img->image.fill.pos_abs_x, params[5]);
+         SETINT(img->image.fill.pos_abs_y, params[6]);
+      }
+    else
+      {
+         proxy = (Edje_Part_Description_Proxy*) rp->custom->description;
+
+         SETFLOAT_T(proxy->proxy.fill.pos_rel_x, params[3]);
+         SETFLOAT_T(proxy->proxy.fill.pos_rel_y, params[4]);
+         SETINT(proxy->proxy.fill.pos_abs_x, params[5]);
+         SETINT(proxy->proxy.fill.pos_abs_y, params[6]);
+      }
 
 	   break;
 	}
       case EDJE_STATE_PARAM_FILL_SIZE:
 	{
 	   Edje_Part_Description_Image *img;
+	   Edje_Part_Description_Proxy *proxy;
 
-	   if ( (rp->part->type != EDJE_PART_TYPE_IMAGE) ) return 0;
+	   if ( (rp->part->type != EDJE_PART_TYPE_IMAGE) && (rp->part->type != EDJE_PART_TYPE_PROXY) ) return 0;
 	   CHKPARAM(6);
 
-	   img = (Edje_Part_Description_Image*) rp->custom->description;
+    if (rp->part->type == EDJE_PART_TYPE_IMAGE)
+      {
+         img = (Edje_Part_Description_Image*) rp->custom->description;
 
-	   SETFLOAT_T(img->image.fill.rel_x, params[3]);
-	   SETFLOAT_T(img->image.fill.rel_y, params[4]);
-	   SETINT(img->image.fill.abs_x, params[5]);
-	   SETINT(img->image.fill.abs_y, params[6]);
+         SETFLOAT_T(img->image.fill.rel_x, params[3]);
+         SETFLOAT_T(img->image.fill.rel_y, params[4]);
+         SETINT(img->image.fill.abs_x, params[5]);
+         SETINT(img->image.fill.abs_y, params[6]);
+      }
+    else
+      {
+         proxy = (Edje_Part_Description_Proxy*) rp->custom->description;
+
+         SETFLOAT_T(proxy->proxy.fill.rel_x, params[3]);
+         SETFLOAT_T(proxy->proxy.fill.rel_y, params[4]);
+         SETINT(proxy->proxy.fill.abs_x, params[5]);
+         SETINT(proxy->proxy.fill.abs_y, params[6]);
+      }
 
 	   break;
 	}
