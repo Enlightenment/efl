@@ -264,3 +264,4 @@ Fixes:
     * Evas: Fix gif loader can't load image which has normal frames and error frames
     * Ecore_Input_Evas: Fix ecore_input_evas didn't check the device id of mouse event
     * Edje: fix custom states for proxy parts
+    * Evas: Don't try blend on gl backened if the render option is COPY

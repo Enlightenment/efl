@@ -1,3 +1,7 @@
+2013-05-10  ChunEon Park (Hermet)
+
+        * Evas: don't try blend on gl backened if the render option is COPY
+
 2013-05-08  Mike Blumenkrantz
 
         * Edje: fix custom states for proxy parts
