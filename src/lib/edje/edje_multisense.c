@@ -70,6 +70,14 @@ eet_snd_file_tell(void *data, Eo *eo_obj EINA_UNUSED)
 }
 #endif
 
+static void _free(void *data)
+{
+  struct _edje_multisense_eet_data *eet_data = data;
+
+  free(eet_data->data);
+  free(data);
+}
+
 Eina_Bool
 _edje_multisense_internal_sound_sample_play(Edje *ed, const char *sample_name, const double speed)
 {
@@ -114,7 +122,7 @@ _edje_multisense_internal_sound_sample_play(Edje *ed, const char *sample_name, c
 
             eet_data->offset = 0;
 
-            eo_do(in, ecore_audio_obj_vio_set(&eet_data->vio, eet_data, free));
+            eo_do(in, ecore_audio_obj_vio_set(&eet_data->vio, eet_data, _free));
             eo_do(in, eo_event_callback_add(ECORE_AUDIO_EV_IN_STOPPED, _play_finished, NULL));
 
             if (!out)
