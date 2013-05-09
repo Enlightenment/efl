@@ -106,14 +106,11 @@ _edje_multisense_internal_sound_sample_play(Edje *ed, const char *sample_name, c
        if (!strcmp(sample->name, sample_name))
          {
             struct _edje_multisense_eet_data *eet_data;
+            int len;
 
             snprintf(snd_id_str, sizeof(snd_id_str), "edje/sounds/%i", sample->id);
-            in = eo_add(ECORE_AUDIO_OBJ_IN_SNDFILE_CLASS, NULL);
-            eo_do(in, ecore_audio_obj_name_set(snd_id_str));
-            eo_do(in, ecore_audio_obj_in_speed_set(speed));
-
+            
             eet_data = calloc(1, sizeof(struct _edje_multisense_eet_data));
-
             if (!eet_data)
               {
                  ERR("Out of memory in allocating multisense sample info");
@@ -124,29 +121,49 @@ _edje_multisense_internal_sound_sample_play(Edje *ed, const char *sample_name, c
             // by relying on a direct mmap, but this means we need to close
             // the eet file handle instead of freeing data
             eet_data->ef = eet_open(ed->path, EET_FILE_MODE_READ);
-            eet_data->data = eet_read_direct(eet_data->ef, snd_id_str, (int *)&eet_data->length);
-
+            if (!eet_data->ef)
+              {
+                 ERR("Cannot open edje file '%s' for samples", ed->path);
+                 free(eet_data);
+                 return EINA_FALSE;
+              }
+            eet_data->data = eet_read_direct(eet_data->ef, snd_id_str, &len);
+            if (len <= 0)
+              {
+                 ERR("Sample form edj file '%s' is 0 length", ed->path);
+                 eet_close(eet_data->ef);
+                 free(eet_data);
+                 return EINA_FALSE;
+              }
+            eet_data->length = len;
             /* action->speed */
 
             eet_data->vio.get_length = eet_snd_file_get_length;
             eet_data->vio.seek = eet_snd_file_seek;
             eet_data->vio.read = eet_snd_file_read;
             eet_data->vio.tell = eet_snd_file_tell;
-
             eet_data->offset = 0;
 
-            eo_do(in, ecore_audio_obj_vio_set(&eet_data->vio, eet_data, _free));
-            eo_do(in, eo_event_callback_add(ECORE_AUDIO_EV_IN_STOPPED, _play_finished, NULL));
-
+            in = eo_add(ECORE_AUDIO_OBJ_IN_SNDFILE_CLASS, NULL,
+                        ecore_audio_obj_name_set(snd_id_str),
+                        ecore_audio_obj_in_speed_set(speed),
+                        ecore_audio_obj_vio_set(&eet_data->vio, eet_data, _free),
+                        eo_event_callback_add(ECORE_AUDIO_EV_IN_STOPPED, _play_finished, NULL));
             if (!out)
               out = eo_add(ECORE_AUDIO_OBJ_OUT_PULSE_CLASS, NULL);
-
+            if (!out)
+              {
+                 ERR("Could not create multisense audio out (pulse)");
+                 eo_del(in);
+                 return EINA_FALSE;
+              }
             eo_do(out, ecore_audio_obj_out_input_attach(in, &ret));
-            if (!ret) {
-              ERR("Could not attach input");
-              eo_del(in);
-              return EINA_FALSE;
-            }
+            if (!ret)
+              {
+                 ERR("Could not attach input");
+                 eo_del(in);
+                 return EINA_FALSE;
+              }
          }
      }
    return EINA_TRUE;
