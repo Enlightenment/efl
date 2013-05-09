@@ -238,12 +238,26 @@ static void _constructor(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list EINA_U
 
 }
 
+static void _destructor(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
+{
+  Ecore_Audio_Sndfile *obj = _pd;
+  Ecore_Audio_Object *ea_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_OBJ_CLASS);
+
+  if (obj->handle)
+    sf_close(obj->handle);
+
+  if (ea_obj->vio)
+    _free_vio(ea_obj);
+
+  eo_do_super(eo_obj, MY_CLASS, eo_destructor());
+}
+
 static void _class_constructor(Eo_Class *klass)
 {
   const Eo_Op_Func_Description func_desc[] = {
       /* Virtual functions of parent class implemented in this class */
       EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
-      //EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DESTRUCTOR), _destructor),
+      EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DESTRUCTOR), _destructor),
 
       EO_OP_FUNC(ECORE_AUDIO_OBJ_ID(ECORE_AUDIO_OBJ_SUB_ID_SOURCE_SET), _source_set),
       EO_OP_FUNC(ECORE_AUDIO_OBJ_ID(ECORE_AUDIO_OBJ_SUB_ID_SOURCE_GET), _source_get),
