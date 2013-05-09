@@ -857,6 +857,22 @@ EAPI Eina_Inlist *eina_inlist_sort(Eina_Inlist *head, Eina_Compare_Cb func);
   for (it = NULL, it = (list ? _EINA_INLIST_CONTAINER(it, list->last) : NULL); \
        it; it = (EINA_INLIST_GET(it)->prev ? _EINA_INLIST_CONTAINER(it, EINA_INLIST_GET(it)->prev) : NULL))
 
+/**
+ * @def EINA_INLIST_FREE
+ * @param list The list to free.
+ * @param it The pointer to the list item, i.e. a pointer to each item
+ * that is part of the list.
+ *
+ * NOTE: it is the duty of the body loop to properly remove the item from the
+ * inlist and free it. This function will turn into a infinite loop if you
+ * don't remove all items from the list.
+ * @since 1.8
+ */
+#define EINA_INLIST_FREE(list, it)				\
+  for (it = (typeof(it)) list; list; it = (typeof(it)) list)	\
+
+
+
 #include "eina_inline_inlist.x"
 
 /**
