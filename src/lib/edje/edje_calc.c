@@ -2437,7 +2437,7 @@ _edje_proxy_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edj
    Edje_Real_Part *pp;
    int part_id = -1;
 
-   if (pos >= FROM_DOUBLE(0.5))
+   if (ep->param2 && (pos >= FROM_DOUBLE(0.5)))
      part_id = ((Edje_Part_Description_Proxy*) ep->param2->description)->proxy.id;
    else
      part_id = chosen_desc->proxy.id;
@@ -2952,7 +2952,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
      {
         int part_id = -1;
 
-        if (pos >= FROM_DOUBLE(0.5))
+        if (ep->param2 && (pos >= FROM_DOUBLE(0.5)))
           part_id = ((Edje_Part_Description_Proxy*) ep->param2->description)->proxy.id;
         else
           part_id = ((Edje_Part_Description_Proxy*) chosen_desc)->proxy.id;
