@@ -1,3 +1,7 @@
+2013-05-08  Mike Blumenkrantz
+
+        * Edje: fix custom states for proxy parts
+
 2013-05-07  Rafael Antognolli
 
         * Evas: Added evas_event_input_multi_up/down().

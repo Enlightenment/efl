@@ -1744,6 +1744,7 @@ _edje_embryo_fn_custom_state(Embryo_Program *ep, Embryo_Cell *params)
 	ALLOC_DESC(GROUP, Common, d);
 
 	ALLOC_COPY_DESC(IMAGE, Image, d, image);
+	ALLOC_COPY_DESC(PROXY, Proxy, d, proxy);
 	ALLOC_COPY_DESC(TEXT, Text, d, text);
 	ALLOC_COPY_DESC(TEXTBLOCK, Text, d, text);
 	ALLOC_COPY_DESC(BOX, Box, d, box);
