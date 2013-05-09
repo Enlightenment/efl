@@ -68,7 +68,6 @@ eet_snd_file_tell(void *data, Eo *eo_obj EINA_UNUSED)
 
    return vf->offset;
 }
-#endif
 
 static void _free(void *data)
 {
@@ -77,6 +76,7 @@ static void _free(void *data)
   free(eet_data->data);
   free(data);
 }
+#endif
 
 Eina_Bool
 _edje_multisense_internal_sound_sample_play(Edje *ed, const char *sample_name, const double speed)
