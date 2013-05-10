@@ -4735,7 +4735,7 @@ _elm_widget_display_mode_set(Eo *obj, void *_pd, va_list *list)
    evas_object_size_hint_display_mode_set(obj, dispmode);
 
    EINA_LIST_FOREACH (sd->subobjs, l, child)
-      elm_widget_display_mode_set(child, dispmode);
+     elm_widget_display_mode_set(child, dispmode);
 }
 
 EAPI void
