@@ -3632,7 +3632,7 @@ _at_xy_item_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Elm_Gengrid_Smart_Data *sd = _pd;
    Elm_Gen_Item *it = ELM_GEN_ITEM_FROM_INLIST(sd->items);
 
-   Evas_Coord l, r, t, b; /* left, right, top, bottom */
+   Evas_Coord l = 0, r = 0, t = 0, b = 0; /* left, right, top, bottom */
    Eina_Bool init = EINA_TRUE;
 
    while ((it) && (it->generation < sd->generation))
