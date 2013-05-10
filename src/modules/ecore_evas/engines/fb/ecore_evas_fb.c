@@ -661,6 +661,11 @@ ecore_evas_fb_new_internal(const char *disp_name, int rotation, int w, int h)
 
    ee->engine.func->fn_render = _ecore_evas_fb_render;
    _ecore_evas_register(ee);
+   ecore_event_window_register(1, ee, ee->evas,
+			       (Ecore_Event_Mouse_Move_Cb)_ecore_evas_mouse_move_process,
+			       (Ecore_Event_Multi_Move_Cb)_ecore_evas_mouse_multi_move_process,
+			       (Ecore_Event_Multi_Down_Cb)_ecore_evas_mouse_multi_down_process,
+			       (Ecore_Event_Multi_Up_Cb)_ecore_evas_mouse_multi_up_process);              
    evas_event_feed_mouse_in(ee->evas, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff), NULL);
    return ee;
 }
