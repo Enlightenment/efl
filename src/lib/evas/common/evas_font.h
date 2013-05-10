@@ -14,6 +14,10 @@ EAPI int               evas_common_font_ascent_get           (RGBA_Font *fn);
 EAPI int               evas_common_font_descent_get          (RGBA_Font *fn);
 EAPI int               evas_common_font_max_ascent_get       (RGBA_Font *fn);
 EAPI int               evas_common_font_max_descent_get      (RGBA_Font *fn);
+EAPI int               evas_common_font_instance_ascent_get           (RGBA_Font_Int *fi);
+EAPI int               evas_common_font_instance_descent_get          (RGBA_Font_Int *fi);
+EAPI int               evas_common_font_instance_max_ascent_get       (RGBA_Font_Int *fi);
+EAPI int               evas_common_font_instance_max_descent_get      (RGBA_Font_Int *fi);
 EAPI int               evas_common_font_get_line_advance     (RGBA_Font *fn);
 
 /* draw */

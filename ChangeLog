@@ -1,3 +1,8 @@
+2013-05-10  Tom Hacohen
+
+        * Evas text: Fixed line size calculation when using multiple
+	fonts.
+
 2013-05-10  ChunEon Park (Hermet)
 
         * Evas: don't try blend on gl backened if the render option is COPY

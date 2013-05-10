@@ -2399,6 +2399,38 @@ _evas_object_text_recalc(Evas_Object *eo_obj, Eina_Unicode *text)
 
    _evas_object_text_layout(eo_obj, o, text);
 
+   /* Calc ascent/descent. */
+     {
+        Evas_Object_Text_Item *item;
+
+        for (item = o->items ; item ;
+              item = EINA_INLIST_CONTAINER_GET(
+                 EINA_INLIST_GET(item)->next, Evas_Object_Text_Item))
+          {
+             int asc = 0, desc = 0;
+             int max_asc = 0, max_desc = 0;
+
+             /* Skip items without meaning full information. */
+             if (!item->text_props.font_instance)
+                continue;
+
+             asc = evas_common_font_instance_ascent_get(item->text_props.font_instance);
+             desc = evas_common_font_instance_descent_get(item->text_props.font_instance);
+             if (asc > o->ascent)
+                o->ascent = asc;
+             if (desc > o->descent)
+                o->descent = desc;
+
+             max_asc = evas_common_font_instance_max_ascent_get(item->text_props.font_instance);
+             max_desc = evas_common_font_instance_max_descent_get(item->text_props.font_instance);
+
+             if (max_asc > o->max_ascent)
+                o->max_ascent = max_asc;
+             if (max_desc > o->max_descent)
+                o->max_descent = max_desc;
+          }
+     }
+
    if ((o->font) && (o->items))
      {
 	int w, h;
