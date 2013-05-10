@@ -5,6 +5,7 @@
 #include "Ecore_Audio.h"
 
 static Eo *out = NULL;
+static int outs = 0;
 
 static Eina_Bool _play_finished(void *data EINA_UNUSED, Eo *in, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
@@ -72,12 +73,13 @@ eet_snd_file_tell(void *data, Eo *eo_obj EINA_UNUSED)
 
 static void _free(void *data)
 {
-  struct _edje_multisense_eet_data *eet_data = data;
+   struct _edje_multisense_eet_data *eet_data = data;
 
-  if (eet_data->ef) eet_close(eet_data->ef);
+   if (eet_data->ef) eet_close(eet_data->ef);
 // don't free if eet_data->data  comes from eet_read_direct   
 //  free(eet_data->data);
-  free(data);
+   free(data);
+   outs--;
 }
 #endif
 
@@ -150,7 +152,10 @@ _edje_multisense_internal_sound_sample_play(Edje *ed, const char *sample_name, c
                         ecore_audio_obj_vio_set(&eet_data->vio, eet_data, _free),
                         eo_event_callback_add(ECORE_AUDIO_EV_IN_STOPPED, _play_finished, NULL));
             if (!out)
-              out = eo_add(ECORE_AUDIO_OBJ_OUT_PULSE_CLASS, NULL);
+              {
+                 out = eo_add(ECORE_AUDIO_OBJ_OUT_PULSE_CLASS, NULL);
+                 if (out) outs++;
+              }
             if (!out)
               {
                  ERR("Could not create multisense audio out (pulse)");
@@ -238,6 +243,17 @@ void
 _edje_multisense_shutdown(void)
 {
 #ifdef ENABLE_MULTISENSE
+   if (outs > 0)
+     {
+        WRN("Shutting down audio while samples still playing");
+     }
+   if (out)
+     {
+        // XXX: this causes an abort inside of pa!!!!!
+        //eo_del(out);
+        out = NULL;
+        outs = 0;
+     }
    ecore_audio_shutdown();
 #endif
 }
