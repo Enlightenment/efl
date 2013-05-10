@@ -556,6 +556,8 @@ _drm_init(Display *disp, int scr)
         if (swap_debug) ERR("DRM bufmgr init failed");
         goto err;
      }
+   if (drv_name) XFree(drv_name);
+   if (dev_name) XFree(dev_name);
    return EINA_TRUE;
 err:
    if (drm_fd >= 0)
@@ -583,6 +585,8 @@ err:
         dlclose(xfixes_lib);
         xfixes_lib = NULL;
      }
+   if (drv_name) XFree(drv_name);
+   if (dev_name) XFree(dev_name);
    return EINA_FALSE;
 }
 
