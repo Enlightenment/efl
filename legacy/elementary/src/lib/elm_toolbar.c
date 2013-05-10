@@ -984,6 +984,10 @@ _item_theme_hook(Evas_Object *obj,
              edje_object_part_text_escaped_set(view, "elm.text", it->label);
              edje_object_signal_emit(view, "elm,state,text,visible", "elm");
           }
+        if (sd->vertical)
+          edje_object_signal_emit(view, "elm,orient,vertical", "elm");
+        else
+          edje_object_signal_emit(view, "elm,orient,horizontal", "elm");
      }
    else
      {
@@ -993,15 +997,17 @@ _item_theme_hook(Evas_Object *obj,
                (obj, view, "toolbar", "separator", style);
              if (sd->vertical)
                {
+                  edje_object_signal_emit(view, "elm,orient,vertical", "elm");
                   evas_object_size_hint_weight_set
-                    (view, EVAS_HINT_EXPAND, -1.0);
+                    (view, EVAS_HINT_EXPAND, 0.0);
                   evas_object_size_hint_align_set
                     (view, EVAS_HINT_FILL, EVAS_HINT_FILL);
                }
              else
                {
+                  edje_object_signal_emit(view, "elm,orient,horizontal", "elm");
                   evas_object_size_hint_weight_set
-                    (view, -1.0, EVAS_HINT_EXPAND);
+                    (view, 0.0, EVAS_HINT_EXPAND);
                   evas_object_size_hint_align_set
                     (view, EVAS_HINT_FILL, EVAS_HINT_FILL);
                }
@@ -1011,6 +1017,10 @@ _item_theme_hook(Evas_Object *obj,
              elm_widget_theme_object_set
                (obj, view, "toolbar", "object", style);
              edje_object_part_swallow(view, "elm.swallow.object", it->object);
+             if (sd->vertical)
+               edje_object_signal_emit(view, "elm,orient,vertical", "elm");
+             else
+               edje_object_signal_emit(view, "elm,orient,horizontal", "elm");
           }
      }
 
@@ -1151,10 +1161,18 @@ _elm_toolbar_smart_theme(Eo *obj, void *_pd, va_list *list)
    elm_widget_theme_object_set
      (obj, wd->resize_obj, "toolbar", "base",
      elm_widget_style_get(obj));
+   if (sd->vertical)
+     edje_object_signal_emit(wd->resize_obj, "elm,orient,vertical", "elm");
+   else
+     edje_object_signal_emit(wd->resize_obj, "elm,orient,horizontal", "elm");
 
    if (!elm_layout_theme_set
        (sd->more, "toolbar", "more", elm_widget_style_get(obj)))
      CRITICAL("Failed to set layout!");
+   if (sd->vertical)
+     edje_object_signal_emit(sd->more, "elm,orient,vertical", "elm");
+   else
+     edje_object_signal_emit(sd->more, "elm,orient,horizontal", "elm");
 
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
 
@@ -2492,6 +2510,10 @@ _elm_toolbar_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    priv->more = elm_layout_add(obj);
    if (!elm_layout_theme_set(priv->more, "toolbar", "more", "default"))
      CRITICAL("Failed to set layout!");
+   if (priv->vertical)
+     edje_object_signal_emit(priv->more, "elm,orient,vertical", "elm");
+   else
+     edje_object_signal_emit(priv->more, "elm,orient,horizontal", "elm");
 
    elm_widget_sub_object_add(obj, priv->more);
    evas_object_show(priv->more);
