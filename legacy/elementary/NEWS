@@ -1,6 +1,6 @@
 Changes since Elementary 1.7.0:
 -------------------------
-
+		
 Additions:
 
    * Porting to Eo
@@ -107,7 +107,8 @@ Improvements:
    * Ctxpopup is now supporting focus_direction.
    * Don't try to pop the naviframe item multiple times.
    * Support language change for widget items (Ctxpopup, Hoversel, Naviframe, Diskselector, List, Menu, Segment_Control, Toolbar, Popup, MultibuttonEntry)
-	
+
+
 Fixes:
    * Now elm_datetime_field_limit_set() can set year limits wihtout problems.
    * Fix re-order animation when it doesn't end correctly.
