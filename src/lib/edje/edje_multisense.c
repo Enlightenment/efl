@@ -122,7 +122,7 @@ _edje_multisense_internal_sound_sample_play(Edje *ed, const char *sample_name, c
             // use eet_read_direct to avoid duplicating/copying into memory
             // by relying on a direct mmap, but this means we need to close
             // the eet file handle instead of freeing data
-            eet_data->ef = eet_mmap(ed->file->f, EET_FILE_MODE_READ);
+            eet_data->ef = eet_mmap(ed->file->f);
             if (!eet_data->ef)
               {
                  ERR("Cannot open edje file '%s' for samples", ed->path);
