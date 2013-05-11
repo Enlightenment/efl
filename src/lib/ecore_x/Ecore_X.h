@@ -1986,6 +1986,7 @@ typedef struct _Ecore_X_Randr_Crtc_Gamma_Info
 
 EAPI int                                       ecore_x_randr_version_get(void);
 EAPI Eina_Bool                                 ecore_x_randr_query(void);
+EAPI Ecore_X_Time                              ecore_x_randr_config_timestamp_get(Ecore_X_Window root); /** @since 1.8 */
 EAPI Ecore_X_Randr_Orientation                 ecore_x_randr_screen_primary_output_orientations_get(Ecore_X_Window root);
 EAPI Ecore_X_Randr_Orientation                 ecore_x_randr_screen_primary_output_orientation_get(Ecore_X_Window root);
 EAPI Eina_Bool                                 ecore_x_randr_screen_primary_output_orientation_set(Ecore_X_Window root, Ecore_X_Randr_Orientation orientation);

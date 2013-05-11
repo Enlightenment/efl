@@ -85,6 +85,41 @@ ecore_x_randr_query(void)
    return _randr_avail;
 }
 
+/**
+ * @brief This function returns the current config timestamp from 
+ * XRRScreenConfiguration.
+ * 
+ * @params root root window to query screen configuration from
+ * 
+ * @returns The screen configuration timestamp
+ * 
+ * @since 1.8
+ */
+EAPI Ecore_X_Time 
+ecore_x_randr_config_timestamp_get(Ecore_X_Window root)
+{
+   Ecore_X_Time timestamp = 0;
+
+#ifdef ECORE_XRANDR
+   XRRScreenConfiguration *cfg;
+
+   /* try to get the screen configuration from Xrandr */
+   if ((cfg = XRRGetScreenInfo(_ecore_x_disp, root)))
+     {
+        Time tm;
+
+        XRRConfigTimes(cfg, &tm);
+
+        timestamp = (Ecore_X_Time)tm;
+
+        /* free any returned screen config */
+        if (cfg) XRRFreeScreenConfigInfo(cfg);
+     }
+#endif
+
+   return timestamp;
+}
+
 /***************************************
  * API Functions for RandR version 1.1 *
  ***************************************/

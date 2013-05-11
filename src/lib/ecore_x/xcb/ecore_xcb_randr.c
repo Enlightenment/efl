@@ -254,6 +254,42 @@ ecore_x_randr_version_get(void)
    return _randr_version;
 }
 
+/**
+ * @brief This function returns the current config timestamp from 
+ * XRRScreenConfiguration.
+ * 
+ * @params root root window to query screen configuration from
+ * 
+ * @returns The screen configuration timestamp
+ * 
+ * @since 1.8
+ */
+EAPI Ecore_X_Time 
+ecore_x_randr_config_timestamp_get(Ecore_X_Window root)
+{
+   Ecore_X_Time timestamp = 0;
+
+#ifdef ECORE_XCB_RANDR
+   xcb_randr_get_screen_info_cookie_t cookie;
+   xcb_randr_get_screen_info_reply_t *reply;
+#endif
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
+
+#ifdef ECORE_XCB_RANDR
+   cookie = xcb_randr_get_screen_info_unchecked(_ecore_xcb_conn, root);
+   reply = xcb_randr_get_screen_info_reply(_ecore_xcb_conn, cookie, NULL);
+   if (reply)
+     {
+        timestamp = (Ecore_X_Time)reply->config_timestamp;
+        free(reply);
+     }
+#endif
+
+   return timestamp;
+}
+
 /*
  * @param root window which's primary output will be queried
  */
