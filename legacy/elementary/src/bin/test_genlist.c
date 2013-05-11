@@ -873,7 +873,7 @@ my_gl_item_check_changed(void *data, Evas_Object *obj, void *event_info __UNUSED
    printf("item %p onoff = %i\n", tit, tit->onoff);
 }
 
-static Elm_Genlist_Item_Class itc3;
+static Elm_Genlist_Item_Class *itc3;
 
 char *gl3_text_get(void *data, Evas_Object *obj __UNUSED__, const char *part __UNUSED__)
 {
@@ -953,25 +953,27 @@ test_genlist4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
    evas_object_smart_callback_add(gl, "realized", _realized, NULL);
 
-   itc3.item_style     = "default";
-   itc3.func.text_get = gl3_text_get;
-   itc3.func.content_get  = gl3_content_get;
-   itc3.func.state_get = gl3_state_get;
-   itc3.func.del       = NULL;
+   itc3 = elm_genlist_item_class_new();
+   itc3->item_style     = "default";
+   itc3->func.text_get = gl3_text_get;
+   itc3->func.content_get  = gl3_content_get;
+   itc3->func.state_get = gl3_state_get;
+   itc3->func.del       = NULL;
 
    tit[0].mode = 0;
-   tit[0].item = elm_genlist_item_append(gl, &itc3,
+   tit[0].item = elm_genlist_item_append(gl, itc3,
                                          &(tit[0])/* item data */, NULL/* parent */, ELM_GENLIST_ITEM_NONE, gl_sel/* func */,
                                          NULL/* func data */);
    tit[1].mode = 1;
-   tit[1].item = elm_genlist_item_append(gl, &itc3,
+   tit[1].item = elm_genlist_item_append(gl, itc3,
                                          &(tit[1])/* item data */, NULL/* parent */, ELM_GENLIST_ITEM_NONE, gl_sel/* func */,
                                          NULL/* func data */);
    tit[2].mode = 2;
-   tit[2].item = elm_genlist_item_append(gl, &itc3,
+   tit[2].item = elm_genlist_item_append(gl, itc3,
                                          &(tit[2])/* item data */, NULL/* parent */, ELM_GENLIST_ITEM_NONE, gl_sel/* func */,
                                          NULL/* func data */);
 
+   elm_genlist_item_class_free(itc3);
    elm_box_pack_end(bx, gl);
    evas_object_show(bx);
 
