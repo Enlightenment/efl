@@ -1,3 +1,7 @@
+2013-05-11  Jiyou Park
+
+        * Evas: Fix crash if app use native surface in wrong engine.
+
 2013-05-10  Tom Hacohen
 
         * Evas text: Fixed line size calculation when using multiple

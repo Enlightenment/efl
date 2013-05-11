@@ -922,7 +922,7 @@ eng_image_native_set(void *data EINA_UNUSED, void *image, void *native)
 
    im2 = evas_cache_image_data(evas_common_image_cache_get(), 
                                im->w, im->h, 
-                               ns->data.x11.visual, 1,
+                               NULL, 1,
                                EVAS_COLORSPACE_ARGB8888);
    if (im->references > 1)
      ERR("Setting native with more than one references for im=%p", im);
