@@ -395,7 +395,7 @@ evas_common_load_rgba_image_data_from_file(Image_Entry *ie)
    memset(&property, 0, sizeof (Evas_Image_Property));
    property.w = ie->w;
    property.h = ie->h;
-   property.scale = property.scale;
+   property.scale = ie->scale;
    property.rotated = ie->flags.rotated;
    property.premul = EINA_FALSE;
    property.alpha_sparse = EINA_FALSE;
