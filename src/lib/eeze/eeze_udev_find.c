@@ -319,7 +319,8 @@ eeze_udev_find_by_filter(const char *subsystem,
    if (subsystem)
      udev_enumerate_add_match_subsystem(en, subsystem);
 
-   udev_enumerate_add_match_property(en, type, "1");
+   if (type)
+     udev_enumerate_add_match_property(en, type, "1");
    udev_enumerate_scan_devices(en);
    devs = udev_enumerate_get_list_entry(en);
    udev_list_entry_foreach(cur, devs)
