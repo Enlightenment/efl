@@ -3691,6 +3691,16 @@ eng_image_max_size_get(void *data, int *maxw, int *maxh)
    if (maxh) *maxh = re->win->gl_context->shared->info.max_texture_size;
 }
 
+static void
+eng_context_flush(void *data)
+{
+   Render_Engine *re;
+   re = (Render_Engine *)data;
+
+   eng_window_use(re->win);
+   evas_gl_common_context_flush(re->win->gl_context);
+}
+
 static int
 module_open(Evas_Module *em)
 {
@@ -3806,6 +3816,8 @@ module_open(Evas_Module *em)
    ORD(image_animated_frame_set);
 
    ORD(image_max_size_get);
+
+   ORD(context_flush);
 
    /* now advertise out own api */
    em->functions = (void *)(&func);

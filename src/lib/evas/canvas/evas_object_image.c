@@ -3812,6 +3812,9 @@ evas_object_image_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, v
           {
              if (o->pixels->func.get_pixels)
                {
+                  if (obj->layer->evas->engine.func->context_flush)
+                     obj->layer->evas->engine.func->context_flush(output);
+
                   // Set img object for direct rendering optimization
                   // Check for image w/h against image geometry w/h
                   // Check for image color r,g,b,a = {255,255,255,255}

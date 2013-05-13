@@ -2674,6 +2674,7 @@ static Evas_Func func =
      NULL,
      eng_multi_font_draw,
      eng_pixel_alpha_get,
+     NULL, // eng_context_flush - software doesn't use it
    /* FUTURE software generic calls go here */
 };
 

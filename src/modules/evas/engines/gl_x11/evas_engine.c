@@ -3270,6 +3270,16 @@ eng_pixel_alpha_get(void *image, int x, int y, DATA8 *alpha, int src_region_x, i
    return EINA_TRUE;
 }
 
+static void
+eng_context_flush(void *data)
+{
+   Render_Engine *re;
+   re = (Render_Engine *)data;
+
+   eng_window_use(re->win);
+   evas_gl_common_context_flush(re->win->gl_context);
+}
+
 static int
 module_open(Evas_Module *em)
 {
@@ -3387,6 +3397,8 @@ module_open(Evas_Module *em)
    ORD(image_max_size_get);
 
    ORD(pixel_alpha_get);
+
+   ORD(context_flush);
 
    /* now advertise out own api */
    em->functions = (void *)(&func);
