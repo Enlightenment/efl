@@ -37,7 +37,7 @@ static const char SIG_CURSOR_CHANGED_MANUAL[] = "cursor,changed,manual";
 static const char SIG_FOCUSED[] = "focused";
 static const char SIG_LANG_CHANGED[] = "language,changed";
 static const char SIG_LONGPRESSED[] = "longpressed";
-static const char SIG_MAX_LENGHT[] = "maxlength,reached";
+static const char SIG_MAX_LENGTH[] = "maxlength,reached";
 static const char SIG_PREEDIT_CHANGED[] = "preedit,changed";
 static const char SIG_PRESS[] = "press";
 static const char SIG_REDO_REQUEST[] = "redo,request";
@@ -70,7 +70,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_FOCUSED, ""},
    {SIG_LANG_CHANGED, ""},
    {SIG_LONGPRESSED, ""},
-   {SIG_MAX_LENGHT, ""},
+   {SIG_MAX_LENGTH, ""},
    {SIG_PREEDIT_CHANGED, ""},
    {SIG_PRESS, ""},
    {SIG_REDO_REQUEST, ""},
@@ -2381,7 +2381,7 @@ _chars_add_till_limit(Evas_Object *obj,
           {
              if (!i)
                {
-                  evas_object_smart_callback_call(obj, SIG_MAX_LENGHT, NULL);
+                  evas_object_smart_callback_call(obj, SIG_MAX_LENGTH, NULL);
                   free(*text);
                   *text = NULL;
                   return;
@@ -2400,7 +2400,7 @@ _chars_add_till_limit(Evas_Object *obj,
         i++;
      }
 
-   evas_object_smart_callback_call(obj, SIG_MAX_LENGHT, NULL);
+   evas_object_smart_callback_call(obj, SIG_MAX_LENGTH, NULL);
 }
 
 static void
@@ -4243,7 +4243,7 @@ elm_entry_filter_limit_size(void *data,
         newlen = evas_string_char_len_get(utfstr);
         if ((len >= lim->max_char_count) && (newlen > 0))
           {
-             evas_object_smart_callback_call(entry, SIG_MAX_LENGHT, NULL);
+             evas_object_smart_callback_call(entry, SIG_MAX_LENGTH, NULL);
              free(*text);
              *text = NULL;
              free(current);
@@ -4260,7 +4260,7 @@ elm_entry_filter_limit_size(void *data,
         newlen = strlen(utfstr);
         if ((len >= lim->max_byte_count) && (newlen > 0))
           {
-             evas_object_smart_callback_call(entry, SIG_MAX_LENGHT, NULL);
+             evas_object_smart_callback_call(entry, SIG_MAX_LENGTH, NULL);
              free(*text);
              *text = NULL;
              free(current);
