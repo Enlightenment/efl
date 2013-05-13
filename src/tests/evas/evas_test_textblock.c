@@ -23,12 +23,12 @@ EAPI int
 _evas_textblock_format_offset_get(const Evas_Object_Textblock_Node_Format *n);
 /* end of functions defined in evas_object_textblock.c */
 
-#define TEST_FONT "font=TEST_FONT fount_source" TESTS_SRC_DIR "./DejaVuSans.eet"
+#define TEST_FONT "font=DejaVuSans font_source=" TESTS_SRC_DIR "/TestFont.eet"
 
 static const char *style_buf =
    "DEFAULT='" TEST_FONT " font_size=10 color=#000 text_class=entry'"
    "newline='br'"
-   "b='+ font=Sans:style=bold'";
+   "b='+ font_weight=bold'";
 
 #define START_TB_TEST() \
    Evas *evas; \
@@ -1745,7 +1745,7 @@ START_TEST(evas_textblock_various)
 
         stt = evas_textblock_style_new();
         evas_textblock_style_set(stt,
-              "DEFAULT='font=" TEST_FONT " font_size=10 align=left color=#000000 wrap=char'");
+              "DEFAULT='" TEST_FONT " font_size=10 align=left color=#000000 wrap=char'");
         evas_object_textblock_style_set(tb, stt);
         evas_textblock_style_free(stt);
 

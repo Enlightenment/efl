@@ -9,8 +9,8 @@
 #include "Evas.h"
 #include "evas_tests_helpers.h"
 
-#define TEST_FONT_NAME "TEST_FONT"
-#define TEST_FONT_SOURCE TESTS_SRC_DIR "./DejaVuSans.eet"
+#define TEST_FONT_NAME "DejaVuSans,UnDotum"
+#define TEST_FONT_SOURCE TESTS_SRC_DIR "/TestFont.eet"
 
 #define START_TEXT_TEST() \
    Evas *evas; \
