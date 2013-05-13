@@ -1314,8 +1314,7 @@ _elm_diskselector_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
      (priv->main_box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set
      (priv->main_box, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_widget_theme_object_set
-     (obj, priv->main_box, "diskselector", "base", "default");
+   elm_widget_theme_set(priv->main_box, elm_widget_theme_get(obj));
 
    elm_widget_sub_object_add(obj, priv->main_box);
 
