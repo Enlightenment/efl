@@ -89,7 +89,7 @@ struct _Old_Edje_Part
    const char            *name; /* the name if any of the part */
    Old_Edje_Part_Description *default_desc; /* the part descriptor for default */
    Eina_List             *other_desc; /* other possible descriptors */
-   const char            *source, *source2, *source3, *source4, *source5, *source6;
+   const char            *source, *source2, *source3, *source4, *source5, *source6, *source7, *source8;
    int                    id; /* its id number */
    int                    clip_to_id; /* the part id to clip this one to */
    Edje_Part_Dragable     dragable;

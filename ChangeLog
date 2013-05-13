@@ -1,3 +1,7 @@
+2013-05-13  Thiep Ha
+
+        * Edje: Added selection handlers to entry.
+
 2013-05-11  Jiyou Park
 
         * Evas: Fix crash if app use native surface in wrong engine.

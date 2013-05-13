@@ -224,6 +224,8 @@ static void st_collections_group_parts_part_source3(void);
 static void st_collections_group_parts_part_source4(void);
 static void st_collections_group_parts_part_source5(void);
 static void st_collections_group_parts_part_source6(void);
+static void st_collections_group_parts_part_source7(void);
+static void st_collections_group_parts_part_source8(void);
 static void st_collections_group_parts_part_entry_mode(void);
 static void st_collections_group_parts_part_select_mode(void);
 static void st_collections_group_parts_part_cursor_mode(void);
@@ -501,6 +503,8 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.source4", st_collections_group_parts_part_source4},
      {"collections.group.parts.part.source5", st_collections_group_parts_part_source5},
      {"collections.group.parts.part.source6", st_collections_group_parts_part_source6},
+     {"collections.group.parts.part.source7", st_collections_group_parts_part_source7},
+     {"collections.group.parts.part.source8", st_collections_group_parts_part_source8},
      {"collections.group.parts.part.dragable.x", st_collections_group_parts_part_dragable_x},
      {"collections.group.parts.part.dragable.y", st_collections_group_parts_part_dragable_y},
      {"collections.group.parts.part.dragable.confine", st_collections_group_parts_part_dragable_confine},
@@ -2656,6 +2660,8 @@ st_collections_group_inherit(void)
         ep->source4 = STRDUP(ep2->source4);
         ep->source5 = STRDUP(ep2->source5);
         ep->source6 = STRDUP(ep2->source6);
+        ep->source7 = STRDUP(ep2->source7);
+        ep->source8 = STRDUP(ep2->source8);
 
         data_queue_copied_part_lookup(pc, &(ep2->clip_to_id), &(ep->clip_to_id));
 
@@ -3940,6 +3946,48 @@ st_collections_group_parts_part_source6(void)
 
 /**
     @page edcref
+    @property
+        source7
+    @parameters
+        [another group's name]
+    @effect
+        Only available to TEXTBLOCK parts. It is used for the group to be
+        loaded and used for the start selection handler display.
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_source7(void)
+{
+   check_arg_count(1);
+
+   //FIXME: validate this somehow (need to decide on the format also)
+   current_part->source7 = parse_str(0);
+   data_queue_group_lookup(current_part->source7, current_part);
+}
+
+/**
+    @page edcref
+    @property
+        source8
+    @parameters
+        [another group's name]
+    @effect
+        Only available to TEXTBLOCK parts. It is used for the group to be
+        loaded and used for the end selection handler display.
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_source8(void)
+{
+   check_arg_count(1);
+
+   //FIXME: validate this somehow (need to decide on the format also)
+   current_part->source8 = parse_str(0);
+   data_queue_group_lookup(current_part->source8, current_part);
+}
+
+/**
+    @page edcref
 
     @property
         effect
@@ -4061,7 +4109,7 @@ st_collections_group_parts_part_select_mode(void)
    current_part->select_mode = parse_enum(0,
                                 "DEFAULT", EDJE_ENTRY_SELECTION_MODE_DEFAULT,
                                 "EXPLICIT", EDJE_ENTRY_SELECTION_MODE_EXPLICIT,
-                                "BLOCK_HANDLE", EDJE_ENTRY_SELECTION_MODE_DEFAULT,
+                                "BLOCK_HANDLE", EDJE_ENTRY_SELECTION_MODE_BLOCK_HANDLE,
                                 NULL);
 }
 
