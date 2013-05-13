@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-05-06 11:44+0900\n"
+"POT-Creation-Date: 2013-05-13 13:07+0900\n"
 "PO-Revision-Date: 2012-12-16 21:59+0100\n"
 "Last-Translator: Tomáš Čech <sleep_walker@suse.cz>\n"
 "Language-Team: Czech <kde-i18n-doc@kde.org>\n"
@@ -26,8 +26,8 @@ msgstr "Nahoru"
 msgid "Home"
 msgstr "Domů"
 
-#: src/lib/elc_fileselector.c:1019 src/lib/elm_entry.c:1289
-#: src/lib/elm_entry.c:1314
+#: src/lib/elc_fileselector.c:1019 src/lib/elm_entry.c:1291
+#: src/lib/elm_entry.c:1316
 msgid "Cancel"
 msgstr "Zrušit"
 
@@ -44,8 +44,8 @@ msgid "Clicked"
 msgstr "Kliknuto"
 
 #: src/lib/elm_button.c:288 src/lib/elm_check.c:217 src/lib/elm_gengrid.c:713
-#: src/lib/elm_genlist.c:1431 src/lib/elm_list.c:1394 src/lib/elm_radio.c:262
-#: src/lib/elm_spinner.c:526 src/lib/elm_toolbar.c:1941
+#: src/lib/elm_genlist.c:1436 src/lib/elm_list.c:1476 src/lib/elm_radio.c:262
+#: src/lib/elm_spinner.c:526 src/lib/elm_toolbar.c:1959
 msgid "State: Disabled"
 msgstr "Stav: Zakázáno"
 
@@ -143,23 +143,23 @@ msgstr "výchozí:LTR"
 msgid "diskselector item"
 msgstr "položka výběru disků"
 
-#: src/lib/elm_entry.c:1282
+#: src/lib/elm_entry.c:1284
 msgid "Copy"
 msgstr "Kopírovat"
 
-#: src/lib/elm_entry.c:1286
+#: src/lib/elm_entry.c:1288
 msgid "Cut"
 msgstr "Vyjmout"
 
-#: src/lib/elm_entry.c:1301
+#: src/lib/elm_entry.c:1303
 msgid "Select"
 msgstr "Vybrat"
 
-#: src/lib/elm_entry.c:1308
+#: src/lib/elm_entry.c:1310
 msgid "Paste"
 msgstr "Vložit"
 
-#: src/lib/elm_entry.c:2955
+#: src/lib/elm_entry.c:2959
 msgid "Entry"
 msgstr "Vstup"
 
@@ -215,27 +215,27 @@ msgstr "odečítací tlačítko spinneru"
 msgid "spinner"
 msgstr "spinner"
 
-#: src/lib/elm_toolbar.c:1433 src/lib/elm_toolbar.c:2002
+#: src/lib/elm_toolbar.c:1451 src/lib/elm_toolbar.c:2020
 msgid "Selected"
 msgstr "Vybrané"
 
-#: src/lib/elm_toolbar.c:1939
+#: src/lib/elm_toolbar.c:1957
 msgid "Separator"
 msgstr "Oddělovač"
 
-#: src/lib/elm_toolbar.c:1943
+#: src/lib/elm_toolbar.c:1961
 msgid "State: Selected"
 msgstr "Stav: Vybráno"
 
-#: src/lib/elm_toolbar.c:1945
+#: src/lib/elm_toolbar.c:1963
 msgid "Has menu"
 msgstr "Má nabídku"
 
-#: src/lib/elm_toolbar.c:1997
+#: src/lib/elm_toolbar.c:2015
 msgid "Unselected"
 msgstr "Nevybrané"
 
-#: src/lib/elm_toolbar.c:2014
+#: src/lib/elm_toolbar.c:2032
 msgid "Toolbar Item"
 msgstr "Položka panelu nástrojů"
 

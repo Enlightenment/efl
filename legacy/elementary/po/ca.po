@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-05-06 11:44+0900\n"
+"POT-Creation-Date: 2013-05-13 13:07+0900\n"
 "PO-Revision-Date: 2013-03-22 00:32+0100\n"
 "Last-Translator: JoanColl <jcoll2@gmail.com>\n"
 "Language-Team: Catalan\n"
@@ -24,8 +24,8 @@ msgstr "Amunt"
 msgid "Home"
 msgstr "Carpeta personal"
 
-#: src/lib/elc_fileselector.c:1019 src/lib/elm_entry.c:1289
-#: src/lib/elm_entry.c:1314
+#: src/lib/elc_fileselector.c:1019 src/lib/elm_entry.c:1291
+#: src/lib/elm_entry.c:1316
 msgid "Cancel"
 msgstr "Cancel·la"
 
@@ -42,8 +42,8 @@ msgid "Clicked"
 msgstr "Clicat"
 
 #: src/lib/elm_button.c:288 src/lib/elm_check.c:217 src/lib/elm_gengrid.c:713
-#: src/lib/elm_genlist.c:1431 src/lib/elm_list.c:1394 src/lib/elm_radio.c:262
-#: src/lib/elm_spinner.c:526 src/lib/elm_toolbar.c:1941
+#: src/lib/elm_genlist.c:1436 src/lib/elm_list.c:1476 src/lib/elm_radio.c:262
+#: src/lib/elm_spinner.c:526 src/lib/elm_toolbar.c:1959
 msgid "State: Disabled"
 msgstr "Estat: desactivat "
 
@@ -136,23 +136,23 @@ msgstr "Per defecte: LTR"
 msgid "diskselector item"
 msgstr "selector de disc"
 
-#: src/lib/elm_entry.c:1282
+#: src/lib/elm_entry.c:1284
 msgid "Copy"
 msgstr "Copia"
 
-#: src/lib/elm_entry.c:1286
+#: src/lib/elm_entry.c:1288
 msgid "Cut"
 msgstr "Retalla"
 
-#: src/lib/elm_entry.c:1301
+#: src/lib/elm_entry.c:1303
 msgid "Select"
 msgstr "Selecciona"
 
-#: src/lib/elm_entry.c:1308
+#: src/lib/elm_entry.c:1310
 msgid "Paste"
 msgstr "Enganxa "
 
-#: src/lib/elm_entry.c:2955
+#: src/lib/elm_entry.c:2959
 msgid "Entry"
 msgstr "Entrada"
 
@@ -208,27 +208,27 @@ msgstr "botó de decrement del spinner"
 msgid "spinner"
 msgstr "spinner"
 
-#: src/lib/elm_toolbar.c:1433 src/lib/elm_toolbar.c:2002
+#: src/lib/elm_toolbar.c:1451 src/lib/elm_toolbar.c:2020
 msgid "Selected"
 msgstr "Seleccionat"
 
-#: src/lib/elm_toolbar.c:1939
+#: src/lib/elm_toolbar.c:1957
 msgid "Separator"
 msgstr "Separador"
 
-#: src/lib/elm_toolbar.c:1943
+#: src/lib/elm_toolbar.c:1961
 msgid "State: Selected"
 msgstr "Estat: Seleccionat"
 
-#: src/lib/elm_toolbar.c:1945
+#: src/lib/elm_toolbar.c:1963
 msgid "Has menu"
 msgstr "Té menú"
 
-#: src/lib/elm_toolbar.c:1997
+#: src/lib/elm_toolbar.c:2015
 msgid "Unselected"
 msgstr "No seleccionat "
 
-#: src/lib/elm_toolbar.c:2014
+#: src/lib/elm_toolbar.c:2032
 msgid "Toolbar Item"
 msgstr "Element de barra d'eines"
 
