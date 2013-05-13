@@ -556,7 +556,7 @@ START_TEST(evas_text_bidi)
    for (x = 0 ; x <= (adv - 1) ; x++)
      {
         pos = evas_object_text_last_up_to_pos(to, x, 0);
-        _ck_assert_int(pos, <, prev_pos);
+        _ck_assert_int(pos, >=, prev_pos);
         prev_pos = pos;
      }
    pos = evas_object_text_last_up_to_pos(to, x, 0);
