@@ -115,7 +115,7 @@ _prop_all_update_cb(void *data __UNUSED__)
    return EINA_FALSE;
 }
 
-void
+static void
 _elm_font_overlays_del_free(void)
 {
    char *text_class;
@@ -125,7 +125,7 @@ _elm_font_overlays_del_free(void)
    _font_overlays_del = eina_list_free(_font_overlays_del);
 }
 
-void
+static void
 _elm_config_font_overlays_cancel(void)
 {
    Elm_Font_Overlay *efd;
@@ -2541,7 +2541,9 @@ _elm_config_shutdown(void)
         _elm_profile = NULL;
      }
 
+#ifdef HAVE_ELEMENTARY_X
    _elm_font_overlays_del_free();
+#endif
    _desc_shutdown();
 }
 

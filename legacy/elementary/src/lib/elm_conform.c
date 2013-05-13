@@ -147,18 +147,16 @@ _conformant_part_sizing_eval(Evas_Object *obj,
 
    if (part_type & ELM_CONFORMANT_INDICATOR_PART)
      {
+#ifdef HAVE_ELEMENTARY_X
         if ((!_conformant_part_geometry_get_from_env
                ("ILLUME_IND", &sx, &sy, &sw, &sh)) && (xwin))
           {
-#ifdef HAVE_ELEMENTARY_X
              //No information of the indicator geometry, reset the geometry.
              if (!ecore_x_e_illume_indicator_geometry_get
                    (zone, &sx, &sy, &sw, &sh))
                sx = sy = sw = sh = 0;
-#else
-             ;
-#endif
           }
+#endif
         if (((sd->rot == 90) || (sd->rot == 270)) && sd->landscape_indicator)
           _conformant_part_size_hints_set(obj, sd->landscape_indicator, sx, sy, sw, sh);
         else if (((sd->rot == 0) || (sd->rot == 180)) && sd->portrait_indicator)
@@ -167,10 +165,10 @@ _conformant_part_sizing_eval(Evas_Object *obj,
 
    if (part_type & ELM_CONFORMANT_VIRTUAL_KEYPAD_PART)
      {
+#ifdef HAVE_ELEMENTARY_X
         if ((!_conformant_part_geometry_get_from_env
                ("ILLUME_KBD", &sx, &sy, &sw, &sh)) && (xwin))
           {
-#ifdef HAVE_ELEMENTARY_X
              //No information of the keyboard geometry, reset the geometry.
 #ifdef __linux__
 	         DBG("[KEYPAD]:pid=%d, xwin=0x%x, zone=0x%x: no env value and check window property.", getpid(), xwin, zone);
@@ -184,45 +182,39 @@ _conformant_part_sizing_eval(Evas_Object *obj,
                        sx = sy = sw = sh = 0;
 				    }
                }
-#else
-             ;
-#endif
           }
-		DBG("[KEYPAD]: size(%d,%d, %dx%d).", sx, sy, sw, sh);
+#endif
+        DBG("[KEYPAD]: size(%d,%d, %dx%d).", sx, sy, sw, sh);
         _conformant_part_size_hints_set
           (obj, sd->virtualkeypad, sx, sy, sw, sh);
      }
 
    if (part_type & ELM_CONFORMANT_SOFTKEY_PART)
      {
+#ifdef HAVE_ELEMENTARY_X
         if ((!_conformant_part_geometry_get_from_env
                ("ILLUME_STK", &sx, &sy, &sw, &sh)) && (xwin))
           {
-#ifdef HAVE_ELEMENTARY_X
              //No information of the softkey geometry, reset the geometry.
              if (!ecore_x_e_illume_softkey_geometry_get
                    (zone, &sx, &sy, &sw, &sh))
                sx = sy = sw = sh = 0;
-#else
-             ;
-#endif
           }
+#endif
         _conformant_part_size_hints_set(obj, sd->softkey, sx, sy, sw, sh);
      }
    if (part_type & ELM_CONFORMANT_CLIPBOARD_PART)
      {
+#ifdef HAVE_ELEMENTARY_X
         if ((!_conformant_part_geometry_get_from_env
                ("ILLUME_CB", &sx, &sy, &sw, &sh)) && (xwin))
           {
-#ifdef HAVE_ELEMENTARY_X
              //No information of the clipboard geometry, reset the geometry.
              if (!ecore_x_e_illume_clipboard_geometry_get
                    (zone, &sx, &sy, &sw, &sh))
                sx = sy = sw = sh = 0;
-#else
-             ;
-#endif
           }
+#endif
         _conformant_part_size_hints_set(obj, sd->clipboard, sx, sy, sw, sh);
      }
 }
@@ -944,9 +936,8 @@ _elm_conformant_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 static void
 _elm_conformant_smart_parent_set(Eo *obj, void *_pd, va_list *list)
 {
-   Evas_Object *parent = va_arg(*list, Evas_Object *);
-
 #ifdef HAVE_ELEMENTARY_X
+   Evas_Object *parent = va_arg(*list, Evas_Object *);
    Evas_Object *top = elm_widget_top_get(parent);
    Ecore_X_Window xwin = elm_win_xwindow_get(parent);
 

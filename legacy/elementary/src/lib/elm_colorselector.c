@@ -1539,7 +1539,9 @@ _elm_colorselector_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    priv->a = 255;
    priv->grab.x = -1;
    priv->grab.y = -1;
+#ifdef HAVE_ELEMENTARY_X
    priv->grab.xroot = -1;
+#endif
    priv->grab.in = EINA_TRUE;
 
    _hsl_to_rgb(priv);
@@ -1563,9 +1565,11 @@ _elm_colorselector_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    if (sd->longpress_timer) ecore_timer_del(sd->longpress_timer);
    if (sd->palette_name) eina_stringshare_del(sd->palette_name);
+#ifdef HAVE_ELEMENTARY_X
    if (sd->grab.mouse_motion) ecore_event_handler_del(sd->grab.mouse_motion);
    if (sd->grab.mouse_up) ecore_event_handler_del(sd->grab.mouse_up);
    if (sd->grab.key_up) ecore_event_handler_del(sd->grab.key_up);
+#endif
 
    _items_del(sd);
    /* This cb_data are used during the destruction process of base.del */

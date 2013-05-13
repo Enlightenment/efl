@@ -2936,13 +2936,13 @@ _elm_entry_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
           ecore_event_handler_add
             (ECORE_X_EVENT_SELECTION_CLEAR, _event_selection_clear, obj);
      }
-#endif
    elm_drop_target_add
      (obj, ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_IMAGE,
          NULL, NULL,
          NULL, NULL,
          NULL, NULL,
          _drag_drop_cb, NULL);
+#endif
 
    entries = eina_list_prepend(entries, obj);
 
@@ -3241,11 +3241,14 @@ _password_set(Eo *obj, void *_pd, va_list *list)
      }
    else
      {
+#ifdef HAVE_ELEMENTARY_X
         elm_drop_target_add(obj, ELM_SEL_FORMAT_MARKUP, 
                             NULL, NULL,
                             NULL, NULL,
                             NULL, NULL,
                             _drag_drop_cb, NULL);
+#endif
+
         _entry_selection_callbacks_register(obj);
      }
 
@@ -3496,6 +3499,7 @@ _editable_set(Eo *obj, void *_pd, va_list *list)
    sd->editable = editable;
    eo_do(obj, elm_wdg_theme(NULL));
 
+#ifdef HAVE_ELEMENTARY_X
    if (editable)
      elm_drop_target_add(obj, ELM_SEL_FORMAT_MARKUP, 
                          NULL, NULL,
@@ -3503,6 +3507,7 @@ _editable_set(Eo *obj, void *_pd, va_list *list)
                          NULL, NULL,
                          _drag_drop_cb, NULL);
    else
+#endif
      elm_drop_target_del(obj);
 }
 
@@ -4538,11 +4543,13 @@ _cnp_mode_set(Eo *obj, void *_pd, va_list *list)
      format = ELM_SEL_FORMAT_TEXT;
    else if (cnp_mode == ELM_CNP_MODE_MARKUP)
      format |= ELM_SEL_FORMAT_IMAGE;
+#ifdef HAVE_ELEMENTARY_X
    elm_drop_target_add(obj, format,
                        NULL, NULL,
                        NULL, NULL,
                        NULL, NULL,
                        _drag_drop_cb, NULL);
+#endif
 }
 
 EAPI Elm_Cnp_Mode

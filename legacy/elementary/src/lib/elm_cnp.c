@@ -131,6 +131,8 @@ typedef struct _Item_Container_Drag_Info Item_Container_Drag_Info;
 static int _elm_cnp_init_count = 0;
 /* Stringshared, so I can just compare pointers later */
 static const char *text_uri;
+
+#ifdef HAVE_ELEMENTARY_X
 /* Data for DND in progress */
 static Saved_Type savedtypes =  { NULL, NULL, 0, 0, 0, EINA_FALSE };
 
@@ -167,6 +169,7 @@ static Ecore_Event_Handler *handler_up = NULL;
 static Tmp_Info  *_tempfile_new      (int size);
 static int        _tmpinfo_free      (Tmp_Info *tmp);
 static Eina_Bool  _pasteimage_append (char *file, Evas_Object *entry);
+#endif
 
 //#define DEBUGON 1
 #ifdef DEBUGON

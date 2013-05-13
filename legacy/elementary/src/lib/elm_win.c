@@ -3636,12 +3636,14 @@ _main_menu_get(Eo *obj, void *_pd, va_list *list)
    if (!_elm_config->disable_external_menu && sd->x.xwin) use_dbus = EINA_TRUE;
 #endif
 
+#ifdef HAVE_ELEMENTARY_X
    if (use_dbus && _elm_dbus_menu_register(sd->main_menu))
      {
         _elm_dbus_menu_app_menu_register(sd->x.xwin, sd->main_menu,
                                          _dbus_menu_set, obj);
      }
    else
+#endif
      _dbus_menu_set(EINA_FALSE, obj);
 
 end:
