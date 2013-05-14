@@ -2641,7 +2641,7 @@ eng_gl_surface_create(void *data, void *config, int w, int h)
      {
         ERR("Unable Create Specificed Surfaces.  Unsupported format!");
         goto finish;
-     };
+     }
 
    ret = sfc;
 
@@ -2971,7 +2971,7 @@ eng_gl_string_query(void *data EINA_UNUSED, int name)
          return (void*)_evasgl_ext_string;
       default:
          return NULL;
-     };
+     }
 }
 
 static void *

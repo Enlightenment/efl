@@ -1717,7 +1717,7 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
                     {
                        ERR("Unable Create Specificed Surfaces.  Unsupported format!");
                        return 0;
-                    };
+                    }
                   sfc->buffers_allocated = 1;
                }
           }
