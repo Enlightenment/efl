@@ -102,6 +102,7 @@ extern "C" {
 #define HAVE_ECORE_EVAS_PSL1GHT 1
 #define HAVE_ECORE_EVAS_WAYLAND_SHM 1
 #define HAVE_ECORE_EVAS_WAYLAND_EGL 1
+#define HAVE_ECORE_EVAS_DRM 1
 
 typedef enum _Ecore_Evas_Engine_Type
 {
@@ -127,7 +128,8 @@ typedef enum _Ecore_Evas_Engine_Type
    ECORE_EVAS_ENGINE_EWS,
    ECORE_EVAS_ENGINE_PSL1GHT,
    ECORE_EVAS_ENGINE_WAYLAND_SHM,
-   ECORE_EVAS_ENGINE_WAYLAND_EGL
+   ECORE_EVAS_ENGINE_WAYLAND_EGL,
+   ECORE_EVAS_ENGINE_DRM
 } Ecore_Evas_Engine_Type;
 
 typedef enum _Ecore_Evas_Avoid_Damage_Type
@@ -981,6 +983,8 @@ EAPI void            ecore_evas_wayland_move(Ecore_Evas *ee, int x, int y);
 EAPI void            ecore_evas_wayland_pointer_set(Ecore_Evas *ee, int hot_x, int hot_y);
 EAPI void            ecore_evas_wayland_type_set(Ecore_Evas *ee, int type);
 EAPI Ecore_Wl_Window *ecore_evas_wayland_window_get(const Ecore_Evas *ee);
+
+EAPI Ecore_Evas     *ecore_evas_drm_new(const char *device, unsigned int parent, int x, int y, int w, int h);
 
 /**
  * @brief Create a new @c Ecore_Evas canvas bound to the Evas
