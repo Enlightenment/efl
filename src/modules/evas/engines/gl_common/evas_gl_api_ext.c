@@ -72,13 +72,13 @@ evgl_evasglCreateImage(int target, void* buffer, int *attrib_list)
    if (!(rsc=_evgl_tls_resource_get()))
      {
         ERR("Unable to execute GL command. Error retrieving tls");
-        return;
+        return NULL;
      }
 
    if (!rsc->current_eng)
      {
         ERR("Unable to retrive Current Engine");
-        return;
+        return NULL;
      }
 
    if ((evgl_engine) && (evgl_engine->funcs->display_get))
