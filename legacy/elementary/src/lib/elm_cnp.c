@@ -3118,7 +3118,7 @@ elm_drag_item_container_del_internal(Evas_Object *obj, Eina_Bool full)
 
         if (full)
           {
-             st->itemgetcb = NULL;;
+             st->itemgetcb = NULL;
              st->data_get = NULL;
              evas_object_event_callback_del_full
                 (obj, EVAS_CALLBACK_MOUSE_DOWN, _cont_obj_mouse_down, st);
