@@ -118,7 +118,7 @@ ecore_evas_drm_new_internal(const char *device, unsigned int parent, int x, int 
         return NULL;
      }
 
-   return NULL;
+   return ee;
 }
 
 /* local functions */
