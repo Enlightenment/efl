@@ -9,6 +9,9 @@
 #ifdef HAVE_PULSE
 #include "ecore_audio_obj_out_pulse.h"
 #define MY_CLASS ECORE_AUDIO_OBJ_OUT_PULSE_CLASS
+#elif HAVE_ALSA
+#include "ecore_audio_obj_out_alsa.h"
+#define MY_CLASS ECORE_AUDIO_OBJ_OUT_ALSA_CLASS
 #else
 #error "Multisense needs Pulseaudio suport!"
 #endif
