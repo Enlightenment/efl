@@ -181,7 +181,7 @@ _thumb_retry(Elm_Thumb_Smart_Data *sd)
           }
 
         evas_object_event_callback_add
-          (sd->view, EVAS_CALLBACK_IMAGE_PRELOADED, _on_thumb_preloaded, sd);
+          (sd->view, EVAS_CALLBACK_IMAGE_PRELOADED, _on_thumb_preloaded, sd->obj);
         evas_object_image_preload(sd->view, EINA_TRUE);
 
         return EINA_TRUE;
@@ -256,7 +256,7 @@ _thumb_finish(Elm_Thumb_Smart_Data *sd,
                }
              evas_object_event_callback_add
                (sd->view, EVAS_CALLBACK_IMAGE_PRELOADED, _on_thumb_preloaded,
-               sd);
+               sd->obj);
              evas_object_hide(sd->view);
           }
 
@@ -393,7 +393,7 @@ _thumb_start(Elm_Thumb_Smart_Data *sd)
    pending_request++;
    ethumb_client_file_set(_elm_ethumb_client, sd->file, sd->key);
    sd->thumb.request = ethumb_client_thumb_async_get
-       (_elm_ethumb_client, _on_ethumb_thumb_done, _on_ethumb_thumb_error, sd);
+       (_elm_ethumb_client, _on_ethumb_thumb_done, _on_ethumb_thumb_error, sd->obj);
 }
 
 static Eina_Bool
