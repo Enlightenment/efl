@@ -11,6 +11,7 @@
 #include <fcntl.h>
 #include <Ecore.h>
 #include <Ecore_Audio.h>
+#include <ecore_audio_obj_out_pulse.h>
 #include <Eina.h>
 
 Eo *out = NULL;

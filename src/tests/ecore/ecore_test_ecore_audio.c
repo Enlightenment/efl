@@ -13,6 +13,12 @@
 #include <Ecore.h>
 #include <Ecore_Audio.h>
 
+#ifdef HAVE_PULSE
+#include <ecore_audio_obj_out_pulse.h>
+#endif
+
+
+
 #if 0
 
 

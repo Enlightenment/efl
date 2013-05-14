@@ -12,6 +12,7 @@
 
 #include <Eo.h>
 #include "ecore_audio_private.h"
+#include "ecore_audio_obj_out_pulse.h"
 #include <pulse/pulseaudio.h>
 
 #include <sys/time.h>

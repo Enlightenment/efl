@@ -1,6 +1,18 @@
 #include "edje_private.h"
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #ifdef ENABLE_MULTISENSE
+
+#ifdef HAVE_PULSE
+#include "ecore_audio_obj_out_pulse.h"
+#define MY_CLASS ECORE_AUDIO_OBJ_OUT_PULSE_CLASS
+#else
+#error "Multisense needs Pulseaudio suport!"
+#endif
+
 #include <sndfile.h>
 #include "Ecore_Audio.h"
 
@@ -153,7 +165,7 @@ _edje_multisense_internal_sound_sample_play(Edje *ed, const char *sample_name, c
                         eo_event_callback_add(ECORE_AUDIO_EV_IN_STOPPED, _play_finished, NULL));
             if (!out)
               {
-                 out = eo_add(ECORE_AUDIO_OBJ_OUT_PULSE_CLASS, NULL);
+                 out = eo_add(MY_CLASS, NULL);
                  if (out) outs++;
               }
             if (!out)
@@ -210,7 +222,7 @@ _edje_multisense_internal_sound_tone_play(Edje *ed, const char *tone_name, const
              eo_do(in, eo_event_callback_add(ECORE_AUDIO_EV_IN_STOPPED, _play_finished, NULL));
 
              if (!out)
-               out = eo_add(ECORE_AUDIO_OBJ_OUT_PULSE_CLASS, NULL);
+               out = eo_add(MY_CLASS, NULL);
 
              eo_do(out, ecore_audio_obj_out_input_attach(in, &ret));
              if (!ret) {
