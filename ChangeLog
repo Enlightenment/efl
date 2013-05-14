@@ -1,6 +1,7 @@
 2013-05-14  Jihoon Kim
 
         * Edje entry: return surrounding string until the start position of selection
+        * ecore_imf: fix crash when ecore_imf_context_del is called in ecore_imf_context_input_panel_callback_call
 
 2013-05-13  Thiep Ha
 

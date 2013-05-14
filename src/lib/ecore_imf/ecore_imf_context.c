@@ -1137,6 +1137,9 @@ ecore_imf_context_input_panel_event_callback_call(Ecore_IMF_Context *ctx, Ecore_
                  value == ECORE_IMF_INPUT_PANEL_STATE_HIDE &&
                  show_req_ctx == ctx)
                show_req_ctx = NULL;
+
+             if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
+               break;
           }
      }
 }
