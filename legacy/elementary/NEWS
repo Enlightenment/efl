@@ -228,6 +228,7 @@ Fixes:
    * Fix do not append NULL to genlist focus list.
    * Fix elm_clock_first_interval_set writes wrong value.
    * Fix remained ecore timer issue when gesture layer was deleted.
+   * Fix ctxpopup can't be called again in the mobile mode entry.
 
 Removals:
 

@@ -1344,3 +1344,7 @@
 2013-05-09 Seunggyun Kim
 
         * Fix remained ecore timer issue when gesture layer was deleted.
+
+2013-05-14 Youngbok Shin
+
+        * Fix ctxpopup can't be called again in the mobile mode entry.
