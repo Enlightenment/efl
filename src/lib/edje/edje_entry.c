@@ -4042,6 +4042,7 @@ _edje_entry_imf_retrieve_surrounding_cb(void *data, Ecore_IMF_Context *ctx EINA_
    Entry *en = NULL;
    const char *str;
    char *plain_text;
+   Eina_Strbuf *buf = NULL;
 
    if (!rp) return EINA_FALSE;
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
@@ -4056,14 +4057,45 @@ _edje_entry_imf_retrieve_surrounding_cb(void *data, Ecore_IMF_Context *ctx EINA_
      {
         str = _edje_entry_text_get(rp);
         if (str)
-          plain_text = evas_textblock_text_markup_to_utf8(NULL, str);
+          {
+             plain_text = evas_textblock_text_markup_to_utf8(NULL, str);
+
+             if (plain_text)
+               {
+                  if (en->have_selection)
+                    {
+                       buf = eina_strbuf_new();
+
+                       if (en->sel_start)
+                         eina_strbuf_append_n(buf, plain_text, evas_textblock_cursor_pos_get(en->sel_start));
+                       else
+                         eina_strbuf_append(buf, plain_text);
+
+                       *text = strdup(eina_strbuf_string_get(buf));
+                       eina_strbuf_free(buf);
+                    }
+                  else
+                    *text = strdup(plain_text);
+
+                  free(plain_text);
+                  plain_text = NULL;
+               }
+             else
+               *text = strdup("");
+          }
         else
-          plain_text = strdup("");
-        *text = plain_text;
+          *text = strdup("");
      }
 
    if (cursor_pos)
-     *cursor_pos = evas_textblock_cursor_pos_get(en->cursor);
+     {
+        if (en->have_selection && en->sel_start)
+          *cursor_pos = evas_textblock_cursor_pos_get(en->sel_start);
+        else if (en->cursor)
+          *cursor_pos = evas_textblock_cursor_pos_get(en->cursor);
+        else
+          *cursor_pos = 0;
+     }
 
    return EINA_TRUE;
 }
