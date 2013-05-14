@@ -180,12 +180,12 @@ EO_DBG_INFO_LIST_APPEND(Eo_Dbg_Info *list, const char *name)
 #define EO_DBG_INFO_APPEND(LIST, NAME, TYPE, VALUE) \
 do { \
    Eo_Dbg_Info *List = LIST; \
-   Eo_Dbg_Info *Tmp = calloc(1, sizeof(*Tmp)); \
-   Tmp->name = eina_stringshare_add(NAME); \
-   eina_value_setup(&(Tmp->value), TYPE); \
-   eina_value_set(&(Tmp->value), VALUE); \
    if (List) \
      { \
+        Eo_Dbg_Info *Tmp = calloc(1, sizeof(*Tmp)); \
+        Tmp->name = eina_stringshare_add(NAME); \
+        eina_value_setup(&(Tmp->value), TYPE); \
+        eina_value_set(&(Tmp->value), VALUE); \
         eina_value_list_pappend(&(List->value), Tmp); \
      } \
 } while (0)
