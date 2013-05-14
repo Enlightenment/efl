@@ -2960,6 +2960,7 @@ want_ecore_evas_software_ddraw="${have_evas_engine_software_ddraw}"
 want_ecore_evas_gl_cocoa="${have_evas_engine_gl_cocoa}"
 want_ecore_evas_wayland_egl="${have_evas_engine_wayland_egl}"
 want_ecore_evas_extn="yes"
+want_ecore_evas_drm="${have_evas_engine_drm}"
 
 if test "x${have_ecore_ipc}" = "xno" || \
    test "x${efl_func_shm_open}" = "xno" || \
@@ -3002,6 +3003,7 @@ AM_CONDITIONAL([BUILD_ECORE_EVAS_SDL],
 
 ECORE_EVAS_MODULE([wayland-shm], [${want_wayland}])
 ECORE_EVAS_MODULE([wayland-egl], [${want_ecore_evas_wayland_egl}])
+ECORE_EVAS_MODULE([drm], [${want_drm}])
 
 build_ecore_evas_wayland="no"
 if test "x${have_ecore_evas_wayland_shm}" = "xyes" || \
@@ -3714,6 +3716,7 @@ pc/evas-software-ddraw.pc
 pc/evas-software-sdl.pc
 pc/evas-wayland-shm.pc
 pc/evas-wayland-egl.pc
+pc/evas-drm.pc
 pc/evas.pc
 pc/ecore.pc
 pc/ecore-con.pc
