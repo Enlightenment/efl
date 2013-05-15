@@ -544,6 +544,7 @@ static int
 _re_wincheck(Render_Engine *re)
 {
    if (!re) return 0;
+   if (!re->win) return 0;
    if (re->win->surf) return 1;
    eng_window_resurf(re->win);
    if (!re->win->surf)
@@ -761,7 +762,7 @@ eng_setup(Evas *eo_e, void *in)
                        if ((re->win) && (inc))
                          re->win->gl_context->references--;
                     }
-							 }
+               }
              else if ((re->win->w != e->output.w) ||
                       (re->win->h != e->output.h))
                {
