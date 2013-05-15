@@ -1615,8 +1615,8 @@ collections {
       {
          style { name: "entry_single_textblock_style";
             base: "font=Sans font_size=10 color=#000 wrap=none text_class=entry";
-            tag:  "br" "\n";
-            tag:  "ps" "ps";
+            tag:  "br" "";
+            tag:  "ps" "";
             tag:  "tab" "\t";
             tag:  "em" "+ font=Sans:style=Oblique";
             tag:  "b" "+ font=Sans:style=Bold";
@@ -1625,8 +1625,8 @@ collections {
          }
          style { name: "entry_single_textblock_disabled_style";
             base: "font=Sans font_size=10 color=#00000080 wrap=none text_class=entry";
-            tag:  "br" "\n";
-            tag:  "ps" "ps";
+            tag:  "br" "";
+            tag:  "ps" "";
             tag:  "tab" "\t";
             tag:  "em" "+ font=Sans:style=Oblique";
             tag:  "b" "+ font=Sans:style=Bold";
