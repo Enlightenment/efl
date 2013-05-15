@@ -8,7 +8,9 @@
 #include <Eina.h>
 
 #include <librsvg/rsvg.h>
+#if !LIBRSVG_CHECK_VERSION(2,36,2)
 #include <librsvg/rsvg-cairo.h>
+#endif
 
 #define DATA32 unsigned int
 
@@ -57,7 +59,9 @@ static int
 _svg_init(const char *file)
 {
 #ifdef HAVE_SVG_2_36
+# if !defined(GLIB_VERSION_2_36)
    g_type_init();
+# endif
 #else
    rsvg_init();
 #endif
