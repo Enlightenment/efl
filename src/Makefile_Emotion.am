@@ -8,7 +8,7 @@ dist_installed_emotionmainheaders_DATA = lib/emotion/Emotion.h
 
 # libemotion.la
 lib_emotion_libemotion_la_SOURCES = \
-lib/emotion/emotion_module.h \
+lib/emotion/emotion_modules.h \
 lib/emotion/emotion_private.h \
 lib/emotion/emotion_smart.c \
 lib/emotion/emotion_webcam.c \
