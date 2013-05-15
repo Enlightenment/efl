@@ -8,7 +8,7 @@
 #
 # When the COMPONENTS keyword was passed to find_package(),
 # the following variables are defined for additional Ecore modules
-# such as Evas, X, Imf.
+# such as Evas, X, Imf, Imf_Evas.
 #
 #  ECORE_*_FOUND        - System has ecore *
 #  ECORE_*_INCLUDE_DIRS - The ecore include directories
@@ -44,7 +44,7 @@ if (Ecore_FIND_COMPONENTS)
    foreach(_component ${Ecore_FIND_COMPONENTS})
       string(TOUPPER ${_component} _COMPONENT)
       string(TOLOWER ${_component} _component)
-      set(_MODULE_PKGNAME ecore-${_component})
+      string(REGEX REPLACE "_" "-" _MODULE_PKGNAME "ecore-${_component}")
 
       pkg_check_modules(PC_LIBECORE_${_COMPONENT} ${_QUIET} ${_MODULE_PKGNAME})
 
