@@ -35,6 +35,7 @@
  * @li @c "hbar,drag" - the horizontal scroll bar has been dragged
  * @li @c "hbar,press" - the horizontal scroll bar has been pressed
  * @li @c "hbar,unpress" - the horizontal scroll bar has been unpressed
+ * @li @c "scroll,page,changed" - the visible page has changed
  *
  * This widget implements the @ref elm-scrollable-interface interface.
  * Its (non-deprecated) API functions, except for elm_scroller_add(),

@@ -213,6 +213,7 @@ enum
    ELM_SCROLLABLE_INTERFACE_SUB_ID_WHEEL_DISABLED_SET,
    ELM_SCROLLABLE_INTERFACE_SUB_ID_MOVEMENT_BLOCK_SET,
    ELM_SCROLLABLE_INTERFACE_SUB_ID_MOVEMENT_BLOCK_GET,
+   ELM_SCROLLABLE_INTERFACE_SUB_ID_PAGE_CHANGE_CB_SET,
    ELM_SCROLLABLE_INTERFACE_SUB_ID_LAST
 };
 
@@ -963,6 +964,17 @@ enum
  */
 #define elm_scrollable_interface_movement_block_get(block) ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_MOVEMENT_BLOCK_GET), EO_TYPECHECK(Elm_Scroller_Movement_Block *, block)
 
+/**
+ * @def elm_scrollable_interface_page_change_cb_set
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] page_change_cb
+ *
+ */
+#define elm_scrollable_interface_page_change_cb_set(page_change_cb) ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_PAGE_CHANGE_CB_SET), EO_TYPECHECK(Elm_Interface_Scrollable_Cb, page_change_cb)
+
 
 /**
  * Elementary scroller panning base smart data.
@@ -1070,7 +1082,7 @@ struct _Elm_Scrollable_Smart_Interface_Data
    struct
    {
       Evas_Coord x, y;
-   } step, page;
+   } step, page, current_page;
 
    struct
    {
@@ -1093,6 +1105,8 @@ struct _Elm_Scrollable_Smart_Interface_Data
       Elm_Interface_Scrollable_Cb hbar_drag;
       Elm_Interface_Scrollable_Cb hbar_press;
       Elm_Interface_Scrollable_Cb hbar_unpress;
+      Elm_Interface_Scrollable_Cb page_change;
+
       Elm_Interface_Scrollable_Min_Limit_Cb content_min_limit;
    } cb_func;
 

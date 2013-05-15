@@ -34,6 +34,8 @@ static const char SIG_VBAR_UNPRESS[] = "vbar,unpress";
 static const char SIG_HBAR_DRAG[] = "hbar,drag";
 static const char SIG_HBAR_PRESS[] = "hbar,press";
 static const char SIG_HBAR_UNPRESS[] = "hbar,unpress";
+static const char SIG_SCROLL_PAGE_CHANGE[] = "scroll,page,changed";
+
 static const Evas_Smart_Cb_Description _smart_callbacks[] =
 {
    {SIG_SCROLL, ""},
@@ -55,6 +57,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] =
    {SIG_HBAR_DRAG, ""},
    {SIG_HBAR_PRESS, ""},
    {SIG_HBAR_UNPRESS, ""},
+   {SIG_SCROLL_PAGE_CHANGE, ""},
    {NULL, NULL}
 };
 
@@ -647,6 +650,13 @@ _hbar_unpress_cb(Evas_Object *obj,
 }
 
 static void
+_page_change_cb(Evas_Object *obj,
+                void *data __UNUSED__)
+{
+   evas_object_smart_callback_call(obj, SIG_SCROLL_PAGE_CHANGE, NULL);
+}
+
+static void
 _elm_scroller_smart_content_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
    const char *part = va_arg(*list, const char *);
@@ -790,7 +800,9 @@ _elm_scroller_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
          elm_scrollable_interface_hbar_drag_cb_set(_hbar_drag_cb),
          elm_scrollable_interface_hbar_press_cb_set(_hbar_press_cb),
          elm_scrollable_interface_hbar_unpress_cb_set(_hbar_unpress_cb),
-         elm_scrollable_interface_content_min_limit_cb_set(_elm_scroller_content_min_limit_cb));
+         elm_scrollable_interface_page_change_cb_set(_page_change_cb),
+         elm_scrollable_interface_content_min_limit_cb_set
+         (_elm_scroller_content_min_limit_cb));
 }
 
 static void

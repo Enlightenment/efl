@@ -209,6 +209,8 @@
  *   started.
  * - @c "scroll,drag,stop" - called when dragging the content has
  *   stopped.
+ * - @c "scroll,page,changed" - called when the visible page has
+ *   changed.
  * - @c "edge,top" - This is called when the gengrid is scrolled until
  *   the top edge.
  * - @c "edge,bottom" - This is called when the gengrid is scrolled

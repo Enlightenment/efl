@@ -55,6 +55,7 @@ static const char SIG_SCROLL_ANIM_START[] = "scroll,anim,start";
 static const char SIG_SCROLL_ANIM_STOP[] = "scroll,anim,stop";
 static const char SIG_SCROLL_DRAG_START[] = "scroll,drag,start";
 static const char SIG_SCROLL_DRAG_STOP[] = "scroll,drag,stop";
+static const char SIG_SCROLL_PAGE_CHANGE[] = "scroll,page,changed";
 static const char SIG_EDGE_TOP[] = "edge,top";
 static const char SIG_EDGE_BOTTOM[] = "edge,bottom";
 static const char SIG_EDGE_LEFT[] = "edge,left";
@@ -97,6 +98,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_LANG_CHANGED, ""},
    {SIG_PRESSED, ""},
    {SIG_RELEASED, ""},
+   {SIG_SCROLL_PAGE_CHANGE, ""},
 
    {NULL, NULL}
 };
@@ -2158,6 +2160,13 @@ _edge_bottom_cb(Evas_Object *obj,
 }
 
 static void
+_scroll_page_change_cb(Evas_Object *obj,
+                     void *data __UNUSED__)
+{
+   evas_object_smart_callback_call(obj, SIG_SCROLL_PAGE_CHANGE, NULL);
+}
+
+static void
 _scroll_cb(Evas_Object *obj,
            void *data __UNUSED__)
 {
@@ -2432,7 +2441,8 @@ _elm_gengrid_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    eo_do(obj, elm_scrollable_interface_bounce_allow_set(bounce, bounce));
 
    eo_do(obj,
-         elm_scrollable_interface_animate_start_cb_set(_scroll_animate_start_cb),
+         elm_scrollable_interface_animate_start_cb_set
+         (_scroll_animate_start_cb),
          elm_scrollable_interface_animate_stop_cb_set(_scroll_animate_stop_cb),
          elm_scrollable_interface_drag_start_cb_set(_scroll_drag_start_cb),
          elm_scrollable_interface_drag_stop_cb_set(_scroll_drag_stop_cb),
@@ -2440,7 +2450,8 @@ _elm_gengrid_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
          elm_scrollable_interface_edge_right_cb_set(_edge_right_cb),
          elm_scrollable_interface_edge_top_cb_set(_edge_top_cb),
          elm_scrollable_interface_edge_bottom_cb_set(_edge_bottom_cb),
-         elm_scrollable_interface_scroll_cb_set(_scroll_cb));
+         elm_scrollable_interface_scroll_cb_set(_scroll_cb),
+         elm_scrollable_interface_page_change_cb_set(_scroll_page_change_cb));
 
    priv->align_x = 0.5;
    priv->align_y = 0.5;

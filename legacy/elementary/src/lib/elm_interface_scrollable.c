@@ -958,6 +958,9 @@ _elm_scroll_scroll_bar_read_and_update(
 static void
 _elm_scroll_drag_start(Elm_Scrollable_Smart_Interface_Data *sid)
 {
+   sid->current_page.x = _elm_scroll_page_x_get(sid, 0, EINA_FALSE);
+   sid->current_page.y = _elm_scroll_page_y_get(sid, 0, EINA_FALSE);
+
    if (sid->cb_func.drag_start)
      sid->cb_func.drag_start(sid->obj, NULL);
 }
@@ -965,6 +968,18 @@ _elm_scroll_drag_start(Elm_Scrollable_Smart_Interface_Data *sid)
 static void
 _elm_scroll_drag_stop(Elm_Scrollable_Smart_Interface_Data *sid)
 {
+   Evas_Coord x, y;
+
+   if (!(sid->down.bounce_x_animator) && !(sid->down.bounce_y_animator) &&
+       !(sid->scrollto.x.animator) && !(sid->scrollto.y.animator))
+     {
+        x = _elm_scroll_page_x_get(sid, 0, EINA_FALSE);
+        y = _elm_scroll_page_y_get(sid, 0, EINA_FALSE);
+        if (sid->cb_func.page_change &&
+            ((x != sid->current_page.x) || (y != sid->current_page.y)))
+          sid->cb_func.page_change(sid->obj, NULL);
+     }
+
    if (sid->cb_func.drag_stop)
      sid->cb_func.drag_stop(sid->obj, NULL);
 }
@@ -979,6 +994,16 @@ _elm_scroll_anim_start(Elm_Scrollable_Smart_Interface_Data *sid)
 static void
 _elm_scroll_anim_stop(Elm_Scrollable_Smart_Interface_Data *sid)
 {
+   Evas_Coord x, y;
+
+   if (sid->cb_func.page_change)
+     {
+        x = _elm_scroll_page_x_get(sid, 0, EINA_FALSE);
+        y = _elm_scroll_page_y_get(sid, 0, EINA_FALSE);
+        if ((x != sid->current_page.x) || (y != sid->current_page.y))
+           sid->cb_func.page_change(sid->obj, NULL);
+     }
+
    if (sid->cb_func.animate_stop)
      sid->cb_func.animate_stop(sid->obj, NULL);
 }
@@ -3773,6 +3798,16 @@ _elm_scroll_animate_stop_cb_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 }
 
 static void
+_elm_scroll_page_change_cb_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Elm_Scrollable_Smart_Interface_Data *sid = _pd;
+   Elm_Interface_Scrollable_Cb page_change_cb =
+       va_arg(*list, Elm_Interface_Scrollable_Cb);
+
+   sid->cb_func.page_change = page_change_cb;
+}
+
+static void
 _elm_scroll_scroll_cb_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Elm_Scrollable_Smart_Interface_Data *sid = _pd;
@@ -4282,13 +4317,20 @@ _elm_scroll_page_show(Eo *obj, void *_pd, va_list *list)
 
    Elm_Scrollable_Smart_Interface_Data *sid = _pd;
 
+   sid->current_page.x = _elm_scroll_page_x_get(sid, 0, EINA_FALSE);
+   sid->current_page.y = _elm_scroll_page_y_get(sid, 0, EINA_FALSE);
+
    eo_do(sid->obj, elm_scrollable_interface_content_viewport_size_get(&w, &h));
    if (pagenumber_h >= 0) x = sid->pagesize_h * pagenumber_h;
    if (pagenumber_v >= 0) y = sid->pagesize_v * pagenumber_v;
    if (_elm_scroll_content_region_show_internal(obj, &x, &y, w, h))
-
-
      eo_do(obj, elm_scrollable_interface_content_pos_set(x, y, EINA_TRUE));
+
+   if ((sid->current_page.x != x) || (sid->current_page.y != y))
+     {
+        if (sid->cb_func.page_change)
+          sid->cb_func.page_change(sid->obj, NULL);
+     }
 }
 
 static void
@@ -4303,6 +4345,9 @@ _elm_scroll_page_bring_in(Eo *obj, void *_pd, va_list *list)
 
    Elm_Scrollable_Smart_Interface_Data *sid = _pd;
 
+   sid->current_page.x = _elm_scroll_page_x_get(sid, 0, EINA_FALSE);
+   sid->current_page.y = _elm_scroll_page_y_get(sid, 0, EINA_FALSE);
+
    eo_do(sid->obj, elm_scrollable_interface_content_viewport_size_get(&w, &h));
    if (pagenumber_h >= 0) x = sid->pagesize_h * pagenumber_h;
    if (pagenumber_v >= 0) y = sid->pagesize_v * pagenumber_v;
@@ -4310,6 +4355,12 @@ _elm_scroll_page_bring_in(Eo *obj, void *_pd, va_list *list)
      {
         _elm_scroll_scroll_to_x(sid, _elm_config->bring_in_scroll_friction, x);
         _elm_scroll_scroll_to_y(sid, _elm_config->bring_in_scroll_friction, y);
+     }
+
+   if ((sid->current_page.x != x) || (sid->current_page.y != y))
+     {
+        if (sid->cb_func.page_change)
+          sid->cb_func.page_change(sid->obj, NULL);
      }
 }
 
@@ -4512,6 +4563,8 @@ _elm_scrollable_interface_constructor(Eo_Class *klass)
            EO_OP_FUNC(ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_WHEEL_DISABLED_SET), _elm_scroll_wheel_disabled_set),
            EO_OP_FUNC(ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_MOVEMENT_BLOCK_SET), _elm_scroll_movement_block_set),
            EO_OP_FUNC(ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_MOVEMENT_BLOCK_GET), _elm_scroll_movement_block_get),
+           EO_OP_FUNC(ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_PAGE_CHANGE_CB_SET), _elm_scroll_page_change_cb_set),
+
            EO_OP_FUNC_SENTINEL
       };
       eo_class_funcs_set(klass, func_desc);
@@ -4584,6 +4637,8 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_WHEEL_DISABLED_SET, "description here"),
      EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_MOVEMENT_BLOCK_SET, "Set movement block in a axis"),
      EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_MOVEMENT_BLOCK_GET, "Get the movement block"),
+     EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_PAGE_CHANGE_CB_SET,
+                       "Set a scroller page change callback function"),
      EO_OP_DESCRIPTION_SENTINEL
 };
 
