@@ -326,6 +326,7 @@ evas_software_xlib_swapbuf_flush(Outbuf *buf)
         EINA_ARRAY_ITER_NEXT(&buf->priv.onebuf_regions, i, rect, it)
           {
              rects[i] = *rect;
+             eina_rectangle_free(rect);
           }
         evas_xlib_swapper_buffer_unmap(buf->priv.swapper);
         evas_xlib_swapper_swap(buf->priv.swapper, rects, n);
