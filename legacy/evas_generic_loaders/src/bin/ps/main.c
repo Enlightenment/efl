@@ -24,7 +24,7 @@
 
 
 SpectreDocument *psdoc;
-unsigned int page_count;
+int page_count;
 
 SpectrePage *page;
 
@@ -82,7 +82,7 @@ _spectre_init(const char *file, int page_nbr, int size_w, int size_h)
    if (status != SPECTRE_STATUS_SUCCESS)
      {
         D("[eps] %s\n", spectre_status_to_string (status));
-        goto free_psdoc;
+        goto free_page;
    }
 
    spectre_page_get_size(page, &ww, &hh);
@@ -163,7 +163,7 @@ _pixcopy(DATA32 *dst, unsigned char *src, int size)
 }
 
 static void
-_spectre_load_image(int size_w, int size_h)
+_spectre_load_image(int size_w EINA_UNUSED, int size_h EINA_UNUSED)
 {
    SpectreRenderContext *rc;
    unsigned char        *psdata;
