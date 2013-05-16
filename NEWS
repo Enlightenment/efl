@@ -270,3 +270,4 @@ Fixes:
     * Evas: Fix crash if app use native surface in wrong engine.
     * Edje entry: return surrounding string until the start position of selection
     * Ecore-imf: fix crash when ecore_imf_context_del is called in ecore_imf_context_input_panel_callback_call
+    * Edje textblock: Fixed issue with quoted formats.

@@ -25,44 +25,43 @@ _edje_format_param_parse(char *item, char **key, char **val)
 static char *
 _edje_format_parse(const char **s)
 {
-   char *item, *ds;
-   const char *p, *ss;
+   const char *p;
    const char *s1 = NULL;
    const char *s2 = NULL;
+   Eina_Bool quote = EINA_FALSE;
 
    p = *s;
    if ((!p) || (*p == 0)) return NULL;
    for (;;)
      {
-	if (!s1)
-	  {
-	     if (*p != ' ') s1 = p;
-	     if (*p == 0) break;
-	  }
-	else if (!s2)
-	  {
-	     if ((p > *s) && (p[-1] != '\\'))
-	       {
-		  if (*p == ' ') s2 = p;
-	       }
-	     if (*p == 0) s2 = p;
-	  }
-	p++;
-	if (s1 && s2)
-	  {
-	     item = malloc(s2 - s1 + 1);
-	     if (item)
-	       {
-		  for (ds = item, ss = s1; ss < s2; ss++, ds++)
-		    {
-		       if ((*ss == '\\') && (ss < (s2 - 1))) ss++;
-		       *ds = *ss;
-		    }
-		  *ds = 0;
-	       }
-	     *s = s2;
-	     return item;
-	  }
+        if (!s1)
+          {
+             if (*p != ' ') s1 = p;
+             if (*p == 0) break;
+          }
+        else if (!s2)
+          {
+             if (*p == '\'')
+               {
+                  quote = !quote;
+               }
+
+             if ((p > *s) && (p[-1] != '\\') && (!quote))
+               {
+                  if (*p == ' ') s2 = p;
+               }
+             if (*p == 0) s2 = p;
+          }
+        p++;
+        if (s1 && s2 && (s2 > s1))
+          {
+             size_t len = s2 - s1;
+             char *ret = malloc(len + 1);
+             memcpy(ret, s1, len);
+             ret[len] = '\0';
+             *s = s2;
+             return ret;
+          }
      }
    *s = p;
    return NULL;
@@ -142,7 +141,7 @@ _edje_format_reparse(Edje_File *edf, const char *str, Edje_Style_Tag **tag_ret)
 	     if (eina_strbuf_length_get(txt)) eina_strbuf_append(txt, " ");
 	     eina_strbuf_append(txt, item);
 	  }
-	free(item);
+        free(item);
      }
    if (tmp)
      eina_strbuf_free(tmp);
