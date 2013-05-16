@@ -166,6 +166,29 @@ _eo_id_mem_free(void *ptr)
 #endif
 }
 
+#ifdef EINA_DEBUG_MALLOC
+static void
+_eo_id_mem_protect(void *ptr, Eina_Bool may_not_write)
+{
+# ifdef __linux__
+   Mem_Header *hdr;
+   if (!ptr) return;
+   hdr = (Mem_Header *)(((unsigned char *)ptr) - MEM_HEADER_SIZE);
+   if (hdr->magic != MEM_MAGIC)
+     {
+        ERR("mprotect of eo table region has bad magic!");
+        return;
+     }
+   mprotect(hdr, hdr->size, PROT_READ | ( may_not_write ? 0 : PROT_WRITE) );
+# endif
+}
+# define   PROTECT(_ptr_)   _eo_id_mem_protect((_ptr_), EINA_TRUE)
+# define UNPROTECT(_ptr_)   _eo_id_mem_protect((_ptr_), EINA_FALSE)
+#else
+# define   PROTECT(_ptr_)
+# define UNPROTECT(_ptr_)
+#endif
+
 /* Entry */
 typedef struct
 {
@@ -266,12 +289,14 @@ _get_available_entry(_Eo_Ids_Table *table)
      {
         /* Serve never used entries first */
         entry = &(table->entries[table->start]);
+        UNPROTECT(table);
         table->start++;
      }
    else if (table->fifo_head != -1)
      {
         /* Pop a free entry from the fifo */
         entry = &(table->entries[table->fifo_head]);
+        UNPROTECT(table);
         if (entry->next_in_fifo == -1)
           table->fifo_head = table->fifo_tail = -1;
         else
@@ -305,8 +330,10 @@ _search_tables()
                   table = _eo_id_mem_calloc(1, sizeof(_Eo_Ids_Table));
                   table->start = 1;
                   table->fifo_head = table->fifo_tail = -1;
-                  TABLE_FROM_IDS = table;
                   entry = &(table->entries[0]);
+                  UNPROTECT(_eo_ids_tables[mid_table_id]);
+                  TABLE_FROM_IDS = table;
+                  PROTECT(_eo_ids_tables[mid_table_id]);
                }
              else
                entry = _get_available_entry(table);
@@ -351,6 +378,7 @@ _eo_id_allocate(const _Eo *obj)
    entry->ptr = (_Eo *)obj;
    entry->active = 1;
    entry->generation = _eo_generation_counter;
+   PROTECT(current_table.table);
    return EO_COMPOSE_ID(current_table.mid_table_id,
                         current_table.table_id,
                         (entry - current_table.table->entries),
@@ -376,6 +404,7 @@ _eo_id_release(const Eo_Id obj_id)
         entry = &(table->entries[entry_id]);
         if (entry && entry->active && (entry->generation == generation))
           {
+             UNPROTECT(table);
              /* Disable the entry */
              entry->active = 0;
              entry->next_in_fifo = -1;
@@ -389,6 +418,7 @@ _eo_id_release(const Eo_Id obj_id)
                   table->entries[table->fifo_tail].next_in_fifo = entry_id;
                   table->fifo_tail = entry_id;
                }
+             PROTECT(table);
              return;
           }
      }
