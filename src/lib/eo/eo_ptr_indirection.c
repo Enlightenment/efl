@@ -211,7 +211,7 @@ static _Eo_Ids_Table **_eo_ids_tables[MAX_MID_TABLE_ID] = { NULL };
 static _Eo_Table_Info current_table = { NULL, 0, 0 };
 
 /* Next generation to use when assigning a new entry to a Eo pointer */
-Generation_Counter _eo_generation_counter;
+Generation_Counter _eo_generation_counter = 0;
 
 /* Macro used to compose an Eo id */
 #define EO_COMPOSE_ID(TABLE, INTER_TABLE, ENTRY, GENERATION)         \
@@ -287,7 +287,7 @@ _search_tables()
    _Eo_Ids_Table *table;
    _Eo_Id_Entry *entry;
 
-   for (Table_Index mid_table_id = 1; mid_table_id < MAX_MID_TABLE_ID; mid_table_id++)
+   for (Table_Index mid_table_id = 0; mid_table_id < MAX_MID_TABLE_ID; mid_table_id++)
      {
         if (!_eo_ids_tables[mid_table_id])
           {
@@ -343,12 +343,14 @@ _eo_id_allocate(const _Eo *obj)
           return 0;
      }
 
+   /* [1;max-1] thus we never generate an Eo_Id equal to 0 */
+   _eo_generation_counter++;
+   if (_eo_generation_counter == MAX_GENERATIONS)
+     _eo_generation_counter = 1;
    /* An entry was found - fill it */
    entry->ptr = (_Eo *)obj;
    entry->active = 1;
    entry->generation = _eo_generation_counter;
-   _eo_generation_counter++;
-   _eo_generation_counter %= MAX_GENERATIONS;
    return EO_COMPOSE_ID(current_table.mid_table_id,
                         current_table.table_id,
                         (entry - current_table.table->entries),
