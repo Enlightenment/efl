@@ -60,9 +60,9 @@ _evas_common_language_char_script_search(Eina_Unicode unicode)
 }
 
 Evas_Script_Type
-evas_common_language_char_script_get(Eina_Unicode unicode)
+evas_common_language_char_script_get(Eina_Unicode _unicode)
 {
-   if (unicode < 0) return EVAS_SCRIPT_COMMON;
+   uint32_t unicode = _unicode;
    if (unicode < EVAS_SCRIPT_DIRECT_TABLE_LIMIT)
       return _evas_script_fast_table[unicode];
    return _evas_common_language_char_script_search(unicode);
