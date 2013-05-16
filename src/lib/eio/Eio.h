@@ -1,8 +1,10 @@
-/* EIO - EFL data type library
+/* EIO - Core asynchronous input/output operation library.
  * Copyright (C) 2010 Enlightenment Developers:
  *           Cedric Bail <cedric.bail@free.fr>
+ *           Gustavo Sverzut Barbieri <barbieri@gmail.com>
  *           Vincent "caro" Torri  <vtorri at univ-evry dot fr>
- *	     Stephen "okra" Houston <unixtitan@gmail.com>
+ *           Stephen "okra" Houston <unixtitan@gmail.com
+ *           Guillaume "kuri" Friloux <guillaume.friloux@asp64.com>>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
