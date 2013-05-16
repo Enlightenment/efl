@@ -2334,7 +2334,7 @@ _format_parse(const char **s)
 {
    const char *p;
    const char *s1 = NULL, *s2 = NULL;
-   Eina_Bool quote = EINA_FALSE;;
+   Eina_Bool quote = EINA_FALSE;
 
    p = *s;
    if (*p == 0) return NULL;
