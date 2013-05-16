@@ -8,7 +8,9 @@
 #include <Eina.h>
 
 #include <librsvg/rsvg.h>
-#if !LIBRSVG_CHECK_VERSION(2,36,2)
+#include <librsvg/librsvg-features.h>
+#if LIBRSVG_CHECK_VERSION(2,36,2)
+#else
 #include <librsvg/rsvg-cairo.h>
 #endif
 
