@@ -212,42 +212,36 @@ typedef struct
    Table_Index fifo_head;
    /* Indicates where to add an entry to recycle */
    Table_Index fifo_tail;
+   /* Packed mid table and table indexes */
+   Eo_Id partial_id;
    /* Entries of the table holding real pointers and generations */
    _Eo_Id_Entry entries[MAX_ENTRY_ID];
 } _Eo_Ids_Table;
-
-/* Table Info */
-typedef struct
-{
-   /* Table pointer */
-   _Eo_Ids_Table *table;
-   /* Index of mid table in top table */
-   Table_Index mid_table_id;
-   /* Index of table in mid table */
-   Table_Index table_id;
-} _Eo_Table_Info;
 
 /* Tables handling pointers indirection */
 static _Eo_Ids_Table **_eo_ids_tables[MAX_MID_TABLE_ID] = { NULL };
 
 /* Current table used for following allocations */
-static _Eo_Table_Info current_table = { NULL, 0, 0 };
+static _Eo_Ids_Table *current_table = NULL;
 
 /* Next generation to use when assigning a new entry to a Eo pointer */
 Generation_Counter _eo_generation_counter = 0;
 
 /* Macro used to compose an Eo id */
-#define EO_COMPOSE_ID(TABLE, INTER_TABLE, ENTRY, GENERATION)         \
-   (((Eo_Id)(TABLE & MASK_MID_TABLE_ID) << SHIFT_MID_TABLE_ID)    |  \
-    ((Eo_Id)(INTER_TABLE & MASK_TABLE_ID) << SHIFT_TABLE_ID)      |  \
-    ((ENTRY & MASK_ENTRY_ID) << SHIFT_ENTRY_ID)                   |  \
-    (GENERATION & MASK_GENERATIONS ))
+#define EO_COMPOSE_PARTIAL_ID(MID_TABLE, TABLE)                         \
+   (((Eo_Id)(MID_TABLE & MASK_MID_TABLE_ID) << SHIFT_MID_TABLE_ID)   |  \
+    ((Eo_Id)(TABLE & MASK_TABLE_ID) << SHIFT_TABLE_ID))
+
+#define EO_COMPOSE_FINAL_ID(PARTIAL_ID, ENTRY, GENERATION)     \
+    (PARTIAL_ID                                             |  \
+     ((ENTRY & MASK_ENTRY_ID) << SHIFT_ENTRY_ID)            |  \
+     (GENERATION & MASK_GENERATIONS ))
 
 /* Macro to extract from an Eo id the indexes of the tables */
-#define EO_DECOMPOSE_ID(ID, TABLE, INTER_TABLE, ENTRY, GENERATION)   \
-   TABLE = (ID >> SHIFT_MID_TABLE_ID) & MASK_MID_TABLE_ID;           \
-   INTER_TABLE = (ID >> SHIFT_TABLE_ID) & MASK_TABLE_ID;             \
-   ENTRY = (ID >> SHIFT_ENTRY_ID) & MASK_ENTRY_ID;                   \
+#define EO_DECOMPOSE_ID(ID, MID_TABLE, TABLE, ENTRY, GENERATION)  \
+   MID_TABLE = (ID >> SHIFT_MID_TABLE_ID) & MASK_MID_TABLE_ID;    \
+   TABLE = (ID >> SHIFT_TABLE_ID) & MASK_TABLE_ID;                \
+   ENTRY = (ID >> SHIFT_ENTRY_ID) & MASK_ENTRY_ID;                \
    GENERATION = ID & MASK_GENERATIONS;
 
 /* Macro used for readability */
@@ -330,6 +324,7 @@ _search_tables()
                   table = _eo_id_mem_calloc(1, sizeof(_Eo_Ids_Table));
                   table->start = 1;
                   table->fifo_head = table->fifo_tail = -1;
+                  table->partial_id = EO_COMPOSE_PARTIAL_ID(mid_table_id, table_id);
                   entry = &(table->entries[0]);
                   UNPROTECT(_eo_ids_tables[mid_table_id]);
                   TABLE_FROM_IDS = table;
@@ -341,16 +336,14 @@ _search_tables()
              if (entry)
                {
                   /* Store table info into current table */
-                  current_table.table = table;
-                  current_table.mid_table_id = mid_table_id;
-                  current_table.table_id = table_id;
+                  current_table = table;
                   return entry;
                }
           }
      }
 
    ERR("no more available entries to store eo objects");
-   current_table.table = NULL;
+   current_table = NULL;
    return NULL;
 }
 
@@ -360,8 +353,8 @@ _eo_id_allocate(const _Eo *obj)
 #ifdef HAVE_EO_ID
    _Eo_Id_Entry *entry = NULL;
 
-   if (current_table.table)
-     entry = _get_available_entry(current_table.table);
+   if (current_table)
+     entry = _get_available_entry(current_table);
 
    if (!entry)
      {
@@ -378,11 +371,10 @@ _eo_id_allocate(const _Eo *obj)
    entry->ptr = (_Eo *)obj;
    entry->active = 1;
    entry->generation = _eo_generation_counter;
-   PROTECT(current_table.table);
-   return EO_COMPOSE_ID(current_table.mid_table_id,
-                        current_table.table_id,
-                        (entry - current_table.table->entries),
-                        entry->generation);
+   PROTECT(current_table);
+   return EO_COMPOSE_FINAL_ID(current_table->partial_id,
+                              (entry - current_table->entries),
+                              entry->generation);
 #else
    return (Eo_Id)obj;
 #endif
@@ -447,7 +439,7 @@ _eo_free_ids_tables()
           }
         _eo_ids_tables[mid_table_id] = NULL;
      }
-   current_table.table = NULL;
+   current_table = NULL;
 }
 
 #ifdef EFL_DEBUG
