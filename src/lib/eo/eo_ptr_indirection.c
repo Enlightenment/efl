@@ -68,6 +68,8 @@
 # define BITS_TABLE_ID            5
 # define BITS_ENTRY_ID           12
 # define BITS_GENERATION_COUNTER 10
+# define DROPPED_TABLES           0
+# define DROPPED_ENTRIES          3
 typedef int16_t Table_Index;
 typedef uint16_t Generation_Counter;
 #else
@@ -76,6 +78,8 @@ typedef uint16_t Generation_Counter;
 # define BITS_TABLE_ID           11
 # define BITS_ENTRY_ID           12
 # define BITS_GENERATION_COUNTER 30
+# define DROPPED_TABLES           2
+# define DROPPED_ENTRIES          2
 typedef int16_t Table_Index;
 typedef uint32_t Generation_Counter;
 #endif
@@ -86,16 +90,17 @@ typedef uint32_t Generation_Counter;
 #define SHIFT_TABLE_ID        (BITS_ENTRY_ID + BITS_GENERATION_COUNTER)
 #define SHIFT_ENTRY_ID        (BITS_GENERATION_COUNTER)
 
-/* Maximum ranges */
+/* Maximum ranges - a few tables and entries are dropped to minimize the amount
+ * of wasted bytes, see _eo_id_mem_alloc */
 #define MAX_MID_TABLE_ID      (1 << BITS_MID_TABLE_ID)
-#define MAX_TABLE_ID          (1 << BITS_TABLE_ID)
-#define MAX_ENTRY_ID          (1 << BITS_ENTRY_ID)
+#define MAX_TABLE_ID          ((1 << BITS_TABLE_ID) - DROPPED_TABLES )
+#define MAX_ENTRY_ID          ((1 << BITS_ENTRY_ID) - DROPPED_ENTRIES)
 #define MAX_GENERATIONS       (1 << BITS_GENERATION_COUNTER)
 
 /* Masks */
 #define MASK_MID_TABLE_ID     (MAX_MID_TABLE_ID - 1)
-#define MASK_TABLE_ID         (MAX_TABLE_ID - 1)
-#define MASK_ENTRY_ID         (MAX_ENTRY_ID - 1)
+#define MASK_TABLE_ID         ((1 << BITS_TABLE_ID) - 1)
+#define MASK_ENTRY_ID         ((1 << BITS_ENTRY_ID) - 1)
 #define MASK_GENERATIONS      (MAX_GENERATIONS - 1)
 
 #define MEM_HEADER_SIZE       16
@@ -127,6 +132,7 @@ _eo_id_mem_alloc(size_t size)
    hdr = ptr;
    hdr->size = newsize;
    hdr->magic = MEM_MAGIC;
+   /* DBG("asked:%lu allocated:%lu wasted:%lu bytes", size, newsize, (newsize - size)); */
    return (void *)(((unsigned char *)ptr) + MEM_HEADER_SIZE);
 #else
    return malloc(size);
