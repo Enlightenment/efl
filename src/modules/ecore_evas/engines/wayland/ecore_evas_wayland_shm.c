@@ -76,7 +76,9 @@ static Ecore_Evas_Engine_Func _ecore_wl_engine_func =
    NULL, // focus skip set
    NULL, //_ecore_evas_wl_common_render,
    _ecore_evas_wl_common_screen_geometry_get,
-   _ecore_evas_wl_common_screen_dpi_get
+   _ecore_evas_wl_common_screen_dpi_get,
+   NULL, // func msg parent send
+   NULL // func msg send
 };
 
 /* external variables */
