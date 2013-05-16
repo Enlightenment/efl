@@ -116,6 +116,7 @@ struct _Elm_Entry_Markup_Filter
 {
    Elm_Entry_Filter_Cb func;
    void               *data;
+   void               *orig_data;
 };
 
 typedef enum _Length_Unit
