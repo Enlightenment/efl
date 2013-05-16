@@ -244,7 +244,7 @@ EAPI Elm_Object_Item             *elm_gengrid_item_insert_after(Evas_Object *obj
  * @param gic The item class for the item.
  * @param data The item data.
  * @param comp User defined comparison function that defines the sort order
- *             based on Elm_Gen_Item and its data param.
+ *             based on gengrid item and its data.
  * @param func Convenience function called when the item is selected.
  * @param func_data Data to be passed to @p func.
  * @return A handle to the item added or @c NULL, on errors.
@@ -256,6 +256,7 @@ EAPI Elm_Object_Item             *elm_gengrid_item_insert_after(Evas_Object *obj
  * @see elm_gengrid_item_append()
  * @see elm_gengrid_item_prepend()
  * @see elm_gengrid_item_insert_after()
+ * @see elm_object_item_data_get()
  * @see elm_object_item_del()
  *
  * @ingroup Gengrid

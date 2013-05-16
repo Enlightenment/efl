@@ -604,8 +604,8 @@ _before_bt_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __U
 static int
 compare_cb(const void *data1, const void *data2)
 {
-   Testitem *ti1 = (Testitem *)data1;
-   Testitem *ti2 = (Testitem *)data2;
+   Testitem *ti1 = (Testitem *)elm_object_item_data_get(data1);
+   Testitem *ti2 = (Testitem *)elm_object_item_data_get(data2);
    return strlen(ti1->path) - strlen(ti2->path);
 }
 
