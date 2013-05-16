@@ -337,9 +337,9 @@ ecore_animator_pos_map(double        pos,
                        double        v2)
 {
    /* purely functional - locking not required */
-    if (pos > 1.0) pos = 1.0;
-    else if (pos < 0.0)
-      pos = 0.0;
+    if (pos >= 1.0) return 1.0;
+    else if (pos <= 0.0)
+      return 0.0;
     switch (map)
       {
        case ECORE_POS_MAP_LINEAR:
@@ -390,6 +390,7 @@ ecore_animator_pos_map(double        pos,
        default:
          return pos;
       }
+
     return pos;
 }
 
