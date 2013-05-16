@@ -11,5 +11,6 @@ void ecore_test_ecore_audio(TCase *tc);
 void ecore_test_coroutine(TCase *tc);
 void ecore_test_timer(TCase *tc);
 void ecore_test_ecore_evas(TCase *tc);
+void ecore_test_animator(TCase *tc);
 
 #endif /* _ECORE_SUITE_H */

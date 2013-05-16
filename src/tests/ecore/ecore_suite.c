@@ -28,6 +28,7 @@ static const Ecore_Test_Case etc[] = {
   { "Ecore_Coroutine", ecore_test_coroutine },
   { "Ecore_Timers", ecore_test_timer },
   { "Ecore_Evas", ecore_test_ecore_evas },
+  { "Ecore_Animators", ecore_test_animator },
   { NULL, NULL }
 };
 
