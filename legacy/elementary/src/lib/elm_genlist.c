@@ -1065,6 +1065,7 @@ _item_state_realize(Elm_Gen_Item *it,
                   edje_object_signal_emit(target, buf, "elm");
                }
           }
+        edje_object_message_signal_process(target);
      }
 }
 
