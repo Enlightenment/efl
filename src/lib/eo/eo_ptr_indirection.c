@@ -262,7 +262,7 @@ _eo_obj_pointer_get(const Eo_Id obj_id)
 
    EO_DECOMPOSE_ID(obj_id, mid_table_id, table_id, entry_id, generation);
 
-   /* Checking the validity of the entry */
+   /* Check the validity of the entry */
    if (_eo_ids_tables[mid_table_id] && TABLE_FROM_IDS)
      {
         entry = &(TABLE_FROM_IDS->entries[entry_id]);
@@ -336,9 +336,10 @@ _search_tables()
                     }
                   else
                     {
-                       /* Allocate a new one and reserve the first entry */
+                       /* Allocate a new table */
                        table = _eo_id_mem_calloc(1, sizeof(_Eo_Ids_Table));
                     }
+                  /* Initialize the table and reserve the first entry */
                   table->start = 1;
                   table->free_entries = MAX_ENTRY_ID - 1;
                   table->fifo_head = table->fifo_tail = -1;
@@ -385,7 +386,7 @@ _eo_id_allocate(const _Eo *obj)
    _eo_generation_counter++;
    if (_eo_generation_counter == MAX_GENERATIONS)
      _eo_generation_counter = 1;
-   /* An entry was found - fill it */
+   /* Fill the entry and return it's Eo Id */
    entry->ptr = (_Eo *)obj;
    entry->active = 1;
    entry->generation = _eo_generation_counter;
@@ -408,7 +409,7 @@ _eo_id_release(const Eo_Id obj_id)
    Table_Index mid_table_id, table_id, entry_id;
    EO_DECOMPOSE_ID(obj_id, mid_table_id, table_id, entry_id, generation);
 
-   /* Checking the validity of the entry */
+   /* Check the validity of the entry */
    if (_eo_ids_tables[mid_table_id] && (table = TABLE_FROM_IDS))
      {
         entry = &(table->entries[entry_id]);
