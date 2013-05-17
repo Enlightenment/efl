@@ -36,10 +36,16 @@ eina_f32p32_sub(Eina_F32p32 a, Eina_F32p32 b)
 static inline Eina_F32p32
 eina_f32p32_mul(Eina_F32p32 a, Eina_F32p32 b)
 {
-   /* Prevent overflow and do '(a * b) >> 32' */
-   /* Basically do: Eina_F16p16 * Eina_F16p16 = Eina_F32p32 */
+   /* To prevent overflow during multiplication
+    * we need to reduce the precision of the fraction part
+    * Shift both values to only contain 16 bit of the fraction part
+    * (rounded).
+    * After multiplication we again have a value with a 32-bit
+    * fraction part. See also
+    * http://en.wikipedia.org/wiki/Fixed-point_arithmetic#Operations
+    */
+
    Eina_F32p32 up;
-   Eina_F32p32 down;
    Eina_F32p32 result;
    uint64_t as, bs;
    Eina_F32p32 sign;
@@ -48,10 +54,13 @@ eina_f32p32_mul(Eina_F32p32 a, Eina_F32p32 b)
    as = eina_fp32p32_llabs(a);
    bs = eina_fp32p32_llabs(b);
 
-   up = (as >> 16) * (bs >> 16);
-   down = (as & 0xFFFF) * (bs & 0xFFFF);
+   /* Reduce fraction to 16-bit (rounded) */
+   as = (as >> 16) + ((as >> 15) & 0x1);
+   bs = (bs >> 16) + ((bs >> 15) & 0x1);
 
-   result = up + (down >> 32);
+   up = as * bs;
+
+   result = up;
 
    return sign < 0 ? - result : result;
 }
@@ -70,6 +79,8 @@ eina_f32p32_div(Eina_F32p32 a, Eina_F32p32 b)
 
    sign = a ^ b;
 
+   /* FIXME: This should probably map to +/-inf when converting to double
+      or we should abort... */
    if (b == 0)
      return sign < 0 ? (Eina_F32p32) 0x8000000000000000ull : (Eina_F32p32) 0x7FFFFFFFFFFFFFFFull;
 
