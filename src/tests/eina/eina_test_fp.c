@@ -85,9 +85,107 @@ START_TEST(eina_fp_sin)
 }
 END_TEST
 
+START_TEST(eina_fp_mul)
+{
+   Eina_F32p32 fc1, fc2;
+   Eina_F32p32 fresult;
+   double dc1, dc2;
+   double dl1, dl2;
+   double step1, step2;
+   double dresult;
+   double delta, delta_per;
+   double maxdelta = 0;
+   double maxdelta_per = 0;
+
+        fail_if(!eina_init());
+
+   dl1 = 10;
+   step1 = 0.001;
+   dl2 = 1000;
+   step2 = 0.01;
+
+   for (dc1 = 0; dc1 < dl1; dc1 += step1)
+     {
+        for (dc2 = 0; dc2 < dl2; dc2 += step2)
+          {
+              dresult = dc1 * dc2;
+
+              fc1 = eina_f32p32_double_from(dc1);
+              fc2 = eina_f32p32_double_from(dc2);
+              fresult = eina_f32p32_mul(fc1, fc2);
+
+              delta = fabs(dresult - eina_f32p32_double_to(fresult));
+              delta_per = delta/dresult;
+              if (delta > 0.008 || delta_per > 0.01)
+                {
+                   printf("%f*%f = %f (delta: %f, %f%%)\n", dc1, dc2, dresult, delta, delta_per*100);
+                   fail_if(delta > 0.005 || delta_per > 0.01);
+                }
+              if (delta > maxdelta)
+                maxdelta = delta;
+              if (delta_per > maxdelta_per)
+                maxdelta_per = delta_per;
+          }
+     }
+   printf("Max delta(multiplication): %f (%f%%)\n", maxdelta, maxdelta_per*100);
+
+   eina_shutdown();
+}
+END_TEST
+
+START_TEST(eina_fp_div)
+{
+   Eina_F32p32 fc1, fc2;
+   Eina_F32p32 fresult;
+   double dc1, dc2;
+   double dl1, dl2;
+   double step1, step2;
+   double dresult;
+   double delta, delta_per;
+   double maxdelta = 0;
+   double maxdelta_per = 0;
+
+        fail_if(!eina_init());
+
+   dl1 = 10;
+   step1 = 0.001;
+   dl2 = 1000;
+   step2 = 0.01;
+
+   for (dc1 = 0; dc1 < dl1; dc1 += step1)
+     {
+        for (dc2 = step2; dc2 < dl2; dc2 += step2)
+          {
+              dresult = dc1 / dc2;
+
+              fc1 = eina_f32p32_double_from(dc1);
+              fc2 = eina_f32p32_double_from(dc2);
+              fresult = eina_f32p32_div(fc1, fc2);
+
+              delta = fabs(dresult - eina_f32p32_double_to(fresult));
+              delta_per = delta/dresult;
+              if (delta > 0.005 || delta_per > 0.03)
+                {
+                   printf("%f/%f = %f (delta %f, %f%%)\n", dc1, dc2, dresult, delta, delta_per*100);
+                   fail_if(delta > 0.005 || delta_per > 0.03);
+                }
+              if (delta > maxdelta)
+                maxdelta = delta;
+              if (delta_per > maxdelta_per)
+                maxdelta_per = delta_per;
+          }
+     }
+   printf("Max delta(division): %f (%f%%)\n", maxdelta, maxdelta_per*100);
+
+   eina_shutdown();
+}
+END_TEST
+
 void
 eina_test_fp(TCase *tc)
 {
    tcase_add_test(tc, eina_fp_cos);
    tcase_add_test(tc, eina_fp_sin);
+   tcase_add_test(tc, eina_fp_mul);
+   tcase_add_test(tc, eina_fp_div);
 }
