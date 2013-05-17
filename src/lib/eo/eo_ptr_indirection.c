@@ -22,7 +22,7 @@
  * - a tree structure is used, composed of a top level table pointing at
  *   mid tables pointing at tables composed of entries.
  * - tables are allocated when needed (i.e no more empty entries in allocated tables.
- * For now there is no mechanism to free empty tables.
+ * - empty tables are freed, except one kept as spare table.
  *
  * An Eo id is contructed by bits manipulation of table indexes and a generation.
  *
@@ -69,7 +69,7 @@
 # define BITS_ENTRY_ID           12
 # define BITS_GENERATION_COUNTER 10
 # define DROPPED_TABLES           0
-# define DROPPED_ENTRIES          3
+# define DROPPED_ENTRIES          4
 typedef int16_t Table_Index;
 typedef uint16_t Generation_Counter;
 #else
@@ -79,7 +79,7 @@ typedef uint16_t Generation_Counter;
 # define BITS_ENTRY_ID           12
 # define BITS_GENERATION_COUNTER 30
 # define DROPPED_TABLES           2
-# define DROPPED_ENTRIES          2
+# define DROPPED_ENTRIES          3
 typedef int16_t Table_Index;
 typedef uint32_t Generation_Counter;
 #endif
@@ -214,6 +214,8 @@ typedef struct
    Table_Index fifo_tail;
    /* Packed mid table and table indexes */
    Eo_Id partial_id;
+   /* Counter of free entries */
+   unsigned int free_entries;
    /* Entries of the table holding real pointers and generations */
    _Eo_Id_Entry entries[MAX_ENTRY_ID];
 } _Eo_Ids_Table;
@@ -223,6 +225,9 @@ static _Eo_Ids_Table **_eo_ids_tables[MAX_MID_TABLE_ID] = { NULL };
 
 /* Current table used for following allocations */
 static _Eo_Ids_Table *_current_table = NULL;
+
+/* Spare empty table */
+static _Eo_Ids_Table *_empty_table = NULL;
 
 /* Next generation to use when assigning a new entry to a Eo pointer */
 Generation_Counter _eo_generation_counter = 0;
@@ -285,6 +290,7 @@ _get_available_entry(_Eo_Ids_Table *table)
         entry = &(table->entries[table->start]);
         UNPROTECT(table);
         table->start++;
+        table->free_entries--;
      }
    else if (table->fifo_head != -1)
      {
@@ -295,6 +301,7 @@ _get_available_entry(_Eo_Ids_Table *table)
           table->fifo_head = table->fifo_tail = -1;
         else
           table->fifo_head = entry->next_in_fifo;
+        table->free_entries--;
      }
 
    return entry;
@@ -320,9 +327,20 @@ _search_tables()
 
              if (!table)
                {
-                  /* Allocate a new table and reserve the first entry */
-                  table = _eo_id_mem_calloc(1, sizeof(_Eo_Ids_Table));
+                  if (_empty_table)
+                    {
+                       /* Recycle the available empty table */
+                       table = _empty_table;
+                       _empty_table = NULL;
+                       UNPROTECT(table);
+                    }
+                  else
+                    {
+                       /* Allocate a new one and reserve the first entry */
+                       table = _eo_id_mem_calloc(1, sizeof(_Eo_Ids_Table));
+                    }
                   table->start = 1;
+                  table->free_entries = MAX_ENTRY_ID - 1;
                   table->fifo_head = table->fifo_tail = -1;
                   table->partial_id = EO_COMPOSE_PARTIAL_ID(mid_table_id, table_id);
                   entry = &(table->entries[0]);
@@ -397,6 +415,7 @@ _eo_id_release(const Eo_Id obj_id)
         if (entry && entry->active && (entry->generation == generation))
           {
              UNPROTECT(table);
+             table->free_entries++;
              /* Disable the entry */
              entry->active = 0;
              entry->next_in_fifo = -1;
@@ -411,6 +430,19 @@ _eo_id_release(const Eo_Id obj_id)
                   table->fifo_tail = entry_id;
                }
              PROTECT(table);
+             if (table->free_entries == MAX_ENTRY_ID)
+               {
+                  UNPROTECT(_eo_ids_tables[mid_table_id]);
+                  TABLE_FROM_IDS = NULL;
+                  PROTECT(_eo_ids_tables[mid_table_id]);
+                  /* Recycle or free the empty table */
+                  if (!_empty_table)
+                    _empty_table = table;
+                  else
+                    _eo_id_mem_free(table);
+                  if (_current_table == table)
+                    _current_table = NULL;
+               }
              return;
           }
      }
@@ -439,7 +471,8 @@ _eo_free_ids_tables()
           }
         _eo_ids_tables[mid_table_id] = NULL;
      }
-   _current_table = NULL;
+   if (_empty_table) _eo_id_mem_free(_empty_table);
+   _empty_table = _current_table = NULL;
 }
 
 #ifdef EFL_DEBUG
