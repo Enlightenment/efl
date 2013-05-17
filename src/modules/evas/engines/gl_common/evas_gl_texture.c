@@ -363,6 +363,7 @@ static Evas_GL_Texture_Pool *
 _pool_tex_render_new(Evas_Engine_GL_Context *gc, int w, int h, int intformat, int format)
 {
    Evas_GL_Texture_Pool *pt;
+   int fnum;
 
    pt = calloc(1, sizeof(Evas_GL_Texture_Pool));
    if (!pt) return NULL;
@@ -395,6 +396,7 @@ _pool_tex_render_new(Evas_Engine_GL_Context *gc, int w, int h, int intformat, in
 
    _print_tex_count();
 
+   glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &fnum);
    glGenTextures(1, &(pt->texture));
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    glBindTexture(GL_TEXTURE_2D, pt->texture);
@@ -415,7 +417,7 @@ _pool_tex_render_new(Evas_Engine_GL_Context *gc, int w, int h, int intformat, in
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    glsym_glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, pt->texture, 0);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   glsym_glBindFramebuffer(GL_FRAMEBUFFER, 0);
+   glsym_glBindFramebuffer(GL_FRAMEBUFFER, fnum);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 
    glBindTexture(GL_TEXTURE_2D, gc->pipe[0].shader.cur_tex);
