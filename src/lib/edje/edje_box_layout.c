@@ -64,7 +64,11 @@ _edje_box_layout_calculate_coords(Evas_Object *obj, Evas_Object_Box_Data *priv, 
      }
    evas_object_box_padding_set(obj, anim->end.padding.x, anim->end.padding.y);
    evas_object_box_align_set(obj, TO_DOUBLE(anim->end.align.x), TO_DOUBLE(anim->end.align.y));
-   anim->end.layout(obj, priv, anim->end.data);
+   if (anim->end.layout)
+     anim->end.layout(obj, priv, anim->end.data);
+   else if (anim->start.layout)
+     anim->start.layout(obj, priv, anim->start.data);
+
    EINA_LIST_FOREACH(anim->objs, l, tad)
      {
         evas_object_geometry_get(tad->obj, &tad->end.x, &tad->end.y,
