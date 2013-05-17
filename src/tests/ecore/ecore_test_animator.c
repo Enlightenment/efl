@@ -10,15 +10,8 @@
 static double prev = 0;
 static Eina_Bool _anim_cb(void *data, double pos)
 {
-  double interval = *(double *)data;
 
-  /* Make sure the intervals are within tolerances
-   * Ignore first and last step */
-  if (prev != 0 && pos != 1.0) {
-    fail_if(pos-prev > interval*1.1);
-    fail_if(pos-prev < interval*0.9);
-  }
-
+  fail_if(prev >= pos);
   prev = pos;
 
   if (pos == 1.0)
