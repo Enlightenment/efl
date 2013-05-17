@@ -134,6 +134,44 @@ EAPI void                          elm_scroller_region_get(const Evas_Object *ob
 EAPI void                          elm_scroller_child_size_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coord *h);
 
 /**
+ * @brief Set page snapping behavior of a scroller
+ *
+ * @param obj The scroller object
+ * @param page_h_snap Allow snap horizontally
+ * @param page_v_snap Allow snap vertically
+ *
+ * When scrolling, if a scroller is paged (see
+ * elm_scroller_page_size_set() and elm_scroller_page_relative_set()),
+ * the scroller may snap to pages when being scrolled, i.e., even if
+ * it had momentum to scroll further, it will stop at the next page
+ * boundaries. This is @b disabled, by default, for both axis. This
+ * function will set if it that is enabled or not, for each axis.
+ *
+ * @note If @a obj is not set to have pages, nothing will happen after
+ * this call.
+ *
+ * @since 1.8
+ *
+ * @ingroup Scroller
+ */
+EAPI void                          elm_scroller_page_snap_set(Evas_Object *obj, Eina_Bool page_h_snap, Eina_Bool page_v_snap);
+
+/**
+ * @brief Get the page snap behaviour of a scroller
+ *
+ * @param obj The Scroller object
+ * @param page_h_snap Will the scroller snap horizontally or not
+ * @param page_v_snap Will the scroller snap vertically or not
+ *
+ * @see elm_scroller_page_snap_set() for more details
+ *
+ * @since 1.8
+ *
+ * @ingroup Scroller
+ */
+EAPI void                          elm_scroller_page_snap_get(const Evas_Object *obj, Eina_Bool *page_h_snap, Eina_Bool *page_v_snap);
+
+/**
  * @brief Set bouncing behavior
  *
  * @param obj The scroller object

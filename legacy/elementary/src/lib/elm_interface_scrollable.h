@@ -192,6 +192,8 @@ enum
    ELM_SCROLLABLE_INTERFACE_SUB_ID_MIRRORED_SET,
    ELM_SCROLLABLE_INTERFACE_SUB_ID_HOLD_SET,
    ELM_SCROLLABLE_INTERFACE_SUB_ID_FREEZE_SET,
+   ELM_SCROLLABLE_INTERFACE_SUB_ID_PAGE_BOUNCE_ALLOW_SET,
+   ELM_SCROLLABLE_INTERFACE_SUB_ID_PAGE_BOUNCE_ALLOW_GET,
    ELM_SCROLLABLE_INTERFACE_SUB_ID_BOUNCE_ALLOW_SET,
    ELM_SCROLLABLE_INTERFACE_SUB_ID_BOUNCE_ALLOW_GET,
    ELM_SCROLLABLE_INTERFACE_SUB_ID_PAGING_SET,
@@ -715,6 +717,31 @@ enum
 #define elm_scrollable_interface_freeze_set(freeze) ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_FREEZE_SET), EO_TYPECHECK(Eina_Bool, freeze)
 
 /**
+ * @def elm_scrollable_interface_page_snap_allow_set
+ * @since 1.8
+ *
+ * Enable/disable page bouncing, for paged scrollers, on each axis.
+ *
+ * @param[in] horiz
+ * @param[in] vert
+ *
+ */
+#define elm_scrollable_interface_page_snap_allow_set(horiz, vert) ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_PAGE_BOUNCE_ALLOW_SET), EO_TYPECHECK(Eina_Bool, horiz), EO_TYPECHECK(Eina_Bool, vert)
+
+/**
+ * @def elm_scrollable_interface_page_snap_allow_get
+ * @since 1.8
+ *
+ * Get wether page bouncing is enabled, for paged scrollers, on each
+ * axis.
+ *
+ * @param[out] horiz
+ * @param[out] vert
+ *
+ */
+#define elm_scrollable_interface_page_snap_allow_get(horiz, vert) ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_PAGE_BOUNCE_ALLOW_GET), EO_TYPECHECK(Eina_Bool *, horiz), EO_TYPECHECK(Eina_Bool *, vert)
+
+/**
  * @def elm_scrollable_interface_bounce_allow_set
  * @since 1.8
  *
@@ -1126,6 +1153,8 @@ struct _Elm_Scrollable_Smart_Interface_Data
 
    Eina_Bool  momentum_animator_disabled : 1;
    Eina_Bool  bounce_animator_disabled : 1;
+   Eina_Bool  page_snap_horiz : 1;
+   Eina_Bool  page_snap_vert : 1;
    Eina_Bool  wheel_disabled : 1;
    Eina_Bool  hbar_visible : 1;
    Eina_Bool  vbar_visible : 1;

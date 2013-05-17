@@ -1541,8 +1541,29 @@ _elm_scroll_content_pos_set(Eo *obj, void *_pd, va_list *list)
    eo_do(sid->pan_obj, elm_obj_pan_pos_max_get(&mx, &my));
    eo_do(sid->pan_obj, elm_obj_pan_pos_min_get(&minx, &miny));
    eo_do(sid->pan_obj, elm_obj_pan_pos_get(&px, &py));
+
+   if (_paging_is_enabled(sid) && sid->page_snap_horiz)
+     {
+        //we passed one page to the right
+        if (x > sid->current_page.x + sid->pagesize_h)
+          x = sid->current_page.x + sid->pagesize_h;
+        //we passed one page to the left
+        if (x < sid->current_page.x - sid->pagesize_h)
+          x = sid->current_page.x - sid->pagesize_h;
+     }
+   if (_paging_is_enabled(sid) && sid->page_snap_vert)
+     {
+        //we passed one page to the bottom
+        if (y > sid->current_page.y + sid->pagesize_v)
+          y = sid->current_page.y + sid->pagesize_v;
+        //we passed one page to the top
+        if (y < sid->current_page.y - sid->pagesize_v)
+          y = sid->current_page.y - sid->pagesize_v;
+     }
+
    if (!_elm_config->thumbscroll_bounce_enable)
      {
+
         if (x < minx) x = minx;
         if ((x - minx) > mx) x = mx + minx;
         if (y < miny) y = miny;
@@ -4175,6 +4196,32 @@ _elm_scroll_freeze_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 }
 
 static void
+_elm_scroll_page_snap_allow_set(Eo *obj EINA_UNUSED,
+                                  void *_pd,
+                                  va_list *list)
+{
+   Elm_Scrollable_Smart_Interface_Data *sid = _pd;
+   Eina_Bool horiz = va_arg(*list, int);
+   Eina_Bool vert = va_arg(*list, int);
+
+   sid->page_snap_horiz = !!horiz;
+   sid->page_snap_vert = !!vert;
+}
+
+static void
+_elm_scroll_page_snap_allow_get(Eo *obj EINA_UNUSED,
+                                  void *_pd,
+                                  va_list *list)
+{
+   Elm_Scrollable_Smart_Interface_Data *sid = _pd;
+   Eina_Bool *horiz = va_arg(*list, Eina_Bool *);
+   Eina_Bool *vert = va_arg(*list, Eina_Bool *);
+
+   if (horiz) *horiz = sid->page_snap_horiz;
+   if (vert) *vert = sid->page_snap_vert;
+}
+
+static void
 _elm_scroll_bounce_allow_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Elm_Scrollable_Smart_Interface_Data *sid = _pd;
@@ -4542,6 +4589,8 @@ _elm_scrollable_interface_constructor(Eo_Class *klass)
            EO_OP_FUNC(ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_MIRRORED_SET), _elm_scroll_mirrored_set),
            EO_OP_FUNC(ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_HOLD_SET), _elm_scroll_hold_set),
            EO_OP_FUNC(ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_FREEZE_SET), _elm_scroll_freeze_set),
+           EO_OP_FUNC(ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_PAGE_BOUNCE_ALLOW_SET), _elm_scroll_page_snap_allow_set),
+           EO_OP_FUNC(ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_PAGE_BOUNCE_ALLOW_GET), _elm_scroll_page_snap_allow_get),
            EO_OP_FUNC(ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_BOUNCE_ALLOW_SET), _elm_scroll_bounce_allow_set),
            EO_OP_FUNC(ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_BOUNCE_ALLOW_GET), _elm_scroll_bounce_allow_get),
            EO_OP_FUNC(ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_PAGING_SET), _elm_scroll_paging_set),
@@ -4616,6 +4665,12 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_MIRRORED_SET, "description here"),
      EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_HOLD_SET, "description here"),
      EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_FREEZE_SET, "description here"),
+     EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_PAGE_BOUNCE_ALLOW_SET,
+                       "Enable/disable page bouncing, for paged scrollers, "
+                       "on each axis."),
+     EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_PAGE_BOUNCE_ALLOW_GET,
+                       "Get wether page bouncing is enabled,"
+                       " for paged scrollers, on each axis"),
      EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_BOUNCE_ALLOW_SET, "description here"),
      EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_BOUNCE_ALLOW_GET, "description here"),
      EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_PAGING_SET, "description here"),

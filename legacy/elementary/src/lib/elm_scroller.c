@@ -1022,6 +1022,28 @@ _child_size_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 }
 
 EAPI void
+elm_scroller_page_snap_set(Evas_Object *obj,
+                             Eina_Bool page_snap_h,
+                             Eina_Bool page_snap_v)
+{
+   ELM_SCROLLABLE_CHECK(obj);
+
+   eo_do(obj, elm_scrollable_interface_page_snap_allow_set
+         (page_snap_h, page_snap_v));
+}
+
+EAPI void
+elm_scroller_page_snap_get(const Evas_Object *obj,
+                             Eina_Bool *page_snap_h,
+                             Eina_Bool *page_snap_v)
+{
+   ELM_SCROLLABLE_CHECK(obj);
+
+   eo_do((Eo *) obj, elm_scrollable_interface_page_snap_allow_get
+         (page_snap_h, page_snap_v));
+}
+
+EAPI void
 elm_scroller_bounce_set(Evas_Object *obj,
                         Eina_Bool h_bounce,
                         Eina_Bool v_bounce)
