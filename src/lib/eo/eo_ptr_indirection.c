@@ -222,7 +222,7 @@ typedef struct
 static _Eo_Ids_Table **_eo_ids_tables[MAX_MID_TABLE_ID] = { NULL };
 
 /* Current table used for following allocations */
-static _Eo_Ids_Table *current_table = NULL;
+static _Eo_Ids_Table *_current_table = NULL;
 
 /* Next generation to use when assigning a new entry to a Eo pointer */
 Generation_Counter _eo_generation_counter = 0;
@@ -336,14 +336,14 @@ _search_tables()
              if (entry)
                {
                   /* Store table info into current table */
-                  current_table = table;
+                  _current_table = table;
                   return entry;
                }
           }
      }
 
    ERR("no more available entries to store eo objects");
-   current_table = NULL;
+   _current_table = NULL;
    return NULL;
 }
 
@@ -353,8 +353,8 @@ _eo_id_allocate(const _Eo *obj)
 #ifdef HAVE_EO_ID
    _Eo_Id_Entry *entry = NULL;
 
-   if (current_table)
-     entry = _get_available_entry(current_table);
+   if (_current_table)
+     entry = _get_available_entry(_current_table);
 
    if (!entry)
      {
@@ -371,9 +371,9 @@ _eo_id_allocate(const _Eo *obj)
    entry->ptr = (_Eo *)obj;
    entry->active = 1;
    entry->generation = _eo_generation_counter;
-   PROTECT(current_table);
-   return EO_COMPOSE_FINAL_ID(current_table->partial_id,
-                              (entry - current_table->entries),
+   PROTECT(_current_table);
+   return EO_COMPOSE_FINAL_ID(_current_table->partial_id,
+                              (entry - _current_table->entries),
                               entry->generation);
 #else
    return (Eo_Id)obj;
@@ -439,7 +439,7 @@ _eo_free_ids_tables()
           }
         _eo_ids_tables[mid_table_id] = NULL;
      }
-   current_table = NULL;
+   _current_table = NULL;
 }
 
 #ifdef EFL_DEBUG
