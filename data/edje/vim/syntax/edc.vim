@@ -24,7 +24,7 @@ syn keyword 	edcBlock 	map rotation perspective script lua_script contained
 syn keyword	edcLabel	item name alias min max type effect contained
 syn keyword	edcLabel	mouse_events repeat_events clip_to contained
 syn keyword	edcLabel	x y z confine events scale contained
-syn keyword	edcLabel	ignore_flags precise_is_inside contained
+syn keyword	edcLabel	ignore_flags precise_is_inside select_mode contained
 syn keyword	edcLabel	use_alternate_font_metrics entry_mode contained
 syn keyword	edcLabel	source source2 source3 source4 contained
 syn keyword	edcLabel	source5 source6 multiline pointer_mode contained
@@ -57,6 +57,7 @@ syn keyword	edcConstant	ACCEL_FAC DECEL_FAC SIN_FAC DIVISOR_INTERP
 syn keyword	edcConstant	ACCELERATE_FACTOR DECELERATE_FACTOR
 syn keyword	edcConstant	VERTICAL HORIZONTAL BOTH BOX TABLE
 syn keyword	edcConstant	EDITABLE PASSWORD "default"
+syn keyword edcConstant DEFAULT EXPLICIT BLOCK_HANDLE 
 syn keyword edcConstant SOLID
 
 syn keyword	edcTodo		contained TODO FIXME XXX
