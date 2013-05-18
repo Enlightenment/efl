@@ -1,4 +1,5 @@
 #include "evas_gl_private.h"
+#include "evas_gl_common.h"
 
 static const GLenum rgba_fmt   = GL_RGBA;
 static const GLenum rgba_ifmt  = GL_RGBA;
