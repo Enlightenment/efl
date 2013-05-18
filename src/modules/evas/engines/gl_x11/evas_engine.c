@@ -1395,14 +1395,14 @@ eng_output_redraws_next_update_push(void *data, void *surface EINA_UNUSED, int x
    // this is needed to make sure all previous rendering is flushed to
    // buffers/surfaces
    // previous rendering should be done and swapped
-   if (!safe_native) eglWaitNative(EGL_CORE_NATIVE_ENGINE);
+//xx   if (!safe_native) eglWaitNative(EGL_CORE_NATIVE_ENGINE);
 //   if (eglGetError() != EGL_SUCCESS)
 //     {
 //        printf("Error:  eglWaitNative(EGL_CORE_NATIVE_ENGINE) fail.\n");
 //     }
 #else
    // previous rendering should be done and swapped
-   if (!safe_native) glXWaitX();
+//xx   if (!safe_native) glXWaitX();
 #endif
 }
 
@@ -1491,7 +1491,7 @@ eng_output_flush(void *data, Evas_Render_Mode render_mode)
      }
    else
      eglSwapBuffers(re->win->egl_disp, re->win->egl_surface[0]);
-   if (!safe_native) eglWaitGL();
+//xx   if (!safe_native) eglWaitGL();
    if (re->info->callback.post_swap)
      {
         re->info->callback.post_swap(re->info->callback.data, re->evas);
