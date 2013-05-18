@@ -8,10 +8,12 @@
 #include <Eina.h>
 
 #include <librsvg/rsvg.h>
-#include <librsvg/librsvg-features.h>
+#ifndef LIBRSVG_CHECK_VERSION
+# include <librsvg/librsvg-features.h>
+#endif
 #if LIBRSVG_CHECK_VERSION(2,36,2)
 #else
-#include <librsvg/rsvg-cairo.h>
+# include <librsvg/rsvg-cairo.h>
 #endif
 
 #define DATA32 unsigned int
