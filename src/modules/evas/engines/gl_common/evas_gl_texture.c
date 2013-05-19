@@ -383,6 +383,9 @@ _pool_tex_render_new(Evas_Engine_GL_Context *gc, int w, int h, int intformat, in
 # ifndef GL_COLOR_ATTACHMENT0
 #  define GL_COLOR_ATTACHMENT0 GL_COLOR_ATTACHMENT0_OES
 # endif
+# ifndef GL_DRAW_FRAMEBUFFER_BINDING
+#  define GL_DRAW_FRAMEBUFFER_BINDING GL_FRAMEBUFFER_BINDING
+# endif
 #else
 # ifndef GL_FRAMEBUFFER
 #  define GL_FRAMEBUFFER GL_FRAMEBUFFER_EXT
