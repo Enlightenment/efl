@@ -363,6 +363,7 @@ jump_simple_stuff:
    eina_strbuf_append_printf(c_code, "   if (!eldbus_message_arguments_get(msg, \"%s\"%s))\n", eina_strbuf_string_get(full_signature), eina_strbuf_string_get(parameters));
    eina_strbuf_append_printf(c_code, "     {\n");
    eina_strbuf_append_printf(c_code, "        ERR(\"Error: Getting arguments from message.\");\n");
+   eina_strbuf_append_printf(c_code, "        free(s_data);\n");
    eina_strbuf_append_printf(c_code, "        return;\n");
    eina_strbuf_append_printf(c_code, "     }\n");
    eina_strbuf_append(c_code, eina_strbuf_string_get(string_copy));
