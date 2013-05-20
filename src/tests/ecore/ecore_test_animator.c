@@ -11,7 +11,7 @@ static double prev = 0;
 static Eina_Bool _anim_cb(void *data, double pos)
 {
 
-  fail_if(prev >= pos);
+  fail_if(prev > pos);
   prev = pos;
 
   if (pos == 1.0)
