@@ -1409,7 +1409,7 @@ _elm_diskselector_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
         _item_del(it);
         elm_widget_item_free(it);
      }
-   eina_list_free(sd->r_items);
+   sd->r_items = eina_list_free(sd->r_items);
 
    if (sd->scroller_move_idle_enterer)
      {
