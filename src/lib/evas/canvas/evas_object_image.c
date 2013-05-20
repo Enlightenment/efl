@@ -185,7 +185,7 @@ static const Evas_Object_Func object_func =
 };
 
 static const Evas_Object_Image_Load_Opts default_load_opts = {
-  0, 0, 0, 0, { 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0, 0, 0 }, 0
+  0, 0.0, 0, 0, { 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0, 0, 0 }, 0
 };
 
 static const Evas_Object_Image_Pixels default_pixels = {
@@ -534,6 +534,7 @@ _image_init_set(Eina_File *f, const char *file, const char *key,
    lo->scale_load.smooth = o->load_opts->scale_load.smooth;
    lo->scale_load.scale_hint = o->load_opts->scale_load.scale_hint;
    lo->orientation = o->load_opts->orientation;
+   lo->degree = 0;
 }
 
 static void
@@ -3473,6 +3474,7 @@ evas_object_image_load(Evas_Object *eo_obj)
    lo.scale_load.smooth = o->load_opts->scale_load.smooth;
    lo.scale_load.scale_hint = o->load_opts->scale_load.scale_hint;
    lo.orientation = o->load_opts->orientation;
+   lo.degree = 0;
    o->engine_data = obj->layer->evas->engine.func->image_load
       (obj->layer->evas->engine.data.output,
           o->cur->file,
