@@ -247,13 +247,16 @@ _wref_destruct(Private_Data *pd)
 struct _Eo_Callback_Description
 {
    Eo_Callback_Description *next;
+
    union
      {
         Eo_Callback_Array_Item item;
         const Eo_Callback_Array_Item *item_array;
      } items;
+
    void *func_data;
    Eo_Callback_Priority priority;
+
    Eina_Bool delete_me : 1;
    Eina_Bool func_array : 1;
 };
@@ -452,9 +455,6 @@ _ev_cb_call(Eo *obj, void *class_data, va_list *list)
 
    if (ret) *ret = EINA_TRUE;
 
-   if (event_freeze_count || pd->event_freeze_count)
-      return;
-
    /* FIXME: Change eo_ref to _eo_ref and unref. */
    eo_ref(obj);
    pd->walking_list++;
@@ -471,6 +471,10 @@ _ev_cb_call(Eo *obj, void *class_data, va_list *list)
                     {
                        if (it->desc != desc)
                           continue;
+                       if (!it->desc->unfreezable &&
+                           (event_freeze_count || pd->event_freeze_count))
+                          continue;
+
                        /* Abort callback calling if the func says so. */
                        if (!it->func((void *) cb->func_data, obj, desc,
                                 (void *) event_info))
@@ -482,6 +486,11 @@ _ev_cb_call(Eo *obj, void *class_data, va_list *list)
                }
              else
                {
+                  if ((!cb->items.item.desc
+                       || !cb->items.item.desc->unfreezable) &&
+                      (event_freeze_count || pd->event_freeze_count))
+                    continue;
+
                   if (cb->items.item.desc == desc)
                     {
                        /* Abort callback calling if the func says so. */

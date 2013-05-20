@@ -271,6 +271,8 @@ struct _Eo_Event_Description
 {
    const char *name; /**< name of the event. */
    const char *doc; /**< Explanation about the event. */
+
+   Eina_Bool   unfreezable; /**< Eina_True if the event cannot be frozen */
 };
 
 /**
@@ -286,7 +288,20 @@ typedef struct _Eo_Event_Description Eo_Event_Description;
  * @param doc Additional doc for the event.
  * @see Eo_Event_Description
  */
-#define EO_EVENT_DESCRIPTION(name, doc) { name, doc }
+#define EO_EVENT_DESCRIPTION(name, doc) { name, doc, EINA_FALSE }
+
+/**
+ * @def EO_HOT_EVENT_DESCRIPTION(name, doc)
+ * An helper macro to help populating #Eo_Event_Description and make
+ * the event impossible to freeze.
+ * @param name The name of the event.
+ * @param doc Additional doc for the event.
+ * @see Eo_Event_Description
+ * @see EO_EVENT_DESCRIPTION
+ */
+#define EO_HOT_EVENT_DESCRIPTION(name, doc) { name, doc, EINA_TRUE }
+
+
 
 /**
  * @}
