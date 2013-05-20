@@ -1170,7 +1170,7 @@ EAPI void      elm_config_mirrored_set(Eina_Bool mirrored);
  * @since 1.8
  * @return EINA_TRUE if clouseau was tried to run, EINA_FALSE otherwise
  */
-EAPI Eina_Bool elm_config_clouseau_enable_get(void);
+EAPI Eina_Bool elm_config_clouseau_enabled_get(void);
 
 /**
  * Get the clouseau state. EINA_TRUE if clouseau should be attempted to be run.
@@ -1178,7 +1178,7 @@ EAPI Eina_Bool elm_config_clouseau_enable_get(void);
  * @since 1.8
  * @param enabled EINA_TRUE to try and run clouseau, EINA_FALSE otherwise.
  */
-EAPI void      elm_config_clouseau_enable_set(Eina_Bool enabled);
+EAPI void      elm_config_clouseau_enabled_set(Eina_Bool enabled);
 
 /**
  * Get the indicator service name according to the rotation degree.

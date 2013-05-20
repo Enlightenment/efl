@@ -768,10 +768,10 @@ dbg_change(void *data       __UNUSED__,
           void *event_info __UNUSED__)
 {
    Eina_Bool val = elm_check_state_get(obj);
-   Eina_Bool sel = elm_config_clouseau_enable_get();
+   Eina_Bool sel = elm_config_clouseau_enabled_get();
 
    if (val == sel) return;
-   elm_config_clouseau_enable_set(val);
+   elm_config_clouseau_enabled_set(val);
    elm_config_all_flush();
    elm_config_save();
 }
@@ -1530,7 +1530,7 @@ _status_config_debug(Evas_Object *win,
    evas_object_data_set(win, "clouseau_check", ck);
    evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(ck, EVAS_HINT_FILL, 0.5);
-   elm_check_state_set(ck, elm_config_clouseau_enable_get());
+   elm_check_state_set(ck, elm_config_clouseau_enabled_get());
    elm_box_pack_end(bx, ck);
    evas_object_show(ck);
 

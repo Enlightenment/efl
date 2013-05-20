@@ -2303,13 +2303,13 @@ elm_config_disable_external_menu_set(Eina_Bool disable)
 }
 
 EAPI Eina_Bool
-elm_config_clouseau_enable_get(void)
+elm_config_clouseau_enabled_get(void)
 {
    return _elm_config->clouseau_enable;
 }
 
 EAPI void
-elm_config_clouseau_enable_set(Eina_Bool enable)
+elm_config_clouseau_enabled_set(Eina_Bool enable)
 {
    _elm_config->clouseau_enable = !!enable;
    _elm_clouseau_reload();
