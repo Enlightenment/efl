@@ -493,13 +493,13 @@ AC_ARG_ENABLE([eldbus],
 if test "x$want_elementary_eldbus" != "xno"; then
     PKG_CHECK_MODULES([ELEMENTARY_ELDBUS],
        [
-        eldbus >= 1.6.99
+        eldbus >= 1.7.99
        ],
        [
         AC_DEFINE(HAVE_ELEMENTARY_ELDBUS, 1, [Eldbus support for Elementary])
         have_elementary_eldbus="yes"
         ELM_ELDBUS_DEF="#define"
-        requirement_elm="eldbus >= 1.6.99 ${requirement_elm}"
+        requirement_elm="eldbus >= 1.7.99 ${requirement_elm}"
        ],
        [have_elementary_eldbus="no"]
     )
@@ -507,7 +507,7 @@ else
     have_elementary_eldbus="no"
 fi
 if test "x$want_elementary_eldbus" = "xyes" -a "x$have_elementary_eldbus" = "xno"; then
-    AC_MSG_ERROR([Eldbus (v2) support requested, but no eldbus found by pkg-config.])
+    AC_MSG_ERROR([eldbus support requested, but no eldbus found by pkg-config.])
 fi
 AC_SUBST(ELM_ELDBUS_DEF)
 
@@ -535,7 +535,7 @@ else
     have_elementary_elocation="no"
 fi
 if test "x$want_elementary_elocation" = "xyes" -a "x$have_elementary_elocation" = "xno"; then
-    AC_MSG_ERROR([Eldbus (v2) support requested, but no elocation found by pkg-config.])
+    AC_MSG_ERROR([elocation support requested, but no elocation found by pkg-config.])
 fi
 AC_SUBST(ELM_ELOCATION_DEF)
 
@@ -858,7 +858,7 @@ echo
 echo "  Features:"
 echo "    Ecore_IMF..............: ${have_ecore_imf}"
 echo "    Ecore_Con..............: ${have_ecore_con}"
-echo "    Eldbus..................: v2=${have_elementary_eldbus}"
+echo "    Eldbus.................: ${have_elementary_eldbus}"
 echo "    EFreet.................: ${have_elementary_efreet}"
 echo "    EWeather...............: ${have_elementary_eweather}"
 echo "    EMap...................: ${have_elementary_emap}"
