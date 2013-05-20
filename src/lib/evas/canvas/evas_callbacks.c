@@ -63,17 +63,17 @@ EAPI const Eo_Event_Description _EVAS_OBJECT_EVENT_RENDER_POST =
    EO_EVENT_DESCRIPTION("Render Post", "Called just after rendering stops on the canvas target @since 1.2");
 
 EAPI const Eo_Event_Description _EVAS_CANVAS_EVENT_FOCUS_IN =
-   EO_EVENT_DESCRIPTION("Canvas Focus In", "Canvas got focus as a whole");
+   EO_HOT_EVENT_DESCRIPTION("Canvas Focus In", "Canvas got focus as a whole");
 EAPI const Eo_Event_Description _EVAS_CANVAS_EVENT_FOCUS_OUT =
-   EO_EVENT_DESCRIPTION("Canvas Focus Out", "Canvas lost focus as a whole");
+   EO_HOT_EVENT_DESCRIPTION("Canvas Focus Out", "Canvas lost focus as a whole");
 EAPI const Eo_Event_Description _EVAS_CANVAS_EVENT_RENDER_FLUSH_PRE =
-   EO_EVENT_DESCRIPTION("Render Flush Pre", "Called just before rendering is updated on the canvas target");
+   EO_HOT_EVENT_DESCRIPTION("Render Flush Pre", "Called just before rendering is updated on the canvas target");
 EAPI const Eo_Event_Description _EVAS_CANVAS_EVENT_RENDER_FLUSH_POST =
-   EO_EVENT_DESCRIPTION("Render Flush Post", "Called just after rendering is updated on the canvas target");
+   EO_HOT_EVENT_DESCRIPTION("Render Flush Post", "Called just after rendering is updated on the canvas target");
 EAPI const Eo_Event_Description _EVAS_CANVAS_EVENT_OBJECT_FOCUS_IN =
-   EO_EVENT_DESCRIPTION("Canvas Object Focus In", "Canvas object got focus");
+   EO_HOT_EVENT_DESCRIPTION("Canvas Object Focus In", "Canvas object got focus");
 EAPI const Eo_Event_Description _EVAS_CANVAS_EVENT_OBJECT_FOCUS_OUT =
-   EO_EVENT_DESCRIPTION("Canvas Object Focus Out", "Canvas object lost focus");
+   EO_HOT_EVENT_DESCRIPTION("Canvas Object Focus Out", "Canvas object lost focus");
 
 /**
  * Evas events descriptions for Eo.
