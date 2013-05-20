@@ -383,9 +383,6 @@ _pool_tex_render_new(Evas_Engine_GL_Context *gc, int w, int h, int intformat, in
 # ifndef GL_COLOR_ATTACHMENT0
 #  define GL_COLOR_ATTACHMENT0 GL_COLOR_ATTACHMENT0_OES
 # endif
-# ifndef GL_DRAW_FRAMEBUFFER_BINDING
-#  define GL_DRAW_FRAMEBUFFER_BINDING GL_FRAMEBUFFER_BINDING
-# endif
 #else
 # ifndef GL_FRAMEBUFFER
 #  define GL_FRAMEBUFFER GL_FRAMEBUFFER_EXT
@@ -399,7 +396,7 @@ _pool_tex_render_new(Evas_Engine_GL_Context *gc, int w, int h, int intformat, in
 
    _print_tex_count();
 
-   glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &fnum);
+   glGetIntegerv(GL_FRAMEBUFFER_BINDING, &fnum);
    glGenTextures(1, &(pt->texture));
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    glBindTexture(GL_TEXTURE_2D, pt->texture);
