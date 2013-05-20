@@ -187,6 +187,7 @@ _prop_config_get(void)
    _elm_config_font_overlay_apply();
    _elm_rescale();
    _elm_recache();
+   _elm_clouseau_reload();
    _elm_win_access(_elm_config->access_mode);
    ecore_event_add(ELM_EVENT_CONFIG_ALL_CHANGED, NULL, NULL, NULL);
    return EINA_TRUE;
@@ -434,6 +435,7 @@ _desc_init(void)
    ELM_CONFIG_VAL(D, T, indicator_service_180, T_STRING);
    ELM_CONFIG_VAL(D, T, indicator_service_270, T_STRING);
    ELM_CONFIG_VAL(D, T, disable_external_menu, T_UCHAR);
+   ELM_CONFIG_VAL(D, T, clouseau_enable, T_UCHAR);
 #undef T
 #undef D
 #undef T_INT
@@ -1700,6 +1702,9 @@ _env_get(void)
    if (s) eina_stringshare_replace(&_elm_config->indicator_service_270, s);
    s = getenv("ELM_DISABLE_EXTERNAL_MENU");
    if (s) _elm_config->disable_external_menu = !!atoi(s);
+
+   s = getenv("ELM_CLOUSEAU");
+   if (s) _elm_config->clouseau_enable = atoi(s);
 }
 
 EAPI Eina_Bool
@@ -2297,6 +2302,19 @@ elm_config_disable_external_menu_set(Eina_Bool disable)
    _elm_config->disable_external_menu = !!disable;
 }
 
+EAPI Eina_Bool
+elm_config_clouseau_enable_get(void)
+{
+   return _elm_config->clouseau_enable;
+}
+
+EAPI void
+elm_config_clouseau_enable_set(Eina_Bool enable)
+{
+   _elm_config->clouseau_enable = !!enable;
+   _elm_clouseau_reload();
+}
+
 EAPI void
 elm_config_all_flush(void)
 {
@@ -2348,6 +2366,7 @@ _elm_config_init(void)
    _config_apply();
    _elm_config_font_overlay_apply();
    _elm_recache();
+   _elm_clouseau_reload();
 }
 
 void
@@ -2439,6 +2458,7 @@ _elm_config_reload(void)
    _elm_config_font_overlay_apply();
    _elm_rescale();
    _elm_recache();
+   _elm_clouseau_reload();
    ecore_event_add(ELM_EVENT_CONFIG_ALL_CHANGED, NULL, NULL, NULL);
 }
 
@@ -2510,6 +2530,7 @@ _elm_config_profile_set(const char *profile)
         _elm_config_font_overlay_apply();
         _elm_rescale();
         _elm_recache();
+        _elm_clouseau_reload();
      }
 }
 

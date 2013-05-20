@@ -239,6 +239,7 @@ struct _Elm_Config
    const char   *indicator_service_270;
    unsigned char selection_clear_enable;
    unsigned char disable_external_menu;
+   unsigned char clouseau_enable;
 
    /* Not part of the EET file */
    Eina_Bool     is_mirrored : 1;
@@ -338,6 +339,7 @@ void                 _elm_unneed_ethumb(void);
 void                 _elm_unneed_web(void);
 
 void                 _elm_rescale(void);
+Eina_Bool            _elm_clouseau_reload(void);
 
 void                 _elm_config_init(void);
 void                 _elm_config_sub_init(void);

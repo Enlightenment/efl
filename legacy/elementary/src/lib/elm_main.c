@@ -209,6 +209,7 @@ static struct {
      void (*init)(void);
      void (*shutdown)(void);
      Eina_Bool (*app_connect)(const char *appname);
+     Eina_Bool is_init;
 } _clouseau_info;
 
 #define _CLOUSEAU_LOAD_SYMBOL(cls_struct, sym) \
@@ -225,16 +226,37 @@ static struct {
      } \
    while (0)
 
-static Eina_Bool
-_clouseau_module_load()
+static void
+_elm_clouseau_unload()
 {
-   const char *elm_clouseau_env = getenv("ELM_CLOUSEAU");
-   Eina_Bool want_cls = EINA_FALSE;
-   if (elm_clouseau_env)
-      want_cls = atoi(elm_clouseau_env);
+   if (!_clouseau_info.is_init)
+      return;
 
-   if (!want_cls)
-      return EINA_FALSE;
+   if (_clouseau_info.shutdown)
+     {
+        _clouseau_info.shutdown();
+     }
+
+   if (_clouseau_info.handle)
+     {
+        eina_module_free(_clouseau_info.handle);
+        _clouseau_info.handle = NULL;
+     }
+
+   _clouseau_info.is_init = EINA_FALSE;
+}
+
+Eina_Bool
+_elm_clouseau_reload()
+{
+   if (!_elm_config->clouseau_enable)
+     {
+        _elm_clouseau_unload();
+        return EINA_TRUE;
+     }
+
+   if (_clouseau_info.is_init)
+      return EINA_TRUE;
 
    _clouseau_info.handle = eina_module_new(
          PACKAGE_LIB_DIR "/libclouseau" LIBEXT);
@@ -250,6 +272,14 @@ _clouseau_module_load()
    _CLOUSEAU_LOAD_SYMBOL(_clouseau_info, shutdown);
    _CLOUSEAU_LOAD_SYMBOL(_clouseau_info, app_connect);
 
+   _clouseau_info.init();
+   if(!_clouseau_info.app_connect(elm_app_name_get()))
+     {
+        ERR("Failed connecting to the clouseau server.");
+     }
+
+   _clouseau_info.is_init = EINA_TRUE;
+
    return EINA_TRUE;
 }
 
@@ -262,15 +292,6 @@ elm_init(int    argc,
    elm_quicklaunch_init(argc, argv);
    elm_quicklaunch_sub_init(argc, argv);
    _prefix_shutdown();
-
-   if (_clouseau_module_load())
-     {
-        _clouseau_info.init();
-        if(!_clouseau_info.app_connect(elm_app_name_get()))
-          {
-             ERR("Failed connecting to the clouseau server.");
-          }
-     }
 
    return _elm_init_count;
 }
@@ -288,12 +309,7 @@ elm_shutdown(void)
    _elm_win_shutdown();
    while (_elm_win_deferred_free) ecore_main_loop_iterate();
 
-   if (_clouseau_info.shutdown)
-     {
-        _clouseau_info.shutdown();
-        eina_module_free(_clouseau_info.handle);
-        _clouseau_info.handle = NULL;
-     }
+   _elm_clouseau_unload();
 // wrningz :(
 //   _prefix_shutdown();
    if (app_name)
