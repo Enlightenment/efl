@@ -489,6 +489,29 @@ _on_done(void *data,
 }
 
 static void
+_on_direct(void *data,
+           Evas_Object *obj __UNUSED__,
+           void *event_info __UNUSED__)
+{
+   elm_glview_mode_set(data, 0
+                       | ELM_GLVIEW_ALPHA
+                       | ELM_GLVIEW_DEPTH
+                       | ELM_GLVIEW_DIRECT
+                      );
+}
+
+static void
+_on_indirect(void *data,
+           Evas_Object *obj __UNUSED__,
+           void *event_info __UNUSED__)
+{
+   elm_glview_mode_set(data, 0
+                       | ELM_GLVIEW_ALPHA
+                       | ELM_GLVIEW_DEPTH
+                      );
+}
+
+static void
 _del(void *data __UNUSED__, Evas *evas __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Ecore_Animator *ani = evas_object_data_get(obj, "ani");
@@ -568,7 +591,7 @@ _mouse_up(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *eve
 void
 test_glview(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bx, *bt, *gl;
+   Evas_Object *win, *bx0, *bx, *bt, *gl;
    Ecore_Animator *ani;
    GLData *gld = NULL;
 
@@ -581,16 +604,44 @@ test_glview(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 
    elm_win_autodel_set(win, EINA_TRUE);
 
+   bx0 = elm_box_add(win);
+   elm_box_horizontal_set(bx0, EINA_TRUE);
+   evas_object_size_hint_weight_set(bx0, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bx0);
+   evas_object_show(bx0);
+
+   /* add an ok button */
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "OK");
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(bt, 0.0, EVAS_HINT_EXPAND);
+   elm_box_pack_end(bx0, bt);
+   evas_object_show(bt);
+   evas_object_smart_callback_add(bt, "clicked", _on_done, win);
+   
    bx = elm_box_add(win);
+   evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, bx);
+   elm_box_pack_end(bx0, bx);
    evas_object_show(bx);
+
+   /* add an ok button */
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "OK");
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
+   evas_object_smart_callback_add(bt, "clicked", _on_done, win);
 
    // Add a GLView
    gl = elm_glview_add(win);
    evas_object_size_hint_align_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_glview_mode_set(gl, ELM_GLVIEW_ALPHA|ELM_GLVIEW_DEPTH);
+   elm_glview_mode_set(gl, 0
+                       | ELM_GLVIEW_ALPHA
+                       | ELM_GLVIEW_DEPTH
+                      );
    elm_glview_resize_policy_set(gl, ELM_GLVIEW_RESIZE_POLICY_RECREATE);
    elm_glview_render_policy_set(gl, ELM_GLVIEW_RENDER_POLICY_ALWAYS);
    elm_glview_init_func_set(gl, _init_gl);
@@ -616,13 +667,22 @@ test_glview(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 
    /* add an ok button */
    bt = elm_button_add(win);
-   elm_object_text_set(bt, "OK");
+   elm_object_text_set(bt, "Direct");
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
-   evas_object_smart_callback_add(bt, "clicked", _on_done, win);
+   evas_object_smart_callback_add(bt, "clicked", _on_direct, gl);
 
+   /* add an ok button */
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "I");
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(bt, 0.0, EVAS_HINT_EXPAND);
+   elm_box_pack_end(bx0, bt);
+   evas_object_show(bt);
+   evas_object_smart_callback_add(bt, "clicked", _on_indirect, gl);
+   
    evas_object_resize(win, 320, 480);
    evas_object_show(win);
 }
