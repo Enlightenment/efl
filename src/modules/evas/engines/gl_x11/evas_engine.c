@@ -52,6 +52,7 @@ struct _Render_Engine
    int                      vsync;
    int                      lost_back;
    int                      prev_age;
+   Eina_Bool                evgl_initted : 1;
 };
 
 static int initted = 0;
@@ -152,6 +153,10 @@ measure(int end, const char *name)
 }
 #endif
 
+static int evgl_init(Render_Engine *re);
+
+#define EVGLINIT(_re, _ret) if (!evgl_init(_re)) return _ret
+
 //----------------------------------------------------------//
 // NEW_EVAS_GL Engine Functions
 static void *
@@ -159,10 +164,11 @@ evgl_eng_display_get(void *data)
 {
    Render_Engine *re = (Render_Engine *)data;
 
+   EVGLINIT(re, NULL);
    if (!re)
      {
         ERR("Invalid Render Engine Data!");
-        return 0;
+        return NULL;
      }
 
 #ifdef GL_GLES
@@ -181,10 +187,11 @@ evgl_eng_evas_surface_get(void *data)
 {
    Render_Engine *re = (Render_Engine *)data;
 
+   EVGLINIT(re, NULL);
    if (!re)
      {
         ERR("Invalid Render Engine Data!");
-        return 0;
+        return NULL;
      }
 
 #ifdef GL_GLES
@@ -204,6 +211,7 @@ evgl_eng_make_current(void *data, void *surface, void *context, int flush)
    Render_Engine *re = (Render_Engine *)data;
    int ret = 0;
 
+   EVGLINIT(re, 0);
    if (!re)
      {
         ERR("Invalid Render Engine Data!");
@@ -289,6 +297,7 @@ evgl_eng_native_window_create(void *data)
 {
    Render_Engine *re = (Render_Engine *)data;
 
+   EVGLINIT(re, NULL);
    if (!re)
      {
         ERR("Invalid Render Engine Data!");
@@ -331,6 +340,7 @@ evgl_eng_native_window_destroy(void *data, void *native_window)
 {
    Render_Engine *re = (Render_Engine *)data;
 
+   EVGLINIT(re, 0);
    if (!re)
      {
         ERR("Invalid Render Engine Data!");
@@ -358,6 +368,7 @@ evgl_eng_window_surface_create(void *data, void *native_window)
 {
    Render_Engine *re = (Render_Engine *)data;
 
+   EVGLINIT(re, NULL);
    if (!re)
      {
         ERR("Invalid Render Engine Data!");
@@ -398,6 +409,7 @@ evgl_eng_window_surface_destroy(void *data, void *surface)
 {
    Render_Engine *re = (Render_Engine *)data;
 
+   EVGLINIT(re, 0);
    if (!re)
      {
         ERR("Invalid Render Engine Data!");
@@ -423,6 +435,7 @@ evgl_eng_context_create(void *data, void *share_ctx)
 {
    Render_Engine *re = (Render_Engine *)data;
 
+   EVGLINIT(re, NULL);
    if (!re)
      {
         ERR("Invalid Render Engine Data!");
@@ -495,6 +508,7 @@ evgl_eng_context_destroy(void *data, void *context)
 {
    Render_Engine *re = (Render_Engine *)data;
 
+   EVGLINIT(re, 0);
    if ((!re) || (!context))
      {
         ERR("Invalid Render Input Data. Engine: %p, Context: %p", data, context);
@@ -515,6 +529,7 @@ evgl_eng_string_get(void *data)
 {
    Render_Engine *re = (Render_Engine *)data;
 
+   EVGLINIT(re, NULL);
    if (!re)
      {
         ERR("Invalid Render Engine Data!");
@@ -550,6 +565,7 @@ evgl_eng_rotation_angle_get(void *data)
 {
    Render_Engine *re = (Render_Engine *)data;
 
+   EVGLINIT(re, 0);
    if (!re)
      {
         ERR("Invalid Render Engine Data!");
@@ -799,6 +815,15 @@ _re_winfree(Render_Engine *re)
 }
 
 static int
+evgl_init(Render_Engine *re)
+{
+   if (re->evgl_initted) return 1;
+   if (!evgl_engine_init(re, &evgl_funcs)) return 0;
+   re->evgl_initted = EINA_TRUE;
+   return 1;
+}
+
+static int
 eng_setup(Evas *eo_e, void *in)
 {
    Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CLASS);
@@ -856,7 +881,7 @@ eng_setup(Evas *eo_e, void *in)
              evas_common_draw_init();
              evas_common_tilebuf_init();
              gl_extn_veto(re);
-             evgl_engine_init(re, &evgl_funcs);
+//             evgl_engine_init(re, &evgl_funcs);
              initted = 1;
           }
      }
@@ -3000,6 +3025,7 @@ eng_gl_surface_create(void *data, void *config, int w, int h)
 {
    Evas_GL_Config *cfg = (Evas_GL_Config *)config;
 
+   EVGLINIT(data, NULL);
    return evgl_surface_create(data, cfg, w, h);
 }
 
@@ -3008,6 +3034,7 @@ eng_gl_surface_destroy(void *data, void *surface)
 {
    EVGL_Surface  *sfc = (EVGL_Surface *)surface;
 
+   EVGLINIT(data, 0);
    return evgl_surface_destroy(data, sfc);
 }
 
@@ -3016,6 +3043,7 @@ eng_gl_context_create(void *data, void *share_context)
 {
    EVGL_Context  *sctx = (EVGL_Context *)share_context;
 
+   EVGLINIT(data, NULL);
    return evgl_context_create(data, sctx);
 }
 
@@ -3024,6 +3052,7 @@ eng_gl_context_destroy(void *data, void *context)
 {
    EVGL_Context  *ctx = (EVGL_Context *)context;
 
+   EVGLINIT(data, 0);
    return evgl_context_destroy(data, ctx);
 }
 
@@ -3033,12 +3062,14 @@ eng_gl_make_current(void *data, void *surface, void *context)
    EVGL_Surface  *sfc = (EVGL_Surface *)surface;
    EVGL_Context  *ctx = (EVGL_Context *)context;
 
+   EVGLINIT(data, 0);
    return evgl_make_current(data, sfc, ctx);
 }
 
 static void *
-eng_gl_string_query(void *data EINA_UNUSED, int name)
+eng_gl_string_query(void *data, int name)
 {
+   EVGLINIT(data, NULL);
    return (void *)evgl_string_query(name);
 }
 
@@ -3059,8 +3090,9 @@ eng_gl_native_surface_get(void *data EINA_UNUSED, void *surface, void *native_su
 }
 
 static void *
-eng_gl_api_get(void *data EINA_UNUSED)
+eng_gl_api_get(void *data)
 {
+   EVGLINIT(data, NULL);
    return evgl_api_get();
 }
 
@@ -3069,6 +3101,7 @@ eng_gl_img_obj_set(void *data EINA_UNUSED, void *image, int has_alpha)
 {
    Render_Engine *re = (Render_Engine *)data;
 
+   EVGLINIT(data, );
    evgl_direct_img_obj_set(image, has_alpha, re->win->gl_context->rot);
 }
 //--------------------------------//
