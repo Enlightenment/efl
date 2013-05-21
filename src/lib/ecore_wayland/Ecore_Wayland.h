@@ -652,6 +652,17 @@ EAPI struct wl_surface *ecore_wl_window_surface_create(Ecore_Wl_Window *win);
 EAPI void ecore_wl_window_alpha_set(Ecore_Wl_Window *win, Eina_Bool alpha);
 EAPI Eina_Bool ecore_wl_window_alpha_get(Ecore_Wl_Window *win);
 
+/**
+ * Returns the Ecore_Wl_Window from a wl_surface
+ * 
+ * @param surface The surface for which to find the Ecore_Wl_Window from
+ * @return the Ecore_Wl_Window associated with this surface
+ * 
+ * @ingroup Ecore_Wl_Window_Group
+ * @since 1.8
+ */
+EAPI Ecore_Wl_Window *ecore_wl_window_surface_find(struct wl_surface *surface);
+
 #ifdef __cplusplus
 }
 #endif

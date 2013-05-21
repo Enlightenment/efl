@@ -253,7 +253,6 @@ ecore_wl_window_surface_create(Ecore_Wl_Window *win)
    if (win->surface) return NULL;
 
    win->surface = wl_compositor_create_surface(_ecore_wl_disp->wl.compositor);
-   wl_surface_set_user_data(win->surface, win);
    return win->surface;
 }
 
@@ -466,6 +465,7 @@ EAPI void
 ecore_wl_window_update_size(Ecore_Wl_Window *win, int w, int h)
 {
    struct wl_region *opaque = NULL;
+
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!win) return;
@@ -579,6 +579,28 @@ ecore_wl_window_parent_set(Ecore_Wl_Window *win, Ecore_Wl_Window *parent)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    win->parent = parent;
+}
+
+EAPI Ecore_Wl_Window *
+ecore_wl_window_surface_find(struct wl_surface *surface)
+{
+   Eina_Iterator *itr;
+   Ecore_Wl_Window *win = NULL;
+   void *data;
+
+   itr = eina_hash_iterator_data_new(_windows);
+   while (eina_iterator_next(itr, &data))
+     {
+        if (((Ecore_Wl_Window *)data)->surface == surface)
+          {
+             win = data;
+             break;
+          }
+     }
+
+   eina_iterator_free(itr);
+
+   return win;
 }
 
 /* local functions */
