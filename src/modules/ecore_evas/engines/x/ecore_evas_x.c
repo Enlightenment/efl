@@ -2628,9 +2628,9 @@ static void
 _ecore_evas_x_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int layer, int hot_x, int hot_y)
 {
    int x, y;
+   Evas_Object* old;
 
-   if (ee->prop.cursor.object) evas_object_del(ee->prop.cursor.object);
-
+   old = ee->prop.cursor.object;
    if (!obj)
      {
         ee->prop.cursor.object = NULL;
@@ -2638,7 +2638,7 @@ _ecore_evas_x_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int layer, int
         ee->prop.cursor.hot.x = 0;
         ee->prop.cursor.hot.y = 0;
         ecore_x_window_cursor_show(ee->prop.window, 1);
-        return;
+        goto end;
      }
 
    ee->prop.cursor.object = obj;
@@ -2658,6 +2658,9 @@ _ecore_evas_x_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int layer, int
      evas_object_show(ee->prop.cursor.object);
 
    evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL, _ecore_evas_object_cursor_del, ee);
+
+end:
+   if (old) evas_object_del(old);
 }
 
 /*
