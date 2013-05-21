@@ -349,6 +349,8 @@ struct _Ecore_Wl_Event_Interfaces_Bound
  * @li @ref Ecore_Wl_Display_Group
  * @li @ref Ecore_Wl_Flush_Group
  * @li @ref Ecore_Wl_Window_Group
+ * @li @ref Ecore_Wl_Input_Group
+ * @li @ref Ecore_Wl_Dnd_Group
  */
 
 EAPI extern int ECORE_WL_EVENT_MOUSE_IN;
@@ -485,6 +487,13 @@ EAPI void ecore_wl_display_iterate(void);
  * @since 1.2
  */
 EAPI struct wl_cursor *ecore_wl_cursor_get(const char *cursor_name);
+
+/**
+ * @defgroup Ecore_Wl_Input_Group Functions dealing with Wayland Input
+ * @ingroup Ecore_Wl_Group
+ *
+ * Functions to interface with Wayland Input
+ */
 
 EAPI void ecore_wl_input_grab(Ecore_Wl_Input *input, Ecore_Wl_Window *win, unsigned int button);
 EAPI void ecore_wl_input_ungrab(Ecore_Wl_Input *input);
@@ -631,6 +640,13 @@ EAPI void ecore_wl_window_pointer_set(Ecore_Wl_Window *win, struct wl_surface *s
 EAPI void ecore_wl_window_cursor_from_name_set(Ecore_Wl_Window *win, const char *cursor_name);
 EAPI void ecore_wl_window_cursor_default_restore(Ecore_Wl_Window *win);
 EAPI void ecore_wl_window_parent_set(Ecore_Wl_Window *win, Ecore_Wl_Window *parent);
+
+/**
+ * @defgroup Ecore_Wl_Dnd_Group Functions dealing with Wayland Drag-n-Drop
+ * @ingroup Ecore_Wl_Group
+ *
+ * Functions to interface with Wayland Drag-n-Drop
+ */
 
 /** @since 1.7 */
 EAPI Eina_Bool ecore_wl_dnd_set_selection(Ecore_Wl_Dnd *dnd, const char **types_offered);
