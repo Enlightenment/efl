@@ -3,7 +3,7 @@
 #endif
 #include <Elementary.h>
 #ifndef ELM_LIB_QUICKLAUNCH
-static Elm_Genlist_Item_Class it_desk;
+static Elm_Genlist_Item_Class *it_desk = NULL;
 
 static char *
 desk_gl_text_get(void *data, Evas_Object *obj __UNUSED__, const char *part __UNUSED__)
@@ -67,11 +67,12 @@ test_icon_desktops(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *eve
    win = elm_win_util_standard_add("icon-desktops", "Icon Desktops");
    elm_win_autodel_set(win, EINA_TRUE);
 
-   it_desk.item_style     = "default";
-   it_desk.func.text_get = desk_gl_text_get;
-   it_desk.func.content_get  = desk_gl_content_get;
-   it_desk.func.state_get = NULL;
-   it_desk.func.del       = desk_gl_del;
+   it_desk = elm_genlist_item_class_new();
+   it_desk->item_style     = "default";
+   it_desk->func.text_get = desk_gl_text_get;
+   it_desk->func.content_get  = desk_gl_content_get;
+   it_desk->func.state_get = NULL;
+   it_desk->func.del       = desk_gl_del;
 
    gl = elm_genlist_add(win);
    evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -87,13 +88,14 @@ test_icon_desktops(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *eve
            Efreet_Desktop *d;
 
            EINA_LIST_FREE(desktops, d)
-             elm_genlist_item_append(gl, &it_desk, d,
+             elm_genlist_item_append(gl, it_desk, d,
                                     NULL, ELM_GENLIST_ITEM_NONE,
                                     desktop_sel, NULL);
          }
      }
 #endif
 
+   elm_genlist_item_class_free(it_desk);
    evas_object_resize(win, 320, 480);
    evas_object_show(win);
 }
