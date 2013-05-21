@@ -635,7 +635,7 @@ EAPI void ecore_wl_window_parent_set(Ecore_Wl_Window *win, Ecore_Wl_Window *pare
 /** @since 1.7 */
 EAPI Eina_Bool ecore_wl_dnd_set_selection(Ecore_Wl_Dnd *dnd, const char **types_offered);
 EAPI Eina_Bool ecore_wl_dnd_get_selection(Ecore_Wl_Dnd *dnd, const char *type);
-EAPI Ecore_Wl_Dnd *ecore_wl_dnd_get();
+EAPI Ecore_Wl_Dnd *ecore_wl_dnd_get(void);
 
 /**
  * @deprecated use ecore_wl_dnd_drag_start
