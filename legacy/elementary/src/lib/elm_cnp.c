@@ -2103,6 +2103,9 @@ static Eina_Bool _wl_elm_cnp_selection_get(Evas_Object *obj, Elm_Sel_Type select
 static Eina_Bool _wl_selection_send(void *udata, int type __UNUSED__, void *event);
 static Eina_Bool _wl_selection_receive(void *udata, int type __UNUSED__, void *event);
 
+static Eina_Bool _wl_elm_drop_target_add(Evas_Object *obj, Elm_Sel_Format format, Elm_Drag_State entercb, void *enterdata, Elm_Drag_State leavecb, void *leavedata, Elm_Drag_Pos poscb, void *posdata, Elm_Drop_Cb dropcb, void *cbdata);
+static Eina_Bool _wl_elm_drop_target_del(Evas_Object *obj);
+
 static void
 _wl_sel_obj_del2(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
@@ -2219,6 +2222,72 @@ _wl_elm_cnp_init(void)
 
    return EINA_TRUE;
 }
+
+static Eina_Bool 
+_wl_elm_drop_target_add(Evas_Object *obj, Elm_Sel_Format format, Elm_Drag_State entercb, void *enterdata, Elm_Drag_State leavecb, void *leavedata, Elm_Drag_Pos poscb, void *posdata, Elm_Drop_Cb dropcb, void *cbdata)
+{
+   Dropable *drop;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(drops, l, drop)
+     {
+        if (drop->obj == obj)
+          {
+             drop->dropcb = dropcb;
+             drop->cbdata = cbdata;
+             drop->types = format;
+             return EINA_TRUE;
+          }
+     }
+
+   if (!(drop = calloc(1, sizeof(Dropable)))) 
+     return EINA_FALSE;
+
+   if (!(drops = eina_list_append(drops, drop)))
+     {
+        free(drop);
+        return EINA_FALSE;
+     }
+
+   drop->entercb = entercb;
+   drop->enterdata = enterdata;
+   drop->leavecb = leavecb;
+   drop->leavedata = leavedata;
+   drop->poscb = poscb;
+   drop->posdata = posdata;
+   drop->dropcb = dropcb;
+   drop->cbdata = cbdata;
+   drop->types = format;
+   drop->obj = obj;
+
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL,
+                                  (Evas_Object_Event_Cb)elm_drop_target_del,
+                                  obj);
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool 
+_wl_elm_drop_target_del(Evas_Object *obj)
+{
+   Dropable *drop;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(drops, l, drop)
+     {
+        if (drop->obj == obj)
+          {
+             drops = eina_list_remove_list(drops, l);
+             evas_object_event_callback_del(drop->obj, EVAS_CALLBACK_FREE,
+                                            (Evas_Object_Event_Cb)elm_drop_target_del);
+             free(drop);
+             break;
+          }
+     }
+
+   return EINA_TRUE;
+}
+
 #endif
 
 
@@ -2634,6 +2703,11 @@ elm_drop_target_add(Evas_Object *obj, Elm_Sel_Format format,
                                      leavecb, leavedata, poscb, posdata,
                                      dropcb, cbdata);
 #endif
+#ifdef HAVE_ELEMENTARY_WAYLAND
+   return _wl_elm_drop_target_add(obj, format, entercb, enterdata,
+                                  leavecb, leavedata, poscb, posdata,
+                                  dropcb, cbdata);
+#endif
    return _local_elm_drop_target_add(obj, format, entercb, enterdata,
                                      leavecb, leavedata, poscb, posdata,
                                      dropcb, cbdata);
@@ -2646,6 +2720,9 @@ elm_drop_target_del(Evas_Object *obj)
 #ifdef HAVE_ELEMENTARY_X
    if (_x11_elm_widget_xwin_get(obj))
      return _x11_elm_drop_target_del(obj);
+#endif
+#ifdef HAVE_ELEMENTARY_WAYLAND
+   return _wl_elm_drop_target_del(obj);
 #endif
    return _local_elm_drop_target_del(obj);
 }
