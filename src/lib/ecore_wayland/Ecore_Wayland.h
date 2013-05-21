@@ -642,24 +642,6 @@ EAPI void ecore_wl_window_cursor_default_restore(Ecore_Wl_Window *win);
 EAPI void ecore_wl_window_parent_set(Ecore_Wl_Window *win, Ecore_Wl_Window *parent);
 
 /**
- * @defgroup Ecore_Wl_Dnd_Group Functions dealing with Wayland Drag-n-Drop
- * @ingroup Ecore_Wl_Group
- *
- * Functions to interface with Wayland Drag-n-Drop
- */
-
-/** @since 1.7 */
-EAPI Eina_Bool ecore_wl_dnd_set_selection(Ecore_Wl_Dnd *dnd, const char **types_offered);
-EAPI Eina_Bool ecore_wl_dnd_get_selection(Ecore_Wl_Dnd *dnd, const char *type);
-EAPI Ecore_Wl_Dnd *ecore_wl_dnd_get(void);
-
-/**
- * @deprecated use ecore_wl_dnd_drag_start
- */
-EINA_DEPRECATED EAPI Eina_Bool ecore_wl_dnd_start_drag();
-EAPI Eina_Bool ecore_wl_dnd_selection_has_owner(Ecore_Wl_Dnd *dnd);
-
-/**
  * Returns a wl_surface with no association to any wl_shell_surface.
  *
  * @param win The window which will use this newly created surface.
@@ -682,6 +664,24 @@ EAPI Eina_Bool ecore_wl_window_alpha_get(Ecore_Wl_Window *win);
  * @since 1.8
  */
 EAPI Ecore_Wl_Window *ecore_wl_window_surface_find(struct wl_surface *surface);
+
+/**
+ * @defgroup Ecore_Wl_Dnd_Group Functions dealing with Wayland Drag-n-Drop
+ * @ingroup Ecore_Wl_Group
+ *
+ * Functions to interface with Wayland Drag-n-Drop
+ */
+
+/** @since 1.7 */
+EAPI Eina_Bool ecore_wl_dnd_set_selection(Ecore_Wl_Dnd *dnd, const char **types_offered);
+EAPI Eina_Bool ecore_wl_dnd_get_selection(Ecore_Wl_Dnd *dnd, const char *type);
+EAPI Ecore_Wl_Dnd *ecore_wl_dnd_get(void);
+
+/**
+ * @deprecated use ecore_wl_dnd_drag_start
+ */
+EINA_DEPRECATED EAPI Eina_Bool ecore_wl_dnd_start_drag();
+EAPI Eina_Bool ecore_wl_dnd_selection_has_owner(Ecore_Wl_Dnd *dnd);
 
 #ifdef __cplusplus
 }
