@@ -172,6 +172,8 @@ images/cur_hi.png \
 images/cur_shad.png \
 images/cur_shine.png \
 images/cur_glow.png \
+images/handler_start.png \
+images/handler_end.png \
 images/bubble.png \
 images/bubble_3.png \
 images/bubble_shine3.png \

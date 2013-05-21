@@ -1352,3 +1352,7 @@
 2013-05-16 Ryuan Choi (ryuan)
 
         * Fix single line enty got multiple line when pasted multiple line.
+
+2013-05-17 Thiep Ha
+
+        * Add selection handlers to entry.
