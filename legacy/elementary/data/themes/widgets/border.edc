@@ -24,7 +24,10 @@ color_classes {
 
 group {
    name: "elm/border/base/default";
-   data.item: "focus_highlight" "off";
+   data {
+      item: "focus_highlight" "off";
+      item: "framespace" "0 22 0 26";
+   }
    images {
       image: "bd_top.png" COMP;
       image: "bd_top_hilight.png" COMP;

@@ -2317,14 +2317,24 @@ _elm_win_frame_add(Elm_Win_Smart_Data *sd,
    Evas_Object *obj = sd->obj;
    int w, h;
    short layer;
+   const char *framespacestr;
+   int fx = 0, fy = 0, fw = 0, fh = 0;
 
-   // FIXME: Don't use hardcoded framespace values, get it from theme
-   evas_output_framespace_set(sd->evas, 0, 22, 0, 26);
    sd->frame_obj = edje_object_add(sd->evas);
    layer = evas_object_layer_get(obj);
    evas_object_layer_set(sd->frame_obj, layer + 1);
-   elm_widget_theme_object_set
-     (sd->obj, sd->frame_obj, "border", "base", style);
+   if (!elm_widget_theme_object_set
+       (sd->obj, sd->frame_obj, "border", "base", style))
+     {
+        evas_object_del(sd->frame_obj);
+        sd->frame_obj = NULL;
+        return;
+     }
+
+   framespacestr = edje_object_data_get(sd->frame_obj, "framespace");
+   if (framespacestr)
+       sscanf(framespacestr, "%d %d %d %d", &fx, &fy, &fw, &fh);
+   evas_output_framespace_set(sd->evas, fx, fy, fw, fh);
 
    evas_object_move(sd->frame_obj, 0, 0);
    evas_object_resize(sd->frame_obj, 1, 1);
@@ -3353,7 +3363,8 @@ _borderless_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
             EE_ENGINE_COMPARE(sd->ee, ELM_WAYLAND_EGL))
           _elm_win_frame_add(sd, "default");
 
-        evas_object_show(sd->frame_obj);
+        if (sd->frame_obj)
+          evas_object_show(sd->frame_obj);
      }
 
    TRAP(sd, borderless_set, borderless);
@@ -3557,7 +3568,8 @@ _fullscreen_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
                  EE_ENGINE_COMPARE(sd->ee, ELM_WAYLAND_EGL))
                _elm_win_frame_add(sd, "default");
 
-             evas_object_show(sd->frame_obj);
+             if (sd->frame_obj)
+               evas_object_show(sd->frame_obj);
           }
 #ifdef HAVE_ELEMENTARY_X
         _elm_win_xwin_update(sd);
