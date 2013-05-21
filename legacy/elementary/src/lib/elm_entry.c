@@ -1382,7 +1382,7 @@ _mouse_down_cb(void *data,
    sd->downy = ev->canvas.y;
    if (ev->button == 1)
      {
-        if (sd->longpress_timer) ecore_timer_del(sd->longpress_timer);
+        ELM_FREE_FUNC(sd->longpress_timer, ecore_timer_del);
         sd->longpress_timer = ecore_timer_add
             (_elm_config->longpress_timeout, _long_press_cb, data);
      }
@@ -1406,11 +1406,7 @@ _mouse_up_cb(void *data,
    if (sd->disabled) return;
    if (ev->button == 1)
      {
-        if (sd->longpress_timer)
-          {
-             ecore_timer_del(sd->longpress_timer);
-             sd->longpress_timer = NULL;
-          }
+        ELM_FREE_FUNC(sd->longpress_timer, ecore_timer_del);
      }
    else if ((ev->button == 3) && (!_elm_config->desktop_entry))
      {
@@ -1434,11 +1430,7 @@ _mouse_move_cb(void *data,
      {
         if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
           {
-             if (sd->longpress_timer)
-               {
-                  ecore_timer_del(sd->longpress_timer);
-                  sd->longpress_timer = NULL;
-               }
+             ELM_FREE_FUNC(sd->longpress_timer, ecore_timer_del);
           }
         else if (sd->longpress_timer)
           {
@@ -1452,8 +1444,7 @@ _mouse_move_cb(void *data,
                  ((_elm_config->finger_size / 2) *
                   (_elm_config->finger_size / 2)))
                {
-                  ecore_timer_del(sd->longpress_timer);
-                  sd->longpress_timer = NULL;
+                  ELM_FREE_FUNC(sd->longpress_timer, ecore_timer_del);
                }
           }
      }
@@ -1469,8 +1460,7 @@ _mouse_move_cb(void *data,
             ((_elm_config->finger_size / 2) *
              (_elm_config->finger_size / 2)))
           {
-             ecore_timer_del(sd->longpress_timer);
-             sd->longpress_timer = NULL;
+             ELM_FREE_FUNC(sd->longpress_timer, ecore_timer_del);
           }
      }
 }
@@ -1495,11 +1485,7 @@ _entry_changed_handle(void *data,
    elm_layout_sizing_eval(data);
    if (sd->text) eina_stringshare_del(sd->text);
    sd->text = NULL;
-   if (sd->delay_write)
-     {
-        ecore_timer_del(sd->delay_write);
-        sd->delay_write = NULL;
-     }
+   ELM_FREE_FUNC(sd->delay_write, ecore_timer_del);
    evas_event_thaw(evas_object_evas_get(data));
    evas_event_thaw_eval(evas_object_evas_get(data));
    if ((sd->auto_save) && (sd->file))
@@ -2975,8 +2961,7 @@ _elm_entry_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    if (sd->delay_write)
      {
-        ecore_timer_del(sd->delay_write);
-        sd->delay_write = NULL;
+        ELM_FREE_FUNC(sd->delay_write, ecore_timer_del);
         if (sd->auto_save) _save_do(obj);
      }
 
@@ -3009,7 +2994,7 @@ _elm_entry_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
         sd->append_text_left = NULL;
         sd->append_text_idler = NULL;
      }
-   if (sd->longpress_timer) ecore_timer_del(sd->longpress_timer);
+   ELM_FREE_FUNC(sd->longpress_timer, ecore_timer_del);
    EINA_LIST_FREE(sd->items, it)
      {
         eina_stringshare_del(it->label);
@@ -3025,11 +3010,9 @@ _elm_entry_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
      {
         _filter_free(tf);
      }
-   if (sd->delay_write) ecore_timer_del(sd->delay_write);
-   if (sd->input_panel_imdata) free(sd->input_panel_imdata);
-
-   if (sd->anchor_hover.hover_style)
-     eina_stringshare_del(sd->anchor_hover.hover_style);
+   ELM_FREE_FUNC(sd->delay_write, ecore_timer_del);
+   ELM_FREE_FUNC(sd->input_panel_imdata, free);
+   ELM_FREE_FUNC(sd->anchor_hover.hover_style, eina_stringshare_del);
 
    evas_event_thaw(evas_object_evas_get(obj));
    evas_event_thaw_eval(evas_object_evas_get(obj));
@@ -4412,12 +4395,7 @@ _file_set(Eo *obj, void *_pd, va_list *list)
 
    Elm_Entry_Smart_Data *sd = _pd;
 
-   if (sd->delay_write)
-     {
-        ecore_timer_del(sd->delay_write);
-        sd->delay_write = NULL;
-     }
-
+   ELM_FREE_FUNC(sd->delay_write, ecore_timer_del);
    if (sd->auto_save) _save_do(obj);
    eina_stringshare_replace(&sd->file, file);
    sd->format = format;
@@ -4457,11 +4435,7 @@ _file_save(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Entry_Smart_Data *sd = _pd;
 
-   if (sd->delay_write)
-     {
-        ecore_timer_del(sd->delay_write);
-        sd->delay_write = NULL;
-     }
+   ELM_FREE_FUNC(sd->delay_write, ecore_timer_del);
    _save_do(obj);
    sd->delay_write = ecore_timer_add(2.0, _delay_write, obj);
 }

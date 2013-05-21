@@ -3037,8 +3037,8 @@ _cont_obj_mouse_down(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *eve
    evas_object_event_callback_add(st->obj, EVAS_CALLBACK_MOUSE_UP,
          _cont_obj_mouse_up, st);
 #endif
-   if (st->tm)
-     ecore_timer_del(st->tm);
+
+   ELM_FREE_FUNC(st->tm, ecore_timer_del);
 
    st->e = e;
    st->x_down = ev->canvas.x;
@@ -3065,11 +3065,7 @@ _cont_obj_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__
 #endif
         elm_drag_item_container_del_internal(obj, EINA_FALSE);
 
-        if (st->tm)
-          {
-             ecore_timer_del(st->tm);
-             st->tm = NULL;
-          }
+        ELM_FREE_FUNC(st->tm, ecore_timer_del);
 
         _anim_st_free(st);
      }
@@ -3090,11 +3086,7 @@ _cont_obj_mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
    evas_object_event_callback_del_full
       (st->obj, EVAS_CALLBACK_MOUSE_UP, _cont_obj_mouse_up, st);
 
-   if (st->tm)
-     {
-        ecore_timer_del(st->tm);
-        st->tm = NULL;
-     }
+   ELM_FREE_FUNC(st->tm, ecore_timer_del);
 
    _anim_st_free(st);
 }
@@ -3108,13 +3100,10 @@ elm_drag_item_container_del_internal(Evas_Object *obj, Eina_Bool full)
 
    if (st)
      {
-        if (st->tm)
-          ecore_timer_del(st->tm);  /* Cancel drag-start timer */
+        ELM_FREE_FUNC(st->tm, ecore_timer_del); /* Cancel drag-start timer */
 
         if (st->ea)  /* Cancel ongoing default animation */
           _anim_st_free(st);
-
-        st->tm = NULL;
 
         if (full)
           {

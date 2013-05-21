@@ -1830,12 +1830,7 @@ static void
 _drag_start_cb(Evas_Object *obj, void *data __UNUSED__)
 {
    ELM_TOOLBAR_DATA_GET(obj, sd);
-
-   if (sd->long_timer)
-     {
-        ecore_timer_del(sd->long_timer);
-        sd->long_timer = NULL;
-     }
+   ELM_FREE_FUNC(sd->long_timer, ecore_timer_del);
 }
 
 static void
@@ -1849,12 +1844,10 @@ _mouse_move_cb(Elm_Toolbar_Item *it,
    ELM_TOOLBAR_DATA_GET(WIDGET(it), sd);
    evas_object_geometry_get(VIEW(it), &x, &y, &w, &h);
 
-   if ((sd->long_timer) &&
-       ((x > ev->cur.canvas.x) || (ev->cur.canvas.x > x + w) ||
-        (y > ev->cur.canvas.y) || (ev->cur.canvas.y > y + h)))
+   if ((x > ev->cur.canvas.x) || (ev->cur.canvas.x > x + w) ||
+       (y > ev->cur.canvas.y) || (ev->cur.canvas.y > y + h))
      {
-        ecore_timer_del(sd->long_timer);
-        sd->long_timer = NULL;
+        ELM_FREE_FUNC(sd->long_timer, ecore_timer_del);
      }
 }
 

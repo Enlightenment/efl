@@ -917,16 +917,15 @@ _elm_conformant_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    Elm_Conformant_Smart_Data *sd = _pd;
 
 #ifdef HAVE_ELEMENTARY_X
-   if (sd->prop_hdl) ecore_event_handler_del(sd->prop_hdl);
+   ELM_FREE_FUNC(sd->prop_hdl, ecore_event_handler_del);
 #endif
 
-   if (sd->show_region_job) ecore_job_del(sd->show_region_job);
-   if (sd->port_indi_timer) ecore_timer_del(sd->port_indi_timer);
-   if (sd->land_indi_timer) ecore_timer_del(sd->land_indi_timer);
-   if (sd->portrait_indicator)
-     evas_object_del(sd->portrait_indicator);
-   if (sd->landscape_indicator)
-     evas_object_del(sd->landscape_indicator);
+   ELM_FREE_FUNC(sd->show_region_job, ecore_job_del);
+   ELM_FREE_FUNC(sd->port_indi_timer, ecore_timer_del);
+   ELM_FREE_FUNC(sd->land_indi_timer, ecore_timer_del);
+   ELM_FREE_FUNC(sd->portrait_indicator, evas_object_del);
+   ELM_FREE_FUNC(sd->landscape_indicator, evas_object_del);
+
    top = elm_widget_top_get(obj);
    evas_object_data_set(top, "\377 elm,conformant", NULL);
 

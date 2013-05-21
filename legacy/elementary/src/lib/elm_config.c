@@ -246,13 +246,13 @@ _prop_change(void *data  __UNUSED__,
      {
         if (event->atom == _atom[ATOM_E_PROFILE])
           {
-             if (_prop_change_delay_timer) ecore_timer_del(_prop_change_delay_timer);
+             ELM_FREE_FUNC(_prop_change_delay_timer, ecore_timer_del);
              _prop_change_delay_timer = ecore_timer_add(0.1, _prop_change_delay_cb, NULL);
           }
         else if (((_atom_config > 0) && (event->atom == _atom_config)) ||
                  (event->atom == _atom[ATOM_E_CONFIG]))
           {
-             if (_prop_change_delay_timer) ecore_timer_del(_prop_change_delay_timer);
+             ELM_FREE_FUNC(_prop_change_delay_timer, ecore_timer_del);
              _prop_change_delay_timer = ecore_timer_add(0.1, _prop_change_delay_cb, NULL);
           }
      }
@@ -2319,7 +2319,7 @@ EAPI void
 elm_config_all_flush(void)
 {
 #ifdef HAVE_ELEMENTARY_X
-   if (_prop_all_update_timer) ecore_timer_del(_prop_all_update_timer);
+   ELM_FREE_FUNC(_prop_all_update_timer, ecore_timer_del);
    _prop_all_update_timer = ecore_timer_add(0.1, _prop_all_update_cb, NULL);
 #endif
 }
@@ -2375,12 +2375,10 @@ _elm_config_sub_shutdown(void)
 #ifdef HAVE_ELEMENTARY_X
    if (_prop_all_update_timer)
      {
-        ecore_timer_del(_prop_all_update_timer);
-        _prop_all_update_timer = NULL;
+        ELM_FREE_FUNC(_prop_all_update_timer, ecore_timer_del);
         _prop_all_update_cb(NULL);
      }
-   if (_prop_change_delay_timer) ecore_timer_del(_prop_change_delay_timer);
-   _prop_change_delay_timer = NULL;
+   ELM_FREE_FUNC(_prop_change_delay_timer, ecore_timer_del);
 #endif
 
 #define ENGINE_COMPARE(name) (!strcmp(_elm_config->engine, name))

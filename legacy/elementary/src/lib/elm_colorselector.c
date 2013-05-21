@@ -1284,7 +1284,7 @@ _on_color_pressed(void *data,
    elm_object_signal_emit(VIEW(item), "elm,state,selected", "elm");
    sd->longpressed = EINA_FALSE;
 
-   if (sd->longpress_timer) ecore_timer_del(sd->longpress_timer);
+   ELM_FREE_FUNC(sd->longpress_timer, ecore_timer_del);
    sd->longpress_timer = ecore_timer_add
        (_elm_config->longpress_timeout, _on_color_long_press, data);
 }
@@ -1304,11 +1304,7 @@ _on_color_released(void *data,
    ELM_COLORSELECTOR_DATA_GET(WIDGET(item), sd);
 
    if (ev->button != 1) return;
-   if (sd->longpress_timer)
-     {
-        ecore_timer_del(sd->longpress_timer);
-        sd->longpress_timer = NULL;
-     }
+   ELM_FREE_FUNC(sd->longpress_timer, ecore_timer_del);
    elm_object_signal_emit(VIEW(item), "elm,state,unselected", "elm");
    if (!sd->longpressed)
      {
@@ -1563,12 +1559,12 @@ _elm_colorselector_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    evas_event_callback_del_full(evas_object_evas_get(obj), EVAS_CALLBACK_CANVAS_FOCUS_IN, _mouse_in_canvas, obj);
    evas_event_callback_del_full(evas_object_evas_get(obj), EVAS_CALLBACK_CANVAS_FOCUS_OUT, _mouse_out_canvas, obj);
 
-   if (sd->longpress_timer) ecore_timer_del(sd->longpress_timer);
-   if (sd->palette_name) eina_stringshare_del(sd->palette_name);
+   ELM_FREE_FUNC(sd->longpress_timer, ecore_timer_del);
+   ELM_FREE_FUNC(sd->palette_name, eina_stringshare_del);
 #ifdef HAVE_ELEMENTARY_X
-   if (sd->grab.mouse_motion) ecore_event_handler_del(sd->grab.mouse_motion);
-   if (sd->grab.mouse_up) ecore_event_handler_del(sd->grab.mouse_up);
-   if (sd->grab.key_up) ecore_event_handler_del(sd->grab.key_up);
+   ELM_FREE_FUNC(sd->grab.mouse_motion, ecore_event_handler_del);
+   ELM_FREE_FUNC(sd->grab.mouse_up, ecore_event_handler_del);
+   ELM_FREE_FUNC(sd->grab.key_up, ecore_event_handler_del);
 #endif
 
    _items_del(sd);

@@ -45,12 +45,7 @@ _activate(Evas_Object *obj)
 {
    ELM_BUTTON_DATA_GET_OR_RETURN(obj, sd);
 
-   if (sd->timer)
-     {
-        ecore_timer_del(sd->timer);
-        sd->timer = NULL;
-     }
-
+   ELM_FREE_FUNC(sd->timer, ecore_timer_del);
    sd->repeating = EINA_FALSE;
 
    if ((_elm_config->access_mode == ELM_ACCESS_MODE_OFF) ||
@@ -225,7 +220,7 @@ _autorepeat_initial_send(void *data)
 {
    ELM_BUTTON_DATA_GET_OR_RETURN_VAL(data, sd, ECORE_CALLBACK_CANCEL);
 
-   if (sd->timer) ecore_timer_del(sd->timer);
+   ELM_FREE_FUNC(sd->timer, ecore_timer_del);
    sd->repeating = EINA_TRUE;
    _autorepeat_send(data);
    sd->timer = ecore_timer_add(sd->ar_interval, _autorepeat_send, data);
@@ -261,11 +256,7 @@ _on_unpressed_signal(void *data,
 {
    ELM_BUTTON_DATA_GET_OR_RETURN(data, sd);
 
-   if (sd->timer)
-     {
-        ecore_timer_del(sd->timer);
-        sd->timer = NULL;
-     }
+   ELM_FREE_FUNC(sd->timer, ecore_timer_del);
    sd->repeating = EINA_FALSE;
    evas_object_smart_callback_call(data, SIG_UNPRESSED, NULL);
 }
@@ -368,11 +359,7 @@ _autorepeat_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Eina_Bool on = va_arg(*list, int);
    Elm_Button_Smart_Data *sd = _pd;
 
-   if (sd->timer)
-     {
-        ecore_timer_del(sd->timer);
-        sd->timer = NULL;
-     }
+   ELM_FREE_FUNC(sd->timer, ecore_timer_del);
    sd->autorepeat = on;
    sd->repeating = EINA_FALSE;
 }
@@ -433,11 +420,7 @@ _autorepeat_initial_timeout_set(Eo *obj, void *_pd, va_list *list)
      }
 
    if (sd->ar_threshold == t) return;
-   if (sd->timer)
-     {
-        ecore_timer_del(sd->timer);
-        sd->timer = NULL;
-     }
+   ELM_FREE_FUNC(sd->timer, ecore_timer_del);
    sd->ar_threshold = t;
 }
 

@@ -456,8 +456,7 @@ _elm_flipselector_smart_event(Eo *obj, void *_pd, va_list *list)
    else if ((strcmp(ev->keyname, "Up")) && (strcmp(ev->keyname, "KP_Up")))
      return;
 
-   if (sd->spin) ecore_timer_del(sd->spin);
-   sd->spin = NULL;
+   ELM_FREE_FUNC(sd->spin, ecore_timer_del);
 
    /* TODO: if direction setting via API is not coming in, replace
       these calls by flip_{next,prev} */
@@ -501,7 +500,7 @@ _signal_val_up_start(void *data,
 
    sd->interval = sd->first_interval;
 
-   if (sd->spin) ecore_timer_del(sd->spin);
+   ELM_FREE_FUNC(sd->spin, ecore_timer_del);
    sd->spin = ecore_timer_add(sd->interval, _signal_val_up, data);
 
    _signal_val_up(data);
@@ -534,7 +533,7 @@ _signal_val_down_start(void *data,
 
    sd->interval = sd->first_interval;
 
-   if (sd->spin) ecore_timer_del(sd->spin);
+   ELM_FREE_FUNC(sd->spin, ecore_timer_del);
    sd->spin = ecore_timer_add(sd->interval, _signal_val_down, data);
 
    _signal_val_down(data);
@@ -548,8 +547,7 @@ _signal_val_change_stop(void *data,
 {
    ELM_FLIPSELECTOR_DATA_GET(data, sd);
 
-   if (sd->spin) ecore_timer_del(sd->spin);
-   sd->spin = NULL;
+   ELM_FREE_FUNC(sd->spin, ecore_timer_del);
 }
 
 static void
@@ -591,7 +589,7 @@ _elm_flipselector_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    while (sd->items)
      elm_widget_item_del(DATA_GET(sd->items));
 
-   if (sd->spin) ecore_timer_del(sd->spin);
+   ELM_FREE_FUNC(sd->spin, ecore_timer_del);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
@@ -630,8 +628,7 @@ _flip_next(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Flipselector_Smart_Data *sd = _pd;
 
-   if (sd->spin) ecore_timer_del(sd->spin);
-   sd->spin = NULL;
+   ELM_FREE_FUNC(sd->spin, ecore_timer_del);
 
    _flipselector_walk(sd);
    _flip_down(sd);
@@ -650,8 +647,7 @@ _flip_prev(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Flipselector_Smart_Data *sd = _pd;
 
-   if (sd->spin) ecore_timer_del(sd->spin);
-   sd->spin = NULL;
+   ELM_FREE_FUNC(sd->spin, ecore_timer_del);
 
    _flipselector_walk(sd);
    _flip_up(sd);
