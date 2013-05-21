@@ -2106,6 +2106,9 @@ static Eina_Bool _wl_selection_receive(void *udata, int type __UNUSED__, void *e
 static Eina_Bool _wl_elm_drop_target_add(Evas_Object *obj, Elm_Sel_Format format, Elm_Drag_State entercb, void *enterdata, Elm_Drag_State leavecb, void *leavedata, Elm_Drag_Pos poscb, void *posdata, Elm_Drop_Cb dropcb, void *cbdata);
 static Eina_Bool _wl_elm_drop_target_del(Evas_Object *obj);
 
+static Eina_Bool _wl_elm_drag_action_set(Evas_Object *obj, Elm_Xdnd_Action action);
+static Eina_Bool _wl_elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data, Elm_Xdnd_Action action, Elm_Drag_Icon_Create_Cb createicon, void *createdata, Elm_Drag_Pos dragpos, void *dragdata, Elm_Drag_Accept acceptcb, void *acceptdata, Elm_Drag_State dragdone, void *donecbdata);
+
 static void
 _wl_sel_obj_del2(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
@@ -2288,6 +2291,26 @@ _wl_elm_drop_target_del(Evas_Object *obj)
    return EINA_TRUE;
 }
 
+static Eina_Bool 
+_wl_elm_drag_action_set(Evas_Object *obj, Elm_Xdnd_Action action)
+{
+   if (!dragwin) return EINA_FALSE;
+   if (dragwidget != obj) return EINA_FALSE;
+   if (dragaction == action) return EINA_TRUE;
+   dragaction = action;
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_wl_elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data,
+                   Elm_Xdnd_Action action,
+                   Elm_Drag_Icon_Create_Cb createicon, void *createdata,
+                   Elm_Drag_Pos dragpos, void *dragdata,
+                   Elm_Drag_Accept acceptcb, void *acceptdata,
+                   Elm_Drag_State dragdone, void *donecbdata)
+{
+   return EINA_TRUE;
+}
 #endif
 
 
@@ -2744,6 +2767,13 @@ elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data,
                                 acceptcb, acceptdata,
                                 dragdone, donecbdata);
 #endif
+#ifdef HAVE_ELEMENTARY_WAYLAND
+   return _wl_elm_drag_start(obj, format, data, action, 
+                             createicon, createdata, 
+                             dragpos, dragdata,
+                             acceptcb, acceptdata,
+                             dragdone, donecbdata);
+#endif
    return _local_elm_drag_start(obj, format, data, action,
                                 createicon, createdata,
                                 dragpos, dragdata,
@@ -2758,6 +2788,9 @@ elm_drag_action_set(Evas_Object *obj, Elm_Xdnd_Action action)
 #ifdef HAVE_ELEMENTARY_X
    if (_x11_elm_widget_xwin_get(obj))
      return _x11_elm_drag_action_set(obj, action);
+#endif
+#ifdef HAVE_ELEMENTARY_WAYLAND
+   return _wl_elm_drag_action_set(obj, action);
 #endif
    return _local_elm_drag_action_set(obj, action);
 }
