@@ -888,7 +888,7 @@ test_dnd_genlist_gengrid(void *data __UNUSED__, Evas_Object *obj __UNUSED__, voi
         evas_object_show(grid);
      }
 
-   evas_object_resize(win, 1280, 800);
+   evas_object_resize(win, 680, 800);
    evas_object_show(win);
 }
 
