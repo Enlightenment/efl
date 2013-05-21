@@ -702,7 +702,7 @@ EAPI const Eo_Event_Description _EO_EV_CALLBACK_ADD =
 EAPI const Eo_Event_Description _EO_EV_CALLBACK_DEL =
    EO_EVENT_DESCRIPTION("callback,del", "A callback was deleted.");
 EAPI const Eo_Event_Description _EO_EV_DEL =
-   EO_EVENT_DESCRIPTION("del", "Obj is being deleted.");
+   EO_HOT_EVENT_DESCRIPTION("del", "Obj is being deleted.");
 
 static void
 _constructor(Eo *obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
