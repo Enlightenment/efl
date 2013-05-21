@@ -7,6 +7,13 @@
 # include <sys/mman.h>
 #endif
 
+//#define DEBUGON 1
+#ifdef DEBUGON
+# define cnp_debug(x...) fprintf(stderr, __FILE__": " x)
+#else
+# define cnp_debug(x...) do { } while (0)
+#endif
+
 // common stuff
 enum
 {
@@ -132,9 +139,22 @@ static int _elm_cnp_init_count = 0;
 /* Stringshared, so I can just compare pointers later */
 static const char *text_uri;
 
-#ifdef HAVE_ELEMENTARY_X
 /* Data for DND in progress */
 static Saved_Type savedtypes =  { NULL, NULL, 0, 0, 0, EINA_FALSE };
+
+/* Drag & Drop functions */
+/* FIXME: Way too many globals */
+static Eina_List *drops = NULL;
+static Evas_Object *dragwin = NULL;
+static int dragwin_x_start, dragwin_y_start;
+static int dragwin_x_end, dragwin_y_end;
+static int _dragx = 0, _dragy = 0;
+static Ecore_Event_Handler *handler_pos = NULL;
+static Ecore_Event_Handler *handler_drop = NULL;
+static Ecore_Event_Handler *handler_enter = NULL;
+static Ecore_Event_Handler *handler_status = NULL;
+static Ecore_Event_Handler *handler_leave = NULL;
+static Ecore_Event_Handler *handler_up = NULL;
 
 /* TODO BUG: should NEVER have these as globals! They should be per context (window). */
 static Elm_Drag_Pos dragposcb = NULL;
@@ -152,30 +172,10 @@ static Eina_List *cont_drag_tg = NULL; /* List of Item_Container_Drag_Info */
 static void _cont_obj_mouse_up( void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _cont_obj_mouse_move( void *data, Evas *e, Evas_Object *obj, void *event_info);
 
-/* Drag & Drop functions */
-/* FIXME: Way too many globals */
-static Eina_List *drops = NULL;
-static Evas_Object *dragwin = NULL;
-static int dragwin_x_start, dragwin_y_start;
-static int dragwin_x_end, dragwin_y_end;
-static int _dragx = 0, _dragy = 0;
-static Ecore_Event_Handler *handler_pos = NULL;
-static Ecore_Event_Handler *handler_drop = NULL;
-static Ecore_Event_Handler *handler_enter = NULL;
-static Ecore_Event_Handler *handler_status = NULL;
-static Ecore_Event_Handler *handler_leave = NULL;
-static Ecore_Event_Handler *handler_up = NULL;
-
+#ifdef HAVE_ELEMENTARY_X
 static Tmp_Info  *_tempfile_new      (int size);
 static int        _tmpinfo_free      (Tmp_Info *tmp);
 static Eina_Bool  _pasteimage_append (char *file, Evas_Object *entry);
-#endif
-
-//#define DEBUGON 1
-#ifdef DEBUGON
-# define cnp_debug(x...) fprintf(stderr, __FILE__": " x)
-#else
-# define cnp_debug(x...) do { } while (0)
 #endif
 
 // x11 specific stuff
@@ -2794,7 +2794,6 @@ _elm_item_container_pos_cb(void *data, Evas_Object *obj, Evas_Coord x, Evas_Coor
    int xposret = 0;
    int yposret = 0;
 
-#ifdef HAVE_ELEMENTARY_X
    Item_Container_Drop_Info *st =
       eina_list_search_unsorted(cont_drop_tg, _drop_item_container_cmp, obj);
 
@@ -2808,7 +2807,6 @@ _elm_item_container_pos_cb(void *data, Evas_Object *obj, Evas_Coord x, Evas_Coor
 
         st->poscb(data, obj, it, x, y, xposret, yposret, action);
      }
-#endif
 }
 
 static Eina_Bool
@@ -2818,7 +2816,6 @@ _elm_item_container_drop_cb(void *data, Evas_Object *obj , Elm_Selection_Data *e
    int xposret = 0;
    int yposret = 0;
 
-#ifdef HAVE_ELEMENTARY_X
    Item_Container_Drop_Info *st =
       eina_list_search_unsorted(cont_drop_tg, _drop_item_container_cmp, obj);
 
@@ -2832,7 +2829,6 @@ _elm_item_container_drop_cb(void *data, Evas_Object *obj , Elm_Selection_Data *e
 
         return st->dropcb(data, obj, it, ev, xposret, yposret);
      }
-#endif
 
    return EINA_FALSE;
 }
@@ -2840,7 +2836,6 @@ _elm_item_container_drop_cb(void *data, Evas_Object *obj , Elm_Selection_Data *e
 static Eina_Bool
 elm_drop_item_container_del_internal(Evas_Object *obj, Eina_Bool full)
 {
-#ifdef HAVE_ELEMENTARY_X
    Item_Container_Drop_Info *st =
       eina_list_search_unsorted(cont_drop_tg, _drop_item_container_cmp, obj);
 
@@ -2859,7 +2854,7 @@ elm_drop_item_container_del_internal(Evas_Object *obj, Eina_Bool full)
 
         return EINA_TRUE;
      }
-#endif
+
    return EINA_FALSE;
 }
 
@@ -2878,7 +2873,6 @@ elm_drop_item_container_add(Evas_Object *obj,
       Elm_Drag_Item_Container_Pos poscb, void *posdata,
       Elm_Drop_Item_Container_Cb dropcb, void *cbdata)
 {
-#ifdef HAVE_ELEMENTARY_X
    Item_Container_Drop_Info *st;
 
    if (elm_drop_item_container_del_internal(obj, EINA_FALSE))
@@ -2902,8 +2896,6 @@ elm_drop_item_container_add(Evas_Object *obj,
                        _elm_item_container_drop_cb, cbdata);
 
    return EINA_TRUE;
-#endif
-   return EINA_FALSE;
 }
 /* END   - Support elm containers for Drop */
 
@@ -2922,10 +2914,8 @@ _cont_drag_done_cb(void *data, Evas_Object *obj __UNUSED__)
 {
    Item_Container_Drag_Info *st = data;
    elm_widget_scroll_freeze_pop(st->obj);
-#ifdef HAVE_ELEMENTARY_X
    if (st->user_info.dragdone) 
      st->user_info.dragdone(st->user_info.donecbdata, dragwidget, doaccept);
-#endif
 }
 
 static Eina_Bool
@@ -2936,10 +2926,8 @@ _cont_obj_drag_start(void *data)
    st->tm = NULL;
    Elm_Drag_User_Info *info = &st->user_info;
    elm_widget_scroll_freeze_push(st->obj);
-#ifdef HAVE_ELEMENTARY_X
    evas_object_event_callback_del_full
       (st->obj, EVAS_CALLBACK_MOUSE_MOVE, _cont_obj_mouse_move, st);
-#endif
    elm_drag_start(  /* Commit the start only if data_get successful */
          st->obj, info->format,
          info->data, info->action,
@@ -3102,15 +3090,14 @@ _cont_obj_mouse_down(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *eve
      return;  /* We only process left-click at the moment */
 
    Item_Container_Drag_Info *st = data;
-#ifdef HAVE_ELEMENTARY_X
    evas_object_event_callback_add(st->obj, EVAS_CALLBACK_MOUSE_MOVE,
          _cont_obj_mouse_move, st);
 
    evas_object_event_callback_add(st->obj, EVAS_CALLBACK_MOUSE_UP,
          _cont_obj_mouse_up, st);
-#endif
 
-   ELM_FREE_FUNC(st->tm, ecore_timer_del);
+   if (st->tm)
+     ecore_timer_del(st->tm);
 
    st->e = e;
    st->x_down = ev->canvas.x;
@@ -3129,12 +3116,10 @@ _cont_obj_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__
         cnp_debug("%s event on hold - have to cancel DnD\n", __FUNCTION__);
         Item_Container_Drag_Info *st = data;
 
-#ifdef HAVE_ELEMENTARY_X
         evas_object_event_callback_del_full
            (st->obj, EVAS_CALLBACK_MOUSE_MOVE, _cont_obj_mouse_move, st);
         evas_object_event_callback_del_full
            (st->obj, EVAS_CALLBACK_MOUSE_UP, _cont_obj_mouse_up, st);
-#endif
         elm_drag_item_container_del_internal(obj, EINA_FALSE);
 
         ELM_FREE_FUNC(st->tm, ecore_timer_del);
@@ -3166,7 +3151,6 @@ _cont_obj_mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
 static Eina_Bool
 elm_drag_item_container_del_internal(Evas_Object *obj, Eina_Bool full)
 {
-#ifdef HAVE_ELEMENTARY_X
    Item_Container_Drag_Info *st =
       eina_list_search_unsorted(cont_drag_tg, _drag_item_container_cmp, obj);
 
@@ -3190,7 +3174,6 @@ elm_drag_item_container_del_internal(Evas_Object *obj, Eina_Bool full)
 
         return EINA_TRUE;
      }
-#endif
    return EINA_FALSE;
 }
 
@@ -3203,7 +3186,6 @@ elm_drag_item_container_del(Evas_Object *obj)
 EAPI Eina_Bool
 elm_drag_item_container_add(Evas_Object *obj, double anim_tm, double tm_to_drag, Elm_Xy_Item_Get_Cb itemgetcb, Elm_Item_Container_Data_Get_Cb data_get)
 {
-#ifdef HAVE_ELEMENTARY_X
    Item_Container_Drag_Info *st;
 
    if (elm_drag_item_container_del_internal(obj, EINA_FALSE))
@@ -3226,7 +3208,7 @@ elm_drag_item_container_add(Evas_Object *obj, double anim_tm, double tm_to_drag,
    st->tm_to_drag = tm_to_drag;
    st->itemgetcb = itemgetcb;
    st->data_get = data_get;
-#endif
+
    return EINA_TRUE;
 }
 /* END   - Support elm containers for Drag */
