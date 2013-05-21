@@ -35,7 +35,7 @@
  * @subsection textblock_nodes_format_internal Format Nodes - Internal
  * Each format node stores a group of format information, for example the
  * markup: \<font=Vera,Kochi font_size=10 align=left\> will all be inserted
- * inside the same format node, altohugh it consists of different formatting
+ * inside the same format node, although it consists of different formatting
  * commands.
  * Each node has a pointer to it's text node, this pointer is NEVER NULL, even
  * if there's only one format, and no text, a text node is created. Each format
