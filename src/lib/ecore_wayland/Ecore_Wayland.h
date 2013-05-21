@@ -636,7 +636,11 @@ EAPI void ecore_wl_window_parent_set(Ecore_Wl_Window *win, Ecore_Wl_Window *pare
 EAPI Eina_Bool ecore_wl_dnd_set_selection(Ecore_Wl_Dnd *dnd, const char **types_offered);
 EAPI Eina_Bool ecore_wl_dnd_get_selection(Ecore_Wl_Dnd *dnd, const char *type);
 EAPI Ecore_Wl_Dnd *ecore_wl_dnd_get();
-EAPI Eina_Bool ecore_wl_dnd_start_drag();
+
+/**
+ * @deprecated use ecore_wl_dnd_drag_start
+ */
+EINA_DEPRECATED EAPI Eina_Bool ecore_wl_dnd_start_drag();
 EAPI Eina_Bool ecore_wl_dnd_selection_has_owner(Ecore_Wl_Dnd *dnd);
 
 /**
