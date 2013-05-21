@@ -1648,43 +1648,59 @@ ecore_x_randr_crtc_settings_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, Ec
    /* try to get the screen resources from Xrandr */
    if ((res = _ecore_x_randr_screen_resources_get(_ecore_x_disp, root)))
      {
+        RRCrtc rcrtc;
+        RROutput *routputs = NULL;
         XRRCrtcInfo *info = NULL;
+        Eina_Bool need_free = EINA_FALSE;
+        int i = 0;
+
+        rcrtc = (RRCrtc)crtc;
 
         /* try to get crtc info for original crtc */
-        if ((info = XRRGetCrtcInfo(_ecore_x_disp, res, crtc)))
+        if (!(info = XRRGetCrtcInfo(_ecore_x_disp, res, rcrtc)))
           {
-             if ((mode == 0) || (noutputs == 0))
-               {
-                  outputs = NULL;
-                  noutputs = 0;
-               }
-             else if (noutputs == -1)
-               {
-                  outputs = (Ecore_X_Randr_Output *)info->outputs;
-                  noutputs = info->noutput;
-               }
-
-             /* safety check some values */
-             if ((int)mode == -1) mode = info->mode;
-             if ((int)orientation == -1) orientation = info->rotation;
-             if (x < 0) x = info->x;
-             if (y < 0) y = info->y;
-
-             /* try to set the crtc config */
-             if (!XRRSetCrtcConfig(_ecore_x_disp, res, crtc, CurrentTime, 
-                                   x, y, mode, orientation, 
-                                   (RROutput *)outputs, noutputs))
-               ret = EINA_TRUE;
-
-             /* free the crtc info */
-             XRRFreeCrtcInfo(info);
+             /* free the resources */
+             XRRFreeScreenResources(res);
+             return EINA_FALSE;
           }
+
+        if ((int)mode == -1) mode = info->mode;
+        if ((int)orientation == -1) orientation = info->rotation;
+        if (x < 0) x = info->x;
+        if (y < 0) y = info->y;
+
+        if (noutputs < 0)
+          {
+             noutputs = info->noutput;
+             routputs = malloc(noutputs * sizeof(RROutput));
+             for (i = 0; i < noutputs; i++)
+               routputs[i] = info->outputs[i];
+             need_free = EINA_TRUE;
+          }
+        else if (noutputs > 0)
+          {
+             routputs = malloc(noutputs * sizeof(RROutput));
+             for (i = 0; i < noutputs; i++)
+               routputs[i] = (RROutput)outputs[i];
+             need_free = EINA_TRUE;
+          }
+
+        /* try to set the crtc config */
+        if (!XRRSetCrtcConfig(_ecore_x_disp, res, rcrtc, CurrentTime, 
+                              x, y, mode, orientation, 
+                              routputs, noutputs))
+          ret = EINA_TRUE;
+
+        if (need_free) free(routputs);
+
+        /* free the crtc info */
+        XRRFreeCrtcInfo(info);
 
         /* free the resources */
         XRRFreeScreenResources(res);
-
-        return ret;
      }
+
+   return ret;
 #endif
    return EINA_FALSE;
 }
