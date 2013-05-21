@@ -486,6 +486,7 @@ _evas_swapper_buffer_put(Wl_Swapper *ws, Wl_Buffer *wb, Eina_Rectangle *rects, u
    if (sent != wb)
      {
         wl_surface_attach(ws->surface, wb->buffer, ws->dx, ws->dy);
+        wl_surface_set_user_data(ws->surface, wb->buffer);
         ws->dx = 0;
         ws->dy = 0;
         sent = wb;
