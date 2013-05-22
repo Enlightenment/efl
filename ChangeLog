@@ -1,3 +1,7 @@
+2013-05-22  Daniel Juyung Seo (SeoZ)
+
+        * Fix fd handler increase issue when ecore_pipe_add/del is called repeatedly.
+
 2013-05-22  ChunEon Park (Hermet)
 
         * Edje textblock: keep the text styles when new font by the text class is applied.
