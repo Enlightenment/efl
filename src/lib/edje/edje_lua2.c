@@ -2954,7 +2954,7 @@ static int _elua_map_smooth(lua_State *L);
 static int _elua_map_uv(lua_State *L);
 static int _elua_map_zoom(lua_State *L);
 
-static const char *_elua_evas_map_api = "ewas_map";
+static const char *_elua_evas_map_api = "evas_map";
 static const struct luaL_Reg _elua_evas_map_funcs [] =
 {
      {"alpha",         _elua_map_alpha},
