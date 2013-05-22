@@ -327,9 +327,13 @@ _elua_obj_new(lua_State *L, Edje *ed, int size, const char *metatable)  // Stack
 }
 
 static void
-_elua_obj_free(lua_State *L EINA_UNUSED, Edje_Lua_Obj *obj)
+_elua_obj_free(lua_State *L, Edje_Lua_Obj *obj)
 {
    if (!obj->free_func) return;
+   // Free the reference, so it will actually get gc'd.
+   // It seems that being a completely weak table isn't enough.
+   lua_pushnil(L);                                  // Stack usage [-0, +1, -]
+   _elua_ref_set(L, obj);                           // Stack usage [-4, +4, m]
    obj->free_func(obj);
    obj->ed->lua_objs = eina_inlist_remove(obj->ed->lua_objs, EINA_INLIST_GET(obj));
    obj->free_func = NULL;
@@ -3888,7 +3892,7 @@ _elua_init(void)                                                                
    lua_pushlightuserdata(L, &_elua_objs);                                                  // Stack usage [-0, +1, -]
    lua_newtable(L);                                                                        // Stack usage [-0, +1, m]
    lua_pushstring(L, "__mode");                                                            // Stack usage [-0, +1, m]
-   lua_pushstring(L, "v");                                                                 // Stack usage [-0, +1, m]
+   lua_pushstring(L, "kv");                                                                // Stack usage [-0, +1, m]
    lua_rawset(L, -3);                                                                      // Stack usage [-2, +0, m]
    lua_rawset(L, LUA_REGISTRYINDEX);                                                       // Stack usage [-2, +0, m]
 }
@@ -3978,7 +3982,7 @@ _edje_lua2_script_init(Edje *ed)                                  // Stack usage
    lua_pushlightuserdata(L, &_elua_objs);                         // Stack usage [-0, +1, -]
    lua_newtable(L);                                               // Stack usage [-0, +1, m]
    lua_pushstring(L, "__mode");                                   // Stack usage [-0, +1, m]
-   lua_pushstring(L, "v");                                        // Stack usage [-0, +1, m]
+   lua_pushstring(L, "kv");                                       // Stack usage [-0, +1, m]
    lua_rawset(L, -3);                                             // Stack usage [-2, +0, m]
    lua_rawset(L, LUA_REGISTRYINDEX);                              // Stack usage [-2, +0, m]
 
