@@ -243,8 +243,6 @@ _edje_textblock_style_all_update(Edje *ed)
                   eina_strbuf_append(txt, "font=");
 
                   f = (tc && tc->font) ? tc->font : tag->font;
-                  if (tc && tc->font) printf("tc font = %s\n", tc->font);
-                  if (tag->font) printf("tag font = %s\n", tag->font);
                   eina_strbuf_append_escaped(txt, f);
                }
 
