@@ -242,16 +242,6 @@ ecore_x_init(const char *name)
    /* finalize xcb keymasks */
    _ecore_xcb_keymap_finalize();
 
-   /* setup ecore fd handler */
-   _ecore_xcb_fd_handler =
-     ecore_main_fd_handler_add(xcb_get_file_descriptor(_ecore_xcb_conn),
-                               ECORE_FD_READ, _ecore_xcb_fd_handle,
-                               _ecore_xcb_conn, _ecore_xcb_fd_handle_buff,
-                               _ecore_xcb_conn);
-
-   if (!_ecore_xcb_fd_handler)
-     return _ecore_xcb_shutdown(EINA_TRUE);
-
    /* prefetch atoms */
    _ecore_xcb_atoms_init();
 
@@ -284,6 +274,16 @@ ecore_x_init(const char *name)
 
    _ecore_xcb_idle_enterer =
      ecore_idle_enterer_add(_ecore_xcb_idle_enter, NULL);
+
+   /* setup ecore fd handler */
+   _ecore_xcb_fd_handler =
+     ecore_main_fd_handler_add(xcb_get_file_descriptor(_ecore_xcb_conn),
+                               ECORE_FD_READ, _ecore_xcb_fd_handle,
+                               _ecore_xcb_conn, _ecore_xcb_fd_handle_buff,
+                               _ecore_xcb_conn);
+
+   if (!_ecore_xcb_fd_handler)
+     return _ecore_xcb_shutdown(EINA_TRUE);
 
    return _ecore_xcb_init_count;
 }

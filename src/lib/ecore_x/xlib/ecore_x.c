@@ -635,14 +635,6 @@ ecore_x_init(const char *name)
 
    _ecore_x_modifiers_get();
 
-   _ecore_x_fd_handler_handle =
-     ecore_main_fd_handler_add(ConnectionNumber(_ecore_x_disp),
-                               ECORE_FD_READ,
-                               _ecore_x_fd_handler, _ecore_x_disp,
-                               _ecore_x_fd_handler_buf, _ecore_x_disp);
-   if (!_ecore_x_fd_handler_handle)
-     goto free_event_handlers;
-
    _ecore_x_atoms_init();
 
    /* Set up the ICCCM hints */
@@ -675,6 +667,14 @@ ecore_x_init(const char *name)
    _ecore_x_gesture_init();
    _ecore_x_input_init();
    _ecore_x_events_init();
+
+   _ecore_x_fd_handler_handle =
+     ecore_main_fd_handler_add(ConnectionNumber(_ecore_x_disp),
+                               ECORE_FD_READ,
+                               _ecore_x_fd_handler, _ecore_x_disp,
+                               _ecore_x_fd_handler_buf, _ecore_x_disp);
+   if (!_ecore_x_fd_handler_handle)
+     goto free_event_handlers;
 
    _ecore_x_private_win = ecore_x_window_override_new(0, -77, -777, 123, 456);
 
