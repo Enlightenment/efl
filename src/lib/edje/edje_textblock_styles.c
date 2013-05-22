@@ -238,12 +238,17 @@ _edje_textblock_style_all_update(Edje *ed)
              if (tag->font)
                {
                   const char *f;
+                  char *sfont = NULL;
 
                   eina_strbuf_append(txt, " ");
                   eina_strbuf_append(txt, "font=");
 
-                  f = (tc && tc->font) ? tc->font : tag->font;
+                  if (tc) f = _edje_text_font_get(tag->font, tc->font, &sfont);
+                  else f = tag->font;
+
                   eina_strbuf_append_escaped(txt, f);
+
+                  if (sfont) free(sfont);
                }
 
              eina_strbuf_append(txt, "'");

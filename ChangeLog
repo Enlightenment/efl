@@ -1,3 +1,7 @@
+2013-05-22  ChunEon Park (Hermet)
+
+        * Edje textblock: keep the text styles when new font by the text class is applied.
+
 2013-05-16  Tom Hacohen
 
         * Edje textblock: Fixed issue with quoted formats.

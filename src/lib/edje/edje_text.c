@@ -102,7 +102,7 @@ _edje_text_fit_x(Edje *ed, Edje_Real_Part *ep,
    return text;
 }
 
-static const char *
+const char *
 _edje_text_font_get(const char *base, const char *new, char **free_later)
 {
    const char *base_style, *new_style, *aux;
