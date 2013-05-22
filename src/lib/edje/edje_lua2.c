@@ -1703,8 +1703,6 @@ In the following, "evas_object" is a place holder for any lua variable that
 holds a reference to an evas object.
 */
 
-static int _elua_obj_del(lua_State *L);
-
 static int _elua_hide(lua_State *L);
 static int _elua_show(lua_State *L);
 static int _elua_visible(lua_State *L);
