@@ -736,8 +736,8 @@ _resize_cb(void *data,
    evas_object_geometry_get(data, &x, &y, NULL, &h);
    evas_object_move(sd->more, x, y + h);
 
-   if (!sd->resize_job)
-     sd->resize_job = ecore_job_add(_resize_job, data);
+   ELM_FREE_FUNC(sd->resize_job, ecore_job_del);
+   sd->resize_job = ecore_job_add(_resize_job, data);
 }
 
 static void
