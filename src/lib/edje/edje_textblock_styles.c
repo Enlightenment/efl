@@ -152,7 +152,7 @@ _edje_format_reparse(Edje_File *edf, const char *str, Edje_Style_Tag **tag_ret)
 
 /* Update all evas_styles which are in an edje
  *
- * @param ed	The edje containing styles which need to be updated
+ * @param ed The edje containing styles which need to be updated
  */
 void
 _edje_textblock_style_all_update(Edje *ed)
@@ -165,16 +165,16 @@ _edje_textblock_style_all_update(Edje *ed)
 
    EINA_LIST_FOREACH(ed->file->styles, l, stl)
      {
-	Edje_Style_Tag *tag;
-	Edje_Text_Class *tc;
-	int found = 0;
-	char *fontset = NULL, *fontsource = NULL;
+        Edje_Style_Tag *tag;
+        Edje_Text_Class *tc;
+        int found = 0;
+        char *fontset = NULL, *fontsource = NULL;
 
-	/* Make sure the style is already defined */
-	if (!stl->style) break;
+        /* Make sure the style is already defined */
+        if (!stl->style) break;
 
-	/* Make sure the style contains a text_class */
-	EINA_LIST_FOREACH(stl->tags, ll, tag)
+        /* Make sure the style contains a text_class */
+        EINA_LIST_FOREACH(stl->tags, ll, tag)
           {
              if (tag->text_class)
                {
@@ -183,75 +183,79 @@ _edje_textblock_style_all_update(Edje *ed)
                }
           }
 
-	/* No text classes , goto next style */
-	if (!found) continue;
-	if (!txt)
-	  txt = eina_strbuf_new();
+        /* No text classes , goto next style */
+        if (!found) continue;
+        if (!txt)
+          txt = eina_strbuf_new();
 
-	if (_edje_fontset_append)
-	  fontset = eina_str_escape(_edje_fontset_append);
-	fontsource = eina_str_escape(ed->file->path);
+        if (_edje_fontset_append)
+          fontset = eina_str_escape(_edje_fontset_append);
+        fontsource = eina_str_escape(ed->file->path);
 
-	/* Build the style from each tag */
-	EINA_LIST_FOREACH(stl->tags, ll, tag)
-	  {
-	     if (!tag->key) continue;
+        /* Build the style from each tag */
+        EINA_LIST_FOREACH(stl->tags, ll, tag)
+          {
+             if (!tag->key) continue;
 
-	     /* Add Tag Key */
-	     eina_strbuf_append(txt, tag->key);
-	     eina_strbuf_append(txt, "='");
+             /* Add Tag Key */
+             eina_strbuf_append(txt, tag->key);
+             eina_strbuf_append(txt, "='");
 
-	     /* Configure fonts from text class if it exists */
-	     tc = _edje_text_class_find(ed, tag->text_class);
+             /* Configure fonts from text class if it exists */
+             tc = _edje_text_class_find(ed, tag->text_class);
 
-	     /* Add and Ha`ndle tag parsed data */
-	     eina_strbuf_append(txt, tag->value);
+             /* Add and Handle tag parsed data */
+             eina_strbuf_append(txt, tag->value);
 
-	     if (!strcmp(tag->key, "DEFAULT"))
-	       {
-		  if (fontset)
-		    {
-		       eina_strbuf_append(txt, " ");
-		       eina_strbuf_append(txt, "font_fallbacks=");
-		       eina_strbuf_append(txt, fontset);
-		    }
-		  eina_strbuf_append(txt, " ");
-		  eina_strbuf_append(txt, "font_source=");
-		  eina_strbuf_append(txt, fontsource);
-	       }
-	     if (tag->font_size != 0)
-	       {
-		  char font_size[32];
+             if (!strcmp(tag->key, "DEFAULT"))
+               {
+                  if (fontset)
+                    {
+                       eina_strbuf_append(txt, " ");
+                       eina_strbuf_append(txt, "font_fallbacks=");
+                       eina_strbuf_append(txt, fontset);
+                    }
+                  eina_strbuf_append(txt, " ");
+                  eina_strbuf_append(txt, "font_source=");
+                  eina_strbuf_append(txt, fontsource);
+               }
+             if (tag->font_size != 0)
+               {
+                  char font_size[32];
 
-		  if (tc && tc->size)
-		    snprintf(font_size, sizeof(font_size), "%f", (double) _edje_text_size_calc(tag->font_size, tc));
-		  else
-		    snprintf(font_size, sizeof(font_size), "%f", tag->font_size);
+                  if (tc && tc->size)
+                    snprintf(font_size, sizeof(font_size), "%f",
+                             (double) _edje_text_size_calc(tag->font_size, tc));
+                  else
+                    snprintf(font_size, sizeof(font_size), "%f",
+                             tag->font_size);
 
-		  eina_strbuf_append(txt, " ");
-		  eina_strbuf_append(txt, "font_size=");
-		  eina_strbuf_append(txt, font_size);
-	       }
-	     /* Add font name last to save evas from multiple loads */
-	     if (tag->font)
-	       {
-		  const char *f;
+                  eina_strbuf_append(txt, " ");
+                  eina_strbuf_append(txt, "font_size=");
+                  eina_strbuf_append(txt, font_size);
+               }
+             /* Add font name last to save evas from multiple loads */
+             if (tag->font)
+               {
+                  const char *f;
 
-		  eina_strbuf_append(txt, " ");
-		  eina_strbuf_append(txt, "font=");
+                  eina_strbuf_append(txt, " ");
+                  eina_strbuf_append(txt, "font=");
 
-		  f = (tc && tc->font) ? tc->font : tag->font;
-		  eina_strbuf_append_escaped(txt, f);
-	       }
+                  f = (tc && tc->font) ? tc->font : tag->font;
+                  if (tc && tc->font) printf("tc font = %s\n", tc->font);
+                  if (tag->font) printf("tag font = %s\n", tag->font);
+                  eina_strbuf_append_escaped(txt, f);
+               }
 
-	     eina_strbuf_append(txt, "'");
-	  }
-	if (fontset) free(fontset);
-	if (fontsource) free(fontsource);
+             eina_strbuf_append(txt, "'");
+          }
+        if (fontset) free(fontset);
+        if (fontsource) free(fontsource);
 
-	/* Configure the style */
-	evas_textblock_style_set(stl->style, eina_strbuf_string_get(txt));
-	eina_strbuf_reset(txt);
+        /* Configure the style */
+        evas_textblock_style_set(stl->style, eina_strbuf_string_get(txt));
+        eina_strbuf_reset(txt);
      }
    if (txt)
      eina_strbuf_free(txt);
