@@ -1356,3 +1356,7 @@
 2013-05-17 Thiep Ha
 
         * Add selection handlers to entry.
+
+2013-05-23 Daniel Juyung Seo (SeoZ)
+
+        * Fix colorselector color change but when palette item is selected.

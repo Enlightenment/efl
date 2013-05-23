@@ -1308,11 +1308,11 @@ _on_color_released(void *data,
    elm_object_signal_emit(VIEW(item), "elm,state,unselected", "elm");
    if (!sd->longpressed)
      {
-        evas_object_smart_callback_call
-          (WIDGET(item), SIG_COLOR_ITEM_SELECTED, item);
         elm_colorselector_color_set
           (WIDGET(item), item->color->r, item->color->g, item->color->b,
           item->color->a);
+        evas_object_smart_callback_call
+          (WIDGET(item), SIG_COLOR_ITEM_SELECTED, item);
      }
    EINA_LIST_FOREACH(sd->items, l, temp_item)
      if (item == temp_item) sd->selected = l;
@@ -1732,10 +1732,10 @@ _elm_colorselector_smart_event(Eo *obj, void *_pd, va_list *list)
      {
         item = eina_list_data_get(cl);
         elm_object_signal_emit(VIEW(item), "elm,anim,activate", "elm");
-        evas_object_smart_callback_call
-          (WIDGET(item), SIG_COLOR_ITEM_SELECTED, item);
         elm_colorselector_color_set
           (WIDGET(item), item->color->r, item->color->g, item->color->b,
+        evas_object_smart_callback_call
+          (WIDGET(item), SIG_COLOR_ITEM_SELECTED, item);
           item->color->a);
         sd->selected = cl;
      }
