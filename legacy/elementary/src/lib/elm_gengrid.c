@@ -1240,9 +1240,8 @@ _item_place(Elm_Gen_Item *it,
                }
              else if (item->item_reorder_move_animator)
                {
-                  ecore_animator_del
-                    (item->item_reorder_move_animator);
-                  item->item_reorder_move_animator = NULL;
+                  ELM_FREE_FUNC(item->item_reorder_move_animator,
+                                ecore_animator_del);
                   item->moving = EINA_FALSE;
                }
           }

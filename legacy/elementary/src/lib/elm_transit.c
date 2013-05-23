@@ -258,8 +258,7 @@ _transit_del(Elm_Transit *transit)
 
    transit->deleted = EINA_TRUE;
 
-   if (transit->animator)
-     ecore_animator_del(transit->animator);
+   ELM_FREE_FUNC(transit->animator, ecore_animator_del);
 
    //remove effects
    while (transit->effect_list)
@@ -717,8 +716,7 @@ elm_transit_go(Elm_Transit *transit)
    Eina_List *elist;
    Evas_Object *obj;
 
-   if (transit->animator)
-     ecore_animator_del(transit->animator);
+   ELM_FREE_FUNC(transit->animator, ecore_animator_del);
 
    EINA_LIST_FOREACH(transit->objs, elist, obj)
      _transit_obj_data_update(transit, obj);

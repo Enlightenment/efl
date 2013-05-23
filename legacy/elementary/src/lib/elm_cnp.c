@@ -2879,12 +2879,7 @@ _anim_st_free(Item_Container_Drag_Info *st)
 {  /* Stops and free mem of ongoing animation */
    if (st)
      {
-        if (st->ea)
-          {
-             ecore_animator_del(st->ea);
-             st->ea = NULL;
-          }
-
+        ELM_FREE_FUNC(st->ea, ecore_animator_del);
         Anim_Icon *sti;
 
         EINA_LIST_FREE(st->icons, sti)

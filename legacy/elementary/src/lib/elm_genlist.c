@@ -3066,8 +3066,7 @@ _item_del(Elm_Gen_Item *it)
         if (sd->tree_effect_animator)
           {
              _item_tree_effect_finish(sd);
-             ecore_animator_del(sd->tree_effect_animator);
-             sd->tree_effect_animator = NULL;
+             ELM_FREE_FUNC(sd->tree_effect_animator, ecore_animator_del);
           }
         sd->expanded_item = NULL;
         sd->move_effect_mode = ELM_GENLIST_TREE_EFFECT_NONE;
@@ -4966,22 +4965,10 @@ static void
 _clear(Elm_Genlist_Smart_Data *sd)
 {
    sd->anchor_item = NULL;
-   if (sd->queue_idle_enterer)
-     {
-        ecore_idle_enterer_del(sd->queue_idle_enterer);
-        sd->queue_idle_enterer = NULL;
-     }
-   if (sd->must_recalc_idler)
-     {
-        ecore_idler_del(sd->must_recalc_idler);
-        sd->must_recalc_idler = NULL;
-     }
-   if (sd->queue) sd->queue = eina_list_free(sd->queue);
-   if (sd->reorder_move_animator)
-     {
-        ecore_animator_del(sd->reorder_move_animator);
-        sd->reorder_move_animator = NULL;
-     }
+   ELM_FREE_FUNC(sd->queue_idle_enterer, ecore_idle_enterer_del);
+   ELM_FREE_FUNC(sd->must_recalc_idler, ecore_idler_del);
+   ELM_FREE_FUNC(sd->queue, eina_list_free);
+   ELM_FREE_FUNC(sd->reorder_move_animator, ecore_animator_del);
    sd->show_item = NULL;
    sd->reorder_old_pan_y = 0;
 }
@@ -7004,11 +6991,7 @@ _decorate_mode_set(Eo *obj, void *_pd, va_list *valist)
    if (sd->decorate_all_mode == decorated) return;
    sd->decorate_all_mode = decorated;
 
-   if (sd->tree_effect_animator)
-     {
-        ecore_animator_del(sd->tree_effect_animator);
-        sd->tree_effect_animator = NULL;
-     }
+   ELM_FREE_FUNC(sd->tree_effect_animator, ecore_animator_del);
    sd->move_effect_mode = ELM_GENLIST_TREE_EFFECT_NONE;
 
    list = elm_genlist_realized_items_get(obj);

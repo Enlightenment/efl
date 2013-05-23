@@ -254,8 +254,7 @@ _view_smart_del(Evas_Object *obj)
 
    sd = evas_object_smart_data_get(obj);
 
-   if (sd->mouse.pan_anim)
-     ecore_animator_del(sd->mouse.pan_anim);
+   ELM_FREE_FUNC(sd->mouse.pan_anim, ecore_animator_del);
 
    _ewk_view_parent_sc.sc.del(obj);
 }
@@ -303,8 +302,7 @@ _view_smart_mouse_up(Ewk_View_Smart_Data *esd,
 
    if (sd->mouse.pan_anim)
      {
-        ecore_animator_del(sd->mouse.pan_anim);
-        sd->mouse.pan_anim = NULL;
+        ELM_FREE_FUNC(sd->mouse.pan_anim, ecore_animator_del);
 
         if (sd->mouse.longpress_timer)
           _ewk_view_parent_sc.mouse_down(esd, &sd->mouse.event);
@@ -2379,11 +2377,7 @@ _region_show(Eo *obj, void *_pd, va_list *list)
    zh = fh / zoom;
    rx = (x * fw) / zw;
    ry = (y * fh) / zh;
-   if (sd->bring_in.animator)
-     {
-        ecore_animator_del(sd->bring_in.animator);
-        sd->bring_in.animator = NULL;
-     }
+   ELM_FREE_FUNC(sd->bring_in.animator, ecore_animator_del);
    ewk_frame_scroll_set(frame, rx, ry);
 #else
    (void)obj;
@@ -2436,8 +2430,7 @@ _region_bring_in(Eo *obj, void *_pd, va_list *list)
    sd->bring_in.start.y = sy;
    sd->bring_in.end.x = rx;
    sd->bring_in.end.y = ry;
-   if (sd->bring_in.animator)
-     ecore_animator_del(sd->bring_in.animator);
+   ELM_FREE_FUNC(sd->bring_in.animator, ecore_animator_del);
    sd->bring_in.animator = ecore_animator_timeline_add(
        _elm_config->bring_in_scroll_friction, _bring_in_anim_cb, obj);
 #else

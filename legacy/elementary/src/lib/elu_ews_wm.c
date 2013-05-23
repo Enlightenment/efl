@@ -33,11 +33,7 @@ _elm_ews_wm_border_del(void *data)
 
    if (_ews_border_mover_obj == deco)
      {
-        if (_ews_border_mover)
-          {
-             ecore_animator_del(_ews_border_mover);
-             _ews_border_mover = NULL;
-          }
+        ELM_FREE_FUNC(_ews_border_mover, ecore_animator_del);
         _ews_border_mover_obj = NULL;
      }
 }
@@ -280,14 +276,13 @@ _elm_ews_border_sig_move_start(void *data, Evas_Object *o __UNUSED__, const char
    Evas_Object *bs_o = ecore_evas_ews_backing_store_get(ee);
    int x, y, ox, oy;
 
-   if (_ews_border_mover) ecore_animator_del(_ews_border_mover);
+   ELM_FREE_FUNC(_ews_border_mover, ecore_animator_del);
 
    evas_pointer_output_xy_get(evas_object_evas_get(bs_o), &x, &y);
    evas_object_geometry_get(bs_o, &ox, &oy, NULL, NULL);
    _ews_border_mover_off.x = x - ox;
    _ews_border_mover_off.y = y - oy;
    _ews_border_mover_obj = bs_o;
-   if (_ews_border_mover) ecore_animator_del(_ews_border_mover);
    _ews_border_mover = ecore_animator_add(_elm_ews_border_mover, ee);
 }
 
@@ -295,8 +290,7 @@ static void
 _elm_ews_border_sig_move_stop(void *data __UNUSED__, Evas_Object *o __UNUSED__, const char *sig __UNUSED__, const char *source __UNUSED__)
 {
    if (!_ews_border_mover) return;
-   ecore_animator_del(_ews_border_mover);
-   _ews_border_mover = NULL;
+   ELM_FREE_FUNC(_ews_border_mover, ecore_animator_del);
    _ews_border_mover_obj = NULL;
 }
 
@@ -529,23 +523,11 @@ _elm_ews_wm_shutdown(void)
 {
    Ecore_Event_Handler *eh;
 
-   if (_ews_border_mover)
-     {
-        ecore_animator_del(_ews_border_mover);
-        _ews_border_mover = NULL;
-     }
+   ELM_FREE_FUNC(_ews_border_mover, ecore_animator_del);
    _ews_border_mover_obj = NULL;
 
    EINA_LIST_FREE(_ews_ev_handlers, eh) ecore_event_handler_del(eh);
-   if (_ews_borders)
-     {
-        eina_hash_free(_ews_borders);
-        _ews_borders = NULL;
-     }
-   if (_ews_borders_geo)
-     {
-        eina_hash_free(_ews_borders_geo);
-        _ews_borders_geo = NULL;
-     }
+   ELM_FREE_FUNC(_ews_borders, eina_hash_free);
+   ELM_FREE_FUNC(_ews_borders_geo, ecore_animator_del);
    _ews_bg = NULL;
 }
