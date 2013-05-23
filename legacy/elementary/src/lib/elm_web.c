@@ -1185,7 +1185,7 @@ _elm_web_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    Elm_Web_Smart_Data *sd = _pd;
 
    ELM_FREE_FUNC(sd->zoom.timer, ecore_timer_del);
-   ELM_FREE_FUNC(sd->bring_in.animator.timer, ecore_animator_del);
+   ELM_FREE_FUNC(sd->bring_in.animator, ecore_animator_del);
 
 #else
    (void)_pd;
