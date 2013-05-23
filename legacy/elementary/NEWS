@@ -231,6 +231,7 @@ Fixes:
    * Fix remained ecore timer issue when gesture layer was deleted.
    * Fix ctxpopup can't be called again in the mobile mode entry.
    * Fix colorselector color change but when palette item is selected.
+   * Fix elm_colorselector does not emit "changed" when clicked color palatte.
 
 Removals:
 

@@ -1360,3 +1360,7 @@
 2013-05-23 Daniel Juyung Seo (SeoZ)
 
         * Fix colorselector color change but when palette item is selected.
+
+2013-05-23 Ryuan Choi (ryuan)
+
+        * Fix elm_colorselector does not emit "changed" when clicked color palatte.

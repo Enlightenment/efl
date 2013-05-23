@@ -383,6 +383,9 @@ _colors_set(Evas_Object *obj,
 
    ELM_COLORSELECTOR_DATA_GET(obj, sd);
 
+   if ((sd->r == r) && (sd->g == g) && (sd->b == b) && (sd->a == a))
+     return;
+
    sd->r = r;
    sd->g = g;
    sd->b = b;
@@ -417,6 +420,7 @@ _colors_set(Evas_Object *obj,
      (sd->cb_data[3]->colorbar, "elm.arrow", x, y);
 
    _rectangles_redraw(sd->cb_data[3], x);
+   evas_object_smart_callback_call(obj, SIG_CHANGED, NULL);
 }
 
 static void
@@ -442,20 +446,16 @@ _entry_changed_cb(void *data,
    switch (i)
      {
       case 0:
-         if (v != sd->r)
-           _colors_set(parent, v, sd->g, sd->b, sd->a);
+         _colors_set(parent, v, sd->g, sd->b, sd->a);
          break;
       case 1:
-         if (v != sd->g)
-           _colors_set(parent, sd->r, v, sd->b, sd->a);
+         _colors_set(parent, sd->r, v, sd->b, sd->a);
          break;
       case 2:
-         if (v != sd->b)
-           _colors_set(parent, sd->r, sd->g, v, sd->a);
+         _colors_set(parent, sd->r, sd->g, v, sd->a);
          break;
       case 3:
-         if (v != sd->a)
-           _colors_set(parent, sd->r, sd->g, sd->b, v);
+         _colors_set(parent, sd->r, sd->g, sd->b, v);
          break;
      }
 }

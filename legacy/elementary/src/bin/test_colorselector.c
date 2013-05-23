@@ -23,13 +23,13 @@ _colorselector_clicked_cb(void *data, Evas_Object *obj,
 }
 
 static void
-_colorpalette_clicked_cb(void *data, Evas_Object *obj __UNUSED__,
+_colorpalette_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
                          void *event_info)
 {
    int r = 0, g = 0, b = 0 ,a = 0;
    Elm_Object_Item *color_it = (Elm_Object_Item *) event_info;
    elm_colorselector_palette_item_color_get(color_it, &r, &g, &b, &a);
-   evas_object_color_set((Evas_Object *) data, r, g, b , a);
+   printf("Selected Color Palette [r=%d g=%d b=%d a=%d]\n", r, g, b, a);
 }
 
 static void
