@@ -363,8 +363,8 @@ struct _Eina_List_Accounting
  * list = eina_list_append(list, my_data);
  * if (eina_error_get())
  *   {
- *     fprintf(stderr, "ERROR: Memory is low. List allocation failed.\n");
- *     exit(-1);
+ *      fprintf(stderr, "ERROR: Memory is low. List allocation failed.\n");
+ *      exit(-1);
  *   }
  * @endcode
  *
@@ -396,8 +396,8 @@ EAPI Eina_List            *eina_list_append(Eina_List *list, const void *data) E
  * list = eina_list_prepend(list, my_data);
  * if (eina_error_get())
  *   {
- *     fprintf(stderr, "ERROR: Memory is low. List allocation failed.\n");
- *     exit(-1);
+ *      fprintf(stderr, "ERROR: Memory is low. List allocation failed.\n");
+ *      exit(-1);
  *   }
  * @endcode
  *
@@ -433,14 +433,14 @@ EAPI Eina_List            *eina_list_prepend(Eina_List *list, const void *data) 
  * list = eina_list_append(list, relative_member);
  * if (eina_error_get())
  *   {
- *     fprintf(stderr, "ERROR: Memory is low. List allocation failed.\n");
- *     exit(-1);
+ *      fprintf(stderr, "ERROR: Memory is low. List allocation failed.\n");
+ *      exit(-1);
  *   }
  * list = eina_list_append_relative(list, my_data, relative_member);
  * if (eina_error_get())
  *   {
- *     fprintf(stderr, "ERROR: Memory is low. List allocation failed.\n");
- *     exit(-1);
+ *      fprintf(stderr, "ERROR: Memory is low. List allocation failed.\n");
+ *      exit(-1);
  *   }
  * @endcode
  *
@@ -498,14 +498,14 @@ EAPI Eina_List            *eina_list_append_relative_list(Eina_List *list, const
  * list = eina_list_append(list, relative_member);
  * if (eina_error_get_error())
  *   {
- *     fprintf(stderr, "ERROR: Memory is low. List allocation failed.\n");
- *     exit(-1);
+ *      fprintf(stderr, "ERROR: Memory is low. List allocation failed.\n");
+ *      exit(-1);
  *   }
  * list = eina_list_prepend_relative(list, my_data, relative_member);
  * if (eina_error_get())
  *   {
- *     fprintf(stderr, "ERROR: Memory is low. List allocation failed.\n");
- *     exit(-1);
+ *      fprintf(stderr, "ERROR: Memory is low. List allocation failed.\n");
+ *      exit(-1);
  *   }
  * @endcode
  *
@@ -606,11 +606,11 @@ EAPI Eina_List            *eina_list_remove(Eina_List *list, const void *data) E
  *
  * EINA_LIST_FOREACH(list, l, data)
  *   {
- *     if (data == my_data)
- *       {
- *         list = eina_list_remove_list(list, l);
- *         break;
- *       }
+ *      if (data == my_data)
+ *        {
+ *           list = eina_list_remove_list(list, l);
+ *           break;
+ *        }
  *   }
  * @endcode
  *
@@ -640,11 +640,11 @@ EAPI Eina_List            *eina_list_remove_list(Eina_List *list, Eina_List *rem
  *
  * EINA_LIST_FOREACH(list, l, data)
  *   {
- *     if (data == my_data)
- *       {
- *         list = eina_list_promote_list(list, l);
- *         break;
- *       }
+ *      if (data == my_data)
+ *        {
+ *           list = eina_list_promote_list(list, l);
+ *           break;
+ *        }
  *   }
  * @endcode
  *
@@ -674,11 +674,11 @@ EAPI Eina_List            *eina_list_promote_list(Eina_List *list, Eina_List *mo
  *
  * EINA_LIST_FOREACH(list, l, data)
  *   {
- *     if (data == my_data)
- *       {
- *         list = eina_list_demote_list(list, l);
- *         break;
- *       }
+ *      if (data == my_data)
+ *        {
+ *           list = eina_list_demote_list(list, l);
+ *           break;
+ *        }
  *   }
  * @endcode
  *
@@ -1518,10 +1518,11 @@ EAPI Eina_Accessor        *eina_list_accessor_new(const Eina_List *list) EINA_MA
  * // EINA_LIST_FOREACH_SAFE will be used to free elements that match "key".
  *
  * EINA_LIST_FOREACH_SAFE(list, l, l_next, data)
- *   if (strcmp(data, "key") == 0) {
- *      free(data);
- *      list = eina_list_remove_list(list, l);
- *   }
+ *   if (strcmp(data, "key") == 0)
+ *     {
+ *        free(data);
+ *        list = eina_list_remove_list(list, l);
+ *     }
  * @endcode
  *
  * @warning @p list must be a pointer to the first element of the list.
@@ -1574,10 +1575,11 @@ EAPI Eina_Accessor        *eina_list_accessor_new(const Eina_List *list) EINA_MA
  * // EINA_LIST_REVERSE_FOREACH_SAFE will be used to free elements that match "key".
  *
  * EINA_LIST_REVERSE_FOREACH_SAFE(list, l, l_prev, data)
- *   if (strcmp(data, "key") == 0) {
- *      free(data);
- *      list = eina_list_remove_list(list, l);
- *   }
+ *   if (strcmp(data, "key") == 0)
+ *     {
+ *        free(data);
+ *        list = eina_list_remove_list(list, l);
+ *     }
  * @endcode
  *
  * @warning @p list must be a pointer to the first element of the list.
