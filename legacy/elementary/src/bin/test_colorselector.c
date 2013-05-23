@@ -5,14 +5,14 @@
 #ifndef ELM_LIB_QUICKLAUNCH
 
 static void
-_colorselector_clicked_cb(void *data, Evas_Object *obj,
+_colorselector_changed_cb(void *data, Evas_Object *obj,
                           void *event_info __UNUSED__)
 {
    Evas_Object *re = data;
    int r, g, b, a;
 
    elm_colorselector_color_get(obj, &r, &g, &b, &a);
-   printf("Current Color [r=%d g=%d b=%d a=%d]\n",r, g, b, a);
+   printf("Changed Color [r=%d g=%d b=%d a=%d]\n", r, g, b, a);
 
    /* Fix Alpha pre multiplication by edje */
    r = (r * a) / 255;
@@ -23,23 +23,26 @@ _colorselector_clicked_cb(void *data, Evas_Object *obj,
 }
 
 static void
-_colorpalette_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
-                         void *event_info)
+_color_item_selected_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
+                        void *event_info)
 {
    int r = 0, g = 0, b = 0 ,a = 0;
-   Elm_Object_Item *color_it = (Elm_Object_Item *) event_info;
+   Elm_Object_Item *color_it = event_info;
+
    elm_colorselector_palette_item_color_get(color_it, &r, &g, &b, &a);
    printf("Selected Color Palette [r=%d g=%d b=%d a=%d]\n", r, g, b, a);
 }
 
 static void
-_colorpalette_longpressed_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
-                             void *event_info)
+_color_item_longpressed_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
+                           void *event_info)
 {
    int r = 0,g = 0,b = 0 ,a = 0;
-   Elm_Object_Item *color_it = (Elm_Object_Item *) event_info;
+   Elm_Object_Item *color_it = event_info;
+
    elm_colorselector_palette_item_color_get(color_it, &r, &g, &b, &a);
-   printf("\ncolor = %d-%d-%d-%d\n", r, g, b, a);
+   printf("Longpressed color item : %p, color = %d-%d-%d-%d\n",
+          color_it, r, g, b, a);
 }
 
 static void
@@ -138,11 +141,11 @@ test_colorselector(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
    evas_object_size_hint_align_set(cs, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_object_content_set(fr, cs);
    evas_object_show(cs);
-   evas_object_smart_callback_add(cs, "changed", _colorselector_clicked_cb, re);
+   evas_object_smart_callback_add(cs, "changed", _colorselector_changed_cb, re);
    evas_object_smart_callback_add(cs, "color,item,selected",
-                                  _colorpalette_clicked_cb, re);
+                                  _color_item_selected_cb, re);
    evas_object_smart_callback_add(cs, "color,item,longpressed",
-                                  _colorpalette_longpressed_cb, re);
+                                  _color_item_longpressed_cb, re);
    evas_object_data_set(cs, "win", win);
 
    elm_colorselector_color_get(cs, &r, &g, &b, &a);
