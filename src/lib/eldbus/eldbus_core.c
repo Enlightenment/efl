@@ -76,11 +76,13 @@ int _eldbus_log_dom = -1;
 
 /* We don't save ELDBUS_CONNECTION_TYPE_UNKNOWN in here so we need room for 
  * last - 1 elements */
-static Eldbus_Connection *shared_connections[ELDBUS_CONNECTION_TYPE_LAST - 1];
+static void *shared_connections[ELDBUS_CONNECTION_TYPE_LAST - 1];
+static Eina_Hash *address_connections = NULL;
 
 static void _eldbus_connection_event_callback_call(Eldbus_Connection *conn, Eldbus_Connection_Event_Type type, const void *event_info);
 static void _eldbus_connection_context_event_cb_del(Eldbus_Connection_Context_Event *ce, Eldbus_Connection_Context_Event_Cb *ctx);
 static void eldbus_dispatch_name_owner_change(Eldbus_Connection_Name *cn, const char *old_id);
+static void _eldbus_connection_free(Eldbus_Connection *conn);
 
 EAPI int
 eldbus_init(void)
@@ -214,6 +216,17 @@ eldbus_shutdown(void)
      {
         CRITICAL("Alive TYPE_STARTER connection");
         print_live_connection(shared_connections[ELDBUS_CONNECTION_TYPE_STARTER - 1]);
+     }
+   if (shared_connections[ELDBUS_CONNECTION_TYPE_ADDRESS - 1])
+     {
+        if (eina_hash_population(address_connections))
+          {
+             CRITICAL("Alive TYPE_ADDRESS connection");
+             print_live_connection(shared_connections[ELDBUS_CONNECTION_TYPE_ADDRESS - 1]);
+          }
+
+        eina_hash_free(address_connections);
+        address_connections = shared_connections[ELDBUS_CONNECTION_TYPE_ADDRESS - 1] = NULL;
      }
 
    eldbus_service_shutdown();
@@ -946,8 +959,9 @@ _disconnected(void *data, const Eldbus_Message *msg EINA_UNUSED)
       conn, ELDBUS_CONNECTION_EVENT_DISCONNECTED, NULL);
 }
 
+/* Param address is only used for ELDBUS_CONNECTION_TYPE_ADDRESS type */
 static Eldbus_Connection *
-_connection_get(Eldbus_Connection_Type type)
+_connection_get(Eldbus_Connection_Type type, const char *address)
 {
    Eldbus_Connection *conn;
    DBusError err;
@@ -955,12 +969,18 @@ _connection_get(Eldbus_Connection_Type type)
 
    EINA_SAFETY_ON_FALSE_RETURN_VAL((type < ELDBUS_CONNECTION_TYPE_LAST) &&
                                    (type > ELDBUS_CONNECTION_TYPE_UNKNOWN), NULL);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL((type == ELDBUS_CONNECTION_TYPE_ADDRESS) &&
+                                  (address == NULL), NULL);
 
    conn = calloc(1, sizeof(Eldbus_Connection));
    EINA_SAFETY_ON_NULL_RETURN_VAL(conn, NULL);
 
    dbus_error_init(&err);
-   conn->dbus_conn = dbus_bus_get_private(type - 1, &err);
+   if (type == ELDBUS_CONNECTION_TYPE_ADDRESS)
+      conn->dbus_conn = dbus_connection_open_private(address, &err);
+   else
+      conn->dbus_conn = dbus_bus_get_private(type - 1, &err);
+
    if (dbus_error_is_set(&err))
      {
         free(conn);
@@ -986,7 +1006,8 @@ _connection_get(Eldbus_Connection_Type type)
 EAPI Eldbus_Connection *
 eldbus_private_connection_get(Eldbus_Connection_Type type)
 {
-   return _connection_get(type);
+   DBG("Getting private connection with type %d", type);
+   return _connection_get(type, NULL);
 }
 
 EAPI Eldbus_Connection *
@@ -999,7 +1020,13 @@ eldbus_connection_get(Eldbus_Connection_Type type)
    if (!type)
      return NULL;
 
-   conn = shared_connections[type - 1];
+   if (type == ELDBUS_CONNECTION_TYPE_ADDRESS)
+     {
+        ERR("CONNECTION_TYPE_ADDRESS must be used with appropriate address_connection_get() function");
+        return NULL;
+     }
+
+   conn = (Eldbus_Connection *) shared_connections[type - 1];
    if (conn)
      {
         DBG("Connection with type %d exists at %p; reffing and returning",
@@ -1007,11 +1034,49 @@ eldbus_connection_get(Eldbus_Connection_Type type)
         return eldbus_connection_ref(conn);
      }
 
-   conn = _connection_get(type);
+   conn = _connection_get(type, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(conn, NULL);
    shared_connections[type - 1] = conn;
 
    return conn;
+}
+
+EAPI Eldbus_Connection *
+eldbus_address_connection_get(const char *address)
+{
+   Eldbus_Connection *conn = NULL;
+
+   DBG("Getting connection with address %s", address);
+
+   if (address_connections == NULL)
+     {
+        address_connections = eina_hash_string_small_new(NULL);
+        shared_connections[ELDBUS_CONNECTION_TYPE_ADDRESS - 1] = address_connections;
+     }
+   else
+     {
+        conn = (Eldbus_Connection *) eina_hash_find(address_connections, address);
+     }
+
+   if (conn != NULL)
+     {
+        DBG("Connection with address %s exists at %p; reffing and returning",
+            address, conn);
+        return eldbus_connection_ref(conn);
+     }
+
+   conn = _connection_get(ELDBUS_CONNECTION_TYPE_ADDRESS, address);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(conn, NULL);
+   eina_hash_add(address_connections, address, conn);
+
+   return conn;
+}
+
+EAPI Eldbus_Connection *
+eldbus_private_address_connection_get(const char *address)
+{
+   DBG("Getting private connection with address %s", address);
+   return _connection_get(ELDBUS_CONNECTION_TYPE_ADDRESS, address);
 }
 
 EAPI Eldbus_Connection *
@@ -1127,8 +1192,13 @@ _eldbus_connection_free(Eldbus_Connection *conn)
    eldbus_data_del_all(&conn->data);
 
    if (conn->idler) ecore_idler_del(conn->idler);
-   if (conn->type && (shared_connections[conn->type - 1] == conn))
-     shared_connections[conn->type - 1] = NULL;
+   if (conn->type)
+     {
+        if (conn->type == ELDBUS_CONNECTION_TYPE_ADDRESS)
+           eina_hash_del_by_data(address_connections, conn);
+        else if (shared_connections[conn->type - 1] == (void *) conn)
+           shared_connections[conn->type - 1] = NULL;
+     }
 
    free(conn);
 }

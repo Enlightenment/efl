@@ -13,6 +13,7 @@ typedef enum
    ELDBUS_CONNECTION_TYPE_SESSION,
    ELDBUS_CONNECTION_TYPE_SYSTEM,
    ELDBUS_CONNECTION_TYPE_STARTER,
+   ELDBUS_CONNECTION_TYPE_ADDRESS,
    ELDBUS_CONNECTION_TYPE_LAST       /**< sentinel, not a real type */
 } Eldbus_Connection_Type;
 
@@ -42,6 +43,29 @@ EAPI Eldbus_Connection *eldbus_connection_get(Eldbus_Connection_Type type);
  * @return connection with bus
  */
 EAPI Eldbus_Connection *eldbus_private_connection_get(Eldbus_Connection_Type type);
+
+/**
+ * Establish a connection to bus and integrate it with the ecore main
+ * loop. If a connection of given type was already created before, its
+ * reference counter is incremented and the connection is returned.
+ *
+ * @param address the address which will be passed to dbus_connection_open()
+ *
+ * @return connection with bus
+ */
+EAPI Eldbus_Connection *eldbus_address_connection_get(const char *address) EINA_ARG_NONNULL(1);
+
+/**
+ * Always create and establish a new connection to bus and integrate it with
+ * the ecore main loop. Differently from eldbus_connection_get(), this function
+ * guarantees to create a new connection to the D-Bus daemon and the connection
+ * is not shared by any means.
+ *
+ * @param address the address which will be passed to dbus_connection_open_private()
+ *
+ * @return connection with bus
+ */
+EAPI Eldbus_Connection *eldbus_private_address_connection_get(const char *address) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Increment connection reference count.
