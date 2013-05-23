@@ -1734,9 +1734,9 @@ _elm_colorselector_smart_event(Eo *obj, void *_pd, va_list *list)
         elm_object_signal_emit(VIEW(item), "elm,anim,activate", "elm");
         elm_colorselector_color_set
           (WIDGET(item), item->color->r, item->color->g, item->color->b,
+          item->color->a);
         evas_object_smart_callback_call
           (WIDGET(item), SIG_COLOR_ITEM_SELECTED, item);
-          item->color->a);
         sd->selected = cl;
      }
    else if (!cl && sd->focused == ELM_COLORSELECTOR_PALETTE)
