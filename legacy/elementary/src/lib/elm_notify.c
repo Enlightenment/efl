@@ -259,11 +259,7 @@ static void
 _timer_init(Evas_Object *obj,
             Elm_Notify_Smart_Data *sd)
 {
-   if (sd->timer)
-     {
-        ecore_timer_del(sd->timer);
-        sd->timer = NULL;
-     }
+   ELM_FREE_FUNC(sd->timer, ecore_timer_del);
    if (sd->timeout > 0.0)
      sd->timer = ecore_timer_add(sd->timeout, _timer_cb, obj);
 }
@@ -290,11 +286,7 @@ _elm_notify_smart_hide(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    evas_object_hide(sd->notify);
    if (!sd->allow_events) evas_object_hide(sd->block_events);
-   if (sd->timer)
-     {
-        ecore_timer_del(sd->timer);
-        sd->timer = NULL;
-     }
+   ELM_FREE_FUNC(sd->timer, ecore_timer_del);
 }
 
 static void
@@ -466,11 +458,7 @@ _elm_notify_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    elm_notify_parent_set(obj, NULL);
    elm_notify_allow_events_set(obj, EINA_FALSE);
-   if (sd->timer)
-     {
-        ecore_timer_del(sd->timer);
-        sd->timer = NULL;
-     }
+   ELM_FREE_FUNC(sd->timer, ecore_timer_del);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }

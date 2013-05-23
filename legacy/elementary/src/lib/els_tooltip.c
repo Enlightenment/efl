@@ -260,8 +260,8 @@ _elm_tooltip_hide_anim_stop(Elm_Tooltip *tt)
    if (!tt->hide_timer) return;
    if (tt->tooltip)
      edje_object_signal_emit(tt->tooltip, "elm,action,show", "elm");
-   ecore_timer_del(tt->hide_timer);
-   tt->hide_timer = NULL;
+
+   ELM_FREE_FUNC(tt->hide_timer, ecore_timer_del);
 }
 
 static void
@@ -537,8 +537,7 @@ static void
 _elm_tooltip_show_timer_stop(Elm_Tooltip *tt)
 {
    if (!tt->show_timer) return;
-   ecore_timer_del(tt->show_timer);
-   tt->show_timer = NULL;
+   ELM_FREE_FUNC(tt->show_timer, ecore_timer_del);
 }
 
 static Eina_Bool

@@ -146,7 +146,7 @@ _value_set(Evas_Object *obj,
    sd->val = new_val;
 
    evas_object_smart_callback_call(obj, SIG_CHANGED, NULL);
-   if (sd->delay) ecore_timer_del(sd->delay);
+   ELM_FREE_FUNC(sd->delay, ecore_timer_del);
    sd->delay = ecore_timer_add(0.2, _delay_change, obj);
 
    return EINA_TRUE;
@@ -309,7 +309,7 @@ _val_inc_start(Evas_Object *obj)
 
    sd->interval = sd->first_interval;
    sd->spin_speed = sd->step;
-   if (sd->spin) ecore_timer_del(sd->spin);
+   ELM_FREE_FUNC(sd->spin, ecore_timer_del);
    sd->spin = ecore_timer_add(sd->interval, _spin_value, obj);
    _spin_value(obj);
 }
@@ -321,8 +321,7 @@ _val_inc_stop(Evas_Object *obj)
 
    sd->interval = sd->first_interval;
    sd->spin_speed = 0;
-   if (sd->spin) ecore_timer_del(sd->spin);
-   sd->spin = NULL;
+   ELM_FREE_FUNC(sd->spin, ecore_timer_del);
 }
 
 static void
@@ -332,7 +331,7 @@ _val_dec_start(Evas_Object *obj)
 
    sd->interval = sd->first_interval;
    sd->spin_speed = -sd->step;
-   if (sd->spin) ecore_timer_del(sd->spin);
+   ELM_FREE_FUNC(sd->spin, ecore_timer_del);
    sd->spin = ecore_timer_add(sd->interval, _spin_value, obj);
    _spin_value(obj);
 }
@@ -344,8 +343,7 @@ _val_dec_stop(Evas_Object *obj)
 
    sd->interval = sd->first_interval;
    sd->spin_speed = 0;
-   if (sd->spin) ecore_timer_del(sd->spin);
-   sd->spin = NULL;
+   ELM_FREE_FUNC(sd->spin, ecore_timer_del);
 }
 
 static void
@@ -407,7 +405,7 @@ _entry_activated_cb(void *data,
 
    _entry_value_apply(data);
    evas_object_smart_callback_call(data, SIG_CHANGED, NULL);
-   if (sd->delay) ecore_timer_del(sd->delay);
+   ELM_FREE_FUNC(sd->delay, ecore_timer_del);
    sd->delay = ecore_timer_add(0.2, _delay_change, data);
 }
 
@@ -694,9 +692,10 @@ _elm_spinner_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    Elm_Spinner_Smart_Data *sd = _pd;
 
-   if (sd->label) eina_stringshare_del(sd->label);
-   if (sd->delay) ecore_timer_del(sd->delay);
-   if (sd->spin) ecore_timer_del(sd->spin);
+   ELM_FREE_FUNC(sd->label, eina_stringshare_del);
+   ELM_FREE_FUNC(sd->delay, ecore_timer_del);
+   ELM_FREE_FUNC(sd->spin, ecore_timer_del);
+
    if (sd->special_values)
      {
         EINA_LIST_FREE(sd->special_values, sv)

@@ -72,12 +72,10 @@ _elm_list_item_free(Elm_List_Item *it)
 
    eina_stringshare_del(it->label);
 
-   if (it->swipe_timer) ecore_timer_del(it->swipe_timer);
-   it->swipe_timer = NULL;
-   if (it->long_timer) ecore_timer_del(it->long_timer);
-   it->long_timer = NULL;
-   if (it->icon) evas_object_del(it->icon);
-   if (it->end) evas_object_del(it->end);
+   ELM_FREE_FUNC(it->swipe_timer, ecore_timer_del);
+   ELM_FREE_FUNC(it->long_timer, ecore_timer_del);
+   ELM_FREE_FUNC(it->icon, evas_object_del);
+   ELM_FREE_FUNC(it->end, evas_object_del);
 }
 
 static Eina_Bool
@@ -1151,11 +1149,7 @@ _mouse_move_cb(void *data,
         if (!sd->on_hold)
           {
              sd->on_hold = EINA_TRUE;
-             if (it->long_timer)
-               {
-                  ecore_timer_del(it->long_timer);
-                  it->long_timer = NULL;
-               }
+             ELM_FREE_FUNC(it->long_timer, ecore_timer_del);
              if (!sd->was_selected)
                _item_unselect(it);
           }
@@ -1201,10 +1195,10 @@ _mouse_down_cb(void *data,
 
    _item_highlight(it);
    sd->longpressed = EINA_FALSE;
-   if (it->long_timer) ecore_timer_del(it->long_timer);
+   ELM_FREE_FUNC(it->long_timer, ecore_timer_del);
    it->long_timer = ecore_timer_add
        (_elm_config->longpress_timeout, _long_press_cb, it);
-   if (it->swipe_timer) ecore_timer_del(it->swipe_timer);
+   ELM_FREE_FUNC(it->swipe_timer, ecore_timer_del);
    it->swipe_timer = ecore_timer_add(0.4, _swipe_cancel, it);
 
    /* Always call the callbacks last - the user may delete our context! */
@@ -1238,16 +1232,8 @@ _mouse_up_cb(void *data,
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) sd->on_hold = EINA_TRUE;
    else sd->on_hold = EINA_FALSE;
    sd->longpressed = EINA_FALSE;
-   if (it->long_timer)
-     {
-        ecore_timer_del(it->long_timer);
-        it->long_timer = NULL;
-     }
-   if (it->swipe_timer)
-     {
-        ecore_timer_del(it->swipe_timer);
-        it->swipe_timer = NULL;
-     }
+   ELM_FREE_FUNC(it->long_timer, ecore_timer_del);
+   ELM_FREE_FUNC(it->swipe_timer, ecore_timer_del);
    if (sd->on_hold)
      {
         if (sd->swipe) _swipe_do(data);

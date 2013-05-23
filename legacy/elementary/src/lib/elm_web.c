@@ -312,11 +312,7 @@ _view_smart_mouse_up(Ewk_View_Smart_Data *esd,
           return EINA_TRUE;
      }
 
-   if (sd->mouse.longpress_timer)
-     {
-        ecore_timer_del(sd->mouse.longpress_timer);
-        sd->mouse.longpress_timer = NULL;
-     }
+   ELM_FREE_FUNC(sd->mouse.longpress_timer, ecore_timer_del);
 
    sd->mouse.move_count = 0;
    return _ewk_view_parent_sc.mouse_up(esd, event);
@@ -332,12 +328,10 @@ _view_smart_mouse_move(Ewk_View_Smart_Data *esd,
 
    sd->mouse.move_count++;
 
-   if (sd->mouse.longpress_timer &&
-       (((sd->mouse.x ^ sd->mouse.event.canvas.x) |
-         (sd->mouse.y ^ sd->mouse.event.canvas.y)) & (~0x07)))
+   if (((sd->mouse.x ^ sd->mouse.event.canvas.x) |
+        (sd->mouse.y ^ sd->mouse.event.canvas.y)) & (~0x07))
      {
-        ecore_timer_del(sd->mouse.longpress_timer);
-        sd->mouse.longpress_timer = NULL;
+        ELM_FREE_FUNC(sd->mouse.longpress_timer, ecore_timer_del);
      }
 
    if (sd->mouse.pan_anim)
@@ -913,8 +907,7 @@ _ewk_view_resized_cb(void *data,
    if (!(sd->zoom.mode != ELM_WEB_ZOOM_MODE_MANUAL))
      return;
 
-   if (sd->zoom.timer)
-     ecore_timer_del(sd->zoom.timer);
+   ELM_FREE_FUNC(sd->zoom.timer, ecore_timer_del);
    sd->zoom.timer = ecore_timer_add(0.5, _reset_zoom_timer_cb, data);
 }
 
@@ -1191,17 +1184,9 @@ _elm_web_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 #ifdef HAVE_ELEMENTARY_WEB
    Elm_Web_Smart_Data *sd = _pd;
 
-   if (sd->zoom.timer)
-     {
-        ecore_timer_del(sd->zoom.timer);
-        sd->zoom.timer = NULL;
-     }
+   ELM_FREE_FUNC(sd->zoom.timer, ecore_timer_del);
+   ELM_FREE_FUNC(sd->bring_in.animator.timer, ecore_animator_del);
 
-   if (sd->bring_in.animator)
-     {
-        ecore_animator_del(sd->bring_in.animator);
-        sd->bring_in.animator = NULL;
-     }
 #else
    (void)_pd;
 #endif

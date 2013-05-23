@@ -1398,11 +1398,7 @@ _tap_gestures_test_reset(Gesture_Info *gesture)
    EINA_SAFETY_ON_NULL_RETURN(gesture);
    ELM_GESTURE_LAYER_DATA_GET(gesture->obj, sd);
 
-   if (sd->gest_taps_timeout)
-     {
-        ecore_timer_del(sd->gest_taps_timeout);
-        sd->gest_taps_timeout = NULL;
-     }
+   ELM_FREE_FUNC(sd->gest_taps_timeout, ecore_timer_del);
 
    if (!gesture->data)
      return;
@@ -1433,11 +1429,7 @@ _n_long_tap_test_reset(Gesture_Info *gesture)
      free(p);
    st->touched = NULL;
 
-   if (st->timeout)
-     {
-        ecore_timer_del(st->timeout);
-        st->timeout = NULL;
-     }
+   ELM_FREE_FUNC(st->timeout, ecore_timer_del);
    memset(gesture->data, 0, sizeof(Long_Tap_Type));
 }
 
@@ -1989,11 +1981,7 @@ _n_long_tap_test(Evas_Object *obj,
                ev_flag = _state_set(gesture, ELM_GESTURE_STATE_ABORT,
                                     &st->info, EINA_FALSE);
 
-             if (st->timeout)
-               {
-                  ecore_timer_del(st->timeout);
-                  st->timeout = NULL;
-               }
+             ELM_FREE_FUNC(st->timeout, ecore_timer_del);
              _event_consume(sd, event_info, event_type, ev_flag);
           }
 
@@ -2013,11 +2001,7 @@ _n_long_tap_test(Evas_Object *obj,
              /* ABORT if user moved fingers out of tap area */
              if (!_inside(x, y, st->center_x, st->center_y))
                {
-                  if (st->timeout)
-                    {
-                       ecore_timer_del(st->timeout);
-                       st->timeout = NULL;
-                    }
+                  ELM_FREE_FUNC(st->timeout, ecore_timer_del);
 
                   /* Report MOVE if gesture started */
                   ev_flag = _state_set(gesture, ELM_GESTURE_STATE_ABORT,
@@ -3638,11 +3622,7 @@ _elm_gesture_layer_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
           free(sd->gesture[i]);
        }
-   if (sd->gest_taps_timeout)
-     {
-        ecore_timer_del(sd->gest_taps_timeout);
-        sd->gest_taps_timeout = NULL;
-     }
+   ELM_FREE_FUNC(sd->gest_taps_timeout, ecore_timer_del);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }

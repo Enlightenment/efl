@@ -834,7 +834,7 @@ _mouse_down_cb(void *data,
    else
      evas_object_smart_callback_call(data, SIG_PRESS, NULL);
    sd->longpressed = EINA_FALSE;
-   if (sd->long_timer) ecore_timer_del(sd->long_timer);
+   ELM_FREE_FUNC(sd->long_timer, ecore_timer_del);
    sd->long_timer = ecore_timer_add
        (_elm_config->longpress_timeout, _long_press_cb, data);
 }
@@ -852,11 +852,7 @@ _mouse_up_cb(void *data,
    if (ev->button != 1) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) sd->on_hold = EINA_TRUE;
    else sd->on_hold = EINA_FALSE;
-   if (sd->long_timer)
-     {
-        ecore_timer_del(sd->long_timer);
-        sd->long_timer = NULL;
-     }
+   ELM_FREE_FUNC(sd->long_timer, ecore_timer_del);
    if (!sd->on_hold)
      evas_object_smart_callback_call(data, SIG_CLICKED, NULL);
    sd->on_hold = EINA_FALSE;
@@ -939,7 +935,7 @@ _scroll_cb(Evas_Object *obj,
         if (sd->no_smooth == 1) _smooth_update(obj);
      }
 
-   if (sd->scr_timer) ecore_timer_del(sd->scr_timer);
+   ELM_FREE_FUNC(sd->scr_timer, ecore_timer_del);
    sd->scr_timer = ecore_timer_add(0.5, _scroll_timeout_cb, obj);
 
    evas_object_smart_callback_call(obj, SIG_SCROLL, NULL);
@@ -1395,13 +1391,12 @@ _elm_photocam_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    evas_object_del(sd->pan_obj);
    sd->pan_obj = NULL;
 
-   if (sd->file) eina_stringshare_del(sd->file);
-   if (sd->calc_job) ecore_job_del(sd->calc_job);
-   if (sd->scr_timer) ecore_timer_del(sd->scr_timer);
-   if (sd->zoom_animator) ecore_animator_del(sd->zoom_animator);
-   if (sd->g_layer_zoom.bounce.animator)
-     ecore_animator_del(sd->g_layer_zoom.bounce.animator);
-   if (sd->long_timer) ecore_timer_del(sd->long_timer);
+   ELM_FREE_FUNC(sd->file, eina_stringshare_del);
+   ELM_FREE_FUNC(sd->calc_job, ecore_job_del);
+   ELM_FREE_FUNC(sd->scr_timer, ecore_timer_del);
+   ELM_FREE_FUNC(sd->long_timer, ecore_timer_del);
+   ELM_FREE_FUNC(sd->zoom_animator, ecore_animator_del);
+   ELM_FREE_FUNC(sd->g_layer_zoom.bounce.animator, ecore_animator_del);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }

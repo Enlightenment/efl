@@ -1883,11 +1883,7 @@ _mouse_up_cb(Elm_Toolbar_Item *it,
    ELM_TOOLBAR_DATA_GET(WIDGET(it), sd);
 
    if (ev->button != 1) return;
-   if (sd->long_timer)
-     {
-        ecore_timer_del(sd->long_timer);
-        sd->long_timer = NULL;
-     }
+   ELM_FREE_FUNC(sd->long_timer, ecore_timer_del);
    evas_object_event_callback_del_full
      (VIEW(it), EVAS_CALLBACK_MOUSE_MOVE,
      (Evas_Object_Event_Cb)_mouse_move_cb, it);
@@ -2558,16 +2554,8 @@ _elm_toolbar_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
         elm_widget_item_del(it);
         it = next;
      }
-   if (sd->more_item)
-     {
-        elm_widget_item_del(sd->more_item);
-        sd->more_item = NULL;
-     }
-   if (sd->long_timer)
-     {
-        ecore_timer_del(sd->long_timer);
-        sd->long_timer = NULL;
-     }
+   ELM_FREE_FUNC(sd->more_item, elm_widget_item_del);
+   ELM_FREE_FUNC(sd->long_timer, ecore_timer_del);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }

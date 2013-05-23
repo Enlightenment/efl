@@ -1469,10 +1469,11 @@ _elm_win_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
         ecore_evas_callback_delete_request_set(sd->ee, NULL);
         ecore_evas_callback_resize_set(sd->ee, NULL);
      }
-   if (sd->deferred_resize_job) ecore_job_del(sd->deferred_resize_job);
-   if (sd->deferred_child_eval_job) ecore_job_del(sd->deferred_child_eval_job);
-   if (sd->shot.info) eina_stringshare_del(sd->shot.info);
-   if (sd->shot.timer) ecore_timer_del(sd->shot.timer);
+
+   ELM_FREE_FUNC(sd->deferred_resize_job, ecore_job_del);
+   ELM_FREE_FUNC(sd->deferred_child_eval_job, ecore_job_del);
+   ELM_FREE_FUNC(sd->shot.info, eina_stringshare_del);
+   ELM_FREE_FUNC(sd->shot.timer, ecore_timer_del);
 
 #ifdef HAVE_ELEMENTARY_X
    if (sd->x.client_message_handler)
