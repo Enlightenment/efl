@@ -1024,7 +1024,7 @@ eldbus_connection_ref(Eldbus_Connection *conn)
 }
 
 static void
-_eldbus_connection_unref(Eldbus_Connection *conn)
+_eldbus_connection_free(Eldbus_Connection *conn)
 {
    unsigned int i;
    Eldbus_Handler_Data *fd_handler;
@@ -1036,11 +1036,6 @@ _eldbus_connection_unref(Eldbus_Connection *conn)
    Eldbus_Connection_Name *cn;
    Eina_Array *cns;
    const char *name;
-
-   DBG("Connection %p: unref (currently at %d refs)",
-       conn, conn->refcount);
-
-   if (--conn->refcount > 0) return;
 
    DBG("Freeing connection %p", conn);
 
@@ -1136,6 +1131,16 @@ _eldbus_connection_unref(Eldbus_Connection *conn)
      shared_connections[conn->type - 1] = NULL;
 
    free(conn);
+}
+
+static void
+_eldbus_connection_unref(Eldbus_Connection *conn)
+{
+   DBG("Connection %p: unref (currently at %d refs)",
+       conn, conn->refcount);
+
+   if (--conn->refcount > 0) return;
+   _eldbus_connection_free(conn);
 }
 
 EAPI void
