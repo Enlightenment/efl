@@ -1437,7 +1437,10 @@ _ecore_con_cl_timer_update(Ecore_Con_Client *cl)
         if (cl->host_server->client_disconnect_time > 0)
           {
              if (cl->until_deletion)
-               ecore_timer_interval_set(cl->until_deletion, cl->host_server->client_disconnect_time);
+               {
+                  ecore_timer_interval_set(cl->until_deletion, cl->host_server->client_disconnect_time);
+                  ecore_timer_reset(cl->until_deletion);
+               }
              else
                cl->until_deletion = ecore_timer_add(cl->host_server->client_disconnect_time, (Ecore_Task_Cb)_ecore_con_client_timer, cl);
           }
