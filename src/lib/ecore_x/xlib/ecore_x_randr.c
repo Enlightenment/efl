@@ -713,10 +713,15 @@ ecore_x_randr_modes_info_get(Ecore_X_Window root, int *num)
                        ret[i]->vSyncStart = res->modes[i].vSyncStart;
                        ret[i]->vSyncEnd = res->modes[i].vSyncEnd;
                        ret[i]->vTotal = res->modes[i].vTotal;
-                       if ((ret[i]->name = 
-                            (malloc(res->modes[i].nameLength + 1))))
-                         strncpy(ret[i]->name, res->modes[i].name,
-                                 (res->modes[i].nameLength + 1));
+                       if (res->modes[i].nameLength > 0)
+                         {
+                            if ((ret[i]->name = 
+                                 (malloc(res->modes[i].nameLength + 1))))
+                              strncpy(ret[i]->name, res->modes[i].name,
+                                      (res->modes[i].nameLength + 1));
+                            else
+                              ret[i]->name = NULL;
+                         }
                        else
                          ret[i]->name = NULL;
 
