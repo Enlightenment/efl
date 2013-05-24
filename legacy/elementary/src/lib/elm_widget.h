@@ -641,7 +641,6 @@ EAPI Evas_Object     *elm_widget_parent2_get(const Evas_Object *obj);
 EAPI void             elm_widget_parent2_set(Evas_Object *obj, Evas_Object *parent);
 EAPI void             elm_widget_focus_steal(Evas_Object *obj);
 EAPI Evas_Object     *elm_widget_newest_focus_order_get(const Evas_Object *obj, unsigned int *newest_focus_order, Eina_Bool can_focus_only);
-EAPI Evas_Display_Mode elm_widget_display_mode_get(const Evas_Object *obj);
 EAPI void             elm_widget_display_mode_set(Evas_Object *obj, Evas_Display_Mode dispmode);
 EAPI const Elm_Widget_Smart_Class *elm_widget_smart_class_get(void);
 
@@ -2416,18 +2415,6 @@ typedef void * (*list_data_get_func_type)(const Eina_List * l);
  *
  */
 #define elm_wdg_display_mode_set(dispmode) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_DISPLAY_MODE_SET), EO_TYPECHECK(Evas_Display_Mode, dispmode)
-
-/**
- * @def elm_wdg_display_mode_get
- * @since 1.8
- *
- * No description supplied by the EAPI.
- *
- * @param[out] ret
- *
- */
-#define elm_wdg_display_mode_get(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_DISPLAY_MODE_GET), EO_TYPECHECK(Evas_Display_Mode *, ret)
-
 
 /**
  * @def elm_wdg_tree_unfocusable_set

@@ -4697,46 +4697,6 @@ elm_widget_activate(Evas_Object *obj, Elm_Activate act)
 /**
  * @internal
  *
- * Returns the widget's Evas_Display_Mode
- *
- * @param obj The widget.
- * @return Evas_Display_Mode of the object.
- *
- * @see elm_widget_display_mode_set().
- * @ingroup Widget
- **/
-EAPI Evas_Display_Mode
-elm_widget_display_mode_get(const Evas_Object *obj)
-{
-   ELM_WIDGET_CHECK(obj) EVAS_DISPLAY_MODE_NONE;
-   Evas_Display_Mode ret = EVAS_DISPLAY_MODE_NONE;
-   eo_do((Eo *) obj, elm_wdg_display_mode_get(&ret));
-   return ret;
-}
-
-static void
-_elm_widget_display_mode_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
-{
-   Evas_Display_Mode *ret = va_arg(*list, Evas_Display_Mode *);
-   *ret = EVAS_DISPLAY_MODE_NONE;
-
-   Evas_Display_Mode new_mode;
-   Evas_Object *parent;
-
-   new_mode = evas_object_size_hint_display_mode_get(obj);
-   parent = elm_widget_parent_get(obj);
-
-   if ((new_mode == EVAS_DISPLAY_MODE_INHERIT) && parent)
-     {
-        *ret = elm_widget_display_mode_get(parent);
-        return;
-     }
-   *ret = new_mode;
-}
-
-/**
- * @internal
- *
  * Sets the widget and child widget's Evas_Display_Mode.
  *
  * @param obj The widget.
@@ -4760,25 +4720,21 @@ _elm_widget_display_mode_set(Eo *obj, void *_pd, va_list *list)
 {
    Evas_Display_Mode dispmode = va_arg(*list, Evas_Display_Mode);
 
-   Evas_Display_Mode child_mode;
    Evas_Object *child;
    Eina_List *l;
 
    Elm_Widget_Smart_Data *sd = _pd;
 
-   if (elm_widget_display_mode_get(obj) == dispmode) return;
+   if (evas_object_size_hint_display_mode_get(obj) == dispmode) return;
    evas_object_size_hint_display_mode_set(obj, dispmode);
 
    //TODO: Need to deal with EVAS_DISPLAY_MODE_INHERIT efficiently.
    EINA_LIST_FOREACH (sd->subobjs, l, child)
      {
-        child_mode = evas_object_size_hint_display_mode_get(child);
-        if (child_mode != EVAS_DISPLAY_MODE_DONT_CHANGE)
-          {
-             elm_widget_display_mode_set(child, dispmode);
-          }
+        if (evas_object_size_hint_display_mode_get(child)
+            != EVAS_DISPLAY_MODE_DONT_CHANGE)
+          elm_widget_display_mode_set(child, dispmode);
      }
-
 }
 
 EAPI void
@@ -6086,7 +6042,6 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_NEXT_OBJECT_SET), _elm_widget_focus_next_object_set),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_PARENT_HIGHLIGHT_SET), _elm_widget_parent_highlight_set),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_DISPLAY_MODE_SET), _elm_widget_display_mode_set),
-        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_DISPLAY_MODE_GET), _elm_widget_display_mode_get),
 
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_TREE_UNFOCUSABLE_SET), _elm_widget_tree_unfocusable_set),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_TREE_UNFOCUSABLE_GET), _elm_widget_tree_unfocusable_get),
