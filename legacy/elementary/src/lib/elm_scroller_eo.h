@@ -12,9 +12,6 @@ extern EAPI Eo_Op ELM_OBJ_SCROLLER_BASE_ID;
 enum
 {
    ELM_OBJ_SCROLLER_SUB_ID_CUSTOM_WIDGET_BASE_THEME_SET,
-   ELM_OBJ_SCROLLER_SUB_ID_REGION_GET,
-   ELM_OBJ_SCROLLER_SUB_ID_CHILD_SIZE_GET,
-   ELM_OBJ_SCROLLER_SUB_ID_PAGE_RELATIVE_SET,
    ELM_OBJ_SCROLLER_SUB_ID_PAGE_SCROLL_LIMIT_SET,
    ELM_OBJ_SCROLLER_SUB_ID_PAGE_SCROLL_LIMIT_GET,
    ELM_OBJ_SCROLLER_SUB_ID_PROPAGATE_EVENTS_SET,
@@ -37,47 +34,6 @@ enum
  * @see elm_scroller_custom_widget_base_theme_set
  */
 #define elm_obj_scroller_custom_widget_base_theme_set(klass, group) ELM_OBJ_SCROLLER_ID(ELM_OBJ_SCROLLER_SUB_ID_CUSTOM_WIDGET_BASE_THEME_SET), EO_TYPECHECK(const char *, klass), EO_TYPECHECK(const char *, group)
-
-/**
- * @def elm_obj_scroller_region_get
- * @since 1.8
- *
- * @brief Get the currently visible content region
- *
- * @param[out] x
- * @param[out] y
- * @param[out] w
- * @param[out] h
- *
- * @see elm_scroller_region_get
- */
-#define elm_obj_scroller_region_get(x, y, w, h) ELM_OBJ_SCROLLER_ID(ELM_OBJ_SCROLLER_SUB_ID_REGION_GET), EO_TYPECHECK(Evas_Coord *, x), EO_TYPECHECK(Evas_Coord *, y), EO_TYPECHECK(Evas_Coord *, w), EO_TYPECHECK(Evas_Coord *, h)
-
-/**
- * @def elm_obj_scroller_child_size_get
- * @since 1.8
- *
- * @brief Get the size of the content object
- *
- * @param[out] w
- * @param[out] h
- *
- * @see elm_scroller_child_size_get
- */
-#define elm_obj_scroller_child_size_get(w, h) ELM_OBJ_SCROLLER_ID(ELM_OBJ_SCROLLER_SUB_ID_CHILD_SIZE_GET), EO_TYPECHECK(Evas_Coord *, w), EO_TYPECHECK(Evas_Coord *, h)
-
-/**
- * @def elm_obj_scroller_page_relative_set
- * @since 1.8
- *
- * @brief Set scroll page size relative to viewport size.
- *
- * @param[in] h_pagerel
- * @param[in] v_pagerel
- *
- * @see elm_scroller_page_relative_set
- */
-#define elm_obj_scroller_page_relative_set(h_pagerel, v_pagerel) ELM_OBJ_SCROLLER_ID(ELM_OBJ_SCROLLER_SUB_ID_PAGE_RELATIVE_SET), EO_TYPECHECK(double, h_pagerel), EO_TYPECHECK(double, v_pagerel)
 
 /**
  * @def elm_obj_scroller_page_scroll_limit_set

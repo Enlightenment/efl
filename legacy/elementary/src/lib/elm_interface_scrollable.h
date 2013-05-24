@@ -176,6 +176,7 @@ enum
    ELM_SCROLLABLE_INTERFACE_SUB_ID_CONTENT_POS_GET,
    ELM_SCROLLABLE_INTERFACE_SUB_ID_CONTENT_REGION_SHOW,
    ELM_SCROLLABLE_INTERFACE_SUB_ID_CONTENT_REGION_SET,
+   ELM_SCROLLABLE_INTERFACE_SUB_ID_CONTENT_REGION_GET,
    ELM_SCROLLABLE_INTERFACE_SUB_ID_CONTENT_SIZE_GET,
    ELM_SCROLLABLE_INTERFACE_SUB_ID_CONTENT_VIEWPORT_SIZE_GET,
    ELM_SCROLLABLE_INTERFACE_SUB_ID_CONTENT_MIN_LIMIT,
@@ -198,6 +199,7 @@ enum
    ELM_SCROLLABLE_INTERFACE_SUB_ID_BOUNCE_ALLOW_GET,
    ELM_SCROLLABLE_INTERFACE_SUB_ID_PAGING_SET,
    ELM_SCROLLABLE_INTERFACE_SUB_ID_PAGING_GET,
+   ELM_SCROLLABLE_INTERFACE_SUB_ID_PAGE_RELATIVE_SET,
    ELM_SCROLLABLE_INTERFACE_SUB_ID_PAGE_SCROLL_LIMIT_SET,
    ELM_SCROLLABLE_INTERFACE_SUB_ID_PAGE_SCROLL_LIMIT_GET,
    ELM_SCROLLABLE_INTERFACE_SUB_ID_CURRENT_PAGE_GET,
@@ -530,6 +532,20 @@ enum
 #define elm_scrollable_interface_content_region_set(x, y, w, h) ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_CONTENT_REGION_SET), EO_TYPECHECK(Evas_Coord, x), EO_TYPECHECK(Evas_Coord, y), EO_TYPECHECK(Evas_Coord, w), EO_TYPECHECK(Evas_Coord, h)
 
 /**
+ * @def elm_scrollable_interface_content_region_get
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[out] x
+ * @param[out] y
+ * @param[out] w
+ * @param[out] h
+ *
+ */
+#define elm_scrollable_interface_content_region_get(x, y, w, h) ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_CONTENT_REGION_GET), EO_TYPECHECK(Evas_Coord *, x), EO_TYPECHECK(Evas_Coord *, y), EO_TYPECHECK(Evas_Coord *, w), EO_TYPECHECK(Evas_Coord *, h)
+
+/**
  * @def elm_scrollable_interface_content_size_get
  * @since 1.8
  *
@@ -612,6 +628,18 @@ enum
  *
  */
 #define elm_scrollable_interface_page_size_get(x, y) ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_PAGE_SIZE_GET), EO_TYPECHECK(Evas_Coord *, x), EO_TYPECHECK(Evas_Coord *, y)
+
+/**
+ * @def elm_scrollable_interface_page_relative_set
+ * @since 1.8
+ *
+ * @brief Set scroll page size relative to viewport size.
+ *
+ * @param[in] h_pagerel
+ * @param[in] v_pagerel
+ *
+ */
+#define elm_scrollable_interface_page_relative_set(h_pagerel, v_pagerel) ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_PAGE_RELATIVE_SET), EO_TYPECHECK(double, h_pagerel), EO_TYPECHECK(double, v_pagerel)
 
 /**
  * @def elm_scrollable_interface_policy_set
