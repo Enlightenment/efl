@@ -375,9 +375,9 @@ typedef enum _Evas_Aspect_Control
 typedef enum _Evas_Display_Mode
 {
    EVAS_DISPLAY_MODE_NONE = 0, /**<Default mode */
-   EVAS_DISPLAY_MODE_COMPRESS = 1, /**< Use this mode want to give comppress display mode hint to object */
-   EVAS_DISPLAY_MODE_EXPAND = 2, /**< Use this mode want to give expand display mode hint to object */
-   EVAS_DISPLAY_MODE_DONT_CHANGE = 3 /**< Use this mode when object should not change display mode */
+   EVAS_DISPLAY_MODE_COMPRESS = 1, /**< Use this mode when you want to give comppress display mode hint to an object */
+   EVAS_DISPLAY_MODE_EXPAND = 2, /**< Use this mode when you want to give expand display mode hint to an object */
+   EVAS_DISPLAY_MODE_DONT_CHANGE = 3 /**< Use this mode when an object should not change its display mode */
 } Evas_Display_Mode; /**< object's display mode type related with compress/expand or etc mode */
 
 typedef struct _Evas_Pixel_Import_Source Evas_Pixel_Import_Source; /**< A source description of pixels for importing pixels */
