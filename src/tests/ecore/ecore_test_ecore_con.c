@@ -185,14 +185,14 @@ START_TEST(ecore_test_ecore_con_server)
        _data, (void *) 2);
    fail_if(handlers[5] == NULL);
 
-   server = ecore_con_server_add(ECORE_CON_REMOTE_TCP, "::1", 1234,
+   server = ecore_con_server_add(ECORE_CON_REMOTE_TCP, "127.0.0.1", 1234,
        server_data);
    fail_if (server == NULL);
 
    ecore_con_server_timeout_set(server, 10);
    ecore_con_server_client_limit_set(server, 1, 0);
 
-   client = ecore_con_server_connect(ECORE_CON_REMOTE_TCP, "::1", 1234,
+   client = ecore_con_server_connect(ECORE_CON_REMOTE_TCP, "127.0.0.1", 1234,
        client_data);
    fail_if (client == NULL);
 
