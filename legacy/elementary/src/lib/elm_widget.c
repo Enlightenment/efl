@@ -1037,6 +1037,8 @@ _elm_widget_sub_object_add(Eo *obj, void *_pd, va_list *list)
         if (elm_widget_focus_get(sobj)) _parents_focus(obj);
      }
 
+   elm_widget_display_mode_set(sobj,
+                               evas_object_size_hint_display_mode_get(obj));
 end:
    if (ret) *ret = EINA_TRUE;
 }
@@ -4719,22 +4721,21 @@ static void
 _elm_widget_display_mode_set(Eo *obj, void *_pd, va_list *list)
 {
    Evas_Display_Mode dispmode = va_arg(*list, Evas_Display_Mode);
-
+   Evas_Display_Mode prev_dispmode;
    Evas_Object *child;
    Eina_List *l;
 
    Elm_Widget_Smart_Data *sd = _pd;
 
-   if (evas_object_size_hint_display_mode_get(obj) == dispmode) return;
+   prev_dispmode = evas_object_size_hint_display_mode_get(obj);
+
+   if ((prev_dispmode == dispmode) ||
+       (prev_dispmode == EVAS_DISPLAY_MODE_DONT_CHANGE)) return;
+
    evas_object_size_hint_display_mode_set(obj, dispmode);
 
-   //TODO: Need to deal with EVAS_DISPLAY_MODE_INHERIT efficiently.
    EINA_LIST_FOREACH (sd->subobjs, l, child)
-     {
-        if (evas_object_size_hint_display_mode_get(child)
-            != EVAS_DISPLAY_MODE_DONT_CHANGE)
-          elm_widget_display_mode_set(child, dispmode);
-     }
+      elm_widget_display_mode_set(child, dispmode);
 }
 
 EAPI void
