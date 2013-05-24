@@ -1,3 +1,7 @@
+2013-05-24  Daniel Willmann
+        * Fix srv->start_time (initialization missing). So now 
+          ecore_con_server_uptime_get() is working for plain TCP connections.
+
 2013-05-24  Guillaume Friloux
         * Fix use of ecore_con_server_client_limit_set() (counter never
           decreased).

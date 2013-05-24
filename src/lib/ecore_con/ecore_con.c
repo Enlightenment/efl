@@ -364,6 +364,7 @@ ecore_con_server_add(Ecore_Con_Type compl_type,
    if (!svr->name)
      goto error;
 
+   svr->start_time = ecore_time_get();
    svr->type = compl_type;
    svr->port = port;
    svr->data = (void *)data;
