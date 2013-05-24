@@ -1389,11 +1389,7 @@ void
 evgl_engine_shutdown(void *eng_data)
 {
    // Check if engine is valid
-   if (!evgl_engine)
-     {
-        ERR("EVGL Engine not valid!");
-        return;
-     }
+   if (!evgl_engine) return;
 
    // Log
    eina_log_domain_unregister(_evas_gl_log_dom);
