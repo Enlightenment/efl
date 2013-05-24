@@ -1116,6 +1116,7 @@ ecore_con_event_client_add(Ecore_Con_Client *cl)
    cl->event_count = eina_list_append(cl->event_count, e);
    cl->host_server->event_count = eina_list_append(cl->host_server->event_count, e);
    _ecore_con_cl_timer_update(cl);
+   cl->start_time = ecore_time_get();
    e->client = cl;
    if (cl->upgrade) ev = ECORE_CON_EVENT_CLIENT_UPGRADE;
    ecore_event_add(ev, e,
