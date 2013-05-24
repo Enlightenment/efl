@@ -1330,6 +1330,7 @@ _ecore_con_client_free(Ecore_Con_Client *cl)
           }
      }
    cl->host_server->clients = eina_list_remove(cl->host_server->clients, cl);
+   --cl->host_server->client_count;
 
 #ifdef _WIN32
    ecore_con_local_win32_client_del(cl);
