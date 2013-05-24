@@ -1379,7 +1379,10 @@ _ecore_con_server_timer_update(Ecore_Con_Server *svr)
         if (svr->disconnect_time > 0)
           {
              if (svr->until_deletion)
-               ecore_timer_interval_set(svr->until_deletion, svr->disconnect_time);
+               {
+                  ecore_timer_interval_set(svr->until_deletion, svr->disconnect_time);
+                  ecore_timer_reset(svr->until_deletion);
+               }
              else
                svr->until_deletion = ecore_timer_add(svr->disconnect_time, (Ecore_Task_Cb)_ecore_con_server_timer, svr);
           }
@@ -1416,7 +1419,10 @@ _ecore_con_cl_timer_update(Ecore_Con_Client *cl)
         if (cl->disconnect_time > 0)
           {
              if (cl->until_deletion)
-               ecore_timer_interval_set(cl->until_deletion, cl->disconnect_time);
+               {
+                  ecore_timer_interval_set(cl->until_deletion, cl->disconnect_time);
+                  ecore_timer_reset(cl->until_deletion);
+               }
              else
                cl->until_deletion = ecore_timer_add(cl->disconnect_time, (Ecore_Task_Cb)_ecore_con_client_timer, cl);
           }
