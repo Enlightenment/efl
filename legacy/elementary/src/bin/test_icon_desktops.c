@@ -50,9 +50,14 @@ desk_gl_del(void *data, Evas_Object *obj __UNUSED__)
 
 #ifdef ELM_EFREET
 static void
-desktop_sel(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+desktop_sel(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   printf("sel\n");
+   Efreet_Desktop *d = data;
+   if (!d) return;
+   printf("Selected Desktop Icon:\n");
+   printf("\tname : %s\n", d->name);
+   printf("\ticon : %s\n", d->icon);
+   printf("\tgeneric_name : %s\n", d->generic_name);
 }
 #endif
 
@@ -90,7 +95,7 @@ test_icon_desktops(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *eve
            EINA_LIST_FREE(desktops, d)
              elm_genlist_item_append(gl, it_desk, d,
                                     NULL, ELM_GENLIST_ITEM_NONE,
-                                    desktop_sel, NULL);
+                                    desktop_sel, d);
          }
      }
 #endif
