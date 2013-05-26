@@ -824,11 +824,7 @@ _item_signal_emit_hook(Elm_Object_Item *it,
                        const char *emission,
                        const char *source)
 {
-   Elm_Popup_Item *item = (Elm_Popup_Item *)it;
-
-   ELM_POPUP_ITEM_CHECK_OR_RETURN(it);
-
-   edje_object_signal_emit(VIEW(item), emission, source);
+   edje_object_signal_emit(VIEW(it), emission, source);
 }
 
 static void
