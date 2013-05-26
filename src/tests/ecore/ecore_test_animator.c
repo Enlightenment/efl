@@ -8,7 +8,7 @@
 #include <math.h>
 
 static double prev = 0;
-static Eina_Bool _anim_cb(void *data, double pos)
+static Eina_Bool _anim_cb(void *data EINA_UNUSED, double pos)
 {
 
   fail_if(prev > pos);
@@ -67,22 +67,22 @@ Eina_Bool test_pos(Ecore_Pos_Map posmap, double v1, double v2, double (*testmap)
   return EINA_TRUE;
 }
 
-double _linear(double val, double v1, double v2)
+double _linear(double val, double v1 EINA_UNUSED, double v2 EINA_UNUSED)
 {
   return val;
 }
 
-double _accel(double val, double v1, double v2)
+double _accel(double val, double v1 EINA_UNUSED, double v2 EINA_UNUSED)
 {
   return 1 - sin(M_PI_2 + val * M_PI_2);
 }
 
-double _decel(double val, double v1, double v2)
+double _decel(double val, double v1 EINA_UNUSED, double v2 EINA_UNUSED)
 {
   return  sin(val * M_PI_2);
 }
 
-double _sinusoidal(double val, double v1, double v2)
+double _sinusoidal(double val, double v1 EINA_UNUSED, double v2 EINA_UNUSED)
 {
   return  (1 - cos(val * M_PI)) / 2;
 }
