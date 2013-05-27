@@ -97,7 +97,10 @@ Additions:
      - Add ecore_imf_context_input_panel_layout_variation_set/get API
      - Add ecore_imf_input_panel_hide API
      - Add ecore_imf_context_input_panel_event_callback_call, clear API
-    * Add edje_object_part_text_input_panel_layout_variation_set/get API
+     - Add ECORE_IMF_INPUT_PANEL_LAYOUT_DATETIME layout
+    * Edje:
+     - Add edje_object_part_text_input_panel_layout_variation_set/get API
+     - Add EDJE_INPUT_PANEL_LAYOUT_DATETIME layout
     * Evil:
      - Add mkdtemp.
     * ecore_x:
