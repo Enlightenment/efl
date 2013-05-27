@@ -208,6 +208,7 @@ tags
 /src/examples/eldbus/complex-types
 /src/examples/eldbus/complex-types-client-eina-value
 /src/examples/eldbus/complex-types-server
+/src/examples/eldbus/conect-address
 /src/examples/eldbus/connman-list-services
 /src/examples/eldbus/ofono-dial
 /src/examples/eldbus/server

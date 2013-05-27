@@ -28,7 +28,8 @@ complex-types-server.c \
 server.c \
 client.c \
 simple-signal-emit.c \
-complex-types-client-eina-value.c
+complex-types-client-eina-value.c \
+connect-address.c
 
 EXTRA_PROGRAMS = \
 connman-list-services \
@@ -39,7 +40,8 @@ complex-types-server \
 server \
 client \
 simple-signal-emit \
-complex-types-client-eina-value
+complex-types-client-eina-value \
+connect-address
 
 connman_list_services_SOURCES = connman-list-services.c
 connman_list_services_LDADD = $(EXAMPLES_LIBS)
@@ -67,6 +69,9 @@ simple_signal_emit_LDADD = $(EXAMPLES_LIBS)
 
 complex_types_client_eina_value_SOURCES = complex-types-client-eina-value.c
 complex_types_client_eina_value_LDADD = $(EXAMPLES_LIBS)
+
+connect_address_SOURCES = connect-address.c
+connect_address_LDADD = $(EXAMPLES_LIBS)
 
 DATA_FILES = Makefile.examples
 

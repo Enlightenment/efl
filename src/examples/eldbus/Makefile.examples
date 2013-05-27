@@ -8,7 +8,8 @@ EXAMPLES= banshee client \
           connman-list-services \
           ofono-dial \
           server \
-          simple-signal-emit 
+          simple-signal-emit \
+          connect-address
 
 all: examples
 examples: $(EXAMPLES)
