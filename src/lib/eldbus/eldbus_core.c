@@ -635,8 +635,15 @@ cb_watch_toggle(DBusWatch *watch, void *data EINA_UNUSED)
    hd->enabled = dbus_watch_get_enabled(watch);
 
    DBG("watch %p is %sabled", hd, hd->enabled ? "en" : "dis");
-   if (hd->enabled) eldbus_fd_handler_add(hd);
-   else ecore_main_fd_handler_del(hd->fd_handler);
+   if (hd->enabled)
+     {
+        eldbus_fd_handler_add(hd);
+     }
+   else
+     {
+        ecore_main_fd_handler_del(hd->fd_handler);
+        hd->fd_handler = NULL;
+     }
 }
 
 static void
