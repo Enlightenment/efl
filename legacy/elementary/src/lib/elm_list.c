@@ -1439,6 +1439,14 @@ _item_del_pre_hook(Elm_Object_Item *it)
    return EINA_TRUE;
 }
 
+static void
+_item_signal_emit_hook(Elm_Object_Item *it,
+                       const char *emission,
+                       const char *source)
+{
+   edje_object_signal_emit(VIEW(it), emission, source);
+}
+
 static char *
 _access_info_cb(void *data, Evas_Object *obj __UNUSED__)
 {
@@ -1603,6 +1611,7 @@ _item_new(Evas_Object *obj,
    elm_widget_item_text_set_hook_set(it, _item_text_set_hook);
    elm_widget_item_text_get_hook_set(it, _item_text_get_hook);
    elm_widget_item_del_pre_hook_set(it, _item_del_pre_hook);
+   elm_widget_item_signal_emit_hook_set(it, _item_signal_emit_hook);
 
    return it;
 }

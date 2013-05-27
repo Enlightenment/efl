@@ -64,6 +64,7 @@
  * @li @ref elm_object_item_part_content_set
  * @li @ref elm_object_item_part_content_get
  * @li @ref elm_object_item_part_content_unset
+ * @li @ref elm_object_item_signal_emit
  *
  * This widget implements the @b @ref elm-scrollable-interface
  * interface, so that all (non-deprecated) functions for the base @ref

@@ -69,6 +69,7 @@ Additions:
    * The momentum animation time is changed as the amount of flick.
    * Add elm_entry smart callback - "text,set,done".
    * Add selection handlers to entry.
+   * Add support elm_object_item_signal_emit() for elm_list.
 
 Improvements:
 
