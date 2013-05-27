@@ -1368,3 +1368,7 @@
 2013-05-27 Tae-Hwan Kim (bluezery)
 
         * Add support elm_object_item_signal_emit() for elm_list.
+
+2013-05-27 Jihoon Kim (jihoon)
+
+        * Add ELM_INPUT_PANEL_LAYOUT_DATETIME.
