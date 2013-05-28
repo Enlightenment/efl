@@ -150,15 +150,17 @@ ecore_wl_window_resize(Ecore_Wl_Window *win, int w, int h, int location)
 
    if (!win) return;
 
-   if (win->type != ECORE_WL_WINDOW_TYPE_FULLSCREEN)
+   if ((win->type != ECORE_WL_WINDOW_TYPE_FULLSCREEN) || 
+       (win->type != ECORE_WL_WINDOW_TYPE_DND))
      {
-        win->allocation.w = w;
-        win->allocation.h = h;
+        /* win->allocation.w = w; */
+        /* win->allocation.h = h; */
 
         win->region.input = 
           wl_compositor_create_region(_ecore_wl_disp->wl.compositor);
-        wl_region_add(win->region.input, win->allocation.x, win->allocation.y, 
-                      win->allocation.w, win->allocation.h);
+        wl_region_add(win->region.input, 
+                      win->allocation.x, win->allocation.y, w, h);
+        /* win->allocation.w, win->allocation.h); */
      }
 
    ecore_wl_window_update_size(win, w, h);
@@ -234,6 +236,7 @@ ecore_wl_window_buffer_attach(Ecore_Wl_Window *win, struct wl_buffer *buffer, in
 
              /* if (buffer) */
              wl_surface_attach(win->surface, buffer, x, y);
+             wl_surface_set_user_data(win->surface, buffer);
              wl_surface_damage(win->surface, 0, 0, 
                                win->allocation.w, win->allocation.h);
              wl_surface_commit(win->surface);
@@ -266,10 +269,13 @@ ecore_wl_window_show(Ecore_Wl_Window *win)
 
    ecore_wl_window_surface_create(win);
 
-   win->shell_surface = 
-     wl_shell_get_shell_surface(_ecore_wl_disp->wl.shell, win->surface);
-   wl_shell_surface_add_listener(win->shell_surface, 
-                                 &_ecore_wl_shell_surface_listener, win);
+   if (win->type != ECORE_WL_WINDOW_TYPE_DND)
+     {
+        win->shell_surface = 
+          wl_shell_get_shell_surface(_ecore_wl_disp->wl.shell, win->surface);
+        wl_shell_surface_add_listener(win->shell_surface, 
+                                      &_ecore_wl_shell_surface_listener, win);
+     }
 
    switch (win->type)
      {
@@ -482,8 +488,7 @@ ecore_wl_window_update_size(Ecore_Wl_Window *win, int w, int h)
    if (win->surface)
      wl_surface_set_opaque_region(win->surface, opaque);
 
-   if (opaque)
-        wl_region_destroy(opaque);
+   if (opaque) wl_region_destroy(opaque);
 }
 
 EAPI void 
