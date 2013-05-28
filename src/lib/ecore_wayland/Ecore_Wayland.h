@@ -39,7 +39,13 @@ typedef struct _Ecore_Wl_Global Ecore_Wl_Global; /** @since 1.7.6 */
 # ifndef _ECORE_WAYLAND_WINDOW_PREDEF
 typedef struct _Ecore_Wl_Window Ecore_Wl_Window;
 # endif
-typedef struct _Ecore_Wl_Dnd Ecore_Wl_Dnd; /** @since 1.7 */
+
+/**
+ * @deprecated Do Not Use
+ * @since 1.7
+ */
+typedef struct _Ecore_Wl_Dnd Ecore_Wl_Dnd;
+
 typedef struct _Ecore_Wl_Dnd_Source Ecore_Wl_Dnd_Source;
 typedef struct _Ecore_Wl_Dnd_Target Ecore_Wl_Dnd_Target;
 
@@ -52,6 +58,7 @@ typedef struct _Ecore_Wl_Event_Dnd_Enter Ecore_Wl_Event_Dnd_Enter;
 typedef struct _Ecore_Wl_Event_Dnd_Position Ecore_Wl_Event_Dnd_Position;
 typedef struct _Ecore_Wl_Event_Dnd_Leave Ecore_Wl_Event_Dnd_Leave;
 typedef struct _Ecore_Wl_Event_Dnd_Drop Ecore_Wl_Event_Dnd_Drop;
+typedef struct _Ecore_Wl_Event_Dnd_End Ecore_Wl_Event_Dnd_End;
 typedef struct _Ecore_Wl_Event_Data_Source_Send Ecore_Wl_Event_Data_Source_Send; /** @since 1.7 */
 typedef struct _Ecore_Wl_Event_Selection_Data_Ready Ecore_Wl_Event_Selection_Data_Ready; /** @since 1.7 */
 typedef struct _Ecore_Wl_Event_Interfaces_Bound Ecore_Wl_Event_Interfaces_Bound;
@@ -64,6 +71,7 @@ enum _Ecore_Wl_Window_Type
    ECORE_WL_WINDOW_TYPE_MAXIMIZED,
    ECORE_WL_WINDOW_TYPE_TRANSIENT,
    ECORE_WL_WINDOW_TYPE_MENU,
+   ECORE_WL_WINDOW_TYPE_DND,
    ECORE_WL_WINDOW_TYPE_CUSTOM
 };
 
@@ -153,6 +161,8 @@ struct _Ecore_Wl_Input
    unsigned int cursor_current_index;
 
    struct wl_data_device *data_device;
+   struct wl_data_source *data_source;
+   struct wl_array data_types;
 
    Ecore_Wl_Window *pointer_focus;
    Ecore_Wl_Window *keyboard_focus;
@@ -170,7 +180,6 @@ struct _Ecore_Wl_Input
 
    Ecore_Wl_Dnd_Source *drag_source;
    Ecore_Wl_Dnd_Source *selection_source;
-   Ecore_Wl_Dnd *dnd; /** @since 1.7 */
 
    struct
      {
@@ -283,6 +292,8 @@ struct _Ecore_Wl_Event_Dnd_Enter
    unsigned int win, source;
    char **types;
    int num_types;
+   unsigned int serial;
+   struct wl_data_offer *offer;
    struct 
      {
         int x, y;
@@ -310,6 +321,11 @@ struct _Ecore_Wl_Event_Dnd_Drop
      {
         int x, y;
      } position;
+};
+
+struct _Ecore_Wl_Event_Dnd_End
+{
+   unsigned int win, source;
 };
 
 /** @since 1.7 */
@@ -362,6 +378,8 @@ EAPI extern int ECORE_WL_EVENT_DND_ENTER;
 EAPI extern int ECORE_WL_EVENT_DND_POSITION;
 EAPI extern int ECORE_WL_EVENT_DND_LEAVE;
 EAPI extern int ECORE_WL_EVENT_DND_DROP;
+EAPI extern int ECORE_WL_EVENT_DND_OFFER; /** @since 1.8 */
+EAPI extern int ECORE_WL_EVENT_DND_END; /** @since 1.8 */
 EAPI extern int ECORE_WL_EVENT_DATA_SOURCE_TARGET; /** @since 1.7 */
 EAPI extern int ECORE_WL_EVENT_DATA_SOURCE_SEND; /** @since 1.7 */
 EAPI extern int ECORE_WL_EVENT_DATA_SOURCE_CANCELLED; /** @since 1.7 */
@@ -495,6 +513,11 @@ EAPI struct wl_cursor *ecore_wl_cursor_get(const char *cursor_name);
  * Functions to interface with Wayland Input
  */
 
+/**
+ * @ingroup Ecore_Wl_Input_Group
+ * @since 1.8
+ */
+EAPI Ecore_Wl_Input *ecore_wl_input_get(void);
 EAPI void ecore_wl_input_grab(Ecore_Wl_Input *input, Ecore_Wl_Window *win, unsigned int button);
 EAPI void ecore_wl_input_ungrab(Ecore_Wl_Input *input);
 EAPI void ecore_wl_input_pointer_set(Ecore_Wl_Input *input, struct wl_surface *surface, int hot_x, int hot_y);
@@ -672,16 +695,95 @@ EAPI Ecore_Wl_Window *ecore_wl_window_surface_find(struct wl_surface *surface);
  * Functions to interface with Wayland Drag-n-Drop
  */
 
-/** @since 1.7 */
-EAPI Eina_Bool ecore_wl_dnd_set_selection(Ecore_Wl_Dnd *dnd, const char **types_offered);
-EAPI Eina_Bool ecore_wl_dnd_get_selection(Ecore_Wl_Dnd *dnd, const char *type);
-EAPI Ecore_Wl_Dnd *ecore_wl_dnd_get(void);
+/**
+ * @deprecated use ecore_wl_dnd_selection_set
+ * @since 1.7 
+*/
+EINA_DEPRECATED EAPI Eina_Bool ecore_wl_dnd_set_selection(Ecore_Wl_Dnd *dnd, const char **types_offered);
+
+/**
+ * @deprecated use ecore_wl_dnd_selection_get
+ * @since 1.7 
+*/
+EINA_DEPRECATED EAPI Eina_Bool ecore_wl_dnd_get_selection(Ecore_Wl_Dnd *dnd, const char *type);
+
+/**
+ * @deprecated Do Not Use
+ * @since 1.7
+ */
+EINA_DEPRECATED EAPI Ecore_Wl_Dnd *ecore_wl_dnd_get(void);
 
 /**
  * @deprecated use ecore_wl_dnd_drag_start
+ * @since 1.7
  */
-EINA_DEPRECATED EAPI Eina_Bool ecore_wl_dnd_start_drag();
-EAPI Eina_Bool ecore_wl_dnd_selection_has_owner(Ecore_Wl_Dnd *dnd);
+EINA_DEPRECATED EAPI Eina_Bool ecore_wl_dnd_start_drag(Ecore_Wl_Dnd *dnd);
+
+/**
+ * @deprecated use ecore_wl_dnd_selection_owner_has
+ * @since 1.7
+ */
+EINA_DEPRECATED EAPI Eina_Bool ecore_wl_dnd_selection_has_owner(Ecore_Wl_Dnd *dnd);
+
+/**
+ * @ingroup Ecore_Wl_Dnd_Group
+ * @since 1.8
+ */
+EAPI Eina_Bool ecore_wl_dnd_selection_set(Ecore_Wl_Input *input, const char **types_offered);
+
+/**
+ * @ingroup Ecore_Wl_Dnd_Group
+ * @since 1.8
+ */
+EAPI Eina_Bool ecore_wl_dnd_selection_get(Ecore_Wl_Input *input, const char *type);
+
+/**
+ * @ingroup Ecore_Wl_Dnd_Group
+ * @since 1.8
+ */
+EAPI Eina_Bool ecore_wl_dnd_selection_owner_has(Ecore_Wl_Input *input);
+
+/**
+ * @ingroup Ecore_Wl_Dnd_Group
+ * @since 1.8
+ */
+EAPI Eina_Bool ecore_wl_dnd_selection_clear(Ecore_Wl_Input *input);
+
+/**
+ * @ingroup Ecore_Wl_Dnd_Group
+ * @since 1.8
+ */
+EAPI void ecore_wl_dnd_drag_start(Ecore_Wl_Input *input, Ecore_Wl_Window *win, Ecore_Wl_Window *dragwin, int x, int y, int w, int h);
+
+/**
+ * @ingroup Ecore_Wl_Dnd_Group
+ * @since 1.8
+ */
+EAPI void ecore_wl_dnd_drag_end(Ecore_Wl_Input *input);
+
+/**
+ * @ingroup Ecore_Wl_Dnd_Group
+ * @since 1.8
+ */
+EAPI Eina_Bool ecore_wl_dnd_drag_get(Ecore_Wl_Input *input, const char *type);
+
+/**
+ * @ingroup Ecore_Wl_Dnd_Group
+ * @since 1.8
+ */
+EAPI void ecore_wl_dnd_drag_types_set(Ecore_Wl_Input *input, const char **types_offered);
+
+/**
+ * @ingroup Ecore_Wl_Dnd_Group
+ * @since 1.8
+ */
+EAPI struct wl_array *ecore_wl_dnd_drag_types_get(Ecore_Wl_Input *input);
+
+/**
+ * @ingroup Ecore_Wl_Dnd_Group
+ * @since 1.8
+ */
+/* EAPI Ecore_Wl_Dnd_Source *ecore_wl_dnd_drag_source_create(Ecore_Wl_Dnd *dnd); */
 
 #ifdef __cplusplus
 }
