@@ -522,18 +522,38 @@ _elm_user_dir_snprintf(char       *dst,
 
 #ifdef _WIN32
    home = evil_homedir_get();
+   user_dir_len = eina_str_join_len
+     (dst, size, '/', home, strlen(home),
+         ELEMENTARY_BASE_DIR, sizeof(ELEMENTARY_BASE_DIR) - 1);
 #else
-   home = getenv("HOME");
+#ifdef DOXDG   
+   home = getenv("XDG_CONFIG_HOME");
+   if (home)
+     {
+        user_dir_len = eina_str_join_len
+          (dst, size, '/', home, strlen(home),
+              "elementary", sizeof("elementary") - 1);
+     }
+   else
+#endif     
+     {
+        if (!home) home = getenv("HOME");
+        if (!home) home = "/";
+#ifdef DOXDG
+        user_dir_len = eina_str_join_len
+          (dst, size, '/', home, strlen(home),
+              ".config", sizeof(".config") - 1,
+              "elementary", sizeof("elementary") - 1);
+#else
+        user_dir_len = eina_str_join_len
+          (dst, size, '/', home, strlen(home),
+              ELEMENTARY_BASE_DIR, sizeof(ELEMENTARY_BASE_DIR) - 1);
+#endif        
+     }
 #endif
-   if (!home)
-     home = "/";
-
-   user_dir_len = eina_str_join_len(dst, size, '/', home, strlen(home),
-                                    ELEMENTARY_BASE_DIR, sizeof(ELEMENTARY_BASE_DIR) - 1);
 
    off = user_dir_len + 1;
-   if (off >= size)
-     goto end;
+   if (off >= size) goto end;
 
    va_start(ap, fmt);
    dst[user_dir_len] = '/';
