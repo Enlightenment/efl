@@ -20,6 +20,9 @@
         * Fix cl->start_time (initialization missing). So now 
           ecore_con_client_uptime_get() is working.
 
+2013-05-22  David Seikel (onefang)
+	* Edje Lua: Stop leaking evas objects in Lua.
+
 2013-05-22  Daniel Juyung Seo (SeoZ)
 
         * Fix fd handler increase issue when ecore_pipe_add/del is called repeatedly.
@@ -916,4 +919,3 @@
 2012-09-03  Igor Murzov
 
         * Add WebP image loader.
-
