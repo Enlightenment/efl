@@ -1852,6 +1852,9 @@ st_data_file(void)
 
    es->str = value;
 
+   if (!edje_file->data)
+     edje_file->data = eina_hash_string_small_new(free);
+
    eina_hash_direct_add(edje_file->data, key, es);
 
    free(filename);
