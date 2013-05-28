@@ -283,3 +283,4 @@ Fixes:
       ecore_con_client_uptime_get() is working.
     * Fix srv->start_time (initialization missing). So now
       ecore_con_server_uptime_get() is working for plain TCP connections.
+    * Fix textblock to render pre again if it needs to relayouting.

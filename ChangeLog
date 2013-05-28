@@ -1,3 +1,7 @@
+2013-05-28  ChunEon Park (Hermet)
+
+        * Fix textblock to render pre again if it needs to relayouting.
+
 2013-05-27  Jihoon Kim (jihoon)
 
         * Add ECORE_IMF_INPUT_PANEL_LAYOUT_DATETIME layout
