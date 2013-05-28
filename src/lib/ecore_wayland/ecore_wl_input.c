@@ -50,8 +50,6 @@ typedef struct _Ecore_Wl_Mouse_Down_Info
    Eina_Bool did_triple : 1;
 } Ecore_Wl_Mouse_Down_Info;
 
-Ecore_Wl_Dnd *glb_dnd = NULL;
-
 /* FIXME: This should be a global setting, used by wayland and X */
 static double _ecore_wl_double_click_time = 0.25;
 static Eina_Inlist *_ecore_wl_mouse_down_info_list = NULL;
@@ -276,6 +274,15 @@ ecore_wl_input_cursor_default_restore(Ecore_Wl_Input *input)
    ecore_wl_input_cursor_from_name_set(input, "left_ptr");
 }
 
+/**
+ * @since 1.8
+ */
+EAPI Ecore_Wl_Input *
+ecore_wl_input_get(void)
+{
+   return _ecore_wl_disp->input;
+}
+
 /* local functions */
 void 
 _ecore_wl_input_add(Ecore_Wl_Display *ewd, unsigned int id)
@@ -300,6 +307,8 @@ _ecore_wl_input_add(Ecore_Wl_Display *ewd, unsigned int id)
                         &_ecore_wl_seat_listener, input);
    wl_seat_set_user_data(input->seat, input);
 
+   wl_array_init(&input->data_types);
+
    input->data_device = 
      wl_data_device_manager_get_data_device(ewd->wl.data_device_manager, 
                                             input->seat);
@@ -317,14 +326,6 @@ _ecore_wl_input_add(Ecore_Wl_Display *ewd, unsigned int id)
                                NULL, NULL);
 
    ewd->input = input;
-
-   /* create Ecore_Wl_Dnd */
-   if (!glb_dnd)
-     if (!(glb_dnd = calloc(1, sizeof(Ecore_Wl_Dnd)))) return;
-   glb_dnd->ewd = ewd;
-   glb_dnd->input = input;
-   input->dnd = glb_dnd;
-   wl_array_init(&glb_dnd->types_offered);
 }
 
 void 
@@ -346,6 +347,18 @@ _ecore_wl_input_del(Ecore_Wl_Input *input)
 
         input->keyboard_focus = NULL;
      }
+
+   if (input->data_types.data)
+     {
+        char **t;
+
+        wl_array_for_each(t, &input->data_types)
+          free(*t);
+        wl_array_release(&input->data_types);
+     }
+
+   if (input->data_source) wl_data_source_destroy(input->data_source);
+   input->data_source = NULL;
 
    if (input->drag_source) _ecore_wl_dnd_del(input->drag_source);
    input->drag_source = NULL;
@@ -1335,12 +1348,6 @@ _ecore_wl_input_mouse_wheel_send(Ecore_Wl_Input *input, unsigned int axis, int v
      }
 
    ecore_event_add(ECORE_EVENT_MOUSE_WHEEL, ev, NULL, NULL);
-}
-
-void
-_ecore_wl_input_set_selection(Ecore_Wl_Input *input, struct wl_data_source *source)
-{
-   wl_data_device_set_selection(input->data_device, source, input->display->serial);
 }
 
 static void
