@@ -516,7 +516,7 @@ _elm_user_dir_snprintf(char       *dst,
                        const char *fmt,
                        ...)
 {
-   const char *home;
+   const char *home = NULL;
    size_t user_dir_len, off;
    va_list ap;
 
@@ -537,7 +537,7 @@ _elm_user_dir_snprintf(char       *dst,
    else
 #endif     
      {
-        if (!home) home = getenv("HOME");
+        home = getenv("HOME");
         if (!home) home = "/";
 #ifdef DOXDG
         user_dir_len = eina_str_join_len
