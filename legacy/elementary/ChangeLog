@@ -1372,3 +1372,7 @@
 2013-05-27 Jihoon Kim (jihoon)
 
         * Add ELM_INPUT_PANEL_LAYOUT_DATETIME.
+
+2013-05-27 Seunggyun Kim
+        * Add elm_config_glayer_long_tap_start_timeout_set/get,
+        elm_config_glayer_double_tap_timeout_set/get

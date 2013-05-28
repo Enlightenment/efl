@@ -2335,6 +2335,30 @@ elm_config_clouseau_enabled_set(Eina_Bool enable)
    _elm_clouseau_reload();
 }
 
+EAPI double
+elm_config_glayer_long_tap_start_timeout_get(void)
+{
+   return _elm_config->glayer_long_tap_start_timeout;
+}
+
+EAPI void
+elm_config_glayer_long_tap_start_timeout_set(double long_tap_timeout)
+{
+   _elm_config->glayer_long_tap_start_timeout = long_tap_timeout;
+}
+
+EAPI double
+elm_config_glayer_double_tap_timeout_get(void)
+{
+   return _elm_config->glayer_double_tap_timeout;
+}
+
+EAPI void
+elm_config_glayer_double_tap_timeout_set(double double_tap_timeout)
+{
+   _elm_config->glayer_double_tap_timeout = double_tap_timeout;
+}
+
 EAPI void
 elm_config_all_flush(void)
 {

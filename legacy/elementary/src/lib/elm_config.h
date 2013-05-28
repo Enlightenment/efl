@@ -1190,6 +1190,38 @@ EAPI void      elm_config_clouseau_enabled_set(Eina_Bool enabled);
 EAPI const char *elm_config_indicator_service_get(int rotation);
 
 /**
+ * Get the duration for occurring long tap event of gesture layer.
+ *
+ * @return Timeout for long tap event of gesture layer.
+ * @ingroup glayer
+ */
+EAPI double   elm_config_glayer_long_tap_start_timeout_get(void);
+
+/**
+ * Set the duration for occurring long tap event of gesture layer.
+ *
+ * @param long_tap_timeout Timeout for long tap event of gesture layer.
+ * @ingroup glayer
+ */
+EAPI void   elm_config_glayer_long_tap_start_timeout_set(double long_tap_timeout);
+
+/**
+ * Get the duration for occurring double tap event of gesture layer.
+ *
+ * @return Timeout for double tap event of gesture layer.
+ * @ingroup glayer
+ */
+EAPI double   elm_config_glayer_double_tap_timeout_get(void);
+
+/**
+ * Set the duration for occurring double tap event of gesture layer.
+ *
+ * @param long_tap_timeout Timeout for double tap event of gesture layer.
+ * @ingroup glayer
+ */
+EAPI void   elm_config_glayer_double_tap_timeout_set(double double_tap_timeout);
+
+/**
  * @}
  */
 

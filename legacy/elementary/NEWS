@@ -71,6 +71,7 @@ Additions:
    * Add selection handlers to entry.
    * Add support elm_object_item_signal_emit() for elm_list.
    * Add ELM_INPUT_PANEL_LAYOUT_DATETIME.
+   * Add elm_config_glayer_long_tap_start_timeout_set/get, elm_config_glayer_double_tap_timeout_set/get
 
 Improvements:
 
