@@ -28,7 +28,7 @@ syn keyword	cStructure	spectra spectrum box
 syn keyword	cStructure	physics movement_freedom faces face world
 syn match	cType		"+ + +;" contained
 
-syn keyword	cLabel		item name min max type effect
+syn keyword	cLabel		item name min max type effect file
 syn keyword	cLabel		mouse_events repeat_events clip_to
 syn keyword	cLabel		color_class text_class x y confine
 syn keyword	cLabel		state visible align step aspect aspect_preference fixed
