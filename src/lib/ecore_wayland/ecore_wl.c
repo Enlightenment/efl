@@ -41,6 +41,8 @@ EAPI int ECORE_WL_EVENT_DND_ENTER = 0;
 EAPI int ECORE_WL_EVENT_DND_POSITION = 0;
 EAPI int ECORE_WL_EVENT_DND_LEAVE = 0;
 EAPI int ECORE_WL_EVENT_DND_DROP = 0;
+EAPI int ECORE_WL_EVENT_DND_OFFER = 0;
+EAPI int ECORE_WL_EVENT_DND_END = 0;
 EAPI int ECORE_WL_EVENT_DATA_SOURCE_TARGET = 0;
 EAPI int ECORE_WL_EVENT_DATA_SOURCE_SEND = 0;
 EAPI int ECORE_WL_EVENT_SELECTION_DATA_READY = 0;
@@ -95,6 +97,8 @@ ecore_wl_init(const char *name)
         ECORE_WL_EVENT_DND_POSITION = ecore_event_type_new();
         ECORE_WL_EVENT_DND_LEAVE = ecore_event_type_new();
         ECORE_WL_EVENT_DND_DROP = ecore_event_type_new();
+        ECORE_WL_EVENT_DND_OFFER = ecore_event_type_new();
+        ECORE_WL_EVENT_DND_END = ecore_event_type_new();
         ECORE_WL_EVENT_DATA_SOURCE_TARGET = ecore_event_type_new();
         ECORE_WL_EVENT_DATA_SOURCE_SEND = ecore_event_type_new();
         ECORE_WL_EVENT_SELECTION_DATA_READY = ecore_event_type_new();
@@ -480,12 +484,6 @@ _ecore_wl_xkb_shutdown(Ecore_Wl_Display *ewd)
    xkb_context_unref(ewd->xkb.context);
 
    return EINA_TRUE;
-}
-
-struct wl_data_source *
-_ecore_wl_create_data_source(Ecore_Wl_Display *ewd)
-{
-   return wl_data_device_manager_create_data_source(ewd->wl.data_device_manager);
 }
 
 static void
