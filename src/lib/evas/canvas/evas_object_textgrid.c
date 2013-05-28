@@ -1430,6 +1430,7 @@ _palette_set(Eo *eo_obj, void *_pd, va_list *list)
              if (!c)
                {
                   ERR("Evas can not allocate memory");
+                  free(color);
                   return;
                }
              eina_array_push(palette, c);
