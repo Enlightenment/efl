@@ -651,9 +651,7 @@ _elm_win_mouse_in(Ecore_Evas *ee)
 static void
 _elm_win_focus_highlight_reconfigure_job_stop(Elm_Win_Smart_Data *sd)
 {
-   if (sd->focus_highlight.reconf_job)
-     ecore_job_del(sd->focus_highlight.reconf_job);
-   sd->focus_highlight.reconf_job = NULL;
+   ELM_SAFE_FREE(sd->focus_highlight.reconf_job, ecore_job_del);
 }
 
 static void
@@ -883,22 +881,15 @@ _elm_win_available_profiles_del(Elm_Win_Smart_Data *sd)
 
    unsigned int i;
    for (i = 0; i < sd->profile.count; i++)
-     if (sd->profile.available_list[i])
-       {
-          eina_stringshare_del(sd->profile.available_list[i]);
-          sd->profile.available_list[i] = NULL;
-       }
+     ELM_SAFE_FREE(sd->profile.available_list[i], eina_stringshare_del);
    sd->profile.count = 0;
-   free(sd->profile.available_list);
-   sd->profile.available_list = NULL;
+   ELM_SAFE_FREE(sd->profile.available_list, free);
 }
 
 static void
 _elm_win_profile_del(Elm_Win_Smart_Data *sd)
 {
-   if (!sd->profile.name) return;
-   eina_stringshare_del(sd->profile.name);
-   sd->profile.name = NULL;
+   ELM_SAFE_FREE(sd->profile.name, eina_stringshare_del);
 }
 
 static Eina_Bool
@@ -1470,10 +1461,10 @@ _elm_win_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
         ecore_evas_callback_resize_set(sd->ee, NULL);
      }
 
-   ELM_FREE_FUNC(sd->deferred_resize_job, ecore_job_del);
-   ELM_FREE_FUNC(sd->deferred_child_eval_job, ecore_job_del);
-   ELM_FREE_FUNC(sd->shot.info, eina_stringshare_del);
-   ELM_FREE_FUNC(sd->shot.timer, ecore_timer_del);
+   if (sd->deferred_resize_job) ecore_job_del(sd->deferred_resize_job);
+   if (sd->deferred_child_eval_job) ecore_job_del(sd->deferred_child_eval_job);
+   if (sd->shot.info) eina_stringshare_del(sd->shot.info);
+   if (sd->shot.timer) ecore_timer_del(sd->shot.timer);
 
 #ifdef HAVE_ELEMENTARY_X
    if (sd->x.client_message_handler)
@@ -1883,11 +1874,7 @@ void
 _elm_win_shutdown(void)
 {
    while (_elm_win_list) evas_object_del(_elm_win_list->data);
-   if (_elm_win_state_eval_job)
-     {
-        ecore_job_del(_elm_win_state_eval_job);
-        _elm_win_state_eval_job = NULL;
-     }
+   ELM_SAFE_FREE(_elm_win_state_eval_job, ecore_job_del);
 }
 
 void
