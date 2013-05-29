@@ -237,10 +237,7 @@ _elm_genlist_pan_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    Elm_Genlist_Pan_Smart_Data *psd = _pd;
 
    if (psd->resize_job)
-     {
-        ecore_job_del(psd->resize_job);
-        psd->resize_job = NULL;
-     }
+     ecore_job_del(psd->resize_job);
 
    eo_do_super(obj, MY_PAN_CLASS, evas_obj_smart_del());
 }
@@ -254,8 +251,7 @@ _elm_genlist_pan_smart_move(Eo *obj, void *_pd, va_list *list)
 
    psd->wsd->pan_changed = EINA_TRUE;
    evas_object_smart_changed(obj);
-   if (psd->wsd->calc_job) ecore_job_del(psd->wsd->calc_job);
-   psd->wsd->calc_job = NULL;
+   ELM_SAFE_FREE(psd->wsd->calc_job, ecore_job_del);
 }
 
 static void
@@ -373,19 +369,19 @@ _elm_genlist_item_unrealize(Elm_Gen_Item *it,
    evas_event_freeze(evas_object_evas_get(WIDGET(it)));
    if (!calc)
      evas_object_smart_callback_call(WIDGET(it), SIG_UNREALIZED, it);
-   ELM_FREE_FUNC(it->long_timer, ecore_timer_del);
+   ELM_SAFE_FREE(it->long_timer, ecore_timer_del);
 
    EINA_LIST_FOREACH(it->texts, l, part)
      edje_object_part_text_set(VIEW(it), part, NULL);
 
-   ELM_FREE_FUNC(it->texts, elm_widget_stringlist_free);
-   ELM_FREE_FUNC(it->contents, elm_widget_stringlist_free);
-   ELM_FREE_FUNC(it->states, elm_widget_stringlist_free);
+   ELM_SAFE_FREE(it->texts, elm_widget_stringlist_free);
+   ELM_SAFE_FREE(it->contents, elm_widget_stringlist_free);
+   ELM_SAFE_FREE(it->states, elm_widget_stringlist_free);
 
    EINA_LIST_FREE(it->content_objs, content)
      evas_object_del(content);
 
-   ELM_FREE_FUNC(it->item_focus_chain, eina_list_free);
+   ELM_SAFE_FREE(it->item_focus_chain, eina_list_free);
 
    it->unrealize_cb(it);
 
@@ -1286,8 +1282,8 @@ _item_cache_add(Elm_Gen_Item *it)
    itc->selected = it->selected;
    itc->disabled = elm_widget_item_disabled_get(it);
    itc->expanded = it->item->expanded;
-   ELM_FREE_FUNC(it->long_timer, ecore_timer_del);
-   ELM_FREE_FUNC(it->item->swipe_timer, ecore_timer_del);
+   ELM_SAFE_FREE(it->long_timer, ecore_timer_del);
+   ELM_SAFE_FREE(it->item->swipe_timer, ecore_timer_del);
 
    // FIXME: other callbacks?
    edje_object_signal_callback_del_full
@@ -3020,7 +3016,7 @@ _elm_genlist_item_del_serious(Elm_Gen_Item *it)
    if (it->tooltip.del_cb)
      it->tooltip.del_cb((void *)it->tooltip.data, WIDGET(it), it);
    sd->walking -= it->walking;
-   ELM_FREE_FUNC(it->long_timer, ecore_timer_del);
+   ELM_SAFE_FREE(it->long_timer, ecore_timer_del);
    if (it->group)
      sd->group_items = eina_list_remove(sd->group_items, it);
 
@@ -3036,8 +3032,7 @@ _elm_genlist_item_del_serious(Elm_Gen_Item *it)
      sd->last_selected_item = NULL;
    sd->item_count--;
 
-   free(it->item);
-   it->item = NULL;
+   ELM_SAFE_FREE(it->item, free);
 }
 
 static void
@@ -3066,7 +3061,7 @@ _item_del(Elm_Gen_Item *it)
         if (sd->tree_effect_animator)
           {
              _item_tree_effect_finish(sd);
-             ELM_FREE_FUNC(sd->tree_effect_animator, ecore_animator_del);
+             ELM_SAFE_FREE(sd->tree_effect_animator, ecore_animator_del);
           }
         sd->expanded_item = NULL;
         sd->move_effect_mode = ELM_GENLIST_TREE_EFFECT_NONE;
@@ -3075,7 +3070,7 @@ _item_del(Elm_Gen_Item *it)
    if (sd->move_items) sd->move_items = eina_list_remove(sd->move_items, it);
    if (it->parent)
      it->parent->item->items = eina_list_remove(it->parent->item->items, it);
-   ELM_FREE_FUNC(it->item->swipe_timer, ecore_timer_del);
+   ELM_SAFE_FREE(it->item->swipe_timer, ecore_timer_del);
    _elm_genlist_item_del_serious(it);
    elm_genlist_item_class_unref((Elm_Genlist_Item_Class *)it->itc);
    evas_event_thaw(evas_object_evas_get(obj));
@@ -3145,13 +3140,13 @@ _item_mouse_move_cb(void *data,
              else
                sd->movements++;
           }
-        ELM_FREE_FUNC(it->long_timer, ecore_timer_del);
+        ELM_SAFE_FREE(it->long_timer, ecore_timer_del);
         evas_object_smart_callback_call(WIDGET(it), SIG_DRAG, it);
         return;
      }
    if ((!it->down) || (sd->longpressed))
      {
-        ELM_FREE_FUNC(it->long_timer, ecore_timer_del);
+        ELM_SAFE_FREE(it->long_timer, ecore_timer_del);
         if ((sd->reorder_mode) && (sd->reorder_it))
           {
              evas_object_geometry_get(sd->pan_obj, &ox, &oy, &ow, &oh);
@@ -3203,7 +3198,7 @@ _item_mouse_move_cb(void *data,
    if ((adx > minw) || (ady > minh))
      {
         it->dragging = EINA_TRUE;
-        ELM_FREE_FUNC(it->long_timer, ecore_timer_del);
+        ELM_SAFE_FREE(it->long_timer, ecore_timer_del);
         if (!sd->wasselected)
           _item_unselect(it);
         if (dy < 0)
@@ -3341,7 +3336,7 @@ _multi_touch_gesture_eval(void *data)
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
 
    sd->multi_touched = EINA_FALSE;
-   ELM_FREE_FUNC(sd->multi_timer, ecore_timer_del);
+   ELM_SAFE_FREE(sd->multi_timer, ecore_timer_del);
    if (sd->multi_timeout)
      {
         sd->multi_timeout = EINA_FALSE;
@@ -3417,13 +3412,13 @@ _item_multi_down_cb(void *data,
      _item_unselect(it);
    sd->wasselected = EINA_FALSE;
    sd->longpressed = EINA_FALSE;
-   ELM_FREE_FUNC(it->long_timer, ecore_timer_del);
+   ELM_SAFE_FREE(it->long_timer, ecore_timer_del);
    if (it->dragging)
      {
         it->dragging = EINA_FALSE;
         evas_object_smart_callback_call(WIDGET(it), SIG_DRAG_STOP, it);
      }
-   ELM_FREE_FUNC(it->item->swipe_timer, ecore_timer_del);
+   ELM_SAFE_FREE(it->item->swipe_timer, ecore_timer_del);
    if (sd->on_hold)
      {
         sd->swipe = EINA_FALSE;
@@ -3492,7 +3487,7 @@ _item_mouse_down_cb(void *data,
         sd->prev_x = ev->canvas.x;
         sd->prev_y = ev->canvas.y;
         sd->multi_timeout = EINA_FALSE;
-        ELM_FREE_FUNC(sd->multi_timer, ecore_timer_del);
+        if (sd->multi_timer) ecore_timer_del(sd->multi_timer);
         sd->multi_timer = ecore_timer_add(MULTI_DOWN_TIME, _multi_cancel, sd->obj);
      }
    sd->longpressed = EINA_FALSE;
@@ -3509,9 +3504,9 @@ _item_mouse_down_cb(void *data,
           evas_object_smart_callback_call(WIDGET(it), SIG_ACTIVATED, it);
        }
    evas_object_smart_callback_call(WIDGET(it), SIG_PRESSED, it);
-   ELM_FREE_FUNC(it->item->swipe_timer, ecore_timer_del);
+   if (it->item->swipe_timer) ecore_timer_del(it->item->swipe_timer);
    it->item->swipe_timer = ecore_timer_add(SWIPE_TIME, _swipe_cancel, it);
-   ELM_FREE_FUNC(it->long_timer, ecore_timer_del);
+   ELM_SAFE_FREE(it->long_timer, ecore_timer_del);
    if (it->realized)
      it->long_timer = ecore_timer_add
          (sd->longpress_timeout, _long_press_cb, it);
@@ -4088,17 +4083,17 @@ _item_mouse_up_cb(void *data,
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
      sd->on_hold = EINA_TRUE;
    else sd->on_hold = EINA_FALSE;
-   ELM_FREE_FUNC(it->long_timer, ecore_timer_del);
+   ELM_SAFE_FREE(it->long_timer, ecore_timer_del);
    if (it->dragging)
      {
         it->dragging = EINA_FALSE;
         evas_object_smart_callback_call(WIDGET(it), SIG_DRAG_STOP, it);
         dragged = 1;
      }
-   ELM_FREE_FUNC(it->item->swipe_timer, ecore_timer_del);
+   ELM_SAFE_FREE(it->item->swipe_timer, ecore_timer_del);
    if (sd->multi_timer)
      {
-        ELM_FREE_FUNC(sd->multi_timer, ecore_timer_del);
+        ELM_SAFE_FREE(sd->multi_timer, ecore_timer_del);
         sd->multi_timeout = EINA_FALSE;
      }
    if (sd->on_hold)
@@ -4731,7 +4726,7 @@ _decorate_item_set(Elm_Gen_Item *it)
    sd->mode_item = it;
    it->item->nocache_once = EINA_TRUE;
 
-   ELM_FREE_FUNC(sd->scr_hold_timer, ecore_timer_del);
+   ELM_SAFE_FREE(sd->scr_hold_timer, ecore_timer_del);
    eo_do(sd->obj, elm_scrollable_interface_hold_set(EINA_TRUE));
    sd->scr_hold_timer = ecore_timer_add(SCR_HOLD_TIME, _scroll_hold_timer_cb, sd->obj);
 
@@ -4856,14 +4851,14 @@ _elm_genlist_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    sd->pan_obj = NULL;
 
    _item_cache_zero(sd);
-   ELM_FREE_FUNC(sd->calc_job, ecore_job_del);
-   ELM_FREE_FUNC(sd->update_job, ecore_job_del);
-   ELM_FREE_FUNC(sd->queue_idle_enterer, ecore_idle_enterer_del);
-   ELM_FREE_FUNC(sd->must_recalc_idler, ecore_idler_del);
-   ELM_FREE_FUNC(sd->multi_timer, ecore_timer_del);
-   ELM_FREE_FUNC(sd->scr_hold_timer, ecore_timer_del);
-   ELM_FREE_FUNC(sd->decorate_it_type, eina_stringshare_del);
-   ELM_FREE_FUNC(sd->tree_effect_animator, ecore_animator_del);
+   if (sd->calc_job) ecore_job_del(sd->calc_job);
+   if (sd->update_job) ecore_job_del(sd->update_job);
+   if (sd->queue_idle_enterer) ecore_idle_enterer_del(sd->queue_idle_enterer);
+   if (sd->must_recalc_idler) ecore_idler_del(sd->must_recalc_idler);
+   if (sd->multi_timer) ecore_timer_del(sd->multi_timer);
+   if (sd->scr_hold_timer) ecore_timer_del(sd->scr_hold_timer);
+   if (sd->decorate_it_type) eina_stringshare_del(sd->decorate_it_type);
+   if (sd->tree_effect_animator) ecore_animator_del(sd->tree_effect_animator);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
@@ -4965,10 +4960,10 @@ static void
 _clear(Elm_Genlist_Smart_Data *sd)
 {
    sd->anchor_item = NULL;
-   ELM_FREE_FUNC(sd->queue_idle_enterer, ecore_idle_enterer_del);
-   ELM_FREE_FUNC(sd->must_recalc_idler, ecore_idler_del);
-   ELM_FREE_FUNC(sd->queue, eina_list_free);
-   ELM_FREE_FUNC(sd->reorder_move_animator, ecore_animator_del);
+   ELM_SAFE_FREE(sd->queue_idle_enterer, ecore_idle_enterer_del);
+   ELM_SAFE_FREE(sd->must_recalc_idler, ecore_idler_del);
+   ELM_SAFE_FREE(sd->queue, eina_list_free);
+   ELM_SAFE_FREE(sd->reorder_move_animator, ecore_animator_del);
    sd->show_item = NULL;
    sd->reorder_old_pan_y = 0;
 }
@@ -6991,7 +6986,7 @@ _decorate_mode_set(Eo *obj, void *_pd, va_list *valist)
    if (sd->decorate_all_mode == decorated) return;
    sd->decorate_all_mode = decorated;
 
-   ELM_FREE_FUNC(sd->tree_effect_animator, ecore_animator_del);
+   ELM_SAFE_FREE(sd->tree_effect_animator, ecore_animator_del);
    sd->move_effect_mode = ELM_GENLIST_TREE_EFFECT_NONE;
 
    list = elm_genlist_realized_items_get(obj);
