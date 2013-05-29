@@ -387,10 +387,7 @@ _elm_icon_smart_file_set(Eo *obj, void *_pd, va_list *list)
 
 #ifdef ELM_EFREET
    if (!sd->freedesktop.use)
-     {
-        if (sd->stdicon) eina_stringshare_del(sd->stdicon);
-        sd->stdicon = NULL;
-     }
+     ELM_SAFE_FREE(sd->stdicon, eina_stringshare_del);
 #endif
 
    if (!sd->is_video)
@@ -451,8 +448,7 @@ _elm_icon_smart_memfile_set(Eo *obj, void *_pd, va_list *list)
 
    EINA_SAFETY_ON_NULL_RETURN(img);
    EINA_SAFETY_ON_TRUE_RETURN(!size);
-   eina_stringshare_del(sd->stdicon);
-   sd->stdicon = NULL;
+   ELM_SAFE_FREE(sd->stdicon, eina_stringshare_del);
 
    _edje_signals_free(sd);
 
