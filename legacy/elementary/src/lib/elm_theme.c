@@ -23,21 +23,10 @@ _elm_theme_clear(Elm_Theme *th)
       eina_stringshare_del(p);
    EINA_LIST_FREE(th->extension, p)
       eina_stringshare_del(p);
-   if (th->cache)
-     {
-        eina_hash_free(th->cache);
-        th->cache = NULL;
-     }
-   if (th->cache_data)
-     {
-        eina_hash_free(th->cache_data);
-        th->cache_data = NULL;
-     }
-   if (th->theme)
-     {
-        eina_stringshare_del(th->theme);
-        th->theme = NULL;
-     }
+
+   ELM_SAFE_FREE(th->cache, eina_hash_free);
+   ELM_SAFE_FREE(th->cache_data, eina_hash_free);
+   ELM_SAFE_FREE(th->theme, eina_stringshare_del);
    if (th->ref_theme)
      {
         th->ref_theme->referrers =
@@ -555,11 +544,7 @@ elm_theme_set(Elm_Theme *th, const char *theme)
 {
    if (!th) th = &(theme_default);
    _elm_theme_parse(th, theme);
-   if (th->theme)
-     {
-        eina_stringshare_del(th->theme);
-        th->theme = NULL;
-     }
+   ELM_SAFE_FREE(th->theme, eina_stringshare_del);
    elm_theme_flush(th);
    if (th == &(theme_default))
      eina_stringshare_replace(&_elm_config->theme, theme);
