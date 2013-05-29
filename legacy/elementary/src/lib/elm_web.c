@@ -254,7 +254,7 @@ _view_smart_del(Evas_Object *obj)
 
    sd = evas_object_smart_data_get(obj);
 
-   ELM_FREE_FUNC(sd->mouse.pan_anim, ecore_animator_del);
+   if (sd->mouse.pan_anim) ecore_animator_del(sd->mouse.pan_anim);
 
    _ewk_view_parent_sc.sc.del(obj);
 }
@@ -302,7 +302,7 @@ _view_smart_mouse_up(Ewk_View_Smart_Data *esd,
 
    if (sd->mouse.pan_anim)
      {
-        ELM_FREE_FUNC(sd->mouse.pan_anim, ecore_animator_del);
+        ELM_SAFE_FREE(sd->mouse.pan_anim, ecore_animator_del);
 
         if (sd->mouse.longpress_timer)
           _ewk_view_parent_sc.mouse_down(esd, &sd->mouse.event);
@@ -310,7 +310,7 @@ _view_smart_mouse_up(Ewk_View_Smart_Data *esd,
           return EINA_TRUE;
      }
 
-   ELM_FREE_FUNC(sd->mouse.longpress_timer, ecore_timer_del);
+   ELM_SAFE_FREE(sd->mouse.longpress_timer, ecore_timer_del);
 
    sd->mouse.move_count = 0;
    return _ewk_view_parent_sc.mouse_up(esd, event);
@@ -329,7 +329,7 @@ _view_smart_mouse_move(Ewk_View_Smart_Data *esd,
    if (((sd->mouse.x ^ sd->mouse.event.canvas.x) |
         (sd->mouse.y ^ sd->mouse.event.canvas.y)) & (~0x07))
      {
-        ELM_FREE_FUNC(sd->mouse.longpress_timer, ecore_timer_del);
+        ELM_SAFE_FREE(sd->mouse.longpress_timer, ecore_timer_del);
      }
 
    if (sd->mouse.pan_anim)
@@ -905,7 +905,7 @@ _ewk_view_resized_cb(void *data,
    if (!(sd->zoom.mode != ELM_WEB_ZOOM_MODE_MANUAL))
      return;
 
-   ELM_FREE_FUNC(sd->zoom.timer, ecore_timer_del);
+   if (sd->zoom.timer) ecore_timer_del(sd->zoom.timer);
    sd->zoom.timer = ecore_timer_add(0.5, _reset_zoom_timer_cb, data);
 }
 
@@ -1182,8 +1182,8 @@ _elm_web_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 #ifdef HAVE_ELEMENTARY_WEB
    Elm_Web_Smart_Data *sd = _pd;
 
-   ELM_FREE_FUNC(sd->zoom.timer, ecore_timer_del);
-   ELM_FREE_FUNC(sd->bring_in.animator, ecore_animator_del);
+   if (sd->zoom.timer) ecore_timer_del(sd->zoom.timer);
+   if (sd->bring_in.animator) ecore_animator_del(sd->bring_in.animator);
 
 #else
    (void)_pd;
@@ -2377,7 +2377,7 @@ _region_show(Eo *obj, void *_pd, va_list *list)
    zh = fh / zoom;
    rx = (x * fw) / zw;
    ry = (y * fh) / zh;
-   ELM_FREE_FUNC(sd->bring_in.animator, ecore_animator_del);
+   ELM_SAFE_FREE(sd->bring_in.animator, ecore_animator_del);
    ewk_frame_scroll_set(frame, rx, ry);
 #else
    (void)obj;
@@ -2430,7 +2430,7 @@ _region_bring_in(Eo *obj, void *_pd, va_list *list)
    sd->bring_in.start.y = sy;
    sd->bring_in.end.x = rx;
    sd->bring_in.end.y = ry;
-   ELM_FREE_FUNC(sd->bring_in.animator, ecore_animator_del);
+   if (sd->bring_in.animator) ecore_animator_del(sd->bring_in.animator);
    sd->bring_in.animator = ecore_animator_timeline_add(
        _elm_config->bring_in_scroll_friction, _bring_in_anim_cb, obj);
 #else
