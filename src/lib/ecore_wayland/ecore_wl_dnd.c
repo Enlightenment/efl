@@ -620,7 +620,11 @@ _ecore_wl_dnd_selection_data_read(void *data, Ecore_Fd_Handler *fd_handler EINA_
    else
      {
         event->data = malloc(len + 1);
-        if (!event->data) return ECORE_CALLBACK_CANCEL;
+        if (!event->data)
+          {
+             free(event);
+             return ECORE_CALLBACK_CANCEL;
+          }
         strncpy(event->data, buffer, len);
         event->data[len] = '\0';
         event->len = len;
