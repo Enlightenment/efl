@@ -25,6 +25,7 @@ struct _Elm_Mapbuf_Smart_Data
 
    Ecore_Idler          *idler;
 
+   Eina_Bool             inside_view[4];
    Eina_Bool             enabled : 1;
    Eina_Bool             smooth_saved : 1;
    Eina_Bool             smooth : 1;

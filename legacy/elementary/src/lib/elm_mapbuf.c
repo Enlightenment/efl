@@ -118,16 +118,40 @@ _configure(Evas_Object *obj, Eina_Bool update_force)
    Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    if (!sd->content) return;
-   Evas_Coord x, y, w, h, x2, y2, w2, h2;
+   Eina_Bool inside_all = EINA_FALSE;
+   Evas_Coord x, y, w, h, x2, y2, w2, h2, vx, vy, vw, vh;
    evas_object_geometry_get(wd->resize_obj, &x, &y, &w, &h);
    evas_object_geometry_get(sd->content, &x2, &y2, &w2, &h2);
    if ((update_force) || ((x != x2) || (y != y2) || (w != w2) || (h != h2)))
      {
-        if (!sd->enabled)
+        Evas *e = evas_object_evas_get(obj);
+        evas_output_viewport_get(e, &vx, &vy, &vw, &vh);
+
+        /* Apply no changes once the content is rendered fully one time. We
+           aren't sure that the content is updated correctly if the content was
+           outside of the viewport, especially it has many child members. Some
+           type of children will do the lazy updated (ie, textblock) on right
+           before the rendering. It means they lose the update time cause 
+           of the mapbuf since the mapbuf tries nochange forcefully. */
+        if (!sd->inside_view[0] && ((x >= vx) && (x <= (vx + vw))))
+          sd->inside_view[0] = EINA_TRUE;
+        if (!sd->inside_view[1] && ((y >= vy) && (y <= (vy + vh))))
+          sd->inside_view[1] = EINA_TRUE;
+
+        if (!sd->inside_view[2] && (((x + w) >= vx) && ((x + w) <= (vx + vw))))
+          sd->inside_view[2] = EINA_TRUE;
+
+        if (!sd->inside_view[3] && (((y + h) >= vy) && ((y + h) <= (vy + vh))))
+          sd->inside_view[3] = EINA_TRUE;
+
+        if (sd->inside_view[0] && sd->inside_view[1] && sd->inside_view[2] &&
+            sd->inside_view[3])
+          inside_all = EINA_TRUE;
+
+        if (!sd->enabled || !inside_all)
           evas_object_move(sd->content, x, y);
         else
           {
-             Evas *e = evas_object_evas_get(obj);
              evas_smart_objects_calculate(e);
              evas_nochange_push(e);
              evas_object_move(sd->content, x, y);
@@ -216,6 +240,17 @@ _elm_mapbuf_smart_hide(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 }
 
 static void
+_elm_mapbuf_inside_view_reset(Evas_Object *obj)
+{
+   ELM_MAPBUF_DATA_GET(obj, sd);
+
+   sd->inside_view[0] = EINA_FALSE;
+   sd->inside_view[1] = EINA_FALSE;
+   sd->inside_view[2] = EINA_FALSE;
+   sd->inside_view[3] = EINA_FALSE;
+}
+
+static void
 _elm_mapbuf_smart_content_set(Eo *obj, void *_pd, va_list *list)
 {
    Elm_Mapbuf_Smart_Data *sd = _pd;
@@ -250,6 +285,7 @@ _elm_mapbuf_smart_content_set(Eo *obj, void *_pd, va_list *list)
    else
      evas_object_color_set(wd->resize_obj, 0, 0, 0, 0);
 
+   _elm_mapbuf_inside_view_reset(obj);
    _sizing_eval(obj);
    _configure(obj, EINA_TRUE);
 
@@ -358,8 +394,10 @@ _internal_enable_set(Eo *obj, Elm_Mapbuf_Smart_Data *sd, Eina_Bool enabled)
    if (sd->enabled == enabled) return;
    sd->enabled = enabled;
 
+   _elm_mapbuf_inside_view_reset(obj);
+
    if (sd->content) evas_object_static_clip_set(sd->content, sd->enabled);
-   _configure(obj, EINA_TRUE);   
+   _configure(obj, EINA_TRUE);
 }
 
 static void
