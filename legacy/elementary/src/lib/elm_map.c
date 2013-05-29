@@ -625,7 +625,7 @@ _grid_item_update(Grid_Item *gi)
         gi->file_have = EINA_TRUE;
      }
 
-   ELM_FREE_FUNC(gi->wsd->loaded_timer, ecore_timer_del);
+   if (gi->wsd->loaded_timer) ecore_timer_del(gi->wsd->loaded_timer);
    gi->wsd->loaded_timer = ecore_timer_add(0.25, _loaded_timeout_cb, gi->wsd->obj);
 }
 
@@ -1272,7 +1272,7 @@ _mouse_down_cb(void *data,
      evas_object_smart_callback_call
        (sd->obj, SIG_PRESS, ev);
 
-   ELM_FREE_FUNC(sd->long_timer, ecore_timer_del);
+   if (sd->long_timer) ecore_timer_del(sd->long_timer);
    sd->ev = *ev;
    sd->long_timer =
      ecore_timer_add(_elm_config->longpress_timeout, _long_press_cb, data);
@@ -1294,7 +1294,7 @@ _mouse_up_cb(void *data,
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) sd->on_hold = EINA_TRUE;
    else sd->on_hold = EINA_FALSE;
 
-   ELM_FREE_FUNC(sd->long_timer, ecore_timer_del);
+   ELM_SAFE_FREE(sd->long_timer, ecore_timer_del);
 
    if (!sd->on_hold)
      evas_object_smart_callback_call
@@ -4101,12 +4101,12 @@ _elm_map_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    EINA_LIST_FREE(sd->track, track)
      evas_object_del(track);
 
-   ELM_FREE_FUNC(sd->scr_timer, ecore_timer_del);
-   ELM_FREE_FUNC(sd->long_timer, ecore_timer_del);
-   ELM_FREE_FUNC(sd->user_agent, eina_stringshare_del);
-   ELM_FREE_FUNC(sd->ua, eina_hash_free);
-   ELM_FREE_FUNC(sd->zoom_timer, ecore_timer_del);
-   ELM_FREE_FUNC(sd->zoom_animator, ecore_animator_del);
+   if (sd->scr_timer) ecore_timer_del(sd->scr_timer);
+   if (sd->long_timer) ecore_timer_del(sd->long_timer);
+   if (sd->user_agent) eina_stringshare_del(sd->user_agent);
+   if (sd->ua) eina_hash_free(sd->ua);
+   if (sd->zoom_timer) ecore_timer_del(sd->zoom_timer);
+   if (sd->zoom_animator) ecore_animator_del(sd->zoom_animator);
 
    _grid_all_clear(sd);
    // Removal of download list should be after grid clear.
@@ -4131,8 +4131,8 @@ _elm_map_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
         ERR("Deletion of %s failed", buf);
    }
 
-   ELM_FREE_FUNC(sd->loaded_timer, ecore_timer_del);
-   ELM_FREE_FUNC(sd->map, evas_map_free);
+   if (sd->loaded_timer) ecore_timer_del(sd->loaded_timer);
+   if (sd->map) evas_map_free(sd->map);
 
    eo_unref(sd->pan_obj);
    evas_object_del(sd->pan_obj);
