@@ -672,7 +672,7 @@ _button_month_inc_start(void *data,
 
    sd->interval = sd->first_interval;
    sd->spin_speed = 1;
-   ELM_FREE_FUNC(sd->spin_month, ecore_timer_del);
+   if (sd->spin_month) ecore_timer_del(sd->spin_month);
    sd->spin_month = ecore_timer_add(sd->interval, _spin_month_value, data);
 
    _spin_month_value(data);
@@ -688,7 +688,7 @@ _button_month_dec_start(void *data,
 
    sd->interval = sd->first_interval;
    sd->spin_speed = -1;
-   ELM_FREE_FUNC(sd->spin_month, ecore_timer_del);
+   if (sd->spin_month) ecore_timer_del(sd->spin_month);
    sd->spin_month = ecore_timer_add(sd->interval, _spin_month_value, data);
 
    _spin_month_value(data);
@@ -703,7 +703,7 @@ _button_month_stop(void *data,
    ELM_CALENDAR_DATA_GET(data, sd);
 
    sd->interval = sd->first_interval;
-   ELM_FREE_FUNC(sd->spin_month, ecore_timer_del);
+   ELM_SAFE_FREE(sd->spin_month, ecore_timer_del);
 }
 
 static void
@@ -716,7 +716,7 @@ _button_year_inc_start(void *data,
 
    sd->interval = sd->first_interval;
    sd->spin_speed = 1;
-   ELM_FREE_FUNC(sd->spin_year, ecore_timer_del);
+   if (sd->spin_year) ecore_timer_del(sd->spin_year);
    sd->spin_year = ecore_timer_add(sd->interval, _spin_year_value, data);
 
    _spin_year_value(data);
@@ -732,7 +732,7 @@ _button_year_dec_start(void *data,
 
    sd->interval = sd->first_interval;
    sd->spin_speed = -1;
-   ELM_FREE_FUNC(sd->spin_year, ecore_timer_del);
+   if (sd->spin_year) ecore_timer_del(sd->spin_year);
    sd->spin_year = ecore_timer_add(sd->interval, _spin_year_value, data);
 
    _spin_year_value(data);
@@ -747,7 +747,7 @@ _button_year_stop(void *data,
    ELM_CALENDAR_DATA_GET(data, sd);
 
    sd->interval = sd->first_interval;
-   ELM_FREE_FUNC(sd->spin_year, ecore_timer_del);
+   ELM_SAFE_FREE(sd->spin_year, ecore_timer_del);
 }
 
 static int
@@ -1028,9 +1028,9 @@ _elm_calendar_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    Elm_Calendar_Mark *mark;
    Elm_Calendar_Smart_Data *sd = _pd;
 
-   ELM_FREE_FUNC(sd->spin_month, ecore_timer_del);
-   ELM_FREE_FUNC(sd->spin_year, ecore_timer_del);
-   ELM_FREE_FUNC(sd->update_timer, ecore_timer_del);
+   if (sd->spin_month) ecore_timer_del(sd->spin_month);
+   if (sd->spin_year) ecore_timer_del(sd->spin_year);
+   if (sd->update_timer) ecore_timer_del(sd->update_timer);
 
    if (sd->marks)
      {
