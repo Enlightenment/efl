@@ -131,7 +131,7 @@ _configure(Evas_Object *obj, Eina_Bool update_force)
            aren't sure that the content is updated correctly if the content was
            outside of the viewport, especially it has many child members. Some
            type of children will do the lazy updated (ie, textblock) on right
-           before the rendering. It means they lose the update time cause 
+           before the rendering. It means they lose the update time cause
            of the mapbuf since the mapbuf tries nochange forcefully. */
         if (!sd->inside_view[0] && ((x >= vx) && (x <= (vx + vw))))
           sd->inside_view[0] = EINA_TRUE;
