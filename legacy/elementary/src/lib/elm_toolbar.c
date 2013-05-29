@@ -736,7 +736,7 @@ _resize_cb(void *data,
    evas_object_geometry_get(data, &x, &y, NULL, &h);
    evas_object_move(sd->more, x, y + h);
 
-   ELM_FREE_FUNC(sd->resize_job, ecore_job_del);
+   if (sd->resize_job) ecore_job_del(sd->resize_job);
    sd->resize_job = ecore_job_add(_resize_job, data);
 }
 
@@ -1830,7 +1830,7 @@ static void
 _drag_start_cb(Evas_Object *obj, void *data __UNUSED__)
 {
    ELM_TOOLBAR_DATA_GET(obj, sd);
-   ELM_FREE_FUNC(sd->long_timer, ecore_timer_del);
+   ELM_SAFE_FREE(sd->long_timer, ecore_timer_del);
 }
 
 static void
@@ -1847,7 +1847,7 @@ _mouse_move_cb(Elm_Toolbar_Item *it,
    if ((x > ev->cur.canvas.x) || (ev->cur.canvas.x > x + w) ||
        (y > ev->cur.canvas.y) || (ev->cur.canvas.y > y + h))
      {
-        ELM_FREE_FUNC(sd->long_timer, ecore_timer_del);
+        ELM_SAFE_FREE(sd->long_timer, ecore_timer_del);
      }
 }
 
@@ -1883,7 +1883,7 @@ _mouse_up_cb(Elm_Toolbar_Item *it,
    ELM_TOOLBAR_DATA_GET(WIDGET(it), sd);
 
    if (ev->button != 1) return;
-   ELM_FREE_FUNC(sd->long_timer, ecore_timer_del);
+   ELM_SAFE_FREE(sd->long_timer, ecore_timer_del);
    evas_object_event_callback_del_full
      (VIEW(it), EVAS_CALLBACK_MOUSE_MOVE,
      (Evas_Object_Event_Cb)_mouse_move_cb, it);
@@ -2554,8 +2554,8 @@ _elm_toolbar_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
         elm_widget_item_del(it);
         it = next;
      }
-   ELM_FREE_FUNC(sd->more_item, elm_widget_item_del);
-   ELM_FREE_FUNC(sd->long_timer, ecore_timer_del);
+   if (sd->more_item) elm_widget_item_del(sd->more_item);
+   if (sd->long_timer) ecore_timer_del(sd->long_timer);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
