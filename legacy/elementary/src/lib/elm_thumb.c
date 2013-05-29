@@ -189,11 +189,8 @@ _thumb_retry(Elm_Thumb_Smart_Data *sd)
 
    _thumb_ready_inform(sd, sd->thumb.thumb_path, sd->thumb.thumb_key);
 
-   eina_stringshare_del(sd->thumb.thumb_path);
-   sd->thumb.thumb_path = NULL;
-
-   eina_stringshare_del(sd->thumb.thumb_key);
-   sd->thumb.thumb_key = NULL;
+   ELM_SAFE_FREE(sd->thumb.thumb_path, eina_stringshare_del);
+   ELM_SAFE_FREE(sd->thumb.thumb_key, eina_stringshare_del);
 
    return EINA_TRUE;
 
@@ -473,11 +470,7 @@ _elm_thumb_smart_hide(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
         sd->thumb.retry = EINA_FALSE;
      }
 
-   if (sd->eeh)
-     {
-        ecore_event_handler_del(sd->eeh);
-        sd->eeh = NULL;
-     }
+   ELM_SAFE_FREE(sd->eeh, ecore_event_handler_del);
 #endif
 }
 
