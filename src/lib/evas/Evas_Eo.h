@@ -424,7 +424,7 @@ enum
  * @def evas_canvas_coord_screen_x_to_world
  * @since 1.8
  *
- * Convert/scale an ouput screen co-ordinate into canvas co-ordinates
+ * Convert/scale an output screen co-ordinate into canvas co-ordinates
  *
  * @param[in] x
  * @param[out] ret
@@ -437,7 +437,7 @@ enum
  * @def evas_canvas_coord_screen_y_to_world
  * @since 1.8
  *
- * Convert/scale an ouput screen co-ordinate into canvas co-ordinates
+ * Convert/scale an output screen co-ordinate into canvas co-ordinates
  *
  * @param[in] y
  * @param[out] ret

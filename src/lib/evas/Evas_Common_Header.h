@@ -832,7 +832,7 @@ typedef void      (*Evas_Async_Events_Put_Cb)(void *target, Evas_Callback_Type t
 /**
  * Get the path for the cserve binary to execute
  * 
- * There is little need for anyone except a desktop nevironment to call this.
+ * There is little need for anyone except a desktop environment to call this.
  * This can be called before evas_init() has been called. It will try and find
  * the full path to the to the cserve binary to run to provide cserve image
  * and font caching services for evas.
@@ -931,7 +931,7 @@ EAPI int               evas_shutdown(void);
  * recovered from by evas finding memory of its own it has allocated and
  * freeing what it sees as not really usefully allocated memory. What is freed
  * may vary. Evas may reduce the resolution of images, free cached images or
- * fonts, trhow out pre-rendered data, reduce the complexity of change lists
+ * fonts, throw out pre-rendered data, reduce the complexity of change lists
  * etc. Evas and the program will function as per normal after this, but this
  * is a sign of low memory, and it is suggested that the program try and
  * identify memory it doesn't need, and free it.
@@ -1387,7 +1387,7 @@ EAPI void evas_device_pop(Evas *e);
  * @since 1.8
  */
 EAPI const Eina_List *evas_device_list(Evas *e, const Evas_Device *dev);
-   
+
 /**
  * Set the name of a device as a string
  * 
@@ -1397,7 +1397,7 @@ EAPI const Eina_List *evas_device_list(Evas *e, const Evas_Device *dev);
  * @since 1.8
  */
 EAPI void evas_device_name_set(Evas_Device *dev, const char *name);
-   
+
 /**
  * Get the name of a device
  * 
@@ -1413,7 +1413,7 @@ EAPI void evas_device_name_set(Evas_Device *dev, const char *name);
  * @since 1.8
  */
 EAPI const char *evas_device_name_get(const Evas_Device *dev);
-   
+
 /**
  * Set the description of a device as a string
  * 
@@ -1423,7 +1423,7 @@ EAPI const char *evas_device_name_get(const Evas_Device *dev);
  * @since 1.8
  */
 EAPI void evas_device_description_set(Evas_Device *dev, const char *desc);
-   
+
 /**
  * Get the description of a device
  * 
@@ -1441,7 +1441,7 @@ EAPI void evas_device_description_set(Evas_Device *dev, const char *desc);
  * @since 1.8
  */
 EAPI const char *evas_device_description_get(const Evas_Device *dev);
-   
+
 /**
  * Set the parent of a device
  * 
@@ -1463,7 +1463,7 @@ EAPI const char *evas_device_description_get(const Evas_Device *dev);
  * @since 1.8
  */
 EAPI void evas_device_parent_set(Evas_Device *dev, Evas_Device *parent);
-   
+
 /**
  * Get the parent of a device
  * 
@@ -1476,7 +1476,7 @@ EAPI void evas_device_parent_set(Evas_Device *dev, Evas_Device *parent);
  * @since 1.8
  */
 EAPI const Evas_Device *evas_device_parent_get(const Evas_Device *dev);
-   
+
 /**
  * Set the major class of device
  * 
@@ -1489,7 +1489,7 @@ EAPI const Evas_Device *evas_device_parent_get(const Evas_Device *dev);
  * @since 1.8
  */
 EAPI void evas_device_class_set(Evas_Device *dev, Evas_Device_Class clas);
-   
+
 /**
  * Get the major class of a device
  * 
@@ -1501,7 +1501,7 @@ EAPI void evas_device_class_set(Evas_Device *dev, Evas_Device_Class clas);
  * @since 1.8
  */
 EAPI Evas_Device_Class evas_device_class_get(const Evas_Device *dev);
-   
+
 /**
  * Set the sub-class of a device
  * 
@@ -1514,7 +1514,7 @@ EAPI Evas_Device_Class evas_device_class_get(const Evas_Device *dev);
  * @since 1.8
  */
 EAPI void evas_device_subclass_set(Evas_Device *dev, Evas_Device_Subclass clas);
-   
+
 /**
  * Get the device sub-class
  * 

@@ -215,7 +215,7 @@ EAPI void              evas_obscured_clear(Evas *e) EINA_ARG_NONNULL(1);
  *
  * @return EINA_TRUE if the canvas will render, EINA_FALSE otherwise.
  *
- * This function only returns EINA_TRUE whne a frame will be rendered. If the
+ * This function only returns EINA_TRUE when a frame will be rendered. If the
  * previous frame is still rendering, EINA_FALSE will be returned so the users
  * know not to wait for the updates callback and just return to their main
  * loop.
@@ -514,7 +514,7 @@ EAPI void              evas_output_framespace_get(const Evas *e, Evas_Coord *x, 
  */
 
 /**
- * Convert/scale an ouput screen co-ordinate into canvas co-ordinates
+ * Convert/scale an output screen co-ordinate into canvas co-ordinates
  *
  * @param e The pointer to the Evas Canvas
  * @param x The screen/output x co-ordinate
@@ -538,7 +538,7 @@ EAPI void              evas_output_framespace_get(const Evas *e, Evas_Coord *x, 
 EAPI Evas_Coord        evas_coord_screen_x_to_world(const Evas *e, int x) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
 /**
- * Convert/scale an ouput screen co-ordinate into canvas co-ordinates
+ * Convert/scale an output screen co-ordinate into canvas co-ordinates
  *
  * @param e The pointer to the Evas Canvas
  * @param y The screen/output y co-ordinate
@@ -954,7 +954,7 @@ EAPI void  evas_post_event_callback_remove_full(Evas *e, Evas_Object_Event_Post_
  * @param flags The default flags to use
  *
  * Events in evas can have an event_flags member. This starts out with
- * and initial value (no flags). this lets you set the default flags that
+ * and initial value (no flags). This lets you set the default flags that
  * an event begins with to be @p flags
  *
  * @since 1.2
@@ -1066,7 +1066,7 @@ EAPI void             evas_event_thaw_eval(Evas *e) EINA_ARG_NONNULL(1);
  * Get the number of mouse or multi presses currently active
  *
  * @p e The given canvas pointer.
- * @return The numer of presses (0 if none active).
+ * @return The number of presses (0 if none active).
  *
  * @since 1.2
  */
