@@ -525,6 +525,77 @@ eina_str_convert(const char *enc_from EINA_UNUSED,
 }
 #endif
 
+#ifdef HAVE_ICONV
+EAPI char *
+eina_str_convert_len(const char *enc_from, const char *enc_to, const char *text, size_t len, size_t *retlen)
+{
+   iconv_t ic;
+   char *new_txt, *inp, *outp;
+   size_t inb, outb, outlen, tob, outalloc;
+
+   if (retlen) *retlen = 0;
+   if (!text) return NULL;
+
+   ic = iconv_open(enc_to, enc_from);
+   if (ic == (iconv_t)(-1))
+      return NULL;
+
+   new_txt = malloc(64);
+   inb = len;
+   outb = 64;
+   inp = (char *)text;
+   outp = new_txt;
+   outalloc = 64;
+   outlen = 0;
+
+   for (;; )
+     {
+        size_t count;
+
+        tob = outb;
+        count = iconv(ic, &inp, &inb, &outp, &outb);
+        outlen += tob - outb;
+        if (count == (size_t)(-1))
+          {
+             if (errno == E2BIG)
+               {
+                  new_txt = realloc(new_txt, outalloc + 64);
+                  outp = new_txt + outlen;
+                  outalloc += 64;
+                  outb += 64;
+               }
+             else
+               {
+                  if (new_txt)
+                     free(new_txt);
+
+                  new_txt = NULL;
+                  break;
+               }
+          }
+
+        if (inb == 0)
+          {
+             if (outalloc == outlen)
+                new_txt = realloc(new_txt, outalloc + 1);
+
+             new_txt[outlen] = 0;
+             break;
+          }
+     }
+   iconv_close(ic);
+   if (retlen) *retlen = outlen;
+   return new_txt;
+}
+#else
+EAPI char *
+eina_str_convert_len(const char *enc_from EINA_UNUSED, const char *enc_to EINA_UNUSED, const char *text EINA_UNUSED, size_t len EINA_UNUSED, size_t *retlen)
+{
+   if (retlen) *retlen = 0;
+   return NULL;
+}
+#endif
+
 EAPI char *
 eina_str_escape(const char *str)
 {

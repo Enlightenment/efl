@@ -1,3 +1,7 @@
+2013-05-29  Mike Blumenkrantz
+
+        * Added eina_str_convert_len() to work around broken eina_str_convert()
+
 2013-05-28  ChunEon Park (Hermet)
 
         * Fix textblock to render pre again if it needs to relayouting.

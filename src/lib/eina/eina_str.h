@@ -260,8 +260,30 @@ EAPI size_t          eina_str_join_len(char *dst, size_t size, char sep, const c
  * failure, @c NULL is returned. Iconv is used to convert @p text. If
  * Iconv is not available, @c NULL is returned. When not used anymore,
  * the returned value must be freed.
+ *
+ * @warning This function is guaranteed to break when '\0' characters are in @p text.
+ * DO NOT USE THIS FUNCTION IF YOUR TEXT CONTAINS NON-TERMINATING '\0' CHARACTERS.
  */
 EAPI char           *eina_str_convert(const char *enc_from, const char *enc_to, const char *text) EINA_WARN_UNUSED_RESULT EINA_MALLOC EINA_ARG_NONNULL(1, 2, 3);
+
+/**
+ * @brief Use Iconv to convert a text string from one encoding to another.
+ *
+ * @param enc_from Encoding to convert from.
+ * @param enc_to Encoding to convert to.
+ * @param text The text to convert.
+ * @param text The length of the text to convert.
+ * @return The converted text.
+ *
+ * This function converts @p text, encoded in @p enc_from. On success,
+ * the converted text is returned and is encoded in @p enc_to. On
+ * failure, @c NULL is returned. Iconv is used to convert @p text. If
+ * Iconv is not available, @c NULL is returned. When not used anymore,
+ * the returned value must be freed.
+ *
+ * @since 1.8
+ */
+EAPI char           *eina_str_convert_len(const char *enc_from, const char *enc_to, const char *text, size_t len, size_t *retlen) EINA_WARN_UNUSED_RESULT EINA_MALLOC EINA_ARG_NONNULL(1, 2, 3);
 
 
 /**

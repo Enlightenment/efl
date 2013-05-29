@@ -25,6 +25,7 @@ Additions:
      - Add eina_log_timing()
      - Add eina_inlist_first
      - Add eina_inlist_last
+     - Added eina_str_convert_len() to work around broken eina_str_convert()
     * Add Cserve2 scalecache support
     * ecore_x:
      - Add window profile support.
