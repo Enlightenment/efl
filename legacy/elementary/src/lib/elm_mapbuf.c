@@ -288,8 +288,7 @@ _elm_mapbuf_smart_content_unset(Eo *obj, void *_pd, va_list *list)
    evas_object_data_del(content, "_elm_leaveme");
    evas_object_color_set(wd->resize_obj, 0, 0, 0, 0);
    if (ret) *ret = content;
-   if (sd->idler) ecore_idler_del(sd->idler);
-   sd->idler = NULL;
+   ELM_SAFE_FREE(sd->idler, ecore_idler_del);
 }
 
 static void
@@ -484,8 +483,7 @@ _auto_set(Eo *obj, void *_pd, va_list *list)
      }
    else
      {
-        if (sd->idler) ecore_idler_del(sd->idler);
-        sd->idler = NULL;
+        ELM_SAFE_FREE(sd->idler, ecore_idler_del);
 
         _internal_enable_set(obj, _pd, EINA_FALSE);
      }
