@@ -220,9 +220,7 @@ _elm_tooltip_reconfigure_job(void *data)
 static void
 _elm_tooltip_reconfigure_job_stop(Elm_Tooltip *tt)
 {
-   if (!tt->reconfigure_job) return;
-   ecore_job_del(tt->reconfigure_job);
-   tt->reconfigure_job = NULL;
+   ELM_SAFE_FREE(tt->reconfigure_job, ecore_job_del);
 }
 
 static void
@@ -261,7 +259,7 @@ _elm_tooltip_hide_anim_stop(Elm_Tooltip *tt)
    if (tt->tooltip)
      edje_object_signal_emit(tt->tooltip, "elm,action,show", "elm");
 
-   ELM_FREE_FUNC(tt->hide_timer, ecore_timer_del);
+   ELM_SAFE_FREE(tt->hide_timer, ecore_timer_del);
 }
 
 static void
@@ -537,7 +535,7 @@ static void
 _elm_tooltip_show_timer_stop(Elm_Tooltip *tt)
 {
    if (!tt->show_timer) return;
-   ELM_FREE_FUNC(tt->show_timer, ecore_timer_del);
+   ELM_SAFE_FREE(tt->show_timer, ecore_timer_del);
 }
 
 static Eina_Bool
