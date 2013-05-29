@@ -175,7 +175,7 @@ _update_slider(void *data,
    elm_slider_min_max_set(sd->slider, 0, length);
    elm_slider_value_set(sd->slider, pos);
    sd->last_update_time = ecore_loop_time_get();
-   ELM_FREE_FUNC(sd->delay_update, ecore_timer_del);
+   ELM_SAFE_FREE(sd->delay_update, ecore_timer_del);
 }
 
 static Eina_Bool
@@ -198,7 +198,7 @@ _update_frame(void *data,
    
    if ((ecore_loop_time_get() - sd->last_update_time) < 0.25)
      {
-        ELM_FREE_FUNC(sd->delay_update, ecore_timer_del);
+        if (sd->delay_update) ecore_timer_del(sd->delay_update);
         sd->delay_update = ecore_timer_add(0.30, _update_delay, data);
         return;
      }
@@ -551,7 +551,7 @@ _elm_player_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Player_Smart_Data *sd = _pd;
    
-   ELM_FREE_FUNC(sd->delay_update, ecore_timer_del);
+   if (sd->delay_update) ecore_timer_del(sd->delay_update);
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
 
