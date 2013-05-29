@@ -525,11 +525,7 @@ _x11_selection_clear(void *udata __UNUSED__, int type __UNUSED__, void *event)
    
    sel->active = EINA_FALSE;
    sel->widget = NULL;
-   if (sel->selbuf)
-     {
-        free(sel->selbuf);
-        sel->selbuf = NULL;
-     }
+   ELM_SAFE_FREE(sel->selbuf, free);
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -1457,8 +1453,7 @@ found:
                   ddata.data = (char *)savedtypes.imgfile;
                   dropable->dropcb(dropable->cbdata, dropable->obj, &ddata);
                   ecore_x_dnd_send_finished();
-                  if (savedtypes.imgfile) free(savedtypes.imgfile);
-                  savedtypes.imgfile = NULL;
+                  ELM_SAFE_FREE(savedtypes.imgfile, free);
 
                   return EINA_TRUE;
                }
@@ -1545,16 +1540,8 @@ _x11_drag_mouse_up(void *data, int etype __UNUSED__, void *event)
         Dropable *dropable;
 
         ecore_x_pointer_ungrab();
-        if (handler_up)
-          {
-             ecore_event_handler_del(handler_up);
-             handler_up = NULL;
-          }
-        if (handler_status)
-          {
-             ecore_event_handler_del(handler_status);
-             handler_status = NULL;
-          }
+        ELM_SAFE_FREE(handler_up, ecore_event_handler_del);
+        ELM_SAFE_FREE(handler_status, ecore_event_handler_del);
         ecore_x_dnd_self_drop();
 
         cnp_debug("mouse up, xwin=%#llx\n", (unsigned long long)xwin);
@@ -1743,11 +1730,7 @@ _x11_elm_object_cnp_selection_clear(Evas_Object *obj, Elm_Sel_Type selection)
    sel->loss_data = NULL;
    
    sel->active = EINA_FALSE;
-   if (sel->selbuf)
-     {
-        free(sel->selbuf);
-        sel->selbuf = NULL;
-     }
+   ELM_SAFE_FREE(sel->selbuf, free);
    sel->clear();
 
    return EINA_TRUE;
@@ -1914,30 +1897,13 @@ _x11_elm_drop_target_del(Evas_Object *obj)
 
    if (!drops)
      {
-        if (handler_pos)
-          {
-             ecore_event_handler_del(handler_pos);
-             handler_pos = NULL;
-          }
-        if (handler_drop)
-          {
-             ecore_event_handler_del(handler_drop);
-             handler_drop = NULL;
-          }
-        if (handler_enter)
-          {
-             ecore_event_handler_del(handler_enter);
-             handler_enter = NULL;
-          }
-        if (handler_leave)
-          {
-             ecore_event_handler_del(handler_leave);
-             handler_leave = NULL;
-          }
+        ELM_SAFE_FREE(handler_pos, ecore_event_handler_del);
+        ELM_SAFE_FREE(handler_drop, ecore_event_handler_del);
+        ELM_SAFE_FREE(handler_enter, ecore_event_handler_del);
+        ELM_SAFE_FREE(handler_leave, ecore_event_handler_del);
      }
 
-   if (savedtypes.imgfile) free(savedtypes.imgfile);
-   savedtypes.imgfile = NULL;
+   ELM_SAFE_FREE(savedtypes.imgfile, free);
 
    return EINA_TRUE;
 }
@@ -2369,26 +2335,10 @@ _wl_elm_drop_target_del(Evas_Object *obj)
 
    if (!drops)
      {
-        if (handler_enter)
-          {
-             ecore_event_handler_del(handler_enter);
-             handler_enter = NULL;
-          }
-        if (handler_leave)
-          {
-             ecore_event_handler_del(handler_leave);
-             handler_leave = NULL;
-          }
-        if (handler_pos)
-          {
-             ecore_event_handler_del(handler_pos);
-             handler_pos = NULL;
-          }
-        if (handler_drop)
-          {
-             ecore_event_handler_del(handler_drop);
-             handler_drop = NULL;
-          }
+        ELM_SAFE_FREE(handler_pos, ecore_event_handler_del);
+        ELM_SAFE_FREE(handler_drop, ecore_event_handler_del);
+        ELM_SAFE_FREE(handler_enter, ecore_event_handler_del);
+        ELM_SAFE_FREE(handler_leave, ecore_event_handler_del);
      }
 
    return EINA_TRUE;
@@ -3653,7 +3603,7 @@ _anim_st_free(Item_Container_Drag_Info *st)
 {  /* Stops and free mem of ongoing animation */
    if (st)
      {
-        ELM_FREE_FUNC(st->ea, ecore_animator_del);
+        ELM_SAFE_FREE(st->ea, ecore_animator_del);
         Anim_Icon *sti;
 
         EINA_LIST_FREE(st->icons, sti)
@@ -3831,7 +3781,7 @@ _cont_obj_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__
            (st->obj, EVAS_CALLBACK_MOUSE_UP, _cont_obj_mouse_up, st);
         elm_drag_item_container_del_internal(obj, EINA_FALSE);
 
-        ELM_FREE_FUNC(st->tm, ecore_timer_del);
+        ELM_SAFE_FREE(st->tm, ecore_timer_del);
 
         _anim_st_free(st);
      }
@@ -3852,7 +3802,7 @@ _cont_obj_mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
    evas_object_event_callback_del_full
       (st->obj, EVAS_CALLBACK_MOUSE_UP, _cont_obj_mouse_up, st);
 
-   ELM_FREE_FUNC(st->tm, ecore_timer_del);
+   ELM_SAFE_FREE(st->tm, ecore_timer_del);
 
    _anim_st_free(st);
 }
@@ -3865,7 +3815,7 @@ elm_drag_item_container_del_internal(Evas_Object *obj, Eina_Bool full)
 
    if (st)
      {
-        ELM_FREE_FUNC(st->tm, ecore_timer_del); /* Cancel drag-start timer */
+        ELM_SAFE_FREE(st->tm, ecore_timer_del); /* Cancel drag-start timer */
 
         if (st->ea)  /* Cancel ongoing default animation */
           _anim_st_free(st);
