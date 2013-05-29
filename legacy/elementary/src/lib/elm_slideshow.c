@@ -67,7 +67,7 @@ _elm_slideshow_smart_event(Eo *obj, void *_pd, va_list *list)
         if (sd->timeout)
           {
              if (sd->timer)
-               ELM_FREE_FUNC(sd->timer, ecore_timer_del);
+               ELM_SAFE_FREE(sd->timer, ecore_timer_del);
              else
                elm_slideshow_timeout_set(obj, sd->timeout);
           }
@@ -353,8 +353,8 @@ _elm_slideshow_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    const char *layout;
 
    elm_slideshow_clear(obj);
-   ELM_FREE_FUNC(sd->transitions, elm_widget_stringlist_free);
-   ELM_FREE_FUNC(sd->timer, ecore_timer_del);
+   if (sd->transitions) elm_widget_stringlist_free(sd->transitions);
+   if (sd->timer) ecore_timer_del(sd->timer);
 
    EINA_LIST_FREE(sd->layout.list, layout)
      eina_stringshare_del(layout);
@@ -476,7 +476,7 @@ elm_slideshow_item_show(Elm_Object_Item *it)
    next = item;
    _on_slideshow_end(WIDGET(item), WIDGET(item), NULL, NULL);
 
-   ELM_FREE_FUNC(sd->timer, ecore_timer_del);
+   ELM_SAFE_FREE(sd->timer, ecore_timer_del);
    if (sd->timeout > 0.0)
      sd->timer = ecore_timer_add(sd->timeout, _timer_cb, WIDGET(item));
 
@@ -515,7 +515,7 @@ _elm_slideshow_next(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    _on_slideshow_end(obj, obj, NULL, NULL);
 
-   ELM_FREE_FUNC(sd->timer, ecore_timer_del);
+   ELM_SAFE_FREE(sd->timer, ecore_timer_del);
    if (sd->timeout > 0.0)
      sd->timer = ecore_timer_add(sd->timeout, _timer_cb, obj);
 
@@ -555,7 +555,7 @@ _elm_slideshow_previous(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    _on_slideshow_end(obj, obj, NULL, NULL);
 
-   ELM_FREE_FUNC(sd->timer, ecore_timer_del);
+   ELM_SAFE_FREE(sd->timer, ecore_timer_del);
    if (sd->timeout > 0.0)
      sd->timer = ecore_timer_add(sd->timeout, _timer_cb, obj);
 
@@ -659,7 +659,7 @@ _elm_slideshow_timeout_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 
    sd->timeout = timeout;
 
-   ELM_FREE_FUNC(sd->timer, ecore_timer_del);
+   ELM_SAFE_FREE(sd->timer, ecore_timer_del);
    if (timeout > 0.0)
      sd->timer = ecore_timer_add(timeout, _timer_cb, obj);
 }
