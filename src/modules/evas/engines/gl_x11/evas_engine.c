@@ -1456,7 +1456,7 @@ eng_output_flush(void *data, Evas_Render_Mode render_mode)
      {
         re->info->callback.pre_swap(re->info->callback.data, re->evas);
      }
-   if (glsym_eglSwapBuffersRegion)
+   if ((glsym_eglSwapBuffersRegion) && (re->mode != MODE_FULL))
      {
         EGLint num = 0, *rects = NULL, i;
         Tilebuf_Rect *r;
