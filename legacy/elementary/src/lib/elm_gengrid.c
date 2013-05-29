@@ -328,14 +328,14 @@ _item_mouse_move_cb(void *data,
 
    if ((it->dragging) && (it->down))
      {
-        ELM_FREE_FUNC(it->long_timer, ecore_timer_del);
+        ELM_SAFE_FREE(it->long_timer, ecore_timer_del);
         evas_object_smart_callback_call(WIDGET(it), SIG_DRAG, it);
         return;
      }
 
    if ((!it->down) || (GG_IT(it)->wsd->longpressed))
      {
-        ELM_FREE_FUNC(it->long_timer, ecore_timer_del);
+        ELM_SAFE_FREE(it->long_timer, ecore_timer_del);
         if ((GG_IT(it)->wsd->reorder_mode) &&
             (GG_IT(it)->wsd->reorder_it))
           {
@@ -400,7 +400,7 @@ _item_mouse_move_cb(void *data,
           }
 
         it->dragging = 1;
-        ELM_FREE_FUNC(it->long_timer, ecore_timer_del);
+        ELM_SAFE_FREE(it->long_timer, ecore_timer_del);
         if (!GG_IT(it)->wsd->was_selected)
           _item_unselect(it);
 
@@ -507,7 +507,7 @@ _item_mouse_down_cb(void *data,
      }
 
    evas_object_smart_callback_call(WIDGET(it), SIG_PRESSED, it);
-   ELM_FREE_FUNC(it->long_timer, ecore_timer_del);
+   ELM_SAFE_FREE(it->long_timer, ecore_timer_del);
    if (it->realized)
      it->long_timer = ecore_timer_add
          (_elm_config->longpress_timeout, _long_press_cb, it);
@@ -527,10 +527,10 @@ _elm_gengrid_item_unrealize(Elm_Gen_Item *it,
    evas_event_freeze(evas_object_evas_get(WIDGET(it)));
    if (!calc)
      evas_object_smart_callback_call(WIDGET(it), SIG_UNREALIZED, it);
-   ELM_FREE_FUNC(it->long_timer, ecore_timer_del);
-   ELM_FREE_FUNC(it->texts, elm_widget_stringlist_free);
-   ELM_FREE_FUNC(it->contents, elm_widget_stringlist_free);
-   ELM_FREE_FUNC(it->states, elm_widget_stringlist_free);
+   ELM_SAFE_FREE(it->long_timer, ecore_timer_del);
+   ELM_SAFE_FREE(it->texts, elm_widget_stringlist_free);
+   ELM_SAFE_FREE(it->contents, elm_widget_stringlist_free);
+   ELM_SAFE_FREE(it->states, elm_widget_stringlist_free);
 
    EINA_LIST_FREE(it->content_objs, content)
      evas_object_del(content);
@@ -564,7 +564,7 @@ _item_mouse_up_cb(void *data,
    else sd->on_hold = EINA_FALSE;
 
    evas_object_smart_callback_call(WIDGET(it), SIG_RELEASED, it);
-   ELM_FREE_FUNC(it->long_timer, ecore_timer_del);
+   ELM_SAFE_FREE(it->long_timer, ecore_timer_del);
    if (it->dragging)
      {
         it->dragging = EINA_FALSE;
@@ -1240,7 +1240,7 @@ _item_place(Elm_Gen_Item *it,
                }
              else if (item->item_reorder_move_animator)
                {
-                  ELM_FREE_FUNC(item->item_reorder_move_animator,
+                  ELM_SAFE_FREE(item->item_reorder_move_animator,
                                 ecore_animator_del);
                   item->moving = EINA_FALSE;
                }
@@ -2039,7 +2039,7 @@ _elm_gengrid_item_del_serious(Elm_Gen_Item *it)
    if (it->tooltip.del_cb)
      it->tooltip.del_cb((void *)it->tooltip.data, WIDGET(it), it);
    GG_IT(it)->wsd->walking -= it->walking;
-   ELM_FREE_FUNC(it->long_timer, ecore_timer_del);
+   ELM_SAFE_FREE(it->long_timer, ecore_timer_del);
    if (it->group)
      GG_IT(it)->wsd->group_items =
        eina_list_remove(GG_IT(it)->wsd->group_items, it);
@@ -2057,8 +2057,7 @@ _elm_gengrid_item_del_serious(Elm_Gen_Item *it)
      GG_IT(it)->wsd->last_selected_item = NULL;
    GG_IT(it)->wsd->item_count--;
 
-   free(it->item);
-   it->item = NULL;
+   ELM_SAFE_FREE(it->item, free);
 }
 
 static void
@@ -2260,11 +2259,7 @@ _elm_gengrid_clear(Evas_Object *obj,
      }
    sd->clear_me = EINA_FALSE;
    sd->pan_changed = EINA_TRUE;
-   if (sd->calc_job)
-     {
-        ecore_job_del(sd->calc_job);
-        sd->calc_job = NULL;
-     }
+   ELM_SAFE_FREE(sd->calc_job, ecore_job_del);
    if (sd->selected) sd->selected = eina_list_free(sd->selected);
    if (sd->clear_cb) sd->clear_cb(sd);
    sd->pan_x = 0;
