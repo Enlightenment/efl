@@ -834,7 +834,7 @@ _mouse_down_cb(void *data,
    else
      evas_object_smart_callback_call(data, SIG_PRESS, NULL);
    sd->longpressed = EINA_FALSE;
-   ELM_FREE_FUNC(sd->long_timer, ecore_timer_del);
+   if (sd->long_timer) ecore_timer_del(sd->long_timer);
    sd->long_timer = ecore_timer_add
        (_elm_config->longpress_timeout, _long_press_cb, data);
 }
@@ -852,7 +852,7 @@ _mouse_up_cb(void *data,
    if (ev->button != 1) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) sd->on_hold = EINA_TRUE;
    else sd->on_hold = EINA_FALSE;
-   ELM_FREE_FUNC(sd->long_timer, ecore_timer_del);
+   ELM_SAFE_FREE(sd->long_timer, ecore_timer_del);
    if (!sd->on_hold)
      evas_object_smart_callback_call(data, SIG_CLICKED, NULL);
    sd->on_hold = EINA_FALSE;
@@ -935,7 +935,7 @@ _scroll_cb(Evas_Object *obj,
         if (sd->no_smooth == 1) _smooth_update(obj);
      }
 
-   ELM_FREE_FUNC(sd->scr_timer, ecore_timer_del);
+   if (sd->scr_timer) ecore_timer_del(sd->scr_timer);
    sd->scr_timer = ecore_timer_add(0.5, _scroll_timeout_cb, obj);
 
    evas_object_smart_callback_call(obj, SIG_SCROLL, NULL);
@@ -1162,11 +1162,7 @@ _g_layer_zoom_start_cb(void *data,
    Evas_Coord rw, rh;
    int x, y, w, h;
 
-   if (sd->g_layer_zoom.bounce.animator)
-     {
-        ecore_animator_del(sd->g_layer_zoom.bounce.animator);
-        sd->g_layer_zoom.bounce.animator = NULL;
-     }
+   ELM_SAFE_FREE(sd->g_layer_zoom.bounce.animator, ecore_animator_del);
    sd->zoom_g_layer = EINA_TRUE;
 
    eo_do(obj, elm_scrollable_interface_freeze_set(EINA_TRUE));
@@ -1391,12 +1387,13 @@ _elm_photocam_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    evas_object_del(sd->pan_obj);
    sd->pan_obj = NULL;
 
-   ELM_FREE_FUNC(sd->file, eina_stringshare_del);
-   ELM_FREE_FUNC(sd->calc_job, ecore_job_del);
-   ELM_FREE_FUNC(sd->scr_timer, ecore_timer_del);
-   ELM_FREE_FUNC(sd->long_timer, ecore_timer_del);
-   ELM_FREE_FUNC(sd->zoom_animator, ecore_animator_del);
-   ELM_FREE_FUNC(sd->g_layer_zoom.bounce.animator, ecore_animator_del);
+   if (sd->file) eina_stringshare_del(sd->file);
+   if (sd->calc_job) ecore_job_del(sd->calc_job);
+   if (sd->scr_timer) ecore_timer_del(sd->scr_timer);
+   if (sd->long_timer) ecore_timer_del(sd->long_timer);
+   if (sd->zoom_animator) ecore_animator_del(sd->zoom_animator);
+   if (sd->g_layer_zoom.bounce.animator)
+     ecore_animator_del(sd->g_layer_zoom.bounce.animator);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
@@ -1503,11 +1500,7 @@ _file_set(Eo *obj, void *_pd, va_list *list)
    sd->size.imh = h;
    sd->size.w = sd->size.imw / sd->zoom;
    sd->size.h = sd->size.imh / sd->zoom;
-   if (sd->g_layer_zoom.bounce.animator)
-     {
-        ecore_animator_del(sd->g_layer_zoom.bounce.animator);
-        sd->g_layer_zoom.bounce.animator = NULL;
-     }
+   ELM_SAFE_FREE(sd->g_layer_zoom.bounce.animator, ecore_animator_del);
    if (sd->zoom_animator)
      {
         sd->no_smooth--;
