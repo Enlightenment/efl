@@ -360,7 +360,7 @@ _transition_layout_animation_stop(Elm_Box_Transition *layout_data)
 {
    layout_data->animation_ended = EINA_TRUE;
 
-   ELM_FREE_FUNC(layout_data->animator, ecore_animator_del);
+   ELM_SAFE_FREE(layout_data->animator, ecore_animator_del);
 
    if (layout_data->transition_end_cb)
      layout_data->transition_end_cb(layout_data->transition_end_data);
@@ -787,7 +787,7 @@ elm_box_transition_free(void *data)
      (box_data->box, SIG_CHILD_ADDED, _transition_layout_child_added);
    evas_object_smart_callback_del
      (box_data->box, SIG_CHILD_REMOVED, _transition_layout_child_removed);
-   ELM_FREE_FUNC(box_data->animator, ecore_animator_del);
+   if (box_data->animator) ecore_animator_del(box_data->animator);
 
    free(data);
 }
