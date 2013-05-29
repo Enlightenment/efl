@@ -76,7 +76,7 @@ _val_fetch(Evas_Object *obj)
      {
         sd->val = val;
         evas_object_smart_callback_call(obj, SIG_CHANGED, NULL);
-        ELM_FREE_FUNC(sd->delay, ecore_timer_del);
+        if (sd->delay) ecore_timer_del(sd->delay);
         sd->delay = ecore_timer_add(SLIDER_DELAY_CHANGED_INTERVAL, _delay_change, obj);
      }
 }
@@ -837,10 +837,10 @@ _elm_slider_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Slider_Smart_Data *sd = _pd;
 
-   ELM_FREE_FUNC(sd->indicator, eina_stringshare_del);
-   ELM_FREE_FUNC(sd->units, eina_stringshare_del);
-   ELM_FREE_FUNC(sd->delay, ecore_timer_del);
-   ELM_FREE_FUNC(sd->popup, evas_object_del);
+   if (sd->indicator) eina_stringshare_del(sd->indicator);
+   if (sd->units) eina_stringshare_del(sd->units);
+   if (sd->delay) ecore_timer_del(sd->delay);
+   if (sd->popup) evas_object_del(sd->popup);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
