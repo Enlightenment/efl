@@ -664,9 +664,9 @@ _elm_image_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Image_Smart_Data *sd = _pd;
 
-   ELM_FREE_FUNC(sd->anim_timer, ecore_timer_del);
-   ELM_FREE_FUNC(sd->img, evas_object_del);
-   ELM_FREE_FUNC(sd->prev_img, evas_object_del);
+   if (sd->anim_timer) ecore_timer_del(sd->anim_timer);
+   if (sd->img) evas_object_del(sd->img);
+   if (sd->prev_img) evas_object_del(sd->prev_img);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
@@ -1509,7 +1509,7 @@ _elm_image_smart_animated_play_set(Eo *obj, void *_pd, va_list *list)
      }
    else
      {
-        ELM_FREE_FUNC(sd->anim_timer, ecore_timer_del);
+        ELM_SAFE_FREE(sd->anim_timer, ecore_timer_del);
      }
    sd->play = play;
 }
