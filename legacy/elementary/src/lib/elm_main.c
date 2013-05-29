@@ -312,17 +312,8 @@ elm_shutdown(void)
    _elm_clouseau_unload();
 // wrningz :(
 //   _prefix_shutdown();
-   if (app_name)
-     {
-        eina_stringshare_del(app_name);
-        app_name = NULL;
-     }
-
-   if (app_desktop_entry)
-     {
-        eina_stringshare_del(app_desktop_entry);
-        app_desktop_entry = NULL;
-     }
+   ELM_SAFE_FREE(app_name, eina_stringshare_del);
+   ELM_SAFE_FREE(app_desktop_entry, eina_stringshare_del);
 
    elm_quicklaunch_sub_shutdown();
    elm_quicklaunch_shutdown();
@@ -735,18 +726,13 @@ elm_quicklaunch_shutdown(void)
 
    if (pfx) eina_prefix_free(pfx);
    pfx = NULL;
-   eina_stringshare_del(_elm_data_dir);
-   _elm_data_dir = NULL;
-   eina_stringshare_del(_elm_lib_dir);
-   _elm_lib_dir = NULL;
-
-   free(_elm_appname);
-   _elm_appname = NULL;
+   ELM_SAFE_FREE(_elm_data_dir, eina_stringshare_del);
+   ELM_SAFE_FREE(_elm_lib_dir, eina_stringshare_del);
+   ELM_SAFE_FREE(_elm_appname, free);
 
    _elm_config_shutdown();
 
-   ecore_event_handler_del(_elm_exit_handler);
-   _elm_exit_handler = NULL;
+   ELM_SAFE_FREE(_elm_exit_handler, ecore_event_handler_del);
 
    _elm_theme_shutdown();
    _elm_unneed_systray();
