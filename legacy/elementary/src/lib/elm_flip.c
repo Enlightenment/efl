@@ -1552,7 +1552,7 @@ _down_cb(void *data,
 
    if (ev->button != 1) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
-   ELM_FREE_FUNC(sd->animator, ecore_animator_del);
+   ELM_SAFE_FREE(sd->animator, ecore_animator_del);
    sd->down = EINA_TRUE;
    sd->started = EINA_FALSE;
    evas_object_geometry_get(data, &x, &y, &w, &h);
@@ -1588,11 +1588,7 @@ _up_cb(void *data,
    sd->h = h;
    sd->ox = sd->x;
    sd->oy = sd->y;
-   if (sd->job)
-     {
-        ecore_job_del(sd->job);
-        sd->job = NULL;
-     }
+   ELM_SAFE_FREE(sd->job, ecore_job_del);
    sd->finish = EINA_FALSE;
    if (sd->dir == 0)
      {
