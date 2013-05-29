@@ -191,8 +191,7 @@ _access_shutdown(void)
 
    initted = 0;
 
-   free(mapi);
-   mapi = NULL;
+   ELM_SAFE_FREE(mapi, free);
 }
 
 static Elm_Access_Item *
@@ -297,7 +296,7 @@ _access_obj_mouse_in_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSE
     ac = evas_object_data_get(data, "_elm_access");
    if (!ac) return;
 
-   ELM_FREE_FUNC(ac->delay_timer, ecore_timer_del);
+   ELM_SAFE_FREE(ac->delay_timer, ecore_timer_del);
 
    if (_elm_config->access_mode != ELM_ACCESS_MODE_OFF)
       ac->delay_timer = ecore_timer_add(0.2, _access_obj_over_timeout_cb, data);
@@ -314,7 +313,7 @@ _access_obj_mouse_out_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
 
    _elm_access_object_unhilight(data);
 
-   ELM_FREE_FUNC(ac->delay_timer, ecore_timer_del);
+   ELM_SAFE_FREE(ac->delay_timer, ecore_timer_del);
 }
 
 static void
@@ -558,7 +557,7 @@ _elm_access_clear(Elm_Access_Info *ac)
    Elm_Access_Item *ai;
 
    if (!ac) return;
-   ELM_FREE_FUNC(ac->delay_timer, ecore_timer_del);
+   ELM_SAFE_FREE(ac->delay_timer, ecore_timer_del);
    EINA_LIST_FREE(ac->items, ai)
      {
         if (!ai->func)
