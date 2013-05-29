@@ -2754,6 +2754,7 @@ eng_gl_context_create(void *data, void *share_context)
    if (!ctx->context)
      {
         ERR("eglCreateContext() fail. code=%#x", eglGetError());
+        free(ctx);
         return NULL;
      }
 
