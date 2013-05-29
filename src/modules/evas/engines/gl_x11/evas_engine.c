@@ -1278,7 +1278,7 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
                        re->prev_age = age;
                     }
                }
-             if (re->lost_back)
+             if ((re->lost_back) || (re->mode == MODE_FULL))
                {
                   /* if we lost our backbuffer since the last frame redraw all */
                   re->lost_back = 0;
