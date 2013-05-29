@@ -52,11 +52,7 @@ _item_free(Elm_Index_Item *it)
    if (it->omitted)
      it->omitted = eina_list_free(it->omitted);
 
-   if (it->letter)
-     {
-        eina_stringshare_del(it->letter);
-        it->letter = NULL;
-     }
+   ELM_SAFE_FREE(it->letter, eina_stringshare_del);
 }
 
 static void
@@ -651,7 +647,7 @@ _sel_eval(Evas_Object *obj,
                   else
                     evas_object_smart_callback_call
                        (obj, SIG_CHANGED, it);
-                  ELM_FREE_FUNC(sd->delay, ecore_timer_del);
+                  if (sd->delay) ecore_timer_del(sd->delay);
                   sd->delay = ecore_timer_add(sd->delay_change_time,
                                               _delay_change_cb, obj);
                }
@@ -996,7 +992,7 @@ _elm_index_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    EINA_LIST_FREE(sd->omit, o)
      free(o);
 
-   ELM_FREE_FUNC(sd->delay, ecore_timer_del);
+   if (sd->delay) ecore_timer_del(sd->delay);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
@@ -1245,7 +1241,7 @@ elm_index_item_selected_set(Elm_Object_Item *it,
            (obj, SIG_CHANGED, it);
         evas_object_smart_callback_call
            (obj, SIG_SELECTED, it);
-        ELM_FREE_FUNC(sd->delay, ecore_timer_del);
+        if (sd->delay) ecore_timer_del(sd->delay);
         sd->delay = ecore_timer_add(sd->delay_change_time,
                                     _delay_change_cb, obj);
      }
