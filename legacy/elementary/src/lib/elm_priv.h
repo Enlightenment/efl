@@ -150,7 +150,6 @@ extern const char *_elm_engines[];
 #undef MAX
 #define MAX(x, y) (((x) > (y)) ? (x) : (y))
 
-#define ELM_FREE_FUNC(_h, _fn) do { if (_h) { _fn((void*)_h); _h = NULL; } } while (0) // this will be removed
 #define ELM_SAFE_FREE(_h, _fn) do { if (_h) { _fn((void*)_h); _h = NULL; } } while (0)
 
 struct _Elm_Config
