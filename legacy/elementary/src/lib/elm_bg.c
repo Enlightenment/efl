@@ -184,10 +184,8 @@ _file_set(Eo *obj, void *_pd, va_list *list)
      }
    if (!file)
      {
-        eina_stringshare_del(sd->file);
-        sd->file = NULL;
-        eina_stringshare_del(sd->group);
-        sd->group = NULL;
+        ELM_SAFE_FREE(sd->file, eina_stringshare_del);
+        ELM_SAFE_FREE(sd->group, eina_stringshare_del);
         if (ret) *ret = EINA_TRUE;
         return;
      }
