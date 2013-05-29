@@ -137,7 +137,7 @@ _mouse_move(void *data,
    if (move->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
      {
         /* Moved too far: No longpress for you! */
-        ELM_FREE_FUNC(sd->long_press_timer, ecore_timer_del);
+        ELM_SAFE_FREE(sd->long_press_timer, ecore_timer_del);
         evas_object_event_callback_del
           (icon, EVAS_CALLBACK_MOUSE_MOVE, _mouse_move);
      }
@@ -192,7 +192,7 @@ _mouse_down(void *data,
 
    if (ev->button != 1) return;
 
-   ELM_FREE_FUNC(sd->long_press_timer, ecore_timer_del);
+   if (sd->long_press_timer) ecore_timer_del(sd->long_press_timer);
    sd->long_press_timer = ecore_timer_add(_elm_config->longpress_timeout,
                                           _long_press_cb, data);
    evas_object_event_callback_add
@@ -211,7 +211,7 @@ _mouse_up(void *data,
    if (ev->button != 1) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
 
-   ELM_FREE_FUNC(sd->long_press_timer, ecore_timer_del);
+   ELM_SAFE_FREE(sd->long_press_timer, ecore_timer_del);
 
    evas_object_smart_callback_call(data, SIG_CLICKED, NULL);
 }
@@ -300,7 +300,7 @@ _elm_photo_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Photo_Smart_Data * sd = _pd;
 
-   ELM_FREE_FUNC(sd->long_press_timer, ecore_timer_del);
+   if (sd->long_press_timer) ecore_timer_del(sd->long_press_timer);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
