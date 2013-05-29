@@ -8,6 +8,10 @@ static void *_ecore_xcb_selection_parser_text(const char *target EINA_UNUSED,
                                               void       *data,
                                               int         size,
                                               int         format EINA_UNUSED);
+static void *_ecore_xcb_selection_parser_xmozurl(const char *target EINA_UNUSED,
+                                              void       *data,
+                                              int         size,
+                                              int         format EINA_UNUSED);
 static void *_ecore_xcb_selection_parser_files(const char *target,
                                                void       *data,
                                                int         size,
@@ -61,6 +65,8 @@ _ecore_xcb_selection_init(void)
                                 _ecore_xcb_selection_parser_text);
    ecore_x_selection_parser_add("text/uri-list",
                                 _ecore_xcb_selection_parser_files);
+   ecore_x_selection_parser_add("text/x-moz-url",
+                                _ecore_x_selection_parser_xmozurl);
    ecore_x_selection_parser_add("_NETSCAPE_URL",
                                 _ecore_xcb_selection_parser_files);
    ecore_x_selection_parser_add(ECORE_X_SELECTION_TARGET_TARGETS,
@@ -769,6 +775,66 @@ _ecore_xcb_selection_parser_text(const char *target EINA_UNUSED,
    return sel;
 }
 
+static int
+_ecore_xcb_selection_data_xmozurl_free(void *data)
+{
+   Ecore_X_Selection_Data_X_Moz_Url *sel = data;
+   char **buf;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   if (!sel) return 0;
+
+   buf = eina_inarray_nth(sel->links, 0);
+   free(*buf);
+   eina_inarray_free(sel->links);
+   eina_inarray_free(sel->link_names);
+   free(sel);
+   return 1;
+}
+
+static void *
+_ecore_xcb_selection_parser_xmozurl(const char *target EINA_UNUSED,
+                               void *_data,
+                               int size,
+                               int format EINA_UNUSED)
+{
+   Ecore_X_Selection_Data_X_Moz_Url *sel;
+   char *prev, *n, *buf, *data = _data;
+   size_t sz;
+   int num = 0;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   buf = eina_str_convert_len("UTF-16LE", "UTF-8", data, size, &sz);
+   if (!buf) return NULL;
+   sel = calloc(1, sizeof(Ecore_X_Selection_Data_X_Moz_Url));
+   if (!sel)
+     {
+        free(buf);
+        return NULL;
+     }
+   sel->links = eina_inarray_new(sizeof(char*), 0);
+   sel->link_names = eina_inarray_new(sizeof(char*), 0);
+   prev = buf;
+   for (n = memchr(buf, '\n', sz); n; n = memchr(prev, '\n', sz - (prev - buf)))
+     {
+        n[0] = 0;
+        if (num % 2 == 0)
+          eina_inarray_push(sel->links, &prev);
+        else
+          eina_inarray_push(sel->link_names, &prev);
+        num++;
+        prev = n + 1;
+     }
+   eina_inarray_push(sel->link_names, &prev[0]);
+
+   ECORE_XCB_SELECTION_DATA(sel)->length = size;
+   ECORE_XCB_SELECTION_DATA(sel)->content = ECORE_X_SELECTION_CONTENT_X_MOZ_URL;
+   ECORE_XCB_SELECTION_DATA(sel)->data = (void*)data;
+   ECORE_XCB_SELECTION_DATA(sel)->free = _ecore_xcb_selection_data_xmozurl_free;
+   return sel;
+}
+
 static void *
 _ecore_xcb_selection_parser_files(const char *target,
                                   void       *data,
@@ -1004,6 +1070,8 @@ _ecore_xcb_selection_target_atom_get(const char *target)
      x_target = ECORE_X_ATOM_UTF8_STRING;
    else if (!strcmp(target, ECORE_X_SELECTION_TARGET_FILENAME))
      x_target = ECORE_X_ATOM_FILE_NAME;
+   else if (!strcmp(target, ECORE_X_SELECTION_TARGET_X_MOZ_URL))
+     x_target = ECORE_X_ATOM_X_MOZ_URL;
    else
      x_target = ecore_x_atom_get(target);
 
@@ -1021,6 +1089,8 @@ _ecore_xcb_selection_target_get(Ecore_X_Atom target)
      return strdup(ECORE_X_SELECTION_TARGET_UTF8_STRING);
    else if (target == ECORE_X_ATOM_TEXT)
      return strdup(ECORE_X_SELECTION_TARGET_TEXT);
+   else if (target == ECORE_X_ATOM_X_MOZ_URL)
+     return strdup(ECORE_X_SELECTION_TARGET_X_MOZ_URL);
    else
      return ecore_x_atom_name_get(target);
 }

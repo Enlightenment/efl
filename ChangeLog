@@ -1,6 +1,7 @@
 2013-05-29  Mike Blumenkrantz
 
         * Added eina_str_convert_len() to work around broken eina_str_convert()
+        * Add ecore-x(cb) support for text/x-moz-url DND operations
 
 2013-05-28  ChunEon Park (Hermet)
 

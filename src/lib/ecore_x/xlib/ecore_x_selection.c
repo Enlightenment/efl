@@ -34,6 +34,10 @@ static void *_ecore_x_selection_parser_text(const char *target,
                                             void *data,
                                             int size,
                                             int format);
+static void *_ecore_x_selection_parser_xmozurl(const char *target,
+                                            void *data,
+                                            int size,
+                                            int format);
 static int   _ecore_x_selection_data_text_free(void *data);
 static void *_ecore_x_selection_parser_targets(const char *target,
                                                void *data,
@@ -68,6 +72,8 @@ _ecore_x_selection_data_init(void)
                                 _ecore_x_selection_parser_text);
    ecore_x_selection_parser_add("text/uri-list",
                                 _ecore_x_selection_parser_files);
+   ecore_x_selection_parser_add("text/x-moz-url",
+                                _ecore_x_selection_parser_xmozurl);
    ecore_x_selection_parser_add("_NETSCAPE_URL",
                                 _ecore_x_selection_parser_files);
    ecore_x_selection_parser_add(ECORE_X_SELECTION_TARGET_TARGETS,
@@ -316,6 +322,8 @@ _ecore_x_selection_target_atom_get(const char *target)
      x_target = ECORE_X_ATOM_UTF8_STRING;
    else if (!strcmp(target, ECORE_X_SELECTION_TARGET_FILENAME))
      x_target = ECORE_X_ATOM_FILE_NAME;
+   else if (!strcmp(target, ECORE_X_SELECTION_TARGET_X_MOZ_URL))
+     x_target = ECORE_X_ATOM_X_MOZ_URL;
    else
      x_target = ecore_x_atom_get(target);
 
@@ -335,6 +343,8 @@ _ecore_x_selection_target_get(Ecore_X_Atom target)
      return strdup(ECORE_X_SELECTION_TARGET_UTF8_STRING);
    else if (target == ECORE_X_ATOM_TEXT)
      return strdup(ECORE_X_SELECTION_TARGET_TEXT);
+   else if (target == ECORE_X_ATOM_X_MOZ_URL)
+     return strdup(ECORE_X_SELECTION_TARGET_X_MOZ_URL);
    else
      return XGetAtomName(_ecore_x_disp, target);
 }
@@ -938,6 +948,65 @@ _ecore_x_selection_parser_text(const char *target EINA_UNUSED,
    ECORE_X_SELECTION_DATA(sel)->content = ECORE_X_SELECTION_CONTENT_TEXT;
    ECORE_X_SELECTION_DATA(sel)->data = data;
    ECORE_X_SELECTION_DATA(sel)->free = _ecore_x_selection_data_text_free;
+   return sel;
+}
+
+static int
+_ecore_x_selection_data_xmozurl_free(void *data)
+{
+   Ecore_X_Selection_Data_X_Moz_Url *sel = data;
+   char **buf;
+
+   buf = eina_inarray_nth(sel->links, 0);
+   free(*buf);
+   eina_inarray_free(sel->links);
+   eina_inarray_free(sel->link_names);
+   free(sel);
+   return 1;
+}
+#ifdef HAVE_ICONV
+# include <errno.h>
+# include <iconv.h>
+#endif
+static void *
+_ecore_x_selection_parser_xmozurl(const char *target EINA_UNUSED,
+                               void *_data,
+                               int size,
+                               int format EINA_UNUSED)
+{
+   Ecore_X_Selection_Data_X_Moz_Url *sel;
+   char *prev, *n, *buf, *data = _data;
+   size_t sz;
+   int num = 0;
+
+   buf = eina_str_convert_len("UTF-16LE", "UTF-8", data, size, &sz);
+   if (!buf) return NULL;
+   sel = calloc(1, sizeof(Ecore_X_Selection_Data_X_Moz_Url));
+   if (!sel)
+     {
+        free(buf);
+        return NULL;
+     }
+   sz = strlen(buf);
+   sel->links = eina_inarray_new(sizeof(char*), 0);
+   sel->link_names = eina_inarray_new(sizeof(char*), 0);
+   prev = buf;
+   for (n = memchr(buf, '\n', sz); n; n = memchr(prev, '\n', sz - (prev - buf)))
+     {
+        n[0] = 0;
+        if (num % 2 == 0)
+          eina_inarray_push(sel->links, &prev);
+        else
+          eina_inarray_push(sel->link_names, &prev);
+        num++;
+        prev = n + 1;
+     }
+   eina_inarray_push(sel->link_names, &prev);
+
+   ECORE_X_SELECTION_DATA(sel)->length = size;
+   ECORE_X_SELECTION_DATA(sel)->content = ECORE_X_SELECTION_CONTENT_X_MOZ_URL;
+   ECORE_X_SELECTION_DATA(sel)->data = (void*)data;
+   ECORE_X_SELECTION_DATA(sel)->free = _ecore_x_selection_data_xmozurl_free;
    return sel;
 }
 

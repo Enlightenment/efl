@@ -46,6 +46,7 @@ Additions:
        ecore_x_randr_crtc_info_free()
        ecore_x_dnd_self_begin()
        ecore_x_dnd_self_drop()
+       support for text/x-moz-url DND operations
     * ecore_wayland:
      - Store global wayland interfaces in a globals list so wayland programs
        can bind to other non-standard wayland protocol extensions.

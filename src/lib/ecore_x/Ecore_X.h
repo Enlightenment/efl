@@ -259,6 +259,7 @@ typedef enum _Ecore_X_Randr_Edid_Aspect_Ratio
 #define ECORE_X_SELECTION_TARGET_STRING        "STRING"
 #define ECORE_X_SELECTION_TARGET_UTF8_STRING   "UTF8_STRING"
 #define ECORE_X_SELECTION_TARGET_FILENAME      "FILENAME"
+#define ECORE_X_SELECTION_TARGET_X_MOZ_URL     "X_MOZ_URL"
 
 #define ECORE_X_DND_VERSION                    5
 
@@ -427,6 +428,7 @@ typedef struct _Ecore_X_Event_Fixes_Selection_Notify       Ecore_X_Event_Fixes_S
 typedef struct _Ecore_X_Selection_Data                     Ecore_X_Selection_Data;
 typedef struct _Ecore_X_Selection_Data_Files               Ecore_X_Selection_Data_Files;
 typedef struct _Ecore_X_Selection_Data_Text                Ecore_X_Selection_Data_Text;
+typedef struct _Ecore_X_Selection_Data_X_Moz_Url           Ecore_X_Selection_Data_X_Moz_Url;
 typedef struct _Ecore_X_Selection_Data_Targets             Ecore_X_Selection_Data_Targets;
 typedef struct _Ecore_X_Event_Xdnd_Enter                   Ecore_X_Event_Xdnd_Enter;
 typedef struct _Ecore_X_Event_Xdnd_Position                Ecore_X_Event_Xdnd_Position;
@@ -714,6 +716,7 @@ struct _Ecore_X_Selection_Data
       ECORE_X_SELECTION_CONTENT_NONE,
       ECORE_X_SELECTION_CONTENT_TEXT,
       ECORE_X_SELECTION_CONTENT_FILES,
+      ECORE_X_SELECTION_CONTENT_X_MOZ_URL,
       ECORE_X_SELECTION_CONTENT_TARGETS,
       ECORE_X_SELECTION_CONTENT_CUSTOM
    } content;
@@ -734,6 +737,13 @@ struct _Ecore_X_Selection_Data_Text
 {
    Ecore_X_Selection_Data data;
    char                  *text;
+};
+
+struct _Ecore_X_Selection_Data_X_Moz_Url
+{
+   Ecore_X_Selection_Data data;
+   Eina_Inarray         *links;
+   Eina_Inarray         *link_names;
 };
 
 struct _Ecore_X_Selection_Data_Targets

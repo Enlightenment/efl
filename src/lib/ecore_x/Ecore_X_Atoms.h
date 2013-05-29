@@ -14,6 +14,7 @@ EAPI extern Ecore_X_Atom ECORE_X_ATOM_FILE_NAME;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_STRING;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_TEXT;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_UTF8_STRING;
+EAPI extern Ecore_X_Atom ECORE_X_ATOM_X_MOZ_URL;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_WINDOW;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_PIXMAP;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_VISUALID;
