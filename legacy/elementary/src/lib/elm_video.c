@@ -282,7 +282,7 @@ _elm_video_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    Elm_Video_Smart_Data *sd = _pd;
 
 #ifdef HAVE_EMOTION
-   ELM_FREE_FUNC(sd->timer, ecore_timer_del);
+   if (sd->timer) ecore_timer_del(sd->timer);
    if (sd->remember) emotion_object_last_position_save(sd->emotion);
 #else
    (void) sd;
@@ -392,7 +392,7 @@ _play(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
 
    if (emotion_object_play_get(sd->emotion)) return;
 
-   ELM_FREE_FUNC(sd->timer, ecore_timer_del);
+   ELM_SAFE_FREE(sd->timer, ecore_timer_del);
    sd->stop = EINA_FALSE;
    emotion_object_play_set(sd->emotion, EINA_TRUE);
 #else
@@ -444,7 +444,7 @@ _stop(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    if (!emotion_object_play_get(sd->emotion) && sd->stop) return;
 
-   ELM_FREE_FUNC(sd->timer, ecore_timer_del);
+   ELM_SAFE_FREE(sd->timer, ecore_timer_del);
 
    sd->stop = EINA_TRUE;
    emotion_object_play_set(sd->emotion, EINA_FALSE);
