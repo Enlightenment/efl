@@ -532,9 +532,7 @@ _button_remove(Evas_Object *obj,
 
    evas_object_event_callback_del
      (sd->buttons[pos]->btn, EVAS_CALLBACK_DEL, _on_button_del);
-   free(sd->buttons[pos]);
-
-   sd->buttons[pos] = NULL;
+   ELM_SAFE_FREE(sd->buttons[pos], free);
    sd->button_count -= 1;
 
    if (!sd->no_shift)
