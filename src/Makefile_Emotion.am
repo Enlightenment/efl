@@ -142,6 +142,7 @@ edje_external_emotion_module_la_LIBTOOLFLAGS = --tag=disable-static
 ### Unit tests
 
 if EFL_ENABLE_TESTS
+if BUILD_LOADER_PNG
 
 bin_PROGRAMS += tests/emotion/emotion_test
 
@@ -193,6 +194,7 @@ tests/emotion/data/window_inner_shadow.png
 emotiondatafilesdir = $(datadir)/emotion/data
 emotiondatafiles_DATA = tests/emotion/data/theme.edj
 CLEANFILES += tests/emotion/data/theme.edj
+endif
 endif
 
 EXTRA_DIST += \

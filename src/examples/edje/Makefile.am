@@ -205,6 +205,8 @@ uninstall-local:
 	done
 
 if ALWAYS_BUILD_EXAMPLES
+if BUILD_LOADER_PNG
 noinst_PROGRAMS = $(EXTRA_PROGRAMS)
 nodist_pkgdata_DATA = $(EDJS)
+endif
 endif

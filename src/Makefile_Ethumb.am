@@ -27,6 +27,7 @@ lib_ethumb_libethumb_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 ## Modules
 
 # Emotion
+if BUILD_LOADER_PNG
 ethumbmoduleemotiondir = $(libdir)/ethumb/modules/emotion/$(MODULE_ARCH)
 ethumbmoduleemotion_LTLIBRARIES = modules/ethumb/emotion/module.la
 modules_ethumb_emotion_module_la_SOURCES = \
@@ -57,6 +58,7 @@ CLEANFILES += modules/ethumb/emotion/template.edj
 EXTRA_DIST += \
 modules/ethumb/emotion/template.edc \
 modules/ethumb/emotion/placeholder.png
+endif
 
 
 ### Binary
