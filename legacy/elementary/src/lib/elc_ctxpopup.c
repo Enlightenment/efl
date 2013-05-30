@@ -134,6 +134,39 @@ _elm_ctxpopup_smart_event(Eo *obj, void *_pd, va_list *list)
         return;
      }
 
+   if (((!strcmp(ev->keyname, "Left")) ||
+        (!strcmp(ev->keyname, "KP_Left")) ||
+        (!strcmp(ev->keyname, "Right")) ||
+        (!strcmp(ev->keyname, "KP_Right")) ||
+        (!strcmp(ev->keyname, "Up")) ||
+        (!strcmp(ev->keyname, "KP_Up")) ||
+        (!strcmp(ev->keyname, "Down")) ||
+        (!strcmp(ev->keyname, "KP_Down"))) && (!ev->string))
+     {
+        if (sd->box)
+          {
+             double degree = 0.0;
+
+             if ((!strcmp(ev->keyname, "Left")) ||
+                 (!strcmp(ev->keyname, "KP_Left")))
+               degree = 270.0;
+             else if ((!strcmp(ev->keyname, "Right")) ||
+                      (!strcmp(ev->keyname, "KP_Right")))
+               degree = 90.0;
+             else if ((!strcmp(ev->keyname, "Up")) ||
+                      (!strcmp(ev->keyname, "KP_Up")))
+               degree = 0.0;
+             else if ((!strcmp(ev->keyname, "Down")) ||
+                      (!strcmp(ev->keyname, "KP_Down")))
+               degree = 180.0;
+
+             elm_widget_focus_direction_go(obj, degree);
+             ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+             if (ret) *ret = EINA_TRUE;
+             return;
+          }
+     }
+
    if (strcmp(ev->keyname, "Escape")) return;
 
    evas_object_hide(obj);
