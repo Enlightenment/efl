@@ -930,7 +930,7 @@ static void
 _elm_scroll_scroll_bar_read_and_update(
   Elm_Scrollable_Smart_Interface_Data *sid)
 {
-   Evas_Coord x, y, mx = 0, my = 0, px, py, minx = 0, miny = 0;
+   Evas_Coord x, y, mx = 0, my = 0, px = 0, py = 0, minx = 0, miny = 0;
    double vx, vy;
 
    if (!sid->edje_obj || !sid->pan_obj) return;
