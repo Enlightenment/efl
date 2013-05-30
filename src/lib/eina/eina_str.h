@@ -272,7 +272,8 @@ EAPI char           *eina_str_convert(const char *enc_from, const char *enc_to, 
  * @param enc_from Encoding to convert from.
  * @param enc_to Encoding to convert to.
  * @param text The text to convert.
- * @param text The length of the text to convert.
+ * @param len The size in bytes of the text to convert.
+ * @param retlen The size in bytes of the converted text.
  * @return The converted text.
  *
  * This function converts @p text, encoded in @p enc_from. On success,
