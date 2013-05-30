@@ -12,7 +12,6 @@
 #include "evas_private.h"
 
 typedef struct _Evas_Event_Async	Evas_Event_Async;
-
 struct _Evas_Event_Async
 {
    const void		    *target;
@@ -20,6 +19,28 @@ struct _Evas_Event_Async
    Evas_Async_Events_Put_Cb  func;
    Evas_Callback_Type	     type;
 };
+
+typedef struct _Evas_Safe_Call Evas_Safe_Call;
+struct _Evas_Safe_Call
+{
+   Eina_Condition c;
+   Eina_Lock      m;
+
+   int            current_id;
+};
+
+static Eina_Lock _thread_mutex;
+static Eina_Condition _thread_cond;
+
+static Eina_Lock _thread_feedback_mutex;
+static Eina_Condition _thread_feedback_cond;
+
+static int _thread_loop = 0;
+
+static Eina_Lock _thread_id_lock;
+static int _thread_id = -1;
+static int _thread_id_max = 0;
+static int _thread_id_update = 0;
 
 static int _fd_write = -1;
 static int _fd_read = -1;
@@ -81,6 +102,14 @@ evas_async_events_init(void)
    eina_lock_new(&async_lock);
    eina_inarray_step_set(&async_queue, sizeof (Eina_Inarray), sizeof (Evas_Event_Async), 16);
 
+   eina_lock_new(&_thread_mutex);
+   eina_condition_new(&_thread_cond, &_thread_mutex);
+
+   eina_lock_new(&_thread_feedback_mutex);
+   eina_condition_new(&_thread_feedback_cond, &_thread_feedback_mutex);
+
+   eina_lock_new(&_thread_id_lock);
+
    return _init_evas_event;
 }
 
@@ -89,6 +118,12 @@ evas_async_events_shutdown(void)
 {
    _init_evas_event--;
    if (_init_evas_event > 0) return _init_evas_event;
+
+   eina_condition_free(&_thread_cond);
+   eina_lock_free(&_thread_mutex);
+   eina_condition_free(&_thread_feedback_cond);
+   eina_lock_free(&_thread_feedback_mutex);
+   eina_lock_free(&_thread_id_lock);
 
    eina_lock_free(&async_lock);
    eina_inarray_flush(&async_queue);
@@ -283,4 +318,109 @@ evas_async_events_put(const void *target, Evas_Callback_Type type, void *event_i
    evas_cache_image_wakeup();
 
    return ret;
+}
+
+static void
+_evas_thread_main_loop_lock(void *target EINA_UNUSED,
+                            Evas_Callback_Type type EINA_UNUSED,
+                            void *event_info)
+{
+   Evas_Safe_Call *call = event_info;
+
+   eina_lock_take(&_thread_mutex);
+
+   eina_lock_take(&call->m);
+   _thread_id = call->current_id;
+   eina_condition_broadcast(&call->c);
+   eina_lock_release(&call->m);
+
+   while (_thread_id_update != _thread_id)
+     eina_condition_wait(&_thread_cond);
+   eina_lock_release(&_thread_mutex);
+
+   eina_main_loop_define();
+
+   eina_lock_take(&_thread_feedback_mutex);
+
+   _thread_id = -1;
+
+   eina_condition_broadcast(&_thread_feedback_cond);
+   eina_lock_release(&_thread_feedback_mutex);
+
+   eina_condition_free(&call->c);
+   eina_lock_free(&call->m);
+   free(call);
+}                           
+
+EAPI int
+evas_thread_main_loop_begin(void)
+{
+   Evas_Safe_Call *order;
+
+   if (eina_main_loop_is())
+     {
+        return ++_thread_loop;
+     }
+
+   order = malloc(sizeof (Evas_Safe_Call));
+   if (!order) return -1;
+
+   eina_lock_take(&_thread_id_lock);
+   order->current_id = ++_thread_id_max;
+   if (order->current_id < 0)
+     {
+        _thread_id_max = 0;
+        order->current_id = ++_thread_id_max;
+     }
+   eina_lock_release(&_thread_id_lock);
+
+   eina_lock_new(&order->m);
+   eina_condition_new(&order->c, &order->m);
+
+   evas_async_events_put(NULL, 0, order, _evas_thread_main_loop_lock);
+
+   eina_lock_take(&order->m);
+   while (order->current_id != _thread_id)
+     eina_condition_wait(&order->c);
+   eina_lock_release(&order->m);
+
+   eina_main_loop_define();
+
+   _thread_loop = 1;
+
+   return _thread_loop;
+}
+
+EAPI int
+evas_thread_main_loop_end(void)
+{
+   int current_id;
+
+   if (_thread_loop == 0)
+     abort();
+
+   /* until we unlock the main loop, this thread has the main loop id */
+   if (!eina_main_loop_is())
+     {
+        ERR("Not in a locked thread !");
+        return -1;
+     }
+
+   _thread_loop--;
+   if (_thread_loop > 0)
+     return _thread_loop;
+
+   current_id = _thread_id;
+
+   eina_lock_take(&_thread_mutex);
+   _thread_id_update = _thread_id;
+   eina_condition_broadcast(&_thread_cond);
+   eina_lock_release(&_thread_mutex);
+
+   eina_lock_take(&_thread_feedback_mutex);
+   while (current_id == _thread_id && _thread_id != -1)
+     eina_condition_wait(&_thread_feedback_cond);
+   eina_lock_release(&_thread_feedback_mutex);
+
+   return 0;
 }

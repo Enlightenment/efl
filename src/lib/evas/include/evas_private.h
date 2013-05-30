@@ -1205,6 +1205,9 @@ int evas_async_events_init(void);
 int evas_async_events_shutdown(void);
 int evas_async_target_del(const void *target);
 
+EAPI int evas_thread_main_loop_begin(void);
+EAPI int evas_thread_main_loop_end(void);
+
 void _evas_preload_thread_init(void);
 void _evas_preload_thread_shutdown(void);
 Evas_Preload_Pthread *evas_preload_thread_run(void (*func_heavy)(void *data),
