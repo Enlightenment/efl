@@ -1,4 +1,31 @@
 
+dnl use: ARG_ENABLE_EVAS_IMAGE_LOADER(loader, default_value)
+
+AC_DEFUN([ARG_ENABLE_EVAS_IMAGE_LOADER],
+[dnl
+m4_pushdef([DOWN], m4_tolower([$1]))dnl
+
+AC_ARG_ENABLE([image-loader-[]DOWN],
+   [AC_HELP_STRING([--enable-image-loader-[]DOWN], [enable $1 image loader. @<:@default=$2@:>@])],
+   [
+      if test "x${enableval}" = "xyes" ; then
+         want_evas_image_loader_[]DOWN="yes"
+      else
+         if test "x${enableval}" = "xstatic" ; then
+            want_evas_image_loader_[]DOWN="static"
+         else
+            if test "x${enableval}" = "xauto" ; then
+               want_evas_image_loader_[]DOWN="auto"
+            else
+               want_evas_image_loader_[]DOWN="no"
+            fi
+         fi
+      fi
+   ],
+   [want_evas_image_loader_[]DOWN="$2"])
+m4_popdef([DOWN])dnl
+])
+
 dnl use: EVAS_CHECK_LOADER_DEP_BMP(loader, want_static[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
 
 AC_DEFUN([EVAS_CHECK_LOADER_DEP_BMP],

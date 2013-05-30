@@ -1219,52 +1219,22 @@ AC_ARG_ENABLE([tile-rotate],
   [have_tile_rotate="no"])
 
 
-# Loaders
+# Image Loaders
 
-AC_ARG_ENABLE([image-loader-gif],
-   [AC_HELP_STRING([--enable-image-loader-gif], [enable Gif image loader. @<:@default=enabled@:>@])],
-   [
-    if test "x${enableval}" = "xyes" ; then
-       want_evas_image_loader_gif="yes"
-    else
-       if test "x${enableval}" = "xstatic" ; then
-          want_evas_image_loader_gif="static"
-       else
-          want_evas_image_loader_gif="no"
-       fi
-    fi
-   ],
-   [want_evas_image_loader_gif="yes"])
-
-AC_ARG_ENABLE([image-loader-tiff],
-   [AC_HELP_STRING([--enable-image-loader-tiff], [enable Tiff image loader. @<:@default=enabled@:>@])],
-   [
-    if test "x${enableval}" = "xyes" ; then
-       want_evas_image_loader_tiff="yes"
-    else
-       if test "x${enableval}" = "xstatic" ; then
-          want_evas_image_loader_tiff="static"
-       else
-          want_evas_image_loader_tiff="no"
-       fi
-    fi
-   ],
-   [want_evas_image_loader_tiff="yes"])
-
-AC_ARG_ENABLE([image-loader-webp],
-   [AC_HELP_STRING([--enable-image-loader-webp], [enable WEBP image loader. @<:@default=disabled@:>@])],
-   [
-    if test "x${enableval}" = "xyes" ; then
-       want_evas_image_loader_webp="yes"
-    else
-       if test "x${enableval}" = "xstatic" ; then
-          want_evas_image_loader_webp="static"
-       else
-          want_evas_image_loader_webp="no"
-       fi
-    fi
-   ],
-   [want_evas_image_loader_webp="no"])
+ARG_ENABLE_EVAS_IMAGE_LOADER(BMP, static)
+ARG_ENABLE_EVAS_IMAGE_LOADER(Eet, static)
+ARG_ENABLE_EVAS_IMAGE_LOADER(Generic, static)
+ARG_ENABLE_EVAS_IMAGE_LOADER(Gif, yes)
+ARG_ENABLE_EVAS_IMAGE_LOADER(ICO, static)
+ARG_ENABLE_EVAS_IMAGE_LOADER(JPEG, static)
+ARG_ENABLE_EVAS_IMAGE_LOADER(PMAPS, static)
+ARG_ENABLE_EVAS_IMAGE_LOADER(PNG, static)
+ARG_ENABLE_EVAS_IMAGE_LOADER(PSD, static)
+ARG_ENABLE_EVAS_IMAGE_LOADER(Tga, static)
+ARG_ENABLE_EVAS_IMAGE_LOADER(Tiff, yes)
+ARG_ENABLE_EVAS_IMAGE_LOADER(WBMP, static)
+ARG_ENABLE_EVAS_IMAGE_LOADER(WEBP, no)
+ARG_ENABLE_EVAS_IMAGE_LOADER(XPM, static)
 
 ### Default values
 
@@ -1277,21 +1247,6 @@ want_evas_engine_wayland_egl="no"
 if test "${want_wayland}" = "yes" && test "${want_egl}" = "yes"; then
    want_evas_engine_wayland_egl="yes"
 fi
-
-want_evas_image_loader_bmp="static"
-want_evas_image_loader_eet="static"
-want_evas_image_loader_generic="static"
-#want_evas_image_loader_gif="yes"
-want_evas_image_loader_ico="static"
-want_evas_image_loader_jpeg="static"
-want_evas_image_loader_pmaps="static"
-want_evas_image_loader_png="static"
-want_evas_image_loader_psd="static"
-want_evas_image_loader_tga="static"
-#want_evas_image_loader_tiff="yes"
-want_evas_image_loader_wbmp="static"
-#want_evas_image_loader_webp="yes"
-want_evas_image_loader_xpm="static"
 
 if test "${have_wince}" = "yes"; then
    want_fontconfig="no"
