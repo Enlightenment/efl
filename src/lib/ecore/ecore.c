@@ -548,7 +548,7 @@ ecore_thread_main_loop_begin(void)
 
    _thread_loop = 1;
 
-   return EINA_TRUE;
+   return _thread_loop;
 }
 
 EAPI int
