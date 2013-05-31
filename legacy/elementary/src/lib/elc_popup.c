@@ -1357,8 +1357,8 @@ _elm_popup_smart_focus_next(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    /* action area */
    if (sd->action_area) items = eina_list_append(items, sd->action_area);
 
-   elm_widget_focus_list_next_get
-           (obj, items, eina_list_data_get, dir, next);
+   if (!elm_widget_focus_list_next_get(obj, items, eina_list_data_get, dir, next))
+     *next = obj;
 
    return;
 }
