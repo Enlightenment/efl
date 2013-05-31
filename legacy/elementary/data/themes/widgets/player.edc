@@ -1,6 +1,5 @@
 #define BSZ 24
-group {
-   name: "elm/player/base/default";
+group { name: "elm/player/base/default";
    min: 20 10;
 
    parts {

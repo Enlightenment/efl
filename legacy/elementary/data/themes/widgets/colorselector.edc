@@ -1,6 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////////
-group {
-   name: "elm/colorselector/palette/default";
+group { name: "elm/colorselector/palette/default";
    data.item: "horizontal_pad" "10";
    data.item: "vertical_pad" "10";
    parts {

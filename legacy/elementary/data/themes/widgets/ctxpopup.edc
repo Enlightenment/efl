@@ -431,8 +431,7 @@ group { name: "elm/ctxpopup/arrow/default";
    }
 }
 ///////////////////////////////////////////////////////////////////////////////
-group {
-   name: "elm/ctxpopup/icon_text_style_item/default";
+group { name: "elm/ctxpopup/icon_text_style_item/default";
    alias: "elm/ctxpopup/text_style_item/default";
    alias: "elm/ctxpopup/icon_style_item/default";
    images {

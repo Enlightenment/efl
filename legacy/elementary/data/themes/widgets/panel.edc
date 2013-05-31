@@ -708,8 +708,7 @@ group { name: "elm/panel/bottom/default";
    }
 }
 
-group {
-   name: "elm/panel/right/default";
+group { name: "elm/panel/right/default";
    images {
       image: "bt_base1.png" COMP;
       image: "bt_hilight.png" COMP;

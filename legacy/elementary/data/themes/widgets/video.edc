@@ -1,5 +1,4 @@
-group {
-   name: "elm/video/base/default";
+group { name: "elm/video/base/default";
 
    parts {
       part {

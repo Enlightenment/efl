@@ -54,8 +54,7 @@
       }
    }
 
-   group {
-      name: "elm/multibuttonentry/guidetext/default";
+   group { name: "elm/multibuttonentry/guidetext/default";
       parts {
          part {
             name: "elm.text.bg";
@@ -88,8 +87,7 @@
       }
    }
 
-   group {
-      name: "elm/multibuttonentry/btn/default";
+   group { name: "elm/multibuttonentry/btn/default";
       data.item: "button_max_size" 130;      
       styles {
          style { name: "multibuttonentry_textblock_style";
@@ -235,8 +233,7 @@
          }
       }
    }
-   group {
-      name: "elm/label/base/extended/multibuttonentry_default";
+   group { name: "elm/label/base/extended/multibuttonentry_default";
 
       styles {
          style {
@@ -276,8 +273,7 @@
       }
    }
 
-   group {
-      name: "elm/multibuttonentry/closedbutton/default";
+   group { name: "elm/multibuttonentry/closedbutton/default";
       images {
          image: "bt_basew.png" COMP;
          image: "bt_base1.png" COMP;
@@ -350,8 +346,7 @@
       }
    }
 
-   group {
-      name: "elm/multibuttonentry/label/default";
+   group { name: "elm/multibuttonentry/label/default";
       parts {
          part {
             name: "mbe.label.bg";

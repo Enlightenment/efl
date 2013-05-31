@@ -1,5 +1,4 @@
-   group {
-      name: "elm/pointer/base/default";
+   group { name: "elm/pointer/base/default";
       images {
          image: "pointer.png" COMP;
          image: "pointer_glow.png" COMP;

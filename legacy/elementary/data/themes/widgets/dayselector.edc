@@ -52,8 +52,7 @@
       }\
    }
 
-group {
-   name: "elm/dayselector/base/default";
+group { name: "elm/dayselector/base/default";
    parts {
       part {
          name: "bg";
@@ -163,8 +162,7 @@ group {
    }
 }
 
-group {
-   name: "elm/check/base/dayselector/default";
+group { name: "elm/check/base/dayselector/default";
    images {
       image: "seg_single_normal.png" COMP;
       image: "seg_left_normal.png" COMP;
