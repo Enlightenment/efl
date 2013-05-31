@@ -949,8 +949,7 @@ eng_image_load(void *data EINA_UNUSED, const char *file, const char *key, int *e
         ie = evas_cache2_image_open(evas_common_image_cache2_get(),
                                     file, key, lo, error);
         if (ie)
-          evas_cache2_image_open_wait(ie);
-
+          *error = evas_cache2_image_open_wait(ie);
         return ie;
      }
 #endif
@@ -969,8 +968,7 @@ eng_image_mmap(void *data EINA_UNUSED, Eina_File *f, const char *key, int *error
         ie = evas_cache2_image_open(evas_common_image_cache2_get(),
                                     eina_file_filename_get(f), key, lo, error);
         if (ie)
-          evas_cache2_image_open_wait(ie);
-
+          *error = evas_cache2_image_open_wait(ie);
         return ie;
      }
 #endif
