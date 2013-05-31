@@ -342,7 +342,9 @@
  * - @c multi,pinch,in" - This is called when the genlist is multi-touch
  *   pinched in.
  * - @c "swipe" - This is called when the genlist is swiped.
- * - @c "moved" - This is called when a genlist item is moved in reorder mode.
+ * - @c "moved" - This is called when a genlist item is moved by a user
+ *   interaction in a reorder mode. The %c event_info parameter is the item that
+ *   was moved.
  * - @c "moved,after" - This is called when a genlist item is moved after
  *   another item in reorder mode. The event_info parameter is the reordered
  *   item. To get the relative previous item, use elm_genlist_item_prev_get().
