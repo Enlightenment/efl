@@ -2,6 +2,17 @@
 # define EVAS_ENGINE_H
 
 # include "config.h"
+
+/* NB: This already includes wayland-client.h */
+# include <wayland-egl.h>
+
+# ifdef GL_GLES
+#  include <EGL/egl.h>
+/* NB: These are already included from gl_common */
+/* #  include <GLES2/gl2.h> */
+/* #  include <GLES2/gl2ext.h> */
+# endif
+
 # include "evas_common.h"
 # include "evas_private.h"
 # include "evas_gl_common.h"
@@ -9,15 +20,6 @@
 # include "Evas_Engine_Wayland_Egl.h"
 
 # define GL_GLEXT_PROTOTYPES
-
-/* NB: This already includes wayland-client.h */
-# include <wayland-egl.h>
-
-# ifdef GL_GLES
-#  include <EGL/egl.h>
-#  include <GLES2/gl2.h>
-#  include <GLES2/gl2ext.h>
-# endif
 
 extern int _evas_engine_wl_egl_log_dom;
 
@@ -60,7 +62,7 @@ struct _Evas_GL_Wl_Window
 
    struct 
      {
-        int drew : 1;
+        Eina_Bool drew : 1;
      } draw;
 
 #ifdef GL_GLES
@@ -70,7 +72,7 @@ struct _Evas_GL_Wl_Window
    EGLDisplay egl_disp;
 #endif
 
-   int surf : 1;
+   Eina_Bool surf : 1;
 };
 
 Evas_GL_Wl_Window *eng_window_new(struct wl_display *disp, struct wl_surface *surface, int screen, int depth, int w, int h, int indirect, int alpha, int rot);
