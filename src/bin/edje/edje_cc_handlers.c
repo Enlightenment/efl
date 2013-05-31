@@ -322,6 +322,7 @@ static void st_collections_group_parts_part_description_table_align(void);
 static void st_collections_group_parts_part_description_table_padding(void);
 static void st_collections_group_parts_part_description_table_min(void);
 static void st_collections_group_parts_part_description_proxy_source_visible(void);
+static void st_collections_group_parts_part_description_proxy_source_clip(void);
 
 #ifdef HAVE_EPHYSICS
 static void st_collections_group_parts_part_description_physics_mass(void);
@@ -636,6 +637,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.table.padding", st_collections_group_parts_part_description_table_padding},
      {"collections.group.parts.part.description.table.min", st_collections_group_parts_part_description_table_min},
      {"collections.group.parts.part.description.proxy.source_visible", st_collections_group_parts_part_description_proxy_source_visible},
+     {"collections.group.parts.part.description.proxy.source_clip", st_collections_group_parts_part_description_proxy_source_clip},
 
 #ifdef HAVE_EPHYSICS
      {"collections.group.parts.part.description.physics.mass", st_collections_group_parts_part_description_physics_mass},
@@ -1100,6 +1102,7 @@ _edje_part_description_alloc(unsigned char type, const char *collection, const c
 
            ed->proxy.id = -1;
            ed->proxy.source_visible = EINA_TRUE;
+           ed->proxy.source_clip = EINA_TRUE;
            _edje_part_description_fill(&ed->proxy.fill);
 
            result = &ed->common;
@@ -7393,6 +7396,24 @@ static void st_collections_group_parts_part_description_table_padding(void)
 
    ed->table.padding.x = parse_int_range(0, 0, 0x7fffffff);
    ed->table.padding.y = parse_int_range(1, 0, 0x7fffffff);
+}
+
+static void
+st_collections_group_parts_part_description_proxy_source_clip(void)
+{
+   Edje_Part_Description_Proxy *ed;
+
+   check_arg_count(1);
+
+   if (current_part->type != EDJE_PART_TYPE_PROXY)
+     {
+        ERR("parse error %s:%i. proxy attributes in non-PROXY part.",
+            file_in, line - 1);
+        exit(-1);
+     }
+
+   ed = (Edje_Part_Description_Proxy*) current_desc;
+   ed->proxy.source_clip = parse_bool(0);
 }
 
 static void

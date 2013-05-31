@@ -31,7 +31,7 @@ syn keyword	edcLabel	source5 source6 multiline pointer_mode contained
 syn keyword	edcLabel	state visible step aspect fixed middle contained
 syn keyword	edcLabel	aspect_preference ellipsis elipsis image contained
 syn keyword	edcLabel	relative offset to to_x to_y contained
-syn keyword edcLabel source_visible contained
+syn keyword edcLabel source_visible source_clip contained
 syn keyword	edcLabel	border border_scale scale_hint color color2 color3 font size contained
 syn keyword	edcLabel	signal action transition in filter contained
 syn keyword	edcLabel	target after fit align contained
