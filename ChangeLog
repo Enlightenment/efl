@@ -1,3 +1,6 @@
+2013-05-31  ChunEon Park (Hermet)
+        * Edje: support edc proxy.source_visible
+
 2013-05-31  Jérémy Zurcher
         * Added --enable-image-loader-xyz=yes|static|auto|no for all loaders
         * compilation fail if not found and option set to yes or static

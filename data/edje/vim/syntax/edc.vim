@@ -14,7 +14,7 @@ endif
 " A bunch of useful keywords
 syn keyword	edcBlock	images data fonts collections group contained
 syn keyword	edcBlock	part parts dragable description contained
-syn keyword	edcBlock	text font fill origin size image contained
+syn keyword	edcBlock	text font fill origin size image proxy contained
 syn keyword	edcBlock	programs program styles style contained
 syn keyword 	edcBlock 	gradient spectra spectrum contained
 syn keyword 	edcBlock 	color_classes color_class rel1 rel2 contained
@@ -31,6 +31,7 @@ syn keyword	edcLabel	source5 source6 multiline pointer_mode contained
 syn keyword	edcLabel	state visible step aspect fixed middle contained
 syn keyword	edcLabel	aspect_preference ellipsis elipsis image contained
 syn keyword	edcLabel	relative offset to to_x to_y contained
+syn keyword edcLabel source_visible contained
 syn keyword	edcLabel	border border_scale scale_hint color color2 color3 font size contained
 syn keyword	edcLabel	signal action transition in filter contained
 syn keyword	edcLabel	target after fit align contained

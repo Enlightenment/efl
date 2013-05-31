@@ -3095,6 +3095,7 @@ edje_edit_state_add(Evas_Object *obj, const char *part, const char *name, double
 	memset(&pro->proxy, 0, sizeof (pro->proxy));
 
 	pro->proxy.id = -1;
+	pro->proxy.source_visible = EINA_TRUE;
 	pro->proxy.fill.smooth = 1;
 	pro->proxy.fill.pos_rel_x = 0.0;
 	pro->proxy.fill.pos_abs_x = 0;

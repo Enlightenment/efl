@@ -1130,6 +1130,7 @@ struct _Edje_Part_Description_Spec_Proxy
    Edje_Part_Description_Spec_Fill   fill;
 
    int id; /* the part id to use as a source for this state */
+   Eina_Bool source_visible;  /* source object visibility */
 };
 
 struct _Edje_Part_Description_Spec_Text
