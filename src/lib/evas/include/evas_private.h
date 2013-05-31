@@ -46,6 +46,7 @@ typedef struct _Evas_Post_Callback          Evas_Post_Callback;
 typedef struct _Evas_Coord_Touch_Point      Evas_Coord_Touch_Point;
 typedef struct _Evas_Object_Proxy_Data      Evas_Object_Proxy_Data;
 typedef struct _Evas_Object_Map_Data        Evas_Object_Map_Data;
+typedef struct _Evas_Proxy_Render_Data      Evas_Proxy_Render_Data;
 
 typedef struct _Evas_Object_Protected_State Evas_Object_Protected_State;
 typedef struct _Evas_Object_Protected_Data  Evas_Object_Protected_Data;
@@ -1192,6 +1193,14 @@ struct _Evas_Imaging_Font
    RGBA_Font *font;
 };
 
+struct _Evas_Proxy_Render_Data
+{
+   Evas_Object *eo_proxy;
+   Evas_Object_Protected_Data *proxy_obj;
+   Evas_Object *eo_src;
+   Eina_Bool source_clip : 1;
+};
+
 int evas_async_events_init(void);
 int evas_async_events_shutdown(void);
 int evas_async_target_del(const void *target);
@@ -1215,7 +1224,7 @@ Eina_Bool evas_render_mapped(Evas_Public_Data *e, Evas_Object *obj,
                              Evas_Object_Protected_Data *source_pd,
                              void *context, void *surface, int off_x, int off_y,
                              int mapped, int ecx, int ecy, int ecw, int ech,
-                             Evas_Object *proxy_obj
+                             Evas_Proxy_Render_Data *proxy_render_data
 #ifdef REND_DBG
                              , int level
 #endif

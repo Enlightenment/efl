@@ -3308,7 +3308,7 @@ _proxy_subrender_recurse(Evas_Object *eo_obj, Evas_Object *clip, void *output, v
  * Used to force a draw if necessary, else just makes sures it's available.
  */
 static void
-_proxy_subrender(Evas *eo_e, Evas_Object *eo_source, Evas_Object *eo_proxy, Eina_Bool do_async)
+_proxy_subrender(Evas *eo_e, Evas_Object *eo_source, Evas_Object *eo_proxy, Evas_Object_Protected_Data *proxy_obj, Eina_Bool do_async)
 {
    Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CLASS);
    Evas_Object_Protected_Data *source;
@@ -3355,10 +3355,20 @@ _proxy_subrender(Evas *eo_e, Evas_Object *eo_source, Evas_Object *eo_proxy, Eina
         e->engine.func->context_free(e->engine.data.output, ctx);
 
         ctx = e->engine.func->context_new(e->engine.data.output);
+
+        Eina_Bool source_clip;
+        eo_do(eo_proxy, evas_obj_image_source_clip_get(&source_clip));
+
+        Evas_Proxy_Render_Data proxy_render_data = {
+           .eo_proxy = eo_proxy,
+           .proxy_obj = proxy_obj,
+           .eo_src = eo_source,
+           .source_clip = source_clip
+        };
         evas_render_mapped(e, eo_source, source, ctx, proxy_write->surface,
                            -source->cur->geometry.x,
                            -source->cur->geometry.y,
-                           1, 0, 0, e->output.w, e->output.h, eo_proxy
+                           1, 0, 0, e->output.w, e->output.h, &proxy_render_data
 #ifdef REND_DBG
                            , 1
 #endif
@@ -3794,7 +3804,7 @@ evas_object_image_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, v
    else
      {
         o->proxyrendering = EINA_TRUE;
-        _proxy_subrender(obj->layer->evas->evas, o->cur->source, eo_obj,
+        _proxy_subrender(obj->layer->evas->evas, o->cur->source, eo_obj, obj,
                          EINA_FALSE);
         pixels = source->proxy->surface;
         imagew = source->proxy->w;
@@ -4679,7 +4689,7 @@ evas_object_image_is_inside(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj
    else
      {
         o->proxyrendering = EINA_TRUE;
-        _proxy_subrender(obj->layer->evas->evas, o->cur->source, eo_obj,
+        _proxy_subrender(obj->layer->evas->evas, o->cur->source, eo_obj, obj,
                          EINA_FALSE);
         pixels = source->proxy->surface;
         imagew = source->proxy->w;
