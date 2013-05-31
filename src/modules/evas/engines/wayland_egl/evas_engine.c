@@ -1810,7 +1810,7 @@ eng_image_data_preload_request(void *data EINA_UNUSED, void *image, const void *
    if (gim->native.data) return;
    im = (RGBA_Image *)gim->im;
    if (!im) return;
-   evas_cache_image_preload_data(&im->cache_entry, target);
+   evas_cache_image_preload_data(&im->cache_entry, target, NULL, NULL, NULL);
 }
 
 static void

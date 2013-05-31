@@ -353,6 +353,7 @@ typedef unsigned short			DATA16;
 typedef unsigned char                   DATA8;
 
 typedef struct _Image_Entry             Image_Entry;
+typedef struct _Image_Entry_Task        Image_Entry_Task;
 typedef struct _Image_Entry_Flags       Image_Entry_Flags;
 typedef struct _Image_Entry_Frame       Image_Entry_Frame;
 typedef struct _Image_Timestamp         Image_Timestamp;
@@ -413,6 +414,8 @@ typedef void (*Gfx_Func_Convert) (DATA32 *src, DATA8 *dst, int src_jump, int dst
 
 
 typedef void (*Evas_Render_Done_Cb)(void *);
+
+typedef void (*Evas_Engine_Thread_Task_Cb)(void *engine_data, Image_Entry *ie, void *custom_data);
 
 #include "../cache/evas_cache.h"
 #ifdef EVAS_CSERVE2
@@ -541,6 +544,13 @@ struct _Image_Timestamp
 #endif
 };
 
+struct _Image_Entry_Task
+{
+   Evas_Engine_Thread_Task_Cb cb;
+   const void *engine_data;
+   const void *custom_data;
+};
+
 struct _Image_Entry
 {
    EINA_INLIST;
@@ -557,13 +567,14 @@ struct _Image_Entry
 
    Evas_Cache_Target     *targets;
    Evas_Preload_Pthread  *preload;
+   Eina_List             *tasks;
 
    Image_Timestamp        tstamp;
 
    int                    references;
 
 #ifdef BUILD_PIPE_RENDER
-   RGBA_Pipe           *pipe;
+   RGBA_Pipe             *pipe;
 #endif
 
    Evas_Image_Load_Opts   load_opts;
@@ -588,6 +599,7 @@ struct _Image_Entry
 
    LK(lock);
    LK(lock_cancel);
+   LK(lock_task);
 
    /* for animation feature */
    Evas_Image_Animated   animated;

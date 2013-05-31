@@ -1,12 +1,10 @@
 #ifndef _EVAS_CACHE_H
 #define _EVAS_CACHE_H
 
-
 typedef struct _Evas_Cache_Image                Evas_Cache_Image;
 typedef struct _Evas_Cache_Image_Func           Evas_Cache_Image_Func;
 typedef struct _Evas_Cache_Engine_Image         Evas_Cache_Engine_Image;
 typedef struct _Evas_Cache_Engine_Image_Func    Evas_Cache_Engine_Image_Func;
-
 
 struct _Evas_Cache_Image_Func
 {
@@ -167,7 +165,8 @@ EAPI Engine_Image_Entry*      evas_cache_engine_image_size_set(Engine_Image_Entr
 
 EAPI void                     evas_cache_engine_image_load_data(Engine_Image_Entry *eim);
 
-EAPI void                     evas_cache_image_preload_data(Image_Entry *im, const void *target);
+EAPI void                     evas_cache_image_preload_data(Image_Entry *im, const void *target,
+							    Evas_Engine_Thread_Task_Cb func, const void *engine_data, const void *custom_data);
 EAPI void                     evas_cache_image_preload_cancel(Image_Entry *im, const void *target);
 
 EAPI void                     evas_cache_image_wakeup(void);
