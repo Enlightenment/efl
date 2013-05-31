@@ -84,6 +84,7 @@ evas_common_font_instance_ascent_get(RGBA_Font_Int *fi)
         FTUNLOCK();
         fi->src->current_size = fi->size;
      }
+   if (!fi->src->ft.face) return 0;
    if (!FT_IS_SCALABLE(fi->src->ft.face))
      {
         WRN("NOT SCALABLE!");
@@ -110,6 +111,7 @@ evas_common_font_instance_descent_get(RGBA_Font_Int *fi)
         FTUNLOCK();
         fi->src->current_size = fi->size;
      }
+   if (!fi->src->ft.face) return 0;
    val = -(int)fi->src->ft.face->size->metrics.descender;
    return FONT_METRIC_ROUNDUP(val);
 //   if (fi->src->ft.face->units_per_EM == 0)
@@ -133,6 +135,7 @@ evas_common_font_instance_max_ascent_get(RGBA_Font_Int *fi)
         FTUNLOCK();
         fi->src->current_size = fi->size;
      }
+   if (!fi->src->ft.face) return 0;
    if ((fi->src->ft.face->bbox.yMax == 0) &&
        (fi->src->ft.face->bbox.yMin == 0) &&
        (fi->src->ft.face->units_per_EM == 0))
@@ -160,6 +163,7 @@ evas_common_font_instance_max_descent_get(RGBA_Font_Int *fi)
         FTUNLOCK();
         fi->src->current_size = fi->size;
      }
+   if (!fi->src->ft.face) return 0;
    if ((fi->src->ft.face->bbox.yMax == 0) &&
        (fi->src->ft.face->bbox.yMin == 0) &&
        (fi->src->ft.face->units_per_EM == 0))
@@ -177,28 +181,64 @@ EAPI int
 evas_common_font_ascent_get(RGBA_Font *fn)
 {
 //   evas_common_font_size_use(fn);
-   return evas_common_font_instance_ascent_get(fn->fonts->data);
+   int max = 0, v;
+   Eina_List *l;
+   RGBA_Font_Int *fi;
+   
+   EINA_LIST_FOREACH(fn->fonts, l, fi)
+     {
+        v = evas_common_font_instance_ascent_get(fi);
+        if (v > max) max = v;
+     }
+   return max;
 }
 
 EAPI int
 evas_common_font_descent_get(RGBA_Font *fn)
 {
 //   evas_common_font_size_use(fn);
-   return evas_common_font_instance_descent_get(fn->fonts->data);
+   int max = 0, v;
+   Eina_List *l;
+   RGBA_Font_Int *fi;
+   
+   EINA_LIST_FOREACH(fn->fonts, l, fi)
+     {
+        v = evas_common_font_instance_descent_get(fi);
+        if (v > max) max = v;
+     }
+   return max;
 }
 
 EAPI int
 evas_common_font_max_ascent_get(RGBA_Font *fn)
 {
 //   evas_common_font_size_use(fn);
-   return evas_common_font_instance_max_ascent_get(fn->fonts->data);
+   int max = 0, v;
+   Eina_List *l;
+   RGBA_Font_Int *fi;
+   
+   EINA_LIST_FOREACH(fn->fonts, l, fi)
+     {
+        v = evas_common_font_instance_max_ascent_get(fi);
+        if (v > max) max = v;
+     }
+   return max;
 }
 
 EAPI int
 evas_common_font_max_descent_get(RGBA_Font *fn)
 {
 //   evas_common_font_size_use(fn);
-   return evas_common_font_instance_max_descent_get(fn->fonts->data);
+   int max = 0, v;
+   Eina_List *l;
+   RGBA_Font_Int *fi;
+   
+   EINA_LIST_FOREACH(fn->fonts, l, fi)
+     {
+        v = evas_common_font_instance_max_descent_get(fi);
+        if (v > max) max = v;
+     }
+   return max;
 }
 
 EAPI int
