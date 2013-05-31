@@ -7400,7 +7400,7 @@ st_collections_group_parts_part_description_table_min(void)
 
    if (current_part->type != EDJE_PART_TYPE_TABLE)
      {
-        ERR("parse error %s:%i. box attributes in non-TABLE part.",
+        ERR("parse error %s:%i. table attributes in non-TABLE part.",
             file_in, line - 1);
         exit(-1);
      }
