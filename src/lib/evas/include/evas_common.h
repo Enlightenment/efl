@@ -880,8 +880,13 @@ struct _RGBA_Font
    Fash_Int        *fash;
    Font_Hint_Flags  hinting;
    int              references;
+   short            ascent, descent, max_ascent, max_descent;
    LK(lock);
    unsigned char    sizeok : 1;
+   unsigned char    have_ascent : 1;
+   unsigned char    have_descent : 1;
+   unsigned char    have_max_ascent : 1;
+   unsigned char    have_max_descent : 1;
 };
 
 #include "../common/evas_font_ot.h"
