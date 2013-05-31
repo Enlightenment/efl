@@ -46,7 +46,7 @@ syn keyword	edcLabel	int double string external script_only contained
 
 syn keyword	edcConstant 	COMP RAW LOSSY NONE ON_HOLD AUTOGRAB NOGRAB
 syn keyword	edcConstant 	TEXT IMAGE RECT TEXTBLOCK SWALLOW GRADIENT GROUP
-syn keyword	edcConstant 	NONE PLAIN OUTLINE SOFT_OUTLINE SHADOW
+syn keyword	edcConstant 	NONE PLAIN OUTLINE SOFT_OUTLINE SHADOW PROXY
 syn keyword	edcConstant 	SOFT_SHADOW OUTLINE_SHADOW OUTLINE_SOFT_SHADOW
 syn keyword	edcConstant	GLOW FAR_SHADOW FAR_SOFT_SHADOW
 syn keyword	edcConstant 	STATE_SET ACTION_STOP SIGNAL_EMIT FOCUS_SET
