@@ -2290,6 +2290,30 @@ _edje_embryo_fn_set_state_val(Embryo_Program *ep, Embryo_Cell *params)
          GETINT(rp->custom->description->persp.focal, params[3]);
 
          break;
+      case EDJE_STATE_PARAM_PROXY_SRC_CLIP:
+        {
+           Edje_Part_Description_Proxy *proxy;
+
+           if ((rp->part->type != EDJE_PART_TYPE_PROXY)) return 0;
+           CHKPARAM(3);
+
+           proxy = (Edje_Part_Description_Proxy*) rp->custom->description;
+           GETINT(proxy->proxy.source_clip, params[3]);
+
+           break;
+        }
+      case EDJE_STATE_PARAM_PROXY_SRC_VISIBLE:
+        {
+           Edje_Part_Description_Proxy *proxy;
+
+           if ((rp->part->type != EDJE_PART_TYPE_PROXY)) return 0;
+           CHKPARAM(3);
+
+           proxy = (Edje_Part_Description_Proxy*) rp->custom->description;
+           GETINT(proxy->proxy.source_visible, params[3]);
+
+           break;
+        }
 #ifdef HAVE_EPHYSICS
       case EDJE_STATE_PARAM_PHYSICS_MASS:
          CHKPARAM(3);
@@ -2864,6 +2888,30 @@ _edje_embryo_fn_get_state_val(Embryo_Program *ep, Embryo_Cell *params)
          SETINT(rp->custom->description->persp.focal, params[3]);
 
          break;
+      case EDJE_STATE_PARAM_PROXY_SRC_CLIP:
+        {
+           Edje_Part_Description_Proxy *proxy;
+
+           if ((rp->part->type != EDJE_PART_TYPE_PROXY)) return 0;
+           CHKPARAM(3);
+
+           proxy = (Edje_Part_Description_Proxy*) rp->custom->description;
+           SETINT(proxy->proxy.source_clip, params[3]);
+
+           break;
+        }
+      case EDJE_STATE_PARAM_PROXY_SRC_VISIBLE:
+        {
+           Edje_Part_Description_Proxy *proxy;
+
+           if ((rp->part->type != EDJE_PART_TYPE_PROXY)) return 0;
+           CHKPARAM(3);
+
+           proxy = (Edje_Part_Description_Proxy*) rp->custom->description;
+           SETINT(proxy->proxy.source_visible, params[3]);
+
+           break;
+        }
 #ifdef HAVE_EPHYSICS
       case EDJE_STATE_PARAM_PHYSICS_MASS:
          CHKPARAM(3);
