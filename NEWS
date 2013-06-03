@@ -112,7 +112,11 @@ Additions:
        ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_SCROLL
        ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_MOUSE
     * Add evas_object_image_source_clip_set()/get()
-
+    * Add --with-api=XXX (both|legacy|eo)
+    * Rejig 32bit eoid allocation to 5.5.12.
+    * Make eoid use mmaped tables from anonymous memory for safety.
+    * Rejig 64bit eoid allocation to use much less memory (11.11.12).
+        
 Deprecations:
     * ecore_x:
      - Old profile stuffs.
@@ -168,6 +172,12 @@ Improvements:
     * Evas works around MESA/intel xorg bug where alpha channel of non-argb windows is not filled in with 0xff.
     * edje entry: remove duplicated ecore_imf_context_reset in adjusting the selection
     * Evas: update the map smart members really when it needs to render.
+    * Evas: reduce memory footrpint with evasgl to only make context on demand.
+    * Evas: reduce waiting on gl so it cvan fully run async from cpu.
+    * Ecore_Audio: use eo api to batch more
+    * Edje entry emtis signals on keydown/up for theme to use
+    * Turn on scissors always to abe able to to partual render on some GL implementations properly.
+    * Evas gl engine - dont map dri/drm buffer unless we are going to render.
 
 Fixes:
     * Fix a memory leak in ecore_con_dns when using ecore_con_server_connect
@@ -289,3 +299,22 @@ Fixes:
       ecore_con_server_uptime_get() is working for plain TCP connections.
     * Fix textblock to render pre again if it needs to relayouting.
     * Fix edje min size calc to calc sub GROUP parts too.
+    * Fix textblock ascent/descent calc to use superset of fontset data.
+    * Fix evas gl partial swap to keep full renders if auto mode switching.
+    * Fix memory leak in evas dri/drm swapbuf path
+    * Fix string leak in evas dri/drm swapbuf
+    * Fix crash on exit in ecore_audio
+    * Fix eet_mmap to use caches for lookup so it shares with everyone
+    * Fix edje multisense segv (free non-malloced data from eet)
+    * Fix evas proxy_unset of NULL image.
+    * Fix x11 selection trailing nul byte in text
+    * Fix slowness in glmap/unmap buffer by default in evas gl engine
+    * Fix evas segv on image del if loader is NULL
+    * Fix evas swapregion rect to account for rotation
+    * Fix "always scissor" to not break map in evas gl engine
+    * Fix issue when wchar_t is signed and eina_unicode does negative array lookups.
+    * Fix nvidia texture from pixmap config depth match to be looser to avoid non-matches.
+    * Fix evas gl engine to work in 16bpp nicely.
+    * Fix native surface to be more anal about depth matching.
+    * Fix eeze sensors to not segv on shutdown
+        
