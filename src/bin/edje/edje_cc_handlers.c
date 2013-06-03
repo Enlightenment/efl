@@ -6614,7 +6614,7 @@ st_collections_group_parts_part_description_fill_size_offset(void)
                     align:        X-axis     Y-axis;
                     source:      "part_name";
                     text_source: "text_part_name";
-                    ellipsis:     0.0-1.0;
+                    ellipsis:     -1.0 (since 1.8), 0.0-1.0;
                     style:       "stylename";
                 }
                 ..
@@ -7113,7 +7113,7 @@ st_collections_group_parts_part_description_text_elipsis(void)
 
    ed = (Edje_Part_Description_Text*) current_desc;
 
-   ed->text.elipsis = parse_float_range(0, 0.0, 1.0);
+   ed->text.elipsis = parse_float_range(0, -1.0, 1.0);
 }
 
 

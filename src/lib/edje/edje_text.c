@@ -91,6 +91,9 @@ _edje_text_fit_x(Edje *ed, Edje_Real_Part *ep,
    *free_text = 0;
    if (sw <= 1) return "";
 
+   if (params->type.text.elipsis < 0)
+     return text;
+
    if (ep->part->scale) evas_object_scale_set(ep->object, TO_DOUBLE(sc));
 
    eo_do(ep->object,

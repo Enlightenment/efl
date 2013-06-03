@@ -1,3 +1,7 @@
+2013-06-03  Ederson Desouza
+
+        * Add -1.0 value to text ellipsis -- for not ellipsizing it at all.
+
 2013-06-03  Carsten Haitzler (The Rasterman)
 
         * Fix edje min size calc to propagate min size calcs to GROUP
