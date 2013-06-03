@@ -213,6 +213,8 @@ static void _event_process(void *data,
                            void *event_info,
                            Evas_Callback_Type event_type);
 
+static void _callbacks_unregister(Evas_Object *obj);
+
 /* Should be the same order as _Elm_Gesture_Type */
 static Tests_Array_Funcs _glayer_tests_array[] = {
    { NULL, NULL, NULL },     /** Because someone made an awful mistake. */
@@ -947,6 +949,15 @@ _multi_up_cb(void *data,
    _event_process(data, obj, event_info, EVAS_CALLBACK_MULTI_UP);
 }
 
+static void
+_target_del_cb(void *data,
+               Evas *e __UNUSED__,
+               Evas_Object *obj __UNUSED__,
+               void *event_info __UNUSED__)
+{
+   _callbacks_unregister(data);
+}
+
 /**
  * @internal
  *
@@ -985,6 +996,9 @@ _callbacks_register(Evas_Object *obj)
      (sd->target, EVAS_CALLBACK_KEY_DOWN, _key_down_cb, obj);
    evas_object_event_callback_add
      (sd->target, EVAS_CALLBACK_KEY_UP, _key_up_cb, obj);
+
+   evas_object_event_callback_add
+     (sd->target, EVAS_CALLBACK_DEL, _target_del_cb, obj);
 }
 
 /**
@@ -1026,6 +1040,9 @@ _callbacks_unregister(Evas_Object *obj)
      (sd->target, EVAS_CALLBACK_KEY_DOWN, _key_down_cb, obj);
    evas_object_event_callback_del_full
      (sd->target, EVAS_CALLBACK_KEY_UP, _key_up_cb, obj);
+
+   evas_object_event_callback_del_full
+     (sd->target, EVAS_CALLBACK_DEL, _target_del_cb, obj);
 }
 
 /**
