@@ -9,6 +9,7 @@ static void _edje_part_recalc_single(Edje *ed, Edje_Real_Part *ep,
                                      Edje_Real_Part *rel1_to_x, Edje_Real_Part *rel1_to_y,
                                      Edje_Real_Part *rel2_to_x, Edje_Real_Part *rel2_to_y,
                                      Edje_Real_Part *confine_to, Edje_Calc_Params *params,
+                                     Evas_Coord mmw, Evas_Coord mmh,
                                      FLOAT_T pos);
 
 #define EINA_COW_CALC_PHYSICS_BEGIN(Calc, Write)	\
@@ -2178,6 +2179,7 @@ _edje_part_recalc_single(Edje *ed,
                          Edje_Real_Part *rel2_to_y,
                          Edje_Real_Part *confine_to,
                          Edje_Calc_Params *params,
+                         Evas_Coord mmw, Evas_Coord mmh,
                          FLOAT_T pos)
 {
    Edje_Color_Class *cc = NULL;
@@ -2188,6 +2190,8 @@ _edje_part_recalc_single(Edje *ed,
    sc = ed->scale;
    if (sc == ZERO) sc = _edje_scale;
    _edje_part_recalc_single_min_max(sc, ed, ep, desc, &minw, &minh, &maxw, &maxh);
+   if (minw < mmw) minw = mmw;
+   if (minh < mmh) minh = mmh;
 
    /* relative coords of top left & bottom right */
    _edje_part_recalc_single_rel(ed, ep, desc, rel1_to_x, rel1_to_y, rel2_to_x, rel2_to_y, params);
@@ -2761,6 +2765,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
    Edje_Real_Part *confine_to = NULL;
    FLOAT_T pos = ZERO, pos2;
    Edje_Calc_Params lp3;
+   Evas_Coord mmw = 0, mmh = 0;
 
    /* GRADIENT ARE GONE, WE MUST IGNORE IT FROM OLD FILE. */
    if (ep->part->type == EDJE_PART_TYPE_GRADIENT)
@@ -2826,6 +2831,14 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
              ted = _edje_fetch(ep->typedata.swallow->swallowed_object);
              _edje_recalc_do(ted);
           }
+     }
+   if (ep->part->type == EDJE_PART_TYPE_GROUP &&
+       ((ep->type == EDJE_RP_TYPE_SWALLOW) &&
+           (ep->typedata.swallow)) &&
+       ep->typedata.swallow->swallowed_object)
+     {
+        edje_object_size_min_calc(ep->typedata.swallow->swallowed_object,
+                                  &mmw, &mmh);
      }
 
 #ifdef EDJE_CALC_CACHE
@@ -3021,7 +3034,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
              _edje_part_recalc_single(ed, ep, ep->param1.description, chosen_desc, center[0], light[0], persp[0],
                                       rp1[Rel1X], rp1[Rel1Y], rp1[Rel2X], rp1[Rel2Y],
                                       confine_to,
-                                      p1, pos);
+                                      p1, mmw, mmh, pos);
 #ifdef EDJE_CALC_CACHE
              if (flags == FLAG_XY)
                ep->param1.state = ed->state;
@@ -3090,7 +3103,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                                       rp2[Rel2X],
                                       rp2[Rel2Y],
                                       confine_to,
-                                      p2, pos);
+                                      p2, mmw, mmh, pos);
 #ifdef EDJE_CALC_CACHE
              if (flags == FLAG_XY)
                ep->param2->state = ed->state;

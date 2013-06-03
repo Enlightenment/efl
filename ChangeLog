@@ -1,3 +1,8 @@
+2013-06-03  Carsten Haitzler (The Rasterman)
+
+        * Fix edje min size calc to propagate min size calcs to GROUP
+        items swallowed in automatically.
+
 2013-05-31  ChunEon Park (Hermet)
         * Edje: support edc proxy.source_visible, proxy.source_clip
 
