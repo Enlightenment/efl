@@ -333,8 +333,8 @@ _eo_kls_itr_func_get(const _Eo_Class *cur_klass, Eo_Op op)
       { \
          const _Eo_Class *op_klass = _eo_op_class_get(op); \
          const char *_dom_name = (op_klass) ? op_klass->desc->name : NULL; \
-         ERR("in %s:%d: Can't find func for op 0x%x (%s:%s) for class '%s'. Aborting.", \
-               file, line, op, _dom_name, _eo_op_id_name_get(op), \
+         ERR("in %s:%d: Can't execute function %s:%s (op 0x%x) for class '%s'. Aborting.", \
+               file, line, _dom_name, _eo_op_id_name_get(op), op, \
                (klass) ? klass->desc->name : NULL); \
       } \
    while (0)
