@@ -70,12 +70,12 @@ static void
 err_show_stack(void)
 {
    const char *s;
-   
+
    s = stack_id();
    if (s)
-      ERR("PARSE STACK:\n%s", s);
+     ERR("PARSE STACK:\n%s", s);
    else
-      ERR("NO PARSE STACK");
+     ERR("NO PARSE STACK");
 }
 
 static void
@@ -116,11 +116,11 @@ fill_object_statement_hashes(void)
    int i, n;
 
    if (_new_object_hash) return;
-   
+
    _new_object_hash = eina_hash_string_superfast_new(NULL);
    _new_statement_hash = eina_hash_string_superfast_new(NULL);
    _new_nested_hash = eina_hash_string_superfast_new(NULL);
-   
+
    n = object_handler_num();
    for (i = 0; i < n; i++)
      {
@@ -220,8 +220,8 @@ isdelim(char c)
    d = (char *)delims;
    while (*d)
      {
-	if (c == *d) return 1;
-	d++;
+        if (c == *d) return 1;
+        d++;
      }
    return 0;
 }
@@ -243,128 +243,128 @@ next_token(char *p, char *end, char **new_p, int *delim)
    if (p >= end) return NULL;
    while (p < end)
      {
-	if (*p == '\n')
-	  {
-	     in_comment_ss = 0;
-	     in_comment_cpp = 0;
-	     line++;
-	  }
-	if ((!in_comment_ss) && (!in_comment_sa))
-	  {
-	     if ((!in_quote) && (*p == '/') && (p < (end - 1)) && (*(p + 1) == '/'))
-	       in_comment_ss = 1;
-	     if ((!in_quote) && (*p == '#'))
-	       in_comment_cpp = 1;
-	     if ((!in_quote) && (*p == '/') && (p < (end - 1)) && (*(p + 1) == '*'))
-	       {
-		  in_comment_sa = 1;
-		  sa_start = p;
-	       }
-	  }
-	if ((in_comment_cpp) && (*p == '#'))
-	  {
-	     char *pp, fl[4096];
-	     char *tmpstr = NULL;
-	     int   l, nm;
+        if (*p == '\n')
+          {
+             in_comment_ss = 0;
+             in_comment_cpp = 0;
+             line++;
+          }
+        if ((!in_comment_ss) && (!in_comment_sa))
+          {
+             if ((!in_quote) && (*p == '/') && (p < (end - 1)) && (*(p + 1) == '/'))
+               in_comment_ss = 1;
+             if ((!in_quote) && (*p == '#'))
+               in_comment_cpp = 1;
+             if ((!in_quote) && (*p == '/') && (p < (end - 1)) && (*(p + 1) == '*'))
+               {
+                  in_comment_sa = 1;
+                  sa_start = p;
+               }
+          }
+        if ((in_comment_cpp) && (*p == '#'))
+          {
+             char *pp, fl[4096];
+             char *tmpstr = NULL;
+             int   l, nm;
 
-	     /* handle cpp comments */
-	     /* their line format is
-	      * #line <line no. of next line> <filename from next line on> [??]
-	      */
+             /* handle cpp comments */
+             /* their line format is
+              * #line <line no. of next line> <filename from next line on> [??]
+              */
 
-	     pp = p;
-	     while ((pp < end) && (*pp != '\n'))
-	       {
-		  pp++;
-	       }
-	     l = pp - p;
-	     tmpstr = alloca(l + 1);
-	     strncpy(tmpstr, p, l);
-	     tmpstr[l] = 0;
-	     l = sscanf(tmpstr, "%*s %i \"%[^\"]\"", &nm, fl);
-	     if (l == 2)
-	       {
-		  strcpy(file_buf, fl);
-		  line = nm;
-		  file_in = file_buf;
-	       }
-	  }
-	else if ((!in_comment_ss) && (!in_comment_sa) && (!in_comment_cpp))
-	  {
-	     if (!in_tok)
-	       {
-		  if (!in_quote)
-		    {
-		       if (!isspace(*p))
-			 {
-			    if (*p == '"')
-			      {
-				 in_quote = 1;
-				 had_quote = 1;
-			      }
-			    else if (*p == '(')
-			      in_parens++;
+             pp = p;
+             while ((pp < end) && (*pp != '\n'))
+               {
+                  pp++;
+               }
+             l = pp - p;
+             tmpstr = alloca(l + 1);
+             strncpy(tmpstr, p, l);
+             tmpstr[l] = 0;
+             l = sscanf(tmpstr, "%*s %i \"%[^\"]\"", &nm, fl);
+             if (l == 2)
+               {
+                  strcpy(file_buf, fl);
+                  line = nm;
+                  file_in = file_buf;
+               }
+          }
+        else if ((!in_comment_ss) && (!in_comment_sa) && (!in_comment_cpp))
+          {
+             if (!in_tok)
+               {
+                  if (!in_quote)
+                    {
+                       if (!isspace(*p))
+                         {
+                            if (*p == '"')
+                              {
+                                 in_quote = 1;
+                                 had_quote = 1;
+                              }
+                            else if (*p == '(')
+                              in_parens++;
 
-			    in_tok = 1;
-			    tok_start = p;
-			    if (isdelim(*p)) *delim = 1;
-			 }
-		    }
-	       }
-	     else
-	       {
-		  if (in_quote)
-		    {
-		       if ((*p) == '\\')
-			 is_escaped = !is_escaped;
-		       else if (((*p) == '"') && (!is_escaped))
-			 {
-			    in_quote = 0;
-			    had_quote = 1;
-			 }
-		       else if (is_escaped)
-			 is_escaped = 0;
-		    }
-		  else if (in_parens)
-		    {
-		       if (((*p) == ')') && (!is_escaped))
-			 in_parens--;
-		    }
-		  else
-		    {
-		       if (*p == '"')
-			 {
-			    in_quote = 1;
-			    had_quote = 1;
-			 }
-		       else if (*p == '(')
-			 in_parens++;
+                            in_tok = 1;
+                            tok_start = p;
+                            if (isdelim(*p)) *delim = 1;
+                         }
+                    }
+               }
+             else
+               {
+                  if (in_quote)
+                    {
+                       if ((*p) == '\\')
+                         is_escaped = !is_escaped;
+                       else if (((*p) == '"') && (!is_escaped))
+                         {
+                            in_quote = 0;
+                            had_quote = 1;
+                         }
+                       else if (is_escaped)
+                         is_escaped = 0;
+                    }
+                  else if (in_parens)
+                    {
+                       if (((*p) == ')') && (!is_escaped))
+                         in_parens--;
+                    }
+                  else
+                    {
+                       if (*p == '"')
+                         {
+                            in_quote = 1;
+                            had_quote = 1;
+                         }
+                       else if (*p == '(')
+                         in_parens++;
 
-		       /* check for end-of-token */
-		       if (
-			   (isspace(*p)) ||
-			   ((*delim) && (!isdelim(*p))) ||
-			   (isdelim(*p))
-			   )
-			 {/*the line below this is never  used because it skips to
+                       /* check for end-of-token */
+                       if (
+                          (isspace(*p)) ||
+                          ((*delim) && (!isdelim(*p))) ||
+                          (isdelim(*p))
+                          )
+                         {/*the line below this is never  used because it skips to
                            * the 'done' label which is after the return call for
                            * in_tok being 0. is this intentional?
                            */
-			    in_tok = 0;
+                            in_tok = 0;
 
-			    tok_end = p - 1;
-			    if (*p == '\n') line--;
-			    goto done;
-			 }
-		    }
-	       }
-	  }
-	if (in_comment_sa)
-	  {
-	     if ((*p == '/') && (*(p - 1) == '*') && ((p - sa_start) > 2))
-	       in_comment_sa = 0;
-	  }
-	p++;
+                            tok_end = p - 1;
+                            if (*p == '\n') line--;
+                            goto done;
+                         }
+                    }
+               }
+          }
+        if (in_comment_sa)
+          {
+             if ((*p == '/') && (*(p - 1) == '*') && ((p - sa_start) > 2))
+               in_comment_sa = 0;
+          }
+        p++;
      }
    if (!in_tok) return NULL;
    tok_end = p - 1;
@@ -378,44 +378,44 @@ next_token(char *p, char *end, char **new_p, int *delim)
 
    if (had_quote)
      {
-	is_escaped = 0;
-	p = tok;
+        is_escaped = 0;
+        p = tok;
 
-	while (*p)
-	  {
-	     if ((*p == '\"') && (!is_escaped))
-	       {
-		  memmove(p, p + 1, strlen(p));
-	       }
-	     else if ((*p == '\\') && (*(p + 1) == 'n'))
-	       {
-		  memmove(p, p + 1, strlen(p));
-		  *p = '\n';
-	       }
-	     else if ((*p == '\\') && (*(p + 1) == 't'))
-	       {
-		  memmove(p, p + 1, strlen(p));
-		  *p = '\t';
-	       }
-	     else if (*p == '\\')
-	       {
-		  memmove(p, p + 1, strlen(p));
-		  if (*p == '\\') p++;
-		  else is_escaped = 1;
-	       }
-	     else
-	       {
-		  if (is_escaped) is_escaped = 0;
-		  p++;
-	       }
-	  }
+        while (*p)
+          {
+             if ((*p == '\"') && (!is_escaped))
+               {
+                  memmove(p, p + 1, strlen(p));
+               }
+             else if ((*p == '\\') && (*(p + 1) == 'n'))
+               {
+                  memmove(p, p + 1, strlen(p));
+                  *p = '\n';
+               }
+             else if ((*p == '\\') && (*(p + 1) == 't'))
+               {
+                  memmove(p, p + 1, strlen(p));
+                  *p = '\t';
+               }
+             else if (*p == '\\')
+               {
+                  memmove(p, p + 1, strlen(p));
+                  if (*p == '\\') p++;
+                  else is_escaped = 1;
+               }
+             else
+               {
+                  if (is_escaped) is_escaped = 0;
+                  p++;
+               }
+          }
      }
    else if ((tok) && (*tok == '('))
      {
-	char *tmp;
-	tmp = tok;
-	tok = perform_math(tok);
-	free(tmp);
+        char *tmp;
+        tmp = tok;
+        tok = perform_math(tok);
+        free(tmp);
      }
 
    return tok;
@@ -471,10 +471,10 @@ stack_pop(void)
 
    if (!stack)
      {
-	ERR("parse error %s:%i. } marker without matching { marker",
-	    file_in, line - 1);
+        ERR("parse error %s:%i. } marker without matching { marker",
+            file_in, line - 1);
         err_show();
-	exit(-1);
+        exit(-1);
      }
    tmp = eina_list_data_get(eina_list_last(stack));
    tmp_length = strlen(tmp);
@@ -553,146 +553,146 @@ parse(char *data, off_t size)
    line = 1;
    while ((token = next_token(p, end, &p, &delim)))
      {
-	/* if we are in param mode, the only delimiter
-	 * we'll accept is the semicolon
-	 */
-	if (do_params && delim && *token != ';')
-	  {
-	     ERR("parse error %s:%i. %c marker before ; marker",
-		 file_in, line - 1, *token);
+        /* if we are in param mode, the only delimiter
+         * we'll accept is the semicolon
+         */
+        if (do_params && delim && *token != ';')
+          {
+             ERR("parse error %s:%i. %c marker before ; marker",
+                 file_in, line - 1, *token);
              err_show();
-	     exit(-1);
-	  }
-	else if (delim)
-	  {
-	     if (*token == ',' || *token == ':') do_params = 1;
-	     else if (*token == '}')
-	       {
-		  if (do_params)
-		    {
-		       ERR("Parse error %s:%i. } marker before ; marker",
-		           file_in, line - 1);
-		       err_show();
-		       exit(-1);
-		    }
-		  else
-		    stack_pop();
-	       }
-	     else if (*token == ';')
-	       {
-		  if (do_params)
-		    {
+             exit(-1);
+          }
+        else if (delim)
+          {
+             if (*token == ',' || *token == ':') do_params = 1;
+             else if (*token == '}')
+               {
+                  if (do_params)
+                    {
+                       ERR("Parse error %s:%i. } marker before ; marker",
+                           file_in, line - 1);
+                       err_show();
+                       exit(-1);
+                    }
+                  else
+                    stack_pop();
+               }
+             else if (*token == ';')
+               {
+                  if (do_params)
+                    {
                        void *param;
 
-		       do_params = 0;
-		       new_statement();
-		       /* clear out params */
-		       while ((param = eina_array_pop(&params)))
+                       do_params = 0;
+                       new_statement();
+                       /* clear out params */
+                       while ((param = eina_array_pop(&params)))
                          free(param);
-		       /* remove top from stack */
-		       stack_pop();
-		    }
-	       }
-	     else if (*token == '{')
-	       {
-		  if (do_params)
-		    {
-		       ERR("parse error %s:%i. { marker before ; marker",
-			   file_in, line - 1);
+                       /* remove top from stack */
+                       stack_pop();
+                    }
+               }
+             else if (*token == '{')
+               {
+                  if (do_params)
+                    {
+                       ERR("parse error %s:%i. { marker before ; marker",
+                           file_in, line - 1);
                        err_show();
-		       exit(-1);
-		    }
-	       }
-	     free(token);
-	  }
-	else
-	  {
-	     if (do_params)
+                       exit(-1);
+                    }
+               }
+             free(token);
+          }
+        else
+          {
+             if (do_params)
                {
                   eina_array_push(&params, token);
                }
-	     else
-	       {
+             else
+               {
                   stack_push(token);
-		  new_object();
-		  if ((verbatim == 1) && (p < (end - 2)))
-		    {
-		       int escaped = 0;
-		       int inquotes = 0;
-		       int insquotes = 0;
-		       int squigglie = 1;
-		       int l1 = 0, l2 = 0;
-		       char *verbatim_1;
-		       char *verbatim_2;
+                  new_object();
+                  if ((verbatim == 1) && (p < (end - 2)))
+                    {
+                       int escaped = 0;
+                       int inquotes = 0;
+                       int insquotes = 0;
+                       int squigglie = 1;
+                       int l1 = 0, l2 = 0;
+                       char *verbatim_1;
+                       char *verbatim_2;
 
-		       l1 = line;
-		       while ((p[0] != '{') && (p < end))
-			 {
-			    if (*p == '\n') line++;
-			    p++;
-			 }
-		       p++;
-		       verbatim_1 = p;
-		       verbatim_2 = NULL;
-		       for (; p < end; p++)
-			 {
-			    if (*p == '\n') line++;
-			    if (escaped) escaped = 0;
-			    if (!escaped)
-			      {
-				 if (p[0] == '\\') escaped = 1;
-				 else if (p[0] == '\"')
-				   {
-				      if (!insquotes)
-					{
-					   if (inquotes) inquotes = 0;
-					   else inquotes = 1;
-					}
-				   }
-				 else if (p[0] == '\'')
-				   {
-				      if (!inquotes)
-					{
-					   if (insquotes) insquotes = 0;
-					   else insquotes = 1;
-					}
-				   }
-				 else if ((!inquotes) && (!insquotes))
-				   {
-				      if      (p[0] == '{') squigglie++;
-				      else if (p[0] == '}') squigglie--;
-				      if (squigglie == 0)
-					{
-					   verbatim_2 = p - 1;
-					   l2 = line;
-					   break;
-					}
-				   }
-			      }
-			 }
-		       if (verbatim_2 > verbatim_1)
-			 {
-			    int l;
-			    char *v;
+                       l1 = line;
+                       while ((p[0] != '{') && (p < end))
+                         {
+                            if (*p == '\n') line++;
+                            p++;
+                         }
+                       p++;
+                       verbatim_1 = p;
+                       verbatim_2 = NULL;
+                       for (; p < end; p++)
+                         {
+                            if (*p == '\n') line++;
+                            if (escaped) escaped = 0;
+                            if (!escaped)
+                              {
+                                 if (p[0] == '\\') escaped = 1;
+                                 else if (p[0] == '\"')
+                                   {
+                                      if (!insquotes)
+                                        {
+                                           if (inquotes) inquotes = 0;
+                                           else inquotes = 1;
+                                        }
+                                   }
+                                 else if (p[0] == '\'')
+                                   {
+                                      if (!inquotes)
+                                        {
+                                           if (insquotes) insquotes = 0;
+                                           else insquotes = 1;
+                                        }
+                                   }
+                                 else if ((!inquotes) && (!insquotes))
+                                   {
+                                      if      (p[0] == '{') squigglie++;
+                                      else if (p[0] == '}') squigglie--;
+                                      if (squigglie == 0)
+                                        {
+                                           verbatim_2 = p - 1;
+                                           l2 = line;
+                                           break;
+                                        }
+                                   }
+                              }
+                         }
+                       if (verbatim_2 > verbatim_1)
+                         {
+                            int l;
+                            char *v;
 
-			    l = verbatim_2 - verbatim_1 + 1;
-			    v = malloc(l + 1);
-			    strncpy(v, verbatim_1, l);
-			    v[l] = 0;
-			    set_verbatim(v, l1, l2);
-			 }
-		       else
-			 {
-			    ERR("Parse error %s:%i. { marker does not have matching } marker",
-				file_in, line - 1);
+                            l = verbatim_2 - verbatim_1 + 1;
+                            v = malloc(l + 1);
+                            strncpy(v, verbatim_1, l);
+                            v[l] = 0;
+                            set_verbatim(v, l1, l2);
+                         }
+                       else
+                         {
+                            ERR("Parse error %s:%i. { marker does not have matching } marker",
+                                file_in, line - 1);
                             err_show();
-			    exit(-1);
-			 }
-		       new_object();
-		       verbatim = 0;
-		    }
-	       }
-	  }
+                            exit(-1);
+                         }
+                       new_object();
+                       verbatim = 0;
+                    }
+               }
+          }
      }
 
    edje_cc_handlers_hierarchy_free();
@@ -778,34 +778,34 @@ compile(void)
 
    if (fd >= 0)
      {
-	int ret;
-	char *def;
+        int ret;
+        char *def;
 
-	clean_file = tmpn;
-	close(fd);
-	atexit(clean_tmp_file);
-	if (!defines)
-	  def = mem_strdup("");
-	else
-	  {
-	     int len;
-	     char *define;
+        clean_file = tmpn;
+        close(fd);
+        atexit(clean_tmp_file);
+        if (!defines)
+          def = mem_strdup("");
+        else
+          {
+             int len;
+             char *define;
 
-	     len = 0;
-	     EINA_LIST_FOREACH(defines, l, define)
-	       len += strlen(define) + 1;
-	     def = mem_alloc(len + 1);
-	     def[0] = 0;
-	     EINA_LIST_FOREACH(defines, l, define)
-	       {
-		  strcat(def, define);
-		  strcat(def, " ");
-	       }
-	  }
+             len = 0;
+             EINA_LIST_FOREACH(defines, l, define)
+                len += strlen(define) + 1;
+             def = mem_alloc(len + 1);
+             def[0] = 0;
+             EINA_LIST_FOREACH(defines, l, define)
+               {
+                  strcat(def, define);
+                  strcat(def, " ");
+               }
+          }
 
-	/*
-	 * Run the input through the C pre-processor.
-	 */
+        /*
+         * Run the input through the C pre-processor.
+         */
 
         buf2[0] = '\0';
         if (getenv("EFL_RUN_IN_TREE"))
@@ -834,21 +834,21 @@ compile(void)
              ERR("Cannot run epp: %s", buf2);
              exit(-1);
           }
-	if (ret == EXIT_SUCCESS)
-	  file_in = tmpn;
+        if (ret == EXIT_SUCCESS)
+          file_in = tmpn;
         else
           {
              ERR("Exit code of epp not clean: %i", ret);
              exit(-1);
           }
-	free(def);
+        free(def);
      }
    fd = open(file_in, O_RDONLY | O_BINARY, S_IRUSR | S_IWUSR);
    if (fd < 0)
      {
-	ERR("Cannot open file \"%s\" for input. %s",
-	    file_in, strerror(errno));
-	exit(-1);
+        ERR("Cannot open file \"%s\" for input. %s",
+            file_in, strerror(errno));
+        exit(-1);
      }
    DBG("Opening \"%s\" for input", file_in);
 
@@ -858,16 +858,16 @@ compile(void)
    if (data && (read(fd, data, size) == size))
      {
         stack_buf = eina_strbuf_new();
-	eina_array_step_set(&params, sizeof (Eina_Array), 8);
+        eina_array_step_set(&params, sizeof (Eina_Array), 8);
         parse(data, size);
-	eina_array_flush(&params);
+        eina_array_flush(&params);
         eina_strbuf_free(stack_buf);
         stack_buf = NULL;
      }
    else
      {
-	ERR("Cannot read file \"%s\". %s", file_in, strerror(errno));
-	exit(-1);
+        ERR("Cannot read file \"%s\". %s", file_in, strerror(errno));
+        exit(-1);
      }
    free(data);
    close(fd);
@@ -898,14 +898,14 @@ is_num(int n)
    char *str;
    char *end;
    long int ret;
-   
+
    str = _parse_param_get(n);
    if (!str)
      {
-	ERR("%s:%i no parameter supplied as argument %i",
-		file_in, line - 1, n + 1);
+        ERR("%s:%i no parameter supplied as argument %i",
+            file_in, line - 1, n + 1);
         err_show();
-	exit(-1);
+        exit(-1);
      }
    if (str[0] == 0) return 0;
    end = str;
@@ -927,10 +927,10 @@ parse_str(int n)
    str = _parse_param_get(n);
    if (!str)
      {
-	ERR("%s:%i no parameter supplied as argument %i",
-	    file_in, line - 1, n + 1);
+        ERR("%s:%i no parameter supplied as argument %i",
+            file_in, line - 1, n + 1);
         err_show();
-	exit(-1);
+        exit(-1);
      }
    s = mem_strdup(str);
    return s;
@@ -944,37 +944,37 @@ _parse_enum(char *str, va_list va)
 
    for (;;)
      {
-	char *s;
-	int   v;
+        char *s;
+        int   v;
 
-	s = va_arg(va, char *);
+        s = va_arg(va, char *);
 
-	/* End of the list, nothing matched. */
-	if (!s)
-	  {
- 	     ERR("%s:%i token %s not one of:", file_in, line - 1, str);
-	     s = va_arg(va2, char *);
-	     while (s)
-	       {
-		  va_arg(va2, int);
-		  fprintf(stderr, " %s", s);
-		  s = va_arg(va2, char *);
-		  if (!s) break;
-	       }
-	     fprintf(stderr, "\n");
-	     va_end(va2);
-	     va_end(va);
+        /* End of the list, nothing matched. */
+        if (!s)
+          {
+             ERR("%s:%i token %s not one of:", file_in, line - 1, str);
+             s = va_arg(va2, char *);
+             while (s)
+               {
+                  va_arg(va2, int);
+                  fprintf(stderr, " %s", s);
+                  s = va_arg(va2, char *);
+                  if (!s) break;
+               }
+             fprintf(stderr, "\n");
+             va_end(va2);
+             va_end(va);
              err_show();
-	     exit(-1);
-	  }
+             exit(-1);
+          }
 
-	v = va_arg(va, int);
-	if (!strcmp(s, str))
-	  {
-	     va_end(va2);
-	     va_end(va);
-	     return v;
-	  }
+        v = va_arg(va, int);
+        if (!strcmp(s, str))
+          {
+             va_end(va2);
+             va_end(va);
+             return v;
+          }
      }
    va_end(va2);
    va_end(va);
@@ -991,10 +991,10 @@ parse_enum(int n, ...)
    str = _parse_param_get(n);
    if (!str)
      {
-	ERR("%s:%i no parameter supplied as argument %i",
-	    file_in, line - 1, n + 1);
+        ERR("%s:%i no parameter supplied as argument %i",
+            file_in, line - 1, n + 1);
         err_show();
-	exit(-1);
+        exit(-1);
      }
 
    va_start(va, n);
@@ -1030,10 +1030,10 @@ parse_int(int n)
    str = _parse_param_get(n);
    if (!str)
      {
-	ERR("%s:%i no parameter supplied as argument %i",
-	    file_in, line - 1, n + 1);
+        ERR("%s:%i no parameter supplied as argument %i",
+            file_in, line - 1, n + 1);
         err_show();
-	exit(-1);
+        exit(-1);
      }
    i = my_atoi(str);
    return i;
@@ -1048,18 +1048,18 @@ parse_int_range(int n, int f, int t)
    str = _parse_param_get(n);
    if (!str)
      {
-	ERR("%s:%i no parameter supplied as argument %i",
-	    file_in, line - 1, n + 1);
+        ERR("%s:%i no parameter supplied as argument %i",
+            file_in, line - 1, n + 1);
         err_show();
-	exit(-1);
+        exit(-1);
      }
    i = my_atoi(str);
    if ((i < f) || (i > t))
      {
-	ERR("%s:%i integer %i out of range of %i to %i inclusive",
-	    file_in, line - 1, i, f, t);
+        ERR("%s:%i integer %i out of range of %i to %i inclusive",
+            file_in, line - 1, i, f, t);
         err_show();
-	exit(-1);
+        exit(-1);
      }
    return i;
 }
@@ -1073,31 +1073,31 @@ parse_bool(int n)
    str = _parse_param_get(n);
    if (!str)
      {
-	ERR("%s:%i no parameter supplied as argument %i",
-	    file_in, line - 1, n + 1);
+        ERR("%s:%i no parameter supplied as argument %i",
+            file_in, line - 1, n + 1);
         err_show();
-	exit(-1);
+        exit(-1);
      }
 
    if (!strstrip(str, buf, sizeof (buf)))
      {
-	ERR("%s:%i expression is too long",
-	    file_in, line - 1);
-	return 0;
+        ERR("%s:%i expression is too long",
+            file_in, line - 1);
+        return 0;
      }
 
    if (!strcasecmp(buf, "false") || !strcasecmp(buf, "off"))
-      return 0;
+     return 0;
    if (!strcasecmp(buf, "true") || !strcasecmp(buf, "on"))
-      return 1;
+     return 1;
 
    i = my_atoi(str);
    if ((i < 0) || (i > 1))
      {
-	ERR("%s:%i integer %i out of range of 0 to 1 inclusive",
-	    file_in, line - 1, i);
+        ERR("%s:%i integer %i out of range of 0 to 1 inclusive",
+            file_in, line - 1, i);
         err_show();
-	exit(-1);
+        exit(-1);
      }
    return i;
 }
@@ -1111,10 +1111,10 @@ parse_float(int n)
    str = _parse_param_get(n);
    if (!str)
      {
-	ERR("%s:%i no parameter supplied as argument %i",
-	    file_in, line - 1, n + 1);
+        ERR("%s:%i no parameter supplied as argument %i",
+            file_in, line - 1, n + 1);
         err_show();
-	exit(-1);
+        exit(-1);
      }
    i = my_atof(str);
    return i;
@@ -1129,18 +1129,18 @@ parse_float_range(int n, double f, double t)
    str = _parse_param_get(n);
    if (!str)
      {
-	ERR("%s:%i no parameter supplied as argument %i",
-	    file_in, line - 1, n + 1);
+        ERR("%s:%i no parameter supplied as argument %i",
+            file_in, line - 1, n + 1);
         err_show();
-	exit(-1);
+        exit(-1);
      }
    i = my_atof(str);
    if ((i < f) || (i > t))
      {
-	ERR("%s:%i float %3.3f out of range of %3.3f to %3.3f inclusive",
-	    file_in, line - 1, i, f, t);
+        ERR("%s:%i float %3.3f out of range of %3.3f to %3.3f inclusive",
+            file_in, line - 1, i, f, t);
         err_show();
-	exit(-1);
+        exit(-1);
      }
    return i;
 }
@@ -1161,7 +1161,7 @@ check_arg_count(int required_args)
         ERR("%s:%i got %i arguments, but expected %i",
             file_in, line - 1, num_args, required_args);
         err_show();
-	exit(-1);
+        exit(-1);
      }
 }
 
@@ -1172,10 +1172,10 @@ check_min_arg_count(int min_required_args)
 
    if (num_args < min_required_args)
      {
-	ERR("%s:%i got %i arguments, but expected at least %i",
-	    file_in, line - 1, num_args, min_required_args);
+        ERR("%s:%i got %i arguments, but expected at least %i",
+            file_in, line - 1, num_args, min_required_args);
         err_show();
-	exit(-1);
+        exit(-1);
      }
 }
 
@@ -1196,13 +1196,13 @@ my_atoi(const char *s)
 {
    int res = 0;
    char buf[4096];
-   
+
    if (!s) return 0;
    if (!strstrip(s, buf, sizeof(buf)))
      {
-	ERR("%s:%i expression is too long",
-	    file_in, line - 1);
-	return 0;
+        ERR("%s:%i expression is too long",
+            file_in, line - 1);
+        return 0;
      }
    _alphai(buf, &res);
    return res;
@@ -1214,16 +1214,16 @@ _deltai(char *s, int *val)
    if (!val) return NULL;
    if ('(' != s[0])
      {
-	ERR("%s:%i unexpected character at %s",
-	    file_in, line - 1, s);
-	return s;
+        ERR("%s:%i unexpected character at %s",
+            file_in, line - 1, s);
+        return s;
      }
    else
      {
-	s++;
-	s = _alphai(s, val);
-	s++;
-	return s;
+        s++;
+        s = _alphai(s, val);
+        s++;
+        return s;
      }
    return s;
 }
@@ -1246,7 +1246,7 @@ _funci(char *s, int *val)
    else
      {
         ERR("%s:%i unexpected character at %s",
-	    file_in, line - 1, s);
+            file_in, line - 1, s);
      }
    return s;
 }
@@ -1257,19 +1257,19 @@ _gammai(char *s, int *val)
    if (!val) return NULL;
    if (_is_numi(s[0]))
      {
-	s = _get_numi(s, val);
-	return s;
+        s = _get_numi(s, val);
+        return s;
      }
    else if ('(' == s[0])
      {
-	s = _deltai(s, val);
-	return s;
+        s = _deltai(s, val);
+        return s;
      }
    else
      {
         s = _funci(s, val);
-//        ERR("%s:%i unexpected character at %s",
-//                progname, file_in, line - 1, s);
+        //        ERR("%s:%i unexpected character at %s",
+        //                progname, file_in, line - 1, s);
      }
    return s;
 }
@@ -1284,10 +1284,10 @@ _betai(char *s, int *val)
    s = _gammai(s, &a1);
    while (_is_op1i(s[0]))
      {
-	op = s[0];
-	s++;
-	s = _gammai(s, &a2);
-	a1 = _calci(op, a1, a2);
+        op = s[0];
+        s++;
+        s = _gammai(s, &a2);
+        a1 = _calci(op, a1, a2);
      }
    (*val) = a1;
    return s;
@@ -1298,15 +1298,15 @@ _alphai(char *s, int *val)
 {
    int a1, a2;
    char op;
-   
+
    if (!val) return NULL;
    s = _betai(s, &a1);
    while (_is_op2i(s[0]))
      {
-	op = s[0];
-	s++;
-	s = _betai(s, &a2);
-	a1 = _calci(op, a1, a2);
+        op = s[0];
+        s++;
+        s = _betai(s, &a2);
+        a1 = _calci(op, a1, a2);
      }
    (*val) = a1;
    return s;
@@ -1317,13 +1317,13 @@ _get_numi(char *s, int *val)
 {
    char buf[4096];
    int pos = 0;
-   
+
    if (!val) return s;
    while ((('0' <= s[pos]) && ('9' >= s[pos])) ||
-	  ((0 == pos) && ('-' == s[pos])))
+          ((0 == pos) && ('-' == s[pos])))
      {
-	buf[pos] = s[pos];
-	pos++;
+        buf[pos] = s[pos];
+        pos++;
      }
    buf[pos] = '\0';
    (*val) = atoi(buf);
@@ -1369,27 +1369,27 @@ _calci(char op, int a, int b)
 {
    switch(op)
      {
-     case '+':
-	a += b;
-	return a;
-     case '-':
-	a -= b;
-	return a;
-     case '/':
-	if (0 != b) a /= b;
-	else
-	  ERR("%s:%i divide by zero", file_in, line - 1);
-	return a;
-     case '*':
-	a *= b;
-	return a;
-     case '%':
-	if (0 != b) a = a % b;
-	else
-	  ERR("%s:%i modula by zero", file_in, line - 1);
-	return a;
-     default:
-	ERR("%s:%i unexpected character '%c'", file_in, line - 1, op);
+      case '+':
+         a += b;
+         return a;
+      case '-':
+         a -= b;
+         return a;
+      case '/':
+         if (0 != b) a /= b;
+         else
+           ERR("%s:%i divide by zero", file_in, line - 1);
+         return a;
+      case '*':
+         a *= b;
+         return a;
+      case '%':
+         if (0 != b) a = a % b;
+         else
+           ERR("%s:%i modula by zero", file_in, line - 1);
+         return a;
+      default:
+         ERR("%s:%i unexpected character '%c'", file_in, line - 1, op);
      }
    return a;
 }
@@ -1401,13 +1401,13 @@ my_atof(const char *s)
 {
    double res = 0;
    char buf[4096];
-   
+
    if (!s) return 0;
 
    if (!strstrip(s, buf, sizeof (buf)))
      {
-	ERR("%s:%i expression is too long", file_in, line - 1);
-	return 0;
+        ERR("%s:%i expression is too long", file_in, line - 1);
+        return 0;
      }
    _alphaf(buf, &res);
    return res;
@@ -1419,14 +1419,14 @@ _deltaf(char *s, double *val)
    if (!val) return NULL;
    if ('(' != s[0])
      {
-	ERR("%s:%i unexpected character at %s", file_in, line - 1, s);
-	return s;
+        ERR("%s:%i unexpected character at %s", file_in, line - 1, s);
+        return s;
      }
    else
      {
-	s++;
-	s = _alphaf(s, val);
-	s++;
+        s++;
+        s = _alphaf(s, val);
+        s++;
      }
    return s;
 }
@@ -1457,22 +1457,22 @@ static char *
 _gammaf(char *s, double *val)
 {
    if (!val) return NULL;
-   
+
    if (_is_numf(s[0]))
      {
-	s = _get_numf(s, val);
-	return s;
+        s = _get_numf(s, val);
+        return s;
      }
    else if ('(' == s[0])
      {
-	s = _deltaf(s, val);
-	return s;
+        s = _deltaf(s, val);
+        return s;
      }
    else
      {
         s = _funcf(s, val);
-//        ERR("%s:%i unexpected character at %s",
-//                progname, file_in, line - 1, s);
+        //        ERR("%s:%i unexpected character at %s",
+        //                progname, file_in, line - 1, s);
      }
    return s;
 }
@@ -1482,15 +1482,15 @@ _betaf(char *s, double *val)
 {
    double a1=0, a2=0;
    char op;
-   
+
    if (!val) return NULL;
    s = _gammaf(s, &a1);
    while (_is_op1f(s[0]))
      {
-	op = s[0];
-	s++;
-	s = _gammaf(s, &a2);
-	a1 = _calcf(op, a1, a2);
+        op = s[0];
+        s++;
+        s = _gammaf(s, &a2);
+        a1 = _calcf(op, a1, a2);
      }
    (*val) = a1;
    return s;
@@ -1506,10 +1506,10 @@ _alphaf(char *s, double *val)
    s = _betaf(s, &a1);
    while (_is_op2f(s[0]))
      {
-	op = s[0];
-	s++;
-	s = _betaf(s, &a2);
-	a1 = _calcf(op, a1, a2);
+        op = s[0];
+        s++;
+        s = _betaf(s, &a2);
+        a1 = _calcf(op, a1, a2);
      }
    (*val) = a1;
    return s;
@@ -1524,11 +1524,11 @@ _get_numf(char *s, double *val)
    if (!val) return s;
 
    while ((('0' <= s[pos]) && ('9' >= s[pos])) ||
-	  ('.' == s[pos]) ||
-	  ((0 == pos) && ('-' == s[pos])))
+          ('.' == s[pos]) ||
+          ((0 == pos) && ('-' == s[pos])))
      {
-	buf[pos] = s[pos];
-	pos++;
+        buf[pos] = s[pos];
+        pos++;
      }
    buf[pos] = '\0';
    (*val) = atof(buf);
@@ -1551,10 +1551,10 @@ _is_op1f(char c)
 {
    switch(c)
      {
-     case '*':;
-     case '%':;
-     case '/': return 1;
-     default: break;
+      case '*':;
+      case '%':;
+      case '/': return 1;
+      default: break;
      }
    return 0;
 }
@@ -1564,9 +1564,9 @@ _is_op2f(char c)
 {
    switch(c)
      {
-     case '+':;
-     case '-': return 1;
-     default: break;
+      case '+':;
+      case '-': return 1;
+      default: break;
      }
    return 0;
 }
@@ -1576,27 +1576,27 @@ _calcf(char op, double a, double b)
 {
    switch(op)
      {
-     case '+':
-	a += b;
-	return a;
-     case '-':
-	a -= b;
-	return a;
-     case '/':
-	if (b != 0) a /= b;
-	else
-	  ERR("%s:%i divide by zero", file_in, line - 1);
-	return a;
-     case '*':
-	a *= b;
-	return a;
-     case '%':
-	if (0 != b) a = (double)((int)a % (int)b);
-	else
-	  ERR("%s:%i modula by zero", file_in, line - 1);
-	return a;
-     default:
-	ERR("%s:%i unexpected character '%c'", file_in, line - 1, op);
+      case '+':
+         a += b;
+         return a;
+      case '-':
+         a -= b;
+         return a;
+      case '/':
+         if (b != 0) a /= b;
+         else
+           ERR("%s:%i divide by zero", file_in, line - 1);
+         return a;
+      case '*':
+         a *= b;
+         return a;
+      case '%':
+         if (0 != b) a = (double)((int)a % (int)b);
+         else
+           ERR("%s:%i modula by zero", file_in, line - 1);
+         return a;
+      default:
+         ERR("%s:%i unexpected character '%c'", file_in, line - 1, op);
      }
    return a;
 }
@@ -1606,18 +1606,18 @@ strstrip(const char *in, char *out, size_t size)
 {
    if ((size -1 ) < strlen(in))
      {
-	ERR("%s:%i expression is too long", file_in, line - 1);
-	return 0;
+        ERR("%s:%i expression is too long", file_in, line - 1);
+        return 0;
      }
    /* remove spaces and tabs */
    while (*in)
      {
-	if ((0x20 != *in) && (0x09 != *in))
-	  {
-	     *out = *in;
-	     out++;
-	  }
-	in++;
+        if ((0x20 != *in) && (0x09 != *in))
+          {
+             *out = *in;
+             out++;
+          }
+        in++;
      }
    *out = '\0';
    return 1;
