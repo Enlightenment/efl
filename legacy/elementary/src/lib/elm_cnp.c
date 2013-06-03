@@ -2010,11 +2010,11 @@ _x11_elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data,
    y += y2;
    dragwin_x_start = dragwin_x_end = x;
    dragwin_y_start = dragwin_y_end = y;
-   evas_object_move(dragwin, x, y);
    evas_object_resize(dragwin, w, h);
 
    evas_object_show(icon);
    evas_object_show(dragwin);
+   evas_object_move(dragwin, x, y);
 
    evas_pointer_canvas_xy_get(evas_object_evas_get(obj), &x3, &y3);
    _dragx = x3 - x2;
