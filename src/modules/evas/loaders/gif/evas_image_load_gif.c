@@ -728,7 +728,11 @@ evas_image_load_file_head_gif(void *loader_data,
    egi.length = eina_file_size_get(f);
    egi.position = 0;
 
+#if GIFLIB_MAJOR >= 5
+   gif = DGifOpen(&egi, _evas_image_load_file_read, NULL);
+#else
    gif = DGifOpen(&egi, _evas_image_load_file_read);
+#endif
    if (!gif)
      {
         *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
@@ -870,7 +874,11 @@ evas_image_load_specific_frame(Eina_File *f,
    egi.length = eina_file_size_get(f);
    egi.position = 0;
 
+#if GIFLIB_MAJOR >= 5
+   gif = DGifOpen(&egi, _evas_image_load_file_read, NULL);
+#else
    gif = DGifOpen(&egi, _evas_image_load_file_read);
+#endif
    if (!gif)
      {
         *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
@@ -970,7 +978,11 @@ evas_image_load_file_data_gif(void *loader_data,
              egi.length = eina_file_size_get(f);
              egi.position = 0;
 
+#if GIFLIB_MAJOR >= 5
+	     gif = DGifOpen(&egi, _evas_image_load_file_read, NULL);
+#else
              gif = DGifOpen(&egi, _evas_image_load_file_read);
+#endif
              if (!gif)
                {
                   *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
@@ -1043,8 +1055,11 @@ evas_image_load_frame_duration_gif(void *loader_data,
    if (!egi.map) goto on_error;
    egi.length = eina_file_size_get(f);
    egi.position = 0;        
-
+#if GIFLIB_MAJOR >= 5
+   gif = DGifOpen(&egi, _evas_image_load_file_read, NULL);
+#else
    gif = DGifOpen(&egi, _evas_image_load_file_read);
+#endif
    if (!gif) goto on_error;
 
    duration = 0;
