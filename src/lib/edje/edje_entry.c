@@ -2107,14 +2107,8 @@ _edje_part_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
    shift = evas_key_modifier_is_set(ev->modifiers, "Shift");
    en->select_mod_start = EINA_FALSE;
    en->select_mod_end = EINA_FALSE;
-   if (rp->part->select_mode == EDJE_ENTRY_SELECTION_MODE_DEFAULT)
-     dosel = EINA_TRUE;
-   else if ((rp->part->select_mode == EDJE_ENTRY_SELECTION_MODE_EXPLICIT) ||
-            (rp->part->select_mode == EDJE_ENTRY_SELECTION_MODE_BLOCK_HANDLE))
-     {
-        if (en->select_allow) dosel = EINA_TRUE;
-     }
-   if (ev->button == 2) dosel = EINA_FALSE;
+
+   if (en->select_allow && ev->button != 2) dosel = EINA_TRUE;
    if (dosel)
      {
         evas_object_geometry_get(rp->object, &x, &y, &w, &h);
@@ -2280,10 +2274,7 @@ _edje_part_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
                {
                   en->selecting = EINA_TRUE;
                   _sel_clear(en->ed, en->cursor, rp->object, en);
-                  if (en->select_allow)
-                    {
-                       _sel_start(en->cursor, rp->object, en);
-                    }
+                  _sel_start(en->cursor, rp->object, en);
                }
           }
      }
