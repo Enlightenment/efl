@@ -347,6 +347,8 @@ extern EAPI int _evas_log_dom_global;
 
 /*****************************************************************************/
 
+#include "../file/evas_module.h"
+
 typedef unsigned long long		DATA64;
 typedef unsigned int			DATA32;
 typedef unsigned short			DATA16;
@@ -593,8 +595,8 @@ struct _Image_Entry
 
    struct
      {
-        void		*module;
-        void		*loader;
+        Evas_Module          *module;
+        Evas_Image_Load_Func *loader;
      } info;
 
    LK(lock);

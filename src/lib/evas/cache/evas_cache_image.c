@@ -343,8 +343,8 @@ _evas_cache_image_async_heavy(void *data)
    current->channel++;
    cache = current->cache;
 
-   if ((!current->flags.loaded) && 
-       ((Evas_Image_Load_Func*) current->info.module)->threadable)
+   if ((!current->flags.loaded) &&
+       current->info.loader->threadable)
      {
         error = cache->func.load(current);
         if (cache->func.debug) cache->func.debug("load", current);

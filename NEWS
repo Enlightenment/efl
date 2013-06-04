@@ -317,4 +317,4 @@ Fixes:
     * Fix evas gl engine to work in 16bpp nicely.
     * Fix native surface to be more anal about depth matching.
     * Fix eeze sensors to not segv on shutdown
-        
+    * Evas: correctly detect if a loader support asynchronous preloading.

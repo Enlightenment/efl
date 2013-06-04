@@ -345,9 +345,9 @@ evas_common_load_rgba_image_module_from_file(Image_Entry *ie)
        em->definition->name : "<UNKNOWN>",
        file);
 
-   ie->info.module = (void*) em;
+   ie->info.module = em;
    ie->info.loader = (void*) em ? em->functions : NULL;
-   evas_module_ref((Evas_Module*) ie->info.module);
+   evas_module_ref(ie->info.module);
    return ret;
 }
 
@@ -388,7 +388,7 @@ evas_common_load_rgba_image_data_from_file(Image_Entry *ie)
 //   printf("load data [%p] %s %s\n", ie, ie->file, ie->key);
            
    evas_image_load_func = ie->info.loader;
-   evas_module_use((Evas_Module*) ie->info.module);
+   evas_module_use(ie->info.module);
 
    if (!ie->f) return EVAS_LOAD_ERROR_DOES_NOT_EXIST;
 
@@ -412,7 +412,7 @@ evas_common_load_rgba_image_data_from_file(Image_Entry *ie)
 
    if (property.premul)
      evas_common_image_premul(ie);
-//   evas_module_unref((Evas_Module*) ie->info.module);
+//   evas_module_unref(ie->info.module);
 //   ie->info.module = NULL;
 
    return ret;
@@ -426,7 +426,7 @@ evas_common_load_rgba_image_frame_duration_from_file(Image_Entry *ie, const int 
    if (!ie->info.module) return -1;
 
    evas_image_load_func = ie->info.loader;
-   evas_module_use((Evas_Module*) ie->info.module);
+   evas_module_use(ie->info.module);
    if (evas_image_load_func->frame_duration)
      {
         if (!ie->f) return -1;

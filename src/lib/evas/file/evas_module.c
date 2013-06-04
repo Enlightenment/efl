@@ -4,9 +4,8 @@
 
 #include <string.h>
 
-#include <evas_common.h>
-#include <evas_private.h>
-#include <evas_module.h>
+#include "evas_common.h"
+#include "evas_private.h"
 
 
 static Eina_Hash *evas_modules[4] = {
