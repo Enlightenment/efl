@@ -1,3 +1,7 @@
+2013-06-04  Jean-Philippe Andre
+
+	* Evas: improve stability of Evas_Cserve2.
+
 2013-06-04  Cedric Bail
 
 	* Evas: correctly detect if loader support asynchronous preloading.
