@@ -479,7 +479,7 @@ evas_image_load_file_data_jpeg_internal(Evas_Img_Load_Params *ilp,
    struct jpeg_decompress_struct cinfo;
    struct _JPEG_error_mgr jerr;
    DATA8 *ptr, *line[16], *data;
-   DATA32 *ptr2, *ptr_rotate = NULL;
+   DATA32 *ptr2, *ptr_rotate = NULL, *ptr2_orig = NULL;
    unsigned int x, y, l, i, scans;
    int region = 0;
    /* rotation setting */
@@ -652,9 +652,10 @@ evas_image_load_file_data_jpeg_internal(Evas_Img_Load_Params *ilp,
      {
         ptr2 = malloc(ilp->w * ilp->h * sizeof(DATA32));
         ptr_rotate = ptr2;
+        ptr2_orig = ptr2;
      }
    else
-     ptr2 = ilp->buffer;;
+     ptr2 = ilp->buffer;
 
    if (!ptr2)
      {
@@ -1018,7 +1019,7 @@ done:
      {
         jpeg_destroy_decompress(&cinfo);
         _evas_jpeg_membuf_src_term(&cinfo);
-        if (ptr2) free(ptr2);
+        if (ptr2_orig) free(ptr2_orig);
         *error = CSERVE2_NONE;
         return EINA_FALSE;
      }
@@ -1026,7 +1027,7 @@ done:
    jpeg_finish_decompress(&cinfo);
    jpeg_destroy_decompress(&cinfo);
    _evas_jpeg_membuf_src_term(&cinfo);
-   if (ptr2) free(ptr2);
+   if (ptr2_orig) free(ptr2_orig);
    *error = CSERVE2_NONE;
    return EINA_TRUE;
 }
