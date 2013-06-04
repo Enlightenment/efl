@@ -395,8 +395,11 @@ end:
 static unsigned int
 _font_slave_int_shm_prev_calculate(unsigned int size, unsigned int nglyphs)
 {
-   unsigned int average = size / nglyphs;
+   unsigned int average;
    unsigned int newsize;
+
+   if (!nglyphs) return cserve2_shm_size_normalize(1);
+   average = size / nglyphs;
 
    newsize = MIN_GLYPHS * average;
    newsize = cserve2_shm_size_normalize(newsize);
@@ -530,7 +533,7 @@ _font_slave_glyphs_load(const void *cmddata, void *data EINA_UNUSED)
         if (!r) // SHM is full
           {
              fi->shmsize = _font_slave_int_shm_prev_calculate
-                (c->usage, total_glyphs);
+                   (c->usage, total_glyphs);
              c = NULL;
              continue;
           }
