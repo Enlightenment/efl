@@ -344,6 +344,18 @@ _fash_int_add(Fash_Int *fash, int item, RGBA_Font_Int *fint, int idx)
 }
 
 static void
+_glyph_free(RGBA_Font_Glyph *fg)
+{
+   if ((!fg) || (fg == (void *)(-1))) return;
+
+   FT_Done_Glyph(fg->glyph);
+   /* extension calls */
+   if (fg->ext_dat_free) fg->ext_dat_free(fg->ext_dat);
+   if (fg->glyph_out_free) fg->glyph_out_free(fg->glyph_out);
+   free(fg);
+}
+
+static void
 _fash_glyph_free(Fash_Glyph_Map *fmap)
 {
    int i;
@@ -353,11 +365,7 @@ _fash_glyph_free(Fash_Glyph_Map *fmap)
         RGBA_Font_Glyph *fg = fmap->item[i];
         if ((fg) && (fg != (void *)(-1)))
           {
-             FT_Done_Glyph(fg->glyph);
-             /* extension calls */
-             if (fg->ext_dat_free) fg->ext_dat_free(fg->ext_dat);
-             if (fg->glyph_out_free) fg->glyph_out_free(fg->glyph_out);
-             free(fg);
+             _glyph_free(fg);
              fmap->item[i] = NULL;
           }
      }
@@ -443,10 +451,20 @@ evas_common_font_int_cache_glyph_get(RGBA_Font_Int *fi, FT_UInt idx)
           {
 #ifdef EVAS_CSERVE2
              if (fi->cs2_handler)
-               evas_cserve2_font_glyph_used(fi->cs2_handler, idx,
-                                            fi->hinting);
-#endif
+               {
+                  if (evas_cserve2_font_glyph_used(fi->cs2_handler, idx,
+                                                   fi->hinting))
+                    return fg;
+                  else
+                    {
+                       _glyph_free(fg);
+                       _fash_gl_add(fi->fash, idx, NULL);
+                    }
+               }
+             else return fg;
+#else
              return fg;
+#endif
           }
      }
 //   fg = eina_hash_find(fi->glyphs, &hindex);
@@ -472,9 +490,8 @@ evas_common_font_int_cache_glyph_get(RGBA_Font_Int *fi, FT_UInt idx)
    if (fi->runtime_rend & FONT_REND_WEIGHT)
       FT_GlyphSlot_Embolden(fi->src->ft.face->glyph);
 
-   fg = malloc(sizeof(struct _RGBA_Font_Glyph));
+   fg = calloc(1, sizeof(RGBA_Font_Glyph));
    if (!fg) return NULL;
-   memset(fg, 0, (sizeof(struct _RGBA_Font_Glyph)));
 
    FTLOCK();
    error = FT_Get_Glyph(fi->src->ft.face->glyph, &(fg->glyph));
