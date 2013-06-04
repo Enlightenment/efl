@@ -3,7 +3,7 @@
 m4_define([v_maj], [1])
 m4_define([v_min], [7])
 m4_define([v_mic], [99])
-m4_define([v_rev], m4_esyscmd([(git rev-list --count HEAD 2>/dev/null || echo 0) | tr -d '\n']))dnl
+m4_define([v_rev], m4_esyscmd([(git rev-list --count HEAD 2>/dev/null || echo 0) | tr -d '\n']))
 ##--   When released, remove the dnl on the below line
 dnl m4_undefine([v_rev])
 ##--   When doing snapshots - change soname. remove dnl on below line
@@ -228,27 +228,27 @@ AM_CONDITIONAL([ELEMENTARY_WINDOWS_BUILD], [test "x${have_windows}" = "xyes"])
 
 PKG_CHECK_MODULES([ELEMENTARY],
    [
-    eina >= 1.6.99
-    eet >= 1.6.99
-    evas >= 1.6.99
-    ecore >= 1.6.99
-    ecore-evas >= 1.6.99
-    ecore-file >= 1.6.99
-    ecore-input >= 1.6.99
-    edje >= 1.6.99
+    eina >= 1.7.99
+    eet >= 1.7.99
+    evas >= 1.7.99
+    ecore >= 1.7.99
+    ecore-evas >= 1.7.99
+    ecore-file >= 1.7.99
+    ecore-input >= 1.7.99
+    edje >= 1.7.99
     eo
    ]
 )
 
-requirement_elm="edje >= 1.6.99 ecore-file >= 1.6.99 ecore-evas >= 1.6.99 ecore >= 1.6.99 evas >= 1.6.99 eet >= 1.6.99 eina >= 1.6.99 ${requirement_elm}"
+requirement_elm="edje >= 1.7.99 ecore-file >= 1.7.99 ecore-evas >= 1.7.99 ecore >= 1.7.99 evas >= 1.7.99 eet >= 1.7.99 eina >= 1.7.99 ${requirement_elm}"
 
 PKG_CHECK_MODULES([ELEMENTARY_ECORE_IMF],
-   [ecore-imf >= 1.6.99],
+   [ecore-imf >= 1.7.99],
    [
     ELEMENTARY_ECORE_IMF_INC="#include <Ecore_IMF.h>"
     AC_DEFINE(HAVE_ELEMENTARY_ECORE_IMF, 1, [Have Ecore_IMF support])
     have_ecore_imf="yes"
-    requirement_elm="ecore-imf >= 1.6.99 ${requirement_elm}"
+    requirement_elm="ecore-imf >= 1.7.99 ${requirement_elm}"
    ],
    [have_ecore_imf="no"])
 AC_SUBST(ELEMENTARY_ECORE_IMF_INC)
@@ -256,12 +256,12 @@ AC_SUBST(ELEMENTARY_ECORE_IMF_INC)
 AM_CONDITIONAL([HAVE_ECORE_IMF], [test "x${have_ecore_imf}" = "xyes"])
 
 PKG_CHECK_MODULES([ELEMENTARY_ECORE_CON],
-   [ecore-con >= 1.6.99],
+   [ecore-con >= 1.7.99],
    [
     ELEMENTARY_ECORE_CON_INC="#include <Ecore_Con.h>"
     AC_DEFINE(HAVE_ELEMENTARY_ECORE_CON, 1, [Have Ecore_Con support])
     have_ecore_con="yes"
-    requirement_elm="ecore-con >= 1.6.99 ${requirement_elm}"
+    requirement_elm="ecore-con >= 1.7.99 ${requirement_elm}"
    ],
    [have_ecore_con="no"])
 AC_SUBST(ELEMENTARY_ECORE_CON_INC)
@@ -306,11 +306,11 @@ AC_ARG_ENABLE([ecore-x],
 
 if test "x$want_elementary_x" != "xno"; then
    PKG_CHECK_MODULES([ELEMENTARY_X],
-      [ecore-x >= 1.6.99],
+      [ecore-x >= 1.7.99],
       [
        AC_DEFINE(HAVE_ELEMENTARY_X, 1, [X11 support for Elementary])
        have_elementary_x="yes"
-       requirement_elm="ecore-x >= 1.6.99 ${requirement_elm}"
+       requirement_elm="ecore-x >= 1.7.99 ${requirement_elm}"
       ],
       [have_elementary_x="no"]
    )
@@ -318,7 +318,7 @@ else
     have_elementary_x="no"
 fi
 if test "x$want_elementary_x" = "xyes" -a "x$have_elementary_x" = "xno"; then
-    AC_MSG_ERROR([ecore-x support requested, but not found by pkg-config.])
+    AC_MSG_ERROR([ecore-x support requested, but ecore-x was not found by pkg-config.])
 fi
 
 
@@ -330,11 +330,11 @@ AC_ARG_ENABLE([ecore-fb],
 
 if test "x$want_elementary_fb" != "xno"; then
    PKG_CHECK_MODULES([ELEMENTARY_FB],
-      [ecore-fb >= 1.6.99],
+      [ecore-fb >= 1.7.99],
       [
        AC_DEFINE(HAVE_ELEMENTARY_FB, 1, [FB support for Elementary])
        have_elementary_fb="yes"
-       requirement_elm="ecore-fb >= 1.6.99 ${requirement_elm}"
+       requirement_elm="ecore-fb >= 1.7.99 ${requirement_elm}"
       ],
       [have_elementary_fb="no"]
    )
@@ -342,7 +342,7 @@ else
     have_elementary_fb="no"
 fi
 if test "x$want_elementary_fb" = "xyes" -a "x$have_elementary_fb" = "xno"; then
-    AC_MSG_ERROR([ecore-fb support requested, but not found by pkg-config.])
+    AC_MSG_ERROR([ecore-fb support requested, but ecore-fb was not found by pkg-config.])
 fi
 
 have_elementary_psl1ght="no"
@@ -353,11 +353,11 @@ AC_ARG_ENABLE([ecore-psl1ght],
 
 if test "x$want_elementary_psl1ght" != "xno"; then
    PKG_CHECK_MODULES([ELEMENTARY_PSL1GHT],
-      [ecore-psl1ght >= 1.6.99],
+      [ecore-psl1ght >= 1.7.99],
       [
        AC_DEFINE(HAVE_ELEMENTARY_PSL1GHT, 1, [PSL1GHT support for Elementary])
        have_elementary_psl1ght="yes"
-       requirement_elm="ecore-psl1ght >= 1.6.99 ${requirement_elm}"
+       requirement_elm="ecore-psl1ght >= 1.7.99 ${requirement_elm}"
       ],
       [have_elementary_psl1ght="no"]
    )
@@ -365,7 +365,7 @@ else
     have_elementary_psl1ght="no"
 fi
 if test "x$want_elementary_psl1ght" = "xyes" -a "x$have_elementary_psl1ght" = "xno"; then
-    AC_MSG_ERROR([ecore-psl1ght support requested, but not found by pkg-config.])
+    AC_MSG_ERROR([ecore-psl1ght support requested, but ecore-psl1ght was not found by pkg-config.])
 fi
 
 have_elementary_sdl="no"
@@ -376,11 +376,11 @@ AC_ARG_ENABLE([ecore-sdl],
 
 if test "x$want_elementary_sdl" != "xno"; then
    PKG_CHECK_MODULES([ELEMENTARY_SDL],
-      [ecore-sdl >= 1.6.99],
+      [ecore-sdl >= 1.7.99],
       [
        AC_DEFINE(HAVE_ELEMENTARY_SDL, 1, [SDL support for Elementary])
        have_elementary_sdl="yes"
-       requirement_elm="ecore-sdl >= 1.6.99 ${requirement_elm}"
+       requirement_elm="ecore-sdl >= 1.7.99 ${requirement_elm}"
       ],
       [have_elementary_sdl="no"]
    )
@@ -388,7 +388,7 @@ else
     have_elementary_sdl="no"
 fi
 if test "x$want_elementary_sdl" = "xyes" -a "x$have_elementary_sdl" = "xno"; then
-    AC_MSG_ERROR([ecore-sdl support requested, but not found by pkg-config.])
+    AC_MSG_ERROR([ecore-sdl support requested, but ecore-sdl was not found by pkg-config.])
 fi
 
 have_elementary_cocoa="no"
@@ -399,11 +399,11 @@ AC_ARG_ENABLE([ecore-cocoa],
 
 if test "x$want_elementary_cocoa" != "xno"; then
    PKG_CHECK_MODULES([ELEMENTARY_COCOA],
-      [ecore-cocoa >= 1.6.99],
+      [ecore-cocoa >= 1.7.99],
       [
        AC_DEFINE(HAVE_ELEMENTARY_COCOA, 1, [COCOA support for Elementary])
        have_elementary_cocoa="yes"
-       requirement_elm="ecore-cocoa >= 1.6.99 ${requirement_elm}"
+       requirement_elm="ecore-cocoa >= 1.7.99 ${requirement_elm}"
       ],
       [have_elementary_cocoa="no"]
    )
@@ -411,7 +411,7 @@ else
     have_elementary_cocoa="no"
 fi
 if test "x$want_elementary_cocoa" = "xyes" -a "x$have_elementary_cocoa" = "xno"; then
-    AC_MSG_ERROR([ecore-cocoa support requested, but not found by pkg-config.])
+    AC_MSG_ERROR([ecore-cocoa support requested, but ecore-cocoa was not found by pkg-config.])
 fi
 
 have_elementary_win32="no"
@@ -422,11 +422,11 @@ AC_ARG_ENABLE([ecore-win32],
 
 if test "x$want_elementary_win32" != "xno"; then
    PKG_CHECK_MODULES([ELEMENTARY_WIN32],
-      [ecore-win32 >= 1.6.99],
+      [ecore-win32 >= 1.7.99],
       [
        AC_DEFINE(HAVE_ELEMENTARY_WIN32, 1, [Windows XP support for Elementary])
        have_elementary_win32="yes"
-       requirement_elm="ecore-win32 >= 1.6.99 ${requirement_elm}"
+       requirement_elm="ecore-win32 >= 1.7.99 ${requirement_elm}"
       ],
       [have_elementary_win32="no"]
    )
@@ -434,7 +434,7 @@ else
     have_elementary_win32="no"
 fi
 if test "x$want_elementary_win32" = "xyes" -a "x$have_elementary_win32" = "xno"; then
-    AC_MSG_ERROR([ecore-win32 support requested, but not found by pkg-config.])
+    AC_MSG_ERROR([ecore-win32 support requested, but ecore-win32 was not found by pkg-config.])
 fi
 
 have_elementary_wince="no"
@@ -445,11 +445,11 @@ AC_ARG_ENABLE([ecore-wince],
 
 if test "x$want_elementary_wince" != "xno"; then
    PKG_CHECK_MODULES([ELEMENTARY_WINCE],
-      [ecore-wince >= 1.6.99],
+      [ecore-wince >= 1.7.99],
       [
        AC_DEFINE(HAVE_ELEMENTARY_WINCE, 1, [Windows CE support for Elementary])
        have_elementary_wince="yes"
-       requirement_elm="ecore-wince >= 1.6.99 ${requirement_elm}"
+       requirement_elm="ecore-wince >= 1.7.99 ${requirement_elm}"
       ],
       [have_elementary_wince="no"]
    )
@@ -457,7 +457,7 @@ else
     have_elementary_wince="no"
 fi
 if test "x$want_elementary_wince" = "xyes" -a "x$have_elementary_wince" = "xno"; then
-    AC_MSG_ERROR([ecore-wince support requested, but not found by pkg-config.])
+    AC_MSG_ERROR([ecore-wince support requested, but ecore-wince was not found by pkg-config.])
 fi
 
 have_elementary_wayland="no"
@@ -480,7 +480,7 @@ else
     have_elementary_wayland="no"
 fi
 if test "x$want_elementary_wayland" = "xyes" -a "x$have_elementary_wayland" = "xno"; then
-    AC_MSG_ERROR([ecore-wayland support requested, but not found by pkg-config.])
+    AC_MSG_ERROR([ecore-wayland support requested, but ecore-wayland was not found by pkg-config.])
 fi
 
 ELM_ELDBUS_DEF="#undef"
@@ -507,7 +507,7 @@ else
     have_elementary_eldbus="no"
 fi
 if test "x$want_elementary_eldbus" = "xyes" -a "x$have_elementary_eldbus" = "xno"; then
-    AC_MSG_ERROR([eldbus support requested, but no eldbus found by pkg-config.])
+    AC_MSG_ERROR([eldbus support requested, but eldbus was not found by pkg-config.])
 fi
 AC_SUBST(ELM_ELDBUS_DEF)
 
@@ -535,7 +535,7 @@ else
     have_elementary_elocation="no"
 fi
 if test "x$want_elementary_elocation" = "xyes" -a "x$have_elementary_elocation" = "xno"; then
-    AC_MSG_ERROR([elocation support requested, but no elocation found by pkg-config.])
+    AC_MSG_ERROR([elocation support requested, but elocation was not found by pkg-config.])
 fi
 AC_SUBST(ELM_ELOCATION_DEF)
 
@@ -549,15 +549,15 @@ AC_ARG_ENABLE([efreet],
 if test "x$want_elementary_efreet" != "xno"; then
     PKG_CHECK_MODULES([ELEMENTARY_EFREET],
        [
-        efreet >= 1.6.99
-        efreet-mime >= 1.6.99
-        efreet-trash >= 1.6.99
+        efreet >= 1.7.99
+        efreet-mime >= 1.7.99
+        efreet-trash >= 1.7.99
        ],
        [
         AC_DEFINE(HAVE_ELEMENTARY_EFREET, 1, [Efreet support for Elementary])
         have_elementary_efreet="yes"
         ELM_EFREET_DEF="#define"
-        requirement_elm="efreet >= 1.6.99 efreet-mime >= 1.6.99 efreet-trash >= 1.6.99 ${requirement_elm}"
+        requirement_elm="efreet >= 1.7.99 efreet-mime >= 1.7.99 efreet-trash >= 1.7.99 ${requirement_elm}"
        ],
        [have_elementary_efreet="no"]
     )
@@ -565,7 +565,7 @@ else
     have_elementary_efreet="no"
 fi
 if test "x$want_elementary_efreet" = "xyes" -a "x$have_elementary_efreet" = "xno"; then
-    AC_MSG_ERROR([Efreet support requested, but no efreet/efreet-mime/efreet-trash found by pkg-config.])
+    AC_MSG_ERROR([Efreet support requested, but efreet/efreet-mime/efreet-trash were not found by pkg-config.])
 fi
 AC_SUBST(ELM_EFREET_DEF)
 
@@ -593,7 +593,7 @@ else
     have_elementary_eweather="no"
 fi
 if test "x$want_elementary_eweather" = "xyes" -a "x$have_elementary_eweather" = "xno"; then
-    AC_MSG_ERROR([Eweather support requested, but no eweather found by pkg-config.])
+    AC_MSG_ERROR([Eweather support requested, but eweather was not found by pkg-config.])
 fi
 AC_SUBST(ELM_EWEATHER_DEF)
 
@@ -621,7 +621,7 @@ else
     have_elementary_emap="no"
 fi
 if test "x$want_elementary_emap" = "xyes" -a "x$have_elementary_emap" = "xno"; then
-    AC_MSG_ERROR([Emap support requested, but no emap found by pkg-config.])
+    AC_MSG_ERROR([Emap support requested, but emap was not found by pkg-config.])
 fi
 AC_SUBST(ELM_EMAP_DEF)
 
@@ -651,7 +651,7 @@ else
     have_elementary_ethumb="no"
 fi
 if test "x$want_elementary_ethumb" = "xyes" -a "x$have_elementary_ethumb" = "xno"; then
-    AC_MSG_ERROR([Ethumb support requested, but no ethumb found by pkg-config.])
+    AC_MSG_ERROR([Ethumb support requested, but ethumb was not found by pkg-config.])
 fi
 AC_SUBST(ELM_ETHUMB_DEF)
 
@@ -853,7 +853,7 @@ echo "    SDL....................: ${have_elementary_sdl}"
 echo "    Cocoa..................: ${have_elementary_cocoa}"
 echo "    Windows XP.............: ${have_elementary_win32}"
 echo "    Windows CE.............: ${have_elementary_wince}"
-echo "    Wayland...............:. ${have_elementary_wayland}"
+echo "    Wayland................: ${have_elementary_wayland}"
 echo
 echo "  Features:"
 echo "    Ecore_IMF..............: ${have_ecore_imf}"
