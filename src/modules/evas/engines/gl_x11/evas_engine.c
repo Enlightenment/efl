@@ -82,7 +82,6 @@ void     (*glsym_eglDestroyImage)              (EGLDisplay a, void *b) = NULL;
 void     (*glsym_glEGLImageTargetTexture2DOES) (int a, void *b)  = NULL;
 void          *(*glsym_eglMapImageSEC)         (void *a, void *b, int c, int d) = NULL;
 unsigned int   (*glsym_eglUnmapImageSEC)       (void *a, void *b, int c) = NULL;
-const char    *(*glsym_eglQueryString)         (EGLDisplay a, int name) = NULL;
 void           (*glsym_eglSwapBuffersRegion)   (EGLDisplay a, void *b, EGLint c, const EGLint *d) = NULL;
 
 #else
@@ -103,7 +102,6 @@ void     (*glsym_glXDestroyPixmap)   (Display *a, XID b) = NULL;
 void     (*glsym_glXQueryDrawable)   (Display *a, XID b, int c, unsigned int *d) = NULL;
 int      (*glsym_glXSwapIntervalSGI) (int a) = NULL;
 void     (*glsym_glXSwapIntervalEXT) (Display *s, GLXDrawable b, int c) = NULL;
-const char *(*glsym_glXQueryExtensionsString) (Display *a, int screen) = NULL;
 void     (*glsym_glXReleaseBuffersMESA)   (Display *a, XID b) = NULL;
 
 #endif
@@ -537,11 +535,7 @@ evgl_eng_string_get(void *data)
      }
 
 #ifdef GL_GLES
-   // EGL Extensions
-   if (glsym_eglQueryString)
-      return glsym_eglQueryString(re->win->egl_disp, EGL_EXTENSIONS);
-   else
-      return "";
+   return eglQueryString(re->win->egl_disp, EGL_EXTENSIONS);
 #else
    return glXQueryExtensionsString(re->info->info.display,
                                    re->info->info.screen);
@@ -635,8 +629,6 @@ gl_symbols(void)
    FINDSYM(glsym_eglMapImageSEC, "eglMapImageSEC", glsym_func_void_ptr);
    FINDSYM(glsym_eglUnmapImageSEC, "eglUnmapImageSEC", glsym_func_uint);
 
-   FINDSYM(glsym_eglQueryString, "eglQueryString", glsym_func_const_char_ptr);
-
    FINDSYM(glsym_eglSwapBuffersRegion, "eglSwapBuffersRegionSEC", glsym_func_void_ptr);
    FINDSYM(glsym_eglSwapBuffersRegion, "eglSwapBuffersRegion", glsym_func_void_ptr);
 
@@ -677,10 +669,6 @@ gl_symbols(void)
    FINDSYM(glsym_glXQueryDrawable, "glXQueryDrawableARB", glsym_func_void);
    FINDSYM(glsym_glXQueryDrawable, "glXQueryDrawable", glsym_func_void);
 
-   FINDSYM(glsym_glXQueryExtensionsString, "glXQueryExtensionsStringEXT", glsym_func_const_char_ptr);
-   FINDSYM(glsym_glXQueryExtensionsString, "glXQueryExtensionsStringARB", glsym_func_const_char_ptr);
-   FINDSYM(glsym_glXQueryExtensionsString, "glXQueryExtensionsString", glsym_func_const_char_ptr);
-
    FINDSYM(glsym_glXSwapIntervalSGI, "glXSwapIntervalMESA", glsym_func_int);
    FINDSYM(glsym_glXSwapIntervalSGI, "glXSwapIntervalSGI", glsym_func_int);
 
@@ -698,8 +686,7 @@ gl_extn_veto(Render_Engine *re)
 {
    const char *str = NULL;
 #ifdef GL_GLES
-   if (glsym_eglQueryString)
-     str = glsym_eglQueryString(re->win->egl_disp, EGL_EXTENSIONS);
+   str = eglQueryString(re->win->egl_disp, EGL_EXTENSIONS);
    if (str)
      {
         if (getenv("EVAS_GL_INFO"))
@@ -716,9 +703,8 @@ gl_extn_veto(Render_Engine *re)
         extn_have_buffer_age = 0;
      }
 #else
-   if (glsym_glXQueryExtensionsString)
-     str = glsym_glXQueryExtensionsString(re->info->info.display,
-                                          re->info->info.screen);
+   str = glXQueryExtensionsString(re->info->info.display,
+                                  re->info->info.screen);
    if (str)
      {
         if (getenv("EVAS_GL_INFO"))

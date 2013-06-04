@@ -37,7 +37,6 @@ typedef unsigned int  (*secsym_func_uint) ();
 typedef void         *(*secsym_func_void_ptr) ();
 
 static _eng_fn  (*glsym_eglGetProcAddress)            (const char *a) = NULL;
-static const char *(*glsym_eglQueryString)             (void *a, int name) = NULL;
 
 void          *(*secsym_eglCreateImage)               (void *a, void *b, GLenum c, void *d, const int *e) = NULL;
 unsigned int   (*secsym_eglDestroyImage)              (void *a, void *b) = NULL;
@@ -50,7 +49,6 @@ typedef void (*_eng_fn) (void);
 
 typedef _eng_fn (*glsym_func_eng_fn) ();
 static _eng_fn  (*glsym_glXGetProcAddress)  (const char *a) = NULL;
-static const char *(*glsym_glXQueryExtensionsString) (void *a, int screen) = NULL;
 #endif
 
 static int dbgflushnum = -1;
@@ -82,8 +80,6 @@ gl_symbols(void)
    FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddressEXT", glsym_func_eng_fn);
    FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddressARB", glsym_func_eng_fn);
    FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddress", glsym_func_eng_fn);
-   
-   FINDSYM(glsym_eglQueryString, "eglQueryString", glsym_func_const_char_ptr);
 #else
 #define FINDSYM(dst, sym, typ) \
    if (glsym_glXGetProcAddress) { \
@@ -94,8 +90,6 @@ gl_symbols(void)
    FINDSYM(glsym_glXGetProcAddress, "glXGetProcAddressEXT", glsym_func_eng_fn);
    FINDSYM(glsym_glXGetProcAddress, "glXGetProcAddressARB", glsym_func_eng_fn);
    FINDSYM(glsym_glXGetProcAddress, "glXGetProcAddress", glsym_func_eng_fn);
-   
-   FINDSYM(glsym_glXQueryExtensionsString, "glXQueryExtensionsString", glsym_func_const_char_ptr);
 #endif
 #define FINDSYM2(dst, sym, typ) if (!dst) dst = (typ)dlsym(RTLD_DEFAULT, sym)
 #define FALLBAK(dst, typ) if (!dst) dst = (typ)sym_missing
