@@ -62,8 +62,10 @@ _elm_flipselector_smart_sizing_eval(Eo *obj, void *_pd, va_list *list EINA_UNUSE
    if (sd->sentinel)
      {
         const char *label = elm_object_item_text_get(DATA_GET(sd->sentinel));
+        const char *src = elm_layout_text_get(obj, "elm.top");
 
-        tmp = strdup(elm_layout_text_get(obj, "elm.top"));
+        if (src)
+            tmp = strdup(src);
         elm_layout_text_set(obj, "elm.top", label);
      }
 
