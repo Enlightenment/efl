@@ -135,6 +135,31 @@ _tex_2d(int intfmt, int w, int h, int fmt, int type)
 #endif   
 }
 
+static Evas_GL_Texture *
+evas_gl_common_texture_alloc(Evas_Engine_GL_Context *gc,
+			     Evas_Coord w, Evas_Coord h,
+                             Eina_Bool alpha)
+{
+   Evas_GL_Texture *tex;
+
+   tex = calloc(1, sizeof(Evas_GL_Texture));
+   if (!tex) return NULL;
+
+   tex->gc = gc;
+   tex->references = 1;
+   tex->alpha = alpha;
+   tex->w = w;
+   tex->h = h;
+
+   return tex;
+}
+
+static void
+evas_gl_common_texture_light_free(Evas_GL_Texture *tex)
+{
+   free(tex);
+}
+
 static void
 _tex_sub_2d(int x, int y, int w, int h, int fmt, int type, const void *pix)
 {
@@ -296,11 +321,8 @@ evas_gl_common_texture_new(Evas_Engine_GL_Context *gc, RGBA_Image *im)
    Eina_List *l_after = NULL;
    int u = 0, v = 0;
 
-   tex = calloc(1, sizeof(Evas_GL_Texture));
+   tex = evas_gl_common_texture_alloc(gc, im->cache_entry.w, im->cache_entry.h, im->cache_entry.flags.alpha);
    if (!tex) return NULL;
-
-   tex->gc = gc;
-   tex->references = 1;
 
 #define TEX_HREP 1
 #define TEX_VREP 1
@@ -317,7 +339,6 @@ evas_gl_common_texture_new(Evas_Engine_GL_Context *gc, RGBA_Image *im)
                                     im->cache_entry.h + TEX_VREP, rgba_ifmt, rgba_fmt,
                                     &u, &v, &l_after,
                                     gc->shared->info.tune.atlas.max_alloc_size);
-        tex->alpha = 1;
      }
    else
      {
@@ -341,13 +362,11 @@ evas_gl_common_texture_new(Evas_Engine_GL_Context *gc, RGBA_Image *im)
      }
    if (!tex->pt)
      {
-        free(tex);
+        evas_gl_common_texture_light_free(tex);
         return NULL;
      }
    tex->x = u + 1;
    tex->y = v;
-   tex->w = im->cache_entry.w;
-   tex->h = im->cache_entry.h;
    if (l_after)
      tex->pt->allocations =
      eina_list_append_relative_list(tex->pt->allocations, tex, l_after);
@@ -721,12 +740,9 @@ evas_gl_common_texture_native_new(Evas_Engine_GL_Context *gc, unsigned int w, un
 {
    Evas_GL_Texture *tex;
 
-   tex = calloc(1, sizeof(Evas_GL_Texture));
+   tex = evas_gl_common_texture_alloc(gc, w, h, alpha);
    if (!tex) return NULL;
 
-   tex->gc = gc;
-   tex->references = 1;
-   tex->alpha = alpha;
    if (alpha)
      {
         if (gc->shared->info.bgra)
@@ -743,13 +759,9 @@ evas_gl_common_texture_native_new(Evas_Engine_GL_Context *gc, unsigned int w, un
      }
    if (!tex->pt)
      {
-        free(tex);
+        evas_gl_common_texture_light_free(tex);
         return NULL;
      }
-   tex->x = 0;
-   tex->y = 0;
-   tex->w = w;
-   tex->h = h;
    tex->pt->references++;
    return tex;
 }
@@ -759,12 +771,9 @@ evas_gl_common_texture_render_new(Evas_Engine_GL_Context *gc, unsigned int w, un
 {
    Evas_GL_Texture *tex;
 
-   tex = calloc(1, sizeof(Evas_GL_Texture));
+   tex = evas_gl_common_texture_alloc(gc, w, h, alpha);
    if (!tex) return NULL;
 
-   tex->gc = gc;
-   tex->references = 1;
-   tex->alpha = alpha;
    if (alpha)
      {
         if (gc->shared->info.bgra)
@@ -781,13 +790,9 @@ evas_gl_common_texture_render_new(Evas_Engine_GL_Context *gc, unsigned int w, un
      }
    if (!tex->pt)
      {
-        free(tex);
+        evas_gl_common_texture_light_free(tex);
         return NULL;
      }
-   tex->x = 0;
-   tex->y = 0;
-   tex->w = w;
-   tex->h = h;
    tex->pt->references++;
    return tex;
 }
@@ -797,16 +802,9 @@ evas_gl_common_texture_dynamic_new(Evas_Engine_GL_Context *gc, Evas_GL_Image *im
 {
    Evas_GL_Texture *tex;
 
-   tex = calloc(1, sizeof(Evas_GL_Texture));
+   tex = evas_gl_common_texture_alloc(gc, im->w, im->h, im->alpha);
    if (!tex) return NULL;
 
-   tex->gc = gc;
-   tex->references = 1;
-   tex->alpha = im->alpha;
-   tex->x = 0;
-   tex->y = 0;
-   tex->w = im->w;
-   tex->h = im->h;
    if (tex->alpha)
      {
         if (gc->shared->info.bgra)
@@ -823,7 +821,7 @@ evas_gl_common_texture_dynamic_new(Evas_Engine_GL_Context *gc, Evas_GL_Image *im
      }
    if (!tex->pt)
      {
-        free(tex);
+        evas_gl_common_texture_light_free(tex);
         return NULL;
      }
    tex->pt->references++;
@@ -1004,7 +1002,8 @@ evas_gl_common_texture_free(Evas_GL_Texture *tex)
              pt_unref(tex->ptuv);
           }
      }
-   free(tex);
+
+   evas_gl_common_texture_light_free(tex);
 }
 
 Evas_GL_Texture *
@@ -1015,23 +1014,19 @@ evas_gl_common_texture_alpha_new(Evas_Engine_GL_Context *gc, DATA8 *pixels,
    Eina_List *l_after = NULL;
    int u = 0, v = 0;
 
-   tex = calloc(1, sizeof(Evas_GL_Texture));
+   tex = evas_gl_common_texture_alloc(gc, w, h, EINA_FALSE);
    if (!tex) return NULL;
 
-   tex->gc = gc;
-   tex->references = 1;
    tex->pt = _pool_tex_find(gc, w + 3, fh, alpha_ifmt, alpha_fmt, &u, &v,
                             &l_after,
                             gc->shared->info.tune.atlas.max_alloc_alpha_size);
    if (!tex->pt)
      {
-        free(tex);
+        evas_gl_common_texture_light_free(tex);
         return NULL;
      }
    tex->x = u + 1;
    tex->y = v;
-   tex->w = w;
-   tex->h = h;
    if (l_after)
      tex->pt->allocations =
      eina_list_append_relative_list(tex->pt->allocations, tex, l_after);
@@ -1070,15 +1065,13 @@ evas_gl_common_texture_yuv_new(Evas_Engine_GL_Context *gc, DATA8 **rows, unsigne
 {
    Evas_GL_Texture *tex;
 
-   tex = calloc(1, sizeof(Evas_GL_Texture));
+   tex = evas_gl_common_texture_alloc(gc, w, h, EINA_FALSE);
    if (!tex) return NULL;
 
-   tex->gc = gc;
-   tex->references = 1;
    tex->ptu = _pool_tex_new(gc, w / 2 + 1, h / 2 + 1, lum_ifmt, lum_fmt);
    if (!tex->ptu)
      {
-        free(tex);
+        evas_gl_common_texture_light_free(tex);
         return NULL;
      }
    gc->shared->tex.whole = eina_list_prepend(gc->shared->tex.whole, tex->ptu);
@@ -1090,7 +1083,7 @@ evas_gl_common_texture_yuv_new(Evas_Engine_GL_Context *gc, DATA8 **rows, unsigne
      {
         pt_unref(tex->pt);
         pt_unref(tex->ptu);
-        free(tex);
+        evas_gl_common_texture_light_free(tex);
         return NULL;
      }
    gc->shared->tex.whole = eina_list_prepend(gc->shared->tex.whole, tex->ptv);
@@ -1100,17 +1093,13 @@ evas_gl_common_texture_yuv_new(Evas_Engine_GL_Context *gc, DATA8 **rows, unsigne
    tex->pt = _pool_tex_new(gc, tex->ptu->w * 2, tex->ptu->h * 2, lum_ifmt, lum_fmt);
    if (!tex->pt)
      {
-        free(tex);
+        evas_gl_common_texture_light_free(tex);
         return NULL;
      }
    gc->shared->tex.whole = eina_list_prepend(gc->shared->tex.whole, tex->pt);
    tex->pt->slot = -1;
    tex->pt->fslot = -1;
    tex->pt->whole = 1;
-   tex->x = 0;
-   tex->y = 0;
-   tex->w = w;
-   tex->h = h;
    tex->pt->allocations = eina_list_prepend(tex->pt->allocations, tex);
    tex->ptu->allocations = eina_list_prepend(tex->ptu->allocations, tex);
    tex->ptv->allocations = eina_list_prepend(tex->ptv->allocations, tex);
@@ -1253,12 +1242,10 @@ _evas_gl_common_texture_y2uv_new(Evas_Engine_GL_Context *gc,
        yw, yh,
        pt[0]->w, pt[0]->h,
        ptuv[0]->w, ptuv[0]->h);
-   tex = calloc(1, sizeof(Evas_GL_Texture));
+   tex = evas_gl_common_texture_alloc(gc, yw, yh, EINA_FALSE);
    if (!tex)
      goto on_error;
 
-   tex->gc = gc;
-   tex->references = 1;
    tex->pt = pt[0];
    tex->ptuv = ptuv[0];
    tex->dyn = dynamic;
@@ -1268,10 +1255,6 @@ _evas_gl_common_texture_y2uv_new(Evas_Engine_GL_Context *gc,
    pt_link(gc, tex, ptuv[0]);
    pt_link(gc, tex, ptuv[1]);
 
-   tex->x = 0;
-   tex->y = 0;
-   tex->w = yw;
-   tex->h = yh;
    tex->double_buffer.source = 0;
    memcpy(tex->double_buffer.pt, pt, sizeof (Evas_GL_Texture_Pool *) * 2);
    memcpy(tex->double_buffer.ptuv, ptuv, sizeof (Evas_GL_Texture_Pool *) * 2);
