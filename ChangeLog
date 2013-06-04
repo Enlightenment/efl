@@ -1,6 +1,7 @@
 2013-06-04  Cedric Bail
 
 	* Evas: correctly detect if loader support asynchronous preloading.
+	* Eina: add eina_file_dup.
 
 2013-06-03  Ederson Desouza
 

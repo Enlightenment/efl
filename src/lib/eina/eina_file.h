@@ -460,6 +460,18 @@ EAPI Eina_Bool eina_file_copy(const char *src, const char *dst, Eina_File_Copy_F
 EAPI Eina_File *eina_file_open(const char *name, Eina_Bool shared) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
 
 /**
+ * @brief Dup a read-only handler of a previously open file.
+ *
+ * @param file To duplicate a reference to
+ * @return Eina_File handle to the duplicated file
+ *
+ * Opens a file in read-only mode.
+ *
+ * @since 1.8
+ */
+EAPI Eina_File * eina_file_dup(Eina_File *file);
+
+/**
  * @brief Unref file handler.
  *
  * @param file File handler to unref.

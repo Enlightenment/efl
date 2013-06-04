@@ -152,6 +152,13 @@ eina_file_path_sanitize(const char *path)
    return _eina_file_escape(eina_file_cleanup(result), len);
 }
 
+EAPI Eina_File *
+eina_file_dup(Eina_File *file)
+{
+   if (file) file->refcount++;
+   return file;
+}
+
 EAPI void
 eina_file_close(Eina_File *file)
 {
