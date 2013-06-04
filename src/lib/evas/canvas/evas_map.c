@@ -1294,8 +1294,8 @@ evas_object_map_update(Evas_Object *eo_obj,
         pt->x = (lround(p->x) + x) * FP1;
         pt->y = (lround(p->y) + y) * FP1;
         pt->z = (lround(p->z)    ) * FP1;
-        pt->fx = p->px;
-        pt->fy = p->py;
+        pt->fx = p->px + obj->layer->evas->framespace.x;
+        pt->fy = p->py + obj->layer->evas->framespace.y;
         pt->fz = p->z;
         if ((uvw == 0) || (imagew == 0)) pt->u = 0;
         else pt->u = ((lround(p->u) * imagew) / uvw) * FP1;
