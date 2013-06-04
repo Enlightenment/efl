@@ -131,7 +131,6 @@ void (*glsym_eglDestroyImage) (EGLDisplay a, void *b) = NULL;
 void (*glsym_glEGLImageTargetTexture2DOES) (int a, void *b)  = NULL;
 void *(*glsym_eglMapImageSEC) (void *a, void *b, int c, int d) = NULL;
 unsigned int (*glsym_eglUnmapImageSEC) (void *a, void *b, int c) = NULL;
-const char *(*glsym_eglQueryString) (EGLDisplay a, int name) = NULL;
 unsigned int (*glsym_eglSwapBuffersRegion) (EGLDisplay a, EGLSurface *b, EGLint c, const EGLint *d) = NULL;
 
 #endif
@@ -181,8 +180,6 @@ evgl_symbols(void)
    FINDSYM(glsym_eglMapImageSEC, "eglMapImageSEC", glsym_func_void_ptr);
    FINDSYM(glsym_eglUnmapImageSEC, "eglUnmapImageSEC", glsym_func_uint);
 
-   FINDSYM(glsym_eglQueryString, "eglQueryString", glsym_func_const_char_ptr);
-
    FINDSYM(glsym_eglSwapBuffersRegion, 
            "eglSwapBuffersRegionSEC", glsym_func_uint);
    FINDSYM(glsym_eglSwapBuffersRegion, 
@@ -198,8 +195,7 @@ evgl_extn_veto(Render_Engine *re)
 
    if ((!re) || (!re->win)) return;
 
-   if (glsym_eglQueryString)
-     str = glsym_eglQueryString(re->win->egl_disp, EGL_EXTENSIONS);
+   str = eglQueryString(re->win->egl_disp, EGL_EXTENSIONS);
    if (str)
      {
         if (getenv("EVAS_GL_INFO")) printf("EGL EXTENSION:\n%s\n", str);
@@ -418,10 +414,7 @@ evgl_eng_string_get(void *data)
 
    EVGLINIT(re, NULL);
 
-   if (glsym_eglQueryString)
-     return glsym_eglQueryString(re->win->egl_disp, EGL_EXTENSIONS);
-
-   return "";
+   return eglQueryString(re->win->egl_disp, EGL_EXTENSIONS);
 }
 
 static void *
