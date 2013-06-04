@@ -1450,7 +1450,7 @@ eet_mmap(Eina_File *file)
    INIT_FILE(ef);
    ef->ed = NULL;
    ef->key = NULL;
-   ef->readfp = file;
+   ef->readfp = eina_file_dup(file);
    ef->path = eina_stringshare_add(path);
    ef->magic = EET_MAGIC_FILE;
    ef->references = 1;
@@ -1462,7 +1462,7 @@ eet_mmap(Eina_File *file)
    ef->data_size = 0;
    ef->sha1 = NULL;
    ef->sha1_length = 0;
-   ef->readfp_owned = EINA_FALSE;
+   ef->readfp_owned = EINA_TRUE;
 
    ef->data_size = eina_file_size_get(file);
    ef->data = eina_file_map_all(file, EINA_FILE_SEQUENTIAL);
