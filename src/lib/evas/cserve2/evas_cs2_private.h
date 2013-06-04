@@ -26,7 +26,7 @@ EAPI int evas_cserve2_use_get(void);
 Eina_Bool evas_cserve2_image_load(Image_Entry *ie, const char *file, const char *key, Evas_Image_Load_Opts *lopt);
 int evas_cserve2_image_load_wait(Image_Entry *ie);
 Eina_Bool evas_cserve2_image_data_load(Image_Entry *ie);
-void evas_cserve2_image_load_data_wait(Image_Entry *ie);
+int evas_cserve2_image_load_data_wait(Image_Entry *ie);
 void evas_cserve2_image_free(Image_Entry *ie);
 void evas_cserve2_image_unload(Image_Entry *ie);
 Eina_Bool evas_cserve2_image_preload(Image_Entry *ie, void (*preloaded_cb)(void *im, Eina_Bool success));
@@ -38,6 +38,6 @@ Font_Entry *evas_cserve2_font_load(const char *source, const char *name, int siz
 EAPI int evas_cserve2_font_load_wait(Font_Entry *fe);
 void evas_cserve2_font_free(Font_Entry *fe);
 Eina_Bool evas_cserve2_font_glyph_request(Font_Entry *fe, unsigned int idx, Font_Hint_Flags hints);
-Eina_Bool evas_cserve2_font_glyph_used(Font_Entry *fe, unsigned int idx, Font_Hint_Flags hints);
+Eina_Bool evas_cserve2_font_glyph_used(Font_Entry *fe, unsigned int idx, Font_Hint_Flags hints) EINA_WARN_UNUSED_RESULT;
 RGBA_Font_Glyph_Out *evas_cserve2_font_glyph_bitmap_get(Font_Entry *fe, unsigned int idx, Font_Hint_Flags hints);
 #endif

@@ -945,11 +945,12 @@ evas_cache2_image_load_data(Image_Entry *ie)
        ie->file, ie->key ? ie->key : "");
    if (evas_cserve2_image_data_load(ie))
      {
-        evas_cserve2_image_load_data_wait(ie);
+        error = evas_cserve2_image_load_data_wait(ie);
+
         RGBA_Image *im = (RGBA_Image *)ie;
         DBG("try cserve2 image data '%s' '%s' loaded!",
             ie->file, ie->key ? ie->key : "");
-        if (im->image.data)
+        if ((error == CSERVE2_NONE) && im->image.data)
           {
              error = EVAS_LOAD_ERROR_NONE;
           }

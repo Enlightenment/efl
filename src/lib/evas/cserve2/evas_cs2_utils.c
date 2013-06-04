@@ -74,6 +74,8 @@ fash_gl_find(Fash_Glyph2 *fash, int item)
 {
    int grp, maj, min;
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(fash, NULL);
+
    // 24bits for unicode - v6 up to E01EF (chrs) & 10FFFD for private use (plane 16)
    grp = (item >> 16) & 0xff;
    maj = (item >> 8) & 0xff;
@@ -87,6 +89,8 @@ void
 fash_gl_add(Fash_Glyph2 *fash, int item, void *glyph)
 {
    int grp, maj, min;
+
+   EINA_SAFETY_ON_NULL_RETURN(fash);
 
    // 24bits for unicode - v6 up to E01EF (chrs) & 10FFFD for private use (plane 16)
    grp = (item >> 16) & 0xff;
@@ -107,6 +111,8 @@ fash_gl_del(Fash_Glyph2 *fash, int item)
    int grp, maj, min;
    void *data;
 
+   EINA_SAFETY_ON_NULL_RETURN(fash);
+
    // 24bits for unicode - v6 up to E01EF (chrs) & 10FFFD for private use (plane 16)
    grp = (item >> 16) & 0xff;
    maj = (item >> 8) & 0xff;
@@ -116,6 +122,7 @@ fash_gl_del(Fash_Glyph2 *fash, int item)
    if (!fash->bucket[grp]->bucket[maj]->item[min]) return;
 
    data = fash->bucket[grp]->bucket[maj]->item[min];
-   fash->free_cb(data);
+   if (fash->free_cb)
+     fash->free_cb(data);
    fash->bucket[grp]->bucket[maj]->item[min] = NULL;
 }
