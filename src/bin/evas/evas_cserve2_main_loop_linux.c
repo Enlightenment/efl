@@ -513,7 +513,7 @@ cserve2_fd_watch_add(int fd, Fd_Flags flags, Fd_Watch_Cb cb, const void *data)
    ev.data.ptr = w_data;
 
    err = epoll_ctl(epoll_fd, EPOLL_CTL_ADD, fd, &ev);
-   if (!err < 0)
+   if (err < 0)
      {
         ERR("Could not create epoll watch for fd %d.", fd);
         eina_hash_del(watch_list, &fd, NULL);

@@ -31,7 +31,7 @@ typedef struct _Slave_Worker Slave_Worker;
  * of the request types on it is the order in which these requests will
  * be processed.
  */
-static struct _Request_Match
+static const struct _Request_Match
 {
    Slave_Request_Type rtype;
    Slave_Type stype;
@@ -45,7 +45,7 @@ static struct _Request_Match
    { CSERVE2_REQ_IMAGE_SPEC_LOAD, SLAVE_IMAGE, IMAGE_LOAD, 1 },
    { CSERVE2_REQ_FONT_LOAD, SLAVE_FONT, FONT_LOAD, 0 },
    { CSERVE2_REQ_FONT_GLYPHS_LOAD, SLAVE_FONT, FONT_GLYPHS_LOAD, 0 },
-   { CSERVE2_REQ_LAST, 0, 0, 0 }
+   { CSERVE2_REQ_LAST, SLAVE_NONE, ERROR, 0 }
 };
 
 static Slave *_create_image_slave(void *data);
