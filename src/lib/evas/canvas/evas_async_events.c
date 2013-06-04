@@ -242,7 +242,7 @@ _evas_async_events_fd_blocking_set(Eina_Bool blocking)
 #endif
 }
 
-int
+EAPI int
 evas_async_events_process_blocking(void)
 {
    int ret;
