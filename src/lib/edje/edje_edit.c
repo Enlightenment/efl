@@ -3038,12 +3038,12 @@ edje_edit_state_add(Evas_Object *obj, const char *part, const char *name, double
    pd->map.rot.x = FROM_DOUBLE(0.0);
    pd->map.rot.y = FROM_DOUBLE(0.0);
    pd->map.rot.z = FROM_DOUBLE(0.0);
-   pd->map.on = 0;
-   pd->map.smooth = 1;
-   pd->map.alpha = 1;
-   pd->map.backcull = 0;
-   pd->map.persp_on = 0;
-   pd->persp.zplane = 0;
+   pd->map.on = EINA_FALSE;
+   pd->map.smooth = EINA_TRUE;
+   pd->map.alpha = EINA_TRUE;
+   pd->map.backcull = EINA_FALSE;
+   pd->map.persp_on = EINA_FALSE;
+   pd->persp.zplane = EINA_FALSE;
    pd->persp.focal = 1000;
 
    if (rp->part->type == EDJE_PART_TYPE_TEXT

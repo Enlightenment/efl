@@ -3636,34 +3636,34 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                }
 
              // handle smooth
-             if (chosen_desc->map.smooth) evas_map_smooth_set(map, 1);
-             else evas_map_smooth_set(map, 0);
+             if (chosen_desc->map.smooth) evas_map_smooth_set(map, EINA_TRUE);
+             else evas_map_smooth_set(map, EINA_FALSE);
              // handle alpha
-             if (chosen_desc->map.alpha) evas_map_alpha_set(map, 1);
-             else evas_map_alpha_set(map, 0);
+             if (chosen_desc->map.alpha) evas_map_alpha_set(map, EINA_TRUE);
+             else evas_map_alpha_set(map, EINA_FALSE);
 
 
              if (ep->nested_smart)
                {  /* Apply map to smart obj holding nested parts */
-		  eo_do(ep->nested_smart,
-			evas_obj_map_set(map),
-			evas_obj_map_enable_set(1));
+                  eo_do(ep->nested_smart,
+                        evas_obj_map_set(map),
+                        evas_obj_map_enable_set(EINA_TRUE));
                }
              else
                {
                   if (mo)
                     eo_do(mo,
                           evas_obj_map_set(map),
-                          evas_obj_map_enable_set(1));
+                          evas_obj_map_enable_set(EINA_TRUE));
                }
           }
         else
           {
              if (ep->nested_smart)
                {  /* Cancel map of smart obj holding nested parts */
-		  eo_do(ep->nested_smart,
-			evas_obj_map_enable_set(0),
-			evas_obj_map_set(NULL));
+                  eo_do(ep->nested_smart,
+                        evas_obj_map_enable_set(EINA_FALSE),
+                        evas_obj_map_set(NULL));
                }
              else
                {

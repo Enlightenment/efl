@@ -1036,11 +1036,11 @@ struct _Edje_Part_Description_Common
          int id_center;
          FLOAT_T x, y, z;
       } rot;
-      unsigned char backcull;
-      unsigned char on;
-      unsigned char persp_on;
-      unsigned char smooth;
-      unsigned char alpha;
+      Eina_Bool backcull;
+      Eina_Bool on;
+      Eina_Bool persp_on;
+      Eina_Bool smooth;
+      Eina_Bool alpha;
    } map;
 
    struct {
