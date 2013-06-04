@@ -1823,9 +1823,22 @@ st_data_file(void)
    fd = open(filename, O_RDONLY | O_BINARY, S_IRUSR | S_IWUSR);
    if (fd < 0)
      {
-        ERR("%s:%i when opening file \"%s\": \"%s\"",
-	    file_in, line, filename, strerror(errno));
-        exit(-1);
+        char path[PATH_MAX], *dir;
+        Eina_List *l;
+        EINA_LIST_FOREACH(data_dirs, l, dir)
+          {
+             snprintf(path, sizeof(path), "%s/%s", dir, filename);
+             fd = open(path, O_RDONLY | O_BINARY, S_IRUSR | S_IWUSR);
+             if (fd >= 0)
+                break;
+          }
+
+        if (fd < 0)
+          {
+             ERR("%s:%i when opening file \"%s\": \"%s\"",
+                 file_in, line, filename, strerror(errno));
+             exit(-1);
+          }
      }
 
    if (fstat(fd, &buf))

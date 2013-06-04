@@ -15,6 +15,7 @@ Eina_Prefix  *pfx = NULL;
 Eina_List *snd_dirs = NULL;
 Eina_List *img_dirs = NULL;
 Eina_List *fnt_dirs = NULL;
+Eina_List *data_dirs = NULL;
 Eina_List *defines = NULL;
 char      *file_in = NULL;
 char      *tmp_dir = NULL;
@@ -87,6 +88,7 @@ main_help(void)
       "-id image/directory      Add a directory to look in for relative path images\n"
       "-fd font/directory       Add a directory to look in for relative path fonts\n"
       "-sd sound/directory      Add a directory to look in for relative path sounds samples\n"
+      "-dd data/directory       Add a directory to look in for relative path data.file entries\n"
       "-td temp/directory       Directory to store temporary files\n"
       "-v                       Verbose output\n"
       "-no-lossy                Do NOT allow images to be lossy\n"
@@ -178,6 +180,11 @@ main(int argc, char **argv)
           {
              i++;
              snd_dirs = eina_list_append(snd_dirs, argv[i]);
+          }
+        else if ((!strcmp(argv[i], "-dd") || !strcmp(argv[i], "--data_dir")) && (i < (argc - 1)))
+          {
+             i++;
+             data_dirs = eina_list_append(data_dirs, argv[i]);
           }
 	else if ((!strcmp(argv[i], "-td") || !strcmp(argv[i], "--tmp_dir")) && (i < (argc - 1)))
 	  {
