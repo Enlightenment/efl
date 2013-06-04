@@ -6,8 +6,10 @@ Changes since 1.7.0:
 --------------------
 
 Additions:
-    * Add multiple font draws support to engines
-    * eina :
+    * Add --with-api=XXX (both|legacy|eo)
+    * Evil:
+     - Add mkdtemp.
+    * eina:
      - Add DOCTYPE children parsing in eina_simple_xml
      - Add eina_barrier thread API
      - Add eina_tmpstr_add(), eina_tmpstr_del(), eina_tmpstr_add_length() and
@@ -26,7 +28,25 @@ Additions:
      - Add eina_inlist_first
      - Add eina_inlist_last
      - Added eina_str_convert_len() to work around broken eina_str_convert()
-    * Add Cserve2 scalecache support
+    * eet:
+     - Add eet_mmap()
+     - Add eet_data_descriptor_name_get()
+    * eo:
+     - Add generic efl object infrastructure
+     - Add debugging facility
+     - Make eoid use mmaped tables from anonymous memory for safety.
+    * evas:
+     - Add WebP image loader and saver modules.
+     - Add ellipsis support in Evas_Object_Text.
+     - Add EVAS_GL_LINE_OFFSET_HACK_DISABLE to turn off line shift correction by evas.
+     - Add EVAS_GL_DIRECT_MEM_OPT to enable on-demand fallback memory allocation policy for EvasGL direct rendering.
+     - Add engine specific alpha_get.
+     - Add multiple output support API.
+     - Add buffer age support to gl for automatic partial redraws.
+     - Add GLX_MESA_release_buffers suppport to release unused buffers.
+     - Add multiple font draws support to engines
+     - Add Cserve2 scalecache support
+     - Add evas_object_image_source_clip_set()/get()
     * ecore_x:
      - Add window profile support.
        ECORE_X_ATOM_E_WINDOW_PROFILE_SUPPORTED
@@ -47,6 +67,12 @@ Additions:
        ecore_x_dnd_self_begin()
        ecore_x_dnd_self_drop()
        support for text/x-moz-url DND operations
+     - Add atom related with indicator type. 
+     - Add manual render code before deiconify
+     - Add accessibility support.
+       ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_BACK
+       ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_SCROLL
+       ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_MOUSE
     * ecore_wayland:
      - Store global wayland interfaces in a globals list so wayland programs
        can bind to other non-standard wayland protocol extensions.
@@ -63,35 +89,28 @@ Additions:
      - ecore_evas_window_available_profiles_set()
      - ecore_evas_window_available_profiles_get()
      - ecore_evas_sub_ecore_evas_list_get()
-    * ecore_evas_extn:
-     - Add window profile support.
-    * ecore_evas_buffer:
-     - Add window profile support.
-    * ecore_getopt: add ECORE_GETOPT_ACTION_BREAK
-    * evas:
-     - Add WebP image loader and saver modules.
-     - Add ellipsis support in Evas_Object_Text.
-     - Add EVAS_GL_LINE_OFFSET_HACK_DISABLE to turn off line shift correction by evas.
-     - Add EVAS_GL_DIRECT_MEM_OPT to enable on-demand fallback memory allocation policy for EvasGL direct rendering.
-     - Add engine specific alpha_get.
-     - Add multiple output support API.
-     - Add buffer age support to gl for automatic partial redraws.
-     - Add GLX_MESA_release_buffers suppport to release unused buffers.
-    * Add ecore_audio API
-    * Add eet_mmap.
-    * added eet_data_descriptor_name_get()
-    * Add eio_eet_sync symbols.
-    * Add infrastructure to handle buggy touchscreen in Ecore_Input_Evas.
-    * Add infrastructure to handle message between ecore and parent ecore in Ecore_Evas.
+     - Add infrastructure to handle message between ecore and parent ecore in Ecore_Evas.
+     - Add window profile support to ecore_evas_extn.
+     - Add window profile support to ecore_evas_buffer.
+    * ecore_getopt:
+     - Add ECORE_GETOPT_ACTION_BREAK
+    * ecore_audio:
+     - Add PulseAudio backend.
+     - Add Alsa backend.
+    * ecore_input_evas:
+     - Add infrastructure to handle buggy touchscreen.
     * Edje:
      - textblock: Added support for size_range.
      - table: Added spread.{w,h} to repeat and automatically name an item in a TABLE part.
      - add embryo fill support for proxy parts
      - entry: Added selection handlers.
-    * Ecore_x: Add atom related with indicator type. 
-    * Ecore_x: Add manual render code before deiconify
-    * Eeze: Add a dummy libmount replacement for when libmount is not there.
-    * Ecore_Con: Add systemd socket activation support (ECORE_CON_SOCKET_ACTIVATE).
+     - Add edje_object_part_text_input_panel_layout_variation_set/get API
+     - Add EDJE_INPUT_PANEL_LAYOUT_DATETIME layout
+     - support edc proxy.source_visible, proxy.source_clip
+    * Eeze:
+     - Add a dummy libmount replacement for when libmount is not there.
+    * Ecore_Con:
+     - Add systemd socket activation support (ECORE_CON_SOCKET_ACTIVATE).
     * Ecore:
      - notify systemd that we are ready as soon as the main loop is running.
      - automatically support Watchdog.
@@ -100,22 +119,8 @@ Additions:
      - Add ecore_imf_input_panel_hide API
      - Add ecore_imf_context_input_panel_event_callback_call, clear API
      - Add ECORE_IMF_INPUT_PANEL_LAYOUT_DATETIME layout
-    * Edje:
-     - Add edje_object_part_text_input_panel_layout_variation_set/get API
-     - Add EDJE_INPUT_PANEL_LAYOUT_DATETIME layout
-     - support edc proxy.source_visible, proxy.source_clip
-    * Evil:
-     - Add mkdtemp.
-    * ecore_x:
-     - Add accessibility support.
-       ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_BACK
-       ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_SCROLL
-       ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_MOUSE
-    * Add evas_object_image_source_clip_set()/get()
-    * Add --with-api=XXX (both|legacy|eo)
-    * Rejig 32bit eoid allocation to 5.5.12.
-    * Make eoid use mmaped tables from anonymous memory for safety.
-    * Rejig 64bit eoid allocation to use much less memory (11.11.12).
+    * Eio:
+     - Add eio_eet_sync symbols.
         
 Deprecations:
     * ecore_x:
@@ -131,7 +136,9 @@ Deprecations:
     * eeze: deprecate libudev<148 and libmount<2.18
 
 Removed:
-    * directfb support: ecore_directfb and evas directfb engine.
+    * directfb support:
+     - ecore_directfb
+     - evas directfb engine.
     * Removed XRender, WinCE, Glew, Direct3d, X11-16 and X11-8 ecore_evas support.
     * Removed svg from inside merged tree.
 
