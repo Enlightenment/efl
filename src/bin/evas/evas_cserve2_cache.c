@@ -1566,7 +1566,7 @@ _glyphs_load_request_response(Glyphs_Request *req, Slave_Msg_Font_Glyphs_Loaded 
 
         if (!fc)
           {
-             fc = malloc(sizeof(*fc));
+             fc = calloc(1, sizeof(*fc));
              fe->caches = eina_inlist_append(fe->caches, EINA_INLIST_GET(fc));
              fe->last_cache = fc;
              fc->fe = fe;
@@ -1580,22 +1580,28 @@ _glyphs_load_request_response(Glyphs_Request *req, Slave_Msg_Font_Glyphs_Loaded 
         fc->usage = c->usage;
         for (j = 0; j < c->nglyphs; j++)
           {
-             Glyph_Entry *gl = malloc(sizeof(*gl));
-             gl->fe = fe;
-             gl->fc = fc;
-             gl->index = c->glyphs[j].index;
-             gl->offset = c->glyphs[j].offset;
-             gl->size = c->glyphs[j].size;
-             gl->rows = c->glyphs[j].rows;
-             gl->width = c->glyphs[j].width;
-             gl->pitch = c->glyphs[j].pitch;
-             gl->num_grays = c->glyphs[j].num_grays;
-             gl->pixel_mode = c->glyphs[j].pixel_mode;
-             font_mem_usage += sizeof(*gl);
-             fc->glyphs = eina_inlist_append(fc->glyphs, EINA_INLIST_GET(gl));
-             fc->nglyphs++;
-             fe->nglyphs++;
-             fash_gl_add(fe->glyphs, gl->index, gl);
+             Glyph_Entry *gl;
+
+             gl = fash_gl_find(fe->glyphs, c->glyphs[j].index);
+             if (!gl)
+               {
+                  gl = calloc(1, sizeof(*gl));
+                  gl->fe = fe;
+                  gl->fc = fc;
+                  gl->index = c->glyphs[j].index;
+                  gl->offset = c->glyphs[j].offset;
+                  gl->size = c->glyphs[j].size;
+                  gl->rows = c->glyphs[j].rows;
+                  gl->width = c->glyphs[j].width;
+                  gl->pitch = c->glyphs[j].pitch;
+                  gl->num_grays = c->glyphs[j].num_grays;
+                  gl->pixel_mode = c->glyphs[j].pixel_mode;
+                  font_mem_usage += sizeof(*gl);
+                  fc->glyphs = eina_inlist_append(fc->glyphs, EINA_INLIST_GET(gl));
+                  fc->nglyphs++;
+                  fe->nglyphs++;
+                  fash_gl_add(fe->glyphs, gl->index, gl);
+               }
              req->answer[req->nanswer++] = gl;
              gl->fc->inuse++;
           }
