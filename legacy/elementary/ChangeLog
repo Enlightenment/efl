@@ -1390,3 +1390,7 @@
 2013-06-05 ChunEon Park (Hermet)
 
         * Fix navifame to recover the focus for the prev page when top item is deleted.
+
+2013-06-06 Ryuan Choi (ryuan)
+
+        * Up/down step of hour decimal of elm_clock is changed to 12 not to touch hour unit at editing mode.

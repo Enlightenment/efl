@@ -31,7 +31,7 @@ _on_clock_val_up(void *data)
    if (!sd->sel_obj) goto clock_val_up_cancel;
    if (sd->sel_obj == sd->digit[0])
      {
-        sd->hrs = sd->hrs + 10;
+        sd->hrs = sd->hrs + 12;
         if (sd->hrs >= 24) sd->hrs -= 24;
      }
    if (sd->sel_obj == sd->digit[1])
@@ -87,7 +87,7 @@ _on_clock_val_down(void *data)
    if (!sd->sel_obj) goto clock_val_down_cancel;
    if (sd->sel_obj == sd->digit[0])
      {
-        sd->hrs = sd->hrs - 10;
+        sd->hrs = sd->hrs - 12;
         if (sd->hrs < 0) sd->hrs += 24;
      }
    if (sd->sel_obj == sd->digit[1])
