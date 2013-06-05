@@ -98,7 +98,7 @@ edje_init(void)
 	goto shutdown_all;
      }
 
-   _edje_calc_params_map_cow = eina_cow_add("Edje Calc Params Map", sizeof (Edje_Calc_Params), 8, &default_calc_map, EINA_TRUE);
+   _edje_calc_params_map_cow = eina_cow_add("Edje Calc Params Map", sizeof (Edje_Calc_Params_Map), 8, &default_calc_map, EINA_TRUE);
    _edje_calc_params_physics_cow= eina_cow_add("Edje Calc Params Physics", sizeof (Edje_Calc_Params_Physics), 8, &default_calc_physics, EINA_TRUE);
 
    eina_log_timing(_edje_default_log_dom,
