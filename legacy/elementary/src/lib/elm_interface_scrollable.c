@@ -1443,7 +1443,7 @@ _elm_scroll_bounce_eval(Elm_Scrollable_Smart_Interface_Data *sid)
      }
    if (sid->down.hold_animator)
      {
-        ELM_SAFE_FREE(sid->down.onhold_animator, ecore_animator_del);
+        ELM_SAFE_FREE(sid->down.hold_animator, ecore_animator_del);
         if (sid->content_info.resized)
           _elm_scroll_wanted_region_set(sid->obj);
      }
@@ -2548,7 +2548,7 @@ _elm_scroll_mouse_up_event_cb(void *data,
           }
         if (sid->down.hold_animator)
           {
-             ELM_SAFE_FREE(sid->down.onhold_animator, ecore_animator_del);
+             ELM_SAFE_FREE(sid->down.hold_animator, ecore_animator_del);
              if (sid->content_info.resized)
                _elm_scroll_wanted_region_set(sid->obj);
           }
