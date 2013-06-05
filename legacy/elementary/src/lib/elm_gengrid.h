@@ -222,6 +222,8 @@
  * - @c "moved" - This is called when a gengrid item is moved by a user
  *   interaction in a reorder mode. The %c event_info parameter is the item that
  *   was moved.
+ * - @c "index,update" - This is called when a gengrid item index is changed.
+ *   Note that this callback is called while each item is being realized.
  * - @c "highlighted" - an item in the list is highlighted. This is called when
  *   the user presses an item or keyboard selection is done so the item is
  *   physically highlighted. The %c event_info parameter is the item that was

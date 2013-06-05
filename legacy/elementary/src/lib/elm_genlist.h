@@ -353,6 +353,8 @@
  *   another item in reorder mode. The event_info parameter is the reordered
  *   item. To get the relative previous item, use elm_genlist_item_next_get().
  *   This signal is called along with "moved" signal.
+ * - @c "index,update" - This is called when a genlist item index is changed.
+ *   Note that this callback is called while each item is being realized.
  * - @c "language,changed" - This is called when the program's language is
  *   changed. Call the elm_genlist_realized_items_update() if items text should
  *   be translated.
