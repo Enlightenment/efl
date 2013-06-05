@@ -2,32 +2,50 @@
 pkgname=('efl' 'efl_doc' 'efl_x11')
 pkgver=@VERSION@
 pkgrel=1
-pkgdesc="Enlightenment Foundation Libraries"
+pkgdesc="Enlightenment Foundation Libraries - GIT development snapshot (Ecore, Eldbus, Edje, Eet, Eeze, Efreet, Eina, Eio, Embryo, Emotion, Eo, Ephysics, Ethumb, & Evas)"
 arch=('i686' 'x86_64' 'arm')
 url="http://www.enlightenment.org"
 license=('BSD' 'LGPL2' 'GPL2')
-depends=('bullet' 'libpng' 'libjpeg-turbo' 'gstreamer0.10' 'zlib' 'lua' 'libtiff' 'openssl' 'util-linux' 'curl' 'dbus-core' 'glibc' 'fontconfig' 'freetype2' 'fribidi' 'libpulse' 'libsndfile' 'systemd' 'libx11' 'libxau' 'libxcomposite' 'libxdamage' 'libxdmcp' 'libxext' 'libxfixes' 'libxinerama' 'libxi' 'libxrandr' 'libxrender' 'libxss' 'libxtst' ' libgl' 'giflib')
-provides=()
-replaces=()
-options=('strip' 'docs' 'zipman')
+makedepends=('doxygen')
+depends=('bullet' 'libpng' 'libjpeg-turbo' 'gstreamer0.10'
+         'gstreamer0.10-base' 'gstreamer0.10-good' 
+	 'gstreamer0.10-bad' 'gstreamer0.10-ugly' 'gstreamer0.10-ffmpeg'
+	 'zlib' 'lua' 'libtiff' 'openssl' 'util-linux' 'curl' 'dbus-core'
+	 'glibc' 'fontconfig' 'freetype2' 'fribidi' 'libpulse'
+	 'libsndfile' 'systemd' 'libx11' 'libxau' 'libxcomposite'
+	 'libxdamage' 'libxdmcp' 'libxext' 'libxfixes' 'libxinerama'
+	 'libxi' 'libxrandr' 'libxrender' 'libxss' 'libxtst'
+	 'libxcursor' 'libxp' 'libgl' 'giflib' 'libwebp' 'harfbuzz')
+provides=("ecore=$pkgver" "eldbus=$pkgver" "edje=$pkgver"
+          "eet=$pkgver" "eeze=$pkgver" "efreet=$pkgver"
+	  "eina=$pkgver" "eio=$pkgver" "embryo=$pkgver" "emotion=$pkgver"
+          "ephysics=$pkgver" "ethumb=$pkgver" "evas=$pkgver"
+	  "efl=$pkgver" 'efl_x11' 'efl-svn')
+conflicts=('ecore' 'edje' 'eet' 'eeze' 'efreet' 'eina' 'eio' 'embryo'
+           'emotion' 'ethumb' 'evas' 'efl' 'efl_x11' 'efl-svn')
+options=('strip' 'docs' 'zipman' '!libtool' 'debug')
 buildflags="-fvisibility=hidden -fomit-frame-pointer"
 build() {
-  cd ".."
+  cd "../.."
+  make clean distclean
   ./configure --prefix=/usr \
-  --disable-static --enable-fb --disable-tslib --enable-xinput22
+  --disable-static --disable-tslib --enable-fb \
+  --enable-xinput22 --enable-multisense --enable-systemd \
+  --enable-image-loader-webp --enable-harfbuzz
   make
-  make doc
 }
 
-check() {
-  cd ".."
-  make -k check
-}
+#check() {
+#  cd "../.."
+#  make -k check
+#}
 
 package_efl() {
-  cd ".."
+  export CFLAGS="-O2 -g -pipe -fvisibility=hidden -ffast-math"
+  export LDFLAGS=""
+  cd "../.."
   rm -rf $pkgdir/usr
-  make DESTDIR="$pkgdir/" install
+  make -j1 DESTDIR="$pkgdir/" install
   install -Dm644 README $pkgdir/usr/share/$pkgname/licenses/$pkgname/README
   install -Dm644 NEWS $pkgdir/usr/share/$pkgname/licenses/$pkgname/NEWS
   install -Dm644 ChangeLog $pkgdir/usr/share/$pkgname/licenses/$pkgname/ChangeLog
@@ -48,19 +66,21 @@ package_efl() {
 }
 
 package_efl_doc() {
-  cd ".."
+  cd "../.."
   rm -rf $pkgdir/usr
-  make DESTDIR="$pkgdir/" install
+  make -j1 doc
+  make -j1 DESTDIR="$pkgdir/" install
   mkdir -p $pkgdir/usr/share/man/man3
   cp -r doc/html $pkgdir/usr/share/$pkgname/
   cp -r doc/latex $pkgdir/usr/share/$pkgname/latex
+  rm -f `find $pkgdir -name '*.la' -print`
 }
 
 package_efl_x11() {
-  cd ".."
+  cd "../.."
   rm -rf $pkgdir/usr
-  make DESTDIR="$pkgdir/" install
-  tar cf xf.tar \
+  make -j1 DESTDIR="$pkgdir/" install
+  tar cf /tmp/xf.tar \
   $pkgdir/usr/include/evas-1/Evas_Engine_*_X11.h \
   $pkgdir/usr/include/ecore-x-1 \
   $pkgdir/usr/lib/evas/modules/engines/*_x11 \
@@ -69,5 +89,6 @@ package_efl_x11() {
   $pkgdir/usr/lib/pkgconfig/ecore-x.pc \
   $pkgdir/usr/lib/pkgconfig/evas-*-x11.pc
   rm -rf $pkgdir/usr
-  tar -C / -P -xf xf.tar 
+  tar -C / -P -xf /tmp/xf.tar
+  rm -f `find $pkgdir -name '*.la' -print`
 }
