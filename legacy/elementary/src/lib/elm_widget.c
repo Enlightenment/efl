@@ -5749,14 +5749,14 @@ _sub_obj_tree_dump(const Evas_Object *obj,
      {
         Eina_List *l;
         INTERNAL_ENTRY;
-        printf("+ %s(%p)\n",
-               elm_widget_type_get(obj),
-               obj);
+        DBG("+ %s(%p)\n",
+            elm_widget_type_get(obj),
+            obj);
         EINA_LIST_FOREACH(sd->subobjs, l, obj)
           _sub_obj_tree_dump(obj, lvl + 1);
      }
    else
-     printf("+ %s(%p)\n", evas_object_type_get(obj), obj);
+     DBG("+ %s(%p)\n", evas_object_type_get(obj), obj);
 }
 
 static void

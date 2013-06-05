@@ -562,7 +562,7 @@ _sel_eval(Evas_Object *obj,
              dist = 0x7fffffff;
              dh = h / size;
              if (dh == 0)
-               printf("too many index items to omit\n"); //FIXME
+               WRN("too many index items to omit."); //FIXME
              else
                {
                   for (j = 0; j < size; j++)

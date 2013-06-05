@@ -273,7 +273,7 @@ _desc_init(void)
    _config_edd = eet_data_descriptor_file_new(&eddc);
    if (!_config_edd)
      {
-        printf("EEEK! eet_data_descriptor_file_new() failed\n");
+        ERR("EEEK! eet_data_descriptor_file_new() failed.");
         return;
      }
 
@@ -285,7 +285,7 @@ _desc_init(void)
    _config_font_overlay_edd = eet_data_descriptor_stream_new(&eddc);
    if (!_config_font_overlay_edd)
      {
-        printf("EEEK! eet_data_descriptor_stream_new() failed\n");
+        ERR("EEEK! eet_data_descriptor_stream_new() failed.");
         eet_data_descriptor_free(_config_edd);
         return;
      }
@@ -298,7 +298,7 @@ _desc_init(void)
    _config_color_edd = eet_data_descriptor_stream_new(&eddc);
    if (!_config_color_edd)
      {
-        printf("EEEK! eet_data_descriptor_stream_new() failed\n");
+        ERR("EEEK! eet_data_descriptor_stream_new() failed.");
         eet_data_descriptor_free(_config_edd);
         return;
      }
@@ -311,7 +311,7 @@ _desc_init(void)
    _config_color_palette_edd = eet_data_descriptor_stream_new(&eddc);
    if (!_config_color_palette_edd)
      {
-        printf("EEEK! eet_data_descriptor_stream_new() failed\n");
+        ERR("EEEK! eet_data_descriptor_stream_new() failed.");
         eet_data_descriptor_free(_config_edd);
         return;
      }

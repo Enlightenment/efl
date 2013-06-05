@@ -328,7 +328,7 @@ _access_obj_del_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event
 static void
 _access_read_done(void *data __UNUSED__)
 {
-   printf("read done\n");
+   DBG("read done");
    // FIXME: produce event here
 }
 

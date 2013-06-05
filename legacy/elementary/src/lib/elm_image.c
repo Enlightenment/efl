@@ -612,7 +612,7 @@ _elm_image_drag_n_drop_cb(void *elm_obj,
    eo_do(obj, elm_obj_image_file_set(drop->data, NULL, &ret));
    if(ret)
      {
-        printf("dnd: %s, %s, %s", elm_widget_type_get(elm_obj),
+        DBG("dnd: %s, %s, %s", elm_widget_type_get(elm_obj),
                SIG_DND, (char *)drop->data);
 
         evas_object_smart_callback_call(elm_obj, SIG_DND, drop->data);
@@ -1036,7 +1036,7 @@ _elm_image_smart_editable_set(Eo *obj, void *_pd, va_list *list)
 
    if (sd->edje)
      {
-        printf("No editing edje objects yet (ever)\n");
+        WRN("No editing edje objects yet (ever)\n");
         return;
      }
 
