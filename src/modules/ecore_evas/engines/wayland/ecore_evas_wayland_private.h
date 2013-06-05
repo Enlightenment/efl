@@ -32,6 +32,9 @@ struct _Ecore_Evas_Engine_Wl_Data
    Ecore_Wl_Window *parent, *win;
    Evas_Object *frame;
    int fx, fy, fw, fh;
+#ifdef BUILD_ECORE_EVAS_WAYLAND_EGL
+   struct wl_egl_window *egl_win;
+#endif
 };
 
 Ecore_Evas_Interface_Wayland *_ecore_evas_wl_interface_new(void);
