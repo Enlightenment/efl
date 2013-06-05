@@ -222,18 +222,6 @@ EAPI void                         elm_object_item_access_info_set(Elm_Object_Ite
 EAPI Evas_Object                 *elm_object_item_access_register(Elm_Object_Item *item);
 
 /**
- * @brief Register a part on an object item as an accessible object.
- * @since 1.8
- *
- * @param item The elementary object item
- * @param part The part name to set
- * @return Accessible object of the object item or NULL for any error
- *
- * @ingroup General
- */
-EAPI Evas_Object                 *elm_object_item_part_access_register(Elm_Object_Item *item, const char *part);
-
-/**
  * @brief Unregister accessible object of the object item.
  * @since 1.8
  *

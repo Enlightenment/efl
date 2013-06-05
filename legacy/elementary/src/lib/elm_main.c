@@ -1687,35 +1687,6 @@ elm_object_item_access_info_set(Elm_Object_Item *it, const char *txt)
 }
 
 EAPI Evas_Object *
-elm_object_item_part_access_register(Elm_Object_Item *item, const char *part)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(item, NULL);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(part, NULL);
-
-   Elm_Widget_Item *it = (Elm_Widget_Item *)item;
-   Evas_Object *edj;
-   Evas_Object *parent;
-
-   const char *type = elm_widget_type_get(VIEW(item));
-
-   if (type && !strcmp(type, "elm_layout"))
-     {
-        edj = elm_layout_edje_get(VIEW(item));
-        parent = VIEW(item);
-     }
-   else
-     {
-        edj = VIEW(item);
-        parent = WIDGET(item);
-     }
-
-   elm_object_item_access_unregister(item);
-   it->access_obj =
-      _elm_access_edje_object_part_object_register(parent, edj, part);
-   return it->access_obj;
-}
-
-EAPI Evas_Object *
 elm_object_item_access_register(Elm_Object_Item *item)
 {
    Elm_Widget_Item *it;

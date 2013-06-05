@@ -1065,9 +1065,7 @@ _elm_access_widget_item_unregister(Elm_Widget_Item *item)
 
    if (!item->access_obj) return;
 
-   Elm_Access_Info *ac = _elm_access_object_get(item->access_obj);
-   ho = ac->hoverobj;
-
+   ho = item->view;
    evas_object_event_callback_del_full(ho, EVAS_CALLBACK_RESIZE,
                                   _content_resize, item->access_obj);
    evas_object_event_callback_del_full(ho, EVAS_CALLBACK_MOVE,
