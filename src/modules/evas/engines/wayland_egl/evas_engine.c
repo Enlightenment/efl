@@ -1197,9 +1197,9 @@ eng_output_flush(void *data, Evas_Render_Mode render_mode)
         
         // if partial swaps can be done use re->rects
         EINA_INLIST_FOREACH(EINA_INLIST_GET(re->rects), r) num++;
-        if (num > 0) rects = malloc(sizeof(EGLint) * 4 * num);
-        if (rects)
+        if (num > 0)
           {
+             rects = alloca(sizeof(EGLint) * 4 * num);
              EINA_INLIST_FOREACH(EINA_INLIST_GET(re->rects), r)
                {
                   int gw, gh;
@@ -1216,7 +1216,7 @@ eng_output_flush(void *data, Evas_Render_Mode render_mode)
                        break;
                      case 90:
                        rects[i + 0] = r->y;
-                       rects[i + 1] = gh - (r->x + r->w);
+                       rects[i + 1] = gw - (r->x + r->w);
                        rects[i + 2] = r->h;
                        rects[i + 3] = r->w;
                        break;
@@ -1243,7 +1243,6 @@ eng_output_flush(void *data, Evas_Render_Mode render_mode)
                }
              glsym_eglSwapBuffersRegion(re->win->egl_disp,
                                         re->win->egl_surface[0], num, rects);
-             free(rects);
           }
      }
    else

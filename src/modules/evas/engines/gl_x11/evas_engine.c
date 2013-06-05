@@ -1444,15 +1444,14 @@ eng_output_flush(void *data, Evas_Render_Mode render_mode)
      }
    if ((glsym_eglSwapBuffersRegion) && (re->mode != MODE_FULL))
      {
-        EGLint num = 0, *rects = NULL, i;
+        EGLint num = 0, *rects = NULL, i = 0;
         Tilebuf_Rect *r;
         
         // if partial swaps can be done use re->rects
         EINA_INLIST_FOREACH(EINA_INLIST_GET(re->rects), r) num++;
-        if (num > 0) rects = malloc(sizeof(EGLint) * 4 * num);
-        if (rects)
+        if (num > 0)
           {
-             i = 0;
+             rects = alloca(sizeof(EGLint) * 4 * num);
              EINA_INLIST_FOREACH(EINA_INLIST_GET(re->rects), r)
                {
                   int gw, gh;
@@ -1497,7 +1496,6 @@ eng_output_flush(void *data, Evas_Render_Mode render_mode)
              glsym_eglSwapBuffersRegion(re->win->egl_disp,
                                         re->win->egl_surface[0],
                                         num, rects);
-             free(rects);
           }
      }
    else
