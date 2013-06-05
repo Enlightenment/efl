@@ -1469,7 +1469,7 @@ eng_output_flush(void *data, Evas_Render_Mode render_mode)
                        break;
                      case 90:
                        rects[i + 0] = r->y;
-                       rects[i + 1] = gh - (r->x + r->w);
+                       rects[i + 1] = gw - (r->x + r->w);
                        rects[i + 2] = r->h;
                        rects[i + 3] = r->w;
                        break;
