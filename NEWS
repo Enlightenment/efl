@@ -327,3 +327,5 @@ Fixes:
     * Fix eeze sensors to not segv on shutdown
     * Evas: correctly detect if a loader support asynchronous preloading.
     * Evas: improve stability of Evas_Cserve2.
+    * Evas: Fix gif cannot decode alpha value correctly.
+
