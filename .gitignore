@@ -16,6 +16,7 @@ tags
 *.gcno
 *.gcda
 *.dirstamp
+/efl-*-doc.tar.bz2
 /ar-lib
 /stamp-h1
 /aclocal.m4
@@ -30,6 +31,9 @@ tags
 /configure
 /depcomp
 /doc/Doxyfile
+/doc/html
+/doc/latex
+/doc/man
 /install-sh
 /libtool
 /ltmain.sh
@@ -62,6 +66,9 @@ tags
 /pc/evas.pc
 /spec/efl.spec
 /pkgbuild/PKGBUILD
+/pkgbuild/pkg
+/pkgbuild/src
+/pkgbuild/*.tar.xz
 /src/bin/eet/eet
 /src/bin/embryo/embryo_cc
 /src/bin/evas/dummy_slave
