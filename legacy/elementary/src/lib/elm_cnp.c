@@ -2756,6 +2756,8 @@ _wl_dropable_data_handle(Wl_Cnp_Selection *sel, char *data)
    sdata.x = savedtypes.x;
    sdata.y = savedtypes.y;
 
+   if (!savedtypes.imgfile) return;
+
    if ((drop->types & ELM_SEL_FORMAT_MARKUP) && 
        (drop->types & ELM_SEL_FORMAT_IMAGE))
      {
