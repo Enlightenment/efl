@@ -2862,6 +2862,7 @@ _elm_scroll_hold_animator(void *data)
                   if (dt > twin)
                     {
                        i--;
+                       count--;
                        break;
                     }
                   x = sid->down.history[i].x;
@@ -2878,7 +2879,6 @@ _elm_scroll_hold_animator(void *data)
                   count++;
                }
           }
-        count = i;
         if (count >= 2)
           {
              double dtsum = 0.0, tadd, maxdt;
