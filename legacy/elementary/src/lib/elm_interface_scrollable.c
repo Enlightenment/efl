@@ -2898,21 +2898,24 @@ _elm_scroll_hold_animator(void *data)
              dxsum /= (double)i;
              dysum /= (double)i;
              dtsum /= (double)i;
-             xsum /= (double)i;
-             ysum /= (double)i;
-             tadd = tnow - sid->down.history[0].timestamp + _elm_config->scroll_smooth_future_time;
-             tadd = tadd - (maxdt / 2);
+             if (dtsum > 0)
+               {
+                  xsum /= (double)i;
+                  ysum /= (double)i;
+                  tadd = tnow - sid->down.history[0].timestamp + _elm_config->scroll_smooth_future_time;
+                  tadd = tadd - (maxdt / 2);
 #define WEIGHT(n, o, v) n = (((double)o * (1.0 - v)) + ((double)n * v))
-             WEIGHT(tadd, sid->down.hist.tadd, _elm_config->scroll_smooth_history_weight);
-             WEIGHT(dxsum, sid->down.hist.dxsum, _elm_config->scroll_smooth_history_weight);
-             WEIGHT(dysum, sid->down.hist.dysum, _elm_config->scroll_smooth_history_weight);
-             fx = basex + xsum + ((dxsum * tadd) / dtsum);
-             fy = basey + ysum + ((dysum * tadd) / dtsum);
-             sid->down.hist.tadd = tadd;
-             sid->down.hist.dxsum = dxsum;
-             sid->down.hist.dysum = dysum;
-             WEIGHT(fx, sid->down.hold_x, _elm_config->scroll_smooth_amount);
-             WEIGHT(fy, sid->down.hold_y, _elm_config->scroll_smooth_amount);
+                  WEIGHT(tadd, sid->down.hist.tadd, _elm_config->scroll_smooth_history_weight);
+                  WEIGHT(dxsum, sid->down.hist.dxsum, _elm_config->scroll_smooth_history_weight);
+                  WEIGHT(dysum, sid->down.hist.dysum, _elm_config->scroll_smooth_history_weight);
+                  fx = basex + xsum + ((dxsum * tadd) / dtsum);
+                  fy = basey + ysum + ((dysum * tadd) / dtsum);
+                  sid->down.hist.tadd = tadd;
+                  sid->down.hist.dxsum = dxsum;
+                  sid->down.hist.dysum = dysum;
+                  WEIGHT(fx, sid->down.hold_x, _elm_config->scroll_smooth_amount);
+                  WEIGHT(fy, sid->down.hold_y, _elm_config->scroll_smooth_amount);
+               }
           }
      }
 
