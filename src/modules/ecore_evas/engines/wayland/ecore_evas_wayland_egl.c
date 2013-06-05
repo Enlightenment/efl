@@ -8,7 +8,6 @@
 # include <sys/mman.h>
 # include <Evas_Engine_Wayland_Egl.h>
 
-
 /* local function prototypes */
 static void _ecore_evas_wl_resize(Ecore_Evas *ee, int w, int h);
 static void _ecore_evas_wl_show(Ecore_Evas *ee);
@@ -334,13 +333,12 @@ _ecore_evas_wl_rotation_set(Ecore_Evas *ee, int rotation, int resize)
    if (ee->rotation == rotation) return;
 
    einfo = (Evas_Engine_Info_Wayland_Egl *)evas_engine_info_get(ee->evas);
-   if (!einfo)
-     return;
+   if (!einfo) return;
+
    einfo->info.rotation = rotation;
+
    if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
-   {
-       ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
-   }
+     ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
 
    _ecore_evas_wl_common_rotation_set(ee, rotation, resize);
 }
@@ -391,8 +389,6 @@ _ecore_evas_wl_show(Ecore_Evas *ee)
         einfo->info.surface = ecore_wl_window_surface_get(wdata->win);
         /* if (einfo->info.surface) */
         evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
-        /* else */
-        /*   printf("Failed to get a Surface from Ecore_Wl\n"); */
      }
 
    ee->visible = 1;
@@ -445,6 +441,7 @@ _ecore_evas_wl_alpha_set(Ecore_Evas *ee, int alpha)
    if ((einfo = (Evas_Engine_Info_Wayland_Egl *)evas_engine_info_get(ee->evas)))
      {
         int fw, fh;
+
         einfo->info.destination_alpha = alpha;
         if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
           ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
@@ -474,9 +471,11 @@ _ecore_evas_wl_transparent_set(Ecore_Evas *ee, int transparent)
    if ((einfo = (Evas_Engine_Info_Wayland_Egl *)evas_engine_info_get(ee->evas)))
      {
         int fw, fh;
+
         einfo->info.destination_alpha = transparent;
         if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
           ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
+
         evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
         evas_damage_rectangle_add(ee->evas, 0, 0, ee->w + fw, ee->h + fh);
      }
@@ -507,13 +506,9 @@ _ecore_evas_wayland_egl_resize(Ecore_Evas *ee, int location)
         wdata->win->resizing = EINA_TRUE;
         evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
         if ((ee->rotation == 0) || (ee->rotation == 180))
-          {
-             ecore_wl_window_resize(wdata->win, ee->w + fw, ee->h + fh, location);
-          }
+          ecore_wl_window_resize(wdata->win, ee->w + fw, ee->h + fh, location);
         else
-          {
-             ecore_wl_window_resize(wdata->win, ee->w + fh, ee->h + fw, location);
-          }
+          ecore_wl_window_resize(wdata->win, ee->w + fh, ee->h + fw, location);
      }
 }
 #endif
