@@ -2914,7 +2914,7 @@ static unsigned int
 _wl_elm_widget_window_get(Evas_Object *obj)
 {
    Evas_Object *top;
-   Ecore_Wl_Window *win;
+   Ecore_Wl_Window *win = NULL;
 
    top = elm_widget_top_get(obj);
    if (!top) top = elm_widget_top_get(elm_widget_parent_widget_get(obj));
@@ -2932,7 +2932,8 @@ _wl_elm_widget_window_get(Evas_Object *obj)
         win = ecore_evas_wayland_window_get(ee);
      }
 
-   return win->id;
+   if (win) return win->id;
+   return 0;
 }
 
 #endif
