@@ -1358,6 +1358,7 @@ image_loaded:
              if (im->cache_entry.space == EVAS_COLORSPACE_ARGB8888)
                evas_cache2_image_load_data(&im->cache_entry);
 
+             if (!im->cache_entry.flags.loaded) return EINA_FALSE;
              evas_common_image_colorspace_normalize(im);
 
              if (smooth)
@@ -1384,7 +1385,7 @@ image_loaded:
                 dst_x, dst_y, dst_w, dst_h);
           }
 
-	evas_common_cpu_end_opt();
+        evas_common_cpu_end_opt();
      }
 
    return EINA_FALSE;
