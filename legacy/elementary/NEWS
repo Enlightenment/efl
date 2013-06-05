@@ -237,6 +237,7 @@ Fixes:
    * Fix elm_colorselector does not emit "changed" when clicked color palatte.
    * Fix elm_mapbuf to be enabled before it's content is entirely rendered once.     this will reduce the cases that content is not updated in the screen.
    * Fix elm_colorselector does not update color bar when picker changed color.
+   * Fix navifame to recover the focus for the prev page when top item is deleted.
 
 Removals:
 

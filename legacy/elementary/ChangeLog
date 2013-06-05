@@ -1374,13 +1374,19 @@
         * Add ELM_INPUT_PANEL_LAYOUT_DATETIME.
 
 2013-05-27 Seunggyun Kim
+
         * Add elm_config_glayer_long_tap_start_timeout_set/get,
         elm_config_glayer_double_tap_timeout_set/get
 
 2013-05-30 ChunEon Park
+
         * Fix the mapbuf to be enabled before it's content is entirely rendered
         once.
 
 2013-06-05 Ryuan Choi (ryuan)
 
         * Fix elm_colorselector does not update color bar when picker changed color.
+
+2013-06-05 ChunEon Park (Hermet)
+
+        * Fix navifame to recover the focus for the prev page when top item is deleted.
