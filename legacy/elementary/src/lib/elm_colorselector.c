@@ -522,6 +522,7 @@ _mouse_up_cb(void *data, int type __UNUSED__, void *event __UNUSED__)
 {
    const unsigned int *pixels;
    Evas_Object *o = data;
+   int r, g, b;
 
    /* mouse up => check it */
    ELM_COLORSELECTOR_DATA_GET(o, sd);
@@ -533,11 +534,11 @@ _mouse_up_cb(void *data, int type __UNUSED__, void *event __UNUSED__)
    sd->grab.mouse_motion = ecore_event_handler_add(ECORE_X_RAW_MOTION, _mouse_grab_pixels, o);
 
    pixels = evas_object_image_data_get(sd->picker_display, EINA_FALSE);
-   sd->a = 0xff;
-   sd->r = (pixels[17 * 9 + 9] >> 16) & 0xFF;
-   sd->g = (pixels[17 * 9 + 9] >> 8) & 0xFF;
-   sd->b = pixels[17 * 9 + 9] & 0xFF;
+   r = (pixels[17 * 9 + 9] >> 16) & 0xFF;
+   g = (pixels[17 * 9 + 9] >> 8) & 0xFF;
+   b = pixels[17 * 9 + 9] & 0xFF;
 
+   _colors_set(o, r, g, b, 0xFF);
    _color_picker_init(sd);
 
    return EINA_TRUE;

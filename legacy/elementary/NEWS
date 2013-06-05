@@ -236,6 +236,7 @@ Fixes:
    * Fix colorselector color change but when palette item is selected.
    * Fix elm_colorselector does not emit "changed" when clicked color palatte.
    * Fix elm_mapbuf to be enabled before it's content is entirely rendered once.     this will reduce the cases that content is not updated in the screen.
+   * Fix elm_colorselector does not update color bar when picker changed color.
 
 Removals:
 

@@ -1380,3 +1380,7 @@
 2013-05-30 ChunEon Park
         * Fix the mapbuf to be enabled before it's content is entirely rendered
         once.
+
+2013-06-05 Ryuan Choi (ryuan)
+
+        * Fix elm_colorselector does not update color bar when picker changed color.
