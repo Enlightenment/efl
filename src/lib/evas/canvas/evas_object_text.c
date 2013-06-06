@@ -466,14 +466,6 @@ _text_font_set(Eo *eo_obj, void *_pd, va_list *list)
 
    o->font = evas_font_load(obj->layer->evas->evas, o->cur.fdesc, o->cur.source,
          (int)(((double) o->cur.size) * obj->cur->scale));
-   if (o->font)
-     {
-        o->ascent = ENFN->font_ascent_get(ENDT, o->font);
-        o->descent = ENFN->font_descent_get(ENDT, o->font);
-        o->max_ascent = ENFN->font_max_ascent_get(ENDT, o->font);
-        o->max_descent = ENFN->font_max_descent_get(ENDT, o->font);
-     }
-   else
      {
         o->ascent = 0;
         o->descent = 0;
@@ -2420,13 +2412,8 @@ _evas_object_text_recalc(Evas_Object *eo_obj, Eina_Unicode *text)
              if (desc > o->descent)
                 o->descent = desc;
 
-             max_asc = evas_common_font_instance_max_ascent_get(item->text_props.font_instance);
-             max_desc = evas_common_font_instance_max_descent_get(item->text_props.font_instance);
-
-             if (max_asc > o->max_ascent)
-                o->max_ascent = max_asc;
-             if (max_desc > o->max_descent)
-                o->max_descent = max_desc;
+             o->max_ascent = o->ascent;
+             o->max_descent = o->descent;
           }
      }
 
