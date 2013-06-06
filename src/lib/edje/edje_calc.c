@@ -3659,21 +3659,12 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
              (ep->typedata.swallow)) &&
             (ep->typedata.swallow->swallowed_object))
           {
-             //// the below really is wrong - swallow color shouldn't affect swallowed object
-             //// color - the edje color as a WHOLE should though - and that should be
-             //// done via the clipper anyway. this created bugs when objects had their
-             //// colro set and were swallowed - then had their color changed.
-             //	     evas_object_color_set(ep->typedata.swallow->swallowed_object,
-             //				   (pf->color.r * pf->color.a) / 255,
-             //				   (pf->color.g * pf->color.a) / 255,
-             //				   (pf->color.b * pf->color.a) / 255,
-             //				   pf->color.a);
              if (pf->visible)
                {
-		  eo_do(ep->typedata.swallow->swallowed_object,
-			evas_obj_position_set(ed->x + pf->x, ed->y + pf->y),
-			evas_obj_size_set(pf->w, pf->h),
-			evas_obj_visibility_set(EINA_TRUE));
+                  eo_do(ep->typedata.swallow->swallowed_object,
+                        evas_obj_position_set(ed->x + pf->x, ed->y + pf->y),
+                        evas_obj_size_set(pf->w, pf->h),
+                        evas_obj_visibility_set(EINA_TRUE));
                }
              else evas_object_hide(ep->typedata.swallow->swallowed_object);
              mo = ep->typedata.swallow->swallowed_object;
