@@ -35,6 +35,7 @@ static const char SIG_CLICKED_TRIPLE[] = "clicked,triple";
 static const char SIG_CURSOR_CHANGED[] = "cursor,changed";
 static const char SIG_CURSOR_CHANGED_MANUAL[] = "cursor,changed,manual";
 static const char SIG_FOCUSED[] = "focused";
+static const char SIG_UNFOCUSED[] = "unfocused";
 static const char SIG_LANG_CHANGED[] = "language,changed";
 static const char SIG_LONGPRESSED[] = "longpressed";
 static const char SIG_MAX_LENGTH[] = "maxlength,reached";
@@ -50,7 +51,6 @@ static const char SIG_SELECTION_START[] = "selection,start";
 static const char SIG_TEXT_SET_DONE[] = "text,set,done";
 static const char SIG_THEME_CHANGED[] = "theme,changed";
 static const char SIG_UNDO_REQUEST[] = "undo,request";
-static const char SIG_UNFOCUSED[] = "unfocused";
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_ABORTED, ""},
    {SIG_ACTIVATED, ""},
@@ -68,6 +68,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_CURSOR_CHANGED, ""},
    {SIG_CURSOR_CHANGED_MANUAL, ""},
    {SIG_FOCUSED, ""},
+   {SIG_UNFOCUSED, ""},
    {SIG_LANG_CHANGED, ""},
    {SIG_LONGPRESSED, ""},
    {SIG_MAX_LENGTH, ""},
@@ -83,7 +84,6 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_TEXT_SET_DONE, ""},
    {SIG_THEME_CHANGED, ""},
    {SIG_UNDO_REQUEST, ""},
-   {SIG_UNFOCUSED, ""},
    {NULL, NULL}
 };
 
