@@ -2414,7 +2414,7 @@ _debug_key_down(void *data __UNUSED__,
        (!evas_key_modifier_is_set(ev->modifiers, "Control")))
      return;
 
-   INFO("Tree graph generated.\n");
+   EINA_LOG_INFO("Tree graph generated.");
    elm_object_tree_dot_dump(obj, "./dump.dot");
 }
 
