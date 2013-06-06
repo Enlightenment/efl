@@ -863,6 +863,10 @@ _elm_photocam_smart_on_focus(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Eina_Bool int_ret = EINA_FALSE;
+
+   eo_do_super(obj, MY_CLASS, elm_wdg_on_focus(&int_ret));
+   if (!int_ret) return;
 
    if (elm_widget_focus_get(obj))
      {

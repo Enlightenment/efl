@@ -1128,8 +1128,11 @@ _elm_win_smart_on_focus(Eo *obj, void *_pd, va_list *list)
 {
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    if (ret) *ret = EINA_TRUE;
-
    Elm_Win_Smart_Data *sd = _pd;
+   Eina_Bool int_ret = EINA_FALSE;
+
+   eo_do_super(obj, MY_CLASS, elm_wdg_on_focus(&int_ret));
+   if (!int_ret) return;
 
    if (sd->img_obj)
      evas_object_focus_set(sd->img_obj, elm_widget_focus_get(obj));

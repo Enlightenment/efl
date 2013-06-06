@@ -452,6 +452,12 @@ static void
 _elm_datetime_smart_on_focus(Eo *obj, void *_pd, va_list *list)
 {
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   if (ret) *ret = EINA_FALSE;
+   Eina_Bool int_ret = EINA_FALSE;
+
+   eo_do_super(obj, MY_CLASS, elm_wdg_on_focus(&int_ret));
+   if (!int_ret) return;
+
    if (!elm_widget_focus_get(obj))
      {
         Elm_Datetime_Smart_Data *sd = _pd;
