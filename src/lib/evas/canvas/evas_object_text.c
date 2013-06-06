@@ -2029,8 +2029,7 @@ evas_object_text_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, vo
                                 o->font,                                \
                                 obj->cur->geometry.x + x + sl + ox + it->x, \
                                 obj->cur->geometry.y + y + st + oy +     \
-                                (int)                                   \
-                                (((o->max_ascent * obj->cur->geometry.h) / obj->cur->geometry.h)), \
+                                (int) o->max_ascent,                    \
                                 obj->cur->geometry.w,                    \
                                 obj->cur->geometry.h,                    \
                                 obj->cur->geometry.w,                    \
