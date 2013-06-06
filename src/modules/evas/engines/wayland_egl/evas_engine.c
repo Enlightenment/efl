@@ -679,33 +679,37 @@ eng_setup(Evas *evas, void *info)
         re = epd->engine.data.output;
         if (_re_wincheck(re))
           {
-             if ((inf->info.display != re->win->disp) || 
-                 (inf->info.surface != re->win->surface) || 
-                 (inf->info.screen != re->win->screen) || 
-                 (inf->info.depth != re->win->depth) || 
-                 (inf->info.rotation != re->win->rot) || 
-                 (inf->info.destination_alpha != re->win->alpha))
+             re->info = inf;
+             if ((re->info->info.display != re->win->disp) || 
+                 (re->info->info.surface != re->win->surface) || 
+                 (re->info->info.screen != re->win->screen) || 
+                 (re->info->info.depth != re->win->depth) || 
+                 (re->info->info.rotation != re->win->rot) || 
+                 (re->info->info.destination_alpha != re->win->alpha))
                {
                   Eina_Bool inc = EINA_FALSE;
                   Evas_GL_Wl_Window *new_win = NULL;
 
-                  if ((re->win) && (re->win->surface) && (!inf->info.surface))
+                  /* if no surface is passed in, then we are hiding 
+                   * or destroying */
+                  if ((re->win) && (re->win->surface) && 
+                      (!re->info->info.surface))
                     {
                        eng_window_free(re->win);
                        gl_wins--;
-                       re->win = NULL;
-                       re->info = inf;
-                       return 1;
+                       free(re);
+                       epd->engine.data.output = NULL;
+                       return 0;
                     }
 
-                  new_win = eng_window_new(inf->info.display, 
-                                           inf->info.surface, 
-                                           inf->info.screen, 
-                                           inf->info.depth, 
+                  new_win = eng_window_new(re->info->info.display, 
+                                           re->info->info.surface, 
+                                           re->info->info.screen, 
+                                           re->info->info.depth, 
                                            epd->output.w, epd->output.h,
-                                           inf->indirect, 
-                                           inf->info.destination_alpha, 
-                                           inf->info.rotation);
+                                           re->info->indirect, 
+                                           re->info->info.destination_alpha, 
+                                           re->info->info.rotation);
                   if (new_win)
                     {
                        if (re->win)
@@ -725,8 +729,6 @@ eng_setup(Evas *evas, void *info)
                        if ((re->win) && (inc))
                          re->win->gl_context->references--;
                     }
-
-                  re->info = inf;
                }
              else if ((re->win->w != epd->output.w) || 
                       (re->win->h != epd->output.h))
