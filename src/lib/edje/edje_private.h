@@ -222,6 +222,15 @@ struct _Edje_Color
    unsigned char  r, g, b, a;
 };
 
+struct _Edje_Map_Color
+{
+   int idx;
+   unsigned char r;
+   unsigned char g;
+   unsigned char b;
+   unsigned char a;
+};
+
 struct _Edje_Aspect_Prefer
 {
    FLOAT_T min, max;
@@ -246,6 +255,7 @@ typedef struct _Edje_Position                        Edje_Position;
 typedef struct _Edje_Size                            Edje_Size;
 typedef struct _Edje_Rectangle                       Edje_Rectangle;
 typedef struct _Edje_Color                           Edje_Color;
+typedef struct _Edje_Map_Color                       Edje_Map_Color;
 typedef struct _Edje_Aspect_Prefer                   Edje_Aspect_Prefer;
 typedef struct _Edje_Aspect                          Edje_Aspect;
 typedef struct _Edje_String                          Edje_String;
@@ -1022,7 +1032,7 @@ struct _Edje_Part_Description_Common
 
    struct {
       FLOAT_T        relative_x;
-      FLOAT_T	     relative_y;
+      FLOAT_T        relative_y;
       int            offset_x;
       int            offset_y;
       int            id_x; /* -1 = whole part collection, or part ID */
@@ -1036,6 +1046,7 @@ struct _Edje_Part_Description_Common
          int id_center;
          FLOAT_T x, y, z;
       } rot;
+      Eina_List *colors;    //Edje_Map_Color, consider to apply Eina_Hash
       Eina_Bool backcull;
       Eina_Bool on;
       Eina_Bool persp_on;
@@ -1360,6 +1371,7 @@ struct _Edje_Calc_Params_Map
       int x, y, z;
       int focal;
    } persp; // 16
+   Eina_List *colors;
 };
 
 struct _Edje_Calc_Params_Physics

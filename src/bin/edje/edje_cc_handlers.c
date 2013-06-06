@@ -355,6 +355,7 @@ static void st_collections_group_parts_part_description_map_smooth(void);
 static void st_collections_group_parts_part_description_map_alpha(void);
 static void st_collections_group_parts_part_description_map_backface_cull(void);
 static void st_collections_group_parts_part_description_map_perspective_on(void);
+static void st_collections_group_parts_part_description_map_color(void);
 static void st_collections_group_parts_part_description_perspective_zplane(void);
 static void st_collections_group_parts_part_description_perspective_focal(void);
 static void st_collections_group_parts_part_api(void);
@@ -669,6 +670,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.map.alpha", st_collections_group_parts_part_description_map_alpha},
      {"collections.group.parts.part.description.map.backface_cull", st_collections_group_parts_part_description_map_backface_cull},
      {"collections.group.parts.part.description.map.perspective_on", st_collections_group_parts_part_description_map_perspective_on},
+     {"collections.group.parts.part.description.map.color", st_collections_group_parts_part_description_map_color},
      {"collections.group.parts.part.description.perspective.zplane", st_collections_group_parts_part_description_perspective_zplane},
      {"collections.group.parts.part.description.perspective.focal", st_collections_group_parts_part_description_perspective_focal},
      {"collections.group.parts.part.description.params.int", st_collections_group_parts_part_description_params_int},
@@ -4800,6 +4802,27 @@ static void st_collections_group_parts_part_table_items_item_span(void)
    current_item->rowspan = parse_int_range(1, 1, 0xffff);
 }
 
+static Eina_List *
+_copied_map_colors_get(Edje_Part_Description_Common *parent)
+{
+   Eina_List *colors = NULL;
+   Eina_List *l;
+   Edje_Map_Color *color;
+   EINA_LIST_FOREACH(parent->map.colors, l, color)
+     {
+        Edje_Map_Color *c = mem_alloc(SZ(Edje_Map_Color));
+        if (!color)
+          {
+             ERR("not enough memory");
+             exit(-1);
+             return NULL;
+          }
+        memcpy(c, color, sizeof(Edje_Map_Color));
+        colors = eina_list_append(colors, c);
+     }
+   return colors;
+}
+
 /**
    @edcsubsection{collections_group_parts_description,Description}
  */
@@ -4907,6 +4930,7 @@ ob_collections_group_parts_part_description(void)
    ed->map.alpha = 1;
    ed->map.backcull = 0;
    ed->map.persp_on = 0;
+   ed->map.colors = NULL;
    ed->persp.zplane = 0;
    ed->persp.focal = 1000;
    ed->minmul.have = 1;
@@ -5037,6 +5061,8 @@ st_collections_group_parts_part_description_inherit(void)
 #define STRDUP(x) x ? strdup(x) : NULL
 
    ed->color_class = STRDUP(ed->color_class);
+   ed->map.colors = _copied_map_colors_get(parent);
+
    switch (ep->type)
      {
       case EDJE_PART_TYPE_SPACER:
@@ -8261,6 +8287,39 @@ st_collections_group_parts_part_description_map_perspective_on(void)
 
    current_desc->map.persp_on = parse_bool(0);
 }
+
+static void
+st_collections_group_parts_part_description_map_color(void)
+{
+   check_arg_count(5);
+
+   Edje_Map_Color *color = mem_alloc(SZ(Edje_Map_Color));
+   if (!color)
+     {
+        ERR("not enough memory");
+        exit(-1);
+        return;
+     }
+   color->idx = parse_int(0);
+   color->r = parse_int_range(1, 0, 255);
+   color->g = parse_int_range(2, 0, 255);
+   color->b = parse_int_range(3, 0, 255);
+   color->a = parse_int_range(4, 0, 255);
+
+   Eina_List *l;
+   Edje_Map_Color *ex_color;
+   EINA_LIST_FOREACH(current_desc->map.colors, l, ex_color)
+     {
+        if (ex_color->idx != color->idx) continue;
+        ex_color->r = color->r;
+        ex_color->g = color->g;
+        ex_color->b = color->b;
+        ex_color->a = color->a;
+        return;
+     }
+   current_desc->map.colors = eina_list_append(current_desc->map.colors, color);
+}
+
 
 /**
    @edcsubsection{collections_group_parts_description_map_rotation,Rotation}

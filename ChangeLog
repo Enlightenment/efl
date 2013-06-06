@@ -1,3 +1,7 @@
+2013-06-06  ChunEon Park (Hermet)
+
+        * Edje: support edc map color set
+
 2013-06-05  Jiyou Park
 
         * Evas: Fix gif cannot decode alpha value correctly.

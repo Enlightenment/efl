@@ -3038,6 +3038,7 @@ edje_edit_state_add(Evas_Object *obj, const char *part, const char *name, double
    pd->map.rot.x = FROM_DOUBLE(0.0);
    pd->map.rot.y = FROM_DOUBLE(0.0);
    pd->map.rot.z = FROM_DOUBLE(0.0);
+   pd->map.colors = NULL;
    pd->map.on = EINA_FALSE;
    pd->map.smooth = EINA_TRUE;
    pd->map.alpha = EINA_TRUE;
