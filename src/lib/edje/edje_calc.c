@@ -2810,39 +2810,104 @@ map_colors_interp(Edje_Calc_Params *p1, Edje_Calc_Params *p2,
 }
 
 static void
-_edje_map_color_update(Evas_Map *map, const  Edje_Calc_Params_Map *pmap,
-                       Eina_Bool map_colors_free)
+_edje_map_prop_set(Evas_Map *map, const  Edje_Calc_Params *pf,
+                   Edje_Part_Description_Common *chosen_desc,
+                   Edje_Real_Part *ep, Evas_Object *mo,
+                   Eina_Bool map_colors_free)
 {
-   Eina_List *colors = pmap->colors;
+   Eina_List *colors = pf->map->colors;
    Edje_Map_Color *color;
    Eina_List *l;
 
+   evas_map_util_points_populate_from_object(map, ep->object);
+
+   if (ep->part->type == EDJE_PART_TYPE_IMAGE ||
+       ((ep->part->type == EDJE_PART_TYPE_SWALLOW) &&
+        (eo_isa(mo, EVAS_OBJ_IMAGE_CLASS) &&
+         (!evas_object_image_source_get(mo))))
+      )
+     {
+        int iw = 1, ih = 1;
+
+        evas_object_image_size_get(mo, &iw, &ih);
+        evas_map_point_image_uv_set(map, 0, 0.0, 0.0);
+        evas_map_point_image_uv_set(map, 1, iw , 0.0);
+        evas_map_point_image_uv_set(map, 2, iw , ih );
+        evas_map_point_image_uv_set(map, 3, 0.0, ih );
+     }
+
+   //map color
    if (!colors)
      {
         evas_map_point_color_set(map, 0, 255, 255, 255, 255);
         evas_map_point_color_set(map, 1, 255, 255, 255, 255);
         evas_map_point_color_set(map, 2, 255, 255, 255, 255);
         evas_map_point_color_set(map, 3, 255, 255, 255, 255);
-        return;
-     }
-
-   if (map_colors_free)
-     {
-        EINA_LIST_FREE(colors, color)
-          {
-             evas_map_point_color_set(map, color->idx, color->r, color->g,
-                                      color->b, color->a);
-             free(color);
-          }
      }
    else
      {
-        EINA_LIST_FOREACH(colors, l, color)
+        if (map_colors_free)
           {
-             evas_map_point_color_set(map, color->idx, color->r, color->g,
-                                      color->b, color->a);
+             EINA_LIST_FREE(colors, color)
+               {
+                  evas_map_point_color_set(map, color->idx, color->r, color->g,
+                                           color->b, color->a);
+                  free(color);
+               }
+          }
+        else
+          {
+             EINA_LIST_FOREACH(colors, l, color)
+               {
+                  evas_map_point_color_set(map, color->idx, color->r, color->g,
+                                           color->b, color->a);
+               }
           }
      }
+
+   //rotate
+   evas_map_util_3d_rotate(map,
+                           TO_DOUBLE(pf->map->rotation.x),
+                           TO_DOUBLE(pf->map->rotation.y),
+                           TO_DOUBLE(pf->map->rotation.z),
+                           pf->map->center.x, pf->map->center.y,
+                           pf->map->center.z);
+
+   // calculate light color & position etc. if there is one
+   if (pf->lighted)
+     {
+        evas_map_util_3d_lighting(map, pf->map->light.x, pf->map->light.y,
+                                  pf->map->light.z, pf->map->light.r,
+                                  pf->map->light.g, pf->map->light.b,
+                                  pf->map->light.ar, pf->map->light.ag,
+                                  pf->map->light.ab);
+     }
+
+   // calculate perspective point
+   if (chosen_desc->map.persp_on)
+     {
+        evas_map_util_3d_perspective(map,
+                                     pf->map->persp.x, pf->map->persp.y,
+                                     pf->map->persp.z, pf->map->persp.focal);
+     }
+
+   // handle backface culling (object is facing away from view
+   if (chosen_desc->map.backcull)
+     {
+        if (pf->visible)
+          {
+             if (evas_map_util_clockwise_get(map))
+               evas_object_show(mo);
+             else evas_object_hide(mo);
+          }
+     }
+
+   // handle smooth
+   if (chosen_desc->map.smooth) evas_map_smooth_set(map, EINA_TRUE);
+   else evas_map_smooth_set(map, EINA_FALSE);
+   // handle alpha
+   if (chosen_desc->map.alpha) evas_map_alpha_set(map, EINA_TRUE);
+   else evas_map_alpha_set(map, EINA_FALSE);
 }
 
 #define Rel1X 0
@@ -3677,66 +3742,8 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
              ed->have_mapped_part = EINA_TRUE;
              // create map and populate with part geometry
              if (!map) map = evas_map_new(4);
-             evas_map_util_points_populate_from_object(map, ep->object);
-             if (ep->part->type == EDJE_PART_TYPE_IMAGE ||
-                 ((ep->part->type == EDJE_PART_TYPE_SWALLOW) &&
-                  (eo_isa(mo, EVAS_OBJ_IMAGE_CLASS) &&
-                  (!evas_object_image_source_get(mo))))
-                )
-               {
-                  int iw = 1, ih = 1;
 
-                  evas_object_image_size_get(mo, &iw, &ih);
-                  evas_map_point_image_uv_set(map, 0, 0.0, 0.0);
-                  evas_map_point_image_uv_set(map, 1, iw , 0.0);
-                  evas_map_point_image_uv_set(map, 2, iw , ih );
-                  evas_map_point_image_uv_set(map, 3, 0.0, ih );
-               }
-
-             _edje_map_color_update(map, pf->map, map_colors_free);
-
-             evas_map_util_3d_rotate(map,
-                                     TO_DOUBLE(pf->map->rotation.x),
-                                     TO_DOUBLE(pf->map->rotation.y),
-                                     TO_DOUBLE(pf->map->rotation.z),
-                                     pf->map->center.x, pf->map->center.y,
-                                     pf->map->center.z);
-
-             // calculate light color & position etc. if there is one
-             if (pf->lighted)
-               {
-                  evas_map_util_3d_lighting(map,
-                                            pf->map->light.x, pf->map->light.y, pf->map->light.z,
-                                            pf->map->light.r, pf->map->light.g, pf->map->light.b,
-                                            pf->map->light.ar, pf->map->light.ag, pf->map->light.ab);
-               }
-
-             // calculate perspective point
-             if (chosen_desc->map.persp_on)
-               {
-                  evas_map_util_3d_perspective(map,
-                                               pf->map->persp.x, pf->map->persp.y, pf->map->persp.z,
-                                               pf->map->persp.focal);
-               }
-
-             // handle backface culling (object is facing away from view
-             if (chosen_desc->map.backcull)
-               {
-                  if (pf->visible)
-                    {
-                       if (evas_map_util_clockwise_get(map))
-                         evas_object_show(mo);
-                       else evas_object_hide(mo);
-                    }
-               }
-
-             // handle smooth
-             if (chosen_desc->map.smooth) evas_map_smooth_set(map, EINA_TRUE);
-             else evas_map_smooth_set(map, EINA_FALSE);
-             // handle alpha
-             if (chosen_desc->map.alpha) evas_map_alpha_set(map, EINA_TRUE);
-             else evas_map_alpha_set(map, EINA_FALSE);
-
+             _edje_map_prop_set(map, pf, chosen_desc, ep, mo, map_colors_free);
 
              if (ep->nested_smart)
                {  /* Apply map to smart obj holding nested parts */
