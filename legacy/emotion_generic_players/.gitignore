@@ -1,3 +1,4 @@
+*~
 INSTALL
 Makefile
 Makefile.in
@@ -21,3 +22,7 @@ src/vlc/.dirstamp
 src/vlc/src_vlc_vlc-emotion_generic_vlc.o
 src/vlc/vlc
 stamp-h1
+pkgbuild/PKGBUILD
+pkgbuild/pkg
+pkgbuild/src
+pkgbuild/*.tar.xz
