@@ -10,7 +10,7 @@ makedepends=()
 depends=('poppler' 'libraw' 'libspectre' 'librsvg' 'gstreamer0.10'
          'gstreamer0.10-base' 'gstreamer0.10-good' 
 	 'gstreamer0.10-bad' 'gstreamer0.10-ugly' 'gstreamer0.10-ffmpeg')
-provides=("evas_generic_loaders=$pkgver")
+provides=("evas_generic_loaders=$pkgver" 'evas_generic_loaders-svn')
 conflicts=('evas_generic_loaders-svn')
 options=('strip' 'zipman' '!libtool' 'debug')
 buildflags="-O2 -g -fvisibility=hidden -fomit-frame-pointer"
@@ -32,9 +32,10 @@ package() {
   cd "../.."
   rm -rf $pkgdir/usr
   make -j1 DESTDIR="$pkgdir/" install
-  install -Dm644 README $pkgdir/usr/share/$pkgname/licenses/$pkgname/README
-  install -Dm644 NEWS $pkgdir/usr/share/$pkgname/licenses/$pkgname/NEWS
-  install -Dm644 ChangeLog $pkgdir/usr/share/$pkgname/licenses/$pkgname/ChangeLog
-  install -Dm644 AUTHORS $pkgdir/usr/share/$pkgname/licenses/$pkgname/AUTHORS
-  install -Dm644 COPYING $pkgdir/usr/share/$pkgname/licenses/$pkgname/licenses/COPYING
+  install -Dm644 README $pkgdir/usr/share/$pkgname/README
+  install -Dm644 NEWS $pkgdir/usr/share/$pkgname/NEWS
+  install -Dm644 ChangeLog $pkgdir/usr/share/$pkgname/ChangeLog
+  install -Dm644 AUTHORS $pkgdir/usr/share/$pkgname/AUTHORS
+  install -Dm644 COPYING $pkgdir/usr/share/licenses/$pkgname/COPYING
+  ln -s ../licenses/$pkgname/COPYING $pkgdir/usr/share/$pkgname/COPYING
 }
