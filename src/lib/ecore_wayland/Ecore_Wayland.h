@@ -504,7 +504,7 @@ EAPI void ecore_wl_display_iterate(void);
  * @ingroup Ecore_Wl_Display_Group
  * @since 1.8
  */
-EAPI Eina_Bool ecore_wl_animator_source_set(Ecore_Wl_Window *win, Ecore_Animator_Source source);
+EAPI Eina_Bool ecore_wl_animator_source_set(Ecore_Animator_Source source);
 
 /**
  * Retrieves the requested cursor from the cursor theme
@@ -623,6 +623,9 @@ EAPI void ecore_wl_window_move(Ecore_Wl_Window *win, int x, int y);
 EAPI void ecore_wl_window_resize(Ecore_Wl_Window *win, int w, int h, int location);
 EAPI void ecore_wl_window_damage(Ecore_Wl_Window *win, int x, int y, int w, int h);
 EAPI void ecore_wl_window_buffer_attach(Ecore_Wl_Window *win, struct wl_buffer *buffer, int x, int y);
+
+/* @since 1.8 */
+EAPI void ecore_wl_window_commit(Ecore_Wl_Window *win);
 
 /**
  * Shows a window
