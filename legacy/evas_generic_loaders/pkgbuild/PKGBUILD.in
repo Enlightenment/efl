@@ -1,0 +1,40 @@
+# Maintainer: Enlightenment Developers <enlightenment-devel@enlightenment.org>
+pkgname=('evas_generic_loaders')
+pkgver=@VERSION@
+pkgrel=1
+pkgdesc="Evas external binary executable loaders - GIT development snapshot"
+arch=('i686' 'x86_64' 'arm')
+url="http://www.enlightenment.org"
+license=('GPL2')
+makedepends=()
+depends=('poppler' 'libraw' 'libspectre' 'librsvg' 'gstreamer0.10'
+         'gstreamer0.10-base' 'gstreamer0.10-good' 
+	 'gstreamer0.10-bad' 'gstreamer0.10-ugly' 'gstreamer0.10-ffmpeg')
+provides=("evas_generic_loaders=$pkgver")
+conflicts=('evas_generic_loaders-svn')
+options=('strip' 'zipman' '!libtool' 'debug')
+buildflags="-O2 -g -fvisibility=hidden -fomit-frame-pointer"
+build() {
+  export LDFLAGS=""
+  cd "../.."
+  make clean distclean
+  ./configure --prefix=/usr \
+  --disable-static
+  make
+}
+
+#check() {
+#  cd "../.."
+#  make -k check
+#}
+
+package() {
+  cd "../.."
+  rm -rf $pkgdir/usr
+  make -j1 DESTDIR="$pkgdir/" install
+  install -Dm644 README $pkgdir/usr/share/$pkgname/licenses/$pkgname/README
+  install -Dm644 NEWS $pkgdir/usr/share/$pkgname/licenses/$pkgname/NEWS
+  install -Dm644 ChangeLog $pkgdir/usr/share/$pkgname/licenses/$pkgname/ChangeLog
+  install -Dm644 AUTHORS $pkgdir/usr/share/$pkgname/licenses/$pkgname/AUTHORS
+  install -Dm644 COPYING $pkgdir/usr/share/$pkgname/licenses/$pkgname/licenses/COPYING
+}

@@ -225,6 +225,7 @@ src/bin/ps/Makefile
 src/bin/raw/Makefile
 src/bin/xcf/Makefile
 src/bin/svg/Makefile
+pkgbuild/PKGBUILD
 ])
 
 AC_OUTPUT
