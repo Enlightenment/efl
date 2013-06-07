@@ -2,7 +2,7 @@
 pkgname=('elementary' 'elementary_test' 'elementary_doc')
 pkgver=@VERSION@
 pkgrel=1
-pkgdesc="Eklementary GUI toolkit - GIT development snapshot (Ecore, Eldbus, Edje, Eet, Eeze, Efreet, Eina, Eio, Embryo, Emotion, Eo, Ephysics, Ethumb, & Evas)"
+pkgdesc="Eklementary GUI toolkit - GIT development snapshot"
 arch=('i686' 'x86_64' 'arm')
 url="http://www.enlightenment.org"
 license=('LGPL2')
