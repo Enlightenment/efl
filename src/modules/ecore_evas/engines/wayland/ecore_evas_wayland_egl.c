@@ -158,10 +158,12 @@ ecore_evas_wayland_egl_new_internal(const char *disp_name, unsigned int parent,
    ee->prop.draw_frame = frame;
    ee->alpha = EINA_FALSE;
 
-   if (getenv("ECORE_EVAS_FORCE_SYNC_RENDER"))
-     ee->can_async_render = 0;
-   else
-     ee->can_async_render = 1;
+   /* NB: Disabled for right now as it causes textgrid (terminology) 
+    * to not draw text anymore */
+   /* if (getenv("ECORE_EVAS_FORCE_SYNC_RENDER")) */
+   /*   ee->can_async_render = 0; */
+   /* else */
+   /*   ee->can_async_render = 1; */
 
    /* frame offset and size */
    if (ee->prop.draw_frame)
@@ -171,6 +173,15 @@ ecore_evas_wayland_egl_new_internal(const char *disp_name, unsigned int parent,
         fw = 8;
         fh = 22;
      }
+
+   if (parent)
+     p = ecore_wl_window_find(parent);
+
+   wdata->parent = p;
+   wdata->win = 
+     ecore_wl_window_new(p, x, y, w + fw, h + fh, 
+                         ECORE_WL_WINDOW_BUFFER_TYPE_EGL_WINDOW);
+   ee->prop.window = wdata->win->id;
 
    ee->evas = evas_new();
    evas_data_attach_set(ee->evas, ee);
@@ -186,15 +197,7 @@ ecore_evas_wayland_egl_new_internal(const char *disp_name, unsigned int parent,
    if (ee->prop.draw_frame)
      evas_output_framespace_set(ee->evas, fx, fy, fw, fh);
 
-   if (parent)
-     p = ecore_wl_window_find(parent);
-
    /* FIXME: Get if parent is alpha, and set */
-
-   wdata->parent = p;
-   wdata->win = 
-     ecore_wl_window_new(p, x, y, w + fw, h + fh, ECORE_WL_WINDOW_BUFFER_TYPE_EGL_WINDOW);
-   ee->prop.window = wdata->win->id;
 
    if ((einfo = (Evas_Engine_Info_Wayland_Egl *)evas_engine_info_get(ee->evas)))
      {
@@ -202,6 +205,7 @@ ecore_evas_wayland_egl_new_internal(const char *disp_name, unsigned int parent,
         einfo->info.destination_alpha = ee->alpha;
         einfo->info.rotation = ee->rotation;
         einfo->info.depth = 32;
+        einfo->info.surface = ecore_wl_window_surface_create(wdata->win);
         if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
           {
              ERR("Failed to set Evas Engine Info for '%s'", ee->driver);
@@ -374,7 +378,7 @@ _ecore_evas_wl_rotation_set(Ecore_Evas *ee, int rotation, int resize)
 static void 
 _ecore_evas_wl_show(Ecore_Evas *ee)
 {
-   Evas_Engine_Info_Wayland_Egl *einfo;
+   /* Evas_Engine_Info_Wayland_Egl *einfo; */
    Ecore_Evas_Engine_Wl_Data *wdata;
    int fw, fh;
 
@@ -391,12 +395,12 @@ _ecore_evas_wl_show(Ecore_Evas *ee)
         ecore_wl_window_update_size(wdata->win, ee->w + fw, ee->h + fh);
 //        ecore_wl_window_buffer_attach(wdata->win, NULL, 0, 0);
 
-        einfo = (Evas_Engine_Info_Wayland_Egl *)evas_engine_info_get(ee->evas);
-        if (einfo)
-          {
-             einfo->info.surface = ecore_wl_window_surface_get(wdata->win);
-             evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
-          }
+        /* einfo = (Evas_Engine_Info_Wayland_Egl *)evas_engine_info_get(ee->evas); */
+        /* if (einfo) */
+        /*   { */
+        /*      einfo->info.surface = ecore_wl_window_surface_get(wdata->win); */
+        /*      evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo); */
+        /*   } */
 
         if ((ee->prop.clas) && (wdata->win->shell_surface))
           wl_shell_surface_set_class(wdata->win->shell_surface, 
