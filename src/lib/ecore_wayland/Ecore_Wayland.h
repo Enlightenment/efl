@@ -232,8 +232,12 @@ struct _Ecore_Wl_Window
    Ecore_Wl_Input *keyboard_device;
 
    /* FIXME: Shouldn't these attributes be private to the Ecore_Wl_Window? */
-   Eina_Bool frame_pending;
+   Eina_Bool frame_pending : 1;
    struct wl_callback *frame_callback;
+
+   Eina_Bool anim_pending : 1;
+   struct wl_callback *anim_callback;
+
    /* FIXME: Ideally we should record the cursor name for this window 
     * so we can compare and avoid unnecessary cursor set calls to wayland */
 
@@ -495,6 +499,12 @@ EAPI void ecore_wl_pointer_xy_get(int *x, int *y);
  */
 EAPI int ecore_wl_dpi_get(void);
 EAPI void ecore_wl_display_iterate(void);
+
+/*
+ * @ingroup Ecore_Wl_Display_Group
+ * @since 1.8
+ */
+EAPI Eina_Bool ecore_wl_animator_source_set(Ecore_Wl_Window *win, Ecore_Animator_Source source);
 
 /**
  * Retrieves the requested cursor from the cursor theme
