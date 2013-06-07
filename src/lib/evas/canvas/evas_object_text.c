@@ -2391,6 +2391,7 @@ _evas_object_text_recalc(Evas_Object *eo_obj, Eina_Unicode *text)
    _evas_object_text_layout(eo_obj, o, text);
 
    /* Calc ascent/descent. */
+   if (o->items)
      {
         Evas_Object_Text_Item *item;
 
@@ -2411,10 +2412,16 @@ _evas_object_text_recalc(Evas_Object *eo_obj, Eina_Unicode *text)
              if (desc > o->descent)
                 o->descent = desc;
 
-             o->max_ascent = o->ascent;
-             o->max_descent = o->descent;
           }
      }
+   else if (o->font)
+     {
+        o->ascent = ENFN->font_ascent_get(ENDT, o->font);
+        o->descent = ENFN->font_descent_get(ENDT, o->font);
+     }
+
+   o->max_ascent = o->ascent;
+   o->max_descent = o->descent;
 
    if ((o->font) && (o->items))
      {
