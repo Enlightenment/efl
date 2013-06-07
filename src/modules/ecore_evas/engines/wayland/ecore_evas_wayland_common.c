@@ -73,6 +73,8 @@ _ecore_evas_wl_common_render_updates_process(Ecore_Evas *ee, Eina_List *updates)
           ecore_wl_window_damage(wdata->win,
                                  r->x, r->y, r->w, r->h);
 
+        ecore_wl_window_commit(wdata->win);
+
         ecore_wl_flush();
 
         _ecore_evas_idle_timeout_update(ee);
