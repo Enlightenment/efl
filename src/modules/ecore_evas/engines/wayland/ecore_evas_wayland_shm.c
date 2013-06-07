@@ -9,7 +9,6 @@
 # include <sys/mman.h>
 
 /* local function prototypes */
-static void _ecore_evas_wl_free(Ecore_Evas *ee);
 static void _ecore_evas_wl_resize(Ecore_Evas *ee, int w, int h);
 static void _ecore_evas_wl_move_resize(Ecore_Evas *ee, int x, int y, int w, int h);
 static void _ecore_evas_wl_show(Ecore_Evas *ee);
@@ -20,7 +19,7 @@ static void _ecore_evas_wl_rotation_set(Ecore_Evas *ee, int rotation, int resize
 
 static Ecore_Evas_Engine_Func _ecore_wl_engine_func = 
 {
-   _ecore_evas_wl_free,
+   _ecore_evas_wl_common_free,
    _ecore_evas_wl_common_callback_resize_set,
    _ecore_evas_wl_common_callback_move_set,
    NULL, 
@@ -244,12 +243,6 @@ ecore_evas_wayland_shm_new_internal(const char *disp_name, unsigned int parent, 
 }
 
 static void 
-_ecore_evas_wl_free(Ecore_Evas *ee)
-{
-   _ecore_evas_wl_common_free(ee);
-}
-
-static void 
 _ecore_evas_wl_resize(Ecore_Evas *ee, int w, int h)
 {
    Ecore_Evas_Engine_Wl_Data *wdata;
@@ -359,18 +352,18 @@ static void
 _ecore_evas_wl_rotation_set(Ecore_Evas *ee, int rotation, int resize)
 {
    Evas_Engine_Info_Wayland_Shm *einfo;
+
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (ee->rotation == rotation) return;
 
    einfo = (Evas_Engine_Info_Wayland_Shm *)evas_engine_info_get(ee->evas);
-   if (!einfo)
-     return;
+   if (!einfo) return;
+
    einfo->info.rotation = rotation;
+
    if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
-   {
-       ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
-   }
+     ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
 
    _ecore_evas_wl_common_rotation_set(ee, rotation, resize);
 }
@@ -454,7 +447,6 @@ _ecore_evas_wayland_shm_alpha_do(Ecore_Evas *ee, int alpha)
 {
    Evas_Engine_Info_Wayland_Shm *einfo;
    Ecore_Evas_Engine_Wl_Data *wdata;
-   Ecore_Wl_Window *win = NULL;
    int fw, fh;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -464,14 +456,7 @@ _ecore_evas_wayland_shm_alpha_do(Ecore_Evas *ee, int alpha)
    ee->alpha = alpha;
    wdata = ee->engine.data;
 
-   /* FIXME: NB: We should really add a ecore_wl_window_alpha_set function
-    * but we are in API freeze, so just hack it in for now and fix when 
-    * freeze is over */
-   if ((win = wdata->win))
-     win->alpha = alpha;
-
-   /* if (wdata->win) */
-   /*   ecore_wl_window_transparent_set(wdata->win, alpha); */
+   if (wdata->win) ecore_wl_window_alpha_set(wdata->win, alpha);
 
    evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
 
@@ -483,8 +468,8 @@ _ecore_evas_wayland_shm_alpha_do(Ecore_Evas *ee, int alpha)
         evas_damage_rectangle_add(ee->evas, 0, 0, ee->w + fw, ee->h + fh);
      }
 
-   if (win)
-     ecore_wl_window_update_size(win, ee->w + fw, ee->h + fh);
+   if (wdata->win)
+     ecore_wl_window_update_size(wdata->win, ee->w + fw, ee->h + fh);
 }
 
 static void
