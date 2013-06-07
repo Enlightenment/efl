@@ -75,7 +75,6 @@ package_efl_doc() {
   mkdir -p $pkgdir/usr/share/man/man3
   cp -r doc/html $pkgdir/usr/share/$pkgname/
   cp -r doc/latex $pkgdir/usr/share/$pkgname/latex
-  rm -f `find $pkgdir -name '*.la' -print`
 }
 
 package_efl_x11() {
@@ -92,5 +91,4 @@ package_efl_x11() {
   $pkgdir/usr/lib/pkgconfig/evas-*-x11.pc
   rm -rf $pkgdir/usr
   tar -C / -P -xf /tmp/xf.tar
-  rm -f `find $pkgdir -name '*.la' -print`
 }
