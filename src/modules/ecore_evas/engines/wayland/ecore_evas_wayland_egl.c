@@ -157,6 +157,11 @@ ecore_evas_wayland_egl_new_internal(const char *disp_name, unsigned int parent,
    ee->prop.draw_frame = frame;
    ee->alpha = EINA_FALSE;
 
+   if (getenv("ECORE_EVAS_FORCE_SYNC_RENDER"))
+     ee->can_async_render = 0;
+   else
+     ee->can_async_render = 1;
+
    /* frame offset and size */
    if (ee->prop.draw_frame)
      {
@@ -171,6 +176,10 @@ ecore_evas_wayland_egl_new_internal(const char *disp_name, unsigned int parent,
    evas_output_method_set(ee->evas, method);
    evas_output_size_set(ee->evas, ee->w + fw, ee->h + fh);
    evas_output_viewport_set(ee->evas, 0, 0, ee->w + fw, ee->h + fh);
+
+   if (ee->can_async_render)
+     evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_POST, 
+                             _ecore_evas_wl_common_render_updates, ee);
 
    /* FIXME: This needs to be set based on theme & scale */
    if (ee->prop.draw_frame)
@@ -422,8 +431,8 @@ _ecore_evas_wl_hide(Ecore_Evas *ee)
    if (ee->func.fn_hide) ee->func.fn_hide(ee);
 }
 
-static void
-_ecore_evas_wl_alpha_set(Ecore_Evas *ee, int alpha)
+static void 
+_ecore_evas_wayland_egl_alpha_do(Ecore_Evas *ee, int alpha)
 {
    Evas_Engine_Info_Wayland_Egl *einfo;
    Ecore_Evas_Engine_Wl_Data *wdata;
@@ -451,8 +460,21 @@ _ecore_evas_wl_alpha_set(Ecore_Evas *ee, int alpha)
      }
 }
 
+static void
+_ecore_evas_wl_alpha_set(Ecore_Evas *ee, int alpha)
+{
+   if (ee->in_async_render)
+     {
+        ee->delayed.alpha = alpha;
+        ee->delayed.alpha_changed = EINA_TRUE;
+        return;
+     }
+
+   _ecore_evas_wayland_egl_alpha_do(ee, alpha);
+}
+
 static void 
-_ecore_evas_wl_transparent_set(Ecore_Evas *ee, int transparent)
+_ecore_evas_wayland_egl_transparent_do(Ecore_Evas *ee, int transparent)
 {
    Evas_Engine_Info_Wayland_Egl *einfo;
    Ecore_Evas_Engine_Wl_Data *wdata;
@@ -479,6 +501,19 @@ _ecore_evas_wl_transparent_set(Ecore_Evas *ee, int transparent)
         evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
         evas_damage_rectangle_add(ee->evas, 0, 0, ee->w + fw, ee->h + fh);
      }
+}
+
+static void 
+_ecore_evas_wl_transparent_set(Ecore_Evas *ee, int transparent)
+{
+   if (ee->in_async_render)
+     {
+        ee->delayed.transparent = transparent;
+        ee->delayed.transparent_changed = EINA_TRUE;
+        return;
+     }
+
+   _ecore_evas_wayland_egl_transparent_do(ee, transparent);
 }
 
 void 
