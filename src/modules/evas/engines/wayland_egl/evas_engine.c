@@ -292,6 +292,7 @@ evgl_eng_native_window_create(void *data)
 
    if (!(re = (Render_Engine *)data)) return NULL;
    if (!re->info) return NULL;
+//   if (!re->info->info.surface) return NULL;
 
    EVGLINIT(re, NULL);
 
@@ -628,6 +629,14 @@ eng_setup(Evas *evas, void *info)
    /* check for existing engine output */
    if (!epd->engine.data.output)
      {
+        /* FIXME: Remove this line as soon as eglGetDisplay() autodetection
+         * gets fixed. Currently it is incorrectly detecting wl_display and
+         * returning _EGL_PLATFORM_X11 instead of _EGL_PLATFORM_WAYLAND.
+         *
+         * See ticket #1972 for more info.
+         */
+        setenv("EGL_PLATFORM", "wayland", 1);
+
         /* try to allocate space for a new render engine */
         if (!(re = calloc(1, sizeof(Render_Engine))))
           return 0;
@@ -637,22 +646,6 @@ eng_setup(Evas *evas, void *info)
         re->evas = evas;
         re->w = epd->output.w;
         re->h = epd->output.h;
-
-        /* try to create a new window */
-        re->win = eng_window_new(inf->info.display, inf->info.surface, 
-                                 inf->info.screen, inf->info.depth, 
-                                 re->w, re->h, inf->indirect, 
-                                 inf->info.destination_alpha, 
-                                 inf->info.rotation);
-        if (!re->win)
-          {
-             free(re);
-             return 0;
-          }
-
-        /* tell the engine to use this render_engine for output */
-        epd->engine.data.output = re;
-        gl_wins++;
 
         /* if we have not initialize gl & evas, do it */
         if (!initted)
@@ -673,6 +666,22 @@ eng_setup(Evas *evas, void *info)
 //             evgl_engine_init(re, &evgl_funcs);
              initted = EINA_TRUE;
           }
+
+        /* try to create a new window */
+        re->win = eng_window_new(inf->info.display, inf->info.surface, 
+                                 inf->info.screen, inf->info.depth, 
+                                 re->w, re->h, inf->indirect, 
+                                 inf->info.destination_alpha, 
+                                 inf->info.rotation);
+        if (!re->win)
+          {
+             free(re);
+             return 0;
+          }
+
+        /* tell the engine to use this render_engine for output */
+        epd->engine.data.output = re;
+        gl_wins++;
      }
    else
      {
@@ -688,21 +697,19 @@ eng_setup(Evas *evas, void *info)
                  (re->info->info.destination_alpha != re->win->alpha))
                {
                   Eina_Bool inc = EINA_FALSE;
-                  Evas_GL_Wl_Window *new_win = NULL;
 
-                  /* if no surface is passed in, then we are hiding 
-                   * or destroying */
-                  if ((re->win) && (re->win->surface) && 
-                      (!re->info->info.surface))
+                  if (re->win)
                     {
+                       re->win->gl_context->references++;
                        eng_window_free(re->win);
+                       inc = EINA_TRUE;
                        gl_wins--;
-                       free(re);
-                       epd->engine.data.output = NULL;
-                       return 0;
                     }
 
-                  new_win = eng_window_new(re->info->info.display, 
+                  re->w = epd->output.w;
+                  re->h = epd->output.h;
+
+                  re->win = eng_window_new(re->info->info.display, 
                                            re->info->info.surface, 
                                            re->info->info.screen, 
                                            re->info->info.depth, 
@@ -710,25 +717,11 @@ eng_setup(Evas *evas, void *info)
                                            re->info->indirect, 
                                            re->info->info.destination_alpha, 
                                            re->info->info.rotation);
-                  if (new_win)
-                    {
-                       if (re->win)
-                         {
-                            re->win->gl_context->references++;
-                            eng_window_free(re->win);
-                            inc = EINA_TRUE;
-                            gl_wins--;
-                         }
 
-                       re->win = new_win;
-                       re->w = epd->output.w;
-                       re->h = epd->output.h;
-
-                       eng_window_use(re->win);
-                       if (re->win) gl_wins++;
-                       if ((re->win) && (inc))
-                         re->win->gl_context->references--;
-                    }
+                  eng_window_use(re->win);
+                  if (re->win) gl_wins++;
+                  if ((re->win) && (inc))
+                    re->win->gl_context->references--;
                }
              else if ((re->win->w != epd->output.w) || 
                       (re->win->h != epd->output.h))
@@ -1149,7 +1142,8 @@ eng_output_redraws_next_update_push(void *data, void *surface EINA_UNUSED, int x
    if (!_re_wincheck(re)) return;
 
    re->win->draw.drew = EINA_TRUE;
-   evas_gl_common_context_flush(re->win->gl_context);
+   if (re->win->gl_context) 
+     evas_gl_common_context_flush(re->win->gl_context);
 
    if (safe_native == -1)
      {
@@ -1669,14 +1663,14 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data, i
 #endif
 
    /* Engine can be fail to create texture after cache drop like eng_image_content_hint_set function,
-        so it is need to add code which check im->im's NULL value*/
+    so it is need to add code which check im->im's NULL value*/
 
    if (!im->im)
-    {
-       *image_data = NULL;
-       if (err) *err = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
-       return NULL;
-    }
+     {
+        *image_data = NULL;
+        if (err) *err = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+        return NULL;
+     }
 
    error = evas_cache_image_load_data(&im->im->cache_entry);
    switch (im->cs.space)
@@ -1772,6 +1766,7 @@ eng_image_data_put(void *data, void *image, DATA32 *image_data)
               if (!im2) return im;
               evas_gl_common_image_free(im);
               im = im2;
+              evas_gl_common_image_dirty(im, 0, 0, 0, 0);
            }
          break;
       case EVAS_COLORSPACE_YCBCR422P601_PL:
@@ -2185,12 +2180,13 @@ eng_image_cache_flush(void *data)
    Render_Engine *re;
    int tmp_size;
 
-   if (!(re = (Render_Engine *)data)) return;
-
    tmp_size = evas_common_image_get_cache();
    evas_common_image_set_cache(0);
    evas_common_rgba_image_scalecache_flush();
+   re = (Render_Engine *)data;
    evas_gl_common_image_cache_flush(re->win->gl_context);
+//   if ((re = (Render_Engine *)data))
+//     evas_gl_common_image_cache_flush(re->win->gl_context);
    evas_common_image_set_cache(tmp_size);
 }
 
@@ -2199,10 +2195,12 @@ eng_image_cache_set(void *data, int bytes)
 {
    Render_Engine *re;
 
-   if (!(re = (Render_Engine *)data)) return;
    evas_common_image_set_cache(bytes);
    evas_common_rgba_image_scalecache_size_set(bytes);
+   re = (Render_Engine *)data;
    evas_gl_common_image_cache_flush(re->win->gl_context);
+//   if (!(re = (Render_Engine *)data)) return;
+//   if (re->win) evas_gl_common_image_cache_flush(re->win->gl_context);
 }
 
 static int
