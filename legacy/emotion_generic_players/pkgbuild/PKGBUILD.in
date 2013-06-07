@@ -9,7 +9,7 @@ license=('BSD')
 makedepends=()
 depends=('vlc' 'libdvdcss' 'libbluray' 'flac' 'vcdimager' 'libcdio'
          'ttf-freefont' 'ttf-dejavu' 'opus' 'libssh2')
-provides=("emotion_generic_players=$pkgver")
+provides=("emotion_generic_players=$pkgver" 'emotion_generic_players-svn')
 conflicts=('emotion_generic_players-svn')
 options=('strip' 'zipman' '!libtool' 'debug')
 buildflags="-O2 -g -fvisibility=hidden -fomit-frame-pointer"
