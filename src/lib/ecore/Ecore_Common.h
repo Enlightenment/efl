@@ -1719,14 +1719,14 @@ EAPI double ecore_poller_poll_interval_get(Ecore_Poller_Type type);
  *    ... do some more animating ...
  * }
  * ...
- *ecore_animator_timeline_add(2, _do_animation, my_evas_object);
+ * ecore_animator_timeline_add(2, _do_animation, my_evas_object);
  * @endcode
  * In the sample above we create an animation to move
  * @c my_evas_object from position (0,0) to (100,100) in 2 seconds.
  *
  * If your animation will run for an unspecified amount of time you
  * can use ecore_animator_add(), which is like using
- *ecore_timer_add() with the interval being the
+ * ecore_timer_add() with the interval being the
  * @ref ecore_animator_frametime_set "framerate". Note that this has
  * tangible benefits to creating a timer for each animation in terms
  * of performance.
