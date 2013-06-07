@@ -16,13 +16,10 @@ depends=('bullet' 'libpng' 'libjpeg-turbo' 'gstreamer0.10'
 	 'libxdamage' 'libxdmcp' 'libxext' 'libxfixes' 'libxinerama'
 	 'libxi' 'libxrandr' 'libxrender' 'libxss' 'libxtst'
 	 'libxcursor' 'libxp' 'libgl' 'giflib' 'libwebp' 'harfbuzz')
-provides=("ecore=$pkgver" "eldbus=$pkgver" "edje=$pkgver"
-          "eet=$pkgver" "eeze=$pkgver" "efreet=$pkgver"
-	  "eina=$pkgver" "eio=$pkgver" "embryo=$pkgver" "emotion=$pkgver"
-          "ephysics=$pkgver" "ethumb=$pkgver" "evas=$pkgver"
-	  "efl=$pkgver" 'efl_x11' 'efl-svn')
-conflicts=('ecore' 'edje' 'eet' 'eeze' 'efreet' 'eina' 'eio' 'embryo'
-           'emotion' 'ethumb' 'evas' 'efl' 'efl_x11' 'efl-svn')
+provides_efl=("ecore=$pkgver" "eldbus=$pkgver" "edje=$pkgver"
+              "eet=$pkgver" "eeze=$pkgver" "efreet=$pkgver"
+	      "eina=$pkgver" "eio=$pkgver" "embryo=$pkgver" "emotion=$pkgver"
+              "ephysics=$pkgver" "ethumb=$pkgver" "evas=$pkgver")
 options=('strip' 'docs' 'zipman' '!libtool' 'debug')
 buildflags="-O2 -g -fvisibility=hidden -fomit-frame-pointer"
 build() {
@@ -71,9 +68,8 @@ package_efl_doc() {
   cd "../.."
   rm -rf $pkgdir/usr
   make -j1 doc
-  make -j1 DESTDIR="$pkgdir/" install
-  mkdir -p $pkgdir/usr/share/man/man3
-  cp -r doc/html $pkgdir/usr/share/$pkgname/
+  mkdir -p $pkgdir/usr/share/$pkgname
+  cp -r doc/html $pkgdir/usr/share/$pkgname/html
   cp -r doc/latex $pkgdir/usr/share/$pkgname/latex
 }
 
