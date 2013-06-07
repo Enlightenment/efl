@@ -186,7 +186,7 @@ _rgb_to_hsl(Elm_Colorselector_Smart_Data *sd)
    sd->h *= 60.0;
 }
 
-static void
+static Eina_Bool
 _hsl_to_rgb(Elm_Colorselector_Smart_Data *sd)
 {
    double sv, vsf, f, p, q, t, v;
@@ -259,119 +259,132 @@ _hsl_to_rgb(Elm_Colorselector_Smart_Data *sd)
      }
    i = (int)(r * 255.0);
    f = (r * 255.0) - i;
-   sd->r = (f <= 0.5) ? i : (i + 1);
+   r = (f <= 0.5) ? i : (i + 1);
 
    i = (int)(g * 255.0);
    f = (g * 255.0) - i;
-   sd->g = (f <= 0.5) ? i : (i + 1);
+   g = (f <= 0.5) ? i : (i + 1);
 
    i = (int)(b * 255.0);
    f = (b * 255.0) - i;
-   sd->b = (f <= 0.5) ? i : (i + 1);
+   b = (f <= 0.5) ? i : (i + 1);
+
+   if (sd->r == r && sd->g == g && sd->b == b) return EINA_FALSE;
+
+   sd->r = r;
+   sd->g = g;
+   sd->b = b;
+
+   return EINA_TRUE;
 }
 
 static void
-_rectangles_redraw(Color_Bar_Data *cb_data, double x)
+_update_ergb(Elm_Colorselector_Smart_Data *sd, double x)
 {
    double one_six = 1.0 / 6.0;
 
-   ELM_COLORSELECTOR_DATA_GET(cb_data->parent, sd);
+   if (x < one_six)
+     {
+        sd->er = 255;
+        sd->eg = (255.0 * x * 6.0);
+        sd->eb = 0;
+     }
+   else if (x < 2 * one_six)
+     {
+        sd->er = 255 - (int)(255.0 * (x - one_six) * 6.0);
+        sd->eg = 255;
+        sd->eb = 0;
+     }
+   else if (x < 3 * one_six)
+     {
+        sd->er = 0;
+        sd->eg = 255;
+        sd->eb = (int)(255.0 * (x - (2.0 * one_six)) * 6.0);
+     }
+   else if (x < 4 * one_six)
+     {
+        sd->er = 0;
+        sd->eg = 255 - (int)(255.0 * (x - (3.0 * one_six)) * 6.0);
+        sd->eb = 255;
+     }
+   else if (x < 5 * one_six)
+     {
+        sd->er = 255.0 * (x - (4.0 * one_six)) * 6.0;
+        sd->eg = 0;
+        sd->eb = 255;
+     }
+   else
+     {
+        sd->er = 255;
+        sd->eg = 0;
+        sd->eb = 255 - (int)(255.0 * (x - (5.0 * one_six)) * 6.0);
+     }
+}
 
-   switch (cb_data->color_type)
+static void
+_update_colorbars(Elm_Colorselector_Smart_Data *sd)
+{
+   evas_object_color_set
+     (sd->cb_data[0]->arrow, sd->er, sd->eg, sd->eb, 255);
+   evas_object_color_set
+     (sd->cb_data[1]->bg_rect, sd->er, sd->eg, sd->eb, 255);
+   evas_object_color_set
+     (sd->cb_data[2]->bg_rect, sd->er, sd->eg, sd->eb, 255);
+   evas_object_color_set
+     (sd->cb_data[3]->bar, sd->er, sd->eg, sd->eb, 255);
+
+   _color_with_saturation(sd);
+   evas_object_color_set
+     (sd->cb_data[1]->arrow, sd->sr, sd->sg, sd->sb, 255);
+
+   _color_with_lightness(sd);
+   evas_object_color_set
+     (sd->cb_data[2]->arrow, sd->lr, sd->lg, sd->lb, 255);
+
+   evas_object_color_set(sd->cb_data[3]->arrow,
+                         (sd->er * sd->a) / 255,
+                         (sd->eg * sd->a) / 255,
+                         (sd->eb * sd->a) / 255,
+                         sd->a);
+}
+
+static void
+_update_hsla_from_colorbar(Evas_Object *obj, Color_Type type, double x)
+{
+   int ta;
+
+   ELM_COLORSELECTOR_DATA_GET(obj, sd);
+
+   switch (type)
      {
       case HUE:
         sd->h = 360.0 * x;
-
-        if (x < one_six)
-          {
-             sd->er = 255;
-             sd->eg = (255.0 * x * 6.0);
-             sd->eb = 0;
-          }
-        else if (x < 2 * one_six)
-          {
-             sd->er = 255 - (int)(255.0 * (x - one_six) * 6.0);
-             sd->eg = 255;
-             sd->eb = 0;
-          }
-        else if (x < 3 * one_six)
-          {
-             sd->er = 0;
-             sd->eg = 255;
-             sd->eb = (int)(255.0 * (x - (2.0 * one_six)) * 6.0);
-          }
-        else if (x < 4 * one_six)
-          {
-             sd->er = 0;
-             sd->eg = 255 - (int)(255.0 * (x - (3.0 * one_six)) * 6.0);
-             sd->eb = 255;
-          }
-        else if (x < 5 * one_six)
-          {
-             sd->er = 255.0 * (x - (4.0 * one_six)) * 6.0;
-             sd->eg = 0;
-             sd->eb = 255;
-          }
-        else
-          {
-             sd->er = 255;
-             sd->eg = 0;
-             sd->eb = 255 - (int)(255.0 * (x - (5.0 * one_six)) * 6.0);
-          }
-
-        evas_object_color_set
-          (sd->cb_data[0]->arrow, sd->er, sd->eg, sd->eb, 255);
-        evas_object_color_set
-          (sd->cb_data[1]->bg_rect, sd->er, sd->eg, sd->eb, 255);
-        evas_object_color_set
-          (sd->cb_data[2]->bg_rect, sd->er, sd->eg, sd->eb, 255);
-        evas_object_color_set
-          (sd->cb_data[3]->bar, sd->er, sd->eg, sd->eb, 255);
-
-        _color_with_saturation(sd);
-        evas_object_color_set
-          (sd->cb_data[1]->arrow, sd->sr, sd->sg, sd->sb, 255);
-
-        _color_with_lightness(sd);
-        evas_object_color_set
-          (sd->cb_data[2]->arrow, sd->lr, sd->lg, sd->lb, 255);
-
-        evas_object_color_set(sd->cb_data[3]->arrow,
-                              (sd->er * sd->a) / 255,
-                              (sd->eg * sd->a) / 255,
-                              (sd->eb * sd->a) / 255,
-                              sd->a);
+        _update_ergb(sd, x);
         break;
 
       case SATURATION:
         sd->s = 1.0 - x;
-        _color_with_saturation(sd);
-        evas_object_color_set
-          (sd->cb_data[1]->arrow, sd->sr, sd->sg, sd->sb, 255);
         break;
 
       case LIGHTNESS:
         sd->l = x;
-        _color_with_lightness(sd);
-        evas_object_color_set
-          (sd->cb_data[2]->arrow, sd->lr, sd->lg, sd->lb, 255);
         break;
 
       case ALPHA:
-        sd->a = 255.0 * x;
-        evas_object_color_set(sd->cb_data[3]->arrow,
-                              (sd->er * sd->a) / 255,
-                              (sd->eg * sd->a) / 255,
-                              (sd->eb * sd->a) / 255,
-                              sd->a);
+        ta = 255.0 * x;
+        if (ta == sd->a) return;
+        sd->a = ta;
         break;
 
       default:
-        break;
+        return;
      }
 
-   _hsl_to_rgb(sd);
+   if (type != ALPHA && !_hsl_to_rgb(sd)) return;
+
+   _update_colorbars(sd);
    _color_picker_init(sd);
+   evas_object_smart_callback_call(obj, SIG_CHANGED, NULL);
 }
 
 static void
@@ -400,20 +413,18 @@ _colors_set(Evas_Object *obj,
    x = sd->h / 360.0;
    edje_object_part_drag_value_set
      (sd->cb_data[0]->colorbar, "elm.arrow", x, y);
-   _rectangles_redraw(sd->cb_data[0], x);
+   _update_ergb(sd, x);
 
    edje_object_part_drag_value_get
      (sd->cb_data[1]->colorbar, "elm.arrow", &x, &y);
    x = 1.0 - sd->s;
    edje_object_part_drag_value_set
      (sd->cb_data[1]->colorbar, "elm.arrow", x, y);
-   _rectangles_redraw(sd->cb_data[1], x);
 
    edje_object_part_drag_value_get
      (sd->cb_data[2]->colorbar, "elm.arrow", &x, &y);
    x = sd->l;
    edje_object_part_drag_value_set(sd->cb_data[2]->colorbar, "elm.arrow", x, y);
-   _rectangles_redraw(sd->cb_data[2], x);
 
    edje_object_part_drag_value_get
      (sd->cb_data[3]->colorbar, "elm.arrow", &x, &y);
@@ -421,7 +432,8 @@ _colors_set(Evas_Object *obj,
    edje_object_part_drag_value_set
      (sd->cb_data[3]->colorbar, "elm.arrow", x, y);
 
-   _rectangles_redraw(sd->cb_data[3], x);
+   _update_colorbars(sd);
+   _color_picker_init(sd);
    evas_object_smart_callback_call(obj, SIG_CHANGED, NULL);
 }
 
@@ -541,7 +553,6 @@ _mouse_up_cb(void *data, int type __UNUSED__, void *event __UNUSED__)
    b = pixels[17 * 9 + 9] & 0xFF;
 
    _colors_set(o, r, g, b, 0xFF);
-   _color_picker_init(sd);
 
    return EINA_TRUE;
 }
@@ -737,9 +748,7 @@ _arrow_cb(void *data,
    double x, y;
 
    edje_object_part_drag_value_get(obj, "elm.arrow", &x, &y);
-
-   _rectangles_redraw(data, x);
-   evas_object_smart_callback_call(cb_data->parent, SIG_CHANGED, NULL);
+   _update_hsla_from_colorbar(cb_data->parent, cb_data->color_type, x);
 }
 
 static void
@@ -764,8 +773,7 @@ _colorbar_cb(void *data,
    edje_object_part_drag_value_set
      (cb_data->colorbar, "elm.arrow", arrow_x, arrow_y);
 
-   _rectangles_redraw(data, arrow_x);
-   evas_object_smart_callback_call(cb_data->parent, SIG_CHANGED, NULL);
+   _update_hsla_from_colorbar(cb_data->parent, cb_data->color_type, arrow_x);
    evas_event_feed_mouse_cancel(e, 0, NULL);
    evas_event_feed_mouse_down(e, 1, EVAS_BUTTON_NONE, 0, NULL);
    sd->sel_color_type = cb_data->color_type;
@@ -823,8 +831,7 @@ _button_clicked_cb(void *data,
      }
 
    edje_object_part_drag_value_set(cb_data->colorbar, "elm.arrow", x, y);
-   _rectangles_redraw(data, x);
-   evas_object_smart_callback_call(cb_data->parent, SIG_CHANGED, NULL);
+   _update_hsla_from_colorbar(cb_data->parent, cb_data->color_type, x);
    sd->sel_color_type = cb_data->color_type;
    sd->focused = ELM_COLORSELECTOR_COMPONENTS;
 }
@@ -858,8 +865,7 @@ _button_repeat_cb(void *data,
      }
 
    edje_object_part_drag_value_set(cb_data->colorbar, "elm.arrow", x, y);
-   _rectangles_redraw(data, x);
-   evas_object_smart_callback_call(cb_data->parent, SIG_CHANGED, NULL);
+   _update_hsla_from_colorbar(cb_data->parent, cb_data->color_type, x);
 }
 
 static void
