@@ -75,6 +75,7 @@ struct _Ecore_Wl_Dnd_Target
 
 void _ecore_wl_window_init(void);
 void _ecore_wl_window_shutdown(void);
+Eina_Hash *_ecore_wl_window_hash_get(void);
 
 void _ecore_wl_output_add(Ecore_Wl_Display *ewd, unsigned int id);
 void _ecore_wl_output_del(Ecore_Wl_Output *output);
