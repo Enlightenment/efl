@@ -170,6 +170,15 @@ ecore_evas_wayland_shm_new_internal(const char *disp_name, unsigned int parent, 
         fh = 22;
      }
 
+   /* FIXME: Get if parent is alpha, and set */
+   if (parent)
+     p = ecore_wl_window_find(parent);
+
+   wdata->parent = p;
+   wdata->win = 
+     ecore_wl_window_new(p, x, y, w + fw, h + fh, ECORE_WL_WINDOW_BUFFER_TYPE_SHM);
+   ee->prop.window = wdata->win->id;
+
    ee->evas = evas_new();
    evas_data_attach_set(ee->evas, ee);
    evas_output_method_set(ee->evas, method);
@@ -184,21 +193,12 @@ ecore_evas_wayland_shm_new_internal(const char *disp_name, unsigned int parent, 
    if (ee->prop.draw_frame)
      evas_output_framespace_set(ee->evas, fx, fy, fw, fh);
 
-   if (parent)
-     p = ecore_wl_window_find(parent);
-
-   /* FIXME: Get if parent is alpha, and set */
-
-   wdata->parent = p;
-   wdata->win = 
-     ecore_wl_window_new(p, x, y, w + fw, h + fh, ECORE_WL_WINDOW_BUFFER_TYPE_SHM);
-   ee->prop.window = wdata->win->id;
-
    if ((einfo = (Evas_Engine_Info_Wayland_Shm *)evas_engine_info_get(ee->evas)))
      {
         einfo->info.wl_shm = ecore_wl_shm_get();
         einfo->info.destination_alpha = ee->alpha;
         einfo->info.rotation = ee->rotation;
+        einfo->info.wl_surface = ecore_wl_window_surface_create(wdata->win);
         if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
           {
              ERR("Failed to set Evas Engine Info for '%s'", ee->driver);
