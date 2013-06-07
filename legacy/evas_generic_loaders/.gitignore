@@ -37,3 +37,7 @@ src/bin/ps/evas_image_loader.ps
 src/bin/svg/evas_image_loader.svg
 src/bin/xcf/evas_image_loader.xcf
 src/bin/raw/evas_image_loader.raw
+pkgbuild/PKGBUILD
+pkgbuild/pkg
+pkgbuild/src
+pkgbuild/*.tar.xz
