@@ -14,9 +14,15 @@ static Eina_Bool _ecore_wl_xkb_init(Ecore_Wl_Display *ewd);
 static Eina_Bool _ecore_wl_xkb_shutdown(Ecore_Wl_Display *ewd);
 static void _ecore_wl_sync_wait(Ecore_Wl_Display *ewd);
 static void _ecore_wl_sync_callback(void *data, struct wl_callback *callback, uint32_t serial);
+static void _ecore_wl_animator_tick_cb_begin(void *data EINA_UNUSED);
+static void _ecore_wl_animator_tick_cb_end(void *data EINA_UNUSED);
+static void _ecore_wl_animator_callback(void *data, struct wl_callback *callback, uint32_t serial EINA_UNUSED);
+static Eina_Bool _ecore_wl_animator_window_add(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, void *data, void *fdata EINA_UNUSED);
 
 /* local variables */
 static int _ecore_wl_init_count = 0;
+static Eina_Bool _ecore_wl_animator_busy = EINA_FALSE;
+
 static const struct wl_registry_listener _ecore_wl_registry_listener =
 {
    _ecore_wl_cb_handle_global,
@@ -26,6 +32,11 @@ static const struct wl_registry_listener _ecore_wl_registry_listener =
 static const struct wl_callback_listener _ecore_wl_sync_listener =
 {
    _ecore_wl_sync_callback
+};
+
+static const struct wl_callback_listener _ecore_wl_anim_listener = 
+{
+   _ecore_wl_animator_callback
 };
 
 /* external variables */
@@ -279,6 +290,37 @@ ecore_wl_display_iterate(void)
    wl_display_dispatch(_ecore_wl_disp->wl.display);
 }
 
+/* @since 1.8 */
+EAPI Eina_Bool 
+ecore_wl_animator_source_set(Ecore_Animator_Source source)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   /* FIXME: check existing source. If custom, disable anim_callbacks */
+
+   /* based on the animator source we are using, setup or destroy callbacks */
+   switch (source)
+     {
+      case ECORE_ANIMATOR_SOURCE_CUSTOM:
+        ecore_animator_custom_source_tick_begin_callback_set
+          (_ecore_wl_animator_tick_cb_begin, NULL);
+        ecore_animator_custom_source_tick_end_callback_set
+          (_ecore_wl_animator_tick_cb_end, NULL);
+        break;
+      case ECORE_ANIMATOR_SOURCE_TIMER:
+        ecore_animator_custom_source_tick_begin_callback_set(NULL, NULL);
+        ecore_animator_custom_source_tick_end_callback_set(NULL, NULL);
+        break;
+      default:
+        break;
+     }
+
+   /* set the source of the animator */
+   ecore_animator_source_set(source);
+
+   return EINA_TRUE;
+}
+
 EAPI struct wl_cursor *
 ecore_wl_cursor_get(const char *cursor_name)
 {
@@ -503,4 +545,58 @@ _ecore_wl_sync_wait(Ecore_Wl_Display *ewd)
    ewd->sync_ref_count++;
    callback = wl_display_sync(ewd->wl.display);
    wl_callback_add_listener(callback, &_ecore_wl_sync_listener, ewd);
+}
+
+static void 
+_ecore_wl_animator_tick_cb_begin(void *data EINA_UNUSED)
+{
+   Eina_Hash *windows;
+
+   _ecore_wl_animator_busy = EINA_TRUE;
+
+   windows = _ecore_wl_window_hash_get();
+   eina_hash_foreach(windows, _ecore_wl_animator_window_add, NULL);
+}
+
+static void 
+_ecore_wl_animator_tick_cb_end(void *data EINA_UNUSED)
+{
+   _ecore_wl_animator_busy = EINA_FALSE;
+}
+
+static void 
+_ecore_wl_animator_callback(void *data, struct wl_callback *callback, uint32_t serial EINA_UNUSED)
+{
+   Ecore_Wl_Window *win;
+
+   if (!(win = data)) return;
+
+   ecore_animator_custom_tick();
+
+   wl_callback_destroy(callback);
+   win->anim_callback = NULL;
+
+   if (_ecore_wl_animator_busy) 
+     {
+        win->anim_callback = wl_surface_frame(win->surface);
+        wl_callback_add_listener(win->anim_callback, 
+                                 &_ecore_wl_anim_listener, win);
+        ecore_wl_window_commit(win);
+     }
+}
+
+static Eina_Bool 
+_ecore_wl_animator_window_add(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, void *data, void *fdata EINA_UNUSED)
+{
+   Ecore_Wl_Window *win;
+
+   if (!(win = data)) return EINA_TRUE;
+   if (!win->surface) return EINA_TRUE;
+   if (win->anim_callback) return EINA_TRUE;
+
+   win->anim_callback = wl_surface_frame(win->surface);
+   wl_callback_add_listener(win->anim_callback, &_ecore_wl_anim_listener, win);
+   ecore_wl_window_commit(win);
+
+   return EINA_TRUE;
 }
