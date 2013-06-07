@@ -24,7 +24,7 @@ provides=("ecore=$pkgver" "eldbus=$pkgver" "edje=$pkgver"
 conflicts=('ecore' 'edje' 'eet' 'eeze' 'efreet' 'eina' 'eio' 'embryo'
            'emotion' 'ethumb' 'evas' 'efl' 'efl_x11' 'efl-svn')
 options=('strip' 'docs' 'zipman' '!libtool' 'debug')
-buildflags="-fvisibility=hidden -fomit-frame-pointer"
+buildflags="-O2 -g -fvisibility=hidden -fomit-frame-pointer"
 build() {
   cd "../.."
   make clean distclean
@@ -41,8 +41,6 @@ build() {
 #}
 
 package_efl() {
-  export CFLAGS="-O2 -g -pipe -fvisibility=hidden -ffast-math"
-  export LDFLAGS=""
   cd "../.."
   rm -rf $pkgdir/usr
   make -j1 DESTDIR="$pkgdir/" install
