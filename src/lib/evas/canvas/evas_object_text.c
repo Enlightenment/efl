@@ -2399,7 +2399,6 @@ _evas_object_text_recalc(Evas_Object *eo_obj, Eina_Unicode *text)
                  EINA_INLIST_GET(item)->next, Evas_Object_Text_Item))
           {
              int asc = 0, desc = 0;
-             int max_asc = 0, max_desc = 0;
 
              /* Skip items without meaning full information. */
              if (!item->text_props.font_instance)
