@@ -1340,13 +1340,123 @@ _menu_call(Evas_Object *obj)
      }
 }
 
+static void
+_magnifier_create(void *data)
+{
+   ELM_ENTRY_DATA_GET(data, sd);
+
+   double scale = _elm_config->magnifier_scale;
+   Evas_Coord w, h, mw, mh;
+
+   if (sd->mgf_proxy)
+     {
+        evas_object_image_source_unset(sd->mgf_proxy);
+        evas_object_clip_unset(sd->mgf_proxy);
+        evas_object_del(sd->mgf_proxy);
+     }
+   if (sd->mgf_bg) evas_object_del(sd->mgf_bg);
+   if (sd->mgf_clip) evas_object_del(sd->mgf_clip);
+
+   sd->mgf_bg = edje_object_add(evas_object_evas_get(data));
+   _elm_theme_object_set(data, sd->mgf_bg, "entry", "magnifier", "default");
+   evas_object_show(sd->mgf_bg);
+
+   sd->mgf_clip = evas_object_rectangle_add(evas_object_evas_get(data));
+   evas_object_color_set(sd->mgf_clip, 255, 255, 255, 255);
+   edje_object_part_swallow(sd->mgf_bg, "swallow", sd->mgf_clip);
+
+   if (sd->scroll)
+     {
+        sd->mgf_proxy = evas_object_image_add(evas_object_evas_get(sd->scr_edje));
+        evas_object_image_source_set(sd->mgf_proxy, sd->scr_edje);
+        evas_object_geometry_get(sd->scr_edje, NULL, NULL, &w, &h);
+     }
+   else
+     {
+        sd->mgf_proxy = evas_object_image_add(evas_object_evas_get(data));
+        evas_object_image_source_set(sd->mgf_proxy, data);
+        evas_object_geometry_get(data, NULL, NULL, &w, &h);
+     }
+
+   mw = (Evas_Coord)(scale * (float) w);
+   mh = (Evas_Coord)(scale * (float) h);
+   if ((mw <= 0) || (mh <= 0))
+     return;
+
+   evas_object_resize(sd->mgf_proxy, mw, mh);
+   evas_object_image_fill_set(sd->mgf_proxy, 0, 0, mw, mh);
+   evas_object_color_set(sd->mgf_proxy, 255, 255, 255, 255);
+   evas_object_pass_events_set(sd->mgf_proxy, EINA_TRUE);
+   evas_object_show(sd->mgf_proxy);
+   evas_object_clip_set(sd->mgf_proxy, sd->mgf_clip);
+
+   evas_object_layer_set(sd->mgf_bg, EVAS_LAYER_MAX);
+   evas_object_layer_set(sd->mgf_proxy, EVAS_LAYER_MAX);
+}
+
+static void
+_magnifier_move(void *data, Evas_Coord px, Evas_Coord py)
+{
+   ELM_ENTRY_DATA_GET(data, sd);
+
+   Evas_Coord x, y, w, h;
+   Evas_Coord ex, ey;
+   Evas_Coord sx, sy;
+   const Evas_Object *obj_bg;
+   double scale = _elm_config->magnifier_scale;
+
+   obj_bg = edje_object_part_object_get(sd->mgf_bg, "bg");
+   evas_object_geometry_get(obj_bg, NULL, NULL, &w, &h);
+   evas_object_move(sd->mgf_bg, px - w/2, py - h);
+
+   obj_bg = edje_object_part_object_get(sd->mgf_bg, "swallow");
+   evas_object_geometry_get(obj_bg, &x, &y, &w, &h);
+   sx = px - (x + w/2);
+   sy = py - (y + h/2);
+
+   if (sd->scroll)
+     {
+        evas_object_geometry_get(sd->scr_edje, &ex, &ey, NULL, NULL);
+     }
+   else
+     {
+        evas_object_geometry_get(data, &ex, &ey, NULL, NULL);
+     }
+   evas_object_move(sd->mgf_proxy, ex * scale - (px * scale - px) - sx,
+                    ey * scale - (py * scale - py) - sy);
+}
+
+static void
+_magnifier_hide(void *data)
+{
+   ELM_ENTRY_DATA_GET(data, sd);
+   edje_object_signal_emit(sd->mgf_bg, "elm,action,hide,magnifier", "elm");
+   elm_widget_scroll_freeze_pop(data);
+}
+
+static void
+_magnifier_show(void *data)
+{
+   ELM_ENTRY_DATA_GET(data, sd);
+   edje_object_signal_emit(sd->mgf_bg, "elm,action,show,magnifier", "elm");
+   elm_widget_scroll_freeze_push(data);
+}
+
 static Eina_Bool
 _long_press_cb(void *data)
 {
    ELM_ENTRY_DATA_GET(data, sd);
 
-   if (!_elm_config->desktop_entry)
+   if (_elm_config->magnifier_enable)
+     {
+        _magnifier_create(data);
+        _magnifier_show(data);
+        _magnifier_move(data, sd->downx, sd->downy);
+     }
+   else if (!_elm_config->desktop_entry)
      _menu_call(data);
+
+   sd->long_pressed = EINA_TRUE;
 
    sd->longpress_timer = NULL;
    evas_object_smart_callback_call(data, SIG_LONGPRESSED, NULL);
@@ -1380,12 +1490,15 @@ _mouse_down_cb(void *data,
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
    sd->downx = ev->canvas.x;
    sd->downy = ev->canvas.y;
-   if (ev->button == 1)
-     {
-        if (sd->longpress_timer) ecore_timer_del(sd->longpress_timer);
-        sd->longpress_timer = ecore_timer_add
-            (_elm_config->longpress_timeout, _long_press_cb, data);
-     }
+   sd->long_pressed = EINA_FALSE;
+   
+    if (ev->button == 1)
+      {
+         ELM_SAFE_FREE(sd->longpress_timer, ecore_timer_del);
+         sd->longpress_timer = ecore_timer_add
+           (_elm_config->longpress_timeout, _long_press_cb, data);
+         sd->long_pressed = EINA_FALSE;
+      }
    else if (ev->button == 3)
      {
         if (_elm_config->desktop_entry)
@@ -1407,6 +1520,11 @@ _mouse_up_cb(void *data,
    if (ev->button == 1)
      {
         ELM_SAFE_FREE(sd->longpress_timer, ecore_timer_del);
+        if ((sd->long_pressed) && (_elm_config->magnifier_enable))
+          {
+             _magnifier_hide(data);
+             _menu_call(data);
+          }
      }
    else if ((ev->button == 3) && (!_elm_config->desktop_entry))
      {
@@ -1426,6 +1544,11 @@ _mouse_move_cb(void *data,
    ELM_ENTRY_DATA_GET(data, sd);
 
    if (sd->disabled) return;
+   if (ev->buttons == 1)
+     {
+        if ((sd->long_pressed) && (_elm_config->magnifier_enable))
+          _magnifier_move(data, ev->cur.canvas.x, ev->cur.canvas.y);
+     }
    if (!sd->sel_mode)
      {
         if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
@@ -2972,6 +3095,15 @@ _elm_entry_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    if (sd->hov_deljob) ecore_job_del(sd->hov_deljob);
    if ((sd->api) && (sd->api->obj_unhook))
      sd->api->obj_unhook(obj);  // module - unhook
+
+   if (sd->mgf_proxy)
+     {
+        evas_object_image_source_unset(sd->mgf_proxy);
+        evas_object_clip_unset(sd->mgf_proxy);
+        evas_object_del(sd->mgf_proxy);
+     }
+   if (sd->mgf_bg) evas_object_del(sd->mgf_bg);
+   if (sd->mgf_clip) evas_object_del(sd->mgf_clip);
 
    entries = eina_list_remove(entries, obj);
 #ifdef HAVE_ELEMENTARY_X

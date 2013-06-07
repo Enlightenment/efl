@@ -1394,3 +1394,7 @@
 2013-06-06 Ryuan Choi (ryuan)
 
         * Up/down step of hour decimal of elm_clock is changed to 12 not to touch hour unit at editing mode.
+
+2013-06-07 Thiep Ha
+
+        * Add magnifier to entry.

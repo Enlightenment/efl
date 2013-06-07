@@ -243,6 +243,8 @@ struct _Elm_Config
    unsigned char selection_clear_enable;
    unsigned char disable_external_menu;
    unsigned char clouseau_enable;
+   unsigned char magnifier_enable;
+   double        magnifier_scale;
 
    /* Not part of the EET file */
    Eina_Bool     is_mirrored : 1;

@@ -436,6 +436,8 @@ _desc_init(void)
    ELM_CONFIG_VAL(D, T, indicator_service_270, T_STRING);
    ELM_CONFIG_VAL(D, T, disable_external_menu, T_UCHAR);
    ELM_CONFIG_VAL(D, T, clouseau_enable, T_UCHAR);
+   ELM_CONFIG_VAL(D, T, magnifier_enable, T_UCHAR);
+   ELM_CONFIG_VAL(D, T, magnifier_scale, T_DOUBLE);
 #undef T
 #undef D
 #undef T_INT
@@ -1176,6 +1178,8 @@ _config_load(void)
    _elm_config->indicator_service_180 = eina_stringshare_add("elm_indicator_portrait");
    _elm_config->indicator_service_270 = eina_stringshare_add("elm_indicator_landscape");
    _elm_config->disable_external_menu = EINA_FALSE;
+   _elm_config->magnifier_enable = EINA_TRUE;
+   _elm_config->magnifier_scale = 1.5;
 }
 
 static const char *
@@ -1725,6 +1729,10 @@ _env_get(void)
 
    s = getenv("ELM_CLOUSEAU");
    if (s) _elm_config->clouseau_enable = atoi(s);
+   s = getenv("ELM_MAGNIFIER_ENABLE");
+   if (s) _elm_config->magnifier_enable = !!atoi(s);
+   s = getenv("ELM_MAGNIFIER_SCALE");
+   if (s) _elm_config->magnifier_scale = _elm_atof(s);
 }
 
 EAPI Eina_Bool
@@ -2357,6 +2365,30 @@ EAPI void
 elm_config_glayer_double_tap_timeout_set(double double_tap_timeout)
 {
    _elm_config->glayer_double_tap_timeout = double_tap_timeout;
+}
+
+EAPI Eina_Bool
+elm_config_magnifier_enable_get(void)
+{
+   return _elm_config->magnifier_enable;
+}
+
+EAPI void
+elm_config_magnifier_enable_set(Eina_Bool enable)
+{
+   _elm_config->magnifier_enable = !!enable;
+}
+
+EAPI double
+elm_config_magnifier_scale_get(void)
+{
+   return _elm_config->magnifier_scale;
+}
+
+EAPI void
+elm_config_magnifier_scale_set(double scale)
+{
+   _elm_config->magnifier_scale = scale;
 }
 
 EAPI void

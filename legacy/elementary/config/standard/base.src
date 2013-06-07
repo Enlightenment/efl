@@ -77,6 +77,8 @@ group "Elm_Config" struct {
   value "auto_dump_withdrawn" uchar: 1;
   value "auto_throttle" uchar: 0;
   value "auto_throttle_amount" double: 0.0333333333;
+  value "magnifier_enable" uchar: 0;
+  value "magnifier_scale" double: 1.5;
   group "color_palette" list {
      group "Elm_Custom_Palette" struct {
         value "palette_name" string: "default";

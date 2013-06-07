@@ -26,6 +26,9 @@ struct _Elm_Entry_Smart_Data
    Evas_Object                          *hit_rect, *entry_edje, *scr_edje;
 
    Evas_Object                          *hoversel;
+   Evas_Object                          *mgf_bg;
+   Evas_Object                          *mgf_clip;
+   Evas_Object                          *mgf_proxy;
    Ecore_Job                            *deferred_recalc_job;
    Ecore_Event_Handler                  *sel_notify_handler;
    Ecore_Event_Handler                  *sel_clear_handler;
@@ -76,6 +79,7 @@ struct _Elm_Entry_Smart_Data
    Eina_Bool                             have_selection : 1;
    Eina_Bool                             deferred_cur : 1;
    Eina_Bool                             context_menu : 1;
+   Eina_Bool                             long_pressed : 1;
    Eina_Bool                             cur_changed : 1;
    Eina_Bool                             single_line : 1;
    Eina_Bool                             can_write : 1;

@@ -174,6 +174,8 @@ images/cur_shine.png \
 images/cur_glow.png \
 images/handler_start.png \
 images/handler_end.png \
+images/magnifier_bg.png \
+images/magnifier_line.png \
 images/bubble.png \
 images/bubble_3.png \
 images/bubble_shine3.png \

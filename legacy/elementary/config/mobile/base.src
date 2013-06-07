@@ -81,6 +81,8 @@ group "Elm_Config" struct {
   value "indicator_service_90" string: "elm_indicator_landscape";
   value "indicator_service_180" string: "elm_indicator_portrait";
   value "indicator_service_270" string: "elm_indicator_landscape";
+  value "magnifier_enable" uchar: 1;
+  value "magnifier_scale" double: 1.5;
   group "color_palette" list {
      group "Elm_Custom_Palette" struct {
         value "palette_name" string: "default";
