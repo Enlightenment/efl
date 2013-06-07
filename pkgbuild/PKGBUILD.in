@@ -44,15 +44,19 @@ package_efl() {
   cd "../.."
   rm -rf $pkgdir/usr
   make -j1 DESTDIR="$pkgdir/" install
-  install -Dm644 README $pkgdir/usr/share/$pkgname/licenses/$pkgname/README
-  install -Dm644 NEWS $pkgdir/usr/share/$pkgname/licenses/$pkgname/NEWS
-  install -Dm644 ChangeLog $pkgdir/usr/share/$pkgname/licenses/$pkgname/ChangeLog
-  install -Dm644 COMPLIANCE $pkgdir/usr/share/$pkgname/licenses/$pkgname/COMPLIANCE
-  install -Dm644 AUTHORS $pkgdir/usr/share/$pkgname/licenses/$pkgname/AUTHORS
-  install -Dm644 licenses/COPYING.BSD $pkgdir/usr/share/$pkgname/licenses/$pkgname/licenses/COPYING.BSD
-  install -Dm644 licenses/COPYING.GPL $pkgdir/usr/share/$pkgname/licenses/$pkgname/licenses/COPYING.GPL
-  install -Dm644 licenses/COPYING.LGPL $pkgdir/usr/share/$pkgname/licenses/$pkgname/licenses/COPYING.LGPL
-  install -Dm644 licenses/COPYING.SMALL $pkgdir/usr/share/$pkgname/licenses/$pkgname/licenses/COPYING.SMALL
+  install -Dm644 README $pkgdir/usr/share/$pkgname/README
+  install -Dm644 NEWS $pkgdir/usr/share/$pkgname/NEWS
+  install -Dm644 ChangeLog $pkgdir/usr/share/$pkgname/ChangeLog
+  install -Dm644 AUTHORS $pkgdir/usr/share/$pkgname/AUTHORS
+  install -Dm644 COMPLIANCE $pkgdir/usr/share/$pkgname/COMPLIANCE
+  install -Dm644 licenses/COPYING.BSD $pkgdir/usr/share/licenses/$pkgname/COPYING.BSD
+  install -Dm644 licenses/COPYING.GPL $pkgdir/usr/share/licenses/$pkgname/COPYING.GPL
+  install -Dm644 licenses/COPYING.LGPL $pkgdir/usr/share/licenses/$pkgname/COPYING.LGPL
+  install -Dm644 licenses/COPYING.SMALL $pkgdir/usr/share/licenses/$pkgname/COPYING.SMALL
+  ln -s ../licenses/$pkgname/COPYING.BSD $pkgdir/usr/share/$pkgname/COPYING.BSD
+  ln -s ../licenses/$pkgname/COPYING.GPL $pkgdir/usr/share/$pkgname/COPYING.GPL
+  ln -s ../licenses/$pkgname/COPYING.LGPL $pkgdir/usr/share/$pkgname/COPYING.LGPL
+  ln -s ../licenses/$pkgname/COPYING.SMALL $pkgdir/usr/share/$pkgname/COPYING.SMALL
   rm -rf \
   $pkgdir/usr/include/evas-1/Evas_Engine_*_X11.h \
   $pkgdir/usr/include/ecore-x-1 \
