@@ -113,6 +113,7 @@ EMOTION_GENERIC_PLAYER([VLC], [yes], [libvlc >= 0.9 eina >= 1.1.99 ecore >= 1.7.
 
 AC_CONFIG_FILES([
 Makefile
+pkgbuild/PKGBUILD
 ])
 
 AC_OUTPUT
