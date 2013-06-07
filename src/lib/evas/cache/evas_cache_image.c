@@ -182,7 +182,7 @@ _evas_cache_image_entry_delete(Evas_Cache_Image *cache, Image_Entry *ie)
    Image_Entry_Task *task;
 
    if (!ie) return;
-   if (cache->func.debug) cache->func.debug("deleting", ie);
+   if ((cache) && (cache->func.debug)) cache->func.debug("deleting", ie);
    if (ie->flags.delete_me == 1) return;
    if (ie->preload)
      {
