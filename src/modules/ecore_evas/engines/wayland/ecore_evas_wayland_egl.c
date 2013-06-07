@@ -348,7 +348,7 @@ _ecore_evas_wl_move_resize(Ecore_Evas *ee, int x, int y, int w, int h)
    if ((ee->x != x) || (ee->y != y))
      _ecore_evas_wl_common_move(ee, x, y);
    if ((ee->w != w) || (ee->h != h))
-     _ecore_evas_wl_common_resize(ee, w, h);
+     _ecore_evas_wl_resize(ee, w, h);
 }
 
 static void
