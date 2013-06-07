@@ -45,6 +45,12 @@ _ecore_wl_window_shutdown(void)
    _windows = NULL;
 }
 
+Eina_Hash *
+_ecore_wl_window_hash_get(void)
+{
+   return _windows;
+}
+
 EAPI Ecore_Wl_Window *
 ecore_wl_window_new(Ecore_Wl_Window *parent, int x, int y, int w, int h, int buffer_type)
 {
@@ -97,15 +103,18 @@ ecore_wl_window_free(Ecore_Wl_Window *win)
           input->keyboard_focus = NULL;
      }
 
+   if (win->frame_callback) wl_callback_destroy(win->frame_callback);
+   win->frame_callback = NULL;
+   if (win->anim_callback) wl_callback_destroy(win->anim_callback);
+   win->anim_callback = NULL;
+
    if (win->region.input) wl_region_destroy(win->region.input);
    win->region.input = NULL;
    if (win->region.opaque) wl_region_destroy(win->region.opaque);
    win->region.opaque = NULL;
+
    if (win->shell_surface) wl_shell_surface_destroy(win->shell_surface);
    win->shell_surface = NULL;
-
-   if (win->frame_callback) wl_callback_destroy(win->frame_callback);
-   win->frame_callback = NULL;
    if (win->surface) wl_surface_destroy(win->surface);
    win->surface = NULL;
 
@@ -199,11 +208,16 @@ ecore_wl_window_damage(Ecore_Wl_Window *win, int x, int y, int w, int h)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!win) return;
-   if (win->surface) 
-     {
-        wl_surface_damage(win->surface, x, y, w, h);
-        wl_surface_commit(win->surface);
-     }
+   if (win->surface) wl_surface_damage(win->surface, x, y, w, h);
+}
+
+EAPI void 
+ecore_wl_window_commit(Ecore_Wl_Window *win)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!win) return;
+   if (win->surface) wl_surface_commit(win->surface);
 }
 
 EAPI void 
@@ -253,8 +267,7 @@ EAPI struct wl_surface*
 ecore_wl_window_surface_create(Ecore_Wl_Window *win)
 {
    if (!win) return NULL;
-   if (win->surface) return NULL;
-
+   if (win->surface) return win->surface;
    win->surface = wl_compositor_create_surface(_ecore_wl_disp->wl.compositor);
    return win->surface;
 }
@@ -265,14 +278,18 @@ ecore_wl_window_show(Ecore_Wl_Window *win)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!win) return;
-   if (win->surface) return;
 
    ecore_wl_window_surface_create(win);
 
    if (win->type != ECORE_WL_WINDOW_TYPE_DND)
      {
-        win->shell_surface = 
-          wl_shell_get_shell_surface(_ecore_wl_disp->wl.shell, win->surface);
+        if (!win->shell_surface)
+          {
+             win->shell_surface = 
+               wl_shell_get_shell_surface(_ecore_wl_disp->wl.shell, 
+                                          win->surface);
+          }
+
         wl_shell_surface_add_listener(win->shell_surface, 
                                       &_ecore_wl_shell_surface_listener, win);
      }
