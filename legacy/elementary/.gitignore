@@ -11,6 +11,7 @@ Makefile.in
 *.so
 *.edj
 *.cmake
+elementary-*-doc.tar.bz2
 src/lib/note.txt
 src/lib/Elementary.h
 elementary_config
@@ -201,3 +202,10 @@ src/examples/win_example
 src/examples/dayselector_example
 src/bin/elm_prefs_cc
 data/objects/test_prefs.epb
+doc/html
+doc/man
+doc/latex
+pkgbuild/PKGBUILD
+pkgbuild/pkg
+pkgbuild/src
+pkgbuild/*.tar.xz

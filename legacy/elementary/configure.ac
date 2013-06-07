@@ -831,6 +831,7 @@ config/mobile/Makefile
 $po_makefile_in
 cmakeconfig/ElementaryConfig.cmake
 cmakeconfig/ElementaryConfigVersion.cmake
+pkgbuild/PKGBUILD
 ])
 
 #####################################################################
