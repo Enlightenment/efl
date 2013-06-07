@@ -340,7 +340,6 @@ _time_update(Evas_Object *obj)
    Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    Edje_Message_Int msg;
-   int ampm = 0;
    const char *style = elm_widget_style_get(obj);
 
    if ((sd->cur.seconds != sd->seconds) || (sd->cur.am_pm != sd->am_pm) ||
@@ -485,13 +484,8 @@ _time_update(Evas_Object *obj)
         hrs = sd->hrs;
         if (sd->am_pm)
           {
-             if (hrs >= 12)
-               {
-                  if (hrs > 12) hrs -= 12;
-                  ampm = 1;
-               }
-             else if (!hrs)
-               hrs = 12;
+             if (hrs > 12) hrs -= 12;
+             else if (!hrs) hrs = 12;
           }
         d1 = hrs / 10;
         d2 = hrs % 10;
@@ -559,15 +553,13 @@ _time_update(Evas_Object *obj)
 
    if (sd->am_pm)
      {
+        int ampm = 0;
         if (sd->hrs >= 12) ampm = 1;
         if (ampm != sd->cur.ampm)
           {
-             if (sd->cur.ampm != ampm)
-               {
-                  msg.val = ampm;
-                  edje_object_message_send
-                    (sd->am_pm_obj, EDJE_MESSAGE_INT, 1, &msg);
-               }
+             msg.val = ampm;
+             edje_object_message_send
+               (sd->am_pm_obj, EDJE_MESSAGE_INT, 1, &msg);
              sd->cur.ampm = ampm;
           }
      }
@@ -626,7 +618,6 @@ _access_info_cb(void *data __UNUSED__, Evas_Object *obj)
 {
    int hrs;
    char *ret;
-   char *ampm = NULL;
    Eina_Strbuf *buf;
 
    ELM_CLOCK_DATA_GET(obj, sd);
@@ -637,16 +628,14 @@ _access_info_cb(void *data __UNUSED__, Evas_Object *obj)
 
    if (sd->am_pm)
      {
+        char *ampm = NULL;
         if (hrs >= 12)
           {
              if (hrs > 12) hrs -= 12;
              ampm = "PM";
           }
         else ampm = "AM";
-     }
 
-   if (ampm)
-     {
         eina_strbuf_append_printf(buf, "%d, %d, %s", hrs, sd->min, ampm);
      }
    else
