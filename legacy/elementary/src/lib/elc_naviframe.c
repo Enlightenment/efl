@@ -315,12 +315,16 @@ _elm_naviframe_smart_theme(Eo *obj, void *_pd, va_list *list)
 static char *
 _access_info_cb(void *data, Evas_Object *obj __UNUSED__)
 {
+   Elm_Naviframe_Item *nit;
    Evas_Object *layout;
    Eina_Strbuf *buf;
    const char *info;
    char *ret;
 
-   layout = (Evas_Object *)data;
+   nit = data;
+   if (!nit->title_visible) return NULL;
+
+   layout = VIEW(nit);
    info = elm_object_part_text_get(layout, TITLE_PART);
    if (!info) return NULL;
 
@@ -343,7 +347,7 @@ _access_obj_process(Elm_Naviframe_Item *it, Eina_Bool is_access)
 {
    Evas_Object *ao, *eo;
 
-   if (is_access)
+   if (is_access && (it->title_label || it->subtitle_label))
      {
         if (!_access_object_get(it, TITLE_ACCESS_PART))
           {
@@ -353,7 +357,7 @@ _access_obj_process(Elm_Naviframe_Item *it, Eina_Bool is_access)
             _elm_access_text_set(_elm_access_object_get(ao),
                                 ELM_ACCESS_TYPE, E_("Title"));
             _elm_access_callback_set(_elm_access_object_get(ao),
-                                     ELM_ACCESS_INFO, _access_info_cb, VIEW(it));
+                                     ELM_ACCESS_INFO, _access_info_cb, it);
             /* to access title access object, any idea? */
             ((Elm_Widget_Item *)it)->access_obj = ao;
          }
@@ -1098,9 +1102,8 @@ _item_dispmode_set(Elm_Naviframe_Item *it, Evas_Display_Mode dispmode)
 }
 
 static char *
-_access_prev_btn_info_cb(void *data, Evas_Object *obj __UNUSED__)
+_access_prev_btn_info_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__)
 {
-   Elm_Naviframe_Item *it = (Elm_Naviframe_Item *)data;
    return strdup(E_("Back"));
 }
 
