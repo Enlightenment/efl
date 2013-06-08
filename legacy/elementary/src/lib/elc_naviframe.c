@@ -364,12 +364,13 @@ _access_obj_process(Elm_Naviframe_Item *it, Eina_Bool is_access)
      }
    else
      {
-        if (it->title_label)
-          _elm_access_edje_object_part_object_unregister
-            (WIDGET(it), elm_layout_edje_get(VIEW(it)), TITLE_ACCESS_PART);
         /* to access title access object, any idea? */
         ao = ((Elm_Widget_Item *)it)->access_obj;
         if (!ao) return;
+
+        if (it->title_label)
+          _elm_access_edje_object_part_object_unregister
+             (WIDGET(it), elm_layout_edje_get(VIEW(it)), TITLE_ACCESS_PART);
         evas_object_del(ao);
      }
 }
