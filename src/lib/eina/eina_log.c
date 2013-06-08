@@ -1177,6 +1177,7 @@ static inline Eina_Bool
 eina_log_term_color_supported(const char *term)
 {
    const char *tail;
+   size_t len;
 
    if (!term)
       return EINA_FALSE;
@@ -1188,10 +1189,11 @@ eina_log_term_color_supported(const char *term)
        * take from gentoo's portage.
        */
 
-      case 'x': /* xterm and xterm-color */
+      case 'x': /* xterm and xterm-(256)color */
+         len = strlen(term);
          return ((strncmp(tail, "term", sizeof("term") - 1) == 0) &&
                  ((tail[sizeof("term") - 1] == '\0') ||
-                  (strcmp(tail + sizeof("term") - 1, "-color") == 0)));
+                  (strcmp(term + len - sizeof("color") + 1, "color") == 0)));
 
       case 'E': /* Eterm */
       case 'a': /* aterm */
