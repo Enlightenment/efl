@@ -1101,11 +1101,7 @@ static char *
 _access_prev_btn_info_cb(void *data, Evas_Object *obj __UNUSED__)
 {
    Elm_Naviframe_Item *it = (Elm_Naviframe_Item *)data;
-
-   if (it->dispmode == EVAS_DISPLAY_MODE_COMPRESS)
-     return strdup(E_("Close Keyboard"));
-   else
-     return strdup(E_("Back"));
+   return strdup(E_("Back"));
 }
 
 static Elm_Naviframe_Item *
