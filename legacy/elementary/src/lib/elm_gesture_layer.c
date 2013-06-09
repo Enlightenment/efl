@@ -1553,11 +1553,6 @@ _pe_device_compare(const void *data1,
    const Pointer_Event *pe1 = eina_list_data_get(data1);
    const Pointer_Event *pe2 = data2;
 
-   /* Only match if last was a down event */
-   if ((pe1->event_type != EVAS_CALLBACK_MULTI_DOWN) &&
-       (pe1->event_type != EVAS_CALLBACK_MOUSE_DOWN))
-     return 1;
-
    if (pe1->device == pe2->device)
      return 0;
    else if (pe1->device < pe2->device)
@@ -1603,6 +1598,51 @@ _pointer_event_record(Taps_Type *st,
 /**
  * @internal
  *
+ * This function computes minimum rect to bound taps at idx index
+ *
+ * @param taps [in] List of lists containing taps info.
+ * @param idx [in] index of events taken from lists.
+ * @param r [out] rect object to save info
+ * @return EINA_TRUE if managed to compute rect.
+ *
+ * @ingroup Elm_Gesture_Layer
+ */
+static Eina_Bool
+_taps_rect_get(Eina_List *taps, int idx, Evas_Coord_Rectangle *r)
+{  /* Build a rect bounding all taps at index idx */
+   Eina_List *l;
+   Evas_Coord bx, by;
+   Eina_List *pe_list;
+   Eina_Bool was_init = EINA_FALSE;
+
+   EINA_LIST_FOREACH(taps, l, pe_list)
+     {
+        Pointer_Event *pe = eina_list_nth(pe_list, idx);
+        if (!pe) continue;  /* Not suppose to happen */
+
+        if (was_init)
+          {
+             if (pe->x < r->x) r->x = pe->x;
+             if (pe->y < r->y) r->y = pe->y;
+             if (pe->x > bx) bx = pe->x;
+             if (pe->y > by) by = pe->y;
+          }
+        else
+          {
+             r->x = bx = pe->x;
+             r->y = by = pe->y;
+             was_init = EINA_TRUE;
+          }
+     }
+
+   r->w = bx - r->x;
+   r->h = by - r->y;
+   return was_init;
+}
+
+/**
+ * @internal
+ *
  * This function checks if the tap gesture is done.
  *
  * @param data gesture info pointer
@@ -1616,9 +1656,13 @@ _tap_gesture_check_finish(Gesture_Info *gesture)
    /* Here we check if taps-gesture was completed successfuly */
    /* Count how many taps were recieved on each device then   */
    /* determine if it matches n_taps_needed defined on START  */
+   unsigned int i;
    Taps_Type *st = gesture->data;
    Eina_List *l;
    Eina_List *pe_list;
+   Evas_Coord_Rectangle base;
+   Evas_Coord_Rectangle tmp;
+   Evas_Coord tap_finger_size = elm_config_finger_size_get();
 
    if (!st->l) return EINA_FALSE;
    EINA_LIST_FOREACH(st->l, l, pe_list)
@@ -1627,6 +1671,29 @@ _tap_gesture_check_finish(Gesture_Info *gesture)
         if (eina_list_count(pe_list) != st->n_taps_needed)
           {
              return EINA_FALSE;
+          }
+     }
+
+   /* Now bound each tap touches in a rect, compare diff within tolerance */
+   /* Get rect based on first DOWN events for all devices */
+   if (!_taps_rect_get(st->l, 0, &base))
+     return EINA_FALSE;  /* Should not happen */
+
+   for(i = 1; i < st->n_taps_needed; i++)
+     {  /* Compare all other rects to base, tolerance is finger size */
+        if (_taps_rect_get(st->l, i, &tmp))
+          {
+             if (abs(tmp.x - base.x) > tap_finger_size)
+               return EINA_FALSE;
+
+             if (abs(tmp.y - base.y) > tap_finger_size)
+               return EINA_FALSE;
+
+             if (abs((tmp.x + tmp.w) - (base.x + base.w)) > tap_finger_size)
+               return EINA_FALSE;
+
+             if (abs((tmp.y + tmp.h) - (base.y + base.h)) > tap_finger_size)
+               return EINA_FALSE;
           }
      }
 
@@ -1736,7 +1803,7 @@ _tap_gesture_test(Evas_Object *obj,
    Taps_Type *st;
    Gesture_Info *gesture;
    Eina_List *pe_list = NULL;
-   Pointer_Event *pe_down = NULL;
+   Pointer_Event *pe_last = NULL;
    Evas_Event_Flags ev_flag = EVAS_EVENT_FLAG_NONE;
 
    /* Here we fill Tap struct */
@@ -1751,20 +1818,20 @@ _tap_gesture_test(Evas_Object *obj,
    switch (g_type)
      {
       case ELM_GESTURE_N_TAPS:
-        taps = 1;
-        break;
+         taps = 1;
+         break;
 
       case ELM_GESTURE_N_DOUBLE_TAPS:
-        taps = 2;
-        break;
+         taps = 2;
+         break;
 
       case ELM_GESTURE_N_TRIPLE_TAPS:
-        taps = 3;
-        break;
+         taps = 3;
+         break;
 
       default:
-        taps = 0;
-        break;
+         taps = 0;
+         break;
      }
 
    st = gesture->data;
@@ -1779,94 +1846,105 @@ _tap_gesture_test(Evas_Object *obj,
      {
       case EVAS_CALLBACK_MULTI_DOWN:
       case EVAS_CALLBACK_MOUSE_DOWN:
-        /* Check if got tap on same cord was tapped before */
-        pe_list = eina_list_search_unsorted(st->l, _match_fingers_compare, pe);
+         /* Each device taps (DOWN, UP event) registered in same list    */
+         /* Find list for this device or start a new list if not found   */
+         pe_list = eina_list_search_unsorted(st->l, _pe_device_compare, pe);
+         if (pe_list)
+           {  /* This device touched before, verify that this tap is on  */
+              /* top of a previous tap (including a tap of other device) */
+              if (!eina_list_search_unsorted(st->l, _match_fingers_compare, pe))
+                {  /* New DOWN event is not on top of any prev touch     */
+                   ev_flag = _state_set(gesture, ELM_GESTURE_STATE_ABORT,
+                         &st->info, EINA_FALSE);
+                   _event_consume(sd, event_info, event_type, ev_flag);
 
-        if ((!pe_list) &&
-            /* This device was touched in other cord before completion */
-            eina_list_search_unsorted(st->l, _pe_device_compare, pe))
-          {
-             ev_flag = _state_set(gesture, ELM_GESTURE_STATE_ABORT,
-                                  &st->info, EINA_FALSE);
-             _event_consume(sd, event_info, event_type, ev_flag);
+                   return;
+                }
+           }
 
-             return;
-          }
-
-        pe_list = _pointer_event_record
+         /* All tests are good, register this tap in device list */
+         pe_list = _pointer_event_record
             (st, pe_list, pe, sd, event_info, event_type);
-        if (!sd->gest_taps_timeout)
-          {
-             if (sd->double_tap_timeout > 0.0)
-               {
-                  sd->gest_taps_timeout =
-                     ecore_timer_add(sd->double_tap_timeout,
-                           _multi_tap_timeout, gesture->obj);
-               }
-          }
-        else
-          ecore_timer_reset(sd->gest_taps_timeout);
 
-        /* This is the first mouse down we got */
-        if ((pe->device == 0) && (eina_list_count(pe_list) == 1))
-          {
-             ev_flag = _state_set(gesture, ELM_GESTURE_STATE_START,
-                                  &st->info, EINA_FALSE);
-             _event_consume(sd, event_info, event_type, ev_flag);
+         if (!sd->gest_taps_timeout)
+           {
+              if (sd->double_tap_timeout > 0.0)
+                {
+                   sd->gest_taps_timeout =
+                      ecore_timer_add(sd->double_tap_timeout,
+                            _multi_tap_timeout, gesture->obj);
+                }
+           }
+         else  /* We re-allocate gest_taps_timeout between taps */
+           ecore_timer_reset(sd->gest_taps_timeout);
 
-             st->n_taps_needed = taps * 2;  /* count DOWN and UP */
+         if ((pe->device == 0) && (eina_list_count(pe_list) == 1))
+           {  /* This is the first mouse down we got */
+              ev_flag = _state_set(gesture, ELM_GESTURE_STATE_START,
+                    &st->info, EINA_FALSE);
+              _event_consume(sd, event_info, event_type, ev_flag);
 
-             return;
-          }
-        else if (eina_list_count(pe_list) > st->n_taps_needed)
-          /* If we arleady got too many touches for this gesture. */
-          ev_flag = _state_set(gesture, ELM_GESTURE_STATE_ABORT,
-                               &st->info, EINA_FALSE);
+              st->n_taps_needed = taps * 2;  /* count DOWN and UP */
 
-        break;
+              return;
+           }
+         else if (eina_list_count(pe_list) > st->n_taps_needed)
+           {  /* If we arleady got too many touches for this gesture. */
+              ev_flag = _state_set(gesture, ELM_GESTURE_STATE_ABORT,
+                    &st->info, EINA_FALSE);
+           }
+
+         break;
 
       case EVAS_CALLBACK_MULTI_UP:
       case EVAS_CALLBACK_MOUSE_UP:
-        pe_list = eina_list_search_unsorted(st->l, _pe_device_compare, pe);
-        if (!pe_list) return;
+         pe_list = eina_list_search_unsorted(st->l, _pe_device_compare, pe);
+         if (!pe_list) return;
 
-        pe_list = _pointer_event_record
+         pe_list = _pointer_event_record
             (st, pe_list, pe, sd, event_info, event_type);
 
-        if (((gesture->g_type == ELM_GESTURE_N_TAPS) &&
-             !IS_TESTED(ELM_GESTURE_N_DOUBLE_TAPS) &&
-             !IS_TESTED(ELM_GESTURE_N_TRIPLE_TAPS)) ||
-            ((gesture->g_type == ELM_GESTURE_N_DOUBLE_TAPS) &&
-             !IS_TESTED(ELM_GESTURE_N_TRIPLE_TAPS)))
-          {
-             if (_tap_gesture_check_finish(gesture))
-               {
-                  _tap_gesture_finish(gesture);
-                  return;
-               }
-          }
+         if (((gesture->g_type == ELM_GESTURE_N_TAPS) &&
+                  !IS_TESTED(ELM_GESTURE_N_DOUBLE_TAPS) &&
+                  !IS_TESTED(ELM_GESTURE_N_TRIPLE_TAPS)) ||
+               ((gesture->g_type == ELM_GESTURE_N_DOUBLE_TAPS) &&
+                !IS_TESTED(ELM_GESTURE_N_TRIPLE_TAPS)))
+           {  /* Test for finish immidiatly, not waiting for timeout */
+              if (_tap_gesture_check_finish(gesture))
+                {
+                   _tap_gesture_finish(gesture);
+                   return;
+                }
+           }
 
-        break;
+         break;
 
       case EVAS_CALLBACK_MULTI_MOVE:
       case EVAS_CALLBACK_MOUSE_MOVE:
-        /* Get first event in first list, this has to be a Mouse Down event  */
-        /* and verify that user didn't move out of this area before next tap */
-        pe_list = eina_list_search_unsorted(st->l, _pe_device_compare, pe);
-        if (pe_list)
-          {
-             pe_down = eina_list_data_get(pe_list);
-             if (!_inside(pe_down->x, pe_down->y, pe->x, pe->y))
-               {
-                  ev_flag = _state_set(gesture, ELM_GESTURE_STATE_ABORT,
-                                       &st->info, EINA_FALSE);
-                  _event_consume(sd, event_info, event_type, ev_flag);
-               }
-          }
-        break;
+         /* Verify that user didn't move out of tap area before next tap */
+         /* BUT: we need to skip some MOVE events coming before DOWN     */
+         /* when user taps next tap. So fetch LAST recorded event for    */
+         /* device (DOWN or UP event), ignore all MOVEs if last was UP   */
+         pe_last = eina_list_data_get(eina_list_last(
+                  eina_list_search_unsorted(st->l, _pe_device_compare, pe)));
+
+         if (pe_last)
+           {  /* pe_last is the last event recorded for this device */
+              if ((pe_last->event_type == EVAS_CALLBACK_MOUSE_DOWN) ||
+                    (pe_last->event_type == EVAS_CALLBACK_MULTI_DOWN))
+                {  /* Test only MOVE events that come after DOWN event */
+                   if (!_inside(pe_last->x, pe_last->y, pe->x, pe->y))
+                     {
+                        ev_flag = _state_set(gesture, ELM_GESTURE_STATE_ABORT,
+                              &st->info, EINA_FALSE);
+                        _event_consume(sd, event_info, event_type, ev_flag);
+                     }
+                }
+           }
+         break;
 
       default:
-        return;
+         return;
      }
 }
 
