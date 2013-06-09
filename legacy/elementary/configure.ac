@@ -879,6 +879,7 @@ echo "  Build elm_prefs_cc.......: ${have_elm_prefs_cc}"
 echo "  Examples.................: ${enable_build_examples}"
 echo "  Examples installed.......: ${enable_install_examples}"
 echo "  Build elementary_config..: ${have_elementary_config}"
+echo "  Enable debug.............: ${want_elementary_debug}"
 echo
 echo "Compilation................: make (or gmake)"
 echo "  CPPFLAGS.................: $CPPFLAGS"
