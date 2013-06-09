@@ -2402,26 +2402,26 @@ _evas_object_text_recalc(Evas_Object *eo_obj, Eina_Unicode *text)
              int asc = 0, desc = 0;
 
              /* Skip items without meaning full information. */
-             if (!item->text_props.font_instance)
-                continue;
+             if (!item->text_props.font_instance) continue;
 
              asc = evas_common_font_instance_ascent_get(item->text_props.font_instance);
              desc = evas_common_font_instance_descent_get(item->text_props.font_instance);
-             if (asc > o->ascent)
-                o->ascent = asc;
-             if (desc > o->descent)
-                o->descent = desc;
+             if (asc > o->ascent) o->ascent = asc;
+             if (desc > o->descent) o->descent = desc;
 
+             asc = evas_common_font_instance_max_ascent_get(item->text_props.font_instance);
+             desc = evas_common_font_instance_max_descent_get(item->text_props.font_instance);
+             if (asc > o->max_ascent) o->max_ascent = asc;
+             if (desc > o->max_descent) o->max_descent = desc;
           }
      }
    else if (o->font)
      {
         o->ascent = ENFN->font_ascent_get(ENDT, o->font);
         o->descent = ENFN->font_descent_get(ENDT, o->font);
+        o->max_ascent = ENFN->font_max_ascent_get(ENDT, o->font);
+        o->max_descent = ENFN->font_max_descent_get(ENDT, o->font);
      }
-
-   o->max_ascent = o->ascent;
-   o->max_descent = o->descent;
 
    if ((o->font) && (o->items))
      {
