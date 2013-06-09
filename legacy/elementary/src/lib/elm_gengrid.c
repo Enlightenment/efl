@@ -67,6 +67,8 @@ static const char SIG_UNHIGHLIGHTED[] = "unhighlighted";
 static const char SIG_LANG_CHANGED[] = "language,changed";
 static const char SIG_PRESSED[] = "pressed";
 static const char SIG_RELEASED[] = "released";
+static const char SIG_FOCUSED[] = "focused"; /**< handled by elm_widget */
+static const char SIG_UNFOCUSED[] = "unfocused"; /**< handled by elm_widget */
 
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_ACTIVATED, ""},
@@ -99,6 +101,8 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_PRESSED, ""},
    {SIG_RELEASED, ""},
    {SIG_SCROLL_PAGE_CHANGE, ""},
+   {SIG_FOCUSED, ""},
+   {SIG_UNFOCUSED, ""},
 
    {NULL, NULL}
 };

@@ -28,6 +28,8 @@
  * - @c "color,item,longpressed" - When user long presses on color
  *   item. The event info parameter of the callback contains selected
  *   color item.
+ * - @c "focused" - When the entry has received focus.
+ * - @c "unfocused" - When the entry has lost focus.
  *
  * See @ref tutorial_colorselector.
  * @{

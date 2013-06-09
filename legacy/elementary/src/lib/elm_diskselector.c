@@ -29,6 +29,8 @@ static const char SIG_SCROLL_ANIM_START[] = "scroll,anim,start";
 static const char SIG_SCROLL_ANIM_STOP[] = "scroll,anim,stop";
 static const char SIG_SCROLL_DRAG_START[] = "scroll,drag,start";
 static const char SIG_SCROLL_DRAG_STOP[] = "scroll,drag,stop";
+static const char SIG_FOCUSED[] = "focused"; /**< handled by elm_widget */
+static const char SIG_UNFOCUSED[] = "unfocused"; /**< handled by elm_widget */
 
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_SELECTED, ""},
@@ -37,6 +39,8 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_SCROLL_ANIM_STOP, ""},
    {SIG_SCROLL_DRAG_START, ""},
    {SIG_SCROLL_DRAG_STOP, ""},
+   {SIG_FOCUSED, ""},
+   {SIG_UNFOCUSED, ""},
    {NULL, NULL}
 };
 

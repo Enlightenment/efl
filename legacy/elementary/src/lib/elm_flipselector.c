@@ -37,10 +37,14 @@ EAPI Eo_Op ELM_OBJ_FLIPSELECTOR_BASE_ID = EO_NOOP;
 static const char SIG_SELECTED[] = "selected";
 static const char SIG_UNDERFLOWED[] = "underflowed";
 static const char SIG_OVERFLOWED[] = "overflowed";
+static const char SIG_FOCUSED[] = "focused"; /**< handled by elm_widget */
+static const char SIG_UNFOCUSED[] = "unfocused"; /**< handled by elm_widget */
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_SELECTED, ""},
    {SIG_UNDERFLOWED, ""},
    {SIG_OVERFLOWED, ""},
+   {SIG_FOCUSED, ""},
+   {SIG_UNFOCUSED, ""},
    {NULL, NULL}
 };
 

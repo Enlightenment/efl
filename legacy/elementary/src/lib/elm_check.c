@@ -28,10 +28,14 @@ static const Elm_Layout_Part_Alias_Description _text_aliases[] =
 };
 
 static const char SIG_CHANGED[] = "changed";
+static const char SIG_FOCUSED[] = "focused"; /**< handled by elm_widget */
+static const char SIG_UNFOCUSED[] = "unfocused"; /**< handled by elm_widget */
 
 /* smart callbacks coming from elm check objects: */
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_CHANGED, ""},
+   {SIG_FOCUSED, ""},
+   {SIG_UNFOCUSED, ""},
    {NULL, NULL}
 };
 

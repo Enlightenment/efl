@@ -23,11 +23,15 @@ EAPI Eo_Op ELM_OBJ_COLORSELECTOR_BASE_ID = EO_NOOP;
 static const char SIG_CHANGED[] = "changed";
 static const char SIG_COLOR_ITEM_SELECTED[] = "color,item,selected";
 static const char SIG_COLOR_ITEM_LONGPRESSED[] = "color,item,longpressed";
+static const char SIG_FOCUSED[] = "focused"; /**< handled by elm_widget */
+static const char SIG_UNFOCUSED[] = "unfocused"; /**< handled by elm_widget */
 static const Evas_Smart_Cb_Description _smart_callbacks[] =
 {
    {SIG_COLOR_ITEM_SELECTED, ""},
    {SIG_COLOR_ITEM_LONGPRESSED, ""},
    {SIG_CHANGED, ""},
+   {SIG_FOCUSED, ""},
+   {SIG_UNFOCUSED, ""},
    {NULL, NULL}
 };
 
