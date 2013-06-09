@@ -1182,6 +1182,7 @@ eina_log_term_color_supported(const char *term)
    if (!term)
       return EINA_FALSE;
 
+   len = strlen(term);
    tail = term + 1;
    switch (term[0])
      {
@@ -1190,7 +1191,6 @@ eina_log_term_color_supported(const char *term)
        */
 
       case 'x': /* xterm and xterm-(256)color */
-         len = strlen(term);
          return ((strncmp(tail, "term", sizeof("term") - 1) == 0) &&
                  ((tail[sizeof("term") - 1] == '\0') ||
                   (strcmp(term + len - sizeof("color") + 1, "color") == 0)));
@@ -1206,7 +1206,9 @@ eina_log_term_color_supported(const char *term)
                   (strcmp(tail + sizeof("xvt") - 1, "-unicode") == 0)));
 
       case 's': /* screen */
-         return (strcmp(tail, "creen") == 0);
+         return ((strncmp(tail, "creen", sizeof("creen") - 1) == 0) &&
+                 ((tail[sizeof("creen") - 1] == '\0') ||
+                  (strcmp(term + len - sizeof("color") + 1, "color") == 0)));
 
       case 'g': /* gnome */
          return (strcmp(tail, "nome") == 0);
