@@ -3,12 +3,12 @@
 # batden <batden@orange.fr>, 2011.
 # dazibao <dazibao@sfr.fr>, 2011.
 #
-#: src/lib/elm_config.c:2314
+#: src/lib/elm_config.c:2408
 msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-05-13 13:07+0900\n"
+"POT-Creation-Date: 2013-06-09 17:11+0900\n"
 "PO-Revision-Date: 2013-03-18 08:05+0000\n"
 "Last-Translator: Eliovir <Unknown>\n"
 "Language-Team: French <sansgourou@gmail.com>\n"
@@ -30,8 +30,8 @@ msgstr "Monter"
 msgid "Home"
 msgstr "Home"
 
-#: src/lib/elc_fileselector.c:1019 src/lib/elm_entry.c:1291
-#: src/lib/elm_entry.c:1316
+#: src/lib/elc_fileselector.c:1019 src/lib/elm_entry.c:1292
+#: src/lib/elm_entry.c:1317
 msgid "Cancel"
 msgstr "Annuler"
 
@@ -43,17 +43,17 @@ msgstr "OK"
 msgid "Bubble"
 msgstr ""
 
-#: src/lib/elm_button.c:60
+#: src/lib/elm_button.c:55
 msgid "Clicked"
 msgstr "Cliqué"
 
-#: src/lib/elm_button.c:288 src/lib/elm_check.c:217 src/lib/elm_gengrid.c:713
-#: src/lib/elm_genlist.c:1436 src/lib/elm_list.c:1476 src/lib/elm_radio.c:262
-#: src/lib/elm_spinner.c:526 src/lib/elm_toolbar.c:1959
+#: src/lib/elm_button.c:279 src/lib/elm_check.c:217 src/lib/elm_gengrid.c:692
+#: src/lib/elm_genlist.c:1419 src/lib/elm_list.c:1469 src/lib/elm_radio.c:262
+#: src/lib/elm_spinner.c:524 src/lib/elm_toolbar.c:1952
 msgid "State: Disabled"
 msgstr "État : désactivé"
 
-#: src/lib/elm_button.c:314
+#: src/lib/elm_button.c:305
 msgid "Button"
 msgstr "Bouton"
 
@@ -114,27 +114,27 @@ msgstr "État"
 msgid "Check"
 msgstr "À cocher"
 
-#: src/lib/elm_clock.c:299
+#: src/lib/elm_clock.c:298
 msgid "clock increment button for am,pm"
 msgstr ""
 
-#: src/lib/elm_clock.c:307
+#: src/lib/elm_clock.c:306
 msgid "clock decrement button for am,pm"
 msgstr ""
 
-#: src/lib/elm_clock.c:668
+#: src/lib/elm_clock.c:656
 msgid "State: Editable"
 msgstr ""
 
-#: src/lib/elm_clock.c:703
+#: src/lib/elm_clock.c:691
 msgid "Clock"
 msgstr ""
 
-#: src/lib/elm_colorselector.c:1354
+#: src/lib/elm_colorselector.c:1351
 msgid "color selector palette item"
 msgstr ""
 
-#: src/lib/elm_config.c:2330
+#: src/lib/elm_config.c:2424
 msgid "default:LTR"
 msgstr "LTR par défaut"
 
@@ -142,35 +142,35 @@ msgstr "LTR par défaut"
 msgid "diskselector item"
 msgstr ""
 
-#: src/lib/elm_entry.c:1284
+#: src/lib/elm_entry.c:1285
 msgid "Copy"
 msgstr "Copier"
 
-#: src/lib/elm_entry.c:1288
+#: src/lib/elm_entry.c:1289
 msgid "Cut"
 msgstr "Couper"
 
-#: src/lib/elm_entry.c:1303
+#: src/lib/elm_entry.c:1304
 msgid "Select"
 msgstr "Sélectionner"
 
-#: src/lib/elm_entry.c:1310
+#: src/lib/elm_entry.c:1311
 msgid "Paste"
 msgstr "Coller"
 
-#: src/lib/elm_entry.c:2959
+#: src/lib/elm_entry.c:3066
 msgid "Entry"
 msgstr ""
 
-#: src/lib/elm_gengrid.c:743
+#: src/lib/elm_gengrid.c:722
 msgid "Gengrid Item"
 msgstr ""
 
-#: src/lib/elm_index.c:104
+#: src/lib/elm_index.c:100
 msgid "Index"
 msgstr ""
 
-#: src/lib/elm_index.c:131
+#: src/lib/elm_index.c:127
 msgid "Index Item"
 msgstr ""
 
@@ -202,38 +202,38 @@ msgstr "Radio"
 msgid "slider"
 msgstr ""
 
-#: src/lib/elm_spinner.c:615
+#: src/lib/elm_spinner.c:613
 msgid "spinner increment button"
 msgstr ""
 
-#: src/lib/elm_spinner.c:624
+#: src/lib/elm_spinner.c:622
 msgid "spinner decrement button"
 msgstr ""
 
-#: src/lib/elm_spinner.c:632
+#: src/lib/elm_spinner.c:630
 msgid "spinner"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:1451 src/lib/elm_toolbar.c:2020
+#: src/lib/elm_toolbar.c:1455 src/lib/elm_toolbar.c:2013
 msgid "Selected"
 msgstr "Sélectionné"
 
-#: src/lib/elm_toolbar.c:1957
+#: src/lib/elm_toolbar.c:1950
 msgid "Separator"
 msgstr "Séparateur"
 
-#: src/lib/elm_toolbar.c:1961
+#: src/lib/elm_toolbar.c:1954
 msgid "State: Selected"
 msgstr "État : sélectionné"
 
-#: src/lib/elm_toolbar.c:1963
+#: src/lib/elm_toolbar.c:1956
 msgid "Has menu"
 msgstr "Possède un menu"
 
-#: src/lib/elm_toolbar.c:2015
+#: src/lib/elm_toolbar.c:2008
 msgid "Unselected"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:2032
+#: src/lib/elm_toolbar.c:2025
 msgid "Toolbar Item"
 msgstr ""

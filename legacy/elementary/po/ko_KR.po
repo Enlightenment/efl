@@ -2,12 +2,12 @@
 # This file is distributed under the same license as the Elementary package.
 # Daniel Juyung Seo <seojuyung2@gmail.com>, 2011.
 #
-#: src/lib/elm_config.c:2314
+#: src/lib/elm_config.c:2408
 msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-05-13 13:07+0900\n"
+"POT-Creation-Date: 2013-06-09 17:11+0900\n"
 "PO-Revision-Date: 2013-04-04 13:05+0900\n"
 "Last-Translator: Daniel Juyung Seo <seojuyung2@gmali.com>\n"
 "Language-Team: General\n"
@@ -25,8 +25,8 @@ msgstr "위로"
 msgid "Home"
 msgstr "홈"
 
-#: src/lib/elc_fileselector.c:1019 src/lib/elm_entry.c:1291
-#: src/lib/elm_entry.c:1316
+#: src/lib/elc_fileselector.c:1019 src/lib/elm_entry.c:1292
+#: src/lib/elm_entry.c:1317
 msgid "Cancel"
 msgstr "취소"
 
@@ -38,17 +38,17 @@ msgstr "확인"
 msgid "Bubble"
 msgstr "버블"
 
-#: src/lib/elm_button.c:60
+#: src/lib/elm_button.c:55
 msgid "Clicked"
 msgstr "클릭 됨"
 
-#: src/lib/elm_button.c:288 src/lib/elm_check.c:217 src/lib/elm_gengrid.c:713
-#: src/lib/elm_genlist.c:1436 src/lib/elm_list.c:1476 src/lib/elm_radio.c:262
-#: src/lib/elm_spinner.c:526 src/lib/elm_toolbar.c:1959
+#: src/lib/elm_button.c:279 src/lib/elm_check.c:217 src/lib/elm_gengrid.c:692
+#: src/lib/elm_genlist.c:1419 src/lib/elm_list.c:1469 src/lib/elm_radio.c:262
+#: src/lib/elm_spinner.c:524 src/lib/elm_toolbar.c:1952
 msgid "State: Disabled"
 msgstr "상태 : 비활성화"
 
-#: src/lib/elm_button.c:314
+#: src/lib/elm_button.c:305
 msgid "Button"
 msgstr "버튼"
 
@@ -109,27 +109,27 @@ msgstr "상태"
 msgid "Check"
 msgstr "체크"
 
-#: src/lib/elm_clock.c:299
+#: src/lib/elm_clock.c:298
 msgid "clock increment button for am,pm"
 msgstr "시계 am,pm 증가 버튼"
 
-#: src/lib/elm_clock.c:307
+#: src/lib/elm_clock.c:306
 msgid "clock decrement button for am,pm"
 msgstr "시계 am,pm 감소 버튼"
 
-#: src/lib/elm_clock.c:668
+#: src/lib/elm_clock.c:656
 msgid "State: Editable"
 msgstr "상태 : 수정 가능"
 
-#: src/lib/elm_clock.c:703
+#: src/lib/elm_clock.c:691
 msgid "Clock"
 msgstr "시계"
 
-#: src/lib/elm_colorselector.c:1354
+#: src/lib/elm_colorselector.c:1351
 msgid "color selector palette item"
 msgstr "색상 선택기 팔레트 항목"
 
-#: src/lib/elm_config.c:2330
+#: src/lib/elm_config.c:2424
 msgid "default:LTR"
 msgstr "default:LTR"
 
@@ -137,35 +137,35 @@ msgstr "default:LTR"
 msgid "diskselector item"
 msgstr "디스크셀렉터 항목"
 
-#: src/lib/elm_entry.c:1284
+#: src/lib/elm_entry.c:1285
 msgid "Copy"
 msgstr "복사"
 
-#: src/lib/elm_entry.c:1288
+#: src/lib/elm_entry.c:1289
 msgid "Cut"
 msgstr "잘라내기"
 
-#: src/lib/elm_entry.c:1303
+#: src/lib/elm_entry.c:1304
 msgid "Select"
 msgstr "선택"
 
-#: src/lib/elm_entry.c:1310
+#: src/lib/elm_entry.c:1311
 msgid "Paste"
 msgstr "붙여넣기"
 
-#: src/lib/elm_entry.c:2959
+#: src/lib/elm_entry.c:3066
 msgid "Entry"
 msgstr "엔트리"
 
-#: src/lib/elm_gengrid.c:743
+#: src/lib/elm_gengrid.c:722
 msgid "Gengrid Item"
 msgstr "젠그리드 항목"
 
-#: src/lib/elm_index.c:104
+#: src/lib/elm_index.c:100
 msgid "Index"
 msgstr "인덱스"
 
-#: src/lib/elm_index.c:131
+#: src/lib/elm_index.c:127
 msgid "Index Item"
 msgstr "인덱스 항목"
 
@@ -197,38 +197,38 @@ msgstr "라디오 버튼"
 msgid "slider"
 msgstr "슬라이더"
 
-#: src/lib/elm_spinner.c:615
+#: src/lib/elm_spinner.c:613
 msgid "spinner increment button"
 msgstr "스피너 증가 버튼"
 
-#: src/lib/elm_spinner.c:624
+#: src/lib/elm_spinner.c:622
 msgid "spinner decrement button"
 msgstr "스피너 감소 버튼"
 
-#: src/lib/elm_spinner.c:632
+#: src/lib/elm_spinner.c:630
 msgid "spinner"
 msgstr "스피너"
 
-#: src/lib/elm_toolbar.c:1451 src/lib/elm_toolbar.c:2020
+#: src/lib/elm_toolbar.c:1455 src/lib/elm_toolbar.c:2013
 msgid "Selected"
 msgstr "선택"
 
-#: src/lib/elm_toolbar.c:1957
+#: src/lib/elm_toolbar.c:1950
 msgid "Separator"
 msgstr "구분선"
 
-#: src/lib/elm_toolbar.c:1961
+#: src/lib/elm_toolbar.c:1954
 msgid "State: Selected"
 msgstr "상태: 선택"
 
-#: src/lib/elm_toolbar.c:1963
+#: src/lib/elm_toolbar.c:1956
 msgid "Has menu"
 msgstr "메뉴 있음"
 
-#: src/lib/elm_toolbar.c:2015
+#: src/lib/elm_toolbar.c:2008
 msgid "Unselected"
 msgstr "선택 해제"
 
-#: src/lib/elm_toolbar.c:2032
+#: src/lib/elm_toolbar.c:2025
 msgid "Toolbar Item"
 msgstr "툴바 항목"

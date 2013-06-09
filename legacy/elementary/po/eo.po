@@ -3,20 +3,21 @@
 # This file is distributed under the same license as the enlightenment package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2012.
 #
+#: src/lib/elm_config.c:2408
 msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
-"Report-Msgid-Bugs-To: $MSGID_BUGS_ADDRESS\n"
-"POT-Creation-Date: 2013-05-23 11:50+0200\n"
+"Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
+"POT-Creation-Date: 2013-06-09 17:11+0900\n"
 "PO-Revision-Date: 2013-01-23 05:24+0000\n"
 "Last-Translator: Eliovir <Unknown>\n"
 "Language-Team: Esperanto <eo@li.org>\n"
+"Language: eo\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Launchpad-Export-Date: 2013-05-24 05:46+0000\n"
 "X-Generator: Launchpad (build 16640)\n"
-"Language: eo\n"
 
 #: src/lib/elc_fileselector.c:777
 msgid "Up"
@@ -44,8 +45,8 @@ msgid "Clicked"
 msgstr "Alklakita"
 
 #: src/lib/elm_button.c:279 src/lib/elm_check.c:217 src/lib/elm_gengrid.c:692
-#: src/lib/elm_genlist.c:1423 src/lib/elm_list.c:1462 src/lib/elm_radio.c:262
-#: src/lib/elm_spinner.c:524 src/lib/elm_toolbar.c:1948
+#: src/lib/elm_genlist.c:1419 src/lib/elm_list.c:1469 src/lib/elm_radio.c:262
+#: src/lib/elm_spinner.c:524 src/lib/elm_toolbar.c:1952
 msgid "State: Disabled"
 msgstr "Stato: malŝaltita"
 
@@ -118,19 +119,19 @@ msgstr "Alkrementa butono de ĥorloĝo por m,ptm"
 msgid "clock decrement button for am,pm"
 msgstr "Dekrementa butono de ĥorloĝo por m,ptm"
 
-#: src/lib/elm_clock.c:667
+#: src/lib/elm_clock.c:656
 msgid "State: Editable"
 msgstr "Stato: redaktebla"
 
-#: src/lib/elm_clock.c:702
+#: src/lib/elm_clock.c:691
 msgid "Clock"
 msgstr "Horloĝo"
 
-#: src/lib/elm_colorselector.c:1350
+#: src/lib/elm_colorselector.c:1351
 msgid "color selector palette item"
 msgstr "ero de elektilo de kolorpaletro"
 
-#: src/lib/elm_config.c:2348
+#: src/lib/elm_config.c:2424
 msgid "default:LTR"
 msgstr "default:LTR"
 
@@ -154,7 +155,7 @@ msgstr "Elekti"
 msgid "Paste"
 msgstr "Alglui"
 
-#: src/lib/elm_entry.c:2946
+#: src/lib/elm_entry.c:3066
 msgid "Entry"
 msgstr "Ero"
 
@@ -162,11 +163,11 @@ msgstr "Ero"
 msgid "Gengrid Item"
 msgstr "Ero de komuna krado"
 
-#: src/lib/elm_index.c:104
+#: src/lib/elm_index.c:100
 msgid "Index"
 msgstr "Indekso"
 
-#: src/lib/elm_index.c:131
+#: src/lib/elm_index.c:127
 msgid "Index Item"
 msgstr "Indeksero"
 
@@ -210,26 +211,26 @@ msgstr "dekrementa sago-butono"
 msgid "spinner"
 msgstr "sago-butono"
 
-#: src/lib/elm_toolbar.c:1451 src/lib/elm_toolbar.c:2009
+#: src/lib/elm_toolbar.c:1455 src/lib/elm_toolbar.c:2013
 msgid "Selected"
 msgstr "Elektita"
 
-#: src/lib/elm_toolbar.c:1946
+#: src/lib/elm_toolbar.c:1950
 msgid "Separator"
 msgstr "Disigilo"
 
-#: src/lib/elm_toolbar.c:1950
+#: src/lib/elm_toolbar.c:1954
 msgid "State: Selected"
 msgstr "Stato: elektita"
 
-#: src/lib/elm_toolbar.c:1952
+#: src/lib/elm_toolbar.c:1956
 msgid "Has menu"
 msgstr "Ĝi havas menuo"
 
-#: src/lib/elm_toolbar.c:2004
+#: src/lib/elm_toolbar.c:2008
 msgid "Unselected"
 msgstr "Malelektita"
 
-#: src/lib/elm_toolbar.c:2021
+#: src/lib/elm_toolbar.c:2025
 msgid "Toolbar Item"
 msgstr "Ilobretero"
