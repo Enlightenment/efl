@@ -30,6 +30,8 @@
  * dismissed.
  * - @c "language,changed" - This is called when the program's language is
  * changed.
+ * - @c "focused" - When the entry has received focus.
+ * - @c "unfocused" - When the entry has lost focus.
  *
  * Default content parts of the ctxpopup widget that you can use for are:
  * @li "default" - A content of the ctxpopup

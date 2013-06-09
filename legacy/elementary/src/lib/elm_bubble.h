@@ -38,6 +38,8 @@
  * This widget emits the following signals, besides the ones sent from
  * @ref Layout:
  * @li @c "clicked" - This is called when a user has clicked the bubble.
+ * @li @c "focused" - When the entry has received focus.
+ * @li @c "unfocused" - When the entry has lost focus.
  *
  * Default content parts of the bubble that you can use for are:
  * @li "default" - A content of the bubble

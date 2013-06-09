@@ -25,6 +25,9 @@ static const char SIG_PLAY_CLICKED[] = "play,clicked";
 static const char SIG_PREV_CLICKED[] = "prev,clicked";
 static const char SIG_REWIND_CLICKED[] = "rewind,clicked";
 static const char SIG_STOP_CLICKED[] = "stop,clicked";
+static const char SIG_FOCUSED[] = "focused"; /**< handled by elm_widget */
+static const char SIG_UNFOCUSED[] = "unfocused"; /**< handled by elm_widget */
+
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    { SIG_FORWARD_CLICKED, "" },
    { SIG_INFO_CLICKED, "" },
@@ -34,6 +37,8 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    { SIG_PREV_CLICKED, "" },
    { SIG_REWIND_CLICKED, "" },
    { SIG_STOP_CLICKED, "" },
+   {SIG_FOCUSED, ""},
+   {SIG_UNFOCUSED, ""},
    { NULL, NULL }
 };
 

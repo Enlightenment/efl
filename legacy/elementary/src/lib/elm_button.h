@@ -24,6 +24,8 @@
  * @li "repeated": the user pressed the button without releasing it.
  * @li "pressed": button was pressed.
  * @li "unpressed": button was released after being pressed.
+ * @li @c "focused" : When the entry has received focus.
+ * @li @c "unfocused" : When the entry has lost focus.
  * In all cases, the @c event parameter of the callback will be
  * @c NULL.
  *

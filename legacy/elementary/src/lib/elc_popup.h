@@ -70,6 +70,8 @@
  * @ref Layout:
  * @li @c "timeout" - whenever popup is closed as a result of timeout.
  * @li @c "block,clicked" - whenever user taps on Blocked Event area.
+ * @li @c "focused" - When the entry has received focus.
+ * @li @c "unfocused" - When the entry has lost focus.
  *
  * Styles available for Popup
  * @li "default"

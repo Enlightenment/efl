@@ -14,6 +14,16 @@ EAPI Eo_Op ELM_OBJ_BUBBLE_BASE_ID = EO_NOOP;
 #define MY_CLASS_NAME "elm_bubble"
 
 static const char SIG_CLICKED[] = "clicked";
+static const char SIG_FOCUSED[] = "focused"; /**< handled by elm_widget */
+static const char SIG_UNFOCUSED[] = "unfocused"; /**< handled by elm_widget */
+
+static const Evas_Smart_Cb_Description _smart_callbacks[] =
+{
+   {SIG_CLICKED, ""},
+   {SIG_FOCUSED, ""},
+   {SIG_UNFOCUSED, ""},
+   {NULL, NULL}
+};
 
 static const Elm_Layout_Part_Alias_Description _content_aliases[] =
 {
@@ -26,12 +36,6 @@ static const Elm_Layout_Part_Alias_Description _text_aliases[] =
 {
    {"default", "elm.text"},
    {"info", "elm.info"},
-   {NULL, NULL}
-};
-
-static const Evas_Smart_Cb_Description _smart_callbacks[] =
-{
-   {SIG_CLICKED, ""},
    {NULL, NULL}
 };
 

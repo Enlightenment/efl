@@ -23,9 +23,14 @@ static const char TITLE_ACCESS_PART[] = "access.title";
 
 static const char SIG_TRANSITION_FINISHED[] = "transition,finished";
 static const char SIG_TITLE_CLICKED[] = "title,clicked";
+static const char SIG_FOCUSED[] = "focused"; /**< handled by elm_widget */
+static const char SIG_UNFOCUSED[] = "unfocused"; /**< handled by elm_widget */
+
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_TRANSITION_FINISHED, ""},
    {SIG_TITLE_CLICKED, ""},
+   {SIG_FOCUSED, ""},
+   {SIG_UNFOCUSED, ""},
    {NULL, NULL}
 };
 
