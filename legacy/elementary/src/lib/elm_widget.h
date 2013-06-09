@@ -340,7 +340,7 @@ typedef struct _Elm_Widget_Smart_Class
                                        Evas_Coord *x,
                                        Evas_Coord *y,
                                        Evas_Coord *w,
-                                       Evas_Coord *h); /**< 'Virtual' function returning an inner area of a widget that should be brought into the visible are of a broader viewport, may this context arise. On the base Elementary widget class, it defaults to the object's total area, so only override it if you have to. */
+                                       Evas_Coord *h); /**< 'Virtual' function returning an inner area of a widget that should be brought into the visible area of a broader viewport, may this context arise. On the base Elementary widget class, it defaults to the object's total area, so only override it if you have to. */
    Eina_Bool        (*focus_next)(const Evas_Object *obj,
                                   Elm_Focus_Direction dir,
                                   Evas_Object **next); /**< 'Virtual' function handling passing focus to sub-objects */

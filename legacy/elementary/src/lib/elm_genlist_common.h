@@ -151,7 +151,7 @@ EAPI Eina_Bool                     elm_genlist_item_selected_get(const Elm_Objec
 EAPI void                          elm_genlist_item_show(Elm_Object_Item *it, Elm_Genlist_Item_Scrollto_Type type);
 
 /**
- * Animatedly bring in, to the visible are of a genlist, a given
+ * Animatedly bring in, to the visible area of a genlist, a given
  * item on it.
  *
  * @param it The item to display
