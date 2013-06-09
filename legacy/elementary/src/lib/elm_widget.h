@@ -1199,7 +1199,7 @@ typedef void * (*list_data_get_func_type)(const Eina_List * l);
  * @def elm_wdg_disable
  * @since 1.8
  *
- * No description supplied by the EAPI.
+ * 'Virtual' function on the widget being disabled.
  *
  * @param[out] ret
  *
@@ -1210,7 +1210,7 @@ typedef void * (*list_data_get_func_type)(const Eina_List * l);
  * @def elm_wdg_theme
  * @since 1.8
  *
- * No description supplied by the EAPI.
+ * 'Virtual' function on the widget being re-themed.
  *
  * @param[out] ret
  *
@@ -1221,7 +1221,7 @@ typedef void * (*list_data_get_func_type)(const Eina_List * l);
  * @def elm_wdg_translate
  * @since 1.8
  *
- * No description supplied by the EAPI.
+ * 'Virtual' function handling language changes on Elementary.
  *
  * @param[out] ret
  *
@@ -1232,7 +1232,7 @@ typedef void * (*list_data_get_func_type)(const Eina_List * l);
  * @def elm_wdg_event
  * @since 1.8
  *
- * No description supplied by the EAPI.
+ * 'Virtual' function handling input events on the widget.
  *
  * @param[in] source
  * @param[in] type
@@ -1246,7 +1246,8 @@ typedef void * (*list_data_get_func_type)(const Eina_List * l);
  * @def elm_wdg_on_focus_region
  * @since 1.8
  *
- * No description supplied by the EAPI.
+ * 'Virtual' function returning an inner area of a widget that should be brought
+ * into the visible area of a broader viewport, may this context arise.
  *
  * @param[out] x
  * @param[out] y
@@ -1261,7 +1262,8 @@ typedef void * (*list_data_get_func_type)(const Eina_List * l);
  * @def elm_wdg_focus_next_manager_is
  * @since 1.8
  *
- * No description supplied by the EAPI.
+ * 'Virtual' function which checks if handling of passing focus to sub-objects
+ * is supported by widget.
  *
  * @param[out] ret
  *
@@ -1272,7 +1274,7 @@ typedef void * (*list_data_get_func_type)(const Eina_List * l);
  * @def elm_wdg_focus_next
  * @since 1.8
  *
- * No description supplied by the EAPI.
+ * 'Virtual' function handling passing focus to sub-objects.
  *
  * @param[in] dir
  * @param[out] next
@@ -1285,7 +1287,8 @@ typedef void * (*list_data_get_func_type)(const Eina_List * l);
  * @def elm_wdg_focus_direction_manager_is
  * @since 1.8
  *
- * No description supplied by the EAPI.
+ * 'Virtual' function which checks if handling of passing focus to sub-objects
+ * in given direction is supported by widget.
  *
  * @param[out] ret
  *
@@ -1296,7 +1299,8 @@ typedef void * (*list_data_get_func_type)(const Eina_List * l);
  * @def elm_wdg_focus_direction
  * @since 1.8
  *
- * No description supplied by the EAPI.
+ * 'Virtual' function handling passing focus to sub-objects given a direction,
+ * in degrees.
  *
  * @param[in] base
  * @param[in] degree
@@ -1311,7 +1315,7 @@ typedef void * (*list_data_get_func_type)(const Eina_List * l);
  * @def elm_wdg_sub_object_add
  * @since 1.8
  *
- * No description supplied by the EAPI.
+ * 'Virtual' function handling sub objects being added.
  *
  * @param[in] sobj
  * @param[out] ret
@@ -1323,7 +1327,7 @@ typedef void * (*list_data_get_func_type)(const Eina_List * l);
  * @def elm_wdg_sub_object_del
  * @since 1.8
  *
- * No description supplied by the EAPI.
+ * 'Virtual' function handling sub objects being removed.
  *
  * @param[in] sobj
  * @param[out] ret
@@ -1335,7 +1339,7 @@ typedef void * (*list_data_get_func_type)(const Eina_List * l);
  * @def elm_wdg_access
  * @since 1.8
  *
- * No description supplied by the EAPI.
+ * 'Virtual' function on the widget being set access.
  *
  * @param[in] is_access
  *
@@ -1347,7 +1351,7 @@ typedef void * (*list_data_get_func_type)(const Eina_List * l);
  * @def elm_wdg_parent_set
  * @since 1.8
  *
- * No description supplied by the EAPI.
+ * 'Virtual' function handling parent widget attachment to new object.
  *
  * @param[in] parent
  *
@@ -1358,7 +1362,7 @@ typedef void * (*list_data_get_func_type)(const Eina_List * l);
  * @def elm_wdg_parent_get
  * @since 1.8
  *
- * No description supplied by the EAPI.
+ * 'Virtual' function handling getting object's parent widget.
  *
  * @param[out] parent
  *
@@ -1393,7 +1397,7 @@ typedef void * (*list_data_get_func_type)(const Eina_List * l);
  * @def elm_wdg_activate
  * @since 1.8
  *
- * No description supplied by the EAPI.
+ * 'Virtual' function to activate widget.
  *
  * @param[in] act
  * @param[out] ret
@@ -1406,7 +1410,7 @@ typedef void * (*list_data_get_func_type)(const Eina_List * l);
  * @def elm_wdg_mirrored_get
  * @since 1.8
  *
- * No description supplied by the EAPI.
+ * Returns the widget's mirrored mode.
  *
  * @param[out] ret
  *
@@ -1417,7 +1421,7 @@ typedef void * (*list_data_get_func_type)(const Eina_List * l);
  * @def elm_wdg_mirrored_set
  * @since 1.8
  *
- * No description supplied by the EAPI.
+ * Sets the widget's mirrored mode.
  *
  * @param[in] mirrored
  *
@@ -1428,7 +1432,7 @@ typedef void * (*list_data_get_func_type)(const Eina_List * l);
  * @def elm_wdg_mirrored_automatic_get
  * @since 1.8
  *
- * No description supplied by the EAPI.
+ * Returns the widget's mirrored mode setting.
  *
  * @param[out] ret
  *
@@ -1439,7 +1443,7 @@ typedef void * (*list_data_get_func_type)(const Eina_List * l);
  * @def elm_wdg_mirrored_automatic_set
  * @since 1.8
  *
- * No description supplied by the EAPI.
+ * Sets the widget's mirrored mode setting.
  *
  * @param[in] automatic
  *
