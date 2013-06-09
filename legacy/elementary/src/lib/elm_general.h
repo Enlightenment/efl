@@ -317,7 +317,7 @@ EAPI int       elm_policy_get(unsigned int policy);
  *
  * For more complex cases, like having formatted strings that need
  * translation, widgets will also emit a "language,changed" signal that
- * the user can listen to manually translate the text.
+ * the user can listen to and manually translate the text.
  *
  * @param lang Language to set, must be the full name of the locale
  *
