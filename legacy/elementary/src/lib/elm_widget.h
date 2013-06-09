@@ -1187,9 +1187,10 @@ typedef void * (*list_data_get_func_type)(const Eina_List * l);
  * @def elm_wdg_on_focus
  * @since 1.8
  *
- * No description supplied by the EAPI.
+ * 'Virtual' function handling focus in/out events on the widget.
  *
- * @param[out] ret
+ * @param[out] ret @c EINA_TRUE if this widget can handle focus, EINA_FALSE
+ * otherise.
  *
  */
 #define elm_wdg_on_focus(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ON_FOCUS), EO_TYPECHECK(Eina_Bool *, ret)
