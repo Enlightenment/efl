@@ -15,10 +15,10 @@ EAPI Eo_Op ELM_OBJ_LABEL_BASE_ID = EO_NOOP;
 #define MY_CLASS_NAME "elm_label"
 
 static const char SIG_SLIDE_END[] = "slide,end";
-static const char SIG_LANGUAGE_CHANGED[] = "language,changed";
+static const char SIG_LANG_CHANGED[] = "language,changed";
 
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
-   {SIG_LANGUAGE_CHANGED, ""},
+   {SIG_LANG_CHANGED, ""},
    {SIG_SLIDE_END, ""},
    {NULL, NULL}
 };
@@ -347,7 +347,7 @@ static void
 _elm_label_smart_translate(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   evas_object_smart_callback_call(obj, SIG_LANGUAGE_CHANGED, NULL);
+   evas_object_smart_callback_call(obj, SIG_LANG_CHANGED, NULL);
 
    if (ret) *ret = EINA_TRUE;
 }
