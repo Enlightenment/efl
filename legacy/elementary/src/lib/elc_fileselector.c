@@ -1236,6 +1236,7 @@ _selected_set(Eo *obj, void *_pd, va_list *list)
 {
    const char *_path = va_arg(*list, const char *);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   char *selected;
 
    if (ret) *ret = EINA_TRUE;
    char *path;
@@ -1253,8 +1254,10 @@ _selected_set(Eo *obj, void *_pd, va_list *list)
              goto clean_up;
           }
 
-        _populate(obj, ecore_file_dir_get(path), NULL);
-	eina_stringshare_replace(&sd->selection, path);
+        selected= ecore_file_dir_get(path);
+        _populate(obj, selected, NULL);
+        eina_stringshare_replace(&sd->selection, path);
+        free(selected);
      }
 
 clean_up:
