@@ -1005,7 +1005,8 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
              mro_itr++;
           }
 
-        klass->extn_data_size = extn_data_off;
+        klass->extn_data_size = extn_data_off
+           - klass->data_offset - EO_ALIGN_SIZE(klass->desc->data_size);
      }
 
    eina_lock_take(&_eo_class_creation_lock);
