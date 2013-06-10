@@ -1402,3 +1402,11 @@
 2013-06-10 ChunEon Park (Hermet)
 
         * Remove the keyboard area in the conformant if the keyboard state is off.
+
+2013-06-10  Daniel Juyung Seo (SeoZ)
+
+        * Add "focused" and "unfocused" smart callback for panel, video, web,
+        web2, genlist, hover, index, list, map, photocam, progressbar, radio,
+        scroller, slider, slideshow, spinner, toolbar, win, calendar, check,
+        clock, colorselector, datetime, diskselector, flipselector, gengrid,
+        ctxpopup, fileselector_button, naviframe, player, popup, bubble, button.
