@@ -74,6 +74,8 @@
  * @li "windows,close,request": A JavaScript request to close the current
  * window was requested
  * @li "zoom,animated,end": Animated zoom finished
+ * @li "focused" : When the web has received focus. (since 1.8)
+ * @li "unfocused" : When the web has lost focus. (since 1.8)
  *
  * available styles:
  * - default

@@ -21,6 +21,11 @@
  * This widget inherits from the @ref Layout one, so that all the
  * functions acting on it also work for panel objects (@since 1.8).
  *
+ * This widget emits the following signals, besides the ones sent from
+ * @ref Layout:
+ * @li @c "focused" : When the panel has received focus. (since 1.8)
+ * @li @c "unfocused" : When the panel has lost focus. (since 1.8)
+ *
  * Default content parts of the panel widget that you can use are:
  * @li @c "default" - A content of the panel
  *

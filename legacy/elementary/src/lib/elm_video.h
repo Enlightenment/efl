@@ -29,6 +29,11 @@
  * Both widgets inherit from the @ref Layout one, so that all the
  * functions acting on it also work for video objects.
  *
+ * This widget emits the following signals, besides the ones sent from
+ * @ref Layout:
+ * @li @c "focused" : When the video has received focus. (since 1.8)
+ * @li @c "unfocused" : When the video has lost focus. (since 1.8)
+ *
  * The player widget emits the following signals, besides the ones
  * sent from @ref Layout:
  *  - @c "forward,clicked" - the user clicked the forward button.

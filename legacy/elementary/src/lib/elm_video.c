@@ -21,6 +21,12 @@ EAPI Eo_Op ELM_OBJ_VIDEO_BASE_ID = EO_NOOP;
 
 #define MY_CLASS_NAME "elm_video"
 
+static const Evas_Smart_Cb_Description _smart_callbacks[] = {
+   {"focused", ""}, /**< handled by elm_widget */
+   {"unfocused", ""}, /**< handled by elm_widget */
+   {NULL, NULL}
+};
+
 static void
 _elm_video_smart_event(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
@@ -311,7 +317,8 @@ _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 #ifdef HAVE_EMOTION
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
-         evas_obj_type_set(MY_CLASS_NAME));
+         evas_obj_type_set(MY_CLASS_NAME),
+         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
 
    elm_widget_sub_object_add(eo_parent_get(obj), obj);
 #else

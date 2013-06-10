@@ -74,6 +74,8 @@ static const Evas_Smart_Cb_Description _elm_web_smart_callbacks[] = {
    { "view,resized", "" },
    { "windows,close,request", ""},
    { "zoom,animated,end", "" },
+   { "focused", ""}, /**< handled by elm_widget */
+   { "unfocused", ""}, /**< handled by elm_widget */
    { NULL, NULL }
 };
 

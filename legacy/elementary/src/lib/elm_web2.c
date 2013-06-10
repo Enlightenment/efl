@@ -21,6 +21,8 @@ static Ewk_View_Smart_Class _ewk_view_parent_sc =
 
 static const Evas_Smart_Cb_Description _elm_web_smart_callbacks[] = {
    { "url,changed", "s" },
+   { "focused", ""}, /**< handled by elm_widget */
+   { "unfocused", ""}, /**< handled by elm_widget */
    { NULL, NULL }
 };
 
