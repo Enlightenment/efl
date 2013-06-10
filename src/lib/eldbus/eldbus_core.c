@@ -221,8 +221,16 @@ eldbus_shutdown(void)
      {
         if (eina_hash_population(address_connections))
           {
-             CRITICAL("Alive TYPE_ADDRESS connection");
-             print_live_connection(shared_connections[ELDBUS_CONNECTION_TYPE_ADDRESS - 1]);
+             Eina_Iterator *it;
+             Eina_Hash_Tuple *tuple;
+
+             it = eina_hash_iterator_tuple_new(address_connections);
+             EINA_ITERATOR_FOREACH(it, tuple)
+               {
+                  CRITICAL("Alive TYPE_ADDRESS connection: %s", (char*)tuple->key);
+                  print_live_connection(tuple->data);
+               }
+             eina_iterator_free(it);
           }
 
         eina_hash_free(address_connections);
