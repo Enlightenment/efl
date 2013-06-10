@@ -17,14 +17,12 @@ EAPI const char ELM_CTXPOPUP_SMART_NAME[] = "elm_ctxpopup";
 
 static const char SIG_DISMISSED[] = "dismissed";
 static const char SIG_LANG_CHANGED[] = "language,changed";
-static const char SIG_FOCUSED[] = "focused"; /**< handled by elm_widget */
-static const char SIG_UNFOCUSED[] = "unfocused"; /**< handled by elm_widget */
 
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_DISMISSED, ""},
    {SIG_LANG_CHANGED, ""},
-   {SIG_FOCUSED, ""},
-   {SIG_UNFOCUSED, ""},
+   {"focused", ""}, /**< handled by elm_widget */
+   {"unfocused", ""}, /**< handled by elm_widget */
    {NULL, NULL}
 };
 

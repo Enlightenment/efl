@@ -16,13 +16,11 @@ EAPI Eo_Op ELM_OBJ_CLOCK_BASE_ID = EO_NOOP;
 static void _time_update(Evas_Object *obj);
 
 static const char SIG_CHANGED[] = "changed";
-static const char SIG_FOCUSED[] = "focused"; /**< handled by elm_widget */
-static const char SIG_UNFOCUSED[] = "unfocused"; /**< handled by elm_widget */
 
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_CHANGED, ""},
-   {SIG_FOCUSED, ""},
-   {SIG_UNFOCUSED, ""},
+   {"focused", ""}, /**< handled by elm_widget */
+   {"unfocused", ""}, /**< handled by elm_widget */
    {NULL, NULL}
 };
 

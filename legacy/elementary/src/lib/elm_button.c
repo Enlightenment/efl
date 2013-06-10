@@ -17,8 +17,6 @@ static const char SIG_CLICKED[] = "clicked";
 static const char SIG_REPEATED[] = "repeated";
 static const char SIG_PRESSED[] = "pressed";
 static const char SIG_UNPRESSED[] = "unpressed";
-static const char SIG_FOCUSED[] = "focused"; /**< handled by elm_widget */
-static const char SIG_UNFOCUSED[] = "unfocused"; /**< handled by elm_widget */
 
 /* smart callbacks coming from elm button objects (besides the ones
  * coming from elm layout): */
@@ -27,8 +25,8 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_REPEATED, ""},
    {SIG_PRESSED, ""},
    {SIG_UNPRESSED, ""},
-   {SIG_FOCUSED, ""},
-   {SIG_UNFOCUSED, ""},
+   {"focused", ""}, /**< handled by elm_widget */
+   {"unfocused", ""}, /**< handled by elm_widget */
    {NULL, NULL}
 };
 

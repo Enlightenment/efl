@@ -22,14 +22,12 @@ static const char CONTENT_PART[] = "elm.swallow.content";
 
 static const char SIG_BLOCK_CLICKED[] = "block,clicked";
 static const char SIG_TIMEOUT[] = "timeout";
-static const char SIG_FOCUSED[] = "focused"; /**< handled by elm_widget */
-static const char SIG_UNFOCUSED[] = "unfocused"; /**< handled by elm_widget */
 
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_BLOCK_CLICKED, ""},
    {SIG_TIMEOUT, ""},
-   {SIG_FOCUSED, ""},
-   {SIG_UNFOCUSED, ""},
+   {"focused", ""}, /**< handled by elm_widget */
+   {"unfocused", ""}, /**< handled by elm_widget */
    {NULL, NULL}
 };
 

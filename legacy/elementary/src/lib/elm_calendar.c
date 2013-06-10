@@ -14,14 +14,12 @@ EAPI Eo_Op ELM_OBJ_CALENDAR_BASE_ID = EO_NOOP;
 
 static const char SIG_CHANGED[] = "changed";
 static const char SIG_DISPLAY_CHANGED[] = "display,changed";
-static const char SIG_FOCUSED[] = "focused"; /**< handled by elm_widget */
-static const char SIG_UNFOCUSED[] = "unfocused"; /**< handled by elm_widget */
 
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_CHANGED, ""},
    {SIG_DISPLAY_CHANGED, ""},
-   {SIG_FOCUSED, ""},
-   {SIG_UNFOCUSED, ""},
+   {"focused", ""}, /**< handled by elm_widget */
+   {"unfocused", ""}, /**< handled by elm_widget */
    {NULL, NULL}
 };
 
