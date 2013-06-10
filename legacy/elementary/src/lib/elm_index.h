@@ -41,6 +41,8 @@
  * - @c "level,down" - when the user moves a finger from the second
  *      level to the first level
  * - @c "language,changed" - the program's language changed
+ * - @c "focused" - When the index has received focus. (since 1.8)
+ * - @c "unfocused" - When the index has lost focus. (since 1.8)
  *
  * The @c "delay,changed" event is so that it'll wait a small time
  * before actually reporting those events and, moreover, just the

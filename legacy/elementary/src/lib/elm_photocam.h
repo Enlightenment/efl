@@ -39,6 +39,8 @@
  * @li @c "scroll,anim,stop" - scrolling animation has stopped
  * @li @c "scroll,drag,start" - dragging the contents around has started
  * @li @c "scroll,drag,stop" - dragging the contents around has stopped
+ * @li @c "focused" - When the photocam has received focus. (since 1.8)
+ * @li @c "unfocused" - When the photocam has lost focus. (since 1.8)
  *
  * This widget implements the @b @ref elm-scrollable-interface
  * interface, so that all (non-deprecated) functions for the base @ref

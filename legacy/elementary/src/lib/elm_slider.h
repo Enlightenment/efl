@@ -42,6 +42,8 @@
  * a very short period or when they release their
  * finger/mouse, so it avoids possibly expensive reactions to
  * the value change.
+ * - @c "focused" - When the slider has received focus. (since 1.8)
+ * - @c "unfocused" - When the slider has lost focus. (since 1.8)
  *
  * Available styles for it:
  * - @c "default"

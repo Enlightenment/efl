@@ -62,6 +62,8 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_SCROLL_ANIM_STOP, ""},
    {SIG_SCROLL_DRAG_START, ""},
    {SIG_SCROLL_DRAG_STOP, ""},
+   {"focused", ""}, /**< handled by elm_widget */
+   {"unfocused", ""}, /**< handled by elm_widget */
    {NULL, NULL}
 };
 

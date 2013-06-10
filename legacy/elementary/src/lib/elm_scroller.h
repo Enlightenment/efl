@@ -36,6 +36,8 @@
  * @li @c "hbar,press" - the horizontal scroll bar has been pressed
  * @li @c "hbar,unpress" - the horizontal scroll bar has been unpressed
  * @li @c "scroll,page,changed" - the visible page has changed
+ * @li @c "focused" - When the scroller has received focus. (since 1.8)
+ * @li @c "unfocused" - When the scroller has lost focus. (since 1.8)
  *
  * This widget implements the @ref elm-scrollable-interface interface.
  * Its (non-deprecated) API functions, except for elm_scroller_add(),

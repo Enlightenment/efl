@@ -45,6 +45,8 @@
  *   is physically unhighlighted. The %c event_info parameter is the item that
  *   was unhighlighted.
  * - @c "language,changed" - the program's language changed
+ * - @c "focused" - When the list has received focus. (since 1.8)
+ * - @c "unfocused" - When the list has lost focus. (since 1.8)
  *
  * Available styles for it are:
  * - @c "default"

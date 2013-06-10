@@ -49,6 +49,8 @@ static const char SIG_SMART_LOCATION_CHANGED[] = "smart,changed";
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_CLICKED, ""},
    {SIG_SMART_LOCATION_CHANGED, ""},
+   {"focused", ""}, /**< handled by elm_widget */
+   {"unfocused", ""}, /**< handled by elm_widget */
    {NULL, NULL}
 };
 

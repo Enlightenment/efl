@@ -31,6 +31,8 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_LEVEL_UP, ""},
    {SIG_LEVEL_DOWN, ""},
    {SIG_LANG_CHANGED, ""},
+   {"focused", ""}, /**< handled by elm_widget */
+   {"unfocused", ""}, /**< handled by elm_widget */
    {NULL, NULL}
 };
 

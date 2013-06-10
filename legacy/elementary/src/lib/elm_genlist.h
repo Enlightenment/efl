@@ -367,6 +367,8 @@
  *   when the user releases an item or keyboard selection is moved so the item
  *   is physically unhighlighted. The %c event_info parameter is the item that
  *   was unhighlighted.
+ * - @c "focused" - When the genlist has received focus. (since 1.8)
+ * - @c "unfocused" - When the genlist has lost focus. (since 1.8)
  *
  *
  * Supported elm_object_item common APIs

@@ -70,8 +70,8 @@
  *
  * @li "delete,request": the user requested to close the window. See
  * elm_win_autodel_set().
- * @li "focus,in": window got focus
- * @li "focus,out": window lost focus
+ * @li "focus,in": window got focus (deprecated. use "focused" instead.)
+ * @li "focus,out": window lost focus (deprecated. use "unfocused" instead.)
  * @li "moved": window that holds the canvas was moved
  * @li "withdrawn": window is still managed normally but removed from view
  * @li "iconified": window is minimized (perhaps into an icon or taskbar)
@@ -86,6 +86,8 @@
  * @li "indicator,prop,changed": an indicator's property has been changed
  * @li "rotation,changed": window rotation has been changed
  * @li "profile,changed": profile of the window has been changed
+ * @li "focused" : When the win has received focus. (since 1.8)
+ * @li "unfocused" : When the win has lost focus. (since 1.8)
  *
  * Examples:
  * @li @ref win_example_01

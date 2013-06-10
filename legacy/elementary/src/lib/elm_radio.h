@@ -40,6 +40,8 @@
  * @ref Layout:
  * @li changed - This is called whenever the user changes the state of one of
  * the radio objects within the group of radio objects that work together.
+ * @li @c "focused" - When the radio has received focus. (since 1.8)
+ * @li @c "unfocused" - When the radio has lost focus. (since 1.8)
  *
  * Default text parts of the radio widget that you can use for are:
  * @li "default" - Label of the radio

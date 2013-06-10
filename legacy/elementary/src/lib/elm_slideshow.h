@@ -57,6 +57,8 @@
  *   item. event_info parameter in callback contains the current visible item
  * - @c "transition,end" - when a slide transition ends. event_info parameter
  *   in callback contains the current visible item
+ * - @c "focused" - When the slideshow has received focus. (since 1.8)
+ * - @c "unfocused" - When the slideshow has lost focus. (since 1.8)
  *
  * List of examples for the slideshow widget:
  * @li @ref slideshow_example

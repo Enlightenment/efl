@@ -164,8 +164,8 @@ struct _Elm_Win_Smart_Data
 };
 
 static const char SIG_DELETE_REQUEST[] = "delete,request";
-static const char SIG_FOCUS_OUT[] = "focus,out";
-static const char SIG_FOCUS_IN[] = "focus,in";
+static const char SIG_FOCUS_OUT[] = "focus,out"; // deprecated. use "focused" instead.
+static const char SIG_FOCUS_IN[] = "focus,in"; // deprecated. use "unfocused" instead.
 static const char SIG_MOVED[] = "moved";
 static const char SIG_WITHDRAWN[] = "withdrawn";
 static const char SIG_ICONIFIED[] = "iconified";
@@ -180,6 +180,8 @@ static const char SIG_IOERR[] = "ioerr";
 static const char SIG_INDICATOR_PROP_CHANGED[] = "indicator,prop,changed";
 static const char SIG_ROTATION_CHANGED[] = "rotation,changed";
 static const char SIG_PROFILE_CHANGED[] = "profile,changed";
+static const char SIG_FOCUSED[] = "focused";
+static const char SIG_UNFOCUSED[] = "unfocused";
 
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_DELETE_REQUEST, ""},
@@ -199,6 +201,8 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_INDICATOR_PROP_CHANGED, ""},
    {SIG_ROTATION_CHANGED, ""},
    {SIG_PROFILE_CHANGED, ""},
+   {SIG_FOCUSED, ""},
+   {SIG_UNFOCUSED, ""},
    {NULL, NULL}
 };
 
@@ -832,6 +836,7 @@ _elm_win_focus_in(Ecore_Evas *ee)
    else
      elm_widget_focus_restore(obj);
    evas_object_smart_callback_call(obj, SIG_FOCUS_IN, NULL);
+   evas_object_smart_callback_call(obj, SIG_FOCUSED, NULL);
    sd->focus_highlight.cur.visible = EINA_TRUE;
    _elm_win_focus_highlight_reconfigure_job_start(sd);
    if (sd->frame_obj)
@@ -858,6 +863,7 @@ _elm_win_focus_out(Ecore_Evas *ee)
    elm_object_focus_set(obj, EINA_FALSE);
    _elm_widget_top_win_focused_set(obj, EINA_FALSE);
    evas_object_smart_callback_call(obj, SIG_FOCUS_OUT, NULL);
+   evas_object_smart_callback_call(obj, SIG_UNFOCUSED, NULL);
    sd->focus_highlight.cur.visible = EINA_FALSE;
    _elm_win_focus_highlight_reconfigure_job_start(sd);
    if (sd->frame_obj)

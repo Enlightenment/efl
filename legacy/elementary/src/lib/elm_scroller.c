@@ -58,6 +58,8 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] =
    {SIG_HBAR_PRESS, ""},
    {SIG_HBAR_UNPRESS, ""},
    {SIG_SCROLL_PAGE_CHANGE, ""},
+   {"focused", ""}, /**< handled by elm_widget */
+   {"unfocused", ""}, /**< handled by elm_widget */
    {NULL, NULL}
 };
 

@@ -29,6 +29,8 @@
  * - @c "longpressed" - when the toolbar is pressed for a certain
  *                      amount of time.
  * - @c "language,changed" - when the program language changes.
+ * - @c "focused" - When the toolbar has received focus. (since 1.8)
+ * - @c "unfocused" - When the toolbar has lost focus. (since 1.8)
  *
  * Available styles for it:
  * - @c "default"

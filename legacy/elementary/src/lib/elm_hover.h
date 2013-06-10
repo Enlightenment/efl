@@ -35,6 +35,8 @@
  * @li @c "clicked" - the user clicked the empty space in the hover to dismiss
  * @li @c "smart,changed" - a content object placed under the "smart"
  *                   policy was replaced to a new slot direction.
+ * @li @c "focused" - When the hover has received focus. (since 1.8)
+ * @li @c "unfocused" - When the hover has lost focus. (since 1.8)
  *
  * Default content parts of the hover widget that you can use for are:
  * @li @c "left"
