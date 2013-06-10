@@ -1316,90 +1316,90 @@
 
         * The momentum animation time is changed as the amount of flick.
 
-2013-05-01 Ryuan Choi (ryuan)
+2013-05-01  Ryuan Choi (ryuan)
 
         * Fix elm_object_cursor_theme_search_enabled_set to do as it's name described.
 
-2013-05-02 WooHyun Jung
+2013-05-02  WooHyun Jung
 
         * elm_entry_filter_accept_set function now can recognize tags.
 
-2013-05-02 ChunEon Park (Hermet)
+2013-05-02  ChunEon Park (Hermet)
 
         * Don't be dead even if a ctxpopup item callback function is null.
 
-2013-05-03 Shinwoo Kim
+2013-05-03  Shinwoo Kim
 
         * Fix gengrid does not work under the accessibility.
         * Fix do not append NULL to genlist focus list.
 
-2013-05-01 Ryuan Choi (ryuan)
+2013-05-01  Ryuan Choi (ryuan)
 
         * Fix elm_clock_first_interval_set writes wrong value.
 
-2013-05-06 WooHyun Jung
+2013-05-06  WooHyun Jung
 
         * Add elm_entry smart callback - "text,set,done".
 
-2013-05-09 Seunggyun Kim
+2013-05-09  Seunggyun Kim
 
         * Fix remained ecore timer issue when gesture layer was deleted.
 
-2013-05-14 Youngbok Shin
+2013-05-14  Youngbok Shin
 
         * Fix ctxpopup can't be called again in the mobile mode entry.
 
-2013-05-16 Ryuan Choi (ryuan)
+2013-05-16  Ryuan Choi (ryuan)
 
         * Fix single line enty got multiple line when pasted multiple line.
 
-2013-05-17 Thiep Ha
+2013-05-17  Thiep Ha
 
         * Add selection handlers to entry.
 
-2013-05-23 Daniel Juyung Seo (SeoZ)
+2013-05-23  Daniel Juyung Seo (SeoZ)
 
         * Fix colorselector color change but when palette item is selected.
 
-2013-05-23 Ryuan Choi (ryuan)
+2013-05-23  Ryuan Choi (ryuan)
 
         * Fix elm_colorselector does not emit "changed" when clicked color palatte.
 
-2013-05-27 Tae-Hwan Kim (bluezery)
+2013-05-27  Tae-Hwan Kim (bluezery)
 
         * Add support elm_object_item_signal_emit() for elm_list.
 
-2013-05-27 Jihoon Kim (jihoon)
+2013-05-27  Jihoon Kim (jihoon)
 
         * Add ELM_INPUT_PANEL_LAYOUT_DATETIME.
 
-2013-05-27 Seunggyun Kim
+2013-05-27  Seunggyun Kim
 
         * Add elm_config_glayer_long_tap_start_timeout_set/get,
         elm_config_glayer_double_tap_timeout_set/get
 
-2013-05-30 ChunEon Park
+2013-05-30  ChunEon Park
 
         * Fix the mapbuf to be enabled before it's content is entirely rendered
         once.
 
-2013-06-05 Ryuan Choi (ryuan)
+2013-06-05  Ryuan Choi (ryuan)
 
         * Fix elm_colorselector does not update color bar when picker changed color.
 
-2013-06-05 ChunEon Park (Hermet)
+2013-06-05  ChunEon Park (Hermet)
 
         * Fix navifame to recover the focus for the prev page when top item is deleted.
 
-2013-06-06 Ryuan Choi (ryuan)
+2013-06-06  Ryuan Choi (ryuan)
 
         * Up/down step of hour decimal of elm_clock is changed to 12 not to touch hour unit at editing mode.
 
-2013-06-07 Thiep Ha
+2013-06-07  Thiep Ha
 
         * Add magnifier to entry.
 
-2013-06-10 ChunEon Park (Hermet)
+2013-06-10  ChunEon Park (Hermet)
 
         * Remove the keyboard area in the conformant if the keyboard state is off.
 
