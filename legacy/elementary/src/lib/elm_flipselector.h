@@ -29,8 +29,8 @@
  *   from the first item in its list to the last
  * - @c "underflowed" - when the widget's current selection is changed
  *   from the last item in its list to the first
- * - @c "focused" - When the entry has received focus.
- * - @c "unfocused" - When the entry has lost focus.
+ * - @c "focused" - When the flip selector has received focus. (since 1.8)
+ * - @c "unfocused" - When the flip selector has lost focus. (since 1.8)
  *
  * Available styles for it:
  * - @c "default"

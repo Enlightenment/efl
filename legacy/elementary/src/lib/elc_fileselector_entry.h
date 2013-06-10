@@ -37,8 +37,8 @@
  *   couple seconds
  * - @c "clicked" - The entry has been clicked
  * - @c "clicked,double" - The entry has been double clicked
- * - @c "focused" - The entry has received focus
- * - @c "unfocused" - The entry has lost focus
+ * - @c "focused" - The entry has received focus (since 1.8)
+ * - @c "unfocused" - The entry has lost focus (since 1.8)
  * - @c "selection,paste" - A paste action has occurred on the
  *   entry
  * - @c "selection,copy" - A copy action has occurred on the entry

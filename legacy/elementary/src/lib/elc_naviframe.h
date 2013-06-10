@@ -58,8 +58,8 @@
  * @li @c "transition,finished" - When the transition is finished in
  *                                changing the item
  * @li @c "title,clicked" - User clicked title area
- * @li @c "focused" - When the entry has received focus.
- * @li @c "unfocused" - When the entry has lost focus.
+ * @li @c "focused" - When the naviframe has received focus. (since 1.8)
+ * @li @c "unfocused" - When the naviframe has lost focus. (since 1.8)
  *
  * All the parts, for content and text, described here will also be
  * reachable by naviframe @b items direct calls:

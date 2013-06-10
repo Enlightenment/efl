@@ -183,8 +183,8 @@
  * signal is sent.
  * @li @b "language,changed" - whenever system locale changes, this
  * signal is sent.
- * @li @c "focused" - When the entry has received focus.
- * @li @c "unfocused" - When the entry has lost focus.
+ * @li @c "focused" - When the datetime has received focus. (since 1.8)
+ * @li @c "unfocused" - When the datetime has lost focus. (since 1.8)
  *
  * Here is an example on its usage:
  * @li @ref datetime_example

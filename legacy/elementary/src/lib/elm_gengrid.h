@@ -235,8 +235,8 @@
  * - @c "language,changed" - This is called when the program's language is
  *   changed. Call the elm_gengrid_realized_items_update() if items text should
  *   be translated.
- * - @c "focused" - When the entry has received focus.
- * - @c "unfocused" - When the entry has lost focus.
+ * - @c "focused" - When the gengrid has received focus. (since 1.8)
+ * - @c "unfocused" - When the gengrid has lost focus. (since 1.8)
  *
  * Supported elm_object common APIs
  * @li elm_object_signal_emit()

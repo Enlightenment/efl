@@ -30,8 +30,8 @@
  * @ref Layout:
  * - @c "changed" - This is called whenever the user changes the state of
  *             the check objects (@c event_info is always @c NULL).
- * - @c "focused" - When the entry has received focus.
- * - @c "unfocused" - When the entry has lost focus.
+ * - @c "focused" - When the check has received focus. (since 1.8)
+ * - @c "unfocused" - When the check has lost focus. (since 1.8)
  *
  * Default content parts of the check widget that you can use for are:
  * @li "icon" - An icon of the check

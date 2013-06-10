@@ -39,8 +39,8 @@
  * This widget emits the following signals, besides the ones sent from
  * @ref Layout:
  * - @c "changed" - the clock's user changed the time
- * - @c "focused" - When the entry has received focus.
- * - @c "unfocused" - When the entry has lost focus.
+ * - @c "focused" - When the clock ehas received focus. (since 1.8)
+ * - @c "unfocused" - When the clock has lost focus. (since 1.8)
  *
  * Supported elm_object common APIs.
  * @li @ref elm_object_signal_emit

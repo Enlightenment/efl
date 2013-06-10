@@ -33,8 +33,8 @@
  * @li @c "scroll,anim,stop" - scrolling animation has stopped
  * @li @c "scroll,drag,start" - dragging the diskselector has started
  * @li @c "scroll,drag,stop" - dragging the diskselector has stopped
- * @li @c "focused" - When the entry has received focus.
- * @li @c "unfocused" - When the entry has lost focus.
+ * @li @c "focused" - When the diskselector has received focus. (since 1.8)
+ * @li @c "unfocused" - When the diskselector has lost focus. (since 1.8)
  *
  * @note The "scroll,anim,*" and "scroll,drag,*" signals are only emitted by
  * user intervention.

@@ -25,8 +25,8 @@
  * - @c "changed" - emitted when the date in the calendar is changed.
  * - @c "display,changed" - emitted when the current month displayed in the
  * calendar is changed.
- * - @c "focused" - When the entry has received focus.
- * - @c "unfocused" - When the entry has lost focus.
+ * - @c "focused" - When the calendar has received focus. (since 1.8)
+ * - @c "unfocused" - When the calendar has lost focus. (since 1.8)
  *
  * Supported elm_object common APIs.
  * @li @ref elm_object_signal_emit
