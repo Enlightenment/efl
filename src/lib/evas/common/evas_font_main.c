@@ -185,14 +185,11 @@ evas_common_font_ascent_get(RGBA_Font *fn)
    Eina_List *l;
    RGBA_Font_Int *fi;
    
-   if (fn->have_ascent) return fn->ascent;
    EINA_LIST_FOREACH(fn->fonts, l, fi)
      {
         v = evas_common_font_instance_ascent_get(fi);
         if (v > max) max = v;
      }
-   fn->ascent = max;
-   fn->have_ascent = 1;
    return max;
 }
 
@@ -204,14 +201,11 @@ evas_common_font_descent_get(RGBA_Font *fn)
    Eina_List *l;
    RGBA_Font_Int *fi;
    
-   if (fn->have_descent) return fn->descent;
    EINA_LIST_FOREACH(fn->fonts, l, fi)
      {
         v = evas_common_font_instance_descent_get(fi);
         if (v > max) max = v;
      }
-   fn->descent = max;
-   fn->have_descent = 1;
    return max;
 }
 
@@ -223,14 +217,11 @@ evas_common_font_max_ascent_get(RGBA_Font *fn)
    Eina_List *l;
    RGBA_Font_Int *fi;
    
-   if (fn->have_max_ascent) return fn->max_ascent;
    EINA_LIST_FOREACH(fn->fonts, l, fi)
      {
         v = evas_common_font_instance_max_ascent_get(fi);
         if (v > max) max = v;
      }
-   fn->max_ascent = max;
-   fn->have_max_ascent = 1;
    return max;
 }
 
@@ -242,14 +233,11 @@ evas_common_font_max_descent_get(RGBA_Font *fn)
    Eina_List *l;
    RGBA_Font_Int *fi;
    
-   if (fn->have_max_descent) return fn->max_descent;
    EINA_LIST_FOREACH(fn->fonts, l, fi)
      {
         v = evas_common_font_instance_max_descent_get(fi);
         if (v > max) max = v;
      }
-   fn->max_descent = max;
-   fn->have_max_descent = 1;
    return max;
 }
 
