@@ -48,7 +48,7 @@
  * - @c "name,loaded" - Name request ends.
  * - @c "name,loaded,fail" - Name request fails.
  * - @c "overlay,clicked" - A overlay is clicked.
- * - @c "loaded" - when a map is finally loaded. @since 1.7
+ * - @c "loaded" - when a map is finally loaded. (since 1.7)
  * - @c "language,changed" - the program's language changed
  * - @c "focused" - When the map has received focus. (since 1.8)
  * - @c "unfocused" - When the map has lost focus. (since 1.8)
