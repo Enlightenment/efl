@@ -240,6 +240,7 @@ Fixes:
    * Fix elm_colorselector does not update color bar when picker changed color.
    * Fix navifame to recover the focus for the prev page when top item is deleted.
    * Up/down step of hour decimal of elm_clock is changed to 12 not to touch hour unit at editing mode.
+   * Remove the keyboard area in the conformant if the keyboard state is off.
 
 Removals:
 

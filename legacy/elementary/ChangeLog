@@ -1398,3 +1398,7 @@
 2013-06-07 Thiep Ha
 
         * Add magnifier to entry.
+
+2013-06-10 ChunEon Park (Hermet)
+
+        * Remove the keyboard area in the conformant if the keyboard state is off.

@@ -779,6 +779,8 @@ _virtualkeypad_state_change(Evas_Object *obj, Ecore_X_Event_Window_Property *ev)
    if (state == ECORE_X_VIRTUAL_KEYBOARD_STATE_OFF)
      {
         DBG("[KEYPAD]:ECORE_X_VIRTUAL_KEYBOARD_STATE_OFF");
+        evas_object_size_hint_min_set(sd->virtualkeypad, -1, 0);
+        evas_object_size_hint_max_set(sd->virtualkeypad, -1, 0);
         _conformant_part_sizing_eval(obj, ELM_CONFORMANT_VIRTUAL_KEYPAD_PART);
         elm_widget_display_mode_set(obj, EVAS_DISPLAY_MODE_NONE);
         evas_object_smart_callback_call(obj, SIG_VIRTUALKEYPAD_STATE_OFF, NULL);
