@@ -57,44 +57,44 @@ _items_del(Elm_Colorselector_Smart_Data *sd)
 }
 
 static void
-_color_with_saturation(Elm_Colorselector_Smart_Data *sd)
+_color_with_saturation(Elm_Colorselector_Smart_Data *sd, int *sr, int *sg, int *sb)
 {
    if (sd->er > 127)
-     sd->sr = 127 + (int)((double)(sd->er - 127) * sd->s);
+     *sr = 127 + (int)((double)(sd->er - 127) * sd->s);
    else
-     sd->sr = 127 - (int)((double)(127 - sd->er) * sd->s);
+     *sr = 127 - (int)((double)(127 - sd->er) * sd->s);
 
    if (sd->eg > 127)
-     sd->sg = 127 + (int)((double)(sd->eg - 127) * sd->s);
+     *sg = 127 + (int)((double)(sd->eg - 127) * sd->s);
    else
-     sd->sg = 127 - (int)((double)(127 - sd->eg) * sd->s);
+     *sg = 127 - (int)((double)(127 - sd->eg) * sd->s);
 
    if (sd->eb > 127)
-     sd->sb = 127 + (int)((double)(sd->eb - 127) * sd->s);
+     *sb = 127 + (int)((double)(sd->eb - 127) * sd->s);
    else
-     sd->sb = 127 - (int)((double)(127 - sd->eb) * sd->s);
+     *sb = 127 - (int)((double)(127 - sd->eb) * sd->s);
 }
 
 static void
-_color_with_lightness(Elm_Colorselector_Smart_Data *sd)
+_color_with_lightness(Elm_Colorselector_Smart_Data *sd, int *lr, int *lg, int *lb)
 {
    if (sd->l > 0.5)
      {
-        sd->lr = sd->er + (int)((double)(255 - sd->er) * (sd->l - 0.5) * 2.0);
-        sd->lg = sd->eg + (int)((double)(255 - sd->eg) * (sd->l - 0.5) * 2.0);
-        sd->lb = sd->eb + (int)((double)(255 - sd->eb) * (sd->l - 0.5) * 2.0);
+        *lr = sd->er + (int)((double)(255 - sd->er) * (sd->l - 0.5) * 2.0);
+        *lg = sd->eg + (int)((double)(255 - sd->eg) * (sd->l - 0.5) * 2.0);
+        *lb = sd->eb + (int)((double)(255 - sd->eb) * (sd->l - 0.5) * 2.0);
      }
    else if (sd->l < 0.5)
      {
-        sd->lr = (double)sd->er * sd->l * 2.0;
-        sd->lg = (double)sd->eg * sd->l * 2.0;
-        sd->lb = (double)sd->eb * sd->l * 2.0;
+        *lr = (double)sd->er * sd->l * 2.0;
+        *lg = (double)sd->eg * sd->l * 2.0;
+        *lb = (double)sd->eb * sd->l * 2.0;
      }
    else
      {
-        sd->lr = sd->er;
-        sd->lg = sd->eg;
-        sd->lb = sd->eb;
+        *lr = sd->er;
+        *lg = sd->eg;
+        *lb = sd->eb;
      }
 }
 
@@ -324,6 +324,7 @@ _update_ergb(Elm_Colorselector_Smart_Data *sd, double x)
 static void
 _update_colorbars(Elm_Colorselector_Smart_Data *sd)
 {
+   int r, g, b;
    evas_object_color_set
      (sd->cb_data[0]->arrow, sd->er, sd->eg, sd->eb, 255);
    evas_object_color_set
@@ -333,13 +334,11 @@ _update_colorbars(Elm_Colorselector_Smart_Data *sd)
    evas_object_color_set
      (sd->cb_data[3]->bar, sd->er, sd->eg, sd->eb, 255);
 
-   _color_with_saturation(sd);
-   evas_object_color_set
-     (sd->cb_data[1]->arrow, sd->sr, sd->sg, sd->sb, 255);
+   _color_with_saturation(sd, &r, &g, &b);
+   evas_object_color_set(sd->cb_data[1]->arrow, r, g, b, 255);
 
-   _color_with_lightness(sd);
-   evas_object_color_set
-     (sd->cb_data[2]->arrow, sd->lr, sd->lg, sd->lb, 255);
+   _color_with_lightness(sd, &r, &g, &b);
+   evas_object_color_set(sd->cb_data[2]->arrow, r, g, b, 255);
 
    evas_object_color_set(sd->cb_data[3]->arrow,
                          (sd->er * sd->a) / 255,

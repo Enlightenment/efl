@@ -51,8 +51,6 @@ struct _Elm_Colorselector_Smart_Data
    /* color components */
    int                    r, g, b, a;
    int                    er, eg, eb;
-   int                    sr, sg, sb;
-   int                    lr, lg, lb;
 
    double                 h, s, l;
    Elm_Colorselector_Mode mode, focused;
