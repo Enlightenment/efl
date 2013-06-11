@@ -400,7 +400,8 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
         Evas_Object *win = elm_object_top_widget_get(tt->owner);
 #ifdef HAVE_ELEMENTARY_X
         Ecore_X_Window xwin = elm_win_xwindow_get(win);
-        ecore_x_pointer_xy_get(xwin, &px, &py);
+        if (xwin)
+          ecore_x_pointer_xy_get(xwin, &px, &py);
 #endif
         elm_win_screen_position_get(win, &x, &y);
         ox += x;
