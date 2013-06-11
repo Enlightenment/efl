@@ -3928,6 +3928,7 @@ evas_object_image_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, v
                                  Image_Entry *ie;
                                  void *data = pixels;
                                  int w = imagew, h = imageh;
+                                 Eina_Bool mustclose = EINA_FALSE;
 
                                  ie = evas_cache2_image_scale_load
                                    ((Image_Entry *)pixels,
@@ -3939,6 +3940,7 @@ evas_object_image_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, v
                                       data = ie;
                                       w = iw;
                                       h = ih;
+                                      mustclose = EINA_TRUE;
                                    }
 
                                  _draw_image
@@ -3950,6 +3952,9 @@ evas_object_image_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, v
                                     iw, ih,
                                     o->cur->smooth_scale,
                                     do_async);
+
+                                 if (mustclose)
+                                   evas_cache2_image_close(ie);
                               }
                             else
 #endif
