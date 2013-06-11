@@ -1159,7 +1159,6 @@ _item_new(Evas_Object *obj,
 
    //item base layout
    VIEW(it) = elm_layout_add(obj);
-   evas_object_data_set(VIEW(it), "_elm_leaveme", (void *) EINA_TRUE);
    evas_object_smart_member_add(VIEW(it), obj);
 
    evas_object_event_callback_add
