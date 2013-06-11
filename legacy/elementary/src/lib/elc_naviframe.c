@@ -1494,6 +1494,7 @@ _item_push(Eo *obj, void *_pd, va_list *list)
         prev_it->unfocusable = elm_widget_tree_unfocusable_get(VIEW(prev_it));
         elm_widget_tree_unfocusable_set(VIEW(prev_it), EINA_TRUE);
 
+        if (it->animator) ecore_animator_del(it->animator);
         it->animator = ecore_animator_add(_push_transition_cb, it);
      }
    else
