@@ -1414,3 +1414,9 @@
 2013-06-05  Ryuan Choi (ryuan)
 
         * Fix colorselector send "changed" signal twice when pressed color bar.
+
+2013-06-11  ChunEon Park (Hermet)
+
+        * Keep the smart members of the naviframe views whenever resize object is changed.
+		  This prevents the dangling view objects of the naviframe and keep the layer
+		  consistency.
