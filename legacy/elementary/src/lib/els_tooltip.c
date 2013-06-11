@@ -306,20 +306,19 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
                {
                   evas_object_hide(tt->tt_win);
                   elm_win_alpha_set(tt->tt_win, EINA_TRUE);
-#ifdef HAVE_ELEMENTARY_X
-                  ecore_x_window_shape_input_rectangle_set(elm_win_xwindow_get(tt->tt_win), 0, 0, 0, 0);
-#endif
-                  evas_object_show(tt->tt_win);
                }
              else
                {
                   evas_object_hide(tt->tt_win);
                   elm_win_alpha_set(tt->tt_win, EINA_FALSE);
-#ifdef HAVE_ELEMENTARY_X
-                  ecore_x_window_shape_input_rectangle_set(elm_win_xwindow_get(tt->tt_win), 0, 0, 0, 0);
-#endif
-                  evas_object_show(tt->tt_win);
                }
+#ifdef HAVE_ELEMENTARY_X
+             Ecore_X_Window win;
+             win = elm_win_xwindow_get(tt->tt_win);
+             if (win)
+               ecore_x_window_shape_input_rectangle_set(win, 0, 0, 0, 0);
+#endif
+             evas_object_show(tt->tt_win);
           }
 
         str = edje_object_data_get(tt->tooltip, "pad_x");
