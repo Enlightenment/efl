@@ -1410,3 +1410,7 @@
         scroller, slider, slideshow, spinner, toolbar, win, calendar, check,
         clock, colorselector, datetime, diskselector, flipselector, gengrid,
         ctxpopup, fileselector_button, naviframe, player, popup, bubble, button.
+
+2013-06-05  Ryuan Choi (ryuan)
+
+        * Fix colorselector send "changed" signal twice when pressed color bar.

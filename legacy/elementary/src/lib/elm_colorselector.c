@@ -476,6 +476,8 @@ _entry_changed_cb(void *data,
 
 #ifdef HAVE_ELEMENTARY_X
 static Eina_Bool _mouse_grab_pixels(void *data, int type __UNUSED__, void *event __UNUSED__);
+static Eina_Bool _key_up_cb(void *data, int type __UNUSED__, void *event __UNUSED__);
+static Eina_Bool _mouse_up_cb(void *data, int type __UNUSED__, void *event __UNUSED__);
 
 static Ecore_X_Window
 _x11_elm_widget_xwin_get(const Evas_Object *obj)
@@ -507,8 +509,9 @@ _start_grab_pick_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 
    elm_object_disabled_set(obj, EINA_TRUE);
 
-   ecore_event_handler_del(sd->grab.mouse_motion);
    sd->grab.mouse_motion = ecore_event_handler_add(ECORE_EVENT_MOUSE_MOVE, _mouse_grab_pixels, o);
+   sd->grab.key_up = ecore_event_handler_add(ECORE_EVENT_KEY_UP, _key_up_cb, o);
+   sd->grab.mouse_up = ecore_event_handler_add(ECORE_EVENT_MOUSE_BUTTON_UP, _mouse_up_cb, o);
 
    ecore_x_keyboard_grab(sd->grab.xroot);
    ecore_x_pointer_grab(sd->grab.xroot);
@@ -525,8 +528,9 @@ _key_up_cb(void *data, int type __UNUSED__, void *event __UNUSED__)
    elm_object_disabled_set(sd->button, EINA_FALSE);
    ecore_x_keyboard_ungrab();
    ecore_x_pointer_ungrab();
-   ecore_event_handler_del(sd->grab.mouse_motion);
-   sd->grab.mouse_motion = ecore_event_handler_add(ECORE_X_RAW_MOTION, _mouse_grab_pixels, o);
+   ELM_SAFE_FREE(sd->grab.mouse_motion, ecore_event_handler_del);
+   ELM_SAFE_FREE(sd->grab.key_up, ecore_event_handler_del);
+   ELM_SAFE_FREE(sd->grab.mouse_up, ecore_event_handler_del);
 
    return EINA_TRUE;
 }
@@ -544,8 +548,9 @@ _mouse_up_cb(void *data, int type __UNUSED__, void *event __UNUSED__)
    elm_object_disabled_set(sd->button, EINA_FALSE);
    ecore_x_keyboard_ungrab();
    ecore_x_pointer_ungrab();
-   ecore_event_handler_del(sd->grab.mouse_motion);
-   sd->grab.mouse_motion = ecore_event_handler_add(ECORE_X_RAW_MOTION, _mouse_grab_pixels, o);
+   ELM_SAFE_FREE(sd->grab.mouse_motion, ecore_event_handler_del);
+   ELM_SAFE_FREE(sd->grab.key_up, ecore_event_handler_del);
+   ELM_SAFE_FREE(sd->grab.mouse_up, ecore_event_handler_del);
 
    pixels = evas_object_image_data_get(sd->picker_display, EINA_FALSE);
    r = (pixels[17 * 9 + 9] >> 16) & 0xFF;
@@ -655,10 +660,6 @@ _color_picker_add(Evas_Object *obj, Elm_Colorselector_Smart_Data *sd)
      {
         sd->grab.xroot = ecore_x_window_root_get(xwin);
         ecore_x_input_raw_select(sd->grab.xroot);
-
-        sd->grab.mouse_motion = ecore_event_handler_add(ECORE_X_RAW_MOTION, _mouse_grab_pixels, obj);
-        sd->grab.key_up = ecore_event_handler_add(ECORE_EVENT_KEY_UP, _key_up_cb, obj);
-        sd->grab.mouse_up = ecore_event_handler_add(ECORE_EVENT_MOUSE_BUTTON_UP, _mouse_up_cb, obj);
      }
 #endif
 
