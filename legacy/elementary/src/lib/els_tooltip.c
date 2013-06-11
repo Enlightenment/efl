@@ -265,7 +265,7 @@ _elm_tooltip_hide_anim_stop(Elm_Tooltip *tt)
 static void
 _elm_tooltip_reconfigure(Elm_Tooltip *tt)
 {
-   Evas_Coord ox, oy, ow, oh, px, py, tx, ty, tw, th, cw = 0, ch = 0;
+   Evas_Coord ox, oy, ow, oh, px = 0, py = 0, tx, ty, tw, th, cw = 0, ch = 0;
    Evas_Coord eminw, eminh, ominw, ominh;
    double rel_x, rel_y;
    Eina_Bool inside_eventarea;
