@@ -169,10 +169,10 @@ compute_gl_coordinates(Evas_Object *obj, int rot, int clip_image,
    int out_w, out_h;
 
    // Original Coordinates
-   obj_x = pd->cur->geometry->x;
-   obj_y = pd->cur->geometry->y;
-   obj_w = pd->cur->geometry->w;
-   obj_h = pd->cur->geometry->h;
+   obj_x = pd->cur->geometry.x;
+   obj_y = pd->cur->geometry.y;
+   obj_w = pd->cur->geometry.w;
+   obj_h = pd->cur->geometry.h;
 
    // Clip Region
    clip_x = clip[0];
