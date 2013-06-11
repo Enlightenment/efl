@@ -1254,7 +1254,7 @@ _selected_set(Eo *obj, void *_pd, va_list *list)
              goto clean_up;
           }
 
-        selected= ecore_file_dir_get(path);
+        selected = ecore_file_dir_get(path);
         _populate(obj, selected, NULL);
         eina_stringshare_replace(&sd->selection, path);
         free(selected);
