@@ -1430,7 +1430,8 @@ eng_output_flush(void *data, Evas_Render_Mode render_mode)
    
    re->win->draw.drew = 0;
    eng_window_use(re->win);
-
+   evas_gl_common_context_done(re->win->gl_context);
+   
 #ifdef GL_GLES
    if (!re->vsync)
      {

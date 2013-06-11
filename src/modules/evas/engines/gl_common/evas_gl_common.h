@@ -126,6 +126,42 @@
 #define EGL_MAP_GL_TEXTURE_OPTION_WRITE_SEC (1<<1)
 #endif
 
+#ifndef GL_COLOR_BUFFER_BIT0_QCOM
+// if GL_COLOR_BUFFER_BIT0_QCOM  just assume the rest arent... saves fluff
+#define GL_COLOR_BUFFER_BIT0_QCOM                     0x00000001
+#define GL_COLOR_BUFFER_BIT1_QCOM                     0x00000002
+#define GL_COLOR_BUFFER_BIT2_QCOM                     0x00000004
+#define GL_COLOR_BUFFER_BIT3_QCOM                     0x00000008
+#define GL_COLOR_BUFFER_BIT4_QCOM                     0x00000010
+#define GL_COLOR_BUFFER_BIT5_QCOM                     0x00000020
+#define GL_COLOR_BUFFER_BIT6_QCOM                     0x00000040
+#define GL_COLOR_BUFFER_BIT7_QCOM                     0x00000080
+#define GL_DEPTH_BUFFER_BIT0_QCOM                     0x00000100
+#define GL_DEPTH_BUFFER_BIT1_QCOM                     0x00000200
+#define GL_DEPTH_BUFFER_BIT2_QCOM                     0x00000400
+#define GL_DEPTH_BUFFER_BIT3_QCOM                     0x00000800
+#define GL_DEPTH_BUFFER_BIT4_QCOM                     0x00001000
+#define GL_DEPTH_BUFFER_BIT5_QCOM                     0x00002000
+#define GL_DEPTH_BUFFER_BIT6_QCOM                     0x00004000
+#define GL_DEPTH_BUFFER_BIT7_QCOM                     0x00008000
+#define GL_STENCIL_BUFFER_BIT0_QCOM                   0x00010000
+#define GL_STENCIL_BUFFER_BIT1_QCOM                   0x00020000
+#define GL_STENCIL_BUFFER_BIT2_QCOM                   0x00040000
+#define GL_STENCIL_BUFFER_BIT3_QCOM                   0x00080000
+#define GL_STENCIL_BUFFER_BIT4_QCOM                   0x00100000
+#define GL_STENCIL_BUFFER_BIT5_QCOM                   0x00200000
+#define GL_STENCIL_BUFFER_BIT6_QCOM                   0x00400000
+#define GL_STENCIL_BUFFER_BIT7_QCOM                   0x00800000
+#define GL_MULTISAMPLE_BUFFER_BIT0_QCOM               0x01000000
+#define GL_MULTISAMPLE_BUFFER_BIT1_QCOM               0x02000000
+#define GL_MULTISAMPLE_BUFFER_BIT2_QCOM               0x04000000
+#define GL_MULTISAMPLE_BUFFER_BIT3_QCOM               0x08000000
+#define GL_MULTISAMPLE_BUFFER_BIT4_QCOM               0x10000000
+#define GL_MULTISAMPLE_BUFFER_BIT5_QCOM               0x20000000
+#define GL_MULTISAMPLE_BUFFER_BIT6_QCOM               0x40000000
+#define GL_MULTISAMPLE_BUFFER_BIT7_QCOM               0x80000000
+#endif
+
 #define SHAD_VERTEX 0
 #define SHAD_COLOR  1
 #define SHAD_TEXUV  2
@@ -354,6 +390,7 @@ struct _Evas_Engine_GL_Context
    struct {
       int                x, y, w, h;
       Eina_Bool          enabled : 1;
+      Eina_Bool          used : 1;
    } master_clip;
 
    struct {
@@ -558,6 +595,7 @@ void              evas_gl_common_context_free(Evas_Engine_GL_Context *gc);
 void              evas_gl_common_context_use(Evas_Engine_GL_Context *gc);
 void              evas_gl_common_context_newframe(Evas_Engine_GL_Context *gc);
 void              evas_gl_common_context_resize(Evas_Engine_GL_Context *gc, int w, int h, int rot);
+void              evas_gl_common_context_done(Evas_Engine_GL_Context *gc);
 void              evas_gl_common_context_target_surface_set(Evas_Engine_GL_Context *gc, Evas_GL_Image *surface);
 
 void              evas_gl_common_context_line_push(Evas_Engine_GL_Context *gc,

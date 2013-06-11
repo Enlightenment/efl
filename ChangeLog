@@ -1,3 +1,7 @@
+2013-06-11  Carsten Haitzler (The Rasterman)
+
+        * Support qualcomm begin/end tile extension for partial update
+
 2013-06-06  ChunEon Park (Hermet)
 
         * Edje: support edc map color set

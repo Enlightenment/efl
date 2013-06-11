@@ -27,6 +27,8 @@ void       (*glsym_glProgramParameteri)    (GLuint a, GLuint b, GLint d) = NULL;
 void       (*glsym_glReleaseShaderCompiler)(void) = NULL;
 void      *(*glsym_glMapBuffer)            (GLenum a, GLenum b) = NULL;
 GLboolean  (*glsym_glUnmapBuffer)          (GLenum a) = NULL;
+void       (*glsym_glStartTiling)          (GLuint a, GLuint b, GLuint c, GLuint d, GLuint e) = NULL;
+void       (*glsym_glEndTiling)            (GLuint a) = NULL;
 
 #ifdef GL_GLES
 // just used for finding symbols :)
@@ -142,6 +144,12 @@ gl_symbols(void)
    FINDSYM(glsym_glReleaseShaderCompiler, "glReleaseShaderCompilerARB", glsym_func_void);
    FINDSYM(glsym_glReleaseShaderCompiler, "glReleaseShaderCompiler", glsym_func_void);
 
+   FINDSYM(glsym_glStartTiling, "glStartTilingQCOM", glsym_func_void);
+   FINDSYM(glsym_glStartTiling, "glStartTiling", glsym_func_void);
+   
+   FINDSYM(glsym_glEndTiling, "glEndTilingQCOM", glsym_func_void);
+   FINDSYM(glsym_glEndTiling, "glEndTiling", glsym_func_void);
+   
    if (!getenv("EVAS_GL_MAPBUFFER_DISABLE"))
      {
         FINDSYM(glsym_glMapBuffer, "glMapBufferOES", glsym_func_void_ptr);
@@ -618,6 +626,11 @@ evas_gl_common_context_new(void)
                      shared->info.sec_image_map = 1;
                }
 #endif
+             if (!strstr((char *)ext, "GL_QCOM_tiled_rendering"))
+               {
+                  glsym_glStartTiling = NULL;
+                  glsym_glEndTiling = NULL;
+               }
           }
         glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS,
                       &(shared->info.max_texture_units));
@@ -1021,13 +1034,24 @@ evas_gl_common_context_resize(Evas_Engine_GL_Context *gc, int w, int h, int rot)
 }
 
 void
+evas_gl_common_context_done(Evas_Engine_GL_Context *gc)
+{
+   if (gc->master_clip.used)
+     {
+        if (glsym_glEndTiling) glsym_glEndTiling(GL_COLOR_BUFFER_BIT0_QCOM);
+        gc->master_clip.used = EINA_FALSE;
+     }
+}
+
+void
 evas_gl_common_context_target_surface_set(Evas_Engine_GL_Context *gc,
                                           Evas_GL_Image *surface)
 {
    if (surface == gc->pipe[0].shader.surface) return;
 
    evas_gl_common_context_flush(gc);
-
+   evas_gl_common_context_done(gc);
+   
    gc->state.current.cur_prog = PRG_INVALID;
    gc->state.current.cur_tex = -1;
    gc->state.current.cur_texu = -1;
@@ -2570,6 +2594,32 @@ scissor_rot(Evas_Engine_GL_Context *gc EINA_UNUSED,
 }
 
 static void
+start_tiling(Evas_Engine_GL_Context *gc EINA_UNUSED,
+             int rot, int gw, int gh, int cx, int cy, int cw, int ch,
+             int bitmask)
+{
+   if (!glsym_glStartTiling) return;
+   switch (rot)
+     {
+      case 0: // UP this way: ^
+        glsym_glStartTiling(cx, cy, cw, ch, bitmask);
+        break;
+      case 90: // UP this way: <
+        glsym_glStartTiling(gh - (cy + ch), cx, ch, cw, bitmask);
+        break;
+      case 180: // UP this way: v
+        glsym_glStartTiling(gw - (cx + cw), gh - (cy + ch), cw, ch, bitmask);
+        break;
+      case 270: // UP this way: >
+        glsym_glStartTiling(cy, gw - (cx + cw), ch, cw, bitmask);
+        break;
+      default: // assume up is up
+        glsym_glStartTiling(cx, cy, cw, ch, bitmask);
+        break;
+     }
+}
+
+static void
 shader_array_flush(Evas_Engine_GL_Context *gc)
 {
    int i, gw, gh, setclip, fbo = 0, done = 0;
@@ -2740,6 +2790,24 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                        cy = gc->master_clip.y;
                        cw = gc->master_clip.w;
                        ch = gc->master_clip.h;
+                    }
+               }
+             if ((glsym_glStartTiling) && (glsym_glEndTiling) && 
+                 (gc->master_clip.enabled) && 
+                 (gc->master_clip.w > 0) && (gc->master_clip.h > 0))
+               {
+                  if (!gc->master_clip.used)
+                    {
+                       if (!fbo)
+                         start_tiling(gc, gc->rot, gw, gh, 
+                                      gc->master_clip.x, 
+                                      gh - gc->master_clip.y - gc->master_clip.h,
+                                      gc->master_clip.w, gc->master_clip.h, 0);
+                       else
+                         start_tiling(gc, 0, gw, gh, 
+                                      gc->master_clip.x, gc->master_clip.y,
+                                      gc->master_clip.w, gc->master_clip.h, 0);
+                       gc->master_clip.used = EINA_TRUE;
                     }
                }
              if ((gc->pipe[i].shader.clip) || 
