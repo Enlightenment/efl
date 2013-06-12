@@ -438,7 +438,7 @@ eina_str_join_len(char *dst,
         return ret;
      }
 
-        memcpy(dst, a, a_len);
+   memcpy(dst, a, a_len);
    off = a_len;
 
    if (size <= off + 1)
