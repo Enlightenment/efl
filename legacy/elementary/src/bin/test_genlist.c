@@ -3381,6 +3381,7 @@ test_genlist20(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
 const char *_genlist_styles[] = {
    "default", "full", "one_icon", "end_icon", "no_icon",
    "default_style", "double_label", "icon_top_text_bottom",
+   "message", "media", "media-album", "media_preview",
    NULL
 };
 
@@ -3388,11 +3389,19 @@ static void
 _genlist_renew(Evas_Object *obj, const char *style)
 {
    Elm_Genlist_Item_Class *ic;
+   Evas_Object *check;
    int i;
 
    if (!obj) return;
+   
    elm_genlist_clear(obj);
 
+   check = evas_object_data_get(obj, "check");
+   if (elm_check_state_get(check))
+     elm_genlist_mode_set(obj, ELM_LIST_COMPRESS);
+   else
+     elm_genlist_mode_set(obj, ELM_LIST_SCROLL);
+     
    ic = elm_genlist_item_class_new();
    ic->item_style = style;
    ic->func.text_get = gl_text_get;
@@ -3439,7 +3448,7 @@ void
 test_genlist_item_styles(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
                          void *event_info __UNUSED__)
 {
-   Evas_Object *win, *box, *gl, *list, *table;
+   Evas_Object *win, *box, *gl, *list, *table, *check;
 
    win = elm_win_util_standard_add("genlist-item-styles", "Gengrid Item Styles");
    elm_win_autodel_set(win, EINA_TRUE);
@@ -3455,7 +3464,7 @@ test_genlist_item_styles(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
    list = _item_styles_list_create(box);
    evas_object_show(list);
 
-   table = _elm_min_set(list, box, 100, 0);
+   table = _elm_min_set(list, box, 200, 0);
    WEIGHT(table, 0, EVAS_HINT_EXPAND);
    FILL(table);
    elm_box_pack_end(box, table);
@@ -3466,6 +3475,12 @@ test_genlist_item_styles(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
     _genlist_renew(gl, "default");
    elm_box_pack_end(box, gl);
    evas_object_show(gl);
+   
+   check = elm_check_add(win);
+   elm_object_text_set(check, "Compress");
+   elm_box_pack_end(box, check);
+   evas_object_show(check);
+   evas_object_data_set(gl, "check", check);
 
    evas_object_data_set(list, "genlist", gl);
 }
