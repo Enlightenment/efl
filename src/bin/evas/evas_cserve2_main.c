@@ -358,6 +358,8 @@ main(int argc EINA_UNUSED, const char *argv[])
 
    cserve2_cache_init();
 
+   cserve2_shm_init();
+
    _clients_setup();
 
    cserve2_main_loop_run();
@@ -375,6 +377,8 @@ main(int argc EINA_UNUSED, const char *argv[])
    cserve2_slaves_shutdown();
 
    cserve2_main_loop_finish();
+
+   cserve2_shm_shutdown();
 
    eina_prefix_free(_evas_cserve2_pfx);
 

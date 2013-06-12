@@ -193,3 +193,41 @@ cserve2_shm_unmap(Shm_Handle *shm)
    munmap(shm->data, shm->image_size);
    shm->data = NULL;
 }
+
+static void
+_cserve2_shm_cleanup()
+{
+   Eina_Iterator *iter;
+   const Eina_File_Direct_Info *f_info;
+   char pattern[NAME_MAX];
+
+   sprintf(pattern, "evas-shm-img-%x-", (int) getuid());
+   iter = eina_file_direct_ls("/dev/shm");
+   EINA_ITERATOR_FOREACH(iter, f_info)
+     {
+        if (strstr(f_info->path, pattern))
+          {
+             const char *shmname = strrchr(f_info->path, '/');
+             if (!shmname) continue;
+
+             if (shm_unlink(shmname) == -1)
+               ERR("Failed to remove shm entry at %s: %d %s", shmname, errno, strerror(errno));
+             else
+               DBG("cserve2 cleanup: removed %s", shmname);
+          }
+        else
+          DBG("cserve2 cleanup: ignoring %s", f_info->path);
+     }
+}
+
+void
+cserve2_shm_init()
+{
+   _cserve2_shm_cleanup();
+}
+
+void
+cserve2_shm_shutdown()
+{
+   _cserve2_shm_cleanup();
+}
