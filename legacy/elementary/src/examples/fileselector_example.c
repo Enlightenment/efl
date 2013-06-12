@@ -5,7 +5,7 @@
  * See stdout/stderr for output. Compile with:
  *
  * @verbatim
- * gcc -g file selector_example.c -o file selector_example `pkg-config --cflags --libs elementary`
+ * gcc -g fileselector_example.c -o fileselector_example `pkg-config --cflags --libs elementary`
  * @endverbatim
  */
 
