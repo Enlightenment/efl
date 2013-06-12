@@ -38,8 +38,8 @@
  *
  * Default text parts of the check widget that you can use for are:
  * @li "default" - A label of the check
- * @li "on" - On state label of the check
- * @li "off" - Off state label of the check
+ * @li "on" - On state label of the check (only valid for "toggle" style.)
+ * @li "off" - Off state label of the check (only valid for "toggle" style.)
  *
  * Supported elm_object common APIs.
  * @li @ref elm_object_disabled_set
