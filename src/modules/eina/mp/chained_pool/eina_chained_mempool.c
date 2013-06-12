@@ -510,7 +510,7 @@ eina_chained_mempool_shutdown(void *data)
 
 #ifdef DEBUG
         if (p->usage > 0)
-           INF("Bad news we are destroying not an empty mempool [%s]\n",
+           INF("Bad news we are destroying a non-empty mempool [%s]\n",
                mp->name);
 
 #endif
