@@ -166,6 +166,7 @@ START_TEST(str_split)
         free(result);
 
    str = malloc(sizeof(char) * 1024);
+   str[0] = 0;
    for (elements = 0; elements < 300; elements++)
      strcat(str, "ma:");
    strcat(str, "ma");
