@@ -258,7 +258,10 @@ _socketfd_setup(void)
      {
         if (connect(s, (struct sockaddr *)&socket_local, len) != -1)
           {
-             ERR("cserve2 service already there: \"%s\"", strerror(errno));
+             if (errno == EADDRINUSE)
+               ERR("cserve2 service already there: \"%s\"", strerror(errno));
+             else
+               ERR("cserve2 could connect the socket: %d \"%s\"", errno, strerror(errno));
              close(s);
              return -1;
           }

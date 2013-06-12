@@ -68,7 +68,7 @@ cserve2_shm_request(size_t size)
      }
 
    do {
-        snprintf(shmname, sizeof(shmname), "/evas-shm-img-%d", id++);
+        snprintf(shmname, sizeof(shmname), "/evas-shm-img-%x-%d", (int)getuid(), id++);
         fd = shm_open(shmname, O_RDWR | O_CREAT | O_EXCL, S_IRUSR | S_IWUSR);
         if (fd == -1 && errno != EEXIST)
           {
