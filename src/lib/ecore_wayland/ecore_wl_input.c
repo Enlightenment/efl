@@ -582,18 +582,60 @@ _ecore_wl_input_cb_keyboard_keymap(void *data, struct wl_keyboard *keyboard EINA
      1 << xkb_map_mod_get_index(input->xkb.keymap, "Shift");
 }
 
+static int
+_ecore_wl_input_keymap_translate_keysym(xkb_keysym_t keysym, unsigned int modifiers, char *buffer, int bytes)
+{
+   unsigned long hbytes = 0;
+   unsigned char c;
+
+   if (!keysym) return 0;
+   hbytes = (keysym >> 8);
+
+   if (!(bytes &&
+         ((hbytes == 0) ||
+          ((hbytes == 0xFF) &&
+           (((keysym >= XKB_KEY_BackSpace) && (keysym <= XKB_KEY_Clear)) ||
+            (keysym == XKB_KEY_Return) || (keysym == XKB_KEY_Escape) ||
+            (keysym == XKB_KEY_KP_Space) || (keysym == XKB_KEY_KP_Tab) ||
+            (keysym == XKB_KEY_KP_Enter) ||
+            ((keysym >= XKB_KEY_KP_Multiply) && (keysym <= XKB_KEY_KP_9)) ||
+            (keysym == XKB_KEY_KP_Equal) || (keysym == XKB_KEY_Delete))))))
+     return 0;
+
+   if (keysym == XKB_KEY_KP_Space)
+     c = (XKB_KEY_space & 0x7F);
+   else if (hbytes == 0xFF)
+     c = (keysym & 0x7F);
+   else
+     c = (keysym & 0xFF);
+
+   if (modifiers & ECORE_EVENT_MODIFIER_CTRL)
+     {
+        if (((c >= '@') && (c < '\177')) || c == ' ')
+          c &= 0x1F;
+        else if (c == '2')
+          c = '\000';
+        else if ((c >= '3') && (c <= '7'))
+          c -= ('3' - '\033');
+        else if (c == '8')
+          c = '\177';
+        else if (c == '/')
+          c = '_' & 0x1F;
+     }
+   buffer[0] = c;
+   return 1;
+}
+
 static void 
 _ecore_wl_input_cb_keyboard_key(void *data, struct wl_keyboard *keyboard EINA_UNUSED, unsigned int serial, unsigned int timestamp, unsigned int keycode, unsigned int state)
 {
    Ecore_Wl_Input *input;
    Ecore_Wl_Window *win;
-   unsigned int code, num;
-   const xkb_keysym_t *syms;
+   unsigned int code;
    xkb_keysym_t sym = XKB_KEY_NoSymbol;
-   char string[32], key[32], keyname[32];// compose[32];
+   char key[32], keyname[32], compose[32];
    Ecore_Event_Key *e;
    struct itimerspec ts;
-   int len = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -607,10 +649,7 @@ _ecore_wl_input_cb_keyboard_key(void *data, struct wl_keyboard *keyboard EINA_UN
    if ((!win) || (win->keyboard_device != input) || (!input->xkb.state)) 
      return;
 
-   num = xkb_key_get_syms(input->xkb.state, code, &syms);
-
-   sym = XKB_KEY_NoSymbol;
-   if (num == 1) sym = syms[0];
+   sym = xkb_state_key_get_one_sym(input->xkb.state, code);
 
    memset(key, 0, sizeof(key));
    xkb_keysym_get_name(sym, key, sizeof(key));
@@ -620,43 +659,21 @@ _ecore_wl_input_cb_keyboard_key(void *data, struct wl_keyboard *keyboard EINA_UN
    if (keyname[0] == '\0')
      snprintf(keyname, sizeof(keyname), "Keycode-%u", code);
 
-   memset(string, 0, sizeof(string));
-   if (xkb_keysym_to_utf8(sym, string, 32) <= 0)
-     {
-        /* FIXME: NB: We may need to add more checks here for other 
-         * non-printable characters */
-        if ((sym == XKB_KEY_Tab) || (sym == XKB_KEY_ISO_Left_Tab)) 
-          string[len++] = '\t';
-        /* else if ((sym == XKB_KEY_Control_L) || (sym == XKB_KEY_Control_R)) */
-        /*   string[len++] = '\'; */
-        else
-          {
-             printf("Non Printable Key\n");
-             printf("\tKey: %s\n", key);
-             printf("\tKeyname: %s\n", keyname);
-          }
-     }
-
-   /* FIXME: NB: Start hacking on compose key support */
-   /* memset(compose, 0, sizeof(compose)); */
-   /* if (sym == XKB_KEY_Multi_key) */
-   /*   { */
-   /*      if (xkb_keysym_to_utf8(sym, compose, 32) <= 0) */
-   /*        compose[0] = '\0'; */
-   /*   } */
+   memset(compose, 0, sizeof(compose));
+   _ecore_wl_input_keymap_translate_keysym(sym, input->modifiers, compose, sizeof(compose));
 
    e = malloc(sizeof(Ecore_Event_Key) + strlen(key) + strlen(keyname) +
-              ((string[0] != '\0') ? strlen(string) : 0) + 3);
+              ((compose[0] != '\0') ? strlen(compose) : 0) + 3);
    if (!e) return;
 
    e->keyname = (char *)(e + 1);
    e->key = e->keyname + strlen(keyname) + 1;
-   e->string = strlen(string) ? e->key + strlen(key) + 1 : NULL;
-   e->compose = e->string;
+   e->compose = strlen(compose) ? e->key + strlen(key) + 1 : NULL;
+   e->string = e->compose;
 
    strcpy((char *)e->keyname, keyname);
    strcpy((char *)e->key, key);
-   if (strlen(string)) strcpy((char *)e->string, string);
+   if (strlen(compose)) strcpy((char *)e->compose, compose);
 
    e->window = win->id;
    e->event_window = win->id;
