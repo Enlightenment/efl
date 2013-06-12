@@ -417,6 +417,7 @@ _populate(Evas_Object *obj,
           Elm_Object_Item *parent_it)
 {
    ELM_FILESELECTOR_DATA_GET(obj, sd);
+   if (!path) return;
 
 #ifdef HAVE_EIO
    Listing_Request *lreq;
