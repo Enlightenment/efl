@@ -940,6 +940,25 @@ EAPI Eina_List            *eina_list_sort(Eina_List *list, unsigned int limit, E
 
 
 /**
+ * @brief filter (clone some) the elements in the list in exactly same order.
+ *
+ * @param list The list to filter.
+ * @param func The filter function.
+ * @return The new list.
+ *
+ * This function clone in order the elements in @p list that satisfy the
+ * filter @p func. This filter function @p func must return @c EINA_TRUE if the
+ * element is to be cloned. If @p list is @c NULL, this functon returns @c NULL.
+ * If @p func is @c NULL, this functon calls @see eina_list_clone().
+ * This returns a new list.
+ *
+ * @since 1.8
+ *
+ * @warning @p list must be a pointer to the first element of the list.
+ */
+EAPI Eina_List            *eina_list_filter(Eina_List *list, Eina_Filter_Cb func) EINA_WARN_UNUSED_RESULT;
+
+/**
  * @brief Shuffle list.
  *
  * @param list The list handle to shuffle.

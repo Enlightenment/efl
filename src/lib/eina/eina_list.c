@@ -1154,6 +1154,31 @@ eina_list_sort(Eina_List *list, unsigned int limit, Eina_Compare_Cb func)
 }
 
 EAPI Eina_List *
+eina_list_filter(Eina_List *list, Eina_Filter_Cb func)
+{
+   const Eina_List *l;
+   Eina_List *lfiltered;
+   void *data;
+
+   if (!list)
+     return NULL;
+
+   EINA_MAGIC_CHECK_LIST(list, NULL);
+
+   if (func == NULL)
+     return eina_list_clone(list);
+
+   lfiltered = NULL;
+   EINA_LIST_FOREACH(list, l, data)
+     {
+        if (func(data) == EINA_TRUE)
+          lfiltered = eina_list_append(lfiltered, data);
+     }
+
+   return lfiltered;
+}
+
+EAPI Eina_List *
 eina_list_shuffle(Eina_List *list, Eina_Random_Cb func)
 {
    unsigned int n, i, j;

@@ -496,6 +496,49 @@ START_TEST(eina_test_remove_duplicates)
 }
 END_TEST
 
+static Eina_Bool filter_cb(int *data)
+{
+   return ( (*data < 81) ? EINA_TRUE : EINA_FALSE );
+}
+
+START_TEST(eina_test_filter)
+{
+   int i;
+   int *p;
+   int data[] = { 6, 9, 93, 42, 1, 7, 9, 81, 1664, 1337 };
+   int result[] = { 6, 9, 42, 1, 7, 9, 81 };
+   Eina_List *list = NULL;
+   Eina_List *l = NULL;
+
+   eina_init();
+
+   for (i = 0; i < 10; i++)
+     list = eina_list_append(list, &data[i]);
+
+   l = eina_list_filter(list, NULL);
+      fail_if(eina_list_count(list) != 10);
+      for (i = 0; i < 10; i++)
+        {
+           p = eina_list_nth(l, i);
+           fail_if(*p != data[i]);
+        }
+   l = eina_list_free(l);
+
+   l = eina_list_filter(list, EINA_FILTER_CB(filter_cb));
+      fail_if(eina_list_count(l) != 6);
+      for (i = 0; i < 6; i++)
+        {
+           p = eina_list_nth(l, i);
+           fail_if(*p != result[i]);
+        }
+   l = eina_list_free(l);
+
+   list = eina_list_free(list);
+
+   eina_shutdown();
+}
+END_TEST
+
 void
 eina_test_list(TCase *tc)
 {
@@ -505,4 +548,5 @@ eina_test_list(TCase *tc)
    tcase_add_test(tc, eina_test_list_split);
    tcase_add_test(tc, eina_test_shuffle);
    tcase_add_test(tc, eina_test_remove_duplicates);
+   tcase_add_test(tc, eina_test_filter);
 }

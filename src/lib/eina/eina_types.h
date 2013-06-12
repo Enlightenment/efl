@@ -334,6 +334,20 @@ typedef int (*Eina_Compare_Cb)(const void *data1, const void *data2);
 #define EINA_COMPARE_CB(function) ((Eina_Compare_Cb)function)
 
 /**
+ * @typedef Eina_Filter_Cb
+ * Function used in filtering functions.
+ * It returns EINA_TRUE only if @p data satisfies the predicate thus
+ * is not to be filtered.
+ */
+typedef Eina_Bool (*Eina_Filter_Cb)(const void *data);
+
+/**
+ * @def EINA_FILTER_CB
+ * Macro to cast to Eina_Filter_Cb.
+ */
+#define EINA_FILTER_CB(function) ((Eina_Filter_Cb)function)
+
+/**
  * @typedef Eina_Random_Cb
  * Function used in shuffling functions. An integer betwen min and max
  * inclusive must be returned.
