@@ -400,14 +400,14 @@ START_TEST(eina_test_shuffle)
 
   eina_init();
 
-  for(i = 0; i < SHUFFLE_SZ; i++)
+  for (i = 0; i < SHUFFLE_SZ; i++)
     {
        n[i] = i;
        rand_count[i] = 0;
        list = eina_list_append(list, &n[i]);
     }
 
-  for(i = 0; i < SHUFFLE_N; i++)
+  for (i = 0; i < SHUFFLE_N; i++)
     {
        list = eina_list_shuffle(list, NULL);
        p = eina_list_nth(list, SHUFFLE_SZ/2);
@@ -425,7 +425,7 @@ START_TEST(eina_test_shuffle)
     }
 
   d = SHUFFLE_SZ/(float)(SHUFFLE_N);
-  for(i = 0; i < SHUFFLE_SZ; i++)
+  for (i = 0; i < SHUFFLE_SZ; i++)
     {
        fail_if(rand_count[i]*d > 1.20f);
        fail_if(rand_count[i]*d < 0.80f);
@@ -462,7 +462,7 @@ START_TEST(eina_test_remove_duplicates)
 
    list = eina_list_remove_duplicates(list, EINA_TRUE);
       fail_if(eina_list_count(list) != 7);
-      for(i = 0; i < 7; i++)
+      for (i = 0; i < 7; i++)
         {
            p = eina_list_nth(list, i);
            fail_if(*p != result1[i]);
@@ -485,7 +485,7 @@ START_TEST(eina_test_remove_duplicates)
 
    list = eina_list_remove_duplicates(list, EINA_FALSE);
       fail_if(eina_list_count(list) != 7);
-      for(i = 0; i < 7; i++)
+      for (i = 0; i < 7; i++)
         {
            p = eina_list_nth(list, i);
            fail_if(*p != result2[i]);
