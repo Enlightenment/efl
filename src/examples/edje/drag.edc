@@ -78,6 +78,7 @@ collections {
 
             description {
                state: "default" 0.0;
+               min: 10 10;
 
                color: 255 0 0 200;
 
