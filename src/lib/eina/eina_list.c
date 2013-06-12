@@ -752,6 +752,64 @@ eina_list_remove_list(Eina_List *list, Eina_List *remove_list)
 }
 
 EAPI Eina_List *
+eina_list_remove_duplicates(Eina_List *list, Eina_Bool keep_first)
+{
+   Eina_List *itr1, *itr2, *itr3;
+
+   if (!list)
+     return NULL;
+
+   EINA_MAGIC_CHECK_LIST(list, NULL);
+
+   if (keep_first)
+     {
+        itr1 = list;
+        while (itr1)
+          {
+             itr2 = itr1->next;
+
+             while (itr2)
+               {
+                  itr3 = itr2->next;
+
+                  if (itr1->data == itr2->data)
+                    {
+                       list = eina_list_remove_list(list, itr2);
+                    }
+
+                  itr2 = itr3;
+               }
+
+             itr1 = itr1->next;
+          }
+     }
+   else
+     {
+        itr1 = list->accounting->last;
+        while (itr1)
+          {
+             itr2 = itr1->prev;
+
+             while (itr2)
+               {
+                  itr3 = itr2->prev;
+
+                  if (itr1->data == itr2->data)
+                    {
+                       list = eina_list_remove_list(list, itr2);
+                    }
+
+                  itr2 = itr3;
+               }
+
+             itr1 = itr1->prev;
+          }
+     }
+
+   return list;
+}
+
+EAPI Eina_List *
 eina_list_free(Eina_List *list)
 {
    Eina_List *l, *free_l;

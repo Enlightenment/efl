@@ -435,6 +435,67 @@ START_TEST(eina_test_shuffle)
 }
 END_TEST
 
+START_TEST(eina_test_remove_duplicates)
+{
+   int i;
+   int *p;
+   int data[] = { 0, 1, 2, 3, 4, 5, 6 };
+   int result1[] = { 0, 1, 2, 3, 4, 5, 6 };
+   int result2[] = {2, 3, 4, 1, 6, 5, 0};
+   Eina_List *list = NULL;
+
+   eina_init();
+
+   list = eina_list_append(list, &data[0]);
+   list = eina_list_append(list, &data[1]);
+   list = eina_list_append(list, &data[1]);
+   list = eina_list_append(list, &data[2]);
+   list = eina_list_append(list, &data[3]);
+   list = eina_list_append(list, &data[4]);
+   list = eina_list_append(list, &data[1]);
+   list = eina_list_append(list, &data[5]);
+   list = eina_list_append(list, &data[6]);
+   list = eina_list_append(list, &data[5]);
+   list = eina_list_append(list, &data[0]);
+   list = eina_list_append(list, &data[0]);
+   fail_if(eina_list_count(list) != 12);
+
+   list = eina_list_remove_duplicates(list, EINA_TRUE);
+      fail_if(eina_list_count(list) != 7);
+      for(i = 0; i < 7; i++)
+        {
+           p = eina_list_nth(list, i);
+           fail_if(*p != result1[i]);
+        }
+   list = eina_list_free(list);
+
+   list = eina_list_append(list, &data[0]);
+   list = eina_list_append(list, &data[1]);
+   list = eina_list_append(list, &data[1]);
+   list = eina_list_append(list, &data[2]);
+   list = eina_list_append(list, &data[3]);
+   list = eina_list_append(list, &data[4]);
+   list = eina_list_append(list, &data[1]);
+   list = eina_list_append(list, &data[5]);
+   list = eina_list_append(list, &data[6]);
+   list = eina_list_append(list, &data[5]);
+   list = eina_list_append(list, &data[0]);
+   list = eina_list_append(list, &data[0]);
+   fail_if(eina_list_count(list) != 12);
+
+   list = eina_list_remove_duplicates(list, EINA_FALSE);
+      fail_if(eina_list_count(list) != 7);
+      for(i = 0; i < 7; i++)
+        {
+           p = eina_list_nth(list, i);
+           fail_if(*p != result2[i]);
+        }
+   list = eina_list_free(list);
+
+   eina_shutdown();
+}
+END_TEST
+
 void
 eina_test_list(TCase *tc)
 {
@@ -443,4 +504,5 @@ eina_test_list(TCase *tc)
    tcase_add_test(tc, eina_test_sorted_insert);
    tcase_add_test(tc, eina_test_list_split);
    tcase_add_test(tc, eina_test_shuffle);
+   tcase_add_test(tc, eina_test_remove_duplicates);
 }

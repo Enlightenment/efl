@@ -620,6 +620,25 @@ EAPI Eina_List            *eina_list_remove_list(Eina_List *list, Eina_List *rem
 
 
 /**
+ * @brief Remove duplicated list nodes.
+ *
+ * @param list The given linked list.
+ * @param keep_first Keep the first or last occurence
+ * @return A list pointer.
+ *
+ * This function removes multiple node occurences that have the same data.
+ * It keeps the first or last occurence depending of @p keep_first.
+ * If @p list is @c NULL, @c NULL is returned, otherwise a new list pointer
+ * that should be used in place of the one passed to this function.
+ *
+ * @since 1.8
+ *
+ * @warning @p list must be a pointer to the first element of the list.
+ */
+EAPI Eina_List            *eina_list_remove_duplicates(Eina_List *list, Eina_Bool keep_first) EINA_WARN_UNUSED_RESULT;
+
+
+/**
  * @brief Move the specified data to the head of the list.
  *
  * @param list The list handle to move the data.
