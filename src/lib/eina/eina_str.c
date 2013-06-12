@@ -77,6 +77,13 @@ eina_str_split_full_helper(const char *str,
    unsigned int tokens = 0, x;
    const char *idx[256] = {NULL};
 
+   if ((!str) || (!delim))
+     {
+        if (elements)
+          *elements = 0;
+
+        return NULL;
+     }
    if (max_tokens < 0) max_tokens = 0;
    if (max_tokens == 1)
      {
@@ -101,6 +108,7 @@ eina_str_split_full_helper(const char *str,
         if (elements)
           *elements = 1;
         str_array[0] = s;
+        str_array[1] = NULL;
         return str_array;
      }
    dlen = strlen(delim);
