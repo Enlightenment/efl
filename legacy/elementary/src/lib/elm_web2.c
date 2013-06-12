@@ -114,8 +114,6 @@ elm_need_web(void)
 static void
 _elm_web_smart_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
-
 #ifdef HAVE_ELEMENTARY_WEB
    elm_widget_resize_object_set(obj, _view_add(obj));
 
