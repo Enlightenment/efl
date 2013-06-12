@@ -42,7 +42,11 @@ _resize_object_reset(Evas_Object *obj, Elm_Naviframe_Item *it,
 {
    ELM_NAVIFRAME_DATA_GET(obj, sd);
 
-   if (it) elm_widget_resize_object_set(obj, VIEW(it));
+   if (it)
+     {
+        elm_widget_resize_object_set(obj, VIEW(it));
+        evas_object_raise(VIEW(it));
+     }
 
    //Recover previous smart members.
    if (prev_it)
@@ -509,7 +513,6 @@ _item_del_pre_hook(Elm_Object_Item *it)
         _resize_object_reset(WIDGET(prev_it), prev_it, NULL,
                              EINA_FALSE);
         evas_object_show(VIEW(prev_it));
-        evas_object_raise(VIEW(prev_it));
 
         _prev_page_focus_recover(prev_it);
 
@@ -1517,7 +1520,6 @@ _item_push(Eo *obj, void *_pd, va_list *list)
      elm_object_focus_set(VIEW(it), EINA_TRUE);
 
    sd->stack = eina_inlist_append(sd->stack, EINA_INLIST_GET(it));
-   evas_object_raise(VIEW(it));
 
    elm_layout_sizing_eval(obj);
 
@@ -1690,7 +1692,6 @@ _item_pop(Eo *obj, void *_pd, va_list *list)
           }
 
         _resize_object_reset(obj, prev_it, NULL, EINA_FALSE);
-        evas_object_raise(VIEW(prev_it));
 
         /* these 2 signals MUST take place simultaneously */
         elm_object_signal_emit(VIEW(it), "elm,state,cur,popped", "elm");
@@ -1786,7 +1787,6 @@ elm_naviframe_item_promote(Elm_Object_Item *it)
    elm_object_signal_emit(VIEW(prev_it), "elm,state,cur,pushed", "elm");
 
    evas_object_show(VIEW(nit));
-   evas_object_raise(VIEW(nit));
 
    elm_object_signal_emit(VIEW(nit), "elm,state,new,pushed", "elm");
 
