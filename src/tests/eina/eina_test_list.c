@@ -340,38 +340,38 @@ END_TEST
 
 START_TEST(eina_test_list_split)
 {
-  Eina_List *left = NULL, *right = NULL ;
-  Eina_List *list = NULL;
-  unsigned int i;
+   Eina_List *left = NULL, *right = NULL ;
+   Eina_List *list = NULL;
+   unsigned int i;
 
-  eina_init();
+   eina_init();
 
-  list = eina_list_append(list, "tigh");
-  list = eina_list_append(list, "adar");
-  list = eina_list_append(list, "baltar");
-  list = eina_list_append(list, "roslin");
-  list = eina_list_append(list, "baltar");
-  list = eina_list_append(list, "roslin");
-  list = eina_list_append(list, "baltar");
-  list = eina_list_append(list, "roslin");
+   list = eina_list_append(list, "tigh");
+   list = eina_list_append(list, "adar");
+   list = eina_list_append(list, "baltar");
+   list = eina_list_append(list, "roslin");
+   list = eina_list_append(list, "baltar");
+   list = eina_list_append(list, "roslin");
+   list = eina_list_append(list, "baltar");
+   list = eina_list_append(list, "roslin");
 
-  fail_if(list == NULL);
-  fail_if(eina_list_count(list) != 8);
+   fail_if(list == NULL);
+   fail_if(eina_list_count(list) != 8);
 
-  for ( i = 0; i <  200; i++)
-    {
-      left = eina_list_split_list(list, eina_list_nth_list(list, i % 2), &right);
+   for ( i = 0; i <  200; i++)
+     {
+        left = eina_list_split_list(list, eina_list_nth_list(list, i % 2), &right);
 
-      if (i % 2 == 0)
-	fail_if(eina_list_count(left) == 1 && eina_list_count(right) + eina_list_count(left) == i + 7);
-      else
-	fail_if(eina_list_count(left) == 2 && eina_list_count(right) + eina_list_count(left) == i + 7);
+        if (i % 2 == 0)
+          fail_if(eina_list_count(left) == 1 && eina_list_count(right) + eina_list_count(left) == i + 7);
+        else
+          fail_if(eina_list_count(left) == 2 && eina_list_count(right) + eina_list_count(left) == i + 7);
 
-      list = eina_list_merge(left, right);
-      list = eina_list_append(list, "roslin");
-    }
+        list = eina_list_merge(left, right);
+        list = eina_list_append(list, "roslin");
+     }
 
-  eina_shutdown();
+   eina_shutdown();
 }
 END_TEST
 
@@ -390,48 +390,48 @@ static int uicmp(const void *d1, const void *d2)
 #define SHUFFLE_N 100000
 START_TEST(eina_test_shuffle)
 {
-  double d;
-  unsigned int *p;
-  unsigned int i, j;
-  unsigned int n[SHUFFLE_SZ];
-  unsigned int rand_count[SHUFFLE_SZ];
-  Eina_List *list = NULL;
-  Eina_List *item = NULL;
+   double d;
+   unsigned int *p;
+   unsigned int i, j;
+   unsigned int n[SHUFFLE_SZ];
+   unsigned int rand_count[SHUFFLE_SZ];
+   Eina_List *list = NULL;
+   Eina_List *item = NULL;
 
-  eina_init();
+   eina_init();
 
-  for(i = 0; i < SHUFFLE_SZ; i++)
-    {
-       n[i] = i;
-       rand_count[i] = 0;
-       list = eina_list_append(list, &n[i]);
-    }
+   for(i = 0; i < SHUFFLE_SZ; i++)
+     {
+        n[i] = i;
+        rand_count[i] = 0;
+        list = eina_list_append(list, &n[i]);
+     }
 
-  for(i = 0; i < SHUFFLE_N; i++)
-    {
-       list = eina_list_shuffle(list, NULL);
-       p = eina_list_nth(list, SHUFFLE_SZ/2);
-       rand_count[*p]++;
+   for(i = 0; i < SHUFFLE_N; i++)
+     {
+        list = eina_list_shuffle(list, NULL);
+        p = eina_list_nth(list, SHUFFLE_SZ/2);
+        rand_count[*p]++;
 
-       j = 0;
-       list = eina_list_sort(list, 0, (Eina_Compare_Cb)&uicmp);
-       EINA_LIST_FOREACH(list, item, p)
-         {
-            if (*p != j++)
-              fail_if(*p != j++);
-         }
-       if (j != SHUFFLE_SZ)
-         fail_if(j != SHUFFLE_SZ);
-    }
+        j = 0;
+        list = eina_list_sort(list, 0, (Eina_Compare_Cb)&uicmp);
+        EINA_LIST_FOREACH(list, item, p)
+          {
+             if (*p != j++)
+               fail_if(*p != j++);
+          }
+        if (j != SHUFFLE_SZ)
+          fail_if(j != SHUFFLE_SZ);
+     }
 
-  d = SHUFFLE_SZ/(float)(SHUFFLE_N);
-  for(i = 0; i < SHUFFLE_SZ; i++)
-    {
-       fail_if(rand_count[i]*d > 1.20f);
-       fail_if(rand_count[i]*d < 0.80f);
-    }
+   d = SHUFFLE_SZ/(float)(SHUFFLE_N);
+   for(i = 0; i < SHUFFLE_SZ; i++)
+     {
+        fail_if(rand_count[i]*d > 1.20f);
+        fail_if(rand_count[i]*d < 0.80f);
+     }
 
-  eina_shutdown();
+   eina_shutdown();
 }
 END_TEST
 
