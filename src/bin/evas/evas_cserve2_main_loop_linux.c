@@ -143,14 +143,22 @@ _signalfd_handler(int fd, Fd_Flags flags EINA_UNUSED, void *data EINA_UNUSED)
      }
 }
 
+static void
+_sigint_handler(int id, siginfo_t *info EINA_UNUSED, void *data EINA_UNUSED)
+{
+   if (id != SIGINT) return;
+   DBG("Received SIGINT. Honoring request.");
+   terminate = EINA_TRUE;
+}
+
 static int
 _signalfd_setup(void)
 {
    sigset_t mask;
+   struct sigaction action;
 
    sigemptyset(&mask);
    sigaddset(&mask, SIGCHLD);
-   sigaddset(&mask, SIGINT);
    sigaddset(&mask, SIGTERM);
    sigaddset(&mask, SIGQUIT);
    sigaddset(&mask, SIGUSR1);
@@ -168,6 +176,11 @@ _signalfd_setup(void)
 
    /* ignore SIGPIPE so it's handled by write() and send() as needed */
    signal(SIGPIPE, SIG_IGN);
+
+   action.sa_sigaction = _sigint_handler;
+   action.sa_flags = SA_SIGINFO;
+   sigemptyset(&action.sa_mask);
+   sigaction(SIGINT, &action, NULL);
 
    return signal_fd;
 }
@@ -768,9 +781,16 @@ cserve2_main_loop_run(void)
         nfds = epoll_wait(epoll_fd, events, MAX_EPOLL_EVENTS, timeout);
         if (nfds < 0)
           {
-             ERR("An error occurred when reading the epoll fd.");
-             ERR("%s", strerror(errno));
-             break;
+             if (errno == EINTR && !terminate)
+               {
+                  INF("Ignoring interruption during epoll_wait.");
+                  continue;
+               }
+             else
+               {
+                  ERR("An error occurred when reading the epoll fd: %s.", strerror(errno));
+                  break;
+               }
           }
         if (nfds == 0) // timeout occurred
           {
