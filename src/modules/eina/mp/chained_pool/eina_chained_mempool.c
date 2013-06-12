@@ -231,7 +231,7 @@ _eina_chained_mempool_free_in(Chained_Mempool *pool, Chained_Pool *p, void *ptr)
    // is it really a pointer returned by malloc
    if ((((unsigned char *)ptr) - (unsigned char *)(p + 1)) % pool->item_alloc)
      {
-        ERR("%p is %i bytes inside a pointer served by %p '%s' Chained_Mempool (You are freeing the wrong pointer man !).",
+        ERR("%p is %lu bytes inside a pointer served by %p '%s' Chained_Mempool (You are freeing the wrong pointer man !).",
             ptr, ((((unsigned char *)ptr) - (unsigned char *)(p + 1)) % pool->item_alloc), pool, pool->name);
         return EINA_FALSE;
      }
