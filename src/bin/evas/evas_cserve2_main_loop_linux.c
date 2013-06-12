@@ -90,16 +90,19 @@ _signal_handle_child(struct signalfd_siginfo *sinfo EINA_UNUSED)
 }
 
 static void
-_signal_handle_int(struct signalfd_siginfo *sinfo EINA_UNUSED)
+_signal_handle_exit(struct signalfd_siginfo *sinfo)
 {
-   DBG("Received SIGINT. Honoring request.");
-   terminate = EINA_TRUE;
-}
+   const char *name;
 
-static void
-_signal_handle_term(struct signalfd_siginfo *sinfo EINA_UNUSED)
-{
-   DBG("Received SIGTERM. Honoring request.");
+   switch (sinfo->ssi_signo)
+     {
+      case SIGINT:  name = "SIGINT"; break;
+      case SIGTERM: name = "SIGTERM"; break;
+      case SIGQUIT: name = "SIGQUIT"; break;
+      default: return;
+     }
+
+   DBG("Received %s. Honoring request.", name);
    terminate = EINA_TRUE;
 }
 
@@ -123,16 +126,19 @@ _signalfd_handler(int fd, Fd_Flags flags EINA_UNUSED, void *data EINA_UNUSED)
         switch(sinfo.ssi_signo)
           {
            case SIGCHLD:
-              _signal_handle_child(&sinfo);
-              break;
+             _signal_handle_child(&sinfo);
+             break;
            case SIGINT:
-              _signal_handle_int(&sinfo);
-              break;
            case SIGTERM:
-              _signal_handle_term(&sinfo);
-              break;
+           case SIGQUIT:
+             _signal_handle_exit(&sinfo);
+             break;
+           case SIGUSR1:
+           case SIGUSR2:
+             DBG("Ignored signal %d", sinfo.ssi_signo);
+             break;
            default:
-              ERR("Caught unexpected signal '%d'.", sinfo.ssi_signo);
+             ERR("Caught unexpected signal '%d'.", sinfo.ssi_signo);
           }
      }
 }
@@ -146,6 +152,9 @@ _signalfd_setup(void)
    sigaddset(&mask, SIGCHLD);
    sigaddset(&mask, SIGINT);
    sigaddset(&mask, SIGTERM);
+   sigaddset(&mask, SIGQUIT);
+   sigaddset(&mask, SIGUSR1);
+   sigaddset(&mask, SIGUSR2);
 
    if (sigprocmask(SIG_BLOCK, &mask, NULL) == -1)
      {
