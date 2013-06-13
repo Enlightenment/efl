@@ -330,4 +330,5 @@ Fixes:
     * Evas: correctly detect if a loader support asynchronous preloading.
     * Evas: improve stability of Evas_Cserve2.
     * Evas: Fix gif cannot decode alpha value correctly.
+    * Evas: Fix bs if app call image object update add after call api like fileset.
 

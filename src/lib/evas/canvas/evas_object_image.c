@@ -124,6 +124,7 @@ struct _Evas_Object_Image
    Eina_Bool         created : 1;
    Eina_Bool         proxyerror : 1;
    Eina_Bool         proxy_src_clip : 1;
+   Eina_Bool         written : 1;
 };
 
 /* private methods for image objects */
@@ -585,7 +586,7 @@ _image_done_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Object_Image *
           }
         EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
      }
-
+   o->written = EINA_FALSE;
    o->changed = EINA_TRUE;
    if (resize_call) evas_object_inform_call_image_resize(eo_obj);
    evas_object_change(eo_obj, obj);
@@ -1377,6 +1378,7 @@ _image_size_set(Eo *eo_obj, void *_pd, va_list *list)
      }
    EINA_COW_IMAGE_STATE_WRITE_END(o, cur_write);
 
+   o->written = EINA_TRUE;
    o->changed = EINA_TRUE;
    evas_object_inform_call_image_resize(eo_obj);
    evas_object_change(eo_obj, obj);
@@ -1551,6 +1553,7 @@ _image_data_set(Eo *eo_obj, void *_pd, va_list *list)
                   EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
                }
          }
+       o->written = EINA_TRUE;
      }
    else
      {
@@ -1655,6 +1658,7 @@ _image_data_get(Eo *eo_obj, void *_pd, va_list *list)
    o->pixels_checked_out++;
    if (for_writing)
      {
+        o->written = EINA_TRUE;
         EVAS_OBJECT_WRITE_IMAGE_FREE_FILE_AND_KEY(o);
      }
 
@@ -1780,6 +1784,7 @@ _image_data_copy_set(Eo *eo_obj, void *_pd, va_list *list)
                state_write->image.stride = stride;
              EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
           }
+        o->written = EINA_TRUE;
      }
    o->pixels_checked_out = 0;
    EVAS_OBJECT_WRITE_IMAGE_FREE_FILE_AND_KEY(o);
@@ -1807,6 +1812,7 @@ _image_data_update_add(Eo *eo_obj, void *_pd, va_list *list)
    int h = va_arg(*list, int);
    RECTS_CLIP_TO_RECT(x, y, w, h, 0, 0, o->cur->image.w, o->cur->image.h);
    if ((w <= 0)  || (h <= 0)) return;
+   if (!o->written) return;
    cnt = eina_list_count(o->pixels->pixel_updates);
    if (cnt == 1)
      { // detect single blob case already there to do a nop
@@ -1899,6 +1905,7 @@ _image_alpha_set(Eo *eo_obj, void *_pd, va_list *list)
                state_write->image.stride = stride;
              EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
           }
+        o->written = EINA_TRUE;
      }
    evas_object_image_data_update_add(eo_obj, 0, 0, o->cur->image.w, o->cur->image.h);
    EVAS_OBJECT_WRITE_IMAGE_FREE_FILE_AND_KEY(o);
@@ -1997,6 +2004,7 @@ _image_reload(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
        (o->pixels_checked_out > 0)) return;
    if (o->engine_data)
      o->engine_data = obj->layer->evas->engine.func->image_dirty_region(obj->layer->evas->engine.data.output, o->engine_data, 0, 0, o->cur->image.w, o->cur->image.h);
+   o->written = EINA_FALSE;
    evas_object_image_unload(eo_obj, 1);
    evas_object_inform_call_image_unloaded(eo_obj);
    evas_object_image_load(eo_obj);
