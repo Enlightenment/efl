@@ -1189,11 +1189,9 @@ eina_list_map(Eina_List *list, Eina_Map_Cb func)
 
    EINA_MAGIC_CHECK_LIST(list, NULL);
 
-   if (func == NULL)
-     return list;
-
-   EINA_LIST_FOREACH(list, l, data)
-      func(data);
+   if (func)
+     EINA_LIST_FOREACH(list, l, data)
+        func(data);
 
    return list;
 }
@@ -1209,11 +1207,9 @@ eina_list_reduce(Eina_List *list, Eina_Reduce_Cb func, void *acc)
 
    EINA_MAGIC_CHECK_LIST(list, NULL);
 
-   if (func == NULL)
-     return list;
-
-   EINA_LIST_FOREACH(list, l, data)
-      func(data, acc);
+   if (func)
+     EINA_LIST_FOREACH(list, l, data)
+        func(data, acc);
 
    return list;
 }
