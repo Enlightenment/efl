@@ -15,7 +15,7 @@ typedef struct
    Evas_Object *win;
    Evas_Object *main_box;
    Evas_Object *naviframe;
-   Evas_Object *url;
+   Evas_Object *url_entry;
    Evas_Object *default_web;
    Evas_Object *tabs;
    Evas_Object *close_tab;
@@ -57,18 +57,18 @@ nav_button_update(App_Data *ad)
 static void
 tab_current_set(Tab_Data *td)
 {
-   const char *uri;
+   const char *url;
 
    if (td == td->app->current_tab)
      return;
 
    td->app->current_tab = td;
 
-   uri = elm_web_uri_get(td->web);
-   elm_object_text_set(td->app->url, uri);
+   url = elm_web_url_get(td->web);
+   elm_object_text_set(td->app->url_entry, url);
 
    nav_button_update(td->app);
-   elm_entry_icon_visible_set(td->app->url, EINA_TRUE);
+   elm_entry_icon_visible_set(td->app->url_entry, EINA_TRUE);
 
    elm_naviframe_item_simple_promote(td->app->naviframe, td->web);
 }
@@ -97,16 +97,16 @@ _title_changed_cb(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_uri_changed_cb(void *data, Evas_Object *obj, void *event_info)
+_url_changed_cb(void *data, Evas_Object *obj, void *event_info)
 {
    Tab_Data *td = data;
-   const char *uri = event_info;
+   const char *url = event_info;
 
    if (td != td->app->current_tab)
      return;
 
    nav_button_update(td->app);
-   elm_object_text_set(td->app->url, uri);
+   elm_object_text_set(td->app->url_entry, url);
 }
 
 static void
@@ -127,7 +127,7 @@ _tb_item_del_cb(void *data, Evas_Object *obj, void *event_info)
    if (!td->app->exiting && !elm_toolbar_selected_item_get(obj))
      {
         td->app->current_tab = NULL;
-        elm_entry_icon_visible_set(td->app->url, EINA_FALSE);
+        elm_entry_icon_visible_set(td->app->url_entry, EINA_FALSE);
         if (td->app->search_box)
           evas_object_del(td->app->search_box);
      }
@@ -159,7 +159,7 @@ tab_add(App_Data *ad)
 
    evas_object_smart_callback_add(td->web, "title,changed", _title_changed_cb,
                                   td);
-   evas_object_smart_callback_add(td->web, "uri,changed", _uri_changed_cb, td);
+   evas_object_smart_callback_add(td->web, "url,changed", _url_changed_cb, td);
    evas_object_event_callback_add(td->web, EVAS_CALLBACK_FREE, _web_free_cb,
                                   td);
 
@@ -168,61 +168,61 @@ tab_add(App_Data *ad)
 }
 
 static char *
-uri_sanitize(const char *uri)
+url_sanitize(const char *url)
 {
-   char *fixed_uri;
+   char *fixed_url;
    char *schema;
    char *tmp;
 
-   if (!uri || !*uri) return NULL;
+   if (!url || !*url) return NULL;
 
-   tmp = strstr(uri, "://");
-   if (!tmp || (tmp == uri) || (tmp > (uri + 15)))
+   tmp = strstr(url, "://");
+   if (!tmp || (tmp == url) || (tmp > (url + 15)))
      {
-        char *new_uri = NULL;
-        if (ecore_file_exists(uri))
+        char *new_url = NULL;
+        if (ecore_file_exists(url))
           {
              schema = "file";
-             new_uri = ecore_file_realpath(uri);
+             new_url = ecore_file_realpath(url);
           }
         else
           schema = "http";
 
-        if (asprintf(&fixed_uri, "%s://%s", schema, new_uri ? new_uri : uri) >
+        if (asprintf(&fixed_url, "%s://%s", schema, new_url ? new_url : url) >
             0)
           {
-             free(new_uri);
-             return fixed_uri;
+             free(new_url);
+             return fixed_url;
           }
-        free(new_uri);
+        free(new_url);
      }
    else
-     return strdup(uri);
+     return strdup(url);
 
    return NULL;
 }
 
 static void
-tab_uri_set(Tab_Data *td, const char *uri)
+tab_url_set(Tab_Data *td, const char *url)
 {
-   char *sane_uri = uri_sanitize(uri);
-   elm_web_uri_set(td->web, sane_uri);
-   free(sane_uri);
+   char *sane_url = url_sanitize(url);
+   elm_web_url_set(td->web, sane_url);
+   free(sane_url);
 }
 
 static void
-_url_activated_cb(void *data, Evas_Object *obj, void *event_info)
+_url_entry_activated_cb(void *data, Evas_Object *obj, void *event_info)
 {
    App_Data *ad = data;
    Tab_Data *td;
-   const char *uri = eina_stringshare_ref(elm_object_text_get(obj));
+   const char *url = eina_stringshare_ref(elm_object_text_get(obj));
 
    if (!ad->current_tab)
      td = tab_add(ad);
    else
      td = ad->current_tab;
-   tab_uri_set(td, uri);
-   eina_stringshare_del(uri);
+   tab_url_set(td, url);
+   eina_stringshare_del(url);
 }
 
 static void
@@ -268,7 +268,7 @@ _add_tab_cb(void *data, Evas_Object *obj, void *event_info)
 {
    App_Data *ad = data;
    tab_add(ad);
-   elm_object_focus_set(ad->url, EINA_TRUE);
+   elm_object_focus_set(ad->url_entry, EINA_TRUE);
 }
 
 static Evas_Object *
@@ -373,7 +373,7 @@ _win_search_trigger_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
    elm_box_horizontal_set(box, EINA_TRUE);
    evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(box, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_box_pack_after(ad->main_box, box, ad->url);
+   elm_box_pack_after(ad->main_box, box, ad->url_entry);
    evas_object_show(box);
 
    evas_object_event_callback_add(box, EVAS_CALLBACK_DEL, _search_box_del_cb,
@@ -462,7 +462,7 @@ default_content_set(Evas_Object *web)
 EAPI_MAIN int
 elm_main(int argc, char *argv[])
 {
-   Evas_Object *win, *bg, *box, *box2, *btn, *ic, *url, *naviframe, *tabs, *web;
+   Evas_Object *win, *bg, *box, *box2, *btn, *ic, *url_entry, *naviframe, *tabs, *web;
    Evas *e;
    Evas_Modifier_Mask ctrl_mask;
    App_Data *ad;
@@ -499,20 +499,20 @@ elm_main(int argc, char *argv[])
    elm_win_resize_object_add(win, box);
    evas_object_show(box);
 
-   url = elm_entry_add(win);
-   elm_entry_single_line_set(url, EINA_TRUE);
-   elm_entry_scrollable_set(url, EINA_TRUE);
-   evas_object_size_hint_weight_set(url, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(url, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_box_pack_end(box, url);
-   evas_object_show(url);
+   url_bar = elm_entry_add(win);
+   elm_entry_single_line_set(url_bar, EINA_TRUE);
+   elm_entry_scrollable_set(url_bar, EINA_TRUE);
+   evas_object_size_hint_weight_set(url_bar, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(url_bar, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(box, url_bar);
+   evas_object_show(url_bar);
 
-   evas_object_smart_callback_add(url, "activated", _url_activated_cb, ad);
+   evas_object_smart_callback_add(url_bar, "activated", _url_bar_activated_cb, ad);
 
    box2 = elm_box_add(win);
    elm_box_horizontal_set(box2, EINA_TRUE);
-   elm_object_part_content_set(url, "icon", box2);
-   elm_entry_icon_visible_set(url, EINA_FALSE);
+   elm_object_part_content_set(url_bar, "icon", box2);
+   elm_entry_icon_visible_set(url_bar, EINA_FALSE);
 
    btn = elm_button_add(win);
    elm_box_pack_end(box2, btn);
@@ -607,7 +607,7 @@ elm_main(int argc, char *argv[])
    ad->win = win;
    ad->main_box = box;
    ad->naviframe = naviframe;
-   ad->url = url;
+   ad->url_bar = url_bar;
    ad->default_web = web;
    ad->tabs = tabs;
    ad->close_tab = btn;

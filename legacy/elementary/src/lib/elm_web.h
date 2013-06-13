@@ -68,7 +68,8 @@
  * info is an Eina_Bool with the visibility state
  * @li "tooltip,text,set": Show and set text of a tooltip. Event info is
  * a string with the text to show
- * @li "uri,changed": URI of the main frame changed. Event info is a string
+ * @li "uri,changed": URI of the main frame changed. Event info is a string (deprecated. use "url,changed" instead)
+ * @li "url,changed": URL of the main frame changed. Event info is a string
  * with the new URI
  * @li "view,resized": The web object internal's view changed sized
  * @li "windows,close,request": A JavaScript request to close the current

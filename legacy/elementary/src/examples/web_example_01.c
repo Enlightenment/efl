@@ -34,7 +34,7 @@ elm_main(int argc, char *argv[])
    elm_win_resize_object_add(win, web);
    elm_web_history_enabled_set(web, EINA_FALSE);
 
-   if (!elm_web_uri_set(web, URL))
+   if (!elm_web_url_set(web, URL))
      {
         printf("URL NOT LOADED");
         return -1;

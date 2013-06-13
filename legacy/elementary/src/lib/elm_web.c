@@ -71,6 +71,7 @@ static const Evas_Smart_Cb_Description _elm_web_smart_callbacks[] = {
    { "toolbars,visible,set", "b" },
    { "tooltip,text,set", "s" },
    { "uri,changed", "s" },
+   { "url,changed", "s" },
    { "view,resized", "" },
    { "windows,close,request", ""},
    { "zoom,animated,end", "" },
@@ -1025,6 +1026,9 @@ _view_smart_callback_proxy_cb(void *data,
 {
    Elm_Web_Callback_Proxy_Context *ctxt = data;
 
+   if (!strcmp(ctxt->name, "uri,changed"))
+     evas_object_smart_callback_call(ctxt->obj, "url,changed";, event_info);
+
    evas_object_smart_callback_call(ctxt->obj, ctxt->name, event_info);
 }
 
@@ -1497,18 +1501,28 @@ _tab_propagate_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 
 EAPI Eina_Bool
 elm_web_uri_set(Evas_Object *obj,
-                const char *uri)
+                const char *url)
 {
    ELM_WEB_CHECK(obj) EINA_FALSE;
    Eina_Bool ret = EINA_FALSE;
-   eo_do(obj, elm_obj_web_uri_set(uri, &ret));
+   eo_do(obj, elm_obj_web_url_set(url, &ret));
+   return ret;
+}
+
+EAPI Eina_Bool
+elm_web_url_set(Evas_Object *obj,
+                const char *url)
+{
+   ELM_WEB_CHECK(obj) EINA_FALSE;
+   Eina_Bool ret = EINA_FALSE;
+   eo_do(obj, elm_obj_web_url_set(url, &ret));
    return ret;
 }
 
 static void
-_uri_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+_url_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
-   const char *uri = va_arg(*list, const char *);
+   const char *url = va_arg(*list, const char *);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    if (ret) *ret = EINA_FALSE;
 
@@ -1516,10 +1530,10 @@ _uri_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    Eina_Bool int_ret = EINA_FALSE;
    Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
-   int_ret = ewk_view_uri_set(wd->resize_obj, uri);
+   int_ret = ewk_view_uri_set(wd->resize_obj, url);
    if (ret) *ret = int_ret;
 #else
-   (void)uri;
+   (void)url;
    *ret = EINA_FALSE;
    (void)obj;
 #endif
@@ -1530,12 +1544,21 @@ elm_web_uri_get(const Evas_Object *obj)
 {
    ELM_WEB_CHECK(obj) NULL;
    const char *ret = NULL;
-   eo_do((Eo *) obj, elm_obj_web_uri_get(&ret));
+   eo_do((Eo *) obj, elm_obj_web_url_get(&ret));
+   return ret;
+}
+
+EAPI const char *
+elm_web_url_get(const Evas_Object *obj)
+{
+   ELM_WEB_CHECK(obj) NULL;
+   const char *ret = NULL;
+   eo_do((Eo *) obj, elm_obj_web_url_get(&ret));
    return ret;
 }
 
 static void
-_uri_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+_url_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
    const char **ret = va_arg(*list, const char **);
 #ifdef HAVE_ELEMENTARY_WEB
@@ -2634,8 +2657,8 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_OBJ_WEB_ID(ELM_OBJ_WEB_SUB_ID_USERAGENT_GET), _useragent_get),
         EO_OP_FUNC(ELM_OBJ_WEB_ID(ELM_OBJ_WEB_SUB_ID_TAB_PROPAGATE_GET), _tab_propagate_get),
         EO_OP_FUNC(ELM_OBJ_WEB_ID(ELM_OBJ_WEB_SUB_ID_TAB_PROPAGATE_SET), _tab_propagate_set),
-        EO_OP_FUNC(ELM_OBJ_WEB_ID(ELM_OBJ_WEB_SUB_ID_URI_SET), _uri_set),
-        EO_OP_FUNC(ELM_OBJ_WEB_ID(ELM_OBJ_WEB_SUB_ID_URI_GET), _uri_get),
+        EO_OP_FUNC(ELM_OBJ_WEB_ID(ELM_OBJ_WEB_SUB_ID_URL_SET), _url_set),
+        EO_OP_FUNC(ELM_OBJ_WEB_ID(ELM_OBJ_WEB_SUB_ID_URL_GET), _url_get),
         EO_OP_FUNC(ELM_OBJ_WEB_ID(ELM_OBJ_WEB_SUB_ID_TITLE_GET), _title_get),
         EO_OP_FUNC(ELM_OBJ_WEB_ID(ELM_OBJ_WEB_SUB_ID_BG_COLOR_SET), _bg_color_set),
         EO_OP_FUNC(ELM_OBJ_WEB_ID(ELM_OBJ_WEB_SUB_ID_BG_COLOR_GET), _bg_color_get),
@@ -2685,8 +2708,8 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_OBJ_WEB_SUB_ID_USERAGENT_GET, "Return current useragent of elm_web object."),
      EO_OP_DESCRIPTION(ELM_OBJ_WEB_SUB_ID_TAB_PROPAGATE_GET, "Gets the status of the tab propagation."),
      EO_OP_DESCRIPTION(ELM_OBJ_WEB_SUB_ID_TAB_PROPAGATE_SET, "Sets whether to use tab propagation."),
-     EO_OP_DESCRIPTION(ELM_OBJ_WEB_SUB_ID_URI_SET, "Sets the URI for the web object."),
-     EO_OP_DESCRIPTION(ELM_OBJ_WEB_SUB_ID_URI_GET, "Gets the current URI for the object."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WEB_SUB_ID_URL_SET, "Sets the URL for the web object."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WEB_SUB_ID_URL_GET, "Gets the current URL for the object."),
      EO_OP_DESCRIPTION(ELM_OBJ_WEB_SUB_ID_TITLE_GET, "Gets the current title."),
      EO_OP_DESCRIPTION(ELM_OBJ_WEB_SUB_ID_BG_COLOR_SET, "Sets the background color to be used by the web object."),
      EO_OP_DESCRIPTION(ELM_OBJ_WEB_SUB_ID_BG_COLOR_GET, "Gets the background color to be used by the web object."),

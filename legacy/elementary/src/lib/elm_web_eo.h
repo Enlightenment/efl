@@ -17,8 +17,8 @@ enum
    ELM_OBJ_WEB_SUB_ID_USERAGENT_GET,
    ELM_OBJ_WEB_SUB_ID_TAB_PROPAGATE_GET,
    ELM_OBJ_WEB_SUB_ID_TAB_PROPAGATE_SET,
-   ELM_OBJ_WEB_SUB_ID_URI_SET,
-   ELM_OBJ_WEB_SUB_ID_URI_GET,
+   ELM_OBJ_WEB_SUB_ID_URL_SET,
+   ELM_OBJ_WEB_SUB_ID_URL_GET,
    ELM_OBJ_WEB_SUB_ID_TITLE_GET,
    ELM_OBJ_WEB_SUB_ID_BG_COLOR_SET,
    ELM_OBJ_WEB_SUB_ID_BG_COLOR_GET,
@@ -217,33 +217,33 @@ enum
 #define elm_obj_web_tab_propagate_set(propagate) ELM_OBJ_WEB_ID(ELM_OBJ_WEB_SUB_ID_TAB_PROPAGATE_SET), EO_TYPECHECK(Eina_Bool, propagate)
 
 /**
- * @def elm_obj_web_uri_set
+ * @def elm_obj_web_url_set
  * @since 1.8
  *
- * Sets the URI for the web object
+ * Sets the URL for the web object
  *
- * @param[in] uri
+ * @param[in] url
  * @param[out] ret
  *
- * @see elm_web_uri_set
+ * @see elm_web_url_set
  *
  * @ingroup Web
  */
-#define elm_obj_web_uri_set(uri, ret) ELM_OBJ_WEB_ID(ELM_OBJ_WEB_SUB_ID_URI_SET), EO_TYPECHECK(const char *, uri), EO_TYPECHECK(Eina_Bool *, ret)
+#define elm_obj_web_url_set(url, ret) ELM_OBJ_WEB_ID(ELM_OBJ_WEB_SUB_ID_URL_SET), EO_TYPECHECK(const char *, url), EO_TYPECHECK(Eina_Bool *, ret)
 
 /**
- * @def elm_obj_web_uri_get
+ * @def elm_obj_web_url_get
  * @since 1.8
  *
- * Gets the current URI for the object
+ * Gets the current URL for the object
  *
  * @param[out] ret
  *
- * @see elm_web_uri_get
+ * @see elm_web_url_get
  *
  * @ingroup Web
  */
-#define elm_obj_web_uri_get(ret) ELM_OBJ_WEB_ID(ELM_OBJ_WEB_SUB_ID_URI_GET), EO_TYPECHECK(const char **, ret)
+#define elm_obj_web_url_get(ret) ELM_OBJ_WEB_ID(ELM_OBJ_WEB_SUB_ID_URL_GET), EO_TYPECHECK(const char **, ret)
 
 /**
  * @def elm_obj_web_title_get

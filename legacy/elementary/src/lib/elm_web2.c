@@ -19,8 +19,12 @@ EAPI Eo_Op ELM_OBJ_WEB_BASE_ID = EO_NOOP;
 static Ewk_View_Smart_Class _ewk_view_parent_sc =
   EWK_VIEW_SMART_CLASS_INIT_NULL;
 
+static const char SIG_URI_CHANGED[] = "uri,changed"; // deprecated, use "url,changed" instead.
+static const char SIG_URL_CHANGED[] = "url,changed";
+
 static const Evas_Smart_Cb_Description _elm_web_smart_callbacks[] = {
-   { "url,changed", "s" },
+   { SIG_URI_CHANGED, "s" },
+   { SIG_URL_CHANGED, "s" },
    { "focused", ""}, /**< handled by elm_widget */
    { "unfocused", ""}, /**< handled by elm_widget */
    { NULL, NULL }
@@ -92,6 +96,21 @@ _view_add(Evas_Object *parent)
    return view;
 }
 
+static void
+_view_smart_url_changed_cb(void *data,
+                           Evas_Object *obj __UNUSED__,
+                           void *event_info)
+{
+   evas_object_smart_callback_call(data, SIG_URI_CHANGED, event_info);
+   evas_object_smart_callback_call(data, SIG_URL_CHANGED, event_info);
+}
+
+static void
+_view_smart_callback_proxy(Evas_Object *view, Evas_Object *parent)
+{
+   evas_object_smart_callback_add(view, SIG_URL_CHANGED, _view_smart_url_changed_cb, parent);
+}
+
 static Eina_Bool _elm_need_web = EINA_FALSE;
 
 void
@@ -115,10 +134,14 @@ static void
 _elm_web_smart_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
 #ifdef HAVE_ELEMENTARY_WEB
-   elm_widget_resize_object_set(obj, _view_add(obj));
+   Evas_Object *resize_obj;
+
+   resize_obj = _view_add(obj);
+   elm_widget_resize_object_set(obj, resize_obj);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 
+   _view_smart_callback_proxy(resize_obj, obj);
    elm_widget_can_focus_set(obj, EINA_TRUE);
 #endif
 }
@@ -375,24 +398,34 @@ _useragent_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 
 EAPI Eina_Bool
 elm_web_uri_set(Evas_Object *obj,
-                const char *uri)
+                const char *url)
 {
    ELM_WEB_CHECK(obj) EINA_FALSE;
    Eina_Bool ret = EINA_FALSE;
-   eo_do(obj, elm_obj_web_uri_set(uri, &ret));
+   eo_do(obj, elm_obj_web_url_set(url, &ret));
+   return ret;
+}
+
+EAPI Eina_Bool
+elm_web_url_set(Evas_Object *obj,
+                const char *url)
+{
+   ELM_WEB_CHECK(obj) EINA_FALSE;
+   Eina_Bool ret = EINA_FALSE;
+   eo_do(obj, elm_obj_web_url_set(url, &ret));
    return ret;
 }
 
 static void
-_uri_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+_url_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
    Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
-   const char *uri = va_arg(*list, const char *);
+   const char *url = va_arg(*list, const char *);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret = EINA_FALSE;
-   int_ret = ewk_view_url_set(wd->resize_obj, uri);
+   int_ret = ewk_view_url_set(wd->resize_obj, url);
    if (ret) *ret = int_ret;
 }
 
@@ -401,12 +434,21 @@ elm_web_uri_get(const Evas_Object *obj)
 {
    ELM_WEB_CHECK(obj) NULL;
    const char *ret = NULL;
-   eo_do((Eo *) obj, elm_obj_web_uri_get(&ret));
+   eo_do((Eo *) obj, elm_obj_web_url_get(&ret));
+   return ret;
+}
+
+EAPI const char *
+elm_web_url_get(const Evas_Object *obj)
+{
+   ELM_WEB_CHECK(obj) NULL;
+   const char *ret = NULL;
+   eo_do((Eo *) obj, elm_obj_web_url_get(&ret));
    return ret;
 }
 
 static void
-_uri_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+_url_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
    const char **ret = va_arg(*list, const char **);
    Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
@@ -1279,8 +1321,8 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_OBJ_WEB_ID(ELM_OBJ_WEB_SUB_ID_USERAGENT_SET), _useragent_set),
         EO_OP_FUNC(ELM_OBJ_WEB_ID(ELM_OBJ_WEB_SUB_ID_USERAGENT_GET), _useragent_get),
 
-        EO_OP_FUNC(ELM_OBJ_WEB_ID(ELM_OBJ_WEB_SUB_ID_URI_SET), _uri_set),
-        EO_OP_FUNC(ELM_OBJ_WEB_ID(ELM_OBJ_WEB_SUB_ID_URI_GET), _uri_get),
+        EO_OP_FUNC(ELM_OBJ_WEB_ID(ELM_OBJ_WEB_SUB_ID_URL_SET), _url_set),
+        EO_OP_FUNC(ELM_OBJ_WEB_ID(ELM_OBJ_WEB_SUB_ID_URL_GET), _url_get),
         EO_OP_FUNC(ELM_OBJ_WEB_ID(ELM_OBJ_WEB_SUB_ID_TITLE_GET), _title_get),
 
         EO_OP_FUNC(ELM_OBJ_WEB_ID(ELM_OBJ_WEB_SUB_ID_BG_COLOR_SET), _bg_color_set),
@@ -1331,8 +1373,8 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_OBJ_WEB_SUB_ID_USERAGENT_GET, "Return current useragent of elm_web object."),
      EO_OP_DESCRIPTION(ELM_OBJ_WEB_SUB_ID_TAB_PROPAGATE_GET, "Gets the status of the tab propagation."),
      EO_OP_DESCRIPTION(ELM_OBJ_WEB_SUB_ID_TAB_PROPAGATE_SET, "Sets whether to use tab propagation."),
-     EO_OP_DESCRIPTION(ELM_OBJ_WEB_SUB_ID_URI_SET, "Sets the URI for the web object."),
-     EO_OP_DESCRIPTION(ELM_OBJ_WEB_SUB_ID_URI_GET, "Gets the current URI for the object."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WEB_SUB_ID_URL_SET, "Sets the URL for the web object."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WEB_SUB_ID_URL_GET, "Gets the current URL for the object."),
      EO_OP_DESCRIPTION(ELM_OBJ_WEB_SUB_ID_TITLE_GET, "Gets the current title."),
      EO_OP_DESCRIPTION(ELM_OBJ_WEB_SUB_ID_BG_COLOR_SET, "Sets the background color to be used by the web object."),
      EO_OP_DESCRIPTION(ELM_OBJ_WEB_SUB_ID_BG_COLOR_GET, "Gets the background color to be used by the web object."),

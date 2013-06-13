@@ -40,12 +40,12 @@ _btn_reload_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSE
 }
 
 static void
-_url_change_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+_url_entry_changed_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Evas_Object *web = data;
-   const char *uri = elm_object_text_get(obj);
+   const char *url = elm_object_text_get(obj);
 
-   elm_web_uri_set(web, uri);
+   elm_web_url_set(web, url);
 }
 
 static void
@@ -63,7 +63,7 @@ _title_changed_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info)
 }
 
 static void
-_uri_changed_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info)
+_url_changed_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Web_Test *wt = data;
 
@@ -403,7 +403,7 @@ test_web(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __
    elm_box_pack_end(bx2, url);
    evas_object_show(url);
 
-   evas_object_smart_callback_add(url, "activated", _url_change_cb, web);
+   evas_object_smart_callback_add(url, "activated", _url_entry_changed_cb, web);
    wt->url_entry = url;
 
    bx2 = elm_box_add(win);
@@ -472,13 +472,13 @@ test_web(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __
    evas_object_smart_callback_add(bt, "clicked", _bring_in_region_cb, wt);
 
    evas_object_smart_callback_add(web, "title,changed", _title_changed_cb, win);
-   evas_object_smart_callback_add(web, "uri,changed", _uri_changed_cb, wt);
+   evas_object_smart_callback_add(web, "url,changed", _url_changed_cb, wt);
 
    evas_object_event_callback_add(web, EVAS_CALLBACK_DEL, _main_web_del_cb, wt);
 
    wt->web = web;
 
-   elm_web_uri_set(web, "http://www.enlightenment.org");
+   elm_web_url_set(web, "http://www.enlightenment.org");
 
    elm_web_window_create_hook_set(web, _new_window_hook, wt);
 
