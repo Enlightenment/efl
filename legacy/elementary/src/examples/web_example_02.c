@@ -462,7 +462,7 @@ default_content_set(Evas_Object *web)
 EAPI_MAIN int
 elm_main(int argc, char *argv[])
 {
-   Evas_Object *win, *bg, *box, *box2, *btn, *ic, *url_entry, *naviframe, *tabs, *web;
+   Evas_Object *win, *bg, *box, *box2, *btn, *ic, *url_bar, *naviframe, *tabs, *web;
    Evas *e;
    Evas_Modifier_Mask ctrl_mask;
    App_Data *ad;
@@ -507,7 +507,7 @@ elm_main(int argc, char *argv[])
    elm_box_pack_end(box, url_bar);
    evas_object_show(url_bar);
 
-   evas_object_smart_callback_add(url_bar, "activated", _url_bar_activated_cb, ad);
+   evas_object_smart_callback_add(url_bar, "activated", _url_entry_activated_cb, ad);
 
    box2 = elm_box_add(win);
    elm_box_horizontal_set(box2, EINA_TRUE);
@@ -607,7 +607,7 @@ elm_main(int argc, char *argv[])
    ad->win = win;
    ad->main_box = box;
    ad->naviframe = naviframe;
-   ad->url_bar = url_bar;
+   ad->url_entry = url_bar;
    ad->default_web = web;
    ad->tabs = tabs;
    ad->close_tab = btn;
