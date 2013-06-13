@@ -506,10 +506,16 @@ static void map_cb(int *data)
    *data = *data * 3;
 }
 
-START_TEST(eina_test_filter)
+static void reduce_cb(int *data, int *acc)
+{
+   *acc += (*data * 3);
+}
+
+START_TEST(eina_test_filter_map_reduce)
 {
    int i;
    int *p;
+   int sum;
    int data[] = { 6, 9, 93, 42, 1, 7, 9, 81, 1664, 1337 };
    int result1[] = { 6, 9, 42, 1, 7, 9 };
    int result2[] = { 18, 27, 126, 3, 21, 27 };
@@ -545,6 +551,10 @@ START_TEST(eina_test_filter)
            p = eina_list_nth(l, i);
            fail_if(*p != result2[i]);
         }
+
+   l = eina_list_reduce(l, EINA_REDUCE_CB(reduce_cb), &sum);
+      fail_if(sum != 666);
+
    l = eina_list_free(l);
 
    list = eina_list_free(list);
@@ -562,5 +572,5 @@ eina_test_list(TCase *tc)
    tcase_add_test(tc, eina_test_list_split);
    tcase_add_test(tc, eina_test_shuffle);
    tcase_add_test(tc, eina_test_remove_duplicates);
-   tcase_add_test(tc, eina_test_filter);
+   tcase_add_test(tc, eina_test_filter_map_reduce);
 }
