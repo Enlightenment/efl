@@ -811,7 +811,11 @@ _parse_parts(Evas_Object *ed)
 	if (type == EDJE_PART_TYPE_EXTERNAL)
 	  {
 	     ei = calloc(1, sizeof(Part_External_Info));
-	     if (!ei) goto end;
+	     if (!ei)
+               {
+                  free(apiname);
+                  goto end;
+               }
 	     ei->description = description;
 	     ei->source = edje_edit_part_source_get(ed, name);
 	     ei->apiname = apiname;
