@@ -74,6 +74,7 @@ Additions:
    * Add elm_config_glayer_long_tap_start_timeout_set/get, elm_config_glayer_double_tap_timeout_set/get
    * Add magnifier to entry.
    * Add "focused" and "unfocused" smart callback for panel, video, web, web2, genlist, hover, index, list, map, photocam, progressbar, radio, scroller, slider, slideshow, spinner, toolbar, win, calendar, check, clock, colorselector, datetime, diskselector, flipselector, gengrid, ctxpopup, fileselector_button, naviframe, player, popup, bubble, button.
+   * Add elm_web_url_set(), elm_web_url_get() and "url,changed" signal for web, web2.
 
 Improvements:
 
@@ -252,6 +253,7 @@ Removals:
      to adapt themselves.
    * Deprecate elm_label_slide_set(), elm_label_slide_get().
    * Deprecate elm_object_domain_translatable_text_part_set(), elm_object_translatable_text_part_get().
+   * Deprecate elm_web_uri_set(), elm_web_uri_get() and "uri,changed" signal for web, web2.
 
 Changes since Elementary 1.0.0:
 -------------------------

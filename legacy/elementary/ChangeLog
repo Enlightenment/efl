@@ -1420,3 +1420,8 @@
         * Keep the smart members of the naviframe views whenever resize object is changed.
 		  This prevents the dangling view objects of the naviframe and keep the layer
 		  consistency.
+
+2013-06-13  Ryuan Choi (ryuan)
+
+        * Replace uri to url from elm_web_uri_get, elm_web_uri_set and "uri,changed" signal.
+        Previous APIs and signal are deprecated.

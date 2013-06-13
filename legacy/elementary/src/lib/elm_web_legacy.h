@@ -166,6 +166,34 @@ EAPI Eina_Bool         elm_web_tab_propagate_get(const Evas_Object *obj);
 EAPI void              elm_web_tab_propagate_set(Evas_Object *obj, Eina_Bool propagate);
 
 /**
+ * Sets the URL for the web object
+ *
+ * It must be a full URL, with resource included, in the form
+ * http://www.enlightenment.org or file:///tmp/something.html
+ *
+ * @param obj The web object
+ * @param url The URL to set
+ * @return @c EINA_TRUE if the URL could be set, @c EINA_FALSE if an error occurred.
+ *
+ * @ingroup Web
+ */
+EAPI Eina_Bool         elm_web_url_set(Evas_Object *obj, const char *url);
+
+/**
+ * Gets the current URL for the object
+ *
+ * The returned string must not be freed and is guaranteed to be
+ * stringshared.
+ *
+ * @param obj The web object
+ * @return A stringshared internal string with the current URL, or @c NULL on
+ * failure
+ *
+ * @ingroup Web
+ */
+EAPI const char       *elm_web_url_get(const Evas_Object *obj);
+
+/**
  * Sets the URI for the web object
  *
  * It must be a full URI, with resource included, in the form
@@ -175,9 +203,13 @@ EAPI void              elm_web_tab_propagate_set(Evas_Object *obj, Eina_Bool pro
  * @param uri The URI to set
  * @return @c EINA_TRUE if the URI could be set, @c EINA_FALSE if an error occurred.
  *
+ * @deprecated Use elm_web_url_set() instead
+ *
+ * @see elm_web_url_set()
+ *
  * @ingroup Web
  */
-EAPI Eina_Bool         elm_web_uri_set(Evas_Object *obj, const char *uri);
+EINA_DEPRECATED EAPI Eina_Bool         elm_web_uri_set(Evas_Object *obj, const char *uri);
 
 /**
  * Gets the current URI for the object
@@ -189,9 +221,13 @@ EAPI Eina_Bool         elm_web_uri_set(Evas_Object *obj, const char *uri);
  * @return A stringshared internal string with the current URI, or @c NULL on
  * failure
  *
+ * @deprecated Use elm_web_url_get() instead
+ *
+ * @see elm_web_url_get()
+ *
  * @ingroup Web
  */
-EAPI const char       *elm_web_uri_get(const Evas_Object *obj);
+EINA_DEPRECATED EAPI const char       *elm_web_uri_get(const Evas_Object *obj);
 
 /**
  * Gets the current title
