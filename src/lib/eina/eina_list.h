@@ -981,7 +981,7 @@ EAPI Eina_List            *eina_list_map(Eina_List *list, Eina_Map_Cb func) EINA
  *
  * @warning @p list must be a pointer to the first element of the list.
  */
-EAPI Eina_List            *eina_list_reduce(Eina_List *list, Eina_Reduce_Cb func, void *acc) EINA_WARN_UNUSED_RESULT;
+EAPI Eina_List            *eina_list_reduce(Eina_List *list, Eina_Reduce_Cb func, void *acc) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(3);
 
 /**
  * @brief Shuffle list.
