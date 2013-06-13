@@ -280,8 +280,8 @@ ecore_wl_window_show(Ecore_Wl_Window *win)
 
    ecore_wl_window_surface_create(win);
 
-   if (win->type != ECORE_WL_WINDOW_TYPE_DND &&
-       win->type != ECORE_WL_WINDOW_TYPE_NONE)
+   if ((win->type != ECORE_WL_WINDOW_TYPE_DND) &&
+       (win->type != ECORE_WL_WINDOW_TYPE_NONE))
      {
         if (!win->shell_surface)
           {
