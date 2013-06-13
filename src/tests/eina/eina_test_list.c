@@ -501,12 +501,18 @@ static Eina_Bool filter_cb(int *data)
    return ( (*data < 81) ? EINA_TRUE : EINA_FALSE );
 }
 
+static void map_cb(int *data)
+{
+   *data = *data * 3;
+}
+
 START_TEST(eina_test_filter)
 {
    int i;
    int *p;
    int data[] = { 6, 9, 93, 42, 1, 7, 9, 81, 1664, 1337 };
-   int result[] = { 6, 9, 42, 1, 7, 9, 81 };
+   int result1[] = { 6, 9, 42, 1, 7, 9 };
+   int result2[] = { 18, 27, 126, 3, 21, 27 };
    Eina_List *list = NULL;
    Eina_List *l = NULL;
 
@@ -529,7 +535,15 @@ START_TEST(eina_test_filter)
       for (i = 0; i < 6; i++)
         {
            p = eina_list_nth(l, i);
-           fail_if(*p != result[i]);
+           fail_if(*p != result1[i]);
+        }
+
+   l = eina_list_map(l, EINA_MAP_CB(map_cb));
+      fail_if(eina_list_count(l) != 6);
+      for (i = 0; i < 6; i++)
+        {
+           p = eina_list_nth(l, i);
+           fail_if(*p != result2[i]);
         }
    l = eina_list_free(l);
 

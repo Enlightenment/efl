@@ -959,6 +959,18 @@ EAPI Eina_List            *eina_list_sort(Eina_List *list, unsigned int limit, E
 EAPI Eina_List            *eina_list_filter(Eina_List *list, Eina_Filter_Cb func) EINA_WARN_UNUSED_RESULT;
 
 /**
+ * @brief Apply a function on all nodes of list
+ *
+ * @param list The list to apply function on.
+ * @param func The function to apply on nodes.
+ * @return The same list.
+ * @since 1.8
+ *
+ * @warning @p list must be a pointer to the first element of the list.
+ */
+EAPI Eina_List            *eina_list_map(Eina_List *list, Eina_Map_Cb func) EINA_WARN_UNUSED_RESULT;
+
+/**
  * @brief Shuffle list.
  *
  * @param list The list handle to shuffle.

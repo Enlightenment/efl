@@ -348,6 +348,18 @@ typedef Eina_Bool (*Eina_Filter_Cb)(const void *data);
 #define EINA_FILTER_CB(function) ((Eina_Filter_Cb)function)
 
 /**
+ * @typedef Eina_Map_Cb
+ * Function to be applied on nodes.
+ */
+typedef void (*Eina_Map_Cb)(const void *data);
+
+/**
+ * @def EINA_MAP_CB
+ * Macro to cast to Eina_Map_Cb.
+ */
+#define EINA_MAP_CB(function) ((Eina_Map_Cb)function)
+
+/**
  * @typedef Eina_Random_Cb
  * Function used in shuffling functions. An integer betwen min and max
  * inclusive must be returned.

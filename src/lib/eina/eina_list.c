@@ -1179,6 +1179,26 @@ eina_list_filter(Eina_List *list, Eina_Filter_Cb func)
 }
 
 EAPI Eina_List *
+eina_list_map(Eina_List *list, Eina_Map_Cb func)
+{
+   const Eina_List *l;
+   void *data;
+
+   if (!list)
+     return NULL;
+
+   EINA_MAGIC_CHECK_LIST(list, NULL);
+
+   if (func == NULL)
+     return list;
+
+   EINA_LIST_FOREACH(list, l, data)
+      func(data);
+
+   return list;
+}
+
+EAPI Eina_List *
 eina_list_shuffle(Eina_List *list, Eina_Random_Cb func)
 {
    unsigned int n, i, j;
