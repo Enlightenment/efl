@@ -42,12 +42,6 @@ _resize_object_reset(Evas_Object *obj, Elm_Naviframe_Item *it,
 {
    ELM_NAVIFRAME_DATA_GET(obj, sd);
 
-   if (it)
-     {
-        elm_widget_resize_object_set(obj, VIEW(it));
-        evas_object_raise(VIEW(it));
-     }
-
    //Recover previous smart members.
    if (prev_it)
      {
@@ -56,6 +50,12 @@ _resize_object_reset(Evas_Object *obj, Elm_Naviframe_Item *it,
      }
    else if (dummy)
      evas_object_smart_member_add(sd->dummy_edje, obj);
+
+   if (it)
+     {
+        elm_widget_resize_object_set(obj, VIEW(it));
+        evas_object_raise(VIEW(it));
+     }
 }
 
 static void
@@ -520,7 +520,7 @@ _item_del_pre_hook(Elm_Object_Item *it)
      }
 
 end:
-   if (!sd->stack)
+   if (!sd->stack || (VIEW(it) != sd->dummy_edje))
      _resize_object_reset(WIDGET(it), NULL, NULL, EINA_TRUE);
 
    _item_free(nit);
