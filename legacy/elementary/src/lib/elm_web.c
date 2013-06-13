@@ -1027,7 +1027,7 @@ _view_smart_callback_proxy_cb(void *data,
    Elm_Web_Callback_Proxy_Context *ctxt = data;
 
    if (!strcmp(ctxt->name, "uri,changed"))
-     evas_object_smart_callback_call(ctxt->obj, "url,changed";, event_info);
+     evas_object_smart_callback_call(ctxt->obj, "url,changed", event_info);
 
    evas_object_smart_callback_call(ctxt->obj, ctxt->name, event_info);
 }
