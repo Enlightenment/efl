@@ -1200,9 +1200,7 @@ _elm_scroll_content_size_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Evas_Coord *w = va_arg(*list, Evas_Coord *);
    Evas_Coord *h = va_arg(*list, Evas_Coord *);
 
-   if (!sid->content) return;
-
-   evas_object_geometry_get(sid->content, NULL, NULL, w, h);
+   eo_do(sid->pan_obj, elm_obj_pan_content_size_get(w, h));
 }
 
 static void
