@@ -1214,6 +1214,32 @@ eina_list_reduce(Eina_List *list, Eina_Reduce_Cb func, void *acc)
    return list;
 }
 
+EAPI void
+eina_list_filter_map_reduce(Eina_List *list,
+                            Eina_Filter_Cb filter,
+                            Eina_Map_Cb map,
+                            Eina_Reduce_Cb reduce, void *acc)
+{
+   const Eina_List *l;
+   void *data;
+
+   if (!list)
+     return;
+
+   EINA_MAGIC_CHECK_LIST(list);
+
+   EINA_LIST_FOREACH(list, l, data)
+     {
+        if ((filter == NULL) || (filter(data) == EINA_TRUE))
+          {
+             if (map)
+               map(data);
+             if (reduce)
+               reduce(data, acc);
+          }
+     }
+}
+
 EAPI Eina_List *
 eina_list_shuffle(Eina_List *list, Eina_Random_Cb func)
 {

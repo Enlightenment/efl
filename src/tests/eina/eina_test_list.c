@@ -552,10 +552,30 @@ START_TEST(eina_test_filter_map_reduce)
            fail_if(*p != result2[i]);
         }
 
+   sum = 0;
    l = eina_list_reduce(l, EINA_REDUCE_CB(reduce_cb), &sum);
       fail_if(sum != 666);
 
    l = eina_list_free(l);
+
+
+   sum = 0;
+   l = eina_list_clone(list);
+   eina_list_filter_map_reduce(l,
+                               EINA_FILTER_CB(filter_cb),
+                               EINA_MAP_CB(map_cb),
+                               EINA_REDUCE_CB(reduce_cb), &sum);
+   l = eina_list_free(l);
+      fail_if(sum != 864);
+
+   sum = 0;
+   l = eina_list_clone(list);
+   eina_list_filter_map_reduce(l,
+                               NULL,
+                               EINA_MAP_CB(map_cb),
+                               EINA_REDUCE_CB(reduce_cb), &sum);
+   l = eina_list_free(l);
+      fail_if(sum != 32301);
 
    list = eina_list_free(list);
 

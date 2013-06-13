@@ -984,6 +984,24 @@ EAPI Eina_List            *eina_list_map(Eina_List *list, Eina_Map_Cb func) EINA
 EAPI Eina_List            *eina_list_reduce(Eina_List *list, Eina_Reduce_Cb func, void *acc) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(3);
 
 /**
+ * @brief Apply a filter, then a map then a reduce function on all nodes of list
+ *
+ * @param list The list to filter, map then reduce.
+ * @param filter The filter function.
+ * @param map The reduce function to apply on nodes.
+ * @param reduce The reduce function to apply on nodes.
+ * @param acc The pointer to the accumulator of the reduce function.
+ * @since 1.8
+ *
+ * @see eina_list_filter()
+ * @see eina_list_map()
+ * @see eina_list_reduce()
+ *
+ * @warning @p list must be a pointer to the first element of the list.
+ */
+EAPI void                 eina_list_filter_map_reduce(Eina_List *list, Eina_Filter_Cb filter, Eina_Map_Cb map, Eina_Reduce_Cb reduce, void *acc) EINA_ARG_NONNULL(5);
+
+/**
  * @brief Shuffle list.
  *
  * @param list The list handle to shuffle.
