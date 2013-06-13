@@ -33,7 +33,7 @@ static Eina_Condition cond_wakeup;
 
 static const Image_Entry_Task dummy_task = { NULL, NULL, NULL };
 
-static void _evas_cache_image_entry_preload_remove(Image_Entry *ie, const void *target);
+static void _evas_cache_image_entry_preload_remove(Image_Entry *ie, const Eo *target);
 
 #define FREESTRC(Var)             \
    if (Var)                       \
@@ -435,7 +435,7 @@ _evas_cache_image_async_cancel(void *data)
 // note - preload_add assumes a target is ONLY added ONCE to the image
 // entry. make sure you only add once, or remove first, then add
 static int
-_evas_cache_image_entry_preload_add(Image_Entry *ie, const void *target,
+_evas_cache_image_entry_preload_add(Image_Entry *ie, const Eo *target,
 				    Evas_Engine_Thread_Task_Cb func, const void *engine_data, const void *custom_data)
 {
    Evas_Cache_Target *tg;
@@ -483,7 +483,7 @@ _evas_cache_image_entry_preload_add(Image_Entry *ie, const void *target,
 }
 
 static void
-_evas_cache_image_entry_preload_remove(Image_Entry *ie, const void *target)
+_evas_cache_image_entry_preload_remove(Image_Entry *ie, const Eo *target)
 {
    Evas_Cache_Target *tg;
    Eina_List *l;
@@ -1244,23 +1244,23 @@ evas_cache_image_is_loaded(Image_Entry *im)
 }
 
 EAPI void
-evas_cache_image_preload_data(Image_Entry *im, const void *target,
+evas_cache_image_preload_data(Image_Entry *im, const Eo *target,
                               Evas_Engine_Thread_Task_Cb func, const void *engine_data, const void *custom_data)
 {
    RGBA_Image *img = (RGBA_Image *)im;
 
    if ((im->flags.loaded) && (img->image.data))
      {
-        evas_object_inform_call_image_preloaded((Evas_Object *)target);
+        evas_object_inform_call_image_preloaded((Evas_Object*)target);
         return;
      }
    im->flags.loaded = 0;
    if (!_evas_cache_image_entry_preload_add(im, target, func, engine_data, custom_data))
-     evas_object_inform_call_image_preloaded((Evas_Object *)target);
+     evas_object_inform_call_image_preloaded((Evas_Object*) target);
 }
 
 EAPI void
-evas_cache_image_preload_cancel(Image_Entry *im, const void *target)
+evas_cache_image_preload_cancel(Image_Entry *im, const Eo *target)
 {
    if (!target) return;
    _evas_cache_image_entry_preload_remove(im, target);

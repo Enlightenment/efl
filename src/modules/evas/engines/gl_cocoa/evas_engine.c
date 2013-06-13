@@ -855,7 +855,7 @@ eng_image_data_put(void *data, void *image, DATA32 *image_data)
 }
 
 static void
-eng_image_data_preload_request(void *data EINA_UNUSED, void *image, const void *target)
+eng_image_data_preload_request(void *data EINA_UNUSED, void *image, const Eo *target)
 {
    Evas_GL_Image *gim = image;
    RGBA_Image *im;
@@ -868,7 +868,7 @@ eng_image_data_preload_request(void *data EINA_UNUSED, void *image, const void *
 }
 
 static void
-eng_image_data_preload_cancel(void *data EINA_UNUSED, void *image, const void *target)
+eng_image_data_preload_cancel(void *data EINA_UNUSED, void *image, const Eo *target)
 {
    Evas_GL_Image *gim = image;
    RGBA_Image *im;

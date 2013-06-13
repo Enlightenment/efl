@@ -1155,7 +1155,7 @@ eng_image_data_put(void *data, void *image, DATA32 *image_data)
 }
 
 static void
-eng_image_data_preload_request(void *data EINA_UNUSED, void *image, const void *target)
+eng_image_data_preload_request(void *data EINA_UNUSED, void *image, const Eo *target)
 {
    RGBA_Image *im = image;
    if (!im) return ;
@@ -1171,7 +1171,7 @@ eng_image_data_preload_request(void *data EINA_UNUSED, void *image, const void *
 }
 
 static void
-eng_image_data_preload_cancel(void *data EINA_UNUSED, void *image, const void *target)
+eng_image_data_preload_cancel(void *data EINA_UNUSED, void *image, const Eo *target)
 {
    RGBA_Image *im = image;
 #ifdef EVAS_CSERVE2

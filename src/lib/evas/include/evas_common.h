@@ -532,7 +532,7 @@ struct _Image_Entry_Frame
 struct _Evas_Cache_Target
 {
   EINA_INLIST;
-  const void *target;
+  const Eo *target;
   void *data;
 };
 
