@@ -520,7 +520,7 @@ _item_del_pre_hook(Elm_Object_Item *it)
      }
 
 end:
-   if (!sd->stack || (VIEW(it) != sd->dummy_edje))
+   if (!sd->stack && !sd->on_deletion)
      _resize_object_reset(WIDGET(it), NULL, NULL, EINA_TRUE);
 
    _item_free(nit);
