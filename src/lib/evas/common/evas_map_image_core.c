@@ -7,13 +7,13 @@
              int x, w, ww;
              FPc u, v, ud, vd, dv, ue, ve;
              DATA32 *d, *s;
-#ifdef COLMUL             
+#ifdef COLMUL
              FPc cv, cd; // col
 # ifdef SCALE_USING_MMX
              FPc cc;
-#endif             
+#endif
              DATA32 c1, c2; // col
-#endif             
+#endif
              Line *line;
              
 #ifdef SCALE_USING_MMX
@@ -74,8 +74,8 @@
                        else
                          d = buf;
 
-#define SMOOTH 1                       
-#ifdef COLMUL             
+#define SMOOTH 1
+#ifdef COLMUL
                        c1 = span->col[0]; // col
                        c2 = span->col[1]; // col
                        cv = 0; // col
@@ -85,16 +85,20 @@
                          {
                             if (c1 == 0xffffffff)
                               {
-#endif                         
+#endif
+#define COLSAME 1
 #include "evas_map_image_loop.c"
-#ifdef COLMUL             
+#undef COLSAME
+#ifdef COLMUL
                               }
                             else if ((c1 == 0x0000ff) && (!src->cache_entry.flags.alpha))
                               {
                                  // all black line
 # define COLBLACK 1
+# define COLSAME 1
 # include "evas_map_image_loop.c"
-# undef COLBLACK                                 
+# undef COLSAME
+# undef COLBLACK
                               }
                             else if (c1 == 0x000000)
                               {
@@ -103,7 +107,9 @@
                             else
                               {
                                  // generic loop
+# define COLSAME 1
 # include "evas_map_image_loop.c"
+# undef COLSAME
                               }
                          }
                        else
@@ -132,7 +138,7 @@
 #ifdef COLMUL
              FPc cv, cd; // col
              DATA32 c1, c2; // col
-#endif             
+#endif
              Line *line;
              
              line = &(spans[y - ystart]);
@@ -185,16 +191,20 @@
                          {
                             if (c1 == 0xffffffff)
                               {
-#endif                                 
+#endif
+#define COLSAME 1
 #include "evas_map_image_loop.c"
+#undef COLSAME
 #ifdef COLMUL
                               }
                             else if ((c1 == 0x0000ff) && (!src->cache_entry.flags.alpha))
                               {
                                  // all black line
 # define COLBLACK 1
+# define COLSAME 1
 # include "evas_map_image_loop.c"
-# undef COLBLACK                                 
+# undef COLSAME
+# undef COLBLACK
                               }
                             else if (c1 == 0x000000)
                               {
@@ -203,7 +213,9 @@
                             else
                               {
                                  // generic loop
+# define COLSAME 1
 # include "evas_map_image_loop.c"
+# undef COLSAME
                               }
                          }
                        else

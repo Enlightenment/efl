@@ -1,5 +1,12 @@
 #ifdef SMOOTH
 {
+# ifdef SCALE_USING_MMX
+#   ifdef COLMUL
+#    ifdef COLSAME
+   MOV_P2R(c1, mm7, mm0); // col
+#    endif   
+#   endif   
+#  endif   
    while (ww > 0)
      {
 # ifdef COLBLACK
@@ -56,6 +63,10 @@
           }
         INTERP_256_R2R(mm4, mm2, mm1, mm5);
 #   ifdef COLMUL
+#    ifdef COLSAME
+//        MOV_P2R(c1, mm7, mm0); // col
+        MUL4_SYM_R2R(mm7, mm1, mm5); // col
+#    else        
         cc = cv >> 16; // col
         cv += cd; // col
         MOV_A2R(cc, mm2); // col
@@ -63,6 +74,7 @@
         MOV_P2R(c2, mm4, mm0); // col
         INTERP_256_R2R(mm2, mm4, mm3, mm5); // col
         MUL4_SYM_R2R(mm3, mm1, mm5); // col
+#    endif        
 #   endif                            
         MOV_R2P(mm1, *d, mm0);
 #  else
@@ -70,9 +82,13 @@
         val3 = INTERP_256(ru, val4, val3);
         val1 = INTERP_256(rv, val3, val1); // col
 #   ifdef COLMUL                            
+#   ifdef COLSAME
+        *d = MUL4_SYM(c1, val1);
+#   else        
         val2 = INTERP_256((cv >> 16), c2, c1); // col
         *d   = MUL4_SYM(val2, val1); // col
         cv += cd; // col
+#   endif
 #   else                            
         *d   = INTERP_256(rv, val3, val1);
 #   endif
@@ -90,7 +106,11 @@
      {
 # ifdef COLMUL
 #  ifndef COLBLACK        
-        DATA32 val1, cval; // col
+        DATA32 val1;
+#   ifdef COLSAME
+#   else        
+        DATA32 cval; // col
+#   endif        
 #  endif
 # endif
 # ifdef COLBLACK
@@ -100,9 +120,13 @@
           (u >> (FP + FPI));
 #  ifdef COLMUL
         val1 = *s; // col
+#   ifdef COLSAME
+        *d = MUL4_SYM(c1, val1);
+#   else        
         cval = INTERP_256((cv >> 16), c2, c1); // col
         *d = MUL4_SYM(cval, val1);
         cv += cd; // col              
+#   endif        
 #  else
         *d = *s;
 #  endif
