@@ -236,6 +236,7 @@ evas_common_font_glyphs_unref(Evas_Glyph_Array *array)
    if (--array->refcount) return;
 
    eina_inarray_free(array->array);
+   evas_common_font_int_unref(array->fi);
    free(array);
 }
 
@@ -323,6 +324,8 @@ evas_common_font_draw_prepare(Evas_Text_Props *text_props)
         if (!text_props->glyphs) goto error;
         text_props->glyphs->refcount = 1;
         text_props->glyphs->array = glyphs;
+        text_props->glyphs->fi = fi;
+        fi->references++;
      }
 
    /* check if there's a request queue in fi, if so ask cserve2 to render

@@ -29,6 +29,7 @@ typedef struct _Evas_Glyph_Array Evas_Glyph_Array;
 struct _Evas_Glyph_Array
 {
    Eina_Inarray *array;
+   void *fi;
    unsigned int refcount;
 };
 
