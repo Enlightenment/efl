@@ -13,7 +13,7 @@
 #include "ecore_audio_obj_out_alsa.h"
 #define MY_CLASS ECORE_AUDIO_OBJ_OUT_ALSA_CLASS
 #else
-#error "Multisense needs Pulseaudio suport!"
+#error "Multisense needs Pulseaudio or ALSA suport!"
 #endif
 
 #include <sndfile.h>

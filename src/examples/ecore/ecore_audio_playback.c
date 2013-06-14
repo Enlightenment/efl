@@ -1,6 +1,8 @@
 // Compile with:
 // gcc -o ecore_audio_playback ecore_audio_playback.c `pkg-config --libs --cflags ecore eina ecore-audio`
 
+#include <config.h>
+
 #include <stdio.h>
 #include <string.h>
 #include <libgen.h>
@@ -11,8 +13,18 @@
 #include <fcntl.h>
 #include <Ecore.h>
 #include <Ecore_Audio.h>
-#include <ecore_audio_obj_out_pulse.h>
 #include <Eina.h>
+
+#if HAVE_PULSE
+#include <ecore_audio_obj_out_pulse.h>
+#define MY_CLASS ECORE_AUDIO_OBJ_OUT_PULSE_CLASS
+#elif HAVE_ALSA
+#include <ecore_audio_obj_out_alsa.h>
+#define MY_CLASS ECORE_AUDIO_OBJ_OUT_ALSA_CLASS
+#else
+#warning "Need either pulse or alsa for output"
+#define MY_CLASS ECORE_AUDIO_OBJ_OUT_CLASS
+#endif
 
 Eo *out = NULL;
 double volume = 1;
@@ -308,7 +320,7 @@ main(int argc, const char *argv[])
 
    printf("Start: %s (%0.2fs)\n", name, length);
 
-   out = eo_add(ECORE_AUDIO_OBJ_OUT_PULSE_CLASS, NULL);
+   out = eo_add(MY_CLASS, NULL);
    eo_do(out, ecore_audio_obj_out_input_attach(in, &ret));
    if (!ret)
      printf("Could not attach input %s\n", name);
