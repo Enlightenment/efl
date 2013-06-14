@@ -96,7 +96,7 @@ void
 evas_gl_font_texture_free(void *tex)
 {
    if (!tex) return;
-   evas_gl_common_texture_free(tex);
+   evas_gl_common_texture_free(tex, EINA_TRUE);
 }
 
 void

@@ -1810,7 +1810,7 @@ eng_image_colorspace_set(void *data, void *image, int cspace)
       case EVAS_COLORSPACE_YCBCR422601_PL:
       case EVAS_COLORSPACE_YCBCR420NV12601_PL:
       case EVAS_COLORSPACE_YCBCR420TM12601_PL:
-         if (im->tex) evas_gl_common_texture_free(im->tex);
+         if (im->tex) evas_gl_common_texture_free(im->tex, EINA_TRUE);
          im->tex = NULL;
          if (im->cs.data)
            {
@@ -2519,7 +2519,7 @@ eng_image_size_set(void *data, void *image, int w, int h)
    eng_window_use(re->win);
    if ((im->tex) && (im->tex->pt->dyn.img))
      {
-        evas_gl_common_texture_free(im->tex);
+        evas_gl_common_texture_free(im->tex, EINA_TRUE);
         im->tex = NULL;
         im->w = w;
         im->h = h;

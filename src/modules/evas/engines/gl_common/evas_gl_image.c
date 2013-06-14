@@ -13,7 +13,7 @@ evas_gl_common_image_all_unload(Evas_Engine_GL_Context *gc)
           {
              if (!im->tex->pt->dyn.img)
                {
-                  evas_gl_common_texture_free(im->tex);
+		 evas_gl_common_texture_free(im->tex, EINA_TRUE);
                   im->tex = NULL;
                }
           }
@@ -218,7 +218,7 @@ evas_gl_common_image_new_from_data(Evas_Engine_GL_Context *gc, unsigned int w, u
         break;
       case EVAS_COLORSPACE_YCBCR422P601_PL:
       case EVAS_COLORSPACE_YCBCR422P709_PL:
-        if (im->tex) evas_gl_common_texture_free(im->tex);
+        if (im->tex) evas_gl_common_texture_free(im->tex, EINA_TRUE);
 	im->tex = NULL;
 	im->cs.data = data;
 	im->cs.no_free = 1;
@@ -260,7 +260,7 @@ evas_gl_common_image_new_from_copied_data(Evas_Engine_GL_Context *gc, unsigned i
 	break;
       case EVAS_COLORSPACE_YCBCR422P601_PL:
       case EVAS_COLORSPACE_YCBCR422P709_PL:
-        if (im->tex) evas_gl_common_texture_free(im->tex);
+        if (im->tex) evas_gl_common_texture_free(im->tex, EINA_TRUE);
         im->tex = NULL;
 	im->cs.no_free = 0;
         if (im->im->cache_entry.h > 0)
@@ -335,7 +335,7 @@ evas_gl_common_image_alpha_set(Evas_GL_Image *im, int alpha)
    evas_cache_image_load_data(&im->im->cache_entry);
    im->im->cache_entry.flags.alpha = alpha ? 1 : 0;
 
-   if (im->tex) evas_gl_common_texture_free(im->tex);
+   if (im->tex) evas_gl_common_texture_free(im->tex, EINA_TRUE);
    if (im->tex_only)
      {
         im->tex = evas_gl_common_texture_native_new(im->gc, im->w, im->h,
@@ -372,7 +372,7 @@ evas_gl_common_image_native_enable(Evas_GL_Image *im)
      }
    if (im->tex)
      {
-        evas_gl_common_texture_free(im->tex);
+        evas_gl_common_texture_free(im->tex, EINA_TRUE);
         im->tex = NULL;
      }
 
@@ -391,7 +391,7 @@ evas_gl_common_image_native_disable(Evas_GL_Image *im)
      }
    if (im->tex)
      {
-        evas_gl_common_texture_free(im->tex);
+        evas_gl_common_texture_free(im->tex, EINA_TRUE);
         im->tex = NULL;
      }
    im->tex_only = 0;
@@ -446,7 +446,7 @@ evas_gl_common_image_content_hint_set(Evas_GL_Image *im, int hint)
           }
         if (im->tex)
           {
-             evas_gl_common_texture_free(im->tex);
+             evas_gl_common_texture_free(im->tex, EINA_TRUE);
              im->tex = NULL;
           }
         im->tex = evas_gl_common_texture_dynamic_new(im->gc, im);
@@ -461,7 +461,7 @@ evas_gl_common_image_content_hint_set(Evas_GL_Image *im, int hint)
           }
         if (im->tex)
           {
-             evas_gl_common_texture_free(im->tex);
+             evas_gl_common_texture_free(im->tex, EINA_TRUE);
              im->tex = NULL;
           }
         im->tex_only = 0;
@@ -501,7 +501,7 @@ evas_gl_common_image_free(Evas_GL_Image *im)
         if (_evas_gl_image_cache_add(im)) return;
      }
    if (im->im) evas_cache_image_drop(&im->im->cache_entry);
-   if (im->tex) evas_gl_common_texture_free(im->tex);
+   if (im->tex) evas_gl_common_texture_free(im->tex, EINA_TRUE);
 
    free(im);
 }
