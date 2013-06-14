@@ -1180,6 +1180,8 @@ eng_output_flush(void *data, Evas_Render_Mode render_mode)
    re->win->draw.drew = EINA_FALSE;
    eng_window_use(re->win);
 
+   evas_gl_common_context_done(re->win->gl_context);
+
    if (!re->vsync)
      {
         if (re->info->vsync) eglSwapInterval(re->win->egl_disp, 1);
