@@ -131,7 +131,7 @@ void (*glsym_eglDestroyImage) (EGLDisplay a, void *b) = NULL;
 void (*glsym_glEGLImageTargetTexture2DOES) (int a, void *b)  = NULL;
 void *(*glsym_eglMapImageSEC) (void *a, void *b, int c, int d) = NULL;
 unsigned int (*glsym_eglUnmapImageSEC) (void *a, void *b, int c) = NULL;
-unsigned int (*glsym_eglSwapBuffersRegion) (EGLDisplay a, EGLSurface *b, EGLint c, const EGLint *d) = NULL;
+void (*glsym_eglSwapBuffersWithDamage) (EGLDisplay a, void *b, const EGLint *d, EGLint c) = NULL;
 
 #endif
 
@@ -180,11 +180,10 @@ evgl_symbols(void)
    FINDSYM(glsym_eglMapImageSEC, "eglMapImageSEC", glsym_func_void_ptr);
    FINDSYM(glsym_eglUnmapImageSEC, "eglUnmapImageSEC", glsym_func_uint);
 
-   FINDSYM(glsym_eglSwapBuffersRegion, 
-           "eglSwapBuffersRegionSEC", glsym_func_uint);
-   FINDSYM(glsym_eglSwapBuffersRegion, 
-           "eglSwapBuffersRegion", glsym_func_uint);
-
+   FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamageEXT", glsym_func_void_ptr);
+   FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamageINTEL", glsym_func_void_ptr);
+   FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamage", glsym_func_void_ptr);
+   
    done = EINA_TRUE;
 }
 
@@ -201,11 +200,14 @@ evgl_extn_veto(Render_Engine *re)
         if (getenv("EVAS_GL_INFO")) printf("EGL EXTENSION:\n%s\n", str);
         if (!strstr(str, "EGL_EXT_buffer_age"))
           extn_have_buffer_age = EINA_FALSE;
+        if (!strstr(str, "swap_buffers_with_damage"))
+          glsym_eglSwapBuffersWithDamage = NULL;
      }
    else
      {
         if (getenv("EVAS_GL_INFO")) printf("NO EGL EXTENSIONS !!\n");
         extn_have_buffer_age = EINA_FALSE;
+        glsym_eglSwapBuffersWithDamage = NULL;
      }
 }
 
@@ -1188,7 +1190,7 @@ eng_output_flush(void *data, Evas_Render_Mode render_mode)
    if (re->info->callback.pre_swap)
      re->info->callback.pre_swap(re->info->callback.data, re->evas);
 
-   if ((glsym_eglSwapBuffersRegion) && (re->mode != MODE_FULL))
+   if ((glsym_eglSwapBuffersWithDamage) && (re->mode != MODE_FULL))
      {
         EGLint num = 0, *rects = NULL, i = 0;
         Tilebuf_Rect *r;
@@ -1239,8 +1241,9 @@ eng_output_flush(void *data, Evas_Render_Mode render_mode)
                     }
                   i += 4;
                }
-             glsym_eglSwapBuffersRegion(re->win->egl_disp,
-                                        re->win->egl_surface[0], num, rects);
+             glsym_eglSwapBuffersWithDamage(re->win->egl_disp,
+                                            re->win->egl_surface[0],
+                                            rects, num);
           }
      }
    else
