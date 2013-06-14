@@ -302,6 +302,9 @@ cserve2_slaves_shutdown(void)
 
    EINA_LIST_FREE(slave_procs, sp)
      {
+        Slave *s = (Slave*) sp;
+
+        s->dead_cb = NULL;
         kill(sp->pid, SIGKILL);
         _slave_proc_free(sp);
      }
