@@ -34,10 +34,24 @@ typedef struct _Ecore_Audio_Alsa Ecore_Audio_Alsa;
 struct _Ecore_Audio_Alsa_Data
 {
   snd_pcm_t *handle;
-  Ecore_Timer *timer;
+  Ecore_Idler *idler;
 };
 
 typedef struct _Ecore_Audio_Alsa_Data Ecore_Audio_Alsa_Data;
+
+
+static Eina_Bool _close_cb(void *data)
+{
+  snd_pcm_t *handle = data;
+  snd_pcm_close(handle);
+
+  return EINA_FALSE;
+}
+
+static void _delayed_close(snd_pcm_t *handle)
+{
+  ecore_timer_add(2, _close_cb, handle);
+}
 
 static void _volume_set(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
 {
@@ -69,23 +83,39 @@ static Eina_Bool _write_cb(void *data)
 
   size_t avail;
   ssize_t bread;
-  int ret;
+  int ret, channels;
 
   eo_do(in, eo_base_data_get("alsa_data", (void **)&alsa));
 
-  avail = snd_pcm_avail_update(alsa->handle);
+  eo_do(in, ecore_audio_obj_in_channels_get(&channels));
 
-  buf = calloc(1, sizeof(float) * avail * 8);
+  avail = snd_pcm_avail(alsa->handle);
 
-  eo_do(in, ecore_audio_obj_in_read(buf, avail*8, &bread));
+  if (avail < 1000)
+    return EINA_TRUE;
 
-  ret = snd_pcm_writei(alsa->handle, buf, bread/8);
+  buf = calloc(1, sizeof(float) * avail * channels);
+
+  eo_do(in, ecore_audio_obj_in_read(buf, avail*channels, &bread));
+
+  ERR("ALSA: avail %i, read %i", avail, bread/channels);
+
+  if (bread == 0)
+    goto end;
+
+  ret = snd_pcm_writei(alsa->handle, buf, bread/channels);
   if (ret < 0)
     {
-      ERR("Error when writing: %s", snd_strerror(ret));
+      ERR("Error when writing: %s (avail %i, read %i)", snd_strerror(ret), avail, bread);
       snd_pcm_recover(alsa->handle, ret, 0);
     }
 
+  if (bread<avail*channels)
+    snd_pcm_start(alsa->handle);
+
+  ERR("Success: written %i", ret);
+end:
+  free(buf);
   return EINA_TRUE;
 }
 
@@ -159,7 +189,7 @@ static Eina_Bool _input_attach_internal(Eo *eo_obj, Eo *in)
   if (ea_obj->paused)
      return EINA_TRUE;
 
-  alsa->timer = ecore_timer_add(0.3, _write_cb, in);
+  alsa->idler = ecore_idler_add(_write_cb, in);
 
   return EINA_TRUE;
 }
@@ -193,9 +223,9 @@ static void _input_detach(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
 
   eo_do(in, eo_base_data_get("alsa_data", (void **)&alsa));
 
-  ecore_timer_del(alsa->timer);
+  ecore_idler_del(alsa->idler);
 
-  snd_pcm_close(alsa->handle);
+  _delayed_close(alsa->handle);
 
   eo_do(in, eo_base_data_del("alsa_data"));
 
