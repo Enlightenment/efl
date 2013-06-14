@@ -125,6 +125,7 @@ eina_one_big_malloc(void *data, EINA_UNUSED unsigned int size)
    else
      {
         pool->over++;
+        /* Only need to zero list elements and not the payload here */
         memset(mem, 0, sizeof(Eina_Inlist));
         pool->over_list = eina_inlist_append(pool->over_list, 
                                              (Eina_Inlist *)mem);
