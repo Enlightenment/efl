@@ -403,7 +403,11 @@ _request_failed(Entry *e, Error_Type type EINA_UNUSED)
         else
           continue;
 
-        eina_hash_del_by_key(hash, &(ref->client_entry_id));
+        if (type != CSERVE2_REQUEST_CANCEL)
+          {
+             DBG("removing entry %u from hash", ref->client_entry_id);
+             eina_hash_del_by_key(hash, &(ref->client_entry_id));
+          }
      }
 }
 
