@@ -184,11 +184,6 @@ _prefix_shutdown(void)
    if (app_compile_lib_dir) eina_stringshare_del(app_compile_lib_dir);
    if (app_compile_data_dir) eina_stringshare_del(app_compile_data_dir);
    if (app_compile_locale_dir) eina_stringshare_del(app_compile_locale_dir);
-   if (app_prefix_dir) eina_stringshare_del(app_prefix_dir);
-   if (app_bin_dir) eina_stringshare_del(app_bin_dir);
-   if (app_lib_dir) eina_stringshare_del(app_lib_dir);
-   if (app_data_dir) eina_stringshare_del(app_data_dir);
-   if (app_locale_dir) eina_stringshare_del(app_locale_dir);
    app_mainfunc = NULL;
    app_domain = NULL;
    app_checkfile = NULL;
