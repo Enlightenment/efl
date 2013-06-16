@@ -136,11 +136,11 @@ _send_track_info(struct _App *app, int cmd, int current, int count, libvlc_track
    SEND_CMD_PARAM(app, count);
    while (desc)
      {
-	int tid = desc->i_id;
-	const char *name = desc->psz_name;
-	SEND_CMD_PARAM(app, tid);
-	_send_cmd_str(app, name);
-	desc = desc->p_next;
+        int tid = desc->i_id;
+        const char *name = desc->psz_name;
+        SEND_CMD_PARAM(app, tid);
+        _send_cmd_str(app, name);
+        desc = desc->p_next;
      }
 }
 
@@ -155,21 +155,21 @@ _send_all_track_info(struct _App *app)
    desc = libvlc_audio_get_track_description(app->mp);
 
    _send_track_info(app, EM_RESULT_AUDIO_TRACK_INFO,
-		    current, track_count, desc);
+                    current, track_count, desc);
 
    current = libvlc_video_get_track(app->mp);
    track_count = libvlc_video_get_track_count(app->mp);
    desc = libvlc_video_get_track_description(app->mp);
 
    _send_track_info(app, EM_RESULT_VIDEO_TRACK_INFO,
-		    current, track_count, desc);
+                    current, track_count, desc);
 
    current = libvlc_video_get_spu(app->mp);
    track_count = libvlc_video_get_spu_count(app->mp);
    desc = libvlc_video_get_spu_description(app->mp);
 
    _send_track_info(app, EM_RESULT_SPU_TRACK_INFO,
-		    current, track_count, desc);
+                    current, track_count, desc);
 }
 
 static void
@@ -225,8 +225,8 @@ _position_changed(App *app)
    r = libvlc_video_get_size(app->mp, 0, &w, &h);
    if (r < 0)
      {
-	w = 1;
-	h = 1;
+        w = 1;
+        h = 1;
      }
 
    if (w > 0 || h > 0)
@@ -279,30 +279,31 @@ _event_cb(const struct libvlc_event_t *ev, void *data)
    App *app = data;
 
    ecore_thread_main_loop_begin();
-   switch (ev->type) {
+   switch (ev->type)
+   {
       case libvlc_MediaPlayerTimeChanged:
          _send_time_changed(app, ev);
-	 break;
+         break;
       case libvlc_MediaPlayerPositionChanged:
-	 _position_changed(app);
-	 break;
+         _position_changed(app);
+         break;
       case libvlc_MediaPlayerLengthChanged:
-	 _send_length_changed(app, ev);
-	 break;
+         _send_length_changed(app, ev);
+         break;
       case libvlc_MediaPlayerSeekableChanged:
-	 _send_seekable_changed(app, ev);
-	 break;
+         _send_seekable_changed(app, ev);
+         break;
       case libvlc_MediaPlayerPlaying:
-	 _send_resize(app, app->w, app->h);
-	 _send_cmd(app, EM_RESULT_PLAYBACK_STARTED);
-	 break;
+         _send_resize(app, app->w, app->h);
+         _send_cmd(app, EM_RESULT_PLAYBACK_STARTED);
+         break;
       case libvlc_MediaPlayerStopped:
-	 _send_file_set(app);
-	 break;
+         _send_file_set(app);
+         break;
       case libvlc_MediaPlayerEndReached:
          app->playing = 0;
-	 _send_cmd(app, EM_RESULT_PLAYBACK_STOPPED);
-	 break;
+         _send_cmd(app, EM_RESULT_PLAYBACK_STOPPED);
+         break;
    }
    ecore_thread_main_loop_end();
 }
@@ -331,15 +332,15 @@ _file_set(App *app)
    app->m = libvlc_media_new_path(app->libvlc, app->filename);
    if (!app->m)
      {
-	ERR("could not open path: \"%s\"", app->filename);
-	return;
+        ERR("could not open path: \"%s\"", app->filename);
+        return;
      }
 
    app->mp = libvlc_media_player_new_from_media(app->m);
    if (!app->mp)
      {
-	ERR("could not create new player from media.");
-	return;
+        ERR("could not create new player from media.");
+        return;
      }
 
    app->opening = 1;
@@ -347,9 +348,9 @@ _file_set(App *app)
    libvlc_video_set_callbacks(app->mp, _tmp_lock, _tmp_unlock, _tmp_display, app);
    app->event_mgr = libvlc_media_player_event_manager(app->mp);
    libvlc_event_attach(app->event_mgr, libvlc_MediaPlayerPositionChanged,
-		       _event_cb, app);
+                       _event_cb, app);
    libvlc_event_attach(app->event_mgr, libvlc_MediaPlayerStopped,
-		       _event_cb, app);
+                       _event_cb, app);
 
    app->mevent_mgr = libvlc_media_event_manager(app->m);
 
@@ -403,15 +404,15 @@ _file_set_done(App *app)
    r = emotion_generic_shm_get(app->shmname, &app->vs, &app->vf);
    if (!r)
      {
-	free(app->filename);
+        free(app->filename);
         libvlc_media_release(app->m);
         libvlc_media_player_release(app->mp);
-	app->filename = NULL;
-	app->m = NULL;
-	app->mp = NULL;
+        app->filename = NULL;
+        app->m = NULL;
+        app->mp = NULL;
 
         _send_cmd(app, EM_RESULT_FILE_SET_DONE);
-	SEND_CMD_PARAM(app, r);
+        SEND_CMD_PARAM(app, r);
      }
    app->w = app->vs->width;
    app->h = app->vs->height;
@@ -420,13 +421,13 @@ _file_set_done(App *app)
 
 
    libvlc_event_attach(app->event_mgr, libvlc_MediaPlayerPlaying,
-		       _event_cb, app);
+                      _event_cb, app);
    libvlc_event_attach(app->event_mgr, libvlc_MediaPlayerTimeChanged,
-		       _event_cb, app);
+                      _event_cb, app);
    libvlc_event_attach(app->event_mgr, libvlc_MediaPlayerLengthChanged,
-		       _event_cb, app);
+                      _event_cb, app);
    libvlc_event_attach(app->event_mgr, libvlc_MediaPlayerSeekableChanged,
-		       _event_cb, app);
+                      _event_cb, app);
    libvlc_event_attach(app->event_mgr, libvlc_MediaPlayerEndReached,
                        _event_cb, app);
 
@@ -445,8 +446,8 @@ _file_close(App *app)
 
    if (libvlc_media_player_get_state(app->mp) != libvlc_Playing)
      {
-	_send_file_closed(app);
-	return;
+        _send_file_closed(app);
+        return;
      }
 
    app->closing = 1;
@@ -459,7 +460,7 @@ release_resources:
      {
         libvlc_media_release(app->m);
         libvlc_media_player_release(app->mp);
-	free(app->tmpbuffer);
+        free(app->tmpbuffer);
      }
 }
 
@@ -478,18 +479,18 @@ _play(App *app, float pos)
 
    if (app->playing)
      {
-	libvlc_media_player_set_pause(app->mp, 0);
+        libvlc_media_player_set_pause(app->mp, 0);
      }
    else
      {
-	libvlc_time_t new_time = pos * 1000;
-	libvlc_media_player_set_time(app->mp, new_time);
+        libvlc_time_t new_time = pos * 1000;
+        libvlc_media_player_set_time(app->mp, new_time);
         libvlc_media_player_play(app->mp);
 
         if (app->subtitle_path)
           libvlc_video_set_subtitle_file(app->mp, app->subtitle_path);
 
-	app->playing = 1;
+        app->playing = 1;
      }
 }
 
