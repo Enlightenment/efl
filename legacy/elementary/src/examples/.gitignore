@@ -91,3 +91,16 @@
 /web_example
 /win_example
 /dayselector_example
+/codegen_example
+/codegen_example_generated.c
+/codegen_example_generated.h
+/glview_example_01
+/location_example_01
+/prefs_example_01
+/prefs_example_01.epb
+/prefs_example_02
+/prefs_example_02.epb
+/prefs_example_03
+/prefs_example_03.epb
+/web_example_01
+/web_example_02
