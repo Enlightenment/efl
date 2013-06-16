@@ -1588,7 +1588,8 @@ EAPI const Evas_Device *evas_device_emulation_source_get(const Evas_Device *dev)
  *   - line,
  *   - polygon,
  *   - text,
- *   - textblock and
+ *   - textblock,
+ *   - textgrid and
  *   - image.
  *
  * These functions apply to @b any Evas object, whichever type that
