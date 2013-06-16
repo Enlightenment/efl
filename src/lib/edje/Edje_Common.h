@@ -90,7 +90,7 @@ EAPI int          edje_init                       (void);
 /**
  * @brief Shutdown the Edje library.
  *
- * @return The number of times the library has been initialised
+ * @return The number of times the library has been initialized
  *         without being shutdown.
  *
  * This function shuts down the Edje library. It will also call the
