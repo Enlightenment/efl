@@ -666,23 +666,20 @@ main(int argc, const char *argv[])
 {
    App app;
    Ecore_Event_Handler *hld;
-   char cwidth[64], cheight[64], cpitch[64], chroma[64];
    int vlc_argc;
 
    const char *vlc_argv[] =
      {
         "--quiet",
-	"--vout",
-	"vmem",
-	"--vmem-width",
-	cwidth,
-	"--vmem-height",
-	cheight,
-	"--vmem-pitch",
-	cpitch,
-	"--vmem-chroma",
-	chroma
+        "--intf", "dummy",              /* no interface                      */
+        "--vout", "dummy",              /* we don't want video (output)      */
+        "--no-video-title-show",        /* nor the filename displayed        */
+        "--no-sub-autodetect-file",     /* we don't want automatic subtitles */
+        "--no-stats",                   /* no stats                          */
+        "--no-inhibit",                 /* we don't want interfaces          */
+        "--no-disable-screensaver",     /* we don't want interfaces          */
      };
+   vlc_argc = sizeof(vlc_argv) / sizeof(*vlc_argv);
 
    if (!eina_init())
      {
@@ -714,12 +711,6 @@ main(int argc, const char *argv[])
                                      atoi(argv[1]), -1, EINA_FALSE, EINA_FALSE);
    app.fd_write = ecore_pipe_full_add(_dummy, NULL,
                                       -1, atoi(argv[2]), EINA_FALSE, EINA_FALSE);
-
-   vlc_argc = sizeof(vlc_argv) / sizeof(*vlc_argv);
-   snprintf(cwidth, sizeof(cwidth), "%d", DEFAULTWIDTH);
-   snprintf(cheight, sizeof(cheight), "%d", DEFAULTHEIGHT);
-   snprintf(cpitch, sizeof(cpitch), "%d", DEFAULTWIDTH * 4);
-   snprintf(chroma, sizeof(chroma), "RV32");
 
    hld = ecore_event_handler_add(ECORE_EVENT_SIGNAL_HUP, exit_func, NULL);
 
