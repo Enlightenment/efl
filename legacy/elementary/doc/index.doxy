@@ -4,6 +4,7 @@
  * Elementary is mostly composed of widgets, but it also contains some
  * infrastructure modules that facilitate the use of widgets. These are the
  * infrastructure modules:
+ * @li @ref App
  * @li @ref Caches
  * @li @ref Cursors
  * @li @ref Debug
