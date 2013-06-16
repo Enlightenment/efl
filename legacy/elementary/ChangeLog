@@ -1425,3 +1425,7 @@
 
         * Replace uri to url from elm_web_uri_get, elm_web_uri_set and "uri,changed" signal.
         Previous APIs and signal are deprecated.
+
+2013-06-16  ChunEon Park (Hermet)
+
+        * Naviframe: Dont' be popped if the event is freezed and popping is going on.

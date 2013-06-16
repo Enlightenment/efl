@@ -1376,9 +1376,8 @@ _elm_naviframe_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 }
 
 static void
-_elm_naviframe_smart_event(Eo *obj, void *_pd, va_list *list)
+_elm_naviframe_smart_event(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
-   Elm_Naviframe_Smart_Data *sd = _pd;
    Evas_Object *source = va_arg(*list, Evas_Object *);
    Evas_Callback_Type type = va_arg(*list, Evas_Callback_Type);
    Evas_Event_Key_Down *ev = va_arg(*list, Evas_Event_Key_Down *);
@@ -1397,8 +1396,6 @@ _elm_naviframe_smart_event(Eo *obj, void *_pd, va_list *list)
 
    ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
    if (ret) *ret = EINA_TRUE;
-
-   if (sd->freeze_events && sd->popping) return;
 
    //FIXME: Replace this below code to elm_naviframe_item_pop() at elm 2.0.
    ///Leave for compatibility. 
@@ -1652,6 +1649,8 @@ _item_pop(Eo *obj, void *_pd, va_list *list)
    *ret = NULL;
 
    Elm_Naviframe_Smart_Data *sd = _pd;
+
+   if (sd->freeze_events && sd->popping) return;
 
    it = (Elm_Naviframe_Item *)elm_naviframe_top_item_get(obj);
    if (!it) return;
