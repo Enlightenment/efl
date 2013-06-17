@@ -421,7 +421,7 @@ _ecore_wl_cb_handle_data(void *data, Ecore_Fd_Handler *hdl)
    Ecore_Wl_Display *ewd;
    int ret;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   /* LOGFN(__FILE__, __LINE__, __FUNCTION__); */
 
    if (!(ewd = data)) return ECORE_CALLBACK_RENEW;
 
