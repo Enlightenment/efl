@@ -844,7 +844,7 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
    _Eo_Class *klass;
    va_list p_list;
    size_t extn_sz, mro_sz;
-   Eina_List *extn_list, *mro;
+   Eina_List *extn_list, *mro, *mixins;
 
    _Eo_Class *parent = _eo_class_pointer_get(parent_id);
    if (parent && !EINA_MAGIC_CHECK(parent, EO_CLASS_EINA_MAGIC))
@@ -973,13 +973,20 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
         *(extn_itr) = NULL;
      }
 
-   /* Copy the mro and free the list. */
+   /* Copy the mro and free the list.
+    * in the same time build the mixin table
+    */
      {
+        mixins = NULL;
         const _Eo_Class *kls_itr;
         const _Eo_Class **mro_itr = klass->mro;
         EINA_LIST_FREE(mro, kls_itr)
           {
              *(mro_itr++) = kls_itr;
+
+             if ((kls_itr->desc->type == EO_CLASS_TYPE_MIXIN) &&
+                   (kls_itr->desc->data_size > 0))
+               mixins = eina_list_append(mixins, kls_itr);
 
              DBG("Added '%s' to MRO", kls_itr->desc->name);
           }
@@ -991,40 +998,25 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
 
    /* create MIXIN offset table. */
      {
-        const _Eo_Class **mro_itr = klass->mro;
+        const _Eo_Class *kls_itr;
         Eo_Extension_Data_Offset *extn_data_itr;
-        size_t extn_num = 0;
 
-        /* FIXME: Make faster... */
-        while (*mro_itr)
-          {
-             if (((*mro_itr)->desc->type == EO_CLASS_TYPE_MIXIN) &&
-                   ((*mro_itr)->desc->data_size > 0))
-               {
-                  extn_num++;
-               }
-             mro_itr++;
-          }
-
-        klass->extn_data_off = calloc(extn_num + 1,
-              sizeof(*klass->extn_data_off));
+        klass->extn_data_off = calloc(eina_list_count(mixins) + 1,
+                                      sizeof(*klass->extn_data_off));
 
         extn_data_itr = klass->extn_data_off;
-        mro_itr = klass->mro;
-        while (*mro_itr)
+        EINA_LIST_FREE(mixins, kls_itr)
           {
-             if (((*mro_itr)->desc->type == EO_CLASS_TYPE_MIXIN) &&
-                   ((*mro_itr)->desc->data_size > 0))
-               {
-                  extn_data_itr->klass = *mro_itr;
-                  extn_data_itr->offset = extn_data_off;
+             extn_data_itr->klass = kls_itr;
+             extn_data_itr->offset = extn_data_off;
 
-                  extn_data_off += EO_ALIGN_SIZE(extn_data_itr->klass->desc->data_size);
-                  extn_data_itr++;
-               }
-             mro_itr++;
+             extn_data_off += EO_ALIGN_SIZE(extn_data_itr->klass->desc->data_size);
+             extn_data_itr++;
+
+             DBG("Added '%s' to Data Offset info", kls_itr->desc->name);
           }
-
+        extn_data_itr->klass = 0;
+        extn_data_itr->offset = 0;
      }
 
    klass->obj_size = _eo_sz + extn_data_off;
