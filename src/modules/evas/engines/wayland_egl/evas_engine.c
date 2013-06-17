@@ -41,12 +41,6 @@ struct _Render_Engine
    Eina_Bool lost_back : 1;
    Eina_Bool end : 1;
    Eina_Bool evgl_initted : 1;
-
-   struct {
-      Evas_Object_Image_Pixels_Get_Cb  get_pixels;
-      void                            *get_pixels_data;
-      Evas_Object                     *obj;
-   } func;
 };
 
 typedef struct _Native Native;
@@ -1398,22 +1392,14 @@ eng_gl_api_get(void *data)
    return evgl_api_get();
 }
 
-static void
-eng_gl_direct_override_get(void *data, int *override, int *force_off)
+static void 
+eng_gl_img_obj_set(void *data, void *image, int has_alpha)
 {
-   EVGLINIT(data, );
-   evgl_direct_override_get(override, force_off);
-}
+   Render_Engine *re;
 
-static void
-eng_gl_get_pixels_set(void *data, void *get_pixels, void *get_pixels_data, void *obj)
-{
-   Render_Engine *re = (Render_Engine *)data;
-
+   if (!(re = (Render_Engine *)data)) return;
    EVGLINIT(data, );
-   re->func.get_pixels = get_pixels;
-   re->func.get_pixels_data = get_pixels_data;
-   re->func.obj = (Evas_Object*)obj;
+   evgl_direct_img_obj_set(image, has_alpha, re->win->gl_context->rot);
 }
 
 static void 
@@ -1919,30 +1905,10 @@ eng_image_draw(void *data, void *context, void *surface, void *image, int src_x,
 
    if ((n) && (n->ns.type == EVAS_NATIVE_SURFACE_OPENGL) &&
        (n->ns.data.opengl.framebuffer_id == 0) &&
-       re->func.get_pixels)
+       (evgl_direct_rendered()))
      {
         DBG("Rendering Directly to the window: %p", data);
-
-        re->win->gl_context->dc = context;
-
-        if (re->func.get_pixels)
-          {
-
-             // Pass the clip info the evas_gl
-             evgl_direct_img_clip_set(1,
-                                      re->win->gl_context->dc->clip.x,
-                                      re->win->gl_context->dc->clip.y,
-                                      re->win->gl_context->dc->clip.w,
-                                      re->win->gl_context->dc->clip.h);
-
-             // Call pixel get function
-             evgl_direct_img_obj_set(re->func.obj, re->win->gl_context->rot);
-             re->func.get_pixels(re->func.get_pixels_data, re->func.obj);
-             evgl_direct_img_obj_set(NULL, 0);
-
-             // Reset clip
-             evgl_direct_img_clip_set(0, 0, 0, 0, 0);
-          }
+        evas_object_image_pixels_dirty_set(evgl_direct_img_obj_get(), EINA_TRUE);
      }
    else
      {
@@ -2557,8 +2523,7 @@ module_open(Evas_Module *em)
    ORD(gl_proc_address_get);
    ORD(gl_native_surface_get);
    ORD(gl_api_get);
-   ORD(gl_direct_override_get);
-   ORD(gl_get_pixels_set);
+   ORD(gl_img_obj_set);
 
    ORD(rectangle_draw);
    ORD(line_draw);
