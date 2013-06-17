@@ -1060,7 +1060,7 @@ _ecore_wl_input_mouse_move_send(Ecore_Wl_Input *input, Ecore_Wl_Window *win, uns
    Ecore_Event_Mouse_Move *ev;
    Ecore_Wl_Mouse_Down_Info *down_info;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   /* LOGFN(__FILE__, __LINE__, __FUNCTION__); */
 
    if (!(ev = malloc(sizeof(Ecore_Event_Mouse_Move)))) return;
 
@@ -1217,8 +1217,9 @@ _ecore_wl_input_mouse_down_send(Ecore_Wl_Input *input, Ecore_Wl_Window *win, int
         //Check Double Clicked
         if (((int)(timestamp - down_info->last_time) <=
              (int)(1000 * _ecore_wl_double_click_time)) &&
-            (win->id == down_info->last_win) &&
-            (win->id == down_info->last_event_win))
+            ((win) && 
+                (win->id == down_info->last_win) &&
+                (win->id == down_info->last_event_win)))
           {
              ev->double_click = 1;
              down_info->did_double = EINA_TRUE;
@@ -1232,11 +1233,11 @@ _ecore_wl_input_mouse_down_send(Ecore_Wl_Input *input, Ecore_Wl_Window *win, int
         //Check Triple Clicked
         if (((int)(timestamp - down_info->last_last_time) <=
              (int)(2 * 1000 * _ecore_wl_double_click_time)) &&
-            (win->id == down_info->last_win) &&
-            (win->id == down_info->last_last_win) &&
-            (win->id == down_info->last_event_win) &&
-            (win->id == down_info->last_last_event_win)
-           )
+            ((win) && 
+                (win->id == down_info->last_win) &&
+                (win->id == down_info->last_last_win) &&
+                (win->id == down_info->last_event_win) &&
+                (win->id == down_info->last_last_event_win)))
           {
              ev->triple_click = 1;
              down_info->did_triple = EINA_TRUE;
@@ -1268,9 +1269,9 @@ _ecore_wl_input_mouse_down_send(Ecore_Wl_Input *input, Ecore_Wl_Window *win, int
        (!down_info->did_triple))
      {
         down_info->last_last_win = down_info->last_win;
-        down_info->last_win = win->id;
+        down_info->last_win = ev->window;
         down_info->last_last_event_win = down_info->last_event_win;
-        down_info->last_event_win = win->id;
+        down_info->last_event_win = ev->window;
         down_info->last_last_time = down_info->last_time;
         down_info->last_time = timestamp;
      }
