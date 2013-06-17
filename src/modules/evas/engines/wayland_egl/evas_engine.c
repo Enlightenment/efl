@@ -44,8 +44,8 @@ struct _Render_Engine
 
    struct 
      {
-        Evas_Object_Image_Pixels_Get_Cb get_pixels;
-        void *get_pixels_data;
+        Evas_Object_Image_Pixels_Get_Cb pixels_get;
+        void *pixels_data_get;
         Evas_Object *obj;
      } func;
 };
@@ -1414,8 +1414,8 @@ eng_gl_get_pixels_set(void *data, void *get_pixels, void *get_pixels_data, void 
    if (!(re = (Render_Engine *)data)) return;
 
    EVGLINIT(data, );
-   re->func.get_pixels = get_pixels;
-   re->func.get_pixels_data = get_pixels_data;
+   re->func.pixels_get = get_pixels;
+   re->func.pixels_data_get = get_pixels_data;
    re->func.obj = (Evas_Object*)obj;
 }
 
@@ -1922,30 +1922,26 @@ eng_image_draw(void *data, void *context, void *surface, void *image, int src_x,
 
    if ((n) && (n->ns.type == EVAS_NATIVE_SURFACE_OPENGL) &&
        (n->ns.data.opengl.framebuffer_id == 0) &&
-       re->func.get_pixels)
+       (re->func.pixels_get))
      {
         DBG("Rendering Directly to the window: %p", data);
 
         re->win->gl_context->dc = context;
 
-        if (re->func.get_pixels)
-          {
+        // Pass the clip info the evas_gl
+        evgl_direct_img_clip_set(1,
+                                 re->win->gl_context->dc->clip.x,
+                                 re->win->gl_context->dc->clip.y,
+                                 re->win->gl_context->dc->clip.w,
+                                 re->win->gl_context->dc->clip.h);
 
-             // Pass the clip info the evas_gl
-             evgl_direct_img_clip_set(1,
-                                      re->win->gl_context->dc->clip.x,
-                                      re->win->gl_context->dc->clip.y,
-                                      re->win->gl_context->dc->clip.w,
-                                      re->win->gl_context->dc->clip.h);
+        // Call pixel get function
+        evgl_direct_img_obj_set(re->func.obj, re->win->gl_context->rot);
+        re->func.get_pixels(re->func.get_pixels_data, re->func.obj);
+        evgl_direct_img_obj_set(NULL, 0);
 
-             // Call pixel get function
-             evgl_direct_img_obj_set(re->func.obj, re->win->gl_context->rot);
-             re->func.get_pixels(re->func.get_pixels_data, re->func.obj);
-             evgl_direct_img_obj_set(NULL, 0);
-
-             // Reset clip
-             evgl_direct_img_clip_set(0, 0, 0, 0, 0);
-          }
+        // Reset clip
+        evgl_direct_img_clip_set(0, 0, 0, 0, 0);
      }
    else
      {
