@@ -31,6 +31,7 @@ static Eina_Bool _eo_init_count = 0;
 static Eo_Op _eo_ops_last_id = 0;
 
 static size_t _eo_sz = 0;
+static size_t _eo_class_sz = 0;
 
 static void _eo_condtor_reset(_Eo *obj);
 static inline void *_eo_data_scope_get(const _Eo *obj, const _Eo_Class *klass);
@@ -716,7 +717,7 @@ _eo_class_mro_init(_Eo_Class *klass)
      {
         const _Eo_Class *kls_itr;
         const _Eo_Class **mro_itr;
-        klass->mro = calloc(sizeof(*klass->mro), eina_list_count(mro) + 1);
+        klass->mro = calloc(_eo_class_sz, eina_list_count(mro) + 1);
 
         mro_itr = klass->mro;
 
@@ -885,7 +886,7 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
         EINA_SAFETY_ON_FALSE_RETURN_VAL(!desc->data_size, NULL);
      }
 
-   klass = calloc(1, sizeof(_Eo_Class));
+   klass = calloc(1, _eo_class_sz);
    klass->parent = parent;
 
    /* Handle class extensions */
@@ -912,7 +913,7 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
              extn_id = va_arg(p_list, Eo_Class_Id *);
           }
 
-        klass->extensions = calloc(sizeof(*klass->extensions),
+        klass->extensions = calloc(_eo_class_sz,
               eina_list_count(extn_list) + 1);
 
         extn_itr = klass->extensions;
@@ -1625,6 +1626,7 @@ eo_init(void)
    eina_init();
 
    _eo_sz = EO_ALIGN_SIZE(sizeof (_Eo));
+   _eo_class_sz = EO_ALIGN_SIZE(sizeof (_Eo_Class));
 
    _eo_classes = NULL;
    _eo_classes_last_id = EO_CLASS_IDS_FIRST - 1;
