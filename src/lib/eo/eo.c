@@ -118,7 +118,7 @@ struct _Eo_Class
 
    const _Eo_Class **mro;
 
-   unsigned int extn_data_size;
+   unsigned int obj_size; /**< size of an object of this class */
    unsigned int chain_size;
    unsigned int base_id;
    unsigned int data_offset; /* < Offset of the data within object data. */
@@ -967,13 +967,14 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
         goto cleanup;
      }
 
+   size_t extn_data_off = klass->data_offset +
+      EO_ALIGN_SIZE(klass->desc->data_size);
+
    /* create MIXIN offset table. */
      {
         const _Eo_Class **mro_itr = klass->mro;
         Eo_Extension_Data_Offset *extn_data_itr;
         size_t extn_num = 0;
-        size_t extn_data_off = klass->data_offset +
-           EO_ALIGN_SIZE(klass->desc->data_size);
 
         /* FIXME: Make faster... */
         while (*mro_itr)
@@ -1005,9 +1006,9 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
              mro_itr++;
           }
 
-        klass->extn_data_size = extn_data_off
-           - klass->data_offset - EO_ALIGN_SIZE(klass->desc->data_size);
      }
+
+   klass->obj_size = _eo_sz + extn_data_off;
 
    eina_lock_take(&_eo_class_creation_lock);
 
@@ -1072,8 +1073,7 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
    if (getenv("EO_DEBUG"))
      {
         fprintf(stderr, "Eo class '%s' will take %u bytes per object.\n",
-                desc->name,
-                (unsigned int) (_eo_sz + klass->data_offset + EO_ALIGN_SIZE(klass->desc->data_size) + klass->extn_data_size));
+                desc->name, klass->obj_size);
      }
 
    va_end(p_list);
@@ -1156,9 +1156,7 @@ eo_add_internal(const char *file, int line, const Eo_Class *klass_id, Eo *parent
         return NULL;
      }
 
-   _Eo *obj = calloc(1, EO_ALIGN_SIZE(sizeof(*obj)) +
-                    (klass->data_offset + EO_ALIGN_SIZE(klass->desc->data_size)) +
-                    klass->extn_data_size);
+   _Eo *obj = calloc(1, klass->obj_size);
    obj->refcount++;
    obj->klass = klass;
 
@@ -1503,10 +1501,8 @@ _eo_data_xunref_internal(_Eo *obj, void *data, const _Eo *ref_obj)
 {
 #ifdef EO_DEBUG
    const _Eo_Class *klass = obj->klass;
-   char *data_base = ((char *) obj) + EO_ALIGN_SIZE(sizeof(*obj));
-   Eina_Bool in_range = ((char *)data >= data_base &&
-         (char *)data < (data_base + (klass->data_offset +
-               EO_ALIGN_SIZE(klass->desc->data_size) + klass->extn_data_size)));
+   Eina_Bool in_range = (((char *)data >= (((char *) obj) + _eo_sz) &&
+                          ((char *)data < (((char *) obj) + klass->obj_size)))
    if (!in_range)
      {
         ERR("Data %p is not in the data range of the object %p (%s).", data, (Eo *)obj->obj_id, obj->klass->desc->name);
