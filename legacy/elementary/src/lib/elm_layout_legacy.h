@@ -603,6 +603,8 @@ EAPI Evas_Object                 *elm_layout_content_unset(Evas_Object *obj, con
  * @param part The TEXT part where to set the text
  * @param text The text to set
  * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise
+ *
+ * @ingroup Layout
  */
 EAPI Eina_Bool                    elm_layout_text_set(Evas_Object *obj, const char *part, const char *text);
 
@@ -613,6 +615,8 @@ EAPI Eina_Bool                    elm_layout_text_set(Evas_Object *obj, const ch
  * @param part The TEXT part to retrieve the text off
  *
  * @return The text set in @p part
+ *
+ * @ingroup Layout
  */
 EAPI const char                  *elm_layout_text_get(const Evas_Object *obj, const char *part);
 
