@@ -53,12 +53,12 @@ struct _Render_Engine
    int                      lost_back;
    int                      prev_age;
    Eina_Bool                evgl_initted : 1;
+
    struct {
       Evas_Object_Image_Pixels_Get_Cb  get_pixels;
       void                            *get_pixels_data;
       Evas_Object                     *obj;
    } func;
-
 };
 
 static int initted = 0;
@@ -3119,7 +3119,6 @@ eng_gl_direct_override_get(void *data, int *override, int *force_off)
    EVGLINIT(data, );
    evgl_direct_override_get(override, force_off);
 }
-//--------------------------------//
 
 static void
 eng_gl_get_pixels_set(void *data, void *get_pixels, void *get_pixels_data, void *obj)
