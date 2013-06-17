@@ -3868,7 +3868,7 @@ evas_object_image_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, v
 
                                  if (obj->layer->evas->engine.func->gl_get_pixels_set)
                                    {
-                                      obj->layer->evas->engine.func->gl_get_pixels_set(output, o->pixels->func.get_pixels, o->pixels->func.get_pixels_data, eo_obj);
+                                      obj->layer->evas->engine.func->gl_get_pixels_set(output, o->pixels->func.get_pixels, o->pixels->func.get_pixels_data, obj);
                                    }
 
                                  o->direct_render = EINA_TRUE;
@@ -3906,6 +3906,38 @@ evas_object_image_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, v
                }
           }
 
+        /*
+           if (obj->layer->evas->engine.func->context_flush)
+           obj->layer->evas->engine.func->context_flush(output);
+
+                  // Set img object for direct rendering optimization
+                  // Check for image w/h against image geometry w/h
+                  // Check for image color r,g,b,a = {255,255,255,255}
+                  // Check and make sure that there are no maps.
+                  if ( (obj->cur->geometry.w == o->cur->image.w) &&
+                       (obj->cur->geometry.h == o->cur->image.h) &&
+                       (obj->cur->color.r == 255) &&
+                       (obj->cur->color.g == 255) &&
+                       (obj->cur->color.b == 255) &&
+                       (obj->cur->color.a == 255) &&
+                       (!obj->map->cur.map) )
+                    {
+                       if (obj->layer->evas->engine.func->gl_img_obj_set)
+                         {
+                            obj->layer->evas->engine.func->gl_img_obj_set(output, eo_obj, o->cur->has_alpha);
+                            img_set = 1;
+                         }
+                    }
+
+                  o->pixels->func.get_pixels(o->pixels->func.get_pixels_data, eo_obj);
+                  if (o->engine_data != pixels)
+                    pixels = o->engine_data;
+                  o->engine_data = obj->layer->evas->engine.func->image_dirty_region
+                     (obj->layer->evas->engine.data.output, o->engine_data,
+                      0, 0, o->cur->image.w, o->cur->image.h);
+               }
+             o->dirty_pixels = EINA_FALSE;
+*/
         if ((obj->map->cur.map) && (obj->map->cur.map->count > 3) && (obj->map->cur.usemap))
           {
              evas_object_map_update(eo_obj, x, y, imagew, imageh, uvw, uvh);
@@ -4144,7 +4176,6 @@ evas_object_image_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, v
                   if (dobreak_w) break;
                }
           }
-     }
 }
 
 static void
