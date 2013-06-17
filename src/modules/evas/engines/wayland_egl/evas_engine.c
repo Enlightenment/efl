@@ -42,11 +42,12 @@ struct _Render_Engine
    Eina_Bool end : 1;
    Eina_Bool evgl_initted : 1;
 
-   struct {
-      Evas_Object_Image_Pixels_Get_Cb  get_pixels;
-      void                            *get_pixels_data;
-      Evas_Object                     *obj;
-   } func;
+   struct 
+     {
+        Evas_Object_Image_Pixels_Get_Cb get_pixels;
+        void *get_pixels_data;
+        Evas_Object *obj;
+     } func;
 };
 
 typedef struct _Native Native;
@@ -1408,7 +1409,9 @@ eng_gl_direct_override_get(void *data, int *override, int *force_off)
 static void
 eng_gl_get_pixels_set(void *data, void *get_pixels, void *get_pixels_data, void *obj)
 {
-   Render_Engine *re = (Render_Engine *)data;
+   Render_Engine *re;
+
+   if (!(re = (Render_Engine *)data)) return;
 
    EVGLINIT(data, );
    re->func.get_pixels = get_pixels;
