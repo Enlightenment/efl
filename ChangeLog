@@ -1,3 +1,7 @@
+2013-06-17  Sung W. Park (sung_)
+
+	* Evas: add partial rendering support for Evas_GL direct rendering
+
 2013-06-17  Cedric Bail
 
 	* Edje: Use Eo array of callbacks to reduce edje memory foot print.
