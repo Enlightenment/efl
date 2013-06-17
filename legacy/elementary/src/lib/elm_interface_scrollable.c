@@ -4273,14 +4273,28 @@ _elm_scroll_current_page_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    if (pagenumber_h)
      {
         if (sid->pagesize_h > 0)
-          *pagenumber_h = (x + sid->pagesize_h - 1) / sid->pagesize_h;
+          {
+             double result = (double)x / (double)sid->pagesize_h;
+             double rest = result - (x / sid->pagesize_h);
+             if (rest >= 0.5)
+               *pagenumber_h = result + 1;
+             else
+               *pagenumber_h = result;
+          }
         else
           *pagenumber_h = 0;
      }
    if (pagenumber_v)
      {
         if (sid->pagesize_v > 0)
-          *pagenumber_v = (y + sid->pagesize_v - 1) / sid->pagesize_v;
+          {
+             double result = (double)y / (double)sid->pagesize_v;
+             double rest = result - (y / sid->pagesize_v);
+             if (rest >= 0.5)
+               *pagenumber_v = result + 1;
+             else
+               *pagenumber_v = result;
+          }
         else
           *pagenumber_v = 0;
      }

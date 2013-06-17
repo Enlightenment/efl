@@ -113,6 +113,18 @@ my_bt_block_movements_y_axis(void *data, Evas_Object *obj,
 }
 
 void
+page_change_cb(void *data __UNUSED__,
+               Evas_Object *obj,
+               void *event_info __UNUSED__)
+{
+   int page_x = 0, page_y = 0;
+
+   elm_scroller_current_page_get(obj, &page_x, &page_y);
+
+   printf("Page changed to %d, %d\n", page_x, page_y);
+}
+
+void
 _sc_move_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Evas_Coord x = 0, y = 0;
@@ -223,8 +235,11 @@ test_scroller(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    elm_object_content_set(sc, tb);
    evas_object_show(tb);
 
-   elm_scroller_page_relative_set(sc, 1.0, 1.0);
+   elm_scroller_page_size_set(sc, 318, 318);
    evas_object_show(sc);
+
+   evas_object_smart_callback_add
+       (sc, "scroll,page,changed", page_change_cb, sc);
 
    evas_object_smart_callback_add(ck1, "changed", my_bt_freeze_toggle, tb);
    evas_object_smart_callback_add(ck2, "changed", my_bt_hold_toggle, tb);
