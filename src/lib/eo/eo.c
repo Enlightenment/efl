@@ -966,6 +966,7 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
      }
 
    klass = calloc(1, _eo_class_sz + extn_sz + mro_sz + mixins_sz);
+   EINA_MAGIC_SET(klass, EO_CLASS_EINA_MAGIC);
    klass->parent = parent;
    klass->desc = desc;
    klass->extensions = (const _Eo_Class **) ((char *) klass + _eo_class_sz);
@@ -1031,27 +1032,11 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
      }
 
    klass->obj_size = _eo_sz + extn_data_off;
-
-   eina_lock_take(&_eo_class_creation_lock);
-
-   klass->class_id = ++_eo_classes_last_id;
-
+   if (getenv("EO_DEBUG"))
      {
-        /* FIXME: Handle errors. */
-        size_t arrsize = _eo_classes_last_id * sizeof(*_eo_classes);
-        _Eo_Class **tmp;
-        tmp = realloc(_eo_classes, arrsize);
-
-        /* If it's the first allocation, memset. */
-        if (!_eo_classes)
-           memset(tmp, 0, arrsize);
-
-        _eo_classes = tmp;
-        _eo_classes[klass->class_id - 1] = klass;
+        fprintf(stderr, "Eo class '%s' will take %u bytes per object.\n",
+                desc->name, klass->obj_size);
      }
-   eina_lock_release(&_eo_class_creation_lock);
-
-   EINA_MAGIC_SET(klass, EO_CLASS_EINA_MAGIC);
 
    _eo_class_base_op_init(klass);
    /* Flatten the function array */
@@ -1090,13 +1075,24 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
           }
      }
 
-   _eo_class_constructor(klass);
-
-   if (getenv("EO_DEBUG"))
+   eina_lock_take(&_eo_class_creation_lock);
+   klass->class_id = ++_eo_classes_last_id;
      {
-        fprintf(stderr, "Eo class '%s' will take %u bytes per object.\n",
-                desc->name, klass->obj_size);
+        /* FIXME: Handle errors. */
+        size_t arrsize = _eo_classes_last_id * sizeof(*_eo_classes);
+        _Eo_Class **tmp;
+        tmp = realloc(_eo_classes, arrsize);
+
+        /* If it's the first allocation, memset. */
+        if (!_eo_classes)
+           memset(tmp, 0, arrsize);
+
+        _eo_classes = tmp;
+        _eo_classes[klass->class_id - 1] = klass;
      }
+   eina_lock_release(&_eo_class_creation_lock);
+
+   _eo_class_constructor(klass);
 
    return _eo_class_id_get(klass);
 }
