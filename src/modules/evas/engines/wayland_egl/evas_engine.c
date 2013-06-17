@@ -1937,7 +1937,7 @@ eng_image_draw(void *data, void *context, void *surface, void *image, int src_x,
 
         // Call pixel get function
         evgl_direct_img_obj_set(re->func.obj, re->win->gl_context->rot);
-        re->func.get_pixels(re->func.get_pixels_data, re->func.obj);
+        re->func.pixels_get(re->func.pixels_data_get, re->func.obj);
         evgl_direct_img_obj_set(NULL, 0);
 
         // Reset clip
