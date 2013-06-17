@@ -126,6 +126,7 @@ struct _Eo_Class
 
    Eina_Bool constructed : 1;
    /* [extensions*] + NULL */
+   /* [mro*] + NULL */
 };
 
 static inline void
@@ -642,45 +643,51 @@ _eo_class_list_remove_duplicates(Eina_List* list)
 static Eina_List *
 _eo_class_mro_add(Eina_List *mro, const _Eo_Class *klass)
 {
-   Eina_List *extn_pos = NULL;
-   Eina_Bool check_consistency = !mro;
    if (!klass)
-      return mro;
+     return mro;
 
    mro = eina_list_append(mro, klass);
 
-   /* ONLY ADD MIXINS! */
-
-   /* Recursively add extensions. */
+   /* Recursively add MIXINS extensions. */
      {
         const _Eo_Class **extn_itr;
 
         for (extn_itr = klass->extensions ; *extn_itr ; extn_itr++)
           {
              const _Eo_Class *extn = *extn_itr;
-             if (extn->desc->type != EO_CLASS_TYPE_MIXIN)
-                continue;
-
-             mro = _eo_class_mro_add(mro, extn);
-             /* Not possible: if (!mro) return NULL; */
-
-             if (check_consistency)
-               {
-                  extn_pos = eina_list_append(extn_pos, eina_list_last(mro));
-               }
+             if (extn->desc->type == EO_CLASS_TYPE_MIXIN)
+               mro = _eo_class_mro_add(mro, extn);
           }
      }
 
-   /* Check if we can create a consistent mro. We only do it for the class
-    * we are working on (i.e no parents). */
-   if (check_consistency)
-     {
-        const _Eo_Class **extn_itr;
+   mro = _eo_class_mro_add(mro, klass->parent);
 
+   return mro;
+}
+
+static Eina_List *
+_eo_class_mro_init(const Eo_Class_Description *desc, const _Eo_Class *parent, Eina_List *extensions)
+{
+   Eina_List *mro = NULL;
+   Eina_List *extn_itr = NULL;
+   Eina_List *extn_pos = NULL;
+   const _Eo_Class *extn = NULL;
+
+   /* Add MIXINS extensions. */
+   EINA_LIST_FOREACH(extensions, extn_itr, extn)
+     {
+        if (extn->desc->type != EO_CLASS_TYPE_MIXIN)
+          continue;
+
+        mro = _eo_class_mro_add(mro, extn);
+        extn_pos = eina_list_append(extn_pos, eina_list_last(mro));
+     }
+
+   /* Check if we can create a consistent mro */
+     {
         Eina_List *itr = extn_pos;
-        for (extn_itr = klass->extensions ; *extn_itr ; extn_itr++)
+        EINA_LIST_FOREACH(extensions, extn_itr, extn)
           {
-             const _Eo_Class *extn = *extn_itr;
              if (extn->desc->type != EO_CLASS_TYPE_MIXIN)
                 continue;
 
@@ -691,7 +698,8 @@ _eo_class_mro_add(Eina_List *mro, const _Eo_Class *klass)
              if (eina_list_data_find_list(extn_list, extn))
                {
                   eina_list_free(mro);
-                  ERR("Cannot create a consistent method resolution order for class '%s' because of '%s'.", klass->desc->name, extn->desc->name);
+                  eina_list_free(extn_pos);
+                  ERR("Cannot create a consistent method resolution order for class '%s' because of '%s'.", desc->name, extn->desc->name);
                   return NULL;
                }
 
@@ -701,44 +709,12 @@ _eo_class_mro_add(Eina_List *mro, const _Eo_Class *klass)
 
    eina_list_free(extn_pos);
 
-   mro = _eo_class_mro_add(mro, klass->parent);
+   mro = _eo_class_mro_add(mro, parent);
+   mro = _eo_class_list_remove_duplicates(mro);
+   /* Will be replaced with the actual class pointer */
+   mro = eina_list_prepend(mro, NULL);
 
    return mro;
-}
-
-static Eina_Bool
-_eo_class_mro_init(_Eo_Class *klass)
-{
-   Eina_List *mro = NULL;
-
-   DBG("Started creating MRO for class '%s'", klass->desc->name);
-   mro = _eo_class_mro_add(mro, klass);
-
-   if (!mro)
-      return EINA_FALSE;
-
-   mro = _eo_class_list_remove_duplicates(mro);
-
-   /* Copy the mro and free the list. */
-     {
-        const _Eo_Class *kls_itr;
-        const _Eo_Class **mro_itr;
-        klass->mro = calloc(_eo_class_sz, eina_list_count(mro) + 1);
-
-        mro_itr = klass->mro;
-
-        EINA_LIST_FREE(mro, kls_itr)
-          {
-             *(mro_itr++) = kls_itr;
-
-             DBG("Added '%s' to MRO", kls_itr->desc->name);
-          }
-        *(mro_itr) = NULL;
-     }
-
-   DBG("Finished creating MRO for class '%s'", klass->desc->name);
-
-   return EINA_TRUE;
 }
 
 static void
@@ -798,9 +774,6 @@ eo_class_free(_Eo_Class *klass)
 
         _dich_func_clean_all(klass);
      }
-
-   if (klass->mro)
-      free(klass->mro);
 
    if (klass->extn_data_off)
       free(klass->extn_data_off);
@@ -871,8 +844,8 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
 {
    _Eo_Class *klass;
    va_list p_list;
-   size_t extn_sz;
-   Eina_List *extn_list;
+   size_t extn_sz, mro_sz;
+   Eina_List *extn_list, *mro;
 
    _Eo_Class *parent = _eo_class_pointer_get(parent_id);
    if (parent && !EINA_MAGIC_CHECK(parent, EO_CLASS_EINA_MAGIC))
@@ -925,10 +898,30 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
         DBG("Finished building extensions list for class '%s'", desc->name);
      }
 
-   klass = calloc(1, _eo_class_sz + extn_sz);
+   /* Prepare mro list */
+     {
+        DBG("Started building MRO list for class '%s'", desc->name);
+
+        mro = _eo_class_mro_init(desc, parent, extn_list);
+        if (!mro)
+          {
+             eina_list_free(extn_list);
+             return NULL;
+          }
+
+        mro_sz = sizeof(_Eo_Class *) * (eina_list_count(mro) + 1);
+
+        DBG("Finished building MRO list for class '%s'", desc->name);
+     }
+
+   klass = calloc(1, _eo_class_sz + extn_sz + mro_sz );
    klass->parent = parent;
    klass->desc = desc;
    klass->extensions = (const _Eo_Class **) ((char *) klass + _eo_class_sz);
+   klass->mro = (const _Eo_Class **) ((char *) klass->extensions + extn_sz);
+
+   mro = eina_list_remove(mro, NULL);
+   mro = eina_list_prepend(mro, klass);
 
    /* Copy the extensions and free the list */
      {
@@ -941,6 +934,19 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
              DBG("Added '%s' extension", extn->desc->name);
           }
         *(extn_itr) = NULL;
+     }
+
+   /* Copy the mro and free the list. */
+     {
+        const _Eo_Class *kls_itr;
+        const _Eo_Class **mro_itr = klass->mro;
+        EINA_LIST_FREE(mro, kls_itr)
+          {
+             *(mro_itr++) = kls_itr;
+
+             DBG("Added '%s' to MRO", kls_itr->desc->name);
+          }
+        *(mro_itr) = NULL;
      }
 
    /* Handle the inheritance */
@@ -977,11 +983,6 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
      }
 
    if (!_eo_class_check_op_descs(klass))
-     {
-        goto cleanup;
-     }
-
-   if (!_eo_class_mro_init(klass))
      {
         goto cleanup;
      }

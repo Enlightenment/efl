@@ -311,7 +311,7 @@ START_TEST(eo_inconsistent_mro)
    klass_mixin3 = eo_class_new(&class_desc_mixin3, klass_mixin, NULL);
    fail_if(!klass_mixin3);
 
-   TEST_EO_ERROR("_eo_class_mro_add", "Cannot create a consistent method resolution order for class '%s' because of '%s'.");
+   TEST_EO_ERROR("_eo_class_mro_init", "Cannot create a consistent method resolution order for class '%s' because of '%s'.");
    klass = eo_class_new(&class_desc_simple, EO_BASE_CLASS, klass_mixin, klass_mixin2, NULL);
    fail_if(klass);
    fail_unless(ctx.did);
