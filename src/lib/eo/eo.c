@@ -783,9 +783,8 @@ eo_class_free(_Eo_Class *klass)
 
 /* DEVCHECK */
 static Eina_Bool
-_eo_class_check_op_descs(const _Eo_Class *klass)
+_eo_class_check_op_descs(const Eo_Class_Description *desc)
 {
-   const Eo_Class_Description *desc = klass->desc;
    const Eo_Op_Description *itr;
    size_t i;
 
@@ -857,10 +856,42 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
    EINA_SAFETY_ON_NULL_RETURN_VAL(desc, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(desc->name, NULL);
 
+   if (!_eo_class_check_op_descs(desc))
+     return NULL;
+
    /* Check restrictions on Interface types. */
    if (desc->type == EO_CLASS_TYPE_INTERFACE)
      {
         EINA_SAFETY_ON_FALSE_RETURN_VAL(!desc->data_size, NULL);
+     }
+
+   /* Check parent */
+   if (parent)
+     {
+        /* Verify the inheritance is allowed. */
+        switch (desc->type)
+          {
+           case EO_CLASS_TYPE_REGULAR:
+           case EO_CLASS_TYPE_REGULAR_NO_INSTANT:
+              if ((parent->desc->type != EO_CLASS_TYPE_REGULAR) &&
+                    (parent->desc->type != EO_CLASS_TYPE_REGULAR_NO_INSTANT))
+                {
+                   ERR("Regular classes ('%s') aren't allowed to inherit from non-regular classes ('%s').",
+                       desc->name, parent->desc->name);
+                   return NULL;
+                }
+              break;
+           case EO_CLASS_TYPE_INTERFACE:
+           case EO_CLASS_TYPE_MIXIN:
+              if ((parent->desc->type != EO_CLASS_TYPE_INTERFACE) &&
+                    (parent->desc->type != EO_CLASS_TYPE_MIXIN))
+                {
+                   ERR("Non-regular classes ('%s') aren't allowed to inherit from regular classes ('%s').",
+                       desc->name, parent->desc->name);
+                   return NULL;
+                }
+              break;
+          }
      }
 
    /* Build class extensions list */
@@ -919,6 +950,12 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
    klass->desc = desc;
    klass->extensions = (const _Eo_Class **) ((char *) klass + _eo_class_sz);
    klass->mro = (const _Eo_Class **) ((char *) klass->extensions + extn_sz);
+   if (klass->parent)
+     {
+        /* FIXME: Make sure this alignment is enough. */
+        klass->data_offset = klass->parent->data_offset +
+           EO_ALIGN_SIZE(klass->parent->desc->data_size);
+     }
 
    mro = eina_list_remove(mro, NULL);
    mro = eina_list_prepend(mro, klass);
@@ -947,44 +984,6 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
              DBG("Added '%s' to MRO", kls_itr->desc->name);
           }
         *(mro_itr) = NULL;
-     }
-
-   /* Handle the inheritance */
-   if (klass->parent)
-     {
-        /* Verify the inheritance is allowed. */
-        switch (klass->desc->type)
-          {
-           case EO_CLASS_TYPE_REGULAR:
-           case EO_CLASS_TYPE_REGULAR_NO_INSTANT:
-              if ((klass->parent->desc->type != EO_CLASS_TYPE_REGULAR) &&
-                    (klass->parent->desc->type != EO_CLASS_TYPE_REGULAR_NO_INSTANT))
-                {
-                   ERR("Regular classes ('%s') aren't allowed to inherit from non-regular classes ('%s').", klass->desc->name, klass->parent->desc->name);
-                   goto cleanup;
-                }
-              break;
-           case EO_CLASS_TYPE_INTERFACE:
-           case EO_CLASS_TYPE_MIXIN:
-              if ((klass->parent->desc->type != EO_CLASS_TYPE_INTERFACE) &&
-                    (klass->parent->desc->type != EO_CLASS_TYPE_MIXIN))
-                {
-                   ERR("Non-regular classes ('%s') aren't allowed to inherit from regular classes ('%s').", klass->desc->name, klass->parent->desc->name);
-                   goto cleanup;
-                }
-              break;
-          }
-
-
-        /* Update the current offset. */
-        /* FIXME: Make sure this alignment is enough. */
-        klass->data_offset = klass->parent->data_offset +
-           EO_ALIGN_SIZE(klass->parent->desc->data_size);
-     }
-
-   if (!_eo_class_check_op_descs(klass))
-     {
-        goto cleanup;
      }
 
    size_t extn_data_off = klass->data_offset +
@@ -1097,10 +1096,6 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
      }
 
    return _eo_class_id_get(klass);
-
-cleanup:
-   eo_class_free(klass);
-   return NULL;
 }
 
 EAPI Eina_Bool
