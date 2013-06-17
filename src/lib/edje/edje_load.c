@@ -1317,8 +1317,18 @@ _edje_file_del(Edje *ed)
 
 	     if (rp->object)
 	       {
-		  _edje_callbacks_del(rp->object, ed);
-		  _edje_callbacks_focus_del(rp->object, ed);
+		  switch (rp->part->type)
+		    {
+                     case EDJE_PART_TYPE_GROUP:
+                     case EDJE_PART_TYPE_SWALLOW:
+                     case EDJE_PART_TYPE_EXTERNAL:
+                        _edje_callbacks_focus_del(rp->object, ed);
+                        break;
+                     default:
+                        if (rp->part->mouse_events)
+                          _edje_callbacks_del(rp->object, ed);
+                        break;
+                    }
 		  evas_object_del(rp->object);
 	       }
 

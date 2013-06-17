@@ -37,6 +37,7 @@
 
 #include <Eina.h>
 #include <Eet.h>
+#include <Eo.h>
 #include <Evas.h>
 #include <Ecore.h>
 #include <Ecore_Evas.h>

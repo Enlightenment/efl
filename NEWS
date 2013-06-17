@@ -188,6 +188,7 @@ Improvements:
     * Turn on scissors always to abe able to to partual render on some GL implementations properly.
     * Evas gl engine - dont map dri/drm buffer unless we are going to render.
     * Partial rendering support in evas for several gl drivers.
+    * edje: use eo array of callbacks to reduce callbacks memory footprint.
 
 Fixes:
     * Fix a memory leak in ecore_con_dns when using ecore_con_server_connect
