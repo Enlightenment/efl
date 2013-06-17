@@ -612,6 +612,34 @@ _eo_class_mro_has(const _Eo_Class *klass, const _Eo_Class *find)
 #endif
 
 static Eina_List *
+_eo_class_list_remove_duplicates(Eina_List* list)
+{
+   Eina_List *itr1, *itr2, *itr2n;
+
+   itr1 = eina_list_last(list);
+   while (itr1)
+     {
+        itr2 = eina_list_prev(itr1);
+
+        while (itr2)
+          {
+             itr2n = eina_list_prev(itr2);
+
+             if (eina_list_data_get(itr1) == eina_list_data_get(itr2))
+               {
+                  list = eina_list_remove_list(list, itr2);
+               }
+
+             itr2 = itr2n;
+          }
+
+        itr1 = eina_list_prev(itr1);
+     }
+
+   return list;
+}
+
+static Eina_List *
 _eo_class_mro_add(Eina_List *mro, const _Eo_Class *klass)
 {
    Eina_List *extn_pos = NULL;
@@ -689,30 +717,7 @@ _eo_class_mro_init(_Eo_Class *klass)
    if (!mro)
       return EINA_FALSE;
 
-   /* Remove duplicates and make them the right order. */
-     {
-        Eina_List *itr1, *itr2, *itr2n;
-
-        itr1 = eina_list_last(mro);
-        while (itr1)
-          {
-             itr2 = eina_list_prev(itr1);
-
-             while (itr2)
-               {
-                  itr2n = eina_list_prev(itr2);
-
-                  if (eina_list_data_get(itr1) == eina_list_data_get(itr2))
-                    {
-                       mro = eina_list_remove_list(mro, itr2);
-                    }
-
-                  itr2 = itr2n;
-               }
-
-             itr1 = eina_list_prev(itr1);
-          }
-     }
+   mro = _eo_class_list_remove_duplicates(mro);
 
    /* Copy the mro and free the list. */
      {
@@ -912,6 +917,8 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
           }
 
         va_end(p_list);
+
+        extn_list = _eo_class_list_remove_duplicates(extn_list);
 
         extn_sz = sizeof(_Eo_Class *) * (eina_list_count(extn_list) + 1);
 
