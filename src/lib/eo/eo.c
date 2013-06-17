@@ -125,6 +125,7 @@ struct _Eo_Class
    unsigned int data_offset; /* < Offset of the data within object data. */
 
    Eina_Bool constructed : 1;
+   /* [extensions*] + NULL */
 };
 
 static inline void
@@ -793,8 +794,6 @@ eo_class_free(_Eo_Class *klass)
         _dich_func_clean_all(klass);
      }
 
-   free(klass->extensions);
-
    if (klass->mro)
       free(klass->mro);
 
@@ -867,6 +866,8 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
 {
    _Eo_Class *klass;
    va_list p_list;
+   size_t extn_sz;
+   Eina_List *extn_list;
 
    _Eo_Class *parent = _eo_class_pointer_get(parent_id);
    if (parent && !EINA_MAGIC_CHECK(parent, EO_CLASS_EINA_MAGIC))
@@ -874,8 +875,6 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
         EINA_MAGIC_FAIL(parent, EO_CLASS_EINA_MAGIC);
         return NULL;
      }
-
-   va_start(p_list, parent_id);
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(desc, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(desc->name, NULL);
@@ -886,15 +885,14 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
         EINA_SAFETY_ON_FALSE_RETURN_VAL(!desc->data_size, NULL);
      }
 
-   klass = calloc(1, _eo_class_sz);
-   klass->parent = parent;
-
-   /* Handle class extensions */
+   /* Build class extensions list */
      {
-        Eina_List *extn_list = NULL;
-        const Eo_Class_Id *extn_id = NULL;
+        DBG("Started building extensions list for class '%s'", desc->name);
+        extn_list = NULL;
         const _Eo_Class *extn = NULL;
-        const _Eo_Class **extn_itr = NULL;
+        const Eo_Class_Id *extn_id = NULL;
+
+        va_start(p_list, parent_id);
 
         extn_id = va_arg(p_list, Eo_Class_Id *);
         while (extn_id)
@@ -913,17 +911,30 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
              extn_id = va_arg(p_list, Eo_Class_Id *);
           }
 
-        klass->extensions = calloc(_eo_class_sz,
-              eina_list_count(extn_list) + 1);
+        va_end(p_list);
 
-        extn_itr = klass->extensions;
+        extn_sz = sizeof(_Eo_Class *) * (eina_list_count(extn_list) + 1);
+
+        DBG("Finished building extensions list for class '%s'", desc->name);
+     }
+
+   klass = calloc(1, _eo_class_sz + extn_sz);
+   klass->parent = parent;
+   klass->desc = desc;
+   klass->extensions = (const _Eo_Class **) ((char *) klass + _eo_class_sz);
+
+   /* Copy the extensions and free the list */
+     {
+        const _Eo_Class *extn = NULL;
+        const _Eo_Class **extn_itr = klass->extensions;
         EINA_LIST_FREE(extn_list, extn)
           {
              *(extn_itr++) = extn;
-          }
-     }
 
-   klass->desc = desc;
+             DBG("Added '%s' extension", extn->desc->name);
+          }
+        *(extn_itr) = NULL;
+     }
 
    /* Handle the inheritance */
    if (klass->parent)
@@ -1076,8 +1087,6 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
         fprintf(stderr, "Eo class '%s' will take %u bytes per object.\n",
                 desc->name, klass->obj_size);
      }
-
-   va_end(p_list);
 
    return _eo_class_id_get(klass);
 
