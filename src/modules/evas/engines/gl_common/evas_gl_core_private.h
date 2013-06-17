@@ -18,7 +18,7 @@ extern int _evas_gl_log_dom;
 #ifdef DBG
 # undef DBG
 #endif
-#define DBG(...) EINA_LOG_DOM_DBG(_evas_gl_log_dom, __VA_ARGS__)
+#define DBG(...) EINA_LOG_DOM_DBG(_evas_gl_log_dom, __VA_ARGS__) 
 #ifdef INF
 # undef INF
 #endif
@@ -40,7 +40,7 @@ struct _EVGL_Interface
    // Returns the native display of evas engine.
    void       *(*display_get)(void *data);
 
-   // Returns the Window surface that evas uses for direct rendering opt
+   // Returns the Window surface that evas uses for direct rendering opt. 
    void       *(*evas_surface_get)(void *data);
    void       *(*native_window_create)(void *data);
    int        (*native_window_destroy)(void *data, void *window);
@@ -129,6 +129,7 @@ struct _EVGL_Context
    int          scissor_enabled;
    int          scissor_updated;
    int          scissor_coord[4];
+   int          dr_scissor_coord[4];
    int          direct_scissor;
 
    int          viewport_updated;
@@ -141,7 +142,7 @@ typedef enum _EVGL_Color_Bit
 {
    COLOR_NONE      = 0,
    COLOR_RGB_888   = 0x1,
-   COLOR_RGBA_8888 = 0x3,
+   COLOR_RGBA_8888 = 0x3, // XXX: eh? not 0x2
 } EVGL_Color_Bit;
 
 
@@ -149,20 +150,20 @@ typedef enum _EVGL_Depth_Bit
 {
    DEPTH_NONE   = 0,
    DEPTH_BIT_8  = 0x1,
-   DEPTH_BIT_16 = 0x3,
-   DEPTH_BIT_24 = 0x7,
-   DEPTH_BIT_32 = 0xF,
-   DEPTH_STENCIL = 0xFF,
+   DEPTH_BIT_16 = 0x3, // XXX: eh? not 0x2
+   DEPTH_BIT_24 = 0x7, // XXX: eh? not 0x4
+   DEPTH_BIT_32 = 0xF, // XXX: eh? not 0x8
+   DEPTH_STENCIL = 0xFF, // XXX: eh? not 0x80
 } EVGL_Depth_Bit;
 
 typedef enum _EVGL_Stencil_Bit
 {
    STENCIL_NONE   = 0,
    STENCIL_BIT_1  = 0x1,
-   STENCIL_BIT_2  = 0x3,
-   STENCIL_BIT_4  = 0x7,
-   STENCIL_BIT_8  = 0xF,
-   STENCIL_BIT_16 = 0x1F,
+   STENCIL_BIT_2  = 0x3, // XXX: eh? not 0x2
+   STENCIL_BIT_4  = 0x7, // XXX: eh? not 0x4
+   STENCIL_BIT_8  = 0xF, // XXX: eh? not 0x8
+   STENCIL_BIT_16 = 0x1F, // XXX: eh? not 0x10
 } EVGL_Stencil_Bit;
 
 
@@ -211,10 +212,6 @@ struct _EVGL_Resource
 
    int                  direct_rendered;
    Evas_Object         *direct_img_obj;
-   int                  get_pixels_set;
-
-   int                  master_clip;
-   int                  clip[4];
 };
 
 struct _EVGL_Engine
@@ -239,11 +236,8 @@ struct _EVGL_Engine
    int                direct_mem_opt;
    int                api_debug_mode;
 
-   // Force Off for Debug purposes
+   // Force Off fo Debug purposes
    int                direct_force_off;
-
-   // Force Direct Scissoring off for Debug purposes
-   int                direct_scissor_off;
 
    // Keep track of all the current surfaces/contexts
    Eina_List         *surfaces;

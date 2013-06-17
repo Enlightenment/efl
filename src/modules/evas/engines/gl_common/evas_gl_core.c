@@ -448,7 +448,7 @@ _surface_cap_check()
         ERR("EVGL Engine not initialized!");
         return 0;
      }
-
+ 
    // Check Surface Cap for MSAA
    if (evgl_engine->caps.msaa_supported)
      {
@@ -507,7 +507,7 @@ _surface_cap_load(Eet_File *ef)
    free(data);
    data = NULL;
 
-   // !!!FIXME
+   // !!!FIXME 
    // Should use eet functionality instead of just reading using sscanfs...
    for (i = 0; i < evgl_engine->caps.num_fbo_fmts; ++i)
      {
@@ -544,7 +544,7 @@ _surface_cap_save(Eet_File *ef)
    if (eet_write(ef, "num_fbo_fmts", data, strlen(data) + 1, 1) < 0)
       return 0;
 
-   // !!!FIXME
+   // !!!FIXME 
    // Should use eet functionality instead of just writing out using snprintfs...
    for (i = 0; i < evgl_engine->caps.num_fbo_fmts; ++i)
      {
@@ -831,7 +831,7 @@ _surface_context_list_print()
         DBG( RED "\t[Surface %d]" YELLOW " Ptr: %p" RED " Appx Mem: %d Byte", count++, s, (s->buffer_mem[0]+s->buffer_mem[1]+s->buffer_mem[2]+s->buffer_mem[3]));
         DBG( GREEN "\t\t Size:" RESET " (%d, %d)",  s->w, s->h);
 
-        if (s->buffer_mem[0])
+        if (s->buffer_mem[0]) 
           {
              DBG( GREEN "\t\t Color Format:" RESET " %s", _glenum_string_get(s->color_fmt));
              DBG( GREEN "\t\t Color Buffer Appx. Mem Usage:" RESET " %d Byte", s->buffer_mem[0]);
@@ -1247,10 +1247,10 @@ _evgl_not_in_pixel_get()
 
    EVGL_Context *ctx = rsc->current_ctx;
 
-   if ((!evgl_engine->direct_force_off) &&
+   if ((!evgl_engine->direct_force_off) && 
        (rsc->id == evgl_engine->main_tid) &&
-       (ctx) &&
-       (ctx->current_sfc) &&
+       (ctx) && 
+       (ctx->current_sfc) && 
        (ctx->current_sfc->direct_fb_opt) &&
        (!rsc->direct_img_obj))
       return 1;
@@ -1285,14 +1285,14 @@ _evgl_direct_enabled()
 EVGL_Engine *
 evgl_engine_init(void *eng_data, EVGL_Interface *efunc)
 {
-   int direct_mem_opt = 0, direct_off = 0, direct_soff = 0, debug_mode = 0;
+   int direct_mem_opt = 0, direct_off = 0, debug_mode = 0;
    char *s = NULL;
 
    if (evgl_engine) return evgl_engine;
 
    // Initialize Log Domain
    if (_evas_gl_log_dom < 0)
-      _evas_gl_log_dom = eina_log_domain_register("EvasGL", EVAS_DEFAULT_LOG_COLOR);
+     _evas_gl_log_dom = eina_log_domain_register("EvasGL", EVAS_DEFAULT_LOG_COLOR);
    if (_evas_gl_log_dom < 0)
      {
         EINA_LOG_ERR("Can not create a module log domain.");
@@ -1333,9 +1333,9 @@ evgl_engine_init(void *eng_data, EVGL_Interface *efunc)
 
    // Initialize Extensions
    if (efunc->proc_address_get && efunc->ext_string_get)
-      evgl_api_ext_init(efunc->proc_address_get, efunc->ext_string_get(eng_data));
+     evgl_api_ext_init(efunc->proc_address_get, efunc->ext_string_get(eng_data));
    else
-      ERR("Proc address get function not available.  Extension not initialized.");
+     ERR("Proc address get function not available.  Extension not initialized.");
 
    DBG("GLUE Extension String: %s", efunc->ext_string_get(eng_data));
    DBG("GL Extension String: %s", glGetString(GL_EXTENSIONS));
@@ -1352,25 +1352,19 @@ evgl_engine_init(void *eng_data, EVGL_Interface *efunc)
    s = getenv("EVAS_GL_DIRECT_MEM_OPT");
    if (s) direct_mem_opt = atoi(s);
    if (direct_mem_opt == 1)
-      evgl_engine->direct_mem_opt = 1;
+     evgl_engine->direct_mem_opt = 1;
 
    // Check if Direct Rendering Override Force Off flag is on
    s = getenv("EVAS_GL_DIRECT_OVERRIDE_FORCE_OFF");
    if (s) direct_off = atoi(s);
    if (direct_off == 1)
-      evgl_engine->direct_force_off = 1;
-
-   // Check if Direct Rendering Override Force Off flag is on
-   s = getenv("EVAS_GL_DIRECT_SCISSOR_OFF");
-   if (s) direct_soff = atoi(s);
-   if (direct_soff == 1)
-      evgl_engine->direct_scissor_off = 1;
+     evgl_engine->direct_force_off = 1;
 
    // Check if API Debug mode is on
    s = getenv("EVAS_GL_API_DEBUG");
    if (s) debug_mode = atoi(s);
    if (debug_mode == 1)
-      evgl_engine->api_debug_mode = 1;
+     evgl_engine->api_debug_mode = 1;
 
    // Maint Thread ID (get tid not available in eina thread yet)
    evgl_engine->main_tid = 0;
@@ -1831,7 +1825,7 @@ evgl_direct_rendered()
 }
 
 void
-evgl_direct_img_obj_set(Evas_Object *img, int rot)
+evgl_direct_img_obj_set(Evas_Object *img, int alpha, int rot)
 {
    EVGL_Resource *rsc;
 
@@ -1839,7 +1833,7 @@ evgl_direct_img_obj_set(Evas_Object *img, int rot)
 
    // Normally direct rendering isn't allowed if alpha is on and
    // rotation is not 0.  BUT, if override is on, allow it.
-   if (rot!=0)
+   if ((alpha) || (rot!=0))
      {
         if (evgl_engine->direct_override)
            rsc->direct_img_obj = img;
@@ -1866,29 +1860,6 @@ evgl_api_get()
    _evgl_api_get(&gl_funcs, evgl_engine->api_debug_mode);
 
    return &gl_funcs;
-}
-
-
-void
-evgl_direct_img_clip_set(int c, int x, int y, int w, int h)
-{
-   EVGL_Resource *rsc;
-
-   if (!(rsc=_evgl_tls_resource_get())) return NULL;
-
-   rsc->master_clip = c;
-   rsc->clip[0] = x;
-   rsc->clip[1] = y;
-   rsc->clip[2] = w;
-   rsc->clip[3] = h;
-
-}
-
-void
-evgl_direct_override_get(int *override, int *force_off)
-{
-   *override  = evgl_engine->direct_override;
-   *force_off = evgl_engine->direct_force_off;
 }
 
 //-----------------------------------------------------//
