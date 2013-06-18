@@ -114,6 +114,7 @@ map_example_02.c \
 map_example_03.c \
 mapbuf_example.c \
 menu_example_01.c \
+naviframe_example.c \
 notify_example_01.c \
 panes_example.c \
 panel_example_01.c \
@@ -252,6 +253,7 @@ map_example_02 \
 map_example_03 \
 mapbuf_example \
 menu_example_01 \
+naviframe_example \
 notify_example_01 \
 panes_example \
 panel_example_01 \

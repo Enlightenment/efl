@@ -73,6 +73,9 @@
  * What happens is that the topmost item of a naviframe will be the
  * widget's target layout, when accessed directly. Items lying below
  * the top one can be interacted with this way.
+ *
+ * Here is an example on its usage:
+ * @li @ref naviframe_example
  */
 
 /**
