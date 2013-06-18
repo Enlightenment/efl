@@ -116,16 +116,18 @@ _evas_object_box_accessor_free(Evas_Object_Box_Accessor *it)
    free(it);
 }
 
-static void
-_on_child_resize(void *data, Evas *evas EINA_UNUSED, Evas_Object *o EINA_UNUSED, void *einfo EINA_UNUSED)
+static Eina_Bool
+_on_child_resize(void *data, Eo *o EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *einfo EINA_UNUSED)
 {
    Evas_Object *box = data;
    EVAS_OBJECT_BOX_DATA_GET_OR_RETURN(box, priv);
    if (!priv->layouting) evas_object_smart_changed(box);
+
+   return EO_CALLBACK_CONTINUE;
 }
 
-static void
-_on_child_del(void *data, Evas *evas EINA_UNUSED, Evas_Object *o, void *einfo EINA_UNUSED)
+static Eina_Bool
+_on_child_del(void *data, Eo *o, const Eo_Event_Description *desc EINA_UNUSED, void *einfo EINA_UNUSED)
 {
    Evas_Object *box = data;
 
@@ -134,10 +136,12 @@ _on_child_del(void *data, Evas *evas EINA_UNUSED, Evas_Object *o, void *einfo EI
    if (!ret)
      ERR("child removal failed");
    evas_object_smart_changed(box);
+
+   return EO_CALLBACK_CONTINUE;
 }
 
-static void
-_on_child_hints_changed(void *data, Evas *evas EINA_UNUSED, Evas_Object *o EINA_UNUSED, void *einfo EINA_UNUSED)
+static Eina_Bool
+_on_child_hints_changed(void *data, Eo *o EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *einfo EINA_UNUSED)
 {
    Evas_Object *box = data;
    EVAS_OBJECT_BOX_DATA_GET_OR_RETURN(box, priv);
@@ -145,6 +149,8 @@ _on_child_hints_changed(void *data, Evas *evas EINA_UNUSED, Evas_Object *o EINA_
 // to change their hints evenr WHILE being laid out. so comment this out.
 //   if (!priv->layouting)
      evas_object_smart_changed(box);
+
+   return EO_CALLBACK_CONTINUE;
 }
 
 static void
@@ -168,15 +174,17 @@ _evas_object_box_option_new(Evas_Object *o, Evas_Object_Box_Data *priv EINA_UNUS
    return opt;
 }
 
+static const Eo_Callback_Array_Item evas_object_box_callbacks[] = {
+  { EVAS_OBJECT_EVENT_RESIZE, _on_child_resize },
+  { EVAS_OBJECT_EVENT_FREE, _on_child_del },
+  { EVAS_OBJECT_EVENT_CHANGED_SIZE_HINTS, _on_child_hints_changed },
+  { NULL, NULL }
+};
+
 static void
-_evas_object_box_child_callbacks_unregister(Evas_Object *obj)
+_evas_object_box_child_callbacks_unregister(Evas_Object *obj, Evas_Object *parent)
 {
-   evas_object_event_callback_del
-     (obj, EVAS_CALLBACK_RESIZE, _on_child_resize);
-   evas_object_event_callback_del
-     (obj, EVAS_CALLBACK_FREE, _on_child_del);
-   evas_object_event_callback_del
-     (obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _on_child_hints_changed);
+   eo_do(obj, eo_event_callback_array_del(evas_object_box_callbacks, parent));
 }
 
 static Evas_Object_Box_Option *
@@ -184,12 +192,7 @@ _evas_object_box_option_callbacks_register(Evas_Object *o, Evas_Object_Box_Data 
 {
    Evas_Object *obj = opt->obj;
 
-   evas_object_event_callback_add
-     (obj, EVAS_CALLBACK_RESIZE, _on_child_resize, o);
-   evas_object_event_callback_add
-     (obj, EVAS_CALLBACK_FREE, _on_child_del, o);
-   evas_object_event_callback_add
-     (obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _on_child_hints_changed, o);
+   eo_do(obj, eo_event_callback_array_add(evas_object_box_callbacks, o));
 
    return opt;
 }
@@ -458,7 +461,7 @@ _smart_del(Eo *o, void *_pd, va_list *list EINA_UNUSED)
      {
         Evas_Object_Box_Option *opt = l->data;
 
-        _evas_object_box_child_callbacks_unregister(opt->obj);
+        _evas_object_box_child_callbacks_unregister(opt->obj, o);
         eo_do(o, evas_obj_box_internal_option_free(opt));
         l = eina_list_remove_list(l, l);
      }
@@ -2032,7 +2035,7 @@ _box_remove(Eo *o, void *_pd EINA_UNUSED, va_list *list)
 
    if (obj)
      {
-        _evas_object_box_child_callbacks_unregister(obj);
+        _evas_object_box_child_callbacks_unregister(obj, o);
         evas_object_smart_member_del(obj);
         evas_object_smart_changed(o);
         if (result) *result = EINA_TRUE;
@@ -2060,7 +2063,7 @@ _box_remove_at(Eo *o, void *_pd EINA_UNUSED, va_list *list)
 
    if (obj)
      {
-        _evas_object_box_child_callbacks_unregister(obj);
+        _evas_object_box_child_callbacks_unregister(obj, o);
         evas_object_smart_member_del(obj);
         evas_object_smart_changed(o);
         if (result) *result = EINA_TRUE;
@@ -2094,7 +2097,7 @@ _box_remove_all(Eo *o, void *_pd, va_list *list)
         eo_do(o, evas_obj_box_internal_remove(opt->obj, &obj));
         if (obj)
           {
-             _evas_object_box_child_callbacks_unregister(obj);
+             _evas_object_box_child_callbacks_unregister(obj, o);
              evas_object_smart_member_del(obj);
              if (clear)
                evas_object_del(obj);
