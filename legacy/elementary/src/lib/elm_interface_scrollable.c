@@ -2724,18 +2724,20 @@ _elm_scroll_post_event_move(void *data,
                             Evas *e __UNUSED__)
 {
    Elm_Scrollable_Smart_Interface_Data *sid = data;
+   Eina_Bool horiz, vert;
    int start = 0;
 
    if (!sid->down.want_dragged) return EINA_TRUE;
 
+   elm_widget_parents_bounce_get(sid->obj, &horiz, &vert);
    if (sid->down.hold_parent)
      {
-        if ((sid->down.dir_x) &&
+        if ((sid->down.dir_x) && horiz &&
             !_elm_scroll_can_scroll(sid, sid->down.hdir))
           {
              sid->down.dir_x = EINA_FALSE;
           }
-        if ((sid->down.dir_y) &&
+        if ((sid->down.dir_y) && vert &&
             !_elm_scroll_can_scroll(sid, sid->down.vdir))
           {
              sid->down.dir_y = EINA_FALSE;

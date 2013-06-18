@@ -3473,6 +3473,41 @@ _elm_widget_focus_region_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    *ret = int_ret;
 }
 
+EAPI void
+elm_widget_parents_bounce_get(Evas_Object *obj,
+                              Eina_Bool *horiz, Eina_Bool *vert)
+{
+   ELM_WIDGET_CHECK(obj);
+   eo_do((Eo *)obj, elm_wdg_parents_bounce_get(horiz, vert));
+}
+
+static void
+_elm_widget_parents_bounce_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+{
+   Eina_Bool *horiz = va_arg(*list, Eina_Bool *);
+   Eina_Bool *vert = va_arg(*list, Eina_Bool *);
+
+   Evas_Object *parent_obj = obj;
+   Eina_Bool h, v;
+
+   *horiz = EINA_FALSE;
+   *vert = EINA_FALSE;
+
+   do
+     {
+        parent_obj = elm_widget_parent_get(parent_obj);
+        if ((!parent_obj) || (!_elm_widget_is(parent_obj))) break;
+
+        if (_elm_scrollable_is(parent_obj))
+          {
+             eo_do(parent_obj, elm_scrollable_interface_bounce_allow_get(&h, &v));
+             if (h) *horiz = EINA_TRUE;
+             if (v) *vert = EINA_TRUE;
+          }
+     }
+   while (parent_obj);
+}
+
 EAPI Eina_List *
 elm_widget_scrollable_children_get(Evas_Object *obj)
 {
@@ -5988,6 +6023,8 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_SHOW_REGION_SET), _elm_widget_show_region_set),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_SHOW_REGION_GET), _elm_widget_show_region_get),
 
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_PARENTS_BOUNCE_GET), _elm_widget_parents_bounce_get),
+
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_SCROLLABLE_CHILDREN_GET), _elm_widget_scrollable_children_get),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_SCALE_SET), _elm_widget_scale_set),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_SCALE_GET), _elm_widget_scale_get),
@@ -6131,6 +6168,8 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_DISABLED_GET, "description here"),
      EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_SHOW_REGION_SET, "description here"),
      EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_SHOW_REGION_GET, "description here"),
+
+     EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_PARENTS_BOUNCE_GET, "Get the whether parents have a bounce."),
 
      EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_SCROLLABLE_CHILDREN_GET, "description here"),
      EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_SCALE_SET, "description here"),

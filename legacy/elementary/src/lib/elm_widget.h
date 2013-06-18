@@ -664,6 +664,7 @@ EAPI Eina_Bool        elm_widget_disabled_get(const Evas_Object *obj);
 EAPI void             elm_widget_show_region_set(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, Eina_Bool forceshow);
 EAPI void             elm_widget_show_region_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
 EAPI Eina_Bool        elm_widget_focus_region_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
+EAPI void             elm_widget_parents_bounce_get(Evas_Object *obj, Eina_Bool *horiz, Eina_Bool *vert);
 EAPI void             elm_widget_scroll_hold_push(Evas_Object *obj);
 EAPI void             elm_widget_scroll_hold_pop(Evas_Object *obj);
 EAPI int              elm_widget_scroll_hold_get(const Evas_Object *obj);
@@ -1091,6 +1092,8 @@ enum
    ELM_WIDGET_SUB_ID_DISABLED_GET,
    ELM_WIDGET_SUB_ID_SHOW_REGION_SET,
    ELM_WIDGET_SUB_ID_SHOW_REGION_GET,
+
+   ELM_WIDGET_SUB_ID_PARENTS_BOUNCE_GET,
 
    ELM_WIDGET_SUB_ID_SCROLLABLE_CHILDREN_GET,
    ELM_WIDGET_SUB_ID_SCALE_SET,
@@ -1769,6 +1772,18 @@ typedef void * (*list_data_get_func_type)(const Eina_List * l);
  *
  */
 #define elm_wdg_show_region_get(x, y, w, h) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_SHOW_REGION_GET), EO_TYPECHECK(Evas_Coord *, x), EO_TYPECHECK(Evas_Coord *, y), EO_TYPECHECK(Evas_Coord *, w), EO_TYPECHECK(Evas_Coord *, h)
+
+/**
+ * @def elm_wdg_parents_bounce_get
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[out] horiz
+ * @param[out] vert
+ *
+ */
+#define elm_wdg_parents_bounce_get(horiz, vert) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_PARENTS_BOUNCE_GET), EO_TYPECHECK(Eina_Bool *, horiz), EO_TYPECHECK(Eina_Bool *, vert)
 
 /**
  * @def elm_wdg_scrollable_children_get
