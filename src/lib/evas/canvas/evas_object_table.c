@@ -245,38 +245,42 @@ _evas_object_table_option_del(Evas_Object *o)
    return evas_object_data_del(o, EVAS_OBJECT_TABLE_OPTION_KEY);
 }
 
-static void
-_on_child_del(void *data, Evas *evas EINA_UNUSED, Evas_Object *child, void *einfo EINA_UNUSED)
+static Eina_Bool
+_on_child_del(void *data, Eo *child, const Eo_Event_Description *desc EINA_UNUSED, void *einfo EINA_UNUSED)
 {
    Evas_Object *table = data;
    evas_object_table_unpack(table, child);
+
+   return EO_CALLBACK_CONTINUE;
 }
 
-static void
-_on_child_hints_changed(void *data, Evas *evas EINA_UNUSED, Evas_Object *child EINA_UNUSED, void *einfo EINA_UNUSED)
+static Eina_Bool
+_on_child_hints_changed(void *data, Eo *child EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *einfo EINA_UNUSED)
 {
    Evas_Object *table = data;
-   EVAS_OBJECT_TABLE_DATA_GET_OR_RETURN(table, priv);
+   EVAS_OBJECT_TABLE_DATA_GET_OR_RETURN_VAL(table, priv, EO_CALLBACK_CONTINUE);
    _evas_object_table_cache_invalidate(priv);
    evas_object_smart_changed(table);
+
+   return EO_CALLBACK_CONTINUE;
 }
+
+static const Eo_Callback_Array_Item evas_object_table_callbacks[] = {
+  { EVAS_OBJECT_EVENT_DEL, _on_child_del },
+  { EVAS_OBJECT_EVENT_CHANGED_SIZE_HINTS, _on_child_hints_changed },
+  { NULL, NULL }
+};
 
 static void
 _evas_object_table_child_connect(Evas_Object *o, Evas_Object *child)
 {
-   evas_object_event_callback_add
-     (child, EVAS_CALLBACK_DEL, _on_child_del, o);
-   evas_object_event_callback_add
-     (child, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _on_child_hints_changed, o);
+   eo_do(child, eo_event_callback_array_add(evas_object_table_callbacks, o));
 }
 
 static void
 _evas_object_table_child_disconnect(Evas_Object *o, Evas_Object *child)
 {
-   evas_object_event_callback_del_full
-     (child, EVAS_CALLBACK_DEL, _on_child_del, o);
-   evas_object_event_callback_del_full
-     (child, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _on_child_hints_changed, o);
+   eo_do(child, eo_event_callback_array_del(evas_object_table_callbacks, o));
 }
 
 static void

@@ -1,6 +1,6 @@
 2013-06-18  Cedric Bail
 
-	* Evas: Use Eo array of callbacks to reduce edje memory foot print of Evas_Object_Box.
+	* Evas: Use Eo array of callbacks to reduce edje memory foot print of Evas_Object_Box and Evas_Object_Table.
 
 2013-06-17  Sung W. Park (sung_)
 
