@@ -107,10 +107,22 @@ _server_connect(void)
    len = strlen(remote.sun_path) + sizeof(remote.sun_family);
    for (;;)
      {
+        errno = 0;
         if (connect(s, (struct sockaddr *)&remote, len) != -1) break;
+        if (errno == EACCES)
+          {
+             ERR("not authorized to connect to cserve2!");
+             return EINA_FALSE;
+          }
         ERR("cserve2 connect failed: [%d] %s. Retrying...", errno, strerror(errno));
 
-        usleep(1000);
+        errno = 0;
+        usleep(10000);
+        if (errno == EINTR)
+          {
+             WRN("received interruption while trying to connect to cserve2!");
+             return EINA_FALSE;
+          }
 
         /* FIXME: Here we should identify the error, maybe signal the daemon manager
          * that we need cserve2 to [re]start or just quit and return false.
