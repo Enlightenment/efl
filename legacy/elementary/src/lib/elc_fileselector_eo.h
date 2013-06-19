@@ -25,6 +25,8 @@ enum
    ELM_OBJ_FILESELECTOR_SUB_ID_MODE_GET,
    ELM_OBJ_FILESELECTOR_SUB_ID_SELECTED_GET,
    ELM_OBJ_FILESELECTOR_SUB_ID_SELECTED_SET,
+   ELM_OBJ_FILESELECTOR_SUB_ID_MIME_TYPES_FILTER_APPEND,
+   ELM_OBJ_FILESELECTOR_SUB_ID_FILTERS_CLEAR,
    ELM_OBJ_FILESELECTOR_SUB_ID_LAST
 };
 
@@ -206,6 +208,32 @@ enum
  * @see elm_fileselector_selected_set
  */
 #define elm_obj_fileselector_selected_set(_path, ret) ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_SELECTED_SET), EO_TYPECHECK(const char *, _path), EO_TYPECHECK(Eina_Bool *, ret)
+
+/**
+ * @def elm_obj_fileselector_mime_type_filter_append
+ * @since 1.8
+ *
+ * Append mime type based filter into filter list
+ *
+ * @param[in] mime_types
+ * @param[in] filter_name
+ * @param[out] ret
+ *
+ * @see elm_fileselector_mime_type_filter_append
+ */
+#define elm_obj_fileselector_mime_types_filter_append(mime_types, filter_name, ret) ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_MIME_TYPES_FILTER_APPEND), EO_TYPECHECK(const char *, mime_types), EO_TYPECHECK(const char *, filter_name), EO_TYPECHECK(Eina_Bool *, ret)
+
+/**
+ * @def elm_obj_fileselector_filters_clear
+ * @since 1.8
+ *
+ * Clear all filters registered
+ *
+ *
+ * @see elm_fileselector_mime_type_filter_append
+ */
+#define elm_obj_fileselector_filters_clear() ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_FILTERS_CLEAR)
+
 /**
  * @}
  */

@@ -7,7 +7,8 @@
  *  - double click to choose a file
  *  - multi-selection
  *  - make variable/function names that are sensible
- *  - Filter support
+ *  - Pattern Filter support
+ *  - Custom Filter support
  */
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
@@ -127,6 +128,7 @@ _elm_fileselector_smart_theme(Eo *obj, void *_pd, va_list *list)
    SWALLOW("elm.swallow.path", sd->path_entry);
 
    snprintf(buf, sizeof(buf), "fileselector/actions/%s", style);
+   SWALLOW("elm.swallow.filters", sd->filter_hoversel);
    SWALLOW("elm.swallow.cancel", sd->cancel_button);
    SWALLOW("elm.swallow.ok", sd->ok_button);
 
@@ -253,6 +255,50 @@ _anchors_do(Evas_Object *obj,
    elm_object_text_set(sd->path_entry, buf);
 }
 
+static Eina_Bool
+_mime_type_matched(const char *mime_filter, const char *mime_type)
+{
+   int i = 0;
+
+   while (mime_filter[i] != '\0')
+     {
+        if (mime_filter[i] != mime_type[i])
+          {
+             if (mime_filter[i] == '*' && mime_filter[i + 1] == '\0')
+               return EINA_TRUE;
+
+             return EINA_FALSE;
+          }
+        i++;
+     }
+
+   if (mime_type[i] != '\0') return EINA_FALSE;
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_check_filters(const Elm_Fileselector_Filter *filter, const char *file_name)
+{
+   const char *mime_type = NULL;
+   int i;
+
+   if (!filter) return EINA_TRUE;
+
+#ifdef ELM_EFREET
+   mime_type = efreet_mime_type_get(file_name);
+#endif
+
+   if (!mime_type) return EINA_FALSE;
+
+   for (i = 0; filter->mime_types[i]; ++i)
+     {
+        if (_mime_type_matched(filter->mime_types[i], mime_type))
+          return EINA_TRUE;
+     }
+   return EINA_FALSE;
+}
+
 #ifdef HAVE_EIO
 static Eina_Bool
 _ls_filter_cb(void *data,
@@ -265,6 +311,9 @@ _ls_filter_cb(void *data,
      return EINA_FALSE;
 
    if (lreq->sd->only_folder && info->type != EINA_FILE_DIR)
+     return EINA_FALSE;
+
+   if (info->type != EINA_FILE_DIR && !_check_filters(lreq->sd->current_filter, info->path))
      return EINA_FALSE;
 
    return EINA_TRUE;
@@ -452,7 +501,7 @@ _populate(Evas_Object *obj,
         filename = eina_stringshare_add(file->path);
         if (file->type == EINA_FILE_DIR)
           dirs = eina_list_append(dirs, filename);
-        else if (!sd->only_folder)
+        else if (!sd->only_folder && _check_filters(sd->current_filter, filename))
           files = eina_list_append(files, filename);
      }
    eina_iterator_free(it);
@@ -674,6 +723,21 @@ _home(void *data,
 }
 
 static void
+_current_filer_changed(void *data,
+                       Evas_Object *obj,
+                       void *event_info __UNUSED__)
+{
+   Elm_Fileselector_Filter *filter = data;
+
+   if (filter->sd->current_filter == filter) return;
+
+   elm_object_text_set(obj, filter->filter_name);
+   filter->sd->current_filter = filter;
+
+   _populate(filter->sd->obj, filter->sd->path, NULL);
+}
+
+static void
 _ok(void *data,
     Evas_Object *obj __UNUSED__,
     void *event_info __UNUSED__)
@@ -881,6 +945,7 @@ _elm_fileselector_smart_del(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_U
    int i;
 
    Elm_Fileselector_Smart_Data *sd = _pd;
+   Elm_Fileselector_Filter *filter;
 
    for (i = 0; i < ELM_FILE_LAST; ++i)
      {
@@ -891,6 +956,16 @@ _elm_fileselector_smart_del(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_U
 #ifdef HAVE_EIO
    if (sd->current) eio_file_cancel(sd->current);
 #endif
+
+   EINA_LIST_FREE(sd->filter_list, filter)
+     {
+        eina_stringshare_del(filter->filter_name);
+
+        free(filter->mime_types[0]);
+        free(filter->mime_types);
+
+        free(filter);
+     }
 
    sd->files_list = NULL;
    sd->files_grid = NULL;
@@ -1265,6 +1340,93 @@ clean_up:
    free(path);
 }
 
+EAPI Eina_Bool
+elm_fileselector_mime_types_filter_append(Evas_Object *obj, const char *mime_type, const char *filter_name)
+{
+   ELM_FILESELECTOR_CHECK(obj) EINA_FALSE;
+   Eina_Bool ret = EINA_FALSE;
+   eo_do(obj, elm_obj_fileselector_mime_types_filter_append(mime_type, filter_name, &ret));
+   return ret;
+}
+
+static void
+_mime_types_filter_append(Eo *obj, void *_pd, va_list *list)
+{
+   const char *mime_types = va_arg(*list, const char *);
+   const char *filter_name = va_arg(*list, const char *);
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+
+   Elm_Fileselector_Smart_Data *sd;
+   Elm_Fileselector_Filter *ff;
+   Eina_Bool int_ret = EINA_FALSE;
+   Eina_Bool need_theme = EINA_FALSE;
+
+   if (!mime_types) goto end;
+
+   sd = _pd;
+
+   ff = malloc(sizeof(Elm_Fileselector_Filter));
+   if (!ff) goto end;
+
+   if (filter_name)
+     ff->filter_name = eina_stringshare_add(filter_name);
+   else
+     ff->filter_name = eina_stringshare_add(mime_types);
+
+   ff->sd = sd;
+
+   ff->mime_types = eina_str_split(mime_types, ",", 0);
+
+   if (!sd->filter_list)
+     {
+        sd->current_filter = ff;
+        sd->filter_hoversel = elm_hoversel_add(obj);
+        elm_object_text_set(sd->filter_hoversel, ff->filter_name);
+        need_theme = EINA_TRUE;
+     }
+   elm_hoversel_item_add(sd->filter_hoversel, ff->filter_name, NULL, ELM_ICON_NONE, _current_filer_changed, ff);
+
+   sd->filter_list = eina_list_append(sd->filter_list, ff);
+
+   _populate(obj, sd->path, NULL);
+
+   if (need_theme)
+     eo_do(obj, elm_wdg_theme(NULL));
+
+   int_ret = EINA_TRUE;
+
+end:
+   if (ret) *ret = int_ret;
+}
+
+EAPI void
+elm_fileselector_filters_clear(Evas_Object *obj)
+{
+   ELM_FILESELECTOR_CHECK(obj);
+   eo_do(obj, elm_obj_fileselector_filters_clear());
+}
+
+static void
+_filters_clear(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+{
+   Elm_Fileselector_Smart_Data *sd = _pd;
+   Elm_Fileselector_Filter *filter;
+
+   EINA_LIST_FREE(sd->filter_list, filter)
+     {
+        eina_stringshare_del(filter->filter_name);
+
+        free(filter->mime_types[0]);
+        free(filter->mime_types);
+
+        free(filter);
+     }
+
+   ELM_SAFE_FREE(sd->filter_hoversel, evas_object_del);
+
+   _populate(obj, sd->path, NULL);
+}
+
 static void
 _elm_fileselector_smart_focus_next_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
 {
@@ -1308,6 +1470,8 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_MODE_GET), _mode_get),
         EO_OP_FUNC(ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_SELECTED_GET), _selected_get),
         EO_OP_FUNC(ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_SELECTED_SET), _selected_set),
+        EO_OP_FUNC(ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_MIME_TYPES_FILTER_APPEND), _mime_types_filter_append),
+        EO_OP_FUNC(ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_FILTERS_CLEAR), _filters_clear),
         EO_OP_FUNC_SENTINEL
    };
    eo_class_funcs_set(klass, func_desc);
@@ -1329,6 +1493,8 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_OBJ_FILESELECTOR_SUB_ID_MODE_GET, "Get the mode in which a given file selector widget is displaying (layouting) file system entries in its view."),
      EO_OP_DESCRIPTION(ELM_OBJ_FILESELECTOR_SUB_ID_SELECTED_GET, "Get the currently selected item's (full) path, in the given file selector widget."),
      EO_OP_DESCRIPTION(ELM_OBJ_FILESELECTOR_SUB_ID_SELECTED_SET, "Set, programmatically, the currently selected file/directory in the given file selector widget."),
+     EO_OP_DESCRIPTION(ELM_OBJ_FILESELECTOR_SUB_ID_MIME_TYPES_FILTER_APPEND, "Append mime type filter"),
+     EO_OP_DESCRIPTION(ELM_OBJ_FILESELECTOR_SUB_ID_FILTERS_CLEAR, "Clear filters"),
      EO_OP_DESCRIPTION_SENTINEL
 };
 static const Eo_Class_Description class_desc = {

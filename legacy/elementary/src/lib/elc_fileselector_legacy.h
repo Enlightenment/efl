@@ -242,3 +242,36 @@ EAPI Eina_Bool             elm_fileselector_selected_set(Evas_Object *obj, const
  * @ingroup Fileselector
  */
 EAPI const char           *elm_fileselector_selected_get(const Evas_Object *obj);
+
+/**
+ * Append mime types filter into filter list
+ *
+ * @param obj The file selector object
+ * @param mime_types comma(,) separated mime types to be allowed.
+ * @param filter_name The name to be displayed, @p mime_types will be displayed if NULL
+ * @return @c EINA_TRUE on success, @c EINA_FALSE on failure.
+ *
+ * @note a sub type of mime can be asterisk(*)
+ * @note mime type filter is only working with efreet now.
+ * @note first added filter will be the default filter at the moment.
+ *
+ * @see elm_need_efreet()
+ * @see elm_fileselector_filters_clear()
+ *
+ * @ingroup Fileselector
+ */
+EAPI Eina_Bool             elm_fileselector_mime_types_filter_append(Evas_Object *obj, const char *mime_types, const char *filter_name);
+
+/**
+ * Clear all filters registered
+ *
+ * @param obj The file selector object
+ *
+ * @note If filter list is empty, file selector assume that all
+ * files are matched.
+ *
+ * @see elm_fileselector_mime_type_filter_append()
+ *
+ * @ingroup Fileselector
+ */
+EAPI void                  elm_fileselector_filters_clear(Evas_Object *obj);

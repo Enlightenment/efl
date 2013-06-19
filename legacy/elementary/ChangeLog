@@ -1450,3 +1450,7 @@
 2013-06-23  ChunEon Park (Hermet)
 
         * Apply current ctxpopup style to the list in the ctxpopup.
+
+2013-06-24  Ryuan Choi (ryuan)
+
+        * fileselector : Add support mime type filter

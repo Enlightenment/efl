@@ -110,8 +110,25 @@ group { name: "elm/fileselector/base/default";
             align: 0.5 1.0;
             fixed: 1 1;
             rel1 {
-               to_y: "elm.swallow.ok";
+               to_y: "elm.swallow.filters";
                relative: 0.0 0.0;
+               offset: 0 -1;
+            }
+            rel2 {
+               to_y: "elm.swallow.filters";
+               relative: 1.0 0.0;
+               offset: -1 -1;
+            }
+         }
+      }
+      part { name: "elm.swallow.filters";
+         type: SWALLOW;
+         description { state: "default" 0.0;
+            align: 1.0 1.0;
+            fixed: 1 1;
+            rel1 {
+               to_y: "elm.swallow.ok";
+               relative: 1.0 0.0;
                offset: 0 -1;
             }
             rel2 {

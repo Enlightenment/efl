@@ -14,6 +14,8 @@
  * widgets which are a fileselector with some more logic on top.
  */
 
+typedef struct _Elm_Fileselector_Filter Elm_Fileselector_Filter;
+
 /**
  * Base layout smart data extended with fileselector instance data.
  */
@@ -22,24 +24,28 @@ struct _Elm_Fileselector_Smart_Data
 {
    EINA_REFCOUNT;
 
-   Evas_Object          *obj;
-   Evas_Object          *path_entry;
-   Evas_Object          *files_list;
-   Evas_Object          *files_grid;
-   Evas_Object          *up_button;
-   Evas_Object          *home_button;
-   Evas_Object          *spinner;
-   Evas_Object          *ok_button;
-   Evas_Object          *cancel_button;
+   Evas_Object             *obj;
+   Evas_Object             *path_entry;
+   Evas_Object             *files_list;
+   Evas_Object             *files_grid;
+   Evas_Object             *up_button;
+   Evas_Object             *home_button;
+   Evas_Object             *spinner;
+   Evas_Object             *filter_hoversel;
+   Evas_Object             *ok_button;
+   Evas_Object             *cancel_button;
 
-   const char           *path;
-   const char           *selection;
-   Ecore_Idler          *sel_idler;
+   Eina_List               *filter_list;
+   Elm_Fileselector_Filter *current_filter;
 
-   const char           *path_separator;
+   const char              *path;
+   const char              *selection;
+   Ecore_Idler             *sel_idler;
+
+   const char              *path_separator;
 
 #ifdef HAVE_EIO
-   Eio_File             *current;
+   Eio_File                *current;
 #endif
 
    Elm_Fileselector_Mode mode;
@@ -71,6 +77,14 @@ typedef enum {
    ELM_FILE_UNKNOW = 2,
    ELM_FILE_LAST
 } Elm_Fileselector_Type;
+
+struct _Elm_Fileselector_Filter
+{
+   const char                   *filter_name;
+   Elm_Fileselector_Smart_Data  *sd;
+
+   char                        **mime_types;
+};
 
 /**
  * @}

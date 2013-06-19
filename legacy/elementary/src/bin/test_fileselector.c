@@ -141,6 +141,7 @@ test_fileselector(void *data       __UNUSED__,
    setlocale(LC_ALL, "");
 
    elm_need_ethumb();
+   elm_need_efreet();
 
    win = elm_win_util_standard_add("fileselector", "File Selector");
    elm_win_autodel_set(win, EINA_TRUE);
@@ -157,6 +158,9 @@ test_fileselector(void *data       __UNUSED__,
    elm_fileselector_expandable_set(fs, EINA_FALSE);
    /* start the fileselector in the home dir */
    elm_fileselector_path_set(fs, getenv("HOME"));
+   elm_fileselector_mime_types_filter_append(fs, "text/*", "Text Files");
+   elm_fileselector_mime_types_filter_append(fs, "image/*", "Image Files");
+
    /* allow fs to expand in x & y */
    evas_object_size_hint_weight_set(fs, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(fs, EVAS_HINT_FILL, EVAS_HINT_FILL);
