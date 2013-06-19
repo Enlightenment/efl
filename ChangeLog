@@ -10,6 +10,10 @@
 
 	* Evas: optimized path for when map use the same color for all corner.
 
+2013-06-19  Christophe Sadoine
+
+	* Evil: Added evil_rename function, a wrapper around rename().
+
 2013-06-18  Cedric Bail
 
 	* Evas: Use Eo array of callbacks to reduce edje memory foot print of Evas_Object_Box and Evas_Object_Table.

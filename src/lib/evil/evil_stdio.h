@@ -204,8 +204,26 @@ EAPI int evil_fclose_native(FILE *stream);
 
 
 /**
- * @}
+ * @brief Emulate the rename() function on Windows.
+ *
+ * @param src The old pathname.
+ * @param dst The new pathname.
+ * @return 0 on success, -1 otherwise.
+ *
+ * This function emulates the POSIX rename() function on Windows.
+ * The difference with the POSIX function is that the rename() function
+ * on windows fails if the destination exists.
+ *
+ * @since 1.8
  */
+EAPI int evil_rename(const char *src, const char *dst);
+
+/**
+ * @def rename(src, dest)
+ *
+ * Wrapper around evil_rename().
+ */
+# define rename(src, dst) evil_rename(src, dst)
 
 
 #endif /* __EVIL_STDIO_H__ */

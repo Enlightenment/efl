@@ -6,7 +6,7 @@
 #include "evil_private.h"
 
 #undef fopen
-
+#undef rename
 
 #ifdef _WIN32_WCE
 
@@ -199,3 +199,30 @@ int evil_fclose_native(FILE *stream)
 }
 
 #endif /* _WIN32_WCE */
+
+int 
+evil_rename(const char *src, const char* dst)
+{
+   struct stat st;
+
+   if (stat(dst, &st) < 0)
+        return rename(src, dst);
+
+   if (stat(src, &st) < 0)
+        return -1;
+
+   if (S_ISDIR(st.st_mode))
+     {
+        rmdir(dst);
+        return rename(src, dst);
+     }
+
+   if (S_ISREG(st.st_mode))
+     {
+        unlink(dst);
+        return rename(src, dst);
+     }
+
+   return -1;
+}
+
