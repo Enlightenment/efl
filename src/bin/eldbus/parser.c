@@ -140,7 +140,10 @@ interface_close(void)
 {
    //its not necessary generate code to FreeDesktop interfaces
    if (!strncmp(iface->name, DBUS_INTERFACE, strlen(DBUS_INTERFACE)))
-     interface_free(iface);
+     {
+        printf("Refusing to generate code for FDO interface; see eldbus_freedesktop.h\n");
+        interface_free(iface);
+     }
    iface = NULL;
 }
 
