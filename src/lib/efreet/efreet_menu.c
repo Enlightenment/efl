@@ -403,37 +403,25 @@ efreet_menu_init(void)
 
     for (i = 0; menu_cbs[i].key; i++)
     {
-        eina_hash_del(efreet_menu_handle_cbs,
-                        menu_cbs[i].key,
-                        NULL);
-        eina_hash_add(efreet_menu_handle_cbs,
+        eina_hash_set(efreet_menu_handle_cbs,
                         menu_cbs[i].key,
                         menu_cbs[i].cb);
     }
     for (i = 0; filter_cbs[i].key; i++)
     {
-        eina_hash_del(efreet_menu_filter_cbs,
-                        filter_cbs[i].key,
-                        NULL);
-        eina_hash_add(efreet_menu_filter_cbs,
+        eina_hash_set(efreet_menu_filter_cbs,
                         filter_cbs[i].key,
                         filter_cbs[i].cb);
     }
     for (i = 0; move_cbs[i].key; i++)
     {
-        eina_hash_del(efreet_menu_move_cbs,
-                        move_cbs[i].key,
-                        NULL);
-        eina_hash_add(efreet_menu_move_cbs,
+        eina_hash_set(efreet_menu_move_cbs,
                         move_cbs[i].key,
                         move_cbs[i].cb);
     }
     for (i = 0; layout_cbs[i].key; i++)
     {
-        eina_hash_del(efreet_menu_layout_cbs,
-                        layout_cbs[i].key,
-                        NULL);
-        eina_hash_add(efreet_menu_layout_cbs,
+        eina_hash_set(efreet_menu_layout_cbs,
                         layout_cbs[i].key,
                         layout_cbs[i].cb);
     }
