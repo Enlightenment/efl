@@ -1135,13 +1135,13 @@ _cserve2_font_source_find(const char *name)
 }
 
 static Font_Entry *
-_cserve2_font_entry_find(const char *name, unsigned int namelen, unsigned int size, unsigned int rend_flags, unsigned int dpi)
+_cserve2_font_entry_find(const char *name, unsigned int size, unsigned int rend_flags, unsigned int dpi)
 {
    Font_Entry tmp_fe;
    Font_Source tmp_fs;
    Font_Entry *fe;
 
-   tmp_fs.key = eina_stringshare_add_length(name, namelen);
+   tmp_fs.key = eina_stringshare_add(name);
    tmp_fe.src = &tmp_fs;
    tmp_fe.size = size;
    tmp_fe.rend_flags = rend_flags;
@@ -1431,19 +1431,18 @@ _file_path_join(const char *path, const char *end)
 }
 
 static Glyphs_Request *
-_glyphs_request_create(Client *client, const char *source, unsigned int sourcelen, const char *name, unsigned int namelen, unsigned int hint, unsigned int rend_flags, unsigned int size, unsigned int dpi, unsigned int *glyphs, unsigned int nglyphs)
+_glyphs_request_create(Client *client, const char *source, const char *name, unsigned int hint, unsigned int rend_flags, unsigned int size, unsigned int dpi, unsigned int *glyphs, unsigned int nglyphs)
 {
    char *fullname;
    Glyphs_Request *req = calloc(1, sizeof(*req));
 
-   if (sourcelen == 0)
+   if (source && !*source)
      source = NULL;
-   if (namelen == 0)
+   if (name && !*name)
      name = NULL;
 
    fullname = _file_path_join(source, name);
-   req->fe = _cserve2_font_entry_find(fullname, strlen(fullname) + 1, size,
-                                      rend_flags, dpi);
+   req->fe = _cserve2_font_entry_find(fullname, size, rend_flags, dpi);
    free(fullname);
    if (!req->fe)
      {
@@ -2258,21 +2257,20 @@ cserve2_cache_image_unload(Client *client, unsigned int client_image_id)
 }
 
 int
-cserve2_cache_font_load(Client *client, const char *source, unsigned int sourcelen, const char *name, unsigned int namelen, unsigned int rend_flags, unsigned int size, unsigned int dpi, unsigned int rid)
+cserve2_cache_font_load(Client *client, const char *source, const char *name, unsigned int rend_flags, unsigned int size, unsigned int dpi, unsigned int rid)
 {
    Reference *ref;
    Font_Source *fs;
    Font_Entry *fe;
    char *fullname;
 
-   if (sourcelen == 0)
+   if (source && !*source)
      source = NULL;
-   if (namelen == 0)
+   if (name && !*name)
      name = NULL;
 
    fullname = _file_path_join(source, name);
-   fe = _cserve2_font_entry_find(fullname, strlen(fullname) + 1, size,
-                                 rend_flags, dpi);
+   fe = _cserve2_font_entry_find(fullname, size, rend_flags, dpi);
    if (fe)
      {
         DBG("found font entry %s, rendflags: %d, size: %d, dpi: %d",
@@ -2311,12 +2309,12 @@ cserve2_cache_font_load(Client *client, const char *source, unsigned int sourcel
         if (source)
           {
              fs->key = eina_stringshare_add(fullname);
-             fs->name = eina_stringshare_add_length(name, namelen);
-             fs->file = eina_stringshare_add_length(source, sourcelen);
+             fs->name = eina_stringshare_add(name);
+             fs->file = eina_stringshare_add(source);
           }
         else
           {
-             fs->file = eina_stringshare_add_length(name, namelen);
+             fs->file = eina_stringshare_add(name);
              fs->key = eina_stringshare_ref(fs->file);
           }
         eina_hash_direct_add(font_sources, fs->key, fs);
@@ -2336,19 +2334,18 @@ cserve2_cache_font_load(Client *client, const char *source, unsigned int sourcel
 }
 
 int
-cserve2_cache_font_unload(Client *client, const char *source, unsigned int sourcelen, const char *name, unsigned int namelen, unsigned int rend_flags, unsigned int size, unsigned int dpi, unsigned int rid EINA_UNUSED)
+cserve2_cache_font_unload(Client *client, const char *source, const char *name, unsigned int rend_flags, unsigned int size, unsigned int dpi, unsigned int rid EINA_UNUSED)
 {
    Font_Entry *fe;
    char *fullname;
 
-   if (sourcelen == 0)
+   if (source && !*source)
      source = NULL;
-   if (namelen == 0)
+   if (name && !*name)
      name = NULL;
 
    fullname = _file_path_join(source, name);
-   fe = _cserve2_font_entry_find(fullname, strlen(fullname) + 1, size,
-                                 rend_flags, dpi);
+   fe = _cserve2_font_entry_find(fullname, size, rend_flags, dpi);
    free(fullname);
 
    if (!fe)
@@ -2363,11 +2360,11 @@ cserve2_cache_font_unload(Client *client, const char *source, unsigned int sourc
 }
 
 int
-cserve2_cache_font_glyphs_load(Client *client, const char *source, unsigned int sourcelen, const char *name, unsigned int namelen, unsigned int hint, unsigned int rend_flags, unsigned int size, unsigned int dpi, unsigned int *glyphs, unsigned int nglyphs, unsigned int rid)
+cserve2_cache_font_glyphs_load(Client *client, const char *source, const char *name, unsigned int hint, unsigned int rend_flags, unsigned int size, unsigned int dpi, unsigned int *glyphs, unsigned int nglyphs, unsigned int rid)
 {
    Glyphs_Request *req;
 
-   req = _glyphs_request_create(client, source, sourcelen, name, namelen,
+   req = _glyphs_request_create(client, source, name,
                                 hint, rend_flags, size, dpi, glyphs, nglyphs);
    if (!req)
      {
@@ -2390,14 +2387,14 @@ cserve2_cache_font_glyphs_load(Client *client, const char *source, unsigned int 
 }
 
 int
-cserve2_cache_font_glyphs_used(Client *client, const char *source, unsigned int sourcelen, const char *name, unsigned int namelen, unsigned int hint, unsigned int rend_flags, unsigned int size, unsigned int dpi, unsigned int *glyphs, unsigned int nglyphs, unsigned int rid EINA_UNUSED)
+cserve2_cache_font_glyphs_used(Client *client, const char *source, const char *name, unsigned int hint, unsigned int rend_flags, unsigned int size, unsigned int dpi, unsigned int *glyphs, unsigned int nglyphs, unsigned int rid EINA_UNUSED)
 {
    Glyphs_Group *gg;
    Eina_List *groups;
    Glyphs_Request *req;
 
    DBG("Received report of used glyphs from client %d", client->id);
-   req = _glyphs_request_create(client, source, sourcelen, name, namelen,
+   req = _glyphs_request_create(client, source, name,
                                 hint, rend_flags, size, dpi, glyphs, nglyphs);
    if (!req)
      {

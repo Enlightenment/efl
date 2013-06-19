@@ -296,10 +296,10 @@ void cserve2_cache_image_load(Client *client, unsigned int client_image_id, unsi
 void cserve2_cache_image_preload(Client *client, unsigned int client_image_id, unsigned int rid);
 void cserve2_cache_image_unload(Client *client, unsigned int client_image_id);
 
-int cserve2_cache_font_load(Client *client, const char *source, unsigned int sourcelen, const char *name, unsigned int namelen, unsigned int rend_flags, unsigned int size, unsigned int dpi, unsigned int rid);
-int cserve2_cache_font_unload(Client *client, const char *source, unsigned int sourcelen, const char *name, unsigned int namelen, unsigned int rend_flags, unsigned int size, unsigned int dpi, unsigned int rid);
-int cserve2_cache_font_glyphs_load(Client *client, const char *source, unsigned int sourcelen, const char *name, unsigned int namelen, unsigned int rend_flags, unsigned int hint, unsigned int size, unsigned int dpi, unsigned int *glyphs, unsigned int nglyphs, unsigned int rid);
-int cserve2_cache_font_glyphs_used(Client *client, const char *source, unsigned int sourcelen, const char *name, unsigned int namelen, unsigned int hint, unsigned int rend_flags, unsigned int size, unsigned int dpi, unsigned int *glyphs, unsigned int nglyphs, unsigned int rid);
+int cserve2_cache_font_load(Client *client, const char *source, const char *name, unsigned int rend_flags, unsigned int size, unsigned int dpi, unsigned int rid);
+int cserve2_cache_font_unload(Client *client, const char *source, const char *name, unsigned int rend_flags, unsigned int size, unsigned int dpi, unsigned int rid);
+int cserve2_cache_font_glyphs_load(Client *client, const char *source, const char *name, unsigned int rend_flags, unsigned int hint, unsigned int size, unsigned int dpi, unsigned int *glyphs, unsigned int nglyphs, unsigned int rid);
+int cserve2_cache_font_glyphs_used(Client *client, const char *source, const char *name, unsigned int hint, unsigned int rend_flags, unsigned int size, unsigned int dpi, unsigned int *glyphs, unsigned int nglyphs, unsigned int rid);
 void cserve2_cache_stats_get(Client *client, unsigned int rid);
 void cserve2_cache_font_debug(Client *client, unsigned int rid);
 

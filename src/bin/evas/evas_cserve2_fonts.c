@@ -270,6 +270,7 @@ _font_slave_load(const void *cmddata, void *data EINA_UNUSED)
      {
         if (!msg->ftdata1)
           cserve2_font_source_ft_free(fsi);
+        ERR("Could not load font '%s' from source '%s'", msg->name, msg->file);
         return NULL;
      }
 
