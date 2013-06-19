@@ -1,19 +1,19 @@
 #include "codegen.h"
 
 #define OBJECT_TAG "node"
-#define OBJECT_TAG_LENGHT strlen(OBJECT_TAG)
+#define OBJECT_TAG_LENGTH strlen(OBJECT_TAG)
 #define INTERFACE_TAG "interface"
-#define INTERFACE_TAG_LENGHT strlen(INTERFACE_TAG)
+#define INTERFACE_TAG_LENGTH strlen(INTERFACE_TAG)
 #define SIGNAL_TAG "signal"
-#define SIGNAL_TAG_LENGHT strlen(SIGNAL_TAG)
+#define SIGNAL_TAG_LENGTH strlen(SIGNAL_TAG)
 #define METHOD_TAG "method"
-#define METHOD_TAG_LENGHT strlen(METHOD_TAG)
+#define METHOD_TAG_LENGTH strlen(METHOD_TAG)
 #define PROPERTY_TAG "property"
-#define PROPERTY_TAG_LENGHT strlen(PROPERTY_TAG)
+#define PROPERTY_TAG_LENGTH strlen(PROPERTY_TAG)
 #define ARG_TAG "arg"
-#define ARG_TAG_LENGHT strlen(ARG_TAG)
+#define ARG_TAG_LENGTH strlen(ARG_TAG)
 #define ANNOTATION_TAG "annotation"
-#define ANNOTATION_TAG_LENGHT strlen(ANNOTATION_TAG)
+#define ANNOTATION_TAG_LENGTH strlen(ANNOTATION_TAG)
 
 //attributes
 #define NAME_ATTR "name"
@@ -407,21 +407,21 @@ static Eina_Bool
 open_tag(const char *content, unsigned length, Eina_Bool is_open_empty, DBus_Object **obj)
 {
    unsigned int i;
-   if (!strncmp(content, OBJECT_TAG, OBJECT_TAG_LENGHT))
+   if (!strncmp(content, OBJECT_TAG, OBJECT_TAG_LENGTH))
      return open_object(content, length, is_open_empty, obj);
-   else if (!strncmp(content, INTERFACE_TAG, INTERFACE_TAG_LENGHT) && *obj)
+   else if (!strncmp(content, INTERFACE_TAG, INTERFACE_TAG_LENGTH) && *obj)
      return open_interface(content, length, is_open_empty, *obj);
-   else if (!strncmp(content, SIGNAL_TAG, SIGNAL_TAG_LENGHT) && iface)
+   else if (!strncmp(content, SIGNAL_TAG, SIGNAL_TAG_LENGTH) && iface)
      return open_signal(content, length, is_open_empty);
-   else if (!strncmp(content, ARG_TAG, ARG_TAG_LENGHT) && iface)
+   else if (!strncmp(content, ARG_TAG, ARG_TAG_LENGTH) && iface)
      return open_arg(content, length);
-   else if (!strncmp(content, ANNOTATION_TAG, ANNOTATION_TAG_LENGHT) && iface)
+   else if (!strncmp(content, ANNOTATION_TAG, ANNOTATION_TAG_LENGTH) && iface)
      return open_annotation(content, length);
-   else if (!strncmp(content, METHOD_TAG, METHOD_TAG_LENGHT) && iface)
+   else if (!strncmp(content, METHOD_TAG, METHOD_TAG_LENGTH) && iface)
      return open_method(content, length, is_open_empty);
-   else if (!strncmp(content, PROPERTY_TAG, PROPERTY_TAG_LENGHT) && iface)
+   else if (!strncmp(content, PROPERTY_TAG, PROPERTY_TAG_LENGTH) && iface)
      return open_property(content, length);
-   else if (!strncmp(content, ANNOTATION_TAG, ANNOTATION_TAG_LENGHT) && iface)
+   else if (!strncmp(content, ANNOTATION_TAG, ANNOTATION_TAG_LENGTH) && iface)
      return EINA_TRUE;
 
    printf("Warning: Tag not handled:\n");
@@ -435,13 +435,13 @@ open_tag(const char *content, unsigned length, Eina_Bool is_open_empty, DBus_Obj
 static Eina_Bool
 close_tag(const char *content)
 {
-   if (!strncmp(content, INTERFACE_TAG, INTERFACE_TAG_LENGHT))
+   if (!strncmp(content, INTERFACE_TAG, INTERFACE_TAG_LENGTH))
      interface_close();
-   if (!strncmp(content, SIGNAL_TAG, SIGNAL_TAG_LENGHT))
+   if (!strncmp(content, SIGNAL_TAG, SIGNAL_TAG_LENGTH))
      signal_close();
-   else if (!strncmp(content, METHOD_TAG, METHOD_TAG_LENGHT))
+   else if (!strncmp(content, METHOD_TAG, METHOD_TAG_LENGTH))
      method_close();
-   else if (!strncmp(content, PROPERTY_TAG, PROPERTY_TAG_LENGHT))
+   else if (!strncmp(content, PROPERTY_TAG, PROPERTY_TAG_LENGTH))
      property = NULL;
 
    return EINA_TRUE;
