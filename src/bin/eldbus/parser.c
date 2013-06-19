@@ -1,19 +1,19 @@
 #include "codegen.h"
 
 #define OBJECT_TAG "node"
-#define OBJECT_TAG_LENGTH strlen(OBJECT_TAG)
+#define OBJECT_TAG_LENGTH sizeof(OBJECT_TAG) - 1
 #define INTERFACE_TAG "interface"
-#define INTERFACE_TAG_LENGTH strlen(INTERFACE_TAG)
+#define INTERFACE_TAG_LENGTH sizeof(INTERFACE_TAG) - 1
 #define SIGNAL_TAG "signal"
-#define SIGNAL_TAG_LENGTH strlen(SIGNAL_TAG)
+#define SIGNAL_TAG_LENGTH sizeof(SIGNAL_TAG) - 1
 #define METHOD_TAG "method"
-#define METHOD_TAG_LENGTH strlen(METHOD_TAG)
+#define METHOD_TAG_LENGTH sizeof(METHOD_TAG) - 1
 #define PROPERTY_TAG "property"
-#define PROPERTY_TAG_LENGTH strlen(PROPERTY_TAG)
+#define PROPERTY_TAG_LENGTH sizeof(PROPERTY_TAG) - 1
 #define ARG_TAG "arg"
-#define ARG_TAG_LENGTH strlen(ARG_TAG)
+#define ARG_TAG_LENGTH sizeof(ARG_TAG) - 1
 #define ANNOTATION_TAG "annotation"
-#define ANNOTATION_TAG_LENGTH strlen(ANNOTATION_TAG)
+#define ANNOTATION_TAG_LENGTH sizeof(ANNOTATION_TAG) - 1
 
 //attributes
 #define NAME_ATTR "name"
