@@ -36,6 +36,9 @@ struct Efreet_Menu_Internal
         const char *name;         /**< Name to use in the menus */
     } name;                       /**< The names for this menu */
 
+    Eina_Hash *efreet_merged_menus; /**< Merged menus */
+    Eina_Hash *efreet_merged_dirs; /**< Merged dirs */
+
     Efreet_Desktop *directory; /**< The directory */
     Eina_List *directories;  /**< All the directories set in the menu file */
 
@@ -156,9 +159,6 @@ Eina_List *efreet_menu_kde_legacy_dirs = NULL; /**< The directories to use for K
 static const char *efreet_tag_menu = NULL;
 static const char *efreet_menu_file = NULL; /**< A menu file set explicityl as default */
 
-static Eina_Hash *efreet_merged_menus = NULL;
-static Eina_Hash *efreet_merged_dirs = NULL;
-
 static Eina_Hash *efreet_menu_handle_cbs = NULL;
 static Eina_Hash *efreet_menu_filter_cbs = NULL;
 static Eina_Hash *efreet_menu_move_cbs = NULL;
@@ -212,7 +212,7 @@ static void efreet_menu_layout_entries_get(Efreet_Menu *entry, Efreet_Menu_Inter
                                             Efreet_Menu_Layout *layout);
 static int efreet_menu_layout_is_empty(Efreet_Menu *entry);
 
-static Efreet_Menu_Internal *efreet_menu_internal_new(void);
+static Efreet_Menu_Internal *efreet_menu_internal_new(Efreet_Menu_Internal *parent);
 static void efreet_menu_internal_free(Efreet_Menu_Internal *internal);
 static void efreet_menu_create_sub_menu_list(Efreet_Menu_Internal *internal);
 static void efreet_menu_create_app_dirs_list(Efreet_Menu_Internal *internal);
@@ -479,9 +479,6 @@ efreet_menu_shutdown(void)
 
     IF_FREE_LIST(efreet_menu_kde_legacy_dirs, eina_stringshare_del);
 
-    IF_FREE_HASH(efreet_merged_menus);
-    IF_FREE_HASH(efreet_merged_dirs);
-
     IF_RELEASE(efreet_tag_menu);
 
     eina_log_domain_unregister(_efreet_menu_log_dom);
@@ -564,15 +561,11 @@ efreet_menu_parse(const char *path)
         return NULL;
     }
 
-    IF_FREE_HASH(efreet_merged_menus);
-    efreet_merged_menus = eina_hash_string_superfast_new(NULL);
-
-    IF_FREE_HASH(efreet_merged_dirs);
-    efreet_merged_dirs = eina_hash_string_superfast_new(NULL);
-
     /* split apart the filename and the path */
-    internal = efreet_menu_internal_new();
+    internal = efreet_menu_internal_new(NULL);
     if (!internal) return NULL;
+    internal->efreet_merged_menus = eina_hash_string_superfast_new(NULL);
+    internal->efreet_merged_dirs = eina_hash_string_superfast_new(NULL);
 
     /* Set default values */
     internal->show_empty = 0;
@@ -614,6 +607,8 @@ efreet_menu_parse(const char *path)
 
     /* layout menu */
     entry = efreet_menu_layout_menu(internal);
+    IF_FREE_HASH(internal->efreet_merged_menus);
+    IF_FREE_HASH(internal->efreet_merged_dirs);
     efreet_menu_internal_free(internal);
     return entry;
 }
@@ -828,7 +823,7 @@ efreet_menu_dump(Efreet_Menu *menu, const char *indent)
  * @brief Allocates and initializes a new Efreet_Menu_Internal structure
  */
 static Efreet_Menu_Internal *
-efreet_menu_internal_new(void)
+efreet_menu_internal_new(Efreet_Menu_Internal *parent)
 {
     Efreet_Menu_Internal *internal;
 
@@ -839,6 +834,12 @@ efreet_menu_internal_new(void)
     internal->inline_limit = -1;
     internal->inline_header = -1;
     internal->inline_alias = -1;
+
+    if (parent)
+    {
+        internal->efreet_merged_menus = parent->efreet_merged_menus;
+        internal->efreet_merged_dirs = parent->efreet_merged_dirs;
+    }
 
     return internal;
 }
@@ -944,7 +945,7 @@ efreet_menu_handle_sub_menu(Efreet_Menu_Internal *parent, Efreet_Xml *xml)
 
     efreet_menu_create_sub_menu_list(parent);
 
-    internal = efreet_menu_internal_new();
+    internal = efreet_menu_internal_new(parent);
     if (!internal) return 0;
     internal->file.path = eina_stringshare_add(parent->file.path);
     if (!efreet_menu_handle_menu(internal, xml))
@@ -1479,12 +1480,12 @@ efreet_menu_merge(Efreet_Menu_Internal *parent, Efreet_Xml *xml, const char *pat
     if (!ecore_file_exists(path)) return 1;
 
     /* don't merge the same path twice */
-    if (eina_hash_find(efreet_merged_menus, path))
+    if (eina_hash_find(parent->efreet_merged_menus, path))
     {
         return 1;
     }
 
-    eina_hash_add(efreet_merged_menus, path, (void *)1);
+    eina_hash_add(parent->efreet_merged_menus, path, (void *)1);
 
     merge_xml = efreet_xml_new(path);
 
@@ -1495,7 +1496,7 @@ efreet_menu_merge(Efreet_Menu_Internal *parent, Efreet_Xml *xml, const char *pat
         return 0;
     }
 
-    internal = efreet_menu_internal_new();
+    internal = efreet_menu_internal_new(parent);
     if (!internal) return 0;
     efreet_menu_path_set(internal, path);
     efreet_menu_handle_menu(internal, merge_xml);
@@ -1554,8 +1555,8 @@ efreet_menu_merge_dir(Efreet_Menu_Internal *parent, Efreet_Xml *xml, const char 
     if (!parent || !xml || !path) return 0;
 
     /* check to see if we've merged this directory already */
-    if (eina_hash_find(efreet_merged_dirs, path)) return 1;
-    eina_hash_add(efreet_merged_dirs, path, (void *)1);
+    if (eina_hash_find(parent->efreet_merged_dirs, path)) return 1;
+    eina_hash_add(parent->efreet_merged_dirs, path, (void *)1);
 
     it = eina_file_direct_ls(path);
     if (!it) return 1;
@@ -1699,7 +1700,7 @@ efreet_menu_handle_legacy_dir_helper(Efreet_Menu_Internal *root,
         return NULL;
     }
 
-    legacy_internal = efreet_menu_internal_new();
+    legacy_internal = efreet_menu_internal_new(parent);
     if (!legacy_internal)
         return NULL;
     legacy_internal->name.internal = eina_stringshare_add(ecore_file_file_get(path));
@@ -2930,7 +2931,7 @@ efreet_menu_resolve_moves(Efreet_Menu_Internal *internal)
 
                 *path = '\0';
 
-                ancestor = efreet_menu_internal_new();
+                ancestor = efreet_menu_internal_new(parent);
                 if (!ancestor) goto error;
                 ancestor->name.internal = eina_stringshare_add(tmp);
 
