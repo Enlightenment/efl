@@ -4349,6 +4349,12 @@ _elm_scroll_page_show(Eo *obj, void *_pd, va_list *list)
    eo_do(sid->obj, elm_scrollable_interface_content_viewport_size_get(&w, &h));
    if (pagenumber_h >= 0) x = sid->pagesize_h * pagenumber_h;
    if (pagenumber_v >= 0) y = sid->pagesize_v * pagenumber_v;
+
+   sid->wx = x;
+   sid->wy = y;
+   sid->ww = w;
+   sid->wh = h;
+
    if (_elm_scroll_content_region_show_internal(obj, &x, &y, w, h))
      eo_do(obj, elm_scrollable_interface_content_pos_set(x, y, EINA_TRUE));
 

@@ -246,6 +246,7 @@ Fixes:
    * Fix colorselector send "changed" signal twice when pressed color bar.
    * Keep the smart members of the naviframe views whenever resize object is changed. This prevents the dangling view objects of the naviframe and keep the layer consistency.
    * In case of scroll in scroll, the child scroller have to bounce if parents don't have a bounce.
+   * Fix elm_scroller_page_show bug. It have to save the wanted values to show the wanted page.
 
 Removals:
 

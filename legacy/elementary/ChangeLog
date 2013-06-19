@@ -1433,3 +1433,7 @@
 2013-06-18  Jaehwan Kim
 
         * In case of scroll in scroll, the child scroller have to bounce if parents don't have a bounce.
+
+2013-06-19  Jaehwan Kim
+
+        * Fix elm_scroller_page_show bug. It have to save the wanted values to show the wanted page.
