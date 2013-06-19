@@ -93,6 +93,7 @@ _font_slave_source_load(const char *file, const char *name)
         error = FT_New_Face(cserve2_ft_lib, file, 0, &(fsi->face));
         if (error)
           {
+             ERR("could not open font file: %s", file);
              free(fsi);
              return NULL;
           }
@@ -106,6 +107,7 @@ _font_slave_source_load(const char *file, const char *name)
         ef = eet_open(file, EET_FILE_MODE_READ);
         if (!ef)
           {
+             ERR("failed to read eet: %s", file);
              free(fsi);
              return NULL;
           }
@@ -113,6 +115,7 @@ _font_slave_source_load(const char *file, const char *name)
         eet_close(ef);
         if (!fdata)
           {
+             ERR("failed to read font from eet: %s:%s", file, name);
              free(fsi);
              return NULL;
           }
@@ -123,6 +126,7 @@ _font_slave_source_load(const char *file, const char *name)
                                    0, &(fsi->face));
         if (error)
           {
+             ERR("failed to load font: %s:%s", file, name);
              free(fsi->data);
              free(fsi);
              return NULL;
@@ -132,6 +136,7 @@ _font_slave_source_load(const char *file, const char *name)
    error = FT_Select_Charmap(fsi->face, ft_encoding_unicode);
    if (error)
      {
+        ERR("could not select unicode charmap for font: %s:%s", file, name);
         FT_Done_Face(fsi->face);
         free(fsi->data);
         free(fsi);
