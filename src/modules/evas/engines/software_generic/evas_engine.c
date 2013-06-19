@@ -1474,15 +1474,19 @@ _draw_thread_map_draw(void *data)
             (m->pts[2 + offset].v == (int)(im->cache_entry.h << FP)) &&
             (m->pts[3 + offset].u == 0) &&
             (m->pts[3 + offset].v == (int)(im->cache_entry.h << FP)) &&
-            (m->pts[0 + offset].col == 0xffffffff) &&
-            (m->pts[1 + offset].col == 0xffffffff) &&
-            (m->pts[2 + offset].col == 0xffffffff) &&
-            (m->pts[3 + offset].col == 0xffffffff))
+            (m->pts[0].col == m->pts[1].col) &&
+            (m->pts[1].col == m->pts[2].col) &&
+            (m->pts[2].col == m->pts[3].col))
           {
+             DATA32 col;
+
              dx = m->pts[0 + offset].x >> FP;
              dy = m->pts[0 + offset].y >> FP;
              dw = (m->pts[2 + offset].x >> FP) - dx;
              dh = (m->pts[2 + offset].y >> FP) - dy;
+
+             col = map->image_ctx.col.col;
+             map->image_ctx.col.col = MUL4_SYM(col, m->pts[0].col);
 
              if (map->smooth)
                evas_common_scale_rgba_in_to_out_clip_cb
@@ -1494,6 +1498,8 @@ _draw_thread_map_draw(void *data)
                  (im, map->surface, &map->image_ctx,
                   0, 0, im->cache_entry.w, im->cache_entry.h,
                   dx, dy, dw, dh, _map_image_sample_draw);
+
+             map->image_ctx.col.col = col;
           }
         else
           {
@@ -1587,12 +1593,17 @@ evas_software_image_map_draw(void *data, void *context, RGBA_Image *surface, RGB
        (m->pts[2 + offset].v == (int)(im->cache_entry.h << FP)) &&
        (m->pts[3 + offset].u == 0) &&
        (m->pts[3 + offset].v == (int)(im->cache_entry.h << FP)) &&
-       (m->pts[0 + offset].col == 0xffffffff) &&
-       (m->pts[1 + offset].col == 0xffffffff) &&
-       (m->pts[2 + offset].col == 0xffffffff) &&
-       (m->pts[3 + offset].col == 0xffffffff))
+       (m->pts[0 + offset].col == m->pts[1 + offset].col) &&
+       (m->pts[1 + offset].col == m->pts[2 + offset].col) &&
+       (m->pts[2 + offset].col == m->pts[3 + offset].col))
      {
+        DATA32 col;
+        int a, r, g, b;
         int dx, dy, dw, dh;
+
+        eng_context_color_get(data, context, &r, &g, &b, &a);
+        col = MUL4_256(a, r, g, b, m->pts[0 + offset].col);
+        eng_context_color_set(data, context, R_VAL(col), G_VAL(col), B_VAL(col), A_VAL(col));
 
         dx = m->pts[0 + offset].x >> FP;
         dy = m->pts[0 + offset].y >> FP;
@@ -1603,6 +1614,8 @@ evas_software_image_map_draw(void *data, void *context, RGBA_Image *surface, RGB
            0, 0, im->cache_entry.w, im->cache_entry.h,
            dx, dy, dw, dh, smooth,
            EINA_FALSE);
+
+        eng_context_color_set(data, context, r, g, b, a);
      }
    else
      {
