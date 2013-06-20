@@ -450,7 +450,7 @@ _rgba_map_cutout_resize(RGBA_Map *m, int count)
 
    if (old && old->count == count)
      {
-        return ;
+        return;
      }
 
    size = sizeof (RGBA_Map_Cutout) + sizeof (RGBA_Map_Spans) * (count - 1);
@@ -471,11 +471,11 @@ _rgba_map_cutout_resize(RGBA_Map *m, int count)
    memset(r, 0, size);
    m->engine_data = r;
    r->count = count;
-   return ;
+   return;
 
  empty:
    evas_common_map_rgba_clean(m);
-   return ;
+   return;
 }
 
 static void

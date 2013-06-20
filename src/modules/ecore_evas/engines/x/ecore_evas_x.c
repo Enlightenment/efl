@@ -587,7 +587,7 @@ _ecore_evas_x_render_updates(void *data, Evas *e EINA_UNUSED, void *event_info)
    Evas_Event_Render_Post *ev = event_info;
    Ecore_Evas *ee = data;
 
-   if (!ev) return ;
+   if (!ev) return;
 
    EDBG("ee=%p finished asynchronous render.", ee);
 

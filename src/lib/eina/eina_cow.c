@@ -203,7 +203,7 @@ _eina_cow_hash_del(Eina_Cow *cow,
                    Eina_Cow_Ptr *ref)
 {
    /* eina_cow_gc is not supposed to be thread safe */
-   if (!ref->hashed) return ;
+   if (!ref->hashed) return;
 
    current_cow_size = cow->struct_size;
    eina_hash_del(cow->match, data, data);
@@ -220,7 +220,7 @@ static inline void
 _eina_cow_togc_del(Eina_Cow *cow, Eina_Cow_Ptr *ref)
 {
    /* eina_cow_gc is not supposed to be thread safe */
-   if (!ref->togc) return ;
+   if (!ref->togc) return;
    eina_hash_del(cow->togc, &ref, NULL);
    ref->togc = EINA_FALSE;
 }
@@ -233,13 +233,13 @@ _eina_cow_togc_add(Eina_Cow *cow,
    Eina_Cow_GC *gc;
 
    /* needed if we want to make cow gc safe */
-   if (ref->togc) return ;
+   if (ref->togc) return;
 #ifndef NVALGRIND
    VALGRIND_MAKE_MEM_NOACCESS(ref, sizeof (*ref));
 #endif
 
    gc = eina_mempool_malloc(gc_pool, sizeof (Eina_Cow_GC));
-   if (!gc) return ; /* That one will not get gced this time */
+   if (!gc) return; /* That one will not get gced this time */
 
    gc->ref = ref;
    gc->dst = dst;
@@ -390,7 +390,7 @@ eina_cow_add(const char *name, unsigned int struct_size, unsigned int step, cons
 EAPI void
 eina_cow_del(Eina_Cow *cow)
 {
-   if (!cow) return ;
+   if (!cow) return;
 
 #ifdef EINA_COW_MAGIC_ON
    EINA_COW_MAGIC_CHECK(cow);
@@ -421,8 +421,8 @@ eina_cow_free(Eina_Cow *cow, const Eina_Cow_Data *data)
    EINA_COW_MAGIC_CHECK(cow);
 #endif
 
-   if (!data) return ;
-   if (cow->default_value == data) return ;
+   if (!data) return;
+   if (cow->default_value == data) return;
 
    ref = EINA_COW_PTR_GET(data);
 #ifndef NVALGRIND
@@ -435,7 +435,7 @@ eina_cow_free(Eina_Cow *cow, const Eina_Cow_Data *data)
 #ifndef NVALGRIND
        VALGRIND_MAKE_MEM_NOACCESS(ref, sizeof (*ref));
 #endif
-       return ;
+       return;
      }
 
 #ifdef EINA_COW_MAGIC_ON
@@ -552,7 +552,7 @@ eina_cow_done(Eina_Cow *cow,
    VALGRIND_MAKE_MEM_NOACCESS(ref, sizeof (*ref));
 #endif
 
-   if (!cow->togc || !needed_gc) return ;
+   if (!cow->togc || !needed_gc) return;
 
 #ifndef NVALGRIND
    VALGRIND_MAKE_MEM_DEFINED(ref, sizeof (*ref));
@@ -570,7 +570,7 @@ eina_cow_memcpy(Eina_Cow *cow,
 
    EINA_COW_MAGIC_CHECK(cow);
 
-   if (*dst == src) return ;
+   if (*dst == src) return;
 
    if (src != cow->default_value)
      {

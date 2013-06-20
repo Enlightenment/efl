@@ -1171,7 +1171,7 @@ ethumb_thumb_hash_copy(Ethumb *dst, const Ethumb *src)
    EINA_SAFETY_ON_NULL_RETURN(dst);
    EINA_SAFETY_ON_NULL_RETURN(src);
 
-   if (src == dst) return ;
+   if (src == dst) return;
 
    eina_stringshare_del(dst->src_hash);
    dst->src_hash = eina_stringshare_ref(src->src_hash);

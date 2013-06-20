@@ -694,7 +694,7 @@ _edje_recalc_do(Edje *ed)
 	eo_do(ed->obj, evas_obj_size_hint_min_set(w, h));
      }
 
-   if (!ed->collection) return ;
+   if (!ed->collection) return;
 
    for (i = 0; i < ed->collection->limits.parts_count; i++)
      {
@@ -818,7 +818,7 @@ void
 _edje_dragable_pos_set(Edje *ed, Edje_Real_Part *ep, FLOAT_T x, FLOAT_T y)
 {
    /* check whether this part is dragable at all */
-   if (!ep->drag) return ;
+   if (!ep->drag) return;
 
    /* instead of checking for equality, we really should check that
     * the difference is greater than foo, but I have no idea what
@@ -2076,7 +2076,7 @@ _edje_part_recalc_single_map(Edje *ed,
    params->lighted = params->mapped ? !!light : 0;
    params->persp_on = params->mapped ? !!persp : 0;
 
-   if (!params->mapped) return ;
+   if (!params->mapped) return;
 
    EINA_COW_CALC_MAP_BEGIN(params, params_write)
      {
@@ -3023,7 +3023,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
 
 #ifdef EDJE_CALC_CACHE
    if (ep->state == ed->state && !state)
-     return ;
+     return;
 #endif
 
    if (ep->param1.description->rel1.id_x >= 0)

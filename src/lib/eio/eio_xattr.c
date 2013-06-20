@@ -36,7 +36,7 @@ _eio_ls_xattr_heavy(void *data, Ecore_Thread *thread)
    const char *tmp;
 
    it = eina_xattr_ls(async->ls.directory);
-   if (!it) return ;
+   if (!it) return;
 
    EINA_ITERATOR_FOREACH(it, tmp)
      {

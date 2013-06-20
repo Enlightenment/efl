@@ -772,7 +772,7 @@ EAPI void
 evas_common_pipe_image_load(RGBA_Image *im)
 {
   if (im->flags & RGBA_IMAGE_TODO_LOAD)
-    return ;
+    return;
 
   if (im->cache_entry.space == EVAS_COLORSPACE_ARGB8888
       && !evas_cache_image_is_loaded(&(im->cache_entry)))
@@ -781,7 +781,7 @@ evas_common_pipe_image_load(RGBA_Image *im)
   if (!((!im->cs.data) || ((!im->cs.dirty) && (!(im->flags & RGBA_IMAGE_IS_DIRTY)))))
     goto add_task;
 
-  return ;
+  return;
 
  add_task:
   LKL(im_task_mutex);
@@ -796,10 +796,10 @@ evas_common_pipe_text_prepare(Evas_Text_Props *text_props)
    RGBA_Font_Int *fi;
 
    fi = text_props->font_instance;
-   if (!fi) return ;
+   if (!fi) return;
 
    if (!text_props->changed && text_props->generation == fi->generation && text_props->glyphs)
-     return ;
+     return;
 
    LKL(fi->ft_mutex);
 

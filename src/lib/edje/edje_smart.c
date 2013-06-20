@@ -212,7 +212,7 @@ _edje_limit_emit(Edje *ed, const char *limit_name, Eina_Bool over)
    char *buffer;
    unsigned int length;
 
-   if (!limit_name) return ;
+   if (!limit_name) return;
 
    length = strlen(limit_name) + 13;
    buffer = alloca(length);
@@ -225,7 +225,7 @@ _edje_limit_get(Edje *ed, Edje_Limit **limits, unsigned int length, Evas_Coord s
 {
    unsigned int i;
 
-   if (size_next == size_current) return ;
+   if (size_next == size_current) return;
 
    for (i = 0; i < length; ++i)
      {

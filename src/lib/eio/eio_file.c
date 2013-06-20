@@ -43,7 +43,7 @@ _eio_file_heavy(void *data, Ecore_Thread *thread)
    if (!ls)
      {
 	eio_file_thread_error(&async->ls.common, thread);
-	return ;
+	return;
      }
 
    eio_file_container_set(&async->ls.common, eina_iterator_container_get(ls));
@@ -139,7 +139,7 @@ _eio_file_eina_ls_heavy(Ecore_Thread *thread, Eio_File_Direct_Ls *async, Eina_It
    if (!ls)
      {
 	eio_file_thread_error(&async->ls.common, thread);
-	return ;
+	return;
      }
 
    eio_file_container_set(&async->ls.common, eina_iterator_container_get(ls));
@@ -388,7 +388,7 @@ _eio_file_move_error(void *data, Ecore_Thread *thread EINA_UNUSED)
    if (move->copy)
      {
 	eio_file_cancel(move->copy);
-	return ;
+	return;
      }
 
    if (move->progress.common.error == EXDEV)
@@ -406,7 +406,7 @@ _eio_file_move_error(void *data, Ecore_Thread *thread EINA_UNUSED)
              move->copy = eio_cp;
 
              move->progress.common.thread = ((Eio_File_Progress*)move->copy)->common.thread;
-             return ;
+             return;
           }
      }
 

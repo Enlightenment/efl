@@ -1958,30 +1958,30 @@ eet_data_descriptor_element_add(Eet_Data_Descriptor *edd,
        type >= EET_T_LAST)
      {
         CRIT("Preventing later bug due to unknow type: %i", type);
-        return ;
+        return;
      }
    if (offset < 0)
      {
         CRIT("Preventing later buffer underrun : offset = %i", offset);
-        return ;
+        return;
      }
    if (offset > edd->size)
      {
         CRIT("Preventing later buffer overrun : offset = %i in a structure of %i bytes", offset, edd->size);
-        return ;
+        return;
      }
    if (group_type == EET_G_UNKNOWN && type != EET_T_UNKNOW)
      {
         if (offset + eet_basic_codec[type - 1].size > edd->size)
           {
              CRIT("Preventing later buffer overrun : offset = %i, size = %i in a structure of %i bytes", offset, eet_basic_codec[type - 1].size, edd->size);
-             return ;
+             return;
           }
      }
    else if ((offset + sizeof (void*)) > (unsigned int) edd->size)
      {
         CRIT("Preventing later buffer overrun : offset = %i, estimated size = %zu in a structure of %i bytes", offset, sizeof (void*), edd->size);
-        return ;
+        return;
      }
 
    /* UNION, VARIANT type would not work with simple type, we need a way to map the type. */

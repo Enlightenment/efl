@@ -694,7 +694,7 @@ evas_object_textgrid_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj
 		  if (!fad)
 		    {
                        ERR("Failed to allocate Evas_Font_Array_Data.");
-                       return ;
+                       return;
 		    }
 
                   for (xx = 0; xx < row->texts_num; xx++)
@@ -1407,7 +1407,7 @@ _palette_set(Eo *eo_obj, void *_pd, va_list *list)
             color->r == r &&
             color->g == g &&
             color->b == b)
-          return ;
+          return;
      }
    else
      {

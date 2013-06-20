@@ -63,7 +63,7 @@ _edje_text_part_on_del(Edje *ed, Edje_Part *pt)
    if (!pt) return;
    if (pt->type != EDJE_PART_TYPE_TEXT
        && pt->type != EDJE_PART_TYPE_TEXTBLOCK)
-     return ;
+     return;
 
    desc = (Edje_Part_Description_Text *) pt->default_desc;
    if ((pt->default_desc) && (desc->text.text_class))

@@ -102,10 +102,10 @@ _edje_programs_patterns_init(Edje_Part_Collection *edc)
      + edc->programs.strrncmp_count
      + edc->programs.fnmatch_count
      + edc->programs.nocmp_count;
-   if (j == 0) return ;
+   if (j == 0) return;
 
    all = malloc(sizeof (Edje_Program *) * j);
-   if (!all) return ;
+   if (!all) return;
    j = 0;
 
    /* FIXME: Build specialized data type for each case */

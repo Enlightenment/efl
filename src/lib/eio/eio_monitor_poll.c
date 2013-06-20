@@ -72,7 +72,7 @@ _eio_monitor_fallback_heavy_cb(void *data, Ecore_Thread *thread)
      est = alloca(sizeof (Eina_Stat));
 
    if (!backend->parent)
-     return ;
+     return;
 
    if (_eio_stat(backend->parent->path, &st))
      {
@@ -83,7 +83,7 @@ _eio_monitor_fallback_heavy_cb(void *data, Ecore_Thread *thread)
              ecore_thread_main_loop_end();
              backend->destroyed = EINA_TRUE;
           }
-        return ;
+        return;
      }
 
    backend->destroyed = EINA_FALSE;
@@ -229,7 +229,7 @@ _eio_monitor_fallback_cancel_cb(void *data, Ecore_Thread *thread EINA_UNUSED)
    if (backend->delete_me)
      {
         free(backend);
-        return ;
+        return;
      }
    backend->timer = ecore_timer_add(60.0, _eio_monitor_fallback_timer_cb, backend);
 }
@@ -308,7 +308,7 @@ eio_monitor_fallback_add(Eio_Monitor *monitor)
    monitor->backend = NULL;
 
    backend = calloc(1, sizeof (Eio_Monitor_Backend));
-   if (!backend) return ;
+   if (!backend) return;
 
    backend->children = eina_hash_string_superfast_new(free);
    backend->parent = monitor;
@@ -327,7 +327,7 @@ eio_monitor_fallback_del(Eio_Monitor *monitor)
    backend = monitor->backend;
    monitor->backend = NULL;
 
-   if (!backend) return ;
+   if (!backend) return;
 
    backend->parent = NULL;
    if (backend->timer) ecore_timer_del(backend->timer);
@@ -338,7 +338,7 @@ eio_monitor_fallback_del(Eio_Monitor *monitor)
      {
         backend->delete_me = EINA_TRUE;
         ecore_thread_cancel(backend->work);
-        return ;
+        return;
      }
    eina_hash_free(backend->children);
    free(backend);

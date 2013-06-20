@@ -2172,7 +2172,7 @@ eina_log_timing(int domain,
    Eina_Log_Domain *d;
    Eina_Log_Timing *t;
 
-   if (_disable_timing) return ;
+   if (_disable_timing) return;
 
    d = _log_domains + domain;
    t = _log_timing + domain;
@@ -2187,11 +2187,11 @@ eina_log_timing(int domain,
 #endif
 
    if (!t->phase && state == EINA_LOG_STATE_STOP)
-     return ;
+     return;
 
    if (t->phase == EINA_LOG_STATE_INIT &&
        phase == EINA_LOG_STATE_SHUTDOWN)
-     return ;
+     return;
 
    if (state == EINA_LOG_STATE_START &&
        t->phase &&

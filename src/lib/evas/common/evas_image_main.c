@@ -908,8 +908,8 @@ evas_common_image_premul(Image_Entry *ie)
 {
    DATA32  nas = 0;
 
-   if (!ie) return ;
-   if (!evas_cache_image_pixels(ie)) return ;
+   if (!ie) return;
+   if (!evas_cache_image_pixels(ie)) return;
    if (!ie->flags.alpha) return;
 
    nas = evas_common_convert_argb_premul(evas_cache_image_pixels(ie), ie->w * ie->h);
@@ -924,7 +924,7 @@ evas_common_image_set_alpha_sparse(Image_Entry *ie)
    DATA32  nas = 0;
 
    if (!ie) return;
-   if (!evas_cache_image_pixels(ie)) return ;
+   if (!evas_cache_image_pixels(ie)) return;
    if (!ie->flags.alpha) return;
 
    s = evas_cache_image_pixels(ie);

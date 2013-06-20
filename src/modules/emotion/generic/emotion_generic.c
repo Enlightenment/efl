@@ -72,7 +72,7 @@ _player_send_cmd(Emotion_Generic_Video *ev, int cmd)
    if (!ev->fd_write)
      {
         ERR("you should wait for emotion to be ready to take action.");
-        return ;
+        return;
      }
    ecore_pipe_write(ev->fd_write, &cmd, sizeof(cmd));
 }
@@ -83,7 +83,7 @@ _player_send_int(Emotion_Generic_Video *ev, int number)
    if (!ev->fd_write)
      {
         ERR("you should wait for emotion to be ready to take action.");
-        return ;
+        return;
      }
    ecore_pipe_write(ev->fd_write, &number, sizeof(number));
 }
@@ -94,7 +94,7 @@ _player_send_float(Emotion_Generic_Video *ev, float number)
    if (!ev->fd_write)
      {
         ERR("you should wait for emotion to be ready to take action.");
-        return ;
+        return;
      }
    ecore_pipe_write(ev->fd_write, &number, sizeof(number));
 }

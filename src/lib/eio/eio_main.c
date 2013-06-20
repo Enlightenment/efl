@@ -115,10 +115,10 @@ eio_progress_send(Ecore_Thread *thread, Eio_File_Progress *op, long long current
    Eio_Progress *progress;
 
    if (op->progress_cb == NULL)
-     return ;
+     return;
 
    progress = eio_progress_malloc();
-   if (!progress) return ;
+   if (!progress) return;
 
    progress->op = op->op;
    progress->current = current;
@@ -173,7 +173,7 @@ eio_associate_free(void *data)
 {
   Eio_File_Associate *tmp;
 
-  if (!data) return ;
+  if (!data) return;
 
   tmp = data;
   if (tmp->free_cb)

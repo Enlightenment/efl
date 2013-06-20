@@ -14,7 +14,7 @@ evas_common_draw_context_cutouts_new(void)
 EAPI void
 evas_common_draw_context_cutouts_free(Cutout_Rects* rects)
 {
-   if (!rects) return ;
+   if (!rects) return;
    rects->active = 0;
 }
 

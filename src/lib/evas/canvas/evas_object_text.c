@@ -692,7 +692,7 @@ _evas_object_text_layout(Evas_Object *eo_obj, Evas_Object_Text *o, Eina_Unicode 
        obj->cur->scale == obj->prev->scale &&
        o->last_computed.w == obj->cur->geometry.w &&
        o->last_computed.h == obj->cur->geometry.h)
-     return ;
+     return;
 
    evas_object_content_change(eo_obj, obj);
 
@@ -921,7 +921,7 @@ _text_ellipsis_set(Eo *eo_obj, void *_pd, va_list *list)
    Evas_Object_Text *o = _pd;
    double ellipsis = va_arg(*list, double);
 
-   if (o->cur.ellipsis == ellipsis) return ;
+   if (o->cur.ellipsis == ellipsis) return;
 
    o->cur.ellipsis = ellipsis;
    o->changed = 1;

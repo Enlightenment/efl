@@ -293,7 +293,7 @@ _ecore_evas_resize(Ecore_Evas *ee, int w, int h)
                                                         | SDL_DOUBLEBUF);
              if (!einfo->info.switch_data)
                {
-                  return ;
+                  return;
                }
 
              SDL_SetAlpha(einfo->info.switch_data, SDL_SRCALPHA, 0);
@@ -308,7 +308,7 @@ _ecore_evas_resize(Ecore_Evas *ee, int w, int h)
              einfo->info.func.switch_buffer = _ecore_evas_sdl_switch_buffer;
              if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *) einfo))
                {
-                  return ;
+                  return;
                }
           }
      }

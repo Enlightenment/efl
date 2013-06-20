@@ -7448,7 +7448,7 @@ using_file(const char *filename, const char type)
    FILE *f;
 
    f = fopen(options.watchfile, "a");
-   if (!f) return ;
+   if (!f) return;
    if (anotate)
      {
         fprintf(f, "%c: %s\n", type, filename);

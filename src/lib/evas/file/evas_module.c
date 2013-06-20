@@ -469,7 +469,7 @@ evas_module_unload(Evas_Module *em)
    if (!em->loaded)
      return;
    if (!em->definition)
-     return ;
+     return;
 
 // for now lets not unload modules - they may still be in use.   
 //   em->definition->func.close(em);

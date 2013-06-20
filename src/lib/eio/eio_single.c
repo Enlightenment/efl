@@ -256,11 +256,11 @@ _eio_file_chown(void *data, Ecore_Thread *thread)
    if (chown(own->path, owner, group) != 0)
      eio_file_thread_error(&own->common, thread);
 
-   return ;
+   return;
 
  on_error:
    ecore_thread_cancel(thread);
-   return ;
+   return;
 #endif
 }
 

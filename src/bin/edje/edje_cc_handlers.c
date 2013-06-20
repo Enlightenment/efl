@@ -1039,7 +1039,7 @@ part_description_image_cleanup(Edje_Part *ep)
    unsigned int j;
 
    if (ep->type != EDJE_PART_TYPE_IMAGE)
-     return ;
+     return;
 
    ed = (Edje_Part_Description_Image*) ep->default_desc;
    _edje_part_description_image_remove(ed);

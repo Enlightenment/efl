@@ -41,7 +41,7 @@ fakeeos_bin_handle_message(GstBin * bin, GstMessage * message)
    switch (GST_MESSAGE_TYPE(message)) {
     case GST_MESSAGE_EOS:
        /* what to do here ? just returning at the moment */
-       return ;
+       return;
     default:
        break;
    }

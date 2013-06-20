@@ -170,7 +170,7 @@ void eio_monitor_backend_init(void)
 
    fd = inotify_init();
    if (fd < 0)
-     return ;
+     return;
 
 #ifdef HAVE_FCNTL
    flags = fcntl(fd, F_GETFD);
@@ -182,7 +182,7 @@ void eio_monitor_backend_init(void)
    if (!_inotify_fdh)
      {
         close(fd);
-        return ;
+        return;
      }
 
    _inotify_monitors = eina_hash_int32_new(_eio_inotify_del);
@@ -192,7 +192,7 @@ void eio_monitor_backend_shutdown(void)
 {
    int fd;
 
-   if (!_inotify_fdh) return ;
+   if (!_inotify_fdh) return;
 
    eina_hash_free(_inotify_monitors);
 
@@ -250,7 +250,7 @@ void eio_monitor_backend_del(Eio_Monitor *monitor)
    if (!_inotify_fdh)
      eio_monitor_fallback_del(monitor);
 
-   if (!monitor->backend) return ;
+   if (!monitor->backend) return;
 
    eina_hash_del(_inotify_monitors, &monitor->backend->hwnd, monitor->backend);
    monitor->backend = NULL;

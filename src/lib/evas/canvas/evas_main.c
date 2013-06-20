@@ -307,7 +307,7 @@ _canvas_output_method_set(Eo *eo_e, void *_pd, va_list *list)
    if (e->output.render_method != RENDER_METHOD_INVALID) return;
    /* Request the right engine. */
    em = evas_module_engine_get(render_method);
-   if (!em) return ;
+   if (!em) return;
    if (em->id_engine != render_method) return;
    if (!evas_module_load(em)) return;
 

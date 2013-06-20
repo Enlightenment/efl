@@ -35,8 +35,8 @@ _evas_image_png_read(png_structp png_ptr, png_bytep out, png_size_t count)
 {
    Evas_PNG_Info *epi = png_get_io_ptr(png_ptr);
 
-   if (!epi) return ;
-   if (epi->position == epi->length) return ;
+   if (!epi) return;
+   if (epi->position == epi->length) return;
 
    if (epi->position + count > epi->length) count = epi->length - epi->position;
    memcpy(out, epi->map + epi->position, count);

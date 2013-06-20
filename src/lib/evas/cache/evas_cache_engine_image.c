@@ -388,7 +388,7 @@ evas_cache_engine_image_drop(Engine_Image_Entry *eim)
    if (eim->flags.dirty)
      {
         _evas_cache_engine_image_dealloc(cache, eim);
-        return ;
+        return;
      }
 
    if (eim->references == 0)
@@ -396,7 +396,7 @@ evas_cache_engine_image_drop(Engine_Image_Entry *eim)
         _evas_cache_engine_image_remove_activ(cache, eim);
         _evas_cache_engine_image_make_inactive(cache, eim, eim->cache_key);
         evas_cache_engine_image_flush(cache);
-        return ;
+        return;
      }
 }
 

@@ -1828,7 +1828,7 @@ data_queue_part_lookup(Edje_Part_Collection *pc, const char *name, int *dest)
              eina_hash_set(part_dest_lookup, &pl->dest, list);
              eina_hash_del(part_pc_dest_lookup, &key, pl);
           }
-        return ;
+        return;
      }
 
    if (!name[0]) return;
@@ -1863,7 +1863,7 @@ data_queue_anonymous_lookup(Edje_Part_Collection *pc, Edje_Program *ep, int *des
    Eina_List *l, *l2;
    Program_Lookup *pl;
 
-   if (!ep) return ; /* FIXME: should we stop compiling ? */
+   if (!ep) return; /* FIXME: should we stop compiling ? */
 
    EINA_LIST_FOREACH(program_lookups, l, pl)
      {
@@ -1949,7 +1949,7 @@ data_queue_program_lookup(Edje_Part_Collection *pc, const char *name, int *dest)
 {
    Program_Lookup *pl;
 
-   if (!name) return ; /* FIXME: should we stop compiling ? */
+   if (!name) return; /* FIXME: should we stop compiling ? */
 
    pl = mem_alloc(SZ(Program_Lookup));
    program_lookups = eina_list_append(program_lookups, pl);
@@ -1997,7 +1997,7 @@ data_queue_image_remove(int *dest, Eina_Bool *set)
              image_lookups = eina_list_remove_list(image_lookups, l);
              free(il->name);
              free(il);
-             return ;
+             return;
           }
      }
  }
@@ -2625,7 +2625,7 @@ using_file(const char *filename, const char type)
 
    if (!watchfile) return;
    f = fopen(watchfile, "ab");
-   if (!f) return ;
+   if (!f) return;
    if (anotate)
      {
        fprintf(f, "%c: %s\n", type, filename);

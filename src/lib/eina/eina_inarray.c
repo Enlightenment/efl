@@ -379,7 +379,7 @@ eina_inarray_step_set(Eina_Inarray *array,
             (int) sizeof (Eina_Inarray));
         /* Force memory to zero to provide a small layer of security */
         memset(array, 0, sizeof_eina_inarray);
-        return ;
+        return;
      }
 
    _eina_inarray_setup(array, member_size, step);

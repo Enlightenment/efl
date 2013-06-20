@@ -167,7 +167,7 @@ eina_file_close(Eina_File *file)
    eina_lock_take(&file->lock);
    file->refcount--;
    eina_lock_release(&file->lock);
-   if (file->refcount != 0) return ;
+   if (file->refcount != 0) return;
 
    eina_lock_take(&_eina_file_lock_cache);
 

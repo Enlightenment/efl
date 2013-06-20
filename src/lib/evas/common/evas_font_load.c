@@ -921,7 +921,7 @@ evas_common_font_flush_last(void)
 {
    RGBA_Font_Int *fi = NULL;
 
-   if (!fonts_lru) return ;
+   if (!fonts_lru) return;
    fi = eina_list_data_get(fonts_lru);
    fonts_lru = eina_list_remove_list(fonts_lru, fonts_lru);
    eina_hash_del(fonts, fi, fi);

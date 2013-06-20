@@ -751,7 +751,7 @@ clean_stuff:
              OBJS_ARRAY_CLEAN(&e->restack_objects);
              OBJS_ARRAY_CLEAN(&e->delete_objects);
              e->invalidate = EINA_TRUE;
-             return ;
+             return;
           }
      }
 }

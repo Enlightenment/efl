@@ -2682,7 +2682,7 @@ edje_edit_part_drag_x_set(Evas_Object *obj, const char *part, int drag)
      {
 	free(rp->drag);
 	rp->drag = NULL;
-	return ;
+	return;
      }
 
    if (rp->drag) return;
@@ -2717,7 +2717,7 @@ edje_edit_part_drag_y_set(Evas_Object *obj, const char *part, int drag)
      {
 	free(rp->drag);
 	rp->drag = NULL;
-	return ;
+	return;
      }
 
    if (rp->drag) return;
@@ -2777,7 +2777,7 @@ FUNC_PART_DRAG_INT(count, y);
      if (!e)								\
        {								\
 	  rp->part->dragable.Id##_id = -1;				\
-	  return ;							\
+	  return;							\
        }								\
 									\
      e_part = _edje_real_part_get(ed, e);				\

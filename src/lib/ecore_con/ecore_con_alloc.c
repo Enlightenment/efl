@@ -81,7 +81,7 @@ ecore_con_mempool_init(void)
              else
                {
                   ERR("Impossible to allocate mempool '%s' !", choice);
-                  return ;
+                  return;
                }
           }
      }

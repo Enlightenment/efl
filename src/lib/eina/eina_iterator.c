@@ -140,7 +140,7 @@ eina_iterator_foreach(Eina_Iterator *iterator,
    EINA_SAFETY_ON_NULL_RETURN(iterator->next);
    EINA_SAFETY_ON_NULL_RETURN(cb);
 
-   if (!eina_iterator_lock(iterator)) return ;
+   if (!eina_iterator_lock(iterator)) return;
 
    container = iterator->get_container(iterator);
    while (iterator->next(iterator, &data) == EINA_TRUE)

@@ -372,7 +372,7 @@ _eio_dir_copy_heavy(void *data, Ecore_Thread *thread)
 
    /* list all the content that should be copied */
    if (!_eio_dir_recursiv_ls(thread, copy, copy->progress.source))
-     return ;
+     return;
 
    /* init all structure needed to copy the file */
    if (!_eio_dir_init(thread, &step, &count, &length_source, &length_dest, copy, &file_copy))
@@ -437,7 +437,7 @@ _eio_dir_copy_heavy(void *data, Ecore_Thread *thread)
    if (!ecore_thread_check(thread))
      eio_progress_send(thread, &copy->progress, count, count);
 
-   return ;
+   return;
 }
 
 static void
@@ -497,12 +497,12 @@ _eio_dir_move_heavy(void *data, Ecore_Thread *thread)
      {
         /* we are really lucky */
         eio_progress_send(thread, &move->progress, 1, 1);
-        return ;
+        return;
      }
 
    /* list all the content that should be moved */
    if (!_eio_dir_recursiv_ls(thread, move, move->progress.source))
-     return ;
+     return;
 
    /* init all structure needed to move the file */
    if (!_eio_dir_init(thread, &step, &count, &length_source, &length_dest, move, &file_move))
@@ -599,7 +599,7 @@ _eio_dir_rmrf_heavy(void *data, Ecore_Thread *thread)
 
    /* list all the content that should be moved */
    if (!_eio_dir_recursiv_ls(thread, rmrf, rmrf->progress.source))
-     return ;
+     return;
 
    /* init counter */
    step = 0;

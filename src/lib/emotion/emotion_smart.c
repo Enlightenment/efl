@@ -697,7 +697,7 @@ emotion_object_position_set(Evas_Object *obj, double sec)
    if (!sd->open)
      {
         sd->remember_jump = sec;
-        return ;
+        return;
      }
    sd->remember_jump = 0;
    sd->seek_pos = sec;
@@ -1276,17 +1276,17 @@ emotion_object_last_position_load(Evas_Object *obj)
 #endif
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
-   if (!sd->file) return ;
+   if (!sd->file) return;
 
    if (!strncmp(sd->file, "file://", 7))
      tmp = sd->file + 7;
    else if (!strstr(sd->file, "://"))
      tmp = sd->file;
    else
-     return ;
+     return;
 
 #ifdef HAVE_EIO
-   if (sd->load_xattr) return ;
+   if (sd->load_xattr) return;
 
    EINA_REFCOUNT_REF(sd);
 
@@ -1348,17 +1348,17 @@ emotion_object_last_position_save(Evas_Object *obj)
    const char *tmp;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
-   if (!sd->file) return ;
+   if (!sd->file) return;
 
    if (!strncmp(sd->file, "file://", 7))
      tmp = sd->file + 7;
    else if (!strstr(sd->file, "://"))
      tmp = sd->file;
    else
-     return ;
+     return;
 
 #ifdef HAVE_EIO
-   if (sd->save_xattr) return ;
+   if (sd->save_xattr) return;
 
    EINA_REFCOUNT_REF(sd);
 

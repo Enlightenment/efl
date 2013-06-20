@@ -135,7 +135,7 @@ eina_accessor_over(Eina_Accessor *accessor,
    void *data;
    unsigned int i;
 
-   if (!accessor) return ;
+   if (!accessor) return;
 
    EINA_MAGIC_CHECK_ACCESSOR(accessor);
    EINA_SAFETY_ON_NULL_RETURN(accessor->get_container);
@@ -144,7 +144,7 @@ eina_accessor_over(Eina_Accessor *accessor,
    EINA_SAFETY_ON_FALSE_RETURN(start < end);
 
    if (!eina_accessor_lock(accessor))
-      return ;
+      return;
 
    container = accessor->get_container(accessor);
    for (i = start; i < end && accessor->get_at(accessor, i, &data) == EINA_TRUE;

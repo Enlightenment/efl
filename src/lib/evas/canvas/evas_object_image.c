@@ -309,7 +309,7 @@ _constructor(Eo *eo_obj, void *class_data, va_list *list EINA_UNUSED)
    evas_object_inject(eo_obj, obj, eo_e);
 
    if (!_init_cow(eo_obj))
-     return ;
+     return;
 
    o->load_opts = eina_cow_alloc(evas_object_image_load_opts_cow);
    o->pixels = eina_cow_alloc(evas_object_image_pixels_cow);
@@ -1670,7 +1670,7 @@ EAPI void
 evas_object_image_preload(Evas_Object *eo_obj, Eina_Bool cancel)
 {
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return ;
+   return;
    MAGIC_CHECK_END();
    if (cancel)
      eo_do(eo_obj, evas_obj_image_preload_cancel());
@@ -2489,7 +2489,7 @@ _image_load_orientation_set(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
    Eina_Bool enable = va_arg(*list, int);
    Evas_Object_Image *o = _pd;
 
-   if (o->load_opts->orientation == !!enable) return ;
+   if (o->load_opts->orientation == !!enable) return;
 
    EINA_COW_LOAD_OPTS_WRITE_BEGIN(o, low)
      low->orientation = !!enable;
@@ -2585,14 +2585,14 @@ _image_video_surface_set(Eo *eo_obj, void *_pd, va_list *list)
 
    if (surf)
      {
-        if (surf->version != EVAS_VIDEO_SURFACE_VERSION) return ;
+        if (surf->version != EVAS_VIDEO_SURFACE_VERSION) return;
 
         if (!surf->update_pixels ||
             !surf->move ||
             !surf->resize ||
             !surf->hide ||
             !surf->show)
-          return ;
+          return;
 
         o->created = EINA_TRUE;
         o->video_surface = EINA_TRUE;
@@ -2612,7 +2612,7 @@ _image_video_surface_set(Eo *eo_obj, void *_pd, va_list *list)
             !o->pixels->video.hide &&
             !o->pixels->video.show &&
             !o->pixels->video.data)
-          return ;
+          return;
 
         o->video_surface = EINA_FALSE;
         EINA_COW_PIXEL_WRITE_BEGIN(o, pixi_write)
@@ -3607,7 +3607,7 @@ _evas_object_image_free(Evas_Object *obj)
 {
    Evas_Object_Image *o;
 
-   if (!eo_isa(obj, MY_CLASS)) return ;
+   if (!eo_isa(obj, MY_CLASS)) return;
 
    o = eo_data_scope_get(obj, MY_CLASS);
 

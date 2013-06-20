@@ -286,11 +286,11 @@ _ecore_con_eet_data(Ecore_Con_Reply *n, void *data, unsigned int size)
         if (n->buffer_current + size > n->buffer_length)
           {
              _ecore_con_eet_reply_cleanup(n);
-             return ;
+             return;
           }
 
         _ecore_con_eet_raw_data_push(n, data, size);
-        return ;
+        return;
      }
    else if (eet_connection_empty(n->econn) && size > (int) (4 * sizeof (unsigned int) + 2))
      {
@@ -329,7 +329,7 @@ _ecore_con_eet_data(Ecore_Con_Reply *n, void *data, unsigned int size)
                        if (n->buffer)
                          {
                             _ecore_con_eet_raw_data_push(n, buffer, size);
-                            return ;
+                            return;
                          }
                        _ecore_con_eet_reply_cleanup(n);
 
@@ -487,7 +487,7 @@ ecore_con_eet_client_new(Ecore_Con_Server *server)
 EAPI void
 ecore_con_eet_server_free(Ecore_Con_Eet *r)
 {
-   if (!r) return ;
+   if (!r) return;
 
    eet_data_descriptor_free(r->edd);
    eet_data_descriptor_free(r->matching);
@@ -535,7 +535,7 @@ ecore_con_eet_server_free(Ecore_Con_Eet *r)
 EAPI void
 ecore_con_eet_register(Ecore_Con_Eet *ece, const char *name, Eet_Data_Descriptor *edd)
 {
-   if (!ece) return ;
+   if (!ece) return;
 
    EET_DATA_DESCRIPTOR_ADD_MAPPING(ece->matching, name, edd);
 }
@@ -545,10 +545,10 @@ ecore_con_eet_data_callback_add(Ecore_Con_Eet *ece, const char *name, Ecore_Con_
 {
    Ecore_Con_Eet_Data *eced;
 
-   if (!ece) return ;
+   if (!ece) return;
 
    eced = calloc(1, sizeof (Ecore_Con_Eet_Data));
-   if (!eced) return ;
+   if (!eced) return;
 
    eced->func = func;
    eced->data = data;
@@ -560,7 +560,7 @@ ecore_con_eet_data_callback_add(Ecore_Con_Eet *ece, const char *name, Ecore_Con_
 EAPI void
 ecore_con_eet_data_callback_del(Ecore_Con_Eet *ece, const char *name)
 {
-   if (!ece) return ;
+   if (!ece) return;
    eina_hash_del(ece->data_callbacks, name, NULL);
 }
 
@@ -569,10 +569,10 @@ ecore_con_eet_raw_data_callback_add(Ecore_Con_Eet *ece, const char *name, Ecore_
 {
    Ecore_Con_Eet_Raw_Data *eced;
 
-   if (!ece) return ;
+   if (!ece) return;
 
    eced = calloc(1, sizeof (Ecore_Con_Eet_Raw_Data));
-   if (!eced) return ;
+   if (!eced) return;
 
    eced->func = func;
    eced->data = data;
@@ -584,7 +584,7 @@ ecore_con_eet_raw_data_callback_add(Ecore_Con_Eet *ece, const char *name, Ecore_
 EAPI void
 ecore_con_eet_raw_data_callback_del(Ecore_Con_Eet *ece, const char *name)
 {
-   if (!ece) return ;
+   if (!ece) return;
 
    if (ece->client && ece->u.client.r->buffer_handler && !strcmp(ece->u.client.r->buffer_handler->name, name))
      {
@@ -600,10 +600,10 @@ ecore_con_eet_client_connect_callback_add(Ecore_Con_Eet *ece, Ecore_Con_Eet_Clie
 {
    Ecore_Con_Eet_Client *c;
 
-   if (!ece || !func) return ;
+   if (!ece || !func) return;
 
    c = calloc(1, sizeof (Ecore_Con_Eet_Client));
-   if (!c) return ;
+   if (!c) return;
 
    c->func = func;
    c->data = data;
@@ -617,14 +617,14 @@ ecore_con_eet_client_connect_callback_del(Ecore_Con_Eet *ece, Ecore_Con_Eet_Clie
    Ecore_Con_Eet_Client *c;
    Eina_List *l;
 
-   if (!ece || !func) return ;
+   if (!ece || !func) return;
 
    EINA_LIST_FOREACH(ece->u.server.client_connect_callbacks, l, c)
      if (c->func == func && c->data == data)
        {
           ece->u.server.client_connect_callbacks = eina_list_remove_list(ece->u.server.client_connect_callbacks, l);
           free(c);
-          return ;
+          return;
        }
 }
 
@@ -633,10 +633,10 @@ ecore_con_eet_client_disconnect_callback_add(Ecore_Con_Eet *ece, Ecore_Con_Eet_C
 {
    Ecore_Con_Eet_Client *c;
 
-   if (!ece || !func) return ;
+   if (!ece || !func) return;
 
    c = calloc(1, sizeof (Ecore_Con_Eet_Client));
-   if (!c) return ;
+   if (!c) return;
 
    c->func = func;
    c->data = data;
@@ -650,7 +650,7 @@ ecore_con_eet_client_disconnect_callback_del(Ecore_Con_Eet *ece, Ecore_Con_Eet_C
    Ecore_Con_Eet_Client *c;
    Eina_List *l;
 
-   if (!ece || !func) return ;
+   if (!ece || !func) return;
 
    EINA_LIST_FOREACH(ece->u.server.client_disconnect_callbacks, l, c)
      if (c->func == func && c->data == data)
@@ -658,7 +658,7 @@ ecore_con_eet_client_disconnect_callback_del(Ecore_Con_Eet *ece, Ecore_Con_Eet_C
           ece->u.server.client_disconnect_callbacks = eina_list_remove_list(ece->u.server.client_disconnect_callbacks,
                                                                             l);
           free(c);
-          return ;
+          return;
        }
 }
 
@@ -667,10 +667,10 @@ ecore_con_eet_server_connect_callback_add(Ecore_Con_Eet *ece, Ecore_Con_Eet_Serv
 {
    Ecore_Con_Eet_Server *s;
 
-   if (!ece || !func) return ;
+   if (!ece || !func) return;
 
    s = calloc(1, sizeof (Ecore_Con_Eet_Server));
-   if (!s) return ;
+   if (!s) return;
 
    s->func = func;
    s->data = data;
@@ -684,14 +684,14 @@ ecore_con_eet_server_connect_callback_del(Ecore_Con_Eet *ece, Ecore_Con_Eet_Serv
    Ecore_Con_Eet_Server *s;
    Eina_List *l;
 
-   if (!ece || !func) return ;
+   if (!ece || !func) return;
 
    EINA_LIST_FOREACH(ece->u.client.server_connect_callbacks, l, s)
      if (s->func == func && s->data == data)
        {
           ece->u.client.server_connect_callbacks = eina_list_remove_list(ece->u.client.server_connect_callbacks, l);
           free(s);
-          return ;
+          return;
        }
 }
 
@@ -700,10 +700,10 @@ ecore_con_eet_server_disconnect_callback_add(Ecore_Con_Eet *ece, Ecore_Con_Eet_S
 {
    Ecore_Con_Eet_Server *s;
 
-   if (!ece || !func) return ;
+   if (!ece || !func) return;
 
    s = calloc(1, sizeof (Ecore_Con_Eet_Server));
-   if (!s) return ;
+   if (!s) return;
 
    s->func = func;
    s->data = data;
@@ -717,14 +717,14 @@ ecore_con_eet_server_disconnect_callback_del(Ecore_Con_Eet *ece, Ecore_Con_Eet_S
    Ecore_Con_Eet_Server *s;
    Eina_List *l;
 
-   if (!ece || !func) return ;
+   if (!ece || !func) return;
 
    EINA_LIST_FOREACH(ece->u.client.server_disconnect_callbacks, l, s)
      if (s->func == func && s->data == data)
        {
           ece->u.client.server_disconnect_callbacks = eina_list_remove_list(ece->u.client.server_disconnect_callbacks, l);
           free(s);
-          return ;
+          return;
        }
 }
 
@@ -755,7 +755,7 @@ ecore_con_eet_send(Ecore_Con_Reply *reply, const char *name, void *value)
 {
    Ecore_Con_Eet_Protocol protocol;
 
-   if (!reply) return ;
+   if (!reply) return;
 
    protocol.type = name;
    protocol.data = value;
@@ -772,12 +772,12 @@ ecore_con_eet_raw_send(Ecore_Con_Reply *reply, const char *protocol_name, const 
    unsigned int size;
    char *tmp;
 
-   if (!reply) return ;
-   if (!protocol_name) return ;
-   if (!section) return ;
+   if (!reply) return;
+   if (!protocol_name) return;
+   if (!section) return;
 
    protocol_length = strlen(protocol_name) + 1;
-   if (protocol_length == 1) return ;
+   if (protocol_length == 1) return;
    section_length = strlen(section) + 1;
 
    protocol[0] = htonl(ECORE_CON_EET_RAW_MAGIC);

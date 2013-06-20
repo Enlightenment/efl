@@ -404,7 +404,7 @@ void eio_monitor_backend_del(Eio_Monitor *monitor)
    if (!_eio_monitor_win32_native)
      {
         eio_monitor_fallback_del(monitor);
-        return ;
+        return;
      }
 
    _eio_monitor_win32_watcher_free(monitor->backend->watcher_parent);

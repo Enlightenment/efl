@@ -308,7 +308,7 @@ em_play(void   *video,
    Emotion_Gstreamer_Video *ev;
 
    ev = (Emotion_Gstreamer_Video *)video;
-   if (!ev->pipeline) return ;
+   if (!ev->pipeline) return;
 
    if (ev->pipeline_parsed)
      gst_element_set_state(ev->pipeline, GST_STATE_PLAYING);
@@ -323,7 +323,7 @@ em_stop(void *video)
 
    ev = (Emotion_Gstreamer_Video *)video;
 
-   if (!ev->pipeline) return ;
+   if (!ev->pipeline) return;
 
    if (ev->pipeline_parsed)
      gst_element_set_state(ev->pipeline, GST_STATE_PAUSED);
@@ -349,7 +349,7 @@ em_size_get(void  *video,
         if (width) *width = vstream->width;
         if (height) *height = vstream->height;
 
-        return ;
+        return;
      }
 
  on_error:
@@ -365,7 +365,7 @@ em_pos_set(void   *video,
 
    ev = (Emotion_Gstreamer_Video *)video;
 
-   if (!ev->pipeline) return ;
+   if (!ev->pipeline) return;
 
    if (ev->play)
      gst_element_set_state(ev->pipeline, GST_STATE_PAUSED);
@@ -675,7 +675,7 @@ em_video_data_size_get(void *video, int *w, int *h)
         *w = vstream->width;
         *h = vstream->height;
 
-        return ;
+        return;
      }
 
  on_error:
@@ -858,7 +858,7 @@ em_audio_channel_mute_set(void *video,
 
    ev = (Emotion_Gstreamer_Video *)video;
 
-   if (!ev->pipeline) return ;
+   if (!ev->pipeline) return;
 
    ev->audio_mute = mute;
 
@@ -883,7 +883,7 @@ em_audio_channel_volume_set(void  *video,
 
    ev = (Emotion_Gstreamer_Video *)video;
 
-   if (!ev->pipeline) return ;
+   if (!ev->pipeline) return;
 
    if (vol < 0.0)
      vol = 0.0;
@@ -1024,7 +1024,7 @@ em_priority_set(void *video, Eina_Bool pri)
    Emotion_Gstreamer_Video *ev;
 
    ev = video;
-   if (priority_overide > 3) return ; /* If we failed to much to create that pipeline, let's don't wast our time anymore */
+   if (priority_overide > 3) return; /* If we failed to much to create that pipeline, let's don't wast our time anymore */
 
    if (ev->priority != pri && ev->pipeline)
      {

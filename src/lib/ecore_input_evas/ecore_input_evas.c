@@ -114,10 +114,10 @@ _ecore_event_evas_push_mouse_button(Ecore_Event_Mouse_Button *e, Ecore_Event_Pre
 {
    Ecore_Event_Last *eel;
 
-   if (!_last_events_enable) return ;
+   if (!_last_events_enable) return;
 
    eel = _ecore_event_evas_lookup(e->multi.device, e->buttons, EINA_TRUE);
-   if (!eel) return ;
+   if (!eel) return;
 
    switch (eel->state)
      {
@@ -158,7 +158,7 @@ _ecore_event_evas_push_mouse_button(Ecore_Event_Mouse_Button *e, Ecore_Event_Pre
           {
              /* Save the Ecore_Event somehow */
              if (!eel->ev) eel->ev = malloc(sizeof (Ecore_Event_Mouse_Button));
-             if (!eel->ev) return ;
+             if (!eel->ev) return;
              memcpy(eel->ev, e, sizeof (Ecore_Event_Mouse_Button));
              eel->timer = ecore_timer_add(_last_events_timeout, _ecore_event_evas_push_fake, eel);
           }
@@ -176,7 +176,7 @@ _ecore_event_evas_push_mouse_move(Ecore_Event_Mouse_Move *e)
    Ecore_Event_Last *eel;
    Eina_List *l;
 
-   if (!_last_events_enable) return ;
+   if (!_last_events_enable) return;
 
    EINA_LIST_FOREACH(_last_events, l, eel)
      switch (eel->state)

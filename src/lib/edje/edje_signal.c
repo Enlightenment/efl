@@ -96,11 +96,11 @@ _edje_callbacks_patterns_init(Edje_Signal_Callback_Group *gp)
    Edje_Signals_Sources_Patterns *ssp;
    Edje_Signal_Callback_Matches *tmp;
 
-   if (gp->matches->patterns) return ;
+   if (gp->matches->patterns) return;
 
    tmp = (Edje_Signal_Callback_Matches*) gp->matches;
    tmp->patterns = calloc(1, sizeof (Edje_Signals_Sources_Patterns));
-   if (!gp->matches->patterns) return ;
+   if (!gp->matches->patterns) return;
 
    ssp = gp->matches->patterns;
    edje_match_callback_hash_build(gp->matches->matches,
@@ -211,7 +211,7 @@ _edje_signal_callback_push(const Edje_Signal_Callback_Group *cgp,
                _edje_signal_callback_set(gp, i,
                                          sig, src, func, data,
                                          (((!!propagate) & 1) | _JUST_ADDED));
-               return ;
+               return;
             }
        }
 
@@ -229,7 +229,7 @@ _edje_signal_callback_push(const Edje_Signal_Callback_Group *cgp,
           {
              Edje_Signal_Callback_Matches *tmp_dup;
              tmp_dup = (Edje_Signal_Callback_Matches*) _edje_signal_callback_matches_dup(tmp);
-             if (!tmp_dup) return ;
+             if (!tmp_dup) return;
              EINA_REFCOUNT_UNREF(tmp)
                (void) 0; // Nothing to do because the case where refcount == 1 was already handle above.
              gp->matches = tmp_dup;
@@ -246,7 +246,7 @@ _edje_signal_callback_push(const Edje_Signal_Callback_Group *cgp,
                _edje_signal_callback_set(gp, i,
                                          sig, src, func, data,
                                          (((!!propagate) & 1) | _JUST_ADDED));
-               return ;
+               return;
             }
           if (gp->flags[i >> 1] & (_DELETE_ME << 4))
             {
@@ -254,7 +254,7 @@ _edje_signal_callback_push(const Edje_Signal_Callback_Group *cgp,
                _edje_signal_callback_set(gp, i + 1,
                                          sig, src, func, data,
                                          (((!!propagate) & 1) | _JUST_ADDED));
-               return ;
+               return;
             }
        }
 
@@ -264,7 +264,7 @@ _edje_signal_callback_push(const Edje_Signal_Callback_Group *cgp,
    _edje_signal_callback_set(gp, gp->matches->matches_count - 1,
                              sig, src, func, data, (((!!propagate) & 1) | _JUST_ADDED));
 
-   return ;
+   return;
 }
 
 const Edje_Signal_Callback_Group *
@@ -316,7 +316,7 @@ _edje_signal_callback_free(const Edje_Signal_Callback_Group *cgp)
 {
    Edje_Signal_Callback_Group *gp = (Edje_Signal_Callback_Group*) cgp;
 
-   if (!gp) return ;
+   if (!gp) return;
 
    _edje_signal_callback_matches_unref((Edje_Signal_Callback_Matches*) gp->matches);
    gp->matches = NULL;
@@ -389,7 +389,7 @@ _edje_signal_callback_move_last(Edje_Signal_Callback_Group *gp,
              m->matches[i].func = m->matches[j].func;
              gp->flags[i] = (gp->flags[i >> 1] & (0xF << (((i & 1) ^ 1) * 4))) |
                (gp->flags[j >> 1] & (0xF << (((j & 1) * 4))));
-             return ;
+             return;
           }
         --m->matches_count;
      }
@@ -460,7 +460,7 @@ _edje_signal_callback_patterns_unref(const Edje_Signals_Sources_Patterns *essp)
 {
    Edje_Signals_Sources_Patterns *ssp;
 
-   if (!essp) return ;
+   if (!essp) return;
 
    ssp = (Edje_Signals_Sources_Patterns*) essp;
 

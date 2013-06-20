@@ -532,7 +532,7 @@ _draw_rectangle_thread_cmd(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y,
    if ((w <= 0) || (h <= 0)) return;
 
    cr = eina_mempool_malloc(_mp_command_rect, sizeof (Evas_Thread_Command_Rect));
-   if (!cr) return ;
+   if (!cr) return;
 
    cr->surface = dst;
    cr->color = dc->col.col;
@@ -609,7 +609,7 @@ _line_draw_thread_cmd(RGBA_Image *dst, RGBA_Draw_Context *dc, int x1, int y1, in
    int x, y, w, h;
 
    cl = eina_mempool_malloc(_mp_command_line, sizeof (Evas_Thread_Command_Line));
-   if (!cl) return ;
+   if (!cl) return;
 
    cl->surface = dst;
 
@@ -782,7 +782,7 @@ _polygon_draw_thread_cmd(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Polygon_Po
      }
 
    cp = eina_mempool_malloc(_mp_command_polygon, sizeof (Evas_Thread_Command_Polygon));
-   if (!cp) return ;
+   if (!cp) return;
 
    EINA_RECTANGLE_SET(&cp->ext, ext_x, ext_y, ext_w, ext_h);
    cp->col = dc->col.col;
@@ -1156,7 +1156,7 @@ static void
 eng_image_data_preload_request(void *data EINA_UNUSED, void *image, const Eo *target)
 {
    RGBA_Image *im = image;
-   if (!im) return ;
+   if (!im) return;
 
 #ifdef EVAS_CSERVE2
    if (evas_cserve2_use_get())
@@ -1177,7 +1177,7 @@ eng_image_data_preload_cancel(void *data EINA_UNUSED, void *image, const Eo *tar
      return;
 #endif
 
-   if (!im) return ;
+   if (!im) return;
    evas_cache_image_preload_cancel(&im->cache_entry, target);
 }
 
@@ -1623,7 +1623,7 @@ evas_software_image_map_draw(void *data, void *context, RGBA_Image *surface, RGB
         if ((cpunum > 1))
 	  {
              evas_common_pipe_map_draw(im, surface, context, m, smooth, level);
-             return ;
+             return;
           }
         else
 #endif

@@ -1527,7 +1527,7 @@ evas_gl_common_texture_nv12tiled_update(Evas_GL_Texture *tex, DATA8 **rows, unsi
 	  }
 
 	secsym_eglUnmapImageSEC(tex->gc->egldisp, tex->ptuv->dyn.img, EGL_MAP_GL_TEXTURE_DEVICE_CPU_SEC);
-	return ;
+	return;
      }
 #endif
 

@@ -760,7 +760,7 @@ eina_object_del(Eina_Class *class,
 {
   Eina_Object_Item *item;
 
-  if (!object) return ;
+  if (!object) return;
   EINA_MAGIC_CHECK_CLASS(class);
 
   if (!eina_lock_take(&class->mutex))

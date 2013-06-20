@@ -309,7 +309,7 @@ eina_array_step_set(Eina_Array *array,
 	    (int) sizeof (Eina_Array));
 	/* Force memory to zero to provide a small layer of security */
 	memset(array, 0, sizeof_eina_array);
-	return ;
+	return;
      }
 
    array->version = EINA_ARRAY_VERSION;

@@ -445,7 +445,7 @@ evas_common_font_draw_do(const Cutout_Rects *reuse, const Eina_Rectangle *clip, 
                                    dc->clip.x, dc->clip.y,
                                    dc->clip.w, dc->clip.h,
                                    im_w, im_h);
-        return ;
+        return;
      }
 
    for (i = 0; i < reuse->active; ++i)

@@ -98,7 +98,7 @@ _emotion_check_device(Emotion_Webcam *ew)
    int fd;
 #endif
 
-   if (!ew) return ;
+   if (!ew) return;
 #ifdef HAVE_V4L2
    if (!ew->device) goto on_error;
 
@@ -122,7 +122,7 @@ _emotion_check_device(Emotion_Webcam *ew)
 
    EINA_REFCOUNT_INIT(ew);
 
-   return ;
+   return;
 
  on_error:
 #endif

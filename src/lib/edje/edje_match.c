@@ -727,7 +727,7 @@ edje_match_callback_exec(const Edje_Signals_Sources_Patterns *ssp,
 void
 edje_match_patterns_free(Edje_Patterns *ppat)
 {
-   if (!ppat) return ;
+   if (!ppat) return;
 
    ppat->delete_me = EINA_TRUE;
    ppat->ref--;

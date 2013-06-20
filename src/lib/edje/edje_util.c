@@ -166,7 +166,7 @@ _edje_class_member_add(Edje *ed, Eina_Hash **ehash, Eina_Hash **ghash, const cha
      }
 
    lookup = malloc(sizeof (Edje_List_Refcount));
-   if (!lookup) return ;
+   if (!lookup) return;
    EINA_REFCOUNT_INIT(lookup);
 
    /* Get members list */
@@ -197,7 +197,7 @@ _edje_class_member_del(Eina_Hash **ehash, Eina_Hash **ghash, const char *class)
    if (!members) return;
 
    lookup = eina_hash_find(*ehash, class);
-   if (!lookup) return ;
+   if (!lookup) return;
 
    EINA_REFCOUNT_UNREF(lookup)
    {
@@ -1457,14 +1457,14 @@ _edje_user_define_string(Edje *ed, const char *part, const char *raw_text)
           if (!raw_text)
             {
                _edje_user_definition_free(eud);
-               return ;
+               return;
             }
           eud->u.string.text = raw_text;
-          return ;
+          return;
        }
 
    eud = _edje_user_definition_new(EDJE_USER_STRING, part, ed);
-   if (!eud) return ;
+   if (!eud) return;
    eud->u.string.text = raw_text;
 }
 
@@ -3740,7 +3740,7 @@ _part_unswallow(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
                     if (eud->type == EDJE_USER_SWALLOW && eud->u.swallow.child == obj_swallow)
                       {
                          _edje_user_definition_free(eud);
-                         return ;
+                         return;
                       }
                }
           }
@@ -5780,8 +5780,8 @@ _update_hints_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Eina_Bool update = va_arg(*list, int);
    Edje *ed = _pd;
 
-   if (!ed) return ;
-   if (ed->update_hints == !!update) return ;
+   if (!ed) return;
+   if (ed->update_hints == !!update) return;
 
    ed->update_hints = !!update;
    if (update)

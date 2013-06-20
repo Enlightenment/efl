@@ -456,7 +456,7 @@ _update_emotion_fps(Emotion_Gstreamer_Video *ev)
 {
    double tim;
 
-   if (!debug_fps) return ;
+   if (!debug_fps) return;
 
    tim = ecore_time_get();
    ev->frames++;
@@ -829,7 +829,7 @@ _emotion_gstreamer_pause(void *data, Ecore_Thread *thread)
    Emotion_Gstreamer_Video *ev = data;
    gboolean res;
 
-   if (ecore_thread_check(thread) || !ev->pipeline) return ;
+   if (ecore_thread_check(thread) || !ev->pipeline) return;
 
    gst_element_set_state(ev->pipeline, GST_STATE_PAUSED);
    res = gst_element_get_state(ev->pipeline, NULL, NULL, GST_CLOCK_TIME_NONE);
@@ -965,7 +965,7 @@ _video_update_pixels(void *data, Evas_Object *obj EINA_UNUSED, const Evas_Video_
    Emotion_Gstreamer_Buffer *send;
    EvasVideoSinkPrivate *priv = NULL;
 
-   if (!ev->send) return ;
+   if (!ev->send) return;
 
    send = ev->send;
    priv = send->sink;

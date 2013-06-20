@@ -1240,7 +1240,7 @@ evas_object_map_update(Evas_Object *eo_obj,
         obj->changed_map = EINA_TRUE;
      }
 
-   if (!obj->changed_map) return ;
+   if (!obj->changed_map) return;
 
    if (obj->map->cur.map && obj->map->spans && obj->map->cur.map->count != obj->map->spans->count)
      {
@@ -1264,7 +1264,7 @@ evas_object_map_update(Evas_Object *eo_obj,
         EINA_COW_WRITE_END(evas_object_map_cow, obj->map, map_write);
      }
 
-   if (!obj->map->spans) return ;
+   if (!obj->map->spans) return;
 
    EINA_COW_WRITE_BEGIN(evas_object_map_cow, obj->map, Evas_Object_Map_Data, map_write)
      {

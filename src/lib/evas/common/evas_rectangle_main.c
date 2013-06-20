@@ -90,7 +90,7 @@ evas_common_rectangle_draw_do(const Cutout_Rects *reuse,
 					   clip->x, clip->y,
 					   clip->w, clip->h);
         rectangle_draw_internal(dst, dc, x, y, w, h);
-        return ;
+        return;
      }
 
    for (i = 0; i < reuse->active; ++i)

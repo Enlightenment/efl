@@ -33,7 +33,7 @@ read_watch_file(const char *file)
    Eina_List *r = NULL;
 
    f = eina_file_open(file, EINA_FALSE);
-   if (!f) return ;
+   if (!f) return;
 
    it = eina_file_map_lines(f);
    if (!it) goto err;
