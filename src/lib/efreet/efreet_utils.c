@@ -25,6 +25,8 @@ static Efreet_Desktop *efreet_util_cache_find(const char *search, const char *wh
 static Eina_List *efreet_util_cache_list(const char *search, const char *what);
 static Eina_List *efreet_util_cache_glob_list(const char *search, const char *what);
 
+static Eina_Lock _lock;
+
 static Eina_Hash *file_id_by_desktop_path = NULL;
 
 static int init = 0;
@@ -41,15 +43,28 @@ efreet_util_init(void)
         return 0;
     }
 
+    if (!eina_lock_new(&_lock))
+    {
+        ERR("Could not create lock");
+        goto error;
+    }
+
+
     file_id_by_desktop_path = eina_hash_string_superfast_new(EINA_FREE_CB(eina_stringshare_del));
 
     return init;
+error:
+    eina_log_domain_unregister(_efreet_utils_log_dom);
+    _efreet_utils_log_dom = -1;
+    return 0;
 }
 
 int
 efreet_util_shutdown(void)
 {
     if (--init) return init;
+
+    eina_lock_free(&_lock);
 
     eina_log_domain_unregister(_efreet_utils_log_dom);
     _efreet_utils_log_dom = -1;
@@ -118,7 +133,9 @@ efreet_util_path_to_file_id(const char *path)
     }
     eina_stringshare_del(base);
     file_id = eina_stringshare_add(tmp);
-    eina_hash_add(file_id_by_desktop_path, path, (void *)file_id);
+    eina_lock_take(&_lock);
+    eina_hash_set(file_id_by_desktop_path, path, (void *)file_id);
+    eina_lock_release(&_lock);
     return file_id;
 }
 
