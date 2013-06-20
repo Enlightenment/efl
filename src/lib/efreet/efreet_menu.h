@@ -70,7 +70,7 @@ EAPI Efreet_Menu     *efreet_menu_new(const char *name);
 EAPI void             efreet_menu_file_set(const char *file);
 
 /**
- * @return Returns the Efreet_Menu_Internal representation of the default menu or
+ * @return Returns the Efreet_Menu representation of the default menu or
  * NULL if none found
  * @brief Creates the default menu representation
  */
@@ -78,7 +78,7 @@ EAPI Efreet_Menu     *efreet_menu_get(void);
 
 /**
  * @param path The path of the menu to load
- * @return Returns the Efreet_Menu_Internal representation on success or NULL on
+ * @return Returns the Efreet_Menu representation on success or NULL on
  * failure
  * @brief Parses the given .menu file and creates the menu representation
  */
