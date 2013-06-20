@@ -164,8 +164,6 @@ static Eina_Hash *efreet_menu_filter_cbs = NULL;
 static Eina_Hash *efreet_menu_move_cbs = NULL;
 static Eina_Hash *efreet_menu_layout_cbs = NULL;
 
-static const char *efreet_menu_prefix_get(void);
-
 static Efreet_Menu_Internal *efreet_menu_by_name_find(Efreet_Menu_Internal *internal,
                                                     const char *name,
                                                     Efreet_Menu_Internal **parent);
@@ -385,6 +383,9 @@ efreet_menu_init(void)
         return 0;
     }
 
+    efreet_menu_prefix = getenv("XDG_MENU_PREFIX");
+    if (!efreet_menu_prefix) efreet_menu_prefix = "";
+
     efreet_menu_handle_cbs = eina_hash_string_superfast_new(NULL);
     efreet_menu_filter_cbs = eina_hash_string_superfast_new(NULL);
     efreet_menu_move_cbs = eina_hash_string_superfast_new(NULL);
@@ -524,7 +525,7 @@ efreet_menu_get(void)
 
     /* check the users config directory first */
     snprintf(menu, sizeof(menu), "%s/menus/%sapplications.menu",
-                        efreet_config_home_get(), efreet_menu_prefix_get());
+                        efreet_config_home_get(), efreet_menu_prefix);
     if (ecore_file_exists(menu))
         return efreet_menu_parse(menu);
 
@@ -533,7 +534,7 @@ efreet_menu_get(void)
     EINA_LIST_FOREACH(config_dirs, l, dir)
     {
         snprintf(menu, sizeof(menu), "%s/menus/%sapplications.menu",
-                                    dir, efreet_menu_prefix_get());
+                                    dir, efreet_menu_prefix);
         if (ecore_file_exists(menu))
             return efreet_menu_parse(menu);
     }
@@ -877,22 +878,6 @@ efreet_menu_internal_free(Efreet_Menu_Internal *internal)
     IF_FREE_LIST(internal->default_layout, efreet_menu_layout_free);
 
     FREE(internal);
-}
-
-/**
- * @internal
- * @return Returns the XDG_MENU_PREFIX env variable or "" if none set
- * @brief Retrieves the XDG_MENU_PREFIX or "" if not set.
- */
-static const char *
-efreet_menu_prefix_get(void)
-{
-    if (efreet_menu_prefix) return efreet_menu_prefix;
-
-    efreet_menu_prefix = getenv("XDG_MENU_PREFIX");
-    if (!efreet_menu_prefix) efreet_menu_prefix = "";
-
-    return efreet_menu_prefix;
 }
 
 /**
@@ -1595,18 +1580,16 @@ efreet_menu_handle_default_merge_dirs(Efreet_Menu_Internal *parent, Efreet_Xml *
 #ifndef STRICT_SPEC
     char parent_path[PATH_MAX];
 #endif
-    const char *prefix;
 
     if (!parent || !xml) return 0;
 
-    prefix = efreet_menu_prefix_get();
-    if (!strcmp(prefix, "gnome-") &&
+    if (!strcmp(efreet_menu_prefix, "gnome-") &&
             (!strcmp(parent->file.name, "gnome-applications.menu")))
     {
         p = alloca(sizeof("applications"));
         memcpy(p, "applications", sizeof("applications"));
     }
-    else if ((!strcmp(prefix, "kde-") &&
+    else if ((!strcmp(efreet_menu_prefix, "kde-") &&
             (!strcmp(parent->file.name, "kde-applications.menu"))))
     {
         p = alloca(sizeof("applications"));
