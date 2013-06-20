@@ -44,6 +44,12 @@ struct Efreet_Menu
     Eina_List      *entries;   /**< The menu items */
 };
 
+/**
+ * A callback used with efreet_menu_async_get() and efreet_menu_async_parse()
+ *
+ * @since 1.8
+ */
+typedef void *(*Efreet_Menu_Cb) (Efreet_Menu *menu);
 
 /**
  * @return Returns no value
@@ -70,11 +76,26 @@ EAPI Efreet_Menu     *efreet_menu_new(const char *name);
 EAPI void             efreet_menu_file_set(const char *file);
 
 /**
+ * Creates the Efreet_Menu representation of the default menu or
+ * NULL if none found and returns it in the callback.
+ * @param func function to call when menu is created
+ */
+EAPI void             efreet_menu_async_get(Efreet_Menu_Cb func);
+
+/**
  * @return Returns the Efreet_Menu representation of the default menu or
  * NULL if none found
  * @brief Creates the default menu representation
  */
 EAPI Efreet_Menu     *efreet_menu_get(void);
+
+/**
+ * Parses the given .menu file and creates the menu representation, and
+ * returns it in the callback
+ * @param path The path of the menu to load
+ * @param func function to call when menu is created
+ */
+EAPI void             efreet_menu_async_parse(const char *path, Efreet_Menu_Cb func);
 
 /**
  * @param path The path of the menu to load

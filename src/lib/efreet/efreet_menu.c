@@ -2,6 +2,7 @@
 # include <config.h>
 #endif
 
+#include <Ecore.h>
 #include <Ecore_File.h>
 
 /* define macros and variable for using the eina logging system  */
@@ -154,6 +155,14 @@ struct Efreet_Menu_Desktop
     unsigned char allocated:1; /**< If this desktop has been allocated */
 };
 
+typedef struct Efreet_Menu_Async Efreet_Menu_Async;
+
+struct Efreet_Menu_Async
+{
+    Efreet_Menu_Cb    func;
+    Eina_Stringshare *path;
+};
+
 static const char *efreet_menu_prefix = NULL; /**< The $XDG_MENU_PREFIX env var */
 Eina_List *efreet_menu_kde_legacy_dirs = NULL; /**< The directories to use for KDELegacy entries */
 static const char *efreet_tag_menu = NULL;
@@ -163,6 +172,8 @@ static Eina_Hash *efreet_menu_handle_cbs = NULL;
 static Eina_Hash *efreet_menu_filter_cbs = NULL;
 static Eina_Hash *efreet_menu_move_cbs = NULL;
 static Eina_Hash *efreet_menu_layout_cbs = NULL;
+
+static Efreet_Menu *efreet_menu_internal_get(Efreet_Menu_Cb func);
 
 static Efreet_Menu_Internal *efreet_menu_by_name_find(Efreet_Menu_Internal *internal,
                                                     const char *name,
@@ -304,6 +315,8 @@ static void efreet_menu_path_set(Efreet_Menu_Internal *internal, const char *pat
 
 static int efreet_menu_save_menu(Efreet_Menu *menu, FILE *f, int indent);
 static int efreet_menu_save_indent(FILE *f, int indent);
+
+static void _efreet_menu_async_parse_cb(void *data, Ecore_Thread *thread);
 
 int
 efreet_menu_init(void)
@@ -507,39 +520,27 @@ efreet_menu_file_set(const char *file)
     if (file) efreet_menu_file = eina_stringshare_add(file);
 }
 
+EAPI void
+efreet_menu_async_get(Efreet_Menu_Cb func)
+{
+   efreet_menu_internal_get(func);
+}
+
 EAPI Efreet_Menu *
 efreet_menu_get(void)
 {
-    char menu[PATH_MAX];
-    const char *dir;
-    Eina_List *config_dirs, *l;
+   return efreet_menu_internal_get(NULL);
+}
 
-#ifndef STRICT_SPEC
-    /* prefer user set menu */
-    if (efreet_menu_file)
-    {
-        if (ecore_file_exists(efreet_menu_file))
-            return efreet_menu_parse(efreet_menu_file);
-    }
-#endif
+EAPI void
+efreet_menu_async_parse(const char *path, Efreet_Menu_Cb func)
+{
+    Efreet_Menu_Async *async;
 
-    /* check the users config directory first */
-    snprintf(menu, sizeof(menu), "%s/menus/%sapplications.menu",
-                        efreet_config_home_get(), efreet_menu_prefix);
-    if (ecore_file_exists(menu))
-        return efreet_menu_parse(menu);
-
-    /* fallback to the XDG_CONFIG_DIRS */
-    config_dirs = efreet_config_dirs_get();
-    EINA_LIST_FOREACH(config_dirs, l, dir)
-    {
-        snprintf(menu, sizeof(menu), "%s/menus/%sapplications.menu",
-                                    dir, efreet_menu_prefix);
-        if (ecore_file_exists(menu))
-            return efreet_menu_parse(menu);
-    }
-
-    return NULL;
+    async = NEW(Efreet_Menu_Async, 1);
+    async->func = func;
+    async->path = eina_stringshare_add(path);
+    ecore_thread_run(_efreet_menu_async_parse_cb, NULL, NULL, async);
 }
 
 EAPI Efreet_Menu *
@@ -718,6 +719,65 @@ efreet_menu_dump(Efreet_Menu *menu, const char *indent)
                 INF("%s|---%s", new_indent, entry->name);
         }
     }
+}
+
+static Efreet_Menu *
+efreet_menu_internal_get(Efreet_Menu_Cb func)
+{
+    char menu[PATH_MAX];
+    const char *dir;
+    Eina_List *config_dirs, *l;
+
+#ifndef STRICT_SPEC
+    /* prefer user set menu */
+    if (efreet_menu_file)
+    {
+        if (ecore_file_exists(efreet_menu_file))
+        {
+            if (func)
+            {
+                efreet_menu_async_parse(efreet_menu_file, func);
+                return NULL;
+            }
+            else
+                return efreet_menu_parse(efreet_menu_file);
+        }
+    }
+#endif
+
+    /* check the users config directory first */
+    snprintf(menu, sizeof(menu), "%s/menus/%sapplications.menu",
+                        efreet_config_home_get(), efreet_menu_prefix);
+    if (ecore_file_exists(menu))
+    {
+        if (func)
+        {
+            efreet_menu_async_parse(menu, func);
+            return NULL;
+        }
+        else
+            return efreet_menu_parse(menu);
+    }
+
+    /* fallback to the XDG_CONFIG_DIRS */
+    config_dirs = efreet_config_dirs_get();
+    EINA_LIST_FOREACH(config_dirs, l, dir)
+    {
+        snprintf(menu, sizeof(menu), "%s/menus/%sapplications.menu",
+                                    dir, efreet_menu_prefix);
+        if (ecore_file_exists(menu))
+        {
+            if (func)
+            {
+                efreet_menu_async_parse(menu, func);
+                return NULL;
+            }
+            else
+                return efreet_menu_parse(menu);
+        }
+    }
+
+    return NULL;
 }
 
 /**
@@ -3798,3 +3858,16 @@ efreet_menu_save_indent(FILE *f, int indent)
     return 1;
 }
 
+static void
+_efreet_menu_async_parse_cb(void *data, Ecore_Thread *thread EINA_UNUSED)
+{
+    Efreet_Menu_Async *async = data;
+    Efreet_Menu *menu;
+
+    menu = efreet_menu_parse(async->path);
+    ecore_thread_main_loop_begin();
+    async->func(menu);
+    ecore_thread_main_loop_end();
+    eina_stringshare_del(async->path);
+    free(async);
+}
