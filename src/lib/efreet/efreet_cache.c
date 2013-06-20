@@ -42,6 +42,9 @@ struct _Efreet_Old_Cache
 
 static Eldbus_Connection *conn = NULL;
 static Eldbus_Proxy *proxy = NULL;
+
+static Eina_Lock _lock;
+
 /**
  * Data for cache files
  */
@@ -111,6 +114,12 @@ efreet_cache_init(void)
     _efreet_cache_log_dom = eina_log_domain_register("efreet_cache", EFREET_DEFAULT_LOG_COLOR);
     if (_efreet_cache_log_dom < 0)
         return 0;
+
+    if (!eina_lock_new(&_lock))
+    {
+        ERR("Could not create lock");
+        goto error;
+    }
 
     EFREET_EVENT_ICON_CACHE_UPDATE = ecore_event_type_new();
     EFREET_EVENT_DESKTOP_CACHE_UPDATE = ecore_event_type_new();
@@ -216,6 +225,8 @@ efreet_cache_shutdown(void)
       }
 
     eldbus_shutdown();
+
+    eina_lock_free(&_lock);
 
     eina_log_domain_unregister(_efreet_cache_log_dom);
     _efreet_cache_log_dom = -1;
@@ -767,24 +778,27 @@ efreet_cache_array_string_free(Efreet_Cache_Array_String *array)
 Efreet_Desktop *
 efreet_cache_desktop_find(const char *file)
 {
-    Efreet_Cache_Desktop *cache;
+    Efreet_Cache_Desktop *cache = NULL;
 
-    if (!efreet_cache_check(&desktop_cache, efreet_desktop_cache_file(), EFREET_DESKTOP_CACHE_MAJOR)) return NULL;
+    eina_lock_take(&_lock);
+    if (!efreet_cache_check(&desktop_cache, efreet_desktop_cache_file(), EFREET_DESKTOP_CACHE_MAJOR)) goto error;
 
     cache = eina_hash_find(desktops, file);
-    if (cache == NON_EXISTING) return NULL;
+    if (cache == NON_EXISTING) goto error;
     if (cache)
     {
         /* If less than one second since last stat, return desktop */
         if ((ecore_time_get() - cache->check_time) < 1)
         {
             INF("Return without stat %f %f", ecore_time_get(), cache->check_time);
+            eina_lock_release(&_lock);
             return &cache->desktop;
         }
         if (cache->desktop.load_time == ecore_file_mod_time(cache->desktop.orig_path))
         {
             INF("Return with stat %f %f", ecore_time_get(), cache->check_time);
             cache->check_time = ecore_time_get();
+            eina_lock_release(&_lock);
             return &cache->desktop;
         }
 
@@ -809,11 +823,14 @@ efreet_cache_desktop_find(const char *file)
             cache->desktop.eet = 1;
             cache->check_time = ecore_time_get();
             eina_hash_set(desktops, cache->desktop.orig_path, cache);
+            eina_lock_release(&_lock);
             return &cache->desktop;
         }
     }
     else
         eina_hash_set(desktops, file, NON_EXISTING);
+error:
+    eina_lock_release(&_lock);
     return NULL;
 }
 
@@ -828,6 +845,7 @@ efreet_cache_desktop_free(Efreet_Desktop *desktop)
         desktop == NON_EXISTING ||
         !desktop->eet) return;
 
+    eina_lock_take(&_lock);
     curr = eina_hash_find(desktops, desktop->orig_path);
     if (curr == desktop)
     {
@@ -860,6 +878,7 @@ efreet_cache_desktop_free(Efreet_Desktop *desktop)
     eina_list_free(desktop->mime_types);
     IF_FREE_HASH(desktop->x);
     free(desktop);
+    eina_lock_release(&_lock);
 }
 
 void
@@ -871,6 +890,12 @@ efreet_cache_desktop_add(Efreet_Desktop *desktop)
 
     if (!efreet_cache_update) return;
     /* TODO: Chunk updates */
+    if (!eina_main_loop_is()) return;
+    /*
+     * TODO: Call in thread with:
+    ecore_thread_main_loop_begin();
+    ecore_thread_main_loop_end();
+    */
     path = ecore_file_dir_get(desktop->orig_path);
     msg = eldbus_proxy_method_call_new(proxy, "AddDesktopDirs");
     iter = eldbus_message_iter_get(msg);
@@ -923,6 +948,7 @@ efreet_cache_desktop_close(void)
     IF_RELEASE(util_cache_names_key);
     IF_RELEASE(util_cache_hash_key);
 
+    eina_lock_take(&_lock);
     if ((desktop_cache) && (desktop_cache != NON_EXISTING))
     {
         Efreet_Old_Cache *d = NEW(Efreet_Old_Cache, 1);
@@ -936,6 +962,7 @@ efreet_cache_desktop_close(void)
         desktops = eina_hash_string_superfast_new(NULL);
     }
     desktop_cache = NULL;
+    eina_lock_release(&_lock);
 
     efreet_cache_array_string_free(util_cache_names);
     util_cache_names = NULL;
@@ -949,7 +976,9 @@ efreet_cache_desktop_close(void)
 
     util_cache = efreet_cache_close(util_cache);
 
+    eina_lock_take(&_lock);
     IF_RELEASE(desktop_cache_file);
+    eina_lock_release(&_lock);
     IF_RELEASE(util_cache_file);
 }
 
