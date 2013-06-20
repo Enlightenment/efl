@@ -144,7 +144,7 @@ int main(int c, char **v)
 {
    int wfd, rfd;
    Slave_Command cmd;
-   void *params = NULL;;
+   void *params = NULL;
    Eina_Bool quit = EINA_FALSE;
 
    if (c < 3)

@@ -1797,7 +1797,7 @@ static void _players_all_from(const char *path)
    const Eina_File_Direct_Info *info;
    int count = 0;
    Eina_Iterator *itr = eina_file_direct_ls(path);
-   if (!itr) goto end;;
+   if (!itr) goto end;
    EINA_ITERATOR_FOREACH(itr, info)
      {
         if (access(info->path, R_OK | X_OK) == 0)

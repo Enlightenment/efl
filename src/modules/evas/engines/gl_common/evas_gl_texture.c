@@ -318,7 +318,7 @@ _pool_tex_find(Evas_Engine_GL_Context *gc, int w, int h,
         pt->slot = -1;
         pt->fslot = -1;
         pt->whole = 1;
-        *apt = _pool_tex_alloc(pt, w, h, u, v);;
+        *apt = _pool_tex_alloc(pt, w, h, u, v);
         return pt;
      }
 

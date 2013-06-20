@@ -83,7 +83,7 @@ _mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
 {
    Ecore_Evas *ee = data;
    size_t len = 0;
-   char *buf = NULL;;
+   char *buf = NULL;
 
    num++;
 

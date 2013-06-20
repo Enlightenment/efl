@@ -796,7 +796,7 @@ _edje_load_or_show_error(Evas_Object *edje, const char *file, const char *group)
 
    if (edje_object_file_set(edje, file, group))
      {
-        edje_object_signal_callback_add(edje, "edje,change,file", "edje", _edje_reload, NULL);;
+        edje_object_signal_callback_add(edje, "edje,change,file", "edje", _edje_reload, NULL);
         evas_object_focus_set(edje, EINA_TRUE);
         return EINA_TRUE;
      }

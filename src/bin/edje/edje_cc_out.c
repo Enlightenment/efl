@@ -102,7 +102,7 @@ struct _Script_Lua_Writer
    int size;
 };
 
-typedef struct _Script_Write Script_Write;;
+typedef struct _Script_Write Script_Write;
 typedef struct _Head_Write Head_Write;
 typedef struct _Fonts_Write Fonts_Write;
 typedef struct _Image_Write Image_Write;

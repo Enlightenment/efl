@@ -476,7 +476,7 @@ START_TEST(eina_model_test_deep_copy)
 
    s1 = eina_model_to_string(m);
    fail_unless(s1 != NULL);
-   ck_assert_str_eq(s1, "Eina_Model_Type_Generic({a: 0, b: 1, c: 2, d: 3, e: 4}, [Eina_Model_Type_Generic({x: 0}, []), Eina_Model_Type_Generic({x: 1}, []), Eina_Model_Type_Generic({x: 2}, []), Eina_Model_Type_Generic({x: 3}, []), Eina_Model_Type_Generic({x: 4}, [])])");;
+   ck_assert_str_eq(s1, "Eina_Model_Type_Generic({a: 0, b: 1, c: 2, d: 3, e: 4}, [Eina_Model_Type_Generic({x: 0}, []), Eina_Model_Type_Generic({x: 1}, []), Eina_Model_Type_Generic({x: 2}, []), Eina_Model_Type_Generic({x: 3}, []), Eina_Model_Type_Generic({x: 4}, [])])");
 
    cp = eina_model_deep_copy(m);
    fail_unless(cp != NULL);

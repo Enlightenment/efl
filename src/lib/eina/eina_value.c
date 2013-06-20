@@ -5105,7 +5105,7 @@ EAPI const unsigned int eina_prime_table[] =
 EAPI Eina_Value *
 eina_value_new(const Eina_Value_Type *type)
 {
-   Eina_Value *value = eina_mempool_malloc(_eina_value_mp, sizeof(Eina_Value));;
+   Eina_Value *value = eina_mempool_malloc(_eina_value_mp, sizeof(Eina_Value));
    if (!value)
      {
         eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
@@ -5209,7 +5209,7 @@ eina_value_array_new(const Eina_Value_Type *subtype, unsigned int step)
 
    EINA_SAFETY_ON_FALSE_RETURN_VAL(eina_value_type_check(subtype), EINA_FALSE);
 
-   value = eina_mempool_malloc(_eina_value_mp, sizeof(Eina_Value));;
+   value = eina_mempool_malloc(_eina_value_mp, sizeof(Eina_Value));
    if (!value)
      return NULL;
 
@@ -5229,7 +5229,7 @@ eina_value_list_new(const Eina_Value_Type *subtype)
 
    EINA_SAFETY_ON_FALSE_RETURN_VAL(eina_value_type_check(subtype), EINA_FALSE);
 
-   value = eina_mempool_malloc(_eina_value_mp, sizeof(Eina_Value));;
+   value = eina_mempool_malloc(_eina_value_mp, sizeof(Eina_Value));
    if (!value)
      return NULL;
 
@@ -5249,7 +5249,7 @@ eina_value_hash_new(const Eina_Value_Type *subtype, unsigned int buckets_power_s
 
    EINA_SAFETY_ON_FALSE_RETURN_VAL(eina_value_type_check(subtype), EINA_FALSE);
 
-   value = eina_mempool_malloc(_eina_value_mp, sizeof(Eina_Value));;
+   value = eina_mempool_malloc(_eina_value_mp, sizeof(Eina_Value));
    if (!value)
      return NULL;
 
@@ -5267,7 +5267,7 @@ eina_value_struct_new(const Eina_Value_Struct_Desc *desc)
 {
    Eina_Value *value;
 
-   value = eina_mempool_malloc(_eina_value_mp, sizeof(Eina_Value));;
+   value = eina_mempool_malloc(_eina_value_mp, sizeof(Eina_Value));
    if (!value)
      return NULL;
 

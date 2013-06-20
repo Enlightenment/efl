@@ -1155,7 +1155,7 @@ evas_image_load_file_data_jpeg_alpha_internal(Image_Entry *ie, FILE *f, int *err
      {
 	jpeg_destroy_decompress(&cinfo);
 	*error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
-	return EINA_FALSE;;
+	return EINA_FALSE;
      }
    data = alloca(w * 16 * 3);
    if (!ie->flags.loaded)

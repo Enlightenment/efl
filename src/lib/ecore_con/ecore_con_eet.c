@@ -547,7 +547,7 @@ ecore_con_eet_data_callback_add(Ecore_Con_Eet *ece, const char *name, Ecore_Con_
 
    if (!ece) return ;
 
-   eced = calloc(1, sizeof (Ecore_Con_Eet_Data));;
+   eced = calloc(1, sizeof (Ecore_Con_Eet_Data));
    if (!eced) return ;
 
    eced->func = func;
@@ -571,7 +571,7 @@ ecore_con_eet_raw_data_callback_add(Ecore_Con_Eet *ece, const char *name, Ecore_
 
    if (!ece) return ;
 
-   eced = calloc(1, sizeof (Ecore_Con_Eet_Raw_Data));;
+   eced = calloc(1, sizeof (Ecore_Con_Eet_Raw_Data));
    if (!eced) return ;
 
    eced->func = func;

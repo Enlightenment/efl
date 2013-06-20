@@ -539,7 +539,7 @@ eina_module_find(const Eina_Array *array, const char *module)
            continue;
 
         if (!strncmp(module, file_m, len))
-	   return m;;
+	   return m;
      }
 
    return NULL;

@@ -233,7 +233,7 @@ ecore_evas_object_associate(Ecore_Evas *ee, Evas_Object *obj, Ecore_Evas_Object_
    if (!_ecore_evas_object_evas_check(__FUNCTION__, ee, obj))
      return EINA_FALSE;
 
-   old_ee = _evas_object_associate_get(obj);;
+   old_ee = _evas_object_associate_get(obj);
    if (old_ee)
      ecore_evas_object_dissociate(old_ee, obj);
 
