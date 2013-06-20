@@ -303,7 +303,19 @@ efreet_dirs_init(void)
     xdg_config_dirs = efreet_dirs_get("XDG_CONFIG_DIRS", "/etc/xdg");
 
     /* xdg_runtime_dir */
-    xdg_runtime_dir = efreet_dir_get("XDG_RUNTIME_DIR", "/tmp");
+    xdg_runtime_dir = getenv("XDG_RUNTIME_DIR");
+    if (!xdg_runtime_dir)
+    {
+        snprintf(buf, sizeof(buf), "/tmp/xdg-XXXXXX");
+        xdg_runtime_dir = mkdtemp(buf);
+        if (!xdg_runtime_dir)
+        {
+            perror("efreet mkdtemp");
+            xdg_runtime_dir = "/tmp";
+        }
+    }
+    xdg_runtime_dir = eina_stringshare_add(xdg_runtime_dir);
+
     if (stat(xdg_runtime_dir, &st) == -1)
     {
         ERR("$XDG_RUNTIME_DIR did not exist, creating '%s' (breaks spec)",
