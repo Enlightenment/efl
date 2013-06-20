@@ -88,10 +88,10 @@ efreet_desktop_init(void)
 
 #ifdef HAVE_EVIL
     if (!evil_sockets_init())
-      {
-         ERR("Could not initialize Winsock system");
-         goto error;
-      }
+    {
+        ERR("Could not initialize Winsock system");
+        goto error;
+    }
 #endif
 
     efreet_desktop_types = NULL;
