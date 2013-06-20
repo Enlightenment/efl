@@ -27,6 +27,8 @@ static const char *desktop_environment = NULL;
  */
 static Eina_List *efreet_desktop_types = NULL;
 
+static Eina_Lock _lock;
+
 EAPI int EFREET_DESKTOP_TYPE_APPLICATION = 0;
 EAPI int EFREET_DESKTOP_TYPE_LINK = 0;
 EAPI int EFREET_DESKTOP_TYPE_DIRECTORY = 0;
@@ -94,6 +96,12 @@ efreet_desktop_init(void)
     }
 #endif
 
+    if (!eina_lock_new(&_lock))
+    {
+        ERR("Could not create lock");
+        goto error;
+    }
+
     efreet_desktop_types = NULL;
 
     EFREET_DESKTOP_TYPE_APPLICATION = efreet_desktop_type_add("Application",
@@ -107,12 +115,10 @@ efreet_desktop_init(void)
                                                                 NULL, NULL);
 
     return 1;
-#ifdef HAVE_EVIL
 error:
     eina_log_domain_unregister(_efreet_desktop_log_dom);
     _efreet_desktop_log_dom = -1;
     return 0;
-#endif
 }
 
 /**
@@ -128,6 +134,7 @@ efreet_desktop_shutdown(void)
     IF_RELEASE(desktop_environment);
     EINA_LIST_FREE(efreet_desktop_types, info)
         efreet_desktop_type_info_free(info);
+    eina_lock_free(&_lock);
 #ifdef HAVE_EVIL
     evil_sockets_shutdown();
 #endif
@@ -168,7 +175,9 @@ EAPI int
 efreet_desktop_ref(Efreet_Desktop *desktop)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(desktop, 0);
+    eina_lock_take(&_lock);
     desktop->ref++;
+    eina_lock_release(&_lock);
     return desktop->ref;
 }
 
@@ -205,7 +214,9 @@ efreet_desktop_new(const char *file)
     free(tmp);
     if (desktop)
     {
+        eina_lock_take(&_lock);
         desktop->ref++;
+        eina_lock_release(&_lock);
         if (!efreet_desktop_environment_check(desktop))
         {
             efreet_desktop_free(desktop);
@@ -320,8 +331,13 @@ efreet_desktop_free(Efreet_Desktop *desktop)
 {
     if (!desktop) return;
 
+    eina_lock_take(&_lock);
     desktop->ref--;
-    if (desktop->ref > 0) return;
+    if (desktop->ref > 0)
+    {
+        eina_lock_release(&_lock);
+        return;
+    }
 
     if (desktop->eet)
     {
@@ -360,6 +376,7 @@ efreet_desktop_free(Efreet_Desktop *desktop)
         }
         free(desktop);
     }
+    eina_lock_release(&_lock);
 }
 
 EAPI void
@@ -392,8 +409,10 @@ efreet_desktop_category_add(Efreet_Desktop *desktop, const char *category)
     if (eina_list_search_unsorted(desktop->categories,
                                   EINA_COMPARE_CB(strcmp), category)) return;
 
+    eina_lock_take(&_lock);
     desktop->categories = eina_list_append(desktop->categories,
                         (void *)eina_stringshare_add(category));
+    eina_lock_release(&_lock);
 }
 
 EAPI int
@@ -406,8 +425,10 @@ efreet_desktop_category_del(Efreet_Desktop *desktop, const char *category)
     if ((found = eina_list_search_unsorted(desktop->categories,
                                            EINA_COMPARE_CB(strcmp), category)))
     {
-        eina_stringshare_del(found);
+        eina_lock_take(&_lock);
         desktop->categories = eina_list_remove(desktop->categories, found);
+        eina_stringshare_del(found);
+        eina_lock_release(&_lock);
 
         return 1;
     }
@@ -455,11 +476,13 @@ efreet_desktop_x_field_set(Efreet_Desktop *desktop, const char *key, const char 
     EINA_SAFETY_ON_NULL_RETURN_VAL(desktop, EINA_FALSE);
     EINA_SAFETY_ON_TRUE_RETURN_VAL(strncmp(key, "X-", 2), EINA_FALSE);
 
+    eina_lock_take(&_lock);
     if (!desktop->x)
         desktop->x = eina_hash_string_superfast_new(EINA_FREE_CB(eina_stringshare_del));
 
     eina_hash_del_by_key(desktop->x, key);
     eina_hash_add(desktop->x, key, eina_stringshare_add(data));
+    eina_lock_release(&_lock);
 
     return EINA_TRUE;
 }
@@ -483,11 +506,15 @@ efreet_desktop_x_field_get(Efreet_Desktop *desktop, const char *key)
 EAPI Eina_Bool
 efreet_desktop_x_field_del(Efreet_Desktop *desktop, const char *key)
 {
+    Eina_Bool ret;
     EINA_SAFETY_ON_NULL_RETURN_VAL(desktop, EINA_FALSE);
     EINA_SAFETY_ON_TRUE_RETURN_VAL(strncmp(key, "X-", 2), EINA_FALSE);
     EINA_SAFETY_ON_NULL_RETURN_VAL(desktop->x, EINA_FALSE);
 
-    return eina_hash_del_by_key(desktop->x, key);
+    eina_lock_take(&_lock);
+    ret = eina_hash_del_by_key(desktop->x, key);
+    eina_lock_release(&_lock);
+    return ret;
 }
 
 EAPI void *
