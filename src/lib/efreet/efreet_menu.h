@@ -79,6 +79,8 @@ EAPI void             efreet_menu_file_set(const char *file);
  * Creates the Efreet_Menu representation of the default menu or
  * NULL if none found and returns it in the callback.
  * @param func function to call when menu is created
+ *
+ * @since 1.8
  */
 EAPI void             efreet_menu_async_get(Efreet_Menu_Cb func);
 
@@ -94,6 +96,8 @@ EAPI Efreet_Menu     *efreet_menu_get(void);
  * returns it in the callback
  * @param path The path of the menu to load
  * @param func function to call when menu is created
+ *
+ * @since 1.8
  */
 EAPI void             efreet_menu_async_parse(const char *path, Efreet_Menu_Cb func);
 
