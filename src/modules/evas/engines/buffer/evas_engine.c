@@ -1,10 +1,10 @@
-#include "evas_common.h"
+#include "evas_common_private.h"
 #include "evas_private.h"
 #include "evas_engine.h"
 #include "Evas_Engine_Buffer.h"
 
 /* domain for eina_log */
-/* the log macros are defined in evas_common.h */
+/* the log macros are defined in evas_common_private.h */
 /* theirs names are EVAS_ERR, EVAS_DBG, EVAS_CRIT, EVAS_WRN and EVAS_INF */
 /* although we can use the EVAS_ERROR, etc... macros it will not work
    when the -fvisibility=hidden option is passed to gcc */

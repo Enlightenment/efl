@@ -1,4 +1,4 @@
-#include "evas_common.h"
+#include "evas_common_private.h"
 
 static RGBA_Gfx_Func     op_mul_span_funcs[SP_LAST][SM_LAST][SC_LAST][DP_LAST][CPU_LAST];
 static RGBA_Gfx_Pt_Func  op_mul_pt_funcs[SP_LAST][SM_LAST][SC_LAST][DP_LAST][CPU_LAST];

@@ -10,7 +10,7 @@
 # include <Evil.h>
 #endif
 
-#include "evas_common.h"
+#include "evas_common_private.h"
 #include "evas_private.h"
 
 #define PNG_BYTES_TO_CHECK 4

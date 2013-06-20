@@ -1,4 +1,4 @@
-#include "evas_common.h"
+#include "evas_common_private.h"
 #include "evas_blend_private.h"
 
 static RGBA_Gfx_Func     op_copy_span_funcs[SP_LAST][SM_LAST][SC_LAST][DP_LAST][CPU_LAST];

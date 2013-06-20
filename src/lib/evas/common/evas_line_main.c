@@ -1,4 +1,4 @@
-#include "evas_common.h"
+#include "evas_common_private.h"
 #include "evas_blend_private.h"
 
 #define IN_RANGE(x, y, w, h) \

@@ -1,4 +1,4 @@
-#include "evas_common.h"
+#include "evas_common_private.h"
 #include "evas_convert_rgb_16.h"
 
 #ifndef BUILD_NO_DITHER_MASK

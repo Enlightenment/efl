@@ -1,4 +1,4 @@
-#include "evas_common.h"
+#include "evas_common_private.h"
 #include "evas_convert_colorspace.h"
 
 #define CONVERT_RGB_565_TO_RGB_888(s) \

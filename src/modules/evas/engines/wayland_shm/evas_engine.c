@@ -1,4 +1,4 @@
-#include "evas_common.h"
+#include "evas_common_private.h"
 #include "evas_private.h"
 #include "Evas_Engine_Wayland_Shm.h"
 #include "evas_engine.h"

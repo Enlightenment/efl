@@ -1,7 +1,7 @@
 #ifndef EVAS_CS2_PRIVATE_H
 #define EVAS_CS2_PRIVATE_H 1
 
-#include "evas_common.h"
+#include "evas_common_private.h"
 
 struct _Data_Entry {
    unsigned int image_id;

@@ -5,7 +5,7 @@
 # include <hb-ft.h>
 #endif
 
-#include "evas_common.h"
+#include "evas_common_private.h"
 
 #include <Eina.h>
 #include "evas_font_private.h"

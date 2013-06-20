@@ -1,4 +1,4 @@
-#include "evas_common.h"
+#include "evas_common_private.h"
 #include "evas_private.h"
 
 EAPI Eo_Op EVAS_OBJ_SMART_CLIPPED_BASE_ID = EO_NOOP;

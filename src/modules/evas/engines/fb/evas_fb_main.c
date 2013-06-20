@@ -4,7 +4,7 @@
 /* some other system if needed.                                         */
 /* Copyright (c) 1999 - Carsten Haitzler (The Rasterman)                */
 /* -------------------------------------------------------------------- */
-#include "evas_common.h"
+#include "evas_common_private.h"
 #include "evas_fb.h"
 
 #include <sys/ioctl.h>

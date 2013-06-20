@@ -1,4 +1,4 @@
-#include "evas_common.h"
+#include "evas_common_private.h"
 #include "evas_engine.h"
 #include <sys/time.h>
 #include <sys/utsname.h>

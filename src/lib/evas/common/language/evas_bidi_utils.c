@@ -5,7 +5,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "evas_common.h"
+#include "evas_common_private.h"
 #include "evas_bidi_utils.h"
 
 #include "evas_font_private.h"

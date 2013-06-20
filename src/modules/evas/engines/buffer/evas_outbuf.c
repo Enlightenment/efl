@@ -6,7 +6,7 @@
 #include "evas_cs2_private.h"
 #endif
 
-#include "evas_common.h"
+#include "evas_common_private.h"
 #include "evas_engine.h"
 
 void

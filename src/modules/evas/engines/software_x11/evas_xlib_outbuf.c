@@ -8,7 +8,7 @@
 #ifdef EVAS_CSERVE2
 #include "evas_cs2_private.h"
 #endif
-#include "evas_common.h"
+#include "evas_common_private.h"
 #include "evas_macros.h"
 #include "evas_xlib_outbuf.h"
 #include "evas_xlib_buffer.h"

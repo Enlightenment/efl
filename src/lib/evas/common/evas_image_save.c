@@ -4,7 +4,7 @@
 
 #include "evas_options.h"
 
-#include "evas_common.h"
+#include "evas_common_private.h"
 #include "evas_private.h"
 
 

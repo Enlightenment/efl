@@ -1,4 +1,4 @@
-#include "evas_common.h" /* Includes evas_bidi_utils stuff. */
+#include "evas_common_private.h" /* Includes evas_bidi_utils stuff. */
 #include "evas_private.h"
 
 #include "Eo.h"

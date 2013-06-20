@@ -11,7 +11,7 @@
 #include <setjmp.h>
 #include <jpeglib.h>
 
-#include "evas_common.h"
+#include "evas_common_private.h"
 #include "evas_private.h"
 
 typedef struct _JPEG_error_mgr *emptr;

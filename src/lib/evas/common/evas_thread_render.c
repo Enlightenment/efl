@@ -1,6 +1,6 @@
 #include <assert.h>
 
-#include "evas_common.h"
+#include "evas_common_private.h"
 
 static Eina_Thread evas_thread_worker;
 static Eina_Condition evas_thread_queue_condition;

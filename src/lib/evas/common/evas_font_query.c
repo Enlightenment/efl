@@ -1,4 +1,4 @@
-#include "evas_common.h"
+#include "evas_common_private.h"
 #include "language/evas_bidi_utils.h" /*defines BIDI_SUPPORT if possible */
 #include "evas_font_private.h" /* for Frame-Queuing support */
 #include "evas_font_ot.h"

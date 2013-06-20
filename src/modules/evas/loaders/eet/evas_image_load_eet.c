@@ -4,7 +4,7 @@
 
 #include <Eet.h>
 
-#include "evas_common.h"
+#include "evas_common_private.h"
 #include "evas_private.h"
 
 typedef struct _Evas_Loader_Internal Evas_Loader_Internal;

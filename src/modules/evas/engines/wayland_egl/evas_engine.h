@@ -13,7 +13,7 @@
 /* #  include <GLES2/gl2ext.h> */
 # endif
 
-# include "evas_common.h"
+# include "evas_common_private.h"
 # include "evas_private.h"
 # include "evas_gl_common.h"
 # include "Evas.h"

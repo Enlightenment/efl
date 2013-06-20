@@ -1,4 +1,4 @@
-#include "evas_common.h" /* Also includes international specific stuff */
+#include "evas_common_private.h" /* Also includes international specific stuff */
 #include "evas_engine.h"
 #include "evas_gl_core_private.h"
 

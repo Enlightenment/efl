@@ -2,7 +2,7 @@
 #define EVAS_ENGINE_H
 
 #include "config.h"
-#include "evas_common.h"
+#include "evas_common_private.h"
 #include "evas_private.h"
 #include "evas_gl_common.h"
 #include "Evas.h"

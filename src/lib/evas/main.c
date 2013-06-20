@@ -1,4 +1,4 @@
-#include "evas_common.h"
+#include "evas_common_private.h"
 #include "evas_private.h"
 
 static Evas_Version _version = { VMAJ, VMIN, VMIC, VREV };

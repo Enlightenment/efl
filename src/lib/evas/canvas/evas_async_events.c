@@ -8,7 +8,7 @@
 #include <fcntl.h>
 #include <errno.h>
 
-#include "evas_common.h"
+#include "evas_common_private.h"
 #include "evas_private.h"
 
 typedef struct _Evas_Event_Async	Evas_Event_Async;

@@ -1,6 +1,6 @@
 #define NEED_SSE3 1
 
-#include "evas_common.h"
+#include "evas_common_private.h"
 
 #ifdef BUILD_SSE3
 static __m128i A_MASK_SSE3;

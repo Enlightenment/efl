@@ -1,4 +1,4 @@
-#include "evas_common.h"
+#include "evas_common_private.h"
 #ifdef EVAS_RECT_SPLIT
 
 static inline void rect_list_node_pool_set_max(int max);

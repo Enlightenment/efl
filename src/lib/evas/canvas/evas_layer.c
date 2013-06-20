@@ -1,4 +1,4 @@
-#include "evas_common.h"
+#include "evas_common_private.h"
 #include "evas_private.h"
 
 static void _evas_layer_free(Evas_Layer *lay);

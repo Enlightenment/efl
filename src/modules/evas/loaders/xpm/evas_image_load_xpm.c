@@ -6,7 +6,7 @@
 # include <Evil.h>
 #endif
 
-#include "evas_common.h"
+#include "evas_common_private.h"
 #include "evas_private.h"
 
 static int _evas_loader_xpm_log_dom = -1;

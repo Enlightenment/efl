@@ -3,7 +3,7 @@
 
 #include <Evas.h>
 
-/* begin bunch of stuff from evas_common.h so that we don't need to drag
+/* begin bunch of stuff from evas_common_private.h so that we don't need to drag
  * a lot of useless @SOMETHING_CFLAGS@ around */
 typedef unsigned long long		DATA64;
 typedef unsigned int			DATA32;
@@ -43,7 +43,7 @@ typedef unsigned char                   DATA8;
 
 #define ARGB_JOIN(a,r,g,b) \
         (((a) << 24) + ((r) << 16) + ((g) << 8) + (b))
-/* end bunchf of stuff from evas_common.h */
+/* end bunchf of stuff from evas_common_private.h */
 
 typedef struct _Evas_Loader_Module_Api Evas_Loader_Module_Api;
 typedef struct _Evas_Img_Load_Params Evas_Img_Load_Params;

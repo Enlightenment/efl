@@ -1,4 +1,4 @@
-#include "evas_common.h"
+#include "evas_common_private.h"
 
 #ifdef BUILD_MMX
 #include "evas_mmx.h"

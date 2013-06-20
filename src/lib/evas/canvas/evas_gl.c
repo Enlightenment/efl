@@ -1,5 +1,5 @@
 /* vim:set ts=8 sw=3 sts=3 expandtab cino=>5n-2f0^-2{2(0W1st0 :*/
-#include "evas_common.h"
+#include "evas_common_private.h"
 #include "evas_private.h"
 #include "Evas_GL.h"
 

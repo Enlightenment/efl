@@ -1,4 +1,4 @@
-#include "evas_common.h"
+#include "evas_common_private.h"
 #include <unistd.h>
 
 #ifdef BUILD_PIPE_RENDER

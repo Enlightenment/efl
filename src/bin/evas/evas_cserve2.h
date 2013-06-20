@@ -205,7 +205,7 @@ struct _Slave_Request_Funcs {
 typedef struct _Slave_Request Slave_Request;
 typedef struct _Slave_Request_Funcs Slave_Request_Funcs;
 
-/* This enum must be kept in sync with lib/evas/include/evas_common.h */
+/* This enum must be kept in sync with lib/evas/include/evas_common_private.h */
 typedef enum {
    FONT_REND_REGULAR = 0,
    FONT_REND_SLANT   = (1 << 0),

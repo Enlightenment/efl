@@ -11,7 +11,7 @@
 #ifdef EVAS_CSERVE2
 #include "evas_cs2_private.h"
 #endif
-#include "evas_common.h"
+#include "evas_common_private.h"
 #include "evas_private.h"
 #include "evas_image_private.h"
 

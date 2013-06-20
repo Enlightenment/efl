@@ -61,7 +61,7 @@
  * @subsection textblock_layout The layout system
  * @todo write @ref textblock_layout
  */
-#include "evas_common.h"
+#include "evas_common_private.h"
 #include "evas_private.h"
 #include <stdlib.h>
 

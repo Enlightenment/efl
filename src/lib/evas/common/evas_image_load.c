@@ -6,7 +6,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-#include "evas_common.h"
+#include "evas_common_private.h"
 #include "evas_private.h"
 //#include "evas_cs.h"
 #ifdef EVAS_CSERVE2

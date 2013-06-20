@@ -1,4 +1,4 @@
-#include "evas_common.h"
+#include "evas_common_private.h"
 #include "evas_font_private.h"
 #include "evas_text_utils.h"
 #include "language/evas_bidi_utils.h"

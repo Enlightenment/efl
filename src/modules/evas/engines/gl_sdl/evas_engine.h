@@ -17,7 +17,7 @@
 # include <SDL/SDL_opengl.h>
 # define EVAS_SDL_GL_FLAG SDL_OPENGL
 #endif
-#include "evas_common.h"
+#include "evas_common_private.h"
 #include "evas_private.h"
 #include "evas_gl_common.h"
 #include "Evas.h"

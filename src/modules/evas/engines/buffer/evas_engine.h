@@ -1,6 +1,6 @@
 #ifndef EVAS_ENGINE_H
 #define EVAS_ENGINE_H
-#include "evas_common.h"
+#include "evas_common_private.h"
 /*  this thing is for eina_log */
 extern int _evas_engine_buffer_log_dom ;
 
