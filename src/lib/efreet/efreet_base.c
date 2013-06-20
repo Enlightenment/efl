@@ -44,6 +44,7 @@ static const char *xdg_pictures_dir = NULL;
 static const char *xdg_videos_dir = NULL;
 static const char *hostname = NULL;
 
+static void efreet_dirs_init(void);
 static const char *efreet_dir_get(const char *key, const char *fallback);
 static Eina_List  *efreet_dirs_get(const char *key,
                                    const char *fallback);
@@ -64,6 +65,7 @@ efreet_base_init(void)
         EINA_LOG_ERR("Efreet: Could not create a log domain for efreet_base.\n");
         return 0;
     }
+    efreet_dirs_init();
     return 1;
 }
 
@@ -107,18 +109,6 @@ efreet_base_shutdown(void)
 const char *
 efreet_home_dir_get(void)
 {
-    if (efreet_home_dir) return efreet_home_dir;
-
-    efreet_home_dir = getenv("HOME");
-#ifdef _WIN32
-    if (!efreet_home_dir || efreet_home_dir[0] == '\0')
-        efreet_home_dir = getenv("USERPROFILE");
-#endif
-    if (!efreet_home_dir || efreet_home_dir[0] == '\0')
-        efreet_home_dir = "/tmp";
-
-    efreet_home_dir = eina_stringshare_add(efreet_home_dir);
-
     return efreet_home_dir;
 }
 
@@ -192,102 +182,42 @@ efreet_videos_dir_get(void)
 EAPI const char *
 efreet_data_home_get(void)
 {
-    if (xdg_data_home) return xdg_data_home;
-    xdg_data_home = efreet_dir_get("XDG_DATA_HOME", "/.local/share");
     return xdg_data_home;
 }
 
 EAPI Eina_List *
 efreet_data_dirs_get(void)
 {
-#ifdef _WIN32
-    char buf[4096];
-#endif
-
-    if (xdg_data_dirs) return xdg_data_dirs;
-
-#ifdef _WIN32
-    snprintf(buf, 4096, "%s\\Efl;" DATA_DIR ";/usr/share;/usr/local/share", getenv("APPDATA"));
-    xdg_data_dirs = efreet_dirs_get("XDG_DATA_DIRS", buf);
-#else
-    xdg_data_dirs = efreet_dirs_get("XDG_DATA_DIRS",
-                                    DATA_DIR ":/usr/share:/usr/local/share");
-#endif
     return xdg_data_dirs;
 }
 
 EAPI const char *
 efreet_config_home_get(void)
 {
-    if (xdg_config_home) return xdg_config_home;
-    xdg_config_home = efreet_dir_get("XDG_CONFIG_HOME", "/.config");
     return xdg_config_home;
 }
 
 EAPI Eina_List *
 efreet_config_dirs_get(void)
 {
-    if (xdg_config_dirs) return xdg_config_dirs;
-    xdg_config_dirs = efreet_dirs_get("XDG_CONFIG_DIRS", "/etc/xdg");
     return xdg_config_dirs;
 }
 
 EAPI const char *
 efreet_cache_home_get(void)
 {
-    if (xdg_cache_home) return xdg_cache_home;
-    xdg_cache_home = efreet_dir_get("XDG_CACHE_HOME", "/.cache");
     return xdg_cache_home;
 }
 
 EAPI const char *
 efreet_runtime_dir_get(void)
 {
-    struct stat st;
-    if (xdg_runtime_dir) return xdg_runtime_dir;
-    xdg_runtime_dir = efreet_dir_get("XDG_RUNTIME_DIR", "/tmp");
-    if (stat(xdg_runtime_dir, &st) == -1)
-    {
-        ERR("$XDG_RUNTIME_DIR did not exist, creating '%s' (breaks spec)",
-            xdg_runtime_dir);
-        if (ecore_file_mkpath(xdg_runtime_dir))
-            chmod(xdg_runtime_dir, 0700);
-        else
-        {
-            CRITICAL("Failed to create XDG_RUNTIME_DIR=%s", xdg_runtime_dir);
-            eina_stringshare_replace(&xdg_runtime_dir, NULL);
-        }
-    }
-    else if (!S_ISDIR(st.st_mode))
-    {
-        CRITICAL("XDG_RUNTIME_DIR=%s is not a directory!", xdg_runtime_dir);
-        eina_stringshare_replace(&xdg_runtime_dir, NULL);
-    }
-    else if ((st.st_mode & 0777) != 0700)
-    {
-        ERR("XDG_RUNTIME_DIR=%s is mode %o, changing to 0700",
-            xdg_runtime_dir, st.st_mode & 0777);
-        if (chmod(xdg_runtime_dir, 0700) != 0)
-        {
-            CRITICAL("Cannot fix XDG_RUNTIME_DIR=%s incorrect mode %o: %s",
-                     xdg_runtime_dir, st.st_mode & 0777, strerror(errno));
-            eina_stringshare_replace(&xdg_runtime_dir, NULL);
-        }
-    }
-
     return xdg_runtime_dir;
 }
 
 EAPI const char *
 efreet_hostname_get(void)
 {
-    char buf[256];
-
-    if (hostname) return hostname;
-    if (gethostname(buf, sizeof(buf)) < 0)
-        hostname = eina_stringshare_add("");
-    else
-        hostname = eina_stringshare_add(buf);
     return hostname;
 }
 
@@ -337,6 +267,76 @@ efreet_dirs_reset(void)
     eina_stringshare_replace(&xdg_music_dir, NULL);
     eina_stringshare_replace(&xdg_pictures_dir, NULL);
     eina_stringshare_replace(&xdg_videos_dir, NULL);
+}
+
+static void
+efreet_dirs_init(void)
+{
+    char buf[4096];
+    struct stat st;
+
+    /* efreet_home_dir */
+    efreet_home_dir = getenv("HOME");
+#ifdef _WIN32
+    if (!efreet_home_dir || efreet_home_dir[0] == '\0')
+        efreet_home_dir = getenv("USERPROFILE");
+#endif
+    if (!efreet_home_dir || efreet_home_dir[0] == '\0')
+        efreet_home_dir = "/tmp";
+
+    efreet_home_dir = eina_stringshare_add(efreet_home_dir);
+
+    /* xdg_<dir>_home */
+    xdg_data_home = efreet_dir_get("XDG_DATA_HOME", "/.local/share");
+    xdg_config_home = efreet_dir_get("XDG_CONFIG_HOME", "/.config");
+    xdg_cache_home = efreet_dir_get("XDG_CACHE_HOME", "/.cache");
+
+    /* xdg_data_dirs */
+#ifdef _WIN32
+    snprintf(buf, 4096, "%s\\Efl;" DATA_DIR ";/usr/share;/usr/local/share", getenv("APPDATA"));
+    xdg_data_dirs = efreet_dirs_get("XDG_DATA_DIRS", buf);
+#else
+    xdg_data_dirs = efreet_dirs_get("XDG_DATA_DIRS",
+                                    DATA_DIR ":/usr/share:/usr/local/share");
+#endif
+    /* xdg_config_dirs */
+    xdg_config_dirs = efreet_dirs_get("XDG_CONFIG_DIRS", "/etc/xdg");
+
+    /* xdg_runtime_dir */
+    xdg_runtime_dir = efreet_dir_get("XDG_RUNTIME_DIR", "/tmp");
+    if (stat(xdg_runtime_dir, &st) == -1)
+    {
+        ERR("$XDG_RUNTIME_DIR did not exist, creating '%s' (breaks spec)",
+            xdg_runtime_dir);
+        if (ecore_file_mkpath(xdg_runtime_dir))
+            chmod(xdg_runtime_dir, 0700);
+        else
+        {
+            CRITICAL("Failed to create XDG_RUNTIME_DIR=%s", xdg_runtime_dir);
+            eina_stringshare_replace(&xdg_runtime_dir, NULL);
+        }
+    }
+    else if (!S_ISDIR(st.st_mode))
+    {
+        CRITICAL("XDG_RUNTIME_DIR=%s is not a directory!", xdg_runtime_dir);
+        eina_stringshare_replace(&xdg_runtime_dir, NULL);
+    }
+    else if ((st.st_mode & 0777) != 0700)
+    {
+        ERR("XDG_RUNTIME_DIR=%s is mode %o, changing to 0700",
+            xdg_runtime_dir, st.st_mode & 0777);
+        if (chmod(xdg_runtime_dir, 0700) != 0)
+        {
+            CRITICAL("Cannot fix XDG_RUNTIME_DIR=%s incorrect mode %o: %s",
+                     xdg_runtime_dir, st.st_mode & 0777, strerror(errno));
+            eina_stringshare_replace(&xdg_runtime_dir, NULL);
+        }
+    }
+    /* hostname */
+    if (gethostname(buf, sizeof(buf)) < 0)
+        hostname = eina_stringshare_add("");
+    else
+        hostname = eina_stringshare_add(buf);
 }
 
 /**
