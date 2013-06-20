@@ -360,6 +360,11 @@ _server_dispatch_until(unsigned int rid)
                    * Or maybe just return EINA_FALSE after some timeout?
                    * -- jpeg
                    */
+                  if (errno == EINTR)
+                    {
+                       DBG("giving up on request %d after interrupt", rid);
+                       return EINA_FALSE;
+                    }
                }
           }
      }
@@ -638,7 +643,7 @@ _image_open_server_send(Image_Entry *ie, const char *file, const char *key, Evas
    return msg_open.base.rid;
 }
 
-unsigned int
+static unsigned int
 _image_setopts_server_send(Image_Entry *ie)
 {
    File_Entry *fentry;
@@ -651,6 +656,8 @@ _image_setopts_server_send(Image_Entry *ie)
    fentry = ie->data1;
 
    dentry = calloc(1, sizeof(*dentry));
+   if (!dentry)
+     return 0;
 
    memset(&msg, 0, sizeof(msg));
    dentry->image_id = ++_data_id;
@@ -681,7 +688,10 @@ _image_setopts_server_send(Image_Entry *ie)
    msg.opts.orientation = ie->load_opts.orientation;
 
    if (!_server_send(&msg, sizeof(msg), NULL, NULL))
-     return 0;
+     {
+        free(dentry);
+        return 0;
+     }
 
    ie->data2 = dentry;
 
