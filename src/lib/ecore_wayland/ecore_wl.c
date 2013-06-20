@@ -419,7 +419,6 @@ static Eina_Bool
 _ecore_wl_cb_handle_data(void *data, Ecore_Fd_Handler *hdl)
 {
    Ecore_Wl_Display *ewd;
-   int ret;
 
    /* LOGFN(__FILE__, __LINE__, __FUNCTION__); */
 
@@ -433,6 +432,8 @@ _ecore_wl_cb_handle_data(void *data, Ecore_Fd_Handler *hdl)
      wl_display_dispatch(ewd->wl.display);
    else if (ecore_main_fd_handler_active_get(hdl, ECORE_FD_WRITE))
      {
+        int ret = 0;
+
         ret = wl_display_flush(ewd->wl.display);
         if (ret == 0)
           ecore_main_fd_handler_active_set(hdl, ECORE_FD_READ);
