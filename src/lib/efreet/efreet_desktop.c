@@ -90,7 +90,7 @@ efreet_desktop_init(void)
     if (!evil_sockets_init())
       {
          ERR("Could not initialize Winsock system");
-         return 0;
+         goto error;
       }
 #endif
 
@@ -107,6 +107,12 @@ efreet_desktop_init(void)
                                                                 NULL, NULL);
 
     return 1;
+#ifdef HAVE_EVIL
+error:
+    eina_log_domain_unregister(_efreet_desktop_log_dom);
+    _efreet_desktop_log_dom = -1;
+    return 0;
+#endif
 }
 
 /**
