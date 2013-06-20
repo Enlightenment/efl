@@ -735,7 +735,10 @@ _props_get_all(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending EI
 
    if (!eldbus_message_arguments_get(msg, "a{sv}", &dict))
      {
-        ERR("Error getting data from properties getAll.");
+        char *txt;
+
+        if (eldbus_message_arguments_get(msg, "s", &txt))
+          ERR("Error getting data from properties getAll: %s", txt);
         return;
      }
    eldbus_message_iter_dict_iterate(dict, "sv", _property_iter, proxy);
