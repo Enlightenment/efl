@@ -355,7 +355,13 @@ evas_common_font_int_memory_load(const char *source, const char *name, int size,
         fi->cs2_handler = evas_cserve2_font_load(source, name, size, font_dpi,
                                                  wanted_rend);
         if (fi->cs2_handler)
-          evas_cserve2_font_load_wait((Font_Entry *)fi->cs2_handler);
+          {
+             if (evas_cserve2_font_load_wait((Font_Entry *)fi->cs2_handler) != 0)
+               {
+                  evas_cserve2_font_free(fi->cs2_handler);
+                  fi->cs2_handler = NULL;
+               }
+          }
      }
 #endif
    free(fake_name);
@@ -391,7 +397,13 @@ evas_common_font_int_load(const char *name, int size,
         fi->cs2_handler = evas_cserve2_font_load(NULL, name, size, font_dpi,
                                                  wanted_rend);
         if (fi->cs2_handler)
-          evas_cserve2_font_load_wait((Font_Entry *)fi->cs2_handler);
+          {
+             if (evas_cserve2_font_load_wait((Font_Entry *)fi->cs2_handler) != 0)
+               {
+                  evas_cserve2_font_free(fi->cs2_handler);
+                  fi->cs2_handler = NULL;
+               }
+          }
      }
 #endif
 //   evas_common_font_int_load_complete(fi);

@@ -1165,6 +1165,7 @@ evas_cserve2_font_free(Font_Entry *fe)
    if (ret != CSERVE2_NONE)
      {
         ERR("Failed to wait loading font '%s'.", fe->name);
+        _font_entry_free(fe);
         return;
      }
 
