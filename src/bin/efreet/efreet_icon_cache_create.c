@@ -6,6 +6,8 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <errno.h>
+#include <sys/time.h>
+#include <sys/resource.h>
 
 #include <Eina.h>
 #include <Eet.h>
@@ -768,6 +770,7 @@ main(int argc, char **argv)
             flush = EINA_TRUE;
     }
 
+    setpriority(PRIO_PROCESS, 0, 19);
     if (!eet_init()) return -1;
     if (!ecore_init()) return -1;
 

@@ -2,6 +2,9 @@
 # include <config.h>
 #endif
 
+#include <sys/time.h>
+#include <sys/resource.h>
+
 #include <Ecore.h>
 #include <Ecore_File.h>
 
@@ -34,6 +37,7 @@ main(int argc, char *argv[])
    if (!dbus_init()) goto dbus_error;
    if (!cache_init()) goto cache_error;
 
+   setpriority(PRIO_PROCESS, 0, 19);
    ecore_main_loop_begin();
 
    cache_shutdown();

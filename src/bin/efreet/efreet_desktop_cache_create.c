@@ -5,6 +5,8 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <errno.h>
+#include <sys/time.h>
+#include <sys/resource.h>
 
 #include <Eina.h>
 #include <Eet.h>
@@ -250,6 +252,7 @@ main(int argc, char **argv)
     }
     extra_dirs = eina_list_sort(extra_dirs, -1, EINA_COMPARE_CB(strcmp));
 
+    setpriority(PRIO_PROCESS, 0, 19);
     /* init external subsystems */
     if (!eet_init()) goto eet_error;
     if (!ecore_init()) goto ecore_error;

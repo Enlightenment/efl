@@ -42,7 +42,6 @@ static Eina_Bool
 icon_cache_update_cache_cb(void *data EINA_UNUSED)
 {
    char file[PATH_MAX];
-   int prio;
 
    icon_cache_timer = NULL;
 
@@ -55,9 +54,6 @@ icon_cache_update_cache_cb(void *data EINA_UNUSED)
    if ((!icon_flush) && (!icon_exts)) return ECORE_CALLBACK_CANCEL;
 
    /* TODO: Queue if already running */
-   prio = ecore_exe_run_priority_get();
-   ecore_exe_run_priority_set(19);
-
    snprintf(file, sizeof(file),
             "%s/efreet/" MODULE_ARCH "/efreet_icon_cache_create",
             eina_prefix_lib_get(pfx));
@@ -90,7 +86,6 @@ icon_cache_update_cache_cb(void *data EINA_UNUSED)
    icon_flush = EINA_FALSE;
    icon_cache_exe =
       ecore_exe_pipe_run(file, ECORE_EXE_PIPE_READ|ECORE_EXE_PIPE_READ_LINE_BUFFERED, NULL);
-   ecore_exe_run_priority_set(prio);
 
    return ECORE_CALLBACK_CANCEL;
 }
@@ -109,7 +104,6 @@ static Eina_Bool
 desktop_cache_update_cache_cb(void *data EINA_UNUSED)
 {
    char file[PATH_MAX];
-   int prio;
 
    desktop_cache_timer = NULL;
 
@@ -119,8 +113,6 @@ desktop_cache_update_cache_cb(void *data EINA_UNUSED)
         return ECORE_CALLBACK_CANCEL;
      }
    desktop_queue = EINA_FALSE;
-   prio = ecore_exe_run_priority_get();
-   ecore_exe_run_priority_set(19);
 
    snprintf(file, sizeof(file),
             "%s/efreet/" MODULE_ARCH "/efreet_desktop_cache_create",
@@ -140,7 +132,6 @@ desktop_cache_update_cache_cb(void *data EINA_UNUSED)
    INF("Run desktop cache creation: %s", file);
    desktop_cache_exe =
       ecore_exe_pipe_run(file, ECORE_EXE_PIPE_READ|ECORE_EXE_PIPE_READ_LINE_BUFFERED, NULL);
-   ecore_exe_run_priority_set(prio);
 
    return ECORE_CALLBACK_CANCEL;
 }
