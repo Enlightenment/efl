@@ -2,6 +2,7 @@
 # include <config.h>
 #endif
 
+#include <stdlib.h>
 #include <sys/time.h>
 #include <sys/resource.h>
 
@@ -23,7 +24,19 @@ quit(void)
 int
 main(int argc, char *argv[])
 {
+   char buf[PATH_MAX];
+   char *path;
+   FILE *log;
+
    if (!eina_init()) return 1;
+
+   strcpy(buf, "/tmp/efreetd_XXXXXX");
+   path = mktemp(buf);
+   if (!path) return 1;
+   chmod(path, 0700);
+   log = fopen(path, "wb");
+   eina_log_print_cb_set(eina_log_print_cb_file, log);
+
    efreetd_log_dom = eina_log_domain_register("efreetd", EFREETD_DEFAULT_LOG_COLOR);
    if (efreetd_log_dom < 0)
      {
