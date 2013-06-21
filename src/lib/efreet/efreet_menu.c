@@ -162,6 +162,7 @@ struct Efreet_Menu_Async
     Efreet_Menu_Cb    func;
     void             *data;
     Eina_Stringshare *path;
+    Efreet_Menu      *menu;
 };
 
 static const char *efreet_menu_prefix = NULL; /**< The $XDG_MENU_PREFIX env var */
@@ -318,6 +319,7 @@ static int efreet_menu_save_menu(Efreet_Menu *menu, FILE *f, int indent);
 static int efreet_menu_save_indent(FILE *f, int indent);
 
 static void _efreet_menu_async_parse_cb(void *data, Ecore_Thread *thread);
+static void _efreet_menu_async_end_cb(void *data, Ecore_Thread *thread);
 
 int
 efreet_menu_init(void)
@@ -542,7 +544,7 @@ efreet_menu_async_parse(const char *path, Efreet_Menu_Cb func, const void *data)
     async->func = func;
     async->data = (void*)data;
     async->path = eina_stringshare_add(path);
-    ecore_thread_run(_efreet_menu_async_parse_cb, NULL, NULL, async);
+    ecore_thread_run(_efreet_menu_async_parse_cb, _efreet_menu_async_end_cb, NULL, async);
 }
 
 EAPI Efreet_Menu *
@@ -3864,12 +3866,16 @@ static void
 _efreet_menu_async_parse_cb(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
     Efreet_Menu_Async *async = data;
-    Efreet_Menu *menu;
 
-    menu = efreet_menu_parse(async->path);
-    ecore_thread_main_loop_begin();
-    async->func(async->data, menu);
-    ecore_thread_main_loop_end();
+    async->menu = efreet_menu_parse(async->path);
+}
+
+static void
+_efreet_menu_async_end_cb(void *data, Ecore_Thread *thread EINA_UNUSED)
+{
+    Efreet_Menu_Async *async = data;
+
+    async->func(async->data, async->menu);
     eina_stringshare_del(async->path);
     free(async);
 }
