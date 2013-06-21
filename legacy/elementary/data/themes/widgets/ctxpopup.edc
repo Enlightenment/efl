@@ -1,4 +1,15 @@
 ///////////////////////////////////////////////////////////////////////////////
+group { name: "elm/ctxpopup/bg/noblock";
+   parts {
+      part { name: "ctxpopup_bg";
+         type: RECT;
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            color: 0 0 0 0;
+         }
+      }
+   }
+}
 group { name: "elm/ctxpopup/bg/default";
    parts {
       part { name: "ctxpopup_bg";
