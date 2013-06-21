@@ -522,9 +522,9 @@ efreet_menu_file_set(const char *file)
 }
 
 EAPI void
-efreet_menu_async_get(Efreet_Menu_Cb func, void *data)
+efreet_menu_async_get(Efreet_Menu_Cb func, const void *data)
 {
-   efreet_menu_internal_get(func, data);
+   efreet_menu_internal_get(func, (void*)data);
 }
 
 EAPI Efreet_Menu *
@@ -534,13 +534,13 @@ efreet_menu_get(void)
 }
 
 EAPI void
-efreet_menu_async_parse(const char *path, Efreet_Menu_Cb func, void *data)
+efreet_menu_async_parse(const char *path, Efreet_Menu_Cb func, const void *data)
 {
     Efreet_Menu_Async *async;
 
     async = NEW(Efreet_Menu_Async, 1);
     async->func = func;
-    async->data = data;
+    async->data = (void*)data;
     async->path = eina_stringshare_add(path);
     ecore_thread_run(_efreet_menu_async_parse_cb, NULL, NULL, async);
 }

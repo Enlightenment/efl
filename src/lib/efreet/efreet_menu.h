@@ -49,7 +49,7 @@ struct Efreet_Menu
  *
  * @since 1.8
  */
-typedef void *(*Efreet_Menu_Cb) (void *data, Efreet_Menu *menu);
+typedef void (*Efreet_Menu_Cb) (void *data, Efreet_Menu *menu);
 
 /**
  * @return Returns no value
@@ -83,7 +83,7 @@ EAPI void             efreet_menu_file_set(const char *file);
  *
  * @since 1.8
  */
-EAPI void             efreet_menu_async_get(Efreet_Menu_Cb func, void *data);
+EAPI void             efreet_menu_async_get(Efreet_Menu_Cb func, const void *data);
 
 /**
  * @return Returns the Efreet_Menu representation of the default menu or
@@ -101,7 +101,7 @@ EAPI Efreet_Menu     *efreet_menu_get(void);
  *
  * @since 1.8
  */
-EAPI void             efreet_menu_async_parse(const char *path, Efreet_Menu_Cb func, void *data);
+EAPI void             efreet_menu_async_parse(const char *path, Efreet_Menu_Cb func, const void *data);
 
 /**
  * @param path The path of the menu to load
