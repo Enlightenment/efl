@@ -494,7 +494,6 @@ Eina_Bool
 cache_init(void)
 {
    char **argv;
-   char buf[PATH_MAX];
 
    ecore_app_args_get(NULL, &argv);
 
@@ -504,13 +503,6 @@ cache_init(void)
                          PACKAGE_LIB_DIR,
                          PACKAGE_DATA_DIR,
                          PACKAGE_DATA_DIR);
-
-   snprintf(buf, sizeof(buf), "%s/efreet", efreet_cache_home_get());
-   if (!ecore_file_mkpath(buf))
-     {
-        ERR("Failed to create directory '%s'", buf);
-        goto error;
-     }
 
    cache_exe_del_handler = ecore_event_handler_add(ECORE_EXE_EVENT_DEL,
                                                    cache_exe_del_cb, NULL);
