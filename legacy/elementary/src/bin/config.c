@@ -3474,6 +3474,7 @@ win_create(void)
    Evas_Object *win, *bx0;
 
    win = elm_win_util_standard_add("main", "Elementary Config");
+   if (!win) exit(1);
    ecore_event_handler_add(ELM_EVENT_CONFIG_ALL_CHANGED, _config_all_changed,
                            win);
    evas_object_smart_callback_add(win, "delete,request", config_exit, NULL);
