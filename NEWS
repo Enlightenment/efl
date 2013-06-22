@@ -191,6 +191,7 @@ Improvements:
     * edje: use eo array of callbacks to reduce callbacks memory footprint.
     * evas: use eo array of callbacks to reduce callbacks memory footprint of Evas_Object_Box and Evas_Object_Table.
     * evas: optimized path for when map use the same color for all corner.
+    * Edje entry: Move cursor to correct position when selection handlers are pressed.
 
 Fixes:
     * Fix a memory leak in ecore_con_dns when using ecore_con_server_connect

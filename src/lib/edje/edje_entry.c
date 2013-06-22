@@ -756,6 +756,8 @@ _edje_start_handler_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *
        (!rp->typedata.text)) return;
    en = rp->typedata.text->entry_data;
 
+   _edje_entry_cursor_copy(rp, EDJE_CURSOR_SELECTION_BEGIN, EDJE_CURSOR_MAIN);
+
    evas_object_geometry_get(rp->object, &ex, &ey, NULL, NULL);
    switch (rp->part->cursor_mode)
      {
@@ -837,6 +839,8 @@ _edje_end_handler_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *ob
        (!rp->typedata.text)) return;
    en = rp->typedata.text->entry_data;
 
+   _edje_entry_cursor_copy(rp, EDJE_CURSOR_SELECTION_END, EDJE_CURSOR_MAIN);
+
    evas_object_geometry_get(rp->object, &ex, &ey, NULL, NULL);
    switch (rp->part->cursor_mode)
      {
@@ -855,7 +859,7 @@ _edje_end_handler_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *ob
    en->select_mod_end = EINA_TRUE;
    en->selecting = EINA_TRUE;
 
-   _edje_emit(en->ed, "handler,move,end", rp->part->name);
+   _edje_emit(en->ed, "handler,move,start", rp->part->name);
 }
 
 static void
