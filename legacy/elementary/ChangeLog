@@ -1447,3 +1447,7 @@
 2013-06-22 ChunEon Park (Hermet)
 
         * Block mouse events when the ctxpopup on dismiss.
+
+2013-06-23 ChunEon Park (Hermet)
+
+        * Apply current ctxpopup style to the list in the ctxpopup.

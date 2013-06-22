@@ -260,6 +260,7 @@ Removals:
    * Deprecate elm_object_domain_translatable_text_part_set(), elm_object_translatable_text_part_get().
    * Deprecate elm_web_uri_set(), elm_web_uri_get() and "uri,changed" signal for web, web2.
    * Naviframe: Dont' be popped if the event is freezed and popping is going on.
+   * Ctxpopup: Apply current ctxpopup style to the list.
 
 Changes since Elementary 1.0.0:
 -------------------------
