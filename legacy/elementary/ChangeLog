@@ -1443,3 +1443,7 @@
 
         * Move cursor when mouse moves with longpress.
         * Show magnifier when selection handlers are pressed or moved.
+
+2013-06-22 ChunEon Park (Hermet)
+
+        * Block mouse events when the ctxpopup on dismiss.

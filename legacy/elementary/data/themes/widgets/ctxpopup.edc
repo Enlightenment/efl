@@ -232,6 +232,17 @@ group { name: "elm/ctxpopup/base/default";
             rel2 { to:"base"; offset: -5 -5; }
          }
       }
+      part { name: "event_blocker";
+         type: RECT;
+         description { state: "default" 0.0;
+            color: 0 0 0 0;
+            visible: 1;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
       part { name: "ctxpopup_clip";
          type: RECT;
          description { state: "default" 0.0;
@@ -291,8 +302,14 @@ group { name: "elm/ctxpopup/base/default";
          signal: "elm,state,show";
          source: "elm";
          action: STATE_SET "visible" 0.0;
-         transition: LINEAR 0.25;
          target: "ctxpopup_clip";
+         target: "event_blocker";
+      }
+      program { name: "hide";
+         signal: "elm,state,hide";
+         source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "event_blocker";
       }
       program { name: "show_up";
          signal: "elm,state,show,up";

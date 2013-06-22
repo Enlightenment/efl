@@ -259,7 +259,6 @@ _base_geometry_calc(Evas_Object *obj,
 
    if ((max_size.x > 0) && (base_size.x > max_size.x))
      base_size.x = max_size.x;
-
    //Limit to Min Size
    evas_object_size_hint_min_get(obj, &min_size.x, &min_size.y);
 
@@ -583,8 +582,8 @@ _hide_signals_emit(Evas_Object *obj,
       default:
         break;
      }
-
    edje_object_signal_emit(sd->bg, "elm,state,hide", "elm");
+   elm_layout_signal_emit(obj, "elm,state,hide", "elm");
 }
 
 static void
