@@ -1603,7 +1603,7 @@ evas_software_image_map_draw(void *data, void *context, RGBA_Image *surface, RGB
 
         eng_context_color_get(data, context, &r, &g, &b, &a);
         col = MUL4_256(a, r, g, b, m->pts[0 + offset].col);
-        eng_context_color_set(data, context, R_VAL(col), G_VAL(col), B_VAL(col), A_VAL(col));
+        eng_context_color_set(data, context, R_VAL(&col), G_VAL(&col), B_VAL(&col), A_VAL(&col));
 
         dx = m->pts[0 + offset].x >> FP;
         dy = m->pts[0 + offset].y >> FP;
