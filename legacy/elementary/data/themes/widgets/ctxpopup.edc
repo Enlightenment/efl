@@ -304,6 +304,7 @@ group { name: "elm/ctxpopup/base/default";
          action: STATE_SET "visible" 0.0;
          target: "ctxpopup_clip";
          target: "event_blocker";
+         transition: LINEAR 0.25;
       }
       program { name: "hide";
          signal: "elm,state,hide";
