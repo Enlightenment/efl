@@ -115,6 +115,7 @@ Improvements:
    * Don't try to pop the naviframe item multiple times.
    * Support language change for widget items (Ctxpopup, Hoversel, Naviframe, Diskselector, List, Menu, Segment_Control, Toolbar, Popup, MultibuttonEntry)
    * Move cursor when mouse moves with longpress.
+   * Show magnifier when selection handlers are pressed or moved.
 
 Fixes:
    * Now elm_datetime_field_limit_set() can set year limits wihtout problems.

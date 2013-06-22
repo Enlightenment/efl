@@ -1465,6 +1465,56 @@ _long_press_cb(void *data)
 }
 
 static void
+_entry_handler_move_start_cb(void *data,
+                             Evas_Object *obj __UNUSED__,
+                             const char *emission __UNUSED__,
+                             const char *source __UNUSED__)
+{
+   ELM_ENTRY_DATA_GET(data, sd);
+   Evas_Coord x, y, cx, cy, ch;
+
+   evas_object_geometry_get(sd->entry_edje, &x, &y, NULL, NULL);
+   edje_object_part_text_cursor_geometry_get(sd->entry_edje,
+                                             "elm.text",
+                                             &cx, &cy, NULL, &ch);
+   if (_elm_config->magnifier_enable)
+     {
+        _magnifier_create(data);
+        _magnifier_show(data);
+        _magnifier_move(data, x + cx, y + cy + ch/2);
+     }
+}
+
+static void
+_entry_handler_move_end_cb(void *data,
+                           Evas_Object *obj __UNUSED__,
+                           const char *emission __UNUSED__,
+                           const char *source __UNUSED__)
+{
+   if (_elm_config->magnifier_enable)
+     _magnifier_hide(data);
+   if (!_elm_config->desktop_entry)
+     _menu_call(data);
+}
+
+static void
+_entry_handler_moving_cb(void *data,
+                         Evas_Object *obj __UNUSED__,
+                         const char *emission __UNUSED__,
+                         const char *source __UNUSED__)
+{
+   ELM_ENTRY_DATA_GET(data, sd);
+   Evas_Coord x, y, cx, cy, ch;
+
+   evas_object_geometry_get(sd->entry_edje, &x, &y, NULL, NULL);
+   edje_object_part_text_cursor_geometry_get(sd->entry_edje,
+                                             "elm.text",
+                                             &cx, &cy, NULL, &ch);
+   if (_elm_config->magnifier_enable)
+     _magnifier_move(data, x + cx, y + cy + ch/2);
+}
+
+static void
 _key_down_cb(void *data,
                Evas *evas __UNUSED__,
                Evas_Object *obj __UNUSED__,
@@ -3030,6 +3080,15 @@ _elm_entry_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    edje_object_signal_callback_add
      (priv->entry_edje, "entry,redo,request", "elm.text",
      _entry_redo_request_signal_cb, obj);
+   edje_object_signal_callback_add
+     (priv->entry_edje, "handler,move,start", "elm.text",
+     _entry_handler_move_start_cb, obj);
+   edje_object_signal_callback_add
+     (priv->entry_edje, "handler,move,end", "elm.text",
+     _entry_handler_move_end_cb, obj);
+   edje_object_signal_callback_add
+     (priv->entry_edje, "handler,moving", "elm.text",
+     _entry_handler_moving_cb, obj);
 
    elm_layout_text_set(obj, "elm.text", "");
 

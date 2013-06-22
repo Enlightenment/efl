@@ -1399,6 +1399,7 @@
 
         * Add magnifier to entry.
 
+<<<<<<< HEAD
 2013-06-10  ChunEon Park (Hermet)
 
         * Remove the keyboard area in the conformant if the keyboard state is off.
@@ -1441,4 +1442,4 @@
 2013-06-22 Thiep Ha
 
         * Move cursor when mouse moves with longpress.
-
+        * Show magnifier when selection handlers are pressed or moved.
