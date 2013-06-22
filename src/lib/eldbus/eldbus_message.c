@@ -826,12 +826,7 @@ eldbus_message_error_new(const Eldbus_Message *msg, const char *error_name, cons
    reply->dbus_msg = dbus_message_new_error(msg->dbus_msg,
                                             error_name, error_msg);
 
-   /*
-    * Technically user should not append more arguments in an error message but
-    * we can't leave its iter as NULL.
-    */
-   dbus_message_iter_init_append(reply->dbus_msg,
-                                 &reply->iterator->dbus_iterator);
+   dbus_message_iter_init(reply->dbus_msg, &reply->iterator->dbus_iterator);
 
    return reply;
 }
