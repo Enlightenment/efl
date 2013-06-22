@@ -1547,7 +1547,24 @@ _mouse_move_cb(void *data,
    if (ev->buttons == 1)
      {
         if ((sd->long_pressed) && (_elm_config->magnifier_enable))
-          _magnifier_move(data, ev->cur.canvas.x, ev->cur.canvas.y);
+          {
+             Evas_Coord x, y;
+             Eina_Bool rv;
+
+             evas_object_geometry_get(sd->entry_edje, &x, &y, NULL, NULL);
+             rv = edje_object_part_text_cursor_coord_set
+               (sd->entry_edje, "elm.text", EDJE_CURSOR_USER,
+               ev->cur.canvas.x - x, ev->cur.canvas.y - y);
+             if (rv)
+               {
+                  edje_object_part_text_cursor_copy
+                    (sd->entry_edje, "elm.text", EDJE_CURSOR_USER, EDJE_CURSOR_MAIN);
+               }
+             else
+               WRN("Warning: Cannot move cursor");
+
+             _magnifier_move(data, ev->cur.canvas.x, ev->cur.canvas.y);
+          }
      }
    if (!sd->sel_mode)
      {
