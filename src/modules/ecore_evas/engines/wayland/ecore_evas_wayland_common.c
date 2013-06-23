@@ -1028,7 +1028,8 @@ _ecore_evas_wl_common_border_update(Ecore_Evas *ee)
      }
    else
      {
-        int fx, fy, fw, fh;
+        int fx = 0, fy = 0, fw = 0, fh = 0;
+
         evas_object_show(wdata->frame);
         _ecore_evas_wl_common_frame_border_size_get(wdata->frame,
                                                     &fx, &fy, &fw, &fh);
