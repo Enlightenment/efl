@@ -3381,7 +3381,7 @@ test_genlist20(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
 const char *_genlist_styles[] = {
    "default", "full", "one_icon", "end_icon", "no_icon",
    "default_style", "double_label", "icon_top_text_bottom",
-   "message", "media", "media-album", "media_preview",
+   "message", "media", "media-album", "media-preview",
    NULL
 };
 
