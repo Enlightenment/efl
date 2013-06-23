@@ -834,17 +834,19 @@ _item_tree_effect_finish(Elm_Genlist_Smart_Data *sd)
 static void
 _elm_genlist_item_odd_even_update(Elm_Gen_Item *it)
 {
+   ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
+   
    if (!it->item->nostacking)
      {
         if ((it->item->order_num_in & 0x1) ^ it->item->stacking_even)
           {
-             if (it->deco_all_view) evas_object_lower(it->deco_all_view);
-             else evas_object_lower(VIEW(it));
+             if (it->deco_all_view) evas_object_stack_below(it->deco_all_view, sd->stack[0]);
+             else evas_object_stack_below(VIEW(it), sd->stack[0]);
           }
         else
           {
-             if (it->deco_all_view) evas_object_raise(it->deco_all_view);
-             else evas_object_raise(VIEW(it));
+             if (it->deco_all_view) evas_object_stack_above(it->deco_all_view, sd->stack[0]);
+             else evas_object_stack_above(VIEW(it), sd->stack[0]);
           }
      }
 
@@ -1875,8 +1877,8 @@ _group_items_recalc(void *data)
              if (!git->realized) _item_realize(git, 0, EINA_FALSE);
              evas_object_resize(VIEW(git), sd->minw, git->item->h);
              evas_object_move(VIEW(git), git->item->scrl_x, git->item->scrl_y);
+             evas_object_stack_above(VIEW(git), sd->stack[1]);
              evas_object_show(VIEW(git));
-             evas_object_raise(VIEW(git));
           }
         else if (!git->item->want_realize && git->realized)
           {
@@ -2145,6 +2147,7 @@ _elm_genlist_pan_smart_calculate(Eo *obj EINA_UNUSED, void *_pd, va_list *list E
           {
              _item_tree_effect_before(psd->wsd->expanded_item);
              evas_object_raise(psd->wsd->alpha_bg);
+             evas_object_stack_below(psd->wsd->alpha_bg, psd->wsd->stack[1]);
              evas_object_show(psd->wsd->alpha_bg);
              psd->wsd->start_time = ecore_time_get();
              psd->wsd->tree_effect_animator =
@@ -2179,6 +2182,7 @@ _elm_genlist_pan_smart_calculate(Eo *obj EINA_UNUSED, void *_pd, va_list *list E
         else psd->wsd->reorder_pan_move = EINA_FALSE;
 
         evas_object_raise(psd->wsd->VIEW(reorder_it));
+        evas_object_stack_below(psd->wsd->VIEW(reorder_it), psd->wsd->stack[1]);
         psd->wsd->reorder_old_pan_y = psd->wsd->pan_y;
         psd->wsd->start_time = ecore_loop_time_get();
      }
@@ -2790,10 +2794,10 @@ _item_highlight(Elm_Gen_Item *it)
    selectraise = edje_object_data_get(VIEW(it), "selectraise");
    if ((selectraise) && (!strcmp(selectraise, "on")))
      {
-        if (it->deco_all_view) evas_object_raise(it->deco_all_view);
-        else evas_object_raise(VIEW(it));
+        if (it->deco_all_view) evas_object_stack_below(it->deco_all_view, sd->stack[1]);
+        else evas_object_stack_below(VIEW(it), sd->stack[1]);
         if ((it->item->group_item) && (it->item->group_item->realized))
-          evas_object_raise(it->item->VIEW(group_item));
+          evas_object_stack_above(it->item->VIEW(group_item), sd->stack[1]);
      }
    it->highlighted = EINA_TRUE;
 }
@@ -2801,6 +2805,8 @@ _item_highlight(Elm_Gen_Item *it)
 static void
 _item_unhighlight(Elm_Gen_Item *it)
 {
+   ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
+   
    if ((it->generation < GL_IT(it)->wsd->generation) || (!it->highlighted))
      return;
 
@@ -2814,13 +2820,13 @@ _item_unhighlight(Elm_Gen_Item *it)
      {
         if ((it->item->order_num_in & 0x1) ^ it->item->stacking_even)
           {
-             if (it->deco_all_view) evas_object_lower(it->deco_all_view);
-             else evas_object_lower(VIEW(it));
+             if (it->deco_all_view) evas_object_stack_below(it->deco_all_view, sd->stack[0]);
+             else evas_object_stack_below(VIEW(it), sd->stack[0]);
           }
         else
           {
-             if (it->deco_all_view) evas_object_raise(it->deco_all_view);
-             else evas_object_raise(VIEW(it));
+             if (it->deco_all_view) evas_object_stack_above(it->deco_all_view, sd->stack[0]);
+             else evas_object_stack_above(VIEW(it), sd->stack[0]);
           }
      }
    it->highlighted = EINA_FALSE;
@@ -3255,9 +3261,9 @@ _long_press_cb(void *data)
         sd->reorder_it = it;
         sd->reorder_start_y = 0;
         if (it->deco_all_view)
-          evas_object_raise(it->deco_all_view);
+          evas_object_stack_below(it->deco_all_view, sd->stack[1]);
         else
-          evas_object_raise(VIEW(it));
+          evas_object_stack_below(VIEW(it), sd->stack[1]);
 
         eo_do(sd->obj, elm_scrollable_interface_hold_set(EINA_TRUE));
         eo_do(sd->obj, elm_scrollable_interface_bounce_allow_set
@@ -4285,7 +4291,7 @@ _decorate_item_finished_signal_cb(void *data,
    it->item->nocache_once = EINA_FALSE;
    _decorate_item_unrealize(it);
    if (it->item->group_item)
-     evas_object_raise(it->item->VIEW(group_item));
+     evas_object_stack_above(it->item->VIEW(group_item), sd->stack[1]);
 
    snprintf(buf, sizeof(buf), "elm,state,%s,passive,finished",
             sd->decorate_it_type);
@@ -4735,7 +4741,7 @@ _decorate_item_set(Elm_Gen_Item *it)
    evas_event_freeze(evas_object_evas_get(sd->obj));
    _decorate_item_realize(it);
    if (it->item->group_item)
-     evas_object_raise(it->item->VIEW(group_item));
+     evas_object_stack_above(it->item->VIEW(group_item), sd->stack[1]);
    _item_position
      (it, it->item->deco_it_view, it->item->scrl_x, it->item->scrl_y);
    evas_event_thaw(evas_object_evas_get(sd->obj));
@@ -4771,6 +4777,7 @@ _elm_genlist_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Evas_Coord minw, minh;
    Elm_Genlist_Pan_Smart_Data *pan_data;
+   int i;
 
    Elm_Genlist_Smart_Data *priv = _pd;
    Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
@@ -4829,6 +4836,12 @@ _elm_genlist_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    pan_data->wobj = obj;
    pan_data->wsd = priv;
 
+   for (i = 0; i < 2; i++)
+     {
+        priv->stack[i] = evas_object_rectangle_add(evas_object_evas_get(obj));
+        evas_object_smart_member_add(priv->stack[i], priv->pan_obj);
+     }
+   
    eo_do(obj, elm_scrollable_interface_extern_pan_set(priv->pan_obj));
 
    edje_object_size_min_calc(wd->resize_obj, &minw, &minh);
@@ -4843,11 +4856,17 @@ static void
 _elm_genlist_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Genlist_Smart_Data *sd = _pd;
+   int i;
 
    if (sd->decorate_all_mode)
      elm_genlist_decorate_mode_set(sd->obj, EINA_FALSE);
    sd->queue = eina_list_free(sd->queue);
    elm_genlist_clear(obj);
+   for (i = 0; i < 2; i++)
+     {
+        evas_object_del(sd->stack[i]);
+        sd->stack[i] = NULL;
+     }
    eo_unref(sd->pan_obj);
    evas_object_del(sd->pan_obj);
    sd->pan_obj = NULL;
@@ -5968,7 +5987,7 @@ elm_genlist_item_subitems_clear(Elm_Object_Item *item)
           {
              sd->expanded_item = it;
              _item_tree_effect_before(it);
-             evas_object_raise(sd->alpha_bg);
+             evas_object_stack_below(sd->alpha_bg, sd->stack[1]);
              evas_object_show(sd->alpha_bg);
              sd->start_time = ecore_time_get();
              sd->tree_effect_animator =

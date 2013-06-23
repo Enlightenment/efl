@@ -32,6 +32,7 @@ struct _Elm_Genlist_Smart_Data
    Eina_Inlist_Sorted_State             *state;
    Evas_Object                          *hit_rect;
    Evas_Object                          *pan_obj;
+   Evas_Object                          *stack[2]; // stacking markers in pan
    Evas_Object                          *obj; // the object itself
 
    Eina_List                            *selected; /* a list of
