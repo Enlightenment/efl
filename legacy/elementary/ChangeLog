@@ -1,15 +1,15 @@
-2012-04-26 Carsten Haitzler (The Rasterman)
+2012-04-26  Carsten Haitzler (The Rasterman)
 
         * 1.0.0 release
 
-2012-04-27 Daniel Juyung Seo (SeoZ)
+2012-04-27  Daniel Juyung Seo (SeoZ)
 
         * Genlist : Fixed genlist expandable effect bug when we expand/contract
           items with many children very quickly.
         * Genlist : Realize move items during tree effect only when the item is
           not in the queue.
 
-2012-04-30 Jérôme Pinot
+2012-04-30  Jérôme Pinot
 
         * Add missing files in the tarballs.
 
@@ -17,7 +17,7 @@
 
         * Do less allocation and reuse much more Evas_Map.
 
-2012-05-02 Carsten Haitzler (The Rasterman)
+2012-05-02  Carsten Haitzler (The Rasterman)
 
         * Fix possible problems with other subsystems depending on X11 display
           being closed (XCloseDisplay not close() on socket fd).
@@ -61,7 +61,7 @@
 
         * Fileselector: honor folder_only when using EIO
 
-2012-05-16 Carsten Haitzler (The Rasterman)
+2012-05-16  Carsten Haitzler (The Rasterman)
 
         * Fix genlist ELM_LIST_LIMIT mode to do what it originally did.
           Documentation was wrong too and code had a slight bug stopping
@@ -232,11 +232,11 @@
 
         * Use Edje to enable accessibility on TEXTBLOCK.
 
-2012-06-27 Daniel Juyung Seo (SeoZ)
+2012-06-27  Daniel Juyung Seo (SeoZ)
 
         * Genlist: Fixed homogeneous mode bug with ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY item. Now it calculates display only item size correctly.
 
-2012-06-29 Artem Popov
+2012-06-29  Artem Popov
 
         * Add support for a new toolbar style with icon and text
         aligned in center. "item_centered".
@@ -739,7 +739,7 @@
 
         * Fix case where tooltips could go offscreen unnecessarily.
 
-2012-12-03 Gustavo Sverzut Barbieri (k-s)
+2012-12-03  Gustavo Sverzut Barbieri (k-s)
 
         * Add elm_need_eldbus(), deprecate elm_need_e_dbus(), integrating
         eldbus.
@@ -1034,21 +1034,21 @@
 
         * Improve support on some 64bits system.
 
-2013-02-17 Mike Blumenkrantz
+2013-02-17  Mike Blumenkrantz
 
         * ignore tab key widget focus change if control/alt is pressed
         * prevent blank entry hoversels
 
-2013-02-17 Shinwoo Kim
+2013-02-17  Shinwoo Kim
 
         * Fix restacking issue on ctxpopup - resatck callback makes the bg object be top of ctxpopup.
 
-2013-02-20 Carsten Haitzler (The Rasterman)
+2013-02-20  Carsten Haitzler (The Rasterman)
 
         * Fix gl engine vsync option pass-in in elm_win
         * Fix elm_progressbar_pulse() to abort if pulsing not enabled
 
-2013-02-21 Carsten Haitzler (The Rasterman)
+2013-02-21  Carsten Haitzler (The Rasterman)
 
         * Improve a lot of the dnd infra to be more fully baked
         * Add elm_drop_target_add() elm_drop_target_del() and elm_drag_start()
@@ -1097,7 +1097,7 @@
 
         * Improved gengrid item append performance.
 
-2013-03-05 Jiyoun Park
+2013-03-05  Jiyoun Park
 
         * Fix elm_conform didn't set size hint when keypad on.
 
@@ -1106,7 +1106,7 @@
         * Add edje_object_message_signal_process before edje_object_size_min_restricted_calc.
         If the min size is changed by edje signal in edc, the the function should be called before the calculation.
 
-2013-03-05 Jiyoun Park
+2013-03-05  Jiyoun Park
 
         * Fix elm_conform didn't change indicator mode when create.
 
@@ -1168,18 +1168,18 @@
         When the elm_shutdown is used after elm_config_all_flush, the segment fault occur.
         It's why it uses ecore_x in _prop_all_update_cb after removing it.
 
-2013-03-20 Carsten Haitzler (The Rasterman)
+2013-03-20  Carsten Haitzler (The Rasterman)
 
         * Fix elm box layout when an item has a max size, and that squashes all
         content even when the minimum size is greater.
 
-2013-03-23 WooHyun Jung
+2013-03-23  WooHyun Jung
 
         * Add four more focus directions. ELM_FOCUS_UP/DOWN/RIGHT/LEFT.
         * Add elm_object_focus_next_object_get/set.
         * Add elm_object_focused_object_get.
 
-2013-03-27 Jihoon Kim
+2013-03-27  Jihoon Kim
 
         * Add elm_entry_input_panel_layout_variation_set/get API
 
@@ -1226,7 +1226,7 @@
 
         * Fix elc_player crash issue.
 
-2013-04-09 Carsten Haitzler (The Rasterman)
+2013-04-09  Carsten Haitzler (The Rasterman)
 
         * Add elm_mapbuf_auto_set()/elm_mapbuf_auto_get()
 
@@ -1438,15 +1438,15 @@
 
         * Fix elm_scroller_page_show bug. It have to save the wanted values to show the wanted page.
 
-2013-06-22 Thiep Ha
+2013-06-22  Thiep Ha
 
         * Move cursor when mouse moves with longpress.
         * Show magnifier when selection handlers are pressed or moved.
 
-2013-06-22 ChunEon Park (Hermet)
+2013-06-22  ChunEon Park (Hermet)
 
         * Block mouse events when the ctxpopup on dismiss.
 
-2013-06-23 ChunEon Park (Hermet)
+2013-06-23  ChunEon Park (Hermet)
 
         * Apply current ctxpopup style to the list in the ctxpopup.
