@@ -194,13 +194,6 @@ evas_gl_common_texture_light_free(Evas_GL_Texture *tex)
    free(tex);
 }
 
-static void
-_tex_sub_2d(int x, int y, int w, int h, int fmt, int type, const void *pix)
-{
-   glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, w, h, fmt, type, pix);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-}
-
 static Evas_GL_Texture_Pool *
 _pool_tex_new(Evas_Engine_GL_Context *gc, int w, int h, int intformat, GLenum format)
 {
@@ -711,7 +704,7 @@ evas_gl_texture_pool_empty(Evas_GL_Texture_Pool *pt)
    pt->h = 0;
 }
 
-static void
+void
 pt_unref(Evas_GL_Texture_Pool *pt)
 {
    if (!pt) return;
@@ -814,7 +807,7 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im)
 {
    GLuint fmt;
 
-   if (!im->image.data) return;
+   if (!im->cache_entry.flags.loaded) return;
 
    if (tex->alpha != im->cache_entry.flags.alpha)
      {
@@ -830,7 +823,100 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im)
                                        *matching_format[lformat].intformat,
                                        *matching_format[lformat].format);
      }
+   // If image was preloaded then we need a ptt
    if (!tex->pt) return;
+
+   // if preloaded, then async push it in after uploading a miniature of it
+   if (im->cache_entry.flags.preload_done && tex->w > 2 * EVAS_GL_TILE_SIZE && tex->h > 2 * EVAS_GL_TILE_SIZE)
+     {
+        Evas_GL_Texture_Async_Preload *async;
+        int *in;
+        int out[EVAS_GL_TILE_SIZE * EVAS_GL_TILE_SIZE];
+        float xstep, ystep;
+        float x, y;
+        int i, j;
+        int lformat;
+        int u, v;
+
+        if (tex->ptt) return ;
+
+        xstep = (float)tex->w / (EVAS_GL_TILE_SIZE - 2);
+        ystep = (float)tex->h / (EVAS_GL_TILE_SIZE - 1);
+        in = (int*) im->image.data;
+
+        for (y = 0, j = 0; j < EVAS_GL_TILE_SIZE - 1; y += ystep, j++)
+          {
+             out[j * EVAS_GL_TILE_SIZE] = in[(int)y * im->cache_entry.w];
+             for (x = 0, i = 1; i < EVAS_GL_TILE_SIZE - 1; x += xstep, i++)
+               out[j * EVAS_GL_TILE_SIZE + i] = in[(int)y * im->cache_entry.w + (int)x];
+             out[j * EVAS_GL_TILE_SIZE + i] = in[(int)y * im->cache_entry.w + (int)(x - xstep)];
+          }
+
+        memcpy(&out[j * EVAS_GL_TILE_SIZE], &out[(j - 1) * EVAS_GL_TILE_SIZE], EVAS_GL_TILE_SIZE * sizeof (int));
+
+        // out is a miniature of the texture, upload that now and schedule the data for later.
+
+        // Creating the mini picture texture
+        lformat = _evas_gl_texture_search_format(tex->alpha, tex->gc->shared->info.bgra);
+        tex->ptt = _pool_tex_find(tex->gc, EVAS_GL_TILE_SIZE, EVAS_GL_TILE_SIZE,
+                                  *matching_format[lformat].intformat,
+                                  *matching_format[lformat].format,
+                                  &u, &v, &tex->aptt,
+                                  tex->gc->shared->info.tune.atlas.max_alloc_size);
+        if (!tex->ptt)
+          goto upload;
+        tex->aptt->tex = tex;
+
+        tex->tx = u + 1;
+        tex->ty = v;
+        tex->ptt->references++;
+
+        // Bind and upload ! Vooom !
+        fmt = tex->ptt->format;
+        glBindTexture(GL_TEXTURE_2D, tex->ptt->texture);
+        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+        if (tex->gc->shared->info.unpack_row_length)
+          {
+             glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+          }
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+
+        _tex_sub_2d(u, tex->ty, EVAS_GL_TILE_SIZE, EVAS_GL_TILE_SIZE, fmt, tex->ptt->dataformat, out);
+
+        // Switch back to current texture
+        if (tex->ptt->texture != tex->gc->pipe[0].shader.cur_tex)
+          {
+             glBindTexture(GL_TEXTURE_2D, tex->gc->pipe[0].shader.cur_tex);
+             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+          }
+
+        // Now prepare uploading the main texture before returning;
+        async = malloc(sizeof (Evas_GL_Texture_Async_Preload));
+        if (!async)
+          {
+             goto upload;
+          }
+
+        async->tex = tex;
+        async->tex->references++;
+        async->im = im;
+        evas_cache_image_ref(&async->im->cache_entry);
+        async->unpack_row_length = tex->gc->shared->info.unpack_row_length;
+
+        if (evas_gl_preload_push(async))
+          return ;
+
+        // Failed to start asynchronous upload, likely due to preload not being supported by the backend
+        async->tex->references--;
+        evas_cache_image_drop(&async->im->cache_entry);
+        free(async);
+
+     upload:
+        pt_unref(tex->ptt);
+        tex->ptt = NULL;
+     }
 
    fmt = tex->pt->format;
    glBindTexture(GL_TEXTURE_2D, tex->pt->texture);
@@ -939,6 +1025,13 @@ void
 evas_gl_common_texture_free(Evas_GL_Texture *tex, Eina_Bool force EINA_UNUSED)
 {
    if (!tex) return;
+   if (force)
+     {
+        evas_gl_preload_pop(tex);
+
+        while (tex->targets)
+          evas_gl_preload_target_unregister(tex, eina_list_data_get(tex->targets));
+     }
    tex->references--;
    if (tex->references != 0) return;
    if (tex->fglyph)

@@ -48,6 +48,7 @@ Additions:
      - Add multiple font draws support to engines
      - Add Cserve2 scalecache support
      - Add evas_object_image_source_clip_set()/get()
+     - Asynchronous preload of GL texture.
     * ecore_x:
      - Add window profile support.
        ECORE_X_ATOM_E_WINDOW_PROFILE_SUPPORTED

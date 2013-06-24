@@ -13,7 +13,7 @@ evas_gl_common_image_all_unload(Evas_Engine_GL_Context *gc)
           {
              if (!im->tex->pt->dyn.img)
                {
-		 evas_gl_common_texture_free(im->tex, EINA_TRUE);
+                  evas_gl_common_texture_free(im->tex, EINA_TRUE);
                   im->tex = NULL;
                }
           }
@@ -574,11 +574,12 @@ evas_gl_common_image_update(Evas_Engine_GL_Context *gc, Evas_GL_Image *im)
      {
       case EVAS_COLORSPACE_ARGB8888:
          if ((im->tex) &&
-             ((im->dirty) || (ie->animated.animated)))
+             ((im->dirty) || (ie->animated.animated) || (ie->flags.updated_data)))
           {
              evas_cache_image_load_data(&im->im->cache_entry);
              evas_gl_common_texture_update(im->tex, im->im);
              evas_cache_image_unload_data(&im->im->cache_entry);
+             ie->flags.updated_data = 0;
           }
 	if (!im->tex)
           {

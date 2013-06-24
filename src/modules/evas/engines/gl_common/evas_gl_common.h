@@ -162,6 +162,8 @@
 #define GL_MULTISAMPLE_BUFFER_BIT7_QCOM               0x80000000
 #endif
 
+#define EVAS_GL_TILE_SIZE 16
+
 #define SHAD_VERTEX 0
 #define SHAD_COLOR  1
 #define SHAD_TEXUV  2
@@ -181,6 +183,9 @@ typedef struct _Evas_GL_Image                 Evas_GL_Image;
 typedef struct _Evas_GL_Font_Texture          Evas_GL_Font_Texture;
 typedef struct _Evas_GL_Polygon               Evas_GL_Polygon;
 typedef struct _Evas_GL_Polygon_Point         Evas_GL_Polygon_Point;
+typedef struct _Evas_GL_Texture_Async_Preload Evas_GL_Texture_Async_Preload;
+
+typedef Eina_Bool (*evas_gl_make_current_cb)(void *engine_data, void *doit);
 
 typedef enum {
   SHADER_RECT,
@@ -494,6 +499,7 @@ struct _Evas_GL_Texture
    Evas_GL_Texture_Alloca *apt, *aptt;
    RGBA_Font_Glyph *fglyph;
    int              x, y, w, h;
+   int              tx, ty;
    double           sx1, sy1, sx2, sy2;
    int              references;
 
@@ -503,8 +509,12 @@ struct _Evas_GL_Texture
       int              source;
    } double_buffer;
 
+   Eina_List       *targets;
+
    Eina_Bool        alpha : 1;
    Eina_Bool        dyn : 1;
+   Eina_Bool        uploaded : 1;
+   Eina_Bool        was_preloaded : 1;
 };
 
 struct _Evas_GL_Image
@@ -540,6 +550,7 @@ struct _Evas_GL_Image
    int csize;
 
    Eina_List       *filtered;
+   Eina_List       *targets;
 
    unsigned char    dirty : 1;
    unsigned char    cached : 1;
@@ -561,6 +572,14 @@ struct _Evas_GL_Polygon
 struct _Evas_GL_Polygon_Point
 {
    int x, y;
+};
+
+struct _Evas_GL_Texture_Async_Preload
+{
+   Evas_GL_Texture *tex;
+   RGBA_Image *im;
+
+   Eina_Bool unpack_row_length;
 };
 
 #if 0
@@ -748,7 +767,19 @@ extern unsigned int   (*secsym_eglUnmapImageSEC)             (void *a, void *b, 
 extern unsigned int   (*secsym_eglGetImageAttribSEC)         (void *a, void *b, int c, int *d);
 #endif
 
-//#define GL_ERRORS 1
+Eina_Bool evas_gl_preload_push(Evas_GL_Texture_Async_Preload *async);
+void evas_gl_preload_pop(Evas_GL_Texture *tex);
+int evas_gl_preload_init(void);
+int evas_gl_preload_shutdown(void);
+void evas_gl_preload_render_lock(evas_gl_make_current_cb make_current, void *engine_data);
+void evas_gl_preload_render_unlock(evas_gl_make_current_cb make_current, void *engine_data);
+void evas_gl_preload_render_relax(evas_gl_make_current_cb make_current, void *engine_data);
+void evas_gl_preload_target_register(Evas_GL_Texture *tex, Eo *target);
+void evas_gl_preload_target_unregister(Evas_GL_Texture *tex, Eo *target);
+
+void pt_unref(Evas_GL_Texture_Pool *pt);
+
+#define GL_ERRORS 1
 
 #ifdef GL_ERRORS
 # define GLERR(fn, fl, ln, op) \
@@ -762,5 +793,12 @@ extern unsigned int   (*secsym_eglGetImageAttribSEC)         (void *a, void *b, 
 
 Eina_Bool evas_gl_common_module_open(void);
 void      evas_gl_common_module_close(void);
+
+static inline void
+_tex_sub_2d(int x, int y, int w, int h, int fmt, int type, const void *pix)
+{
+   glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, w, h, fmt, type, pix);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+}
 
 #endif

@@ -117,7 +117,6 @@ _internal_resource_make_current(void *eng_data, EVGL_Context *ctx)
           }
      }
 
-
    // Set context from input or from resource
    if (ctx)
       context = ctx->context;

@@ -1,3 +1,7 @@
+2013-06-24  Cedric Bail
+
+	* Evas: add support for asynchronously uploading GL texture.
+
 2013-06-22  Thiep Ha
 
         * Edje: Move cursor to correct position when selection handlers are pressed.

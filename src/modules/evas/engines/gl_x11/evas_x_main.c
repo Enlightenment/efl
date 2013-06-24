@@ -454,11 +454,57 @@ eng_window_free(Evas_GL_X11_Window *gw)
    free(gw);
 }
 
+static Eina_Bool
+eng_window_make_current(void *data, void *doit)
+{
+   Evas_GL_X11_Window *gw = data;
+
+#ifdef GL_GLES
+   if (doit)
+     {
+        if (!eglMakeCurrent(gw->egl_disp, gw->egl_surface[0], gw->egl_surface[0], gw->egl_context[0]))
+          return EINA_FALSE;
+     }
+   else
+     {
+        if (!eglMakeCurrent(gw->egl_disp, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT))
+          return EINA_FALSE;
+     }
+#else
+   if (doit)
+     {
+        if (gw->glxwin)
+          {
+             if (!glXMakeContextCurrent(gw->disp, gw->glxwin, gw->glxwin, gw->context))
+               {
+                  ERR("glXMakeContextCurrent(%p, %p, %p, %p)", (void *)gw->disp, (void *)gw->glxwin, (void *)gw->glxwin, (void *)gw->context);
+                  return EINA_FALSE;
+               }
+          }
+        else
+          {
+             if (!glXMakeCurrent(gw->disp, gw->win, gw->context))
+               {
+                  ERR("glXMakeCurrent(%p, 0x%x, %p) failed", gw->disp, (unsigned int)gw->win, (void *)gw->context);
+                  return EINA_FALSE;
+               }
+          }
+     }
+   else
+     {
+        if (!glXMakeCurrent(gw->disp, None, NULL))
+          return EINA_FALSE;
+     }
+#endif
+   return EINA_TRUE;
+}
+
 void
 eng_window_use(Evas_GL_X11_Window *gw)
 {
    Eina_Bool force_use = EINA_FALSE;
 
+   evas_gl_preload_render_lock(eng_window_make_current, gw);
 #ifdef GL_GLES
    if (_evas_gl_x11_window)
      {

@@ -1261,7 +1261,14 @@ _evas_gl_common_context_push(int rtype,
                              Eina_Bool clip,
                              int cx, int cy, int cw, int ch)
 {
+   GLuint current_tex = 0;
+   GLuint current_texm = 0;
    int pn = 0;
+
+   if (tex)
+     current_tex = tex->ptt ? tex->ptt->texture : tex->pt->texture;
+   if (texm)
+     current_texm = texm->ptt ? texm->ptt->texture : tex->pt->texture;
 
 #ifdef GLPIPES
  again:
@@ -1277,8 +1284,8 @@ _evas_gl_common_context_push(int rtype,
         for (i = pn; i >= 0; i--)
           {
              if ((gc->pipe[i].region.type == rtype)
-                 && (!tex || gc->pipe[i].shader.cur_tex == tex->pt->texture)
-                 && (!texm || gc->pipe[i].shader.cur_texm == texm->pt->texture)
+                 && (!tex || gc->pipe[i].shader.cur_tex == current_tex)
+                 && (!texm || gc->pipe[i].shader.cur_texm == current_texm)
                  && (gc->pipe[i].shader.cur_prog == prog)
                  && (gc->pipe[i].shader.smooth == smooth)
                  && (gc->pipe[i].shader.blend == blend)
@@ -1318,8 +1325,8 @@ _evas_gl_common_context_push(int rtype,
      }
 #else
    if (!((gc->pipe[pn].region.type == rtype)
-         && (!tex || gc->pipe[pn].shader.cur_tex == tex->pt->texture)
-         && (!texm || gc->pipe[pn].shader.cur_texm == texm->pt->texture)
+         && (!tex || gc->pipe[pn].shader.cur_tex == current_tex)
+         && (!texm || gc->pipe[pn].shader.cur_texm == current_texm)
          && (gc->pipe[pn].shader.cur_prog == prog)
          && (gc->pipe[pn].shader.smooth == smooth)
          && (gc->pipe[pn].shader.blend == blend)
@@ -1553,8 +1560,10 @@ evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
                                   int r, int g, int b, int a,
                                   Eina_Bool smooth, Eina_Bool tex_only)
 {
+   Evas_GL_Texture_Pool *pt;
    int pnum, nv, nc, nu, ns, i;
    GLfloat tx1, tx2, ty1, ty2;
+   GLfloat offsetx, offsety;
    Eina_Bool blend = EINA_FALSE;
    GLuint prog = gc->shared->shader[SHADER_IMG].prog;
    int pn = 0, sam = 0;
@@ -1693,6 +1702,25 @@ evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
           }
      }
 
+   if (tex->ptt)
+     {
+        pt = tex->ptt;
+        offsetx = tex->tx;
+        offsety = tex->ty;
+
+        // Adjusting sx, sy, sw and sh to real size of tiny texture
+        sx = sx * (EVAS_GL_TILE_SIZE - 2) / tex->w;
+        sw = sw * (EVAS_GL_TILE_SIZE - 2) / tex->w;
+        sy = sy * (EVAS_GL_TILE_SIZE - 1) / tex->h;
+        sh = sh * (EVAS_GL_TILE_SIZE - 1) / tex->h;
+     }
+   else
+     {
+        pt = tex->pt;
+        offsetx = tex->x;
+        offsety = tex->y;
+     }
+
    pn = _evas_gl_common_context_push(RTYPE_IMAGE,
                                      gc, tex, NULL,
                                      prog,
@@ -1702,7 +1730,7 @@ evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
                                      0, 0, 0, 0, 0);
 
    gc->pipe[pn].region.type = RTYPE_IMAGE;
-   gc->pipe[pn].shader.cur_tex = tex->pt->texture;
+   gc->pipe[pn].shader.cur_tex = pt->texture;
    gc->pipe[pn].shader.cur_prog = prog;
    gc->pipe[pn].shader.smooth = smooth;
    gc->pipe[pn].shader.blend = blend;
@@ -1731,17 +1759,17 @@ evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
 
    if ((tex->im) && (tex->im->native.data) && (!tex->im->native.yinvert))
      {
-        tx1 = ((double)(tex->x) + sx) / (double)tex->pt->w;
-        ty1 = 1.0 - ((double)(tex->y) + sy) / (double)tex->pt->h;
-        tx2 = ((double)(tex->x) + sx + sw) / (double)tex->pt->w;
-        ty2 = 1.0 - ((double)(tex->y) + sy + sh) / (double)tex->pt->h;
+        tx1 = ((double)(offsetx) + sx) / (double)pt->w;
+        ty1 = 1.0 - ((double)(offsety) + sy) / (double)pt->h;
+        tx2 = ((double)(offsetx) + sx + sw) / (double)pt->w;
+        ty2 = 1.0 - ((double)(offsety) + sy + sh) / (double)pt->h;
      }
    else
      {
-        tx1 = ((double)(tex->x) + sx) / (double)tex->pt->w;
-        ty1 = ((double)(tex->y) + sy) / (double)tex->pt->h;
-        tx2 = ((double)(tex->x) + sx + sw) / (double)tex->pt->w;
-        ty2 = ((double)(tex->y) + sy + sh) / (double)tex->pt->h;
+        tx1 = ((double)(offsetx) + sx) / (double)pt->w;
+        ty1 = ((double)(offsety) + sy) / (double)pt->h;
+        tx2 = ((double)(offsetx) + sx + sw) / (double)pt->w;
+        ty2 = ((double)(offsety) + sy + sh) / (double)pt->h;
      }
 
    PUSH_VERTEX(pn, x    , y    , 0);

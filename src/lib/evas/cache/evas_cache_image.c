@@ -396,6 +396,7 @@ _evas_cache_image_async_end(void *data)
    ie->cache->pending = eina_list_remove(ie->cache->pending, ie);
    ie->preload = NULL;
    ie->flags.preload_done = ie->flags.loaded;
+   ie->flags.updated_data = 1;
    while ((tmp = ie->targets))
      {
         evas_object_inform_call_image_preloaded((Evas_Object*) tmp->target);

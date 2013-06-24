@@ -73,6 +73,8 @@ typedef int             (*glsym_func_int) ();
 typedef unsigned int    (*glsym_func_uint) ();
 typedef const char     *(*glsym_func_const_char_ptr) ();
 
+static Eina_Bool eng_preload_make_current(void *data, void *doit);
+
 #ifdef GL_GLES
 
 #ifndef EGL_NATIVE_PIXMAP_KHR
@@ -702,10 +704,6 @@ gl_extn_veto(Render_Engine *re)
           {
              extn_have_buffer_age = 0;
           }
-        if (!strstr(str, "swap_buffers_with_damage"))
-          {
-             glsym_eglSwapBuffersWithDamage = NULL;
-          }
      }
    else
      {
@@ -808,6 +806,7 @@ static void
 _re_winfree(Render_Engine *re)
 {
    if (!re->win->surf) return;
+   evas_gl_preload_render_relax(eng_preload_make_current, re);
    eng_window_unsurf(re->win);
 }
 
@@ -877,6 +876,7 @@ eng_setup(Evas *eo_e, void *in)
              evas_common_font_init();
              evas_common_draw_init();
              evas_common_tilebuf_init();
+             evas_gl_preload_init();
              gl_extn_veto(re);
 //             evgl_engine_init(re, &evgl_funcs);
              initted = 1;
@@ -1033,6 +1033,8 @@ eng_output_free(void *data)
 
    if (re)
      {
+        evas_gl_preload_render_relax(eng_preload_make_current, re);
+
 #if 0
 #ifdef GL_GLES
         // Destroy the resource surface
@@ -1070,6 +1072,7 @@ eng_output_free(void *data)
      }
    if ((initted == 1) && (gl_wins == 0))
      {
+        evas_gl_preload_shutdown();
         evas_common_image_shutdown();
         evas_common_font_shutdown();
         initted = 0;
@@ -1213,6 +1216,42 @@ _merge_rects(Tilebuf *tb, Tilebuf_Rect *r1, Tilebuf_Rect *r2, Tilebuf_Rect *r3)
 /* vsync games - not for now though */
 #define VSYNC_TO_SCREEN 1
 
+static Eina_Bool
+eng_preload_make_current(void *data, void *doit)
+{
+   Render_Engine *re = data;
+
+   if (doit)
+     {
+#ifdef GL_GLES
+        if (!eglMakeCurrent(re->win->egl_disp, re->win->egl_surface[0], re->win->egl_surface[0], re->win->egl_context[0]))
+          return EINA_FALSE;
+#else
+        if (!glXMakeCurrent(re->info->info.display, re->win->win, re->win->context))
+          {
+             ERR("glXMakeCurrent(%p, 0x%x, %p) failed", re->info->info.display, (unsigned int)re->win->win, (void *)re->win->context);
+             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+             return EINA_FALSE;
+          }
+#endif
+     }
+   else
+     {
+#ifdef GL_GLES
+        if (!eglMakeCurrent(re->win->egl_disp, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT))
+          return EINA_FALSE;
+#else
+        if (!glXMakeCurrent(re->info->info.display, None, NULL))
+          {
+             ERR("glXMakeCurrent(%p, None, NULL) failed", re->info->info.display);
+             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+             return EINA_FALSE;
+          }
+#endif
+     }
+   return EINA_TRUE;
+}
+
 static void *
 eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, int *cx, int *cy, int *cw, int *ch)
 {
@@ -1353,6 +1392,7 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
           }
         if (first_rect)
           {
+             evas_gl_preload_render_lock(eng_preload_make_current, re);
 #ifdef GL_GLES
              // dont need to for egl - eng_window_use() can check for other ctxt's
 #else
@@ -1433,11 +1473,11 @@ eng_output_flush(void *data, Evas_Render_Mode render_mode)
 {
    Render_Engine *re;
 
-   if (render_mode == EVAS_RENDER_MODE_ASYNC_INIT) return;
+   if (render_mode == EVAS_RENDER_MODE_ASYNC_INIT) goto end;
 
    re = (Render_Engine *)data;
-   if (!_re_wincheck(re)) return;
-   if (!re->win->draw.drew) return;
+   if (!_re_wincheck(re)) goto end;
+   if (!re->win->draw.drew) goto end;
    
    re->win->draw.drew = 0;
    eng_window_use(re->win);
@@ -1454,7 +1494,7 @@ eng_output_flush(void *data, Evas_Render_Mode render_mode)
      {
         re->info->callback.pre_swap(re->info->callback.data, re->evas);
      }
-   if ((glsym_eglSwapBuffersWithDamage) && (re->mode != MODE_FULL))
+   if ((glsym_eglSwapBuffersRegion) && (re->mode != MODE_FULL))
      {
         EGLint num = 0, *rects = NULL, i = 0;
         Tilebuf_Rect *r;
@@ -1505,9 +1545,9 @@ eng_output_flush(void *data, Evas_Render_Mode render_mode)
                     }
                   i += 4;
                }
-             glsym_eglSwapBuffersWithDamage(re->win->egl_disp,
-                                            re->win->egl_surface[0],
-                                            rects, num);
+             glsym_eglSwapBuffersRegion(re->win->egl_disp,
+                                        re->win->egl_surface[0],
+                                        num, rects);
           }
      }
    else
@@ -1574,6 +1614,9 @@ eng_output_flush(void *data, Evas_Render_Mode render_mode)
         evas_common_tilebuf_free_render_rects(re->rects);
         re->rects = NULL;
      }
+
+ end:
+   evas_gl_preload_render_unlock(eng_preload_make_current, re);
 }
 
 static void
@@ -2771,9 +2814,10 @@ eng_image_data_put(void *data, void *image, DATA32 *image_data)
 }
 
 static void
-eng_image_data_preload_request(void *data EINA_UNUSED, void *image, const Eo *target)
+eng_image_data_preload_request(void *data, void *image, const Eo *target)
 {
    Evas_GL_Image *gim = image;
+   Render_Engine *re = data;
    RGBA_Image *im;
 
    if (!gim) return;
@@ -2781,6 +2825,9 @@ eng_image_data_preload_request(void *data EINA_UNUSED, void *image, const Eo *ta
    im = (RGBA_Image *)gim->im;
    if (!im) return;
    evas_cache_image_preload_data(&im->cache_entry, target, NULL, NULL, NULL);
+   if (!gim->tex)
+     gim->tex = evas_gl_common_texture_new(re->win->gl_context, gim->im);
+   evas_gl_preload_target_register(gim->tex, (Eo*) target);
 }
 
 static void
@@ -2794,6 +2841,7 @@ eng_image_data_preload_cancel(void *data EINA_UNUSED, void *image, const Eo *tar
    im = (RGBA_Image *)gim->im;
    if (!im) return;
    evas_cache_image_preload_cancel(&im->cache_entry, target);
+   evas_gl_preload_target_unregister(gim->tex, (Eo*) target);
 }
 
 static Eina_Bool

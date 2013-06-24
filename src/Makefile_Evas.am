@@ -438,6 +438,7 @@ modules/evas/engines/gl_common/evas_gl_file_cache.c \
 modules/evas/engines/gl_common/evas_gl_shader.c \
 modules/evas/engines/gl_common/evas_gl_rectangle.c \
 modules/evas/engines/gl_common/evas_gl_texture.c \
+modules/evas/engines/gl_common/evas_gl_preload.c \
 modules/evas/engines/gl_common/evas_gl_image.c \
 modules/evas/engines/gl_common/evas_gl_font.c \
 modules/evas/engines/gl_common/evas_gl_polygon.c \
