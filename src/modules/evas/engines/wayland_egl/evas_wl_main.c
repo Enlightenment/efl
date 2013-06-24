@@ -223,6 +223,8 @@ eng_window_use(Evas_GL_Wl_Window *gw)
 {
    Eina_Bool force = EINA_FALSE;
 
+   evas_gl_preload_render_lock(eng_window_make_current, gw);
+
    if (_evas_gl_wl_window)
      {
         if ((eglGetCurrentContext() != 
@@ -304,4 +306,27 @@ eng_window_resurf(Evas_GL_Wl_Window *gw)
      ERR("eglMakeCurrent() failed!");
 
    gw->surf = EINA_TRUE;
+}
+
+Eina_Bool 
+eng_window_make_current(void *data, void *doit)
+{
+   Evas_GL_Wl_Window *gw;
+
+   if (!(gw = data)) return EINA_FALSE;
+
+   if (doit)
+     {
+        if (!eglMakeCurrent(gw->egl_disp, gw->egl_surface[0], 
+                            gw->egl_surface[0], gw->egl_context[0]))
+          return EINA_FALSE;
+     }
+   else
+     {
+        if (!eglMakeCurrent(gw->egl_disp, EGL_NO_SURFACE, 
+                            EGL_NO_SURFACE, EGL_NO_CONTEXT))
+          return EINA_FALSE;
+     }
+
+   return EINA_TRUE;
 }

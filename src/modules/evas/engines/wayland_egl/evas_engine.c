@@ -92,6 +92,8 @@ static void _native_free_cb(void *data, void *image);
 static int eng_image_colorspace_get(void *data EINA_UNUSED, void *image);
 static int eng_image_alpha_get(void *data EINA_UNUSED, void *image);
 
+static Eina_Bool eng_gl_preload_make_current(void *data, void *doit);
+
 #define EVGLINIT(_re, _ret) if (!evgl_init(_re)) return _ret;
 
 /* local variables */
@@ -210,8 +212,8 @@ evgl_extn_veto(Render_Engine *re)
         if (getenv("EVAS_GL_INFO")) printf("EGL EXTENSION:\n%s\n", str);
         if (!strstr(str, "EGL_EXT_buffer_age"))
           extn_have_buffer_age = EINA_FALSE;
-        if (!strstr(str, "swap_buffers_with_damage"))
-          glsym_eglSwapBuffersWithDamage = NULL;
+        /* if (!strstr(str, "swap_buffers_with_damage")) */
+        /*   glsym_eglSwapBuffersWithDamage = NULL; */
      }
    else
      {
@@ -475,6 +477,7 @@ _re_winfree(Render_Engine *re)
 {
    if ((!re) || (!re->win)) return;
    if (!re->win->surf) return;
+   evas_gl_preload_render_relax(eng_gl_preload_make_current, re);
    eng_window_unsurf(re->win);
 }
 
@@ -674,6 +677,7 @@ eng_setup(Evas *evas, void *info)
              evas_common_font_init();
              evas_common_draw_init();
              evas_common_tilebuf_init();
+             evas_gl_preload_init();
              evgl_extn_veto(re);
 //             evgl_engine_init(re, &evgl_funcs);
              initted = EINA_TRUE;
@@ -867,6 +871,8 @@ eng_output_free(void *data)
 
    if ((re = (Render_Engine *)data))
      {
+        evas_gl_preload_render_relax(eng_gl_preload_make_current, re);
+
         if (re->win)
           {
              eng_window_free(re->win);
@@ -890,6 +896,7 @@ eng_output_free(void *data)
 
    if ((initted) && (!gl_wins))
      {
+        evas_gl_preload_shutdown();
         evas_common_image_shutdown();
         evas_common_font_shutdown();
         initted = EINA_FALSE;
@@ -1127,6 +1134,8 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
 
         if (first_rect)
           {
+             evas_gl_preload_render_lock(eng_gl_preload_make_current, re);
+
              eng_window_use(re->win);
              if (!_re_wincheck(re)) return NULL;
              
@@ -1182,11 +1191,11 @@ eng_output_flush(void *data, Evas_Render_Mode render_mode)
 
    if (!(re = (Render_Engine *)data)) return;
 
-   if (render_mode == EVAS_RENDER_MODE_ASYNC_INIT) return;
+   if (render_mode == EVAS_RENDER_MODE_ASYNC_INIT) goto end;
 
-   if (!_re_wincheck(re)) return;
+   if (!_re_wincheck(re)) goto end;
 
-   if (!re->win->draw.drew) return;
+   if (!re->win->draw.drew) goto end;
    re->win->draw.drew = EINA_FALSE;
    eng_window_use(re->win);
 
@@ -1269,6 +1278,8 @@ eng_output_flush(void *data, Evas_Render_Mode render_mode)
         evas_common_tilebuf_free_render_rects(re->rects);
         re->rects = NULL;
      }
+end:
+   evas_gl_preload_render_unlock(eng_gl_preload_make_current, re);
 }
 
 static void 
@@ -1417,6 +1428,30 @@ eng_gl_get_pixels_set(void *data, void *get_pixels, void *get_pixels_data, void 
    re->func.pixels_get = get_pixels;
    re->func.pixels_data_get = get_pixels_data;
    re->func.obj = (Evas_Object*)obj;
+}
+
+static Eina_Bool 
+eng_gl_preload_make_current(void *data, void *doit)
+{
+   Render_Engine *re;
+
+   if (!(re = (Render_Engine *)data)) 
+     return EINA_FALSE;
+
+   if (doit)
+     {
+        if (!eglMakeCurrent(re->win->egl_disp, re->win->egl_surface[0], 
+                            re->win->egl_surface[0], re->win->egl_context[0]))
+          return EINA_FALSE;
+     }
+   else
+     {
+        if (!eglMakeCurrent(re->win->egl_disp, EGL_NO_SURFACE, 
+                            EGL_NO_SURFACE, EGL_NO_CONTEXT))
+          return EINA_FALSE;
+     }
+
+   return EINA_TRUE;
 }
 
 static void 
@@ -1817,16 +1852,21 @@ eng_image_data_put(void *data, void *image, DATA32 *image_data)
 }
 
 static void
-eng_image_data_preload_request(void *data EINA_UNUSED, void *image, const Eo *target)
+eng_image_data_preload_request(void *data, void *image, const Eo *target)
 {
    Evas_GL_Image *gim;
    RGBA_Image *im;
+   Render_Engine *re;
 
    if (!(gim = image)) return;
    if (gim->native.data) return;
    im = (RGBA_Image *)gim->im;
    if (!im) return;
    evas_cache_image_preload_data(&im->cache_entry, target, NULL, NULL, NULL);
+   if (!(re = (Render_Engine *)data)) return;
+   if (!gim->tex)
+     gim->tex = evas_gl_common_texture_new(re->win->gl_context, gim->im);
+   evas_gl_preload_target_register(gim->tex, (Eo *)target);
 }
 
 static void
@@ -1840,6 +1880,7 @@ eng_image_data_preload_cancel(void *data EINA_UNUSED, void *image, const Eo *tar
    im = (RGBA_Image *)gim->im;
    if (!im) return;
    evas_cache_image_preload_cancel(&im->cache_entry, target);
+   evas_gl_preload_target_unregister(gim->tex, (Eo *)target);
 }
 
 static void *

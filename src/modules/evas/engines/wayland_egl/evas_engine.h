@@ -80,5 +80,6 @@ void eng_window_free(Evas_GL_Wl_Window *gw);
 void eng_window_use(Evas_GL_Wl_Window *gw);
 void eng_window_unsurf(Evas_GL_Wl_Window *gw);
 void eng_window_resurf(Evas_GL_Wl_Window *gw);
+Eina_Bool eng_window_make_current(void *data, void *doit);
 
 #endif
