@@ -1399,14 +1399,9 @@ _item_append(Eo *obj, void *_pd, va_list *list)
      {
         //The first item is appended.
         sd->list = elm_list_add(obj);
-        if (sd->list)
-          {
-             if (!strncmp(elm_object_style_get(obj), "default",
-                          strlen("default")))
-               elm_object_style_set(sd->list, "ctxpopup");
-             else
-               elm_object_style_set(sd->list, elm_object_style_get(obj));
-          }
+        if (!strncmp(elm_object_style_get(obj), "default", strlen("default")))
+          elm_object_style_set(sd->list, "ctxpopup");
+        else elm_object_style_set(sd->list, elm_object_style_get(obj));
         elm_list_mode_set(sd->list, ELM_LIST_EXPAND);
         elm_list_horizontal_set(sd->list, sd->horizontal);
         evas_object_event_callback_add
