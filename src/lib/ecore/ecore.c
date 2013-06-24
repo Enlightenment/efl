@@ -217,7 +217,7 @@ ecore_init(void)
 	_systemd_watchdog = ecore_timer_add(sec / 2, _systemd_watchdog_cb, NULL);
 	unsetenv("WATCHDOG_USEC");
 
-	INF("Setup Systemd watchdog to : %f", sec);
+	INF("Setup systemd watchdog to : %f", sec);
 
 	_systemd_watchdog_cb(NULL);
      }

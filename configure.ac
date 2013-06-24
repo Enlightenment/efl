@@ -535,7 +535,7 @@ AC_DEFINE_IF([HAVE_ATFILE_SOURCE],
 
 AC_ARG_ENABLE([systemd],
    [AC_HELP_STRING([--enable-systemd],
-      [Enable SystemD support. @<:@default=disabled@:>@])],
+      [Enable systemd support. @<:@default=disabled@:>@])],
    [
     if test "x${enableval}" = "xyes" ; then
        want_systemd="yes"

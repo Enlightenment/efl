@@ -388,7 +388,7 @@
 
 2013-03-28  Cedric Bail
 
-	* Ecore: automatically turn on Systemd watchdog in Ecore main loop.
+	* Ecore: automatically turn on systemd watchdog in Ecore main loop.
 
 2013-03-28  Carsten Haitzler (The Rasterman)
 
@@ -434,7 +434,7 @@
 2013-03-16  Cedric Bail
 
 	* Remove Glew and Direct3d code from Ecore_Evas module.
-	* Add Eina_Log integration for Systemd journal.
+	* Add Eina_Log integration for systemd journal.
 
 2013-03-15  Carsten Haitzler (The Rasterman)
 
