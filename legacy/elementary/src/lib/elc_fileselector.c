@@ -1087,7 +1087,7 @@ _buttons_ok_cancel_set(Eo *obj, void *_pd, va_list *list)
 
    Elm_Fileselector_Smart_Data *sd = _pd;
 
-   if (visible)
+   if (visible && (!sd->ok_button))
      {
         // cancel btn
         bt = elm_button_add(obj);
