@@ -1454,3 +1454,7 @@
 2013-06-24  Ryuan Choi (ryuan)
 
         * fileselector : Add support mime type filter
+
+2013-06-25  Ryuan Choi (ryuan)
+
+        * Fix crash of elm_notify when timeout is zero.
