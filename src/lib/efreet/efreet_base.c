@@ -335,13 +335,16 @@ efreet_dirs_init(void)
     }
     else if ((st.st_mode & 0777) != 0700)
     {
-        ERR("XDG_RUNTIME_DIR=%s is mode %o, changing to 0700",
-            xdg_runtime_dir, st.st_mode & 0777);
-        if (chmod(xdg_runtime_dir, 0700) != 0)
+        if (st.st_uid == geteuid())
         {
-            CRITICAL("Cannot fix XDG_RUNTIME_DIR=%s incorrect mode %o: %s",
-                     xdg_runtime_dir, st.st_mode & 0777, strerror(errno));
-            eina_stringshare_replace(&xdg_runtime_dir, NULL);
+            ERR("XDG_RUNTIME_DIR=%s is mode %o, changing to 0700",
+                xdg_runtime_dir, st.st_mode & 0777);
+            if (chmod(xdg_runtime_dir, 0700) != 0)
+            {
+                CRITICAL("Cannot fix XDG_RUNTIME_DIR=%s incorrect mode %o: %s",
+                         xdg_runtime_dir, st.st_mode & 0777, strerror(errno));
+                eina_stringshare_replace(&xdg_runtime_dir, NULL);
+            }
         }
     }
     /* hostname */
