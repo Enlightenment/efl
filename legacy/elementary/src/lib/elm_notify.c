@@ -262,6 +262,8 @@ _timer_init(Evas_Object *obj,
    if (sd->timer) ecore_timer_del(sd->timer);
    if (sd->timeout > 0.0)
      sd->timer = ecore_timer_add(sd->timeout, _timer_cb, obj);
+   else
+     sd->timer = NULL;
 }
 
 static void
