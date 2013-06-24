@@ -1494,7 +1494,7 @@ eng_output_flush(void *data, Evas_Render_Mode render_mode)
      {
         re->info->callback.pre_swap(re->info->callback.data, re->evas);
      }
-   if ((glsym_eglSwapBuffersRegion) && (re->mode != MODE_FULL))
+   if ((glsym_eglSwapBuffersWithDamage) && (re->mode != MODE_FULL))
      {
         EGLint num = 0, *rects = NULL, i = 0;
         Tilebuf_Rect *r;
@@ -1545,9 +1545,9 @@ eng_output_flush(void *data, Evas_Render_Mode render_mode)
                     }
                   i += 4;
                }
-             glsym_eglSwapBuffersRegion(re->win->egl_disp,
-                                        re->win->egl_surface[0],
-                                        num, rects);
+             glsym_eglSwapBuffersWithDamage(re->win->egl_disp,
+                                            re->win->egl_surface[0],
+                                            rects, num);
           }
      }
    else
