@@ -682,15 +682,6 @@ evas_common_font_free(RGBA_Font *fn)
    free(fn);
 }
 
-static void
-_evas_common_font_rehint(RGBA_Font_Int *fi, Font_Hint_Flags hinting)
-{
-   if (fi->fash)
-     fi->fash->freeme(fi->fash);
-   fi->fash = NULL;
-   fi->hinting = hinting;
-}
-
 EAPI void
 evas_common_font_hinting_set(RGBA_Font *fn, Font_Hint_Flags hinting)
 {
@@ -702,7 +693,7 @@ evas_common_font_hinting_set(RGBA_Font *fn, Font_Hint_Flags hinting)
    EINA_LIST_FOREACH(fn->fonts, l, fi)
      {
         if (fi->hinting != fn->hinting)
-          _evas_common_font_rehint(fi, fn->hinting);
+          _evas_common_font_int_clear(fi);
         fi->hinting = fn->hinting;
      }
 }
