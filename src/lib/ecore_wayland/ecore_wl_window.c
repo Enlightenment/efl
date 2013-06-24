@@ -311,7 +311,7 @@ ecore_wl_window_show(Ecore_Wl_Window *win)
       case ECORE_WL_WINDOW_TYPE_MENU:
         wl_shell_surface_set_popup(win->shell_surface, 
                                    _ecore_wl_disp->input->seat,
-                                   wl_display_get_serial(_ecore_wl_disp->wl.display),
+                                   _ecore_wl_disp->serial,
                                    win->parent->surface, 
                                    win->allocation.x, win->allocation.y, 0);
         break;
