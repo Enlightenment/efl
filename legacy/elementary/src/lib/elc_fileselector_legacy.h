@@ -258,6 +258,7 @@ EAPI const char           *elm_fileselector_selected_get(const Evas_Object *obj)
  * @see elm_need_efreet()
  * @see elm_fileselector_filters_clear()
  *
+ * @since 1.8
  * @ingroup Fileselector
  */
 EAPI Eina_Bool             elm_fileselector_mime_types_filter_append(Evas_Object *obj, const char *mime_types, const char *filter_name);
@@ -272,6 +273,7 @@ EAPI Eina_Bool             elm_fileselector_mime_types_filter_append(Evas_Object
  *
  * @see elm_fileselector_mime_type_filter_append()
  *
+ * @since 1.8
  * @ingroup Fileselector
  */
 EAPI void                  elm_fileselector_filters_clear(Evas_Object *obj);
