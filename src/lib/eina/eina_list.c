@@ -1111,6 +1111,9 @@ eina_list_shuffle(Eina_List *list, Eina_Random_Cb func)
    n = accounting->count;
    shuffled_list = shuffled_last = NULL;
 
+   if (n == 0)
+     return NULL;
+
    if (n == 1)
      return list;
 
