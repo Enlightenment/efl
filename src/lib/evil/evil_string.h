@@ -144,10 +144,30 @@ EAPI int strcasecmp(const char *s1, const char *s2);
  */
 EAPI char *strcasestr(const char *haystack, const char *needle);
 
-
 /**
- * @}
- */
+ * @brief Implements the strsep function which is used to separate strings.
+ *
+ * @param stringp The pointer to the string to search in.
+ * @param delim The delimiter that contains characters used to find the next token.
+ * @return a pointer to the next token or NULL;
+ *
+ * The strsep() function locates, in the string referenced by *stringp, the
+ * first occurrence of any character in the string delim (or the terminating
+ * `\0' character) and replaces it with a `\0'.  The location of the next
+ * character after the delimiter character (or NULL, if the end of the
+ * string was reached) is stored in *stringp.  The original value of
+ * stringp is returned.
+ *
+ * An ``empty'' field (i.e., a character in the string delim occurs as the
+ * first character of *stringp) can be detected by comparing the location
+ * referenced by the returned pointer to `\0'.
 
+ * If *stringp is initially NULL, strsep() returns NULL.
+ *
+ * This function is from LibGW32C.
+ * @since 1.8
+ *
+ */
+EAPI char *strsep(char **stringp, const char *delim);
 
 #endif /* __EVIL_STRING_H__ */

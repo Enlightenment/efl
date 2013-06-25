@@ -6,6 +6,10 @@
 
         * Edje: Move cursor to correct position when selection handlers are pressed.
 
+2013-06-20  Christophe Sadoine
+
+	* Evil: Added strsep function.
+
 2013-06-19  Cedric Bail
 
 	* Evas: optimized path for when map use the same color for all corner.

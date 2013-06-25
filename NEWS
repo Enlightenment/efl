@@ -10,6 +10,7 @@ Additions:
     * Evil:
      - Add mkdtemp.
      - Add evil_rename() a wrapper for rename().
+     - Add strsep().
     * eina:
      - Add DOCTYPE children parsing in eina_simple_xml
      - Add eina_barrier thread API
