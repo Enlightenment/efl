@@ -177,32 +177,6 @@ _elm_image_internal_sizing_eval(Evas_Object *obj, Elm_Image_Smart_Data *sd)
    evas_object_resize(sd->hit_rect, w, h);
 }
 
-static void
-_elm_image_file_set_do(Evas_Object *obj)
-{
-   Evas_Object *pclip = NULL;
-
-   ELM_IMAGE_DATA_GET(obj, sd);
-
-   if (sd->prev_img) evas_object_del(sd->prev_img);
-   if (sd->img)
-     {
-        pclip = evas_object_clip_get(sd->img);
-        sd->prev_img = sd->img;
-     }
-
-   sd->img = _img_new(obj);
-
-   evas_object_image_load_orientation_set(sd->img, EINA_TRUE);
-
-   evas_object_clip_set(sd->img, pclip);
-
-   sd->edje = EINA_FALSE;
-
-   if (!sd->load_size)
-     evas_object_image_load_size_set(sd->img, sd->load_size, sd->load_size);
-}
-
 /* WARNING: whenever you patch this function, remember to do the same
  * on elm_icon.c:_elm_icon_smart_file_set()'s 2nd half.
  */
@@ -247,37 +221,6 @@ _elm_image_edje_file_set(Evas_Object *obj,
 }
 
 static void
-_elm_image_smart_size_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   int *w = va_arg(*list, int *);
-   int *h = va_arg(*list, int *);
-
-   int tw, th;
-   int cw = 0, ch = 0;
-   const char *type;
-
-   Elm_Image_Smart_Data *sd = _pd;
-
-   type = evas_object_type_get(sd->img);
-   if (!type) return;
-
-   if (!strcmp(type, "edje"))
-     edje_object_size_min_get(sd->img, &tw, &th);
-   else
-     evas_object_image_size_get(sd->img, &tw, &th);
-
-   if ((sd->resize_up) || (sd->resize_down))
-     evas_object_geometry_get(sd->img, NULL, NULL, &cw, &ch);
-
-   tw = tw > cw ? tw : cw;
-   th = th > ch ? th : ch;
-   tw = ((double)tw) * sd->scale;
-   th = ((double)th) * sd->scale;
-   if (w) *w = tw;
-   if (h) *h = th;
-}
-
-static void
 _elm_image_smart_smooth_scale_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Eina_Bool smooth = va_arg(*list, int);
@@ -302,16 +245,6 @@ _elm_image_smart_smooth_scale_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
      }
 
    *ret = evas_object_image_smooth_scale_get(sd->img);
-}
-
-static void
-_elm_image_smart_object_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Evas_Object **ret = va_arg(*list, Evas_Object **);
-
-   Elm_Image_Smart_Data *sd = _pd;
-
-   *ret = sd->img;
 }
 
 static void
@@ -480,127 +413,6 @@ _elm_image_smart_rotate_180(Evas_Object *obj, Elm_Image_Smart_Data *sd)
    evas_object_image_data_update_add(sd->img, 0, 0, iw, ih);
 
    _elm_image_internal_sizing_eval(obj, sd);
-}
-
-static void
-_elm_image_smart_orient_set(Eo *obj, void *_pd, va_list *list)
-{
-   Elm_Image_Orient orient = va_arg(*list, Elm_Image_Orient);
-
-   unsigned int *data, *data2 = NULL, *to, *from;
-   int x, y, w, hw, iw, ih;
-
-   Elm_Image_Smart_Data *sd = _pd;
-
-   if (sd->edje)
-     return;
-
-   switch (orient)
-     {
-      case ELM_IMAGE_FLIP_HORIZONTAL:
-        _elm_image_flip_horizontal(obj, sd);
-	sd->orient = orient;
-        return;
-
-      case ELM_IMAGE_FLIP_VERTICAL:
-        _elm_image_flip_vertical(obj, sd);
-	sd->orient = orient;
-        return;
-
-      case ELM_IMAGE_ROTATE_180:
-        _elm_image_smart_rotate_180(obj, sd);
-	sd->orient = orient;
-        return;
-
-     case ELM_IMAGE_ORIENT_NONE:
-        sd->orient = orient;
-        return;
-
-      default:
-        break;
-     }
-
-   evas_object_image_size_get(sd->img, &iw, &ih);
-
-   /* we need separate destination memory if we want to rotate 90 or
-    * 270 degree */
-   data = evas_object_image_data_get(sd->img, EINA_FALSE);
-   if (!data) return;
-   data2 = malloc(sizeof(unsigned char) * (iw * ih * 4));
-   if (!data2) return;
-   memcpy(data2, data, sizeof (unsigned char) * (iw * ih * 4));
-
-   w = ih;
-   ih = iw;
-   iw = w;
-   hw = w * ih;
-
-   evas_object_image_size_set(sd->img, iw, ih);
-   data = evas_object_image_data_get(sd->img, EINA_TRUE);
-
-   switch (orient)
-     {
-      case ELM_IMAGE_FLIP_TRANSPOSE:
-        to = data;
-        hw = -hw + 1;
-	sd->orient = orient;
-        break;
-
-      case ELM_IMAGE_FLIP_TRANSVERSE:
-        to = data + hw - 1;
-        w = -w;
-        hw = hw - 1;
-	sd->orient = orient;
-        break;
-
-      case ELM_IMAGE_ROTATE_90:
-        to = data + w - 1;
-        hw = -hw - 1;
-	sd->orient = orient;
-        break;
-
-      case ELM_IMAGE_ROTATE_270:
-        to = data + hw - w;
-        w = -w;
-        hw = hw + 1;
-	sd->orient = orient;
-        break;
-
-      default:
-        ERR("unknown orient %d", orient);
-        evas_object_image_data_set(sd->img, data);  // give it back
-        if (data2) free(data2);
-
-        return;
-     }
-
-   from = data2;
-   for (x = iw; --x >= 0; )
-     {
-        for (y = ih; --y >= 0; )
-          {
-             *to = *from;
-             from++;
-             to += w;
-          }
-        to += hw;
-     }
-   if (data2) free(data2);
-
-   evas_object_image_data_set(sd->img, data);
-   evas_object_image_data_update_add(sd->img, 0, 0, iw, ih);
-
-   _elm_image_internal_sizing_eval(obj, sd);
-}
-
-static void
-_elm_image_smart_orient_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Elm_Image_Smart_Data *sd = _pd;
-
-   Elm_Image_Orient *ret = va_arg(*list, Elm_Image_Orient *);
-
-   *ret = sd->orient;
 }
 
 static Eina_Bool
@@ -868,6 +680,32 @@ _elm_image_smart_sizing_eval(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 }
 
 static void
+_elm_image_file_set_do(Evas_Object *obj)
+{
+   Evas_Object *pclip = NULL;
+
+   ELM_IMAGE_DATA_GET(obj, sd);
+
+   if (sd->prev_img) evas_object_del(sd->prev_img);
+   if (sd->img)
+     {
+        pclip = evas_object_clip_get(sd->img);
+        sd->prev_img = sd->img;
+     }
+
+   sd->img = _img_new(obj);
+
+   evas_object_image_load_orientation_set(sd->img, EINA_TRUE);
+
+   evas_object_clip_set(sd->img, pclip);
+
+   sd->edje = EINA_FALSE;
+
+   if (!sd->load_size)
+     evas_object_image_load_size_set(sd->img, sd->load_size, sd->load_size);
+}
+
+static void
 _elm_image_smart_memfile_set(Eo *obj, void *_pd, va_list *list)
 {
    Elm_Image_Smart_Data *sd = _pd;
@@ -899,110 +737,6 @@ _elm_image_smart_memfile_set(Eo *obj, void *_pd, va_list *list)
 }
 
 static void
-_elm_image_smart_file_set(Eo *obj, void *_pd, va_list *list)
-{
-   const char *file = va_arg(*list, const char *);
-   const char *key = va_arg(*list, const char *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-
-   Evas_Coord w, h;
-
-   Elm_Image_Smart_Data *sd = _pd;
-
-   if (eina_str_has_extension(file, ".edj"))
-     {
-        Eina_Bool int_ret = _elm_image_edje_file_set(obj, file, key);
-        if (ret) *ret = int_ret;
-        return;
-     }
-
-   _elm_image_file_set_do(obj);
-
-   evas_object_image_file_set(sd->img, file, key);
-
-   sd->preloading = EINA_TRUE;
-   evas_object_hide(sd->img);
-
-   eo_do(obj, elm_obj_image_size_get(&w, &h));
-
-   evas_object_image_load_size_set(sd->img, w, h);
-
-   evas_object_image_preload(sd->img, EINA_FALSE);
-   if (evas_object_image_load_error_get(sd->img) != EVAS_LOAD_ERROR_NONE)
-     {
-        ERR("Things are going bad for '%s' (%p)", file, sd->img);
-        if (ret) *ret = EINA_FALSE;
-        return;
-     }
-
-   _elm_image_internal_sizing_eval(obj, sd);
-
-   if (ret) *ret = EINA_TRUE;
-}
-
-static void
-_elm_image_smart_file_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Elm_Image_Smart_Data *sd = _pd;
-
-   const char **file = va_arg(*list, const char **);
-   const char **key = va_arg(*list, const char **);
-
-   if (sd->edje)
-     edje_object_file_get(sd->img, file, key);
-   else
-     evas_object_image_file_get(sd->img, file, key);
-}
-
-static void
-_elm_image_smart_preload_disabled_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Elm_Image_Smart_Data *sd = _pd;
-
-   Eina_Bool disable = va_arg(*list, int);
-
-   if (sd->edje || !sd->preloading) return;
-
-   //FIXME: Need to keep the disabled status for next image loading.
-
-   evas_object_image_preload(sd->img, disable);
-   sd->preloading = !disable;
-
-   if (disable)
-     {
-        if (sd->show && sd->img) evas_object_show(sd->img);
-        if (sd->prev_img)
-          {
-             evas_object_del(sd->prev_img);
-             sd->prev_img = NULL;
-          }
-     }
-}
-
-static void
-_elm_image_smart_load_size_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Elm_Image_Smart_Data *sd = _pd;
-
-   int size = va_arg(*list, int);
-
-   sd->load_size = size;
-   if (!sd->img || sd->edje) return;
-
-   evas_object_image_load_size_set(sd->img, sd->load_size, sd->load_size);
-}
-
-static void
-_elm_image_smart_load_size_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Elm_Image_Smart_Data *sd = _pd;
-
-   int *ret = va_arg(*list, int *);
-
-   *ret = sd->load_size;
-}
-
-static void
 _elm_image_smart_scale_set(Eo *obj, void *_pd, va_list *list)
 {
    Elm_Image_Smart_Data *sd = _pd;
@@ -1021,72 +755,6 @@ _elm_image_smart_scale_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    double *ret = va_arg(*list, double *);
 
    *ret = sd->scale;
-}
-
-/**
- * Turns on editing through drag and drop and copy and paste.
- */
-static void
-_elm_image_smart_editable_set(Eo *obj, void *_pd, va_list *list)
-
-{
-   Elm_Image_Smart_Data *sd = _pd;
-   Eina_Bool edit = va_arg(*list, int);
-   Evas_Object *parent = va_arg(*list, Evas_Object *);
-
-   if (sd->edje)
-     {
-        WRN("No editing edje objects yet (ever)\n");
-        return;
-     }
-
-   edit = !!edit;
-
-   if (edit == sd->edit) return;
-
-   sd->edit = edit;
-
-   if (sd->edit)
-     elm_drop_target_add
-       (obj, ELM_SEL_FORMAT_IMAGE,
-           NULL, NULL,
-           NULL, NULL,
-           NULL, NULL,
-           _elm_image_drag_n_drop_cb, parent);
-   else
-     elm_drop_target_del(obj);
-}
-
-static void
-_elm_image_smart_editable_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Elm_Image_Smart_Data *sd = _pd;
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-
-   *ret = sd->edit;
-}
-
-static void
-_elm_image_smart_aspect_fixed_set(Eo *obj, void *_pd, va_list *list)
-{
-   Elm_Image_Smart_Data *sd = _pd;
-   Eina_Bool fixed = va_arg(*list, int);
-
-   fixed = !!fixed;
-   if (sd->aspect_fixed == fixed) return;
-
-   sd->aspect_fixed = fixed;
-
-   _elm_image_internal_sizing_eval(obj, sd);
-}
-
-static void
-_elm_image_smart_aspect_fixed_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Elm_Image_Smart_Data *sd = _pd;
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-
-   *ret = sd->aspect_fixed;
 }
 
 EAPI Evas_Object *
@@ -1140,6 +808,48 @@ elm_image_file_set(Evas_Object *obj,
    return ret;
 }
 
+static void
+_elm_image_smart_file_set(Eo *obj, void *_pd, va_list *list)
+{
+   const char *file = va_arg(*list, const char *);
+   const char *key = va_arg(*list, const char *);
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+
+   Evas_Coord w, h;
+
+   Elm_Image_Smart_Data *sd = _pd;
+
+   if (eina_str_has_extension(file, ".edj"))
+     {
+        Eina_Bool int_ret = _elm_image_edje_file_set(obj, file, key);
+        if (ret) *ret = int_ret;
+        return;
+     }
+
+   _elm_image_file_set_do(obj);
+
+   evas_object_image_file_set(sd->img, file, key);
+
+   sd->preloading = EINA_TRUE;
+   evas_object_hide(sd->img);
+
+   eo_do(obj, elm_obj_image_size_get(&w, &h));
+
+   evas_object_image_load_size_set(sd->img, w, h);
+
+   evas_object_image_preload(sd->img, EINA_FALSE);
+   if (evas_object_image_load_error_get(sd->img) != EVAS_LOAD_ERROR_NONE)
+     {
+        ERR("Things are going bad for '%s' (%p)", file, sd->img);
+        if (ret) *ret = EINA_FALSE;
+        return;
+     }
+
+   _elm_image_internal_sizing_eval(obj, sd);
+
+   if (ret) *ret = EINA_TRUE;
+}
+
 EAPI void
 elm_image_file_get(const Evas_Object *obj,
                    const char **file,
@@ -1147,6 +857,20 @@ elm_image_file_get(const Evas_Object *obj,
 {
    ELM_IMAGE_CHECK(obj);
    eo_do((Eo *) obj, elm_obj_image_file_get(file, group));
+}
+
+static void
+_elm_image_smart_file_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Elm_Image_Smart_Data *sd = _pd;
+
+   const char **file = va_arg(*list, const char **);
+   const char **key = va_arg(*list, const char **);
+
+   if (sd->edje)
+     edje_object_file_get(sd->img, file, key);
+   else
+     evas_object_image_file_get(sd->img, file, key);
 }
 
 EAPI void
@@ -1194,6 +918,37 @@ elm_image_object_size_get(const Evas_Object *obj,
 
    ELM_IMAGE_CHECK(obj);
    eo_do((Eo *) obj, elm_obj_image_size_get(w, h));
+}
+
+static void
+_elm_image_smart_size_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   int *w = va_arg(*list, int *);
+   int *h = va_arg(*list, int *);
+
+   int tw, th;
+   int cw = 0, ch = 0;
+   const char *type;
+
+   Elm_Image_Smart_Data *sd = _pd;
+
+   type = evas_object_type_get(sd->img);
+   if (!type) return;
+
+   if (!strcmp(type, "edje"))
+     edje_object_size_min_get(sd->img, &tw, &th);
+   else
+     evas_object_image_size_get(sd->img, &tw, &th);
+
+   if ((sd->resize_up) || (sd->resize_down))
+     evas_object_geometry_get(sd->img, NULL, NULL, &cw, &ch);
+
+   tw = tw > cw ? tw : cw;
+   th = th > ch ? th : ch;
+   tw = ((double)tw) * sd->scale;
+   th = ((double)th) * sd->scale;
+   if (w) *w = tw;
+   if (h) *h = th;
 }
 
 EAPI void
@@ -1318,12 +1073,50 @@ elm_image_preload_disabled_set(Evas_Object *obj,
    eo_do(obj, elm_obj_image_preload_disabled_set(!!disabled));
 }
 
+static void
+_elm_image_smart_preload_disabled_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Elm_Image_Smart_Data *sd = _pd;
+
+   Eina_Bool disable = va_arg(*list, int);
+
+   if (sd->edje || !sd->preloading) return;
+
+   //FIXME: Need to keep the disabled status for next image loading.
+
+   evas_object_image_preload(sd->img, disable);
+   sd->preloading = !disable;
+
+   if (disable)
+     {
+        if (sd->show && sd->img) evas_object_show(sd->img);
+        if (sd->prev_img)
+          {
+             evas_object_del(sd->prev_img);
+             sd->prev_img = NULL;
+          }
+     }
+}
+
 EAPI void
 elm_image_prescale_set(Evas_Object *obj,
                        int size)
 {
    ELM_IMAGE_CHECK(obj);
    eo_do(obj, elm_obj_image_load_size_set(size));
+}
+
+static void
+_elm_image_smart_load_size_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Elm_Image_Smart_Data *sd = _pd;
+
+   int size = va_arg(*list, int);
+
+   sd->load_size = size;
+   if (!sd->img || sd->edje) return;
+
+   evas_object_image_load_size_set(sd->img, sd->load_size, sd->load_size);
 }
 
 EAPI int
@@ -1336,12 +1129,133 @@ elm_image_prescale_get(const Evas_Object *obj)
    return ret;
 }
 
+static void
+_elm_image_smart_load_size_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Elm_Image_Smart_Data *sd = _pd;
+
+   int *ret = va_arg(*list, int *);
+
+   *ret = sd->load_size;
+}
+
 EAPI void
 elm_image_orient_set(Evas_Object *obj,
                      Elm_Image_Orient orient)
 {
    ELM_IMAGE_CHECK(obj);
    eo_do(obj, elm_obj_image_orient_set(orient));
+}
+
+static void
+_elm_image_smart_orient_set(Eo *obj, void *_pd, va_list *list)
+{
+   Elm_Image_Orient orient = va_arg(*list, Elm_Image_Orient);
+
+   unsigned int *data, *data2 = NULL, *to, *from;
+   int x, y, w, hw, iw, ih;
+
+   Elm_Image_Smart_Data *sd = _pd;
+
+   if (sd->edje)
+     return;
+
+   switch (orient)
+     {
+      case ELM_IMAGE_FLIP_HORIZONTAL:
+        _elm_image_flip_horizontal(obj, sd);
+	sd->orient = orient;
+        return;
+
+      case ELM_IMAGE_FLIP_VERTICAL:
+        _elm_image_flip_vertical(obj, sd);
+	sd->orient = orient;
+        return;
+
+      case ELM_IMAGE_ROTATE_180:
+        _elm_image_smart_rotate_180(obj, sd);
+	sd->orient = orient;
+        return;
+
+     case ELM_IMAGE_ORIENT_NONE:
+        sd->orient = orient;
+        return;
+
+      default:
+        break;
+     }
+
+   evas_object_image_size_get(sd->img, &iw, &ih);
+
+   /* we need separate destination memory if we want to rotate 90 or
+    * 270 degree */
+   data = evas_object_image_data_get(sd->img, EINA_FALSE);
+   if (!data) return;
+   data2 = malloc(sizeof(unsigned char) * (iw * ih * 4));
+   if (!data2) return;
+   memcpy(data2, data, sizeof (unsigned char) * (iw * ih * 4));
+
+   w = ih;
+   ih = iw;
+   iw = w;
+   hw = w * ih;
+
+   evas_object_image_size_set(sd->img, iw, ih);
+   data = evas_object_image_data_get(sd->img, EINA_TRUE);
+
+   switch (orient)
+     {
+      case ELM_IMAGE_FLIP_TRANSPOSE:
+        to = data;
+        hw = -hw + 1;
+	sd->orient = orient;
+        break;
+
+      case ELM_IMAGE_FLIP_TRANSVERSE:
+        to = data + hw - 1;
+        w = -w;
+        hw = hw - 1;
+	sd->orient = orient;
+        break;
+
+      case ELM_IMAGE_ROTATE_90:
+        to = data + w - 1;
+        hw = -hw - 1;
+	sd->orient = orient;
+        break;
+
+      case ELM_IMAGE_ROTATE_270:
+        to = data + hw - w;
+        w = -w;
+        hw = hw + 1;
+	sd->orient = orient;
+        break;
+
+      default:
+        ERR("unknown orient %d", orient);
+        evas_object_image_data_set(sd->img, data);  // give it back
+        if (data2) free(data2);
+
+        return;
+     }
+
+   from = data2;
+   for (x = iw; --x >= 0; )
+     {
+        for (y = ih; --y >= 0; )
+          {
+             *to = *from;
+             from++;
+             to += w;
+          }
+        to += hw;
+     }
+   if (data2) free(data2);
+
+   evas_object_image_data_set(sd->img, data);
+   evas_object_image_data_update_add(sd->img, 0, 0, iw, ih);
+
+   _elm_image_internal_sizing_eval(obj, sd);
 }
 
 EAPI Elm_Image_Orient
@@ -1355,12 +1269,56 @@ elm_image_orient_get(const Evas_Object *obj)
    return ret;
 }
 
+static void
+_elm_image_smart_orient_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Elm_Image_Smart_Data *sd = _pd;
+
+   Elm_Image_Orient *ret = va_arg(*list, Elm_Image_Orient *);
+
+   *ret = sd->orient;
+}
+
 EAPI void
 elm_image_editable_set(Evas_Object *obj,
                        Eina_Bool set)
 {
    ELM_IMAGE_CHECK(obj);
    eo_do(obj, elm_obj_image_editable_set(set, obj));
+}
+
+/**
+ * Turns on editing through drag and drop and copy and paste.
+ */
+static void
+_elm_image_smart_editable_set(Eo *obj, void *_pd, va_list *list)
+
+{
+   Elm_Image_Smart_Data *sd = _pd;
+   Eina_Bool edit = va_arg(*list, int);
+   Evas_Object *parent = va_arg(*list, Evas_Object *);
+
+   if (sd->edje)
+     {
+        WRN("No editing edje objects yet (ever)\n");
+        return;
+     }
+
+   edit = !!edit;
+
+   if (edit == sd->edit) return;
+
+   sd->edit = edit;
+
+   if (sd->edit)
+     elm_drop_target_add
+       (obj, ELM_SEL_FORMAT_IMAGE,
+           NULL, NULL,
+           NULL, NULL,
+           NULL, NULL,
+           _elm_image_drag_n_drop_cb, parent);
+   else
+     elm_drop_target_del(obj);
 }
 
 EAPI Eina_Bool
@@ -1370,6 +1328,15 @@ elm_image_editable_get(const Evas_Object *obj)
    Eina_Bool ret = EINA_FALSE;
    eo_do((Eo *) obj, elm_obj_image_editable_get(&ret));
    return ret;
+}
+
+static void
+_elm_image_smart_editable_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Elm_Image_Smart_Data *sd = _pd;
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+
+   *ret = sd->edit;
 }
 
 EAPI Evas_Object *
@@ -1382,12 +1349,36 @@ elm_image_object_get(const Evas_Object *obj)
    return ret;
 }
 
+static void
+_elm_image_smart_object_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Evas_Object **ret = va_arg(*list, Evas_Object **);
+
+   Elm_Image_Smart_Data *sd = _pd;
+
+   *ret = sd->img;
+}
+
 EAPI void
 elm_image_aspect_fixed_set(Evas_Object *obj,
                            Eina_Bool fixed)
 {
    ELM_IMAGE_CHECK(obj);
    eo_do(obj, elm_obj_image_aspect_fixed_set(fixed));
+}
+
+static void
+_elm_image_smart_aspect_fixed_set(Eo *obj, void *_pd, va_list *list)
+{
+   Elm_Image_Smart_Data *sd = _pd;
+   Eina_Bool fixed = va_arg(*list, int);
+
+   fixed = !!fixed;
+   if (sd->aspect_fixed == fixed) return;
+
+   sd->aspect_fixed = fixed;
+
+   _elm_image_internal_sizing_eval(obj, sd);
 }
 
 EAPI Eina_Bool
@@ -1397,6 +1388,15 @@ elm_image_aspect_fixed_get(const Evas_Object *obj)
    Eina_Bool ret = EINA_FALSE;
    eo_do((Eo *) obj, elm_obj_image_aspect_fixed_get(&ret));
    return ret;
+}
+
+static void
+_elm_image_smart_aspect_fixed_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Elm_Image_Smart_Data *sd = _pd;
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+
+   *ret = sd->aspect_fixed;
 }
 
 EAPI Eina_Bool
