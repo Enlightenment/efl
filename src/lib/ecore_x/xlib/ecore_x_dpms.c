@@ -80,6 +80,30 @@ ecore_x_dpms_enabled_get(void)
 }
 
 /**
+ * Check the DPMS power level.
+ * @return @c 0 if DPMS is :In Use
+ * @return @c 1 if DPMS is :Blanked, low power
+ * @return @c 2 if DPMS is :Blanked, lower power
+ * @return @c 3 if DPMS is :Shut off, awaiting activity
+ * @return @c -1 othwhise.
+ */
+
+EAPI Ecore_X_Dpms_Mode
+ecore_x_dpms_power_level_get(void)
+{
+#ifdef ECORE_XDPMS
+   unsigned char state;
+   unsigned short power_lvl;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   DPMSInfo(_ecore_x_disp, &power_lvl, &state);
+   return (int)power_lvl;
+#else
+   return -1;
+#endif
+}
+
+/**
  * Sets the DPMS state of the display.
  * @param enabled @c 0 to disable DPMS characteristics of the server, enable it otherwise.
  * @ingroup Ecore_X_DPMS_Group

@@ -319,3 +319,36 @@ ecore_x_dpms_timeout_off_set(unsigned int new_timeout)
    ecore_x_dpms_timeouts_set(standby, suspend, new_timeout);
 }
 
+/**
+ * Check the DPMS power level.
+ * @return @c 0 if DPMS is :In Use
+ * @return @c 1 if DPMS is :Blanked, low power
+ * @return @c 2 if DPMS is :Blanked, lower power
+ * @return @c 3 if DPMS is :Shut off, awaiting activity
+ * @return @c -1 otherwise.
+*/
+EAPI Ecore_X_Dpms_Mode 
+ecore_x_dpms_power_level_get(void)
+{
+   Ecore_X_Dpms_Mode ret = -1;
+#ifdef ECORE_XCB_DPMS
+   xcb_dpms_info_cookie_t cookie;
+   xcb_dpms_info_reply_t *reply;
+#endif
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
+
+   if (!_dpms_avail) return ret;
+
+#ifdef ECORE_XCB_DPMS
+   cookie = xcb_dpms_info_unchecked(_ecore_xcb_conn);
+   reply = xcb_dpms_info_reply(_ecore_xcb_conn, cookie, NULL);
+   if (!reply) return -1;
+
+   ret = reply->power_level;
+   free(reply);
+#endif
+
+   return ret;
+}
