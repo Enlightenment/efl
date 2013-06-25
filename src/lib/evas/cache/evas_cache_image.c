@@ -119,13 +119,12 @@ _evas_cache_image_lru_add(Image_Entry *im)
    if (im->flags.given_mmap)
      {
         eina_hash_direct_add(im->cache->mmap_inactiv, im->cache_key, im);
-        im->cache->mmap_lru  = eina_inlist_prepend(im->cache->mmap_lru, EINA_INLIST_GET(im));
      }
    else
      {
         eina_hash_direct_add(im->cache->inactiv, im->cache_key, im);
-        im->cache->lru = eina_inlist_prepend(im->cache->lru, EINA_INLIST_GET(im));
      }
+   im->cache->lru = eina_inlist_prepend(im->cache->lru, EINA_INLIST_GET(im));
    im->cache->usage += im->cache->func.mem_size_get(im);
 }
 
@@ -139,13 +138,12 @@ _evas_cache_image_lru_del(Image_Entry *im)
    if (im->flags.given_mmap)
      {
         eina_hash_del(im->cache->mmap_inactiv, im->cache_key, im);
-        im->cache->mmap_lru = eina_inlist_remove(im->cache->mmap_lru, EINA_INLIST_GET(im));
      }
    else
      {
         eina_hash_del(im->cache->inactiv, im->cache_key, im);
-        im->cache->lru = eina_inlist_remove(im->cache->lru, EINA_INLIST_GET(im));
      }
+   im->cache->lru = eina_inlist_remove(im->cache->lru, EINA_INLIST_GET(im));
    im->cache->usage -= im->cache->func.mem_size_get(im);
 }
 
@@ -158,10 +156,7 @@ _evas_cache_image_lru_nodata_add(Image_Entry *im)
    _evas_cache_image_lru_del(im);
    im->flags.lru = 1;
    im->flags.cached = 1;
-   if (im->flags.given_mmap)
-     im->cache->mmap_lru_nodata = eina_inlist_prepend(im->cache->mmap_lru_nodata, EINA_INLIST_GET(im));
-   else
-     im->cache->lru_nodata = eina_inlist_prepend(im->cache->lru_nodata, EINA_INLIST_GET(im));
+   im->cache->lru_nodata = eina_inlist_prepend(im->cache->lru_nodata, EINA_INLIST_GET(im));
 }
 
 static void
@@ -170,10 +165,7 @@ _evas_cache_image_lru_nodata_del(Image_Entry *im)
    if (!im->flags.lru_nodata) return;
    im->flags.lru = 0;
    im->flags.cached = 0;
-   if (im->flags.given_mmap)
-     im->cache->mmap_lru_nodata = eina_inlist_remove(im->cache->mmap_lru_nodata, EINA_INLIST_GET(im));
-   else
-     im->cache->lru_nodata = eina_inlist_remove(im->cache->lru_nodata, EINA_INLIST_GET(im));
+   im->cache->lru_nodata = eina_inlist_remove(im->cache->lru_nodata, EINA_INLIST_GET(im));
 }
 
 static void
@@ -181,6 +173,7 @@ _evas_cache_image_entry_delete(Evas_Cache_Image *cache, Image_Entry *ie)
 {
    Image_Entry_Task *task;
 
+   fprintf(stderr, "delete entry %p %p\n", ie, ie->f);
    if (!ie) return;
    if ((cache) && (cache->func.debug)) cache->func.debug("deleting", ie);
    if (ie->flags.delete_me == 1) return;
@@ -203,6 +196,7 @@ _evas_cache_image_entry_delete(Evas_Cache_Image *cache, Image_Entry *ie)
    FREESTRC(ie->cache_key);
    FREESTRC(ie->file);
    FREESTRC(ie->key);
+   if (ie->f && ie->flags.given_mmap) eina_file_close(ie->f);
    ie->cache = NULL;
    cache->func.surface_delete(ie);
 
@@ -270,7 +264,7 @@ _evas_cache_image_entry_new(Evas_Cache_Image *cache,
    ie->w = -1;
    ie->h = -1;
    ie->scale = 1;
-   ie->f = f;
+   ie->f = eina_file_dup(f);
    ie->loader_data = NULL;
    if (ie->f) ie->flags.given_mmap = EINA_TRUE;
    if (file) ie->file = eina_stringshare_add(file);
@@ -620,10 +614,6 @@ evas_cache_image_shutdown(Evas_Cache_Image *cache)
      _evas_cache_image_entry_delete(cache, im);
    EINA_INLIST_FREE(cache->lru_nodata, im)
      _evas_cache_image_entry_delete(cache, im);
-   EINA_INLIST_FREE(cache->mmap_lru, im)
-     _evas_cache_image_entry_delete(cache, im);
-   EINA_INLIST_FREE(cache->mmap_lru_nodata, im)
-     _evas_cache_image_entry_delete(cache, im);
 
    /* This is mad, I am about to destroy image still alive, but we need to prevent leak. */
    while (cache->dirty)
@@ -793,6 +783,7 @@ evas_cache_image_mmap_request(Evas_Cache_Image *cache,
    if (!im) return NULL;
 
  on_ok:
+   fprintf(stderr, "new ref: %i\n", im->references);
    *error = EVAS_LOAD_ERROR_NONE;
    im->references++;
    return im;
@@ -945,6 +936,8 @@ evas_cache_image_drop(Image_Entry *im)
 
    cache = im->cache;
 
+   fprintf(stderr, "%p ref: %i, im->f: %p, cache: %p\n",
+           im, references, im->f, cache);
    if (references == 0)
      {
         if (im->preload)

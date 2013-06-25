@@ -56,8 +56,6 @@ struct _Evas_Cache_Image
 
    Eina_Hash                    *mmap_activ;
    Eina_Hash                    *mmap_inactiv;
-   Eina_Inlist                  *mmap_lru;
-   Eina_Inlist                  *mmap_lru_nodata;
 
    void                         *data;
 
