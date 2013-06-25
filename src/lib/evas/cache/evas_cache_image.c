@@ -173,7 +173,6 @@ _evas_cache_image_entry_delete(Evas_Cache_Image *cache, Image_Entry *ie)
 {
    Image_Entry_Task *task;
 
-   fprintf(stderr, "delete entry %p %p\n", ie, ie->f);
    if (!ie) return;
    if ((cache) && (cache->func.debug)) cache->func.debug("deleting", ie);
    if (ie->flags.delete_me == 1) return;
@@ -777,13 +776,17 @@ evas_cache_image_mmap_request(Evas_Cache_Image *cache,
 
    /* find image by key in inactive/lru hash */
    im = eina_hash_find(cache->mmap_inactiv, hkey);
-   if (im) goto on_ok;
+   if (im)
+     {
+        _evas_cache_image_lru_del(im);
+        _evas_cache_image_activ_add(im);
+        goto on_ok;
+     }
 
    im = _evas_cache_image_entry_new(cache, hkey, NULL, f, NULL, key, lo, error);
    if (!im) return NULL;
 
  on_ok:
-   fprintf(stderr, "new ref: %i\n", im->references);
    *error = EVAS_LOAD_ERROR_NONE;
    im->references++;
    return im;
@@ -936,8 +939,6 @@ evas_cache_image_drop(Image_Entry *im)
 
    cache = im->cache;
 
-   fprintf(stderr, "%p ref: %i, im->f: %p, cache: %p\n",
-           im, references, im->f, cache);
    if (references == 0)
      {
         if (im->preload)
