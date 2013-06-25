@@ -832,7 +832,6 @@ EFL_LIB_START([Eet])
 
 ## Compatibility layers
 EFL_PLATFORM_DEPEND([EET], [evil])
-EFL_CRYPTO_DEPEND([EET])
 
 EFL_ADD_LIBS([EET], [-lm])
 
@@ -840,6 +839,7 @@ EFL_ADD_LIBS([EET], [-lm])
 if test "$build_crypto" != "none" ; then
    AC_DEFINE([HAVE_CIPHER], [1], [Have cipher support built in eet])
    AC_DEFINE([HAVE_SIGNATURE], [1], [Have signature support for eet file])
+   EFL_CRYPTO_DEPEND([EET])
 fi
 
 EFL_CHECK_LIBS([EET], [libjpeg zlib])
