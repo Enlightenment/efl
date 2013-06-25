@@ -78,7 +78,7 @@ _bouncing_change(void        *data,
    Evas_Object *grid = data;
    Eina_Bool bounce = elm_check_state_get(obj);
 
-   elm_gengrid_bounce_set(grid, bounce, bounce);
+   elm_scroller_bounce_set(grid, bounce, bounce);
 
    fprintf(stdout, "Bouncing effect for gengrid is now %s\n",
            bounce ? "on" : "off");
@@ -372,7 +372,7 @@ _grid_scroll_stopped_cb(void        *data,
                         void        *event_info)
 {
    int h_pagenumber = 0, v_pagenumber = 0;
-   elm_gengrid_current_page_get(obj, &h_pagenumber, &v_pagenumber);
+   elm_scroller_current_page_get(obj, &h_pagenumber, &v_pagenumber);
    fprintf(stdout, "Grid current horiz page is %d, vert page is %d\n",
            h_pagenumber, v_pagenumber);
 }
@@ -414,7 +414,7 @@ _page_change_cb(void        *data,
 {
    double val = elm_slider_value_get(obj);
 
-   elm_gengrid_page_relative_set(data, val, val);
+   elm_scroller_page_relative_set(data, val, val);
 
    fprintf(stdout, "Setting grid page's relative size to %f\n", val);
 }
@@ -536,7 +536,7 @@ elm_main(int    argc,
    evas_object_show(ck);
 
    ck = elm_check_add(win);
-   elm_gengrid_bounce_get(grid, &bounce, NULL);
+   elm_scroller_bounce_get(grid, &bounce, NULL);
    elm_object_text_set(ck, "Bouncing");
    elm_check_state_set(ck, bounce);
    evas_object_smart_callback_add(ck, "changed", _bouncing_change, grid);

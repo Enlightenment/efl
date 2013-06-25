@@ -22,7 +22,7 @@ elm_main(int argc, char **argv)
    elm_object_text_set(label, "Some long text for our label, that is long but "
                        "not too long.");
    elm_label_slide_duration_set(label, 3);
-   elm_label_slide_set(label, EINA_TRUE);
+   elm_label_slide_mode_set(label, ELM_LABEL_SLIDE_MODE_ALWAYS);
    elm_object_style_set(label, "slide_bounce");
    evas_object_move(label, 0, 10);
    evas_object_resize(label, 200, 15);

@@ -8,7 +8,7 @@ static void _hide(void *data, Evas_Object *obj, void *event_info);
 EAPI_MAIN int
 elm_main(int argc, char **argv)
 {
-   Evas_Object *win, *bg, *bx, *notify, *content;
+   Evas_Object *win, *bx, *notify, *content;
 
    win = elm_win_util_standard_add("notify", "Notify");
    elm_win_autodel_set(win, EINA_TRUE);

@@ -69,7 +69,7 @@ elm_main(int argc, char *argv[])
    elm_object_text_set(label, "Getting location ...");
    evas_object_size_hint_weight_set(label, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(label, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_label_slide_set(label, EINA_TRUE);
+   elm_label_slide_mode_set(label, ELM_LABEL_SLIDE_MODE_ALWAYS);
    evas_object_resize(label, 600, 480);
    evas_object_show(label);
 

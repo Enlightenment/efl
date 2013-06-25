@@ -6,7 +6,7 @@
 EAPI_MAIN int
 elm_main(int argc, char **argv)
 {
-   Evas_Object *win, *bg;
+   Evas_Object *win;
 
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
    win = elm_win_util_standard_add("bg-plain", "Bg Plain");
