@@ -409,24 +409,28 @@ wl_text_input_add_listener(struct wl_text_input *wl_text_input,
 static inline void
 wl_text_input_set_user_data(struct wl_text_input *wl_text_input, void *user_data)
 {
+   if (!wl_text_input) return;
 	wl_proxy_set_user_data((struct wl_proxy *) wl_text_input, user_data);
 }
 
 static inline void *
 wl_text_input_get_user_data(struct wl_text_input *wl_text_input)
 {
+   if (!wl_text_input) return NULL;
 	return wl_proxy_get_user_data((struct wl_proxy *) wl_text_input);
 }
 
 static inline void
 wl_text_input_destroy(struct wl_text_input *wl_text_input)
 {
+   if (!wl_text_input) return;
 	wl_proxy_destroy((struct wl_proxy *) wl_text_input);
 }
 
 static inline void
 wl_text_input_activate(struct wl_text_input *wl_text_input, struct wl_seat *seat, struct wl_surface *surface)
 {
+   if (!wl_text_input) return;
 	wl_proxy_marshal((struct wl_proxy *) wl_text_input,
 			 WL_TEXT_INPUT_ACTIVATE, seat, surface);
 }
@@ -434,6 +438,7 @@ wl_text_input_activate(struct wl_text_input *wl_text_input, struct wl_seat *seat
 static inline void
 wl_text_input_deactivate(struct wl_text_input *wl_text_input, struct wl_seat *seat)
 {
+   if (!wl_text_input) return;
 	wl_proxy_marshal((struct wl_proxy *) wl_text_input,
 			 WL_TEXT_INPUT_DEACTIVATE, seat);
 }
@@ -441,6 +446,7 @@ wl_text_input_deactivate(struct wl_text_input *wl_text_input, struct wl_seat *se
 static inline void
 wl_text_input_show_input_panel(struct wl_text_input *wl_text_input)
 {
+   if (!wl_text_input) return;
 	wl_proxy_marshal((struct wl_proxy *) wl_text_input,
 			 WL_TEXT_INPUT_SHOW_INPUT_PANEL);
 }
@@ -448,6 +454,7 @@ wl_text_input_show_input_panel(struct wl_text_input *wl_text_input)
 static inline void
 wl_text_input_hide_input_panel(struct wl_text_input *wl_text_input)
 {
+   if (!wl_text_input) return;
 	wl_proxy_marshal((struct wl_proxy *) wl_text_input,
 			 WL_TEXT_INPUT_HIDE_INPUT_PANEL);
 }
@@ -455,6 +462,7 @@ wl_text_input_hide_input_panel(struct wl_text_input *wl_text_input)
 static inline void
 wl_text_input_reset(struct wl_text_input *wl_text_input)
 {
+   if (!wl_text_input) return;
 	wl_proxy_marshal((struct wl_proxy *) wl_text_input,
 			 WL_TEXT_INPUT_RESET);
 }
@@ -462,6 +470,7 @@ wl_text_input_reset(struct wl_text_input *wl_text_input)
 static inline void
 wl_text_input_set_surrounding_text(struct wl_text_input *wl_text_input, const char *text, uint32_t cursor, uint32_t anchor)
 {
+   if (!wl_text_input) return;
 	wl_proxy_marshal((struct wl_proxy *) wl_text_input,
 			 WL_TEXT_INPUT_SET_SURROUNDING_TEXT, text, cursor, anchor);
 }
@@ -469,6 +478,7 @@ wl_text_input_set_surrounding_text(struct wl_text_input *wl_text_input, const ch
 static inline void
 wl_text_input_set_content_type(struct wl_text_input *wl_text_input, uint32_t hint, uint32_t purpose)
 {
+   if (!wl_text_input) return;
 	wl_proxy_marshal((struct wl_proxy *) wl_text_input,
 			 WL_TEXT_INPUT_SET_CONTENT_TYPE, hint, purpose);
 }
@@ -476,6 +486,7 @@ wl_text_input_set_content_type(struct wl_text_input *wl_text_input, uint32_t hin
 static inline void
 wl_text_input_set_cursor_rectangle(struct wl_text_input *wl_text_input, int32_t x, int32_t y, int32_t width, int32_t height)
 {
+   if (!wl_text_input) return;
 	wl_proxy_marshal((struct wl_proxy *) wl_text_input,
 			 WL_TEXT_INPUT_SET_CURSOR_RECTANGLE, x, y, width, height);
 }
@@ -483,6 +494,7 @@ wl_text_input_set_cursor_rectangle(struct wl_text_input *wl_text_input, int32_t 
 static inline void
 wl_text_input_set_preferred_language(struct wl_text_input *wl_text_input, const char *language)
 {
+   if (!wl_text_input) return;
 	wl_proxy_marshal((struct wl_proxy *) wl_text_input,
 			 WL_TEXT_INPUT_SET_PREFERRED_LANGUAGE, language);
 }
@@ -490,6 +502,7 @@ wl_text_input_set_preferred_language(struct wl_text_input *wl_text_input, const 
 static inline void
 wl_text_input_commit_state(struct wl_text_input *wl_text_input, uint32_t serial)
 {
+   if (!wl_text_input) return;
 	wl_proxy_marshal((struct wl_proxy *) wl_text_input,
 			 WL_TEXT_INPUT_COMMIT_STATE, serial);
 }
@@ -497,6 +510,7 @@ wl_text_input_commit_state(struct wl_text_input *wl_text_input, uint32_t serial)
 static inline void
 wl_text_input_invoke_action(struct wl_text_input *wl_text_input, uint32_t button, uint32_t index)
 {
+   if (!wl_text_input) return;
 	wl_proxy_marshal((struct wl_proxy *) wl_text_input,
 			 WL_TEXT_INPUT_INVOKE_ACTION, button, index);
 }
@@ -506,18 +520,21 @@ wl_text_input_invoke_action(struct wl_text_input *wl_text_input, uint32_t button
 static inline void
 wl_text_input_manager_set_user_data(struct wl_text_input_manager *wl_text_input_manager, void *user_data)
 {
+   if (!wl_text_input_manager) return;
 	wl_proxy_set_user_data((struct wl_proxy *) wl_text_input_manager, user_data);
 }
 
 static inline void *
 wl_text_input_manager_get_user_data(struct wl_text_input_manager *wl_text_input_manager)
 {
+   if (!wl_text_input_manager) return NULL;
 	return wl_proxy_get_user_data((struct wl_proxy *) wl_text_input_manager);
 }
 
 static inline void
 wl_text_input_manager_destroy(struct wl_text_input_manager *wl_text_input_manager)
 {
+   if (!wl_text_input_manager) return;
 	wl_proxy_destroy((struct wl_proxy *) wl_text_input_manager);
 }
 
@@ -525,6 +542,8 @@ static inline struct wl_text_input *
 wl_text_input_manager_create_text_input(struct wl_text_input_manager *wl_text_input_manager)
 {
 	struct wl_proxy *id;
+
+   if (!wl_text_input_manager) return NULL;
 
 	id = wl_proxy_create((struct wl_proxy *) wl_text_input_manager,
 			     &wl_text_input_interface);
