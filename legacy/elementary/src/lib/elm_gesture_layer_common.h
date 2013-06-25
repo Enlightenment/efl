@@ -377,3 +377,24 @@ EAPI void elm_gesture_layer_double_tap_timeout_set(Evas_Object *obj, double doub
  */
 EAPI double elm_gesture_layer_double_tap_timeout_get(const Evas_Object *obj);
 
+/**
+ * @since 1.8
+ * This function sets the gesture layer finger-size for taps
+ * If not set, this size taken from elm_config.
+ * Set to ZERO if you want GLayer to use system finger size value (default)
+ *
+ * @param obj gesture-layer.
+ * @param fsize Finger size
+ *
+ */
+EAPI void elm_gesture_layer_tap_finger_size_set(Evas_Object *obj, Evas_Coord sz);
+
+/**
+ * @since 1.8
+ * This function returns the gesture layer finger-size for taps
+ *
+ * @param obj gesture-layer.
+ * @return Finger size that is currently used by Gesture Layer for taps.
+ *
+ */
+EAPI Evas_Coord elm_gesture_layer_tap_finger_size_get(const Evas_Object *obj);

@@ -14,6 +14,8 @@ enum
    ELM_OBJ_GESTURE_LAYER_SUB_ID_ROTATE_STEP_SET,
    ELM_OBJ_GESTURE_LAYER_SUB_ID_ATTACH,
    ELM_OBJ_GESTURE_LAYER_SUB_ID_CB_SET,
+   ELM_OBJ_GESTURE_LAYER_TAP_FINGER_SIZE_SET,
+   ELM_OBJ_GESTURE_LAYER_TAP_FINGER_SIZE_GET,
    ELM_OBJ_GESTURE_LAYER_SUB_ID_LAST
 };
 
@@ -137,3 +139,37 @@ enum
  * @ingroup Elm_Gesture_Layer
  */
 #define elm_obj_gesture_layer_cb_set(idx, cb_type, cb, data) ELM_OBJ_GESTURE_LAYER_ID(ELM_OBJ_GESTURE_LAYER_SUB_ID_CB_SET), EO_TYPECHECK(Elm_Gesture_Type, idx), EO_TYPECHECK(Elm_Gesture_State, cb_type), EO_TYPECHECK(Elm_Gesture_Event_Cb, cb), EO_TYPECHECK(void *, data)
+
+/**
+ * @def elm_obj_gesture_layer_tap_finger_size_set
+ * @since 1.8
+ *
+ * This function sets the gesture layer finger-size for taps
+ * If not set, this size is taken from elm_config.
+ * Set to ZERO if you want GLayer to use system finger size value (default)
+ * It is recommended to not set a too much big or little value to avoid weird
+ * behaviors.
+ *
+ * @param[in] obj gesture-layer.
+ * @param[in] fsize Finger size
+ *
+ * @see elm_gesture_layer_tap_finger_size_get
+ *
+ * @ingroup Elm_Gesture_Layer
+ */
+#define elm_obj_gesture_layer_tap_finger_size_set(sz) ELM_OBJ_GESTURE_LAYER_ID(ELM_OBJ_GESTURE_LAYER_TAP_FINGER_SIZE_SET), EO_TYPECHECK(Evas_Coord, sz)
+
+/**
+ * @def elm_obj_gesture_layer_tap_finger_size_get
+ * @since 1.8
+ *
+ * This function returns the gesture layer finger-size for taps
+ *
+ * @param[out] ret
+ * @return Finger size that is currently used by Gesture Layer for taps.
+ *
+ * @see elm_gesture_layer_tap_finger_size_set
+ *
+ * @ingroup Elm_Gesture_Layer
+ */
+#define elm_obj_gesture_layer_tap_finger_size_get(ret) ELM_OBJ_GESTURE_LAYER_ID(ELM_OBJ_GESTURE_LAYER_TAP_FINGER_SIZE_GET), EO_TYPECHECK(Evas_Coord *, ret)
