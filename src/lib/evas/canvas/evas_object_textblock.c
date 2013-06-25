@@ -2550,6 +2550,11 @@ _layout_item_ascent_descent_adjust(const Evas_Object *eo_obj,
       Evas_Coord *maxascent, Evas_Coord *maxdescent,
       Evas_Object_Textblock_Item *it, Textblock_Position position)
 {
+   if (!it->format || !it->format->font.font)
+     {
+        return;
+     }
+
    _layout_format_ascent_descent_adjust(eo_obj, maxascent, maxdescent, it->format);
 
    if ((it->type == EVAS_TEXTBLOCK_ITEM_TEXT) &&

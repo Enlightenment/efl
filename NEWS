@@ -339,4 +339,4 @@ Fixes:
     * Evas: Fix gif cannot decode alpha value correctly.
     * Evas: Fix bs if app call image object update add after call api like fileset.
     * Evas: Fix evas_gl direct rendering to support partial redraw.
-
+    * Evas textblock: Fixed issue with textblocks without fonts segfaulting.

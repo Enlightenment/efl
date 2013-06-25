@@ -1,3 +1,8 @@
+2013-06-25  Tom Hacohen
+
+	* Evas textblock: Fixed issue with textblocks without fonts
+	segfaulting.
+
 2013-06-24  Cedric Bail
 
 	* Evas: add support for asynchronously uploading GL texture.

@@ -2484,6 +2484,13 @@ START_TEST(evas_textblock_style)
    evas_object_textblock_style_insets_get(tb, &l, &r, &t, &b);
    fail_if((l != 1) || (r != 4) || (t != 1) || (b != 4));
 
+   /* No font */
+   evas_textblock_style_set(newst, "DEFAULT=''");
+   evas_object_textblock_text_markup_set(tb, "Test");
+   evas_object_textblock_size_formatted_get(tb, &nw, &nh);
+   ck_assert_int_eq(nw, 0);
+   ck_assert_int_eq(nw, nh);
+
    END_TB_TEST();
 }
 END_TEST
