@@ -142,23 +142,24 @@ efreet_cache_init(void)
     eldbus_init();
     if (efreet_cache_update)
     {
-        Eldbus_Object *obj;
-
         conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
-        if (!conn) goto error;
+        if (conn)
+        {
+            Eldbus_Object *obj;
 
-        obj = eldbus_object_get(conn, BUS, PATH);
-        proxy = eldbus_proxy_get(obj, INTERFACE);
-        eldbus_proxy_signal_handler_add(proxy, "IconCacheUpdate", icon_cache_update, NULL);
-        eldbus_proxy_signal_handler_add(proxy, "DesktopCacheUpdate", desktop_cache_update, NULL);
+            obj = eldbus_object_get(conn, BUS, PATH);
+            proxy = eldbus_proxy_get(obj, INTERFACE);
+            eldbus_proxy_signal_handler_add(proxy, "IconCacheUpdate", icon_cache_update, NULL);
+            eldbus_proxy_signal_handler_add(proxy, "DesktopCacheUpdate", desktop_cache_update, NULL);
 
-        eldbus_proxy_call(proxy, "Register", on_send_register, NULL, -1, "s", efreet_language_get());
+            eldbus_proxy_call(proxy, "Register", on_send_register, NULL, -1, "s", efreet_language_get());
 
-        /*
-         * TODO: Needed?
-        eldbus_name_owner_changed_callback_add(conn, BUS, on_name_owner_changed,
-                                              conn, EINA_TRUE);
-                                              */
+            /*
+             * TODO: Needed?
+             eldbus_name_owner_changed_callback_add(conn, BUS, on_name_owner_changed,
+             conn, EINA_TRUE);
+             */
+        }
     }
 
     return 1;
@@ -897,7 +898,8 @@ efreet_cache_desktop_add(Efreet_Desktop *desktop)
     Eldbus_Message_Iter *iter, *array_of_string;
     char *path;
 
-    if (!efreet_cache_update) return;
+    if ((!efreet_cache_update) || (!proxy))
+        return;
     /* TODO: Chunk updates */
     if (!eina_main_loop_is()) return;
     /*
@@ -923,7 +925,8 @@ efreet_cache_icon_exts_add(Eina_List *exts)
     Eina_List *l;
     const char *ext;
 
-    if (!efreet_cache_update) return;
+    if ((!efreet_cache_update) || (!proxy))
+        return;
     msg = eldbus_proxy_method_call_new(proxy, "AddIconExts");
     iter = eldbus_message_iter_get(msg);
     array_of_string = eldbus_message_iter_container_new(iter, 'a',"s");
@@ -941,7 +944,8 @@ efreet_cache_icon_dirs_add(Eina_List *dirs)
     Eina_List *l;
     const char *dir;
 
-    if (!efreet_cache_update) return;
+    if ((!efreet_cache_update) || (!proxy))
+        return;
     msg = eldbus_proxy_method_call_new(proxy, "AddIconDirs");
     iter = eldbus_message_iter_get(msg);
     array_of_string = eldbus_message_iter_container_new(iter, 'a',"s");
@@ -994,9 +998,9 @@ efreet_cache_desktop_close(void)
 void
 efreet_cache_desktop_build(void)
 {
-    if (!efreet_cache_update) return;
-    if (proxy)
-        eldbus_proxy_call(proxy, "BuildDesktopCache", NULL, NULL, -1, "s", efreet_language_get());
+    if ((!efreet_cache_update) || (!proxy))
+        return;
+    eldbus_proxy_call(proxy, "BuildDesktopCache", NULL, NULL, -1, "s", efreet_language_get());
 }
 
 static Eina_Bool
