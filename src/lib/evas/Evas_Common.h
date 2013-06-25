@@ -536,20 +536,6 @@ typedef enum _Evas_Border_Fill_Mode
    EVAS_BORDER_FILL_SOLID = 2 /**< Image's center region is to be made solid, even if it has transparency on it */
 } Evas_Border_Fill_Mode; /**< How an image's center region (the complement to the border region) should be rendered by Evas */
 
-typedef enum _Evas_Image_Scale_Hint
-{
-   EVAS_IMAGE_SCALE_HINT_NONE = 0, /**< No scale hint at all */
-   EVAS_IMAGE_SCALE_HINT_DYNAMIC = 1, /**< Image is being re-scaled over time, thus turning scaling cache @b off for its data */
-   EVAS_IMAGE_SCALE_HINT_STATIC = 2 /**< Image is not being re-scaled over time, thus turning scaling cache @b on for its data */
-} Evas_Image_Scale_Hint; /**< How an image's data is to be treated by Evas, with regard to scaling cache */
-
-typedef enum _Evas_Image_Animated_Loop_Hint
-{
-   EVAS_IMAGE_ANIMATED_HINT_NONE = 0,
-   EVAS_IMAGE_ANIMATED_HINT_LOOP = 1, /**< Image's animation mode is loop like 1->2->3->1->2->3 */
-   EVAS_IMAGE_ANIMATED_HINT_PINGPONG = 2 /**< Image's animation mode is pingpong like 1->2->3->2->1-> ... */
-} Evas_Image_Animated_Loop_Hint;
-
 typedef enum _Evas_Engine_Render_Mode
 {
    EVAS_RENDER_MODE_BLOCKING = 0,

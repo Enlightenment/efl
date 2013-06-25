@@ -50,7 +50,6 @@
 #include <Eina.h>
 #include "Evas.h"
 //#include "Evas_GL.h"
-#include "Evas_Loader.h"
 
 #ifndef HAVE_LROUND
 /* right now i dont care about rendering bugs on platforms without lround

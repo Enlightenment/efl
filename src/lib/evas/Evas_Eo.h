@@ -1,21 +1,5 @@
 #include <Eo.h>
 
-#ifdef _WIN32
-# ifdef EAPI
-#  undef EAPI
-# endif
-# ifdef EFL_EVAS_BUILD
-#  ifdef DLL_EXPORT
-#   define EAPI __declspec(dllexport)
-#  else
-#   define EAPI
-#  endif /* ! DLL_EXPORT */
-# else
-#  define EAPI
-# endif /* ! EFL_EVAS_BUILD */
-#else
-#endif /* ! _WIN32 */
-
 EAPI extern const Eo_Event_Description _EVAS_OBJECT_EVENT_MOUSE_IN;
 EAPI extern const Eo_Event_Description _EVAS_OBJECT_EVENT_MOUSE_OUT;
 EAPI extern const Eo_Event_Description _EVAS_OBJECT_EVENT_MOUSE_DOWN;

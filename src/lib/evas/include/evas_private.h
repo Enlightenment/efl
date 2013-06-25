@@ -9,7 +9,6 @@
 #include <eina_safety_checks.h>
 
 #include "Evas.h"
-#include "Evas_Loader.h"
 
 #include "../file/evas_module.h"
 #include "../file/evas_path.h"

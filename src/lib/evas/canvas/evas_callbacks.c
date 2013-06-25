@@ -1,22 +1,6 @@
 #include "evas_common_private.h"
 #include "evas_private.h"
 
-#ifdef _WIN32
-# ifdef EAPI
-#  undef EAPI
-# endif
-# ifdef EFL_EVAS_BUILD
-#  ifdef DLL_EXPORT
-#   define EAPI __declspec(dllexport)
-#  else
-#   define EAPI
-#  endif /* ! DLL_EXPORT */
-# else
-#  define EAPI
-# endif /* ! EFL_EVAS_BUILD */
-#else
-#endif /* ! _WIN32 */
-
 int _evas_event_counter = 0;
 
 EVAS_MEMPOOL(_mp_pc);
