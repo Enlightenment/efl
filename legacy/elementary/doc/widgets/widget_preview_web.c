@@ -7,6 +7,6 @@ evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 elm_win_resize_object_add(win, o);
 evas_object_show(o);
 
-elm_web_uri_set(o, "http://www.enlightenment.org");
+elm_web_url_set(o, "http://www.enlightenment.org");
 
 #include "widget_preview_tmpl_foot.c"

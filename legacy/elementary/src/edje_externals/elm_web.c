@@ -34,7 +34,7 @@ external_web_state_set(void *data __UNUSED__, Evas_Object *obj, const void *from
    else return;
 
    if (p->uri)
-     elm_web_uri_set(obj, p->uri);
+     elm_web_url_set(obj, p->uri);
    if (p->zoom_mode < ELM_WEB_ZOOM_MODE_LAST)
      elm_web_zoom_mode_set(obj, p->zoom_mode);
    if (p->zoom_set)
@@ -50,7 +50,7 @@ external_web_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_Exter
      {
         if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
           {
-             elm_web_uri_set(obj, param->s);
+             elm_web_url_set(obj, param->s);
              return EINA_TRUE;
           }
      }
@@ -95,7 +95,7 @@ external_web_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_Exter
      {
         if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
           {
-             param->s = elm_web_uri_get(obj);
+             param->s = elm_web_url_get(obj);
              return EINA_TRUE;
           }
      }
