@@ -335,6 +335,7 @@ efreet_dirs_init(void)
     }
     else if ((st.st_mode & 0777) != 0700)
     {
+#ifdef HAVE_GETEUID
         if (st.st_uid == geteuid())
         {
             ERR("XDG_RUNTIME_DIR=%s is mode %o, changing to 0700",
@@ -346,6 +347,7 @@ efreet_dirs_init(void)
                 eina_stringshare_replace(&xdg_runtime_dir, NULL);
             }
         }
+#endif
     }
     /* hostname */
     if (gethostname(buf, sizeof(buf)) < 0)

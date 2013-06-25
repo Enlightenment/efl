@@ -518,6 +518,7 @@ mkdirat \
 mtrace \
 realpath \
 strlcpy \
+geteuid \
 ])
 
 AC_FUNC_ALLOCA
