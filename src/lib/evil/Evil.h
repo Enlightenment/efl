@@ -193,6 +193,9 @@ typedef unsigned long  gid_t;
 # define _S_IWUSR _S_IWRITE
 # define _S_IRUSR _S_IREAD
 
+#define S_IRWXO _S_IRWXU
+#define S_IRWXG _S_IRWXU
+
 #  define mkdir(p,m) _mkdir(p)
   /*
 #  define close(fd) _close(fd)

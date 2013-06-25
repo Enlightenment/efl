@@ -310,7 +310,7 @@ _mkstemp(char *suffix, int val)
 
    val += 7777;
 
-   return v;
+   return val;
 }
 
 EAPI char *
@@ -369,7 +369,7 @@ mkstemp(char *__template)
      {
         int fd;
 
-	val = _mkstemp(suffix, val);
+        val = _mkstemp(suffix, val);
 
 #ifndef __MINGW32CE__
         fd = _open(__template, _O_RDWR | _O_BINARY | _O_CREAT | _O_EXCL, _S_IREAD | _S_IWRITE);
