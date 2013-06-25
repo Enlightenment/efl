@@ -129,7 +129,6 @@ efreet_cache_init(void)
         ERR("Failed to create directory '%s'", buf);
     }
 
-
     EFREET_EVENT_ICON_CACHE_UPDATE = ecore_event_type_new();
     EFREET_EVENT_DESKTOP_CACHE_UPDATE = ecore_event_type_new();
     EFREET_EVENT_DESKTOP_CACHE_BUILD = ecore_event_type_new();
