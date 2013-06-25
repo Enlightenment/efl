@@ -443,6 +443,16 @@ _edje_program_end(Edje *ed, Edje_Running_Program *runp)
                                      runp->program->tween.mode, ZERO,
                                      runp->program->tween.v1,
                                      runp->program->tween.v2);
+
+                  if (rp->current)
+                    {
+                       eina_cow_free(_edje_calc_params_map_cow, rp->current->map);
+#ifdef HAVE_EPHYSICS
+                       eina_cow_free(_edje_calc_params_physics_cow, rp->current->physics);
+#endif
+                       free(rp->current);
+                       rp->current = NULL;
+                    }
                   rp->program = NULL;
                }
           }
