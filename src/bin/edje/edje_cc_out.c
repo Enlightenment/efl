@@ -1181,6 +1181,7 @@ data_thread_script(void *data, Ecore_Thread *thread EINA_UNUSED)
                            "Unable to read all of script object \"%s\"",
                            sc->tmpo);
                   sc->errstr = strdup(buf);
+                  free(dat);
                   return;
                }
 	     snprintf(buf, sizeof(buf), "edje/scripts/embryo/compiled/%i",
