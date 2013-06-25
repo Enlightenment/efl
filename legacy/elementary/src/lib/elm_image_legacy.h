@@ -44,7 +44,8 @@ EAPI Eina_Bool        elm_image_memfile_set(Evas_Object *obj, const void *img, s
  * @param obj The image object
  * @param file The path to file that will be used as image source
  * @param group The group that the image belongs to, in case it's an
- *              EET (including Edje case) file
+ *              EET (including Edje case) file. This can be used as a key inside
+ *              evas image cache if this is a normal image file not eet file.
  *
  * @return (@c EINA_TRUE = success, @c EINA_FALSE = error)
  *
@@ -54,6 +55,11 @@ EAPI Eina_Bool        elm_image_memfile_set(Evas_Object *obj, const void *img, s
  * extension of the @a file string (expects @c ".edj", for this
  * case). If one wants to force this type of file independently of the
  * extension, elm_image_file_edje_set() must be used, instead.
+ *
+ * @note If you use animated gif image and create multiple image objects with
+ * one gif image file, you should set the @group differently for each object.
+ * Or image objects will share one evas image cache entry and you will get
+ * unwanted frames.
  *
  * @ingroup Image
  */
