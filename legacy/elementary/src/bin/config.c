@@ -2476,6 +2476,8 @@ _profiles_list_selected_cb(void            *data,
    else
      {
         if (desk) efreet_desktop_free(desk);
+        if (pdir) elm_config_profile_dir_free(pdir);
+
         pdir = elm_config_profile_dir_get(sel_profile, EINA_FALSE);
         snprintf(buf, sizeof(buf), "%s/profile.desktop", pdir);
         desk = efreet_desktop_new(buf);
@@ -2552,6 +2554,8 @@ _profiles_list_fill(Evas_Object *l_widget,
         else
           {
              if (desk) efreet_desktop_free(desk);
+             if (pdir) elm_config_profile_dir_free(pdir);
+
              pdir = elm_config_profile_dir_get(profile, EINA_FALSE);
              snprintf(buf, sizeof(buf), "%s/profile.desktop", pdir);
              desk = efreet_desktop_new(buf);
