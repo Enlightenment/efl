@@ -105,8 +105,6 @@ evas_common_convert_yuv_422_601_to(void *data, int w, int h, Evas_Colorspace csp
         {
            void *dst;
 
-           fprintf(stderr, "to argb888\n");
-
            dst = malloc(sizeof (unsigned int) * w * h);
            if (!dst) return NULL;
 
