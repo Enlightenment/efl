@@ -8,17 +8,12 @@ static void _change_interaction(void *data, Evas_Object *obj, void *event_info);
 EAPI_MAIN int
 elm_main(int argc, char **argv)
 {
-   Evas_Object *win, *bg, *rect, *rect2, *flip, *radio, *radio2, *radio3;
+   Evas_Object *win, *rect, *rect2, *flip, *radio, *radio2, *radio3;
 
-   win = elm_win_add(NULL, "flip", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Flip");
-   elm_win_autodel_set(win, EINA_TRUE);
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
 
-   bg = elm_bg_add(win);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, bg);
-   evas_object_show(bg);
+   win = elm_win_util_standard_add("flip", "Flip");
+   elm_win_autodel_set(win, EINA_TRUE);
 
    rect = evas_object_rectangle_add(evas_object_evas_get(win));
    evas_object_resize(rect, 150, 150);

@@ -120,20 +120,15 @@ anim(void *data)
 EAPI_MAIN int
 elm_main(int argc, char **argv)
 {
-   Evas_Object *o, *bg;
+   Evas_Object *o;
    int i;
 
-   win = elm_win_add(NULL, "efl-thread-6", ELM_WIN_BASIC);
-   elm_win_title_set(win, "EFL Thread 6");
-   elm_win_autodel_set(win, EINA_TRUE);
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
+
+   win = elm_win_util_standard_add("efl-thread-6", "EFL Thread 6");
+   elm_win_autodel_set(win, EINA_TRUE);
    evas_object_resize(win, 400, 400);
    evas_object_show(win);
-
-   bg = elm_bg_add(win);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, bg);
-   evas_object_show(bg);
 
    // queue up 64 mandel generation thread jobs
    for (i = 0; i < 64; i++)

@@ -12,20 +12,15 @@ static void _add_item(void *data, Evas_Object *obj, void *event_info);
 EAPI_MAIN int
 elm_main(int argc, char **argv)
 {
-   Evas_Object *win, *bg, *rect, *hoversel;
+   Evas_Object *win, *rect, *hoversel;
    Elm_Object_Item *hoversel_it;
 
-   win = elm_win_add(NULL, "hoversel", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Hoversel");
-   elm_win_autodel_set(win, EINA_TRUE);
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
+
+   win = elm_win_util_standard_add("hoversel", "Hoversel");
+   elm_win_autodel_set(win, EINA_TRUE);
    evas_object_resize(win, 200, 300);
    evas_object_show(win);
-
-   bg = elm_bg_add(win);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, bg);
-   evas_object_show(bg);
 
    rect = evas_object_rectangle_add(evas_object_evas_get(win));
    evas_object_color_set(rect, 255, 0, 0, 255);

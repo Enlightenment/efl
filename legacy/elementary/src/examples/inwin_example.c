@@ -111,21 +111,16 @@ _screenshot_hack_cb(void *data)
 EAPI_MAIN int
 elm_main(int argc, char *argv[])
 {
-   Evas_Object *win, *bg, *box, *o;
+   Evas_Object *win, *box, *o;
 
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
 
-   win = elm_win_add(NULL, "inwin-example", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Inwin Example");
+   win = elm_win_util_standard_add("inwin-example", "Inwin Example");
+   elm_win_autodel_set(win, EINA_TRUE);
    evas_object_resize(win, 400, 400);
    evas_object_show(win);
 
    evas_object_smart_callback_add(win, "delete,request", _win_del_cb, NULL);
-
-   bg = elm_bg_add(win);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, bg);
-   evas_object_show(bg);
 
    box = elm_box_add(win);
    evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

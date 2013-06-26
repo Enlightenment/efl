@@ -83,7 +83,7 @@ EAPI_MAIN int
 elm_main(int    argc,
          char **argv)
 {
-   Evas_Object *win, *bg, *grid, *idx;
+   Evas_Object *win, *grid, *idx;
    Elm_Object_Item *gg_it;
    unsigned int i;
 
@@ -92,14 +92,8 @@ elm_main(int    argc,
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
    elm_app_info_set(elm_main, "elementary", "images");
 
-   win = elm_win_add(NULL, "index", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Index Example");
+   win = elm_win_util_standard_add("index", "Index Example");
    elm_win_autodel_set(win, EINA_TRUE);
-
-   bg = elm_bg_add(win);
-   elm_win_resize_object_add(win, bg);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_show(bg);
 
    grid = elm_gengrid_add(win);
    elm_gengrid_item_size_set(grid, 150, 150);

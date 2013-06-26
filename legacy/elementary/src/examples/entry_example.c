@@ -489,22 +489,16 @@ _edit_tplclick_cb(void *data, Evas_Object *obj, void *event)
 EAPI_MAIN int
 elm_main(int argc, char *argv[])
 {
-   Evas_Object *win, *bg, *box, *tb, *en, *o, *icon;
+   Evas_Object *win, *box, *tb, *en, *o, *icon;
    App_Data app;
 
    memset(&app, 0, sizeof(app));
 
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
 
-   win = elm_win_add(NULL, "entry-example", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Emacs Lite");
+   win = elm_win_util_standard_add("entry-example", "Emacs Lite");
    elm_win_autodel_set(win, EINA_TRUE);
    evas_object_show(win);
-
-   bg = elm_bg_add(win);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, bg);
-   evas_object_show(bg);
 
    box = elm_box_add(win);
    evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

@@ -6,19 +6,13 @@
 EAPI_MAIN int
 elm_main(int argc, char **argv)
 {
-   Evas_Object *win, *bg, *icon;
+   Evas_Object *win, *icon;
    const char *path, *group, *name;
 
-   win = elm_win_add(NULL, "icon", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Icon");
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
-   elm_win_autodel_set(win, EINA_TRUE);
 
-   bg = elm_bg_add(win);
-   elm_bg_color_set(bg, 255,255 ,255);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, bg);
-   evas_object_show(bg);
+   win = elm_win_util_standard_add("icon", "Icon");
+   elm_win_autodel_set(win, EINA_TRUE);
 
    icon = elm_icon_add(win);
    elm_icon_order_lookup_set(icon, ELM_ICON_LOOKUP_THEME_FDO);

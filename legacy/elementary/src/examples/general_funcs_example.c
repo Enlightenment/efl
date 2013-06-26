@@ -67,7 +67,7 @@ EAPI_MAIN int
 elm_main(int    argc,
          char **argv)
 {
-   Evas_Object *win, *bg, *box, *frame, *check, *b, *slider;
+   Evas_Object *win, *box, *frame, *check, *b, *slider;
 
    /* tell elm about our app so it can figure out where to get files */
    elm_app_compile_bin_dir_set(BIN_DIR);
@@ -80,8 +80,8 @@ elm_main(int    argc,
    fprintf(stdout, "library directory is: %s\n", elm_app_lib_dir_get());
    fprintf(stdout, "locale directory is: %s\n", elm_app_locale_dir_get());
 
-   win = elm_win_add(NULL, "top-level-funcs-example", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Elementary Top-level Functions Example");
+   win = elm_win_util_standard_add("top-level-funcs-example",
+                                   "Elementary Top-level Functions Example");
 
    /* by using this policy value, we avoid having to
     * evas_object_smart_callback_add(win, "delete,request", _on_exit, NULL),
@@ -89,11 +89,6 @@ elm_main(int    argc,
     */
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
    elm_win_autodel_set(win, EINA_TRUE);
-
-   bg = elm_bg_add(win);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, bg);
-   evas_object_show(bg);
 
    /* outer box */
    box = elm_box_add(win);
