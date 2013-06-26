@@ -1493,7 +1493,7 @@ _item_push(Eo *obj, void *_pd, va_list *list)
 
    if (prev_it) elm_widget_focused_object_clear(VIEW(prev_it));
    _resize_object_reset(obj, it, prev_it,
-                        (prev_it ? : EINA_FALSE, EINA_TRUE));
+                        (prev_it ? EINA_FALSE : EINA_TRUE));
    if (prev_it)
      {
         if (sd->freeze_events)
