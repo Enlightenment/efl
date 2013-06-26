@@ -92,6 +92,22 @@ im_module_create()
    Ecore_IMF_Context *ctx = NULL;
    WaylandIMContext *ctxd = NULL;
 
+   if (!text_input_manager)
+     {
+        Ecore_Wl_Global *global;
+        struct wl_registry *registry = ecore_wl_registry_get();
+        struct wl_list *globals = ecore_wl_globals_get();
+
+        wl_list_for_each(global, globals, link)
+          {
+             if (!strcmp(global->interface, "wl_text_input_manager"))
+               {
+                  text_input_manager = wl_registry_bind(registry, global->id, &wl_text_input_manager_interface, 1);
+                  EINA_LOG_DOM_INFO(_ecore_imf_wayland_log_dom, "bound wl_text_input_manager interface");
+               }
+          }
+     }
+
    ctxd = wayland_im_context_new(text_input_manager);
    if (!ctxd)
      {
@@ -113,30 +129,10 @@ im_module_create()
 static Eina_Bool
 im_module_init(void)
 {
-   struct wl_registry *registry;
-   struct wl_list *globals;
-   Ecore_Wl_Global *global;
-
    if (!ecore_wl_init(NULL)) return EINA_FALSE;
 
    _ecore_imf_wayland_log_dom = 
      eina_log_domain_register("ecore_imf_wayland", EINA_COLOR_YELLOW);
-
-   ecore_wl_display_iterate();
-   registry = ecore_wl_registry_get();
-   globals = ecore_wl_globals_get();
-
-   wl_list_for_each(global, globals, link)
-      {
-         if (!strcmp(global->interface, "wl_text_input_manager"))
-           {
-              text_input_manager = 
-                wl_registry_bind(registry, global->id, 
-                                 &wl_text_input_manager_interface, 1);
-              EINA_LOG_DOM_INFO(_ecore_imf_wayland_log_dom, 
-                                "bound wl_text_input_manager interface");
-           }
-      }
 
    ecore_imf_module_register(&wayland_im_info, im_module_create, 
                              im_module_exit);
