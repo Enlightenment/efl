@@ -23,7 +23,7 @@ _btn_clear_cb(void *data, Evas_Object *btn, void *ev)
 EAPI_MAIN int
 elm_main(int argc, char **argv)
 {
-   Evas_Object *win, *bg, *bt, *bx, *cal;
+   Evas_Object *win, *bt, *bx, *cal;
    Elm_Calendar_Mark *mark;
    struct tm selected_time;
    time_t current_time;
@@ -35,15 +35,9 @@ elm_main(int argc, char **argv)
    /* months since Jan, in the range 0 to 11 */
    christmas.tm_mon = 11;
 
-   win = elm_win_add(NULL, "calendar", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Calendar Marks Example");
+   win = elm_win_util_standard_add("calendar", "Calendar Marks Example");
    elm_win_autodel_set(win, EINA_TRUE);
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
-
-   bg = elm_bg_add(win);
-   elm_win_resize_object_add(win, bg);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_show(bg);
 
    bx = elm_box_add(win);
    elm_win_resize_object_add(win, bx);

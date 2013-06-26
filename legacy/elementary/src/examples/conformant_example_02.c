@@ -14,18 +14,12 @@
 EAPI_MAIN int
 elm_main(int argc, char **argv)
 {
-   Evas_Object *win, *bg, *conform, *btn, *bx, *en;
+   Evas_Object *win, *conform, *btn, *bx, *en;
 
-   win = elm_win_add(NULL, "conformant", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Conformant Example");
+   win = elm_win_util_standard_add("conformant", "Conformant Example");
    elm_win_autodel_set(win, EINA_TRUE);
 
    elm_win_conformant_set(win, EINA_TRUE);
-
-   bg = elm_bg_add(win);
-   elm_win_resize_object_add(win, bg);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_show(bg);
 
    conform = elm_conformant_add(win);
    elm_win_resize_object_add(win, conform);

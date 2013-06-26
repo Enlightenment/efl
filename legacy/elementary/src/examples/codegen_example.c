@@ -77,20 +77,15 @@ _button_create(Evas_Object *parent, const char *label)
 EAPI_MAIN int
 elm_main(int argc, char **argv)
 {
-   Evas_Object *win, *bg, *btn, *layout, *tbl_items[6];
+   Evas_Object *win, *btn, *layout, *tbl_items[6];
    const char *labels[] = {"One", "Two", "Three", "Four", "Five", "Six"};
    int i;
 
    elm_app_info_set(elm_main, "elementary", "examples/codegen_example.edj");
-   win = elm_win_add(NULL, "layout", ELM_WIN_BASIC);
+
+   win = elm_win_util_standard_add("codegen", "Elementary CodeGen");
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
    elm_win_autodel_set(win, EINA_TRUE);
-
-   bg = elm_bg_add(win);
-   elm_bg_color_set(bg, 255,255 ,255);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, bg);
-   evas_object_show(bg);
 
    // Adding layout
    layout = codegen_example_layout_add(win, NULL, NULL);

@@ -10,17 +10,12 @@ static void _colorpalette_longpressed_cb(void *data, Evas_Object *obj, void *eve
 EAPI_MAIN int
 elm_main(int argc, char **argv)
 {
-   Evas_Object *win, *bg, *cs, *rect, *bx, *fr;
+   Evas_Object *win, *cs, *rect, *bx, *fr;
 
-   win = elm_win_add(NULL, "color selector", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Color selector");
-   elm_win_autodel_set(win, EINA_TRUE);
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
 
-   bg = elm_bg_add(win);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, bg);
-   evas_object_show(bg);
+   win = elm_win_util_standard_add("color selector", "Color selector");
+   elm_win_autodel_set(win, EINA_TRUE);
 
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

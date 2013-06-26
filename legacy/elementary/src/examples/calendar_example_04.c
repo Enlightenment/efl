@@ -17,19 +17,13 @@
 EAPI_MAIN int
 elm_main(int argc, char **argv)
 {
-   Evas_Object *win, *bg, *bx, *cal, *cal2;
+   Evas_Object *win, *bx, *cal, *cal2;
    struct tm selected_time;
    time_t current_time;
 
-   win = elm_win_add(NULL, "calendar", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Calendar Day Selection Example");
+   win = elm_win_util_standard_add("calendar", "Calendar Day Selection Example");
    elm_win_autodel_set(win, EINA_TRUE);
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
-
-   bg = elm_bg_add(win);
-   elm_win_resize_object_add(win, bg);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_show(bg);
 
    bx = elm_box_add(win);
    elm_win_resize_object_add(win, bx);

@@ -18,19 +18,14 @@ _bla(void *data, Evas_Object *obj, void *event_info)
 EAPI_MAIN int
 elm_main(int argc, char **argv)
 {
-   Evas_Object *win, *bg, *bubble, *label, *icon;
+   Evas_Object *win, *bubble, *label, *icon;
 
-   win = elm_win_add(NULL, "bubble", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Bubble");
-   elm_win_autodel_set(win, EINA_TRUE);
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
+
+   win = elm_win_util_standard_add("bubble", "Bubble");
+   elm_win_autodel_set(win, EINA_TRUE);
    evas_object_resize(win, 300, 200);
    evas_object_show(win);
-
-   bg = elm_bg_add(win);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, bg);
-   evas_object_show(bg);
 
    label = elm_label_add(win);
    elm_object_text_set(label, "This is the CONTENT of our bubble");

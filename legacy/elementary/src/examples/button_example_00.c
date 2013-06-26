@@ -13,24 +13,16 @@ EAPI_MAIN int
 elm_main(int argc, char **argv)
 {
    Evas_Object *win = NULL;
-   Evas_Object *bg  = NULL;
    Evas_Object *btn = NULL;
+
+   elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
 
    /* Create an win, associate it with a canvas and */
    /* turn it visible on WM (Window Manager).       */
-   win = elm_win_add(NULL, "Greetings", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Hello, World!");
+   win = elm_win_util_standard_add("Greetings", "Hello, World!");
    elm_win_autodel_set(win, EINA_TRUE);
-   elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
    evas_object_resize(win, 240, 60);
    evas_object_show(win);
-
-   /* Create a bg, associate it to an win */
-   /* and turn it visible on WM.          */
-   bg = elm_bg_add(win);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, bg);
-   evas_object_show(bg);
 
    /* Create a btn, associate to a function, associate */
    /* to win,  give a dimension and position.          */
