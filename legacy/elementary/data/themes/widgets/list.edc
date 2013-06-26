@@ -1195,7 +1195,7 @@ group { name: "elm/list/h_item_odd/default";
          scale: 1;
          description {
             state: "default" 0.0;
-            fixed: 1 1;
+            fixed: 0 1;
             rel1 {
                to_x: "elm.swallow.icon";
                relative: 0.0 1.0;
