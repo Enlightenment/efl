@@ -124,6 +124,7 @@ static const struct wl_touch_listener touch_listener =
 static const struct wl_seat_listener _ecore_wl_seat_listener = 
 {
    _ecore_wl_input_seat_handle_capabilities,
+   NULL // _ecore_wl_input_seat_handle_name
 };
 
 static const struct wl_data_device_listener _ecore_wl_data_listener = 
