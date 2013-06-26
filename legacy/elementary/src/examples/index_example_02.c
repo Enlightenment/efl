@@ -111,7 +111,6 @@ elm_main(int    argc,
    idx = elm_index_add(win);
    evas_object_size_hint_weight_set(idx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, idx);
-
    evas_object_show(idx);
 
    for (i = 0; i < (sizeof(items) / sizeof(items[0])); i++)

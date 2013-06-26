@@ -33,6 +33,7 @@ elm_main(int argc, char **argv)
 
    rect = evas_object_rectangle_add(evas_object_evas_get(win));
    elm_win_resize_object_add(win, rect);
+   evas_object_size_hint_min_set(rect, 0, 0);
    evas_object_color_set(rect, 0, 0, 0, 0);
    evas_object_show(rect);
 

@@ -181,8 +181,8 @@ elm_main(int argc, char **argv)
    elm_win_autodel_set(win, EINA_TRUE);
 
    map = elm_map_add(win);
-   elm_win_resize_object_add(win, map);
    evas_object_size_hint_weight_set(map, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, map);
    evas_object_show(map);
 
    box = elm_box_add(win);

@@ -159,8 +159,8 @@ elm_main(int    argc,
    evas_object_smart_callback_add(win, "delete,request", _on_done, NULL);
 
    bx = elm_box_add(win);
-   elm_win_resize_object_add(win, bx);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bx);
    evas_object_show(bx);
 
    /* pb with no label, default unit label and no icon */

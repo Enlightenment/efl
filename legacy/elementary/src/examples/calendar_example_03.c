@@ -23,8 +23,8 @@ elm_main(int argc, char **argv)
    elm_win_autodel_set(win, EINA_TRUE);
 
    cal = elm_calendar_add(win);
-   elm_win_resize_object_add(win, cal);
    evas_object_size_hint_weight_set(cal, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, cal);
    elm_calendar_min_max_year_set(cal, 2020, 2022);
    evas_object_show(cal);
 

@@ -110,8 +110,8 @@ elm_main(int argc,
    elm_win_autodel_set(win, EINA_TRUE);
 
    vbox = elm_box_add(win);
-   elm_win_resize_object_add(win, vbox);
    evas_object_size_hint_weight_set(vbox, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, vbox);
    evas_object_show(vbox);
 
    d.list = elm_list_add(win);
@@ -122,10 +122,9 @@ elm_main(int argc,
    elm_box_pack_end(vbox, d.list);
 
    d.index = elm_index_add(win);
-   elm_win_resize_object_add(win, d.index);
    evas_object_size_hint_weight_set(d.index, EVAS_HINT_EXPAND,
                                     EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(d.list, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_win_resize_object_add(win, d.index);
    evas_object_show(d.index);
 
    for (i = 0; i < (sizeof(dict) / sizeof(dict[0])); i++)

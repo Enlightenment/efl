@@ -22,8 +22,8 @@ elm_main(int argc, char **argv)
    elm_win_conformant_set(win, EINA_TRUE);
 
    conform = elm_conformant_add(win);
-   elm_win_resize_object_add(win, conform);
    evas_object_size_hint_weight_set(conform, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, conform);
    evas_object_show(conform);
 
    bx = elm_box_add(win);

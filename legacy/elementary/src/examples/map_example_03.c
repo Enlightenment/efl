@@ -120,11 +120,14 @@ elm_main(int argc, char **argv)
    elm_win_autodel_set(win, EINA_TRUE);
 
    map = elm_map_add(win);
-   elm_win_resize_object_add(win, map);
    evas_object_size_hint_weight_set(map, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, map);
    evas_object_show(map);
 
    box = elm_box_add(win);
+   elm_box_horizontal_set(box, EINA_TRUE);
+   evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, box);
    evas_object_show(box);
 
    bt = elm_button_add(win);
@@ -154,11 +157,6 @@ elm_main(int argc, char **argv)
    evas_object_show(bt);
    evas_object_smart_callback_add(bt, "clicked", _bt_zoom_fill, map);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, 0);
-
-   elm_box_horizontal_set(box, EINA_TRUE);
-   elm_win_resize_object_add(win, box);
-   evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(box, EVAS_HINT_FILL, 0);
 
    entry = elm_entry_add(win);
    elm_entry_scrollable_set(entry, EINA_TRUE);

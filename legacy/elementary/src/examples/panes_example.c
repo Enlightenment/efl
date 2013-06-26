@@ -61,9 +61,8 @@ elm_main(int argc, char **argv)
    elm_win_focus_highlight_enabled_set(win, EINA_TRUE);
 
    panes = elm_panes_add(win);
-   elm_win_resize_object_add(win, panes);
    evas_object_size_hint_weight_set(panes, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(panes, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_win_resize_object_add(win, panes);
    evas_object_show(panes);
 
    bt = elm_button_add(win);

@@ -46,8 +46,8 @@ elm_main(int argc, char **argv)
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
 
    cal = elm_calendar_add(win);
-   elm_win_resize_object_add(win, cal);
    evas_object_size_hint_weight_set(cal, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, cal);
    /* Add callback to display calendar information every time user
     * selects a new date */
    evas_object_smart_callback_add(cal, "changed", _print_cal_info_cb, NULL);
