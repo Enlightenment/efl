@@ -336,7 +336,8 @@ efreet_dirs_init(void)
     else if ((st.st_mode & 0777) != 0700)
     {
 #ifdef HAVE_GETEUID
-        if (st.st_uid == geteuid())
+        if ((!(!strcmp(xdg_runtime_dir, "/tmp"))) &&
+            (st.st_uid == geteuid()))
         {
             ERR("XDG_RUNTIME_DIR=%s is mode %o, changing to 0700",
                 xdg_runtime_dir, st.st_mode & 0777);
