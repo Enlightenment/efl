@@ -4464,7 +4464,7 @@ EAPI Eina_Bool                     evas_object_image_pixels_import(Evas_Object *
  * @param data The data pointer to be passed to @a func.
  *
  * This functions sets a function to be the callback function that get
- * pixes from a image of the canvas.
+ * pixels from a image of the canvas.
  *
  */
 EAPI void                          evas_object_image_pixels_get_callback_set(Evas_Object *obj, Evas_Object_Image_Pixels_Get_Cb func, void *data) EINA_ARG_NONNULL(1, 2);
