@@ -1472,10 +1472,10 @@ static void
 eng_output_flush(void *data, Evas_Render_Mode render_mode)
 {
    Render_Engine *re;
+   re = (Render_Engine *)data;
 
    if (render_mode == EVAS_RENDER_MODE_ASYNC_INIT) goto end;
 
-   re = (Render_Engine *)data;
    if (!_re_wincheck(re)) goto end;
    if (!re->win->draw.drew) goto end;
    
