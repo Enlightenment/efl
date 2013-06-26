@@ -132,7 +132,7 @@ evas_common_convert_yuv_422P_601_to(void *data, int w, int h, Evas_Colorspace cs
            if (!dst) return NULL;
 
            evas_common_convert_yuv_420p_601_rgba(data, dst, w, h);
-           break;
+           return dst;
         }
       default:
          break;
@@ -153,7 +153,7 @@ evas_common_convert_yuv_420_601_to(void *data, int w, int h, Evas_Colorspace csp
            if (!dst) return NULL;
 
            evas_common_convert_yuv_420_601_rgba(data, dst, w, h);
-           break;
+           return dst;
         }
       default:
          break;
@@ -174,7 +174,7 @@ evas_common_convert_yuv_420T_601_to(void *data, int w, int h, Evas_Colorspace cs
            if (!dst) return NULL;
 
            evas_common_convert_yuv_420_601_rgba(data, dst, w, h);
-           break;
+           return dst;
         }
       default:
          break;

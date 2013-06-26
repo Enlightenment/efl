@@ -1,3 +1,8 @@
+2013-06-26  Daniel Willmann
+
+	* Evas: Fix evas_common_convert_yuv_42* functions to actually return
+	the converted data.
+
 2013-06-25  Tom Hacohen
 
 	* Evas textblock: Fixed issue with textblocks without fonts
