@@ -67,6 +67,14 @@ cserve2_shm_request(size_t size)
         return NULL;
      }
 
+   shm = calloc(1, sizeof(Shm_Handle));
+   if (!shm)
+     {
+        ERR("Failed to allocate shared memory handler.");
+        free(map);
+        return NULL;
+     }
+
    do {
         snprintf(shmname, sizeof(shmname), "/evas-shm-img-%x-%d", (int)getuid(), id++);
         fd = shm_open(shmname, O_RDWR | O_CREAT | O_EXCL, S_IRUSR | S_IWUSR);
@@ -74,6 +82,7 @@ cserve2_shm_request(size_t size)
           {
              ERR("Failed to create shared memory object '%s': %m", shmname);
              free(map);
+             free(shm);
              return NULL;
           }
    } while (fd == -1);
@@ -85,21 +94,13 @@ cserve2_shm_request(size_t size)
         ERR("Failed to set size of shared file: %m");
         close(fd);
         free(map);
+        free(shm);
         return NULL;
      }
    close(fd);
 
    map->name = eina_stringshare_add(shmname);
    map->length = map_size;
-
-   shm = calloc(1, sizeof(Shm_Handle));
-   if (!shm)
-     {
-        ERR("Failed to allocate shared memory handler.");
-        eina_stringshare_del(map->name);
-        free(map);
-        return NULL;
-     }
 
    map->segments = eina_inlist_append(map->segments, EINA_INLIST_GET(shm));
    shm->mapping = map;

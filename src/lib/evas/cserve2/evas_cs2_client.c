@@ -634,6 +634,7 @@ _image_open_server_send(Image_Entry *ie, const char *file, const char *key, Evas
      {
         ERR("Couldn't send message to server.");
         free(buf);
+        free(fentry);
         return 0;
      }
 

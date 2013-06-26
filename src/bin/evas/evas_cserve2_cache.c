@@ -429,6 +429,8 @@ _load_request_build(Image_Data *i, int *bufsize)
 
    // opening shm for this file
    i->shm = cserve2_shm_request(i->file->w * i->file->h * 4);
+   if (!i->shm)
+     return NULL;
 
    shmpath = cserve2_shm_name_get(i->shm);
 
@@ -2012,6 +2014,7 @@ cserve2_cache_file_open(Client *client, unsigned int client_file_id, const char 
              ERR("file \"%s\" is in file_ids hash but not in entries hash.",
                  buf);
              cserve2_client_error_send(client, rid, CSERVE2_INVALID_CACHE);
+             // FIXME: Maybe we should remove the entry from file_ids then?
              return -1;
           }
         ref = _entry_reference_add((Entry *)entry, client, client_file_id);
