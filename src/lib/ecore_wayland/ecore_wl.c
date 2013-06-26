@@ -164,7 +164,7 @@ ecore_wl_init(const char *name)
    wl_registry_add_listener(_ecore_wl_disp->wl.registry,
                             &_ecore_wl_registry_listener, _ecore_wl_disp);
 
-   /* NB: Hmmm, should we display_dispatch here ?? */
+   ecore_wl_display_iterate();
 
    if (!_ecore_wl_xkb_init(_ecore_wl_disp))
      {
