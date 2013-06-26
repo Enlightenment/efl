@@ -2047,7 +2047,7 @@ _elm_win_property_change(void *data,
      {
         if (e->win == sd->x.xwin)
           {
-             sd->indmode = ecore_x_e_illume_indicator_state_get(e->win);
+             sd->indmode = (Elm_Win_Indicator_Mode)ecore_x_e_illume_indicator_state_get(e->win);
              evas_object_smart_callback_call(sd->obj, SIG_INDICATOR_PROP_CHANGED, NULL);
           }
      }
