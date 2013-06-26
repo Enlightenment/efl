@@ -56,7 +56,7 @@ _cserve2_client_close(Client *client)
    Msg_Close *msg = (Msg_Close *)client->msg.buf;
 
    INF("Received CLOSE command: RID=%d", msg->base.rid);
-   INF("File_ID: %d\n", msg->file_id);
+   INF("File_ID: %d", msg->file_id);
 
    cserve2_cache_file_close(client, msg->file_id);
 }
@@ -67,7 +67,7 @@ _cserve2_client_unload(Client *client)
    Msg_Unload *msg = (Msg_Unload *)client->msg.buf;
 
    INF("Received UNLOAD command: RID=%d", msg->base.rid);
-   INF("Image_ID: %d\n", msg->image_id);
+   INF("Image_ID: %d", msg->image_id);
 
    cserve2_cache_image_unload(client, msg->image_id);
 }
@@ -78,7 +78,7 @@ _cserve2_client_preload(Client *client)
    Msg_Preload *msg = (Msg_Preload *)client->msg.buf;
 
    INF("Received PRELOAD command: RID=%d", msg->base.rid);
-   INF("Image_ID: %d\n", msg->image_id);
+   INF("Image_ID: %d", msg->image_id);
 
    cserve2_cache_image_preload(client, msg->image_id, msg->base.rid);
 }
@@ -88,9 +88,7 @@ _cserve2_client_load(Client *client)
 {
    Msg_Load *msg = (Msg_Load *)client->msg.buf;
 
-   INF("Received LOAD command: RID=%d", msg->base.rid);
-   INF("Image_ID: %d\n", msg->image_id);
-
+   INF("Received LOAD command: RID=%d, Image_ID: %d", msg->base.rid, msg->image_id);
    cserve2_cache_image_load(client, msg->image_id, msg->base.rid);
 }
 
@@ -114,7 +112,7 @@ _cserve2_client_setopts(Client *client)
    INF("\tscale size: %dx%d", msg->opts.scale_dst_w, msg->opts.scale_dst_h);
    INF("\tscale smooth: %d", msg->opts.scale_smooth);
    INF("\tscale hint: %d", msg->opts.scale_hint);
-   INF("\torientation: %d\n", msg->opts.orientation);
+   INF("\torientation: %d", msg->opts.orientation);
 
    if (cserve2_cache_image_opts_set(client, msg) != 0)
      return;
@@ -132,8 +130,7 @@ _cserve2_client_open(Client *client)
    key = ((const char *)msg) + sizeof(*msg) + msg->key_offset;
 
    INF("Received OPEN command: RID=%d", msg->base.rid);
-   INF("File_ID: %d, path=\"%s\", key=\"%s\"\n",
-          msg->file_id, path, key);
+   INF("File_ID: %d, path=\"%s\", key=\"%s\"", msg->file_id, path, key);
 
    cserve2_cache_file_open(client, msg->file_id, path, key, msg->base.rid);
 }
