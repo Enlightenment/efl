@@ -14,7 +14,7 @@
 EAPI_MAIN int
 elm_main(int argc, char **argv)
 {
-   Evas_Object *win, *bg, *bx, *li;
+   Evas_Object *win, *bg, *li;
    unsigned int i;
    static const char *lbl[] =
      {
@@ -38,17 +38,11 @@ elm_main(int argc, char **argv)
    evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(bg);
 
-   bx = elm_box_add(win);
-   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_win_resize_object_add(win, bx);
-   evas_object_show(bx);
-
    /* default */
    li = elm_list_add(win);
    evas_object_size_hint_weight_set(li, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(li, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_box_pack_end(bx, li);
+   elm_win_resize_object_add(win, li);
+
    for (i = 0; i < sizeof(lbl) / sizeof(lbl[0]); i++)
      elm_list_item_append(li, lbl[i], NULL, NULL, NULL, NULL);
 
