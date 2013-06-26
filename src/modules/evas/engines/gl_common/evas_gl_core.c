@@ -1242,7 +1242,7 @@ _evgl_not_in_pixel_get()
 {
    EVGL_Resource *rsc;
 
-   if (!(rsc=_evgl_tls_resource_get(evgl_engine))) return 1;
+   if (!(rsc=_evgl_tls_resource_get())) return 1;
 
    EVGL_Context *ctx = rsc->current_ctx;
 
@@ -1771,7 +1771,7 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
    rsc->current_ctx = ctx;
    rsc->current_eng = eng_data;
 
-   _surface_context_list_print(evgl_engine);
+   _surface_context_list_print();
 
    return 1;
 }
