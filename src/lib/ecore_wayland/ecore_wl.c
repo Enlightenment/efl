@@ -10,6 +10,7 @@ static Eina_Bool _ecore_wl_shutdown(Eina_Bool close);
 static Eina_Bool _ecore_wl_cb_idle_enterer(void *data);
 static Eina_Bool _ecore_wl_cb_handle_data(void *data, Ecore_Fd_Handler *hdl);
 static void _ecore_wl_cb_handle_global(void *data, struct wl_registry *registry, unsigned int id, const char *interface, unsigned int version EINA_UNUSED);
+static void _ecore_wl_cb_handle_global_remove(void *data, struct wl_registry *registry EINA_UNUSED, unsigned int id);
 static Eina_Bool _ecore_wl_xkb_init(Ecore_Wl_Display *ewd);
 static Eina_Bool _ecore_wl_xkb_shutdown(Ecore_Wl_Display *ewd);
 static void _ecore_wl_sync_wait(Ecore_Wl_Display *ewd);
@@ -18,15 +19,18 @@ static void _ecore_wl_animator_tick_cb_begin(void *data EINA_UNUSED);
 static void _ecore_wl_animator_tick_cb_end(void *data EINA_UNUSED);
 static void _ecore_wl_animator_callback(void *data, struct wl_callback *callback, uint32_t serial EINA_UNUSED);
 static Eina_Bool _ecore_wl_animator_window_add(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, void *data, void *fdata EINA_UNUSED);
+static void _ecore_wl_signal_exit(void);
+static void _ecore_wl_signal_exit_free(void *data EINA_UNUSED, void *event);
 
 /* local variables */
 static int _ecore_wl_init_count = 0;
 static Eina_Bool _ecore_wl_animator_busy = EINA_FALSE;
+static Eina_Bool _ecore_wl_fatal_error = EINA_FALSE;
 
 static const struct wl_registry_listener _ecore_wl_registry_listener =
 {
    _ecore_wl_cb_handle_global,
-   NULL // handle_global_remove
+   _ecore_wl_cb_handle_global_remove
 };
 
 static const struct wl_callback_listener _ecore_wl_sync_listener =
@@ -159,6 +163,8 @@ ecore_wl_init(const char *name)
      wl_display_get_registry(_ecore_wl_disp->wl.display);
    wl_registry_add_listener(_ecore_wl_disp->wl.registry,
                             &_ecore_wl_registry_listener, _ecore_wl_disp);
+
+   /* NB: Hmmm, should we display_dispatch here ?? */
 
    if (!_ecore_wl_xkb_init(_ecore_wl_disp))
      {
@@ -348,7 +354,7 @@ _ecore_wl_shutdown(Eina_Bool close)
    if (_ecore_wl_disp->idle_enterer)
       ecore_idle_enterer_del(_ecore_wl_disp->idle_enterer);
 
-   if (close)
+   if ((close) && (!_ecore_wl_fatal_error))
      {
         Ecore_Wl_Output *out, *tout;
         Ecore_Wl_Input *in, *tin;
@@ -399,17 +405,32 @@ static Eina_Bool
 _ecore_wl_cb_idle_enterer(void *data)
 {
    Ecore_Wl_Display *ewd;
-   int ret;
+   int ret = 0;
+
+   if (_ecore_wl_fatal_error) return ECORE_CALLBACK_CANCEL;
 
    if (!(ewd = data)) return ECORE_CALLBACK_RENEW;
+
+   ret = wl_display_get_error(ewd->wl.display);
+   if (ret < 0) goto err;
+
+   ret = wl_display_dispatch_pending(ewd->wl.display);
+   if (ret < 0) goto err;
 
    ret = wl_display_flush(ewd->wl.display);
    if ((ret < 0) && (errno == EAGAIN))
      ecore_main_fd_handler_active_set(ewd->fd_hdl, 
                                       (ECORE_FD_READ | ECORE_FD_WRITE));
-   else if (ret < 0)
+
+   return ECORE_CALLBACK_RENEW;
+
+err:
+   if ((ret < 0) && ((errno != EAGAIN) && (errno != EINVAL)))
      {
-      /* FIXME: need do error processing? */
+        _ecore_wl_fatal_error = EINA_TRUE;
+
+        /* raise exit signal */
+        _ecore_wl_signal_exit();
      }
 
    return ECORE_CALLBACK_RENEW;
@@ -419,8 +440,11 @@ static Eina_Bool
 _ecore_wl_cb_handle_data(void *data, Ecore_Fd_Handler *hdl)
 {
    Ecore_Wl_Display *ewd;
+   int ret = 0;
 
    /* LOGFN(__FILE__, __LINE__, __FUNCTION__); */
+
+   if (_ecore_wl_fatal_error) return ECORE_CALLBACK_CANCEL;
 
    if (!(ewd = data)) return ECORE_CALLBACK_RENEW;
 
@@ -429,18 +453,20 @@ _ecore_wl_cb_handle_data(void *data, Ecore_Fd_Handler *hdl)
    /* wl_display_dispatch_pending(ewd->wl.display); */
 
    if (ecore_main_fd_handler_active_get(hdl, ECORE_FD_READ))
-     wl_display_dispatch(ewd->wl.display);
+     ret = wl_display_dispatch(ewd->wl.display);
    else if (ecore_main_fd_handler_active_get(hdl, ECORE_FD_WRITE))
      {
-        int ret = 0;
-
         ret = wl_display_flush(ewd->wl.display);
         if (ret == 0)
           ecore_main_fd_handler_active_set(hdl, ECORE_FD_READ);
-        else if ((ret == -1) && (errno != EAGAIN))
-          {
-            /* FIXME: need do error processing? */
-          }
+     }
+
+   if ((ret < 0) && ((errno != EAGAIN) && (errno != EINVAL)))
+     {
+        _ecore_wl_fatal_error = EINA_TRUE;
+
+        /* raise exit signal */
+        _ecore_wl_signal_exit();
      }
 
    return ECORE_CALLBACK_RENEW;
@@ -505,6 +531,25 @@ _ecore_wl_cb_handle_global(void *data, struct wl_registry *registry, unsigned in
         ev->shell = (ewd->wl.shell != NULL);
 
         ecore_event_add(ECORE_WL_EVENT_INTERFACES_BOUND, ev, NULL, NULL);
+     }
+}
+
+static void 
+_ecore_wl_cb_handle_global_remove(void *data, struct wl_registry *registry EINA_UNUSED, unsigned int id)
+{
+   Ecore_Wl_Display *ewd;
+   Ecore_Wl_Global *global, *tmp;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   ewd = data;
+
+   wl_list_for_each_safe(global, tmp, &ewd->globals, link)
+     {
+        if (global->id != id) continue;
+        wl_list_remove(&global->link);
+        free(global->interface);
+        free(global);
      }
 }
 
@@ -600,4 +645,23 @@ _ecore_wl_animator_window_add(const Eina_Hash *hash EINA_UNUSED, const void *key
    ecore_wl_window_commit(win);
 
    return EINA_TRUE;
+}
+
+static void 
+_ecore_wl_signal_exit(void)
+{
+   Ecore_Event_Signal_Exit *ev;
+
+   if (!(ev = calloc(1, sizeof(Ecore_Event_Signal_Exit))))
+     return;
+
+   ev->quit = 1;
+   ecore_event_add(ECORE_EVENT_SIGNAL_EXIT, ev, 
+                   _ecore_wl_signal_exit_free, NULL);
+}
+
+static void 
+_ecore_wl_signal_exit_free(void *data EINA_UNUSED, void *event)
+{
+   free(event);
 }
