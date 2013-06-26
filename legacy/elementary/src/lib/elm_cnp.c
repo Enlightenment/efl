@@ -1169,6 +1169,7 @@ _x11_dnd_enter(void *data __UNUSED__, int etype __UNUSED__, void *ev)
    int i;
    Dropable *dropable;
 
+   if (!enter) return EINA_TRUE;
    dropable = _x11_dropable_find(enter->win);
    if (dropable)
      {
@@ -1177,7 +1178,7 @@ _x11_dnd_enter(void *data __UNUSED__, int etype __UNUSED__, void *ev)
      }
    /* Skip it */
    cnp_debug("enter types=%p (%d)\n", enter->types, enter->num_types);
-   if ((!enter) || (!enter->num_types) || (!enter->types)) return EINA_TRUE;
+   if ((!enter->num_types) || (!enter->types)) return EINA_TRUE;
 
    cnp_debug("Types\n");
    savedtypes.ntypes = enter->num_types;
