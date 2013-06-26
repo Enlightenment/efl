@@ -153,10 +153,15 @@ _slave_write(Slave *s, const char *data, size_t size)
           {
              if (errno == EAGAIN)
                break;
-             if (errno == EPIPE)
+             else if (errno == EPIPE)
                {
                   WRN("Slave unexpectedly gone.");
-                  /* handle dead? */
+                  /* FIXME: handle dead? */
+                  break;
+               }
+             else
+               {
+                  ERR("Unhandled error occurred when writing to slave: %d %m", errno);
                   break;
                }
           }
