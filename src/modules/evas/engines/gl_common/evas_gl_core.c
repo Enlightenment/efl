@@ -1384,6 +1384,7 @@ error:
       eina_tls_free(evgl_engine->resource_key);
    if (evgl_engine)
       free(evgl_engine);
+   evgl_engine = NULL;
    return NULL;
 }
 
