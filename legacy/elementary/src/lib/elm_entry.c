@@ -529,11 +529,11 @@ _elm_entry_smart_theme(Eo *obj, void *_pd, va_list *list)
      edje_object_signal_emit(sd->entry_edje, "elm,state,disabled", "elm");
 
    edje_object_part_text_input_panel_layout_set
-     (sd->entry_edje, "elm.text", sd->input_panel_layout);
+     (sd->entry_edje, "elm.text", (Edje_Input_Panel_Layout)sd->input_panel_layout);
    edje_object_part_text_input_panel_layout_variation_set
      (sd->entry_edje, "elm.text", sd->input_panel_layout_variation);
    edje_object_part_text_autocapital_type_set
-     (sd->entry_edje, "elm.text", sd->autocapital_type);
+     (sd->entry_edje, "elm.text", (Edje_Text_Autocapital_Type)sd->autocapital_type);
    edje_object_part_text_prediction_allow_set
      (sd->entry_edje, "elm.text", sd->prediction_allow);
    edje_object_part_text_input_panel_enabled_set
@@ -542,7 +542,7 @@ _elm_entry_smart_theme(Eo *obj, void *_pd, va_list *list)
      (sd->entry_edje, "elm.text", sd->input_panel_imdata,
      sd->input_panel_imdata_len);
    edje_object_part_text_input_panel_return_key_type_set
-     (sd->entry_edje, "elm.text", sd->input_panel_return_key_type);
+     (sd->entry_edje, "elm.text", (Edje_Input_Panel_Return_Key_Type)sd->input_panel_return_key_type);
    edje_object_part_text_input_panel_return_key_disabled_set
      (sd->entry_edje, "elm.text", sd->input_panel_return_key_disabled);
 
@@ -3105,7 +3105,7 @@ _elm_entry_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    elm_entry_input_panel_enabled_set(obj, EINA_TRUE);
    elm_entry_prediction_allow_set(obj, EINA_TRUE);
 
-   priv->autocapital_type = edje_object_part_text_autocapital_type_get
+   priv->autocapital_type = (Elm_Autocapital_Type)edje_object_part_text_autocapital_type_get
        (priv->entry_edje, "elm.text");
 
 #ifdef HAVE_ELEMENTARY_X
@@ -4956,7 +4956,7 @@ _input_panel_layout_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    sd->input_panel_layout = layout;
 
    edje_object_part_text_input_panel_layout_set
-     (sd->entry_edje, "elm.text", layout);
+     (sd->entry_edje, "elm.text", (Edje_Input_Panel_Layout)layout);
 }
 
 EAPI Elm_Input_Panel_Layout
@@ -5032,7 +5032,7 @@ _autocapital_type_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 
    sd->autocapital_type = autocapital_type;
    edje_object_part_text_autocapital_type_set
-     (sd->entry_edje, "elm.text", autocapital_type);
+     (sd->entry_edje, "elm.text", (Edje_Text_Autocapital_Type)autocapital_type);
 }
 
 EAPI Elm_Autocapital_Type
@@ -5188,7 +5188,7 @@ _input_panel_language_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 
    sd->input_panel_lang = lang;
    edje_object_part_text_input_panel_language_set
-     (sd->entry_edje, "elm.text", lang);
+     (sd->entry_edje, "elm.text", (Edje_Input_Panel_Lang)lang);
 }
 
 EAPI Elm_Input_Panel_Lang
@@ -5275,7 +5275,7 @@ _input_panel_return_key_type_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    sd->input_panel_return_key_type = return_key_type;
 
    edje_object_part_text_input_panel_return_key_type_set
-     (sd->entry_edje, "elm.text", return_key_type);
+     (sd->entry_edje, "elm.text", (Edje_Input_Panel_Return_Key_Type)return_key_type);
 }
 
 EAPI Elm_Input_Panel_Return_Key_Type
