@@ -111,6 +111,43 @@ EAPI Eina_Bool    elm_gesture_layer_attach(Evas_Object *obj, Evas_Object *target
 EAPI void         elm_gesture_layer_cb_set(Evas_Object *obj, Elm_Gesture_Type idx, Elm_Gesture_State cb_type, Elm_Gesture_Event_Cb cb, void *data);
 
 /**
+ * Use function to add callbacks to be notified about
+ * change of state of gesture.
+ * When a user registers a callback with this function
+ * this means this gesture has to be tested.
+ *
+ * When ALL callbacks for a gesture are set to NULL
+ * it means user isn't interested in gesture-state
+ * and it will not be tested.
+ *
+ * If a function was already set for this gesture/type/state, it will be
+ * replaced by the new one. For ABI compat, callbacks added by
+ * elm_gesture_layer_cb_add will be removed. It is recommended to
+ * use only one of these functions for a gesture object.
+ *
+ * @param obj gesture-layer.
+ * @param idx The gesture you would like to track its state.
+ * @param cb callback function pointer.
+ * @param cb_type what event this callback tracks: START, MOVE, END, ABORT.
+ * @param data user info to be sent to callback (usually, Smart Data)
+ *
+ */
+EAPI void elm_gesture_layer_cb_add(Evas_Object *obj, Elm_Gesture_Type idx, Elm_Gesture_State cb_type, Elm_Gesture_Event_Cb cb, void *data);
+
+/**
+ * Use this function to remove a callback that has been added
+ * to be notified about change of state of gesture.
+ *
+ * @param obj gesture-layer.
+ * @param idx The gesture you would like to track its state.
+ * @param cb callback function pointer.
+ * @param cb_type what event this callback tracks: START, MOVE, END, ABORT.
+ * @param data user info for the callback (usually, Smart Data)
+ *
+ */
+EAPI void elm_gesture_layer_cb_del(Evas_Object *obj, Elm_Gesture_Type idx, Elm_Gesture_State cb_type, Elm_Gesture_Event_Cb cb, void *data);
+
+/**
  * @since 1.8
  * This function sets the gesture layer finger-size for taps
  * If not set, this size taken from elm_config.

@@ -44,10 +44,10 @@ _glayer_buf_dup(void *buf, size_t size)
 
 #define SET_TEST_BIT(P)                               \
   do {                                                \
-       P->test = P->fn[ELM_GESTURE_STATE_START].cb || \
-         P->fn[ELM_GESTURE_STATE_MOVE].cb ||          \
-         P->fn[ELM_GESTURE_STATE_END].cb ||           \
-         P->fn[ELM_GESTURE_STATE_ABORT].cb;           \
+       P->test = P->cbs[ELM_GESTURE_STATE_START] || \
+         P->cbs[ELM_GESTURE_STATE_MOVE] ||          \
+         P->cbs[ELM_GESTURE_STATE_END] ||           \
+         P->cbs[ELM_GESTURE_STATE_ABORT];           \
     } while (0)
 
 #define IS_TESTED_GESTURE(gesture) \
@@ -118,6 +118,7 @@ typedef struct _Pointer_Event Pointer_Event;
  */
 struct _Func_Data
 {
+   EINA_INLIST;
    void                *user_data; /**< Holds user data to CB (like sd) */
    Elm_Gesture_Event_Cb cb;
 };
@@ -144,7 +145,7 @@ struct _Gesture_Info
 {
    Evas_Object      *obj;
    void             *data; /**< Holds gesture intemidiate processing data */
-   Func_Data         fn[ELM_GESTURE_STATE_ABORT + 1]; /**< Callback info for states */
+   Eina_Inlist      *cbs[ELM_GESTURE_STATE_ABORT + 1]; /**< Callback info (Func_Data) for states */
    Elm_Gesture_Type  g_type; /**< gesture type */
    Elm_Gesture_State state; /**< gesture state */
    void             *info; /**< Data for the state callback */
@@ -606,14 +607,16 @@ static Evas_Event_Flags
 _state_report(Gesture_Info *gesture,
               void *info)
 {
+   Evas_Event_Flags flags = EVAS_EVENT_FLAG_NONE;
    /* We report current state (START, MOVE, END, ABORT), once */
    if ((gesture->state != ELM_GESTURE_STATE_UNDEFINED) &&
-       (gesture->fn[gesture->state].cb)) /* Fill state-info struct and
-                                          * send ptr to user
-                                          * callback */
+       (gesture->cbs[gesture->state])) /* Fill state-info struct and
+                                        * send ptr to user
+                                        * callback */
      {
-        return gesture->fn[gesture->state].cb(
-                 gesture->fn[gesture->state].user_data, info);
+        Func_Data *cb_info;
+        EINA_INLIST_FOREACH(gesture->cbs[gesture->state], cb_info)
+           flags |= cb_info->cb(cb_info->user_data, info);
      }
 
    return EVAS_EVENT_FLAG_NONE;
@@ -3704,6 +3707,8 @@ _elm_gesture_layer_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    memset(priv->gesture, 0, sizeof(priv->gesture));
 }
 
+static void _cbs_clean(Elm_Gesture_Layer_Smart_Data *sd, Elm_Gesture_Type idx, Elm_Gesture_State cb_type);
+
 static void
 _elm_gesture_layer_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
@@ -3727,6 +3732,10 @@ _elm_gesture_layer_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
           if (sd->gesture[i]->data)
             free(sd->gesture[i]->data);
 
+          _cbs_clean(sd, i, ELM_GESTURE_STATE_START);
+          _cbs_clean(sd, i, ELM_GESTURE_STATE_MOVE);
+          _cbs_clean(sd, i, ELM_GESTURE_STATE_END);
+          _cbs_clean(sd, i, ELM_GESTURE_STATE_ABORT);
           free(sd->gesture[i]);
        }
    if (sd->gest_taps_timeout) ecore_timer_del(sd->gest_taps_timeout);
@@ -3888,6 +3897,23 @@ _attach(Eo *obj, void *_pd, va_list *list)
    if (ret) *ret = EINA_TRUE;
 }
 
+static void
+_cbs_clean(Elm_Gesture_Layer_Smart_Data *sd,
+          Elm_Gesture_Type idx,
+          Elm_Gesture_State cb_type)
+{
+   if (!sd->gesture[idx]) return;
+
+   Func_Data *cb_info;
+   EINA_INLIST_FREE(sd->gesture[idx]->cbs[cb_type], cb_info)
+     {
+        sd->gesture[idx]->cbs[cb_type] = eina_inlist_remove(
+              sd->gesture[idx]->cbs[cb_type], EINA_INLIST_GET(cb_info));
+        free(cb_info);
+     }
+   SET_TEST_BIT(sd->gesture[idx]);
+}
+
 EAPI void
 elm_gesture_layer_cb_set(Evas_Object *obj,
                          Elm_Gesture_Type idx,
@@ -3907,6 +3933,33 @@ _cb_set(Eo *obj, void *_pd, va_list *list)
    Elm_Gesture_Event_Cb cb = va_arg(*list, Elm_Gesture_Event_Cb);
    void *data = va_arg(*list, void *);
 
+   Elm_Gesture_Layer_Smart_Data *sd = _pd;
+
+   _cbs_clean(sd, idx, cb_type); // for ABI compat.
+   eo_do(obj, elm_obj_gesture_layer_cb_add(idx, cb_type, cb, data));
+}
+
+EAPI void
+elm_gesture_layer_cb_add(Evas_Object *obj,
+                         Elm_Gesture_Type idx,
+                         Elm_Gesture_State cb_type,
+                         Elm_Gesture_Event_Cb cb,
+                         void *data)
+{
+   ELM_GESTURE_LAYER_CHECK(obj);
+   eo_do(obj, elm_obj_gesture_layer_cb_add(idx, cb_type, cb, data));
+}
+
+static void
+_cb_add(Eo *obj, void *_pd, va_list *list)
+{
+   Elm_Gesture_Type idx = va_arg(*list, Elm_Gesture_Type);
+   Elm_Gesture_State cb_type = va_arg(*list, Elm_Gesture_State);
+   Elm_Gesture_Event_Cb cb = va_arg(*list, Elm_Gesture_Event_Cb);
+   void *data = va_arg(*list, void *);
+
+   if (!cb) return;
+
    Gesture_Info *p;
    Elm_Gesture_Layer_Smart_Data *sd = _pd;
 
@@ -3914,13 +3967,56 @@ _cb_set(Eo *obj, void *_pd, va_list *list)
      sd->gesture[idx] = calloc(1, sizeof(Gesture_Info));
    if (!sd->gesture[idx]) return;
 
+   Func_Data *cb_info = calloc(1, sizeof(*cb_info));
+   if (!cb_info) return;
+   cb_info->cb = cb;
+   cb_info->user_data = data;
+
    p = sd->gesture[idx];
    p->obj = obj;
    p->g_type = idx;
-   p->fn[cb_type].cb = cb;
-   p->fn[cb_type].user_data = data;
+   p->cbs[cb_type] = eina_inlist_append(p->cbs[cb_type],
+         EINA_INLIST_GET(cb_info));
    p->state = ELM_GESTURE_STATE_UNDEFINED;
    SET_TEST_BIT(p);
+}
+
+EAPI void
+elm_gesture_layer_cb_del(Evas_Object *obj,
+                         Elm_Gesture_Type idx,
+                         Elm_Gesture_State cb_type,
+                         Elm_Gesture_Event_Cb cb,
+                         void *data)
+{
+   ELM_GESTURE_LAYER_CHECK(obj);
+   eo_do(obj, elm_obj_gesture_layer_cb_del(idx, cb_type, cb, data));
+}
+
+static void
+_cb_del(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Elm_Gesture_Type idx = va_arg(*list, Elm_Gesture_Type);
+   Elm_Gesture_State cb_type = va_arg(*list, Elm_Gesture_State);
+   Elm_Gesture_Event_Cb cb = va_arg(*list, Elm_Gesture_Event_Cb);
+   void *data = va_arg(*list, void *);
+
+   Elm_Gesture_Layer_Smart_Data *sd = _pd;
+
+   if (!sd->gesture[idx]) return;
+
+   Eina_Inlist *itr;
+   Func_Data *cb_info;
+   EINA_INLIST_FOREACH_SAFE(sd->gesture[idx]->cbs[cb_type], itr, cb_info)
+     {
+        if (cb_info->cb == cb && cb_info->user_data == data)
+          {
+             sd->gesture[idx]->cbs[cb_type] = eina_inlist_remove(
+                   sd->gesture[idx]->cbs[cb_type], EINA_INLIST_GET(cb_info));
+             free(cb_info);
+             SET_TEST_BIT(sd->gesture[idx]);
+             return;
+          }
+     }
 }
 
 EAPI void
@@ -4158,6 +4254,8 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_OBJ_GESTURE_LAYER_ID(ELM_OBJ_GESTURE_LAYER_SUB_ID_CB_SET), _cb_set),
         EO_OP_FUNC(ELM_OBJ_GESTURE_LAYER_ID(ELM_OBJ_GESTURE_LAYER_TAP_FINGER_SIZE_SET), _tap_finger_size_set),
         EO_OP_FUNC(ELM_OBJ_GESTURE_LAYER_ID(ELM_OBJ_GESTURE_LAYER_TAP_FINGER_SIZE_GET), _tap_finger_size_get),
+        EO_OP_FUNC(ELM_OBJ_GESTURE_LAYER_ID(ELM_OBJ_GESTURE_LAYER_SUB_ID_CB_ADD), _cb_add),
+        EO_OP_FUNC(ELM_OBJ_GESTURE_LAYER_ID(ELM_OBJ_GESTURE_LAYER_SUB_ID_CB_DEL), _cb_del),
         EO_OP_FUNC_SENTINEL
    };
    eo_class_funcs_set(klass, func_desc);
@@ -4176,6 +4274,8 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_OBJ_GESTURE_LAYER_SUB_ID_CB_SET, "Use function to set callbacks to be notified about change of state of gesture."),
      EO_OP_DESCRIPTION(ELM_OBJ_GESTURE_LAYER_TAP_FINGER_SIZE_SET, "Use function to set valid touch-area size for finger."),
      EO_OP_DESCRIPTION(ELM_OBJ_GESTURE_LAYER_TAP_FINGER_SIZE_GET, "This function returns the valid touch-area size for finger."),
+     EO_OP_DESCRIPTION(ELM_OBJ_GESTURE_LAYER_SUB_ID_CB_ADD, "Use function to add callbacks to be notified about change of state of gesture."),
+     EO_OP_DESCRIPTION(ELM_OBJ_GESTURE_LAYER_SUB_ID_CB_DEL, "Use function to remove added callbacks."),
      EO_OP_DESCRIPTION_SENTINEL
 };
 

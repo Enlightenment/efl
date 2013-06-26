@@ -1458,3 +1458,8 @@
 2013-06-25  Ryuan Choi (ryuan)
 
         * Fix crash of elm_notify when timeout is zero.
+
+2013-06-26  Daniel Zaoui (JackDanielZ)
+
+        * Gesture Layer: add APIs to add/del multiple callbacks for a same
+	gesture/type/state.

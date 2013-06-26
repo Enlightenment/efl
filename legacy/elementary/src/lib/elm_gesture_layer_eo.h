@@ -16,6 +16,8 @@ enum
    ELM_OBJ_GESTURE_LAYER_SUB_ID_CB_SET,
    ELM_OBJ_GESTURE_LAYER_TAP_FINGER_SIZE_SET,
    ELM_OBJ_GESTURE_LAYER_TAP_FINGER_SIZE_GET,
+   ELM_OBJ_GESTURE_LAYER_SUB_ID_CB_ADD,
+   ELM_OBJ_GESTURE_LAYER_SUB_ID_CB_DEL,
    ELM_OBJ_GESTURE_LAYER_SUB_ID_LAST
 };
 
@@ -127,7 +129,10 @@ enum
  * @since 1.8
  *
  * Use function to set callbacks to be notified about
- * change of state of gesture.
+ * change of state of gesture. If a function was already
+ * set for this gesture/type/state, it will be replaced by the new one.
+ * For ABI compat, callbacks added by elm_obj_gesture_layer_cb_add will be removed. It is recommended
+ * to use only one of these functions for a gesture object.
  *
  * @param[in] idx
  * @param[in] cb_type
@@ -135,10 +140,47 @@ enum
  * @param[in] data
  *
  * @see elm_gesture_layer_cb_set
+ * @see elm_gesture_layer_cb_add
  *
  * @ingroup Elm_Gesture_Layer
  */
 #define elm_obj_gesture_layer_cb_set(idx, cb_type, cb, data) ELM_OBJ_GESTURE_LAYER_ID(ELM_OBJ_GESTURE_LAYER_SUB_ID_CB_SET), EO_TYPECHECK(Elm_Gesture_Type, idx), EO_TYPECHECK(Elm_Gesture_State, cb_type), EO_TYPECHECK(Elm_Gesture_Event_Cb, cb), EO_TYPECHECK(void *, data)
+
+/**
+ * @def elm_obj_gesture_layer_cb_add
+ * @since 1.8
+ *
+ * Use function to add a callback to be notified about
+ * change of state of gesture.
+ *
+ * @param[in] idx
+ * @param[in] cb_type
+ * @param[in] cb
+ * @param[in] data
+ *
+ * @see elm_gesture_layer_cb_add
+ *
+ * @ingroup Elm_Gesture_Layer
+ */
+#define elm_obj_gesture_layer_cb_add(idx, cb_type, cb, data) ELM_OBJ_GESTURE_LAYER_ID(ELM_OBJ_GESTURE_LAYER_SUB_ID_CB_ADD), EO_TYPECHECK(Elm_Gesture_Type, idx), EO_TYPECHECK(Elm_Gesture_State, cb_type), EO_TYPECHECK(Elm_Gesture_Event_Cb, cb), EO_TYPECHECK(void *, data)
+
+/**
+ * @def elm_obj_gesture_layer_cb_del
+ * @since 1.8
+ *
+ * Use function to remove a callback that has been added
+ * to be notified about change of state of gesture.
+ *
+ * @param[in] idx
+ * @param[in] cb_type
+ * @param[in] cb
+ * @param[in] data
+ *
+ * @see elm_gesture_layer_cb_del
+ *
+ * @ingroup Elm_Gesture_Layer
+ */
+#define elm_obj_gesture_layer_cb_del(idx, cb_type, cb, data) ELM_OBJ_GESTURE_LAYER_ID(ELM_OBJ_GESTURE_LAYER_SUB_ID_CB_DEL), EO_TYPECHECK(Elm_Gesture_Type, idx), EO_TYPECHECK(Elm_Gesture_State, cb_type), EO_TYPECHECK(Elm_Gesture_Event_Cb, cb), EO_TYPECHECK(void *, data)
 
 /**
  * @def elm_obj_gesture_layer_tap_finger_size_set
