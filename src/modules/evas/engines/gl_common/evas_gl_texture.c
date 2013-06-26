@@ -825,6 +825,7 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im)
      }
    // If image was preloaded then we need a ptt
    if (!tex->pt) return;
+   if (!im->image.data) return;
 
    // if preloaded, then async push it in after uploading a miniature of it
    if (im->cache_entry.flags.preload_done && tex->w > 2 * EVAS_GL_TILE_SIZE && tex->h > 2 * EVAS_GL_TILE_SIZE)
