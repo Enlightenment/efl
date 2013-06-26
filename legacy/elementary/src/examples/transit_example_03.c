@@ -166,7 +166,7 @@ _cb_tween_changed(void *data, Evas_Object *obj, void *event)
 EAPI_MAIN int
 elm_main(int argc, char **argv)
 {
-   Evas_Object *win, *bg, *obj, *icon, *box, *vbox, *vbox2, *hbox, *btn;
+   Evas_Object *win, *obj, *icon, *box, *vbox, *vbox2, *hbox, *btn;
    Evas_Object *cbox, *dummy, *spinner;
    char buf[PATH_MAX];
    int i;
@@ -183,16 +183,8 @@ elm_main(int argc, char **argv)
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
 
    /* add a window */
-   win = elm_win_add(NULL, "transit", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Transit Example");
+   win = elm_win_util_standard_add("transit", "Transit Example");
    elm_win_autodel_set(win, EINA_TRUE);
-
-   /* add a scalable white background to this window */
-   bg = elm_bg_add(win);
-   elm_bg_color_set(bg, 255, 255, 255);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, bg);
-   evas_object_show(bg);
 
    /* add a vertical box that will hold everything */
    box = elm_box_add(win);

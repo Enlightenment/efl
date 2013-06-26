@@ -462,7 +462,7 @@ default_content_set(Evas_Object *web)
 EAPI_MAIN int
 elm_main(int argc, char *argv[])
 {
-   Evas_Object *win, *bg, *box, *box2, *btn, *ic, *url_bar, *naviframe, *tabs, *web;
+   Evas_Object *win, *box, *box2, *btn, *ic, *url_bar, *naviframe, *tabs, *web;
    Evas *e;
    Evas_Modifier_Mask ctrl_mask;
    App_Data *ad;
@@ -475,7 +475,7 @@ elm_main(int argc, char *argv[])
 
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
 
-   win = elm_win_add(NULL, "example-web", ELM_WIN_BASIC);
+   win = elm_win_util_standard_add("example-web", "Web Example");
    elm_win_autodel_set(win, EINA_TRUE);
 
    e = evas_object_evas_get(win);
@@ -488,11 +488,6 @@ elm_main(int argc, char *argv[])
    evas_object_event_callback_add(win, EVAS_CALLBACK_KEY_DOWN,
                                   _win_search_trigger_cb, ad);
    evas_object_event_callback_add(win, EVAS_CALLBACK_FREE, _win_free_cb, ad);
-
-   bg = elm_bg_add(win);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, bg);
-   evas_object_show(bg);
 
    box = elm_box_add(win);
    evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

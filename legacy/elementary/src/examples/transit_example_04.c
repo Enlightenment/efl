@@ -81,7 +81,7 @@ _transit_start(void *data, Evas_Object *o, void *event_info)
 EAPI_MAIN int
 elm_main(int argc, char **argv)
 {
-   Evas_Object *win, *bg, *obj, *icon, *box, *vbox, *btn, *dummy;
+   Evas_Object *win, *obj, *icon, *box, *vbox, *btn, *dummy;
    Eina_List *objs = NULL;
    char buf[PATH_MAX];
    int i;
@@ -90,16 +90,8 @@ elm_main(int argc, char **argv)
    elm_app_info_set(elm_main, "elementary", "images/icon_07.png");
 
    /* add a window */
-   win = elm_win_add(NULL, "transit", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Transit Example");
+   win = elm_win_util_standard_add("transit", "Transit Example");
    elm_win_autodel_set(win, EINA_TRUE);
-
-   /* add a scalable white background to this window */
-   bg = elm_bg_add(win);
-   elm_bg_color_set(bg, 255, 255, 255);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, bg);
-   evas_object_show(bg);
 
    box = elm_box_add(win);
    evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

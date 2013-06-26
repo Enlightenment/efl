@@ -161,7 +161,7 @@ EAPI_MAIN int
 elm_main(int    argc,
          char **argv)
 {
-   Evas_Object *win, *bg, *notify, *bx, *bt, *hv, *spin;
+   Evas_Object *win, *notify, *bx, *bt, *hv, *spin;
    Elm_Object_Item *slide_first, *slide_last, *slide_it;
    const char *transition, *layout;
    const Eina_List *l, *list;
@@ -181,17 +181,10 @@ elm_main(int    argc,
 
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
 
-   win = elm_win_add(NULL, "slideshow", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Slideshow example");
+   win = elm_win_util_standard_add("slideshow", "Slideshow example");
    elm_win_autodel_set(win, EINA_TRUE);
-   elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
    evas_object_resize(win, 600, 400);
    evas_object_show(win);
-
-   bg = elm_bg_add(win);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, bg);
-   evas_object_show(bg);
 
    slideshow = elm_slideshow_add(win);
    elm_slideshow_loop_set(slideshow, EINA_TRUE);

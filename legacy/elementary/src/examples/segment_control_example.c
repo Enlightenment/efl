@@ -14,20 +14,14 @@
 EAPI_MAIN int
 elm_main(int argc, char **argv)
 {
-   Evas_Object *win, *bg, *sc, *ic;
+   Evas_Object *win, *sc, *ic;
    Elm_Object_Item *seg_it;
    int count, idx;
 
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
 
-   win = elm_win_add(NULL, "segment_control", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Segment Control Example");
+   win = elm_win_util_standard_add("segment_control", "Segment Control Example");
    elm_win_autodel_set(win, EINA_TRUE);
-
-   bg = elm_bg_add(win);
-   elm_win_resize_object_add(win, bg);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_show(bg);
 
    sc = elm_segment_control_add(win);
    evas_object_size_hint_weight_set(sc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
