@@ -334,13 +334,16 @@ static void *
 _open_request_build(File_Data *f, int *bufsize)
 {
    char *buf;
-   int size, pathlen, keylen;
+   int size, pathlen, keylen, loaderlen;
    Slave_Msg_Image_Open msg;
 
    pathlen = strlen(f->path) + 1;
    keylen = strlen(f->key) + 1;
 
-   size = sizeof(msg) + pathlen + keylen;
+   msg.has_loader_data = !!f->loader_data;
+   loaderlen = msg.has_loader_data ? (strlen(f->loader_data) + 1) : 0;
+
+   size = sizeof(msg) + pathlen + keylen + loaderlen;
    buf = malloc(size);
    if (!buf) return NULL;
 
@@ -348,6 +351,8 @@ _open_request_build(File_Data *f, int *bufsize)
    memcpy(buf, &msg, sizeof(msg));
    memcpy(buf + sizeof(msg), f->path, pathlen);
    memcpy(buf + sizeof(msg) + pathlen, f->key, keylen);
+   if (msg.has_loader_data)
+     memcpy(buf + sizeof(msg) + pathlen + keylen, f->loader_data, loaderlen);
 
    *bufsize = size;
 
