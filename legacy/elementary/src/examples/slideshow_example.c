@@ -11,14 +11,6 @@
 
 #include <Elementary.h>
 
-static void
-_on_done(void        *data,
-         Evas_Object *obj,
-         void        *event_info)
-{
-   elm_exit();
-}
-
 static Evas_Object *slideshow, *bt_start, *bt_stop;
 static Elm_Slideshow_Item_Class itc;
 
@@ -187,9 +179,10 @@ elm_main(int    argc,
    snprintf(img8, sizeof(img8), "%s/images/mystrale.jpg", data_dir);
    snprintf(img9, sizeof(img9), "%s/images/mystrale_2.jpg", data_dir);
 
+   elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
+
    win = elm_win_add(NULL, "slideshow", ELM_WIN_BASIC);
    elm_win_title_set(win, "Slideshow example");
-   evas_object_smart_callback_add(win, "delete,request", _on_done, NULL);
    elm_win_autodel_set(win, EINA_TRUE);
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
    evas_object_resize(win, 600, 400);

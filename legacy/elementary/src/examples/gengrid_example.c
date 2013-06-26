@@ -32,14 +32,6 @@ static const char *imgs[9] =
 static Elm_Gengrid_Item_Class *gic = NULL;
 static Evas_Object *before_bt, *after_bt;
 
-static void
-_on_done(void        *data,
-         Evas_Object *obj,
-         void        *event_info)
-{
-   elm_exit();
-}
-
 /* change layouting mode */
 static void
 _horizontal_grid(void        *data,
@@ -430,10 +422,12 @@ elm_main(int    argc,
 
    srand(time(NULL));
 
+   elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
    elm_app_info_set(elm_main, "elementary", "images");
+
    win = elm_win_add(NULL, "gengrid", ELM_WIN_BASIC);
    elm_win_title_set(win, "Generic Grid Example");
-   evas_object_smart_callback_add(win, "delete,request", _on_done, NULL);
+   elm_win_autodel_set(win, EINA_TRUE);
 
    bg = elm_bg_add(win);
    evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

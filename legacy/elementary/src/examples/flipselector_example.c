@@ -20,14 +20,6 @@ static const char *commands = \
                               "\ts - print selected item's label\n"
                               "\th - print help\n";
 
-static void
-_on_done(void        *data,
-         Evas_Object *obj,
-         void        *event_info)
-{
-   elm_exit();
-}
-
 void /* unselect the item shown in the flip selector */
 _unsel_cb(void        *data,
           Evas_Object *obj,
@@ -158,9 +150,11 @@ elm_main(int argc, char **argv)
         "Eldbus"
      };
 
+   elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
+
    win = elm_win_add(NULL, "flipselector", ELM_WIN_BASIC);
    elm_win_title_set(win, "Flip Selector Example");
-   evas_object_smart_callback_add(win, "delete,request", _on_done, NULL);
+   elm_win_autodel_set(win, EINA_TRUE);
 
    bg = elm_bg_add(win);
    elm_win_resize_object_add(win, bg);

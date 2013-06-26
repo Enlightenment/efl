@@ -5,13 +5,6 @@
 #include <Elementary.h>
 
 static void
-on_done(void *data, Evas_Object *obj, void *event_info)
-{
-   /* quit the mainloop (elm_run) */
-   elm_exit();
-}
-
-static void
 _cb_radio_changed(void *data, Evas_Object *obj, void *event)
 {
    Evas_Object *o_bg = data;
@@ -64,10 +57,11 @@ elm_main(int argc, char **argv)
    Evas_Object *rd, *rdg;
    char buf[PATH_MAX];
 
+   elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
    elm_app_info_set(elm_main, "elementary", "objects/test.edj");
+
    win = elm_win_add(NULL, "bg-options", ELM_WIN_BASIC);
    elm_win_title_set(win, "Bg Options");
-   evas_object_smart_callback_add(win, "delete,request", on_done, NULL);
    elm_win_autodel_set(win, EINA_TRUE);
 
    bg = elm_bg_add(win);

@@ -486,13 +486,6 @@ _edit_tplclick_cb(void *data, Evas_Object *obj, void *event)
    elm_entry_cursor_selection_end(obj);
 }
 
-static void
-_win_del_cb(void *data, Evas_Object *obj, void *event)
-{
-   evas_object_del(obj);
-   elm_exit();
-}
-
 EAPI_MAIN int
 elm_main(int argc, char *argv[])
 {
@@ -501,8 +494,11 @@ elm_main(int argc, char *argv[])
 
    memset(&app, 0, sizeof(app));
 
+   elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
+
    win = elm_win_add(NULL, "entry-example", ELM_WIN_BASIC);
    elm_win_title_set(win, "Emacs Lite");
+   elm_win_autodel_set(win, EINA_TRUE);
    evas_object_show(win);
 
    bg = elm_bg_add(win);
@@ -573,8 +569,6 @@ elm_main(int argc, char *argv[])
                                   NULL);
    evas_object_smart_callback_add(en, "clicked,triple", _edit_tplclick_cb,
                                   NULL);
-
-   evas_object_smart_callback_add(win, "delete,request", _win_del_cb, &app);
 
    elm_object_focus_set(app.edit_buffer, EINA_TRUE);
 

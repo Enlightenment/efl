@@ -11,14 +11,6 @@
 
 #include <Elementary.h>
 
-static void
-_on_done(void        *data,
-         Evas_Object *obj,
-         void        *event_info)
-{
-   elm_exit();
-}
-
 static void /* hook on the sole smart callback */
 _file_chosen(void            *data,
              Evas_Object *obj,
@@ -91,9 +83,11 @@ elm_main(int    argc,
 {
    Evas_Object *win, *bg, *vbox, *hbox, *ic, *ck, *fs_bt, *en, *lb, *sep;
 
+   elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
+
    win = elm_win_add(NULL, "fileselector-button", ELM_WIN_BASIC);
    elm_win_title_set(win, "File Selector Button Example");
-   evas_object_smart_callback_add(win, "delete,request", _on_done, NULL);
+   elm_win_autodel_set(win, EINA_TRUE);
 
    bg = elm_bg_add(win);
    elm_win_resize_object_add(win, bg);

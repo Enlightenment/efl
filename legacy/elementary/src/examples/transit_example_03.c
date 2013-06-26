@@ -78,13 +78,6 @@ static struct {
        { NULL, NULL, EINA_FALSE }
 };
 
-static void
-on_done(void *data, Evas_Object *obj, void *event_info)
-{
-   /* quit the mainloop (elm_run) */
-   elm_exit();
-}
-
 /* add a checkbox to the box with the given label, and uses the checked
  * pointer as state_pointer to this checkbox */
 static void
@@ -187,11 +180,11 @@ elm_main(int argc, char **argv)
    context.tween_mode = ELM_TRANSIT_TWEEN_MODE_LINEAR;
 
    elm_app_info_set(elm_main, "elementary", "images/icon_07.png");
+   elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
 
    /* add a window */
    win = elm_win_add(NULL, "transit", ELM_WIN_BASIC);
    elm_win_title_set(win, "Transit Example");
-   evas_object_smart_callback_add(win, "delete,request", on_done, NULL);
    elm_win_autodel_set(win, EINA_TRUE);
 
    /* add a scalable white background to this window */

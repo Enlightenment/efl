@@ -4,23 +4,17 @@
 
 #include <Elementary.h>
 
-static void
-on_done(void *data, Evas_Object *obj, void *event_info)
-{
-   /* quit the mainloop (elm_run) */
-   elm_exit();
-}
-
 EAPI_MAIN int
 elm_main(int argc, char **argv)
 {
    Evas_Object *win, *bg;
    char buf[PATH_MAX];
 
+   elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
    elm_app_info_set(elm_main, "elementary", "images/plant_01.jpg");
+
    win = elm_win_add(NULL, "bg-image", ELM_WIN_BASIC);
    elm_win_title_set(win, "Bg Image");
-   evas_object_smart_callback_add(win, "delete,request", on_done, NULL);
    elm_win_autodel_set(win, EINA_TRUE);
 
    bg = elm_bg_add(win);

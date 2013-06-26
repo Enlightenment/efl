@@ -12,14 +12,6 @@
 #include <Elementary.h>
 
 static void
-_on_done(void *data,
-         Evas_Object *obj,
-         void *event_info)
-{
-   elm_exit();
-}
-
-static void
 _changed_cb(void *data, Evas_Object *obj, void *event_info)
 {
    printf("Value changed to %0.f\n", elm_spinner_value_get(obj));
@@ -36,9 +28,11 @@ elm_main(int argc, char **argv)
 {
    Evas_Object *win, *bg, *bx, *sp;
 
+   elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
+
    win = elm_win_add(NULL, "spinner", ELM_WIN_BASIC);
    elm_win_title_set(win, "Spinner Example");
-   evas_object_smart_callback_add(win, "delete,request", _on_done, NULL);
+   elm_win_autodel_set(win, EINA_TRUE);
 
    bg = elm_bg_add(win);
    elm_win_resize_object_add(win, bg);

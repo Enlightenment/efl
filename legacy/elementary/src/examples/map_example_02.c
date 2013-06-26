@@ -140,12 +140,6 @@ _bt_zoom_fill(void *data, Evas_Object *obj, void *event_info)
    elm_map_zoom_mode_set(map, ELM_MAP_ZOOM_MODE_AUTO_FILL);
 }
 
-static void
-_on_done(void *data, Evas_Object *obj, void *event_info)
-{
-   elm_exit();
-}
-
 /* FIXME: it shouldn't be required. For unknown reason map won't call
  * pan_calculate until shot delay time, but then it will take a screenshot
  * when the map isn't loaded yet (actually it won't be downloaded, because
@@ -181,9 +175,11 @@ elm_main(int argc, char **argv)
    snprintf(buf, sizeof(buf), "%s/images/sky_03.jpg", "sdf");
    data_brasilia.file = strdup(buf);
 
+   elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
+
    win = elm_win_add(NULL, "map", ELM_WIN_BASIC);
    elm_win_title_set(win, "Map Overlay Example");
-   evas_object_smart_callback_add(win, "delete,request", _on_done, NULL);
+   elm_win_autodel_set(win, EINA_TRUE);
 
    bg = elm_bg_add(win);
    elm_win_resize_object_add(win, bg);

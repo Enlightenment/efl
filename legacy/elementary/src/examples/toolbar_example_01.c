@@ -12,14 +12,6 @@
 #include <Elementary.h>
 
 static void
-_on_done(void *data,
-         Evas_Object *obj,
-         void *event_info)
-{
-   elm_exit();
-}
-
-static void
 _item_1_pressed(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *bt = data;
@@ -47,9 +39,11 @@ elm_main(int argc, char **argv)
    Evas_Object *win, *bg, *bx, *tb, *bt;
    Elm_Object_Item *tb_it;
 
+   elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
+
    win = elm_win_add(NULL, "toolbar", ELM_WIN_BASIC);
    elm_win_title_set(win, "Toolbar Example");
-   evas_object_smart_callback_add(win, "delete,request", _on_done, NULL);
+   elm_win_autodel_set(win, EINA_TRUE);
 
    bg = elm_bg_add(win);
    elm_win_resize_object_add(win, bg);

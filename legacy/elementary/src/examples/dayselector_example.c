@@ -11,14 +11,6 @@
 
 #include <Elementary.h>
 
-static void
-_on_done(void *data,
-         Evas_Object *obj,
-         void *event_info)
-{
-   elm_exit();
-}
-
 /* Callback function when a day is clicked. */
 static void _changed_cb(void* data, Evas_Object* obj, void* event_info)
 {
@@ -50,9 +42,11 @@ elm_main(int argc, char **argv)
 {
    Evas_Object *win, *bg, *bx, *dayselector;
 
+   elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
+
    win = elm_win_add(NULL, "dayselector", ELM_WIN_BASIC);
    elm_win_title_set(win, "Dayselector Example");
-   evas_object_smart_callback_add(win, "delete,request", _on_done, NULL);
+   elm_win_autodel_set(win, EINA_TRUE);
 
    bg = elm_bg_add(win);
    elm_win_resize_object_add(win, bg);

@@ -32,14 +32,6 @@ _index_changed(void        *data,
    elm_gengrid_item_bring_in(item, ELM_GENGRID_ITEM_SCROLLTO_IN);
 }
 
-static void
-_on_done(void        *data,
-         Evas_Object *obj,
-         void        *event_info)
-{
-   elm_exit();
-}
-
 static char *
 _grid_label_get(void        *data,
                 Evas_Object *obj,
@@ -97,10 +89,12 @@ elm_main(int    argc,
 
    Elm_Gengrid_Item_Class gic;
 
+   elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
    elm_app_info_set(elm_main, "elementary", "images");
+
    win = elm_win_add(NULL, "index", ELM_WIN_BASIC);
    elm_win_title_set(win, "Index Example");
-   evas_object_smart_callback_add(win, "delete,request", _on_done, NULL);
+   elm_win_autodel_set(win, EINA_TRUE);
 
    bg = elm_bg_add(win);
    elm_win_resize_object_add(win, bg);
