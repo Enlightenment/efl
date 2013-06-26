@@ -54,6 +54,9 @@ struct _Msg_Open {
    unsigned int file_id;
    int path_offset;
    int key_offset;
+   unsigned int image_id;
+
+   Eina_Bool has_load_opts : 1;
 };
 
 struct _Msg_Opened {

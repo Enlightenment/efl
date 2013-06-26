@@ -130,9 +130,24 @@ _cserve2_client_open(Client *client)
    key = ((const char *)msg) + sizeof(*msg) + msg->key_offset;
 
    INF("Received OPEN command: RID=%d", msg->base.rid);
-   INF("File_ID: %d, path=\"%s\", key=\"%s\"", msg->file_id, path, key);
+   INF("File_ID: %d, path=\"%s\", key=\"%s\", has_load_opts=%d",
+       msg->file_id, path, key, (int) msg->has_load_opts);
 
    cserve2_cache_file_open(client, msg->file_id, path, key, msg->base.rid);
+
+   if (!msg->has_load_opts)
+     {
+        /* FIXME: We should remove this fake call to setopts and do the
+         * appropriate work instead. (split functions) */
+        Msg_Setopts optsmsg;
+
+        memset(&optsmsg, 0, sizeof(optsmsg));
+        optsmsg.base.rid  = msg->base.rid;
+        optsmsg.base.type = CSERVE2_SETOPTS;
+        optsmsg.file_id   = msg->file_id;
+        optsmsg.image_id  = msg->image_id;
+        cserve2_cache_image_opts_set(client, &optsmsg);
+     }
 }
 
 static void

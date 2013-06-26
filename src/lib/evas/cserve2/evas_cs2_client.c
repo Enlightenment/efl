@@ -46,6 +46,25 @@ static Eina_List *_requests = NULL;
 #define UNIX_PATH_MAX sizeof(((struct sockaddr_un *)NULL)->sun_path)
 #endif
 
+static inline Eina_Bool
+_memory_zero_cmp(void *data, size_t len)
+{
+   const int *idata = data;
+   const char *cdata;
+   int remain;
+
+   if (!data || !len) return EINA_TRUE;
+
+   for (remain = len / sizeof(idata); remain > 0; --remain)
+     if (*idata++ != 0) return EINA_FALSE;
+
+   cdata = (const char*) idata;
+   for (remain = ((const char*) data + len) - cdata; remain > 0; --remain)
+     if (*cdata++ != 0) return EINA_FALSE;
+
+   return EINA_TRUE;
+}
+
 static void
 _socket_path_set(char *path)
 {
@@ -585,7 +604,7 @@ _build_absolute_path(const char *path, char buf[], int size)
 }
 
 static unsigned int
-_image_open_server_send(Image_Entry *ie, const char *file, const char *key, Evas_Image_Load_Opts *lopt EINA_UNUSED)
+_image_open_server_send(Image_Entry *ie, const char *file, const char *key, Eina_Bool has_load_opts)
 {
    int flen, klen;
    int size;
@@ -593,12 +612,16 @@ _image_open_server_send(Image_Entry *ie, const char *file, const char *key, Evas
    char filebuf[PATH_MAX];
    Msg_Open msg_open;
    File_Entry *fentry;
+   Data_Entry *dentry;
 
    if (cserve2_init == 0)
      {
         ERR("Server not initialized.");
         return 0;
      }
+
+   ie->data1 = NULL;
+   ie->data2 = NULL;
 
    flen = _build_absolute_path(file, filebuf, sizeof(filebuf));
    if (!flen)
@@ -611,6 +634,16 @@ _image_open_server_send(Image_Entry *ie, const char *file, const char *key, Evas
    if (!key) key = "";
 
    fentry = calloc(1, sizeof(*fentry));
+   if (!fentry)
+     return 0;
+
+   dentry = calloc(1, sizeof(*dentry));
+   if (!dentry)
+     {
+        free(fentry);
+        return 0;
+     }
+
 
    memset(&msg_open, 0, sizeof(msg_open));
 
@@ -622,10 +655,17 @@ _image_open_server_send(Image_Entry *ie, const char *file, const char *key, Evas
    msg_open.file_id = fentry->file_id;
    msg_open.path_offset = 0;
    msg_open.key_offset = flen;
+   msg_open.has_load_opts = has_load_opts;
+   msg_open.image_id = ++_data_id;
 
    size = sizeof(msg_open) + flen + klen;
    buf = malloc(size);
-   if (!buf) return EINA_FALSE;
+   if (!buf)
+     {
+        free(fentry);
+        free(dentry);
+        return 0;
+     }
    memcpy(buf, &msg_open, sizeof(msg_open));
    memcpy(buf + sizeof(msg_open), filebuf, flen);
    memcpy(buf + sizeof(msg_open) + flen, key, klen);
@@ -635,11 +675,15 @@ _image_open_server_send(Image_Entry *ie, const char *file, const char *key, Evas
         ERR("Couldn't send message to server.");
         free(buf);
         free(fentry);
+        free(dentry);
         return 0;
      }
 
    free(buf);
    ie->data1 = fentry;
+
+   dentry->image_id = msg_open.image_id;
+   ie->data2 = dentry;
 
    return msg_open.base.rid;
 }
@@ -647,23 +691,17 @@ _image_open_server_send(Image_Entry *ie, const char *file, const char *key, Evas
 static unsigned int
 _image_setopts_server_send(Image_Entry *ie)
 {
-   File_Entry *fentry;
-   Data_Entry *dentry;
+   File_Entry *fentry = ie->data1;
+   Data_Entry *dentry = ie->data2;
    Msg_Setopts msg;
 
    if (cserve2_init == 0)
      return 0;
 
-   fentry = ie->data1;
-
-   dentry = calloc(1, sizeof(*dentry));
-   if (!dentry)
+   if (!fentry || !dentry)
      return 0;
 
    memset(&msg, 0, sizeof(msg));
-   dentry->image_id = ++_data_id;
-   if (dentry->image_id == 0)
-     dentry->image_id = ++_data_id;
 
    msg.base.rid = _next_rid();
    msg.base.type = CSERVE2_SETOPTS;
@@ -691,10 +729,9 @@ _image_setopts_server_send(Image_Entry *ie)
    if (!_server_send(&msg, sizeof(msg), NULL, NULL))
      {
         free(dentry);
+        ie->data2 = NULL;
         return 0;
      }
-
-   ie->data2 = dentry;
 
    return msg.base.rid;
 }
@@ -840,17 +877,20 @@ Eina_Bool
 evas_cserve2_image_load(Image_Entry *ie, const char *file, const char *key, Evas_Image_Load_Opts *lopt)
 {
    unsigned int rid;
+   Eina_Bool has_load_opts;
 
    if (!ie)
      return EINA_FALSE;
 
-   rid = _image_open_server_send(ie, file, key, lopt);
+   has_load_opts = !_memory_zero_cmp(lopt, sizeof(*lopt));
+   rid = _image_open_server_send(ie, file, key, has_load_opts);
    if (!rid)
      return EINA_FALSE;
 
    ie->open_rid = rid;
 
-   _image_setopts_server_send(ie);
+   if (has_load_opts)
+     _image_setopts_server_send(ie);
 
    // _server_dispatch_until(rid);
 
