@@ -30,6 +30,9 @@
  */
 #define HKEY_LOAD_OPTS_STR_LEN 215
 
+// Default LRU size. If 0, all scaled images will be dropped instantly.
+#define DEFAULT_CACHE_LRU_SIZE (4*1024*1024)
+
 static void _evas_cache_image_dirty_add(Image_Entry *im);
 static void _evas_cache_image_dirty_del(Image_Entry *im);
 static void _evas_cache_image_activ_add(Image_Entry *im);
@@ -484,11 +487,18 @@ on_error:
 EAPI Evas_Cache2 *
 evas_cache2_init(const Evas_Cache2_Image_Func *cb)
 {
+   char *env;
    Evas_Cache2 *cache = calloc(1, sizeof(Evas_Cache2));
 
    cache->func = *cb;
    cache->activ = eina_hash_string_superfast_new(NULL);
    cache->inactiv = eina_hash_string_superfast_new(NULL);
+
+   env = getenv("EVAS_CSERVE2_SIZE");
+   if (env)
+     cache->limit = atoi(env) * 1024 * 1024;
+   if (!env || (cache->limit < 0))
+     cache->limit = DEFAULT_CACHE_LRU_SIZE;
 
    return cache;
 }
