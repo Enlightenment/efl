@@ -95,10 +95,7 @@ _list_item_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED
    Evas_Coord x,y;
 
    ctxpopup = elm_ctxpopup_add(obj);
-   evas_object_smart_callback_add(ctxpopup,
-                                  "dismissed",
-                                  _dismissed,
-                                  NULL);
+   evas_object_smart_callback_add(ctxpopup, "dismissed", _dismissed, NULL);
 
    ITEM_NEW(ctxpopup, "Go to home folder", "home");
    ITEM_NEW(ctxpopup, "Save file", "file");
@@ -124,10 +121,7 @@ _list_item_cb2(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSE
    Evas_Coord x,y;
 
    ctxpopup = elm_ctxpopup_add(obj);
-   evas_object_smart_callback_add(ctxpopup,
-                                  "dismissed",
-                                  _dismissed,
-                                  NULL);
+   evas_object_smart_callback_add(ctxpopup, "dismissed", _dismissed, NULL);
 
    ITEM_NEW(ctxpopup, NULL, "home");
    ITEM_NEW(ctxpopup, NULL, "file");
@@ -152,10 +146,7 @@ _list_item_cb3(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSE
    Evas_Coord x,y;
 
    ctxpopup = elm_ctxpopup_add(obj);
-   evas_object_smart_callback_add(ctxpopup,
-                                  "dismissed",
-                                  _dismissed,
-                                  NULL);
+   evas_object_smart_callback_add(ctxpopup, "dismissed", _dismissed, NULL);
 
    ITEM_NEW(ctxpopup, "Eina", NULL);
    ITEM_NEW(ctxpopup, "Eet", NULL);
@@ -179,10 +170,7 @@ _list_item_cb4(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSE
    Evas_Coord x,y;
 
    ctxpopup = elm_ctxpopup_add(obj);
-   evas_object_smart_callback_add(ctxpopup,
-                                  "dismissed",
-                                  _dismissed,
-                                  NULL);
+   evas_object_smart_callback_add(ctxpopup, "dismissed", _dismissed, NULL);
 
    elm_ctxpopup_horizontal_set(ctxpopup, EINA_TRUE);
 
@@ -227,10 +215,7 @@ _list_item_cb5(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSE
    elm_box_pack_end(bx, sc);
 
    ctxpopup = elm_ctxpopup_add(obj);
-   evas_object_smart_callback_add(ctxpopup,
-                                  "dismissed",
-                                  _dismissed,
-                                  NULL);
+   evas_object_smart_callback_add(ctxpopup, "dismissed", _dismissed, NULL);
 
    elm_object_content_set(ctxpopup, bx);
 
@@ -267,10 +252,7 @@ _list_item_cb6(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSE
    elm_box_pack_end(bx, sc);
 
    ctxpopup = elm_ctxpopup_add(obj);
-   evas_object_smart_callback_add(ctxpopup,
-                                  "dismissed",
-                                  _dismissed,
-                                  NULL);
+   evas_object_smart_callback_add(ctxpopup, "dismissed", _dismissed, NULL);
 
    elm_object_content_set(ctxpopup, bx);
 
@@ -308,10 +290,7 @@ _list_item_cb7(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSE
    Evas_Coord x,y;
 
    ctxpopup = elm_ctxpopup_add(obj);
-   evas_object_smart_callback_add(ctxpopup,
-                                  "dismissed",
-                                  _dismissed,
-                                  NULL);
+   evas_object_smart_callback_add(ctxpopup, "dismissed", _dismissed, NULL);
 
    elm_ctxpopup_item_append(ctxpopup, "Disable this item", NULL, _ctxpopup_item_disable_cb, ctxpopup);
    elm_ctxpopup_item_append(ctxpopup, "Delete this ctxpopup", NULL, _ctxpopup_item_delete_cb, ctxpopup);
