@@ -24,17 +24,12 @@ _show(void *data, Evas *e, Evas_Object *obj, void *event_info)
 EAPI_MAIN int
 elm_main(int argc, char **argv)
 {
-   Evas_Object *win, *bg, *menu, *button, *rect;
+   Evas_Object *win, *menu, *button, *rect;
    Elm_Object_Item *menu_it, *menu_it1;
 
-   win = elm_win_add(NULL, "menu", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Menu");
+   win = elm_win_util_standard_add("menu", "Menu");
    elm_win_autodel_set(win, EINA_TRUE);
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
-
-   bg = elm_bg_add(win);
-   elm_win_resize_object_add(win, bg);
-   evas_object_show(bg);
 
    rect = evas_object_rectangle_add(evas_object_evas_get(win));
    elm_win_resize_object_add(win, rect);

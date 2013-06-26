@@ -150,18 +150,13 @@ EAPI_MAIN int
 elm_main(int    argc,
          char **argv)
 {
-   Evas_Object *win, *bg, *pb, *bx, *hbx, *bt, *bt_bx, *ic1, *ic2, *label;
+   Evas_Object *win, *pb, *bx, *hbx, *bt, *bt_bx, *ic1, *ic2, *label;
    char buf[PATH_MAX];
 
    elm_app_info_set(elm_main, "elementary", "images/logo_small.png");
-   win = elm_win_add(NULL, "progressbar", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Progress bar example");
-   evas_object_smart_callback_add(win, "delete,request", _on_done, NULL);
 
-   bg = elm_bg_add(win);
-   elm_win_resize_object_add(win, bg);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_show(bg);
+   win = elm_win_util_standard_add("progressbar", "Progress bar example");
+   evas_object_smart_callback_add(win, "delete,request", _on_done, NULL);
 
    bx = elm_box_add(win);
    elm_win_resize_object_add(win, bx);

@@ -9,20 +9,15 @@ static void _response_cb(void *data, Evas_Object *obj, void *event_info);
 EAPI_MAIN int
 elm_main(int argc, char **argv)
 {
-   Evas_Object *win, *bg, *popup, *btn1, *btn2, *icon1;
+   Evas_Object *win, *popup, *btn1, *btn2, *icon1;
    Elm_Object_Item *popup_it1;
    char buf[256];
 
    elm_app_info_set(elm_main, "elementary", "images/logo_small.png");
-   win = elm_win_add(NULL, "popup", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Popup");
-   elm_win_autodel_set(win, EINA_TRUE);
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
 
-   bg = elm_bg_add(win);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, bg);
-   evas_object_show(bg);
+   win = elm_win_util_standard_add("popup", "Popup");
+   elm_win_autodel_set(win, EINA_TRUE);
 
    popup = elm_popup_add(win);
 

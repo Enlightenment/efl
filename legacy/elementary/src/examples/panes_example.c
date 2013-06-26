@@ -52,19 +52,13 @@ _clicked_double(void *data, Evas_Object *obj, void *event_info)
 EAPI_MAIN int
 elm_main(int argc, char **argv)
 {
-   Evas_Object *win, *bg, *panes, *panes_h, *bt;
+   Evas_Object *win, *panes, *panes_h, *bt;
 
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
 
-   win = elm_win_add(NULL, "panes", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Panes Example");
+   win = elm_win_util_standard_add("panes", "Panes Example");
    elm_win_autodel_set(win, EINA_TRUE);
-
-   bg = elm_bg_add(win);
-   elm_win_resize_object_add(win, bg);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_focus_highlight_enabled_set(win, EINA_TRUE);
-   evas_object_show(bg);
 
    panes = elm_panes_add(win);
    elm_win_resize_object_add(win, panes);

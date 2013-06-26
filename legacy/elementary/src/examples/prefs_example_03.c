@@ -65,19 +65,13 @@ _item_changed_cb(void *data, Evas_Object *obj, void *event_info)
 EAPI_MAIN int
 elm_main(int argc, char **argv)
 {
-   Evas_Object *win, *bg, *prefs, *layout;
+   Evas_Object *win, *prefs, *layout;
    Elm_Prefs_Data *prefs_data;
 
-   win = elm_win_add(NULL, "Prefs", ELM_WIN_BASIC);
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
-   elm_win_title_set(win, "Prefs Example 03");
-   elm_win_autodel_set(win, EINA_TRUE);
 
-   bg = elm_bg_add(win);
-   elm_win_resize_object_add(win, bg);
-   evas_object_size_hint_min_set(bg, WIDTH, HEIGHT);
-   evas_object_size_hint_max_set(bg, WIDTH, HEIGHT);
-   evas_object_show(bg);
+   win = elm_win_util_standard_add("Prefs", "Prefs Example 03");
+   elm_win_autodel_set(win, EINA_TRUE);
 
    layout = elm_layout_add(win);
    elm_layout_file_set(layout, "prefs_example_03.edj", "prefs_edje");

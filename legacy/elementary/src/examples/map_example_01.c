@@ -57,18 +57,12 @@ _nasty_hack(void *data)
 EAPI_MAIN int
 elm_main(int argc, char **argv)
 {
-   Evas_Object *win, *bg, *map, *box, *bt;
+   Evas_Object *win, *map, *box, *bt;
 
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
 
-   win = elm_win_add(NULL, "map", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Map Creation Example");
+   win = elm_win_util_standard_add("map", "Map Creation Example");
    elm_win_autodel_set(win, EINA_TRUE);
-
-   bg = elm_bg_add(win);
-   elm_win_resize_object_add(win, bg);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_show(bg);
 
    map = elm_map_add(win);
    elm_win_resize_object_add(win, map);
