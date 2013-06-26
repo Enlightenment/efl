@@ -4,6 +4,12 @@
 #include <Elementary.h>
 
 static void
+_dismissed_cb(void *data, Evas_Object *obj, void *event_info)
+{
+   evas_object_del(obj);
+}
+
+static void
 _ctxpopup_item_cb(void *data, Evas_Object *obj, void *event_info)
 {
    printf("ctxpopup item selected: %s\n", elm_object_item_text_get(event_info));
@@ -25,6 +31,7 @@ _list_item_cb(void *data, Evas_Object *obj, void *event_info)
    Evas_Coord x,y;
 
    ctxpopup = elm_ctxpopup_add(obj);
+   evas_object_smart_callback_add(ctxpopup, "dismissed", _dismissed_cb, NULL);
 
    item_new(ctxpopup, "Go to home folder", "home");
    item_new(ctxpopup, "Save file", "file");
@@ -50,6 +57,7 @@ _list_item_cb2(void *data, Evas_Object *obj, void *event_info)
    Evas_Coord x,y;
 
    ctxpopup = elm_ctxpopup_add(obj);
+   evas_object_smart_callback_add(ctxpopup, "dismissed", _dismissed_cb, NULL);
    elm_ctxpopup_horizontal_set(ctxpopup, EINA_TRUE);
 
    item_new(ctxpopup, NULL, "home");
