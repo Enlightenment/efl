@@ -11,6 +11,13 @@
 #include "evas_common_private.h"
 #include "evas_private.h"
 
+static int _evas_loader_ico_log_dom = -1;
+
+#ifdef ERR
+# undef ERR
+#endif
+#define ERR(...) EINA_LOG_DOM_ERR(_evas_loader_ico_log_dom, __VA_ARGS__)
+
 typedef struct _Evas_Loader_Internal Evas_Loader_Internal;
 struct _Evas_Loader_Internal
 {
@@ -818,6 +825,13 @@ static int
 module_open(Evas_Module *em)
 {
    if (!em) return 0;
+   _evas_loader_ico_log_dom = eina_log_domain_register
+     ("evas-ico", EVAS_DEFAULT_LOG_COLOR);
+   if (_evas_loader_ico_log_dom < 0)
+     {
+        EINA_LOG_ERR("Can not create a module log domain.");
+        return 0;
+     }
    em->functions = (void *)(&evas_image_load_ico_func);
    return 1;
 }
@@ -825,6 +839,7 @@ module_open(Evas_Module *em)
 static void
 module_close(Evas_Module *em EINA_UNUSED)
 {
+   eina_log_domain_unregister(_evas_loader_ico_log_dom);
 }
 
 static Evas_Module_Api evas_modapi =
