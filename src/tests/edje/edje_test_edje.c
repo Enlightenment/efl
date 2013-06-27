@@ -74,9 +74,36 @@ START_TEST(edje_test_load_simple_layout)
 }
 END_TEST
 
+START_TEST(edje_test_simple_layout_geometry)
+{
+   int x, y, w, h;
+   int r, g, b, a;
+   Evas *evas = EDJE_TEST_INIT_EVAS();
+   Evas_Object *obj, *bg;
+
+   obj = edje_object_add(evas);
+   fail_unless(edje_object_file_set(obj, test_layout_get("test_layout.edj"), "test_group"));
+
+   evas_object_resize(obj, 1000, 1000);
+   edje_object_part_geometry_get(obj, "background", &x, &y, &w, &h);
+
+   fail_if(x != 0 || y != 0);
+   fail_if(w != 1000 || h != 1000);
+
+   bg = edje_object_part_object_get(obj, "background");
+   fail_if(!bg);
+
+   evas_object_color_get(bg, &r, &g, &b, &a);
+   fail_if(r != 255 || g != 255 || b != 255 || a != 255);
+
+   EDJE_TEST_FREE_EVAS();
+}
+END_TEST
+
 void edje_test_edje(TCase *tc)
 {    
    tcase_add_test(tc, edje_test_edje_init);
    tcase_add_test(tc,edje_test_load_simple_layout);
    tcase_add_test(tc, edje_test_edje_load);
+   tcase_add_test(tc, edje_test_simple_layout_geometry);
 }
