@@ -99,7 +99,9 @@ efreet_icon_deprecated_user_dir_get(void)
     tmp = alloca(len);
     snprintf(tmp, len, "%s/.icons", user);
 
+    tmp = eina_file_path_sanitize(tmp);
     efreet_icon_deprecated_user_dir = eina_stringshare_add_length(tmp, len - 1);
+    free(tmp);
 
     return efreet_icon_deprecated_user_dir;
 }
@@ -118,7 +120,9 @@ efreet_icon_user_dir_get(void)
     tmp = alloca(len);
     snprintf(tmp, len, "%s/icons", user);
 
+    tmp = eina_file_path_sanitize(tmp);
     efreet_icon_user_dir = eina_stringshare_add_length(tmp, len - 1);
+    free(tmp);
 
     return efreet_icon_user_dir;
 }
@@ -682,9 +686,11 @@ efreet_icon_lookup_path_path(Efreet_Cache_Icon_Element *elem, const char *path)
 {
     Eina_List *ll;
     const char *ext, *pp;
+    const char *r = NULL;
     unsigned int i;
     int len;
 
+    path = eina_file_path_sanitize(path);
     len = strlen(path);
 
     for (i = 0; i < elem->paths_count; ++i)
@@ -695,10 +701,15 @@ efreet_icon_lookup_path_path(Efreet_Cache_Icon_Element *elem, const char *path)
 
         EINA_LIST_FOREACH(efreet_icon_extensions, ll, ext)
             if (!strcmp(pp, ext))
-                return elem->paths[i];
+	    {
+		r = elem->paths[i];
+		break;
+	    }
     }
 
-    return NULL;
+    free((void*) path);
+
+    return r;
 }
 
 static const char *
@@ -767,9 +778,11 @@ efreet_icon_fallback_lookup_path_path(Efreet_Cache_Fallback_Icon *icon, const ch
 {
     Eina_List *ll;
     const char *ext, *pp;
+    const char *r = NULL;
     unsigned int i;
     int len;
 
+    path = eina_file_path_sanitize(path);
     len = strlen(path);
 
     for (i = 0; i < icon->icons_count; ++i)
@@ -781,10 +794,15 @@ efreet_icon_fallback_lookup_path_path(Efreet_Cache_Fallback_Icon *icon, const ch
 
         EINA_LIST_FOREACH(efreet_icon_extensions, ll, ext)
             if (!strcmp(pp, ext))
-                return icon->icons[i];
+	    {
+		r = icon->icons[i];
+		break;
+	    }
     }
 
-    return NULL;
+    free((void*) path);
+
+    return r;
 }
 
 static void
