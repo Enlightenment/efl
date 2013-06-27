@@ -1617,7 +1617,7 @@ static Eina_Bool
 _taps_rect_get(Eina_List *taps, int idx, Evas_Coord_Rectangle *r)
 {  /* Build a rect bounding all taps at index idx */
    Eina_List *l;
-   Evas_Coord bx, by;
+   Evas_Coord bx = 0, by = 0;
    Eina_List *pe_list;
    Eina_Bool was_init = EINA_FALSE;
 
