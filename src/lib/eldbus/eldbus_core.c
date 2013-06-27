@@ -989,10 +989,19 @@ _connection_get(Eldbus_Connection_Type type, const char *address)
    else
       conn->dbus_conn = dbus_bus_get_private(type - 1, &err);
 
-   if (dbus_error_is_set(&err))
+   if (!conn->dbus_conn || dbus_error_is_set(&err))
      {
         free(conn);
         ERR("Error connecting to bus: %s", err.message);
+        return NULL;
+     }
+
+   if (type == ELDBUS_CONNECTION_TYPE_ADDRESS &&
+       !dbus_bus_register(conn->dbus_conn, &err))
+     {
+        dbus_connection_close(conn->dbus_conn);
+        free(conn);
+        ERR("Error registering with bus: %s", err.message);
         return NULL;
      }
 
