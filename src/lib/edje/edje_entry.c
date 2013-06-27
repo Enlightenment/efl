@@ -4280,6 +4280,7 @@ _edje_entry_imf_event_preedit_changed_cb(void *data, Ecore_IMF_Context *ctx EINA
                   en->pw_timer = ecore_timer_add
                     (TO_DOUBLE(_edje_password_show_last_timeout),
                         _password_timer_cb, en);
+                  free(info);
                }
           }
         else
