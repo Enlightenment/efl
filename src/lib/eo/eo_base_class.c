@@ -5,6 +5,7 @@
 #include <Eina.h>
 
 #include "Eo.h"
+#include "eo_ptr_indirection.h"
 #include "eo_private.h"
 
 EAPI Eo_Op EO_BASE_BASE_ID = 0;
@@ -446,17 +447,17 @@ _ev_cb_array_del(Eo *obj, void *class_data, va_list *list)
 }
 
 static void
-_ev_cb_call(Eo *obj, void *class_data, va_list *list)
+_ev_cb_call(Eo *obj_id, void *class_data, va_list *list)
 {
    Private_Data *pd = (Private_Data *) class_data;
    const Eo_Event_Description *desc = va_arg(*list, const Eo_Event_Description *);
    void *event_info = va_arg(*list, void *);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   EO_OBJ_POINTER_RETURN(obj_id, obj);
 
    if (ret) *ret = EINA_TRUE;
 
-   /* FIXME: Change eo_ref to _eo_ref and unref. */
-   eo_ref(obj);
+   _eo_ref(obj);
    pd->walking_list++;
 
    Eo_Callback_Description *cb;
@@ -476,7 +477,7 @@ _ev_cb_call(Eo *obj, void *class_data, va_list *list)
                           continue;
 
                        /* Abort callback calling if the func says so. */
-                       if (!it->func((void *) cb->func_data, obj, desc,
+                       if (!it->func((void *) cb->func_data, obj_id, desc,
                                 (void *) event_info))
                          {
                             if (ret) *ret = EINA_FALSE;
@@ -494,7 +495,7 @@ _ev_cb_call(Eo *obj, void *class_data, va_list *list)
                   if (cb->items.item.desc == desc)
                     {
                        /* Abort callback calling if the func says so. */
-                       if (!cb->items.item.func((void *) cb->func_data, obj, desc,
+                       if (!cb->items.item.func((void *) cb->func_data, obj_id, desc,
                                 (void *) event_info))
                          {
                             if (ret) *ret = EINA_FALSE;
@@ -508,7 +509,7 @@ _ev_cb_call(Eo *obj, void *class_data, va_list *list)
 end:
    pd->walking_list--;
    _eo_callbacks_clear(pd);
-   eo_unref(obj);
+   _eo_unref(obj);
 }
 
 static Eina_Bool
