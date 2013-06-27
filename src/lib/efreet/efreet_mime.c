@@ -993,31 +993,22 @@ efreet_mime_count_digits(int in)
 static void
 efreet_mime_shared_mimeinfo_magic_load(const char *file)
 {
-   int fd = -1, size;
-   char *data = (void *)-1;
+   Eina_File *f;
+   void *data;
 
    if (!file) return;
 
-   size = ecore_file_size(file);
-   if (size <= 0) return;
+   f = eina_file_open(file, EINA_FALSE);
+   if (!f) return ;
 
-   fd = open(file, O_RDONLY);
-   if (fd == -1) return;
+   data = eina_file_map_all(f, EINA_FILE_WILLNEED);
+   if (!data) goto end;
 
-   /* let's make mmap safe and just get 0 pages for IO erro */
-   eina_mmap_safety_enabled_set(EINA_TRUE);
+   efreet_mime_shared_mimeinfo_magic_parse(data, eina_file_size_get(f));
 
-   data = mmap(NULL, size, PROT_READ, MAP_SHARED, fd, 0);
-   if (data == MAP_FAILED)
-     {
-        close(fd);
-        return;
-     }
-
-   efreet_mime_shared_mimeinfo_magic_parse(data, size);
-
-   munmap(data, size);
-   close(fd);
+   eina_file_map_free(f, data);
+ end:
+   eina_file_close(f);
 }
 
 /**
