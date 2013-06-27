@@ -1837,7 +1837,7 @@ _entry_selection_cleared_signal_cb(void *data,
              if ((top) && (elm_win_xwindow_get(top)))
                elm_cnp_selection_set
                  (data, ELM_SEL_TYPE_PRIMARY, ELM_SEL_FORMAT_MARKUP,
-                 sd->cut_sel, strlen(sd->cut_sel));
+                 sd->cut_sel, eina_stringshare_strlen(sd->cut_sel));
 #endif
              eina_stringshare_del(sd->cut_sel);
              sd->cut_sel = NULL;

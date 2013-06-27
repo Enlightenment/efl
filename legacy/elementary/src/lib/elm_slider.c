@@ -680,7 +680,7 @@ _min_max_set(Evas_Object *obj)
      }
    else if (sd->units)
      {
-        int length = strlen(sd->units);
+        int length = eina_stringshare_strlen(sd->units);
 
         buf_min = alloca(length + 128);
         buf_max = alloca(length + 128);

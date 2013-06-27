@@ -766,7 +766,7 @@ _on_text_clicked(void *data __UNUSED__,
    ELM_FILESELECTOR_DATA_GET(data, sd);
 
    elm_entry_entry_set(obj, sd->path);
-   elm_entry_cursor_pos_set(obj, strlen(sd->path));
+   elm_entry_cursor_pos_set(obj, eina_stringshare_strlen(sd->path));
 }
 
 static void

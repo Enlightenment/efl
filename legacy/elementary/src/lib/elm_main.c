@@ -165,7 +165,7 @@ _prefix_check(void)
 
    if (app_domain)
      {
-        caps = alloca(strlen(app_domain) + 1);
+        caps = alloca(eina_stringshare_strlen(app_domain) + 1);
         for (p1 = (char *)app_domain, p2 = caps; *p1; p1++, p2++)
            *p2 = toupper(*p1);
         *p2 = 0;
