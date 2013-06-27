@@ -80,3 +80,11 @@ eldbus_object_managed_objects_get(Eldbus_Object *obj, Eldbus_Message_Cb cb, cons
    p = eldbus_object_send(obj, msg, cb, data, -1);
    return p;
 }
+
+EAPI Eldbus_Pending *
+eldbus_hello(Eldbus_Connection *conn, Eldbus_Message_Cb cb, const void *cb_data)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(conn, NULL);
+
+   return eldbus_proxy_call(conn->fdo_proxy, "Hello", cb, cb_data, -1, "");
+}

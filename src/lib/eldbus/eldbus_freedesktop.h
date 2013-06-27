@@ -29,6 +29,7 @@ EAPI Eldbus_Pending *eldbus_name_owner_get(Eldbus_Connection *conn, const char *
 EAPI Eldbus_Pending *eldbus_name_owner_has(Eldbus_Connection *conn, const char *bus, Eldbus_Message_Cb cb, const void *cb_data);
 EAPI Eldbus_Pending *eldbus_names_list(Eldbus_Connection *conn, Eldbus_Message_Cb cb, const void *cb_data) EINA_ARG_NONNULL(1);
 EAPI Eldbus_Pending *eldbus_names_activatable_list(Eldbus_Connection *conn, Eldbus_Message_Cb cb, const void *cb_data) EINA_ARG_NONNULL(1);
+EAPI Eldbus_Pending *eldbus_hello(Eldbus_Connection *conn, Eldbus_Message_Cb cb, const void *cb_data) EINA_ARG_NONNULL(1);
 
 /* Replies to service starts */
 #define ELDBUS_NAME_START_REPLY_SUCCESS         1 /**< Service was auto started */
