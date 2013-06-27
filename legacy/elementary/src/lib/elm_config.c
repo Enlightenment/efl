@@ -84,7 +84,6 @@ static size_t _elm_user_dir_snprintf(char       *dst,
 
 #ifdef HAVE_ELEMENTARY_X
 static Ecore_Event_Handler *_prop_change_handler = NULL;
-static Ecore_Timer *_prop_all_update_timer = NULL;
 static Ecore_Timer *_prop_change_delay_timer = NULL;
 static Ecore_X_Window _root_1st = 0;
 #define ATOM_COUNT 2
@@ -98,22 +97,11 @@ static const char *_atom_names[ATOM_COUNT] =
 #define ATOM_E_PROFILE                              0
 #define ATOM_E_CONFIG                               1
 
-static Eina_Bool _prop_all_update_cb(void *data __UNUSED__);
 static Eina_Bool _prop_config_get(void);
 static void      _prop_config_set(void);
 static Eina_Bool _prop_change(void *data  __UNUSED__,
                               int ev_type __UNUSED__,
                               void       *ev);
-
-static Eina_Bool
-_prop_all_update_cb(void *data __UNUSED__)
-{
-   _prop_config_set();
-   ecore_x_window_prop_string_set(_root_1st, _atom[ATOM_E_PROFILE],
-                                  _elm_profile);
-   _prop_all_update_timer = NULL;
-   return EINA_FALSE;
-}
 
 static void
 _elm_font_overlays_del_free(void)
@@ -2395,8 +2383,9 @@ EAPI void
 elm_config_all_flush(void)
 {
 #ifdef HAVE_ELEMENTARY_X
-   if (_prop_all_update_timer) ecore_timer_del(_prop_all_update_timer);
-   _prop_all_update_timer = ecore_timer_add(0.1, _prop_all_update_cb, NULL);
+   _prop_config_set();
+   ecore_x_window_prop_string_set(_root_1st, _atom[ATOM_E_PROFILE],
+                                  _elm_profile);
 #endif
 }
 
@@ -2448,12 +2437,6 @@ void
 _elm_config_sub_shutdown(void)
 {
 #ifdef HAVE_ELEMENTARY_X
-   if (_prop_all_update_timer)
-     {
-        ecore_timer_del(_prop_all_update_timer);
-        _prop_all_update_timer = NULL;
-        _prop_all_update_cb(NULL);
-     }
    ELM_SAFE_FREE(_prop_change_delay_timer, ecore_timer_del);
 #endif
 
