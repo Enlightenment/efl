@@ -4537,7 +4537,6 @@ elm_entry_filter_accept_set(void *data,
                             strncpy(tag, (*text) + last_read_idx, read_idx - last_read_idx);
                             tag[read_idx - last_read_idx] = 0;
                             markup = elm_entry_markup_to_utf8(tag);
-                            printf("[%s : %d] %s \n", __func__, __LINE__, markup);
                             free(tag);
                             if (markup)
                               {
