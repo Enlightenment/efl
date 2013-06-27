@@ -172,6 +172,25 @@ static Eina_List *cont_drag_tg = NULL; /* List of Item_Container_Drag_Info */
 static void _cont_obj_mouse_up( void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _cont_obj_mouse_move( void *data, Evas *e, Evas_Object *obj, void *event_info);
 
+static Eina_Bool
+_drag_cancel_animate(void *data __UNUSED__, double pos)
+{  /* Animation to "move back" drag-window */
+   if (pos >= 0.99)
+     {
+        evas_object_del(data);
+        return ECORE_CALLBACK_CANCEL;
+     }
+   else
+     {
+        int x, y;
+        x = dragwin_x_end - (pos * (dragwin_x_end - dragwin_x_start));
+        y = dragwin_y_end - (pos * (dragwin_y_end - dragwin_y_start));
+        evas_object_move(data, x, y);
+     }
+
+   return ECORE_CALLBACK_RENEW;
+}
+
 #ifdef HAVE_ELEMENTARY_X
 static Tmp_Info  *_tempfile_new      (int size);
 static int        _tmpinfo_free      (Tmp_Info *tmp);
@@ -1506,25 +1525,6 @@ _x11_dnd_status(void *data __UNUSED__, int etype __UNUSED__, void *ev)
      dragacceptcb(dragacceptdata, _x11_selections[ELM_SEL_TYPE_XDND].widget,
                   doaccept);
    return EINA_TRUE;
-}
-
-static Eina_Bool
-_drag_cancel_animate(void *data __UNUSED__, double pos)
-{  /* Animation to "move back" drag-window */
-   if (pos >= 0.99)
-     {
-        evas_object_del(data);
-        return ECORE_CALLBACK_CANCEL;
-     }
-   else
-     {
-        int x, y;
-        x = dragwin_x_end - (pos * (dragwin_x_end - dragwin_x_start));
-        y = dragwin_y_end - (pos * (dragwin_y_end - dragwin_y_start));
-        evas_object_move(data, x, y);
-     }
-
-   return ECORE_CALLBACK_RENEW;
 }
 
 static Eina_Bool
