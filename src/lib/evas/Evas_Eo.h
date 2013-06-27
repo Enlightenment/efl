@@ -1,4 +1,6 @@
-#include <Eo.h>
+#ifndef _EVAS_H
+# error You shall not include this header directly
+#endif
 
 EAPI extern const Eo_Event_Description _EVAS_OBJECT_EVENT_MOUSE_IN;
 EAPI extern const Eo_Event_Description _EVAS_OBJECT_EVENT_MOUSE_OUT;

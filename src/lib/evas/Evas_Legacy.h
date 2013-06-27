@@ -1,3 +1,6 @@
+#ifndef _EVAS_H
+# error You shall not include this header directly
+#endif
 
 /**
  * @ingroup Evas_Canvas
