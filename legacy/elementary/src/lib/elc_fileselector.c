@@ -815,7 +815,6 @@ static void
 _elm_fileselector_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Evas_Object *ic, *bt, *li, *en, *grid, *pb;
-   unsigned int i;
    int s;
 
    Elm_Fileselector_Smart_Data *priv = _pd;
@@ -865,19 +864,6 @@ _elm_fileselector_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    pb = elm_progressbar_add(obj);
    elm_widget_sub_object_add(obj, pb);
    priv->spinner = pb;
-
-   for (i = 0; i < ELM_FILE_LAST; ++i)
-     {
-        list_itc[i] = elm_genlist_item_class_new();
-        grid_itc[i] = elm_gengrid_item_class_new();
-
-        list_itc[i]->item_style = "default";
-        list_itc[i]->func.text_get = grid_itc[i]->func.text_get =
-            _itc_text_get;
-        list_itc[i]->func.state_get = grid_itc[i]->func.state_get =
-            _itc_state_get;
-        list_itc[i]->func.del = grid_itc[i]->func.del = _itc_del;
-     }
 
    list_itc[ELM_DIRECTORY]->func.content_get =
      grid_itc[ELM_DIRECTORY]->func.content_get = _itc_icon_folder_get;
@@ -942,16 +928,8 @@ _elm_fileselector_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 static void
 _elm_fileselector_smart_del(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
 {
-   int i;
-
    Elm_Fileselector_Smart_Data *sd = _pd;
    Elm_Fileselector_Filter *filter;
-
-   for (i = 0; i < ELM_FILE_LAST; ++i)
-     {
-        elm_genlist_item_class_free(list_itc[i]);
-        elm_gengrid_item_class_free(grid_itc[i]);
-     }
 
 #ifdef HAVE_EIO
    if (sd->current) eio_file_cancel(sd->current);
@@ -1444,6 +1422,8 @@ _elm_fileselector_smart_focus_direction_manager_is(Eo *obj EINA_UNUSED, void *_p
 static void
 _class_constructor(Eo_Class *klass)
 {
+   unsigned int i;
+
    const Eo_Op_Func_Description func_desc[] = {
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
 
@@ -1477,7 +1457,33 @@ _class_constructor(Eo_Class *klass)
    eo_class_funcs_set(klass, func_desc);
 
    evas_smart_legacy_type_register(MY_CLASS_NAME, klass);
+
+   for (i = 0; i < ELM_FILE_LAST; ++i)
+     {
+        list_itc[i] = elm_genlist_item_class_new();
+        grid_itc[i] = elm_gengrid_item_class_new();
+
+        list_itc[i]->item_style = "default";
+        list_itc[i]->func.text_get = grid_itc[i]->func.text_get =
+            _itc_text_get;
+        list_itc[i]->func.state_get = grid_itc[i]->func.state_get =
+            _itc_state_get;
+        list_itc[i]->func.del = grid_itc[i]->func.del = _itc_del;
+     }
 }
+
+static void
+_class_destructor(Eo_Class *klass EINA_UNUSED)
+{
+   unsigned int i;
+
+   for (i = 0; i < ELM_FILE_LAST; ++i)
+     {
+        elm_genlist_item_class_free(list_itc[i]);
+        elm_gengrid_item_class_free(grid_itc[i]);
+     }
+}
+
 static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_OBJ_FILESELECTOR_SUB_ID_IS_SAVE_SET, "Enable/disable the file name entry box where the user can type in a name for a file, in a given file selector widget."),
      EO_OP_DESCRIPTION(ELM_OBJ_FILESELECTOR_SUB_ID_IS_SAVE_GET, "Get whether the given file selector is in 'saving dialog' mode."),
@@ -1505,6 +1511,6 @@ static const Eo_Class_Description class_desc = {
      NULL,
      sizeof(Elm_Fileselector_Smart_Data),
      _class_constructor,
-     NULL
+     _class_destructor
 };
 EO_DEFINE_CLASS(elm_obj_fileselector_class_get, &class_desc, ELM_OBJ_LAYOUT_CLASS, NULL);

@@ -1463,3 +1463,8 @@
 
         * Gesture Layer: add APIs to add/del multiple callbacks for a same
 	gesture/type/state.
+
+2013-06-25  Ryuan Choi (ryuan)
+
+        * Fix Segfault in elementary file_selector_example when closed.
+          https://phab.enlightenment.org/T133

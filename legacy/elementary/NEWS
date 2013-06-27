@@ -252,6 +252,7 @@ Fixes:
    * Fix elm_scroller_page_show bug. It have to save the wanted values to show the wanted page.
    * Block mouse events when the ctxpopup on dismiss.
    * Fix crash of elm_notify when timeout is zero.
+   * Fix Segfault in elementary file_selector_example when closed
 
 Removals:
 
