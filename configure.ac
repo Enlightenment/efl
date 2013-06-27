@@ -25,6 +25,9 @@ EFL_API_LEGACY_DEF="#define EFL_NOLEGACY_API_SUPPORT"
 EFL_API_EO_DEF="#define EFL_EO_API_SUPPORT"
 efl_api="both"
 
+#### For the moment the Eo EFL API is not ready you need to explicitely optin.
+EFL_ENABLE_EO_API_SUPPORT
+
 AC_ARG_WITH([api],
    [AC_HELP_STRING([--with-api=@<:@eo/legacy/both@:>@], [Select the EFL API Model @<:@default=both@:>@])],
    [efl_api=${withval}],

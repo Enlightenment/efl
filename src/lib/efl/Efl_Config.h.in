@@ -7,7 +7,10 @@
  */
 #ifndef EFL_API_OVERRIDE 
 @EFL_API_LEGACY_DEF@
-@EFL_API_EO_DEF@
+/* You can't disable Eo API anymore as EFL use it everywhere internally
+   and we don't want to expose it publicly just yet, so keep it hidden
+   and require an explicit request to get it. */
+/* @EFL_API_EO_DEF@ */
 #endif
 
 #endif
