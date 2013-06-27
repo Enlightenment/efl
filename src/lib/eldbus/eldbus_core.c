@@ -1000,6 +1000,8 @@ _connection_get(Eldbus_Connection_Type type, const char *address)
        !dbus_bus_register(conn->dbus_conn, &err))
      {
         dbus_connection_close(conn->dbus_conn);
+        dbus_connection_unref(conn->dbus_conn);
+        conn->dbus_conn = NULL;
         free(conn);
         ERR("Error registering with bus: %s", err.message);
         return NULL;
