@@ -106,8 +106,13 @@ START_TEST(eina_fp_mul)
 
    for (dc1 = 0; dc1 < dl1; dc1 += step1)
      {
+        if ((int)dc1 % 5 == 2)
+          dc1 += 2;
         for (dc2 = 0; dc2 < dl2; dc2 += step2)
           {
+              if ((int)dc2 % 10 == 5)
+                      dc2 += 20;
+
               dresult = dc1 * dc2;
 
               fc1 = eina_f32p32_double_from(dc1);
@@ -154,8 +159,12 @@ START_TEST(eina_fp_div)
 
    for (dc1 = 0; dc1 < dl1; dc1 += step1)
      {
+        if ((int)dc1 % 5 == 2)
+          dc1 += 2;
         for (dc2 = step2; dc2 < dl2; dc2 += step2)
           {
+              if ((int)dc2 % 10 == 5)
+                dc2 += 20;
               dresult = dc1 / dc2;
 
               fc1 = eina_f32p32_double_from(dc1);
