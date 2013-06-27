@@ -236,15 +236,18 @@ $(EDJE_COMMON_CPPFLAGS) \
 tests_edje_edje_suite_LDADD = @CHECK_LIBS@  $(USE_EDJE_BIN_LIBS)
 tests_edje_edje_suite_DEPENDENCIES = @USE_EDJE_INTERNAL_LIBS@
 
-tests/edje/data/test_layout.edj: tests/edje/data/test_layout.edc bin/edje/edje_cc${EXEEXT}
+tests/edje/data/%.edj: tests/edje/data/%.edc bin/edje/edje_cc${EXEEXT}
 	@$(MKDIR_P) tests/edje/data
 	$(AM_V_EDJ)$(EDJE_CC) $(EDJE_CC_FLAGS) -id $(srcdir)/tests/edje/data $< $@
 
-EDJE_DATA_FILES = tests/edje/data/test_layout.edc
+EDJE_DATA_FILES = tests/edje/data/test_layout.edc \
+                  tests/edje/data/complex_layout.edc
 
 edjedatafilesdir = $(datadir)/edje/data
-edjedatafiles_DATA = tests/edje/data/test_layout.edj
-CLEANFILES += tests/edje/data/test_layout.edj
+edjedatafiles_DATA = tests/edje/data/test_layout.edj \
+                     tests/edje/data/complex_layout.edj
+CLEANFILES += tests/edje/data/test_layout.edj \
+              tests/edje/data/complex_layout.edj
 
 endif
 
