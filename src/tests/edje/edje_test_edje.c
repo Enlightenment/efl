@@ -39,19 +39,23 @@ START_TEST(edje_test_edje_load)
 END_TEST
 
 static const char *
-test_layout_get(void)
+test_layout_get(const char *name)
 {
+   const char filename[PATH_MAX];
+
+   snprintf(filename, PATH_MAX, TESTS_BUILD_DIR"/data/%s", name);
+
    static int is_local = -1;
    if (is_local == -1)
      {
         struct stat st;
-        is_local = (stat(TESTS_BUILD_DIR"/data/test_layout.edj", &st) == 0);
+        is_local = (stat(filename, &st) == 0);
      }
 
-   if (is_local)
-     return TESTS_BUILD_DIR"/data/test_layout.edj";
-   else
-     return PACKAGE_DATA_DIR"/data/test_layout.edj";
+   if (!is_local)
+     snprintf(filename, PATH_MAX, PACKAGE_DATA_DIR"/data/%s", name);
+
+   return filename;
 }
 
 START_TEST(edje_test_load_simple_layout)
@@ -60,7 +64,7 @@ START_TEST(edje_test_load_simple_layout)
    Evas_Object *obj;
 
    obj = edje_object_add(evas);
-   fail_unless(edje_object_file_set(obj, test_layout_get(), "test_group"));
+   fail_unless(edje_object_file_set(obj, test_layout_get("test_layout.edj"), "test_group"));
 
    fail_if(edje_object_part_exists(obj, "unexistant_part"));
    fail_unless(edje_object_part_exists(obj, "background"));
