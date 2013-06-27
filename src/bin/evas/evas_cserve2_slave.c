@@ -13,6 +13,10 @@
 #include "evas_cserve2.h"
 #include "evas_cserve2_slave.h"
 
+#define LK(x) Eina_Lock x
+#include "file/evas_module.h"
+#include "Evas_Loader.h"
+
 static Eina_Hash *loaders = NULL;
 static Eina_List *modules = NULL;
 static Eina_Prefix *pfx = NULL;
@@ -26,6 +30,8 @@ struct ext_loader_s
 
 #define MATCHING(Ext, Module)                   \
   { sizeof (Ext), Ext, Module }
+
+#if !USE_EVAS_MODULE_API
 
 static const struct ext_loader_s map_loaders[] =
 { /* map extensions to loaders to use for good first-guess tries */
@@ -61,6 +67,118 @@ static const char *loaders_name[] =
   "png", "jpeg", "eet", "xpm", "tiff", "gif", "svg", "webp", "pmaps", "bmp", "tga", "wbmp", "ico", "psd"
 };
 
+#else
+
+static const struct ext_loader_s map_loaders[] =
+{ /* map extensions to loaders to use for good first-guess tries */
+   MATCHING(".png", "png"),
+   MATCHING(".jpg", "jpeg"),
+   MATCHING(".jpeg", "jpeg"),
+   MATCHING(".jfif", "jpeg"),
+   MATCHING(".eet", "eet"),
+   MATCHING(".edj", "eet"),
+   MATCHING(".eap", "eet"),
+   MATCHING(".xpm", "xpm"),
+   MATCHING(".tiff", "tiff"),
+   MATCHING(".tif", "tiff"),
+   MATCHING(".svg", "svg"),
+   MATCHING(".svgz", "svg"),
+   MATCHING(".svg.gz", "svg"),
+   MATCHING(".gif", "gif"),
+   MATCHING(".pbm", "pmaps"),
+   MATCHING(".pgm", "pmaps"),
+   MATCHING(".ppm", "pmaps"),
+   MATCHING(".pnm", "pmaps"),
+   MATCHING(".bmp", "bmp"),
+   MATCHING(".tga", "tga"),
+   MATCHING(".wbmp", "wbmp"),
+   MATCHING(".webp", "webp"),
+   MATCHING(".ico", "ico"),
+   MATCHING(".cur", "ico"),
+   MATCHING(".psd", "psd"),
+   MATCHING(".pdf", "generic"),
+   MATCHING(".ps", "generic"),
+   MATCHING(".xcf", "generic"),
+   MATCHING(".xcf.gz", "generic"),
+   /* RAW */
+   MATCHING(".arw", "generic"),
+   MATCHING(".cr2", "generic"),
+   MATCHING(".crw", "generic"),
+   MATCHING(".dcr", "generic"),
+   MATCHING(".dng", "generic"),
+   MATCHING(".k25", "generic"),
+   MATCHING(".kdc", "generic"),
+   MATCHING(".erf", "generic"),
+   MATCHING(".mrw", "generic"),
+   MATCHING(".nef", "generic"),
+   MATCHING(".nrf", "generic"),
+   MATCHING(".nrw", "generic"),
+   MATCHING(".orf", "generic"),
+   MATCHING(".raw", "generic"),
+   MATCHING(".rw2", "generic"),
+   MATCHING(".pef", "generic"),
+   MATCHING(".raf", "generic"),
+   MATCHING(".sr2", "generic"),
+   MATCHING(".srf", "generic"),
+   MATCHING(".x3f", "generic"),
+   /* video */
+   MATCHING(".264", "generic"),
+   MATCHING(".3g2", "generic"),
+   MATCHING(".3gp", "generic"),
+   MATCHING(".3gp2", "generic"),
+   MATCHING(".3gpp", "generic"),
+   MATCHING(".3gpp2", "generic"),
+   MATCHING(".3p2", "generic"),
+   MATCHING(".asf", "generic"),
+   MATCHING(".avi", "generic"),
+   MATCHING(".bdm", "generic"),
+   MATCHING(".bdmv", "generic"),
+   MATCHING(".clpi", "generic"),
+   MATCHING(".clp", "generic"),
+   MATCHING(".fla", "generic"),
+   MATCHING(".flv", "generic"),
+   MATCHING(".m1v", "generic"),
+   MATCHING(".m2v", "generic"),
+   MATCHING(".m2t", "generic"),
+   MATCHING(".m4v", "generic"),
+   MATCHING(".mkv", "generic"),
+   MATCHING(".mov", "generic"),
+   MATCHING(".mp2", "generic"),
+   MATCHING(".mp2ts", "generic"),
+   MATCHING(".mp4", "generic"),
+   MATCHING(".mpe", "generic"),
+   MATCHING(".mpeg", "generic"),
+   MATCHING(".mpg", "generic"),
+   MATCHING(".mpl", "generic"),
+   MATCHING(".mpls", "generic"),
+   MATCHING(".mts", "generic"),
+   MATCHING(".mxf", "generic"),
+   MATCHING(".nut", "generic"),
+   MATCHING(".nuv", "generic"),
+   MATCHING(".ogg", "generic"),
+   MATCHING(".ogm", "generic"),
+   MATCHING(".ogv", "generic"),
+   MATCHING(".rm", "generic"),
+   MATCHING(".rmj", "generic"),
+   MATCHING(".rmm", "generic"),
+   MATCHING(".rms", "generic"),
+   MATCHING(".rmx", "generic"),
+   MATCHING(".rmvb", "generic"),
+   MATCHING(".swf", "generic"),
+   MATCHING(".ts", "generic"),
+   MATCHING(".weba", "generic"),
+   MATCHING(".webm", "generic"),
+   MATCHING(".wmv", "generic")
+};
+
+static const char *loaders_name[] =
+{ /* in order of most likely needed */
+  "png", "jpeg", "eet", "xpm", "tiff", "gif", "svg", "webp", "pmaps", "bmp", "tga", "wbmp", "ico", "psd", "generic"
+};
+
+#endif
+
+
 Eina_Bool
 evas_cserve2_loader_register(Evas_Loader_Module_Api *api)
 {
@@ -75,6 +193,9 @@ evas_cserve2_loader_register(Evas_Loader_Module_Api *api)
 #else
 # define EVAS_MODULE_NAME_IMAGE_LOADER "module.so"
 #endif
+
+
+#if !USE_EVAS_MODULE_API
 
 static Evas_Loader_Module_Api *
 loader_module_find(const char *type)
@@ -111,6 +232,8 @@ loader_module_find(const char *type)
 
    return NULL;
 }
+
+#endif // Old API
 
 static Eina_Bool
 command_read(int fd, Slave_Command *cmd, void **params)
@@ -211,6 +334,263 @@ _cserve2_shm_unmap(void *map, size_t length)
 {
    munmap(map, length);
 }
+
+#if USE_EVAS_MODULE_API
+
+static void *
+_image_file_open(Eina_File *fd, const char *key, Image_Load_Opts *opts,
+                 Evas_Module *module, Evas_Image_Property *property,
+                 Evas_Image_Animated *animated, Evas_Image_Load_Func **pfuncs)
+{
+   int error = EVAS_LOAD_ERROR_NONE;
+   Evas_Image_Load_Opts load_opts;
+   void *loader_data = NULL;
+   Evas_Image_Load_Func *funcs = NULL;
+
+   *pfuncs = NULL;
+   if (!evas_module_load(module))
+     goto unload;
+
+   funcs = module->functions;
+   if (!funcs)
+     goto unload;
+
+   evas_module_use(module);
+   memset(animated, 0, sizeof (*animated));
+   memset(&load_opts, 0, sizeof (load_opts));
+
+   if (opts)
+     {
+        load_opts.w = opts->w;
+        load_opts.h = opts->h;
+        load_opts.dpi = opts->dpi;
+        load_opts.region.x = opts->rx;
+        load_opts.region.y = opts->ry;
+        load_opts.region.w = opts->rw;
+        load_opts.region.h = opts->rh;
+        load_opts.orientation = opts->orientation;
+        load_opts.scale_down_by = opts->scale_down_by;
+     }
+   // Not set here: struct load_opts.scale_load
+
+   loader_data = funcs->file_open(fd, key, &load_opts, animated, &error);
+   if (!loader_data || (error != EVAS_LOAD_ERROR_NONE))
+     goto unload;
+
+   if (!funcs->file_head(loader_data, property, &error))
+     goto unload;
+
+   if (error != EVAS_LOAD_ERROR_NONE)
+     goto unload;
+
+   *pfuncs = funcs;
+   return loader_data;
+
+unload:
+   if (funcs && loader_data)
+     funcs->file_close(loader_data);
+   evas_module_unload(module);
+
+   return NULL;
+}
+
+static Eina_Bool
+_image_file_header(Eina_File *fd, const char *key, Image_Load_Opts *opts,
+                   Slave_Msg_Image_Opened *result, Evas_Module *module)
+{
+   Evas_Image_Property property;
+   Evas_Image_Animated animated;
+   Evas_Image_Load_Func *funcs;
+   void *loader_data;
+
+   memset(&property, 0, sizeof (property));
+   loader_data = _image_file_open(fd, key, opts, module, &property, &animated, &funcs);
+   if (!loader_data)
+     return EINA_FALSE;
+
+   memset(result, 0, sizeof (*result));
+   result->w = property.w;
+   result->h = property.h;
+   //result->degree = opts->
+   result->scale = property.scale;
+   result->alpha = property.alpha;
+   result->rotated = property.rotated;
+
+   result->animated = animated.animated;
+   if (result->animated)
+     {
+        result->frame_count = animated.frame_count;
+        result->loop_count = animated.loop_count;
+        result->loop_hint = animated.loop_hint;
+     }
+   result->has_loader_data = EINA_TRUE;
+
+   // Not set here: (Why?)
+   //property.premul;
+   //property.alpha_sparse;
+
+   // FIXME: We need to close as we this slave might not be used for data loading
+   funcs->file_close(loader_data);
+   return EINA_TRUE;
+}
+
+static Error_Type
+image_open(const char *file, const char *key, Image_Load_Opts *opts,
+           Slave_Msg_Image_Opened *result, const char **use_loader)
+{
+   Evas_Module *module;
+   Eina_File *fd;
+   const char *loader = NULL;
+   const int filelen = strlen(file);
+   unsigned int i;
+   Error_Type ret = CSERVE2_NONE;
+
+   fd = eina_file_open(file, EINA_FALSE);
+   if (!fd)
+     {
+        return CSERVE2_DOES_NOT_EXIST; // FIXME: maybe check errno
+     }
+
+   if (!*use_loader)
+     goto try_extension;
+
+   loader = *use_loader;
+   module = evas_module_find_type(EVAS_MODULE_TYPE_IMAGE_LOADER, loader);
+   if (module)
+     {
+        if (_image_file_header(fd, key, opts, result, module))
+          goto success;
+     }
+
+try_extension:
+   loader = NULL;
+   for (i = 0; i < sizeof(map_loaders) / sizeof(map_loaders[0]); i++)
+     {
+        int extlen = strlen(map_loaders[i].extension);
+        if (extlen > filelen) continue;
+        if (!strcasecmp(map_loaders[i].extension, file + filelen - extlen))
+          {
+             loader = map_loaders[i].loader;
+             break;
+          }
+     }
+
+   if (loader)
+     {
+        module = evas_module_find_type(EVAS_MODULE_TYPE_IMAGE_LOADER, loader);
+        if (_image_file_header(fd, key, opts, result, module))
+          goto success;
+        loader = NULL;
+        module = NULL;
+     }
+
+   // Try all known modules
+   for (i = 0; i < sizeof(loaders_name) / sizeof(loaders_name[0]); i++)
+     {
+        loader = loaders_name[i];
+        module = evas_module_find_type(EVAS_MODULE_TYPE_IMAGE_LOADER, loader);
+        if (!module) continue;
+        if (_image_file_header(fd, key, opts, result, module))
+          goto success;
+     }
+
+   ret = CSERVE2_UNKNOWN_FORMAT;
+   goto end;
+
+success:
+   ret = CSERVE2_NONE;
+   *use_loader = loader;
+
+#warning FIXME: Do we need to unload the module now?
+   evas_module_unload(module);
+
+end:
+   eina_file_close(fd);
+   return ret;
+}
+
+static Error_Type
+image_load(const char *file, const char *key, const char *shmfile,
+           Slave_Msg_Image_Load *params, Slave_Msg_Image_Loaded *result,
+           const char *loader)
+{
+   Evas_Module *module;
+   Eina_File *fd;
+   Evas_Image_Load_Func *funcs = NULL;
+   Image_Load_Opts *opts = &params->opts;
+   Evas_Image_Property property;
+   Evas_Image_Animated animated;
+   Error_Type ret = CSERVE2_GENERIC;
+   void *loader_data = NULL;
+   Eina_Bool ok;
+   int error;
+
+   fd = eina_file_open(file, EINA_FALSE);
+   if (!fd)
+     {
+        return CSERVE2_DOES_NOT_EXIST; // FIXME: maybe check errno
+     }
+
+   char *map = _cserve2_shm_map(shmfile, params->shm.mmap_size,
+                                params->shm.mmap_offset);
+   if (map == MAP_FAILED)
+     {
+        eina_file_close(fd);
+        return CSERVE2_RESOURCE_ALLOCATION_FAILED;
+     }
+
+   module = evas_module_find_type(EVAS_MODULE_TYPE_IMAGE_LOADER, loader);
+   if (!module)
+     {
+        printf("LOAD failed at %s:%d: no module found for loader %s\n",
+               __FUNCTION__, __LINE__, loader);
+        goto done;
+     }
+
+   memset(&property, 0, sizeof (property));
+   property.w = params->w;
+   property.h = params->h;
+
+   loader_data = _image_file_open(fd, key, opts, module, &property, &animated, &funcs);
+   if (!loader_data)
+     {
+        printf("LOAD failed at %s:%d: could not open image %s:%s\n",
+               __FUNCTION__, __LINE__, file, key);
+        goto done;
+     }
+
+   ok = funcs->file_data(loader_data, &property, map, &error);
+   if (!ok || (error != EVAS_LOAD_ERROR_NONE))
+     {
+        printf("LOAD failed at %s:%d: file_data failed for loader %s: error %d\n",
+               __FUNCTION__, __LINE__, loader, error);
+        goto done;
+     }
+
+   result->w = property.w;
+   result->h = property.h;
+
+   if (property.alpha)
+     {
+        result->alpha_sparse = evas_cserve2_image_premul_data((unsigned int *) map,
+                                                              result->w * result->h);
+     }
+
+   //printf("LOAD successful: %dx%d alpha_sparse %d\n",
+   //       result->w, result->h, result->alpha_sparse);
+
+   ret = CSERVE2_NONE;
+
+done:
+   eina_file_close(fd);
+   _cserve2_shm_unmap(map, params->shm.mmap_size);
+   if (funcs)
+     evas_module_unload(module);
+
+   return ret;
+}
+
+#else // Old cserve2 API
 
 static Error_Type
 image_open(const char *file, const char *key, Image_Load_Opts *opts, Slave_Msg_Image_Opened *result, const char **use_loader)
@@ -355,11 +735,15 @@ image_load(const char *file, const char *key, const char *shmfile, Slave_Msg_Ima
    result->h = params->h;
    result->alpha_sparse = ilp.alpha_sparse;
 
+   //printf("LOAD successful: %dx%d alpha_sparse %d\n",
+   //       result->w, result->h, result->alpha_sparse);
+
 done:
    _cserve2_shm_unmap(map, params->shm.mmap_size);
 
    return ret;
 }
+#endif
 
 static void
 handle_image_open(int wfd, void *params)
@@ -388,6 +772,7 @@ handle_image_open(int wfd, void *params)
    if ((err = image_open(file, key, load_opts, &result, &loader))
        != CSERVE2_NONE)
      {
+        printf("OPEN failed at %s:%d\n", __FUNCTION__, __LINE__);
         error_send(wfd, err);
         return;
      }
@@ -412,6 +797,7 @@ handle_image_load(int wfd, void *params)
 
    if (!load_args->has_loader_data)
      {
+        printf("LOAD failed at %s:%d: no loader data\n", __FUNCTION__, __LINE__);
         error_send(wfd, CSERVE2_UNKNOWN_FORMAT);
         return;
      }
@@ -425,6 +811,8 @@ handle_image_load(int wfd, void *params)
    if ((err = image_load(file, key, shmfile, load_args, &resp, loader))
        != CSERVE2_NONE)
      {
+        printf("LOAD failed at %s:%d: load failed with error %d\n",
+               __FUNCTION__, __LINE__, err);
         error_send(wfd, err);
         return;
      }
@@ -453,6 +841,10 @@ int main(int c, char **v)
 
    loaders = eina_hash_string_superfast_new(NULL);
 
+#if USE_EVAS_MODULE_API
+   evas_module_init();
+#endif
+
    wfd = atoi(v[1]);
    rfd = atoi(v[2]);
 
@@ -466,18 +858,22 @@ int main(int c, char **v)
         switch (cmd)
           {
            case IMAGE_OPEN:
-              handle_image_open(wfd, params);
-              break;
+             handle_image_open(wfd, params);
+             break;
            case IMAGE_LOAD:
-              handle_image_load(wfd, params);
-              break;
+             handle_image_load(wfd, params);
+             break;
            case SLAVE_QUIT:
-              quit = EINA_TRUE;
-              break;
+             quit = EINA_TRUE;
+             break;
            default:
-              error_send(wfd, CSERVE2_INVALID_COMMAND);
+             error_send(wfd, CSERVE2_INVALID_COMMAND);
           }
      }
+
+#if USE_EVAS_MODULE_API
+   evas_module_shutdown();
+#endif
 
    eina_hash_free(loaders);
 

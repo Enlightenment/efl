@@ -22,6 +22,15 @@ evas_cserve2_convert_argb_premul(unsigned int *data, unsigned int len)
    return nas;
 }
 
+Eina_Bool
+evas_cserve2_image_premul_data(unsigned int *data, unsigned int len)
+{
+   unsigned int nas;
+
+   nas = evas_cserve2_convert_argb_premul(data, len);
+   return ((ALPHA_SPARSE_INV_FRACTION * nas) >= len);
+}
+
 EAPI void
 evas_cserve2_image_premul(Evas_Img_Load_Params *ilp)
 {
