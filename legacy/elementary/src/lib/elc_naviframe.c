@@ -1492,8 +1492,7 @@ _item_push(Eo *obj, void *_pd, va_list *list)
    evas_object_show(VIEW(it));
 
    if (prev_it) elm_widget_focused_object_clear(VIEW(prev_it));
-   _resize_object_reset(obj, it, prev_it,
-                        (prev_it ? EINA_FALSE : EINA_TRUE));
+   _resize_object_reset(obj, it, prev_it, !prev_it);
    if (prev_it)
      {
         if (sd->freeze_events)
@@ -1774,8 +1773,7 @@ elm_naviframe_item_promote(Elm_Object_Item *it)
        (sd->stack->last->prev, Elm_Naviframe_Item);
 
    elm_widget_focused_object_clear(VIEW(nit));
-   _resize_object_reset(WIDGET(it), nit, prev_it,
-                        (prev_it ? EINA_FALSE : EINA_TRUE));
+   _resize_object_reset(WIDGET(it), nit, prev_it, !prev_it);
 
    if (sd->freeze_events)
      {
