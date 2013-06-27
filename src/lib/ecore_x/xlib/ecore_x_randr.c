@@ -1865,6 +1865,7 @@ ecore_x_randr_crtc_info_get(Ecore_X_Window root, const Ecore_X_Randr_Crtc crtc)
                   ret->height = info->height;
                   ret->mode = info->mode;
                   ret->rotation = info->rotation;
+                  ret->rotations = info->rotations;
                   ret->noutput = info->noutput;
                   ret->npossible = info->npossible;
 
