@@ -61,9 +61,10 @@ static void
 _data_set(Eo *obj, void *class_data, va_list *list)
 {
    Private_Data *pd = class_data;
-   const char *key = va_arg(*list, const char *);
-   const void *data = va_arg(*list, const void *);
-   eo_base_data_free_func free_func = va_arg(*list, eo_base_data_free_func);
+
+   EO_PARAMETER_GET(const char *, key, list);
+   EO_PARAMETER_GET(const void *, data, list);
+   EO_PARAMETER_GET(eo_base_data_free_func, free_func, list);
 
    Eo_Generic_Data_Node *node;
 
@@ -83,10 +84,11 @@ static void
 _data_get(Eo *obj EINA_UNUSED, void *class_data, va_list *list)
 {
    /* We don't really change it... */
-   Private_Data *pd = (Private_Data *) class_data;
-   const char *key = va_arg(*list, const char *);
-   void **data = va_arg(*list, void **);
    Eo_Generic_Data_Node *node;
+   Private_Data *pd = (Private_Data *) class_data;
+
+   EO_PARAMETER_GET(const char *, key, list);
+   EO_PARAMETER_GET(void **, data, list);
 
    if (!data) return;
    *data = NULL;
@@ -115,10 +117,10 @@ _dbg_info_get(Eo *obj EINA_UNUSED, void *class_data EINA_UNUSED,
 static void
 _data_del(Eo *obj EINA_UNUSED, void *class_data, va_list *list)
 {
-   Private_Data *pd = class_data;
-   const char *key = va_arg(*list, const char *);
-
    Eo_Generic_Data_Node *node;
+   Private_Data *pd = class_data;
+
+   EO_PARAMETER_GET(const char *, key, list);
 
    if (!key) return;
 
@@ -155,7 +157,8 @@ _wref_add(Eo *obj, void *class_data, va_list *list)
 {
    Private_Data *pd = (Private_Data *) class_data;
    size_t count;
-   Eo **wref = va_arg(*list, Eo **);
+
+   EO_PARAMETER_GET(Eo **, wref, list);
 
    count = _wref_count(pd);
    count += 1; /* New wref. */
@@ -172,7 +175,9 @@ _wref_del(Eo *obj, void *class_data, va_list *list)
 {
    Private_Data *pd = (Private_Data *) class_data;
    size_t count;
-   Eo **wref = va_arg(*list, Eo **);
+
+   EO_PARAMETER_GET(Eo **, wref, list);
+
    if (*wref != obj)
      {
         ERR("Wref is a weak ref to %p, while this function was called on %p.",
@@ -356,13 +361,15 @@ _eo_callbacks_sorted_insert(Private_Data *pd, Eo_Callback_Description *cb)
 static void
 _ev_cb_priority_add(Eo *obj, void *class_data, va_list *list)
 {
+   Eo_Callback_Description *cb;
    Private_Data *pd = (Private_Data *) class_data;
-   const Eo_Event_Description *desc = va_arg(*list, const Eo_Event_Description *);
-   Eo_Callback_Priority priority = va_arg(*list, int);
-   Eo_Event_Cb func = va_arg(*list, Eo_Event_Cb);
-   const void *data = va_arg(*list, const void *);
 
-   Eo_Callback_Description *cb = calloc(1, sizeof(*cb));
+   EO_PARAMETER_GET(const Eo_Event_Description *, desc, list);
+   EO_PARAMETER_ENUM_GET(Eo_Callback_Priority, priority, list);
+   EO_PARAMETER_GET(Eo_Event_Cb, func, list);
+   EO_PARAMETER_GET(const void *, data, list);
+
+   cb = calloc(1, sizeof(*cb));
    cb->items.item.desc = desc;
    cb->items.item.func = func;
    cb->func_data = (void *) data;
@@ -378,12 +385,13 @@ _ev_cb_priority_add(Eo *obj, void *class_data, va_list *list)
 static void
 _ev_cb_del(Eo *obj, void *class_data, va_list *list)
 {
-   Private_Data *pd = (Private_Data *) class_data;
-   const Eo_Event_Description *desc = va_arg(*list, const Eo_Event_Description *);
-   Eo_Event_Cb func = va_arg(*list, Eo_Event_Cb);
-   void *user_data = va_arg(*list, void *);
-
    Eo_Callback_Description *cb;
+   Private_Data *pd = (Private_Data *) class_data;
+
+   EO_PARAMETER_GET(const Eo_Event_Description *, desc, list);
+   EO_PARAMETER_GET(Eo_Event_Cb, func, list);
+   EO_PARAMETER_GET(void *, user_data, list);
+
    for (cb = pd->callbacks ; cb ; cb = cb->next)
      {
         if ((cb->items.item.desc == desc) && (cb->items.item.func == func) &&
@@ -405,12 +413,14 @@ _ev_cb_del(Eo *obj, void *class_data, va_list *list)
 static void
 _ev_cb_array_priority_add(Eo *obj, void *class_data, va_list *list)
 {
+   Eo_Callback_Description *cb;
    Private_Data *pd = (Private_Data *) class_data;
-   const Eo_Callback_Array_Item *array = va_arg(*list, const Eo_Callback_Array_Item *);
-   Eo_Callback_Priority priority = va_arg(*list, int);
-   const void *data = va_arg(*list, const void *);
 
-   Eo_Callback_Description *cb = calloc(1, sizeof(*cb));
+   EO_PARAMETER_GET(const Eo_Callback_Array_Item *, array, list);
+   EO_PARAMETER_ENUM_GET(Eo_Callback_Priority, priority, list);
+   EO_PARAMETER_GET(const void *, data, list);
+
+   cb = calloc(1, sizeof(*cb));
    cb->func_data = (void *) data;
    cb->priority = priority;
    cb->items.item_array = array;
@@ -425,11 +435,12 @@ _ev_cb_array_priority_add(Eo *obj, void *class_data, va_list *list)
 static void
 _ev_cb_array_del(Eo *obj, void *class_data, va_list *list)
 {
-   Private_Data *pd = (Private_Data *) class_data;
-   const Eo_Callback_Array_Item *array = va_arg(*list, const Eo_Callback_Array_Item *);
-   void *user_data = va_arg(*list, void *);
-
    Eo_Callback_Description *cb;
+   Private_Data *pd = (Private_Data *) class_data;
+
+   EO_PARAMETER_GET(const Eo_Callback_Array_Item *, array, list);
+   EO_PARAMETER_GET(void *, user_data, list);
+
    for (cb = pd->callbacks ; cb ; cb = cb->next)
      {
         if ((cb->items.item_array == array) && (cb->func_data == user_data))
@@ -449,10 +460,13 @@ _ev_cb_array_del(Eo *obj, void *class_data, va_list *list)
 static void
 _ev_cb_call(Eo *obj_id, void *class_data, va_list *list)
 {
+   Eo_Callback_Description *cb;
    Private_Data *pd = (Private_Data *) class_data;
-   const Eo_Event_Description *desc = va_arg(*list, const Eo_Event_Description *);
-   void *event_info = va_arg(*list, void *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+
+   EO_PARAMETER_GET(const Eo_Event_Description *, desc, list);
+   EO_PARAMETER_GET(void *, event_info, list);
+   EO_PARAMETER_GET(Eina_Bool *, ret, list);
+
    EO_OBJ_POINTER_RETURN(obj_id, obj);
 
    if (ret) *ret = EINA_TRUE;
@@ -460,7 +474,6 @@ _ev_cb_call(Eo *obj_id, void *class_data, va_list *list)
    _eo_ref(obj);
    pd->walking_list++;
 
-   Eo_Callback_Description *cb;
    for (cb = pd->callbacks ; cb ; cb = cb->next)
      {
         if (!cb->delete_me)
@@ -468,6 +481,7 @@ _ev_cb_call(Eo *obj_id, void *class_data, va_list *list)
              if (cb->func_array)
                {
                   const Eo_Callback_Array_Item *it;
+
                   for (it = cb->items.item_array ; it->func ; it++)
                     {
                        if (it->desc != desc)
@@ -518,7 +532,9 @@ _eo_event_forwarder_callback(void *data, Eo *obj, const Eo_Event_Description *de
    (void) obj;
    Eo *new_obj = (Eo *) data;
    Eina_Bool ret;
+
    eo_do(new_obj, eo_event_callback_call(desc, event_info, &ret));
+
    return ret;
 }
 
@@ -526,8 +542,9 @@ _eo_event_forwarder_callback(void *data, Eo *obj, const Eo_Event_Description *de
 static void
 _ev_cb_forwarder_add(Eo *obj, void *class_data EINA_UNUSED, va_list *list)
 {
-   const Eo_Event_Description *desc = va_arg(*list, const Eo_Event_Description *);
-   Eo *new_obj = va_arg(*list, Eo *);
+   EO_PARAMETER_GET(const Eo_Event_Description *, desc, list);
+   EO_PARAMETER_GET(Eo *, new_obj, list);
+
    /* FIXME: Add it EO_MAGIC_RETURN(new_obj, EO_EINA_MAGIC); */
 
    eo_do(obj, eo_event_callback_add(desc, _eo_event_forwarder_callback, new_obj));
@@ -536,8 +553,9 @@ _ev_cb_forwarder_add(Eo *obj, void *class_data EINA_UNUSED, va_list *list)
 static void
 _ev_cb_forwarder_del(Eo *obj, void *class_data EINA_UNUSED, va_list *list)
 {
-   const Eo_Event_Description *desc = va_arg(*list, const Eo_Event_Description *);
-   Eo *new_obj = va_arg(*list, Eo *);
+   EO_PARAMETER_GET(const Eo_Event_Description *, desc, list);
+   EO_PARAMETER_GET(Eo *, new_obj, list);
+
    /* FIXME: Add it EO_MAGIC_RETURN(new_obj, EO_EINA_MAGIC); */
 
    eo_do(obj, eo_event_callback_del(desc, _eo_event_forwarder_callback, new_obj));
@@ -568,7 +586,8 @@ static void
 _ev_freeze_get(Eo *obj EINA_UNUSED, void *class_data, va_list *list)
 {
    Private_Data *pd = (Private_Data *) class_data;
-   int *ret = va_arg(*list, int *);
+   EO_PARAMETER_GET(int *, ret, list);
+
    *ret = pd->event_freeze_count;
 }
 
@@ -594,7 +613,8 @@ _ev_global_thaw(const Eo_Class *klass EINA_UNUSED, va_list *list EINA_UNUSED)
 static void
 _ev_global_freeze_get(const Eo_Class *klass EINA_UNUSED, va_list *list)
 {
-   int *ret = va_arg(*list, int *);
+   EO_PARAMETER_GET(int *, ret, list);
+
    *ret = event_freeze_count;
 }
 

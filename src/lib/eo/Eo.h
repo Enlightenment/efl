@@ -513,6 +513,18 @@ typedef struct _Eo_Class_Description Eo_Class_Description;
 #define EO_OP_DESCRIPTION_SENTINEL { 0, NULL, NULL, EO_OP_TYPE_INVALID }
 
 /**
+ * @def EO_PARAMETER_GET
+ * An helper macro to get parameter with less mistake
+ */
+#define EO_PARAMETER_GET(Type, Name, List) Type Name = va_arg(*List, Type);
+
+/**
+ * @def EO_PARAMETER_ENUM_GET
+ * An helper macro to get parameter that are enum with less mistake (require to ask an int)
+ */
+#define EO_PARAMETER_ENUM_GET(Type, Name, List) Type Name = va_arg(*List, int);
+
+/**
  * @brief Create a new class.
  * @param desc the class description to create the class with.
  * @param parent the class to inherit from.
