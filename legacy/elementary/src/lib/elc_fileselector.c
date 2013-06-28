@@ -1087,7 +1087,7 @@ _buttons_ok_cancel_set(Eo *obj, void *_pd, va_list *list)
 
         eo_do(obj, elm_wdg_theme(NULL));
      }
-   else
+   else if (!visible)
      {
         evas_object_del(sd->cancel_button);
         sd->cancel_button = NULL;
