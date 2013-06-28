@@ -1819,7 +1819,7 @@ _image_data_update_add(Eo *eo_obj, void *_pd, va_list *list)
      { // detect single blob case already there to do a nop
         if ((r = o->pixels->pixel_updates->data))
           { // already a single full rect there.
-             if ((r->x == 0) && (r->y == 0) && (r->w == w) && (r->h == h))
+             if ((r->x == 0) && (r->y == 0) && (r->w == o->cur->image.w) && (r->h == o->cur->image.h))
                return;
           }
      }
