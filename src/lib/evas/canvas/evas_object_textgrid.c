@@ -694,6 +694,7 @@ evas_object_textgrid_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj
 		  if (!fad)
 		    {
                        ERR("Failed to allocate Evas_Font_Array_Data.");
+                       free(texts);
                        return;
 		    }
 
