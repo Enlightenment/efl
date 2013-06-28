@@ -338,6 +338,7 @@ evas_common_font_draw_prepare(Evas_Text_Props *text_props)
    return;
 
 error:
+   if (fg) free(fg);
    eina_inarray_free(glyphs);
 }
 
