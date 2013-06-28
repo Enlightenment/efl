@@ -1,12 +1,12 @@
 #
 # Саша Петровић <salepetronije@gmail.com>, 2012.
 #
-#: src/lib/elm_config.c:2408
+#: src/lib/elm_config.c:2397
 msgid ""
 msgstr ""
 "Project-Id-Version: а\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-06-19 02:21+0900\n"
+"POT-Creation-Date: 2013-06-28 14:39+0900\n"
 "PO-Revision-Date: 2013-04-11 16:30+0000\n"
 "Last-Translator: Саша Петровић <salepetronije@gmail.com>\n"
 "Language-Team: српски <xfce-i18n@xfce.org>\n"
@@ -17,20 +17,20 @@ msgstr ""
 "X-Launchpad-Export-Date: 2013-04-25 05:27+0000\n"
 "X-Generator: Launchpad (build 16580)\n"
 
-#: src/lib/elc_fileselector.c:778
+#: src/lib/elc_fileselector.c:841
 msgid "Up"
 msgstr "Горе"
 
-#: src/lib/elc_fileselector.c:793
+#: src/lib/elc_fileselector.c:856
 msgid "Home"
 msgstr "Лична фасцикла"
 
-#: src/lib/elc_fileselector.c:1020 src/lib/elm_entry.c:1292
+#: src/lib/elc_fileselector.c:1073 src/lib/elm_entry.c:1292
 #: src/lib/elm_entry.c:1317
 msgid "Cancel"
 msgstr "Откажи"
 
-#: src/lib/elc_fileselector.c:1029
+#: src/lib/elc_fileselector.c:1082
 msgid "OK"
 msgstr "У реду"
 
@@ -43,7 +43,7 @@ msgid "Clicked"
 msgstr "Кликнуто"
 
 #: src/lib/elm_button.c:281 src/lib/elm_check.c:219 src/lib/elm_gengrid.c:694
-#: src/lib/elm_genlist.c:1421 src/lib/elm_list.c:1471 src/lib/elm_radio.c:264
+#: src/lib/elm_genlist.c:1423 src/lib/elm_list.c:1471 src/lib/elm_radio.c:264
 #: src/lib/elm_spinner.c:526 src/lib/elm_toolbar.c:1954
 msgid "State: Disabled"
 msgstr "Стање: онемогућено"
@@ -129,7 +129,7 @@ msgstr "Сат"
 msgid "color selector palette item"
 msgstr "ставка избирача палете боја"
 
-#: src/lib/elm_config.c:2424
+#: src/lib/elm_config.c:2413
 msgid "default:LTR"
 msgstr "задато:слева на десно"
 
@@ -153,7 +153,7 @@ msgstr "Изаберите"
 msgid "Paste"
 msgstr "Прилепи"
 
-#: src/lib/elm_entry.c:3066
+#: src/lib/elm_entry.c:3142
 msgid "Entry"
 msgstr "Улаз"
 

@@ -1,12 +1,12 @@
 # Italian translation for Elementary.
 # This file is put in the public domain.
 # Massimo Maiurana <maiurana@gmail.com>, 2011.
-#: src/lib/elm_config.c:2408
+#: src/lib/elm_config.c:2397
 msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-06-19 02:21+0900\n"
+"POT-Creation-Date: 2013-06-28 14:39+0900\n"
 "PO-Revision-Date: 2013-01-04 22:08+0100\n"
 "Last-Translator: Massimo Maiurana <maiurana@gmail.com>\n"
 "Language-Team: none\n"
@@ -15,20 +15,20 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/lib/elc_fileselector.c:778
+#: src/lib/elc_fileselector.c:841
 msgid "Up"
 msgstr "Su"
 
-#: src/lib/elc_fileselector.c:793
+#: src/lib/elc_fileselector.c:856
 msgid "Home"
 msgstr "Home"
 
-#: src/lib/elc_fileselector.c:1020 src/lib/elm_entry.c:1292
+#: src/lib/elc_fileselector.c:1073 src/lib/elm_entry.c:1292
 #: src/lib/elm_entry.c:1317
 msgid "Cancel"
 msgstr "Annulla"
 
-#: src/lib/elc_fileselector.c:1029
+#: src/lib/elc_fileselector.c:1082
 msgid "OK"
 msgstr "OK"
 
@@ -41,7 +41,7 @@ msgid "Clicked"
 msgstr "Cliccato"
 
 #: src/lib/elm_button.c:281 src/lib/elm_check.c:219 src/lib/elm_gengrid.c:694
-#: src/lib/elm_genlist.c:1421 src/lib/elm_list.c:1471 src/lib/elm_radio.c:264
+#: src/lib/elm_genlist.c:1423 src/lib/elm_list.c:1471 src/lib/elm_radio.c:264
 #: src/lib/elm_spinner.c:526 src/lib/elm_toolbar.c:1954
 msgid "State: Disabled"
 msgstr "Stato: disabilitato"
@@ -127,7 +127,7 @@ msgstr "Orologio"
 msgid "color selector palette item"
 msgstr "palette selezione colore"
 
-#: src/lib/elm_config.c:2424
+#: src/lib/elm_config.c:2413
 msgid "default:LTR"
 msgstr "predefintito: LTR"
 
@@ -151,7 +151,7 @@ msgstr "Seleziona"
 msgid "Paste"
 msgstr "Incolla"
 
-#: src/lib/elm_entry.c:3066
+#: src/lib/elm_entry.c:3142
 msgid "Entry"
 msgstr "Voce"
 

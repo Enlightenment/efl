@@ -3,12 +3,12 @@
 # batden <batden@orange.fr>, 2011.
 # dazibao <dazibao@sfr.fr>, 2011.
 #
-#: src/lib/elm_config.c:2408
+#: src/lib/elm_config.c:2397
 msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-06-19 02:21+0900\n"
+"POT-Creation-Date: 2013-06-28 14:39+0900\n"
 "PO-Revision-Date: 2013-03-18 08:05+0000\n"
 "Last-Translator: Eliovir <Unknown>\n"
 "Language-Team: French <sansgourou@gmail.com>\n"
@@ -22,20 +22,20 @@ msgstr ""
 "X-Poedit-Language: French\n"
 "X-Poedit-SourceCharset: utf-8\n"
 
-#: src/lib/elc_fileselector.c:778
+#: src/lib/elc_fileselector.c:841
 msgid "Up"
 msgstr "Monter"
 
-#: src/lib/elc_fileselector.c:793
+#: src/lib/elc_fileselector.c:856
 msgid "Home"
 msgstr "Home"
 
-#: src/lib/elc_fileselector.c:1020 src/lib/elm_entry.c:1292
+#: src/lib/elc_fileselector.c:1073 src/lib/elm_entry.c:1292
 #: src/lib/elm_entry.c:1317
 msgid "Cancel"
 msgstr "Annuler"
 
-#: src/lib/elc_fileselector.c:1029
+#: src/lib/elc_fileselector.c:1082
 msgid "OK"
 msgstr "OK"
 
@@ -48,7 +48,7 @@ msgid "Clicked"
 msgstr "Cliqué"
 
 #: src/lib/elm_button.c:281 src/lib/elm_check.c:219 src/lib/elm_gengrid.c:694
-#: src/lib/elm_genlist.c:1421 src/lib/elm_list.c:1471 src/lib/elm_radio.c:264
+#: src/lib/elm_genlist.c:1423 src/lib/elm_list.c:1471 src/lib/elm_radio.c:264
 #: src/lib/elm_spinner.c:526 src/lib/elm_toolbar.c:1954
 msgid "State: Disabled"
 msgstr "État : désactivé"
@@ -134,7 +134,7 @@ msgstr ""
 msgid "color selector palette item"
 msgstr ""
 
-#: src/lib/elm_config.c:2424
+#: src/lib/elm_config.c:2413
 msgid "default:LTR"
 msgstr "LTR par défaut"
 
@@ -158,7 +158,7 @@ msgstr "Sélectionner"
 msgid "Paste"
 msgstr "Coller"
 
-#: src/lib/elm_entry.c:3066
+#: src/lib/elm_entry.c:3142
 msgid "Entry"
 msgstr ""
 
