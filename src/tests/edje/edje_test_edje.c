@@ -41,7 +41,7 @@ END_TEST
 static const char *
 test_layout_get(const char *name)
 {
-   const char filename[PATH_MAX];
+   static char filename[PATH_MAX];
 
    snprintf(filename, PATH_MAX, TESTS_BUILD_DIR"/data/%s", name);
 
