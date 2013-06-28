@@ -1347,8 +1347,9 @@ main(int argc, char **argv)
    _edje_pick_sound_dir_compose(samples, tones, out_file);
 
    /* Write file header after processing all groups */
-   bytes = eet_data_write(out_file->ef, _edje_edd_edje_file, "edje/file",
-                          out_file, comp_mode);
+   if (out_file)
+     bytes = eet_data_write(out_file->ef, _edje_edd_edje_file, "edje/file",
+                            out_file, comp_mode);
 
    VERBOSE(EINA_LOG_INFO("Wrote <%d> bytes for file header.\n", bytes));
 
