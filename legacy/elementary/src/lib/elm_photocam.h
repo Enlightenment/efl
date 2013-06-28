@@ -56,6 +56,18 @@
  * @{
  */
 
+/**
+ * @brief Types of zoom available.
+ */
+typedef enum
+{
+   ELM_PHOTOCAM_ZOOM_MODE_MANUAL = 0, /**< Zoom controlled normally by elm_photocam_zoom_set */
+   ELM_PHOTOCAM_ZOOM_MODE_AUTO_FIT, /**< Zoom until photo fits in photocam */
+   ELM_PHOTOCAM_ZOOM_MODE_AUTO_FILL, /**< Zoom until photo fills photocam */
+   ELM_PHOTOCAM_ZOOM_MODE_AUTO_FIT_IN, /**< Zoom in until photo fits in photocam */
+   ELM_PHOTOCAM_ZOOM_MODE_LAST
+} Elm_Photocam_Zoom_Mode;
+
 #ifdef EFL_EO_API_SUPPORT
 #include "elm_photocam_eo.h"
 #endif
