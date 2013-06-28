@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Efl\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-03-22 17:44+0900\n"
+"POT-Creation-Date: 2013-06-28 14:38+0900\n"
 "PO-Revision-Date: 2013-01-02 07:33+0900\n"
 "Last-Translator: Daniel Juyung Seo <seojuyung2@gmali.com>\n"
 "Language-Team: Enlightenment Team\n"
@@ -175,34 +175,34 @@ msgstr "오류: '%s' 값의 좌표가 올바르지 않습니다\n"
 msgid "ERROR: incorrect size value '%s'\n"
 msgstr "오류: '%s' 값의 크기가 올바르지 않습니다\n"
 
-#: src/lib/efreet/efreet_base.c:129
+#: src/lib/efreet/efreet_base.c:119
 msgid "Desktop"
 msgstr "데스크톱"
 
-#: src/lib/efreet/efreet_base.c:137
+#: src/lib/efreet/efreet_base.c:127
 msgid "Downloads"
 msgstr "다운로드"
 
-#: src/lib/efreet/efreet_base.c:146
+#: src/lib/efreet/efreet_base.c:136
 msgid "Templates"
 msgstr "템플릿"
 
-#: src/lib/efreet/efreet_base.c:155
+#: src/lib/efreet/efreet_base.c:145
 msgid "Public"
 msgstr "공개"
 
-#: src/lib/efreet/efreet_base.c:164
+#: src/lib/efreet/efreet_base.c:154
 msgid "Documents"
 msgstr "문서"
 
-#: src/lib/efreet/efreet_base.c:172
+#: src/lib/efreet/efreet_base.c:162
 msgid "Music"
 msgstr "음악"
 
-#: src/lib/efreet/efreet_base.c:180
+#: src/lib/efreet/efreet_base.c:170
 msgid "Pictures"
 msgstr "사진"
 
-#: src/lib/efreet/efreet_base.c:188
+#: src/lib/efreet/efreet_base.c:178
 msgid "Videos"
 msgstr "영상"

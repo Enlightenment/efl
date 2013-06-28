@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Efl\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-05-06 11:42+0900\n"
+"POT-Creation-Date: 2013-06-28 14:38+0900\n"
 "PO-Revision-Date: 2013-02-05 22:51+0000\n"
 "Last-Translator: ilLogict <illogict@online.fr>\n"
 "Language-Team: Enlightenment French Team <enlightenment-intl@lists."
@@ -178,34 +178,34 @@ msgstr "ERREUR : valeur géométrique incorrecte « %s »\n"
 msgid "ERROR: incorrect size value '%s'\n"
 msgstr "ERREUR : valeur de taille incorrecte « %s »\n"
 
-#: src/lib/efreet/efreet_base.c:129
+#: src/lib/efreet/efreet_base.c:119
 msgid "Desktop"
 msgstr "Bureau"
 
-#: src/lib/efreet/efreet_base.c:137
+#: src/lib/efreet/efreet_base.c:127
 msgid "Downloads"
 msgstr "Téléchargements"
 
-#: src/lib/efreet/efreet_base.c:146
+#: src/lib/efreet/efreet_base.c:136
 msgid "Templates"
 msgstr "Modèles"
 
-#: src/lib/efreet/efreet_base.c:155
+#: src/lib/efreet/efreet_base.c:145
 msgid "Public"
 msgstr "Public"
 
-#: src/lib/efreet/efreet_base.c:164
+#: src/lib/efreet/efreet_base.c:154
 msgid "Documents"
 msgstr "Documents"
 
-#: src/lib/efreet/efreet_base.c:172
+#: src/lib/efreet/efreet_base.c:162
 msgid "Music"
 msgstr "Musique"
 
-#: src/lib/efreet/efreet_base.c:180
+#: src/lib/efreet/efreet_base.c:170
 msgid "Pictures"
 msgstr "Images"
 
-#: src/lib/efreet/efreet_base.c:188
+#: src/lib/efreet/efreet_base.c:178
 msgid "Videos"
 msgstr "Vidéos"

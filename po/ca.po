@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Efl\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-03-22 17:44+0900\n"
+"POT-Creation-Date: 2013-06-28 14:38+0900\n"
 "PO-Revision-Date: 2013-02-01 09:52+0100\n"
 "Last-Translator: Joan Coll <jcoll2@gmail.com>\n"
 "Language-Team: Catalan\n"
@@ -174,34 +174,34 @@ msgstr "ERROR: valor geomètric incorrecte '%s'\n"
 msgid "ERROR: incorrect size value '%s'\n"
 msgstr "ERROR: tamany incorrecte '%s'\n"
 
-#: src/lib/efreet/efreet_base.c:129
+#: src/lib/efreet/efreet_base.c:119
 msgid "Desktop"
 msgstr "Escriptori"
 
-#: src/lib/efreet/efreet_base.c:137
+#: src/lib/efreet/efreet_base.c:127
 msgid "Downloads"
 msgstr "Descàrregues"
 
-#: src/lib/efreet/efreet_base.c:146
+#: src/lib/efreet/efreet_base.c:136
 msgid "Templates"
 msgstr "Plantilles"
 
-#: src/lib/efreet/efreet_base.c:155
+#: src/lib/efreet/efreet_base.c:145
 msgid "Public"
 msgstr "Públic"
 
-#: src/lib/efreet/efreet_base.c:164
+#: src/lib/efreet/efreet_base.c:154
 msgid "Documents"
 msgstr "Documents"
 
-#: src/lib/efreet/efreet_base.c:172
+#: src/lib/efreet/efreet_base.c:162
 msgid "Music"
 msgstr "Música"
 
-#: src/lib/efreet/efreet_base.c:180
+#: src/lib/efreet/efreet_base.c:170
 msgid "Pictures"
 msgstr "Imatges"
 
-#: src/lib/efreet/efreet_base.c:188
+#: src/lib/efreet/efreet_base.c:178
 msgid "Videos"
 msgstr "Vídeos"
