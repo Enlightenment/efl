@@ -1412,7 +1412,7 @@ evgl_engine_shutdown(void *eng_data)
 void *
 evgl_surface_create(void *eng_data, Evas_GL_Config *cfg, int w, int h)
 {
-   EVGL_Surface   *sfc = NULL;
+   EVGL_Surface *sfc = NULL;
    char *s = NULL;
    int direct_override = 0;
 
@@ -1469,7 +1469,7 @@ evgl_surface_create(void *eng_data, Evas_GL_Config *cfg, int w, int h)
    if (!_internal_resource_make_current(eng_data, NULL))
      {
         ERR("Error doing an internal resource make current");
-        return 0;
+        goto error;
      }
 
    // Create internal buffers
@@ -1492,7 +1492,7 @@ evgl_surface_create(void *eng_data, Evas_GL_Config *cfg, int w, int h)
    if (!evgl_engine->funcs->make_current(eng_data, NULL, NULL, 0))
      {
         ERR("Error doing make_current(NULL, NULL).");
-        return 0;
+        goto error;
      }
 
    // Keep track of all the created surfaces
