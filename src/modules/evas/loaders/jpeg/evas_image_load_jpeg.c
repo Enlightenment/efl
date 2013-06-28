@@ -1083,11 +1083,11 @@ done:
                        to += hw;
                     }
                }
-             if (ptr_rotate)
-               {
-                  free(ptr_rotate);
-                  ptr_rotate = NULL;
-               }
+          }
+        if (ptr_rotate)
+          {
+             free(ptr_rotate);
+             ptr_rotate = NULL;
           }
         if (region)
           {
