@@ -634,6 +634,7 @@ evas_image_load_file_xpm(Evas_Img_Load_Params *ilp, const char *file, const char
    return EINA_TRUE;
 
  on_error:
+   if (cmap) free(cmap);
    free(line);
    eina_file_map_free(f, (void*) map);
    eina_file_close(f);
