@@ -148,6 +148,7 @@ static int
 module_open(Evas_Module *em)
 {
    if (!em) return 0;
+   eet_init();
    em->functions = (void *)(&evas_image_load_eet_func);
    return 1;
 }
@@ -155,6 +156,7 @@ module_open(Evas_Module *em)
 static void
 module_close(Evas_Module *em EINA_UNUSED)
 {
+   eet_shutdown();
 }
 
 static Evas_Module_Api evas_modapi =
