@@ -1468,3 +1468,8 @@
 
         * Fix Segfault in elementary file_selector_example when closed.
           https://phab.enlightenment.org/T133
+
+2013-06-30  Jaehwan Kim
+
+        * Add the elm_scrollable_interface_content_viewport_resize_cb_set.
+        When the viewport is resized, the enrolled function is called.

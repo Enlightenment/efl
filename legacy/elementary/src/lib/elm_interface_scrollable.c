@@ -117,7 +117,8 @@ _elm_pan_smart_resize(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    psd->h = h;
 
    _elm_pan_update(psd);
-   evas_object_smart_callback_call(psd->self, SIG_CHANGED, NULL);
+   evas_object_smart_callback_call(psd->self, SIG_CHANGED,
+                                   ELM_OBJ_PAN_SMART_RESIZE);
 }
 
 static void
@@ -154,7 +155,8 @@ _elm_pan_pos_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    psd->py = y;
 
    _elm_pan_update(psd);
-   evas_object_smart_callback_call(psd->self, SIG_CHANGED, NULL);
+   evas_object_smart_callback_call(psd->self, SIG_CHANGED,
+                                   ELM_OBJ_PAN_POS_SET);
 }
 
 static void
@@ -264,7 +266,8 @@ _elm_pan_content_del_cb(void *data,
    psd->content = NULL;
    psd->content_w = psd->content_h = psd->px = psd->py =
            psd->prev_cw = psd->prev_ch = psd->delta_posx = psd->delta_posy = 0;
-   evas_object_smart_callback_call(psd->self, SIG_CHANGED, NULL);
+   evas_object_smart_callback_call(psd->self, SIG_CHANGED,
+                                   ELM_OBJ_PAN_CONTENT_DEL);
 }
 
 static void
@@ -284,7 +287,8 @@ _elm_pan_content_resize_cb(void *data,
         psd->content_h = h;
         _elm_pan_update(psd);
      }
-   evas_object_smart_callback_call(psd->self, SIG_CHANGED, NULL);
+   evas_object_smart_callback_call(psd->self, SIG_CHANGED,
+                                   ELM_OBJ_PAN_CONTENT_RESIZE);
 }
 
 static void
@@ -326,7 +330,8 @@ _elm_pan_content_set(Evas_Object *obj,
    _elm_pan_update(psd);
 
 end:
-   evas_object_smart_callback_call(psd->self, SIG_CHANGED, NULL);
+   evas_object_smart_callback_call(psd->self, SIG_CHANGED,
+                                   ELM_OBJ_PAN_CONTENT_SET);
 }
 
 static void
@@ -3619,10 +3624,11 @@ _elm_scroll_scroll_bar_reset(Elm_Scrollable_Smart_Interface_Data *sid)
 static void
 _elm_scroll_pan_changed_cb(void *data,
                            Evas_Object *obj __UNUSED__,
-                           void *event_info __UNUSED__)
+                           void *event_info)
 {
    Evas_Coord w, h;
    Elm_Scrollable_Smart_Interface_Data *sid = data;
+   Elm_Pan_Callback_Type type = (Elm_Pan_Callback_Type) event_info;
 
    if (!sid->pan_obj) return;
 
@@ -3638,6 +3644,14 @@ _elm_scroll_pan_changed_cb(void *data,
         sid->content_info.resized = EINA_TRUE;
         _elm_scroll_wanted_region_set(sid->obj);
      }
+
+   if (type == ELM_OBJ_PAN_SMART_RESIZE)
+     if (sid->cb_func.content_viewport_resize)
+       {
+          eo_do(sid->obj, elm_scrollable_interface_content_viewport_size_get(&w, &h));
+          sid->cb_func.content_viewport_resize(obj, w, h);
+       }
+
 }
 
 static void
@@ -3917,6 +3931,14 @@ _elm_scroll_content_min_limit_cb_set(Eo *obj EINA_UNUSED, void *_pd, va_list *li
    Elm_Scrollable_Smart_Interface_Data *sid = _pd;
    Elm_Interface_Scrollable_Min_Limit_Cb min_limit_cb = va_arg(*list, Elm_Interface_Scrollable_Min_Limit_Cb);
    sid->cb_func.content_min_limit = min_limit_cb;
+}
+
+static void
+_elm_scroll_content_viewport_resize_cb_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Elm_Scrollable_Smart_Interface_Data *sid = _pd;
+   Elm_Interface_Scrollable_Resize_Cb viewport_resize_cb = va_arg(*list, Elm_Interface_Scrollable_Resize_Cb);
+   sid->cb_func.content_viewport_resize = viewport_resize_cb;
 }
 
 static void
@@ -4549,6 +4571,7 @@ _elm_scrollable_interface_constructor(Eo_Class *klass)
            EO_OP_FUNC(ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_HBAR_PRESS_CB_SET), _elm_scroll_hbar_press_cb_set),
            EO_OP_FUNC(ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_HBAR_UNPRESS_CB_SET), _elm_scroll_hbar_unpress_cb_set),
            EO_OP_FUNC(ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_CONTENT_MIN_LIMIT_CB_SET), _elm_scroll_content_min_limit_cb_set),
+           EO_OP_FUNC(ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_CONTENT_VIEWPORT_RESIZE_CB_SET), _elm_scroll_content_viewport_resize_cb_set),
            EO_OP_FUNC(ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_CONTENT_POS_SET), _elm_scroll_content_pos_set),
            EO_OP_FUNC(ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_CONTENT_POS_GET), _elm_scroll_content_pos_get),
            EO_OP_FUNC(ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_CONTENT_REGION_SHOW), _elm_scroll_content_region_show),
@@ -4627,6 +4650,8 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_HBAR_PRESS_CB_SET, "description here"),
      EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_HBAR_UNPRESS_CB_SET, "description here"),
      EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_CONTENT_MIN_LIMIT_CB_SET, "description here"),
+     EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_CONTENT_VIEWPORT_RESIZE_CB_SET,
+                       "When the viewport is resized, the callback is called."),
      EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_CONTENT_POS_SET, "description here"),
      EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_CONTENT_POS_GET, "description here"),
      EO_OP_DESCRIPTION(ELM_SCROLLABLE_INTERFACE_SUB_ID_CONTENT_REGION_SHOW, "description here"),

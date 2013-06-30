@@ -76,6 +76,7 @@ Additions:
    * Add "focused" and "unfocused" smart callback for panel, video, web, web2, genlist, hover, index, list, map, photocam, progressbar, radio, scroller, slider, slideshow, spinner, toolbar, win, calendar, check, clock, colorselector, datetime, diskselector, flipselector, gengrid, ctxpopup, fileselector_button, naviframe, player, popup, bubble, button.
    * Add elm_web_url_set(), elm_web_url_get() and "url,changed" signal for web, web2.
    * Add elm_fileselector_mime_type_filter_append and elm_fileselector_filters_clear to support mime type filter.
+   * Add the elm_scrollable_interface_content_viewport_resize_cb_set.
 
 Improvements:
 

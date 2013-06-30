@@ -750,6 +750,14 @@ _elm_scroller_content_min_limit_cb(Evas_Object *obj,
 }
 
 static void
+_elm_scroller_content_viewport_resize_cb(Evas_Object *obj,
+                                   Evas_Coord w EINA_UNUSED,
+                                   Evas_Coord h EINA_UNUSED)
+{
+   elm_layout_sizing_eval(obj);
+}
+
+static void
 _elm_scroller_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Evas_Coord minw, minh;
@@ -804,7 +812,9 @@ _elm_scroller_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
          elm_scrollable_interface_hbar_unpress_cb_set(_hbar_unpress_cb),
          elm_scrollable_interface_page_change_cb_set(_page_change_cb),
          elm_scrollable_interface_content_min_limit_cb_set
-         (_elm_scroller_content_min_limit_cb));
+         (_elm_scroller_content_min_limit_cb),
+         elm_scrollable_interface_content_viewport_resize_cb_set
+         (_elm_scroller_content_viewport_resize_cb));
 }
 
 static void

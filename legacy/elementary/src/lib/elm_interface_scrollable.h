@@ -34,6 +34,16 @@
 #define ELM_OBJ_PAN_CLASS elm_obj_pan_eo_class_get()
 const Eo_Class *elm_obj_pan_eo_class_get(void) EINA_CONST;
 
+typedef enum _Elm_Pan_Callback_Type
+{
+   ELM_OBJ_PAN_SMART_RESIZE,
+   ELM_OBJ_PAN_POS_SET,
+   ELM_OBJ_PAN_CONTENT_DEL,
+   ELM_OBJ_PAN_CONTENT_RESIZE,
+   ELM_OBJ_PAN_CONTENT_SET,
+   ELM_OBJ_PAN_LAST
+} Elm_Pan_Callback_Type;
+
 extern EAPI Eo_Op ELM_OBJ_PAN_BASE_ID;
 
 enum
@@ -172,6 +182,7 @@ enum
    ELM_SCROLLABLE_INTERFACE_SUB_ID_HBAR_PRESS_CB_SET,
    ELM_SCROLLABLE_INTERFACE_SUB_ID_HBAR_UNPRESS_CB_SET,
    ELM_SCROLLABLE_INTERFACE_SUB_ID_CONTENT_MIN_LIMIT_CB_SET,
+   ELM_SCROLLABLE_INTERFACE_SUB_ID_CONTENT_VIEWPORT_RESIZE_CB_SET,
    ELM_SCROLLABLE_INTERFACE_SUB_ID_CONTENT_POS_SET,
    ELM_SCROLLABLE_INTERFACE_SUB_ID_CONTENT_POS_GET,
    ELM_SCROLLABLE_INTERFACE_SUB_ID_CONTENT_REGION_SHOW,
@@ -477,6 +488,17 @@ enum
  *
  */
 #define elm_scrollable_interface_content_min_limit_cb_set(min_limit_cb) ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_CONTENT_MIN_LIMIT_CB_SET), EO_TYPECHECK(Elm_Interface_Scrollable_Min_Limit_Cb, min_limit_cb)
+
+/**
+ * @def elm_scrollable_interface_content_viewport_resize_cb_set
+ * @since 1.8
+ *
+ * When the viewport is resized, the callback is called.
+ *
+ * @param[in] viewport_resize_cb
+ *
+ */
+#define elm_scrollable_interface_content_viewport_resize_cb_set(viewport_resize_cb) ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_CONTENT_VIEWPORT_RESIZE_CB_SET), EO_TYPECHECK(Elm_Interface_Scrollable_Resize_Cb, viewport_resize_cb)
 
 /**
  * @def elm_scrollable_interface_content_pos_set
@@ -1050,6 +1072,7 @@ struct _Elm_Pan_Smart_Data
  */
 typedef void      (*Elm_Interface_Scrollable_Cb)(Evas_Object *, void *data);
 typedef void      (*Elm_Interface_Scrollable_Min_Limit_Cb)(Evas_Object *obj, Eina_Bool w, Eina_Bool h);
+typedef void      (*Elm_Interface_Scrollable_Resize_Cb)(Evas_Object *obj, Eina_Bool w, Eina_Bool h);
 
 typedef struct _Elm_Scrollable_Smart_Interface_Data
   Elm_Scrollable_Smart_Interface_Data;
@@ -1163,6 +1186,7 @@ struct _Elm_Scrollable_Smart_Interface_Data
       Elm_Interface_Scrollable_Cb page_change;
 
       Elm_Interface_Scrollable_Min_Limit_Cb content_min_limit;
+      Elm_Interface_Scrollable_Resize_Cb content_viewport_resize;
    } cb_func;
 
    struct
