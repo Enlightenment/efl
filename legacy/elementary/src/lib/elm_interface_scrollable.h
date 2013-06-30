@@ -1072,7 +1072,7 @@ struct _Elm_Pan_Smart_Data
  */
 typedef void      (*Elm_Interface_Scrollable_Cb)(Evas_Object *, void *data);
 typedef void      (*Elm_Interface_Scrollable_Min_Limit_Cb)(Evas_Object *obj, Eina_Bool w, Eina_Bool h);
-typedef void      (*Elm_Interface_Scrollable_Resize_Cb)(Evas_Object *obj, Eina_Bool w, Eina_Bool h);
+typedef void      (*Elm_Interface_Scrollable_Resize_Cb)(Evas_Object *obj, Evas_Coord w, Evas_Coord h);
 
 typedef struct _Elm_Scrollable_Smart_Interface_Data
   Elm_Scrollable_Smart_Interface_Data;
