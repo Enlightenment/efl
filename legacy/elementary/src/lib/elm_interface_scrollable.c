@@ -118,7 +118,7 @@ _elm_pan_smart_resize(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 
    _elm_pan_update(psd);
    evas_object_smart_callback_call(psd->self, SIG_CHANGED,
-                                   ELM_OBJ_PAN_SMART_RESIZE);
+                                   (void *)ELM_OBJ_PAN_SMART_RESIZE);
 }
 
 static void
@@ -156,7 +156,7 @@ _elm_pan_pos_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 
    _elm_pan_update(psd);
    evas_object_smart_callback_call(psd->self, SIG_CHANGED,
-                                   ELM_OBJ_PAN_POS_SET);
+                                   (void *)ELM_OBJ_PAN_POS_SET);
 }
 
 static void
@@ -267,7 +267,7 @@ _elm_pan_content_del_cb(void *data,
    psd->content_w = psd->content_h = psd->px = psd->py =
            psd->prev_cw = psd->prev_ch = psd->delta_posx = psd->delta_posy = 0;
    evas_object_smart_callback_call(psd->self, SIG_CHANGED,
-                                   ELM_OBJ_PAN_CONTENT_DEL);
+                                   (void *)ELM_OBJ_PAN_CONTENT_DEL);
 }
 
 static void
@@ -288,7 +288,7 @@ _elm_pan_content_resize_cb(void *data,
         _elm_pan_update(psd);
      }
    evas_object_smart_callback_call(psd->self, SIG_CHANGED,
-                                   ELM_OBJ_PAN_CONTENT_RESIZE);
+                                   (void *)ELM_OBJ_PAN_CONTENT_RESIZE);
 }
 
 static void
@@ -331,7 +331,7 @@ _elm_pan_content_set(Evas_Object *obj,
 
 end:
    evas_object_smart_callback_call(psd->self, SIG_CHANGED,
-                                   ELM_OBJ_PAN_CONTENT_SET);
+                                   (void *)ELM_OBJ_PAN_CONTENT_SET);
 }
 
 static void
