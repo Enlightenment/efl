@@ -886,9 +886,6 @@ evas_common_rgba_image_scalecache_do_cbs(Image_Entry *ie, RGBA_Image *dst,
              if ((dounload) ||
                  ((im->cache_entry.flags.loaded) &&
                      ((!im->cs.no_free)
-#ifdef EVAS_CSERVE
-                      || (ie->data1)
-#endif
 #ifdef EVAS_CSERVE2
                       || (ie->data1)
 #endif

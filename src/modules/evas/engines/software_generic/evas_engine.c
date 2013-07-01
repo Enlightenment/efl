@@ -1070,13 +1070,11 @@ eng_image_data_get(void *data EINA_UNUSED, void *image, int to_write, DATA32 **i
 
         if (to_write)
           im = (RGBA_Image *)evas_cache2_image_writable(&im->cache_entry);
-
-        *image_data = im->image.data;
-        return im;
      }
+   else
 #endif
-
    error = evas_cache_image_load_data(&im->cache_entry);
+
    switch (im->cache_entry.space)
      {
       case EVAS_COLORSPACE_ARGB8888:
@@ -1136,7 +1134,7 @@ eng_image_data_put(void *data, void *image, DATA32 *image_data)
       case EVAS_COLORSPACE_YCBCR420NV12601_PL:
       case EVAS_COLORSPACE_YCBCR420TM12601_PL:
 	if (image_data != im->cs.data)
-	  {
+          {
 	     if (im->cs.data)
 	       {
 		  if (!im->cs.no_free) free(im->cs.data);
