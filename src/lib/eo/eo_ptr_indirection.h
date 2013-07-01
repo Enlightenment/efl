@@ -44,5 +44,7 @@
 void _eo_print();
 #endif
 
+#include "eo_ptr_indirection.x"
+
 #endif
 

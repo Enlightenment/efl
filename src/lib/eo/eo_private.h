@@ -59,16 +59,16 @@ typedef struct _Eo_Class _Eo_Class;
 typedef struct _Eo_Internal _Eo;
 
 /* Retrieves the pointer to the object from the id */
-_Eo *_eo_obj_pointer_get(const Eo_Id obj_id);
+static inline _Eo *_eo_obj_pointer_get(const Eo_Id obj_id);
 
 /* Allocates an entry for the given object */
-Eo_Id _eo_id_allocate(const _Eo *obj);
+static inline Eo_Id _eo_id_allocate(const _Eo *obj);
 
 /* Releases an entry by the object id */
-void _eo_id_release(const Eo_Id obj_id);
+static inline void _eo_id_release(const Eo_Id obj_id);
 
 /* Free all the entries and the tables */
-void _eo_free_ids_tables();
+static inline void _eo_free_ids_tables(void);
 
 void _eo_condtor_done(Eo *obj);
 

@@ -154,4 +154,4 @@ TESTS += tests/eo/test_signals
 endif
 
 
-EXTRA_DIST += tests/eo/eunit_tests.h
+EXTRA_DIST += tests/eo/eunit_tests.h lib/eo/eo_ptr_indirection.x
