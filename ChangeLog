@@ -4,7 +4,7 @@
 
 2013-06-28  Jiyoun Park
 
-    * Evas: Fix jpeg loader cannot deal with exif information correctly
+	* Evas: Fix jpeg loader cannot deal with exif information correctly
 
 2013-06-26  Daniel Willmann
 
