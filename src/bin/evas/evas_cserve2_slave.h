@@ -48,7 +48,6 @@ typedef unsigned char                   DATA8;
 typedef struct _Evas_Loader_Module_Api Evas_Loader_Module_Api;
 typedef struct _Evas_Img_Load_Params Evas_Img_Load_Params;
 
-#define USE_EVAS_MODULE_API 1 ///< Use common evas loaders. TEMPORARY DEFINE.
 #define EVAS_CSERVE2_MODULE_API_VERSION 1
 struct _Evas_Loader_Module_Api {
    int version;
@@ -79,10 +78,6 @@ struct _Evas_Img_Load_Params {
    Eina_Bool animated : 1;
 };
 
-EAPI Eina_Bool evas_cserve2_loader_register(Evas_Loader_Module_Api *api);
-
 Eina_Bool evas_cserve2_image_premul_data(unsigned int *data, unsigned int len);
-EAPI void evas_cserve2_image_premul(Evas_Img_Load_Params *ilp);
-EAPI void evas_cserve2_image_alpha_sparse_set(Evas_Img_Load_Params *ilp);
 
 #endif /* _EVAS_CSERVE2_SLAVE_H */

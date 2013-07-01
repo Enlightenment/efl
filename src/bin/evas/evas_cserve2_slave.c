@@ -31,44 +31,6 @@ struct ext_loader_s
 #define MATCHING(Ext, Module)                   \
   { sizeof (Ext), Ext, Module }
 
-#if !USE_EVAS_MODULE_API
-
-static const struct ext_loader_s map_loaders[] =
-{ /* map extensions to loaders to use for good first-guess tries */
-   MATCHING(".png", "png"),
-   MATCHING(".jpg", "jpeg"),
-   MATCHING(".jpeg", "jpeg"),
-   MATCHING(".jfif", "jpeg"),
-   MATCHING(".eet", "eet"),
-   MATCHING(".edj", "eet"),
-   MATCHING(".eap", "eet"),
-   MATCHING(".xpm", "xpm"),
-   MATCHING(".tiff", "tiff"),
-   MATCHING(".tif", "tiff"),
-   MATCHING(".svg", "svg"),
-   MATCHING(".svgz", "svg"),
-   MATCHING(".svg.gz", "svg"),
-   MATCHING(".gif", "gif"),
-   MATCHING(".pbm", "pmaps"),
-   MATCHING(".pgm", "pmaps"),
-   MATCHING(".ppm", "pmaps"),
-   MATCHING(".pnm", "pmaps"),
-   MATCHING(".bmp", "bmp"),
-   MATCHING(".tga", "tga"),
-   MATCHING(".wbmp", "wbmp"),
-   MATCHING(".webp", "webp"),
-   MATCHING(".ico", "ico"),
-   MATCHING(".cur", "ico"),
-   MATCHING(".psd", "psd")
-};
-
-static const char *loaders_name[] =
-{ /* in order of most likely needed */
-  "png", "jpeg", "eet", "xpm", "tiff", "gif", "svg", "webp", "pmaps", "bmp", "tga", "wbmp", "ico", "psd"
-};
-
-#else
-
 static const struct ext_loader_s map_loaders[] =
 { /* map extensions to loaders to use for good first-guess tries */
    MATCHING(".png", "png"),
@@ -176,15 +138,6 @@ static const char *loaders_name[] =
   "png", "jpeg", "eet", "xpm", "tiff", "gif", "svg", "webp", "pmaps", "bmp", "tga", "wbmp", "ico", "psd", "generic"
 };
 
-#endif
-
-
-Eina_Bool
-evas_cserve2_loader_register(Evas_Loader_Module_Api *api)
-{
-   eina_hash_direct_add(loaders, api->type, api);
-   return EINA_TRUE;
-}
 
 #if defined(__CEGCC__) || defined(__MINGW32CE__)
 # define EVAS_MODULE_NAME_IMAGE_LOADER "loader_%s.dll"
@@ -193,47 +146,6 @@ evas_cserve2_loader_register(Evas_Loader_Module_Api *api)
 #else
 # define EVAS_MODULE_NAME_IMAGE_LOADER "module.so"
 #endif
-
-
-#if !USE_EVAS_MODULE_API
-
-static Evas_Loader_Module_Api *
-loader_module_find(const char *type)
-{
-   Evas_Loader_Module_Api *l;
-   Eina_Module *em;
-   char buf[PATH_MAX];
-
-   l = eina_hash_find(loaders, type);
-   if (l) return l;
-
-   /* FIXME: Look in every possible path, but what will those be? */
-   snprintf(buf, sizeof(buf), "%s/evas/cserve2/loaders/%s/%s/%s",
-            eina_prefix_lib_get(pfx),
-            type, MODULE_ARCH, EVAS_MODULE_NAME_IMAGE_LOADER);
-
-   em = eina_module_new(buf);
-   if (!em) return NULL;
-
-   if (!eina_module_load(em))
-     {
-        eina_module_free(em);
-        return NULL;
-     }
-
-   l = eina_hash_find(loaders, type);
-   if (l)
-     {
-        modules = eina_list_append(modules, em);
-        return l;
-     }
-
-   eina_module_free(em);
-
-   return NULL;
-}
-
-#endif // Old API
 
 static Eina_Bool
 command_read(int fd, Slave_Command *cmd, void **params)
@@ -334,8 +246,6 @@ _cserve2_shm_unmap(void *map, size_t length)
 {
    munmap(map, length);
 }
-
-#if USE_EVAS_MODULE_API
 
 static void *
 _image_file_open(Eina_File *fd, const char *key, Image_Load_Opts *opts,
@@ -501,7 +411,7 @@ success:
    ret = CSERVE2_NONE;
    *use_loader = loader;
 
-#warning FIXME: Do we need to unload the module now?
+   // FIXME: Do we really need to unload the module now?
    evas_module_unload(module);
 
 end:
@@ -589,161 +499,6 @@ done:
 
    return ret;
 }
-
-#else // Old cserve2 API
-
-static Error_Type
-image_open(const char *file, const char *key, Image_Load_Opts *opts, Slave_Msg_Image_Opened *result, const char **use_loader)
-{
-   Evas_Img_Load_Params ilp;
-   Evas_Loader_Module_Api *api;
-   const char *loader = NULL, *end;
-   unsigned int i;
-   int len;
-   int err;
-
-   memset(&ilp, 0, sizeof(ilp));
-
-   if (opts)
-     {
-#define SETOPT(v) ilp.opts.v = opts->v
-        SETOPT(w);
-        SETOPT(h);
-        SETOPT(rx);
-        SETOPT(ry);
-        SETOPT(rw);
-        SETOPT(rh);
-        SETOPT(scale_down_by);
-        SETOPT(dpi);
-        SETOPT(orientation);
-#undef SETOPT
-        ilp.has_opts = EINA_TRUE;
-     }
-
-   if (!*use_loader)
-     goto try_extension;
-
-   loader = *use_loader;
-   api = loader_module_find(loader);
-   if (!api)
-     goto try_extension;
-
-   if (api->head_load(&ilp, file, key, &err))
-     goto done;
-
-try_extension:
-   len = strlen(file);
-   end = file + len;
-   for (i = 0; i < (sizeof (map_loaders) / sizeof(struct ext_loader_s)); i++)
-     {
-        int len2 = strlen(map_loaders[i].extension);
-        if (len2 > len) continue;
-        if (!strcasecmp(end - len2, map_loaders[i].extension))
-          {
-             loader = map_loaders[i].loader;
-             break;
-          }
-     }
-
-   if (!loader)
-     goto try_all_known;
-
-   api = loader_module_find(loader);
-   if (!api)
-     goto try_all_known;
-
-   if (api->head_load(&ilp, file, key, &err))
-     goto done;
-
-try_all_known:
-   for (i = 0; i < (sizeof(loaders_name) / sizeof(loaders_name[0])); i++)
-     {
-        loader = loaders_name[i];
-        api = loader_module_find(loader);
-        if (!api)
-          continue;
-        if (api->head_load(&ilp, file, key, &err))
-          goto done;
-     }
-
-   /* find every module available and try them, even if we don't know they
-    * exist. That will be our generic loader */
-
-   return err;
-
-done:
-   *use_loader = loader;
-
-   result->w = ilp.w;
-   result->h = ilp.h;
-   if ((result->rotated = ilp.rotated))
-     {
-        result->degree = ilp.degree;
-     }
-   if ((result->animated = ilp.animated))
-     {
-        result->frame_count = ilp.frame_count;
-        result->loop_count = ilp.loop_count;
-        result->loop_hint = ilp.loop_hint;
-     }
-   result->scale = ilp.scale;
-   result->alpha = ilp.alpha;
-   return CSERVE2_NONE;
-}
-
-static Error_Type
-image_load(const char *file, const char *key, const char *shmfile, Slave_Msg_Image_Load *params, Slave_Msg_Image_Loaded *result, const char *loader)
-{
-   Evas_Img_Load_Params ilp;
-   Evas_Loader_Module_Api *api;
-   int err;
-   Error_Type ret = CSERVE2_NONE;
-   char *map = _cserve2_shm_map(shmfile, params->shm.mmap_size,
-                                params->shm.mmap_offset);
-   if (map == MAP_FAILED)
-     return CSERVE2_RESOURCE_ALLOCATION_FAILED;
-
-   memset(&ilp, 0, sizeof(ilp));
-
-   api = loader_module_find(loader);
-   if (!api)
-     {
-        ret = CSERVE2_GENERIC;
-        goto done;
-     }
-
-   ilp.w = params->w;
-   ilp.h = params->h;
-   ilp.alpha = params->alpha;
-#define SETOPT(v) ilp.opts.v = params->opts.v
-     SETOPT(w);
-     SETOPT(h);
-     SETOPT(rx);
-     SETOPT(ry);
-     SETOPT(rw);
-     SETOPT(rh);
-     SETOPT(scale_down_by);
-     SETOPT(dpi);
-     SETOPT(orientation);
-#undef SETOPT
-
-   ilp.buffer = map + params->shm.image_offset;
-   if (!api->data_load(&ilp, file, key, &err))
-     ret = err;
-
-   result->w = params->w;
-   result->h = params->h;
-   result->alpha_sparse = ilp.alpha_sparse;
-
-   //printf("LOAD successful: %dx%d alpha_sparse %d\n",
-   //       result->w, result->h, result->alpha_sparse);
-
-done:
-   _cserve2_shm_unmap(map, params->shm.mmap_size);
-
-   return ret;
-}
-#endif
 
 static void
 handle_image_open(int wfd, void *params)
@@ -840,10 +595,7 @@ int main(int c, char **v)
                           PACKAGE_DATA_DIR);
 
    loaders = eina_hash_string_superfast_new(NULL);
-
-#if USE_EVAS_MODULE_API
    evas_module_init();
-#endif
 
    wfd = atoi(v[1]);
    rfd = atoi(v[2]);
@@ -871,10 +623,7 @@ int main(int c, char **v)
           }
      }
 
-#if USE_EVAS_MODULE_API
    evas_module_shutdown();
-#endif
-
    eina_hash_free(loaders);
 
    EINA_LIST_FREE(modules, m)
