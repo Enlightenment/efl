@@ -960,6 +960,8 @@ _target_del_cb(void *data,
                void *event_info __UNUSED__)
 {
    _callbacks_unregister(data);
+   ELM_GESTURE_LAYER_DATA_GET(data, sd);
+   sd->target = NULL;
 }
 
 /**
@@ -1165,8 +1167,9 @@ _event_history_clear(Evas_Object *obj)
                }
              else
                {  /* Report ABORT to all gestures that still not finished */
-                 _state_set(p, ELM_GESTURE_STATE_ABORT, sd->gesture[i]->info,
-                            EINA_FALSE);
+                  if (sd->target)
+                    _state_set(p, ELM_GESTURE_STATE_ABORT,
+                          sd->gesture[i]->info, EINA_FALSE);
                }
           }
      }
