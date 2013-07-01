@@ -385,6 +385,11 @@ _server_dispatch_until(unsigned int rid)
                        return EINA_FALSE;
                     }
                }
+             else if (!sel)
+               {
+                  WRN("select() timed out. giving up on request %d", rid);
+                  return EINA_FALSE;
+               }
           }
      }
    return EINA_TRUE;
