@@ -1,3 +1,7 @@
+2013-06-25  Tom Hacohen
+
+	* Evas textblock: Fixed issue when parsing formats with quotes.
+
 2013-06-28  Jiyoun Park
 
     * Evas: Fix jpeg loader cannot deal with exif information correctly

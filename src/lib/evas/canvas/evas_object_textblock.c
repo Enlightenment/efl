@@ -2267,15 +2267,19 @@ _format_is_param(const char *item)
 static void
 _format_param_parse(const char *item, const char **key, const char **val)
 {
-   const char *start, *end, *quote;
+   const char *start, *end;
 
    start = strchr(item, '=');
    *key = eina_stringshare_add_length(item, start - item);
    start++; /* Advance after the '=' */
-   /* If we can find a quote, our new delimiter is a quote, not a space. */
-   if ((quote = strchr(start, '\'')))
+   /* If we can find a quote as the first non-space char,
+    * our new delimiter is a quote, not a space. */
+   while (*start == ' ')
+      start++;
+
+   if (*start == '\'')
      {
-        start = quote + 1;
+        start++;
         end = strchr(start, '\'');
         while ((end) && (end > start) && (end[-1] == '\\'))
           end = strchr(end + 1, '\'');

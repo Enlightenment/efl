@@ -342,3 +342,4 @@ Fixes:
     * Evas textblock: Fixed issue with textblocks without fonts segfaulting.
     * Evas: Fix evas_common_convert_yuv_42* functions to actually return the converted data.
     * Evas: Fix jpeg loader cannot deal with exif information correctly
+    * Evas textblock: Fixed issue when parsing formats with quotes.
