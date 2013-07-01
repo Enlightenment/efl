@@ -139,14 +139,6 @@ static const char *loaders_name[] =
 };
 
 
-#if defined(__CEGCC__) || defined(__MINGW32CE__)
-# define EVAS_MODULE_NAME_IMAGE_LOADER "loader_%s.dll"
-#elif _WIN32
-# define EVAS_MODULE_NAME_IMAGE_LOADER "module.dll"
-#else
-# define EVAS_MODULE_NAME_IMAGE_LOADER "module.so"
-#endif
-
 static Eina_Bool
 command_read(int fd, Slave_Command *cmd, void **params)
 {
@@ -248,7 +240,7 @@ _cserve2_shm_unmap(void *map, size_t length)
 }
 
 static void *
-_image_file_open(Eina_File *fd, const char *key, Image_Load_Opts *opts,
+_image_file_open(Eina_File *fd, Eina_Stringshare *key, Image_Load_Opts *opts,
                  Evas_Module *module, Evas_Image_Property *property,
                  Evas_Image_Animated *animated, Evas_Image_Load_Func **pfuncs)
 {
@@ -305,7 +297,7 @@ unload:
 }
 
 static Eina_Bool
-_image_file_header(Eina_File *fd, const char *key, Image_Load_Opts *opts,
+_image_file_header(Eina_File *fd, Eina_Stringshare *key, Image_Load_Opts *opts,
                    Slave_Msg_Image_Opened *result, Evas_Module *module)
 {
    Evas_Image_Property property;
@@ -335,10 +327,6 @@ _image_file_header(Eina_File *fd, const char *key, Image_Load_Opts *opts,
      }
    result->has_loader_data = EINA_TRUE;
 
-   // Not set here: (Why?)
-   //property.premul;
-   //property.alpha_sparse;
-
    // FIXME: We need to close as we this slave might not be used for data loading
    funcs->file_close(loader_data);
    return EINA_TRUE;
@@ -354,6 +342,7 @@ image_open(const char *file, const char *key, Image_Load_Opts *opts,
    const int filelen = strlen(file);
    unsigned int i;
    Error_Type ret = CSERVE2_NONE;
+   Eina_Stringshare *skey = eina_stringshare_add(key);
 
    fd = eina_file_open(file, EINA_FALSE);
    if (!fd)
@@ -368,7 +357,7 @@ image_open(const char *file, const char *key, Image_Load_Opts *opts,
    module = evas_module_find_type(EVAS_MODULE_TYPE_IMAGE_LOADER, loader);
    if (module)
      {
-        if (_image_file_header(fd, key, opts, result, module))
+        if (_image_file_header(fd, skey, opts, result, module))
           goto success;
      }
 
@@ -388,7 +377,7 @@ try_extension:
    if (loader)
      {
         module = evas_module_find_type(EVAS_MODULE_TYPE_IMAGE_LOADER, loader);
-        if (_image_file_header(fd, key, opts, result, module))
+        if (_image_file_header(fd, skey, opts, result, module))
           goto success;
         loader = NULL;
         module = NULL;
@@ -400,7 +389,7 @@ try_extension:
         loader = loaders_name[i];
         module = evas_module_find_type(EVAS_MODULE_TYPE_IMAGE_LOADER, loader);
         if (!module) continue;
-        if (_image_file_header(fd, key, opts, result, module))
+        if (_image_file_header(fd, skey, opts, result, module))
           goto success;
      }
 
@@ -416,6 +405,7 @@ success:
 
 end:
    eina_file_close(fd);
+   eina_stringshare_del(skey);
    return ret;
 }
 
@@ -433,6 +423,7 @@ image_load(const char *file, const char *key, const char *shmfile,
    Error_Type ret = CSERVE2_GENERIC;
    void *loader_data = NULL;
    Eina_Bool ok;
+   Eina_Stringshare *skey = NULL;
    int error;
 
    fd = eina_file_open(file, EINA_FALSE);
@@ -461,11 +452,12 @@ image_load(const char *file, const char *key, const char *shmfile,
    property.w = params->w;
    property.h = params->h;
 
-   loader_data = _image_file_open(fd, key, opts, module, &property, &animated, &funcs);
+   skey = eina_stringshare_add(key);
+   loader_data = _image_file_open(fd, skey, opts, module, &property, &animated, &funcs);
    if (!loader_data)
      {
         printf("LOAD failed at %s:%d: could not open image %s:%s\n",
-               __FUNCTION__, __LINE__, file, key);
+               __FUNCTION__, __LINE__, file, skey);
         goto done;
      }
 
@@ -495,7 +487,12 @@ done:
    eina_file_close(fd);
    _cserve2_shm_unmap(map, params->shm.mmap_size);
    if (funcs)
-     evas_module_unload(module);
+     {
+        if (loader_data)
+          funcs->file_close(loader_data);
+        evas_module_unload(module);
+     }
+   eina_stringshare_del(skey);
 
    return ret;
 }

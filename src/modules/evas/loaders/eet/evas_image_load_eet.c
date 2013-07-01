@@ -43,7 +43,7 @@ evas_image_load_file_open_eet(Eina_File *f, const char *key,
         return NULL;
      }
 
-   loader->key = eina_stringshare_ref(key);
+   loader->key = eina_stringshare_add(key);
    return loader;
 }
 

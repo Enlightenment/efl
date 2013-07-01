@@ -396,7 +396,7 @@ evas_image_load_file_open_generic(Eina_File *f, const char *key,
      }
 
    loader->f = f;
-   loader->key = eina_stringshare_ref(key);
+   loader->key = eina_stringshare_add(key);
    loader->opts = opts;
    return loader;
 }
