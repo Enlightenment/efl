@@ -448,6 +448,8 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 
    if (params->visible) evas_object_show(ep->object);
    else evas_object_hide(ep->object);
+
+
      {
 	Evas_Text_Style_Type style;
         Edje_Text_Effect effect;
