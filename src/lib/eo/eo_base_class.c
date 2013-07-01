@@ -314,12 +314,12 @@ _eo_callbacks_clear(Private_Data *pd)
 {
    Eo_Callback_Description *cb = NULL;
 
-   /* Abort if we are currently walking the list. */
-   if (pd->walking_list > 0)
-      return;
-
    /* If there are no deletions waiting. */
    if (!pd->deletions_waiting)
+      return;
+
+   /* Abort if we are currently walking the list. */
+   if (pd->walking_list > 0)
       return;
 
    pd->deletions_waiting = EINA_FALSE;
@@ -501,20 +501,19 @@ _ev_cb_call(Eo *obj_id, void *class_data, va_list *list)
                }
              else
                {
+                  if (cb->items.item.desc != desc)
+                    continue;
                   if ((!cb->items.item.desc
                        || !cb->items.item.desc->unfreezable) &&
                       (event_freeze_count || pd->event_freeze_count))
                     continue;
 
-                  if (cb->items.item.desc == desc)
+                  /* Abort callback calling if the func says so. */
+                  if (!cb->items.item.func((void *) cb->func_data, obj_id, desc,
+                                           (void *) event_info))
                     {
-                       /* Abort callback calling if the func says so. */
-                       if (!cb->items.item.func((void *) cb->func_data, obj_id, desc,
-                                (void *) event_info))
-                         {
-                            if (ret) *ret = EINA_FALSE;
-                            goto end;
-                         }
+                       if (ret) *ret = EINA_FALSE;
+                       goto end;
                     }
                }
           }
