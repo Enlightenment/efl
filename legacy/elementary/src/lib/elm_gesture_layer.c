@@ -3719,16 +3719,7 @@ _elm_gesture_layer_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    Pointer_Event *data;
    int i;
 
-   _event_history_clear(obj);
-   sd->pending = eina_list_free(sd->pending);
-
-   EINA_LIST_FREE(sd->touched, data)
-     free(data);
-
-   if (!elm_widget_disabled_get(obj))
-     _callbacks_unregister(obj);
-
-   /* Free all gestures internal data structures */
+   /* First Free all gestures internal data structures */
    for (i = 0; i < ELM_GESTURE_LAST; i++)
      if (sd->gesture[i])
        {
@@ -3740,8 +3731,20 @@ _elm_gesture_layer_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
           _cbs_clean(sd, i, ELM_GESTURE_STATE_END);
           _cbs_clean(sd, i, ELM_GESTURE_STATE_ABORT);
           free(sd->gesture[i]);
+          sd->gesture[i] = NULL; /* Referenced by _event_history_clear */
        }
    if (sd->gest_taps_timeout) ecore_timer_del(sd->gest_taps_timeout);
+
+   /* Then take care of clearing events */
+   _event_history_clear(obj);
+   sd->pending = eina_list_free(sd->pending);
+
+   EINA_LIST_FREE(sd->touched, data)
+     free(data);
+
+   if (!elm_widget_disabled_get(obj))
+     _callbacks_unregister(obj);
+
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
