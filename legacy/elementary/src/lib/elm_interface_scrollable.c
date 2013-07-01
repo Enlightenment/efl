@@ -117,8 +117,7 @@ _elm_pan_smart_resize(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    psd->h = h;
 
    _elm_pan_update(psd);
-   evas_object_smart_callback_call(psd->self, SIG_CHANGED,
-                                   (void *)ELM_OBJ_PAN_SMART_RESIZE);
+   evas_object_smart_callback_call(psd->self, SIG_CHANGED, NULL);
 }
 
 static void
@@ -155,8 +154,7 @@ _elm_pan_pos_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    psd->py = y;
 
    _elm_pan_update(psd);
-   evas_object_smart_callback_call(psd->self, SIG_CHANGED,
-                                   (void *)ELM_OBJ_PAN_POS_SET);
+   evas_object_smart_callback_call(psd->self, SIG_CHANGED, NULL);
 }
 
 static void
@@ -266,8 +264,7 @@ _elm_pan_content_del_cb(void *data,
    psd->content = NULL;
    psd->content_w = psd->content_h = psd->px = psd->py =
            psd->prev_cw = psd->prev_ch = psd->delta_posx = psd->delta_posy = 0;
-   evas_object_smart_callback_call(psd->self, SIG_CHANGED,
-                                   (void *)ELM_OBJ_PAN_CONTENT_DEL);
+   evas_object_smart_callback_call(psd->self, SIG_CHANGED, NULL);
 }
 
 static void
@@ -287,8 +284,7 @@ _elm_pan_content_resize_cb(void *data,
         psd->content_h = h;
         _elm_pan_update(psd);
      }
-   evas_object_smart_callback_call(psd->self, SIG_CHANGED,
-                                   (void *)ELM_OBJ_PAN_CONTENT_RESIZE);
+   evas_object_smart_callback_call(psd->self, SIG_CHANGED, NULL);
 }
 
 static void
@@ -330,8 +326,7 @@ _elm_pan_content_set(Evas_Object *obj,
    _elm_pan_update(psd);
 
 end:
-   evas_object_smart_callback_call(psd->self, SIG_CHANGED,
-                                   (void *)ELM_OBJ_PAN_CONTENT_SET);
+   evas_object_smart_callback_call(psd->self, SIG_CHANGED, NULL);
 }
 
 static void
@@ -3620,15 +3615,31 @@ _elm_scroll_scroll_bar_reset(Elm_Scrollable_Smart_Interface_Data *sid)
    _elm_direction_arrows_eval(sid);
 }
 
+static void
+_elm_scroll_pan_resized_cb(void *data,
+                          Evas *e __UNUSED__,
+                          Evas_Object *obj __UNUSED__,
+                          void *event_info __UNUSED__)
+{
+   Evas_Coord w, h;
+   Elm_Scrollable_Smart_Interface_Data *sid = data;
+
+   if (sid->cb_func.content_viewport_resize)
+     {
+        eo_do(sid->obj,
+              elm_scrollable_interface_content_viewport_size_get(&w, &h));
+        sid->cb_func.content_viewport_resize(sid->obj, w, h);
+     }
+}
+
 /* even external pan objects get this */
 static void
 _elm_scroll_pan_changed_cb(void *data,
                            Evas_Object *obj __UNUSED__,
-                           void *event_info)
+                           void *event_info __UNUSED__)
 {
    Evas_Coord w, h;
    Elm_Scrollable_Smart_Interface_Data *sid = data;
-   Elm_Pan_Callback_Type type = (Elm_Pan_Callback_Type) event_info;
 
    if (!sid->pan_obj) return;
 
@@ -3644,14 +3655,6 @@ _elm_scroll_pan_changed_cb(void *data,
         sid->content_info.resized = EINA_TRUE;
         _elm_scroll_wanted_region_set(sid->obj);
      }
-
-   if (type == ELM_OBJ_PAN_SMART_RESIZE)
-     if (sid->cb_func.content_viewport_resize)
-       {
-          eo_do(sid->obj, elm_scrollable_interface_content_viewport_size_get(&w, &h));
-          sid->cb_func.content_viewport_resize(obj, w, h);
-       }
-
 }
 
 static void
@@ -3699,6 +3702,8 @@ _elm_scroll_content_set(Eo *obj, void *_pd, va_list *list)
         sid->pan_obj = o;
         evas_object_smart_callback_add
           (o, SIG_CHANGED, _elm_scroll_pan_changed_cb, sid);
+        evas_object_event_callback_add(o, EVAS_CALLBACK_RESIZE,
+                                       _elm_scroll_pan_resized_cb, sid);
         edje_object_part_swallow(sid->edje_obj, "elm.swallow.content", o);
      }
 
@@ -3729,6 +3734,8 @@ _elm_scroll_extern_pan_set(Eo *obj, void *_pd, va_list *list)
      {
         evas_object_smart_callback_del
           (sid->pan_obj, SIG_CHANGED, _elm_scroll_pan_changed_cb);
+        evas_object_event_callback_del(sid->pan_obj, EVAS_CALLBACK_RESIZE,
+                                       _elm_scroll_pan_resized_cb);
      }
 
    if (sid->extern_pan)
@@ -3759,6 +3766,8 @@ _elm_scroll_extern_pan_set(Eo *obj, void *_pd, va_list *list)
    sid->extern_pan = EINA_TRUE;
    evas_object_smart_callback_add
      (sid->pan_obj, SIG_CHANGED, _elm_scroll_pan_changed_cb, sid);
+   evas_object_event_callback_add(sid->pan_obj, EVAS_CALLBACK_RESIZE,
+                                  _elm_scroll_pan_resized_cb, sid);
    edje_object_part_swallow
      (sid->edje_obj, "elm.swallow.content", sid->pan_obj);
 }

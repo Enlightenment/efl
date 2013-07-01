@@ -34,16 +34,6 @@
 #define ELM_OBJ_PAN_CLASS elm_obj_pan_eo_class_get()
 const Eo_Class *elm_obj_pan_eo_class_get(void) EINA_CONST;
 
-typedef enum _Elm_Pan_Callback_Type
-{
-   ELM_OBJ_PAN_SMART_RESIZE,
-   ELM_OBJ_PAN_POS_SET,
-   ELM_OBJ_PAN_CONTENT_DEL,
-   ELM_OBJ_PAN_CONTENT_RESIZE,
-   ELM_OBJ_PAN_CONTENT_SET,
-   ELM_OBJ_PAN_LAST
-} Elm_Pan_Callback_Type;
-
 extern EAPI Eo_Op ELM_OBJ_PAN_BASE_ID;
 
 enum
