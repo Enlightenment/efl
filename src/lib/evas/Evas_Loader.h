@@ -1,6 +1,8 @@
 #ifndef _EVAS_LOADER_H
 #define _EVAS_LOADER_H
 
+#include "eina_stringshare.h"
+
 typedef struct _Evas_Image_Load_Opts Evas_Image_Load_Opts;
 typedef struct _Evas_Image_Animated  Evas_Image_Animated;
 typedef struct _Evas_Image_Property  Evas_Image_Property;
@@ -67,7 +69,7 @@ struct _Evas_Image_Load_Opts
 
 struct _Evas_Image_Load_Func
 {
-  void     *(*file_open) (Eina_File *f, const char *key,
+  void     *(*file_open) (Eina_File *f, Eina_Stringshare *key,
 			  Evas_Image_Load_Opts *opts,
 			  Evas_Image_Animated *animated,
 			  int *error);

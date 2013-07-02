@@ -295,7 +295,7 @@ _evas_image_load_file_header(void *map, size_t fsize, size_t *position, int *ima
 }
 
 static void *
-evas_image_load_file_open_bmp(Eina_File *f, const char *key EINA_UNUSED,
+evas_image_load_file_open_bmp(Eina_File *f, Eina_Stringshare *key EINA_UNUSED,
                               Evas_Image_Load_Opts *opts,
                               Evas_Image_Animated *animated EINA_UNUSED,
                               int *error)

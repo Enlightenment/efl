@@ -30,7 +30,7 @@ read_mb(unsigned int *data, void *map, size_t length, size_t *position)
 }
 
 static void *
-evas_image_load_file_open_wbmp(Eina_File *f, const char *key EINA_UNUSED,
+evas_image_load_file_open_wbmp(Eina_File *f, Eina_Stringshare *key EINA_UNUSED,
 			       Evas_Image_Load_Opts *opts EINA_UNUSED,
 			       Evas_Image_Animated *animated EINA_UNUSED,
 			       int *error EINA_UNUSED)

@@ -44,7 +44,7 @@ _evas_image_png_read(png_structp png_ptr, png_bytep out, png_size_t count)
 }
 
 static void *
-evas_image_load_file_open_png(Eina_File *f, const char *key EINA_UNUSED,
+evas_image_load_file_open_png(Eina_File *f, Eina_Stringshare *key EINA_UNUSED,
                               Evas_Image_Load_Opts *opts,
                               Evas_Image_Animated *animated EINA_UNUSED,
                               int *error)

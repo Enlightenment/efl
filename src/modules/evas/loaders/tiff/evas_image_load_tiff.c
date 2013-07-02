@@ -85,7 +85,7 @@ _evas_tiff_UnmapProc(thandle_t handle, tdata_t data, toff_t size EINA_UNUSED)
 }
 
 static void *
-evas_image_load_file_open_tiff(Eina_File *f, const char *key EINA_UNUSED,
+evas_image_load_file_open_tiff(Eina_File *f, Eina_Stringshare *key EINA_UNUSED,
 			       Evas_Image_Load_Opts *opts EINA_UNUSED,
 			       Evas_Image_Animated *animated EINA_UNUSED,
 			       int *error EINA_UNUSED)

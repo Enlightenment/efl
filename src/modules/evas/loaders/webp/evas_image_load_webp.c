@@ -41,7 +41,7 @@ evas_image_load_file_check(Eina_File *f, void *map,
 }
 
 static void *
-evas_image_load_file_open_webp(Eina_File *f, const char *key EINA_UNUSED,
+evas_image_load_file_open_webp(Eina_File *f, Eina_Stringshare *key EINA_UNUSED,
 			       Evas_Image_Load_Opts *opts EINA_UNUSED,
 			       Evas_Image_Animated *animated EINA_UNUSED,
 			       int *error EINA_UNUSED)

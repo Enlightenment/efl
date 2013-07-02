@@ -678,7 +678,7 @@ _evas_image_load_file_read(GifFileType* gft, GifByteType *buf,int length)
    return length;
 }
 static void *
-evas_image_load_file_open_gif(Eina_File *f, const char *key EINA_UNUSED,
+evas_image_load_file_open_gif(Eina_File *f, Eina_Stringshare *key EINA_UNUSED,
                                Evas_Image_Load_Opts *opts,
                                Evas_Image_Animated *animated,
                                int *error)

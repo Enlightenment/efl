@@ -83,7 +83,7 @@ enum
 };
 
 static void *
-evas_image_load_file_open_ico(Eina_File *f, const char *key,
+evas_image_load_file_open_ico(Eina_File *f, Eina_Stringshare *key,
                               Evas_Image_Load_Opts *opts,
                               Evas_Image_Animated *animated EINA_UNUSED,
                               int *error)
@@ -98,7 +98,7 @@ evas_image_load_file_open_ico(Eina_File *f, const char *key,
      }
 
    loader->f = f;
-   loader->key = eina_stringshare_add(key);
+   loader->key = eina_stringshare_ref(key);
    loader->opts = opts;
 
    return loader;

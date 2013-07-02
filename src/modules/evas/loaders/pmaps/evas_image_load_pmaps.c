@@ -56,7 +56,7 @@ static size_t pmaps_buffer_raw_update(Pmaps_Buffer *b);
 static int pmaps_buffer_comment_skip(Pmaps_Buffer *b);
 
 static void *
-evas_image_load_file_open_pmaps(Eina_File *f, const char *key EINA_UNUSED,
+evas_image_load_file_open_pmaps(Eina_File *f, Eina_Stringshare *key EINA_UNUSED,
 				Evas_Image_Load_Opts *opts EINA_UNUSED,
 				Evas_Image_Animated *animated EINA_UNUSED,
 				int *error EINA_UNUSED)
