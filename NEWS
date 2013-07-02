@@ -208,6 +208,7 @@ Improvements:
      - Use eina_file_mkstemp().
     * Ecore_Audio:
      - Use eo api to batch more
+    * Evas: optimize proxy rendering. Rendering performance is increased up to 2x in some cases.
 
 Fixes:
     * Eina:

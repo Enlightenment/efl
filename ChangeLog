@@ -1,3 +1,7 @@
+2013-07-02  ChunEon Park (Hermet)
+
+	* Evas: optimize proxy rendering. Rendering performance is increased up to 2x in some cases.
+
 2013-07-02  Cedric Bail
 
 	* Eet: force thread to always run during eet_cache_concurrency test.
