@@ -991,6 +991,7 @@ void _evas_object_smart_members_all_del(Evas_Object *obj);
 void evas_call_smarts_calculate(Evas *e);
 void evas_object_smart_bounding_box_update(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj);
 void evas_object_smart_need_bounding_box_update(Evas_Object *obj);
+Eina_Bool evas_object_smart_changed_get(Evas_Object *eo_obj);
 void *evas_mem_calloc(int size);
 void _evas_post_event_callback_call(Evas *e, Evas_Public_Data* e_pd);
 void _evas_post_event_callback_free(Evas *e);

@@ -1125,6 +1125,50 @@ _smart_changed(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
    eo_do(eo_obj, evas_obj_smart_need_recalculate_set(1));
 }
 
+static Eina_Bool
+_smart_members_changed_check(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
+{
+   Evas_Object_Protected_Data *o2;
+
+   if (!evas_object_is_visible(eo_obj, obj) &&
+       !evas_object_was_visible(eo_obj, obj))
+     return EINA_FALSE;
+
+   if (!obj->smart.smart) return EINA_TRUE;
+   if (_evas_render_has_map(eo_obj, obj))
+     {
+        if (((obj->changed_pchange) && (obj->changed_map)) ||
+            (obj->changed_color)) return EINA_TRUE;
+     }
+
+   EINA_INLIST_FOREACH(evas_object_smart_members_get_direct(eo_obj), o2)
+     {
+        if (!o2->changed) continue;
+        if (_smart_members_changed_check(o2->object, o2)) return EINA_TRUE;
+     }
+
+   return EINA_FALSE;
+}
+
+Eina_Bool
+evas_object_smart_changed_get(Evas_Object *eo_obj)
+{
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Protected_Data *o2;
+   Eina_Bool changed = EINA_FALSE;
+
+   if (!obj->is_smart) return obj->changed;
+   if (obj->changed_color) return EINA_TRUE;
+
+   EINA_INLIST_FOREACH(evas_object_smart_members_get_direct(eo_obj), o2)
+     {
+        if (!o2->changed) continue;
+        changed = _smart_members_changed_check(o2->object, o2);
+        if (changed) break;
+     }
+   return changed;
+}
+
 void
 evas_object_smart_del(Evas_Object *eo_obj)
 {
