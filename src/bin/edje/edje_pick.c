@@ -1385,7 +1385,8 @@ main(int argc, char **argv)
    if (sets)
      free(sets);
 
-   printf("Wrote <%s> output file.\n", output_filename);
+   if (output_filename)
+     printf("Wrote <%s> output file.\n", output_filename);
 
    return _edje_pick_cleanup(inp_files, out_file, EDJE_PICK_NO_ERROR);
 }
