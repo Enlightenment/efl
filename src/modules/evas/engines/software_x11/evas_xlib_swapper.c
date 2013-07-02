@@ -611,6 +611,7 @@ _drm_shutdown(void)
    dri_lib = NULL;
    dlclose(xfixes_lib);
    xfixes_lib = NULL;
+   tried = EINA_FALSE;
 }
 
 static Eina_Bool
