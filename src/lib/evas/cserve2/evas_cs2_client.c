@@ -446,7 +446,10 @@ _loaded_handle(Image_Entry *ie, const Msg_Loaded *msg, int size)
    shmpath = ((const char *)msg) + sizeof(*msg);
    if ((size < (int) sizeof(*msg) + 1)
        || (strnlen(shmpath, size - sizeof(*msg)) >= (size - sizeof(*msg))))
-     goto fail;
+     {
+        DBG("invalid message size");
+        goto fail;
+     }
 
    // dentry->shm.path = strdup(shmpath);
    dentry->shm.mmap_offset = msg->shm.mmap_offset;
@@ -456,7 +459,10 @@ _loaded_handle(Image_Entry *ie, const Msg_Loaded *msg, int size)
 
    dentry->shm.f = eina_file_open(shmpath, EINA_TRUE);
    if (!dentry->shm.f)
-     goto fail;
+     {
+        DBG("could not open the shm file: %d %m", errno);
+        goto fail;
+     }
 
    dentry->shm.data = eina_file_map_new(dentry->shm.f, EINA_FILE_WILLNEED,
                                         dentry->shm.mmap_offset,
@@ -464,6 +470,7 @@ _loaded_handle(Image_Entry *ie, const Msg_Loaded *msg, int size)
 
    if (!dentry->shm.data)
      {
+        DBG("could not mmap the shm file: %d %m", errno);
         eina_file_close(dentry->shm.f);
         goto fail;
      }
