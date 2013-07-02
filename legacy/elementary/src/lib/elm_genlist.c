@@ -3116,7 +3116,7 @@ _item_mouse_move_cb(void *data,
    Elm_Gen_Item *it = data;
    Evas_Event_Mouse_Move *ev = event_info;
    Evas_Coord ox, oy, ow, oh, it_scrl_y, y_pos;
-   Evas_Coord minw = 0, minh = 0, x, y, dx, dy, adx, ady;
+   Evas_Coord minw = 0, minh = 0, x, y, w, h, dx, dy, adx, ady;
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
 
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
@@ -3190,7 +3190,7 @@ _item_mouse_move_cb(void *data,
    if (it->select_mode != ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY)
      elm_coords_finger_size_adjust(1, &minw, 1, &minh);
 
-   evas_object_geometry_get(obj, &x, &y, NULL, NULL);
+   evas_object_geometry_get(obj, &x, &y, &w, &h);
    x = ev->cur.canvas.x - x;
    y = ev->cur.canvas.y - y;
    dx = x - it->dx;
@@ -3203,6 +3203,21 @@ _item_mouse_move_cb(void *data,
 
    minw /= 2;
    minh /= 2;
+   
+   // gah! annoying drag detection - leave this alone
+   if (h < w)
+     {
+        if (minw < h) minw = h;
+        if (minh < h) minh = h;
+     }
+   else
+     {
+        if (minw < w) minw = w;
+        if (minh < w) minh = w;
+     }
+   if (minw < 5) minw = 5;
+   if (minh < 5) minh = 5;
+   
    if ((adx > minw) || (ady > minh))
      {
         it->dragging = EINA_TRUE;
