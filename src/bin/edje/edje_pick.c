@@ -1367,19 +1367,21 @@ main(int argc, char **argv)
           fl->list = eina_list_append(fl->list, fnt->f);
      }
 
-   {
-      /* Write Fonts from all files */
-      Eet_Data_Descriptor *_font_list_edd = NULL;
-      Eet_Data_Descriptor *_font_edd;
+   if (out_file)
+     {
+        /* Write Fonts from all files */
+        Eet_Data_Descriptor *_font_list_edd = NULL;
+        Eet_Data_Descriptor *_font_edd;
 
-      _edje_data_font_list_desc_make(&_font_list_edd, &_font_edd);
-      bytes = eet_data_write(out_file->ef, _font_list_edd,
-                             "edje_source_fontmap", fl, comp_mode);
-      VERBOSE(EINA_LOG_INFO("Wrote <%d> bytes for fontmap.\n", bytes));
+        _edje_data_font_list_desc_make(&_font_list_edd, &_font_edd);
+        bytes = eet_data_write(out_file->ef, _font_list_edd,
+                               "edje_source_fontmap", fl, comp_mode);
+        VERBOSE(EINA_LOG_INFO("Wrote <%d> bytes for fontmap.\n", bytes));
 
-      eet_data_descriptor_free(_font_list_edd);
-      eet_data_descriptor_free(_font_edd);
-   }
+        eet_data_descriptor_free(_font_list_edd);
+        eet_data_descriptor_free(_font_edd);
+     }
+
    free(fl);
 
    if (sets)
