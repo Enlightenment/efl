@@ -1086,6 +1086,8 @@ _image_resize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_inf
                }
           }
 
+        if (!engine) return;
+
         if (strstr(engine, "software") != NULL)
           {
              caps = gst_caps_new_simple("video/x-raw-rgb",
