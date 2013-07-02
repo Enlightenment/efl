@@ -8,6 +8,19 @@
 #include "evas_private.h"
 
 
+#ifndef EVAS_MODULE_NO_ENGINES
+#define EVAS_MODULE_NO_ENGINES 0
+#endif
+
+#ifndef EVAS_MODULE_NO_IMAGE_LOADERS
+#define EVAS_MODULE_NO_IMAGE_LOADERS 0
+#endif
+
+#ifndef EVAS_MODULE_NO_IMAGE_SAVERS
+#define EVAS_MODULE_NO_IMAGE_SAVERS 0
+#endif
+
+
 static Eina_Hash *evas_modules[4] = {
   NULL,
   NULL,
@@ -102,6 +115,7 @@ evas_module_paths_init(void)
 #define EVAS_EINA_STATIC_MODULE_USE(Tn, Name)	\
   { evas_##Tn##_##Name##_init, evas_##Tn##_##Name##_shutdown }
 
+#if !EVAS_MODULE_NO_ENGINES
 EVAS_EINA_STATIC_MODULE_DEFINE(engine, buffer);
 EVAS_EINA_STATIC_MODULE_DEFINE(engine, fb);
 EVAS_EINA_STATIC_MODULE_DEFINE(engine, gl_x11);
@@ -113,6 +127,9 @@ EVAS_EINA_STATIC_MODULE_DEFINE(engine, software_ddraw);
 EVAS_EINA_STATIC_MODULE_DEFINE(engine, software_gdi);
 EVAS_EINA_STATIC_MODULE_DEFINE(engine, software_generic);
 EVAS_EINA_STATIC_MODULE_DEFINE(engine, software_x11);
+#endif
+
+#if !EVAS_MODULE_NO_IMAGE_LOADERS
 EVAS_EINA_STATIC_MODULE_DEFINE(image_loader, bmp);
 EVAS_EINA_STATIC_MODULE_DEFINE(image_loader, eet);
 EVAS_EINA_STATIC_MODULE_DEFINE(image_loader, generic);
@@ -128,16 +145,21 @@ EVAS_EINA_STATIC_MODULE_DEFINE(image_loader, tiff);
 EVAS_EINA_STATIC_MODULE_DEFINE(image_loader, wbmp);
 EVAS_EINA_STATIC_MODULE_DEFINE(image_loader, webp);
 EVAS_EINA_STATIC_MODULE_DEFINE(image_loader, xpm);
+#endif
+
+#if !EVAS_MODULE_NO_IMAGE_SAVERS
 EVAS_EINA_STATIC_MODULE_DEFINE(image_saver, eet);
 EVAS_EINA_STATIC_MODULE_DEFINE(image_saver, jpeg);
 EVAS_EINA_STATIC_MODULE_DEFINE(image_saver, png);
 EVAS_EINA_STATIC_MODULE_DEFINE(image_saver, tiff);
 EVAS_EINA_STATIC_MODULE_DEFINE(image_saver, webp);
+#endif
 
 static const struct {
    Eina_Bool (*init)(void);
    void (*shutdown)(void);
 } evas_static_module[] = {
+#if !EVAS_MODULE_NO_ENGINES
 #ifdef EVAS_STATIC_BUILD_BUFFER
   EVAS_EINA_STATIC_MODULE_USE(engine, buffer),
 #endif
@@ -165,6 +187,8 @@ static const struct {
 #ifdef EVAS_STATIC_BUILD_SOFTWARE_X11
   EVAS_EINA_STATIC_MODULE_USE(engine, software_x11),
 #endif
+#endif
+#if !EVAS_MODULE_NO_IMAGE_LOADERS
 #ifdef EVAS_STATIC_BUILD_BMP
   EVAS_EINA_STATIC_MODULE_USE(image_loader, bmp),
 #endif
@@ -210,6 +234,8 @@ static const struct {
 #ifdef EVAS_STATIC_BUILD_XPM
   EVAS_EINA_STATIC_MODULE_USE(image_loader, xpm),
 #endif
+#endif
+#if !EVAS_MODULE_NO_IMAGE_SAVERS
 #ifdef EVAS_STATIC_BUILD_EET
   EVAS_EINA_STATIC_MODULE_USE(image_saver, eet),
 #endif
@@ -224,6 +250,7 @@ static const struct {
 #endif
 #ifdef EVAS_STATIC_BUILD_WEBP
   EVAS_EINA_STATIC_MODULE_USE(image_saver, webp),
+#endif
 #endif
   { NULL, NULL }
 };
