@@ -1843,10 +1843,14 @@ START_TEST(eet_cipher_decipher_simple)
 END_TEST
 
 static Eina_Bool open_worker_stop;
+static Eina_Condition open_worker_cond;
+static Eina_Lock open_worker_mutex;
 
 static void *
 open_close_worker(void *path, Eina_Thread tid EINA_UNUSED)
 {
+   static Eina_Bool first = EINA_TRUE;
+
    while (!open_worker_stop)
      {
         Eet_File *ef = eet_open((char const *)path, EET_FILE_MODE_READ);
@@ -1857,6 +1861,14 @@ open_close_worker(void *path, Eina_Thread tid EINA_UNUSED)
              Eet_Error err_code = eet_close(ef);
              if (err_code != EET_ERROR_NONE)
                return "eet_close() failed";
+          }
+
+        if (first)
+          {
+             eina_lock_take(&open_worker_mutex);
+             eina_condition_broadcast(&open_worker_cond);
+             eina_lock_release(&open_worker_mutex);
+             first = EINA_FALSE;
           }
      }
 
@@ -1876,16 +1888,23 @@ START_TEST(eet_cache_concurrency)
    eet_init();
    eina_threads_init();
 
+   eina_lock_new(&open_worker_mutex);
+   eina_condition_new(&open_worker_cond, &open_worker_mutex);
+
    /* create a file to test with */
    fail_if(!(file = tmpnam(file)));
    ef = eet_open(file, EET_FILE_MODE_WRITE);
    fail_if(!ef);
    fail_if(!eet_write(ef, "keys/tests", buffer, strlen(buffer) + 1, 0));
 
+   eina_lock_take(&open_worker_mutex);
    /* start a thread that repeatedly opens and closes a file */
    open_worker_stop = 0;
    r = eina_thread_create(&thread, EINA_THREAD_NORMAL, -1, open_close_worker, file);
    fail_unless(r);
+
+   eina_condition_wait(&open_worker_cond);
+   eina_lock_release(&open_worker_mutex);
 
    /* clear the cache repeatedly in this thread */
    for (n = 0; n < 20000; ++n)

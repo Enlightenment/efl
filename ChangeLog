@@ -1,3 +1,7 @@
+2013-07-02  Cedric Bail
+
+	* Eet: force thread to always run during eet_cache_concurrency test.
+
 2013-06-25  Tom Hacohen
 
 	* Evas textblock: Fixed issue when parsing formats with quotes.
