@@ -21,8 +21,8 @@ part_get_geometry(Edje_Real_Part *rp, Evas_Coord *w, Evas_Coord *h)
      evas_object_geometry_get(rp->object, NULL, NULL, w, h);
    else
      {
-	if (w) *w = evas_object_text_horiz_advance_get(rp->object);
-	if (h) *h = evas_object_text_vert_advance_get(rp->object);
+        if (w) *w = evas_object_text_horiz_advance_get(rp->object);
+        if (h) *h = evas_object_text_vert_advance_get(rp->object);
      }
 }
 
@@ -48,9 +48,9 @@ _edje_text_part_on_add(Edje *ed, Edje_Real_Part *ep)
    /* If any other classes exist add them */
    for (i = 0; i < pt->other.desc_count; ++i)
      {
-	desc = (Edje_Part_Description_Text *) pt->other.desc[i];
-	if ((desc) && (desc->text.text_class))
-	  _edje_text_class_member_add(ed, desc->text.text_class);
+        desc = (Edje_Part_Description_Text *) pt->other.desc[i];
+        if ((desc) && (desc->text.text_class))
+          _edje_text_class_member_add(ed, desc->text.text_class);
      }
 }
 
@@ -71,9 +71,9 @@ _edje_text_part_on_del(Edje *ed, Edje_Part *pt)
 
    for (i = 0; i < pt->other.desc_count; ++i)
      {
-	desc = (Edje_Part_Description_Text *) pt->other.desc[i];
-	if (desc->text.text_class)
-	  _edje_text_class_member_del(ed, desc->text.text_class);
+        desc = (Edje_Part_Description_Text *) pt->other.desc[i];
+        if (desc->text.text_class)
+          _edje_text_class_member_del(ed, desc->text.text_class);
      }
 }
 
@@ -160,8 +160,8 @@ _edje_text_class_font_get(Edje *ed, Edje_Part_Description_Text *chosen_desc, int
 
 void
 _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
-			Edje_Calc_Params *params,
-			Edje_Part_Description_Text *chosen_desc)
+                        Edje_Calc_Params *params,
+                        Edje_Part_Description_Text *chosen_desc)
 {
    const char	*text = NULL;
    const char	*font;
@@ -173,7 +173,7 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
    int		 inlined_font = 0, free_text = 0;
    Eina_Bool     same_text = EINA_FALSE;
    FLOAT_T       sc;
-   
+
    if ((ep->type != EDJE_RP_TYPE_TEXT) ||
        (!ep->typedata.text)) return;
    sc = ed->scale;
@@ -187,15 +187,15 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 
    if (ep->typedata.text->text_source)
      {
-	text = edje_string_get(&(((Edje_Part_Description_Text *)ep->typedata.text->text_source->chosen_description)->text.text));
-	if (ep->typedata.text->text_source->typedata.text->text) text = ep->typedata.text->text_source->typedata.text->text;
+        text = edje_string_get(&(((Edje_Part_Description_Text *)ep->typedata.text->text_source->chosen_description)->text.text));
+        if (ep->typedata.text->text_source->typedata.text->text) text = ep->typedata.text->text_source->typedata.text->text;
      }
    if (ep->typedata.text->source)
      {
-	font = edje_string_get(&(((Edje_Part_Description_Text *)ep->typedata.text->source->chosen_description)->text.font));
-	size = ((Edje_Part_Description_Text *)ep->typedata.text->source->chosen_description)->text.size;
-	if (ep->typedata.text->source->typedata.text->font) font = ep->typedata.text->source->typedata.text->font;
-	if (ep->typedata.text->source->typedata.text->size > 0) size = ep->typedata.text->source->typedata.text->size;
+        font = edje_string_get(&(((Edje_Part_Description_Text *)ep->typedata.text->source->chosen_description)->text.font));
+        size = ((Edje_Part_Description_Text *)ep->typedata.text->source->chosen_description)->text.size;
+        if (ep->typedata.text->source->typedata.text->font) font = ep->typedata.text->source->typedata.text->font;
+        if (ep->typedata.text->source->typedata.text->size > 0) size = ep->typedata.text->source->typedata.text->size;
      }
 
    if (!text) text = "";
@@ -204,36 +204,36 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
    /* check if the font is embedded in the .eet */
    if (ed->file->fonts)
      {
-	Edje_Font_Directory_Entry *fnt = eina_hash_find(ed->file->fonts, font);
+        Edje_Font_Directory_Entry *fnt = eina_hash_find(ed->file->fonts, font);
 
-	if (fnt)
-	  {
+        if (fnt)
+          {
              size_t len = strlen(font) + sizeof("edje/fonts/") + 1;
              font2 = alloca(len);
              sprintf(font2, "edje/fonts/%s", font);
              font = font2;
-	     inlined_font = 1;
+             inlined_font = 1;
              font2 = NULL;
-	  }
+          }
      }
 
    if ((_edje_fontset_append) && (font))
      {
-	font2 = malloc(strlen(font) + 1 + strlen(_edje_fontset_append) + 1);
-	if (font2)
-	  {
-	     strcpy(font2, font);
-	     strcat(font2, ",");
-	     strcat(font2, _edje_fontset_append);
-	     font = font2;
-	  }
+        font2 = malloc(strlen(font) + 1 + strlen(_edje_fontset_append) + 1);
+        if (font2)
+          {
+             strcpy(font2, font);
+             strcat(font2, ",");
+             strcat(font2, _edje_fontset_append);
+             font = font2;
+          }
      }
      {
-	int l, r, t, b;
+        int l, r, t, b;
 
-	evas_object_text_style_pad_get(ep->object, &l, &r, &t, &b);
-	sw = params->w;
-	sh = params->h;
+        evas_object_text_style_pad_get(ep->object, &l, &r, &t, &b);
+        sw = params->w;
+        sh = params->h;
      }
 
    size = params->type.text.size;
@@ -257,10 +257,10 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
        (ep->typedata.text->cache.fit_x == chosen_desc->text.fit_x) &&
        (ep->typedata.text->cache.fit_y == chosen_desc->text.fit_y))
      {
-	text = ep->typedata.text->cache.out_str;
-	size = ep->typedata.text->cache.out_size;
+        text = ep->typedata.text->cache.out_str;
+        size = ep->typedata.text->cache.out_size;
 
-	goto arrange_text;
+        goto arrange_text;
      }
    if (!same_text)
      {
@@ -270,15 +270,15 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
    if (chosen_desc->text.fit_x && (ep->typedata.text->cache.in_str && eina_stringshare_strlen(ep->typedata.text->cache.in_str) > 0))
      {
         if (inlined_font) evas_object_text_font_source_set(ep->object, ed->path);
-	else evas_object_text_font_source_set(ep->object, NULL);
+        else evas_object_text_font_source_set(ep->object, NULL);
 
-	if (ep->part->scale) evas_object_scale_set(ep->object, TO_DOUBLE(sc));
+        if (ep->part->scale) evas_object_scale_set(ep->object, TO_DOUBLE(sc));
         eo_do(ep->object,
               evas_obj_text_font_set(font, size),
               evas_obj_text_text_set(text));
-	part_get_geometry(ep, &tw, &th);
+        part_get_geometry(ep, &tw, &th);
         /* Find the wanted font size */
-	if ((tw != sw) && (size > 0) && (tw != 0))
+        if ((tw != sw) && (size > 0) && (tw != 0))
           {
              size = (size * sw) / tw;
 
@@ -288,7 +288,7 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
              if (ep->part->scale) evas_object_scale_set(ep->object, TO_DOUBLE(sc));
              evas_object_text_font_set(ep->object, font, size);
              part_get_geometry(ep, &tw, &th);
-	  }
+          }
 
         /* FIXME: This should possibly be replaced by more proper handling,
          * but it's still way better than what was here before. */
@@ -296,107 +296,107 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
      }
    if (chosen_desc->text.fit_y && (ep->typedata.text->cache.in_str && eina_stringshare_strlen(ep->typedata.text->cache.in_str) > 0))
      {
-	/* if we fit in the x axis, too, size already has a somewhat
-	 * meaningful value, so don't overwrite it with the starting
-	 * value in that case
-	 */
-	if (!chosen_desc->text.fit_x) size = sh;
+        /* if we fit in the x axis, too, size already has a somewhat
+         * meaningful value, so don't overwrite it with the starting
+         * value in that case
+         */
+        if (!chosen_desc->text.fit_x) size = sh;
 
         if (inlined_font) evas_object_text_font_source_set(ep->object, ed->path);
-	else evas_object_text_font_source_set(ep->object, NULL);
+        else evas_object_text_font_source_set(ep->object, NULL);
 
-	if (ep->part->scale) evas_object_scale_set(ep->object, TO_DOUBLE(sc));
+        if (ep->part->scale) evas_object_scale_set(ep->object, TO_DOUBLE(sc));
         eo_do(ep->object,
               evas_obj_text_font_set(font, size),
               evas_obj_text_text_set(text));
-	part_get_geometry(ep, &tw, &th);
+        part_get_geometry(ep, &tw, &th);
 
-	/* only grow the font size if we didn't already reach the max size
-	 * for the x axis
-	 */
-	if (!chosen_desc->text.fit_x && th < sh)
-	  {
-	     int dif;
+        /* only grow the font size if we didn't already reach the max size
+         * for the x axis
+         */
+        if (!chosen_desc->text.fit_x && th < sh)
+          {
+             int dif;
 
-	     dif = (th - sh) / 4;
-	     if (dif < 1) dif = 1;
-	     while ((th < sh) && (sw > 0))
-	       {
-		  size += dif;
-		  if (size <= 0) break;
-		  if (inlined_font) evas_object_text_font_source_set(ep->object, ed->path);
-		  else evas_object_text_font_source_set(ep->object, NULL);
+             dif = (th - sh) / 4;
+             if (dif < 1) dif = 1;
+             while ((th < sh) && (sw > 0))
+               {
+                  size += dif;
+                  if (size <= 0) break;
+                  if (inlined_font) evas_object_text_font_source_set(ep->object, ed->path);
+                  else evas_object_text_font_source_set(ep->object, NULL);
 
-		  if (ep->part->scale) evas_object_scale_set(ep->object, TO_DOUBLE(sc));
-		  evas_object_text_font_set(ep->object, font, size);
-		  part_get_geometry(ep, &tw, &th);
-		  if ((size > 0) && (th == 0)) break;
-	       }
-	     size -= dif;
-	  }
-	else if (th > sh)
-	  {
-	     int current;
+                  if (ep->part->scale) evas_object_scale_set(ep->object, TO_DOUBLE(sc));
+                  evas_object_text_font_set(ep->object, font, size);
+                  part_get_geometry(ep, &tw, &th);
+                  if ((size > 0) && (th == 0)) break;
+               }
+             size -= dif;
+          }
+        else if (th > sh)
+          {
+             int current;
 
-	     if (ep->part->scale) evas_object_scale_set(ep->object, TO_DOUBLE(sc));
-	     evas_object_text_font_set(ep->object, font, 10);
-	     part_get_geometry(ep, &tw, &th);
+             if (ep->part->scale) evas_object_scale_set(ep->object, TO_DOUBLE(sc));
+             evas_object_text_font_set(ep->object, font, 10);
+             part_get_geometry(ep, &tw, &th);
 
-	     if (th == sh)
-	       current = 10;
-	     else
-	       {
-		  int bottom, top;
+             if (th == sh)
+               current = 10;
+             else
+               {
+                  int bottom, top;
 
-		  if (th < sh) bottom = 10;
-		  else if (th > sh) bottom = 1;
-		  else bottom = 0; /* XXX shut up GCC, th == sh is handled before! */
+                  if (th < sh) bottom = 10;
+                  else if (th > sh) bottom = 1;
+                  else bottom = 0; /* XXX shut up GCC, th == sh is handled before! */
 
-		  top = size;
-		  /* search one that fits (binary search) */
-		  do
-		    {
-		       current = (top + bottom) / 2;
+                  top = size;
+                  /* search one that fits (binary search) */
+                  do
+                    {
+                       current = (top + bottom) / 2;
 
-		       if (ep->part->scale) evas_object_scale_set(ep->object, TO_DOUBLE(sc));
-		       evas_object_text_font_set(ep->object, font, current);
-		       part_get_geometry(ep, &tw, &th);
+                       if (ep->part->scale) evas_object_scale_set(ep->object, TO_DOUBLE(sc));
+                       evas_object_text_font_set(ep->object, font, current);
+                       part_get_geometry(ep, &tw, &th);
 
-		       if      (th < sh) bottom = current + 1;
-		       else if (th > sh) top    = current - 1;
-		    } while ((bottom < top) && (th != sh));
-	       }
+                       if      (th < sh) bottom = current + 1;
+                       else if (th > sh) top    = current - 1;
+                    } while ((bottom < top) && (th != sh));
+               }
 
-	     /* search the larger one that fits (linear search) */
-	     do
-	       {
-		  current++;
+             /* search the larger one that fits (linear search) */
+             do
+               {
+                  current++;
 
-		  if (ep->part->scale) evas_object_scale_set(ep->object, TO_DOUBLE(sc));
-		  evas_object_text_font_set(ep->object, font, current);
-		  part_get_geometry(ep, &tw, &th);
-	       } while (th <= sh);
-	     size = current - 1;
-	  }
+                  if (ep->part->scale) evas_object_scale_set(ep->object, TO_DOUBLE(sc));
+                  evas_object_text_font_set(ep->object, font, current);
+                  part_get_geometry(ep, &tw, &th);
+               } while (th <= sh);
+             size = current - 1;
+          }
      }
 
    /* Make sure the size is in range */
    if (size < 1)
-      size = 1;
+     size = 1;
    else if ((size > chosen_desc->text.size_range_max) &&
             (chosen_desc->text.size_range_max > 0))
-      size = chosen_desc->text.size_range_max;
+     size = chosen_desc->text.size_range_max;
    else if (size < chosen_desc->text.size_range_min)
-      size = chosen_desc->text.size_range_min;
+     size = chosen_desc->text.size_range_min;
 
    /* Handle ellipsis */
    if (!chosen_desc->text.min_x)
      {
-	if (inlined_font) evas_object_text_font_source_set(ep->object, ed->path);
-	else evas_object_text_font_source_set(ep->object, NULL);
+        if (inlined_font) evas_object_text_font_source_set(ep->object, ed->path);
+        else evas_object_text_font_source_set(ep->object, NULL);
 
-	text = _edje_text_fit_x(ed, ep, params,
-				text, font, size,
+        text = _edje_text_fit_x(ed, ep, params,
+                                text, font, size,
                                 sw, sh, &free_text);
      }
 
@@ -409,7 +409,7 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
    ep->typedata.text->cache.elipsis = params->type.text.elipsis;
    ep->typedata.text->cache.fit_x = chosen_desc->text.fit_x;
    ep->typedata.text->cache.fit_y = chosen_desc->text.fit_y;
-   arrange_text:
+arrange_text:
 
    if (inlined_font) evas_object_text_font_source_set(ep->object, ed->path);
    else evas_object_text_font_source_set(ep->object, NULL);
@@ -425,7 +425,7 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
         if (params->type.text.align.x < FROM_INT(0))
           {
              if (evas_object_text_direction_get(ep->object) ==
-                   EVAS_BIDI_DIRECTION_RTL)
+                 EVAS_BIDI_DIRECTION_RTL)
                {
                   align_x = FROM_INT(1);
                }
@@ -443,160 +443,160 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
      }
 
    evas_object_move(ep->object,
-		    ed->x + params->x + ep->typedata.text->offset.x,
-		    ed->y + params->y + ep->typedata.text->offset.y);
+                    ed->x + params->x + ep->typedata.text->offset.x,
+                    ed->y + params->y + ep->typedata.text->offset.y);
 
    if (params->visible) evas_object_show(ep->object);
    else evas_object_hide(ep->object);
 
 
      {
-	Evas_Text_Style_Type style;
+        Evas_Text_Style_Type style;
         Edje_Text_Effect effect;
 
-	style = EVAS_TEXT_STYLE_PLAIN;
+        style = EVAS_TEXT_STYLE_PLAIN;
 
-	evas_object_color_set(ep->object,
-			      (params->color.r * params->color.a) / 255,
-			      (params->color.g * params->color.a) / 255,
-			      (params->color.b * params->color.a) / 255,
-			      params->color.a);
+        evas_object_color_set(ep->object,
+                              (params->color.r * params->color.a) / 255,
+                              (params->color.g * params->color.a) / 255,
+                              (params->color.b * params->color.a) / 255,
+                              params->color.a);
         effect = ep->part->effect;
         switch (effect & EDJE_TEXT_EFFECT_MASK_BASIC)
           {
            case EDJE_TEXT_EFFECT_NONE:
            case EDJE_TEXT_EFFECT_PLAIN:
-	     style = EVAS_TEXT_STYLE_PLAIN;
-             break;
+              style = EVAS_TEXT_STYLE_PLAIN;
+              break;
            case EDJE_TEXT_EFFECT_OUTLINE:
-	     style = EVAS_TEXT_STYLE_OUTLINE;
-	     evas_object_text_outline_color_set(ep->object,
-					        (params->type.text.color2.r * params->type.text.color2.a) / 255,
-					        (params->type.text.color2.g * params->type.text.color2.a) / 255,
-					        (params->type.text.color2.b * params->type.text.color2.a) / 255,
-						params->type.text.color2.a);
-             break;
+              style = EVAS_TEXT_STYLE_OUTLINE;
+              evas_object_text_outline_color_set(ep->object,
+                                                 (params->type.text.color2.r * params->type.text.color2.a) / 255,
+                                                 (params->type.text.color2.g * params->type.text.color2.a) / 255,
+                                                 (params->type.text.color2.b * params->type.text.color2.a) / 255,
+                                                 params->type.text.color2.a);
+              break;
            case EDJE_TEXT_EFFECT_SOFT_OUTLINE:
-	     style = EVAS_TEXT_STYLE_SOFT_OUTLINE;
-	     evas_object_text_outline_color_set(ep->object,
-						(params->type.text.color2.r * params->type.text.color2.a) / 255,
-						(params->type.text.color2.g * params->type.text.color2.a) / 255,
-						(params->type.text.color2.b * params->type.text.color2.a) / 255,
-						params->type.text.color2.a);
-             break;
+              style = EVAS_TEXT_STYLE_SOFT_OUTLINE;
+              evas_object_text_outline_color_set(ep->object,
+                                                 (params->type.text.color2.r * params->type.text.color2.a) / 255,
+                                                 (params->type.text.color2.g * params->type.text.color2.a) / 255,
+                                                 (params->type.text.color2.b * params->type.text.color2.a) / 255,
+                                                 params->type.text.color2.a);
+              break;
            case EDJE_TEXT_EFFECT_SHADOW:
-	     style = EVAS_TEXT_STYLE_SHADOW;
-	     evas_object_text_shadow_color_set(ep->object,
-					       (params->type.text.color3.r * params->type.text.color3.a) / 255,
-					       (params->type.text.color3.g * params->type.text.color3.a) / 255,
-					       (params->type.text.color3.b * params->type.text.color3.a) / 255,
-					       params->type.text.color3.a);
-             break;
+              style = EVAS_TEXT_STYLE_SHADOW;
+              evas_object_text_shadow_color_set(ep->object,
+                                                (params->type.text.color3.r * params->type.text.color3.a) / 255,
+                                                (params->type.text.color3.g * params->type.text.color3.a) / 255,
+                                                (params->type.text.color3.b * params->type.text.color3.a) / 255,
+                                                params->type.text.color3.a);
+              break;
            case EDJE_TEXT_EFFECT_SOFT_SHADOW:
-	     style = EVAS_TEXT_STYLE_SOFT_SHADOW;
-	     evas_object_text_shadow_color_set(ep->object,
-					       (params->type.text.color3.r * params->type.text.color3.a) / 255,
-					       (params->type.text.color3.g * params->type.text.color3.a) / 255,
-					       (params->type.text.color3.b * params->type.text.color3.a) / 255,
-					       params->type.text.color3.a);
-             break;
+              style = EVAS_TEXT_STYLE_SOFT_SHADOW;
+              evas_object_text_shadow_color_set(ep->object,
+                                                (params->type.text.color3.r * params->type.text.color3.a) / 255,
+                                                (params->type.text.color3.g * params->type.text.color3.a) / 255,
+                                                (params->type.text.color3.b * params->type.text.color3.a) / 255,
+                                                params->type.text.color3.a);
+              break;
            case EDJE_TEXT_EFFECT_OUTLINE_SHADOW:
-	     style = EVAS_TEXT_STYLE_OUTLINE_SHADOW;
-             eo_do(ep->object,
-                   evas_obj_text_outline_color_set((params->type.text.color2.r * params->type.text.color2.a) / 255,
-                                                   (params->type.text.color2.g * params->type.text.color2.a) / 255,
-                                                   (params->type.text.color2.b * params->type.text.color2.a) / 255,
-                                                   params->type.text.color2.a),
-                   evas_obj_text_shadow_color_set((params->type.text.color3.r * params->type.text.color3.a) / 255,
-                                                  (params->type.text.color3.g * params->type.text.color3.a) / 255,
-                                                  (params->type.text.color3.b * params->type.text.color3.a) / 255,
-                                                  params->type.text.color3.a));
-             break;
+              style = EVAS_TEXT_STYLE_OUTLINE_SHADOW;
+              eo_do(ep->object,
+                    evas_obj_text_outline_color_set((params->type.text.color2.r * params->type.text.color2.a) / 255,
+                                                    (params->type.text.color2.g * params->type.text.color2.a) / 255,
+                                                    (params->type.text.color2.b * params->type.text.color2.a) / 255,
+                                                    params->type.text.color2.a),
+                    evas_obj_text_shadow_color_set((params->type.text.color3.r * params->type.text.color3.a) / 255,
+                                                   (params->type.text.color3.g * params->type.text.color3.a) / 255,
+                                                   (params->type.text.color3.b * params->type.text.color3.a) / 255,
+                                                   params->type.text.color3.a));
+              break;
            case EDJE_TEXT_EFFECT_OUTLINE_SOFT_SHADOW:
-	     style = EVAS_TEXT_STYLE_OUTLINE_SOFT_SHADOW;
-             eo_do(ep->object,
-                   evas_obj_text_outline_color_set((params->type.text.color2.r * params->type.text.color2.a) / 255,
-                                                   (params->type.text.color2.g * params->type.text.color2.a) / 255,
-                                                   (params->type.text.color2.b * params->type.text.color2.a) / 255,
-                                                   params->type.text.color2.a),
-                   evas_obj_text_shadow_color_set((params->type.text.color3.r * params->type.text.color3.a) / 255,
+              style = EVAS_TEXT_STYLE_OUTLINE_SOFT_SHADOW;
+              eo_do(ep->object,
+                    evas_obj_text_outline_color_set((params->type.text.color2.r * params->type.text.color2.a) / 255,
+                                                    (params->type.text.color2.g * params->type.text.color2.a) / 255,
+                                                    (params->type.text.color2.b * params->type.text.color2.a) / 255,
+                                                    params->type.text.color2.a),
+                    evas_obj_text_shadow_color_set((params->type.text.color3.r * params->type.text.color3.a) / 255,
+                                                   (params->type.text.color3.g * params->type.text.color3.a) / 255,
+                                                   (params->type.text.color3.b * params->type.text.color3.a) / 255,
+                                                   params->type.text.color3.a));
+              break;
+           case EDJE_TEXT_EFFECT_FAR_SHADOW:
+              style = EVAS_TEXT_STYLE_FAR_SHADOW;
+              evas_object_text_shadow_color_set(ep->object,
+                                                (params->type.text.color3.r * params->type.text.color3.a) / 255,
+                                                (params->type.text.color3.g * params->type.text.color3.a) / 255,
+                                                (params->type.text.color3.b * params->type.text.color3.a) / 255,
+                                                params->type.text.color3.a);
+              break;
+           case EDJE_TEXT_EFFECT_FAR_SOFT_SHADOW:
+              style = EVAS_TEXT_STYLE_FAR_SOFT_SHADOW;
+              evas_object_text_shadow_color_set(ep->object,
+                                                (params->type.text.color3.r * params->type.text.color3.a) / 255,
+                                                (params->type.text.color3.g * params->type.text.color3.a) / 255,
+                                                (params->type.text.color3.b * params->type.text.color3.a) / 255,
+                                                params->type.text.color3.a);
+              break;
+           case EDJE_TEXT_EFFECT_GLOW:
+              style = EVAS_TEXT_STYLE_GLOW;
+              eo_do(ep->object,
+                    evas_obj_text_glow_color_set((params->type.text.color2.r * params->type.text.color2.a) / 255,
+                                                 (params->type.text.color2.g * params->type.text.color2.a) / 255,
+                                                 (params->type.text.color2.b * params->type.text.color2.a) / 255,
+                                                 params->type.text.color2.a),
+                    evas_obj_text_glow2_color_set((params->type.text.color3.r * params->type.text.color3.a) / 255,
                                                   (params->type.text.color3.g * params->type.text.color3.a) / 255,
                                                   (params->type.text.color3.b * params->type.text.color3.a) / 255,
                                                   params->type.text.color3.a));
-             break;
-           case EDJE_TEXT_EFFECT_FAR_SHADOW:
-	     style = EVAS_TEXT_STYLE_FAR_SHADOW;
-	     evas_object_text_shadow_color_set(ep->object,
-					       (params->type.text.color3.r * params->type.text.color3.a) / 255,
-					       (params->type.text.color3.g * params->type.text.color3.a) / 255,
-					       (params->type.text.color3.b * params->type.text.color3.a) / 255,
-					       params->type.text.color3.a);
-             break;
-           case EDJE_TEXT_EFFECT_FAR_SOFT_SHADOW:
-	     style = EVAS_TEXT_STYLE_FAR_SOFT_SHADOW;
-	     evas_object_text_shadow_color_set(ep->object,
-					       (params->type.text.color3.r * params->type.text.color3.a) / 255,
-					       (params->type.text.color3.g * params->type.text.color3.a) / 255,
-					       (params->type.text.color3.b * params->type.text.color3.a) / 255,
-					       params->type.text.color3.a);
-             break;
-           case EDJE_TEXT_EFFECT_GLOW:
-	     style = EVAS_TEXT_STYLE_GLOW;
-             eo_do(ep->object,
-                   evas_obj_text_glow_color_set((params->type.text.color2.r * params->type.text.color2.a) / 255,
-                                                (params->type.text.color2.g * params->type.text.color2.a) / 255,
-                                                (params->type.text.color2.b * params->type.text.color2.a) / 255,
-                                                params->type.text.color2.a),
-                   evas_obj_text_glow2_color_set((params->type.text.color3.r * params->type.text.color3.a) / 255,
-                                                 (params->type.text.color3.g * params->type.text.color3.a) / 255,
-                                                 (params->type.text.color3.b * params->type.text.color3.a) / 255,
-                                                 params->type.text.color3.a));
-             break;
+              break;
            default:
-	     style = EVAS_TEXT_STYLE_PLAIN;
-             break;
+              style = EVAS_TEXT_STYLE_PLAIN;
+              break;
           }
-        
+
         switch (effect & EDJE_TEXT_EFFECT_MASK_SHADOW_DIRECTION)
           {
            case EDJE_TEXT_EFFECT_SHADOW_DIRECTION_BOTTOM_RIGHT:
-             EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET
-                (style, EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_RIGHT);
-             break;
+              EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET
+                 (style, EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_RIGHT);
+              break;
            case EDJE_TEXT_EFFECT_SHADOW_DIRECTION_BOTTOM:
-             EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET
-                (style, EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM);
-             break;
+              EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET
+                 (style, EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM);
+              break;
            case EDJE_TEXT_EFFECT_SHADOW_DIRECTION_BOTTOM_LEFT:
-             EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET
-                (style, EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_LEFT);
-             break;
+              EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET
+                 (style, EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_LEFT);
+              break;
            case EDJE_TEXT_EFFECT_SHADOW_DIRECTION_LEFT:
-             EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET
-                (style, EVAS_TEXT_STYLE_SHADOW_DIRECTION_LEFT);
-             break;
+              EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET
+                 (style, EVAS_TEXT_STYLE_SHADOW_DIRECTION_LEFT);
+              break;
            case EDJE_TEXT_EFFECT_SHADOW_DIRECTION_TOP_LEFT:
-             EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET
-                (style, EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP_LEFT);
-             break;
+              EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET
+                 (style, EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP_LEFT);
+              break;
            case EDJE_TEXT_EFFECT_SHADOW_DIRECTION_TOP:
-             EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET
-                (style, EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP);
-             break;
+              EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET
+                 (style, EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP);
+              break;
            case EDJE_TEXT_EFFECT_SHADOW_DIRECTION_TOP_RIGHT:
-             EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET
-                (style, EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP_RIGHT);
-             break;
+              EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET
+                 (style, EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP_RIGHT);
+              break;
            case EDJE_TEXT_EFFECT_SHADOW_DIRECTION_RIGHT:
-             EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET
-                (style, EVAS_TEXT_STYLE_SHADOW_DIRECTION_RIGHT);
-             break;
+              EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET
+                 (style, EVAS_TEXT_STYLE_SHADOW_DIRECTION_RIGHT);
+              break;
            default:
-             break;
+              break;
           }
-	evas_object_text_style_set(ep->object, style);
+        evas_object_text_style_set(ep->object, style);
      }
-   
+
    if (free_text) free((char *)text);
    if (font2) free(font2);
    if (sfont) free(sfont);
@@ -609,15 +609,15 @@ _edje_text_size_calc(Evas_Font_Size size, Edje_Text_Class *tc)
 
    if (tc->size == 0)
      {
-	val = size;
+        val = size;
      }
    else if (tc->size > 0.0)
      {
-	val = tc->size;
+        val = tc->size;
      }
    else
      {
-	val = (size * -tc->size) / 100;
+        val = (size * -tc->size) / 100;
      }
    return val;
 }
