@@ -259,7 +259,7 @@ EAPI void
 evas_common_font_draw_prepare(Evas_Text_Props *text_props)
 {
    RGBA_Font_Int *fi;
-   RGBA_Font_Glyph *fg;
+   RGBA_Font_Glyph *fg = NULL;
    Eina_Inarray *glyphs;
    size_t unit = 32;
    Eina_Bool reused_glyphs;
@@ -338,8 +338,11 @@ evas_common_font_draw_prepare(Evas_Text_Props *text_props)
    return;
 
 error:
-   if (fg->glyph_out) free(fg->glyph_out);
-   if (fg) free(fg);
+   if (fg)
+     {
+        if (fg->glyph_out) free(fg->glyph_out);
+        free(fg);
+     }
    eina_inarray_free(glyphs);
 }
 
