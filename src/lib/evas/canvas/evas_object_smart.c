@@ -1069,7 +1069,6 @@ evas_call_smarts_calculate(Evas *eo_e)
    Eina_Clist *elem;
    Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CLASS);
 
-//   printf("+CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALC-----------v\n");
    evas_event_freeze(eo_e);
    e->in_smart_calc++;
 
