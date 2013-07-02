@@ -1123,6 +1123,7 @@ lib_evas_libevas_la_LIBADD += @evas_image_loader_eet_libs@
 if EVAS_CSERVE2
 bin_evas_evas_cserve2_slave_SOURCES += modules/evas/loaders/eet/evas_image_load_eet.c
 bin_evas_evas_cserve2_slave_CPPFLAGS += @evas_image_loader_eet_cflags@
+bin_evas_evas_cserve2_slave_DEPENDENCIES += @USE_EET_INTERNAL_LIBS@
 bin_evas_evas_cserve2_slave_LDADD += @USE_EET_LIBS@ @evas_image_loader_eet_libs@
 endif
 else
