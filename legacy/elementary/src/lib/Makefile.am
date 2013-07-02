@@ -419,6 +419,7 @@ elm_frame.c \
 elm_gengrid.c \
 elm_genlist.c \
 elm_gesture_layer.c \
+elm_gesture_layer_extra_gestures.c \
 elm_glview.c \
 elm_grid.c \
 elm_hover.c \

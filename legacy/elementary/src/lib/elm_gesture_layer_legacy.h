@@ -168,3 +168,40 @@ EAPI void elm_gesture_layer_tap_finger_size_set(Evas_Object *obj, Evas_Coord sz)
  *
  */
 EAPI Evas_Coord elm_gesture_layer_tap_finger_size_get(const Evas_Object *obj);
+
+/**
+ * @since 1.8
+ * This function adds a callback called during Tap + Long Tap sequence.
+ *
+ * @param state state for the callback to add.
+ * @param cb callback pointer
+ * @param data user data for the callback.
+ *
+ * The callbacks will be called as followed:
+ * - start cbs on single tap start
+ * - move cbs on long press move
+ * - end cbs on long press end
+ * - abort cbs whenever in the sequence. The event info will be NULL, because it
+ *   can be triggered from multiple events (timer expired, abort single/long taps).
+ *
+ * You can remove the callbacks by using elm_gesture_layer_tap_longpress_cb_del.
+ *
+ * @see elm_gesture_layer_tap_longpress_cb_del
+ */
+EAPI void elm_gesture_layer_tap_longpress_cb_add(Evas_Object *obj, Elm_Gesture_State state, Elm_Gesture_Event_Cb cb, void *data);
+
+/**
+ * @since 1.8
+ * This function removes a callback called during Tap + Long Tap sequence.
+ *
+ * @param state state for the callback to add.
+ * @param cb callback pointer
+ * @param data user data for the callback.
+ *
+ * The internal data used for the sequence will be freed ONLY when all the
+ * callbacks added via elm_gesture_layer_tap_longpress_cb_add are removed by
+ * this function.
+ *
+ * @see elm_gesture_layer_tap_longpress_cb_add
+ */
+EAPI void elm_gesture_layer_tap_longpress_cb_del(Evas_Object *obj, Elm_Gesture_State state, Elm_Gesture_Event_Cb cb, void *data);
