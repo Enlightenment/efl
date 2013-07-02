@@ -2,21 +2,21 @@
 # Copyright (c) 2013 Rosetta Contributors and Canonical Ltd 2013
 # This file is distributed under the same license as the enlightenment package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2013.
+# Саша Петровић <salepetronije@gmail.com>, 2013.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
-"Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-06-28 14:38+0900\n"
-"PO-Revision-Date: 2013-01-07 20:18+0000\n"
+"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2013-01-05 11:32+0100\n"
+"PO-Revision-Date: 2013-06-20 04:43+0000\n"
 "Last-Translator: Саша Петровић <salepetronije@gmail.com>\n"
-"Language-Team: Serbian <sr@li.org>\n"
-"Language: sr\n"
+"Language-Team: српски <српски <xfce-i18n@xfce.org>>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2013-01-08 04:52+0000\n"
-"X-Generator: Launchpad (build 16402)\n"
+"X-Launchpad-Export-Date: 2013-06-21 05:36+0000\n"
+"X-Generator: Launchpad (build 16677)\n"
 
 #: src/lib/ecore/ecore_getopt.c:87
 msgid "Version:"
@@ -41,7 +41,7 @@ msgstr "Дозвола:"
 
 #: src/lib/ecore/ecore_getopt.c:449
 msgid "Type: "
-msgstr ""
+msgstr "Врста: "
 
 #: src/lib/ecore/ecore_getopt.c:525
 msgid "Default: "
@@ -74,135 +74,135 @@ msgstr "ГРЕШКА: "
 #: src/lib/ecore/ecore_getopt.c:1120 src/lib/ecore/ecore_getopt.c:1167
 #: src/lib/ecore/ecore_getopt.c:1287 src/lib/ecore/ecore_getopt.c:1328
 msgid "value has no pointer set.\n"
-msgstr ""
+msgstr "вредност нема подешен показивач.\n"
 
 #: src/lib/ecore/ecore_getopt.c:967 src/lib/ecore/ecore_getopt.c:1187
 #, c-format
 msgid "unknown boolean value %s.\n"
-msgstr ""
+msgstr "непозната булова вредност %s\n"
 
 #: src/lib/ecore/ecore_getopt.c:1018 src/lib/ecore/ecore_getopt.c:1275
 #, c-format
 msgid "invalid number format %s\n"
-msgstr ""
+msgstr "неисправан облик броја %s\n"
 
 #: src/lib/ecore/ecore_getopt.c:1133
 #, c-format
 msgid "invalid choice \"%s\". Valid values are: "
-msgstr ""
+msgstr "неисправан избор „%s“. Исправне вредности су: "
 
 #: src/lib/ecore/ecore_getopt.c:1161
 msgid "missing parameter to append.\n"
-msgstr ""
+msgstr "недостаје одредница за наставак.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1265
 msgid "could not parse value.\n"
-msgstr ""
+msgstr "нисам успео да расчланим вредност\n"
 
 #: src/lib/ecore/ecore_getopt.c:1322
 msgid "missing parameter.\n"
-msgstr ""
+msgstr "недостаје одредница.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1335
 msgid "missing callback function!\n"
-msgstr ""
+msgstr "недостаје функција узвратног позива!\n"
 
 #: src/lib/ecore/ecore_getopt.c:1364
 msgid "no version was defined.\n"
-msgstr ""
+msgstr "није одређено издање.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1381
 msgid "no copyright was defined.\n"
-msgstr ""
+msgstr "нису одређена права умножавања.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1398
 msgid "no license was defined.\n"
-msgstr ""
+msgstr "није одређена дозвола.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1488
 #, c-format
 msgid "ERROR: unknown option --%s, ignored.\n"
-msgstr ""
+msgstr "ГРЕШКА: непозната могућност --%s, занемарујем.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1521
 #, c-format
 msgid "ERROR: option --%s requires an argument!\n"
-msgstr ""
+msgstr "ГРЕШКА: могућност --%s захтева одредницу!\n"
 
 #: src/lib/ecore/ecore_getopt.c:1563
 #, c-format
 msgid "ERROR: unknown option -%c, ignored.\n"
-msgstr ""
+msgstr "ГРЕШКА: непозната могућност -%c, занемарујем.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1601
 #, c-format
 msgid "ERROR: option -%c requires an argument!\n"
-msgstr ""
+msgstr "ГРЕШКА: могућност -%c захтева одредницу!\n"
 
 #: src/lib/ecore/ecore_getopt.c:1812
 msgid "ERROR: no parser provided.\n"
-msgstr ""
+msgstr "ГРЕШКА: није обезбеђен расчлањивач.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1817
 msgid "ERROR: no values provided.\n"
-msgstr ""
+msgstr "ГРЕШКА: нема обезбеђених вредности.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1826
 msgid "ERROR: no arguments provided.\n"
-msgstr ""
+msgstr "ГРЕШКА: није обезбеђена одредница.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1852
 msgid "ERROR: invalid options found."
-msgstr ""
+msgstr "ГРЕШКА: нађена је неисправна могућност."
 
 #: src/lib/ecore/ecore_getopt.c:1858
 #, c-format
 msgid " See --%s.\n"
-msgstr ""
+msgstr " Погледајте --%s.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1860
 #, c-format
 msgid " See -%c.\n"
-msgstr ""
+msgstr " Погледајте -%c.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1906
 #, c-format
 msgid "ERROR: incorrect geometry value '%s'\n"
-msgstr ""
+msgstr "ГРЕШКА: неисправна геометријска вредност „%s“\n"
 
 #: src/lib/ecore/ecore_getopt.c:1938
 #, c-format
 msgid "ERROR: incorrect size value '%s'\n"
-msgstr ""
+msgstr "ГРЕШКА: неисправна вредност величине  „%s“\n"
 
-#: src/lib/efreet/efreet_base.c:119
+#: src/lib/efreet/efreet_base.c:129
 msgid "Desktop"
-msgstr ""
+msgstr "Радна површ"
 
-#: src/lib/efreet/efreet_base.c:127
+#: src/lib/efreet/efreet_base.c:137
 msgid "Downloads"
-msgstr ""
+msgstr "Преузимања"
 
-#: src/lib/efreet/efreet_base.c:136
+#: src/lib/efreet/efreet_base.c:146
 msgid "Templates"
-msgstr ""
+msgstr "Обрасци"
 
-#: src/lib/efreet/efreet_base.c:145
+#: src/lib/efreet/efreet_base.c:155
 msgid "Public"
-msgstr ""
+msgstr "Јавно"
 
-#: src/lib/efreet/efreet_base.c:154
+#: src/lib/efreet/efreet_base.c:164
 msgid "Documents"
-msgstr ""
+msgstr "Документа"
 
-#: src/lib/efreet/efreet_base.c:162
+#: src/lib/efreet/efreet_base.c:172
 msgid "Music"
-msgstr ""
+msgstr "Музика"
 
-#: src/lib/efreet/efreet_base.c:170
+#: src/lib/efreet/efreet_base.c:180
 msgid "Pictures"
-msgstr ""
+msgstr "Слике"
 
-#: src/lib/efreet/efreet_base.c:178
+#: src/lib/efreet/efreet_base.c:188
 msgid "Videos"
-msgstr ""
+msgstr "Видео снимци"
