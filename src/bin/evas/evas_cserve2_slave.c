@@ -239,13 +239,31 @@ _cserve2_shm_unmap(void *map, size_t length)
    munmap(map, length);
 }
 
+static void
+_image_load_opts_copy(Evas_Image_Load_Opts *load_opts, Image_Load_Opts *opts)
+{
+   memset(load_opts, 0, sizeof (Evas_Image_Load_Opts));
+   if (opts)
+     {
+        load_opts->w = opts->w;
+        load_opts->h = opts->h;
+        load_opts->dpi = opts->dpi;
+        load_opts->region.x = opts->rx;
+        load_opts->region.y = opts->ry;
+        load_opts->region.w = opts->rw;
+        load_opts->region.h = opts->rh;
+        load_opts->orientation = opts->orientation;
+        load_opts->scale_down_by = opts->scale_down_by;
+     }
+   // Not set here: struct load_opts.scale_load
+}
+
 static void *
-_image_file_open(Eina_File *fd, Eina_Stringshare *key, Image_Load_Opts *opts,
+_image_file_open(Eina_File *fd, Eina_Stringshare *key, Evas_Image_Load_Opts *load_opts,
                  Evas_Module *module, Evas_Image_Property *property,
                  Evas_Image_Animated *animated, Evas_Image_Load_Func **pfuncs)
 {
    int error = EVAS_LOAD_ERROR_NONE;
-   Evas_Image_Load_Opts load_opts;
    void *loader_data = NULL;
    Evas_Image_Load_Func *funcs = NULL;
 
@@ -259,23 +277,8 @@ _image_file_open(Eina_File *fd, Eina_Stringshare *key, Image_Load_Opts *opts,
 
    evas_module_use(module);
    memset(animated, 0, sizeof (*animated));
-   memset(&load_opts, 0, sizeof (load_opts));
 
-   if (opts)
-     {
-        load_opts.w = opts->w;
-        load_opts.h = opts->h;
-        load_opts.dpi = opts->dpi;
-        load_opts.region.x = opts->rx;
-        load_opts.region.y = opts->ry;
-        load_opts.region.w = opts->rw;
-        load_opts.region.h = opts->rh;
-        load_opts.orientation = opts->orientation;
-        load_opts.scale_down_by = opts->scale_down_by;
-     }
-   // Not set here: struct load_opts.scale_load
-
-   loader_data = funcs->file_open(fd, key, &load_opts, animated, &error);
+   loader_data = funcs->file_open(fd, key, load_opts, animated, &error);
    if (!loader_data || (error != EVAS_LOAD_ERROR_NONE))
      goto unload;
 
@@ -297,7 +300,7 @@ unload:
 }
 
 static Eina_Bool
-_image_file_header(Eina_File *fd, Eina_Stringshare *key, Image_Load_Opts *opts,
+_image_file_header(Eina_File *fd, Eina_Stringshare *key, Evas_Image_Load_Opts *load_opts,
                    Slave_Msg_Image_Opened *result, Evas_Module *module)
 {
    Evas_Image_Property property;
@@ -306,7 +309,7 @@ _image_file_header(Eina_File *fd, Eina_Stringshare *key, Image_Load_Opts *opts,
    void *loader_data;
 
    memset(&property, 0, sizeof (property));
-   loader_data = _image_file_open(fd, key, opts, module, &property, &animated, &funcs);
+   loader_data = _image_file_open(fd, key, load_opts, module, &property, &animated, &funcs);
    if (!loader_data)
      return EINA_FALSE;
 
@@ -333,7 +336,7 @@ _image_file_header(Eina_File *fd, Eina_Stringshare *key, Image_Load_Opts *opts,
 }
 
 static Error_Type
-image_open(const char *file, const char *key, Image_Load_Opts *opts,
+image_open(const char *file, const char *key, Evas_Image_Load_Opts *load_opts,
            Slave_Msg_Image_Opened *result, const char **use_loader)
 {
    Evas_Module *module;
@@ -357,7 +360,7 @@ image_open(const char *file, const char *key, Image_Load_Opts *opts,
    module = evas_module_find_type(EVAS_MODULE_TYPE_IMAGE_LOADER, loader);
    if (module)
      {
-        if (_image_file_header(fd, skey, opts, result, module))
+        if (_image_file_header(fd, skey, load_opts, result, module))
           goto success;
      }
 
@@ -377,7 +380,7 @@ try_extension:
    if (loader)
      {
         module = evas_module_find_type(EVAS_MODULE_TYPE_IMAGE_LOADER, loader);
-        if (_image_file_header(fd, skey, opts, result, module))
+        if (_image_file_header(fd, skey, load_opts, result, module))
           goto success;
         loader = NULL;
         module = NULL;
@@ -389,7 +392,7 @@ try_extension:
         loader = loaders_name[i];
         module = evas_module_find_type(EVAS_MODULE_TYPE_IMAGE_LOADER, loader);
         if (!module) continue;
-        if (_image_file_header(fd, skey, opts, result, module))
+        if (_image_file_header(fd, skey, load_opts, result, module))
           goto success;
      }
 
@@ -418,6 +421,7 @@ image_load(const char *file, const char *key, const char *shmfile,
    Eina_File *fd;
    Evas_Image_Load_Func *funcs = NULL;
    Image_Load_Opts *opts = &params->opts;
+   Evas_Image_Load_Opts load_opts;
    Evas_Image_Property property;
    Evas_Image_Animated animated;
    Error_Type ret = CSERVE2_GENERIC;
@@ -453,7 +457,8 @@ image_load(const char *file, const char *key, const char *shmfile,
    property.h = params->h;
 
    skey = eina_stringshare_add(key);
-   loader_data = _image_file_open(fd, skey, opts, module, &property, &animated, &funcs);
+   _image_load_opts_copy(&load_opts, opts);
+   loader_data = _image_file_open(fd, skey, &load_opts, module, &property, &animated, &funcs);
    if (!loader_data)
      {
         printf("LOAD failed at %s:%d: could not open image %s:%s\n",
@@ -502,7 +507,8 @@ handle_image_open(int wfd, void *params)
 {
    Slave_Msg_Image_Open *p;
    Slave_Msg_Image_Opened result;
-   Image_Load_Opts *load_opts = NULL;
+   Image_Load_Opts *opts = NULL;
+   Evas_Image_Load_Opts load_opts;
    Error_Type err;
    const char *loader = NULL, *file, *key, *ptr;
    char *resp;
@@ -514,14 +520,15 @@ handle_image_open(int wfd, void *params)
    ptr = key + strlen(key) + 1;
    if (p->has_opts)
      {
-        load_opts = (Image_Load_Opts *)ptr;
+        opts = (Image_Load_Opts *)ptr;
         ptr += sizeof(Image_Load_Opts);
      }
    if (p->has_loader_data)
      loader = ptr;
 
    memset(&result, 0, sizeof(result));
-   if ((err = image_open(file, key, load_opts, &result, &loader))
+   _image_load_opts_copy(&load_opts, opts);
+   if ((err = image_open(file, key, &load_opts, &result, &loader))
        != CSERVE2_NONE)
      {
         printf("OPEN failed at %s:%d\n", __FUNCTION__, __LINE__);
