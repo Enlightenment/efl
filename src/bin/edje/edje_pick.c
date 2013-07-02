@@ -1348,10 +1348,11 @@ main(int argc, char **argv)
 
    /* Write file header after processing all groups */
    if (out_file)
-     bytes = eet_data_write(out_file->ef, _edje_edd_edje_file, "edje/file",
-                            out_file, comp_mode);
-
-   VERBOSE(EINA_LOG_INFO("Wrote <%d> bytes for file header.\n", bytes));
+     {
+        bytes = eet_data_write(out_file->ef, _edje_edd_edje_file, "edje/file",
+                               out_file, comp_mode);
+        VERBOSE(EINA_LOG_INFO("Wrote <%d> bytes for file header.\n", bytes));
+     }
 
    eina_list_free(images);
    eina_list_free(samples);
