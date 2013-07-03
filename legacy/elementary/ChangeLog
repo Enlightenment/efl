@@ -1482,3 +1482,8 @@
 
         * added callback call "scroll", "scroll,anim,start", "scroll,anim,stop", "scroll,drag,start", "scroll,drag,stop"
         in toolar widget.
+
+2013-07-03  Jaehwan Kim
+
+        * Change the method to calculate a distance which be scrolled from linear to sine curve.
+        And add the configuration thumbscroll_flick_distance_tolerance. It's the max flick distance.

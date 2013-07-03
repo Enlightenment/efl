@@ -347,6 +347,31 @@ tsmt_change(void *data       __UNUSED__,
 }
 
 static void
+tsfdt_round(void *data       __UNUSED__,
+            Evas_Object     *obj,
+            void *event_info __UNUSED__)
+{
+   double val = elm_slider_value_get(obj);
+   double v;
+
+   v = ((double)((int)(val * 10.0))) / 10.0;
+   if (v != val) elm_slider_value_set(obj, v);
+}
+
+static void
+tsfdt_change(void *data       __UNUSED__,
+             Evas_Object     *obj,
+             void *event_info __UNUSED__)
+{
+   double tsfdt = elm_config_scroll_thumbscroll_flick_distance_tolerance_get();
+   double val = elm_slider_value_get(obj);
+
+   if (tsfdt == val) return;
+   elm_config_scroll_thumbscroll_flick_distance_tolerance_set(val);
+   elm_config_all_flush();
+}
+
+static void
 tsf_round(void *data       __UNUSED__,
           Evas_Object     *obj,
           void *event_info __UNUSED__)
@@ -1122,7 +1147,8 @@ _config_display_update(Evas_Object *win)
 {
    int flush_interval, font_c, image_c, edje_file_c, edje_col_c, ts_threshould,
        ts_hold_threshold;
-   double scale, s_bounce_friction, ts_momentum_threshold, ts_friction,
+   double scale, s_bounce_friction, ts_momentum_threshold,
+          ts_flick_distance_tolerance, ts_friction,
           ts_min_friction, ts_friction_standard, ts_border_friction,
           ts_sensitivity_friction, ts_acceleration_threshold,
           ts_acceleration_time_limit, ts_acceleration_weight, page_friction,
@@ -1148,6 +1174,7 @@ _config_display_update(Evas_Object *win)
    ts_threshould = elm_config_scroll_thumbscroll_threshold_get();
    ts_hold_threshold = elm_config_scroll_thumbscroll_hold_threshold_get();
    ts_momentum_threshold = elm_config_scroll_thumbscroll_momentum_threshold_get();
+   ts_flick_distance_tolerance = elm_config_scroll_thumbscroll_flick_distance_tolerance_get();
    ts_friction = elm_config_scroll_thumbscroll_friction_get();
    ts_min_friction = elm_config_scroll_thumbscroll_min_friction_get();
    ts_friction_standard = elm_config_scroll_thumbscroll_friction_standard_get();
@@ -1191,6 +1218,9 @@ _config_display_update(Evas_Object *win)
    elm_slider_value_set(evas_object_data_get(win,
                                              "ts_momentum_threshold_slider"),
                         ts_momentum_threshold);
+   elm_slider_value_set(evas_object_data_get(win,
+                                             "ts_flick_distance_tolerance_slider"),
+                        ts_flick_distance_tolerance);
    elm_slider_value_set(evas_object_data_get(win,
                                              "ts_friction_slider"),
                         ts_friction);
@@ -2887,6 +2917,27 @@ _status_config_scrolling(Evas_Object *win,
    evas_object_smart_callback_add(sl, "changed", tsmt_round, NULL);
    evas_object_smart_callback_add(sl, "delay,changed", tsmt_change,
                                   NULL);
+
+   LABEL_FRAME_ADD("<hilight>Thumb scroll flick distance tolerance</>");
+
+   sl = elm_slider_add(win);
+   elm_object_tooltip_text_set(sl, "This is the number of pixels the maximum<br/>"
+                                   "distance which can be flicked. If it is<br/>"
+                                   "flicked more than this, the flick distance<br/>"
+                                   "is same with maximum distance");
+   evas_object_data_set(win, "ts_flick_distance_tolerance_slider", sl);
+   evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);
+   elm_slider_span_size_set(sl, 120);
+   elm_slider_unit_format_set(sl, "%1.0f pixels");
+   elm_slider_indicator_format_set(sl, "%1.0f");
+   elm_slider_min_max_set(sl, 100.0, 3000.0);
+   elm_slider_value_set(sl, elm_config_scroll_thumbscroll_flick_distance_tolerance_get());
+   elm_box_pack_end(bx, sl);
+   evas_object_show(sl);
+
+   evas_object_smart_callback_add(sl, "changed", tsfdt_round, NULL);
+   evas_object_smart_callback_add(sl, "delay,changed", tsfdt_change, NULL);
 
    LABEL_FRAME_ADD("<hilight>Thumb scroll friction</>");
 

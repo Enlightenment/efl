@@ -350,6 +350,29 @@ EAPI double       elm_config_scroll_thumbscroll_momentum_threshold_get(void);
 EAPI void         elm_config_scroll_thumbscroll_momentum_threshold_set(double threshold);
 
 /**
+ * Get the number of pixels the maximum distance which can be flicked.
+ * If it is flicked more than this,
+ * the flick distance is same with maximum distance.
+ *
+ * @return the thumb scroll maximum flick distance
+ *
+ * @ingroup Scrolling
+ */
+EAPI unsigned int elm_config_scroll_thumbscroll_flick_distance_tolerance_get(void);
+
+/**
+ * Set the number of pixels the maximum distance which can be flicked.
+ * If it is flicked more than this,
+ * the flick distance is same with maximum distance.
+ *
+ * @param distance the thumb scroll maximum flick distance
+ *
+ * @see elm_config_thumbscroll_flick_distance_tolerance_get()
+ * @ingroup Scrolling
+ */
+EAPI void         elm_config_scroll_thumbscroll_flick_distance_tolerance_set(unsigned int distance);
+
+/**
  * Get the amount of inertia a scroller will impose at self scrolling
  * animations.
  *

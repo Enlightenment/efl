@@ -2400,6 +2400,7 @@ _elm_scroll_mouse_up_event_cb(void *data,
                        if ((_elm_config->thumbscroll_friction > 0.0) &&
                            (vel > _elm_config->thumbscroll_momentum_threshold))
                          {
+                            Evas_Coord vw, vh, max_d;
                             int minx, miny, mx, my, px, py;
                             double tt = 0.0, dtt = 0.0;
 
@@ -2408,8 +2409,21 @@ _elm_scroll_mouse_up_event_cb(void *data,
                             eo_do(sid->pan_obj, elm_obj_pan_pos_max_get
                                   (&mx, &my));
                             eo_do(sid->pan_obj, elm_obj_pan_pos_get(&px, &py));
-                            sid->down.dx = ((double)dx / at);
-                            sid->down.dy = ((double)dy / at);
+                            eo_do(sid->obj,
+                                  elm_scrollable_interface_content_viewport_size_get(&vw, &vh));
+                            max_d = _elm_config->thumbscroll_flick_distance_tolerance;
+                            if (dx > 0)
+                              sid->down.dx = (sin((M_PI * (double)dx / max_d)
+                                                  - (M_PI / 2)) + 1) * max_d / at;
+                            else
+                              sid->down.dx = (sin((M_PI * (double)dx / max_d)
+                                                  + (M_PI / 2)) - 1) * max_d / at;
+                            if (dy > 0)
+                              sid->down.dy = (sin((M_PI * (double)dy / max_d)
+                                                  - (M_PI / 2)) + 1) * max_d / at;
+                            else
+                              sid->down.dy = (sin((M_PI * (double)dy / max_d)
+                                                  + (M_PI / 2)) - 1) * max_d / at;
                             if (((sid->down.dx > 0) && (sid->down.pdx > 0)) ||
                                 ((sid->down.dx < 0) && (sid->down.pdx < 0)) ||
                                 ((sid->down.dy > 0) && (sid->down.pdy > 0)) ||
