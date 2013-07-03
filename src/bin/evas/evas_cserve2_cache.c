@@ -454,6 +454,7 @@ _load_request_build(Image_Data *i, int *bufsize)
    msg.opts.region = i->opts.region;
    msg.opts.scale_down_by = i->opts.scale_down_by;
    msg.opts.dpi = i->opts.dpi;
+   msg.opts.degree = i->opts.degree;
    msg.opts.orientation = i->opts.orientation;
 
    msg.shm.mmap_offset = cserve2_shm_map_offset_get(i->shm);
@@ -1038,9 +1039,9 @@ cserve2_cache_client_del(Client *client)
 }
 
 static Image_Data *
-_image_msg_new(Client *client, int rid,
-               unsigned int file_id, unsigned int image_id,
-               Evas_Image_Load_Opts *opts)
+_image_entry_new(Client *client, int rid,
+                 unsigned int file_id, unsigned int image_id,
+                 Evas_Image_Load_Opts *opts)
 {
    Reference *ref;
    Image_Data *im_entry;
@@ -2097,7 +2098,7 @@ cserve2_cache_image_opts_set(Client *client, int rid,
    oldref = eina_hash_find(client->images.referencing, &client_image_id);
 
    // search whether the image is already loaded by another client
-   entry = _image_msg_new(client, rid, file_id, client_image_id, opts);
+   entry = _image_entry_new(client, rid, file_id, client_image_id, opts);
    if (!entry)
      return -1;
    image_id = _img_opts_id_get(entry, buf, sizeof(buf));

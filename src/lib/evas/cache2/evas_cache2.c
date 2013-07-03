@@ -844,13 +844,25 @@ _scaled_image_find(Image_Entry *im, int src_x, int src_y, int src_w, int src_h, 
 }
 
 EAPI Image_Entry *
-evas_cache2_image_scale_load(Image_Entry *im, int src_x, int src_y, int src_w, int src_h, int dst_w, int dst_h, int smooth)
+evas_cache2_image_scale_load(Image_Entry *im,
+                             int src_x, int src_y, int src_w, int src_h,
+                             int dst_w, int dst_h, int smooth)
 {
    size_t               pathlen, keylen, size;
    char                 *hkey;
    Evas_Image_Load_Opts lo;
    int                  error = EVAS_LOAD_ERROR_NONE;
    Image_Entry          *ret;
+
+   if (!smooth && im->scale_hint != EVAS_IMAGE_SCALE_HINT_STATIC)
+     goto parent_out;
+
+   // Concept from scalecache: don't cache large images.
+   if (((((dst_w > 640) || (dst_h > 640)) &&
+         ((dst_w * dst_h) > (480 * 480))) ||
+        (im->scale_hint == EVAS_IMAGE_SCALE_HINT_STATIC)) &&
+       (im->scale_hint != EVAS_IMAGE_SCALE_HINT_DYNAMIC))
+     goto parent_out;
 
    if (((!im->file) || ((!im->file) && (!im->key))) ||
        ((src_w == 0) || (src_h == 0) || (dst_w == 0) || (dst_h == 0)) ||
