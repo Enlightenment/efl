@@ -250,11 +250,10 @@ if test "x${have_dep}" = "xyes" ; then
    if test "x$2" = "xstatic" ; then
       requirements_pc_evas="${requirement} ${requirements_pc_evas}"
       requirements_pc_deps_evas="${requirement} ${requirements_pc_deps_evas}"
-   else
-      PKG_CHECK_MODULES([PNG], [${requirement}])
-      evas_image_loader_[]$1[]_cflags="${PNG_CFLAGS}"
-      evas_image_loader_[]$1[]_libs="${PNG_LIBS}"
    fi
+   PKG_CHECK_MODULES([PNG], [${requirement}])
+   evas_image_loader_[]$1[]_cflags="${PNG_CFLAGS}"
+   evas_image_loader_[]$1[]_libs="${PNG_LIBS}"
 fi
 
 AC_SUBST([evas_image_loader_$1_cflags])
@@ -302,11 +301,10 @@ if test "x${have_dep}" = "xyes" ; then
    if test "x$2" = "xstatic" ; then
       requirements_pc_evas="${requirement} ${requirements_pc_evas}"
       requirements_pc_deps_evas="${requirement} ${requirements_pc_deps_evas}"
-   else
-      PKG_CHECK_MODULES([SVG], [${requirement}])
-      evas_image_loader_[]$1[]_cflags="${SVG_CFLAGS}"
-      evas_image_loader_[]$1[]_libs="${SVG_LIBS}"
    fi
+   PKG_CHECK_MODULES([SVG], [${requirement}])
+   evas_image_loader_[]$1[]_cflags="${SVG_CFLAGS}"
+   evas_image_loader_[]$1[]_libs="${SVG_LIBS}"
 fi
 
 AC_SUBST([evas_image_loader_$1_cflags])

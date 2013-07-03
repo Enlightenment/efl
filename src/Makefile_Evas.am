@@ -1304,8 +1304,7 @@ lib_evas_libevas_la_LIBADD += @evas_image_loader_png_libs@
 if EVAS_CSERVE2
 bin_evas_evas_cserve2_slave_SOURCES += modules/evas/loaders/png/evas_image_load_png.c
 bin_evas_evas_cserve2_slave_CPPFLAGS += @evas_image_loader_png_cflags@
-# FIXME: Problem here, forcing link to png12.
-bin_evas_evas_cserve2_slave_LDADD += -lpng12 @evas_image_loader_png_libs@
+bin_evas_evas_cserve2_slave_LDADD += @evas_image_loader_png_libs@
 endif
 else
 loaderpngpkgdir = $(libdir)/evas/modules/loaders/png/$(MODULE_ARCH)
