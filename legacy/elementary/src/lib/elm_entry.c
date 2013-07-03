@@ -2130,7 +2130,6 @@ _entry_anchor_clicked_signal_cb(void *data,
    if (!sd->disabled)
      {
         evas_object_smart_callback_call(data, SIG_ANCHOR_CLICKED, &ei);
-
         _entry_hover_anchor_clicked_do(data, &ei);
      }
 }
