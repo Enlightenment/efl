@@ -25,7 +25,7 @@ struct _EE_Wl_Smart_Data
 
 static const Evas_Smart_Cb_Description _smart_callbacks[] =
 {
-     {NULL, NULL}
+   {NULL, NULL}
 };
 
 EVAS_SMART_SUBCLASS_NEW(_smart_frame_type, _ecore_evas_wl_frame,
@@ -307,27 +307,32 @@ _rotation_do(Ecore_Evas *ee, int rotation, int resize)
                   evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
                   if ((rotation == 0) || (rotation == 180))
                     {
-                       ecore_wl_window_resize(wdata->win, ee->h + fw, ee->w + fh, 0);
+                       ecore_wl_window_resize(wdata->win, ee->h + fw, 
+                                              ee->w + fh, 0);
                     }
                   else
                     {
-                       ecore_wl_window_resize(wdata->win, ee->h + fh, ee->w + fw, 0);
+                       ecore_wl_window_resize(wdata->win, ee->h + fh, 
+                                              ee->w + fw, 0);
                     }
                   if ((ee->rotation == 0) || (ee->rotation == 180))
                     {
                        evas_output_size_set(ee->evas, ee->w + fw, ee->h + fh);
-                       evas_output_viewport_set(ee->evas, 0, 0, ee->w + fw, ee->h + fh);
+                       evas_output_viewport_set(ee->evas, 0, 0, 
+                                                ee->w + fw, ee->h + fh);
                     }
                   else
                     {
                        evas_output_size_set(ee->evas, ee->h + fw, ee->w + fh);
-                       evas_output_viewport_set(ee->evas, 0, 0, ee->h + fw, ee->w + fh);
+                       evas_output_viewport_set(ee->evas, 0, 0, 
+                                                ee->h + fw, ee->w + fh);
                     }
                }
              else
                {
                   evas_output_size_set(ee->evas, ee->req.w, ee->req.h);
-                  evas_output_viewport_set(ee->evas, 0, 0, ee->req.w, ee->req.h);
+                  evas_output_viewport_set(ee->evas, 0, 0, 
+                                           ee->req.w, ee->req.h);
                   if (ee->func.fn_resize) ee->func.fn_resize(ee);
                }
              if ((ee->rotation == 90) || (ee->rotation == 270))
@@ -640,7 +645,8 @@ _border_size_eval(Evas_Object *obj EINA_UNUSED, EE_Wl_Smart_Data *sd)
    /* bottom border */
    if (sd->border[1])
      {
-        evas_object_move(sd->border[1], sd->x, sd->y + sd->h - sd->border_size[1]);
+        evas_object_move(sd->border[1], sd->x, 
+                         sd->y + sd->h - sd->border_size[1]);
         evas_object_resize(sd->border[1], sd->w, sd->border_size[1]);
      }
 
@@ -955,7 +961,9 @@ void
 _ecore_evas_wl_common_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int layer, int hot_x, int hot_y)
 {
    int x, y, fx, fy;
-   Ecore_Evas_Engine_Wl_Data *wdata = ee->engine.data;
+   Ecore_Evas_Engine_Wl_Data *wdata;
+
+   if (!(wdata = ee->engine.data)) return;
 
    if (ee->prop.cursor.object) evas_object_del(ee->prop.cursor.object);
 
@@ -1021,7 +1029,7 @@ _ecore_evas_wl_common_border_update(Ecore_Evas *ee)
    if (!wdata->frame)
      return;
 
-   if (ee->prop.borderless || ee->prop.fullscreen)
+   if ((ee->prop.borderless) || (ee->prop.fullscreen))
      {
         evas_object_hide(wdata->frame);
         evas_output_framespace_set(ee->evas, 0, 0, 0, 0);
@@ -1057,8 +1065,8 @@ _ecore_evas_wl_common_maximized_set(Ecore_Evas *ee, int max)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!ee) return;
-   wdata = ee->engine.data;
    if (ee->prop.maximized == max) return;
+   wdata = ee->engine.data;
    ecore_wl_window_maximized_set(wdata->win, max);
 }
 
