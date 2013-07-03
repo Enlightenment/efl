@@ -62,11 +62,12 @@ struct _Elm_Entry_Smart_Data
    int                                   input_panel_imdata_len;
    int                                   input_panel_layout_variation;
    struct
-   {
-      Evas_Object *hover_parent;
-      Evas_Object *pop, *hover;
-      const char  *hover_style;
-   } anchor_hover;
+     {
+        Evas_Object *hover_parent; /**< hover parent object. entry is a hover parent object by default */
+        Evas_Object *pop; /**< hidden icon for hover target */
+        Evas_Object *hover; /**< hover object */
+        const char  *hover_style; /**< style of a hover object */
+     } anchor_hover;
 
    Elm_Cnp_Mode                          cnp_mode;
 
