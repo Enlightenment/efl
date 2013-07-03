@@ -982,11 +982,7 @@ _hover_del_job(void *data)
 {
    ELM_ENTRY_DATA_GET(data, sd);
 
-   if (sd->hoversel)
-     {
-        evas_object_del(sd->hoversel);
-        sd->hoversel = NULL;
-     }
+   ELM_SAFE_FREE(sd->hoversel, evas_object_del);
    sd->hov_deljob = NULL;
 }
 
@@ -2019,8 +2015,7 @@ _anchor_hover_del_cb(void *data,
 {
    ELM_ENTRY_DATA_GET(data, sd);
 
-   if (sd->anchor_hover.pop) evas_object_del(sd->anchor_hover.pop);
-   sd->anchor_hover.pop = NULL;
+   ELM_SAFE_FREE(sd->anchor_hover.pop, evas_object_del);
    evas_object_event_callback_del_full
      (sd->anchor_hover.hover, EVAS_CALLBACK_DEL, _anchor_hover_del_cb, obj);
 }
@@ -5482,10 +5477,8 @@ _anchor_hover_end(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Entry_Smart_Data *sd = _pd;
 
-   if (sd->anchor_hover.hover) evas_object_del(sd->anchor_hover.hover);
-   if (sd->anchor_hover.pop) evas_object_del(sd->anchor_hover.pop);
-   sd->anchor_hover.hover = NULL;
-   sd->anchor_hover.pop = NULL;
+   ELM_SAFE_FREE(sd->anchor_hover.hover, evas_object_del);
+   ELM_SAFE_FREE(sd->anchor_hover.pop, evas_object_del);
 }
 /* END - ANCHOR HOVER */
 
