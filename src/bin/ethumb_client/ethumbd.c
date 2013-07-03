@@ -941,6 +941,7 @@ _ethumb_dbus_ethumb_new_cb(const Eldbus_Service_Interface *interface, const Eldb
                                          EINA_TRUE);
    _ethumbd_child_write_op_new(&ed->slave, i);
    _ethumbd_timeout_stop(ed);
+   _ethumbd_timeout_start(ed);
 
  end_new:
    reply = eldbus_message_method_return_new(msg);
@@ -1689,7 +1690,7 @@ main(int argc, char *argv[])
    int arg_idx;
    Ethumbd ed;
    int child;
-   double timeout = -1;
+   double timeout = 2.0;
 
    memset(&ed, 0, sizeof(ed));
    ecore_init();
