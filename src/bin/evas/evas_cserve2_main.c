@@ -102,16 +102,17 @@ _cserve2_client_setopts(Client *client)
    INF("Load Options:");
    INF("\tdpi: %03.1f", msg->opts.dpi);
    INF("\tsize: %dx%d", msg->opts.w, msg->opts.h);
-   INF("\tscale down: %d", msg->opts.scale_down);
+   INF("\tscale down: %d", msg->opts.scale_down_by);
    INF("\tregion: %d,%d + %dx%d",
-       msg->opts.rx, msg->opts.ry, msg->opts.rw, msg->opts.rh);
+       msg->opts.region.x, msg->opts.region.y, msg->opts.region.w, msg->opts.region.h);
    INF("\toriginal image's source coord: %d,%d",
-       msg->opts.scale_src_x, msg->opts.scale_src_y);
+       msg->opts.scale_load.src_x, msg->opts.scale_load.src_y);
    INF("\toriginal image size: %dx%d",
-       msg->opts.scale_src_w, msg->opts.scale_src_h);
-   INF("\tscale size: %dx%d", msg->opts.scale_dst_w, msg->opts.scale_dst_h);
-   INF("\tscale smooth: %d", msg->opts.scale_smooth);
-   INF("\tscale hint: %d", msg->opts.scale_hint);
+       msg->opts.scale_load.src_w, msg->opts.scale_load.src_h);
+   INF("\tscale size: %dx%d", msg->opts.scale_load.dst_w, msg->opts.scale_load.dst_h);
+   INF("\tscale smooth: %d", msg->opts.scale_load.smooth);
+   INF("\tscale hint: %d", msg->opts.scale_load.scale_hint);
+   INF("\tdegree: %d", msg->opts.degree);
    INF("\torientation: %d", msg->opts.orientation);
 
    if (cserve2_cache_image_opts_set(client, msg) != 0)

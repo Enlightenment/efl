@@ -5,6 +5,8 @@
 
 #ifdef EVAS_CSERVE2
 
+#include <Evas_Loader.h>
+
 typedef enum {
    CSERVE2_OPEN = 1,
    CSERVE2_OPENED,
@@ -74,17 +76,7 @@ struct _Msg_Setopts {
    Msg_Base base;
    unsigned int file_id;
    unsigned int image_id;
-   struct {
-      double dpi;
-      int w, h;
-      int scale_down;
-      int rx, ry, rw, rh;
-      int scale_src_x, scale_src_y, scale_src_w, scale_src_h;
-      int scale_dst_w, scale_dst_h;
-      int scale_smooth;
-      int scale_hint;
-      Eina_Bool orientation;
-   } opts;
+   Evas_Image_Load_Opts opts;
 };
 
 struct _Msg_Setoptsed {

@@ -104,6 +104,7 @@ parse_input_setopts(int *size)
    int scale_dst_w, scale_dst_h;
    int scale_smooth;
    int scale_hint;
+   int degree;
    int orientation;
 
    // reading file_id, image_id
@@ -146,6 +147,10 @@ parse_input_setopts(int *size)
    _read_line(line, sizeof(line));
    sscanf(line, "%d", &scale_hint);
 
+   // reading degree
+   _read_line(line, sizeof(line));
+   sscanf(line, "%d", &degree);
+
    // reading orientation
    _read_line(line, sizeof(line));
    sscanf(line, "%d", &orientation);
@@ -159,19 +164,20 @@ parse_input_setopts(int *size)
    msg->opts.dpi = dpi;
    msg->opts.w = w;
    msg->opts.h = h;
-   msg->opts.scale_down = scale;
-   msg->opts.rx = rx;
-   msg->opts.ry = ry;
-   msg->opts.rw = rw;
-   msg->opts.rh = rh;
-   msg->opts.scale_src_x = scale_src_x;
-   msg->opts.scale_src_y = scale_src_y;
-   msg->opts.scale_src_w = scale_src_w;
-   msg->opts.scale_src_h = scale_src_h;
-   msg->opts.scale_dst_w = scale_dst_w;
-   msg->opts.scale_dst_h = scale_dst_h;
-   msg->opts.scale_smooth = scale_smooth;
-   msg->opts.scale_hint = scale_hint;
+   msg->opts.scale_down_by = scale;
+   msg->opts.region.x = rx;
+   msg->opts.region.y = ry;
+   msg->opts.region.w = rw;
+   msg->opts.region.h = rh;
+   msg->opts.scale_load.src_x = scale_src_x;
+   msg->opts.scale_load.src_y = scale_src_y;
+   msg->opts.scale_load.src_w = scale_src_w;
+   msg->opts.scale_load.src_h = scale_src_h;
+   msg->opts.scale_load.dst_w = scale_dst_w;
+   msg->opts.scale_load.dst_h = scale_dst_h;
+   msg->opts.scale_load.smooth = scale_smooth;
+   msg->opts.scale_load.scale_hint = scale_hint;
+   msg->opts.degree = degree;
    msg->opts.orientation = !!orientation;
 
    *size = sizeof(*msg);

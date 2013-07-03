@@ -507,8 +507,7 @@ handle_image_open(int wfd, void *params)
 {
    Slave_Msg_Image_Open *p;
    Slave_Msg_Image_Opened result;
-   Image_Load_Opts *opts = NULL;
-   Evas_Image_Load_Opts load_opts;
+   Evas_Image_Load_Opts opts;
    Error_Type err;
    const char *loader = NULL, *file, *key, *ptr;
    char *resp;
@@ -520,15 +519,16 @@ handle_image_open(int wfd, void *params)
    ptr = key + strlen(key) + 1;
    if (p->has_opts)
      {
-        opts = (Image_Load_Opts *)ptr;
-        ptr += sizeof(Image_Load_Opts);
+        //opts = (Evas_Image_Load_Opts *)ptr;
+        memcpy(&opts, ptr, sizeof(opts));
+        ptr += sizeof(opts);
      }
+   else memset(&opts, 0, sizeof(opts));
    if (p->has_loader_data)
      loader = ptr;
 
    memset(&result, 0, sizeof(result));
-   _image_load_opts_copy(&load_opts, opts);
-   if ((err = image_open(file, key, &load_opts, &result, &loader))
+   if ((err = image_open(file, key, &opts, &result, &loader))
        != CSERVE2_NONE)
      {
         printf("OPEN failed at %s:%d\n", __FUNCTION__, __LINE__);

@@ -12,6 +12,8 @@
 #include "evas_cserve2.h"
 #include "evas_cs2_utils.h"
 
+#include <Evas_Loader.h>
+
 typedef struct _Entry Entry;
 typedef struct _Reference Reference;
 typedef struct _File_Data File_Data;
@@ -61,17 +63,7 @@ struct _Image_Data {
    Entry base;
    unsigned int file_id;
    File_Data *file;
-   struct {
-      double dpi; // dpi < -1
-      int w, h; // w and h < -1
-      int scale_down; // scale_down < -1
-      int rx, ry, rw, rh; // rx, ry, rw, rh < -1
-      int scale_src_x, scale_src_y, scale_src_w, scale_src_h;
-      int scale_dst_w, scale_dst_h;
-      int scale_smooth;
-      int scale_hint;
-      Eina_Bool orientation; // orientation == 0
-   } opts;
+   Evas_Image_Load_Opts opts;
    Shm_Handle *shm;
    Eina_Bool alpha_sparse : 1;
    Eina_Bool unused : 1;
@@ -340,6 +332,7 @@ _open_request_build(File_Data *f, int *bufsize)
    pathlen = strlen(f->path) + 1;
    keylen = strlen(f->key) + 1;
 
+   memset(&msg, 0, sizeof(msg));
    msg.has_loader_data = !!f->loader_data;
    loaderlen = msg.has_loader_data ? (strlen(f->loader_data) + 1) : 0;
 
@@ -347,7 +340,6 @@ _open_request_build(File_Data *f, int *bufsize)
    buf = malloc(size);
    if (!buf) return NULL;
 
-   memset(&msg, 0, sizeof(msg));
    memcpy(buf, &msg, sizeof(msg));
    memcpy(buf + sizeof(msg), f->path, pathlen);
    memcpy(buf + sizeof(msg) + pathlen, f->key, keylen);
@@ -457,11 +449,11 @@ _load_request_build(Image_Data *i, int *bufsize)
    msg.alpha = i->file->alpha;
    msg.opts.w = i->opts.w;
    msg.opts.h = i->opts.h;
-   msg.opts.rx = i->opts.rx;
-   msg.opts.ry = i->opts.ry;
-   msg.opts.rw = i->opts.rw;
-   msg.opts.rh = i->opts.rh;
-   msg.opts.scale_down_by = i->opts.scale_down;
+   msg.opts.rx = i->opts.region.x;
+   msg.opts.ry = i->opts.region.y;
+   msg.opts.rw = i->opts.region.w;
+   msg.opts.rh = i->opts.region.h;
+   msg.opts.scale_down_by = i->opts.scale_down_by;
    msg.opts.dpi = i->opts.dpi;
    msg.opts.orientation = i->opts.orientation;
 
@@ -493,9 +485,9 @@ _load_request_build(Image_Data *i, int *bufsize)
 static inline Eina_Bool
 _scaling_needed(Image_Data *entry, Slave_Msg_Image_Loaded *resp)
 {
-   return (((entry->opts.scale_dst_w) && (entry->opts.scale_dst_h)) &&
-           ((entry->opts.scale_dst_w != resp->w) ||
-            (entry->opts.scale_dst_h != resp->h)));
+   return (((entry->opts.scale_load.dst_w) && (entry->opts.scale_load.dst_h)) &&
+           ((entry->opts.scale_load.dst_w != resp->w) ||
+            (entry->opts.scale_load.dst_h != resp->h)));
 }
 
 static int
@@ -524,17 +516,17 @@ _scaling_do(Shm_Handle *scale_shm, Image_Data *entry)
    dst_data = scale_map + cserve2_shm_map_offset_get(scale_shm);
 
    DBG("Scaling image ([%d,%d:%dx%d] --> [%d,%d:%dx%d])",
-       entry->opts.scale_src_x, entry->opts.scale_src_y,
-       entry->opts.scale_src_w, entry->opts.scale_src_h,
+       entry->opts.scale_load.src_x, entry->opts.scale_load.src_y,
+       entry->opts.scale_load.src_w, entry->opts.scale_load.src_h,
        0, 0,
-       entry->opts.scale_dst_w, entry->opts.scale_dst_h);
+       entry->opts.scale_load.dst_w, entry->opts.scale_load.dst_h);
 
    cserve2_rgba_image_scale_do(src_data, dst_data,
-                               entry->opts.scale_src_x, entry->opts.scale_src_y,
-                               entry->opts.scale_src_w, entry->opts.scale_src_h,
+                               entry->opts.scale_load.src_x, entry->opts.scale_load.src_y,
+                               entry->opts.scale_load.src_w, entry->opts.scale_load.src_h,
                                0, 0,
-                               entry->opts.scale_dst_w, entry->opts.scale_dst_h,
-                               entry->file->alpha, entry->opts.scale_smooth);
+                               entry->opts.scale_load.dst_w, entry->opts.scale_load.dst_h,
+                               entry->file->alpha, entry->opts.scale_load.smooth);
 
    cserve2_shm_unmap(entry->shm);
    cserve2_shm_unmap(scale_shm);
@@ -550,7 +542,7 @@ _scaling_prepare_and_do(Image_Data *orig)
    DBG("Original image's shm path %s", cserve2_shm_name_get(orig->shm));
 
    scale_shm =
-     cserve2_shm_request(orig->opts.scale_dst_w * orig->opts.scale_dst_h * 4);
+     cserve2_shm_request(orig->opts.scale_load.dst_w * orig->opts.scale_load.dst_h * 4);
 
    DBG("Scale image's shm path %s", cserve2_shm_name_get(scale_shm));
 
@@ -602,14 +594,15 @@ _img_opts_id_get(Image_Data *im, char *buf, int size)
 {
    uintptr_t image_id;
 
+   // FIXME: Add degree here?
    snprintf(buf, size,
             "%u:%0.3f:%dx%d:%d:%d,%d+%dx%d:!([%d,%d:%dx%d]-[%dx%d:%d]):%d",
             im->file_id, im->opts.dpi, im->opts.w, im->opts.h,
-            im->opts.scale_down, im->opts.rx, im->opts.ry,
-            im->opts.rw, im->opts.rh,
-            im->opts.scale_src_x, im->opts.scale_src_y,
-            im->opts.scale_src_w, im->opts.scale_src_h,
-            im->opts.scale_dst_w, im->opts.scale_dst_h, im->opts.scale_smooth,
+            im->opts.scale_down_by, im->opts.region.x, im->opts.region.y,
+            im->opts.region.w, im->opts.region.h,
+            im->opts.scale_load.src_x, im->opts.scale_load.src_y,
+            im->opts.scale_load.src_w, im->opts.scale_load.src_h,
+            im->opts.scale_load.dst_w, im->opts.scale_load.dst_h, im->opts.scale_load.smooth,
             im->opts.orientation);
 
    image_id = (uintptr_t)eina_hash_find(image_ids, buf);
@@ -1074,19 +1067,20 @@ _image_msg_new(Client *client, Msg_Setopts *msg)
    im_entry->opts.dpi = msg->opts.dpi;
    im_entry->opts.w = msg->opts.w;
    im_entry->opts.h = msg->opts.h;
-   im_entry->opts.scale_down = msg->opts.scale_down;
-   im_entry->opts.rx = msg->opts.rx;
-   im_entry->opts.ry = msg->opts.ry;
-   im_entry->opts.rw = msg->opts.rw;
-   im_entry->opts.rh = msg->opts.rh;
-   im_entry->opts.scale_src_x = msg->opts.scale_src_x;
-   im_entry->opts.scale_src_y = msg->opts.scale_src_y;
-   im_entry->opts.scale_src_w = msg->opts.scale_src_w;
-   im_entry->opts.scale_src_h = msg->opts.scale_src_h;
-   im_entry->opts.scale_dst_w = msg->opts.scale_dst_w;
-   im_entry->opts.scale_dst_h = msg->opts.scale_dst_h;
-   im_entry->opts.scale_smooth = msg->opts.scale_smooth;
-   im_entry->opts.scale_hint = msg->opts.scale_hint;
+   im_entry->opts.scale_down_by = msg->opts.scale_down_by;
+   im_entry->opts.region.x = msg->opts.region.x;
+   im_entry->opts.region.y = msg->opts.region.y;
+   im_entry->opts.region.w = msg->opts.region.w;
+   im_entry->opts.region.h = msg->opts.region.h;
+   im_entry->opts.scale_load.src_x = msg->opts.scale_load.src_x;
+   im_entry->opts.scale_load.src_y = msg->opts.scale_load.src_y;
+   im_entry->opts.scale_load.src_w = msg->opts.scale_load.src_w;
+   im_entry->opts.scale_load.src_h = msg->opts.scale_load.src_h;
+   im_entry->opts.scale_load.dst_w = msg->opts.scale_load.dst_w;
+   im_entry->opts.scale_load.dst_h = msg->opts.scale_load.dst_h;
+   im_entry->opts.scale_load.smooth = msg->opts.scale_load.smooth;
+   im_entry->opts.scale_load.scale_hint = msg->opts.scale_load.scale_hint;
+   im_entry->opts.degree = msg->opts.degree;
    im_entry->opts.orientation = msg->opts.orientation;
 
    return im_entry;

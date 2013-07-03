@@ -81,6 +81,9 @@ typedef enum {
 struct _Slave_Msg_Image_Open {
    Eina_Bool has_opts : 1;
    Eina_Bool has_loader_data : 1;
+   // Optionally followed by:
+   // Evas_Image_Load_Opts opts;
+   // const char *loader;
 };
 
 struct _Slave_Msg_Image_Opened {
