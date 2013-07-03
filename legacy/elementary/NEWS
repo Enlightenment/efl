@@ -254,6 +254,7 @@ Fixes:
    * Block mouse events when the ctxpopup on dismiss.
    * Fix crash of elm_notify when timeout is zero.
    * Fix Segfault in elementary file_selector_example when closed
+   * Fix Showing multiple popups in Entry.
 
 Removals:
 

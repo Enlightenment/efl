@@ -1473,3 +1473,8 @@
 
         * Add the elm_scrollable_interface_content_viewport_resize_cb_set.
         When the viewport is resized, the enrolled function is called.
+
+2013-07-03  Thiep Ha
+
+        * Fix bug of showing multiple popups in Entry.
+

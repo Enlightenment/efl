@@ -1241,6 +1241,7 @@ _menu_call(Evas_Object *obj)
 
    ELM_ENTRY_DATA_GET(obj, sd);
 
+   if (sd->anchor_hover.hover) return;
    if ((sd->api) && (sd->api->obj_longpress))
      {
         sd->api->obj_longpress(obj);
@@ -2041,6 +2042,8 @@ _entry_hover_anchor_clicked_do(Evas_Object *obj,
    Elm_Entry_Anchor_Hover_Info ei;
 
    ELM_ENTRY_DATA_GET(obj, sd);
+
+   if (sd->hoversel) return;
 
    ei.anchor_info = info;
 
