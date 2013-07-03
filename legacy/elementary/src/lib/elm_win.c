@@ -1842,6 +1842,18 @@ _elm_win_xwin_update(Elm_Win_Smart_Data *sd)
 
 #endif
 
+/**
+  * @internal
+  *
+  * Resize the window according to window layout's min and weight.
+  * If the window layout's weight is 0.0, the window max is limited to layout's
+  * min size.
+  *
+  * This is called when the window layout's weight hint is changed or when the
+  * window is rotated.
+  *
+  * @param obj window object
+  */
 static void
 _elm_win_resize_objects_eval(Evas_Object *obj)
 {
@@ -2544,6 +2556,17 @@ _elm_win_cb_show(void *data __UNUSED__,
    _elm_win_state_eval_queue();
 }
 
+/**
+  * @internal
+  *
+  * Recalculate the size of window considering its resize objects' weight and
+  * min size. If any of its resize objects' weight equals to 0.0, window
+  * layout's weight will be set to 0.0.
+  *
+  * @param o box object
+  * @param p box's private data
+  * @param data window object
+  */
 static void
 _window_layout_stack(Evas_Object *o, Evas_Object_Box_Data *p, void *data)
 {
