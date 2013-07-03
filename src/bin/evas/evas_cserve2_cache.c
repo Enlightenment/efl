@@ -447,12 +447,11 @@ _load_request_build(Image_Data *i, int *bufsize)
    msg.w = i->file->w;
    msg.h = i->file->h;
    msg.alpha = i->file->alpha;
+
+   // NOTE: Not passing scale_load options
    msg.opts.w = i->opts.w;
    msg.opts.h = i->opts.h;
-   msg.opts.rx = i->opts.region.x;
-   msg.opts.ry = i->opts.region.y;
-   msg.opts.rw = i->opts.region.w;
-   msg.opts.rh = i->opts.region.h;
+   msg.opts.region = i->opts.region;
    msg.opts.scale_down_by = i->opts.scale_down_by;
    msg.opts.dpi = i->opts.dpi;
    msg.opts.orientation = i->opts.orientation;

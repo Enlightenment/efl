@@ -239,25 +239,6 @@ _cserve2_shm_unmap(void *map, size_t length)
    munmap(map, length);
 }
 
-static void
-_image_load_opts_copy(Evas_Image_Load_Opts *load_opts, Image_Load_Opts *opts)
-{
-   memset(load_opts, 0, sizeof (Evas_Image_Load_Opts));
-   if (opts)
-     {
-        load_opts->w = opts->w;
-        load_opts->h = opts->h;
-        load_opts->dpi = opts->dpi;
-        load_opts->region.x = opts->rx;
-        load_opts->region.y = opts->ry;
-        load_opts->region.w = opts->rw;
-        load_opts->region.h = opts->rh;
-        load_opts->orientation = opts->orientation;
-        load_opts->scale_down_by = opts->scale_down_by;
-     }
-   // Not set here: struct load_opts.scale_load
-}
-
 static void *
 _image_file_open(Eina_File *fd, Eina_Stringshare *key, Evas_Image_Load_Opts *load_opts,
                  Evas_Module *module, Evas_Image_Property *property,
@@ -423,8 +404,7 @@ image_load(const char *file, const char *key, const char *shmfile,
    Evas_Module *module;
    Eina_File *fd;
    Evas_Image_Load_Func *funcs = NULL;
-   Image_Load_Opts *opts = &params->opts;
-   Evas_Image_Load_Opts load_opts;
+   Evas_Image_Load_Opts *opts = &params->opts;
    Evas_Image_Property property;
    Evas_Image_Animated animated;
    Error_Type ret = CSERVE2_GENERIC;
@@ -460,8 +440,7 @@ image_load(const char *file, const char *key, const char *shmfile,
    property.h = params->h;
 
    skey = eina_stringshare_add(key);
-   _image_load_opts_copy(&load_opts, opts);
-   loader_data = _image_file_open(fd, skey, &load_opts, module, &property, &animated, &funcs);
+   loader_data = _image_file_open(fd, skey, opts, module, &property, &animated, &funcs);
    if (!loader_data)
      {
         printf("LOAD failed at %s:%d: could not open image %s:%s\n",

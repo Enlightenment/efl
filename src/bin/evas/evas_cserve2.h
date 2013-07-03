@@ -59,16 +59,6 @@ struct _Client {
 
 typedef struct _Client Client;
 
-struct _Image_Load_Opts {
-   unsigned int w, h;
-   unsigned int rx, ry, rw, rh;
-   unsigned int scale_down_by;
-   double dpi;
-   Eina_Bool orientation;
-};
-
-typedef struct _Image_Load_Opts Image_Load_Opts;
-
 typedef enum {
    IMAGE_OPEN,
    IMAGE_LOAD,
@@ -100,7 +90,7 @@ struct _Slave_Msg_Image_Opened {
 
 struct _Slave_Msg_Image_Load {
    int w, h;
-   Image_Load_Opts opts;
+   Evas_Image_Load_Opts opts;
    struct {
       int mmap_offset;
       int image_offset;
