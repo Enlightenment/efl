@@ -77,6 +77,7 @@ Additions:
    * Add elm_web_url_set(), elm_web_url_get() and "url,changed" signal for web, web2.
    * Add elm_fileselector_mime_type_filter_append and elm_fileselector_filters_clear to support mime type filter.
    * Add the elm_scrollable_interface_content_viewport_resize_cb_set.
+   * added callback call "scroll", "scroll,anim,start", "scroll,anim,stop", "scroll,drag,start", "scroll,drag,stop" in toolar widget.
 
 Improvements:
 
