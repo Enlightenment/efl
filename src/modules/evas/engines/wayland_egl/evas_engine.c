@@ -1231,31 +1231,31 @@ eng_output_flush(void *data, Evas_Render_Mode render_mode)
                     {
                      case 0:
                        rects[i + 0] = r->x;
-                       rects[i + 1] = r->y;
+                       rects[i + 1] = gh - r->y;
                        rects[i + 2] = r->w;
                        rects[i + 3] = r->h;
                        break;
                      case 90:
                        rects[i + 0] = r->y;
-                       rects[i + 1] = gw - (r->x + r->w);
+                       rects[i + 1] = gw - (gw - (r->x + r->w));
                        rects[i + 2] = r->h;
                        rects[i + 3] = r->w;
                        break;
                      case 180:
                        rects[i + 0] = gw - (r->x + r->w);
-                       rects[i + 1] = gh - (r->y + r->h);
+                       rects[i + 1] = gh - (gh - (r->y + r->h));
                        rects[i + 2] = r->w;
                        rects[i + 3] = r->h;
                        break;
                      case 270:
                        rects[i + 0] = gh - (r->y + r->h);
-                       rects[i + 1] = r->x;
+                       rects[i + 1] = gw - r->x;
                        rects[i + 2] = r->h;
                        rects[i + 3] = r->w;
                        break;
                      default:
                        rects[i + 0] = r->x;
-                       rects[i + 1] = r->y;
+                       rects[i + 1] = gh - r->y;
                        rects[i + 2] = r->w;
                        rects[i + 3] = r->h;
                        break;
