@@ -807,8 +807,6 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im)
 {
    GLuint fmt;
 
-   if (!im->cache_entry.flags.loaded) return;
-
    if (tex->alpha != im->cache_entry.flags.alpha)
      {
         int lformat;
