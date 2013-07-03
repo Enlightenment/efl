@@ -3719,6 +3719,18 @@ _elm_gesture_layer_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    Pointer_Event *data;
    int i;
 
+   /* Clear all gestures intermediate data, stop any timers */
+   {
+      /* FIXME: +1 because of the mistake in the enum. */
+      Gesture_Info **gitr = sd->gesture + 1;
+      Tests_Array_Funcs *fitr = _glayer_tests_array + 1;
+      for (; fitr->reset; fitr++, gitr++)
+        {
+           if (IS_TESTED_GESTURE(*gitr))
+             fitr->reset(*gitr);
+        }
+   }
+
    /* First Free all gestures internal data structures */
    for (i = 0; i < ELM_GESTURE_LAST; i++)
      if (sd->gesture[i])
@@ -3941,6 +3953,10 @@ _cb_set(Eo *obj, void *_pd, va_list *list)
 
    Elm_Gesture_Layer_Smart_Data *sd = _pd;
 
+   /* Clear gesture intermediate data, stop any timers */
+   if (IS_TESTED_GESTURE(sd->gesture[idx]))
+     _glayer_tests_array[idx].reset(sd->gesture[idx]);
+
    _cbs_clean(sd, idx, cb_type); // for ABI compat.
    eo_do(obj, elm_obj_gesture_layer_cb_add(idx, cb_type, cb, data));
 }
@@ -4016,6 +4032,10 @@ _cb_del(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
      {
         if (cb_info->cb == cb && cb_info->user_data == data)
           {
+             /* Clear gesture intermediate data, stop any timers */
+             if (IS_TESTED_GESTURE(sd->gesture[idx]))
+                _glayer_tests_array[idx].reset(sd->gesture[idx]);
+
              sd->gesture[idx]->cbs[cb_type] = eina_inlist_remove(
                    sd->gesture[idx]->cbs[cb_type], EINA_INLIST_GET(cb_info));
              free(cb_info);
