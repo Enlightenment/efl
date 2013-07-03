@@ -10,8 +10,6 @@
 typedef enum {
    CSERVE2_OPEN = 1,
    CSERVE2_OPENED,
-   CSERVE2_SETOPTS,
-   CSERVE2_SETOPTSED,
    CSERVE2_LOAD,
    CSERVE2_LOADED,
    CSERVE2_PRELOAD,
@@ -59,6 +57,11 @@ struct _Msg_Open {
    unsigned int image_id;
 
    Eina_Bool has_load_opts : 1;
+
+   // Followed by:
+   // const char file[];
+   // const char key[];
+   // Evas_Image_Load_Opts opts; // if has_load_opts
 };
 
 struct _Msg_Opened {
@@ -70,17 +73,6 @@ struct _Msg_Opened {
       int loop_hint; /* include Evas.h? Copy the enum around? */
       Eina_Bool alpha : 1;
    } image;
-};
-
-struct _Msg_Setopts {
-   Msg_Base base;
-   unsigned int file_id;
-   unsigned int image_id;
-   Evas_Image_Load_Opts opts;
-};
-
-struct _Msg_Setoptsed {
-   Msg_Base base;
 };
 
 struct _Msg_Load {
@@ -277,8 +269,6 @@ struct _Msg_Error {
 
 typedef struct _Msg_Open Msg_Open;
 typedef struct _Msg_Opened Msg_Opened;
-typedef struct _Msg_Setopts Msg_Setopts;
-typedef struct _Msg_Setoptsed Msg_Setoptsed;
 typedef struct _Msg_Load Msg_Load;
 typedef struct _Msg_Loaded Msg_Loaded;
 typedef struct _Msg_Preload Msg_Preload;

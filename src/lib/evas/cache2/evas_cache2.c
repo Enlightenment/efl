@@ -259,7 +259,7 @@ _evas_cache_image_entry_new(Evas_Cache2 *cache,
    if (lo) ie->load_opts = *lo;
    if (ie->file)
      {
-        if (!evas_cserve2_image_load(ie, ie->file, ie->key, &(ie->load_opts)))
+        if (!evas_cserve2_image_load(ie))
           {
              ERR("couldn't load '%s' '%s' with cserve2!",
                  ie->file, ie->key ? ie->key : "");

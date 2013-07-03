@@ -221,7 +221,6 @@ _server_send(const void *buf, int size, Op_Callback cb, void *data)
    switch (msg->type)
      {
       case CSERVE2_OPEN:
-      case CSERVE2_SETOPTS:
       case CSERVE2_LOAD:
       case CSERVE2_PRELOAD:
       case CSERVE2_FONT_LOAD:
@@ -616,7 +615,8 @@ _build_absolute_path(const char *path, char buf[], int size)
 }
 
 static unsigned int
-_image_open_server_send(Image_Entry *ie, const char *file, const char *key, Eina_Bool has_load_opts)
+_image_open_server_send(Image_Entry *ie, const char *file, const char *key,
+                        Evas_Image_Load_Opts *opts)
 {
    int flen, klen;
    int size;
@@ -656,7 +656,6 @@ _image_open_server_send(Image_Entry *ie, const char *file, const char *key, Eina
         return 0;
      }
 
-
    memset(&msg_open, 0, sizeof(msg_open));
 
    fentry->file_id = ++_file_id;
@@ -667,10 +666,12 @@ _image_open_server_send(Image_Entry *ie, const char *file, const char *key, Eina
    msg_open.file_id = fentry->file_id;
    msg_open.path_offset = 0;
    msg_open.key_offset = flen;
-   msg_open.has_load_opts = has_load_opts;
+   msg_open.has_load_opts = (opts != NULL);
    msg_open.image_id = ++_data_id;
 
    size = sizeof(msg_open) + flen + klen;
+   if (opts)
+     size += sizeof(*opts);
    buf = malloc(size);
    if (!buf)
      {
@@ -681,6 +682,8 @@ _image_open_server_send(Image_Entry *ie, const char *file, const char *key, Eina
    memcpy(buf, &msg_open, sizeof(msg_open));
    memcpy(buf + sizeof(msg_open), filebuf, flen);
    memcpy(buf + sizeof(msg_open) + flen, key, klen);
+   if (opts)
+     memcpy(buf + sizeof(msg_open) + flen + klen, opts, sizeof(*opts));
 
    if (!_server_send(buf, size, _image_opened_cb, ie))
      {
@@ -698,55 +701,6 @@ _image_open_server_send(Image_Entry *ie, const char *file, const char *key, Eina
    ie->data2 = dentry;
 
    return msg_open.base.rid;
-}
-
-static unsigned int
-_image_setopts_server_send(Image_Entry *ie)
-{
-   File_Entry *fentry = ie->data1;
-   Data_Entry *dentry = ie->data2;
-   Msg_Setopts msg;
-
-   if (cserve2_init == 0)
-     return 0;
-
-   if (!fentry || !dentry)
-     return 0;
-
-   memset(&msg, 0, sizeof(msg));
-
-   msg.base.rid = _next_rid();
-   msg.base.type = CSERVE2_SETOPTS;
-   msg.file_id = fentry->file_id;
-   msg.image_id = dentry->image_id;
-
-   msg.opts.scale_down_by = ie->load_opts.scale_down_by;
-   msg.opts.dpi = ie->load_opts.dpi;
-   msg.opts.w = ie->load_opts.w;
-   msg.opts.h = ie->load_opts.h;
-   msg.opts.region.x = ie->load_opts.region.x;
-   msg.opts.region.y = ie->load_opts.region.y;
-   msg.opts.region.w = ie->load_opts.region.w;
-   msg.opts.region.h = ie->load_opts.region.h;
-   msg.opts.scale_load.src_x = ie->load_opts.scale_load.src_x;
-   msg.opts.scale_load.src_y = ie->load_opts.scale_load.src_y;
-   msg.opts.scale_load.src_w = ie->load_opts.scale_load.src_w;
-   msg.opts.scale_load.src_h = ie->load_opts.scale_load.src_h;
-   msg.opts.scale_load.dst_w = ie->load_opts.scale_load.dst_w;
-   msg.opts.scale_load.dst_h = ie->load_opts.scale_load.dst_h;
-   msg.opts.scale_load.smooth = ie->load_opts.scale_load.smooth;
-   msg.opts.scale_load.scale_hint = ie->load_opts.scale_load.scale_hint;
-   msg.opts.degree = ie->load_opts.degree;
-   msg.opts.orientation = ie->load_opts.orientation;
-
-   if (!_server_send(&msg, sizeof(msg), NULL, NULL))
-     {
-        free(dentry);
-        ie->data2 = NULL;
-        return 0;
-     }
-
-   return msg.base.rid;
 }
 
 unsigned int
@@ -887,25 +841,24 @@ _image_unload_server_send(Image_Entry *ie)
 }
 
 Eina_Bool
-evas_cserve2_image_load(Image_Entry *ie, const char *file, const char *key, Evas_Image_Load_Opts *lopt)
+evas_cserve2_image_load(Image_Entry *ie)
 {
    unsigned int rid;
-   Eina_Bool has_load_opts;
+   const char *file, *key;
+   Evas_Image_Load_Opts *opts = NULL;
 
    if (!ie)
      return EINA_FALSE;
 
-   has_load_opts = !_memory_zero_cmp(lopt, sizeof(*lopt));
-   rid = _image_open_server_send(ie, file, key, has_load_opts);
+   file = ie->file;
+   key = ie->key;
+   if (!_memory_zero_cmp(&ie->load_opts, sizeof(ie->load_opts)))
+     opts = &ie->load_opts;
+   rid = _image_open_server_send(ie, file, key, opts);
    if (!rid)
      return EINA_FALSE;
 
    ie->open_rid = rid;
-
-   if (has_load_opts)
-     _image_setopts_server_send(ie);
-
-   // _server_dispatch_until(rid);
 
    if (ie->data1)
      return EINA_TRUE;

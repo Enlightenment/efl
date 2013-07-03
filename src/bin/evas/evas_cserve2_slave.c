@@ -336,7 +336,7 @@ _image_file_header(Eina_File *fd, Eina_Stringshare *key, Evas_Image_Load_Opts *l
 }
 
 static Error_Type
-image_open(const char *file, const char *key, Evas_Image_Load_Opts *load_opts,
+image_open(const char *file, const char *key,
            Slave_Msg_Image_Opened *result, const char **use_loader)
 {
    Evas_Module *module;
@@ -346,6 +346,9 @@ image_open(const char *file, const char *key, Evas_Image_Load_Opts *load_opts,
    unsigned int i;
    Error_Type ret = CSERVE2_NONE;
    Eina_Stringshare *skey = eina_stringshare_add(key);
+   Evas_Image_Load_Opts load_opts;
+
+   memset(&load_opts, 0, sizeof(load_opts));
 
    fd = eina_file_open(file, EINA_FALSE);
    if (!fd)
@@ -360,7 +363,7 @@ image_open(const char *file, const char *key, Evas_Image_Load_Opts *load_opts,
    module = evas_module_find_type(EVAS_MODULE_TYPE_IMAGE_LOADER, loader);
    if (module)
      {
-        if (_image_file_header(fd, skey, load_opts, result, module))
+        if (_image_file_header(fd, skey, &load_opts, result, module))
           goto success;
      }
 
@@ -380,7 +383,7 @@ try_extension:
    if (loader)
      {
         module = evas_module_find_type(EVAS_MODULE_TYPE_IMAGE_LOADER, loader);
-        if (_image_file_header(fd, skey, load_opts, result, module))
+        if (_image_file_header(fd, skey, &load_opts, result, module))
           goto success;
         loader = NULL;
         module = NULL;
@@ -392,7 +395,7 @@ try_extension:
         loader = loaders_name[i];
         module = evas_module_find_type(EVAS_MODULE_TYPE_IMAGE_LOADER, loader);
         if (!module) continue;
-        if (_image_file_header(fd, skey, load_opts, result, module))
+        if (_image_file_header(fd, skey, &load_opts, result, module))
           goto success;
      }
 
@@ -507,7 +510,6 @@ handle_image_open(int wfd, void *params)
 {
    Slave_Msg_Image_Open *p;
    Slave_Msg_Image_Opened result;
-   Evas_Image_Load_Opts opts;
    Error_Type err;
    const char *loader = NULL, *file, *key, *ptr;
    char *resp;
@@ -517,18 +519,11 @@ handle_image_open(int wfd, void *params)
    file = (const char *)(p + sizeof(Slave_Msg_Image_Open));
    key = file + strlen(file) + 1;
    ptr = key + strlen(key) + 1;
-   if (p->has_opts)
-     {
-        //opts = (Evas_Image_Load_Opts *)ptr;
-        memcpy(&opts, ptr, sizeof(opts));
-        ptr += sizeof(opts);
-     }
-   else memset(&opts, 0, sizeof(opts));
    if (p->has_loader_data)
      loader = ptr;
 
    memset(&result, 0, sizeof(result));
-   if ((err = image_open(file, key, &opts, &result, &loader))
+   if ((err = image_open(file, key, &result, &loader))
        != CSERVE2_NONE)
      {
         printf("OPEN failed at %s:%d\n", __FUNCTION__, __LINE__);

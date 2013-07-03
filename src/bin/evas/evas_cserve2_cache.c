@@ -594,15 +594,15 @@ _img_opts_id_get(Image_Data *im, char *buf, int size)
 {
    uintptr_t image_id;
 
-   // FIXME: Add degree here?
    snprintf(buf, size,
-            "%u:%0.3f:%dx%d:%d:%d,%d+%dx%d:!([%d,%d:%dx%d]-[%dx%d:%d]):%d",
+            "%u:%0.3f:%dx%d:%d:%d,%d+%dx%d:!([%d,%d:%dx%d]-[%dx%d:%d]):%d:%d",
             im->file_id, im->opts.dpi, im->opts.w, im->opts.h,
             im->opts.scale_down_by, im->opts.region.x, im->opts.region.y,
             im->opts.region.w, im->opts.region.h,
             im->opts.scale_load.src_x, im->opts.scale_load.src_y,
             im->opts.scale_load.src_w, im->opts.scale_load.src_h,
-            im->opts.scale_load.dst_w, im->opts.scale_load.dst_h, im->opts.scale_load.smooth,
+            im->opts.scale_load.dst_w, im->opts.scale_load.dst_h,
+            im->opts.scale_load.smooth, im->opts.degree,
             im->opts.orientation);
 
    image_id = (uintptr_t)eina_hash_find(image_ids, buf);
@@ -1039,23 +1039,25 @@ cserve2_cache_client_del(Client *client)
 }
 
 static Image_Data *
-_image_msg_new(Client *client, Msg_Setopts *msg)
+_image_msg_new(Client *client, int rid,
+               unsigned int file_id, unsigned int image_id,
+               Evas_Image_Load_Opts *opts)
 {
    Reference *ref;
    Image_Data *im_entry;
 
-   ref = eina_hash_find(client->files.referencing, &msg->file_id);
+   ref = eina_hash_find(client->files.referencing, &file_id);
    if (!ref)
      {
         ERR("Couldn't find file id: %d, for image id: %d",
-            msg->file_id, msg->image_id);
-        cserve2_client_error_send(client, msg->base.rid,
+            file_id, image_id);
+        cserve2_client_error_send(client, rid,
                                   CSERVE2_INVALID_CACHE);
         return NULL;
      }
    if (((File_Data *)ref->entry)->invalid)
      {
-        cserve2_client_error_send(client, msg->base.rid,
+        cserve2_client_error_send(client, rid,
                                   CSERVE2_FILE_CHANGED);
         return NULL;
      }
@@ -1064,24 +1066,27 @@ _image_msg_new(Client *client, Msg_Setopts *msg)
    im_entry->base.type = CSERVE2_IMAGE_DATA;
    im_entry->file_id = ref->entry->id;
    im_entry->file = (File_Data *)ref->entry;
-   im_entry->opts.dpi = msg->opts.dpi;
-   im_entry->opts.w = msg->opts.w;
-   im_entry->opts.h = msg->opts.h;
-   im_entry->opts.scale_down_by = msg->opts.scale_down_by;
-   im_entry->opts.region.x = msg->opts.region.x;
-   im_entry->opts.region.y = msg->opts.region.y;
-   im_entry->opts.region.w = msg->opts.region.w;
-   im_entry->opts.region.h = msg->opts.region.h;
-   im_entry->opts.scale_load.src_x = msg->opts.scale_load.src_x;
-   im_entry->opts.scale_load.src_y = msg->opts.scale_load.src_y;
-   im_entry->opts.scale_load.src_w = msg->opts.scale_load.src_w;
-   im_entry->opts.scale_load.src_h = msg->opts.scale_load.src_h;
-   im_entry->opts.scale_load.dst_w = msg->opts.scale_load.dst_w;
-   im_entry->opts.scale_load.dst_h = msg->opts.scale_load.dst_h;
-   im_entry->opts.scale_load.smooth = msg->opts.scale_load.smooth;
-   im_entry->opts.scale_load.scale_hint = msg->opts.scale_load.scale_hint;
-   im_entry->opts.degree = msg->opts.degree;
-   im_entry->opts.orientation = msg->opts.orientation;
+   if (opts)
+     {
+        im_entry->opts.dpi = opts->dpi;
+        im_entry->opts.w = opts->w;
+        im_entry->opts.h = opts->h;
+        im_entry->opts.scale_down_by = opts->scale_down_by;
+        im_entry->opts.region.x = opts->region.x;
+        im_entry->opts.region.y = opts->region.y;
+        im_entry->opts.region.w = opts->region.w;
+        im_entry->opts.region.h = opts->region.h;
+        im_entry->opts.scale_load.src_x = opts->scale_load.src_x;
+        im_entry->opts.scale_load.src_y = opts->scale_load.src_y;
+        im_entry->opts.scale_load.src_w = opts->scale_load.src_w;
+        im_entry->opts.scale_load.src_h = opts->scale_load.src_h;
+        im_entry->opts.scale_load.dst_w = opts->scale_load.dst_w;
+        im_entry->opts.scale_load.dst_h = opts->scale_load.dst_h;
+        im_entry->opts.scale_load.smooth = opts->scale_load.smooth;
+        im_entry->opts.scale_load.scale_hint = opts->scale_load.scale_hint;
+        im_entry->opts.degree = opts->degree;
+        im_entry->opts.orientation = opts->orientation;
+     }
 
    return im_entry;
 }
@@ -2080,7 +2085,9 @@ cserve2_cache_file_close(Client *client, unsigned int client_file_id)
 }
 
 int
-cserve2_cache_image_opts_set(Client *client, Msg_Setopts *msg)
+cserve2_cache_image_opts_set(Client *client, int rid,
+                             unsigned int file_id, unsigned int client_image_id,
+                             Evas_Image_Load_Opts *opts)
 {
    Image_Data *entry;
    File_Data *fentry = NULL;
@@ -2088,10 +2095,10 @@ cserve2_cache_image_opts_set(Client *client, Msg_Setopts *msg)
    unsigned int image_id;
    char buf[4096];
 
-   oldref = eina_hash_find(client->images.referencing, &msg->image_id);
+   oldref = eina_hash_find(client->images.referencing, &client_image_id);
 
    // search whether the image is already loaded by another client
-   entry = _image_msg_new(client, msg);
+   entry = _image_msg_new(client, rid, file_id, client_image_id, opts);
    if (!entry)
      return -1;
    image_id = _img_opts_id_get(entry, buf, sizeof(buf));
@@ -2099,14 +2106,13 @@ cserve2_cache_image_opts_set(Client *client, Msg_Setopts *msg)
      {  // if so, just update the references
         free(entry);
         DBG("found image_id %d for client image id %d",
-            image_id, msg->image_id);
+            image_id, client_image_id);
         entry = eina_hash_find(image_entries, &image_id);
         if (!entry)
           {
              ERR("image id %d is in file_ids hash, but not in entries hash"
-                 "with entry id %d.", msg->image_id, image_id);
-             cserve2_client_error_send(client, msg->base.rid,
-                                       CSERVE2_INVALID_CACHE);
+                 "with entry id %d.", client_image_id, image_id);
+             cserve2_client_error_send(client, rid, CSERVE2_INVALID_CACHE);
              return -1;
           }
 
@@ -2123,12 +2129,12 @@ cserve2_cache_image_opts_set(Client *client, Msg_Setopts *msg)
         if (oldref && (oldref->entry->id == image_id))
           return 0;
 
-        ref = _entry_reference_add((Entry *)entry, client, msg->image_id);
+        ref = _entry_reference_add((Entry *)entry, client, client_image_id);
 
         if (oldref)
-          eina_hash_del_by_key(client->images.referencing, &msg->image_id);
+          eina_hash_del_by_key(client->images.referencing, &client_image_id);
 
-        eina_hash_add(client->images.referencing, &msg->image_id, ref);
+        eina_hash_add(client->images.referencing, &client_image_id, ref);
 
         return 0;
      }
@@ -2140,11 +2146,11 @@ cserve2_cache_image_opts_set(Client *client, Msg_Setopts *msg)
    entry->base.id = image_id;
    eina_hash_add(image_entries, &image_id, entry);
    eina_hash_add(image_ids, buf, (void *)(intptr_t)image_id);
-   ref = _entry_reference_add((Entry *)entry, client, msg->image_id);
+   ref = _entry_reference_add((Entry *)entry, client, client_image_id);
 
    if (oldref)
-     eina_hash_del_by_key(client->images.referencing, &msg->image_id);
-   eina_hash_add(client->images.referencing, &msg->image_id, ref);
+     eina_hash_del_by_key(client->images.referencing, &client_image_id);
+   eina_hash_add(client->images.referencing, &client_image_id, ref);
 
    fentry = entry->file;
    fentry->images = eina_list_append(fentry->images, entry);

@@ -67,6 +67,8 @@ parse_input_open(int *size)
    char *buf;
    int file_id;
 
+   // TODO: Add load opts
+
    _read_line(line, sizeof(line));
    path_len = _read_line(path, sizeof(path));
    key_len = _read_line(key, sizeof(key));
@@ -88,11 +90,9 @@ parse_input_open(int *size)
    *size = sizeof(msg) + path_len + key_len;
 
    return buf;
-}
 
-static void *
-parse_input_setopts(int *size)
-{
+#if 0
+   // TODO: Adapt the following code
    Msg_Setopts *msg;
    char line[4096];
    int file_id, image_id;
@@ -183,6 +183,7 @@ parse_input_setopts(int *size)
    *size = sizeof(*msg);
 
    return msg;
+#endif
 }
 
 static void *
@@ -283,13 +284,6 @@ parse_answer_opened(const void *buf)
 }
 
 static void
-parse_answer_setoptsed(const void *buf)
-{
-   const Msg_Setoptsed *msg = buf;
-   printf("SETOPTSED rid = %d\n", msg->base.rid);
-}
-
-static void
 parse_answer_loaded(const void *buf)
 {
    const Msg_Loaded *msg = buf;
@@ -321,9 +315,6 @@ parse_answer(const void *buf)
       case CSERVE2_OPENED:
          parse_answer_opened(buf);
          break;
-      case CSERVE2_SETOPTSED:
-         parse_answer_setoptsed(buf);
-         break;
       case CSERVE2_LOADED:
          parse_answer_loaded(buf);
          break;
@@ -342,8 +333,6 @@ static struct {
 } _msg_types[] = {
    { "OPEN", CSERVE2_OPEN, parse_input_open },
    { "OPENED", CSERVE2_OPENED, NULL },
-   { "SETOPTS", CSERVE2_SETOPTS, parse_input_setopts },
-   { "SETOPTSED", CSERVE2_SETOPTSED, NULL },
    { "LOAD", CSERVE2_LOAD, parse_input_load },
    { "LOADED", CSERVE2_LOADED, NULL },
    { "PRELOAD", CSERVE2_PRELOAD, parse_input_preload },

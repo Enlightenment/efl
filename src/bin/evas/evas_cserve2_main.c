@@ -36,21 +36,6 @@ cserve2_client_error_send(Client *client, unsigned int rid, int error_code)
 }
 
 static void
-_cserve2_client_image_setoptsed(Client *client, unsigned int rid)
-{
-   int size;
-   Msg_Setoptsed msg;
-
-   memset(&msg, 0, sizeof(msg));
-   msg.base.rid = rid;
-   msg.base.type = CSERVE2_SETOPTSED;
-
-   size = sizeof(msg);
-   cserve2_client_send(client, &size, sizeof(size));
-   cserve2_client_send(client, &msg, size);
-}
-
-static void
 _cserve2_client_close(Client *client)
 {
    Msg_Close *msg = (Msg_Close *)client->msg.buf;
@@ -88,37 +73,9 @@ _cserve2_client_load(Client *client)
 {
    Msg_Load *msg = (Msg_Load *)client->msg.buf;
 
-   INF("Received LOAD command: RID=%d, Image_ID: %d", msg->base.rid, msg->image_id);
+   INF("Received LOAD command: RID=%d, Image_ID: %d",
+       msg->base.rid, msg->image_id);
    cserve2_cache_image_load(client, msg->image_id, msg->base.rid);
-}
-
-static void
-_cserve2_client_setopts(Client *client)
-{
-   Msg_Setopts *msg = (Msg_Setopts *)client->msg.buf;
-
-   INF("Received SETOPTS command: RID=%d", msg->base.rid);
-   INF("File_ID: %d, Image_ID: %d", msg->file_id, msg->image_id);
-   INF("Load Options:");
-   INF("\tdpi: %03.1f", msg->opts.dpi);
-   INF("\tsize: %dx%d", msg->opts.w, msg->opts.h);
-   INF("\tscale down: %d", msg->opts.scale_down_by);
-   INF("\tregion: %d,%d + %dx%d",
-       msg->opts.region.x, msg->opts.region.y, msg->opts.region.w, msg->opts.region.h);
-   INF("\toriginal image's source coord: %d,%d",
-       msg->opts.scale_load.src_x, msg->opts.scale_load.src_y);
-   INF("\toriginal image size: %dx%d",
-       msg->opts.scale_load.src_w, msg->opts.scale_load.src_h);
-   INF("\tscale size: %dx%d", msg->opts.scale_load.dst_w, msg->opts.scale_load.dst_h);
-   INF("\tscale smooth: %d", msg->opts.scale_load.smooth);
-   INF("\tscale hint: %d", msg->opts.scale_load.scale_hint);
-   INF("\tdegree: %d", msg->opts.degree);
-   INF("\torientation: %d", msg->opts.orientation);
-
-   if (cserve2_cache_image_opts_set(client, msg) != 0)
-     return;
-
-   _cserve2_client_image_setoptsed(client, msg->base.rid);
 }
 
 static void
@@ -137,17 +94,33 @@ _cserve2_client_open(Client *client)
    cserve2_cache_file_open(client, msg->file_id, path, key, msg->base.rid);
 
    if (!msg->has_load_opts)
+     cserve2_cache_image_opts_set(client, msg->base.rid,
+                                  msg->file_id, msg->image_id, NULL);
+   else
      {
-        /* FIXME: We should remove this fake call to setopts and do the
-         * appropriate work instead. (split functions) */
-        Msg_Setopts optsmsg;
+        // FIXME: Check message size first?
+        Evas_Image_Load_Opts *opts =
+              (Evas_Image_Load_Opts*) (key + strlen(key) + 1);
 
-        memset(&optsmsg, 0, sizeof(optsmsg));
-        optsmsg.base.rid  = msg->base.rid;
-        optsmsg.base.type = CSERVE2_SETOPTS;
-        optsmsg.file_id   = msg->file_id;
-        optsmsg.image_id  = msg->image_id;
-        cserve2_cache_image_opts_set(client, &optsmsg);
+        DBG("Load Options:");
+        DBG("\tdpi: %03.1f", opts->dpi);
+        DBG("\tsize: %dx%d", opts->w, opts->h);
+        DBG("\tscale down: %d", opts->scale_down_by);
+        DBG("\tregion: %d,%d + %dx%d",
+            opts->region.x, opts->region.y, opts->region.w, opts->region.h);
+        DBG("\toriginal image's source coord: %d,%d",
+            opts->scale_load.src_x, opts->scale_load.src_y);
+        DBG("\toriginal image size: %dx%d",
+            opts->scale_load.src_w, opts->scale_load.src_h);
+        DBG("\tscale size: %dx%d",
+            opts->scale_load.dst_w, opts->scale_load.dst_h);
+        DBG("\tscale smooth: %d", opts->scale_load.smooth);
+        DBG("\tscale hint: %d", opts->scale_load.scale_hint);
+        DBG("\tdegree: %d", opts->degree);
+        DBG("\torientation: %d", opts->orientation);
+
+        cserve2_cache_image_opts_set(client, msg->base.rid,
+                                     msg->file_id, msg->image_id, opts);
      }
 }
 
@@ -237,9 +210,6 @@ cserve2_command_run(Client *client, Message_Type type)
      {
       case CSERVE2_OPEN:
          _cserve2_client_open(client);
-         break;
-      case CSERVE2_SETOPTS:
-         _cserve2_client_setopts(client);
          break;
       case CSERVE2_LOAD:
          _cserve2_client_load(client);

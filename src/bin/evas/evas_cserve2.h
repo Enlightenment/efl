@@ -79,11 +79,9 @@ typedef enum {
 } Slave_Command;
 
 struct _Slave_Msg_Image_Open {
-   Eina_Bool has_opts : 1;
    Eina_Bool has_loader_data : 1;
    // Optionally followed by:
-   // Evas_Image_Load_Opts opts;
-   // const char *loader;
+   // const char loader[];
 };
 
 struct _Slave_Msg_Image_Opened {
@@ -293,7 +291,7 @@ void cserve2_cache_client_new(Client *client);
 void cserve2_cache_client_del(Client *client);
 int cserve2_cache_file_open(Client *client, unsigned int client_file_id, const char *path, const char *key, unsigned int rid);
 void cserve2_cache_file_close(Client *client, unsigned int client_file_id);
-int cserve2_cache_image_opts_set(Client *client, Msg_Setopts *msg);
+int cserve2_cache_image_opts_set(Client *client, int rid, unsigned int file_id, unsigned int image_id, Evas_Image_Load_Opts *opts);
 void cserve2_rgba_image_scale_do(void *src_data, void *dst_data, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int alpha, int smooth);
 void cserve2_cache_image_load(Client *client, unsigned int client_image_id, unsigned int rid);
 void cserve2_cache_image_preload(Client *client, unsigned int client_image_id, unsigned int rid);

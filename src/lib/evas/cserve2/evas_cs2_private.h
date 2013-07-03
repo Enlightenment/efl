@@ -23,7 +23,7 @@ typedef struct _Font_Entry Font_Entry;
 int evas_cserve2_init(void);
 int evas_cserve2_shutdown(void);
 EAPI int evas_cserve2_use_get(void);
-Eina_Bool evas_cserve2_image_load(Image_Entry *ie, const char *file, const char *key, Evas_Image_Load_Opts *lopt);
+Eina_Bool evas_cserve2_image_load(Image_Entry *ie);
 int evas_cserve2_image_load_wait(Image_Entry *ie);
 Eina_Bool evas_cserve2_image_data_load(Image_Entry *ie);
 int evas_cserve2_image_load_data_wait(Image_Entry *ie);
