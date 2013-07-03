@@ -2400,7 +2400,7 @@ _elm_scroll_mouse_up_event_cb(void *data,
                        if ((_elm_config->thumbscroll_friction > 0.0) &&
                            (vel > _elm_config->thumbscroll_momentum_threshold))
                          {
-                            Evas_Coord vw, vh, max_d;
+                            Evas_Coord max_d;
                             int minx, miny, mx, my, px, py;
                             double tt = 0.0, dtt = 0.0;
 
@@ -2409,8 +2409,6 @@ _elm_scroll_mouse_up_event_cb(void *data,
                             eo_do(sid->pan_obj, elm_obj_pan_pos_max_get
                                   (&mx, &my));
                             eo_do(sid->pan_obj, elm_obj_pan_pos_get(&px, &py));
-                            eo_do(sid->obj,
-                                  elm_scrollable_interface_content_viewport_size_get(&vw, &vh));
                             max_d = _elm_config->thumbscroll_flick_distance_tolerance;
                             if (dx > 0)
                               {
