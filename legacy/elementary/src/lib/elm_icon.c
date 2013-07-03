@@ -620,17 +620,16 @@ _elm_icon_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 static void
 _elm_icon_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
-#ifdef HAVE_ELEMENTARY_ETHUMB
-   Ethumb_Client *ethumbd;
-#endif
-
    Elm_Icon_Smart_Data *sd = _pd;
 
    if (sd->stdicon) eina_stringshare_del(sd->stdicon);
 
 #ifdef HAVE_ELEMENTARY_ETHUMB
-   ethumbd = elm_thumb_ethumb_client_get();
-   _icon_thumb_stop(sd, ethumbd);
+   if (sd->thumb.request)
+     {
+        Ethumb_Client *ethumbd = elm_thumb_ethumb_client_get();
+        if (ethumbd) _icon_thumb_stop(sd, ethumbd);
+     }
 
    eina_stringshare_del(sd->thumb.file.path);
    eina_stringshare_del(sd->thumb.file.key);

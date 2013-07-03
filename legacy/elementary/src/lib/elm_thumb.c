@@ -404,13 +404,47 @@ _thumbnailing_available_cb(void *data,
    return ECORE_CALLBACK_RENEW;
 }
 
+static Eina_Bool _elm_need_ethumb = EINA_FALSE;
+static void _on_die_cb(void *, Ethumb_Client *);
+
+static void
+_connect_cb(void *data __UNUSED__,
+            Ethumb_Client *c,
+            Eina_Bool success)
+{
+   if (success)
+     {
+        ethumb_client_on_server_die_callback_set(c, _on_die_cb, NULL, NULL);
+        _elm_ethumb_connected = EINA_TRUE;
+        ecore_event_add(ELM_ECORE_EVENT_ETHUMB_CONNECT, NULL, NULL, NULL);
+     }
+   else
+     _elm_ethumb_client = NULL;
+}
+
+static void
+_on_die_cb(void *data __UNUSED__,
+           Ethumb_Client *c __UNUSED__)
+{
+   if (_elm_ethumb_client)
+     {
+        ethumb_client_disconnect(_elm_ethumb_client);
+        _elm_ethumb_client = NULL;
+     }
+   _elm_ethumb_connected = EINA_FALSE;
+   if (pending_request > 0)
+     _elm_ethumb_client = ethumb_client_connect(_connect_cb, NULL, NULL);
+}
+
 static void
 _thumb_show(Elm_Thumb_Smart_Data *sd)
 {
    Elm_Widget_Smart_Data *wd = eo_data_scope_get(sd->obj, ELM_OBJ_WIDGET_CLASS);
    evas_object_show(wd->resize_obj);
 
-   if (elm_thumb_ethumb_client_connected_get())
+   if (!_elm_ethumb_client)
+     _elm_ethumb_client = ethumb_client_connect(_connect_cb, NULL, NULL);
+   else if (elm_thumb_ethumb_client_connected_get())
      {
         _thumb_start(sd);
         return;
@@ -474,38 +508,6 @@ _elm_thumb_smart_hide(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 #endif
 }
 
-#ifdef ELM_ETHUMB
-static Eina_Bool _elm_need_ethumb = EINA_FALSE;
-static void _on_die_cb(void *, Ethumb_Client *);
-
-static void
-_connect_cb(void *data __UNUSED__,
-            Ethumb_Client *c,
-            Eina_Bool success)
-{
-   if (success)
-     {
-        ethumb_client_on_server_die_callback_set(c, _on_die_cb, NULL, NULL);
-        _elm_ethumb_connected = EINA_TRUE;
-        ecore_event_add(ELM_ECORE_EVENT_ETHUMB_CONNECT, NULL, NULL, NULL);
-     }
-   else
-     _elm_ethumb_client = NULL;
-}
-
-static void
-_on_die_cb(void *data __UNUSED__,
-           Ethumb_Client *c __UNUSED__)
-{
-   ethumb_client_disconnect(_elm_ethumb_client);
-
-   _elm_ethumb_client = NULL;
-   _elm_ethumb_connected = EINA_FALSE;
-   _elm_ethumb_client = ethumb_client_connect(_connect_cb, NULL, NULL);
-}
-
-#endif
-
 void
 _elm_unneed_ethumb(void)
 {
@@ -513,8 +515,11 @@ _elm_unneed_ethumb(void)
    if (!_elm_need_ethumb) return;
    _elm_need_ethumb = EINA_FALSE;
 
-   ethumb_client_disconnect(_elm_ethumb_client);
-   _elm_ethumb_client = NULL;
+   if (_elm_ethumb_client)
+     {
+        ethumb_client_disconnect(_elm_ethumb_client);
+        _elm_ethumb_client = NULL;
+     }
    ethumb_client_shutdown();
    ELM_ECORE_EVENT_ETHUMB_CONNECT = 0;
 #endif
@@ -561,7 +566,6 @@ elm_need_ethumb(void)
 
    ELM_ECORE_EVENT_ETHUMB_CONNECT = ecore_event_type_new();
    ethumb_client_init();
-   _elm_ethumb_client = ethumb_client_connect(_connect_cb, NULL, NULL);
 
    return EINA_TRUE;
 #else
