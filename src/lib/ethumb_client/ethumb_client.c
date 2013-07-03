@@ -238,7 +238,7 @@ end_connection:
    obj = eldbus_proxy_object_get(client->proxy);
    eldbus_proxy_unref(client->proxy);
    eldbus_object_unref(obj);
-   eldbus_connection_unref(client->conn);
+   if (client->conn) eldbus_connection_unref(client->conn);
 
    if (client->connect.free_data)
      client->connect.free_data(client->connect.data);

@@ -772,7 +772,8 @@ eldbus_idler(void *data)
    dbus_connection_ref(conn->dbus_conn);
    DBG("Connection@%p: Dispatching", conn);
    dbus_connection_dispatch(conn->dbus_conn);
-   dbus_connection_unref(conn->dbus_conn);
+   // add the if check as dispact may set conn->dbus_conn to NULL in a cb
+   if (conn->dbus_conn) dbus_connection_unref(conn->dbus_conn);
    return ECORE_CALLBACK_RENEW;
 }
 
