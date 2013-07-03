@@ -261,7 +261,7 @@ _eo_kls_itr_func_get(const _Eo_Class *cur_klass, Eo_Op op)
       } \
    while (0)
 
-static Eina_Bool
+static inline Eina_Bool
 _eo_op_internal(const char *file, int line, _Eo *obj, const _Eo_Class *cur_klass,
                 Eo_Op_Type op_type, Eo_Op op, va_list *p_list)
 {
