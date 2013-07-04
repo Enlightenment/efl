@@ -8858,9 +8858,9 @@ evas_textblock_cursor_range_formats_get(const Evas_Textblock_Cursor *cur1, const
      {
         Evas_Object_Textblock_Node_Format *fnode = first;
         /* Go to the first one in the range */
-        if (first->text_node != n1)
+        if (fnode->text_node != n1)
           {
-             first = _NODE_FORMAT(EINA_INLIST_GET(first)->next);
+             fnode = _NODE_FORMAT(EINA_INLIST_GET(fnode)->next);
           }
 
         while (fnode)
