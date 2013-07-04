@@ -2,12 +2,12 @@
 # This file is put in the public domain.
 # Aníbal Garrido <khany@member.trisquel.info>, 2012.
 #
-#: src/lib/elm_config.c:2397
+#: src/lib/elm_config.c:2413
 msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-06-28 14:39+0900\n"
+"POT-Creation-Date: 2013-07-04 15:02+0900\n"
 "PO-Revision-Date: 2012-11-16 21:51+0100\n"
 "Last-Translator: Aníbal Garrido <khany@member.trisquel.info>\n"
 "Language-Team: http://trasno.net/ <proxecto@trasno.net>\n"
@@ -24,8 +24,8 @@ msgstr "Arriba"
 msgid "Home"
 msgstr "Cartafol persoal"
 
-#: src/lib/elc_fileselector.c:1073 src/lib/elm_entry.c:1292
-#: src/lib/elm_entry.c:1317
+#: src/lib/elc_fileselector.c:1073 src/lib/elm_entry.c:1289
+#: src/lib/elm_entry.c:1314
 msgid "Cancel"
 msgstr "Cancelar"
 
@@ -43,7 +43,7 @@ msgstr "Premido"
 
 #: src/lib/elm_button.c:281 src/lib/elm_check.c:219 src/lib/elm_gengrid.c:694
 #: src/lib/elm_genlist.c:1423 src/lib/elm_list.c:1471 src/lib/elm_radio.c:264
-#: src/lib/elm_spinner.c:526 src/lib/elm_toolbar.c:1954
+#: src/lib/elm_spinner.c:526 src/lib/elm_toolbar.c:1995
 msgid "State: Disabled"
 msgstr "Estado: Desactivado"
 
@@ -133,7 +133,7 @@ msgstr "Reloxo"
 msgid "color selector palette item"
 msgstr "Paleta de selección de cor"
 
-#: src/lib/elm_config.c:2413
+#: src/lib/elm_config.c:2429
 msgid "default:LTR"
 msgstr "Predeterminado: LTR"
 
@@ -141,23 +141,23 @@ msgstr "Predeterminado: LTR"
 msgid "diskselector item"
 msgstr "Selector de disco"
 
-#: src/lib/elm_entry.c:1285
+#: src/lib/elm_entry.c:1282
 msgid "Copy"
 msgstr "Copiar"
 
-#: src/lib/elm_entry.c:1289
+#: src/lib/elm_entry.c:1286
 msgid "Cut"
 msgstr "Cortar"
 
-#: src/lib/elm_entry.c:1304
+#: src/lib/elm_entry.c:1301
 msgid "Select"
 msgstr "Seleccionar"
 
-#: src/lib/elm_entry.c:1311
+#: src/lib/elm_entry.c:1308
 msgid "Paste"
 msgstr "Pegar"
 
-#: src/lib/elm_entry.c:3142
+#: src/lib/elm_entry.c:3139
 msgid "Entry"
 msgstr "Entrada"
 
@@ -213,27 +213,27 @@ msgstr "botón de disminución"
 msgid "spinner"
 msgstr "botón de spinner"
 
-#: src/lib/elm_toolbar.c:1457 src/lib/elm_toolbar.c:2015
+#: src/lib/elm_toolbar.c:1467 src/lib/elm_toolbar.c:2056
 msgid "Selected"
 msgstr "Seleccionado"
 
-#: src/lib/elm_toolbar.c:1952
+#: src/lib/elm_toolbar.c:1993
 msgid "Separator"
 msgstr "Separador"
 
-#: src/lib/elm_toolbar.c:1956
+#: src/lib/elm_toolbar.c:1997
 msgid "State: Selected"
 msgstr "Estado: Seleccionado"
 
-#: src/lib/elm_toolbar.c:1958
+#: src/lib/elm_toolbar.c:1999
 msgid "Has menu"
 msgstr "Ten menú"
 
-#: src/lib/elm_toolbar.c:2010
+#: src/lib/elm_toolbar.c:2051
 msgid "Unselected"
 msgstr "Non seleccionado"
 
-#: src/lib/elm_toolbar.c:2027
+#: src/lib/elm_toolbar.c:2068
 msgid "Toolbar Item"
 msgstr "Elemento da barra de ferramentas"
 

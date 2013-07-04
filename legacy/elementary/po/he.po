@@ -2,12 +2,12 @@
 # This file is distributed under the same license as the Elementary package.
 # FIRST AUTHOR <a.hillel@samsung.com>, 2010.
 #
-#: src/lib/elm_config.c:2397
+#: src/lib/elm_config.c:2413
 msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-06-28 14:39+0900\n"
+"POT-Creation-Date: 2013-07-04 15:02+0900\n"
 "PO-Revision-Date: 2010-12-26 10:05+0200\n"
 "Last-Translator: Aharon Hillel <a.hillel@samsung.com>\n"
 "Language-Team: General\n"
@@ -25,8 +25,8 @@ msgstr ""
 msgid "Home"
 msgstr ""
 
-#: src/lib/elc_fileselector.c:1073 src/lib/elm_entry.c:1292
-#: src/lib/elm_entry.c:1317
+#: src/lib/elc_fileselector.c:1073 src/lib/elm_entry.c:1289
+#: src/lib/elm_entry.c:1314
 msgid "Cancel"
 msgstr "בטל"
 
@@ -44,7 +44,7 @@ msgstr ""
 
 #: src/lib/elm_button.c:281 src/lib/elm_check.c:219 src/lib/elm_gengrid.c:694
 #: src/lib/elm_genlist.c:1423 src/lib/elm_list.c:1471 src/lib/elm_radio.c:264
-#: src/lib/elm_spinner.c:526 src/lib/elm_toolbar.c:1954
+#: src/lib/elm_spinner.c:526 src/lib/elm_toolbar.c:1995
 msgid "State: Disabled"
 msgstr ""
 
@@ -129,7 +129,7 @@ msgstr ""
 msgid "color selector palette item"
 msgstr ""
 
-#: src/lib/elm_config.c:2413
+#: src/lib/elm_config.c:2429
 msgid "default:LTR"
 msgstr "default:RTL"
 
@@ -137,23 +137,23 @@ msgstr "default:RTL"
 msgid "diskselector item"
 msgstr ""
 
-#: src/lib/elm_entry.c:1285
+#: src/lib/elm_entry.c:1282
 msgid "Copy"
 msgstr "העתק"
 
-#: src/lib/elm_entry.c:1289
+#: src/lib/elm_entry.c:1286
 msgid "Cut"
 msgstr "גזור"
 
-#: src/lib/elm_entry.c:1304
+#: src/lib/elm_entry.c:1301
 msgid "Select"
 msgstr "התחל בחירה"
 
-#: src/lib/elm_entry.c:1311
+#: src/lib/elm_entry.c:1308
 msgid "Paste"
 msgstr "הדבק"
 
-#: src/lib/elm_entry.c:3142
+#: src/lib/elm_entry.c:3139
 msgid "Entry"
 msgstr ""
 
@@ -209,28 +209,28 @@ msgstr ""
 msgid "spinner"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:1457 src/lib/elm_toolbar.c:2015
+#: src/lib/elm_toolbar.c:1467 src/lib/elm_toolbar.c:2056
 #, fuzzy
 msgid "Selected"
 msgstr "התחל בחירה"
 
-#: src/lib/elm_toolbar.c:1952
+#: src/lib/elm_toolbar.c:1993
 msgid "Separator"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:1956
+#: src/lib/elm_toolbar.c:1997
 msgid "State: Selected"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:1958
+#: src/lib/elm_toolbar.c:1999
 msgid "Has menu"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:2010
+#: src/lib/elm_toolbar.c:2051
 #, fuzzy
 msgid "Unselected"
 msgstr "התחל בחירה"
 
-#: src/lib/elm_toolbar.c:2027
+#: src/lib/elm_toolbar.c:2068
 msgid "Toolbar Item"
 msgstr ""

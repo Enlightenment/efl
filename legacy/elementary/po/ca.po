@@ -2,12 +2,12 @@
 # This file is put in the public domain.
 # Marc Furtià  i Puig <marc.furtia@gmail.com>, 2013.
 # Joan Coll <jcoll2@gmail.com>, 2013.
-#: src/lib/elm_config.c:2397
+#: src/lib/elm_config.c:2413
 msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-06-28 14:39+0900\n"
+"POT-Creation-Date: 2013-07-04 15:02+0900\n"
 "PO-Revision-Date: 2013-03-22 00:32+0100\n"
 "Last-Translator: JoanColl <jcoll2@gmail.com>\n"
 "Language-Team: Catalan\n"
@@ -24,8 +24,8 @@ msgstr "Amunt"
 msgid "Home"
 msgstr "Carpeta personal"
 
-#: src/lib/elc_fileselector.c:1073 src/lib/elm_entry.c:1292
-#: src/lib/elm_entry.c:1317
+#: src/lib/elc_fileselector.c:1073 src/lib/elm_entry.c:1289
+#: src/lib/elm_entry.c:1314
 msgid "Cancel"
 msgstr "Cancel·la"
 
@@ -43,7 +43,7 @@ msgstr "Clicat"
 
 #: src/lib/elm_button.c:281 src/lib/elm_check.c:219 src/lib/elm_gengrid.c:694
 #: src/lib/elm_genlist.c:1423 src/lib/elm_list.c:1471 src/lib/elm_radio.c:264
-#: src/lib/elm_spinner.c:526 src/lib/elm_toolbar.c:1954
+#: src/lib/elm_spinner.c:526 src/lib/elm_toolbar.c:1995
 msgid "State: Disabled"
 msgstr "Estat: desactivat "
 
@@ -128,7 +128,7 @@ msgstr "Rellotge"
 msgid "color selector palette item"
 msgstr "paleta de selecció de color"
 
-#: src/lib/elm_config.c:2413
+#: src/lib/elm_config.c:2429
 msgid "default:LTR"
 msgstr "Per defecte: LTR"
 
@@ -136,23 +136,23 @@ msgstr "Per defecte: LTR"
 msgid "diskselector item"
 msgstr "selector de disc"
 
-#: src/lib/elm_entry.c:1285
+#: src/lib/elm_entry.c:1282
 msgid "Copy"
 msgstr "Copia"
 
-#: src/lib/elm_entry.c:1289
+#: src/lib/elm_entry.c:1286
 msgid "Cut"
 msgstr "Retalla"
 
-#: src/lib/elm_entry.c:1304
+#: src/lib/elm_entry.c:1301
 msgid "Select"
 msgstr "Selecciona"
 
-#: src/lib/elm_entry.c:1311
+#: src/lib/elm_entry.c:1308
 msgid "Paste"
 msgstr "Enganxa "
 
-#: src/lib/elm_entry.c:3142
+#: src/lib/elm_entry.c:3139
 msgid "Entry"
 msgstr "Entrada"
 
@@ -208,27 +208,27 @@ msgstr "botó de decrement del spinner"
 msgid "spinner"
 msgstr "spinner"
 
-#: src/lib/elm_toolbar.c:1457 src/lib/elm_toolbar.c:2015
+#: src/lib/elm_toolbar.c:1467 src/lib/elm_toolbar.c:2056
 msgid "Selected"
 msgstr "Seleccionat"
 
-#: src/lib/elm_toolbar.c:1952
+#: src/lib/elm_toolbar.c:1993
 msgid "Separator"
 msgstr "Separador"
 
-#: src/lib/elm_toolbar.c:1956
+#: src/lib/elm_toolbar.c:1997
 msgid "State: Selected"
 msgstr "Estat: Seleccionat"
 
-#: src/lib/elm_toolbar.c:1958
+#: src/lib/elm_toolbar.c:1999
 msgid "Has menu"
 msgstr "Té menú"
 
-#: src/lib/elm_toolbar.c:2010
+#: src/lib/elm_toolbar.c:2051
 msgid "Unselected"
 msgstr "No seleccionat "
 
-#: src/lib/elm_toolbar.c:2027
+#: src/lib/elm_toolbar.c:2068
 msgid "Toolbar Item"
 msgstr "Element de barra d'eines"
 
