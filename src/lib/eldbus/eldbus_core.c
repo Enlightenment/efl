@@ -756,6 +756,7 @@ static Eina_Bool
 eldbus_idler(void *data)
 {
    Eldbus_Connection *conn = data;
+   DBusConnection *dbus_conn;
 
    DBG("Connection@%p: Dispatch status: %d", conn,
       dbus_connection_get_dispatch_status(conn->dbus_conn));
@@ -768,12 +769,13 @@ eldbus_idler(void *data)
         conn->idler = NULL;
         return ECORE_CALLBACK_CANCEL;
      }
-
-   dbus_connection_ref(conn->dbus_conn);
+   // make local copy of dbus_conn because something in dispatch can set
+   // conn->dbus_conn to NULL, thus losing our handle
+   dbus_conn = conn->dbus_conn;
+   dbus_connection_ref(dbus_conn);
    DBG("Connection@%p: Dispatching", conn);
-   dbus_connection_dispatch(conn->dbus_conn);
-   // add the if check as dispact may set conn->dbus_conn to NULL in a cb
-   if (conn->dbus_conn) dbus_connection_unref(conn->dbus_conn);
+   dbus_connection_dispatch(dbus_conn);
+   dbus_connection_unref(dbus_conn);
    return ECORE_CALLBACK_RENEW;
 }
 
