@@ -235,7 +235,8 @@ _evas_cache_image_entry_new(Evas_Cache2 *cache,
    im = calloc(1, sizeof(RGBA_Image));
    if (!im)
      {
-        *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+        if (error)
+          *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
         return NULL;
      }
 
@@ -264,12 +265,17 @@ _evas_cache_image_entry_new(Evas_Cache2 *cache,
              ERR("couldn't load '%s' '%s' with cserve2!",
                  ie->file, ie->key ? ie->key : "");
              _evas_cache_image_entry_delete(cache, ie);
+             if (error)
+               *error = EVAS_LOAD_ERROR_GENERIC;
              return NULL;
           }
      }
 
    if (ie->cache_key) _evas_cache_image_activ_add(ie);
    else _evas_cache_image_dirty_add(ie);
+
+   if (error)
+     *error = EVAS_LOAD_ERROR_NONE;
    return ie;
 }
 
