@@ -111,6 +111,7 @@ struct _Eina_Tiler
    splitter_t splitter;
 
    Eina_Bool rounding : 1;
+   Eina_Bool strict : 1;
 };
 
 #define EINA_MAGIC_CHECK_TILER(d, ...)                                  \
@@ -1013,6 +1014,8 @@ static inline Eina_Bool _splitter_rect_add(Eina_Tiler *t, Eina_Rectangle *rect)
    //printf("ACCOUNTING[1]: add_redraw: %4d,%4d %3dx%3d\n", x, y, w, h);
    if (t->rounding)
      {
+        // FIXME: Seems that this trigger overdraw bug in Evas implementation and
+        // was disable. Need to investigate.
         rect->x >>= 1;
         rect->y >>= 1;
         rect->w += 2;
@@ -1156,6 +1159,16 @@ EAPI void eina_tiler_free(Eina_Tiler *t)
    free(t);
 }
 
+EAPI void eina_tiler_area_size_set(Eina_Tiler *t, int w, int h)
+{
+   EINA_MAGIC_CHECK_TILER(t);
+   if ((w <= 0) || (h <= 0))
+     return;
+
+   t->area.w = w;
+   t->area.h = h;
+}
+
 EAPI void eina_tiler_tile_size_set(Eina_Tiler *t, int w, int h)
 {
    EINA_MAGIC_CHECK_TILER(t);
@@ -1214,6 +1227,12 @@ EAPI void eina_tiler_clear(Eina_Tiler *t)
    _splitter_clear(t);
 }
 
+EAPI void
+eina_tiler_strict_set(Eina_Tiler *t, Eina_Bool strict)
+{
+   EINA_MAGIC_CHECK_TILER(t);
+   t->strict = strict;
+}
 
 EAPI Eina_Iterator *eina_tiler_iterator_new(const Eina_Tiler *t)
 {
@@ -1229,17 +1248,52 @@ EAPI Eina_Iterator *eina_tiler_iterator_new(const Eina_Tiler *t)
 
    if (t->splitter.need_merge == EINA_TRUE)
      {
-        list_t to_merge;
         splitter_t *sp;
+        list_t to_merge;
+
+        to_merge = t->splitter.rects;
+        if (t->strict)
+          {
+             rect_node_t *rn;
+             list_node_t *n;
+
+             // round up rects to tb->tile_size.w and tb->tile_size.h
+             to_merge = list_zeroed;
+             for (n = t->splitter.rects.head; n; n = n->next)
+               {
+                  int x1, x2, y1, y2;
+
+                  x1 = ((rect_node_t *)n)->rect.left;
+                  x2 = x1 + ((rect_node_t *)n)->rect.width;
+                  y1 = ((rect_node_t *)n)->rect.top;
+                  y2 = y1 + ((rect_node_t *)n)->rect.height;
+                  x1 = t->tile.w * (x1 / t->tile.w);
+                  y1 = t->tile.h * (y1 / t->tile.h);
+                  x2 = t->tile.w * ((x2 + t->tile.w - 1) / t->tile.w);
+                  y2 = t->tile.h * ((y2 + t->tile.h - 1) / t->tile.h);
+
+                  rn = (rect_node_t *)rect_list_node_pool_get();
+                  rn->_lst = list_node_zeroed;
+                  rect_init(&rn->rect, x1, y1, x2 - x1, y2 - y1);
+                  rect_list_add_split_fuzzy_and_merge(&to_merge,
+                                                      (list_node_t *)rn,
+                                                      t->tile.w * t->tile.h,
+                                                      t->tile.w * t->tile.h);
+               }
+          }
 
         sp = (splitter_t *)&(t->splitter);
-        to_merge = t->splitter.rects;
         sp->rects = list_zeroed;
         rect_list_merge_rects(&sp->rects, &to_merge, t->tile.w * t->tile.h);
         sp->need_merge = 0;
      }
 
    it->curr = it->tiler->splitter.rects.head;
+   if (!it->tiler->splitter.rects.head)
+     {
+        free(it);
+        return NULL;
+     }
 
    it->iterator.version = EINA_ITERATOR_VERSION;
    it->iterator.next = FUNC_ITERATOR_NEXT(_iterator_next);

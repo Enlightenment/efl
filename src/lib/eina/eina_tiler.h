@@ -205,6 +205,28 @@ EAPI void               eina_tiler_free(Eina_Tiler *t);
  * @warning Tile size is not used!
  */
 EAPI void               eina_tiler_tile_size_set(Eina_Tiler *t, int w, int h);
+
+/**
+ * @brief Change the size of the area covered by the tiler.
+ *
+ * @param t The tiler whose area size will be set.
+ * @param w Width of the area.
+ * @param h Height of the area.
+ *
+ * Better clear the tiler before changing it's size.
+ */
+EAPI void               eina_tiler_area_size_set(Eina_Tiler *t, int w, int h);
+
+/**
+ * @brief Define if we need to follow a strict grid of tile or a loosy one
+ *
+ * @param t The tiler to apply the strict rules to.
+ * @param strict Define if it will be strict or loosy
+ *
+ * By default it will be loosy.
+ */
+EAPI void               eina_tiler_strict_set(Eina_Tiler *t, Eina_Bool strict);
+
 /**
  * @brief Adds a rectangle to a tiler.
  *

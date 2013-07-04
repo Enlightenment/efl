@@ -1,3 +1,7 @@
+2013-07-04  Cedric Bail
+
+	* Eina: add eina_tiler_area_size_set and eina_tiler_strict_set to make Eina_Tiler in par with Evas_Tilebuf.
+
 2013-07-03  Shinwoo Kim
 
 	* Ecore: add atoms - enable, disable - to support accessibility

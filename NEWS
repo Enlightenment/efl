@@ -31,6 +31,7 @@ Additions:
      - Add eina_inlist_last
      - Add eina_str_convert_len() to work around broken eina_str_convert()
      - Add eina_file_dup()
+     - Add eina_tiler_area_size_set(), eina_tiler_strict_set()
     * Eet:
      - Add eet_mmap()
      - Add eet_data_descriptor_name_get()
