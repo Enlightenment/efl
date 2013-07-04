@@ -2582,6 +2582,28 @@ AC_ARG_ENABLE([xim],
    ],
    [want_xim="yes"])
 
+AC_ARG_ENABLE([scim],
+   [AC_HELP_STRING([--disable-scim], [disable SCIM.])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_scim="yes"
+    else
+       want_scim="no"
+    fi
+   ],
+   [want_scim="yes"])
+
+AC_ARG_ENABLE([ibus],
+   [AC_HELP_STRING([--disable-ibus], [disable IBUS.])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_ibus="yes"
+    else
+       want_ibus="no"
+    fi
+   ],
+   [want_ibus="yes"])
+
 ### Default values
 
 ### Checks for programs
@@ -2814,7 +2836,7 @@ fi
 # ibus
 
 have_ecore_imf_ibus="no"
-if test "x${want_ecore_imf_ibus}" = "xyes" && test "x${have_glib}" = "xyes" ; then
+if test "x${want_ibus}" = "xyes" && test "x${want_ecore_imf_ibus}" = "xyes" && test "x${have_glib}" = "xyes" ; then
    PKG_CHECK_MODULES([IBUS],
       [ibus-1.0 >= 1.4 glib-2.0],
       [
@@ -2825,11 +2847,12 @@ if test "x${want_ecore_imf_ibus}" = "xyes" && test "x${have_glib}" = "xyes" ; th
 fi
 
 AM_CONDITIONAL([BUILD_ECORE_IMF_IBUS], [test "x${have_ecore_imf_ibus}" = "xyes"])
-EFL_ADD_FEATURE([ECORE_IMF], [ibus], [${want_ecore_imf_ibus}])
+EFL_ADD_FEATURE([ECORE_IMF], [ibus], [${have_ecore_imf_ibus}])
 
 # scim
 
-if test "x${want_ecore_imf_scim}" = "xyes" ; then
+have_ecore_imf_scim="no"
+if test "x${want_scim}" = "xyes" && test "x${want_ecore_imf_scim}" = "xyes" ; then
    PKG_CHECK_MODULES([SCIM],
       [scim],
       [
@@ -2840,7 +2863,7 @@ if test "x${want_ecore_imf_scim}" = "xyes" ; then
 fi
 
 AM_CONDITIONAL([BUILD_ECORE_IMF_SCIM], [test "x${have_ecore_imf_scim}" = "xyes"])
-EFL_ADD_FEATURE([ECORE_IMF], [scim], [${want_ecore_imf_scim}])
+EFL_ADD_FEATURE([ECORE_IMF], [scim], [${have_ecore_imf_scim}])
 
 # xim
 
