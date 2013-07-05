@@ -911,7 +911,7 @@ evas_image_load_specific_frame(Eina_File *f,
         goto on_error;
      }
 
-   gif_frame = malloc(sizeof (Gif_Frame));
+   gif_frame = calloc(1, sizeof (Gif_Frame));
    if (!gif_frame)
      {
         *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
