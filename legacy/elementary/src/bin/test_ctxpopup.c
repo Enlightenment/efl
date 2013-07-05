@@ -76,34 +76,43 @@ _ctxpopup_item_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
    elm_object_item_text_get(event_info));
 }
 
-#define ITEM_NEW(_hov, _label, _icon)                                         \
-   if (_icon)                                                                 \
-     {                                                                        \
-        ic = elm_icon_add(obj);                                               \
-        elm_icon_standard_set(ic, _icon);                                     \
-        elm_image_resizable_set(ic, EINA_FALSE, EINA_FALSE);                   \
-     }                                                                        \
-   else                                                                       \
-      ic = NULL;                                                              \
-   it = elm_ctxpopup_item_append(_hov, _label, ic, _ctxpopup_item_cb, NULL);  \
+static Elm_Object_Item *
+_ctxpopup_item_new(Evas_Object *obj, const char *label, const char *icon)
+{
+   Evas_Object *ic = NULL;
+   Elm_Object_Item *it = NULL;
+
+   if (!obj) return NULL;
+
+   if (icon)
+     {
+        ic = elm_icon_add(obj);
+        elm_icon_standard_set(ic, icon);
+        elm_image_resizable_set(ic, EINA_FALSE, EINA_FALSE);
+     }
+
+   it = elm_ctxpopup_item_append(obj, label, ic, _ctxpopup_item_cb, NULL);
+   return it;
+}
+
 
 static void
 _list_item_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
-   Evas_Object *ctxpopup, *ic;
-   Elm_Object_Item *it;
+   Evas_Object *ctxpopup;
+   Elm_Object_Item *it = NULL;
    Evas_Coord x,y;
 
    ctxpopup = elm_ctxpopup_add(obj);
    evas_object_smart_callback_add(ctxpopup, "dismissed", _dismissed, NULL);
 
-   ITEM_NEW(ctxpopup, "Go to home folder", "home");
-   ITEM_NEW(ctxpopup, "Save file", "file");
-   ITEM_NEW(ctxpopup, "Delete file", "delete");
-   ITEM_NEW(ctxpopup, "Navigate to folder", "folder");
+   _ctxpopup_item_new(ctxpopup, "Go to home folder", "home");
+   _ctxpopup_item_new(ctxpopup, "Save file", "file");
+   _ctxpopup_item_new(ctxpopup, "Delete file", "delete");
+   it = _ctxpopup_item_new(ctxpopup, "Navigate to folder", "folder");
    elm_object_item_disabled_set(it, EINA_TRUE);
-   ITEM_NEW(ctxpopup, "Edit entry", "edit");
-   ITEM_NEW(ctxpopup, "Set date and time", "clock");
+   _ctxpopup_item_new(ctxpopup, "Edit entry", "edit");
+   it = _ctxpopup_item_new(ctxpopup, "Set date and time", "clock");
    elm_object_item_disabled_set(it, EINA_TRUE);
 
    evas_pointer_canvas_xy_get(evas_object_evas_get(obj), &x, &y);
@@ -116,20 +125,20 @@ _list_item_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED
 static void
 _list_item_cb2(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
-   Evas_Object *ctxpopup, *ic;
-   Elm_Object_Item *it;
+   Evas_Object *ctxpopup;
+   Elm_Object_Item *it = NULL;
    Evas_Coord x,y;
 
    ctxpopup = elm_ctxpopup_add(obj);
    evas_object_smart_callback_add(ctxpopup, "dismissed", _dismissed, NULL);
 
-   ITEM_NEW(ctxpopup, NULL, "home");
-   ITEM_NEW(ctxpopup, NULL, "file");
-   ITEM_NEW(ctxpopup, NULL, "delete");
-   ITEM_NEW(ctxpopup, NULL, "folder");
-   ITEM_NEW(ctxpopup, NULL, "edit");
+   _ctxpopup_item_new(ctxpopup, NULL, "home");
+   _ctxpopup_item_new(ctxpopup, NULL, "file");
+   _ctxpopup_item_new(ctxpopup, NULL, "delete");
+   _ctxpopup_item_new(ctxpopup, NULL, "folder");
+   it = _ctxpopup_item_new(ctxpopup, NULL, "edit");
    elm_object_item_disabled_set(it, EINA_TRUE);
-   ITEM_NEW(ctxpopup, NULL, "clock");
+   _ctxpopup_item_new(ctxpopup, NULL, "clock");
 
    evas_pointer_canvas_xy_get(evas_object_evas_get(obj), &x, &y);
    evas_object_size_hint_max_set(ctxpopup, 240, 240);
@@ -141,20 +150,20 @@ _list_item_cb2(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSE
 static void
 _list_item_cb3(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
-   Evas_Object *ctxpopup, *ic;
-   Elm_Object_Item *it;
+   Evas_Object *ctxpopup;
+   Elm_Object_Item *it = NULL;
    Evas_Coord x,y;
 
    ctxpopup = elm_ctxpopup_add(obj);
    evas_object_smart_callback_add(ctxpopup, "dismissed", _dismissed, NULL);
 
-   ITEM_NEW(ctxpopup, "Eina", NULL);
-   ITEM_NEW(ctxpopup, "Eet", NULL);
-   ITEM_NEW(ctxpopup, "Evas", NULL);
-   ITEM_NEW(ctxpopup, "Ecore", NULL);
+   _ctxpopup_item_new(ctxpopup, "Eina", NULL);
+   _ctxpopup_item_new(ctxpopup, "Eet", NULL);
+   _ctxpopup_item_new(ctxpopup, "Evas", NULL);
+   it = _ctxpopup_item_new(ctxpopup, "Ecore", NULL);
    elm_object_item_disabled_set(it, EINA_TRUE);
-   ITEM_NEW(ctxpopup, "Embryo", NULL);
-   ITEM_NEW(ctxpopup, "Edje", NULL);
+   _ctxpopup_item_new(ctxpopup, "Embryo", NULL);
+   _ctxpopup_item_new(ctxpopup, "Edje", NULL);
 
    evas_pointer_canvas_xy_get(evas_object_evas_get(obj), &x, &y);
    evas_object_move(ctxpopup, x, y);
@@ -165,8 +174,7 @@ _list_item_cb3(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSE
 static void
 _list_item_cb4(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
-   Evas_Object *ctxpopup, *ic;
-   Elm_Object_Item *it;
+   Evas_Object *ctxpopup;
    Evas_Coord x,y;
 
    ctxpopup = elm_ctxpopup_add(obj);
@@ -174,20 +182,18 @@ _list_item_cb4(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSE
 
    elm_ctxpopup_horizontal_set(ctxpopup, EINA_TRUE);
 
-   ITEM_NEW(ctxpopup, NULL, "home");
-   ITEM_NEW(ctxpopup, NULL, "file");
-   ITEM_NEW(ctxpopup, NULL, "delete");
-   ITEM_NEW(ctxpopup, NULL, "folder");
-   ITEM_NEW(ctxpopup, NULL, "edit");
-   ITEM_NEW(ctxpopup, NULL, "clock");
+   _ctxpopup_item_new(ctxpopup, NULL, "home");
+   _ctxpopup_item_new(ctxpopup, NULL, "file");
+   _ctxpopup_item_new(ctxpopup, NULL, "delete");
+   _ctxpopup_item_new(ctxpopup, NULL, "folder");
+   _ctxpopup_item_new(ctxpopup, NULL, "edit");
+   _ctxpopup_item_new(ctxpopup, NULL, "clock");
 
    evas_pointer_canvas_xy_get(evas_object_evas_get(obj), &x, &y);
    evas_object_size_hint_max_set(ctxpopup, 240, 240);
    evas_object_move(ctxpopup, x, y);
    evas_object_show(ctxpopup);
    _print_current_dir(ctxpopup);
-
-   (void)it;
 }
 
 
@@ -322,7 +328,6 @@ test_ctxpopup(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    elm_list_mode_set(list, ELM_LIST_COMPRESS);
    evas_object_smart_callback_add(list, "selected", _list_clicked, NULL);
 
-#undef ITEM_NEW
    elm_list_item_append(list, "Ctxpopup with icons and labels", NULL, NULL,
                         _list_item_cb, NULL);
    elm_list_item_append(list, "Ctxpopup with icons only", NULL, NULL,
