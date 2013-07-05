@@ -1228,22 +1228,14 @@ _eldbus_connection_free(Eldbus_Connection *conn)
    free(conn);
 }
 
-static void
-_eldbus_connection_unref(Eldbus_Connection *conn)
-{
-   DBG("Connection %p: unref (currently at %d refs)",
-       conn, conn->refcount);
-
-   if (--conn->refcount > 0) return;
-   _eldbus_connection_free(conn);
-}
-
 EAPI void
 eldbus_connection_unref(Eldbus_Connection *conn)
 {
    ELDBUS_CONNECTION_CHECK(conn);
    DBG("conn=%p, pre-refcount=%d", conn, conn->refcount);
-   _eldbus_connection_unref(conn);
+   if (--conn->refcount > 0)
+      return;
+   _eldbus_connection_free(conn);
 }
 
 EAPI void
