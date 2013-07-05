@@ -274,7 +274,7 @@ _on_action_invoked(void *data EINA_UNUSED,
         return;
      }
 
-   d = malloc(sizeof(*d));
+   d = calloc(1, sizeof(*d));
 
    if (!eldbus_message_arguments_get(msg, "us", &(d->id), &aux))
      {
