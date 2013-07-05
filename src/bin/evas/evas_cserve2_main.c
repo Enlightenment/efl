@@ -94,8 +94,8 @@ _cserve2_client_open(Client *client)
    cserve2_cache_file_open(client, msg->file_id, path, key, msg->base.rid);
 
    if (!msg->has_load_opts)
-     cserve2_cache_image_opts_set(client, msg->base.rid,
-                                  msg->file_id, msg->image_id, NULL);
+     cserve2_cache_image_entry_create(client, msg->base.rid,
+                                      msg->file_id, msg->image_id, NULL);
    else
      {
         // FIXME: Check message size first?
@@ -119,8 +119,9 @@ _cserve2_client_open(Client *client)
         DBG("\tdegree: %d", opts->degree);
         DBG("\torientation: %d", opts->orientation);
 
-        cserve2_cache_image_opts_set(client, msg->base.rid,
-                                     msg->file_id, msg->image_id, opts);
+        cserve2_cache_image_entry_create(client, msg->base.rid,
+                                         msg->file_id, msg->image_id,
+                                         opts);
      }
 }
 
