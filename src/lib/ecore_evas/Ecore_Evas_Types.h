@@ -10,6 +10,7 @@
 #ifndef _ECORE_X_H
 #define _ECORE_X_WINDOW_PREDEF
 typedef unsigned int Ecore_X_Window;
+typedef unsigned int Ecore_X_Pixmap;
 #endif
 
 #ifndef _ECORE_DIRECTFB_H
