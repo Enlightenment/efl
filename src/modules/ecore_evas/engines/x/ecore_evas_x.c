@@ -3671,7 +3671,7 @@ ecore_evas_software_x11_pixmap_new_internal(const char *disp_name, Ecore_X_Windo
         einfo->info.screen = NULL;
 # endif
 
-        if (argb)
+        if ((argb) && (ee->prop.window))
           {
              Ecore_X_Window_Attributes at;
 
