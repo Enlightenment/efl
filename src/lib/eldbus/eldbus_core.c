@@ -756,26 +756,22 @@ static Eina_Bool
 eldbus_idler(void *data)
 {
    Eldbus_Connection *conn = data;
-   DBusConnection *dbus_conn;
 
    DBG("Connection@%p: Dispatch status: %d", conn,
-      dbus_connection_get_dispatch_status(conn->dbus_conn));
+       dbus_connection_get_dispatch_status(conn->dbus_conn));
 
-   if (DBUS_DISPATCH_COMPLETE ==
-       dbus_connection_get_dispatch_status(conn->dbus_conn))
+   if (dbus_connection_get_dispatch_status(conn->dbus_conn) ==
+       DBUS_DISPATCH_COMPLETE)
      {
         DBG("Connection@%p: Dispatch complete, idler@%p finishing",
-           conn, conn->idler);
+            conn, conn->idler);
         conn->idler = NULL;
         return ECORE_CALLBACK_CANCEL;
      }
-   // make local copy of dbus_conn because something in dispatch can set
-   // conn->dbus_conn to NULL, thus losing our handle
-   dbus_conn = conn->dbus_conn;
-   dbus_connection_ref(dbus_conn);
    DBG("Connection@%p: Dispatching", conn);
-   dbus_connection_dispatch(dbus_conn);
-   dbus_connection_unref(dbus_conn);
+   eldbus_connection_ref(conn);
+   dbus_connection_dispatch(conn->dbus_conn);
+   eldbus_connection_unref(conn);
    return ECORE_CALLBACK_RENEW;
 }
 
@@ -784,18 +780,24 @@ cb_dispatch_status(DBusConnection *dbus_conn EINA_UNUSED, DBusDispatchStatus new
 {
    Eldbus_Connection *conn = data;
 
+   if (!conn->refcount)
+     {
+        DBG("Connection[%p] being freed, dispatch blocked", conn);
+        return;
+     }
+
    DBG("Connection@%p: Dispatch status: %d", conn, new_status);
 
    if ((new_status == DBUS_DISPATCH_DATA_REMAINS) && (!conn->idler))
      {
         conn->idler = ecore_idler_add(eldbus_idler, conn);
         DBG("Connection@%p: Adding idler@%p to handle remaining dispatch data",
-           conn, conn->idler);
+            conn, conn->idler);
      }
    else if ((new_status != DBUS_DISPATCH_DATA_REMAINS) && (conn->idler))
      {
         DBG("Connection@%p: No remaining dispatch data, clearing idler@%p",
-           conn, conn->idler);
+            conn, conn->idler);
 
         ecore_idler_del(conn->idler);
         conn->idler = NULL;
@@ -1010,14 +1012,14 @@ _connection_get(Eldbus_Connection_Type type, const char *address)
         return NULL;
      }
 
-   eldbus_connection_setup(conn);
    conn->type = type;
    conn->refcount = 1;
    EINA_MAGIC_SET(conn, ELDBUS_CONNECTION_MAGIC);
    conn->names = eina_hash_string_superfast_new(NULL);
+   eldbus_connection_setup(conn);
 
    eldbus_signal_handler_add(conn, NULL, DBUS_PATH_LOCAL, DBUS_INTERFACE_LOCAL,
-                            "Disconnected", _disconnected, conn);
+                             "Disconnected", _disconnected, conn);
    obj = eldbus_object_get(conn, ELDBUS_FDO_BUS, ELDBUS_FDO_PATH);
    conn->fdo_proxy = eldbus_proxy_get(obj, ELDBUS_FDO_INTERFACE);
 
@@ -1201,6 +1203,7 @@ _eldbus_connection_free(Eldbus_Connection *conn)
      }
 
    EINA_MAGIC_SET(conn, EINA_MAGIC_NONE);
+   //will trigger a cb_dispatch_status()
    dbus_connection_close(conn->dbus_conn);
    dbus_connection_unref(conn->dbus_conn);
    conn->dbus_conn = NULL;

@@ -12,6 +12,9 @@
 static int _client_log_dom = -1;
 #define ERR(...)      EINA_LOG_DOM_ERR(_client_log_dom, __VA_ARGS__)
 
+static Eldbus_Connection *conn = NULL;
+static Ecore_Timer *timeout = NULL;
+
 static void
 _on_alive(void *context EINA_UNUSED, const Eldbus_Message *msg EINA_UNUSED)
 {
@@ -53,7 +56,12 @@ test(void)
    static int n = 0;
    n++;
    if (n >= NTESTS)
-    printf("Passed in all tests\n");
+     {
+        printf("Passed in all tests\nExiting...\n");
+        eldbus_connection_unref(conn);
+        conn = NULL;
+        ecore_main_loop_quit();
+     }
    else
     printf("Passed in %d/%d tests\n", n, NTESTS);
 }
@@ -270,14 +278,15 @@ on_name_owner_changed(void *data EINA_UNUSED, const char *bus, const char *old_i
 static Eina_Bool
 finish(void *data EINA_UNUSED)
 {
+   ERR("Timeout\nSome error happened or server is taking too much time to respond.");
    ecore_main_loop_quit();
+   timeout = NULL;
    return ECORE_CALLBACK_CANCEL;
 }
 
 int
 main(void)
 {
-   Eldbus_Connection *conn;
    Eldbus_Object *obj;
    Eldbus_Proxy *proxy;
 
@@ -317,11 +326,14 @@ main(void)
 
    eldbus_name_owner_changed_callback_add(conn, BUS, on_name_owner_changed,
                                          conn, EINA_TRUE);
-   ecore_timer_add(30, finish, NULL);
+   timeout = ecore_timer_add(30, finish, NULL);
 
    ecore_main_loop_begin();
 
-   eldbus_connection_unref(conn);
+   if (timeout)
+      ecore_timer_del(timeout);
+   if (conn)
+      eldbus_connection_unref(conn);
 
    eldbus_shutdown();
    ecore_shutdown();
