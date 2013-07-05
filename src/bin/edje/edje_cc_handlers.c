@@ -8291,32 +8291,39 @@ st_collections_group_parts_part_description_map_perspective_on(void)
 static void
 st_collections_group_parts_part_description_map_color(void)
 {
+   Edje_Map_Color *color;
+   Edje_Map_Color tmp;
+
    check_arg_count(5);
 
-   Edje_Map_Color *color = mem_alloc(SZ(Edje_Map_Color));
+   tmp.idx = parse_int(0);
+   tmp.r = parse_int_range(1, 0, 255);
+   tmp.g = parse_int_range(2, 0, 255);
+   tmp.b = parse_int_range(3, 0, 255);
+   tmp.a = parse_int_range(4, 0, 255);
+
+   Eina_List *l;
+   Edje_Map_Color *ex_color;
+   EINA_LIST_FOREACH(current_desc->map.colors, l, ex_color)
+     {
+        if (ex_color->idx != tmp.idx) continue;
+        ex_color->r = tmp.r;
+        ex_color->g = tmp.g;
+        ex_color->b = tmp.b;
+        ex_color->a = tmp.a;
+        return;
+     }
+
+   color = mem_alloc(SZ(Edje_Map_Color));
    if (!color)
      {
         ERR("not enough memory");
         exit(-1);
         return;
      }
-   color->idx = parse_int(0);
-   color->r = parse_int_range(1, 0, 255);
-   color->g = parse_int_range(2, 0, 255);
-   color->b = parse_int_range(3, 0, 255);
-   color->a = parse_int_range(4, 0, 255);
 
-   Eina_List *l;
-   Edje_Map_Color *ex_color;
-   EINA_LIST_FOREACH(current_desc->map.colors, l, ex_color)
-     {
-        if (ex_color->idx != color->idx) continue;
-        ex_color->r = color->r;
-        ex_color->g = color->g;
-        ex_color->b = color->b;
-        ex_color->a = color->a;
-        return;
-     }
+   *color = tmp;
+
    current_desc->map.colors = eina_list_append(current_desc->map.colors, color);
 }
 
