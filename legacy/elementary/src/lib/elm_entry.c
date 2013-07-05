@@ -839,7 +839,7 @@ _elm_entry_smart_on_focus(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Evas_Object *top;
-   Eina_Bool top_is_win;
+   Eina_Bool top_is_win = EINA_FALSE;
    if (ret) *ret = EINA_FALSE;
 
    Elm_Entry_Smart_Data *sd = _pd;
