@@ -48,6 +48,12 @@ Evas_Object *gl_access_content_get(void *data __UNUSED__, Evas_Object *obj, cons
    return bt;
 }
 
+static void
+gl_del(void *data, Evas_Object *obj __UNUSED__)
+{
+	free(data);
+}
+
 static Elm_Gengrid_Item_Class *gic;
 
 Evas_Object *
@@ -93,7 +99,7 @@ Evas_Object *gl_access_content_full_get(void *data __UNUSED__, Evas_Object *obj,
    gic->func.text_get = NULL;
    gic->func.content_get = grid_access_content_get;
    gic->func.state_get = NULL;
-   gic->func.del = NULL;
+   gic->func.del = gl_del;
 
    for (i = 0; i < 4; i++)
      {
@@ -176,14 +182,14 @@ test_access(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    itc1->func.text_get = gl_access_text_get;
    itc1->func.content_get  = gl_access_content_get;
    itc1->func.state_get = NULL;
-   itc1->func.del       = NULL;
+   itc1->func.del       = gl_del;
 
    itc2 = elm_genlist_item_class_new();
    itc2->item_style     = "full";
    itc2->func.text_get = NULL;
    itc2->func.content_get  = gl_access_content_full_get;
    itc2->func.state_get = NULL;
-   itc2->func.del       = NULL;
+   itc2->func.del       = gl_del;
 
    for (i = 1; i < 10; i++)
      {
