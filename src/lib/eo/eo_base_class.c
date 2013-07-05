@@ -407,7 +407,7 @@ _ev_cb_del(Eo *obj, void *class_data, va_list *list)
           }
      }
 
-   ERR("Callback of object %p with function %p and data %p not found.", obj, func, user_data);
+   DBG("Callback of object %p with function %p and data %p not found.", obj, func, user_data);
 }
 
 static void
@@ -454,7 +454,7 @@ _ev_cb_array_del(Eo *obj, void *class_data, va_list *list)
           }
      }
 
-   ERR("Callback of object %p with function array %p and data %p not found.", obj, array, user_data);
+   DBG("Callback of object %p with function array %p and data %p not found.", obj, array, user_data);
 }
 
 static void
