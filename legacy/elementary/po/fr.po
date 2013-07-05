@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-07-04 15:02+0900\n"
+"POT-Creation-Date: 2013-07-05 08:25+0900\n"
 "PO-Revision-Date: 2013-06-20 07:08+0000\n"
 "Last-Translator: Eliovir <Unknown>\n"
 "Language-Team: French <sansgourou@gmail.com>\n"
@@ -48,7 +48,7 @@ msgid "Clicked"
 msgstr "Cliqué"
 
 #: src/lib/elm_button.c:281 src/lib/elm_check.c:219 src/lib/elm_gengrid.c:694
-#: src/lib/elm_genlist.c:1423 src/lib/elm_list.c:1471 src/lib/elm_radio.c:264
+#: src/lib/elm_genlist.c:1423 src/lib/elm_list.c:1476 src/lib/elm_radio.c:264
 #: src/lib/elm_spinner.c:526 src/lib/elm_toolbar.c:1995
 msgid "State: Disabled"
 msgstr "État : désactivé"
