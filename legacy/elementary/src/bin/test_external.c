@@ -120,7 +120,6 @@ _bt_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__
    elm_object_disabled_set(bt3, EINA_TRUE);
 
    pb1 = edje_object_part_external_object_get(edje, "ext_pbar1");
-   pb1 = edje_object_part_external_object_get(edje, "ext_pbar1");
    pb2 = edje_object_part_external_object_get(edje, "ext_pbar2");
    pb3 = edje_object_part_external_object_get(edje, "ext_pbar3");
    pb4 = edje_object_part_external_object_get(edje, "ext_pbar4");
