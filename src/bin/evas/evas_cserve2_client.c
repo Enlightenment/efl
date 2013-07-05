@@ -82,6 +82,7 @@ parse_input_open(int *size)
    msg.file_id = file_id;
    msg.path_offset = 0;
    msg.key_offset = path_len;
+   msg.has_load_opts = EINA_FALSE;
 
    memcpy(buf, &msg, sizeof(msg));
    memcpy(buf + sizeof(msg), path, path_len);

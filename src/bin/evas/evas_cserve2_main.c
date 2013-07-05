@@ -260,6 +260,7 @@ cserve2_client_accept(int fd)
             eina_error_msg_get(err));
         free(client);
         close(fd);
+        return;
      }
 
    cserve2_fd_watch_add(fd, FD_READ | FD_ERROR, cserve2_message_handler,

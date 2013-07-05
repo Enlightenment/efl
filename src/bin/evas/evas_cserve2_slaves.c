@@ -523,6 +523,7 @@ cserve2_slave_thread_run(Slave_Thread_Cb thread_cb, void *thread_data, Slave_Rea
    if (!sd)
      {
         ERR("Could not create Slave_Thread_Data.");
+        free(s);
         return NULL;
      }
 
