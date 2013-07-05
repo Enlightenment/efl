@@ -354,7 +354,7 @@ test_naviframe_complex(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void 
         evas_object_data_set(o, "page1", elm_naviframe_item_push(o, "Page 1", NULL, btn, content, NULL));
 
         it = elm_naviframe_item_simple_push(nf, o);
-        it = elm_toolbar_item_append(tb, NULL, label[x], _promote, it);
+        elm_toolbar_item_append(tb, NULL, label[x], _promote, it);
         evas_object_show(o);
      }
 
