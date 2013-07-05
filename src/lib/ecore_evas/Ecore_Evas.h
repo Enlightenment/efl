@@ -922,13 +922,32 @@ EAPI void        ecore_evas_name_class_get(const Ecore_Evas *ee, const char **n,
  */
 EAPI Ecore_Window ecore_evas_window_get(const Ecore_Evas *ee);
 
-
 /* engine/target specific init calls */
 EAPI Ecore_Evas     *ecore_evas_software_x11_new(const char *disp_name, Ecore_X_Window parent, int x, int y, int w, int h);
 EAPI Ecore_X_Window  ecore_evas_software_x11_window_get(const Ecore_Evas *ee);
 EAPI void            ecore_evas_software_x11_direct_resize_set(Ecore_Evas *ee, Eina_Bool on);
 EAPI Eina_Bool       ecore_evas_software_x11_direct_resize_get(const Ecore_Evas *ee);
 EAPI void            ecore_evas_software_x11_extra_event_window_add(Ecore_Evas *ee, Ecore_X_Window win);
+
+/**
+ * @brief Create a new Ecore_Evas which does not contain an XWindow. It will 
+ * only contain an XPixmap to render to
+ * 
+ * @since 1.8
+ */
+EAPI Ecore_Evas     *ecore_evas_software_x11_pixmap_new(const char *disp_name, Ecore_X_Window parent, int x, int y, int w, int h);
+
+/**
+ * @brief Returns the underlying Ecore_X_Pixmap used in the Ecore_Evas
+ * 
+ * @param ee The Ecore_Evas whose pixmap is desired.
+ * @return The underlying Ecore_X_Pixmap
+ * 
+ * @warning Support for this depends on the underlying windowing system.
+ * 
+ * @since 1.8
+ */
+EAPI Ecore_X_Pixmap ecore_evas_software_x11_pixmap_get(const Ecore_Evas *ee);
 
 #define ECORE_EVAS_GL_X11_OPT_NONE         0
 #define ECORE_EVAS_GL_X11_OPT_INDIRECT     1
@@ -949,6 +968,26 @@ EAPI void            ecore_evas_gl_x11_direct_resize_set(Ecore_Evas *ee, Eina_Bo
 EAPI Eina_Bool       ecore_evas_gl_x11_direct_resize_get(const Ecore_Evas *ee);
 EAPI void            ecore_evas_gl_x11_extra_event_window_add(Ecore_Evas *ee, Ecore_X_Window win);
 EAPI void            ecore_evas_gl_x11_pre_post_swap_callback_set(const Ecore_Evas *ee, void *data, void (*pre_cb) (void *data, Evas *e), void (*post_cb) (void *data, Evas *e));
+
+/**
+ * @brief Create a new Ecore_Evas which does not contain an XWindow. It will 
+ * only contain an XPixmap to render to
+ * 
+ * @since 1.8
+ */
+EAPI Ecore_Evas     *ecore_evas_gl_x11_pixmap_new(const char *disp_name, Ecore_X_Window parent, int x, int y, int w, int h);
+
+   /**
+ * @brief Returns the underlying Ecore_X_Pixmap used in the Ecore_Evas
+ * 
+ * @param ee The Ecore_Evas whose pixmap is desired.
+ * @return The underlying Ecore_X_Pixmap
+ * 
+ * @warning Support for this depends on the underlying windowing system.
+ * 
+ * @since 1.8
+ */
+EAPI Ecore_X_Pixmap ecore_evas_gl_x11_pixmap_get(const Ecore_Evas *ee);
 
 EAPI Ecore_Evas     *ecore_evas_xrender_x11_new(const char *disp_name, Ecore_X_Window parent, int x, int y, int w, int h) EINA_DEPRECATED;
 EAPI Ecore_X_Window  ecore_evas_xrender_x11_window_get(const Ecore_Evas *ee) EINA_DEPRECATED;
