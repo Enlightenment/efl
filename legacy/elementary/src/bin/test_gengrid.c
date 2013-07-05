@@ -261,6 +261,7 @@ grid_state_get(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const char *p
 void
 grid_del(void *data __UNUSED__, Evas_Object *obj __UNUSED__)
 {
+	free(data);
 }
 
 static void
@@ -330,7 +331,7 @@ create_gengrid(Evas_Object *obj, int items)
    gic->func.text_get = grid_text_get;
    gic->func.content_get = grid_content_get;
    gic->func.state_get = grid_state_get;
-   gic->func.del = grid_del;
+   gic->func.del = NULL;
 
    n = 0;
    for (i = 0; i < items; i++)
@@ -779,7 +780,6 @@ test_gengrid2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_show(ck);
 
    gic = elm_gengrid_item_class_new();
-
    gic->item_style = "default";
    gic->func.text_get = grid_text_get;
    gic->func.content_get = grid_content_get;
@@ -830,7 +830,7 @@ test_gengrid3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    gic->func.text_get = grid_text_get;
    gic->func.content_get = grid_content_get;
    gic->func.state_get = grid_state_get;
-   gic->func.del = grid_del;
+   gic->func.del = NULL;
 
    ggic = elm_gengrid_item_class_new();
    ggic->item_style = "group_index";
@@ -865,12 +865,6 @@ test_gengrid3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
 /* test gengrid item styles */
 
-static void
-_del_cb(void *data, Evas_Object *obj __UNUSED__)
-{
-   free(data);
-}
-
 static Evas_Object *
 _gengrid_create(Evas_Object *obj, int items, const char *style)
 {
@@ -897,7 +891,7 @@ _gengrid_create(Evas_Object *obj, int items, const char *style)
    ic->func.text_get = grid_text_get;
    ic->func.content_get = grid_content_get;
    ic->func.state_get = NULL;
-   ic->func.del = _del_cb;
+   ic->func.del = grid_del;
 
    n = 0;
    for (i = 0; i < items; i++)
@@ -1023,7 +1017,7 @@ _bring_in2_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *
    gic->func.text_get = grid_text_get;
    gic->func.content_get = grid_content_get;
    gic->func.state_get = grid_state_get;
-   gic->func.del = grid_del;
+   gic->func.del = NULL;
 
    n = 0;
    for (i = 0; i < 5000; i++)
@@ -1068,7 +1062,7 @@ _bring_in1_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *
    gic->func.text_get = grid_text_get;
    gic->func.content_get = grid_content_get;
    gic->func.state_get = grid_state_get;
-   gic->func.del = grid_del;
+   gic->func.del = NULL;
 
    n = 0;
    for (i = 0; i < 5000; i++)
@@ -1114,7 +1108,7 @@ _show2_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
    gic->func.text_get = grid_text_get;
    gic->func.content_get = grid_content_get;
    gic->func.state_get = grid_state_get;
-   gic->func.del = grid_del;
+   gic->func.del = NULL;
 
    n = 0;
    for (i = 0; i < 10000; i++)
@@ -1159,7 +1153,7 @@ _show1_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
    gic->func.text_get = grid_text_get;
    gic->func.content_get = grid_content_get;
    gic->func.state_get = grid_state_get;
-   gic->func.del = grid_del;
+   gic->func.del = NULL;
 
    n = 0;
    for (i = 0; i < 10000; i++)
