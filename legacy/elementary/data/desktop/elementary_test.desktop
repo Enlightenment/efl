@@ -1,11 +1,12 @@
 [Desktop Entry]
 Encoding=UTF-8
+Type=Application
 Name=Elementary Test
 Name[eo]=Provo de Elementary
-Name[ru]=Тест Elementary
+Name[fr]=Test Elementary
 Name[pt]=Testes Elementary
+Name[ru]=Тест Elementary
 Comment=Elementary Test Application
-Comment[ru]=Тестовое приложение Элементария
 Comment[cs]=Testovací aplikace Elementary
 Comment[eo]=Provoversia aplikaĵo de Elementary
 Comment[es]=Aplicación de pruebas para Elementary
@@ -13,8 +14,8 @@ Comment[fr]=Programme de tests pour Elementary
 Comment[gl]=Aplicativo de probas para Elementary
 Comment[it]=Applicazione di test per Elementary
 Comment[pt]=Aplicação de testes do Elementary
-Exec=elementary_test
+Comment[ru]=Тестовое приложение Элементария
 Icon=elementary
+Exec=elementary_test
 Terminal=false
-Type=Application
 Categories=Development;Utility;
