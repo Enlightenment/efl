@@ -1,10 +1,13 @@
 [Desktop Entry]
+Encoding=UTF-8
 Type=My_Type
 Name=Efreet Test Application
-Name[eo]=Provoversia aplikaĵo Efreet
+Name[eo]=Provoversia aplikaĵo de Efreet
+Name[fr]=Application test pour Efreet
 GenericName=Test Application
 GenericName[eo]=Provoversia aplikaĵo
+GenericName[fr]=Application test
+Icon=TestIcon
 Exec=efreet_test %F %i
 Categories=Test;Enlightenment;
-Icon=TestIcon
 X-Test=Own key
