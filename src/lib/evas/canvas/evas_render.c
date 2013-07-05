@@ -1263,42 +1263,32 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
           {
              if (obj->cur->clipper)
                {
-                  int x, y, w, h;
-
                   evas_object_clip_recalc(obj);
-                  x = obj->cur->cache.clip.x;
-                  y = obj->cur->cache.clip.y;
-                  w = obj->cur->cache.clip.w;
-                  h = obj->cur->cache.clip.h;
 
                   if (obj->is_smart)
                     {
                        Evas_Object *tobj;
 
-		       EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
-			 {
-			   state_write->cache.clip.dirty = EINA_TRUE;
-			 }
-		       EINA_COW_STATE_WRITE_END(obj, state_write, cur);
+                       EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
+                         {
+                            state_write->cache.clip.dirty = EINA_TRUE;
+                         }
+                       EINA_COW_STATE_WRITE_END(obj, state_write, cur);
 
-                       EINA_COW_WRITE_BEGIN(evas_object_map_cow, obj->map, Evas_Object_Map_Data, map_write)
+                       EINA_COW_WRITE_BEGIN(evas_object_map_cow, obj->map,
+                                            Evas_Object_Map_Data, map_write)
                          {
                             tobj = map_write->cur.map_parent;
-                            map_write->cur.map_parent = obj->cur->clipper->map->cur.map_parent;
+                            map_write->cur.map_parent =
+                               obj->cur->clipper->map->cur.map_parent;
                             map_write->cur.map_parent = tobj;
                          }
-                       EINA_COW_WRITE_END(evas_object_map_cow, obj->map, map_write);
+                       EINA_COW_WRITE_END(evas_object_map_cow, obj->map,
+                                          map_write);
                     }
-
-                  RECTS_CLIP_TO_RECT(x, y, w, h,
-                                     obj->cur->clipper->cur->cache.clip.x,
-                                     obj->cur->clipper->cur->cache.clip.y,
-                                     obj->cur->clipper->cur->cache.clip.w,
-                                     obj->cur->clipper->cur->cache.clip.h);
-
-                  e->engine.func->context_clip_set(e->engine.data.output,
-                                                   context,
-                                                   x + off_x, y + off_y, w, h);
+                  _evas_render_mapped_context_clip_set(e, eo_obj, obj, context,
+                                                       proxy_render_data, off_x,
+                                                       off_y);
                }
           }
 //        if (surface == e->engine.data.output)
