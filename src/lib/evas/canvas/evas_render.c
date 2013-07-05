@@ -1295,7 +1295,7 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
           e->engine.func->context_clip_clip(e->engine.data.output,
                                             context,
                                             ecx, ecy, ecw, ech);
-        if (obj->cur->cache.clip.visible)
+        if (obj->cur->cache.clip.visible || !proxy_src_clip)
           {
              obj->layer->evas->engine.func->context_multiplier_unset
                (e->engine.data.output, context);
