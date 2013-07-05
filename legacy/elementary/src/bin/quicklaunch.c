@@ -120,7 +120,6 @@ handle_run(int fd, unsigned long bytes)
    if (argc <= 0)
      {
         CRITICAL("no executable specified");
-        close(fd);
         return;
      }
    
