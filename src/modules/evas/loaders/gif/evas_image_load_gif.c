@@ -187,7 +187,7 @@ _evas_image_load_frame_image_des_info(GifFileType *gif, Image_Entry_Frame *frame
 
 static Eina_Bool
 _evas_image_load_frame_image_data(Eina_File *f,
-                                  const Evas_Image_Load_Opts *opts,
+                                  const Evas_Image_Load_Opts *opts EINA_UNUSED,
                                   Evas_Image_Property *prop,
                                   Evas_Image_Animated *animated,
                                   GifFileType *gif, Image_Entry_Frame *frame, int *error)
@@ -198,8 +198,8 @@ _evas_image_load_frame_image_data(Eina_File *f,
    DATA32         *ptr;
    Gif_Frame      *gif_frame = NULL;
 
-   double          per;
-   double          per_inc;
+//   double          per;
+//   double          per_inc;
    size_t          siz;
    int             intoffset[] = { 0, 4, 2, 1 };
    int             intjump[] = { 8, 8, 4, 2 };
@@ -226,7 +226,9 @@ _evas_image_load_frame_image_data(Eina_File *f,
    cache_h = prop->h;
 
    /* if user don't set scale down, default scale_ratio is 1 */
-   if (opts->scale_down_by > 1) scale_ratio = opts->scale_down_by;
+   // disable scale down by until gif is handled right
+   //if (opts->scale_down_by > 1) scale_ratio = opts->scale_down_by;
+   
    scale_w = w / scale_ratio;
    scale_h = h / scale_ratio;
    scale_x = x / scale_ratio;
@@ -246,7 +248,7 @@ _evas_image_load_frame_image_data(Eina_File *f,
    /* alloc memory according to scaled size */
    for (i = 0; i < scale_h; i++)
      {
-        rows[i] = malloc(w * sizeof(GifPixelType));
+        rows[i] = malloc(scale_w * sizeof(GifPixelType));
         if (!rows[i])
           {
              for (i = 0; i < scale_h; i++)
@@ -262,15 +264,15 @@ _evas_image_load_frame_image_data(Eina_File *f,
           }
      }
 
-   if (scale_ratio > 1)
-     {
-        tmp = malloc(w * sizeof(GifPixelType));
-        if (!tmp)
-          {
-             *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
-             goto error;
-          }
-     }
+//   if (scale_ratio > 1)
+//     {
+//        tmp = malloc(w * sizeof(GifPixelType));
+//        if (!tmp)
+//          {
+//             *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+//             goto error;
+//          }
+//     }
 
    if (gif->Image.Interlace)
      {
@@ -345,8 +347,8 @@ _evas_image_load_frame_image_data(Eina_File *f,
         return EINA_FALSE;
      }
 
-   per_inc = 100.0 / (((double)w) * h);
-   per = 0.0;
+//   per_inc = 100.0 / (((double)w) * h);
+//   per = 0.0;
    cur_h = scale_h;
    cur_w = scale_w;
 
@@ -387,15 +389,130 @@ _evas_image_load_frame_image_data(Eina_File *f,
         else
           {
              Gif_Frame *gif_frame2 = NULL;
+             int xx, yy, xin = 0, yin = 0;
+             
              ptr_src = new_frame->data;
              if (new_frame->info)
                {
                   gif_frame2 = (Gif_Frame *)(new_frame->info);
+                  // the disposal mode of this frame
                   disposal = gif_frame2->frame_info.disposal;
+                  // background rgba color value
                   gif_frame->bg_val = gif_frame2->bg_val;
                   bg_val = gif_frame->bg_val;
-               }
-             switch(disposal) /* we only support disposal flag 0,1,2 */
+#if 1                  
+                  // clip the image desc region to be within current image
+                  // size and note the inset
+                  if (x < 0)
+                    {
+                       w += x; xin = -x; x = 0;
+                    }
+                  if ((x + w) > cache_w)
+                    {
+                       w = cache_w - x;
+                    }
+                  if (y < 0)
+                    {
+                       h += y; yin = -y; y = 0;
+                    }
+                  if ((y + h) > cache_h)
+                    {
+                       h = cache_h - y;
+                    }
+#define PIX(_x, _y) rows[yin + _y][xin + (_x * scale_ratio)]
+#define CMAP(_v) cmap->Colors[_v]
+                  switch (disposal)
+                    {
+                     case 0: // no nothing
+                       memset(ptr, 0, siz);
+                       for (yy = 0; yy < h; yy++)
+                         {
+                            ptr = frame->data;
+                            ptr += ((y + yy) * cache_w) + x;
+                            for (xx = 0; xx < w; xx++)
+                              {
+                                 if (PIX(xx, yy) != alpha)
+                                   {
+                                      r = CMAP(PIX(xx, yy)).Red;
+                                      g = CMAP(PIX(xx, yy)).Green;
+                                      b = CMAP(PIX(xx, yy)).Blue;
+                                      *ptr = ARGB_JOIN(0xff, r, g, b);
+                                   }
+                                 else
+                                   *ptr = 0;
+                                 ptr++;
+                              }
+                         }
+                       break;
+                     case 1: // leave as-is
+                       memcpy(ptr, ptr_src, siz);
+                       for (yy = 0; yy < h; yy++)
+                         {
+                            ptr = frame->data;
+                            ptr += ((y + yy) * cache_w) + x;
+                            for (xx = 0; xx < w; xx++)
+                              {
+                                 if (PIX(xx, yy) != alpha)
+                                   {
+                                      r = CMAP(PIX(xx, yy)).Red;
+                                      g = CMAP(PIX(xx, yy)).Green;
+                                      b = CMAP(PIX(xx, yy)).Blue;
+                                      *ptr = ARGB_JOIN(0xff, r, g, b);
+                                   }
+                                 ptr++;
+                              }
+                         }
+                       break;
+                     case 2: // restore bg
+                       for (yy = 0; yy < cache_h; yy++)
+                         {
+                            for (xx = 0; xx < cache_w; xx++)
+                              {
+                                 *ptr = bg_val;
+                                 ptr++;
+                              }
+                         }
+                       for (yy = 0; yy < h; yy++)
+                         {
+                            ptr = frame->data;
+                            ptr += ((y + yy) * cache_w) + x;
+                            for (xx = 0; xx < w; xx++)
+                              {
+                                 if (PIX(xx, yy) != alpha)
+                                   {
+                                      r = CMAP(PIX(xx, yy)).Red;
+                                      g = CMAP(PIX(xx, yy)).Green;
+                                      b = CMAP(PIX(xx, yy)).Blue;
+                                      *ptr = ARGB_JOIN(0xff, r, g, b);
+                                   }
+                                 ptr++;
+                              }
+                         }
+                       break;
+                     case 3: // previous image
+                       memcpy(ptr, ptr_src, siz);
+                       for (yy = 0; yy < h; yy++)
+                         {
+                            ptr = frame->data;
+                            ptr += ((y + yy) * cache_w) + x;
+                            for (xx = 0; xx < w; xx++)
+                              {
+                                 if (PIX(xx, yy) != alpha)
+                                   {
+                                      r = CMAP(PIX(xx, yy)).Red;
+                                      g = CMAP(PIX(xx, yy)).Green;
+                                      b = CMAP(PIX(xx, yy)).Blue;
+                                      *ptr = ARGB_JOIN(0xff, r, g, b);
+                                   }
+                                 ptr++;
+                              }
+                         }
+                       break;
+                     default:
+                       break;
+                    }
+#else
+             switch (disposal) /* we only support disposal flag 0,1,2 */
                {
                 case 1: /* Do not dispose. need previous frame*/
                   memcpy(ptr, ptr_src, siz);
@@ -409,7 +526,7 @@ _evas_image_load_frame_image_data(Eina_File *f,
                          {
                             if (rows[i][j * scale_ratio] == alpha)
                               {
-                                 ptr++ ;
+                                 ptr++;
                               }
                             else
                               {
@@ -453,7 +570,7 @@ _evas_image_load_frame_image_data(Eina_File *f,
                                    {
                                       if (rows[i][j * scale_ratio] == alpha)
                                         {
-                                           ptr++ ;
+                                           ptr++;
                                         }
                                       else
                                         {
@@ -467,14 +584,15 @@ _evas_image_load_frame_image_data(Eina_File *f,
                          }
                     }
                    break;
+                case 3: /* Restore previous */
                 case 0: /* No disposal specified */
                 default:
                    memset(ptr, 0, siz);
-                   for (i = 0; i < cache_h; i++)
+                   for (i = 0; i < gif_frame2->image_des.h; i++)
                      {
                         if ((i < scale_y) || (i >= (scale_y + cur_h)))
                           {
-                             for (j = 0; j < cache_w; j++)
+                             for (j = 0; j < gif_frame2->image_des.w; j++)
                                {
                                   *ptr = bg_val;
                                   ptr++;
@@ -485,7 +603,7 @@ _evas_image_load_frame_image_data(Eina_File *f,
                              int i1, j1;
                              i1 = i - scale_y;
 
-                             for (j = 0; j < cache_w; j++)
+                             for (j = 0; j < gif_frame2->image_des.w; j++)
                                {
                                   j1 = j - scale_x;
                                   if ((j < scale_x) || (j >= (scale_x + cur_w)))
@@ -497,7 +615,7 @@ _evas_image_load_frame_image_data(Eina_File *f,
                                     {
                                       if (rows[i][j * scale_ratio] == alpha)
                                         {
-                                           ptr++ ;
+                                           ptr++;
                                         }
                                       else
                                         {
@@ -511,6 +629,8 @@ _evas_image_load_frame_image_data(Eina_File *f,
                           }
                      }
                    break;
+               }
+#endif        
                }
           }
      }
@@ -711,7 +831,7 @@ evas_image_load_file_head_gif(void *loader_data,
 			      int *error)
 {
    Evas_Loader_Internal *loader = loader_data;
-   Evas_Image_Load_Opts *load_opts;
+//   Evas_Image_Load_Opts *load_opts;
    Evas_Image_Animated *animated;
    Eina_File *f;
 
@@ -726,7 +846,7 @@ evas_image_load_file_head_gif(void *loader_data,
    int            image_count = 0;
 
    f = loader->f;
-   load_opts = loader->opts;
+//   load_opts = loader->opts;
    animated = loader->animated;
 
    prop->w = 0;
@@ -757,11 +877,12 @@ evas_image_load_file_head_gif(void *loader_data,
    prop->w = gif->SWidth;
    prop->h = gif->SHeight;
    /* support scale down feture in gif*/
-   if (load_opts->scale_down_by > 1)
-     {
-       prop->w /= load_opts->scale_down_by;
-       prop->h /= load_opts->scale_down_by;
-     }
+// disable scale down for gif until gif is handled right   
+//   if (load_opts->scale_down_by > 1)
+//     {
+//       prop->w /= load_opts->scale_down_by;
+//       prop->h /= load_opts->scale_down_by;
+//     }
 
    if ((prop->w < 1) || (prop->h < 1) ||
        (prop->w > IMG_MAX_SIZE) || (prop->h > IMG_MAX_SIZE) ||
