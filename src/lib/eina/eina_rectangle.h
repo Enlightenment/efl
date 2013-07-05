@@ -195,7 +195,6 @@ EAPI void                 eina_rectangle_pool_release(Eina_Rectangle *rect) EINA
  * width and @p H is its height.
  */
 #define EINA_RECTANGLE_SET(Rectangle, X, Y, W, H) \
-  if (Rectangle)				  \
     {						  \
       (Rectangle)->x = X;			  \
       (Rectangle)->y = Y;			  \
