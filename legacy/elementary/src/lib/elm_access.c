@@ -191,7 +191,8 @@ _access_shutdown(void)
 
    initted = 0;
 
-   ELM_SAFE_FREE(mapi, free);
+   /* _elm_module_unload(); could access m->api and try to free(); */
+   ELM_SAFE_FREE(m->api, free);
 }
 
 static Elm_Access_Item *
