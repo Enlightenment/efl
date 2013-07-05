@@ -517,7 +517,7 @@ test_config(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__
 
    if (pd)
      {
-        if (pd->available_profiles)
+        if (pd->available_profiles[0])
           elm_win_available_profiles_set(win,
                                          pd->available_profiles,
                                          pd->count);
