@@ -1935,7 +1935,7 @@ _x11_elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data,
    Ecore_Evas *ee;
    int x, y, x2 = 0, y2 = 0, x3, y3;
    Evas_Object *icon = NULL;
-   int w, h;
+   int w = 0, h = 0;
    Ecore_X_Atom actx;
 
    _x11_elm_cnp_init();
