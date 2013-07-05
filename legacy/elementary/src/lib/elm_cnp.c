@@ -3837,8 +3837,8 @@ elm_drag_item_container_del_internal(Evas_Object *obj, Eina_Bool full)
              evas_object_event_callback_del_full
                 (obj, EVAS_CALLBACK_MOUSE_DOWN, _cont_obj_mouse_down, st);
 
-             free(st);
              cont_drag_tg = eina_list_remove(cont_drag_tg, st);
+             free(st);
           }
 
         return EINA_TRUE;
