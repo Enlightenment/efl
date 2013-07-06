@@ -345,13 +345,35 @@ _btn_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUS
 }
 #endif
 
+static char *
+_space_removed_string_get(const char *name)
+{
+   int i = 0, j = 0, len;
+   char *ret;
+
+   len = strlen(name);
+   ret = calloc(sizeof(char), len);
+
+   while (name[i])
+     {
+        if (name[i] != ' ')
+          {
+             ret[j] = name[i];
+             j++;
+          }
+        i++;
+     }
+
+   return ret;
+}
+
 static void
-my_win_main(char *autorun, Eina_Bool test_win_only)
+my_win_main(const char *autorun, Eina_Bool test_win_only)
 {
    Evas_Object *bg = NULL, *bx0 = NULL, *bx1 = NULL, *lb = NULL;
    Evas_Object *fr = NULL, *tg = NULL, *sc = NULL, *en = NULL;
    //Evas_Object *btn = NULL;
-   Eina_List *l;
+   Eina_List *l = NULL;
    struct elm_test *t = NULL;
 
    if (test_win_only) goto add_tests;
@@ -771,15 +793,26 @@ add_tests:
 
    if (autorun)
      {
+        char *tmp = _space_removed_string_get(autorun);
         EINA_LIST_FOREACH(tests, l, t)
           {
-             if ((t->name) && (t->cb) && (!strcasecmp(t->name, autorun)))
+             char *name;
+
+             if (!t->name || !t->cb) continue;
+
+             name = _space_removed_string_get(t->name);
+             if (!strcasecmp(name, tmp))
                {
                   t->cb(NULL, NULL, NULL);
+                  free(name);
                   break;
                }
+             free(name);
           }
+        free(tmp);
 
+        if (!l)
+          ERR("'%s' is not valid test case name\n", autorun);
      }
    tt = t;
 
@@ -787,6 +820,9 @@ add_tests:
      {
         EINA_LIST_FREE(tests, t)
           free(t);
+
+        if (!l)
+          elm_exit();
 
         return;
      }
