@@ -709,6 +709,8 @@ _button_item_add(Elm_Multibuttonentry_Smart_Data *sd,
 
    // append item list
    item = elm_widget_item_new(obj, Elm_Multibuttonentry_Item);
+   if (!item) return NULL;
+
    elm_widget_item_del_pre_hook_set(item, _item_del_pre_hook);
    elm_widget_item_text_set_hook_set(item, _item_text_set_hook);
    elm_widget_item_text_get_hook_set(item, _item_text_get_hook);
