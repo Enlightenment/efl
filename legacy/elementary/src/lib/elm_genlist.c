@@ -3309,7 +3309,6 @@ _swipe_do(Elm_Gen_Item *it)
    int i, sum = 0;
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
 
-   if (!it) return;
    if ((it->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY) ||
        elm_widget_item_disabled_get(it)) return;
 
