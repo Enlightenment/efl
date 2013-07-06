@@ -1489,10 +1489,11 @@ _items_change(Elm_Toolbar_Item *reorder_from, Elm_Toolbar_Item *reorder_to)
    Elm_Toolbar_Item *prev = NULL, *next = NULL;
    int tmp;
 
+   if (!reorder_from) return;
    ELM_TOOLBAR_DATA_GET(WIDGET(reorder_from), sd);
    if (reorder_from == reorder_to) return;
 
-   if ((reorder_from) && (reorder_to) &&
+   if ((reorder_to) &&
        (!reorder_from->separator) && (!reorder_to->separator))
      {
         prev = ELM_TOOLBAR_ITEM_FROM_INLIST
