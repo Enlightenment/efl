@@ -382,7 +382,6 @@ libelementary_la_SOURCES = \
 elm_gen_common.h \
 elm_priv.h \
 els_box.h \
-els_pan.h \
 elc_ctxpopup.c \
 elc_fileselector.c \
 elc_fileselector_button.c \
@@ -471,7 +470,6 @@ elm_widget.c \
 elm_win.c \
 els_box.c \
 els_cursor.c \
-els_pan.c \
 els_tooltip.c \
 elu_ews_wm.c
 
