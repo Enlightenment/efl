@@ -335,7 +335,7 @@ void
 test_access3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    char buf[PATH_MAX];
-   Evas_Object *win, *ly, *btn;
+   Evas_Object *win, *box, *lbl, *ly, *btn;
    Evas_Object *red_ao, *green_ao, *blue_ao, *black_ao, *to;
 
    win = elm_win_util_standard_add("access", "Access");
@@ -344,11 +344,26 @@ test_access3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
 
    elm_config_access_set(EINA_TRUE);
 
-   ly = elm_layout_add(win);
+   box = elm_box_add(win);
+   evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, box);
+   evas_object_show(box);
+
+   lbl = elm_label_add(box);
+   elm_object_text_set(lbl,
+                       "Move a mount pointer to any object and press F1 to"
+                       "move access highlight to the next object.");
+   evas_object_size_hint_weight_set(lbl, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(lbl, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(box, lbl);
+   evas_object_show(lbl);
+
+   ly = elm_layout_add(box);
    snprintf(buf, sizeof(buf), "%s/objects/test.edj", elm_app_data_dir_get());
    elm_layout_file_set(ly, buf, "access_color_page");
    evas_object_size_hint_weight_set(ly, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, ly);
+   evas_object_size_hint_align_set(ly, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(box, ly);
    evas_object_show(ly);
 
    btn = elm_button_add(win);
