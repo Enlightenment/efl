@@ -185,6 +185,98 @@ _evas_image_load_frame_image_des_info(GifFileType *gif, Image_Entry_Frame *frame
    return EINA_TRUE;
 }
 
+#define PIX(_x, _y) rows[yin + _y][xin + _x]
+#define CMAP(_v) cmap->Colors[_v]
+
+static void
+_expand_gif_rows(GifRowType *rows, ColorMapObject *cmap, DATA32 *ptr,
+                 int rowpix, int xin, int yin, int w, int h,
+                 int x, int y, int alpha, Eina_Bool overwrite)
+{
+   int xx, yy, pix;
+   DATA32 *p;
+   
+   if (alpha >= 0)
+     {
+        if (overwrite)
+          {
+             for (yy = 0; yy < h; yy++)
+               {
+                  p = ptr + ((y + yy) * rowpix) + x;
+                  for (xx = 0; xx < w; xx++)
+                    {
+                       pix = PIX(xx, yy);
+                       if (pix != alpha)
+                         *p = ARGB_JOIN(0xff, CMAP(pix).Red,
+                                        CMAP(pix).Green, CMAP(pix).Blue);
+                       else *p = 0;
+                       p++;
+                    }
+               }
+          }
+        else
+          {
+             for (yy = 0; yy < h; yy++)
+               {
+                  p = ptr + ((y + yy) * rowpix) + x;
+                  for (xx = 0; xx < w; xx++)
+                    {
+                       pix = PIX(xx, yy);
+                       if (pix != alpha)
+                         *p = ARGB_JOIN(0xff, CMAP(pix).Red,
+                                        CMAP(pix).Green, CMAP(pix).Blue);
+                       p++;
+                    }
+               }
+          }
+     }
+   else
+     {
+        for (yy = 0; yy < h; yy++)
+          {
+             p = ptr + ((y + yy) * rowpix) + x;
+             for (xx = 0; xx < w; xx++)
+               {
+                  pix = PIX(xx, yy);
+                  *p = ARGB_JOIN(0xff, CMAP(pix).Red,
+                                 CMAP(pix).Green, CMAP(pix).Blue);
+                  p++;
+               }
+          }
+     }
+}
+
+static void
+_copy_pixels(DATA32 *ptr_src, DATA32 *ptr, int rowpix,
+             int x, int y, int w, int h)
+{
+   DATA32 *p1, *p2, *pe;
+   int yy;
+   
+   if ((w <= 0) || (h <= 0)) return;
+   for (yy = 0; yy < h; yy++)
+     {
+        p1 = ptr_src + ((y + yy) * rowpix) + x;
+        p2 = ptr + ((y + yy) * rowpix) + x;
+        for (pe = p2 + w; p2 < pe;) *p2++ = *p1++;
+     }
+}
+
+static void
+_fill_pixels(DATA32 val, DATA32 *ptr, int rowpix,
+             int x, int y, int w, int h)
+{
+   DATA32 *p2, *pe;
+   int yy;
+   
+   if ((w <= 0) || (h <= 0)) return;
+   for (yy = 0; yy < h; yy++)
+     {
+        p2 = ptr + ((y + yy) * rowpix) + x;
+        for (pe = p2 + w; p2 < pe;) *p2++ = val;
+     }
+}
+
 static Eina_Bool
 _evas_image_load_frame_image_data(Eina_File *f,
                                   const Evas_Image_Load_Opts *opts EINA_UNUSED,
@@ -193,27 +285,13 @@ _evas_image_load_frame_image_data(Eina_File *f,
                                   GifFileType *gif, Image_Entry_Frame *frame, int *error)
 {
    ColorMapObject *cmap;
-   GifRowType     *rows;
-   GifPixelType   *tmp = NULL; /*for skip gif line */
-   DATA32         *ptr;
-   Gif_Frame      *gif_frame = NULL;
-
-//   double          per;
-//   double          per_inc;
-   size_t          siz;
-   int             intoffset[] = { 0, 4, 2, 1 };
-   int             intjump[] = { 8, 8, 4, 2 };
-   int x, y, w, h;
-   int i, j;
-   int bg;
-   int r, g, b, alpha;
-   int cache_w, cache_h;
-   int cur_h, cur_w;
-   int disposal = 0;
-   int bg_val = 0;
-   /* for scale down decoding */
-   int scale_ratio = 1;
-   int scale_w, scale_h, scale_x, scale_y;
+   GifRowType *rows;
+   DATA32 *ptr, pad = 0xff000000;
+   Gif_Frame *gif_frame = NULL;
+   int intoffset[] = { 0, 4, 2, 1 };
+   int intjump[] = { 8, 8, 4, 2 };
+   int  x, y, w, h, i, bg, alpha, cache_w, cache_h, cur_h, cur_w, yy;
+   int  disposal = 0, xin = 0, yin = 0;
 
    if ((!gif) || (!frame)) return EINA_FALSE;
 
@@ -222,139 +300,85 @@ _evas_image_load_frame_image_data(Eina_File *f,
    h = gif->Image.Height;
    x = gif->Image.Left;
    y = gif->Image.Top;
+   cur_h = h;
+   cur_w = w;
    cache_w = prop->w;
    cache_h = prop->h;
 
-   /* if user don't set scale down, default scale_ratio is 1 */
-   // disable scale down by until gif is handled right
-   //if (opts->scale_down_by > 1) scale_ratio = opts->scale_down_by;
-   
-   scale_w = w / scale_ratio;
-   scale_h = h / scale_ratio;
-   scale_x = x / scale_ratio;
-   scale_y = y / scale_ratio;
-
-   rows = malloc(scale_h * sizeof(GifRowType *));
-
+   rows = malloc((h * sizeof(GifRowType *)) + (w * h * sizeof(GifPixelType)));
    if (!rows)
      {
         *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
         return EINA_FALSE;
      }
-   for (i = 0; i < scale_h; i++)
+   for (yy = 0; yy < h; yy++)
      {
-        rows[i] = NULL;
+        rows[yy] = ((unsigned char *)rows) + (h * sizeof(GifRowType *)) +
+          (yy * w * sizeof(GifPixelType));
      }
-   /* alloc memory according to scaled size */
-   for (i = 0; i < scale_h; i++)
-     {
-        rows[i] = malloc(scale_w * sizeof(GifPixelType));
-        if (!rows[i])
-          {
-             for (i = 0; i < scale_h; i++)
-               {
-                  if (rows[i])
-                    {
-                       free(rows[i]);
-                    }
-               }
-             free(rows);
-             *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
-             return EINA_FALSE;
-          }
-     }
-
-//   if (scale_ratio > 1)
-//     {
-//        tmp = malloc(w * sizeof(GifPixelType));
-//        if (!tmp)
-//          {
-//             *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
-//             goto error;
-//          }
-//     }
 
    if (gif->Image.Interlace)
      {
-        Eina_Bool multiple;
-        int scale_j;
         for (i = 0; i < 4; i++)
           {
-             for (j = intoffset[i]; j < h; j += intjump[i])
+             for (yy = intoffset[i]; yy < h; yy += intjump[i])
                {
-                  scale_j = j / scale_ratio;
-                  multiple = ((j % scale_ratio) ? EINA_FALSE : EINA_TRUE);
-
-                  if (multiple && (scale_j < scale_h))
-                    DGifGetLine(gif, rows[scale_j], w);
-                  else
-                    DGifGetLine(gif, tmp, w);
+                  if (DGifGetLine(gif, rows[yy], w) != GIF_OK)
+                    {
+                       *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
+                       goto error;
+                    }
                }
           }
      }
    else
      {
-        for (i = 0; i < scale_h; i++)
+        for (yy = 0; yy < h; yy++)
           {
-             if (DGifGetLine(gif, rows[i], w) != GIF_OK)
+             if (DGifGetLine(gif, rows[yy], w) != GIF_OK)
                {
-                  *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+                  *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
                   goto error;
               }
-             if (scale_ratio > 1)
-               {
-                  /* we use down sample method for scale down, so skip other line */
-                  for (j = 0; j < (scale_ratio - 1); j++)
-                    {
-                       if (DGifGetLine(gif, tmp, w) != GIF_OK)
-                         {
-                            *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
-                            goto error;
-                         }
-                    }
-               }
           }
      }
 
-   if (scale_ratio > 1)
-     {
-        if (tmp) free(tmp);
-        tmp = NULL;
-     }
-
    alpha = gif_frame->frame_info.transparent;
-   siz = cache_w *cache_h * sizeof(DATA32);
-   frame->data = malloc(siz);
+   if ((prop->alpha) || (alpha >= 0)) pad = 0x00000000;
+   frame->data = malloc(cache_w * cache_h * sizeof(DATA32));
    if (!frame->data)
      {
         *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
         goto error;
      }
-   ptr = frame->data;
    bg = gif->SBackGroundColor;
    cmap = (gif->Image.ColorMap ? gif->Image.ColorMap : gif->SColorMap);
 
    if (!cmap)
      {
         DGifCloseFile(gif);
-        for (i = 0; i < scale_h; i++)
-          {
-             free(rows[i]);
-          }
-        free(rows);
         if (frame->data) free(frame->data);
         *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
-        return EINA_FALSE;
+        goto error;
      }
-
-//   per_inc = 100.0 / (((double)w) * h);
-//   per = 0.0;
-   cur_h = scale_h;
-   cur_w = scale_w;
 
    if (cur_h > cache_h) cur_h = cache_h;
    if (cur_w > cache_w) cur_w = cache_w;
 
+   // clip the image region to be within current image size and note the inset
+   if (x < 0)
+     {
+        w += x; xin = -x; x = 0;
+     }
+   if ((x + w) > cache_w) w = cache_w - x;
+   if (y < 0)
+     {
+        h += y; yin = -y; y = 0;
+     }
+   if ((y + h) > cache_h) h = cache_h - y;
+   
+   // data ptr to write to
+   ptr = frame->data;
    if (frame->index > 1)
      {
         /* get previous frame only frame index is bigger than 1 */
@@ -372,10 +396,10 @@ _evas_image_load_frame_image_data(Eina_File *f,
              goto error;
           }
         /* load previous frame of cur_frame */
-        for (j = start_frame; j < cur_frame ; j++)
+        for (i = start_frame; i < cur_frame; i++)
           {
              // FIXME : that one -v
-             if (!evas_image_load_specific_frame(f, opts, prop, animated, j, error))
+             if (!evas_image_load_specific_frame(f, opts, prop, animated, i, error))
                {
                   *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
                   goto error;
@@ -389,320 +413,58 @@ _evas_image_load_frame_image_data(Eina_File *f,
         else
           {
              Gif_Frame *gif_frame2 = NULL;
-             int xx, yy, xin = 0, yin = 0;
              
              ptr_src = new_frame->data;
              if (new_frame->info)
                {
                   gif_frame2 = (Gif_Frame *)(new_frame->info);
-                  // the disposal mode of this frame
                   disposal = gif_frame2->frame_info.disposal;
-                  // background rgba color value
                   gif_frame->bg_val = gif_frame2->bg_val;
-                  bg_val = gif_frame->bg_val;
-#if 1                  
-                  // clip the image desc region to be within current image
-                  // size and note the inset
-                  if (x < 0)
-                    {
-                       w += x; xin = -x; x = 0;
-                    }
-                  if ((x + w) > cache_w)
-                    {
-                       w = cache_w - x;
-                    }
-                  if (y < 0)
-                    {
-                       h += y; yin = -y; y = 0;
-                    }
-                  if ((y + h) > cache_h)
-                    {
-                       h = cache_h - y;
-                    }
-#define PIX(_x, _y) rows[yin + _y][xin + (_x * scale_ratio)]
-#define CMAP(_v) cmap->Colors[_v]
                   switch (disposal)
                     {
                      case 0: // no nothing
-                       memset(ptr, 0, siz);
-                       for (yy = 0; yy < h; yy++)
-                         {
-                            ptr = frame->data;
-                            ptr += ((y + yy) * cache_w) + x;
-                            for (xx = 0; xx < w; xx++)
-                              {
-                                 if (PIX(xx, yy) != alpha)
-                                   {
-                                      r = CMAP(PIX(xx, yy)).Red;
-                                      g = CMAP(PIX(xx, yy)).Green;
-                                      b = CMAP(PIX(xx, yy)).Blue;
-                                      *ptr = ARGB_JOIN(0xff, r, g, b);
-                                   }
-                                 else
-                                   *ptr = 0;
-                                 ptr++;
-                              }
-                         }
+                     case 2: // restore bg ... browsers don't respect bg, so neither shall we.
+                       // fill in the area OUTSIDE the image with 0/black
+                       _fill_pixels(pad, ptr, cache_w, 0, 0, cache_w, y);
+                       _fill_pixels(pad, ptr, cache_w, 0, y + h, cache_w, cache_h - (y + h));
+                       _fill_pixels(pad, ptr, cache_w, 0, y, x, h);
+                       _fill_pixels(pad, ptr, cache_w, x + w, y, cache_w - (x + w), h);
+                       _expand_gif_rows(rows, cmap, ptr, cache_w, xin, yin,
+                                        w, h, x, y, alpha, EINA_TRUE);
                        break;
                      case 1: // leave as-is
-                       memcpy(ptr, ptr_src, siz);
-                       for (yy = 0; yy < h; yy++)
-                         {
-                            ptr = frame->data;
-                            ptr += ((y + yy) * cache_w) + x;
-                            for (xx = 0; xx < w; xx++)
-                              {
-                                 if (PIX(xx, yy) != alpha)
-                                   {
-                                      r = CMAP(PIX(xx, yy)).Red;
-                                      g = CMAP(PIX(xx, yy)).Green;
-                                      b = CMAP(PIX(xx, yy)).Blue;
-                                      *ptr = ARGB_JOIN(0xff, r, g, b);
-                                   }
-                                 ptr++;
-                              }
-                         }
-                       break;
-                     case 2: // restore bg
-                       for (yy = 0; yy < cache_h; yy++)
-                         {
-                            for (xx = 0; xx < cache_w; xx++)
-                              {
-                                 *ptr = bg_val;
-                                 ptr++;
-                              }
-                         }
-                       for (yy = 0; yy < h; yy++)
-                         {
-                            ptr = frame->data;
-                            ptr += ((y + yy) * cache_w) + x;
-                            for (xx = 0; xx < w; xx++)
-                              {
-                                 if (PIX(xx, yy) != alpha)
-                                   {
-                                      r = CMAP(PIX(xx, yy)).Red;
-                                      g = CMAP(PIX(xx, yy)).Green;
-                                      b = CMAP(PIX(xx, yy)).Blue;
-                                      *ptr = ARGB_JOIN(0xff, r, g, b);
-                                   }
-                                 ptr++;
-                              }
-                         }
-                       break;
                      case 3: // previous image
-                       memcpy(ptr, ptr_src, siz);
-                       for (yy = 0; yy < h; yy++)
-                         {
-                            ptr = frame->data;
-                            ptr += ((y + yy) * cache_w) + x;
-                            for (xx = 0; xx < w; xx++)
-                              {
-                                 if (PIX(xx, yy) != alpha)
-                                   {
-                                      r = CMAP(PIX(xx, yy)).Red;
-                                      g = CMAP(PIX(xx, yy)).Green;
-                                      b = CMAP(PIX(xx, yy)).Blue;
-                                      *ptr = ARGB_JOIN(0xff, r, g, b);
-                                   }
-                                 ptr++;
-                              }
-                         }
+                       _copy_pixels(ptr_src, ptr, cache_w, 0, 0,
+                                    cache_w, cache_h);
+                       _expand_gif_rows(rows, cmap, ptr, cache_w, xin, yin,
+                                        w, h, x, y, alpha, EINA_FALSE);
                        break;
                      default:
                        break;
                     }
-#else
-             switch (disposal) /* we only support disposal flag 0,1,2 */
-               {
-                case 1: /* Do not dispose. need previous frame*/
-                  memcpy(ptr, ptr_src, siz);
-                  /* only decoding image descriptor's region */
-                  ptr = ptr + cache_w * scale_y;
-                  
-                  for (i = 0; i < cur_h; i++)
-                    {
-                       ptr = ptr + scale_x;
-                       for (j = 0; j < cur_w; j++)
-                         {
-                            if (rows[i][j * scale_ratio] == alpha)
-                              {
-                                 ptr++;
-                              }
-                            else
-                              {
-                                 r = cmap->Colors[rows[i][j * scale_ratio]].Red;
-                                 g = cmap->Colors[rows[i][j * scale_ratio]].Green;
-                                 b = cmap->Colors[rows[i][j * scale_ratio]].Blue;
-                                 *ptr++ = ARGB_JOIN(0xff, r, g, b);
-                              }
-                            per += per_inc;
-                         }
-                       ptr = ptr + (cache_w - (scale_x + cur_w));
-                    }
-                  break;
-                case 2: /* Restore to background color */
-                   memcpy(ptr, ptr_src, siz);
-                   /* composite frames */
-                   for (i = 0; i < cache_h; i++)
-                    {
-                       if ((i < scale_y) || (i >= (scale_y + cur_h)))
-                         {
-                            for (j = 0; j < cache_w; j++)
-                              {
-                                 *ptr = bg_val;
-                                 ptr++;
-                              }
-                         }
-                       else
-                         {
-                            int i1, j1;
-                            i1 = i - scale_y;
-                            
-                            for (j = 0; j < cache_w; j++)
-                              {
-                                 j1 = j - scale_x;
-                                 if ((j < scale_x) || (j >= (scale_x + cur_w)))
-                                   {
-                                      *ptr = bg_val;
-                                      ptr++;
-                                   }
-                                 else
-                                   {
-                                      if (rows[i][j * scale_ratio] == alpha)
-                                        {
-                                           ptr++;
-                                        }
-                                      else
-                                        {
-                                           r = cmap->Colors[rows[i1][j1 * scale_ratio]].Red;
-                                           g = cmap->Colors[rows[i1][j1 * scale_ratio]].Green;
-                                           b = cmap->Colors[rows[i1][j1 * scale_ratio]].Blue;
-                                           *ptr++ = ARGB_JOIN(0xff, r, g, b);
-                                        }
-                                   }
-                              }
-                         }
-                    }
-                   break;
-                case 3: /* Restore previous */
-                case 0: /* No disposal specified */
-                default:
-                   memset(ptr, 0, siz);
-                   for (i = 0; i < gif_frame2->image_des.h; i++)
-                     {
-                        if ((i < scale_y) || (i >= (scale_y + cur_h)))
-                          {
-                             for (j = 0; j < gif_frame2->image_des.w; j++)
-                               {
-                                  *ptr = bg_val;
-                                  ptr++;
-                               }
-                          }
-                        else
-                          {
-                             int i1, j1;
-                             i1 = i - scale_y;
-
-                             for (j = 0; j < gif_frame2->image_des.w; j++)
-                               {
-                                  j1 = j - scale_x;
-                                  if ((j < scale_x) || (j >= (scale_x + cur_w)))
-                                    {
-                                       *ptr = bg_val;
-                                       ptr++;
-                                    }
-                                  else
-                                    {
-                                      if (rows[i][j * scale_ratio] == alpha)
-                                        {
-                                           ptr++;
-                                        }
-                                      else
-                                        {
-                                           r = cmap->Colors[rows[i1][j1 * scale_ratio]].Red;
-                                           g = cmap->Colors[rows[i1][j1 * scale_ratio]].Green;
-                                           b = cmap->Colors[rows[i1][j1 * scale_ratio]].Blue;
-                                           *ptr++ = ARGB_JOIN(0xff, r, g, b);
-                                        }
-                                    }
-                               }
-                          }
-                     }
-                   break;
-               }
-#endif        
                }
           }
      }
    else /* first frame decoding */
      {
         /* get the background value */
-        r = cmap->Colors[bg].Red;
-        g = cmap->Colors[bg].Green;
-        b = cmap->Colors[bg].Blue;
-        bg_val =  ARGB_JOIN(0xff, r, g, b);
-        gif_frame->bg_val = bg_val;
-
-        memset(ptr, 0, siz);
-
-        /* fill background color */
-        for (i = 0; i < cache_h; i++)
-          {
-             /* the row's of logical screen not overap with frame */
-             if ((i < scale_y) || (i >= (scale_y + cur_h)))
-               {
-                  for (j = 0; j < cache_w; j++)
-                    {
-                       *ptr = bg_val;
-                       ptr++;
-                    }
-               }
-             else
-               {
-                  int i1, j1;
-                  i1 = i -scale_y;
-
-                  for (j = 0; j < cache_w; j++)
-                    {
-                       j1 = j - scale_x;
-                       if ((j < scale_x) || (j >= (scale_x + cur_w)))
-                         {
-                            *ptr = bg_val;
-                            ptr++;
-                         }
-                       else
-                         {
-                            if (rows[i1][j1 * scale_ratio] == alpha)
-                              {
-                                 ptr++;
-                              }
-                            else
-                              {
-                                 r = cmap->Colors[rows[i1][j1 * scale_ratio]].Red;
-                                 g = cmap->Colors[rows[i1][j1 * scale_ratio]].Green;
-                                 b = cmap->Colors[rows[i1][j1 * scale_ratio]].Blue;
-                                 *ptr++ = ARGB_JOIN(0xff, r, g, b);
-                              }
-                         }
-                    }
-               }
-          }
+        gif_frame->bg_val = RGB_JOIN(cmap->Colors[bg].Red, 
+                                     cmap->Colors[bg].Green,
+                                     cmap->Colors[bg].Blue);
+        // fill in the area OUTSIDE the image with 0/black
+        _fill_pixels(pad, ptr, cache_w, 0, 0, cache_w, y);
+        _fill_pixels(pad, ptr, cache_w, 0, y + h, cache_w, cache_h - (y + h));
+        _fill_pixels(pad, ptr, cache_w, 0, y, x, h);
+        _fill_pixels(pad, ptr, cache_w, x + w, y, cache_w - (x + w), h);
+        _expand_gif_rows(rows, cmap, ptr, cache_w, xin, yin,
+                         w, h, x, y, alpha, EINA_TRUE);
      }
 
-   for (i = 0; i < scale_h; i++)
-     {
-        if (rows[i]) free(rows[i]);
-     }
    if (rows) free(rows);
    frame->loaded = EINA_TRUE;
    return EINA_TRUE;
 error:
-   for (i = 0; i < scale_h; i++)
-     {
-        if (rows[i]) free(rows[i]);
-     }
    if (rows) free(rows);
-   if (tmp) free(tmp);
    return EINA_FALSE;
 }
 
