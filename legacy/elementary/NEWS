@@ -79,6 +79,7 @@ Additions:
    * Add the elm_scrollable_interface_content_viewport_resize_cb_set.
    * added callback call "scroll", "scroll,anim,start", "scroll,anim,stop", "scroll,drag,start", "scroll,drag,stop" in toolar widget.
    * Add the configuration thumbscroll_flick_distance_tolerance.
+   * Add elm_access_highlight_next_set, export elm_widget_focus_region_show
 
 Improvements:
 

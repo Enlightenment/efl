@@ -578,6 +578,12 @@ _propagate_event(void *data,
    elm_widget_event_propagate(obj, type, event_info, event_flags);
 }
 
+EAPI void
+elm_widget_focus_region_show(const Evas_Object *obj)
+{
+   ELM_WIDGET_CHECK(obj);
+   eo_do((Eo *) obj, elm_wdg_focus_region_show());
+}
 /**
  * @internal
  *
@@ -585,12 +591,10 @@ _propagate_event(void *data,
  * ignore region show action.
  */
 static void
-_elm_widget_focus_region_show(const Evas_Object *obj)
+_elm_widget_focus_region_show(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
    Evas_Coord x, y, w, h, ox, oy;
    Evas_Object *o;
-
-   API_ENTRY return;
 
    o = elm_widget_parent_get(obj);
    if (!o) return;
@@ -650,7 +654,7 @@ _parent_focus(Evas_Object *obj)
      {
         sd->focused = EINA_TRUE;
         eo_do(obj, elm_wdg_on_focus(NULL));
-        _elm_widget_focus_region_show(obj);
+        elm_widget_focus_region_show(obj);
      }
    sd->focus_order_on_calc = EINA_FALSE;
 
@@ -2027,7 +2031,7 @@ _elm_widget_focus_cycle(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
         if (_elm_config->access_mode && _elm_access_read_mode_get())
           {
              _elm_access_highlight_set(target);
-             _elm_widget_focus_region_show(target);
+             elm_widget_focus_region_show(target);
           }
         else elm_widget_focus_steal(target);
      }
@@ -6070,6 +6074,7 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_DISABLED_HANDLE), _elm_widget_focus_disabled_handle),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_ORDER_GET), _elm_widget_focus_order_get),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_REGION_GET), _elm_widget_focus_region_get),
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_REGION_SHOW), _elm_widget_focus_region_show),
 
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME_OBJECT_SET), _elm_widget_theme_object_set),
 
@@ -6217,6 +6222,7 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_FOCUS_DISABLED_HANDLE, "description here"),
      EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_FOCUS_ORDER_GET, "description here"),
      EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_FOCUS_REGION_GET, "Get the focus region of the given widget."),
+     EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_FOCUS_REGION_SHOW, "Show the focus region of the given widget."),
 
      EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_THEME_OBJECT_SET, "description here"),
      EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_ORIENTATION_SET, "description here"),

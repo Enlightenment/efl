@@ -12,6 +12,7 @@ int _log_domain = -1;
 /* all tests prototypes */
 void test_access(void *data, Evas_Object *obj, void *event_info);
 void test_access2(void *data, Evas_Object *obj, void *event_info);
+void test_access3(void *data, Evas_Object *obj, void *event_info);
 void test_bg_plain(void *data, Evas_Object *obj, void *event_info);
 void test_bg_image(void *data, Evas_Object *obj, void *event_info);
 void test_bg_options(void *data, Evas_Object *obj, void *event_info);
@@ -764,6 +765,7 @@ add_tests:
    ADD_TEST(NULL, "Miscellaneous", "Configuration", test_config);
    ADD_TEST(NULL, "Miscellaneous", "Accessibility", test_access);
    ADD_TEST(NULL, "Miscellaneous", "Accessibility2", test_access2);
+   ADD_TEST(NULL, "Miscellaneous", "Accessibility3", test_access3);
 
 #undef ADD_TEST
 

@@ -78,6 +78,19 @@ struct _Elm_Access_Action_Info
  */
 typedef struct _Elm_Access_Action_Info Elm_Access_Action_Info;
 
+enum _Elm_Highlight_Direction
+{
+   ELM_HIGHLIGHT_DIR_FIRST = -1,
+   ELM_HIGHLIGHT_DIR_NEXT,
+   ELM_HIGHLIGHT_DIR_PREVIOUS
+};
+
+/**
+ * @since 1.8
+ * @typedef Elm_Highlight_Direction
+ */
+typedef enum _Elm_Highlight_Direction Elm_Highlight_Direction;
+
 /**
  * @since 1.8
  * @typedef Elm_Access_Action_Cb
@@ -241,3 +254,21 @@ EAPI Eina_Bool elm_access_action(Evas_Object *obj, const Elm_Access_Action_Type 
  * @ingroup Access
  */
 EAPI void elm_access_action_cb_set(Evas_Object *obj, const Elm_Access_Action_Type type, const Elm_Access_Action_Cb cb, const void *data);
+
+/**
+ * @brief Set the next access object for highlight.
+ * @since 1.8
+ *
+ * @param obj  The object is previous access object of next for hilight.
+ * @param dir  Access direction same as Focus direction
+ * @param next The object is next access object of obj for hilight.
+ *
+ * Currently focus chain is used for access highlight chain. Use this API to
+ * customize highlight chain. If highlight chain is already established, you can
+ * change one object's highlight chain and do not break the other object's
+ * highlight chain.
+ *
+ * @ingroup Access
+ */
+EAPI void
+elm_access_highlight_next_set(Evas_Object *obj, Elm_Highlight_Direction dir, Evas_Object *next);

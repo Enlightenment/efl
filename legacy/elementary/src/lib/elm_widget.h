@@ -493,6 +493,9 @@ struct _Elm_Access_Info
 
    /* the owner part object that owns this access info */
    Evas_Object               *part_object;
+
+   Evas_Object               *next;
+   Evas_Object               *prev;
 };
 
 void                  _elm_access_shutdown();
@@ -664,6 +667,7 @@ EAPI Eina_Bool        elm_widget_disabled_get(const Evas_Object *obj);
 EAPI void             elm_widget_show_region_set(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, Eina_Bool forceshow);
 EAPI void             elm_widget_show_region_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
 EAPI Eina_Bool        elm_widget_focus_region_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
+EAPI void             elm_widget_focus_region_show(const Evas_Object *obj);
 EAPI void             elm_widget_parents_bounce_get(Evas_Object *obj, Eina_Bool *horiz, Eina_Bool *vert);
 EAPI void             elm_widget_scroll_hold_push(Evas_Object *obj);
 EAPI void             elm_widget_scroll_hold_pop(Evas_Object *obj);
@@ -1141,6 +1145,7 @@ enum
    ELM_WIDGET_SUB_ID_FOCUS_DISABLED_HANDLE,
    ELM_WIDGET_SUB_ID_FOCUS_ORDER_GET,
    ELM_WIDGET_SUB_ID_FOCUS_REGION_GET,
+   ELM_WIDGET_SUB_ID_FOCUS_REGION_SHOW,
 
    ELM_WIDGET_SUB_ID_THEME_OBJECT_SET,
    ELM_WIDGET_SUB_ID_ORIENTATION_SET,
@@ -2232,6 +2237,14 @@ typedef void * (*list_data_get_func_type)(const Eina_List * l);
  */
 #define elm_wdg_focus_region_get(x, y, w, h, ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_REGION_GET), EO_TYPECHECK(Evas_Coord *, x), EO_TYPECHECK(Evas_Coord *, y), EO_TYPECHECK(Evas_Coord *, w), EO_TYPECHECK(Evas_Coord *, h), EO_TYPECHECK(Eina_Bool *, ret)
 
+/**
+ * @def elm_wdg_focus_region_show
+ * @since 1.8
+ *
+ * No description supplied by the EAPI.
+ *
+ */
+#define elm_wdg_focus_region_show() ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_REGION_SHOW)
 
 /**
  * @def elm_wdg_theme_object_set

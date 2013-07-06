@@ -509,25 +509,41 @@ _access_highlight_next_get(Evas_Object *obj, Elm_Focus_Direction dir)
 
    _elm_access_read_mode_set(EINA_TRUE);
 
-   ret = elm_widget_focus_next_get(obj, dir, &target);
-   if (ret && target)
+   if (dir == ELM_FOCUS_NEXT)
+     type = ELM_ACCESS_ACTION_HIGHLIGHT_NEXT;
+   else
+     type = ELM_ACCESS_ACTION_HIGHLIGHT_PREV;
+
+   /* this value is used in _elm_access_object_highlight();
+      to inform the target object of how to get highlight */
+   action_by = type;
+
+   if (!_access_action_callback_call(ho, type, NULL))
      {
-        if (dir == ELM_FOCUS_NEXT)
-          type = ELM_ACCESS_ACTION_HIGHLIGHT_NEXT;
-        else
-          type = ELM_ACCESS_ACTION_HIGHLIGHT_PREV;
-
-        if (!_access_action_callback_call(ho, type, NULL))
+        if (ho)
           {
-             /* this value is used in _elm_access_object_highlight();
-                to inform the target object of how to get highlight */
-             action_by = type;
+             Elm_Access_Info *info = _elm_access_object_get(ho);
+             if (type == ELM_ACCESS_ACTION_HIGHLIGHT_NEXT && info->next)
+               target = info->next;
+             else if (type == ELM_ACCESS_ACTION_HIGHLIGHT_PREV && info->prev)
+               target = info->prev;
+          }
 
+        if (target)
+          {
              _elm_access_highlight_set(target);
-
-             action_by = ELM_ACCESS_ACTION_FIRST;
+             elm_widget_focus_region_show(target);
+             ret = EINA_TRUE;
+          }
+        else
+          {
+             ret = elm_widget_focus_next_get(obj, dir, &target);
+             if (ret && target)
+               _elm_access_highlight_set(target);
           }
      }
+
+   action_by = ELM_ACCESS_ACTION_FIRST;
 
    _elm_access_read_mode_set(EINA_FALSE);
 
@@ -659,8 +675,27 @@ _elm_access_highlight_cycle(Evas_Object *obj, Elm_Focus_Direction dir)
 
    action_by = type;
 
-   if (!_access_action_callback_call(ho, type, NULL))
-     elm_widget_focus_cycle(obj, dir);
+   if (!ho) elm_widget_focus_cycle(obj, dir);
+   else if (!_access_action_callback_call(ho, type, NULL))
+     {
+        Elm_Access_Info *info = _elm_access_object_get(ho);
+        Evas_Object *comming = NULL;
+        if (type == ELM_ACCESS_ACTION_HIGHLIGHT_NEXT)
+          {
+             if ((info) && (info->next)) comming = info->next;
+          }
+        else
+          {
+             if ((info) && (info->prev)) comming = info->prev;
+          }
+        if (comming)
+          {
+             _elm_access_highlight_set(comming);
+             elm_widget_focus_region_show(comming);
+          }
+        else
+          elm_widget_focus_cycle(obj, dir);
+     }
 
    action_by = ELM_ACCESS_ACTION_FIRST;
 
@@ -1285,6 +1320,35 @@ elm_access_external_info_get(const Evas_Object *obj)
 
    ac = _elm_access_object_get(obj);
    return _elm_access_text_get(ac, ELM_ACCESS_CONTEXT_INFO, obj);
+}
+
+EAPI void
+elm_access_highlight_next_set(Evas_Object *obj, Elm_Highlight_Direction dir, Evas_Object *next)
+{
+   EINA_SAFETY_ON_FALSE_RETURN(obj);
+   EINA_SAFETY_ON_FALSE_RETURN(next);
+
+   Elm_Access_Info *info = _elm_access_object_get(obj);
+   Elm_Access_Info *info_next = _elm_access_object_get(next);
+
+   if (!info || !info_next)
+     {
+        ERR("There is no access information");
+        return;
+     }
+
+   if (dir == ELM_HIGHLIGHT_DIR_NEXT)
+     {
+        info_next->prev = obj;
+        info->next = next;
+     }
+   else if (dir == ELM_HIGHLIGHT_DIR_PREVIOUS)
+     {
+        info_next->next = obj;
+        info->prev = next;
+     }
+   else
+      ERR("Not supported focus direction for access highlight [%d]", dir);
 }
 
 static void

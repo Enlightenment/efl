@@ -305,4 +305,87 @@ test_access2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
    evas_object_resize(win, 300, 300);
    evas_object_show(win);
 }
+
+static Eina_Bool
+_key_down_cb(void *data, int type __UNUSED__, void *ei)
+{
+   Elm_Access_Action_Info *a;
+   Ecore_Event_Key *ev = ei;
+
+   a = calloc(1, sizeof(Elm_Access_Action_Info));
+   if (!a) return EINA_TRUE;
+
+   if (ev && ev->keyname)
+     {
+        if (!strcmp(ev->keyname, "F1"))
+          {
+             a->highlight_cycle = EINA_TRUE;
+             elm_access_action(data, ELM_ACCESS_ACTION_HIGHLIGHT_NEXT, a);
+             free(a);
+          }
+     }
+   return EINA_TRUE;
+}
+
+static char *
+_access_info_cb(void *data, Evas_Object *obj __UNUSED__)
+{
+   if (data) return strdup(data);
+   return NULL;
+}
+
+void
+test_access3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   char buf[PATH_MAX];
+   Evas_Object *win, *ly, *btn;
+   Evas_Object *red_ao, *green_ao, *blue_ao, *black_ao, *to;
+
+   win = elm_win_util_standard_add("access", "Access");
+   elm_win_autodel_set(win, EINA_TRUE);
+   evas_object_event_callback_add(win, EVAS_CALLBACK_FREE, _cleanup_cb, NULL);
+
+   elm_config_access_set(EINA_TRUE);
+
+   ly = elm_layout_add(win);
+   snprintf(buf, sizeof(buf), "%s/objects/test.edj", elm_app_data_dir_get());
+   elm_layout_file_set(ly, buf, "access_color_page");
+   evas_object_size_hint_weight_set(ly, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(ly, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_show(ly);
+
+   btn = elm_button_add(win);
+   elm_object_text_set(btn, "action");
+   evas_object_size_hint_weight_set(btn, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(btn, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_show(btn);
+
+   elm_object_part_content_set(ly, "center", btn);
+
+   to = (Evas_Object *)edje_object_part_object_get(elm_layout_edje_get(ly), "red");
+   red_ao = elm_access_object_register(to, ly);
+   elm_access_info_cb_set(red_ao, ELM_ACCESS_INFO, _access_info_cb, "red");
+   elm_access_highlight_next_set(btn, ELM_HIGHLIGHT_DIR_NEXT, red_ao);
+
+   to = (Evas_Object *)edje_object_part_object_get(elm_layout_edje_get(ly), "green");
+   green_ao = elm_access_object_register(to, ly);
+   elm_access_info_cb_set(green_ao, ELM_ACCESS_INFO, _access_info_cb, "green");
+   elm_access_highlight_next_set(red_ao, ELM_HIGHLIGHT_DIR_NEXT, green_ao);
+
+   to = (Evas_Object *)edje_object_part_object_get(elm_layout_edje_get(ly), "blue");
+   blue_ao = elm_access_object_register(to, ly);
+   elm_access_info_cb_set(blue_ao, ELM_ACCESS_INFO, _access_info_cb, "blue");
+   elm_access_highlight_next_set(green_ao, ELM_HIGHLIGHT_DIR_NEXT, blue_ao);
+
+   to = (Evas_Object *)edje_object_part_object_get(elm_layout_edje_get(ly), "black");
+   black_ao = elm_access_object_register(to, ly);
+   elm_access_info_cb_set(black_ao, ELM_ACCESS_INFO, _access_info_cb, "black");
+   elm_access_highlight_next_set(blue_ao, ELM_HIGHLIGHT_DIR_NEXT, black_ao);
+
+   ecore_event_handler_add(ECORE_EVENT_KEY_DOWN, _key_down_cb, win);
+
+   elm_win_resize_object_add(win, ly);
+   evas_object_resize(win, 300, 300);
+   evas_object_show(win);
+}
 #endif
