@@ -376,6 +376,9 @@ _eina_file_map_rule_apply(Eina_File_Populate rule, void *addr, unsigned long int
       case EINA_FILE_SEQUENTIAL: flag = MADV_SEQUENTIAL; break;
       case EINA_FILE_POPULATE: flag = MADV_WILLNEED; break;
       case EINA_FILE_WILLNEED: flag = MADV_WILLNEED; break;
+      case EINA_FILE_DONTNEED: flag = MADV_DONTNEED; break;
+      case EINA_FILE_REMOVE: flag = MADV_REMOVE; break;
+      default: return tmp; break;
      }
 
    madvise(addr, size, flag);
@@ -1076,6 +1079,20 @@ eina_file_map_free(Eina_File *file, void *map)
      }
 
  on_exit:
+   eina_lock_release(&file->lock);
+}
+
+EAPI void
+eina_file_map_populate(Eina_File *file, Eina_File_Populate rule, void *map,
+                       unsigned long int offset, unsigned long int length)
+{
+   Eina_File_Map *em;
+   
+   EINA_SAFETY_ON_NULL_RETURN(file);
+   eina_lock_take(&file->lock);
+   em = eina_hash_find(file->rmap, &map);
+   if (em) _eina_file_map_rule_apply(rule, ((char *)em->map) + offset,
+                                     length, em->hugetlb);
    eina_lock_release(&file->lock);
 }
 

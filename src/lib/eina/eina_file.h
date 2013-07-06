@@ -139,7 +139,9 @@ typedef enum {
   EINA_FILE_RANDOM,     /**< Advise random memory access to the mapped memory. */
   EINA_FILE_SEQUENTIAL, /**< Advise sequential memory access to the mapped memory. */
   EINA_FILE_WILLNEED,   /**< Advise need for all the mapped memory. */
-  EINA_FILE_POPULATE    /**< Request all the mapped memory. */
+  EINA_FILE_POPULATE,   /**< Request all the mapped memory. */
+  EINA_FILE_DONTNEED,   /**< Indicate that the memory is no longer needed. This may result in the memory being removed from any caches if applicable. @since 1.8 */
+  EINA_FILE_REMOVE      /**< This memory is to be released and any content will be lost. Subsequent accesses will succeed but return fresh memory as if accessed for the first time. This may not suceed if the filesystem does not support it. @since 1.8 */
 } Eina_File_Populate;
 
 /* Why do this? Well PATH_MAX may vary from when eina itself is compiled
@@ -575,6 +577,24 @@ EAPI void *eina_file_map_new(Eina_File *file, Eina_File_Populate rule,
  * @since 1.1
  */
 EAPI void eina_file_map_free(Eina_File *file, void *map);
+
+/**
+ * @brief Ask the OS to populate or otherwise pages of memory in file mapping
+ * 
+ * @param file The file handle from whih the map comes
+ * @param map Memory that was mapped inside of which the memory range is
+ * @param offset The offset in bytes from the start of the map address
+ * @param length The length in bytes of the memory region to populate
+ * 
+ * This advises the operating system as to what to do with the memory mapped
+ * to the given @p file. This affects a specific range of memory and may not
+ * be honored if the system chooses to ignore the request.
+ * 
+ * @sine 1.8
+ */
+EAPI void
+eina_file_map_populate(Eina_File *file, Eina_File_Populate rule, void *map,
+                       unsigned long int offset, unsigned long int length);
 
 /**
  * @brief Map line by line in memory efficiently with an Eina_Iterator
