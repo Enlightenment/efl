@@ -3350,9 +3350,8 @@ _multi_cancel(void *data)
 }
 
 static void
-_multi_touch_gesture_eval(void *data)
+_multi_touch_gesture_eval(Elm_Gen_Item *it)
 {
-   Elm_Gen_Item *it = data;
    Evas_Coord minw = 0, minh = 0;
    Evas_Coord off_x, off_y, off_mx, off_my;
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
@@ -4099,7 +4098,7 @@ _item_mouse_up_cb(void *data,
         if ((!sd->multi) && (!it->selected) && (it->highlighted))
           _item_unhighlight(it);
         if (sd->multi_down) return;
-        _multi_touch_gesture_eval(data);
+        _multi_touch_gesture_eval(it);
         return;
      }
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
@@ -4120,7 +4119,7 @@ _item_mouse_up_cb(void *data,
      }
    if (sd->on_hold)
      {
-        if (sd->swipe) _swipe_do(data);
+        if (sd->swipe) _swipe_do(it);
         sd->longpressed = EINA_FALSE;
         sd->on_hold = EINA_FALSE;
         return;
