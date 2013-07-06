@@ -917,7 +917,6 @@ _elm_diskselector_smart_focus_next(Eo *obj, void *_pd EINA_UNUSED, va_list *list
    Elm_Focus_Direction dir = va_arg(*list, Elm_Focus_Direction);
    Evas_Object **next = va_arg(*list, Evas_Object **);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   *ret = EINA_FALSE;
    if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret;
 
