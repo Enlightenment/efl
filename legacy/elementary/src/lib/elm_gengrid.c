@@ -3993,9 +3993,7 @@ elm_gengrid_item_select_mode_set(Elm_Object_Item *item,
                                  Elm_Object_Select_Mode mode)
 {
    Elm_Gen_Item *it = (Elm_Gen_Item *)item;
-
    ELM_GENGRID_ITEM_CHECK_OR_RETURN(it);
-   if (!it) return;
 
    if (it->generation < GG_IT(it)->wsd->generation) return;
    if (mode >= ELM_OBJECT_SELECT_MODE_MAX)
@@ -4012,10 +4010,8 @@ EAPI Elm_Object_Select_Mode
 elm_gengrid_item_select_mode_get(const Elm_Object_Item *item)
 {
    Elm_Gen_Item *it = (Elm_Gen_Item *)item;
-
    ELM_GENGRID_ITEM_CHECK_OR_RETURN(it, ELM_OBJECT_SELECT_MODE_MAX);
 
-   if (!it) return ELM_OBJECT_SELECT_MODE_MAX;
    return it->select_mode;
 }
 

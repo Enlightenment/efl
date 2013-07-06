@@ -7308,7 +7308,6 @@ elm_genlist_item_select_mode_set(Elm_Object_Item *item,
    Elm_Gen_Item *it = (Elm_Gen_Item *)item;
 
    ELM_GENLIST_ITEM_CHECK_OR_RETURN(item);
-   if (!it) return;
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
 
    if (it->generation < sd->generation) return;
@@ -7340,10 +7339,7 @@ EAPI Elm_Object_Select_Mode
 elm_genlist_item_select_mode_get(const Elm_Object_Item *item)
 {
    Elm_Gen_Item *it = (Elm_Gen_Item *)item;
-
    ELM_GENLIST_ITEM_CHECK_OR_RETURN(item, ELM_OBJECT_SELECT_MODE_MAX);
-
-   if (!it) return ELM_OBJECT_SELECT_MODE_MAX;
 
    return it->select_mode;
 }
