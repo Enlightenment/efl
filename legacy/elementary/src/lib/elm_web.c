@@ -1534,7 +1534,6 @@ _url_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    if (ret) *ret = int_ret;
 #else
    (void)url;
-   *ret = EINA_FALSE;
    (void)obj;
 #endif
 }
