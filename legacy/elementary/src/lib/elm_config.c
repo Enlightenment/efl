@@ -653,14 +653,15 @@ _elm_config_font_overlay_remove(const char *text_class)
 
    EINA_LIST_FOREACH(_elm_config->font_overlays, l, efd)
      {
-        if (strcmp(efd->text_class, text_class))
-          continue;
+        if (!efd->text_class) continue;
+        if (strcmp(efd->text_class, text_class)) continue;
+
         _font_overlays_del =
            eina_list_append(_font_overlays_del,
                             eina_stringshare_add(text_class));
         _elm_config->font_overlays =
           eina_list_remove_list(_elm_config->font_overlays, l);
-        if (efd->text_class) eina_stringshare_del(efd->text_class);
+        eina_stringshare_del(efd->text_class);
         if (efd->font) eina_stringshare_del(efd->font);
         free(efd);
 
