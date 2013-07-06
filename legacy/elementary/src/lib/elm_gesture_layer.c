@@ -1915,8 +1915,7 @@ _tap_gesture_test(Evas_Object *obj,
          pe_list = eina_list_search_unsorted(st->l, _pe_device_compare, pe);
          if (!pe_list) return;
 
-         pe_list = _pointer_event_record
-            (st, pe_list, pe, sd, event_info, event_type);
+         _pointer_event_record(st, pe_list, pe, sd, event_info, event_type);
 
          if (((gesture->g_type == ELM_GESTURE_N_TAPS) &&
                   !IS_TESTED(ELM_GESTURE_N_DOUBLE_TAPS) &&
