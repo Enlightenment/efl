@@ -163,7 +163,6 @@ test_access(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_homogeneous_set(bx, EINA_TRUE);
    elm_box_horizontal_set(bx, EINA_TRUE);
    elm_win_resize_object_add(win, bx);
@@ -242,22 +241,20 @@ test_access2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
 
    elm_config_access_set(EINA_TRUE);
 
+   sc = elm_scroller_add(win);
+   elm_scroller_bounce_set(sc, EINA_TRUE, EINA_FALSE);
+   elm_scroller_policy_set(sc, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
+   evas_object_size_hint_weight_set(sc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, sc);
+   evas_object_show(sc);
+
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_homogeneous_set(bx, EINA_TRUE);
    elm_box_horizontal_set(bx, EINA_TRUE);
-
-   sc = elm_scroller_add(win);
-   elm_scroller_bounce_set(sc, EINA_TRUE, EINA_FALSE);
-   elm_scroller_policy_set(sc, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
-   evas_object_size_hint_weight_set(sc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_fill_set(sc, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_win_resize_object_add(win, sc);
-
    elm_object_content_set(sc, bx);
    evas_object_show(bx);
-   evas_object_show(sc);
 
    for (k = 0 ; k < 3; k++)
      {
@@ -313,7 +310,7 @@ _key_down_cb(void *data, int type __UNUSED__, void *ei)
    Ecore_Event_Key *ev = ei;
 
    a = calloc(1, sizeof(Elm_Access_Action_Info));
-   if (!a) return EINA_TRUE;
+   if (!a) return ECORE_CALLBACK_PASS_ON;
 
    if (ev && ev->keyname)
      {
@@ -324,7 +321,7 @@ _key_down_cb(void *data, int type __UNUSED__, void *ei)
              free(a);
           }
      }
-   return EINA_TRUE;
+   return ECORE_CALLBACK_PASS_ON;
 }
 
 static char *
@@ -351,7 +348,7 @@ test_access3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
    snprintf(buf, sizeof(buf), "%s/objects/test.edj", elm_app_data_dir_get());
    elm_layout_file_set(ly, buf, "access_color_page");
    evas_object_size_hint_weight_set(ly, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(ly, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_win_resize_object_add(win, ly);
    evas_object_show(ly);
 
    btn = elm_button_add(win);
@@ -384,7 +381,6 @@ test_access3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
 
    ecore_event_handler_add(ECORE_EVENT_KEY_DOWN, _key_down_cb, win);
 
-   elm_win_resize_object_add(win, ly);
    evas_object_resize(win, 300, 300);
    evas_object_show(win);
 }
