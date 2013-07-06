@@ -943,9 +943,6 @@ _color_bars_add(Evas_Object *obj)
            case 3:
              sd->cb_data[i]->color_type = ALPHA;
              break;
-
-           default:
-             break;
           }
 
         /* load colorbar area */
