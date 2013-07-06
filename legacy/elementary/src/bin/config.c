@@ -2276,7 +2276,7 @@ _font_names_list_load(Evas_Object *flist)
    EINA_LIST_FOREACH(names_list, l, font)
      elm_list_item_append(flist, font, NULL, NULL, _font_names_list_sel, NULL);
 
-   EINA_LIST_FREE(names_list, font) ;
+   eina_list_free(names_list);
 
    evas_object_smart_callback_add(flist, "unselected",
                                   _fnames_list_unselect_cb, NULL);
