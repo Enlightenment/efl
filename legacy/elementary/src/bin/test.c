@@ -352,7 +352,7 @@ _space_removed_string_get(const char *name)
    char *ret;
 
    len = strlen(name);
-   ret = calloc(sizeof(char), len);
+   ret = calloc(sizeof(char), len + 1);
 
    while (name[i])
      {
