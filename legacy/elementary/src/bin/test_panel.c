@@ -93,11 +93,14 @@ _fill_list(Evas_Object *obj)
    struct dirent *de;
    Eina_List *l;
    char *real;
+   char *home_env = NULL;
    unsigned int x = 0;
 
    if (!dirs)
      {
-        if (!(d = opendir(getenv("HOME")))) return;
+        home_env = getenv("HOME");
+        if (!home_env) return;
+        if (!(d = opendir(home_env))) return;
         while ((de = readdir(d)) && (x < LIST_ITEM_MAX))
           {
              char buff[PATH_MAX];
