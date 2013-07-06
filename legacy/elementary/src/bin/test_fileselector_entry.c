@@ -68,7 +68,10 @@ static void
 create_dir_struct(void)
 {
    FILE *fp;
-   mkdir("/tmp/test_fs_bt", S_IRWXU);
+   int ret = 0;
+
+   ret = mkdir("/tmp/test_fs_bt", S_IRWXU);
+   if (ret < 0) return;
    fp = fopen("/tmp/test_fs_bt/a_file.txt", "w");
    if (fp) fclose(fp);
    fp = fopen("/tmp/test_fs_bt/k_file.txt", "w");
@@ -76,7 +79,8 @@ create_dir_struct(void)
    fp = fopen("/tmp/test_fs_bt/m_file.txt", "w");
    if (fp) fclose(fp);
 
-   mkdir("/tmp/test_fs_bt/a_subdir", S_IRWXU);
+   ret = mkdir("/tmp/test_fs_bt/a_subdir", S_IRWXU);
+   if (ret < 0) return;
    fp = fopen("/tmp/test_fs_bt/a_subdir/d_sub_file.txt", "w");
    if (fp) fclose(fp);
    fp = fopen("/tmp/test_fs_bt/a_subdir/j_sub_file.txt", "w");
