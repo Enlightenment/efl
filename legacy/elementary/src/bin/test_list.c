@@ -513,8 +513,8 @@ test_list_horizontal(void        *data __UNUSED__,
    elm_list_item_append(li, "we", NULL, NULL, NULL, NULL);
    elm_list_item_append(li, "are", NULL, NULL, NULL, NULL);
    elm_list_item_append(li, "done", NULL, NULL, NULL, NULL);
-   elm_list_item_append(li, "with", NULL, NULL, NULL, NULL);
-   elm_list_item_append(li, "items.", NULL, NULL, NULL, NULL);
+   elm_object_item_disabled_set(elm_list_item_append(li, "with", NULL, NULL, NULL, NULL), EINA_TRUE);
+   elm_object_item_disabled_set(elm_list_item_append(li, "items.", NULL, NULL, NULL, NULL), EINA_TRUE);
 
    elm_list_go(li);
 
