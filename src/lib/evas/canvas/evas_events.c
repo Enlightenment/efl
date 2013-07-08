@@ -19,7 +19,8 @@ _evas_event_havemap_adjust(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protecte
         _evas_event_havemap_adjust(obj->smart.parent, smart_parent_obj, x, y, mouse_grabbed);
      }
 
-   if ((!obj->map->cur.usemap) || (!obj->map->cur.map) || (!obj->map->cur.map->count == 4))
+   if ((!obj->map->cur.usemap) || (!obj->map->cur.map) || 
+       (obj->map->cur.map->count != 4))
       return;
 
    //FIXME: Unless map_coords_get() supports grab mode and extrapolate coords
