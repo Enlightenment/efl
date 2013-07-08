@@ -2128,7 +2128,10 @@ eet_alias_get(Eet_File   *ef,
           }
         
         if (tmp[compr_size - 1] != '\0')
-          goto on_error;
+          {
+             free(tmp);
+             goto on_error;
+          }
 
         UNLOCK_FILE(ef);
 
