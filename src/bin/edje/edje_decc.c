@@ -505,6 +505,7 @@ output(void)
 
      }
    eet_close(tef);
+   if (outdir) free(outdir);
 }
 
 static int
