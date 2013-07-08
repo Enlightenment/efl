@@ -1035,7 +1035,10 @@ ecore_x_icccm_colormap_window_unset(Ecore_X_Window win,
    if (!ecore_x_window_prop_property_get(win,
                                          ECORE_X_ATOM_WM_COLORMAP_WINDOWS,
                                          XA_WINDOW, 32, &old_data, &num))
-     return;
+     {
+        if (old_data) free(old_data);
+        return;
+     }
 
    oldset = (Window *)old_data;
    for (i = 0; i < num; i++)
