@@ -151,7 +151,7 @@ _evas_gl_preload_tile_async(void *data EINA_UNUSED, Eina_Thread t EINA_UNUSED)
 
      retry:
         eina_condition_wait(&async_loader_cond);
-        if (async_loader_exit) break ;
+        if (async_loader_exit) break;
 
      get_next:
         // Get a texture to upload
