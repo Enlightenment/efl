@@ -767,7 +767,12 @@ _ecore_imf_xim_init(void)
 
    DBG(" ");
 
-   ecore_x_init(NULL);
+   if (!ecore_x_init(NULL))
+     {
+        eina_shutdown();
+        return EINA_FALSE;
+     }
+
    ecore_imf_module_register(&xim_info,
                              xim_imf_module_create,
                              xim_imf_module_exit);
