@@ -1189,7 +1189,7 @@ ecore_x_window_root_list(int *num_ret)
                          overlap++;
                     }
                }
-             roots = malloc(MAX((num - overlap) * sizeof(Window), 1));
+             roots = malloc(MAX((num - overlap) * sizeof(Ecore_X_Window), 1));
              if (roots)
                {
                   int k;
@@ -1221,7 +1221,7 @@ ecore_x_window_root_list(int *num_ret)
           }
         else
           {
-             roots = malloc(num * sizeof(Window));
+             roots = malloc(num * sizeof(Ecore_X_Window));
              if (!roots)
                return NULL;
 
@@ -1232,7 +1232,7 @@ ecore_x_window_root_list(int *num_ret)
      }
    else
      {
-        roots = malloc(num * sizeof(Window));
+        roots = malloc(num * sizeof(Ecore_X_Window));
         if (!roots)
           return NULL;
 
@@ -1243,7 +1243,7 @@ ecore_x_window_root_list(int *num_ret)
 
 #else /* ifdef ECORE_XPRINT */
    num = ScreenCount(_ecore_x_disp);
-   roots = malloc(num * sizeof(Window));
+   roots = malloc(num * sizeof(Ecore_X_Window));
    if (!roots)
      return NULL;
 
