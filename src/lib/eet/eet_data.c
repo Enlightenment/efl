@@ -2891,8 +2891,15 @@ _eet_data_dump_encode(int             parent_type,
                              node->type);
           }
         else
-          /* A Hash without key will not decode correctly. */
-          return NULL;
+          {
+             /* A Hash without key will not decode correctly. */
+
+             ds->data = NULL;
+             ds->size = 0;
+             eet_data_stream_free(ds);
+
+             return NULL;
+          }
 
         for (n = node->values; n; n = n->next)
           {
