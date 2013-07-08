@@ -2381,6 +2381,30 @@ EAPI Evas_Object *ecore_evas_extn_plug_new(Ecore_Evas *ee_target);
 EAPI Eina_Bool ecore_evas_extn_plug_connect(Evas_Object *obj, const char *svcname, int svcnum, Eina_Bool svcsys);
 
 /**
+ * @brief Retrieve the coordinates of the mouse pointer
+ * 
+ * @param ee The Ecore_Evas containing the pointer
+ * @param x Pointer to integer to store horizontal coordinate. May be @c NULL.
+ * @param y Pointer to integer to store vertical coordinate. May be @c NULL.
+ * 
+ * @since 1.8
+ */
+EAPI void ecore_evas_pointer_xy_get(const Ecore_Evas *ee, Evas_Coord *x, Evas_Coord *y);
+
+/**
+ * @brief Retrieve the coordinates of the mouse pointer
+ * 
+ * @param ee The Ecore_Evas containing the pointer
+ * @param x The horizontal coordinate to move the pointer to
+ * @param y The vertical coordinate to move the pointer to
+ * 
+ * @return @c EINA_TRUE on success, EINA_FALSE on failure.
+ * 
+ * @since 1.8
+ */
+EAPI Eina_Bool ecore_evas_pointer_warp(const Ecore_Evas *ee, Evas_Coord x, Evas_Coord y);
+
+/**
  * @}
  */
 
