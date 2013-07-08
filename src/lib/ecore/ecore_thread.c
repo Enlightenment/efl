@@ -1201,7 +1201,11 @@ ecore_thread_global_data_add(const char  *key,
    d->cb = cb;
 
    if (!_ecore_thread_global_hash)
-     return EINA_FALSE;
+     {
+        free(d);
+        return EINA_FALSE;
+     }
+
    LRWKWL(_ecore_thread_global_hash_lock);
    if (direct)
      ret = eina_hash_direct_add(_ecore_thread_global_hash, key, d);
