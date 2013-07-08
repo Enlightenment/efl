@@ -832,6 +832,14 @@ _ecore_evas_wl_common_frame_border_size_get(Evas_Object *obj, int *fx, int *fy, 
    if (fh) *fh = sd->border_size[0] + sd->border_size[1];
 }
 
+void 
+_ecore_evas_wl_common_pointer_xy_get(Ecore_Evas *ee EINA_UNUSED, Evas_Coord *x, Evas_Coord *y)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   ecore_wl_pointer_xy_get(x, y);
+}
+
 void
 _ecore_evas_wl_common_raise(Ecore_Evas *ee)
 {
