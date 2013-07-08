@@ -201,11 +201,18 @@ ecore_x_dnd_version_get(Ecore_X_Window win)
 
         t = realloc(_version_cache, _version_cache_alloc *
                     sizeof(Version_Cache_Item));
-        if (!t) return 0;
+        if (!t)
+          {
+             if (prop_data) free(prop_data);
+             return 0;
+          }
+
         _version_cache = t;
         _version_cache[_version_cache_num - 1].win = win;
         _version_cache[_version_cache_num - 1].ver = 0;
      }
+
+   if (prop_data) free(prop_data);
 
    return 0;
 }
