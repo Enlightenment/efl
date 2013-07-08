@@ -268,13 +268,16 @@ ecore_x_dnd_type_set(Ecore_X_Window win,
      {
         if (ecore_x_dnd_type_isset(win, type))
           {
-             XFree(old_data);
+             if (old_data) free(old_data);
              return;
           }
 
         newset = calloc(num + 1, sizeof(Ecore_X_Atom));
         if (!newset)
-          return;
+          {
+             if (old_data) free(old_data);
+             return;
+          }
 
         data = (unsigned char *)newset;
 
@@ -290,14 +293,14 @@ ecore_x_dnd_type_set(Ecore_X_Window win,
      {
         if (!ecore_x_dnd_type_isset(win, type))
           {
-             XFree(old_data);
+             if (old_data) free(old_data);
              return;
           }
 
         newset = calloc(num - 1, sizeof(Ecore_X_Atom));
         if (!newset)
           {
-             XFree(old_data);
+             if (old_data) free(old_data);
              return;
           }
 
