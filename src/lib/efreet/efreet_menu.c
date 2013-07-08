@@ -1452,7 +1452,11 @@ efreet_menu_merge(Efreet_Menu_Internal *parent, Efreet_Xml *xml, const char *pat
     }
 
     internal = efreet_menu_internal_new(parent);
-    if (!internal) return 0;
+    if (!internal)
+    {
+        efreet_xml_del(merge_xml);
+        return 0;
+    }
     efreet_menu_path_set(internal, path);
     efreet_menu_handle_menu(internal, merge_xml);
     efreet_menu_concatenate(parent, internal);
