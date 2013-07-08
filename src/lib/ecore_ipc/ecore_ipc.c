@@ -1395,7 +1395,8 @@ _ecore_ipc_event_server_data(void *data EINA_UNUSED, int ev_type EINA_UNUSED, vo
    Ecore_Con_Event_Server_Data *e;
 
    e = ev;
-   if (!eina_list_data_find(servers, ecore_con_server_data_get(e->server))) return ECORE_CALLBACK_RENEW;
+   if (!eina_list_data_find(servers, ecore_con_server_data_get(e->server))) 
+     return ECORE_CALLBACK_RENEW;
    /* handling code here */
      {
         Ecore_Ipc_Server *svr;
