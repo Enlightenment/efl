@@ -569,7 +569,11 @@ efreet_menu_parse(const char *path)
 
     /* split apart the filename and the path */
     internal = efreet_menu_internal_new(NULL);
-    if (!internal) return NULL;
+    if (!internal)
+    {
+        efreet_xml_del(xml);
+        return NULL;
+    }
     internal->efreet_merged_menus = eina_hash_string_superfast_new(NULL);
     internal->efreet_merged_dirs = eina_hash_string_superfast_new(NULL);
 
