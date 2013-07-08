@@ -1336,7 +1336,8 @@ evgl_engine_init(void *eng_data, EVGL_Interface *efunc)
    else
       ERR("Proc address get function not available.  Extension not initialized.");
 
-   DBG("GLUE Extension String: %s", efunc->ext_string_get(eng_data));
+   if (efunc->ext_string_get)
+     DBG("GLUE Extension String: %s", efunc->ext_string_get(eng_data));
    DBG("GL Extension String: %s", glGetString(GL_EXTENSIONS));
 
    // Surface Caps
