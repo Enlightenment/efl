@@ -523,7 +523,8 @@ ecore_imf_context_data_set(Ecore_IMF_Context *ctx, void *data)
    ctx->data = data;
 }
 
-EAPI void *ecore_imf_context_data_get(Ecore_IMF_Context *ctx)
+EAPI void *
+ecore_imf_context_data_get(Ecore_IMF_Context *ctx)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
      {
