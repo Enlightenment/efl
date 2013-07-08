@@ -2367,6 +2367,35 @@ ecore_evas_draw_frame_get(const Ecore_Evas *ee)
    return ee->prop.draw_frame;
 }
 
+EAPI void 
+ecore_evas_pointer_xy_get(const Ecore_Evas *ee, Evas_Coord *x, Evas_Coord *y)
+{
+   if (x) *x = 0;
+   if (y) *y = 0;
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+        ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS, "ecore_evas_pointer_xy_get");
+        return;
+     }
+   IFC(ee, fn_pointer_xy_get) (ee, x, y);
+   IFE;
+}
+
+EAPI Eina_Bool 
+ecore_evas_pointer_warp(const Ecore_Evas *ee, Evas_Coord x, Evas_Coord y)
+{
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+        ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS, "ecore_evas_pointer_warp");
+        return;
+     }
+
+   if (ee->func.fn_pointer_warp)
+     return ee->func.fn_pointer_warp(ee, x, y);
+
+   return EINA_FALSE;
+}
+
 /* fps debug calls - for debugging how much time your app actually spends */
 /* rendering graphics... :) */
 
