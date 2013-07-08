@@ -242,9 +242,9 @@ _edje_var_shutdown(Edje *ed)
 	Edje_Var_Timer *et;
 
 	et = eina_list_data_get(ed->var_pool->timers);
+	ed->var_pool->timers = eina_list_remove(ed->var_pool->timers, et);
 	ecore_timer_del(et->timer);
 	free(et);
-	ed->var_pool->timers = eina_list_remove(ed->var_pool->timers, et);
      }
    if (ed->var_pool->animators)
      {
@@ -263,8 +263,8 @@ _edje_var_shutdown(Edje *ed)
 	Edje_Var_Animator *ea;
 
 	ea = eina_list_data_get(ed->var_pool->animators);
-	free(ea);
 	ed->var_pool->animators = eina_list_remove(ed->var_pool->animators, ea);
+	free(ea);
      }
    free(ed->var_pool);
    ed->var_pool = NULL;
