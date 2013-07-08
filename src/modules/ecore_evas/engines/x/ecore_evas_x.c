@@ -3053,6 +3053,19 @@ norandr:
    free(out);
 }
 
+static void 
+_ecore_evas_x_pointer_xy_get(const Ecore_Evas *ee, Evas_Coord *x, Evas_Coord *y)
+{
+   if (ee->prop.window)
+     ecore_x_pointer_xy_get(ee->prop.window, x, y);
+}
+
+static Eina_Bool 
+_ecore_evas_x_pointer_warp(const Ecore_Evas *ee, Evas_Coord x, Evas_Coord y)
+{
+   return ecore_x_pointer_warp(ee->prop.window, x, y);
+}
+
 static Ecore_Evas_Engine_Func _ecore_x_engine_func =
 {
    _ecore_evas_x_free,
@@ -3115,7 +3128,10 @@ static Ecore_Evas_Engine_Func _ecore_x_engine_func =
    _ecore_evas_x_screen_geometry_get,
    _ecore_evas_x_screen_dpi_get,
    NULL,
-   NULL //fn_msg_send
+   NULL, //fn_msg_send
+
+   _ecore_evas_x_pointer_xy_get,
+   _ecore_evas_x_pointer_warp
 };
 
 /*
