@@ -570,6 +570,7 @@ eina_file_copy(const char *src, const char *dst, Eina_File_Copy_Flags flags, Ein
      }
 
  end:
+   close(d);
    close(s);
 
    if (!success)
