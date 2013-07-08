@@ -87,6 +87,11 @@ replace_string(const char *string, const char *substr, const char *replacement)
    Eina_Strbuf *buffer = eina_strbuf_new();
 
    pch = strtok(str_cpy, substr);
+   if (!pch)
+     {
+        eina_strbuf_free(buffer);
+        return str_cpy;
+     }
    eina_strbuf_append(buffer, pch);
 
    while ((pch = strtok(NULL, substr)))
