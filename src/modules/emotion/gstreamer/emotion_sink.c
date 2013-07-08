@@ -604,7 +604,7 @@ evas_video_sink_samsung_main_render(void *data)
    send->ev->last_buffer = buffer;
 
  exit_point:
-   emotion_gstreamer_buffer_free(send);
+   if (send) emotion_gstreamer_buffer_free(send);
 
  exit_stream:
    if (priv)
