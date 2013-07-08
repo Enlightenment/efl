@@ -192,11 +192,10 @@ source_fetch_file(const char *fil, const char *filname)
 	     got_hash = 0;
 	  }
 	if ((file) && (fname))
-	  {
-	     source_fetch_file(file, fname);
-	     free(file);
-	     free(fname);
-	  }
+          source_fetch_file(file, fname);
+
+        if (file) free(file);
+        if (fname) free(fname);
      }
    free(dir);
    fclose(f);
