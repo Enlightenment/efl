@@ -255,6 +255,41 @@ _eo_kls_itr_func_get(const _Eo_Class *cur_klass, Eo_Op op)
    return NULL;
 }
 
+EAPI _Eo *
+eo2_do_start(Eo *obj_id)
+{
+   EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, NULL);
+   _eo_ref(obj);
+   return obj;
+}
+
+static void *
+_eo2_func_get(const _Eo_Class *cur_klass, Eo_Op op)
+{
+     {
+        const op_type_funcs *func = _eo_kls_itr_func_get(cur_klass, op);
+        if (EINA_LIKELY(func != NULL))
+          {
+             return func->func;
+          }
+     }
+
+   /* Try composite objects */
+   /* FIXME!!! */
+   return NULL;
+}
+
+EAPI void *
+eo2_func_get_internal(_Eo *obj, const Eo_Class *klass_id, Eo_Op op)
+{
+   const _Eo_Class *klass;
+   if (klass_id)
+      klass = _eo_class_pointer_get(klass_id);
+   else
+      klass = obj->klass;
+   return _eo2_func_get(klass, op);
+}
+
 #define _EO_OP_ERR_NO_OP_PRINT(file, line, op, klass) \
    do \
       { \

@@ -592,6 +592,50 @@ EAPI Eina_Bool eo_init(void);
  */
 EAPI Eina_Bool eo_shutdown(void);
 
+typedef struct _Eo_Internal _Eo;
+
+/* XXX: Essential, because we need to adjust objid for comp objects. */
+#define EO_FUNC(Name, Ret, Id, Func, DefRet, ...) \
+Ret \
+Name(_Eo *obj, Eo *objid, __VA_ARGS__) \
+{ \
+   Ret (*func)(Eo *, __VA_ARGS__) = eo2_func_get(obj, Id(Name)); \
+   if (func) \
+     { \
+        return Func; \
+     } \
+   else \
+     { \
+        return DefRet; \
+     } \
+}
+
+
+EAPI _Eo * eo2_do_start(Eo *obj_id);
+#define eo2_func_get(obj_id, op) eo2_func_get_internal(obj_id, NULL, op)
+EAPI void * eo2_func_get_internal(_Eo *obj, const Eo_Class *klass, Eo_Op op);
+
+/* FIXME: Don't use this unref, use an internal one. Reduce id resolution. */
+
+#define eo2_do_end(obj) eo_unref(obj)
+
+#define eo_o _obj_, _objid_
+
+#define eo2_do(objid, ...) \
+do \
+{ \
+   Eo *_objid_ = obj; \
+   _Eo *_obj_ = eo2_do_start(obj); \
+   do { __VA_ARGS__ ; } while (0); \
+   eo2_do_end(obj); \
+} while (0)
+
+#define eo2_class_do(clsid, ...) \
+do \
+{ \
+   do { __VA_ARGS__ ; } while (0); \
+} while (0)
+
 /**
  * @def eo_do
  * A convenience wrapper around eo_do_internal()
