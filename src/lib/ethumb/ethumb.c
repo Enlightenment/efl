@@ -1354,12 +1354,13 @@ ethumb_image_save(Ethumb *e)
 
    dname = ecore_file_dir_get(e->thumb_path);
    r = ecore_file_mkpath(dname);
-   free(dname);
    if (!r)
      {
         ERR("could not create directory '%s'", dname);
+        free(dname);
         return EINA_FALSE;
      }
+   free(dname);
 
    snprintf(flags, sizeof(flags), "quality=%d compress=%d",
             e->quality, e->compress);
