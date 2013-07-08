@@ -1467,6 +1467,7 @@ _ecore_ipc_event_server_data(void *data EINA_UNUSED, int ev_type EINA_UNUSED, vo
                   Ecore_Ipc_Event_Server_Data *e2;
                   int max;
 
+                  if (buf) free(buf);
                   buf = NULL;
                   max = svr->max_buf_size;
                   if ((max < 0) || (msg.size <= max))
@@ -1504,6 +1505,7 @@ _ecore_ipc_event_server_data(void *data EINA_UNUSED, int ev_type EINA_UNUSED, vo
                        free(svr->buf);
                        svr->buf = NULL;
                        svr->buf_size = 0;
+                       if (buf) free(buf);
                        return ECORE_CALLBACK_CANCEL;
                     }
                   goto redo;
@@ -1513,6 +1515,7 @@ _ecore_ipc_event_server_data(void *data EINA_UNUSED, int ev_type EINA_UNUSED, vo
         else
           {
              scroll:
+             if (buf) free(buf);
              buf = malloc(svr->buf_size - offset);
              if (!buf)
                {
