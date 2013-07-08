@@ -2092,7 +2092,7 @@ eet_alias_get(Eet_File   *ef,
    /* get size (uncompressed, if compressed at all) */
    size = efn->data_size;
 
-   if (!efn->alias) return NULL;
+   if (!efn->alias) goto on_error;
    data = efn->data ? efn->data : ef->data + efn->offset;
 
    /* handle alias case */
