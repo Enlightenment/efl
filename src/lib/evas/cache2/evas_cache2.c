@@ -1102,8 +1102,6 @@ evas_cache2_image_dirty(Image_Entry *im, unsigned int x, unsigned int y, unsigne
    return im2;
 
 on_error:
-   if (im2)
-     _evas_cache_image_entry_delete(cache, im2);
    evas_cache2_image_close(im);
    return NULL;
 }
