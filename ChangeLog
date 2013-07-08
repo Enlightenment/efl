@@ -1,3 +1,7 @@
+2013-07-08  Mike Blumenkrantz
+
+        * add eina_tiler_area_size_get
+
 2013-07-06  Carsten Haitzler (The Rasterman)
 
         * Add direct eina file map populate controls

@@ -1169,6 +1169,13 @@ EAPI void eina_tiler_area_size_set(Eina_Tiler *t, int w, int h)
    t->area.h = h;
 }
 
+EAPI void eina_tiler_area_size_get(const Eina_Tiler *t, int *w, int *h)
+{
+   EINA_MAGIC_CHECK_TILER(t);
+   if (w) *w = t->area.w;
+   if (h) *h = t->area.h;
+}
+
 EAPI void eina_tiler_tile_size_set(Eina_Tiler *t, int w, int h)
 {
    EINA_MAGIC_CHECK_TILER(t);

@@ -213,9 +213,22 @@ EAPI void               eina_tiler_tile_size_set(Eina_Tiler *t, int w, int h);
  * @param w Width of the area.
  * @param h Height of the area.
  *
- * Better clear the tiler before changing it's size.
+ * @since 1.8
+ *
+ * @warning Must clear the tiler before changing its size.
  */
 EAPI void               eina_tiler_area_size_set(Eina_Tiler *t, int w, int h);
+
+/**
+ * @brief Get the size of the area covered by the tiler.
+ *
+ * @param t The tiler whose area size will be fetched.
+ * @param w Width of the area.
+ * @param h Height of the area.
+ *
+ * @since 1.8
+ */
+EAPI void eina_tiler_area_size_get(const Eina_Tiler *t, int *w, int *h);
 
 /**
  * @brief Define if we need to follow a strict grid of tile or a loosy one
