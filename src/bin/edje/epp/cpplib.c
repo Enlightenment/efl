@@ -6129,6 +6129,7 @@ push_parse_file(cpp_reader * pfile, const char *fname)
 	     if (fd < 0)
 	       {
 		  cpp_perror_with_name(pfile, pend->arg);
+                  if (f) close(f);
 		  return FATAL_EXIT_CODE;
 	       }
 	     cpp_push_buffer(pfile, NULL, 0);
