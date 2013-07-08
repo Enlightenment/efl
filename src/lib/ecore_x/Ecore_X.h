@@ -59,9 +59,9 @@
 typedef unsigned int   Ecore_X_ID;
 #ifndef _ECORE_X_WINDOW_PREDEF
 typedef Ecore_X_ID     Ecore_X_Window;
+typedef Ecore_X_ID     Ecore_X_Pixmap;
 #endif // ifndef _ECORE_X_WINDOW_PREDEF
 typedef void          *Ecore_X_Visual;
-typedef Ecore_X_ID     Ecore_X_Pixmap;
 typedef Ecore_X_ID     Ecore_X_Drawable;
 #ifdef HAVE_ECORE_X_XCB
 typedef Ecore_X_ID     Ecore_X_GC;
