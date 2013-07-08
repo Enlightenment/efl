@@ -259,7 +259,7 @@ void cserve2_message_handler(int fd, Fd_Flags flags, void *data);
 
 void cserve2_shm_init();
 void cserve2_shm_shutdown();
-Shm_Handle *cserve2_shm_request(size_t size);
+Shm_Handle *cserve2_shm_request(const char *infix, size_t size);
 void cserve2_shm_unref(Shm_Handle *shm);
 const char *cserve2_shm_name_get(const Shm_Handle *shm);
 off_t cserve2_shm_map_offset_get(const Shm_Handle *shm);

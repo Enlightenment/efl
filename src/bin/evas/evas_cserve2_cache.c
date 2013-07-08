@@ -425,7 +425,7 @@ _load_request_build(Image_Data *i, int *bufsize)
    Slave_Msg_Image_Load msg;
 
    // opening shm for this file
-   i->shm = cserve2_shm_request(i->file->w * i->file->h * 4);
+   i->shm = cserve2_shm_request("img", i->file->w * i->file->h * 4);
    if (!i->shm)
      return NULL;
 
@@ -541,8 +541,9 @@ _scaling_prepare_and_do(Image_Data *orig)
 
    DBG("Original image's shm path %s", cserve2_shm_name_get(orig->shm));
 
-   scale_shm =
-     cserve2_shm_request(orig->opts.scale_load.dst_w * orig->opts.scale_load.dst_h * 4);
+   scale_shm = cserve2_shm_request(
+            "img",
+            orig->opts.scale_load.dst_w * orig->opts.scale_load.dst_h * 4);
 
    DBG("Scale image's shm path %s", cserve2_shm_name_get(scale_shm));
 
@@ -2226,7 +2227,7 @@ do_scaling:
    if (entry->shm)
      cserve2_shm_unref(entry->shm);
 
-   entry->shm = cserve2_shm_request(dst_w * dst_h * 4);
+   entry->shm = cserve2_shm_request("img", dst_w * dst_h * 4);
    if (!entry->shm) return -1;
 
    if (_scaling_do(entry->shm, entry, original) != 0)

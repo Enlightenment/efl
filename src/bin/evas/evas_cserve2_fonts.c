@@ -284,7 +284,7 @@ _font_slave_load(const void *cmddata, void *data EINA_UNUSED)
 static Shm_Handle *
 _font_slave_memory_alloc(Font_Info *fi)
 {
-   Shm_Handle *shm = cserve2_shm_request(fi->shmsize);
+   Shm_Handle *shm = cserve2_shm_request("font", fi->shmsize);
 
    return shm;
 }
