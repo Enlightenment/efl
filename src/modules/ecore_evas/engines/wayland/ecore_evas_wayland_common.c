@@ -833,7 +833,7 @@ _ecore_evas_wl_common_frame_border_size_get(Evas_Object *obj, int *fx, int *fy, 
 }
 
 void 
-_ecore_evas_wl_common_pointer_xy_get(Ecore_Evas *ee EINA_UNUSED, Evas_Coord *x, Evas_Coord *y)
+_ecore_evas_wl_common_pointer_xy_get(const Ecore_Evas *ee EINA_UNUSED, Evas_Coord *x, Evas_Coord *y)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
