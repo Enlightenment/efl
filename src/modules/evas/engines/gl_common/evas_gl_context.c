@@ -1268,7 +1268,7 @@ _evas_gl_common_context_push(int rtype,
    if (tex)
      current_tex = tex->ptt ? tex->ptt->texture : tex->pt->texture;
    if (texm)
-     current_texm = texm->ptt ? texm->ptt->texture : tex->pt->texture;
+     current_texm = texm->ptt ? texm->ptt->texture : texm->pt->texture;
 
 #ifdef GLPIPES
  again:
