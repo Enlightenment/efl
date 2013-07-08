@@ -977,7 +977,7 @@ EAPI void            ecore_evas_gl_x11_pre_post_swap_callback_set(const Ecore_Ev
  */
 EAPI Ecore_Evas     *ecore_evas_gl_x11_pixmap_new(const char *disp_name, Ecore_X_Window parent, int x, int y, int w, int h);
 
-   /**
+/**
  * @brief Returns the underlying Ecore_X_Pixmap used in the Ecore_Evas
  * 
  * @param ee The Ecore_Evas whose pixmap is desired.
