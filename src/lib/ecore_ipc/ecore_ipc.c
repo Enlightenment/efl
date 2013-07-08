@@ -1402,7 +1402,7 @@ _ecore_ipc_event_server_data(void *data EINA_UNUSED, int ev_type EINA_UNUSED, vo
         Ecore_Ipc_Server *svr;
         Ecore_Ipc_Msg_Head msg;
         int offset = 0;
-        unsigned char *buf;
+        unsigned char *buf = NULL;
 
         svr = ecore_con_server_data_get(e->server);
 
