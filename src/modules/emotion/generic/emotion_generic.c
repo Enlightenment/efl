@@ -108,7 +108,9 @@ _player_send_str(Emotion_Generic_Video *ev, const char *str, Eina_Bool stringsha
      len = str ? eina_stringshare_strlen(str) + 1 : 0;
    else
      len = str ? strlen(str) + 1 : 0;
-   ecore_pipe_write(ev->fd_write, str, len);
+
+   if (str)
+     ecore_pipe_write(ev->fd_write, str, len);
 }
 
 static Eina_Bool
