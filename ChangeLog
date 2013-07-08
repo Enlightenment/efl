@@ -1,3 +1,12 @@
+2013-07-08  Chris Michael
+
+        * Ecore_Evas: Added functions got software_x11 and gl_x11
+engines to create new ecore_evas which uses just a pixmap (no window).
+           - add ecore_evas_software_x11_pixmap_new
+           - add ecore_evas_gl_x11_pixmap_new
+           - add ecore_evas_software_x11_pixmap_get
+           - add ecore_evas_gl_x11_pixmap_get
+
 2013-07-08  Mike Blumenkrantz
 
         * add eina_tiler_area_size_get
