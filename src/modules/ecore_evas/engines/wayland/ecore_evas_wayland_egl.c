@@ -77,7 +77,10 @@ static Ecore_Evas_Engine_Func _ecore_wl_engine_func =
    _ecore_evas_wl_common_screen_geometry_get,
    _ecore_evas_wl_common_screen_dpi_get,
    NULL, // msg parent send
-   NULL // msg_send
+   NULL, // msg_send
+
+   _ecore_evas_wl_common_pointer_xy_get,
+   NULL // pointer warp
 };
 
 /* external variables */
