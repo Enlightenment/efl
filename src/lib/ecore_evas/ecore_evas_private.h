@@ -111,7 +111,6 @@ struct _Ecore_Evas_Engine_Func
 };
 
 struct _Ecore_Evas_Interface
-
 {
     const char *name;
     unsigned int version;
