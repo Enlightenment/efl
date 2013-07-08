@@ -127,6 +127,9 @@ evas_bidi_shape_string(Eina_Unicode *eina_ustr, const Evas_BiDi_Paragraph_Props 
    join_types = (EvasBiDiJoiningType *) malloc(sizeof(EvasBiDiJoiningType) * len);
    if (!join_types)
      {
+#ifdef EVAS_FRIBIDI_EINA_UNICODE_UNEQUAL
+        if (base_ustr) free(base_ustr);
+#endif
         return EINA_FALSE;
      }
    fribidi_get_joining_types(ustr, len, join_types);
