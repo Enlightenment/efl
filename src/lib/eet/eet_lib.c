@@ -1444,7 +1444,7 @@ eet_mmap(Eina_File *file)
 
    /* Allocate struct for eet file and have it zero'd out */
    ef = eet_file_malloc(1);
-   if (!ef) return NULL;
+   if (!ef) goto on_error;
 
    /* fill some of the members */
    INIT_FILE(ef);
