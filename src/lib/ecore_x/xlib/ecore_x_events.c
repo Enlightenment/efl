@@ -1415,6 +1415,7 @@ _ecore_x_event_handle_selection_notify(XEvent *xevent)
                                selection,
                                xevent->xselection.requestor,
                                CurrentTime);
+             if (data) free(data);
              return;
           }
      }
@@ -1426,7 +1427,10 @@ _ecore_x_event_handle_selection_notify(XEvent *xevent)
 
    e = calloc(1, sizeof(Ecore_X_Event_Selection_Notify));
    if (!e)
-     return;
+     {
+        if (data) free(data);
+        return;
+     }
 
    e->win = xevent->xselection.requestor;
    e->time = xevent->xselection.time;
