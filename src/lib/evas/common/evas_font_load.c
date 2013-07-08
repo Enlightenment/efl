@@ -157,6 +157,7 @@ evas_common_font_source_memory_load(const char *name, const void *data, int data
    if (error)
      {
         FT_Done_Face(fs->ft.face);
+        FTUNLOCK();
         fs->ft.face = NULL;
         free(fs);
         return NULL;
