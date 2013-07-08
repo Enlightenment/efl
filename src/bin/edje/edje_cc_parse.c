@@ -885,7 +885,17 @@ compile(void)
      }
    DBG("Opening \"%s\" for input", file_in);
 
+   /* lseek can return -1 on error. trap that return and exit so that 
+    * we do not pass malloc a -1
+    * 
+    * NB: Fixes Coverity CID 1040029 */
    size = lseek(fd, 0, SEEK_END);
+   if (size < 0)
+     {
+        ERR("Cannot read file \"%s\". %s", file_in, strerror(errno));
+        exit(-1);
+     }
+
    lseek(fd, 0, SEEK_SET);
    data = malloc(size);
    if (data && (read(fd, data, size) == size))
