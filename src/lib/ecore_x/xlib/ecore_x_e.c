@@ -1201,8 +1201,7 @@ ecore_x_e_window_profile_list_get(Ecore_X_Window   win,
            (*profiles)[i] = ecore_x_atom_name_get(atoms[i]);
      }
 
-   if (data)
-     XFree(data);
+   if (data) free(data);
 
    return EINA_TRUE;
 }
