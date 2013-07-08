@@ -2387,7 +2387,7 @@ ecore_evas_pointer_warp(const Ecore_Evas *ee, Evas_Coord x, Evas_Coord y)
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
         ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS, "ecore_evas_pointer_warp");
-        return;
+        return EINA_FALSE;
      }
 
    if (ee->func.fn_pointer_warp)
