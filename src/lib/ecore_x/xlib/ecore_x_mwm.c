@@ -48,7 +48,10 @@ ecore_x_mwm_hints_get(Ecore_X_Window win,
                                          ECORE_X_ATOM_MOTIF_WM_HINTS,
                                          ECORE_X_ATOM_MOTIF_WM_HINTS,
                                          32, &p, &num))
-     return EINA_FALSE;
+     {
+        if (p) free(p);
+        return EINA_FALSE;
+     }
 
    mwmhints = (MWMHints *)p;
    if (mwmhints)
