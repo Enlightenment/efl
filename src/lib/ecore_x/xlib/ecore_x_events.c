@@ -1571,6 +1571,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
                }
 
              e->num_types = num_ret;
+             if (data) free(data);
           }
         else
           {
