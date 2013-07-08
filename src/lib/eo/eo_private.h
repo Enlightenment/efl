@@ -56,7 +56,6 @@ extern int _eo_log_dom;
 
 typedef size_t  Eo_Id;
 typedef struct _Eo_Class _Eo_Class;
-typedef struct _Eo_Internal _Eo;
 
 /* Retrieves the pointer to the object from the id */
 static inline _Eo *_eo_obj_pointer_get(const Eo_Id obj_id);
