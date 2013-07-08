@@ -127,7 +127,11 @@ _evas_gl_preload_lock(void)
         eina_condition_signal(&async_loader_cond);
 
         eina_condition_wait(&async_loader_cond);
-        if (async_loader_exit) return EINA_FALSE;
+        if (async_loader_exit) 
+          {
+             eina_lock_release(&async_loader_lock);
+             return EINA_FALSE;
+          }
 
         async_gl_make_current(async_engine_data, async_engine_data);
      }
