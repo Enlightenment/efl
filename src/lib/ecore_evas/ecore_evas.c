@@ -3024,6 +3024,45 @@ ecore_evas_gl_x11_options_new(const char *disp_name, Ecore_X_Window parent, int 
 }
 
 /**
+ * @brief Create a new Ecore_Evas which does not contain an XWindow. It will 
+ * only contain an XPixmap to render to
+ * 
+ * @since 1.8
+ */
+EAPI Ecore_Evas *
+ecore_evas_gl_x11_pixmap_new(const char *disp_name, Ecore_X_Window parent, int x, int y, int w, int h)
+{
+   Ecore_Evas *(*new)(const char *, Ecore_X_Window, int, int, int, int);
+   Eina_Module *m = _ecore_evas_engine_load("x");
+   EINA_SAFETY_ON_NULL_RETURN_VAL(m, NULL);
+
+   new = eina_module_symbol_get(m, "ecore_evas_gl_x11_pixmap_new_internal");
+   EINA_SAFETY_ON_NULL_RETURN_VAL(new, NULL);
+
+   return new(disp_name, parent, x, y, w, h);
+}
+
+/**
+ * @brief Returns the underlying Ecore_X_Pixmap used in the Ecore_Evas
+ * 
+ * @param ee The Ecore_Evas whose pixmap is desired.
+ * @return The underlying Ecore_X_Pixmap
+ * 
+ * @warning Support for this depends on the underlying windowing system.
+ * 
+ * @since 1.8
+ */
+EAPI Ecore_X_Pixmap 
+ecore_evas_gl_x11_pixmap_get(const Ecore_Evas *ee)
+{
+   Ecore_Evas_Interface_Gl_X11 *iface;
+   iface = (Ecore_Evas_Interface_Gl_X11 *)_ecore_evas_interface_get(ee, "gl_x11");
+   EINA_SAFETY_ON_NULL_RETURN_VAL(iface, 0);
+
+   return iface->pixmap_get(ee);
+}
+
+/**
  * @brief Get the window from Ecore_Evas using opengl x11.
  * @note If ecore is not compiled with support for x11 or if @p ee was not
  * created with ecore_evas_gl_x11_new() then nothing is done and
