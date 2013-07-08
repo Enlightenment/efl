@@ -1,5 +1,9 @@
 2013-07-08  Chris Michael
 
+        * Ecore_Evas: Added pointer abtractions (requested by Mike)
+
+2013-07-08  Chris Michael
+
         * Ecore_Evas: Added functions got software_x11 and gl_x11
 engines to create new ecore_evas which uses just a pixmap (no window).
            - add ecore_evas_software_x11_pixmap_new
