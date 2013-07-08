@@ -108,6 +108,10 @@ struct _Ecore_Evas_Engine_Func
    void (*fn_screen_dpi_get) (const Ecore_Evas *ee, int *xdpi, int *ydpi);
    void (*fn_msg_parent_send) (Ecore_Evas *ee, int maj, int min, void *data, int size);
    void (*fn_msg_send) (Ecore_Evas *ee, int maj, int min, void *data, int size);
+
+   /* 1.8 abstractions */
+   void (*fn_pointer_xy_get) (const Ecore_Evas *ee, Evas_Coord *x, Evas_Coord *y);
+   Eina_Bool (*fn_pointer_warp) (const Ecore_Evas *ee, Evas_Coord x, Evas_Coord y);
 };
 
 struct _Ecore_Evas_Interface
