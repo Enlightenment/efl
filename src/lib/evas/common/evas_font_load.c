@@ -153,13 +153,15 @@ evas_common_font_source_memory_load(const char *name, const void *data, int data
    fs->file = NULL;
    FTLOCK();
    error = FT_Select_Charmap(fs->ft.face, ft_encoding_unicode);
-  if (error)
-    {
-      FT_Done_Face(fs->ft.face);
-      fs->ft.face = NULL;
-      free(fs);
-      return NULL;
-    }
+
+   if (error)
+     {
+        FT_Done_Face(fs->ft.face);
+        fs->ft.face = NULL;
+        free(fs);
+        return NULL;
+     }
+
    FTUNLOCK();
    fs->ft.orig_upem = fs->ft.face->units_per_EM;
    fs->references = 1;
