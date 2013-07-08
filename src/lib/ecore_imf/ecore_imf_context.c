@@ -568,7 +568,7 @@ _ecore_imf_event_free_preedit(void *data EINA_UNUSED, void *event)
 EAPI void
 ecore_imf_context_preedit_start_event_add(Ecore_IMF_Context *ctx)
 {
-   Ecore_IMF_Event_Commit *ev;
+   Ecore_IMF_Event_Preedit_Start *ev;
 
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
      {
@@ -586,7 +586,7 @@ ecore_imf_context_preedit_start_event_add(Ecore_IMF_Context *ctx)
 EAPI void
 ecore_imf_context_preedit_end_event_add(Ecore_IMF_Context *ctx)
 {
-   Ecore_IMF_Event_Commit *ev;
+   Ecore_IMF_Event_Preedit_End *ev;
 
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
      {
@@ -604,7 +604,7 @@ ecore_imf_context_preedit_end_event_add(Ecore_IMF_Context *ctx)
 EAPI void
 ecore_imf_context_preedit_changed_event_add(Ecore_IMF_Context *ctx)
 {
-   Ecore_IMF_Event_Commit *ev;
+   Ecore_IMF_Event_Preedit_Changed *ev;
 
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
      {
