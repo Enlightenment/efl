@@ -1556,6 +1556,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
                {
                   WRN(
                     "DND: Could not fetch data type list from source window, aborting.");
+                  if (data) free(data);
                   free(e);
                   return;
                }
@@ -1594,6 +1595,8 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
         e->source = target->source;
         ecore_event_add(ECORE_X_EVENT_XDND_ENTER, e,
                         _ecore_x_event_free_xdnd_enter, NULL);
+
+        if (data) free(data);
      }
    /* Message Type: XdndPosition target */
    else if (xevent->xclient.message_type == ECORE_X_ATOM_XDND_POSITION)
