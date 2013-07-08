@@ -1414,7 +1414,7 @@ eldbus_service_object_manager_attach(Eldbus_Service_Interface *iface)
      return EINA_TRUE;
 
    /* Ugh. User already registered the ObjectManager interface himself? */
-   if (eina_hash_find(obj->interfaces, obj->objmanager->name))
+   if (eina_hash_find(obj->interfaces, objmanager->name))
      return EINA_FALSE;
 
    if (!eina_hash_add(obj->interfaces, objmanager->name, objmanager))
