@@ -975,7 +975,10 @@ ecore_x_icccm_colormap_window_set(Ecore_X_Window win,
      {
         newset = calloc(1, sizeof(Window));
         if (!newset)
-          return;
+          {
+             if (old_data) free(old_data);
+             return;
+          }
 
         newset[0] = subwin;
         num = 1;
@@ -986,7 +989,10 @@ ecore_x_icccm_colormap_window_set(Ecore_X_Window win,
         newset = calloc(num + 1, sizeof(Window));
         oldset = (Window *)old_data;
         if (!newset)
-          return;
+          {
+             if (old_data) free(old_data);
+             return;
+          }
 
         for (i = 0; i < num; ++i)
           {
@@ -1014,6 +1020,7 @@ ecore_x_icccm_colormap_window_set(Ecore_X_Window win,
                                     ECORE_X_ATOM_WM_COLORMAP_WINDOWS,
                                     XA_WINDOW, 32, data, num);
    free(newset);
+   free(old_data);
 }
 
 /**
