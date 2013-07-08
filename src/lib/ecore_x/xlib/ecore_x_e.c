@@ -1243,13 +1243,18 @@ ecore_x_e_window_profile_get(Ecore_X_Window win)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (!ecore_x_window_prop_property_get(win, ECORE_X_ATOM_E_WINDOW_PROFILE,
                                          XA_ATOM, 32, &data, &num))
-     return NULL;
+     {
+        if (data) free(data);
+        return NULL;
+     }
 
    if (data)
      atom = (Ecore_X_Atom *)data;
 
    if (atom)
      profile = ecore_x_atom_name_get(atom[0]);
+
+   if (data) free(data);
 
    return profile;
 }
