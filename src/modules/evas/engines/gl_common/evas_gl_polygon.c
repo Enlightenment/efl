@@ -70,10 +70,16 @@ evas_gl_common_poly_point_add(Evas_GL_Polygon *poly, int x, int y)
 {
    Evas_GL_Polygon_Point *pt;
 
-   if (!poly) poly = calloc(1, sizeof(Evas_GL_Polygon));
-   if (!poly) return NULL;
    pt = calloc(1, sizeof(Evas_GL_Polygon_Point));
    if (!pt) return NULL;
+
+   if (!poly) poly = calloc(1, sizeof(Evas_GL_Polygon));
+   if (!poly)
+     {
+        free(pt);
+        return NULL;
+     }
+
    pt->x = x;
    pt->y = y;
    poly->points = eina_list_append(poly->points, pt);
