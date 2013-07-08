@@ -1237,7 +1237,10 @@ ecore_x_netwm_window_types_get(Ecore_X_Window win,
 
    atoms2 = malloc(num * sizeof(Ecore_X_Window_Type));
    if (!atoms2)
-     return 0;
+     {
+        if (atoms) free(atoms);
+        return 0;
+     }
 
    for (i = 0; i < num; i++)
      atoms2[i] = _ecore_x_netwm_window_type_type_get(atoms[i]);
