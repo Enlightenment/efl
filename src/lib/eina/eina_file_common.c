@@ -543,7 +543,7 @@ EAPI Eina_Bool
 eina_file_copy(const char *src, const char *dst, Eina_File_Copy_Flags flags, Eina_File_Copy_Progress cb, const void *cb_data)
 {
    struct stat st;
-   int s, d;
+   int s, d = -1;
    Eina_Bool success;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(src, EINA_FALSE);
@@ -570,7 +570,7 @@ eina_file_copy(const char *src, const char *dst, Eina_File_Copy_Flags flags, Ein
      }
 
  end:
-   close(d);
+   if (d > 0) close(d);
    close(s);
 
    if (!success)
