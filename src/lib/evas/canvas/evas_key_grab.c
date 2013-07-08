@@ -108,11 +108,11 @@ evas_object_grabs_cleanup(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected
         while (obj->grabs)
           {
              Evas_Key_Grab *g = obj->grabs->data;
+             obj->layer->evas->grabs = 
+               eina_list_remove(obj->layer->evas->grabs, g);
+             obj->grabs = eina_list_remove(obj->grabs, g);
              if (g->keyname) free(g->keyname);
              free(g);
-             obj->layer->evas->grabs = eina_list_remove(obj->layer->evas->grabs,
-                                                        g);
-             obj->grabs = eina_list_remove(obj->grabs, g);
           }
      }
 }
