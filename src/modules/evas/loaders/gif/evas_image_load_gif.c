@@ -798,6 +798,7 @@ evas_image_load_specific_frame(Eina_File *f,
    if (!gif_frame)
      {
         *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+        free(frame);
         goto on_error;
      }
    frame->info = gif_frame;
@@ -805,6 +806,8 @@ evas_image_load_specific_frame(Eina_File *f,
    if (!_evas_image_load_frame(f, opts, prop, animated, gif, frame, LOAD_FRAME_DATA_INFO, error))
      {
         *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
+        free(gif_frame);
+        free(frame);
         goto on_error;
      }
 
