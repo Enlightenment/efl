@@ -1178,6 +1178,7 @@ emotion_object_meta_info_get(const Evas_Object *obj, Emotion_Meta_Info meta)
          break;
       case EMOTION_META_INFO_TRACK_DISC_ID:
          id = META_TRACK_DISCID;
+        break;
       default:
          ERR("Unknown meta info id: %d", meta);
          return NULL;
