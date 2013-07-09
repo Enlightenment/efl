@@ -3,8 +3,10 @@
 #endif
 
 #include <stdlib.h>
+#ifndef _WIN32
 #include <sys/time.h>
 #include <sys/resource.h>
+#endif
 
 #include <Ecore.h>
 #include <Ecore_File.h>
@@ -50,7 +52,10 @@ main(int argc, char *argv[])
    if (!dbus_init()) goto dbus_error;
    if (!cache_init()) goto cache_error;
 
+#ifndef _WIN32
    setpriority(PRIO_PROCESS, 0, 19);
+#endif
+
    ecore_main_loop_begin();
 
    cache_shutdown();

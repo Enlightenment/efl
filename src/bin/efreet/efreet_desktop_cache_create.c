@@ -5,8 +5,10 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <errno.h>
+#ifndef _WIN32
 #include <sys/time.h>
 #include <sys/resource.h>
+#endif
 
 #include <Eina.h>
 #include <Eet.h>
@@ -252,7 +254,10 @@ main(int argc, char **argv)
     }
     extra_dirs = eina_list_sort(extra_dirs, -1, EINA_COMPARE_CB(strcmp));
 
+#ifndef _WIN32
     setpriority(PRIO_PROCESS, 0, 19);
+#endif
+
     /* init external subsystems */
     if (!eet_init()) goto eet_error;
     if (!ecore_init()) goto ecore_error;
