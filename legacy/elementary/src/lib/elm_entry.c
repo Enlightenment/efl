@@ -490,6 +490,7 @@ _elm_entry_smart_disable(Eo *obj, void *_pd, va_list *list)
 static void
 _elm_entry_smart_theme(Eo *obj, void *_pd, va_list *list)
 {
+   const char *str;
    const char *t;
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    if (ret) *ret = EINA_FALSE;
@@ -556,7 +557,6 @@ _elm_entry_smart_theme(Eo *obj, void *_pd, va_list *list)
 
    if (sd->scroll)
      {
-        const char *str;
         Eina_Bool ok = EINA_FALSE;
         
         eo_do(obj, elm_scrollable_interface_mirrored_set(elm_widget_mirrored_get(obj)));
@@ -569,11 +569,16 @@ _elm_entry_smart_theme(Eo *obj, void *_pd, va_list *list)
           (obj, sd->scr_edje, "scroller", "entry", elm_widget_style_get(obj));
 
         str = edje_object_data_get(sd->scr_edje, "focus_highlight");
-        if ((str) && (!strcmp(str, "on")))
-          elm_widget_highlight_in_theme_set(obj, EINA_TRUE);
-        else
-          elm_widget_highlight_in_theme_set(obj, EINA_FALSE);
      }
+   else
+     {
+        str = edje_object_data_get(sd->entry_edje, "focus_highlight");
+     }
+
+   if ((str) && (!strcmp(str, "on")))
+     elm_widget_highlight_in_theme_set(obj, EINA_TRUE);
+   else
+     elm_widget_highlight_in_theme_set(obj, EINA_FALSE);
 
    sd->changed = EINA_TRUE;
    elm_layout_sizing_eval(obj);
