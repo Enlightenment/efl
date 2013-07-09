@@ -4881,7 +4881,7 @@ _end_visible_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
    Eina_Bool setting = va_arg(*list, int);
 
-   if (!elm_layout_content_get(obj, "elm.swallow.icon")) return;
+   if (!elm_layout_content_get(obj, "elm.swallow.end")) return;
 
    if (setting)
      elm_layout_signal_emit(obj, "elm,action,show,end", "elm");
