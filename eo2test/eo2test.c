@@ -14,9 +14,10 @@ main()
    Eo *obj = eo_add(TEST_CLASS, NULL);
 
    eo2_do(obj,
-         a = inst_func(eo2_o, 32);
-         inst_func(eo2_o, 10);
-         b = inst_func(eo2_o, 50);
+         a = inst_func_set(eo2_o, 32);
+         inst_func_set(eo2_o, 10);
+         b = inst_func_set(eo2_o, 50);
+         a = inst_func_get(eo2_o);
          );
 
    printf("%d %d\n", a, b);
@@ -34,7 +35,7 @@ typedef struct
 } Private_Data;
 
 static int
-_inst_func(Eo *objid EINA_UNUSED, void *obj_data, int a)
+_inst_func_set(Eo *objid EINA_UNUSED, void *obj_data, int a)
 {
    Private_Data *data = (Private_Data *) obj_data;
    int ret = a + data->a;
@@ -42,11 +43,19 @@ _inst_func(Eo *objid EINA_UNUSED, void *obj_data, int a)
    return ret;
 }
 
+static int
+_inst_func_get(Eo *objid EINA_UNUSED, void *obj_data)
+{
+   Private_Data *data = (Private_Data *) obj_data;
+   return data->a;
+}
+
 static void
 _class_constructor(Eo_Class *klass)
 {
    const Eo_Op_Func_Description func_desc[] = {
-        EO_OP_FUNC(TEST_ID(inst_func), (void *) _inst_func),
+        EO_OP_FUNC(TEST_ID(inst_func_set), (void *) _inst_func_set),
+        EO_OP_FUNC(TEST_ID(inst_func_get), (void *) _inst_func_get),
         EO_OP_FUNC_SENTINEL
    };
 
@@ -56,7 +65,8 @@ _class_constructor(Eo_Class *klass)
 EAPI Eo_Op TEST_BASE_ID = 0;
 
 static const Eo_Op_Description op_desc[] = {
-     EO_OP_DESCRIPTION(TEST_SUB_ID_inst_func, "Test base id"),
+     EO_OP_DESCRIPTION(TEST_SUB_ID_inst_func_set, "Set"),
+     EO_OP_DESCRIPTION(TEST_SUB_ID_inst_func_get, "Get"),
      EO_OP_DESCRIPTION_SENTINEL
 };
 
@@ -74,4 +84,4 @@ static const Eo_Class_Description class_desc = {
 EO_DEFINE_CLASS(test_class_get, &class_desc, EO_BASE_CLASS, NULL)
 
 /* fct_sym, ret_type, OP_ID, fct_call, default_ret_val, arguments… */
-EAPI EO_FUNC_BODYV(inst_func, int, TEST_ID, EO_FUNC_CALLV(a), 0, int a)
+EAPI EO_FUNC_BODYV(inst_func_set, int, TEST_ID, EO_FUNC_CALLV(a), 0, int a)
