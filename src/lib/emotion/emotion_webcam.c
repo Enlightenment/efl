@@ -122,6 +122,8 @@ _emotion_check_device(Emotion_Webcam *ew)
 
    EINA_REFCOUNT_INIT(ew);
 
+   if (fd > 0) close(fd);
+
    return;
 
  on_error:
@@ -131,6 +133,7 @@ _emotion_check_device(Emotion_Webcam *ew)
    eina_stringshare_del(ew->device);
    eina_stringshare_del(ew->name);
    free(ew);
+   if (fd > 0) close(fd);
 }
 
 static Emotion_Webcam *
