@@ -168,7 +168,7 @@ evas_object_free(Evas_Object *eo_obj, int clean_layer)
    evas_object_smart_cleanup(eo_obj);
    if (obj->func->free)
      {
-        obj->func->free(eo_obj, obj);
+        obj->func->free(eo_obj, obj, obj->private_data);
      }
    if (!was_smart_child) evas_object_release(eo_obj, obj, obj->clean_layer);
    if (obj->clip.clipees)
@@ -194,6 +194,8 @@ evas_object_free(Evas_Object *eo_obj, int clean_layer)
    eina_cow_free(evas_object_map_cow, obj->map);
    eina_cow_free(evas_object_state_cow, obj->cur);
    eina_cow_free(evas_object_state_cow, obj->prev);
+   eo_data_unref(eo_obj, obj->private_data);
+   obj->private_data = NULL;
    eo_manual_free(eo_obj);
 }
 
@@ -517,7 +519,7 @@ evas_object_was_opaque(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
    if (obj->prev->cache.clip.a == 255)
      {
         if (obj->func->was_opaque)
-          return obj->func->was_opaque(eo_obj, obj);
+          return obj->func->was_opaque(eo_obj, obj, obj->private_data);
         return 1;
      }
    return 0;
@@ -528,7 +530,7 @@ evas_object_is_inside(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas
 {
    if (obj->is_smart) return 0;
    if (obj->func->is_inside)
-     return obj->func->is_inside(eo_obj, obj, x, y);
+     return obj->func->is_inside(eo_obj, obj, obj->private_data, x, y);
    return 0;
 }
 
@@ -537,7 +539,7 @@ evas_object_was_inside(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Eva
 {
    if (obj->is_smart) return 0;
    if (obj->func->was_inside)
-     return obj->func->was_inside(eo_obj, obj, x, y);
+     return obj->func->was_inside(eo_obj, obj, obj->private_data, x, y);
    return 0;
 }
 /* routines apps will call */
@@ -664,6 +666,7 @@ _destructor(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
 end:
    evas_object_event_callback_all_del(eo_obj);
    evas_object_event_callback_cleanup(eo_obj);
+
    eo_do_super(eo_obj, MY_CLASS, eo_destructor());
 }
 
@@ -1706,7 +1709,7 @@ _scale_set(Eo *eo_obj, void *_pd, va_list *list)
    EINA_COW_STATE_WRITE_END(obj, state_write, cur);
 
    evas_object_change(eo_obj, obj);
-   if (obj->func->scale_update) obj->func->scale_update(eo_obj);
+   if (obj->func->scale_update) obj->func->scale_update(eo_obj, obj, obj->private_data);
 }
 
 EAPI double

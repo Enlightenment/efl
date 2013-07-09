@@ -22,16 +22,28 @@ struct _Evas_Object_Rectangle
 
 /* private methods for rectangle objects */
 static void evas_object_rectangle_init(Evas_Object *eo_obj);
-static void evas_object_rectangle_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, void *output, void *context, void *surface, int x, int y, Eina_Bool do_async);
-static void evas_object_rectangle_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj);
-static void evas_object_rectangle_render_post(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj);
+static void evas_object_rectangle_render(Evas_Object *eo_obj,
+					 Evas_Object_Protected_Data *obj,
+					 void *type_private_data,
+					 void *output, void *context, void *surface,
+					 int x, int y, Eina_Bool do_async);
+static void evas_object_rectangle_render_pre(Evas_Object *eo_obj,
+					     Evas_Object_Protected_Data *obj,
+					     void *type_private_data);
+static void evas_object_rectangle_render_post(Evas_Object *eo_obj,
+					      Evas_Object_Protected_Data *obj,
+					      void *type_private_data);
 
 static unsigned int evas_object_rectangle_id_get(Evas_Object *eo_obj);
 static unsigned int evas_object_rectangle_visual_id_get(Evas_Object *eo_obj);
 static void *evas_object_rectangle_engine_data_get(Evas_Object *eo_obj);
 
-static int evas_object_rectangle_is_opaque(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj);
-static int evas_object_rectangle_was_opaque(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj);
+static int evas_object_rectangle_is_opaque(Evas_Object *eo_obj,
+					   Evas_Object_Protected_Data *obj,
+					   void *type_private_data);
+static int evas_object_rectangle_was_opaque(Evas_Object *eo_obj,
+					    Evas_Object_Protected_Data *obj,
+					    void *type_private_data);
 
 #if 0 /* usless calls for a rect object. much more useful for images etc. */
 static void evas_object_rectangle_store(Evas_Object *eo_obj);
@@ -99,17 +111,15 @@ evas_object_rectangle_init(Evas_Object *eo_obj)
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    /* set up methods (compulsory) */
    obj->func = &object_func;
+   obj->private_data = eo_data_ref(eo_obj, MY_CLASS);
    obj->type = o_type;
 }
 
 static void
-_destructor(Eo *eo_obj, void *_obj EINA_UNUSED, va_list *list EINA_UNUSED)
-{
-   eo_do_super(eo_obj, MY_CLASS, eo_destructor());
-}
-
-static void
-evas_object_rectangle_render(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, void *output, void *context, void *surface, int x, int y, Eina_Bool do_async)
+evas_object_rectangle_render(Evas_Object *eo_obj EINA_UNUSED,
+			     Evas_Object_Protected_Data *obj,
+			     void *type_private_data EINA_UNUSED,
+			     void *output, void *context, void *surface, int x, int y, Eina_Bool do_async)
 {
    /* render object to surface with context, and offxet by x,y */
    obj->layer->evas->engine.func->context_color_set(output,
@@ -137,7 +147,9 @@ evas_object_rectangle_render(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protec
 }
 
 static void
-evas_object_rectangle_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
+evas_object_rectangle_render_pre(Evas_Object *eo_obj,
+				 Evas_Object_Protected_Data *obj,
+				 void *type_private_data EINA_UNUSED)
 {
    int is_v, was_v;
 
@@ -154,7 +166,9 @@ evas_object_rectangle_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data
      {
         if (obj->cur->cache.clip.dirty)
           evas_object_clip_recalc(obj->cur->clipper);
-        obj->cur->clipper->func->render_pre(obj->cur->clipper->object, obj->cur->clipper);
+        obj->cur->clipper->func->render_pre(obj->cur->clipper->object,
+					    obj->cur->clipper,
+					    obj->cur->clipper->private_data);
      }
    /* now figure what changed and add draw rects */
    /* if it just became visible or invisible */
@@ -241,7 +255,9 @@ evas_object_rectangle_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data
 }
 
 static void
-evas_object_rectangle_render_post(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj EINA_UNUSED)
+evas_object_rectangle_render_post(Evas_Object *eo_obj,
+				  Evas_Object_Protected_Data *obj EINA_UNUSED,
+				  void *type_private_data EINA_UNUSED)
 {
 
    /* this moves the current data to the previous state parts of the object */
@@ -254,7 +270,9 @@ evas_object_rectangle_render_post(Evas_Object *eo_obj, Evas_Object_Protected_Dat
 }
 
 static int
-evas_object_rectangle_is_opaque(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
+evas_object_rectangle_is_opaque(Evas_Object *eo_obj EINA_UNUSED,
+				Evas_Object_Protected_Data *obj,
+				void *type_private_data EINA_UNUSED)
 {
    /* this returns 1 if the internal object data implies that the object is */
    /* currently fully opaque over the entire rectangle it occupies */
@@ -267,7 +285,9 @@ evas_object_rectangle_is_opaque(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Pro
 }
 
 static int
-evas_object_rectangle_was_opaque(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
+evas_object_rectangle_was_opaque(Evas_Object *eo_obj EINA_UNUSED,
+				 Evas_Object_Protected_Data *obj,
+				 void *type_private_data EINA_UNUSED)
 {
    /* this returns 1 if the internal object data implies that the object was */
    /* previously fully opaque over the entire rectangle it occupies */
@@ -303,7 +323,6 @@ _class_constructor(Eo_Class *klass)
 {
    const Eo_Op_Func_Description func_desc[] = {
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DESTRUCTOR), _destructor),
         EO_OP_FUNC_SENTINEL
    };
 

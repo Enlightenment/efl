@@ -577,6 +577,7 @@ struct _Evas_Object_Protected_Data
    } clip;
 
    const Evas_Object_Func     *func;
+   void                       *private_data;
 
    struct {
       Evas_Smart              *smart;
@@ -716,10 +717,11 @@ struct _Evas_Device
 
 struct _Evas_Object_Func
 {
-   void (*free) (Evas_Object *obj, Evas_Object_Protected_Data *pd);
-   void (*render) (Evas_Object *obj, Evas_Object_Protected_Data *pd, void *output, void *context, void *surface, int x, int y, Eina_Bool do_async);
-   void (*render_pre) (Evas_Object *obj, Evas_Object_Protected_Data *pd);
-   void (*render_post) (Evas_Object *obj, Evas_Object_Protected_Data *pd);
+   void (*free) (Evas_Object *obj, Evas_Object_Protected_Data *pd, void *type_private_data);
+   void (*render) (Evas_Object *obj, Evas_Object_Protected_Data *pd, void *type_private_data,
+                   void *output, void *context, void *surface, int x, int y, Eina_Bool do_async);
+   void (*render_pre) (Evas_Object *obj, Evas_Object_Protected_Data *pd, void *type_private_data);
+   void (*render_post) (Evas_Object *obj, Evas_Object_Protected_Data *pd, void *type_private_data);
 
    unsigned int  (*type_id_get) (Evas_Object *obj);
    unsigned int  (*visual_id_get) (Evas_Object *obj);
@@ -731,18 +733,21 @@ struct _Evas_Object_Func
    int  (*is_visible) (Evas_Object *obj);
    int  (*was_visible) (Evas_Object *obj);
 
-   int  (*is_opaque) (Evas_Object *obj, Evas_Object_Protected_Data *pd);
-   int  (*was_opaque) (Evas_Object *obj, Evas_Object_Protected_Data *pd);
+   int  (*is_opaque) (Evas_Object *obj, Evas_Object_Protected_Data *pd, void *type_private_data);
+   int  (*was_opaque) (Evas_Object *obj, Evas_Object_Protected_Data *pd, void *type_private_data);
 
-   int  (*is_inside) (Evas_Object *obj, Evas_Object_Protected_Data *pd, Evas_Coord x, Evas_Coord y);
-   int  (*was_inside) (Evas_Object *obj, Evas_Object_Protected_Data *pd, Evas_Coord x, Evas_Coord y);
+   int  (*is_inside) (Evas_Object *obj, Evas_Object_Protected_Data *pd, void *type_private_data,
+                      Evas_Coord x, Evas_Coord y);
+   int  (*was_inside) (Evas_Object *obj, Evas_Object_Protected_Data *pd, void *type_private_data,
+                       Evas_Coord x, Evas_Coord y);
 
-   void (*coords_recalc) (Evas_Object *obj, Evas_Object_Protected_Data *pd);
+   void (*coords_recalc) (Evas_Object *obj, Evas_Object_Protected_Data *pd, void *type_private_data);
 
-   void (*scale_update) (Evas_Object *obj);
+   void (*scale_update) (Evas_Object *obj, Evas_Object_Protected_Data *pd, void *type_private_data);
 
-   int (*has_opaque_rect) (Evas_Object *obj, Evas_Object_Protected_Data *pd);
-   int (*get_opaque_rect) (Evas_Object *obj, Evas_Object_Protected_Data *pd, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
+   int (*has_opaque_rect) (Evas_Object *obj, Evas_Object_Protected_Data *pd, void *type_private_data);
+   int (*get_opaque_rect) (Evas_Object *obj, Evas_Object_Protected_Data *pd, void *type_private_data,
+                           Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
 
    int (*can_map) (Evas_Object *obj);
 };

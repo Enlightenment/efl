@@ -323,7 +323,7 @@ _evas_render_phase1_direct(Evas_Public_Data *e,
           {
              /* Flag need redraw on proxy too */
              evas_object_clip_recalc(obj);
-             obj->func->render_pre(eo_obj, obj);
+             obj->func->render_pre(eo_obj, obj, obj->private_data);
              if (obj->proxy->redraw)
                _evas_render_prev_cur_clip_cache_add(e, obj);
              if (obj->proxy->proxies)
@@ -335,7 +335,7 @@ _evas_render_phase1_direct(Evas_Public_Data *e,
                   EINA_LIST_FOREACH(obj->proxy->proxies, l, eo_proxy)
                     {
                        Evas_Object_Protected_Data *proxy = eo_data_scope_get(eo_proxy, EVAS_OBJ_CLASS);
-                       proxy->func->render_pre(eo_proxy, proxy);
+                       proxy->func->render_pre(eo_proxy, proxy, proxy->private_data);
                        _evas_render_prev_cur_clip_cache_add(e, proxy);
                     }
                }
@@ -767,7 +767,7 @@ pending_change(void *data, void *gdata EINA_UNUSED)
    if (obj->pre_render_done)
      {
         RD("  OBJ [%p] pending change %i -> 0, pre %i\n", obj, obj->changed, obj->pre_render_done);
-        obj->func->render_post(eo_obj, obj);
+        obj->func->render_post(eo_obj, obj, obj->private_data);
         obj->pre_render_done = EINA_FALSE;
         evas_object_change_reset(eo_obj);
      }
@@ -859,7 +859,7 @@ _evas_render_can_use_overlay(Evas_Public_Data *e, Evas_Object *eo_obj)
 
              if (evas_object_is_opaque(eo_current, current) ||
                  ((current->func->has_opaque_rect) &&
-                  (current->func->has_opaque_rect(eo_current, current))))
+                  (current->func->has_opaque_rect(eo_current, current, current->private_data))))
                {
                   /* The object is opaque */
 
@@ -1234,7 +1234,8 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
 
                   e->engine.func->context_clip_set(e->engine.data.output,
                                                    ctx, x, y, w, h);
-                  obj->func->render(eo_obj, obj, e->engine.data.output, ctx,
+                  obj->func->render(eo_obj, obj, obj->private_data,
+				    e->engine.data.output, ctx,
                                     obj->map->surface, off_x2, off_y2,
                                     EINA_FALSE);
                }
@@ -1352,7 +1353,8 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
                                                             proxy_render_data,
                                                            off_x, off_y);
                     }
-                  obj->func->render(eo_obj, obj, e->engine.data.output, ctx,
+                  obj->func->render(eo_obj, obj, obj->private_data,
+				    e->engine.data.output, ctx,
                                     surface, off_x, off_y, EINA_FALSE);
                }
              e->engine.func->context_free(e->engine.data.output, ctx);
@@ -1384,7 +1386,8 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
 
              RDI(level);
              RD("        draw normal obj\n");
-             obj->func->render(eo_obj, obj, e->engine.data.output, context, surface,
+             obj->func->render(eo_obj, obj, obj->private_data,
+			       e->engine.data.output, context, surface,
                                off_x, off_y, do_async);
           }
         if (obj->changed_map) clean_them = EINA_TRUE;
@@ -1439,7 +1442,7 @@ _evas_render_cutout_add(Evas_Public_Data *e, Evas_Object_Protected_Data *obj, in
           {
              Evas_Coord obx, oby, obw, obh;
 
-             obj->func->get_opaque_rect(obj->object, obj, &obx, &oby, &obw, &obh);
+             obj->func->get_opaque_rect(obj->object, obj, obj->private_data, &obx, &oby, &obw, &obh);
              if ((obw > 0) && (obh > 0))
                {
                   obx += off_x;
@@ -1573,7 +1576,7 @@ evas_render_updates_internal(Evas *eo_e,
      {
         obj = eina_array_data_get(&e->restack_objects, i);
         eo_obj = obj->object;
-        obj->func->render_pre(eo_obj, obj);
+        obj->func->render_pre(eo_obj, obj, obj->private_data);
         _evas_render_prev_cur_clip_cache_add(e, obj);
      }
    OBJS_ARRAY_CLEAN(&e->restack_objects);
@@ -1639,7 +1642,7 @@ evas_render_updates_internal(Evas *eo_e,
         eo_obj = obj->object;
         if (UNLIKELY((evas_object_is_opaque(eo_obj, obj) ||
                       ((obj->func->has_opaque_rect) &&
-                       (obj->func->has_opaque_rect(eo_obj, obj)))) &&
+                       (obj->func->has_opaque_rect(eo_obj, obj, obj->private_data)))) &&
                      evas_object_is_visible(eo_obj, obj) &&
                      (!obj->clip.clipees) &&
                      (obj->cur->visible) &&
@@ -1839,7 +1842,7 @@ evas_render_updates_internal(Evas *eo_e,
         if ((clean_them) || (obj->changed && do_draw))
           {
              RD("    OBJ [%p] post... func\n", obj);
-             obj->func->render_post(eo_obj, obj);
+             obj->func->render_post(eo_obj, obj, obj->private_data);
              obj->restack = EINA_FALSE;
              evas_object_change_reset(eo_obj);
           }
@@ -1865,7 +1868,7 @@ evas_render_updates_internal(Evas *eo_e,
         obj->pre_render_done = EINA_FALSE;
         if ((obj->changed) && (do_draw))
           {
-             obj->func->render_post(eo_obj, obj);
+	    obj->func->render_post(eo_obj, obj, obj->private_data);
              obj->restack = EINA_FALSE;
              evas_object_change_reset(eo_obj);
           }

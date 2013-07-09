@@ -135,20 +135,40 @@ static Evas_Coord evas_object_image_figure_x_fill(Evas_Object *eo_obj, Evas_Obje
 static Evas_Coord evas_object_image_figure_y_fill(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas_Coord start, Evas_Coord size, Evas_Coord *size_ret);
 
 static void evas_object_image_init(Evas_Object *eo_obj);
-static void evas_object_image_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, void *output, void *context, void *surface, int x, int y, Eina_Bool do_async);
-static void evas_object_image_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj);
-static void evas_object_image_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj);
-static void evas_object_image_render_post(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj);
+static void evas_object_image_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj,
+				     void *type_private_data,
+				     void *output, void *context, void *surface,
+				     int x, int y, Eina_Bool do_async);
+static void evas_object_image_free(Evas_Object *eo_obj,
+				   Evas_Object_Protected_Data *obj);
+static void evas_object_image_render_pre(Evas_Object *eo_obj,
+					 Evas_Object_Protected_Data *obj,
+					 void *type_private_data);
+static void evas_object_image_render_post(Evas_Object *eo_obj,
+					  Evas_Object_Protected_Data *obj,
+					  void *type_private_data);
 
 static unsigned int evas_object_image_id_get(Evas_Object *eo_obj);
 static unsigned int evas_object_image_visual_id_get(Evas_Object *eo_obj);
 static void *evas_object_image_engine_data_get(Evas_Object *eo_obj);
 
-static int evas_object_image_is_opaque(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj);
-static int evas_object_image_was_opaque(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj);
-static int evas_object_image_is_inside(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas_Coord x, Evas_Coord y);
-static int evas_object_image_has_opaque_rect(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj);
-static int evas_object_image_get_opaque_rect(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
+static int evas_object_image_is_opaque(Evas_Object *eo_obj,
+				       Evas_Object_Protected_Data *obj,
+				       void *type_private_data);
+static int evas_object_image_was_opaque(Evas_Object *eo_obj,
+					Evas_Object_Protected_Data *obj,
+					void *type_private_data);
+static int evas_object_image_is_inside(Evas_Object *eo_obj,
+				       Evas_Object_Protected_Data *obj,
+				       void *type_private_data,
+				       Evas_Coord x, Evas_Coord y);
+static int evas_object_image_has_opaque_rect(Evas_Object *eo_obj,
+					     Evas_Object_Protected_Data *obj,
+					     void *type_private_data);
+static int evas_object_image_get_opaque_rect(Evas_Object *eo_obj,
+					     Evas_Object_Protected_Data *obj,
+					     void *type_private_data,
+					     Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
 static int evas_object_image_can_map(Evas_Object *eo_obj);
 
 static void *evas_object_image_data_convert_internal(Evas_Object_Image *o, void *data, Evas_Colorspace to_cspace);
@@ -3599,6 +3619,7 @@ evas_object_image_init(Evas_Object *eo_obj)
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    /* set up methods (compulsory) */
    obj->func = &object_func;
+   obj->private_data = eo_data_ref(eo_obj, MY_CLASS);
    obj->type = o_type;
 }
 
@@ -3727,9 +3748,10 @@ evas_draw_image_map_async_check(Evas_Object_Protected_Data *obj,
 }
 
 static void
-evas_object_image_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, void *output, void *context, void *surface, int x, int y, Eina_Bool do_async)
+evas_object_image_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, void *type_private_data,
+			 void *output, void *context, void *surface, int x, int y, Eina_Bool do_async)
 {
-   Evas_Object_Image *o = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Object_Image *o = type_private_data;
    int imagew, imageh, uvw, uvh;
    void *pixels;
 
@@ -4158,9 +4180,11 @@ evas_object_image_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, v
 }
 
 static void
-evas_object_image_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
+evas_object_image_render_pre(Evas_Object *eo_obj,
+			     Evas_Object_Protected_Data *obj,
+			     void *type_private_data)
 {
-   Evas_Object_Image *o = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Object_Image *o = type_private_data;
    int is_v = 0, was_v = 0;
 
    /* dont pre-render the obj twice! */
@@ -4186,7 +4210,8 @@ evas_object_image_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *ob
 	if (obj->cur->cache.clip.dirty)
 	  evas_object_clip_recalc(obj->cur->clipper);
 	obj->cur->clipper->func->render_pre(obj->cur->clipper->object,
-					    obj->cur->clipper);
+					    obj->cur->clipper,
+					    obj->cur->clipper->private_data);
      }
    /* Proxy: Do it early */
    if (o->cur->source)
@@ -4444,9 +4469,11 @@ evas_object_image_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *ob
 }
 
 static void
-evas_object_image_render_post(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj EINA_UNUSED)
+evas_object_image_render_post(Evas_Object *eo_obj,
+			      Evas_Object_Protected_Data *obj EINA_UNUSED,
+			      void *type_private_data)
 {
-   Evas_Object_Image *o = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Object_Image *o = type_private_data;
    Eina_Rectangle *r;
 
    /* this moves the current data to the previous state parts of the object */
@@ -4493,13 +4520,15 @@ static void *evas_object_image_engine_data_get(Evas_Object *eo_obj)
 }
 
 static int
-evas_object_image_is_opaque(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
+evas_object_image_is_opaque(Evas_Object *eo_obj EINA_UNUSED,
+			    Evas_Object_Protected_Data *obj,
+			    void *type_private_data)
 {
    /* this returns 1 if the internal object data implies that the object is */
    /* currently fully opaque over the entire rectangle it occupies */
 /*  disable caching due tyo maps screwing with this
     o->cur.opaque_valid = 0;*/
-   Evas_Object_Image *o = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Object_Image *o = type_private_data;
 
    if (o->cur->opaque_valid)
      {
@@ -4597,9 +4626,11 @@ evas_object_image_is_opaque(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj
 }
 
 static int
-evas_object_image_was_opaque(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
+evas_object_image_was_opaque(Evas_Object *eo_obj EINA_UNUSED,
+			     Evas_Object_Protected_Data *obj,
+			     void *type_private_data)
 {
-   Evas_Object_Image *o = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Object_Image *o = type_private_data;
 
    /* this returns 1 if the internal object data implies that the object was */
    /* previously fully opaque over the entire rectangle it occupies */
@@ -4700,9 +4731,12 @@ evas_object_image_was_opaque(Evas_Object *eo_obj, Evas_Object_Protected_Data *ob
 }
 
 static int
-evas_object_image_is_inside(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas_Coord px, Evas_Coord py)
+evas_object_image_is_inside(Evas_Object *eo_obj,
+			    Evas_Object_Protected_Data *obj,
+			    void *type_private_data,
+			    Evas_Coord px, Evas_Coord py)
 {
-   Evas_Object_Image *o = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Object_Image *o = type_private_data;
    int imagew, imageh, uvw, uvh;
    void *pixels;
    Evas_Func *eng = obj->layer->evas->engine.func;
@@ -5053,9 +5087,11 @@ evas_object_image_is_inside(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj
 }
 
 static int
-evas_object_image_has_opaque_rect(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
+evas_object_image_has_opaque_rect(Evas_Object *eo_obj EINA_UNUSED,
+				  Evas_Object_Protected_Data *obj,
+				  void *type_private_data)
 {
-   Evas_Object_Image *o = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Object_Image *o = type_private_data;
 
    if ((obj->map->cur.map) && (obj->map->cur.usemap)) return 0;
    if (((o->cur->border.l | o->cur->border.r | o->cur->border.t | o->cur->border.b) != 0) &&
@@ -5071,9 +5107,12 @@ evas_object_image_has_opaque_rect(Evas_Object *eo_obj, Evas_Object_Protected_Dat
 }
 
 static int
-evas_object_image_get_opaque_rect(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
+evas_object_image_get_opaque_rect(Evas_Object *eo_obj EINA_UNUSED,
+				  Evas_Object_Protected_Data *obj,
+				  void *type_private_data,
+				  Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
-   Evas_Object_Image *o = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Object_Image *o = type_private_data;
 
    if (o->cur->border.scale == 1.0)
      {

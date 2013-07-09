@@ -72,19 +72,33 @@ struct _Evas_Object_Text_Item
 
 /* private methods for text objects */
 static void evas_object_text_init(Evas_Object *eo_obj);
-static void evas_object_text_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, void *output, void *context, void *surface, int x, int y, Eina_Bool do_async);
-static void evas_object_text_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj);
-static void evas_object_text_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj);
-static void evas_object_text_render_post(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj);
+static void evas_object_text_render(Evas_Object *eo_obj,
+				    Evas_Object_Protected_Data *obj,
+				    void *type_private_data,
+				    void *output, void *context, void *surface, int x, int y, Eina_Bool do_async);
+static void evas_object_text_free(Evas_Object *eo_obj,
+				  Evas_Object_Protected_Data *obj);
+static void evas_object_text_render_pre(Evas_Object *eo_obj,
+					Evas_Object_Protected_Data *obj,
+					void *type_private_data);
+static void evas_object_text_render_post(Evas_Object *eo_obj,
+					 Evas_Object_Protected_Data *obj,
+					 void *type_private_data);
 
 static unsigned int evas_object_text_id_get(Evas_Object *eo_obj);
 static unsigned int evas_object_text_visual_id_get(Evas_Object *eo_obj);
 static void *evas_object_text_engine_data_get(Evas_Object *eo_obj);
 
-static int evas_object_text_is_opaque(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj);
-static int evas_object_text_was_opaque(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj);
+static int evas_object_text_is_opaque(Evas_Object *eo_obj,
+				      Evas_Object_Protected_Data *obj,
+				      void *type_private_data);
+static int evas_object_text_was_opaque(Evas_Object *eo_obj,
+				       Evas_Object_Protected_Data *obj,
+				       void *type_private_data);
 
-static void evas_object_text_scale_update(Evas_Object *eo_obj);
+static void evas_object_text_scale_update(Evas_Object *eo_obj,
+					  Evas_Object_Protected_Data *obj,
+					  void *type_private_data);
 static void _evas_object_text_recalc(Evas_Object *eo_obj, Eina_Unicode *text);
 
 static const Evas_Object_Func object_func =
@@ -1878,9 +1892,10 @@ evas_object_text_init(Evas_Object *eo_obj)
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    /* set up methods (compulsory) */
    obj->func = &object_func;
+   obj->private_data = eo_data_ref(eo_obj, MY_CLASS);
    obj->type = o_type;
 
-   Evas_Object_Text *o = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Object_Text *o = obj->private_data;
    /* alloc obj private data */
    o->cur.ellipsis = -1.0;
    o->prev = o->cur;
@@ -1936,10 +1951,13 @@ evas_font_draw_async_check(Evas_Object_Protected_Data *obj,
 }
 
 static void
-evas_object_text_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, void *output, void *context, void *surface, int x, int y, Eina_Bool do_async)
+evas_object_text_render(Evas_Object *eo_obj EINA_UNUSED,
+			Evas_Object_Protected_Data *obj,
+			void *type_private_data,
+			void *output, void *context, void *surface, int x, int y, Eina_Bool do_async)
 {
    int i, j;
-   Evas_Object_Text *o = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Object_Text *o = type_private_data;
    Evas_Object_Text_Item *it;
    const char vals[5][5] =
      {
@@ -2183,9 +2201,11 @@ evas_object_text_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, vo
 }
 
 static void
-evas_object_text_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
+evas_object_text_render_pre(Evas_Object *eo_obj,
+			    Evas_Object_Protected_Data *obj,
+			    void *type_private_data)
 {
-   Evas_Object_Text *o = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Object_Text *o = type_private_data;
    int is_v = 0, was_v = 0;
    /* dont pre-render the obj twice! */
    if (obj->pre_render_done) return;
@@ -2200,7 +2220,9 @@ evas_object_text_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj
      {
 	if (obj->cur->cache.clip.dirty)
 	  evas_object_clip_recalc(obj->cur->clipper);
-	obj->cur->clipper->func->render_pre(obj->cur->clipper->object, obj->cur->clipper);
+	obj->cur->clipper->func->render_pre(obj->cur->clipper->object,
+					    obj->cur->clipper,
+					    obj->cur->clipper->private_data);
      }
    /* If object size changed and ellipsis is set */
    if (((o->cur.ellipsis >= 0.0 ||
@@ -2281,7 +2303,9 @@ evas_object_text_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj
 }
 
 static void
-evas_object_text_render_post(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj EINA_UNUSED)
+evas_object_text_render_post(Evas_Object *eo_obj,
+                             Evas_Object_Protected_Data *obj EINA_UNUSED,
+                             void *type_private_data EINA_UNUSED)
 {
    /* this moves the current data to the previous state parts of the object
     in whatever way is safest for the object. also if we don't need object
@@ -2317,7 +2341,9 @@ evas_object_text_engine_data_get(Evas_Object *eo_obj)
 }
 
 static int
-evas_object_text_is_opaque(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj EINA_UNUSED)
+evas_object_text_is_opaque(Evas_Object *eo_obj EINA_UNUSED,
+                           Evas_Object_Protected_Data *obj EINA_UNUSED,
+                           void *type_private_data EINA_UNUSED)
 {
    /* this returns 1 if the internal object data implies that the object is 
     currently fully opaque over the entire gradient it occupies */
@@ -2325,7 +2351,9 @@ evas_object_text_is_opaque(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protecte
 }
 
 static int
-evas_object_text_was_opaque(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj EINA_UNUSED)
+evas_object_text_was_opaque(Evas_Object *eo_obj EINA_UNUSED,
+                            Evas_Object_Protected_Data *obj EINA_UNUSED,
+                            void *type_private_data EINA_UNUSED)
 {
    /* this returns 1 if the internal object data implies that the object was
     currently fully opaque over the entire gradient it occupies */
@@ -2333,9 +2361,11 @@ evas_object_text_was_opaque(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protect
 }
 
 static void
-evas_object_text_scale_update(Evas_Object *eo_obj)
+evas_object_text_scale_update(Evas_Object *eo_obj,
+                              Evas_Object_Protected_Data *pd EINA_UNUSED,
+                              void *type_private_data)
 {
-   Evas_Object_Text *o = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Object_Text *o = type_private_data;
    int size;
    const char *font;
 

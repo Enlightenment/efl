@@ -114,18 +114,32 @@ struct _Evas_Object_Textgrid_Line
 
 /* private methods for textgrid objects */
 static void evas_object_textgrid_init(Evas_Object *eo_obj);
-static void evas_object_textgrid_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, void *output, void *context, void *surface, int x, int y, Eina_Bool do_async);
-static void evas_object_textgrid_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj);
-static void evas_object_textgrid_render_post(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj);
+static void evas_object_textgrid_render(Evas_Object *eo_obj,
+					Evas_Object_Protected_Data *obj,
+					void *type_private_data,
+					void *output, void *context, void *surface,
+					int x, int y, Eina_Bool do_async);
+static void evas_object_textgrid_render_pre(Evas_Object *eo_obj,
+					    Evas_Object_Protected_Data *obj,
+					    void *type_private_data);
+static void evas_object_textgrid_render_post(Evas_Object *eo_obj,
+					     Evas_Object_Protected_Data *obj,
+					     void *type_private_data);
 
 static unsigned int evas_object_textgrid_id_get(Evas_Object *eo_obj);
 static unsigned int evas_object_textgrid_visual_id_get(Evas_Object *eo_obj);
 static void *evas_object_textgrid_engine_data_get(Evas_Object *eo_obj);
 
-static int evas_object_textgrid_is_opaque(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj);
-static int evas_object_textgrid_was_opaque(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj);
+static int evas_object_textgrid_is_opaque(Evas_Object *eo_obj,
+					  Evas_Object_Protected_Data *obj,
+					  void *type_private_data);
+static int evas_object_textgrid_was_opaque(Evas_Object *eo_obj,
+					   Evas_Object_Protected_Data *obj,
+					   void *type_private_data);
 
-static void evas_object_textgrid_scale_update(Evas_Object *eo_obj);
+static void evas_object_textgrid_scale_update(Evas_Object *eo_obj,
+					      Evas_Object_Protected_Data *pd,
+					      void *type_private_data);
 
 static const Evas_Object_Func object_func =
 {
@@ -344,9 +358,10 @@ evas_object_textgrid_init(Evas_Object *eo_obj)
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    /* set up methods (compulsory) */
    obj->func = &object_func;
+   obj->private_data = eo_data_ref(eo_obj, MY_CLASS);
    obj->type = o_type;
 
-   Evas_Object_Textgrid *o = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Object_Textgrid *o = obj->private_data;
    o->magic = MAGIC_OBJ_TEXTGRID;
    o->prev = o->cur;
    eina_array_step_set(&o->cur.palette_standard, sizeof (Eina_Array), 16);
@@ -458,6 +473,7 @@ _destructor(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    evas_object_textgrid_free(eo_obj, obj);
+   eo_data_unref(eo_obj, obj->private_data);
    eo_do_super(eo_obj, MY_CLASS, eo_destructor());
 }
 
@@ -555,7 +571,10 @@ _drop_glyphs_ref(const void *container EINA_UNUSED, void *data, void *fdata)
 }
 
 static void
-evas_object_textgrid_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, void *output, void *context, void *surface, int x, int y, Eina_Bool do_async)
+evas_object_textgrid_render(Evas_Object *eo_obj,
+			    Evas_Object_Protected_Data *obj,
+			    void *type_private_data,
+			    void *output, void *context, void *surface, int x, int y, Eina_Bool do_async)
 {
    Evas_Textgrid_Cell *cells;
    Evas_Object_Textgrid_Color *c;
@@ -564,7 +583,7 @@ evas_object_textgrid_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj
    int rr = 0, rg = 0, rb = 0, ra = 0, rx = 0, rw = 0, run;
 
    /* render object to surface with context, and offset by x,y */
-   Evas_Object_Textgrid *o = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Object_Textgrid *o = type_private_data;
    ENFN->context_multiplier_unset(output, context);
    ENFN->context_render_op_set(output, context, obj->cur->render_op);
 
@@ -778,9 +797,12 @@ evas_object_textgrid_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj
 }
 
 static void
-evas_object_textgrid_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
+evas_object_textgrid_render_pre(Evas_Object *eo_obj,
+				Evas_Object_Protected_Data *obj,
+				void *type_private_data)
 {
    int is_v, was_v;
+   Evas_Object_Textgrid *o = type_private_data;
 
    /* dont pre-render the obj twice! */
    if (obj->pre_render_done) return;
@@ -790,13 +812,15 @@ evas_object_textgrid_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data 
    /* elsewhere, decoding video etc. */
    /* then when this is done the object needs to figure if it changed and */
    /* if so what and where and add thr appropriate redraw rectangles */
-   Evas_Object_Textgrid *o = eo_data_scope_get(eo_obj, MY_CLASS);
+
    /* if someone is clipping this obj - go calculate the clipper */
    if (obj->cur->clipper)
      {
 	if (obj->cur->cache.clip.dirty)
 	  evas_object_clip_recalc(obj->cur->clipper);
-	obj->cur->clipper->func->render_pre(obj->cur->clipper->object, obj->cur->clipper);
+	obj->cur->clipper->func->render_pre(obj->cur->clipper->object,
+					    obj->cur->clipper,
+					    obj->cur->clipper->private_data);
      }
    /* now figure what changed and add draw rects */
    /* if it just became visible or invisible */
@@ -903,12 +927,14 @@ evas_object_textgrid_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data 
 }
 
 static void
-evas_object_textgrid_render_post(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj EINA_UNUSED)
+evas_object_textgrid_render_post(Evas_Object *eo_obj,
+				 Evas_Object_Protected_Data *obj EINA_UNUSED,
+				 void *type_private_data)
 {
    /* this moves the current data to the previous state parts of the object */
    /* in whatever way is safest for the object. also if we don't need object */
    /* data anymore we can free it if the object deems this is a good idea */
-   Evas_Object_Textgrid *o = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Object_Textgrid *o = type_private_data;
    /* remove those pesky changes */
    evas_object_clip_changes_clean(eo_obj);
    /* move cur to prev safely for object data */
@@ -961,7 +987,9 @@ evas_object_textgrid_engine_data_get(Evas_Object *eo_obj)
 }
 
 static int
-evas_object_textgrid_is_opaque(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj EINA_UNUSED)
+evas_object_textgrid_is_opaque(Evas_Object *eo_obj EINA_UNUSED,
+			       Evas_Object_Protected_Data *obj EINA_UNUSED,
+			       void *type_private_data EINA_UNUSED)
 {
    /* this returns 1 if the internal object data implies that the object is
     currently fully opaque over the entire gradient it occupies */
@@ -969,7 +997,9 @@ evas_object_textgrid_is_opaque(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Prot
 }
 
 static int
-evas_object_textgrid_was_opaque(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj EINA_UNUSED)
+evas_object_textgrid_was_opaque(Evas_Object *eo_obj EINA_UNUSED,
+				Evas_Object_Protected_Data *obj EINA_UNUSED,
+				void *type_private_data EINA_UNUSED)
 {
    /* this returns 1 if the internal object data implies that the object was
     currently fully opaque over the entire gradient it occupies */
@@ -977,12 +1007,14 @@ evas_object_textgrid_was_opaque(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Pro
 }
 
 static void
-evas_object_textgrid_scale_update(Evas_Object *eo_obj)
+evas_object_textgrid_scale_update(Evas_Object *eo_obj,
+				  Evas_Object_Protected_Data *pd EINA_UNUSED,
+				  void *type_private_data)
 {
    int font_size;
    const char *font_name;
 
-   Evas_Object_Textgrid *o = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Object_Textgrid *o = type_private_data;
    font_name = eina_stringshare_add(o->cur.font_name);
    font_size = o->cur.font_size;
    if (o->cur.font_name) eina_stringshare_del(o->cur.font_name);

@@ -32,19 +32,39 @@ struct _Evas_Polygon_Point
 
 /* private methods for polygon objects */
 static void evas_object_polygon_init(Evas_Object *eo_obj);
-static void evas_object_polygon_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, void *output, void *context, void *surface, int x, int y, Eina_Bool do_async);
-static void evas_object_polygon_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj);
-static void evas_object_polygon_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj);
-static void evas_object_polygon_render_post(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj);
+static void evas_object_polygon_render(Evas_Object *eo_obj,
+                                       Evas_Object_Protected_Data *obj,
+                                       void *type_private_data,
+                                       void *output, void *context, void *surface,
+                                       int x, int y, Eina_Bool do_async);
+static void evas_object_polygon_free(Evas_Object *eo_obj,
+                                     Evas_Object_Protected_Data *obj,
+                                     void *type_private_data);
+static void evas_object_polygon_render_pre(Evas_Object *eo_obj,
+                                           Evas_Object_Protected_Data *obj,
+                                           void *type_private_data);
+static void evas_object_polygon_render_post(Evas_Object *eo_obj,
+                                            Evas_Object_Protected_Data *obj,
+                                            void *type_private_data);
 
 static unsigned int evas_object_polygon_id_get(Evas_Object *eo_obj);
 static unsigned int evas_object_polygon_visual_id_get(Evas_Object *eo_obj);
 static void *evas_object_polygon_engine_data_get(Evas_Object *eo_obj);
 
-static int evas_object_polygon_is_opaque(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj);
-static int evas_object_polygon_was_opaque(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj);
-static int evas_object_polygon_is_inside(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas_Coord x, Evas_Coord y);
-static int evas_object_polygon_was_inside(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas_Coord x, Evas_Coord y);
+static int evas_object_polygon_is_opaque(Evas_Object *eo_obj,
+                                         Evas_Object_Protected_Data *obj,
+                                         void *type_private_data);
+static int evas_object_polygon_was_opaque(Evas_Object *eo_obj,
+                                          Evas_Object_Protected_Data *obj,
+                                          void *type_private_data);
+static int evas_object_polygon_is_inside(Evas_Object *eo_obj,
+                                         Evas_Object_Protected_Data *obj,
+                                         void *type_private_data,
+                                         Evas_Coord x, Evas_Coord y);
+static int evas_object_polygon_was_inside(Evas_Object *eo_obj,
+                                          Evas_Object_Protected_Data *obj,
+                                          void *type_private_data,
+                                          Evas_Coord x, Evas_Coord y);
 
 static const Evas_Object_Func object_func =
 {
@@ -273,6 +293,7 @@ evas_object_polygon_init(Evas_Object *eo_obj)
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    /* set up methods (compulsory) */
    obj->func = &object_func;
+   obj->private_data = eo_data_ref(eo_obj, MY_CLASS);
    obj->type = o_type;
 }
 
@@ -280,14 +301,17 @@ static void
 _destructor(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
-   evas_object_polygon_free(eo_obj, obj);
+
+   evas_object_polygon_free(eo_obj, obj, obj->private_data);
    eo_do_super(eo_obj, MY_CLASS, eo_destructor());
 }
 
 static void
-evas_object_polygon_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
+evas_object_polygon_free(Evas_Object *eo_obj EINA_UNUSED,
+                         Evas_Object_Protected_Data *obj,
+                         void *type_private_data)
 {
-   Evas_Object_Polygon *o = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Object_Polygon *o = type_private_data;
    void *list_data;
    /* free obj */
    EINA_LIST_FREE(o->points, list_data)
@@ -300,9 +324,12 @@ evas_object_polygon_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 }
 
 static void
-evas_object_polygon_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, void *output, void *context, void *surface, int x, int y, Eina_Bool do_async)
+evas_object_polygon_render(Evas_Object *eo_obj EINA_UNUSED,
+			   Evas_Object_Protected_Data *obj,
+			   void *type_private_data,
+			   void *output, void *context, void *surface, int x, int y, Eina_Bool do_async)
 {
-   Evas_Object_Polygon *o = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Object_Polygon *o = type_private_data;
    Eina_List *l;
    Evas_Polygon_Point *p;
 
@@ -343,9 +370,11 @@ evas_object_polygon_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj,
 }
 
 static void
-evas_object_polygon_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
+evas_object_polygon_render_pre(Evas_Object *eo_obj,
+			       Evas_Object_Protected_Data *obj,
+			       void *type_private_data)
 {
-   Evas_Object_Polygon *o = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Object_Polygon *o = type_private_data;
    int is_v, was_v;
 
    /* dont pre-render the obj twice! */
@@ -361,7 +390,9 @@ evas_object_polygon_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *
      {
         if (obj->cur->cache.clip.dirty)
           evas_object_clip_recalc(obj->cur->clipper);
-        obj->cur->clipper->func->render_pre(obj->cur->clipper->object, obj->cur->clipper);
+        obj->cur->clipper->func->render_pre(obj->cur->clipper->object,
+                                            obj->cur->clipper,
+                                            obj->cur->clipper->private_data);
      }
    /* now figure what changed and add draw rects */
    /* if it just became visible or invisible */
@@ -433,7 +464,9 @@ evas_object_polygon_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *
 }
 
 static void
-evas_object_polygon_render_post(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj EINA_UNUSED)
+evas_object_polygon_render_post(Evas_Object *eo_obj,
+				Evas_Object_Protected_Data *obj EINA_UNUSED,
+				void *type_private_data EINA_UNUSED)
 {
    /* this moves the current data to the previous state parts of the object */
    /* in whatever way is safest for the object. also if we don't need object */
@@ -465,7 +498,9 @@ static void *evas_object_polygon_engine_data_get(Evas_Object *eo_obj)
 }
 
 static int
-evas_object_polygon_is_opaque(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj EINA_UNUSED)
+evas_object_polygon_is_opaque(Evas_Object *eo_obj EINA_UNUSED,
+			      Evas_Object_Protected_Data *obj EINA_UNUSED,
+			      void *type_private_data EINA_UNUSED)
 {
    /* this returns 1 if the internal object data implies that the object is */
    /* currently fully opaque over the entire line it occupies */
@@ -473,7 +508,9 @@ evas_object_polygon_is_opaque(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Prote
 }
 
 static int
-evas_object_polygon_was_opaque(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj EINA_UNUSED)
+evas_object_polygon_was_opaque(Evas_Object *eo_obj EINA_UNUSED,
+			       Evas_Object_Protected_Data *obj EINA_UNUSED,
+			       void *type_private_data EINA_UNUSED)
 {
    /* this returns 1 if the internal object data implies that the object was */
    /* previously fully opaque over the entire line it occupies */
@@ -484,9 +521,12 @@ evas_object_polygon_was_opaque(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Prot
  * intersects with. If it's even, we are outside of the polygon, if it's odd,
  * we are inside of it. */
 static int
-evas_object_polygon_is_inside(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj EINA_UNUSED, Evas_Coord x, Evas_Coord y)
+evas_object_polygon_is_inside(Evas_Object *eo_obj EINA_UNUSED,
+			      Evas_Object_Protected_Data *obj EINA_UNUSED,
+			      void *type_private_data,
+			      Evas_Coord x, Evas_Coord y)
 {
-   Evas_Object_Polygon *o = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Object_Polygon *o = type_private_data;
    int num_edges = 0; /* Number of edges we crossed */
    Eina_List *itr;
    Evas_Polygon_Point *p;
@@ -537,7 +577,10 @@ evas_object_polygon_is_inside(Evas_Object *eo_obj, Evas_Object_Protected_Data *o
 }
 
 static int
-evas_object_polygon_was_inside(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj EINA_UNUSED, Evas_Coord x EINA_UNUSED, Evas_Coord y EINA_UNUSED)
+evas_object_polygon_was_inside(Evas_Object *eo_obj EINA_UNUSED,
+                               Evas_Object_Protected_Data *obj EINA_UNUSED,
+                               void *type_private_data EINA_UNUSED,
+                               Evas_Coord x EINA_UNUSED, Evas_Coord y EINA_UNUSED)
 {
    /* this returns 1 if the canvas co-ordinates were inside the object based */
    /* on object private data. not much use for rects, but for polys, images */

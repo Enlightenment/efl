@@ -69,7 +69,7 @@ evas_object_is_opaque(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
    if (obj->cur->cache.clip.a == 255)
      {
         if (obj->func->is_opaque)
-          return obj->func->is_opaque(eo_obj, obj);
+          return obj->func->is_opaque(eo_obj, obj, obj->private_data);
         return 1;
      }
    if (obj->cur->render_op == EVAS_RENDER_COPY)
@@ -214,7 +214,7 @@ evas_object_coords_recalc(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 ////   obj->cur->cache.geometry.h =
 ////     evas_coord_world_y_to_screen(obj->layer->evas, obj->cur->geometry.h) -
 ////     evas_coord_world_y_to_screen(obj->layer->evas, 0);
-   if (obj->func->coords_recalc) obj->func->coords_recalc(eo_obj, obj);
+   if (obj->func->coords_recalc) obj->func->coords_recalc(eo_obj, obj, obj->private_data);
 ////   obj->cur->cache.geometry.validity = obj->layer->evas->output_validity;
 }
 

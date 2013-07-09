@@ -61,9 +61,17 @@ _eo_evas_smart_cb(void *data, Eo *eo_obj, const Eo_Event_Description *desc EINA_
 
 /* private methods for smart objects */
 static void evas_object_smart_init(Evas_Object *eo_obj);
-static void evas_object_smart_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, void *output, void *context, void *surface, int x, int y, Eina_Bool do_async);
-static void evas_object_smart_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj);
-static void evas_object_smart_render_post(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj);
+static void evas_object_smart_render(Evas_Object *eo_obj,
+				     Evas_Object_Protected_Data *obj,
+				     void *type_private_data,
+				     void *output, void *context, void *surface,
+				     int x, int y, Eina_Bool do_async);
+static void evas_object_smart_render_pre(Evas_Object *eo_obj,
+					 Evas_Object_Protected_Data *obj,
+					 void *type_private_data);
+static void evas_object_smart_render_post(Evas_Object *eo_obj,
+					  Evas_Object_Protected_Data *obj,
+					  void *type_private_data);
 
 static unsigned int evas_object_smart_id_get(Evas_Object *eo_obj);
 static unsigned int evas_object_smart_visual_id_get(Evas_Object *eo_obj);
@@ -1565,16 +1573,19 @@ evas_object_smart_init(Evas_Object *eo_obj)
    obj->is_smart = EINA_TRUE;
    /* set up methods (compulsory) */
    obj->func = &object_func;
+   obj->private_data = eo_data_ref(eo_obj, MY_CLASS);
 }
 
 static void
-evas_object_smart_render(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj EINA_UNUSED, void *output EINA_UNUSED, void *context EINA_UNUSED, void *surface EINA_UNUSED, int x EINA_UNUSED, int y EINA_UNUSED, Eina_Bool do_async EINA_UNUSED)
+evas_object_smart_render(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj EINA_UNUSED,  void *type_private_data EINA_UNUSED, void *output EINA_UNUSED, void *context EINA_UNUSED, void *surface EINA_UNUSED, int x EINA_UNUSED, int y EINA_UNUSED, Eina_Bool do_async EINA_UNUSED)
 {
    return;
 }
 
 static void
-evas_object_smart_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
+evas_object_smart_render_pre(Evas_Object *eo_obj,
+			     Evas_Object_Protected_Data *obj,
+			     void *type_private_data EINA_UNUSED)
 {
    if (obj->pre_render_done) return;
    if (!obj->child_has_map && !obj->cur->cached_surface)
@@ -1584,7 +1595,7 @@ evas_object_smart_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *ob
         Evas_Object_Smart *o;
 
         fprintf(stderr, "");
-        o = (Evas_Object_Smart *)(obj->object_data);
+        o = type_private_data;
         if (/* o->member_count > 1 && */
             o->cur.bounding_box.w == o->prev.bounding_box.w &&
             obj->cur->bounding_box.h == obj->prev->bounding_box.h &&
@@ -1658,9 +1669,9 @@ evas_object_smart_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *ob
 }
 
 static void
-evas_object_smart_render_post(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj EINA_UNUSED)
+evas_object_smart_render_post(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj EINA_UNUSED, void *type_private_data)
 {
-   Evas_Object_Smart *o = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Object_Smart *o = type_private_data;
    evas_object_cur_prev(eo_obj);
    o->prev = o->cur;
 }

@@ -508,22 +508,38 @@ struct _Evas_Object_Textblock
 
 /* private methods for textblock objects */
 static void evas_object_textblock_init(Evas_Object *eo_obj);
-static void evas_object_textblock_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, void *output, void *context, void *surface, int x, int y, Eina_Bool do_async);
+static void evas_object_textblock_render(Evas_Object *eo_obj,
+					 Evas_Object_Protected_Data *obj,
+					 void *type_private_data,
+					 void *output, void *context, void *surface,
+					 int x, int y, Eina_Bool do_async);
 static void evas_object_textblock_free(Evas_Object *eo_obj);
-static void evas_object_textblock_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj);
-static void evas_object_textblock_render_post(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj);
+static void evas_object_textblock_render_pre(Evas_Object *eo_obj,
+					     Evas_Object_Protected_Data *obj,
+					     void *type_private_data);
+static void evas_object_textblock_render_post(Evas_Object *eo_obj,
+					      Evas_Object_Protected_Data *obj,
+					      void *type_private_data);
 static Evas_Object_Textblock_Node_Text *_evas_textblock_node_text_new(void);
 
 static unsigned int evas_object_textblock_id_get(Evas_Object *eo_obj);
 static unsigned int evas_object_textblock_visual_id_get(Evas_Object *eo_obj);
 static void *evas_object_textblock_engine_data_get(Evas_Object *eo_obj);
 
-static int evas_object_textblock_is_opaque(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj);
-static int evas_object_textblock_was_opaque(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj);
+static int evas_object_textblock_is_opaque(Evas_Object *eo_obj,
+					   Evas_Object_Protected_Data *obj,
+					   void *type_private_data);
+static int evas_object_textblock_was_opaque(Evas_Object *eo_obj,
+					    Evas_Object_Protected_Data *obj,
+					    void *type_private_data);
 
-static void evas_object_textblock_coords_recalc(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj);
+static void evas_object_textblock_coords_recalc(Evas_Object *eo_obj,
+						Evas_Object_Protected_Data *obj,
+						void *type_private_data);
 
-static void evas_object_textblock_scale_update(Evas_Object *eo_obj);
+static void evas_object_textblock_scale_update(Evas_Object *eo_obj,
+					       Evas_Object_Protected_Data *obj,
+					       void *type_private_data);
 
 static const Evas_Object_Func object_func =
 {
@@ -5162,9 +5178,17 @@ evas_object_textblock_add(Evas *e)
 static void
 _constructor(Eo *eo_obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   eo_do_super(eo_obj, MY_CLASS, eo_constructor());
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
-   Evas_Object_Textblock *o = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Object_Textblock *o;
+
+   eo_do_super(eo_obj, MY_CLASS, eo_constructor());
+
+   /* set up methods (compulsory) */
+   obj->func = &object_func;
+   obj->private_data = eo_data_ref(eo_obj, MY_CLASS);
+   obj->type = o_type;
+
+   o = obj->private_data;
    o->cursor = calloc(1, sizeof(Evas_Textblock_Cursor));
    _format_command_init();
    evas_object_textblock_init(eo_obj);
@@ -10348,7 +10372,7 @@ static void
 _workaround_object_coords_recalc(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *eo_obj, void *event_info EINA_UNUSED)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
-   evas_object_textblock_coords_recalc(eo_obj, obj);
+   evas_object_textblock_coords_recalc(eo_obj, obj, obj->private_data);
 }
 
 /* all nice and private */
@@ -10356,8 +10380,9 @@ static void
 evas_object_textblock_init(Evas_Object *eo_obj)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
-   Evas_Object_Textblock *o = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Object_Textblock *o;
    static Eina_Bool linebreak_init = EINA_FALSE;
+
    if (!linebreak_init)
      {
         linebreak_init = EINA_TRUE;
@@ -10365,10 +10390,7 @@ evas_object_textblock_init(Evas_Object *eo_obj)
         init_wordbreak();
      }
 
-   /* set up methods (compulsory) */
-   obj->func = &object_func;
-   obj->type = o_type;
-
+   o = obj->private_data;
    o->cursor->obj = eo_obj;
    evas_object_textblock_text_markup_set(eo_obj, "");
 
@@ -10412,11 +10434,15 @@ evas_object_textblock_free(Evas_Object *eo_obj)
 
 
 static void
-evas_object_textblock_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, void *output, void *context, void *surface, int x, int y, Eina_Bool do_async)
+evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
+			     Evas_Object_Protected_Data *obj,
+			     void *type_private_data,
+			     void *output, void *context, void *surface,
+			     int x, int y, Eina_Bool do_async)
 {
    Evas_Object_Textblock_Paragraph *par, *start = NULL;
    Evas_Object_Textblock_Line *ln;
-   Evas_Object_Textblock *o = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Object_Textblock *o = type_private_data;
    int i, j;
    int cx, cy, cw, ch, clip;
    const char vals[5][5] =
@@ -10809,9 +10835,11 @@ evas_object_textblock_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *ob
 }
 
 static void
-evas_object_textblock_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
+evas_object_textblock_render_pre(Evas_Object *eo_obj,
+				 Evas_Object_Protected_Data *obj,
+				 void *type_private_data)
 {
-   Evas_Object_Textblock *o = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Object_Textblock *o = type_private_data;
    int is_v, was_v;
 
    /* dont pre-render the obj twice! */
@@ -10852,7 +10880,8 @@ evas_object_textblock_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data
         if (obj->cur->cache.clip.dirty)
           evas_object_clip_recalc(obj->cur->clipper);
         obj->cur->clipper->func->render_pre(obj->cur->clipper->object,
-                                            obj->cur->clipper);
+                                            obj->cur->clipper,
+                                            obj->cur->clipper->private_data);
      }
    /* now figure what changed and add draw rects */
    /* if it just became visible or invisible */
@@ -10910,7 +10939,9 @@ done:
 }
 
 static void
-evas_object_textblock_render_post(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj EINA_UNUSED)
+evas_object_textblock_render_post(Evas_Object *eo_obj,
+                                  Evas_Object_Protected_Data *obj EINA_UNUSED,
+                                  void *type_private_data EINA_UNUSED)
 {
    /*   Evas_Object_Textblock *o; */
 
@@ -10947,7 +10978,9 @@ static void *evas_object_textblock_engine_data_get(Evas_Object *eo_obj)
 }
 
 static int
-evas_object_textblock_is_opaque(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj EINA_UNUSED)
+evas_object_textblock_is_opaque(Evas_Object *eo_obj EINA_UNUSED,
+                                Evas_Object_Protected_Data *obj EINA_UNUSED,
+                                void *type_private_data EINA_UNUSED)
 {
    /* this returns 1 if the internal object data implies that the object is */
    /* currently fulyl opque over the entire gradient it occupies */
@@ -10955,7 +10988,9 @@ evas_object_textblock_is_opaque(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Pro
 }
 
 static int
-evas_object_textblock_was_opaque(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj EINA_UNUSED)
+evas_object_textblock_was_opaque(Evas_Object *eo_obj EINA_UNUSED,
+                                 Evas_Object_Protected_Data *obj EINA_UNUSED,
+                                 void *type_private_data EINA_UNUSED)
 {
    /* this returns 1 if the internal object data implies that the object was */
    /* currently fulyl opque over the entire gradient it occupies */
@@ -10963,9 +10998,11 @@ evas_object_textblock_was_opaque(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Pr
 }
 
 static void
-evas_object_textblock_coords_recalc(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
+evas_object_textblock_coords_recalc(Evas_Object *eo_obj EINA_UNUSED,
+                                    Evas_Object_Protected_Data *obj,
+                                    void *type_private_data)
 {
-   Evas_Object_Textblock *o = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Object_Textblock *o = type_private_data;
    if ((obj->cur->geometry.w != o->last_w) ||
        (((o->valign != 0.0) || (o->have_ellipsis)) &&
            (obj->cur->geometry.h != o->last_h)))
@@ -10976,9 +11013,11 @@ evas_object_textblock_coords_recalc(Evas_Object *eo_obj, Evas_Object_Protected_D
 }
 
 static void
-evas_object_textblock_scale_update(Evas_Object *eo_obj)
+evas_object_textblock_scale_update(Evas_Object *eo_obj EINA_UNUSED,
+                                   Evas_Object_Protected_Data *obj EINA_UNUSED,
+                                   void *type_private_data)
 {
-   Evas_Object_Textblock *o = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Object_Textblock *o = type_private_data;
    _evas_textblock_invalidate_all(o);
    _evas_textblock_changed(o, eo_obj);
    o->last_w = -1;
