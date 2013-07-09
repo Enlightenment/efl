@@ -393,6 +393,11 @@ _generated_cb(Ethumbd *ed, Eina_Bool success, const char *thumb_path, const char
    eina_stringshare_del(ed->processing->thumb_key);
    free(ed->processing);
    ed->processing = NULL;
+   if (!ed->queue.count)
+     {
+        _ethumbd_timeout_stop(ed);
+        _ethumbd_timeout_start(ed);
+     }
 }
 
 static void
@@ -497,6 +502,11 @@ _ethumbd_slave_data_read_cb(void *data, int type EINA_UNUSED, void *event)
 	  }
      }
 
+   if (!ed->queue.count)
+     {
+        _ethumbd_timeout_stop(ed);
+        _ethumbd_timeout_start(ed);
+     }
    return 1;
 }
 
@@ -711,8 +721,11 @@ _process_queue_cb(void *data)
    if (!queue->nqueue)
      {
 	ed->idler = NULL;
-	if (!queue->count)
-	  _ethumbd_timeout_start(ed);
+	if (!ed->queue.count)
+          {
+             _ethumbd_timeout_stop(ed);
+             _ethumbd_timeout_start(ed);
+          }
 	ed->idler = NULL;
 	return 0;
      }
@@ -1690,7 +1703,7 @@ main(int argc, char *argv[])
    int arg_idx;
    Ethumbd ed;
    int child;
-   double timeout = 10.0;
+   double timeout = 30.0;
 
    memset(&ed, 0, sizeof(ed));
    ecore_init();
