@@ -13,6 +13,7 @@
 #ifdef _WIN32
 # include <winsock2.h>
 # define HAVE_BOOLEAN
+# define XMD_H /* This prevents libjpeg to redefine INT32 */
 #endif /* ifdef _WIN32 */
 
 #include <stdio.h>

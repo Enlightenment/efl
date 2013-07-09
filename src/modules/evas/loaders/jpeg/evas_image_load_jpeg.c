@@ -8,6 +8,10 @@
 # include <Evil.h>
 #endif
 
+#ifdef _WIN32
+# define XMD_H /* This prevents libjpeg to redefine INT32 */
+#endif
+
 #include <setjmp.h>
 #include <jpeglib.h>
 
