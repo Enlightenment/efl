@@ -594,14 +594,14 @@ EAPI Eina_Bool eo_shutdown(void);
 
 typedef struct _Eo_Internal _Eo;
 
-#define EO_FUNC_CALL(...) func(obj_data, __VA_ARGS__)
+#define EO_FUNC_CALL(...) func(objid, obj_data, __VA_ARGS__)
 
 /* XXX: Essential, because we need to adjust objid for comp objects. */
 #define EO_FUNC_BODY(Name, Ret, Id, Func, DefRet, ...) \
 EAPI Ret \
 Name(_Eo *obj, Eo *objid, __VA_ARGS__) \
 { \
-   Ret (*func)(Eo *, __VA_ARGS__) = eo2_func_get(obj, Id(Name)); \
+   Ret (*func)(Eo *, void *obj_data, __VA_ARGS__) = eo2_func_get(obj, Id(Name)); \
    if (!func) return DefRet; \
    void *obj_data = eo2_data_scope_get(obj); \
    return Func; \
