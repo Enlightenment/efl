@@ -624,10 +624,10 @@ EAPI void * eo2_func_get_internal(_Eo *obj, const Eo_Class *klass, Eo_Op op);
 #define eo2_do(objid, ...) \
 do \
 { \
-   Eo *_objid_ = obj; \
-   _Eo *_obj_ = eo2_do_start(obj); \
+   Eo *_objid_ = objid; \
+   _Eo *_obj_ = eo2_do_start(_objid_); \
    do { __VA_ARGS__ ; } while (0); \
-   eo2_do_end(obj); \
+   eo2_do_end(_objid_); \
 } while (0)
 
 #define eo2_class_do(clsid, ...) \
