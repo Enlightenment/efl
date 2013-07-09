@@ -269,6 +269,14 @@ _ethumbd_timeout_stop(Ethumbd *ed)
    ed->timeout_timer = NULL;
 }
 
+static void
+_ethumbd_timeout_redo(Ethumbd *ed)
+{
+   //if (!ed->queue.count)
+   _ethumbd_timeout_stop(ed);
+   _ethumbd_timeout_start(ed);
+}
+
 static int
 _ethumb_dbus_check_id(Ethumbd_Object *eobject, int id)
 {
@@ -393,11 +401,7 @@ _generated_cb(Ethumbd *ed, Eina_Bool success, const char *thumb_path, const char
    eina_stringshare_del(ed->processing->thumb_key);
    free(ed->processing);
    ed->processing = NULL;
-   if (!ed->queue.count)
-     {
-        _ethumbd_timeout_stop(ed);
-        _ethumbd_timeout_start(ed);
-     }
+   _ethumbd_timeout_redo(ed);
 }
 
 static void
@@ -501,12 +505,7 @@ _ethumbd_slave_data_read_cb(void *data, int type EINA_UNUSED, void *event)
 	       _ethumbd_slave_cmd_ready(ed);
 	  }
      }
-
-   if (!ed->queue.count)
-     {
-        _ethumbd_timeout_stop(ed);
-        _ethumbd_timeout_start(ed);
-     }
+   _ethumbd_timeout_redo(ed);
    return 1;
 }
 
@@ -721,11 +720,7 @@ _process_queue_cb(void *data)
    if (!queue->nqueue)
      {
 	ed->idler = NULL;
-	if (!ed->queue.count)
-          {
-             _ethumbd_timeout_stop(ed);
-             _ethumbd_timeout_start(ed);
-          }
+        _ethumbd_timeout_redo(ed);
 	ed->idler = NULL;
 	return 0;
      }
@@ -882,7 +877,7 @@ _ethumb_table_del(Ethumbd *ed, int i)
    q->count--;
    _ethumbd_child_write_op_del(&ed->slave, i);
    if (!q->count && !ed->processing)
-     _ethumbd_timeout_start(ed);
+     _ethumbd_timeout_redo(ed);
 }
 
 static void
@@ -953,8 +948,7 @@ _ethumb_dbus_ethumb_new_cb(const Eldbus_Service_Interface *interface, const Eldb
                                          _name_owner_changed_cb, odata,
                                          EINA_TRUE);
    _ethumbd_child_write_op_new(&ed->slave, i);
-   _ethumbd_timeout_stop(ed);
-   _ethumbd_timeout_start(ed);
+   _ethumbd_timeout_redo(ed);
 
  end_new:
    reply = eldbus_message_method_return_new(msg);
@@ -1651,7 +1645,7 @@ _ethumb_dbus_request_name_cb(void *data, const Eldbus_Message *msg, Eldbus_Pendi
 
    eldbus_service_object_data_set(iface, DAEMON, ed);
 
-   _ethumbd_timeout_start(ed);
+   _ethumbd_timeout_redo(ed);
 }
 
 static int
