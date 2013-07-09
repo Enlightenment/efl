@@ -1690,7 +1690,7 @@ main(int argc, char *argv[])
    int arg_idx;
    Ethumbd ed;
    int child;
-   double timeout = 2.0;
+   double timeout = 10.0;
 
    memset(&ed, 0, sizeof(ed));
    ecore_init();
