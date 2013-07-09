@@ -49,9 +49,63 @@ static void free_list(void)
      }
 }
 
+static void add_string_after(const char *str_to_add)
+{
+  struct test_string *entry_to_add;
+
+  entry_to_add = malloc(sizeof(struct test_string));
+  assert(entry_to_add != NULL);
+
+  entry_to_add->string = str_to_add;
+
+  eina_clist_add_after(&string_list, &entry_to_add->entry);
+}
+
+static void add_string_head(const char *string_to_add)
+{
+  struct test_string *entry_to_add;
+
+  entry_to_add = malloc(sizeof(struct test_string));
+  assert(entry_to_add != NULL);
+
+  entry_to_add->string = string_to_add;
+
+  eina_clist_add_head(&string_list, &entry_to_add->entry);
+  fail_if(eina_clist_head(&string_list) != &entry_to_add->entry);
+}
+
+static void iterating_two_phase_with_add_head(int n, const char *str, int n_ent)
+{
+  int i;
+  struct test_string *entries[n_ent];
+  Eina_Clist *tail;
+
+  tail = eina_clist_tail(&string_list);
+  entries[0] = malloc(sizeof(struct test_string));
+  assert(entries[0] != NULL);
+  entries[0]->string = str;
+  eina_clist_add_tail(&string_list, &entries[0]->entry);
+  n++;
+  fail_if(eina_clist_next(&string_list, tail) != &entries[0]->entry);
+  fail_if(eina_clist_tail(&string_list) != &entries[0]->entry);
+  for (i=1; i<n_ent; i++)
+  {
+	entries[i] = malloc(sizeof(struct test_string));
+	assert(entries[i] != NULL);
+	entries[i]->string = str;
+	eina_clist_add_tail(&string_list, &entries[i]->entry);
+	n++;
+	fail_if(eina_clist_count(&string_list) != n);
+	fail_if(eina_clist_tail(&string_list) != &entries[i]->entry);
+	fail_if(eina_clist_next(&string_list, &entries[i-1]->entry) != &entries[i]->entry);
+  };
+}
+
 START_TEST(eina_clist_basic)
 {
   unsigned int n = 0;
+
+  fail_if(!eina_clist_empty(&string_list));
 
   add_string("this");
   n++;
@@ -75,6 +129,46 @@ START_TEST(eina_clist_basic)
   fail_if(eina_clist_count(&string_list) != n);
 
   print_strings();
+
+  add_string_after("one\n");
+  n++;
+  add_string_after("two\n");
+  n++;
+  add_string_after("three\n");
+  n++;
+  add_string_after("four\n");
+  n++;
+  add_string_after("five\n");
+  n++;
+  add_string_after("six\n");
+  n++;
+  add_string_after("seven\n");
+  n++;
+  add_string_after("eight\n");
+  n++;
+
+  fail_if(eina_clist_count(&string_list) != n);
+
+  add_string_head("one2\n");
+  n++;
+  add_string_head("two2\n");
+  n++;
+  add_string_head("three2\n");
+  n++;
+  add_string_head("four2\n");
+  n++;
+  add_string_head("five2\n");
+  n++;
+  add_string_head("six2\n");
+  n++;
+  add_string_head("seven2\n");
+  n++;
+  add_string_head("eight2\n");
+  n++;
+
+  fail_if(eina_clist_count(&string_list) != n);
+
+  iterating_two_phase_with_add_head(n, "theString", 16);
 
   free_list();
 
