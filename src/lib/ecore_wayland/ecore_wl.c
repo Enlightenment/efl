@@ -431,6 +431,8 @@ err:
 
         /* raise exit signal */
         _ecore_wl_signal_exit();
+
+        return ECORE_CALLBACK_CANCEL;
      }
 
    return ECORE_CALLBACK_RENEW;
@@ -467,6 +469,8 @@ _ecore_wl_cb_handle_data(void *data, Ecore_Fd_Handler *hdl)
 
         /* raise exit signal */
         _ecore_wl_signal_exit();
+
+        return ECORE_CALLBACK_CANCEL;
      }
 
    return ECORE_CALLBACK_RENEW;
