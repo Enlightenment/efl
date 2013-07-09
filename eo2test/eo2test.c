@@ -14,9 +14,9 @@ main()
    Eo *obj = eo_add(TEST_CLASS, NULL);
 
    eo2_do(obj,
-         a = inst_func_set(eo2_o, 32);
-         inst_func_set(eo2_o, 10);
-         b = inst_func_set(eo2_o, 50);
+         a = inst_func_set(eo2_o, 32, 12);
+         inst_func_set(eo2_o, 10, 31);
+         b = inst_func_set(eo2_o, 50, 42);
          a = inst_func_get(eo2_o);
          );
 
@@ -32,15 +32,16 @@ main()
 typedef struct
 {
    int a;
+   int b;
 } Private_Data;
 
 static int
-_inst_func_set(Eo *objid EINA_UNUSED, void *obj_data, int a)
+_inst_func_set(Eo *objid EINA_UNUSED, void *obj_data, int a, int b)
 {
    Private_Data *data = (Private_Data *) obj_data;
-   int ret = a + data->a;
-   data->a += a;
-   return ret;
+   data->a = a;
+   data->b = b;
+   return a + b;
 }
 
 static int
@@ -84,4 +85,4 @@ static const Eo_Class_Description class_desc = {
 EO_DEFINE_CLASS(test_class_get, &class_desc, EO_BASE_CLASS, NULL)
 
 /* fct_sym, ret_type, OP_ID, fct_call, default_ret_val, arguments… */
-EAPI EO_FUNC_BODYV(inst_func_set, int, TEST_ID, EO_FUNC_CALLV(a), 0, int a)
+EAPI EO_FUNC_BODYV(inst_func_set, int, TEST_ID, EO_FUNC_CALLV(a, b), 0, int a, int b)

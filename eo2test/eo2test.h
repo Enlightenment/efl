@@ -12,7 +12,7 @@ enum {
      TEST_SUB_ID_LAST
 };
 
-EAPI int inst_func_set(eo2_a, int a);
+EAPI int inst_func_set(eo2_a, int a, int b);
 
 static inline EO_FUNC_BODY(inst_func_get, int, TEST_ID, EO_FUNC_CALL(), -1)
 
