@@ -1492,6 +1492,12 @@ _ecore_ipc_event_server_data(void *data EINA_UNUSED, int ev_type EINA_UNUSED, vo
                                  e2->response = msg.response;
                                  e2->size     = msg.size;
                                  e2->data     = buf;
+                                 if (buf == svr->buf)
+                                   {
+                                      svr->buf = NULL;
+                                      svr->buf_size = 0;
+                                   }
+                                 buf = NULL;
                                  ecore_event_add(ECORE_IPC_EVENT_SERVER_DATA, e2,
                                                  _ecore_ipc_event_server_data_free,
                                                  NULL);
@@ -1500,9 +1506,9 @@ _ecore_ipc_event_server_data(void *data EINA_UNUSED, int ev_type EINA_UNUSED, vo
                     }
                   svr->prev.i = msg;
                   offset += (s + msg.size);
-                  if (svr->buf_size == offset)
+                  if ((svr->buf_size == offset) && ((svr->buf) || (buf)))
                     {
-                       free(svr->buf);
+                       if (svr->buf) free(svr->buf);
                        svr->buf = NULL;
                        svr->buf_size = 0;
                        if (buf) free(buf);
