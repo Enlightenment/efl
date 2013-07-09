@@ -619,7 +619,7 @@ EAPI void * eo2_func_get_internal(_Eo *obj, const Eo_Class *klass, Eo_Op op);
 
 #define eo2_do_end(obj) eo_unref(obj)
 
-#define eo_o _obj_, _objid_
+#define eo2_o _obj_, _objid_
 
 #define eo2_do(objid, ...) \
 do \
