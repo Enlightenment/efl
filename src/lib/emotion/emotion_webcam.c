@@ -3,6 +3,7 @@
 #endif
 
 #ifdef HAVE_EEZE
+# include <unistd.h>
 # include <sys/types.h>
 # include <sys/stat.h>
 # include <fcntl.h>
@@ -95,7 +96,7 @@ _emotion_check_device(Emotion_Webcam *ew)
    Emotion_Webcam *check;
    Eina_List *l;
    struct v4l2_capability caps;
-   int fd;
+   int fd = -1;
 #endif
 
    if (!ew) return;
@@ -133,7 +134,9 @@ _emotion_check_device(Emotion_Webcam *ew)
    eina_stringshare_del(ew->device);
    eina_stringshare_del(ew->name);
    free(ew);
+#ifdef HAVE_V4L2
    if (fd > 0) close(fd);
+#endif
 }
 
 static Emotion_Webcam *
