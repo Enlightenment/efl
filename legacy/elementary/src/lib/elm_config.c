@@ -1064,6 +1064,8 @@ _config_load(void)
           _elm_config->thumbscroll_min_friction = 0.5;
         if (_elm_config->thumbscroll_friction_standard == 0.0)
           _elm_config->thumbscroll_friction_standard = 1000.0;
+        if (_elm_config->thumbscroll_flick_distance_tolerance == 0)
+          _elm_config->thumbscroll_flick_distance_tolerance = 1000;
 
         return;
      }
