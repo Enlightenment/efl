@@ -26,12 +26,19 @@ main()
    eo_shutdown();
 }
 
-static int
-_inst_func(Eo *obj EINA_UNUSED, int a)
+/* static */
+
+typedef struct
 {
-   static int c = 0;
-   int ret = a + c;
-   c += a;
+   int a;
+} Private_Data;
+
+static int
+_inst_func(void *obj_data, int a)
+{
+   Private_Data *data = (Private_Data *) obj_data;
+   int ret = a + data->a;
+   data->a += a;
    return ret;
 }
 
@@ -59,7 +66,7 @@ static const Eo_Class_Description class_desc = {
      EO_CLASS_TYPE_REGULAR,
      EO_CLASS_DESCRIPTION_OPS(&TEST_BASE_ID, op_desc, TEST_SUB_ID_LAST),
      NULL,
-     0,
+     sizeof(Private_Data),
      _class_constructor,
      NULL
 };
