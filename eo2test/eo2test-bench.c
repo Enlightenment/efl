@@ -73,7 +73,7 @@ enum {
 };
 
 EAPI int inst_func(eo2_a, int a, int b);
-EO_FUNC_BODY(inst_func, int, TEST_ID, EO_FUNC_CALL(a, b), 0, int a, int b)
+EO_FUNC_BODYV(inst_func, int, TEST_ID, EO_FUNC_CALLV(a, b), 0, int a, int b)
 
 EAPI const Eo_Class *test_class_get(void);
 #define TEST_CLASS test_class_get()
