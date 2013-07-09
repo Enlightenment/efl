@@ -14,9 +14,9 @@ main()
    Eo *obj = eo_add(TEST_CLASS, NULL);
 
    eo2_do(obj,
-         a = inst_func(eo_o, 32);
-         inst_func(eo_o, 10);
-         b = inst_func(eo_o, 50);
+         a = inst_func(eo2_o, 32);
+         inst_func(eo2_o, 10);
+         b = inst_func(eo2_o, 50);
          );
 
    printf("%d %d\n", a, b);
