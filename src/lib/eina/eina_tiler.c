@@ -1245,6 +1245,8 @@ EAPI Eina_Iterator *eina_tiler_iterator_new(const Eina_Tiler *t)
 {
    Eina_Iterator_Tiler *it;
 
+   if (!t) return NULL;
+
    EINA_MAGIC_CHECK_TILER(t, NULL);
 
    it = calloc(1, sizeof (Eina_Iterator_Tiler));
