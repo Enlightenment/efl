@@ -2803,6 +2803,7 @@ _status_config_scrolling(Evas_Object *win,
    evas_object_show(sc);
    elm_object_content_set(sc, bx);
 
+   /* Enable Scroll Bounce */
    ck = elm_check_add(win);
    elm_object_tooltip_text_set(ck, "Set whether scrollers should bounce<br/>"
                                    "when they reach their viewport's edge<br/>"
@@ -2817,6 +2818,7 @@ _status_config_scrolling(Evas_Object *win,
 
    evas_object_smart_callback_add(ck, "changed", sb_change, NULL);
 
+   /* Scroll bounce friction */
    LABEL_FRAME_ADD("<hilight>Scroll bounce friction</>");
 
    sl = elm_slider_add(win);
@@ -2843,6 +2845,7 @@ _status_config_scrolling(Evas_Object *win,
    elm_box_pack_end(bx, sp);
    evas_object_show(sp);
 
+   /* Enable thumb scroll */
    ck = elm_check_add(win);
    elm_object_tooltip_text_set(ck, "Set whether scrollers should be<br/>"
                                    "draggable from any point in their views");
@@ -2856,6 +2859,7 @@ _status_config_scrolling(Evas_Object *win,
 
    evas_object_smart_callback_add(ck, "changed", ts_change, NULL);
 
+   /* Thumb scroll threadhold */
    LABEL_FRAME_ADD("<hilight>Thumb scroll threshold</>");
 
    sl = elm_slider_add(win);
@@ -2876,6 +2880,7 @@ _status_config_scrolling(Evas_Object *win,
    evas_object_smart_callback_add(sl, "changed", tst_round, NULL);
    evas_object_smart_callback_add(sl, "delay,changed", tst_change, NULL);
 
+   /* Thumb scroll hold threashold */
    LABEL_FRAME_ADD("<hilight>Thumb scroll hold threshold</>");
 
    sl = elm_slider_add(win);
@@ -2896,6 +2901,7 @@ _status_config_scrolling(Evas_Object *win,
    evas_object_smart_callback_add(sl, "changed", tsht_round, NULL);
    evas_object_smart_callback_add(sl, "delay,changed", tsht_change, NULL);
 
+   /* Thumb scroll momentum threshold */
    LABEL_FRAME_ADD("<hilight>Thumb scroll momentum threshold</>");
 
    sl = elm_slider_add(win);
@@ -2918,6 +2924,7 @@ _status_config_scrolling(Evas_Object *win,
    evas_object_smart_callback_add(sl, "delay,changed", tsmt_change,
                                   NULL);
 
+   /* Thumb scroll flick distance tolerance */
    LABEL_FRAME_ADD("<hilight>Thumb scroll flick distance tolerance</>");
 
    sl = elm_slider_add(win);
@@ -2939,6 +2946,7 @@ _status_config_scrolling(Evas_Object *win,
    evas_object_smart_callback_add(sl, "changed", tsfdt_round, NULL);
    evas_object_smart_callback_add(sl, "delay,changed", tsfdt_change, NULL);
 
+   /* Thumb scroll friction */
    LABEL_FRAME_ADD("<hilight>Thumb scroll friction</>");
 
    sl = elm_slider_add(win);
@@ -2959,6 +2967,7 @@ _status_config_scrolling(Evas_Object *win,
    evas_object_smart_callback_add(sl, "changed", tsf_round, NULL);
    evas_object_smart_callback_add(sl, "delay,changed", tsf_change, NULL);
 
+   /* Thumb scroll min friction */
    LABEL_FRAME_ADD("<hilight>Thumb scroll min friction</>");
 
    sl = elm_slider_add(win);
@@ -2979,6 +2988,7 @@ _status_config_scrolling(Evas_Object *win,
    evas_object_smart_callback_add(sl, "changed", tsmf_round, NULL);
    evas_object_smart_callback_add(sl, "delay,changed", tsmf_change, NULL);
 
+   /* Thumb scroll friction standard */
    LABEL_FRAME_ADD("<hilight>Thumb scroll friction standard</>");
 
    sl = elm_slider_add(win);
@@ -3000,6 +3010,7 @@ _status_config_scrolling(Evas_Object *win,
    evas_object_smart_callback_add(sl, "changed", tsfs_round, NULL);
    evas_object_smart_callback_add(sl, "delay,changed", tsfs_change, NULL);
 
+   /* Thumb scroll border friction */
    LABEL_FRAME_ADD("<hilight>Thumb scroll border friction</>");
 
    sl = elm_slider_add(win);
@@ -3022,6 +3033,7 @@ _status_config_scrolling(Evas_Object *win,
    evas_object_smart_callback_add(sl, "changed", tsbf_round, NULL);
    evas_object_smart_callback_add(sl, "delay,changed", tsbf_change, NULL);
 
+   /* Thumb scroll sensitivity friction */
    LABEL_FRAME_ADD("<hilight>Thumb scroll sensitivity friction</>");
 
    sl = elm_slider_add(win);
@@ -3042,6 +3054,7 @@ _status_config_scrolling(Evas_Object *win,
    evas_object_smart_callback_add(sl, "changed", tssf_round, NULL);
    evas_object_smart_callback_add(sl, "delay,changed", tssf_change, NULL);
 
+   /* Thumb scroll acceleration threshold */
    LABEL_FRAME_ADD("<hilight>Thumb scroll acceleration threshold</>");
 
    sl = elm_slider_add(win);
@@ -3063,6 +3076,7 @@ _status_config_scrolling(Evas_Object *win,
    evas_object_smart_callback_add(sl, "changed", tsat_round, NULL);
    evas_object_smart_callback_add(sl, "delay,changed", tsat_change, NULL);
 
+   /* Thumb scroll acceleration time limit */
    LABEL_FRAME_ADD("<hilight>Thumb scroll acceleration time limit</>");
 
    sl = elm_slider_add(win);
@@ -3082,6 +3096,7 @@ _status_config_scrolling(Evas_Object *win,
    evas_object_smart_callback_add(sl, "changed", tsatl_round, NULL);
    evas_object_smart_callback_add(sl, "delay,changed", tsatl_change, NULL);
 
+   /* Thumb scroll acceleration weight */
    LABEL_FRAME_ADD("<hilight>Thumb scroll acceleration weight</>");
 
    sl = elm_slider_add(win);
@@ -3107,6 +3122,7 @@ _status_config_scrolling(Evas_Object *win,
    elm_box_pack_end(bx, sp);
    evas_object_show(sp);
 
+   /* Page scroll friction */
    LABEL_FRAME_ADD("<hilight>Page scroll friction</>");
 
    sl = elm_slider_add(win);
@@ -3127,6 +3143,7 @@ _status_config_scrolling(Evas_Object *win,
    evas_object_smart_callback_add(sl, "changed", ps_round, NULL);
    evas_object_smart_callback_add(sl, "delay,changed", ps_change, NULL);
 
+   /* Bring in scroll friction */
    LABEL_FRAME_ADD("<hilight>Bring in scroll friction</>");
 
    sl = elm_slider_add(win);
@@ -3147,6 +3164,7 @@ _status_config_scrolling(Evas_Object *win,
    evas_object_smart_callback_add(sl, "changed", bis_round, NULL);
    evas_object_smart_callback_add(sl, "delay,changed", bis_change, NULL);
 
+   /* Zoom scroll friction */
    LABEL_FRAME_ADD("<hilight>Zoom scroll friction</>");
 
    sl = elm_slider_add(win);
