@@ -263,6 +263,11 @@ eo2_do_start(Eo *obj_id)
    return obj;
 }
 
+EAPI void *eo2_data_scope_get(const _Eo *obj)
+{
+   return _eo_data_scope_get(obj, obj->klass);
+}
+
 static void *
 _eo2_func_get(const _Eo_Class *cur_klass, Eo_Op op)
 {
