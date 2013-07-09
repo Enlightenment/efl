@@ -38,14 +38,13 @@ typedef struct _Render_Engine               Render_Engine;
 
 struct _Render_Engine
 {
-   Tilebuf_Rect            *rects;
-   Tilebuf_Rect            *rects_prev[3];
-   Eina_Inlist             *cur_rect;
+   Eina_Iterator           *rects;
+   Eina_Tiler              *prev_tb[3];
+   Eina_Tiler              *cur_tb;
    
    Evas_GL_X11_Window      *win;
    Evas_Engine_Info_GL_X11 *info;
    Evas                    *evas;
-   Tilebuf                 *tb;
    int                      end;
    int                      mode;
    int                      w, h;
@@ -826,6 +825,7 @@ eng_setup(Evas *eo_e, void *in)
    Render_Engine *re;
    Evas_Engine_Info_GL_X11 *info;
    const char *s;
+   int i;
 
    info = (Evas_Engine_Info_GL_X11 *)in;
    if (!e->engine.data.output)
@@ -1000,19 +1000,38 @@ eng_setup(Evas *eo_e, void *in)
         free(re);
         return 0;
      }
-   re->tb = evas_common_tilebuf_new(re->win->w, re->win->h);
-   if (!re->tb)
+
+   for (i = 0; i < 3; i++)
      {
-        if (re->win)
+        re->prev_tb[i] = eina_tiler_new(re->win->w, re->win->h);
+        if (!re->prev_tb[i])
           {
-             eng_window_free(re->win);
-             gl_wins--;
+             if (re->win)
+               {
+                  eng_window_free(re->win);
+                  gl_wins--;
+               }
+             free(re);
+             return 0;
           }
-        free(re);
-        return 0;
+        
+        eina_tiler_tile_size_set(re->prev_tb[i], EVAS_GL_UPDATE_TILE_SIZE, EVAS_GL_UPDATE_TILE_SIZE);
+        eina_tiler_strict_set(re->prev_tb[i], EINA_TRUE);
      }
-   evas_common_tilebuf_set_tile_size(re->tb, EVAS_GL_UPDATE_TILE_SIZE, EVAS_GL_UPDATE_TILE_SIZE);
-   evas_common_tilebuf_tile_strict_set(re->tb, EINA_TRUE);
+
+   re->cur_tb = eina_tiler_new(re->win->w, re->win->h);
+   if (!re->cur_tb)
+     {
+       if (re->win)
+	 {
+	   eng_window_free(re->win);
+	   gl_wins--;
+	 }
+       free(re);
+       return 0;
+     }
+   eina_tiler_tile_size_set(re->cur_tb, EVAS_GL_UPDATE_TILE_SIZE, EVAS_GL_UPDATE_TILE_SIZE);
+   eina_tiler_strict_set(re->cur_tb, EINA_TRUE);
 
    if (!e->engine.data.context)
      e->engine.data.context =
@@ -1028,6 +1047,7 @@ static void
 eng_output_free(void *data)
 {
    Render_Engine *re;
+   int i;
 
    re = (Render_Engine *)data;
 
@@ -1060,11 +1080,10 @@ eng_output_free(void *data)
              gl_wins--;
           }
         
-        evas_common_tilebuf_free(re->tb);
-        if (re->rects) evas_common_tilebuf_free_render_rects(re->rects);
-        if (re->rects_prev[0]) evas_common_tilebuf_free_render_rects(re->rects_prev[0]);
-        if (re->rects_prev[1]) evas_common_tilebuf_free_render_rects(re->rects_prev[1]);
-        if (re->rects_prev[2]) evas_common_tilebuf_free_render_rects(re->rects_prev[2]);
+	if (re->rects) eina_iterator_free(re->rects);
+        for (i = 0; i < 3; i++)
+          eina_tiler_free(re->prev_tb[i]);
+	eina_tiler_free(re->cur_tb);
 
         if (gl_wins == 0) evgl_engine_shutdown(re);
         
@@ -1083,48 +1102,56 @@ static void
 eng_output_resize(void *data, int w, int h)
 {
    Render_Engine *re;
+   int i;
 
    re = (Render_Engine *)data;
    re->win->w = w;
    re->win->h = h;
    eng_window_use(re->win);
    evas_gl_common_context_resize(re->win->gl_context, w, h, re->win->rot);
-   evas_common_tilebuf_free(re->tb);
-   re->tb = evas_common_tilebuf_new(w, h);
-   if (re->tb)
+   for (i = 0; i < 3; i++)
      {
-        evas_common_tilebuf_set_tile_size(re->tb, EVAS_GL_UPDATE_TILE_SIZE, EVAS_GL_UPDATE_TILE_SIZE);
-        evas_common_tilebuf_tile_strict_set(re->tb, EINA_TRUE);
+        eina_tiler_clear(re->prev_tb[i]);
+        eina_tiler_area_size_set(re->prev_tb[i], w, h);
      }
+   eina_tiler_clear(re->cur_tb);
+   eina_tiler_area_size_set(re->cur_tb, w, h);
 }
 
 static void
 eng_output_tile_size_set(void *data, int w, int h)
 {
    Render_Engine *re;
+   int i;
 
    re = (Render_Engine *)data;
-   evas_common_tilebuf_set_tile_size(re->tb, w, h);
+   for (i = 0; i < 3; i++)
+     eina_tiler_tile_size_set(re->prev_tb[i], w, h);
+   eina_tiler_tile_size_set(re->cur_tb, w, h);
 }
 
 static void
 eng_output_redraws_rect_add(void *data, int x, int y, int w, int h)
 {
    Render_Engine *re;
+   Eina_Rectangle r;
 
    re = (Render_Engine *)data;
    eng_window_use(re->win);
    evas_gl_common_context_resize(re->win->gl_context, re->win->w, re->win->h, re->win->rot);
-   evas_common_tilebuf_add_redraw(re->tb, x, y, w, h);
+   EINA_RECTANGLE_SET(&r, x, y, w, h);
+   eina_tiler_rect_add(re->prev_tb[0], &r);
 }
 
 static void
 eng_output_redraws_rect_del(void *data, int x, int y, int w, int h)
 {
    Render_Engine *re;
+   Eina_Rectangle r;
 
    re = (Render_Engine *)data;
-   evas_common_tilebuf_del_redraw(re->tb, x, y, w, h);
+   EINA_RECTANGLE_SET(&r, x, y, w, h);
+   eina_tiler_rect_add(re->prev_tb[0], &r);
 }
 
 static void
@@ -1133,39 +1160,34 @@ eng_output_redraws_clear(void *data)
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-   evas_common_tilebuf_clear(re->tb);
+   eina_tiler_clear(re->prev_tb[0]);
 //   INF("GL: finish update cycle!");
 }
 
-static Tilebuf_Rect *
-_merge_rects(Tilebuf *tb, Tilebuf_Rect *r1, Tilebuf_Rect *r2, Tilebuf_Rect *r3)
+static void
+_merge_rects(Eina_Tiler *res, Eina_Tiler *t1, Eina_Tiler *t2, Eina_Tiler *t3)
 {
-   Tilebuf_Rect *r, *rects;
-   Evas_Point p1, p2;
+   Eina_Rectangle *r;
+   Eina_Iterator *it = NULL;
 
-   if (r1)
-     {
-        EINA_INLIST_FOREACH(EINA_INLIST_GET(r1), r)
-          {
-             evas_common_tilebuf_add_redraw(tb, r->x, r->y, r->w, r->h);
-          }
-     }
-   if (r2)
-     {
-        EINA_INLIST_FOREACH(EINA_INLIST_GET(r2), r)
-          {
-             evas_common_tilebuf_add_redraw(tb, r->x, r->y, r->w, r->h);
-          }
-     }
-   if (r3)
-     {
-        EINA_INLIST_FOREACH(EINA_INLIST_GET(r3), r)
-          {
-             evas_common_tilebuf_add_redraw(tb, r->x, r->y, r->w, r->h);
-          }
-     }
-   rects = evas_common_tilebuf_get_render_rects(tb);
-   
+   if (t1) it = eina_tiler_iterator_new(t1);
+   EINA_ITERATOR_FOREACH(it, r)
+     eina_tiler_rect_add(res, r);
+   eina_iterator_free(it);
+   it = NULL;
+
+   if (t2) it = eina_tiler_iterator_new(t2);
+   EINA_ITERATOR_FOREACH(it, r)
+     eina_tiler_rect_add(res, r);
+   eina_iterator_free(it);
+   it = NULL;
+
+   if (t3) it = eina_tiler_iterator_new(t3);
+   EINA_ITERATOR_FOREACH(it, r)
+     eina_tiler_rect_add(res, r);
+   eina_iterator_free(it);
+   it = NULL;
+
    if (partial_rect_union_mode == -1)
      {
         const char *s = getenv("EVAS_GL_PARTIAL_MERGE");
@@ -1187,30 +1209,27 @@ _merge_rects(Tilebuf *tb, Tilebuf_Rect *r1, Tilebuf_Rect *r2, Tilebuf_Rect *r3)
 // yes we could try and be smart and figure out size of regions, how far
 // apart etc. etc. to try and figure out an optimal "set". this is a tradeoff
 // between multiple update regions to render and total pixels to render.
-        if (rects)
+        it = eina_tiler_iterator_new(res);  
+        if (eina_iterator_next(it, (void**) &r))
           {
-             p1.x = rects->x; p1.y = rects->y;
-             p2.x = rects->x + rects->w; p2.y = rects->y + rects->h;
-             EINA_INLIST_FOREACH(EINA_INLIST_GET(rects), r)
+             Eina_Rectangle tmp;
+             Evas_Point p1, p2;
+
+             p1.x = r->x; p1.y = r->y;
+             p2.x = r->x + r->w; p2.y = r->y + r->h;
+             EINA_ITERATOR_FOREACH(it, r)
                {
                   if (r->x < p1.x) p1.x = r->x;
                   if (r->y < p1.y) p1.y = r->y;
                   if ((r->x + r->w) > p2.x) p2.x = r->x + r->w;
                   if ((r->y + r->h) > p2.y) p2.y = r->y + r->h;
                }
-             evas_common_tilebuf_free_render_rects(rects);
-             rects = calloc(1, sizeof(Tilebuf_Rect));
-             if (rects)
-               {
-                  rects->x = p1.x;
-                  rects->y = p1.y;
-                  rects->w = p2.x - p1.x;
-                  rects->h = p2.y - p1.y;
-               }
+
+             EINA_RECTANGLE_SET(&tmp, p1.x, p1.y, p2.x - p1.x, p2.y - p1.y);
+             eina_tiler_rect_add(res, &tmp);
           }
+        eina_iterator_free(it);
      }
-   evas_common_tilebuf_clear(tb);
-   return rects;
 }
 
 /* vsync games - not for now though */
@@ -1256,16 +1275,9 @@ static void *
 eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, int *cx, int *cy, int *cw, int *ch)
 {
    Render_Engine *re;
-   Tilebuf_Rect *rect;
+   Eina_Rectangle *r;
    Eina_Bool first_rect = EINA_FALSE;
    
-#define CLEAR_PREV_RECTS(x) \
-   do { \
-      if (re->rects_prev[x]) \
-        evas_common_tilebuf_free_render_rects(re->rects_prev[x]); \
-      re->rects_prev[x] = NULL; \
-   } while (0)
-
    re = (Render_Engine *)data;
    /* get the upate rect surface - return engine data as dummy */
    if (re->end)
@@ -1275,9 +1287,11 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
      }
    if (!re->rects)
      {
-        re->rects = evas_common_tilebuf_get_render_rects(re->tb);
+        re->rects = eina_tiler_iterator_new(re->prev_tb[0]);
         if (re->rects)
           {
+             Eina_Tiler *tmp;
+
              if (re->info->swap_mode == EVAS_ENGINE_GL_X11_SWAP_MODE_AUTO)
                {
                   if (extn_have_buffer_age)
@@ -1316,42 +1330,55 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
                }
              if ((re->lost_back) || (re->mode == MODE_FULL))
                {
+                  Eina_Rectangle screen;
                   /* if we lost our backbuffer since the last frame redraw all */
                   re->lost_back = 0;
-                  evas_common_tilebuf_add_redraw(re->tb, 0, 0, re->win->w, re->win->h);
-                  evas_common_tilebuf_free_render_rects(re->rects);
-                  re->rects = evas_common_tilebuf_get_render_rects(re->tb);
+                  EINA_RECTANGLE_SET(&screen, 0, 0, re->win->w, re->win->h);
+                  eina_tiler_rect_add(re->prev_tb[0], &screen);
                }
              /* ensure we get rid of previous rect lists we dont need if mode
               * changed/is appropriate */
-             evas_common_tilebuf_clear(re->tb);
-             CLEAR_PREV_RECTS(2);
-             re->rects_prev[2] = re->rects_prev[1];
-             re->rects_prev[1] = re->rects_prev[0];
-             re->rects_prev[0] = re->rects;
-             re->rects = NULL;
+             eina_tiler_clear(re->cur_tb);
+             eina_iterator_free(re->rects);
+
              switch (re->mode)
                {
                 case MODE_FULL:
                 case MODE_COPY: // no prev rects needed
-                  re->rects = _merge_rects(re->tb, re->rects_prev[0], NULL, NULL);
-                  break;
+                   _merge_rects(re->cur_tb, re->prev_tb[0], NULL, NULL);
+                   re->rects = eina_tiler_iterator_new(re->cur_tb);
+                   break;
                 case MODE_DOUBLE: // double mode - only 1 level of prev rect
-                  re->rects = _merge_rects(re->tb, re->rects_prev[0], re->rects_prev[1], NULL);
-                  break;
+                   _merge_rects(re->cur_tb, re->prev_tb[0], re->prev_tb[1], NULL);
+                   re->rects = eina_tiler_iterator_new(re->cur_tb);
+                   break;
                 case MODE_TRIPLE: // keep all
-                  re->rects = _merge_rects(re->tb, re->rects_prev[0], re->rects_prev[1], re->rects_prev[2]);
-                  break;
+                   _merge_rects(re->cur_tb, re->prev_tb[0], re->prev_tb[1], re->prev_tb[2]);
+                   re->rects = eina_tiler_iterator_new(re->cur_tb);
+                   break;
                 default:
-                  break;
+                   abort();
+                   break;
                }
+             eina_tiler_clear(re->prev_tb[2]);
+
+             /* Prepare next frame and switch all frame position */
+             tmp = re->prev_tb[2];
+             re->prev_tb[2] = re->prev_tb[1];
+             re->prev_tb[1] = re->prev_tb[0];
+             re->prev_tb[0] = tmp;
+
              first_rect = EINA_TRUE;
           }
-        evas_common_tilebuf_clear(re->tb);
-        re->cur_rect = EINA_INLIST_GET(re->rects);
      }
-   if (!re->cur_rect) return NULL;
-   rect = (Tilebuf_Rect *)re->cur_rect;
+   if (!eina_iterator_next(re->rects, (void**) &r))
+     {
+        eina_iterator_free(re->rects);
+        re->rects = NULL;
+        re->end = 1;
+        return NULL;
+     }
+
    if (re->rects)
      {
         switch (re->mode)
@@ -1359,36 +1386,35 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
            case MODE_COPY:
            case MODE_DOUBLE:
            case MODE_TRIPLE:
-             rect = (Tilebuf_Rect *)re->cur_rect;
-             *x = rect->x;
-             *y = rect->y;
-             *w = rect->w;
-             *h = rect->h;
-             *cx = rect->x;
-             *cy = rect->y;
-             *cw = rect->w;
-             *ch = rect->h;
-             re->cur_rect = re->cur_rect->next;
-             re->win->gl_context->master_clip.enabled = EINA_TRUE;
-             re->win->gl_context->master_clip.x = rect->x;
-             re->win->gl_context->master_clip.y = rect->y;
-             re->win->gl_context->master_clip.w = rect->w;
-             re->win->gl_context->master_clip.h = rect->h;
-             break;
+              *x = r->x;
+              *y = r->y;
+              *w = r->w;
+              *h = r->h;
+              *cx = r->x;
+              *cy = r->y;
+              *cw = r->w;
+              *ch = r->h;
+              re->win->gl_context->master_clip.enabled = EINA_TRUE;
+              re->win->gl_context->master_clip.x = r->x;
+              re->win->gl_context->master_clip.y = r->y;
+              re->win->gl_context->master_clip.w = r->w;
+              re->win->gl_context->master_clip.h = r->h;
+              break;
            case MODE_FULL:
-             re->cur_rect = NULL;
-             if (x) *x = 0;
-             if (y) *y = 0;
-             if (w) *w = re->win->w;
-             if (h) *h = re->win->h;
-             if (cx) *cx = 0;
-             if (cy) *cy = 0;
-             if (cw) *cw = re->win->w;
-             if (ch) *ch = re->win->h;
-             re->win->gl_context->master_clip.enabled = EINA_FALSE;
-             break;
+              eina_iterator_free(re->rects);
+              re->rects = NULL;
+              if (x) *x = 0;
+              if (y) *y = 0;
+              if (w) *w = re->win->w;
+              if (h) *h = re->win->h;
+              if (cx) *cx = 0;
+              if (cy) *cy = 0;
+              if (cw) *cw = re->win->w;
+              if (ch) *ch = re->win->h;
+              re->win->gl_context->master_clip.enabled = EINA_FALSE;
+              break;
            default:
-             break;
+              break;
           }
         if (first_rect)
           {
@@ -1414,10 +1440,7 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
                   glClear(GL_COLOR_BUFFER_BIT);
                }
           }
-        if (!re->cur_rect)
-          {
-             re->end = 1;
-          }
+
         return re->win->gl_context->def_surface;
      }
    return NULL;
@@ -1497,7 +1520,8 @@ eng_output_flush(void *data, Evas_Render_Mode render_mode)
    if ((glsym_eglSwapBuffersWithDamage) && (re->mode != MODE_FULL))
      {
         EGLint num = 0, *rects = NULL, i = 0;
-        Tilebuf_Rect *r;
+        Eina_Iterator *it;
+        Eina_Rectangle *r;
         
         // if partial swaps can be done use re->rects
         EINA_INLIST_FOREACH(EINA_INLIST_GET(re->rects), r) num++;
@@ -1611,7 +1635,7 @@ eng_output_flush(void *data, Evas_Render_Mode render_mode)
    // clear out rects after swap as we may use them during swap
    if (re->rects)
      {
-        evas_common_tilebuf_free_render_rects(re->rects);
+        eina_iterator_free(re->rects);
         re->rects = NULL;
      }
 
