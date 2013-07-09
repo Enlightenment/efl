@@ -5,6 +5,8 @@
 #include "Eo.h"
 #include "eo2test.h"
 
+#ifndef NOMAIN
+
 int
 main()
 {
@@ -26,6 +28,8 @@ main()
 
    eo_shutdown();
 }
+
+#endif
 
 /* static */
 
