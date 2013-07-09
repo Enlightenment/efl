@@ -34,7 +34,7 @@ typedef struct
 } Private_Data;
 
 static int
-_inst_func(void *obj_data, int a)
+_inst_func(Eo *objid EINA_UNUSED, void *obj_data, int a)
 {
    Private_Data *data = (Private_Data *) obj_data;
    int ret = a + data->a;
