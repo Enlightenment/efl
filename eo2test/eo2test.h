@@ -9,7 +9,7 @@ extern Eo2_Op_Description op_descs[];
 
 EAPI int inst_func_set(eo2_a, int a, int b);
 
-static inline EO_FUNC_BODY(inst_func_get, int, EO_FUNC_CALL(), -1)
+static inline EO_FUNC_BODY(inst_func_get, int, EO_FUNC_CALL(), -1, op_descs)
 
 EAPI const Eo_Class *test_class_get(void);
 #define TEST_CLASS test_class_get()

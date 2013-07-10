@@ -621,12 +621,12 @@ typedef struct _Eo2_Op_Call_Data
 #define EO_FUNC_CALLV(...) func(objid, call.data, __VA_ARGS__)
 
 /* XXX: Essential, because we need to adjust objid for comp objects. */
-#define EO_FUNC_BODY(Name, Ret, Func, DefRet)                           \
+#define EO_FUNC_BODY(Name, Ret, Func, DefRet, OpDescs)                  \
   Ret                                                                   \
   Name(_Eo *obj, Eo *objid)                                             \
   {                                                                     \
      static Eo_Op op = EO_NOOP;                                         \
-     if ( op == EO_NOOP ) op = eo2_get_op_id(op_descs, Name);           \
+     if ( op == EO_NOOP ) op = eo2_get_op_id(OpDescs, (void*)Name);     \
      typedef Ret (*__##Name##_func)(Eo *, void *obj_data);              \
      Eo2_Op_Call_Data call;                                             \
      if (!eo2_call_resolve(obj, op, &call)) return DefRet;              \
@@ -634,12 +634,12 @@ typedef struct _Eo2_Op_Call_Data
      return Func;                                                       \
   }
 
-#define EO_FUNC_BODYV(Name, Ret, Func, DefRet, ...)                     \
+#define EO_FUNC_BODYV(Name, Ret, Func, DefRet, OpDescs, ...)            \
   Ret                                                                   \
   Name(_Eo *obj, Eo *objid, __VA_ARGS__)                                \
   {                                                                     \
      static Eo_Op op = EO_NOOP;                                         \
-     if ( op == EO_NOOP ) op = eo2_get_op_id(op_descs, Name);           \
+     if ( op == EO_NOOP ) op = eo2_get_op_id(OpDescs, (void*)Name);     \
      typedef Ret (*__##Name##_func)(Eo *, void *obj_data, __VA_ARGS__); \
      Eo2_Op_Call_Data call;                                             \
      if (!eo2_call_resolve(obj, op, &call)) return DefRet;              \

@@ -105,4 +105,4 @@ static const Eo_Class_Description class_desc = {
 EO_DEFINE_CLASS(test_class_get, &class_desc, EO_BASE_CLASS, NULL)
 
 /* fct_sym, ret_type, OP_ID, fct_call, default_ret_val, arguments… */
-EAPI EO_FUNC_BODYV(inst_func_set, int, EO_FUNC_CALLV(a, b), 0, int a, int b)
+EAPI EO_FUNC_BODYV(inst_func_set, int, EO_FUNC_CALLV(a, b), 0, op_descs, int a, int b)
