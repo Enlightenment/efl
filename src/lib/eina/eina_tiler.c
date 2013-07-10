@@ -28,6 +28,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "eina_config.h"
 #include "eina_private.h"
@@ -106,6 +107,11 @@ struct _Eina_Tiler
    {
       int w, h;
    } tile;
+
+   struct
+   {
+      Eina_Rectangle add, del;
+   } last;
    Eina_Rectangle area;
    EINA_MAGIC
    splitter_t splitter;
@@ -1139,6 +1145,10 @@ EAPI Eina_Tiler *eina_tiler_new(int w, int h)
      return NULL;
 
    t = calloc(1, sizeof(Eina_Tiler));
+   t->last.add.w = -1;
+   t->last.add.h = -1;
+   t->last.del.w = -1;
+   t->last.del.h = -1;
    t->area.w = w;
    t->area.h = h;
    t->tile.w = 32;
@@ -1205,6 +1215,11 @@ EAPI Eina_Bool eina_tiler_rect_add(Eina_Tiler *t, const Eina_Rectangle *r)
    if ((tmp.w <= 0) || (tmp.h <= 0))
       return EINA_FALSE;
 
+   if (!memcmp(&tmp, &t->last.add, sizeof (Eina_Rectangle)))
+      return EINA_FALSE;
+
+   t->last.add = tmp;
+
    return _splitter_rect_add(t, &tmp);
 }
 
@@ -1225,6 +1240,11 @@ EAPI void eina_tiler_rect_del(Eina_Tiler *t, const Eina_Rectangle *r)
    if ((tmp.w <= 0) || (tmp.h <= 0))
       return;
 
+   if (!memcmp(&tmp, &t->last.del, sizeof (Eina_Rectangle)))
+      return;
+
+   t->last.del = tmp;
+
    _splitter_rect_del(t, &tmp);
 }
 
@@ -1232,6 +1252,10 @@ EAPI void eina_tiler_clear(Eina_Tiler *t)
 {
    EINA_MAGIC_CHECK_TILER(t);
    _splitter_clear(t);
+   t->last.add.w = -1;
+   t->last.add.h = -1;
+   t->last.del.w = -1;
+   t->last.del.h = -1;
 }
 
 EAPI void
