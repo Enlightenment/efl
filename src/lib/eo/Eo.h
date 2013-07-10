@@ -630,7 +630,7 @@ typedef struct _Eo2_Op_Call_Data
      typedef Ret (*__##Name##_func)(Eo *, void *obj_data, __VA_ARGS__);	\
      Eo2_Op_Call_Data call;						\
      if (!eo2_call_resolve(obj, Id(Name), &call)) return DefRet;        \
-     __##Name##_func func = (__##Name##_func) = call.func;		\
+     __##Name##_func func = (__##Name##_func) call.func;		\
      return Func;							\
   }
 
