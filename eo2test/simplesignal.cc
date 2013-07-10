@@ -664,9 +664,6 @@ enum {
 static inline int get(eo2_a);
 static inline void inc(eo2_a);
 
-static inline EO_FUNC_BODY(get, int, TEST_EVENT2_SPEED_ID, EO_FUNC_CALL(), -1);
-static inline EO_FUNC_BODY(inc, void, TEST_EVENT2_SPEED_ID, EO_FUNC_CALL(), );
-
 const Eo_Class *test_event2_speed_class_get(void);
 #define TEST_EVENT2_SPEED_CLASS test_event2_speed_class_get()
 
@@ -686,16 +683,26 @@ __inc(Eo *objid EINA_UNUSED, void *obj_data)
    conf->count++;
 }
 
+Eo2_Op_Description op_descs [] = {
+       { (void*)__get, (void*)get, EO_NOOP, EO_OP_TYPE_REGULAR, "Get"},
+       { (void*)__inc, (void*)inc, EO_NOOP, EO_OP_TYPE_REGULAR, "Inc"},
+       { NULL, NULL, 0, EO_OP_TYPE_INVALID, NULL}
+};
+
+static inline EO_FUNC_BODY(get, int, EO_FUNC_CALL(), -1, op_descs);
+static inline EO_FUNC_BODY(inc, void, EO_FUNC_CALL(), ,op_descs);
+
 static void
 _class2_constructor(Eo_Class *klass)
 {
-  const Eo_Op_Func_Description func_desc[] = {
-    EO_OP_FUNC(TEST_EVENT2_SPEED_ID(get), (eo_op_func_type) __get),
-    EO_OP_FUNC(TEST_EVENT2_SPEED_ID(inc), (eo_op_func_type) __inc),
-    EO_OP_FUNC_SENTINEL
-  };
+  /* const Eo_Op_Func_Description func_desc[] = { */
+  /*   EO_OP_FUNC(TEST_EVENT2_SPEED_ID(get), (eo_op_func_type) __get), */
+  /*   EO_OP_FUNC(TEST_EVENT2_SPEED_ID(inc), (eo_op_func_type) __inc), */
+  /*   EO_OP_FUNC_SENTINEL */
+  /* }; */
 
-  eo_class_funcs_set(klass, func_desc);
+  /* eo_class_funcs_set(klass, func_desc); */
+   eo2_class_funcs_set(klass, op_descs, OP_DESC_SIZE(op_descs));
 }
 
 static const Eo_Op_Description op2_desc[] = {
