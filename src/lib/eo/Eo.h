@@ -594,17 +594,23 @@ EAPI Eina_Bool eo_shutdown(void);
 
 typedef struct _Eo_Internal _Eo;
 
-#define EO_FUNC_CALL() func(objid, obj_data)
-#define EO_FUNC_CALLV(...) func(objid, obj_data, __VA_ARGS__)
+typedef struct _Eo2_Op_Call_Data
+{
+   void *func;
+   void *data;
+} Eo2_Op_Call_Data;
+
+#define EO_FUNC_CALL() func(objid, call.data)
+#define EO_FUNC_CALLV(...) func(objid, call.data, __VA_ARGS__)
 
 /* XXX: Essential, because we need to adjust objid for comp objects. */
 #define EO_FUNC_BODY(Name, Ret, Id, Func, DefRet) \
 Ret \
 Name(_Eo *obj, Eo *objid) \
 { \
-   Ret (*func)(Eo *, void *obj_data) = eo2_func_get(obj, Id(Name)); \
-   if (!func) return DefRet; \
-   void *obj_data = eo2_data_scope_get(obj); \
+   Eo2_Op_Call_Data call; \
+   if (!eo2_call_resolve(obj, Id(Name), &call)) return DefRet; \
+   Ret (*func)(Eo *, void *obj_data) = call.func; \
    return Func; \
 }
 
@@ -612,17 +618,16 @@ Name(_Eo *obj, Eo *objid) \
 Ret \
 Name(_Eo *obj, Eo *objid, __VA_ARGS__) \
 { \
-   Ret (*func)(Eo *, void *obj_data, __VA_ARGS__) = eo2_func_get(obj, Id(Name)); \
-   if (!func) return DefRet; \
-   void *obj_data = eo2_data_scope_get(obj); \
+   Eo2_Op_Call_Data call; \
+   if (!eo2_call_resolve(obj, Id(Name), &call)) return DefRet; \
+   Ret (*func)(Eo *, void *obj_data, __VA_ARGS__) = call.func; \
    return Func; \
 }
 
 
 EAPI _Eo * eo2_do_start(Eo *obj_id);
-EAPI void * eo2_data_scope_get(const _Eo *obj);
-#define eo2_func_get(obj_id, op) eo2_func_get_internal(obj_id, NULL, op)
-EAPI void * eo2_func_get_internal(_Eo *obj, const Eo_Class *klass, Eo_Op op);
+#define eo2_call_resolve(obj_id, op, call) eo2_call_resolve_internal(obj_id, NULL, op, call)
+EAPI Eina_Bool eo2_call_resolve_internal(_Eo *obj, const Eo_Class *klass, Eo_Op op, Eo2_Op_Call_Data *call);
 
 /* FIXME: Don't use this unref, use an internal one. Reduce id resolution. */
 

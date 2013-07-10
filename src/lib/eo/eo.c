@@ -263,36 +263,28 @@ eo2_do_start(Eo *obj_id)
    return obj;
 }
 
-EAPI void *eo2_data_scope_get(const _Eo *obj)
-{
-   return _eo_data_scope_get(obj, obj->klass);
-}
-
-static void *
-_eo2_func_get(const _Eo_Class *cur_klass, Eo_Op op)
-{
-     {
-        const op_type_funcs *func = _eo_kls_itr_func_get(cur_klass, op);
-        if (EINA_LIKELY(func != NULL))
-          {
-             return func->func;
-          }
-     }
-
-   /* Try composite objects */
-   /* FIXME!!! */
-   return NULL;
-}
-
-EAPI void *
-eo2_func_get_internal(_Eo *obj, const Eo_Class *klass_id, Eo_Op op)
+EAPI Eina_Bool
+eo2_call_resolve_internal(_Eo *obj, const Eo_Class *klass_id, Eo_Op op, Eo2_Op_Call_Data *call)
 {
    const _Eo_Class *klass;
+   const op_type_funcs *func;
+
    if (klass_id)
       klass = _eo_class_pointer_get(klass_id);
    else
       klass = obj->klass;
-   return _eo2_func_get(klass, op);
+
+   func = _eo_kls_itr_func_get(klass, op);
+   if (EINA_LIKELY(func != NULL))
+     {
+        call->func = func->func;
+        call->data = _eo_data_scope_get(obj, func->src);
+        return EINA_TRUE;
+     }
+
+   /* Try composite objects */
+   /* FIXME!!! */
+   return EINA_FALSE;
 }
 
 #define _EO_OP_ERR_NO_OP_PRINT(file, line, op, klass) \
