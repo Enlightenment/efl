@@ -1,3 +1,5 @@
+/* g++ -g -ggdb3 -O3 --std=c++0x simplesignal.cc `pkg-config --cflags --libs eina eo` -o test */
+
 // CC0 Public Domain: http://creativecommons.org/publicdomain/zero/1.0/
 #ifndef __SIMPLE_SIGNAL_HH__
 #define __SIMPLE_SIGNAL_HH__
