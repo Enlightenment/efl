@@ -1,3 +1,7 @@
+2013-07-10  Cedric Bail
+
+	* Eina: Add eina_tiler_empty.
+
 2013-07-08  Chris Michael
 
         * Ecore_Evas: Added pointer abtractions (requested by Mike)
@@ -13,11 +17,11 @@ engines to create new ecore_evas which uses just a pixmap (no window).
 
 2013-07-08  Mike Blumenkrantz
 
-        * add eina_tiler_area_size_get
+        * Eina: add eina_tiler_area_size_get
 
 2013-07-06  Carsten Haitzler (The Rasterman)
 
-        * Add direct eina file map populate controls
+        * Eina: Add direct eina file map populate controls
 
 2013-07-04  Cedric Bail
 
