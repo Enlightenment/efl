@@ -121,23 +121,23 @@ struct _Eina_Tiler
 };
 
 #define EINA_MAGIC_CHECK_TILER(d, ...)                                  \
-   do {                                                            \
-        if (!EINA_MAGIC_CHECK(d, EINA_MAGIC_TILER))             \
-          {                                                       \
-             EINA_MAGIC_FAIL(d, EINA_MAGIC_TILER);           \
-             return __VA_ARGS__;                             \
-          }                                                       \
-     } while(0)
+  do {                                                                  \
+     if (!EINA_MAGIC_CHECK(d, EINA_MAGIC_TILER))                        \
+       {                                                                \
+          EINA_MAGIC_FAIL(d, EINA_MAGIC_TILER);                         \
+          return __VA_ARGS__;                                           \
+       }                                                                \
+  } while(0)
 
 
-#define EINA_MAGIC_CHECK_TILER_ITERATOR(d, ...)                         \
-   do {                                                            \
-        if (!EINA_MAGIC_CHECK(d, EINA_MAGIC_TILER_ITERATOR))    \
-          {                                                       \
-             EINA_MAGIC_FAIL(d, EINA_MAGIC_TILER_ITERATOR);  \
-             return __VA_ARGS__;                             \
-          }                                                       \
-     } while(0)
+#define EINA_MAGIC_CHECK_TILER_ITERATOR(d, ...)                    \
+  do {                                                             \
+     if (!EINA_MAGIC_CHECK(d, EINA_MAGIC_TILER_ITERATOR))          \
+       {                                                           \
+          EINA_MAGIC_FAIL(d, EINA_MAGIC_TILER_ITERATOR);           \
+          return __VA_ARGS__;                                      \
+       }                                                           \
+  } while(0)
 
 /* The Splitter algorithm */
 static inline void rect_init(rect_t *r, int x, int y, int w, int h)
