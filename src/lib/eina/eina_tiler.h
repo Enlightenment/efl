@@ -228,7 +228,7 @@ EAPI void               eina_tiler_area_size_set(Eina_Tiler *t, int w, int h);
  *
  * @since 1.8
  */
-EAPI void eina_tiler_area_size_get(const Eina_Tiler *t, int *w, int *h);
+EAPI void               eina_tiler_area_size_get(const Eina_Tiler *t, int *w, int *h);
 
 /**
  * @brief Define if we need to follow a strict grid of tile or a loosy one
@@ -237,8 +237,20 @@ EAPI void eina_tiler_area_size_get(const Eina_Tiler *t, int *w, int *h);
  * @param strict Define if it will be strict or loosy
  *
  * By default it will be loosy.
+ *
+ * @since 1.8
  */
 EAPI void               eina_tiler_strict_set(Eina_Tiler *t, Eina_Bool strict);
+
+/**
+ * @brief Tell if a tiler is empty or not
+ *
+ * @param t The tiler to apply the strict rules to.
+ * @return EINA_TRUE when empty, EINA_FALSE when not.
+ *
+ * @since 1.8
+ */
+EAPI Eina_Bool          eina_tiler_empty(Eina_Tiler *t);
 
 /**
  * @brief Adds a rectangle to a tiler.

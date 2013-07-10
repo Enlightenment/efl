@@ -1198,6 +1198,14 @@ EAPI void eina_tiler_tile_size_set(Eina_Tiler *t, int w, int h)
    _splitter_tile_size_set(t, w, h);
 }
 
+EAPI Eina_Bool
+eina_tiler_empty(Eina_Tiler *t)
+{
+   EINA_MAGIC_CHECK_TILER(t, EINA_TRUE);
+
+   return !memcmp(&t->splitter.rects, &list_zeroed, sizeof (list_t));
+}
+
 EAPI Eina_Bool eina_tiler_rect_add(Eina_Tiler *t, const Eina_Rectangle *r)
 {
    Eina_Rectangle tmp;
