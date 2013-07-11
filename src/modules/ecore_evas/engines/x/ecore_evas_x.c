@@ -3718,6 +3718,8 @@ ecore_evas_software_x11_pixmap_new_internal(const char *disp_name, Ecore_X_Windo
         edata->pixmap.w = w;
         edata->pixmap.h = h;
         edata->pixmap.depth = einfo->info.depth;
+        edata->pixmap.visual = einfo->info.visual;
+        edata->pixmap.colormap = einfo->info.colormap;
 
         /* create front and back pixmaps for double-buffer rendering */
         edata->pixmap.front = 
@@ -3773,6 +3775,30 @@ _ecore_evas_software_x11_pixmap_get(const Ecore_Evas *ee)
    if (!(!strcmp(ee->driver, "software_x11"))) return 0;
    Ecore_Evas_Engine_Data_X11 *edata = ee->engine.data;
    return (Ecore_X_Pixmap) edata->pixmap.front;
+}
+
+static void *
+_ecore_evas_software_x11_pixmap_visual_get(const Ecore_Evas *ee)
+{
+   if (!(!strcmp(ee->driver, "software_x11"))) return 0;
+   Ecore_Evas_Engine_Data_X11 *edata = ee->engine.data;
+   return edata->pixmap.visual;
+}
+
+static unsigned long 
+_ecore_evas_software_x11_pixmap_colormap_get(const Ecore_Evas *ee)
+{
+   if (!(!strcmp(ee->driver, "software_x11"))) return 0;
+   Ecore_Evas_Engine_Data_X11 *edata = ee->engine.data;
+   return edata->pixmap.colormap;
+}
+
+static int 
+_ecore_evas_software_x11_pixmap_depth_get(const Ecore_Evas *ee)
+{
+   if (!(!strcmp(ee->driver, "software_x11"))) return 0;
+   Ecore_Evas_Engine_Data_X11 *edata = ee->engine.data;
+   return edata->pixmap.depth;
 }
 
 static void
@@ -4118,6 +4144,8 @@ ecore_evas_gl_x11_pixmap_new_internal(const char *disp_name, Ecore_X_Window pare
         edata->pixmap.w = w;
         edata->pixmap.h = h;
         edata->pixmap.depth = einfo->info.depth;
+        edata->pixmap.visual = einfo->info.visual;
+        edata->pixmap.colormap = einfo->info.colormap;
 
         /* create front and back pixmaps for double-buffer rendering */
         edata->pixmap.front = 
@@ -4168,6 +4196,30 @@ _ecore_evas_gl_x11_pixmap_get(const Ecore_Evas *ee)
    if (!(!strcmp(ee->driver, "opengl_x11"))) return 0;
    Ecore_Evas_Engine_Data_X11 *edata = ee->engine.data;
    return (Ecore_X_Pixmap) edata->pixmap.front;
+}
+
+static void *
+_ecore_evas_gl_x11_pixmap_visual_get(const Ecore_Evas *ee)
+{
+   if (!(!strcmp(ee->driver, "opengl_x11"))) return 0;
+   Ecore_Evas_Engine_Data_X11 *edata = ee->engine.data;
+   return edata->pixmap.visual;
+}
+
+static unsigned long 
+_ecore_evas_gl_x11_pixmap_colormap_get(const Ecore_Evas *ee)
+{
+   if (!(!strcmp(ee->driver, "opengl_x11"))) return 0;
+   Ecore_Evas_Engine_Data_X11 *edata = ee->engine.data;
+   return edata->pixmap.colormap;
+}
+
+static int 
+_ecore_evas_gl_x11_pixmap_depth_get(const Ecore_Evas *ee)
+{
+   if (!(!strcmp(ee->driver, "opengl_x11"))) return 0;
+   Ecore_Evas_Engine_Data_X11 *edata = ee->engine.data;
+   return edata->pixmap.depth;
 }
 
 static void
@@ -4486,6 +4538,9 @@ _ecore_evas_x_interface_software_x11_new(void)
    iface->resize_set = _ecore_evas_software_x11_direct_resize_set;
    iface->resize_get = _ecore_evas_software_x11_direct_resize_get;
    iface->extra_event_window_add = _ecore_evas_software_x11_extra_event_window_add;
+   iface->pixmap_visual_get = _ecore_evas_software_x11_pixmap_visual_get;
+   iface->pixmap_colormap_get = _ecore_evas_software_x11_pixmap_colormap_get;
+   iface->pixmap_depth_get = _ecore_evas_software_x11_pixmap_depth_get;
 
    return iface;
 }
@@ -4509,6 +4564,9 @@ _ecore_evas_x_interface_gl_x11_new(void)
    iface->resize_get = _ecore_evas_gl_x11_direct_resize_get;
    iface->extra_event_window_add = _ecore_evas_gl_x11_extra_event_window_add;
    iface->pre_post_swap_callback_set = _ecore_evas_gl_x11_pre_post_swap_callback_set;
+   iface->pixmap_visual_get = _ecore_evas_gl_x11_pixmap_visual_get;
+   iface->pixmap_colormap_get = _ecore_evas_gl_x11_pixmap_colormap_get;
+   iface->pixmap_depth_get = _ecore_evas_gl_x11_pixmap_depth_get;
 
    return iface;
 }
