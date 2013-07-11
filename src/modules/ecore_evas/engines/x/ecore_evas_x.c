@@ -92,6 +92,8 @@ struct _Ecore_Evas_Engine_Data_X11 {
         unsigned int front, back; // front and back pixmaps (double-buffer)
         Evas_Coord w, h; // store pixmap size (saves X roundtrips)
         int depth; // store depth to save us from fetching engine info pre_render
+        void *visual; // store visual used to create pixmap
+        unsigned long colormap; // store colormap used to create pixmap
      } pixmap;
 };
 
