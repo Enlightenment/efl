@@ -653,18 +653,21 @@ eo2_class_funcs_set(Eo_Class *klass_id, Eo2_Op_Description *op_descs, int n);
 
 /* FIXME: Don't use this unref, use an internal one. Reduce id resolution. */
 
-#define eo2_do_end(obj) eo_unref(obj)
+EAPI void eo2_unref_internal(_Eo *obj);
+
+#define eo2_do_end(obj) eo2_unref_internal(obj)
 
 #define eo2_o _obj_, _objid_
 #define eo2_a _Eo *obj, Eo *objid
 
-#define eo2_do(objid, ...)			\
-  do						\
-    {						\
-       Eo *_objid_ = objid;			\
+#define eo2_do(objid, ...)                      \
+  do                                            \
+    {                                           \
+       Eo *_objid_ = objid;                     \
        _Eo *_obj_ = eo2_do_start(_objid_);      \
-       do { __VA_ARGS__ ; } while (0);		\
-       eo2_do_end(_objid_);			\
+       if (!_obj_) break;                       \
+       do { __VA_ARGS__ ; } while (0);          \
+       eo2_do_end(_obj_);                       \
     } while (0)
 
 #define eo2_class_do(clsid, ...)                \

@@ -263,6 +263,12 @@ eo2_do_start(Eo *obj_id)
    return obj;
 }
 
+EAPI void
+eo2_unref_internal(_Eo *obj)
+{
+   _eo_unref(obj);
+}
+
 EAPI Eina_Bool
 eo2_call_resolve_internal(_Eo *obj, const Eo_Class *klass_id, Eo_Op op, Eo2_Op_Call_Data *call)
 {
