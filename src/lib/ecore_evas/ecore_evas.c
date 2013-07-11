@@ -3011,7 +3011,10 @@ ecore_evas_software_x11_pixmap_get(const Ecore_Evas *ee)
    iface = (Ecore_Evas_Interface_Software_X11 *)_ecore_evas_interface_get(ee, "software_x11");
    EINA_SAFETY_ON_NULL_RETURN_VAL(iface, 0);
 
-   return iface->pixmap_get(ee);
+   if (iface->pixmap_get)
+     return iface->pixmap_get(ee);
+
+   return 0;
 }
 
 /**
@@ -3087,7 +3090,10 @@ ecore_evas_gl_x11_pixmap_get(const Ecore_Evas *ee)
    iface = (Ecore_Evas_Interface_Gl_X11 *)_ecore_evas_interface_get(ee, "gl_x11");
    EINA_SAFETY_ON_NULL_RETURN_VAL(iface, 0);
 
-   return iface->pixmap_get(ee);
+   if (iface->pixmap_get)
+     return iface->pixmap_get(ee);
+
+   return 0;
 }
 
 /**
