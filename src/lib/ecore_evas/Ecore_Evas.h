@@ -2421,6 +2421,51 @@ EAPI void ecore_evas_pointer_xy_get(const Ecore_Evas *ee, Evas_Coord *x, Evas_Co
 EAPI Eina_Bool ecore_evas_pointer_warp(const Ecore_Evas *ee, Evas_Coord x, Evas_Coord y);
 
 /**
+ * @brief Retrieve the Visual used for pixmap creation
+ * 
+ * @param ee The Ecore_Evas containing the pixmap
+ * 
+ * @return The Visual which was used when creating the pixmap
+ * 
+ * @warning If and when this function is called depends on the underlying
+ * windowing system. This function should only be called if the Ecore_Evas was
+ * created using @c ecore_evas_software_x11_pixmap_new or @c ecore_evas_gl_x11_pixmap_new
+ * 
+ * @since 1.8
+ */
+EAPI void *ecore_evas_pixmap_visual_get(const Ecore_Evas *ee);
+
+/**
+ * @brief Retrieve the Colormap used for pixmap creation
+ * 
+ * @param ee The Ecore_Evas containing the pixmap
+ * 
+ * @return The Colormap which was used when creating the pixmap
+ * 
+ * @warning If and when this function is called depends on the underlying
+ * windowing system. This function should only be called if the Ecore_Evas was
+ * created using @c ecore_evas_software_x11_pixmap_new or @c ecore_evas_gl_x11_pixmap_new
+ * 
+ * @since 1.8
+ */
+EAPI unsigned long ecore_evas_pixmap_colormap_get(const Ecore_Evas *ee);
+
+/**
+ * @brief Retrieve the depth used for pixmap creation
+ * 
+ * @param ee The Ecore_Evas containing the pixmap
+ * 
+ * @return The depth which was used when creating the pixmap
+ * 
+ * @warning If and when this function is called depends on the underlying
+ * windowing system. This function should only be called if the Ecore_Evas was
+ * created using @c ecore_evas_software_x11_pixmap_new or @c ecore_evas_gl_x11_pixmap_new
+ * 
+ * @since 1.8
+ */
+EAPI int ecore_evas_pixmap_depth_get(const Ecore_Evas *ee);
+
+/**
  * @}
  */
 
