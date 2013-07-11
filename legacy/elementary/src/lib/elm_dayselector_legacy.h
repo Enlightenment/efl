@@ -112,3 +112,50 @@ EAPI void   elm_dayselector_weekend_length_set(Evas_Object *obj, unsigned int le
  * @ingroup Dayselector
  */
 EAPI unsigned int   elm_dayselector_weekend_length_get(const Evas_Object *obj);
+
+/**
+ * Set weekdays names to be displayed by the Dayselector.
+ *
+ * @param obj The Dayselector object.
+ * @param weekdays Array of seven strings to be used as weekday names.
+ * @warning It must have 7 elements, or it will access invalid memory.
+ * @warning The strings must be NULL terminated ('@\0').
+ *
+ * By default or if @a weekdays is @c NULL, weekdays abbreviations get from system are displayed:
+ * E.g. for an en_US locale: "Sun, Mon, Tue, Wed, Thu, Fri, Sat"
+ *
+ * The first string should be related to Sunday, the second to Monday...
+ *
+ * The usage should be like this:
+ * @code
+ *   const char *weekdays[] =
+ *   {
+ *      "Sunday", "Monday", "Tuesday", "Wednesday",
+ *      "Thursday", "Friday", "Saturday"
+ *   };
+ *  elm_dayselector_wekdays_names_set(calendar, weekdays);
+ * @endcode
+ *
+ * @see elm_dayselector_weekdays_name_get()
+ * @see elm_dayselector_weekend_start_set()
+ *
+ * @ingroup Dayselector
+ */
+EAPI void elm_dayselector_weekdays_names_set(Evas_Object *obj, const char *weekdays[]);
+
+/**
+ * Get weekdays names displayed by the calendar.
+ *
+ * @param obj The Dayselector object.
+ * @return A list of seven strings to be used as weekday names.
+ *
+ * By default, weekdays abbreviations get from system are displayed:
+ * E.g. for an en_US locale: "Sun, Mon, Tue, Wed, Thu, Fri, Sat"
+ * The first string is related to Sunday, the second to Monday...
+ *
+ * @see elm_dayselector_weekdays_name_set()
+ *
+ *
+ * @ingroup Dayselector
+ */
+EAPI Eina_List *elm_dayselector_weekdays_names_get(const Evas_Object *obj);

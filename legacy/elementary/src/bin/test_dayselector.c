@@ -44,6 +44,9 @@ void
 test_dayselector(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bx, *dayselector, *sunday;
+   Eina_List *weekdays_list;
+   const char *weekday;
+   const char *weekdays[] = {"S", "M", "T", "W", "T", "F", "S"};
 
    win = elm_win_util_standard_add("dayselector", "Day Selector");
    elm_win_autodel_set(win, EINA_TRUE);
@@ -81,6 +84,24 @@ test_dayselector(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event
    evas_object_smart_callback_add(dayselector, "dayselector,changed", _changed_cb, NULL);
    sunday = elm_object_part_content_get(dayselector, "day0");
    elm_object_signal_emit(sunday, "elm,type,weekend,style1", "");
+
+   //Setting weekday name
+   dayselector = elm_dayselector_add(win);
+   evas_object_size_hint_weight_set(dayselector, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(dayselector, EVAS_HINT_FILL, 0.5);
+   elm_dayselector_weekdays_names_set(dayselector, weekdays);
+   elm_box_pack_end(bx, dayselector);
+   evas_object_show(dayselector);
+   evas_object_smart_callback_add(dayselector, "dayselector,changed", _changed_cb, NULL);
+
+   weekdays_list = elm_dayselector_weekdays_names_get(dayselector);
+
+   fprintf(stderr, "User set weekday names to: ");
+   EINA_LIST_FREE(weekdays_list, weekday)
+     {
+        fprintf(stderr, "%s\n", weekday);
+        eina_stringshare_del(weekday);
+     }
 
    evas_object_resize(win, 350, 120);
    evas_object_show(win);

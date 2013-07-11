@@ -67,6 +67,9 @@ _elm_dayselector_smart_translate(Eo *obj, void *_pd, va_list *list)
 
    Elm_Dayselector_Smart_Data *sd = _pd;
 
+   if (sd->weekdays_names_set)
+     goto exit;
+
    t = time(NULL);
    localtime_r(&t, &time_daysel);
    EINA_LIST_FOREACH(sd->items, l, it)
@@ -78,6 +81,7 @@ _elm_dayselector_smart_translate(Eo *obj, void *_pd, va_list *list)
 
    evas_object_smart_callback_call(obj, SIG_LANG_CHANGED, NULL);
 
+ exit:
    if (ret) *ret = EINA_TRUE;
 }
 
@@ -642,6 +646,76 @@ _weekend_length_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    *ret = sd->weekend_len;
 }
 
+EAPI void
+elm_dayselector_weekdays_names_set(Evas_Object *obj, const char *weekdays[])
+{
+   ELM_DAYSELECTOR_CHECK(obj);
+   eo_do((Eo *)obj, elm_obj_dayselector_weekdays_names_set(weekdays));
+}
+
+EAPI Eina_List *
+elm_dayselector_weekdays_names_get(const Evas_Object *obj)
+{
+   Eina_List *weekdays = NULL;
+
+   ELM_DAYSELECTOR_CHECK(obj) NULL;
+
+   eo_do((Eo *)obj, elm_obj_dayselector_weekdays_names_get(&weekdays));
+
+   return weekdays;
+}
+
+static void
+_weekdays_name_set(Eo *obj, void *_pd, va_list *list)
+{
+   int idx;
+   time_t now;
+   struct tm time_daysel;
+   Elm_Dayselector_Item *it;
+   char buf[1024];
+   const char **weekdays = va_arg(*list, const char **);
+   Elm_Dayselector_Smart_Data *sd = _pd;
+
+   if (weekdays)
+     sd->weekdays_names_set = EINA_TRUE;
+   else
+     {
+       now = time(NULL);
+       localtime_r(&now, &time_daysel);
+       sd->weekdays_names_set = EINA_FALSE;
+     }
+
+   for (idx = 0; idx < ELM_DAYSELECTOR_MAX; idx++)
+     {
+        it = _item_find(obj, idx);
+
+        if (sd->weekdays_names_set)
+          elm_object_text_set(VIEW(it), weekdays[idx]);
+        else
+        {
+          time_daysel.tm_wday = idx;
+          strftime(buf, sizeof(buf), "%a", &time_daysel);
+          elm_object_text_set(VIEW(it), buf);
+        }
+     }
+}
+
+static void
+_weekdays_name_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+{
+   int idx;
+   const char *weekday;
+   Elm_Dayselector_Item *it;
+   Eina_List **weekdays = va_arg(*list, Eina_List **);
+
+   for (idx = 0; idx < ELM_DAYSELECTOR_MAX; idx++)
+     {
+        it = _item_find(obj, idx);
+        weekday = elm_object_text_get(VIEW(it));
+        *weekdays = eina_list_append(*weekdays, eina_stringshare_add(weekday));
+     }
+}
+
 static void
 _elm_dayselector_smart_focus_direction_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
 {
@@ -675,6 +749,8 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_OBJ_DAYSELECTOR_ID(ELM_OBJ_DAYSELECTOR_SUB_ID_WEEKEND_START_GET), _weekend_start_get),
         EO_OP_FUNC(ELM_OBJ_DAYSELECTOR_ID(ELM_OBJ_DAYSELECTOR_SUB_ID_WEEKEND_LENGTH_SET), _weekend_length_set),
         EO_OP_FUNC(ELM_OBJ_DAYSELECTOR_ID(ELM_OBJ_DAYSELECTOR_SUB_ID_WEEKEND_LENGTH_GET), _weekend_length_get),
+        EO_OP_FUNC(ELM_OBJ_DAYSELECTOR_ID(ELM_OBJ_DAYSELECTOR_SUB_ID_WEEKDAYS_NAMES_SET), _weekdays_name_set),
+        EO_OP_FUNC(ELM_OBJ_DAYSELECTOR_ID(ELM_OBJ_DAYSELECTOR_SUB_ID_WEEKDAYS_NAMES_GET), _weekdays_name_get),
         EO_OP_FUNC_SENTINEL
    };
    eo_class_funcs_set(klass, func_desc);
@@ -691,6 +767,8 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_OBJ_DAYSELECTOR_SUB_ID_WEEKEND_START_GET, "Get the weekend starting day of Dayselector."),
      EO_OP_DESCRIPTION(ELM_OBJ_DAYSELECTOR_SUB_ID_WEEKEND_LENGTH_SET, "Set the weekend length of Dayselector."),
      EO_OP_DESCRIPTION(ELM_OBJ_DAYSELECTOR_SUB_ID_WEEKEND_LENGTH_GET, "Get the weekend length of Dayselector."),
+     EO_OP_DESCRIPTION(ELM_OBJ_DAYSELECTOR_SUB_ID_WEEKDAYS_NAMES_SET, "Set how the weekdays are displayed to the user"),
+     EO_OP_DESCRIPTION(ELM_OBJ_DAYSELECTOR_SUB_ID_WEEKDAYS_NAMES_GET, "Get how the weekdays are displayed to the user"),
      EO_OP_DESCRIPTION_SENTINEL
 };
 

@@ -24,6 +24,7 @@ struct _Elm_Dayselector_Smart_Data
    Elm_Dayselector_Day   week_start;
    Elm_Dayselector_Day   weekend_start;
    unsigned int          weekend_len;
+   Eina_Bool weekdays_names_set : 1;
 };
 
 typedef struct _Elm_Dayselector_Item       Elm_Dayselector_Item;

@@ -14,6 +14,8 @@ enum
    ELM_OBJ_DAYSELECTOR_SUB_ID_WEEKEND_START_GET,
    ELM_OBJ_DAYSELECTOR_SUB_ID_WEEKEND_LENGTH_SET,
    ELM_OBJ_DAYSELECTOR_SUB_ID_WEEKEND_LENGTH_GET,
+   ELM_OBJ_DAYSELECTOR_SUB_ID_WEEKDAYS_NAMES_SET,
+   ELM_OBJ_DAYSELECTOR_SUB_ID_WEEKDAYS_NAMES_GET,
    ELM_OBJ_DAYSELECTOR_SUB_ID_LAST
 };
 
@@ -133,3 +135,33 @@ enum
  * @ingroup Dayselector
  */
 #define elm_obj_dayselector_weekend_length_get(ret) ELM_OBJ_DAYSELECTOR_ID(ELM_OBJ_DAYSELECTOR_SUB_ID_WEEKEND_LENGTH_GET), EO_TYPECHECK(unsigned int *, ret)
+
+/**
+ * @def elm_obj_dayselector_weekdays_names_set
+ * @since 1.8
+ *
+ * Set the weekdays's names
+ *
+ * @param[in] day
+ * @param[in] weekdays
+ *
+ * @see elm_dayselector_weekdays_names_set
+ *
+ * @ingroup Dayselector
+ */
+#define elm_obj_dayselector_weekdays_names_set(weekdays) ELM_OBJ_DAYSELECTOR_ID(ELM_OBJ_DAYSELECTOR_SUB_ID_WEEKDAYS_NAMES_SET), EO_TYPECHECK(const char **, weekdays)
+
+/**
+ * @def elm_obj_dayselector_weekdays_names_get
+ * @since 1.8
+ *
+ * Get the weekdays' names
+ *
+ * @param[in] day
+ * @param[out] ret
+ *
+ * @see elm_dayselector_weekdays_names_get
+ *
+ * @ingroup Dayselector
+ */
+#define elm_obj_dayselector_weekdays_names_get(ret) ELM_OBJ_DAYSELECTOR_ID(ELM_OBJ_DAYSELECTOR_SUB_ID_WEEKDAYS_NAMES_GET), EO_TYPECHECK(Eina_List **, ret)
