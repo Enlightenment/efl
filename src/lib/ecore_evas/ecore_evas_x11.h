@@ -27,6 +27,10 @@ struct _Ecore_Evas_Interface_Software_X11 {
    void           (*resize_set)(Ecore_Evas *ee, Eina_Bool on);
    Eina_Bool      (*resize_get)(const Ecore_Evas *ee);
    void           (*extra_event_window_add)(Ecore_Evas *ee, Ecore_X_Window win);
+
+   void          *(*pixmap_visual_get)(const Ecore_Evas *ee);
+   unsigned long  (*pixmap_colormap_get)(const Ecore_Evas *ee);
+   int            (*pixmap_depth_get)(const Ecore_Evas *ee);
 };
 
 struct _Ecore_Evas_Interface_Gl_X11 {
@@ -38,6 +42,10 @@ struct _Ecore_Evas_Interface_Gl_X11 {
    Eina_Bool       (*resize_get)(const Ecore_Evas *ee);
    void            (*extra_event_window_add)(Ecore_Evas *ee, Ecore_X_Window win);
    void            (*pre_post_swap_callback_set)(const Ecore_Evas *ee, void *data, void (*pre_cb) (void *data, Evas *e), void (*post_cb) (void *data, Evas *e));
+
+   void          *(*pixmap_visual_get)(const Ecore_Evas *ee);
+   unsigned long  (*pixmap_colormap_get)(const Ecore_Evas *ee);
+   int            (*pixmap_depth_get)(const Ecore_Evas *ee);
 };
 
 #endif
