@@ -54,6 +54,8 @@ main(int argc, char *argv[])
 
 #ifdef HAVE_SYS_RESOURCE_H
    setpriority(PRIO_PROCESS, 0, 19);
+#elif _WIN32
+    SetPriorityClass(GetCurrentProcess(), IDLE_PRIORITY_CLASS);
 #endif
 
    ecore_main_loop_begin();
