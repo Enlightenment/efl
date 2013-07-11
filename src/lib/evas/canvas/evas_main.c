@@ -206,19 +206,19 @@ _destructor(Eo *eo_e, void *_pd, va_list *list EINA_UNUSED)
    e->cleanup = 1;
    while (del)
      {
-	del = 0;
-	EINA_INLIST_FOREACH(e->layers, lay)
-	  {
-	     Evas_Object_Protected_Data *o;
+        del = 0;
+        EINA_INLIST_FOREACH(e->layers, lay)
+          {
+             Evas_Object_Protected_Data *o;
 
-	     evas_layer_pre_free(lay);
+             evas_layer_pre_free(lay);
 
-	     EINA_INLIST_FOREACH(lay->objects, o)
-	       {
-		  if (!o->delete_me)
-		    del = 1;
-	       }
-	  }
+             EINA_INLIST_FOREACH(lay->objects, o)
+               {
+                  if (!o->delete_me)
+                    del = 1;
+               }
+          }
      }
    EINA_INLIST_FOREACH(e->layers, lay)
      evas_layer_free_objects(lay);
@@ -233,22 +233,23 @@ _destructor(Eo *eo_e, void *_pd, va_list *list EINA_UNUSED)
    e->name_hash = NULL;
 
    EINA_LIST_FREE(e->damages, r)
-     eina_rectangle_free(r);
+      eina_rectangle_free(r);
    EINA_LIST_FREE(e->obscures, r)
-     eina_rectangle_free(r);
+      eina_rectangle_free(r);
 
    evas_fonts_zero_free(eo_e);
-   
+
    evas_event_callback_all_del(eo_e);
    evas_event_callback_cleanup(eo_e);
 
    EINA_LIST_FREE(e->outputs, evo) evas_output_del(evo);
-   
+
    if (e->engine.func)
      {
-	e->engine.func->context_free(e->engine.data.output, e->engine.data.context);
-	e->engine.func->output_free(e->engine.data.output);
-	e->engine.func->info_free(eo_e, e->engine.info);
+        e->engine.func->context_free(e->engine.data.output,
+                                     e->engine.data.context);
+        e->engine.func->output_free(e->engine.data.output);
+        e->engine.func->info_free(eo_e, e->engine.info);
      }
 
    for (i = 0; i < e->modifiers.mod.count; i++)
@@ -279,7 +280,7 @@ _destructor(Eo *eo_e, void *_pd, va_list *list EINA_UNUSED)
      free(touch_point);
 
    _evas_device_cleanup(eo_e);
-   
+
    e->magic = 0;
    eo_do_super(eo_e, MY_CLASS, eo_destructor());
 }
