@@ -2396,6 +2396,99 @@ ecore_evas_pointer_warp(const Ecore_Evas *ee, Evas_Coord x, Evas_Coord y)
    return EINA_FALSE;
 }
 
+EAPI void *
+ecore_evas_pixmap_visual_get(const Ecore_Evas *ee)
+{
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+        ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS, "ecore_evas_pixmap_visual_get");
+        return NULL;
+     }
+
+   if (!strcmp(ee->driver, "software_x11"))
+     {
+        Ecore_Evas_Interface_Software_X11 *iface;
+        iface = (Ecore_Evas_Interface_Software_X11 *)_ecore_evas_interface_get(ee, "software_x11");
+        EINA_SAFETY_ON_NULL_RETURN_VAL(iface, NULL);
+
+        if (iface->pixmap_visual_get)
+          return iface->pixmap_visual_get(ee);
+     }
+   else if (!strcmp(ee->driver, "opengl_x11"))
+     {
+        Ecore_Evas_Interface_Gl_X11 *iface;
+        iface = (Ecore_Evas_Interface_Gl_X11 *)_ecore_evas_interface_get(ee, "gl_x11");
+        EINA_SAFETY_ON_NULL_RETURN_VAL(iface, NULL);
+
+        if (iface->pixmap_visual_get)
+          return iface->pixmap_visual_get(ee);
+     }
+
+   return NULL;
+}
+
+EAPI unsigned long 
+ecore_evas_pixmap_colormap_get(const Ecore_Evas *ee)
+{
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+        ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS, "ecore_evas_pixmap_colormap_get");
+        return 0;
+     }
+
+   if (!strcmp(ee->driver, "software_x11"))
+     {
+        Ecore_Evas_Interface_Software_X11 *iface;
+        iface = (Ecore_Evas_Interface_Software_X11 *)_ecore_evas_interface_get(ee, "software_x11");
+        EINA_SAFETY_ON_NULL_RETURN_VAL(iface, 0);
+
+        if (iface->pixmap_colormap_get)
+          return iface->pixmap_colormap_get(ee);
+     }
+   else if (!strcmp(ee->driver, "opengl_x11"))
+     {
+        Ecore_Evas_Interface_Gl_X11 *iface;
+        iface = (Ecore_Evas_Interface_Gl_X11 *)_ecore_evas_interface_get(ee, "gl_x11");
+        EINA_SAFETY_ON_NULL_RETURN_VAL(iface, 0);
+
+        if (iface->pixmap_colormap_get)
+          return iface->pixmap_colormap_get(ee);
+     }
+
+   return 0;
+}
+
+EAPI int 
+ecore_evas_pixmap_depth_get(const Ecore_Evas *ee)
+{
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+        ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS, "ecore_evas_pixmap_depth_get");
+        return 0;
+     }
+
+   if (!strcmp(ee->driver, "software_x11"))
+     {
+        Ecore_Evas_Interface_Software_X11 *iface;
+        iface = (Ecore_Evas_Interface_Software_X11 *)_ecore_evas_interface_get(ee, "software_x11");
+        EINA_SAFETY_ON_NULL_RETURN_VAL(iface, 0);
+
+        if (iface->pixmap_depth_get)
+          return iface->pixmap_depth_get(ee);
+     }
+   else if (!strcmp(ee->driver, "opengl_x11"))
+     {
+        Ecore_Evas_Interface_Gl_X11 *iface;
+        iface = (Ecore_Evas_Interface_Gl_X11 *)_ecore_evas_interface_get(ee, "gl_x11");
+        EINA_SAFETY_ON_NULL_RETURN_VAL(iface, 0);
+
+        if (iface->pixmap_depth_get)
+          return iface->pixmap_depth_get(ee);
+     }
+
+   return 0;
+}
+
 /* fps debug calls - for debugging how much time your app actually spends */
 /* rendering graphics... :) */
 
