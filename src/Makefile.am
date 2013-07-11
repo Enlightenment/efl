@@ -88,7 +88,7 @@ DIST_SUBDIRS += $(EXAMPLES_SUBDIRS)
 examples: all-am
 	@for d in $(EXAMPLES_SUBDIRS); do \
 	   echo "Making examples in $$d"; \
-	   $(MAKE) $(AM_MAKEFLAGS) -C $$d examples; \
+	   $(MAKE) $(AM_MAKEFLAGS) -C $$d examples || exit 1; \
 	done
 
 install-examples:
