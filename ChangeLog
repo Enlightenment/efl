@@ -1,3 +1,11 @@
+2013-07-11  Chris Michael
+
+        * Ecore_Evas: Updated doxygen comments for pixmap functions
+        * Ecore_Evas: Check for valid interface pixmap_get function
+before calling it.
+        * Ecore_Evas: Removed need for prev_front pixmap field in
+structure and just use a temporary variable.
+
 2013-07-10  Cedric Bail
 
 	* Eina: Add eina_tiler_empty.
