@@ -774,26 +774,7 @@ _color_class_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
              if (ret) *ret = EINA_TRUE;
              return;
           }
-       cc->r = r;
-       cc->g = g;
-       cc->b = b;
-       cc->a = a;
-       cc->r2 = r2;
-       cc->g2 = g2;
-       cc->b2 = b2;
-       cc->a2 = a2;
-       cc->r3 = r3;
-       cc->g3 = g3;
-       cc->b3 = b3;
-       cc->a3 = a3;
-       ed->dirty = EINA_TRUE;
-       ed->recalc_call = EINA_TRUE;
-#ifdef EDJE_CALC_CACHE
-       ed->all_part_change = EINA_TRUE;
-#endif
-       _edje_recalc(ed);
-       if (ret) *ret = EINA_TRUE;
-       return;
+        goto update_color_class;
      }
 
    color_class = eina_stringshare_add(color_class);
@@ -805,6 +786,8 @@ _color_class_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
         return;
      }
    cc->name = color_class;
+   eina_hash_direct_add(ed->color_classes, cc->name, cc);
+update_color_class:
    cc->r = r;
    cc->g = g;
    cc->b = b;
@@ -817,7 +800,6 @@ _color_class_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    cc->g3 = g3;
    cc->b3 = b3;
    cc->a3 = a3;
-   eina_hash_direct_add(ed->color_classes, cc->name, cc);
    ed->dirty = EINA_TRUE;
    ed->recalc_call = EINA_TRUE;
 #ifdef EDJE_CALC_CACHE
