@@ -2,12 +2,12 @@
 #
 # Vít Pelčák <vit@pelcak.org>, 2011.
 # Tomáš Čech <sleep_walker@suse.cz>, 2012.
-#: src/lib/elm_config.c:2413
+#: src/lib/elm_config.c:2416
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-07-05 08:25+0900\n"
+"POT-Creation-Date: 2013-07-12 07:09+0900\n"
 "PO-Revision-Date: 2012-12-16 21:59+0100\n"
 "Last-Translator: Tomáš Čech <sleep_walker@suse.cz>\n"
 "Language-Team: Czech <kde-i18n-doc@kde.org>\n"
@@ -26,8 +26,8 @@ msgstr "Nahoru"
 msgid "Home"
 msgstr "Domů"
 
-#: src/lib/elc_fileselector.c:1073 src/lib/elm_entry.c:1289
-#: src/lib/elm_entry.c:1314
+#: src/lib/elc_fileselector.c:1073 src/lib/elm_entry.c:1294
+#: src/lib/elm_entry.c:1319
 msgid "Cancel"
 msgstr "Zrušit"
 
@@ -45,7 +45,7 @@ msgstr "Kliknuto"
 
 #: src/lib/elm_button.c:281 src/lib/elm_check.c:219 src/lib/elm_gengrid.c:694
 #: src/lib/elm_genlist.c:1423 src/lib/elm_list.c:1476 src/lib/elm_radio.c:264
-#: src/lib/elm_spinner.c:526 src/lib/elm_toolbar.c:1995
+#: src/lib/elm_spinner.c:526 src/lib/elm_toolbar.c:1996
 msgid "State: Disabled"
 msgstr "Stav: Zakázáno"
 
@@ -131,11 +131,11 @@ msgstr "Stav: Upravitelný"
 msgid "Clock"
 msgstr "Hodiny"
 
-#: src/lib/elm_colorselector.c:1359
+#: src/lib/elm_colorselector.c:1356
 msgid "color selector palette item"
 msgstr "položka výběru barvy z palety"
 
-#: src/lib/elm_config.c:2429
+#: src/lib/elm_config.c:2432
 msgid "default:LTR"
 msgstr "výchozí:LTR"
 
@@ -143,23 +143,23 @@ msgstr "výchozí:LTR"
 msgid "diskselector item"
 msgstr "položka výběru disků"
 
-#: src/lib/elm_entry.c:1282
+#: src/lib/elm_entry.c:1287
 msgid "Copy"
 msgstr "Kopírovat"
 
-#: src/lib/elm_entry.c:1286
+#: src/lib/elm_entry.c:1291
 msgid "Cut"
 msgstr "Vyjmout"
 
-#: src/lib/elm_entry.c:1301
+#: src/lib/elm_entry.c:1306
 msgid "Select"
 msgstr "Vybrat"
 
-#: src/lib/elm_entry.c:1308
+#: src/lib/elm_entry.c:1313
 msgid "Paste"
 msgstr "Vložit"
 
-#: src/lib/elm_entry.c:3139
+#: src/lib/elm_entry.c:3148
 msgid "Entry"
 msgstr "Vstup"
 
@@ -215,27 +215,27 @@ msgstr "odečítací tlačítko spinneru"
 msgid "spinner"
 msgstr "spinner"
 
-#: src/lib/elm_toolbar.c:1467 src/lib/elm_toolbar.c:2056
+#: src/lib/elm_toolbar.c:1467 src/lib/elm_toolbar.c:2057
 msgid "Selected"
 msgstr "Vybrané"
 
-#: src/lib/elm_toolbar.c:1993
+#: src/lib/elm_toolbar.c:1994
 msgid "Separator"
 msgstr "Oddělovač"
 
-#: src/lib/elm_toolbar.c:1997
+#: src/lib/elm_toolbar.c:1998
 msgid "State: Selected"
 msgstr "Stav: Vybráno"
 
-#: src/lib/elm_toolbar.c:1999
+#: src/lib/elm_toolbar.c:2000
 msgid "Has menu"
 msgstr "Má nabídku"
 
-#: src/lib/elm_toolbar.c:2051
+#: src/lib/elm_toolbar.c:2052
 msgid "Unselected"
 msgstr "Nevybrané"
 
-#: src/lib/elm_toolbar.c:2068
+#: src/lib/elm_toolbar.c:2069
 msgid "Toolbar Item"
 msgstr "Položka panelu nástrojů"
 
