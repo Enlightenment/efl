@@ -83,11 +83,13 @@ struct _Evas_Object_Image_State
 
    Evas_Object   *source;
    Evas_Map      *defmap;
-   const char    *file;
+   union {
+      const char    *file;
+      Eina_File     *f;
+   } u;
    const char    *key;
-   Eina_File     *f;
    int            frame;
-   int             spread;
+   int            spread;
 
    Evas_Colorspace cspace;
 
@@ -95,6 +97,7 @@ struct _Evas_Object_Image_State
    Eina_Bool      has_alpha :1;
    Eina_Bool      opaque_valid : 1;
    Eina_Bool      opaque : 1;
+   Eina_Bool      mmaped_source : 1;
 };
 
 struct _Evas_Object_Image
@@ -130,7 +133,7 @@ struct _Evas_Object_Image
 
 /* private methods for image objects */
 static void evas_object_image_unload(Evas_Object *eo_obj, Eina_Bool dirty);
-static void evas_object_image_load(Evas_Object *eo_obj);
+static void evas_object_image_load(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas_Object_Image *o);
 static Evas_Coord evas_object_image_figure_x_fill(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas_Coord start, Evas_Coord size, Evas_Coord *size_ret);
 static Evas_Coord evas_object_image_figure_y_fill(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas_Coord start, Evas_Coord size, Evas_Coord *size_ret);
 
@@ -219,7 +222,7 @@ static const Evas_Object_Image_State default_state = {
   { 0, 0, 0 }, // image
   { 1.0, 0, 0, 0, 0, 1 }, // border
 
-  NULL, NULL, NULL, NULL, NULL,
+  NULL, NULL, { NULL }, NULL,
   0,
   EVAS_TEXTURE_REPEAT,
   EVAS_COLORSPACE_ARGB8888,
@@ -250,16 +253,16 @@ Eina_Cow *evas_object_image_state_cow = NULL;
 # define EINA_COW_IMAGE_STATE_WRITE_END(Obj, Write) \
   EINA_COW_WRITE_END(evas_object_image_state_cow, Obj->cur, Write)
 
-# define EVAS_OBJECT_WRITE_IMAGE_FREE_FILE_AND_KEY(Obj) \
-  if (Obj->cur->file || Obj->cur->key)                  \
-    {                                                   \
-       EINA_COW_IMAGE_STATE_WRITE_BEGIN(Obj, cur_write)                       \
+# define EVAS_OBJECT_WRITE_IMAGE_FREE_FILE_AND_KEY(Obj)                 \
+  if ((!Obj->cur->mmaped_source && Obj->cur->u.file) || Obj->cur->key) \
+    {                                                                   \
+       EINA_COW_IMAGE_STATE_WRITE_BEGIN(Obj, cur_write)                 \
          {                                                              \
             EINA_COW_WRITE_BEGIN(evas_object_image_state_cow, Obj->prev, Evas_Object_Image_State, prev_write) \
               EVAS_OBJECT_IMAGE_FREE_FILE_AND_KEY(cur_write, prev_write); \
             EINA_COW_WRITE_END(evas_object_image_state_cow, Obj->prev, prev_write); \
          }                                                              \
-       EINA_COW_IMAGE_STATE_WRITE_END(Obj, cur_write);                        \
+       EINA_COW_IMAGE_STATE_WRITE_END(Obj, cur_write);                  \
     }
 
 static void
@@ -515,19 +518,22 @@ _image_init_set(Eina_File *f, const char *file, const char *key,
 
    EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
      {
-        eina_stringshare_replace(&state_write->file, file);
+        if (f) state_write->u.f = f;
+        else eina_stringshare_replace(&state_write->u.file, file);
+        state_write->mmaped_source = !!f;
         eina_stringshare_replace(&state_write->key, key);
-        state_write->f = f;
      }
    EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
 
-   EINA_COW_WRITE_BEGIN(evas_object_image_state_cow, o->prev, Evas_Object_Image_State, state_write)
+   if (o->prev->u.file != NULL || o->prev->key != NULL)
      {
-        state_write->file = NULL;
-        state_write->key = NULL;
-        state_write->f = NULL;
+        EINA_COW_WRITE_BEGIN(evas_object_image_state_cow, o->prev, Evas_Object_Image_State, state_write)
+          {
+             state_write->u.file = NULL;
+             state_write->key = NULL;
+          }
+        EINA_COW_WRITE_END(evas_object_image_state_cow, o->prev, state_write);
      }
-   EINA_COW_WRITE_END(evas_object_image_state_cow, o->prev, state_write);
    
    if (o->engine_data)
      {
@@ -630,7 +636,7 @@ _image_mmap_set(Eo *eo_obj, void *_pd, va_list *list)
    const char *key = va_arg(*list, const char*);
 
    if (o->pixels->tmpf) _cleanup_tmpf(eo_obj);
-   if (o->cur->f == f)
+   if (o->cur->u.f == f)
      {
         if ((!o->cur->key) && (!key))
           return;
@@ -640,7 +646,7 @@ _image_mmap_set(Eo *eo_obj, void *_pd, va_list *list)
 
    _image_init_set(f, NULL, key, eo_obj, obj, o, &lo);
    o->engine_data = obj->layer->evas->engine.func->image_mmap(obj->layer->evas->engine.data.output,
-							      o->cur->f,
+							      o->cur->u.f,
 							      o->cur->key,
 							      &o->load_error,
 							      &lo);
@@ -667,7 +673,7 @@ _image_file_set(Eo *eo_obj, void *_pd, va_list *list)
    const char *key = va_arg(*list, const char*);
 
    if ((o->pixels->tmpf) && (file != o->pixels->tmpf)) _cleanup_tmpf(eo_obj);
-   if ((o->cur->file) && (file) && (!strcmp(o->cur->file, file)))
+   if ((o->cur->u.file) && (file) && (!strcmp(o->cur->u.file, file)))
      {
         if ((!o->cur->key) && (!key))
           return;
@@ -683,7 +689,7 @@ _image_file_set(Eo *eo_obj, void *_pd, va_list *list)
  */
    _image_init_set(NULL, file, key, eo_obj, obj, o, &lo);
    o->engine_data = obj->layer->evas->engine.func->image_load(obj->layer->evas->engine.data.output,
-                                                              o->cur->file,
+                                                              o->cur->u.file,
                                                               o->cur->key,
                                                               &o->load_error,
                                                               &lo);
@@ -707,7 +713,7 @@ _image_file_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
    const Evas_Object_Image *o = _pd;
    const char **file = va_arg(*list, const char**);
    const char **key = va_arg(*list, const char**);
-   if (file) *file = o->cur->file;
+   if (file) *file = o->cur->u.file;
    if (key) *key = o->cur->key;
 }
 
@@ -770,7 +776,7 @@ _image_source_set(Eo *eo_obj, void *_pd, va_list *list)
 
    _evas_object_image_cleanup(eo_obj, obj, o);
    /* Kill the image if any */
-   if (o->cur->file || o->cur->key)
+   if (o->cur->u.file || o->cur->key)
       evas_object_image_file_set(eo_obj, NULL, NULL);
 
    if (eo_src) _proxy_set(eo_obj, eo_src);
@@ -2021,18 +2027,18 @@ _image_reload(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
                                                                  o->engine_data,
                                                                  eo_obj);
      }
-   if ((!o->cur->file) ||
+   if ((!o->cur->u.file) ||
        (o->pixels_checked_out > 0)) return;
    if (o->engine_data)
      o->engine_data = obj->layer->evas->engine.func->image_dirty_region(obj->layer->evas->engine.data.output, o->engine_data, 0, 0, o->cur->image.w, o->cur->image.h);
    o->written = EINA_FALSE;
    evas_object_image_unload(eo_obj, 1);
    evas_object_inform_call_image_unloaded(eo_obj);
-   evas_object_image_load(eo_obj);
+   evas_object_image_load(eo_obj, obj, o);
 
    EINA_COW_WRITE_BEGIN(evas_object_image_state_cow, o->prev, Evas_Object_Image_State, prev_write)
      {
-        prev_write->file = NULL;
+        prev_write->u.file = NULL;
         prev_write->key = NULL;
      }
    EINA_COW_WRITE_END(evas_object_image_state_cow, o->prev, prev_write);
@@ -2289,12 +2295,12 @@ _image_load_dpi_set(Eo *eo_obj, void *_pd, va_list *list)
      low->dpi = dpi;
    EINA_COW_LOAD_OPTS_WRITE_END(o, low);
 
-   if (o->cur->file)
+   if (o->cur->u.file)
      {
         Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
         evas_object_image_unload(eo_obj, 0);
         evas_object_inform_call_image_unloaded(eo_obj);
-        evas_object_image_load(eo_obj);
+        evas_object_image_load(eo_obj, obj, o);
         o->changed = EINA_TRUE;
 	evas_object_change(eo_obj, obj);
      }
@@ -2345,12 +2351,12 @@ _image_load_size_set(Eo *eo_obj, void *_pd, va_list *list)
      }
    EINA_COW_LOAD_OPTS_WRITE_END(o, low);
 
-   if (o->cur->file)
+   if (o->cur->u.file)
      {
         Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
         evas_object_image_unload(eo_obj, 0);
         evas_object_inform_call_image_unloaded(eo_obj);
-        evas_object_image_load(eo_obj);
+        evas_object_image_load(eo_obj, obj, o);
         o->changed = EINA_TRUE;
 	evas_object_change(eo_obj, obj);
      }
@@ -2398,12 +2404,12 @@ _image_load_scale_down_set(Eo *eo_obj, void *_pd, va_list *list)
      low->scale_down_by = scale_down;
    EINA_COW_LOAD_OPTS_WRITE_END(o, low);
 
-   if (o->cur->file)
+   if (o->cur->u.file)
      {
         Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
         evas_object_image_unload(eo_obj, 0);
         evas_object_inform_call_image_unloaded(eo_obj);
-        evas_object_image_load(eo_obj);
+        evas_object_image_load(eo_obj, obj, o);
         o->changed = EINA_TRUE;
 	evas_object_change(eo_obj, obj);
      }
@@ -2459,12 +2465,12 @@ _image_load_region_set(Eo *eo_obj, void *_pd, va_list *list)
      }
    EINA_COW_LOAD_OPTS_WRITE_END(o, low);
 
-   if (o->cur->file)
+   if (o->cur->u.file)
      {
         Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
         evas_object_image_unload(eo_obj, 0);
         evas_object_inform_call_image_unloaded(eo_obj);
-        evas_object_image_load(eo_obj);
+        evas_object_image_load(eo_obj, obj, o);
         o->changed = EINA_TRUE;
 	evas_object_change(eo_obj, obj);
      }
@@ -3027,7 +3033,7 @@ _image_animated_frame_set(Eo *eo_obj, void *_pd, va_list *list)
    Evas_Object_Image *o = _pd;
    int frame_count = 0;
 
-   if (!o->cur->file) return;
+   if (!o->cur->u.file) return;
    int frame_index = va_arg(*list, int);
    if (o->cur->frame == frame_index) return;
 
@@ -3109,7 +3115,7 @@ _canvas_image_cache_reload(Eo *eo_e, void *_pd, va_list *list EINA_UNUSED)
              if (eo_isa(obj->object, MY_CLASS))
                {
                   Evas_Object_Image *o = eo_data_scope_get(obj->object, MY_CLASS);
-                  evas_object_image_load(obj->object);
+                  evas_object_image_load(obj->object, obj, o);
                   o->changed = EINA_TRUE;
                   evas_object_change(obj->object, obj);
                }
@@ -3456,7 +3462,7 @@ evas_object_image_unload(Evas_Object *eo_obj, Eina_Bool dirty)
    Eina_Bool resize_call = EINA_FALSE;
 
    o = eo_data_scope_get(eo_obj, MY_CLASS);
-   if ((!o->cur->file) ||
+   if ((!o->cur->u.file) ||
        (o->pixels_checked_out > 0)) return;
 
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
@@ -3498,14 +3504,12 @@ evas_object_image_unload(Evas_Object *eo_obj, Eina_Bool dirty)
 }
 
 static void
-evas_object_image_load(Evas_Object *eo_obj)
+evas_object_image_load(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas_Object_Image *o)
 {
-   Evas_Object_Image *o = eo_data_scope_get(eo_obj, MY_CLASS);
    Evas_Image_Load_Opts lo;
 
    if (o->engine_data) return;
 
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    lo.scale_down_by = o->load_opts->scale_down_by;
    lo.dpi = o->load_opts->dpi;
    lo.w = o->load_opts->w;
@@ -3524,12 +3528,21 @@ evas_object_image_load(Evas_Object *eo_obj)
    lo.scale_load.scale_hint = o->load_opts->scale_load.scale_hint;
    lo.orientation = o->load_opts->orientation;
    lo.degree = 0;
-   o->engine_data = obj->layer->evas->engine.func->image_load
-      (obj->layer->evas->engine.data.output,
-          o->cur->file,
-          o->cur->key,
-          &o->load_error,
-          &lo);
+   if (o->cur->mmaped_source)
+     o->engine_data = obj->layer->evas->engine.func->image_mmap
+       (obj->layer->evas->engine.data.output,
+        o->cur->u.f,
+        o->cur->key,
+        &o->load_error,
+        &lo);
+   else
+     o->engine_data = obj->layer->evas->engine.func->image_load
+       (obj->layer->evas->engine.data.output,
+        o->cur->u.file,
+        o->cur->key,
+        &o->load_error,
+        &lo);
+
    if (o->engine_data)
      {
         int w, h;
@@ -3660,7 +3673,7 @@ evas_object_image_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 
    /* free obj */
    _cleanup_tmpf(eo_obj);
-   if (o->cur->file) eina_stringshare_del(o->cur->file);
+   if (o->cur->u.file && !o->cur->mmaped_source) eina_stringshare_del(o->cur->u.file);
    if (o->cur->key) eina_stringshare_del(o->cur->key);
    if (o->cur->source) _proxy_unset(eo_obj, obj, o);
    if (obj->layer && obj->layer->evas)
@@ -4273,8 +4286,8 @@ evas_object_image_render_pre(Evas_Object *eo_obj,
      }
    if (o->changed)
      {
-        if (((o->cur->file) && (!o->prev->file)) ||
-            ((!o->cur->file) && (o->prev->file)) ||
+        if (((o->cur->u.file) && (!o->prev->u.file)) ||
+            ((!o->cur->u.file) && (o->prev->u.file)) ||
             ((o->cur->key) && (!o->prev->key)) ||
             ((!o->cur->key) && (o->prev->key))
            )
