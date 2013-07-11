@@ -199,28 +199,28 @@ _evas_gl_preload_tile_async(void *data EINA_UNUSED, Eina_Thread t EINA_UNUSED)
         //  +-+
         //  +-+
         //
-        _tex_sub_2d(async->tex->x, async->tex->y,
+        _tex_sub_2d(async->tex->gc, async->tex->x, async->tex->y,
                     async->im->cache_entry.w, async->im->cache_entry.h,
                     fmt, async->tex->pt->dataformat,
                     async->im->image.data);
         //  xxx
         //  xxx
         //  ---
-        _tex_sub_2d(async->tex->x, async->tex->y + async->im->cache_entry.h,
+        _tex_sub_2d(async->tex->gc, async->tex->x, async->tex->y + async->im->cache_entry.h,
                     async->im->cache_entry.w, 1,
                     fmt, async->tex->pt->dataformat,
                     async->im->image.data + ((async->im->cache_entry.h - 1) * async->im->cache_entry.w));
         //  xxx
         //  xxx
         // o
-        _tex_sub_2d(async->tex->x - 1, async->tex->y + async->im->cache_entry.h,
+        _tex_sub_2d(async->tex->gc, async->tex->x - 1, async->tex->y + async->im->cache_entry.h,
                     1, 1,
                     fmt, async->tex->pt->dataformat,
                     async->im->image.data + ((async->im->cache_entry.h - 1) * async->im->cache_entry.w));
         //  xxx
         //  xxx
         //     o
-        _tex_sub_2d(async->tex->x + async->im->cache_entry.w, async->tex->y + async->im->cache_entry.h,
+        _tex_sub_2d(async->tex->gc, async->tex->x + async->im->cache_entry.w, async->tex->y + async->im->cache_entry.h,
                     1, 1,
                     fmt, async->tex->pt->dataformat,
                     async->im->image.data + ((async->im->cache_entry.h - 1) * async->im->cache_entry.w) + (async->im->cache_entry.w - 1));
@@ -231,14 +231,14 @@ _evas_gl_preload_tile_async(void *data EINA_UNUSED, Eina_Thread t EINA_UNUSED)
              // |xxx
              // |xxx
              //
-             _tex_sub_2d(async->tex->x - 1, async->tex->y,
+             _tex_sub_2d(async->tex->gc, async->tex->x - 1, async->tex->y,
                          1, async->im->cache_entry.h,
                          fmt, async->tex->pt->dataformat,
                          async->im->image.data);
              //  xxx|
              //  xxx|
              //
-             _tex_sub_2d(async->tex->x + async->im->cache_entry.w, async->tex->y,
+             _tex_sub_2d(async->tex->gc, async->tex->x + async->im->cache_entry.w, async->tex->y,
                          1, async->im->cache_entry.h,
                          fmt, async->tex->pt->dataformat,
                          async->im->image.data + (async->im->cache_entry.w - 1));
@@ -260,7 +260,7 @@ _evas_gl_preload_tile_async(void *data EINA_UNUSED, Eina_Thread t EINA_UNUSED)
              // |xxx
              // |xxx
              //
-             _tex_sub_2d(async->tex->x - 1, async->tex->y,
+             _tex_sub_2d(async->tex->gc, async->tex->x - 1, async->tex->y,
                          1, async->im->cache_entry.h,
                          fmt, async->tex->pt->dataformat,
                          tpix);
@@ -275,7 +275,7 @@ _evas_gl_preload_tile_async(void *data EINA_UNUSED, Eina_Thread t EINA_UNUSED)
              //  xxx|
              //  xxx|
              //
-             _tex_sub_2d(async->tex->x + async->im->cache_entry.w, async->tex->y,
+             _tex_sub_2d(async->tex->gc, async->tex->x + async->im->cache_entry.w, async->tex->y,
                          1, async->im->cache_entry.h,
                          fmt, async->tex->pt->dataformat,
                          tpix);

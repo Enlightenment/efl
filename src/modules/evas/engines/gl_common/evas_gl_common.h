@@ -795,8 +795,10 @@ Eina_Bool evas_gl_common_module_open(void);
 void      evas_gl_common_module_close(void);
 
 static inline void
-_tex_sub_2d(int x, int y, int w, int h, int fmt, int type, const void *pix)
+_tex_sub_2d(Evas_Engine_GL_Context *gc, int x, int y, int w, int h, int fmt, int type, const void *pix)
 {
+   if ((w > gc->shared->info.max_texture_size) ||
+       (h > gc->shared->info.max_texture_size)) return;
    glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, w, h, fmt, type, pix);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 }
