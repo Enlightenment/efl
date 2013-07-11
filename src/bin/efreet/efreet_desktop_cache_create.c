@@ -5,7 +5,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <errno.h>
-#ifndef HAVE_SYS_RESOURCE_H
+#ifdef HAVE_SYS_RESOURCE_H
 #include <sys/time.h>
 #include <sys/resource.h>
 #endif
@@ -254,7 +254,7 @@ main(int argc, char **argv)
     }
     extra_dirs = eina_list_sort(extra_dirs, -1, EINA_COMPARE_CB(strcmp));
 
-#ifndef HAVE_SYS_RESOURCE_H
+#ifdef HAVE_SYS_RESOURCE_H
     setpriority(PRIO_PROCESS, 0, 19);
 #endif
 
