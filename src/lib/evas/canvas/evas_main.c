@@ -192,7 +192,7 @@ _destructor(Eo *eo_e, void *_pd, va_list *list EINA_UNUSED)
    Evas_Layer *lay;
    Evas_Out *evo;
    int i;
-   int del;
+   Eina_Bool del;
 
    if (e->walking_list == 0) evas_render_idle_flush(eo_e);
 
@@ -201,12 +201,12 @@ _destructor(Eo *eo_e, void *_pd, va_list *list EINA_UNUSED)
 
    _evas_post_event_callback_free(eo_e);
 
-   del = 1;
+   del = EINA_TRUE;
    e->walking_list++;
    e->cleanup = 1;
    while (del)
      {
-        del = 0;
+        del = EINA_FALSE;
         EINA_INLIST_FOREACH(e->layers, lay)
           {
              Evas_Object_Protected_Data *o;
@@ -216,7 +216,7 @@ _destructor(Eo *eo_e, void *_pd, va_list *list EINA_UNUSED)
              EINA_INLIST_FOREACH(lay->objects, o)
                {
                   if (!o->delete_me)
-                    del = 1;
+                    del = EINA_TRUE;
                }
           }
      }
