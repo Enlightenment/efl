@@ -933,6 +933,10 @@ EAPI void            ecore_evas_software_x11_extra_event_window_add(Ecore_Evas *
  * @brief Create a new Ecore_Evas which does not contain an XWindow. It will 
  * only contain an XPixmap to render to
  * 
+ * @warning The XPixmap ID can change with every frame after it is rendered, 
+ * so you should ALWAYS call ecore_evas_software_x11_pixmap_get when you 
+ * need the current pixmap id.
+ * 
  * @since 1.8
  */
 EAPI Ecore_Evas     *ecore_evas_software_x11_pixmap_new(const char *disp_name, Ecore_X_Window parent, int x, int y, int w, int h);
@@ -944,6 +948,10 @@ EAPI Ecore_Evas     *ecore_evas_software_x11_pixmap_new(const char *disp_name, E
  * @return The underlying Ecore_X_Pixmap
  * 
  * @warning Support for this depends on the underlying windowing system.
+ * 
+ * @warning The XPixmap ID can change with every frame after it is rendered, 
+ * so you should ALWAYS call ecore_evas_software_x11_pixmap_get when you 
+ * need the current pixmap id.
  * 
  * @since 1.8
  */
@@ -973,6 +981,10 @@ EAPI void            ecore_evas_gl_x11_pre_post_swap_callback_set(const Ecore_Ev
  * @brief Create a new Ecore_Evas which does not contain an XWindow. It will 
  * only contain an XPixmap to render to
  * 
+ * @warning The XPixmap ID can change with every frame after it is rendered, 
+ * so you should ALWAYS call ecore_evas_software_x11_pixmap_get when you 
+ * need the current pixmap id.
+ * 
  * @since 1.8
  */
 EAPI Ecore_Evas     *ecore_evas_gl_x11_pixmap_new(const char *disp_name, Ecore_X_Window parent, int x, int y, int w, int h);
@@ -984,6 +996,10 @@ EAPI Ecore_Evas     *ecore_evas_gl_x11_pixmap_new(const char *disp_name, Ecore_X
  * @return The underlying Ecore_X_Pixmap
  * 
  * @warning Support for this depends on the underlying windowing system.
+ * 
+ * @warning The XPixmap ID can change with every frame after it is rendered, 
+ * so you should ALWAYS call ecore_evas_software_x11_pixmap_get when you 
+ * need the current pixmap id.
  * 
  * @since 1.8
  */
