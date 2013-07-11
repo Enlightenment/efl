@@ -79,7 +79,9 @@
  * @author Jiyoung Choi <jychoi7.choi@@samsung.com>
  * @author Arvind R <arvino55@@gmail.com>
  * @author Paulo Cavalcanti <paulo.cavalcanti@@linux.intel.com>
+ * @author Stefan Schmidt <stefan@@datenfreihafen.org>
  * @author Ryuan Choi (ryuan) <ryuan.choi@samsung.com> <ryuan.choi@gmail.com>
+ * @author Hosang Kim <hosang12.kim@@samsung.com>
  *
  * Please contact <enlightenment-devel@lists.sourceforge.net> to get in
  * contact with the developers and maintainers.
