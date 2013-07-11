@@ -395,7 +395,10 @@ static void
 _elm_layout_smart_focus_next_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
 {
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   *ret = EINA_TRUE;
+   if (!elm_widget_can_focus_get(obj))
+     *ret = EINA_TRUE;
+   else
+     *ret = EINA_FALSE;
 }
 /* WARNING: if you're making a widget *not* supposed to have focusable
  * child objects, but still inheriting from elm_layout, just set its
@@ -501,7 +504,10 @@ static void
 _elm_layout_smart_focus_direction_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
 {
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   *ret = EINA_TRUE;
+   if (!elm_widget_can_focus_get(obj))
+     *ret = EINA_TRUE;
+   else
+     *ret = EINA_FALSE;
 }
 
 static void
