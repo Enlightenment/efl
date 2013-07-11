@@ -90,7 +90,6 @@ struct _Ecore_Evas_Engine_Data_X11 {
    struct 
      {
         unsigned int front, back; // front and back pixmaps (double-buffer)
-        unsigned int prev_front; // record which buffer Was at the front
         Evas_Coord w, h; // store pixmap size (saves X roundtrips)
         int depth; // store depth to save us from fetching engine info pre_render
      } pixmap;
@@ -3236,6 +3235,8 @@ _ecore_evas_x_flush_post(void *data, Evas *e EINA_UNUSED, void *event_info EINA_
 
    if ((!ee->prop.window) && (edata->pixmap.back))
      {
+        Ecore_X_Pixmap prev;
+
         /* printf("Ecore_Evas Flush Post\n"); */
         /* printf("\tBack Pixmap: %d\n", edata->pixmap.back); */
         /* printf("\tFront Pixmap: %d\n", edata->pixmap.front); */
@@ -3245,13 +3246,13 @@ _ecore_evas_x_flush_post(void *data, Evas *e EINA_UNUSED, void *event_info EINA_
          * pre-rendered */
 
         /* record the current front buffer */
-        edata->pixmap.prev_front = edata->pixmap.front;
+        prev = edata->pixmap.front;
 
         /* flip them */
         edata->pixmap.front = edata->pixmap.back;
 
         /* reassign back buffer to be the old front one */
-        edata->pixmap.back = edata->pixmap.prev_front;
+        edata->pixmap.back = prev;
 
         /* update evas drawable */
         if (!strcmp(ee->driver, "software_x11"))
