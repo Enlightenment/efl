@@ -3,7 +3,7 @@
 #endif
 
 #include <stdlib.h>
-#ifndef _WIN32
+#ifndef HAVE_SYS_RESOURCE_H
 #include <sys/time.h>
 #include <sys/resource.h>
 #endif
@@ -52,7 +52,7 @@ main(int argc, char *argv[])
    if (!dbus_init()) goto dbus_error;
    if (!cache_init()) goto cache_error;
 
-#ifndef _WIN32
+#ifndef HAVE_SYS_RESOURCE_H
    setpriority(PRIO_PROCESS, 0, 19);
 #endif
 

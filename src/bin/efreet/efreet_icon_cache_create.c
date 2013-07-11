@@ -6,7 +6,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <errno.h>
-#ifndef _WIN32
+#ifndef HAVE_SYS_RESOURCE_H
 #include <sys/time.h>
 #include <sys/resource.h>
 #endif
@@ -772,7 +772,7 @@ main(int argc, char **argv)
             flush = EINA_TRUE;
     }
 
-#ifndef _WIN32
+#ifndef HAVE_SYS_RESOURCE_H
     setpriority(PRIO_PROCESS, 0, 19);
 #endif
 
