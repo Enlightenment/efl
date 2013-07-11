@@ -745,6 +745,8 @@ evas_gl_common_image_draw(Evas_Engine_GL_Context *gc, Evas_GL_Image *im, int sx,
        (im->cs.space == EVAS_COLORSPACE_YCBCR420TM12601_PL))
      nv12 = 1;
 
+   if ((sw == dw) && (sh == dh)) smooth = 0;
+   
    im->tex->im = im;
    if ((!gc->dc->cutout.rects) ||
        ((gc->shared->info.tune.cutout.max > 0) &&
