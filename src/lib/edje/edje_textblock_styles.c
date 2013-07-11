@@ -413,11 +413,12 @@ _edje_textblock_style_cleanup(Edje_File *edf)
 
 	     tag = stl->tags->data;
 	     stl->tags = eina_list_remove_list(stl->tags, stl->tags);
+	     if (tag->value && eet_dictionary_string_check(eet_dictionary_get(edf->ef), tag->value) == 0)
+               eina_stringshare_del(tag->value);
              if (edf->free_strings)
                {
                   if (tag->key) eina_stringshare_del(tag->key);
 /*                FIXME: Find a proper way to handle it. */
-                  if (tag->value) eina_stringshare_del(tag->value);
                   if (tag->text_class) eina_stringshare_del(tag->text_class);
                   if (tag->font) eina_stringshare_del(tag->font);
                }
