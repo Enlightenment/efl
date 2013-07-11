@@ -2,6 +2,7 @@
 // gcc -o ecore_idler_example ecore_idler_example.c `pkg-config --libs --cflags ecore eo`
 
 #include <Ecore.h>
+#include <Ecore_Eo.h>
 #include <unistd.h>
 
 struct context   // helper struct to give some context to the callbacks
