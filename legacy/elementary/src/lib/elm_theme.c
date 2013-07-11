@@ -376,7 +376,13 @@ _elm_theme_parse(Elm_Theme *th, const char *theme)
 void
 _elm_theme_shutdown(void)
 {
+   Elm_Theme *th;
    _elm_theme_clear(&(theme_default));
+   EINA_LIST_FREE(themes, th)
+     {
+        _elm_theme_clear(th);
+        free(th);
+     }
 }
 
 EAPI Elm_Theme *
