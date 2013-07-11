@@ -1908,6 +1908,32 @@ _tap_gesture_test(Evas_Object *obj,
                     &st->info, EINA_FALSE);
            }
 
+         if (gesture->state == ELM_GESTURE_STATE_MOVE)
+           {  /* Report MOVE if all devices have same DOWN/UP count */
+              /* Should be in MOVE state from last UP event */
+              Eina_List *l;
+              Eina_Bool move = EINA_TRUE;
+              unsigned int n = 0;
+
+              EINA_LIST_FOREACH(st->l, l, pe_list)
+                {
+                   if (n == 0)
+                     {
+                        n = eina_list_count(pe_list);
+                     }
+                   else if (n != eina_list_count(pe_list))
+                     {
+                        move = EINA_FALSE;
+                     }
+                }
+
+              if (move && (n > 0))
+                {
+                   ev_flag = _state_set(gesture, ELM_GESTURE_STATE_MOVE,
+                         &st->info, EINA_TRUE);
+                }
+           }
+
          break;
 
       case EVAS_CALLBACK_MULTI_UP:
@@ -1927,6 +1953,36 @@ _tap_gesture_test(Evas_Object *obj,
                 {
                    _tap_gesture_finish(gesture, sd->tap_finger_size);
                    return;
+                }
+           }
+
+         if ((gesture->state == ELM_GESTURE_STATE_START) ||
+               (gesture->state == ELM_GESTURE_STATE_MOVE))
+           {  /* Tap gesture started, no finger on surface. Report MOVE */
+              Eina_List *l;
+              Eina_Bool move = EINA_TRUE;
+              unsigned int n = 0;
+
+              /* Report move only if all devices have same DOWN/UP count */
+              EINA_LIST_FOREACH(st->l, l, pe_list)
+                {
+                   if (n == 0)
+                     {
+                        n = eina_list_count(pe_list);
+                     }
+                   else if (n != eina_list_count(pe_list))
+                     {
+                        move = EINA_FALSE;
+                     }
+                }
+
+              if ((move && (n > 0)) && (n < st->n_taps_needed))
+                {  /* Set number of fingers and report MOVE */
+                   /* We don't report MOVE when (n >= st->n_taps_needed)
+                      because will be END or ABORT at this stage */
+                   st->info.n = eina_list_count(st->l);
+                   ev_flag = _state_set(gesture, ELM_GESTURE_STATE_MOVE,
+                         &st->info, EINA_TRUE);
                 }
            }
 
