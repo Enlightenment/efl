@@ -1,5 +1,9 @@
 2013-07-11  Chris Michael
 
+        * Ecore_Evas: Added functions to retieve the pixmap depth, visual, and colormap
+
+2013-07-11  Chris Michael
+
         * Ecore_Evas: Updated doxygen comments for pixmap functions
         * Ecore_Evas: Check for valid interface pixmap_get function
 before calling it.
