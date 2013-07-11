@@ -265,6 +265,17 @@ dbl_click_start(void *data , void *event_info)
 }
 
 static Evas_Event_Flags
+dbl_click_move(void *data , void *event_info)
+{
+   Elm_Gesture_Taps_Info *p = (Elm_Gesture_Taps_Info *) event_info;
+   _color_and_icon_set(data, DOUBLE_TAP_NAME, p->n, MAX_DOUBLE_TAP, MOVE_COLOR);
+
+   printf("Double click move <%p> x,y=<%d,%d> count=<%d>\n",
+         event_info, p->x, p->y, p->n);
+   return EVAS_EVENT_FLAG_ON_HOLD;
+}
+
+static Evas_Event_Flags
 dbl_click_end(void *data , void *event_info)
 {
    Elm_Gesture_Taps_Info *p = (Elm_Gesture_Taps_Info *) event_info;
@@ -292,6 +303,17 @@ triple_click_start(void *data , void *event_info)
    _color_and_icon_set(data,TRIPLE_TAP_NAME, p->n, MAX_TRIPLE_TAP, START_COLOR);
 
    printf("Triple click started <%p> x,y=<%d,%d> count=<%d>\n",
+         event_info, p->x, p->y, p->n);
+   return EVAS_EVENT_FLAG_ON_HOLD;
+}
+
+static Evas_Event_Flags
+triple_click_move(void *data , void *event_info)
+{
+   Elm_Gesture_Taps_Info *p = (Elm_Gesture_Taps_Info *) event_info;
+
+   _color_and_icon_set(data, TRIPLE_TAP_NAME, p->n, MAX_TRIPLE_TAP, MOVE_COLOR);
+   printf("Triple click move <%p> x,y=<%d,%d> count=<%d>\n",
          event_info, p->x, p->y, p->n);
    return EVAS_EVENT_FLAG_ON_HOLD;
 }
@@ -691,6 +713,8 @@ test_gesture_layer2(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
    elm_gesture_layer_cb_set(g, ELM_GESTURE_N_TRIPLE_TAPS,
          ELM_GESTURE_STATE_START, triple_click_start, infra);
    elm_gesture_layer_cb_set(g, ELM_GESTURE_N_TRIPLE_TAPS,
+         ELM_GESTURE_STATE_MOVE, triple_click_move, infra);
+   elm_gesture_layer_cb_set(g, ELM_GESTURE_N_TRIPLE_TAPS,
          ELM_GESTURE_STATE_END, triple_click_end, infra);
    elm_gesture_layer_cb_set(g, ELM_GESTURE_N_TRIPLE_TAPS,
          ELM_GESTURE_STATE_ABORT, triple_click_abort, infra);
@@ -699,6 +723,8 @@ test_gesture_layer2(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
 #if 1
    elm_gesture_layer_cb_set(g, ELM_GESTURE_N_DOUBLE_TAPS,
          ELM_GESTURE_STATE_START, dbl_click_start, infra);
+   elm_gesture_layer_cb_set(g, ELM_GESTURE_N_DOUBLE_TAPS,
+         ELM_GESTURE_STATE_MOVE, dbl_click_move, infra);
    elm_gesture_layer_cb_set(g, ELM_GESTURE_N_DOUBLE_TAPS,
          ELM_GESTURE_STATE_END, dbl_click_end, infra);
    elm_gesture_layer_cb_set(g, ELM_GESTURE_N_DOUBLE_TAPS,
