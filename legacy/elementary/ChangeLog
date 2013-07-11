@@ -1495,3 +1495,7 @@
 2013-07-06  Shinwoo Kim
 
         * Add elm_access_highlight_next_set, export elm_widget_focus_region_show
+
+2013-07-07  Thiep Ha
+
+        * Add hide effect for notify.

@@ -96,9 +96,15 @@ group { name: "elm/notify/top/default";
          transition: LINEAR 0.5;
       }
       program { name: "hide";
-         signal: "hide";
+         signal: "elm,state,hide";
+         source: "elm";
          action: STATE_SET "default" 0.0;
          target: "base";
+         transition: LINEAR 0.5;
+         after: "hide_finished";
+      }
+      program { name: "hide_finished";
+         action: SIGNAL_EMIT "elm,action,hide,finished" "";
       }
    }
 }
@@ -137,6 +143,13 @@ group { name: "elm/notify/center/default";
             rel1.to: "base";
             rel2.to: "base";
          }
+      }
+   }
+   programs {
+      program { name: "hide";
+         signal: "elm,state,hide";
+         source: "elm";
+         action: SIGNAL_EMIT "elm,action,hide,finished" "";
       }
    }
 }
@@ -219,9 +232,15 @@ group { name: "elm/notify/bottom/default";
          transition: LINEAR 0.5;
       }
       program { name: "hide";
-         signal: "hide";
+         signal: "elm,state,hide";
+         source: "elm";
          action: STATE_SET "default" 0.0;
          target: "base";
+         transition: LINEAR 0.5;
+         after: "hide_finished";
+      }
+      program { name: "hide_finished";
+         action: SIGNAL_EMIT "elm,action,hide,finished" "";
       }
    }
 }
@@ -304,9 +323,15 @@ group { name: "elm/notify/left/default";
          transition: LINEAR 0.5;
       }
       program { name: "hide";
-         signal: "hide";
+         signal: "elm,state,hide";
+         source: "elm";
          action: STATE_SET "default" 0.0;
          target: "base";
+         transition: LINEAR 0.5;
+         after: "hide_finished";
+      }
+      program { name: "hide_finished";
+         action: SIGNAL_EMIT "elm,action,hide,finished" "";
       }
    }
 }
@@ -389,9 +414,15 @@ group { name: "elm/notify/right/default";
          transition: LINEAR 0.5;
       }
       program { name: "hide";
-         signal: "hide";
+         signal: "elm,state,hide";
+         source: "elm";
          action: STATE_SET "default" 0.0;
          target: "base";
+         transition: LINEAR 0.5;
+         after: "hide_finished";
+      }
+      program { name: "hide_finished";
+         action: SIGNAL_EMIT "elm,action,hide,finished" "";
       }
    }
 }
@@ -474,9 +505,15 @@ group { name: "elm/notify/top_left/default";
          transition: LINEAR 0.5;
       }
       program { name: "hide";
-         signal: "hide";
+         signal: "elm,state,hide";
+         source: "elm";
          action: STATE_SET "default" 0.0;
          target: "base";
+         transition: LINEAR 0.5;
+         after: "hide_finished";
+      }
+      program { name: "hide_finished";
+         action: SIGNAL_EMIT "elm,action,hide,finished" "";
       }
    }
 }
@@ -559,9 +596,15 @@ group { name: "elm/notify/top_right/default";
          transition: LINEAR 0.5;
       }
       program { name: "hide";
-         signal: "hide";
+         signal: "elm,state,hide";
+         source: "elm";
          action: STATE_SET "default" 0.0;
          target: "base";
+         transition: LINEAR 0.5;
+         after: "hide_finished";
+      }
+      program { name: "hide_finished";
+         action: SIGNAL_EMIT "elm,action,hide,finished" "";
       }
    }
 }
@@ -644,9 +687,15 @@ group { name: "elm/notify/bottom_left/default";
          transition: LINEAR 0.5;
       }
       program { name: "hide";
-         signal: "hide";
+         signal: "elm,state,hide";
+         source: "elm";
          action: STATE_SET "default" 0.0;
          target: "base";
+         transition: LINEAR 0.5;
+         after: "hide_finished";
+      }
+      program { name: "hide_finished";
+         action: SIGNAL_EMIT "elm,action,hide,finished" "";
       }
    }
 }
@@ -729,9 +778,15 @@ group { name: "elm/notify/bottom_right/default";
          transition: LINEAR 0.5;
       }
       program { name: "hide";
-         signal: "hide";
+         signal: "elm,state,hide";
+         source: "elm";
          action: STATE_SET "default" 0.0;
          target: "base";
+         transition: LINEAR 0.5;
+         after: "hide_finished";
+      }
+      program { name: "hide_finished";
+         action: SIGNAL_EMIT "elm,action,hide,finished" "";
       }
    }
 }

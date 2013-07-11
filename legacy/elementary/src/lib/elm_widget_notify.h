@@ -28,6 +28,8 @@ struct _Elm_Notify_Smart_Data
    Ecore_Timer             *timer;
 
    Eina_Bool                allow_events : 1;
+   Eina_Bool                had_hidden : 1;
+   Eina_Bool                in_timeout : 1;
 };
 
 /**

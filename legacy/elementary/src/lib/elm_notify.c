@@ -248,7 +248,8 @@ _timer_cb(void *data)
    sd->timer = NULL;
    if (!evas_object_visible_get(obj)) goto end;
 
-   evas_object_hide(obj);
+   sd->in_timeout = EINA_TRUE;
+   edje_object_signal_emit(sd->notify, "elm,state,hide", "elm");
    evas_object_smart_callback_call(obj, SIG_TIMEOUT, NULL);
 
 end:
@@ -271,6 +272,8 @@ _elm_notify_smart_show(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Notify_Smart_Data *sd = _pd;
 
+   sd->had_hidden = EINA_FALSE;
+   sd->in_timeout = EINA_FALSE;
    eo_do_super(obj, MY_CLASS, evas_obj_smart_show());
 
    evas_object_show(sd->notify);
@@ -284,10 +287,12 @@ _elm_notify_smart_hide(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Notify_Smart_Data *sd = _pd;
 
+   if (sd->had_hidden && !sd->in_timeout)
+     return;
    eo_do_super(obj, MY_CLASS, evas_obj_smart_hide());
 
-   evas_object_hide(sd->notify);
-   if (!sd->allow_events) evas_object_hide(sd->block_events);
+   if (!sd->in_timeout)
+      edje_object_signal_emit(sd->notify, "elm,state,hide", "elm");
    ELM_SAFE_FREE(sd->timer, ecore_timer_del);
 }
 
@@ -434,6 +439,18 @@ _elm_notify_smart_content_unset(Eo *obj, void *_pd, va_list *list)
 }
 
 static void
+_hide_finished_cb(void *data,
+                  Evas_Object *obj __UNUSED__,
+                  const char *emission __UNUSED__,
+                  const char *source __UNUSED__)
+{
+   ELM_NOTIFY_DATA_GET(data, sd);
+   sd->had_hidden = EINA_TRUE;
+   evas_object_hide(sd->notify);
+   if (!sd->allow_events) evas_object_hide(sd->block_events);
+}
+
+static void
 _elm_notify_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Notify_Smart_Data *priv = _pd;
@@ -448,6 +465,8 @@ _elm_notify_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    evas_object_event_callback_add
      (obj, EVAS_CALLBACK_RESTACK, _restack_cb, obj);
+   edje_object_signal_callback_add
+      (priv->notify, "elm,action,hide,finished","", _hide_finished_cb, obj);
 
    elm_widget_can_focus_set(obj, EINA_FALSE);
    elm_notify_align_set(obj, 0.5, 0.0);
@@ -458,6 +477,8 @@ _elm_notify_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Notify_Smart_Data *sd = _pd;
 
+   edje_object_signal_callback_del_full
+      (sd->notify, "elm,action,hide,finished", "", _hide_finished_cb, obj);
    elm_notify_parent_set(obj, NULL);
    elm_notify_allow_events_set(obj, EINA_FALSE);
    if (sd->timer) ecore_timer_del(sd->timer);
