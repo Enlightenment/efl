@@ -139,6 +139,8 @@ EAPI unsigned int   elm_dayselector_weekend_length_get(const Evas_Object *obj);
  * @see elm_dayselector_weekdays_name_get()
  * @see elm_dayselector_weekend_start_set()
  *
+ * @since 1.8
+ *
  * @ingroup Dayselector
  */
 EAPI void elm_dayselector_weekdays_names_set(Evas_Object *obj, const char *weekdays[]);
@@ -155,6 +157,7 @@ EAPI void elm_dayselector_weekdays_names_set(Evas_Object *obj, const char *weekd
  *
  * @see elm_dayselector_weekdays_name_set()
  *
+ * @since 1.8
  *
  * @ingroup Dayselector
  */
