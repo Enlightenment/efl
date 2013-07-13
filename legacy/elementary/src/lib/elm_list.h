@@ -54,9 +54,11 @@
  * Default content parts of the list items that you can use are:
  * @li @c "start" - A start position object in the list item
  * @li @c "end" - An end position object in the list item
+ * Another parts for customized styles are not accepted.
  *
  * Default text parts of the list items that you can use are:
  * @li @c "default" - label in the list item
+ * Another parts for customized styles are not accepted.
  *
  * Supported @c elm_object_item common APIs.
  * @li @ref elm_object_item_disabled_set
