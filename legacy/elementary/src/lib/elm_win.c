@@ -1407,6 +1407,8 @@ _elm_win_focus_highlight_shutdown(Elm_Win_Smart_Data *sd)
    _elm_win_focus_highlight_reconfigure_job_stop(sd);
    if (sd->focus_highlight.cur.target)
      {
+        elm_widget_signal_emit(sd->focus_highlight.cur.target,
+                               "elm,action,focus_highlight,hide", "elm");
         _elm_win_focus_target_callbacks_del(sd);
         sd->focus_highlight.cur.target = NULL;
      }
