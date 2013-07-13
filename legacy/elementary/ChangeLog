@@ -1503,3 +1503,10 @@
 2013-07-13  Daniel Juyung Seo
 
         * Fix elm_object_item_part_content_set bug with end content in elm_list.
+
+2013-07-14  ChunEon Park (Hermet)
+
+        * Entry : Change the keyboard mode only if the imf is not available. If
+        the imf is available, the keyboard mode should be decided by ime, but
+        not entry. This prevents the asynchronous states between ime and
+        conformant.

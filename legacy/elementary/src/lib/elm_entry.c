@@ -858,7 +858,8 @@ _elm_entry_smart_on_focus(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
      {
         evas_object_focus_set(sd->entry_edje, EINA_TRUE);
         edje_object_signal_emit(sd->entry_edje, "elm,action,focus", "elm");
-        if (top && top_is_win && sd->input_panel_enable)
+        if (top && top_is_win && sd->input_panel_enable &&
+            !edje_object_part_text_imf_context_get(sd->entry_edje, "elm.text"))
           elm_win_keyboard_mode_set(top, ELM_WIN_KEYBOARD_ON);
         evas_object_smart_callback_call(obj, SIG_FOCUSED, NULL);
         _return_key_enabled_check(obj);
@@ -867,7 +868,8 @@ _elm_entry_smart_on_focus(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
      {
         edje_object_signal_emit(sd->entry_edje, "elm,action,unfocus", "elm");
         evas_object_focus_set(sd->entry_edje, EINA_FALSE);
-        if (top && top_is_win && sd->input_panel_enable)
+        if (top && top_is_win && sd->input_panel_enable &&
+            !edje_object_part_text_imf_context_get(sd->entry_edje, "elm.text"))
           elm_win_keyboard_mode_set(top, ELM_WIN_KEYBOARD_OFF);
         evas_object_smart_callback_call(obj, SIG_UNFOCUSED, NULL);
 
