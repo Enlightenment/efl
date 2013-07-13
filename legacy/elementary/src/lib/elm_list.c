@@ -1348,7 +1348,12 @@ _item_content_set_hook(Elm_Object_Item *it,
    *icon_p = content;
 
    if (VIEW(item))
-     edje_object_part_swallow(VIEW(item), "elm.swallow.icon", content);
+     {
+        if (!strcmp(part, "start"))
+          edje_object_part_swallow(VIEW(item), "elm.swallow.icon", content);
+        else
+          edje_object_part_swallow(VIEW(item), "elm.swallow.end", content);
+     }
 }
 
 static Evas_Object *

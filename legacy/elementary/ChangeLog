@@ -1499,3 +1499,7 @@
 2013-07-12  Guilherme Íscaro
 
         * Add elm_dayselector_wekdays_names_set/get
+
+2013-07-13  Daniel Juyung Seo
+
+        * Fix elm_object_item_part_content_set bug with end content in elm_list.

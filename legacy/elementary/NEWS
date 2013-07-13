@@ -260,6 +260,7 @@ Fixes:
    * Fix crash of elm_notify when timeout is zero.
    * Fix Segfault in elementary file_selector_example when closed
    * Fix Showing multiple popups in Entry.
+   * Fix elm_object_item_part_content_set bug with end content in elm_list.
 
 Removals:
 
