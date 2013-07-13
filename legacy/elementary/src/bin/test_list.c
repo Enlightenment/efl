@@ -1000,6 +1000,7 @@ test_list5_swipe(void        *data __UNUSED__,
    evas_object_smart_callback_add(button, "clicked", test_list5_item_del,
                                   event_info);
    elm_object_item_part_content_set(event_info, "end", button);
+   elm_object_item_part_text_set(event_info, "default", "Enlightenment");
 }
 
 void
