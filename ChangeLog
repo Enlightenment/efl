@@ -1,3 +1,7 @@
+2013-07-15  Mike Blumenkrantz
+
+        * Ecore-X: fix BadMatch errors in ecore_x_image_get when requested size was larger than XImage size
+
 2013-07-15  Cedric Bail
 
 	* Eet: Add support for EET_T_VALUE to serialize Eina_Value pointer.

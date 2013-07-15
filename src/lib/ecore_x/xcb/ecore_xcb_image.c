@@ -96,8 +96,8 @@ ecore_x_image_get(Ecore_X_Image   *im,
           {
              im->xim->data = (uint8_t *)im->data + (im->xim->stride * sy) +
                (sx * im->bpp);
-             im->xim->width = w;
-             im->xim->height = h;
+             im->xim->width = MIN(w, im->w);
+             im->xim->height = MIN(h, im->h);
 
              ecore_x_grab();
              if (!xcb_image_shm_get(_ecore_xcb_conn, draw, im->xim,

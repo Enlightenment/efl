@@ -293,8 +293,8 @@ ecore_x_image_get(Ecore_X_Image *im,
           {
              im->xim->data = (char *)
                im->data + (im->xim->bytes_per_line * sy) + (sx * im->bpp);
-             im->xim->width = w;
-             im->xim->height = h;
+             im->xim->width = MIN(w, im->w);
+             im->xim->height = MIN(h, im->h);
              XGrabServer(_ecore_x_disp);
              if (!XShmGetImage(_ecore_x_disp, draw, im->xim, x, y, 0xffffffff))
                ret = EINA_FALSE;
