@@ -1482,6 +1482,7 @@ eina_log_shutdown(void)
    free(_log_domains);
    free(_log_timing);
 
+   _log_timing = NULL;
    _log_domains = NULL;
    _log_domains_count = 0;
    _log_domains_allocated = 0;
