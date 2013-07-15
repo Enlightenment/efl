@@ -152,6 +152,12 @@ extern const char *_elm_engines[];
 
 #define ELM_SAFE_FREE(_h, _fn) do { if (_h) { _fn((void*)_h); _h = NULL; } } while (0)
 
+#define ELM_PRIV_STATIC_VARIABLE_DECLARE(name, signal, type) \
+   static const char name[] = signal;
+
+#define ELM_PRIV_SMART_CALLBACKS_DESC(name, signal, type) \
+   {name, type},
+
 struct _Elm_Config
 {
    int           config_version;

@@ -38,108 +38,66 @@ EAPI Eo_Op ELM_OBJ_GENLIST_BASE_ID = EO_NOOP;
         if (getenv("ELM_ERROR_ABORT")) abort(); \
    } while (0)
 
-static const char SIG_ACTIVATED[] = "activated";
-static const char SIG_CLICKED_DOUBLE[] = "clicked,double";
-static const char SIG_SELECTED[] = "selected";
-static const char SIG_UNSELECTED[] = "unselected";
-static const char SIG_EXPANDED[] = "expanded";
-static const char SIG_CONTRACTED[] = "contracted";
-static const char SIG_EXPAND_REQUEST[] = "expand,request";
-static const char SIG_CONTRACT_REQUEST[] = "contract,request";
-static const char SIG_REALIZED[] = "realized";
-static const char SIG_UNREALIZED[] = "unrealized";
-static const char SIG_DRAG_START_UP[] = "drag,start,up";
-static const char SIG_DRAG_START_DOWN[] = "drag,start,down";
-static const char SIG_DRAG_START_LEFT[] = "drag,start,left";
-static const char SIG_DRAG_START_RIGHT[] = "drag,start,right";
-static const char SIG_DRAG_STOP[] = "drag,stop";
-static const char SIG_DRAG[] = "drag";
-static const char SIG_LONGPRESSED[] = "longpressed";
-static const char SIG_SCROLL_ANIM_START[] = "scroll,anim,start";
-static const char SIG_SCROLL_ANIM_STOP[] = "scroll,anim,stop";
-static const char SIG_SCROLL_DRAG_START[] = "scroll,drag,start";
-static const char SIG_SCROLL_DRAG_STOP[] = "scroll,drag,stop";
-static const char SIG_EDGE_TOP[] = "edge,top";
-static const char SIG_EDGE_BOTTOM[] = "edge,bottom";
-static const char SIG_EDGE_LEFT[] = "edge,left";
-static const char SIG_EDGE_RIGHT[] = "edge,right";
-static const char SIG_VBAR_DRAG[] = "vbar,drag";
-static const char SIG_VBAR_PRESS[] = "vbar,press";
-static const char SIG_VBAR_UNPRESS[] = "vbar,unpress";
-static const char SIG_HBAR_DRAG[] = "hbar,drag";
-static const char SIG_HBAR_PRESS[] = "hbar,press";
-static const char SIG_HBAR_UNPRESS[] = "hbar,unpress";
-static const char SIG_MULTI_SWIPE_LEFT[] = "multi,swipe,left";
-static const char SIG_MULTI_SWIPE_RIGHT[] = "multi,swipe,right";
-static const char SIG_MULTI_SWIPE_UP[] = "multi,swipe,up";
-static const char SIG_MULTI_SWIPE_DOWN[] = "multi,swipe,down";
-static const char SIG_MULTI_PINCH_OUT[] = "multi,pinch,out";
-static const char SIG_MULTI_PINCH_IN[] = "multi,pinch,in";
-static const char SIG_SWIPE[] = "swipe";
-static const char SIG_MOVED[] = "moved";
-static const char SIG_MOVED_AFTER[] = "moved,after";
-static const char SIG_MOVED_BEFORE[] = "moved,before";
-static const char SIG_INDEX_UPDATE[] = "index,update";
-static const char SIG_TREE_EFFECT_FINISHED [] = "tree,effect,finished";
-static const char SIG_HIGHLIGHTED[] = "highlighted";
-static const char SIG_UNHIGHLIGHTED[] = "unhighlighted";
-static const char SIG_LANG_CHANGED[] = "language,changed";
-static const char SIG_PRESSED[] = "pressed";
-static const char SIG_RELEASED[] = "released";
+#define ELM_PRIV_GENLIST_SIGNALS(cmd) \
+    cmd(SIG_ACTIVATED, "activated", "") \
+    cmd(SIG_CLICKED_DOUBLE, "clicked,double", "") \
+    cmd(SIG_SELECTED, "selected", "") \
+    cmd(SIG_UNSELECTED, "unselected", "") \
+    cmd(SIG_EXPANDED, "expanded", "") \
+    cmd(SIG_CONTRACTED, "contracted", "") \
+    cmd(SIG_EXPAND_REQUEST, "expand,request", "") \
+    cmd(SIG_CONTRACT_REQUEST, "contract,request", "") \
+    cmd(SIG_REALIZED, "realized", "") \
+    cmd(SIG_UNREALIZED, "unrealized", "") \
+    cmd(SIG_DRAG_START_UP, "drag,start,up", "") \
+    cmd(SIG_DRAG_START_DOWN, "drag,start,down", "") \
+    cmd(SIG_DRAG_START_LEFT, "drag,start,left", "") \
+    cmd(SIG_DRAG_START_RIGHT, "drag,start,right", "") \
+    cmd(SIG_DRAG_STOP, "drag,stop", "") \
+    cmd(SIG_DRAG, "drag", "") \
+    cmd(SIG_LONGPRESSED, "longpressed", "") \
+    cmd(SIG_SCROLL_ANIM_START, "scroll,anim,start", "") \
+    cmd(SIG_SCROLL_ANIM_STOP, "scroll,anim,stop", "") \
+    cmd(SIG_SCROLL_DRAG_START, "scroll,drag,start", "") \
+    cmd(SIG_SCROLL_DRAG_STOP, "scroll,drag,stop", "") \
+    cmd(SIG_EDGE_TOP, "edge,top", "") \
+    cmd(SIG_EDGE_BOTTOM, "edge,bottom", "") \
+    cmd(SIG_EDGE_LEFT, "edge,left", "") \
+    cmd(SIG_EDGE_RIGHT, "edge,right", "") \
+    cmd(SIG_VBAR_DRAG, "vbar,drag", "") \
+    cmd(SIG_VBAR_PRESS, "vbar,press", "") \
+    cmd(SIG_VBAR_UNPRESS, "vbar,unpress", "") \
+    cmd(SIG_HBAR_DRAG, "hbar,drag", "") \
+    cmd(SIG_HBAR_PRESS, "hbar,press", "") \
+    cmd(SIG_HBAR_UNPRESS, "hbar,unpress", "") \
+    cmd(SIG_MULTI_SWIPE_LEFT, "multi,swipe,left", "") \
+    cmd(SIG_MULTI_SWIPE_RIGHT, "multi,swipe,right", "") \
+    cmd(SIG_MULTI_SWIPE_UP, "multi,swipe,up", "") \
+    cmd(SIG_MULTI_SWIPE_DOWN, "multi,swipe,down", "") \
+    cmd(SIG_MULTI_PINCH_OUT, "multi,pinch,out", "") \
+    cmd(SIG_MULTI_PINCH_IN, "multi,pinch,in", "") \
+    cmd(SIG_SWIPE, "swipe", "") \
+    cmd(SIG_MOVED, "moved", "") \
+    cmd(SIG_MOVED_AFTER, "moved,after", "") \
+    cmd(SIG_MOVED_BEFORE, "moved,before", "") \
+    cmd(SIG_INDEX_UPDATE, "index,update", "") \
+    cmd(SIG_TREE_EFFECT_FINISHED , "tree,effect,finished", "") \
+    cmd(SIG_HIGHLIGHTED, "highlighted", "") \
+    cmd(SIG_UNHIGHLIGHTED, "unhighlighted", "") \
+    cmd(SIG_LANG_CHANGED, "language,changed", "") \
+    cmd(SIG_PRESSED, "pressed", "") \
+    cmd(SIG_RELEASED, "released", "")
+
+ELM_PRIV_GENLIST_SIGNALS(ELM_PRIV_STATIC_VARIABLE_DECLARE);
 
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
-   {SIG_CLICKED_DOUBLE, ""},
-   {SIG_ACTIVATED, ""},
-   {SIG_SELECTED, ""},
-   {SIG_UNSELECTED, ""},
-   {SIG_EXPANDED, ""},
-   {SIG_CONTRACTED, ""},
-   {SIG_EXPAND_REQUEST, ""},
-   {SIG_CONTRACT_REQUEST, ""},
-   {SIG_REALIZED, ""},
-   {SIG_UNREALIZED, ""},
-   {SIG_DRAG_START_UP, ""},
-   {SIG_DRAG_START_DOWN, ""},
-   {SIG_DRAG_START_LEFT, ""},
-   {SIG_DRAG_START_RIGHT, ""},
-   {SIG_DRAG_STOP, ""},
-   {SIG_DRAG, ""},
-   {SIG_LONGPRESSED, ""},
-   {SIG_SCROLL_ANIM_START, ""},
-   {SIG_SCROLL_ANIM_STOP, ""},
-   {SIG_SCROLL_DRAG_START, ""},
-   {SIG_SCROLL_DRAG_STOP, ""},
-   {SIG_EDGE_TOP, ""},
-   {SIG_EDGE_BOTTOM, ""},
-   {SIG_EDGE_LEFT, ""},
-   {SIG_EDGE_RIGHT, ""},
-   {SIG_VBAR_DRAG, ""},
-   {SIG_VBAR_PRESS, ""},
-   {SIG_VBAR_UNPRESS, ""},
-   {SIG_HBAR_DRAG, ""},
-   {SIG_HBAR_PRESS, ""},
-   {SIG_HBAR_UNPRESS, ""},
-   {SIG_MULTI_SWIPE_LEFT, ""},
-   {SIG_MULTI_SWIPE_RIGHT, ""},
-   {SIG_MULTI_SWIPE_UP, ""},
-   {SIG_MULTI_SWIPE_DOWN, ""},
-   {SIG_MULTI_PINCH_OUT, ""},
-   {SIG_MULTI_PINCH_IN, ""},
-   {SIG_SWIPE, ""},
-   {SIG_MOVED, ""},
-   {SIG_MOVED_AFTER, ""},
-   {SIG_MOVED_BEFORE, ""},
-   {SIG_TREE_EFFECT_FINISHED, ""},
-   {SIG_HIGHLIGHTED, ""},
-   {SIG_UNHIGHLIGHTED, ""},
-   {SIG_LANG_CHANGED, ""},
-   {SIG_PRESSED, ""},
-   {SIG_RELEASED, ""},
+   ELM_PRIV_GENLIST_SIGNALS(ELM_PRIV_SMART_CALLBACKS_DESC)
    {"focused", ""}, /**< handled by elm_widget */
    {"unfocused", ""}, /**< handled by elm_widget */
 
    {NULL, NULL}
 };
+#undef ELM_PRIV_GENLIST_SIGNALS
 
 static void      _calc_job(void *);
 static Eina_Bool _item_block_recalc(Item_Block *, int, Eina_Bool);
