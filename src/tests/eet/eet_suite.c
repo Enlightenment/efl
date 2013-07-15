@@ -51,6 +51,7 @@ struct _Eet_Test_Basic_Type
    unsigned short       us;
    unsigned int         ui;
    unsigned long long   ul;
+   Eina_Value          *vp;
    Eet_Test_Basic_Type *empty;
    Eet_Test_Basic_Type *with;
 };
@@ -145,6 +146,8 @@ _eet_test_basic_set(Eet_Test_Basic_Type *res,
    res->ul = EET_TEST_LONG_LONG;
    res->empty = NULL;
    res->with = NULL;
+   res->vp = eina_value_new(EINA_VALUE_TYPE_INT);
+   eina_value_set(res->vp, EET_TEST_INT + i);
 
    if (i == 0)
      {
@@ -169,13 +172,16 @@ _eet_test_basic_set(Eet_Test_Basic_Type *res,
         tmp->ul = EET_TEST_LONG_LONG;
         tmp->empty = NULL;
         tmp->with = NULL;
+        tmp->vp = NULL;
      }
 } /* _eet_test_basic_set */
 
 static void
 _eet_test_basic_check(Eet_Test_Basic_Type *result,
-                      int                  i)
+                      int                  i,
+                      Eina_Bool            dumper)
 {
+   int test = -1;
    float tmp;
 
    fail_if(result->c != EET_TEST_CHAR);
@@ -188,6 +194,16 @@ _eet_test_basic_check(Eet_Test_Basic_Type *result,
    fail_if(result->us != EET_TEST_SHORT);
    fail_if(result->ui != EET_TEST_INT);
    fail_if(result->ul != EET_TEST_LONG_LONG);
+   if (!dumper)
+     {
+        fail_if(result->vp == NULL);
+        eina_value_get(result->vp, &test);
+        fail_if(test != EET_TEST_INT + i);
+     }
+   else
+     {
+        fail_if(result->vp != NULL);
+     }
 
    tmp = (result->f1 + EET_TEST_FLOAT);
    if (tmp < 0)
@@ -225,6 +241,7 @@ _eet_test_basic_check(Eet_Test_Basic_Type *result,
         fail_if(tmp2->us != EET_TEST_SHORT);
         fail_if(tmp2->ui != EET_TEST_INT);
         fail_if(tmp2->ul != EET_TEST_LONG_LONG);
+        fail_if(tmp2->vp != NULL);
      }
    else
      fail_if(result->with != NULL);
@@ -298,6 +315,11 @@ _eet_build_basic_descriptor(Eet_Data_Descriptor *edd)
                                  "ul",
                                  ul,
                                  EET_T_ULONG_LONG);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(edd,
+                                 Eet_Test_Basic_Type,
+                                 "vp",
+                                 vp,
+                                 EET_T_VALUE);
 
    EET_DATA_DESCRIPTOR_ADD_SUB(edd, Eet_Test_Basic_Type, "empty", empty, edd);
    EET_DATA_DESCRIPTOR_ADD_SUB(edd, Eet_Test_Basic_Type, "with", with, edd);
@@ -331,7 +353,7 @@ START_TEST(eet_test_basic_data_type_encoding_decoding)
    result = eet_data_descriptor_decode(edd, transfert, size);
    fail_if(!result);
 
-   _eet_test_basic_check(result, 0);
+   _eet_test_basic_check(result, 0, EINA_FALSE);
 
    free(result->str);
    free(result);
@@ -598,7 +620,8 @@ _eet_test_ex_set(Eet_Test_Ex_Type *res,
 
 static int
 _eet_test_ex_check(Eet_Test_Ex_Type *stuff,
-                   int               offset)
+                   int               offset,
+                   Eina_Bool         dumper)
 {
    double tmp;
    unsigned int i;
@@ -680,12 +703,14 @@ _eet_test_ex_check(Eet_Test_Ex_Type *stuff,
 
    for (i = 0; i < 10; ++i)
      {
-        _eet_test_basic_check(stuff->sarray1 + i, i);
-        _eet_test_basic_check(stuff->varray2 + i, i);
+        _eet_test_basic_check(stuff->sarray1 + i, i, dumper);
+        _eet_test_basic_check(stuff->varray2 + i, i, dumper);
      }
 
    return 0;
 } /* _eet_test_ex_check */
+
+static Eina_Bool _dump_call = EINA_FALSE;
 
 static Eina_Bool
 func(EINA_UNUSED const Eina_Hash *hash,
@@ -699,7 +724,7 @@ func(EINA_UNUSED const Eina_Hash *hash,
        && strcmp(key, EET_TEST_KEY2) != 0)
      *res = 1;
 
-   if (_eet_test_ex_check(data, 2))
+   if (_eet_test_ex_check(data, 2, _dump_call))
      *res = 1;
 
    return EINA_TRUE;
@@ -765,8 +790,8 @@ START_TEST(eet_test_data_type_encoding_decoding)
    result = eet_data_descriptor_decode(edd, transfert, size);
    fail_if(!result);
 
-   fail_if(_eet_test_ex_check(result, 0) != 0);
-   fail_if(_eet_test_ex_check(eina_list_data_get(result->list), 1) != 0);
+   fail_if(_eet_test_ex_check(result, 0, EINA_FALSE) != 0);
+   fail_if(_eet_test_ex_check(eina_list_data_get(result->list), 1, EINA_FALSE) != 0);
    fail_if(eina_list_data_get(result->ilist) == NULL);
    fail_if(*((int *)eina_list_data_get(result->ilist)) != 42);
    fail_if(eina_list_data_get(result->slist) == NULL);
@@ -870,8 +895,8 @@ START_TEST(eet_test_data_type_dump_undump)
    result = eet_data_descriptor_decode(edd, transfert2, size2);
    fail_if(!result);
 
-   fail_if(_eet_test_ex_check(result, 0) != 0);
-   fail_if(_eet_test_ex_check(eina_list_data_get(result->list), 1) != 0);
+   fail_if(_eet_test_ex_check(result, 0, EINA_TRUE) != 0);
+   fail_if(_eet_test_ex_check(eina_list_data_get(result->list), 1, EINA_TRUE) != 0);
    fail_if(eina_list_data_get(result->ilist) == NULL);
    fail_if(*((int *)eina_list_data_get(result->ilist)) != 42);
    fail_if(eina_list_data_get(result->slist) == NULL);
@@ -881,8 +906,10 @@ START_TEST(eet_test_data_type_dump_undump)
    fail_if(strcmp(result->charray[0], "test") != 0);
 
    test = 0;
+   _dump_call = EINA_TRUE;
    if (result->hash)
      eina_hash_foreach(result->hash, func, &test);
+   _dump_call = EINA_FALSE;
 
    fail_if(test != 0);
    if (result->ihash)
@@ -1039,7 +1066,7 @@ START_TEST(eet_file_data_test)
    fail_if(!result);
 
    /* Test the resulting data. */
-   fail_if(_eet_test_ex_check(result, 0) != 0);
+   fail_if(_eet_test_ex_check(result, 0, EINA_FALSE) != 0);
 
    eet_close(ef);
 
@@ -1060,8 +1087,8 @@ START_TEST(eet_file_data_test)
    fail_if(eet_dictionary_string_check(ed, result->istr));
 
    /* Test the resulting data. */
-   fail_if(_eet_test_ex_check(result, 0) != 0);
-   fail_if(_eet_test_ex_check(eina_list_data_get(result->list), 1) != 0);
+   fail_if(_eet_test_ex_check(result, 0, EINA_FALSE) != 0);
+   fail_if(_eet_test_ex_check(eina_list_data_get(result->list), 1, EINA_FALSE) != 0);
    fail_if(eina_list_data_get(result->ilist) == NULL);
    fail_if(*((int *)eina_list_data_get(result->ilist)) != 42);
    fail_if(eina_list_data_get(result->slist) == NULL);
@@ -1186,8 +1213,8 @@ START_TEST(eet_file_data_dump_test)
    eet_close(ef);
 
    /* Test the resulting data. */
-   fail_if(_eet_test_ex_check(result, 0) != 0);
-   fail_if(_eet_test_ex_check(eina_list_data_get(result->list), 1) != 0);
+   fail_if(_eet_test_ex_check(result, 0, EINA_TRUE) != 0);
+   fail_if(_eet_test_ex_check(eina_list_data_get(result->list), 1, EINA_TRUE) != 0);
    fail_if(eina_list_data_get(result->ilist) == NULL);
    fail_if(*((int *)eina_list_data_get(result->ilist)) != 42);
    fail_if(eina_list_data_get(result->slist) == NULL);
@@ -1197,8 +1224,10 @@ START_TEST(eet_file_data_dump_test)
    fail_if(strcmp(result->charray[0], "test") != 0);
 
    test = 0;
+   _dump_call = EINA_TRUE;
    if (result->hash)
      eina_hash_foreach(result->hash, func, &test);
+   _dump_call = EINA_FALSE;
 
    fail_if(test != 0);
    if (result->ihash)
@@ -1961,8 +1990,8 @@ _eet_connection_read(const void *eet_data,
 
    /* Test the resulting data. */
    fail_if(!node);
-   fail_if(_eet_test_ex_check(result, 0) != 0);
-   fail_if(_eet_test_ex_check(eina_list_data_get(result->list), 1) != 0);
+   fail_if(_eet_test_ex_check(result, 0, _dump_call) != 0);
+   fail_if(_eet_test_ex_check(eina_list_data_get(result->list), 1, _dump_call) != 0);
    fail_if(eina_list_data_get(result->ilist) == NULL);
    fail_if(*((int *)eina_list_data_get(result->ilist)) != 42);
    fail_if(eina_list_data_get(result->slist) == NULL);
@@ -1984,7 +2013,9 @@ _eet_connection_read(const void *eet_data,
    if (!dt->test)
      {
         dt->test = EINA_TRUE;
+        _dump_call = EINA_TRUE;
         fail_if(!eet_connection_node_send(dt->conn, node, NULL));
+        _dump_call = EINA_FALSE;
      }
 
    return EINA_TRUE;

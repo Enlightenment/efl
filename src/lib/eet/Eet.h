@@ -2381,7 +2381,8 @@ eet_identity_certificate_print(const unsigned char *certificate,
 #define EET_T_F32P32         14 /**< Data type: fixed point 32.32 */
 #define EET_T_F16P16         15 /**< Data type: fixed point 16.16 */
 #define EET_T_F8P24          16 /**< Data type: fixed point 8.24 */
-#define EET_T_LAST           17 /**< Last data type */
+#define EET_T_VALUE          17 /**< Data type: pointer to Eina_Value @since 1.8 */
+#define EET_T_LAST           18 /**< Last data type */
 
 #define EET_G_UNKNOWN        100 /**< Unknown group data encoding type */
 #define EET_G_ARRAY          101 /**< Fixed size array group type */

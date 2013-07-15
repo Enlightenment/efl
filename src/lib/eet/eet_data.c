@@ -342,6 +342,17 @@ eet_data_put_null(Eet_Dictionary *ed,
                   int            *size_ret);
 
 static int
+eet_data_get_value(const Eet_Dictionary *ed,     
+		   const void           *src,    
+		   const void           *src_end,
+		   void                 *dst);
+
+static void *
+eet_data_put_value(Eet_Dictionary *ed,
+                   const void     *src,
+                   int            *size_ret);
+
+static int
 eet_data_get_type(const Eet_Dictionary *ed,
                   int                   type,
                   const void           *src,
@@ -525,7 +536,8 @@ static const Eet_Data_Basic_Type_Codec eet_basic_codec[] =
    {sizeof(void *), "NULL", eet_data_get_null, eet_data_put_null     },
    {sizeof(Eina_F32p32), "f32p32", eet_data_get_f32p32, eet_data_put_f32p32   },
    {sizeof(Eina_F16p16), "f16p16", eet_data_get_f16p16, eet_data_put_f16p16   },
-   {sizeof(Eina_F8p24), "f8p24", eet_data_get_f8p24, eet_data_put_f8p24    }
+   {sizeof(Eina_F8p24), "f8p24", eet_data_get_f8p24, eet_data_put_f8p24    },
+   {sizeof(Eina_Value*), "eina_value*", eet_data_get_value, eet_data_put_value }
 };
 
 static const Eet_Data_Group_Type_Codec eet_group_codec[] =
@@ -580,7 +592,7 @@ static int _eet_data_words_bigendian = -1;
 #define CONV64(x)             {if (_eet_data_words_bigendian) {SWAP64(x); }}
 
 #define IS_SIMPLE_TYPE(Type)  (Type > EET_T_UNKNOW && Type < EET_T_LAST)
-#define IS_POINTER_TYPE(Type) (Type >= EET_T_STRING && Type <= EET_T_NULL)
+#define IS_POINTER_TYPE(Type) ((Type >= EET_T_STRING && Type <= EET_T_NULL) || Type == EET_T_VALUE)
 
 #define POINTER_TYPE_DECODE(Context,                    \
                             Ed,                         \
@@ -1230,6 +1242,141 @@ eet_data_put_f8p24(Eet_Dictionary *ed,
 
    tmp = eina_f8p24_to_f32p32((Eina_F8p24)(*(Eina_F8p24 *)src));
    return eet_data_put_f32p32(ed, &tmp, size_ret);
+}
+
+static struct {
+   const Eina_Value_Type **eina_type;
+   int eet_type;
+} eina_value_to_eet_type[] = {
+  { &EINA_VALUE_TYPE_UCHAR,       EET_T_UCHAR },
+  { &EINA_VALUE_TYPE_USHORT,      EET_T_USHORT },
+  { &EINA_VALUE_TYPE_UINT,        EET_T_UINT },
+#if SIZEOF_LONG == SIZEOF_INT
+  { &EINA_VALUE_TYPE_ULONG,       EET_T_UINT },
+  { &EINA_VALUE_TYPE_TIMESTAMP,   EET_T_UINT },
+#else
+  { &EINA_VALUE_TYPE_ULONG,       EET_T_ULONG_LONG },
+  { &EINA_VALUE_TYPE_TIMESTAMP,   EET_T_ULONG_LONG },
+#endif
+  { &EINA_VALUE_TYPE_UINT64,      EET_T_ULONG_LONG },
+  { &EINA_VALUE_TYPE_CHAR,        EET_T_CHAR },
+  { &EINA_VALUE_TYPE_SHORT,       EET_T_SHORT },
+  { &EINA_VALUE_TYPE_INT,         EET_T_INT },
+#if SIZEOF_LONG == SIZEOF_INT
+  { &EINA_VALUE_TYPE_LONG,        EET_T_INT },
+#else
+  { &EINA_VALUE_TYPE_LONG,        EET_T_LONG_LONG },
+#endif
+  { &EINA_VALUE_TYPE_INT64,       EET_T_LONG_LONG },
+  { &EINA_VALUE_TYPE_FLOAT,       EET_T_FLOAT },
+  { &EINA_VALUE_TYPE_DOUBLE,      EET_T_DOUBLE },
+  { &EINA_VALUE_TYPE_STRING,      EET_T_STRING },
+  { &EINA_VALUE_TYPE_STRINGSHARE, EET_T_STRING },
+};
+
+static int
+eet_data_get_value(const Eet_Dictionary *ed,     
+		   const void           *src,    
+		   const void           *src_end,
+		   void                 *dst)    
+{
+   void *tmp;
+   int eet_type;
+   int eet_size, type_size;
+   unsigned int i;
+
+   eet_size = eet_data_get_int(ed, src, src_end, &eet_type);
+   if (eet_size < 0 ||
+       eet_type <= EET_T_UNKNOW ||
+       eet_type >= EET_T_VALUE)
+     return -1;
+
+   tmp = alloca(eet_basic_codec[eet_type - 1].size);
+   type_size = eet_basic_codec[eet_type - 1].get(ed, (char*) src + eet_size, src_end, tmp);
+
+   if (eet_type == EET_T_NULL)
+     {
+        Eina_Value **value = dst;
+
+        *value = NULL;
+
+        return eet_size + type_size;
+     }
+
+   for (i = 0; i < sizeof (eina_value_to_eet_type) / sizeof (eina_value_to_eet_type[0]); ++i)
+     if (eet_type == eina_value_to_eet_type[i].eet_type)
+       {
+          Eina_Value **value = dst;
+
+          *value = eina_value_new(*eina_value_to_eet_type[i].eina_type);
+          eina_value_pset(*value, tmp);
+
+          return eet_size + type_size;
+       }
+
+   return -1;
+}
+
+static void *
+eet_data_put_value(Eet_Dictionary *ed,       
+		   const void     *src,      
+		   int            *size_ret) 
+{
+   const Eina_Value *value = *(void**)src;
+   const Eina_Value_Type *value_type;
+   void *int_data;
+   void *type_data;
+   int int_size, type_size;
+   int eet_type = EET_T_STRING; // always fallback to try a conversion to string if possible
+   void *tmp;
+   unsigned int i;
+   Eina_Bool v2s = EINA_FALSE;
+
+   // map empty Eina_Value to EET_T_NULL;
+   if (!value)
+     {
+        eet_type = EET_T_NULL;
+        goto lookup_done;
+     }
+
+   value_type = eina_value_type_get(value);
+
+   for (i = 0; i < sizeof (eina_value_to_eet_type) / sizeof (eina_value_to_eet_type[0]); ++i)
+     if (value_type == *eina_value_to_eet_type[i].eina_type)
+       {
+          eet_type = eina_value_to_eet_type[i].eet_type;
+          break;
+       }
+
+ lookup_done:
+   tmp = alloca(eet_basic_codec[eet_type - 1].size);
+   if (value) eina_value_get(value, tmp);
+   else *(void**) tmp = NULL;
+
+   // handle non simple case by forcing them to convert to string
+   if ((eet_type == EET_T_STRING) &&
+       (*(char**)tmp == NULL))
+     {
+        *(char**)tmp = eina_value_to_string(value);
+        v2s = EINA_TRUE;
+     }
+
+   int_data = eet_data_put_int(ed, &eet_type, &int_size);
+   type_data = eet_basic_codec[eet_type - 1].put(ed, tmp, &type_size);
+
+   // free temporary string as it is not needed anymore
+   if (v2s) free(*(char**)tmp);
+
+   // pack data with type first, then the data
+   *size_ret = int_size + type_size;
+   tmp = malloc(*size_ret);
+   memcpy(tmp, int_data, int_size);
+   memcpy(((char*)tmp) + int_size, type_data, type_size);
+
+   free(int_data);
+   free(type_data);
+
+   return tmp;
 }
 
 static inline int
@@ -2787,6 +2934,7 @@ _eet_data_dump_encode(int             parent_type,
 
                   break;
 
+                case EET_T_VALUE:
                 case EET_T_NULL:
                   continue;
 
@@ -2849,6 +2997,7 @@ _eet_data_dump_encode(int             parent_type,
 
                   break;
 
+                case EET_T_VALUE:
                 case EET_T_NULL:
                   continue;
 
@@ -2922,6 +3071,7 @@ _eet_data_dump_encode(int             parent_type,
 
                   break;
 
+                case EET_T_VALUE:
                 case EET_T_NULL:
                   continue;
 
@@ -2945,6 +3095,7 @@ _eet_data_dump_encode(int             parent_type,
 
         return cdata;
 
+      case EET_T_VALUE:
       case EET_T_NULL:
         break;
 
@@ -3369,6 +3520,7 @@ _eet_data_descriptor_decode(Eet_Free_Context     *context,
                 case EET_T_INLINED_STRING:
                   return eet_node_inlined_string_new(chnk.name, chnk.data);
 
+                case EET_T_VALUE:
                 case EET_T_NULL:
                   return eet_node_null_new(chnk.name);
 
@@ -3422,6 +3574,11 @@ _eet_data_descriptor_decode(Eet_Free_Context     *context,
                            eet_data_type_match(echnk.type, ede->type))
 /* Needed when converting on the fly from FP to Float */
                          type = ede->type;
+                       else if (IS_SIMPLE_TYPE(echnk.type) &&
+                                echnk.type == EET_T_NULL &&
+                                ede->type == EET_T_VALUE)
+/* EET_T_NULL can become an EET_T_VALUE as EET_T_VALUE are pointer to */
+                         type = echnk.type;
                        else if ((echnk.group_type > EET_G_UNKNOWN) &&
                                 (echnk.group_type < EET_G_LAST) &&
                                 (echnk.group_type == ede->group_type))
@@ -4280,6 +4437,9 @@ case Eet_Type:                                                    \
 
       case EET_T_NULL:
         return eet_node_null_new(name);
+
+      case EET_T_VALUE:
+         return eet_node_null_new(name);
 
       default:
         ERR("Unknow type passed to eet_data_node_simple_type");

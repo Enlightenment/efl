@@ -1,3 +1,7 @@
+2013-07-15  Cedric Bail
+
+	* Eet: Add support for EET_T_VALUE to serialize Eina_Value pointer.
+
 2013-07-11  Chris Michael
 
         * Ecore_Evas: Added functions to retieve the pixmap depth, visual, and colormap
