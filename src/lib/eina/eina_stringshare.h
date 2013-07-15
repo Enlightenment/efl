@@ -174,7 +174,8 @@
 typedef const char Eina_Stringshare;
 
 /**
- * @brief Retrieve an instance of a string for use in a program.
+ * @brief Retrieve an instance of a string with a specific size for use in a
+ * program.
  *
  * @param   str The string to retrieve an instance of.
  * @param   slen The string size (<= strlen(str)).
