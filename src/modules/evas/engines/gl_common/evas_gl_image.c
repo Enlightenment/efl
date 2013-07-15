@@ -673,7 +673,6 @@ evas_gl_common_image_map_draw(Evas_Engine_GL_Context *gc, Evas_GL_Image *im,
    int r, g, b, a;
    int c, cx, cy, cw, ch;
 
-   if (!im->tex) return;
    dc = gc->dc;
 
    if (dc->mul.use)
@@ -693,6 +692,7 @@ evas_gl_common_image_map_draw(Evas_Engine_GL_Context *gc, Evas_GL_Image *im,
    c = dc->clip.use;
    cx = dc->clip.x;   cy = dc->clip.y;
    cw = dc->clip.w;   ch = dc->clip.h;
+   if (!im->tex) return;
    im->tex->im = im;
 
    evas_gl_common_context_image_map_push(gc, im->tex, npoints, p,
