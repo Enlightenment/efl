@@ -26,10 +26,63 @@ static int _ecore_x_image_shm_can = -1;
 static int _ecore_x_image_err = 0;
 
 static int
-_ecore_x_image_error_handler(Display *d EINA_UNUSED,
-                             XErrorEvent *ev EINA_UNUSED)
+_ecore_x_image_error_handler(Display *d EINA_UNUSED, XErrorEvent *ev)
 {
    _ecore_x_image_err = 1;
+   switch (ev->error_code)
+     {
+      case BadRequest:	/* bad request code */
+        ERR("BadRequest");
+        break;
+      case BadValue:	/* int parameter out of range */
+        ERR("BadValue");
+        break;
+      case BadWindow:	/* parameter not a Window */
+        ERR("BadWindow");
+        break;
+      case BadPixmap:	/* parameter not a Pixmap */
+        ERR("BadPixmap");
+        break;
+      case BadAtom:	/* parameter not an Atom */
+        ERR("BadAtom");
+        break;
+      case BadCursor:	/* parameter not a Cursor */
+        ERR("BadCursor");
+        break;
+      case BadFont:	/* parameter not a Font */
+        ERR("BadFont");
+        break;
+      case BadMatch:	/* parameter mismatch */
+        ERR("BadMatch");
+        break;
+      case BadDrawable:	/* parameter not a Pixmap or Window */
+        ERR("BadDrawable");
+        break;
+      case BadAccess:	/* depending on context */
+        ERR("BadAccess");
+        break;
+      case BadAlloc:	/* insufficient resources */
+        ERR("BadAlloc");
+        break;
+      case BadColor:	/* no such colormap */
+        ERR("BadColor");
+        break;
+      case BadGC:	/* parameter not a GC */
+        ERR("BadGC");
+        break;
+      case BadIDChoice:	/* choice not in range or already used */
+        ERR("BadIDChoice");
+        break;
+      case BadName:	/* font or color name doesn't exist */
+        ERR("BadName");
+        break;
+      case BadLength:	/* Request length incorrect */
+        ERR("BadLength");
+        break;
+      case BadImplementation:	/* server is defective */
+        ERR("BadImplementation");
+        break;
+     }
    return 0;
 }
 
