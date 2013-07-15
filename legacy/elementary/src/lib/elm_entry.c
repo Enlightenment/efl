@@ -19,76 +19,49 @@ EAPI Eo_Op ELM_OBJ_ENTRY_BASE_ID = EO_NOOP;
  * and to a big value for better computers. */
 #define _CHUNK_SIZE 10000
 
-static const char SIG_ABORTED[] = "aborted";
-static const char SIG_ACTIVATED[] = "activated";
-static const char SIG_ANCHOR_CLICKED[] = "anchor,clicked";
-static const char SIG_ANCHOR_DOWN[] = "anchor,down";
-static const char SIG_ANCHOR_HOVER_OPENED[] = "anchor,hover,opened";
-static const char SIG_ANCHOR_IN[] = "anchor,in";
-static const char SIG_ANCHOR_OUT[] = "anchor,out";
-static const char SIG_ANCHOR_UP[] = "anchor,up";
-static const char SIG_CHANGED[] = "changed";
-static const char SIG_CHANGED_USER[] = "changed,user";
-static const char SIG_CLICKED[] = "clicked";
-static const char SIG_CLICKED_DOUBLE[] = "clicked,double";
-static const char SIG_CLICKED_TRIPLE[] = "clicked,triple";
-static const char SIG_CURSOR_CHANGED[] = "cursor,changed";
-static const char SIG_CURSOR_CHANGED_MANUAL[] = "cursor,changed,manual";
-static const char SIG_FOCUSED[] = "focused";
-static const char SIG_UNFOCUSED[] = "unfocused";
-static const char SIG_LANG_CHANGED[] = "language,changed";
-static const char SIG_LONGPRESSED[] = "longpressed";
-static const char SIG_MAX_LENGTH[] = "maxlength,reached";
-static const char SIG_PREEDIT_CHANGED[] = "preedit,changed";
-static const char SIG_PRESS[] = "press";
-static const char SIG_REDO_REQUEST[] = "redo,request";
-static const char SIG_SELECTION_CHANGED[] = "selection,changed";
-static const char SIG_SELECTION_CLEARED[] = "selection,cleared";
-static const char SIG_SELECTION_COPY[] = "selection,copy";
-static const char SIG_SELECTION_CUT[] = "selection,cut";
-static const char SIG_SELECTION_PASTE[] = "selection,paste";
-static const char SIG_SELECTION_START[] = "selection,start";
-static const char SIG_TEXT_SET_DONE[] = "text,set,done";
-static const char SIG_THEME_CHANGED[] = "theme,changed";
-static const char SIG_UNDO_REQUEST[] = "undo,request";
+#define ELM_PRIV_ENTRY_SIGNALS(cmd) \
+   cmd(SIG_ABORTED, "aborted", "") \
+   cmd(SIG_ACTIVATED, "activated", "") \
+   cmd(SIG_ANCHOR_CLICKED, "anchor,clicked", "") \
+   cmd(SIG_ANCHOR_DOWN, "anchor,down", "") \
+   cmd(SIG_ANCHOR_HOVER_OPENED, "anchor,hover,opened", "") \
+   cmd(SIG_ANCHOR_IN, "anchor,in", "") \
+   cmd(SIG_ANCHOR_OUT, "anchor,out", "") \
+   cmd(SIG_ANCHOR_UP, "anchor,up", "") \
+   cmd(SIG_CHANGED, "changed", "") \
+   cmd(SIG_CHANGED_USER, "changed,user", "") \
+   cmd(SIG_CLICKED, "clicked", "") \
+   cmd(SIG_CLICKED_DOUBLE, "clicked,double", "") \
+   cmd(SIG_CLICKED_TRIPLE, "clicked,triple", "") \
+   cmd(SIG_CURSOR_CHANGED, "cursor,changed", "") \
+   cmd(SIG_CURSOR_CHANGED_MANUAL, "cursor,changed,manual", "") \
+   cmd(SIG_FOCUSED, "focused", "") \
+   cmd(SIG_UNFOCUSED, "unfocused", "") \
+   cmd(SIG_LANG_CHANGED, "language,changed", "") \
+   cmd(SIG_LONGPRESSED, "longpressed", "") \
+   cmd(SIG_MAX_LENGTH, "maxlength,reached", "") \
+   cmd(SIG_PREEDIT_CHANGED, "preedit,changed", "") \
+   cmd(SIG_PRESS, "press", "") \
+   cmd(SIG_REDO_REQUEST, "redo,request", "") \
+   cmd(SIG_SELECTION_CHANGED, "selection,changed", "") \
+   cmd(SIG_SELECTION_CLEARED, "selection,cleared", "") \
+   cmd(SIG_SELECTION_COPY, "selection,copy", "") \
+   cmd(SIG_SELECTION_CUT, "selection,cut", "") \
+   cmd(SIG_SELECTION_PASTE, "selection,paste", "") \
+   cmd(SIG_SELECTION_START, "selection,start", "") \
+   cmd(SIG_TEXT_SET_DONE, "text,set,done", "") \
+   cmd(SIG_THEME_CHANGED, "theme,changed", "") \
+   cmd(SIG_UNDO_REQUEST, "undo,request", "")
+
+ELM_PRIV_ENTRY_SIGNALS(ELM_PRIV_STATIC_VARIABLE_DECLARE);
+
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
-   {SIG_ABORTED, ""},
-   {SIG_ACTIVATED, ""},
-   {SIG_ANCHOR_CLICKED, ""},
-   {SIG_ANCHOR_DOWN, ""},
-   {SIG_ANCHOR_HOVER_OPENED, ""},
-   {SIG_ANCHOR_IN, ""},
-   {SIG_ANCHOR_OUT, ""},
-   {SIG_ANCHOR_UP, ""},
-   {SIG_CHANGED, ""},
-   {SIG_CHANGED_USER, ""},
-   {SIG_CLICKED, ""},
-   {SIG_CLICKED_DOUBLE, ""},
-   {SIG_CLICKED_TRIPLE, ""},
-   {SIG_CURSOR_CHANGED, ""},
-   {SIG_CURSOR_CHANGED_MANUAL, ""},
-   {SIG_FOCUSED, ""},
-   {SIG_UNFOCUSED, ""},
-   {SIG_LANG_CHANGED, ""},
-   {SIG_LONGPRESSED, ""},
-   {SIG_MAX_LENGTH, ""},
-   {SIG_PREEDIT_CHANGED, ""},
-   {SIG_PRESS, ""},
-   {SIG_REDO_REQUEST, ""},
-   {SIG_SELECTION_CHANGED, ""},
-   {SIG_SELECTION_CLEARED, ""},
-   {SIG_SELECTION_COPY, ""},
-   {SIG_SELECTION_CUT, ""},
-   {SIG_SELECTION_PASTE, ""},
-   {SIG_SELECTION_START, ""},
-   {SIG_TEXT_SET_DONE, ""},
-   {SIG_THEME_CHANGED, ""},
-   {SIG_UNDO_REQUEST, ""},
    {NULL, NULL}
 };
 
 static const Elm_Layout_Part_Alias_Description _content_aliases[] =
 {
+   ELM_PRIV_ENTRY_SIGNALS(ELM_PRIV_SMART_CALLBACKS_DESC)
    {"icon", "elm.swallow.icon"},
    {"end", "elm.swallow.end"},
    {NULL, NULL}
