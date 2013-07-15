@@ -45,6 +45,7 @@ test_datetime(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    elm_datetime_field_visible_set(datetime, ELM_DATETIME_MONTH, EINA_FALSE);
    elm_datetime_field_visible_set(datetime, ELM_DATETIME_DATE, EINA_FALSE);
    elm_box_pack_end(bx, datetime);
+   elm_object_disabled_set(datetime, EINA_TRUE);
    evas_object_show(datetime);
 
    datetime = elm_datetime_add(bx);

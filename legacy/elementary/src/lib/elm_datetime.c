@@ -472,6 +472,24 @@ _elm_datetime_smart_on_focus(Eo *obj, void *_pd, va_list *list)
 }
 
 static void
+_elm_datetime_smart_disable(Eo *obj, void *_pd, va_list *list)
+{
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Datetime_Field *field;
+   unsigned int idx = 0;
+   if (ret) *ret = EINA_FALSE;
+   Elm_Datetime_Smart_Data *sd = _pd;
+
+   eo_do_super(obj, MY_CLASS, elm_wdg_disable(ret));
+   for (idx = 0; idx < ELM_DATETIME_TYPE_COUNT; idx++)
+     {
+        field = sd->field_list + idx;
+        elm_object_disabled_set(field->item_obj, elm_object_disabled_get(obj));
+     }
+   if (ret) *ret = EINA_TRUE;
+}
+
+static void
 _elm_datetime_smart_sizing_eval(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Datetime_Field *field;
@@ -1228,7 +1246,8 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_NEXT), _elm_datetime_smart_focus_next),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME), _elm_datetime_smart_theme),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ON_FOCUS), _elm_datetime_smart_on_focus),
-
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_DISABLE), _elm_datetime_smart_disable),
+      
         EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_SIZING_EVAL), _elm_datetime_smart_sizing_eval),
 
         EO_OP_FUNC(ELM_OBJ_DATETIME_ID(ELM_OBJ_DATETIME_SUB_ID_FORMAT_GET), _format_get),
