@@ -56,12 +56,12 @@ EAPI Eo_Op ELM_OBJ_ENTRY_BASE_ID = EO_NOOP;
 ELM_PRIV_ENTRY_SIGNALS(ELM_PRIV_STATIC_VARIABLE_DECLARE);
 
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
+   ELM_PRIV_ENTRY_SIGNALS(ELM_PRIV_SMART_CALLBACKS_DESC)
    {NULL, NULL}
 };
 
 static const Elm_Layout_Part_Alias_Description _content_aliases[] =
 {
-   ELM_PRIV_ENTRY_SIGNALS(ELM_PRIV_SMART_CALLBACKS_DESC)
    {"icon", "elm.swallow.icon"},
    {"end", "elm.swallow.end"},
    {NULL, NULL}
