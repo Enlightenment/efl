@@ -2787,6 +2787,84 @@ _status_config_profiles(Evas_Object *win,
 }
 
 static void
+_status_config_scrolling_acceleration(Evas_Object *win, Evas_Object *box)
+{
+   Evas_Object *fr, *bx, *sl, *pd, *lb;
+
+   fr = elm_frame_add(box);
+   evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_object_text_set(fr, "Acceleration");
+   elm_box_pack_end(box, fr);
+   evas_object_show(fr);
+
+   bx = elm_box_add(fr);
+   elm_object_content_set(fr, bx);
+   evas_object_show(bx);
+
+   /* Thumb scroll acceleration threshold */
+   LABEL_FRAME_ADD("<hilight>Thumb scroll acceleration threshold</>");
+
+   sl = elm_slider_add(bx);
+   elm_object_tooltip_text_set(sl, "This is the minimum speed of mouse <br/>"
+                                   "cursor movement which will accelerate<br/>"
+                                   "scrolling velocity after a<br/>"
+                                   "mouse up event (pixels/second)");
+   evas_object_data_set(win, "ts_acceleration_threshold_slider", sl);
+   evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);
+   elm_slider_span_size_set(sl, 120);
+   elm_slider_unit_format_set(sl, "%1.0f pixels/s");
+   elm_slider_indicator_format_set(sl, "%1.0f");
+   elm_slider_min_max_set(sl, 10.0, 5000.0);
+   elm_slider_value_set(sl, elm_config_scroll_thumbscroll_acceleration_threshold_get());
+   elm_box_pack_end(bx, sl);
+   evas_object_show(sl);
+
+   evas_object_smart_callback_add(sl, "changed", tsat_round, NULL);
+   evas_object_smart_callback_add(sl, "delay,changed", tsat_change, NULL);
+
+   /* Thumb scroll acceleration time limit */
+   LABEL_FRAME_ADD("<hilight>Thumb scroll acceleration time limit</>");
+
+   sl = elm_slider_add(bx);
+   elm_object_tooltip_text_set(sl, "This is the time limit for<br/>"
+                                   "accelerating velocity<br/>");
+   evas_object_data_set(win, "ts_acceleration_time_limit_slider", sl);
+   evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);
+   elm_slider_span_size_set(sl, 120);
+   elm_slider_unit_format_set(sl, "%1.1f");
+   elm_slider_indicator_format_set(sl, "%1.1f");
+   elm_slider_min_max_set(sl, 0.0, 15.0);
+   elm_slider_value_set(sl, elm_config_scroll_thumbscroll_acceleration_time_limit_get());
+   elm_box_pack_end(bx, sl);
+   evas_object_show(sl);
+
+   evas_object_smart_callback_add(sl, "changed", tsatl_round, NULL);
+   evas_object_smart_callback_add(sl, "delay,changed", tsatl_change, NULL);
+
+   /* Thumb scroll acceleration weight */
+   LABEL_FRAME_ADD("<hilight>Thumb scroll acceleration weight</>");
+
+   sl = elm_slider_add(bx);
+   elm_object_tooltip_text_set(sl, "This is the weight for acceleration");
+   evas_object_data_set(win, "ts_acceleration_weight_slider", sl);
+   evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);
+   elm_slider_span_size_set(sl, 120);
+   elm_slider_unit_format_set(sl, "%1.1f");
+   elm_slider_indicator_format_set(sl, "%1.1f");
+   elm_slider_min_max_set(sl, 1.0, 10.0);
+   elm_slider_value_set(sl, elm_config_scroll_thumbscroll_acceleration_weight_get());
+   elm_box_pack_end(bx, sl);
+   evas_object_show(sl);
+
+   evas_object_smart_callback_add(sl, "changed", tsaw_round, NULL);
+   evas_object_smart_callback_add(sl, "delay,changed", tsaw_change, NULL);
+}
+
+static void
 _status_config_scrolling(Evas_Object *win,
                          Evas_Object *naviframe)
 {
@@ -3054,66 +3132,8 @@ _status_config_scrolling(Evas_Object *win,
    evas_object_smart_callback_add(sl, "changed", tssf_round, NULL);
    evas_object_smart_callback_add(sl, "delay,changed", tssf_change, NULL);
 
-   /* Thumb scroll acceleration threshold */
-   LABEL_FRAME_ADD("<hilight>Thumb scroll acceleration threshold</>");
-
-   sl = elm_slider_add(win);
-   elm_object_tooltip_text_set(sl, "This is the minimum speed of mouse <br/>"
-                                   "cursor movement which will accelerate<br/>"
-                                   "scrolling velocity after a<br/>"
-                                   "mouse up event (pixels/second)");
-   evas_object_data_set(win, "ts_acceleration_threshold_slider", sl);
-   evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);
-   elm_slider_span_size_set(sl, 120);
-   elm_slider_unit_format_set(sl, "%1.0f pixels/s");
-   elm_slider_indicator_format_set(sl, "%1.0f");
-   elm_slider_min_max_set(sl, 10.0, 5000.0);
-   elm_slider_value_set(sl, elm_config_scroll_thumbscroll_acceleration_threshold_get());
-   elm_box_pack_end(bx, sl);
-   evas_object_show(sl);
-
-   evas_object_smart_callback_add(sl, "changed", tsat_round, NULL);
-   evas_object_smart_callback_add(sl, "delay,changed", tsat_change, NULL);
-
-   /* Thumb scroll acceleration time limit */
-   LABEL_FRAME_ADD("<hilight>Thumb scroll acceleration time limit</>");
-
-   sl = elm_slider_add(win);
-   elm_object_tooltip_text_set(sl, "This is the time limit for<br/>"
-                                   "accelerating velocity<br/>");
-   evas_object_data_set(win, "ts_acceleration_time_limit_slider", sl);
-   evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);
-   elm_slider_span_size_set(sl, 120);
-   elm_slider_unit_format_set(sl, "%1.1f");
-   elm_slider_indicator_format_set(sl, "%1.1f");
-   elm_slider_min_max_set(sl, 0.0, 15.0);
-   elm_slider_value_set(sl, elm_config_scroll_thumbscroll_acceleration_time_limit_get());
-   elm_box_pack_end(bx, sl);
-   evas_object_show(sl);
-
-   evas_object_smart_callback_add(sl, "changed", tsatl_round, NULL);
-   evas_object_smart_callback_add(sl, "delay,changed", tsatl_change, NULL);
-
-   /* Thumb scroll acceleration weight */
-   LABEL_FRAME_ADD("<hilight>Thumb scroll acceleration weight</>");
-
-   sl = elm_slider_add(win);
-   elm_object_tooltip_text_set(sl, "This is the weight for acceleration");
-   evas_object_data_set(win, "ts_acceleration_weight_slider", sl);
-   evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);
-   elm_slider_span_size_set(sl, 120);
-   elm_slider_unit_format_set(sl, "%1.1f");
-   elm_slider_indicator_format_set(sl, "%1.1f");
-   elm_slider_min_max_set(sl, 1.0, 10.0);
-   elm_slider_value_set(sl, elm_config_scroll_thumbscroll_acceleration_weight_get());
-   elm_box_pack_end(bx, sl);
-   evas_object_show(sl);
-
-   evas_object_smart_callback_add(sl, "changed", tsaw_round, NULL);
-   evas_object_smart_callback_add(sl, "delay,changed", tsaw_change, NULL);
+   /* Acceleration */
+   _status_config_scrolling_acceleration(win, bx);
 
    sp = elm_separator_add(win);
    elm_separator_horizontal_set(sp, EINA_TRUE);
