@@ -2787,6 +2787,58 @@ _status_config_profiles(Evas_Object *win,
 }
 
 static void
+_status_config_scrolling_bounce(Evas_Object *win, Evas_Object *box)
+{
+   Evas_Object *fr, *bx, *ck, *pd, *lb, *sl;
+
+   fr = elm_frame_add(box);
+   evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_object_text_set(fr, "Bounce");
+   elm_box_pack_end(box, fr);
+   evas_object_show(fr);
+
+   bx = elm_box_add(fr);
+   elm_object_content_set(fr, bx);
+   evas_object_show(bx);
+
+   /* Enable Scroll Bounce */
+   ck = elm_check_add(bx);
+   elm_object_tooltip_text_set(ck, "Set whether scrollers should bounce<br/>"
+                                   "when they reach their viewport's edge<br/>"
+                                   "during a scroll");
+   elm_object_text_set(ck, "Enable scroll bounce");
+   evas_object_data_set(win, "scroll_bounce_check", ck);
+   evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(ck, EVAS_HINT_FILL, 0.5);
+   elm_check_state_set(ck, elm_config_scroll_bounce_enabled_get());
+   elm_box_pack_end(bx, ck);
+   evas_object_show(ck);
+
+   evas_object_smart_callback_add(ck, "changed", sb_change, NULL);
+
+   /* Scroll bounce friction */
+   LABEL_FRAME_ADD("<hilight>Scroll bounce friction</>");
+
+   sl = elm_slider_add(bx);
+   elm_object_tooltip_text_set(sl, "This is the amount of inertia a <br/>"
+                                   "scroller will impose at bounce animations");
+   evas_object_data_set(win, "bounce_friction_slider", sl);
+   evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);
+   elm_slider_span_size_set(sl, 120);
+   elm_slider_unit_format_set(sl, "%1.2f");
+   elm_slider_indicator_format_set(sl, "%1.2f");
+   elm_slider_min_max_set(sl, 0.0, 4.0);
+   elm_slider_value_set(sl, elm_config_scroll_bounce_friction_get());
+   elm_box_pack_end(bx, sl);
+   evas_object_show(sl);
+
+   evas_object_smart_callback_add(sl, "changed", bf_round, NULL);
+   evas_object_smart_callback_add(sl, "delay,changed", bf_change, NULL);
+}
+
+static void
 _status_config_scrolling_acceleration(Evas_Object *win, Evas_Object *box)
 {
    Evas_Object *fr, *bx, *sl, *pd, *lb;
@@ -2881,47 +2933,11 @@ _status_config_scrolling(Evas_Object *win,
    evas_object_show(sc);
    elm_object_content_set(sc, bx);
 
-   /* Enable Scroll Bounce */
-   ck = elm_check_add(win);
-   elm_object_tooltip_text_set(ck, "Set whether scrollers should bounce<br/>"
-                                   "when they reach their viewport's edge<br/>"
-                                   "during a scroll");
-   elm_object_text_set(ck, "Enable scroll bounce");
-   evas_object_data_set(win, "scroll_bounce_check", ck);
-   evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(ck, EVAS_HINT_FILL, 0.5);
-   elm_check_state_set(ck, elm_config_scroll_bounce_enabled_get());
-   elm_box_pack_end(bx, ck);
-   evas_object_show(ck);
+   /* Bounce */
+   _status_config_scrolling_bounce(win, bx);
 
-   evas_object_smart_callback_add(ck, "changed", sb_change, NULL);
-
-   /* Scroll bounce friction */
-   LABEL_FRAME_ADD("<hilight>Scroll bounce friction</>");
-
-   sl = elm_slider_add(win);
-   elm_object_tooltip_text_set(sl, "This is the amount of inertia a <br/>"
-                                   "scroller will impose at bounce animations");
-   evas_object_data_set(win, "bounce_friction_slider", sl);
-   evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);
-   elm_slider_span_size_set(sl, 120);
-   elm_slider_unit_format_set(sl, "%1.2f");
-   elm_slider_indicator_format_set(sl, "%1.2f");
-   elm_slider_min_max_set(sl, 0.0, 4.0);
-   elm_slider_value_set(sl, elm_config_scroll_bounce_friction_get());
-   elm_box_pack_end(bx, sl);
-   evas_object_show(sl);
-
-   evas_object_smart_callback_add(sl, "changed", bf_round, NULL);
-   evas_object_smart_callback_add(sl, "delay,changed", bf_change, NULL);
-
-   sp = elm_separator_add(win);
-   elm_separator_horizontal_set(sp, EINA_TRUE);
-   evas_object_size_hint_weight_set(sp, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(sp, EVAS_HINT_FILL, 0.5);
-   elm_box_pack_end(bx, sp);
-   evas_object_show(sp);
+   /* Acceleration */
+   _status_config_scrolling_acceleration(win, bx);
 
    /* Enable thumb scroll */
    ck = elm_check_add(win);
@@ -3131,9 +3147,6 @@ _status_config_scrolling(Evas_Object *win,
 
    evas_object_smart_callback_add(sl, "changed", tssf_round, NULL);
    evas_object_smart_callback_add(sl, "delay,changed", tssf_change, NULL);
-
-   /* Acceleration */
-   _status_config_scrolling_acceleration(win, bx);
 
    sp = elm_separator_add(win);
    elm_separator_horizontal_set(sp, EINA_TRUE);
