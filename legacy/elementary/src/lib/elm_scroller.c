@@ -15,53 +15,37 @@ EAPI Eo_Op ELM_OBJ_SCROLLER_BASE_ID = EO_NOOP;
 
 #define MY_CLASS_NAME "elm_scroller"
 
-static const char SIG_SCROLL[] = "scroll";
-static const char SIG_SCROLL_LEFT[] = "scroll,left";
-static const char SIG_SCROLL_RIGHT[] = "scroll,right";
-static const char SIG_SCROLL_UP[] = "scroll,up";
-static const char SIG_SCROLL_DOWN[] = "scroll,down";
-static const char SIG_SCROLL_ANIM_START[] = "scroll,anim,start";
-static const char SIG_SCROLL_ANIM_STOP[] = "scroll,anim,stop";
-static const char SIG_SCROLL_DRAG_START[] = "scroll,drag,start";
-static const char SIG_SCROLL_DRAG_STOP[] = "scroll,drag,stop";
-static const char SIG_EDGE_LEFT[] = "edge,left";
-static const char SIG_EDGE_RIGHT[] = "edge,right";
-static const char SIG_EDGE_TOP[] = "edge,top";
-static const char SIG_EDGE_BOTTOM[] = "edge,bottom";
-static const char SIG_VBAR_DRAG[] = "vbar,drag";
-static const char SIG_VBAR_PRESS[] = "vbar,press";
-static const char SIG_VBAR_UNPRESS[] = "vbar,unpress";
-static const char SIG_HBAR_DRAG[] = "hbar,drag";
-static const char SIG_HBAR_PRESS[] = "hbar,press";
-static const char SIG_HBAR_UNPRESS[] = "hbar,unpress";
-static const char SIG_SCROLL_PAGE_CHANGE[] = "scroll,page,changed";
+#define ELM_PRIV_SCROLLER_SIGNALS(cmd) \
+   cmd(SIG_SCROLL, "scroll", "") \
+   cmd(SIG_SCROLL_LEFT, "scroll,left", "") \
+   cmd(SIG_SCROLL_RIGHT, "scroll,right", "") \
+   cmd(SIG_SCROLL_UP, "scroll,up", "") \
+   cmd(SIG_SCROLL_DOWN, "scroll,down", "") \
+   cmd(SIG_SCROLL_ANIM_START, "scroll,anim,start", "") \
+   cmd(SIG_SCROLL_ANIM_STOP, "scroll,anim,stop", "") \
+   cmd(SIG_SCROLL_DRAG_START, "scroll,drag,start", "") \
+   cmd(SIG_SCROLL_DRAG_STOP, "scroll,drag,stop", "") \
+   cmd(SIG_EDGE_LEFT, "edge,left", "") \
+   cmd(SIG_EDGE_RIGHT, "edge,right", "") \
+   cmd(SIG_EDGE_TOP, "edge,top", "") \
+   cmd(SIG_EDGE_BOTTOM, "edge,bottom", "") \
+   cmd(SIG_VBAR_DRAG, "vbar,drag", "") \
+   cmd(SIG_VBAR_PRESS, "vbar,press", "") \
+   cmd(SIG_VBAR_UNPRESS, "vbar,unpress", "") \
+   cmd(SIG_HBAR_DRAG, "hbar,drag", "") \
+   cmd(SIG_HBAR_PRESS, "hbar,press", "") \
+   cmd(SIG_HBAR_UNPRESS, "hbar,unpress", "") \
+   cmd(SIG_SCROLL_PAGE_CHANGE, "scroll,page,changed", "") \
 
-static const Evas_Smart_Cb_Description _smart_callbacks[] =
-{
-   {SIG_SCROLL, ""},
-   {SIG_SCROLL_LEFT, ""},
-   {SIG_SCROLL_RIGHT, ""},
-   {SIG_SCROLL_UP, ""},
-   {SIG_SCROLL_DOWN, ""},
-   {SIG_SCROLL_ANIM_START, ""},
-   {SIG_SCROLL_ANIM_STOP, ""},
-   {SIG_SCROLL_DRAG_START, ""},
-   {SIG_SCROLL_DRAG_STOP, ""},
-   {SIG_EDGE_LEFT, ""},
-   {SIG_EDGE_RIGHT, ""},
-   {SIG_EDGE_TOP, ""},
-   {SIG_EDGE_BOTTOM, ""},
-   {SIG_VBAR_DRAG, ""},
-   {SIG_VBAR_PRESS, ""},
-   {SIG_VBAR_UNPRESS, ""},
-   {SIG_HBAR_DRAG, ""},
-   {SIG_HBAR_PRESS, ""},
-   {SIG_HBAR_UNPRESS, ""},
-   {SIG_SCROLL_PAGE_CHANGE, ""},
+ELM_PRIV_SCROLLER_SIGNALS(ELM_PRIV_STATIC_VARIABLE_DECLARE);
+
+static const Evas_Smart_Cb_Description _smart_callbacks[] = {
+   ELM_PRIV_SCROLLER_SIGNALS(ELM_PRIV_SMART_CALLBACKS_DESC)
    {"focused", ""}, /**< handled by elm_widget */
    {"unfocused", ""}, /**< handled by elm_widget */
    {NULL, NULL}
 };
+#undef ELM_PRIV_SCROLLER_SIGNALS
 
 static void
 _elm_scroller_smart_event(Eo *obj, void *_pd, va_list *list)
