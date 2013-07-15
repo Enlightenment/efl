@@ -382,16 +382,28 @@ static int i42 = 42;
 static int i7 = 7;
 
 static void
-_eet_build_ex_descriptor(Eet_Data_Descriptor *edd)
+_eet_build_ex_descriptor(Eet_Data_Descriptor *edd, Eina_Bool stream)
 {
    Eet_Data_Descriptor_Class eddc;
    Eet_Test_Ex_Type etbt;
    Eet_Data_Descriptor *eddb;
 
-   eet_test_setup_eddc(&eddc);
-   eddc.name = "Eet_Test_Basic_Type";
-   eddc.size = sizeof(Eet_Test_Basic_Type);
-   eddb = eet_data_descriptor_file_new(&eddc);
+   if (stream)
+     {
+        eet_eina_stream_data_descriptor_class_set(&eddc,
+                                                  sizeof (Eet_Data_Descriptor_Class),
+                                                  "Eet_Test_Basic_Type",
+                                                  sizeof(Eet_Test_Basic_Type));        
+        eddb = eet_data_descriptor_stream_new(&eddc);
+     }
+   else
+     {
+        eet_eina_file_data_descriptor_class_set(&eddc,
+                                                sizeof (Eet_Data_Descriptor_Class),
+                                                "Eet_Test_Basic_Type",
+                                                sizeof(Eet_Test_Basic_Type));        
+        eddb = eet_data_descriptor_file_new(&eddc);
+     }
    fail_if(!eddb);
 
    _eet_build_basic_descriptor(eddb);
@@ -745,7 +757,7 @@ START_TEST(eet_test_data_type_encoding_decoding)
    edd = eet_data_descriptor_file_new(&eddc);
    fail_if(!edd);
 
-   _eet_build_ex_descriptor(edd);
+   _eet_build_ex_descriptor(edd, EINA_FALSE);
 
    transfert = eet_data_descriptor_encode(edd, &etbt, &size);
    fail_if(!transfert || size <= 0);
@@ -836,7 +848,7 @@ START_TEST(eet_test_data_type_dump_undump)
    edd = eet_data_descriptor_file_new(&eddc);
    fail_if(!edd);
 
-   _eet_build_ex_descriptor(edd);
+   _eet_build_ex_descriptor(edd, EINA_FALSE);
 
    transfert1 = eet_data_descriptor_encode(edd, &etbt, &size1);
    fail_if(!transfert1 || size1 <= 0);
@@ -989,7 +1001,7 @@ START_TEST(eet_file_data_test)
    edd = eet_data_descriptor_file_new(&eddc);
    fail_if(!edd);
 
-   _eet_build_ex_descriptor(edd);
+   _eet_build_ex_descriptor(edd, EINA_FALSE);
 
    fail_if(!(file = tmpnam(file)));
 
@@ -1141,7 +1153,7 @@ START_TEST(eet_file_data_dump_test)
    edd = eet_data_descriptor_file_new(&eddc);
    fail_if(!edd);
 
-   _eet_build_ex_descriptor(edd);
+   _eet_build_ex_descriptor(edd, EINA_FALSE);
 
    fail_if(!(file = tmpnam(file)));
 
@@ -2005,7 +2017,6 @@ _eet_connection_write(const void *data,
 
 START_TEST(eet_connection_check)
 {
-   Eet_Connection *conn;
    Eet_Data_Descriptor *edd;
    Eet_Data_Descriptor_Class eddc;
    Eet_Connection_Data ecd;
@@ -2031,30 +2042,29 @@ START_TEST(eet_connection_check)
    memset(&etbt.charray, 0, sizeof(etbt.charray));
    etbt.charray[0] = "test";
 
-   eet_eina_file_data_descriptor_class_set(&eddc, sizeof (eddc),
-                                           "Eet_Test_Ex_Type",
-                                           sizeof(Eet_Test_Ex_Type));
+   eet_eina_stream_data_descriptor_class_set(&eddc, sizeof (eddc),
+                                             "Eet_Test_Ex_Type",
+                                             sizeof(Eet_Test_Ex_Type));
 
-   edd = eet_data_descriptor_file_new(&eddc);
+   edd = eet_data_descriptor_stream_new(&eddc);
    fail_if(!edd);
 
-   _eet_build_ex_descriptor(edd);
-
-   /* Create a connection. */
-   conn = eet_connection_new(_eet_connection_read, _eet_connection_write, &ecd);
-   fail_if(!conn);
+   _eet_build_ex_descriptor(edd, EINA_TRUE);
 
    /* Init context. */
    ecd.test = EINA_FALSE;
-   ecd.conn = conn;
    ecd.edd = edd;
 
+   /* Create a connection. */
+   ecd.conn = eet_connection_new(_eet_connection_read, _eet_connection_write, &ecd);
+   fail_if(!ecd.conn);
+
    /* Test the connection. */
-   fail_if(!eet_connection_send(conn, edd, &etbt, NULL));
+   fail_if(!eet_connection_send(ecd.conn, edd, &etbt, NULL));
 
    fail_if(!ecd.test);
 
-   fail_if(!eet_connection_close(conn, &on_going));
+   fail_if(!eet_connection_close(ecd.conn, &on_going));
 
    fail_if(on_going);
 
