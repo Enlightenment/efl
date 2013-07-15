@@ -83,6 +83,7 @@ evas_gl_font_texture_new(void *context, RGBA_Font_Glyph *fg)
 //   fh = h;
    fh = fg->fi->max_h;
    tex = evas_gl_common_texture_alpha_new(gc, ndata, w, h, fh);
+   if (!tex) return NULL;
    tex->sx1 = ((double)(tex->x)) / (double)tex->pt->w;
    tex->sy1 = ((double)(tex->y)) / (double)tex->pt->h;
    tex->sx2 = ((double)(tex->x + tex->w)) / (double)tex->pt->w;

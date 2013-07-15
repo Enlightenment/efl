@@ -344,7 +344,7 @@ evas_gl_common_image_alpha_set(Evas_GL_Image *im, int alpha)
    else
      {
         im->tex = evas_gl_common_texture_new(im->gc, im->im);
-        evas_gl_common_texture_update(im->tex, im->im);
+        if (im->tex) evas_gl_common_texture_update(im->tex, im->im);
      }
    return im;
 }
@@ -673,6 +673,7 @@ evas_gl_common_image_map_draw(Evas_Engine_GL_Context *gc, Evas_GL_Image *im,
    int r, g, b, a;
    int c, cx, cy, cw, ch;
 
+   if (!im->tex) return;
    dc = gc->dc;
 
    if (dc->mul.use)

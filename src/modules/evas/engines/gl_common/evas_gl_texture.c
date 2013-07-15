@@ -327,6 +327,7 @@ _pool_tex_find(Evas_Engine_GL_Context *gc, int w, int h,
        (h > gc->shared->info.tune.atlas.max_h))
      {
         pt = _pool_tex_new(gc, w, h, intformat, format);
+        if (!pt) return NULL;
         gc->shared->tex.whole = eina_list_prepend(gc->shared->tex.whole, pt);
         pt->slot = -1;
         pt->fslot = -1;
@@ -350,6 +351,7 @@ _pool_tex_find(Evas_Engine_GL_Context *gc, int w, int h,
      }
 
    pt = _pool_tex_new(gc, atlas_w, h, intformat, format);
+   if (!pt) return NULL;
    gc->shared->tex.atlas[th][th2] =
      eina_list_prepend(gc->shared->tex.atlas[th][th2], pt);
    pt->slot = th;
@@ -1172,7 +1174,6 @@ evas_gl_common_texture_yuv_new(Evas_Engine_GL_Context *gc, DATA8 **rows, unsigne
    tex->ptv = _pool_tex_new(gc,  tex->ptu->w, tex->ptu->h, lum_ifmt, lum_fmt);
    if (!tex->ptv)
      {
-        pt_unref(tex->pt);
         pt_unref(tex->ptu);
         evas_gl_common_texture_light_free(tex);
         return NULL;
@@ -1184,6 +1185,8 @@ evas_gl_common_texture_yuv_new(Evas_Engine_GL_Context *gc, DATA8 **rows, unsigne
    tex->pt = _pool_tex_new(gc, tex->ptu->w * 2, tex->ptu->h * 2, lum_ifmt, lum_fmt);
    if (!tex->pt)
      {
+        pt_unref(tex->ptu);
+        pt_unref(tex->ptv);
         evas_gl_common_texture_light_free(tex);
         return NULL;
      }
