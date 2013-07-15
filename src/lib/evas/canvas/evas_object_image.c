@@ -3760,6 +3760,84 @@ evas_draw_image_map_async_check(Evas_Object_Protected_Data *obj,
      }
 }
 
+static void *
+evas_process_dirty_pixels(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas_Object_Image *o,
+			  void *output, void *pixels)
+{
+   int direct_override = 0;
+   int direct_force_off = 0;
+
+   if (o->dirty_pixels)
+     {
+        if (o->pixels->func.get_pixels)
+          {
+             if (obj->layer->evas->engine.func->image_native_get)
+               {
+                  Evas_Native_Surface *ns;
+                  ns = obj->layer->evas->engine.func->image_native_get(obj->layer->evas->engine.data.output, o->engine_data);
+                  if ( (ns) &&
+                       (ns->type == EVAS_NATIVE_SURFACE_OPENGL) &&
+                       (ns->data.opengl.texture_id) &&
+                       (!ns->data.opengl.framebuffer_id) )
+                    {
+                       // Check if we can do direct rendering...
+                       if (obj->layer->evas->engine.func->gl_direct_override_get)
+                         obj->layer->evas->engine.func->gl_direct_override_get(output, &direct_override, &direct_force_off);
+                       if ( (((obj->cur->geometry.w == o->cur->image.w) &&
+                              (obj->cur->geometry.h == o->cur->image.h) &&
+                              (obj->cur->color.r == 255) &&
+                              (obj->cur->color.g == 255) &&
+                              (obj->cur->color.b == 255) &&
+                              (obj->cur->color.a == 255) &&
+                              (!obj->map->cur.map) &&
+                              (!o->cur->has_alpha)) ||
+                             (direct_override)) &&
+                            (!direct_force_off) )
+                         {
+                            
+                            if (obj->layer->evas->engine.func->gl_get_pixels_set)
+                              {
+                                 obj->layer->evas->engine.func->gl_get_pixels_set(output, o->pixels->func.get_pixels, o->pixels->func.get_pixels_data, eo_obj);
+                              }
+                            
+                            o->direct_render = EINA_TRUE;
+                         }
+                       else
+                         o->direct_render = EINA_FALSE;
+                       
+                    }
+
+                  if ( (ns) &&
+                       (ns->type == EVAS_NATIVE_SURFACE_X11))
+                    {
+                       if (obj->layer->evas->engine.func->context_flush)
+                         obj->layer->evas->engine.func->context_flush(output);
+                    }
+               }
+
+             if (!o->direct_render)
+               o->pixels->func.get_pixels(o->pixels->func.get_pixels_data, eo_obj);
+
+             o->engine_data = obj->layer->evas->engine.func->image_dirty_region
+               (obj->layer->evas->engine.data.output, o->engine_data,
+                0, 0, o->cur->image.w, o->cur->image.h);
+	     if (o->engine_data != pixels)
+	       pixels = o->engine_data;
+          }
+        o->dirty_pixels = EINA_FALSE;
+     }
+   else
+     {
+        // Check if the it's not dirty but it has direct rendering
+        if (o->direct_render)
+          {
+             obj->layer->evas->engine.func->gl_get_pixels_set(output, o->pixels->func.get_pixels, o->pixels->func.get_pixels_data, eo_obj);
+          }
+     }
+
+   return pixels;
+}
+
 static void
 evas_object_image_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, void *type_private_data,
 			 void *output, void *context, void *surface, int x, int y, Eina_Bool do_async)
@@ -3824,13 +3902,20 @@ evas_object_image_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, v
    obj->layer->evas->engine.func->context_render_op_set(output, context,
                                                         obj->cur->render_op);
 
+   // Clear out the pixel get stuff..
+   if (obj->layer->evas->engine.func->gl_get_pixels_set)
+     {
+        obj->layer->evas->engine.func->gl_get_pixels_set(output, NULL, NULL, NULL);
+     }
+
    Evas_Object_Protected_Data *source =
       (o->cur->source ?
        eo_data_scope_get(o->cur->source, EVAS_OBJ_CLASS):
        NULL);
    if (!o->cur->source)
      {
-        pixels = o->engine_data;
+        pixels = evas_process_dirty_pixels(eo_obj, obj, o, output, o->engine_data);
+        /* pixels = o->engine_data; */
         imagew = o->cur->image.w;
         imageh = o->cur->image.h;
         uvw = imagew;
@@ -3868,88 +3953,10 @@ evas_object_image_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, v
         o->proxyrendering = EINA_FALSE;
      }
 
-   // Clear out the pixel get stuff..
-   if (obj->layer->evas->engine.func->gl_get_pixels_set)
-     {
-        obj->layer->evas->engine.func->gl_get_pixels_set(output, NULL, NULL, NULL);
-     }
-
    if (pixels)
      {
         Evas_Coord idw, idh, idx, idy;
         int ix, iy, iw, ih;
-        int direct_override = 0;
-        int direct_force_off = 0;
-
-        if (o->dirty_pixels)
-          {
-             if (o->pixels->func.get_pixels)
-               {
-
-                  if (obj->layer->evas->engine.func->image_native_get)
-                    {
-                       Evas_Native_Surface *ns;
-                       ns = obj->layer->evas->engine.func->image_native_get(obj->layer->evas->engine.data.output, o->engine_data);
-                       if ( (ns) &&
-                            (ns->type == EVAS_NATIVE_SURFACE_OPENGL) &&
-                            (ns->data.opengl.texture_id) &&
-                            (!ns->data.opengl.framebuffer_id) )
-                         {
-
-                            // Check if we can do direct rendering...
-                            if (obj->layer->evas->engine.func->gl_direct_override_get)
-                               obj->layer->evas->engine.func->gl_direct_override_get(output, &direct_override, &direct_force_off);
-                            if ( (((obj->cur->geometry.w == o->cur->image.w) &&
-                                   (obj->cur->geometry.h == o->cur->image.h) &&
-                                   (obj->cur->color.r == 255) &&
-                                   (obj->cur->color.g == 255) &&
-                                   (obj->cur->color.b == 255) &&
-                                   (obj->cur->color.a == 255) &&
-                                   (!obj->map->cur.map) &&
-                                   (!o->cur->has_alpha)) ||
-                                  (direct_override)) &&
-                                 (!direct_force_off) )
-                              {
-
-                                 if (obj->layer->evas->engine.func->gl_get_pixels_set)
-                                   {
-                                      obj->layer->evas->engine.func->gl_get_pixels_set(output, o->pixels->func.get_pixels, o->pixels->func.get_pixels_data, eo_obj);
-                                   }
-
-                                 o->direct_render = EINA_TRUE;
-                              }
-                            else
-                               o->direct_render = EINA_FALSE;
-
-                         }
-
-                       if ( (ns) &&
-                            (ns->type == EVAS_NATIVE_SURFACE_X11))
-                         {
-                            if (obj->layer->evas->engine.func->context_flush)
-                               obj->layer->evas->engine.func->context_flush(output);
-                         }
-                    }
-
-                  if (!o->direct_render)
-                     o->pixels->func.get_pixels(o->pixels->func.get_pixels_data, eo_obj);
-
-                  if (o->engine_data != pixels)
-                     pixels = o->engine_data;
-                  o->engine_data = obj->layer->evas->engine.func->image_dirty_region
-                     (obj->layer->evas->engine.data.output, o->engine_data,
-                      0, 0, o->cur->image.w, o->cur->image.h);
-               }
-             o->dirty_pixels = EINA_FALSE;
-          }
-        else
-          {
-             // Check if the it's not dirty but it has direct rendering
-             if (o->direct_render)
-               {
-                  obj->layer->evas->engine.func->gl_get_pixels_set(output, o->pixels->func.get_pixels, o->pixels->func.get_pixels_data, eo_obj);
-               }
-          }
 
         if ((obj->map->cur.map) && (obj->map->cur.map->count > 3) && (obj->map->cur.usemap))
           {
