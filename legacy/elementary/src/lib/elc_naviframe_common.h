@@ -24,6 +24,9 @@ EAPI Evas_Object     *elm_naviframe_add(Evas_Object *parent);
 /**
  * @brief Pop the items between the top and the above one on the given item.
  *
+ * The items between the top and the given item will be deleted first,
+ * and then the top item will be popped at last.
+ *
  * @param it The naviframe item
  *
  * @ingroup Naviframe
