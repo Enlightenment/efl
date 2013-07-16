@@ -309,7 +309,7 @@ _eo_callback_remove_all(Private_Data *pd)
      }
 }
 
-static void
+static inline void
 _eo_callbacks_clear(Private_Data *pd)
 {
    Eo_Callback_Description *cb = NULL;
