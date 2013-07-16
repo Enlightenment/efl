@@ -2,40 +2,40 @@
 # error You shall not include this header directly
 #endif
 
-EAPI extern const Eo_Event_Description *_EVAS_OBJECT_EVENT_MOUSE_IN;
-EAPI extern const Eo_Event_Description *_EVAS_OBJECT_EVENT_MOUSE_OUT;
-EAPI extern const Eo_Event_Description *_EVAS_OBJECT_EVENT_MOUSE_DOWN;
-EAPI extern const Eo_Event_Description *_EVAS_OBJECT_EVENT_MOUSE_UP;
-EAPI extern const Eo_Event_Description *_EVAS_OBJECT_EVENT_MOUSE_MOVE;
-EAPI extern const Eo_Event_Description *_EVAS_OBJECT_EVENT_MOUSE_WHEEL;
-EAPI extern const Eo_Event_Description *_EVAS_OBJECT_EVENT_MULTI_DOWN;
-EAPI extern const Eo_Event_Description *_EVAS_OBJECT_EVENT_MULTI_UP;
-EAPI extern const Eo_Event_Description *_EVAS_OBJECT_EVENT_MULTI_MOVE;
-EAPI extern const Eo_Event_Description *_EVAS_OBJECT_EVENT_FREE;
-EAPI extern const Eo_Event_Description *_EVAS_OBJECT_EVENT_KEY_DOWN;
-EAPI extern const Eo_Event_Description *_EVAS_OBJECT_EVENT_KEY_UP;
-EAPI extern const Eo_Event_Description *_EVAS_OBJECT_EVENT_FOCUS_IN;
-EAPI extern const Eo_Event_Description *_EVAS_OBJECT_EVENT_FOCUS_OUT;
-EAPI extern const Eo_Event_Description *_EVAS_OBJECT_EVENT_SHOW;
-EAPI extern const Eo_Event_Description *_EVAS_OBJECT_EVENT_HIDE;
-EAPI extern const Eo_Event_Description *_EVAS_OBJECT_EVENT_MOVE;
-EAPI extern const Eo_Event_Description *_EVAS_OBJECT_EVENT_RESIZE;
-EAPI extern const Eo_Event_Description *_EVAS_OBJECT_EVENT_RESTACK;
-EAPI extern const Eo_Event_Description *_EVAS_OBJECT_EVENT_DEL;
-EAPI extern const Eo_Event_Description *_EVAS_OBJECT_EVENT_HOLD;
-EAPI extern const Eo_Event_Description *_EVAS_OBJECT_EVENT_CHANGED_SIZE_HINTS;
-EAPI extern const Eo_Event_Description *_EVAS_OBJECT_EVENT_IMAGE_PRELOADED;
-EAPI extern const Eo_Event_Description *_EVAS_OBJECT_EVENT_IMAGE_RESIZE;
-EAPI extern const Eo_Event_Description *_EVAS_OBJECT_EVENT_IMAGE_UNLOADED;
-EAPI extern const Eo_Event_Description *_EVAS_OBJECT_EVENT_RENDER_PRE;
-EAPI extern const Eo_Event_Description *_EVAS_OBJECT_EVENT_RENDER_POST;
+EAPI extern const Eo_Event_Description _EVAS_OBJECT_EVENT_MOUSE_IN;
+EAPI extern const Eo_Event_Description _EVAS_OBJECT_EVENT_MOUSE_OUT;
+EAPI extern const Eo_Event_Description _EVAS_OBJECT_EVENT_MOUSE_DOWN;
+EAPI extern const Eo_Event_Description _EVAS_OBJECT_EVENT_MOUSE_UP;
+EAPI extern const Eo_Event_Description _EVAS_OBJECT_EVENT_MOUSE_MOVE;
+EAPI extern const Eo_Event_Description _EVAS_OBJECT_EVENT_MOUSE_WHEEL;
+EAPI extern const Eo_Event_Description _EVAS_OBJECT_EVENT_MULTI_DOWN;
+EAPI extern const Eo_Event_Description _EVAS_OBJECT_EVENT_MULTI_UP;
+EAPI extern const Eo_Event_Description _EVAS_OBJECT_EVENT_MULTI_MOVE;
+EAPI extern const Eo_Event_Description _EVAS_OBJECT_EVENT_FREE;
+EAPI extern const Eo_Event_Description _EVAS_OBJECT_EVENT_KEY_DOWN;
+EAPI extern const Eo_Event_Description _EVAS_OBJECT_EVENT_KEY_UP;
+EAPI extern const Eo_Event_Description _EVAS_OBJECT_EVENT_FOCUS_IN;
+EAPI extern const Eo_Event_Description _EVAS_OBJECT_EVENT_FOCUS_OUT;
+EAPI extern const Eo_Event_Description _EVAS_OBJECT_EVENT_SHOW;
+EAPI extern const Eo_Event_Description _EVAS_OBJECT_EVENT_HIDE;
+EAPI extern const Eo_Event_Description _EVAS_OBJECT_EVENT_MOVE;
+EAPI extern const Eo_Event_Description _EVAS_OBJECT_EVENT_RESIZE;
+EAPI extern const Eo_Event_Description _EVAS_OBJECT_EVENT_RESTACK;
+EAPI extern const Eo_Event_Description _EVAS_OBJECT_EVENT_DEL;
+EAPI extern const Eo_Event_Description _EVAS_OBJECT_EVENT_HOLD;
+EAPI extern const Eo_Event_Description _EVAS_OBJECT_EVENT_CHANGED_SIZE_HINTS;
+EAPI extern const Eo_Event_Description _EVAS_OBJECT_EVENT_IMAGE_PRELOADED;
+EAPI extern const Eo_Event_Description _EVAS_OBJECT_EVENT_IMAGE_RESIZE;
+EAPI extern const Eo_Event_Description _EVAS_OBJECT_EVENT_IMAGE_UNLOADED;
+EAPI extern const Eo_Event_Description _EVAS_OBJECT_EVENT_RENDER_PRE;
+EAPI extern const Eo_Event_Description _EVAS_OBJECT_EVENT_RENDER_POST;
 
-EAPI extern const Eo_Event_Description *_EVAS_CANVAS_EVENT_FOCUS_IN;
-EAPI extern const Eo_Event_Description *_EVAS_CANVAS_EVENT_FOCUS_OUT;
-EAPI extern const Eo_Event_Description *_EVAS_CANVAS_EVENT_RENDER_FLUSH_PRE;
-EAPI extern const Eo_Event_Description *_EVAS_CANVAS_EVENT_RENDER_FLUSH_POST;
-EAPI extern const Eo_Event_Description *_EVAS_CANVAS_EVENT_OBJECT_FOCUS_IN;
-EAPI extern const Eo_Event_Description *_EVAS_CANVAS_EVENT_OBJECT_FOCUS_OUT;
+EAPI extern const Eo_Event_Description _EVAS_CANVAS_EVENT_FOCUS_IN;
+EAPI extern const Eo_Event_Description _EVAS_CANVAS_EVENT_FOCUS_OUT;
+EAPI extern const Eo_Event_Description _EVAS_CANVAS_EVENT_RENDER_FLUSH_PRE;
+EAPI extern const Eo_Event_Description _EVAS_CANVAS_EVENT_RENDER_FLUSH_POST;
+EAPI extern const Eo_Event_Description _EVAS_CANVAS_EVENT_OBJECT_FOCUS_IN;
+EAPI extern const Eo_Event_Description _EVAS_CANVAS_EVENT_OBJECT_FOCUS_OUT;
 
 // Callbacks events for use with Evas objects
 #define EVAS_OBJECT_EVENT_MOUSE_IN (&(_EVAS_OBJECT_EVENT_MOUSE_IN))
