@@ -1739,7 +1739,7 @@ reorder_parts(void)
 
                        amount = ep->reorder.linked_prev + ep->reorder.linked_next + 1;
                        linked = i - ep->reorder.linked_prev;
-                       parts = malloc(amount * sizeof(Edje_Part));
+                       parts = malloc(amount * sizeof(Edje_Part *));
                        for (j = 0 ; j < amount ; j++)
                          {
                             parts[j] = pc->parts[linked];
