@@ -727,14 +727,22 @@ _edje_pick_images_add(Edje_File *edf, Edje_File *o)
 
         if (edf->image_dir->entries)
           {  /* Copy image dir entries of current file */
+             Edje_Image_Directory_Entry *entries;
+             
              k = o->image_dir->entries_count; /* save current entries count */
              o->image_dir->entries_count += edf->image_dir->entries_count;
 
              /* alloc mem first time  or  re-allocate again (bigger array) */
-             o->image_dir->entries = realloc(o->image_dir->entries,
-                   o->image_dir->entries_count *
-                   sizeof(Edje_Image_Directory_Entry));
-
+             entries = realloc(o->image_dir->entries,
+                               o->image_dir->entries_count *
+                               sizeof(Edje_Image_Directory_Entry));
+             if (!entries)
+               {
+                  EINA_LOG_ERR("Out of memory in realloc()");
+                  return EDJE_PICK_IMAGE_NOT_FOUND;
+               }
+             o->image_dir->entries = entries;
+             
              /* Concatinate current file entries to re-allocaed array */
              memcpy(&o->image_dir->entries[k], edf->image_dir->entries,
                    edf->image_dir->entries_count *
@@ -743,12 +751,20 @@ _edje_pick_images_add(Edje_File *edf, Edje_File *o)
 
         if (edf->image_dir->sets)
           {  /* Copy image dir sets of current file */
+             Edje_Image_Directory_Set *sets;
+             
              k = o->image_dir->sets_count;      /* save current sets count */
              o->image_dir->sets_count += edf->image_dir->sets_count;
              /* alloc mem first time  or  re-allocate again (bigger array) */
-             o->image_dir->sets = realloc(o->image_dir->sets,
-                   o->image_dir->sets_count *
-                   sizeof(Edje_Image_Directory_Set_Entry));
+             sets = realloc(o->image_dir->sets,
+                            o->image_dir->sets_count *
+                            sizeof(Edje_Image_Directory_Set));
+             if (!sets)
+               {
+                  EINA_LOG_ERR("Out of memory in realloc()");
+                  return EDJE_PICK_IMAGE_NOT_FOUND;
+               }
+             o->image_dir->sets = sets;
 
              /* Concatinate current file sets to re-allocaed array */
              memcpy(&o->image_dir->sets[k], edf->image_dir->sets,
