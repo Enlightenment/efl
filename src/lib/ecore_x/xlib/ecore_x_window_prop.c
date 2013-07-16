@@ -160,7 +160,7 @@ ecore_x_window_prop_xid_set(Ecore_X_Window win,
    unsigned int i;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   pl = malloc(num * sizeof(long));
+   pl = malloc(num * sizeof(unsigned long));
    if (!pl)
      return;
 
