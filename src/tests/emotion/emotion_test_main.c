@@ -705,8 +705,6 @@ main(int argc, char **argv)
       ECORE_GETOPT_VALUE_NONE
     };
 
-   putenv("EFL_RUN_IN_TREE=1");
-
    if (!ecore_evas_init())
      return -1;
    if (!edje_init())
