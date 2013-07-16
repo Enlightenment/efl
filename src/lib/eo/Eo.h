@@ -1303,7 +1303,7 @@ typedef struct _Eo_Callback_Array_Item Eo_Callback_Array_Item;
  */
 struct _Eo_Callback_Array_Item
 {
-   const Eo_Event_Description *desc; /**< The event description. */
+   const Eo_Event_Description **desc; /**< The event description. */
    Eo_Event_Cb func; /**< The callback function. */
 };
 
