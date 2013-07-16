@@ -6589,6 +6589,7 @@ cpp_handle_options(cpp_reader * pfile, int argc, char **argv)
 		     else
 			p = argv[++i];
 
+                     if (!p) break;
 		     if (!strcmp(p, "-"))
 		       {
 			  struct cpp_pending **ptr;
