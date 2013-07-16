@@ -1626,7 +1626,7 @@ _ecore_exe_exec_it(const char     *exe_cmd,
          return;
       }
       errno = 0;
-      execvp(args[0], args);
+      if (args[0]) execvp(args[0], args);
    }
 
    save_errno = errno;
@@ -1910,7 +1910,7 @@ _ecore_exe_dead_attach(Ecore_Exe *exe)
    if (dead)
    {
       dead->pid = exe->pid;
-      dead->cmd = strdup(exe->cmd);
+      if (exe->cmd) dead->cmd = strdup(exe->cmd);
       IF_FN_DEL(ecore_timer_del, exe->doomsday_clock);
       exe->doomsday_clock =
         ecore_timer_add(10.0, _ecore_exe_make_sure_its_dead, dead);
