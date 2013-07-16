@@ -1377,11 +1377,6 @@ st_externals_external(void)
 	edje_file->external_dir->entries = entries;
 	memset(edje_file->external_dir->entries + edje_file->external_dir->entries_count - 1,
 	       0, sizeof (Edje_External_Directory_Entry));
-	if (!edje_file->external_dir->entries)
-	  {
-	     ERR("not enough memory");
-	     exit(-1);
-	  }
 
 	edje_file->external_dir->entries[edje_file->external_dir->entries_count - 1].entry = mem_strdup(ex->name);
      }
@@ -1475,14 +1470,8 @@ st_images_image(void)
         exit(-1);
      }
    edje_file->image_dir->entries = img;
-   
    memset(edje_file->image_dir->entries + edje_file->image_dir->entries_count - 1,
 	  0, sizeof (Edje_Image_Directory_Entry));
-   if (!edje_file->image_dir->entries)
-     {
-        ERR("No enough memory.");
-        exit(-1);
-     }
 
    img = edje_file->image_dir->entries + edje_file->image_dir->entries_count - 1;
 
@@ -1563,19 +1552,23 @@ st_images_image(void)
 static void
 ob_images_set(void)
 {
+   Edje_Image_Directory_Set *sets;
+   
    if (!edje_file->image_dir)
      edje_file->image_dir = mem_alloc(SZ(Edje_Image_Directory));
 
    edje_file->image_dir->sets_count++;
-   edje_file->image_dir->sets = realloc(edje_file->image_dir->sets,
-					sizeof (Edje_Image_Directory_Set) * edje_file->image_dir->sets_count);
-   memset(edje_file->image_dir->sets + edje_file->image_dir->sets_count - 1,
-	  0, sizeof (Edje_Image_Directory_Set));
-   if (!edje_file->image_dir->sets)
+   sets = realloc(edje_file->image_dir->sets,
+                  sizeof (Edje_Image_Directory_Set) * edje_file->image_dir->sets_count);
+   if (!sets)
      {
         ERR("Not enough memory.");
         exit(-1);
      }
+   edje_file->image_dir->sets = sets;
+   memset(edje_file->image_dir->sets + edje_file->image_dir->sets_count - 1,
+	  0, sizeof (Edje_Image_Directory_Set));
+   
    edje_file->image_dir->sets[edje_file->image_dir->sets_count - 1].id = edje_file->image_dir->sets_count - 1;
 }
 
@@ -2288,17 +2281,16 @@ st_collections_group_sound_sample_name(void)
      }
    
    edje_file->sound_dir->samples_count++;
-   edje_file->sound_dir->samples = 
-     realloc(edje_file->sound_dir->samples,
-             sizeof(Edje_Sound_Sample) * 
-             edje_file->sound_dir->samples_count);
-
-   if (!edje_file->sound_dir->samples)
+   sample = realloc(edje_file->sound_dir->samples,
+                    sizeof(Edje_Sound_Sample) * 
+                    edje_file->sound_dir->samples_count);
+   if (!sample)
      {
         ERR("No enough memory.");
         exit(-1);
      }
-   
+   edje_file->sound_dir->samples = sample;
+
    sample =
      edje_file->sound_dir->samples +
      edje_file->sound_dir->samples_count - 1;
@@ -2404,16 +2396,15 @@ st_collections_group_sound_tone(void)
           }
      }
    edje_file->sound_dir->tones_count++;
-   edje_file->sound_dir->tones = 
-     realloc(edje_file->sound_dir->tones,
-             sizeof (Edje_Sound_Tone) * 
-             edje_file->sound_dir->tones_count);
-   
-   if (!edje_file->sound_dir->tones)
+   tone = realloc(edje_file->sound_dir->tones,
+                  sizeof (Edje_Sound_Tone) * 
+                  edje_file->sound_dir->tones_count);
+   if (!tone)
      {
         ERR("No enough memory.");
         exit(-1);
      }
+   edje_file->sound_dir->tones = tone;
    
    tone = edje_file->sound_dir->tones + edje_file->sound_dir->tones_count - 1;
    memset(tone, 0, sizeof (Edje_Sound_Tone));
@@ -3186,16 +3177,23 @@ static void
 st_collections_group_limits_vertical(void)
 {
    Edje_Part_Collection *pc;
-   Edje_Limit *el;
+   Edje_Limit *el, **elp;
 
    check_arg_count(2);
 
-   el = mem_alloc(SZ(Edje_Limit));
-
    pc = eina_list_data_get(eina_list_last(edje_collections));
    pc->limits.vertical_count++;
-   pc->limits.vertical = realloc(pc->limits.vertical, pc->limits.vertical_count * sizeof (Edje_Limit *));
-   if (!pc->limits.vertical || !el)
+   elp = realloc(pc->limits.vertical,
+                pc->limits.vertical_count * sizeof (Edje_Limit *));
+   if (!elp)
+     {
+        ERR("Not enough memory.");
+        exit(-1);
+     }
+   pc->limits.vertical = elp;
+   
+   el = mem_alloc(SZ(Edje_Limit));
+   if (!el)
      {
         ERR("Not enough memory.");
         exit(-1);
