@@ -1658,8 +1658,8 @@ eet_data_stream_write(Eet_Data_Stream *ds,
 
         ds->size = ds->size + size + 512;
      }
-
    p = ds->data;
+   if (!p) return;
    memcpy(p + ds->pos, data, size);
    ds->pos += size;
 }
