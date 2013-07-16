@@ -1105,7 +1105,7 @@ _font_load_server_send(Font_Entry *fe, Message_Type type)
    msg->dpi = fe->dpi;
 
    buf = ((char *)msg) + sizeof(*msg);
-   memcpy(buf, fe->source, source_len);
+   if (source_len > 0) memcpy(buf, fe->source, source_len);
    buf += source_len;
    memcpy(buf, fe->name, path_len);
 
@@ -1338,7 +1338,7 @@ _glyph_request_server_send(Font_Entry *fe, Font_Hint_Flags hints, Eina_Bool used
    msg->nglyphs = nglyphs;
 
    buf = ((char *)msg) + sizeof(*msg);
-   memcpy(buf, fe->source, source_len);
+   if (source_len > 0) memcpy(buf, fe->source, source_len);
    buf += source_len;
    memcpy(buf, fe->name, name_len);
    buf += name_len;
