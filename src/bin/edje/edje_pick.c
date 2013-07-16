@@ -484,6 +484,7 @@ _edje_pick_external_dir_update(Edje_File *o, Edje_File *edf)
         /* Add external-dir entries */
         unsigned int total = 0;
         unsigned int base = 0;
+        Edje_External_Directory_Entry *entries;
 
         if (o->external_dir)
           base = total = o->external_dir->entries_count;
@@ -492,8 +493,14 @@ _edje_pick_external_dir_update(Edje_File *o, Edje_File *edf)
 
         total += edf->external_dir->entries_count;
 
-        o->external_dir->entries = realloc(o->external_dir->entries,
-                                           total * sizeof(Edje_External_Directory_Entry));
+        entries = realloc(o->external_dir->entries,
+                          total * sizeof(Edje_External_Directory_Entry));
+        if (!entries)
+          {
+             EINA_LOG_ERR("Out of memory in realloc()");
+             return;
+          }
+        o->external_dir->entries = entries;
 
         memcpy(&o->external_dir->entries[base], edf->external_dir->entries,
                edf->external_dir->entries_count *
