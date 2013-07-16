@@ -382,15 +382,18 @@ _embryo_str_snprintf(Embryo_Program *ep, Embryo_Cell *params)
 			    int l;
 
 			    STRGET(ep, tmp, params[4 + p]);
-			    l = strlen(tmp);
-			    if ((o + l) > (params[2] - 1))
-			      {
-				 l = params[2] - 1 - o;
-				 if (l < 0) l = 0;
-				 tmp[l] = 0;
-			      }
-			    strcpy(s2 + o, tmp);
-			    o += l;
+                            if (tmp)
+                              {
+                                 l = strlen(tmp);
+                                 if ((o + l) > (params[2] - 1))
+                                   {
+                                      l = params[2] - 1 - o;
+                                      if (l < 0) l = 0;
+                                      tmp[l] = 0;
+                                   }
+                                 strcpy(s2 + o, tmp);
+                                 o += l;
+                              }
 			    p++;
 			 }
 		       break;
