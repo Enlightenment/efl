@@ -112,7 +112,7 @@ ecore_file_monitor_backend_add(const char *path,
         ecore_file_monitor_backend_init();
      }
 
-   em = calloc(1, sizeof(Ecore_File_Monitor_Inotify));
+   em = (Ecore_File_Monitor *)calloc(1, sizeof(Ecore_File_Monitor_Inotify));
    if (!em) return NULL;
 
    em->func = func;
