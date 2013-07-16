@@ -873,7 +873,7 @@ eina_value_list_node_memory_flush(const Eina_Value_Type *type, Eina_List *node)
 {
    if (type->value_size <= sizeof(void*))
      return;
-   free(node->data);
+   if (node->data !=  (void*)1L) free(node->data);
 }
 
 static inline Eina_Bool
