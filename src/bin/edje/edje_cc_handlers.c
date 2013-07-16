@@ -1364,11 +1364,20 @@ st_externals_external(void)
 
    if (edje_file->external_dir)
      {
+        Edje_External_Directory_Entry *entries;
+        
 	edje_file->external_dir->entries_count++;
-	edje_file->external_dir->entries = realloc(edje_file->external_dir->entries,
-						   sizeof (Edje_External_Directory) * edje_file->external_dir->entries_count);
+          
+        entries = realloc(edje_file->external_dir->entries,
+                          sizeof (Edje_External_Directory_Entry) * edje_file->external_dir->entries_count);
+        if (!entries)
+          {
+             ERR("Out of memory at realloc()");
+             exit(-1);
+          }
+	edje_file->external_dir->entries = entries;
 	memset(edje_file->external_dir->entries + edje_file->external_dir->entries_count - 1,
-	       0, sizeof (Edje_External_Directory));
+	       0, sizeof (Edje_Image_Directory_Entry));
 	if (!edje_file->external_dir->entries)
 	  {
 	     ERR("not enough memory");
