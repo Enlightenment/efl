@@ -117,7 +117,7 @@ static void *drm_lib = NULL;
 
 static Window dri_drm_vsync_root = 0;
 
-static void
+static Eina_Bool
 _dri_drm_tick_schedule(void)
 {
    drmVBlank vbl;
@@ -125,7 +125,8 @@ _dri_drm_tick_schedule(void)
    vbl.request.type = DRM_VBLANK_RELATIVE | DRM_VBLANK_EVENT;
    vbl.request.sequence = drm_animators_interval;
    vbl.request.signal = 0;
-   sym_drmWaitVBlank(drm_fd, &vbl);
+   if (sym_drmWaitVBlank(drm_fd, &vbl) < 0) return EINA_FALSE;
+   return EINA_TRUE;
 }
 
 static void
@@ -148,8 +149,11 @@ _dri_drm_vblank_handler(int fd EINA_UNUSED,
                         unsigned int usec EINA_UNUSED,
                         void *data EINA_UNUSED)
 {
-   ecore_animator_custom_tick();
-   if (drm_event_is_busy) _dri_drm_tick_schedule();
+   if (drm_event_is_busy)
+     {
+        ecore_animator_custom_tick();
+        _dri_drm_tick_schedule();
+     }
 }
 
 static Eina_Bool
@@ -271,6 +275,13 @@ _dri_drm_init(void)
    drm_evctx.vblank_handler = _dri_drm_vblank_handler;
    drm_evctx.page_flip_handler = NULL;
 
+   if (!_dri_drm_tick_schedule())
+     {
+        close(drm_fd);
+        drm_fd = -1;
+        return 0;
+     }
+   
    dri_drm_fdh = ecore_main_fd_handler_add(drm_fd, ECORE_FD_READ,
                                            _dri_drm_cb, NULL, NULL, NULL);
    if (!dri_drm_fdh)
