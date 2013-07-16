@@ -1367,17 +1367,16 @@ st_externals_external(void)
         Edje_External_Directory_Entry *entries;
         
 	edje_file->external_dir->entries_count++;
-          
         entries = realloc(edje_file->external_dir->entries,
                           sizeof (Edje_External_Directory_Entry) * edje_file->external_dir->entries_count);
         if (!entries)
           {
-             ERR("Out of memory at realloc()");
+	     ERR("not enough memory");
              exit(-1);
           }
 	edje_file->external_dir->entries = entries;
 	memset(edje_file->external_dir->entries + edje_file->external_dir->entries_count - 1,
-	       0, sizeof (Edje_Image_Directory_Entry));
+	       0, sizeof (Edje_External_Directory_Entry));
 	if (!edje_file->external_dir->entries)
 	  {
 	     ERR("not enough memory");
@@ -1468,8 +1467,15 @@ st_images_image(void)
        }
 
    edje_file->image_dir->entries_count++;
-   edje_file->image_dir->entries = realloc(edje_file->image_dir->entries,
-					   sizeof (Edje_Image_Directory_Entry) * edje_file->image_dir->entries_count);
+   img = realloc(edje_file->image_dir->entries,
+                 sizeof (Edje_Image_Directory_Entry) * edje_file->image_dir->entries_count);
+   if (!img)
+     {
+        ERR("No enough memory.");
+        exit(-1);
+     }
+   edje_file->image_dir->entries = img;
+   
    memset(edje_file->image_dir->entries + edje_file->image_dir->entries_count - 1,
 	  0, sizeof (Edje_Image_Directory_Entry));
    if (!edje_file->image_dir->entries)
