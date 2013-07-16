@@ -1399,8 +1399,10 @@ eet_data_image_header_decode_cipher(const void   *data,
              size = deciphered_sz;
           }
         else
-          if (deciphered_d)
-            free(deciphered_d);
+          {
+             free(deciphered_d);
+             deciphered_d = NULL;
+          }
      }
 
    if (_eet_image_words_bigendian == -1)
@@ -1416,7 +1418,7 @@ eet_data_image_header_decode_cipher(const void   *data,
 
    if (size < 32)
      {
-        if (deciphered_d) free(deciphered_d);
+        free(deciphered_d);
         return 0;
      }
 
@@ -1438,13 +1440,13 @@ eet_data_image_header_decode_cipher(const void   *data,
         cp = header[4];
         if ((iw < 1) || (ih < 1) || (iw > 8192) || (ih > 8192))
           {
-             if (deciphered_d) free(deciphered_d);
+             free(deciphered_d);
              return 0;
           }
 
         if ((cp == 0) && (size < ((iw * ih * 4) + 32)))
           {
-             if (deciphered_d) free(deciphered_d);
+             free(deciphered_d);
              return 0;
           }
 
@@ -1533,7 +1535,7 @@ eet_data_image_header_decode_cipher(const void   *data,
           }
      }
 
-   if (deciphered_d) free(deciphered_d);
+   free(deciphered_d);
    return 0;
 }
 
