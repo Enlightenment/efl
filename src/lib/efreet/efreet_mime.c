@@ -1130,14 +1130,14 @@ efreet_mime_shared_mimeinfo_magic_parse(char *data, int size)
                    entry->value_len = ntohs(tshort);
                    ptr += 2;
 
-                   entry->value = NEW(1, entry->value_len);
+                   entry->value = NEW(char, entry->value_len);
                    memcpy(entry->value, ptr, entry->value_len);
                    ptr += entry->value_len;
                    break;
 
                 case '&':
                    ptr++;
-                   entry->mask = NEW(1, entry->value_len);
+                   entry->mask = NEW(char, entry->value_len);
                    memcpy(entry->mask, ptr, entry->value_len);
                    ptr += entry->value_len;
                    break;
