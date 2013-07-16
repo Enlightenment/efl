@@ -45,7 +45,6 @@ EAPI Eina_Error EDJE_EDIT_ERROR_GROUP_DOES_NOT_EXIST = 0;
 
 /* Get rp(Edje_Real_Part*) from obj(Evas_Object*) and part(char*) */
 #define GET_RP_OR_RETURN(RET) \
-   GET_EED_OR_RETURN(RET) \
    GET_ED_OR_RETURN(RET) \
    Edje_Real_Part *rp; \
    rp = _edje_real_part_get(ed, part); \
@@ -1969,6 +1968,7 @@ edje_edit_part_name_set(Evas_Object *obj, const char* part, const char* new_name
 {
    eina_error_set(0);
 
+   GET_EED_OR_RETURN(EINA_FALSE);
    GET_RP_OR_RETURN(EINA_FALSE);
 
    if (!new_name) return EINA_FALSE;
@@ -2194,6 +2194,7 @@ edje_edit_part_del(Evas_Object *obj, const char* part)
 
    eina_error_set(0);
 
+   GET_EED_OR_RETURN(EINA_FALSE);
    GET_RP_OR_RETURN(EINA_FALSE);
 
    //printf("REMOVE PART: %s\n", part);
@@ -2317,6 +2318,7 @@ edje_edit_part_restack_below(Evas_Object *obj, const char* part)
 
    eina_error_set(0);
 
+   GET_EED_OR_RETURN(EINA_FALSE);
    GET_RP_OR_RETURN(EINA_FALSE);
 
    //printf("RESTACK PART: %s BELOW\n", part);
@@ -2351,6 +2353,7 @@ edje_edit_part_restack_above(Evas_Object *obj, const char* part)
 
    eina_error_set(0);
 
+   GET_EED_OR_RETURN(EINA_FALSE);
    GET_RP_OR_RETURN(EINA_FALSE);
 
    //printf("RESTACK PART: %s ABOVE\n", part);
@@ -2385,7 +2388,6 @@ edje_edit_part_type_get(Evas_Object *obj, const char *part)
    eina_error_set(0);
 
    GET_RP_OR_RETURN(0);
-
    return rp->part->type;
 }
 
@@ -2413,6 +2415,7 @@ edje_edit_part_selected_state_set(Evas_Object *obj, const char *part, const char
 
    eina_error_set(0);
 
+   GET_EED_OR_RETURN(EINA_FALSE);
    GET_RP_OR_RETURN(EINA_FALSE);
 
    pd = _edje_part_description_find_byname(eed, part, state, value);
@@ -2882,6 +2885,7 @@ edje_edit_state_del(Evas_Object *obj, const char *part, const char *state, doubl
 
    eina_error_set(0);
 
+   GET_EED_OR_RETURN(EINA_FALSE);
    GET_RP_OR_RETURN(EINA_FALSE);
 
    if (!edje_edit_state_exist(obj, part, state, value))
@@ -3194,6 +3198,7 @@ edje_edit_state_copy(Evas_Object *obj, const char *part, const char *from, doubl
 
    eina_error_set(0);
 
+   GET_EED_OR_RETURN(EINA_FALSE);
    GET_RP_OR_RETURN(EINA_FALSE);
 
    pdfrom = _edje_part_description_find_byname(eed, part, from, val_from);
