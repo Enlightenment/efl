@@ -3123,6 +3123,12 @@ _layout_calculate_format_item_size(const Evas_Object *eo_obj,
    s = fi->item;
    w = fi->parent.w;
    h = fi->parent.h;
+   if (!s)
+     {
+        *_w = w;
+        *_h = h;
+        return;
+     }
    switch (fi->size)
      {
       case SIZE:
@@ -3138,7 +3144,7 @@ _layout_calculate_format_item_size(const Evas_Object *eo_obj,
            }
          break;
       case SIZE_REL:
-         p = strstr((char *) s, " relsize=");
+         p = strstr(s, " relsize=");
          p += 9;
          if (sscanf(p, "%ix%i", &w, &h) == 2)
            {
