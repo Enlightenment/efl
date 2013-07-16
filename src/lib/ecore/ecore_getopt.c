@@ -906,6 +906,7 @@ _ecore_getopt_parse_long(const char *str,
                          long int   *v)
 {
    char *endptr = NULL;
+   if (!str) return EINA_FALSE;
    *v = strtol(str, &endptr, 0);
    return endptr > str;
 }
@@ -915,6 +916,7 @@ _ecore_getopt_parse_double(const char *str,
                            double     *v)
 {
    char *endptr = NULL;
+   if (!str) return EINA_FALSE;
    *v = strtod(str, &endptr);
    return endptr > str;
 }
