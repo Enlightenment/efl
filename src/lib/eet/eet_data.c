@@ -1244,35 +1244,70 @@ eet_data_put_f8p24(Eet_Dictionary *ed,
    return eet_data_put_f32p32(ed, &tmp, size_ret);
 }
 
-static struct {
-   const Eina_Value_Type **eina_type;
-   int eet_type;
-} eina_value_to_eet_type[] = {
-  { &EINA_VALUE_TYPE_UCHAR,       EET_T_UCHAR },
-  { &EINA_VALUE_TYPE_USHORT,      EET_T_USHORT },
-  { &EINA_VALUE_TYPE_UINT,        EET_T_UINT },
+static const Eina_Value_Type *
+_eet_type_to_eina_value_get(int eet_type)
+{
+   switch (eet_type)
+     {
+      case EET_T_UCHAR: return EINA_VALUE_TYPE_UCHAR;
+      case EET_T_USHORT: return EINA_VALUE_TYPE_USHORT;
+      case EET_T_UINT: return EINA_VALUE_TYPE_UINT;
 #if SIZEOF_LONG == SIZEOF_INT
-  { &EINA_VALUE_TYPE_ULONG,       EET_T_UINT },
-  { &EINA_VALUE_TYPE_TIMESTAMP,   EET_T_UINT },
+      /* case EET_T_UINT: return EINA_VALUE_TYPE_ULONG; */
+      /* case EET_T_UINT: return EINA_VALUE_TYPE_TIMESTAMP; */
 #else
-  { &EINA_VALUE_TYPE_ULONG,       EET_T_ULONG_LONG },
-  { &EINA_VALUE_TYPE_TIMESTAMP,   EET_T_ULONG_LONG },
+      /* case EET_T_ULONG_LONG: return EINA_VALUE_TYPE_ULONG; */
+      /* case EET_T_ULONG_LONG: return EINA_VALUE_TYPE_TIMESTAMP; */
 #endif
-  { &EINA_VALUE_TYPE_UINT64,      EET_T_ULONG_LONG },
-  { &EINA_VALUE_TYPE_CHAR,        EET_T_CHAR },
-  { &EINA_VALUE_TYPE_SHORT,       EET_T_SHORT },
-  { &EINA_VALUE_TYPE_INT,         EET_T_INT },
+      case EET_T_ULONG_LONG: return EINA_VALUE_TYPE_UINT64;
+      case EET_T_CHAR: return EINA_VALUE_TYPE_CHAR;
+      case EET_T_SHORT: return EINA_VALUE_TYPE_SHORT;
+      case EET_T_INT: return EINA_VALUE_TYPE_INT;
 #if SIZEOF_LONG == SIZEOF_INT
-  { &EINA_VALUE_TYPE_LONG,        EET_T_INT },
+      /* case EET_T_INT: return EINA_VALUE_TYPE_LONG; */
 #else
-  { &EINA_VALUE_TYPE_LONG,        EET_T_LONG_LONG },
+      /* case EET_T_LONG_LONG: return EINA_VALUE_TYPE_LONG; */
 #endif
-  { &EINA_VALUE_TYPE_INT64,       EET_T_LONG_LONG },
-  { &EINA_VALUE_TYPE_FLOAT,       EET_T_FLOAT },
-  { &EINA_VALUE_TYPE_DOUBLE,      EET_T_DOUBLE },
-  { &EINA_VALUE_TYPE_STRING,      EET_T_STRING },
-  { &EINA_VALUE_TYPE_STRINGSHARE, EET_T_STRING },
-};
+      case EET_T_LONG_LONG: return EINA_VALUE_TYPE_INT64;
+      case EET_T_FLOAT: return EINA_VALUE_TYPE_FLOAT;
+      case EET_T_DOUBLE: return EINA_VALUE_TYPE_DOUBLE;
+      case EET_T_STRING: return EINA_VALUE_TYPE_STRING;
+      /* case EET_T_STRING: return EINA_VALUE_TYPE_STRINGSHARE; */
+     }
+
+   return NULL;
+}
+ 
+static int
+_eina_value_to_eet_type_get(const Eina_Value_Type *eina_type)
+{
+   if (eina_type == EINA_VALUE_TYPE_UCHAR) return EET_T_UCHAR;
+   else if (eina_type == EINA_VALUE_TYPE_USHORT) return EET_T_USHORT;
+   else if (eina_type == EINA_VALUE_TYPE_UINT) return EET_T_UINT;
+#if SIZEOF_LONG == SIZEOF_INT
+   else if (eina_type == EINA_VALUE_TYPE_ULONG) return EET_T_UINT;
+   else if (eina_type == EINA_VALUE_TYPE_TIMESTAMP) return EET_T_UINT;
+#else
+   else if (eina_type == EINA_VALUE_TYPE_ULONG) return EET_T_ULONG_LONG;
+   else if (eina_type == EINA_VALUE_TYPE_TIMESTAMP) return EET_T_ULONG_LONG;
+#endif
+   else if (eina_type == EINA_VALUE_TYPE_UINT64) return EET_T_ULONG_LONG;
+   else if (eina_type == EINA_VALUE_TYPE_CHAR) return EET_T_CHAR;
+   else if (eina_type == EINA_VALUE_TYPE_SHORT) return EET_T_SHORT;
+   else if (eina_type == EINA_VALUE_TYPE_INT) return EET_T_INT;
+#if SIZEOF_LONG == SIZEOF_INT
+   else if (eina_type == EINA_VALUE_TYPE_LONG) return EET_T_INT;
+#else
+   else if (eina_type == EINA_VALUE_TYPE_LONG) return EET_T_LONG_LONG;
+#endif
+   else if (eina_type == EINA_VALUE_TYPE_INT64) return EET_T_LONG_LONG;
+   else if (eina_type == EINA_VALUE_TYPE_FLOAT) return EET_T_FLOAT;
+   else if (eina_type == EINA_VALUE_TYPE_DOUBLE) return EET_T_DOUBLE;
+   else if (eina_type == EINA_VALUE_TYPE_STRING) return EET_T_STRING;
+   else if (eina_type == EINA_VALUE_TYPE_STRINGSHARE) return EET_T_STRING;
+   // always fallback to try a conversion to string if possible
+   return EET_T_STRING;
+}
 
 static int
 eet_data_get_value(const Eet_Dictionary *ed,     
@@ -1280,10 +1315,10 @@ eet_data_get_value(const Eet_Dictionary *ed,
 		   const void           *src_end,
 		   void                 *dst)    
 {
+   const Eina_Value_Type *eina_type;
    void *tmp;
    int eet_type;
    int eet_size, type_size;
-   unsigned int i;
 
    eet_size = eet_data_get_int(ed, src, src_end, &eet_type);
    if (eet_size < 0 ||
@@ -1303,16 +1338,16 @@ eet_data_get_value(const Eet_Dictionary *ed,
         return eet_size + type_size;
      }
 
-   for (i = 0; i < sizeof (eina_value_to_eet_type) / sizeof (eina_value_to_eet_type[0]); ++i)
-     if (eet_type == eina_value_to_eet_type[i].eet_type)
-       {
-          Eina_Value **value = dst;
+   eina_type = _eet_type_to_eina_value_get(eet_type);
+   if (eina_type)
+     {
+        Eina_Value **value = dst;
 
-          *value = eina_value_new(*eina_value_to_eet_type[i].eina_type);
-          eina_value_pset(*value, tmp);
+        *value = eina_value_new(eina_type);
+        eina_value_pset(*value, tmp);
 
-          return eet_size + type_size;
-       }
+        return eet_size + type_size;
+     }
 
    return -1;
 }
@@ -1327,9 +1362,8 @@ eet_data_put_value(Eet_Dictionary *ed,
    void *int_data;
    void *type_data;
    int int_size, type_size;
-   int eet_type = EET_T_STRING; // always fallback to try a conversion to string if possible
+   int eet_type;
    void *tmp;
-   unsigned int i;
    Eina_Bool v2s = EINA_FALSE;
 
    // map empty Eina_Value to EET_T_NULL;
@@ -1340,13 +1374,7 @@ eet_data_put_value(Eet_Dictionary *ed,
      }
 
    value_type = eina_value_type_get(value);
-
-   for (i = 0; i < sizeof (eina_value_to_eet_type) / sizeof (eina_value_to_eet_type[0]); ++i)
-     if (value_type == *eina_value_to_eet_type[i].eina_type)
-       {
-          eet_type = eina_value_to_eet_type[i].eet_type;
-          break;
-       }
+   eet_type = _eina_value_to_eet_type_get(value_type);
 
  lookup_done:
    tmp = alloca(eet_basic_codec[eet_type - 1].size);
