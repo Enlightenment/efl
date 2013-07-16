@@ -282,16 +282,20 @@ ecore_wl_window_show(Ecore_Wl_Window *win)
    if ((win->type != ECORE_WL_WINDOW_TYPE_DND) &&
        (win->type != ECORE_WL_WINDOW_TYPE_NONE))
      {
-        if (!win->shell_surface)
+        if ((!win->shell_surface) && (_ecore_wl_disp->wl.shell))
           {
              win->shell_surface = 
                wl_shell_get_shell_surface(_ecore_wl_disp->wl.shell, 
                                           win->surface);
           }
 
-        wl_shell_surface_add_listener(win->shell_surface, 
-                                      &_ecore_wl_shell_surface_listener, win);
+        if (win->shell_surface)
+          wl_shell_surface_add_listener(win->shell_surface, 
+                                        &_ecore_wl_shell_surface_listener, win);
      }
+
+   /* trap for valid shell surface */
+   if (!win->shell_surface) return;
 
    switch (win->type)
      {
