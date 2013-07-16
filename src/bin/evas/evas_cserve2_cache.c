@@ -473,7 +473,7 @@ _load_request_build(Image_Data *i, int *bufsize)
    ptr += filelen;
    memcpy(ptr, i->file->key, keylen);
    ptr += keylen;
-   memcpy(ptr, i->file->loader_data, loaderlen);
+   if (loaderlen > 0) memcpy(ptr, i->file->loader_data, loaderlen);
 
    *bufsize = size;
 
@@ -1870,7 +1870,7 @@ _font_entry_debug_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNU
      len = strlen(fe->src->file) + 1;
    memcpy(buf, &len, intsize);
    buf += intsize;
-   memcpy(buf, fe->src->file, len);
+   if (len) memcpy(buf, fe->src->file, len);
    buf += len;
 
    // namelen + name
@@ -1879,7 +1879,7 @@ _font_entry_debug_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNU
      len = strlen(fe->src->name) + 1;
    memcpy(buf, &len, intsize);
    buf += intsize;
-   memcpy(buf, fe->src->name, len);
+   if (len) memcpy(buf, fe->src->name, len);
    buf += len;
 
    // rend_flags, size, dpi
