@@ -66,7 +66,8 @@ static int _ecore_x_event_gesture_id = 0;
 static int _ecore_x_event_xkb_id = 0;
 #endif /* ifdef ECORE_XKB */
 static int _ecore_x_event_handlers_num = 0;
-static void (**_ecore_x_event_handlers) (XEvent * event) = NULL;
+typedef void (*Ecore_X_Event_Handler) (XEvent *event);
+static Ecore_X_Event_Handler *_ecore_x_event_handlers = NULL;
 
 static int _ecore_x_init_count = 0;
 static int _ecore_x_grab_count = 0;
@@ -428,7 +429,7 @@ ecore_x_init(const char *name)
    ECORE_X_EVENT_HANDLERS_GROW(xkb_base, XkbNumberEvents);
 #endif
 
-   _ecore_x_event_handlers = calloc(_ecore_x_event_handlers_num, sizeof(void *));
+   _ecore_x_event_handlers = calloc(_ecore_x_event_handlers_num, sizeof(Ecore_X_Event_Handler));
    if (!_ecore_x_event_handlers)
      goto close_display;
 
