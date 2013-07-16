@@ -1468,6 +1468,7 @@ _ecore_ipc_event_server_data(void *data EINA_UNUSED, int ev_type EINA_UNUSED, vo
                   int max;
 
                   if (buf) free(buf);
+                  if (buf == svr->buf) svr->buf = NULL;
                   buf = NULL;
                   max = svr->max_buf_size;
                   if ((max < 0) || (msg.size <= max))
