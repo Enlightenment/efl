@@ -323,7 +323,7 @@ _ecore_con_eet_data(Ecore_Con_Reply *n, void *data, unsigned int size)
                        n->buffer_length = data_length;
                        n->buffer_current = 0;
                        if (n->buffer_handler)
-                         n->buffer = malloc(sizeof (char) * data_length);
+                         n->buffer = malloc(sizeof (unsigned char) * data_length);
                        else
                          n->buffer = (void*) 1;
                        if (n->buffer)
