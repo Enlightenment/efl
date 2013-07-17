@@ -728,6 +728,7 @@ _ecore_wl_input_cb_keyboard_modifiers(void *data, struct wl_keyboard *keyboard E
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!(input = data)) return;
+   if (!input->xkb.state) return;
 
    xkb_state_update_mask(input->xkb.state, depressed, latched, 
                          locked, 0, 0, group);
