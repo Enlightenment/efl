@@ -1,3 +1,7 @@
+2013-07-17  Guillaume Friloux
+        * Fix ecore_con_server_timeout_set(). It was changing the 
+          timeout value, but not the timer.
+
 2013-07-17  Mike Blumenkrantz
 
         * Ecore-X: add error messages for xlib, ECORE_X_ATOM_XDND_DIRECTSAVE0

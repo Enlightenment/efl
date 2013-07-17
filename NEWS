@@ -331,6 +331,7 @@ Fixes:
        ecore_con_client_uptime_get() is working.
      - Fix srv->start_time (initialization missing). So now
        ecore_con_server_uptime_get() is working for plain TCP connections.
+     - Fix ecore_con_server_timeout_set(). It will now reset the timer.
     * Ecore_Evas:
      - Fix build of Ecore_Evas_Extn on Solaris.
      - Fix many memory problems with ecore_evas_extn.

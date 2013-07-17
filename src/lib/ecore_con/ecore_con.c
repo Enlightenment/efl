@@ -555,6 +555,8 @@ ecore_con_server_timeout_set(Ecore_Con_Server *svr,
      svr->client_disconnect_time = timeout;
    else
      svr->disconnect_time = timeout;
+
+   _ecore_con_server_timer_update(svr);
 }
 
 EAPI double
