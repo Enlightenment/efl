@@ -1,3 +1,7 @@
+2013-07-17  Mike Blumenkrantz
+
+        * Ecore-X: add error messages for xlib
+
 2013-07-15  Mike Blumenkrantz
 
         * Ecore-X: fix BadMatch errors in ecore_x_image_get when requested size was larger than XImage size

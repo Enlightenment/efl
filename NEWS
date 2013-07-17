@@ -82,6 +82,7 @@ Additions:
        ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_MOUSE
        ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_ENABLE
        ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_DISABLE
+     - add error messages for xlib
     * Ecore_Wayland:
      - Store global wayland interfaces in a globals list so wayland programs
        can bind to other non-standard wayland protocol extensions.

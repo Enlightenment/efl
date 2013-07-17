@@ -99,6 +99,60 @@ static int
 _ecore_x_error_handle(Display *d,
                       XErrorEvent *ev)
 {
+   switch (ev->error_code)
+     {
+      case BadRequest:	/* bad request code */
+        ERR("BadRequest");
+        break;
+      case BadValue:	/* int parameter out of range */
+        ERR("BadValue");
+        break;
+      case BadWindow:	/* parameter not a Window */
+        ERR("BadWindow");
+        break;
+      case BadPixmap:	/* parameter not a Pixmap */
+        ERR("BadPixmap");
+        break;
+      case BadAtom:	/* parameter not an Atom */
+        ERR("BadAtom");
+        break;
+      case BadCursor:	/* parameter not a Cursor */
+        ERR("BadCursor");
+        break;
+      case BadFont:	/* parameter not a Font */
+        ERR("BadFont");
+        break;
+      case BadMatch:	/* parameter mismatch */
+        ERR("BadMatch");
+        break;
+      case BadDrawable:	/* parameter not a Pixmap or Window */
+        ERR("BadDrawable");
+        break;
+      case BadAccess:	/* depending on context */
+        ERR("BadAccess");
+        break;
+      case BadAlloc:	/* insufficient resources */
+        ERR("BadAlloc");
+        break;
+      case BadColor:	/* no such colormap */
+        ERR("BadColor");
+        break;
+      case BadGC:	/* parameter not a GC */
+        ERR("BadGC");
+        break;
+      case BadIDChoice:	/* choice not in range or already used */
+        ERR("BadIDChoice");
+        break;
+      case BadName:	/* font or color name doesn't exist */
+        ERR("BadName");
+        break;
+      case BadLength:	/* Request length incorrect */
+        ERR("BadLength");
+        break;
+      case BadImplementation:	/* server is defective */
+        ERR("BadImplementation");
+        break;
+     }
    if (d == _ecore_x_disp)
      {
         _error_request_code = ev->request_code;
