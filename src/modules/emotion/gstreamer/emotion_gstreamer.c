@@ -17,6 +17,9 @@
 #include <gst/video/gstvideosink.h>
 #include <gst/video/video.h>
 
+// forcibly disable x overlay window.. broken badly.
+#undef HAVE_ECORE_X
+
 #ifdef HAVE_ECORE_X
 # include <Ecore_X.h>
 # ifdef HAVE_XOVERLAY_H
