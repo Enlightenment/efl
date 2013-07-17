@@ -38,6 +38,7 @@ EAPI extern Ecore_X_Atom ECORE_X_ATOM_XDND_STATUS;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_XDND_LEAVE;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_XDND_DROP;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_XDND_FINISHED;
+EAPI extern Ecore_X_Atom ECORE_X_ATOM_XDND_DIRECTSAVE0; /**< @since 1.8 */
 
 /* dnd atoms that need to be exposed to the application interface */
 EAPI extern Ecore_X_Atom ECORE_X_DND_ACTION_COPY;

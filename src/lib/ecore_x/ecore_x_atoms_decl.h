@@ -30,6 +30,7 @@ EAPI Ecore_X_Atom ECORE_X_ATOM_XDND_STATUS = 0;
 EAPI Ecore_X_Atom ECORE_X_ATOM_XDND_LEAVE = 0;
 EAPI Ecore_X_Atom ECORE_X_ATOM_XDND_DROP = 0;
 EAPI Ecore_X_Atom ECORE_X_ATOM_XDND_FINISHED = 0;
+EAPI Ecore_X_Atom ECORE_X_ATOM_XDND_DIRECTSAVE0 = 0;
 
 /* dnd atoms that need to be exposed to the application interface */
 EAPI Ecore_X_Atom ECORE_X_DND_ACTION_COPY = 0;
@@ -380,6 +381,7 @@ const Atom_Item atom_items[] =
    { "XdndLeave", &ECORE_X_ATOM_XDND_LEAVE },
    { "XdndDrop", &ECORE_X_ATOM_XDND_DROP },
    { "XdndFinished", &ECORE_X_ATOM_XDND_FINISHED },
+   { "XdndDirectSave0", &ECORE_X_ATOM_XDND_DIRECTSAVE0 },
 
    { "XdndActionCopy", &ECORE_X_DND_ACTION_COPY },
    { "XdndActionMove", &ECORE_X_DND_ACTION_MOVE },

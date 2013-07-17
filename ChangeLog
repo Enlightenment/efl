@@ -1,6 +1,6 @@
 2013-07-17  Mike Blumenkrantz
 
-        * Ecore-X: add error messages for xlib
+        * Ecore-X: add error messages for xlib, ECORE_X_ATOM_XDND_DIRECTSAVE0
 
 2013-07-15  Mike Blumenkrantz
 
