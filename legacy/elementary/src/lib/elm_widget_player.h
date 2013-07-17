@@ -36,6 +36,7 @@ struct _Elm_Player_Smart_Data
    
    Ecore_Timer          *delay_update;
    double                last_update_time;
+   Eina_Bool             dragging : 1;
 };
 
 /**

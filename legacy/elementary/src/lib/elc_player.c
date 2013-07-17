@@ -176,7 +176,7 @@ _update_slider(void *data,
 
    elm_object_disabled_set(sd->slider, !seekable);
    elm_slider_min_max_set(sd->slider, 0, length);
-   elm_slider_value_set(sd->slider, pos);
+   if (!sd->dragging) elm_slider_value_set(sd->slider, pos);
    sd->last_update_time = ecore_loop_time_get();
    ELM_SAFE_FREE(sd->delay_update, ecore_timer_del);
 }
@@ -199,10 +199,10 @@ _update_frame(void *data,
    ELM_PLAYER_DATA_GET(data, sd);
    if (!sd) return;
    
-   if ((ecore_loop_time_get() - sd->last_update_time) < 0.25)
+   if ((ecore_loop_time_get() - sd->last_update_time) < 0.1)
      {
         if (sd->delay_update) ecore_timer_del(sd->delay_update);
-        sd->delay_update = ecore_timer_add(0.30, _update_delay, data);
+        sd->delay_update = ecore_timer_add(0.15, _update_delay, data);
         return;
      }
    _update_slider(data, obj, event_info);
@@ -215,7 +215,26 @@ _update_position(void *data,
 {
    ELM_PLAYER_DATA_GET(data, sd);
 
+   if ((ecore_loop_time_get() - sd->last_update_time) < 0.1) return;
    elm_video_play_position_set(sd->video, elm_slider_value_get(sd->slider));
+}
+
+static void
+_drag_start(void *data,
+            Evas_Object *obj __UNUSED__,
+            void *event_info __UNUSED__)
+{
+   ELM_PLAYER_DATA_GET(data, sd);
+   sd->dragging = EINA_TRUE;
+}
+
+static void
+_drag_stop(void *data,
+            Evas_Object *obj __UNUSED__,
+            void *event_info __UNUSED__)
+{
+   ELM_PLAYER_DATA_GET(data, sd);
+   sd->dragging = EINA_FALSE;
 }
 
 static void
@@ -544,6 +563,10 @@ _elm_player_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    elm_layout_content_set(obj, "media_player/slider", priv->slider);
    evas_object_smart_callback_add
      (priv->slider, "changed", _update_position, obj);
+   evas_object_smart_callback_add
+     (priv->slider, "slider,drag,start", _drag_start, obj);
+   evas_object_smart_callback_add
+     (priv->slider, "slider,drag,stop", _drag_stop, obj);
 
    elm_layout_sizing_eval(obj);
    elm_widget_can_focus_set(obj, EINA_TRUE);
