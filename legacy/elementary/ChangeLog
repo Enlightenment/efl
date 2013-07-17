@@ -1510,3 +1510,7 @@
         the imf is available, the keyboard mode should be decided by ime, but
         not entry. This prevents the asynchronous states between ime and
         conformant.
+
+2013-07-17  ChunEon Park (Hermet)
+
+        * Layout : Send visible/hidden signals whenever contents are set/unset (not only icon and end parts)
