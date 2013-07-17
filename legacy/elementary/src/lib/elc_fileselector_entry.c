@@ -79,7 +79,6 @@ _FILE_CHOSEN_fwd(void *data,
    ELM_FILESELECTOR_ENTRY_DATA_GET(data, sd);
 
    s = elm_entry_utf8_to_markup(file);
-   if (!s) return;
    elm_object_text_set(sd->entry, s);
    free(s);
    evas_object_smart_callback_call(data, SIG_FILE_CHOSEN, event_info);
@@ -560,11 +559,8 @@ _path_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 
    elm_fileselector_button_path_set(sd->button, path);
    s = elm_entry_utf8_to_markup(path);
-   if (s)
-     {
-        elm_object_text_set(sd->entry, s);
-        free(s);
-     }
+   elm_object_text_set(sd->entry, s);
+   free(s);
 }
 
 EAPI const char *
