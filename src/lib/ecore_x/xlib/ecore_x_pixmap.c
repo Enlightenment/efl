@@ -54,6 +54,7 @@ EAPI void
 ecore_x_pixmap_free(Ecore_X_Pixmap pmap)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   if (!pmap) return;
    XFreePixmap(_ecore_x_disp, pmap);
 }
 
