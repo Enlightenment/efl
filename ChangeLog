@@ -4,7 +4,8 @@
 
 2013-07-17  Mike Blumenkrantz
 
-        * Ecore-X: add error messages for xlib, ECORE_X_ATOM_XDND_DIRECTSAVE0
+        * Ecore-X: add error messages for xlib, ECORE_X_ATOM_XDND_DIRECTSAVE0,
+                   fix ecore_x_e_comp_pixmap_set to delete pixmap atom correctly
 
 2013-07-15  Mike Blumenkrantz
 

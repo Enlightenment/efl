@@ -346,6 +346,7 @@ Fixes:
      - Fix selection parser to not overrun buffer read by using longs on 64bit.
      - Fix x11 selection trailing nul byte in text.
      - Fix BadMatch errors in ecore_x_image_get when requested size was larger than XImage size
+     - Fix ecore_x_e_comp_pixmap_set to delete pixmap atom correctly
     * Ecore_Wayland:
      - Fix return type of function ecore_wl_outputs_get().
     * Ecore_Input_Evas:

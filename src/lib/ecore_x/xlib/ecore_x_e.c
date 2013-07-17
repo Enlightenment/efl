@@ -1685,7 +1685,7 @@ ecore_x_e_comp_pixmap_set(Ecore_X_Window win,
      ecore_x_window_prop_xid_set(win, ECORE_X_ATOM_E_COMP_PIXMAP,
                                  ECORE_X_ATOM_PIXMAP, &pixmap, 1);
    else
-     ecore_x_window_prop_property_del(win, pixmap);
+     ecore_x_window_prop_property_del(win, ECORE_X_ATOM_E_COMP_PIXMAP);
 }
 
 EAPI Ecore_X_Pixmap
