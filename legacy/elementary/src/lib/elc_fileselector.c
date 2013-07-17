@@ -662,32 +662,29 @@ _on_item_selected(void *data,
    struct sel_data *sdata;
    void *old_sd;
    char *dir;
+   const char *path;
 
    ELM_FILESELECTOR_DATA_GET(data, sd);
 
+   path = elm_object_item_data_get(it);
+   if (!path)
+     return;
+
    sdata = malloc(sizeof(*sdata));
    sdata->fs = data;
-   sdata->path = elm_object_item_data_get(it);
+   sdata->path = path;
 
-   if (!sdata->path)
+   if (sd->only_folder)
+     eina_stringshare_replace(&sd->path, path);
+   else
      {
-        eina_stringshare_replace(&sd->path, "");
-        goto end;
-     }
+        dir = ecore_file_dir_get(sdata->path);
+        if (!dir) return;
 
-   dir = sd->only_folder ? strdup(sdata->path) :
-     ecore_file_dir_get(sdata->path);
-   if (dir)
-     {
         eina_stringshare_replace(&sd->path, dir);
         free(dir);
      }
-   else
-     {
-        eina_stringshare_replace(&sd->path, "");
-     }
 
-end:
    if (sd->sel_idler)
      {
         old_sd = ecore_idler_del(sd->sel_idler);
