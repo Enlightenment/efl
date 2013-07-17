@@ -432,20 +432,18 @@ _edje_pending_timer_cb(void *data)
    return ECORE_CALLBACK_CANCEL;
 }
 
-EO_CALLBACKS_ARRAY_DEFINE(edje_callbacks, 8,
+EO_CALLBACKS_ARRAY_DEFINE(edje_callbacks,
                           { EVAS_OBJECT_EVENT_HOLD, _edje_hold_signal_cb },
                           { EVAS_OBJECT_EVENT_MOUSE_IN, _edje_mouse_in_signal_cb },
                           { EVAS_OBJECT_EVENT_MOUSE_OUT, _edje_mouse_out_signal_cb },
                           { EVAS_OBJECT_EVENT_MOUSE_DOWN, _edje_mouse_down_signal_cb },
                           { EVAS_OBJECT_EVENT_MOUSE_UP, _edje_mouse_up_signal_cb },
                           { EVAS_OBJECT_EVENT_MOUSE_MOVE, _edje_mouse_move_signal_cb },
-                          { EVAS_OBJECT_EVENT_MOUSE_WHEEL, _edje_mouse_wheel_signal_cb },
-                          { NULL, NULL });
+                          { EVAS_OBJECT_EVENT_MOUSE_WHEEL, _edje_mouse_wheel_signal_cb });
 
-EO_CALLBACKS_ARRAY_DEFINE(edje_focus_callbacks, 3,
+EO_CALLBACKS_ARRAY_DEFINE(edje_focus_callbacks,
                           { EVAS_OBJECT_EVENT_FOCUS_IN, _edje_focus_in_signal_cb },
-                          { EVAS_OBJECT_EVENT_FOCUS_OUT, _edje_focus_out_signal_cb },
-                          { NULL, NULL });
+                          { EVAS_OBJECT_EVENT_FOCUS_OUT, _edje_focus_out_signal_cb });
 
 void
 _edje_callbacks_add(Evas_Object *obj, Edje *ed, Edje_Real_Part *rp)

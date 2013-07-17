@@ -1307,16 +1307,19 @@ struct _Eo_Callback_Array_Item
    Eo_Event_Cb func; /**< The callback function. */
 };
 
-#define EO_CALLBACKS_ARRAY_DEFINE(Name, Count, ...)                     \
+#define EO_CALLBACKS_ARRAY_DEFINE(Name, ...)                            \
   static Eo_Callback_Array_Item *                                       \
   Name(void)                                                            \
   {                                                                     \
-     static Eo_Callback_Array_Item internal[Count] = { { 0 } };         \
+     static Eo_Callback_Array_Item internal[sizeof ((Eo_Callback_Array_Item[]) { __VA_ARGS__ }) / \
+                                            sizeof (Eo_Callback_Array_Item) + \
+                                            1] = { { 0 } };             \
      if (internal[0].desc == NULL)                                      \
        {                                                                \
           memcpy(internal,                                              \
-                 ((Eo_Callback_Array_Item[Count]) { __VA_ARGS__ }),     \
-                 sizeof(Eo_Callback_Array_Item) * Count);               \
+                 ((Eo_Callback_Array_Item[]) { __VA_ARGS__, { NULL, NULL } }), \
+                 sizeof (Eo_Callback_Array_Item) +                      \
+                 sizeof ((Eo_Callback_Array_Item[]) { __VA_ARGS__ }));  \
        }                                                                \
      return internal;                                                   \
   }
