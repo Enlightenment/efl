@@ -23,7 +23,7 @@
  * This widget emits the following signals, besides the ones sent from
  * @ref Layout:
  * - @c "press" - The panes has been pressed (button wasn't released yet).
- * - @c "unpressed" - The panes was released after being pressed.
+ * - @c "unpress" - The panes was released after being pressed.
  * - @c "clicked" - The panes has been clicked>
  * - @c "clicked,double" - The panes has been double clicked
  *
