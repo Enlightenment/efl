@@ -40,6 +40,7 @@ struct _Elm_Event_Cb_Data
 
 struct _Elm_Translate_String_Data
 {
+   EINA_INLIST;
    Eina_Stringshare *id;
    Eina_Stringshare *domain;
    Eina_Stringshare *string;
@@ -305,11 +306,15 @@ _elm_widget_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
      }
    sd->tooltips = eina_list_free(sd->tooltips); /* should be empty anyway */
    sd->cursors = eina_list_free(sd->cursors); /* should be empty anyway */
-   EINA_LIST_FREE(sd->translate_strings, ts)
+   while (sd->translate_strings)
      {
+        ts = EINA_INLIST_CONTAINER_GET(sd->translate_strings,
+                                       Elm_Translate_String_Data);
         eina_stringshare_del(ts->id);
         eina_stringshare_del(ts->domain);
         eina_stringshare_del(ts->string);
+        sd->translate_strings = eina_inlist_remove(sd->translate_strings,
+                                                   sd->translate_strings);
         free(ts);
      }
 
@@ -3815,16 +3820,15 @@ elm_widget_domain_translatable_part_text_set(Evas_Object *obj,
 }
 
 static Elm_Translate_String_Data *
-_translate_string_data_get(Eina_List *translate_strings, const char *part)
+_translate_string_data_get(Eina_Inlist *translate_strings, const char *part)
 {
    Elm_Translate_String_Data *ts;
    Eina_Stringshare *str;
-   Eina_List *l;
 
-   if (eina_list_count(translate_strings) == 0) return NULL;
+   if (!translate_strings) return NULL;
 
    str = eina_stringshare_add(part);
-   EINA_LIST_FOREACH(translate_strings, l, ts)
+   EINA_INLIST_FOREACH(translate_strings, ts)
      {
         if (ts->id == str) break;
         else ts = NULL;
@@ -3835,9 +3839,9 @@ _translate_string_data_get(Eina_List *translate_strings, const char *part)
 }
 
 static Elm_Translate_String_Data *
-_part_text_translatable_set(Eina_List **translate_strings, const char *part, Eina_Bool translatable, Eina_Bool preset)
+_part_text_translatable_set(Eina_Inlist **translate_strings, const char *part, Eina_Bool translatable, Eina_Bool preset)
 {
-   Eina_List *t;
+   Eina_Inlist *t;
    Elm_Translate_String_Data *ts;
    t = *translate_strings;
    ts = _translate_string_data_get(t, part);
@@ -3850,7 +3854,7 @@ _part_text_translatable_set(Eina_List **translate_strings, const char *part, Ein
              if (!ts) return NULL;
 
              ts->id = eina_stringshare_add(part);
-             t = eina_list_append(t, ts);
+             t = eina_inlist_append(t, (Eina_Inlist*) ts);
           }
         if (preset) ts->preset = EINA_TRUE;
      }
@@ -3860,7 +3864,7 @@ _part_text_translatable_set(Eina_List **translate_strings, const char *part, Ein
      {
         if (ts)
           {
-             t = eina_list_remove(t, ts);
+             t = eina_inlist_remove(t, EINA_INLIST_GET(ts));
              eina_stringshare_del(ts->id);
              eina_stringshare_del(ts->domain);
              eina_stringshare_del(ts->string);
@@ -3979,7 +3983,7 @@ elm_widget_translate(Evas_Object *obj)
 }
 
 static const char*
-_part_text_translate(Eina_List *translate_strings,
+_part_text_translate(Eina_Inlist *translate_strings,
                      const char *part,
                      const char *text)
 {
@@ -4035,7 +4039,7 @@ _elm_widget_translate(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list 
 
 #ifdef HAVE_GETTEXT
    Elm_Translate_String_Data *ts;
-   EINA_LIST_FOREACH(sd->translate_strings, l, ts)
+   EINA_INLIST_FOREACH(sd->translate_strings, ts)
      {
         if (!ts->string) continue;
         const char *s = dgettext(ts->domain, ts->string);
@@ -4905,11 +4909,15 @@ _elm_widget_item_free(Elm_Widget_Item *item)
         free(wisd);
      }
 
-   EINA_LIST_FREE(item->translate_strings, ts)
+   while (item->translate_strings)
      {
+        ts = EINA_INLIST_CONTAINER_GET(item->translate_strings,
+                                       Elm_Translate_String_Data);
         eina_stringshare_del(ts->id);
         eina_stringshare_del(ts->domain);
         eina_stringshare_del(ts->string);
+        item->translate_strings = eina_inlist_remove(item->translate_strings,
+                                                     item->translate_strings);
         free(ts);
      }
 
@@ -5747,8 +5755,7 @@ _elm_widget_item_translate(Elm_Widget_Item *item)
 
 #ifdef HAVE_GETTEXT
    Elm_Translate_String_Data *ts;
-   const Eina_List *l;
-   EINA_LIST_FOREACH(item->translate_strings, l, ts)
+   EINA_INLIST_FOREACH(item->translate_strings, ts)
      {
         if (!ts->string) continue;
         const char *s = dgettext(ts->domain, ts->string);

@@ -402,7 +402,7 @@ typedef struct _Elm_Widget_Smart_Data
    int                           child_drag_x_locked;
    int                           child_drag_y_locked;
 
-   Eina_List                    *translate_strings;
+   Eina_Inlist                  *translate_strings;
    Eina_List                    *focus_chain;
    Eina_List                    *event_cb;
 
@@ -575,7 +575,7 @@ struct _Elm_Widget_Item
    Evas_Object                   *access_obj;
    const char                    *access_info;
    Eina_List                     *access_order;
-   Eina_List                     *translate_strings;
+   Eina_Inlist                   *translate_strings;
    Eina_List                     *signals;
 
    Eina_Bool                      disabled : 1;
