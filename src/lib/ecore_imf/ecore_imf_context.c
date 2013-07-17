@@ -182,6 +182,10 @@ ecore_imf_context_del(Ecore_IMF_Context *ctx)
                          "ecore_imf_context_del");
         return;
      }
+
+   if (show_req_ctx == ctx)
+       show_req_ctx = NULL;
+
    if (ctx->klass->del) ctx->klass->del(ctx);
 
    if (ctx->callbacks)
