@@ -4,6 +4,10 @@
 #include <Eina.h>
 #include "evas_cs2.h"
 
+#ifdef CRIT
+#undef CRIT
+#endif
+#define CRIT(...) EINA_LOG_DOM_CRIT(_evas_cserve2_bin_log_dom, __VA_ARGS__)
 #ifdef ERR
 #undef ERR
 #endif
