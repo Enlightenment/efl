@@ -156,7 +156,7 @@ bin_evil_evil_suite_LDADD = @USE_EVIL_LIBS@ @DL_LIBS@ -lm
 bin_evil_evil_suite_DEPENDENCIES = @USE_EVIL_INTERNAL_LIBS@
 
 bin_evil_test_evil_SOURCES = bin/evil/test_evil.c
-bin_evil_test_evil_LDADD = @USE_EVIL_LIBS@
+bin_evil_test_evil_LDADD = @USE_EVIL_LIBS@ @DL_LIBS@
 bin_evil_test_evil_DEPENDENCIES = @USE_EVIL_INTERNAL_LIBS@
 
 endif
