@@ -368,7 +368,7 @@ Ecore_Event_Mouse_Button *_ecore_mouse_button(int event,
 void _ecore_x_modifiers_get(void);
 KeySym _ecore_x_XKeycodeToKeysym(Display *display, KeyCode keycode, int index);
 
-#define LOGFNS 0
+//#define LOGFNS 1
 
 #ifdef LOGFNS
 #include <stdio.h>
