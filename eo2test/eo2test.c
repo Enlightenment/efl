@@ -18,7 +18,7 @@ main()
    eo2_do(obj,
          a = inst_func_set(eo2_o, 32, 12);
          inst_func_set(eo2_o, 10, 31);
-         b = inst_func_set(eo2_o, 50, 42);
+         b = eo2_callv(inst_func_set, 50, 42);
          a = inst_func_get(eo2_o);
          );
 
