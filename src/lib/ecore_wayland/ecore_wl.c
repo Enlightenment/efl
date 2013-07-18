@@ -26,6 +26,7 @@ static void _ecore_wl_signal_exit_free(void *data EINA_UNUSED, void *event);
 static int _ecore_wl_init_count = 0;
 static Eina_Bool _ecore_wl_animator_busy = EINA_FALSE;
 static Eina_Bool _ecore_wl_fatal_error = EINA_FALSE;
+static Eina_Bool _ecore_wl_server_mode = EINA_FALSE;
 
 static const struct wl_registry_listener _ecore_wl_registry_listener =
 {
@@ -164,8 +165,6 @@ ecore_wl_init(const char *name)
    wl_registry_add_listener(_ecore_wl_disp->wl.registry,
                             &_ecore_wl_registry_listener, _ecore_wl_disp);
 
-   ecore_wl_display_iterate();
-
    if (!_ecore_wl_xkb_init(_ecore_wl_disp))
      {
         ERR("Could not initialize XKB");
@@ -293,7 +292,8 @@ ecore_wl_dpi_get(void)
 EAPI void
 ecore_wl_display_iterate(void)
 {
-   wl_display_dispatch(_ecore_wl_disp->wl.display);
+   if (!_ecore_wl_server_mode)
+     wl_display_dispatch(_ecore_wl_disp->wl.display);
 }
 
 /* @since 1.8 */
@@ -335,6 +335,12 @@ ecore_wl_cursor_get(const char *cursor_name)
 
    return wl_cursor_theme_get_cursor(_ecore_wl_disp->cursor_theme,
                                      cursor_name);
+}
+
+EAPI void 
+ecore_wl_server_mode_set(Eina_Bool on)
+{
+   _ecore_wl_server_mode = on;
 }
 
 /* local functions */
