@@ -120,27 +120,27 @@ edje_load_error_str(Edje_Load_Error error)
    switch (error)
      {
       case EDJE_LOAD_ERROR_NONE:
-	 return "No Error";
+         return "No Error";
       case EDJE_LOAD_ERROR_GENERIC:
-	 return "Generic Error";
+         return "Generic Error";
       case EDJE_LOAD_ERROR_DOES_NOT_EXIST:
-	 return "File Does Not Exist";
+         return "File Does Not Exist";
       case EDJE_LOAD_ERROR_PERMISSION_DENIED:
-	 return "Permission Denied";
+         return "Permission Denied";
       case EDJE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED:
-	 return "Resource Allocation Failed";
+         return "Resource Allocation Failed";
       case EDJE_LOAD_ERROR_CORRUPT_FILE:
-	 return "Corrupt File";
+         return "Corrupt File";
       case EDJE_LOAD_ERROR_UNKNOWN_FORMAT:
-	 return "Unknown Format";
+         return "Unknown Format";
       case EDJE_LOAD_ERROR_INCOMPATIBLE_FILE:
-	 return "Incompatible File";
+         return "Incompatible File";
       case EDJE_LOAD_ERROR_UNKNOWN_COLLECTION:
-	 return "Unknown Collection";
+         return "Unknown Collection";
       case EDJE_LOAD_ERROR_RECURSIVE_REFERENCE:
-	 return "Recursive Reference";
+         return "Recursive Reference";
       default:
-	 return "Unknown Error";
+         return "Unknown Error";
      }
 }
 
@@ -156,17 +156,17 @@ edje_file_collection_list(const char *file)
    edf = _edje_cache_file_coll_open(file, NULL, &error_ret, NULL, NULL);
    if (edf)
      {
-	Eina_Iterator *i;
-	const char *key;
+        Eina_Iterator *i;
+        const char *key;
 
-	i = eina_hash_iterator_key_new(edf->collection);
+        i = eina_hash_iterator_key_new(edf->collection);
 
-	EINA_ITERATOR_FOREACH(i, key)
-	  lst = eina_list_append(lst, eina_stringshare_add(key));
+        EINA_ITERATOR_FOREACH(i, key)
+           lst = eina_list_append(lst, eina_stringshare_add(key));
 
-	eina_iterator_free(i);
+        eina_iterator_free(i);
 
-	_edje_cache_file_unref(edf);
+        _edje_cache_file_unref(edf);
      }
    return lst;
 }
@@ -177,7 +177,7 @@ edje_file_collection_list_free(Eina_List *lst)
    while (lst)
      {
         if (eina_list_data_get(lst)) eina_stringshare_del(eina_list_data_get(lst));
-	lst = eina_list_remove(lst, eina_list_data_get(lst));
+        lst = eina_list_remove(lst, eina_list_data_get(lst));
      }
 }
 
@@ -253,15 +253,15 @@ edje_file_data_get(const char *file, const char *key)
 
    if (key)
      {
-	edf = _edje_cache_file_coll_open(file, NULL, &error_ret, NULL, NULL);
-	if (edf)
-	  {
-	     str = (char*) edje_string_get(eina_hash_find(edf->data, key));
+        edf = _edje_cache_file_coll_open(file, NULL, &error_ret, NULL, NULL);
+        if (edf)
+          {
+             str = (char*) edje_string_get(eina_hash_find(edf->data, key));
 
-	     if (str) str = strdup(str);
+             if (str) str = strdup(str);
 
-	     _edje_cache_file_unref(edf);
-	  }
+             _edje_cache_file_unref(edf);
+          }
      }
    return str;
 }
@@ -272,8 +272,8 @@ _edje_programs_patterns_clean(Edje_Part_Collection *edc)
    _edje_signals_sources_patterns_clean(&edc->patterns.programs);
 
    eina_rbtree_delete(edc->patterns.programs.exact_match,
-		      EINA_RBTREE_FREE_CB(edje_match_signal_source_free),
-		      NULL);
+                      EINA_RBTREE_FREE_CB(edje_match_signal_source_free),
+                      NULL);
    edc->patterns.programs.exact_match = NULL;
 
    free(edc->patterns.programs.u.programs.globing);
@@ -354,10 +354,10 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 
    if (ed->file && ed->file->external_dir)
      {
-	unsigned int i;
+        unsigned int i;
 
-	for (i = 0; i < ed->file->external_dir->entries_count; ++i)
-	  edje_module_load(ed->file->external_dir->entries[i].entry);
+        for (i = 0; i < ed->file->external_dir->entries_count; ++i)
+          edje_module_load(ed->file->external_dir->entries[i].entry);
      }
 
    _edje_textblock_styles_add(ed);
@@ -373,21 +373,21 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
           ed->is_rtl = (ed->collection->prop.orientation ==
                         EDJE_ORIENTATION_RTL);
 
-	ed->groups = eina_list_append(ed->groups, ed);
+        ed->groups = eina_list_append(ed->groups, ed);
 
-	if (ed->collection->script_only)
-	  {
-	     ed->load_error = EDJE_LOAD_ERROR_NONE;
-	     _edje_script_only_init(ed);
-	  }
-	else if (ed->collection->lua_script_only)
-	  {
-	     ed->load_error = EDJE_LOAD_ERROR_NONE;
-	     _edje_lua_script_only_init(ed);
-	  }
-	else
-	  {
-	     unsigned int i;
+        if (ed->collection->script_only)
+          {
+             ed->load_error = EDJE_LOAD_ERROR_NONE;
+             _edje_script_only_init(ed);
+          }
+        else if (ed->collection->lua_script_only)
+          {
+             ed->load_error = EDJE_LOAD_ERROR_NONE;
+             _edje_lua_script_only_init(ed);
+          }
+        else
+          {
+             unsigned int i;
 
              if (ed->collection->physics_enabled)
 #ifdef HAVE_EPHYSICS
@@ -408,38 +408,38 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
                ERR("Edje compiled without support to physics.");
 #endif
 
-	     /* colorclass stuff */
-	     for (i = 0; i < ed->collection->parts_count; ++i)
-	       {
-		  Edje_Part *ep;
-		  unsigned int k;
+               /* colorclass stuff */
+               for (i = 0; i < ed->collection->parts_count; ++i)
+                 {
+                    Edje_Part *ep;
+                    unsigned int k;
 
-		  ep = ed->collection->parts[i];
+                    ep = ed->collection->parts[i];
 
-		  /* Register any color classes in this parts descriptions. */
-		  if ((ep->default_desc) && (ep->default_desc->color_class))
-		    _edje_color_class_member_add(ed, ep->default_desc->color_class);
+                    /* Register any color classes in this parts descriptions. */
+                    if ((ep->default_desc) && (ep->default_desc->color_class))
+                      _edje_color_class_member_add(ed, ep->default_desc->color_class);
 
-		  for (k = 0; k < ep->other.desc_count; k++)
-		    {
-		       Edje_Part_Description_Common *desc;
+                    for (k = 0; k < ep->other.desc_count; k++)
+                      {
+                         Edje_Part_Description_Common *desc;
 
-		       desc = ep->other.desc[k];
+                         desc = ep->other.desc[k];
 
-		       if (desc->color_class)
-			 _edje_color_class_member_add(ed, desc->color_class);
-		    }
-	       }
-	     /* build real parts */
-	     for (n = 0; n < ed->collection->parts_count; n++)
-	       {
-		  Edje_Part *ep;
-                  Eina_Bool memerr = EINA_FALSE;
+                         if (desc->color_class)
+                           _edje_color_class_member_add(ed, desc->color_class);
+                      }
+                 }
+               /* build real parts */
+               for (n = 0; n < ed->collection->parts_count; n++)
+                 {
+                    Edje_Part *ep;
+                    Eina_Bool memerr = EINA_FALSE;
 
-		  ep = ed->collection->parts[n];
+                    ep = ed->collection->parts[n];
 
-                  if (ep->nested_children_count)
-                    {  /* Add object to nested parts list */
+                    if (ep->nested_children_count)
+                      {  /* Add object to nested parts list */
                        st_nested = malloc(sizeof(*st_nested));
                        nested_smart = st_nested->o = edje_smart_nested_add(tev);
 
@@ -451,150 +451,150 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
                        evas_object_show(st_nested->o);
 
                        eina_array_push(nested, st_nested);
-                    }
+                      }
 
-		  rp = eina_mempool_malloc(_edje_real_part_mp, sizeof(Edje_Real_Part));
-		  if (!rp)
-		    {
-                       /* FIXME: destroy all allocated ressource, need to have a common exit point */
-		       ed->load_error = EDJE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
-                       goto on_error;
-		    }
+                    rp = eina_mempool_malloc(_edje_real_part_mp, sizeof(Edje_Real_Part));
+                    if (!rp)
+                      {
+                         /* FIXME: destroy all allocated ressource, need to have a common exit point */
+                         ed->load_error = EDJE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+                         goto on_error;
+                      }
 
-		  memset(rp, 0, sizeof (Edje_Real_Part));
+                    memset(rp, 0, sizeof (Edje_Real_Part));
 
-		  rp->param1.p.map = eina_cow_alloc(_edje_calc_params_map_cow);
+                    rp->param1.p.map = eina_cow_alloc(_edje_calc_params_map_cow);
 #ifdef HAVE_EPHYSICS
-		  rp->param1.p.physics = eina_cow_alloc(_edje_calc_params_physics_cow);
+                    rp->param1.p.physics = eina_cow_alloc(_edje_calc_params_physics_cow);
 #endif
 
-		  if ((ep->dragable.x != 0) || (ep->dragable.y != 0))
-		    {
-		       rp->drag = calloc(1, sizeof (Edje_Real_Part_Drag));
-		       if (!rp->drag)
-			 {
-			    ed->load_error = EDJE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
-                            goto on_error;
-			 }
+                    if ((ep->dragable.x != 0) || (ep->dragable.y != 0))
+                      {
+                         rp->drag = calloc(1, sizeof (Edje_Real_Part_Drag));
+                         if (!rp->drag)
+                           {
+                              ed->load_error = EDJE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+                              goto on_error;
+                           }
 
-		       rp->drag->step.x = FROM_INT(ep->dragable.step_x);
-		       rp->drag->step.y = FROM_INT(ep->dragable.step_y);
-		    }
-                  // allow part type specific data - this keeps real_part smaller
-		  switch (ep->type)
-                    {
-		     case EDJE_PART_TYPE_TEXT:
-		     case EDJE_PART_TYPE_TEXTBLOCK:
-                       rp->type = EDJE_RP_TYPE_TEXT;
-                       rp->typedata.text = calloc(1, sizeof(Edje_Real_Part_Text));
-                       if (!rp->typedata.text) memerr = EINA_TRUE;
-                       break;
-		     case EDJE_PART_TYPE_GROUP:
-		     case EDJE_PART_TYPE_SWALLOW:
-		     case EDJE_PART_TYPE_EXTERNAL:
-                       rp->type = EDJE_RP_TYPE_SWALLOW;
-                       rp->typedata.swallow = calloc(1, sizeof(Edje_Real_Part_Swallow));
-                       if (!rp->typedata.swallow) memerr = EINA_TRUE;
-                       break;
-		     case EDJE_PART_TYPE_BOX:
-		     case EDJE_PART_TYPE_TABLE:
-                       rp->type = EDJE_RP_TYPE_CONTAINER;
-                       rp->typedata.container = calloc(1, sizeof(Edje_Real_Part_Container));
-                       if (!rp->typedata.container) memerr = EINA_TRUE;
-                       break;
-                     default:
-                       break;
-                    }
-                  
-                  if (memerr)
-                    {
-                       if (rp->drag) free(rp->drag);
-                       ed->load_error = EDJE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
-                       eina_mempool_free(_edje_real_part_mp, rp);
-                       evas_event_thaw(tev);
-                       evas_event_thaw_eval(tev);
-                       return 0;
-                    }
+                         rp->drag->step.x = FROM_INT(ep->dragable.step_x);
+                         rp->drag->step.y = FROM_INT(ep->dragable.step_y);
+                      }
+                    // allow part type specific data - this keeps real_part smaller
+                    switch (ep->type)
+                      {
+                       case EDJE_PART_TYPE_TEXT:
+                       case EDJE_PART_TYPE_TEXTBLOCK:
+                          rp->type = EDJE_RP_TYPE_TEXT;
+                          rp->typedata.text = calloc(1, sizeof(Edje_Real_Part_Text));
+                          if (!rp->typedata.text) memerr = EINA_TRUE;
+                          break;
+                       case EDJE_PART_TYPE_GROUP:
+                       case EDJE_PART_TYPE_SWALLOW:
+                       case EDJE_PART_TYPE_EXTERNAL:
+                          rp->type = EDJE_RP_TYPE_SWALLOW;
+                          rp->typedata.swallow = calloc(1, sizeof(Edje_Real_Part_Swallow));
+                          if (!rp->typedata.swallow) memerr = EINA_TRUE;
+                          break;
+                       case EDJE_PART_TYPE_BOX:
+                       case EDJE_PART_TYPE_TABLE:
+                          rp->type = EDJE_RP_TYPE_CONTAINER;
+                          rp->typedata.container = calloc(1, sizeof(Edje_Real_Part_Container));
+                          if (!rp->typedata.container) memerr = EINA_TRUE;
+                          break;
+                       default:
+                          break;
+                      }
 
-		  _edje_ref(ed);
-		  rp->part = ep;
-                  eina_array_push(&parts, rp);
-		  rp->param1.description = 
-                    _edje_part_description_find(ed, rp, "default", 0.0);
-		  rp->chosen_description = rp->param1.description;
-		  if (!rp->param1.description)
-		    ERR("no default part description for '%s'!",
-                        rp->part->name);
+                    if (memerr)
+                      {
+                         if (rp->drag) free(rp->drag);
+                         ed->load_error = EDJE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+                         eina_mempool_free(_edje_real_part_mp, rp);
+                         evas_event_thaw(tev);
+                         evas_event_thaw_eval(tev);
+                         return 0;
+                      }
 
-		  switch (ep->type)
-		    {
-		     case EDJE_PART_TYPE_RECTANGLE:
-			rp->object = evas_object_rectangle_add(ed->base->evas);
-			break;
-                     case EDJE_PART_TYPE_PROXY:
-		     case EDJE_PART_TYPE_IMAGE:
-			rp->object = evas_object_image_add(ed->base->evas);
-			break;
-		     case EDJE_PART_TYPE_TEXT:
-			_edje_text_part_on_add(ed, rp);
-			rp->object = evas_object_text_add(ed->base->evas);
-			evas_object_text_font_source_set(rp->object, ed->path);
-			break;
-		     case EDJE_PART_TYPE_GROUP:
-                        sources = eina_list_append(sources, rp);
-		     case EDJE_PART_TYPE_SWALLOW:
-		     case EDJE_PART_TYPE_EXTERNAL:
-                        if (ep->type == EDJE_PART_TYPE_EXTERNAL)
-                          externals = eina_list_append(externals, rp);
-			rp->object = evas_object_rectangle_add(ed->base->evas);
-			evas_object_color_set(rp->object, 0, 0, 0, 0);
-			evas_object_pass_events_set(rp->object, 1);
-			evas_object_pointer_mode_set(rp->object, EVAS_OBJECT_POINTER_MODE_NOGRAB);
-			_edje_callbacks_focus_add(rp->object, ed, rp);
-			break;
-		     case EDJE_PART_TYPE_TEXTBLOCK:
-			textblocks = eina_list_append(textblocks, rp);
-			rp->object = evas_object_textblock_add(ed->base->evas);
-			break;
-		     case EDJE_PART_TYPE_BOX:
-                        sources = eina_list_append(sources, rp);
-			rp->object = evas_object_box_add(ed->base->evas);
-                        rp->typedata.container->anim = _edje_box_layout_anim_new(rp->object);
-			break;
-		     case EDJE_PART_TYPE_TABLE:
-                        sources = eina_list_append(sources, rp);
-			rp->object = evas_object_table_add(ed->base->evas);
-			break;
-		     case EDJE_PART_TYPE_GRADIENT:
-			ERR("SPANK ! SPANK ! SPANK ! YOU ARE USING GRADIENT IN PART %s FROM GROUP %s INSIDE FILE %s !! THEY ARE NOW REMOVED !",
-			    ep->name, group, file);
-			break;
-		     case EDJE_PART_TYPE_SPACER:
-                        rp->object = NULL;
-                        break;
-		     default:
-			ERR("wrong part type %i!", ep->type);
-			break;
-		    }
+                    _edje_ref(ed);
+                    rp->part = ep;
+                    eina_array_push(&parts, rp);
+                    rp->param1.description = 
+                       _edje_part_description_find(ed, rp, "default", 0.0);
+                    rp->chosen_description = rp->param1.description;
+                    if (!rp->param1.description)
+                      ERR("no default part description for '%s'!",
+                          rp->part->name);
 
-		  if (rp->object)
-		    {
-                       if (nested_smart)
-                         {  /* Update this pointer to father object only
-                               this will make smart object size == father sz */
-                            rp->nested_smart = nested_smart;
-                            nested_smart = NULL;
-                         }
+                    switch (ep->type)
+                      {
+                       case EDJE_PART_TYPE_RECTANGLE:
+                          rp->object = evas_object_rectangle_add(ed->base->evas);
+                          break;
+                       case EDJE_PART_TYPE_PROXY:
+                       case EDJE_PART_TYPE_IMAGE:
+                          rp->object = evas_object_image_add(ed->base->evas);
+                          break;
+                       case EDJE_PART_TYPE_TEXT:
+                          _edje_text_part_on_add(ed, rp);
+                          rp->object = evas_object_text_add(ed->base->evas);
+                          evas_object_text_font_source_set(rp->object, ed->path);
+                          break;
+                       case EDJE_PART_TYPE_GROUP:
+                          sources = eina_list_append(sources, rp);
+                       case EDJE_PART_TYPE_SWALLOW:
+                       case EDJE_PART_TYPE_EXTERNAL:
+                          if (ep->type == EDJE_PART_TYPE_EXTERNAL)
+                            externals = eina_list_append(externals, rp);
+                          rp->object = evas_object_rectangle_add(ed->base->evas);
+                          evas_object_color_set(rp->object, 0, 0, 0, 0);
+                          evas_object_pass_events_set(rp->object, 1);
+                          evas_object_pointer_mode_set(rp->object, EVAS_OBJECT_POINTER_MODE_NOGRAB);
+                          _edje_callbacks_focus_add(rp->object, ed, rp);
+                          break;
+                       case EDJE_PART_TYPE_TEXTBLOCK:
+                          textblocks = eina_list_append(textblocks, rp);
+                          rp->object = evas_object_textblock_add(ed->base->evas);
+                          break;
+                       case EDJE_PART_TYPE_BOX:
+                          sources = eina_list_append(sources, rp);
+                          rp->object = evas_object_box_add(ed->base->evas);
+                          rp->typedata.container->anim = _edje_box_layout_anim_new(rp->object);
+                          break;
+                       case EDJE_PART_TYPE_TABLE:
+                          sources = eina_list_append(sources, rp);
+                          rp->object = evas_object_table_add(ed->base->evas);
+                          break;
+                       case EDJE_PART_TYPE_GRADIENT:
+                          ERR("SPANK ! SPANK ! SPANK ! YOU ARE USING GRADIENT IN PART %s FROM GROUP %s INSIDE FILE %s !! THEY ARE NOW REMOVED !",
+                              ep->name, group, file);
+                          break;
+                       case EDJE_PART_TYPE_SPACER:
+                          rp->object = NULL;
+                          break;
+                       default:
+                          ERR("wrong part type %i!", ep->type);
+                          break;
+                      }
 
-                       if (st_nested && st_nested->nested_children_count)
-                         {  /* Add this to list of children */
-                            evas_object_smart_member_add(rp->object,
-							 st_nested->o);
+                    if (rp->object)
+                      {
+                         if (nested_smart)
+                           {  /* Update this pointer to father object only
+                                 this will make smart object size == father sz */
+                              rp->nested_smart = nested_smart;
+                              nested_smart = NULL;
+                           }
 
-                            st_nested->nested_children_count--;
+                         if (st_nested && st_nested->nested_children_count)
+                           {  /* Add this to list of children */
+                              evas_object_smart_member_add(rp->object,
+                                                           st_nested->o);
 
-                            /* No more nested children for this obj */
-                            while (st_nested && (st_nested->nested_children_count == 0))
+                              st_nested->nested_children_count--;
+
+                              /* No more nested children for this obj */
+                              while (st_nested && (st_nested->nested_children_count == 0))
                               {
                                  /* Loop to add smart counter as child */
                                  Evas_Object *p_obj = st_nested->o;
@@ -620,455 +620,455 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
                        else
                          evas_object_smart_member_add(rp->object, ed->obj);
 
-//		       evas_object_layer_set(rp->object, evas_object_layer_get(ed->obj));
-		       if (ep->type != EDJE_PART_TYPE_SWALLOW && ep->type != EDJE_PART_TYPE_GROUP && ep->type != EDJE_PART_TYPE_EXTERNAL)
-			 {
-			    if (ep->mouse_events)
-			      {
-				 _edje_callbacks_add(rp->object, ed, rp);
-				 if (ep->repeat_events)
-				   evas_object_repeat_events_set(rp->object, 1);
-				 
-				 if (ep->pointer_mode != EVAS_OBJECT_POINTER_MODE_AUTOGRAB)
-				   evas_object_pointer_mode_set(rp->object, ep->pointer_mode);
-			      }
-			    else
-			      {
-				 evas_object_pass_events_set(rp->object, 1);
-				 evas_object_pointer_mode_set(rp->object, EVAS_OBJECT_POINTER_MODE_NOGRAB);
-			      }
-			    if (ep->precise_is_inside)
-			      evas_object_precise_is_inside_set(rp->object, 1);
-			 }
-		       if (rp->part->clip_to_id < 0)
-			 evas_object_clip_set(rp->object, ed->base->clipper);
-		    }
-	       }
-	     if (n > 0)
-	       {
-		  ed->table_parts = malloc(sizeof(Edje_Real_Part *) * n);
-		  ed->table_parts_size = n;
-		  /* FIXME: check malloc return */
-		  n = eina_array_count(&parts) - 1;
-                  while ((rp = eina_array_pop(&parts)))
-		    {
-		       ed->table_parts[n] = rp;
-		       n--;
-		    }
-		  for (i = 0; i < ed->table_parts_size; i++)
-		    {
-		       rp = ed->table_parts[i];
-		       if (rp->param1.description) /* FIXME: prevent rel to gone radient part to go wrong. You may
-						      be able to remove this when all theme are correctly rewritten. */
-			 {
-			    if (rp->param1.description->rel1.id_x >= 0)
-			      rp->param1.description->rel1.id_x %= ed->table_parts_size;
-			    if (rp->param1.description->rel1.id_y >= 0)
-			      rp->param1.description->rel1.id_y %= ed->table_parts_size;
-			    if (rp->param1.description->rel2.id_x >= 0)
-			      rp->param1.description->rel2.id_x %= ed->table_parts_size;
-			    if (rp->param1.description->rel2.id_y >= 0)
-			      rp->param1.description->rel2.id_y %= ed->table_parts_size;
-			 }
-		       if (rp->part->clip_to_id >= 0)
-			 {
-			    Edje_Real_Part *clip_to;
-
-			    clip_to = ed->table_parts[rp->part->clip_to_id % ed->table_parts_size];
-			    if (clip_to &&
-                                clip_to->object &&
-                                rp->object)
-			      {
-				 evas_object_pass_events_set(clip_to->object, 1);
-				 evas_object_pointer_mode_set(clip_to->object, EVAS_OBJECT_POINTER_MODE_NOGRAB);
-				 evas_object_clip_set(rp->object, clip_to->object);
-			      }
-			 }
-		       if (rp->drag)
-			 {
-			    if (rp->part->dragable.confine_id >= 0)
-			      rp->drag->confine_to = ed->table_parts[rp->part->dragable.confine_id % ed->table_parts_size];
-			 }
-
-                       if ((rp->type == EDJE_RP_TYPE_SWALLOW) &&
-                           (rp->typedata.swallow))
+                       //		       evas_object_layer_set(rp->object, evas_object_layer_get(ed->obj));
+                       if (ep->type != EDJE_PART_TYPE_SWALLOW && ep->type != EDJE_PART_TYPE_GROUP && ep->type != EDJE_PART_TYPE_EXTERNAL)
                          {
-                            rp->typedata.swallow->swallow_params.min.w = 0;
-                            rp->typedata.swallow->swallow_params.min.h = 0;
-                            rp->typedata.swallow->swallow_params.max.w = -1;
-                            rp->typedata.swallow->swallow_params.max.h = -1;
-                         }
-
-		       if (rp->part->type == EDJE_PART_TYPE_TEXT
-			   || rp->part->type == EDJE_PART_TYPE_TEXTBLOCK)
-			 {
-			    Edje_Part_Description_Text *text;
-
-			    text = (Edje_Part_Description_Text *) rp->param1.description;
-
-			    if (ed->file->feature_ver < 1)
-			      {
-				 text->text.id_source = -1;
-				 text->text.id_text_source = -1;
-			      }
-
-                            if ((rp->type == EDJE_RP_TYPE_TEXT) &&
-                                (rp->typedata.text))
+                            if (ep->mouse_events)
                               {
-                                 if (text->text.id_source >= 0)
-                                   rp->typedata.text->source = ed->table_parts[text->text.id_source % ed->table_parts_size];
-                                 if (text->text.id_text_source >= 0)
-                                   rp->typedata.text->text_source = ed->table_parts[text->text.id_text_source % ed->table_parts_size];
-                              }
-			    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
-			      {
-				 _edje_entry_real_part_init(ed, rp);
-				 if (!ed->has_entries)
-				   ed->has_entries = EINA_TRUE;
-			      }
-			 }
-		    }
-	       }
-	     
-	     _edje_ref(ed);
-	     _edje_block(ed);
-	     _edje_freeze(ed);
-//	     if (ed->collection->script) _edje_embryo_script_init(ed);
-	     _edje_var_init(ed);
-	     for (i = 0; i < ed->table_parts_size; i++)
-	       {
-		  rp = ed->table_parts[i];
-		  evas_object_show(rp->object);
-		  if (_edje_block_break(ed)) break;
-		  if (rp->drag)
-		    {
-		       if (rp->part->dragable.x < 0) rp->drag->val.x = FROM_DOUBLE(1.0);
-		       if (rp->part->dragable.y < 0) rp->drag->val.x = FROM_DOUBLE(1.0);
-		       _edje_dragable_pos_set(ed, rp, rp->drag->val.x, rp->drag->val.y);
-		    }
-	       }
-             ed->recalc_call = EINA_TRUE;
-	     ed->dirty = EINA_TRUE;
-#ifdef EDJE_CALC_CACHE
-	     ed->all_part_change = EINA_TRUE;
-#endif
-	     if ((evas_object_clipees_get(ed->base->clipper)) &&
-		 (evas_object_visible_get(obj)))
-	       evas_object_show(ed->base->clipper);
+                                 _edje_callbacks_add(rp->object, ed, rp);
+                                 if (ep->repeat_events)
+                                   evas_object_repeat_events_set(rp->object, 1);
 
-	     /* instantiate 'internal swallows' */
-             EINA_LIST_FREE(externals, rp)
-               {
-                  Edje_Part_Description_External *external;
-                  Evas_Object *child_obj;
-
-                  external = (Edje_Part_Description_External *) rp->part->default_desc;
-                  child_obj = _edje_external_type_add(rp->part->source,
-                                                      evas_object_evas_get(ed->obj), ed->obj,
-                                                      external->external_params, rp->part->name);
-                  if (child_obj)
-                    {
-		       _edje_real_part_swallow(ed, rp, child_obj, EINA_TRUE);
-                       rp->param1.external_params = _edje_external_params_parse(child_obj,
-                                                                                external->external_params);
-                       _edje_external_recalc_apply(ed, rp, NULL, rp->chosen_description);
-                    }
-               }
-
-             EINA_LIST_FREE(sources, rp)
-	       {
-		  /* XXX: curr_item and pack_it don't require to be NULL since
-		   * XXX: they are just used when source != NULL and type == BOX,
-		   * XXX: and they're always set in this case, but GCC fails to
-		   * XXX: notice that, so let's shut it up
-		   */
-		  Edje_Pack_Element **curr_item = NULL;
-		  unsigned int item_count = 0;
-		  Edje_Pack_Element *pack_it = NULL;
-		  const char *source = NULL;
-
-		  switch (rp->part->type)
-		    {
-		     case EDJE_PART_TYPE_GROUP:
-			source = rp->part->source;
-			break;
-		     case EDJE_PART_TYPE_BOX:
-		     case EDJE_PART_TYPE_TABLE:
-			if (rp->part->items)
-			  {
-			     curr_item = rp->part->items;
-			     item_count = rp->part->items_count;
-			     if (item_count > 0)
-			       {
-				  pack_it = *curr_item;
-				  source = pack_it->source;
-				  item_count--;
-				  curr_item++;
-			       }
-			  }
-			break;
-		     default:
-                        /* This list should only be filled by group, box or table, nothing else. */
-                        abort();
-			continue;
-		    }
-
-		  while (source)
-		    {
-		       Eina_List *l;
-		       Evas_Object *child_obj;
-                       Edje_Pack_Element pack_it_copy;
-		       const char *group_path_entry = eina_stringshare_add(source);
-		       const char *data;
-
-		       if (!group_path)
-			 {
-			    group_path = eina_list_append(NULL, eina_stringshare_add(group));
-			    group_path_started = 1;
-			 }
-		       /* make sure that this group isn't already in the tree of parents */
-		       EINA_LIST_FOREACH(group_path, l, data)
-			 {
-			    if (data == group_path_entry)
-			      {
-                                 ERR("recursive loop group '%s' already included inside part '%s' of group '%s' from file '%s'",
-                                     group_path_entry, rp->part->name, group, file);
-                                 ed->load_error = EDJE_LOAD_ERROR_RECURSIVE_REFERENCE;
-                                 eina_stringshare_del(group_path_entry);
-				 goto on_error;
-			      }
-			 }
-
-                       if (pack_it)
-                         {
-                            pack_it_copy = *pack_it;
-                         }
-                       else
-                         {
-                            memset(&pack_it_copy, 0, sizeof (pack_it_copy));
-                         }
-
-		       do
-			 {
-                            child_obj = edje_object_add(ed->base->evas);
-                            group_path = eina_list_append(group_path, group_path_entry);
-                            if (rp->part->type == EDJE_PART_TYPE_GROUP)
-                              {
-				 _edje_real_part_swallow(ed, rp, child_obj, EINA_FALSE);
-                              }
-
-                            if (!_edje_object_file_set_internal(child_obj, file, source, rp->part->name, group_path, nested))
-                              {
-                                 ERR("impossible to set part '%s' of group '%s' from file '%s' to '%s'",
-                                     rp->part->name, group_path_entry, file, source);
-                                 ed->load_error = edje_object_load_error_get(child_obj);
-                                 evas_object_del(child_obj);
-                                 eina_stringshare_del(group_path_entry);
-                                 goto on_error;
-                              }
-
-                            group_path = eina_list_remove(group_path, group_path_entry);
-
-                            edje_object_propagate_callback_add(child_obj,
-                                                               _cb_signal_repeat,
-                                                               obj);
-                            if (rp->part->type == EDJE_PART_TYPE_GROUP)
-                              {
-                                 ed->groups = eina_list_append(ed->groups, _edje_fetch(child_obj));
-                                 _edje_real_part_swallow(ed, rp, child_obj, EINA_TRUE);
-                                 _edje_subobj_register(ed, child_obj);
-                                 source = NULL;
+                                 if (ep->pointer_mode != EVAS_OBJECT_POINTER_MODE_AUTOGRAB)
+                                   evas_object_pointer_mode_set(rp->object, ep->pointer_mode);
                               }
                             else
                               {
-                                 if ((rp->type == EDJE_RP_TYPE_CONTAINER) &&
-                                     (rp->typedata.container))
-                                   {
-                                      Eina_Strbuf *buf = NULL;
-                                      const char *name = pack_it_copy.name;
-
-                                      pack_it->parent = rp;
-
-                                      _edje_object_pack_item_hints_set(child_obj, &pack_it_copy);
-
-                                      if (pack_it->spread.h > 1 && pack_it->spread.w >= 1)
-                                        {
-                                           buf = eina_strbuf_new();
-                                           if (name)
-                                             eina_strbuf_append_printf(buf, "%s{%i,%i}", name, pack_it_copy.col, pack_it_copy.row);
-                                           else
-                                             eina_strbuf_append_printf(buf, "%i,%i", pack_it_copy.col, pack_it_copy.row);
-                                           name = eina_strbuf_string_get(buf);
-                                        }
-                                      if (name) evas_object_name_set(child_obj, name);
-                                      if (buf) eina_strbuf_free(buf);
-				   
-                                      if (rp->part->type == EDJE_PART_TYPE_BOX)
-                                        {
-					   _edje_real_part_box_append(ed, rp, child_obj);
-                                           evas_object_data_set(child_obj, "\377 edje.box_item", pack_it);
-                                        }
-                                      else if (rp->part->type == EDJE_PART_TYPE_TABLE)
-                                        {
-					   _edje_real_part_table_pack(ed, rp, child_obj,
-                                                                      pack_it_copy.col, pack_it_copy.row,
-                                                                      pack_it_copy.colspan, pack_it_copy.rowspan);
-                                           evas_object_data_set(child_obj, "\377 edje.table_item", pack_it);
-                                        }
-                                      _edje_subobj_register(ed, child_obj);
-                                      evas_object_show(child_obj);
-                                      rp->typedata.container->items = eina_list_append(rp->typedata.container->items, child_obj);
-                                   }
+                                 evas_object_pass_events_set(rp->object, 1);
+                                 evas_object_pointer_mode_set(rp->object, EVAS_OBJECT_POINTER_MODE_NOGRAB);
                               }
-
-                            pack_it_copy.spread.w--;
-                            pack_it_copy.col++;
-                            if (pack_it_copy.spread.w < 1 && pack_it)
-                              {
-                                 pack_it_copy.col = pack_it->col;
-                                 pack_it_copy.row++;
-                                 pack_it_copy.spread.h--;
-                                 pack_it_copy.spread.w = pack_it->spread.w;
-                              }
+                            if (ep->precise_is_inside)
+                              evas_object_precise_is_inside_set(rp->object, 1);
                          }
-                       while (pack_it_copy.spread.h > 0);
-
-                       eina_stringshare_del(group_path_entry);
-
-                       if ((rp->type == EDJE_RP_TYPE_CONTAINER) &&
-                           (rp->typedata.container))
-                         {
-                            if (item_count > 0)
-                              {
-                                 pack_it = *curr_item;
-                                 source = pack_it->source;
-                                 curr_item++;
-                                 item_count--;
-                              }
-                            else
-                              {
-                                 source = NULL;
-                                 curr_item = NULL;
-                                 pack_it = NULL;
-                              }
-                         }
-                    }
-               }
-
-             if (group_path_started)
-	       {
-		  const char *str;
-
-		  EINA_LIST_FREE(group_path, str)
-		    eina_stringshare_del(str);
-	       }
-
-	     /* reswallow any swallows that existed before setting the file */
-             if (collect)
-               {
-                  Edje_User_Defined *eud;
-                  Eina_List *boxes = NULL;
-
-                  EINA_LIST_FREE(collect, eud)
-                    {
-                       Evas_Object *child = NULL;
-
-                       switch (eud->type)
-                         {
-                          case EDJE_USER_SWALLOW:
-			     edje_object_part_swallow(obj, eud->part, eud->u.swallow.child);
-                             child = eud->u.swallow.child;
-                             break;
-                          case EDJE_USER_BOX_PACK:
-                             boxes = eina_list_append(boxes, eud);
-                             eud = NULL;
-                             break;
-                          case EDJE_USER_TABLE_PACK:
-			     edje_object_part_table_pack(obj, eud->part, eud->u.table.child,
-                                                         eud->u.table.col, eud->u.table.row,
-                                                         eud->u.table.colspan, eud->u.table.rowspan);
-                             child = eud->u.table.child;
-                             break;
-                          case EDJE_USER_DRAG_STEP:
-                             edje_object_part_drag_step_set(obj, eud->part,
-                                                            eud->u.drag_position.x,
-                                                            eud->u.drag_position.y);
-                             break;
-                          case EDJE_USER_DRAG_PAGE:
-                             edje_object_part_drag_page_set(obj, eud->part,
-                                                            eud->u.drag_position.x,
-                                                            eud->u.drag_position.y);
-                             break;
-                          case EDJE_USER_DRAG_VALUE:
-                             edje_object_part_drag_value_set(obj, eud->part,
-                                                             eud->u.drag_position.x,
-                                                             eud->u.drag_position.y);
-                             break;
-                          case EDJE_USER_DRAG_SIZE:
-                             edje_object_part_drag_size_set(obj, eud->part,
-                                                            eud->u.drag_size.w,
-                                                            eud->u.drag_size.h);
-                             break;
-                          case EDJE_USER_STRING:
-                             edje_object_part_text_set(obj, eud->part, eud->u.string.text);
-                             eina_stringshare_del(eud->u.string.text);
-                             break;
-                         }
-                       if (eud) _edje_user_definition_remove(eud, child);
-                    }
-
-                  boxes = eina_list_sort(boxes, -1, _sort_defined_boxes);
-                  EINA_LIST_FREE(boxes, eud)
-                    {
-		       edje_object_part_box_append(obj, eud->part, eud->u.box.child);
-                       _edje_user_definition_remove(eud, eud->u.box.child);
-                    }
-               }
-
-             if (edje_object_mirrored_get(obj))
-               edje_object_signal_emit(obj, "edje,state,rtl", "edje");
-             else
-               edje_object_signal_emit(obj, "edje,state,ltr", "edje");
-
-	     _edje_recalc(ed);
-	     _edje_thaw(ed);
-	     _edje_unblock(ed);
-	     _edje_unref(ed);
-	     ed->load_error = EDJE_LOAD_ERROR_NONE;
-	     _edje_emit(ed, "load", NULL);
-
-	     /* instantiate 'internal textblock style' */
-             EINA_LIST_FREE(textblocks, rp)
-               if (rp->part->default_desc)
-                 {
-                    Edje_Part_Description_Text *text;
-                    Edje_Style *stl  = NULL;
-                    const char *style;
-
-                    text = (Edje_Part_Description_Text *) rp->part->default_desc;
-                    style = edje_string_get(&text->text.style);
-                    if (style)
-                      {
-                         Eina_List *l;
-
-                         EINA_LIST_FOREACH(ed->file->styles, l, stl)
-                           {
-                              if ((stl->name) && (!strcmp(stl->name, style))) break;
-                              stl = NULL;
-                           }
-                      }
-                    if (stl)
-                      {
-                         if (evas_object_textblock_style_get(rp->object) != stl->style)
-                           evas_object_textblock_style_set(rp->object, stl->style);
+                       if (rp->part->clip_to_id < 0)
+                         evas_object_clip_set(rp->object, ed->base->clipper);
                       }
                  }
-	  }
+               if (n > 0)
+                 {
+                    ed->table_parts = malloc(sizeof(Edje_Real_Part *) * n);
+                    ed->table_parts_size = n;
+                    /* FIXME: check malloc return */
+                    n = eina_array_count(&parts) - 1;
+                    while ((rp = eina_array_pop(&parts)))
+                      {
+                         ed->table_parts[n] = rp;
+                         n--;
+                      }
+                    for (i = 0; i < ed->table_parts_size; i++)
+                      {
+                         rp = ed->table_parts[i];
+                         if (rp->param1.description) /* FIXME: prevent rel to gone radient part to go wrong. You may
+                                                        be able to remove this when all theme are correctly rewritten. */
+                           {
+                              if (rp->param1.description->rel1.id_x >= 0)
+                                rp->param1.description->rel1.id_x %= ed->table_parts_size;
+                              if (rp->param1.description->rel1.id_y >= 0)
+                                rp->param1.description->rel1.id_y %= ed->table_parts_size;
+                              if (rp->param1.description->rel2.id_x >= 0)
+                                rp->param1.description->rel2.id_x %= ed->table_parts_size;
+                              if (rp->param1.description->rel2.id_y >= 0)
+                                rp->param1.description->rel2.id_y %= ed->table_parts_size;
+                           }
+                         if (rp->part->clip_to_id >= 0)
+                           {
+                              Edje_Real_Part *clip_to;
+
+                              clip_to = ed->table_parts[rp->part->clip_to_id % ed->table_parts_size];
+                              if (clip_to &&
+                                  clip_to->object &&
+                                  rp->object)
+                                {
+                                   evas_object_pass_events_set(clip_to->object, 1);
+                                   evas_object_pointer_mode_set(clip_to->object, EVAS_OBJECT_POINTER_MODE_NOGRAB);
+                                   evas_object_clip_set(rp->object, clip_to->object);
+                                }
+                           }
+                         if (rp->drag)
+                           {
+                              if (rp->part->dragable.confine_id >= 0)
+                                rp->drag->confine_to = ed->table_parts[rp->part->dragable.confine_id % ed->table_parts_size];
+                           }
+
+                         if ((rp->type == EDJE_RP_TYPE_SWALLOW) &&
+                             (rp->typedata.swallow))
+                           {
+                              rp->typedata.swallow->swallow_params.min.w = 0;
+                              rp->typedata.swallow->swallow_params.min.h = 0;
+                              rp->typedata.swallow->swallow_params.max.w = -1;
+                              rp->typedata.swallow->swallow_params.max.h = -1;
+                           }
+
+                         if (rp->part->type == EDJE_PART_TYPE_TEXT
+                             || rp->part->type == EDJE_PART_TYPE_TEXTBLOCK)
+                           {
+                              Edje_Part_Description_Text *text;
+
+                              text = (Edje_Part_Description_Text *) rp->param1.description;
+
+                              if (ed->file->feature_ver < 1)
+                                {
+                                   text->text.id_source = -1;
+                                   text->text.id_text_source = -1;
+                                }
+
+                              if ((rp->type == EDJE_RP_TYPE_TEXT) &&
+                                  (rp->typedata.text))
+                                {
+                                   if (text->text.id_source >= 0)
+                                     rp->typedata.text->source = ed->table_parts[text->text.id_source % ed->table_parts_size];
+                                   if (text->text.id_text_source >= 0)
+                                     rp->typedata.text->text_source = ed->table_parts[text->text.id_text_source % ed->table_parts_size];
+                                }
+                              if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+                                {
+                                   _edje_entry_real_part_init(ed, rp);
+                                   if (!ed->has_entries)
+                                     ed->has_entries = EINA_TRUE;
+                                }
+                           }
+                      }
+                 }
+
+               _edje_ref(ed);
+               _edje_block(ed);
+               _edje_freeze(ed);
+               //	     if (ed->collection->script) _edje_embryo_script_init(ed);
+               _edje_var_init(ed);
+               for (i = 0; i < ed->table_parts_size; i++)
+                 {
+                    rp = ed->table_parts[i];
+                    evas_object_show(rp->object);
+                    if (_edje_block_break(ed)) break;
+                    if (rp->drag)
+                      {
+                         if (rp->part->dragable.x < 0) rp->drag->val.x = FROM_DOUBLE(1.0);
+                         if (rp->part->dragable.y < 0) rp->drag->val.x = FROM_DOUBLE(1.0);
+                         _edje_dragable_pos_set(ed, rp, rp->drag->val.x, rp->drag->val.y);
+                      }
+                 }
+               ed->recalc_call = EINA_TRUE;
+               ed->dirty = EINA_TRUE;
+#ifdef EDJE_CALC_CACHE
+               ed->all_part_change = EINA_TRUE;
+#endif
+               if ((evas_object_clipees_get(ed->base->clipper)) &&
+                   (evas_object_visible_get(obj)))
+                 evas_object_show(ed->base->clipper);
+
+               /* instantiate 'internal swallows' */
+               EINA_LIST_FREE(externals, rp)
+                 {
+                    Edje_Part_Description_External *external;
+                    Evas_Object *child_obj;
+
+                    external = (Edje_Part_Description_External *) rp->part->default_desc;
+                    child_obj = _edje_external_type_add(rp->part->source,
+                                                        evas_object_evas_get(ed->obj), ed->obj,
+                                                        external->external_params, rp->part->name);
+                    if (child_obj)
+                      {
+                         _edje_real_part_swallow(ed, rp, child_obj, EINA_TRUE);
+                         rp->param1.external_params = _edje_external_params_parse(child_obj,
+                                                                                  external->external_params);
+                         _edje_external_recalc_apply(ed, rp, NULL, rp->chosen_description);
+                      }
+                 }
+
+               EINA_LIST_FREE(sources, rp)
+                 {
+                    /* XXX: curr_item and pack_it don't require to be NULL since
+                     * XXX: they are just used when source != NULL and type == BOX,
+                     * XXX: and they're always set in this case, but GCC fails to
+                     * XXX: notice that, so let's shut it up
+                     */
+                    Edje_Pack_Element **curr_item = NULL;
+                    unsigned int item_count = 0;
+                    Edje_Pack_Element *pack_it = NULL;
+                    const char *source = NULL;
+
+                    switch (rp->part->type)
+                      {
+                       case EDJE_PART_TYPE_GROUP:
+                          source = rp->part->source;
+                          break;
+                       case EDJE_PART_TYPE_BOX:
+                       case EDJE_PART_TYPE_TABLE:
+                          if (rp->part->items)
+                            {
+                               curr_item = rp->part->items;
+                               item_count = rp->part->items_count;
+                               if (item_count > 0)
+                                 {
+                                    pack_it = *curr_item;
+                                    source = pack_it->source;
+                                    item_count--;
+                                    curr_item++;
+                                 }
+                            }
+                          break;
+                       default:
+                          /* This list should only be filled by group, box or table, nothing else. */
+                          abort();
+                          continue;
+                      }
+
+                    while (source)
+                      {
+                         Eina_List *l;
+                         Evas_Object *child_obj;
+                         Edje_Pack_Element pack_it_copy;
+                         const char *group_path_entry = eina_stringshare_add(source);
+                         const char *data;
+
+                         if (!group_path)
+                           {
+                              group_path = eina_list_append(NULL, eina_stringshare_add(group));
+                              group_path_started = 1;
+                           }
+                         /* make sure that this group isn't already in the tree of parents */
+                         EINA_LIST_FOREACH(group_path, l, data)
+                           {
+                              if (data == group_path_entry)
+                                {
+                                   ERR("recursive loop group '%s' already included inside part '%s' of group '%s' from file '%s'",
+                                       group_path_entry, rp->part->name, group, file);
+                                   ed->load_error = EDJE_LOAD_ERROR_RECURSIVE_REFERENCE;
+                                   eina_stringshare_del(group_path_entry);
+                                   goto on_error;
+                                }
+                           }
+
+                         if (pack_it)
+                           {
+                              pack_it_copy = *pack_it;
+                           }
+                         else
+                           {
+                              memset(&pack_it_copy, 0, sizeof (pack_it_copy));
+                           }
+
+                         do
+                           {
+                              child_obj = edje_object_add(ed->base->evas);
+                              group_path = eina_list_append(group_path, group_path_entry);
+                              if (rp->part->type == EDJE_PART_TYPE_GROUP)
+                                {
+                                   _edje_real_part_swallow(ed, rp, child_obj, EINA_FALSE);
+                                }
+
+                              if (!_edje_object_file_set_internal(child_obj, file, source, rp->part->name, group_path, nested))
+                                {
+                                   ERR("impossible to set part '%s' of group '%s' from file '%s' to '%s'",
+                                       rp->part->name, group_path_entry, file, source);
+                                   ed->load_error = edje_object_load_error_get(child_obj);
+                                   evas_object_del(child_obj);
+                                   eina_stringshare_del(group_path_entry);
+                                   goto on_error;
+                                }
+
+                              group_path = eina_list_remove(group_path, group_path_entry);
+
+                              edje_object_propagate_callback_add(child_obj,
+                                                                 _cb_signal_repeat,
+                                                                 obj);
+                              if (rp->part->type == EDJE_PART_TYPE_GROUP)
+                                {
+                                   ed->groups = eina_list_append(ed->groups, _edje_fetch(child_obj));
+                                   _edje_real_part_swallow(ed, rp, child_obj, EINA_TRUE);
+                                   _edje_subobj_register(ed, child_obj);
+                                   source = NULL;
+                                }
+                              else
+                                {
+                                   if ((rp->type == EDJE_RP_TYPE_CONTAINER) &&
+                                       (rp->typedata.container))
+                                     {
+                                        Eina_Strbuf *buf = NULL;
+                                        const char *name = pack_it_copy.name;
+
+                                        pack_it->parent = rp;
+
+                                        _edje_object_pack_item_hints_set(child_obj, &pack_it_copy);
+
+                                        if (pack_it->spread.h > 1 && pack_it->spread.w >= 1)
+                                          {
+                                             buf = eina_strbuf_new();
+                                             if (name)
+                                               eina_strbuf_append_printf(buf, "%s{%i,%i}", name, pack_it_copy.col, pack_it_copy.row);
+                                             else
+                                               eina_strbuf_append_printf(buf, "%i,%i", pack_it_copy.col, pack_it_copy.row);
+                                             name = eina_strbuf_string_get(buf);
+                                          }
+                                        if (name) evas_object_name_set(child_obj, name);
+                                        if (buf) eina_strbuf_free(buf);
+
+                                        if (rp->part->type == EDJE_PART_TYPE_BOX)
+                                          {
+                                             _edje_real_part_box_append(ed, rp, child_obj);
+                                             evas_object_data_set(child_obj, "\377 edje.box_item", pack_it);
+                                          }
+                                        else if (rp->part->type == EDJE_PART_TYPE_TABLE)
+                                          {
+                                             _edje_real_part_table_pack(ed, rp, child_obj,
+                                                                        pack_it_copy.col, pack_it_copy.row,
+                                                                        pack_it_copy.colspan, pack_it_copy.rowspan);
+                                             evas_object_data_set(child_obj, "\377 edje.table_item", pack_it);
+                                          }
+                                        _edje_subobj_register(ed, child_obj);
+                                        evas_object_show(child_obj);
+                                        rp->typedata.container->items = eina_list_append(rp->typedata.container->items, child_obj);
+                                     }
+                                }
+
+                              pack_it_copy.spread.w--;
+                              pack_it_copy.col++;
+                              if (pack_it_copy.spread.w < 1 && pack_it)
+                                {
+                                   pack_it_copy.col = pack_it->col;
+                                   pack_it_copy.row++;
+                                   pack_it_copy.spread.h--;
+                                   pack_it_copy.spread.w = pack_it->spread.w;
+                                }
+                           }
+                         while (pack_it_copy.spread.h > 0);
+
+                         eina_stringshare_del(group_path_entry);
+
+                         if ((rp->type == EDJE_RP_TYPE_CONTAINER) &&
+                             (rp->typedata.container))
+                           {
+                              if (item_count > 0)
+                                {
+                                   pack_it = *curr_item;
+                                   source = pack_it->source;
+                                   curr_item++;
+                                   item_count--;
+                                }
+                              else
+                                {
+                                   source = NULL;
+                                   curr_item = NULL;
+                                   pack_it = NULL;
+                                }
+                           }
+                      }
+                 }
+
+               if (group_path_started)
+                 {
+                    const char *str;
+
+                    EINA_LIST_FREE(group_path, str)
+                       eina_stringshare_del(str);
+                 }
+
+               /* reswallow any swallows that existed before setting the file */
+               if (collect)
+                 {
+                    Edje_User_Defined *eud;
+                    Eina_List *boxes = NULL;
+
+                    EINA_LIST_FREE(collect, eud)
+                      {
+                         Evas_Object *child = NULL;
+
+                         switch (eud->type)
+                           {
+                            case EDJE_USER_SWALLOW:
+                               edje_object_part_swallow(obj, eud->part, eud->u.swallow.child);
+                               child = eud->u.swallow.child;
+                               break;
+                            case EDJE_USER_BOX_PACK:
+                               boxes = eina_list_append(boxes, eud);
+                               eud = NULL;
+                               break;
+                            case EDJE_USER_TABLE_PACK:
+                               edje_object_part_table_pack(obj, eud->part, eud->u.table.child,
+                                                           eud->u.table.col, eud->u.table.row,
+                                                           eud->u.table.colspan, eud->u.table.rowspan);
+                               child = eud->u.table.child;
+                               break;
+                            case EDJE_USER_DRAG_STEP:
+                               edje_object_part_drag_step_set(obj, eud->part,
+                                                              eud->u.drag_position.x,
+                                                              eud->u.drag_position.y);
+                               break;
+                            case EDJE_USER_DRAG_PAGE:
+                               edje_object_part_drag_page_set(obj, eud->part,
+                                                              eud->u.drag_position.x,
+                                                              eud->u.drag_position.y);
+                               break;
+                            case EDJE_USER_DRAG_VALUE:
+                               edje_object_part_drag_value_set(obj, eud->part,
+                                                               eud->u.drag_position.x,
+                                                               eud->u.drag_position.y);
+                               break;
+                            case EDJE_USER_DRAG_SIZE:
+                               edje_object_part_drag_size_set(obj, eud->part,
+                                                              eud->u.drag_size.w,
+                                                              eud->u.drag_size.h);
+                               break;
+                            case EDJE_USER_STRING:
+                               edje_object_part_text_set(obj, eud->part, eud->u.string.text);
+                               eina_stringshare_del(eud->u.string.text);
+                               break;
+                           }
+                         if (eud) _edje_user_definition_remove(eud, child);
+                      }
+
+                    boxes = eina_list_sort(boxes, -1, _sort_defined_boxes);
+                    EINA_LIST_FREE(boxes, eud)
+                      {
+                         edje_object_part_box_append(obj, eud->part, eud->u.box.child);
+                         _edje_user_definition_remove(eud, eud->u.box.child);
+                      }
+                 }
+
+               if (edje_object_mirrored_get(obj))
+                 edje_object_signal_emit(obj, "edje,state,rtl", "edje");
+               else
+                 edje_object_signal_emit(obj, "edje,state,ltr", "edje");
+
+               _edje_recalc(ed);
+               _edje_thaw(ed);
+               _edje_unblock(ed);
+               _edje_unref(ed);
+               ed->load_error = EDJE_LOAD_ERROR_NONE;
+               _edje_emit(ed, "load", NULL);
+
+               /* instantiate 'internal textblock style' */
+               EINA_LIST_FREE(textblocks, rp)
+                  if (rp->part->default_desc)
+                    {
+                       Edje_Part_Description_Text *text;
+                       Edje_Style *stl  = NULL;
+                       const char *style;
+
+                       text = (Edje_Part_Description_Text *) rp->part->default_desc;
+                       style = edje_string_get(&text->text.style);
+                       if (style)
+                         {
+                            Eina_List *l;
+
+                            EINA_LIST_FOREACH(ed->file->styles, l, stl)
+                              {
+                                 if ((stl->name) && (!strcmp(stl->name, style))) break;
+                                 stl = NULL;
+                              }
+                         }
+                       if (stl)
+                         {
+                            if (evas_object_textblock_style_get(rp->object) != stl->style)
+                              evas_object_textblock_style_set(rp->object, stl->style);
+                         }
+                    }
+          }
         _edje_entry_init(ed);
         eina_array_flush(&parts);
         evas_event_thaw(tev);
         evas_event_thaw_eval(tev);
-	return 1;
+        return 1;
      }
    else
      {
@@ -1082,7 +1082,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
    evas_event_thaw_eval(tev);
    return 1;
 
- on_error:
+on_error:
    eina_list_free(textblocks);
    eina_list_free(externals);
    eina_list_free(sources);
@@ -1096,7 +1096,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
         const char *path;
 
         EINA_LIST_FREE(group_path, path)
-          eina_stringshare_del(path);
+           eina_stringshare_del(path);
      }
    evas_event_thaw(tev);
    evas_event_thaw_eval(tev);
@@ -1108,17 +1108,17 @@ _edje_file_add(Edje *ed)
 {
    if (!_edje_edd_edje_file) return;
    ed->file = _edje_cache_file_coll_open(ed->path, ed->group,
-					 &(ed->load_error),
-					 &(ed->collection),
-					 ed);
+                                         &(ed->load_error),
+                                         &(ed->collection),
+                                         ed);
 
    if (!ed->collection)
      {
-	if (ed->file)
-	  {
-	     _edje_cache_file_unref(ed->file);
-	     ed->file = NULL;
-	  }
+        if (ed->file)
+          {
+             _edje_cache_file_unref(ed->file);
+             ed->file = NULL;
+          }
      }
 }
 
@@ -1165,32 +1165,32 @@ _edje_object_collect(Edje *ed)
 
                    children = evas_object_box_children_get(rp->object);
                    EINA_LIST_FREE(children, child)
-                     if (!evas_object_data_get(child, "\377 edje.box_item"))
-                       {
-                          EINA_LIST_FOREACH(l, ls, search)
-                            {
-                               if (search->type == EDJE_USER_BOX_PACK &&
-                                   search->u.box.child == child &&
-                                   search->part == eud->part /* beauty of stringshare ! */)
-                                 {
-                                    search->u.box.index = idx++;
-                                    break;
-                                 }
-                            }
-                          _edje_real_part_box_remove(eud->ed, rp, child);
-                       }
+                      if (!evas_object_data_get(child, "\377 edje.box_item"))
+                        {
+                           EINA_LIST_FOREACH(l, ls, search)
+                             {
+                                if (search->type == EDJE_USER_BOX_PACK &&
+                                    search->u.box.child == child &&
+                                    search->part == eud->part /* beauty of stringshare ! */)
+                                  {
+                                     search->u.box.index = idx++;
+                                     break;
+                                  }
+                             }
+                           _edje_real_part_box_remove(eud->ed, rp, child);
+                        }
                 }
               break;
            case EDJE_USER_TABLE_PACK:
-             {
-                Edje_Real_Part *rp;
+                {
+                   Edje_Real_Part *rp;
 
-                rp = _edje_real_part_recursive_get(&ed, eud->part);
-                if (rp->part->type != EDJE_PART_TYPE_TABLE) continue ;
+                   rp = _edje_real_part_recursive_get(&ed, eud->part);
+                   if (rp->part->type != EDJE_PART_TYPE_TABLE) continue ;
 
-                _edje_real_part_table_unpack(eud->ed, rp, eud->u.table.child);
-                break;
-             }
+                   _edje_real_part_table_unpack(eud->ed, rp, eud->u.table.child);
+                   break;
+                }
            case EDJE_USER_SWALLOW:
               edje_object_part_unswallow(NULL, eud->u.swallow.child);
               break;
@@ -1210,7 +1210,7 @@ _edje_file_del(Edje *ed)
 {
    Edje_User_Defined *eud;
    Evas *tev = NULL;
-   
+
    if (ed->obj) tev = evas_object_evas_get(ed->obj);
 
    ed->groups = eina_list_free(ed->groups);
@@ -1226,10 +1226,10 @@ _edje_file_del(Edje *ed)
    _edje_message_del(ed);
    _edje_block_violate(ed);
    _edje_var_shutdown(ed);
-//   if (ed->collection)
-//     {
-//        if (ed->collection->script) _edje_embryo_script_shutdown(ed);
-//     }
+   //   if (ed->collection)
+   //     {
+   //        if (ed->collection->script) _edje_embryo_script_shutdown(ed);
+   //     }
 
    if (!((ed->file) && (ed->collection)))
      {
@@ -1249,23 +1249,23 @@ _edje_file_del(Edje *ed)
 
    if (ed->table_parts)
      {
-	unsigned int i;
-	for (i = 0; i < ed->table_parts_size; i++)
-	  {
-	     Edje_Real_Part *rp;
+        unsigned int i;
+        for (i = 0; i < ed->table_parts_size; i++)
+          {
+             Edje_Real_Part *rp;
 #ifdef HAVE_EPHYSICS
              Evas_Object *face_obj;
 #endif
 
-	     rp = ed->table_parts[i];
+             rp = ed->table_parts[i];
 
 #ifdef HAVE_EPHYSICS
              EINA_LIST_FREE(rp->body_faces, face_obj)
                 evas_object_del(face_obj);
 #endif
 
-	     if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
-	       _edje_entry_real_part_shutdown(ed, rp);
+             if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+               _edje_entry_real_part_shutdown(ed, rp);
 
              if ((rp->type == EDJE_RP_TYPE_CONTAINER) &&
                  (rp->typedata.container))
@@ -1297,17 +1297,17 @@ _edje_file_del(Edje *ed)
                   if (rp->typedata.swallow->swallowed_object)
                     {
                        /* Objects swallowed by the app do not get deleted,
-                        but those internally swallowed (GROUP type) do. */
+                          but those internally swallowed (GROUP type) do. */
                        switch (rp->part->type)
                          {
                           case EDJE_PART_TYPE_EXTERNAL:
-                            _edje_external_parsed_params_free(rp->typedata.swallow->swallowed_object, rp->param1.external_params);
-                            if (rp->param2)
-                              _edje_external_parsed_params_free(rp->typedata.swallow->swallowed_object, rp->param2->external_params);
+                             _edje_external_parsed_params_free(rp->typedata.swallow->swallowed_object, rp->param1.external_params);
+                             if (rp->param2)
+                               _edje_external_parsed_params_free(rp->typedata.swallow->swallowed_object, rp->param2->external_params);
                           case EDJE_PART_TYPE_GROUP:
-                            evas_object_del(rp->typedata.swallow->swallowed_object);
+                             evas_object_del(rp->typedata.swallow->swallowed_object);
                           default:
-                            break;
+                             break;
                          }
                        _edje_real_part_swallow_clear(ed, rp);
                        rp->typedata.swallow->swallowed_object = NULL;
@@ -1315,71 +1315,71 @@ _edje_file_del(Edje *ed)
                   free(rp->typedata.swallow);
                }
 
-	     if (rp->object)
-	       {
+             if (rp->object)
+               {
                   _edje_callbacks_focus_del(rp->object, ed);
                   _edje_callbacks_del(rp->object, ed);
                   evas_object_del(rp->object);
-	       }
+               }
 
-	     if (rp->custom)
+             if (rp->custom)
                {
                   // xxx: lua2
                   _edje_collection_free_part_description_clean(rp->part->type,
-							       rp->custom->description,
-							       ed->file->free_strings);
-		  free(rp->custom->description);
-		  rp->custom->description = NULL;
+                                                               rp->custom->description,
+                                                               ed->file->free_strings);
+                  free(rp->custom->description);
+                  rp->custom->description = NULL;
                }
 
-	     /* Cleanup optional part. */
-	     free(rp->drag);
-	     free(rp->param1.set);
+             /* Cleanup optional part. */
+             free(rp->drag);
+             free(rp->param1.set);
 
-	     if (rp->param2)
-	       {
-		 free(rp->param2->set);
-		 eina_cow_free(_edje_calc_params_map_cow, rp->param2->p.map);
+             if (rp->param2)
+               {
+                  free(rp->param2->set);
+                  eina_cow_free(_edje_calc_params_map_cow, rp->param2->p.map);
 #ifdef HAVE_EPHYSICS
-		 eina_cow_free(_edje_calc_params_physics_cow, rp->param2->p.physics);
+                  eina_cow_free(_edje_calc_params_physics_cow, rp->param2->p.physics);
 #endif
-	       }
-	     eina_mempool_free(_edje_real_part_state_mp, rp->param2);
+               }
+             eina_mempool_free(_edje_real_part_state_mp, rp->param2);
 
-	     if (rp->custom)
-	       {
-		 free(rp->custom->set);
-		 eina_cow_free(_edje_calc_params_map_cow, rp->custom->p.map);
+             if (rp->custom)
+               {
+                  free(rp->custom->set);
+                  eina_cow_free(_edje_calc_params_map_cow, rp->custom->p.map);
 #ifdef HAVE_EPHYSICS
-		 eina_cow_free(_edje_calc_params_physics_cow, rp->custom->p.physics);
+                  eina_cow_free(_edje_calc_params_physics_cow, rp->custom->p.physics);
 #endif
-	       }
-	     eina_mempool_free(_edje_real_part_state_mp, rp->custom);
-             
-	     _edje_unref(ed);
-	     eina_cow_free(_edje_calc_params_map_cow, rp->param1.p.map);
+               }
+             eina_mempool_free(_edje_real_part_state_mp, rp->custom);
+
+             _edje_unref(ed);
+             eina_cow_free(_edje_calc_params_map_cow, rp->param1.p.map);
 #ifdef HAVE_EPHYSICS
-	     eina_cow_free(_edje_calc_params_physics_cow, rp->param1.p.physics);
+             eina_cow_free(_edje_calc_params_physics_cow, rp->param1.p.physics);
 #endif
-	     eina_mempool_free(_edje_real_part_mp, rp);
-	  }
+             eina_mempool_free(_edje_real_part_mp, rp);
+          }
      }
    if ((ed->file) && (ed->collection))
      {
-	Edje_Part *ep;
-	unsigned int i;
+        Edje_Part *ep;
+        unsigned int i;
 
-	_edje_textblock_styles_del(ed);
-	for (i = 0; i < ed->collection->parts_count; ++i)
-	  {
-	     ep = ed->collection->parts[i];
+        _edje_textblock_styles_del(ed);
+        for (i = 0; i < ed->collection->parts_count; ++i)
+          {
+             ep = ed->collection->parts[i];
 
-	     _edje_text_part_on_del(ed, ep);
-	     _edje_color_class_on_del(ed, ep);
-	  }
+             _edje_text_part_on_del(ed, ep);
+             _edje_color_class_on_del(ed, ep);
+          }
 
-	_edje_cache_coll_unref(ed->file, ed->collection);
-	ed->collection = NULL;
+        _edje_cache_coll_unref(ed->file, ed->collection);
+        ed->collection = NULL;
      }
    if (ed->file)
      {
@@ -1387,28 +1387,28 @@ _edje_file_del(Edje *ed)
         ed->file->edjes = eina_list_remove(ed->file->edjes, ed);
 #endif
         _edje_cache_file_unref(ed->file);
-	ed->file = NULL;
+        ed->file = NULL;
      }
    if (ed->actions)
      {
-	Edje_Running_Program *runp;
+        Edje_Running_Program *runp;
 
-	EINA_LIST_FREE(ed->actions, runp)
-	  {
-	     _edje_anim_count--;
-	     free(runp);
-	  }
+        EINA_LIST_FREE(ed->actions, runp)
+          {
+             _edje_anim_count--;
+             free(runp);
+          }
      }
    _edje_animators = eina_list_remove(_edje_animators, ed);
    if (ed->pending_actions)
      {
-	Edje_Pending_Program *pp;
+        Edje_Pending_Program *pp;
 
-	EINA_LIST_FREE(ed->pending_actions, pp)
-	  {
-	     ecore_timer_del(pp->timer);
-	     free(pp);
-	  }
+        EINA_LIST_FREE(ed->pending_actions, pp)
+          {
+             ecore_timer_del(pp->timer);
+             free(pp);
+          }
      }
 
    if (ed->L) _edje_lua2_script_shutdown(ed);
@@ -1432,8 +1432,8 @@ _edje_file_free(Edje_File *edf)
    Ecore_Event_Handler *event;
 #endif
 
-#define HASH_FREE(Hash)				\
-   if (Hash) eina_hash_free(Hash);		\
+#define HASH_FREE(Hash)                         \
+   if (Hash) eina_hash_free(Hash);              \
    Hash = NULL;
 
    /* Clean cache before cleaning memory pool */
@@ -1445,27 +1445,27 @@ _edje_file_free(Edje_File *edf)
 
    if (edf->image_dir)
      {
-	unsigned int i;
+        unsigned int i;
 
-	if (edf->free_strings)
-	  {
-	     for (i = 0; i < edf->image_dir->entries_count; ++i)
-	       eina_stringshare_del(edf->image_dir->entries[i].entry);
-	  }
+        if (edf->free_strings)
+          {
+             for (i = 0; i < edf->image_dir->entries_count; ++i)
+               eina_stringshare_del(edf->image_dir->entries[i].entry);
+          }
 
-	/* Sets have been added after edje received eet dictionnary support */
-	for (i = 0; i < edf->image_dir->sets_count; ++i)
-	  {
-	     Edje_Image_Directory_Set_Entry *se;
+        /* Sets have been added after edje received eet dictionnary support */
+        for (i = 0; i < edf->image_dir->sets_count; ++i)
+          {
+             Edje_Image_Directory_Set_Entry *se;
 
-	     EINA_LIST_FREE(edf->image_dir->sets[i].entries, se)
-	       free(se);
+             EINA_LIST_FREE(edf->image_dir->sets[i].entries, se)
+                free(se);
 
-	  }
+          }
 
-	free(edf->image_dir->entries);
-	free(edf->image_dir->sets);
-	free(edf->image_dir);
+        free(edf->image_dir->entries);
+        free(edf->image_dir->sets);
+        free(edf->image_dir);
      }
    if (edf->sound_dir)
      {
@@ -1489,22 +1489,22 @@ _edje_file_free(Edje_File *edf)
 
    if (edf->external_dir)
      {
-	if (edf->external_dir->entries) free(edf->external_dir->entries);
-	free(edf->external_dir);
+        if (edf->external_dir->entries) free(edf->external_dir->entries);
+        free(edf->external_dir);
      }
 
    eina_hash_free(edf->color_hash);
    EINA_LIST_FREE(edf->color_classes, ecc)
      {
-	if (edf->free_strings && ecc->name) eina_stringshare_del(ecc->name);
-	free(ecc);
+        if (edf->free_strings && ecc->name) eina_stringshare_del(ecc->name);
+        free(ecc);
      }
 
    if (edf->collection_patterns) edje_match_patterns_free(edf->collection_patterns);
 #ifdef HAVE_EIO
    if (edf->timeout) ecore_timer_del(edf->timeout);
    EINA_LIST_FREE(edf->handlers, event)
-     ecore_event_handler_del(event);
+      ecore_event_handler_del(event);
    eio_monitor_del(edf->monitor);
 #endif
    if (edf->path) eina_stringshare_del(edf->path);
@@ -1523,20 +1523,20 @@ _edje_program_free(Edje_Program *pr, Eina_Bool free_strings)
 
    if (free_strings)
      {
-	if (pr->name) eina_stringshare_del(pr->name);
-	if (pr->signal) eina_stringshare_del(pr->signal);
-	if (pr->source) eina_stringshare_del(pr->source);
-	if (pr->filter.part) eina_stringshare_del(pr->filter.part);
-	if (pr->filter.state) eina_stringshare_del(pr->filter.state);
-	if (pr->state) eina_stringshare_del(pr->state);
-	if (pr->state2) eina_stringshare_del(pr->state2);
-   if (pr->sample_name) eina_stringshare_del(pr->sample_name);
-   if (pr->tone_name) eina_stringshare_del(pr->tone_name);
+        if (pr->name) eina_stringshare_del(pr->name);
+        if (pr->signal) eina_stringshare_del(pr->signal);
+        if (pr->source) eina_stringshare_del(pr->source);
+        if (pr->filter.part) eina_stringshare_del(pr->filter.part);
+        if (pr->filter.state) eina_stringshare_del(pr->filter.state);
+        if (pr->state) eina_stringshare_del(pr->state);
+        if (pr->state2) eina_stringshare_del(pr->state2);
+        if (pr->sample_name) eina_stringshare_del(pr->sample_name);
+        if (pr->tone_name) eina_stringshare_del(pr->tone_name);
      }
    EINA_LIST_FREE(pr->targets, prt)
-     free(prt);
+      free(prt);
    EINA_LIST_FREE(pr->after, pa)
-     free(pa);
+      free(pa);
    free(pr);
 }
 
@@ -1547,9 +1547,9 @@ _edje_collection_free(Edje_File *edf, Edje_Part_Collection *ec, Edje_Part_Collec
 
    _edje_embryo_script_shutdown(ec);
 
-#define EDJE_LOAD_PROGRAM_FREE(Array, Ec, It, FreeStrings)	\
-   for (It = 0; It < Ec->programs.Array##_count; ++It)		\
-     _edje_program_free(Ec->programs.Array[It], FreeStrings);	\
+#define EDJE_LOAD_PROGRAM_FREE(Array, Ec, It, FreeStrings)      \
+   for (It = 0; It < Ec->programs.Array##_count; ++It)          \
+   _edje_program_free(Ec->programs.Array[It], FreeStrings);     \
    free(Ec->programs.Array);
 
    EDJE_LOAD_PROGRAM_FREE(fnmatch, ec, i, edf->free_strings);
@@ -1560,29 +1560,29 @@ _edje_collection_free(Edje_File *edf, Edje_Part_Collection *ec, Edje_Part_Collec
 
    for (i = 0; i < ec->parts_count; ++i)
      {
-	Edje_Part *ep;
-	unsigned int j;
+        Edje_Part *ep;
+        unsigned int j;
 
-	ep = ec->parts[i];
+        ep = ec->parts[i];
 
-	if (edf->free_strings && ep->name) eina_stringshare_del(ep->name);
-	if (ep->default_desc)
-	  {
-	     _edje_collection_free_part_description_clean(ep->type, ep->default_desc, edf->free_strings);
-	     ep->default_desc = NULL;
-	  }
-	for (j = 0; j < ep->other.desc_count; ++j)
-	  _edje_collection_free_part_description_clean(ep->type, ep->other.desc[j], edf->free_strings);
+        if (edf->free_strings && ep->name) eina_stringshare_del(ep->name);
+        if (ep->default_desc)
+          {
+             _edje_collection_free_part_description_clean(ep->type, ep->default_desc, edf->free_strings);
+             ep->default_desc = NULL;
+          }
+        for (j = 0; j < ep->other.desc_count; ++j)
+          _edje_collection_free_part_description_clean(ep->type, ep->other.desc[j], edf->free_strings);
 
-	free(ep->other.desc);
+        free(ep->other.desc);
         /* Alloc for RTL objects in edje_calc.c:_edje_part_description_find() */
         if(ep->other.desc_rtl)
           free(ep->other.desc_rtl);
 
-	free(ep->items);
-// technically need this - but we ASSUME we use "one_big" so everything gets
-// freed in one go lower down when we del the mempool... but what if pool goes
-// "over"?
+        free(ep->items);
+        // technically need this - but we ASSUME we use "one_big" so everything gets
+        // freed in one go lower down when we del the mempool... but what if pool goes
+        // "over"?
         eina_mempool_free(ce->mp.part, ep);
      }
    free(ec->parts);
@@ -1590,24 +1590,24 @@ _edje_collection_free(Edje_File *edf, Edje_Part_Collection *ec, Edje_Part_Collec
 
    if (ec->data)
      {
-	Eina_Iterator *it;
-	Edje_String *es;
+        Eina_Iterator *it;
+        Edje_String *es;
 
-	it = eina_hash_iterator_data_new(ec->data);
-	EINA_ITERATOR_FOREACH(it, es)
-	  free(es);
-	eina_iterator_free(it);
+        it = eina_hash_iterator_data_new(ec->data);
+        EINA_ITERATOR_FOREACH(it, es)
+           free(es);
+        eina_iterator_free(it);
 
-	eina_hash_free(ec->data);
+        eina_hash_free(ec->data);
      }
 #ifdef EDJE_PROGRAM_CACHE
    if (ec->prog_cache.no_matches) eina_hash_free(ec->prog_cache.no_matches);
    if (ec->prog_cache.matches)
      {
-	eina_hash_foreach(ec->prog_cache.matches,
-			  _edje_collection_free_prog_cache_matches_free_cb,
-			  NULL);
-	eina_hash_free(ec->prog_cache.matches);
+        eina_hash_foreach(ec->prog_cache.matches,
+                          _edje_collection_free_prog_cache_matches_free_cb,
+                          NULL);
+        eina_hash_free(ec->prog_cache.matches);
      }
 #endif
    _edje_programs_patterns_clean(ec);
@@ -1634,69 +1634,69 @@ _edje_collection_free_part_description_clean(int type, Edje_Part_Description_Com
    switch (type)
      {
       case EDJE_PART_TYPE_IMAGE:
-	{
-	   Edje_Part_Description_Image *img;
-	   unsigned int i;
+           {
+              Edje_Part_Description_Image *img;
+              unsigned int i;
 
-	   img = (Edje_Part_Description_Image *) desc;
+              img = (Edje_Part_Description_Image *) desc;
 
-	   for (i = 0; i < img->image.tweens_count; ++i)
-	     free(img->image.tweens[i]);
-	   free(img->image.tweens);
-	   break;
-	}
+              for (i = 0; i < img->image.tweens_count; ++i)
+                free(img->image.tweens[i]);
+              free(img->image.tweens);
+              break;
+           }
       case EDJE_PART_TYPE_EXTERNAL:
-	{
-	   Edje_Part_Description_External *external;
+           {
+              Edje_Part_Description_External *external;
 
-	   external = (Edje_Part_Description_External *) desc;
+              external = (Edje_Part_Description_External *) desc;
 
-	   if (external->external_params)
-	     _edje_external_params_free(external->external_params, free_strings);
-	   break;
-	}
+              if (external->external_params)
+                _edje_external_params_free(external->external_params, free_strings);
+              break;
+           }
       case EDJE_PART_TYPE_TEXT:
       case EDJE_PART_TYPE_TEXTBLOCK:
-	 if (free_strings)
-	   {
-	      Edje_Part_Description_Text *text;
+         if (free_strings)
+           {
+              Edje_Part_Description_Text *text;
 
-	      text = (Edje_Part_Description_Text *) desc;
+              text = (Edje_Part_Description_Text *) desc;
 
-	      if (text->text.text.str)      eina_stringshare_del(text->text.text.str);
-	      if (text->text.text_class)    eina_stringshare_del(text->text.text_class);
-	      if (text->text.style.str)     eina_stringshare_del(text->text.style.str);
-	      if (text->text.font.str)      eina_stringshare_del(text->text.font.str);
-	   }
-	 break;
+              if (text->text.text.str)      eina_stringshare_del(text->text.text.str);
+              if (text->text.text_class)    eina_stringshare_del(text->text.text_class);
+              if (text->text.style.str)     eina_stringshare_del(text->text.style.str);
+              if (text->text.font.str)      eina_stringshare_del(text->text.font.str);
+           }
+         break;
      }
 }
 
 void
 _edje_collection_free_part_description_free(int type,
-					    Edje_Part_Description_Common *desc,
-					    Edje_Part_Collection_Directory_Entry *ce,
-					    Eina_Bool free_strings)
+                                            Edje_Part_Description_Common *desc,
+                                            Edje_Part_Collection_Directory_Entry *ce,
+                                            Eina_Bool free_strings)
 {
-#define FREE_POOL(Type, Ce, Desc)					\
-   case EDJE_PART_TYPE_##Type: eina_mempool_free(Ce->mp.Type, Desc);    \
-                               ce->count.Type--;                        \
-                               break;
+#define FREE_POOL(Type, Ce, Desc)                                     \
+ case EDJE_PART_TYPE_##Type: eina_mempool_free(Ce->mp.Type, Desc);    \
+                             ce->count.Type--;                        \
+   break;
 
    _edje_collection_free_part_description_clean(type, desc, free_strings);
 
    switch (type)
      {
-	FREE_POOL(RECTANGLE, ce, desc);
-	FREE_POOL(TEXT, ce, desc);
-	FREE_POOL(IMAGE, ce, desc);
-	FREE_POOL(PROXY, ce, desc);
-	FREE_POOL(SWALLOW, ce, desc);
-	FREE_POOL(TEXTBLOCK, ce, desc);
-	FREE_POOL(GROUP, ce, desc);
-	FREE_POOL(BOX, ce, desc);
-	FREE_POOL(TABLE, ce, desc);
-	FREE_POOL(EXTERNAL, ce, desc);
+        FREE_POOL(RECTANGLE, ce, desc);
+        FREE_POOL(TEXT, ce, desc);
+        FREE_POOL(IMAGE, ce, desc);
+        FREE_POOL(PROXY, ce, desc);
+        FREE_POOL(SWALLOW, ce, desc);
+        FREE_POOL(TEXTBLOCK, ce, desc);
+        FREE_POOL(GROUP, ce, desc);
+        FREE_POOL(BOX, ce, desc);
+        FREE_POOL(TABLE, ce, desc);
+        FREE_POOL(EXTERNAL, ce, desc);
      }
 }
 
@@ -1723,14 +1723,14 @@ _edje_object_pack_item_hints_set(Evas_Object *obj, Edje_Pack_Element *it)
 
    if ((minw <= 0) && (minh <= 0))
      {
-	edje_object_size_min_get(obj, &w, &h);
-	if ((w <= 0) && (h <= 0))
-	  edje_object_size_min_calc(obj, &w, &h);
+        edje_object_size_min_get(obj, &w, &h);
+        if ((w <= 0) && (h <= 0))
+          edje_object_size_min_calc(obj, &w, &h);
      }
    else
      {
-	w = minw;
-	h = minh;
+        w = minw;
+        h = minh;
      }
    if (((minw <= 0) && (minh <= 0)) && ((w > 0) || (h > 0)))
      evas_object_size_hint_min_set(obj, w, h);
@@ -1782,13 +1782,13 @@ static void
 _cb_signal_repeat(void *data, Evas_Object *obj, const char *sig, const char *source)
 {
    Edje_Pack_Element *pack_it;
-   Evas_Object	*parent;
-   Edje		*ed;
+   Evas_Object  *parent;
+   Edje         *ed;
    Edje         *ed_parent;
-   char		 new_src[4096]; /* XXX is this max reasonable? */
-   size_t	 length_parent = 0;
+   char          new_src[4096]; /* XXX is this max reasonable? */
+   size_t        length_parent = 0;
    size_t        length_index = 0;
-   size_t	 length_source;
+   size_t        length_source;
    int           i = 0;
    const char   *alias = NULL;
    const char   *name = NULL;
@@ -1890,11 +1890,11 @@ _cb_signal_repeat(void *data, Evas_Object *obj, const char *sig, const char *sou
                }
           }
      }
-   
+
    emsg.sig = sig;
    emsg.src = alias ? alias : new_src;
    emsg.data = NULL;
    if (ed_parent)
-     _edje_message_send(ed_parent, EDJE_QUEUE_SCRIPT, 
+     _edje_message_send(ed_parent, EDJE_QUEUE_SCRIPT,
                         EDJE_MESSAGE_SIGNAL, 0, &emsg);
 }
