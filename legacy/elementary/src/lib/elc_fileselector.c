@@ -227,6 +227,7 @@ _anchors_do(Evas_Object *obj,
    ELM_FILESELECTOR_DATA_GET(obj, sd);
 
    s = elm_entry_utf8_to_markup(path);
+   if (!s) return;
 
    buf[0] = '\0';
    tok = eina_str_split(s, "/", 0);
