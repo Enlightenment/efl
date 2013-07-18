@@ -2,10 +2,6 @@
 
 #include "edje_private.h"
 
-#define _DELETE_ME 0x4
-#define _JUST_ADDED 0x2
-#define _PROPAGATE 0x1
-
 static Eina_Hash *signal_match = NULL;
 
 static unsigned int
@@ -145,7 +141,7 @@ _edje_signal_callback_unset(Edje_Signal_Callback_Group *gp, int idx)
 static void
 _edje_signal_callback_set(Edje_Signal_Callback_Group *gp, int idx,
                           const char *sig, const char *src,
-                          Edje_Signal_Cb func, void *data, Eina_Bool flags)
+                          Edje_Signal_Cb func, void *data, Edje_Signal_Callback_Flags flags)
 {
    Edje_Signal_Callback_Match *m;
 
@@ -156,34 +152,19 @@ _edje_signal_callback_set(Edje_Signal_Callback_Group *gp, int idx,
 
    gp->custom_data[idx] = data;
 
-   gp->flags[idx >> 1] = (gp->flags[idx >> 1] & (0xF << (((idx & 1) ^ 1) * 4))) |
-     ((flags & 0xF) << ((idx & 1) * 4));
-}
-
-Eina_Bool
-_edje_signal_callback_prop(const Eina_Bool *flags, int i)
-{
-   Eina_Bool b;
-
-   b = flags[i >> 1];
-   return b & (_PROPAGATE << ((i & 1) * 4));
+   gp->flags[idx] = flags;
 }
 
 static Edje_Signal_Callback_Group *
 _edje_signal_callback_grow(Edje_Signal_Callback_Group *gp)
 {
    Edje_Signal_Callback_Matches *tmp;
-   unsigned int c;
 
    tmp = (Edje_Signal_Callback_Matches*) gp->matches;
    tmp->matches_count++;
    tmp->matches = realloc(tmp->matches, sizeof (Edje_Signal_Callback_Match) * tmp->matches_count);
    gp->custom_data = realloc(gp->custom_data, sizeof (void*) * tmp->matches_count);
-
-   c = ((tmp->matches_count >> 1) + (tmp->matches_count & 1));
-   gp->flags = realloc(gp->flags, sizeof (Eina_Bool) * c);
-   // We have just expanded by one char, set it to 0
-   if (tmp->matches_count & 1) gp->flags[tmp->matches_count >> 1] = 0;
+   gp->flags = realloc(gp->flags, sizeof (Edje_Signal_Callback_Flags) * tmp->matches_count);
 
    return gp;
 }
@@ -195,6 +176,11 @@ _edje_signal_callback_push(const Edje_Signal_Callback_Group *cgp,
 {
    Edje_Signal_Callback_Group *gp = (Edje_Signal_Callback_Group*) cgp;
    unsigned int i;
+   Edje_Signal_Callback_Flags flags;
+
+   flags.delete_me = EINA_FALSE;
+   flags.just_added = EINA_TRUE;
+   flags.propagate = !!propagate;
 
    // let's first try to see if we do find an empty matching stop
    for (i = 0; i < gp->matches->matches_count; i++)
@@ -202,15 +188,10 @@ _edje_signal_callback_push(const Edje_Signal_Callback_Group *cgp,
          src == gp->matches->matches[i].source &&
          func == gp->matches->matches[i].func)
        {
-          Eina_Bool flags;
-
-          flags = gp->flags[i >> 1] & (0xF << ((i & 1) * 4));
-          if (flags & _DELETE_ME)
+          if (gp->flags[i].delete_me)
             {
                _edje_signal_callback_unset(gp, i);
-               _edje_signal_callback_set(gp, i,
-                                         sig, src, func, data,
-                                         (((!!propagate) & 1) | _JUST_ADDED));
+               _edje_signal_callback_set(gp, i, sig, src, func, data, flags);
                return;
             }
        }
@@ -237,32 +218,19 @@ _edje_signal_callback_push(const Edje_Signal_Callback_Group *cgp,
      }
 
    // search an empty spot now
-   for (i = 0; i < gp->matches->matches_count; i += 2)
-     if (gp->flags[i >> 1] & (_DELETE_ME | (_DELETE_ME << 4)))
+   for (i = 0; i < gp->matches->matches_count; i++)
+     if (gp->flags[i].delete_me)
        {
-          if (gp->flags[i >> 1] & _DELETE_ME)
-            {
-               _edje_signal_callback_unset(gp, i);
-               _edje_signal_callback_set(gp, i,
-                                         sig, src, func, data,
-                                         (((!!propagate) & 1) | _JUST_ADDED));
-               return;
-            }
-          if (gp->flags[i >> 1] & (_DELETE_ME << 4))
-            {
-               _edje_signal_callback_unset(gp, i + 1);
-               _edje_signal_callback_set(gp, i + 1,
-                                         sig, src, func, data,
-                                         (((!!propagate) & 1) | _JUST_ADDED));
-               return;
-            }
+          _edje_signal_callback_unset(gp, i);
+          _edje_signal_callback_set(gp, i, sig, src, func, data, flags);
+          return;
        }
 
    _edje_signal_callback_grow(gp);
 
    // Set propagate and just_added flags
    _edje_signal_callback_set(gp, gp->matches->matches_count - 1,
-                             sig, src, func, data, (((!!propagate) & 1) | _JUST_ADDED));
+                             sig, src, func, data, flags);
 
    return;
 }
@@ -343,10 +311,7 @@ _edje_signal_callback_disable(const Edje_Signal_Callback_Group *cgp,
             func == gp->matches->matches[i].func &&
             gp->custom_data[i] == data)
           {
-             Eina_Bool flags;
-
-             flags = gp->flags[i >> 1] | (_DELETE_ME << ((i & 1) * 4));
-             gp->flags[i >> 1] = flags;
+             gp->flags[i].delete_me = EINA_TRUE;
              return gp->custom_data[i];
           }
      }
@@ -359,10 +324,7 @@ _edje_signal_callback_disable(const Edje_Signal_Callback_Group *cgp,
                  src == gp->matches->matches[i].source &&
                  func == gp->matches->matches[i].func)
                {
-                  Eina_Bool flags;
-
-                  flags = gp->flags[i >> 1] | (_DELETE_ME << ((i & 1) * 4));
-                  gp->flags[i >> 1] = flags;
+                  gp->flags[i].delete_me = EINA_TRUE;
                   return gp->custom_data[i];
                }
           }
@@ -373,32 +335,22 @@ _edje_signal_callback_disable(const Edje_Signal_Callback_Group *cgp,
 
 static void
 _edje_signal_callback_move_last(Edje_Signal_Callback_Group *gp,
-                                int i)
+                                unsigned int i)
 {
    Edje_Signal_Callback_Matches *m;
-   int j;
+   unsigned int j;
 
    m = (Edje_Signal_Callback_Matches*) gp->matches;
 
-   for (j = (int) --m->matches_count; j > i; --j)
+   for (j = --m->matches_count; j > i; --j)
      {
-        if (!(gp->flags[j >> 1] & (_DELETE_ME << ((j & 1) * 4))))
+        if (!gp->flags[j].delete_me)
           {
-             Eina_Bool flag_neighbor_i, flag_j;
-
              _edje_signal_callback_unset(gp, i);
-
              m->matches[i].signal = m->matches[j].signal;
              m->matches[i].source = m->matches[j].source;
              m->matches[i].func = m->matches[j].func;
-
-             flag_j = gp->flags[j >> 1] >> ((j & 1) * 4);
-             flag_neighbor_i = gp->flags[i >> 1] >> ((!(j & 1)) * 4);
-
-             if (i & 1)
-                gp->flags[i >> 1] = flag_neighbor_i | (flag_j << 4);
-             else
-                gp->flags[i >> 1] = flag_j | (flag_neighbor_i << 4);
+             gp->flags[i] = gp->flags[j];
              return;
           }
      }
@@ -421,23 +373,12 @@ _edje_signal_callback_patterns_ref(const Edje_Signal_Callback_Group *gp)
           {
              // Let compact it and remove uneeded pattern before building it
              // We can do that because the custom data are kept local into the matching code.
-             Eina_Bool delete_me = _DELETE_ME | (_DELETE_ME << 4);
              unsigned int i;
 
-             for (i = 0; i < tmp->matches_count; i += 2)
+             for (i = 0; i < tmp->matches_count; i++)
                {
-                  if (gp->flags[i >> 1] & delete_me)
-                    {
-                       if (gp->flags[i >> 1] & _DELETE_ME)
-                         {
-                            _edje_signal_callback_move_last((Edje_Signal_Callback_Group*) gp, i);
-                         }
-                       if (i + 1 < gp->matches->matches_count &&
-                           (gp->flags[i >> 1] & (_DELETE_ME << 4)))
-                         {
-                            _edje_signal_callback_move_last((Edje_Signal_Callback_Group*) gp, i + 1);
-                         }
-                    }
+                  if (gp->flags[i].delete_me)
+                    _edje_signal_callback_move_last((Edje_Signal_Callback_Group*) gp, i);
                }
 
           }
@@ -488,26 +429,11 @@ _edje_signal_callback_patterns_unref(const Edje_Signals_Sources_Patterns *essp)
    }
 }
 
-Eina_Bool
-_edje_signal_callback_run(const Eina_Bool *flags, unsigned int i)
-{
-   Eina_Bool r;
-  
-   r = flags[i >> 1] & ((_DELETE_ME) << ((i & 0x1) * 4));
-
-   return r;
-}
-
 void
-_edje_signal_callback_reset(Eina_Bool *flags, unsigned int length)
+_edje_signal_callback_reset(Edje_Signal_Callback_Flags *flags, unsigned int length)
 {
-   Eina_Bool mask;
    unsigned int i;
-
-   mask = ~((_JUST_ADDED << 4) | _JUST_ADDED);
-
-   length >>= 1;
    for (i = 0; i < length; ++i)
-     flags[i] &= mask;
+     flags[i].just_added = EINA_FALSE;
 }
 

@@ -539,7 +539,7 @@ edje_match_callback_exec_check_finals(const Edje_Signals_Sources_Patterns *ssp,
                     cb = &matches[*e];
                     if (cb)
                       {
-			 if ((prop) && _edje_signal_callback_prop(ed->callbacks->flags, *e)) continue;
+			 if ((prop) && ed->callbacks->flags[*e].propagate) continue;
 			 eina_array_push(&run, cb);
 			 r = 2;
                       }
@@ -551,7 +551,7 @@ edje_match_callback_exec_check_finals(const Edje_Signals_Sources_Patterns *ssp,
      {
         int idx = cb - matches;
 
-	if (_edje_signal_callback_run(ed->callbacks->flags, idx)) continue; 
+	if (ed->callbacks->flags[idx].delete_me) continue;
 
         cb->func((void*) ed->callbacks->custom_data[idx], ed->obj, sig, source);
         if (_edje_block_break(ed))

@@ -1444,9 +1444,8 @@ _edje_emit_cb(Edje *ed, const char *sig, const char *src, Edje_Message_Signal_Da
 
         EINA_INARRAY_FOREACH(match, i)
           {
-             if (_edje_signal_callback_run(ed->callbacks->flags, *i)) continue;
-             if ((prop) && (_edje_signal_callback_prop(ed->callbacks->flags,
-                                                       *i))) continue;
+             if (ed->callbacks->flags[*i].delete_me) continue;
+             if ((prop) && (ed->callbacks->flags[*i].propagate)) continue;
 
              cb = &m->matches[*i];
 

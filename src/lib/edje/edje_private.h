@@ -334,6 +334,7 @@ typedef struct _Edje_Signal_Source_Char Edje_Signal_Source_Char;
 typedef struct _Edje_Text_Insert_Filter_Callback Edje_Text_Insert_Filter_Callback;
 typedef struct _Edje_Markup_Filter_Callback Edje_Markup_Filter_Callback;
 typedef struct _Edje_Signals_Sources_Patterns Edje_Signals_Sources_Patterns;
+typedef struct _Edje_Signal_Callback_Flags Edje_Signal_Callback_Flags;
 typedef struct _Edje_Signal_Callback_Group Edje_Signal_Callback_Group;
 typedef struct _Edje_Signal_Callback_Match Edje_Signal_Callback_Match;
 typedef struct _Edje_Signal_Callback_Matches Edje_Signal_Callback_Matches;
@@ -830,13 +831,20 @@ struct _Edje_Signal_Callback_Matches
    Eina_Bool hashed : 1;
 };
 
+struct _Edje_Signal_Callback_Flags
+{
+   Eina_Bool delete_me:1;
+   Eina_Bool just_added:1;
+   Eina_Bool propagate:1;
+};
+
 struct _Edje_Signal_Callback_Group
 {
    const Edje_Signal_Callback_Matches *matches;
 
    void **custom_data;
 
-   Eina_Bool *flags; /* 4 bits per custom data (delete_me, just_added, propagate) */
+   Edje_Signal_Callback_Flags *flags;
 };
 
 /*----------*/
@@ -1992,9 +2000,7 @@ void  _edje_signals_sources_patterns_clean(Edje_Signals_Sources_Patterns *ssp);
 
 const Edje_Signals_Sources_Patterns *_edje_signal_callback_patterns_ref(const Edje_Signal_Callback_Group *gp);
 void _edje_signal_callback_patterns_unref(const Edje_Signals_Sources_Patterns *essp);
-Eina_Bool _edje_signal_callback_prop(const Eina_Bool *flags, int i);
-Eina_Bool _edje_signal_callback_run(const Eina_Bool *flags, unsigned int i);
-void _edje_signal_callback_reset(Eina_Bool *flags, unsigned int length);
+void _edje_signal_callback_reset(Edje_Signal_Callback_Flags *flags, unsigned int length);
 
 void _edje_signal_callback_free(const Edje_Signal_Callback_Group *gp);
 

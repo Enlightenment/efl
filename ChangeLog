@@ -1,3 +1,7 @@
+2013-07-22 José Roberto de Souza
+
+    * Edje: Refactor signal callbacks flags
+
 2013-07-19  Cedric Bail
 
 	* Edje: add threshold to draggable part.
