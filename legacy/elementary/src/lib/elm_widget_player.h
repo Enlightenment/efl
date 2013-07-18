@@ -34,8 +34,7 @@ struct _Elm_Player_Smart_Data
    Evas_Object          *stop;
    Evas_Object          *slider;
    
-   Ecore_Timer          *delay_update;
-   double                last_update_time;
+   int                   play_update;
    Eina_Bool             dragging : 1;
 };
 

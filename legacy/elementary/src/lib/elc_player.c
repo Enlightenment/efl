@@ -25,6 +25,18 @@ static const char SIG_PLAY_CLICKED[] = "play,clicked";
 static const char SIG_PREV_CLICKED[] = "prev,clicked";
 static const char SIG_REWIND_CLICKED[] = "rewind,clicked";
 static const char SIG_STOP_CLICKED[] = "stop,clicked";
+/* XXX: other things player SHOULD support
+static const char SIG_STOP_CLICKED[] = "repeat,clicked";
+static const char SIG_STOP_CLICKED[] = "shuffle,clicked";
+static const char SIG_STOP_CLICKED[] = "eject,clicked";
+static const char SIG_STOP_CLICKED[] = "record,clicked";
+static const char SIG_STOP_CLICKED[] = "eject,clicked";
+static const char SIG_STOP_CLICKED[] = "replay,clicked";
+static const char SIG_STOP_CLICKED[] = "power,clicked";
+static const char SIG_STOP_CLICKED[] = "volume,clicked";
+static const char SIG_STOP_CLICKED[] = "eject,clicked";
+static const char SIG_STOP_CLICKED[] = "mute,clicked";
+ */
 
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    { SIG_FORWARD_CLICKED, "" },
@@ -71,6 +83,7 @@ _elm_player_smart_event(Eo *obj, void *_pd, va_list *list)
         if (current < last)
           {
              current -= last / 100;
+             printf("SET0: %3.3f\n", current);
              elm_video_play_position_set(sd->video, current);
           }
 
@@ -176,19 +189,11 @@ _update_slider(void *data,
 
    elm_object_disabled_set(sd->slider, !seekable);
    elm_slider_min_max_set(sd->slider, 0, length);
-   if (!sd->dragging) elm_slider_value_set(sd->slider, pos);
-   sd->last_update_time = ecore_loop_time_get();
-   ELM_SAFE_FREE(sd->delay_update, ecore_timer_del);
-}
-
-static Eina_Bool
-_update_delay(void *data)
-{
-   ELM_PLAYER_DATA_GET(data, sd);
-   if (!sd) return EINA_FALSE;
-   sd->delay_update = NULL;
-   _update_slider(data, NULL, NULL);
-   return EINA_FALSE;
+   if (!sd->dragging)
+     {
+        sd->play_update++;
+        elm_slider_value_set(sd->slider, pos);
+     }
 }
 
 static void
@@ -198,13 +203,6 @@ _update_frame(void *data,
 {
    ELM_PLAYER_DATA_GET(data, sd);
    if (!sd) return;
-   
-   if ((ecore_loop_time_get() - sd->last_update_time) < 0.1)
-     {
-        if (sd->delay_update) ecore_timer_del(sd->delay_update);
-        sd->delay_update = ecore_timer_add(0.15, _update_delay, data);
-        return;
-     }
    _update_slider(data, obj, event_info);
 }
 
@@ -215,7 +213,11 @@ _update_position(void *data,
 {
    ELM_PLAYER_DATA_GET(data, sd);
 
-   if ((ecore_loop_time_get() - sd->last_update_time) < 0.1) return;
+   if (sd->play_update > 0)
+     {
+        sd->play_update--;
+        if (sd->play_update >= 0) return;
+     }
    elm_video_play_position_set(sd->video, elm_slider_value_get(sd->slider));
 }
 
@@ -225,6 +227,7 @@ _drag_start(void *data,
             void *event_info __UNUSED__)
 {
    ELM_PLAYER_DATA_GET(data, sd);
+   sd->play_update = 0;
    sd->dragging = EINA_TRUE;
 }
 
@@ -234,7 +237,9 @@ _drag_stop(void *data,
             void *event_info __UNUSED__)
 {
    ELM_PLAYER_DATA_GET(data, sd);
+   sd->play_update = 0;
    sd->dragging = EINA_FALSE;
+   elm_video_play_position_set(sd->video, elm_slider_value_get(sd->slider));
 }
 
 static void
@@ -505,6 +510,7 @@ _elm_player_smart_content_set(Eo *obj, void *_pd, va_list *list)
 
    elm_object_disabled_set(sd->slider, !seekable);
    elm_slider_min_max_set(sd->slider, 0, length);
+   sd->play_update++;
    elm_slider_value_set(sd->slider, pos);
 
    if (elm_video_is_playing_get(sd->video))
@@ -554,6 +560,7 @@ _elm_player_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    elm_slider_units_format_function_set
      (priv->slider, _double_to_time, _str_free);
    elm_slider_min_max_set(priv->slider, 0, 0);
+   priv->play_update++;
    elm_slider_value_set(priv->slider, 0);
    elm_object_disabled_set(priv->slider, EINA_TRUE);
    evas_object_size_hint_align_set(priv->slider, EVAS_HINT_FILL, 0.5);
@@ -573,11 +580,8 @@ _elm_player_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 }
 
 static void
-_elm_player_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+_elm_player_smart_del(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   Elm_Player_Smart_Data *sd = _pd;
-   
-   if (sd->delay_update) ecore_timer_del(sd->delay_update);
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
 
