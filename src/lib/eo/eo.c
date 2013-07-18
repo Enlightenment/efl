@@ -255,6 +255,8 @@ _eo_kls_itr_func_get(const _Eo_Class *cur_klass, Eo_Op op)
    return NULL;
 }
 
+/************************************ EO2 ************************************/
+
 EAPI _Eo *
 eo2_do_start(Eo *obj_id)
 {
@@ -264,7 +266,7 @@ eo2_do_start(Eo *obj_id)
 }
 
 EAPI void
-eo2_unref_internal(_Eo *obj)
+eo2_do_end(_Eo *obj)
 {
    _eo_unref(obj);
 }
@@ -299,7 +301,7 @@ eo2_get_op_id(Eo2_Op_Description *op_descs, void *api_func)
 {
    Eo2_Op_Description *op_desc;
 
-   /* should do a binary search */
+   /* do a binary search, when it's swallowed by _Eo_Class_Description */
    for (op_desc = op_descs; op_desc->op != EO_NOOP; op_desc++)
      {
         if (op_desc->api_func == api_func)
@@ -310,7 +312,7 @@ eo2_get_op_id(Eo2_Op_Description *op_descs, void *api_func)
 }
 
 static int
-eo2_fct_cmp(const void *p1, const void *p2)
+eo2_api_funcs_cmp(const void *p1, const void *p2)
 {
    const Eo2_Op_Description *op1, *op2;
    op1 = (Eo2_Op_Description *) p1;
@@ -332,8 +334,8 @@ eo2_class_funcs_set(Eo_Class *klass_id, Eo2_Op_Description *op_descs, int n)
 
    base_op_id = *klass->desc->ops.base_op_id;
 
-   /* so that eo2_get_op_id can do a binary search to get the OP from the api_func */
-   qsort((void*)op_descs, n, sizeof(Eo2_Op_Description), eo2_fct_cmp);
+   /* to speed up eo2_get_op_id */
+   qsort((void*)op_descs, n, sizeof(Eo2_Op_Description), eo2_api_funcs_cmp);
 
    i = 0;
    for (op_desc = op_descs; op_desc->op_type != EO_OP_TYPE_INVALID; op_desc++)
@@ -346,11 +348,11 @@ eo2_class_funcs_set(Eo_Class *klass_id, Eo2_Op_Description *op_descs, int n)
           }
         /* printf("%d %p %p\n", op_desc->op, op_desc->api_func, op_desc->func); */
         // no need to check func->op_type != op_desc->op_type
-        // as op_descs wourd replace op_desc
-        // what about func->op == EO_NOOP ??
         _dich_func_set(klass, op_desc->op, op_desc->func);
      }
 }
+
+/*****************************************************************************/
 
 #define _EO_OP_ERR_NO_OP_PRINT(file, line, op, klass) \
    do \

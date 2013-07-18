@@ -601,65 +601,76 @@ EAPI Eina_Bool eo_init(void);
  */
 EAPI Eina_Bool eo_shutdown(void);
 
+/************************************ EO2 ************************************/
+
+// computes size of Eo2_Op_Description[]
+#define OP_DESC_SIZE(desc) (sizeof(desc)/sizeof(Eo2_Op_Description) -1 )
+
+// sort Eo2_Op_Description[] by eapi_func then attribute OP ids
+EAPI void
+eo2_class_funcs_set(Eo_Class *klass_id, Eo2_Op_Description *op_descs, int n);
+
+// opaque type used to pass object pointer to EAPI calls
 typedef struct _Eo_Internal _Eo;
 
+// to fetch internal function and object data at once
 typedef struct _Eo2_Op_Call_Data
 {
    void *func;
    void *data;
 } Eo2_Op_Call_Data;
 
+// EAPI function declaration first argument
+#define eo2_a _Eo *obj, Eo *objid
+// EAPI function call first argument
+#define eo2_o _obj_, _objid_
+
+// to pass the internal function call to EO_FUNC_BODY (as Func parameter)
 #define EO_FUNC_CALL() func(objid, call.data)
 #define EO_FUNC_CALLV(...) func(objid, call.data, __VA_ARGS__)
 
-/* XXX: Essential, because we need to adjust objid for comp objects. */
-#define EO_FUNC_BODY(Name, Ret, Func, DefRet, OpDescs)                  \
-  Ret                                                                   \
-  Name(_Eo *obj, Eo *objid)                                             \
-  {                                                                     \
+// cache OP id, get real fct and object data then do the call
+#define _EO_FUNC_COMMON(Name, Ret, Func, DefRet, OpDescs)               \
      static Eo_Op op = EO_NOOP;                                         \
      if ( op == EO_NOOP ) op = eo2_get_op_id(OpDescs, (void*)Name);     \
-     typedef Ret (*__##Name##_func)(Eo *, void *obj_data);              \
      Eo2_Op_Call_Data call;                                             \
      if (!eo2_call_resolve(obj, op, &call)) return DefRet;              \
      __##Name##_func func = (__##Name##_func) call.func;                \
      return Func;                                                       \
+
+/* XXX: Essential, because we need to adjust objid for comp objects. */
+// to define an EAPI function
+#define EO_FUNC_BODY(Name, Ret, Func, DefRet, OpDescs)                  \
+  Ret                                                                   \
+  Name(_Eo *obj, Eo *objid)                                             \
+  {                                                                     \
+     typedef Ret (*__##Name##_func)(Eo *, void *obj_data);              \
+     _EO_FUNC_COMMON(Name, Ret, Func, DefRet, OpDescs)                  \
   }
 
 #define EO_FUNC_BODYV(Name, Ret, Func, DefRet, OpDescs, ...)            \
   Ret                                                                   \
   Name(_Eo *obj, Eo *objid, __VA_ARGS__)                                \
   {                                                                     \
-     static Eo_Op op = EO_NOOP;                                         \
-     if ( op == EO_NOOP ) op = eo2_get_op_id(OpDescs, (void*)Name);     \
      typedef Ret (*__##Name##_func)(Eo *, void *obj_data, __VA_ARGS__); \
-     Eo2_Op_Call_Data call;                                             \
-     if (!eo2_call_resolve(obj, op, &call)) return DefRet;              \
-     __##Name##_func func = (__##Name##_func) call.func;                \
-     return Func;                                                       \
+     _EO_FUNC_COMMON(Name, Ret, Func, DefRet, OpDescs)                  \
   }
 
-EAPI _Eo * eo2_do_start(Eo *obj_id);
+// returns the OP id corresponding to the given api_func
+EAPI Eo_Op eo2_get_op_id(Eo2_Op_Description *op_descs, void *api_func);
 
+// gets the real function pointer and the object data
 #define eo2_call_resolve(obj_id, op, call) eo2_call_resolve_internal(obj_id, NULL, op, call)
 EAPI Eina_Bool eo2_call_resolve_internal(_Eo *obj, const Eo_Class *klass, Eo_Op op, Eo2_Op_Call_Data *call);
 
-EAPI Eo_Op eo2_get_op_id(Eo2_Op_Description *op_descs, void *api_func);
+// start of eo2_do barrier, gets the object pointer and ref it
+EAPI _Eo * eo2_do_start(Eo *obj_id);
 
-#define OP_DESC_SIZE(desc) (sizeof(desc)/sizeof(Eo2_Op_Description) -1 )
+// end of the eo2_do barrier, unref the obj
+EAPI void eo2_do_end(_Eo *obj);
 
-EAPI void
-eo2_class_funcs_set(Eo_Class *klass_id, Eo2_Op_Description *op_descs, int n);
-
-/* FIXME: Don't use this unref, use an internal one. Reduce id resolution. */
-
-EAPI void eo2_unref_internal(_Eo *obj);
-
-#define eo2_do_end(obj) eo2_unref_internal(obj)
-
-#define eo2_o _obj_, _objid_
-#define eo2_a _Eo *obj, Eo *objid
-
+// eo object method calls batch,
+// DO NOT use return statement in it, use break if necessary
 #define eo2_do(objid, ...)                      \
   do                                            \
     {                                           \
@@ -670,11 +681,14 @@ EAPI void eo2_unref_internal(_Eo *obj);
        eo2_do_end(_obj_);                       \
     } while (0)
 
+// FIXME
 #define eo2_class_do(clsid, ...)                \
   do                                            \
     {                                           \
        do { __VA_ARGS__ ; } while (0);          \
     } while (0)
+
+/*****************************************************************************/
 
 /**
  * @def eo_do
