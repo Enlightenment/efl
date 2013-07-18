@@ -770,6 +770,29 @@ bench_callback_eo2_direct_loop()
    printf ("OK\n  Benchmark: callback loop: %fns per round: ", size_t (benchdone - benchstart) * 1.0 / size_t (i));
 }
 
+static void
+bench_callback_eo2_direct_batch_loop()
+{
+   Eo *obj;
+   uint64_t i;
+   int d = 0;
+
+   eo_init();
+
+   obj = eo_add(TEST_EVENT2_SPEED_CLASS, NULL);
+
+   const uint64_t benchstart = timestamp_benchmark();
+   eo2_do(obj,
+      for (i = 0; i < 999999; i++)
+         inc(eo2_o));
+   const uint64_t benchdone = timestamp_benchmark();
+
+   eo2_do(obj, d = get(eo2_o));
+   eo_del(obj);
+   assert(d == 999999);
+   printf ("OK\n  Benchmark: callback loop: %fns per round: ", size_t (benchdone - benchstart) * 1.0 / size_t (i));
+}
+
 uint64_t
 TestCounter::get ()
 {
@@ -830,6 +853,10 @@ main (int   argc,
 
   printf ("Signal/Benchmark: eo2 call: ");
   bench_callback_eo2_direct_loop();
+  printf ("OK\n");
+
+  printf ("Signal/Benchmark: eo2 batched call: ");
+  bench_callback_eo2_direct_batch_loop();
   printf ("OK\n");
 
   return 0;
