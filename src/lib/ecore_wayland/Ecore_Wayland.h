@@ -798,6 +798,8 @@ EAPI struct wl_array *ecore_wl_dnd_drag_types_get(Ecore_Wl_Input *input);
  */
 /* EAPI Ecore_Wl_Dnd_Source *ecore_wl_dnd_drag_source_create(Ecore_Wl_Dnd *dnd); */
 
+EAPI void ecore_wl_server_mode_set(Eina_Bool on);
+
 #ifdef __cplusplus
 }
 #endif
