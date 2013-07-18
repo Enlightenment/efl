@@ -122,7 +122,6 @@ _elm_player_smart_event(Eo *obj, void *_pd, va_list *list)
         if (ret) *ret = EINA_TRUE;
         return;
      }
-   fprintf(stderr, "keyname: '%s' not handle\n", ev->keyname);
 }
 
 
@@ -444,7 +443,6 @@ _double_to_time(double value)
    else
      snprintf(buf, sizeof(buf), "%02i.%02i",
               ps, pf);
-
    return (char *)eina_stringshare_add(buf);
 }
 
@@ -554,6 +552,7 @@ _elm_player_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    priv->stop = _player_button_add(obj, "media_player/stop", _stop);
 
    priv->slider = elm_slider_add(obj);
+   elm_slider_indicator_show_set(priv->slider, EINA_TRUE);
    elm_slider_indicator_format_function_set
      (priv->slider, _double_to_time, _str_free);
    elm_slider_units_format_function_set

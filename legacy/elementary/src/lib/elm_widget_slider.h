@@ -42,6 +42,7 @@ struct _Elm_Slider_Smart_Data
    Eina_Bool             spacer_down : 1;
    Eina_Bool             frozen : 1;
    Eina_Bool             popup_hiding : 1;
+   Eina_Bool             units_show : 1;
 };
 
 /**
