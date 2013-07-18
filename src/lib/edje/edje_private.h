@@ -1047,7 +1047,8 @@ struct _Edje_Part_Description_Common
          int id_center;
          FLOAT_T x, y, z;
       } rot;
-      Eina_List *colors;    //Edje_Map_Color, consider to apply Eina_Hash
+      Edje_Map_Color **colors;    /* List of the Edje_Map_Color */
+      unsigned int colors_count;
       Eina_Bool backcull;
       Eina_Bool on;
       Eina_Bool persp_on;
@@ -1372,7 +1373,8 @@ struct _Edje_Calc_Params_Map
       int x, y, z;
       int focal;
    } persp; // 16
-   Eina_List *colors;
+   Edje_Map_Color **colors;
+   unsigned int colors_count;
 };
 
 struct _Edje_Calc_Params_Physics

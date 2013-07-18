@@ -4815,14 +4815,21 @@ static void st_collections_group_parts_part_table_items_item_span(void)
    current_item->rowspan = parse_int_range(1, 1, 0xffff);
 }
 
-static Eina_List *
+static Edje_Map_Color **
 _copied_map_colors_get(Edje_Part_Description_Common *parent)
 {
-   Eina_List *colors = NULL;
-   Eina_List *l;
+   Edje_Map_Color **colors;
    Edje_Map_Color *color;
-   EINA_LIST_FOREACH(parent->map.colors, l, color)
+   int i;
+
+   if (parent->map.colors_count == 0) return NULL;
+   colors = (Edje_Map_Color **) malloc(sizeof(Edje_Map_Color **) *
+                                       parent->map.colors_count);
+
+   for (i = 0; i < (int)parent->map.colors_count; i++)
      {
+        color = parent->map.colors[i];
+
         Edje_Map_Color *c = mem_alloc(SZ(Edje_Map_Color));
         if (!color)
           {
@@ -4831,7 +4838,7 @@ _copied_map_colors_get(Edje_Part_Description_Common *parent)
              return NULL;
           }
         memcpy(c, color, sizeof(Edje_Map_Color));
-        colors = eina_list_append(colors, c);
+        colors[i] = c;
      }
    return colors;
 }
@@ -8306,6 +8313,7 @@ st_collections_group_parts_part_description_map_color(void)
 {
    Edje_Map_Color *color;
    Edje_Map_Color tmp;
+   int i;
 
    check_arg_count(5);
 
@@ -8315,18 +8323,16 @@ st_collections_group_parts_part_description_map_color(void)
    tmp.b = parse_int_range(3, 0, 255);
    tmp.a = parse_int_range(4, 0, 255);
 
-   Eina_List *l;
-   Edje_Map_Color *ex_color;
-   EINA_LIST_FOREACH(current_desc->map.colors, l, ex_color)
+   for (i = 0; i < (int)current_desc->map.colors_count; i++)
      {
-        if (ex_color->idx != tmp.idx) continue;
-        ex_color->r = tmp.r;
-        ex_color->g = tmp.g;
-        ex_color->b = tmp.b;
-        ex_color->a = tmp.a;
+        color = current_desc->map.colors[i];
+        if (color->idx != tmp.idx) continue;
+        color->r = tmp.r;
+        color->g = tmp.g;
+        color->b = tmp.b;
+        color->a = tmp.a;
         return;
      }
-
    color = mem_alloc(SZ(Edje_Map_Color));
    if (!color)
      {
@@ -8336,8 +8342,11 @@ st_collections_group_parts_part_description_map_color(void)
      }
 
    *color = tmp;
-
-   current_desc->map.colors = eina_list_append(current_desc->map.colors, color);
+   current_desc->map.colors_count++;
+   current_desc->map.colors =
+      realloc(current_desc->map.colors,
+              sizeof(Edje_Map_Color*) * current_desc->map.colors_count);
+   current_desc->map.colors[current_desc->map.colors_count - 1] = color;
 }
 
 

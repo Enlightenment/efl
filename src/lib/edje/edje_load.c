@@ -1629,14 +1629,22 @@ _edje_collection_free(Edje_File *edf, Edje_Part_Collection *ec, Edje_Part_Collec
 void
 _edje_collection_free_part_description_clean(int type, Edje_Part_Description_Common *desc, Eina_Bool free_strings)
 {
+   unsigned int i;
+
    if (free_strings && desc->color_class) eina_stringshare_del(desc->color_class);
+   //clean the map colors
+   if (desc->map.colors)
+     {
+        for (i = 0; i < (int)desc->map.colors_count; i++)
+          free(desc->map.colors[i]);
+        free(desc->map.colors);
+     }
 
    switch (type)
      {
       case EDJE_PART_TYPE_IMAGE:
            {
               Edje_Part_Description_Image *img;
-              unsigned int i;
 
               img = (Edje_Part_Description_Image *) desc;
 

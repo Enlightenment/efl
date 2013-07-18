@@ -2165,6 +2165,7 @@ _edje_part_recalc_single_map(Edje *ed,
                }
           }
         params_write->colors = desc->map.colors;
+        params_write->colors_count = desc->map.colors_count;
      }
    EINA_COW_CALC_MAP_END(params, params_write);
 }
@@ -2773,25 +2774,31 @@ static Eina_Bool
 map_colors_interp(Edje_Calc_Params *p1, Edje_Calc_Params *p2,
                   Edje_Calc_Params_Map *pmap, FLOAT_T pos)
 {
-   Eina_List *l, *l2;
    Edje_Map_Color *col, *col2, *col3;
+   int i, j, idx = 0;
    Eina_Bool matched = EINA_FALSE;
 
-   if (p1->map->colors || p2->map->colors)
+   if ((p1->map->colors_count > 0) || (p2->map->colors_count > 0))
      {
-        EINA_LIST_FOREACH(p1->map->colors, l, col)
+        pmap->colors_count = (p1->map->colors_count > p2->map->colors_count ? p1->map->colors_count : p2->map->colors_count);
+
+        pmap->colors = (Edje_Map_Color **) malloc(sizeof(Edje_Map_Color *) * (int) pmap->colors_count);
+
+        for (i = 0; i < (int)p1->map->colors_count; i++)
           {
-             col3 = calloc(1, sizeof(Edje_Map_Color));
+             col = p1->map->colors[i];
+             col3 = malloc(sizeof(Edje_Map_Color));
              col3->idx = col->idx;
 
-             EINA_LIST_FOREACH(p2->map->colors, l2, col2)
+             for (j = 0; j < (int)p2->map->colors_count; j++)
                {
+                  col2 = p2->map->colors[j];
                   if (col->idx != col2->idx) continue;
                   col3->r = INTP(col->r, col2->r, pos);
                   col3->g = INTP(col->g, col2->g, pos);
                   col3->b = INTP(col->b, col2->b, pos);
                   col3->a = INTP(col->a, col2->a, pos);
-                  pmap->colors = eina_list_append(pmap->colors, col3);
+                  pmap->colors[idx] = col3;
                   matched = EINA_TRUE;
                   break;
                }
@@ -2801,28 +2808,33 @@ map_colors_interp(Edje_Calc_Params *p1, Edje_Calc_Params *p2,
                   col3->g = INTP(col->g, 255, pos);
                   col3->b = INTP(col->b, 255, pos);
                   col3->a = INTP(col->a, 255, pos);
-                  pmap->colors = eina_list_append(pmap->colors, col3);
+                  pmap->colors[idx] = col3;
                }
+             idx++;
              matched = EINA_FALSE;
           }
-        EINA_LIST_FOREACH(p2->map->colors, l, col)
+        for (i = 0; i < (int)p2->map->colors_count; i++)
           {
-             EINA_LIST_FOREACH(p1->map->colors, l2, col2)
+             col = p2->map->colors[i];
+
+             for (j = 0; j < (int)p1->map->colors_count; j++)
                {
+                  col2 = p1->map->colors[j];
                   if (col->idx != col2->idx) continue;
                   matched = EINA_TRUE;
                   break;
                }
              if (!matched)
                {
-                  col3 = calloc(1, sizeof(Edje_Map_Color));
+                  col3 = malloc(sizeof(Edje_Map_Color));
                   col3->idx = col->idx;
                   col3->r = INTP(255, col->r, pos);
                   col3->g = INTP(255, col->g, pos);
                   col3->b = INTP(255, col->b, pos);
                   col3->a = INTP(255, col->a, pos);
-                  pmap->colors = eina_list_append(pmap->colors, col3);
+                  pmap->colors[idx] = col3;
                }
+             idx++;
              matched = EINA_FALSE;
           }
         return EINA_TRUE;
@@ -2837,9 +2849,11 @@ _edje_map_prop_set(Evas_Map *map, const  Edje_Calc_Params *pf,
                    Edje_Real_Part *ep, Evas_Object *mo,
                    Eina_Bool map_colors_free)
 {
-   Eina_List *colors = pf->map->colors;
+   Edje_Map_Color **colors = pf->map->colors;
+   int colors_cnt = pf->map->colors_count;
+   int i;
+
    Edje_Map_Color *color;
-   Eina_List *l;
 
    evas_map_util_points_populate_from_object(map, ep->object);
 
@@ -2859,7 +2873,7 @@ _edje_map_prop_set(Evas_Map *map, const  Edje_Calc_Params *pf,
      }
 
    //map color
-   if (!colors)
+   if (colors_cnt == 0)
      {
         evas_map_point_color_set(map, 0, 255, 255, 255, 255);
         evas_map_point_color_set(map, 1, 255, 255, 255, 255);
@@ -2870,17 +2884,20 @@ _edje_map_prop_set(Evas_Map *map, const  Edje_Calc_Params *pf,
      {
         if (map_colors_free)
           {
-             EINA_LIST_FREE(colors, color)
+             for (i = 0; i < colors_cnt; i++)
                {
+                  color = (Edje_Map_Color*) colors[i];
                   evas_map_point_color_set(map, color->idx, color->r, color->g,
                                            color->b, color->a);
-                  free(color);
+                  free(colors[i]);
                }
+             free (colors);
           }
         else
           {
-             EINA_LIST_FOREACH(colors, l, color)
+             for (i = 0; i < colors_cnt; i++)
                {
+                  color = (Edje_Map_Color*) colors[i];
                   evas_map_point_color_set(map, color->idx, color->r, color->g,
                                            color->b, color->a);
                }
