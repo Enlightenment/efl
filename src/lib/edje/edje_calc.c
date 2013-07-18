@@ -2434,7 +2434,7 @@ _edje_part_recalc_single(Edje *ed,
           params->final.w += 1;
         else if (params->final.x + params->final.w > TO_INT(ADD(params->eval.x, params->eval.w)))
           params->final.w -= 1;
-        if (params->final.y + params->final.h < TO_INT(ADD(params->eval.y, params->eval.y)))
+        if (params->final.y + params->final.h < TO_INT(ADD(params->eval.y, params->eval.h)))
           params->final.h += 1;
         else if (params->final.y + params->final.h > TO_INT(ADD(params->eval.y, params->eval.h)))
           params->final.h -= 1;

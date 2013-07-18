@@ -144,7 +144,7 @@ START_TEST(edje_test_complex_layout)
     * rel2.relative: 1.0 1.0; rel2.offset -5 -5; */
    edje_object_part_geometry_get(obj, "l", &x, &y, &w, &h);
    fail_if(x != 5 || y != 500+2);
-   fail_if(w != 1000-5-5 + 1 || h != 500-5-2 + 2);
+   fail_if(w != 1000-5-5 + 1 || h != 500-5-2 + 1);
 
    EDJE_TEST_FREE_EVAS();
 }
