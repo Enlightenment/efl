@@ -14,6 +14,18 @@
 
 #include <Evas_Loader.h>
 
+// For testing purposes only.
+#define EXPERIMENTAL_SHARED_INDEX 0
+#if EXPERIMENTAL_SHARED_INDEX
+typedef int string_t;
+#else
+#define cserve2_shared_string_get(str) (str)
+#define cserve2_shared_string_del(str) (eina_stringshare_del(str))
+#define cserve2_shared_string_add(str) (eina_stringshare_add(str))
+#define cserve2_shared_string_ref(str) (eina_stringshare_ref(str))
+typedef Eina_Stringshare* string_t;
+#endif
+
 typedef struct _Entry Entry;
 typedef struct _Reference Reference;
 typedef struct _File_Data File_Data;
@@ -45,13 +57,13 @@ struct _Entry {
 
 struct _File_Data {
    Entry base;
-   char *path;
-   char *key;
+   string_t path;
+   string_t key;
+   string_t loader_data;
    int w, h;
    int frame_count;
    int loop_count;
    int loop_hint;
-   const char *loader_data;
    File_Watch *watcher;
    Eina_List *images;
    Eina_Bool alpha : 1;
@@ -71,9 +83,9 @@ struct _Image_Data {
 };
 
 struct _Font_Source {
-   const char *key;
-   const char *name;
-   const char *file;
+   string_t key;
+   string_t name;
+   string_t file;
    int references;
    void *ft;
 };
@@ -225,18 +237,18 @@ _entry_load_reused(Entry *e)
 }
 
 static Msg_Opened *
-_image_opened_msg_create(File_Data *entry, int *size)
+_image_opened_msg_create(File_Data *fe, int *size)
 {
    Msg_Opened *msg;
 
    msg = calloc(1, sizeof(*msg));
    msg->base.type = CSERVE2_OPENED;
-   msg->image.w = entry->w;
-   msg->image.h = entry->h;
-   msg->image.frame_count = entry->frame_count;
-   msg->image.loop_count = entry->loop_count;
-   msg->image.loop_hint = entry->loop_hint;
-   msg->image.alpha = entry->alpha;
+   msg->image.w = fe->w;
+   msg->image.h = fe->h;
+   msg->image.frame_count = fe->frame_count;
+   msg->image.loop_count = fe->loop_count;
+   msg->image.loop_hint = fe->loop_hint;
+   msg->image.alpha = fe->alpha;
 
    *size = sizeof(*msg);
 
@@ -244,15 +256,15 @@ _image_opened_msg_create(File_Data *entry, int *size)
 }
 
 static void
-_image_opened_send(Client *client, File_Data *entry, unsigned int rid)
+_image_opened_send(Client *client, File_Data *fe, unsigned int rid)
 {
     int size;
     Msg_Opened *msg;
 
-    DBG("Sending OPENED reply for entry: %d and RID: %d.", entry->base.id, rid);
+    DBG("Sending OPENED reply for entry: %d and RID: %d.", fe->base.id, rid);
     // clear the struct with possible paddings, since it is not aligned.
 
-    msg = _image_opened_msg_create(entry, &size);
+    msg = _image_opened_msg_create(fe, &size);
     msg->base.rid = rid;
 
     cserve2_client_send(client, &size, sizeof(size));
@@ -323,32 +335,34 @@ _font_loaded_send(Client *client, unsigned int rid)
 }
 
 static void *
-_open_request_build(File_Data *f, int *bufsize)
+_open_request_build(File_Data *fe, int *bufsize)
 {
+   const char *loader_data;
    char *buf;
    int size, pathlen, keylen, loaderlen;
    Slave_Msg_Image_Open msg;
 
-   pathlen = strlen(f->path) + 1;
-   keylen = strlen(f->key) + 1;
+   pathlen = strlen(cserve2_shared_string_get(fe->path)) + 1;
+   keylen = strlen(cserve2_shared_string_get(fe->key)) + 1;
 
    memset(&msg, 0, sizeof(msg));
-   msg.has_loader_data = !!f->loader_data;
-   loaderlen = msg.has_loader_data ? (strlen(f->loader_data) + 1) : 0;
+   loader_data = cserve2_shared_string_get(fe->loader_data);
+   msg.has_loader_data = !!loader_data;
+   loaderlen = msg.has_loader_data ? (strlen(loader_data) + 1) : 0;
 
    size = sizeof(msg) + pathlen + keylen + loaderlen;
    buf = malloc(size);
    if (!buf) return NULL;
 
    memcpy(buf, &msg, sizeof(msg));
-   memcpy(buf + sizeof(msg), f->path, pathlen);
-   memcpy(buf + sizeof(msg) + pathlen, f->key, keylen);
+   memcpy(buf + sizeof(msg), cserve2_shared_string_get(fe->path), pathlen);
+   memcpy(buf + sizeof(msg) + pathlen, cserve2_shared_string_get(fe->key), keylen);
    if (msg.has_loader_data)
-     memcpy(buf + sizeof(msg) + pathlen + keylen, f->loader_data, loaderlen);
+     memcpy(buf + sizeof(msg) + pathlen + keylen, loader_data, loaderlen);
 
    *bufsize = size;
 
-   _entry_load_start(&f->base);
+   _entry_load_start(&fe->base);
 
    return buf;
 }
@@ -360,26 +374,26 @@ _request_free(void *msg, void *data EINA_UNUSED)
 }
 
 static Msg_Opened *
-_open_request_response(File_Data *e, Slave_Msg_Image_Opened *resp, int *size)
+_open_request_response(File_Data *fe, Slave_Msg_Image_Opened *resp, int *size)
 {
-   _entry_load_finish(&e->base);
+   _entry_load_finish(&fe->base);
 
-   e->base.request = NULL;
+   fe->base.request = NULL;
 
-   e->w = resp->w;
-   e->h = resp->h;
-   e->frame_count = resp->frame_count;
-   e->loop_count = resp->loop_count;
-   e->loop_hint = resp->loop_hint;
-   e->alpha = resp->alpha;
+   fe->w = resp->w;
+   fe->h = resp->h;
+   fe->frame_count = resp->frame_count;
+   fe->loop_count = resp->loop_count;
+   fe->loop_hint = resp->loop_hint;
+   fe->alpha = resp->alpha;
    if (resp->has_loader_data)
      {
-        const char *ldata = (const char *)resp +
-                                           sizeof(Slave_Msg_Image_Opened);
-        e->loader_data = eina_stringshare_add(ldata);
+        const char *ldata =
+              (const char *)resp + sizeof(Slave_Msg_Image_Opened);
+        fe->loader_data = cserve2_shared_string_add(ldata);
      }
 
-   return _image_opened_msg_create(e, size);
+   return _image_opened_msg_create(fe, size);
 }
 
 static void
@@ -419,7 +433,7 @@ static void *
 _load_request_build(Image_Data *i, int *bufsize)
 {
    char *buf, *ptr;
-   const char *shmpath;
+   const char *shmpath, *loader_data;
    int size;
    int shmlen, filelen, keylen, loaderlen;
    Slave_Msg_Image_Load msg;
@@ -432,10 +446,11 @@ _load_request_build(Image_Data *i, int *bufsize)
    shmpath = cserve2_shm_name_get(i->shm);
 
    shmlen = strlen(shmpath) + 1;
-   filelen = strlen(i->file->path) + 1;
-   keylen = strlen(i->file->key) + 1;
-   if (i->file->loader_data)
-     loaderlen = strlen(i->file->loader_data) + 1;
+   filelen = strlen(cserve2_shared_string_get(i->file->path)) + 1;
+   keylen = strlen(cserve2_shared_string_get(i->file->key)) + 1;
+   loader_data = cserve2_shared_string_get(i->file->loader_data);
+   if (loader_data)
+     loaderlen = strlen(loader_data) + 1;
    else
      loaderlen = 0;
 
@@ -469,11 +484,11 @@ _load_request_build(Image_Data *i, int *bufsize)
 
    memcpy(ptr, shmpath, shmlen);
    ptr += shmlen;
-   memcpy(ptr, i->file->path, filelen);
+   memcpy(ptr, cserve2_shared_string_get(i->file->path), filelen);
    ptr += filelen;
-   memcpy(ptr, i->file->key, keylen);
+   memcpy(ptr, cserve2_shared_string_get(i->file->key), keylen);
    ptr += keylen;
-   if (loaderlen > 0) memcpy(ptr, i->file->loader_data, loaderlen);
+   if (loaderlen > 0) memcpy(ptr, cserve2_shared_string_get(i->file->loader_data), loaderlen);
 
    *bufsize = size;
 
@@ -558,6 +573,9 @@ _scaling_prepare_and_do(Image_Data *orig)
 static Msg_Loaded *
 _load_request_response(Image_Data *e, Slave_Msg_Image_Loaded *resp, int *size)
 {
+   const char *path = cserve2_shared_string_get(e->file->path);
+   const char *key = cserve2_shared_string_get(e->file->key);
+
    _entry_load_finish(&e->base);
 
    e->base.request = NULL;
@@ -568,17 +586,18 @@ _load_request_response(Image_Data *e, Slave_Msg_Image_Loaded *resp, int *size)
 
    if (_scaling_needed(e, resp))
      {
-        DBG("About to scale down image '%s%s'", e->file->path, e->file->key);
+
+        DBG("About to scale down image '%s%s'", path, key);
 
         if (!_scaling_prepare_and_do(e))
           DBG("Image '%s:%s' has been scaled down.",
-              e->file->path, e->file->key);
+              path, key);
         else
           ERR("Failed to scale down image '%s%s'",
-              e->file->path, e->file->key);
+              path, key);
      }
    else
-     DBG("No scaling needed for image '%s%s'", e->file->path, e->file->key);
+     DBG("No scaling needed for image '%s%s'", path, key);
 
    return _image_loaded_msg_create(e, size);
 }
@@ -629,13 +648,14 @@ _image_entry_size_get(Image_Data *e)
 }
 
 static void
-_file_id_free(File_Data *entry)
+_file_id_free(File_Data *fe)
 {
    char buf[4096];
 
    DBG("Removing entry file id: %d, file: \"%s:%s\"",
-       entry->base.id, entry->path, entry->key);
-   snprintf(buf, sizeof(buf), "%s:%s", entry->path, entry->key);
+       fe->base.id, cserve2_shared_string_get(fe->path), cserve2_shared_string_get(fe->key));
+   snprintf(buf, sizeof(buf), "%s:%s",
+            cserve2_shared_string_get(fe->path), cserve2_shared_string_get(fe->key));
    eina_hash_del_by_key(file_ids, buf);
 }
 
@@ -653,7 +673,7 @@ _image_id_free(Image_Data *entry)
 static void
 _image_entry_free(Image_Data *entry)
 {
-   File_Data *fentry = entry->file;
+   File_Data *fe = entry->file;
 
    if (entry->base.request)
      cserve2_request_cancel_all(entry->base.request, CSERVE2_REQUEST_CANCEL);
@@ -664,11 +684,11 @@ _image_entry_free(Image_Data *entry)
         unused_mem_usage -= _image_entry_size_get(entry);
      }
 
-   if (fentry)
+   if (fe)
      {
-        fentry->images = eina_list_remove(fentry->images, entry);
-        if (!fentry->images && !fentry->base.references)
-          eina_hash_del_by_key(file_entries, &fentry->base.id);
+        fe->images = eina_list_remove(fe->images, entry);
+        if (!fe->images && !fe->base.references)
+          eina_hash_del_by_key(file_entries, &fe->base.id);
      }
    if (entry->shm)
      cserve2_shm_unref(entry->shm);
@@ -685,44 +705,44 @@ _hash_image_entry_free(void *data)
 }
 
 static void
-_file_entry_free(File_Data *entry)
+_file_entry_free(File_Data *fe)
 {
    File_Watch *fw;
 
    // Should we call free for each of the images too?
    // If everything goes fine, it's not necessary.
-   if (entry->images)
+   if (fe->images)
      {
         ERR("Freeing file %d (\"%s:%s\") image data still referenced.",
-            entry->base.id, entry->path, entry->key);
-        eina_list_free(entry->images);
+            fe->base.id, cserve2_shared_string_get(fe->path), cserve2_shared_string_get(fe->key));
+        eina_list_free(fe->images);
      }
 
-   if (entry->base.request)
-     cserve2_request_cancel_all(entry->base.request, CSERVE2_REQUEST_CANCEL);
+   if (fe->base.request)
+     cserve2_request_cancel_all(fe->base.request, CSERVE2_REQUEST_CANCEL);
 
-   if ((fw = entry->watcher))
+   if ((fw = fe->watcher))
      {
-        fw->entries = eina_list_remove(fw->entries, entry);
+        fw->entries = eina_list_remove(fw->entries, fe);
         if (!fw->entries)
           eina_hash_del_by_key(file_watch, fw->path);
      }
 
-   free(entry->key);
-   free(entry->path);
-   eina_stringshare_del(entry->loader_data);
-   free(entry);
+   cserve2_shared_string_del(fe->key);
+   cserve2_shared_string_del(fe->path);
+   cserve2_shared_string_del(fe->loader_data);
+   free(fe);
 }
 
 static void
 _hash_file_entry_free(void *data)
 {
-   File_Data *entry = data;
+   File_Data *fe = data;
    // TODO: Add some checks to make sure that we are freeing an
    // unused entry.
 
-   _file_id_free(entry);
-   _file_entry_free(entry);
+   _file_id_free(fe);
+   _file_entry_free(fe);
 }
 
 static void
@@ -736,8 +756,10 @@ _file_watch_free(void *data)
 }
 
 static int
-_font_entry_cmp(const Font_Entry *k1, int k1_length EINA_UNUSED, const Font_Entry *k2, int k2_length EINA_UNUSED)
+_font_entry_cmp(const Font_Entry *k1, int k1_length EINA_UNUSED,
+                const Font_Entry *k2, int k2_length EINA_UNUSED)
 {
+   const char *key1, *key2;
    if (k1->src->key == k2->src->key)
      {
         if (k1->size == k2->size)
@@ -748,14 +770,19 @@ _font_entry_cmp(const Font_Entry *k1, int k1_length EINA_UNUSED, const Font_Entr
           }
         return k1->size - k2->size;
      }
-   return strcmp(k1->src->key, k2->src->key);
+   key1 = cserve2_shared_string_get(k1->src->key);
+   key2 = cserve2_shared_string_get(k2->src->key);
+   return strcmp(key1, key2);
 }
 
 static int
 _font_entry_key_hash(const Font_Entry *key, int key_length EINA_UNUSED)
 {
-   int hash;
-   hash = eina_hash_djb2(key->src->key, eina_stringshare_strlen(key->src->key) + 1);
+   const char *keystr;
+   int hash;   
+
+   keystr = cserve2_shared_string_get(key->src->key);
+   hash = eina_hash_djb2(keystr, strlen(keystr));
    hash ^= eina_hash_int32(&key->rend_flags, sizeof(int));
    hash ^= eina_hash_int32(&key->size, sizeof(int));
    hash ^= eina_hash_int32(&key->dpi, sizeof(int));
@@ -770,7 +797,10 @@ _font_entry_free(Font_Entry *fe)
    fe->src->references--;
    if (fe->ft) cserve2_font_ft_free(fe->ft);
    if (fe->src->references <= 0)
-     eina_hash_del_by_key(font_sources, fe->src->key);
+     {
+        const char *key = cserve2_shared_string_get(fe->src->key);
+        eina_hash_del_by_key(font_sources, key);
+     }
    free(fe);
 }
 
@@ -784,9 +814,9 @@ _glyph_free_cb(void *data)
 static void
 _font_source_free(Font_Source *fs)
 {
-   eina_stringshare_del(fs->key);
-   eina_stringshare_del(fs->name);
-   eina_stringshare_del(fs->file);
+   cserve2_shared_string_del(fs->key);
+   cserve2_shared_string_del(fs->name);
+   cserve2_shared_string_del(fs->file);
    if (fs->ft) cserve2_font_source_ft_free(fs->ft);
 
    free(fs);
@@ -954,11 +984,11 @@ _entry_reference_del(Entry *entry, Reference *ref)
 
    if (entry->type == CSERVE2_IMAGE_FILE)
      {
-        File_Data *fentry = (File_Data *)entry;
+        File_Data *fe = (File_Data *)entry;
 
-        if (fentry->invalid)
-          _file_entry_free(fentry);
-        else if (!fentry->images)
+        if (fe->invalid)
+          _file_entry_free(fe);
+        else if (!fe->images)
           eina_hash_del_by_key(file_entries, &entry->id);
         /* don't free file entries that have images attached to it, they will
          * be freed when the last unused image is freed */
@@ -1116,18 +1146,18 @@ static void
 _file_changed_cb(const char *path EINA_UNUSED, Eina_Bool deleted EINA_UNUSED, void *data)
 {
    File_Watch *fw = data;
-   File_Data *e;
+   File_Data *fe;
    Eina_List *l;
 
-   EINA_LIST_FOREACH(fw->entries, l, e)
+   EINA_LIST_FOREACH(fw->entries, l, fe)
      {
         Eina_List *ll;
         Image_Data *ie;
 
-        e->invalid = EINA_TRUE;
-        e->watcher = NULL;
+        fe->invalid = EINA_TRUE;
+        fe->watcher = NULL;
 
-        EINA_LIST_FOREACH(e->images, ll, ie)
+        EINA_LIST_FOREACH(fe->images, ll, ie)
           {
              _image_id_free(ie);
              eina_hash_set(image_entries, &ie->base.id, NULL);
@@ -1139,13 +1169,13 @@ _file_changed_cb(const char *path EINA_UNUSED, Eina_Bool deleted EINA_UNUSED, vo
                _image_entry_free(ie);
           }
 
-        _file_id_free(e);
-        eina_hash_set(file_entries, &e->base.id, NULL);
-        if (e->base.request /*&& !e->base.request->processing*/)
-          cserve2_request_cancel_all(e->base.request, CSERVE2_FILE_CHANGED);
-        e->base.request = NULL;
-        if (!e->images && !e->base.references)
-          _file_entry_free(e);
+        _file_id_free(fe);
+        eina_hash_set(file_entries, &fe->base.id, NULL);
+        if (fe->base.request /*&& !fe->base.request->processing*/)
+          cserve2_request_cancel_all(fe->base.request, CSERVE2_FILE_CHANGED);
+        fe->base.request = NULL;
+        if (!fe->images && !fe->base.references)
+          _file_entry_free(fe);
      }
 
    eina_hash_del_by_key(file_watch, fw->path);
@@ -1168,14 +1198,14 @@ _cserve2_font_entry_find(const char *name, unsigned int size, unsigned int rend_
    Font_Source tmp_fs;
    Font_Entry *fe;
 
-   tmp_fs.key = eina_stringshare_add(name);
+   tmp_fs.key = cserve2_shared_string_add(name);
    tmp_fe.src = &tmp_fs;
    tmp_fe.size = size;
    tmp_fe.rend_flags = rend_flags;
    tmp_fe.dpi = dpi;
 
    fe = eina_hash_find(font_entries, &tmp_fe);
-   eina_stringshare_del(tmp_fs.key);
+   cserve2_shared_string_del(tmp_fs.key);
 
    return fe;
 }
@@ -1191,8 +1221,10 @@ _font_load_request_build(void *data, int *size)
    msg->rend_flags = fe->rend_flags;
    msg->size = fe->size;
    msg->dpi = fe->dpi;
-   msg->name = fe->src->name;
-   msg->file = fe->src->file;
+
+#warning TODO Use shared index on client side
+   msg->name = cserve2_shared_string_get(fe->src->name);
+   msg->file = cserve2_shared_string_get(fe->src->file);
 
    *size = 0;
 
@@ -1720,21 +1752,21 @@ static Eina_Bool
 _image_file_entry_stats_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, void *data, void *fdata)
 {
    Msg_Stats *msg = fdata;
-   File_Data *fd = data;
+   File_Data *fe = data;
 
    // accounting numbers
    msg->images.files_loaded++;
 
    // accounting size
    msg->images.files_size += sizeof(File_Data) +
-      eina_list_count(fd->images) * sizeof(Eina_List *) +
-      eina_list_count(fd->base.references) *
+      eina_list_count(fe->images) * sizeof(Eina_List *) +
+      eina_list_count(fe->base.references) *
          (sizeof(Slave_Request *) + sizeof(Eina_List *));
 
 #ifdef DEBUG_LOAD_TIME
    // accounting file entries load time
-   msg->images.files_load_time += fd->base.load_time;
-   msg->images.files_saved_time += fd->base.saved_time;
+   msg->images.files_load_time += fe->base.load_time;
+   msg->images.files_saved_time += fe->base.saved_time;
 #endif
 
    return EINA_TRUE;
@@ -1795,20 +1827,27 @@ _font_entry_debug_size_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EIN
    Font_Entry *fe = data;
    Font_Cache *fc;
    unsigned int intsize = sizeof(unsigned int);
+   const char *str;
 
    // filelen
    size += intsize;
 
    // file
    if (fe->src->file)
-     size += strlen(fe->src->file) + 1;
+     {
+        str = cserve2_shared_string_get(fe->src->file);
+        size += strlen(str) + 1;
+     }
 
    // namelen
    size += intsize;
 
    // name
    if (fe->src->name)
-     size += strlen(fe->src->name) + 1;
+     {
+        str = cserve2_shared_string_get(fe->src->file);
+        size += strlen(str) + 1;
+     }
 
    // rend_flags, size, dpi
    size += 3 * intsize;
@@ -1863,23 +1902,30 @@ _font_entry_debug_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNU
    unsigned int unused;
    unsigned int ncaches;
    unsigned int intsize = sizeof(unsigned int);
+   const char *str;
 
    // filelen + file
    len = 0;
    if (fe->src->file)
-     len = strlen(fe->src->file) + 1;
+     {
+        str = cserve2_shared_string_get(fe->src->file);
+        len = strlen(str) + 1;
+     }
    memcpy(buf, &len, intsize);
    buf += intsize;
-   if (len) memcpy(buf, fe->src->file, len);
+   if (len) memcpy(buf, cserve2_shared_string_get(fe->src->file), len);
    buf += len;
 
    // namelen + name
    len = 0;
    if (fe->src->name)
-     len = strlen(fe->src->name) + 1;
+     {
+        str = cserve2_shared_string_get(fe->src->name);
+        len = strlen(str) + 1;
+     }
    memcpy(buf, &len, intsize);
    buf += intsize;
-   if (len) memcpy(buf, fe->src->name, len);
+   if (len) memcpy(buf, cserve2_shared_string_get(fe->src->name), len);
    buf += len;
 
    // rend_flags, size, dpi
@@ -1994,10 +2040,11 @@ _cserve2_cache_font_debug(unsigned int rid, unsigned int *size)
 }
 
 int
-cserve2_cache_file_open(Client *client, unsigned int client_file_id, const char *path, const char *key, unsigned int rid)
+cserve2_cache_file_open(Client *client, unsigned int client_file_id,
+                        const char *path, const char *key, unsigned int rid)
 {
    unsigned int file_id;
-   File_Data *entry;
+   File_Data *fe;
    Reference *ref;
    File_Watch *fw;
    char buf[4906];
@@ -2006,10 +2053,10 @@ cserve2_cache_file_open(Client *client, unsigned int client_file_id, const char 
    ref = eina_hash_find(client->files.referencing, &client_file_id);
    if (ref)
      {
-        entry = (File_Data *)ref->entry;
+        fe = (File_Data *)ref->entry;
         _entry_load_reused(ref->entry);
 
-        if (entry->invalid)
+        if (fe->invalid)
           {
              cserve2_client_error_send(client, rid, CSERVE2_FILE_CHANGED);
              return -1;
@@ -2019,10 +2066,10 @@ cserve2_cache_file_open(Client *client, unsigned int client_file_id, const char 
         ref->count++;
 
         // File already being loaded, just add the request to be replied
-        if (entry->base.request)
-          cserve2_request_waiter_add(entry->base.request, rid, client);
+        if (fe->base.request)
+          cserve2_request_waiter_add(fe->base.request, rid, client);
         else
-          _image_opened_send(client, entry, rid);
+          _image_opened_send(client, fe, rid);
         return 0;
      }
 
@@ -2032,9 +2079,9 @@ cserve2_cache_file_open(Client *client, unsigned int client_file_id, const char 
    if (file_id)
      {
         DBG("found file_id %u for client file id %d",
-                file_id, client_file_id);
-        entry = eina_hash_find(file_entries, &file_id);
-        if (!entry)
+            file_id, client_file_id);
+        fe = eina_hash_find(file_entries, &file_id);
+        if (!fe)
           {
              ERR("file \"%s\" is in file_ids hash but not in entries hash.",
                  buf);
@@ -2042,13 +2089,13 @@ cserve2_cache_file_open(Client *client, unsigned int client_file_id, const char 
              // FIXME: Maybe we should remove the entry from file_ids then?
              return -1;
           }
-        ref = _entry_reference_add((Entry *)entry, client, client_file_id);
+        ref = _entry_reference_add((Entry *)fe, client, client_file_id);
         _entry_load_reused(ref->entry);
         eina_hash_add(client->files.referencing, &client_file_id, ref);
-        if (entry->base.request)
-          cserve2_request_waiter_add(entry->base.request, rid, client);
+        if (fe->base.request)
+          cserve2_request_waiter_add(fe->base.request, rid, client);
         else // File already loaded, otherwise there would be a request
-          _image_opened_send(client, entry, rid);
+           _image_opened_send(client, fe, rid);
         return 0;
      }
 
@@ -2058,32 +2105,32 @@ cserve2_cache_file_open(Client *client, unsigned int client_file_id, const char 
 
    DBG("Creating new entry with file_id: %u for file \"%s:%s\"",
        file_id, path, key);
-   entry = calloc(1, sizeof(*entry));
-   entry->base.type = CSERVE2_IMAGE_FILE;
-   entry->path = strdup(path);
-   entry->key = strdup(key);
-   entry->base.id = file_id;
-   eina_hash_add(file_entries, &file_id, entry);
+   fe = calloc(1, sizeof(*fe));
+   fe->base.type = CSERVE2_IMAGE_FILE;
+   fe->path = cserve2_shared_string_add(path);
+   fe->key = cserve2_shared_string_add(key);
+   fe->base.id = file_id;
+   eina_hash_add(file_entries, &file_id, fe);
    eina_hash_add(file_ids, buf, (void*)(intptr_t)file_id);
-   ref = _entry_reference_add((Entry *)entry, client, client_file_id);
+   ref = _entry_reference_add((Entry *)fe, client, client_file_id);
    eina_hash_add(client->files.referencing, &client_file_id, ref);
 
-   fw = eina_hash_find(file_watch, entry->path);
+   fw = eina_hash_find(file_watch, cserve2_shared_string_get(fe->path));
    if (!fw)
      {
         fw = calloc(1, sizeof(File_Watch));
-        fw->path = eina_stringshare_add(entry->path);
+        fw->path = eina_stringshare_add(cserve2_shared_string_get(fe->path));
         cserve2_file_change_watch_add(fw->path, _file_changed_cb, fw);
         eina_hash_direct_add(file_watch, fw->path, fw);
      }
-   fw->entries = eina_list_append(fw->entries, entry);
-   entry->watcher = fw;
+   fw->entries = eina_list_append(fw->entries, fe);
+   fe->watcher = fw;
 
-   entry->base.request = cserve2_request_add(CSERVE2_REQ_IMAGE_OPEN,
-                                             rid, client, NULL, &_open_funcs,
-                                             entry);
+   fe->base.request = cserve2_request_add(CSERVE2_REQ_IMAGE_OPEN,
+                                          rid, client, NULL, &_open_funcs,
+                                          fe);
 
-   // _open_image_default_set(entry);
+   // _open_image_default_set(fe);
 
    return 0;
 }
@@ -2183,13 +2230,14 @@ try_again:
    if (!original)
      {
         DBG("Found %d scaled images for %s:%s but none matches",
-            scaled_count, entry->file->path, entry->file->key);
+            scaled_count, cserve2_shared_string_get(entry->file->path),
+            cserve2_shared_string_get(entry->file->key));
 
         if (scaled_count >= 4)
           {
              DBG("Forcing load of original image now!");
 
-             File_Data *fentry;
+             File_Data *fe;
 
              original = _image_entry_new(client, 0, entry->file_id,
                                          0, &unscaled);
@@ -2205,8 +2253,8 @@ try_again:
              eina_hash_add(image_ids, buf, (void *)(intptr_t)image_id);
              _entry_unused_push(original);
 
-             fentry = original->file;
-             fentry->images = eina_list_append(fentry->images, original);
+             fe = original->file;
+             fe->images = eina_list_append(fe->images, original);
           }
         else
           return -1;
@@ -2252,7 +2300,7 @@ cserve2_cache_image_entry_create(Client *client, int rid,
                                  Evas_Image_Load_Opts *opts)
 {
    Image_Data *entry;
-   File_Data *fentry = NULL;
+   File_Data *fe = NULL;
    Reference *ref, *oldref;
    unsigned int image_id;
    char buf[4096];
@@ -2313,8 +2361,8 @@ cserve2_cache_image_entry_create(Client *client, int rid,
      eina_hash_del_by_key(client->images.referencing, &client_image_id);
    eina_hash_add(client->images.referencing, &client_image_id, ref);
 
-   fentry = entry->file;
-   fentry->images = eina_list_append(fentry->images, entry);
+   fe = entry->file;
+   fe->images = eina_list_append(fe->images, entry);
 
    if (opts && opts->scale_load.dst_w && opts->scale_load.dst_h)
      {
@@ -2323,7 +2371,7 @@ cserve2_cache_image_entry_create(Client *client, int rid,
      }
 
    entry->base.request = cserve2_request_add(CSERVE2_REQ_IMAGE_SPEC_LOAD,
-                                             0, NULL, fentry->base.request,
+                                             0, NULL, fe->base.request,
                                              &_load_funcs, entry);
    return 0;
 }
@@ -2480,24 +2528,27 @@ cserve2_cache_font_load(Client *client, const char *source, const char *name, un
    fs = _cserve2_font_source_find(fullname);
    if (!fs)
      {
+        const char *key;
         fs = calloc(1, sizeof(*fs));
         if (source)
           {
-             fs->key = eina_stringshare_add(fullname);
-             fs->name = eina_stringshare_add(name);
-             fs->file = eina_stringshare_add(source);
+             fs->key = cserve2_shared_string_add(fullname);
+             fs->name = cserve2_shared_string_add(name);
+             fs->file = cserve2_shared_string_add(source);
+             key = fullname;
           }
         else
           {
-             fs->file = eina_stringshare_add(name);
-             fs->key = eina_stringshare_ref(fs->file);
+             fs->file = cserve2_shared_string_add(name);
+             fs->key = cserve2_shared_string_ref(fs->file);
+             key = name;
           }
-        eina_hash_direct_add(font_sources, fs->key, fs);
+        eina_hash_direct_add(font_sources, key, fs);
      }
 
    fe->src = fs;
    fs->references++;
-   DBG("adding FONT_LOAD '%s' request.", fs->name);
+   DBG("adding FONT_LOAD '%s' request.", name);
    fe->base.request = cserve2_request_add(CSERVE2_REQ_FONT_LOAD, rid, client,
                                           NULL, &_font_load_funcs, fe);
 
