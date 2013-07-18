@@ -115,8 +115,10 @@ ecore_x_event_mask_set(Ecore_X_Window w,
 
    memset(&attr, 0, sizeof(XWindowAttributes));
    XGetWindowAttributes(_ecore_x_disp, w, &attr);
+   if (_ecore_xlib_sync) ecore_x_sync();
    s_attr.event_mask = mask | attr.your_event_mask;
    XChangeWindowAttributes(_ecore_x_disp, w, CWEventMask, &s_attr);
+   if (_ecore_xlib_sync) ecore_x_sync();
 }
 
 EAPI void
@@ -132,8 +134,10 @@ ecore_x_event_mask_unset(Ecore_X_Window w,
 
    memset(&attr, 0, sizeof(XWindowAttributes));
    XGetWindowAttributes(_ecore_x_disp, w, &attr);
+   if (_ecore_xlib_sync) ecore_x_sync();
    s_attr.event_mask = attr.your_event_mask & ~mask;
    XChangeWindowAttributes(_ecore_x_disp, w, CWEventMask, &s_attr);
+   if (_ecore_xlib_sync) ecore_x_sync();
 }
 
 static void
@@ -1889,6 +1893,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
              XSendEvent(_ecore_x_disp, root, False,
                         SubstructureRedirectMask | SubstructureNotifyMask,
                         xevent);
+             if (_ecore_xlib_sync) ecore_x_sync();
           }
      }
    else if ((xevent->xclient.message_type ==

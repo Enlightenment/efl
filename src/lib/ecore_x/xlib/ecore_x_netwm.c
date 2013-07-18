@@ -214,6 +214,7 @@ ecore_x_netwm_desk_names_set(Ecore_X_Window root,
      }
 
    _ATOM_SET_UTF8_STRING_LIST(root, ECORE_X_ATOM_NET_DESKTOP_NAMES, buf, len);
+   if (_ecore_xlib_sync) ecore_x_sync();
 
    free(buf);
 }
@@ -370,6 +371,7 @@ ecore_x_netwm_client_active_request(Ecore_X_Window root,
 
    XSendEvent(_ecore_x_disp, root, False,
               SubstructureRedirectMask | SubstructureNotifyMask, &xev);
+   if (_ecore_xlib_sync) ecore_x_sync();
 }
 
 EAPI void
@@ -1517,6 +1519,7 @@ ecore_x_netwm_ping_send(Ecore_X_Window win)
    xev.xclient.data.l[4] = 0;
 
    XSendEvent(_ecore_x_disp, win, False, NoEventMask, &xev);
+   if (_ecore_xlib_sync) ecore_x_sync();
 }
 
 EAPI void
@@ -1544,6 +1547,7 @@ ecore_x_netwm_sync_request_send(Ecore_X_Window win,
    xev.xclient.data.l[4] = 0;
 
    XSendEvent(_ecore_x_disp, win, False, NoEventMask, &xev);
+   if (_ecore_xlib_sync) ecore_x_sync();
 }
 
 EAPI void
@@ -1579,6 +1583,7 @@ ecore_x_netwm_state_request_send(Ecore_X_Window win,
 
    XSendEvent(_ecore_x_disp, root, False,
               SubstructureNotifyMask | SubstructureRedirectMask, &xev);
+   if (_ecore_xlib_sync) ecore_x_sync();
 }
 
 EAPI void
@@ -1606,6 +1611,7 @@ ecore_x_netwm_desktop_request_send(Ecore_X_Window win,
 
    XSendEvent(_ecore_x_disp, root, False,
               SubstructureNotifyMask | SubstructureRedirectMask, &xev);
+   if (_ecore_xlib_sync) ecore_x_sync();
 }
 
 EAPI void
@@ -1633,6 +1639,7 @@ ecore_x_netwm_moveresize_request_send(Ecore_X_Window win,
 
    XSendEvent(_ecore_x_disp, win, False,
               SubstructureNotifyMask | SubstructureRedirectMask, &xev);
+   if (_ecore_xlib_sync) ecore_x_sync();
 }
 
 int
@@ -1733,6 +1740,7 @@ _ecore_x_window_prop_string_utf8_set(Ecore_X_Window win,
 {
    XChangeProperty(_ecore_x_disp, win, atom, ECORE_X_ATOM_UTF8_STRING, 8,
                    PropModeReplace, (unsigned char *)str, strlen(str));
+   if (_ecore_xlib_sync) ecore_x_sync();
 }
 
 /*
@@ -1753,6 +1761,7 @@ _ecore_x_window_prop_string_utf8_get(Ecore_X_Window win,
    XGetWindowProperty(_ecore_x_disp, win, atom, 0, 0x7fffffff, False,
                       ECORE_X_ATOM_UTF8_STRING, &type_ret,
                       &format_ret, &num_ret, &bytes_after, &prop_ret);
+   if (_ecore_xlib_sync) ecore_x_sync();
    if (prop_ret && num_ret > 0 && format_ret == 8)
      {
         str = malloc(num_ret + 1);
@@ -2058,6 +2067,7 @@ ecore_x_screen_is_composited(int screen)
    atom = XInternAtom(_ecore_x_disp, buf, True);
    if (atom == None) return EINA_FALSE;
    win = XGetSelectionOwner(_ecore_x_disp, atom);
+   if (_ecore_xlib_sync) ecore_x_sync();
    return (win != None) ? EINA_TRUE : EINA_FALSE;
 }
 
@@ -2073,5 +2083,6 @@ ecore_x_screen_is_composited_set(int screen,
    atom = XInternAtom(_ecore_x_disp, buf, False);
    if (atom == None) return;
    XSetSelectionOwner(_ecore_x_disp, atom, win, _ecore_x_event_last_time);
+   if (_ecore_xlib_sync) ecore_x_sync();
 }
 

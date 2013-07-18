@@ -53,6 +53,7 @@ ecore_x_gesture_events_select(Ecore_X_Window win,
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XGestureSelectEvents(_ecore_x_disp, win, mask);
+   if (_ecore_xlib_sync) ecore_x_sync();
 
    return EINA_TRUE;
 #else /* ifdef ECORE_XGESTURE */
@@ -73,10 +74,8 @@ ecore_x_gesture_events_selected_get(Ecore_X_Window win)
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (GestureSuccess != XGestureGetSelectedEvents(_ecore_x_disp, win, &mask))
-     {
-        mask = ECORE_X_GESTURE_EVENT_MASK_NONE;
-        return mask;
-     }
+     mask = ECORE_X_GESTURE_EVENT_MASK_NONE;
+   if (_ecore_xlib_sync) ecore_x_sync();
 
    return mask;
 #else /* ifdef ECORE_XGESTURE */
@@ -91,16 +90,14 @@ ecore_x_gesture_event_grab(Ecore_X_Window win,
                            int num_fingers)
 {
 #ifdef ECORE_XGESTURE
+   Eina_Bool ret;
    if (!_gesture_available)
      return EINA_FALSE;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   if (GestureGrabSuccess != XGestureGrabEvent(_ecore_x_disp, win, type, num_fingers, CurrentTime))
-     {
-        return EINA_FALSE;
-     }
-
-   return EINA_TRUE;
+   ret = (GestureGrabSuccess == XGestureGrabEvent(_ecore_x_disp, win, type, num_fingers, CurrentTime));
+   if (_ecore_xlib_sync) ecore_x_sync();
+   return ret;
 #else /* ifdef ECORE_XGESTURE */
    (void) win;
    (void) type;
@@ -116,17 +113,15 @@ ecore_x_gesture_event_ungrab(Ecore_X_Window win,
 {
 #ifdef ECORE_XGESTURE
    Ecore_X_Gesture_Event_Mask mask;
+   Eina_Bool ret;
 
    if (!_gesture_available)
      return EINA_FALSE;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   if (GestureUngrabSuccess != XGestureUngrabEvent(_ecore_x_disp, win, type, num_fingers, CurrentTime))
-     {
-        return EINA_FALSE;
-     }
-
-   return EINA_TRUE;
+   ret = (GestureUngrabSuccess == XGestureUngrabEvent(_ecore_x_disp, win, type, num_fingers, CurrentTime));
+   if (_ecore_xlib_sync) ecore_x_sync();
+   return ret;
 #else /* ifdef ECORE_XGESTURE */
    (void) win;
    (void) type;

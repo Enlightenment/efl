@@ -44,11 +44,14 @@ _ecore_x_atoms_init(void)
 EAPI Ecore_X_Atom
 ecore_x_atom_get(const char *name)
 {
+   Ecore_X_Atom atom;
    if (!_ecore_x_disp)
      return 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   return XInternAtom(_ecore_x_disp, name, False);
+   atom = XInternAtom(_ecore_x_disp, name, False);
+   if (_ecore_xlib_sync) ecore_x_sync();
+   return atom;
 }
 
 EAPI void
@@ -67,6 +70,7 @@ ecore_x_atoms_get(const char **names,
    XInternAtoms(_ecore_x_disp, (char **)names, num, False, atoms_int);
    for (i = 0; i < num; i++)
      atoms[i] = atoms_int[i];
+   if (_ecore_xlib_sync) ecore_x_sync();
 }
 
 EAPI char *
@@ -81,6 +85,7 @@ ecore_x_atom_name_get(Ecore_X_Atom atom)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    xname = XGetAtomName(_ecore_x_disp, atom);
+   if (_ecore_xlib_sync) ecore_x_sync();
    if (!xname)
      return NULL;
 

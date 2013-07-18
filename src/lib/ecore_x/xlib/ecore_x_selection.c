@@ -400,6 +400,7 @@ ecore_x_selection_xdnd_request(Ecore_X_Window w,
    XConvertSelection(_ecore_x_disp, ECORE_X_ATOM_SELECTION_XDND, atom,
                      ECORE_X_ATOM_SELECTION_PROP_XDND, w,
                      _target->time);
+   if (_ecore_xlib_sync) ecore_x_sync();
 }
 
 EAPI void

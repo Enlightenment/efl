@@ -29,10 +29,13 @@ ecore_x_xinerama_screen_count_get(void)
    _xin_info = NULL;
    if (XineramaQueryExtension(_ecore_x_disp, &event_base, &error_base))
      {
+        if (_ecore_xlib_sync) ecore_x_sync();
         _xin_info = XineramaQueryScreens(_ecore_x_disp, &_xin_scr_num);
+        if (_ecore_xlib_sync) ecore_x_sync();
         if (_xin_info)
           return _xin_scr_num;
      }
+   if (_ecore_xlib_sync) ecore_x_sync();
 
 #endif /* ifdef ECORE_XINERAMA */
    return 0;

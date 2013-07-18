@@ -41,6 +41,7 @@ ecore_x_window_prop_card32_set(Ecore_X_Window win,
    _ATOM_SET_CARD32(win, atom, v2, num);
    free(v2);
 #endif /* if SIZEOF_INT == SIZEOF_LONG */
+   if (_ecore_xlib_sync) ecore_x_sync();
 }
 
 /*
@@ -85,9 +86,9 @@ ecore_x_window_prop_card32_get(Ecore_X_Window win,
         num = len;
      }
 
+   if (_ecore_xlib_sync) ecore_x_sync();
    if (prop_ret)
      XFree(prop_ret);
-
    return num;
 }
 
@@ -136,9 +137,9 @@ ecore_x_window_prop_card32_list_get(Ecore_X_Window win,
         *plst = val;
      }
 
+   if (_ecore_xlib_sync) ecore_x_sync();
    if (prop_ret)
      XFree(prop_ret);
-
    return num;
 }
 
@@ -170,6 +171,7 @@ ecore_x_window_prop_xid_set(Ecore_X_Window win,
                    (unsigned char *)pl, num);
    free(pl);
 #endif /* if SIZEOF_INT == SIZEOF_LONG */
+   if (_ecore_xlib_sync) ecore_x_sync();
 }
 
 /*
@@ -193,13 +195,15 @@ ecore_x_window_prop_xid_get(Ecore_X_Window win,
    int format_ret;
    int num;
    unsigned i;
+   Eina_Bool success;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    prop_ret = NULL;
-   if (XGetWindowProperty(_ecore_x_disp, win, atom, 0, 0x7fffffff, False,
+   success = (XGetWindowProperty(_ecore_x_disp, win, atom, 0, 0x7fffffff, False,
                           type, &type_ret, &format_ret, &num_ret,
-                          &bytes_after, &prop_ret) != Success)
-     return -1;
+                          &bytes_after, &prop_ret) == Success);
+   if (_ecore_xlib_sync) ecore_x_sync();
+   if (!success) return -1;
 
    if (type_ret != type || format_ret != 32)
      num = -1;
@@ -242,14 +246,16 @@ ecore_x_window_prop_xid_list_get(Ecore_X_Window win,
    Ecore_X_Atom *alst;
    int num;
    unsigned i;
+   Eina_Bool success;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    *val = NULL;
    prop_ret = NULL;
-   if (XGetWindowProperty(_ecore_x_disp, win, atom, 0, 0x7fffffff, False,
+   success = (XGetWindowProperty(_ecore_x_disp, win, atom, 0, 0x7fffffff, False,
                           type, &type_ret, &format_ret, &num_ret,
-                          &bytes_after, &prop_ret) != Success)
-     return -1;
+                          &bytes_after, &prop_ret) == Success);
+   if (_ecore_xlib_sync) ecore_x_sync();
+   if (!success) return -1;
 
    if (type_ret != type || format_ret != 32)
      num = -1;
@@ -266,7 +272,6 @@ ecore_x_window_prop_xid_list_get(Ecore_X_Window win,
 
    if (prop_ret)
      XFree(prop_ret);
-
    return num;
 }
 
@@ -352,8 +357,10 @@ ecore_x_window_prop_atom_get(Ecore_X_Window win,
                              Ecore_X_Atom *lst,
                              unsigned int len)
 {
+   int ret;
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   return ecore_x_window_prop_xid_get(win, atom, XA_ATOM, lst, len);
+   ret = ecore_x_window_prop_xid_get(win, atom, XA_ATOM, lst, len);
+   return ret;
 }
 
 /*
@@ -369,8 +376,10 @@ ecore_x_window_prop_atom_list_get(Ecore_X_Window win,
                                   Ecore_X_Atom atom,
                                   Ecore_X_Atom **plst)
 {
+   int ret;
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   return ecore_x_window_prop_xid_list_get(win, atom, XA_ATOM, plst);
+   ret = ecore_x_window_prop_xid_list_get(win, atom, XA_ATOM, plst);
+   return ret;
 }
 
 /*
@@ -413,8 +422,10 @@ ecore_x_window_prop_window_get(Ecore_X_Window win,
                                Ecore_X_Window *lst,
                                unsigned int len)
 {
+   int ret;
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   return ecore_x_window_prop_xid_get(win, atom, XA_WINDOW, lst, len);
+   ret = ecore_x_window_prop_xid_get(win, atom, XA_WINDOW, lst, len);
+   return ret;
 }
 
 /*
@@ -430,8 +441,10 @@ ecore_x_window_prop_window_list_get(Ecore_X_Window win,
                                     Ecore_X_Atom atom,
                                     Ecore_X_Window **plst)
 {
+   int ret;
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   return ecore_x_window_prop_xid_list_get(win, atom, XA_WINDOW, plst);
+   ret = ecore_x_window_prop_xid_list_get(win, atom, XA_WINDOW, plst);
+   return ret;
 }
 
 EAPI Ecore_X_Atom
@@ -485,6 +498,7 @@ ecore_x_window_prop_property_set(Ecore_X_Window win,
              free(dat);
           }
      }
+   if (_ecore_xlib_sync) ecore_x_sync();
 }
 
 /**
@@ -528,10 +542,9 @@ ecore_x_window_prop_property_get(Ecore_X_Window win,
    ret = XGetWindowProperty(_ecore_x_disp, win, property, 0, LONG_MAX,
                             False, type, &type_ret, &size_ret,
                             &num_ret, &bytes, &prop_ret);
-
+   if (_ecore_xlib_sync) ecore_x_sync();
    if (ret != Success)
      return 0;
-
    if (!num_ret)
      {
         XFree(prop_ret);
@@ -575,6 +588,7 @@ ecore_x_window_prop_property_del(Ecore_X_Window win,
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XDeleteProperty(_ecore_x_disp, win, property);
+   if (_ecore_xlib_sync) ecore_x_sync();
 }
 
 EAPI Ecore_X_Atom *
@@ -590,6 +604,7 @@ ecore_x_window_prop_list(Ecore_X_Window win,
      *num_ret = 0;
 
    atom_ret = XListProperties(_ecore_x_disp, win, &num);
+   if (_ecore_xlib_sync) ecore_x_sync();
    if (!atom_ret)
      return NULL;
 
@@ -630,6 +645,7 @@ ecore_x_window_prop_string_set(Ecore_X_Window win,
    xtp.encoding = ECORE_X_ATOM_UTF8_STRING;
    xtp.nitems = strlen(str);
    XSetTextProperty(_ecore_x_disp, win, &xtp, type);
+   if (_ecore_xlib_sync) ecore_x_sync();
 }
 
 /**
@@ -655,6 +671,7 @@ ecore_x_window_prop_string_get(Ecore_X_Window win,
         char **list = NULL;
         Status s;
 
+        if (_ecore_xlib_sync) ecore_x_sync();
         if (xtp.encoding == ECORE_X_ATOM_UTF8_STRING)
           str = strdup((char *)xtp.value);
         else
@@ -666,6 +683,7 @@ ecore_x_window_prop_string_get(Ecore_X_Window win,
              s = XmbTextPropertyToTextList(_ecore_x_disp, &xtp,
                                            &list, &items);
 #endif /* ifdef X_HAVE_UTF8_STRING */
+             if (_ecore_xlib_sync) ecore_x_sync();
              if ((s == XLocaleNotSupported) ||
                  (s == XNoMemory) || (s == XConverterNotFound))
                str = strdup((char *)xtp.value);
@@ -678,7 +696,6 @@ ecore_x_window_prop_string_get(Ecore_X_Window win,
 
         XFree(xtp.value);
      }
-
    return str;
 }
 
@@ -697,7 +714,9 @@ ecore_x_window_prop_protocol_isset(Ecore_X_Window win,
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    proto = _ecore_x_atoms_wm_protocols[protocol];
 
-   if (!XGetWMProtocols(_ecore_x_disp, win, &protos, &protos_count))
+   ret = XGetWMProtocols(_ecore_x_disp, win, &protos, &protos_count);
+   if (_ecore_xlib_sync) ecore_x_sync();
+   if (!ret)
      return ret;
 
    for (i = 0; i < protos_count; i++)
@@ -708,7 +727,6 @@ ecore_x_window_prop_protocol_isset(Ecore_X_Window win,
        }
 
    XFree(protos);
-
    return ret;
 }
 
@@ -727,9 +745,12 @@ ecore_x_window_prop_protocol_list_get(Ecore_X_Window win,
    Atom *protos = NULL;
    int i, protos_count = 0;
    Ecore_X_WM_Protocol *prot_ret = NULL;
+   Eina_Bool success;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   if (!XGetWMProtocols(_ecore_x_disp, win, &protos, &protos_count))
+   success = XGetWMProtocols(_ecore_x_disp, win, &protos, &protos_count);
+   if (_ecore_xlib_sync) ecore_x_sync();
+   if (!success)
      return NULL;
 
    if ((!protos) || (protos_count <= 0))

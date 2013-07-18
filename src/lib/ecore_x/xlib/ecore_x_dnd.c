@@ -113,6 +113,7 @@ _ecore_x_dnd_converter_copy(char *target EINA_UNUSED,
                                  &text_prop) == Success)
      {
         int bufsize = strlen((char *)text_prop.value) + 1;
+        if (_ecore_xlib_sync) ecore_x_sync();
         *data_ret = malloc(bufsize);
         if (!*data_ret)
           {
@@ -127,6 +128,7 @@ _ecore_x_dnd_converter_copy(char *target EINA_UNUSED,
      }
    else
      {
+        if (_ecore_xlib_sync) ecore_x_sync();
         free(mystr);
         return EINA_FALSE;
      }
@@ -472,6 +474,7 @@ _ecore_x_dnd_drop(Eina_Bool self)
              xev.xclient.data.l[1] = 0;
              xev.xclient.data.l[2] = _source->time;
              XSendEvent(_ecore_x_disp, _source->dest, False, 0, &xev);
+             if (_ecore_xlib_sync) ecore_x_sync();
              _source->state = ECORE_X_DND_SOURCE_DROPPED;
              status = EINA_TRUE;
           }
@@ -481,6 +484,7 @@ _ecore_x_dnd_drop(Eina_Bool self)
              xev.xclient.data.l[0] = _source->win;
              xev.xclient.data.l[1] = 0;
              XSendEvent(_ecore_x_disp, _source->dest, False, 0, &xev);
+             if (_ecore_xlib_sync) ecore_x_sync();
              _source->state = ECORE_X_DND_SOURCE_IDLE;
           }
      }
@@ -576,6 +580,7 @@ ecore_x_dnd_send_status(Eina_Bool will_accept,
      }
 
    XSendEvent(_ecore_x_disp, _target->source, False, 0, &xev);
+   if (_ecore_xlib_sync) ecore_x_sync();
 }
 
 EAPI void
@@ -603,6 +608,7 @@ ecore_x_dnd_send_finished(void)
      }
 
    XSendEvent(_ecore_x_disp, _target->source, False, 0, &xev);
+   if (_ecore_xlib_sync) ecore_x_sync();
 
    _target->state = ECORE_X_DND_TARGET_IDLE;
 }
@@ -663,6 +669,7 @@ _ecore_x_dnd_drag(Ecore_X_Window root,
         xev.xclient.data.l[1] = 0;
 
         XSendEvent(_ecore_x_disp, _source->dest, False, 0, &xev);
+        if (_ecore_xlib_sync) ecore_x_sync();
         _source->suppress = 0;
      }
 
@@ -704,6 +711,7 @@ _ecore_x_dnd_drag(Ecore_X_Window root,
                xev.xclient.data.l[i + 2] = types[i];
              XFree(data);
              XSendEvent(_ecore_x_disp, win, False, 0, &xev);
+             if (_ecore_xlib_sync) ecore_x_sync();
              _source->await_status = 0;
              _source->will_accept = 0;
           }
@@ -726,6 +734,7 @@ _ecore_x_dnd_drag(Ecore_X_Window root,
              xev.xclient.data.l[3] = _source->time; /* Version 1 */
              xev.xclient.data.l[4] = _source->action; /* Version 2, Needs to be pre-set */
              XSendEvent(_ecore_x_disp, win, False, 0, &xev);
+             if (_ecore_xlib_sync) ecore_x_sync();
 
              _source->await_status = 1;
           }

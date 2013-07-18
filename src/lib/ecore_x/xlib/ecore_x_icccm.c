@@ -41,6 +41,7 @@ ecore_x_icccm_state_set(Ecore_X_Window win,
    XChangeProperty(_ecore_x_disp, win, ECORE_X_ATOM_WM_STATE,
                    ECORE_X_ATOM_WM_STATE, 32, PropModeReplace,
                    (unsigned char *)c, 2);
+   if (_ecore_xlib_sync) ecore_x_sync();
 }
 
 EAPI Ecore_X_Window_State_Hint
@@ -58,6 +59,7 @@ ecore_x_icccm_state_get(Ecore_X_Window win)
                       0, 0x7fffffff, False, ECORE_X_ATOM_WM_STATE,
                       &type_ret, &format_ret, &num_ret, &bytes_after,
                       &prop_ret);
+   if (_ecore_xlib_sync) ecore_x_sync();
    if ((prop_ret) && (num_ret == 2))
      {
         if (prop_ret[0] == WithdrawnState)
@@ -129,6 +131,7 @@ ecore_x_icccm_move_resize_send(Ecore_X_Window win,
    ev.xconfigure.above = None;
    ev.xconfigure.override_redirect = False;
    XSendEvent(_ecore_x_disp, win, False, StructureNotifyMask, &ev);
+   if (_ecore_xlib_sync) ecore_x_sync();
 }
 
 EAPI void
@@ -185,6 +188,7 @@ ecore_x_icccm_hints_set(Ecore_X_Window win,
      hints->flags |= XUrgencyHint;
 
    XSetWMHints(_ecore_x_disp, win, hints);
+   if (_ecore_xlib_sync) ecore_x_sync();
    XFree(hints);
 }
 
@@ -223,6 +227,7 @@ ecore_x_icccm_hints_get(Ecore_X_Window win,
      *is_urgent = EINA_FALSE;
 
    hints = XGetWMHints(_ecore_x_disp, win);
+   if (_ecore_xlib_sync) ecore_x_sync();
    if (hints)
      {
         if ((hints->flags & InputHint) && (accepts_focus))
@@ -286,6 +291,7 @@ ecore_x_icccm_size_pos_hints_set(Ecore_X_Window win,
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (!XGetWMNormalHints(_ecore_x_disp, win, &hint, &mask))
      memset(&hint, 0, sizeof(XSizeHints));
+   if (_ecore_xlib_sync) ecore_x_sync();
 
    hint.flags = 0;
    if (request_pos)
@@ -335,6 +341,7 @@ ecore_x_icccm_size_pos_hints_set(Ecore_X_Window win,
      }
 
    XSetWMNormalHints(_ecore_x_disp, win, &hint);
+   if (_ecore_xlib_sync) ecore_x_sync();
 }
 
 EAPI Eina_Bool
@@ -363,7 +370,10 @@ ecore_x_icccm_size_pos_hints_get(Ecore_X_Window win,
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (!XGetWMNormalHints(_ecore_x_disp, win, &hint, &mask))
-     return EINA_FALSE;
+     {
+        if (_ecore_xlib_sync) ecore_x_sync();
+        return EINA_FALSE;
+     }
 
    if ((hint.flags & USPosition) || ((hint.flags & PPosition)))
      {
@@ -486,15 +496,18 @@ ecore_x_icccm_title_set(Ecore_X_Window win,
      XmbTextListToTextProperty(_ecore_x_disp, list, 1, XStdICCTextStyle,
                                &xprop);
 #endif /* ifdef X_HAVE_UTF8_STRING */
+   if (_ecore_xlib_sync) ecore_x_sync();
    if (ret >= Success)
      {
         XSetWMName(_ecore_x_disp, win, &xprop);
+        if (_ecore_xlib_sync) ecore_x_sync();
         if (xprop.value)
           XFree(xprop.value);
      }
    else if (XStringListToTextProperty(list, 1, &xprop) >= Success)
      {
         XSetWMName(_ecore_x_disp, win, &xprop);
+        if (_ecore_xlib_sync) ecore_x_sync();
         if (xprop.value)
           XFree(xprop.value);
      }
@@ -511,6 +524,7 @@ ecore_x_icccm_title_get(Ecore_X_Window win)
    xprop.value = NULL;
    if (XGetWMName(_ecore_x_disp, win, &xprop) >= Success)
      {
+        if (_ecore_xlib_sync) ecore_x_sync();
         if (xprop.value)
           {
              char **list = NULL;
@@ -530,6 +544,7 @@ ecore_x_icccm_title_get(Ecore_X_Window win)
                   ret = XmbTextPropertyToTextList(_ecore_x_disp, &xprop,
                                                   &list, &num);
 #endif /* ifdef X_HAVE_UTF8_STRING */
+                  if (_ecore_xlib_sync) ecore_x_sync();
 
                   if ((ret == XLocaleNotSupported) ||
                       (ret == XNoMemory) || (ret == XConverterNotFound))
@@ -546,6 +561,10 @@ ecore_x_icccm_title_get(Ecore_X_Window win)
 
              return t;
           }
+     }
+   else
+     {
+        if (_ecore_xlib_sync) ecore_x_sync();
      }
 
    return NULL;
@@ -567,6 +586,7 @@ ecore_x_icccm_protocol_atoms_set(Ecore_X_Window win,
      XSetWMProtocols(_ecore_x_disp, win, (Atom *)(protos), num);
    else
      XDeleteProperty(_ecore_x_disp, win, ECORE_X_ATOM_WM_PROTOCOLS);
+   if (_ecore_xlib_sync) ecore_x_sync();
 }
 
 /**
@@ -598,7 +618,7 @@ ecore_x_icccm_protocol_set(Ecore_X_Window win,
         protos = NULL;
         protos_count = 0;
      }
-
+   if (_ecore_xlib_sync) ecore_x_sync();
    for (i = 0; i < protos_count; i++)
      {
         if (protos[i] == proto)
@@ -623,6 +643,7 @@ ecore_x_icccm_protocol_set(Ecore_X_Window win,
           new_protos[i] = protos[i];
         new_protos[protos_count] = proto;
         XSetWMProtocols(_ecore_x_disp, win, new_protos, protos_count + 1);
+        if (_ecore_xlib_sync) ecore_x_sync();
         free(new_protos);
      }
    else
@@ -644,6 +665,7 @@ ecore_x_icccm_protocol_set(Ecore_X_Window win,
                   else
                     XDeleteProperty(_ecore_x_disp, win,
                                     ECORE_X_ATOM_WM_PROTOCOLS);
+                  if (_ecore_xlib_sync) ecore_x_sync();
 
                   goto leave;
                }
@@ -678,6 +700,7 @@ ecore_x_icccm_protocol_isset(Ecore_X_Window win,
 
    if (!XGetWMProtocols(_ecore_x_disp, win, &protos, &protos_count))
      return EINA_FALSE;
+   if (_ecore_xlib_sync) ecore_x_sync();
 
    for (i = 0; i < protos_count; i++)
      if (protos[i] == proto)
@@ -715,6 +738,7 @@ ecore_x_icccm_name_class_set(Ecore_X_Window win,
    xch->res_name = (char *)n;
    xch->res_class = (char *)c;
    XSetClassHint(_ecore_x_disp, win, xch);
+   if (_ecore_xlib_sync) ecore_x_sync();
    XFree(xch);
 }
 
@@ -755,6 +779,7 @@ ecore_x_icccm_name_class_get(Ecore_X_Window win,
         XFree(xch.res_name);
         XFree(xch.res_class);
      }
+   if (_ecore_xlib_sync) ecore_x_sync();
 }
 
 /**
@@ -788,6 +813,7 @@ ecore_x_icccm_command_set(Ecore_X_Window win,
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XSetCommand(_ecore_x_disp, win, argv, argc);
+   if (_ecore_xlib_sync) ecore_x_sync();
 }
 
 /**
@@ -806,6 +832,7 @@ ecore_x_icccm_command_get(Ecore_X_Window win,
 {
    int i, c;
    char **v;
+   Eina_Bool success;
 
    if (argc)
      *argc = 0;
@@ -814,8 +841,9 @@ ecore_x_icccm_command_get(Ecore_X_Window win,
      *argv = NULL;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   if (!XGetCommand(_ecore_x_disp, win, &v, &c))
-     return;
+   success = XGetCommand(_ecore_x_disp, win, &v, &c);
+   if (_ecore_xlib_sync) ecore_x_sync();
+   if (!success) return;
 
    if (c < 1)
      {
@@ -878,15 +906,18 @@ ecore_x_icccm_icon_name_set(Ecore_X_Window win,
    ret = XmbTextListToTextProperty(_ecore_x_disp, list, 1,
                                    XStdICCTextStyle, &xprop);
 #endif /* ifdef X_HAVE_UTF8_STRING */
+   if (_ecore_xlib_sync) ecore_x_sync();
    if (ret >= Success)
      {
         XSetWMIconName(_ecore_x_disp, win, &xprop);
+        if (_ecore_xlib_sync) ecore_x_sync();
         if (xprop.value)
           XFree(xprop.value);
      }
    else if (XStringListToTextProperty(list, 1, &xprop) >= Success)
      {
         XSetWMIconName(_ecore_x_disp, win, &xprop);
+        if (_ecore_xlib_sync) ecore_x_sync();
         if (xprop.value)
           XFree(xprop.value);
      }
@@ -910,6 +941,7 @@ ecore_x_icccm_icon_name_get(Ecore_X_Window win)
    xprop.value = NULL;
    if (XGetWMIconName(_ecore_x_disp, win, &xprop) >= Success)
      {
+        if (_ecore_xlib_sync) ecore_x_sync();
         if (xprop.value)
           {
              char **list = NULL;
@@ -929,6 +961,7 @@ ecore_x_icccm_icon_name_get(Ecore_X_Window win)
                   ret = XmbTextPropertyToTextList(_ecore_x_disp, &xprop,
                                                   &list, &num);
 #endif /* ifdef X_HAVE_UTF8_STRING */
+                  if (_ecore_xlib_sync) ecore_x_sync();
 
                   if ((ret == XLocaleNotSupported) ||
                       (ret == XNoMemory) || (ret == XConverterNotFound))
@@ -948,6 +981,10 @@ ecore_x_icccm_icon_name_get(Ecore_X_Window win)
 
              return t;
           }
+     }
+   else
+     {
+        if (_ecore_xlib_sync) ecore_x_sync();
      }
 
    return NULL;
@@ -1056,6 +1093,7 @@ ecore_x_icccm_colormap_window_unset(Ecore_X_Window win,
                {
                   XDeleteProperty(_ecore_x_disp,
                                   win, ECORE_X_ATOM_WM_COLORMAP_WINDOWS);
+                  if (_ecore_xlib_sync) ecore_x_sync();
                   if (old_data)
                     XFree(old_data);
 
@@ -1102,6 +1140,7 @@ ecore_x_icccm_transient_for_set(Ecore_X_Window win,
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XSetTransientForHint(_ecore_x_disp, win, forwin);
+   if (_ecore_xlib_sync) ecore_x_sync();
 }
 
 /**
@@ -1113,6 +1152,7 @@ ecore_x_icccm_transient_for_unset(Ecore_X_Window win)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XDeleteProperty(_ecore_x_disp, win, ECORE_X_ATOM_WM_TRANSIENT_FOR);
+   if (_ecore_xlib_sync) ecore_x_sync();
 }
 
 /**
@@ -1124,9 +1164,12 @@ EAPI Ecore_X_Window
 ecore_x_icccm_transient_for_get(Ecore_X_Window win)
 {
    Window forwin;
+   Eina_Bool success;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   if (XGetTransientForHint(_ecore_x_disp, win, &forwin))
+   success = XGetTransientForHint(_ecore_x_disp, win, &forwin);
+   if (_ecore_xlib_sync) ecore_x_sync();
+   if (success)
      return (Ecore_X_Window)forwin;
    else
      return 0;
@@ -1216,6 +1259,7 @@ ecore_x_icccm_iconic_request_send(Ecore_X_Window win,
 
    XSendEvent(_ecore_x_disp, root, False,
               SubstructureNotifyMask | SubstructureRedirectMask, &xev);
+   if (_ecore_xlib_sync) ecore_x_sync();
 }
 
 /* FIXME: there are older E hints, gnome hints and mwm hints and new netwm */

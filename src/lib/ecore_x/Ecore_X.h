@@ -54,6 +54,9 @@
  * @li @ref Ecore_X_Window_Z_Order_Group
  * @li @ref Ecore_X_Window_Parent_Group
  * @li @ref Ecore_X_Window_Shape
+ *
+ * When using the XLib backend, setting the ECORE_X_SYNC environment variable
+ * will cause X calls to be run synchronously for easier debugging.
  */
 
 typedef unsigned int   Ecore_X_ID;

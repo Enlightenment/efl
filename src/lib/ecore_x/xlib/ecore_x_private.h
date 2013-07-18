@@ -67,6 +67,7 @@
 #include "Ecore_Input.h"
 
 extern int _ecore_xlib_log_dom;
+extern Eina_Bool _ecore_xlib_sync;
 #ifdef ECORE_XLIB_DEFAULT_LOG_COLOR
 # undef ECORE_XLIB_DEFAULT_LOG_COLOR
 #endif /* ifdef ECORE_XLIB_DEFAULT_LOG_COLOR */
@@ -367,7 +368,7 @@ Ecore_Event_Mouse_Button *_ecore_mouse_button(int event,
 void _ecore_x_modifiers_get(void);
 KeySym _ecore_x_XKeycodeToKeysym(Display *display, KeyCode keycode, int index);
 
-//#define LOGFNS 1
+#define LOGFNS 0
 
 #ifdef LOGFNS
 #include <stdio.h>

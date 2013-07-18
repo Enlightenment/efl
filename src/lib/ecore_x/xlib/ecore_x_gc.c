@@ -23,6 +23,7 @@ ecore_x_gc_new(Ecore_X_Drawable draw,
                Ecore_X_GC_Value_Mask value_mask,
                const unsigned int *value_list)
 {
+   Ecore_X_GC gc;
    XGCValues gcv;
    int mask;
    int idx;
@@ -155,7 +156,9 @@ ecore_x_gc_new(Ecore_X_Drawable draw,
           }
      }
 
-   return XCreateGC(_ecore_x_disp, draw, value_mask, &gcv);
+   gc = XCreateGC(_ecore_x_disp, draw, value_mask, &gcv);
+   if (_ecore_xlib_sync) ecore_x_sync();
+   return gc;
 }
 
 /**
@@ -167,5 +170,6 @@ ecore_x_gc_free(Ecore_X_GC gc)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XFreeGC(_ecore_x_disp, gc);
+   if (_ecore_xlib_sync) ecore_x_sync();
 }
 

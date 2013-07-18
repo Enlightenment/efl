@@ -84,6 +84,7 @@ Additions:
        ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_DISABLE
      - add error messages for xlib
        ECORE_X_ATOM_XDND_DIRECTSAVE0
+     - add ECORE_X_SYNC env variable for xlib backend
     * Ecore_Wayland:
      - Store global wayland interfaces in a globals list so wayland programs
        can bind to other non-standard wayland protocol extensions.

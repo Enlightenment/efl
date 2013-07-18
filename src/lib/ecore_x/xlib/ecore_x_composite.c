@@ -17,12 +17,15 @@ _ecore_x_composite_init(void)
 
    if (XCompositeQueryVersion(_ecore_x_disp, &major, &minor))
      {
+        if (_ecore_xlib_sync) ecore_x_sync();
 # ifdef ECORE_XRENDER
         if (XRenderQueryExtension(_ecore_x_disp, &major, &minor))
           {
+             if (_ecore_xlib_sync) ecore_x_sync();
 #  ifdef ECORE_XFIXES
              if (XFixesQueryVersion(_ecore_x_disp, &major, &minor))
                {
+                  if (_ecore_xlib_sync) ecore_x_sync();
                   _composite_available = EINA_TRUE;
                }
 #  endif
@@ -58,6 +61,7 @@ ecore_x_composite_redirect_window(Ecore_X_Window win,
         break;
      }
    XCompositeRedirectWindow(_ecore_x_disp, win, update);
+   if (_ecore_xlib_sync) ecore_x_sync();
 #endif /* ifdef ECORE_XCOMPOSITE */
 }
 
@@ -80,6 +84,7 @@ ecore_x_composite_redirect_subwindows(Ecore_X_Window win,
         break;
      }
    XCompositeRedirectSubwindows(_ecore_x_disp, win, update);
+   if (_ecore_xlib_sync) ecore_x_sync();
 #endif /* ifdef ECORE_XCOMPOSITE */
 }
 
@@ -102,6 +107,7 @@ ecore_x_composite_unredirect_window(Ecore_X_Window win,
         break;
      }
    XCompositeUnredirectWindow(_ecore_x_disp, win, update);
+   if (_ecore_xlib_sync) ecore_x_sync();
 #endif /* ifdef ECORE_XCOMPOSITE */
 }
 
@@ -124,6 +130,7 @@ ecore_x_composite_unredirect_subwindows(Ecore_X_Window win,
         break;
      }
    XCompositeUnredirectSubwindows(_ecore_x_disp, win, update);
+   if (_ecore_xlib_sync) ecore_x_sync();
 #endif /* ifdef ECORE_XCOMPOSITE */
 }
 
@@ -134,6 +141,7 @@ ecore_x_composite_name_window_pixmap_get(Ecore_X_Window win)
 #ifdef ECORE_XCOMPOSITE
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    pixmap = XCompositeNameWindowPixmap(_ecore_x_disp, win);
+   if (_ecore_xlib_sync) ecore_x_sync();
 #endif /* ifdef ECORE_XCOMPOSITE */
    return pixmap;
 }
@@ -143,6 +151,7 @@ ecore_x_composite_window_events_disable(Ecore_X_Window win)
 {
 #ifdef ECORE_XCOMPOSITE
    ecore_x_window_shape_input_rectangle_set(win, -1, -1, 1, 1);
+   if (_ecore_xlib_sync) ecore_x_sync();
 #endif /* ifdef ECORE_XCOMPOSITE */
 }
 
@@ -151,6 +160,7 @@ ecore_x_composite_window_events_enable(Ecore_X_Window win)
 {
 #ifdef ECORE_XCOMPOSITE
    ecore_x_window_shape_input_rectangle_set(win, 0, 0, 65535, 65535);
+   if (_ecore_xlib_sync) ecore_x_sync();
 #endif /* ifdef ECORE_XCOMPOSITE */
 }
 
@@ -160,6 +170,7 @@ ecore_x_composite_render_window_enable(Ecore_X_Window root)
    Ecore_X_Window win = 0;
 #ifdef ECORE_XCOMPOSITE
    win = XCompositeGetOverlayWindow(_ecore_x_disp, root);
+   if (_ecore_xlib_sync) ecore_x_sync();
    ecore_x_composite_window_events_disable(win);
 #endif /* ifdef ECORE_XCOMPOSITE */
    return win;
@@ -171,6 +182,7 @@ ecore_x_composite_render_window_disable(Ecore_X_Window root)
 #ifdef ECORE_XCOMPOSITE
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XCompositeReleaseOverlayWindow(_ecore_x_disp, root);
+   if (_ecore_xlib_sync) ecore_x_sync();
 #endif /* ifdef ECORE_XCOMPOSITE */
 }
 

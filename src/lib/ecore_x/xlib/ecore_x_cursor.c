@@ -28,6 +28,7 @@ ecore_x_cursor_new(Ecore_X_Window win,
         XcursorImage *xci;
 
         xci = XcursorImageCreate(w, h);
+        if (_ecore_xlib_sync) ecore_x_sync();
         if (xci)
           {
              int i;
@@ -47,6 +48,7 @@ ecore_x_cursor_new(Ecore_X_Window win,
 //		    (a << 24) | (r << 16) | (g << 8) | (b);
                }
              c = XcursorImageLoadCursor(_ecore_x_disp, xci);
+             if (_ecore_xlib_sync) ecore_x_sync();
              XcursorImageDestroy(xci);
              return c;
           }
@@ -72,10 +74,13 @@ ecore_x_cursor_new(Ecore_X_Window win,
       };
 
       pmap = XCreatePixmap(_ecore_x_disp, win, w, h, 1);
+      if (_ecore_xlib_sync) ecore_x_sync();
       mask = XCreatePixmap(_ecore_x_disp, win, w, h, 1);
+      if (_ecore_xlib_sync) ecore_x_sync();
       xim = XCreateImage(_ecore_x_disp,
                          DefaultVisual(_ecore_x_disp, 0),
                          1, ZPixmap, 0, NULL, w, h, 32, 0);
+      if (_ecore_xlib_sync) ecore_x_sync();
       xim->data = malloc(xim->bytes_per_line * xim->height);
 
       fr = 0x00; fg = 0x00; fb = 0x00;
@@ -146,11 +151,14 @@ ecore_x_cursor_new(Ecore_X_Window win,
                   v = 0;
 
                 XPutPixel(xim, x, y, v);
+                if (_ecore_xlib_sync) ecore_x_sync();
                 pix++;
              }
         }
       gc = XCreateGC(_ecore_x_disp, pmap, 0, &gcv);
+      if (_ecore_xlib_sync) ecore_x_sync();
       XPutImage(_ecore_x_disp, pmap, gc, xim, 0, 0, 0, 0, w, h);
+      if (_ecore_xlib_sync) ecore_x_sync();
       XFreeGC(_ecore_x_disp, gc);
 
       pix = (unsigned int *)pixels;
@@ -171,7 +179,9 @@ ecore_x_cursor_new(Ecore_X_Window win,
              }
         }
       gc = XCreateGC(_ecore_x_disp, mask, 0, &gcv);
+      if (_ecore_xlib_sync) ecore_x_sync();
       XPutImage(_ecore_x_disp, mask, gc, xim, 0, 0, 0, 0, w, h);
+      if (_ecore_xlib_sync) ecore_x_sync();
       XFreeGC(_ecore_x_disp, gc);
 
       free(xim->data);
@@ -194,6 +204,7 @@ ecore_x_cursor_new(Ecore_X_Window win,
                               pmap, mask,
                               &c1, &c2,
                               hot_x, hot_y);
+      if (_ecore_xlib_sync) ecore_x_sync();
       XFreePixmap(_ecore_x_disp, pmap);
       XFreePixmap(_ecore_x_disp, mask);
       return c;
@@ -207,6 +218,7 @@ ecore_x_cursor_free(Ecore_X_Cursor c)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XFreeCursor(_ecore_x_disp, c);
+   if (_ecore_xlib_sync) ecore_x_sync();
 }
 
 /*
@@ -217,9 +229,12 @@ ecore_x_cursor_free(Ecore_X_Cursor c)
 EAPI Ecore_X_Cursor
 ecore_x_cursor_shape_get(int shape)
 {
+   Ecore_X_Cursor cur;
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    /* Shapes are defined in Ecore_X_Cursor.h */
-   return XCreateFontCursor(_ecore_x_disp, shape);
+   cur = XCreateFontCursor(_ecore_x_disp, shape);
+   if (_ecore_xlib_sync) ecore_x_sync();
+   return cur;
 }
 
 EAPI void
@@ -228,6 +243,7 @@ ecore_x_cursor_size_set(int size)
 #ifdef ECORE_XCURSOR
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XcursorSetDefaultSize(_ecore_x_disp, size);
+   if (_ecore_xlib_sync) ecore_x_sync();
 #else /* ifdef ECORE_XCURSOR */
    size = 0;
 #endif /* ifdef ECORE_XCURSOR */

@@ -83,7 +83,7 @@ ecore_x_window_new(Ecore_X_Window parent,
                        CWBitGravity |
                        CWWinGravity,
                        &attr);
-
+   if (_ecore_xlib_sync) ecore_x_sync();
    if (parent == DefaultRootWindow(_ecore_x_disp))
      ecore_x_window_defaults_set(win);
 
@@ -152,6 +152,7 @@ ecore_x_window_override_new(Ecore_X_Window parent,
                        CWBitGravity |
                        CWWinGravity,
                        &attr);
+   if (_ecore_xlib_sync) ecore_x_sync();
    return win;
 }
 
@@ -204,7 +205,7 @@ ecore_x_window_input_new(Ecore_X_Window parent,
                        CWDontPropagate |
                        CWEventMask,
                        &attr);
-
+   if (_ecore_xlib_sync) ecore_x_sync();
    if (parent == DefaultRootWindow(_ecore_x_disp))
      {
      }
@@ -253,8 +254,9 @@ ecore_x_window_defaults_set(Ecore_X_Window win)
      {
         XSetWMClientMachine(_ecore_x_disp, win, &xprop);
         XFree(xprop.value);
+        if (_ecore_xlib_sync) ecore_x_sync();
      }
-
+   if (_ecore_xlib_sync) ecore_x_sync();
    /*
     * Set _NET_WM_PID
     */
@@ -294,6 +296,7 @@ ecore_x_window_configure(Ecore_X_Window win,
    xwc.stack_mode = stack_mode;
 
    XConfigureWindow(_ecore_x_disp, win, mask, &xwc);
+   if (_ecore_xlib_sync) ecore_x_sync();
 }
 
 /**
@@ -315,8 +318,9 @@ ecore_x_window_free(Ecore_X_Window win)
     * a smart idea.
     */
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   if (win)
-     XDestroyWindow(_ecore_x_disp, win);
+   if (!win) return;
+   XDestroyWindow(_ecore_x_disp, win);
+   if (_ecore_xlib_sync) ecore_x_sync();
 }
 
 /**
@@ -418,6 +422,7 @@ ecore_x_window_delete_request_send(Ecore_X_Window win)
    xev.xclient.data.l[1] = CurrentTime;
 
    XSendEvent(_ecore_x_disp, win, False, NoEventMask, &xev);
+   if (_ecore_xlib_sync) ecore_x_sync();
 }
 
 /**
@@ -440,6 +445,7 @@ ecore_x_window_show(Ecore_X_Window win)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XMapWindow(_ecore_x_disp, win);
+   if (_ecore_xlib_sync) ecore_x_sync();
 }
 
 /**
@@ -484,6 +490,7 @@ ecore_x_window_hide(Ecore_X_Window win)
    xev.xunmap.from_configure = False;
    XSendEvent(_ecore_x_disp, xev.xunmap.event, False,
               SubstructureRedirectMask | SubstructureNotifyMask, &xev);
+   if (_ecore_xlib_sync) ecore_x_sync();
 }
 
 /**
@@ -511,6 +518,7 @@ ecore_x_window_move(Ecore_X_Window win,
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XMoveWindow(_ecore_x_disp, win, x, y);
+   if (_ecore_xlib_sync) ecore_x_sync();
 }
 
 /**
@@ -533,6 +541,7 @@ ecore_x_window_resize(Ecore_X_Window win,
      h = 1;
 
    XResizeWindow(_ecore_x_disp, win, w, h);
+   if (_ecore_xlib_sync) ecore_x_sync();
 }
 
 /**
@@ -559,6 +568,7 @@ ecore_x_window_move_resize(Ecore_X_Window win,
      h = 1;
 
    XMoveResizeWindow(_ecore_x_disp, win, x, y, w, h);
+   if (_ecore_xlib_sync) ecore_x_sync();
 }
 
 /**
@@ -582,6 +592,7 @@ ecore_x_window_focus(Ecore_X_Window win)
 
 //   XSetInputFocus(_ecore_x_disp, win, RevertToPointerRoot, CurrentTime);
    XSetInputFocus(_ecore_x_disp, win, RevertToParent, CurrentTime);
+   if (_ecore_xlib_sync) ecore_x_sync();
 }
 
 /**
@@ -600,6 +611,7 @@ ecore_x_window_focus_at_time(Ecore_X_Window win,
 
 //   XSetInputFocus(_ecore_x_disp, win, PointerRoot, t);
    XSetInputFocus(_ecore_x_disp, win, RevertToParent, t);
+   if (_ecore_xlib_sync) ecore_x_sync();
 }
 
 /**
@@ -636,6 +648,7 @@ ecore_x_window_raise(Ecore_X_Window win)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XRaiseWindow(_ecore_x_disp, win);
+   if (_ecore_xlib_sync) ecore_x_sync();
 }
 
 /**
@@ -648,6 +661,7 @@ ecore_x_window_lower(Ecore_X_Window win)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XLowerWindow(_ecore_x_disp, win);
+   if (_ecore_xlib_sync) ecore_x_sync();
 }
 
 /**
@@ -676,6 +690,7 @@ ecore_x_window_reparent(Ecore_X_Window win,
      new_parent = DefaultRootWindow(_ecore_x_disp);
 
    XReparentWindow(_ecore_x_disp, win, new_parent, x, y);
+   if (_ecore_xlib_sync) ecore_x_sync();
 }
 
 /**
@@ -697,6 +712,7 @@ ecore_x_window_size_get(Ecore_X_Window win,
      win = DefaultRootWindow(_ecore_x_disp);
 
    ecore_x_drawable_geometry_get(win, &dummy_x, &dummy_y, w, h);
+   if (_ecore_xlib_sync) ecore_x_sync();
 }
 
 /**
@@ -727,6 +743,7 @@ ecore_x_window_geometry_get(Ecore_X_Window win,
      win = DefaultRootWindow(_ecore_x_disp);
 
    ecore_x_drawable_geometry_get(win, x, y, w, h);
+   if (_ecore_xlib_sync) ecore_x_sync();
 }
 
 /**
@@ -738,12 +755,15 @@ ecore_x_window_geometry_get(Ecore_X_Window win,
 EAPI int
 ecore_x_window_border_width_get(Ecore_X_Window win)
 {
+   int w;
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    /* doesn't make sense to call this on a root window */
    if (!win)
      return 0;
 
-   return ecore_x_drawable_border_width_get(win);
+   w = ecore_x_drawable_border_width_get(win);
+   if (_ecore_xlib_sync) ecore_x_sync();
+   return w;
 }
 
 /**
@@ -762,6 +782,7 @@ ecore_x_window_border_width_set(Ecore_X_Window win,
      return;
 
    XSetWindowBorderWidth (_ecore_x_disp, win, width);
+   if (_ecore_xlib_sync) ecore_x_sync();
 }
 
 /**
@@ -772,8 +793,11 @@ ecore_x_window_border_width_set(Ecore_X_Window win,
 EAPI int
 ecore_x_window_depth_get(Ecore_X_Window win)
 {
+   int d;
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   return ecore_x_drawable_depth_get(win);
+   d = ecore_x_drawable_depth_get(win);
+   if (_ecore_xlib_sync) ecore_x_sync();
+   return d;
 }
 
 /**
@@ -798,19 +822,26 @@ ecore_x_window_cursor_show(Ecore_X_Window win,
         XGCValues gcv;
 
         p = XCreatePixmap(_ecore_x_disp, win, 1, 1, 1);
+        if (_ecore_xlib_sync) ecore_x_sync();
         m = XCreatePixmap(_ecore_x_disp, win, 1, 1, 1);
+        if (_ecore_xlib_sync) ecore_x_sync();
         gc = XCreateGC(_ecore_x_disp, m, 0, &gcv);
+        if (_ecore_xlib_sync) ecore_x_sync();
         XSetForeground(_ecore_x_disp, gc, 0);
+        if (_ecore_xlib_sync) ecore_x_sync();
         XDrawPoint(_ecore_x_disp, m, gc, 0, 0);
+        if (_ecore_xlib_sync) ecore_x_sync();
         XFreeGC(_ecore_x_disp, gc);
         c = XCreatePixmapCursor(_ecore_x_disp, p, m, &cl, &cl, 0, 0);
+        if (_ecore_xlib_sync) ecore_x_sync();
         XDefineCursor(_ecore_x_disp, win, c);
         XFreeCursor(_ecore_x_disp, c);
         XFreePixmap(_ecore_x_disp, p);
         XFreePixmap(_ecore_x_disp, m);
-     }
+}
    else
      XDefineCursor(_ecore_x_disp, win, 0);
+   if (_ecore_xlib_sync) ecore_x_sync();
 }
 
 EAPI void
@@ -822,6 +853,7 @@ ecore_x_window_cursor_set(Ecore_X_Window win,
      XUndefineCursor(_ecore_x_disp, win);
    else
      XDefineCursor(_ecore_x_disp, win, c);
+   if (_ecore_xlib_sync) ecore_x_sync();
 }
 
 /**
@@ -833,11 +865,14 @@ ecore_x_window_cursor_set(Ecore_X_Window win,
 EAPI int
 ecore_x_window_visible_get(Ecore_X_Window win)
 {
+   Eina_Bool ret;
    XWindowAttributes attr;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   return XGetWindowAttributes(_ecore_x_disp, win, &attr) &&
-          (attr.map_state == IsViewable);
+   ret = (XGetWindowAttributes(_ecore_x_disp, win, &attr) &&
+          (attr.map_state == IsViewable));
+   if (_ecore_xlib_sync) ecore_x_sync();
+   return ret;
 }
 
 typedef struct _Shadow Shadow;
@@ -862,12 +897,11 @@ _ecore_x_window_tree_walk(Window win)
    unsigned int num;
    Shadow *s, **sl;
    XWindowAttributes att;
+   Eina_Bool ret;
 
-   if (!XGetWindowAttributes(_ecore_x_disp, win, &att))
-     return NULL;  //   if (att.class == InputOnly) return NULL;
-
-   if (att.map_state != IsViewable)
-     return NULL;
+   ret = (XGetWindowAttributes(_ecore_x_disp, win, &att) && (att.map_state == IsViewable));
+   if (_ecore_xlib_sync) ecore_x_sync();
+   if (!ret) return NULL; //   if (att.class == InputOnly) return NULL;
 
    s = calloc(1, sizeof(Shadow));
    if (!s)
@@ -881,6 +915,7 @@ _ecore_x_window_tree_walk(Window win)
    if (XQueryTree(_ecore_x_disp, s->win, &root_win, &parent_win,
                   &list, &num))
      {
+        if (_ecore_xlib_sync) ecore_x_sync();
         s->children = calloc(1, sizeof(Shadow *) * num);
         if (s->children)
           {
@@ -1417,10 +1452,12 @@ ecore_x_window_parent_get(Ecore_X_Window win)
 {
    Window root, parent, *children = NULL;
    unsigned int num;
+   Eina_Bool success;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   if (!XQueryTree(_ecore_x_disp, win, &root, &parent, &children, &num))
-     return 0;
+   success = XQueryTree(_ecore_x_disp, win, &root, &parent, &children, &num);
+   if (_ecore_xlib_sync) ecore_x_sync();
+   if (!success) return 0;
 
    if (children)
      XFree(children);
@@ -1455,6 +1492,7 @@ ecore_x_window_background_color_set(Ecore_X_Window win,
 
    attr.background_pixel = col.pixel;
    XChangeWindowAttributes(_ecore_x_disp, win, CWBackPixel, &attr);
+   if (_ecore_xlib_sync) ecore_x_sync();
 }
 
 EAPI void
@@ -1466,6 +1504,7 @@ ecore_x_window_gravity_set(Ecore_X_Window win,
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    att.win_gravity = grav;
    XChangeWindowAttributes(_ecore_x_disp, win, CWWinGravity, &att);
+   if (_ecore_xlib_sync) ecore_x_sync();
 }
 
 EAPI void
@@ -1477,6 +1516,7 @@ ecore_x_window_pixel_gravity_set(Ecore_X_Window win,
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    att.bit_gravity = grav;
    XChangeWindowAttributes(_ecore_x_disp, win, CWBitGravity, &att);
+   if (_ecore_xlib_sync) ecore_x_sync();
 }
 
 EAPI void
@@ -1485,6 +1525,7 @@ ecore_x_window_pixmap_set(Ecore_X_Window win,
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XSetWindowBackgroundPixmap(_ecore_x_disp, win, pmap);
+   if (_ecore_xlib_sync) ecore_x_sync();
 }
 
 EAPI void
@@ -1496,6 +1537,7 @@ ecore_x_window_area_clear(Ecore_X_Window win,
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XClearArea(_ecore_x_disp, win, x, y, w, h, False);
+   if (_ecore_xlib_sync) ecore_x_sync();
 }
 
 EAPI void
@@ -1507,6 +1549,7 @@ ecore_x_window_area_expose(Ecore_X_Window win,
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XClearArea(_ecore_x_disp, win, x, y, w, h, True);
+   if (_ecore_xlib_sync) ecore_x_sync();
 }
 
 EAPI void
@@ -1518,6 +1561,7 @@ ecore_x_window_override_set(Ecore_X_Window win,
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    att.override_redirect = override;
    XChangeWindowAttributes(_ecore_x_disp, win, CWOverrideRedirect, &att);
+   if (_ecore_xlib_sync) ecore_x_sync();
 }
 
 #ifdef ECORE_XRENDER
@@ -1548,6 +1592,7 @@ _ecore_x_window_argb_internal_new(Ecore_X_Window parent,
      {
         /* ewww - round trip */
         XGetWindowAttributes(_ecore_x_disp, parent, &att);
+        if (_ecore_xlib_sync) ecore_x_sync();
         for (i = 0; i < ScreenCount(_ecore_x_disp); i++)
           {
              if (att.screen == ScreenOfDisplay(_ecore_x_disp, i))
@@ -1567,6 +1612,7 @@ _ecore_x_window_argb_internal_new(Ecore_X_Window parent,
                         VisualClassMask,
                         &vi_in,
                         &nvi);
+   if (_ecore_xlib_sync) ecore_x_sync();
    if (!xvi)
      return 0;
 
@@ -1574,6 +1620,7 @@ _ecore_x_window_argb_internal_new(Ecore_X_Window parent,
    for (i = 0; i < nvi; i++)
      {
         fmt = XRenderFindVisualFormat(_ecore_x_disp, xvi[i].visual);
+        if (_ecore_xlib_sync) ecore_x_sync();
         if ((fmt->type == PictTypeDirect) && (fmt->direct.alphaMask))
           {
              vis = xvi[i].visual;
@@ -1621,6 +1668,7 @@ _ecore_x_window_argb_internal_new(Ecore_X_Window parent,
                        CWBitGravity |
                        CWWinGravity,
                        &attr);
+   if (_ecore_xlib_sync) ecore_x_sync();
    XFreeColormap(_ecore_x_disp, attr.colormap);
 
    if (parent == DefaultRootWindow(_ecore_x_disp))
@@ -1637,12 +1685,15 @@ ecore_x_window_argb_get(Ecore_X_Window win)
 #ifdef ECORE_XRENDER
    XWindowAttributes att;
    XRenderPictFormat *fmt;
+   Eina_Bool ret;
 
    att.visual = 0;
-   if (!XGetWindowAttributes(_ecore_x_disp, win, &att))
-     return 0;
+   ret = XGetWindowAttributes(_ecore_x_disp, win, &att);
+   if (_ecore_xlib_sync) ecore_x_sync();
+   if (!ret) return 0;
 
    fmt = XRenderFindVisualFormat(_ecore_x_disp, att.visual);
+   if (_ecore_xlib_sync) ecore_x_sync();
    if (!fmt)
      return 0;
 

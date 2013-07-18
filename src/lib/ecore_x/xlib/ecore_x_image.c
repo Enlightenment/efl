@@ -106,6 +106,7 @@ _ecore_x_image_shm_check(void)
                                       DefaultScreen(_ecore_x_disp)),
                          ZPixmap, NULL,
                          &shminfo, 1, 1);
+   if (_ecore_xlib_sync) ecore_x_sync();
    if (!xim)
      {
         _ecore_x_image_shm_can = 0;
@@ -370,11 +371,15 @@ ecore_x_image_put(Ecore_X_Image *im,
         memset(&gcv, 0, sizeof(gcv));
         gcv.subwindow_mode = IncludeInferiors;
         tgc = XCreateGC(_ecore_x_disp, draw, GCSubwindowMode, &gcv);
+        if (_ecore_xlib_sync) ecore_x_sync();
         gc = tgc;
      }
    if (!im->xim) _ecore_x_image_shm_create(im);
    if (im->xim)
-     XShmPutImage(_ecore_x_disp, draw, gc, im->xim, sx, sy, x, y, w, h, False);
+     {
+        XShmPutImage(_ecore_x_disp, draw, gc, im->xim, sx, sy, x, y, w, h, False);
+        if (_ecore_xlib_sync) ecore_x_sync();
+     }
    if (tgc) ecore_x_gc_free(tgc);
 }
 

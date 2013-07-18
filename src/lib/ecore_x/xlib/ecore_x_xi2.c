@@ -434,6 +434,7 @@ ecore_x_input_multi_select(Ecore_X_Window win)
              XISetMask(mask, XI_ButtonRelease);
              XISetMask(mask, XI_Motion);
              XISelectEvents(_ecore_x_disp, win, &eventmask, 1);
+             if (_ecore_xlib_sync) ecore_x_sync();
              find = EINA_TRUE;
           }
         else if (dev->use == XISlavePointer)
@@ -485,6 +486,7 @@ ecore_x_input_multi_select(Ecore_X_Window win)
 #endif /* #ifdef ECORE_XI2_2 */
 
                   XISelectEvents(_ecore_x_disp, win, &eventmask, 1);
+                  if (_ecore_xlib_sync) ecore_x_sync();
                   find = EINA_TRUE;
                }
 #ifdef ECORE_XI2_2
@@ -507,6 +509,7 @@ ecore_x_input_multi_select(Ecore_X_Window win)
                        XISetMask(mask, XI_TouchBegin);
                        XISetMask(mask, XI_TouchEnd);
                        XISelectEvents(_ecore_x_disp, win, &eventmask, 1);
+                       if (_ecore_xlib_sync) ecore_x_sync();
 
                        l = eina_inlist_append(l, (Eina_Inlist *)info);
                        _ecore_x_xi2_touch_info_list = l;
@@ -549,6 +552,7 @@ ecore_x_input_raw_select(Ecore_X_Window win)
 #endif
 
    XISelectEvents(_ecore_x_disp, win, &emask, 1);
+   if (_ecore_xlib_sync) ecore_x_sync();
 
    return EINA_TRUE;
 #else

@@ -130,6 +130,7 @@ ecore_x_region_new_from_bitmap(Ecore_X_Pixmap bitmap)
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    region = XFixesCreateRegionFromBitmap(_ecore_x_disp, bitmap);
+   if (_ecore_xlib_sync) ecore_x_sync();
    return region;
 #else /* ifdef ECORE_XFIXES */
    return 0;
@@ -145,6 +146,7 @@ ecore_x_region_new_from_window(Ecore_X_Window win,
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    region = XFixesCreateRegionFromWindow(_ecore_x_disp, win, type);
+   if (_ecore_xlib_sync) ecore_x_sync();
    return region;
 #else /* ifdef ECORE_XFIXES */
    return 0;
@@ -159,6 +161,7 @@ ecore_x_region_new_from_gc(Ecore_X_GC gc)
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    region = XFixesCreateRegionFromGC(_ecore_x_disp, gc);
+   if (_ecore_xlib_sync) ecore_x_sync();
    return region;
 #else /* ifdef ECORE_XFIXES */
    return 0;
@@ -173,6 +176,7 @@ ecore_x_region_new_from_picture(Ecore_X_Picture picture)
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    region = XFixesCreateRegionFromPicture(_ecore_x_disp, picture);
+   if (_ecore_xlib_sync) ecore_x_sync();
    return region;
 #else /* ifdef ECORE_XFIXES */
    return 0;
@@ -197,6 +201,7 @@ ecore_x_region_set(Ecore_X_Region region,
    XRectangle *xrect = _ecore_x_rectangle_ecore_to_x(rects, num);
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XFixesSetRegion(_ecore_x_disp, region, xrect, num);
+   if (_ecore_xlib_sync) ecore_x_sync();
 #endif /* ifdef ECORE_XFIXES */
 }
 
@@ -207,6 +212,7 @@ ecore_x_region_copy(Ecore_X_Region dest,
 #ifdef ECORE_XFIXES
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XFixesCopyRegion(_ecore_x_disp, dest, source);
+   if (_ecore_xlib_sync) ecore_x_sync();
 #endif /* ifdef ECORE_XFIXES */
 }
 
@@ -218,6 +224,7 @@ ecore_x_region_combine(Ecore_X_Region dest,
 #ifdef ECORE_XFIXES
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XFixesUnionRegion(_ecore_x_disp, dest, source1, source2);
+   if (_ecore_xlib_sync) ecore_x_sync();
 #endif /* ifdef ECORE_XFIXES */
 }
 
@@ -229,6 +236,7 @@ ecore_x_region_intersect(Ecore_X_Region dest,
 #ifdef ECORE_XFIXES
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XFixesIntersectRegion(_ecore_x_disp, dest, source1, source2);
+   if (_ecore_xlib_sync) ecore_x_sync();
 #endif /* ifdef ECORE_XFIXES */
 }
 
@@ -240,6 +248,7 @@ ecore_x_region_subtract(Ecore_X_Region dest,
 #ifdef ECORE_XFIXES
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XFixesSubtractRegion(_ecore_x_disp, dest, source1, source2);
+   if (_ecore_xlib_sync) ecore_x_sync();
 #endif /* ifdef ECORE_XFIXES */
 }
 
@@ -258,6 +267,7 @@ ecore_x_region_invert(Ecore_X_Region dest,
    xbound = _ecore_x_rectangle_ecore_to_x(bounds, num);
 
    XFixesInvertRegion(_ecore_x_disp, dest, xbound, source);
+   if (_ecore_xlib_sync) ecore_x_sync();
 #endif /* ifdef ECORE_XFIXES */
 }
 
@@ -269,6 +279,7 @@ ecore_x_region_translate(Ecore_X_Region region,
 #ifdef ECORE_XFIXES
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XFixesTranslateRegion(_ecore_x_disp, region, dx, dy);
+   if (_ecore_xlib_sync) ecore_x_sync();
 #endif /* ifdef ECORE_XFIXES */
 }
 
@@ -279,6 +290,7 @@ ecore_x_region_extents(Ecore_X_Region dest,
 #ifdef ECORE_XFIXES
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XFixesRegionExtents(_ecore_x_disp, dest, source);
+   if (_ecore_xlib_sync) ecore_x_sync();
 #endif /* ifdef ECORE_XFIXES */
 }
 
@@ -292,6 +304,7 @@ ecore_x_region_fetch(Ecore_X_Region region,
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    xrect = XFixesFetchRegionAndBounds(_ecore_x_disp, region, num, &xbound);
+   if (_ecore_xlib_sync) ecore_x_sync();
    rects = _ecore_x_rectangle_x_to_ecore(xrect, *num);
    (*bounds).x = xbound.x;
    (*bounds).y = xbound.y;
@@ -314,6 +327,7 @@ ecore_x_region_expand(Ecore_X_Region dest,
 #ifdef ECORE_XFIXES
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XFixesExpandRegion(_ecore_x_disp, dest, source, left, right, top, bottom);
+   if (_ecore_xlib_sync) ecore_x_sync();
 #endif /* ifdef ECORE_XFIXES */
 }
 
@@ -326,6 +340,7 @@ ecore_x_region_gc_clip_set(Ecore_X_Region region,
 #ifdef ECORE_XFIXES
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XFixesSetGCClipRegion(_ecore_x_disp, gc, x_origin, y_origin, region);
+   if (_ecore_xlib_sync) ecore_x_sync();
 #endif /* ifdef ECORE_XFIXES */
 }
 
@@ -344,6 +359,7 @@ ecore_x_region_window_shape_set(Ecore_X_Region region,
                               x_offset,
                               y_offset,
                               region);
+   if (_ecore_xlib_sync) ecore_x_sync();
 #endif /* ifdef ECORE_XFIXES */
 }
 
@@ -360,6 +376,7 @@ ecore_x_region_picture_clip_set(Ecore_X_Region region,
                               x_origin,
                               y_origin,
                               region);
+   if (_ecore_xlib_sync) ecore_x_sync();
 #endif /* ifdef ECORE_XFIXES */
 }
 

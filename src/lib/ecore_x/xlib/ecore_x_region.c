@@ -48,8 +48,11 @@ EAPI Eina_Bool
 ecore_x_xregion_set(Ecore_X_XRegion *region,
                     Ecore_X_GC gc)
 {
+   Eina_Bool ret;
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   return XSetRegion(_ecore_x_disp, gc, (Region)region) ? EINA_TRUE : EINA_FALSE;
+   ret = !!XSetRegion(_ecore_x_disp, gc, (Region)region);
+   if (_ecore_xlib_sync) ecore_x_sync();
+   return ret;
 }
 
 EAPI void

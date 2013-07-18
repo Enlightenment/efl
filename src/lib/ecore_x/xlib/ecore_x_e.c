@@ -1089,6 +1089,7 @@ ecore_x_e_comp_sync_draw_done_send(Ecore_X_Window root,
    XSendEvent(_ecore_x_disp, root, False,
               SubstructureRedirectMask | SubstructureNotifyMask,
               &xev);
+   if (_ecore_xlib_sync) ecore_x_sync();
 }
 
 EAPI void
@@ -1117,6 +1118,7 @@ ecore_x_e_comp_sync_draw_size_done_send(Ecore_X_Window root,
    XSendEvent(_ecore_x_disp, root, False,
               SubstructureRedirectMask | SubstructureNotifyMask,
               &xev);
+   if (_ecore_xlib_sync) ecore_x_sync();
 }
 
 /*
@@ -1440,6 +1442,7 @@ ecore_x_e_window_profile_change_send(Ecore_X_Window  root,
    XSendEvent(_ecore_x_disp, root, False,
               SubstructureRedirectMask | SubstructureNotifyMask,
               &xev);
+   if (_ecore_xlib_sync) ecore_x_sync();
 }
 
 EAPI void
@@ -1467,6 +1470,7 @@ ecore_x_e_window_profile_change_request_send(Ecore_X_Window win,
    xev.xclient.data.l[4] = 0; // later
 
    XSendEvent(_ecore_x_disp, win, False, NoEventMask, &xev);
+   if (_ecore_xlib_sync) ecore_x_sync();
 }
 
 
@@ -1498,6 +1502,7 @@ ecore_x_e_window_profile_change_done_send(Ecore_X_Window root,
    XSendEvent(_ecore_x_disp, root, False,
               SubstructureRedirectMask | SubstructureNotifyMask,
               &xev);
+   if (_ecore_xlib_sync) ecore_x_sync();
 }
 
 EAPI void
@@ -1586,6 +1591,7 @@ ecore_x_e_comp_sync_begin_send(Ecore_X_Window win)
    XSendEvent(_ecore_x_disp, win, False,
               NoEventMask, //SubstructureRedirectMask | SubstructureNotifyMask,
               &xev);
+   if (_ecore_xlib_sync) ecore_x_sync();
 }
 
 EAPI void
@@ -1608,6 +1614,7 @@ ecore_x_e_comp_sync_end_send(Ecore_X_Window win)
    XSendEvent(_ecore_x_disp, win, False,
               NoEventMask, //SubstructureRedirectMask | SubstructureNotifyMask,
               &xev);
+   if (_ecore_xlib_sync) ecore_x_sync();
 }
 
 EAPI void
@@ -1630,6 +1637,7 @@ ecore_x_e_comp_sync_cancel_send(Ecore_X_Window win)
    XSendEvent(_ecore_x_disp, win, False,
               NoEventMask, //SubstructureRedirectMask | SubstructureNotifyMask,
               &xev);
+   if (_ecore_xlib_sync) ecore_x_sync();
 }
 
 EAPI void
@@ -1652,6 +1660,7 @@ ecore_x_e_comp_flush_send(Ecore_X_Window win)
    XSendEvent(_ecore_x_disp, win, False,
               NoEventMask, //SubstructureRedirectMask | SubstructureNotifyMask,
               &xev);
+   if (_ecore_xlib_sync) ecore_x_sync();
 }
 
 EAPI void
@@ -1674,6 +1683,7 @@ ecore_x_e_comp_dump_send(Ecore_X_Window win)
    XSendEvent(_ecore_x_disp, win, False,
               NoEventMask, //SubstructureRedirectMask | SubstructureNotifyMask,
               &xev);
+   if (_ecore_xlib_sync) ecore_x_sync();
 }
 
 EAPI void
