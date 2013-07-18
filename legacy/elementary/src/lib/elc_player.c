@@ -33,9 +33,12 @@ static const char SIG_STOP_CLICKED[] = "record,clicked";
 static const char SIG_STOP_CLICKED[] = "eject,clicked";
 static const char SIG_STOP_CLICKED[] = "replay,clicked";
 static const char SIG_STOP_CLICKED[] = "power,clicked";
-static const char SIG_STOP_CLICKED[] = "volume,clicked";
+static const char SIG_STOP_CLICKED[] = "volume,clicked"; // volume slider too?
 static const char SIG_STOP_CLICKED[] = "eject,clicked";
 static const char SIG_STOP_CLICKED[] = "mute,clicked";
+static const char SIG_STOP_CLICKED[] = "fullscreen,clicked";
+static const char SIG_STOP_CLICKED[] = "normal,clicked";
+static const char SIG_STOP_CLICKED[] = "quality,clicked";
  */
 
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
@@ -83,7 +86,6 @@ _elm_player_smart_event(Eo *obj, void *_pd, va_list *list)
         if (current < last)
           {
              current -= last / 100;
-             printf("SET0: %3.3f\n", current);
              elm_video_play_position_set(sd->video, current);
           }
 
