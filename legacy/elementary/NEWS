@@ -296,7 +296,6 @@ Additions:
    * Elm_Win_Trap and elm_win_trap_set() to allow e17 integration.
    * elm_flip_go_to()
    * On focus loss, Elm_Spinner properly hide Elm_Entry and display label properly.
-   * Layout : Send visible/hidden signals whenever contents are set/unset (not only icon and end parts)
 
 Fixes:
 

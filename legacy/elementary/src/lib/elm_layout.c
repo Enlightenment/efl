@@ -132,7 +132,11 @@ _icon_signal_emit(Elm_Layout_Smart_Data *sd,
    char buf[1024];
    const char *type;
 
-   if (sub_d->type != SWALLOW) return;
+   //FIXME: Don't limit to the icon and end here.
+   // send signals for all contents after elm 2.0
+   if (sub_d->type != SWALLOW ||
+       (strcmp("elm.swallow.icon", sub_d->part) &&
+        (strcmp("elm.swallow.end", sub_d->part)))) return;
 
    if (strncmp(sub_d->part, "elm.swallow.", sizeof("elm.swallow.") - 1) == 0)
      type = sub_d->part + sizeof("elm.swallow.") - 1;
@@ -157,7 +161,9 @@ _text_signal_emit(Elm_Layout_Smart_Data *sd,
    char buf[1024];
    const char *type;
 
-   if (sub_d->type != TEXT) return;
+   //FIXME: Don't limit to "elm.text" prefix.
+   //Send signals for all text parts after elm 2.0
+   if (sub_d->type != TEXT || strcmp("elm.text", sub_d->part)) return;
 
    Elm_Widget_Smart_Data *wd = eo_data_scope_get(sd->obj, ELM_OBJ_WIDGET_CLASS);
 
