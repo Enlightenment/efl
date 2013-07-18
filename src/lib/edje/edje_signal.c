@@ -180,8 +180,8 @@ _edje_signal_callback_grow(Edje_Signal_Callback_Group *gp)
    tmp->matches = realloc(tmp->matches, sizeof (Edje_Signal_Callback_Match) * tmp->matches_count);
    gp->custom_data = realloc(gp->custom_data, sizeof (void*) * tmp->matches_count);
 
-   c = ((tmp->matches_count >> 1) | (tmp->matches_count & 1));
-   gp->flags = realloc(gp->flags, sizeof (Edje_Signal_Callback_Group) + c);
+   c = ((tmp->matches_count >> 1) + (tmp->matches_count & 1));
+   gp->flags = realloc(gp->flags, sizeof (Eina_Bool) * c);
    // We have just expanded by one char, set it to 0
    if (tmp->matches_count & 1) gp->flags[tmp->matches_count >> 1] = 0;
 
