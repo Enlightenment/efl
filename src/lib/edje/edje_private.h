@@ -1412,7 +1412,11 @@ struct _Edje_Calc_Params_Physics
 
 struct _Edje_Calc_Params
 {
-   int              x, y, w, h; // 16
+   //   int              x, y, w, h; // 16
+   struct {
+      FLOAT_T       x, y, w, h; // 32
+   } eval;
+   Edje_Rectangle   final; // 16
    Edje_Rectangle   req; // 16
    Edje_Rectangle   req_drag; // 16
    Edje_Color       color; // 4

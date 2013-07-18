@@ -2,18 +2,24 @@
 
         * Ecore-X: add ECORE_X_SYNC env variable for xlib backend
 
+2013-07-18  Cedric Bail
+
+	* Edje: fix some logic in the fixed point path.
+	* Edje: improve accuracy of math part positionning.
+
 2013-07-17  Guillaume Friloux
-        * Fix ecore_con_server_timeout_set(). It was changing the 
+
+        * Ecore_Con: fix ecore_con_server_timeout_set(). It was changing the
           timeout value, but not the timer.
 
 2013-07-17  Mike Blumenkrantz
 
-        * Ecore-X: add error messages for xlib, ECORE_X_ATOM_XDND_DIRECTSAVE0,
+        * Ecore_X: add error messages for xlib, ECORE_X_ATOM_XDND_DIRECTSAVE0,
                    fix ecore_x_e_comp_pixmap_set to delete pixmap atom correctly
 
 2013-07-15  Mike Blumenkrantz
 
-        * Ecore-X: fix BadMatch errors in ecore_x_image_get when requested size was larger than XImage size
+        * Ecore_X: fix BadMatch errors in ecore_x_image_get when requested size was larger than XImage size
 
 2013-07-15  Cedric Bail
 

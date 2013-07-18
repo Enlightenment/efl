@@ -866,7 +866,7 @@ _edje_part_recalc_single_rel(Edje *ed,
    else
      x = ADD(FROM_INT(desc->rel1.offset_x),
              SCALE(desc->rel1.relative_x, ed->w));
-   params->x = TO_INT(x);
+   params->eval.x = x;
 
    if (rel2_to_x)
      w = ADD(SUB(ADD(FROM_INT(desc->rel2.offset_x + rel2_to_x->x),
@@ -878,7 +878,7 @@ _edje_part_recalc_single_rel(Edje *ed,
                      SCALE(desc->rel2.relative_x, ed->w)),
                  x),
              FROM_INT(1));
-   params->w = TO_INT(w);
+   params->eval.w = w;
 
    if (rel1_to_y)
      y = ADD(FROM_INT(desc->rel1.offset_y + rel1_to_y->y),
@@ -886,7 +886,7 @@ _edje_part_recalc_single_rel(Edje *ed,
    else
      y = ADD(FROM_INT(desc->rel1.offset_y),
              SCALE(desc->rel1.relative_y, ed->h));
-   params->y = TO_INT(y);
+   params->eval.y = y;
 
    if (rel2_to_y)
      h = ADD(SUB(ADD(FROM_INT(desc->rel2.offset_y + rel2_to_y->y),
@@ -898,7 +898,7 @@ _edje_part_recalc_single_rel(Edje *ed,
                      SCALE(desc->rel2.relative_y, ed->h)),
                  y),
              FROM_INT(1));
-   params->h = TO_INT(h);
+   params->eval.h = h;
 }
 
 static Edje_Internal_Aspect
@@ -914,8 +914,8 @@ _edje_part_recalc_single_aspect(Edje *ed,
    FLOAT_T aspect, amax, amin;
    FLOAT_T new_w = ZERO, new_h = ZERO, want_x, want_y, want_w, want_h;
 
-   if (params->h <= ZERO) aspect = FROM_INT(999999);
-   else aspect = DIV(FROM_INT(params->w), FROM_INT(params->h));
+   if (params->eval.h <= ZERO) aspect = FROM_INT(999999);
+   else aspect = DIV(params->eval.w, params->eval.h);
    amax = desc->aspect.max;
    amin = desc->aspect.min;
    if (desc->aspect.prefer == EDJE_ASPECT_PREFER_SOURCE &&
@@ -938,11 +938,11 @@ _edje_part_recalc_single_aspect(Edje *ed,
           DIV(FROM_INT(ep->typedata.swallow->swallow_params.aspect.w),
               FROM_INT(ep->typedata.swallow->swallow_params.aspect.h));
      }
-   want_x = FROM_INT(params->x);
-   want_w = new_w = FROM_INT(params->w);
+   want_x = params->eval.x;
+   want_w = new_w = params->eval.w;
 
-   want_y = FROM_INT(params->y);
-   want_h = new_h = FROM_INT(params->h);
+   want_y = params->eval.y;
+   want_h = new_h = params->eval.h;
 
    if ((amin > ZERO) && (amax > ZERO))
      {
@@ -978,24 +978,24 @@ _edje_part_recalc_single_aspect(Edje *ed,
               /* adjust for min aspect (width / height) */
               if ((amin > ZERO) && (aspect < amin))
                 {
-                   new_h = DIV(FROM_INT(params->w), amin);
-                   new_w = SCALE(amin, params->h);
+                   new_h = DIV(params->eval.w, amin);
+                   new_w = MUL(amin, params->eval.h);
                 }
               /* adjust for max aspect (width / height) */
               if ((amax > ZERO) && (aspect > amax))
                 {
-                   new_h = DIV(FROM_INT(params->w), amax);
-                   new_w = SCALE(amax, params->h);
+                   new_h = DIV(params->eval.w, amax);
+                   new_w = MUL(amax, params->eval.h);
                 }
-              if ((amax > ZERO) && (new_w < FROM_INT(params->w)))
+              if ((amax > ZERO) && (new_w < params->eval.w))
                 {
-                   new_w = FROM_INT(params->w);
-                   new_h = DIV(FROM_INT(params->w), amax);
+                   new_w = params->eval.w;
+                   new_h = DIV(params->eval.w, amax);
                 }
-              if ((amax > ZERO) && (new_h < FROM_INT(params->h)))
+              if ((amax > ZERO) && (new_h < params->eval.h))
                 {
-                   new_w = SCALE(amax, params->h);
-                   new_h = FROM_INT(params->h);
+                   new_w = MUL(amax, params->eval.h);
+                   new_h = params->eval.h;
                 }
               break;
               /* prefer vertical size as determiner */
@@ -1003,20 +1003,20 @@ _edje_part_recalc_single_aspect(Edje *ed,
               /* keep both dimensions in check */
               /* adjust for max aspect (width / height) */
               if ((amax > ZERO) && (aspect > amax))
-                new_w = SCALE(amax, params->h);
+                new_w = MUL(amax, params->eval.h);
               /* adjust for min aspect (width / height) */
               if ((amin > ZERO) && (aspect < amin))
-                new_w = SCALE(amin, params->h);
+                new_w = MUL(amin, params->eval.h);
               break;
               /* prefer horizontal size as determiner */
            case EDJE_ASPECT_PREFER_HORIZONTAL:
               /* keep both dimensions in check */
               /* adjust for max aspect (width / height) */
               if ((amax > ZERO) && (aspect > amax))
-                new_h = DIV(FROM_INT(params->w), amax);
+                new_h = DIV(params->eval.w, amax);
               /* adjust for min aspect (width / height) */
               if ((amin > ZERO) && (aspect < amin))
-                new_h = DIV(FROM_INT(params->w), amin);
+                new_h = DIV(params->eval.w, amin);
               break;
            case EDJE_ASPECT_PREFER_SOURCE:
            case EDJE_ASPECT_PREFER_BOTH:
@@ -1024,14 +1024,14 @@ _edje_part_recalc_single_aspect(Edje *ed,
               /* adjust for max aspect (width / height) */
               if ((amax > ZERO) && (aspect > amax))
                 {
-                   new_w = SCALE(amax, params->h);
-                   new_h = DIV(FROM_INT(params->w), amax);
+                   new_w = MUL(amax, params->eval.h);
+                   new_h = DIV(params->eval.w, amax);
                 }
               /* adjust for min aspect (width / height) */
               if ((amin > ZERO) && (aspect < amin))
                 {
-                   new_w = SCALE(amin, params->h);
-                   new_h = DIV(FROM_INT(params->w), amin);
+                   new_w = MUL(amin, params->eval.h);
+                   new_h = DIV(params->eval.w, amin);
                 }
               break;
            default:
@@ -1059,16 +1059,16 @@ _edje_part_recalc_single_aspect(Edje *ed,
              if (amin != ZERO)
                {
                   /* fix h and vary w */
-                  if (new_w > FROM_INT(params->w))
+                  if (new_w > params->eval.w)
                     {
                        //		  params->w = new_w;
                        // EXCEEDS BOUNDS in W
-                       new_h = DIV(FROM_INT(params->w), amin);
-                       new_w = FROM_INT(params->w);
-                       if (new_h > FROM_INT(params->h))
+                       new_h = DIV(params->eval.w, amin);
+                       new_w = params->eval.w;
+                       if (new_h > params->eval.h)
                          {
-                            new_h = FROM_INT(params->h);
-                            new_w = SCALE(amin, params->h);
+                            new_h = params->eval.h;
+                            new_w = MUL(amin, params->eval.h);
                          }
                     }
                   /* fix w and vary h */
@@ -1076,16 +1076,16 @@ _edje_part_recalc_single_aspect(Edje *ed,
                     {
                        //		  params->h = new_h;
                        // EXCEEDS BOUNDS in H
-                       new_h = FROM_INT(params->h);
-                       new_w = SCALE(amin, params->h);
-                       if (new_w > FROM_INT(params->w))
+                       new_h = params->eval.h;
+                       new_w = MUL(amin, params->eval.h);
+                       if (new_w > params->eval.w)
                          {
-                            new_h = DIV(FROM_INT(params->w), amin);
-                            new_w = FROM_INT(params->w);
+                            new_h = DIV(params->eval.w, amin);
+                            new_w = params->eval.w;
                          }
                     }
-                  params->w = TO_INT(new_w);
-                  params->h = TO_INT(new_h);
+                  params->eval.w = new_w;
+                  params->eval.h = new_h;
                }
           }
      }
@@ -1093,34 +1093,34 @@ _edje_part_recalc_single_aspect(Edje *ed,
      {
         if ((amin > 0.0) && (amax > ZERO) && (apref == EDJE_ASPECT_PREFER_NONE))
           {
-             params->w = TO_INT(new_w);
-             params->h = TO_INT(new_h);
+             params->eval.w = new_w;
+             params->eval.h = new_h;
           }
-        else if ((FROM_INT(params->h) - new_h) > (FROM_INT(params->w) - new_w))
+        else if (SUB(params->eval.h, new_h) > SUB(params->eval.w, new_w))
           {
-             if (params->h < TO_INT(new_h))
-               params->h = TO_INT(new_h);
-             else if (params->h > TO_INT(new_h))
-               params->h = TO_INT(new_h);
+             if (params->eval.h < new_h)
+               params->eval.h = new_h;
+             else if (params->eval.h > new_h)
+               params->eval.h = new_h;
              if (apref == EDJE_ASPECT_PREFER_VERTICAL)
-               params->w = TO_INT(new_w);
+               params->eval.w = new_w;
           }
         else
           {
-             if (params->w < TO_INT(new_w))
-               params->w = TO_INT(new_w);
-             else if (params->w > TO_INT(new_w))
-               params->w = TO_INT(new_w);
+             if (params->eval.w < new_w)
+               params->eval.w = new_w;
+             else if (params->eval.w > new_w)
+               params->eval.w = new_w;
              if (apref == EDJE_ASPECT_PREFER_HORIZONTAL)
-               params->h = TO_INT(new_h);
+               params->eval.h = new_h;
           }
      }
-   params->x = TO_INT(ADD(want_x,
-                          MUL(SUB(want_w, FROM_INT(params->w)),
-                              desc->align.x)));
-   params->y = TO_INT(ADD(want_y,
-                          MUL(SUB(want_h, FROM_INT(params->h)),
-                              desc->align.y)));
+   params->eval.x = ADD(want_x,
+			MUL(SUB(want_w, params->eval.w),
+			    desc->align.x));
+   params->eval.y = ADD(want_y,
+                        MUL(SUB(want_h, params->eval.h),
+                            desc->align.y));
    return apref;
 }
 
@@ -1133,12 +1133,12 @@ _edje_part_recalc_single_step(Edje_Part_Description_Common *desc,
         int steps;
         int new_w;
 
-        steps = params->w / desc->step.x;
+        steps = TO_INT(params->eval.w) / desc->step.x;
         new_w = desc->step.x * steps;
-        if (params->w > new_w)
+        if (params->eval.w > FROM_INT(new_w))
           {
-             params->x += TO_INT(SCALE(desc->align.x, (params->w - new_w)));
-             params->w = new_w;
+             params->eval.x = ADD(params->eval.x, SCALE(desc->align.x, SUB(params->eval.w, FROM_INT(new_w))));
+             params->eval.w = FROM_INT(new_w);
           }
      }
 
@@ -1147,12 +1147,12 @@ _edje_part_recalc_single_step(Edje_Part_Description_Common *desc,
         int steps;
         int new_h;
 
-        steps = params->h / desc->step.y;
+        steps = TO_INT(params->eval.h) / desc->step.y;
         new_h = desc->step.y * steps;
-        if (params->h > new_h)
+        if (params->eval.h > FROM_INT(new_h))
           {
-             params->y += TO_INT(SCALE(desc->align.y, (params->h - new_h)));
-             params->h = new_h;
+             params->eval.y = ADD(params->eval.y, SCALE(desc->align.y, SUB(params->eval.h, FROM_INT(new_h))));
+             params->eval.h = FROM_INT(new_h);
           }
      }
 }
@@ -1251,7 +1251,8 @@ _edje_part_recalc_single_textblock(FLOAT_T sc,
              /* Now make it bigger so calculations will be more accurate
               * and less influenced by hinting... */
                {
-                  orig_s = _edje_part_recalc_single_textblock_scale_range_adjust(chosen_desc, base_s, orig_s * params->w / (double) tw);
+                  orig_s = _edje_part_recalc_single_textblock_scale_range_adjust(chosen_desc, base_s,
+                                                                                 orig_s * TO_INT(params->eval.w) / tw);
                   eo_do(ep->object,
                         evas_obj_scale_set(orig_s),
                         evas_obj_textblock_size_native_get(&tw, &th));
@@ -1260,7 +1261,8 @@ _edje_part_recalc_single_textblock(FLOAT_T sc,
                {
                   if (tw > 0)
                     {
-                       s = _edje_part_recalc_single_textblock_scale_range_adjust(chosen_desc, base_s, orig_s * params->w / tw);
+                       s = _edje_part_recalc_single_textblock_scale_range_adjust(chosen_desc, base_s,
+                                                                                 orig_s * TO_INT(params->eval.w) / tw);
 		       eo_do(ep->object,
 			     evas_obj_scale_set(s),
 			     evas_obj_textblock_size_native_get(NULL, NULL));
@@ -1270,7 +1272,8 @@ _edje_part_recalc_single_textblock(FLOAT_T sc,
                {
                   if (th > 0)
                     {
-                       double tmp_s = _edje_part_recalc_single_textblock_scale_range_adjust(chosen_desc, base_s, orig_s * params->h / (double) th);
+                       double tmp_s = _edje_part_recalc_single_textblock_scale_range_adjust(chosen_desc, base_s,
+                                                                                            orig_s * TO_INT(params->eval.h) / th);
                        /* If we already have X fit, restrict Y to be no bigger
                         * than what we got with X. */
                        if (!((chosen_desc->text.fit_x) && (tmp_s > s)))
@@ -1295,8 +1298,8 @@ _edje_part_recalc_single_textblock(FLOAT_T sc,
                   /* If we are still too big, try reducing the size to
                    * 95% each try. */
                   while ((i > 0) &&
-                        ((chosen_desc->text.fit_x && (fw > params->w)) ||
-                         (chosen_desc->text.fit_y && (fh > params->h))))
+                         ((chosen_desc->text.fit_x && (fw > TO_INT(params->eval.w))) ||
+                          (chosen_desc->text.fit_y && (fh > TO_INT(params->eval.h)))))
                     {
                        double tmp_s = _edje_part_recalc_single_textblock_scale_range_adjust(chosen_desc, base_s, s * 0.95);
 
@@ -1340,9 +1343,9 @@ _edje_part_recalc_single_textblock(FLOAT_T sc,
                   tw = th = 0;
                   if (!chosen_desc->text.min_x)
                     {
-		       eo_do(ep->object,
-			     evas_obj_size_set(params->w, params->h),
-			     evas_obj_textblock_size_formatted_get(&tw, &th));
+	               eo_do(ep->object,
+	        	     evas_obj_size_set(TO_INT(params->eval.w), TO_INT(params->eval.h)),
+	        	     evas_obj_textblock_size_formatted_get(&tw, &th));
                     }
                   else
                     evas_object_textblock_size_native_get(ep->object, &tw, &th);
@@ -1369,7 +1372,7 @@ _edje_part_recalc_single_textblock(FLOAT_T sc,
              if (!chosen_desc->text.max_x)
                {
 		  eo_do(ep->object,
-			evas_obj_size_set(params->w, params->h),
+			evas_obj_size_set(TO_INT(params->eval.w), TO_INT(params->eval.h)),
 			evas_obj_textblock_size_formatted_get(&tw, &th));
                }
              else
@@ -1662,14 +1665,14 @@ _edje_part_recalc_single_text(FLOAT_T sc EINA_UNUSED,
 #endif
 
 static void
-_edje_part_recalc_single_min_length(FLOAT_T align, int *start, int *length, int min)
+_edje_part_recalc_single_min_length(FLOAT_T align, FLOAT_T *start, FLOAT_T *length, int min)
 {
    if (min >= 0)
      {
-        if (*length < min)
+        if (*length < FROM_INT(min))
           {
-             *start += TO_INT(SCALE(align, (*length - min)));
-             *length = min;
+             *start = ADD(*start, (SCALE(align, (*length - min))));
+             *length = FROM_INT(min);
           }
      }
 }
@@ -1680,62 +1683,62 @@ _edje_part_recalc_single_min(Edje_Part_Description_Common *desc,
                              int minw, int minh,
                              Edje_Internal_Aspect aspect)
 {
-   int tmp;
-   int w;
-   int h;
+   FLOAT_T tmp;
+   FLOAT_T w;
+   FLOAT_T h;
 
-   w = params->w ? params->w : 99999;
-   h = params->h ? params->h : 99999;
+   w = params->eval.w ? params->eval.w : FROM_INT(99999);
+   h = params->eval.h ? params->eval.h : 99999;
 
    switch (aspect)
      {
       case EDJE_ASPECT_PREFER_NONE:
          break;
       case EDJE_ASPECT_PREFER_VERTICAL:
-         tmp = minh * params->w / h;
-         if (tmp >= minw)
+         tmp = DIV(SCALE(params->eval.w, minh), h);
+         if (tmp >= FROM_INT(minw))
            {
-              minw = tmp;
+              minw = TO_INT(tmp);
               break;
            }
       case EDJE_ASPECT_PREFER_HORIZONTAL:
-         tmp = minw * params->h / w;
-         if (tmp >= minh)
+         tmp = DIV(SCALE(params->eval.h, minw), w);
+         if (tmp >= FROM_INT(minh))
            {
-              minh = tmp;
+              minh = TO_INT(tmp);
               break;
            }
       case EDJE_ASPECT_PREFER_SOURCE:
       case EDJE_ASPECT_PREFER_BOTH:
-         tmp = minh * params->w / h;
-         if (tmp >= minw)
+         tmp = DIV(SCALE(params->eval.h, minh), h);
+         if (tmp >= FROM_INT(minw))
            {
-              minw = tmp;
+              minw = TO_INT(tmp);
               break;
            }
 
-         tmp = minw * params->h / w;
-         if (tmp >= minh)
+         tmp = DIV(SCALE(params->eval.h, minw), w);
+         if (tmp >= FROM_INT(minh))
            {
-              minh = tmp;
+              minh = TO_INT(tmp);
               break;
            }
 
          break;
      }
 
-   _edje_part_recalc_single_min_length(desc->align.x, &params->x, &params->w, minw);
-   _edje_part_recalc_single_min_length(desc->align.y, &params->y, &params->h, minh);
+   _edje_part_recalc_single_min_length(desc->align.x, &params->eval.x, &params->eval.w, minw);
+   _edje_part_recalc_single_min_length(desc->align.y, &params->eval.y, &params->eval.h, minh);
 }
 
 static void
-_edje_part_recalc_single_max_length(FLOAT_T align, int *start, int *length, int max)
+_edje_part_recalc_single_max_length(FLOAT_T align, FLOAT_T *start, FLOAT_T *length, int max)
 {
    if (max >= 0)
      {
         if (*length > max)
           {
-             *start += TO_INT(SCALE(align, (*length - max)));
+             *start  = ADD(*start, SCALE(align, (*length - max)));
              *length = max;
           }
      }
@@ -1747,52 +1750,52 @@ _edje_part_recalc_single_max(Edje_Part_Description_Common *desc,
                              int maxw, int maxh,
                              Edje_Internal_Aspect aspect)
 {
-   int tmp;
-   int w;
-   int h;
+   FLOAT_T tmp;
+   FLOAT_T w;
+   FLOAT_T h;
 
-   w = params->w ? params->w : 99999;
-   h = params->h ? params->h : 99999;
+   w = params->eval.w ? params->eval.w : FROM_INT(99999);
+   h = params->eval.h ? params->eval.h : FROM_INT(99999);
 
    switch (aspect)
      {
       case EDJE_ASPECT_PREFER_NONE:
          break;
       case EDJE_ASPECT_PREFER_VERTICAL:
-         tmp = maxh * params->w / h;
-         if (tmp <= maxw)
+         tmp = DIV(SCALE(params->eval.w, maxh), h);
+         if (tmp <= FROM_INT(maxw))
            {
-              maxw = tmp;
+              maxw = TO_INT(tmp);
               break;
            }
       case EDJE_ASPECT_PREFER_HORIZONTAL:
-         tmp = maxw * params->h / w;
-         if (tmp <= maxh)
+         tmp = DIV(SCALE(params->eval.h, maxw), w);
+         if (tmp <= FROM_INT(maxh))
            {
-              maxh = tmp;
+              maxh = TO_INT(tmp);
               break;
            }
       case EDJE_ASPECT_PREFER_SOURCE:
       case EDJE_ASPECT_PREFER_BOTH:
-         tmp = maxh * params->w / h;
-         if (tmp <= maxw)
+         tmp = DIV(SCALE(params->eval.w, maxh), h);
+         if (tmp <= FROM_INT(maxw))
            {
-              maxw = tmp;
+              maxw = TO_INT(tmp);
               break;
            }
 
-         tmp = maxw * params->h / w;
-         if (tmp <= maxh)
+         tmp = DIV(SCALE(params->eval.h, maxw), w);
+         if (tmp <= FROM_INT(maxh))
            {
-              maxh = tmp;
+              maxh = TO_INT(tmp);
               break;
            }
 
          break;
      }
 
-   _edje_part_recalc_single_max_length(desc->align.x, &params->x, &params->w, maxw);
-   _edje_part_recalc_single_max_length(desc->align.y, &params->y, &params->h, maxh);
+   _edje_part_recalc_single_max_length(desc->align.x, &params->eval.x, &params->eval.w, maxw);
+   _edje_part_recalc_single_max_length(desc->align.y, &params->eval.y, &params->eval.h, maxh);
 }
 
 static void
@@ -1812,78 +1815,78 @@ _edje_part_recalc_single_drag(Edje_Real_Part *ep,
         /* complex dragable params */
         v = SCALE(ep->drag->size.x, confine_to->w);
 
-        if ((minw > 0) && (TO_INT(v) < minw)) params->w = minw;
-        else if ((maxw >= 0) && (TO_INT(v) > maxw)) params->w = maxw;
-        else params->w = TO_INT(v);
+        if ((minw > 0) && (TO_INT(v) < minw)) params->eval.w = FROM_INT(minw);
+        else if ((maxw >= 0) && (TO_INT(v) > maxw)) params->eval.w = FROM_INT(maxw);
+        else params->eval.w = v;
 
-        offset = TO_INT(SCALE(ep->drag->x, (confine_to->w - params->w)))
+        offset = TO_INT(SCALE(ep->drag->x, (confine_to->w - TO_INT(params->eval.w))))
            + ep->drag->tmp.x;
         if (ep->part->dragable.step_x > 0)
           {
-             params->x = confine_to->x +
-                ((offset / ep->part->dragable.step_x) * ep->part->dragable.step_x);
+             params->eval.x = FROM_INT(confine_to->x +
+                                       ((offset / ep->part->dragable.step_x) * ep->part->dragable.step_x));
           }
         else if (ep->part->dragable.count_x > 0)
           {
-             step = (confine_to->w - params->w) / ep->part->dragable.count_x;
+             step = (confine_to->w - TO_INT(params->eval.w)) / ep->part->dragable.count_x;
              if (step < 1) step = 1;
-             params->x = confine_to->x +
-                ((offset / step) * step);
+             params->eval.x = FROM_INT(confine_to->x +
+                                       ((offset / step) * step));
           }
-        params->req_drag.x = params->x;
-        params->req_drag.w = params->w;
+        params->req_drag.x = TO_INT(params->eval.x);
+        params->req_drag.w = TO_INT(params->eval.w);
 
         v = SCALE(ep->drag->size.y, confine_to->h);
 
-        if ((minh > 0) && (TO_INT(v) < minh)) params->h = minh;
-        else if ((maxh >= 0) && (TO_INT(v) > maxh)) params->h = maxh;
-        else params->h = TO_INT(v);
+        if ((minh > 0) && (TO_INT(v) < minh)) params->eval.h = FROM_INT(minh);
+        else if ((maxh >= 0) && (TO_INT(v) > maxh)) params->eval.h = FROM_INT(maxh);
+        else params->eval.h = v;
 
-        offset = TO_INT(SCALE(ep->drag->y, (confine_to->h - params->h)))
+        offset = TO_INT(SCALE(ep->drag->y, (confine_to->h - TO_INT(params->eval.h))))
            + ep->drag->tmp.y;
         if (ep->part->dragable.step_y > 0)
           {
-             params->y = confine_to->y +
-                ((offset / ep->part->dragable.step_y) * ep->part->dragable.step_y);
+             params->eval.y = FROM_INT(confine_to->y +
+                                       ((offset / ep->part->dragable.step_y) * ep->part->dragable.step_y));
           }
         else if (ep->part->dragable.count_y > 0)
           {
-             step = (confine_to->h - params->h) / ep->part->dragable.count_y;
+             step = (confine_to->h - TO_INT(params->eval.h)) / ep->part->dragable.count_y;
              if (step < 1) step = 1;
-             params->y = confine_to->y +
-                ((offset / step) * step);
+             params->eval.y = FROM_INT(confine_to->y +
+                                       ((offset / step) * step));
           }
-        params->req_drag.y = params->y;
-        params->req_drag.h = params->h;
+        params->req_drag.y = TO_INT(params->eval.y);
+        params->req_drag.h = TO_INT(params->eval.h);
 
         /* limit to confine */
-        if (params->x < confine_to->x)
+        if (params->eval.x < FROM_INT(confine_to->x))
           {
-             params->x = confine_to->x;
+             params->eval.x = FROM_INT(confine_to->x);
           }
-        if ((params->x + params->w) > (confine_to->x + confine_to->w))
+        if ((ADD(params->eval.x, params->eval.w)) > FROM_INT(confine_to->x + confine_to->w))
           {
-             params->x = confine_to->x + confine_to->w - params->w;
+             params->eval.x = SUB(FROM_INT(confine_to->x + confine_to->w), params->eval.w);
           }
-        if (params->y < confine_to->y)
+        if (params->eval.y < FROM_INT(confine_to->y))
           {
-             params->y = confine_to->y;
+             params->eval.y = FROM_INT(confine_to->y);
           }
-        if ((params->y + params->h) > (confine_to->y + confine_to->h))
+        if ((ADD(params->eval.y, params->eval.h)) > FROM_INT(confine_to->y + confine_to->h))
           {
-             params->y = confine_to->y + confine_to->h - params->h;
+             params->eval.y = SUB(FROM_INT(confine_to->y + confine_to->h), params->eval.h);
           }
      }
    else
      {
         /* simple dragable params */
-        params->x += TO_INT(ep->drag->x) + ep->drag->tmp.x;
-        params->req_drag.x = params->x;
-        params->req_drag.w = params->w;
+        params->eval.x = ADD(ADD(params->eval.x, ep->drag->x), FROM_INT(ep->drag->tmp.x));
+        params->req_drag.x = FROM_INT(params->eval.x);
+        params->req_drag.w = FROM_INT(params->eval.w);
 
-        params->y += TO_INT(ep->drag->y) + ep->drag->tmp.y;
-        params->req_drag.y = params->y;
-        params->req_drag.h = params->h;
+        params->eval.y = ADD(ADD(params->eval.y, ep->drag->y), FROM_INT(ep->drag->tmp.y));
+        params->req_drag.y = FROM_INT(params->eval.y);
+        params->req_drag.h = FROM_INT(params->eval.h);
      }
 }
 
@@ -1900,7 +1903,7 @@ _edje_part_recalc_single_fill(Edje_Real_Part *ep,
    if (fill->type == EDJE_FILL_TYPE_TILE)
      evas_object_image_size_get(ep->object, &fw, NULL);
    else
-     fw = params->w;
+     fw = TO_INT(params->eval.w);
 
    params->type.common.fill.x = fill->pos_abs_x
       + TO_INT(SCALE(fill->pos_rel_x, fw));
@@ -1910,7 +1913,7 @@ _edje_part_recalc_single_fill(Edje_Real_Part *ep,
    if (fill->type == EDJE_FILL_TYPE_TILE)
      evas_object_image_size_get(ep->object, NULL, &fh);
    else
-     fh = params->h;
+     fh = TO_INT(params->eval.h);
 
    params->type.common.fill.y = fill->pos_abs_y
       + TO_INT(SCALE(fill->pos_rel_y, fh));
@@ -2085,8 +2088,8 @@ _edje_part_recalc_single_map(Edje *ed,
           }
         else
           {
-             params_write->center.x = ed->x + params->x + (params->w / 2);
-             params_write->center.y = ed->y + params->y + (params->h / 2);
+             params_write->center.x = ed->x + TO_INT(ADD(params->eval.x, DIV2(params->eval.w)));
+             params_write->center.y = ed->y + TO_INT(ADD(params->eval.y, DIV2(params->eval.h)));
           }
         params_write->center.z = 0;
 
@@ -2272,10 +2275,10 @@ _edje_part_recalc_single(Edje *ed,
      }
 
    /* remember what our size is BEFORE we go limit it */
-   params->req.x = params->x;
-   params->req.y = params->y;
-   params->req.w = params->w;
-   params->req.h = params->h;
+   params->req.x = TO_INT(params->eval.x);
+   params->req.y = TO_INT(params->eval.y);
+   params->req.w = TO_INT(params->eval.w);
+   params->req.h = TO_INT(params->eval.h);
 
    /* adjust for min size */
    _edje_part_recalc_single_min(desc, params, minw, minh, apref);
@@ -2416,6 +2419,25 @@ _edje_part_recalc_single(Edje *ed,
      }
 #endif
    _edje_part_recalc_single_map(ed, ep, center, light, persp, desc, chosen_desc, params);
+
+   params->final.x = TO_INT(params->eval.x);
+   params->final.y = TO_INT(params->eval.y);
+   params->final.w = TO_INT(params->eval.w);
+   params->final.h = TO_INT(params->eval.h);
+
+   // Adjust rounding to not loose one pixels compared to float information only when rendering to
+   // avoid infinite adjustement when doing min restricted calc
+   if (!ed->calc_only)
+     {
+        if (params->final.x + params->final.w < TO_INT(ADD(params->eval.x, params->eval.w)))
+          params->final.w += 1;
+        else if (params->final.x + params->final.w > TO_INT(ADD(params->eval.x, params->eval.w)))
+          params->final.w -= 1;
+        if (params->final.y + params->final.h < TO_INT(ADD(params->eval.y, params->eval.y)))
+          params->final.h += 1;
+        else if (params->final.y + params->final.h > TO_INT(ADD(params->eval.y, params->eval.h)))
+          params->final.h -= 1;
+     }
 }
 
 static void
@@ -2592,13 +2614,13 @@ _edje_physics_body_props_update(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *
         if (pos_update)
           {
              ephysics_body_move(ep->body,
-				ed->x + pf->x,
-                                ed->y + pf->y,
+				ed->x + pf->final.x,
+                                ed->y + pf->final.y,
 				pf->physics->z);
-             ep->x = pf->x;
-             ep->y = pf->y;
-             ep->w = pf->w;
-             ep->h = pf->h;
+             ep->x = pf->final.x;
+             ep->y = pf->final.y;
+             ep->w = pf->final.w;
+             ep->h = pf->final.h;
           }
 
         ephysics_body_geometry_get(ep->body, &x, &y, &z, &w, &h, &d);
@@ -3306,10 +3328,15 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
 
         /* FIXME: do x and y separately base on flag */
 
-        p3->x = INTP(p1->x, p2->x, pos);
-        p3->y = INTP(p1->y, p2->y, pos);
-        p3->w = INTP(p1->w, p2->w, pos);
-        p3->h = INTP(p1->h, p2->h, pos);
+        p3->final.x = INTP(p1->final.x, p2->final.x, pos);
+        p3->final.y = INTP(p1->final.y, p2->final.y, pos);
+        p3->final.w = INTP(p1->final.w, p2->final.w, pos);
+        p3->final.h = INTP(p1->final.h, p2->final.h, pos);
+
+        p3->eval.x = FFP(p1->eval.x, p2->eval.x, pos);
+        p3->eval.y = FFP(p1->eval.y, p2->eval.y, pos);
+        p3->eval.w = FFP(p1->eval.w, p2->eval.w, pos);
+        p3->eval.h = FFP(p1->eval.h, p2->eval.h, pos);
 
         p3->req.x = INTP(p1->req.x, p2->req.x, pos);
         p3->req.y = INTP(p1->req.y, p2->req.y, pos);
@@ -3637,7 +3664,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
               /* visibility and color have no meaning on SWALLOW and GROUP part. */
 #ifdef HAVE_EPHYSICS
               eo_do(ep->object,
-                    evas_obj_size_set(pf->w, pf->h));
+                    evas_obj_size_set(pf->final.w, pf->final.h));
               if ((ep->part->physics_body) && (!ep->body))
                 {
                    if (_edje_physics_world_geometry_check(ed->world))
@@ -3655,19 +3682,19 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                 }
               else
                 eo_do(ep->object,
-                      evas_obj_position_set(ed->x + pf->x, ed->y + pf->y));
+                      evas_obj_position_set(ed->x + pf->final.x, ed->y + pf->final.y));
 #else
 	      eo_do(ep->object,
-                    evas_obj_position_set(ed->x + pf->x, ed->y + pf->y),
-		    evas_obj_size_set(pf->w, pf->h));
+                    evas_obj_position_set(ed->x + pf->final.x, ed->y + pf->final.y),
+		    evas_obj_size_set(pf->final.w, pf->final.h));
 #endif
 
               if (ep->nested_smart)
                 {  /* Move, Resize all nested parts */
                    /* Not really needed but will improve the bounding box evaluation done by Evas */
 		   eo_do(ep->nested_smart,
-			 evas_obj_position_set(ed->x + pf->x, ed->y + pf->y),
-			 evas_obj_size_set(pf->w, pf->h));
+			 evas_obj_position_set(ed->x + pf->final.x, ed->y + pf->final.y),
+			 evas_obj_size_set(pf->final.w, pf->final.h));
                 }
               if (ep->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
                 _edje_entry_real_part_configure(ed, ep);
@@ -3727,8 +3754,8 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
              if (pf->visible)
                {
                   eo_do(ep->typedata.swallow->swallowed_object,
-                        evas_obj_position_set(ed->x + pf->x, ed->y + pf->y),
-                        evas_obj_size_set(pf->w, pf->h),
+                        evas_obj_position_set(ed->x + pf->final.x, ed->y + pf->final.y),
+                        evas_obj_size_set(pf->final.w, pf->final.h),
                         evas_obj_visibility_set(EINA_TRUE));
                }
              else evas_object_hide(ep->typedata.swallow->swallowed_object);
@@ -3789,10 +3816,10 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
    if (!ep->body)
      {
 #endif
-   ep->x = pf->x;
-   ep->y = pf->y;
-   ep->w = pf->w;
-   ep->h = pf->h;
+   ep->x = pf->final.x;
+   ep->y = pf->final.y;
+   ep->w = pf->final.w;
+   ep->h = pf->final.h;
 #ifdef HAVE_EPHYSICS
      }
 #endif

@@ -211,6 +211,7 @@ Improvements:
      - Reduce memory consumption of Edje program handler.
      - Use Eina_Cow to reduce memory usage.
      - Use eo array of callbacks to reduce callbacks memory footprint.
+     - Improve accuracy of part positioning by keeping rounding information as long as possible.
     * Ecore_Evas:
      - wayland-egl only renders now if last frame has been presented.
     * Embryo:
@@ -379,6 +380,7 @@ Fixes:
      - Lua: Stop leaking evas objects in Lua.
      - Fix edje min size calc to calc sub GROUP parts too.
      - Fix edje multisense segv (free non-malloced data from eet).
+     - Fix some logic issue when using fixed point path.
     * Efreet:
      - Fix desktop command parsing of https.
     * Emotion:

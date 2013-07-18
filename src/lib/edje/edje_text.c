@@ -232,8 +232,8 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
         int l, r, t, b;
 
         evas_object_text_style_pad_get(ep->object, &l, &r, &t, &b);
-        sw = params->w;
-        sh = params->h;
+        sw = params->final.w;
+        sh = params->final.h;
      }
 
    size = params->type.text.size;
@@ -443,8 +443,8 @@ arrange_text:
      }
 
    evas_object_move(ep->object,
-                    ed->x + params->x + ep->typedata.text->offset.x,
-                    ed->y + params->y + ep->typedata.text->offset.y);
+                    ed->x + params->final.x + ep->typedata.text->offset.x,
+                    ed->y + params->final.y + ep->typedata.text->offset.y);
 
    if (params->visible) evas_object_show(ep->object);
    else evas_object_hide(ep->object);
