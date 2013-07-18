@@ -46,7 +46,6 @@ test_video(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    win = elm_win_add(NULL, "video", ELM_WIN_BASIC);
    elm_win_title_set(win, "Video");
    elm_win_autodel_set(win, EINA_TRUE);
-   elm_win_alpha_set(win, EINA_TRUE); /* Needed to turn video fast path on */
 
    bg = elm_bg_add(win);
    evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -60,7 +59,7 @@ test_video(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
 
    notify = elm_notify_add(win);
    elm_notify_align_set(notify, 0.5, 1.0);
-   elm_notify_timeout_set(notify, 3.0);
+   elm_notify_timeout_set(notify, 10.0);
 
    player = elm_player_add(win);
    elm_object_content_set(player, video);
@@ -85,7 +84,7 @@ test_video(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    evas_object_event_callback_add(video, EVAS_CALLBACK_MOUSE_IN, _notify_block, notify);
    evas_object_event_callback_add(video, EVAS_CALLBACK_MOUSE_OUT, _notify_unblock, notify);
 
-   evas_object_resize(win, 800, 800);
+   evas_object_resize(win, 800, 500);
    evas_object_show(win);
 }
 #endif
