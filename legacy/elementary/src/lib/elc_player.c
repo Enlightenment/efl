@@ -190,11 +190,9 @@ _update_slider(void *data,
 
    elm_object_disabled_set(sd->slider, !seekable);
    elm_slider_min_max_set(sd->slider, 0, length);
-   if (!sd->dragging)
-     {
-        sd->play_update++;
-        elm_slider_value_set(sd->slider, pos);
-     }
+   if ((elm_slider_value_get(sd->slider) != pos) &&
+       (!sd->dragging))
+     elm_slider_value_set(sd->slider, pos);
 }
 
 static void
@@ -212,14 +210,12 @@ _update_position(void *data,
                  Evas_Object *obj __UNUSED__,
                  void *event_info __UNUSED__)
 {
+   double pos;
    ELM_PLAYER_DATA_GET(data, sd);
 
-   if (sd->play_update > 0)
-     {
-        sd->play_update--;
-        if (sd->play_update >= 0) return;
-     }
-   elm_video_play_position_set(sd->video, elm_slider_value_get(sd->slider));
+   pos = elm_slider_value_get(sd->slider);
+   if (pos != elm_video_play_position_get(sd->video))
+     elm_video_play_position_set(sd->video, pos);
 }
 
 static void
@@ -228,7 +224,6 @@ _drag_start(void *data,
             void *event_info __UNUSED__)
 {
    ELM_PLAYER_DATA_GET(data, sd);
-   sd->play_update = 0;
    sd->dragging = EINA_TRUE;
 }
 
@@ -238,9 +233,7 @@ _drag_stop(void *data,
             void *event_info __UNUSED__)
 {
    ELM_PLAYER_DATA_GET(data, sd);
-   sd->play_update = 0;
    sd->dragging = EINA_FALSE;
-   elm_video_play_position_set(sd->video, elm_slider_value_get(sd->slider));
 }
 
 static void
@@ -507,7 +500,6 @@ _elm_player_smart_content_set(Eo *obj, void *_pd, va_list *list)
 
    elm_object_disabled_set(sd->slider, !seekable);
    elm_slider_min_max_set(sd->slider, 0, length);
-   sd->play_update++;
    elm_slider_value_set(sd->slider, pos);
 
    if (elm_video_is_playing_get(sd->video))
@@ -558,7 +550,6 @@ _elm_player_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    elm_slider_units_format_function_set
      (priv->slider, _double_to_time, _str_free);
    elm_slider_min_max_set(priv->slider, 0, 0);
-   priv->play_update++;
    elm_slider_value_set(priv->slider, 0);
    elm_object_disabled_set(priv->slider, EINA_TRUE);
    evas_object_size_hint_align_set(priv->slider, EVAS_HINT_FILL, 0.5);

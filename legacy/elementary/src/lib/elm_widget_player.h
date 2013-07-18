@@ -34,7 +34,6 @@ struct _Elm_Player_Smart_Data
    Evas_Object          *stop;
    Evas_Object          *slider;
    
-   int                   play_update;
    Eina_Bool             dragging : 1;
 };
 

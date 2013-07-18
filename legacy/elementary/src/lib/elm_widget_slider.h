@@ -33,6 +33,7 @@ struct _Elm_Slider_Smart_Data
    void                  (*units_format_free)(char *str);
 
    double                val, val_min, val_max, val2;
+   double                set_time;
    Evas_Coord            size;
    Evas_Coord            downx, downy;
 
