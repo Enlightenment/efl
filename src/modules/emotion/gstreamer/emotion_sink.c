@@ -902,6 +902,11 @@ _video_resize(void *data, Evas_Object *obj EINA_UNUSED, const Evas_Video_Surface
 
    ecore_x_window_resize(ev->win, w, h);
    DBG("resize: %i, %i", w, h);
+#else   
+   if (data)
+     {
+        DBG("resize: %i, %i (fake)", w, h);
+     }
 #endif
 }
 
@@ -916,6 +921,11 @@ _video_move(void *data, Evas_Object *obj EINA_UNUSED, const Evas_Video_Surface *
    DBG("move: %i, %i", x, y);
    pos[0] = x; pos[1] = y;
    ecore_x_window_prop_card32_set(ev->win, ECORE_X_ATOM_E_VIDEO_POSITION, pos, 2);
+#else   
+   if (data)
+     {
+        DBG("move: %i, %i (fake)", x, y);
+     }
 #endif
 }
 
@@ -961,6 +971,11 @@ _video_show(void *data, Evas_Object *obj EINA_UNUSED, const Evas_Video_Surface *
 
    DBG("show xv");
    ecore_x_window_show(ev->win);
+#else
+   if (data)
+     {
+        DBG("show xv (fake)");
+     }
 #endif
    /* gst_pad_set_blocked_async(ev->xvteepad, TRUE, _block_pad_link_cb, ev); */
 }
@@ -973,6 +988,11 @@ _video_hide(void *data, Evas_Object *obj EINA_UNUSED, const Evas_Video_Surface *
 
    DBG("hide xv");
    ecore_x_window_hide(ev->win);
+#else
+   if (data)
+     {
+        DBG("hide xv (fake)");
+     }
 #endif
    /* gst_pad_set_blocked_async(ev->xvteepad, TRUE, _block_pad_unlink_cb, ev); */
 }
@@ -1281,7 +1301,7 @@ gstreamer_video_sink_new(Emotion_Gstreamer_Video *ev,
        evas_render_method_list_free(engines);
      }
 #else
-# warning "missing: ecore_x OR xoverlay"
+//# warning "missing: ecore_x OR xoverlay"
 #endif
 
    esink = gst_element_factory_make("emotion-sink", "sink");
