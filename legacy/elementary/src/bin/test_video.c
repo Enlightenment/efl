@@ -36,7 +36,6 @@ _notify_show(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *
 static void
 _notify_block(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   printf("in block\n");
    elm_notify_timeout_set(data, 0.0);
    evas_object_show(data);
 }
@@ -44,7 +43,6 @@ _notify_block(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void 
 static void
 _notify_unblock(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   printf("out block\n");
    elm_notify_timeout_set(data, 10.0);
    evas_object_show(data);
 }
