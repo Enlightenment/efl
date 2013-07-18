@@ -167,6 +167,8 @@ _on_playback_finished(void *data,
                       Evas_Object *obj __UNUSED__,
                       void *event_info __UNUSED__)
 {
+   ELM_VIDEO_DATA_GET(data, sd);
+   emotion_object_play_set(sd->emotion, EINA_FALSE);
    elm_layout_signal_emit(data, "elm,video,end", "elm");
 }
 
@@ -402,6 +404,7 @@ _play(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
    ELM_SAFE_FREE(sd->timer, ecore_timer_del);
    sd->stop = EINA_FALSE;
    emotion_object_play_set(sd->emotion, EINA_TRUE);
+   elm_layout_signal_emit(obj, "elm,video,play", "elm");
 #else
    (void) _pd;
 #endif

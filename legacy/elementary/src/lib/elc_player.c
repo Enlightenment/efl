@@ -298,8 +298,6 @@ _pause(void *data,
 
    elm_layout_signal_emit(data, "elm,player,pause", "elm");
    elm_video_pause(sd->video);
-
-   elm_layout_signal_emit(data, "elm,button,pause", "elm");
    evas_object_smart_callback_call(data, SIG_PAUSE_CLICKED, NULL);
 }
 
@@ -312,7 +310,6 @@ _play(void *data,
 
    elm_layout_signal_emit(data, "elm,player,play", "elm");
    elm_video_play(sd->video);
-   elm_layout_signal_emit(data, "elm,button,play", "elm");
    evas_object_smart_callback_call(data, SIG_PLAY_CLICKED, NULL);
 }
 
