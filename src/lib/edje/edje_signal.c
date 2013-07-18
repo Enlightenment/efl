@@ -384,14 +384,23 @@ _edje_signal_callback_move_last(Edje_Signal_Callback_Group *gp,
      {
         if (!(gp->flags[j >> 1] & (_DELETE_ME << ((j & 1) * 4))))
           {
+             Eina_Bool flag_neighbor_i, flag_j;
+
+             _edje_signal_callback_unset(gp, i);
+
              m->matches[i].signal = m->matches[j].signal;
              m->matches[i].source = m->matches[j].source;
              m->matches[i].func = m->matches[j].func;
-             gp->flags[i] = (gp->flags[i >> 1] & (0xF << (((i & 1) ^ 1) * 4))) |
-               (gp->flags[j >> 1] & (0xF << (((j & 1) * 4))));
+
+             flag_j = gp->flags[j >> 1] >> ((j & 1) * 4);
+             flag_neighbor_i = gp->flags[i >> 1] >> ((!(j & 1)) * 4);
+
+             if (i & 1)
+                gp->flags[i >> 1] = flag_neighbor_i | (flag_j << 4);
+             else
+                gp->flags[i >> 1] = flag_j | (flag_neighbor_i << 4);
              return;
           }
-        --m->matches_count;
      }
 }
 
