@@ -152,11 +152,11 @@ bin_evil_evil_suite_SOURCES +=  bin/evil/memcpy_glibc_arm.S
 endif
 
 bin_evil_evil_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EVIL_CFLAGS@
-bin_evil_evil_suite_LDADD = @USE_EVIL_LIBS@ @DL_LIBS@ -lm lib/evil/libdl.la
+bin_evil_evil_suite_LDADD = @USE_EVIL_LIBS@ @DL_LIBS@ -lm
 bin_evil_evil_suite_DEPENDENCIES = @USE_EVIL_INTERNAL_LIBS@
 
 bin_evil_test_evil_SOURCES = bin/evil/test_evil.c
-bin_evil_test_evil_LDADD = @USE_EVIL_LIBS@ @DL_LIBS@ lib/evil/libdl.la
+bin_evil_test_evil_LDADD = @USE_EVIL_LIBS@ @DL_LIBS@
 bin_evil_test_evil_DEPENDENCIES = @USE_EVIL_INTERNAL_LIBS@
 
 endif
