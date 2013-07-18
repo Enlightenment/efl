@@ -237,7 +237,7 @@ gboolean evas_video_sink_set_caps(GstBaseSink *bsink, GstCaps *caps)
                DBG("Found '%s'", colorspace_fourcc_convertion[i].name);
                priv->eformat = colorspace_fourcc_convertion[i].eformat;
                priv->func = colorspace_fourcc_convertion[i].func;
-               if (colorspace_fourcc_convertion[i].force_height)
+              if (colorspace_fourcc_convertion[i].force_height)
                  {
                     priv->height = (priv->height >> 1) << 1;
                  }
@@ -388,11 +388,14 @@ evas_video_sink_preroll(GstBaseSink* bsink, GstBuffer* buffer)
                   else
                     priv->func = _evas_video_st12;
                }
-
+             _emotion_pending_ecore_begin();
              ecore_main_loop_thread_safe_call_async(evas_video_sink_samsung_main_render, send);
           }
         else
-          ecore_main_loop_thread_safe_call_async(evas_video_sink_main_render, send);
+          {
+             _emotion_pending_ecore_begin();
+             ecore_main_loop_thread_safe_call_async(evas_video_sink_main_render, send);
+          }
      }
 
    return GST_FLOW_OK;
@@ -442,11 +445,14 @@ evas_video_sink_render(GstBaseSink* bsink, GstBuffer* buffer)
              else
                priv->func = _evas_video_st12;
           }
-
+        _emotion_pending_ecore_begin();
         ecore_main_loop_thread_safe_call_async(evas_video_sink_samsung_main_render, send);
      }
    else
-     ecore_main_loop_thread_safe_call_async(evas_video_sink_main_render, send);
+     {
+        _emotion_pending_ecore_begin();
+        ecore_main_loop_thread_safe_call_async(evas_video_sink_main_render, send);
+     }
 
    eina_condition_wait(&priv->c);
    eina_lock_release(&priv->m);
@@ -612,11 +618,16 @@ evas_video_sink_samsung_main_render(void *data)
  exit_stream:
    if (priv)
      {
-        if (preroll || !priv->o) return;
+        if (preroll || !priv->o)
+          {
+             _emotion_pending_ecore_end();
+             return;
+          }
         
         if (!priv->unlocked)
           eina_condition_signal(&priv->c);
      }
+   _emotion_pending_ecore_end();
 }
 
 static void
@@ -723,11 +734,16 @@ evas_video_sink_main_render(void *data)
  exit_stream:
    if (priv)
      {
-        if (preroll || !priv->o) return;
+        if (preroll || !priv->o)
+          {
+             _emotion_pending_ecore_end();
+             return;
+          }
         
         if (!priv->unlocked)
           eina_condition_signal(&priv->c);
      }
+   _emotion_pending_ecore_end();
 }
 
 static void
@@ -976,9 +992,15 @@ _video_update_pixels(void *data, Evas_Object *obj EINA_UNUSED, const Evas_Video_
    ev->send = NULL;
 
    if (priv->samsung)
-      evas_video_sink_samsung_main_render(send);
+     {
+        _emotion_pending_ecore_begin();
+        evas_video_sink_samsung_main_render(send);
+     }
    else
-      evas_video_sink_main_render(send);
+     {
+        _emotion_pending_ecore_begin();
+        evas_video_sink_main_render(send);
+     }
 }
 
 static void

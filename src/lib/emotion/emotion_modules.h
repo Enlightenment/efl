@@ -127,6 +127,10 @@ EAPI void  _emotion_image_reset(Evas_Object *obj);
 EAPI void _emotion_pending_object_ref(void);
 EAPI void _emotion_pending_object_unref(void);
 
+EAPI void _emotion_pending_ecore_begin(void);
+EAPI void _emotion_pending_ecore_end(void);
+
+
 EAPI const char *emotion_webcam_custom_get(const char *device);
 
 EAPI Eina_Bool _emotion_module_register(const Emotion_Engine *api);

@@ -130,7 +130,6 @@ emotion_object_extension_may_play_get(const char *file)
 
 static int _emotion_init_count = 0;
 
-
 EAPI Eina_Bool
 emotion_init(void)
 {
@@ -188,6 +187,20 @@ emotion_init(void)
    return EINA_FALSE;
 }
 
+static int emotion_pendig_events = 0;
+
+EAPI void
+_emotion_pending_ecore_begin(void)
+{
+   emotion_pendig_events++;
+}
+
+EAPI void
+_emotion_pending_ecore_end(void)
+{
+   emotion_pendig_events--;
+}
+
 EAPI Eina_Bool
 emotion_shutdown(void)
 {
@@ -200,6 +213,21 @@ emotion_shutdown(void)
      }
    if (--_emotion_init_count) return EINA_TRUE;
 
+   start = ecore_time_get();
+   while (((emotion_pending_objects > 0) ||
+           (emotion_pendig_events > 0)) &&
+          ((ecore_time_get() - start) < 0.5))
+     ecore_main_loop_iterate();
+
+   if (emotion_pending_objects > 0)
+     {
+        EINA_LOG_ERR("There is still %i Emotion pipeline running", emotion_pending_objects);
+     }
+   if (emotion_pendig_events > 0)
+     {
+        EINA_LOG_ERR("There is still %i Emotion events queued", emotion_pendig_events);
+     }
+
    emotion_modules_shutdown();
 
    emotion_webcam_shutdown();
@@ -209,15 +237,6 @@ emotion_shutdown(void)
         /* As long as there is no one reference any pointer, you are safe */
         eet_close(_emotion_config_file);
         _emotion_config_file = NULL;
-     }
-
-   start = ecore_time_get();
-   while (emotion_pending_objects && ecore_time_get() - start < 0.5)
-     ecore_main_loop_iterate();
-
-   if (emotion_pending_objects)
-     {
-        EINA_LOG_ERR("There is still %i Emotion pipeline running", emotion_pending_objects);
      }
 
    eet_shutdown();

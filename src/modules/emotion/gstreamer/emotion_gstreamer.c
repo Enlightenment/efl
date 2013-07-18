@@ -1220,7 +1220,7 @@ gstreamer_module_init(void)
 
    if (_emotion_init_count > 0)
      {
-        _emotion_init_count++;
+        _emotion_pending_ecore_begin();
         return EINA_TRUE;
      }
 
@@ -1525,6 +1525,7 @@ _main_frame_resize(void *data)
 
    ratio = (double)ev->src_width / (double)ev->src_height;
    _emotion_frame_resize(ev->obj, ev->src_width, ev->src_height, ratio);
+   _emotion_pending_ecore_end();
 }
 
 static void
@@ -1539,6 +1540,7 @@ _no_more_pads(GstElement *decodebin, gpointer data)
      {
         if(_video_size_get(GST_ELEMENT(elem), &ev->src_width, &ev->src_height))
           {
+             _emotion_pending_ecore_begin();
              ecore_main_loop_thread_safe_call_async(_main_frame_resize, ev);
              gst_object_unref(elem);
              break;
@@ -1622,6 +1624,7 @@ _eos_main_fct(void *data)
      }
 
    emotion_gstreamer_message_free(send);
+   _emotion_pending_ecore_end();
 }
 
 static GstBusSyncReply
@@ -1642,7 +1645,11 @@ _eos_sync_fct(GstBus *bus EINA_UNUSED, GstMessage *msg, gpointer data)
 	     GST_MESSAGE_TYPE_NAME(msg));
          send = emotion_gstreamer_message_alloc(ev, msg);
 
-         if (send) ecore_main_loop_thread_safe_call_async(_eos_main_fct, send);
+        if (send)
+          {
+             _emotion_pending_ecore_begin();
+             ecore_main_loop_thread_safe_call_async(_eos_main_fct, send);
+          }
 
          break;
 
@@ -1660,7 +1667,11 @@ _eos_sync_fct(GstBus *bus EINA_UNUSED, GstMessage *msg, gpointer data)
              {
                 send = emotion_gstreamer_message_alloc(ev, msg);
 
-                if (send) ecore_main_loop_thread_safe_call_async(_eos_main_fct, send);
+                if (send)
+                  {
+                     _emotion_pending_ecore_begin();
+                     ecore_main_loop_thread_safe_call_async(_eos_main_fct, send);
+                  }
              }
            break;
         }
@@ -1679,7 +1690,11 @@ _eos_sync_fct(GstBus *bus EINA_UNUSED, GstMessage *msg, gpointer data)
              {
                 send = emotion_gstreamer_message_alloc(ev, msg);
 
-                if (send) ecore_main_loop_thread_safe_call_async(_eos_main_fct, send);
+                if (send)
+                  {
+                     _emotion_pending_ecore_begin();
+                     ecore_main_loop_thread_safe_call_async(_eos_main_fct, send);
+                  }
              }
 	   break;
 	}
