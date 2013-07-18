@@ -31,6 +31,8 @@ static Elm_Access_Action_Type action_by = ELM_ACCESS_ACTION_FIRST;
 
 static Evas_Object * _elm_access_add(Evas_Object *parent);
 
+static void _access_object_unregister(Evas_Object *obj);
+
 static void
 _elm_access_smart_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
@@ -321,9 +323,7 @@ static void
 _access_obj_del_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    _elm_access_object_unregister(data, obj);
-
-   // _elm_access_edje_object_part_object_register(); set below object data
-   evas_object_data_del(obj, "_part_access_obj");
+   _access_object_unregister(obj);
 }
 
 static void
