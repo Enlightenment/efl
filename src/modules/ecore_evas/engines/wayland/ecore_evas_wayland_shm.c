@@ -111,7 +111,7 @@ ecore_evas_wayland_shm_new_internal(const char *disp_name, unsigned int parent, 
         ERR("Failed to initialize Ecore_Wayland");
         return NULL;
      }
-   else if (count == 1)
+   else if (count >= 1)
      ecore_wl_display_iterate();
 
    if (!(ee = calloc(1, sizeof(Ecore_Evas))))
@@ -179,7 +179,8 @@ ecore_evas_wayland_shm_new_internal(const char *disp_name, unsigned int parent, 
 
    wdata->parent = p;
    wdata->win = 
-     ecore_wl_window_new(p, x, y, w + fw, h + fh, ECORE_WL_WINDOW_BUFFER_TYPE_SHM);
+     ecore_wl_window_new(p, x, y, w + fw, h + fh, 
+                         ECORE_WL_WINDOW_BUFFER_TYPE_SHM);
    ee->prop.window = wdata->win->id;
 
    ee->evas = evas_new();
