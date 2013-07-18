@@ -2886,7 +2886,7 @@ _edje_map_prop_set(Evas_Map *map, const  Edje_Calc_Params *pf,
           {
              for (i = 0; i < colors_cnt; i++)
                {
-                  color = (Edje_Map_Color*) colors[i];
+                  color = colors[i];
                   evas_map_point_color_set(map, color->idx, color->r, color->g,
                                            color->b, color->a);
                   free(colors[i]);
@@ -2897,7 +2897,7 @@ _edje_map_prop_set(Evas_Map *map, const  Edje_Calc_Params *pf,
           {
              for (i = 0; i < colors_cnt; i++)
                {
-                  color = (Edje_Map_Color*) colors[i];
+                  color = colors[i];
                   evas_map_point_color_set(map, color->idx, color->r, color->g,
                                            color->b, color->a);
                }
