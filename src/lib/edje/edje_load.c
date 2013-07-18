@@ -1635,7 +1635,7 @@ _edje_collection_free_part_description_clean(int type, Edje_Part_Description_Com
    //clean the map colors
    if (desc->map.colors)
      {
-        for (i = 0; i < (int)desc->map.colors_count; i++)
+        for (i = 0; i < desc->map.colors_count; i++)
           free(desc->map.colors[i]);
         free(desc->map.colors);
      }
