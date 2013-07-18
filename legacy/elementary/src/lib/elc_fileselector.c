@@ -788,11 +788,12 @@ _on_text_activated(void *data,
 }
 
 static void
-_on_text_unfocused(void *data __UNUSED__,
-		   Evas_Object *obj,
+_on_text_unfocused(void *data,
+		   Evas_Object *obj __UNUSED__,
 		   void *event_info __UNUSED__)
 {
-   _anchors_do(obj, elm_object_text_get(obj));
+   ELM_FILESELECTOR_DATA_GET(data, sd);
+   _anchors_do(data, sd->path);
 }
 
 static void
