@@ -316,4 +316,47 @@ void *cserve2_font_slave_cb(Slave_Thread_Data *sd, Slave_Command *cmd, const voi
 void cserve2_font_source_ft_free(void *fontsource);
 void cserve2_font_ft_free(void *fontinfo);
 
+// Shared buffers & indexes
+void cserve2_shared_index_init(void);
+void cserve2_shared_index_shutdown(void);
+
+typedef struct _Shared_Array Shared_Array;
+typedef struct _Shared_Mempool Shared_Mempool;
+typedef Eina_Bool (* Shared_Array_Repack_Skip_Cb) (Shared_Array *, const void *);
+
+// Shared arrays (arrays of fixed size object)
+Shared_Array *cserve2_shared_array_new(int tag, int elemsize, int initcount);
+const char *cserve2_shared_array_name_get(Shared_Array *sa);
+void cserve2_shared_array_del(Shared_Array *sa);
+int cserve2_shared_array_size_get(Shared_Array *sa);
+int cserve2_shared_array_count_get(Shared_Array *sa);
+int cserve2_shared_array_item_size_get(Shared_Array *sa);
+int cserve2_shared_array_generation_id_get(Shared_Array *sa);
+int cserve2_shared_array_size_set(Shared_Array *sa, int newcount);
+int cserve2_shared_array_item_new(Shared_Array *sa);
+void *cserve2_shared_array_item_data_get(Shared_Array *sa, int elemid);
+Shared_Array *cserve2_shared_array_repack(Shared_Array *sa,
+                                          Shared_Array_Repack_Skip_Cb skip,
+                                          Eina_Compare_Cb cmp);
+int cserve2_shared_array_item_find(Shared_Array *sa, void *data,
+                                   Eina_Compare_Cb cmp);
+void *cserve2_shared_array_item_data_find(Shared_Array *sa, void *data,
+                                          Eina_Compare_Cb cmp);
+int cserve2_shared_array_foreach(Shared_Array *sa, Eina_Each_Cb cb, void *data);
+
+// Shared buffers and memory pools
+Shared_Mempool *cserve2_shared_mempool_new(int initsize);
+void cserve2_shared_mempool_del(Shared_Mempool *sm);
+int cserve2_shared_mempool_buffer_new(Shared_Mempool *sm, int size);
+int cserve2_shared_mempool_buffer_ref(Shared_Mempool *sm, int bufferid);
+void cserve2_shared_mempool_buffer_del(Shared_Mempool *sm, int bufferid);
+void *cserve2_shared_mempool_buffer_get(Shared_Mempool *sm, int bufferid);
+
+
+// Shared strings
+int cserve2_shared_string_add(const char *str);
+int cserve2_shared_string_ref(int id);
+void cserve2_shared_string_del(int id);
+const char *cserve2_shared_string_get(int id);
+
 #endif /* _EVAS_CSERVE2_H */

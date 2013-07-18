@@ -327,34 +327,26 @@ main(int argc EINA_UNUSED, const char *argv[])
         goto error;
      }
 
-   cserve2_requests_init();
-
-   cserve2_scale_init();
-
-   cserve2_font_init();
-
-   cserve2_cache_init();
-
    cserve2_shm_init();
-
+   cserve2_shared_index_init();
+   cserve2_requests_init();
+   cserve2_scale_init();
+   cserve2_font_init();
+   cserve2_cache_init();
    _clients_setup();
 
    cserve2_main_loop_run();
 
    _clients_finish();
-
    cserve2_cache_shutdown();
-
    cserve2_font_shutdown();
-
    cserve2_scale_shutdown();
-
    cserve2_requests_shutdown();
-
    cserve2_slaves_shutdown();
 
    cserve2_main_loop_finish();
 
+   cserve2_shared_index_shutdown();
    cserve2_shm_shutdown();
 
    eina_prefix_free(_evas_cserve2_pfx);

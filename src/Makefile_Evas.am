@@ -1013,6 +1013,7 @@ bin/evas/evas_cserve2_requests.c \
 bin/evas/evas_cserve2_fonts.c \
 bin/evas/evas_cserve2_scale.c \
 bin/evas/evas_cserve2_main_loop_linux.c \
+bin/evas/evas_cserve2_index.c \
 lib/evas/cserve2/evas_cs2_utils.h \
 lib/evas/cserve2/evas_cs2_utils.c
 
