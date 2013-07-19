@@ -75,7 +75,7 @@ main(int argc, char** argv, char** env)
           inc2(eo2_o);
           c = get2(eo2_o);
           );
-   check(a, 0);
+   check(a, 66);
    check(b, 11);
    check(c, 13);
 

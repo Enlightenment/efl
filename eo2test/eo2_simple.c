@@ -36,8 +36,9 @@ _constructor(Eo *obj, void *obj_data, va_list *list)
 {
    Private_Data *data = (Private_Data *) obj_data;
 
-   printf("Constructor\n");
-   data->x = 0;
+   // FIXME
+   eo_do_super(obj, EO2_SIMPLE_CLASS, eo_constructor());
+   data->x = 66;
 }
 
 static void
@@ -45,13 +46,15 @@ _destructor(Eo *obj, void *obj_data, va_list *list)
 {
    Private_Data *data = (Private_Data *) obj_data;
 
-   printf("Constructor\n");
+   // FIXME
+   eo_do_super(obj, EO2_SIMPLE_CLASS, eo_destructor());
 }
 
 /* should use macro and replace op_desc[], can't be const because of OP*/
 Eo2_Op_Description op_descs [] = {
-     /* { _constructor, _constructor, EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), EO_OP_TYPE_REGULAR, "Constructor"}, */
-     /* { _constructor, _constructor, 12, EO_OP_TYPE_REGULAR, "Constructor"}, */
+     // FIXME: use eo2_get_op_id()
+       { _constructor, NULL, 1, EO_OP_TYPE_REGULAR, "Constructor"},
+       { _destructor, NULL, 2, EO_OP_TYPE_REGULAR, "Destructor"},
        { _inc, inc2, EO_NOOP, EO_OP_TYPE_REGULAR, "Inc X"},
        { _get, get2, EO_NOOP, EO_OP_TYPE_REGULAR, "Get X"},
        { _set, set2, EO_NOOP, EO_OP_TYPE_REGULAR, "Set X"},
