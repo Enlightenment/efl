@@ -102,55 +102,55 @@ _ecore_x_error_handle(Display *d,
    switch (ev->error_code)
      {
       case BadRequest:	/* bad request code */
-        ERR("BadRequest");
+        DBG("BadRequest");
         break;
       case BadValue:	/* int parameter out of range */
-        ERR("BadValue");
+        DBG("BadValue");
         break;
       case BadWindow:	/* parameter not a Window */
-        ERR("BadWindow");
+        DBG("BadWindow");
         break;
       case BadPixmap:	/* parameter not a Pixmap */
-        ERR("BadPixmap");
+        DBG("BadPixmap");
         break;
       case BadAtom:	/* parameter not an Atom */
-        ERR("BadAtom");
+        DBG("BadAtom");
         break;
       case BadCursor:	/* parameter not a Cursor */
-        ERR("BadCursor");
+        DBG("BadCursor");
         break;
       case BadFont:	/* parameter not a Font */
-        ERR("BadFont");
+        DBG("BadFont");
         break;
       case BadMatch:	/* parameter mismatch */
-        ERR("BadMatch");
+        DBG("BadMatch");
         break;
       case BadDrawable:	/* parameter not a Pixmap or Window */
-        ERR("BadDrawable");
+        DBG("BadDrawable");
         break;
       case BadAccess:	/* depending on context */
-        ERR("BadAccess");
+        DBG("BadAccess");
         break;
       case BadAlloc:	/* insufficient resources */
-        ERR("BadAlloc");
+        DBG("BadAlloc");
         break;
       case BadColor:	/* no such colormap */
-        ERR("BadColor");
+        DBG("BadColor");
         break;
       case BadGC:	/* parameter not a GC */
-        ERR("BadGC");
+        DBG("BadGC");
         break;
       case BadIDChoice:	/* choice not in range or already used */
-        ERR("BadIDChoice");
+        DBG("BadIDChoice");
         break;
       case BadName:	/* font or color name doesn't exist */
-        ERR("BadName");
+        DBG("BadName");
         break;
       case BadLength:	/* Request length incorrect */
-        ERR("BadLength");
+        DBG("BadLength");
         break;
       case BadImplementation:	/* server is defective */
-        ERR("BadImplementation");
+        DBG("BadImplementation");
         break;
      }
    if (d == _ecore_x_disp)
