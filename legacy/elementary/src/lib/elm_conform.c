@@ -152,8 +152,9 @@ _conformant_part_sizing_eval(Evas_Object *obj,
                ("ILLUME_IND", &sx, &sy, &sw, &sh)) && (xwin))
           {
              //No information of the indicator geometry, reset the geometry.
-             if (!ecore_x_e_illume_indicator_geometry_get
-                   (zone, &sx, &sy, &sw, &sh))
+             if ((!zone) ||
+                 (!ecore_x_e_illume_indicator_geometry_get
+                   (zone, &sx, &sy, &sw, &sh)))
                sx = sy = sw = sh = 0;
           }
 #endif
@@ -175,12 +176,13 @@ _conformant_part_sizing_eval(Evas_Object *obj,
 #endif
              if (!ecore_x_e_illume_keyboard_geometry_get(xwin, &sx, &sy, &sw, &sh))
                {
-		          DBG("[KEYPAD]:no window property, check zone property.");
-				  if (!ecore_x_e_illume_keyboard_geometry_get(zone, &sx, &sy, &sw, &sh))
+                  DBG("[KEYPAD]:no window property, check zone property.");
+                  if ((!zone) ||
+                      (!ecore_x_e_illume_keyboard_geometry_get(zone, &sx, &sy, &sw, &sh)))
                     {
-		               DBG("[KEYPAD]:no zone property, reset value.");
+                       DBG("[KEYPAD]:no zone property, reset value.");
                        sx = sy = sw = sh = 0;
-				    }
+                    }
                }
           }
 #endif
@@ -196,8 +198,9 @@ _conformant_part_sizing_eval(Evas_Object *obj,
                ("ILLUME_STK", &sx, &sy, &sw, &sh)) && (xwin))
           {
              //No information of the softkey geometry, reset the geometry.
-             if (!ecore_x_e_illume_softkey_geometry_get
-                   (zone, &sx, &sy, &sw, &sh))
+             if ((!zone) ||
+                 (!ecore_x_e_illume_softkey_geometry_get
+                     (zone, &sx, &sy, &sw, &sh)))
                sx = sy = sw = sh = 0;
           }
 #endif
@@ -210,8 +213,9 @@ _conformant_part_sizing_eval(Evas_Object *obj,
                ("ILLUME_CB", &sx, &sy, &sw, &sh)) && (xwin))
           {
              //No information of the clipboard geometry, reset the geometry.
-             if (!ecore_x_e_illume_clipboard_geometry_get
-                   (zone, &sx, &sy, &sw, &sh))
+             if ((!zone) ||
+                 (!ecore_x_e_illume_clipboard_geometry_get
+                   (zone, &sx, &sy, &sw, &sh)))
                sx = sy = sw = sh = 0;
           }
 #endif
@@ -769,7 +773,7 @@ _virtualkeypad_state_change(Evas_Object *obj, Ecore_X_Event_Window_Property *ev)
    DBG("[KEYPAD]:window's state win=0x%x, state=%d.", ev->win, state);
    if (state == ECORE_X_VIRTUAL_KEYBOARD_STATE_UNKNOWN)
      {
-        state = ecore_x_e_virtual_keyboard_state_get(zone);
+        if (zone) state = ecore_x_e_virtual_keyboard_state_get(zone);
         DBG("[KEYPAD]:zone's state zone=0x%x, state=%d.", zone, state);
      }
 
