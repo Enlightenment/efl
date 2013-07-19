@@ -942,6 +942,7 @@ struct _Edje_Part_Dragable
    int                 count_y; /* drag area divided by n (0 = no limit) */
 
    int                 confine_id; /* dragging within this bit, -1 = no */
+   int                 threshold_id; /* dragging outside this bit, -1 = no */
 
    /* davinchi */
    int		  event_id; /* If it is used as scrollbar */
@@ -1487,8 +1488,14 @@ struct _Edje_Real_Part_Drag
    struct {
       int		 x, y; // 8
    } tmp;
-   unsigned char	 need_reset : 1; // 4
    Edje_Real_Part       *confine_to; // 4
+   Edje_Real_Part       *threshold; // 4
+   Eina_Bool             need_reset : 1; // 4
+   Eina_Bool             threshold_started_x : 1;
+   Eina_Bool             threshold_started_y : 1;
+   Eina_Bool             threshold_x : 1;
+   Eina_Bool             threshold_y : 1;
+   Eina_Bool             started : 1;
 }; // 104
 
 #define EDJE_RP_TYPE_NONE 0

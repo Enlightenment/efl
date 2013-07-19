@@ -120,6 +120,7 @@ Additions:
      - Add EDJE_INPUT_PANEL_LAYOUT_DATETIME layout
      - support edc proxy.source_visible, proxy.source_clip
      - support edc map color set
+     - Add threshold support to Edje draggable part.
     * Eeze:
      - Add a dummy libmount replacement for when libmount is not there.
     * Ecore_Con:

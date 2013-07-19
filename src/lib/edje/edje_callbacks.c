@@ -139,8 +139,10 @@ _edje_mouse_down_signal_cb(void *data, Eo *obj, const Eo_Event_Description *desc
 	       rp->drag->down.x = ev->canvas.x;
 	     if (rp->part->dragable.y)
 	       rp->drag->down.y = ev->canvas.y;
-	     if (!ignored)
-	       _edje_emit(ed, "drag,start", rp->part->name);
+             rp->drag->threshold_x = EINA_FALSE;
+             rp->drag->threshold_y = EINA_FALSE;
+             rp->drag->threshold_started_x = EINA_TRUE;
+             rp->drag->threshold_started_y = EINA_TRUE;
 	  }
 	rp->drag->down.count++;
      }
@@ -201,14 +203,18 @@ _edje_mouse_up_signal_cb(void *data, Eo *obj, const Eo_Event_Description *desc E
 	     rp->drag->down.count--;
 	     if (rp->drag->down.count == 0)
 	       {
+                  rp->drag->threshold_started_x = EINA_FALSE;
+                  rp->drag->threshold_started_y = EINA_FALSE;
 		  rp->drag->need_reset = 1;
                   ed->recalc_call = EINA_TRUE;
 		  ed->dirty = EINA_TRUE;
 #ifdef EDJE_CALC_CACHE
 		  rp->invalidate = 1;
 #endif
-		  if (!ignored)
+		  if (!ignored && rp->drag->started)
 		    _edje_emit(ed, "drag,stop", rp->part->name);
+                  rp->drag->started = EINA_FALSE;
+                  _edje_recalc_do(ed);
 	       }
 	  }
      }
@@ -306,7 +312,12 @@ _edje_mouse_move_signal_cb(void *data, Eo *obj, const Eo_Event_Description *desc
 		  rp->drag->val.x = dx;
 		  rp->drag->val.y = dy;
 		  if (!ignored)
-		    _edje_emit(ed, "drag", rp->part->name);
+                    {
+                       if (!rp->drag->started)
+                         _edje_emit(ed, "drag,start", rp->part->name);
+                       _edje_emit(ed, "drag", rp->part->name);
+                       rp->drag->started = EINA_TRUE;
+                    }
                   ed->recalc_call = EINA_TRUE;
 		  ed->dirty = EINA_TRUE;
 #ifdef EDJE_CALC_CACHE

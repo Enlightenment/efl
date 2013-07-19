@@ -688,6 +688,8 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
                            {
                               if (rp->part->dragable.confine_id >= 0)
                                 rp->drag->confine_to = ed->table_parts[rp->part->dragable.confine_id % ed->table_parts_size];
+                              if (rp->part->dragable.threshold_id >= 0)
+                                rp->drag->threshold = ed->table_parts[rp->part->dragable.threshold_id % ed->table_parts_size];
                            }
 
                          if ((rp->type == EDJE_RP_TYPE_SWALLOW) &&

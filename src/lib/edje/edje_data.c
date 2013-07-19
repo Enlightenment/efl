@@ -90,7 +90,27 @@ EMP(BOX, box);
 EMP(TABLE, table);
 EMP(EXTERNAL, external);
 EMP(SPACER, spacer);
-EMP(part, part);
+
+EAPI Eina_Mempool *_emp_part = NULL;
+
+static void *
+mem_alloc_part(size_t size)
+{
+  Edje_Part *ep;
+
+  ep = eina_mempool_malloc(_emp_part, size);
+  memset(ep, 0, size);
+  // This value need to be defined for older file that didn't provide it
+  // as it should -1 by default instead of 0.
+  ep->dragable.threshold_id = -1;
+  return ep;
+}
+
+static void
+mem_free_part(void *data)
+{
+  eina_mempool_free(_emp_part, data);
+}
 
 #define FREED(eed) \
    if (eed) \
@@ -956,6 +976,7 @@ _edje_edd_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part, Edje_Part, "dragable.step_y", dragable.step_y, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part, Edje_Part, "dragable.count_y", dragable.count_y, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part, Edje_Part, "dragable.counfine_id", dragable.confine_id, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part, Edje_Part, "dragable.threshold_id", dragable.threshold_id, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part, Edje_Part, "dragable.events_id", dragable.event_id, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_VAR_ARRAY(_edje_edd_edje_part, Edje_Part, "items", items, _edje_edd_edje_pack_element_pointer);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part, Edje_Part, "type", type, EET_T_UCHAR);

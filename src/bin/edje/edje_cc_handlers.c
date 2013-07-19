@@ -234,6 +234,7 @@ static void st_collections_group_parts_part_access(void);
 static void st_collections_group_parts_part_dragable_x(void);
 static void st_collections_group_parts_part_dragable_y(void);
 static void st_collections_group_parts_part_dragable_confine(void);
+static void st_collections_group_parts_part_dragable_threshold(void);
 static void st_collections_group_parts_part_dragable_events(void);
 
 /* box and table items share these */
@@ -512,6 +513,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.dragable.x", st_collections_group_parts_part_dragable_x},
      {"collections.group.parts.part.dragable.y", st_collections_group_parts_part_dragable_y},
      {"collections.group.parts.part.dragable.confine", st_collections_group_parts_part_dragable_confine},
+     {"collections.group.parts.part.dragable.threshold", st_collections_group_parts_part_dragable_threshold},
      {"collections.group.parts.part.dragable.events", st_collections_group_parts_part_dragable_events},
      {"collections.group.parts.part.entry_mode", st_collections_group_parts_part_entry_mode},
      {"collections.group.parts.part.select_mode", st_collections_group_parts_part_select_mode},
@@ -2719,6 +2721,7 @@ st_collections_group_inherit(void)
         ep->nested_children_count = ep2->nested_children_count;
 
         data_queue_copied_part_lookup(pc, &(ep2->dragable.confine_id), &(ep->dragable.confine_id));
+        data_queue_copied_part_lookup(pc, &(ep2->dragable.threshold_id), &(ep->dragable.threshold_id));
         data_queue_copied_part_lookup(pc, &(ep2->dragable.event_id), &(ep->dragable.event_id));
 
         epp = (Edje_Part_Parser *)ep;
@@ -3353,6 +3356,7 @@ edje_cc_handlers_part_make(void)
    ep->access = 0;
    ep->clip_to_id = -1;
    ep->dragable.confine_id = -1;
+   ep->dragable.threshold_id = -1;
    ep->dragable.event_id = -1;
    ep->items = NULL;
    ep->nested_children_count = 0;
@@ -4227,6 +4231,7 @@ st_collections_group_parts_part_access(void)
             ..
             dragable {
                 confine: "another part";
+		threshold: "another part";
                 events:  "another dragable part";
                 x: 0 0 0;
                 y: 0 0 0;
@@ -4315,6 +4320,34 @@ st_collections_group_parts_part_dragable_confine(void)
 
 	name = parse_str(0);
 	data_queue_part_lookup(pc, name, &(current_part->dragable.confine_id));
+	free(name);
+     }
+}
+
+/**
+    @page edcref
+    @property
+        threshold
+    @parameters
+        [another part's name]
+    @effect
+        When set, the movement of the dragged part can only start when it get
+	moved enough to be outside of the threshold part.
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_dragable_threshold(void)
+{
+   Edje_Part_Collection *pc;
+
+   check_arg_count(1);
+
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+     {
+	char *name;
+
+	name = parse_str(0);
+	data_queue_part_lookup(pc, name, &(current_part->dragable.threshold_id));
 	free(name);
      }
 }

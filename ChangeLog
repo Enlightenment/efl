@@ -1,3 +1,7 @@
+2013-07-19  Cedric Bail
+
+	* Edje: add threshold to draggable part.
+
 2013-07-18  Mike Blumenkrantz
 
         * Ecore-X: add ECORE_X_SYNC env variable for xlib backend

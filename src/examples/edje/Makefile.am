@@ -11,6 +11,7 @@ endif
 
 #put here all EDCs one needs to the examples
 EDCS = \
+edje-threshold.edc \
 animations2.edc \
 animations.edc \
 basic2.edc \

@@ -8,7 +8,8 @@ static void _edje_part_recalc_single(Edje *ed, Edje_Real_Part *ep,
                                      Edje_Real_Part *center, Edje_Real_Part *light, Edje_Real_Part *persp,
                                      Edje_Real_Part *rel1_to_x, Edje_Real_Part *rel1_to_y,
                                      Edje_Real_Part *rel2_to_x, Edje_Real_Part *rel2_to_y,
-                                     Edje_Real_Part *confine_to, Edje_Calc_Params *params,
+                                     Edje_Real_Part *confine_to, Edje_Real_Part *threshold,
+				     Edje_Calc_Params *params,
                                      Evas_Coord mmw, Evas_Coord mmh,
                                      FLOAT_T pos);
 
@@ -775,6 +776,15 @@ _edje_part_dragable_calc(Edje *ed EINA_UNUSED, Edje_Real_Part *ep, FLOAT_T *x, F
 {
    if (ep->drag)
      {
+        Eina_Bool tx = EINA_FALSE;
+        Eina_Bool ty = EINA_FALSE;
+
+        if (ep->drag->threshold)
+          {
+             // Check if we are in the threshold or not and cancel the movement.
+             tx = ep->drag->threshold_x && ep->drag->threshold_started_x;
+             ty = ep->drag->threshold_y && ep->drag->threshold_started_y;
+          }
         if (ep->drag->confine_to)
           {
              FLOAT_T dx, dy, dw, dh;
@@ -795,15 +805,15 @@ _edje_part_dragable_calc(Edje *ed EINA_UNUSED, Edje_Real_Part *ep, FLOAT_T *x, F
              if (dh != ZERO) dy = DIV(dy, dh);
              else dy = ZERO;
 
-             if (x) *x = dx;
-             if (y) *y = dy;
+             if (x) *x = tx ? ep->drag->x : dx;
+             if (y) *y = ty ? ep->drag->y : dy;
 
              return ret;
           }
         else
           {
-             if (x) *x = ADD(FROM_INT(ep->drag->tmp.x), ep->drag->x);
-             if (y) *y = ADD(FROM_INT(ep->drag->tmp.y), ep->drag->y);
+             if (x) *x = tx ? ep->drag->x : ADD(FROM_INT(ep->drag->tmp.x), ep->drag->x);
+             if (y) *y = ty ? ep->drag->y : ADD(FROM_INT(ep->drag->tmp.y), ep->drag->y);
              return 0;
           }
      }
@@ -1799,8 +1809,56 @@ _edje_part_recalc_single_max(Edje_Part_Description_Common *desc,
 }
 
 static void
+_edje_part_recalc_single_drag_threshold(Edje_Real_Part *ep,
+					Edje_Real_Part *threshold,
+                                        Edje_Calc_Params *params)
+{
+   if (threshold)
+     {
+        if (ep->drag->threshold_started_x &&
+            threshold->x < TO_INT(params->eval.x) &&
+            TO_INT(params->eval.x) + TO_INT(params->eval.w) < threshold->x + threshold->w)
+          {
+             // Cancel movement to previous position due to our presence inside the threshold
+             params->eval.x = FROM_INT(params->req_drag.x);
+             params->eval.w = FROM_INT(params->req_drag.w);
+	     ep->drag->threshold_x = EINA_TRUE;
+          }
+        else
+          {
+             params->req_drag.x = TO_INT(params->eval.x);
+             params->req_drag.w = TO_INT(params->eval.w);
+             ep->drag->threshold_started_x = EINA_FALSE;
+          }
+        if (ep->drag->threshold_started_y &&
+            threshold->y < TO_INT(params->eval.y) &&
+            TO_INT(params->eval.y) + TO_INT(params->eval.h) < threshold->y + threshold->h)
+          {
+             // Cancel movement to previous position due to our presence inside the threshold
+             params->eval.y = FROM_INT(params->req_drag.y);
+             params->eval.h = FROM_INT(params->req_drag.h);
+	     ep->drag->threshold_y = EINA_TRUE;
+          }
+        else
+          {
+             params->req_drag.y = TO_INT(params->eval.y);
+             params->req_drag.h = TO_INT(params->eval.h);
+             ep->drag->threshold_started_y = EINA_FALSE;
+          }
+     }
+   else
+     {
+        params->req_drag.x = TO_INT(params->eval.x);
+        params->req_drag.w = TO_INT(params->eval.w);
+        params->req_drag.y = TO_INT(params->eval.y);
+        params->req_drag.h = TO_INT(params->eval.h);
+     }
+}
+
+static void
 _edje_part_recalc_single_drag(Edje_Real_Part *ep,
                               Edje_Real_Part *confine_to,
+                              Edje_Real_Part *threshold,
                               Edje_Calc_Params *params,
                               int minw, int minh,
                               int maxw, int maxh)
@@ -1833,8 +1891,6 @@ _edje_part_recalc_single_drag(Edje_Real_Part *ep,
              params->eval.x = FROM_INT(confine_to->x +
                                        ((offset / step) * step));
           }
-        params->req_drag.x = TO_INT(params->eval.x);
-        params->req_drag.w = TO_INT(params->eval.w);
 
         v = SCALE(ep->drag->size.y, confine_to->h);
 
@@ -1856,8 +1912,8 @@ _edje_part_recalc_single_drag(Edje_Real_Part *ep,
              params->eval.y = FROM_INT(confine_to->y +
                                        ((offset / step) * step));
           }
-        params->req_drag.y = TO_INT(params->eval.y);
-        params->req_drag.h = TO_INT(params->eval.h);
+
+        _edje_part_recalc_single_drag_threshold(ep, threshold, params);
 
         /* limit to confine */
         if (params->eval.x < FROM_INT(confine_to->x))
@@ -1881,12 +1937,9 @@ _edje_part_recalc_single_drag(Edje_Real_Part *ep,
      {
         /* simple dragable params */
         params->eval.x = ADD(ADD(params->eval.x, ep->drag->x), FROM_INT(ep->drag->tmp.x));
-        params->req_drag.x = FROM_INT(params->eval.x);
-        params->req_drag.w = FROM_INT(params->eval.w);
-
         params->eval.y = ADD(ADD(params->eval.y, ep->drag->y), FROM_INT(ep->drag->tmp.y));
-        params->req_drag.y = FROM_INT(params->eval.y);
-        params->req_drag.h = FROM_INT(params->eval.h);
+
+        _edje_part_recalc_single_drag_threshold(ep, threshold, params);
      }
 }
 
@@ -2183,6 +2236,7 @@ _edje_part_recalc_single(Edje *ed,
                          Edje_Real_Part *rel2_to_x,
                          Edje_Real_Part *rel2_to_y,
                          Edje_Real_Part *confine_to,
+                         Edje_Real_Part *threshold,
                          Edje_Calc_Params *params,
                          Evas_Coord mmw, Evas_Coord mmh,
                          FLOAT_T pos)
@@ -2289,7 +2343,7 @@ _edje_part_recalc_single(Edje *ed,
 
    /* take care of dragable part */
    if (ep->drag)
-     _edje_part_recalc_single_drag(ep, confine_to, params, minw, minh, maxw, maxh);
+     _edje_part_recalc_single_drag(ep, confine_to, threshold, params, minw, minh, maxw, maxh);
 
    /* fill */
    if (ep->part->type == EDJE_PART_TYPE_IMAGE)
@@ -2962,6 +3016,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
    int state1 = -1;
    int state2 = -1;
    int statec = -1;
+   int statet = -1;
 #else
    Edje_Calc_Params lp1, lp2;
 #endif
@@ -2979,6 +3034,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
    Edje_Calc_Params *p1, *pf;
    Edje_Part_Description_Common *chosen_desc;
    Edje_Real_Part *confine_to = NULL;
+   Edje_Real_Part *threshold = NULL;
    FLOAT_T pos = ZERO, pos2;
    Edje_Calc_Params lp3;
    Evas_Coord mmw = 0, mmh = 0;
@@ -3160,13 +3216,26 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                }
           }
      }
-   if (ep->drag && ep->drag->confine_to)
+   if (ep->drag)
      {
-        confine_to = ep->drag->confine_to;
-        _edje_part_recalc(ed, confine_to, flags, NULL);
+        if (ep->drag->confine_to)
+          {
+             confine_to = ep->drag->confine_to;
+             _edje_part_recalc(ed, confine_to, flags, NULL);
 #ifdef EDJE_CALC_CACHE
-        statec = confine_to->state;
+             statec = confine_to->state;
 #endif
+          }
+        if (ep->drag->threshold)
+          {
+             threshold = ep->drag->threshold;
+             // We shall not recalculate the threshold position as
+             // we use it's previous position to assert the threshold
+             // the one before moving take action.
+#ifdef EDJE_CALC_CACHE
+             statet = threshold->state;
+#endif
+          }
      }
    //   if (ep->text.source)       _edje_part_recalc(ed, ep->text.source, flags);
    //   if (ep->text.text_source)  _edje_part_recalc(ed, ep->text.text_source, flags);
@@ -3240,6 +3309,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
             ep->invalidate ||
             state1 >= ep->param1.state ||
             statec >= ep->param1.state ||
+            statet >= ep->param1.state ||
             statec1 >= ep->param1.state ||
             statel1 >= ep->param1.state ||
             statep1 >= ep->param1.state ||
@@ -3250,7 +3320,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
           {
              _edje_part_recalc_single(ed, ep, ep->param1.description, chosen_desc, center[0], light[0], persp[0],
                                       rp1[Rel1X], rp1[Rel1Y], rp1[Rel2X], rp1[Rel2Y],
-                                      confine_to,
+                                      confine_to, threshold,
                                       p1, mmw, mmh, pos);
 #ifdef EDJE_CALC_CACHE
              if (flags == FLAG_XY)
@@ -3304,6 +3374,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
             ep->invalidate ||
             state2 >= ep->param2->state ||
             statec >= ep->param2->state ||
+            statet >= ep->param2->state ||
             statec2 >= ep->param2->state ||
             statel2 >= ep->param2->state ||
             statep2 >= ep->param2->state ||
@@ -3319,7 +3390,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                                       rp2[Rel1Y],
                                       rp2[Rel2X],
                                       rp2[Rel2Y],
-                                      confine_to,
+                                      confine_to, threshold,
                                       p2, mmw, mmh, pos);
 #ifdef EDJE_CALC_CACHE
              if (flags == FLAG_XY)
