@@ -351,6 +351,7 @@ _edje_signal_callback_move_last(Edje_Signal_Callback_Group *gp,
              m->matches[i].source = m->matches[j].source;
              m->matches[i].func = m->matches[j].func;
              gp->flags[i] = gp->flags[j];
+             gp->custom_data[i] = gp->custom_data[j];
              return;
           }
      }
