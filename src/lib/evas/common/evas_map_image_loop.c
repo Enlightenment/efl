@@ -90,7 +90,7 @@
         cv += cd; // col
 #   endif
 #   else                            
-        *d   = INTERP_256(rv, val3, val1);
+        *d   = val1;
 #   endif
 #  endif
         u += ud;
