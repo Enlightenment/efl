@@ -56,7 +56,7 @@ _delay_change(void *data)
 }
 
 static void
-_val_fetch(Evas_Object *obj)
+_val_fetch(Evas_Object *obj, Eina_Bool user_event)
 {
    Eina_Bool rtl;
    double posx = 0.0, posy = 0.0, pos = 0.0, val;
@@ -79,7 +79,7 @@ _val_fetch(Evas_Object *obj)
    if (val != sd->val)
      {
         sd->val = val;
-        if ((ecore_time_get() - sd->set_time) > 0.01)
+        if (user_event)
           {
              evas_object_smart_callback_call(obj, SIG_CHANGED, NULL);
              if (sd->delay) ecore_timer_del(sd->delay);
@@ -113,7 +113,6 @@ _val_set(Evas_Object *obj)
    Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
    edje_object_part_drag_value_set
      (wd->resize_obj, "elm.dragable.slider", pos, pos);
-   sd->set_time = ecore_time_get();
 }
 
 static void
@@ -206,8 +205,9 @@ _indicator_set(Evas_Object *obj)
 }
 
 static void
-_slider_update(Evas_Object *obj)
+_slider_update(Evas_Object *obj, Eina_Bool user_event)
 {
+   _val_fetch(obj, user_event);
    evas_object_smart_changed(obj);
 }
 
@@ -217,7 +217,7 @@ _drag(void *data,
       const char *emission __UNUSED__,
       const char *source __UNUSED__)
 {
-   _slider_update(data);
+   _slider_update(data, EINA_TRUE);
 }
 
 static void
@@ -226,7 +226,7 @@ _drag_start(void *data,
             const char *emission __UNUSED__,
             const char *source __UNUSED__)
 {
-   _slider_update(data);
+   _slider_update(data, EINA_TRUE);
    evas_object_smart_callback_call(data, SIG_DRAG_START, NULL);
    elm_widget_scroll_freeze_push(data);
 }
@@ -237,7 +237,7 @@ _drag_stop(void *data,
            const char *emission __UNUSED__,
            const char *source __UNUSED__)
 {
-   _slider_update(data);
+   _slider_update(data, EINA_TRUE);
    evas_object_smart_callback_call(data, SIG_DRAG_STOP, NULL);
    elm_widget_scroll_freeze_pop(data);
 }
@@ -248,7 +248,7 @@ _drag_step(void *data,
            const char *emission __UNUSED__,
            const char *source __UNUSED__)
 {
-   _slider_update(data);
+   _slider_update(data, EINA_TRUE);
 }
 
 static void
@@ -423,7 +423,7 @@ key_down:
    else return;
 
 success:
-   _slider_update(obj);
+   _slider_update(obj, EINA_TRUE);
 
    if (ret) *ret = EINA_TRUE;
 }
@@ -452,7 +452,7 @@ _elm_slider_smart_activate(Eo *obj, void *_pd, va_list *list)
         else _drag_up(obj, NULL, NULL, NULL);
      }
 
-   _slider_update(obj);
+   _slider_update(obj, EINA_TRUE);
 
    if (ret) *ret = EINA_TRUE;
 }
@@ -582,8 +582,7 @@ _spacer_down_cb(void *data,
    edje_object_part_drag_value_set
      (wd->resize_obj, "elm.dragable.slider",
      button_x, button_y);
-   sd->set_time = ecore_time_get();
-   _slider_update(data);
+   _slider_update(data, EINA_TRUE);
    evas_object_smart_callback_call(data, SIG_DRAG_START, NULL);
    elm_layout_signal_emit(data, "elm,state,indicator,show", "elm");
 }
@@ -620,7 +619,7 @@ _spacer_move_cb(void *data,
         if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
           {
              if (sd->spacer_down) sd->spacer_down = EINA_FALSE;
-             _slider_update(data);
+             _slider_update(data, EINA_TRUE);
              evas_object_smart_callback_call(data, SIG_DRAG_STOP, NULL);
              if (sd->frozen)
                {
@@ -648,9 +647,7 @@ _spacer_move_cb(void *data,
         edje_object_part_drag_value_set
           (wd->resize_obj, "elm.dragable.slider",
           button_x, button_y);
-        sd->set_time = ecore_time_get();
-
-        _slider_update(data);
+        _slider_update(data, EINA_TRUE);
      }
 }
 
@@ -665,7 +662,7 @@ _spacer_up_cb(void *data,
    if (!sd->spacer_down) return;
    if (sd->spacer_down) sd->spacer_down = EINA_FALSE;
 
-   _slider_update(data);
+   _slider_update(data, EINA_TRUE);
    evas_object_smart_callback_call(data, SIG_DRAG_STOP, NULL);
 
    if (sd->frozen)
@@ -752,7 +749,7 @@ _elm_slider_smart_calculate(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
        (sd->spacer, 1, (double)sd->size * elm_widget_scale_get(obj) *
        elm_config_scale_get());
 
-   _val_fetch(obj);
+   _val_fetch(obj, EINA_FALSE);
    _min_max_set(obj);
    _units_set(obj);
    _indicator_set(obj);
@@ -820,7 +817,6 @@ _elm_slider_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    elm_layout_signal_callback_add(obj, "*", "popup,emit", _popup_emit, obj);
    edje_object_part_drag_value_set
      (wd->resize_obj, "elm.dragable.slider", 0.0, 0.0);
-   priv->set_time = ecore_time_get();
 
    priv->spacer = evas_object_rectangle_add(evas_object_evas_get(obj));
    evas_object_color_set(priv->spacer, 0, 0, 0, 0);
