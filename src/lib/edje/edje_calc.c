@@ -1720,7 +1720,7 @@ _edje_part_recalc_single_min(Edje_Part_Description_Common *desc,
            }
       case EDJE_ASPECT_PREFER_SOURCE:
       case EDJE_ASPECT_PREFER_BOTH:
-         tmp = DIV(SCALE(params->eval.h, minh), h);
+         tmp = DIV(SCALE(params->eval.w, minh), h);
          if (tmp >= FROM_INT(minw))
            {
               minw = TO_INT(tmp);
