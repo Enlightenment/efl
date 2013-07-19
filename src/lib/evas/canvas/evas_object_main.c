@@ -671,6 +671,17 @@ end:
 }
 
 EAPI void
+evas_object_geometry_set(Evas_Object *eo_obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
+{
+   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+   eo_do(eo_obj,
+         evas_obj_position_set(x, y),
+         evas_obj_size_set(w, h));
+}
+
+EAPI void
 evas_object_move(Evas_Object *eo_obj, Evas_Coord x, Evas_Coord y)
 {
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);

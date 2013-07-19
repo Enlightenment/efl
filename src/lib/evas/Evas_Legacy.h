@@ -1936,6 +1936,34 @@ EAPI void             evas_object_resize(Evas_Object *obj, Evas_Coord w, Evas_Co
 EAPI void             evas_object_geometry_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h) EINA_ARG_NONNULL(1);
 
 /**
+ * Set the position and (rectangular) size of the given Evas object.
+ *
+ * @param obj The given Evas object.
+ * @param x   X position to move the object to, in canvas units.
+ * @param y   Y position to move the object to, in canvas units.
+ * @param w   The new width of the Evas object.
+ * @param h   The new height of the Evas object.
+ *
+ * The position, naturally, will be relative to the top left corner of
+ * the canvas' viewport.
+ *
+ * If the object get moved, the object's ::EVAS_CALLBACK_MOVE callback
+ * will be called.
+ *
+ * If the object get resized, the object's ::EVAS_CALLBACK_RESIZE callback
+ * will be called.
+ *
+ * @see evas_object_move()
+ * @see evas_object_resize()
+ * @see evas_object_geometry_get
+ *
+ * @since 1.8
+ * @ingroup Evas_Object_Group_Basic
+ */
+EAPI void             evas_object_geometry_set(Evas_Object *eo_obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h) EINA_ARG_NONNULL(1);
+
+
+/**
  * Makes the given Evas object visible.
  *
  * @param obj The given Evas object.
