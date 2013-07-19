@@ -3348,7 +3348,7 @@ _part_swallow(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Evas_Object *obj_swallow = va_arg(*list, Evas_Object *);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Edje *ed = _pd;
-   Edje_Real_Part *rp;
+   Edje_Real_Part *rp, *rpcur;
    Edje_User_Defined *eud = NULL;
    if (ret) *ret = EINA_FALSE;
 
@@ -3364,14 +3364,16 @@ _part_swallow(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    // XXX: by Sachiel, January 21th 2009, 19:30 UTC
    _edje_recalc_do(ed);
 
-   rp = evas_object_data_get(obj_swallow, "\377 edje.swallowing_part");
-   if (rp)
+   rp = _edje_real_part_recursive_get(&ed, part);
+   rpcur = evas_object_data_get(obj_swallow, "\377 edje.swallowing_part");
+   if (rpcur)
      {
+        /* the object is already swallowed in the requested part */
+        if (rpcur == rp) return;
         /* The object is already swallowed somewhere, unswallow it first */
         edje_object_part_unswallow(ed->obj, obj_swallow);
      }
 
-   rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp)
      {
         DBG("cannot swallow part %s: part not exist!", part);
