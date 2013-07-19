@@ -6,16 +6,19 @@
 extern EAPI Eo_Op SIMPLE_BASE_ID;
 
 enum {
+     SIMPLE_SUB_ID_INC,
+     SIMPLE_SUB_ID_GET,
      SIMPLE_SUB_ID_SET,
-     SIMPLE_SUB_ID_A_GET,
      SIMPLE_SUB_ID_LAST
 };
 
 #define SIMPLE_ID(sub_id) (SIMPLE_BASE_ID + sub_id)
 
-#define simple_set(a, b) SIMPLE_ID(SIMPLE_SUB_ID_SET), EO_TYPECHECK(int, a), EO_TYPECHECK(int, b)
+#define inc() SIMPLE_ID(SIMPLE_SUB_ID_INC)
 
-#define simple_a_get(a) SIMPLE_ID(SIMPLE_SUB_ID_A_GET), EO_TYPECHECK(int *, a)
+#define get(x) SIMPLE_ID(SIMPLE_SUB_ID_GET), EO_TYPECHECK(int *, x)
+
+#define set(x) SIMPLE_ID(SIMPLE_SUB_ID_SET), EO_TYPECHECK(int, x)
 
 #define SIMPLE_CLASS simple_class_get()
 const Eo_Class *simple_class_get(void);

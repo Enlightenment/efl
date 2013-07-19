@@ -1,39 +1,58 @@
-
 #include "eo_simple.h"
 
 EAPI Eo_Op SIMPLE_BASE_ID = 0;
 
 typedef struct
 {
-   int a;
-   int b;
+   int x;
 } Private_Data;
 
 #define MY_CLASS SIMPLE_CLASS
 
 static void
-_set(Eo *obj EINA_UNUSED, void *class_data, va_list *list)
+_inc(Eo *obj EINA_UNUSED, void *obj_data, va_list *list)
 {
-   Private_Data *pd = class_data;
-   pd->a = va_arg(*list, int);
-   pd->b = va_arg(*list, int);
+   Private_Data *pd = (Private_Data *) obj_data;
+
+   pd->x += 1;
 }
 
 static void
-_get(Eo *obj EINA_UNUSED, void *class_data, va_list *list)
+_get(Eo *obj EINA_UNUSED, void *obj_data, va_list *list)
 {
-   const Private_Data *pd = class_data;
-   int *a;
-   a = va_arg(*list, int *);
-   *a = pd->a;
+   const Private_Data *pd = (Private_Data *) obj_data;
+   int *r;
+
+   r = va_arg(*list, int *);
+   *r = pd->x;
+}
+
+static void
+_set(Eo *obj EINA_UNUSED, void *obj_data, va_list *list)
+{
+   Private_Data *pd = (Private_Data *) obj_data;
+
+   pd->x = va_arg(*list, int);
+}
+
+static void
+_constructor(Eo *obj, void *obj_data, va_list *list)
+{
+   Private_Data *pd = (Private_Data *) obj_data;
+
+   eo_do_super(obj, SIMPLE_CLASS, eo_constructor());
+
+   pd->x = 66;
 }
 
 static void
 _class_constructor(Eo_Class *klass)
 {
    const Eo_Op_Func_Description func_desc[] = {
+        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
+        EO_OP_FUNC(SIMPLE_ID(SIMPLE_SUB_ID_INC), _inc),
+        EO_OP_FUNC(SIMPLE_ID(SIMPLE_SUB_ID_GET), _get),
         EO_OP_FUNC(SIMPLE_ID(SIMPLE_SUB_ID_SET), _set),
-        EO_OP_FUNC(SIMPLE_ID(SIMPLE_SUB_ID_A_GET), _get),
         EO_OP_FUNC_SENTINEL
    };
 
@@ -41,8 +60,9 @@ _class_constructor(Eo_Class *klass)
 }
 
 static const Eo_Op_Description op_desc[] = {
-     EO_OP_DESCRIPTION(SIMPLE_SUB_ID_SET, "Set properties"),
-     EO_OP_DESCRIPTION(SIMPLE_SUB_ID_A_GET, "Get property A"),
+     EO_OP_DESCRIPTION(SIMPLE_SUB_ID_INC, "Inc X"),
+     EO_OP_DESCRIPTION(SIMPLE_SUB_ID_GET, "Get X"),
+     EO_OP_DESCRIPTION(SIMPLE_SUB_ID_SET, "Get X"),
      EO_OP_DESCRIPTION_SENTINEL
 };
 
