@@ -10,7 +10,7 @@ typedef struct
 #define MY_CLASS SIMPLE_CLASS
 
 static void
-_inc(Eo *obj EINA_UNUSED, void *obj_data, va_list *list)
+_inc(Eo *obj EINA_UNUSED, void *obj_data, va_list *list EINA_UNUSED)
 {
    Private_Data *pd = (Private_Data *) obj_data;
 
@@ -36,7 +36,7 @@ _set(Eo *obj EINA_UNUSED, void *obj_data, va_list *list)
 }
 
 static void
-_constructor(Eo *obj, void *obj_data, va_list *list)
+_constructor(Eo *obj, void *obj_data, va_list *list EINA_UNUSED)
 {
    Private_Data *pd = (Private_Data *) obj_data;
 
@@ -46,10 +46,17 @@ _constructor(Eo *obj, void *obj_data, va_list *list)
 }
 
 static void
+_destructor(Eo *obj, void *obj_data EINA_UNUSED, va_list *list EINA_UNUSED)
+{
+   eo_do_super(obj, SIMPLE_CLASS, eo_destructor());
+}
+
+static void
 _class_constructor(Eo_Class *klass)
 {
    const Eo_Op_Func_Description func_desc[] = {
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
+        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DESTRUCTOR), _destructor),
         EO_OP_FUNC(SIMPLE_ID(SIMPLE_SUB_ID_INC), _inc),
         EO_OP_FUNC(SIMPLE_ID(SIMPLE_SUB_ID_GET), _get),
         EO_OP_FUNC(SIMPLE_ID(SIMPLE_SUB_ID_SET), _set),

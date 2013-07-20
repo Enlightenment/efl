@@ -32,7 +32,7 @@ _set(Eo *objid EINA_UNUSED, void *obj_data, int x)
 }
 
 static void
-_constructor(Eo *obj, void *obj_data, va_list *list)
+_constructor(Eo *obj, void *obj_data, va_list *list EINA_UNUSED)
 {
    Private_Data *data = (Private_Data *) obj_data;
 
@@ -42,10 +42,8 @@ _constructor(Eo *obj, void *obj_data, va_list *list)
 }
 
 static void
-_destructor(Eo *obj, void *obj_data, va_list *list)
+_destructor(Eo *obj, void *obj_data EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   Private_Data *data = (Private_Data *) obj_data;
-
    // FIXME
    eo_do_super(obj, EO2_SIMPLE_CLASS, eo_destructor());
 }

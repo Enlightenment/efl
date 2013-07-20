@@ -50,7 +50,7 @@ static void check(int val, int expected)
    check(a, n * k);                       \
 
 int
-main(int argc, char** argv, char** env)
+main(int argc EINA_UNUSED, char** argv EINA_UNUSED, char** env EINA_UNUSED)
 {
    int i, n, k, a, b, c;
    Eo *obj, *obj2;
