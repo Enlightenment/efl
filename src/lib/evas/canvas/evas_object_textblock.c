@@ -9040,8 +9040,7 @@ evas_textblock_cursor_geometry_bidi_get(const Evas_Textblock_Cursor *cur, Evas_C
 
 #ifdef BIDI_SUPPORT
 #define IS_RTL(par) ((par) % 2)
-#define IS_DIFFERENT_DIR(l1, l2) ((IS_RTL(l1) && (!IS_RTL(l2))) || \
-                                  ((!IS_RTL(l1)) && IS_RTL(l2)))
+#define IS_DIFFERENT_DIR(l1, l2) (IS_RTL(l1) != IS_RTL(l2))
    else
      {
         Evas_Object_Textblock_Line *ln = NULL;
