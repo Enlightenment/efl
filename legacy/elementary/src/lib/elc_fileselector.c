@@ -616,41 +616,34 @@ _sel_do(void *data)
    struct sel_data *sdata = data;
    const char *path;
    const char *p;
+   Eina_Bool is_dir;
 
    ELM_FILESELECTOR_DATA_GET(sdata->fs, sd);
    path = sdata->path;
+   is_dir = ecore_file_is_dir(path);
 
-   if ((!sd->only_folder) && ecore_file_is_dir(path))
+   /* We need to populate, if path is directory and:
+    * - mode is GRID;
+    * - mode is LIST and 'not expand mode';
+    *   in other cases update anchors. */
+   if (((!sd->expand) || (sd->mode == ELM_FILESELECTOR_GRID)) && (is_dir))
      {
-        if (sd->expand && sd->mode == ELM_FILESELECTOR_LIST)
-          {
-             _anchors_do(sdata->fs, path);
-          }
-        else
-          {
-             /* keep a ref to path 'couse it will be destroyed by _populate */
-             p = eina_stringshare_add(path);
-             _populate(sdata->fs, p, NULL);
-             eina_stringshare_del(p);
-          }
-        goto end;
+        /* keep a ref to path 'couse it will be destroyed by _populate */
+        p = eina_stringshare_add(path);
+        _populate(sdata->fs, p, NULL);
+        eina_stringshare_del(p);
      }
-   else /* navigating through folders only or file is not a dir. */
+   else
      {
-        if (sd->expand && sd->mode == ELM_FILESELECTOR_LIST)
-          _anchors_do(sdata->fs, path);
-        else if (sd->only_folder)
-          {
-             /* keep a ref to path 'couse it will be destroyed by _populate */
-             p = eina_stringshare_add(path);
-             _populate(sdata->fs, p, NULL);
-             eina_stringshare_del(p);
-          }
+        _anchors_do(sdata->fs, path);
      }
 
-   evas_object_smart_callback_call(sdata->fs, SIG_SELECTED, (void *)path);
+   /* We need to send callback when:
+    * - path is dir and mode is ONLY FOLDER
+    * - path is file and mode is NOT ONLY FOLDER */
+   if (is_dir == sd->only_folder)
+     evas_object_smart_callback_call(sdata->fs, SIG_SELECTED, (void *)path);
 
-end:
    sd->sel_idler = NULL;
    free(sdata);
    return ECORE_CALLBACK_CANCEL;
