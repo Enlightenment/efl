@@ -686,8 +686,7 @@ _view_smart_run_javascript_prompt(Ewk_View_Smart_Data *esd,
 static Eina_Bool
 _view_smart_run_open_panel(Ewk_View_Smart_Data *esd,
                            Evas_Object *frame __UNUSED__,
-                           Eina_Bool allows_multiple_files,
-                           Eina_List *accept_types,
+                           Ewk_File_Chooser *request,
                            Eina_List **selected_filenames)
 {
    View_Smart_Data *vsd = (View_Smart_Data *)esd;
@@ -700,12 +699,14 @@ _view_smart_run_open_panel(Ewk_View_Smart_Data *esd,
 
    if (sd->hook.file_selector)
      diag = sd->hook.file_selector(sd->hook.file_selector_data, obj,
-                                   allows_multiple_files, accept_types,
+                                   ewk_file_chooser_allows_multiple_files_get(request),
+                                   ewk_file_chooser_accept_mimetypes_get(request),
                                    selected_filenames, &response);
    else
      diag = _run_dialog(view, DIALOG_FILE_SELECTOR, NULL, NULL, NULL,
-                        allows_multiple_files, accept_types, selected_filenames,
-                        &response);
+                        ewk_file_chooser_allows_multiple_files_get(request),
+                        ewk_file_chooser_accept_mimetypes_get(request),
+                        selected_filenames, &response);
    if (diag) _exec_dialog(diag);
 
    return response;
