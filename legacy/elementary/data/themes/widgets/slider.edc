@@ -40,7 +40,6 @@ group { name: "elm/slider/horizontal/default";
    images {
       image: "sl_bg.png" COMP;
       image: "sl_bg_over.png" COMP;
-
       image: "sl_units.png" COMP;
    }
    parts {
@@ -604,7 +603,6 @@ group { name: "elm/slider/vertical/default";
    images {
       image: "slv_bg.png" COMP;
       image: "slv_bg_over.png" COMP;
-
       image: "slv_units.png" COMP;
    }
    parts {
@@ -1509,5 +1507,3 @@ group { name: "elm/slider/horizontal/indicator/default";
       }
    }
 }
-
-
