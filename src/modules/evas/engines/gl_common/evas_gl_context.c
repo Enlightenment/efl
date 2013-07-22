@@ -3185,6 +3185,70 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
    gc->havestuff = EINA_FALSE;
 }
 
+int
+evas_gl_common_buffer_dump(Evas_Engine_GL_Context *gc, const char* dname, const char* buf_name, int frame)
+{
+   RGBA_Image *im = NULL;
+   DATA32 *data1, *data2;
+   char fname[100];
+   int ok = 0;
+
+   sprintf(fname, "./%s/evas_win_%s-fc_%03d.png", dname, buf_name, frame);
+
+   data1 = (DATA32 *)malloc(gc->w * gc->h * sizeof(DATA32));
+   data2 = (DATA32 *)malloc(gc->w * gc->h * sizeof(DATA32));
+
+   if ((!data1) || (!data2)) goto finish;
+
+   glReadPixels(0, 0, gc->w, gc->h, GL_RGBA,
+                GL_UNSIGNED_BYTE, (unsigned char*)data1);
+
+   // Flip the Y and change from RGBA TO BGRA
+   int i, j;
+   for (j = 0; j < gc->h; j++)
+      for (i = 0; i < gc->w; i++)
+        {
+           DATA32 d;
+           int idx1 = (j * gc->w) + i;
+           int idx2 = ((gc->h - 1) - j) * gc->w + i;
+
+           d = data1[idx1];
+           data2[idx2] = ((d & 0x000000ff) << 16) +
+              ((d & 0x00ff0000) >> 16)  +
+              ((d & 0xff00ff00));
+        }
+
+   evas_common_convert_argb_premul(data2, gc->w * gc->h);
+
+   im = (RGBA_Image*) evas_cache_image_data(evas_common_image_cache_get(),
+                                            gc->w,
+                                            gc->h,
+                                            (DATA32 *)data2,
+                                            1,
+                                            EVAS_COLORSPACE_ARGB8888);
+   if (im)
+     {
+        im->image.data = data2;
+        if (im->image.data)
+          {
+             ok = evas_common_save_image_to_file(im, fname, NULL, 0, 0);
+
+             if (!ok) ERR("Error Saving file.");
+          }
+
+        evas_cache_image_drop(&im->cache_entry);
+     }
+
+finish:
+   if (data1) free(data1);
+   if (data2) free(data2);
+   if (im)  evas_cache_image_drop(&im->cache_entry);
+
+   if (ok) return 1;
+   else return 0;
+}
+
+
 Eina_Bool
 evas_gl_common_module_open(void)
 {
