@@ -704,16 +704,16 @@ _elm_layout_part_aliasing_eval(const Evas_Object *obj EINA_UNUSED,
 static void
 _elm_layout_smart_text_set(Eo *obj, void *_pd, va_list *list)
 {
-   Eina_List *l;
-   Elm_Layout_Sub_Object_Data *sub_d = NULL;
+   Elm_Layout_Smart_Data *sd = _pd;
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    const char *part = va_arg(*list, const char *);
    const char *text = va_arg(*list, const char *);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    if (ret) *ret = EINA_FALSE;
 
-   Elm_Layout_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Eina_List *l;
+   Elm_Layout_Sub_Object_Data *sub_d = NULL;
 
    if (!_elm_layout_part_aliasing_eval(obj, sd, &part, EINA_TRUE))
      return;

@@ -952,14 +952,15 @@ _elm_naviframe_smart_text_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    const char *part = va_arg(*list, const char *);
    const char *label = va_arg(*list, const char *);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Eina_Bool int_ret = EINA_FALSE;
    if (ret) *ret = EINA_FALSE;
 
    it = elm_naviframe_top_item_get(obj);
    if (!it) return;
 
    elm_object_item_part_text_set(it, part, label);
+   int_ret = !strcmp(elm_object_item_part_text_get(it, part), label);
 
-   Eina_Bool int_ret = !strcmp(elm_object_item_part_text_get(it, part), label);
    if (ret) *ret = int_ret;
 }
 

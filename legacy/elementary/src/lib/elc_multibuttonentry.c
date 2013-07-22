@@ -1464,7 +1464,8 @@ _elm_multibuttonentry_smart_text_set(Eo *obj, void *_pd EINA_UNUSED, va_list *li
         if (label) _guide_text_set(obj, label);
         int_ret = EINA_TRUE;
      }
-   else eo_do_super(obj, MY_CLASS, elm_obj_layout_text_set(part, label, &int_ret));
+   else
+     eo_do_super(obj, MY_CLASS, elm_obj_layout_text_set(part, label, &int_ret));
 
    if (ret) *ret = int_ret;
 }

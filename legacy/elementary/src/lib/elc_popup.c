@@ -972,6 +972,7 @@ _elm_popup_smart_text_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
      int_ret = _title_text_set(obj, label);
    else
      eo_do_super(obj, MY_CLASS, elm_obj_layout_text_set(part, label, &int_ret));
+
    if (ret) *ret = int_ret;
 }
 

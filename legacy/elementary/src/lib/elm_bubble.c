@@ -137,8 +137,8 @@ _elm_bubble_smart_text_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    const char *label = va_arg(*list, const char *);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    if (ret) *ret = EINA_FALSE;
-
    Eina_Bool int_ret = EINA_FALSE;
+
    eo_do_super(obj, MY_CLASS, elm_obj_layout_text_set(part, label, &int_ret));
    if (!int_ret) return;
 

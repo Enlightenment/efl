@@ -2681,14 +2681,12 @@ _elm_entry_smart_content_unset(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 static void
 _elm_entry_smart_text_set(Eo *obj, void *_pd, va_list *list)
 {
+   Elm_Entry_Smart_Data *sd = _pd;
    const char *part = va_arg(*list, const char *);
    const char *entry = va_arg(*list, const char *);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    if (ret) *ret = EINA_TRUE;
-
    int len = 0;
-
-   Elm_Entry_Smart_Data *sd = _pd;
 
    if (!entry) entry = "";
    if (part)

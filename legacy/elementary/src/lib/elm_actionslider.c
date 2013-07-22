@@ -371,8 +371,8 @@ _elm_actionslider_smart_text_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    Eina_Bool int_ret = EINA_FALSE;
 
    _mirrored_part_fix(obj, &part);
-
    eo_do_super(obj, MY_CLASS, elm_obj_layout_text_set(part, text, &int_ret));
+
    if (ret) *ret = int_ret;
 }
 
