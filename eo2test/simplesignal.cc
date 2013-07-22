@@ -689,8 +689,8 @@ Eo2_Op_Description op_descs [] = {
        { NULL, NULL, 0, EO_OP_TYPE_INVALID, NULL}
 };
 
-static inline EO_FUNC_BODY(get, int, -1);
-static inline EO_FUNC_BODY_VOID(inc);
+static inline EO2_FUNC_BODY(get, int, -1);
+static inline EO2_VOID_FUNC_BODY(inc);
 
 static void
 _class2_constructor(Eo_Class *klass)
