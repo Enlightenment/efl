@@ -462,7 +462,7 @@ cserve2_shared_array_item_find(Shared_Array *sa, void *data,
 
    // TODO: Fast search in the sorted zone
 
-   ptr = sa->ds->data;
+   ptr = sa->ds->data + sizeof(Shared_Array_Header);
 
    // Linear search O(n)
    for (k = 0; k < sa->header->emptyidx; k++)
@@ -482,7 +482,8 @@ cserve2_shared_array_item_data_find(Shared_Array *sa, void *data,
    int elemid;
 
    elemid = cserve2_shared_array_item_find(sa, data, cmp);
-   if (elemid < 0) return NULL;
+   if (elemid < 0)
+     return NULL;
 
    return cserve2_shared_array_item_data_get(sa, elemid);
 }
