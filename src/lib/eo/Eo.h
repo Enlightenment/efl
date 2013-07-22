@@ -683,6 +683,7 @@ EAPI void eo2_do_end(_Eo *obj);
        if (!_obj_) break;                       \
        do { __VA_ARGS__ ; } while (0);          \
        eo2_do_end(_obj_);                       \
+       _obj_ = NULL;                            \
     } while (0)
 
 // FIXME
