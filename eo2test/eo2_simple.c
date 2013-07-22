@@ -53,13 +53,12 @@ _destructor(Eo *obj, void *obj_data EINA_UNUSED, va_list *list EINA_UNUSED)
 
 /* should use macro and replace op_desc[], can't be const because of OP*/
 Eo2_Op_Description op_descs [] = {
-     // FIXME: use eo2_get_op_id()
-       { _constructor, NULL, 1, EO_OP_TYPE_REGULAR, "Constructor"},
-       { _destructor, NULL, 2, EO_OP_TYPE_REGULAR, "Destructor"},
-       { _inc, inc2, EO_NOOP, EO_OP_TYPE_REGULAR, "Inc X"},
-       { _get, get2, EO_NOOP, EO_OP_TYPE_REGULAR, "Get X"},
-       { _set, set2, EO_NOOP, EO_OP_TYPE_REGULAR, "Set X"},
-       { NULL, NULL, 0, EO_OP_TYPE_INVALID, NULL}
+       EO2_OP_CONSTRUCTOR(_constructor),
+       EO2_OP_DESTRUCTOR(_destructor),
+       EO2_OP_FUNC(_inc, inc2, "Inc X"),
+       EO2_OP_FUNC(_get, get2, "Get X"),
+       EO2_OP_FUNC(_set, set2, "Set X"),
+       EO2_OP_SENTINEL
 };
 
 static void
