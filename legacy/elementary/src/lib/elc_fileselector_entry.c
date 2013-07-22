@@ -253,14 +253,14 @@ _elm_fileselector_entry_smart_text_set(Eo *obj, void *_pd, va_list *list)
 {
    Elm_Fileselector_Entry_Smart_Data *sd = _pd;
 
-   const char *item = va_arg(*list, const char *);
+   const char *part = va_arg(*list, const char *);
    const char *label = va_arg(*list, const char *);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Eina_Bool int_ret;
 
-   if (item && strcmp(item, "default"))
+   if (part && strcmp(part, "default"))
      {
-        eo_do_super(obj, MY_CLASS, elm_obj_layout_text_set(item, label, &int_ret));
+        eo_do_super(obj, MY_CLASS, elm_obj_layout_text_set(part, label, &int_ret));
         goto end;
      }
 
@@ -276,12 +276,12 @@ _elm_fileselector_entry_smart_text_get(Eo *obj, void *_pd, va_list *list)
 {
    Elm_Fileselector_Entry_Smart_Data *sd = _pd;
 
-   const char *item = va_arg(*list, const char *);
+   const char *part = va_arg(*list, const char *);
    const char **text = va_arg(*list, const char **);
 
-   if (item && strcmp(item, "default"))
+   if (part && strcmp(part, "default"))
      {
-        eo_do_super(obj, MY_CLASS, elm_obj_layout_text_get(item, text));
+        eo_do_super(obj, MY_CLASS, elm_obj_layout_text_get(part, text));
         return;
      }
 

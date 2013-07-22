@@ -325,7 +325,7 @@ _elm_label_smart_text_set(Eo *obj, void *_pd, va_list *list)
 {
    Elm_Label_Smart_Data *sd = _pd;
    Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
-   const char *item = va_arg(*list, const char *);
+   const char *part = va_arg(*list, const char *);
    const char *label = va_arg(*list, const char *);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    if (ret) *ret = EINA_FALSE;
@@ -334,7 +334,7 @@ _elm_label_smart_text_set(Eo *obj, void *_pd, va_list *list)
    if (!label) label = "";
    _label_format_set(wd->resize_obj, sd->format);
 
-   eo_do_super(obj, MY_CLASS, elm_obj_layout_text_set(item, label, &int_ret));
+   eo_do_super(obj, MY_CLASS, elm_obj_layout_text_set(part, label, &int_ret));
    if (int_ret)
      {
         sd->lastw = 0;
