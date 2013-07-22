@@ -1425,17 +1425,24 @@ _elm_fileselector_smart_text_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    const char *label = va_arg(*list, const char *);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    if (ret) *ret = EINA_FALSE;
+   Eina_Bool int_ret = EINA_FALSE;
+
+   if (!part) return;
 
    if (sd->ok_button && !strcmp(part, "ok"))
      {
         elm_object_text_set(sd->ok_button, label);
-        if (ret) *ret = EINA_TRUE;
+        int_ret = EINA_TRUE;
      }
    else if (sd->cancel_button && !strcmp(part, "cancel"))
      {
         elm_object_text_set(sd->cancel_button, label);
-        if (ret) *ret = EINA_TRUE;
+        int_ret = EINA_TRUE;
      }
+   else
+     eo_do_super(obj, MY_CLASS, elm_obj_layout_text_set(part, label, &int_ret));
+
+   if (ret) *ret = int_ret;
 }
 
 static void
