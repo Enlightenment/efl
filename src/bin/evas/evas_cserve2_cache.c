@@ -171,8 +171,7 @@ struct _File_Watch {
    Eina_List *entries;
 };
 
-static unsigned int _file_id = 0; // id unique number
-static unsigned int _image_id = 0; // id unique number
+static unsigned int _entry_id = 0;
 static Eina_Hash *file_ids = NULL; // maps path + key --> file_id
 static Eina_Hash *file_entries = NULL; // maps file_id --> entry
 
@@ -2099,9 +2098,9 @@ cserve2_cache_file_open(Client *client, unsigned int client_file_id,
         return 0;
      }
 
-   file_id = _file_id++;
+   file_id = ++_entry_id;
    while ((file_id == 0) || (eina_hash_find(file_entries, &file_id)))
-     file_id = _file_id++;
+     file_id = ++_entry_id;
 
    DBG("Creating new entry with file_id: %u for file \"%s:%s\"",
        file_id, path, key);
@@ -2243,9 +2242,9 @@ try_again:
                                          0, &unscaled);
              if (!original) return -1;
 
-             image_id = _image_id++;
+             image_id = ++_entry_id;
              while ((image_id == 0) || (eina_hash_find(image_entries, &image_id)))
-               image_id = _image_id++;
+               image_id = ++_entry_id;
              DBG("Creating new image_id: %d", image_id);
 
              original->base.id = image_id;
@@ -2348,9 +2347,9 @@ cserve2_cache_image_entry_create(Client *client, int rid,
         return 0;
      }
 
-   image_id = _image_id++;
+   image_id = ++_entry_id;
    while ((image_id == 0) || (eina_hash_find(image_entries, &image_id)))
-     image_id = _image_id++;
+     image_id = ++_entry_id;
 
    entry->base.id = image_id;
    eina_hash_add(image_entries, &image_id, entry);
