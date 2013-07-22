@@ -34,4 +34,4 @@ test: libeo2.so simplesignal.o ../src/lib/eo/Eo.h
 	g++ -O2 -std=c++0x $(INCLUDE) $(CONFIG) $(EINA_LIBS) -L. -leo2 simplesignal.o -o $@
 
 clean:
-	rm -f *~ *.o eo2-bench test
+	rm -f *~ *.o eo2-bench test libeo2.so
