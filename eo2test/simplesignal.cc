@@ -689,8 +689,8 @@ Eo2_Op_Description op_descs [] = {
        { NULL, NULL, 0, EO_OP_TYPE_INVALID, NULL}
 };
 
-static inline EO_FUNC_BODY(get, int, EO_FUNC_CALL(), -1, op_descs);
-static inline EO_FUNC_BODY(inc, void, EO_FUNC_CALL(), ,op_descs);
+static inline EO_FUNC_BODY(get, int, EO_FUNC_CALL(), -1);
+static inline EO_FUNC_BODY(inc, void, EO_FUNC_CALL(), );
 
 static void
 _class2_constructor(Eo_Class *klass)
@@ -702,7 +702,7 @@ _class2_constructor(Eo_Class *klass)
   /* }; */
 
   /* eo_class_funcs_set(klass, func_desc); */
-   eo2_class_funcs_set(klass, op_descs, OP_DESC_SIZE(op_descs));
+   eo2_class_funcs_set(klass);
 }
 
 static const Eo_Op_Description op2_desc[] = {

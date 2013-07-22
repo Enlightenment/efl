@@ -828,6 +828,7 @@ static const Eo_Class_Description class_desc = {
      event_desc,
      sizeof(Private_Data),
      _class_constructor,
+     NULL,
      NULL
 };
 

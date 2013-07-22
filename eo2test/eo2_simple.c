@@ -15,6 +15,7 @@ _inc(Eo *objid EINA_UNUSED, void *obj_data)
 
    data->x += 1;
 }
+EAPI EO_FUNC_BODY(inc2, void, EO_FUNC_CALL(), );
 
 static int
 _get(Eo *objid EINA_UNUSED, void *obj_data)
@@ -23,6 +24,7 @@ _get(Eo *objid EINA_UNUSED, void *obj_data)
 
    return data->x;
 }
+EAPI EO_FUNC_BODY(get2, int, EO_FUNC_CALL(), 0);
 
 static void
 _set(Eo *objid EINA_UNUSED, void *obj_data, int x)
@@ -30,6 +32,7 @@ _set(Eo *objid EINA_UNUSED, void *obj_data, int x)
    Private_Data *data = (Private_Data *) obj_data;
    data->x = x;
 }
+EAPI EO_FUNC_BODYV(set2, void, EO_FUNC_CALLV(x), , int x);
 
 static void
 _constructor(Eo *obj, void *obj_data, va_list *list EINA_UNUSED)
@@ -59,15 +62,10 @@ Eo2_Op_Description op_descs [] = {
        { NULL, NULL, 0, EO_OP_TYPE_INVALID, NULL}
 };
 
-/* could be placed under real function description when op_descs is no more needed */
-EAPI EO_FUNC_BODY(inc2, void, EO_FUNC_CALL(), , op_descs);
-EAPI EO_FUNC_BODY(get2, int, EO_FUNC_CALL(), 0, op_descs);
-EAPI EO_FUNC_BODYV(set2, void, EO_FUNC_CALLV(x), , op_descs, int x);
-
 static void
 _class_constructor(Eo_Class *klass)
 {
-   eo2_class_funcs_set(klass, op_descs, OP_DESC_SIZE(op_descs));
+   eo2_class_funcs_set(klass);
    // now op_descs is sorted by api_func, and class _dich is feed
 
 }
@@ -103,7 +101,8 @@ static const Eo_Class_Description class_desc = {
      NULL,
      sizeof(Private_Data),
      _class_constructor,
-     NULL
+     NULL,
+     op_descs
 };
 
 EO_DEFINE_CLASS(eo2_simple_class_get, &class_desc, EO_BASE_CLASS, NULL)
