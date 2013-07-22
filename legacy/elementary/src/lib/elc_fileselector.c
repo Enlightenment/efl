@@ -1417,6 +1417,28 @@ _elm_fileselector_smart_focus_direction_manager_is(Eo *obj EINA_UNUSED, void *_p
 }
 
 static void
+_elm_fileselector_smart_text_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Elm_Fileselector_Smart_Data *sd = _pd;
+
+   const char *part = va_arg(*list, const char *);
+   const char *label = va_arg(*list, const char *);
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   if (ret) *ret = EINA_FALSE;
+
+   if (sd->ok_button && !strcmp(part, "ok"))
+     {
+        elm_object_text_set(sd->ok_button, label);
+        if (ret) *ret = EINA_TRUE;
+     }
+   else if (sd->cancel_button && !strcmp(part, "cancel"))
+     {
+        elm_object_text_set(sd->cancel_button, label);
+        if (ret) *ret = EINA_TRUE;
+     }
+}
+
+static void
 _class_constructor(Eo_Class *klass)
 {
    unsigned int i;
@@ -1432,6 +1454,7 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_DIRECTION_MANAGER_IS), _elm_fileselector_smart_focus_direction_manager_is),
 
         EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_SIZING_EVAL), _elm_fileselector_smart_sizing_eval),
+        EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_TEXT_SET), _elm_fileselector_smart_text_set),
 
         EO_OP_FUNC(ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_IS_SAVE_SET), _is_save_set),
         EO_OP_FUNC(ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_IS_SAVE_GET), _is_save_get),

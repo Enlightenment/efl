@@ -1510,3 +1510,8 @@
         the imf is available, the keyboard mode should be decided by ime, but
         not entry. This prevents the asynchronous states between ime and
         conformant.
+
+2013-07-23  ChunEon Park (Hermet)
+
+        * File Selector : Support elm_object_part_text_set() for the ok, cancel
+        part to change the OK, Cancel button label.

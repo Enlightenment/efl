@@ -80,6 +80,7 @@ Additions:
    * added callback call "scroll", "scroll,anim,start", "scroll,anim,stop", "scroll,drag,start", "scroll,drag,stop" in toolar widget.
    * Add the configuration thumbscroll_flick_distance_tolerance.
    * Add elm_access_highlight_next_set, export elm_widget_focus_region_show
+   * File Selector : Support elm_object_part_text_set() for the ok, cancel part to change the OK, Cancel button label.
 
 Improvements:
 

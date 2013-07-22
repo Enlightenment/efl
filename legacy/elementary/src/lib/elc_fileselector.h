@@ -48,6 +48,10 @@
  *      buttons (@c event_info is a pointer to the selection's
  *      path, a @b stringshared string)
  *
+ * For text, elm_layout_text_set() will work here on:
+ * @li @c "ok" - OK button label if the ok button is set. @since 1.8 
+ * @li @c "cancel" - Cancel button label if the cancel button is set. @since 1.8
+ *
  * Here is an example on its usage:
  * @li @ref fileselector_example
  */
