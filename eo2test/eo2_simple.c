@@ -15,7 +15,7 @@ _inc(Eo *objid EINA_UNUSED, void *obj_data)
 
    data->x += 1;
 }
-EAPI EO_FUNC_BODY(inc2, void, EO_FUNC_CALL(), );
+EAPI EO_FUNC_BODY_VOID(inc2);
 
 static int
 _get(Eo *objid EINA_UNUSED, void *obj_data)
@@ -24,7 +24,7 @@ _get(Eo *objid EINA_UNUSED, void *obj_data)
 
    return data->x;
 }
-EAPI EO_FUNC_BODY(get2, int, EO_FUNC_CALL(), 0);
+EAPI EO_FUNC_BODY(get2, int, 0);
 
 static void
 _set(Eo *objid EINA_UNUSED, void *obj_data, int x)
@@ -32,7 +32,7 @@ _set(Eo *objid EINA_UNUSED, void *obj_data, int x)
    Private_Data *data = (Private_Data *) obj_data;
    data->x = x;
 }
-EAPI EO_FUNC_BODYV(set2, void, EO_FUNC_CALLV(x), , int x);
+EAPI EO_FUNC_BODY_VOIDV(set2, EO_FUNC_CALL(x), int x);
 
 static void
 _constructor(Eo *obj, void *obj_data, va_list *list EINA_UNUSED)
