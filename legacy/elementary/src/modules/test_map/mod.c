@@ -1,8 +1,9 @@
-#include "Elementary.h"
-#include <Eina.h>
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #endif
+
+#include "Elementary.h"
+#include <Eina.h>
 
 EAPI char *
 map_module_source_name_get(void)

@@ -1,4 +1,3 @@
-#include <Elementary.h>
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #endif
@@ -17,6 +16,8 @@
 #include <fcntl.h>
 #include <signal.h>
 #include <sys/wait.h>
+
+#include <Elementary.h>
 
 #ifdef HAVE_ENVIRON
 extern char **environ;

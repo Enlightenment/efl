@@ -1,5 +1,3 @@
-#include <Elementary.h>
-
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #endif
@@ -11,6 +9,8 @@
 #define EDJE_EDIT_IS_UNSTABLE_AND_I_KNOW_ABOUT_IT 1
 #include <Edje_Edit.h>
 #include <Eina.h>
+
+#include <Elementary.h>
 
 #include <ctype.h>
 #include <fcntl.h>

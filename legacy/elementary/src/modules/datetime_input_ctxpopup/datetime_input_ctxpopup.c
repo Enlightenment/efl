@@ -1,8 +1,9 @@
-#include <Elementary.h>
-#include "elm_priv.h"
 #ifdef HAVE_CONFIG_H
 #include "elementary_config.h"
 #endif
+
+#include <Elementary.h>
+#include "elm_priv.h"
 
 #define DATETIME_FIELD_COUNT    6
 #define FIELD_FORMAT_LEN        3

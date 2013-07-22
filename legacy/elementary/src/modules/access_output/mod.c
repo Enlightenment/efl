@@ -1,7 +1,8 @@
-#include <Elementary.h>
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #endif
+
+#include <Elementary.h>
 
 /* to enable this module
 export ELM_MODULES="access_output>access/api"
