@@ -624,8 +624,8 @@ typedef struct _Eo2_Op_Call_Data
 #define eo2_o _obj_, _objid_
 
 // to pass the internal function call to EO_FUNC_BODY (as Func parameter)
-#define EO_FUNC_CALL() func(objid, call.data)
-#define EO_FUNC_CALLV(...) func(objid, call.data, __VA_ARGS__)
+#define EO_FUNC_CALL() _func_(objid, call.data)
+#define EO_FUNC_CALLV(...) _func_(objid, call.data, __VA_ARGS__)
 
 // cache OP id, get real fct and object data then do the call
 #define _EO_FUNC_COMMON(Name, Ret, Func, DefRet)                        \
@@ -633,7 +633,7 @@ typedef struct _Eo2_Op_Call_Data
      if ( op == EO_NOOP ) op = eo2_get_op_id(obj, (void*)Name);         \
      Eo2_Op_Call_Data call;                                             \
      if (!eo2_call_resolve(obj, op, &call)) return DefRet;              \
-     __##Name##_func func = (__##Name##_func) call.func;                \
+     __##Name##_func _func_ = (__##Name##_func) call.func;                \
      return Func;                                                       \
 
 /* XXX: Essential, because we need to adjust objid for comp objects. */
