@@ -2,6 +2,10 @@
 
     * Evas: fix infinite loop if app use ecore evas image
 
+2013-07-23  Yury Usischev
+
+        * Fix a long-standing off-by-1 in the C MUL4_SYM "simd" multiplier.
+
 2013-07-22 José Roberto de Souza
 
     * Edje: Refactor signal callbacks flags

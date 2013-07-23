@@ -317,6 +317,7 @@ Fixes:
      - Fix jpeg loader cannot deal with exif information correctly.
      - Fix issue when parsing formats with quotes.
      - Fix infinite loop if app use ecore evas image
+     - Fix a long-standing off-by-1 in the C "simd" multiplier.
     * Ecore:
      - Don't leak fd on exec.
      - Fix fd handler increase issue when ecore_pipe_add/del is called repeatedly.
