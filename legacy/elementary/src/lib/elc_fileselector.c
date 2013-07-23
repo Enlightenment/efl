@@ -758,6 +758,14 @@ _on_text_clicked(void *data __UNUSED__,
 {
    ELM_FILESELECTOR_DATA_GET(data, sd);
 
+   /* FIXME: When anchor is clicked, current callback is also called.
+    * But when it is "anchor,clicked" entry should be unfocused, so we remove
+    * focus in achor_clicked.
+    *
+    * Check if entry is focused.
+    * It will be so if empty place (not anchor) was clicked. */
+   if (!elm_object_focus_get(obj)) return;
+
    elm_entry_entry_set(obj, sd->path);
    elm_entry_cursor_pos_set(obj, eina_stringshare_strlen(sd->path));
 }
@@ -778,6 +786,7 @@ _on_text_activated(void *data,
      evas_object_smart_callback_call(data, SIG_SELECTED, (void *)p);
 
    eina_stringshare_del(p);
+   elm_object_focus_set(obj, EINA_FALSE);
 }
 
 static void
@@ -803,6 +812,9 @@ _anchor_clicked(void *data,
    _populate(fs, p, NULL);
    evas_object_smart_callback_call(data, SIG_SELECTED, (void *)p);
    eina_stringshare_del(p);
+   /* After anchor was clicked, entry will be focused, and will be editable.
+    * It's wrong. So remove focus. */
+   elm_object_focus_set(obj, EINA_FALSE);
 }
 
 static void
