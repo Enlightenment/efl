@@ -69,39 +69,15 @@ _class_constructor(Eo_Class *klass)
 
 }
 
-/*********************************************************************************/
-/* can be removed when Eo2_Op_Description is used instead of Eo_Op_Description   */
-/* Eo_Op_Func_Description could also be removed                                  */
-EAPI Eo_Op TEST_BASE_ID = 0;
-
-enum {
-     TEST_SUB_ID_inst_func_set,
-     TEST_SUB_ID_inst_func_get,
-     TEST_SUB_ID_inst_func_inc,
-     TEST_SUB_ID_LAST
-};
-
-#define TEST_ID(func_name) (TEST_BASE_ID + (TEST_SUB_ID_ ## func_name))
-
-/* this should be replaced by Eo2_Op_Description */
-static const Eo_Op_Description op_desc[] = {
-     EO_OP_DESCRIPTION(TEST_SUB_ID_inst_func_set, "Get"),
-     EO_OP_DESCRIPTION(TEST_SUB_ID_inst_func_get, "Set"),
-     EO_OP_DESCRIPTION(TEST_SUB_ID_inst_func_inc, "Inc"),
-     EO_OP_DESCRIPTION_SENTINEL
-};
-/*********************************************************************************/
-
 static const Eo_Class_Description class_desc = {
-     EO_VERSION,
+     2,
      "Test",
      EO_CLASS_TYPE_REGULAR,
-     EO_CLASS_DESCRIPTION_OPS(&TEST_BASE_ID, op_desc, TEST_SUB_ID_LAST),
+     EO2_CLASS_DESCRIPTION_OPS(op_descs, OP_DESC_SIZE(op_descs)),
      NULL,
      sizeof(Private_Data),
      _class_constructor,
-     NULL,
-     op_descs
+     NULL
 };
 
 EO_DEFINE_CLASS(eo2_simple_class_get, &class_desc, EO_BASE_CLASS, NULL)
