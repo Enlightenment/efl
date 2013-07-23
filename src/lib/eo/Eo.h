@@ -35,6 +35,33 @@ extern "C" {
 #endif
 
 /**
+ * @typedef Eo
+ * The basic Object type.
+ */
+typedef struct _Eo_Opaque Eo;
+
+/**
+ * @typedef Eo_Class
+ * The basic Object class type.
+ * @ingroup Eo_Class
+ */
+typedef struct _Eo_Class_Opaque Eo_Class;
+
+/**
+ * @typedef Eo_Callback_Priority
+ *
+ * Callback priority value. Range is -32k - 32k. The lower the number, the
+ * higher the priority.
+ *
+ * @see EO_CALLBACK_PRIORITY_AFTER
+ * @see EO_CALLBACK_PRIORITY_BEFORE
+ * @see EO_CALLBACK_PRIORITY_DEFAULT
+ */
+typedef short Eo_Callback_Priority;
+
+#ifdef EFL_BETA_API_SUPPORT
+
+/**
  * @var _eo_class_creation_lock
  * This variable is used for locking purposes in the class_get function
  * defined in #EO_DEFINE_CLASS.
@@ -215,23 +242,10 @@ EAPI void eo_dbg_info_free(Eo_Dbg_Info *info);
     })
 
 /**
- * @typedef Eo
- * The basic Object type.
- */
-typedef struct _Eo_Opaque Eo;
-
-/**
  * @typedef Eo_Op
  * The Eo operation type id.
  */
 typedef unsigned int Eo_Op;
-
-/**
- * @typedef Eo_Class
- * The basic Object class type.
- * @ingroup Eo_Class
- */
-typedef struct _Eo_Class_Opaque Eo_Class;
 
 /**
  * @def EO_NOOP
@@ -1549,6 +1563,8 @@ EAPI extern const Eo_Event_Description _EO_EV_DEL;
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif
 
 #endif
