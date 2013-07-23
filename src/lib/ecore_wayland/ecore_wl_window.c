@@ -564,6 +564,11 @@ ecore_wl_window_pointer_set(Ecore_Wl_Window *win, struct wl_surface *surface, in
 
    if (!win) return;
 
+   win->pointer.surface = surface;
+   win->pointer.hot_x = hot_x;
+   win->pointer.hot_y = hot_y;
+   win->pointer.set = EINA_TRUE;
+
    if ((input = win->pointer_device))
      ecore_wl_input_pointer_set(input, surface, hot_x, hot_y);
 }
@@ -577,6 +582,8 @@ ecore_wl_window_cursor_from_name_set(Ecore_Wl_Window *win, const char *cursor_na
 
    if (!win) return;
 
+   win->pointer.set = EINA_FALSE;
+
    if ((input = win->pointer_device))
      ecore_wl_input_cursor_from_name_set(input, cursor_name);
 }
@@ -589,6 +596,8 @@ ecore_wl_window_cursor_default_restore(Ecore_Wl_Window *win)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!win) return;
+
+   win->pointer.set = EINA_FALSE;
 
    if ((input = win->pointer_device))
      ecore_wl_input_cursor_default_restore(input);
