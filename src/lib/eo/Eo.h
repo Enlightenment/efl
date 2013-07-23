@@ -1266,18 +1266,6 @@ enum {
 #define EO_CALLBACK_PRIORITY_AFTER 100
 
 /**
- * @typedef Eo_Callback_Priority
- *
- * Callback priority value. Range is -32k - 32k. The lower the number, the
- * higher the priority.
- *
- * @see EO_CALLBACK_PRIORITY_AFTER
- * @see EO_CALLBACK_PRIORITY_BEFORE
- * @see EO_CALLBACK_PRIORITY_DEFAULT
- */
-typedef short Eo_Callback_Priority;
-
-/**
  * @def EO_CALLBACK_STOP
  * Stop calling callbacks for the even of which the callback was called for.
  * @see EO_CALLBACK_CONTINUE
