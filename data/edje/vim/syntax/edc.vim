@@ -20,6 +20,7 @@ syn keyword 	edcBlock 	gradient spectra spectrum contained
 syn keyword 	edcBlock 	color_classes color_class rel1 rel2 contained
 syn keyword 	edcBlock 	items item file params externals contained
 syn keyword 	edcBlock 	map rotation perspective script lua_script contained
+syn keyword edcBlock    set
 
 syn keyword	edcLabel	item name alias min max type effect contained
 syn keyword	edcLabel	mouse_events repeat_events clip_to contained
@@ -51,6 +52,8 @@ syn keyword	edcConstant		SPACER
 syn keyword	edcConstant 	NONE PLAIN OUTLINE SOFT_OUTLINE SHADOW PROXY
 syn keyword	edcConstant 	SOFT_SHADOW OUTLINE_SHADOW OUTLINE_SOFT_SHADOW
 syn keyword	edcConstant	GLOW FAR_SHADOW FAR_SOFT_SHADOW
+syn keyword edcConstant BOTTOM_RIGHT BOTTOM BOTTOM_LEFT LEFT
+syn keyword edcConstant TOP_LEFT TOP TOP_RIGHT RIGHT
 syn keyword	edcConstant 	STATE_SET ACTION_STOP SIGNAL_EMIT FOCUS_SET
 syn keyword	edcConstant	DRAG_VAL_SET DRAG_VAL_STEP DRAG_VAL_PAGE
 syn keyword	edcConstant	LINEAR SINUSOIDAL ACCELERATE DECELERATE

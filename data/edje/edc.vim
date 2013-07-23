@@ -24,7 +24,7 @@ syn keyword	cStructure	images data fonts collections group externals
 syn keyword	cStructure	part parts dragable description rel1 rel2
 syn keyword	cStatement	text image font fill origin size tag
 syn keyword	cStructure	programs program script script_only lua_script lua_script_only styles style base
-syn keyword	cStructure	spectra spectrum box
+syn keyword	cStructure	spectra spectrum box set
 syn keyword	cStructure	physics movement_freedom faces face world
 syn match	cType		"+ + +;" contained
 
@@ -60,6 +60,8 @@ syn keyword	cConstant	SOLID AUTOGRAB NOGRAB
 syn keyword	cConstant	NONE PLAIN OUTLINE SOFT_OUTLINE SHADOW
 syn keyword	cConstant	SOFT_SHADOW OUTLINE_SHADOW OUTLINE_SOFT_SHADOW
 syn keyword	cConstant	FAR_SOFT_SHADOW FAR_SHADOW GLOW
+syn keyword cConstant   BOTTOM_RIGHT BOTTOM BOTTOM_LEFT LEFT
+syn keyword cConstant   TOP_LEFT TOP TOP_RIGHT RIGHT
 syn keyword	cConstant	STATE_SET ACTION_STOP SIGNAL_EMIT
 syn keyword	cConstant	SCRIPT LUA_SCRIPT
 syn keyword	cConstant	DRAG_VAL_SET DRAG_VAL_STEP DRAG_VAL_PAGE
