@@ -1,6 +1,6 @@
 2013-07-22 Jiyoun Park
 
-    * Evas: fix infinite loop if app use ecore evas image
+        * Evas: fix infinite loop if app use ecore evas image
 
 2013-07-23  Yury Usischev
 
@@ -8,7 +8,7 @@
 
 2013-07-22 José Roberto de Souza
 
-    * Edje: Refactor signal callbacks flags
+        * Edje: Refactor signal callbacks flags
 
 2013-07-19  Cedric Bail
 
@@ -16,8 +16,8 @@
 
 2013-07-18 José Roberto de Souza
 
-    * Edje: Correctly set match flag in _edje_signal_callback_move_last()
-    * Fix size calculation of flags of signal callbacks
+        * Edje: Correctly set match flag in _edje_signal_callback_move_last()
+        * Fix size calculation of flags of signal callbacks
 
 2013-07-18  Mike Blumenkrantz
 
@@ -36,11 +36,12 @@
 2013-07-17  Mike Blumenkrantz
 
         * Ecore_X: add error messages for xlib, ECORE_X_ATOM_XDND_DIRECTSAVE0,
-                   fix ecore_x_e_comp_pixmap_set to delete pixmap atom correctly
+          fix ecore_x_e_comp_pixmap_set to delete pixmap atom correctly
 
 2013-07-15  Mike Blumenkrantz
 
-        * Ecore_X: fix BadMatch errors in ecore_x_image_get when requested size was larger than XImage size
+        * Ecore_X: fix BadMatch errors in ecore_x_image_get when requested
+          size was larger than XImage size
 
 2013-07-15  Cedric Bail
 
@@ -48,15 +49,16 @@
 
 2013-07-11  Chris Michael
 
-        * Ecore_Evas: Added functions to retieve the pixmap depth, visual, and colormap
+        * Ecore_Evas: Added functions to retieve the pixmap depth, visual,
+          and colormap
 
 2013-07-11  Chris Michael
 
         * Ecore_Evas: Updated doxygen comments for pixmap functions
-        * Ecore_Evas: Check for valid interface pixmap_get function
-before calling it.
-        * Ecore_Evas: Removed need for prev_front pixmap field in
-structure and just use a temporary variable.
+        * Ecore_Evas: Check for valid interface pixmap_get function before
+          calling it.
+        * Ecore_Evas: Removed need for prev_front pixmap field in structure
+          and just use a temporary variable.
 
 2013-07-10  Cedric Bail
 
@@ -68,8 +70,8 @@ structure and just use a temporary variable.
 
 2013-07-08  Chris Michael
 
-        * Ecore_Evas: Added functions got software_x11 and gl_x11
-engines to create new ecore_evas which uses just a pixmap (no window).
+        * Ecore_Evas: Added functions got software_x11 and gl_x11 engines to
+          create new ecore_evas which uses just a pixmap (no window).
            - add ecore_evas_software_x11_pixmap_new
            - add ecore_evas_gl_x11_pixmap_new
            - add ecore_evas_software_x11_pixmap_get
@@ -85,7 +87,8 @@ engines to create new ecore_evas which uses just a pixmap (no window).
 
 2013-07-04  Cedric Bail
 
-	* Eina: add eina_tiler_area_size_set and eina_tiler_strict_set to make Eina_Tiler in par with Evas_Tilebuf.
+	* Eina: add eina_tiler_area_size_set and eina_tiler_strict_set to
+          make Eina_Tiler in par with Evas_Tilebuf.
 
 2013-07-03  Shinwoo Kim
 
@@ -93,7 +96,8 @@ engines to create new ecore_evas which uses just a pixmap (no window).
 
 2013-07-02  ChunEon Park (Hermet)
 
-	* Evas: optimize proxy rendering. Rendering performance is increased up to 2x in some cases.
+	* Evas: optimize proxy rendering. Rendering performance is increased
+          up to 2x in some cases.
 
 2013-07-02  Cedric Bail
 
@@ -123,7 +127,8 @@ engines to create new ecore_evas which uses just a pixmap (no window).
 
 2013-06-22  Thiep Ha
 
-        * Edje: Move cursor to correct position when selection handlers are pressed.
+        * Edje: Move cursor to correct position when selection handlers are
+          pressed.
 
 2013-06-20  Christophe Sadoine
 
