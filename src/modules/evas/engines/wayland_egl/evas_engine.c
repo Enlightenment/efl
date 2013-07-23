@@ -41,6 +41,7 @@ struct _Render_Engine
    Eina_Bool lost_back : 1;
    Eina_Bool end : 1;
    Eina_Bool evgl_initted : 1;
+   int       frame_cnt;
 
    struct 
      {
@@ -102,6 +103,9 @@ static int gl_wins = 0;
 static Eina_Bool extn_have_buffer_age = EINA_TRUE;
 static int safe_native = -1;
 static int partial_rect_union_mode = -1;
+
+static int swap_buffer_debug_mode = -1;
+static int swap_buffer_debug = 0;
 
 /* function tables - filled in later (func and parent func) */
 static Evas_Func func, pfunc;
@@ -1188,6 +1192,7 @@ static void
 eng_output_flush(void *data, Evas_Render_Mode render_mode)
 {
    Render_Engine *re;
+   static char *dname = NULL;
 
    if (!(re = (Render_Engine *)data)) return;
 
@@ -1200,6 +1205,41 @@ eng_output_flush(void *data, Evas_Render_Mode render_mode)
    eng_window_use(re->win);
 
    evas_gl_common_context_done(re->win->gl_context);
+
+   // Save contents of the framebuffer to a file
+   if (swap_buffer_debug_mode == -1)
+     {
+        if ((dname = getenv("EVAS_GL_SWAP_BUFFER_DEBUG_DIR")))
+          {
+             int stat;
+             // Create a directory with 0775 permission
+             stat = mkdir(dname, S_IRWXU|S_IRGRP|S_IXGRP|S_IROTH|S_IXOTH);
+             if ((!stat) || errno == EEXIST) swap_buffer_debug_mode = 1;
+          }
+        else
+           swap_buffer_debug_mode = 0;
+     }
+
+   if (swap_buffer_debug_mode == 1)
+     {
+        // Set this env var to dump files every frame
+        // Or set the global var in gdb to 1|0 to turn it on and off
+        if (getenv("EVAS_GL_SWAP_BUFFER_DEBUG_ALWAYS"))
+           swap_buffer_debug = 1;
+
+        if (swap_buffer_debug)
+          {
+             char fname[100];
+             int ret = 0;
+             sprintf(fname, "%p", (void*)re->win);
+
+             ret = evas_gl_common_buffer_dump(re->win->gl_context,
+                                              (const char*)dname,
+                                              (const char*)fname,
+                                              re->frame_cnt);
+             if (!ret) swap_buffer_debug_mode = 0;
+          }
+     }
 
    if (!re->vsync)
      {
@@ -1278,6 +1318,9 @@ eng_output_flush(void *data, Evas_Render_Mode render_mode)
         evas_common_tilebuf_free_render_rects(re->rects);
         re->rects = NULL;
      }
+
+   re->frame_cnt++;
+   
 end:
    evas_gl_preload_render_unlock(eng_gl_preload_make_current, re);
 }
