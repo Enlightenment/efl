@@ -129,11 +129,15 @@ _update_theme_button(Evas_Object *obj, Evas_Object *bt, const char *name)
 {
    Evas_Object *ic;
    char buf[256];
-   
+
+   if (!bt) return;
    ic = evas_object_data_get(bt, "icon");
-   snprintf(buf, sizeof(buf), "media_player/%s/%s", name,
-            elm_widget_style_get(obj));
-   elm_icon_standard_set(ic, buf);
+   if (ic)
+     {
+        snprintf(buf, sizeof(buf), "media_player/%s/%s", name,
+                 elm_widget_style_get(obj));
+        elm_icon_standard_set(ic, buf);
+     }
    snprintf(buf, sizeof(buf), "media_player/%s/%s", name,
             elm_widget_style_get(obj));
    elm_object_style_set(bt, buf);
@@ -147,7 +151,8 @@ static void
 _update_theme_slider(Evas_Object *obj, Evas_Object *sl, const char *name)
 {
    char buf[256];
-   
+
+   if (!sl) return;
    snprintf(buf, sizeof(buf), "media_player/%s/%s", name,
             elm_widget_style_get(obj));
    elm_object_style_set(sl, buf);
@@ -411,6 +416,7 @@ _player_button_add(Evas_Object *obj,
    elm_icon_standard_set(ic, buf);
 
    bt = elm_button_add(obj);
+   if (ic) evas_object_data_set(bt, "icon", ic);
    elm_widget_mirrored_automatic_set(bt, EINA_FALSE);
    elm_object_content_set(bt, ic);
    evas_object_show(ic);
