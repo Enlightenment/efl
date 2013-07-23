@@ -65,6 +65,7 @@ syn keyword	cConstant	SCRIPT LUA_SCRIPT
 syn keyword	cConstant	DRAG_VAL_SET DRAG_VAL_STEP DRAG_VAL_PAGE
 syn keyword	cConstant	LINEAR SINUSOIDAL ACCELERATE DECELERATE SPRING
 syn keyword	cConstant	VERTICAL HORIZONTAL ON_HOLD BOTH EDITABLE EXPLICIT
+syn keyword	cConstant	CURRENT
 syn keyword	cConstant	FOCUS_SET "default" NEITHER
 syn keyword	cConstant	DYNAMIC STATIC PASSWORD DEFAULT
 
