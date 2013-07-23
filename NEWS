@@ -316,6 +316,7 @@ Fixes:
      - Fix evas_common_convert_yuv_42* functions to actually return the converted data.
      - Fix jpeg loader cannot deal with exif information correctly.
      - Fix issue when parsing formats with quotes.
+     - Fix infinite loop if app use ecore evas image
     * Ecore:
      - Don't leak fd on exec.
      - Fix fd handler increase issue when ecore_pipe_add/del is called repeatedly.

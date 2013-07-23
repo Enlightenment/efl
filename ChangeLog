@@ -1,3 +1,7 @@
+2013-07-22 Jiyoun Park
+
+    * Evas: fix infinite loop if app use ecore evas image
+
 2013-07-22 José Roberto de Souza
 
     * Edje: Refactor signal callbacks flags

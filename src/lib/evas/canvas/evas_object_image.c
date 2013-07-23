@@ -1612,9 +1612,7 @@ _image_data_set(Eo *eo_obj, void *_pd, va_list *list)
         EVAS_OBJECT_WRITE_IMAGE_FREE_FILE_AND_KEY(o);
         o->pixels_checked_out = 0;
      }
-   o->changed = EINA_TRUE;
    if (resize_call) evas_object_inform_call_image_resize(eo_obj);
-   evas_object_change(eo_obj, obj);
 }
 
 EAPI void *
