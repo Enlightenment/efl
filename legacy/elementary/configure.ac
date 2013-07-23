@@ -241,6 +241,7 @@ PKG_CHECK_MODULES([ELEMENTARY],
 )
 
 EFL_ENABLE_EO_API_SUPPORT
+EFL_ENABLE_BETA_API_SUPPORT
 
 requirement_elm="edje >= 1.7.99 ecore-file >= 1.7.99 ecore-evas >= 1.7.99 ecore >= 1.7.99 evas >= 1.7.99 eet >= 1.7.99 eina >= 1.7.99 ${requirement_elm}"
 
