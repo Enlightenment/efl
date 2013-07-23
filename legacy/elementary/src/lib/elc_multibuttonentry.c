@@ -904,7 +904,7 @@ _mouse_clicked_signal_cb(void *data,
 
    _view_update(sd);
 
-   if (elm_widget_focus_get(data) && sd->editable)
+   if (elm_widget_focus_get(obj) && sd->editable)
      {
         elm_entry_input_panel_show(sd->entry);
         elm_object_focus_set(sd->entry, EINA_TRUE);
@@ -1087,7 +1087,7 @@ _callbacks_register(Evas_Object *obj)
 
    evas_object_event_callback_add
      (wd->resize_obj, EVAS_CALLBACK_KEY_UP,
-     _layout_key_up_cb, sd);
+     _layout_key_up_cb, obj);
 
    evas_object_event_callback_add
      (sd->box, EVAS_CALLBACK_RESIZE, _box_resize_cb, obj);
