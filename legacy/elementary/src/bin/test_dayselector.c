@@ -59,41 +59,49 @@ test_dayselector(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event
 
    // Default
    dayselector = elm_dayselector_add(bx);
-   evas_object_size_hint_weight_set(dayselector, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_weight_set(dayselector, EVAS_HINT_EXPAND,
+                                    EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(dayselector, EVAS_HINT_FILL, 0.5);
    elm_box_pack_end(bx, dayselector);
    evas_object_show(dayselector);
-   evas_object_smart_callback_add(dayselector, "dayselector,changed", _changed_cb, NULL);
+   evas_object_smart_callback_add(dayselector, "dayselector,changed",
+                                  _changed_cb, NULL);
 
    //Sunday first
    dayselector = elm_dayselector_add(bx);
-   evas_object_size_hint_weight_set(dayselector, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_weight_set(dayselector, EVAS_HINT_EXPAND,
+                                    EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(dayselector, EVAS_HINT_FILL, 0.5);
    elm_box_pack_end(bx, dayselector);
    evas_object_show(dayselector);
-   evas_object_smart_callback_add(dayselector, "dayselector,changed", _changed_cb, NULL);
+   evas_object_smart_callback_add(dayselector, "dayselector,changed",
+                                  _changed_cb, NULL);
    elm_dayselector_weekdays_names_set(dayselector, weekdays);
    elm_dayselector_week_start_set(dayselector, ELM_DAYSELECTOR_SUN);
 
    //Special Style
    dayselector = elm_dayselector_add(bx);
-   evas_object_size_hint_weight_set(dayselector, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_weight_set(dayselector, EVAS_HINT_EXPAND,
+                                    EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(dayselector, EVAS_HINT_FILL, 0.5);
    elm_dayselector_week_start_set(dayselector, ELM_DAYSELECTOR_MON);
    elm_box_pack_end(bx, dayselector);
    evas_object_show(dayselector);
-   evas_object_smart_callback_add(dayselector, "dayselector,changed", _changed_cb, NULL);
+   evas_object_smart_callback_add(dayselector, "dayselector,changed",
+                                  _changed_cb, NULL);
    monday = elm_object_part_content_get(dayselector, "day0");
    elm_object_signal_emit(monday, "elm,type,weekend,style1", "");
 
    //Setting weekday name
    dayselector = elm_dayselector_add(bx);
-   evas_object_size_hint_weight_set(dayselector, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_weight_set(dayselector, EVAS_HINT_EXPAND,
+                                    EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(dayselector, EVAS_HINT_FILL, 0.5);
    elm_dayselector_weekdays_names_set(dayselector, weekdays2);
    elm_box_pack_end(bx, dayselector);
    evas_object_show(dayselector);
-   evas_object_smart_callback_add(dayselector, "dayselector,changed", _changed_cb, NULL);
+   evas_object_smart_callback_add(dayselector, "dayselector,changed",
+                                  _changed_cb, NULL);
 
    weekdays_list = elm_dayselector_weekdays_names_get(dayselector);
 
@@ -106,7 +114,8 @@ test_dayselector(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event
 
    //Disabled
    dayselector = elm_dayselector_add(bx);
-   evas_object_size_hint_weight_set(dayselector, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_weight_set(dayselector, EVAS_HINT_EXPAND,
+                                    EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(dayselector, EVAS_HINT_FILL, 0.5);
    elm_box_pack_end(bx, dayselector);
    evas_object_show(dayselector);
