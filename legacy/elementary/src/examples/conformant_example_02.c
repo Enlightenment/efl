@@ -16,6 +16,8 @@ elm_main(int argc, char **argv)
 {
    Evas_Object *win, *conform, *btn, *bx, *en;
 
+   elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
+
    win = elm_win_util_standard_add("conformant", "Conformant Example");
    elm_win_autodel_set(win, EINA_TRUE);
 
