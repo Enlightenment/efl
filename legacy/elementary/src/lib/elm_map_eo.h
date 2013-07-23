@@ -599,7 +599,6 @@ enum
  * @ingroup Map
  */
 #define elm_obj_map_overlay_scale_add(x, y, ret) ELM_OBJ_MAP_ID(ELM_OBJ_MAP_SUB_ID_OVERLAY_SCALE_ADD), EO_TYPECHECK(Evas_Coord, x), EO_TYPECHECK(Evas_Coord, y), EO_TYPECHECK(Elm_Map_Overlay **, ret)
-#ifdef ELM_EMAP
 
 /**
  * @def elm_obj_map_track_add
