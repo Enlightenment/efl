@@ -181,7 +181,7 @@ _elm_player_smart_theme(Eo *obj, void *_pd, va_list *list)
    _update_theme_button(obj, sd->rewind, "rewind");
    _update_theme_button(obj, sd->next, "next");
    _update_theme_button(obj, sd->stop, "stop");
-   _update_theme_slider(obj, sd->slider,  "slider");
+   _update_theme_slider(obj, sd->slider,  "position");
    elm_layout_sizing_eval(obj);
 
    if (ret) *ret = EINA_TRUE;
@@ -408,7 +408,7 @@ _player_button_add(Evas_Object *obj,
 {
    Evas_Object *ic;
    Evas_Object *bt;
-   char buf[1024];
+   char buf[256];
    
    ic = elm_icon_add(obj);
    snprintf(buf, sizeof(buf), "media_player/%s/%s", name,
@@ -550,6 +550,7 @@ end:
 static void
 _elm_player_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
+   char buf[256];
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 
    Elm_Player_Smart_Data *priv = _pd;
@@ -566,7 +567,11 @@ _elm_player_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    priv->rewind = _player_button_add(obj, "rewind", _rewind);
    priv->stop = _player_button_add(obj, "stop", _stop);
 
+
    priv->slider = elm_slider_add(obj);
+   snprintf(buf, sizeof(buf), "media_player/position/%s",
+            elm_widget_style_get(obj));
+   elm_object_style_set(priv->slider, buf);
    elm_slider_indicator_show_set(priv->slider, EINA_TRUE);
    elm_slider_indicator_format_function_set
      (priv->slider, _double_to_time, _str_free);
@@ -579,7 +584,7 @@ _elm_player_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    evas_object_size_hint_weight_set
      (priv->slider, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 
-   elm_layout_content_set(obj, "elm.swallow.media_player.slider",
+   elm_layout_content_set(obj, "elm.swallow.media_player.position",
                           priv->slider);
    evas_object_smart_callback_add
      (priv->slider, "changed", _update_position, obj);
