@@ -182,8 +182,9 @@ ecore_wl_input_pointer_set(Ecore_Wl_Input *input, struct wl_surface *surface, in
    if (!input) return;
 
    _pointer_update_stop(input);
-   wl_pointer_set_cursor(input->pointer, input->pointer_enter_serial,
-                         surface, hot_x, hot_y);
+   if (input->pointer)
+     wl_pointer_set_cursor(input->pointer, input->pointer_enter_serial,
+                           surface, hot_x, hot_y);
 }
 
 static Eina_Bool
@@ -801,6 +802,18 @@ _ecore_wl_input_cb_pointer_enter(void *data, struct wl_pointer *pointer EINA_UNU
         win->pointer_device = input;
         input->pointer_focus = win;
 
+        if (win->pointer.set)
+          {
+             ecore_wl_input_pointer_set(input, win->pointer.surface, 
+                                        win->pointer.hot_x, win->pointer.hot_y);
+          }
+        /* NB: Commented out for now. Not needed in most circumstances, 
+         * but left here for any corner-cases */
+        /* else */
+        /*   { */
+        /*      _ecore_wl_input_cursor_update(input); */
+        /*   } */
+
         _ecore_wl_input_mouse_in_send(input, win, input->timestamp);
      }
 
@@ -848,6 +861,10 @@ _ecore_wl_input_cb_pointer_leave(void *data, struct wl_pointer *pointer EINA_UNU
    if (!(input = data)) return;
 
    input->display->serial = serial;
+
+   /* NB: Commented out for now. Not needed in most circumstances, but left 
+    * here for any corner-cases */
+   /* _ecore_wl_input_cursor_update(input); */
 
    if (!surface) return;
    if (!(win = ecore_wl_window_surface_find(surface))) return;
