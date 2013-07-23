@@ -4,7 +4,7 @@ INCLUDE  = -I. -I../ -I../src/lib/eo/
 CONFIG   = -DHAVE_CONFIG_H=1
 EINA_CFLAGS = `pkg-config --cflags eina`
 EINA_LIBS   = `pkg-config --libs eina`
-SO_OBJS  = eo_ptr_indirection.o eo.o eo_base_class.o
+SO_OBJS  = eo_ptr_indirection.o eo.o eo_base_class.o eo2_base_class.o
 BENCH_OBJS  = eo2_simple.o eo_simple.o eo2-bench.o
 
 all: eo2-bench test
@@ -16,6 +16,9 @@ eo_ptr_indirection.o: ../src/lib/eo/eo_ptr_indirection.c ../src/lib/eo/Eo.h
 	$(CC) $(CFLAGS) -fPIC -c $(INCLUDE) $(CONFIG) $(EINA_CFLAGS) $< -o $@
 
 eo_base_class.o: ../src/lib/eo/eo_base_class.c ../src/lib/eo/Eo.h
+	$(CC) $(CFLAGS) -fPIC -c $(INCLUDE) $(CONFIG) $(EINA_CFLAGS) $< -o $@
+
+eo2_base_class.o: ../src/lib/eo/eo2_base_class.c ../src/lib/eo/Eo.h
 	$(CC) $(CFLAGS) -fPIC -c $(INCLUDE) $(CONFIG) $(EINA_CFLAGS) $< -o $@
 
 libeo2.so: $(SO_OBJS)
