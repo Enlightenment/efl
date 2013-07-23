@@ -322,7 +322,9 @@ void cserve2_shared_index_shutdown(void);
 
 typedef struct _Shared_Array Shared_Array;
 typedef struct _Shared_Mempool Shared_Mempool;
-typedef Eina_Bool (* Shared_Array_Repack_Skip_Cb) (Shared_Array *, const void *);
+typedef Eina_Bool (* Shared_Array_Repack_Skip_Cb) (Shared_Array *sa,
+                                                   const void *elem,
+                                                   void *user_data);
 
 // Shared arrays (arrays of fixed size object)
 Shared_Array *cserve2_shared_array_new(int tag, int elemsize, int initcount);
@@ -337,7 +339,7 @@ int cserve2_shared_array_item_new(Shared_Array *sa);
 void *cserve2_shared_array_item_data_get(Shared_Array *sa, int elemid);
 Shared_Array *cserve2_shared_array_repack(Shared_Array *sa,
                                           Shared_Array_Repack_Skip_Cb skip,
-                                          Eina_Compare_Cb cmp);
+                                          Eina_Compare_Cb cmp, void *user_data);
 int cserve2_shared_array_item_find(Shared_Array *sa, void *data,
                                    Eina_Compare_Cb cmp);
 void *cserve2_shared_array_item_data_find(Shared_Array *sa, void *data,

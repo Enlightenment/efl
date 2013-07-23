@@ -406,7 +406,8 @@ cserve2_shared_array_foreach(Shared_Array *sa, Eina_Each_Cb cb, void *data)
 Shared_Array *
 cserve2_shared_array_repack(Shared_Array *sa,
                             Shared_Array_Repack_Skip_Cb skip,
-                            Eina_Compare_Cb cmp)
+                            Eina_Compare_Cb cmp,
+                            void *user_data)
 {
    Eina_List *l = NULL;
    Shared_Array *sa2;
@@ -422,7 +423,7 @@ cserve2_shared_array_repack(Shared_Array *sa,
    for (k = 0; k < sa->header->emptyidx; k++)
      {
         const char *data = srcdata + k * elemsize;
-        if (skip(sa, data)) continue;
+        if (skip(sa, data, user_data)) continue;
         l = eina_list_sorted_insert(l, cmp, data);
         newcount++;
      }
@@ -443,6 +444,7 @@ cserve2_shared_array_repack(Shared_Array *sa,
         const char *data = eina_list_data_get(l);
         l = eina_list_remove_list(l, l);
         memcpy(dstdata, data, elemsize);
+        dstdata += elemsize;
      }
 
    // Finalize & return

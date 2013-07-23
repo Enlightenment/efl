@@ -175,6 +175,8 @@ struct _File_Watch {
 };
 
 static unsigned int _entry_id = 0;
+static unsigned int _freed_entry_count = 0;
+
 static Shared_Array *_file_data_array = NULL;
 
 static Eina_Hash *file_ids = NULL; // maps path + key --> file_id
@@ -242,7 +244,7 @@ _entry_load_reused(Entry *e)
 
 
 static int
-_shm_object_id_find_cb(const void *data1, const void *data2)
+_shm_object_id_cmp_cb(const void *data1, const void *data2)
 {
    const Shm_Object *obj;
    unsigned int key;
@@ -266,12 +268,14 @@ _file_data_find(unsigned int file_id)
    File_Data *fd;
 
    fd = cserve2_shared_array_item_data_find(_file_data_array, &file_id,
-                                            _shm_object_id_find_cb);
+                                            _shm_object_id_cmp_cb);
    if (fd && !fd->refcount)
      {
         ERR("Can not access object %u with refcount 0", file_id);
         return NULL;
      }
+   else if (!fd)
+     ERR("Could not find file %u", file_id);
    return fd;
 }
 
@@ -285,6 +289,45 @@ _file_entry_find(unsigned int entry_id)
      return NULL;
 
    return (File_Entry *) e;
+}
+
+static Eina_Bool
+_repack_skip_cb(Shared_Array *sa EINA_UNUSED, const void *elem,
+                void *user_data EINA_UNUSED)
+{
+   const File_Data *fd = elem;
+   return (!fd->refcount);
+}
+
+static void
+_repack()
+{
+   Shared_Array *sa;
+   int count;
+
+   count = cserve2_shared_array_size_get(_file_data_array);
+   if (count <= 0) return;
+
+   // Repack when we have 10% fragmentation over the whole shm buffer
+   if (_freed_entry_count > 100 ||
+       ((_freed_entry_count * 100) / count >= 10))
+     {
+        DBG("Repacking file data array: %s",
+            cserve2_shared_array_name_get(_file_data_array));
+
+        sa = cserve2_shared_array_repack(_file_data_array,
+                                         _repack_skip_cb,
+                                         _shm_object_id_cmp_cb, NULL);
+        if (!sa)
+          {
+             ERR("Failed to repack array. Keeping previous references!");
+             return;
+          }
+
+        cserve2_shared_array_del(_file_data_array);
+        _freed_entry_count = 0;
+        _file_data_array = sa;
+     }
 }
 
 
@@ -845,8 +888,11 @@ _hash_file_entry_free(void *data)
 
    fd = _file_data_find(ASENTRY(fentry)->id);
    _file_id_free(fd);
-   _file_entry_free(fentry);
    _file_data_free(fd);
+   _file_entry_free(fentry);
+
+   _freed_entry_count++;
+   _repack();
 }
 
 static void
@@ -1097,12 +1143,8 @@ _entry_reference_del(Entry *entry, Reference *ref)
 
         if (fd)
           {
-             if (fd->invalid)
-               {
-                  _file_entry_free(fentry);
-                  _file_data_free(fd);
-               }
-             else if (!fentry->images)
+             // FIXME: Check difference with master (2 cases vs. only one)
+             if (fd->invalid || !fentry->images)
                eina_hash_del_by_key(file_entries, &entry->id);
           }
         else
@@ -1306,10 +1348,7 @@ _file_changed_cb(const char *path EINA_UNUSED, Eina_Bool deleted EINA_UNUSED, vo
              ASENTRY(fentry)->request = NULL;
           }
         if (!fentry->images && !ASENTRY(fentry)->references)
-          {
-             _file_entry_free(fentry);
-             _file_data_free(fd);
-          }
+          _hash_file_entry_free(fentry);
      }
 
    eina_hash_del_by_key(file_watch, fw->path);
