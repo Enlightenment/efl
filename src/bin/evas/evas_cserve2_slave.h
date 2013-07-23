@@ -1,6 +1,10 @@
 #ifndef _EVAS_CSERVE2_SLAVE_H
 #define _EVAS_CSERVE2_SLAVE_H
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include <Evas.h>
 
 /* begin bunch of stuff from evas_common_private.h so that we don't need to drag

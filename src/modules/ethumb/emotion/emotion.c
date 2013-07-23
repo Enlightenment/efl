@@ -1,9 +1,9 @@
-#include "Ethumb.h"
-#include "Ethumb_Plugin.h"
-
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
+
+#include "Ethumb.h"
+#include "Ethumb_Plugin.h"
 
 #define EDJE_EDIT_IS_UNSTABLE_AND_I_KNOW_ABOUT_IT 1
 

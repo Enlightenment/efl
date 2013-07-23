@@ -1,3 +1,7 @@
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include "Efreet.h"
 #include "Efreet_Mime.h"
 #include "config.h"

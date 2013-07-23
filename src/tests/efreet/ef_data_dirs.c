@@ -1,4 +1,9 @@
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include "Efreet.h"
+
 #include <Ecore_File.h>
 #include <stdio.h>
 #include <string.h>

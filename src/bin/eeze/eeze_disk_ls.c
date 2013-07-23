@@ -1,4 +1,9 @@
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include <stdio.h>
+
 #include <Ecore.h>
 #include <Eeze.h>
 #include <Eeze_Disk.h>
