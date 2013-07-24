@@ -4,6 +4,7 @@
 
 #include "eo_simple.h"
 #include "eo2_simple.h"
+#include "eo2_inherit.h"
 
 static void report(struct timespec t0, struct timespec t1,
                    struct timespec t2, struct timespec t3, int n, int c)
@@ -53,13 +54,14 @@ int
 main(int argc EINA_UNUSED, char** argv EINA_UNUSED, char** env EINA_UNUSED)
 {
    int i, n, k, a, b, c;
-   Eo *obj, *obj2;
+   Eo *obj, *obj2, *obj3;
    struct timespec t0, t1, t2, t3;
 
    eo_init();
 
    obj = eo_add(SIMPLE_CLASS, NULL);
-   obj2 = eo_add(EO2_SIMPLE_CLASS, NULL);
+   obj2 = eo2_add(EO2_SIMPLE_CLASS, NULL);
+   obj3 = eo2_add(EO2_INHERIT_CLASS, NULL);
 
    /* check */
    eo_do(obj, get(&a), set(10), inc(), get(&b), inc(), inc(), get(&c));
@@ -129,8 +131,16 @@ main(int argc EINA_UNUSED, char** argv EINA_UNUSED, char** env EINA_UNUSED)
    EO2_RUN_END
    report(t0, t1, t2, t3, k, n * k);
 
+   eo2_do(obj3, set2(65); a = get2(); b = get3(); );
+   check(a, 65);
+   check(b, 68);
+   eo2_do(obj3, inc2(); a = get2(); b = get3(); );
+   check(a, 66);
+   check(b, 69);
+
    eo_del(obj);
    eo_del(obj2);
+   eo_del(obj3);
 
    eo_shutdown();
 
