@@ -74,7 +74,7 @@ _data_set(Eo *obj, void *class_data,
    pd->generic_data = eina_inlist_prepend(pd->generic_data,
          EINA_INLIST_GET(node));
 }
-EAPI EO2_VOID_FUNC_BODYV(data_set, EO2_FUNC_CALL(key, data, free_func),
+EAPI EO2_VOID_FUNC_BODYV(eo2_base_data_set, EO2_FUNC_CALL(key, data, free_func),
                         const char *key, const void *data, eo_base_data_free_func free_func);
 
 static void *
@@ -98,14 +98,14 @@ _data_get(Eo *obj EINA_UNUSED, void *class_data, const char *key)
 
    return NULL;
 }
-EAPI EO2_VOID_FUNC_BODYV(data_get, EO2_FUNC_CALL(key), const char *key);
+EAPI EO2_VOID_FUNC_BODYV(eo2_base_data_get, EO2_FUNC_CALL(key), const char *key);
 
 static void
 _dbg_info_get(Eo *obj EINA_UNUSED, void *class_data EINA_UNUSED)
 {  /* No info required in the meantime */
    return;
 }
-EAPI EO2_VOID_FUNC_BODY(dbg_info_get);
+EAPI EO2_VOID_FUNC_BODY(eo2_dbg_info_get);
 
 static void
 _data_del(Eo *obj EINA_UNUSED, void *class_data, const char *key)
@@ -126,7 +126,7 @@ _data_del(Eo *obj EINA_UNUSED, void *class_data, const char *key)
           }
      }
 }
-EAPI EO2_VOID_FUNC_BODYV(data_del, EO2_FUNC_CALL(key), const char *key);
+EAPI EO2_VOID_FUNC_BODYV(eo2_base_data_del, EO2_FUNC_CALL(key), const char *key);
 
 /* Weak reference. */
 
@@ -159,7 +159,7 @@ _wref_add(Eo *obj, void *class_data, Eo **wref)
    pd->wrefs[count] = NULL;
    *wref = obj;
 }
-EAPI EO2_VOID_FUNC_BODYV(wref_add, EO2_FUNC_CALL(wref), Eo **wref);
+EAPI EO2_VOID_FUNC_BODYV(eo2_wref_add, EO2_FUNC_CALL(wref), Eo **wref);
 
 static void
 _wref_del(Eo *obj, void *class_data, Eo **wref)
@@ -217,7 +217,7 @@ _wref_del(Eo *obj, void *class_data, Eo **wref)
 
    *wref = NULL;
 }
-EAPI EO2_VOID_FUNC_BODYV(wref_del, EO2_FUNC_CALL(wref), Eo **wref);
+EAPI EO2_VOID_FUNC_BODYV(eo2_wref_del, EO2_FUNC_CALL(wref), Eo **wref);
 
 static inline void
 _wref_destruct(Private_Data *pd)
@@ -370,7 +370,7 @@ _ev_cb_priority_add(Eo *obj, void *class_data,
         eo_do(obj, eo_event_callback_call(EO_EV_CALLBACK_ADD, arr, NULL));
      }
 }
-EAPI EO2_VOID_FUNC_BODYV(ev_cb_priority_add,
+EAPI EO2_VOID_FUNC_BODYV(eo2_event_callback_priority_add,
                         EO2_FUNC_CALL(desc, priority, func, user_data),
                         const Eo_Event_Description *desc,
                         Eo_Callback_Priority priority,
@@ -403,7 +403,7 @@ _ev_cb_del(Eo *obj, void *class_data,
 
    DBG("Callback of object %p with function %p and data %p not found.", obj, func, user_data);
 }
-EAPI EO2_VOID_FUNC_BODYV(ev_cb_del,
+EAPI EO2_VOID_FUNC_BODYV(eo2_event_callback_del,
                         EO2_FUNC_CALL(desc, func, user_data),
                         const Eo_Event_Description *desc,
                         Eo_Event_Cb func,
@@ -429,7 +429,7 @@ _ev_cb_array_priority_add(Eo *obj, void *class_data,
         eo_do(obj, eo_event_callback_call(EO_EV_CALLBACK_ADD, array, NULL));
      }
 }
-EAPI EO2_VOID_FUNC_BODYV(ev_cb_array_priority_add,
+EAPI EO2_VOID_FUNC_BODYV(eo2_event_callback_array_priority_add,
                         EO2_FUNC_CALL(array, priority, user_data),
                         const Eo_Callback_Array_Item *array,
                         Eo_Callback_Priority priority,
@@ -458,7 +458,7 @@ _ev_cb_array_del(Eo *obj, void *class_data,
 
    DBG("Callback of object %p with function array %p and data %p not found.", obj, array, user_data);
 }
-EAPI EO2_VOID_FUNC_BODYV(ev_cb_array_del,
+EAPI EO2_VOID_FUNC_BODYV(eo2_event_callback_array_del,
                         EO2_FUNC_CALL(array, user_data),
                         const Eo_Callback_Array_Item *array,
                         const void *user_data);
@@ -531,7 +531,7 @@ end:
 
    return ret;
 }
-EAPI EO2_FUNC_BODYV(ev_cb_call, Eina_Bool,
+EAPI EO2_FUNC_BODYV(eo2_event_callback_call, Eina_Bool,
                    EO2_FUNC_CALL(desc, event_info),
                    EINA_FALSE,
                    const Eo_Event_Description *desc,
@@ -560,7 +560,7 @@ _ev_cb_forwarder_add(Eo *obj, void *class_data EINA_UNUSED,
 
    eo_do(obj, eo_event_callback_add(desc, _eo_event_forwarder_callback, new_obj));
 }
-EAPI EO2_VOID_FUNC_BODYV(ev_cb_forwarder_add,
+EAPI EO2_VOID_FUNC_BODYV(eo2_event_callback_forwarder_add,
                         EO2_FUNC_CALL(desc, new_obj),
                         const Eo_Event_Description *desc,
                         Eo *new_obj);
@@ -575,7 +575,7 @@ _ev_cb_forwarder_del(Eo *obj, void *class_data EINA_UNUSED,
 
    eo_do(obj, eo_event_callback_del(desc, _eo_event_forwarder_callback, new_obj));
 }
-EAPI EO2_VOID_FUNC_BODYV(ev_cb_forwarder_del,
+EAPI EO2_VOID_FUNC_BODYV(eo2_event_callback_forwarder_del,
                         EO2_FUNC_CALL(desc, new_obj),
                         const Eo_Event_Description *desc,
                         Eo *new_obj);
@@ -586,7 +586,7 @@ _ev_freeze(Eo *obj EINA_UNUSED, void *class_data)
    Private_Data *pd = (Private_Data *) class_data;
    pd->event_freeze_count++;
 }
-EAPI EO2_VOID_FUNC_BODY(ev_freeze);
+EAPI EO2_VOID_FUNC_BODY(eo2_event_freeze);
 
 static void
 _ev_thaw(Eo *obj, void *class_data)
@@ -601,7 +601,7 @@ _ev_thaw(Eo *obj, void *class_data)
         ERR("Events for object %p have already been thawed.", obj);
      }
 }
-EAPI EO2_VOID_FUNC_BODY(ev_thaw);
+EAPI EO2_VOID_FUNC_BODY(eo2_event_thaw);
 
 static int
 _ev_freeze_get(Eo *obj EINA_UNUSED, void *class_data)
@@ -610,14 +610,14 @@ _ev_freeze_get(Eo *obj EINA_UNUSED, void *class_data)
 
    return pd->event_freeze_count;
 }
-EAPI EO2_FUNC_BODY(ev_freeze_get, int, 0);
+EAPI EO2_FUNC_BODY(eo2_event_freeze_get, int, 0);
 
 static void
 _ev_global_freeze(const Eo_Class *klass EINA_UNUSED)
 {
    event_freeze_count++;
 }
-EAPI EO2_VOID_FUNC_BODY(ev_global_freeze);
+EAPI EO2_VOID_FUNC_BODY(eo2_event_global_freeze);
 
 static void
 _ev_global_thaw(const Eo_Class *klass EINA_UNUSED)
@@ -631,14 +631,14 @@ _ev_global_thaw(const Eo_Class *klass EINA_UNUSED)
         ERR("Global events have already been thawed.");
      }
 }
-EAPI EO2_VOID_FUNC_BODY(ev_global_thaw);
+EAPI EO2_VOID_FUNC_BODY(eo2_event_global_thaw);
 
 static int
 _ev_global_freeze_get(const Eo_Class *klass EINA_UNUSED)
 {
    return event_freeze_count;
 }
-EAPI EO2_FUNC_BODY(ev_global_freeze_get, int, 0);
+EAPI EO2_FUNC_BODY(eo2_event_global_freeze_get, int, 0);
 
 /* Eo_Dbg */
 EAPI void
@@ -755,6 +755,7 @@ _constructor(Eo *obj, void *class_data EINA_UNUSED)
 
    _eo_condtor_done(obj);
 }
+EAPI EO2_VOID_FUNC_BODY(eo2_constructor);
 
 static void
 _destructor(Eo *obj, void *class_data)
@@ -767,6 +768,7 @@ _destructor(Eo *obj, void *class_data)
 
    _eo_condtor_done(obj);
 }
+EAPI EO2_VOID_FUNC_BODY(eo2_destructor);
 
 static void
 _class_constructor(Eo_Class *klass)
@@ -776,27 +778,27 @@ _class_constructor(Eo_Class *klass)
 }
 
 Eo2_Op_Description op_descs [] = {
-       EO2_OP_CONSTRUCTOR(_constructor),
-       EO2_OP_DESTRUCTOR(_destructor),
-       EO2_OP_FUNC(_data_set, data_set, "Set data for key."),
-       EO2_OP_FUNC(_data_get, data_get, "Get data for key."),
-       EO2_OP_FUNC(_data_del, data_del, "Del key."),
-       EO2_OP_FUNC(_wref_add, wref_add, "Add a weak ref to the object."),
-       EO2_OP_FUNC(_wref_del, wref_del, "Delete the weak ref."),
-       EO2_OP_FUNC(_ev_cb_priority_add, ev_cb_priority_add, "Add an event callback with a priority."),
-       EO2_OP_FUNC(_ev_cb_del, ev_cb_del, "Delete an event callback"),
-       EO2_OP_FUNC(_ev_cb_array_priority_add, ev_cb_array_priority_add, "Add an event callback array with a priority."),
-       EO2_OP_FUNC(_ev_cb_array_del, ev_cb_array_del, "Delete an event callback array"),
-       EO2_OP_FUNC(_ev_cb_call, ev_cb_call, "Call the event callbacks for an event."),
-       EO2_OP_FUNC(_ev_cb_forwarder_add, ev_cb_forwarder_add, "Add an event forwarder."),
-       EO2_OP_FUNC(_ev_cb_forwarder_del, ev_cb_forwarder_del, "Delete an event forwarder."),
-       EO2_OP_FUNC(_ev_freeze, ev_freeze, "Freezes events."),
-       EO2_OP_FUNC(_ev_thaw, ev_thaw, "Thaws events."),
-       EO2_OP_FUNC(_ev_freeze_get, ev_freeze_get, "Get event freeze counter."),
-       EO2_OP_FUNC(_ev_global_freeze, ev_global_freeze, "Freezes events globally."),
-       EO2_OP_FUNC(_ev_global_thaw, ev_global_thaw, "Thaws events globally."),
-       EO2_OP_FUNC(_ev_global_freeze_get, ev_global_freeze_get, "Get global event freeze counter."),
-       EO2_OP_FUNC(_dbg_info_get, dbg_info_get, "Get debug info list for obj."),
+       EO2_OP_FUNC(_constructor, eo2_constructor, "Constructor."),
+       EO2_OP_FUNC(_destructor, eo2_destructor, "Destructor."),
+       EO2_OP_FUNC(_data_set, eo2_base_data_set, "Set data for key."),
+       EO2_OP_FUNC(_data_get, eo2_base_data_get, "Get data for key."),
+       EO2_OP_FUNC(_data_del, eo2_base_data_del, "Del key."),
+       EO2_OP_FUNC(_wref_add, eo2_wref_add, "Add a weak ref to the object."),
+       EO2_OP_FUNC(_wref_del, eo2_wref_del, "Delete the weak ref."),
+       EO2_OP_FUNC(_ev_cb_priority_add, eo2_event_callback_priority_add, "Add an event callback with a priority."),
+       EO2_OP_FUNC(_ev_cb_del, eo2_event_callback_del, "Delete an event callback"),
+       EO2_OP_FUNC(_ev_cb_array_priority_add, eo2_event_callback_array_priority_add, "Add an event callback array with a priority."),
+       EO2_OP_FUNC(_ev_cb_array_del, eo2_event_callback_array_del, "Delete an event callback array"),
+       EO2_OP_FUNC(_ev_cb_call, eo2_event_callback_call, "Call the event callbacks for an event."),
+       EO2_OP_FUNC(_ev_cb_forwarder_add, eo2_event_callback_forwarder_add, "Add an event forwarder."),
+       EO2_OP_FUNC(_ev_cb_forwarder_del, eo2_event_callback_forwarder_del, "Delete an event forwarder."),
+       EO2_OP_CLASS_FUNC(_ev_freeze, eo2_event_freeze, "Freezes events."),
+       EO2_OP_CLASS_FUNC(_ev_thaw, eo2_event_thaw, "Thaws events."),
+       EO2_OP_CLASS_FUNC(_ev_freeze_get, eo2_event_freeze_get, "Get event freeze counter."),
+       EO2_OP_FUNC(_ev_global_freeze, eo2_event_global_freeze, "Freezes events globally."),
+       EO2_OP_FUNC(_ev_global_thaw, eo2_event_global_thaw, "Thaws events globally."),
+       EO2_OP_FUNC(_ev_global_freeze_get, eo2_event_global_freeze_get, "Get global event freeze counter."),
+       EO2_OP_FUNC(_dbg_info_get, eo2_dbg_info_get, "Get debug info list for obj."),
        EO2_OP_SENTINEL
 };
 
@@ -809,7 +811,7 @@ static const Eo_Event_Description *event_desc[] = {
 };
 
 static const Eo_Class_Description class_desc = {
-     2,
+     EO2_VERSION,
      "Eo Base",
      EO_CLASS_TYPE_REGULAR_NO_INSTANT,
      EO2_CLASS_DESCRIPTION_OPS(op_descs, OP_DESC_SIZE(op_descs)),

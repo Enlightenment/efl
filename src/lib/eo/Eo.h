@@ -604,6 +604,8 @@ EAPI Eina_Bool eo_shutdown(void);
 
 /************************************ EO2 ************************************/
 
+#define EO2_VERSION 2
+
 // computes size of Eo2_Op_Description[]
 #define OP_DESC_SIZE(desc) (sizeof(desc)/sizeof(Eo2_Op_Description) -1 )
 
@@ -659,6 +661,7 @@ typedef struct _Eo2_Op_Call_Data
 #define EO2_OP_CONSTRUCTOR(_private) { _private, NULL, 1, EO_OP_TYPE_REGULAR, "Constructor"}
 #define EO2_OP_DESTRUCTOR(_private) { _private, NULL, 2, EO_OP_TYPE_REGULAR, "Destructor"}
 #define EO2_OP_FUNC(_private, _api, _doc) {_private, _api, EO_NOOP, EO_OP_TYPE_REGULAR, _doc}
+#define EO2_OP_CLASS_FUNC(_private, _api, _doc) {_private, _api, EO_NOOP, EO_OP_TYPE_CLASS, _doc}
 #define EO2_OP_SENTINEL { NULL, NULL, 0, EO_OP_TYPE_INVALID, NULL}
 
 // returns the OP id corresponding to the given api_func
@@ -1347,7 +1350,8 @@ eo2_wref_del(Eo **wref);
  * @see #eo_destructor
  */
 #define eo_constructor() EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR)
-// FIXME: eo2
+EAPI void
+eo2_constructor();
 
 /**
  * @def eo_destructor
@@ -1358,7 +1362,8 @@ eo2_wref_del(Eo **wref);
  * @see #eo_constructor
  */
 #define eo_destructor() EO_BASE_ID(EO_BASE_SUB_ID_DESTRUCTOR)
-// FIXME: eo2
+EAPI void
+eo2_destructor();
 
 /**
  * @addtogroup Eo_Events Eo's Event Handling
