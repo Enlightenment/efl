@@ -194,16 +194,14 @@ ecore_wl_shutdown(void)
 EAPI void
 ecore_wl_flush(void)
 {
-//   LOGFN(__FILE__, __LINE__, __FUNCTION__);
-
+   if ((!_ecore_wl_disp) || (!_ecore_wl_disp->wl.display)) return;
    wl_display_flush(_ecore_wl_disp->wl.display);
 }
 
 EAPI void
 ecore_wl_sync(void)
 {
-//   LOGFN(__FILE__, __LINE__, __FUNCTION__);
-
+   if ((!_ecore_wl_disp) || (!_ecore_wl_disp->wl.display)) return;
    _ecore_wl_sync_wait(_ecore_wl_disp);
    while (_ecore_wl_disp->sync_ref_count > 0)
      wl_display_dispatch(_ecore_wl_disp->wl.display);
@@ -212,24 +210,31 @@ ecore_wl_sync(void)
 EAPI struct wl_shm *
 ecore_wl_shm_get(void)
 {
+   if (!_ecore_wl_disp) return NULL;
    return _ecore_wl_disp->wl.shm;
 }
 
 EAPI struct wl_display *
 ecore_wl_display_get(void)
 {
+   if ((!_ecore_wl_disp) || (!_ecore_wl_disp->wl.display)) 
+     return NULL;
    return _ecore_wl_disp->wl.display;
 }
 
 EAPI struct wl_list *
 ecore_wl_globals_get(void)
 {
+   if ((!_ecore_wl_disp) || (!_ecore_wl_disp->wl.display)) 
+     return NULL;
    return &(_ecore_wl_disp->globals);
 }
 
 EAPI struct wl_registry *
 ecore_wl_registry_get(void)
 {
+   if ((!_ecore_wl_disp) || (!_ecore_wl_disp->wl.display)) 
+     return NULL;
    return _ecore_wl_disp->wl.registry;
 }
 
@@ -240,6 +245,8 @@ ecore_wl_screen_size_get(int *w, int *h)
 
    if (w) *w = 0;
    if (h) *h = 0;
+
+   if ((!_ecore_wl_disp) || (!_ecore_wl_disp->wl.display)) return;
 
    if (!_ecore_wl_disp->output)
      ecore_wl_sync();
@@ -278,6 +285,7 @@ ecore_wl_dpi_get(void)
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   if (!_ecore_wl_disp) return 0;
    if (!_ecore_wl_disp->output) return 75;
 
    mw = _ecore_wl_disp->output->mw;
@@ -292,6 +300,7 @@ ecore_wl_dpi_get(void)
 EAPI void
 ecore_wl_display_iterate(void)
 {
+   if ((!_ecore_wl_disp) || (!_ecore_wl_disp->wl.display)) return;
    if (!_ecore_wl_server_mode)
      wl_display_dispatch(_ecore_wl_disp->wl.display);
 }
