@@ -74,23 +74,23 @@ $(top_builddir)/src/lib/eina/libeina.la \
 @ECORE_LDFLAGS@
 
 if HAVE_ECORE_AUDIO
-EXTRA_PROGRAMS += \
-ecore_audio_playback \
-ecore_audio_to_ogg \
-ecore_audio_custom
-
-ECORE_AUDIO_COMMON_LDADD = \
-$(top_builddir)/src/lib/ecore_audio/libecore_audio.la \
-$(ECORE_COMMON_LDADD)
-
-ecore_audio_custom_SOURCES = ecore_audio_custom.c
-ecore_audio_custom_LDADD = $(ECORE_AUDIO_COMMON_LDADD)
-
-ecore_audio_playback_SOURCES = ecore_audio_playback.c
-ecore_audio_playback_LDADD = $(ECORE_AUDIO_COMMON_LDADD)
-
-ecore_audio_to_ogg_SOURCES = ecore_audio_to_ogg.c
-ecore_audio_to_ogg_LDADD = $(ECORE_AUDIO_COMMON_LDADD)
+#EXTRA_PROGRAMS += \
+#ecore_audio_playback \
+#ecore_audio_to_ogg \
+#ecore_audio_custom
+#
+#ECORE_AUDIO_COMMON_LDADD = \
+#$(top_builddir)/src/lib/ecore_audio/libecore_audio.la \
+#$(ECORE_COMMON_LDADD)
+#
+#ecore_audio_custom_SOURCES = ecore_audio_custom.c
+#ecore_audio_custom_LDADD = $(ECORE_AUDIO_COMMON_LDADD)
+#
+#ecore_audio_playback_SOURCES = ecore_audio_playback.c
+#ecore_audio_playback_LDADD = $(ECORE_AUDIO_COMMON_LDADD)
+#
+#ecore_audio_to_ogg_SOURCES = ecore_audio_to_ogg.c
+#ecore_audio_to_ogg_LDADD = $(ECORE_AUDIO_COMMON_LDADD)
 endif
 
 ECORE_EVAS_COMMON_LDADD = \
