@@ -38,9 +38,9 @@ struct _Shared_Array_Header
    int32_t count;
    int32_t generation_id;
    int32_t emptyidx;
+   int32_t sortedidx;
    int32_t _reserved1;
    int32_t _reserved2;
-   int32_t _reserved3;
 };
 
 struct _Shared_Array
@@ -280,8 +280,9 @@ cserve2_shared_array_new(int tag, int elemsize, int initcount)
    sa->header->elemsize = elemsize;
    sa->header->generation_id = 1;
    sa->header->emptyidx = 0;
+   sa->header->sortedidx = 0;
    sa->header->tag = tag;
-   memset(&sa->header->_reserved1, 0, sizeof(int32_t) * 3);
+   memset(&sa->header->_reserved1, 0, sizeof(int32_t) * 2);
 
    return sa;
 }
@@ -449,6 +450,7 @@ cserve2_shared_array_repack(Shared_Array *sa,
 
    // Finalize & return
    sa2->header->emptyidx = newcount;
+   sa2->header->sortedidx = newcount;
    sa2->header->tag = sa->header->tag;
    return sa2;
 }
@@ -462,12 +464,33 @@ cserve2_shared_array_item_find(Shared_Array *sa, void *data,
 
    if (!sa || !cmp) return -1;
 
-   // TODO: Fast search in the sorted zone
-
-   ptr = sa->ds->data + sizeof(Shared_Array_Header);
+   // Binary search
+   if (sa->header->sortedidx > 0)
+     {
+        int low = 0;
+        int high = sa->header->sortedidx;
+        int prev = -1;
+        int r;
+        k = high / 2;
+        while (prev != k)
+          {
+             ptr = cserve2_shared_array_item_data_get(sa, k);
+             r = cmp(ptr, data);
+             if (!r)
+               return k;
+             else if (r > 0)
+               high = k;
+             else
+               low = k;
+             prev = k;
+             k = low + (high - low) / 2;
+          }
+     }
 
    // Linear search O(n)
-   for (k = 0; k < sa->header->emptyidx; k++)
+   k = sa->header->sortedidx;
+   ptr = sa->ds->data + sizeof(Shared_Array_Header) + k * sa->header->elemsize;
+   for (; k < sa->header->emptyidx; k++)
      {
         if (!cmp(ptr, data))
           return k;
