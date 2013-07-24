@@ -54,6 +54,9 @@ ecore_imf_module_init(void)
 #ifdef BUILD_ECORE_IMF_SCIM
                "scim",
 #endif
+#ifdef BUILD_ECORE_IMF_WAYLAND
+                "wayland",
+#endif
                NULL
              };
              const char **itr;
