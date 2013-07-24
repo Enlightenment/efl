@@ -674,6 +674,7 @@ __get(Eo *objid EINA_UNUSED, void *obj_data)
 
   return conf->count;
 }
+static inline EO2_FUNC_BODY(get, int, -1);
 
 static void
 __inc(Eo *objid EINA_UNUSED, void *obj_data)
@@ -682,40 +683,43 @@ __inc(Eo *objid EINA_UNUSED, void *obj_data)
 
    conf->count++;
 }
+static inline EO2_VOID_FUNC_BODY(inc);
+
+static void
+__constructor(Eo *obj, void *obj_data, va_list *list EINA_UNUSED)
+{
+   Test_Event_Speed_Data *conf = (Test_Event_Speed_Data *) obj_data;
+
+   eo_do_super(obj, TEST_EVENT2_SPEED_CLASS, eo_constructor());
+
+   conf->count = 0;
+}
+
+static void
+__destructor(Eo *obj, void *obj_data EINA_UNUSED, va_list *list EINA_UNUSED)
+{
+   eo_do_super(obj, TEST_EVENT2_SPEED_CLASS, eo_destructor());
+}
 
 Eo2_Op_Description op_descs [] = {
-       { (void*)__get, (void*)get, EO_NOOP, EO_OP_TYPE_REGULAR, "Get"},
-       { (void*)__inc, (void*)inc, EO_NOOP, EO_OP_TYPE_REGULAR, "Inc"},
-       { NULL, NULL, 0, EO_OP_TYPE_INVALID, NULL}
+       EO2_OP_CONSTRUCTOR( (void*)__constructor),
+       EO2_OP_DESTRUCTOR( (void*)__destructor),
+       EO2_OP_FUNC( (void*)__get, (void*)get, "Get"),
+       EO2_OP_FUNC( (void*)__inc, (void*)inc, "Inc"),
+       EO2_OP_SENTINEL
 };
-
-static inline EO2_FUNC_BODY(get, int, -1);
-static inline EO2_VOID_FUNC_BODY(inc);
 
 static void
 _class2_constructor(Eo_Class *klass)
 {
-  /* const Eo_Op_Func_Description func_desc[] = { */
-  /*   EO_OP_FUNC(TEST_EVENT2_SPEED_ID(get), (eo_op_func_type) __get), */
-  /*   EO_OP_FUNC(TEST_EVENT2_SPEED_ID(inc), (eo_op_func_type) __inc), */
-  /*   EO_OP_FUNC_SENTINEL */
-  /* }; */
-
-  /* eo_class_funcs_set(klass, func_desc); */
    eo2_class_funcs_set(klass);
 }
 
-static const Eo_Op_Description op2_desc[] = {
-  EO_OP_DESCRIPTION(TEST_EVENT2_SPEED_SUB_ID_get, "Get"),
-  EO_OP_DESCRIPTION(TEST_EVENT2_SPEED_SUB_ID_inc, "Inc"),
-  EO_OP_DESCRIPTION_SENTINEL
-};
-
 static const Eo_Class_Description class2_desc = {
-  EO_VERSION,
+  2,
   "test_event2_speed",
   EO_CLASS_TYPE_REGULAR,
-  EO_CLASS_DESCRIPTION_OPS(&TEST_EVENT2_SPEED_BASE_ID, op2_desc, TEST_EVENT2_SPEED_SUB_ID_LAST),
+  EO2_CLASS_DESCRIPTION_OPS(op_descs, OP_DESC_SIZE(op_descs)),
   event_desc,
   sizeof (Test_Event_Speed_Data),
   _class2_constructor,
