@@ -1353,7 +1353,7 @@ cserve2_cache_client_del(Client *client)
 static Image_Entry *
 _image_entry_new(Client *client, int rid,
                  unsigned int client_file_id, unsigned int client_image_id,
-                 Evas_Image_Load_Opts *opts, char *buf)
+                 Evas_Image_Load_Opts *opts, char *buf, size_t buf_size)
 {
    Reference *ref, *oldref;
    Image_Entry *ientry;
@@ -1424,15 +1424,19 @@ _image_entry_new(Client *client, int rid,
    idata->refcount = 1;
    idata->id = image_id;
 
-   _image_key_set(idata->file_id, opts, buf, sizeof(buf));
+   _image_key_set(idata->file_id, opts, buf, buf_size);
    eina_hash_add(image_entries, &image_id, ientry);
    eina_hash_add(image_ids, buf, (void *)(intptr_t) image_id);
 
-   oldref = eina_hash_find(client->images.referencing, &client_image_id);
-   ref = _entry_reference_add(ASENTRY(ientry), client, client_image_id);
-   if (oldref)
-     eina_hash_del_by_key(client->images.referencing, &client_image_id);
-   eina_hash_add(client->images.referencing, &client_image_id, ref);
+   if (client_image_id)
+     {
+        oldref = eina_hash_find(client->images.referencing, &client_image_id);
+        ref = _entry_reference_add(ASENTRY(ientry), client, client_image_id);
+        if (oldref)
+          eina_hash_del_by_key(client->images.referencing, &client_image_id);
+        eina_hash_add(client->images.referencing, &client_image_id, ref);
+     }
+   // else: See _cserve2_cache_fast_scaling_check()
 
    return ientry;
 }
@@ -2485,8 +2489,9 @@ static int
 _cserve2_cache_fast_scaling_check(Client *client, Image_Entry *ientry)
 {
    Eina_Iterator *iter;
-   Image_Data *i;
-   Image_Entry *original = NULL;
+   Image_Entry *i;
+   Image_Entry *orig_entry = NULL;
+   Image_Data *orig_data = NULL;
    Evas_Image_Load_Opts unscaled;
    char buf[4096];
    unsigned int image_id;
@@ -2496,42 +2501,41 @@ _cserve2_cache_fast_scaling_check(Client *client, Image_Entry *ientry)
    File_Entry *fentry;
    Image_Data *idata;
 
-   return -1;
-#if 0
    if (!ientry) return -1;
-
    idata = _image_data_find(ENTRYID(ientry));
    if (!idata) return -1;
 
-   dst_w = entry->opts.scale_load.dst_w;
-   dst_h = entry->opts.scale_load.dst_h;
+   dst_w = idata->opts.scale_load.dst_w;
+   dst_h = idata->opts.scale_load.dst_h;
 
    // Copy opts w/o scaling
    memset(&unscaled, 0, sizeof(unscaled));
-   unscaled.dpi = entry->opts.dpi;
-   //unscaled.w = entry->opts.w;
-   //unscaled.h = entry->opts.h;
-   //unscaled.scale_down_by = entry->opts.scale_down_by;
-   //unscaled.region.x = entry->opts.region.x;
-   //unscaled.region.y = entry->opts.region.y;
-   //unscaled.region.w = entry->opts.region.w;
-   //unscaled.region.h = entry->opts.region.h;
+   unscaled.dpi = idata->opts.dpi;
+   //unscaled.w = idata->opts.w;
+   //unscaled.h = idata->opts.h;
+   //unscaled.scale_down_by = idata->opts.scale_down_by;
+   //unscaled.region.x = idata->opts.region.x;
+   //unscaled.region.y = idata->opts.region.y;
+   //unscaled.region.w = idata->opts.region.w;
+   //unscaled.region.h = idata->opts.region.h;
    unscaled.scale_load.scale_hint = 0;
-   unscaled.degree = entry->opts.degree;
-   unscaled.orientation = entry->opts.orientation;
-   unscaled.scale_load.smooth = entry->opts.scale_load.smooth;
+   unscaled.degree = idata->opts.degree;
+   unscaled.orientation = idata->opts.orientation;
+   unscaled.scale_load.smooth = idata->opts.scale_load.smooth;
 
 try_again:
-   image_id = _image_opts_id_get(entry->file_id, &unscaled, buf, sizeof(buf));
+   image_id = _image_opts_id_get(idata->file_id, &unscaled, buf, sizeof(buf));
    if (image_id)
      {
-        original = eina_hash_find(image_entries, &image_id);
-        if (!original) return -1; // Should not happen
+        orig_data = _image_data_find(image_id);
+        orig_entry = _image_entry_find(image_id);
+        if (!orig_data || !orig_entry) return -1;
+
         DBG("Found original image in hash: %d,%d:%dx%d -> %dx%d shm %p",
-                original->opts.scale_load.src_x, original->opts.scale_load.src_y,
-                original->opts.scale_load.src_w, original->opts.scale_load.src_h,
-                original->opts.scale_load.dst_w, original->opts.scale_load.dst_h,
-                original->shm);
+            orig_data->opts.scale_load.src_x, orig_data->opts.scale_load.src_y,
+            orig_data->opts.scale_load.src_w, orig_data->opts.scale_load.src_h,
+            orig_data->opts.scale_load.dst_w, orig_data->opts.scale_load.dst_h,
+            orig_entry->shm);
         goto do_scaling;
      }
 
@@ -2542,85 +2546,91 @@ try_again:
         goto try_again;
      }
 
-   fentry = _file_entry_find(entry->file_id);
+   fentry = _file_entry_find(idata->file_id);
    iter = eina_list_iterator_new(fentry->images);
-   //iter = eina_list_iterator_new(entry->file->images);
    EINA_ITERATOR_FOREACH(iter, i)
      {
-        if (i == entry) continue;
-        if (i->opts.w && i->opts.h &&
-            (!i->opts.scale_load.dst_w && !i->opts.scale_load.dst_h))
+        Image_Data *id;
+
+        if (i == ientry) continue;
+        id = _image_data_find(ENTRYID(i));
+        if (!id) continue;
+
+        if (id->opts.w && id->opts.h &&
+            (!id->opts.scale_load.dst_w &&
+             !id->opts.scale_load.dst_h))
           {
              DBG("Found image in list: %d,%d:%dx%d -> %dx%d shm %p",
-                     i->opts.scale_load.src_x, i->opts.scale_load.src_y,
-                     i->opts.scale_load.src_w, i->opts.scale_load.src_h,
-                     i->opts.scale_load.dst_w, i->opts.scale_load.dst_h,
-                     i->shm);
+                 id->opts.scale_load.src_x, id->opts.scale_load.src_y,
+                 id->opts.scale_load.src_w, id->opts.scale_load.src_h,
+                 id->opts.scale_load.dst_w, id->opts.scale_load.dst_h,
+                 i->shm);
              if (i->base.request || !i->shm) continue; // Not loaded yet
-             original = i;
+             orig_entry = i;
              break;
           }
         scaled_count++;
      }
    eina_iterator_free(iter);
 
-   if (!original)
+   if (!orig_entry)
      {
         DBG("Found %d scaled images for image %u but none matches",
-            scaled_count, entry->base.id);
+            scaled_count, ENTRYID(ientry));
 
+        // FIXME: The value 4 is completely arbitrary. No benchmarks done yet.
         if (scaled_count >= 4)
           {
              DBG("Forcing load of original image now!");
 
-             original = _image_entry_new(client, 0, entry->file_id,
-                                         0, &unscaled);
-             if (!original) return -1;
+             orig_entry = _image_entry_new(client, 0, idata->file_id,
+                                           0, &unscaled, buf, sizeof(buf));
+             if (!orig_entry) return -1;
+             _entry_unused_push(orig_entry);
 
-             // NOTE: NOT NEEDED ANYMORE. FIXME
-             eina_hash_add(image_entries, &image_id, original);
-             eina_hash_add(image_ids, buf, (void *)(intptr_t)image_id);
-             _entry_unused_push(original);
-
-             fentry = _file_entry_find(original->file_id);
-             fentry->images = eina_list_append(fentry->images, original);
+             orig_data = _image_data_find(ENTRYID(orig_entry));
+             fentry = _file_entry_find(orig_data->file_id);
+             fentry->images = eina_list_append(fentry->images, orig_entry);
           }
         else
           return -1;
      }
 
 do_scaling:
-   if (!original) return -1;
-   if (!original->shm && !original->base.request)
+   if (!orig_entry || !orig_data) return -1;
+   if (!orig_entry->shm && !orig_entry->base.request)
      {
-        if (original->base.id != image_id) abort();
-        original->base.request = cserve2_request_add(
+        if (orig_entry->base.id != image_id)
+          {
+             CRIT("Entry IDs mismatch");
+             return -1;
+          }
+        orig_entry->base.request = cserve2_request_add(
                  CSERVE2_REQ_IMAGE_LOAD,
-                 0, NULL, 0, &_load_funcs, original);
+                 0, NULL, 0, &_load_funcs, orig_entry);
      }
-   if (original->base.request || !original->shm)
+   if (orig_entry->base.request || !orig_entry->shm)
      return -1; // Not loaded yet
 
-   if (entry->shm)
-     cserve2_shm_unref(entry->shm);
+   if (ientry->shm)
+     cserve2_shm_unref(ientry->shm);
 
-   entry->shm = cserve2_shm_request("img", dst_w * dst_h * 4);
-   if (!entry->shm) return -1;
+   ientry->shm = cserve2_shm_request("img", dst_w * dst_h * 4);
+   if (!ientry->shm) return -1;
 
-   if (_scaling_do(entry->shm, entry, original) != 0)
+   if (_scaling_do(ientry->shm, idata, orig_entry) != 0)
      {
-        cserve2_shm_unref(entry->shm);
-        entry->shm = NULL;
+        cserve2_shm_unref(ientry->shm);
+        ientry->shm = NULL;
         return -1;
      }
 
-   if (original->unused)
+   if (orig_data->unused)
      {
-        image_entries_lru = eina_list_remove(image_entries_lru, original);
-        image_entries_lru = eina_list_prepend(image_entries_lru, original);
+        image_entries_lru = eina_list_remove(image_entries_lru, orig_entry);
+        image_entries_lru = eina_list_prepend(image_entries_lru, orig_entry);
      }
    return 0;
-#endif
 }
 
 int
@@ -2683,7 +2693,7 @@ cserve2_cache_image_entry_create(Client *client, int rid,
      }
 
    ientry = _image_entry_new(client, rid, client_file_id, client_image_id,
-                             opts, buf);
+                             opts, buf, sizeof(buf));
    if (!ientry)
      return -1;
 
