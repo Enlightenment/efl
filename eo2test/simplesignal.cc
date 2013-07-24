@@ -661,8 +661,8 @@ enum {
   TEST_EVENT2_SPEED_SUB_ID_LAST
 };
 
-static inline int get(eo2_a);
-static inline void inc(eo2_a);
+static inline int get();
+static inline void inc();
 
 const Eo_Class *test_event2_speed_class_get(void);
 #define TEST_EVENT2_SPEED_CLASS test_event2_speed_class_get()
@@ -742,7 +742,7 @@ bench_callback_eo2_loop()
      eo_do(obj, eo_event_callback_call(EV_COUNTER, NULL, NULL));
    const uint64_t benchdone = timestamp_benchmark();
 
-   eo2_do(obj, d = get(eo2_o));
+   eo2_do(obj, d = get());
    eo_del(obj);
    assert(d == 999999);
    printf ("OK\n  Benchmark: callback loop: %fns per round: ", size_t (benchdone - benchstart) * 1.0 / size_t (i));
@@ -761,10 +761,10 @@ bench_callback_eo2_direct_loop()
 
    const uint64_t benchstart = timestamp_benchmark();
    for (i = 0; i < 999999; i++)
-     eo2_do(obj, inc(eo2_o));
+     eo2_do(obj, inc());
    const uint64_t benchdone = timestamp_benchmark();
 
-   eo2_do(obj, d = get(eo2_o));
+   eo2_do(obj, d = get());
    eo_del(obj);
    assert(d == 999999);
    printf ("OK\n  Benchmark: callback loop: %fns per round: ", size_t (benchdone - benchstart) * 1.0 / size_t (i));
@@ -784,10 +784,10 @@ bench_callback_eo2_direct_batch_loop()
    const uint64_t benchstart = timestamp_benchmark();
    eo2_do(obj,
       for (i = 0; i < 999999; i++)
-         inc(eo2_o));
+         inc());
    const uint64_t benchdone = timestamp_benchmark();
 
-   eo2_do(obj, d = get(eo2_o));
+   eo2_do(obj, d = get());
    eo_del(obj);
    assert(d == 999999);
    printf ("OK\n  Benchmark: callback loop: %fns per round: ", size_t (benchdone - benchstart) * 1.0 / size_t (i));

@@ -41,12 +41,12 @@ static void check(int val, int expected)
    check(a, n * k);                       \
 
 #define EO2_RUN_START                     \
-   eo2_do(obj2, set2(eo2_o, 0); );        \
+   eo2_do(obj2, set2(0); );               \
    clock_gettime(CLOCK_MONOTONIC, &t2);   \
 
 #define EO2_RUN_END                       \
    clock_gettime(CLOCK_MONOTONIC, &t3);   \
-   eo2_do(obj2, a = get2(eo2_o); );       \
+   eo2_do(obj2, a = get2(); );            \
    check(a, n * k);                       \
 
 int
@@ -67,13 +67,13 @@ main(int argc EINA_UNUSED, char** argv EINA_UNUSED, char** env EINA_UNUSED)
    check(b, 11);
    check(c, 13);
    eo2_do(obj2,
-          a = get2(eo2_o);
-          set2(eo2_o, 10);
-          inc2(eo2_o);
-          b = get2(eo2_o);
-          inc2(eo2_o);
-          inc2(eo2_o);
-          c = get2(eo2_o);
+          a = get2();
+          set2(10);
+          inc2();
+          b = get2();
+          inc2();
+          inc2();
+          c = get2();
           );
    check(a, 66);
    check(b, 11);
@@ -89,7 +89,7 @@ main(int argc EINA_UNUSED, char** argv EINA_UNUSED, char** env EINA_UNUSED)
    EO_RUN_END
    EO2_RUN_START
    for (i = 0; i < n; i++)
-     eo2_do(obj2, inc2(eo2_o); );
+     eo2_do(obj2, inc2(); );
    EO2_RUN_END
    report(t0, t1, t2, t3, k, n * k);
 
@@ -101,7 +101,7 @@ main(int argc EINA_UNUSED, char** argv EINA_UNUSED, char** env EINA_UNUSED)
    EO_RUN_END
    EO2_RUN_START
    for (i = 0; i < n; i++)
-     eo2_do(obj2, inc2(eo2_o); inc2(eo2_o); inc2(eo2_o); );
+     eo2_do(obj2, inc2(); inc2(); inc2(); );
    EO2_RUN_END
    report(t0, t1, t2, t3, k, n * k);
 
@@ -113,7 +113,7 @@ main(int argc EINA_UNUSED, char** argv EINA_UNUSED, char** env EINA_UNUSED)
    EO_RUN_END
    EO2_RUN_START
    for (i = 0; i < n; i++)
-     eo2_do(obj2, inc2(eo2_o); inc2(eo2_o); inc2(eo2_o); inc2(eo2_o); inc2(eo2_o); );
+     eo2_do(obj2, inc2(); inc2(); inc2(); inc2(); inc2(); );
    EO2_RUN_END
    report(t0, t1, t2, t3, k, n * k);
 
@@ -125,7 +125,7 @@ main(int argc EINA_UNUSED, char** argv EINA_UNUSED, char** env EINA_UNUSED)
    EO_RUN_END
    EO2_RUN_START
    for (i = 0; i < n; i++)
-     eo2_do(obj2, inc2(eo2_o); inc2(eo2_o); inc2(eo2_o); inc2(eo2_o); inc2(eo2_o); inc2(eo2_o); inc2(eo2_o); );
+     eo2_do(obj2, inc2(); inc2(); inc2(); inc2(); inc2(); inc2(); inc2(); );
    EO2_RUN_END
    report(t0, t1, t2, t3, k, n * k);
 
