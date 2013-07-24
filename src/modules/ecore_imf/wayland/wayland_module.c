@@ -95,8 +95,14 @@ im_module_create()
    if (!text_input_manager)
      {
         Ecore_Wl_Global *global;
-        struct wl_registry *registry = ecore_wl_registry_get();
-        struct wl_list *globals = ecore_wl_globals_get();
+        struct wl_registry *registry;
+        struct wl_list *globals;
+
+        if (!(registry = ecore_wl_registry_get()))
+          return NULL;
+
+        if (!(globals = ecore_wl_globals_get()))
+          return NULL;
 
         wl_list_for_each(global, globals, link)
           {
@@ -107,6 +113,7 @@ im_module_create()
                                      &wl_text_input_manager_interface, 1);
                   EINA_LOG_DOM_INFO(_ecore_imf_wayland_log_dom, 
                                     "bound wl_text_input_manager interface");
+                  break;
                }
           }
      }
