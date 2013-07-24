@@ -1956,7 +1956,7 @@ _edje_part_recalc_single_fill(Edje_Real_Part *ep,
    if (fill->type == EDJE_FILL_TYPE_TILE)
      evas_object_image_size_get(ep->object, &fw, NULL);
    else
-     fw = TO_INT(params->eval.w);
+     fw = params->final.w;
 
    params->type.common.fill.x = fill->pos_abs_x
       + TO_INT(SCALE(fill->pos_rel_x, fw));
@@ -1966,7 +1966,7 @@ _edje_part_recalc_single_fill(Edje_Real_Part *ep,
    if (fill->type == EDJE_FILL_TYPE_TILE)
      evas_object_image_size_get(ep->object, NULL, &fh);
    else
-     fh = TO_INT(params->eval.h);
+     fh = params->final.h;
 
    params->type.common.fill.y = fill->pos_abs_y
       + TO_INT(SCALE(fill->pos_rel_y, fh));
@@ -2141,8 +2141,8 @@ _edje_part_recalc_single_map(Edje *ed,
           }
         else
           {
-             params_write->center.x = ed->x + TO_INT(ADD(params->eval.x, DIV2(params->eval.w)));
-             params_write->center.y = ed->y + TO_INT(ADD(params->eval.y, DIV2(params->eval.h)));
+             params_write->center.x = ed->x + params->final.x + (params->final.w / 2);
+             params_write->center.y = ed->y + params->final.y + (params->final.h / 2);
           }
         params_write->center.z = 0;
 
@@ -2345,6 +2345,35 @@ _edje_part_recalc_single(Edje *ed,
    if (ep->drag)
      _edje_part_recalc_single_drag(ep, confine_to, threshold, params, minw, minh, maxw, maxh);
 
+   /* Update final size after last change to its position */
+   params->final.x = TO_INT(params->eval.x);
+   params->final.y = TO_INT(params->eval.y);
+   params->final.w = TO_INT(params->eval.w);
+   params->final.h = TO_INT(params->eval.h);
+
+   /* Adjust rounding to not loose one pixels compared to float
+      information only when rendering to avoid infinite adjustement
+      when doing min restricted calc */
+   if (!ed->calc_only)
+     {
+        if (params->final.x + params->final.w < TO_INT(ADD(params->eval.x, params->eval.w)))
+	  {
+             params->final.w += 1;
+	  }
+        else if (params->final.x + params->final.w > TO_INT(ADD(params->eval.x, params->eval.w)))
+	  {
+             params->final.w -= 1;
+	  }
+        if (params->final.y + params->final.h < TO_INT(ADD(params->eval.y, params->eval.h)))
+          {
+             params->final.h += 1;
+          }
+        else if (params->final.y + params->final.h > TO_INT(ADD(params->eval.y, params->eval.h)))
+          {
+             params->final.h -= 1;
+          }
+     }
+
    /* fill */
    if (ep->part->type == EDJE_PART_TYPE_IMAGE)
      _edje_part_recalc_single_fill(ep, &((Edje_Part_Description_Image *)desc)->image.fill, params);
@@ -2474,25 +2503,6 @@ _edje_part_recalc_single(Edje *ed,
      }
 #endif
    _edje_part_recalc_single_map(ed, ep, center, light, persp, desc, chosen_desc, params);
-
-   params->final.x = TO_INT(params->eval.x);
-   params->final.y = TO_INT(params->eval.y);
-   params->final.w = TO_INT(params->eval.w);
-   params->final.h = TO_INT(params->eval.h);
-
-   // Adjust rounding to not loose one pixels compared to float information only when rendering to
-   // avoid infinite adjustement when doing min restricted calc
-   if (!ed->calc_only)
-     {
-        if (params->final.x + params->final.w < TO_INT(ADD(params->eval.x, params->eval.w)))
-          params->final.w += 1;
-        else if (params->final.x + params->final.w > TO_INT(ADD(params->eval.x, params->eval.w)))
-          params->final.w -= 1;
-        if (params->final.y + params->final.h < TO_INT(ADD(params->eval.y, params->eval.h)))
-          params->final.h += 1;
-        else if (params->final.y + params->final.h > TO_INT(ADD(params->eval.y, params->eval.h)))
-          params->final.h -= 1;
-     }
 }
 
 static void
