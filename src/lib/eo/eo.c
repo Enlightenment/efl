@@ -360,16 +360,21 @@ eo2_call_resolve_internal(const Eo_Class *klass_id, Eo_Op op, Eo2_Op_Call_Data *
 
 
 EAPI Eo_Op
-eo2_get_op_id(void *api_func)
+eo2_get_op_id(void *api_func, const Eo_Class *klass_id)
 {
    int imin, imax, imid;
    Eo2_Op_Description *op_desc;
    Eo2_Op_Description *op_descs;
-   const _Eo * obj = eo2_call_stack.frame_ptr->obj;
+   const _Eo_Class *klass;
+
+   if (klass_id)
+      klass = _eo_class_pointer_get(klass_id);
+   else
+      klass = eo2_call_stack.frame_ptr->obj->klass;
 
    imin = 0;
-   imax = obj->klass->desc->ops.count - 1;
-   op_descs = obj->klass->desc->ops.descs2;
+   imax = klass->desc->ops.count - 1;
+   op_descs = klass->desc->ops.descs2;
 
    while (imax >= imin)
      {
@@ -401,7 +406,7 @@ eo2_api_funcs_cmp(const void *p1, const void *p2)
 EAPI void
 eo2_class_funcs_set(Eo_Class *klass_id)
 {
-   int op_id, n;
+   int op_id;
    _Eo_Class *klass;
    Eo2_Op_Description *op_desc;
    Eo2_Op_Description *op_descs;
@@ -410,27 +415,35 @@ eo2_class_funcs_set(Eo_Class *klass_id)
    EO_MAGIC_RETURN(klass, EO_CLASS_EINA_MAGIC);
    op_descs = klass->desc->ops.descs2;
 
-
-   // klass->desc->ops.count only counts class OP, not _constructor or _destructor
-   for (op_desc = op_descs; op_desc->op_type != EO_OP_TYPE_INVALID; op_desc++);
-   n = op_desc - op_descs;
-
-   qsort((void*)op_descs, n, sizeof(Eo2_Op_Description), eo2_api_funcs_cmp);
+   qsort((void*)op_descs, klass->desc->ops.count, sizeof(Eo2_Op_Description), eo2_api_funcs_cmp);
 
    op_id = klass->base_id;
    for (op_desc = op_descs; op_desc->op_type != EO_OP_TYPE_INVALID; op_desc++)
      {
+        if(op_desc->api_func == NULL)
+          ERR("Setting implementation for NULL API. Class '%s', Func index: %lu",
+              klass->desc->name, (unsigned long) (op_desc - op_descs));
+
         if (op_desc->op == EO_NOOP)
           {
-             if(op_desc->api_func == NULL)
-               ERR("Setting implementation for NULL EAPI for class '%s'. Func index: %lu",
+             op_desc->op = op_id;
+             op_id++;
+          }
+        else if (op_desc->op == EO2_OP_OVERRIDE)
+          {
+             if (klass->parent == NULL)
+               ERR("Can't inherit from a NULL parent. Class '%s', Func index: %lu",
                    klass->desc->name, (unsigned long) (op_desc - op_descs));
 
-            op_desc->op = op_id;
-            op_id++;
+             op_desc->op = eo2_get_op_id(op_desc->api_func, _eo_class_id_get(klass->parent));
+
+             if (op_desc->op == EO_NOOP)
+               ERR("API func %p, not found in direct parent '%s'. Class '%s', Func index: %lu",
+                   op_desc->api_func, klass->parent->desc->name,
+                   klass->desc->name, (unsigned long) (op_desc - op_descs));
           }
-        /* printf("%d %p %p\n", op_desc->op, op_desc->api_func, op_desc->func); */
-        // no need to check func->op_type != op_desc->op_type
+
+        /* printf("%d %p %p %s\n", op_desc->op, op_desc->api_func, op_desc->func, op_desc->doc); */
         _dich_func_set(klass, op_desc->op, op_desc->func);
      }
 }

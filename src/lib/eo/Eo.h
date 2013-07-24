@@ -630,7 +630,7 @@ typedef struct _Eo2_Op_Call_Data
 // cache OP id, get real fct and object data then do the call
 #define _EO2_FUNC_COMMON(Name, Ret, Func, DefRet)                       \
      static Eo_Op op = EO_NOOP;                                         \
-     if ( op == EO_NOOP ) op = eo2_get_op_id((void*)Name);              \
+     if ( op == EO_NOOP ) op = eo2_get_op_id((void*)Name, NULL);        \
      Eo2_Op_Call_Data call;                                             \
      if (!eo2_call_resolve(op, &call)) return DefRet;                   \
      __##Name##_func _func_ = (__##Name##_func) call.func;              \
@@ -657,15 +657,16 @@ typedef struct _Eo2_Op_Call_Data
 
 #define EO2_VOID_FUNC_BODYV(Name, Func, ...) EO2_FUNC_BODYV(Name, void, Func, , __VA_ARGS__)
 
-// FIXME: OP ID
-#define EO2_OP_CONSTRUCTOR(_private) { _private, NULL, 1, EO_OP_TYPE_REGULAR, "Constructor"}
-#define EO2_OP_DESTRUCTOR(_private) { _private, NULL, 2, EO_OP_TYPE_REGULAR, "Destructor"}
+// OP ID of an overriding function
+#define EO2_OP_OVERRIDE ((Eo_Op) -1)
+
 #define EO2_OP_FUNC(_private, _api, _doc) {_private, _api, EO_NOOP, EO_OP_TYPE_REGULAR, _doc}
 #define EO2_OP_CLASS_FUNC(_private, _api, _doc) {_private, _api, EO_NOOP, EO_OP_TYPE_CLASS, _doc}
+#define EO2_OP_FUNC_OVERRIDE(_private, _api, _doc) {_private, _api, EO2_OP_OVERRIDE, EO_OP_TYPE_REGULAR, _doc}
 #define EO2_OP_SENTINEL { NULL, NULL, 0, EO_OP_TYPE_INVALID, NULL}
 
 // returns the OP id corresponding to the given api_func
-EAPI Eo_Op eo2_get_op_id(void *api_func);
+EAPI Eo_Op eo2_get_op_id(void *api_func, const Eo_Class *klass);
 
 // gets the real function pointer and the object data
 #define eo2_call_resolve(op, call) eo2_call_resolve_internal(NULL, op, call)
