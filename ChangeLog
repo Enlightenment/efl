@@ -1,3 +1,7 @@
+2013-07-18  Mike Blumenkrantz
+
+        * Ecore-Evas: fix usage of underlying X window after it has received a destroy event
+
 2013-07-22 Jiyoun Park
 
         * Evas: fix infinite loop if app use ecore evas image

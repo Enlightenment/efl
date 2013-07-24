@@ -95,6 +95,7 @@ struct _Ecore_Evas_Engine_Data_X11 {
         void *visual; // store visual used to create pixmap
         unsigned long colormap; // store colormap used to create pixmap
      } pixmap;
+   Eina_Bool destroyed : 1; // X window has been deleted and cannot be used
 };
 
 static Ecore_Evas_Interface_X11 * _ecore_evas_x_interface_x11_new(void);
@@ -152,8 +153,9 @@ static void
 _ecore_evas_x_group_leader_unset(Ecore_Evas *ee)
 {
    Ecore_Evas_Engine_Data_X11 *edata = ee->engine.data;
-   ecore_x_window_prop_property_del(ee->prop.window,
-                                    ECORE_X_ATOM_WM_CLIENT_LEADER);
+   if (!edata->destroyed)
+     ecore_x_window_prop_property_del(ee->prop.window,
+                                      ECORE_X_ATOM_WM_CLIENT_LEADER);
    if (edata->leader == leader_win)
      {
         leader_ref--;
@@ -224,8 +226,8 @@ _ecore_evas_x_sync_set(Ecore_Evas *ee)
           }
         edata->sync_counter = 0;
      }
-   if (sync_counter != edata->sync_counter)
-   ecore_x_e_comp_sync_counter_set(ee->prop.window, edata->sync_counter);
+   if ((!edata->destroyed) && (sync_counter != edata->sync_counter))
+     ecore_x_e_comp_sync_counter_set(ee->prop.window, edata->sync_counter);
 }
 
 static void
@@ -1259,12 +1261,15 @@ _ecore_evas_x_event_window_destroy(void *data EINA_UNUSED, int type EINA_UNUSED,
 {
    Ecore_Evas *ee;
    Ecore_X_Event_Window_Destroy *e;
+   Ecore_Evas_Engine_Data_X11 *edata;
 
    e = event;
    ee = ecore_event_window_match(e->win);
    if (!ee) return ECORE_CALLBACK_PASS_ON; /* pass on event */
    if (e->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
+   edata = ee->engine.data;
    if (ee->func.fn_destroy) ee->func.fn_destroy(ee);
+   edata->destroyed = 1;
    _ecore_evas_x_sync_clear(ee);
    ecore_evas_free(ee);
    return ECORE_CALLBACK_PASS_ON;
@@ -1649,7 +1654,8 @@ _ecore_evas_x_free(Ecore_Evas *ee)
    _ecore_evas_x_sync_set(ee);
    if (edata->win_shaped_input)
      ecore_x_window_free(edata->win_shaped_input);
-   if (ee->prop.window) ecore_x_window_free(ee->prop.window);
+   ecore_event_window_unregister(ee->prop.window);
+   if (ee->prop.window && (!edata->destroyed)) ecore_x_window_free(ee->prop.window);
    if (edata->pmap) ecore_x_pixmap_free(edata->pmap);
    if (edata->mask) ecore_x_pixmap_free(edata->mask);
    if (edata->gc) ecore_x_gc_free(edata->gc);
@@ -1658,7 +1664,6 @@ _ecore_evas_x_free(Ecore_Evas *ee)
    edata->mask = 0;
    edata->gc = 0;
    edata->damages = NULL;
-   ecore_event_window_unregister(ee->prop.window);
    while (edata->win_extra)
      {
         Ecore_X_Window *winp;
