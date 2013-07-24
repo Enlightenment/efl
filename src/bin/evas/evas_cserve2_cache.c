@@ -17,6 +17,7 @@
 typedef int string_t;
 #define ENTRY Entry base
 #define ASENTRY(a) (&(a->base))
+#define ENTRYID(a) ((a)->base.id)
 #define SHMOBJECT unsigned int id; unsigned int refcount
 
 typedef struct _Entry Entry;
@@ -24,6 +25,7 @@ typedef struct _Shm_Object Shm_Object;
 typedef struct _Reference Reference;
 typedef struct _File_Entry File_Entry;
 typedef struct _File_Data File_Data;
+typedef struct _Image_Entry Image_Entry;
 typedef struct _Image_Data Image_Data;
 typedef struct _File_Watch File_Watch;
 
@@ -74,12 +76,17 @@ struct _File_Data {
    Eina_Bool invalid : 1;
 };
 
-// Default values for load options commented below
-struct _Image_Data {
-   Entry base;
-   unsigned int file_id;
-   Evas_Image_Load_Opts opts;
+
+struct _Image_Entry {
+   ENTRY;
    Shm_Handle *shm;
+};
+
+struct _Image_Data {
+   SHMOBJECT;
+   unsigned int file_id;
+   string_t shm_id;
+   Evas_Image_Load_Opts opts;
    Eina_Bool alpha_sparse : 1;
    Eina_Bool unused : 1;
    Eina_Bool doload : 1;
@@ -178,6 +185,7 @@ static unsigned int _entry_id = 0;
 static unsigned int _freed_entry_count = 0;
 
 static Shared_Array *_file_data_array = NULL;
+static Shared_Array *_image_data_array = NULL;
 
 static Eina_Hash *file_ids = NULL; // maps path + key --> file_id
 static Eina_Hash *file_entries = NULL; // maps file_id --> entry
@@ -262,7 +270,7 @@ _shm_object_id_cmp_cb(const void *data1, const void *data2)
      return +1;
 }
 
-static inline File_Data *
+static File_Data *
 _file_data_find(unsigned int file_id)
 {
    File_Data *fd;
@@ -276,10 +284,11 @@ _file_data_find(unsigned int file_id)
      }
    else if (!fd)
      ERR("Could not find file %u", file_id);
+
    return fd;
 }
 
-static inline File_Entry *
+static File_Entry *
 _file_entry_find(unsigned int entry_id)
 {
    Entry *e;
@@ -289,6 +298,36 @@ _file_entry_find(unsigned int entry_id)
      return NULL;
 
    return (File_Entry *) e;
+}
+
+static Image_Data *
+_image_data_find(unsigned int image_id)
+{
+   Image_Data *idata;
+
+   idata = cserve2_shared_array_item_data_find(_image_data_array, &image_id,
+                                               _shm_object_id_cmp_cb);
+   if (idata && !idata->refcount)
+     {
+        ERR("Can not access object %u with refcount 0", image_id);
+        return NULL;
+     }
+   else if (!idata)
+     ERR("Could not find image %u", image_id);
+
+   return idata;
+}
+
+static Image_Entry *
+_image_entry_find(unsigned int entry_id)
+{
+   Entry *e;
+
+   e = (Entry *) eina_hash_find(image_entries, &entry_id);
+   if (!e || e->type != CSERVE2_IMAGE_DATA)
+     return NULL;
+
+   return (Image_Entry *) e;
 }
 
 static Eina_Bool
@@ -369,10 +408,10 @@ _image_opened_send(Client *client, File_Data *fd, unsigned int rid)
 }
 
 static Msg_Loaded *
-_image_loaded_msg_create(Image_Data *entry, int *size)
+_image_loaded_msg_create(Image_Entry *ientry, Image_Data *idata, int *size)
 {
    Msg_Loaded *msg;
-   const char *shmpath = cserve2_shm_name_get(entry->shm);
+   const char *shmpath = cserve2_shm_name_get(ientry->shm);
    int path_len;
    char *buf;
 
@@ -382,11 +421,11 @@ _image_loaded_msg_create(Image_Data *entry, int *size)
    msg = calloc(1, *size);
    msg->base.type = CSERVE2_LOADED;
 
-   msg->shm.mmap_offset = cserve2_shm_map_offset_get(entry->shm);
-   msg->shm.use_offset = cserve2_shm_offset_get(entry->shm);
-   msg->shm.mmap_size = cserve2_shm_map_size_get(entry->shm);
-   msg->shm.image_size = cserve2_shm_size_get(entry->shm);
-   msg->alpha_sparse = entry->alpha_sparse;
+   msg->shm.mmap_offset = cserve2_shm_map_offset_get(ientry->shm);
+   msg->shm.use_offset = cserve2_shm_offset_get(ientry->shm);
+   msg->shm.mmap_size = cserve2_shm_map_size_get(ientry->shm);
+   msg->shm.image_size = cserve2_shm_size_get(ientry->shm);
+   msg->alpha_sparse = idata->alpha_sparse;
 
    buf = (char *)msg + sizeof(*msg);
    memcpy(buf, shmpath, path_len);
@@ -395,14 +434,15 @@ _image_loaded_msg_create(Image_Data *entry, int *size)
 }
 
 static void
-_image_loaded_send(Client *client, Image_Data *entry, unsigned int rid)
+_image_loaded_send(Client *client, Image_Entry *ientry, Image_Data *idata,
+                   unsigned int rid)
 {
    int size;
    Msg_Loaded *msg;
 
-   DBG("Sending LOADED reply for entry %d and RID: %d.", entry->base.id, rid);
+   DBG("Sending LOADED reply for entry %d and RID: %d.", idata->id, rid);
 
-   msg = _image_loaded_msg_create(entry, &size);
+   msg = _image_loaded_msg_create(ientry, idata, &size);
    msg->base.rid = rid;
 
    cserve2_client_send(client, &size, sizeof(size));
@@ -437,6 +477,9 @@ _open_request_build(Entry *entry, int *bufsize)
    int size, pathlen, keylen, loaderlen;
    Slave_Msg_Image_Open msg;
    File_Data *fd;
+
+   if (!entry || entry->type != CSERVE2_IMAGE_FILE)
+     return NULL;
 
    fd = _file_data_find(entry->id);
    if (!fd)
@@ -541,7 +584,7 @@ static Slave_Request_Funcs _open_funcs = {
 };
 
 static void *
-_load_request_build(Image_Data *i, int *bufsize)
+_load_request_build(Image_Entry *ientry, int *bufsize)
 {
    char *buf, *ptr;
    const char *shmpath, *loader_data;
@@ -549,21 +592,29 @@ _load_request_build(Image_Data *i, int *bufsize)
    int shmlen, filelen, keylen, loaderlen;
    Slave_Msg_Image_Load msg;
    File_Data *fd;
+   Image_Data *idata;
 
-   fd = _file_data_find(i->file_id);
+   idata = _image_data_find(ENTRYID(ientry));
+   if (!idata || !idata->refcount)
+     {
+        ERR("Image data not found for entry %u", ENTRYID(ientry));
+        return NULL;
+     }
+
+   fd = _file_data_find(idata->file_id);
    if (!fd)
      {
-        ERR("Could not find file data %u for image %u", i->file_id, i->base.id);
+        ERR("Could not find file data %u for image %u",
+            idata->file_id, idata->id);
         return NULL;
      }
 
    // opening shm for this file
-   i->shm = cserve2_shm_request("img", fd->w * fd->h * 4);
-   if (!i->shm)
+   ientry->shm = cserve2_shm_request("img", fd->w * fd->h * 4);
+   if (!ientry->shm)
      return NULL;
 
-   shmpath = cserve2_shm_name_get(i->shm);
-
+   shmpath = cserve2_shm_name_get(ientry->shm);
    shmlen = strlen(shmpath) + 1;
    filelen = strlen(cserve2_shared_string_get(fd->path)) + 1;
    keylen = strlen(cserve2_shared_string_get(fd->key)) + 1;
@@ -583,18 +634,18 @@ _load_request_build(Image_Data *i, int *bufsize)
    msg.alpha = fd->alpha;
 
    // NOTE: Not passing scale_load options
-   msg.opts.w = i->opts.w;
-   msg.opts.h = i->opts.h;
-   msg.opts.region = i->opts.region;
-   msg.opts.scale_down_by = i->opts.scale_down_by;
-   msg.opts.dpi = i->opts.dpi;
-   msg.opts.degree = i->opts.degree;
-   msg.opts.orientation = i->opts.orientation;
+   msg.opts.w = idata->opts.w;
+   msg.opts.h = idata->opts.h;
+   msg.opts.region = idata->opts.region;
+   msg.opts.scale_down_by = idata->opts.scale_down_by;
+   msg.opts.dpi = idata->opts.dpi;
+   msg.opts.degree = idata->opts.degree;
+   msg.opts.orientation = idata->opts.orientation;
 
-   msg.shm.mmap_offset = cserve2_shm_map_offset_get(i->shm);
-   msg.shm.image_offset = cserve2_shm_offset_get(i->shm);
-   msg.shm.mmap_size = cserve2_shm_map_size_get(i->shm);
-   msg.shm.image_size = cserve2_shm_size_get(i->shm);
+   msg.shm.mmap_offset = cserve2_shm_map_offset_get(ientry->shm);
+   msg.shm.image_offset = cserve2_shm_offset_get(ientry->shm);
+   msg.shm.mmap_size = cserve2_shm_map_size_get(ientry->shm);
+   msg.shm.image_size = cserve2_shm_size_get(ientry->shm);
 
    msg.has_loader_data = !!loaderlen;
 
@@ -611,31 +662,31 @@ _load_request_build(Image_Data *i, int *bufsize)
 
    *bufsize = size;
 
-   _entry_load_start(&i->base);
+   _entry_load_start(&ientry->base);
 
    return buf;
 }
 
 static inline Eina_Bool
-_scaling_needed(Image_Data *entry, Slave_Msg_Image_Loaded *resp)
+_scaling_needed(Image_Data *idata, Slave_Msg_Image_Loaded *resp)
 {
-   return (((entry->opts.scale_load.dst_w) && (entry->opts.scale_load.dst_h)) &&
-           ((entry->opts.scale_load.dst_w != resp->w) ||
-            (entry->opts.scale_load.dst_h != resp->h)));
+   return (((idata->opts.scale_load.dst_w) && (idata->opts.scale_load.dst_h)) &&
+           ((idata->opts.scale_load.dst_w != resp->w) ||
+            (idata->opts.scale_load.dst_h != resp->h)));
 }
 
 static int
-_scaling_do(Shm_Handle *scale_shm, Image_Data *entry, Image_Data *original)
+_scaling_do(Shm_Handle *scale_shm, Image_Data *idata, Image_Entry *original)
 {
    char *scale_map, *orig_map;
    void *src_data, *dst_data;
    File_Data *fd;
 
-   fd = _file_data_find(entry->file_id);
+   fd = _file_data_find(idata->file_id);
    if (!fd)
      {
         ERR("Could not find file data %u for image %u",
-            entry->file_id, entry->base.id);
+            idata->file_id, idata->id);
         return -1;
      }
 
@@ -659,17 +710,18 @@ _scaling_do(Shm_Handle *scale_shm, Image_Data *entry, Image_Data *original)
    dst_data = scale_map + cserve2_shm_map_offset_get(scale_shm);
 
    DBG("Scaling image ([%d,%d:%dx%d] --> [%d,%d:%dx%d])",
-       entry->opts.scale_load.src_x, entry->opts.scale_load.src_y,
-       entry->opts.scale_load.src_w, entry->opts.scale_load.src_h,
+       idata->opts.scale_load.src_x, idata->opts.scale_load.src_y,
+       idata->opts.scale_load.src_w, idata->opts.scale_load.src_h,
        0, 0,
-       entry->opts.scale_load.dst_w, entry->opts.scale_load.dst_h);
+       idata->opts.scale_load.dst_w, idata->opts.scale_load.dst_h);
 
-   cserve2_rgba_image_scale_do(src_data, dst_data,
-                               entry->opts.scale_load.src_x, entry->opts.scale_load.src_y,
-                               entry->opts.scale_load.src_w, entry->opts.scale_load.src_h,
-                               0, 0,
-                               entry->opts.scale_load.dst_w, entry->opts.scale_load.dst_h,
-                               fd->alpha, entry->opts.scale_load.smooth);
+   cserve2_rgba_image_scale_do(
+            src_data, dst_data,
+            idata->opts.scale_load.src_x, idata->opts.scale_load.src_y,
+            idata->opts.scale_load.src_w, idata->opts.scale_load.src_h,
+            0, 0,
+            idata->opts.scale_load.dst_w, idata->opts.scale_load.dst_h,
+            fd->alpha, idata->opts.scale_load.smooth);
 
    cserve2_shm_unmap(original->shm);
    cserve2_shm_unmap(scale_shm);
@@ -678,51 +730,64 @@ _scaling_do(Shm_Handle *scale_shm, Image_Data *entry, Image_Data *original)
 }
 
 static int
-_scaling_prepare_and_do(Image_Data *orig)
+_scaling_prepare_and_do(Image_Entry *ientry, Image_Data *idata)
 {
    Shm_Handle *scale_shm;
 
-   DBG("Original image's shm path %s", cserve2_shm_name_get(orig->shm));
+   scale_shm = cserve2_shm_request("img", idata->opts.scale_load.dst_w
+                                   * idata->opts.scale_load.dst_h * 4);
 
-   scale_shm = cserve2_shm_request(
-            "img",
-            orig->opts.scale_load.dst_w * orig->opts.scale_load.dst_h * 4);
+   if (!scale_shm)
+     return -1;
 
-   DBG("Scale image's shm path %s", cserve2_shm_name_get(scale_shm));
+   DBG("Scaling image from shm %s to shm %s",
+       cserve2_shm_name_get(ientry->shm), cserve2_shm_name_get(scale_shm));
 
-   if (_scaling_do(scale_shm, orig, orig)) return -1;
+   if (_scaling_do(scale_shm, idata, ientry) != 0)
+     return -1;
 
-   cserve2_shm_unref(orig->shm); /* unreference old shm */
-   orig->shm = scale_shm; /* update shm */
+   // Switch shm in original image
+   cserve2_shm_unref(ientry->shm);
+   cserve2_shared_string_del(idata->shm_id);
+   ientry->shm = scale_shm;
+   idata->shm_id = cserve2_shared_string_add(cserve2_shm_name_get(ientry->shm));
 
    return 0;
 }
 
 static Msg_Loaded *
-_load_request_response(Image_Data *e, Slave_Msg_Image_Loaded *resp, int *size)
+_load_request_response(Image_Entry *ientry,
+                       Slave_Msg_Image_Loaded *resp, int *size)
 {
-   _entry_load_finish(&e->base);
+   Image_Data *idata;
 
-   e->base.request = NULL;
-
-   e->alpha_sparse = resp->alpha_sparse;
-   if (!e->doload)
-     DBG("Entry %d loaded by speculative preload.", e->base.id);
-
-   if (_scaling_needed(e, resp))
+   idata = _image_data_find(ENTRYID(ientry));
+   if (!idata)
      {
+        ERR("Image data %u not found", ENTRYID(ientry));
+        return NULL;
+     }
 
-        DBG("About to scale down image %u", ASENTRY(e)->id);
+   _entry_load_finish(ASENTRY(ientry));
+   ASENTRY(ientry)->request = NULL;
 
-        if (!_scaling_prepare_and_do(e))
-          DBG("Image %u has been scaled down.", ASENTRY(e)->id);
+   idata->alpha_sparse = resp->alpha_sparse;
+   if (!idata->doload)
+     DBG("Entry %d loaded by speculative preload.", idata->id);
+
+   if (_scaling_needed(idata, resp))
+     {
+        DBG("About to scale image %u", idata->id);
+
+        if (!_scaling_prepare_and_do(ientry, idata))
+          DBG("Image %u has been scaled.", idata->id);
         else
-          ERR("Failed to scale down image %u", ASENTRY(e)->id);
+          ERR("Failed to scale image %u", idata->id);
      }
    else
-     DBG("No scaling needed for image %u", ASENTRY(e)->id);
+     DBG("No scaling needed for image %u", idata->id);
 
-   return _image_loaded_msg_create(e, size);
+   return _image_loaded_msg_create(ientry, idata, size);
 }
 
 static Slave_Request_Funcs _load_funcs = {
@@ -732,11 +797,14 @@ static Slave_Request_Funcs _load_funcs = {
    .error = (Slave_Request_Error)_request_failed
 };
 
-static unsigned int
-_img_opts_id_get(unsigned int file_id, Evas_Image_Load_Opts *opts,
-                 char *buf, int size)
+static void
+_image_key_set(unsigned int file_id, const Evas_Image_Load_Opts *opts,
+               char *buf, int size)
 {
-   uintptr_t image_id;
+   const char empty[sizeof(Evas_Image_Load_Opts)] = {0};
+
+   if (!opts)
+     opts = (Evas_Image_Load_Opts *) &empty;
 
    snprintf(buf, size,
             "%u:%0.3f:%dx%d:%d:%d,%d+%dx%d:!([%d,%d:%dx%d]-[%dx%d:%d]):%d:%d",
@@ -748,25 +816,27 @@ _img_opts_id_get(unsigned int file_id, Evas_Image_Load_Opts *opts,
             opts->scale_load.dst_w, opts->scale_load.dst_h,
             opts->scale_load.smooth, opts->degree,
             opts->orientation);
-
-   image_id = (uintptr_t)eina_hash_find(image_ids, buf);
-
-   return image_id;
 }
 
 static unsigned int
-_image_data_opts_id_get(Image_Data *im, char *buf, int size)
+_image_opts_id_get(unsigned int file_id, Evas_Image_Load_Opts *opts,
+                   char *buf, int size)
 {
-   return _img_opts_id_get(im->file_id, &im->opts, buf, size);
+   uintptr_t image_id;
+
+   _image_key_set(file_id, opts, buf, size);
+   image_id = (uintptr_t) eina_hash_find(image_ids, buf);
+
+   return (unsigned int) image_id;
 }
 
 static int
-_image_entry_size_get(Image_Data *e)
+_image_entry_size_get(Image_Entry *ientry)
 {
    int size = sizeof(Image_Data);
    /* XXX: get the overhead of the shm handler too */
-   if (e->shm)
-     size += cserve2_shm_size_get(e->shm);
+   if (ientry->shm)
+     size += cserve2_shm_size_get(ientry->shm);
    return size / 1024;
 }
 
@@ -785,54 +855,75 @@ _file_id_free(File_Data *fd)
 }
 
 static void
-_image_id_free(Image_Data *entry)
+_image_id_free(Image_Data *idata)
 {
    char buf[4096];
 
-   DBG("Removing entry image id: %d", entry->base.id);
+   DBG("Removing entry image id: %d", idata->id);
 
-   _image_data_opts_id_get(entry, buf, sizeof(buf));
+   _image_opts_id_get(idata->file_id, &idata->opts, buf, sizeof(buf));
    eina_hash_del_by_key(image_ids, buf);
 }
 
 static void
-_image_entry_free(Image_Data *entry)
+_image_entry_free(Image_Entry *ientry)
 {
    File_Data *fd;
    File_Entry *fentry;
+   Image_Data *idata;
 
-   if (entry->base.request)
-     cserve2_request_cancel_all(entry->base.request, CSERVE2_REQUEST_CANCEL);
-
-   if (entry->unused)
+   idata = _image_data_find(ENTRYID(ientry));
+   if (!idata || !idata->refcount)
      {
-        image_entries_lru = eina_list_remove(image_entries_lru, entry);
-        unused_mem_usage -= _image_entry_size_get(entry);
+        CRIT("Trying to free already freed object: %u", ENTRYID(ientry));
+        return;
      }
 
-   fd = _file_data_find(entry->file_id);
+   if (--idata->refcount > 0)
+     return;
+
+   if (ientry->base.request)
+     cserve2_request_cancel_all(ientry->base.request,
+                                CSERVE2_REQUEST_CANCEL);
+
+   if (idata->unused)
+     {
+        image_entries_lru = eina_list_remove(image_entries_lru, ientry);
+        unused_mem_usage -= _image_entry_size_get(ientry);
+     }
+
+   fd = _file_data_find(idata->file_id);
    if (fd)
      {
         fentry = _file_entry_find(fd->id);
-        fentry->images = eina_list_remove(fentry->images, entry);
+        fentry->images = eina_list_remove(fentry->images, ientry);
         if (fentry && !fentry->images && !ASENTRY(fentry)->references)
           eina_hash_del_by_key(file_entries, &fd->id);
      }
    else
-     ERR("Could not find file data %u for image %u",
-         entry->file_id, ASENTRY(entry)->id);
-   if (entry->shm)
-     cserve2_shm_unref(entry->shm);
-   free(entry);
+      ERR("Could not find file data %u for image %u",
+          idata->file_id, idata->id);
+
+   if (ientry->shm)
+     cserve2_shm_unref(ientry->shm);
+   cserve2_shared_string_del(idata->shm_id);
+   idata->shm_id = 0;
+   free(ientry);
 }
 
 static void
 _hash_image_entry_free(void *data)
 {
-   Image_Data *entry = data;
+   Image_Entry *ientry = data;
+   Image_Data *idata;
 
-   _image_id_free(entry);
-   _image_entry_free(entry);
+   idata = _image_data_find(ENTRYID(ientry));
+   if (idata && idata->refcount > 0)
+     {
+        _image_id_free(idata);
+        _image_entry_free(ientry);
+     }
+   else ERR("Could not find image entry %u", ENTRYID(ientry));
 }
 
 static void
@@ -847,7 +938,7 @@ _file_entry_free(File_Entry *fentry)
 
    if (fentry->images)
      {
-        ERR("Freeing file %u image data still referenced.", ASENTRY(fentry)->id);
+        ERR("Freeing file %u image data still referenced.", ENTRYID(fentry));
         eina_list_free(fentry->images);
      }
    if (ASENTRY(fentry)->request)
@@ -886,7 +977,7 @@ _hash_file_entry_free(void *data)
    // TODO: Add some checks to make sure that we are freeing an
    // unused entry.
 
-   fd = _file_data_find(ASENTRY(fentry)->id);
+   fd = _file_data_find(ENTRYID(fentry));
    _file_id_free(fd);
    _file_data_free(fd);
    _file_entry_free(fentry);
@@ -1046,7 +1137,7 @@ cserve2_cache_init(void)
    file_ids = eina_hash_string_superfast_new(NULL);
    file_entries = eina_hash_int32_new(_hash_file_entry_free);
    image_ids = eina_hash_string_superfast_new(NULL);
-   image_entries = eina_hash_string_superfast_new(_hash_image_entry_free);
+   image_entries = eina_hash_int32_new(_hash_image_entry_free);
    file_watch = eina_hash_string_superfast_new(_file_watch_free);
 
    font_sources = eina_hash_string_small_new(EINA_FREE_CB(_font_source_free));
@@ -1057,6 +1148,7 @@ cserve2_cache_init(void)
                                 5);
 
    _file_data_array = cserve2_shared_array_new(1, sizeof(File_Data), 0);
+   _image_data_array = cserve2_shared_array_new(1, sizeof(Image_Data), 0);
 }
 
 void
@@ -1077,6 +1169,7 @@ cserve2_cache_shutdown(void)
    eina_hash_free(font_sources);
 
    cserve2_shared_array_del(_file_data_array);
+   cserve2_shared_array_del(_image_data_array);
 }
 
 static Reference *
@@ -1096,25 +1189,29 @@ _entry_reference_add(Entry *entry, Client *client, unsigned int client_entry_id)
 }
 
 static void
-_entry_unused_push(Image_Data *e)
+_entry_unused_push(Image_Entry *ientry)
 {
-   int size = _image_entry_size_get(e);
+   Image_Data *idata;
+   int size;
 
-   if ((size > max_unused_mem_usage) || !(e->doload))
+   idata = _image_data_find(ENTRYID(ientry));
+
+   size = _image_entry_size_get(ientry);
+   if ((size > max_unused_mem_usage) || !(idata->doload))
      {
-        eina_hash_del_by_key(image_entries, &e->base.id);
+        eina_hash_del_by_key(image_entries, &idata->id);
         return;
      }
    while (image_entries_lru &&
           (size > (max_unused_mem_usage - unused_mem_usage)))
      {
-        Entry *ie = eina_list_data_get(eina_list_last(image_entries_lru));
-        Eina_Bool ok = eina_hash_del_by_key(image_entries, &ie->id);
+        Image_Entry *ie = eina_list_data_get(eina_list_last(image_entries_lru));
+        Eina_Bool ok = eina_hash_del_by_key(image_entries, &(ENTRYID(ie)));
         if (!ok)
           {
-             DBG("Image %d was not found in the hash table!", ie->id);
+             DBG("Image %d was not found in the hash table!", ENTRYID(ie));
              image_entries_lru = eina_list_remove(image_entries_lru, ie);
-             _image_entry_free((Image_Data*) ie);
+             _image_entry_free(ie);
           }
      }
    if (!image_entries_lru && (unused_mem_usage != 0))
@@ -1123,8 +1220,8 @@ _entry_unused_push(Image_Data *e)
             unused_mem_usage);
         unused_mem_usage = 0;
      }
-   image_entries_lru = eina_list_append(image_entries_lru, e);
-   e->unused = EINA_TRUE;
+   image_entries_lru = eina_list_append(image_entries_lru, ientry);
+   idata->unused = EINA_TRUE;
    unused_mem_usage += size;
 }
 
@@ -1154,15 +1251,20 @@ _entry_reference_del(Entry *entry, Reference *ref)
      }
    else if (entry->type == CSERVE2_IMAGE_DATA)
      {
-        Image_Data *ientry = (Image_Data *) entry;
-        File_Data *fd = _file_data_find(entry->id);
+        Image_Entry *ientry = (Image_Entry *) entry;
+        Image_Data *idata = _image_data_find(entry->id);
 
-        if (!fd)
+        if (!idata || !idata->file_id)
           eina_hash_del_by_key(image_entries, &entry->id);
-        else if (fd->invalid)
-          _image_entry_free(ientry);
         else
-          _entry_unused_push(ientry);
+          {
+             File_Data *fdata = _file_data_find(idata->file_id);
+
+             if (fdata->invalid)
+               _image_entry_free(ientry);
+             else
+               _entry_unused_push(ientry);
+          }
      }
    else if (entry->type == CSERVE2_FONT_ENTRY)
      {
@@ -1249,14 +1351,17 @@ cserve2_cache_client_del(Client *client)
      }
 }
 
-static Image_Data *
+static Image_Entry *
 _image_entry_new(Client *client, int rid,
-                 unsigned int client_file_id, unsigned int image_id,
-                 Evas_Image_Load_Opts *opts)
+                 unsigned int client_file_id, unsigned int client_image_id,
+                 Evas_Image_Load_Opts *opts, char *buf)
 {
-   Reference *ref;
-   Image_Data *im_entry;
+   Reference *ref, *oldref;
+   Image_Entry *ientry;
+   Image_Data *idata;
    File_Data *fd;
+   int idata_id;
+   unsigned int image_id;
 
    ref = eina_hash_find(client->files.referencing, &client_file_id);
    if (!ref)
@@ -1275,32 +1380,62 @@ _image_entry_new(Client *client, int rid,
         return NULL;
      }
 
-   im_entry = calloc(1, sizeof(*im_entry));
-   im_entry->base.type = CSERVE2_IMAGE_DATA;
-   im_entry->file_id = ref->entry->id;
-   if (opts)
+   idata_id = cserve2_shared_array_item_new(_image_data_array);
+   idata = cserve2_shared_array_item_data_get(_image_data_array, idata_id);
+   if (idata_id < 0 || !idata)
      {
-        im_entry->opts.dpi = opts->dpi;
-        im_entry->opts.w = opts->w;
-        im_entry->opts.h = opts->h;
-        im_entry->opts.scale_down_by = opts->scale_down_by;
-        im_entry->opts.region.x = opts->region.x;
-        im_entry->opts.region.y = opts->region.y;
-        im_entry->opts.region.w = opts->region.w;
-        im_entry->opts.region.h = opts->region.h;
-        im_entry->opts.scale_load.src_x = opts->scale_load.src_x;
-        im_entry->opts.scale_load.src_y = opts->scale_load.src_y;
-        im_entry->opts.scale_load.src_w = opts->scale_load.src_w;
-        im_entry->opts.scale_load.src_h = opts->scale_load.src_h;
-        im_entry->opts.scale_load.dst_w = opts->scale_load.dst_w;
-        im_entry->opts.scale_load.dst_h = opts->scale_load.dst_h;
-        im_entry->opts.scale_load.smooth = opts->scale_load.smooth;
-        im_entry->opts.scale_load.scale_hint = opts->scale_load.scale_hint;
-        im_entry->opts.degree = opts->degree;
-        im_entry->opts.orientation = opts->orientation;
+        ERR("Could not create new image entry in shared array");
+        cserve2_client_error_send(client, rid,
+                                  CSERVE2_RESOURCE_ALLOCATION_FAILED);
+        return NULL;
      }
 
-   return im_entry;
+   image_id = ++_entry_id;
+   while (eina_hash_find(image_entries, &image_id))
+     image_id = ++_entry_id;
+
+   DBG("Creating new image entry: %u at index %d in shm %s",
+       image_id, idata_id, cserve2_shared_array_name_get(_image_data_array));
+
+   ientry = calloc(1, sizeof(*ientry));
+   ientry->base.id = image_id;
+   ientry->base.type = CSERVE2_IMAGE_DATA;
+   if (opts)
+     {
+        idata->opts.dpi = opts->dpi;
+        idata->opts.w = opts->w;
+        idata->opts.h = opts->h;
+        idata->opts.scale_down_by = opts->scale_down_by;
+        idata->opts.region.x = opts->region.x;
+        idata->opts.region.y = opts->region.y;
+        idata->opts.region.w = opts->region.w;
+        idata->opts.region.h = opts->region.h;
+        idata->opts.scale_load.src_x = opts->scale_load.src_x;
+        idata->opts.scale_load.src_y = opts->scale_load.src_y;
+        idata->opts.scale_load.src_w = opts->scale_load.src_w;
+        idata->opts.scale_load.src_h = opts->scale_load.src_h;
+        idata->opts.scale_load.dst_w = opts->scale_load.dst_w;
+        idata->opts.scale_load.dst_h = opts->scale_load.dst_h;
+        idata->opts.scale_load.smooth = opts->scale_load.smooth;
+        idata->opts.scale_load.scale_hint = opts->scale_load.scale_hint;
+        idata->opts.degree = opts->degree;
+        idata->opts.orientation = opts->orientation;
+     }
+   idata->file_id = ref->entry->id;
+   idata->refcount = 1;
+   idata->id = image_id;
+
+   _image_key_set(idata->file_id, opts, buf, sizeof(buf));
+   eina_hash_add(image_entries, &image_id, ientry);
+   eina_hash_add(image_ids, buf, (void *)(intptr_t) image_id);
+
+   oldref = eina_hash_find(client->images.referencing, &client_image_id);
+   ref = _entry_reference_add(ASENTRY(ientry), client, client_image_id);
+   if (oldref)
+     eina_hash_del_by_key(client->images.referencing, &client_image_id);
+   eina_hash_add(client->images.referencing, &client_image_id, ref);
+
+   return ientry;
 }
 
 static void
@@ -1313,7 +1448,7 @@ _file_changed_cb(const char *path EINA_UNUSED, Eina_Bool deleted EINA_UNUSED, vo
    EINA_LIST_FOREACH(fw->entries, l, fd)
      {
         Eina_List *ll;
-        Image_Data *ie;
+        Image_Entry *ie;
         File_Entry *fentry;
 
         fd->invalid = EINA_TRUE;
@@ -1328,14 +1463,22 @@ _file_changed_cb(const char *path EINA_UNUSED, Eina_Bool deleted EINA_UNUSED, vo
 
         EINA_LIST_FOREACH(fentry->images, ll, ie)
           {
-             _image_id_free(ie);
-             eina_hash_set(image_entries, &ie->base.id, NULL);
-             if (ie->base.request /*&& !ie->base.request->processing*/)
-               cserve2_request_cancel_all(ie->base.request,
+             Image_Data *idata;
+
+             eina_hash_set(image_entries, &ENTRYID(ie), NULL);
+             if (ASENTRY(ie)->request /*&& !ie->base.request->processing*/)
+               cserve2_request_cancel_all(ASENTRY(ie)->request,
                                           CSERVE2_FILE_CHANGED);
-             ie->base.request = NULL;
-             if (ie->unused)
-               _image_entry_free(ie);
+             ASENTRY(ie)->request = NULL;
+
+             idata = _image_data_find(ENTRYID(ie));
+             if (idata)
+               {
+                  _image_id_free(idata);
+                  if (idata->unused)
+                    _image_entry_free(ie);
+               }
+             else ERR("Image data %u not found", ENTRYID(ie));
           }
 
         _file_id_free(fd);
@@ -1947,29 +2090,32 @@ static Eina_Bool
 _image_data_entry_stats_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, void *data, void *fdata)
 {
    Msg_Stats *msg = fdata;
-   Image_Data *id = data;
+   Image_Entry *ientry = data;
+   Image_Data *idata;
    File_Data *fd;
+
+   idata = _image_data_find(ENTRYID(ientry));
 
    // accounting numbers
    msg->images.images_loaded++;
-   if (id->unused) msg->images.images_unused++;
+   if (idata->unused) msg->images.images_unused++;
 
    // accounting size
-   msg->images.images_size += _image_entry_size_get(id) * 1024;
-   if (id->unused) msg->images.unused_size += _image_entry_size_get(id) * 1024;
+   msg->images.images_size += _image_entry_size_get(ientry) * 1024;
+   if (idata->unused) msg->images.unused_size += _image_entry_size_get(ientry) * 1024;
 
-   fd = _file_data_find(id->file_id);
+   fd = _file_data_find(idata->file_id);
    if (fd)
      {
         unsigned int image_size = fd->w * fd->h * 4;
         msg->images.requested_size +=
-              (image_size * eina_list_count(id->base.references));
+              (image_size * eina_list_count(ASENTRY(ientry)->references));
      }
 
 #ifdef DEBUG_LOAD_TIME
    // accounting image entries load time
-   msg->images.images_load_time += id->base.load_time;
-   msg->images.images_saved_time += id->base.saved_time;
+   msg->images.images_load_time += ASENTRY(ientry)->load_time;
+   msg->images.images_saved_time += ASENTRY(ientry)->saved_time;
 #endif
 
    return EINA_TRUE;
@@ -2341,11 +2487,11 @@ cserve2_cache_file_close(Client *client, unsigned int client_file_id)
 }
 
 static int
-_cserve2_cache_fast_scaling_check(Client *client, Image_Data *entry)
+_cserve2_cache_fast_scaling_check(Client *client, Image_Entry *ientry)
 {
    Eina_Iterator *iter;
    Image_Data *i;
-   Image_Data *original = NULL;
+   Image_Entry *original = NULL;
    Evas_Image_Load_Opts unscaled;
    char buf[4096];
    unsigned int image_id;
@@ -2353,8 +2499,13 @@ _cserve2_cache_fast_scaling_check(Client *client, Image_Data *entry)
    int dst_w, dst_h;
    Eina_Bool first_attempt = EINA_TRUE;
    File_Entry *fentry;
+   Image_Data *idata;
 
-   if (!entry) return -1;
+#warning NOT IMPLEMENTED. PLEASE REIMLPEMENT.
+   return -1;
+#if 0
+
+   if (!ientry || !idata) return -1;
 
    dst_w = entry->opts.scale_load.dst_w;
    dst_h = entry->opts.scale_load.dst_h;
@@ -2375,7 +2526,7 @@ _cserve2_cache_fast_scaling_check(Client *client, Image_Data *entry)
    unscaled.scale_load.smooth = entry->opts.scale_load.smooth;
 
 try_again:
-   image_id = _img_opts_id_get(entry->file_id, &unscaled, buf, sizeof(buf));
+   image_id = _image_opts_id_get(entry->file_id, &unscaled, buf, sizeof(buf));
    if (image_id)
      {
         original = eina_hash_find(image_entries, &image_id);
@@ -2430,12 +2581,7 @@ try_again:
                                          0, &unscaled);
              if (!original) return -1;
 
-             image_id = ++_entry_id;
-             while ((image_id == 0) || (eina_hash_find(image_entries, &image_id)))
-               image_id = ++_entry_id;
-             DBG("Creating new image_id: %d", image_id);
-
-             original->base.id = image_id;
+             // NOTE: NOT NEEDED ANYMORE. FIXME
              eina_hash_add(image_entries, &image_id, original);
              eina_hash_add(image_ids, buf, (void *)(intptr_t)image_id);
              _entry_unused_push(original);
@@ -2478,95 +2624,95 @@ do_scaling:
         image_entries_lru = eina_list_prepend(image_entries_lru, original);
      }
    return 0;
+#endif
 }
 
 int
 cserve2_cache_image_entry_create(Client *client, int rid,
-                                 unsigned int file_id,
+                                 unsigned int client_file_id,
                                  unsigned int client_image_id,
                                  Evas_Image_Load_Opts *opts)
 {
-   Image_Data *entry;
-   Reference *ref, *oldref;
+   Image_Data *idata;
+   Image_Entry *ientry;
+   Reference *ref;
    File_Entry *fentry;
-   unsigned int image_id;
+   unsigned int image_id = 0;
    char buf[4096];
 
-   oldref = eina_hash_find(client->images.referencing, &client_image_id);
-
    // search whether the image is already loaded by another client
-   entry = _image_entry_new(client, rid, file_id, client_image_id, opts);
-   if (!entry)
-     return -1;
-   image_id = _image_data_opts_id_get(entry, buf, sizeof(buf));
+   ref = eina_hash_find(client->files.referencing, &client_file_id);
+   if (ref && opts)
+     image_id = _image_opts_id_get(ref->entry->id, opts, buf, sizeof(buf));
+
    if (image_id)
-     {  // if so, just update the references
-        free(entry);
+     {
+        // Just update the references
+        Reference *oldref;
+
         DBG("found image_id %d for client image id %d",
             image_id, client_image_id);
-        entry = eina_hash_find(image_entries, &image_id);
-        if (!entry)
+        ientry = _image_entry_find(image_id);
+        idata = _image_data_find(image_id);
+        if (!ientry || !idata)
           {
-             ERR("image id %d is in file_ids hash, but not in entries hash"
-                 "with entry id %d.", client_image_id, image_id);
+             ERR("image entry %d (client id: %d) corrupted: entry %p data %p",
+                 image_id, client_image_id, ientry, idata);
              cserve2_client_error_send(client, rid, CSERVE2_INVALID_CACHE);
              return -1;
           }
 
-        if (entry->unused)
+        // FIXME: This might be broken (wrt. refcounting)
+        if (idata->unused)
           {
              DBG("Re-using old image entry (id: %d) from the LRU list.",
-                 entry->base.id);
-             entry->unused = EINA_FALSE;
-             image_entries_lru = eina_list_remove(image_entries_lru, entry);
-             unused_mem_usage -= _image_entry_size_get(entry);
+                 ientry->base.id);
+             idata->unused = EINA_FALSE;
+             idata->refcount++;
+             image_entries_lru = eina_list_remove(image_entries_lru, ientry);
+             unused_mem_usage -= _image_entry_size_get(ientry);
           }
-        _entry_load_reused(&entry->base);
+        _entry_load_reused(&ientry->base);
 
+        oldref = eina_hash_find(client->images.referencing, &client_image_id);
         if (oldref && (oldref->entry->id == image_id))
           return 0;
 
-        ref = _entry_reference_add((Entry *)entry, client, client_image_id);
-
+        ref = _entry_reference_add(ASENTRY(ientry), client, client_image_id);
         if (oldref)
           eina_hash_del_by_key(client->images.referencing, &client_image_id);
-
         eina_hash_add(client->images.referencing, &client_image_id, ref);
+
         return 0;
      }
 
-   image_id = ++_entry_id;
-   while ((image_id == 0) || (eina_hash_find(image_entries, &image_id)))
-     image_id = ++_entry_id;
+   ientry = _image_entry_new(client, rid, client_file_id, client_image_id,
+                             opts, buf);
+   if (!ientry)
+     return -1;
 
-   entry->base.id = image_id;
-   eina_hash_add(image_entries, &image_id, entry);
-   eina_hash_add(image_ids, buf, (void *)(intptr_t)image_id);
-   ref = _entry_reference_add((Entry *)entry, client, client_image_id);
-
-   if (oldref)
-     eina_hash_del_by_key(client->images.referencing, &client_image_id);
-   eina_hash_add(client->images.referencing, &client_image_id, ref);
-
-   fentry = _file_entry_find(entry->file_id);
-   fentry->images = eina_list_append(fentry->images, entry);
+   fentry = _file_entry_find(ref->entry->id);
+   fentry->images = eina_list_append(fentry->images, ientry);
 
    if (opts && opts->scale_load.dst_w && opts->scale_load.dst_h)
      {
-        if (!_cserve2_cache_fast_scaling_check(client, entry))
+        if (!_cserve2_cache_fast_scaling_check(client, ientry))
           return 0;
      }
 
-   ASENTRY(entry)->request = cserve2_request_add(CSERVE2_REQ_IMAGE_SPEC_LOAD,
-                                                 0, NULL, ASENTRY(fentry)->request,
-                                                 &_load_funcs, entry);
+   ASENTRY(ientry)->request = cserve2_request_add(
+            CSERVE2_REQ_IMAGE_SPEC_LOAD,
+            0, NULL, ASENTRY(fentry)->request,
+            &_load_funcs, ientry);
+
    return 0;
 }
 
 void
 cserve2_cache_image_load(Client *client, unsigned int client_image_id, unsigned int rid)
 {
-   Image_Data *entry;
+   Image_Entry *ientry;
+   Image_Data *idata;
    Reference *ref;
    File_Data *fd;
 
@@ -2578,8 +2724,15 @@ cserve2_cache_image_load(Client *client, unsigned int client_image_id, unsigned 
         return;
      }
 
-   entry = (Image_Data *) ref->entry;
-   fd = _file_data_find(entry->file_id);
+   ientry = (Image_Entry *) ref->entry;
+   idata = _image_data_find(ENTRYID(ientry));
+   if (!idata)
+     {
+        ERR("Image data not found for entry %u", ENTRYID(ientry));
+        return;
+     }
+
+   fd = _file_data_find(idata->file_id);
    if (!fd || fd->invalid)
      {
         cserve2_client_error_send(client, rid, CSERVE2_FILE_CHANGED);
@@ -2589,72 +2742,35 @@ cserve2_cache_image_load(Client *client, unsigned int client_image_id, unsigned 
    DBG("Loading image id: %d", ref->entry->id);
 
    // File already being loaded, just add the request to be replied
-   if (entry->base.request)
+   if (ASENTRY(ientry)->request)
      {
-        cserve2_request_waiter_add(entry->base.request, rid, client);
-        if (!entry->doload)
-          cserve2_request_type_set(entry->base.request, CSERVE2_REQ_IMAGE_LOAD);
+        cserve2_request_waiter_add(ASENTRY(ientry)->request, rid, client);
+        if (!idata->doload)
+          {
+             cserve2_request_type_set(ASENTRY(ientry)->request,
+                                      CSERVE2_REQ_IMAGE_LOAD);
+          }
      }
-   else if (entry->shm)
-     _image_loaded_send(client, entry, rid);
+   else if (ientry->shm)
+     _image_loaded_send(client, ientry, idata, rid);
    else
      {
-        File_Entry *fentry = _file_entry_find(entry->file_id);
-        ASENTRY(entry)->request = cserve2_request_add(CSERVE2_REQ_IMAGE_LOAD,
-                                                      rid, client,
-                                                      ASENTRY(fentry)->request,
-                                                      &_load_funcs,
-                                                      entry);
+        File_Entry *fentry = _file_entry_find(idata->file_id);
+        ASENTRY(ientry)->request = cserve2_request_add(CSERVE2_REQ_IMAGE_LOAD,
+                                                       rid, client,
+                                                       ASENTRY(fentry)->request,
+                                                       &_load_funcs,
+                                                       ientry);
      }
 
-   entry->doload = EINA_TRUE;
+   idata->doload = EINA_TRUE;
 }
 
 void
 cserve2_cache_image_preload(Client *client, unsigned int client_image_id, unsigned int rid)
 {
-   Image_Data *entry;
-   Reference *ref;
-   File_Data *fd;
-
-   ref = eina_hash_find(client->images.referencing, &client_image_id);
-   if (!ref)
-     {
-        ERR("Can't load: client %d has no image id %d",
-            client->id, client_image_id);
-        return;
-     }
-
-   entry = (Image_Data *) ref->entry;
-   fd = _file_data_find(entry->file_id);
-   if (!fd || fd->invalid)
-     {
-        cserve2_client_error_send(client, rid, CSERVE2_FILE_CHANGED);
-        return;
-     }
-
-   DBG("Loading image id: %d", ref->entry->id);
-
-   // File already being loaded, just add the request to be replied
-   if (entry->base.request)
-     {
-        cserve2_request_waiter_add(entry->base.request, rid, client);
-        if (!entry->doload)
-          cserve2_request_type_set(entry->base.request, CSERVE2_REQ_IMAGE_LOAD);
-     }
-   else if (entry->shm)
-     _image_loaded_send(client, entry, rid);
-   else
-     {
-        File_Entry *fentry = _file_entry_find(entry->file_id);
-        ASENTRY(entry)->request = cserve2_request_add(CSERVE2_REQ_IMAGE_LOAD,
-                                                      rid, client,
-                                                      ASENTRY(fentry)->request,
-                                                      &_load_funcs,
-                                                      entry);
-     }
-
-   entry->doload = EINA_TRUE;
+   // Same as normal load (for now)
+   return cserve2_cache_image_load(client, client_image_id, rid);
 }
 
 void

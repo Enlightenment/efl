@@ -759,17 +759,18 @@ cserve2_shared_mempool_buffer_ref(Shared_Mempool *sm, int bufferid)
    return ie->id;
 }
 
-void
-cserve2_shared_mempool_buffer_del(Shared_Mempool *sm, int bufferid)
+static Eina_Bool
+_shared_mempool_buffer_del(Shared_Mempool *sm, int bufferid)
 {
    Index_Entry *ie;
 
-   if (!sm || !bufferid) return;
+   if (!sm || !bufferid) return EINA_FALSE;
+
    ie = _shared_index_entry_find(sm->index, bufferid);
    if (!ie || ie->refcount <= 0)
      {
         CRIT("Tried to delete invalid buffer or with refcount 0");
-        return;
+        return EINA_FALSE;
      }
 
    ie->refcount--;
@@ -782,7 +783,16 @@ cserve2_shared_mempool_buffer_del(Shared_Mempool *sm, int bufferid)
         sm->empty_blocks = (Block *) eina_rbtree_inline_insert(
                  EINA_RBTREE_GET(sm->empty_blocks), EINA_RBTREE_GET(newblk),
                  EINA_RBTREE_CMP_NODE_CB(_block_rbtree_cmp), NULL);
+        return EINA_TRUE;
      }
+
+   return EINA_FALSE;
+}
+
+void
+cserve2_shared_mempool_buffer_del(Shared_Mempool *sm, int bufferid)
+{
+   _shared_mempool_buffer_del(sm, bufferid);
 }
 
 void *
