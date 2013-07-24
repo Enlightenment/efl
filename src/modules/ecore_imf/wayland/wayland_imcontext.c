@@ -83,7 +83,7 @@ utf8_offset_to_characters(const char *str, int offset)
    unsigned int i = 0;
 
    for (; index < offset; i++)
-      eina_unicode_utf8_next_get(str, &index);
+     eina_unicode_utf8_next_get(str, &index);
 
    return i;
 }
@@ -97,7 +97,7 @@ update_state(WaylandIMContext *imcontext)
    int canvas_x = 0, canvas_y = 0;
 
    if (!imcontext->ctx)
-      return;
+     return;
 
    /* cursor_pos is a byte index */
    if (ecore_imf_context_surrounding_get(imcontext->ctx, &surrounding, &cursor_pos))
@@ -168,7 +168,7 @@ clear_preedit(WaylandIMContext *imcontext)
    imcontext->preedit_commit = NULL;
 
    EINA_LIST_FREE(imcontext->preedit_attrs, attr)
-      free(attr);
+     free(attr);
 
    imcontext->preedit_attrs = NULL;
 }
@@ -194,10 +194,10 @@ text_input_commit_string(void                 *data,
      imcontext->preedit_text && strlen(imcontext->preedit_text) > 0;
 
    if (!imcontext->ctx)
-      return;
+     return;
 
    if (!check_serial(imcontext, serial))
-      return;
+     return;
 
    if (old_preedit)
      {
@@ -248,10 +248,10 @@ static void
 commit_preedit(WaylandIMContext *imcontext)
 {
    if (!imcontext->preedit_commit)
-      return;
+     return;
 
    if (!imcontext->ctx)
-      return;
+     return;
 
    ecore_imf_context_commit_event_add(imcontext->ctx, 
                                       imcontext->preedit_commit);
@@ -276,7 +276,7 @@ text_input_preedit_string(void                 *data,
                      imcontext->preedit_text ? imcontext->preedit_text : "");
 
    if (!check_serial(imcontext, serial))
-      return;
+     return;
 
    old_preedit = 
      imcontext->preedit_text && strlen(imcontext->preedit_text) > 0;
@@ -396,7 +396,7 @@ modifiers_get_index(struct wl_array *modifiers_map, const char *name)
    while ((const char *)p < ((const char *)modifiers_map->data + modifiers_map->size))
      {
         if (strcmp(p, name) == 0)
-           return index;
+          return index;
 
         index++;
         p += strlen(p) + 1;
@@ -412,7 +412,7 @@ modifiers_get_mask(struct wl_array *modifiers_map,
    xkb_mod_index_t index = modifiers_get_index(modifiers_map, name);
 
    if (index == XKB_MOD_INVALID)
-      return XKB_MOD_INVALID;
+     return XKB_MOD_INVALID;
 
    return 1 << index;
 }
