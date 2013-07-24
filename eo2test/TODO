@@ -1,0 +1,13 @@
+- function name from pointer
+   dladdr backtrace ??
+
+- eo_private.h 177 err
+   do_err = EINA_TRUE;
+   eo2_do((Eo *)obj->obj_id, eo2_destructor(););
+
+- Eo2_Call_Stack
+   grow/shrink
+   per thread stack
+
+- fix simplesignal.cc
+   bench_callback_eo2_loop()
