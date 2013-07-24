@@ -3831,8 +3831,8 @@ _translate_string_data_get(Eina_Inlist *translate_strings, const char *part)
    EINA_INLIST_FOREACH(translate_strings, ts)
      {
         if (ts->id == str) break;
-        else ts = NULL;
      }
+
    eina_stringshare_del(str);
 
    return ts;
