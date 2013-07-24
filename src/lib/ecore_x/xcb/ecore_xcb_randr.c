@@ -2672,15 +2672,19 @@ ecore_x_randr_window_outputs_get(Ecore_X_Window window,
 
         outputs = ecore_x_randr_crtc_outputs_get(root, crtcs[i],
               &noutputs);
-        if (!outputs)
-          goto _ecore_x_randr_current_output_get_fail_free;
-        tret = realloc(ret, ((nret + noutputs) * sizeof(Ecore_X_Randr_Output)));
-        if (!tret) goto _ecore_x_randr_current_output_get_fail_free;
-        ret = tret;
-        memcpy(&ret[nret], outputs, (noutputs * sizeof(Ecore_X_Randr_Output)));
-        nret += noutputs;
-        free(outputs);
-        outputs = NULL;
+        if (outputs)
+          {
+             if (noutputs > 0)
+               {
+                  tret = realloc(ret, ((nret + noutputs) * sizeof(Ecore_X_Randr_Output)));
+                  if (!tret) goto _ecore_x_randr_current_output_get_fail_free;
+                  ret = tret;
+                  memcpy(&ret[nret], outputs, (noutputs * sizeof(Ecore_X_Randr_Output)));
+                  nret += noutputs;
+               }
+             free(outputs);
+             outputs = NULL;
+          }
      }
    free(crtcs);
 

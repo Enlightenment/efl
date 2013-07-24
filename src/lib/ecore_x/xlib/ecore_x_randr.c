@@ -1034,17 +1034,19 @@ ecore_x_randr_window_outputs_get(Ecore_X_Window window, int *num)
                   /* try to get the crtc info for this crtc */
                   if (!(crtc = XRRGetCrtcInfo(_ecore_x_disp, res, crtcs[i])))
                     continue;
-
-                  /* try to reallocate our return variable */
-                  if ((tret = realloc(ret, ((nret + crtc->noutput) * 
-                                            sizeof(Ecore_X_Randr_Output)))))
+                  
+                  if (crtc->noutput > 0)
                     {
-                       ret = tret;
-                       memcpy(&ret[nret], crtc->outputs, 
-                              (crtc->noutput * sizeof(Ecore_X_Randr_Output)));
-                       nret += crtc->noutput;
+                       /* try to reallocate our return variable */
+                       if ((tret = realloc(ret, ((nret + crtc->noutput) * 
+                                                 sizeof(Ecore_X_Randr_Output)))))
+                         {
+                            ret = tret;
+                            memcpy(&ret[nret], crtc->outputs, 
+                                   (crtc->noutput * sizeof(Ecore_X_Randr_Output)));
+                            nret += crtc->noutput;
+                         }
                     }
-
                   /* free the crtc info */
                   XRRFreeCrtcInfo(crtc);
                }
