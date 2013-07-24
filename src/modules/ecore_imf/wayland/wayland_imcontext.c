@@ -81,6 +81,7 @@ utf8_offset_to_characters(const char *str, int offset)
 {
    int index = 0;
    unsigned int i = 0;
+
    for (; index < offset; i++)
       eina_unicode_utf8_next_get(str, &index);
 
@@ -101,10 +102,8 @@ update_state(WaylandIMContext *imcontext)
    /* cursor_pos is a byte index */
    if (ecore_imf_context_surrounding_get(imcontext->ctx, &surrounding, &cursor_pos))
      {
-	wl_text_input_set_surrounding_text(imcontext->text_input,
-					   surrounding,
-					   cursor_pos,
-                                           cursor_pos);
+	wl_text_input_set_surrounding_text(imcontext->text_input, surrounding, 
+                                           cursor_pos, cursor_pos);
         free(surrounding);
      }
 
@@ -115,7 +114,8 @@ update_state(WaylandIMContext *imcontext)
           ecore_evas_geometry_get(ee, &canvas_x, &canvas_y, NULL, NULL);
      }
 
-   EINA_LOG_DOM_INFO(_ecore_imf_wayland_log_dom, "canvas (x: %d, y: %d)", canvas_x, canvas_y);
+   EINA_LOG_DOM_INFO(_ecore_imf_wayland_log_dom, "canvas (x: %d, y: %d)", 
+                     canvas_x, canvas_y);
 
    wl_text_input_set_cursor_rectangle(imcontext->text_input,
                                       imcontext->cursor_location.x + canvas_x,
@@ -131,7 +131,8 @@ check_serial(WaylandIMContext *imcontext, uint32_t serial)
 {
    Ecore_IMF_Preedit_Attr *attr;
 
-   if ((imcontext->serial - serial) > (imcontext->serial - imcontext->reset_serial))
+   if ((imcontext->serial - serial) > 
+       (imcontext->serial - imcontext->reset_serial))
      {
         EINA_LOG_DOM_INFO(_ecore_imf_wayland_log_dom,
                           "outdated serial: %u, current: %u, reset: %u",
@@ -189,7 +190,8 @@ text_input_commit_string(void                 *data,
                      text,
                      imcontext->preedit_text ? imcontext->preedit_text : "");
 
-   old_preedit = imcontext->preedit_text && strlen(imcontext->preedit_text) > 0;
+   old_preedit = 
+     imcontext->preedit_text && strlen(imcontext->preedit_text) > 0;
 
    if (!imcontext->ctx)
       return;
@@ -200,7 +202,9 @@ text_input_commit_string(void                 *data,
    if (old_preedit)
      {
         ecore_imf_context_preedit_end_event_add(imcontext->ctx);
-        ecore_imf_context_event_callback_call(imcontext->ctx, ECORE_IMF_CALLBACK_PREEDIT_END, NULL);
+        ecore_imf_context_event_callback_call(imcontext->ctx, 
+                                              ECORE_IMF_CALLBACK_PREEDIT_END,
+                                              NULL);
      }
 
    clear_preedit(imcontext);
@@ -208,7 +212,8 @@ text_input_commit_string(void                 *data,
    if (imcontext->pending_commit.delete_length > 0)
      {
         /* cursor_pos is a byte index */
-        if (ecore_imf_context_surrounding_get(imcontext->ctx, &surrounding, &cursor_pos))
+        if (ecore_imf_context_surrounding_get(imcontext->ctx, &surrounding, 
+                                              &cursor_pos))
           {
              ev.ctx = imcontext->ctx;
              /* offset and n_chars are in characters */
@@ -248,8 +253,11 @@ commit_preedit(WaylandIMContext *imcontext)
    if (!imcontext->ctx)
       return;
 
-   ecore_imf_context_commit_event_add(imcontext->ctx, imcontext->preedit_commit);
-   ecore_imf_context_event_callback_call(imcontext->ctx, ECORE_IMF_CALLBACK_COMMIT, (void *)imcontext->preedit_commit);
+   ecore_imf_context_commit_event_add(imcontext->ctx, 
+                                      imcontext->preedit_commit);
+   ecore_imf_context_event_callback_call(imcontext->ctx, 
+                                         ECORE_IMF_CALLBACK_COMMIT, 
+                                         (void *)imcontext->preedit_commit);
 }
 
 static void
@@ -270,13 +278,15 @@ text_input_preedit_string(void                 *data,
    if (!check_serial(imcontext, serial))
       return;
 
-   old_preedit = imcontext->preedit_text && strlen(imcontext->preedit_text) > 0;
+   old_preedit = 
+     imcontext->preedit_text && strlen(imcontext->preedit_text) > 0;
 
    clear_preedit(imcontext);
 
    imcontext->preedit_text = strdup(text);
    imcontext->preedit_commit = strdup(commit);
-   imcontext->preedit_cursor = utf8_offset_to_characters(text, imcontext->pending_preedit.cursor);
+   imcontext->preedit_cursor = 
+     utf8_offset_to_characters(text, imcontext->pending_preedit.cursor);
    imcontext->preedit_attrs = imcontext->pending_preedit.attrs;
 
    imcontext->pending_preedit.attrs = NULL;
@@ -284,16 +294,22 @@ text_input_preedit_string(void                 *data,
    if (!old_preedit)
      {
         ecore_imf_context_preedit_start_event_add(imcontext->ctx);
-        ecore_imf_context_event_callback_call(imcontext->ctx, ECORE_IMF_CALLBACK_PREEDIT_START, NULL);
+        ecore_imf_context_event_callback_call(imcontext->ctx, 
+                                              ECORE_IMF_CALLBACK_PREEDIT_START, 
+                                              NULL);
      }
 
    ecore_imf_context_preedit_changed_event_add(imcontext->ctx);
-   ecore_imf_context_event_callback_call(imcontext->ctx, ECORE_IMF_CALLBACK_PREEDIT_CHANGED, NULL);
+   ecore_imf_context_event_callback_call(imcontext->ctx, 
+                                         ECORE_IMF_CALLBACK_PREEDIT_CHANGED, 
+                                         NULL);
 
    if (strlen(imcontext->preedit_text) == 0)
      {
         ecore_imf_context_preedit_end_event_add(imcontext->ctx);
-        ecore_imf_context_event_callback_call(imcontext->ctx, ECORE_IMF_CALLBACK_PREEDIT_END, NULL);
+        ecore_imf_context_event_callback_call(imcontext->ctx, 
+                                              ECORE_IMF_CALLBACK_PREEDIT_END, 
+                                              NULL);
      }
 }
 
@@ -307,8 +323,7 @@ text_input_delete_surrounding_text(void                 *data,
 
    EINA_LOG_DOM_INFO(_ecore_imf_wayland_log_dom,
                      "delete surrounding text (index: %d, length: %u)",
-                     index,
-                     length);
+                     index, length);
 
    imcontext->pending_commit.delete_index = index;
    imcontext->pending_commit.delete_length = length;
@@ -324,8 +339,7 @@ text_input_cursor_position(void                 *data,
 
    EINA_LOG_DOM_INFO(_ecore_imf_wayland_log_dom,
                      "cursor_position for next commit (index: %d, anchor: %d)",
-                     index,
-                     anchor);
+                     index, anchor);
 
    imcontext->pending_commit.cursor = index;
    imcontext->pending_commit.anchor = anchor;
@@ -359,7 +373,8 @@ text_input_preedit_styling(void                 *data,
    attr->start_index = index;
    attr->end_index = index + length;
 
-   imcontext->pending_preedit.attrs = eina_list_append(imcontext->pending_preedit.attrs, attr);
+   imcontext->pending_preedit.attrs = 
+     eina_list_append(imcontext->pending_preedit.attrs, attr);
 }
 
 static void
@@ -373,8 +388,7 @@ text_input_preedit_cursor(void                 *data,
 }
 
 static xkb_mod_index_t
-modifiers_get_index(struct wl_array *modifiers_map,
-                    const char *name)
+modifiers_get_index(struct wl_array *modifiers_map, const char *name)
 {
    xkb_mod_index_t index = 0;
    char *p = modifiers_map->data;
@@ -433,7 +447,7 @@ text_input_keysym(void                 *data,
    memset(keyname, 0, sizeof(keyname));
    xkb_keysym_get_name(sym, keyname, sizeof(keyname));
    if (keyname[0] == '\0')
-      snprintf(keyname, sizeof(keyname), "Keysym-%u", sym);
+     snprintf(keyname, sizeof(keyname), "Keysym-%u", sym);
 
    memset(string, 0, sizeof(string));
    xkb_keysym_to_utf8(sym, string, 32);
@@ -442,9 +456,9 @@ text_input_keysym(void                 *data,
                      "key event (key: %s)",
                      keyname);
 
-   e = malloc(sizeof(Ecore_Event_Key) + strlen(key) + strlen(keyname) + strlen(string) + 3);
-   if (!e)
-      return;
+   e = malloc(sizeof(Ecore_Event_Key) + strlen(key) + strlen(keyname) + 
+              strlen(string) + 3);
+   if (!e) return;
 
    e->keyname = (char *)(e + 1);
    e->key = e->keyname + strlen(keyname) + 1;
@@ -461,18 +475,18 @@ text_input_keysym(void                 *data,
 
    e->modifiers = 0;
    if (modifiers & imcontext->shift_mask)
-      e->modifiers |= ECORE_EVENT_MODIFIER_SHIFT;
+     e->modifiers |= ECORE_EVENT_MODIFIER_SHIFT;
 
    if (modifiers & imcontext->control_mask)
-      e->modifiers |= ECORE_EVENT_MODIFIER_CTRL;
+     e->modifiers |= ECORE_EVENT_MODIFIER_CTRL;
 
    if (modifiers & imcontext->alt_mask)
-      e->modifiers |= ECORE_EVENT_MODIFIER_ALT;
+     e->modifiers |= ECORE_EVENT_MODIFIER_ALT;
 
    if (state)
-      ecore_event_add(ECORE_EVENT_KEY_DOWN, e, NULL, NULL);
+     ecore_event_add(ECORE_EVENT_KEY_DOWN, e, NULL, NULL);
    else
-      ecore_event_add(ECORE_EVENT_KEY_UP, e, NULL, NULL);
+     ecore_event_add(ECORE_EVENT_KEY_UP, e, NULL, NULL);
 }
 
 static void
@@ -500,10 +514,13 @@ text_input_leave(void                 *data,
    clear_preedit(imcontext);
 
    ecore_imf_context_preedit_changed_event_add(imcontext->ctx);
-   ecore_imf_context_event_callback_call(imcontext->ctx, ECORE_IMF_CALLBACK_PREEDIT_CHANGED, NULL);
+   ecore_imf_context_event_callback_call(imcontext->ctx, 
+                                         ECORE_IMF_CALLBACK_PREEDIT_CHANGED, 
+                                         NULL);
 
    ecore_imf_context_preedit_end_event_add(imcontext->ctx);
-   ecore_imf_context_event_callback_call(imcontext->ctx, ECORE_IMF_CALLBACK_PREEDIT_END, NULL);
+   ecore_imf_context_event_callback_call(imcontext->ctx, 
+                                         ECORE_IMF_CALLBACK_PREEDIT_END, NULL);
 }
 
 static void
@@ -555,8 +572,10 @@ wayland_im_context_add(Ecore_IMF_Context *ctx)
 
    imcontext->ctx = ctx;
 
-   imcontext->text_input = wl_text_input_manager_create_text_input(imcontext->text_input_manager);
-   wl_text_input_add_listener(imcontext->text_input, &text_input_listener, imcontext);
+   imcontext->text_input = 
+     wl_text_input_manager_create_text_input(imcontext->text_input_manager);
+   wl_text_input_add_listener(imcontext->text_input, 
+                              &text_input_listener, imcontext);
 }
 
 EAPI void
@@ -594,12 +613,11 @@ wayland_im_context_focus_in(Ecore_IMF_Context *ctx)
 
    EINA_LOG_DOM_INFO(_ecore_imf_wayland_log_dom, "focus-in");
 
-   if (!imcontext->window)
-      return;
+   if (!imcontext->window) return;
 
    input = imcontext->window->keyboard_device;
    if (!input || !input->seat)
-      return;
+     return;
 
    wl_text_input_show_input_panel(imcontext->text_input);
    wl_text_input_activate(imcontext->text_input,
@@ -614,8 +632,7 @@ wayland_im_context_focus_out(Ecore_IMF_Context *ctx)
 
    EINA_LOG_DOM_INFO(_ecore_imf_wayland_log_dom, "focus-out");
 
-   if (!imcontext->window)
-      return;
+   if (!imcontext->window) return;
 
    wl_text_input_deactivate(imcontext->text_input,
                             imcontext->window->display->input->seat);
@@ -633,10 +650,10 @@ wayland_im_context_preedit_string_get(Ecore_IMF_Context  *ctx,
                      imcontext->preedit_text ? imcontext->preedit_text : "");
 
    if (str)
-      *str = strdup(imcontext->preedit_text ? imcontext->preedit_text : "");
+     *str = strdup(imcontext->preedit_text ? imcontext->preedit_text : "");
 
    if (cursor_pos)
-      *cursor_pos = imcontext->preedit_cursor;
+     *cursor_pos = imcontext->preedit_cursor;
 }
 
 EAPI void
@@ -652,7 +669,7 @@ wayland_im_context_preedit_string_with_attributes_get(Ecore_IMF_Context  *ctx,
                      imcontext->preedit_text ? imcontext->preedit_text : "");
 
    if (str)
-      *str = strdup(imcontext->preedit_text ? imcontext->preedit_text : "");
+     *str = strdup(imcontext->preedit_text ? imcontext->preedit_text : "");
 
    if (attrs)
      {
@@ -668,7 +685,7 @@ wayland_im_context_preedit_string_with_attributes_get(Ecore_IMF_Context  *ctx,
      }
 
    if (cursor_pos)
-      *cursor_pos = imcontext->preedit_cursor;
+     *cursor_pos = imcontext->preedit_cursor;
 }
 
 EAPI void
@@ -699,7 +716,7 @@ wayland_im_context_client_window_set(Ecore_IMF_Context *ctx,
    EINA_LOG_DOM_INFO(_ecore_imf_wayland_log_dom, "client window set (window: %p)", window);
 
    if (window != NULL)
-      imcontext->window = ecore_wl_window_find((Ecore_Window)window);
+     imcontext->window = ecore_wl_window_find((Ecore_Window)window);
 }
 
 EAPI void
@@ -711,7 +728,7 @@ wayland_im_context_client_canvas_set(Ecore_IMF_Context *ctx,
    EINA_LOG_DOM_INFO(_ecore_imf_wayland_log_dom, "client canvas set (canvas: %p)", canvas);
 
    if (canvas != NULL)
-      imcontext->canvas = canvas;
+     imcontext->canvas = canvas;
 }
 
 EAPI void
