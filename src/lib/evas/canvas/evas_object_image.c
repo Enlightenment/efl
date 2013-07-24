@@ -913,14 +913,20 @@ _image_source_events_get(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
 }
 
 static void
-_dbg_info_get(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
+_dbg_info_get(Eo *eo_obj, void *_pd, va_list *list)
 {
+   Evas_Object_Image *o = _pd;
    Eo_Dbg_Info *root = (Eo_Dbg_Info *) va_arg(*list, Eo_Dbg_Info *);
    eo_do_super(eo_obj, MY_CLASS, eo_dbg_info_get(root));
    Eo_Dbg_Info *group = EO_DBG_INFO_LIST_APPEND(root, MY_CLASS_NAME);
 
    const char *file, *key;
-   eo_do(eo_obj, evas_obj_image_file_get(&file, &key));
+   if (o->cur->mmaped_source)
+     file = eina_file_filename_get(o->cur->u.f);
+   else
+     file = o->cur->u.file;
+   key = o->cur->key;
+
    EO_DBG_INFO_APPEND(group, "Image File", EINA_VALUE_TYPE_STRING, file);
    EO_DBG_INFO_APPEND(group, "Key", EINA_VALUE_TYPE_STRING, key);
    EO_DBG_INFO_APPEND(group, "Source", EINA_VALUE_TYPE_UINT64,
