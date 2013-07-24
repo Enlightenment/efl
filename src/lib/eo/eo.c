@@ -1013,18 +1013,17 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
    EINA_SAFETY_ON_NULL_RETURN_VAL(desc, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(desc->name, NULL);
 
-   DBG("Started building class '%s'", desc->name);
-
-   if (desc->version == 1)
+   if (desc->version == EO2_VERSION)
+     {
+        // FIXME: eo2
+        /* if (!_eo2_class_check_op_descs(desc)) */
+        /*   return NULL; */
+     }
+   else
      {
         if (!_eo_class_check_op_descs(desc))
           return NULL;
      }
-   else {
-        // FIXME: jeyzu
-        /* if (!_eo2_class_check_op_descs(desc)) */
-        /*   return NULL; */
-   }
 
    _Eo_Class *parent = _eo_class_pointer_get(parent_id);
 #ifndef HAVE_EO_ID
