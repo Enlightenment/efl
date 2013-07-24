@@ -673,20 +673,29 @@ EAPI Eo_Op eo2_get_op_id(void *api_func, const Eo_Class *klass);
 EAPI Eina_Bool eo2_call_resolve_internal(const Eo_Class *klass, Eo_Op op, Eo2_Op_Call_Data *call);
 
 // start of eo2_do barrier, gets the object pointer and ref it, put it on the stask
-EAPI Eina_Bool eo2_do_start(Eo *obj_id);
+EAPI Eina_Bool eo2_do_start(Eo *obj_id, Eina_Bool do_super);
 
 // end of the eo2_do barrier, unref the obj, move the stack pointer
 EAPI void eo2_do_end();
 
 // eo object method calls batch,
 // DO NOT use return statement in it, use break if necessary
-#define eo2_do(objid, ...)                      \
-  do                                            \
-    {                                           \
-       Eo *_objid_ = objid;                     \
-       if (!eo2_do_start(_objid_)) break;       \
-       do { __VA_ARGS__ ; } while (0);          \
-       eo2_do_end();                            \
+#define eo2_do(objid, ...)                            \
+  do                                                  \
+    {                                                 \
+       Eo *_objid_ = objid;                           \
+       if (!eo2_do_start(_objid_, EINA_FALSE)) break; \
+       do { __VA_ARGS__ ; } while (0);                \
+       eo2_do_end();                                  \
+    } while (0)
+
+#define eo2_do_super(objid, ...)                      \
+  do                                                  \
+    {                                                 \
+       Eo *_objid_ = objid;                           \
+       if (!eo2_do_start(_objid_, EINA_TRUE)) break;  \
+       do { __VA_ARGS__ ; } while (0);                \
+       eo2_do_end();                                  \
     } while (0)
 
 // FIXME
