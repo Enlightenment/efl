@@ -295,7 +295,10 @@ _file_entry_find(unsigned int entry_id)
 
    e = (Entry *) eina_hash_find(file_entries, &entry_id);
    if (!e || e->type != CSERVE2_IMAGE_FILE)
-     return NULL;
+     {
+        ERR("Could not find file entry %u", entry_id);
+        return NULL;
+     }
 
    return (File_Entry *) e;
 }
@@ -325,7 +328,10 @@ _image_entry_find(unsigned int entry_id)
 
    e = (Entry *) eina_hash_find(image_entries, &entry_id);
    if (!e || e->type != CSERVE2_IMAGE_DATA)
-     return NULL;
+     {
+        ERR("Could not find image entry %u", entry_id);
+        return NULL;
+     }
 
    return (Image_Entry *) e;
 }
@@ -595,11 +601,7 @@ _load_request_build(Image_Entry *ientry, int *bufsize)
    Image_Data *idata;
 
    idata = _image_data_find(ENTRYID(ientry));
-   if (!idata || !idata->refcount)
-     {
-        ERR("Image data not found for entry %u", ENTRYID(ientry));
-        return NULL;
-     }
+   if (!idata) return NULL;
 
    fd = _file_data_find(idata->file_id);
    if (!fd)
@@ -762,11 +764,7 @@ _load_request_response(Image_Entry *ientry,
    Image_Data *idata;
 
    idata = _image_data_find(ENTRYID(ientry));
-   if (!idata)
-     {
-        ERR("Image data %u not found", ENTRYID(ientry));
-        return NULL;
-     }
+   if (!idata) return NULL;
 
    _entry_load_finish(ASENTRY(ientry));
    ASENTRY(ientry)->request = NULL;
@@ -1195,6 +1193,7 @@ _entry_unused_push(Image_Entry *ientry)
    int size;
 
    idata = _image_data_find(ENTRYID(ientry));
+   if (!idata) return;
 
    size = _image_entry_size_get(ientry);
    if ((size > max_unused_mem_usage) || !(idata->doload))
@@ -1453,11 +1452,7 @@ _file_changed_cb(const char *path EINA_UNUSED, Eina_Bool deleted EINA_UNUSED, vo
 
         fd->invalid = EINA_TRUE;
         fentry = _file_entry_find(fd->id);
-        if (!fentry)
-          {
-             ERR("Could not find file entry for id %u", fd->id);
-             continue;
-          }
+        if (!fentry) continue;
 
         fentry->watcher = NULL;
 
@@ -1478,7 +1473,6 @@ _file_changed_cb(const char *path EINA_UNUSED, Eina_Bool deleted EINA_UNUSED, vo
                   if (idata->unused)
                     _image_entry_free(ie);
                }
-             else ERR("Image data %u not found", ENTRYID(ie));
           }
 
         _file_id_free(fd);
@@ -2095,6 +2089,7 @@ _image_data_entry_stats_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EI
    File_Data *fd;
 
    idata = _image_data_find(ENTRYID(ientry));
+   if (!idata) return EINA_TRUE;
 
    // accounting numbers
    msg->images.images_loaded++;
@@ -2501,11 +2496,12 @@ _cserve2_cache_fast_scaling_check(Client *client, Image_Entry *ientry)
    File_Entry *fentry;
    Image_Data *idata;
 
-#warning NOT IMPLEMENTED. PLEASE REIMLPEMENT.
    return -1;
 #if 0
+   if (!ientry) return -1;
 
-   if (!ientry || !idata) return -1;
+   idata = _image_data_find(ENTRYID(ientry));
+   if (!idata) return -1;
 
    dst_w = entry->opts.scale_load.dst_w;
    dst_h = entry->opts.scale_load.dst_h;
@@ -2726,11 +2722,7 @@ cserve2_cache_image_load(Client *client, unsigned int client_image_id, unsigned 
 
    ientry = (Image_Entry *) ref->entry;
    idata = _image_data_find(ENTRYID(ientry));
-   if (!idata)
-     {
-        ERR("Image data not found for entry %u", ENTRYID(ientry));
-        return;
-     }
+   if (!idata) return;
 
    fd = _file_data_find(idata->file_id);
    if (!fd || fd->invalid)
