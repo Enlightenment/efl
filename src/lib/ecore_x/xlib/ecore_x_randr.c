@@ -1109,7 +1109,7 @@ ecore_x_randr_window_crtcs_get(Ecore_X_Window window, int *num)
         XRRScreenResources *res = NULL;
         Ecore_X_Randr_Crtc *ret = NULL;
 
-        if (ncrtcs <= 0)
+        if (ncrtcs < 1)
           {
              free(crtcs);
              return NULL;
@@ -1695,10 +1695,13 @@ ecore_x_randr_crtc_settings_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, Ec
         if (noutputs < 0)
           {
              noutputs = info->noutput;
-             routputs = malloc(noutputs * sizeof(RROutput));
-             for (i = 0; i < noutputs; i++)
-               routputs[i] = info->outputs[i];
-             need_free = EINA_TRUE;
+             if (noutputs > 0)
+               {
+                  routputs = malloc(noutputs * sizeof(RROutput));
+                  for (i = 0; i < noutputs; i++)
+                    routputs[i] = info->outputs[i];
+                  need_free = EINA_TRUE;
+               }
           }
         else if (noutputs > 0)
           {
