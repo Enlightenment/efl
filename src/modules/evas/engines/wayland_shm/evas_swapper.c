@@ -469,10 +469,8 @@ _evas_swapper_buffer_put(Wl_Swapper *ws, Wl_Buffer *wb, Eina_Rectangle *rects, u
         return;
      }
 
-   if ((!rects) || (count == 0)) return;
-
    rect = eina_rectangle_new(0, 0, 0, 0);
-   if (rects)
+   if ((rects) && (count > 0))
      {
         unsigned int i = 0;
 
