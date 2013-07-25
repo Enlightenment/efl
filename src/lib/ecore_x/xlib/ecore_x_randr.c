@@ -1890,24 +1890,30 @@ ecore_x_randr_crtc_info_get(Ecore_X_Window root, const Ecore_X_Randr_Crtc crtc)
                   ret->noutput = info->noutput;
                   ret->npossible = info->npossible;
 
-                  if ((ret->outputs = 
-                       malloc(info->noutput * sizeof(Ecore_X_Randr_Output))))
+                  if (input->noutput > 0)
                     {
-                       int i = 0;
+                       if ((ret->outputs = 
+                            malloc(info->noutput * sizeof(Ecore_X_Randr_Output))))
+                         {
+                            int i = 0;
 
-                       /* loop the outputs on this crtc */
-                       for (i = 0; i < info->noutput; i++)
-                         ret->outputs[i] = info->outputs[i];
+                            /* loop the outputs on this crtc */
+                            for (i = 0; i < info->noutput; i++)
+                              ret->outputs[i] = info->outputs[i];
+                         }
                     }
 
-                  if ((ret->possible = 
-                       malloc(info->npossible * sizeof(Ecore_X_Randr_Output))))
+                  if (info->npossible > 0)
                     {
-                       int i = 0;
+                       if ((ret->possible = 
+                            malloc(info->npossible * sizeof(Ecore_X_Randr_Output))))
+                         {
+                            int i = 0;
 
-                       /* loop the outputs on this crtc */
-                       for (i = 0; i < info->npossible; i++)
-                         ret->possible[i] = info->possible[i];
+                            /* loop the outputs on this crtc */
+                            for (i = 0; i < info->npossible; i++)
+                              ret->possible[i] = info->possible[i];
+                         }
                     }
                }
 
