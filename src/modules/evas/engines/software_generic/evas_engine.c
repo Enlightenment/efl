@@ -1458,6 +1458,16 @@ _draw_thread_map_draw(void *data)
 
    do
      {
+        //Fully Transparency. Skip this.
+        if (!(m->pts[0 + offset].col & 0xff000000) &&
+            !(m->pts[1 + offset].col & 0xff000000) &&
+            !(m->pts[2 + offset].col & 0xff000000) &&
+            !(m->pts[3 + offset].col & 0xff000000))
+          {
+             offset += 2;
+             continue;
+          }
+
         if ((m->pts[0 + offset].x == m->pts[3 + offset].x) &&
             (m->pts[1 + offset].x == m->pts[2 + offset].x) &&
             (m->pts[0 + offset].y == m->pts[1 + offset].y) &&

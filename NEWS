@@ -318,6 +318,7 @@ Fixes:
      - Fix issue when parsing formats with quotes.
      - Fix infinite loop if app use ecore evas image
      - Fix a long-standing off-by-1 in the C "simd" multiplier.
+     - Skip the map rendering if all points are transparent.
     * Ecore:
      - Don't leak fd on exec.
      - Fix fd handler increase issue when ecore_pipe_add/del is called repeatedly.
