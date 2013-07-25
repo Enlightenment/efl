@@ -1,4 +1,4 @@
-2013-07-18  Mike Blumenkrantz
+2013-07-24  Mike Blumenkrantz
 
         * Ecore-Evas: fix usage of underlying X window after it has received a destroy event
 
