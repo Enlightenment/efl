@@ -48,9 +48,9 @@ _class_constructor(Eo_Class *klass)
 }
 
 static Eo2_Op_Description op_descs [] = {
-       EO2_OP_FUNC_OVERRIDE(_constructor, eo2_constructor, "Constructor"),
-       EO2_OP_FUNC_OVERRIDE(_destructor, eo2_destructor, "Destructor"),
-       EO2_OP_FUNC_OVERRIDE(_inc, eo2_inc, "Inc X overridden"),
+       EO2_OP_FUNC_OVERRIDE(_constructor, eo2_constructor),
+       EO2_OP_FUNC_OVERRIDE(_destructor, eo2_destructor),
+       EO2_OP_FUNC_OVERRIDE(_inc, eo2_inc),
        EO2_OP_FUNC(_get, eo2_inherit_get, "Get Y"),
        EO2_OP_SENTINEL
 };
