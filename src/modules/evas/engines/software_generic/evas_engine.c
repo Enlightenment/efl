@@ -1454,10 +1454,10 @@ _draw_thread_map_draw(void *data)
    RGBA_Image *im = map->image;
    int dx, dy, dw, dh;
 
-   if (m->count - offset < 3) goto free_out;
-
    do
      {
+        if (m->count - offset < 3) goto free_out;
+
         //Fully Transparency. Skip this.
         if (!(m->pts[0 + offset].col & 0xff000000) &&
             !(m->pts[1 + offset].col & 0xff000000) &&
