@@ -31,7 +31,7 @@ group { name: "elm/panel/left/default";
                middle: 0;
             }
          }
-         description { state: "enabled" 0.0;
+         description { state: "visible" 0.0;
             inherit: "default" 0.0;
             visible: 1;
             color: 255 255 255 255;
@@ -222,7 +222,7 @@ group { name: "elm/panel/left/default";
       program { name: "highlight_show";
          signal: "elm,action,focus_highlight,show";
          source: "elm";
-         action: STATE_SET "enabled" 0.0;
+         action: STATE_SET "visible" 0.0;
          transition: ACCELERATE 0.3;
          target: "focus_highlight";
       }
@@ -268,7 +268,7 @@ group { name: "elm/panel/top/default";
                middle: 0;
             }
          }
-         description { state: "enabled" 0.0;
+         description { state: "visible" 0.0;
             inherit: "default" 0.0;
             visible: 1;
             color: 255 255 255 255;
@@ -458,7 +458,7 @@ group { name: "elm/panel/top/default";
       program { name: "highlight_show";
          signal: "elm,action,focus_highlight,show";
          source: "elm";
-         action: STATE_SET "enabled" 0.0;
+         action: STATE_SET "visible" 0.0;
          transition: ACCELERATE 0.3;
          target: "focus_highlight";
       }
@@ -504,7 +504,7 @@ group { name: "elm/panel/bottom/default";
                middle: 0;
             }
          }
-         description { state: "enabled" 0.0;
+         description { state: "visible" 0.0;
             inherit: "default" 0.0;
             visible: 1;
             color: 255 255 255 255;
@@ -694,7 +694,7 @@ group { name: "elm/panel/bottom/default";
       program { name: "highlight_show";
          signal: "elm,action,focus_highlight,show";
          source: "elm";
-         action: STATE_SET "enabled" 0.0;
+         action: STATE_SET "visible" 0.0;
          transition: ACCELERATE 0.3;
          target: "focus_highlight";
       }
@@ -737,7 +737,7 @@ group { name: "elm/panel/right/default";
                middle: 0;
             }
          }
-         description { state: "enabled" 0.0;
+         description { state: "visible" 0.0;
             inherit: "default" 0.0;
             visible: 1;
             color: 255 255 255 255;
@@ -930,7 +930,7 @@ group { name: "elm/panel/right/default";
       program { name: "highlight_show";
          signal: "elm,action,focus_highlight,show";
          source: "elm";
-         action: STATE_SET "enabled" 0.0;
+         action: STATE_SET "visible" 0.0;
          transition: ACCELERATE 0.3;
          target: "focus_highlight";
       }
