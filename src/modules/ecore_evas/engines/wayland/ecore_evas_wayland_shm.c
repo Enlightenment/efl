@@ -394,9 +394,14 @@ _ecore_evas_wl_show(Ecore_Evas *ee)
         einfo = (Evas_Engine_Info_Wayland_Shm *)evas_engine_info_get(ee->evas);
         if (einfo)
           {
-             einfo->info.wl_shm = ecore_wl_shm_get();
-             einfo->info.wl_surface = ecore_wl_window_surface_get(wdata->win);
-             evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+             struct wl_surface *surf;
+
+             surf = ecore_wl_window_surface_get(wdata->win);
+             if ((!einfo->info.wl_surface) || (einfo->info.wl_surface != surf))
+               {
+                  einfo->info.wl_surface = surf;
+                  evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+               }
           }
 
         if ((ee->prop.clas) && (wdata->win->shell_surface))
