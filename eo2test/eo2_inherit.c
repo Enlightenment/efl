@@ -12,7 +12,7 @@ _inc(Eo *objid, void *obj_data)
 {
    Private_Data *data = (Private_Data *) obj_data;
 
-   eo2_do_super(objid, inc2());
+   eo2_do_super(objid, eo2_inc());
    data->y += 1;
 }
 
@@ -23,7 +23,7 @@ _get(Eo *objid EINA_UNUSED, void *obj_data)
 
    return data->y;
 }
-EAPI EO2_FUNC_BODY(get3, int, 0);
+EAPI EO2_FUNC_BODY(eo2_inherit_get, int, 0);
 
 static void
 _constructor(Eo *obj, void *obj_data)
@@ -50,8 +50,8 @@ _class_constructor(Eo_Class *klass)
 static Eo2_Op_Description op_descs [] = {
        EO2_OP_FUNC_OVERRIDE(_constructor, eo2_constructor, "Constructor"),
        EO2_OP_FUNC_OVERRIDE(_destructor, eo2_destructor, "Destructor"),
-       EO2_OP_FUNC_OVERRIDE(_inc, inc2, "Inc X overridden"),
-       EO2_OP_FUNC(_get, get3, "Get Y"),
+       EO2_OP_FUNC_OVERRIDE(_inc, eo2_inc, "Inc X overridden"),
+       EO2_OP_FUNC(_get, eo2_inherit_get, "Get Y"),
        EO2_OP_SENTINEL
 };
 

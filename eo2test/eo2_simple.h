@@ -3,11 +3,11 @@
 
 #include "Eo.h"
 
-EAPI void inc2();
+EAPI void eo2_inc();
 
-EAPI int get2();
+EAPI int eo2_get();
 
-EAPI void set2(int x);
+EAPI void eo2_set(int x);
 
 EAPI const Eo_Class *eo2_simple_class_get(void);
 #define EO2_SIMPLE_CLASS eo2_simple_class_get()

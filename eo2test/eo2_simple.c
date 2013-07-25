@@ -3,8 +3,6 @@
 
 typedef struct
 {
-   int a;
-   int b;
    int x;
 } Private_Data;
 
@@ -15,7 +13,7 @@ _inc(Eo *objid EINA_UNUSED, void *obj_data)
 
    data->x += 1;
 }
-EAPI EO2_VOID_FUNC_BODY(inc2);
+EAPI EO2_VOID_FUNC_BODY(eo2_inc);
 
 static int
 _get(Eo *objid EINA_UNUSED, void *obj_data)
@@ -24,7 +22,7 @@ _get(Eo *objid EINA_UNUSED, void *obj_data)
 
    return data->x;
 }
-EAPI EO2_FUNC_BODY(get2, int, 0);
+EAPI EO2_FUNC_BODY(eo2_get, int, 0);
 
 static void
 _set(Eo *objid EINA_UNUSED, void *obj_data, int x)
@@ -32,7 +30,7 @@ _set(Eo *objid EINA_UNUSED, void *obj_data, int x)
    Private_Data *data = (Private_Data *) obj_data;
    data->x = x;
 }
-EAPI EO2_VOID_FUNC_BODYV(set2, EO2_FUNC_CALL(x), int x);
+EAPI EO2_VOID_FUNC_BODYV(eo2_set, EO2_FUNC_CALL(x), int x);
 
 static void
 _constructor(Eo *obj, void *obj_data)
@@ -59,9 +57,9 @@ _class_constructor(Eo_Class *klass)
 static Eo2_Op_Description op_descs [] = {
        EO2_OP_FUNC_OVERRIDE(_constructor, eo2_constructor, "Constructor"),
        EO2_OP_FUNC_OVERRIDE(_destructor, eo2_destructor, "Destructor"),
-       EO2_OP_FUNC(_inc, inc2, "Inc X"),
-       EO2_OP_FUNC(_get, get2, "Get X"),
-       EO2_OP_FUNC(_set, set2, "Set X"),
+       EO2_OP_FUNC(_inc, eo2_inc, "Inc X"),
+       EO2_OP_FUNC(_get, eo2_get, "Get X"),
+       EO2_OP_FUNC(_set, eo2_set, "Set X"),
        EO2_OP_SENTINEL
 };
 

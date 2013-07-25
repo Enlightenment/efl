@@ -2,12 +2,12 @@
 
 EAPI Eo_Op EO_SIMPLE_BASE_ID = 0;
 
+#define MY_CLASS EO_SIMPLE_CLASS
+
 typedef struct
 {
    int x;
 } Private_Data;
-
-#define MY_CLASS EO_SIMPLE_CLASS
 
 static void
 _inc(Eo *obj EINA_UNUSED, void *obj_data, va_list *list EINA_UNUSED)
@@ -40,7 +40,7 @@ _constructor(Eo *obj, void *obj_data, va_list *list EINA_UNUSED)
 {
    Private_Data *pd = (Private_Data *) obj_data;
 
-   eo_do_super(obj, EO_SIMPLE_CLASS, eo_constructor());
+   eo_do_super(obj, MY_CLASS, eo_constructor());
 
    pd->x = 66;
 }
@@ -48,7 +48,7 @@ _constructor(Eo *obj, void *obj_data, va_list *list EINA_UNUSED)
 static void
 _destructor(Eo *obj, void *obj_data EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   eo_do_super(obj, EO_SIMPLE_CLASS, eo_destructor());
+   eo_do_super(obj, MY_CLASS, eo_destructor());
 }
 
 static void

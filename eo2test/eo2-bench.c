@@ -33,49 +33,47 @@ static void check(int val, int expected)
 }
 
 #define EO_RUN_START                      \
-   eo_do(obj, set(0));                    \
+   eo_do(eo_obj, eo_set(0));              \
    clock_gettime(CLOCK_MONOTONIC, &t0);
 
 #define EO_RUN_END                        \
    clock_gettime(CLOCK_MONOTONIC, &t1);   \
-   eo_do(obj, get(&a));                   \
+   eo_do(eo_obj, eo_get(&a));             \
    check(a, n * k);                       \
 
 #define EO2_RUN_START                     \
-   eo2_do(obj2, set2(0); );               \
+   eo2_do(eo2_obj, eo2_set(0); );         \
    clock_gettime(CLOCK_MONOTONIC, &t2);   \
 
 #define EO2_RUN_END                       \
    clock_gettime(CLOCK_MONOTONIC, &t3);   \
-   eo2_do(obj2, a = get2(); );            \
+   eo2_do(eo2_obj, a = eo2_get(); );      \
    check(a, n * k);                       \
 
-int
-main(int argc EINA_UNUSED, char** argv EINA_UNUSED, char** env EINA_UNUSED)
+static void
+do_batch_test()
 {
    int i, n, k, a, b, c;
-   Eo *obj, *obj2, *obj3;
+   Eo *eo_obj, *eo2_obj;
    struct timespec t0, t1, t2, t3;
 
-   eo_init();
-
-   obj = eo_add(EO_SIMPLE_CLASS, NULL);
-   obj2 = eo2_add(EO2_SIMPLE_CLASS, NULL);
-   obj3 = eo2_add(EO2_INHERIT_CLASS, NULL);
+   a = b = c = 0;
+   eo_obj = eo_add(EO_SIMPLE_CLASS, NULL);
+   eo2_obj = eo2_add(EO2_SIMPLE_CLASS, NULL);
 
    /* check */
-   eo_do(obj, get(&a), set(10), inc(), get(&b), inc(), inc(), get(&c));
+   eo_do(eo_obj, eo_get(&a), eo_set(10), eo_inc(), eo_get(&b), eo_inc(), eo_inc(), eo_get(&c));
    check(a, 66);
    check(b, 11);
    check(c, 13);
-   eo2_do(obj2,
-          a = get2();
-          set2(10);
-          inc2();
-          b = get2();
-          inc2();
-          inc2();
-          c = get2();
+   eo2_do(eo2_obj,
+          a = eo2_get();
+          eo2_set(10);
+          eo2_inc();
+          b = eo2_get();
+          eo2_inc();
+          eo2_inc();
+          c = eo2_get();
           );
    check(a, 66);
    check(b, 11);
@@ -87,11 +85,11 @@ main(int argc EINA_UNUSED, char** argv EINA_UNUSED, char** env EINA_UNUSED)
    k = 1;
    EO_RUN_START
    for (i = 0; i < n; i++)
-     eo_do(obj, inc());
+     eo_do(eo_obj, eo_inc());
    EO_RUN_END
    EO2_RUN_START
    for (i = 0; i < n; i++)
-     eo2_do(obj2, inc2(); );
+     eo2_do(eo2_obj, eo2_inc(); );
    EO2_RUN_END
    report(t0, t1, t2, t3, k, n * k);
 
@@ -99,11 +97,11 @@ main(int argc EINA_UNUSED, char** argv EINA_UNUSED, char** env EINA_UNUSED)
    k = 3;
    EO_RUN_START
    for (i = 0; i < n; i++)
-     eo_do(obj, inc(), inc(), inc());
+     eo_do(eo_obj, eo_inc(), eo_inc(), eo_inc());
    EO_RUN_END
    EO2_RUN_START
    for (i = 0; i < n; i++)
-     eo2_do(obj2, inc2(); inc2(); inc2(); );
+     eo2_do(eo2_obj, eo2_inc(); eo2_inc(); eo2_inc(); );
    EO2_RUN_END
    report(t0, t1, t2, t3, k, n * k);
 
@@ -111,11 +109,11 @@ main(int argc EINA_UNUSED, char** argv EINA_UNUSED, char** env EINA_UNUSED)
    k = 5;
    EO_RUN_START
    for (i = 0; i < n; i++)
-     eo_do(obj, inc(), inc(), inc(), inc(), inc());
+     eo_do(eo_obj, eo_inc(), eo_inc(), eo_inc(), eo_inc(), eo_inc());
    EO_RUN_END
    EO2_RUN_START
    for (i = 0; i < n; i++)
-     eo2_do(obj2, inc2(); inc2(); inc2(); inc2(); inc2(); );
+     eo2_do(eo2_obj, eo2_inc(); eo2_inc(); eo2_inc(); eo2_inc(); eo2_inc(); );
    EO2_RUN_END
    report(t0, t1, t2, t3, k, n * k);
 
@@ -123,24 +121,44 @@ main(int argc EINA_UNUSED, char** argv EINA_UNUSED, char** env EINA_UNUSED)
    k = 7;
    EO_RUN_START
    for (i = 0; i < n; i++)
-     eo_do(obj, inc(), inc(), inc(), inc(), inc(), inc(), inc());
+     eo_do(eo_obj, eo_inc(), eo_inc(), eo_inc(), eo_inc(), eo_inc(), eo_inc(), eo_inc());
    EO_RUN_END
    EO2_RUN_START
    for (i = 0; i < n; i++)
-     eo2_do(obj2, inc2(); inc2(); inc2(); inc2(); inc2(); inc2(); inc2(); );
+     eo2_do(eo2_obj, eo2_inc(); eo2_inc(); eo2_inc(); eo2_inc(); eo2_inc(); eo2_inc(); eo2_inc(); );
    EO2_RUN_END
    report(t0, t1, t2, t3, k, n * k);
 
-   eo2_do(obj3, set2(65); a = get2(); b = get3(); );
+   eo_del(eo_obj);
+   eo_del(eo2_obj);
+}
+
+static void
+inherit_batch_test()
+{
+   int a, b;
+   Eo *eo2_obj;
+
+   a = b = 0;
+   eo2_obj = eo2_add(EO2_INHERIT_CLASS, NULL);
+
+   eo2_do(eo2_obj, eo2_set(65); a = eo2_get(); b = eo2_inherit_get(); );
    check(a, 65);
    check(b, 68);
-   eo2_do(obj3, inc2(); a = get2(); b = get3(); );
+   eo2_do(eo2_obj, eo2_inc(); a = eo2_get(); b = eo2_inherit_get(); );
    check(a, 66);
    check(b, 69);
 
-   eo_del(obj);
-   eo_del(obj2);
-   eo_del(obj3);
+   eo_del(eo2_obj);
+}
+
+int
+main(int argc EINA_UNUSED, char** argv EINA_UNUSED, char** env EINA_UNUSED)
+{
+   eo_init();
+
+   do_batch_test();
+   inherit_batch_test();
 
    eo_shutdown();
 
