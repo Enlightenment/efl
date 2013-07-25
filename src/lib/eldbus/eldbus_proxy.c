@@ -732,6 +732,14 @@ _props_get_all(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending EI
 {
    Eldbus_Proxy *proxy = data;
    Eldbus_Message_Iter *dict;
+   const char *name, *error_msg;
+
+   if (eldbus_message_error_get(msg, &name, &error_msg))
+     {
+        ERR("Error getting all properties of %s %s, error message: %s %s",
+            proxy->obj->name, proxy->obj->path, name, error_msg);
+        return;
+     }
 
    if (!eldbus_message_arguments_get(msg, "a{sv}", &dict))
      {
