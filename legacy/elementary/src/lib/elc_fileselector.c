@@ -9,6 +9,9 @@
  *  - make variable/function names that are sensible
  *  - Pattern Filter support
  *  - Custom Filter support
+ *  - is 'is_save' flag and API needed? If it is not is_save mode,
+ *    entry is disabled and anchor can't be clicked.
+ *    Also user should be able to type custom name in this mode.
  */
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
