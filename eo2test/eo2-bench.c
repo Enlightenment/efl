@@ -3,6 +3,7 @@
 #endif
 
 #include "eo_simple.h"
+#include "eo_inherit.h"
 #include "eo2_simple.h"
 #include "eo2_inherit.h"
 
@@ -38,8 +39,8 @@ static void check(int val, int expected)
 
 #define EO_RUN_END                        \
    clock_gettime(CLOCK_MONOTONIC, &t1);   \
-   eo_do(eo_obj, eo_get(&a));             \
-   check(a, n * k);                       \
+   eo_do(eo_obj, eo_get(&v));             \
+   check(v, n * k);                       \
 
 #define EO2_RUN_START                     \
    eo2_do(eo2_obj, eo2_set(0); );         \
@@ -47,39 +48,14 @@ static void check(int val, int expected)
 
 #define EO2_RUN_END                       \
    clock_gettime(CLOCK_MONOTONIC, &t3);   \
-   eo2_do(eo2_obj, a = eo2_get(); );      \
-   check(a, n * k);                       \
+   eo2_do(eo2_obj, v = eo2_get(); );      \
+   check(v, n * k);                       \
 
 static void
-do_batch_test()
+run_batch(Eo* eo_obj, Eo* eo2_obj, int n)
 {
-   int i, n, k, a, b, c;
-   Eo *eo_obj, *eo2_obj;
+   int i, k, v;
    struct timespec t0, t1, t2, t3;
-
-   a = b = c = 0;
-   eo_obj = eo_add(EO_SIMPLE_CLASS, NULL);
-   eo2_obj = eo2_add(EO2_SIMPLE_CLASS, NULL);
-
-   /* check */
-   eo_do(eo_obj, eo_get(&a), eo_set(10), eo_inc(), eo_get(&b), eo_inc(), eo_inc(), eo_get(&c));
-   check(a, 66);
-   check(b, 11);
-   check(c, 13);
-   eo2_do(eo2_obj,
-          a = eo2_get();
-          eo2_set(10);
-          eo2_inc();
-          b = eo2_get();
-          eo2_inc();
-          eo2_inc();
-          c = eo2_get();
-          );
-   check(a, 66);
-   check(b, 11);
-   check(c, 13);
-
-   n = 999999;
 
    // 1 call per batch
    k = 1;
@@ -128,20 +104,63 @@ do_batch_test()
      eo2_do(eo2_obj, eo2_inc(); eo2_inc(); eo2_inc(); eo2_inc(); eo2_inc(); eo2_inc(); eo2_inc(); );
    EO2_RUN_END
    report(t0, t1, t2, t3, k, n * k);
+}
+
+static void
+do_batch_test()
+{
+   int a, b, c;
+   Eo *eo_obj, *eo2_obj;
+
+   a = b = c = 0;
+   eo_obj = eo_add(EO_SIMPLE_CLASS, NULL);
+   eo2_obj = eo2_add(EO2_SIMPLE_CLASS, NULL);
+
+   /* EO check */
+   eo_do(eo_obj, eo_get(&a), eo_set(10), eo_inc(), eo_get(&b), eo_inc(), eo_inc(), eo_get(&c));
+   check(a, 66);
+   check(b, 11);
+   check(c, 13);
+   /* EO2 check */
+   eo2_do(eo2_obj,
+          a = eo2_get();
+          eo2_set(10);
+          eo2_inc();
+          b = eo2_get();
+          eo2_inc();
+          eo2_inc();
+          c = eo2_get();
+          );
+   check(a, 66);
+   check(b, 11);
+   check(c, 13);
+
+   printf("simple inc()\n");
+   run_batch(eo_obj, eo2_obj, 99999);
 
    eo_del(eo_obj);
    eo_del(eo2_obj);
 }
 
 static void
-inherit_batch_test()
+override_batch_test()
 {
    int a, b;
-   Eo *eo2_obj;
+   Eo *eo_obj, *eo2_obj;
 
    a = b = 0;
+   eo_obj = eo_add(EO_INHERIT_CLASS, NULL);
    eo2_obj = eo2_add(EO2_INHERIT_CLASS, NULL);
 
+   /* EO check */
+   eo_do(eo_obj, eo_set(65), eo_get(&a), eo_inherit_get(&b));
+   check(a, 65);
+   check(b, 68);
+   eo_do(eo_obj, eo_inc(), eo_get(&a), eo_inherit_get(&b));
+   check(a, 66);
+   check(b, 69);
+
+   /* EO2 check */
    eo2_do(eo2_obj, eo2_set(65); a = eo2_get(); b = eo2_inherit_get(); );
    check(a, 65);
    check(b, 68);
@@ -149,6 +168,10 @@ inherit_batch_test()
    check(a, 66);
    check(b, 69);
 
+   printf("overriden inc()\n");
+   run_batch(eo_obj, eo2_obj, 99999);
+
+   eo_del(eo_obj);
    eo_del(eo2_obj);
 }
 
@@ -158,7 +181,7 @@ main(int argc EINA_UNUSED, char** argv EINA_UNUSED, char** env EINA_UNUSED)
    eo_init();
 
    do_batch_test();
-   inherit_batch_test();
+   override_batch_test();
 
    eo_shutdown();
 

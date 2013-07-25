@@ -5,7 +5,7 @@ CONFIG   = -DHAVE_CONFIG_H=1
 EINA_CFLAGS = `pkg-config --cflags eina`
 EINA_LIBS   = `pkg-config --libs eina`
 SO_OBJS  = eo_ptr_indirection.o eo.o eo_base_class.o eo2_base_class.o
-BENCH_OBJS  = eo2_simple.o eo_simple.o eo2_inherit.o eo2-bench.o
+BENCH_OBJS  = eo2_simple.o eo_simple.o eo2_inherit.o eo_inherit.o eo2-bench.o
 
 all: eo2-bench
         #test
