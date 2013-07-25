@@ -7,7 +7,8 @@ EINA_LIBS   = `pkg-config --libs eina`
 SO_OBJS  = eo_ptr_indirection.o eo.o eo_base_class.o eo2_base_class.o
 BENCH_OBJS  = eo2_simple.o eo_simple.o eo2_inherit.o eo2-bench.o
 
-all: eo2-bench test
+all: eo2-bench
+        #test
 
 eo.o: ../src/lib/eo/eo.c ../src/lib/eo/Eo.h ../src/lib/eo/eo_private.h
 	$(CC) $(CFLAGS) -fPIC -c $(INCLUDE) $(CONFIG) $(EINA_CFLAGS) $< -o $@
