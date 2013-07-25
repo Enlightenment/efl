@@ -459,7 +459,7 @@ image_load(const char *file, const char *key, const char *shmfile,
    result->w = property.w;
    result->h = property.h;
 
-   if (property.alpha)
+   if (property.alpha && property.premul)
      {
         result->alpha_sparse = evas_cserve2_image_premul_data((unsigned int *) map,
                                                               result->w * result->h);
