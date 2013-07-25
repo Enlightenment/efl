@@ -371,6 +371,7 @@ _evas_swapper_shm_pool_free(Wl_Swapper *ws)
    wl_shm_pool_destroy(ws->pool);
 
    ws->pool_size = 0;
+   ws->used_size = 0;
 }
 
 static Eina_Bool 
@@ -393,9 +394,15 @@ _evas_swapper_buffer_new(Wl_Swapper *ws, Wl_Buffer *wb)
    /* check pool size to see if we need to realloc the pool */
    if (ws->used_size + size > ws->pool_size) 
      {
-        printf("FIXME !!! Pool Size Too Small !!!\n");
-        /* FIXME: Here we need to reallocate the pool to a greater size !! */
-        return EINA_FALSE;
+        size_t newsize;
+
+        /* calculate new required size */
+        newsize = (ws->pool_size + size);
+
+        /* resize the shm pool */
+        wl_shm_pool_resize(ws->pool, newsize);
+
+        ws->pool_size = newsize;
      }
 
    /* check if this buffer needs argb and set format */
