@@ -1,6 +1,6 @@
 CC       = gcc
 CFLAGS   = -O2 -std=gnu99 -Wall -Wextra
-INCLUDE  = -I. -I../ -I../src/lib/eo/
+INCLUDE  = -I. -I../ -I../src/lib/eo/ -I../build
 CONFIG   = -DHAVE_CONFIG_H=1
 EINA_CFLAGS = `pkg-config --cflags eina`
 EINA_LIBS   = `pkg-config --libs eina`
