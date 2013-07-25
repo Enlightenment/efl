@@ -1109,6 +1109,12 @@ ecore_x_randr_window_crtcs_get(Ecore_X_Window window, int *num)
         XRRScreenResources *res = NULL;
         Ecore_X_Randr_Crtc *ret = NULL;
 
+        if (ncrtcs <= 0)
+          {
+             free(crtcs);
+             return NULL;
+          }
+
         /* make sure we can allocate our return variable */
         if (!(ret = calloc(1, ncrtcs * sizeof(Ecore_X_Randr_Crtc))))
           {
