@@ -25,17 +25,15 @@ static const char SIG_PLAY_CLICKED[] = "play,clicked";
 static const char SIG_PREV_CLICKED[] = "prev,clicked";
 static const char SIG_REWIND_CLICKED[] = "rewind,clicked";
 static const char SIG_STOP_CLICKED[] = "stop,clicked";
-/* XXX: other things player SHOULD support
+static const char SIG_EJECT_CLICKED[] = "eject,clicked";
+static const char SIG_VOLUME_CLICKED[] = "volume,clicked";
+static const char SIG_MUTE_CLICKED[] = "mute,clicked";
+/*
 static const char SIG_STOP_CLICKED[] = "repeat,clicked";
 static const char SIG_STOP_CLICKED[] = "shuffle,clicked";
-static const char SIG_STOP_CLICKED[] = "eject,clicked";
 static const char SIG_STOP_CLICKED[] = "record,clicked";
-static const char SIG_STOP_CLICKED[] = "eject,clicked";
 static const char SIG_STOP_CLICKED[] = "replay,clicked";
 static const char SIG_STOP_CLICKED[] = "power,clicked";
-static const char SIG_STOP_CLICKED[] = "volume,clicked"; // volume slider too?
-static const char SIG_STOP_CLICKED[] = "eject,clicked";
-static const char SIG_STOP_CLICKED[] = "mute,clicked";
 static const char SIG_STOP_CLICKED[] = "fullscreen,clicked";
 static const char SIG_STOP_CLICKED[] = "normal,clicked";
 static const char SIG_STOP_CLICKED[] = "quality,clicked";
@@ -50,6 +48,9 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    { SIG_PREV_CLICKED, "" },
    { SIG_REWIND_CLICKED, "" },
    { SIG_STOP_CLICKED, "" },
+   { SIG_EJECT_CLICKED, "" },
+   { SIG_VOLUME_CLICKED, "" },
+   { SIG_MUTE_CLICKED, "" },
    {"focused", ""}, /**< handled by elm_widget */
    {"unfocused", ""}, /**< handled by elm_widget */
    { NULL, NULL }
@@ -148,7 +149,7 @@ _update_theme_button(Evas_Object *obj, Evas_Object *bt, const char *name)
 }
 
 static void
-_update_theme_slider(Evas_Object *obj, Evas_Object *sl, const char *name)
+_update_theme_slider(Evas_Object *obj, Evas_Object *sl, const char *name, const char *name2)
 {
    char buf[256];
 
@@ -156,7 +157,7 @@ _update_theme_slider(Evas_Object *obj, Evas_Object *sl, const char *name)
    snprintf(buf, sizeof(buf), "media_player/%s/%s", name,
             elm_widget_style_get(obj));
    elm_object_style_set(sl, buf);
-   snprintf(buf, sizeof(buf), "elm.swallow.media_player.%s", name);
+   snprintf(buf, sizeof(buf), "elm.swallow.media_player.%s", name2);
    if (!elm_layout_content_set(obj, buf, sl))
      evas_object_hide(sl);
    elm_object_disabled_set(sl, elm_widget_disabled_get(obj));
@@ -181,7 +182,11 @@ _elm_player_smart_theme(Eo *obj, void *_pd, va_list *list)
    _update_theme_button(obj, sd->rewind, "rewind");
    _update_theme_button(obj, sd->next, "next");
    _update_theme_button(obj, sd->stop, "stop");
-   _update_theme_slider(obj, sd->slider,  "position");
+   _update_theme_button(obj, sd->eject, "eject");
+   _update_theme_button(obj, sd->volume, "volume");
+   _update_theme_button(obj, sd->mute, "mute");
+   _update_theme_slider(obj, sd->slider,  "position", "positionslider");
+   _update_theme_slider(obj, sd->vslider,  "volume", "volumeslider");
    elm_layout_sizing_eval(obj);
 
    if (ret) *ret = EINA_TRUE;
@@ -262,6 +267,19 @@ _drag_stop(void *data,
 {
    ELM_PLAYER_DATA_GET(data, sd);
    sd->dragging = EINA_FALSE;
+}
+
+static void
+_update_volume(void *data,
+                 Evas_Object *obj __UNUSED__,
+                 void *event_info __UNUSED__)
+{
+   double vol;
+   ELM_PLAYER_DATA_GET(data, sd);
+
+   vol = elm_slider_value_get(sd->vslider) / 100.0;
+   if (vol != elm_video_audio_level_get(sd->video))
+     elm_video_audio_level_set(sd->video, vol);
 }
 
 static void
@@ -360,6 +378,55 @@ _stop(void *data,
 }
 
 static void
+_eject(void *data,
+       Evas_Object *obj __UNUSED__,
+       void *event_info __UNUSED__)
+{
+   ELM_PLAYER_DATA_GET(data, sd);
+   
+   elm_layout_signal_emit(data, "elm,button,eject", "elm");
+   emotion_object_eject(elm_video_emotion_get(sd->video));
+   evas_object_smart_callback_call(data, SIG_EJECT_CLICKED, NULL);
+}
+
+static void
+_mute_toggle(Evas_Object *obj)
+{
+   ELM_PLAYER_DATA_GET(obj, sd);
+   
+   if (!elm_video_audio_mute_get(sd->video))
+     {
+        elm_video_audio_mute_set(sd->video, EINA_TRUE);
+        elm_layout_signal_emit(obj, "elm,player,mute", "elm");
+     }
+   else
+     {
+        elm_video_audio_mute_set(sd->video, EINA_FALSE);
+        elm_layout_signal_emit(obj, "elm,player,unmute", "elm");
+     }
+}
+
+static void
+_volume(void *data,
+        Evas_Object *obj __UNUSED__,
+        void *event_info __UNUSED__)
+{
+   elm_layout_signal_emit(data, "elm,button,volume", "elm");
+   _mute_toggle(data);
+   evas_object_smart_callback_call(data, SIG_VOLUME_CLICKED, NULL);
+}
+
+static void
+_mute(void *data,
+      Evas_Object *obj __UNUSED__,
+      void *event_info __UNUSED__)
+{
+   elm_layout_signal_emit(data, "elm,button,mute", "elm");
+   _mute_toggle(data);
+   evas_object_smart_callback_call(data, SIG_MUTE_CLICKED, NULL);
+}
+
+static void
 _play_started(void *data,
               Evas_Object *obj __UNUSED__,
               void *event_info __UNUSED__)
@@ -378,7 +445,6 @@ _play_finished(void *data,
 static void
 _on_video_del(Elm_Player_Smart_Data *sd)
 {
-   elm_object_disabled_set(sd->slider, EINA_TRUE);
    elm_object_disabled_set(sd->forward, EINA_TRUE);
    elm_object_disabled_set(sd->info, EINA_TRUE);
    elm_object_disabled_set(sd->next, EINA_TRUE);
@@ -387,6 +453,11 @@ _on_video_del(Elm_Player_Smart_Data *sd)
    elm_object_disabled_set(sd->prev, EINA_TRUE);
    elm_object_disabled_set(sd->rewind, EINA_TRUE);
    elm_object_disabled_set(sd->next, EINA_TRUE);
+   elm_object_disabled_set(sd->stop, EINA_TRUE);
+   elm_object_disabled_set(sd->volume, EINA_TRUE);
+   elm_object_disabled_set(sd->mute, EINA_TRUE);
+   elm_object_disabled_set(sd->slider, EINA_TRUE);
+   elm_object_disabled_set(sd->vslider, EINA_TRUE);
 
    sd->video = NULL;
    sd->emotion = NULL;
@@ -502,7 +573,6 @@ _elm_player_smart_content_set(Eo *obj, void *_pd, va_list *list)
 
    if (!content) goto end;
 
-   elm_object_disabled_set(sd->slider, EINA_FALSE);
    elm_object_disabled_set(sd->forward, EINA_FALSE);
    elm_object_disabled_set(sd->info, EINA_FALSE);
    elm_object_disabled_set(sd->next, EINA_FALSE);
@@ -511,6 +581,11 @@ _elm_player_smart_content_set(Eo *obj, void *_pd, va_list *list)
    elm_object_disabled_set(sd->prev, EINA_FALSE);
    elm_object_disabled_set(sd->rewind, EINA_FALSE);
    elm_object_disabled_set(sd->next, EINA_FALSE);
+   elm_object_disabled_set(sd->stop, EINA_FALSE);
+   elm_object_disabled_set(sd->volume, EINA_FALSE);
+   elm_object_disabled_set(sd->mute, EINA_FALSE);
+   elm_object_disabled_set(sd->slider, EINA_FALSE);
+   elm_object_disabled_set(sd->vslider, EINA_FALSE);
 
    sd->emotion = elm_video_emotion_get(sd->video);
    emotion_object_priority_set(sd->emotion, EINA_TRUE);
@@ -524,6 +599,10 @@ _elm_player_smart_content_set(Eo *obj, void *_pd, va_list *list)
    elm_object_disabled_set(sd->slider, !seekable);
    elm_slider_min_max_set(sd->slider, 0, length);
    elm_slider_value_set(sd->slider, pos);
+   
+   elm_slider_value_set(sd->vslider,
+                        elm_video_audio_level_get(sd->video) * 100.0);
+   // XXX: get mute
 
    if (elm_video_is_playing_get(sd->video))
      elm_layout_signal_emit(obj, "elm,player,play", "elm");
@@ -566,7 +645,9 @@ _elm_player_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    priv->prev = _player_button_add(obj, "prev", _prev);
    priv->rewind = _player_button_add(obj, "rewind", _rewind);
    priv->stop = _player_button_add(obj, "stop", _stop);
-
+   priv->eject = _player_button_add(obj, "eject", _eject);
+   priv->volume = _player_button_add(obj, "volume", _volume);
+   priv->mute = _player_button_add(obj, "mute", _mute);
 
    priv->slider = elm_slider_add(obj);
    snprintf(buf, sizeof(buf), "media_player/position/%s",
@@ -583,8 +664,7 @@ _elm_player_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    evas_object_size_hint_align_set(priv->slider, EVAS_HINT_FILL, 0.5);
    evas_object_size_hint_weight_set
      (priv->slider, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-
-   elm_layout_content_set(obj, "elm.swallow.media_player.position",
+   elm_layout_content_set(obj, "elm.swallow.media_player.positionslider",
                           priv->slider);
    evas_object_smart_callback_add
      (priv->slider, "changed", _update_position, obj);
@@ -592,6 +672,23 @@ _elm_player_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
      (priv->slider, "slider,drag,start", _drag_start, obj);
    evas_object_smart_callback_add
      (priv->slider, "slider,drag,stop", _drag_stop, obj);
+
+   priv->vslider = elm_slider_add(obj);
+   elm_slider_indicator_show_set(priv->vslider, EINA_FALSE);
+   snprintf(buf, sizeof(buf), "media_player/volume/%s",
+            elm_widget_style_get(obj));
+   elm_object_style_set(priv->vslider, buf);
+   elm_slider_min_max_set(priv->vslider, 0, 100);
+   elm_slider_value_set(priv->vslider, 100);
+   elm_slider_horizontal_set(priv->vslider, EINA_FALSE);
+   elm_slider_inverted_set(priv->vslider, EINA_TRUE);
+   evas_object_size_hint_align_set(priv->vslider, 0.5, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set
+     (priv->vslider, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_layout_content_set(obj, "elm.swallow.media_player.volumeslider",
+                          priv->vslider);
+   evas_object_smart_callback_add
+     (priv->vslider, "changed", _update_volume, obj);
 
    elm_layout_sizing_eval(obj);
    elm_widget_can_focus_set(obj, EINA_TRUE);

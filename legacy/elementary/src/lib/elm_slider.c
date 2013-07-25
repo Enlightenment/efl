@@ -1279,7 +1279,8 @@ _elm_slider_indicator_show_set(Eo *obj, void *_pd, va_list *list)
         if (sd->popup)
           edje_object_signal_emit(sd->popup, "elm,state,val,show", "elm");
      }
-   else {
+   else
+     {
         sd->indicator_show = EINA_FALSE;
         elm_layout_signal_emit(obj, "elm,state,val,hide", "elm");
         if (sd->popup)

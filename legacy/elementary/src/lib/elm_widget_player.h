@@ -32,7 +32,11 @@ struct _Elm_Player_Smart_Data
    Evas_Object          *prev;
    Evas_Object          *rewind;
    Evas_Object          *stop;
+   Evas_Object          *eject;
+   Evas_Object          *volume;
+   Evas_Object          *mute;
    Evas_Object          *slider;
+   Evas_Object          *vslider;
    
    Eina_Bool             dragging : 1;
 };
