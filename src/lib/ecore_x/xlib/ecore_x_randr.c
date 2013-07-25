@@ -1890,7 +1890,7 @@ ecore_x_randr_crtc_info_get(Ecore_X_Window root, const Ecore_X_Randr_Crtc crtc)
                   ret->noutput = info->noutput;
                   ret->npossible = info->npossible;
 
-                  if (input->noutput > 0)
+                  if (info->noutput > 0)
                     {
                        if ((ret->outputs = 
                             malloc(info->noutput * sizeof(Ecore_X_Randr_Output))))
