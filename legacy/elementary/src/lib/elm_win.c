@@ -290,7 +290,9 @@ _elm_win_state_eval(void *data __UNUSED__)
                }
           }
      }
-   if (_elm_config->auto_throttle)
+   if (((_elm_config->auto_throttle) &&
+        (elm_policy_get(ELM_POLICY_THROTTLE) != ELM_POLICY_THROTTLE_NEVER)) ||
+        (elm_policy_get(ELM_POLICY_THROTTLE) == ELM_POLICY_THROTTLE_HIDDEN_ALWAYS))
      {
         if (_elm_win_count == 0)
           {

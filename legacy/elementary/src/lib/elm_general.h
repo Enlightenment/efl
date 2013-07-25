@@ -80,6 +80,9 @@ typedef enum
    ELM_POLICY_EXIT, /**< defines elm_exit() behaviour. @see Elm_Policy_Exit.
                      * @since 1.8
                      */
+   ELM_POLICY_THROTTLE, /**< defines how throttling should work @see Elm_Policy_Throttle
+                         * @since 1.8
+                         */
    ELM_POLICY_LAST
 } Elm_Policy; /**< Elementary policy identifiers/groups enumeration.  @see elm_policy_set() */
 
@@ -105,6 +108,17 @@ typedef enum
    ELM_POLICY_EXIT_WINDOWS_DEL /**< delete all the windows after quitting
                                 * the main loop */
 } Elm_Policy_Exit;
+
+/**
+ * Possible values for the #ELM_POLICY_THROTTLE policy.
+ * @since 1.8
+ */
+typedef enum
+{
+   ELM_POLICY_THROTTLE_CONFIG = 0, /**< do whatever elementary config is configured to do */
+   ELM_POLICY_THROTTLE_HIDDEN_ALWAYS, /**< always throttle when all windows are no longer visible */
+   ELM_POLICY_THROTTLE_NEVER /**< never throttle when windows are all hidden, regardless of config settings */
+} Elm_Policy_Throttle;
 
 typedef enum
 {
