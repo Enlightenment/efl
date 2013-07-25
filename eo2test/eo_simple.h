@@ -1,26 +1,26 @@
-#ifndef SIMPLE_H
-#define SIMPLE_H
+#ifndef EO_SIMPLE_H
+#define EO_SIMPLE_H
 
 #include "Eo.h"
 
-extern EAPI Eo_Op SIMPLE_BASE_ID;
+extern EAPI Eo_Op EO_SIMPLE_BASE_ID;
 
 enum {
-     SIMPLE_SUB_ID_INC,
-     SIMPLE_SUB_ID_GET,
-     SIMPLE_SUB_ID_SET,
-     SIMPLE_SUB_ID_LAST
+     EO_SIMPLE_SUB_ID_INC,
+     EO_SIMPLE_SUB_ID_GET,
+     EO_SIMPLE_SUB_ID_SET,
+     EO_SIMPLE_SUB_ID_LAST
 };
 
-#define SIMPLE_ID(sub_id) (SIMPLE_BASE_ID + sub_id)
+#define EO_SIMPLE_ID(sub_id) (EO_SIMPLE_BASE_ID + sub_id)
 
-#define inc() SIMPLE_ID(SIMPLE_SUB_ID_INC)
+#define inc() EO_SIMPLE_ID(EO_SIMPLE_SUB_ID_INC)
 
-#define get(x) SIMPLE_ID(SIMPLE_SUB_ID_GET), EO_TYPECHECK(int *, x)
+#define get(x) EO_SIMPLE_ID(EO_SIMPLE_SUB_ID_GET), EO_TYPECHECK(int *, x)
 
-#define set(x) SIMPLE_ID(SIMPLE_SUB_ID_SET), EO_TYPECHECK(int, x)
+#define set(x) EO_SIMPLE_ID(EO_SIMPLE_SUB_ID_SET), EO_TYPECHECK(int, x)
 
-#define SIMPLE_CLASS simple_class_get()
+#define EO_SIMPLE_CLASS simple_class_get()
 const Eo_Class *simple_class_get(void);
 
 #endif

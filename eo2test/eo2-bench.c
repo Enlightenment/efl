@@ -59,7 +59,7 @@ main(int argc EINA_UNUSED, char** argv EINA_UNUSED, char** env EINA_UNUSED)
 
    eo_init();
 
-   obj = eo_add(SIMPLE_CLASS, NULL);
+   obj = eo_add(EO_SIMPLE_CLASS, NULL);
    obj2 = eo2_add(EO2_SIMPLE_CLASS, NULL);
    obj3 = eo2_add(EO2_INHERIT_CLASS, NULL);
 
