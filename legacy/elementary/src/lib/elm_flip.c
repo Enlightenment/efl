@@ -241,21 +241,21 @@ _slice_apply(Elm_Flip_Smart_Data *sd,
    for (i = 0; i < 4; i++)
      {
         evas_map_point_color_set(m, i, 255, 255, 255, 255);
-        if (sd->dir == 0)
+        if (sd->dir == ELM_FLIP_DIRECTION_LEFT)
           {
              int p[4] = { 0, 1, 2, 3 };
              evas_map_point_coord_set(m, i, ox + sl->x[p[i]], oy + sl->y[p[i]],
                                       sl->z[p[i]]);
              evas_map_point_image_uv_set(m, i, sl->u[p[i]], sl->v[p[i]]);
           }
-        else if (sd->dir == 1)
+        else if (sd->dir == ELM_FLIP_DIRECTION_RIGHT)
           {
              int p[4] = { 1, 0, 3, 2 };
              evas_map_point_coord_set(m, i, ox + (w - sl->x[p[i]]),
                                       oy + sl->y[p[i]], sl->z[p[i]]);
              evas_map_point_image_uv_set(m, i, ow - sl->u[p[i]], sl->v[p[i]]);
           }
-        else if (sd->dir == 2)
+        else if (sd->dir == ELM_FLIP_DIRECTION_UP)
           {
              int p[4] = { 1, 0, 3, 2 };
              evas_map_point_coord_set(m, i, ox + sl->y[p[i]], oy + sl->x[p[i]],
@@ -521,16 +521,16 @@ _state_update(Evas_Object *obj)
    xx2 = sd->x;
    yy2 = sd->y;
 
-   if (sd->dir == 0)
+   if (sd->dir == ELM_FLIP_DIRECTION_LEFT)
      {
         // no nothing. left drag is standard
      }
-   else if (sd->dir == 1)
+   else if (sd->dir == ELM_FLIP_DIRECTION_RIGHT)
      {
         xx1 = (w - 1) - xx1;
         xx2 = (w - 1) - xx2;
      }
-   else if (sd->dir == 2)
+   else if (sd->dir == ELM_FLIP_DIRECTION_UP)
      {
         Evas_Coord tmp;
 
@@ -815,21 +815,21 @@ _state_update(Evas_Object *obj)
                s2[3] = sd->slices2[num];
              switch (sd->dir)
                {
-                case 0:
+                case ELM_FLIP_DIRECTION_LEFT:
                   _slice_obj_vert_color_merge
                     (s[0], 2, s[1], 3, s[2], 1, s[3], 0);
                   _slice_obj_vert_color_merge
                     (s2[0], 3, s2[1], 2, s2[2], 0, s2[3], 1);
                   break;
 
-                case 1:
+                case ELM_FLIP_DIRECTION_RIGHT:
                   _slice_obj_vert_color_merge
                     (s[0], 3, s[1], 2, s[2], 0, s[3], 1);
                   _slice_obj_vert_color_merge
                     (s2[0], 2, s2[1], 3, s2[2], 1, s2[3], 0);
                   break;
 
-                case 2:
+                case ELM_FLIP_DIRECTION_UP:
                   _slice_obj_vert_color_merge
                     (s[0], 3, s[1], 2, s[2], 0, s[3], 1);
                   _slice_obj_vert_color_merge
@@ -1192,7 +1192,6 @@ _configure(Evas_Object *obj)
    Evas_Coord fsize;
 
    ELM_FLIP_DATA_GET(obj, sd);
-
    _show_hide(obj);
    evas_object_geometry_get(obj, &x, &y, &w, &h);
    // FIXME: manual flip wont get fixed
@@ -1242,13 +1241,12 @@ _flip(Evas_Object *obj)
 
    t = t / sd->len;
    if (t > 1.0) t = 1.0;
-
    evas_object_geometry_get(obj, NULL, NULL, &w, &h);
    if (!sd->manual)
      {
         if (sd->mode == ELM_FLIP_PAGE_LEFT)
           {
-             sd->dir = 0;
+             sd->dir = ELM_FLIP_DIRECTION_LEFT;
              sd->started = EINA_TRUE;
              sd->pageflip = EINA_TRUE;
              sd->down_x = w - 1;
@@ -1260,7 +1258,7 @@ _flip(Evas_Object *obj)
           }
         else if (sd->mode == ELM_FLIP_PAGE_RIGHT)
           {
-             sd->dir = 1;
+             sd->dir = ELM_FLIP_DIRECTION_RIGHT;
              sd->started = EINA_TRUE;
              sd->pageflip = EINA_TRUE;
              sd->down_x = 0;
@@ -1272,7 +1270,7 @@ _flip(Evas_Object *obj)
           }
         else if (sd->mode == ELM_FLIP_PAGE_UP)
           {
-             sd->dir = 2;
+             sd->dir = ELM_FLIP_DIRECTION_UP;
              sd->started = EINA_TRUE;
              sd->pageflip = EINA_TRUE;
              sd->down_x = w / 2;
@@ -1284,7 +1282,7 @@ _flip(Evas_Object *obj)
           }
         else if (sd->mode == ELM_FLIP_PAGE_DOWN)
           {
-             sd->dir = 3;
+             sd->dir = ELM_FLIP_DIRECTION_DOWN;
              sd->started = EINA_TRUE;
              sd->pageflip = EINA_TRUE;
              sd->down_x = w / 2;
@@ -1373,23 +1371,23 @@ _pos_get(Evas_Object *obj,
       case ELM_FLIP_INTERACTION_ROTATE:
       case ELM_FLIP_INTERACTION_CUBE:
       {
-         if (sd->dir == 0)
+         if (sd->dir == ELM_FLIP_DIRECTION_LEFT)
            {
               if (sd->down_x > 0)
                 t = 1.0 - ((double)sd->x / (double)sd->down_x);
               *rev = 1;
            }
-         else if (sd->dir == 1)
+         else if (sd->dir == ELM_FLIP_DIRECTION_RIGHT)
            {
               if (sd->down_x < w)
                 t = 1.0 - ((double)(w - sd->x) / (double)(w - sd->down_x));
            }
-         else if (sd->dir == 2)
+         else if (sd->dir == ELM_FLIP_DIRECTION_UP)
            {
               if (sd->down_y > 0)
                 t = 1.0 - ((double)sd->y / (double)sd->down_y);
            }
-         else if (sd->dir == 3)
+         else if (sd->dir == ELM_FLIP_DIRECTION_DOWN)
            {
               if (sd->down_y < h)
                 t = 1.0 - ((double)(h - sd->y) / (double)(h - sd->down_y));
@@ -1400,7 +1398,8 @@ _pos_get(Evas_Object *obj,
          else if (t > 1.0)
            t = 1.0;
 
-         if ((sd->dir == 0) || (sd->dir == 1))
+         if ((sd->dir == ELM_FLIP_DIRECTION_LEFT) ||
+             (sd->dir == ELM_FLIP_DIRECTION_RIGHT))
            {
               if (sd->intmode == ELM_FLIP_INTERACTION_ROTATE)
                 *m = ELM_FLIP_ROTATE_Y_CENTER_AXIS;
@@ -1442,24 +1441,24 @@ _event_anim(void *data,
    p = ecore_animator_pos_map(pos, ECORE_POS_MAP_ACCELERATE, 0.0, 0.0);
    if (sd->finish)
      {
-        if (sd->dir == 0)
+        if (sd->dir == ELM_FLIP_DIRECTION_LEFT)
           sd->x = sd->ox * (1.0 - p);
-        else if (sd->dir == 1)
+        else if (sd->dir == ELM_FLIP_DIRECTION_RIGHT)
           sd->x = sd->ox + ((sd->w - sd->ox) * p);
-        else if (sd->dir == 2)
+        else if (sd->dir == ELM_FLIP_DIRECTION_UP)
           sd->y = sd->oy * (1.0 - p);
-        else if (sd->dir == 3)
+        else if (sd->dir == ELM_FLIP_DIRECTION_DOWN)
           sd->y = sd->oy + ((sd->h - sd->oy) * p);
      }
    else
      {
-        if (sd->dir == 0)
+        if (sd->dir == ELM_FLIP_DIRECTION_LEFT)
           sd->x = sd->ox + ((sd->w - sd->ox) * p);
-        else if (sd->dir == 1)
+        else if (sd->dir == ELM_FLIP_DIRECTION_RIGHT)
           sd->x = sd->ox * (1.0 - p);
-        else if (sd->dir == 2)
+        else if (sd->dir == ELM_FLIP_DIRECTION_UP)
           sd->y = sd->oy + ((sd->h - sd->oy) * p);
-        else if (sd->dir == 3)
+        else if (sd->dir == ELM_FLIP_DIRECTION_DOWN)
           sd->y = sd->oy * (1.0 - p);
      }
    switch (sd->intmode)
@@ -1590,22 +1589,22 @@ _up_cb(void *data,
    sd->oy = sd->y;
    ELM_SAFE_FREE(sd->job, ecore_job_del);
    sd->finish = EINA_FALSE;
-   if (sd->dir == 0)
+   if (sd->dir == ELM_FLIP_DIRECTION_LEFT)
      {
         tm = (double)sd->x / (double)sd->w;
         if (sd->x < (sd->w / 2)) sd->finish = EINA_TRUE;
      }
-   else if (sd->dir == 1)
+   else if (sd->dir == ELM_FLIP_DIRECTION_RIGHT)
      {
         if (sd->x > (sd->w / 2)) sd->finish = EINA_TRUE;
         tm = 1.0 - ((double)sd->x / (double)sd->w);
      }
-   else if (sd->dir == 2)
+   else if (sd->dir == ELM_FLIP_DIRECTION_UP)
      {
         if (sd->y < (sd->h / 2)) sd->finish = EINA_TRUE;
         tm = (double)sd->y / (double)sd->h;
      }
-   else if (sd->dir == 3)
+   else if (sd->dir == ELM_FLIP_DIRECTION_DOWN)
      {
         if (sd->y > (sd->h / 2)) sd->finish = EINA_TRUE;
         tm = 1.0 - ((double)sd->y / (double)sd->h);
@@ -1651,17 +1650,17 @@ _move_cb(void *data,
         if (((dx * dx) + (dy * dy)) >
             (_elm_config->finger_size * _elm_config->finger_size / 4))
           {
-             sd->dir = 0;
+             sd->dir = ELM_FLIP_DIRECTION_LEFT;
              if ((sd->x > (w / 2)) &&
                  (dx < 0) && (abs(dx) > abs(dy)))
-               sd->dir = 0;  // left
+               sd->dir = ELM_FLIP_DIRECTION_LEFT;
              else if ((sd->x < (w / 2)) && (dx >= 0) &&
                       (abs(dx) > abs(dy)))
-               sd->dir = 1;  // right
+               sd->dir = ELM_FLIP_DIRECTION_RIGHT;
              else if ((sd->y > (h / 2)) && (dy < 0) && (abs(dy) >= abs(dx)))
-               sd->dir = 2;  // up
+               sd->dir = ELM_FLIP_DIRECTION_UP;
              else if ((sd->y < (h / 2)) && (dy >= 0) && (abs(dy) >= abs(dx)))
-               sd->dir = 3;  // down
+               sd->dir = ELM_FLIP_DIRECTION_DOWN;  // down
              sd->started = EINA_TRUE;
              if (sd->intmode == ELM_FLIP_INTERACTION_PAGE)
                sd->pageflip = EINA_TRUE;
@@ -2059,7 +2058,6 @@ _interaction_direction_enabled_set(Eo *obj, void *_pd, va_list *list)
    Elm_Flip_Smart_Data *sd = _pd;
 
    enabled = !!enabled;
-
    if (sd->dir_enabled[i] == enabled) return;
    sd->dir_enabled[i] = enabled;
    if (sd->intmode == ELM_FLIP_INTERACTION_NONE) return;
