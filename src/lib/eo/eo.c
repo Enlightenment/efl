@@ -414,21 +414,26 @@ _eo2_api_desc_get(void *api_func, const _Eo_Class *klass)
    Eo2_Op_Description *op_desc;
    Eo2_Op_Description *op_descs;
 
-   imin = 0;
-   imax = klass->desc->ops.count - 1;
-   op_descs = klass->desc->ops.descs2;
-
-   while (imax >= imin)
+   while (klass)
      {
-        imid = (imax + imin) / 2;
-        op_desc = op_descs + imid;
+        imin = 0;
+        imax = klass->desc->ops.count - 1;
+        op_descs = klass->desc->ops.descs2;
 
-        if (op_desc->api_func > api_func)
-          imin = imid + 1;
-        else if (op_desc->api_func < api_func)
-          imax = imid - 1;
-        else
-          return op_desc;
+        while (imax >= imin)
+          {
+             imid = (imax + imin) / 2;
+             op_desc = op_descs + imid;
+
+             if (op_desc->api_func > api_func)
+               imin = imid + 1;
+             else if (op_desc->api_func < api_func)
+               imax = imid - 1;
+             else
+               return op_desc;
+          }
+
+        klass = klass->parent;
      }
 
    return NULL;
@@ -444,14 +449,8 @@ eo2_api_op_id_get(void *api_func, const Eo_Class *klass_id)
       klass = _eo_class_pointer_get(klass_id);
    else
       klass = eo2_call_stack.frame_ptr->obj->klass;
-   desc = NULL;
 
-   while (klass)
-     {
-        desc = _eo2_api_desc_get(api_func, klass);
-        if (desc) break;
-        klass = klass->parent;
-      }
+   desc = _eo2_api_desc_get(api_func, klass);
 
    if (desc == NULL)
      return EO_NOOP;
@@ -506,8 +505,8 @@ eo2_class_funcs_set(Eo_Class *klass_id)
              api_desc = _eo2_api_desc_get(op_desc->api_func, klass->parent);
 
              if (api_desc == NULL)
-               ERR("Can't find api func %p description in '%s' parent class. Class '%s', Func index: %lu",
-                   op_desc->api_func, klass->parent->desc->name, klass->desc->name, (unsigned long) (op_desc - op_descs));
+               ERR("Can't find api func %p description in class hierarchy. Class '%s', Func index: %lu",
+                   op_desc->api_func, klass->desc->name, (unsigned long) (op_desc - op_descs));
 
              op_desc->op = api_desc->op;
              op_desc->doc = api_desc->doc;
