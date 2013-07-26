@@ -818,8 +818,13 @@ EAPI Eina_Inlist *eina_inlist_sort(Eina_Inlist *head, Eina_Compare_Cb func);
  * In C++ we can't assign a "type*" pointer to void* so we rely on GCC's typeof
  * operator.
  */
-#define _EINA_INLIST_CONTAINER(ref, ptr) (typeof(ref))((char *)(ptr) - \
+# ifdef __GNUC__
+#  define _EINA_INLIST_CONTAINER(ref, ptr) (__typeof__(ref))((char *)(ptr) - \
                                                   _EINA_INLIST_OFFSET(ref))
+# else
+#  define _EINA_INLIST_CONTAINER(ref, ptr) (typeof(ref))((char *)(ptr) - \
+                                                  _EINA_INLIST_OFFSET(ref))
+# endif
 #endif
 
 /**
@@ -868,9 +873,13 @@ EAPI Eina_Inlist *eina_inlist_sort(Eina_Inlist *head, Eina_Compare_Cb func);
  * don't remove all items from the list.
  * @since 1.8
  */
-#define EINA_INLIST_FREE(list, it)				\
-  for (it = (typeof(it)) list; list; it = (typeof(it)) list)	\
-
+#ifdef __GNUC__
+# define EINA_INLIST_FREE(list, it)				\
+   for (it = (__typeof__(it)) list; list; it = (__typeof__(it)) list)
+#else
+# define EINA_INLIST_FREE(list, it)				\
+   for (it = (typeof(it)) list; list; it = (typeof(it)) list)
+#endif
 
 
 #include "eina_inline_inlist.x"

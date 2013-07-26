@@ -685,10 +685,17 @@ EAPI Eina_Accessor *eina_inarray_accessor_new(const Eina_Inarray *array) EINA_MA
  *
  * @since 1.2
  */
-#define EINA_INARRAY_FOREACH(array, itr)                                \
-  for ((itr) = (array)->members;					\
-       (itr) < (((typeof(*itr)*)(array)->members) + (array)->len);	\
-       (itr)++)
+#ifdef __GNUC__
+# define EINA_INARRAY_FOREACH(array, itr)                                \
+   for ((itr) = (array)->members;					\
+        (itr) < (((__typeof__(*itr)*)(array)->members) + (array)->len);	\
+        (itr)++)
+#else
+# define EINA_INARRAY_FOREACH(array, itr)                                \
+   for ((itr) = (array)->members;					\
+        (itr) < (((typeof(*itr)*)(array)->members) + (array)->len);	\
+        (itr)++)
+#endif
 
 /**
  * @def EINA_INARRAY_REVERSE_FOREACH
@@ -706,11 +713,19 @@ EAPI Eina_Accessor *eina_inarray_accessor_new(const Eina_Inarray *array) EINA_MA
  *
  * @since 1.2
  */
-#define EINA_INARRAY_REVERSE_FOREACH(array, itr)                        \
-  for ((itr) = ((((typeof(*(itr))*)(array)->members) + (array)->len) - 1); \
-       (((itr) >= (typeof(*(itr))*)(array)->members)			\
-        && ((array)->members != NULL));					\
-       (itr)--)
+#ifdef __GNUC__
+# define EINA_INARRAY_REVERSE_FOREACH(array, itr)                        \
+   for ((itr) = ((((__typeof__(*(itr))*)(array)->members) + (array)->len) - 1); \
+        (((itr) >= (__typeof__(*(itr))*)(array)->members)			\
+         && ((array)->members != NULL));					\
+        (itr)--)
+#else
+# define EINA_INARRAY_REVERSE_FOREACH(array, itr)                        \
+   for ((itr) = ((((typeof(*(itr))*)(array)->members) + (array)->len) - 1); \
+        (((itr) >= (typeof(*(itr))*)(array)->members)			\
+         && ((array)->members != NULL));					\
+        (itr)--)
+#endif
 
 /**
  * @}
