@@ -24,7 +24,7 @@ typedef enum
 
 typedef enum
 {
-   ELM_FLIP_DIRECTION_UP, /**< Allows interaction with the top of the widget */
+   ELM_FLIP_DIRECTION_UP = 0, /**< Allows interaction with the top of the widget */
    ELM_FLIP_DIRECTION_DOWN, /**< Allows interaction with the bottom of the widget */
    ELM_FLIP_DIRECTION_LEFT, /**< Allows interaction with the left portion of the widget */
    ELM_FLIP_DIRECTION_RIGHT /**< Allows interaction with the right portion of the widget */

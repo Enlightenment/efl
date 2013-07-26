@@ -81,10 +81,10 @@ _sizing_eval(Evas_Object *obj)
    if ((maxw2 >= 0) && (maxw2 < maxw)) maxw = maxw2;
    if ((maxh2 >= 0) && (maxh2 < maxh)) maxh = maxh2;
 
-   if (sd->dir_enabled[0]) fingy++;
-   if (sd->dir_enabled[1]) fingy++;
-   if (sd->dir_enabled[2]) fingx++;
-   if (sd->dir_enabled[3]) fingx++;
+   if (sd->dir_enabled[ELM_FLIP_DIRECTION_UP]) fingy++;
+   if (sd->dir_enabled[ELM_FLIP_DIRECTION_DOWN]) fingy++;
+   if (sd->dir_enabled[ELM_FLIP_DIRECTION_LEFT]) fingx++;
+   if (sd->dir_enabled[ELM_FLIP_DIRECTION_RIGHT]) fingx++;
 
    elm_coords_finger_size_adjust(fingx, &minw, fingy, &minh);
 
@@ -2054,19 +2054,12 @@ _interaction_direction_enabled_set(Eo *obj, void *_pd, va_list *list)
 {
    Elm_Flip_Direction dir = va_arg(*list, Elm_Flip_Direction);
    Eina_Bool enabled = va_arg(*list, int);
-   int i = -1;
+   int i = (int) dir;
 
    Elm_Flip_Smart_Data *sd = _pd;
 
    enabled = !!enabled;
-   if (dir == ELM_FLIP_DIRECTION_UP) i = 0;
-   else if (dir == ELM_FLIP_DIRECTION_DOWN)
-     i = 1;
-   else if (dir == ELM_FLIP_DIRECTION_LEFT)
-     i = 2;
-   else if (dir == ELM_FLIP_DIRECTION_RIGHT)
-     i = 3;
-   if (i < 0) return;
+
    if (sd->dir_enabled[i] == enabled) return;
    sd->dir_enabled[i] = enabled;
    if (sd->intmode == ELM_FLIP_INTERACTION_NONE) return;
@@ -2110,19 +2103,10 @@ _interaction_direction_enabled_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list
 {
    Elm_Flip_Direction dir = va_arg(*list, Elm_Flip_Direction);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   int i = -1;
 
    Elm_Flip_Smart_Data *sd = _pd;
 
-   if (dir == ELM_FLIP_DIRECTION_UP) i = 0;
-   else if (dir == ELM_FLIP_DIRECTION_DOWN)
-     i = 1;
-   else if (dir == ELM_FLIP_DIRECTION_LEFT)
-     i = 2;
-   else if (dir == ELM_FLIP_DIRECTION_RIGHT)
-     i = 3;
-   if (i < 0) *ret = EINA_FALSE;
-   else *ret = sd->dir_enabled[i];
+   *ret = sd->dir_enabled[(int) dir];
 }
 
 EAPI void
@@ -2139,21 +2123,14 @@ _interaction_direction_hitsize_set(Eo *obj, void *_pd, va_list *list)
 {
    Elm_Flip_Direction dir = va_arg(*list, Elm_Flip_Direction);
    double hitsize = va_arg(*list, double);
-   int i = -1;
+   int i = (int) dir;
 
    Elm_Flip_Smart_Data *sd = _pd;
 
-   if (dir == ELM_FLIP_DIRECTION_UP) i = 0;
-   else if (dir == ELM_FLIP_DIRECTION_DOWN)
-     i = 1;
-   else if (dir == ELM_FLIP_DIRECTION_LEFT)
-     i = 2;
-   else if (dir == ELM_FLIP_DIRECTION_RIGHT)
-     i = 3;
-   if (i < 0) return;
    if (hitsize < 0.0) hitsize = 0.0;
    else if (hitsize > 1.0)
      hitsize = 1.0;
+
    if (sd->dir_hitsize[i] == hitsize) return;
    sd->dir_hitsize[i] = hitsize;
    _sizing_eval(obj);
@@ -2175,18 +2152,10 @@ _interaction_direction_hitsize_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list
 {
    Elm_Flip_Direction dir = va_arg(*list, Elm_Flip_Direction);
    double *ret = va_arg(*list, double *);
-   int i = -1;
+   int i = (int) dir;
    Elm_Flip_Smart_Data *sd = _pd;
 
-   if (dir == ELM_FLIP_DIRECTION_UP) i = 0;
-   else if (dir == ELM_FLIP_DIRECTION_DOWN)
-     i = 1;
-   else if (dir == ELM_FLIP_DIRECTION_LEFT)
-     i = 2;
-   else if (dir == ELM_FLIP_DIRECTION_RIGHT)
-     i = 3;
-   if (i < 0) *ret = 0.0;
-   else *ret = sd->dir_hitsize[i];
+   *ret = sd->dir_hitsize[i];
 }
 
 static void
