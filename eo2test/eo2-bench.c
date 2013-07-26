@@ -174,6 +174,25 @@ override_batch_test()
    eo_del(eo2_obj);
 }
 
+static void
+virtual_test()
+{
+   int a;
+   Eo *eo2_obj;
+
+   a = 0;
+   eo2_obj = eo2_add(EO2_SIMPLE_CLASS, NULL);
+   eo2_do(eo2_obj, a = eo2_virtual(10); );
+   printf("%d\n", a);
+   eo_del(eo2_obj);
+
+   a = 0;
+   eo2_obj = eo2_add(EO2_INHERIT_CLASS, NULL);
+   eo2_do(eo2_obj, a = eo2_virtual(10); );
+   printf("%d\n", a);
+   eo_del(eo2_obj);
+}
+
 int
 main(int argc EINA_UNUSED, char** argv EINA_UNUSED, char** env EINA_UNUSED)
 {
@@ -181,6 +200,7 @@ main(int argc EINA_UNUSED, char** argv EINA_UNUSED, char** env EINA_UNUSED)
 
    do_batch_test();
    override_batch_test();
+   virtual_test();
 
    eo_shutdown();
 

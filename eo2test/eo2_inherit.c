@@ -25,6 +25,12 @@ _get(Eo *objid EINA_UNUSED, void *obj_data)
 }
 EAPI EO2_FUNC_BODY(eo2_inherit_get, int, 0);
 
+static int
+_virtual(Eo *objid EINA_UNUSED, void *obj_data EINA_UNUSED, int in)
+{
+   return (in * 2);
+}
+
 static void
 _constructor(Eo *obj, void *obj_data)
 {
@@ -51,6 +57,7 @@ static Eo2_Op_Description op_descs [] = {
        EO2_OP_FUNC_OVERRIDE(_constructor, eo2_constructor),
        EO2_OP_FUNC_OVERRIDE(_destructor, eo2_destructor),
        EO2_OP_FUNC_OVERRIDE(_inc, eo2_inc),
+       EO2_OP_FUNC_OVERRIDE(_virtual, eo2_virtual),
        EO2_OP_FUNC(_get, eo2_inherit_get, "Get Y"),
        EO2_OP_SENTINEL
 };

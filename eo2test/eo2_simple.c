@@ -32,6 +32,8 @@ _set(Eo *objid EINA_UNUSED, void *obj_data, int x)
 }
 EAPI EO2_VOID_FUNC_BODYV(eo2_set, EO2_FUNC_CALL(x), int x);
 
+EAPI EO2_FUNC_BODYV(eo2_virtual, int, EO2_FUNC_CALL(x), 0, int x);
+
 static void
 _constructor(Eo *obj, void *obj_data)
 {
@@ -60,6 +62,7 @@ static Eo2_Op_Description op_descs [] = {
        EO2_OP_FUNC(_inc, eo2_inc, "Inc X"),
        EO2_OP_FUNC(_get, eo2_get, "Get X"),
        EO2_OP_FUNC(_set, eo2_set, "Set X"),
+       EO2_OP_FUNC_VIRTUAL(eo2_virtual, "Virtual Func"),
        EO2_OP_SENTINEL
 };
 
