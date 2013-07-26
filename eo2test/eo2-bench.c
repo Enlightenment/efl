@@ -17,9 +17,8 @@ static void report(struct timespec t0, struct timespec t1,
    dt1 = ((t3.tv_sec * 1000000000ULL) + t3.tv_nsec) -
       ((t2.tv_sec * 1000000000ULL) + t2.tv_nsec);
 
-   printf("#%d EO: %5u [ms] %5u [ns]  - EO2: %5u [ms] %5u [ns]\n", n,
-          (unsigned int)(dt0/1000000), (unsigned int)(dt0/c),
-          (unsigned int)(dt1/1000000), (unsigned int)(dt1/c));
+   printf("   #%d           %5u            %5u\n",
+          n, (unsigned int)(dt0/c), (unsigned int)(dt1/c));
 }
 
 static void check(int val, int expected)
@@ -52,10 +51,12 @@ static void check(int val, int expected)
    check(v, n * k);                       \
 
 static void
-run_batch(Eo* eo_obj, Eo* eo2_obj, int n)
+run_batch(const char *title, Eo* eo_obj, Eo* eo2_obj, int n)
 {
    int i, k, v;
    struct timespec t0, t1, t2, t3;
+
+   printf("\n%s - %d calls\ncalls/eo_do()  EO [ns]/call  - EO2 [ns]/call\n", title, n);
 
    // 1 call per batch
    k = 1;
@@ -135,8 +136,7 @@ do_batch_test()
    check(b, 11);
    check(c, 13);
 
-   printf("simple inc()\n");
-   run_batch(eo_obj, eo2_obj, 99999);
+   run_batch("simple inc()", eo_obj, eo2_obj, 99999);
 
    eo_del(eo_obj);
    eo_del(eo2_obj);
@@ -168,8 +168,7 @@ override_batch_test()
    check(a, 66);
    check(b, 69);
 
-   printf("overriden inc()\n");
-   run_batch(eo_obj, eo2_obj, 99999);
+   run_batch("overriden inc", eo_obj, eo2_obj, 99999);
 
    eo_del(eo_obj);
    eo_del(eo2_obj);
