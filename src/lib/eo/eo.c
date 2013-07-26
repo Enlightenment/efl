@@ -444,6 +444,7 @@ eo2_api_op_id_get(void *api_func, const Eo_Class *klass_id)
       klass = _eo_class_pointer_get(klass_id);
    else
       klass = eo2_call_stack.frame_ptr->obj->klass;
+   desc = NULL;
 
    while (klass)
      {
