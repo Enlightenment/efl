@@ -659,10 +659,12 @@ typedef struct _Eo2_Op_Call_Data
 
 // OP ID of an overriding function
 #define EO2_OP_OVERRIDE ((Eo_Op) -1)
+#define EO2_OP_VIRTUAL ((Eo_Op) -2)
 
 #define EO2_OP_FUNC(_private, _api, _doc) {_private, _api, EO_NOOP, EO_OP_TYPE_REGULAR, _doc}
 #define EO2_OP_CLASS_FUNC(_private, _api, _doc) {_private, _api, EO_NOOP, EO_OP_TYPE_CLASS, _doc}
 #define EO2_OP_FUNC_OVERRIDE(_private, _api) {_private, _api, EO2_OP_OVERRIDE, EO_OP_TYPE_REGULAR, NULL}
+#define EO2_OP_FUNC_VIRTUAL(_api, _doc) {NULL, _api, EO2_OP_VIRTUAL, EO_OP_TYPE_REGULAR, _doc}
 #define EO2_OP_SENTINEL { NULL, NULL, 0, EO_OP_TYPE_INVALID, NULL}
 
 // returns the OP id corresponding to the given api_func

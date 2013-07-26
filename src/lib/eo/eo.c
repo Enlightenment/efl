@@ -382,9 +382,17 @@ eo2_call_resolve_internal(const Eo_Class *klass_id, Eo_Op op, Eo2_Op_Call_Data *
    else
       klass = fptr->cur_klass;
 
-   func = _eo_kls_itr_func_get(klass, op);
+   if (!klass)
+     return EINA_FALSE;
+
+   func = _dich_func_get(klass, op);
    if (EINA_LIKELY(func != NULL))
      {
+        if (func->func == NULL)
+          {
+             ERR("you called a pure virtual func");
+             return EINA_FALSE;
+          }
         call->obj_id = fptr->obj_id;
         call->func = func->func;
 
@@ -492,6 +500,11 @@ eo2_class_funcs_set(Eo_Class *klass_id)
               klass->desc->name, (unsigned long) (op_desc - op_descs));
 
         if (op_desc->op == EO_NOOP)
+          {
+             op_desc->op = op_id;
+             op_id++;
+          }
+        else if (op_desc->op == EO2_OP_VIRTUAL)
           {
              op_desc->op = op_id;
              op_id++;
