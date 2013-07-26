@@ -1890,6 +1890,9 @@ ecore_x_randr_crtc_info_get(Ecore_X_Window root, const Ecore_X_Randr_Crtc crtc)
                   ret->noutput = info->noutput;
                   ret->npossible = info->npossible;
 
+                  ret->outputs = NULL;
+                  ret->possible = NULL;
+
                   if (info->noutput > 0)
                     {
                        if ((ret->outputs = 
