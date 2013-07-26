@@ -411,17 +411,11 @@ eo2_call_resolve_internal(const Eo_Class *klass_id, Eo_Op op, Eo2_Op_Call_Data *
 
 
 static inline const Eo2_Op_Description *
-_eo2_api_desc_get(void *api_func, const Eo_Class *klass_id)
+_eo2_api_desc_get(void *api_func, const _Eo_Class *klass)
 {
    int imin, imax, imid;
    Eo2_Op_Description *op_desc;
    Eo2_Op_Description *op_descs;
-   const _Eo_Class *klass;
-
-   if (klass_id)
-      klass = _eo_class_pointer_get(klass_id);
-   else
-      klass = eo2_call_stack.frame_ptr->obj->klass;
 
    imin = 0;
    imax = klass->desc->ops.count - 1;
@@ -447,10 +441,22 @@ EAPI Eo_Op
 eo2_api_op_id_get(void *api_func, const Eo_Class *klass_id)
 {
     const Eo2_Op_Description *desc;
+    const _Eo_Class *klass;
 
-    desc = _eo2_api_desc_get(api_func, klass_id);
-    if (desc == NULL)
-      return EO_NOOP;
+   if (klass_id)
+      klass = _eo_class_pointer_get(klass_id);
+   else
+      klass = eo2_call_stack.frame_ptr->obj->klass;
+
+   while (klass)
+     {
+        desc = _eo2_api_desc_get(api_func, klass);
+        if (desc) break;
+        klass = klass->parent;
+      }
+
+   if (desc == NULL)
+     return EO_NOOP;
 
     return desc->op;
 }
@@ -499,7 +505,7 @@ eo2_class_funcs_set(Eo_Class *klass_id)
                ERR("Can't inherit from a NULL parent. Class '%s', Func index: %lu",
                    klass->desc->name, (unsigned long) (op_desc - op_descs));
 
-             api_desc = _eo2_api_desc_get(op_desc->api_func,  _eo_class_id_get(klass->parent));
+             api_desc = _eo2_api_desc_get(op_desc->api_func, klass->parent);
 
              if (api_desc == NULL)
                ERR("Can't find api func %p description in '%s' parent class. Class '%s', Func index: %lu",
