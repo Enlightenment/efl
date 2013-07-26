@@ -136,13 +136,13 @@ _units_set(Evas_Object *obj)
           }
         else
           {
+             elm_layout_text_set(obj, "elm.units", NULL);
              if (sd->units_show)
                {
                   elm_layout_signal_emit(obj, "elm,state,units,hidden", "elm");
                   sd->units_show = EINA_FALSE;
                }
           }
-
         if (sd->units_format_free) sd->units_format_free(buf);
      }
    else if (sd->units)
@@ -497,7 +497,7 @@ _elm_slider_smart_theme(Eo *obj, void *_pd, va_list *list)
    if (sd->popup)
      edje_object_scale_set(sd->popup, elm_widget_scale_get(obj) *
                            elm_config_scale_get());
-
+   
    if (sd->horizontal)
      evas_object_size_hint_min_set
        (sd->spacer, (double)sd->size * elm_widget_scale_get(obj) *
@@ -978,8 +978,23 @@ _elm_slider_unit_format_set(Eo *obj, void *_pd, va_list *list)
 {
    const char *units = va_arg(*list, const char *);
    Elm_Slider_Smart_Data *sd = _pd;
-
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   
    eina_stringshare_replace(&sd->units, units);
+   if (units)
+     {
+        elm_layout_signal_emit(obj, "elm,state,units,visible", "elm");
+        edje_object_message_signal_process(wd->resize_obj);
+        if (sd->popup)
+          edje_object_signal_emit(sd->popup, "elm,state,units,visible", "elm");
+     }
+   else
+     {
+        elm_layout_signal_emit(obj, "elm,state,units,hidden", "elm");
+        edje_object_message_signal_process(wd->resize_obj);
+        if (sd->popup)
+          edje_object_signal_emit(sd->popup, "elm,state,units,hidden", "elm");
+     }
    evas_object_smart_changed(obj);
 }
 
