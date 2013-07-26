@@ -1515,3 +1515,8 @@
 
         * File Selector : Support elm_object_part_text_set() for the ok, cancel
         part to change the OK, Cancel button label.
+
+2013-07-26  ChunEon Park (Hermet)
+
+        * Flip : Fix the flip page to not flip on a direction if the direction
+        is disabled.

@@ -1578,8 +1578,8 @@ _up_cb(void *data,
 
    if (ev->button != 1) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
-
    sd->down = 0;
+   if (!sd->started) return;
    evas_object_geometry_get(data, &x, &y, &w, &h);
    sd->x = ev->canvas.x - x;
    sd->y = ev->canvas.y - y;
@@ -1633,7 +1633,6 @@ _move_cb(void *data,
    Evas_Coord x, y, w, h;
 
    ELM_FLIP_DATA_GET(fl, sd);
-
    if (!sd->down) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
    evas_object_geometry_get(data, &x, &y, &w, &h);
@@ -1653,14 +1652,27 @@ _move_cb(void *data,
              sd->dir = ELM_FLIP_DIRECTION_LEFT;
              if ((sd->x > (w / 2)) &&
                  (dx < 0) && (abs(dx) > abs(dy)))
-               sd->dir = ELM_FLIP_DIRECTION_LEFT;
+               {
+                  sd->dir = ELM_FLIP_DIRECTION_LEFT;
+                  if (!sd->dir_enabled[ELM_FLIP_DIRECTION_LEFT]) return;
+               }
              else if ((sd->x < (w / 2)) && (dx >= 0) &&
                       (abs(dx) > abs(dy)))
-               sd->dir = ELM_FLIP_DIRECTION_RIGHT;
+               {
+                  sd->dir = ELM_FLIP_DIRECTION_RIGHT;
+                  if (!sd->dir_enabled[ELM_FLIP_DIRECTION_RIGHT]) return;
+               }
              else if ((sd->y > (h / 2)) && (dy < 0) && (abs(dy) >= abs(dx)))
-               sd->dir = ELM_FLIP_DIRECTION_UP;
+               {
+                  sd->dir = ELM_FLIP_DIRECTION_UP;
+                  if (!sd->dir_enabled[ELM_FLIP_DIRECTION_UP]) return;
+               }
              else if ((sd->y < (h / 2)) && (dy >= 0) && (abs(dy) >= abs(dx)))
-               sd->dir = ELM_FLIP_DIRECTION_DOWN;  // down
+               {
+                  sd->dir = ELM_FLIP_DIRECTION_DOWN;
+                  if (!sd->dir_enabled[ELM_FLIP_DIRECTION_DOWN]) return;
+               }
+
              sd->started = EINA_TRUE;
              if (sd->intmode == ELM_FLIP_INTERACTION_PAGE)
                sd->pageflip = EINA_TRUE;
