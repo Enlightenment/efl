@@ -639,7 +639,7 @@ typedef struct _Eo2_Op_Call_Data
 // to define an EAPI function
 #define EO2_FUNC_BODY(Name, Ret, DefRet)                                \
   Ret                                                                   \
-  Name()                                                                \
+  Name(void)                                                            \
   {                                                                     \
      typedef Ret (*__##Name##_func)(Eo *, void *obj_data);              \
      _EO2_FUNC_COMMON(Name, Ret, _func_(call.obj_id, call.data), DefRet)\
