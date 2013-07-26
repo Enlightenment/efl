@@ -9,5 +9,3 @@
    grow/shrink
    per thread stack
 
-- fix simplesignal.cc
-   bench_callback_eo2_loop()

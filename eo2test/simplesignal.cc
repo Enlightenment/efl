@@ -686,24 +686,24 @@ __inc(Eo *objid EINA_UNUSED, void *obj_data)
 static inline EO2_VOID_FUNC_BODY(inc);
 
 static void
-__constructor(Eo *obj, void *obj_data, va_list *list EINA_UNUSED)
+__constructor(Eo *obj, void *obj_data)
 {
    Test_Event_Speed_Data *conf = (Test_Event_Speed_Data *) obj_data;
 
-   eo_do_super(obj, TEST_EVENT2_SPEED_CLASS, eo_constructor());
+   eo2_do_super(obj, eo2_constructor());
 
    conf->count = 0;
 }
 
 static void
-__destructor(Eo *obj, void *obj_data EINA_UNUSED, va_list *list EINA_UNUSED)
+__destructor(Eo *obj, void *obj_data EINA_UNUSED)
 {
-   eo_do_super(obj, TEST_EVENT2_SPEED_CLASS, eo_destructor());
+   eo2_do_super(obj, eo2_destructor());
 }
 
-Eo2_Op_Description op_descs [] = {
-       EO2_OP_CONSTRUCTOR( (void*)__constructor),
-       EO2_OP_DESTRUCTOR( (void*)__destructor),
+static Eo2_Op_Description op_descs [] = {
+       EO2_OP_FUNC_OVERRIDE( (void*)__constructor, (void*)eo2_constructor),
+       EO2_OP_FUNC_OVERRIDE( (void*)__destructor, (void*)eo2_destructor),
        EO2_OP_FUNC( (void*)__get, (void*)get, "Get"),
        EO2_OP_FUNC( (void*)__inc, (void*)inc, "Inc"),
        EO2_OP_SENTINEL
@@ -716,7 +716,7 @@ _class2_constructor(Eo_Class *klass)
 }
 
 static const Eo_Class_Description class2_desc = {
-  2,
+  EO2_VERSION,
   "test_event2_speed",
   EO_CLASS_TYPE_REGULAR,
   EO2_CLASS_DESCRIPTION_OPS(op_descs, OP_DESC_SIZE(op_descs)),
@@ -726,7 +726,7 @@ static const Eo_Class_Description class2_desc = {
   NULL
 };
 
-EO_DEFINE_CLASS(test_event2_speed_class_get, &class2_desc, EO_BASE_CLASS, NULL);
+EO_DEFINE_CLASS(test_event2_speed_class_get, &class2_desc, EO2_BASE_CLASS, NULL);
 
 static void
 bench_callback_eo2_loop()
@@ -737,13 +737,13 @@ bench_callback_eo2_loop()
 
    eo_init();
 
-   obj = eo_add(TEST_EVENT2_SPEED_CLASS, NULL);
+   obj = eo2_add(TEST_EVENT2_SPEED_CLASS, NULL);
 
-   eo_do(obj, eo_event_callback_add(EV_COUNTER, _inc, eo_data_scope_get(obj, TEST_EVENT2_SPEED_CLASS)));
+   eo2_do(obj, eo2_event_callback_add(EV_COUNTER, _inc, eo_data_scope_get(obj, TEST_EVENT2_SPEED_CLASS)); );
 
    const uint64_t benchstart = timestamp_benchmark();
    for (i = 0; i < 999999; i++)
-     eo_do(obj, eo_event_callback_call(EV_COUNTER, NULL, NULL));
+     eo2_do(obj, eo2_event_callback_call(EV_COUNTER, NULL));
    const uint64_t benchdone = timestamp_benchmark();
 
    eo2_do(obj, d = get());
@@ -761,7 +761,7 @@ bench_callback_eo2_direct_loop()
 
    eo_init();
 
-   obj = eo_add(TEST_EVENT2_SPEED_CLASS, NULL);
+   obj = eo2_add(TEST_EVENT2_SPEED_CLASS, NULL);
 
    const uint64_t benchstart = timestamp_benchmark();
    for (i = 0; i < 999999; i++)
@@ -783,7 +783,7 @@ bench_callback_eo2_direct_batch_loop()
 
    eo_init();
 
-   obj = eo_add(TEST_EVENT2_SPEED_CLASS, NULL);
+   obj = eo2_add(TEST_EVENT2_SPEED_CLASS, NULL);
 
    const uint64_t benchstart = timestamp_benchmark();
    eo2_do(obj,
