@@ -22,19 +22,19 @@ eo2_base_class.o: ../src/lib/eo/eo2_base_class.c ../src/lib/eo/Eo.h ../src/lib/e
 	$(CC) $(CFLAGS) -fPIC -c $(INCLUDE) $(CONFIG) $(EINA_CFLAGS) $< -o $@
 
 libeo2.so: $(SO_OBJS)
-	$(CC) $(CFLAGS) -shared -Wl,-soname,libeo2.so $(INCLUDE) $(CONFIG) $(EINA_CFLAGS) $(SO_OBJS) -o $@
+	$(CC) $(CFLAGS) -shared -Wl,-soname,libeo2.so $(INCLUDE) $(CONFIG) $(SO_OBJS) $(EINA_LIBS) -o $@
 
 .c.o:
 	$(CC) $(CFLAGS) -c $(INCLUDE) $(CONFIG) $(EINA_CFLAGS) $< -o $@
 
 eo2-bench: libeo2.so $(BENCH_OBJS) ../src/lib/eo/Eo.h ../src/lib/eo/eo_private.h
-	$(CC) $(CFLAGS) $(INCLUDE) $(CONFIG) $(EINA_LIBS) -L. -leo2 $(BENCH_OBJS) -o $@
+	$(CC) $(CFLAGS) $(INCLUDE) $(CONFIG) $(BENCH_OBJS) $(EINA_LIBS) -L. -leo2  -o $@
 
 .cc.o:
 	g++ -O2 -std=c++0x -c $(INCLUDE) $(CONFIG) $(EINA_CFLAGS) $< -o $@
 
 test: libeo2.so simplesignal.o ../src/lib/eo/Eo.h ../src/lib/eo/eo_private.h
-	g++ -O2 -std=c++0x $(INCLUDE) $(CONFIG) $(EINA_LIBS) -L. -leo2 simplesignal.o -o $@
+	g++ -O2 -std=c++0x $(INCLUDE) $(CONFIG) simplesignal.o $(EINA_LIBS) -L. -leo2 -o $@
 
 clean:
 	rm -f *~ *.o eo2-bench test libeo2.so
