@@ -336,9 +336,6 @@ eo2_do_start(Eo *obj_id, Eina_Bool do_super)
    if ((fptr - eo2_call_stack.stack) >= EO2_CALL_STACK_SIZE)
      ERR("eo2 call stack overflow !!!");
 
-   if (fptr->obj_id != NULL)
-     ERR("eo2 call stack is not clear, you must have used a return statement in a eo2_do macro");
-
    _eo_ref(obj);
 
    fptr->obj = obj;
