@@ -193,6 +193,62 @@ virtual_test()
    eo_del(eo2_obj);
 }
 
+static void inner_return(Eo *eo2_obj)
+{
+   eo2_do(eo2_obj,
+          eo2_set(0);
+          return;
+          eo2_inc();
+          );
+}
+
+static void
+cleanup_test()
+{
+   int a;
+   Eo *eo2_obj;
+
+   eo2_obj = eo2_add(EO2_SIMPLE_CLASS, NULL);
+
+   // break
+   a = 0;
+   check(eo2_call_stack_depth(), 0);
+   eo2_do(eo2_obj,
+          eo2_set(0);
+          a = eo2_get();
+          break;
+          eo2_inc();
+          a = eo2_get();
+          );
+   check(a, 0);
+   check(eo2_call_stack_depth(), 0);
+
+   // return
+   a = 0;
+   check(eo2_call_stack_depth(), 0);
+   inner_return(eo2_obj);
+   eo2_do(eo2_obj, a = eo2_get(); );
+   check(a, 0);
+   check(eo2_call_stack_depth(), 0);
+
+   /* // goto */
+   a = 0;
+   check(eo2_call_stack_depth(), 0);
+   eo2_do(eo2_obj,
+          eo2_set(0);
+          a = eo2_get();
+          goto check;
+          eo2_inc();
+          a = eo2_get();
+          );
+
+check:
+   check(a, 0);
+   check(eo2_call_stack_depth(), 0);
+
+   eo_del(eo2_obj);
+}
+
 int
 main(int argc EINA_UNUSED, char** argv EINA_UNUSED, char** env EINA_UNUSED)
 {
@@ -201,6 +257,7 @@ main(int argc EINA_UNUSED, char** argv EINA_UNUSED, char** env EINA_UNUSED)
    do_batch_test();
    override_batch_test();
    virtual_test();
+   cleanup_test();
 
    eo_shutdown();
 
