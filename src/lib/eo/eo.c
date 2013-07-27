@@ -300,6 +300,13 @@ static Eo2_Call_Stack eo2_call_stack = {
        },
        NULL };
 
+EAPI int
+eo2_call_stack_depth()
+{
+   return ((eo2_call_stack.frame_ptr == NULL) ? 0 :
+           1 + (eo2_call_stack.frame_ptr - eo2_call_stack.stack));
+}
+
 EAPI Eina_Bool
 eo2_do_start(Eo *obj_id, Eina_Bool do_super)
 {

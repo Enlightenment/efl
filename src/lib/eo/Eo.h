@@ -680,6 +680,8 @@ EAPI Eina_Bool eo2_do_start(Eo *obj_id, Eina_Bool do_super);
 // end of the eo2_do barrier, unref the obj, move the stack pointer
 EAPI void eo2_do_end();
 
+EAPI int eo2_call_stack_depth();
+
 // eo object method calls batch,
 // DO NOT use return statement in it, use break if necessary
 #define eo2_do(objid, ...)                            \
