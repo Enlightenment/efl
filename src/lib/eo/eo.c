@@ -275,7 +275,7 @@ _eo2_kls_itr_next(const _Eo_Class *orig_kls, const _Eo_Class *cur_klass)
 
 // FIXME: per thread stack, grow/shrink
 #define EO2_INVALID_DATA (void *) -1
-#define EO2_CALL_STACK_SIZE 5
+#define EO2_CALL_STACK_DEPTH 5
 typedef struct _Eo2_Stack_Frame
 {
     Eo               *obj_id;
@@ -286,7 +286,7 @@ typedef struct _Eo2_Stack_Frame
 } Eo2_Stack_Frame;
 
 typedef struct _Eo2_Call_Stack {
-     Eo2_Stack_Frame stack[EO2_CALL_STACK_SIZE];
+     Eo2_Stack_Frame stack[EO2_CALL_STACK_DEPTH];
      Eo2_Stack_Frame *frame_ptr;
 } Eo2_Call_Stack;
 
@@ -333,7 +333,7 @@ eo2_do_start(Eo *obj_id, Eina_Bool do_super)
 
    fptr = eo2_call_stack.frame_ptr;
 
-   if ((fptr - eo2_call_stack.stack) >= EO2_CALL_STACK_SIZE)
+   if ((fptr - eo2_call_stack.stack) >= EO2_CALL_STACK_DEPTH)
      ERR("eo2 call stack overflow !!!");
 
    _eo_ref(obj);
