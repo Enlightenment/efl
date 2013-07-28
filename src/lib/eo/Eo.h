@@ -1549,10 +1549,10 @@ EAPI extern const Eo_Event_Description _EO_EV_DEL;
  * @}
  */
 
-#ifdef __cplusplus
-}
 #endif
 
+#ifdef __cplusplus
+}
 #endif
 
 #endif
