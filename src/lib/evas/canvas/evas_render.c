@@ -1074,7 +1074,8 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
           }
         else
           {
-             if ((obj->clip.clipees) || (obj->cur->have_clipees))
+             if (!evas_object_is_proxy_visible(eo_obj, obj) ||
+                 (obj->clip.clipees) || (obj->cur->have_clipees))
                {
                   RDI(level);
                   RD("      }\n");

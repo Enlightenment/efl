@@ -151,6 +151,23 @@ evas_object_clippers_is_visible(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Pro
 }
 
 static inline int
+evas_object_is_proxy_visible(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
+{
+   if ((obj->cur->visible) &&
+       //FIXME: Check the cached clipper visible properly.
+       ((obj->cur->clipper && obj->cur->clipper->cur->visible) ||
+        (obj->is_smart)) &&
+       ((obj->cur->cache.clip.a > 0 && obj->cur->render_op == EVAS_RENDER_BLEND)
+        || obj->cur->render_op != EVAS_RENDER_BLEND))
+     {
+        if (obj->func->is_visible)
+          return obj->func->is_visible(eo_obj);
+        return 1;
+     }
+   return 0;
+}
+
+static inline int
 evas_object_is_in_output_rect(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, int x, int y, int w, int h)
 {
    /* assumes coords have been recalced */
