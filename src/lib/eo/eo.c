@@ -916,7 +916,7 @@ static void
 _eo_class_constructor(_Eo_Class *klass)
 {
    if (klass->constructed)
-      return;
+     return;
 
    klass->constructed = EINA_TRUE;
 
@@ -924,7 +924,7 @@ _eo_class_constructor(_Eo_Class *klass)
      _eo2_class_funcs_set(klass);
 
    if (klass->desc->class_constructor)
-      klass->desc->class_constructor(_eo_class_id_get(klass));
+     klass->desc->class_constructor(_eo_class_id_get(klass));
 }
 
 EAPI void
