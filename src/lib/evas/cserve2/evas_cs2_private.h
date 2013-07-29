@@ -2,6 +2,7 @@
 #define EVAS_CS2_PRIVATE_H 1
 
 #include "evas_common_private.h"
+#include "evas_cs2.h"
 
 struct _Data_Entry {
    unsigned int image_id;
@@ -17,8 +18,30 @@ struct _Data_Entry {
    } shm;
 };
 
+struct _Index_Table {
+   struct {
+      char path[64];
+      Eina_File *f;
+      const Shared_Array_Header *header;
+      const File_Data *entries;
+   } files;
+   struct {
+      char path[64];
+      Eina_File *f;
+      const Shared_Array_Header *header;
+      const Image_Data *entries;
+   } images;
+   struct {
+      char path[64];
+      Eina_File *f;
+      const Shared_Array_Header *header;
+      const void *entries; // FIXME
+   } fonts;
+};
+
 typedef struct _Data_Entry Data_Entry;
 typedef struct _Font_Entry Font_Entry;
+typedef struct _Index_Table Index_Table;
 
 int evas_cserve2_init(void);
 int evas_cserve2_shutdown(void);

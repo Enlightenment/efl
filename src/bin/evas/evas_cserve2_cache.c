@@ -14,19 +14,14 @@
 
 #include <Evas_Loader.h>
 
-typedef int string_t;
 #define ENTRY Entry base
 #define ASENTRY(a) (&(a->base))
 #define ENTRYID(a) ((a)->base.id)
-#define SHMOBJECT unsigned int id; unsigned int refcount
 
 typedef struct _Entry Entry;
-typedef struct _Shm_Object Shm_Object;
 typedef struct _Reference Reference;
 typedef struct _File_Entry File_Entry;
-typedef struct _File_Data File_Data;
 typedef struct _Image_Entry Image_Entry;
-typedef struct _Image_Data Image_Data;
 typedef struct _File_Watch File_Watch;
 
 typedef struct _Font_Source Font_Source;
@@ -52,44 +47,15 @@ struct _Entry {
 #endif
 };
 
-struct _Shm_Object
-{
-   SHMOBJECT;
-};
-
 struct _File_Entry {
    ENTRY;
    File_Watch *watcher;
    Eina_List *images;
 };
 
-struct _File_Data {
-   SHMOBJECT;
-   string_t path;
-   string_t key;
-   string_t loader_data;
-   int w, h;
-   int frame_count;
-   int loop_count;
-   int loop_hint;
-   Eina_Bool alpha : 1;
-   Eina_Bool invalid : 1;
-};
-
-
 struct _Image_Entry {
    ENTRY;
    Shm_Handle *shm;
-};
-
-struct _Image_Data {
-   SHMOBJECT;
-   unsigned int file_id;
-   string_t shm_id;
-   Evas_Image_Load_Opts opts;
-   Eina_Bool alpha_sparse : 1;
-   Eina_Bool unused : 1;
-   Eina_Bool doload : 1;
 };
 
 struct _Font_Source {
@@ -350,12 +316,11 @@ _repack()
    Shared_Array *sa;
    int count;
 
-   count = cserve2_shared_array_size_get(_file_data_array);
-   if (count <= 0) return;
-
    // Repack when we have 10% fragmentation over the whole shm buffer
-   if (_freed_entry_count > 100 ||
-       ((_freed_entry_count * 100) / count >= 10))
+
+   count = cserve2_shared_array_size_get(_file_data_array);
+   if ((count > 0) && (_freed_entry_count > 100 ||
+                       ((_freed_entry_count * 100) / count >= 10)))
      {
         DBG("Repacking file data array: %s",
             cserve2_shared_array_name_get(_file_data_array));
@@ -373,6 +338,12 @@ _repack()
         _freed_entry_count = 0;
         _file_data_array = sa;
      }
+
+   // FIXME TODO: Repack image data array as well
+
+   cserve2_index_list_send(cserve2_shared_array_name_get(_file_data_array),
+                           cserve2_shared_array_name_get(_image_data_array),
+                           NULL);
 }
 
 

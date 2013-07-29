@@ -233,6 +233,7 @@ void cserve2_client_del(Client *client);
 void cserve2_client_deliver(Client *client);
 void cserve2_client_error_send(Client *client, unsigned int rid, int error_code);
 ssize_t cserve2_client_send(Client *client, const void *data, size_t size);
+void cserve2_index_list_send(const char *files_index_path, const char *images_index_path, const char *fonts_index_path);
 
 Eina_Bool cserve2_fd_watch_add(int fd, Fd_Flags flags, Fd_Watch_Cb cb, const void *data);
 Eina_Bool cserve2_fd_watch_del(int fd);

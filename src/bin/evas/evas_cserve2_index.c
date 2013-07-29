@@ -14,7 +14,6 @@
 typedef struct _Data_Shm Data_Shm;
 typedef struct _Index_Entry Index_Entry;
 typedef struct _Block Block;
-typedef struct _Shared_Array_Header Shared_Array_Header;
 typedef struct _Shared_Index Shared_Index;
 
 static int _instances = 0;
@@ -29,18 +28,6 @@ struct _Data_Shm
 {
    Shm_Handle *shm;
    char *data;
-};
-
-struct _Shared_Array_Header
-{
-   int32_t tag;
-   int32_t elemsize;
-   int32_t count;
-   int32_t generation_id;
-   int32_t emptyidx;
-   int32_t sortedidx;
-   int32_t _reserved1;
-   int32_t _reserved2;
 };
 
 struct _Shared_Array

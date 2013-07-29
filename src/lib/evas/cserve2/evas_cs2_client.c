@@ -42,6 +42,10 @@ static unsigned int _data_id = 0;
 
 static Eina_List *_requests = NULL;
 
+// Shared index table
+static Index_Table _index;
+static int _server_index_list_set(Msg_Base *data, int size);
+
 #ifndef UNIX_PATH_MAX
 #define UNIX_PATH_MAX sizeof(((struct sockaddr_un *)NULL)->sun_path)
 #endif
@@ -279,6 +283,8 @@ evas_cserve2_init(void)
    if (cserve2_init++)
      return cserve2_init;
 
+   memset(&_index, 0, sizeof(_index));
+
    DBG("Connecting to cserve2.");
    if (!_server_connect())
      {
@@ -292,10 +298,13 @@ evas_cserve2_init(void)
 int
 evas_cserve2_shutdown(void)
 {
+   const char zeros[sizeof(Msg_Index_List)] = {0};
+
    if ((--cserve2_init) > 0)
      return cserve2_init;
 
    DBG("Disconnecting from cserve2.");
+   _server_index_list_set((Msg_Base *) zeros, sizeof(Msg_Index_List));
    _server_disconnect();
 
    return cserve2_init;
@@ -316,6 +325,123 @@ _next_rid(void)
    return _rid_count++;
 }
 
+// Returns the number of correctly opened index arrays
+static int
+_server_index_list_set(Msg_Base *data, int size)
+{
+   Msg_Index_List *msg = (Msg_Index_List *) data;
+   unsigned sz;
+   int ret = 0;
+
+   if (size != sizeof(*msg) || msg->base.type != CSERVE2_INDEX_LIST)
+     {
+        CRIT("Invalid message! type: %d, size: %d (expected %d)",
+             msg->base.type, size, (int) sizeof(*msg));
+        return -1;
+     }
+
+   // Reset index table
+   if (_index.files.f)
+     {
+        if (_index.files.header)
+          eina_file_map_free(_index.files.f, (void *) _index.files.header);
+        eina_file_close(_index.files.f);
+     }
+   if (_index.images.f)
+     {
+        if (_index.images.header)
+          eina_file_map_free(_index.images.f, (void *) _index.images.header);
+        eina_file_close(_index.images.f);
+     }
+   if (_index.fonts.f)
+     {
+        if (_index.fonts.header)
+          eina_file_map_free(_index.fonts.f, (void *) _index.fonts.header);
+        eina_file_close(_index.fonts.f);
+     }
+   memset(&_index, 0, sizeof(_index));
+
+   // Open new indexes
+   eina_strlcpy(_index.files.path, msg->files_index_path, 64);
+   eina_strlcpy(_index.images.path, msg->images_index_path, 64);
+   eina_strlcpy(_index.fonts.path, msg->fonts_index_path, 64);
+
+   if (_index.files.path[0])
+     {
+        _index.files.f = eina_file_open(_index.files.path, EINA_TRUE);
+        sz = eina_file_size_get(_index.files.f);
+        if (sz < sizeof(Shared_Array_Header))
+          {
+             ERR("Shared index for files is too small: %u", sz);
+             eina_file_close(_index.files.f);
+             _index.files.f = NULL;
+          }
+        else
+          {
+             _index.files.header = eina_file_map_all(_index.files.f,
+                                                     EINA_FILE_WILLNEED);
+             if (sz < (_index.files.header->count * sizeof(File_Data)
+                       + sizeof(Shared_Array_Header)))
+               {
+                  ERR("Shared index size does not match array size: %u / %u",
+                      sz, _index.files.header->count);
+                  eina_file_map_free(_index.files.f,
+                                     (void *) _index.files.header);
+                  eina_file_close(_index.files.f);
+                  _index.files.f = NULL;
+               }
+             else
+               {
+                  _index.files.entries = (File_Data *) &(_index.files.header[1]);
+                  DBG("Mapped files shared index '%s' at %p: %u entries max",
+                      _index.files.path, _index.files.header,
+                      _index.files.header->count);
+                  ret++;
+               }
+          }
+     }
+
+   if (_index.images.path[0])
+     {
+        _index.images.f = eina_file_open(_index.images.path, EINA_TRUE);
+        sz = eina_file_size_get(_index.images.f);
+        if (sz < sizeof(Shared_Array_Header))
+          {
+             ERR("Shared index for images is too small: %u", sz);
+             eina_file_close(_index.images.f);
+             _index.images.f = NULL;
+          }
+        else
+          {
+             _index.images.header = eina_file_map_all(_index.images.f,
+                                                     EINA_FILE_WILLNEED);
+             if (sz < (_index.images.header->count * sizeof(Image_Data)
+                       + sizeof(Shared_Array_Header)))
+               {
+                  ERR("Shared index size does not match array size: %u / %u",
+                      sz, _index.images.header->count);
+                  eina_file_map_free(_index.images.f,
+                                     (void *) _index.images.header);
+                  eina_file_close(_index.images.f);
+                  _index.images.f = NULL;
+               }
+             else
+               {
+                  _index.images.entries = (Image_Data *) &(_index.images.header[1]);
+                  DBG("Mapped images shared index '%s' at %p: %u entries max",
+                      _index.images.path, _index.images.header,
+                      _index.images.header->count);
+                  ret++;
+               }
+          }
+     }
+
+   if (_index.fonts.path[0])
+     ERR("Not implemented yet: fonts shared index");
+
+   return ret;
+}
+
 static unsigned int
 _server_dispatch(Eina_Bool *failed)
 {
@@ -333,6 +459,17 @@ _server_dispatch(Eina_Bool *failed)
      }
    *failed = EINA_FALSE;
 
+   // Special messages (no request)
+   switch (msg->type)
+     {
+      case CSERVE2_INDEX_LIST:
+        _server_index_list_set(msg, size);
+        free(msg);
+        return 0;
+      default: break;
+     }
+
+   // Normal client to server requests
    EINA_LIST_FOREACH_SAFE(_requests, l, l_next, cr)
      {
         if (cr->rid != msg->rid) // dispatch this answer
