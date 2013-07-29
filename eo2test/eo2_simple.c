@@ -50,12 +50,6 @@ _destructor(Eo *obj, void *obj_data EINA_UNUSED)
    eo2_do_super(obj, eo2_destructor());
 }
 
-static void
-_class_constructor(Eo_Class *klass)
-{
-   eo2_class_funcs_set(klass);
-}
-
 static Eo2_Op_Description op_descs [] = {
        EO2_OP_FUNC_OVERRIDE(_constructor, eo2_constructor),
        EO2_OP_FUNC_OVERRIDE(_destructor, eo2_destructor),
@@ -73,7 +67,7 @@ static const Eo_Class_Description class_desc = {
      EO2_CLASS_DESCRIPTION_OPS(op_descs),
      NULL,
      sizeof(Private_Data),
-     _class_constructor,
+     NULL,
      NULL
 };
 

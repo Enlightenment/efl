@@ -709,12 +709,6 @@ static Eo2_Op_Description op_descs [] = {
        EO2_OP_SENTINEL
 };
 
-static void
-_class2_constructor(Eo_Class *klass)
-{
-   eo2_class_funcs_set(klass);
-}
-
 static const Eo_Class_Description class2_desc = {
   EO2_VERSION,
   "test_event2_speed",
@@ -722,7 +716,7 @@ static const Eo_Class_Description class2_desc = {
   EO2_CLASS_DESCRIPTION_OPS(op_descs),
   event_desc,
   sizeof (Test_Event_Speed_Data),
-  _class2_constructor,
+  NULL,
   NULL
 };
 
