@@ -444,6 +444,7 @@ _elm_image_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    priv->hit_rect = evas_object_rectangle_add(evas_object_evas_get(obj));
    evas_object_smart_member_add(priv->hit_rect, obj);
    elm_widget_sub_object_add(obj, priv->hit_rect);
+   evas_object_propagate_events_set(priv->hit_rect, EINA_FALSE);
 
    evas_object_color_set(priv->hit_rect, 0, 0, 0, 0);
    evas_object_show(priv->hit_rect);
