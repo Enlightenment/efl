@@ -10,3 +10,5 @@
    per thread stack
 
 - m4 __attribute__ cleanup
+
+- Bring back support for custom constructors.
