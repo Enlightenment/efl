@@ -248,6 +248,11 @@ check:
    check(a, 0);
    check(eo2_call_stack_depth(), 0);
 
+   /* wrong object */
+   check(eo2_call_stack_depth(), 0);
+   // segfault if eo2_do_end is called !!
+   eo2_do((Eo *)69, eo2_set(0););
+
    eo_del(eo2_obj);
 
    return 0;
