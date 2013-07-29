@@ -101,11 +101,11 @@ _data_get(Eo *obj EINA_UNUSED, void *class_data, const char *key)
 EAPI EO2_VOID_FUNC_BODYV(eo2_base_data_get, EO2_FUNC_CALL(key), const char *key);
 
 static void
-_dbg_info_get(Eo *obj EINA_UNUSED, void *class_data EINA_UNUSED)
+_dbg_info_get(Eo *obj EINA_UNUSED, void *class_data EINA_UNUSED, Eo_Dbg_Info *root_node EINA_UNUSED)
 {  /* No info required in the meantime */
    return;
 }
-EAPI EO2_VOID_FUNC_BODY(eo2_dbg_info_get);
+EAPI EO2_VOID_FUNC_BODYV(eo2_dbg_info_get, EO2_FUNC_CALL(root_node), Eo_Dbg_Info *root_node);
 
 static void
 _data_del(Eo *obj EINA_UNUSED, void *class_data, const char *key)
