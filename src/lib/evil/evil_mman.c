@@ -150,19 +150,19 @@ mmap(void  *addr EVIL_UNUSED,
              return MAP_FAILED;
           }
 
-        if (protect & PAGE_READWRITE)
+        if ((protect & PAGE_READWRITE) == PAGE_READWRITE)
           acs = FILE_MAP_ALL_ACCESS;
-        if (protect & PAGE_WRITECOPY)
+        else if ((protect & PAGE_WRITECOPY) == PAGE_WRITECOPY)
           acs = FILE_MAP_COPY;
 #if 0
         if (protect & (PAGE_EXECUTE_READWRITE | PAGE_EXECUTE_READ))
           acs = FILE_MAP_EXECUTE;
 #endif
-        if (protect & (PAGE_READWRITE | PAGE_READONLY))
+        else if ((protect & (PAGE_READWRITE | PAGE_READONLY)) == (PAGE_READWRITE | PAGE_READONLY))
           acs = FILE_MAP_READ;
         else
           {
-             if (protect & PAGE_READWRITE)
+            if ((protect & PAGE_WRITECOPY) == PAGE_WRITECOPY)
                acs = FILE_MAP_WRITE;
           }
 
