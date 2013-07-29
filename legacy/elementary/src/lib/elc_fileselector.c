@@ -1272,25 +1272,6 @@ _selected_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 
 }
 
-EAPI const char *
-elm_fileselector_entry_entry_get(const Evas_Object *obj)
-{
-   ELM_FILESELECTOR_CHECK(obj) NULL;
-   char *ret;
-   eo_do((Eo *) obj, elm_obj_fileselector_entry_entry_get(&ret));
-   return ret;
-}
-
-static void
-_entry_entry_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char **ret = va_arg(*list, const char **);
-   *ret = NULL;
-   Elm_Fileselector_Smart_Data *sd = _pd;
-
-   *ret = elm_object_text_get(sd->path_entry);
-}
-
 EAPI Eina_Bool
 elm_fileselector_selected_set(Evas_Object *obj,
                               const char *_path)
@@ -1493,14 +1474,11 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_PATH_SET), _path_set),
         EO_OP_FUNC(ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_PATH_GET), _path_get),
         EO_OP_FUNC(ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_MODE_SET), _mode_set),
-
         EO_OP_FUNC(ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_MODE_GET), _mode_get),
         EO_OP_FUNC(ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_SELECTED_GET), _selected_get),
         EO_OP_FUNC(ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_SELECTED_SET), _selected_set),
         EO_OP_FUNC(ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_MIME_TYPES_FILTER_APPEND), _mime_types_filter_append),
         EO_OP_FUNC(ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_FILTERS_CLEAR), _filters_clear),
-        EO_OP_FUNC(ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_ENTRY_ENTRY_GET), _entry_entry_get),
-
         EO_OP_FUNC_SENTINEL
    };
    eo_class_funcs_set(klass, func_desc);
@@ -1550,8 +1528,6 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_OBJ_FILESELECTOR_SUB_ID_SELECTED_SET, "Set, programmatically, the currently selected file/directory in the given file selector widget."),
      EO_OP_DESCRIPTION(ELM_OBJ_FILESELECTOR_SUB_ID_MIME_TYPES_FILTER_APPEND, "Append mime type filter"),
      EO_OP_DESCRIPTION(ELM_OBJ_FILESELECTOR_SUB_ID_FILTERS_CLEAR, "Clear filters"),
-     EO_OP_DESCRIPTION(ELM_OBJ_FILESELECTOR_SUB_ID_ENTRY_ENTRY_GET, "Get the current entry text in the fileselector. "),
-
      EO_OP_DESCRIPTION_SENTINEL
 };
 static const Eo_Class_Description class_desc = {

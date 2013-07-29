@@ -27,7 +27,6 @@ enum
    ELM_OBJ_FILESELECTOR_SUB_ID_SELECTED_SET,
    ELM_OBJ_FILESELECTOR_SUB_ID_MIME_TYPES_FILTER_APPEND,
    ELM_OBJ_FILESELECTOR_SUB_ID_FILTERS_CLEAR,
-   ELM_OBJ_FILESELECTOR_SUB_ID_ENTRY_ENTRY_GET,
    ELM_OBJ_FILESELECTOR_SUB_ID_LAST
 };
 
@@ -234,18 +233,6 @@ enum
  * @see elm_fileselector_mime_type_filter_append
  */
 #define elm_obj_fileselector_filters_clear() ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_FILTERS_CLEAR)
-
-/**
- * @def elm_obj_fileselector_entry_entry_get
- * @since 1.8
- *
- * Get the current entry text in the fileselector.
- *
- *
- * @see elm_fileselector_entry_entry_get()
- */
-#define elm_obj_fileselector_entry_entry_get(ret) ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_ENTRY_ENTRY_GET), EO_TYPECHECK(const char **, ret)
-
 
 /**
  * @}

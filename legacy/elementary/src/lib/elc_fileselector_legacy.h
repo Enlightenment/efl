@@ -277,16 +277,3 @@ EAPI Eina_Bool             elm_fileselector_mime_types_filter_append(Evas_Object
  * @ingroup Fileselector
  */
 EAPI void                  elm_fileselector_filters_clear(Evas_Object *obj);
-
-/**
- * Get the current entry text in a given file selector widget.
- *
- * @param obj The file selector object
- * @return The currently displayed text in the entry box or NULL on failure.
- *
- * @see elm_fileselector_is_save_set()
- * @since 1.8
- *
- * @ingroup Fileselector
- */
-EAPI const char           *elm_fileselector_entry_entry_get(const Evas_Object *obj);
