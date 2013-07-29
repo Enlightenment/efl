@@ -719,7 +719,7 @@ static const Eo_Class_Description class2_desc = {
   EO2_VERSION,
   "test_event2_speed",
   EO_CLASS_TYPE_REGULAR,
-  EO2_CLASS_DESCRIPTION_OPS(op_descs, OP_DESC_SIZE(op_descs)),
+  EO2_CLASS_DESCRIPTION_OPS(op_descs),
   event_desc,
   sizeof (Test_Event_Speed_Data),
   _class2_constructor,
