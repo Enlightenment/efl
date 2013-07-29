@@ -58,7 +58,7 @@ run_batch(const char *title, Eo* eo_obj, Eo* eo2_obj, int n)
 
    printf("\n%s - %d calls\ncalls/eo_do()  EO [ns]/call  - EO2 [ns]/call\n", title, n);
 
-   // 1 call per batch
+   /* 1 call per batch */
    k = 1;
    EO_RUN_START
    for (i = 0; i < n; i++)
@@ -70,7 +70,7 @@ run_batch(const char *title, Eo* eo_obj, Eo* eo2_obj, int n)
    EO2_RUN_END
    report(t0, t1, t2, t3, k, n * k);
 
-   // 3 calls per batch
+   /* 3 calls per batch */
    k = 3;
    EO_RUN_START
    for (i = 0; i < n; i++)
@@ -82,7 +82,7 @@ run_batch(const char *title, Eo* eo_obj, Eo* eo2_obj, int n)
    EO2_RUN_END
    report(t0, t1, t2, t3, k, n * k);
 
-   // 5 calls per batch
+   /* 5 calls per batch */
    k = 5;
    EO_RUN_START
    for (i = 0; i < n; i++)
@@ -94,7 +94,7 @@ run_batch(const char *title, Eo* eo_obj, Eo* eo2_obj, int n)
    EO2_RUN_END
    report(t0, t1, t2, t3, k, n * k);
 
-   // 7 calls per batch
+   /* 7 calls per batch */
    k = 7;
    EO_RUN_START
    for (i = 0; i < n; i++)
@@ -183,13 +183,13 @@ virtual_test()
    a = 0;
    eo2_obj = eo2_add(EO2_SIMPLE_CLASS, NULL);
    eo2_do(eo2_obj, a = eo2_virtual(10); );
-   printf("%d\n", a);
+   check(a, 0);
    eo_del(eo2_obj);
 
    a = 0;
    eo2_obj = eo2_add(EO2_INHERIT_CLASS, NULL);
    eo2_do(eo2_obj, a = eo2_virtual(10); );
-   printf("%d\n", a);
+   check(a, 20);
    eo_del(eo2_obj);
 }
 
@@ -202,7 +202,7 @@ static void inner_return(Eo *eo2_obj)
           );
 }
 
-static void
+static int
 cleanup_test()
 {
    int a;
@@ -210,7 +210,7 @@ cleanup_test()
 
    eo2_obj = eo2_add(EO2_SIMPLE_CLASS, NULL);
 
-   // break
+   /* break */
    a = 0;
    check(eo2_call_stack_depth(), 0);
    eo2_do(eo2_obj,
@@ -223,7 +223,7 @@ cleanup_test()
    check(a, 0);
    check(eo2_call_stack_depth(), 0);
 
-   // return
+   /* return */
    a = 0;
    check(eo2_call_stack_depth(), 0);
    inner_return(eo2_obj);
@@ -231,7 +231,7 @@ cleanup_test()
    check(a, 0);
    check(eo2_call_stack_depth(), 0);
 
-   /* // goto */
+   /* goto */
    a = 0;
    check(eo2_call_stack_depth(), 0);
    eo2_do(eo2_obj,
@@ -247,6 +247,8 @@ check:
    check(eo2_call_stack_depth(), 0);
 
    eo_del(eo2_obj);
+
+   return 0;
 }
 
 int
@@ -257,7 +259,8 @@ main(int argc EINA_UNUSED, char** argv EINA_UNUSED, char** env EINA_UNUSED)
    do_batch_test();
    override_batch_test();
    virtual_test();
-   cleanup_test();
+   if(cleanup_test())
+     printf("something went wrong in cleanup_test()\n");
 
    eo_shutdown();
 
