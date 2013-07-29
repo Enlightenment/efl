@@ -64,7 +64,7 @@ static const Eo_Class_Description class_desc = {
      EO2_VERSION,
      "Eo2 Simple",
      EO_CLASS_TYPE_REGULAR,
-     EO2_CLASS_DESCRIPTION_OPS(op_descs, OP_DESC_SIZE(op_descs)),
+     EO2_CLASS_DESCRIPTION_OPS(op_descs),
      NULL,
      sizeof(Private_Data),
      NULL,
