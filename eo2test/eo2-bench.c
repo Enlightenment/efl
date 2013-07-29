@@ -215,6 +215,7 @@ cleanup_test()
    check(eo2_call_stack_depth(), 0);
    eo2_do(eo2_obj,
           eo2_set(0);
+          check(eo2_call_stack_depth(), 1);
           a = eo2_get();
           break;
           eo2_inc();
@@ -237,6 +238,7 @@ cleanup_test()
    eo2_do(eo2_obj,
           eo2_set(0);
           a = eo2_get();
+          check(eo2_call_stack_depth(), 1);
           goto check;
           eo2_inc();
           a = eo2_get();
