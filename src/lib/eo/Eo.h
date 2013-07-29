@@ -688,19 +688,25 @@ EAPI int eo2_call_stack_depth();
 #define eo2_do(objid, ...)                            \
   do                                                  \
     {                                                 \
-       if (!eo2_do_start(objid, EINA_FALSE)) break;   \
-       Eo *_objid_ EO2_DO_CLEANUP = objid;            \
-       __VA_ARGS__;                                   \
-       (void) _objid_;                                \
+       Eo *_objid_ = objid;                           \
+       if (eo2_do_start(_objid_, EINA_FALSE))         \
+         {                                            \
+            Eo *_id_clean_ EO2_DO_CLEANUP = _objid_;  \
+            __VA_ARGS__;                              \
+            (void) _id_clean_;                        \
+         }                                            \
     } while (0)
 
 #define eo2_do_super(objid, ...)                      \
   do                                                  \
     {                                                 \
-       if (!eo2_do_start(objid, EINA_TRUE)) break;    \
-       Eo *_objid_ EO2_DO_CLEANUP = objid;            \
-       __VA_ARGS__;                                   \
-       (void) _objid_;                                \
+       Eo *_objid_ = objid;                           \
+       if (eo2_do_start(_objid_, EINA_TRUE))          \
+         {                                            \
+            Eo *_id_clean_ EO2_DO_CLEANUP = _objid_;  \
+            __VA_ARGS__;                              \
+            (void) _id_clean_;                        \
+         }                                            \
     } while (0)
 
 // FIXME
