@@ -607,10 +607,10 @@ EAPI Eina_Bool eo_shutdown(void);
 #define EO2_VERSION 2
 
 // computes size of Eo2_Op_Description[]
-#define OP_DESC_SIZE(desc) (sizeof(desc)/sizeof(Eo2_Op_Description) -1 )
+#define EO2_OP_DESC_SIZE(desc) (sizeof(desc)/sizeof(*desc) - 1)
 
 // An helper macro to help populating #Eo_Class_Description.
-#define EO2_CLASS_DESCRIPTION_OPS(op_descs, count) { NULL, NULL, op_descs, count }
+#define EO2_CLASS_DESCRIPTION_OPS(op_descs) { NULL, NULL, op_descs, EO2_OP_DESC_SIZE(op_descs) }
 
 // sort Eo2_Op_Description[] by eapi_func then attribute OP ids
 EAPI void
