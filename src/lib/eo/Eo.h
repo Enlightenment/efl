@@ -612,10 +612,6 @@ EAPI Eina_Bool eo_shutdown(void);
 // An helper macro to help populating #Eo_Class_Description.
 #define EO2_CLASS_DESCRIPTION_OPS(op_descs) { NULL, NULL, op_descs, EO2_OP_DESC_SIZE(op_descs) }
 
-// sort Eo2_Op_Description[] by eapi_func then attribute OP ids
-EAPI void
-eo2_class_funcs_set(Eo_Class *klass_id);
-
 // to fetch internal function and object data at once
 typedef struct _Eo2_Op_Call_Data
 {

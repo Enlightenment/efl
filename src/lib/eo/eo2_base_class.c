@@ -771,10 +771,9 @@ _destructor(Eo *obj, void *class_data)
 EAPI EO2_VOID_FUNC_BODY(eo2_destructor);
 
 static void
-_class_constructor(Eo_Class *klass)
+_class_constructor(Eo_Class *klass EINA_UNUSED)
 {
    event_freeze_count = 0;
-   eo2_class_funcs_set(klass);
 }
 
 Eo2_Op_Description op_descs [] = {

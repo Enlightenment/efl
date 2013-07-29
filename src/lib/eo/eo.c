@@ -485,16 +485,13 @@ eo2_api_funcs_cmp(const void *p1, const void *p2)
 }
 
 EAPI void
-eo2_class_funcs_set(Eo_Class *klass_id)
+_eo2_class_funcs_set(_Eo_Class *klass)
 {
    int op_id;
-   _Eo_Class *klass;
     const Eo2_Op_Description *api_desc;
    Eo2_Op_Description *op_desc;
    Eo2_Op_Description *op_descs;
 
-   klass = _eo_class_pointer_get(klass_id);
-   EO_MAGIC_RETURN(klass, EO_CLASS_EINA_MAGIC);
    op_descs = klass->desc->ops.descs2;
 
    qsort((void*)op_descs, klass->desc->ops.count, sizeof(Eo2_Op_Description), eo2_api_funcs_cmp);
@@ -924,6 +921,9 @@ _eo_class_constructor(_Eo_Class *klass)
       return;
 
    klass->constructed = EINA_TRUE;
+
+   if (klass->desc->version == EO2_VERSION)
+     _eo2_class_funcs_set(klass);
 
    if (klass->desc->class_constructor)
       klass->desc->class_constructor(_eo_class_id_get(klass));
