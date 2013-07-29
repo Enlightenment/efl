@@ -1237,7 +1237,7 @@ eo2_base_data_get(const char *key);
  */
 #define eo_dbg_info_get(root_node) EO_BASE_ID(EO_BASE_SUB_ID_DBG_INFO_GET), EO_TYPECHECK(Eo_Dbg_Info *, root_node)
 EAPI void
-eo2_dbg_info_get();
+eo2_dbg_info_get(Eo_Dbg_Info *root_node);
 
 /**
  * @def eo_base_data_del(key)
