@@ -227,13 +227,13 @@ _eo_del_internal(const char *file, int line, _Eo_Object *obj)
    if (klass->desc->version == EO2_VERSION)
      {
         // FIXME: eo2
-        do_err = EINA_TRUE;
+        do_err = EINA_FALSE;
         eo2_do((Eo *)obj->obj_id, eo2_destructor(););
      }
    else
-     do_err = eo_do((Eo *)obj->obj_id, eo_destructor());
+     do_err = !eo_do((Eo *)obj->obj_id, eo_destructor());
 
-   if (EINA_UNLIKELY(!do_err))
+   if (EINA_UNLIKELY(do_err))
      {
         ERR("in %s:%d: Object of class '%s' - One of the object destructors have failed.",
             file, line, klass->desc->name);
