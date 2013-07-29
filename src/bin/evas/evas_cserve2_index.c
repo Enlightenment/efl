@@ -12,7 +12,6 @@
 #include <stdint.h>
 
 typedef struct _Data_Shm Data_Shm;
-typedef struct _Index_Entry Index_Entry;
 typedef struct _Block Block;
 typedef struct _Shared_Index Shared_Index;
 
@@ -55,16 +54,6 @@ struct _Shared_Mempool
 struct _Block
 {
    EINA_RBTREE;
-   int32_t length;
-   int32_t offset;
-   int32_t shmid;
-};
-
-struct _Index_Entry
-{
-   int32_t id; // Write last, can't be 0
-   int32_t refcount;
-   // Block entry
    int32_t length;
    int32_t offset;
    int32_t shmid;
@@ -159,7 +148,7 @@ _block_rbtree_block_find(const Block *node, const void *key,
 
 // Data shm
 
-Data_Shm *
+static Data_Shm *
 _shared_data_shm_new(int size)
 {
    Data_Shm *ds;
@@ -194,7 +183,7 @@ _shared_data_shm_new(int size)
    return ds;
 }
 
-void
+static void
 _shared_data_shm_del(Data_Shm *ds)
 {
    if (!ds) return;
@@ -202,7 +191,7 @@ _shared_data_shm_del(Data_Shm *ds)
    free(ds);
 }
 
-int
+static int
 _shared_data_shm_resize(Data_Shm *ds, size_t newsize)
 {
    Shm_Handle *shm;
@@ -802,6 +791,24 @@ cserve2_shared_mempool_buffer_get(Shared_Mempool *sm, int bufferid)
 
 
 // Shared strings
+
+const char *
+cserve2_shared_strings_table_name_get()
+{
+   if (!_string_mempool)
+     return NULL;
+
+   return cserve2_shm_name_get(_string_mempool->ds->shm);
+}
+
+const char *
+cserve2_shared_strings_index_name_get()
+{
+   if (!_string_mempool)
+     return NULL;
+
+   return cserve2_shared_array_name_get(_string_mempool->index->sa);
+}
 
 int
 cserve2_shared_string_add(const char *str)

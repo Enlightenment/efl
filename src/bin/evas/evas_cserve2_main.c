@@ -36,17 +36,27 @@ cserve2_client_error_send(Client *client, unsigned int rid, int error_code)
 }
 
 void
-cserve2_index_list_send(const char *files_index_path,
+cserve2_index_list_send(const char *strings_index_path,
+                        const char *strings_entries_path,
+                        const char *files_index_path,
                         const char *images_index_path,
-                        const char *fonts_index_path)
+                        const char *fonts_index_path,
+                        Client *client)
 {
    Eina_Iterator *iter;
-   Client *client;
    Msg_Index_List msg;
    const int size = sizeof(msg);
 
+   INF("New shared index: strings: '%s':'%s' files: '%s' images: '%s', fonts: '%s'",
+       strings_index_path, strings_entries_path,
+       files_index_path, images_index_path, fonts_index_path);
+
    memset(&msg, 0, size);
    msg.base.type = CSERVE2_INDEX_LIST;
+   if (strings_index_path)
+     eina_strlcpy(msg.strings_index_path, strings_index_path, 64);
+   if (strings_entries_path)
+     eina_strlcpy(msg.strings_entries_path, strings_entries_path, 64);
    if (files_index_path)
      eina_strlcpy(msg.files_index_path, files_index_path, 64);
    if (images_index_path)
@@ -54,14 +64,23 @@ cserve2_index_list_send(const char *files_index_path,
    if (fonts_index_path)
      eina_strlcpy(msg.fonts_index_path, fonts_index_path, 64);
 
-   iter = eina_hash_iterator_data_new(client_list);
-   EINA_ITERATOR_FOREACH(iter, client)
+   if (!client)
+     {
+        iter = eina_hash_iterator_data_new(client_list);
+        EINA_ITERATOR_FOREACH(iter, client)
+          {
+             DBG("Sending updated list of indexes to client %d", client->id);
+             cserve2_client_send(client, &size, sizeof(size));
+             cserve2_client_send(client, &msg, sizeof(msg));
+          }
+        eina_iterator_free(iter);
+     }
+   else
      {
         DBG("Sending updated list of indexes to client %d", client->id);
         cserve2_client_send(client, &size, sizeof(size));
         cserve2_client_send(client, &msg, sizeof(msg));
      }
-   eina_iterator_free(iter);
 }
 
 static void

@@ -4,6 +4,11 @@
 #include "evas_common_private.h"
 #include "evas_cs2.h"
 
+typedef struct _Data_Entry Data_Entry;
+typedef struct _Font_Entry Font_Entry;
+typedef struct _Index_Table Index_Table;
+typedef struct _Shared_Index Shared_Index;
+
 struct _Data_Entry {
    unsigned int image_id;
    void (*preloaded_cb)(void *, Eina_Bool);
@@ -18,30 +23,38 @@ struct _Data_Entry {
    } shm;
 };
 
-struct _Index_Table {
-   struct {
-      char path[64];
-      Eina_File *f;
-      const Shared_Array_Header *header;
-      const File_Data *entries;
-   } files;
-   struct {
-      char path[64];
-      Eina_File *f;
-      const Shared_Array_Header *header;
-      const Image_Data *entries;
-   } images;
-   struct {
-      char path[64];
-      Eina_File *f;
-      const Shared_Array_Header *header;
-      const void *entries; // FIXME
-   } fonts;
+struct _Shared_Index {
+   char path[64];
+   Eina_File *f;
+   const Shared_Array_Header *header;
+   union
+   {
+      const Index_Entry *index; // TODO for strings
+      const Image_Data *idata;
+      const File_Data *fdata;
+      // TODO Fonts
+   } entries;
+   int count;
+   Eina_Hash *entries_by_hkey;
+   int last_entry_in_hash;
 };
 
-typedef struct _Data_Entry Data_Entry;
-typedef struct _Font_Entry Font_Entry;
-typedef struct _Index_Table Index_Table;
+struct _Index_Table {
+   // TODO: use Shared_Index
+   struct {
+      char index_path[64];
+      char entries_path[64];
+      Eina_File *index_file;
+      Eina_File *entries_file;
+      const Shared_Array_Header *index_header;
+      const Index_Entry *indexes;
+      const char *data;
+      size_t entries_size;
+   } strings;
+   Shared_Index files;
+   Shared_Index images;
+   Shared_Index fonts; // TODO
+};
 
 int evas_cserve2_init(void);
 int evas_cserve2_shutdown(void);

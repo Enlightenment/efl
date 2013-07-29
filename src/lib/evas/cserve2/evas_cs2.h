@@ -275,12 +275,15 @@ struct _Msg_Font_Debug {
  */
 struct _Msg_Index_List {
    Msg_Base base;
+   char strings_index_path[64];
+   char strings_entries_path[64];
    char files_index_path[64];
    char images_index_path[64];
    char fonts_index_path[64];
 };
 
 typedef struct _Shm_Object Shm_Object;
+typedef struct _Index_Entry Index_Entry;
 typedef struct _File_Data File_Data;
 typedef struct _Image_Data Image_Data;
 typedef struct _Shared_Array_Header Shared_Array_Header;
@@ -302,6 +305,15 @@ struct _Shared_Array_Header
 struct _Shm_Object
 {
    SHMOBJECT;
+};
+
+struct _Index_Entry
+{
+   SHMOBJECT;
+   // Block entry
+   int32_t length;
+   int32_t offset;
+   int32_t shmid;
 };
 
 struct _File_Data {

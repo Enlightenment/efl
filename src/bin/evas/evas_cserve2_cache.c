@@ -148,7 +148,8 @@ struct _File_Watch {
 };
 
 static unsigned int _entry_id = 0;
-static unsigned int _freed_entry_count = 0;
+static unsigned int _freed_file_entry_count = 0;
+static unsigned int _freed_image_entry_count = 0;
 
 static Shared_Array *_file_data_array = NULL;
 static Shared_Array *_image_data_array = NULL;
@@ -315,12 +316,13 @@ _repack()
 {
    Shared_Array *sa;
    int count;
+   Eina_Bool updated = EINA_FALSE;
 
    // Repack when we have 10% fragmentation over the whole shm buffer
 
    count = cserve2_shared_array_size_get(_file_data_array);
-   if ((count > 0) && (_freed_entry_count > 100 ||
-                       ((_freed_entry_count * 100) / count >= 10)))
+   if ((count > 0) && (_freed_file_entry_count > 100 ||
+                       ((_freed_file_entry_count * 100) / count >= 10)))
      {
         DBG("Repacking file data array: %s",
             cserve2_shared_array_name_get(_file_data_array));
@@ -331,19 +333,46 @@ _repack()
         if (!sa)
           {
              ERR("Failed to repack array. Keeping previous references!");
-             return;
+             goto skip_files;
           }
 
         cserve2_shared_array_del(_file_data_array);
-        _freed_entry_count = 0;
+        _freed_file_entry_count = 0;
         _file_data_array = sa;
+        updated = EINA_TRUE;
      }
+skip_files:
 
-   // FIXME TODO: Repack image data array as well
+   count = cserve2_shared_array_size_get(_image_data_array);
+   if ((count > 0) && (_freed_image_entry_count > 100 ||
+                       ((_freed_image_entry_count * 100) / count >= 10)))
+     {
+        DBG("Repacking image data array: %s",
+            cserve2_shared_array_name_get(_image_data_array));
 
-   cserve2_index_list_send(cserve2_shared_array_name_get(_file_data_array),
-                           cserve2_shared_array_name_get(_image_data_array),
-                           NULL);
+        sa = cserve2_shared_array_repack(_image_data_array,
+                                         _repack_skip_cb,
+                                         _shm_object_id_cmp_cb, NULL);
+        if (!sa)
+          {
+             ERR("Failed to repack array. Keeping previous references!");
+             goto skip_images;
+          }
+
+        cserve2_shared_array_del(_image_data_array);
+        _freed_image_entry_count = 0;
+        _image_data_array = sa;
+        updated = EINA_TRUE;
+     }
+skip_images:
+
+   if (updated)
+     cserve2_index_list_send(cserve2_shared_strings_index_name_get(),
+                             cserve2_shared_strings_table_name_get(),
+                             cserve2_shared_array_name_get(_file_data_array),
+                             cserve2_shared_array_name_get(_image_data_array),
+                             NULL,
+                             NULL);
 }
 
 
@@ -403,6 +432,18 @@ _image_loaded_msg_create(Image_Entry *ientry, Image_Data *idata, int *size)
    msg->shm.mmap_size = cserve2_shm_map_size_get(ientry->shm);
    msg->shm.image_size = cserve2_shm_size_get(ientry->shm);
    msg->alpha_sparse = idata->alpha_sparse;
+
+   if (idata->shm_id)
+     {
+        const char *old = cserve2_shared_string_get(idata->shm_id);
+        if (strcmp(old, shmpath))
+          {
+             cserve2_shared_string_del(idata->shm_id);
+             idata->shm_id = cserve2_shared_string_add(shmpath);
+          }
+     }
+   else
+     idata->shm_id = cserve2_shared_string_add(shmpath);
 
    buf = (char *)msg + sizeof(*msg);
    memcpy(buf, shmpath, path_len);
@@ -723,7 +764,7 @@ _scaling_prepare_and_do(Image_Entry *ientry, Image_Data *idata)
    cserve2_shm_unref(ientry->shm);
    cserve2_shared_string_del(idata->shm_id);
    ientry->shm = scale_shm;
-   idata->shm_id = cserve2_shared_string_add(cserve2_shm_name_get(ientry->shm));
+   idata->shm_id = 0;
 
    return 0;
 }
@@ -891,6 +932,8 @@ _hash_image_entry_free(void *data)
      {
         _image_id_free(idata);
         _image_entry_free(ientry);
+        _freed_image_entry_count++;
+        _repack();
      }
    else ERR("Could not find image entry %u", ENTRYID(ientry));
 }
@@ -951,7 +994,7 @@ _hash_file_entry_free(void *data)
    _file_data_free(fd);
    _file_entry_free(fentry);
 
-   _freed_entry_count++;
+   _freed_file_entry_count++;
    _repack();
 }
 
@@ -1165,6 +1208,7 @@ _entry_unused_push(Image_Entry *ientry)
 
    idata = _image_data_find(ENTRYID(ientry));
    if (!idata) return;
+   idata->unused = EINA_TRUE;
 
    size = _image_entry_size_get(ientry);
    if ((size > max_unused_mem_usage) || !(idata->doload))
@@ -1191,7 +1235,6 @@ _entry_unused_push(Image_Entry *ientry)
         unused_mem_usage = 0;
      }
    image_entries_lru = eina_list_append(image_entries_lru, ientry);
-   idata->unused = EINA_TRUE;
    unused_mem_usage += size;
 }
 
@@ -1303,6 +1346,13 @@ cserve2_cache_client_new(Client *client)
    client->files.referencing = eina_hash_int32_new(_entry_free_cb);
    client->images.referencing = eina_hash_int32_new(_entry_free_cb);
    client->fonts.referencing = NULL;
+
+   cserve2_index_list_send(cserve2_shared_strings_index_name_get(),
+                           cserve2_shared_strings_table_name_get(),
+                           cserve2_shared_array_name_get(_file_data_array),
+                           cserve2_shared_array_name_get(_image_data_array),
+                           NULL,
+                           client);
 }
 
 void
