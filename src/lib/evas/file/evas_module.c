@@ -383,7 +383,7 @@ evas_module_unregister(const Evas_Module_Api *module, Evas_Module_Type type)
    if (!em || em->definition != module) return EINA_FALSE;
 
    if (type == EVAS_MODULE_TYPE_ENGINE)
-     eina_array_data_set(evas_engines, em->id_engine, NULL);
+     eina_array_data_set(evas_engines, em->id_engine - 1, NULL);
 
    eina_hash_del(evas_modules[type], module->name, em);
    free(em);
