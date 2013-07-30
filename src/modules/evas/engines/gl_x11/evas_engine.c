@@ -1051,6 +1051,8 @@ eng_output_free(void *data)
 #endif
         if (re->win)
           {
+             if (gl_wins == 1) evgl_engine_shutdown(re);
+
 #ifdef GL_GLES
              eng_window_free(re->win);
 #else        
@@ -1069,7 +1071,6 @@ eng_output_free(void *data)
         if (re->rects_prev[1]) evas_common_tilebuf_free_render_rects(re->rects_prev[1]);
         if (re->rects_prev[2]) evas_common_tilebuf_free_render_rects(re->rects_prev[2]);
 
-        if (gl_wins == 0) evgl_engine_shutdown(re);
         
         free(re);
      }
