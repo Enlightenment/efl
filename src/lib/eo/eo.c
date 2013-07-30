@@ -1472,22 +1472,8 @@ eo_add_internal(const char *file, int line, const Eo_Class *klass_id, Eo *parent
 
    /* Run the relevant do stuff. */
    if (klass->desc->version == EO2_VERSION)
-     {
-        eo2_constructor_type constr;
-        va_list p_list;
-        if(eo2_do_start((Eo *)obj_id, EINA_FALSE))
-          {
-             va_start(p_list, parent_id);
-             while ((constr = va_arg(p_list, eo2_constructor_type)))
-               constr();
-             va_end(p_list);
-             eo2_do_end(NULL);
-             do_err = EINA_FALSE;
-          }
-        else
-          do_err = EINA_TRUE;
-     }
-   else
+     eo2_do((Eo *)obj_id, eo2_constructor());
+   /* Run the relevant do stuff. */
      {
         va_list p_list;
         va_start(p_list, parent_id);
