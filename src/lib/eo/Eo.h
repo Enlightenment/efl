@@ -664,22 +664,22 @@ typedef struct _Eo2_Op_Call_Data
 #define EO2_VOID_FUNC_BODYV(Name, Func, ...) EO2_FUNC_BODYV(Name, void, Func, , __VA_ARGS__)
 
 // to define a EAPI class function
-#define EO2_CLASS_FUNC_BODY(Name, Ret, DefRet, Class)                                     \
-  Ret                                                                                     \
-  Name(void)                                                                              \
-  {                                                                                       \
-     typedef Ret (*__##Name##_func)(Eo_Class *);                                          \
-     _EO2_CLASS_FUNC_COMMON(Name, Ret, _func_(call.klass_id), DefRet, Class)              \
+#define EO2_CLASS_FUNC_BODY(Name, Ret, DefRet, Class)                        \
+  Ret                                                                        \
+  Name(void)                                                                 \
+  {                                                                          \
+     typedef Ret (*__##Name##_func)(Eo_Class *);                             \
+     _EO2_CLASS_FUNC_COMMON(Name, Ret, _func_(call.klass_id), DefRet, Class) \
   }
 
 #define EO2_VOID_CLASS_FUNC_BODY(Name, Class) EO2_CLASS_FUNC_BODY(Name, void, , Class)
 
-#define EO2_CLASS_FUNC_BODYV(Name, Ret, Func, DefRet, Class, ...)                         \
-  Ret                                                                                     \
-  Name(__VA_ARGS__)                                                                       \
-  {                                                                                       \
-     typedef Ret (*__##Name##_func)(Eo_Class *, __VA_ARGS__);                             \
-     _EO2_CLASS_FUNC_COMMON(Name, Ret, Func, DefRet, Class)                               \
+#define EO2_CLASS_FUNC_BODYV(Name, Ret, Func, DefRet, Class, ...) \
+  Ret                                                             \
+  Name(__VA_ARGS__)                                               \
+  {                                                               \
+     typedef Ret (*__##Name##_func)(Eo_Class *, __VA_ARGS__);     \
+     _EO2_CLASS_FUNC_COMMON(Name, Ret, Func, DefRet, Class)       \
   }
 
 #define EO2_VOID_CLASS_FUNC_BODYV(Name, Func, Class, ...) EO2_CLASS_FUNC_BODYV(Name, void, Func, , Class, __VA_ARGS__)
