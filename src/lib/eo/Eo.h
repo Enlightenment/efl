@@ -615,18 +615,28 @@ EAPI Eina_Bool eo_shutdown(void);
 // to fetch internal function and object data at once
 typedef struct _Eo2_Op_Call_Data
 {
-   Eo    *obj_id;
-   void  *func;
-   void  *data;
+   Eo       *obj_id;
+   Eo_Class *klass_id;
+   void     *func;
+   void     *data;
 } Eo2_Op_Call_Data;
 
 // to pass the internal function call to EO2_FUNC_BODY (as Func parameter)
 #define EO2_FUNC_CALL(...) _func_(call.obj_id, call.data, __VA_ARGS__)
+#define EO2_CLASS_FUNC_CALL(...) _func_(call.klass_id, __VA_ARGS__)
 
 // cache OP id, get real fct and object data then do the call
 #define _EO2_FUNC_COMMON(Name, Ret, Func, DefRet)                       \
      static Eo_Op op = EO_NOOP;                                         \
      if ( op == EO_NOOP ) op = eo2_api_op_id_get((void*)Name, NULL);    \
+     Eo2_Op_Call_Data call;                                             \
+     if (!eo2_call_resolve(op, &call)) return DefRet;                   \
+     __##Name##_func _func_ = (__##Name##_func) call.func;              \
+     return Func;                                                       \
+
+#define _EO2_CLASS_FUNC_COMMON(Name, Ret, Func, DefRet, Class)          \
+     static Eo_Op op = EO_NOOP;                                         \
+     if ( op == EO_NOOP ) op = eo2_api_op_id_get((void*)Name, Class);   \
      Eo2_Op_Call_Data call;                                             \
      if (!eo2_call_resolve(op, &call)) return DefRet;                   \
      __##Name##_func _func_ = (__##Name##_func) call.func;              \
@@ -653,6 +663,27 @@ typedef struct _Eo2_Op_Call_Data
 
 #define EO2_VOID_FUNC_BODYV(Name, Func, ...) EO2_FUNC_BODYV(Name, void, Func, , __VA_ARGS__)
 
+// to define a EAPI class function
+#define EO2_CLASS_FUNC_BODY(Name, Ret, DefRet, Class)                                     \
+  Ret                                                                                     \
+  Name(void)                                                                              \
+  {                                                                                       \
+     typedef Ret (*__##Name##_func)(Eo_Class *);                                          \
+     _EO2_CLASS_FUNC_COMMON(Name, Ret, _func_(call.klass_id), DefRet, Class)              \
+  }
+
+#define EO2_VOID_CLASS_FUNC_BODY(Name, Class) EO2_CLASS_FUNC_BODY(Name, void, , Class)
+
+#define EO2_CLASS_FUNC_BODYV(Name, Ret, Func, DefRet, Class, ...)                         \
+  Ret                                                                                     \
+  Name(__VA_ARGS__)                                                                       \
+  {                                                                                       \
+     typedef Ret (*__##Name##_func)(Eo_Class *, __VA_ARGS__);                             \
+     _EO2_CLASS_FUNC_COMMON(Name, Ret, Func, DefRet, Class)                               \
+  }
+
+#define EO2_VOID_CLASS_FUNC_BODYV(Name, Func, Class, ...) EO2_CLASS_FUNC_BODYV(Name, void, Func, , Class, __VA_ARGS__)
+
 // OP ID of an overriding function
 #define EO2_OP_OVERRIDE ((Eo_Op) -1)
 #define EO2_OP_VIRTUAL ((Eo_Op) -2)
@@ -660,6 +691,7 @@ typedef struct _Eo2_Op_Call_Data
 #define EO2_OP_FUNC(_private, _api, _doc) {_private, _api, EO_NOOP, EO_OP_TYPE_REGULAR, _doc}
 #define EO2_OP_CLASS_FUNC(_private, _api, _doc) {_private, _api, EO_NOOP, EO_OP_TYPE_CLASS, _doc}
 #define EO2_OP_FUNC_OVERRIDE(_private, _api) {_private, _api, EO2_OP_OVERRIDE, EO_OP_TYPE_REGULAR, NULL}
+#define EO2_OP_CLASS_FUNC_OVERRIDE(_private, _api) {_private, _api, EO2_OP_OVERRIDE, EO_OP_TYPE_CLASS, NULL}
 #define EO2_OP_FUNC_VIRTUAL(_api, _doc) {NULL, _api, EO2_OP_VIRTUAL, EO_OP_TYPE_REGULAR, _doc}
 #define EO2_OP_SENTINEL { NULL, NULL, 0, EO_OP_TYPE_INVALID, NULL}
 
@@ -672,13 +704,16 @@ EAPI Eina_Bool eo2_call_resolve_internal(const Eo_Class *klass, Eo_Op op, Eo2_Op
 
 // start of eo2_do barrier, gets the object pointer and ref it, put it on the stask
 EAPI Eina_Bool eo2_do_start(Eo *obj_id, Eina_Bool do_super);
+EAPI Eina_Bool eo2_class_do_start(const Eo_Class *klass_id, Eina_Bool do_super);
 
 // end of the eo2_do barrier, unref the obj, move the stack pointer
 EAPI void eo2_do_end(Eo **ojb);
+EAPI void eo2_class_do_end(const Eo_Class **klass);
 
 EAPI int eo2_call_stack_depth();
 
 #define EO2_DO_CLEANUP __attribute__((cleanup(eo2_do_end)))
+#define EO2_CLASS_DO_CLEANUP __attribute__((cleanup(eo2_class_do_end)))
 
 // eo object method calls batch,
 #define eo2_do(objid, ...)                            \
@@ -705,11 +740,28 @@ EAPI int eo2_call_stack_depth();
          }                                            \
     } while (0)
 
-// FIXME
-#define eo2_class_do(clsid, ...)                \
-  do                                            \
-    {                                           \
-       do { __VA_ARGS__ ; } while (0);          \
+#define eo2_class_do(clsid, ...)                                        \
+  do                                                                    \
+    {                                                                   \
+       const Eo_Class *_clsid_ = clsid;                                 \
+       if (eo2_class_do_start(_clsid_, EINA_FALSE))                     \
+         {                                                              \
+            const Eo_Class *_id_clean_ EO2_CLASS_DO_CLEANUP = _clsid_;  \
+            __VA_ARGS__;                                                \
+            (void) _id_clean_;                                          \
+         }                                                              \
+    } while (0)
+
+#define eo2_class_super_do(clsid, ...)                                  \
+  do                                                                    \
+    {                                                                   \
+       const Eo_Class *_clsid_ = clsid;                                 \
+       if (eo2_class_do_start(_clsid_, EINA_TRUE))                      \
+         {                                                              \
+            const Eo_Class *_id_clean_ EO2_CLASS_DO_CLEANUP = _clsid_;  \
+            __VA_ARGS__;                                                \
+            (void) _id_clean_;                                          \
+         }                                                              \
     } while (0)
 
 /*****************************************************************************/

@@ -280,7 +280,7 @@ typedef struct _Eo2_Stack_Frame
 {
     Eo               *obj_id;
    _Eo               *obj;
-   const _Eo_Class   *cur_klass;
+   const _Eo_Class   *klass;
    void              *obj_data;
 
 } Eo2_Stack_Frame;
@@ -311,7 +311,7 @@ EAPI Eina_Bool
 eo2_do_start(Eo *obj_id, Eina_Bool do_super)
 {
    _Eo * obj;
-   const _Eo_Class *cur_klass;
+   const _Eo_Class *klass;
    Eo2_Stack_Frame *fptr;
 
    fptr = eo2_call_stack.frame_ptr;
@@ -319,9 +319,9 @@ eo2_do_start(Eo *obj_id, Eina_Bool do_super)
      {
         obj = fptr->obj;
         if (do_super)
-          cur_klass = _eo2_kls_itr_next(obj->klass, fptr->cur_klass);
+          klass = _eo2_kls_itr_next(obj->klass, fptr->klass);
         else
-          cur_klass = fptr->cur_klass;
+          klass = fptr->klass;
         eo2_call_stack.frame_ptr++;
      }
    else
@@ -329,9 +329,9 @@ eo2_do_start(Eo *obj_id, Eina_Bool do_super)
         obj = _eo_obj_pointer_get((Eo_Id)obj_id);
         if (!obj) return EINA_FALSE;
         if (do_super)
-          cur_klass = _eo2_kls_itr_next(obj->klass, obj->klass);
+          klass = _eo2_kls_itr_next(obj->klass, obj->klass);
         else
-          cur_klass = obj->klass;
+          klass = obj->klass;
         if (fptr == NULL)
           eo2_call_stack.frame_ptr = &eo2_call_stack.stack[0];
         else
@@ -347,30 +347,83 @@ eo2_do_start(Eo *obj_id, Eina_Bool do_super)
 
    fptr->obj = obj;
    fptr->obj_id = obj_id;
-   fptr->cur_klass = cur_klass;
+   fptr->klass = klass;
    fptr->obj_data = EO2_INVALID_DATA;
 
    return EINA_TRUE;
 }
 
-EAPI void
-eo2_do_end(Eo **objid EINA_UNUSED)
+EAPI Eina_Bool
+eo2_class_do_start(const Eo_Class *klass_id, Eina_Bool do_super EINA_UNUSED)
+{
+   Eo2_Stack_Frame *fptr;
+   const _Eo_Class *klass;
+
+   fptr = eo2_call_stack.frame_ptr;
+   if ((fptr != NULL) && (fptr->klass->class_id == (Eo_Class_Id) klass_id))
+     {
+        if (do_super)
+          klass = _eo2_kls_itr_next(fptr->klass, fptr->klass);
+        else
+          klass = fptr->klass;
+        eo2_call_stack.frame_ptr++;
+     }
+   else
+     {
+        klass = _eo_class_pointer_get(klass_id);
+        EO_MAGIC_RETURN_VAL(klass, EO_CLASS_EINA_MAGIC, EINA_FALSE);
+        if (do_super)
+          klass = _eo2_kls_itr_next(klass, klass);
+        if (fptr == NULL)
+          eo2_call_stack.frame_ptr = &eo2_call_stack.stack[0];
+        else
+          eo2_call_stack.frame_ptr++;
+     }
+
+   fptr = eo2_call_stack.frame_ptr;
+
+   if ((fptr - eo2_call_stack.stack) >= EO2_CALL_STACK_DEPTH)
+     ERR("eo2 call stack overflow !!!");
+
+   fptr->obj = NULL;
+   fptr->obj_id = NULL;
+   fptr->klass = klass;
+   fptr->obj_data = EO2_INVALID_DATA;
+
+   return EINA_TRUE;
+}
+
+static inline void
+_eo2_do_end(Eina_Bool obj_do)
 {
    Eo2_Stack_Frame *fptr;
 
    fptr = eo2_call_stack.frame_ptr;
 
-   _eo_unref(fptr->obj);
+   if(obj_do)
+     _eo_unref(fptr->obj);
 
    fptr->obj = NULL;
    fptr->obj_id = NULL;
-   fptr->cur_klass = NULL;
+   fptr->klass = NULL;
    fptr->obj_data = EO2_INVALID_DATA;
 
    if (fptr == &eo2_call_stack.stack[0])
      eo2_call_stack.frame_ptr = NULL;
    else
      eo2_call_stack.frame_ptr--;
+}
+
+EAPI void
+eo2_do_end(Eo **obj_id EINA_UNUSED)
+{
+   _eo2_do_end(EINA_TRUE);
+}
+
+EAPI void
+eo2_class_do_end(const Eo_Class **klass_id EINA_UNUSED)
+{
+   _eo2_do_end(EINA_FALSE);
 }
 
 EAPI Eina_Bool
@@ -385,12 +438,17 @@ eo2_call_resolve_internal(const Eo_Class *klass_id, Eo_Op op, Eo2_Op_Call_Data *
    obj = fptr->obj;
 
    if (klass_id)
-      klass = _eo_class_pointer_get(klass_id);
+     {
+        klass = _eo_class_pointer_get(klass_id);
+        EO_MAGIC_RETURN_VAL(klass, EO_CLASS_EINA_MAGIC, EINA_FALSE);
+     }
    else
-      klass = fptr->cur_klass;
+     {
+        klass = fptr->klass;
+        if (!klass)
+          return EINA_FALSE;
+     }
 
-   if (!klass)
-     return EINA_FALSE;
 
    func = _dich_func_get(klass, op);
    if (EINA_LIKELY(func != NULL))
@@ -400,18 +458,24 @@ eo2_call_resolve_internal(const Eo_Class *klass_id, Eo_Op op, Eo2_Op_Call_Data *
              ERR("you called a pure virtual func");
              return EINA_FALSE;
           }
+        call->klass_id = (Eo_Class *) klass->class_id;
         call->obj_id = fptr->obj_id;
         call->func = func->func;
 
-        if (func->src == obj->klass)
+        if (obj)
           {
-             if (fptr->obj_data == EO2_INVALID_DATA)
-               fptr->obj_data = _eo_data_scope_get(obj, func->src);
+             if (func->src == obj->klass)
+               {
+                  if (fptr->obj_data == EO2_INVALID_DATA)
+                    fptr->obj_data = _eo_data_scope_get(obj, func->src);
 
-             call->data = fptr->obj_data;
+                  call->data = fptr->obj_data;
+               }
+             else
+               call->data = _eo_data_scope_get(obj, func->src);
           }
         else
-          call->data = _eo_data_scope_get(obj, func->src);
+          call->data = NULL;
 
         return EINA_TRUE;
      }
@@ -497,6 +561,7 @@ _eo2_class_funcs_set(_Eo_Class *klass)
    qsort((void*)op_descs, klass->desc->ops.count, sizeof(Eo2_Op_Description), eo2_api_funcs_cmp);
 
    op_id = klass->base_id;
+   /* printf("elaborate class '%s' \n", klass->desc->name); */
    for (op_desc = op_descs; op_desc->op_type != EO_OP_TYPE_INVALID; op_desc++)
      {
         if(op_desc->api_func == NULL)
@@ -534,7 +599,7 @@ _eo2_class_funcs_set(_Eo_Class *klass)
                    klass->desc->name, (unsigned long) (op_desc - op_descs));
           }
 
-        /* printf("%d %p %p %s\n", op_desc->op, op_desc->api_func, op_desc->func, op_desc->doc); */
+        /* printf(" %d %p %p %s\n", op_desc->op, op_desc->api_func, op_desc->func, op_desc->doc); */
         _dich_func_set(klass, op_desc->op, op_desc->func);
      }
 }
