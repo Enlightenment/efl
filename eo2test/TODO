@@ -14,3 +14,5 @@
 - Fix custom constructors
 
 - Fix composite objects (?)
+
+- Consider making classes just a regular Eo object? (Just need to bootstrap the first class).
