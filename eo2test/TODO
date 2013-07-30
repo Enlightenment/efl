@@ -10,3 +10,7 @@
    per thread stack
 
 - m4 __attribute__ cleanup
+
+- Fix custom constructors
+
+- Fix composite objects (?)
