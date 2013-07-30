@@ -269,6 +269,8 @@ main(int argc EINA_UNUSED, char** argv EINA_UNUSED, char** env EINA_UNUSED)
    if(cleanup_test())
      printf("something went wrong in cleanup_test()\n");
 
+   eo2_class_do(EO2_INHERIT_CLASS, eo2_class_hello(2); );
+
    eo_shutdown();
 
    return 0;

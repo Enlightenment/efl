@@ -25,6 +25,14 @@ _get(Eo *objid EINA_UNUSED, void *obj_data)
 }
 EAPI EO2_FUNC_BODY(eo2_inherit_get, int, 0);
 
+static void
+_class_hello(const Eo_Class *klass, int a)
+{
+   printf("Hello %d - body %s - EAPI %s\n", a, eo_class_name_get(klass), eo_class_name_get(EO2_SIMPLE_CLASS)); 
+
+   eo2_class_super_do(klass, eo2_class_hello(a * 2));
+}
+
 static int
 _virtual(Eo *objid EINA_UNUSED, void *obj_data EINA_UNUSED, int in)
 {
@@ -52,6 +60,7 @@ static Eo2_Op_Description op_descs [] = {
        EO2_OP_FUNC_OVERRIDE(_destructor, eo2_destructor),
        EO2_OP_FUNC_OVERRIDE(_inc, eo2_inc),
        EO2_OP_FUNC_OVERRIDE(_virtual, eo2_virtual),
+       EO2_OP_CLASS_FUNC_OVERRIDE(_class_hello, eo2_class_hello),
        EO2_OP_FUNC(_get, eo2_inherit_get, "Get Y"),
        EO2_OP_SENTINEL
 };

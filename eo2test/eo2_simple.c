@@ -32,6 +32,13 @@ _set(Eo *objid EINA_UNUSED, void *obj_data, int x)
 }
 EAPI EO2_VOID_FUNC_BODYV(eo2_set, EO2_FUNC_CALL(x), int x);
 
+static void
+_class_hello(const Eo_Class *klass, int a)
+{
+   printf("Hello %d - body %s - EAPI %s\n", a, eo_class_name_get(klass), eo_class_name_get(EO2_SIMPLE_CLASS)); 
+}
+EAPI EO2_VOID_CLASS_FUNC_BODYV(eo2_class_hello, EO2_CLASS_FUNC_CALL(a), EO2_SIMPLE_CLASS, int a);
+
 EAPI EO2_FUNC_BODYV(eo2_virtual, int, EO2_FUNC_CALL(x), 0, int x);
 
 static void
@@ -56,6 +63,7 @@ static Eo2_Op_Description op_descs [] = {
        EO2_OP_FUNC(_inc, eo2_inc, "Inc X"),
        EO2_OP_FUNC(_get, eo2_get, "Get X"),
        EO2_OP_FUNC(_set, eo2_set, "Set X"),
+       EO2_OP_CLASS_FUNC(_class_hello, eo2_class_hello, "Class says hello"),
        EO2_OP_FUNC_VIRTUAL(eo2_virtual, "Virtual Func"),
        EO2_OP_SENTINEL
 };
