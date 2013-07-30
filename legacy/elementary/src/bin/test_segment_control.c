@@ -118,7 +118,13 @@ test_segment_control(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *e
         evas_object_size_hint_weight_set(sc, em->weight.w, em->weight.h);
         evas_object_size_hint_align_set(sc, em->align.x, em->align.y);
         elm_segment_control_item_add(sc, NULL, "Disabled");
-        seg_it = elm_segment_control_item_add(sc, NULL, "Disabled");
+
+        //icon
+        ic = elm_icon_add(sc);
+        elm_image_file_set(ic, buf, NULL);
+        evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_BOTH, 1, 1);
+
+        seg_it = elm_segment_control_item_add(sc, ic, "Disabled");
         elm_segment_control_item_selected_set(seg_it, EINA_TRUE);
         elm_segment_control_item_add(sc, NULL, "Disabled");
         elm_object_disabled_set(sc, EINA_TRUE);
