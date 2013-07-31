@@ -334,7 +334,7 @@ AM_CONDITIONAL([EFL_ENABLE_COVERAGE], [test "${want_coverage}" = "yes"])
 # check unit testing library
 
 if test "${want_tests}" = "yes"; then
-   PKG_CHECK_MODULES([CHECK], [check >= 0.9.5])
+   PKG_CHECK_MODULES([CHECK], [check >= 0.9.4])
 fi
 AM_CONDITIONAL([EFL_ENABLE_TESTS], [test "${want_tests}" = "yes"])
 
@@ -3489,7 +3489,7 @@ if test "x${want_x11_xlib}" = "xyes" ; then
    ECORE_CHECK_X_EXTENSION([Xdpms], [dpms.h], [Xext], [DPMSQueryExtension])
    ECORE_CHECK_X_EXTENSION([Xfixes], [Xfixes.h], [Xfixes], [XFixesExpandRegion])
    ECORE_CHECK_X_EXTENSION([Xinerama], [Xinerama.h], [Xinerama], [XineramaQueryScreens])
-   ECORE_CHECK_X_EXTENSION([Xprint], [Print.h], [Xp], [XpQueryScreens])
+   #ECORE_CHECK_X_EXTENSION([Xprint], [Print.h], [Xp], [XpQueryScreens])
    ECORE_CHECK_X_EXTENSION([Xrandr], [Xrandr.h], [Xrandr], [XRRGetScreenResourcesCurrent])
    ECORE_CHECK_X_EXTENSION([Xrender], [Xrender.h], [Xrender], [XRenderFindVisualFormat])
    ECORE_CHECK_X_EXTENSION([Xtest], [XTest.h], [Xtst], [XTestFakeKeyEvent])
@@ -3529,7 +3529,7 @@ fi
 if test "${want_x11_xcb}" = "yes"; then
 dnl note: added pixman-1 as ecore_xcb_region uses that
    EFL_DEPEND_PKG([ECORE_X], [ECORE_X_XCB],
-      [x11-xcb xcb xcb-shm xcb-event xcb-icccm >= 0.3.8 xcb-util >= 0.3.8 xcb-image xcb-keysyms >= 0.3.8 xcb-composite xcb-present xcb-damage xcb-dpms xcb-randr xcb-render xcb-screensaver xcb-shape xcb-sync xcb-xfixes xcb-xinerama xcb-xprint xcb-xtest xcb-renderutil pixman-1])
+      [x11-xcb xcb xcb-shm xcb-event xcb-icccm >= 0.3.8 xcb-util >= 0.3.8 xcb-image xcb-keysyms >= 0.3.8 xcb-composite xcb-present xcb-damage xcb-dpms xcb-randr xcb-render xcb-screensaver xcb-shape xcb-sync xcb-xfixes xcb-xinerama xcb-xtest xcb-renderutil pixman-1]) #xcb-xprint
 
 dnl TODO: remove these ifdefs from code!
    AC_DEFINE([ECORE_XCB_COMPOSITE], [1], [Build support for XCB composite])
@@ -3542,7 +3542,7 @@ dnl TODO: remove these ifdefs from code!
    AC_DEFINE([ECORE_XCB_SYNC], [1], [Build support for XCB sync])
    AC_DEFINE([ECORE_XCB_XFIXES], [1], [Build support for XCB xfixes])
    AC_DEFINE([ECORE_XCB_XINERAMA], [1], [Build support for XCB xinerama])
-   AC_DEFINE([ECORE_XCB_XPRINT], [1], [Build support for XCB xprint])
+   #AC_DEFINE([ECORE_XCB_XPRINT], [1], [Build support for XCB xprint])
    AC_DEFINE([ECORE_XCB_XTEST], [1], [Build support for XCB xtest])
    AC_DEFINE([ECORE_XCB_CURSOR], [1], [Build support for XCB cursor])
 
