@@ -487,7 +487,7 @@ eo2_call_resolve_internal(const Eo_Class *klass_id, Eo_Op op, Eo2_Op_Call_Data *
 
 
 static inline const Eo2_Op_Description *
-_eo2_api_desc_get(void *api_func, const _Eo_Class *klass)
+_eo2_api_desc_get(const void *api_func, const _Eo_Class *klass)
 {
    int imin, imax, imid;
    Eo2_Op_Description *op_desc;
@@ -519,20 +519,35 @@ _eo2_api_desc_get(void *api_func, const _Eo_Class *klass)
 }
 
 EAPI Eo_Op
-eo2_api_op_id_get(void *api_func, const Eo_Class *klass_id)
+eo2_api_op_id_get(const void *api_func, const Eo_Op_Type op_type)
 {
     const Eo2_Op_Description *desc;
     const _Eo_Class *klass;
 
-   if (klass_id)
-      klass = _eo_class_pointer_get(klass_id);
-   else
+   if (op_type == EO_OP_TYPE_REGULAR)
       klass = eo2_call_stack.frame_ptr->obj->klass;
+   else if (op_type == EO_OP_TYPE_CLASS)
+      klass = eo2_call_stack.frame_ptr->klass;
+   else
+     {
+        ERR("api func %p, unknown op type %d", api_func, op_type);
+        return EO_NOOP;
+     }
 
    desc = _eo2_api_desc_get(api_func, klass);
 
    if (desc == NULL)
-     return EO_NOOP;
+     {
+        ERR("unable to resolve api func %p, op type %d", api_func,op_type);
+        return EO_NOOP;
+     }
+
+   if (desc->op_type != op_type)
+     {
+        ERR("api func %p resolves to %d, op type %d instead of %d",
+            api_func, (int) desc->op, desc->op_type, op_type);
+        return EO_NOOP;
+     }
 
     return desc->op;
 }

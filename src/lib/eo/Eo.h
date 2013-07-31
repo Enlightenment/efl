@@ -628,15 +628,17 @@ typedef struct _Eo2_Op_Call_Data
 // cache OP id, get real fct and object data then do the call
 #define _EO2_FUNC_COMMON(Name, Ret, Func, DefRet)                       \
      static Eo_Op op = EO_NOOP;                                         \
-     if ( op == EO_NOOP ) op = eo2_api_op_id_get((void*)Name, NULL);    \
+     if ( op == EO_NOOP )                                               \
+        op = eo2_api_op_id_get((void*)Name, EO_OP_TYPE_REGULAR);        \
      Eo2_Op_Call_Data call;                                             \
      if (!eo2_call_resolve(op, &call)) return DefRet;                   \
      __##Name##_func _func_ = (__##Name##_func) call.func;              \
      return Func;                                                       \
 
-#define _EO2_CLASS_FUNC_COMMON(Name, Ret, Func, DefRet, Class)          \
+#define _EO2_CLASS_FUNC_COMMON(Name, Ret, Func, DefRet)                 \
      static Eo_Op op = EO_NOOP;                                         \
-     if ( op == EO_NOOP ) op = eo2_api_op_id_get((void*)Name, Class);   \
+     if ( op == EO_NOOP )                                               \
+        op = eo2_api_op_id_get((void*)Name, EO_OP_TYPE_CLASS);          \
      Eo2_Op_Call_Data call;                                             \
      if (!eo2_call_resolve(op, &call)) return DefRet;                   \
      __##Name##_func _func_ = (__##Name##_func) call.func;              \
@@ -664,25 +666,25 @@ typedef struct _Eo2_Op_Call_Data
 #define EO2_VOID_FUNC_BODYV(Name, Func, ...) EO2_FUNC_BODYV(Name, void, Func, , __VA_ARGS__)
 
 // to define a EAPI class function
-#define EO2_CLASS_FUNC_BODY(Name, Ret, DefRet, Class)                        \
+#define EO2_CLASS_FUNC_BODY(Name, Ret, DefRet)                               \
   Ret                                                                        \
   Name(void)                                                                 \
   {                                                                          \
      typedef Ret (*__##Name##_func)(Eo_Class *);                             \
-     _EO2_CLASS_FUNC_COMMON(Name, Ret, _func_(call.klass_id), DefRet, Class) \
+     _EO2_CLASS_FUNC_COMMON(Name, Ret, _func_(call.klass_id), DefRet)        \
   }
 
-#define EO2_VOID_CLASS_FUNC_BODY(Name, Class) EO2_CLASS_FUNC_BODY(Name, void, , Class)
+#define EO2_VOID_CLASS_FUNC_BODY(Name) EO2_CLASS_FUNC_BODY(Name, void, )
 
-#define EO2_CLASS_FUNC_BODYV(Name, Ret, Func, DefRet, Class, ...) \
+#define EO2_CLASS_FUNC_BODYV(Name, Ret, Func, DefRet, ...)        \
   Ret                                                             \
   Name(__VA_ARGS__)                                               \
   {                                                               \
      typedef Ret (*__##Name##_func)(Eo_Class *, __VA_ARGS__);     \
-     _EO2_CLASS_FUNC_COMMON(Name, Ret, Func, DefRet, Class)       \
+     _EO2_CLASS_FUNC_COMMON(Name, Ret, Func, DefRet)              \
   }
 
-#define EO2_VOID_CLASS_FUNC_BODYV(Name, Func, Class, ...) EO2_CLASS_FUNC_BODYV(Name, void, Func, , Class, __VA_ARGS__)
+#define EO2_VOID_CLASS_FUNC_BODYV(Name, Func, ...) EO2_CLASS_FUNC_BODYV(Name, void, Func, , __VA_ARGS__)
 
 // OP ID of an overriding function
 #define EO2_OP_OVERRIDE ((Eo_Op) -1)
@@ -694,7 +696,7 @@ typedef struct _Eo2_Op_Call_Data
 #define EO2_OP_SENTINEL { NULL, NULL, 0, EO_OP_TYPE_INVALID, NULL}
 
 // returns the OP id corresponding to the given api_func
-EAPI Eo_Op eo2_api_op_id_get(void *api_func, const Eo_Class *klass);
+EAPI Eo_Op eo2_api_op_id_get(const void *api_func, const Eo_Op_Type);
 
 // gets the real function pointer and the object data
 #define eo2_call_resolve(op, call) eo2_call_resolve_internal(NULL, op, call)
