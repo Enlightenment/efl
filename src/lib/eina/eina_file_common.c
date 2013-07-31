@@ -129,6 +129,116 @@ _eina_file_escape(char *path, size_t len)
    return result;
 }
 
+
+unsigned int
+eina_file_map_key_length(const void *key EINA_UNUSED)
+{
+   return sizeof (unsigned long int) * 2;
+}
+
+int
+eina_file_map_key_cmp(const unsigned long int *key1, int key1_length EINA_UNUSED,
+                       const unsigned long int *key2, int key2_length EINA_UNUSED)
+{
+   if (key1[0] - key2[0] == 0) return key1[1] - key2[1];
+   return key1[0] - key2[0];
+}
+
+int
+eina_file_map_key_hash(const unsigned long int *key, int key_length EINA_UNUSED)
+{
+   return eina_hash_int64(&key[0], sizeof (unsigned long int))
+     ^ eina_hash_int64(&key[1], sizeof (unsigned long int));
+}
+
+void *
+eina_file_virtual_map_all(Eina_File *file)
+{
+   eina_lock_take(&file->lock);
+   file->global_refcount++;
+   eina_lock_release(&file->lock);
+
+   return file->global_map;
+}
+
+void *
+eina_file_virtual_map_new(Eina_File *file,
+                          unsigned long int offset, unsigned long int length)
+{
+   Eina_File_Map *map;
+   unsigned long int key[2];
+
+   // offset and length has already been checked by the caller function
+
+   key[0] = offset;
+   key[1] = length;
+
+   eina_lock_take(&file->lock);
+
+   map = eina_hash_find(file->map, &key);
+   if (!map)
+     {
+        map = malloc(sizeof (Eina_File_Map));
+        goto on_error;
+
+        map->map = ((char*) file->global_map) + offset;
+        map->offset = offset;
+        map->length = length;
+        map->refcount = 0;
+
+        eina_hash_add(file->map, &key, map);
+        eina_hash_direct_add(file->rmap, map->map, map);
+     }
+
+   map->refcount++;
+
+ on_error:
+   eina_lock_release(&file->lock);
+   return map ? map->map : NULL;
+}
+
+void
+eina_file_virtual_map_free(Eina_File *file, void *map)
+{
+   Eina_File_Map *em;
+
+   eina_lock_take(&file->lock);
+
+   // map could equal global_map even if length != file->length
+   em = eina_hash_find(file->rmap, &map);
+   if (em)
+     {
+        unsigned long int key[2];
+
+        em->refcount--;
+
+        if (em->refcount > 0) goto on_exit;
+
+        key[0] = em->offset;
+        key[1] = em->length;
+
+        eina_hash_del(file->rmap, &map, em);
+        eina_hash_del(file->map, &key, em);
+     }
+   else
+     {
+        if (file->global_map == map)
+          {
+             file->global_refcount--;
+          }
+     }
+
+ on_exit:
+   eina_lock_release(&file->lock);
+}
+
+// Private to this file API
+static void
+_eina_file_map_close(Eina_File_Map *map)
+{
+   free(map);
+}
+
 // Global API
 
 EAPI char *
@@ -153,9 +263,70 @@ eina_file_path_sanitize(const char *path)
 }
 
 EAPI Eina_File *
+eina_file_virtualize(const void *data, unsigned long long length, Eina_Bool copy)
+{
+   Eina_File *file;
+   Eina_Nano_Time tp;
+   long int ti;
+   const char *tmpname = "/dev/mem/virtual\\/%16x";
+
+   // Generate an almost uniq filename based on current nsec time.
+   if (_eina_time_get(&tp)) return NULL;
+   ti = _eina_time_convert(&tp);
+
+   file = malloc(sizeof (Eina_File) +
+                 strlen(tmpname) + 17 +
+                 (copy ? length : 0));
+   if (!file) return NULL;
+
+   memset(file, 0, sizeof(Eina_File));
+   file->filename = (char*) (file + 1);
+   sprintf((char*) file->filename, tmpname, ti);
+
+   eina_lock_new(&file->lock);
+   file->mtime = ti / 1000;
+   file->length = length;
+   file->mtime_nsec = ti;
+   file->refcount = 1;
+   file->fd = -1;
+   file->virtual = EINA_TRUE;
+   file->map = eina_hash_new(EINA_KEY_LENGTH(eina_file_map_key_length),
+                             EINA_KEY_CMP(eina_file_map_key_cmp),
+                             EINA_KEY_HASH(eina_file_map_key_hash),
+                             EINA_FREE_CB(_eina_file_map_close),
+                             3);
+   file->rmap = eina_hash_pointer_new(NULL);
+
+   if (copy)
+     {
+        file->global_map = (void*)(file->filename +
+                                   strlen(file->filename) + 1);
+        memcpy((char*) file->global_map, data, length);
+     }
+   else
+     {
+        file->global_map = (void*) data;
+     }
+
+   return file;
+}
+
+EAPI Eina_Bool
+eina_file_virtual(Eina_File *file)
+{
+   if (file) return file->virtual;
+   return EINA_FALSE;
+}
+
+EAPI Eina_File *
 eina_file_dup(Eina_File *file)
 {
-   if (file) file->refcount++;
+   if (file)
+     {
+        eina_lock_take(&file->lock);
+        file->refcount++;
+        eina_lock_release(&file->lock);
+     }
    return file;
 }
 

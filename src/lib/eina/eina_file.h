@@ -444,8 +444,6 @@ typedef enum {
  */
 EAPI Eina_Bool eina_file_copy(const char *src, const char *dst, Eina_File_Copy_Flags flags, Eina_File_Copy_Progress cb, const void *cb_data) EINA_ARG_NONNULL(1, 2);
 
-
-
 /**
  * @brief Get a read-only handler to a file.
  *
@@ -460,6 +458,30 @@ EAPI Eina_Bool eina_file_copy(const char *src, const char *dst, Eina_File_Copy_F
  * @since 1.1
  */
 EAPI Eina_File *eina_file_open(const char *name, Eina_Bool shared) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
+
+/**
+ * @brief Create a virtual file from a memory pointer.
+ *
+ * @param data The memory pointer to take data from
+ * @param length The length of the data in memory
+ * @param copy #EINA_TRUE if the data must be copied
+ * @return Eina_File handle to the file
+ *
+ * @since 1.8
+ */
+EAPI Eina_File *
+eina_file_virtualize(const void *data, unsigned long long length, Eina_Bool copy) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Tell if a file is a real file or only exist in memory
+ *
+ * @param file The file to test
+ * @return #EINA_TRUE if the file is a virtual file
+ *
+ * @since 1.8
+ */
+EAPI Eina_Bool
+eina_file_virtual(Eina_File *file) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
 /**
  * @brief Dup a read-only handler of a previously open file.

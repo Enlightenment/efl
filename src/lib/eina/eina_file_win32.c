@@ -384,27 +384,6 @@ _eina_file_map_close(Eina_File_Map *map)
    free(map);
 }
 
-static unsigned int
-_eina_file_map_key_length(const void *key EINA_UNUSED)
-{
-   return sizeof (unsigned long int) * 2;
-}
-
-static int
-_eina_file_map_key_cmp(const unsigned long int *key1, int key1_length EINA_UNUSED,
-                       const unsigned long int *key2, int key2_length EINA_UNUSED)
-{
-   if (key1[0] - key2[0] == 0) return key1[1] - key2[1];
-   return key1[0] - key2[0];
-}
-
-static int
-_eina_file_map_key_hash(const unsigned long int *key, int key_length EINA_UNUSED)
-{
-   return eina_hash_int64(&key[0], sizeof (unsigned long int))
-     ^ eina_hash_int64(&key[1], sizeof (unsigned long int));
-}
-
 /**
  * @endcond
  */
@@ -804,9 +783,9 @@ eina_file_open(const char *path, Eina_Bool shared)
         memset(n, 0, sizeof(Eina_File));
         n->filename = (char*) (n + 1);
         strcpy((char*) n->filename, filename);
-        n->map = eina_hash_new(EINA_KEY_LENGTH(_eina_file_map_key_length),
-                               EINA_KEY_CMP(_eina_file_map_key_cmp),
-                               EINA_KEY_HASH(_eina_file_map_key_hash),
+        n->map = eina_hash_new(EINA_KEY_LENGTH(eina_file_map_key_length),
+                               EINA_KEY_CMP(eina_file_map_key_cmp),
+                               EINA_KEY_HASH(eina_file_map_key_hash),
                                EINA_FREE_CB(_eina_file_map_close),
                                3);
         n->rmap = eina_hash_pointer_new(NULL);
@@ -859,6 +838,8 @@ eina_file_map_all(Eina_File *file, Eina_File_Populate rule EINA_UNUSED)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(file, NULL);
 
+   if (file->virtual) return eina_file_virtual_map_all(file);
+
    eina_lock_take(&file->lock);
    if (file->global_map == MAP_FAILED)
      {
@@ -875,6 +856,7 @@ eina_file_map_all(Eina_File *file, Eina_File_Populate rule EINA_UNUSED)
    if (file->global_map != MAP_FAILED)
      {
         file->global_refcount++;
+	eina_lock_release(&file->lock);
         return file->global_map;
      }
 
@@ -898,6 +880,9 @@ eina_file_map_new(Eina_File *file, Eina_File_Populate rule,
 
    if (offset == 0 && length == file->length)
      return eina_file_map_all(file, rule);
+
+   if (file->virtual)
+     return eina_file_virtual_map_new(file, offset, length);
 
    key[0] = offset;
    key[1] = length;
@@ -952,6 +937,9 @@ eina_file_map_free(Eina_File *file, void *map)
 {
    EINA_SAFETY_ON_NULL_RETURN(file);
 
+   if (file->virtual)
+     return eina_file_virtual_map_free(file, map);
+
    eina_lock_take(&file->lock);
 
    if (file->global_map == map)
@@ -989,6 +977,7 @@ eina_file_map_free(Eina_File *file, void *map)
 EAPI Eina_Bool
 eina_file_map_faulted(Eina_File *file, void *map)
 {
+  if (file->virtual) return EINA_FALSE;
   /*
    * FIXME:
    * vc++ : http://msdn.microsoft.com/en-us/library/windows/desktop/aa366801%28v=vs.85%29.aspx

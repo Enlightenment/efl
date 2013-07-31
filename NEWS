@@ -34,6 +34,7 @@ Additions:
      - Add eina_tiler_area_size_set(), eina_tiler_strict_set(), eina_tiler_area_size_get()
      - Add eina_file_map_populate()
      - Add eina_tiler_empty()
+     - Add eina_file_virtualize() and eina_file_virtual()
     * Eet:
      - Add eet_mmap()
      - Add eet_data_descriptor_name_get()

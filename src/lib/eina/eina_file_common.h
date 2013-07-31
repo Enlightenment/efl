@@ -61,6 +61,7 @@ struct _Eina_File
    Eina_Bool shared : 1;
    Eina_Bool delete_me : 1;
    Eina_Bool global_faulty : 1;
+   Eina_Bool virtual : 1;
 };
 
 struct _Eina_File_Map
@@ -122,5 +123,17 @@ void eina_file_real_close(Eina_File *file);
 extern Eina_Hash *_eina_file_cache;
 extern Eina_Lock _eina_file_lock_cache;
 extern int _eina_file_log_dom;
+
+// Common function to handle virtual file
+void *eina_file_virtual_map_all(Eina_File *file);
+void *eina_file_virtual_map_new(Eina_File *file,
+                                unsigned long int offset, unsigned long int length);
+void eina_file_virtual_map_free(Eina_File *file, void *map);
+
+// Common hash function
+unsigned int eina_file_map_key_length(const void *key);
+int eina_file_map_key_cmp(const unsigned long int *key1, int key1_length,
+                          const unsigned long int *key2, int key2_length);
+int eina_file_map_key_hash(const unsigned long int *key, int key_length);
 
 #endif /* EINA_FILE_COMMON_H_ */
