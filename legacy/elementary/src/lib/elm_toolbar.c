@@ -665,8 +665,8 @@ _elm_toolbar_smart_event(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    if (!sd->items) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
 
-   if ((!strcmp(ev->keyname, "Return")) ||
-            ((!strcmp(ev->keyname, "KP_Enter")) && !ev->string))
+   if ((!strcmp(ev->key, "Return")) ||
+            ((!strcmp(ev->key, "KP_Enter")) && !ev->string))
      {
         if (sd->highlighted_item)
           _item_select(sd->highlighted_item);
@@ -674,8 +674,8 @@ _elm_toolbar_smart_event(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
         if (ret) *ret = EINA_TRUE;
         return;
      }
-   else if ((!strcmp(ev->keyname, "Left")) ||
-            ((!strcmp(ev->keyname, "KP_Left")) && !ev->string))
+   else if ((!strcmp(ev->key, "Left")) ||
+            ((!strcmp(ev->key, "KP_Left")) && !ev->string))
      {
         if (!sd->vertical)
           it = _highlight_next_item_get(obj, sd->bx, EINA_TRUE);
@@ -685,8 +685,8 @@ _elm_toolbar_smart_event(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
              return;
           }
      }
-   else if ((!strcmp(ev->keyname, "Right")) ||
-            ((!strcmp(ev->keyname, "KP_Right")) && !ev->string))
+   else if ((!strcmp(ev->key, "Right")) ||
+            ((!strcmp(ev->key, "KP_Right")) && !ev->string))
      {
         if (!sd->vertical)
           it = _highlight_next_item_get(obj, sd->bx, EINA_FALSE);
@@ -696,8 +696,8 @@ _elm_toolbar_smart_event(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
              return;
           }
      }
-   else if ((!strcmp(ev->keyname, "Up")) ||
-            ((!strcmp(ev->keyname, "KP_Up")) && !ev->string))
+   else if ((!strcmp(ev->key, "Up")) ||
+            ((!strcmp(ev->key, "KP_Up")) && !ev->string))
      {
         if (sd->vertical)
           it = _highlight_next_item_get(obj, sd->bx, EINA_TRUE);
@@ -707,8 +707,8 @@ _elm_toolbar_smart_event(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
              return;
           }
      }
-   else if ((!strcmp(ev->keyname, "Down")) ||
-            ((!strcmp(ev->keyname, "KP_Down")) && !ev->string))
+   else if ((!strcmp(ev->key, "Down")) ||
+            ((!strcmp(ev->key, "KP_Down")) && !ev->string))
      {
         if (sd->vertical)
           it = _highlight_next_item_get(obj, sd->bx, EINA_FALSE);

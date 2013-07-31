@@ -525,31 +525,31 @@ _key_down(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *eve
    ev = (Evas_Event_Key_Down *)event_info;
    GLData *gld = evas_object_data_get(obj, "gld");
 
-   if (strcmp(ev->keyname, "Left") == 0)
+   if (strcmp(ev->key, "Left") == 0)
      {
         gld->view_roty += 5.0;
         return;
      }
 
-   if (strcmp(ev->keyname, "Right") == 0)
+   if (strcmp(ev->key, "Right") == 0)
      {
         gld->view_roty -= 5.0;
         return;
      }
 
-   if (strcmp(ev->keyname, "Up") == 0)
+   if (strcmp(ev->key, "Up") == 0)
      {
         gld->view_rotx += 5.0;
         return;
      }
 
-   if (strcmp(ev->keyname, "Down") == 0)
+   if (strcmp(ev->key, "Down") == 0)
      {
         gld->view_rotx -= 5.0;
         return;
      }
-   if ((strcmp(ev->keyname, "Escape") == 0) ||
-       (strcmp(ev->keyname, "Return") == 0))
+   if ((strcmp(ev->key, "Escape") == 0) ||
+       (strcmp(ev->key, "Return") == 0))
      {
         //_on_done(data, obj, event_info);
         return;

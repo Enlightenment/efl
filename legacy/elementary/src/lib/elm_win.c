@@ -1165,8 +1165,8 @@ _elm_win_smart_event(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    if (type != EVAS_CALLBACK_KEY_DOWN)
      return;
 
-   if ((!strcmp(ev->keyname, "Tab")) ||
-       (!strcmp(ev->keyname, "ISO_Left_Tab")))
+   if ((!strcmp(ev->key, "Tab")) ||
+       (!strcmp(ev->key, "ISO_Left_Tab")))
      {
         if (evas_key_modifier_is_set(ev->modifiers, "Control") ||
             evas_key_modifier_is_set(ev->modifiers, "Alt"))
@@ -1178,29 +1178,29 @@ _elm_win_smart_event(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 
         goto success;
      }
-   else if ((!strcmp(ev->keyname, "Left")) ||
-            ((!strcmp(ev->keyname, "KP_Left")) && (!ev->string)))
+   else if ((!strcmp(ev->key, "Left")) ||
+            ((!strcmp(ev->key, "KP_Left")) && (!ev->string)))
      {
         elm_widget_focus_cycle(obj, ELM_FOCUS_LEFT);
 
         goto success;
      }
-   else if ((!strcmp(ev->keyname, "Right")) ||
-            ((!strcmp(ev->keyname, "KP_Right")) && (!ev->string)))
+   else if ((!strcmp(ev->key, "Right")) ||
+            ((!strcmp(ev->key, "KP_Right")) && (!ev->string)))
      {
         elm_widget_focus_cycle(obj, ELM_FOCUS_RIGHT);
 
         goto success;
      }
-   else if ((!strcmp(ev->keyname, "Up")) ||
-            ((!strcmp(ev->keyname, "KP_Up")) && (!ev->string)))
+   else if ((!strcmp(ev->key, "Up")) ||
+            ((!strcmp(ev->key, "KP_Up")) && (!ev->string)))
      {
         elm_widget_focus_cycle(obj, ELM_FOCUS_UP);
 
         goto success;
      }
-   else if ((!strcmp(ev->keyname, "Down")) ||
-            ((!strcmp(ev->keyname, "KP_Down")) && (!ev->string)))
+   else if ((!strcmp(ev->key, "Down")) ||
+            ((!strcmp(ev->key, "KP_Down")) && (!ev->string)))
      {
         elm_widget_focus_cycle(obj, ELM_FOCUS_DOWN);
 
@@ -2432,7 +2432,7 @@ _debug_key_down(void *data __UNUSED__,
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
      return;
 
-   if ((strcmp(ev->keyname, "F12")) ||
+   if ((strcmp(ev->key, "F12")) ||
        (!evas_key_modifier_is_set(ev->modifiers, "Control")))
      return;
 

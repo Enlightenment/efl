@@ -1017,8 +1017,8 @@ _layout_key_up_cb(void *data,
    if (sd->last_btn_select)
      {
         if (sd->selected_it &&
-            ((strcmp(ev->keyname, "BackSpace") == 0) ||
-             (strcmp(ev->keyname, "Delete") == 0)))
+            ((strcmp(ev->key, "BackSpace") == 0) ||
+             (strcmp(ev->key, "Delete") == 0)))
           {
              item = (Elm_Multibuttonentry_Item *)sd->selected_it;
              if (item && sd->editable)
@@ -1028,8 +1028,8 @@ _layout_key_up_cb(void *data,
                }
           }
         else if (((!sd->selected_it && (sd->n_str == 0) &&
-                   (strcmp(ev->keyname, "BackSpace") == 0)) ||
-                  (strcmp(ev->keyname, "Delete") == 0)))
+                   (strcmp(ev->key, "BackSpace") == 0)) ||
+                  (strcmp(ev->key, "Delete") == 0)))
           {
              item = eina_list_data_get(eina_list_last(sd->items));
              if (item)
@@ -1050,7 +1050,7 @@ _entry_key_down_cb(void *data,
    Evas_Event_Key_Down *ev = (Evas_Event_Key_Down *)event_info;
 
    if (sd->n_str == 1 &&
-       (!strcmp(ev->keyname, "BackSpace") || !strcmp(ev->keyname, "Delete")))
+       (!strcmp(ev->key, "BackSpace") || !strcmp(ev->key, "Delete")))
      sd->last_btn_select = EINA_FALSE;
 }
 
@@ -1069,7 +1069,7 @@ _entry_key_up_cb(void *data,
    str = elm_object_text_get(sd->entry);
 
    if (strlen(str) &&
-       (!strcmp(ev->keyname, "KP_Enter") || !strcmp(ev->keyname, "Return")))
+       (!strcmp(ev->key, "KP_Enter") || !strcmp(ev->key, "Return")))
      {
         _button_item_add(sd, str, MULTIBUTTONENTRY_POS_END, NULL, NULL, NULL);
         sd->n_str = 0;

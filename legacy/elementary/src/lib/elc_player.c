@@ -76,8 +76,8 @@ _elm_player_smart_event(Eo *obj, void *_pd, va_list *list)
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
    if (!sd->video) return;
 
-   if ((!strcmp(ev->keyname, "Left")) ||
-       ((!strcmp(ev->keyname, "KP_Left")) && (!ev->string)))
+   if ((!strcmp(ev->key, "Left")) ||
+       ((!strcmp(ev->key, "KP_Left")) && (!ev->string)))
      {
         double current, last;
 
@@ -94,8 +94,8 @@ _elm_player_smart_event(Eo *obj, void *_pd, va_list *list)
         if (ret) *ret = EINA_TRUE;
         return;
      }
-   if ((!strcmp(ev->keyname, "Right")) ||
-       ((!strcmp(ev->keyname, "KP_Right")) && (!ev->string)))
+   if ((!strcmp(ev->key, "Right")) ||
+       ((!strcmp(ev->key, "KP_Right")) && (!ev->string)))
      {
         double current, last;
 
@@ -113,7 +113,7 @@ _elm_player_smart_event(Eo *obj, void *_pd, va_list *list)
         if (ret) *ret = EINA_TRUE;
         return;
      }
-   if (!strcmp(ev->keyname, "space"))
+   if (!strcmp(ev->key, "space"))
      {
         if (elm_video_is_playing_get(sd->video))
           elm_video_pause(sd->video);

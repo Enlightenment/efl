@@ -44,8 +44,8 @@ _elm_video_smart_event(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
    if (elm_widget_disabled_get(obj)) return;
 
-   if ((!strcmp(ev->keyname, "Left")) ||
-       ((!strcmp(ev->keyname, "KP_Left")) && (!ev->string)))
+   if ((!strcmp(ev->key, "Left")) ||
+       ((!strcmp(ev->key, "KP_Left")) && (!ev->string)))
      {
         double current, last;
 
@@ -64,8 +64,8 @@ _elm_video_smart_event(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
         return;
      }
 
-   if ((!strcmp(ev->keyname, "Right")) ||
-       ((!strcmp(ev->keyname, "KP_Right")) && (!ev->string)))
+   if ((!strcmp(ev->key, "Right")) ||
+       ((!strcmp(ev->key, "KP_Right")) && (!ev->string)))
      {
         double current, last;
 
@@ -85,7 +85,7 @@ _elm_video_smart_event(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
         return;
      }
 
-   if (!strcmp(ev->keyname, "space"))
+   if (!strcmp(ev->key, "space"))
      {
         if (elm_video_is_playing_get(obj))
           elm_video_pause(obj);
@@ -97,7 +97,7 @@ _elm_video_smart_event(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
         return;
      }
 
-   INF("keyname: '%s' not handled", ev->keyname);
+   INF("keyname: '%s' not handled", ev->key);
 
 #else
 

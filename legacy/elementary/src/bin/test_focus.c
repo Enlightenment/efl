@@ -26,7 +26,7 @@ _on_key_down(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUSE
 {
    //Evas_Event_Key_Down *event = einfo;
    //printf("%s %p Key %s Parent %p\n", evas_object_type_get(obj),
-   //       obj, event->keyname, evas_object_smart_parent_get(obj));
+   //       obj, event->key, evas_object_smart_parent_get(obj));
 }
 
 static void

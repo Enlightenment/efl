@@ -975,29 +975,29 @@ _elm_diskselector_smart_event(Eo *obj, void *_pd, va_list *list)
         return;
      }
 
-   if ((!strcmp(ev->keyname, "Left")) ||
-       ((!strcmp(ev->keyname, "KP_Left")) && (!ev->string)) ||
-       (!strcmp(ev->keyname, "Up")) ||
-       ((!strcmp(ev->keyname, "KP_Up")) && (!ev->string)))
+   if ((!strcmp(ev->key, "Left")) ||
+       ((!strcmp(ev->key, "KP_Left")) && (!ev->string)) ||
+       (!strcmp(ev->key, "Up")) ||
+       ((!strcmp(ev->key, "KP_Up")) && (!ev->string)))
      {
         l = sd->selected_item->node->prev;
         if ((!l) && (sd->round))
           l = eina_list_last(sd->items);
      }
-   else if ((!strcmp(ev->keyname, "Right")) ||
-            ((!strcmp(ev->keyname, "KP_Right")) && (!ev->string)) ||
-            (!strcmp(ev->keyname, "Down")) ||
-            ((!strcmp(ev->keyname, "KP_Down")) && (!ev->string)))
+   else if ((!strcmp(ev->key, "Right")) ||
+            ((!strcmp(ev->key, "KP_Right")) && (!ev->string)) ||
+            (!strcmp(ev->key, "Down")) ||
+            ((!strcmp(ev->key, "KP_Down")) && (!ev->string)))
      {
         l = sd->selected_item->node->next;
         if ((!l) && (sd->round))
           l = sd->items;
      }
-   else if ((!strcmp(ev->keyname, "Home")) ||
-            ((!strcmp(ev->keyname, "KP_Home")) && (!ev->string)))
+   else if ((!strcmp(ev->key, "Home")) ||
+            ((!strcmp(ev->key, "KP_Home")) && (!ev->string)))
      l = sd->items;
-   else if ((!strcmp(ev->keyname, "End")) ||
-            ((!strcmp(ev->keyname, "KP_End")) && (!ev->string)))
+   else if ((!strcmp(ev->key, "End")) ||
+            ((!strcmp(ev->key, "KP_End")) && (!ev->string)))
      l = eina_list_last(sd->items);
    else return;
 

@@ -453,9 +453,9 @@ _elm_flipselector_smart_event(Eo *obj, void *_pd, va_list *list)
    ev = event_info;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
 
-   if ((!strcmp(ev->keyname, "Down")) || (!strcmp(ev->keyname, "KP_Down")))
+   if ((!strcmp(ev->key, "Down")) || (!strcmp(ev->key, "KP_Down")))
      is_up = EINA_FALSE;
-   else if ((strcmp(ev->keyname, "Up")) && (strcmp(ev->keyname, "KP_Up")))
+   else if ((strcmp(ev->key, "Up")) && (strcmp(ev->key, "KP_Up")))
      return;
 
    ELM_SAFE_FREE(sd->spin, ecore_timer_del);

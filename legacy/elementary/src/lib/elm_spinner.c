@@ -443,10 +443,10 @@ _elm_spinner_smart_event(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
         Evas_Event_Key_Down *ev = event_info;
 
         if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
-        else if (!strcmp(ev->keyname, "Left") ||
-                 ((!strcmp(ev->keyname, "KP_Left")) && (!ev->string)) ||
-                 !strcmp(ev->keyname, "Down") ||
-                 ((!strcmp(ev->keyname, "KP_Down")) && (!ev->string)))
+        else if (!strcmp(ev->key, "Left") ||
+                 ((!strcmp(ev->key, "KP_Left")) && (!ev->string)) ||
+                 !strcmp(ev->key, "Down") ||
+                 ((!strcmp(ev->key, "KP_Down")) && (!ev->string)))
           {
              _val_dec_start(obj);
              elm_layout_signal_emit(obj, "elm,left,anim,activate", "elm");
@@ -454,10 +454,10 @@ _elm_spinner_smart_event(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
              if (ret) *ret = EINA_TRUE;
              return;
           }
-        else if (!strcmp(ev->keyname, "Right") ||
-                 ((!strcmp(ev->keyname, "KP_Right")) && (!ev->string)) ||
-                 !strcmp(ev->keyname, "Up") ||
-                 ((!strcmp(ev->keyname, "KP_Up")) && (!ev->string)))
+        else if (!strcmp(ev->key, "Right") ||
+                 ((!strcmp(ev->key, "KP_Right")) && (!ev->string)) ||
+                 !strcmp(ev->key, "Up") ||
+                 ((!strcmp(ev->key, "KP_Up")) && (!ev->string)))
           {
              _val_inc_start(obj);
              elm_layout_signal_emit(obj, "elm,right,anim,activate", "elm");
@@ -471,15 +471,15 @@ _elm_spinner_smart_event(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
         Evas_Event_Key_Down *ev = event_info;
 
         if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
-        if (!strcmp(ev->keyname, "Right") ||
-            ((!strcmp(ev->keyname, "KP_Right")) && (!ev->string)) ||
-            !strcmp(ev->keyname, "Up") ||
-            ((!strcmp(ev->keyname, "KP_Up")) && (!ev->string)))
+        if (!strcmp(ev->key, "Right") ||
+            ((!strcmp(ev->key, "KP_Right")) && (!ev->string)) ||
+            !strcmp(ev->key, "Up") ||
+            ((!strcmp(ev->key, "KP_Up")) && (!ev->string)))
           _val_inc_stop(obj);
-        else if (!strcmp(ev->keyname, "Left") ||
-                 ((!strcmp(ev->keyname, "KP_Left")) && (!ev->string)) ||
-                 !strcmp(ev->keyname, "Down") ||
-                 ((!strcmp(ev->keyname, "KP_Down")) && (!ev->string)))
+        else if (!strcmp(ev->key, "Left") ||
+                 ((!strcmp(ev->key, "KP_Left")) && (!ev->string)) ||
+                 !strcmp(ev->key, "Down") ||
+                 ((!strcmp(ev->key, "KP_Down")) && (!ev->string)))
           _val_dec_stop(obj);
         else return;
 

@@ -126,7 +126,7 @@ _elm_ctxpopup_smart_event(Eo *obj, void *_pd, va_list *list)
    if (type != EVAS_CALLBACK_KEY_DOWN) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
 
-   if (!strcmp(ev->keyname, "Tab"))
+   if (!strcmp(ev->key, "Tab"))
      {
         if (evas_key_modifier_is_set(ev->modifiers, "Shift"))
           elm_widget_focus_cycle(sd->box, ELM_FOCUS_PREVIOUS);
@@ -136,30 +136,30 @@ _elm_ctxpopup_smart_event(Eo *obj, void *_pd, va_list *list)
         return;
      }
 
-   if (((!strcmp(ev->keyname, "Left")) ||
-        (!strcmp(ev->keyname, "KP_Left")) ||
-        (!strcmp(ev->keyname, "Right")) ||
-        (!strcmp(ev->keyname, "KP_Right")) ||
-        (!strcmp(ev->keyname, "Up")) ||
-        (!strcmp(ev->keyname, "KP_Up")) ||
-        (!strcmp(ev->keyname, "Down")) ||
-        (!strcmp(ev->keyname, "KP_Down"))) && (!ev->string))
+   if (((!strcmp(ev->key, "Left")) ||
+        (!strcmp(ev->key, "KP_Left")) ||
+        (!strcmp(ev->key, "Right")) ||
+        (!strcmp(ev->key, "KP_Right")) ||
+        (!strcmp(ev->key, "Up")) ||
+        (!strcmp(ev->key, "KP_Up")) ||
+        (!strcmp(ev->key, "Down")) ||
+        (!strcmp(ev->key, "KP_Down"))) && (!ev->string))
      {
         if (sd->box)
           {
              double degree = 0.0;
 
-             if ((!strcmp(ev->keyname, "Left")) ||
-                 (!strcmp(ev->keyname, "KP_Left")))
+             if ((!strcmp(ev->key, "Left")) ||
+                 (!strcmp(ev->key, "KP_Left")))
                degree = 270.0;
-             else if ((!strcmp(ev->keyname, "Right")) ||
-                      (!strcmp(ev->keyname, "KP_Right")))
+             else if ((!strcmp(ev->key, "Right")) ||
+                      (!strcmp(ev->key, "KP_Right")))
                degree = 90.0;
-             else if ((!strcmp(ev->keyname, "Up")) ||
-                      (!strcmp(ev->keyname, "KP_Up")))
+             else if ((!strcmp(ev->key, "Up")) ||
+                      (!strcmp(ev->key, "KP_Up")))
                degree = 0.0;
-             else if ((!strcmp(ev->keyname, "Down")) ||
-                      (!strcmp(ev->keyname, "KP_Down")))
+             else if ((!strcmp(ev->key, "Down")) ||
+                      (!strcmp(ev->key, "KP_Down")))
                degree = 180.0;
 
              elm_widget_focus_direction_go(obj, degree);
@@ -169,7 +169,7 @@ _elm_ctxpopup_smart_event(Eo *obj, void *_pd, va_list *list)
           }
      }
 
-   if (strcmp(ev->keyname, "Escape")) return;
+   if (strcmp(ev->key, "Escape")) return;
 
    evas_object_hide(obj);
    ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;

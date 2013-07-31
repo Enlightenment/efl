@@ -1391,7 +1391,7 @@ _elm_naviframe_smart_event(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
    if (elm_widget_disabled_get(obj)) return;
    if (type != EVAS_CALLBACK_KEY_DOWN) return;
-   if (strcmp(ev->keyname, "BackSpace")) return;
+   if (strcmp(ev->key, "BackSpace")) return;
 
    eo_do(obj, elm_obj_naviframe_top_item_get((Elm_Object_Item **)&it));
    if (!it) return;

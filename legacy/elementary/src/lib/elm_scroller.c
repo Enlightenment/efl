@@ -86,14 +86,14 @@ _elm_scroller_smart_event(Eo *obj, void *_pd, va_list *list)
          evas_obj_position_get(&c_x, &c_y),
          evas_obj_size_get(&max_x, &max_y));
 
-   if (((!strcmp(ev->keyname, "Left")) ||
-        (!strcmp(ev->keyname, "KP_Left")) ||
-        (!strcmp(ev->keyname, "Right")) ||
-        (!strcmp(ev->keyname, "KP_Right")) ||
-        (!strcmp(ev->keyname, "Up")) ||
-        (!strcmp(ev->keyname, "KP_Up")) ||
-        (!strcmp(ev->keyname, "Down")) ||
-        (!strcmp(ev->keyname, "KP_Down"))) && (!ev->string))
+   if (((!strcmp(ev->key, "Left")) ||
+        (!strcmp(ev->key, "KP_Left")) ||
+        (!strcmp(ev->key, "Right")) ||
+        (!strcmp(ev->key, "KP_Right")) ||
+        (!strcmp(ev->key, "Up")) ||
+        (!strcmp(ev->key, "KP_Up")) ||
+        (!strcmp(ev->key, "Down")) ||
+        (!strcmp(ev->key, "KP_Down"))) && (!ev->string))
      {
         Evas_Object *current_focus = NULL;
         Eina_List *can_focus_list = NULL;
@@ -157,17 +157,17 @@ _elm_scroller_smart_event(Eo *obj, void *_pd, va_list *list)
 
              list_data_get = eina_list_data_get;
 
-             if ((!strcmp(ev->keyname, "Left")) ||
-                 (!strcmp(ev->keyname, "KP_Left")))
+             if ((!strcmp(ev->key, "Left")) ||
+                 (!strcmp(ev->key, "KP_Left")))
                degree = 270.0;
-             else if ((!strcmp(ev->keyname, "Right")) ||
-                      (!strcmp(ev->keyname, "KP_Right")))
+             else if ((!strcmp(ev->key, "Right")) ||
+                      (!strcmp(ev->key, "KP_Right")))
                degree = 90.0;
-             else if ((!strcmp(ev->keyname, "Up")) ||
-                      (!strcmp(ev->keyname, "KP_Up")))
+             else if ((!strcmp(ev->key, "Up")) ||
+                      (!strcmp(ev->key, "KP_Up")))
                degree = 0.0;
-             else if ((!strcmp(ev->keyname, "Down")) ||
-                      (!strcmp(ev->keyname, "KP_Down")))
+             else if ((!strcmp(ev->key, "Down")) ||
+                      (!strcmp(ev->key, "KP_Down")))
                degree = 180.0;
 
              if (elm_widget_focus_list_direction_get
@@ -198,50 +198,50 @@ _elm_scroller_smart_event(Eo *obj, void *_pd, va_list *list)
                }
           }
      }
-   if ((!strcmp(ev->keyname, "Left")) ||
-       ((!strcmp(ev->keyname, "KP_Left")) && (!ev->string)))
+   if ((!strcmp(ev->key, "Left")) ||
+       ((!strcmp(ev->key, "KP_Left")) && (!ev->string)))
      {
         if (x <= 0) return;
         x -= step_x;
      }
-   else if ((!strcmp(ev->keyname, "Right")) ||
-            ((!strcmp(ev->keyname, "KP_Right")) && (!ev->string)))
+   else if ((!strcmp(ev->key, "Right")) ||
+            ((!strcmp(ev->key, "KP_Right")) && (!ev->string)))
      {
         if (x >= (max_x - v_w)) return;
         x += step_x;
      }
-   else if ((!strcmp(ev->keyname, "Up")) ||
-            ((!strcmp(ev->keyname, "KP_Up")) && (!ev->string)))
+   else if ((!strcmp(ev->key, "Up")) ||
+            ((!strcmp(ev->key, "KP_Up")) && (!ev->string)))
      {
         if (y == 0) return;
         y -= step_y;
      }
-   else if ((!strcmp(ev->keyname, "Down")) ||
-            ((!strcmp(ev->keyname, "KP_Down")) && (!ev->string)))
+   else if ((!strcmp(ev->key, "Down")) ||
+            ((!strcmp(ev->key, "KP_Down")) && (!ev->string)))
      {
         if (y >= (max_y - v_h)) return;
         y += step_y;
      }
-   else if ((!strcmp(ev->keyname, "Home")) ||
-            ((!strcmp(ev->keyname, "KP_Home")) && (!ev->string)))
+   else if ((!strcmp(ev->key, "Home")) ||
+            ((!strcmp(ev->key, "KP_Home")) && (!ev->string)))
      {
         y = 0;
      }
-   else if ((!strcmp(ev->keyname, "End")) ||
-            ((!strcmp(ev->keyname, "KP_End")) && (!ev->string)))
+   else if ((!strcmp(ev->key, "End")) ||
+            ((!strcmp(ev->key, "KP_End")) && (!ev->string)))
      {
         y = max_y - v_h;
      }
-   else if ((!strcmp(ev->keyname, "Prior")) ||
-            ((!strcmp(ev->keyname, "KP_Prior")) && (!ev->string)))
+   else if ((!strcmp(ev->key, "Prior")) ||
+            ((!strcmp(ev->key, "KP_Prior")) && (!ev->string)))
      {
         if (page_y < 0)
           y -= -(page_y * v_h) / 100;
         else
           y -= page_y;
      }
-   else if ((!strcmp(ev->keyname, "Next")) ||
-            ((!strcmp(ev->keyname, "KP_Next")) && (!ev->string)))
+   else if ((!strcmp(ev->key, "Next")) ||
+            ((!strcmp(ev->key, "KP_Next")) && (!ev->string)))
      {
         if (page_y < 0)
           y += -(page_y * v_h) / 100;

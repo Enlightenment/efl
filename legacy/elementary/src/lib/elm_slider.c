@@ -384,8 +384,8 @@ key_down:
    ev = event_info;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
    if (elm_widget_disabled_get(obj)) return;
-   if ((!strcmp(ev->keyname, "Left")) ||
-       ((!strcmp(ev->keyname, "KP_Left")) && (!ev->string)))
+   if ((!strcmp(ev->key, "Left")) ||
+       ((!strcmp(ev->key, "KP_Left")) && (!ev->string)))
      {
         if (!sd->horizontal) return;
         if (!sd->inverted) _drag_down(obj, NULL, NULL, NULL);
@@ -393,8 +393,8 @@ key_down:
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
         goto success;
      }
-   else if ((!strcmp(ev->keyname, "Right")) ||
-            ((!strcmp(ev->keyname, "KP_Right")) && (!ev->string)))
+   else if ((!strcmp(ev->key, "Right")) ||
+            ((!strcmp(ev->key, "KP_Right")) && (!ev->string)))
      {
         if (!sd->horizontal) return;
         if (!sd->inverted) _drag_up(obj, NULL, NULL, NULL);
@@ -402,8 +402,8 @@ key_down:
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
         goto success;
      }
-   else if ((!strcmp(ev->keyname, "Up")) ||
-            ((!strcmp(ev->keyname, "KP_Up")) && (!ev->string)))
+   else if ((!strcmp(ev->key, "Up")) ||
+            ((!strcmp(ev->key, "KP_Up")) && (!ev->string)))
      {
         if (sd->horizontal) return;
         if (sd->inverted) _drag_up(obj, NULL, NULL, NULL);
@@ -411,8 +411,8 @@ key_down:
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
         goto success;
      }
-   else if ((!strcmp(ev->keyname, "Down")) ||
-            ((!strcmp(ev->keyname, "KP_Down")) && (!ev->string)))
+   else if ((!strcmp(ev->key, "Down")) ||
+            ((!strcmp(ev->key, "KP_Down")) && (!ev->string)))
      {
         if (sd->horizontal) return;
         if (sd->inverted) _drag_down(obj, NULL, NULL, NULL);

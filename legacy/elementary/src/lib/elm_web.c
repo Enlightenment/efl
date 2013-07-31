@@ -200,7 +200,7 @@ _elm_web_smart_event(Eo *obj, void *_pd, va_list *list)
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
    if (elm_widget_disabled_get(obj)) return;
 
-   if ((!strcmp(ev->keyname, "Tab")) && (!sd->tab_propagate))
+   if ((!strcmp(ev->key, "Tab")) && (!sd->tab_propagate))
      {
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
         if (ret) *ret = EINA_TRUE;

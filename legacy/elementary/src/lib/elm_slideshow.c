@@ -42,8 +42,8 @@ _elm_slideshow_smart_event(Eo *obj, void *_pd, va_list *list)
 
    Elm_Slideshow_Smart_Data *sd = _pd;
 
-   if ((!strcmp(ev->keyname, "Left")) ||
-       ((!strcmp(ev->keyname, "KP_Left")) && (!ev->string)))
+   if ((!strcmp(ev->key, "Left")) ||
+       ((!strcmp(ev->key, "KP_Left")) && (!ev->string)))
      {
         elm_slideshow_previous(obj);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
@@ -52,8 +52,8 @@ _elm_slideshow_smart_event(Eo *obj, void *_pd, va_list *list)
         return;
      }
 
-   if ((!strcmp(ev->keyname, "Right")) ||
-       ((!strcmp(ev->keyname, "KP_Right")) && (!ev->string)))
+   if ((!strcmp(ev->key, "Right")) ||
+       ((!strcmp(ev->key, "KP_Right")) && (!ev->string)))
      {
         elm_slideshow_next(obj);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
@@ -62,9 +62,9 @@ _elm_slideshow_smart_event(Eo *obj, void *_pd, va_list *list)
         return;
      }
 
-   if ((!strcmp(ev->keyname, "Return")) ||
-       (!strcmp(ev->keyname, "KP_Enter")) ||
-       (!strcmp(ev->keyname, "space")))
+   if ((!strcmp(ev->key, "Return")) ||
+       (!strcmp(ev->key, "KP_Enter")) ||
+       (!strcmp(ev->key, "space")))
      {
         if (sd->timeout)
           {

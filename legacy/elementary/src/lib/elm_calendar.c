@@ -857,13 +857,13 @@ _elm_calendar_smart_event(Eo *obj, void *_pd, va_list *list)
    if (type != EVAS_CALLBACK_KEY_DOWN) return;
    if (elm_widget_disabled_get(obj)) return;
 
-   if ((!strcmp(ev->keyname, "Prior")) ||
-       ((!strcmp(ev->keyname, "KP_Prior")) && (!ev->string)))
+   if ((!strcmp(ev->key, "Prior")) ||
+       ((!strcmp(ev->key, "KP_Prior")) && (!ev->string)))
      {
         if (_update_data(obj, EINA_TRUE, -1)) _populate(obj);
      }
-   else if ((!strcmp(ev->keyname, "Next")) ||
-            ((!strcmp(ev->keyname, "KP_Next")) && (!ev->string)))
+   else if ((!strcmp(ev->key, "Next")) ||
+            ((!strcmp(ev->key, "KP_Next")) && (!ev->string)))
      {
         if (_update_data(obj, EINA_TRUE, 1)) _populate(obj);
      }
@@ -871,32 +871,32 @@ _elm_calendar_smart_event(Eo *obj, void *_pd, va_list *list)
             && ((sd->select_mode != ELM_CALENDAR_SELECT_MODE_ONDEMAND)
                 || (sd->selected)))
      {
-        if ((!strcmp(ev->keyname, "Left")) ||
-            ((!strcmp(ev->keyname, "KP_Left")) && (!ev->string)))
+        if ((!strcmp(ev->key, "Left")) ||
+            ((!strcmp(ev->key, "KP_Left")) && (!ev->string)))
           {
              if ((sd->select_mode != ELM_CALENDAR_SELECT_MODE_ONDEMAND)
                  || ((sd->shown_time.tm_year == sd->selected_time.tm_year)
                      && (sd->shown_time.tm_mon == sd->selected_time.tm_mon)))
                _update_sel_it(obj, sd->selected_it - 1);
           }
-        else if ((!strcmp(ev->keyname, "Right")) ||
-                 ((!strcmp(ev->keyname, "KP_Right")) && (!ev->string)))
+        else if ((!strcmp(ev->key, "Right")) ||
+                 ((!strcmp(ev->key, "KP_Right")) && (!ev->string)))
           {
              if ((sd->select_mode != ELM_CALENDAR_SELECT_MODE_ONDEMAND)
                  || ((sd->shown_time.tm_year == sd->selected_time.tm_year)
                      && (sd->shown_time.tm_mon == sd->selected_time.tm_mon)))
                _update_sel_it(obj, sd->selected_it + 1);
           }
-        else if ((!strcmp(ev->keyname, "Up")) ||
-                 ((!strcmp(ev->keyname, "KP_Up")) && (!ev->string)))
+        else if ((!strcmp(ev->key, "Up")) ||
+                 ((!strcmp(ev->key, "KP_Up")) && (!ev->string)))
           {
              if ((sd->select_mode != ELM_CALENDAR_SELECT_MODE_ONDEMAND)
                  || ((sd->shown_time.tm_year == sd->selected_time.tm_year)
                      && (sd->shown_time.tm_mon == sd->selected_time.tm_mon)))
                _update_sel_it(obj, sd->selected_it - ELM_DAY_LAST);
           }
-        else if ((!strcmp(ev->keyname, "Down")) ||
-                 ((!strcmp(ev->keyname, "KP_Down")) && (!ev->string)))
+        else if ((!strcmp(ev->key, "Down")) ||
+                 ((!strcmp(ev->key, "KP_Down")) && (!ev->string)))
           {
              if ((sd->select_mode != ELM_CALENDAR_SELECT_MODE_ONDEMAND)
                  || ((sd->shown_time.tm_year == sd->selected_time.tm_year)

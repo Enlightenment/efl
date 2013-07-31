@@ -3208,9 +3208,9 @@ _zoom_with_wheel_test(Evas_Object *obj,
       case EVAS_CALLBACK_KEY_UP:
       {
          Evas_Event_Key_Up *p = event_info;
-         if ((!strcmp(p->keyname, "Control_L")) ||
+         if ((!strcmp(p->key, "Control_L")) ||
              /* Test if we ended a zoom gesture when releasing CTRL */
-             (!strcmp(p->keyname, "Control_R")))
+             (!strcmp(p->key, "Control_R")))
            {
               if ((st->zoom_wheel) &&
                   ((gesture_zoom->state == ELM_GESTURE_STATE_START) ||

@@ -1499,7 +1499,7 @@ _key_down_cb(void *data,
 {
    Evas_Event_Key_Down *ev = event_info;
 
-   if (!strcmp(ev->keyname, "Menu"))
+   if (!strcmp(ev->key, "Menu"))
      _menu_call(data);
 }
 

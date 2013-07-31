@@ -1430,7 +1430,7 @@ _elm_popup_smart_event(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    if (type != EVAS_CALLBACK_KEY_DOWN) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
 
-   if (!strcmp(ev->keyname, "Tab"))
+   if (!strcmp(ev->key, "Tab"))
      {
         if (evas_key_modifier_is_set(ev->modifiers, "Shift"))
           elm_widget_focus_cycle(obj, ELM_FOCUS_PREVIOUS);
@@ -1439,26 +1439,26 @@ _elm_popup_smart_event(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 
         goto success;
      }
-   else if ((!strcmp(ev->keyname, "Left")) ||
-            ((!strcmp(ev->keyname, "KP_Left")) && (!ev->string)))
+   else if ((!strcmp(ev->key, "Left")) ||
+            ((!strcmp(ev->key, "KP_Left")) && (!ev->string)))
      {
         elm_widget_focus_direction_go(obj, 270.0);
         goto success;
      }
-   else if ((!strcmp(ev->keyname, "Right")) ||
-            ((!strcmp(ev->keyname, "KP_Right")) && (!ev->string)))
+   else if ((!strcmp(ev->key, "Right")) ||
+            ((!strcmp(ev->key, "KP_Right")) && (!ev->string)))
      {
         elm_widget_focus_direction_go(obj, 90.0);
         goto success;
      }
-   else if ((!strcmp(ev->keyname, "Up")) ||
-            ((!strcmp(ev->keyname, "KP_Up")) && (!ev->string)))
+   else if ((!strcmp(ev->key, "Up")) ||
+            ((!strcmp(ev->key, "KP_Up")) && (!ev->string)))
      {
         elm_widget_focus_direction_go(obj, 0.0);
         goto success;
      }
-   else if ((!strcmp(ev->keyname, "Down")) ||
-            ((!strcmp(ev->keyname, "KP_Down")) && (!ev->string)))
+   else if ((!strcmp(ev->key, "Down")) ||
+            ((!strcmp(ev->key, "KP_Down")) && (!ev->string)))
      {
         elm_widget_focus_direction_go(obj, 180.0);
         goto success;

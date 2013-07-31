@@ -1663,8 +1663,8 @@ _elm_colorselector_smart_event(Eo *obj, void *_pd, va_list *list)
    if (elm_widget_disabled_get(obj)) return;
    if (!sd->selected) sd->selected = sd->items;
 
-   if ((!strcmp(ev->keyname, "Left")) ||
-       ((!strcmp(ev->keyname, "KP_Left")) && (!ev->string)))
+   if ((!strcmp(ev->key, "Left")) ||
+       ((!strcmp(ev->key, "KP_Left")) && (!ev->string)))
      {
         if (sd->focused == ELM_COLORSELECTOR_PALETTE && sd->selected)
           cl = eina_list_prev(sd->selected);
@@ -1672,8 +1672,8 @@ _elm_colorselector_smart_event(Eo *obj, void *_pd, va_list *list)
           _button_clicked_cb(sd->cb_data[sd->sel_color_type], sd->cb_data[sd->sel_color_type]->lbt, NULL);
         else return;
      }
-   else if ((!strcmp(ev->keyname, "Right")) ||
-            ((!strcmp(ev->keyname, "KP_Right")) && (!ev->string)))
+   else if ((!strcmp(ev->key, "Right")) ||
+            ((!strcmp(ev->key, "KP_Right")) && (!ev->string)))
      {
         if (sd->focused == ELM_COLORSELECTOR_PALETTE && sd->selected)
           cl = eina_list_next(sd->selected);
@@ -1681,8 +1681,8 @@ _elm_colorselector_smart_event(Eo *obj, void *_pd, va_list *list)
           _button_clicked_cb(sd->cb_data[sd->sel_color_type], sd->cb_data[sd->sel_color_type]->rbt, NULL);
         else return;
      }
-   else if ((!strcmp(ev->keyname, "Up")) ||
-            ((!strcmp(ev->keyname, "KP_Up")) && (!ev->string)))
+   else if ((!strcmp(ev->key, "Up")) ||
+            ((!strcmp(ev->key, "KP_Up")) && (!ev->string)))
      {
         if (sd->focused == ELM_COLORSELECTOR_COMPONENTS)
           {
@@ -1710,8 +1710,8 @@ _elm_colorselector_smart_event(Eo *obj, void *_pd, va_list *list)
             if (!cl) cl = sd->selected;
         }
      }
-   else if ((!strcmp(ev->keyname, "Down")) ||
-            ((!strcmp(ev->keyname, "KP_Down")) && (!ev->string)))
+   else if ((!strcmp(ev->key, "Down")) ||
+            ((!strcmp(ev->key, "KP_Down")) && (!ev->string)))
      {
         if (sd->focused == ELM_COLORSELECTOR_PALETTE)
           {

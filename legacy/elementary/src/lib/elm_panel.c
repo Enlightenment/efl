@@ -252,9 +252,9 @@ _elm_panel_smart_event(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    if ((src != obj) || (type != EVAS_CALLBACK_KEY_DOWN)) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
 
-   if ((strcmp(ev->keyname, "Return")) &&
-       (strcmp(ev->keyname, "KP_Enter")) &&
-       (strcmp(ev->keyname, "space")))
+   if ((strcmp(ev->key, "Return")) &&
+       (strcmp(ev->key, "KP_Enter")) &&
+       (strcmp(ev->key, "space")))
      return;
 
    _panel_toggle(NULL, obj, NULL, NULL);

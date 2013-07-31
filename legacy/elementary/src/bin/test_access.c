@@ -312,9 +312,9 @@ _key_down_cb(void *data, int type __UNUSED__, void *ei)
    a = calloc(1, sizeof(Elm_Access_Action_Info));
    if (!a) return ECORE_CALLBACK_PASS_ON;
 
-   if (ev && ev->keyname)
+   if (ev && ev->key)
      {
-        if (!strcmp(ev->keyname, "F1"))
+        if (!strcmp(ev->key, "F1"))
           {
              a->highlight_cycle = EINA_TRUE;
              elm_access_action(data, ELM_ACCESS_ACTION_HIGHLIGHT_NEXT, a);

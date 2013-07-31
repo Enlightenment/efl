@@ -1733,8 +1733,8 @@ _elm_gengrid_smart_event(Eo *obj, void *_pd, va_list *list)
          elm_scrollable_interface_page_size_get(&page_x, &page_y),
          elm_scrollable_interface_content_viewport_size_get(&v_w, &v_h));
 
-   if ((!strcmp(ev->keyname, "Left")) ||
-       ((!strcmp(ev->keyname, "KP_Left")) && (!ev->string)))
+   if ((!strcmp(ev->key, "Left")) ||
+       ((!strcmp(ev->key, "KP_Left")) && (!ev->string)))
      {
         if ((sd->horizontal) &&
             (((evas_key_modifier_is_set(ev->modifiers, "Shift")) &&
@@ -1757,8 +1757,8 @@ _elm_gengrid_smart_event(Eo *obj, void *_pd, va_list *list)
         else
           x -= step_x;
      }
-   else if ((!strcmp(ev->keyname, "Right")) ||
-            ((!strcmp(ev->keyname, "KP_Right")) && (!ev->string)))
+   else if ((!strcmp(ev->key, "Right")) ||
+            ((!strcmp(ev->key, "KP_Right")) && (!ev->string)))
      {
         if ((sd->horizontal) &&
             (((evas_key_modifier_is_set(ev->modifiers, "Shift")) &&
@@ -1781,8 +1781,8 @@ _elm_gengrid_smart_event(Eo *obj, void *_pd, va_list *list)
         else
           x += step_x;
      }
-   else if ((!strcmp(ev->keyname, "Up")) ||
-            ((!strcmp(ev->keyname, "KP_Up")) && (!ev->string)))
+   else if ((!strcmp(ev->key, "Up")) ||
+            ((!strcmp(ev->key, "KP_Up")) && (!ev->string)))
      {
         if ((sd->horizontal) &&
             (((evas_key_modifier_is_set(ev->modifiers, "Shift")) &&
@@ -1805,8 +1805,8 @@ _elm_gengrid_smart_event(Eo *obj, void *_pd, va_list *list)
         else
           y -= step_y;
      }
-   else if ((!strcmp(ev->keyname, "Down")) ||
-            ((!strcmp(ev->keyname, "KP_Down")) && (!ev->string)))
+   else if ((!strcmp(ev->key, "Down")) ||
+            ((!strcmp(ev->key, "KP_Down")) && (!ev->string)))
      {
         if ((sd->horizontal) &&
             (((evas_key_modifier_is_set(ev->modifiers, "Shift")) &&
@@ -1829,8 +1829,8 @@ _elm_gengrid_smart_event(Eo *obj, void *_pd, va_list *list)
         else
           y += step_y;
      }
-   else if ((!strcmp(ev->keyname, "Home")) ||
-            ((!strcmp(ev->keyname, "KP_Home")) && (!ev->string)))
+   else if ((!strcmp(ev->key, "Home")) ||
+            ((!strcmp(ev->key, "KP_Home")) && (!ev->string)))
      {
         it = elm_gengrid_first_item_get(obj);
         elm_gengrid_item_bring_in(it, ELM_GENGRID_ITEM_SCROLLTO_IN);
@@ -1839,8 +1839,8 @@ _elm_gengrid_smart_event(Eo *obj, void *_pd, va_list *list)
         if (ret) *ret = EINA_TRUE;
         return;
      }
-   else if ((!strcmp(ev->keyname, "End")) ||
-            ((!strcmp(ev->keyname, "KP_End")) && (!ev->string)))
+   else if ((!strcmp(ev->key, "End")) ||
+            ((!strcmp(ev->key, "KP_End")) && (!ev->string)))
      {
         it = elm_gengrid_last_item_get(obj);
         elm_gengrid_item_bring_in(it, ELM_GENGRID_ITEM_SCROLLTO_IN);
@@ -1849,8 +1849,8 @@ _elm_gengrid_smart_event(Eo *obj, void *_pd, va_list *list)
         if (ret) *ret = EINA_TRUE;
         return;
      }
-   else if ((!strcmp(ev->keyname, "Prior")) ||
-            ((!strcmp(ev->keyname, "KP_Prior")) && (!ev->string)))
+   else if ((!strcmp(ev->key, "Prior")) ||
+            ((!strcmp(ev->key, "KP_Prior")) && (!ev->string)))
      {
         if (sd->horizontal)
           {
@@ -1867,8 +1867,8 @@ _elm_gengrid_smart_event(Eo *obj, void *_pd, va_list *list)
                y -= page_y;
           }
      }
-   else if ((!strcmp(ev->keyname, "Next")) ||
-            ((!strcmp(ev->keyname, "KP_Next")) && (!ev->string)))
+   else if ((!strcmp(ev->key, "Next")) ||
+            ((!strcmp(ev->key, "KP_Next")) && (!ev->string)))
      {
         if (sd->horizontal)
           {
@@ -1885,16 +1885,16 @@ _elm_gengrid_smart_event(Eo *obj, void *_pd, va_list *list)
                y += page_y;
           }
      }
-   else if (!strcmp(ev->keyname, "Escape"))
+   else if (!strcmp(ev->key, "Escape"))
      {
         if (!_all_items_deselect(sd)) return;
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
         if (ret) *ret = EINA_TRUE;
         return;
      }
-   else if (((!strcmp(ev->keyname, "Return")) ||
-             (!strcmp(ev->keyname, "KP_Enter")) ||
-             (!strcmp(ev->keyname, "space")))
+   else if (((!strcmp(ev->key, "Return")) ||
+             (!strcmp(ev->key, "KP_Enter")) ||
+             (!strcmp(ev->key, "space")))
             && (!sd->multi) && (sd->selected))
      {
         it = elm_gengrid_selected_item_get(obj);
