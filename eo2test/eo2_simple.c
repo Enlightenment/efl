@@ -64,7 +64,7 @@ static Eo2_Op_Description op_descs [] = {
        EO2_OP_FUNC(_get, eo2_get, "Get X"),
        EO2_OP_FUNC(_set, eo2_set, "Set X"),
        EO2_OP_CLASS_FUNC(_class_hello, eo2_class_hello, "Class says hello"),
-       EO2_OP_FUNC_VIRTUAL(eo2_virtual, "Virtual Func"),
+       EO2_OP_FUNC(NULL, eo2_virtual, "Virtual Func"),
        EO2_OP_SENTINEL
 };
 
