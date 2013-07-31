@@ -259,6 +259,8 @@ _on_slideshow_end(void *data,
    elm_layout_content_unset(data, "elm.swallow.2");
 
    elm_layout_content_set(data, "elm.swallow.1", VIEW(item));
+   elm_layout_signal_emit(data, "anim,end", "elm");
+   // XXX: fort backwards compat
    elm_layout_signal_emit(data, "anim,end", "slideshow");
 
    if (emission != NULL)
@@ -336,6 +338,10 @@ _elm_slideshow_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    if (eina_list_count(priv->layout.list) > 0)
      priv->layout.current = eina_list_data_get(priv->layout.list);
 
+   edje_object_signal_callback_add
+     (wd->resize_obj, "end", "elm", _on_slideshow_end,
+     obj);
+   // XXX: for backwards compat :(
    edje_object_signal_callback_add
      (wd->resize_obj, "end", "slideshow", _on_slideshow_end,
      obj);
@@ -489,6 +495,8 @@ elm_slideshow_item_show(Elm_Object_Item *it)
      sprintf(buf,"none,next");
    else
      snprintf(buf, sizeof(buf), "%s,next", sd->transition);
+   elm_layout_signal_emit(WIDGET(item), buf, "elm");
+   // XXX: for backwards compat
    elm_layout_signal_emit(WIDGET(item), buf, "slideshow");
 
    sd->previous = sd->current;
@@ -529,6 +537,8 @@ _elm_slideshow_next(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
      sprintf(buf,"none,next");
    else
      snprintf(buf, sizeof(buf), "%s,next", sd->transition);
+   elm_layout_signal_emit(obj, buf, "elm");
+   // XXX: for backwards compat
    elm_layout_signal_emit(obj, buf, "slideshow");
 
    sd->previous = sd->current;
@@ -569,6 +579,8 @@ _elm_slideshow_previous(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
      sprintf(buf,"none,previous");
    else
      snprintf(buf, 1024, "%s,previous", sd->transition);
+   elm_layout_signal_emit(obj, buf, "elm");
+   // XXX: for backwards compat
    elm_layout_signal_emit(obj, buf, "slideshow");
 
    sd->previous = sd->current;
@@ -736,6 +748,8 @@ _elm_slideshow_layout_set(Eo *obj, void *_pd, va_list *list)
 
    sd->layout.current = layout;
    snprintf(buf, sizeof(buf), "layout,%s", layout);
+   elm_layout_signal_emit(obj, buf, "elm");
+   // XXX: for bakcwards compat
    elm_layout_signal_emit(obj, buf, "slideshow");
 }
 
