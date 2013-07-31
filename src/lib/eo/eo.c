@@ -573,11 +573,6 @@ _eo2_class_funcs_set(_Eo_Class *klass)
              op_desc->op = op_id;
              op_id++;
           }
-        else if (op_desc->op == EO2_OP_VIRTUAL)
-          {
-             op_desc->op = op_id;
-             op_id++;
-          }
         else if (op_desc->op == EO2_OP_OVERRIDE)
           {
              if (klass->parent == NULL)
