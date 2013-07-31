@@ -64,9 +64,6 @@ struct _Evas_Object_Image_Pixels
    } func;
 
    Evas_Video_Surface video;
-
-   const char       *tmpf;
-   int               tmpf_fd;
 };
 
 struct _Evas_Object_Image_State
@@ -181,8 +178,6 @@ static void _proxy_unset(Evas_Object *proxy, Evas_Object_Protected_Data *obj, Ev
 static void _proxy_set(Evas_Object *proxy, Evas_Object *src);
 static void _proxy_error(Evas_Object *proxy, void *context, void *output, void *surface, int x, int y, Eina_Bool do_async);
 
-static void _cleanup_tmpf(Evas_Object *eo_obj);
-
 static const Evas_Object_Func object_func =
 {
    /* methods (compulsory) */
@@ -214,7 +209,7 @@ static const Evas_Object_Image_Load_Opts default_load_opts = {
 };
 
 static const Evas_Object_Image_Pixels default_pixels = {
-  NULL, { NULL, NULL }, { 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL }, NULL, -1
+  NULL, { NULL, NULL }, { 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL }
 };
 
 static const Evas_Object_Image_State default_state = {
@@ -281,7 +276,6 @@ _evas_object_image_cleanup(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj,
                                                                  o->engine_data,
                                                                  eo_obj);
      }
-   if (o->pixels->tmpf) _cleanup_tmpf(eo_obj);
    if (o->cur->source) _proxy_unset(eo_obj, obj, o);
 }
 
@@ -374,139 +368,19 @@ evas_object_image_filled_add(Evas *eo_e)
    return eo_obj;
 }
 
-static void
-_cleanup_tmpf(Evas_Object *eo_obj)
-{
-#ifdef HAVE_SYS_MMAN_H
-   Evas_Object_Image *o;
-
-   o = eo_data_scope_get(eo_obj, MY_CLASS);
-   if (!o->pixels->tmpf) return;
-#ifdef __linux__
-#else
-   unlink(o->pixels->tmpf);
-#endif
-   EINA_COW_PIXEL_WRITE_BEGIN(o, pixels)
-     {
-        if (pixels->tmpf_fd >= 0) close(pixels->tmpf_fd);
-        eina_stringshare_del(pixels->tmpf);
-        pixels->tmpf_fd = -1;
-        pixels->tmpf = NULL;
-     }
-   EINA_COW_PIXEL_WRITE_END(o, pixels);
-#else
-   (void) eo_obj;
-#endif
-}
-
-static void
-_create_tmpf(Evas_Object *eo_obj, void *data, int size, char *format EINA_UNUSED)
-{
-#ifdef HAVE_SYS_MMAN_H
-   Evas_Object_Image *o;
-   char buf[PATH_MAX];
-   void *dst;
-   int fd = -1;
-
-   o = eo_data_scope_get(eo_obj, MY_CLASS);
-#ifdef __linux__
-   snprintf(buf, sizeof(buf), "/dev/shm/.evas-tmpf-%i-%p-%i-XXXXXX", 
-            (int)getpid(), data, (int)size);
-   fd = mkstemp(buf);
-#endif   
-   if (fd < 0)
-     {
-        const char *tmpdir = getenv("TMPDIR");
-
-        if (!tmpdir)
-          {
-             tmpdir = getenv("TMP");
-             if (!tmpdir)
-               {
-                  tmpdir = getenv("TEMP");
-                  if (!tmpdir) tmpdir = "/tmp";
-               }
-          }
-        snprintf(buf, sizeof(buf), "%s/.evas-tmpf-%i-%p-%i-XXXXXX",
-                 tmpdir, (int)getpid(), data, (int)size);
-        fd = mkstemp(buf);
-        if (fd < 0) return;
-     }
-   if (ftruncate(fd, size) < 0)
-     {
-        unlink(buf);
-        close(fd);
-        return;
-     }
-#ifdef __linux__
-   unlink(buf);
-#endif
-
-   eina_mmap_safety_enabled_set(EINA_TRUE);
-
-   dst = mmap(NULL, size,
-              PROT_READ | PROT_WRITE,
-              MAP_SHARED,
-              fd, 0);
-   if (dst == MAP_FAILED)
-     {
-        close(fd);
-        return;
-     }
-   EINA_COW_PIXEL_WRITE_BEGIN(o, pixels)
-     pixels->tmpf_fd = fd;
-   EINA_COW_PIXEL_WRITE_END(o, pixels);
-#ifdef __linux__
-   snprintf(buf, sizeof(buf), "/proc/%li/fd/%i", (long)getpid(), fd);
-#endif
-   EINA_COW_PIXEL_WRITE_BEGIN(o, pixels)
-     pixels->tmpf = eina_stringshare_add(buf);
-   EINA_COW_PIXEL_WRITE_END(o, pixels);
-   memcpy(dst, data, size);
-   munmap(dst, size);
-#else
-   (void) eo_obj;
-   (void) data;
-   (void) size;
-   (void) format;
-#endif
-}
-
 EAPI void
-evas_object_image_memfile_set(Evas_Object *eo_obj, void *data, int size, char *format, char *key)
+evas_object_image_memfile_set(Evas_Object *eo_obj, void *data, int size, char *format EINA_UNUSED, char *key)
 {
+   Eina_File *f;
+
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
-   eo_do(eo_obj, evas_obj_image_memfile_set(data, size, format, key));
-}
 
-static void
-_image_memfile_set(Eo *eo_obj, void *_pd, va_list *list)
-{
-   Evas_Object_Image *o = _pd;
-
-   void *data = va_arg(*list, void *);
-   int size = va_arg(*list, int);
-   char *format = va_arg(*list, char*);
-   char *key = va_arg(*list, char*);
-
-   _cleanup_tmpf(eo_obj);
-   evas_object_image_file_set(eo_obj, NULL, NULL);
-   // invalidate the cache effectively
-   evas_object_image_alpha_set(eo_obj, !o->cur->has_alpha);
-   evas_object_image_alpha_set(eo_obj, o->cur->has_alpha);
-
-   if ((size < 1) || (!data)) return;
-
-   _create_tmpf(eo_obj, data, size, format);
-   evas_object_image_file_set(eo_obj, o->pixels->tmpf, key);
-   if (!o->engine_data)
-     {
-        ERR("unable to load '%s' from memory", o->pixels->tmpf);
-        _cleanup_tmpf(eo_obj);
-        return;
-     }
+   f = eina_file_virtualize(data, size, EINA_TRUE);
+   if (!f) return ;
+   eo_do(eo_obj, evas_obj_image_mmap_set(f, key));
+   eina_file_close(f);
 }
 
 static void
@@ -635,7 +509,6 @@ _image_mmap_set(Eo *eo_obj, void *_pd, va_list *list)
    Eina_File *f = va_arg(*list, Eina_File *);
    const char *key = va_arg(*list, const char*);
 
-   if (o->pixels->tmpf) _cleanup_tmpf(eo_obj);
    if (o->cur->u.f == f)
      {
         if ((!o->cur->key) && (!key))
@@ -672,7 +545,6 @@ _image_file_set(Eo *eo_obj, void *_pd, va_list *list)
    const char *file = va_arg(*list, const char*);
    const char *key = va_arg(*list, const char*);
 
-   if ((o->pixels->tmpf) && (file != o->pixels->tmpf)) _cleanup_tmpf(eo_obj);
    if ((o->cur->u.file) && (file) && (!strcmp(o->cur->u.file, file)))
      {
         if ((!o->cur->key) && (!key))
@@ -3676,7 +3548,6 @@ evas_object_image_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
    Eina_Rectangle *r;
 
    /* free obj */
-   _cleanup_tmpf(eo_obj);
    if (o->cur->u.file && !o->cur->mmaped_source) eina_stringshare_del(o->cur->u.file);
    if (o->cur->key) eina_stringshare_del(o->cur->key);
    if (o->cur->source) _proxy_unset(eo_obj, obj, o);
@@ -5327,7 +5198,6 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DESTRUCTOR), _destructor),
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DBG_INFO_GET), _dbg_info_get),
-        EO_OP_FUNC(EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_MEMFILE_SET), _image_memfile_set),
         EO_OP_FUNC(EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_FILE_SET), _image_file_set),
         EO_OP_FUNC(EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_MMAP_SET), _image_mmap_set),
         EO_OP_FUNC(EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_FILE_GET), _image_file_get),
@@ -5406,7 +5276,6 @@ _class_constructor(Eo_Class *klass)
 }
 
 static const Eo_Op_Description op_desc[] = {
-     EO_OP_DESCRIPTION(EVAS_OBJ_IMAGE_SUB_ID_MEMFILE_SET, "Sets the data for an image from memory to be loaded"),
      EO_OP_DESCRIPTION(EVAS_OBJ_IMAGE_SUB_ID_FILE_SET, "Set the source file from where an image object must fetch the real"),
      EO_OP_DESCRIPTION(EVAS_OBJ_IMAGE_SUB_ID_MMAP_SET, "Set the source mmaped file from where an image object must fetch the real"),
      EO_OP_DESCRIPTION(EVAS_OBJ_IMAGE_SUB_ID_FILE_GET, "Retrieve the source file from where an image object is to fetch the"),

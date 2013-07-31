@@ -5524,7 +5524,6 @@ extern EAPI Eo_Op EVAS_OBJ_IMAGE_BASE_ID;
 
 enum
 {
-   EVAS_OBJ_IMAGE_SUB_ID_MEMFILE_SET,
    EVAS_OBJ_IMAGE_SUB_ID_FILE_SET,
    EVAS_OBJ_IMAGE_SUB_ID_MMAP_SET,
    EVAS_OBJ_IMAGE_SUB_ID_FILE_GET,
@@ -5606,21 +5605,6 @@ enum
  *
  * @{
  */
-
-/**
- * @def evas_obj_image_memfile_set
- * @since 1.8
- *
- * Sets the data for an image from memory to be loaded
- *
- * @param[in] data in
- * @param[in] size in
- * @param[in] format in
- * @param[in] key in
- *
- * @see evas_object_image_memfile_set
- */
-#define evas_obj_image_memfile_set(data, size, format, key) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_MEMFILE_SET), EO_TYPECHECK(void *, data), EO_TYPECHECK(int, size), EO_TYPECHECK(char *, format), EO_TYPECHECK(char *, key)
 
 /**
  * @def evas_obj_image_file_set

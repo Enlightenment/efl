@@ -55,6 +55,7 @@ Additions:
      - Add multiple font draws support to engines
      - Add Cserve2 scalecache support
      - Add evas_object_image_source_clip_set()/get()
+     - Use eina_file_virtualize() for evas_object_image_memfile_set().
     * Ecore_X:
      - Add window profile support.
        ECORE_X_ATOM_E_WINDOW_PROFILE_SUPPORTED
