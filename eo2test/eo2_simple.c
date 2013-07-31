@@ -37,7 +37,7 @@ _class_hello(const Eo_Class *klass, int a)
 {
    printf("Hello %d - body %s - EAPI %s\n", a, eo_class_name_get(klass), eo_class_name_get(EO2_SIMPLE_CLASS)); 
 }
-EAPI EO2_VOID_CLASS_FUNC_BODYV(eo2_class_hello, EO2_CLASS_FUNC_CALL(a), EO2_SIMPLE_CLASS, int a);
+EAPI EO2_VOID_CLASS_FUNC_BODYV(eo2_class_hello, EO2_CLASS_FUNC_CALL(a), int a);
 
 EAPI EO2_FUNC_BODYV(eo2_virtual, int, EO2_FUNC_CALL(x), 0, int x);
 
