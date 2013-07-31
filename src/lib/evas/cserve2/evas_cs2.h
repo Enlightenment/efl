@@ -275,6 +275,7 @@ struct _Msg_Font_Debug {
  */
 struct _Msg_Index_List {
    Msg_Base base;
+   int generation_id;
    char strings_index_path[64];
    char strings_entries_path[64];
    char files_index_path[64];

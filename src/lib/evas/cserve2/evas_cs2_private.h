@@ -4,12 +4,15 @@
 #include "evas_common_private.h"
 #include "evas_cs2.h"
 
+#define SHARED_BUFFER_PATH_MAX 64
 typedef struct _Data_Entry Data_Entry;
 typedef struct _Font_Entry Font_Entry;
 typedef struct _Index_Table Index_Table;
 typedef struct _Shared_Index Shared_Index;
+typedef struct _Shared_Buffer Shared_Buffer;
 
-struct _Data_Entry {
+struct _Data_Entry
+{
    unsigned int image_id;
    void (*preloaded_cb)(void *, Eina_Bool);
    struct {
@@ -23,14 +26,15 @@ struct _Data_Entry {
    } shm;
 };
 
-struct _Shared_Index {
-   char path[64];
+struct _Shared_Index
+{
+   char path[SHARED_BUFFER_PATH_MAX];
    int generation_id;
    Eina_File *f;
    union
    {
       const Shared_Array_Header *header;
-      void *data;
+      char *data;
    };
    union
    {
@@ -45,19 +49,19 @@ struct _Shared_Index {
    int last_entry_in_hash;
 };
 
-struct _Index_Table {
+struct _Shared_Buffer
+{
+   char path[SHARED_BUFFER_PATH_MAX];
+   Eina_File *f;
+   char *data;
+   int size;
+};
+
+struct _Index_Table
+{
    int generation_id;
-   // TODO: use Shared_Index
-   struct {
-      char index_path[64];
-      char entries_path[64];
-      Eina_File *index_file;
-      Eina_File *entries_file;
-      const Shared_Array_Header *index_header;
-      const Index_Entry *indexes;
-      const char *data;
-      size_t entries_size;
-   } strings;
+   Shared_Buffer strings_entries;
+   Shared_Index strings_index;
    Shared_Index files;
    Shared_Index images;
    Shared_Index fonts; // TODO

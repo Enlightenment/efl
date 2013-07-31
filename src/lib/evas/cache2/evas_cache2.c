@@ -549,8 +549,10 @@ evas_cache2_shutdown(Evas_Cache2 *cache)
    free(cache);
 }
 
-static void
-_create_hash_key(char *hkey, const char *path, size_t pathlen, const char *key, size_t keylen, Evas_Image_Load_Opts *lo)
+EAPI void
+evas_cache2_image_cache_key_create(char *hkey, const char *path, size_t pathlen,
+                                   const char *key, size_t keylen,
+                                   const Evas_Image_Load_Opts *lo)
 {
    const char *ckey = "(null)";
    size_t size;
@@ -561,6 +563,7 @@ _create_hash_key(char *hkey, const char *path, size_t pathlen, const char *key, 
    memcpy(hkey + size, "//://", 5);
    size += 5;
    if (key) ckey = key;
+   else keylen = 6;
    memcpy(hkey + size, ckey, keylen);
    size += keylen;
    if (lo)
@@ -634,7 +637,8 @@ _create_hash_key(char *hkey, const char *path, size_t pathlen, const char *key, 
 }
 
 EAPI Image_Entry *
-evas_cache2_image_open(Evas_Cache2 *cache, const char *path, const char *key, Evas_Image_Load_Opts *lo, int *error)
+evas_cache2_image_open(Evas_Cache2 *cache, const char *path, const char *key,
+                       Evas_Image_Load_Opts *lo, int *error)
 {
    size_t                size;
    size_t                pathlen;
@@ -659,7 +663,7 @@ evas_cache2_image_open(Evas_Cache2 *cache, const char *path, const char *key, Ev
    size = pathlen + keylen + HKEY_LOAD_OPTS_STR_LEN;
    hkey = alloca(sizeof(char) * size);
 
-   _create_hash_key(hkey, path, pathlen, key, keylen, lo);
+   evas_cache2_image_cache_key_create(hkey, path, pathlen, key, keylen, lo);
    DBG("Looking at the hash for key '%s'", hkey);
 
    /* use local var to copy default load options to the image entry */
@@ -816,7 +820,8 @@ _scaled_image_find(Image_Entry *im, int src_x, int src_y, int src_w, int src_h, 
    if (!smooth)
      {
         lo.scale_load.smooth = 1;
-        _create_hash_key(hkey, im->file, pathlen, im->key, keylen, &lo);
+        evas_cache2_image_cache_key_create(hkey, im->file, pathlen,
+                                           im->key, keylen, &lo);
 
         ret = eina_hash_find(im->cache2->activ, hkey);
         if (ret) goto found;
@@ -827,7 +832,8 @@ _scaled_image_find(Image_Entry *im, int src_x, int src_y, int src_w, int src_h, 
         lo.scale_load.smooth = smooth;
      }
 
-   _create_hash_key(hkey, im->file, pathlen, im->key, keylen, &lo);
+   evas_cache2_image_cache_key_create(hkey, im->file, pathlen,
+                                      im->key, keylen, &lo);
 
    ret = eina_hash_find(im->cache2->activ, hkey);
    if (ret) goto found;
@@ -896,7 +902,8 @@ evas_cache2_image_scale_load(Image_Entry *im,
    lo.scale_load.smooth = smooth;
    lo.scale_load.scale_hint = im->scale_hint;
 
-   _create_hash_key(hkey, im->file, pathlen, im->key, keylen, &lo);
+   evas_cache2_image_cache_key_create(hkey, im->file, pathlen,
+                                      im->key, keylen, &lo);
 
    ret = _evas_cache_image_entry_new(im->cache2, hkey, NULL, im->file, im->key,
                                      &lo, &error);

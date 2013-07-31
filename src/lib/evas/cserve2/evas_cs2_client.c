@@ -17,6 +17,9 @@
 
 #ifdef EVAS_CSERVE2
 
+#define USE_SHARED_INDEX 1
+#define SHARED_INDEX_ADD_TO_HASH 1
+#define HKEY_LOAD_OPTS_STR_LEN 215
 typedef void (*Op_Callback)(void *data, const void *msg, int size);
 
 struct _File_Entry {
@@ -47,6 +50,8 @@ static Eina_List *_requests = NULL;
 static Index_Table _index;
 static const char *_shared_string_get(int id);
 static int _server_index_list_set(Msg_Base *data, int size);
+static const File_Data *_shared_file_data_get_by_id(unsigned int id);
+static const Shm_Object *_shared_index_item_get_by_id(Shared_Index *si, int elemsize, unsigned int id);
 static const File_Data *_shared_image_entry_file_data_find(Image_Entry *ie);
 static const Image_Data *_shared_image_entry_image_data_find(Image_Entry *ie);
 
@@ -902,10 +907,21 @@ int
 evas_cserve2_image_load_wait(Image_Entry *ie)
 {
    const File_Data *fd;
+   Eina_Bool failed;
+   unsigned int rrid, rid;
 
    if (!ie)
      return CSERVE2_GENERIC;
 
+   if (!ie->open_rid)
+     return CSERVE2_NONE;
+
+   rid = ie->open_rid;
+   rrid = _server_dispatch(&failed);
+   if (rid == rrid)
+     return CSERVE2_NONE;
+
+#if USE_SHARED_INDEX
    fd = _shared_image_entry_file_data_find(ie);
    if (fd)
      {
@@ -919,6 +935,7 @@ evas_cserve2_image_load_wait(Image_Entry *ie)
         ie->open_rid = 0;
         return CSERVE2_NONE;
      }
+#endif
 
    if (ie->open_rid)
      {
@@ -959,6 +976,7 @@ evas_cserve2_image_load_data_wait(Image_Entry *ie)
    if (!ie)
      return CSERVE2_GENERIC;
 
+#if USE_SHARED_INDEX
    idata = _shared_image_entry_image_data_find(ie);
    if (idata)
      {
@@ -997,6 +1015,7 @@ evas_cserve2_image_load_data_wait(Image_Entry *ie)
         ie->load_rid = 0;
         return CSERVE2_NONE;
      }
+#endif
 
 load_wait:
    if (ie->load_rid)
@@ -1607,6 +1626,7 @@ evas_cserve2_font_glyph_bitmap_get(Font_Entry *fe, unsigned int idx, Font_Hint_F
 
 // Fast access to shared index tables
 
+static Eina_Bool _shared_index_remap_check(Shared_Index *si, int elemsize);
 
 // Returns the number of correctly opened index arrays
 static int
@@ -1614,7 +1634,6 @@ _server_index_list_set(Msg_Base *data, int size)
 {
    Msg_Index_List *msg = (Msg_Index_List *) data;
    unsigned sz;
-   int ret = 0;
 
    // TODO #1: Check populate rule.
    // TODO #2: Protect memory for read-only access.
@@ -1627,276 +1646,162 @@ _server_index_list_set(Msg_Base *data, int size)
         return -1;
      }
 
-   // Reset index table
-   if (_index.strings.index_file)
+   if (_index.generation_id == msg->generation_id)
      {
-        if (_index.strings.index_header)
-          eina_file_map_free(_index.strings.index_file,
-                             (void *) _index.strings.index_header);
-        eina_file_close(_index.strings.index_file);
-     }
-   if (_index.strings.entries_file)
-     {
-        if (_index.strings.index_header)
-          eina_file_map_free(_index.strings.entries_file,
-                             (void *) _index.strings.index_header);
-        eina_file_close(_index.strings.entries_file);
-     }
-   if (_index.files.f)
-     {
-        if (_index.files.header)
-          eina_file_map_free(_index.files.f, (void *) _index.files.header);
-        eina_file_close(_index.files.f);
-     }
-   if (_index.images.f)
-     {
-        if (_index.images.header)
-          eina_file_map_free(_index.images.f, (void *) _index.images.header);
-        eina_file_close(_index.images.f);
-     }
-   if (_index.fonts.f)
-     {
-        if (_index.fonts.header)
-          eina_file_map_free(_index.fonts.f, (void *) _index.fonts.header);
-        eina_file_close(_index.fonts.f);
+        ERR("New index generation_id is the same as before: %d",
+            _index.generation_id);
      }
 
-   // Open new indexes
-   eina_strlcpy(_index.strings.index_path, msg->strings_index_path, 64);
-   eina_strlcpy(_index.strings.entries_path, msg->strings_entries_path, 64);
-   eina_strlcpy(_index.files.path, msg->files_index_path, 64);
-   eina_strlcpy(_index.images.path, msg->images_index_path, 64);
-   eina_strlcpy(_index.fonts.path, msg->fonts_index_path, 64);
+   _index.generation_id = msg->generation_id;
 
-   if (_index.strings.index_path[0] && _index.strings.entries_path[0])
+   // 1. Strings (indexes and entries)
+
+   if (_index.strings_entries.data
+       && strncmp(_index.strings_entries.path, msg->strings_entries_path,
+                  SHARED_BUFFER_PATH_MAX) != 0)
      {
-        _index.strings.index_file = eina_file_open(_index.strings.index_path,
-                                                   EINA_TRUE);
-        sz = eina_file_size_get(_index.strings.index_file);
-        _index.strings.index_header = eina_file_map_all(
-                 _index.strings.index_file, EINA_FILE_POPULATE);
-        if (_index.strings.index_header && sz > sizeof(Shared_Array_Header)
-            && sz >= (_index.strings.index_header->count * sizeof(Index_Entry)
-                      + sizeof(Shared_Array_Header)))
+        DBG("Updating string entries shm to: '%s'", msg->strings_entries_path);
+        eina_file_map_free(_index.strings_entries.f, _index.strings_entries.data);
+        eina_file_close(_index.strings_entries.f);
+        _index.strings_entries.f = NULL;
+        _index.strings_entries.data = NULL;
+     }
+
+   if (_index.strings_index.data
+       && strncmp(_index.strings_index.path, msg->strings_index_path,
+                  SHARED_BUFFER_PATH_MAX) != 0)
+     {
+        DBG("Updating string indexes shm to: '%s'", msg->strings_index_path);
+        eina_file_map_free(_index.strings_index.f, _index.strings_index.data);
+        eina_file_close(_index.strings_index.f);
+        _index.strings_index.f = NULL;
+        _index.strings_index.data = NULL;
+     }
+
+   eina_strlcpy(_index.strings_entries.path, msg->strings_entries_path, SHARED_BUFFER_PATH_MAX);
+   eina_strlcpy(_index.strings_index.path, msg->strings_index_path, SHARED_BUFFER_PATH_MAX);
+
+   if (!_index.strings_entries.data
+       && _index.strings_entries.path[0]
+       && _index.strings_index.path[0])
+     {
+        _index.strings_entries.f = eina_file_open(_index.strings_entries.path, EINA_TRUE);
+        _index.strings_entries.size = eina_file_size_get(_index.strings_entries.f);
+        if (_index.strings_entries.size > 0)
+          _index.strings_entries.data = eina_file_map_all(_index.strings_entries.f, EINA_FILE_RANDOM);
+
+        if (!_index.strings_entries.data)
           {
-             _index.strings.indexes = (Index_Entry *)
-                   &(_index.strings.index_header[1]);
-             _index.strings.entries_file = eina_file_open(
-                      _index.strings.entries_path, EINA_TRUE);
-             _index.strings.entries_size = eina_file_size_get(
-                      _index.strings.entries_file);
-             _index.strings.data = eina_file_map_all(
-                      _index.strings.entries_file, EINA_FILE_RANDOM);
-             if (!_index.strings.entries_size || !_index.strings.data)
-               goto strings_map_failed;
-             DBG("Mapped shared string table with indexes in %s and data in %s",
-                 _index.strings.index_path, _index.strings.entries_path);
+             ERR("Could not map strings entries from: '%s'", _index.strings_entries.path);
+             eina_file_close(_index.strings_entries.f);
+             _index.strings_entries.f = NULL;
+             _index.strings_entries.data = NULL;
+          }
+        else DBG("Mapped string entries from %s", _index.strings_entries.path);
+     }
+
+   if (_index.strings_entries.data &&
+       (!_index.strings_index.data && _index.strings_index.path[0]))
+     {
+        _index.strings_index.f = eina_file_open(_index.strings_index.path, EINA_TRUE);
+        sz = eina_file_size_get(_index.strings_index.f);
+        if (sz >= sizeof(Shared_Array_Header))
+          _index.strings_index.data = eina_file_map_all(_index.strings_index.f, EINA_FILE_RANDOM);
+
+        if (_index.strings_index.data)
+          {
+             DBG("Mapped string indexes from %s", _index.strings_index.path);
+             sz = eina_file_size_get(_index.strings_index.f);
+             _index.strings_index.count = (sz - sizeof(Shared_Array_Header)) / sizeof(Index_Entry);
+             if (_index.strings_index.count > _index.strings_index.header->count)
+               {
+                  WRN("Detected larger index than advertised: %d > %d",
+                      _index.strings_index.count, _index.strings_index.header->count);
+                  _index.strings_index.count = _index.strings_index.header->count;
+               }
           }
         else
           {
-strings_map_failed:
-             eina_file_map_free(_index.strings.entries_file,
-                                (void *) _index.strings.data);
-             eina_file_close(_index.strings.entries_file);
-             eina_file_map_free(_index.strings.index_file,
-                                (void *) _index.strings.index_header);
-             eina_file_close(_index.strings.index_file);
-             memset(&_index.strings, 0, sizeof(_index.strings));
+             ERR("Could not map string indexes from %s", _index.strings_index.path);
+             eina_file_close(_index.strings_index.f);
+             eina_file_map_free(_index.strings_entries.f, _index.strings_entries.data);
+             eina_file_close(_index.strings_entries.f);
+             _index.strings_index.f = NULL;
+             _index.strings_entries.f = NULL;
+             _index.strings_entries.data = NULL;
           }
      }
 
-   if (_index.files.path[0])
+   _shared_index_remap_check(&_index.strings_index, sizeof(Index_Entry));
+   if (_index.strings_entries.data)
      {
-        _index.files.f = eina_file_open(_index.files.path, EINA_TRUE);
-        sz = eina_file_size_get(_index.files.f);
-        if (sz < sizeof(Shared_Array_Header))
+        if (eina_file_refresh(_index.strings_entries.f))
           {
-             ERR("Shared index for files is too small: %u", sz);
-             eina_file_close(_index.files.f);
-             _index.files.f = NULL;
-          }
-        else
-          {
-             _index.files.header = eina_file_map_all(_index.files.f,
-                                                     EINA_FILE_POPULATE);
-             if (sz < (_index.files.header->count * sizeof(File_Data)
-                       + sizeof(Shared_Array_Header)))
-               {
-                  ERR("Shared index size does not match array size: %u / %u",
-                      sz, _index.files.header->count);
-                  eina_file_map_free(_index.files.f,
-                                     (void *) _index.files.header);
-                  eina_file_close(_index.files.f);
-                  _index.files.f = NULL;
-                  _index.files.header = NULL;
-               }
-             else
-               {
-                  _index.files.entries.fdata =
-                        (File_Data *) &(_index.files.header[1]);
-                  DBG("Mapped files shared index '%s' at %p: %u entries max",
-                      _index.files.path, _index.files.header,
-                      _index.files.header->count);
-                  ret++;
-               }
+             eina_file_map_free(_index.strings_entries.f, _index.strings_entries.data);
+             _index.strings_entries.data = eina_file_map_all(_index.strings_entries.f, EINA_FILE_RANDOM);
+             _index.strings_entries.size = eina_file_size_get(_index.strings_entries.f);
           }
      }
 
-   if (_index.images.path[0])
-     {
-        _index.images.f = eina_file_open(_index.images.path, EINA_TRUE);
-        sz = eina_file_size_get(_index.images.f);
-        if (sz < sizeof(Shared_Array_Header))
-          {
-             ERR("Shared index for images is too small: %u", sz);
-             eina_file_close(_index.images.f);
-             _index.images.f = NULL;
-          }
-        else
-          {
-             int size = eina_file_size_get(_index.images.f);
-             _index.images.header = eina_file_map_all(_index.images.f,
-                                                     EINA_FILE_POPULATE);
-             if (sz < (_index.images.header->count * sizeof(Image_Data)
-                       + sizeof(Shared_Array_Header)))
-               {
-                  ERR("Shared index size does not match array size: %u / %u",
-                      sz, _index.images.header->count);
-                  eina_file_map_free(_index.images.f,
-                                     (void *) _index.images.header);
-                  eina_file_close(_index.images.f);
-                  _index.images.f = NULL;
-                  _index.images.header = NULL;
-               }
-             else
-               {
-                  _index.images.count = (size - sizeof(Shared_Array_Header))
-                        / sizeof(Image_Data);
-                  _index.images.entries.idata =
-                        (Image_Data *) &(_index.images.header[1]);
-                  DBG("Mapped images shared index '%s' at %p: %u entries max",
-                      _index.images.path, _index.images.header,
-                      _index.images.header->count);
-                  ret++;
-               }
-          }
-     }
 
-   if (_index.fonts.path[0])
-     ERR("Not implemented yet: fonts shared index");
+   // 2. File indexes
 
-   return ret;
-}
+   eina_strlcpy(_index.files.path, msg->files_index_path, SHARED_BUFFER_PATH_MAX);
+   _shared_index_remap_check(&_index.files, sizeof(File_Data));
 
-// FIXME: Copy & paste from evas_cserve2_cache.c
-static int
-_shm_object_id_cmp_cb(const void *data1, const void *data2)
-{
-   const Shm_Object *obj;
-   unsigned int key;
 
-   if (data1 == data2) return 0;
-   if (!data1) return 1;
-   if (!data2) return -1;
+   // 3. Image indexes
 
-   obj = data1;
-   key = *((unsigned int *) data2);
-   if (obj->id == key) return 0;
-   if (obj->id < key)
-     return -1;
-   else
-     return +1;
+   eina_strlcpy(_index.images.path, msg->images_index_path, SHARED_BUFFER_PATH_MAX);
+   _shared_index_remap_check(&_index.images, sizeof(Image_Data));
+
+
+   // 4. Font indexes
+   // TODO
+
+   return 0;
 }
 
 // FIXME: (almost) copy & paste from evas_cserve2_cache.c
 static const char *
 _shared_string_get(int id)
 {
-   const char *ret;
-   const Index_Entry *ie = NULL;
-   int k;
+   Index_Entry *ie;
 
-   if (id <= 0) return NULL;
-   if (!_index.strings.data) return NULL;
-
-   // Binary search
-   if (_index.strings.index_header->sortedidx > 0)
-     {
-        int low = 0;
-        int high = _index.strings.index_header->sortedidx;
-        int prev = -1;
-        int r;
-        k = high / 2;
-        while (prev != k)
-          {
-             ie = &(_index.strings.indexes[k]);
-             r = _shm_object_id_cmp_cb(ie, &id);
-             if (!r)
-               goto found;
-             else if (r > 0)
-               high = k;
-             else
-               low = k;
-             prev = k;
-             k = low + (high - low) / 2;
-          }
-     }
-
-   // Linear search O(n)
-   k = _index.strings.index_header->sortedidx;
-   for (; k < _index.strings.index_header->emptyidx; k++)
-     {
-        ie = &(_index.strings.indexes[k]);
-        if (!_shm_object_id_cmp_cb(ie, &id))
-          goto found;
-     }
-
-   return NULL;
-
-found:
+   ie = (Index_Entry *)
+         _shared_index_item_get_by_id(&_index.strings_index, sizeof(*ie), id);
    if (!ie) return NULL;
+   if (ie->offset < 0) return NULL;
    if (!ie->refcount) return NULL;
-   if (ie->length + ie->offset > (int) _index.strings.entries_size)
-     return NULL;
+   if (ie->offset + ie->length > _index.strings_entries.size) return NULL;
 
-   ret = _index.strings.data + ie->offset;
-   return ret;
+   return _index.strings_entries.data + ie->offset;
 }
 
-static inline Eina_Bool
-_shared_image_entry_file_data_match(Image_Entry *ie, const File_Data *fd)
+#define SHARED_INDEX_CHECK(si, typ) \
+   do { if (!_shared_index_remap_check(&(si), sizeof(typ))) { \
+   CRIT("Failed to remap index"); return NULL; } } while (0)
+
+static const char *
+_shared_file_data_hkey_get(char *hkey, const char *file, const char *key,
+                           size_t hkey_size)
 {
-   const char *path, *key, *loader;
+   size_t keylen, filelen;
 
-   if (!fd || !ie) return EINA_FALSE;
-   if (!ie->file && !ie->key)
-     return EINA_FALSE;
+   if (key) keylen = strlen(key) + 1;
+   filelen = strlen(file);
 
-   path = _shared_string_get(fd->path);
-   key = _shared_string_get(fd->key);
-   loader = _shared_string_get(fd->loader_data);
+   if (filelen + keylen + 1 > hkey_size)
+     return NULL;
 
-   if (!path && ie->file)
-     return EINA_FALSE;
-   if (ie->file && strcmp(path, ie->file))
-     return EINA_FALSE;
+   memcpy(hkey, file, filelen);
+   hkey[filelen] = ':';
+   if (key)
+     memcpy(hkey + filelen + 1, key, keylen);
+   else
+     memcpy(hkey + filelen + 1, "(null)", 7);
 
-   if (!key && ie->key)
-     return EINA_FALSE;
-   if (ie->key && strcmp(key, ie->key))
-     return EINA_FALSE;
-
-   /*
-   if (!loader && ie->loader_data)
-     return EINA_FALSE;
-   if (strcmp(loader, ie->loader_data))
-     return EINA_FALSE;
-   */
-
-   // Check w,h ?
-   // Not sure which load opts should be checked here
-   DBG("Found a match for %s:%s", ie->file, ie->key);
-   return EINA_TRUE;
+   return hkey;
 }
 
 static const File_Data *
@@ -1904,32 +1809,122 @@ _shared_image_entry_file_data_find(Image_Entry *ie)
 {
    const File_Data *fdata = NULL;
    File_Entry *fe;
+   Eina_Bool add_to_hash = SHARED_INDEX_ADD_TO_HASH;
+   char hkey[PATH_MAX];
    int k;
 
    DBG("Trying to find if image '%s:%s' is already opened by cserve2",
        ie->file, ie->key);
 
-   if (!_index.files.entries.fdata)
+   SHARED_INDEX_CHECK(_index.files, File_Data);
+
+   if (!_index.strings_index.header || !_index.strings_entries.data)
      return NULL;
 
-#warning FIXME Use safe count
-   for (k = 0; k < _index.files.header->count; k++)
-     {
-        const File_Data *fd = &(_index.files.entries.fdata[k]);
-        if (!fd->id) return NULL;
-        if (!fd->refcount) continue;
+   if (!_index.files.header || !_index.files.entries.fdata)
+     return NULL;
 
-        if (_shared_image_entry_file_data_match(ie, fd))
-          {
-             fdata = fd;
-             break;
-          }
+   // Direct access
+   fe = ie->data1;
+   if (fe->server_file_id)
+     {
+        if ((fdata = _shared_file_data_get_by_id(fe->server_file_id)) != NULL)
+          return fdata;
      }
 
-   DBG("Found file data for %s:%s: %d", ie->file, ie->key, fdata->id);
-   fe = ie->data1;
-   fe->server_file_id = fdata->id;
-   return fdata;
+   // Check hash
+   _shared_file_data_hkey_get(hkey, ie->file, ie->key, PATH_MAX);
+   fdata = eina_hash_find(_index.files.entries_by_hkey, hkey);
+   if (fdata)
+     return fdata;
+
+   // Scan shared index
+   for (k = _index.files.last_entry_in_hash;
+        k < _index.files.count && k < _index.files.header->emptyidx; k++)
+     {
+        const char *file, *key;
+        const File_Data *fd;
+        char fd_hkey[PATH_MAX];
+
+        fd = &(_index.files.entries.fdata[k]);
+        if (!fd->id) break;
+        if (!fd->refcount) continue;
+
+        file = _shared_string_get(fd->path);
+        if (!file)
+          {
+             ERR("Could not find filename for file %d", fd->id);
+             add_to_hash = EINA_FALSE;
+             continue;
+          }
+        key = _shared_string_get(fd->key);
+
+        _shared_file_data_hkey_get(fd_hkey, file, key, PATH_MAX);
+
+        if (add_to_hash)
+          {
+             eina_hash_add(_index.files.entries_by_hkey, fd_hkey, fd);
+             _index.files.last_entry_in_hash = k;
+          }
+
+        if (!strcmp(hkey, fd_hkey))
+          return fd;
+     }
+
+   return NULL;
+}
+
+static const Shm_Object *
+_shared_index_item_get_by_id(Shared_Index *si, int elemsize, unsigned int id)
+{
+   const Shm_Object *obj;
+   const char *base;
+   int low = 0, high, start_high;
+   int cur;
+
+   if (!si || elemsize <= 0 || !id)
+     return NULL;
+
+   // FIXME: HACK (consider all arrays always sorted by id)
+   high = si->header->emptyidx; // Should be si->header->sortedidx
+
+   if (high > si->count)
+     high = si->count;
+
+   base = si->data  + sizeof(Shared_Array_Header);
+
+   // Binary search
+   start_high = high;
+   while(high != low)
+     {
+        cur = low + ((high - low) / 2);
+        obj = (Shm_Object *) (base + (elemsize * cur));
+        if (obj->id == id)
+          return obj;
+        if (obj->id < id)
+          low = cur + 1;
+        else
+          high = cur;
+     }
+
+   // Linear search
+   for (cur = start_high; cur < si->count; cur++)
+     {
+        obj = (Shm_Object *) (base + (elemsize * cur));
+        if (!obj->id)
+          return NULL;
+        if (obj->id == id)
+          return obj;
+     }
+
+   return NULL;
+}
+
+static const File_Data *
+_shared_file_data_get_by_id(unsigned int id)
+{
+   return (const File_Data *)
+         _shared_index_item_get_by_id(&_index.files, sizeof(File_Data), id);
 }
 
 static inline Eina_Bool
@@ -1945,9 +1940,6 @@ _shared_image_entry_image_data_match(Image_Entry *ie, const Image_Data *id)
    return EINA_FALSE;
 }
 
-#define SHARED_INDEX_CHECK(si, typ) \
-   if (!_shared_index_remap_check(&(si), sizeof(typ))) return NULL
-
 static Eina_Bool
 _shared_index_remap_check(Shared_Index *si, int elemsize)
 {
@@ -1957,22 +1949,39 @@ _shared_index_remap_check(Shared_Index *si, int elemsize)
    // Note: all checks are unlikely to be true.
 
    if (!si || elemsize <= 0) return EINA_FALSE;
+
    if (si->generation_id != _index.generation_id)
      {
-        DBG("Generation ID changed.");
-        if (si->f && si->data)
+        DBG("Generation ID changed from %d to %d.",
+            si->generation_id, _index.generation_id);
+        if (si->f)
           {
-             if (eina_file_refresh(si->f))
+             if (strncmp(si->path, eina_file_filename_get(si->f),
+                         SHARED_BUFFER_PATH_MAX) != 0)
                {
-                  DBG("Remapping index.");
+                  DBG("Index file changed. Closing and reopening.");
                   eina_file_map_free(si->f, si->data);
+                  eina_file_close(si->f);
+                  si->f = NULL;
                   si->data = NULL;
                }
-          }
-        else if (si->f)
-          {
-             eina_file_close(si->f);
-             si->f = NULL;
+             else
+               {
+                  if (si->data)
+                    {
+                       if (eina_file_refresh(si->f))
+                         {
+                            DBG("Remapping index.");
+                            eina_file_map_free(si->f, si->data);
+                            si->data = NULL;
+                         }
+                    }
+                  else
+                    {
+                       eina_file_close(si->f);
+                       si->f = NULL;
+                    }
+               }
           }
         si->generation_id = _index.generation_id;
      }
@@ -2039,6 +2048,7 @@ _shared_index_remap_check(Shared_Index *si, int elemsize)
         if (si->entries_by_hkey) eina_hash_free_buckets(si->entries_by_hkey);
         else si->entries_by_hkey = eina_hash_string_small_new(NULL);
         si->last_entry_in_hash = 0;
+        si->entries.p = si->data + sizeof(Shared_Array_Header);
      }
 
    return EINA_TRUE;
@@ -2048,15 +2058,27 @@ static const Image_Data *
 _shared_image_entry_image_data_find(Image_Entry *ie)
 {
    const Image_Data *idata = NULL;
+   const char *shmpath;
    File_Entry *fe;
    unsigned int file_id = 0;
+   Eina_Bool add_to_hash = SHARED_INDEX_ADD_TO_HASH;
    int k;
+
 
    DBG("Trying to find if image '%s:%s' is already loaded by cserve2",
        ie->file, ie->key);
 
+   if (!_index.strings_entries.data || !_index.strings_index.data)
+     return NULL;
+
    if (!_index.images.entries.idata || !_index.images.count)
      return NULL;
+
+   if (!ie->cache_key)
+     {
+        CRIT("Looking for an image in remote cache without hash key?");
+        return NULL;
+     }
 
    fe = ie->data1;
    if (fe && fe->server_file_id)
@@ -2074,32 +2096,79 @@ _shared_image_entry_image_data_find(Image_Entry *ie)
 
    SHARED_INDEX_CHECK(_index.images, Image_Data);
 
-   DBG("Looking for loaded image with file id %d", file_id);
-   for (k = 0; k < _index.images.count; k++)
+   // Find in known entries hash. O(log n)
+   DBG("Looking for %s in hash", ie->cache_key);
+   idata = (const Image_Data *)
+         eina_hash_find(_index.images.entries_by_hkey, ie->cache_key);
+   if (idata)
      {
+        ERR("Image found in shared index (by cache_key).");
+        goto found;
+     }
+
+   // Linear search in non-hashed entries. O(n)
+   DBG("Looking for loaded image with file id %d", file_id);
+   for (k = _index.images.last_entry_in_hash; k < _index.images.count; k++)
+     {
+        const char *file, *key;
+        size_t keylen, filelen;
+        const File_Data *fd;
+        char *hkey;
         const Image_Data *id = &(_index.images.entries.idata[k]);
+
         if (!id->id) return NULL;
         if (!id->refcount) continue;
+
+        if (add_to_hash)
+          {
+             fd = _shared_file_data_get_by_id(id->file_id);
+             if (!fd)
+               {
+                  ERR("Did not find file data for %d", id->file_id);
+                  add_to_hash = EINA_FALSE;
+                  continue;
+               }
+
+             key = _shared_string_get(fd->key);
+             file = _shared_string_get(fd->path);
+             if (!file)
+               {
+                  ERR("No filename for file %d", fd->id);
+                  add_to_hash = EINA_FALSE;
+                  continue;
+               }
+             keylen = key ? strlen(key) : 0;
+             filelen = strlen(file);
+
+             hkey = alloca(filelen + keylen + HKEY_LOAD_OPTS_STR_LEN);
+             evas_cache2_image_cache_key_create(hkey, file, filelen,
+                                                key, keylen, &id->opts);
+             eina_hash_add(_index.images.entries_by_hkey, hkey, id);
+             _index.images.last_entry_in_hash = k;
+          }
+
         if (id->file_id != file_id) continue;
 
         if (_shared_image_entry_image_data_match(ie, id))
           {
              idata = id;
-             break;
+             goto found;
           }
      }
 
    if (!idata)
      return NULL;
 
-   if (!_shared_string_get(idata->shm_id))
+found:
+   shmpath = _shared_string_get(idata->shm_id);
+   if (!shmpath)
      {
-        ERR("Found image but it is not loaded yet: %d (doload %d shm %s)",
-            idata->id, idata->doload, _shared_string_get(idata->shm_id));
+        ERR("Found image but it is not loaded yet: %d (doload %d)",
+            idata->id, idata->doload);
         return NULL;
      }
 
-   DBG("Found image, loaded, in shm %s", _shared_string_get(idata->shm_id));
+   DBG("Found image, loaded, in shm %s", shmpath);
    return idata;
 }
 
