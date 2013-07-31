@@ -1945,6 +1945,105 @@ _shared_image_entry_image_data_match(Image_Entry *ie, const Image_Data *id)
    return EINA_FALSE;
 }
 
+#define SHARED_INDEX_CHECK(si, typ) \
+   if (!_shared_index_remap_check(&(si), sizeof(typ))) return NULL
+
+static Eina_Bool
+_shared_index_remap_check(Shared_Index *si, int elemsize)
+{
+   size_t filesize;
+   Eina_Bool refresh = EINA_FALSE;
+
+   // Note: all checks are unlikely to be true.
+
+   if (!si || elemsize <= 0) return EINA_FALSE;
+   if (si->generation_id != _index.generation_id)
+     {
+        DBG("Generation ID changed.");
+        if (si->f && si->data)
+          {
+             if (eina_file_refresh(si->f))
+               {
+                  DBG("Remapping index.");
+                  eina_file_map_free(si->f, si->data);
+                  si->data = NULL;
+               }
+          }
+        else if (si->f)
+          {
+             eina_file_close(si->f);
+             si->f = NULL;
+          }
+        si->generation_id = _index.generation_id;
+     }
+   if (!si->f)
+     {
+        si->data = NULL; // If that was not NULL, the address was invalid.
+        si->f = eina_file_open(si->path, EINA_TRUE);
+        if (!si->f)
+          {
+             ERR("Could not open index '%s'", si->path);
+             return EINA_FALSE;
+          }
+     }
+   if (!si->data)
+     {
+        filesize = eina_file_size_get(si->f);
+        if (filesize < sizeof(Shared_Array_Header))
+          {
+             ERR("Index is invalid. Got file size %d", (int) filesize);
+             eina_file_close(si->f);
+             si->f = NULL;
+             return EINA_FALSE;
+          }
+        si->data = eina_file_map_all(si->f, EINA_FILE_RANDOM);
+        if (!si->data)
+          {
+             ERR("Could not mmap index '%s'", si->path);
+             eina_file_close(si->f);
+             si->f = NULL;
+             return EINA_FALSE;
+          }
+        refresh = EINA_TRUE;
+     }
+
+   if (elemsize != si->header->elemsize)
+     {
+        ERR("Index is invalid. Expected element size %d, got %d.",
+            elemsize, si->header->elemsize);
+        return EINA_FALSE;
+     }
+
+   if (si->count != si->header->count)
+     {
+        // generation_id should have been incremented. Maybe we are hitting
+        // a race condition here, when cserve2 grows an index.
+        WRN("Reported index count differs from known count: %d vs %d",
+            si->header->count, si->count);
+        filesize = eina_file_size_get(si->f);
+        si->count = (filesize - sizeof(Shared_Array_Header)) / elemsize;
+        if (si->count > si->header->count)
+          {
+             WRN("Index reports %d elements, but file can contain only %d",
+                 si->header->count, si->count);
+             si->count = si->header->count;
+          }
+        refresh = EINA_TRUE;
+     }
+
+   if (!si->entries_by_hkey)
+     refresh = EINA_TRUE;
+
+   if (refresh)
+     {
+        if (si->entries_by_hkey) eina_hash_free_buckets(si->entries_by_hkey);
+        else si->entries_by_hkey = eina_hash_string_small_new(NULL);
+        si->last_entry_in_hash = 0;
+     }
+
+   return EINA_TRUE;
+}
+
 static const Image_Data *
 _shared_image_entry_image_data_find(Image_Entry *ie)
 {
@@ -1973,32 +2072,7 @@ _shared_image_entry_image_data_find(Image_Entry *ie)
         file_id = fdata->id;
      }
 
-   // FIXME. Factorize and simplify.
-   if (_index.images.count != _index.images.header->count)
-     {
-        size_t sz;
-        WRN("Image entries array has been resized from %d to %d. Remapping.",
-            _index.images.count, _index.images.header->count);
-        eina_file_map_free(_index.images.f, (void *) _index.images.header);
-        eina_file_close(_index.images.f);
-        _index.images.f = eina_file_open(_index.images.path, EINA_TRUE);
-        sz = eina_file_size_get(_index.images.f);
-        _index.images.header = eina_file_map_new(_index.images.f, EINA_FILE_RANDOM,
-                                                 0, sz); //eina_file_map_all(_index.images.f, EINA_FILE_RANDOM);
-        _index.images.count = _index.images.header->count;
-        if (_index.images.count * sizeof(Image_Data) + sizeof(Shared_Array_Header) > sz)
-          CRIT("New mapping might be too small!");
-        if (!_index.images.header)
-          {
-             ERR("Could not remap the array!");
-             eina_file_close(_index.images.f);
-             _index.images.f = NULL;
-             _index.images.entries.idata = NULL;
-             return NULL;
-          }
-        _index.images.entries.idata =
-              (Image_Data *) &(_index.images.header[1]);
-     }
+   SHARED_INDEX_CHECK(_index.images, Image_Data);
 
    DBG("Looking for loaded image with file id %d", file_id);
    for (k = 0; k < _index.images.count; k++)

@@ -25,10 +25,16 @@ struct _Data_Entry {
 
 struct _Shared_Index {
    char path[64];
+   int generation_id;
    Eina_File *f;
-   const Shared_Array_Header *header;
    union
    {
+      const Shared_Array_Header *header;
+      void *data;
+   };
+   union
+   {
+      const char *p; // Random access
       const Index_Entry *index; // TODO for strings
       const Image_Data *idata;
       const File_Data *fdata;
@@ -40,6 +46,7 @@ struct _Shared_Index {
 };
 
 struct _Index_Table {
+   int generation_id;
    // TODO: use Shared_Index
    struct {
       char index_path[64];
