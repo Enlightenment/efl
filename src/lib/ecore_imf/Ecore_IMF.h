@@ -943,7 +943,7 @@ EAPI Ecore_IMF_Input_Mode          ecore_imf_context_input_mode_get(Ecore_IMF_Co
  * _key_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
  * {
  *    Evas_Event_Key_Down *ev = event_info;
- *    if (!ev->keyname) return;
+ *    if (!ev->key) return;
  *
  *    if (imf_context)
  *      {

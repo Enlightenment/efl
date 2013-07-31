@@ -1,3 +1,7 @@
+2013-07-31  Carsten Haitzler (The Rasterman)
+
+        * Fix efl to use key not keyname (so xmodmap works).
+
 2013-07-31  Cedric Bail
 
 	* Eina: add eina_file_virtualize() and eina_file_virtual().
