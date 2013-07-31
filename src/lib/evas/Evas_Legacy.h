@@ -5177,17 +5177,17 @@ EAPI void                 evas_object_text_font_source_set(Evas_Object *obj, con
 EAPI const char          *evas_object_text_font_source_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
 /**
- * Set the font family and size on a given text object.
+ * Set the font family or filename, and size on a given text object.
  *
  * @param obj The text object to set font for.
- * @param font The font (family) name.
+ * @param font The font family name or filename.
  * @param size The font size, in points.
  *
  * This function allows the font name and size of a text object to be
  * set. The @p font string has to follow fontconfig's convention on
  * naming fonts, as it's the underlying library used to query system
  * fonts by Evas (see the @c fc-list command's output, on your system,
- * to get an idea).
+ * to get an idea). Alternatively, one can use a full path to a font file.
  *
  * @see evas_object_text_font_get()
  * @see evas_object_text_font_source_set()
