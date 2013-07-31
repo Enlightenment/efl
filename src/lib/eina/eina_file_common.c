@@ -232,6 +232,96 @@ eina_file_virtual_map_free(Eina_File *file, void *map)
    eina_lock_release(&file->lock);
 }
 
+void
+eina_file_common_map_free(Eina_File *file, void *map,
+                          void (*free_func)(Eina_File_Map *map))
+{
+   Eina_File_Map *em;
+   unsigned long int key[2];
+   Eina_List *l = NULL;
+   Eina_Bool hashed = EINA_TRUE;
+
+   em = eina_hash_find(file->rmap, &map);
+   if (!em)
+     {
+        EINA_LIST_FOREACH(file->dead_map, l, em)
+          if (em->map == map)
+            {
+               hashed = EINA_FALSE;
+               break ;
+            }
+        if (hashed) return ;
+     }
+
+   em->refcount--;
+
+   if (em->refcount > 0) return ;
+
+   key[0] = em->offset;
+   key[1] = em->length;
+
+   if (hashed)
+     {
+        eina_hash_del(file->rmap, &map, em);
+        eina_hash_del(file->map, &key, em);
+     }
+   else
+     {
+        file->dead_map = eina_list_remove_list(file->dead_map, l);
+        free_func(em);
+     }
+}
+
+void
+eina_file_flush(Eina_File *file, unsigned long int length)
+{
+   Eina_File_Map *tmp;
+   Eina_Iterator *it;
+   Eina_List *dead_map = NULL;
+   Eina_List *l;
+
+   // File size changed
+   if (file->global_map)
+     {
+        // Forget global map
+        tmp = malloc(sizeof (Eina_File_Map));
+        if (tmp)
+          {
+             tmp->map = file->global_map;
+             tmp->offset = 0;
+             tmp->length = file->length;
+             tmp->refcount = file->refcount;
+
+             file->dead_map = eina_list_append(file->dead_map, tmp);
+          }
+
+        file->global_map = NULL;
+        file->refcount = 0;
+     }
+
+   it = eina_hash_iterator_data_new(file->map);
+   EINA_ITERATOR_FOREACH(it, tmp)
+     {
+        // Add out of limit map to dead_map
+        if (tmp->offset + tmp->length > length)
+          dead_map = eina_list_append(dead_map, tmp);
+     }
+   eina_iterator_free(it);
+
+   EINA_LIST_FOREACH(dead_map, l, tmp)
+     {
+        unsigned long int key[2];
+
+        key[0] = tmp->offset;
+        key[1] = tmp->length;
+
+        eina_hash_del(file->rmap, &tmp->map, tmp);
+        eina_hash_del(file->map, &key, tmp);
+     }
+
+   file->dead_map = eina_list_merge(file->dead_map, dead_map);
+}
+
 // Private to this file API
 static void
 _eina_file_map_close(Eina_File_Map *map)

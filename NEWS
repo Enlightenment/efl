@@ -35,6 +35,7 @@ Additions:
      - Add eina_file_map_populate()
      - Add eina_tiler_empty()
      - Add eina_file_virtualize() and eina_file_virtual()
+     - Add eina_file_refresh()
     * Eet:
      - Add eet_mmap()
      - Add eet_data_descriptor_name_get()

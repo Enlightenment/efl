@@ -484,6 +484,19 @@ EAPI Eina_Bool
 eina_file_virtual(Eina_File *file) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
 /**
+ * @brief Refresh file information
+ *
+ * @param file The file to refresh
+ * @return #EINA_TRUE if the file has changed
+ *
+ * All current map continue to exist. You need to manually delete
+ * and recreate them to have the new correct mapping.
+ *
+ * @since 1.8
+ */
+EAPI Eina_Bool eina_file_refresh(Eina_File *file);  
+
+/**
  * @brief Dup a read-only handler of a previously open file.
  *
  * @param file To duplicate a reference to

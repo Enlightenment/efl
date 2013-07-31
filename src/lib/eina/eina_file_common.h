@@ -22,6 +22,7 @@
 #include "eina_file.h"
 #include "eina_tmpstr.h"
 #include "eina_lock.h"
+#include "eina_list.h"
 
 typedef struct _Eina_File_Map Eina_File_Map;
 typedef struct _Eina_Lines_Iterator Eina_Lines_Iterator;
@@ -57,6 +58,8 @@ struct _Eina_File
    HANDLE handle;
    HANDLE fm;
 #endif
+
+   Eina_List *dead_map;
 
    Eina_Bool shared : 1;
    Eina_Bool delete_me : 1;
@@ -119,6 +122,10 @@ Eina_Bool eina_file_path_relative(const char *path);
 Eina_Tmpstr *eina_file_current_directory_get(const char *path, size_t len);
 char *eina_file_cleanup(Eina_Tmpstr *path);
 void eina_file_real_close(Eina_File *file);
+void eina_file_flush(Eina_File *file, unsigned long int length);
+void eina_file_common_map_free(Eina_File *file, void *map,
+                               void (*free_func)(Eina_File_Map *map));
+
 
 extern Eina_Hash *_eina_file_cache;
 extern Eina_Lock _eina_file_lock_cache;

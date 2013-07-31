@@ -304,10 +304,18 @@ _eina_file_stat_ls_iterator_next(Eina_File_Direct_Iterator *it, void **data)
 void
 eina_file_real_close(Eina_File *file)
 {
+   Eina_File_Map *map;
+
    if (file->refcount != 0) return;
 
    eina_hash_free(file->rmap);
    eina_hash_free(file->map);
+
+   EINA_LIST_FREE(file->dead_map, map)
+     {
+        munmap(map->map, map->length);
+        free(map);
+     }
 
    if (file->global_map != MAP_FAILED)
      munmap(file->global_map, file->length);
@@ -462,6 +470,19 @@ eina_file_shutdown(void)
    return EINA_TRUE;
 }
 
+static Eina_Bool
+_eina_file_mmap_faulty_one(void *addr, long page_size,
+                           Eina_File_Map *m)
+{
+   if ((unsigned char *) addr < (((unsigned char *)m->map) + m->length) &&
+       (((unsigned char *) addr) + page_size) >= (unsigned char *) m->map)
+     {
+        m->faulty = EINA_TRUE;
+        return EINA_TRUE;
+     }
+   return EINA_FALSE;
+}
+
 void
 eina_file_mmap_faulty(void *addr, long page_size)
 {
@@ -497,15 +518,21 @@ eina_file_mmap_faulty(void *addr, long page_size)
              itm = eina_hash_iterator_data_new(f->map);
              EINA_ITERATOR_FOREACH(itm, m)
                {
-                  if ((unsigned char *) addr < (((unsigned char *)m->map) + m->length) &&
-                      (((unsigned char *) addr) + page_size) >= (unsigned char *) m->map)
-                    {
-                       m->faulty = EINA_TRUE;
-                       faulty = EINA_TRUE;
-                       break;
-                    }
+                  faulty = _eina_file_mmap_faulty_one(addr, page_size, m);
+                  if (faulty) break;
                }
              eina_iterator_free(itm);
+          }
+
+        if (!faulty)
+          {
+             Eina_List *l;
+
+             EINA_LIST_FOREACH(f->dead_map, l, m)
+               {
+                  faulty = _eina_file_mmap_faulty_one(addr, page_size, m);
+                  if (faulty) break;
+               }
           }
 
         eina_lock_release(&f->lock);
@@ -902,6 +929,39 @@ eina_file_open(const char *path, Eina_Bool shared)
    return NULL;
 }
 
+EAPI Eina_Bool
+eina_file_refresh(Eina_File *file)
+{
+   struct stat file_stat;
+   Eina_Bool r = EINA_FALSE;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(file, EINA_FALSE);
+
+   if (file->virtual) return EINA_FALSE;
+
+   if (fstat(file->fd, &file_stat))
+     return EINA_FALSE;
+
+   if (file->length != (unsigned long int) file_stat.st_size)
+     {
+        eina_file_flush(file, file_stat.st_size);
+        r = EINA_TRUE;
+     }
+
+   file->length = file_stat.st_size;
+   file->mtime = file_stat.st_mtime;
+#ifdef _STAT_VER_LINUX
+# if (defined __USE_MISC && defined st_mtime)
+   file->mtime_nsec = (unsigned long int)file_stat.st_mtim.tv_nsec;
+# else
+   file->mtime_nsec = (unsigned long int)file_stat.st_mtimensec;
+# endif
+#endif
+   file->inode = file_stat.st_ino;
+
+   return r;
+}
+
 EAPI void *
 eina_file_map_all(Eina_File *file, Eina_File_Populate rule)
 {
@@ -1048,21 +1108,7 @@ eina_file_map_free(Eina_File *file, void *map)
      }
    else
      {
-        Eina_File_Map *em;
-        unsigned long int key[2];
-
-        em = eina_hash_find(file->rmap, &map);
-        if (!em) goto on_exit;
-
-        em->refcount--;
-
-        if (em->refcount > 0) goto on_exit;
-
-        key[0] = em->offset;
-        key[1] = em->length;
-
-        eina_hash_del(file->rmap, &map, em);
-        eina_hash_del(file->map, &key, em);
+        eina_file_common_map_free(file, map, _eina_file_map_close);
      }
 
  on_exit:
@@ -1086,7 +1132,6 @@ eina_file_map_populate(Eina_File *file, Eina_File_Populate rule, void *map,
 EAPI Eina_Bool
 eina_file_map_faulted(Eina_File *file, void *map)
 {
-   Eina_File_Map *em;
    Eina_Bool r = EINA_FALSE;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(file, EINA_FALSE);
@@ -1101,8 +1146,24 @@ eina_file_map_faulted(Eina_File *file, void *map)
      }
    else
      {
+        Eina_File_Map *em;
+
         em = eina_hash_find(file->rmap, &map);
-        if (em) r = em->faulty;
+        if (em)
+          {
+             r = em->faulty;
+          }
+        else
+          {
+             Eina_List *l;
+
+             EINA_LIST_FOREACH(file->dead_map, l, em)
+               if (em->map == map)
+                 {
+                    r = em->faulty;
+                    break;
+                 }
+          }
      }
 
    eina_lock_release(&file->lock);

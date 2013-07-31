@@ -364,8 +364,16 @@ _eina_file_win32_direct_ls_iterator_free(Eina_File_Direct_Iterator *it)
 void
 eina_file_real_close(Eina_File *file)
 {
+   Eina_File_Map *map;
+
    eina_hash_free(file->rmap);
    eina_hash_free(file->map);
+
+   EINA_LIST_FREE(file->dead_map, map)
+     {
+        UnmapViewOfFile(map->map);
+        free(map);
+     }
 
    if (file->global_map != MAP_FAILED)
      UnmapViewOfFile(file->global_map);
@@ -715,6 +723,37 @@ eina_file_stat_ls(const char *dir)
    return eina_file_direct_ls(dir);
 }
 
+EAPI Eina_Bool
+eina_file_refresh(Eina_File *file)
+{
+   WIN32_FILE_ATTRIBUTE_DATA fad;
+   ULARGE_INTEGER length;
+   ULARGE_INTEGER mtime;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(file, EINA_FALSE);
+
+   if (file->virtual) return EINA_FALSE;
+
+   if (!GetFileAttributesEx(file->filename, GetFileExInfoStandard, &fad))
+     return EINA_FALSE;
+
+   length.u.LowPart = fad.nFileSizeLow;
+   length.u.HighPart = fad.nFileSizeHigh;
+   mtime.u.LowPart = fad.ftLastWriteTime.dwLowDateTime;
+   mtime.u.HighPart = fad.ftLastWriteTime.dwHighDateTime;
+
+   if (file->length != length.QuadPart)
+     {
+        eina_file_flush(file, file_stat.st_size);
+        r = EINA_TRUE;
+     }
+
+   n->length = length.QuadPart;
+   n->mtime = mtime.QuadPart;
+
+   return r;
+}
+
 EAPI Eina_File *
 eina_file_open(const char *path, Eina_Bool shared)
 {
@@ -953,21 +992,7 @@ eina_file_map_free(Eina_File *file, void *map)
      }
    else
      {
-        Eina_File_Map *em;
-        unsigned long int key[2];
-
-        em = eina_hash_find(file->rmap, &map);
-        if (!em) goto on_exit;
-
-        em->refcount--;
-
-        if (em->refcount > 0) goto on_exit;
-
-        key[0] = em->offset;
-        key[1] = em->length;
-
-        eina_hash_del(file->rmap, &map, em);
-        eina_hash_del(file->map, &key, em);
+        eina_file_common_map_free(file, map, _eina_file_map_close);
      }
 
  on_exit:
