@@ -91,10 +91,9 @@ _get(void *data, Evas_Object *obj)
    //elm_photocam_file_set(photo, data);
    //elm_photocam_zoom_mode_set(photo, ELM_PHOTOCAM_ZOOM_MODE_AUTO_FIT);
 
-   Evas_Object *photo = elm_photo_add(obj);
-   elm_photo_file_set(photo, data);
-   elm_photo_fill_inside_set(photo, EINA_TRUE);
-   elm_object_style_set(photo, "shadow");
+   Evas_Object *photo = elm_image_add(obj);
+   elm_image_file_set(photo, data, NULL);
+   elm_image_fill_outside_set(photo, EINA_FALSE);
 
    return photo;
 }
