@@ -634,10 +634,9 @@ typedef struct _Eo2_Op_Call_Data
      __##Name##_func _func_ = (__##Name##_func) call.func;              \
      return Func;                                                       \
 
-#define _EO2_CLASS_FUNC_COMMON(Name, Ret, Func, DefRet)                 \
+#define _EO2_CLASS_FUNC_COMMON(Name, Ret, Func, DefRet, Class)          \
      static Eo_Op op = EO_NOOP;                                         \
-     if ( op == EO_NOOP )                                               \
-        op = eo2_api_op_id_get((void*)Name, call.klass_id);             \
+     if ( op == EO_NOOP ) op = eo2_api_op_id_get((void*)Name, Class);   \
      Eo2_Op_Call_Data call;                                             \
      if (!eo2_call_resolve(op, &call)) return DefRet;                   \
      __##Name##_func _func_ = (__##Name##_func) call.func;              \
@@ -665,25 +664,25 @@ typedef struct _Eo2_Op_Call_Data
 #define EO2_VOID_FUNC_BODYV(Name, Func, ...) EO2_FUNC_BODYV(Name, void, Func, , __VA_ARGS__)
 
 // to define a EAPI class function
-#define EO2_CLASS_FUNC_BODY(Name, Ret, DefRet)                               \
+#define EO2_CLASS_FUNC_BODY(Name, Ret, DefRet, Class)                        \
   Ret                                                                        \
   Name(void)                                                                 \
   {                                                                          \
      typedef Ret (*__##Name##_func)(Eo_Class *);                             \
-     _EO2_CLASS_FUNC_COMMON(Name, Ret, _func_(call.klass_id), DefRet)        \
+     _EO2_CLASS_FUNC_COMMON(Name, Ret, _func_(call.klass_id), DefRet, Class) \
   }
 
-#define EO2_VOID_CLASS_FUNC_BODY(Name) EO2_CLASS_FUNC_BODY(Name, void, )
+#define EO2_VOID_CLASS_FUNC_BODY(Name, Class) EO2_CLASS_FUNC_BODY(Name, void, , Class)
 
-#define EO2_CLASS_FUNC_BODYV(Name, Ret, Func, DefRet, ...)        \
+#define EO2_CLASS_FUNC_BODYV(Name, Ret, Func, DefRet, Class, ...) \
   Ret                                                             \
   Name(__VA_ARGS__)                                               \
   {                                                               \
      typedef Ret (*__##Name##_func)(Eo_Class *, __VA_ARGS__);     \
-     _EO2_CLASS_FUNC_COMMON(Name, Ret, Func, DefRet)              \
+     _EO2_CLASS_FUNC_COMMON(Name, Ret, Func, DefRet, Class)       \
   }
 
-#define EO2_VOID_CLASS_FUNC_BODYV(Name, Func, ...) EO2_CLASS_FUNC_BODYV(Name, void, Func, , __VA_ARGS__)
+#define EO2_VOID_CLASS_FUNC_BODYV(Name, Func, Class, ...) EO2_CLASS_FUNC_BODYV(Name, void, Func, , Class, __VA_ARGS__)
 
 // OP ID of an overriding function
 #define EO2_OP_OVERRIDE ((Eo_Op) -1)
