@@ -16,3 +16,6 @@
 - Fix composite objects (?)
 
 - Consider making classes just a regular Eo object? (Just need to bootstrap the first class).
+
+- Move the Op_Descs to be set using a function inside the class_constructor???
+   Have to check if it works on windows or not. If it does, it's and no need to do this crap.
