@@ -269,9 +269,9 @@ _access_calendar_item_register(Evas_Object *obj)
 
              ao = _elm_access_edje_object_part_object_register
                         (obj, elm_layout_edje_get(obj), pname);
-             _elm_access_text_set(_elm_access_object_get(ao),
+             _elm_access_text_set(_elm_access_info_get(ao),
                          ELM_ACCESS_TYPE, E_("calendar item"));
-             _elm_access_callback_set(_elm_access_object_get(ao),
+             _elm_access_callback_set(_elm_access_info_get(ao),
                            ELM_ACCESS_INFO, _access_info_cb, NULL);
 
              snprintf(day_s, sizeof(day_s), "%i", day++);
@@ -295,32 +295,32 @@ _access_calendar_spinner_register(Evas_Object *obj)
 
    sd->dec_btn_month_access = _elm_access_edje_object_part_object_register
                             (obj, elm_layout_edje_get(obj), "left_bt");
-   ai = _elm_access_object_get(sd->dec_btn_month_access);
+   ai = _elm_access_info_get(sd->dec_btn_month_access);
    _elm_access_text_set(ai, ELM_ACCESS_TYPE, E_("calendar decrement month button"));
 
    sd->dec_btn_year_access = _elm_access_edje_object_part_object_register
                             (obj, elm_layout_edje_get(obj), "left_bt_year");
-   ai = _elm_access_object_get(sd->dec_btn_year_access);
+   ai = _elm_access_info_get(sd->dec_btn_year_access);
    _elm_access_text_set(ai, ELM_ACCESS_TYPE, E_("calendar decrement year button"));
 
    sd->inc_btn_month_access = _elm_access_edje_object_part_object_register
                             (obj, elm_layout_edje_get(obj), "right_bt");
-   ai = _elm_access_object_get(sd->inc_btn_month_access);
+   ai = _elm_access_info_get(sd->inc_btn_month_access);
    _elm_access_text_set(ai, ELM_ACCESS_TYPE, E_("calendar increment month button"));
 
    sd->inc_btn_year_access = _elm_access_edje_object_part_object_register
                             (obj, elm_layout_edje_get(obj), "right_bt_year");
-   ai = _elm_access_object_get(sd->inc_btn_year_access);
+   ai = _elm_access_info_get(sd->inc_btn_year_access);
    _elm_access_text_set(ai, ELM_ACCESS_TYPE, E_("calendar increment year button"));
 
    sd->month_access = _elm_access_edje_object_part_object_register
                           (obj, elm_layout_edje_get(obj), "text_month");
-   ai = _elm_access_object_get(sd->month_access);
+   ai = _elm_access_info_get(sd->month_access);
    _elm_access_text_set(ai, ELM_ACCESS_TYPE, E_("calendar month"));
 
    sd->year_access = _elm_access_edje_object_part_object_register
                           (obj, elm_layout_edje_get(obj), "year_text");
-   ai = _elm_access_object_get(sd->year_access);
+   ai = _elm_access_info_get(sd->year_access);
    _elm_access_text_set(ai, ELM_ACCESS_TYPE, E_("calendar year"));
 
    po = (Evas_Object *)edje_object_part_object_get

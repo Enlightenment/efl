@@ -247,9 +247,9 @@ _access_set(Evas_Object *obj, Elm_Datetime_Field_Type field_type)
      }
 
    _elm_access_text_set
-     (_elm_access_object_get(obj), ELM_ACCESS_TYPE, type);
+     (_elm_access_info_get(obj), ELM_ACCESS_TYPE, type);
    _elm_access_callback_set
-     (_elm_access_object_get(obj), ELM_ACCESS_STATE, NULL, NULL);
+     (_elm_access_info_get(obj), ELM_ACCESS_STATE, NULL, NULL);
 }
 
 // module fucns for the specific module type

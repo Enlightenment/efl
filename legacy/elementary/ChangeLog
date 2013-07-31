@@ -1520,3 +1520,7 @@
 
         * Flip : Fix the flip page to not flip on a direction if the direction
         is disabled.
+
+2013-07-31  Shinwoo Kim
+
+        * Add _elm_access_object_get, deprecate _elm_access_info_get.

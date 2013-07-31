@@ -290,11 +290,11 @@ _elm_radio_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    _elm_access_object_register(obj, wd->resize_obj);
    _elm_access_text_set
-     (_elm_access_object_get(obj), ELM_ACCESS_TYPE, E_("Radio"));
+     (_elm_access_info_get(obj), ELM_ACCESS_TYPE, E_("Radio"));
    _elm_access_callback_set
-     (_elm_access_object_get(obj), ELM_ACCESS_INFO, _access_info_cb, obj);
+     (_elm_access_info_get(obj), ELM_ACCESS_INFO, _access_info_cb, obj);
    _elm_access_callback_set
-     (_elm_access_object_get(obj), ELM_ACCESS_STATE, _access_state_cb, obj);
+     (_elm_access_info_get(obj), ELM_ACCESS_STATE, _access_state_cb, obj);
 }
 
 static void

@@ -522,7 +522,7 @@ _access_highlight_next_get(Evas_Object *obj, Elm_Focus_Direction dir)
      {
         if (ho)
           {
-             Elm_Access_Info *info = _elm_access_object_get(ho);
+             Elm_Access_Info *info = _elm_access_info_get(ho);
              if (type == ELM_ACCESS_ACTION_HIGHLIGHT_NEXT && info->next)
                target = info->next;
              else if (type == ELM_ACCESS_ACTION_HIGHLIGHT_PREV && info->prev)
@@ -678,7 +678,7 @@ _elm_access_highlight_cycle(Evas_Object *obj, Elm_Focus_Direction dir)
    if (!ho) elm_widget_focus_cycle(obj, dir);
    else if (!_access_action_callback_call(ho, type, NULL))
      {
-        Elm_Access_Info *info = _elm_access_object_get(ho);
+        Elm_Access_Info *info = _elm_access_info_get(ho);
         Evas_Object *comming = NULL;
         if (type == ELM_ACCESS_ACTION_HIGHLIGHT_NEXT)
           {
@@ -772,9 +772,15 @@ _elm_access_say(const char *txt)
 }
 
 EAPI Elm_Access_Info *
-_elm_access_object_get(const Evas_Object *obj)
+_elm_access_info_get(const Evas_Object *obj)
 {
    return evas_object_data_get(obj, "_elm_access");
+}
+
+EAPI Elm_Access_Info *
+_elm_access_object_get(const Evas_Object *obj)
+{
+   return _elm_access_info_get(obj);
 }
 
 EAPI void
@@ -1174,20 +1180,20 @@ elm_access_object_get(const Evas_Object *obj)
 EAPI void
 elm_access_info_set(Evas_Object *obj, int type, const char *text)
 {
-   _elm_access_text_set(_elm_access_object_get(obj), type, text);
+   _elm_access_text_set(_elm_access_info_get(obj), type, text);
 }
 
 EAPI char *
 elm_access_info_get(const Evas_Object *obj, int type)
 {
-   return _elm_access_text_get(_elm_access_object_get(obj), type, obj);
+   return _elm_access_text_get(_elm_access_info_get(obj), type, obj);
 }
 
 EAPI void
 elm_access_info_cb_set(Evas_Object *obj, int type,
                           Elm_Access_Info_Cb func, const void *data)
 {
-   _elm_access_callback_set(_elm_access_object_get(obj), type, func, data);
+   _elm_access_callback_set(_elm_access_info_get(obj), type, func, data);
 }
 
 EAPI void
@@ -1196,7 +1202,7 @@ elm_access_activate_cb_set(Evas_Object *obj,
 {
    Elm_Access_Info *ac;
 
-   ac = _elm_access_object_get(obj);
+   ac = _elm_access_info_get(obj);
    if (!ac) return;
 
    ac->activate = func;
@@ -1310,7 +1316,7 @@ EAPI void
 elm_access_external_info_set(Evas_Object *obj, const char *text)
 {
    _elm_access_text_set
-     (_elm_access_object_get(obj), ELM_ACCESS_CONTEXT_INFO, text);
+     (_elm_access_info_get(obj), ELM_ACCESS_CONTEXT_INFO, text);
 }
 
 EAPI char *
@@ -1318,7 +1324,7 @@ elm_access_external_info_get(const Evas_Object *obj)
 {
    Elm_Access_Info *ac;
 
-   ac = _elm_access_object_get(obj);
+   ac = _elm_access_info_get(obj);
    return _elm_access_text_get(ac, ELM_ACCESS_CONTEXT_INFO, obj);
 }
 
@@ -1328,8 +1334,8 @@ elm_access_highlight_next_set(Evas_Object *obj, Elm_Highlight_Direction dir, Eva
    EINA_SAFETY_ON_FALSE_RETURN(obj);
    EINA_SAFETY_ON_FALSE_RETURN(next);
 
-   Elm_Access_Info *info = _elm_access_object_get(obj);
-   Elm_Access_Info *info_next = _elm_access_object_get(next);
+   Elm_Access_Info *info = _elm_access_info_get(obj);
+   Elm_Access_Info *info_next = _elm_access_info_get(next);
 
    if (!info || !info_next)
      {

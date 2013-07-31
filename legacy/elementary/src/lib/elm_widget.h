@@ -515,7 +515,7 @@ EAPI void             _elm_access_callback_set(Elm_Access_Info *ac, int type, El
 EAPI char            *_elm_access_text_get(const Elm_Access_Info *ac, int type, const Evas_Object *obj); /* this is ok it actually returns a strduped string - it's meant to! */
 EAPI void             _elm_access_read(Elm_Access_Info *ac, int type, const Evas_Object *obj);
 EAPI void             _elm_access_say(const char *txt);
-EAPI Elm_Access_Info *_elm_access_object_get(const Evas_Object *obj);
+EAPI Elm_Access_Info *_elm_access_info_get(const Evas_Object *obj);
 EAPI void             _elm_access_object_hilight(Evas_Object *obj);
 EAPI void             _elm_access_object_unhilight(Evas_Object *obj);
 EAPI void             _elm_access_object_hilight_disable(Evas *e);
@@ -531,6 +531,8 @@ EAPI void             _elm_access_on_highlight_hook_set(Elm_Access_Info *ac, Elm
 EAPI void             _elm_access_activate_callback_set(Elm_Access_Info *ac, Elm_Access_Activate_Cb func, void *data);
 EAPI void             _elm_access_highlight_object_activate(Evas_Object *obj, Elm_Activate act);
 EAPI void             _elm_access_highlight_cycle(Evas_Object *obj, Elm_Focus_Direction dir);
+
+EINA_DEPRECATED EAPI Elm_Access_Info *_elm_access_object_get(const Evas_Object *obj);
 
 #define ELM_PREFS_DATA_MAGIC 0xe1f5da7a
 

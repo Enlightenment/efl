@@ -3118,11 +3118,11 @@ _elm_entry_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    // access
    _elm_access_object_register(obj, priv->entry_edje);
    _elm_access_text_set
-     (_elm_access_object_get(obj), ELM_ACCESS_TYPE, E_("Entry"));
+     (_elm_access_info_get(obj), ELM_ACCESS_TYPE, E_("Entry"));
    _elm_access_callback_set
-     (_elm_access_object_get(obj), ELM_ACCESS_INFO, _access_info_cb, NULL);
+     (_elm_access_info_get(obj), ELM_ACCESS_INFO, _access_info_cb, NULL);
    _elm_access_callback_set
-     (_elm_access_object_get(obj), ELM_ACCESS_STATE, _access_state_cb, NULL);
+     (_elm_access_info_get(obj), ELM_ACCESS_STATE, _access_state_cb, NULL);
 }
 
 static void

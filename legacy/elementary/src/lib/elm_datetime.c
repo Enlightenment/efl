@@ -841,7 +841,7 @@ _elm_datetime_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
           priv->access_obj = _elm_access_edje_object_part_object_register
           (obj, elm_layout_edje_get(obj), "access");
         
-        ai = _elm_access_object_get(priv->access_obj);
+        ai = _elm_access_info_get(priv->access_obj);
         _elm_access_text_set(ai, ELM_ACCESS_TYPE, "date time");
         _elm_access_callback_set(ai, ELM_ACCESS_INFO, _access_info_cb, obj);
      }

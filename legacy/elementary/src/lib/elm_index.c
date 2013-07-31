@@ -99,7 +99,7 @@ _access_index_register(Evas_Object *obj)
    ao = _elm_access_edje_object_part_object_register
               (obj, elm_layout_edje_get(obj), "access");
    _elm_access_text_set
-     (_elm_access_object_get(ao), ELM_ACCESS_TYPE, E_("Index"));
+     (_elm_access_info_get(ao), ELM_ACCESS_TYPE, E_("Index"));
 }
 
 static char *
@@ -124,7 +124,7 @@ _access_widget_item_register(Elm_Index_Item *it)
 
    _elm_access_widget_item_register((Elm_Widget_Item *)it);
 
-   ai = _elm_access_object_get(it->base.access_obj);
+   ai = _elm_access_info_get(it->base.access_obj);
 
    _elm_access_text_set(ai, ELM_ACCESS_TYPE, E_("Index Item"));
    _elm_access_callback_set(ai, ELM_ACCESS_INFO, _access_info_cb, it);

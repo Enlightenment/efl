@@ -417,7 +417,7 @@ _items_create(Evas_Object *obj)
         elm_layout_content_set(obj, buf, chk);
 
         // XXX: ACCESS
-        _elm_access_text_set(_elm_access_object_get(chk),
+        _elm_access_text_set(_elm_access_info_get(chk),
                  ELM_ACCESS_TYPE, E_("day selector item"));
      }
 

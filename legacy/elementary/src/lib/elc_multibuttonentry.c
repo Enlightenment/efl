@@ -625,7 +625,7 @@ _access_multibuttonentry_label_register(Evas_Object *obj, Eina_Bool is_access)
         Evas_Object *ao;
         ao = _elm_access_edje_object_part_object_register
                             (obj, sd->label, "mbe.label");
-        _elm_access_text_set(_elm_access_object_get(ao),
+        _elm_access_text_set(_elm_access_info_get(ao),
                              ELM_ACCESS_TYPE, E_("multi button entry label"));
      }
    else
@@ -647,7 +647,7 @@ _access_multibuttonentry_item_register(Evas_Object *obj,
         Evas_Object *ao;
         ao = _elm_access_edje_object_part_object_register
                       (obj, item->button, "elm.btn.text");
-        _elm_access_text_set(_elm_access_object_get(ao),
+        _elm_access_text_set(_elm_access_info_get(ao),
                              ELM_ACCESS_TYPE, E_("multi button entry item"));
      }
    else
@@ -1552,9 +1552,9 @@ _elm_multibuttonentry_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    // ACCESS
    _elm_access_object_register(obj, wd->resize_obj);
    _elm_access_text_set
-     (_elm_access_object_get(obj), ELM_ACCESS_TYPE, E_("multi button entry"));
+     (_elm_access_info_get(obj), ELM_ACCESS_TYPE, E_("multi button entry"));
    _elm_access_callback_set
-     (_elm_access_object_get(obj), ELM_ACCESS_INFO, _access_info_cb, NULL);
+     (_elm_access_info_get(obj), ELM_ACCESS_INFO, _access_info_cb, NULL);
 }
 
 static void

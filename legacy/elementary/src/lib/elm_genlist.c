@@ -1408,7 +1408,7 @@ _access_widget_item_register(Elm_Gen_Item *it)
 
    _elm_access_widget_item_register((Elm_Widget_Item *)it);
 
-   ai = _elm_access_object_get(it->base.access_obj);
+   ai = _elm_access_info_get(it->base.access_obj);
 
    _elm_access_callback_set(ai, ELM_ACCESS_INFO, _access_info_cb, it);
    _elm_access_callback_set(ai, ELM_ACCESS_STATE, _access_state_cb, it);

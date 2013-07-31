@@ -380,9 +380,9 @@ _access_obj_process(Elm_Naviframe_Item *it, Eina_Bool is_access)
              eo = elm_layout_edje_get(VIEW(it));
              ao =_elm_access_edje_object_part_object_register(WIDGET(it), eo,
                                                             TITLE_ACCESS_PART);
-            _elm_access_text_set(_elm_access_object_get(ao),
+            _elm_access_text_set(_elm_access_info_get(ao),
                                 ELM_ACCESS_TYPE, E_("Title"));
-            _elm_access_callback_set(_elm_access_object_get(ao),
+            _elm_access_callback_set(_elm_access_info_get(ao),
                                      ELM_ACCESS_INFO, _access_info_cb, it);
             /* to access title access object, any idea? */
             ((Elm_Widget_Item *)it)->access_obj = ao;
@@ -1197,7 +1197,7 @@ _item_new(Evas_Object *obj,
 
         if (!elm_layout_text_get(prev_btn, NULL))
           _elm_access_callback_set
-            (_elm_access_object_get(prev_btn), ELM_ACCESS_INFO,
+            (_elm_access_info_get(prev_btn), ELM_ACCESS_INFO,
              _access_prev_btn_info_cb, it);
      }
 
@@ -1207,7 +1207,7 @@ _item_new(Evas_Object *obj,
 
         if (!elm_layout_text_get(next_btn, NULL))
           _elm_access_text_set
-            (_elm_access_object_get(next_btn), ELM_ACCESS_INFO, E_("Next"));
+            (_elm_access_info_get(next_btn), ELM_ACCESS_INFO, E_("Next"));
      }
 
    _item_content_set(it, content);

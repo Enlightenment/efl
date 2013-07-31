@@ -878,7 +878,7 @@ _access_colorbar_register(Evas_Object *obj,
    const char* colorbar_type = NULL;
 
    ao = _elm_access_edje_object_part_object_register(obj, cd->colorbar, part);
-   ai = _elm_access_object_get(ao);
+   ai = _elm_access_info_get(ao);
 
    switch (cd->color_type)
      {
@@ -1351,7 +1351,7 @@ _access_widget_item_register(Elm_Color_Item *it)
 
    _elm_access_widget_item_register((Elm_Widget_Item *)it);
 
-   ai = _elm_access_object_get(it->base.access_obj);
+   ai = _elm_access_info_get(it->base.access_obj);
 
    _elm_access_text_set(ai, ELM_ACCESS_TYPE, E_("color selector palette item"));
    _elm_access_callback_set(ai, ELM_ACCESS_INFO, _access_info_cb, it);

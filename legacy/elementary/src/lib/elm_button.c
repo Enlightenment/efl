@@ -304,11 +304,11 @@ _elm_button_smart_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 
    _elm_access_object_register(obj, wd->resize_obj);
    _elm_access_text_set
-     (_elm_access_object_get(obj), ELM_ACCESS_TYPE, E_("Button"));
+     (_elm_access_info_get(obj), ELM_ACCESS_TYPE, E_("Button"));
    _elm_access_callback_set
-     (_elm_access_object_get(obj), ELM_ACCESS_INFO, _access_info_cb, NULL);
+     (_elm_access_info_get(obj), ELM_ACCESS_INFO, _access_info_cb, NULL);
    _elm_access_callback_set
-     (_elm_access_object_get(obj), ELM_ACCESS_STATE, _access_state_cb, obj);
+     (_elm_access_info_get(obj), ELM_ACCESS_STATE, _access_state_cb, obj);
 
    elm_widget_can_focus_set(obj, EINA_TRUE);
    if (!elm_layout_theme_set(obj, "button", "base", elm_widget_style_get(obj)))

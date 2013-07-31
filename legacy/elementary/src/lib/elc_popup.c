@@ -260,9 +260,9 @@ _access_obj_process(Eo *obj, Eina_Bool is_access)
           {
              ao = _elm_access_edje_object_part_object_register
                     (obj, wd->resize_obj, ACCESS_TITLE_PART);
-             _elm_access_text_set(_elm_access_object_get(ao),
+             _elm_access_text_set(_elm_access_info_get(ao),
                                   ELM_ACCESS_TYPE, E_("Popup Title"));
-             _elm_access_text_set(_elm_access_object_get(ao),
+             _elm_access_text_set(_elm_access_info_get(ao),
                                   ELM_ACCESS_INFO, sd->title_text);
           }
 
@@ -270,9 +270,9 @@ _access_obj_process(Eo *obj, Eina_Bool is_access)
           {
              ao = _elm_access_edje_object_part_object_register
                     (obj, wd->resize_obj, ACCESS_BODY_PART);
-             _elm_access_text_set(_elm_access_object_get(ao),
+             _elm_access_text_set(_elm_access_info_get(ao),
                                   ELM_ACCESS_TYPE, E_("Popup Body Text"));
-             _elm_access_text_set(_elm_access_object_get(ao),
+             _elm_access_text_set(_elm_access_info_get(ao),
                ELM_ACCESS_INFO, elm_object_text_get(sd->text_content_obj));
           }
      }
@@ -878,10 +878,10 @@ _title_text_set(Evas_Object *obj,
           {
              ao = _elm_access_edje_object_part_object_register
                     (obj, wd->resize_obj, ACCESS_TITLE_PART);
-             _elm_access_text_set(_elm_access_object_get(ao),
+             _elm_access_text_set(_elm_access_info_get(ao),
                                   ELM_ACCESS_TYPE, E_("Popup Title"));
           }
-        _elm_access_text_set(_elm_access_object_get(ao), ELM_ACCESS_INFO, text);
+        _elm_access_text_set(_elm_access_info_get(ao), ELM_ACCESS_INFO, text);
      }
 
    if (sd->title_text)
@@ -946,10 +946,10 @@ _content_text_set(Evas_Object *obj,
           {
              ao = _elm_access_edje_object_part_object_register
                     (obj, wd->resize_obj, ACCESS_BODY_PART);
-             _elm_access_text_set(_elm_access_object_get(ao),
+             _elm_access_text_set(_elm_access_info_get(ao),
                                   ELM_ACCESS_TYPE, E_("Popup Body Text"));
           }
-        _elm_access_text_set(_elm_access_object_get(ao), ELM_ACCESS_INFO, text);
+        _elm_access_text_set(_elm_access_info_get(ao), ELM_ACCESS_INFO, text);
      }
 
 end:

@@ -113,10 +113,10 @@ _orient_set_do(Evas_Object *obj)
         Evas_Object *ao;
         ao = _elm_access_edje_object_part_object_register
             (obj, wd->resize_obj, "btn_icon");
-        _elm_access_text_set(_elm_access_object_get(ao),
+        _elm_access_text_set(_elm_access_info_get(ao),
                              ELM_ACCESS_TYPE, E_("panel button"));
         _elm_access_callback_set
-          (_elm_access_object_get(ao), ELM_ACCESS_STATE, _access_state_cb, obj);
+          (_elm_access_info_get(ao), ELM_ACCESS_STATE, _access_state_cb, obj);
      }
 }
 

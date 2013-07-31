@@ -2646,7 +2646,7 @@ _elm_widget_focus_next_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    if (_elm_config->access_mode)
      {
         Elm_Access_Info *ac;
-        ac= _elm_access_object_get(obj);
+        ac= _elm_access_info_get(obj);
         if (!ac) return;
      }
 

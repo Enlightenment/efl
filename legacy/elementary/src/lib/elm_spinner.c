@@ -610,7 +610,7 @@ _access_spinner_register(Evas_Object *obj, Eina_Bool is_access)
    ao = _elm_access_edje_object_part_object_register
           (obj, elm_layout_edje_get(obj), increment_part);
 
-   ai = _elm_access_object_get(ao);
+   ai = _elm_access_info_get(ao);
    _elm_access_text_set(ai, ELM_ACCESS_TYPE,
                         E_("spinner increment button"));
    _elm_access_activate_callback_set(ai, _access_activate_cb, obj);
@@ -619,7 +619,7 @@ _access_spinner_register(Evas_Object *obj, Eina_Bool is_access)
    ao = _elm_access_edje_object_part_object_register
           (obj, elm_layout_edje_get(obj), decrement_part);
 
-   ai = _elm_access_object_get(ao);
+   ai = _elm_access_info_get(ao);
    _elm_access_text_set(ai, ELM_ACCESS_TYPE,
                         E_("spinner decrement button"));
    _elm_access_activate_callback_set(ai, _access_activate_cb, obj);
@@ -628,7 +628,7 @@ _access_spinner_register(Evas_Object *obj, Eina_Bool is_access)
    ao = _elm_access_edje_object_part_object_register
           (obj, elm_layout_edje_get(obj), "access_text");
 
-   ai = _elm_access_object_get(ao);
+   ai = _elm_access_info_get(ao);
    _elm_access_text_set(ai, ELM_ACCESS_TYPE, E_("spinner"));
    _elm_access_callback_set(ai, ELM_ACCESS_INFO, _access_info_cb, obj);
    _elm_access_callback_set(ai, ELM_ACCESS_STATE, _access_state_cb, obj);

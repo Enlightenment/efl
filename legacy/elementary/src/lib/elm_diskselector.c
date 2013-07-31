@@ -667,13 +667,13 @@ _item_new(Evas_Object *obj,
      {
         _elm_access_widget_item_register((Elm_Widget_Item *)it);
 
-        _elm_access_text_set(_elm_access_object_get(it->base.access_obj),
+        _elm_access_text_set(_elm_access_info_get(it->base.access_obj),
                              ELM_ACCESS_TYPE, E_("diskselector item"));
-        _elm_access_callback_set(_elm_access_object_get(it->base.access_obj),
+        _elm_access_callback_set(_elm_access_info_get(it->base.access_obj),
                                  ELM_ACCESS_INFO,
                                  _access_info_cb, it);
         _elm_access_on_highlight_hook_set(
-           _elm_access_object_get(it->base.access_obj), _access_on_highlight_cb,
+           _elm_access_info_get(it->base.access_obj), _access_on_highlight_cb,
            it);
      }
 
