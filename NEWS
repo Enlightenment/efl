@@ -395,6 +395,7 @@ Fixes:
      - Fix desktop command parsing of https.
     * Emotion:
      - Fix memory leak in gstreamer_ecore_x_check.
+     - Fix backend priority order.
     * Ethumb:
      - Fix memory leak in error case.
     * Eeze:

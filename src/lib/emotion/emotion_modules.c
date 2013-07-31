@@ -37,14 +37,14 @@ static int
 _emotion_engine_registry_entry_cmp(const void *pa, const void *pb)
 {
    const Emotion_Engine_Registry_Entry *a = pa, *b = pb;
-   int r = a->priority - b->priority;
+   int r = b->priority - a->priority;
 
    if (r == 0)
-     r = a->engine->priority - b->engine->priority;
+     r = b->engine->priority - a->engine->priority;
 
    if (r == 0)
      /* guarantee some order to ease debug */
-     r = strcmp(a->engine->name, b->engine->name);
+     r = strcmp(b->engine->name, a->engine->name);
 
    return r;
 }

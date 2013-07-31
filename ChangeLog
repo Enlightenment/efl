@@ -6,6 +6,7 @@
 
 	* Eina: add eina_file_refresh(), eina_file_virtualize() and eina_file_virtual().
 	* Evas: use eina_file_virtualize() for evas_object_image_memfile_set().
+	* Emotion: fix backend priority order.
 
 2013-07-25  ChunEon Park (Hermet)
 
