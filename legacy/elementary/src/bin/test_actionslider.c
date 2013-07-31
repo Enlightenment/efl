@@ -161,6 +161,23 @@ test_actionslider(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *eve
    evas_object_show(as);
    elm_box_pack_end(bx, as);
 
+   as = elm_actionslider_add(win);
+   elm_object_style_set(as, "bar");
+   elm_object_disabled_set(as, EINA_TRUE);
+   evas_object_size_hint_weight_set(as, EVAS_HINT_EXPAND, 0);
+   evas_object_size_hint_align_set(as, EVAS_HINT_FILL, 0);
+   elm_actionslider_indicator_pos_set(as, ELM_ACTIONSLIDER_LEFT);
+   elm_actionslider_magnet_pos_set(as, ELM_ACTIONSLIDER_LEFT);
+   elm_object_part_text_set(as, "left", NULL);
+   elm_object_part_text_set(as, "center", "Accept");
+   elm_object_part_text_set(as, "right", "Reject");
+   elm_object_text_set(as, "Go");
+   evas_object_smart_callback_add(as, "pos_changed",
+                                  _position_change_magnetic_cb, NULL);
+   evas_object_smart_callback_add(as, "selected", _pos_selected_cb, NULL);
+   evas_object_show(as);
+   elm_box_pack_end(bx, as);
+
 
    as = elm_actionslider_add(win);
    evas_object_size_hint_weight_set(as, EVAS_HINT_EXPAND, 0);
