@@ -308,12 +308,14 @@ int
 evas_cserve2_shutdown(void)
 {
    const char zeros[sizeof(Msg_Index_List)] = {0};
+   Msg_Index_List *empty = (Msg_Index_List *) zeros;
 
    if ((--cserve2_init) > 0)
      return cserve2_init;
 
    DBG("Disconnecting from cserve2.");
-   _server_index_list_set((Msg_Base *) zeros, sizeof(Msg_Index_List));
+   empty->base.type = CSERVE2_INDEX_LIST;
+   _server_index_list_set((Msg_Base *) empty, sizeof(Msg_Index_List));
    _server_disconnect();
 
    return cserve2_init;
@@ -1948,7 +1950,21 @@ _shared_index_remap_check(Shared_Index *si, int elemsize)
 
    // Note: all checks are unlikely to be true.
 
-   if (!si || elemsize <= 0) return EINA_FALSE;
+   if (!si || elemsize <= 0)
+     return EINA_FALSE;
+
+   if (!si->path[0])
+     {
+        if (si->f)
+          {
+             DBG("Closing index map");
+             eina_file_map_free(si->f, si->data);
+             eina_file_close(si->f);
+             eina_hash_free(si->entries_by_hkey);
+             memset(si, 0, sizeof(*si));
+          }
+        return EINA_FALSE;
+     }
 
    if (si->generation_id != _index.generation_id)
      {
