@@ -532,8 +532,8 @@ end:
    return ret;
 }
 EAPI EO2_FUNC_BODYV(eo2_event_callback_call, Eina_Bool,
-                   EO2_FUNC_CALL(desc, event_info),
                    EINA_FALSE,
+                   EO2_FUNC_CALL(desc, event_info),
                    const Eo_Event_Description *desc,
                    void *event_info);
 
