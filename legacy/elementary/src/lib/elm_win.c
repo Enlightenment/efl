@@ -234,7 +234,7 @@ _elm_win_first_frame_do(void *data EINA_UNUSED, Evas *e EINA_UNUSED, void *event
       case 'A': abort();
       case 'E':
       case 'D': exit(-1);
-      case 'T': fprintf(stderr, "Startup time: '%f' - '%f' = '%f'\n", end, _elm_startup_time, end - _elm_startup_time);
+      case 'T': fprintf(stderr, "Startup time: '%f' - '%f' = '%f' sec\n", end, _elm_startup_time, end - _elm_startup_time);
          break;
      }
 
