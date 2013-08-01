@@ -449,7 +449,6 @@ eo2_call_resolve_internal(const Eo_Class *klass_id, const Eo_Op op, Eo2_Op_Call_
           return EINA_FALSE;
      }
 
-
    func = _dich_func_get(klass, op);
    if (EINA_LIKELY(func != NULL))
      {
@@ -612,6 +611,64 @@ _eo2_class_funcs_set(_Eo_Class *klass)
         /* printf(" %d %p %p %s\n", op_desc->op, op_desc->api_func, op_desc->func, op_desc->doc); */
         _dich_func_set(klass, op_desc->op, op_desc->func);
      }
+}
+
+EAPI Eo *
+eo2_add_internal_start(const char *file, int line, const Eo_Class *klass_id, Eo *parent_id)
+{
+   _Eo_Class *klass = _eo_class_pointer_get(klass_id);
+   EO_MAGIC_RETURN_VAL(klass, EO_CLASS_EINA_MAGIC, NULL);
+
+   if (parent_id)
+     {
+        EO_OBJ_POINTER_RETURN_VAL(parent_id, parent, NULL);
+     }
+
+   if (EINA_UNLIKELY(klass->desc->type != EO_CLASS_TYPE_REGULAR))
+     {
+        ERR("in %s:%d: Class '%s' is not instantiate-able. Aborting.", file, line, klass->desc->name);
+        return NULL;
+     }
+
+   _Eo *obj = calloc(1, klass->obj_size);
+   obj->refcount++;
+   obj->klass = klass;
+
+#ifndef HAVE_EO_ID
+   EINA_MAGIC_SET(obj, EO_EINA_MAGIC);
+#endif
+   Eo_Id obj_id = _eo_id_allocate(obj);
+   obj->obj_id = obj_id;
+   eo_parent_set((Eo *)obj_id, parent_id);
+
+   _eo_condtor_reset(obj);
+
+   return (Eo *)obj_id;
+}
+
+EAPI Eo *
+eo2_add_internal_end(const char *file, int line, const Eo *obj_id)
+{
+   Eo2_Stack_Frame *fptr;
+
+   fptr = eo2_call_stack.frame_ptr;
+
+   if ((fptr == NULL) || (fptr->obj_id != obj_id))
+     {
+        ERR("in %s:%d - Something very wrong happend to the call stack.", file, line);
+        return NULL;
+     }
+
+   if (!fptr->obj->condtor_done)
+     {
+        ERR("in %s:%d: Object of class '%s' - Not all of the object constructors have been executed.",
+            file, line, fptr->klass->desc->name);
+        /* for the for the basic object ref. */
+        _eo_unref(fptr->obj);
+        return NULL;
+     }
+
+   return (Eo *)fptr->obj_id;
 }
 
 /*****************************************************************************/
