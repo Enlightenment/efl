@@ -542,6 +542,7 @@ ecore_wl_window_find(unsigned int id)
 {
    Ecore_Wl_Window *win = NULL;
 
+   if (!_windows) return NULL;
    win = eina_hash_find(_windows, _ecore_wl_window_id_str_get(id));
    return win;
 }
