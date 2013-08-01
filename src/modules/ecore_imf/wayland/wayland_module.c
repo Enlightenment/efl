@@ -136,8 +136,6 @@ im_module_create()
 static Eina_Bool
 im_module_init(void)
 {
-   if (!ecore_wl_init(NULL)) return EINA_FALSE;
-
    _ecore_imf_wayland_log_dom = 
      eina_log_domain_register("ecore_imf_wayland", EINA_COLOR_YELLOW);
 
@@ -151,7 +149,6 @@ im_module_init(void)
 static void
 im_module_shutdown(void)
 {
-   ecore_wl_shutdown();
    EINA_LOG_DOM_INFO(_ecore_imf_wayland_log_dom, "im module shutdown");
 }
 
