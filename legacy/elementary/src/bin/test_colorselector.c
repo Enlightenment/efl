@@ -50,9 +50,7 @@ _palette_cb(void *data, Evas_Object *obj __UNUSED__,
             void *event_info __UNUSED__)
 {
    Evas_Object *cs = data;
-   Evas_Object *win = evas_object_data_get(cs, "win");
    elm_colorselector_mode_set(cs, ELM_COLORSELECTOR_PALETTE);
-   evas_object_resize(win, 320, 300);
 }
 
 static void
@@ -60,27 +58,28 @@ _components_cb(void *data, Evas_Object *obj __UNUSED__,
                void *event_info __UNUSED__)
 {
    Evas_Object *cs = data;
-   Evas_Object *win = evas_object_data_get(cs, "win");
    elm_colorselector_mode_set(cs, ELM_COLORSELECTOR_COMPONENTS);
-   evas_object_resize(win, 320, 455);
 }
 
 static void
 _both_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *cs = data;
-   Evas_Object *win = evas_object_data_get(cs, "win");
    elm_colorselector_mode_set(cs, ELM_COLORSELECTOR_BOTH);
-   evas_object_resize(win, 320, 550);
 }
 
 static void
 _picker_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *cs = data;
-   Evas_Object *win = evas_object_data_get(cs, "win");
    elm_colorselector_mode_set(cs, ELM_COLORSELECTOR_PICKER);
-   evas_object_resize(win, 320, 430);
+}
+
+static void
+_all_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Evas_Object *cs = data;
+   elm_colorselector_mode_set(cs, ELM_COLORSELECTOR_ALL);
 }
 
 void
@@ -118,7 +117,7 @@ test_colorselector(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
    evas_object_show(fr);
 
    cs = elm_colorselector_add(fr);
-   elm_colorselector_palette_color_add(cs, 255, 90, 18, 255);
+   elm_colorselector_palette_color_add(cs, 255, 90, 18, 128);
    elm_colorselector_palette_color_add(cs, 255, 213, 0, 255);
    elm_colorselector_palette_color_add(cs, 146, 255, 11, 255);
    elm_colorselector_palette_color_add(cs, 9, 186, 10, 255);
@@ -194,7 +193,14 @@ test_colorselector(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
    evas_object_show(bt);
    elm_box_pack_end(bx2, bt);
 
-   evas_object_resize(win, 320, 550);
+   bt = elm_button_add(bx2);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_smart_callback_add(bt, "clicked", _all_cb, cs);
+   elm_object_text_set(bt, "All");
+   evas_object_show(bt);
+   elm_box_pack_end(bx2, bt);
+
    evas_object_show(win);
 }
 #endif
