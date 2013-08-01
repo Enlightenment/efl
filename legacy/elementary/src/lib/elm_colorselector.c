@@ -1509,11 +1509,9 @@ _elm_colorselector_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
      (priv->palette_box, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_homogeneous_set(priv->palette_box, EINA_TRUE);
 
-   hpadstr =
-     edje_object_data_get(wd->resize_obj, "horizontal_pad");
+   hpadstr = edje_object_data_get(wd->resize_obj, "horizontal_pad");
    if (hpadstr) h_pad = atoi(hpadstr);
-   vpadstr = edje_object_data_get
-       (wd->resize_obj, "vertical_pad");
+   vpadstr = edje_object_data_get(wd->resize_obj, "vertical_pad");
    if (vpadstr) v_pad = atoi(vpadstr);
 
    elm_box_padding_set
@@ -1522,7 +1520,8 @@ _elm_colorselector_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
      (v_pad * elm_widget_scale_get(obj) * elm_config_scale_get()));
 
    elm_box_align_set(priv->palette_box, 0.5, 0.5);
-   elm_layout_content_set(obj, "palette", priv->palette_box);
+   if (!elm_layout_content_set(obj, "elm.palette", priv->palette_box))
+     elm_layout_content_set(obj, "palette", priv->palette_box);
    priv->palette_name = eina_stringshare_add("default");
    _palette_colors_load(obj);
 
@@ -1530,8 +1529,9 @@ _elm_colorselector_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    priv->col_bars_area = edje_object_add(evas_object_evas_get(obj));
    elm_widget_theme_object_set
      (obj, priv->col_bars_area, "colorselector", "bg",
-     elm_widget_style_get(obj));
-   elm_layout_content_set(obj, "selector", priv->col_bars_area);
+         elm_widget_style_get(obj));
+   if (!elm_layout_content_set(obj, "elm.selector", priv->col_bars_area))
+     elm_layout_content_set(obj, "selector", priv->col_bars_area);
 
    elm_layout_signal_emit(obj, "elm,state,both", "elm");
    
@@ -1936,32 +1936,46 @@ _mode_set(Eo *obj, void *_pd, va_list *list)
    Elm_Colorselector_Mode mode = va_arg(*list, Elm_Colorselector_Mode);
    Elm_Colorselector_Smart_Data *sd = _pd;
    Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Evas_Object *o;
 
    if (sd->mode == mode) return;
    sd->mode = mode;
 
-   evas_object_hide(elm_layout_content_unset(obj, "selector"));
-   evas_object_hide(elm_layout_content_unset(obj, "palette"));
-   evas_object_hide(elm_layout_content_unset(obj, "picker"));
+   o = elm_layout_content_unset(obj, "elm.selector");
+   if (!o) o = elm_layout_content_unset(obj, "selector");
+   if (o) evas_object_hide(o);
+
+   o = elm_layout_content_unset(obj, "elm.palette");
+   if (!o) o = elm_layout_content_unset(obj, "palette");
+   if (o) evas_object_hide(o);
+
+   o = elm_layout_content_unset(obj, "elm.picker");
+   if (!o) o = elm_layout_content_unset(obj, "picker");
+   if (o) evas_object_hide(o);
 
    switch (sd->mode)
      {
       case ELM_COLORSELECTOR_PALETTE:
-        elm_layout_content_set(obj, "palette", sd->palette_box);
+        if (!elm_layout_content_set(obj, "elm.palette", sd->palette_box))
+          elm_layout_content_set(obj, "palette", sd->palette_box);
         elm_layout_signal_emit(obj, "elm,state,palette", "elm");
         sd->focused = ELM_COLORSELECTOR_PALETTE;
         sd->selected = sd->items;
         break;
 
       case ELM_COLORSELECTOR_COMPONENTS:
-        elm_layout_content_set(obj, "selector", sd->col_bars_area);
+        if (!elm_layout_content_set(obj, "elm.selector", sd->col_bars_area))
+          elm_layout_content_set(obj, "selector", sd->col_bars_area);
         elm_layout_signal_emit(obj, "elm,state,components", "elm");
         sd->focused = ELM_COLORSELECTOR_COMPONENTS;
         sd->sel_color_type = HUE;
         break;
 
       case ELM_COLORSELECTOR_BOTH:
-        elm_layout_content_set(obj, "palette", sd->palette_box);
+        if (!elm_layout_content_set(obj, "elm.palette", sd->palette_box))
+          elm_layout_content_set(obj, "palette", sd->palette_box);
+        if (!elm_layout_content_set(obj, "elm.selector", sd->col_bars_area))
+          elm_layout_content_set(obj, "selector", sd->col_bars_area);
         elm_layout_content_set(obj, "selector", sd->col_bars_area);
         elm_layout_signal_emit(obj, "elm,state,both", "elm");
         sd->focused = ELM_COLORSELECTOR_PALETTE;
@@ -1969,15 +1983,19 @@ _mode_set(Eo *obj, void *_pd, va_list *list)
         break;
 
       case ELM_COLORSELECTOR_PICKER:
-        elm_layout_content_set(obj, "picker", sd->picker);
+        if (!elm_layout_content_set(obj, "elm.picker", sd->picker))
+          elm_layout_content_set(obj, "picker", sd->picker);
         elm_layout_signal_emit(obj, "elm,state,picker", "elm");
         sd->focused = ELM_COLORSELECTOR_PICKER;
         break;
          
       case ELM_COLORSELECTOR_ALL:
-        elm_layout_content_set(obj, "picker", sd->picker);
-        elm_layout_content_set(obj, "palette", sd->palette_box);
-        elm_layout_content_set(obj, "selector", sd->col_bars_area);
+        if (!elm_layout_content_set(obj, "elm.palette", sd->palette_box))
+          elm_layout_content_set(obj, "palette", sd->palette_box);
+        if (!elm_layout_content_set(obj, "elm.selector", sd->col_bars_area))
+          elm_layout_content_set(obj, "selector", sd->col_bars_area);
+        if (!elm_layout_content_set(obj, "elm.picker", sd->picker))
+          elm_layout_content_set(obj, "picker", sd->picker);
         elm_layout_signal_emit(obj, "elm,state,all", "elm");
         sd->focused = ELM_COLORSELECTOR_PALETTE;
         sd->selected = sd->items;
