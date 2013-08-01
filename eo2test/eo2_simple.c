@@ -42,14 +42,15 @@ EAPI EO2_VOID_CLASS_FUNC_BODYV(eo2_class_hello, EO2_CLASS_FUNC_CALL(a), int a);
 EAPI EO2_FUNC_BODYV(eo2_virtual, int, EO2_FUNC_CALL(x), 0, int x);
 
 static void
-_constructor(Eo *obj, void *obj_data)
+_constructor(Eo *obj, void *obj_data, int x)
 {
    Private_Data *data = (Private_Data *) obj_data;
 
    eo2_do_super(obj, eo2_constructor());
 
-   data->x = 66;
+   data->x = x;
 }
+EAPI EO2_VOID_FUNC_BODYV(eo2_simple_constructor, EO2_FUNC_CALL(x), int x);
 
 static void
 _destructor(Eo *obj, void *obj_data EINA_UNUSED)
@@ -58,7 +59,7 @@ _destructor(Eo *obj, void *obj_data EINA_UNUSED)
 }
 
 static Eo2_Op_Description op_descs [] = {
-       EO2_OP_FUNC_OVERRIDE(_constructor, eo2_constructor),
+       EO2_OP_FUNC(_constructor, eo2_simple_constructor, "Simple constructor"),
        EO2_OP_FUNC_OVERRIDE(_destructor, eo2_destructor),
        EO2_OP_FUNC(_inc, eo2_inc, "Inc X"),
        EO2_OP_FUNC(_get, eo2_get, "Get X"),

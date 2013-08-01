@@ -44,7 +44,7 @@ _constructor(Eo *obj, void *obj_data)
 {
    Private_Data *data = (Private_Data *) obj_data;
 
-   eo2_do_super(obj, eo2_constructor());
+   eo2_do_super(obj, eo2_simple_constructor(66));
 
    data->y = 68;
 }

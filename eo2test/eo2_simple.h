@@ -13,6 +13,8 @@ EAPI int eo2_virtual(int in);
 
 EAPI void eo2_class_hello(int a);
 
+EAPI void eo2_simple_constructor(int x);
+
 EAPI const Eo_Class *eo2_simple_class_get(void);
 #define EO2_SIMPLE_CLASS eo2_simple_class_get()
 

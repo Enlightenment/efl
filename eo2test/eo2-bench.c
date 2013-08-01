@@ -113,16 +113,17 @@ do_batch_test()
    int a, b, c;
    Eo *eo_obj, *eo2_obj;
 
-   a = b = c = 0;
    eo_obj = eo_add(EO_SIMPLE_CLASS, NULL);
-   eo2_obj = eo2_add(EO2_SIMPLE_CLASS, NULL);
+   eo2_obj = eo2_add_custom(EO2_SIMPLE_CLASS, NULL, eo2_simple_constructor(66));
 
    /* EO check */
+   a = b = c = 0;
    eo_do(eo_obj, eo_get(&a), eo_set(10), eo_inc(), eo_get(&b), eo_inc(), eo_inc(), eo_get(&c));
    check(a, 66);
    check(b, 11);
    check(c, 13);
    /* EO2 check */
+   a = b = c = 0;
    eo2_do(eo2_obj,
           a = eo2_get();
           eo2_set(10);
@@ -181,7 +182,7 @@ virtual_test()
    Eo *eo2_obj;
 
    a = 0;
-   eo2_obj = eo2_add(EO2_SIMPLE_CLASS, NULL);
+   eo2_obj = eo2_add_custom(EO2_SIMPLE_CLASS, NULL, eo2_simple_constructor(66));
    eo2_do(eo2_obj, a = eo2_virtual(10); );
    check(a, 0);
    eo_del(eo2_obj);
@@ -208,7 +209,7 @@ cleanup_test()
    int a;
    Eo *eo2_obj;
 
-   eo2_obj = eo2_add(EO2_SIMPLE_CLASS, NULL);
+   eo2_obj = eo2_add_custom(EO2_SIMPLE_CLASS, NULL, eo2_simple_constructor(66));
 
    /* break */
    a = 0;
