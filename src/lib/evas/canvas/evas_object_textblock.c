@@ -4717,6 +4717,8 @@ _format_changes_invalidate_text_nodes(Ctxt *c)
              start_n = _NODE_TEXT(EINA_INLIST_GET(start_n)->next);
           }
      }
+
+   eina_list_free(fstack);
 }
 
 
