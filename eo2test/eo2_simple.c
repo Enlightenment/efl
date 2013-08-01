@@ -22,7 +22,7 @@ _get(Eo *objid EINA_UNUSED, void *obj_data)
 
    return data->x;
 }
-EAPI EO2_FUNC_BODY(eo2_get, int, 0);
+EAPI EO2_FUNC_BODY(eo2_get, int, -1);
 
 static void
 _set(Eo *objid EINA_UNUSED, void *obj_data, int x)
@@ -39,7 +39,7 @@ _class_hello(const Eo_Class *klass, int a)
 }
 EAPI EO2_VOID_CLASS_FUNC_BODYV(eo2_class_hello, EO2_CLASS_FUNC_CALL(a), int a);
 
-EAPI EO2_FUNC_BODYV(eo2_virtual, int, EO2_FUNC_CALL(x), 0, int x);
+EAPI EO2_FUNC_BODYV(eo2_virtual, int, -1, EO2_FUNC_CALL(x), int x);
 
 static void
 _constructor(Eo *obj, void *obj_data, int x)

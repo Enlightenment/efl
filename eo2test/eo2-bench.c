@@ -184,7 +184,7 @@ virtual_test()
    a = 0;
    eo2_obj = eo2_add_custom(EO2_SIMPLE_CLASS, NULL, eo2_simple_constructor(66));
    eo2_do(eo2_obj, a = eo2_virtual(10); );
-   check(a, 0);
+   check(a, -1);
    eo_del(eo2_obj);
 
    a = 0;

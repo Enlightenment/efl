@@ -23,7 +23,7 @@ _get(Eo *objid EINA_UNUSED, void *obj_data)
 
    return data->y;
 }
-EAPI EO2_FUNC_BODY(eo2_inherit_get, int, 0);
+EAPI EO2_FUNC_BODY(eo2_inherit_get, int, -2);
 
 static void
 _class_hello(const Eo_Class *klass, int a)
