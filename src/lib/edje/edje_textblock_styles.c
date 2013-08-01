@@ -173,6 +173,9 @@ _edje_textblock_style_all_update(Edje *ed)
         /* Make sure the style is already defined */
         if (!stl->style) break;
 
+        /* No need to compute it again and again and again */
+	if (stl->cache) continue;
+
         /* Make sure the style contains a text_class */
         EINA_LIST_FOREACH(stl->tags, ll, tag)
           {
@@ -257,6 +260,7 @@ _edje_textblock_style_all_update(Edje *ed)
         if (fontsource) free(fontsource);
 
         /* Configure the style */
+        stl->cache = EINA_TRUE;
         evas_textblock_style_set(stl->style, eina_strbuf_string_get(txt));
         eina_strbuf_reset(txt);
      }
@@ -401,18 +405,16 @@ _edje_textblock_style_parse_and_fix(Edje_File *edf)
 void
 _edje_textblock_style_cleanup(Edje_File *edf)
 {
-   while (edf->styles)
-     {
-	Edje_Style *stl;
+   Edje_Style *stl;
 
-	stl = edf->styles->data;
-	edf->styles = eina_list_remove_list(edf->styles, edf->styles);
-	while (stl->tags)
+   EINA_LIST_FREE(edf->styles, stl)
+     {
+        Edje_Style_Tag *tag;
+
+        EINA_LIST_FREE(stl->tags, tag)
 	  {
 	     Edje_Style_Tag *tag;
 
-	     tag = stl->tags->data;
-	     stl->tags = eina_list_remove_list(stl->tags, stl->tags);
 	     if (tag->value && eet_dictionary_string_check(eet_dictionary_get(edf->ef), tag->value) == 0)
                eina_stringshare_del(tag->value);
              if (edf->free_strings)

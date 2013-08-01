@@ -462,6 +462,7 @@ struct _Edje_File
    Edje_External_Directory        *external_dir;
    Edje_Image_Directory           *image_dir;
    Edje_Sound_Directory           *sound_dir;
+
    Eina_List                      *styles;
 
    Eina_List                      *color_classes;
@@ -501,6 +502,8 @@ struct _Edje_Style
    char                           *name;
    Eina_List                      *tags;
    Evas_Textblock_Style           *style;
+
+   Eina_Bool                       cache;
 };
 
 struct _Edje_Style_Tag

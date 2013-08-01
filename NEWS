@@ -124,6 +124,7 @@ Additions:
      - support edc proxy.source_visible, proxy.source_clip
      - support edc map color set
      - Add threshold support to Edje draggable part.
+     - Reduce load time of Edje_Object using Evas_Object_Textblock and many styles.
     * Eeze:
      - Add a dummy libmount replacement for when libmount is not there.
     * Ecore_Con:

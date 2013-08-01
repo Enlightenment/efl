@@ -1,3 +1,7 @@
+2013-08-01  Cedric Bail
+
+	* Edje: faster load time for Edje_Object using Evas_Object_Textblocks and many styles.
+
 2013-07-31  Carsten Haitzler (The Rasterman)
 
         * Fix efl to use key not keyname (so xmodmap works).
