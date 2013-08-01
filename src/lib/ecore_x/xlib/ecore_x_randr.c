@@ -3411,6 +3411,7 @@ ecore_x_randr_edid_has_valid_header(unsigned char *edid, unsigned long edid_leng
 EAPI Eina_Bool 
 ecore_x_randr_edid_info_has_valid_checksum(unsigned char *edid, unsigned long edid_length)
 {
+#ifdef ECORE_XRANDR
    unsigned char *iter = NULL;
    char sum = 0;
    int i = 0, version = 0;
@@ -3437,11 +3438,15 @@ ecore_x_randr_edid_info_has_valid_checksum(unsigned char *edid, unsigned long ed
 
    if (sum) return EINA_FALSE;
    return EINA_TRUE;
+#else
+   return EINA_FALSE;
+#endif
 }
 
 EAPI int 
 ecore_x_randr_edid_version_get(unsigned char *edid, unsigned long edid_length)
 {
+#ifdef ECORE_XRANDR
    if ((edid_length > RANDR_EDID_VERSION_MINOR) && 
        (ecore_x_randr_edid_has_valid_header(edid, edid_length)))
      {
@@ -3450,11 +3455,15 @@ ecore_x_randr_edid_version_get(unsigned char *edid, unsigned long edid_length)
      }
 
    return ECORE_X_RANDR_EDID_UNKNOWN_VALUE;
+#else
+   return 0;
+#endif
 }
 
 EAPI char *
 ecore_x_randr_edid_manufacturer_name_get(unsigned char *edid, unsigned long edid_length)
 {
+#ifdef ECORE_XRANDR
    if ((edid_length > RANDR_EDID_MANUFACTURER + 1) && 
        (ecore_x_randr_edid_has_valid_header(edid, edid_length)))
      {
@@ -3471,13 +3480,14 @@ ecore_x_randr_edid_manufacturer_name_get(unsigned char *edid, unsigned long edid
 
         return name;
      }
-
+#endif
    return NULL;
 }
 
 EAPI char *
 ecore_x_randr_edid_display_name_get(unsigned char *edid, unsigned long edid_length)
 {
+#ifdef ECORE_XRANDR
    unsigned char *block = NULL;
    int version = 0;
 
@@ -3506,13 +3516,14 @@ ecore_x_randr_edid_display_name_get(unsigned char *edid, unsigned long edid_leng
                }
           }
      }
-
+#endif
    return NULL;
 }
 
 EAPI char *
 ecore_x_randr_edid_display_ascii_get(unsigned char *edid, unsigned long edid_length)
 {
+#ifdef ECORE_XRANDR
    unsigned char *block = NULL;
    int version = 0;
 
@@ -3541,13 +3552,14 @@ ecore_x_randr_edid_display_ascii_get(unsigned char *edid, unsigned long edid_len
                }
           }
      }
-
+#endif
    return NULL;
 }
 
 EAPI char *
 ecore_x_randr_edid_display_serial_get(unsigned char *edid, unsigned long edid_length)
 {
+#ifdef ECORE_XRANDR
    unsigned char *block = NULL;
    int version = 0;
 
@@ -3576,7 +3588,7 @@ ecore_x_randr_edid_display_serial_get(unsigned char *edid, unsigned long edid_le
                }
           }
      }
-
+#endif
    return NULL;
 }
 
@@ -3589,77 +3601,90 @@ ecore_x_randr_edid_model_get(unsigned char *edid, unsigned long edid_length)
 EAPI int 
 ecore_x_randr_edid_manufacturer_serial_number_get(unsigned char *edid, unsigned long edid_length)
 {
+#ifdef ECORE_XRANDR
    if ((edid_length > RANDR_EDID_MANUFACTURER + 1) && 
        (ecore_x_randr_edid_has_valid_header(edid, edid_length)))
      return (int)(edid[0x0c] + (edid[0x0d] << 8) + 
                   (edid[0x0e] << 16) + (edid[0x0f] << 24));
 
    return ECORE_X_RANDR_EDID_UNKNOWN_VALUE;
+#else
+   return 0;
+#endif
 }
 
 EAPI int 
 ecore_x_randr_edid_manufacturer_model_get(unsigned char *edid, unsigned long edid_length)
 {
+#ifdef ECORE_XRANDR
    if ((edid_length > RANDR_EDID_MANUFACTURER + 1) && 
        (ecore_x_randr_edid_has_valid_header(edid, edid_length)))
      return (int)(edid[0x0a] + (edid[0x0b] << 8));
-
+#endif
    return ECORE_X_RANDR_EDID_UNKNOWN_VALUE;
 }
 
 EAPI Eina_Bool 
 ecore_x_randr_edid_dpms_available_get(unsigned char *edid, unsigned long edid_length)
 {
+#ifdef ECORE_XRANDR
    int version = 0;
 
    version = ecore_x_randr_edid_version_get(edid, edid_length);
    if (version < RANDR_EDID_VERSION_1_3) return EINA_FALSE;
 
    return !!(edid[0x18] & 0xE0);
+#else
+   return EINA_FALSE;
+#endif
 }
 
 EAPI Eina_Bool 
 ecore_x_randr_edid_dpms_standby_available_get(unsigned char *edid, unsigned long edid_length)
 {
+#ifdef ECORE_XRANDR
    int version = 0;
 
    version = ecore_x_randr_edid_version_get(edid, edid_length);
    if (version < RANDR_EDID_VERSION_1_3) return EINA_FALSE;
 
    if (edid[0x18] & 0xE0) return !!(edid[0x18] & 0x80);
-
+#endif
    return EINA_FALSE;
 }
 
 EAPI Eina_Bool 
 ecore_x_randr_edid_dpms_suspend_available_get(unsigned char *edid, unsigned long edid_length)
 {
+#ifdef ECORE_XRANDR
    int version = 0;
 
    version = ecore_x_randr_edid_version_get(edid, edid_length);
    if (version < RANDR_EDID_VERSION_1_3) return EINA_FALSE;
 
    if (edid[0x18] & 0xE0) return !!(edid[0x18] & 0x40);
-
+#endif
    return EINA_FALSE;
 }
 
 EAPI Eina_Bool 
 ecore_x_randr_edid_dpms_off_available_get(unsigned char *edid, unsigned long edid_length)
 {
+#ifdef ECORE_XRANDR
    int version = 0;
 
    version = ecore_x_randr_edid_version_get(edid, edid_length);
    if (version < RANDR_EDID_VERSION_1_3) return EINA_FALSE;
 
    if (edid[0x18] & 0xE0) return !!(edid[0x18] & 0x20);
-
+#endif
    return EINA_FALSE;
 }
 
 EAPI Ecore_X_Randr_Edid_Aspect_Ratio 
 ecore_x_randr_edid_display_aspect_ratio_preferred_get(unsigned char *edid, unsigned long edid_length)
 {
+#ifdef ECORE_XRANDR
    unsigned char *block = NULL;
    int version = 0;
 
@@ -3697,11 +3722,15 @@ ecore_x_randr_edid_display_aspect_ratio_preferred_get(unsigned char *edid, unsig
      }
 
    return ECORE_X_RANDR_EDID_UNKNOWN_VALUE;
+#else
+   return 0;
+#endif
 }
 
 EAPI Ecore_X_Randr_Edid_Aspect_Ratio 
 ecore_x_randr_edid_display_aspect_ratios_get(unsigned char *edid, unsigned long edid_length)
 {
+#ifdef ECORE_XRANDR
    Ecore_X_Randr_Edid_Aspect_Ratio ret;
    unsigned char *block = NULL;
    int version = 0;
@@ -3734,11 +3763,15 @@ ecore_x_randr_edid_display_aspect_ratios_get(unsigned char *edid, unsigned long 
      }
 
    return ret;
+#else
+   return 0;
+#endif
 }
 
 EAPI Ecore_X_Randr_Edid_Display_Colorscheme 
 ecore_x_randr_edid_display_colorscheme_get(unsigned char *edid, unsigned long edid_length)
 {
+#ifdef ECORE_XRANDR
    Ecore_X_Randr_Edid_Display_Colorscheme ret;
    int version = 0;
 
@@ -3760,22 +3793,30 @@ ecore_x_randr_edid_display_colorscheme_get(unsigned char *edid, unsigned long ed
      ret = (edid[0x18] & 0x18);
 
    return ret;
+#else
+   return 0;
+#endif
 }
 
 EAPI Eina_Bool 
 ecore_x_randr_edid_display_type_digital_get(unsigned char *edid, unsigned long edid_length)
 {
+#ifdef ECORE_XRANDR
    int version = 0;
 
    version = ecore_x_randr_edid_version_get(edid, edid_length);
    if (version < RANDR_EDID_VERSION_1_3) return EINA_FALSE;
 
    return !!(edid[0x14] & 0x80);
+#else
+   return EINA_FALSE;
+#endif
 }
 
 EAPI Ecore_X_Randr_Edid_Display_Interface_Type 
 ecore_x_randr_edid_display_interface_type_get(unsigned char *edid, unsigned long edid_length)
 {
+#ifdef ECORE_XRANDR
    Ecore_X_Randr_Edid_Display_Interface_Type type;
    int version = 0;
 
@@ -3790,4 +3831,7 @@ ecore_x_randr_edid_display_interface_type_get(unsigned char *edid, unsigned long
      type = ECORE_X_RANDR_EDID_UNKNOWN_VALUE;
 
    return type;
+#else
+   return 0;
+#endif
 }
