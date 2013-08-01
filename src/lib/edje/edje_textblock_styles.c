@@ -413,8 +413,6 @@ _edje_textblock_style_cleanup(Edje_File *edf)
 
         EINA_LIST_FREE(stl->tags, tag)
 	  {
-	     Edje_Style_Tag *tag;
-
 	     if (tag->value && eet_dictionary_string_check(eet_dictionary_get(edf->ef), tag->value) == 0)
                eina_stringshare_del(tag->value);
              if (edf->free_strings)
