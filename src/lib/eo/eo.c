@@ -257,6 +257,13 @@ _eo_kls_itr_func_get(const _Eo_Class *cur_klass, Eo_Op op)
 
 /************************************ EO2 ************************************/
 
+EAPI Eo2_Hook_Call eo2_hook_call_pre = NULL;
+EAPI Eo2_Hook_Call eo2_hook_call_post = NULL;
+EAPI Eo2_Hook_Do eo2_hook_do_pre = NULL;
+EAPI Eo2_Hook_Do eo2_hook_do_post = NULL;
+EAPI Eo2_Hook_Class_Do eo2_hook_class_do_pre = NULL;
+EAPI Eo2_Hook_Class_Do eo2_hook_class_do_post = NULL;
+
 static inline const _Eo_Class *
 _eo2_kls_itr_next(const _Eo_Class *orig_kls, const _Eo_Class *cur_klass)
 {
@@ -349,6 +356,8 @@ eo2_do_start(Eo *obj_id, const Eina_Bool do_super)
    fptr->obj_id = obj_id;
    fptr->klass = klass;
    fptr->obj_data = EO2_INVALID_DATA;
+
+   
 
    return EINA_TRUE;
 }
