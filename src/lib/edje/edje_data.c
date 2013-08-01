@@ -188,7 +188,6 @@ _edje_eina_hash_add_alloc(Eina_Hash  *hash,
 EAPI void
 _edje_edd_shutdown(void)
 {
-   FREED(_edje_edd_edje_file);
    FREED(_edje_edd_edje_string);
    FREED(_edje_edd_edje_style);
    FREED(_edje_edd_edje_style_tag);
@@ -198,6 +197,8 @@ _edje_edd_shutdown(void)
    FREED(_edje_edd_edje_font_directory_entry);
    FREED(_edje_edd_edje_image_directory);
    FREED(_edje_edd_edje_image_directory_entry);
+   FREED(_edje_edd_edje_image_directory_set);
+   FREED(_edje_edd_edje_image_directory_set_entry);
    FREED(_edje_edd_edje_limit);
    FREED(_edje_edd_edje_limit_pointer);
    FREED(_edje_edd_edje_sound_sample);
@@ -210,7 +211,6 @@ _edje_edd_shutdown(void)
    FREED(_edje_edd_edje_part_collection_directory_entry);
    FREED(_edje_edd_edje_pack_element);
    FREED(_edje_edd_edje_pack_element_pointer);
-   FREED(_edje_edd_edje_part_collection);
    FREED(_edje_edd_edje_part);
    FREED(_edje_edd_edje_part_pointer);
    FREED(_edje_edd_edje_part_description_variant);
@@ -240,12 +240,13 @@ _edje_edd_shutdown(void)
    FREED(_edje_edd_edje_part_image_id);
    FREED(_edje_edd_edje_part_image_id_pointer);
    FREED(_edje_edd_edje_external_param);
-   FREED(_edje_edd_edje_image_directory_set);
-   FREED(_edje_edd_edje_image_directory_set_entry);
    FREED(_edje_edd_edje_part_limit);
    FREED(_edje_edd_edje_physics_face);
    FREED(_edje_edd_edje_map_colors);
    FREED(_edje_edd_edje_map_colors_pointer);
+
+   FREED(_edje_edd_edje_file);
+   FREED(_edje_edd_edje_part_collection);
 }
 
 #define EDJE_DEFINE_POINTER_TYPE(Type, Name)				\
@@ -502,6 +503,8 @@ _edje_edd_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_map_colors, Edje_Map_Color,
                                  "a", a, EET_T_UCHAR);
 
+   EDJE_DEFINE_POINTER_TYPE(Map_Color, map_colors);
+
 #define EDJE_DATA_DESCRIPTOR_DESCRIPTION_COMMON_FIELDS(Edd, Type) \
       EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "state.name", state.name, EET_T_STRING); \
       EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "state.value", state.value, EET_T_DOUBLE); \
@@ -557,7 +560,6 @@ _edje_edd_init(void)
       EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.alpha", map.alpha, EET_T_UCHAR); \
       EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.persp_on", map.persp_on, EET_T_UCHAR); \
       EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.backcull", map.backcull, EET_T_UCHAR); \
-      EDJE_DEFINE_POINTER_TYPE(Map_Color, map_colors); \
       EET_DATA_DESCRIPTOR_ADD_VAR_ARRAY(Edd, Type, "map.color", map.colors, _edje_edd_edje_map_colors_pointer); \
       EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "persp.zplane", persp.zplane, EET_T_INT); \
       EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "persp.focal", persp.focal, EET_T_INT);
@@ -645,7 +647,6 @@ _edje_edd_init(void)
       EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.alpha", Dec.map.alpha, EET_T_UCHAR); \
       EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.persp_on", Dec.map.persp_on, EET_T_UCHAR); \
       EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.backcull", Dec.map.backcull, EET_T_UCHAR); \
-      EDJE_DEFINE_POINTER_TYPE(Map_Color, map_colors); \
       EET_DATA_DESCRIPTOR_ADD_VAR_ARRAY(Edd, Type, "map.color", Dec.map.colors, _edje_edd_edje_map_colors_pointer); \
       EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "persp.zplane", Dec.persp.zplane, EET_T_INT); \
       EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "persp.focal", Dec.persp.focal, EET_T_INT); \
