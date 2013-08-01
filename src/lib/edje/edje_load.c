@@ -1817,25 +1817,24 @@ _cb_signal_repeat(void *data, Evas_Object *obj, const char *sig, const char *sou
         if (!name) name = pack_it->name;
         if (!name)
           {
-             Eina_List *child = NULL;
+             Eina_Iterator *it = NULL;
              Evas_Object *o;
 
              if (pack_it->parent->part->type == EDJE_PART_TYPE_BOX)
                {
-                  child = evas_object_box_children_get(pack_it->parent->object);
+                  it = evas_object_box_iterator_new(pack_it->parent->object);
                }
              else if (pack_it->parent->part->type == EDJE_PART_TYPE_TABLE)
                {
-                  child = evas_object_table_children_get(pack_it->parent->object);
+                  it = evas_object_table_iterator_new(pack_it->parent->object);
                }
 
-             EINA_LIST_FREE(child, o)
+             EINA_ITERATOR_FOREACH(it, o)
                {
                   if (o == obj) break;
                   i++;
                }
-
-             eina_list_free(child);
+             eina_iterator_free(it);
 
              length_index = 12;
           }
