@@ -5854,8 +5854,8 @@ _edje_real_part_recursive_get(Edje **ed, const char *part)
 Evas_Object *
 _edje_children_get(Edje_Real_Part *rp, const char *partid)
 {
-   Evas_Object *child;
-   Eina_List *l;
+   Evas_Object *child = NULL;
+   Eina_Iterator *it = NULL;
    long int v;
    char *p;
 
@@ -5869,10 +5869,10 @@ _edje_children_get(Edje_Real_Part *rp, const char *partid)
         return _edje_external_content_get
           (rp->typedata.swallow->swallowed_object, partid);
       case EDJE_PART_TYPE_BOX:
-         l = evas_object_box_children_get(rp->object);
+         it = evas_object_box_iterator_new(rp->object);
          break;
       case EDJE_PART_TYPE_TABLE:
-         l = evas_object_table_children_get(rp->object);
+         it = evas_object_table_iterator_new(rp->object);
          break;
       default:
          return NULL;
@@ -5881,13 +5881,19 @@ _edje_children_get(Edje_Real_Part *rp, const char *partid)
    v = strtol(partid, &p, 10);
    if ((*p == '\0') && (v >= 0))
      {
-        child = eina_list_nth(l, v);
+        int i = 0;
+        EINA_ITERATOR_FOREACH(it, child)
+          {
+             if (i == v) break;
+             i++;
+          }
+        if (i != v) child = NULL;
      }
    else
      {
         Evas_Object *cur;
-        child = NULL;
-        EINA_LIST_FREE(l, cur)
+
+        EINA_ITERATOR_FOREACH(it, cur)
           {
              const char *name = evas_object_name_get(cur);
              if ((name) && (!strcmp(name, partid)))
@@ -5897,7 +5903,7 @@ _edje_children_get(Edje_Real_Part *rp, const char *partid)
                }
           }
      }
-   eina_list_free(l);
+   eina_iterator_free(it);
 
    return child;
 }
