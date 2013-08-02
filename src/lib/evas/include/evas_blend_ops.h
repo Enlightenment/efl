@@ -186,6 +186,64 @@ extern const DATA32 ALPHA_256;
 
 #endif
 
+/* some useful NEON macros */
+
+#ifdef BUILD_NEON
+#define FPU_NEON \
+	__asm__ __volatile__(".fpu neon \n\t");
+
+/* copy reg1 to reg2 */
+#define VMOV_R2R_NEON(reg1, reg2) \
+	__asm__ __volatile__("vmov " #reg1 ", " #reg2 " \n\t" ::: #reg1);
+
+/* copy 32bit value to lower bits of register reg */
+#define VMOV_M2R_NEON(reg, value) \
+	__asm__ __volatile__("vmov.32 " #reg "[0], %[val] \n\t" :: [val] "r" (value) : #reg); 
+
+/* save 32bit value from lower 64 bits of register regq to memory location */
+/* pointed to by pointer, using 64bit register regd as temporary location */
+#define VMOV_R2M_NEON(regq, regd, pointer) \
+	__asm__ __volatile__("vqmovn.u16 " #regd ", " #regq " \n\t" \
+			     "vst1.32 {" #regd "[0]}, [%[p]] \n\t" :: [p] "r" (pointer) : #regd, "memory");
+
+/* spread constant imm in register reg */
+#define VMOV_I2R_NEON(reg, imm) \
+	__asm__ __volatile__("vmov.i16 " #reg ", " #imm " \n\t" ::: #reg);
+
+/* spread value in register reg */
+#define VDUP_NEON(reg, value) \
+	__asm__ __volatile__("vdup.16 " #reg ", %[val] \n\t" :: [val] "r" (value) : #reg); 
+
+/* interleave contents of reg1 and reg2 */
+#define VZIP_NEON(reg1, reg2) \
+	__asm__ __volatile__("vzip.8 " #reg1 ", " #reg2 " \n\t" ::: #reg1 , #reg2);
+
+/* swap contents of two registers */
+#define VSWP_NEON(reg1, reg2) \
+	__asm__ __volatile__("vswp " #reg1 ", " #reg2 " \n\t" ::: #reg1 , #reg2);
+
+/* set register to zero */
+#define VEOR_NEON(reg) \
+	__asm__ __volatile__("veor " #reg ", " #reg ", " #reg " \n\t" ::: #reg);
+
+/* do interpolation of every channel RGBA, result is contained in regy */
+#define INTERP_256_NEON(rega, regx, regy, reg255) \
+	__asm__ __volatile__("vsub.i16 " #regx ", " #regx ", " #regy " \n\t" \
+			     "vmul.u16 " #regx ", " #regx ", " #rega " \n\t" \
+			     "vsri.16 " #regx ", " #regx ", #8 \n\t" \
+			     "vadd.i16 " #regx ", " #regx ", " #regy " \n\t" \
+			     "vand " #regy ", " #regx ", " #reg255 " \n\t" \
+			     ::: #regx, #regy );
+
+/* multiply every channel of regx and regy */
+#define MUL4_SYM_NEON(regx, regy, reg255) \
+	__asm__ __volatile__("vmul.u16 " #regx ", " #regx ", " #regy " \n\t" \
+			     "vadd.i16 " #regx ", " #regx ", " #reg255 " \n\t" \
+			     "vsri.16 " #regx ", " #regx ", #8 \n\t" \
+			     "vand " #regx ", " #regx ", " #reg255 " \n\t" \
+			     ::: #regx );
+
+#endif
 
 /* some useful SSE3 inline functions */
 

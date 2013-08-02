@@ -172,6 +172,10 @@
 	    MOV_A2R(ay, mm4)
 	    pxor_r2r(mm0, mm0);
 	    MOV_A2R(ALPHA_255, mm5)
+#elif defined SCALE_USING_NEON
+	    FPU_NEON;
+	    VDUP_NEON(d12, ay);
+	    VMOV_I2R_NEON(q2, #255);
 #endif
 	    pbuf = buf;  pbuf_end = buf + dst_clip_w;
 	    sxx = sxx0;
@@ -210,6 +214,28 @@
 		INTERP_256_R2R(mm4, mm2, mm1, mm5)
 		MOV_R2P(mm1, *pbuf, mm0)
 		pbuf++;
+#elif defined SCALE_USING_NEON
+		if (p0 | p1 | p2 | p3)
+		  {
+		    FPU_NEON;
+		    VMOV_M2R_NEON(d8, p0);
+		    VEOR_NEON(q0);
+		    VMOV_M2R_NEON(d9, p2);
+		    VMOV_M2R_NEON(d10, p1);
+		    VEOR_NEON(q1);
+		    VMOV_M2R_NEON(d11, p3);
+		    VDUP_NEON(q3, ax);
+		    VZIP_NEON(q4, q0);
+		    VZIP_NEON(q5, q1);
+		    VMOV_R2R_NEON(d9, d0);
+		    VMOV_R2R_NEON(d11, d2);
+		    INTERP_256_NEON(q3, q5, q4, q2);
+		    INTERP_256_NEON(d12, d9, d8, d5);
+		    VMOV_R2M_NEON(q4, d8, pbuf);
+		    pbuf++;
+		  }
+		else
+		  *pbuf++ = p0;
 #else
 		if (p0 | p1)
 		  p0 = INTERP_256(ax, p1, p0);

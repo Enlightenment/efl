@@ -201,6 +201,7 @@ Improvements:
      - Use eo array of callbacks to reduce callbacks memory footprint of Evas_Object_Box and Evas_Object_Table.
      - Optimized path for when map use the same color for all corner.
      - Asynchronous preload of GL texture.
+     - Add neon assembly for upscaling and map routines
     * Ecore_Con:
      - Rebase dns.c against upstream
     * Edje:

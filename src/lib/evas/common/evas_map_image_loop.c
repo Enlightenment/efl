@@ -1,13 +1,27 @@
 #ifdef SMOOTH
 {
 # ifdef SCALE_USING_MMX
-#   ifdef COLMUL
-#    ifdef COLSAME
+#  ifdef COLMUL
+#   ifdef COLSAME
    MOV_P2R(c1, mm7, mm0); // col
-#    endif   
 #   endif   
 #  endif   
-   while (ww > 0)
+# endif
+# ifdef SCALE_USING_NEON
+#  ifdef COLMUL
+#   ifndef COLBLACK
+   // this part can be done here as c1 and c2 are constants in the cycle
+   FPU_NEON;
+   VMOV_M2R_NEON(d18, c1);
+   VEOR_NEON(q8);
+   VMOV_M2R_NEON(d19, c2);
+   VZIP_NEON(q9, q8);
+   VMOV_R2R_NEON(d19, d16);
+   // here we have c1 and c2 spread through q9 register
+#   endif
+#  endif
+# endif
+     while (ww > 0)
      {
 # ifdef COLBLACK
         *d = 0xff000000; // col
@@ -77,6 +91,41 @@
 #    endif        
 #   endif                            
         MOV_R2P(mm1, *d, mm0);
+#  elif defined SCALE_USING_NEON
+        // not sure if we need this condition, but it doesn't affect the result
+        if (val1 | val2 | val3 | val4)
+          {
+            FPU_NEON;
+#   ifdef COLMUL
+            // initialize alpha for interpolation of c1 and c2
+            VDUP_NEON(d15, cv >> 16);
+            // copy c1 and c2 as algorithm will overwrite it
+            VMOV_R2R_NEON(q6, q9);
+            cv += cd; // col
+#   endif
+            VMOV_M2R_NEON(d8, val1);
+            VEOR_NEON(q0);
+            VMOV_M2R_NEON(d9, val3);
+            VMOV_M2R_NEON(d10, val2);
+            VEOR_NEON(q1);
+            VMOV_M2R_NEON(d11, val4);
+            VDUP_NEON(q3, ru);
+            VDUP_NEON(d14, rv);
+            VZIP_NEON(q4, q0);
+            VZIP_NEON(q5, q1);
+            VMOV_R2R_NEON(d9, d0);
+            VMOV_R2R_NEON(d11, d2);
+            // by this point we have all required data in right registers
+            INTERP_256_NEON(q3, q5, q4, q2); // interpolate val1,val2 and val3,val4
+            VSWP_NEON(d9, d12); // move result of val3,val4 interpolation (and c1 if COLMUL is defined) for next step
+            INTERP_256_NEON(q7, q6, q4, q2); // second stage of interpolation, also here c1 and c2 are interpolated
+#   ifdef COLMUL
+            MUL4_SYM_NEON(d8, d9, d4); // do required multiplication
+#   endif
+            VMOV_R2M_NEON(q4, d8, d); // save result to d
+          }
+        else
+          *d = val1;
 #  else
         val1 = INTERP_256(ru, val2, val1);
         val3 = INTERP_256(ru, val4, val3);
@@ -102,10 +151,23 @@
 }
 #else
 {
+# ifdef SCALE_USING_NEON
+#  ifdef COLMUL
+#   ifndef COLBLACK
+   // c1 and c2 are constants inside the cycle
+   FPU_NEON;
+   VMOV_M2R_NEON(d10, c1);
+   VEOR_NEON(q0);
+   VMOV_M2R_NEON(d11, c2);
+   VZIP_NEON(q5, q0);
+   VMOV_R2R_NEON(d11, d0);
+#   endif
+#  endif
+# endif
    while (ww > 0)
      {
 # ifdef COLMUL
-#  ifndef COLBLACK        
+#  ifndef COLBLACK
         DATA32 val1;
 #   ifdef COLSAME
 #   else        
@@ -121,11 +183,27 @@
 #  ifdef COLMUL
         val1 = *s; // col
 #   ifdef COLSAME
+#    ifdef SCALE_USING_NEON
         *d = MUL4_SYM(c1, val1);
-#   else        
+#    else
+        *d = MUL4_SYM(c1, val1); // XXX: do this in neon
+#    endif
+#   else
+#    ifdef SCALE_USING_NEON
+        FPU_NEON;
+        VMOV_M2R_NEON(d12, val1);
+        VMOV_R2R_NEON(q4, q5);
+        VEOR_NEON(q1);
+        VDUP_NEON(d15, cv >> 16);
+        VZIP_NEON(q6, q1);
+        INTERP_256_NEON(d15, d9, d8, d4); // interpolate c1 and c2
+        MUL4_SYM_NEON(d8, d12, d4); // multiply
+        VMOV_R2M_NEON(q4, d8, d); // save result
+#    else
         cval = INTERP_256((cv >> 16), c2, c1); // col
         *d = MUL4_SYM(cval, val1);
         cv += cd; // col              
+#    endif
 #   endif        
 #  else
         *d = *s;
