@@ -344,7 +344,7 @@ evas_image_load_file_head_bmp(void *loader_data,
    fsize = eina_file_size_get(f);
    if (fsize < 2) goto close_file;
 
-   map = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
+   map = eina_file_map_all(f, EINA_FILE_RANDOM);
    if (!map) goto close_file;
 
    memset(&header, 0, sizeof (header));

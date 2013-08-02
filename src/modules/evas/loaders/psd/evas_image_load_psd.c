@@ -175,7 +175,7 @@ evas_image_load_file_head_psd(void *loader_data,
 
    *error = EVAS_LOAD_ERROR_NONE;
 
-   map = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
+   map = eina_file_map_all(f, EINA_FILE_RANDOM);
    length = eina_file_size_get(f);
    position = 0;
    if (!map || length < 1)

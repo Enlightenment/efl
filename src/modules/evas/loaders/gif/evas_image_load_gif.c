@@ -615,7 +615,7 @@ evas_image_load_file_head_gif(void *loader_data,
    prop->h = 0;
    a = 0;
 
-   egi.map = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
+   egi.map = eina_file_map_all(f, EINA_FILE_RANDOM);
    if (!egi.map)
      {
         *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
@@ -762,7 +762,7 @@ evas_image_load_specific_frame(Eina_File *f,
    Evas_GIF_Info      egi;
    Eina_Bool          r = EINA_FALSE;
 
-   egi.map = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
+   egi.map = eina_file_map_all(f, EINA_FILE_RANDOM);
    if (!egi.map)
      {
         *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
@@ -869,7 +869,7 @@ evas_image_load_file_data_gif(void *loader_data,
              GifFileType  *gif = NULL;
              Eina_Bool     r = EINA_FALSE;
 
-             egi.map = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
+             egi.map = eina_file_map_all(f, EINA_FILE_RANDOM);
              if (!egi.map)
                {
                   *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
@@ -951,7 +951,7 @@ evas_image_load_frame_duration_gif(void *loader_data,
    if ((start_frame + frame_num) > frame_count) return -1;
    if (frame_num < 0) return -1;
 
-   egi.map = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
+   egi.map = eina_file_map_all(f, EINA_FILE_RANDOM);
    if (!egi.map) goto on_error;
    egi.length = eina_file_size_get(f);
    egi.position = 0;        

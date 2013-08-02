@@ -41,7 +41,7 @@ struct Pmaps_Buffer
 };
 
 /* internal used functions */
-static Eina_Bool pmaps_buffer_open(Pmaps_Buffer *b, Eina_File *f, int *error);
+static Eina_Bool pmaps_buffer_open(Pmaps_Buffer *b, Eina_File *f, Eina_Bool header, int *error);
 static void pmaps_buffer_close(Pmaps_Buffer *b);
 static Eina_Bool pmaps_buffer_header_parse(Pmaps_Buffer *b, int *error);
 static int pmaps_buffer_plain_int_get(Pmaps_Buffer *b, int *val);
@@ -77,7 +77,7 @@ evas_image_load_file_head_pmaps(void *loader_data,
    Eina_File *f = loader_data;
    Pmaps_Buffer b;
 
-   if (!pmaps_buffer_open(&b, f, error))
+   if (!pmaps_buffer_open(&b, f, EINA_TRUE, error))
      {
 	pmaps_buffer_close(&b);
 	return EINA_FALSE;
@@ -109,7 +109,7 @@ evas_image_load_file_data_pmaps(void *loader_data,
    DATA32 *ptr;
    Eina_Bool r = EINA_FALSE;
 
-   if (!pmaps_buffer_open(&b, f, error))
+   if (!pmaps_buffer_open(&b, f, EINA_FALSE, error))
      goto on_error;
 
    if (!pmaps_buffer_header_parse(&b, error))
@@ -161,12 +161,12 @@ evas_image_load_file_data_pmaps(void *loader_data,
 
 /* internal used functions */
 static Eina_Bool
-pmaps_buffer_open(Pmaps_Buffer *b, Eina_File *f, int *error)
+pmaps_buffer_open(Pmaps_Buffer *b, Eina_File *f, Eina_Bool header, int *error)
 {
    size_t len;
 
    b->file = f;
-   b->map = eina_file_map_all(b->file, EINA_FILE_SEQUENTIAL);
+   b->map = eina_file_map_all(b->file, header ? EINA_FILE_RANDOM : EINA_FILE_SEQUENTIAL);
    if (!b->map)
      {
         *error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;

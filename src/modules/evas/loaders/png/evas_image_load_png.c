@@ -90,7 +90,7 @@ evas_image_load_file_head_png(void *loader_data,
    f = loader->f;
 
    hasa = 0;
-   epi.map = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
+   epi.map = eina_file_map_all(f, EINA_FILE_RANDOM);
    if (!epi.map)
      {
         *error = EVAS_LOAD_ERROR_CORRUPT_FILE;

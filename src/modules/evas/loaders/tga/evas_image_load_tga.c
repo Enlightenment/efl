@@ -87,7 +87,7 @@ evas_image_load_file_head_tga(void *loader_data,
    *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
    if (eina_file_size_get(f) < (off_t)(sizeof(tga_header) + sizeof(tga_footer)))
       goto close_file;
-   seg = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
+   seg = eina_file_map_all(f, EINA_FILE_RANDOM);
    if (seg == NULL) goto close_file;
    filedata = seg;
 

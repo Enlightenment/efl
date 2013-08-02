@@ -1306,7 +1306,7 @@ evas_image_load_file_head_jpeg(void *loader_data,
    opts = loader->opts;
    f = loader->f;
 
-   map = eina_file_map_all(f, EINA_FILE_WILLNEED);
+   map = eina_file_map_all(f, EINA_FILE_RANDOM);
    if (!map)
      {
 	*error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;

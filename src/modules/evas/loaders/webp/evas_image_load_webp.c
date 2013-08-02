@@ -65,7 +65,7 @@ evas_image_load_file_head_webp(void *loader_data,
 
    *error = EVAS_LOAD_ERROR_NONE;
 
-   data = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
+   data = eina_file_map_all(f, EINA_FILE_RANDOM);
 
    r = evas_image_load_file_check(f, data,
 				  &prop->w, &prop->h, &prop->alpha,

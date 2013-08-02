@@ -59,7 +59,7 @@ evas_image_load_file_head_wbmp(void *loader_data,
    length = eina_file_size_get(f);
    if (length <= 4) goto bail;
 
-   map = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
+   map = eina_file_map_all(f, EINA_FILE_RANDOM);
    if (!map) goto bail;
 
    if (read_mb(&type, map, length, &position) < 0) goto bail;

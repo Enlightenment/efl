@@ -27,12 +27,18 @@ static int _evas_loader_tiff_log_dom = -1;
 #define INF(...) EINA_LOG_DOM_INFO(_evas_loader_tiff_log_dom, __VA_ARGS__)
 
 typedef struct TIFFRGBAImage_Extra TIFFRGBAImage_Extra;
+typedef struct TIFFRGBAMap TIFFRGBAMap;
 
 struct TIFFRGBAImage_Extra {
    TIFFRGBAImage       rgba;
    char                pper;
    uint32              num_pixels;
    uint32              py;
+};
+
+struct TIFFRGBAMap {
+   tdata_t mem;
+   toff_t size;
 };
 
 static tsize_t
@@ -60,28 +66,25 @@ _evas_tiff_CloseProc(thandle_t handle EINA_UNUSED)
 static toff_t
 _evas_tiff_SizeProc(thandle_t handle)
 {
-   Eina_File *f = (Eina_File *) handle;
+   TIFFRGBAMap *map = (TIFFRGBAMap*) handle;
 
-   return eina_file_size_get(f);
+   return map->size;
 }
 
 static int
 _evas_tiff_MapProc(thandle_t handle, tdata_t *mem, toff_t *size)
 {
-   Eina_File *f = (Eina_File *) handle;
+   TIFFRGBAMap *map = (TIFFRGBAMap*) handle;
 
-   *mem = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
-   *size = eina_file_size_get(f);
+   *mem = map->mem;
+   *size = map->size;
 
    return 1;
 }
 
 static void
-_evas_tiff_UnmapProc(thandle_t handle, tdata_t data, toff_t size EINA_UNUSED)
+_evas_tiff_UnmapProc(thandle_t handle EINA_UNUSED, tdata_t data EINA_UNUSED, toff_t size EINA_UNUSED)
 {
-   Eina_File *f = (Eina_File *) handle;
-
-   eina_file_map_free(f, data);
 }
 
 static void *
@@ -106,12 +109,13 @@ evas_image_load_file_head_tiff(void *loader_data,
    Eina_File *f = loader_data;
    char           txt[1024];
    TIFFRGBAImage  tiff_image;
+   TIFFRGBAMap    tiff_map;
    TIFF          *tif = NULL;
    unsigned char *map;
    uint16         magic_number;
    Eina_Bool      r = EINA_FALSE;
 
-   map = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
+   map = eina_file_map_all(f, EINA_FILE_RANDOM);
    if (!map || eina_file_size_get(f) < 3)
      {
         *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
@@ -127,7 +131,10 @@ evas_image_load_file_head_tiff(void *loader_data,
         goto on_error;
      }
 
-   tif = TIFFClientOpen("evas", "rM", f,
+   tiff_map.mem = map;
+   tiff_map.size = eina_file_size_get(f);
+
+   tif = TIFFClientOpen("evas", "rM", &tiff_map,
                         _evas_tiff_RWProc, _evas_tiff_RWProc,
                         _evas_tiff_SeekProc, _evas_tiff_CloseProc,
                         _evas_tiff_SizeProc,
@@ -186,6 +193,7 @@ evas_image_load_file_data_tiff(void *loader_data,
    Eina_File          *f = loader_data;
    char                txt[1024];
    TIFFRGBAImage_Extra rgba_image;
+   TIFFRGBAMap         rgba_map;
    TIFF               *tif = NULL;
    unsigned char      *map;
    uint32             *rast = NULL;
@@ -210,7 +218,10 @@ evas_image_load_file_data_tiff(void *loader_data,
         goto on_error;
      }
 
-   tif = TIFFClientOpen("evas", "rM", f,
+   rgba_map.mem = map;
+   rgba_map.size = eina_file_size_get(f);
+
+   tif = TIFFClientOpen("evas", "rM", &rgba_map,
                         _evas_tiff_RWProc, _evas_tiff_RWProc,
                         _evas_tiff_SeekProc, _evas_tiff_CloseProc,
                         _evas_tiff_SizeProc,

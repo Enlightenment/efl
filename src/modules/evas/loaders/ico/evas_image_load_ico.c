@@ -151,7 +151,7 @@ evas_image_load_file_head_ico(void *loader_data,
    fsize = eina_file_size_get(f);
    if (fsize < (6 + 16 + 40)) goto close_file;
 
-   map = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
+   map = eina_file_map_all(f, EINA_FILE_RANDOM);
    if (!map) goto close_file;
 
    // key:
@@ -381,7 +381,7 @@ evas_image_load_file_data_ico(void *loader_data,
    fsize = eina_file_size_get(f);
    if (fsize < (6 + 16 + 40)) goto close_file;
 
-   map = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
+   map = eina_file_map_all(f, EINA_FILE_RANDOM);
    if (!map) goto close_file;
 
    // key:

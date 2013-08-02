@@ -172,7 +172,7 @@ evas_image_load_file_xpm(Eina_File *f, Evas_Image_Property *prop, void *pixels, 
         goto on_error;
      }
 
-   map = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
+   map = eina_file_map_all(f, load_data ? EINA_FILE_WILLNEED : EINA_FILE_RANDOM);
    if (!map)
      {
         ERR("XPM ERROR: file failed to mmap");
@@ -712,7 +712,7 @@ module_open(Evas_Module *em)
    if (!rgb_txt) rgb_txt = eina_file_open("/usr/X11R6/lib/X11/rgb.txt", 0);
    if (!rgb_txt) rgb_txt = eina_file_open("/usr/openwin/lib/X11/rgb.txt", 0);
    if (rgb_txt)
-     rgb_txt_map = eina_file_map_all(rgb_txt, EINA_FILE_SEQUENTIAL);
+     rgb_txt_map = eina_file_map_all(rgb_txt, EINA_FILE_WILLNEED);
    em->functions = (void *)(&evas_image_load_xpm_func);
    return 1;
 }
