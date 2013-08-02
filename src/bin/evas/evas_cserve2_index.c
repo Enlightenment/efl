@@ -509,21 +509,51 @@ _shared_index_entry_new(Shared_Index *si)
 }
 
 static Index_Entry *
-_shared_index_entry_find(Shared_Index *si, int id)
+_shared_index_entry_get_by_id(Shared_Index *si, unsigned int id)
 {
-   int k, count;
+   Index_Entry *obj;
+   const char *base;
+   int low = 0, high, start_high, elemsize;
+   int cur;
 
-   if (!si) return NULL;
-   count = cserve2_shared_array_count_get(si->sa);
+   if (!si || !si->sa || !id)
+     return NULL;
 
-   // FIXME: Linear search O(n)
-   for (k = 0; k < count; k++)
+   // FIXME: HACK (consider all arrays always sorted by id)
+   high = si->sa->header->emptyidx; // Should be si->sa->header->sortedidx
+
+   if (high > si->sa->header->count)
+     high = si->sa->header->count;
+
+   base = si->sa->ds->data + sizeof(Shared_Array_Header);
+   elemsize = si->sa->header->elemsize;
+
+   // Binary search
+   start_high = high;
+   while(high != low)
      {
-        Index_Entry *ie;
-        ie = cserve2_shared_array_item_data_get(si->sa, k);
-        if (!ie) break;
-        if (ie->id == id)
-          return ie;
+        cur = low + ((high - low) / 2);
+        obj = (Index_Entry *) (base + (elemsize * cur));
+        if (!obj)
+          return NULL;
+        if (obj->id == id)
+          return obj;
+        if (obj->id < id)
+          low = cur + 1;
+        else
+          high = cur;
+     }
+
+   // Linear search
+   for (cur = start_high; cur < si->sa->header->count; cur++)
+     {
+        obj = (Index_Entry *) (base + (elemsize * cur));
+        if (!obj)
+          return NULL;
+        if (!obj->id)
+          return NULL;
+        if (obj->id == id)
+          return obj;
      }
 
    return NULL;
@@ -709,7 +739,7 @@ cserve2_shared_mempool_buffer_ref(Shared_Mempool *sm, int bufferid)
    Index_Entry *ie;
 
    if (!sm) return -1;
-   ie = _shared_index_entry_find(sm->index, bufferid);
+   ie = _shared_index_entry_get_by_id(sm->index, bufferid);
    if (!ie) return -1;
 
    if (!ie->refcount)
@@ -742,7 +772,7 @@ _shared_mempool_buffer_del(Shared_Mempool *sm, int bufferid)
 
    if (!sm || !bufferid) return EINA_FALSE;
 
-   ie = _shared_index_entry_find(sm->index, bufferid);
+   ie = _shared_index_entry_get_by_id(sm->index, bufferid);
    if (!ie || ie->refcount <= 0)
      {
         CRIT("Tried to delete invalid buffer or with refcount 0");
@@ -778,7 +808,7 @@ cserve2_shared_mempool_buffer_get(Shared_Mempool *sm, int bufferid)
    char *data;
 
    if (!sm) return NULL;
-   ie = _shared_index_entry_find(sm->index, bufferid);
+   ie = _shared_index_entry_get_by_id(sm->index, bufferid);
    if (!ie || ie->refcount <= 0)
      {
         CRIT("Tried to access invalid buffer or with refcount 0");
@@ -823,7 +853,7 @@ cserve2_shared_string_add(const char *str)
    id = (int) (intptr_t) eina_hash_find(_string_entries, str);
    if (id > 0)
      {
-        ie = _shared_index_entry_find(_string_mempool->index, id);
+        ie = _shared_index_entry_get_by_id(_string_mempool->index, id);
         if (!ie || ie->refcount <= 0)
           {
              CRIT("String found in hash but not in mempool!");
