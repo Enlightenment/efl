@@ -123,7 +123,7 @@ struct _Elm_Win_Smart_Data
       Ecore_Job   *reconf_job;
 
       Eina_Bool    enabled : 1;
-      Eina_Bool    changed_theme : 1;
+      Eina_Bool    theme_changed : 1; /* set true when the focus theme is changed */
       Eina_Bool    top_animate : 1;
       Eina_Bool    geometry_changed : 1;
    } focus_highlight;
@@ -744,7 +744,7 @@ _elm_win_focus_highlight_reconfigure(Elm_Win_Smart_Data *sd)
 
    if ((target == previous) && (!visible_changed) &&
        (!sd->focus_highlight.geometry_changed) &&
-       (!sd->focus_highlight.changed_theme))
+       (!sd->focus_highlight.theme_changed))
      return;
 
    if ((previous) && (sd->focus_highlight.prev.handled))
@@ -771,7 +771,7 @@ _elm_win_focus_highlight_reconfigure(Elm_Win_Smart_Data *sd)
    if ((!target) || (!common_visible) || (sd->focus_highlight.cur.handled))
      goto the_end;
 
-   if (sd->focus_highlight.changed_theme)
+   if (sd->focus_highlight.theme_changed)
      {
         const char *str;
         if (sd->focus_highlight.style)
@@ -780,7 +780,7 @@ _elm_win_focus_highlight_reconfigure(Elm_Win_Smart_Data *sd)
           str = "default";
         elm_widget_theme_object_set
           (sd->obj, top, "focus_highlight", "top", str);
-        sd->focus_highlight.changed_theme = EINA_FALSE;
+        sd->focus_highlight.theme_changed = EINA_FALSE;
 
         if (_elm_config->focus_highlight_animate)
           {
@@ -2103,7 +2103,7 @@ _elm_win_focus_highlight_init(Elm_Win_Smart_Data *sd)
    sd->focus_highlight.cur.target = evas_focus_get(sd->evas);
 
    sd->focus_highlight.top = edje_object_add(sd->evas);
-   sd->focus_highlight.changed_theme = EINA_TRUE;
+   sd->focus_highlight.theme_changed = EINA_TRUE;
    edje_object_signal_callback_add(sd->focus_highlight.top,
                                    "elm,action,focus,hide,end", "",
                                    _elm_win_focus_highlight_hide, NULL);
@@ -5067,7 +5067,7 @@ _focus_highlight_style_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Elm_Win_Smart_Data *sd = _pd;
 
    eina_stringshare_replace(&sd->focus_highlight.style, style);
-   sd->focus_highlight.changed_theme = EINA_TRUE;
+   sd->focus_highlight.theme_changed = EINA_TRUE;
    _elm_win_focus_highlight_reconfigure_job_start(sd);
 }
 
