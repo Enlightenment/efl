@@ -664,21 +664,17 @@ static void
 _elm_win_focus_highlight_visible_set(Elm_Win_Smart_Data *sd,
                                      Eina_Bool visible)
 {
-   Evas_Object *fobj;
+   Evas_Object *fobj = sd->focus_highlight.fobj;
+   if (!fobj) return;
 
-   fobj = sd->focus_highlight.fobj;
    if (visible)
      {
-        if (fobj)
-          {
-             evas_object_show(fobj);
-             edje_object_signal_emit(fobj, "elm,action,focus,show", "elm");
-          }
+        evas_object_show(fobj);
+        edje_object_signal_emit(fobj, "elm,action,focus,show", "elm");
      }
    else
      {
-        if (fobj)
-          edje_object_signal_emit(fobj, "elm,action,focus,hide", "elm");
+        edje_object_signal_emit(fobj, "elm,action,focus,hide", "elm");
      }
 }
 
