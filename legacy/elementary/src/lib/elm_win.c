@@ -124,7 +124,7 @@ struct _Elm_Win_Smart_Data
 
       Eina_Bool    enabled : 1;
       Eina_Bool    theme_changed : 1; /* set true when the focus theme is changed */
-      Eina_Bool    top_animate : 1;
+      Eina_Bool    animate : 1; /* set true when the focus highlight animate is enabled */
       Eina_Bool    geometry_changed : 1;
    } focus_highlight;
 
@@ -781,11 +781,11 @@ _elm_win_focus_highlight_reconfigure(Elm_Win_Smart_Data *sd)
         if (_elm_config->focus_highlight_animate)
           {
              str = edje_object_data_get(sd->focus_highlight.fobj, "animate");
-             sd->focus_highlight.top_animate = ((str) && (!strcmp(str, "on")));
+             sd->focus_highlight.animate = ((str) && (!strcmp(str, "on")));
           }
      }
 
-   if ((sd->focus_highlight.top_animate) && (previous) &&
+   if ((sd->focus_highlight.animate) && (previous) &&
        (!sd->focus_highlight.prev.handled))
      _elm_win_focus_highlight_anim_setup(sd, fobj);
    else
