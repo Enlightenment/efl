@@ -1414,11 +1414,7 @@ _elm_win_focus_highlight_shutdown(Elm_Win_Smart_Data *sd)
         _elm_win_focus_target_callbacks_del(sd);
         sd->focus_highlight.cur.target = NULL;
      }
-   if (sd->focus_highlight.top)
-     {
-        evas_object_del(sd->focus_highlight.top);
-        sd->focus_highlight.top = NULL;
-     }
+   ELM_SAFE_FREE(sd->focus_highlight.top, evas_object_del);
 
    evas_event_callback_del_full
      (sd->evas, EVAS_CALLBACK_CANVAS_OBJECT_FOCUS_IN,
