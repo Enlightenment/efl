@@ -2162,10 +2162,7 @@ _ecore_con_svr_udp_handler(void             *data,
      return ECORE_CALLBACK_RENEW;
 
    if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_WRITE))
-     {
-        _ecore_con_client_flush(cl);
-        return ECORE_CALLBACK_RENEW;
-     }
+     return ECORE_CALLBACK_RENEW;
 
    if (!ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_READ))
      return ECORE_CALLBACK_RENEW;
