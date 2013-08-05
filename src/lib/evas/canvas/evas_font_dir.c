@@ -878,8 +878,8 @@ object_text_font_cache_dir_update(char *dir, Evas_Font_Dir *fd)
 			 }
 		       if (mt != fd->fonts_alias_mod_time)
 			 {
-			    object_text_font_cache_dir_del(dir, fd);
 			    eina_hash_del(font_dirs, dir, fd);
+			    object_text_font_cache_dir_del(dir, fd);
 			 }
 		       else
 			 return fd;
