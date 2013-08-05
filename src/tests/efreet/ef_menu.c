@@ -59,6 +59,7 @@ ef_cb_menu_with_slashes(void)
    if (menu)
      {
         printf("efreet_menu_get() didn't return NULL\n");
+        efreet_menu_free(menu);
         return 0;
      }
 
