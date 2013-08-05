@@ -151,8 +151,8 @@ cl_del(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_Con_Event_Client_Del 
    ec = eina_hash_find(clients, ev->client);
    if (ec)
      {
-        eet_connection_close(ec, &d);
         eina_hash_del_by_data(clients, ec);
+        eet_connection_close(ec, &d);
      }
 
    return ECORE_CALLBACK_RENEW;
