@@ -627,7 +627,7 @@ bench_callback_eo_loop()
   eo_do(obj, test_event_speed_get(&d));
   eo_del(obj);
   assert(d == 999999);
-  printf ("OK\n  Benchmark: callback loop: %fns per round: ", size_t (benchdone - benchstart) * 1.0 / size_t (i));
+  printf ("OK\n  Benchmark: callback eo_do: %fns per round: ", size_t (benchdone - benchstart) * 1.0 / size_t (i));
 }
 
 static void
@@ -649,7 +649,7 @@ bench_callback_eo_direct_loop()
   eo_do(obj, test_event_speed_get(&d));
   eo_del(obj);
   assert(d == 999999);
-  printf ("OK\n  Benchmark: callback loop: %fns per round: ", size_t (benchdone - benchstart) * 1.0 / size_t (i));
+  printf ("OK\n  Benchmark: eo_do function call: %fns per round: ", size_t (benchdone - benchstart) * 1.0 / size_t (i));
 }
 
 Eo_Op TEST_EVENT2_SPEED_BASE_ID = 0;
@@ -743,7 +743,7 @@ bench_callback_eo2_loop()
    eo2_do(obj, d = get());
    eo_del(obj);
    assert(d == 999999);
-   printf ("OK\n  Benchmark: callback loop: %fns per round: ", size_t (benchdone - benchstart) * 1.0 / size_t (i));
+   printf ("OK\n  Benchmark: callback eo2_do: %fns per round: ", size_t (benchdone - benchstart) * 1.0 / size_t (i));
 }
 
 static void
@@ -765,7 +765,7 @@ bench_callback_eo2_direct_loop()
    eo2_do(obj, d = get());
    eo_del(obj);
    assert(d == 999999);
-   printf ("OK\n  Benchmark: callback loop: %fns per round: ", size_t (benchdone - benchstart) * 1.0 / size_t (i));
+   printf ("OK\n  Benchmark: eo2_do function call: %fns per round: ", size_t (benchdone - benchstart) * 1.0 / size_t (i));
 }
 
 static void
@@ -788,7 +788,7 @@ bench_callback_eo2_direct_batch_loop()
    eo2_do(obj, d = get());
    eo_del(obj);
    assert(d == 999999);
-   printf ("OK\n  Benchmark: callback loop: %fns per round: ", size_t (benchdone - benchstart) * 1.0 / size_t (i));
+   printf ("OK\n  Benchmark: eo2_do batched function call: %fns per round: ", size_t (benchdone - benchstart) * 1.0 / size_t (i));
 }
 
 uint64_t
