@@ -129,7 +129,6 @@ _dns_timer_cb(Ecore_Con_DNS *dns)
 {
    dns->done_cb(dns->data, NULL);
    _ecore_con_dns_free(dns);
-   dns->timer = NULL;
    return EINA_FALSE;
 }
 
