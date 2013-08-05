@@ -566,8 +566,7 @@ elm_need_ethumb(void)
 
    ELM_ECORE_EVENT_ETHUMB_CONNECT = ecore_event_type_new();
    ethumb_client_init();
-   if (!_elm_ethumb_client)
-        _elm_ethumb_client = ethumb_client_connect(_connect_cb, NULL, NULL);
+
    return EINA_TRUE;
 #else
    return EINA_FALSE;
