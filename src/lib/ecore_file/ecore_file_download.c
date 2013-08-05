@@ -126,8 +126,10 @@ _ecore_file_download(const char *url,
 
         url += 7;
         /* skip hostname */
-        url = strchr(url, '/');
-        return ecore_file_cp(url, dst);
+        if ((url = strchr(url, '/')))
+          return ecore_file_cp(url, dst);
+        else
+          return EINA_FALSE;
      }
 #ifdef HAVE_CURL
    else if ((!strncmp(url, "http://", 7)) || (!strncmp(url, "https://", 8)) ||
