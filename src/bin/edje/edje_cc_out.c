@@ -1185,6 +1185,7 @@ data_thread_script(void *data, Ecore_Thread *thread EINA_UNUSED)
                            sc->tmpo);
                   sc->errstr = strdup(buf);
                   free(dat);
+                  fclose(f);
                   return;
                }
 	     snprintf(buf, sizeof(buf), "edje/scripts/embryo/compiled/%i",
@@ -1197,6 +1198,7 @@ data_thread_script(void *data, Ecore_Thread *thread EINA_UNUSED)
              snprintf(buf, sizeof(buf),
                       "Alloc failed for %lu bytes", (unsigned long)size);
              sc->errstr = strdup(buf);
+             fclose(f);
              return;
           }
      }
