@@ -98,7 +98,7 @@ _dich_func_get(const _Eo_Class *klass, Eo_Op op)
 }
 
 static inline void
-_dich_func_set(const _Eo_Class *klass, Eo_Op op, eo_op_func_type func)
+_dich_func_set(_Eo_Class *klass, Eo_Op op, eo_op_func_type func)
 {
    size_t idx1 = DICH_CHAIN1(op);
    Dich_Chain1 *chain1 = &klass->chain[idx1];
@@ -562,7 +562,7 @@ eo2_api_funcs_cmp(const void *p1, const void *p2)
 }
 
 EAPI void
-_eo2_class_funcs_set(const _Eo_Class *klass)
+_eo2_class_funcs_set(_Eo_Class *klass)
 {
    int op_id;
     const Eo2_Op_Description *api_desc;
