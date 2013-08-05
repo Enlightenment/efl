@@ -113,12 +113,12 @@ _edje_user_definition_free(Edje_User_Defined *eud)
       case EDJE_USER_BOX_PACK:
          child = eud->u.box.child;
          rp = _edje_real_part_recursive_get(&eud->ed, eud->part);
-         _edje_child_remove(eud->ed, rp, child);
+         if (rp) _edje_child_remove(eud->ed, rp, child);
          break;
       case EDJE_USER_TABLE_PACK:
          child = eud->u.table.child;
          rp = _edje_real_part_recursive_get(&eud->ed, eud->part);
-         _edje_child_remove(eud->ed, rp, child);
+         if (rp) _edje_child_remove(eud->ed, rp, child);
          break;
       case EDJE_USER_STRING:
       case EDJE_USER_DRAG_STEP:
