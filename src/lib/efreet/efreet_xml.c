@@ -333,9 +333,10 @@ static void
 efreet_xml_attributes_parse(char **data, int *size,
         Efreet_Xml_Attribute ***attributes, int *error)
 {
-    Efreet_Xml_Attribute attr[10];
+    Efreet_Xml_Attribute attr[11];
     int i, count = 0;
 
+    memset(attr, sizeof(attr), 0);
     while (*size > 0)
     {
         if (**data == '>')
@@ -350,9 +351,6 @@ efreet_xml_attributes_parse(char **data, int *size,
             const char *start = NULL, *end = NULL;
             char buf[256];
             int buf_size;
-
-            attr[count].key = NULL;
-            attr[count].value = NULL;
 
             start = *data;
             while ((*size > 0) && ((isalpha(**data)) || (**data == '_')))
