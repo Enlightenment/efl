@@ -408,9 +408,7 @@ _eo2_do_end(const Eina_Bool obj_do)
    if(obj_do)
      _eo_unref(fptr->obj);
 
-   fptr->obj = NULL;
-   fptr->obj_id = NULL;
-   fptr->klass = NULL;
+   memset(fptr, 0, sizeof (Eo2_Stack_Frame));
    fptr->obj_data = EO2_INVALID_DATA;
 
    if (fptr == &eo2_call_stack.stack[0])
