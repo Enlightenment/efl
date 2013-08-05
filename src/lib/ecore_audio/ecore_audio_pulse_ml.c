@@ -45,7 +45,7 @@ _ecore_io_wrapper(void *data, Ecore_Fd_Handler *handler)
    char buf[64];
    pa_io_event_flags_t flags = 0;
    pa_io_event *event = (pa_io_event *)data;
-   int fd;
+   int fd = 0;
 
    if (ecore_main_fd_handler_active_get(handler, ECORE_FD_READ))
      {
