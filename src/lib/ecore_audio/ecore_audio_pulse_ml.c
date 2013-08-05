@@ -48,10 +48,15 @@ _ecore_io_wrapper(void *data, Ecore_Fd_Handler *handler)
 
    if (ecore_main_fd_handler_active_get(handler, ECORE_FD_READ))
      {
+        int fd;
+
         flags |= PA_IO_EVENT_INPUT;
 
+        fd = ecore_main_fd_handler_fd_get(handler);
+        if (fd < 0) return ECORE_CALLBACK_RENEW;
+
         /* Check for HUP and report */
-        if (recv(ecore_main_fd_handler_fd_get(handler), buf, 64, MSG_PEEK))
+        if (recv(fd, buf, 64, MSG_PEEK))
           {
              if (errno == ESHUTDOWN || errno == ECONNRESET || errno == ECONNABORTED || errno == ENETRESET)
                {
@@ -66,7 +71,7 @@ _ecore_io_wrapper(void *data, Ecore_Fd_Handler *handler)
    if (ecore_main_fd_handler_active_get(handler, ECORE_FD_ERROR))
      flags |= PA_IO_EVENT_ERROR;
 
-   event->callback(event->mainloop, event, ecore_main_fd_handler_fd_get(handler), flags, event->userdata);
+   event->callback(event->mainloop, event, fd, flags, event->userdata);
 
    return ECORE_CALLBACK_RENEW;
 }
