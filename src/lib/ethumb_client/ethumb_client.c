@@ -2101,7 +2101,8 @@ _ethumb_client_thumb_generate_idler(void *data EINA_UNUSED)
              async->client->ethumb = tmp;
           }
 
-        pending = eina_list_append(pending, async);
+        if (async)
+          pending = eina_list_append(pending, async);
 
         if (ecore_time_get() - ecore_loop_time_get() > ecore_animator_frametime_get() * 0.5)
           return EINA_TRUE;
