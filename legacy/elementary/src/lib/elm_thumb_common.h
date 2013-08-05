@@ -19,46 +19,9 @@ typedef enum
  *
  * @return Ethumb_Client instance or NULL.
  *
- * This must be called before the objects are created to be sure no object is
- * visible and no generation started.
- *
- * Example of usage:
- *
- * @code
- * #include <Elementary.h>
- * #ifndef ELM_LIB_QUICKLAUNCH
- * EAPI_MAIN int
- * elm_main(int argc, char **argv)
- * {
- *    Ethumb_Client *client;
- *
- *    elm_need_ethumb();
- *
- *    // ... your code
- *
- *    client = elm_thumb_ethumb_client_get();
- *    if (!client)
- *      {
- *         ERR("could not get ethumb_client");
- *         return 1;
- *      }
- *    ethumb_client_size_set(client, 100, 100);
- *    ethumb_client_crop_align_set(client, 0.5, 0.5);
- *    // ... your code
- *
- *    // Create elm_thumb objects here
- *
- *    elm_run();
- *    elm_shutdown();
- *    return 0;
- * }
- * #endif
- * ELM_MAIN()
- * @endcode
- *
- * @note There's only one client handle for Ethumb, so once a configuration
- * change is done to it, any other request for thumbnails (for any thumbnail
- * object) will use that configuration. Thus, this configuration is global.
+ * The ethumb client handle returned may or may not be NULL. It may or may
+ * not survive into the future (ethumbd may become disconnected). Do not use
+ * this unless you know what you are doing.
  *
  * @ingroup Thumb
  */

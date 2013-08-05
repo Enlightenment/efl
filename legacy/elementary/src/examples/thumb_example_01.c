@@ -27,9 +27,6 @@ elm_main(int argc, char **argv)
    Evas_Object *win;
    Evas_Object *thumb;
    char buf[PATH_MAX];
-#ifdef ELM_ETHUMB   
-   Ethumb_Client *client;
-#endif
 
    elm_need_ethumb();
 
@@ -38,16 +35,6 @@ elm_main(int argc, char **argv)
 
    win = elm_win_util_standard_add("thumb", "Thumbnailer");
    elm_win_autodel_set(win, EINA_TRUE);
-
-#ifdef ELM_ETHUMB
-   client = elm_thumb_ethumb_client_get();
-   if (!client)
-     {
-        printf("error: could not get Ethumb client.\n");
-        return 1;
-     }
-   ethumb_client_size_set(client, 160, 160);
-#endif
 
    thumb = elm_thumb_add(win);
 
