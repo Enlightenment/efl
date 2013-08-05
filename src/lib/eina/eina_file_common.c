@@ -179,7 +179,7 @@ eina_file_virtual_map_new(Eina_File *file,
    if (!map)
      {
         map = malloc(sizeof (Eina_File_Map));
-        goto on_error;
+        if (!map) goto on_error;
 
         map->map = ((char*) file->global_map) + offset;
         map->offset = offset;
