@@ -728,11 +728,14 @@ data_thread_image(void *data, Ecore_Thread *thread EINA_UNUSED)
         struct stat st;
 
         if (!iw->path || (stat(iw->path, &st))) st.st_size = 0;
-        INF("Wrote %9i bytes (%4iKb) for \"%s\" image entry \"%s\" compress: [raw: %2.1f%%] [real: %2.1f%%]",
-               bytes, (bytes + 512) / 1024, buf, iw->img->entry,
-               100 - (100 * (double)bytes) / ((double)(iw->w * iw->h * 4)),
-               100 - (100 * (double)bytes) / ((double)(st.st_size))
-              );
+        if (st.st_size > 0)
+          {
+             INF("Wrote %9i bytes (%4iKb) for \"%s\" image entry \"%s\" compress: [raw: %2.1f%%] [real: %2.1f%%]",
+                 bytes, (bytes + 512) / 1024, buf, iw->img->entry,
+                 100 - (100 * (double)bytes) / ((double)(iw->w * iw->h * 4)),
+                 100 - (100 * (double)bytes) / ((double)(st.st_size))
+                );
+          }
      }
 }
 
