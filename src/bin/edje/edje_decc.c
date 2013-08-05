@@ -438,10 +438,13 @@ output(void)
 		  ERR("potential security violation. attempt to write in parent dir.");
 		  exit (-1);
 	       }
-	     f = fopen(out, "wb");
-	     fprintf(f, "#!/bin/sh\n");
-	     fprintf(f, "%s $@ -id . -fd . %s -o %s.edj\n", edje_file->compiler, sf->name, outdir);
-	     fclose(f);
+	     if ((f = fopen(out, "wb")))
+               {
+                  fprintf(f, "#!/bin/sh\n");
+                  fprintf(f, "%s $@ -id . -fd . %s -o %s.edj\n", 
+                          edje_file->compiler, sf->name, outdir);
+                  fclose(f);
+               }
 
 	     WRN("*** CAUTION ***\n"
 		 "Please check the build script for anything malicious "
