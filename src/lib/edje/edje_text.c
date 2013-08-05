@@ -161,7 +161,8 @@ _edje_text_class_font_get(Edje *ed, Edje_Part_Description_Text *chosen_desc, int
 void
 _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
                         Edje_Calc_Params *params,
-                        Edje_Part_Description_Text *chosen_desc)
+                        Edje_Part_Description_Text *chosen_desc,
+			Eina_Bool calc_only)
 {
    const char	*text = NULL;
    const char	*font;
@@ -442,12 +443,15 @@ arrange_text:
         ep->typedata.text->offset.y = TO_INT(SCALE(params->type.text.align.y, (sh - th)));
      }
 
-   evas_object_move(ep->object,
-                    ed->x + TO_INT(params->eval.x) + ep->typedata.text->offset.x,
-                    ed->y + TO_INT(params->eval.y) + ep->typedata.text->offset.y);
+   if (!calc_only)
+     {
+       evas_object_move(ep->object,
+   			ed->x + TO_INT(params->eval.x) + ep->typedata.text->offset.x,
+   			ed->y + TO_INT(params->eval.y) + ep->typedata.text->offset.y);
 
-   if (params->visible) evas_object_show(ep->object);
-   else evas_object_hide(ep->object);
+       if (params->visible) evas_object_show(ep->object);
+       else evas_object_hide(ep->object);
+     }
 
 
      {

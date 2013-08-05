@@ -1462,7 +1462,7 @@ _edje_part_recalc_single_text(FLOAT_T sc EINA_UNUSED,
    free(sfont);
    params->type.text.size = size; /* XXX TODO used by further calcs, go inside recalc_apply? */
 
-   _edje_text_recalc_apply(ed, ep, params, chosen_desc);
+   _edje_text_recalc_apply(ed, ep, params, chosen_desc, EINA_TRUE);
 
    if ((!chosen_desc) ||
        ((!chosen_desc->text.min_x) && (!chosen_desc->text.min_y) &&
@@ -3813,7 +3813,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
         switch (ep->part->type)
           {
            case EDJE_PART_TYPE_TEXT:
-              _edje_text_recalc_apply(ed, ep, pf, (Edje_Part_Description_Text*) chosen_desc);
+              _edje_text_recalc_apply(ed, ep, pf, (Edje_Part_Description_Text*) chosen_desc, EINA_FALSE);
               break;
            case EDJE_PART_TYPE_PROXY:
               _edje_proxy_recalc_apply(ed, ep, pf, (Edje_Part_Description_Proxy*) chosen_desc, pos);
