@@ -1887,8 +1887,8 @@ efreet_menu_handle_old(Efreet_Menu_Internal *parent, Efreet_Xml *xml)
                                      xml->text);
     if (move)
     {
-        efreet_menu_move_free(move);
         parent->moves = eina_list_remove(parent->moves, move);
+        efreet_menu_move_free(move);
     }
 #endif
 
