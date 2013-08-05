@@ -351,6 +351,9 @@ eet_flush2(Eet_File *ef)
         /* opening for write - delete old copy of file right away */
         unlink(ef->path);
         fd = open(ef->path, O_CREAT | O_TRUNC | O_RDWR | O_BINARY, S_IRUSR | S_IWUSR);
+        if (fd < 0) 
+          return EET_ERROR_NOT_WRITABLE;
+
         fp = fdopen(fd, "wb");
         if (!fp)
           return EET_ERROR_NOT_WRITABLE;
