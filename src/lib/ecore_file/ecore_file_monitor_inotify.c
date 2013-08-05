@@ -88,7 +88,8 @@ ecore_file_monitor_backend_shutdown(void)
      {
         fd = ecore_main_fd_handler_fd_get(_fdh);
         ecore_main_fd_handler_del(_fdh);
-        close(fd);
+        if (fd > -1)
+          close(fd);
      }
    _inotify_fd_pid = -1;
    return 1;
