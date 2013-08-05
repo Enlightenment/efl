@@ -66,7 +66,7 @@ _ecore_xcb_selection_init(void)
    ecore_x_selection_parser_add("text/uri-list",
                                 _ecore_xcb_selection_parser_files);
    ecore_x_selection_parser_add("text/x-moz-url",
-                                _ecore_x_selection_parser_xmozurl);
+                                _ecore_xcb_selection_parser_xmozurl);
    ecore_x_selection_parser_add("_NETSCAPE_URL",
                                 _ecore_xcb_selection_parser_files);
    ecore_x_selection_parser_add(ECORE_X_SELECTION_TARGET_TARGETS,
