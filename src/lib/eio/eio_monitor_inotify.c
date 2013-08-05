@@ -200,6 +200,9 @@ void eio_monitor_backend_shutdown(void)
    ecore_main_fd_handler_del(_inotify_fdh);
    _inotify_fdh = NULL;
 
+   if (fd < 0)
+     return;
+
    close(fd);
 }
 
