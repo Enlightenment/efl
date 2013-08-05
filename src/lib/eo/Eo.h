@@ -622,15 +622,9 @@ typedef struct _Eo2_Op_Call_Data
 } Eo2_Op_Call_Data;
 
 typedef void (*Eo2_Hook_Call)(const Eo_Class *klass_id, const Eo *obj_id, void *func, ...);
-typedef void (*Eo2_Hook_Do)(const char *file, const char *func, int line, const Eo *obj_id);
-typedef void (*Eo2_Hook_Class_Do)(const char *file, const char *func, int line, const Eo_Class *klass_id);
 
 EAPI extern Eo2_Hook_Call eo2_hook_call_pre;
 EAPI extern Eo2_Hook_Call eo2_hook_call_post;
-EAPI extern Eo2_Hook_Do eo2_hook_do_pre;
-EAPI extern Eo2_Hook_Do eo2_hook_do_post;
-EAPI extern Eo2_Hook_Class_Do eo2_hook_class_do_pre;
-EAPI extern Eo2_Hook_Class_Do eo2_hook_class_do_post;
 
 // to pass the internal function call to EO2_FUNC_BODY (as Func parameter)
 #define EO2_FUNC_CALL(...) __VA_ARGS__
@@ -643,10 +637,6 @@ EAPI extern Eo2_Hook_Class_Do eo2_hook_class_do_post;
 #define EO2_HOOK_CALL_PREPAREV(Hook, ...)                               \
      if (Hook)                                                          \
        Hook(call.klass_id, call.obj_id, call.func, __VA_ARGS__);
-
-#define EO2_HOOK_DO_PREPARE(Hook, Var)                                  \
-     if (Hook)                                                          \
-        Hook(__FILE__, __FUNCTION__, __LINE__, Var);
 
 // cache OP id, get real fct and object data then do the call
 #define EO2_FUNC_COMMON_OP(Name, DefRet, Type)                          \
@@ -774,8 +764,8 @@ EAPI Eo_Op eo2_api_op_id_get(const void *api_func, const Eo_Op_Type);
 EAPI Eina_Bool eo2_call_resolve_internal(const Eo_Class *klass, const Eo_Op op, Eo2_Op_Call_Data *call);
 
 // start of eo2_do barrier, gets the object pointer and ref it, put it on the stask
-EAPI Eina_Bool eo2_do_start(Eo *obj_id, const Eina_Bool do_super);
-EAPI Eina_Bool eo2_class_do_start(const Eo_Class *klass_id, const Eina_Bool do_super);
+EAPI Eina_Bool eo2_do_start(Eo *obj_id, const Eina_Bool do_super, const char *file, const char *func, int line);
+EAPI Eina_Bool eo2_class_do_start(const Eo_Class *klass_id, const Eina_Bool do_super, const char *file, const char *func, int line);
 
 // end of the eo2_do barrier, unref the obj, move the stack pointer
 EAPI void eo2_do_end(Eo **ojb);
@@ -791,56 +781,48 @@ EAPI int eo2_call_stack_depth();
   do                                                  \
     {                                                 \
        Eo *_objid_ = objid;                           \
-       EO2_HOOK_DO_PREPARE(eo2_hook_do_pre, _objid_); \
-       if (eo2_do_start(_objid_, EINA_FALSE))         \
+       if (eo2_do_start(_objid_, EINA_FALSE, __FILE__, __FUNCTION__, __LINE__))	\
          {                                            \
             Eo *_id_clean_ EO2_DO_CLEANUP = _objid_;  \
             __VA_ARGS__;                              \
             (void) _id_clean_;                        \
          }                                            \
-       EO2_HOOK_DO_PREPARE(eo2_hook_do_post, _objid_);\
     } while (0)
 
 #define eo2_do_super(objid, ...)                      \
   do                                                  \
     {                                                 \
        Eo *_objid_ = objid;                           \
-       EO2_HOOK_DO_PREPARE(eo2_hook_do_pre, _objid_); \
-       if (eo2_do_start(_objid_, EINA_TRUE))          \
+       if (eo2_do_start(_objid_, EINA_TRUE, __FILE__, __FUNCTION__, __LINE__))          \
          {                                            \
             Eo *_id_clean_ EO2_DO_CLEANUP = _objid_;  \
             __VA_ARGS__;                              \
             (void) _id_clean_;                        \
          }                                            \
-       EO2_HOOK_DO_PREPARE(eo2_hook_do_post, _objid_);\
     } while (0)
 
 #define eo2_class_do(clsid, ...)                                        \
   do                                                                    \
     {                                                                   \
        const Eo_Class *_clsid_ = clsid;                                 \
-       EO2_HOOK_DO_PREPARE(eo2_hook_class_do_pre, _clsid_);             \
-       if (eo2_class_do_start(_clsid_, EINA_FALSE))                     \
+       if (eo2_class_do_start(_clsid_, EINA_FALSE, __FILE__, __FUNCTION__, __LINE__)) \
          {                                                              \
             const Eo_Class *_id_clean_ EO2_CLASS_DO_CLEANUP = _clsid_;  \
             __VA_ARGS__;                                                \
             (void) _id_clean_;                                          \
          }                                                              \
-       EO2_HOOK_DO_PREPARE(eo2_hook_class_do_post, _clsid_);            \
     } while (0)
 
 #define eo2_class_super_do(clsid, ...)                                  \
   do                                                                    \
     {                                                                   \
        const Eo_Class *_clsid_ = clsid;                                 \
-       EO2_HOOK_DO_PREPARE(eo2_hook_class_do_pre, _clsid_);             \
-       if (eo2_class_do_start(_clsid_, EINA_TRUE))                      \
+       if (eo2_class_do_start(_clsid_, EINA_TRUE, __FILE__, __FUNCTION__, __LINE__)) \
          {                                                              \
             const Eo_Class *_id_clean_ EO2_CLASS_DO_CLEANUP = _clsid_;  \
             __VA_ARGS__;                                                \
             (void) _id_clean_;                                          \
          }                                                              \
-       EO2_HOOK_DO_PREPARE(eo2_hook_class_do_post, _clsid_);            \
     } while (0)
 
 /*****************************************************************************/
