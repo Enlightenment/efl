@@ -918,14 +918,22 @@ evas_object_text_ellipsis_set(Evas_Object *obj, double ellipsis)
 }
 
 static void
-_text_resize(void *data,
-             Evas *e EINA_UNUSED,
-             Evas_Object *obj,
-             void *event_info EINA_UNUSED)
+_size_set(Eo *eo_obj, void *_pd, va_list *list)
 {
-   Evas_Object_Text *o = data;
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Text *o = _pd;
 
-   _evas_object_text_recalc(obj, o->cur.text);
+   Evas_Coord w = va_arg(*list, Evas_Coord);
+   Evas_Coord h = va_arg(*list, Evas_Coord);
+
+   EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
+     {
+        state_write->geometry.w = w;
+        state_write->geometry.h = h;
+     }
+   EINA_COW_STATE_WRITE_END(obj, state_write, cur);
+
+   _evas_object_text_recalc(eo_obj, o->cur.text);
 }
 
 static void
@@ -941,11 +949,6 @@ _text_ellipsis_set(Eo *eo_obj, void *_pd, va_list *list)
    o->changed = 1;
    evas_object_change(eo_obj, obj);
    evas_object_clip_dirty(eo_obj, obj);
-
-   evas_object_event_callback_del_full(eo_obj, EVAS_CALLBACK_RESIZE,
-                                       _text_resize, o);
-   evas_object_event_callback_add(eo_obj, EVAS_CALLBACK_RESIZE,
-                                  _text_resize, o);
 }
 
 EAPI double
@@ -1424,6 +1427,7 @@ _text_style_set(Eo *eo_obj, void *_pd, va_list *list)
    Evas_Text_Style_Type style = va_arg(*list, Evas_Text_Style_Type);
    Evas_Object_Text *o = _pd;
    int pl = 0, pr = 0, pt = 0, pb = 0, l = 0, r = 0, t = 0, b = 0;
+   int w = 0, h = 0;
 
    if (o->cur.style == style) return;
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
@@ -1432,18 +1436,11 @@ _text_style_set(Eo *eo_obj, void *_pd, va_list *list)
    o->cur.style = style;
    evas_text_style_pad_get(o->cur.style, &l, &r, &t, &b);
 
-   EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
-     {
-       if (o->items)
-	 state_write->geometry.w += (l - pl) + (r - pr);
-       else
-	 state_write->geometry.w = 0;
-       state_write->geometry.h += (t - pt) + (b - pb);
-     }
-   EINA_COW_STATE_WRITE_END(obj, state_write, cur);
+   if (o->items) w = obj->cur->geometry.w + (l - pl) + (r - pr);
+   h = obj->cur->geometry.h + (t - pt) + (b - pb);
 
-   evas_object_change(eo_obj, obj);
-   evas_object_clip_dirty(eo_obj, obj);
+   eo_do_super(eo_obj, MY_CLASS,
+               evas_obj_size_set(w, h));
 }
 
 EAPI Evas_Text_Style_Type
@@ -2462,13 +2459,8 @@ _evas_object_text_recalc(Evas_Object *eo_obj, Eina_Unicode *text)
         h = _evas_object_text_vert_advance_get(eo_obj, o);
 	evas_text_style_pad_get(o->cur.style, &l, &r, &t, &b);
 
-	EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
-	  {
-	    state_write->geometry.w = w + l + r;
-	    state_write->geometry.h = h + t + b;
-	  }
-	EINA_COW_STATE_WRITE_END(obj, state_write, cur);
-
+        eo_do_super(eo_obj, MY_CLASS,
+                    evas_obj_size_set(w + l + r, h + t + b));
 ////        obj->cur->cache.geometry.validity = 0;
      }
    else
@@ -2476,18 +2468,12 @@ _evas_object_text_recalc(Evas_Object *eo_obj, Eina_Unicode *text)
 	int t = 0, b = 0;
 
 	evas_text_style_pad_get(o->cur.style, NULL, NULL, &t, &b);
-	EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
-	  {
-	    state_write->geometry.w = 0;
-	    state_write->geometry.h = o->max_ascent + o->max_descent + t + b;
-	  }
-	EINA_COW_STATE_WRITE_END(obj, state_write, cur);
-	    
+        eo_do_super(eo_obj, MY_CLASS,
+                    evas_obj_size_set(0, o->max_ascent + o->max_descent + t + b));
 ////        obj->cur->cache.geometry.validity = 0;
      }
    o->last_computed.w = obj->cur->geometry.w;
    o->last_computed.h = obj->cur->geometry.h;
-   evas_object_clip_dirty(eo_obj, obj);
 }
 
 static void
@@ -2497,6 +2483,7 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DESTRUCTOR), _destructor),
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DBG_INFO_GET), _dbg_info_get),
+	EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_SIZE_SET), _size_set),
         EO_OP_FUNC(EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_FONT_SOURCE_SET), _text_font_source_set),
         EO_OP_FUNC(EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_FONT_SOURCE_GET), _text_font_source_get),
         EO_OP_FUNC(EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_FONT_SET), _text_font_set),
