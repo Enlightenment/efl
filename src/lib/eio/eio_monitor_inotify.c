@@ -123,11 +123,14 @@ _eio_inotify_handler(void *data EINA_UNUSED, Ecore_Fd_Handler *fdh)
    Eio_Monitor_Backend *backend;
    unsigned char buffer[16384];
    struct inotify_event *event;
-   int i = 0;
+   int i = 0, fd;
    int event_size;
    ssize_t size;
 
-   size = read(ecore_main_fd_handler_fd_get(fdh), buffer, sizeof(buffer));
+   fd = ecore_main_fd_handler_fd_get(fdh);
+   if (fd < 0) return ECORE_CALLBACK_RENEW;
+
+   size = read(fd, buffer, sizeof(buffer));
    while (i < size)
      {
         event = (struct inotify_event *)&buffer[i];
