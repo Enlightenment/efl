@@ -496,12 +496,25 @@ _elm_spinner_smart_on_focus(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret;
+   Elm_Spinner_Smart_Data *sd = _pd;
 
    eo_do_super(obj, MY_CLASS, elm_wdg_on_focus(&int_ret));
    if (!int_ret) return;
 
    if (!elm_widget_focus_get(obj))
-     _entry_value_apply(obj);
+     {
+        if (sd->delay)
+          {
+             ecore_timer_del(sd->delay);
+             sd->delay = NULL;
+          }
+        if (sd->spin)
+          {
+             ecore_timer_del(sd->spin);
+             sd->spin = NULL;
+          }
+        _entry_value_apply(obj);
+     }
 
    if (ret) *ret = EINA_TRUE;
 }
