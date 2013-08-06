@@ -97,7 +97,8 @@ _ecore_wl_output_cb_done(void *data EINA_UNUSED, struct wl_output *output EINA_U
 
 }
 
-static void _ecore_wl_output_cb_scale(void *data, struct wl_output *output, int scale)
+static void 
+_ecore_wl_output_cb_scale(void *data EINA_UNUSED, struct wl_output *output EINA_UNUSED, int scale EINA_UNUSED)
 {
 
 }
