@@ -667,20 +667,20 @@ _on_item_selected(void *data,
    if (!path)
      return;
 
-   sdata = malloc(sizeof(*sdata));
-   sdata->fs = data;
-   sdata->path = path;
-
    if (sd->only_folder)
      eina_stringshare_replace(&sd->path, path);
    else
      {
-        dir = ecore_file_dir_get(sdata->path);
+        dir = ecore_file_dir_get(path);
         if (!dir) return;
 
         eina_stringshare_replace(&sd->path, dir);
         free(dir);
      }
+
+   sdata = malloc(sizeof(*sdata));
+   sdata->fs = data;
+   sdata->path = path;
 
    if (sd->sel_idler)
      {
