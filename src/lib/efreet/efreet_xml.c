@@ -336,7 +336,7 @@ efreet_xml_attributes_parse(char **data, int *size,
     Efreet_Xml_Attribute attr[11];
     int i, count = 0;
 
-    memset(attr, sizeof(attr), 0);
+    memset(attr, 0, sizeof(attr));
     while (*size > 0)
     {
         if (**data == '>')
