@@ -7,12 +7,16 @@
 /* local function prototypes */
 static void _ecore_wl_output_cb_geometry(void *data, struct wl_output *wl_output EINA_UNUSED, int x, int y, int w, int h, int subpixel EINA_UNUSED, const char *make EINA_UNUSED, const char *model EINA_UNUSED, int transform EINA_UNUSED);
 static void _ecore_wl_output_cb_mode(void *data, struct wl_output *wl_output EINA_UNUSED, unsigned int flags, int w, int h, int refresh EINA_UNUSED);
+static void _ecore_wl_output_cb_done(void *data EINA_UNUSED, struct wl_output *output EINA_UNUSED);
+static void _ecore_wl_output_cb_scale(void *data EINA_UNUSED, struct wl_output *output EINA_UNUSED, int scale EINA_UNUSED);
 
 /* wayland listeners */
 static const struct wl_output_listener _ecore_wl_output_listener = 
 {
    _ecore_wl_output_cb_geometry,
-   _ecore_wl_output_cb_mode
+   _ecore_wl_output_cb_mode,
+   _ecore_wl_output_cb_done,
+   _ecore_wl_output_cb_scale
 };
 
 /* @since 1.2 */
@@ -36,7 +40,7 @@ _ecore_wl_output_add(Ecore_Wl_Display *ewd, unsigned int id)
    output->display = ewd;
 
    output->output = 
-     wl_registry_bind(ewd->wl.registry, id, &wl_output_interface, 1);
+     wl_registry_bind(ewd->wl.registry, id, &wl_output_interface, 2);
 
    wl_list_insert(ewd->outputs.prev, &output->link);
    wl_output_add_listener(output->output, &_ecore_wl_output_listener, output);
@@ -85,4 +89,15 @@ _ecore_wl_output_cb_mode(void *data, struct wl_output *wl_output EINA_UNUSED, un
         _ecore_wl_disp->output = output;
         if (ewd->output_configure) (*ewd->output_configure)(output, ewd->data);
      }
+}
+
+static void 
+_ecore_wl_output_cb_done(void *data EINA_UNUSED, struct wl_output *output EINA_UNUSED)
+{
+
+}
+
+static void _ecore_wl_output_cb_scale(void *data, struct wl_output *output, int scale)
+{
+
 }
