@@ -2616,8 +2616,8 @@ START_TEST(evas_textblock_size)
    evas_object_textblock_size_native_get(tb, &nw, &nh);
    fail_if((w != nw) || (h2 != nh));
 
-   /* Two lines == double the height */
-   fail_if(h * 2 != h2);
+   /* Two lines != double the height */
+   fail_if(h * 2 == h2);
 
    evas_object_textblock_text_markup_set(tb, buf);
 
