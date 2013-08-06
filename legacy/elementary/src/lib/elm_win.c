@@ -1919,10 +1919,33 @@ _elm_win_access(Eina_Bool is_access)
    Evas *evas;
    const Eina_List *l;
    Evas_Object *obj;
+   Evas_Object *fobj;
 
    EINA_LIST_FOREACH(_elm_win_list, l, obj)
      {
         elm_widget_access(obj, is_access);
+
+         /* floating orphan object. if there are A, B, C objects and user does
+            as below, then there would be floating orphan objects.
+
+              1. elm_object_content_set(layout, A);
+              2. elm_object_content_set(layout, B);
+              3. elm_object_content_set(layout, C);
+
+            now, the object A and B are floating orphan objects */
+
+        fobj = obj;
+        for (;;)
+          {
+             fobj = evas_object_below_get(fobj);
+             if (!fobj) break;
+
+             if (elm_widget_is(fobj) && !elm_widget_parent_get(fobj))
+               {
+                  elm_widget_access(fobj, is_access);
+               }
+          }
+
         if (!is_access)
           {
              evas = evas_object_evas_get(obj);
