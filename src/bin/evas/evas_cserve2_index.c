@@ -765,18 +765,19 @@ cserve2_shared_mempool_buffer_ref(Shared_Mempool *sm, int bufferid)
    return ie->id;
 }
 
-static Eina_Bool
+static const void *
 _shared_mempool_buffer_del(Shared_Mempool *sm, int bufferid)
 {
    Index_Entry *ie;
+   const char *data;
 
-   if (!sm || !bufferid) return EINA_FALSE;
+   if (!sm || !bufferid) return NULL;
 
    ie = _shared_index_entry_get_by_id(sm->index, bufferid);
    if (!ie || ie->refcount <= 0)
      {
         CRIT("Tried to delete invalid buffer or with refcount 0");
-        return EINA_FALSE;
+        return NULL;
      }
 
    ie->refcount--;
@@ -789,10 +790,11 @@ _shared_mempool_buffer_del(Shared_Mempool *sm, int bufferid)
         sm->empty_blocks = (Block *) eina_rbtree_inline_insert(
                  EINA_RBTREE_GET(sm->empty_blocks), EINA_RBTREE_GET(newblk),
                  EINA_RBTREE_CMP_NODE_CB(_block_rbtree_cmp), NULL);
-        return EINA_TRUE;
+        data = sm->ds->data + ie->offset;
+        return data;
      }
 
-   return EINA_FALSE;
+   return NULL;
 }
 
 void
@@ -856,7 +858,7 @@ cserve2_shared_string_add(const char *str)
         ie = _shared_index_entry_get_by_id(_string_mempool->index, id);
         if (!ie || ie->refcount <= 0)
           {
-             CRIT("String found in hash but not in mempool!");
+             ERR("String found in hash but not in mempool!");
              eina_hash_del(_string_entries, str, (void *) (intptr_t) id);
              goto new_entry;
           }
@@ -874,9 +876,9 @@ new_entry:
         return -1;
      }
 
-   eina_hash_add(_string_entries, str, (void *) (intptr_t) ie->id);
    data = _string_mempool->ds->data + ie->offset;
    memcpy(data, str, len);
+   eina_hash_add(_string_entries, data, (void *) (intptr_t) ie->id);
    return ie->id;
 }
 
@@ -890,11 +892,16 @@ cserve2_shared_string_ref(int id)
 void
 cserve2_shared_string_del(int id)
 {
+   const char *data;
+
    if (!id) return;
-   if (_shared_mempool_buffer_del(_string_mempool, id))
+   if ((data = _shared_mempool_buffer_del(_string_mempool, id)) != NULL)
      {
-        if (!eina_hash_del_by_data(_string_entries, (void *) (intptr_t) id))
-          CRIT("Invalid free");
+        if (!eina_hash_del_by_key(_string_entries, data))
+          {
+             if (!eina_hash_del_by_data(_string_entries, (void *) (intptr_t) id))
+               CRIT("Invalid free");
+          }
      }
 }
 

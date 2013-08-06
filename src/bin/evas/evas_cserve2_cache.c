@@ -1588,7 +1588,6 @@ _font_load_request_response(Font_Entry *fe, Slave_Msg_Font_Loaded *msg, int *siz
 
    if (fe->base.request) fe->base.request = NULL;
 
-   /* could be a function, but it's too basic and only used here */
    resp = calloc(1, sizeof(*resp));
    resp->base.type = CSERVE2_FONT_LOADED;
    *size = sizeof(*resp);
