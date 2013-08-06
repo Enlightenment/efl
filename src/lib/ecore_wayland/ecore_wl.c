@@ -513,7 +513,7 @@ _ecore_wl_cb_handle_global(void *data, struct wl_registry *registry, unsigned in
    if (!strcmp(interface, "wl_compositor"))
      {
         ewd->wl.compositor =
-          wl_registry_bind(registry, id, &wl_compositor_interface, 1);
+          wl_registry_bind(registry, id, &wl_compositor_interface, 3);
      }
    else if (!strcmp(interface, "wl_output"))
      _ecore_wl_output_add(ewd, id);
