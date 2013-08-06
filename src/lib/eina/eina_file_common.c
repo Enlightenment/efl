@@ -376,7 +376,9 @@ eina_file_virtualize(const void *data, unsigned long long length, Eina_Bool copy
    eina_lock_new(&file->lock);
    file->mtime = ti / 1000;
    file->length = length;
+#ifdef _STAT_VER_LINUX
    file->mtime_nsec = ti;
+#endif
    file->refcount = 1;
    file->fd = -1;
    file->virtual = EINA_TRUE;
