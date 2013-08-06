@@ -5886,12 +5886,22 @@ _elm_widget_on_focus(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    if (ret) *ret = EINA_FALSE;
 
+   ELM_WIDGET_DATA_GET(obj, sd);
+
    if (elm_widget_can_focus_get(obj))
      {
         if (elm_widget_focus_get(obj))
-          evas_object_smart_callback_call(obj, "focused", NULL);
+          {
+             if (!sd->resize_obj)
+               evas_object_focus_set(obj, EINA_TRUE);
+             evas_object_smart_callback_call(obj, "focused", NULL);
+          }
         else
-          evas_object_smart_callback_call(obj, "unfocused", NULL);
+          {
+             if (!sd->resize_obj)
+               evas_object_focus_set(obj, EINA_FALSE);
+             evas_object_smart_callback_call(obj, "unfocused", NULL);
+          }
      }
    else
      return;
