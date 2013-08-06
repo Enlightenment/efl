@@ -344,7 +344,7 @@ _evas_render_phase1_direct(Evas_Public_Data *e,
                 obj->smart.smart,
                 evas_object_smart_members_get_direct(eo_obj),
                 obj->map->cur.map, obj->map->cur.usemap,
-                obj->map->prev.map, obj->prev->usemap,
+                obj->map->prev.map, obj->map->prev.usemap,
                 _evas_render_has_map(eo_obj, obj),
                 _evas_render_had_map(obj));
              if ((obj->is_smart) &&
