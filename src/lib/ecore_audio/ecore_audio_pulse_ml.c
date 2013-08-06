@@ -47,13 +47,12 @@ _ecore_io_wrapper(void *data, Ecore_Fd_Handler *handler)
    pa_io_event *event = (pa_io_event *)data;
    int fd = 0;
 
+   fd = ecore_main_fd_handler_fd_get(handler);
+   if (fd < 0) return ECORE_CALLBACK_RENEW;
+
    if (ecore_main_fd_handler_active_get(handler, ECORE_FD_READ))
      {
-
         flags |= PA_IO_EVENT_INPUT;
-
-        fd = ecore_main_fd_handler_fd_get(handler);
-        if (fd < 0) return ECORE_CALLBACK_RENEW;
 
         /* Check for HUP and report */
         if (recv(fd, buf, 64, MSG_PEEK))
