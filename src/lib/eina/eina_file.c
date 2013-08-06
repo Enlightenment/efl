@@ -364,7 +364,13 @@ _eina_file_map_rule_apply(Eina_File_Populate rule, void *addr, unsigned long int
       case EINA_FILE_POPULATE: flag = MADV_WILLNEED; break;
       case EINA_FILE_WILLNEED: flag = MADV_WILLNEED; break;
       case EINA_FILE_DONTNEED: flag = MADV_DONTNEED; break;
+#ifdef MADV_REMOVE
       case EINA_FILE_REMOVE: flag = MADV_REMOVE; break;
+#elif defined (MADV_FREE)
+      case EINA_FILE_REMOVE: flag = MADV_FREE; break;
+#else
+# warning "EINA_FILE_REMOVE does not have system support"
+#endif        
       default: return tmp; break;
      }
 
