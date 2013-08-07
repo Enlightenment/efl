@@ -103,6 +103,7 @@ efreet_trash_dir_get(const char *file)
         while (strlen(buf) > 1)
         {
             strncpy(path, buf, PATH_MAX);
+            path[PATH_MAX - 1] = 0;
             dir = dirname(buf);
 
             if (stat(dir, &s_dest) == 0)
