@@ -2888,7 +2888,7 @@ EFL_ADD_FEATURE([ECORE_IMF], [xim])
 # wayland
 if test "x${want_ecore_imf_wayland}" = "xyes" ; then
    PKG_CHECK_MODULES([WAYLAND],
-      [wayland-client],
+      [wayland-client >= 1.2.0],
       [
        have_ecore_imf_wayland="yes"
        AC_DEFINE([BUILD_ECORE_IMF_WAYLAND], [1], [Ecore Imf Wayland Support])
