@@ -762,6 +762,7 @@ efreet_cache_icon_theme_list(void)
 
     if (!efreet_cache_check(&icon_theme_cache, efreet_icon_theme_cache_file(), EFREET_ICON_CACHE_MAJOR)) return NULL;
     keys = eet_list(icon_theme_cache, "*", &num);
+    if (!keys) return NULL;
     for (i = 0; i < num; i++)
     {
         Efreet_Icon_Theme *theme;
