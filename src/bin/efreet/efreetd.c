@@ -30,13 +30,19 @@ main(int argc, char *argv[])
    char *path;
    FILE *log;
 
-   if (!eina_init()) return 1;
-
    strcpy(buf, "/tmp/efreetd_XXXXXX");
    path = mktemp(buf);
    if (!path) return 1;
-   chmod(path, 0700);
+   if (chmod(path, 0700) < 0)
+     {
+        perror("chmod");
+        return 1;
+     }
+
    log = fopen(path, "wb");
+   if (!log) return 1;
+
+   if (!eina_init()) return 1;
    eina_log_print_cb_set(eina_log_print_cb_file, log);
 
    efreetd_log_dom = eina_log_domain_register("efreetd", EFREETD_DEFAULT_LOG_COLOR);
