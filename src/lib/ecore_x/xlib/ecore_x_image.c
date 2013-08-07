@@ -117,6 +117,7 @@ _ecore_x_image_shm_check(void)
                           IPC_CREAT | 0666);
    if (shminfo.shmid == -1)
      {
+        ERR("%s", strerror(errno));
         XDestroyImage(xim);
         _ecore_x_image_shm_can = 0;
         return;
