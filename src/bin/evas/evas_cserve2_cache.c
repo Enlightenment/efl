@@ -75,7 +75,7 @@ struct _Font_Entry {
    void *ft;
    Fash_Glyph2 *glyphs;
    unsigned int nglyphs;
-   Eina_Inlist *caches;
+   Eina_List *caches;
    Font_Cache *last_cache;
    Eina_Bool unused : 1;
 #ifdef DEBUG_LOAD_TIME
@@ -90,27 +90,18 @@ struct _Font_Entry {
 };
 
 struct _Font_Cache {
-   EINA_INLIST;
    Font_Entry *fe;
    Shm_Handle *shm;
    unsigned int usage;
    int inuse;
-   Eina_Inlist *glyphs;
+   Shared_Array *glyphs; // Contains gldata_id only
    unsigned int nglyphs;
 };
 
 struct _Glyph_Entry {
-   EINA_INLIST;
+   unsigned int gldata_id;
    Font_Entry *fe;
    Font_Cache *fc;
-   unsigned int index;
-   unsigned int offset;
-   unsigned int size;
-   unsigned int rows;
-   unsigned int width;
-   unsigned int pitch;
-   unsigned int num_grays;
-   unsigned int pixel_mode;
 };
 
 struct _Glyphs_Request {
@@ -148,11 +139,13 @@ struct _File_Watch {
 };
 
 static unsigned int _entry_id = 0;
+static unsigned int _glyph_id = 0;
 static unsigned int _freed_file_entry_count = 0;
 static unsigned int _freed_image_entry_count = 0;
 
 static Shared_Array *_file_data_array = NULL;
 static Shared_Array *_image_data_array = NULL;
+static Shared_Array *_glyph_data_array = NULL;
 
 static Eina_Hash *file_ids = NULL; // maps path + key --> file_id
 static Eina_Hash *file_entries = NULL; // maps file_id --> entry
@@ -301,6 +294,22 @@ _image_entry_find(unsigned int entry_id)
      }
 
    return (Image_Entry *) e;
+}
+
+static Glyph_Data *
+_glyph_data_find(unsigned int glyph_id)
+{
+   Glyph_Data *gldata;
+
+   gldata = cserve2_shared_array_item_data_find(_glyph_data_array, &glyph_id,
+                                                _shm_object_id_cmp_cb);
+   if (!gldata)
+     {
+        ERR("Could not find glyph %u", glyph_id);
+        return NULL;
+     }
+
+   return gldata;
 }
 
 static Eina_Bool
@@ -1061,6 +1070,12 @@ static void
 _glyph_free_cb(void *data)
 {
    Glyph_Entry *gl = data;
+   Glyph_Data *gldata;
+
+   if (!gl) return;
+   gldata = _glyph_data_find(gl->gldata_id);
+   cserve2_shared_string_del(gldata->shm_id);
+   gldata->refcount--;
    free(gl);
 }
 
@@ -1096,18 +1111,22 @@ _font_shm_size_get(Font_Cache *fc)
 static void
 _font_shm_free(Font_Cache *fc)
 {
+   Glyph_Data *gd;
    Font_Entry *fe = fc->fe;
-   fe->caches = eina_inlist_remove(fe->caches, EINA_INLIST_GET(fc));
+   unsigned int k;
+
+   fe->caches = eina_list_remove(fe->caches, fc);
    if (fc == fe->last_cache)
      fe->last_cache = NULL;
 
-   while (fc->glyphs)
+   for (k = 0; k < fc->nglyphs; k++)
      {
-        Glyph_Entry *gl = EINA_INLIST_CONTAINER_GET(fc->glyphs, Glyph_Entry);
-        fc->glyphs = eina_inlist_remove(fc->glyphs, fc->glyphs);
-        fash_gl_del(fe->glyphs, gl->index);
+        int *gldata_id = cserve2_shared_array_item_data_get(fc->glyphs, k);
+        gd = _glyph_data_find(*gldata_id);
+        fash_gl_del(fe->glyphs, gd->index);
      }
 
+   cserve2_shared_array_del(fc->glyphs);
    cserve2_shm_unref(fc->shm);
    free(fc);
 
@@ -1161,6 +1180,7 @@ cserve2_cache_init(void)
 
    _file_data_array = cserve2_shared_array_new(1, sizeof(File_Data), 0);
    _image_data_array = cserve2_shared_array_new(1, sizeof(Image_Data), 0);
+   _glyph_data_array = cserve2_shared_array_new(1, sizeof(Glyph_Data), 0);
 }
 
 void
@@ -1182,6 +1202,7 @@ cserve2_cache_shutdown(void)
 
    cserve2_shared_array_del(_file_data_array);
    cserve2_shared_array_del(_image_data_array);
+   cserve2_shared_array_del(_glyph_data_array);
 }
 
 static Reference *
@@ -1716,7 +1737,7 @@ _glyphs_loaded_msg_create(Glyphs_Request *req, int *resp_size)
         size += sizeof(int);
         // nglyphs * (index + offset + size + rows + width + pitch +
         //            num_grays + pixel_mode)
-        size += eina_list_count(iter->glyphs) * 8 * sizeof(int);
+        size += eina_list_count(iter->glyphs) * 9 * sizeof(int);
      }
 
    resp = malloc(size);
@@ -1743,21 +1764,27 @@ _glyphs_loaded_msg_create(Glyphs_Request *req, int *resp_size)
 
         EINA_LIST_FREE(iter->glyphs, gl)
           {
-             memcpy(buf, &gl->index, sizeof(int));
+             // TODO: Factorize memcpy
+             Glyph_Data *gldata;
+
+             gldata = _glyph_data_find(gl->gldata_id);
+             memcpy(buf, &gldata->index, sizeof(int));
              buf += sizeof(int);
-             memcpy(buf, &gl->offset, sizeof(int));
+             memcpy(buf, &gldata->shm_id, sizeof(string_t));
+             buf += sizeof(string_t);
+             memcpy(buf, &gldata->offset, sizeof(int));
              buf += sizeof(int);
-             memcpy(buf, &gl->size, sizeof(int));
+             memcpy(buf, &gldata->size, sizeof(int));
              buf += sizeof(int);
-             memcpy(buf, &gl->rows, sizeof(int));
+             memcpy(buf, &gldata->rows, sizeof(int));
              buf += sizeof(int);
-             memcpy(buf, &gl->width, sizeof(int));
+             memcpy(buf, &gldata->width, sizeof(int));
              buf += sizeof(int);
-             memcpy(buf, &gl->pitch, sizeof(int));
+             memcpy(buf, &gldata->pitch, sizeof(int));
              buf += sizeof(int);
-             memcpy(buf, &gl->num_grays, sizeof(int));
+             memcpy(buf, &gldata->num_grays, sizeof(int));
              buf += sizeof(int);
-             memcpy(buf, &gl->pixel_mode, sizeof(int));
+             memcpy(buf, &gldata->pixel_mode, sizeof(int));
              buf += sizeof(int);
           }
 
@@ -1955,21 +1982,23 @@ _glyphs_load_request_response(Glyphs_Request *req,
      {
         unsigned int j;
         Slave_Msg_Font_Cache *c = msg->caches[i];
+        string_t shm_id;
 
         if (!fc)
           {
              fc = calloc(1, sizeof(*fc));
-             fe->caches = eina_inlist_append(fe->caches, EINA_INLIST_GET(fc));
+             fe->caches = eina_list_append(fe->caches, fc);
              fe->last_cache = fc;
              fc->fe = fe;
              fc->shm = c->shm;
-             fc->glyphs = NULL;
+             fc->glyphs = cserve2_shared_array_new(1, sizeof(int), 0);
              fc->nglyphs = 0;
              fc->inuse = 0;
              font_shm_lru = eina_list_append(font_shm_lru, fc);
              font_mem_usage += _font_shm_size_get(fc);
           }
         fc->usage = c->usage;
+        shm_id = cserve2_shared_string_add(cserve2_shm_name_get(fc->shm));
         for (j = 0; j < c->nglyphs; j++)
           {
              Glyph_Entry *gl;
@@ -1977,27 +2006,41 @@ _glyphs_load_request_response(Glyphs_Request *req,
              gl = fash_gl_find(fe->glyphs, c->glyphs[j].index);
              if (!gl)
                {
+                  int glyph_id, idx, *gldata_id;
+                  Glyph_Data *gldata;
+
                   gl = calloc(1, sizeof(*gl));
                   gl->fe = fe;
                   gl->fc = fc;
-                  gl->index = c->glyphs[j].index;
-                  gl->offset = c->glyphs[j].offset;
-                  gl->size = c->glyphs[j].size;
-                  gl->rows = c->glyphs[j].rows;
-                  gl->width = c->glyphs[j].width;
-                  gl->pitch = c->glyphs[j].pitch;
-                  gl->num_grays = c->glyphs[j].num_grays;
-                  gl->pixel_mode = c->glyphs[j].pixel_mode;
-                  font_mem_usage += sizeof(*gl);
-                  fc->glyphs = eina_inlist_append(fc->glyphs, EINA_INLIST_GET(gl));
+                  gl->gldata_id = ++_glyph_id;
+
+                  glyph_id = cserve2_shared_array_item_new(_glyph_data_array);
+                  gldata = cserve2_shared_array_item_data_get(_glyph_data_array,
+                                                              glyph_id);
+                  gldata->refcount = 1;
+                  gldata->id = gl->gldata_id;
+                  gldata->index = c->glyphs[j].index;
+                  gldata->shm_id = cserve2_shared_string_ref(shm_id);
+                  gldata->offset = c->glyphs[j].offset;
+                  gldata->size = c->glyphs[j].size;
+                  gldata->rows = c->glyphs[j].rows;
+                  gldata->width = c->glyphs[j].width;
+                  gldata->pitch = c->glyphs[j].pitch;
+                  gldata->num_grays = c->glyphs[j].num_grays;
+                  gldata->pixel_mode = c->glyphs[j].pixel_mode;
+                  font_mem_usage += sizeof(*gl) + sizeof(*gldata);
+                  idx = cserve2_shared_array_item_new(fc->glyphs);
+                  gldata_id = cserve2_shared_array_item_data_get(fc->glyphs, idx);
+                  *gldata_id = gldata->id;
                   fc->nglyphs++;
                   fe->nglyphs++;
-                  fash_gl_add(fe->glyphs, gl->index, gl);
+                  fash_gl_add(fe->glyphs, gldata->index, gl);
                }
              req->answer[req->nanswer++] = gl;
              gl->fc->inuse++;
           }
 
+        cserve2_shared_string_del(shm_id);
         free(c); // FIXME: We are freeing this here because we only do a
                  // simple free on the response message. Later we need to
                  // setup a free callback for the slave response.
@@ -2034,6 +2077,7 @@ _font_entry_stats_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNU
 {
    Font_Entry *fe = data;
    Msg_Stats *msg = fdata;
+   Eina_List *iter;
    Font_Cache *fc;
    int nrefs = eina_list_count(fe->base.references);
 
@@ -2041,7 +2085,7 @@ _font_entry_stats_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNU
    if (fe->unused) msg->fonts.fonts_unused++;
 
    // accounting size
-   EINA_INLIST_FOREACH(fe->caches, fc)
+   EINA_LIST_FOREACH(fe->caches, iter, fc)
      {
         unsigned int fc_usage, shmsize;
         /* This is not real requested usage, but an approximation. We don't
@@ -2164,6 +2208,7 @@ _font_entry_debug_size_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EIN
    unsigned int size = di->size;
    Font_Entry *fe = data;
    Font_Cache *fc;
+   Eina_List *iter;
    const char *str;
 
    // filelen
@@ -2195,10 +2240,8 @@ _font_entry_debug_size_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EIN
    // ncaches
    size += sizeof(int);
 
-   EINA_INLIST_FOREACH(fe->caches, fc)
+   EINA_LIST_FOREACH(fe->caches, iter, fc)
      {
-        Glyph_Entry *gl;
-
         // shmnamelen + shmname
         size += sizeof(int);
         size += strlen(cserve2_shm_name_get(fc->shm)) + 1;
@@ -2209,17 +2252,7 @@ _font_entry_debug_size_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EIN
         // nglyphs
         size += sizeof(int);
 
-        EINA_INLIST_FOREACH(fc->glyphs, gl)
-          {
-             // index, offset, size
-             size += 3 * sizeof(int);
-
-             // rows, width, pitch
-             size += 3 * sizeof(int);
-
-             // num_grays, pixel_mode
-             size += 2 * sizeof(int);
-          }
+        size += (4 + 3 + 2) * sizeof(int) * fc->nglyphs;
      }
 
    di->size = size;
@@ -2235,6 +2268,7 @@ _font_entry_debug_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNU
    char *buf = *pos;
    Font_Entry *fe = data;
    Font_Cache *fc;
+   Eina_List *iter;
    unsigned int len;
    unsigned int unused;
    unsigned int ncaches;
@@ -2278,15 +2312,16 @@ _font_entry_debug_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNU
    buf += sizeof(int);
 
    // ncaches
-   ncaches = eina_inlist_count(fe->caches);
+   ncaches = eina_list_count(fe->caches);
    memcpy(buf, &ncaches, sizeof(int));
    buf += sizeof(int);
 
-   EINA_INLIST_FOREACH(fe->caches, fc)
+   EINA_LIST_FOREACH(fe->caches, iter, fc)
      {
-        Glyph_Entry *gl;
+        Glyph_Data *gldata;
         const char *shmname;
         unsigned int shmsize;
+        unsigned int k;
 
         // shmnamelen + shmname
         shmname = cserve2_shm_name_get(fc->shm);
@@ -2307,28 +2342,34 @@ _font_entry_debug_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNU
         memcpy(buf, &fc->nglyphs, sizeof(int));
         buf += sizeof(int);
 
-        EINA_INLIST_FOREACH(fc->glyphs, gl)
+        for (k = 0; k < fc->nglyphs; k++)
           {
-             // index, offset, size
-             memcpy(buf, &gl->index, sizeof(int));
+             int *gldata_id = cserve2_shared_array_item_data_get(
+                      fc->glyphs, fc->nglyphs);
+             gldata = _glyph_data_find(*gldata_id);
+
+             // index, shm_id, offset, size
+             memcpy(buf, &gldata->index, sizeof(int));
              buf += sizeof(int);
-             memcpy(buf, &gl->offset, sizeof(int));
+             memcpy(buf, &gldata->shm_id, sizeof(string_t));
+             buf += sizeof(string_t);
+             memcpy(buf, &gldata->offset, sizeof(int));
              buf += sizeof(int);
-             memcpy(buf, &gl->size, sizeof(int));
+             memcpy(buf, &gldata->size, sizeof(int));
              buf += sizeof(int);
 
              // rows, width, pitch
-             memcpy(buf, &gl->rows, sizeof(int));
+             memcpy(buf, &gldata->rows, sizeof(int));
              buf += sizeof(int);
-             memcpy(buf, &gl->width, sizeof(int));
+             memcpy(buf, &gldata->width, sizeof(int));
              buf += sizeof(int);
-             memcpy(buf, &gl->pitch, sizeof(int));
+             memcpy(buf, &gldata->pitch, sizeof(int));
              buf += sizeof(int);
 
              // num_grays, pixel_mode
-             memcpy(buf, &gl->num_grays, sizeof(int));
+             memcpy(buf, &gldata->num_grays, sizeof(int));
              buf += sizeof(int);
-             memcpy(buf, &gl->pixel_mode, sizeof(int));
+             memcpy(buf, &gldata->pixel_mode, sizeof(int));
              buf += sizeof(int);
           }
      }

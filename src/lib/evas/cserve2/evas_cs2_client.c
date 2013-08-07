@@ -1356,6 +1356,7 @@ _glyph_request_cb(void *data, const void *msg, int size)
 
         for (i = 0; i < nglyphs; i++)
           {
+             string_t shm_id;
              unsigned int idx, offset, glsize;
              int rows, width, pitch, num_grays, pixel_mode;
              CS_Glyph_Out *gl;
@@ -1366,6 +1367,8 @@ _glyph_request_cb(void *data, const void *msg, int size)
 
              memcpy(&idx, buf, sizeof(int));
              buf += sizeof(int);
+             memcpy(&shm_id, buf, sizeof(string_t));
+             buf += sizeof(string_t);
              memcpy(&offset, buf, sizeof(int));
              buf += sizeof(int);
              memcpy(&glsize, buf, sizeof(int));

@@ -287,12 +287,12 @@ typedef struct _Shm_Object Shm_Object;
 typedef struct _Index_Entry Index_Entry;
 typedef struct _File_Data File_Data;
 typedef struct _Image_Data Image_Data;
+typedef struct _Glyph_Data Glyph_Data;
 typedef struct _Shared_Array_Header Shared_Array_Header;
 typedef int string_t;
 #define SHMOBJECT unsigned int id; unsigned int refcount
 
-struct _Shared_Array_Header
-{
+struct _Shared_Array_Header {
    int32_t tag;
    int32_t elemsize;
    int32_t count;
@@ -303,13 +303,11 @@ struct _Shared_Array_Header
    int32_t _reserved2;
 };
 
-struct _Shm_Object
-{
+struct _Shm_Object {
    SHMOBJECT;
 };
 
-struct _Index_Entry
-{
+struct _Index_Entry {
    SHMOBJECT;
    // Block entry
    int32_t length;
@@ -332,12 +330,25 @@ struct _File_Data {
 
 struct _Image_Data {
    SHMOBJECT;
-   unsigned int file_id;
+   uint32_t file_id;
    string_t shm_id;
    Evas_Image_Load_Opts opts;
    Eina_Bool alpha_sparse : 1;
    Eina_Bool unused : 1;
    Eina_Bool doload : 1;
+};
+
+struct _Glyph_Data {
+   SHMOBJECT;
+   uint32_t index;
+   string_t shm_id;
+   uint32_t offset;
+   uint32_t size;
+   uint32_t rows;
+   uint32_t width;
+   uint32_t pitch;
+   uint32_t num_grays;
+   uint32_t pixel_mode;
 };
 
 struct _Msg_Error {
