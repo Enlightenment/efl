@@ -2357,19 +2357,19 @@ _edje_part_recalc_single(Edje *ed,
       when doing min restricted calc */
    if (!ed->calc_only)
      {
-        if (params->final.x + params->final.w < TO_INT(ADD(params->eval.x, params->eval.w)))
+        if (ABS(params->final.x) + params->final.w < TO_INT(ADD(ABS(params->eval.x), params->eval.w)))
 	  {
              params->final.w += 1;
 	  }
-        else if (params->final.x + params->final.w > TO_INT(ADD(params->eval.x, params->eval.w)))
+        else if (ABS(params->final.x) + params->final.w > TO_INT(ADD(ABS(params->eval.x), params->eval.w)))
 	  {
              params->final.w -= 1;
 	  }
-        if (params->final.y + params->final.h < TO_INT(ADD(params->eval.y, params->eval.h)))
+        if (ABS(params->final.y) + params->final.h < TO_INT(ADD(ABS(params->eval.y), params->eval.h)))
           {
              params->final.h += 1;
           }
-        else if (params->final.y + params->final.h > TO_INT(ADD(params->eval.y, params->eval.h)))
+        else if (ABS(params->final.y) + params->final.h > TO_INT(ADD(ABS(params->eval.y), params->eval.h)))
           {
              params->final.h -= 1;
           }
