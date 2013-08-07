@@ -203,7 +203,7 @@ eeze_disk_new_from_mount(const char *mount_point)
 {
    Eeze_Disk *disk = NULL;
    _udev_device *dev = NULL;
-   const char *syspath = NULL, *source, *uuid = NULL, *label = NULL, *devpath = NULL;
+   const char *source, *uuid = NULL, *label = NULL, *devpath = NULL;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(mount_point, NULL);
 
@@ -261,8 +261,6 @@ error:
      eina_stringshare_del(label);
    else if (devpath)
      eina_stringshare_del(devpath);
-   if (syspath)
-     eina_stringshare_del(syspath);
    if (dev)
      udev_device_unref(dev);
    return NULL;
