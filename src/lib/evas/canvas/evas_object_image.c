@@ -3646,6 +3646,8 @@ evas_process_dirty_pixels(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, 
      {
         if (o->pixels->func.get_pixels)
           {
+             Evas_Coord x, y, w, h;
+
              if (obj->layer->evas->engine.func->image_native_get)
                {
                   Evas_Native_Surface *ns;
@@ -3690,8 +3692,19 @@ evas_process_dirty_pixels(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, 
                     }
                }
 
+             x = obj->cur->geometry.x;
+             y = obj->cur->geometry.y;
+             w = obj->cur->geometry.w;
+             h = obj->cur->geometry.h;             
+
              if (!o->direct_render)
                o->pixels->func.get_pixels(o->pixels->func.get_pixels_data, eo_obj);
+
+             if (!(obj->cur->geometry.x == x &&
+                   obj->cur->geometry.y == y &&
+                   obj->cur->geometry.w == w &&
+                   obj->cur->geometry.h == h))
+               CRIT("Evas_Object_Image geometry did change during pixels get callback !");
 
              o->engine_data = obj->layer->evas->engine.func->image_dirty_region
                (obj->layer->evas->engine.data.output, o->engine_data,
