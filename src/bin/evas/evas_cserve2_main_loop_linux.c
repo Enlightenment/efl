@@ -90,8 +90,9 @@ _signal_handle_child(struct signalfd_siginfo *sinfo EINA_UNUSED)
 }
 
 static void
-_signal_handle_exit(struct signalfd_siginfo *sinfo)
+_signal_handle_exit(struct signalfd_siginfo *sinfo EINA_UNUSED)
 {
+#if CSERVE2_LOG_LEVEL >= 4
    const char *name;
 
    switch (sinfo->ssi_signo)
@@ -103,6 +104,7 @@ _signal_handle_exit(struct signalfd_siginfo *sinfo)
      }
 
    DBG("Received %s. Honoring request.", name);
+#endif
    terminate = EINA_TRUE;
 }
 

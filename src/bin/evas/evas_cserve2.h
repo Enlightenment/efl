@@ -4,26 +4,54 @@
 #include <Eina.h>
 #include "evas_cs2.h"
 
+#ifndef CSERVE2_LOG_LEVEL
+#define CSERVE2_LOG_LEVEL 2
+#endif
+
 #ifdef CRIT
 #undef CRIT
 #endif
+#if CSERVE2_LOG_LEVEL >= 0
 #define CRIT(...) EINA_LOG_DOM_CRIT(_evas_cserve2_bin_log_dom, __VA_ARGS__)
+#else
+#define CRIT(...) do {} while(0)
+#endif
+
 #ifdef ERR
 #undef ERR
 #endif
+#if CSERVE2_LOG_LEVEL >= 1
 #define ERR(...) EINA_LOG_DOM_ERR(_evas_cserve2_bin_log_dom, __VA_ARGS__)
-#ifdef DBG
-#undef DBG
+#else
+#define ERR(...) do {} while(0)
 #endif
-#define DBG(...) EINA_LOG_DOM_DBG(_evas_cserve2_bin_log_dom, __VA_ARGS__)
+
 #ifdef WRN
 #undef WRN
 #endif
+#if CSERVE2_LOG_LEVEL >= 2
 #define WRN(...) EINA_LOG_DOM_WARN(_evas_cserve2_bin_log_dom, __VA_ARGS__)
+#else
+#define WRN(...) do {} while(0)
+#endif
+
 #ifdef INF
 #undef INF
 #endif
+#if CSERVE2_LOG_LEVEL >= 3
 #define INF(...) EINA_LOG_DOM_INFO(_evas_cserve2_bin_log_dom, __VA_ARGS__)
+#else
+#define INF(...) do {} while(0)
+#endif
+
+#ifdef DBG
+#undef DBG
+#endif
+#if CSERVE2_LOG_LEVEL >= 4
+#define DBG(...) EINA_LOG_DOM_DBG(_evas_cserve2_bin_log_dom, __VA_ARGS__)
+#else
+#define DBG(...) do {} while(0)
+#endif
 
 #define DEBUG_LOAD_TIME 1
 

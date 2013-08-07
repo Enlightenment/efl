@@ -1691,7 +1691,6 @@ _glyphs_loaded_msg_create(Glyphs_Request *req, int *resp_size)
    Eina_List *ll, *answers = NULL;
    const char *shmname;
    unsigned int shmsize;
-   unsigned int intsize;
    char *resp, *buf;
    Glyphs_Group *iter;
 
@@ -1706,20 +1705,18 @@ _glyphs_loaded_msg_create(Glyphs_Request *req, int *resp_size)
    // ncaches * sizeof(cache) + nglyphs1 * sizeof(glyph) +
    //   nglyphs2 * sizeof(glyph)...
 
-   intsize = sizeof(unsigned int);
-
    EINA_LIST_FOREACH(answers, ll, iter)
      {
         shmname = cserve2_shm_name_get(iter->fc->shm);
         shmsize = eina_stringshare_strlen(shmname) + 1;
         // shm namelen + name
-        size += intsize + shmsize;
+        size += sizeof(int) + shmsize;
 
         // nglyphs
-        size += intsize;
+        size += sizeof(int);
         // nglyphs * (index + offset + size + rows + width + pitch +
         //            num_grays + pixel_mode)
-        size += eina_list_count(iter->glyphs) * 8 * intsize;
+        size += eina_list_count(iter->glyphs) * 8 * sizeof(int);
      }
 
    resp = malloc(size);
@@ -1733,35 +1730,35 @@ _glyphs_loaded_msg_create(Glyphs_Request *req, int *resp_size)
 
         shmname = cserve2_shm_name_get(iter->fc->shm);
         shmsize = eina_stringshare_strlen(shmname) + 1;
-        memcpy(buf, &shmsize, intsize);
-        buf += intsize;
+        memcpy(buf, &shmsize, sizeof(int));
+        buf += sizeof(int);
         memcpy(buf, shmname, shmsize);
         buf += shmsize;
 
         nglyphs = eina_list_count(iter->glyphs);
-        memcpy(buf, &nglyphs, intsize);
-        buf += intsize;
+        memcpy(buf, &nglyphs, sizeof(int));
+        buf += sizeof(int);
 
         iter->fc->inuse -= eina_list_count(iter->glyphs);
 
         EINA_LIST_FREE(iter->glyphs, gl)
           {
-             memcpy(buf, &gl->index, intsize);
-             buf += intsize;
-             memcpy(buf, &gl->offset, intsize);
-             buf += intsize;
-             memcpy(buf, &gl->size, intsize);
-             buf += intsize;
-             memcpy(buf, &gl->rows, intsize);
-             buf += intsize;
-             memcpy(buf, &gl->width, intsize);
-             buf += intsize;
-             memcpy(buf, &gl->pitch, intsize);
-             buf += intsize;
-             memcpy(buf, &gl->num_grays, intsize);
-             buf += intsize;
-             memcpy(buf, &gl->pixel_mode, intsize);
-             buf += intsize;
+             memcpy(buf, &gl->index, sizeof(int));
+             buf += sizeof(int);
+             memcpy(buf, &gl->offset, sizeof(int));
+             buf += sizeof(int);
+             memcpy(buf, &gl->size, sizeof(int));
+             buf += sizeof(int);
+             memcpy(buf, &gl->rows, sizeof(int));
+             buf += sizeof(int);
+             memcpy(buf, &gl->width, sizeof(int));
+             buf += sizeof(int);
+             memcpy(buf, &gl->pitch, sizeof(int));
+             buf += sizeof(int);
+             memcpy(buf, &gl->num_grays, sizeof(int));
+             buf += sizeof(int);
+             memcpy(buf, &gl->pixel_mode, sizeof(int));
+             buf += sizeof(int);
           }
 
         /* We are removing SHMs from the beginning of the list, so this
@@ -1944,19 +1941,20 @@ _glyphs_load_request_free(void *msg, void *data)
 }
 
 static Msg_Font_Glyphs_Loaded *
-_glyphs_load_request_response(Glyphs_Request *req, Slave_Msg_Font_Glyphs_Loaded *msg, int *size)
+_glyphs_load_request_response(Glyphs_Request *req,
+                              Slave_Msg_Font_Glyphs_Loaded *msg, int *size)
 {
    Font_Entry *fe = req->fe;
    Font_Cache *fc = NULL;
-   unsigned int i = 0;
+   unsigned int i;
 
    if (fe->last_cache && fe->last_cache->shm == msg->caches[0]->shm)
      fc = fe->last_cache;
 
-   while (i < msg->ncaches)
+   for (i = 0; i < msg->ncaches; i++)
      {
         unsigned int j;
-        Slave_Msg_Font_Cache *c = msg->caches[i++];
+        Slave_Msg_Font_Cache *c = msg->caches[i];
 
         if (!fc)
           {
@@ -2166,11 +2164,10 @@ _font_entry_debug_size_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EIN
    unsigned int size = di->size;
    Font_Entry *fe = data;
    Font_Cache *fc;
-   unsigned int intsize = sizeof(unsigned int);
    const char *str;
 
    // filelen
-   size += intsize;
+   size += sizeof(int);
 
    // file
    if (fe->src->file)
@@ -2180,7 +2177,7 @@ _font_entry_debug_size_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EIN
      }
 
    // namelen
-   size += intsize;
+   size += sizeof(int);
 
    // name
    if (fe->src->name)
@@ -2190,38 +2187,38 @@ _font_entry_debug_size_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EIN
      }
 
    // rend_flags, size, dpi
-   size += 3 * intsize;
+   size += 3 * sizeof(int);
 
    // unused
-   size += intsize;
+   size += sizeof(int);
 
    // ncaches
-   size += intsize;
+   size += sizeof(int);
 
    EINA_INLIST_FOREACH(fe->caches, fc)
      {
         Glyph_Entry *gl;
 
         // shmnamelen + shmname
-        size += intsize;
+        size += sizeof(int);
         size += strlen(cserve2_shm_name_get(fc->shm)) + 1;
 
         // size + usage
-        size += 2 * intsize;
+        size += 2 * sizeof(int);
 
         // nglyphs
-        size += intsize;
+        size += sizeof(int);
 
         EINA_INLIST_FOREACH(fc->glyphs, gl)
           {
              // index, offset, size
-             size += 3 * intsize;
+             size += 3 * sizeof(int);
 
              // rows, width, pitch
-             size += 3 * intsize;
+             size += 3 * sizeof(int);
 
              // num_grays, pixel_mode
-             size += 2 * intsize;
+             size += 2 * sizeof(int);
           }
      }
 
@@ -2241,7 +2238,6 @@ _font_entry_debug_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNU
    unsigned int len;
    unsigned int unused;
    unsigned int ncaches;
-   unsigned int intsize = sizeof(unsigned int);
    const char *str;
 
    // filelen + file
@@ -2251,8 +2247,8 @@ _font_entry_debug_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNU
         str = cserve2_shared_string_get(fe->src->file);
         len = strlen(str) + 1;
      }
-   memcpy(buf, &len, intsize);
-   buf += intsize;
+   memcpy(buf, &len, sizeof(int));
+   buf += sizeof(int);
    if (len) memcpy(buf, cserve2_shared_string_get(fe->src->file), len);
    buf += len;
 
@@ -2263,28 +2259,28 @@ _font_entry_debug_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNU
         str = cserve2_shared_string_get(fe->src->name);
         len = strlen(str) + 1;
      }
-   memcpy(buf, &len, intsize);
-   buf += intsize;
+   memcpy(buf, &len, sizeof(int));
+   buf += sizeof(int);
    if (len) memcpy(buf, cserve2_shared_string_get(fe->src->name), len);
    buf += len;
 
    // rend_flags, size, dpi
-   memcpy(buf, &fe->rend_flags, intsize);
-   buf += intsize;
-   memcpy(buf, &fe->size, intsize);
-   buf += intsize;
-   memcpy(buf, &fe->dpi, intsize);
-   buf += intsize;
+   memcpy(buf, &fe->rend_flags, sizeof(int));
+   buf += sizeof(int);
+   memcpy(buf, &fe->size, sizeof(int));
+   buf += sizeof(int);
+   memcpy(buf, &fe->dpi, sizeof(int));
+   buf += sizeof(int);
 
    // unused
    unused = fe->unused;
-   memcpy(buf, &unused, intsize);
-   buf += intsize;
+   memcpy(buf, &unused, sizeof(int));
+   buf += sizeof(int);
 
    // ncaches
    ncaches = eina_inlist_count(fe->caches);
-   memcpy(buf, &ncaches, intsize);
-   buf += intsize;
+   memcpy(buf, &ncaches, sizeof(int));
+   buf += sizeof(int);
 
    EINA_INLIST_FOREACH(fe->caches, fc)
      {
@@ -2295,43 +2291,45 @@ _font_entry_debug_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNU
         // shmnamelen + shmname
         shmname = cserve2_shm_name_get(fc->shm);
         len = strlen(shmname) + 1;
-        memcpy(buf, &len, intsize);
-        buf += intsize;
+        memcpy(buf, &len, sizeof(int));
+        buf += sizeof(int);
         memcpy(buf, shmname, len);
         buf += len;
 
+        // TODO: Simplify memcpy operations (can be factorized into 1)
+
         // size, usage, nglyphs
         shmsize = cserve2_shm_size_get(fc->shm);
-        memcpy(buf, &shmsize, intsize);
-        buf += intsize;
-        memcpy(buf, &fc->usage, intsize);
-        buf += intsize;
-        memcpy(buf, &fc->nglyphs, intsize);
-        buf += intsize;
+        memcpy(buf, &shmsize, sizeof(int));
+        buf += sizeof(int);
+        memcpy(buf, &fc->usage, sizeof(int));
+        buf += sizeof(int);
+        memcpy(buf, &fc->nglyphs, sizeof(int));
+        buf += sizeof(int);
 
         EINA_INLIST_FOREACH(fc->glyphs, gl)
           {
              // index, offset, size
-             memcpy(buf, &gl->index, intsize);
-             buf += intsize;
-             memcpy(buf, &gl->offset, intsize);
-             buf += intsize;
-             memcpy(buf, &gl->size, intsize);
-             buf += intsize;
+             memcpy(buf, &gl->index, sizeof(int));
+             buf += sizeof(int);
+             memcpy(buf, &gl->offset, sizeof(int));
+             buf += sizeof(int);
+             memcpy(buf, &gl->size, sizeof(int));
+             buf += sizeof(int);
 
              // rows, width, pitch
-             memcpy(buf, &gl->rows, intsize);
-             buf += intsize;
-             memcpy(buf, &gl->width, intsize);
-             buf += intsize;
-             memcpy(buf, &gl->pitch, intsize);
-             buf += intsize;
+             memcpy(buf, &gl->rows, sizeof(int));
+             buf += sizeof(int);
+             memcpy(buf, &gl->width, sizeof(int));
+             buf += sizeof(int);
+             memcpy(buf, &gl->pitch, sizeof(int));
+             buf += sizeof(int);
 
              // num_grays, pixel_mode
-             memcpy(buf, &gl->num_grays, intsize);
-             buf += intsize;
-             memcpy(buf, &gl->pixel_mode, intsize);
-             buf += intsize;
+             memcpy(buf, &gl->num_grays, sizeof(int));
+             buf += sizeof(int);
+             memcpy(buf, &gl->pixel_mode, sizeof(int));
+             buf += sizeof(int);
           }
      }
 
