@@ -704,9 +704,11 @@ efreet_mime_special_check(const char *file)
                char path[PATH_MAX];
 
                strncpy(path, file, PATH_MAX);
+               path[PATH_MAX - 1] = '\0';
 
                path_len = strlen(file);
                strncpy(parent, path, PATH_MAX);
+               parent[PATH_MAX - 1] = '\0';
 
                /* Kill any trailing slash */
                parent[--path_len] = '\0';
