@@ -38,7 +38,7 @@ efreet_uri_decode(const char *full_uri)
 
     /* parse protocol */
     p = full_uri;
-    for (i = 0; *p != ':' && *p != '\0' && i < 64; p++, i++)
+    for (i = 0; *p != ':' && *p != '\0' && i < (64 - 1); p++, i++)
          protocol[i] = *p;
     protocol[i] = '\0';
 
@@ -46,7 +46,7 @@ efreet_uri_decode(const char *full_uri)
     p += 3;
     if (*p != '/')
     {
-        for (i = 0; *p != '/' && *p != '\0' && i < _POSIX_HOST_NAME_MAX; p++, i++)
+        for (i = 0; *p != '/' && *p != '\0' && i < (_POSIX_HOST_NAME_MAX - 1); p++, i++)
             hostname[i] = *p;
         hostname[i] = '\0';
     }
@@ -55,7 +55,7 @@ efreet_uri_decode(const char *full_uri)
 
     /* parse path */
     /* See http://www.faqs.org/rfcs/rfc1738.html for the escaped chars */
-    for (i = 0; *p != '\0' && i < PATH_MAX; i++, p++)
+    for (i = 0; *p != '\0' && i < (PATH_MAX - 1); i++, p++)
     {
         if (*p == '%')
         {
