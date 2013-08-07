@@ -1397,7 +1397,7 @@ efreet_menu_handle_merge_file(Efreet_Menu_Internal *parent, Efreet_Xml *xml)
         {
             char file[PATH_MAX];
 
-            snprintf(file, sizeof(file), "%s/%s/%s", dir, (p ? p : ""),
+            snprintf(file, sizeof(file), "%s/%s/%s", dir, p,
                                                         parent->file.name);
             if (ecore_file_exists(file))
             {
