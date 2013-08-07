@@ -1125,6 +1125,7 @@ _edje_part_recalc_single_aspect(Edje *ed,
                params->eval.h = new_h;
           }
      }
+
    params->eval.x = ADD(want_x,
 			MUL(SUB(want_w, params->eval.w),
 			    desc->align.x));
@@ -3091,8 +3092,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
         return;
      }
 
-   if (ep->part->scale &&
-       ep->part->type == EDJE_PART_TYPE_GROUP &&
+   if (ep->part->type == EDJE_PART_TYPE_GROUP &&
        ((ep->type == EDJE_RP_TYPE_SWALLOW) &&
            (ep->typedata.swallow)) &&
        ep->typedata.swallow->swallowed_object)
