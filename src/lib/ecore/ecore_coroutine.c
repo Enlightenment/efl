@@ -329,6 +329,7 @@ ecore_coroutine_defer(Ecore_Coroutine *coro, Eina_Free_Cb func, void *data)
    Ecore_Coroutine_Defer *defer;
 
    defer = eina_inarray_grow(&coro->defer, 1);
+   if (!defer) return;
    defer->func = func;
    defer->data = data;
 }
