@@ -174,7 +174,7 @@ test_progressbar(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event
    elm_progressbar_horizontal_set(pb, EINA_FALSE);
    elm_object_text_set(pb, "Label");
    elm_object_part_content_set(pb, "icon", ic2);
-   elm_progressbar_inverted_set(pb, 1);
+   elm_progressbar_inverted_set(pb, EINA_TRUE);
    elm_progressbar_unit_format_set(pb, "%1.2f%%");
    elm_progressbar_span_size_set(pb, 200);
    evas_object_size_hint_align_set(pb, EVAS_HINT_FILL, 0.5);
