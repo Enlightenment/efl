@@ -26,13 +26,15 @@ quit(void)
 int
 main(int argc, char *argv[])
 {
-   char buf[PATH_MAX];
-   char *path;
+   char path[PATH_MAX];
    FILE *log;
 
-   strcpy(buf, "/tmp/efreetd_XXXXXX");
-   path = mktemp(buf);
-   if (!path) return 1;
+   strcpy(path, "/tmp/efreetd_XXXXXX");
+   if (mkstemp(path) < 0)
+     {
+        perror("mkstemp");
+        return 1;
+     }
    if (chmod(path, 0700) < 0)
      {
         perror("chmod");
