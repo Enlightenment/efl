@@ -1,0 +1,28 @@
+collections
+{
+   group
+   {
+      name: "test";
+      min:200 200;
+      parts
+      {
+         part
+         {
+            name: "bug";
+            type: RECT;
+            description
+            {
+               state: "default" 0;
+               min:50 50;
+               max: 50 50;
+               color: 255 255 0 255;
+            }
+            description
+            {
+               state: "inherit-test" 0;
+               inherit: "default" 1; // edje_cc should throw error or warning.
+            }
+         }
+      }
+   }
+}
