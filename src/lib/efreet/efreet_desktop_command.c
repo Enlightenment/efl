@@ -189,6 +189,7 @@ efreet_desktop_command_progress_get(Efreet_Desktop *desktop, Eina_List *files,
     command->cb_progress = cb_progress;
     command->data = data;
     command->desktop = desktop;
+    command->num_pending = 0;
 
     command->flags = efreet_desktop_command_flags_get(desktop);
     /* get the required info for each file passed in */
