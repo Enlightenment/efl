@@ -2587,7 +2587,8 @@ _ecore_evas_x_title_set(Ecore_Evas *ee, const char *t)
 {
    if (ee->prop.title) free(ee->prop.title);
    ee->prop.title = NULL;
-   if (t) ee->prop.title = strdup(t);
+   if (!t) return;
+   ee->prop.title = strdup(t);
    ecore_x_icccm_title_set(ee->prop.window, ee->prop.title);
    ecore_x_netwm_name_set(ee->prop.window, ee->prop.title);
 }
