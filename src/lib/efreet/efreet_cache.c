@@ -159,6 +159,10 @@ efreet_cache_init(void)
              conn, EINA_TRUE);
              */
         }
+        else
+        {
+            /* TODO: Run cache process directly */
+        }
     }
 
     return 1;
