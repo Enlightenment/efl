@@ -1000,6 +1000,7 @@ AC_ARG_ENABLE([wayland],
 
 if test "${want_wayland}" = "yes"; then
    EFL_PKG_CHECK_STRICT([wayland-client])
+   WAYLAND_SCANNER_RULES(['$(top_srcdir)/data/ecore/ecore_wayland/protocol'])
 fi
 
 # Fb
