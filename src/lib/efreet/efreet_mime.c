@@ -1242,7 +1242,8 @@ efreet_mime_magic_check_priority(const char *file,
    FILE *f = NULL;
    unsigned int i = 0, offset = 0,level = 0, match = 0, bytes_read = 0;
    const char *last_mime = NULL;
-   char c, v, buf[EFREET_MIME_MAGIC_BUFFER_SIZE];
+   int c;
+   char v, buf[EFREET_MIME_MAGIC_BUFFER_SIZE];
 
    f = fopen(file, "rb");
    if (!f) return NULL;
