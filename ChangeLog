@@ -1,3 +1,7 @@
+2013-08-07  Chris Michael
+
+        * EFL: Require at least version 1.2 of the various wayland libraries to build EFL with wayland support.
+
 2013-08-02  Yury Usischev
 
         * Add neon optimizations for several scaling/map routines in evas
