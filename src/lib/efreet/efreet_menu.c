@@ -175,8 +175,6 @@ static Eina_Hash *efreet_menu_filter_cbs = NULL;
 static Eina_Hash *efreet_menu_move_cbs = NULL;
 static Eina_Hash *efreet_menu_layout_cbs = NULL;
 
-static Efreet_Menu *efreet_menu_internal_get(Efreet_Menu_Cb func, void *data);
-
 static Efreet_Menu_Internal *efreet_menu_by_name_find(Efreet_Menu_Internal *internal,
                                                     const char *name,
                                                     Efreet_Menu_Internal **parent);
@@ -527,13 +525,71 @@ efreet_menu_file_set(const char *file)
 EAPI void
 efreet_menu_async_get(Efreet_Menu_Cb func, const void *data)
 {
-   efreet_menu_internal_get(func, (void*)data);
+    char menu[PATH_MAX];
+    const char *dir;
+    Eina_List *config_dirs, *l;
+
+    if (!func) return;
+
+#ifndef STRICT_SPEC
+    /* prefer user set menu */
+    if (efreet_menu_file)
+    {
+        if (ecore_file_exists(efreet_menu_file))
+            efreet_menu_async_parse(efreet_menu_file, func, data);
+    }
+#endif
+
+    /* check the users config directory first */
+    snprintf(menu, sizeof(menu), "%s/menus/%sapplications.menu",
+                        efreet_config_home_get(), efreet_menu_prefix);
+    if (ecore_file_exists(menu))
+        efreet_menu_async_parse(menu, func, data);
+
+    /* fallback to the XDG_CONFIG_DIRS */
+    config_dirs = efreet_config_dirs_get();
+    EINA_LIST_FOREACH(config_dirs, l, dir)
+    {
+        snprintf(menu, sizeof(menu), "%s/menus/%sapplications.menu",
+                                    dir, efreet_menu_prefix);
+        if (ecore_file_exists(menu))
+            efreet_menu_async_parse(menu, func, data);
+    }
 }
 
 EAPI Efreet_Menu *
 efreet_menu_get(void)
 {
-   return efreet_menu_internal_get(NULL, NULL);
+    char menu[PATH_MAX];
+    const char *dir;
+    Eina_List *config_dirs, *l;
+
+#ifndef STRICT_SPEC
+    /* prefer user set menu */
+    if (efreet_menu_file)
+    {
+        if (ecore_file_exists(efreet_menu_file))
+            return efreet_menu_parse(efreet_menu_file);
+    }
+#endif
+
+    /* check the users config directory first */
+    snprintf(menu, sizeof(menu), "%s/menus/%sapplications.menu",
+                        efreet_config_home_get(), efreet_menu_prefix);
+    if (ecore_file_exists(menu))
+        return efreet_menu_parse(menu);
+
+    /* fallback to the XDG_CONFIG_DIRS */
+    config_dirs = efreet_config_dirs_get();
+    EINA_LIST_FOREACH(config_dirs, l, dir)
+    {
+        snprintf(menu, sizeof(menu), "%s/menus/%sapplications.menu",
+                                    dir, efreet_menu_prefix);
+        if (ecore_file_exists(menu))
+            return efreet_menu_parse(menu);
+    }
+
+    return NULL;
 }
 
 EAPI void
@@ -728,65 +784,6 @@ efreet_menu_dump(Efreet_Menu *menu, const char *indent)
                 INF("%s|---%s", new_indent, entry->name);
         }
     }
-}
-
-static Efreet_Menu *
-efreet_menu_internal_get(Efreet_Menu_Cb func, void *data)
-{
-    char menu[PATH_MAX];
-    const char *dir;
-    Eina_List *config_dirs, *l;
-
-#ifndef STRICT_SPEC
-    /* prefer user set menu */
-    if (efreet_menu_file)
-    {
-        if (ecore_file_exists(efreet_menu_file))
-        {
-            if (func)
-            {
-                efreet_menu_async_parse(efreet_menu_file, func, data);
-                return NULL;
-            }
-            else
-                return efreet_menu_parse(efreet_menu_file);
-        }
-    }
-#endif
-
-    /* check the users config directory first */
-    snprintf(menu, sizeof(menu), "%s/menus/%sapplications.menu",
-                        efreet_config_home_get(), efreet_menu_prefix);
-    if (ecore_file_exists(menu))
-    {
-        if (func)
-        {
-            efreet_menu_async_parse(menu, func, data);
-            return NULL;
-        }
-        else
-            return efreet_menu_parse(menu);
-    }
-
-    /* fallback to the XDG_CONFIG_DIRS */
-    config_dirs = efreet_config_dirs_get();
-    EINA_LIST_FOREACH(config_dirs, l, dir)
-    {
-        snprintf(menu, sizeof(menu), "%s/menus/%sapplications.menu",
-                                    dir, efreet_menu_prefix);
-        if (ecore_file_exists(menu))
-        {
-            if (func)
-            {
-                efreet_menu_async_parse(menu, func, data);
-                return NULL;
-            }
-            else
-                return efreet_menu_parse(menu);
-        }
-    }
-
-    return NULL;
 }
 
 /**
