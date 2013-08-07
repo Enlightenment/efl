@@ -321,7 +321,14 @@ efreet_dirs_init(void)
         ERR("$XDG_RUNTIME_DIR did not exist, creating '%s' (breaks spec)",
             xdg_runtime_dir);
         if (ecore_file_mkpath(xdg_runtime_dir))
-            chmod(xdg_runtime_dir, 0700);
+        {
+            if (chmod(xdg_runtime_dir, 0700) < 0)
+            {
+                CRITICAL("Cannot set XDG_RUNTIME_DIR=%s to mode 0700: %s",
+                         xdg_runtime_dir, strerror(errno));
+                eina_stringshare_replace(&xdg_runtime_dir, NULL);
+            }
+        }
         else
         {
             CRITICAL("Failed to create XDG_RUNTIME_DIR=%s", xdg_runtime_dir);
