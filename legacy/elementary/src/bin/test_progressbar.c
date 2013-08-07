@@ -12,7 +12,6 @@ typedef struct Progressbar
    Evas_Object *pb5;
    Evas_Object *pb6;
    Evas_Object *pb7;
-   Eina_Bool run;
    Ecore_Timer *timer;
 } Progressbar;
 
@@ -30,8 +29,10 @@ _my_progressbar_value_set (void *data __UNUSED__)
    elm_progressbar_value_set(_test_progressbar.pb4, progress);
    elm_progressbar_value_set(_test_progressbar.pb3, progress);
    elm_progressbar_value_set(_test_progressbar.pb6, progress);
+
    if (progress < 1.0) return ECORE_CALLBACK_RENEW;
-   _test_progressbar.run = 0;
+
+   _test_progressbar.timer = NULL;
    return ECORE_CALLBACK_CANCEL;
 }
 
@@ -45,11 +46,9 @@ my_progressbar_test_start(void *data __UNUSED__, Evas_Object *obj __UNUSED__, vo
    fprintf(stderr, "s3 %p\n", _test_progressbar.pb7);
    elm_progressbar_pulse(_test_progressbar.pb7, EINA_TRUE);
    fprintf(stderr, "s4\n");
-   if (!_test_progressbar.run)
-     {
-        _test_progressbar.timer = ecore_timer_add(0.1, _my_progressbar_value_set, NULL);
-        _test_progressbar.run = EINA_TRUE;
-     }
+   if (!_test_progressbar.timer)
+     _test_progressbar.timer = ecore_timer_add(0.1,
+                                               _my_progressbar_value_set, NULL);
 }
 
 static void
@@ -58,10 +57,10 @@ my_progressbar_test_stop(void *data __UNUSED__, Evas_Object *obj __UNUSED__, voi
    elm_progressbar_pulse(_test_progressbar.pb2, EINA_FALSE);
    elm_progressbar_pulse(_test_progressbar.pb5, EINA_FALSE);
    elm_progressbar_pulse(_test_progressbar.pb7, EINA_FALSE);
-   if (_test_progressbar.run)
+   if (_test_progressbar.timer)
      {
         ecore_timer_del(_test_progressbar.timer);
-        _test_progressbar.run = EINA_FALSE;
+        _test_progressbar.timer = NULL;
      }
 }
 
