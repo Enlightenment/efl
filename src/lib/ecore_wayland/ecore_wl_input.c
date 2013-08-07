@@ -20,6 +20,7 @@
 #include "ecore_wl_private.h"
 #include <sys/mman.h>
 #include <sys/timerfd.h>
+#include <ctype.h>
 
 /* FIXME: This gives BTN_LEFT/RIGHT/MIDDLE for linux systems ... 
  *        What about other OSs ?? */
@@ -656,13 +657,26 @@ _ecore_wl_input_cb_keyboard_key(void *data, struct wl_keyboard *keyboard EINA_UN
    memset(key, 0, sizeof(key));
    xkb_keysym_get_name(sym, key, sizeof(key));
 
+   xkb_state_mod_mask_remove_consumed(input->xkb.state, 
+                                      code, input->xkb.shift_mask);
+
    memset(keyname, 0, sizeof(keyname));
    xkb_keysym_get_name(sym, keyname, sizeof(keyname));
+   if (xkb_state_mod_index_is_active(input->xkb.state, 
+                                     xkb_map_mod_get_index(input->xkb.keymap, 
+                                                           "Shift"),
+                                     XKB_STATE_MODS_EFFECTIVE))
+     {
+        if (keyname[0] != '\0')
+          keyname[0] = tolower(keyname[0]);
+     }
+
    if (keyname[0] == '\0')
      snprintf(keyname, sizeof(keyname), "Keycode-%u", code);
 
    memset(compose, 0, sizeof(compose));
-   _ecore_wl_input_keymap_translate_keysym(sym, input->modifiers, compose, sizeof(compose));
+   _ecore_wl_input_keymap_translate_keysym(sym, input->modifiers, 
+                                           compose, sizeof(compose));
 
    e = malloc(sizeof(Ecore_Event_Key) + strlen(key) + strlen(keyname) +
               ((compose[0] != '\0') ? strlen(compose) : 0) + 3);
