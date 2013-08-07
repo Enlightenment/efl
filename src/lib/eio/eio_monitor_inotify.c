@@ -168,7 +168,7 @@ void eio_monitor_backend_init(void)
 {
    int fd;
 #ifdef HAVE_FCNTL
-   int flags;
+   int flags, rc;
 #endif
 
    fd = inotify_init();
@@ -178,7 +178,9 @@ void eio_monitor_backend_init(void)
 #ifdef HAVE_FCNTL
    flags = fcntl(fd, F_GETFD);
    flags |= FD_CLOEXEC;
-   fcntl(fd, F_SETFD, flags);
+   rc = fcntl(fd, F_SETFD, flags);
+   if (rc < 0)
+     return;
 #endif
 
    _inotify_fdh = ecore_main_fd_handler_add(fd, ECORE_FD_READ, _eio_inotify_handler, NULL, NULL, NULL);
