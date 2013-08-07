@@ -272,6 +272,7 @@ elm_main(int    argc,
    pb = elm_progressbar_add(win);
    elm_object_style_set(pb, "wheel");
    elm_object_text_set(pb, "Style: wheel");
+   elm_progressbar_pulse_set(pb, EINA_TRUE);
    evas_object_size_hint_align_set(pb, EVAS_HINT_FILL, 0.5);
    evas_object_size_hint_weight_set(pb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_box_pack_end(bx, pb);
