@@ -1,3 +1,7 @@
+2013-08-07  Tom Hacohen
+
+	* Evas textblock: Use max ascent/descent at the edges of the textblock.
+
 2013-08-07  Chris Michael
 
         * EFL: Require at least version 1.2 of the various wayland libraries to build EFL with wayland support.

@@ -58,6 +58,7 @@ Additions:
      - Add evas_object_image_source_clip_set()/get()
      - Use eina_file_virtualize() for evas_object_image_memfile_set().
      - Change mapping policy for image loader.
+     - textblock: Use max ascent/descent at the edges of the textblock.
     * Ecore_X:
      - Add window profile support.
        ECORE_X_ATOM_E_WINDOW_PROFILE_SUPPORTED
