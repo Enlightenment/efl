@@ -70,6 +70,7 @@ eeze_net_new(const char *name)
 
         devname = udev_list_entry_get_name(cur);
         test = strrchr(devname, '/');
+        if (!test) break;
         if (strcmp(++test, name)) continue;
         device = _new_device(devname);
         syspath = eina_stringshare_add(name);
