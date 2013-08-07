@@ -13,6 +13,8 @@ typedef struct Progressbar
    Evas_Object *pb6;
    Evas_Object *pb7;
    Ecore_Timer *timer;
+   Evas_Object *btn_start;
+   Evas_Object *btn_stop;
 } Progressbar;
 
 static Progressbar _test_progressbar;
@@ -46,6 +48,10 @@ my_progressbar_test_start(void *data __UNUSED__, Evas_Object *obj __UNUSED__, vo
    fprintf(stderr, "s3 %p\n", _test_progressbar.pb7);
    elm_progressbar_pulse(_test_progressbar.pb7, EINA_TRUE);
    fprintf(stderr, "s4\n");
+
+   elm_object_disabled_set(_test_progressbar.btn_start, EINA_TRUE);
+   elm_object_disabled_set(_test_progressbar.btn_stop, EINA_FALSE);
+
    if (!_test_progressbar.timer)
      _test_progressbar.timer = ecore_timer_add(0.1,
                                                _my_progressbar_value_set, NULL);
@@ -57,6 +63,10 @@ my_progressbar_test_stop(void *data __UNUSED__, Evas_Object *obj __UNUSED__, voi
    elm_progressbar_pulse(_test_progressbar.pb2, EINA_FALSE);
    elm_progressbar_pulse(_test_progressbar.pb5, EINA_FALSE);
    elm_progressbar_pulse(_test_progressbar.pb7, EINA_FALSE);
+
+   elm_object_disabled_set(_test_progressbar.btn_start, EINA_FALSE);
+   elm_object_disabled_set(_test_progressbar.btn_stop, EINA_TRUE);
+
    if (_test_progressbar.timer)
      {
         ecore_timer_del(_test_progressbar.timer);
@@ -204,12 +214,15 @@ test_progressbar(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event
    evas_object_smart_callback_add(bt, "clicked", my_progressbar_test_start, NULL);
    elm_box_pack_end(bt_bx, bt);
    evas_object_show(bt);
+   _test_progressbar.btn_start = bt;
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Stop");
+   elm_object_disabled_set(bt, EINA_TRUE);
    evas_object_smart_callback_add(bt, "clicked", my_progressbar_test_stop, NULL);
    elm_box_pack_end(bt_bx, bt);
    evas_object_show(bt);
+   _test_progressbar.btn_stop = bt;
 
    evas_object_show(win);
 }
