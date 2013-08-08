@@ -380,7 +380,12 @@ eina_file_virtualize(const void *data, unsigned long long length, Eina_Bool copy
    file->mtime_nsec = ti;
 #endif
    file->refcount = 1;
+#ifndef _WIN32
    file->fd = -1;
+#else
+   file->handle = NULL;
+   file->fm = NULL;
+#endif
    file->virtual = EINA_TRUE;
    file->map = eina_hash_new(EINA_KEY_LENGTH(eina_file_map_key_length),
                              EINA_KEY_CMP(eina_file_map_key_cmp),
