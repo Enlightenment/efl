@@ -271,7 +271,12 @@ EAPI int ecore_thread_main_loop_end(void);
 #define ECORE_EVENT_SIGNAL_EXIT     3 /**< Exit signal event */
 #define ECORE_EVENT_SIGNAL_POWER    4 /**< Power signal event */
 #define ECORE_EVENT_SIGNAL_REALTIME 5 /**< Realtime signal event */
-#define ECORE_EVENT_COUNT           6
+#define ECORE_EVENT_LOW_MEMORY               6 /**< Low memory state changed, see ecore_low_memory_get() */
+#define ECORE_EVENT_LOW_BATTERY              7 /**< Low battery state changed, see ecore_low_battery_get() */
+#define ECORE_EVENT_LOCALE_CHANGED           8 /**< Locale changed */
+#define ECORE_EVENT_HOSTNAME_CHANGED         9 /**< Hostname changed */
+#define ECORE_EVENT_SYSTEM_TIMEDATE_CHANGED 10 /**< Time or Date changed */
+#define ECORE_EVENT_COUNT                   11
 
 typedef struct _Ecore_Win32_Handler         Ecore_Win32_Handler;    /**< A handle for HANDLE handlers on Windows */
 typedef struct _Ecore_Event_Handler         Ecore_Event_Handler;    /**< A handle for an event handler */
@@ -508,6 +513,101 @@ EAPI void *ecore_event_current_event_get(void);
 /**
  * @}
  */
+
+/**
+ * @defgroup Ecore_System_Events System Events
+ *
+ * Ecore is aware of some system events that one may be interested, they are described below:
+ *
+ * @li #ECORE_EVENT_LOW_MEMORY indicates system changed its free
+ *     memory status, going to or being back from "low memory"
+ *     state. When going to low memory state the libraries and
+ *     applications may help the system by reducing memory usage,
+ *     dropping caches and unused resources. The event carries no
+ *     information, the current state should be queried with
+ *     ecore_low_memory_get().
+ * @li #ECORE_EVENT_LOW_BATTERY indicates system changed its battery
+ *     level, going to or being back from "low battery" state. When
+ *     going to low battery state the libraries and applications may
+ *     help the system by reducing number of wake ups and processing,
+ *     increasing @ref Ecore_Animator frame time values, reducing the
+ *     number of @ref Ecore_Timer and @ref Ecore_Idler or even going
+ *     to extreme of trading quality over speed to finish tasks
+ *     sooner. The event carries no information, the current state
+ *     should be queried with ecore_low_battery_get().
+ * @li #ECORE_EVENT_LOCALE_CHANGED indicates the system locale and/or
+ *     language changed. This event carries no information and there
+ *     is no ecore specific call to get the new locale. It is advised
+ *     that the emitter of this event to set the new locale, for
+ *     instance in POSIX one should call setlocale() before adding the
+ *     event. Libraries and applications should then reload their
+ *     resources and reformat their strings to use the new values.
+ * @li #ECORE_EVENT_HOSTNAME_CHANGED indicates the system hostname
+ *     changed. This event carries no information and the new value
+ *     should be queried with platform specific calls, such as
+ *     gethostname() on POSIX.
+ * @li #ECORE_EVENT_SYSTEM_TIMEDATE_CHANGED indicates the system time
+ *     or date changed. This may happen as result of Daylight Saving
+ *     changes, NTP fixing the clock, changing timezones or user
+ *     setting a new date manually. This event carries no information
+ *     and the new value should be queried with ecore_time_unix_get()
+ *     or platform specific such as gettimeofday()
+ *
+ * @ingroup Ecore_Event_Group
+ * @{
+ */
+
+/**
+ * @brief Get the current status of low memory.
+ * @return #EINA_TRUE if low on memory, #EINA_FALSE if memory usage is under normal levels.
+ * @since 1.8
+ */
+EAPI Eina_Bool ecore_low_memory_get(void);
+
+/**
+ * @brief Set the low memory status.
+ * @param status #EINA_TRUE if low on memory, #EINA_FALSE if memory usage is under normal levels.
+ *
+ * This function will keep the information about the current low
+ * memory status and if it changed will automatically create an
+ * #ECORE_EVENT_LOW_MEMORY event.
+ *
+ * @note This function should not be called by user, instead a
+ * monitoring entity that is system dependent. Usually an ecore module
+ * that is platform-specific.
+ *
+ * @since 1.8
+ */
+EAPI void ecore_low_memory_set(Eina_Bool status);
+
+/**
+ * @brief Get the current status of low battery.
+ * @return #EINA_TRUE if low on battery, #EINA_FALSE if battery level is reasonable.
+ * @since 1.8
+ */
+EAPI Eina_Bool ecore_low_battery_get(void);
+
+/**
+ * @brief Set the low battery status.
+ * @param status #EINA_TRUE if low on battery, #EINA_FALSE if battery level is reasonable.
+ *
+ * This function will keep the information about the current low
+ * battery status and if it changed will automatically create an
+ * #ECORE_EVENT_LOW_BATTERY event.
+ *
+ * @note This function should not be called by user, instead a
+ * monitoring entity that is system dependent. Usually an ecore module
+ * that is platform-specific.
+ *
+ * @since 1.8
+ */
+EAPI void ecore_low_battery_set(Eina_Bool status);
+
+/**
+ * @}
+ */
+
+
 
 /**
  * @defgroup Ecore_Exe_Group Process Spawning Functions

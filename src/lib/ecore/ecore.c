@@ -98,6 +98,9 @@ static int _thread_id = -1;
 static int _thread_id_max = 0;
 static int _thread_id_update = 0;
 
+static Eina_Bool _ecore_low_memory = EINA_FALSE;
+static Eina_Bool _ecore_low_battery = EINA_FALSE;
+
 #ifdef HAVE_SYSTEMD
 static Ecore_Timer *_systemd_watchdog = NULL;
 #endif
@@ -914,6 +917,37 @@ _thread_callback(void        *data EINA_UNUSED,
 {
    _ecore_main_call_flush();
 }
+
+EAPI Eina_Bool
+ecore_low_memory_get(void)
+{
+   return _ecore_low_memory;
+}
+
+EAPI void
+ecore_low_memory_set(Eina_Bool status)
+{
+   status = !!status;
+   if (_ecore_low_memory == status) return;
+   _ecore_low_memory = status;
+   ecore_event_add(ECORE_EVENT_LOW_MEMORY, NULL, NULL, NULL);
+}
+
+EAPI Eina_Bool
+ecore_low_battery_get(void)
+{
+   return _ecore_low_battery;
+}
+
+EAPI void
+ecore_low_battery_set(Eina_Bool status)
+{
+   status = !!status;
+   if (_ecore_low_battery == status) return;
+   _ecore_low_battery = status;
+   ecore_event_add(ECORE_EVENT_LOW_BATTERY, NULL, NULL, NULL);
+}
+
 
 static const Eo_Class_Description parent_class_desc = {
      EO_VERSION,
