@@ -1,3 +1,7 @@
+2013-08-08  Tom Hacohen
+
+	* Evas textblock:  Make the ellipsis format the same as the surrounding.
+
 2013-08-07  Tom Hacohen
 
 	* Evas textblock: Use max ascent/descent at the edges of the textblock.
