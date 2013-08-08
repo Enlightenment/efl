@@ -14,8 +14,8 @@ enum
    ELM_OBJ_GESTURE_LAYER_SUB_ID_ROTATE_STEP_SET,
    ELM_OBJ_GESTURE_LAYER_SUB_ID_ATTACH,
    ELM_OBJ_GESTURE_LAYER_SUB_ID_CB_SET,
-   ELM_OBJ_GESTURE_LAYER_TAP_FINGER_SIZE_SET,
-   ELM_OBJ_GESTURE_LAYER_TAP_FINGER_SIZE_GET,
+   ELM_OBJ_GESTURE_LAYER_SUB_ID_TAP_FINGER_SIZE_SET,
+   ELM_OBJ_GESTURE_LAYER_SUB_ID_TAP_FINGER_SIZE_GET,
    ELM_OBJ_GESTURE_LAYER_SUB_ID_CB_ADD,
    ELM_OBJ_GESTURE_LAYER_SUB_ID_CB_DEL,
    ELM_OBJ_GESTURE_LAYER_SUB_ID_LAST
@@ -199,7 +199,7 @@ enum
  *
  * @ingroup Elm_Gesture_Layer
  */
-#define elm_obj_gesture_layer_tap_finger_size_set(sz) ELM_OBJ_GESTURE_LAYER_ID(ELM_OBJ_GESTURE_LAYER_TAP_FINGER_SIZE_SET), EO_TYPECHECK(Evas_Coord, sz)
+#define elm_obj_gesture_layer_tap_finger_size_set(sz) ELM_OBJ_GESTURE_LAYER_ID(ELM_OBJ_GESTURE_LAYER_SUB_ID_TAP_FINGER_SIZE_SET), EO_TYPECHECK(Evas_Coord, sz)
 
 /**
  * @def elm_obj_gesture_layer_tap_finger_size_get
@@ -214,4 +214,4 @@ enum
  *
  * @ingroup Elm_Gesture_Layer
  */
-#define elm_obj_gesture_layer_tap_finger_size_get(ret) ELM_OBJ_GESTURE_LAYER_ID(ELM_OBJ_GESTURE_LAYER_TAP_FINGER_SIZE_GET), EO_TYPECHECK(Evas_Coord *, ret)
+#define elm_obj_gesture_layer_tap_finger_size_get(ret) ELM_OBJ_GESTURE_LAYER_ID(ELM_OBJ_GESTURE_LAYER_SUB_ID_TAP_FINGER_SIZE_GET), EO_TYPECHECK(Evas_Coord *, ret)

@@ -4333,8 +4333,8 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_OBJ_GESTURE_LAYER_ID(ELM_OBJ_GESTURE_LAYER_SUB_ID_ROTATE_STEP_SET), _rotate_step_set),
         EO_OP_FUNC(ELM_OBJ_GESTURE_LAYER_ID(ELM_OBJ_GESTURE_LAYER_SUB_ID_ATTACH), _attach),
         EO_OP_FUNC(ELM_OBJ_GESTURE_LAYER_ID(ELM_OBJ_GESTURE_LAYER_SUB_ID_CB_SET), _cb_set),
-        EO_OP_FUNC(ELM_OBJ_GESTURE_LAYER_ID(ELM_OBJ_GESTURE_LAYER_TAP_FINGER_SIZE_SET), _tap_finger_size_set),
-        EO_OP_FUNC(ELM_OBJ_GESTURE_LAYER_ID(ELM_OBJ_GESTURE_LAYER_TAP_FINGER_SIZE_GET), _tap_finger_size_get),
+        EO_OP_FUNC(ELM_OBJ_GESTURE_LAYER_ID(ELM_OBJ_GESTURE_LAYER_SUB_ID_TAP_FINGER_SIZE_SET), _tap_finger_size_set),
+        EO_OP_FUNC(ELM_OBJ_GESTURE_LAYER_ID(ELM_OBJ_GESTURE_LAYER_SUB_ID_TAP_FINGER_SIZE_GET), _tap_finger_size_get),
         EO_OP_FUNC(ELM_OBJ_GESTURE_LAYER_ID(ELM_OBJ_GESTURE_LAYER_SUB_ID_CB_ADD), _cb_add),
         EO_OP_FUNC(ELM_OBJ_GESTURE_LAYER_ID(ELM_OBJ_GESTURE_LAYER_SUB_ID_CB_DEL), _cb_del),
         EO_OP_FUNC_SENTINEL
@@ -4353,8 +4353,8 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_OBJ_GESTURE_LAYER_SUB_ID_ROTATE_STEP_SET, "This function sets step-value for rotate action."),
      EO_OP_DESCRIPTION(ELM_OBJ_GESTURE_LAYER_SUB_ID_ATTACH, "Attach a given gesture layer widget to an Evas object, thus setting the widget's target."),
      EO_OP_DESCRIPTION(ELM_OBJ_GESTURE_LAYER_SUB_ID_CB_SET, "Use function to set callbacks to be notified about change of state of gesture."),
-     EO_OP_DESCRIPTION(ELM_OBJ_GESTURE_LAYER_TAP_FINGER_SIZE_SET, "Use function to set valid touch-area size for finger."),
-     EO_OP_DESCRIPTION(ELM_OBJ_GESTURE_LAYER_TAP_FINGER_SIZE_GET, "This function returns the valid touch-area size for finger."),
+     EO_OP_DESCRIPTION(ELM_OBJ_GESTURE_LAYER_SUB_ID_TAP_FINGER_SIZE_SET, "Use function to set valid touch-area size for finger."),
+     EO_OP_DESCRIPTION(ELM_OBJ_GESTURE_LAYER_SUB_ID_TAP_FINGER_SIZE_GET, "This function returns the valid touch-area size for finger."),
      EO_OP_DESCRIPTION(ELM_OBJ_GESTURE_LAYER_SUB_ID_CB_ADD, "Use function to add callbacks to be notified about change of state of gesture."),
      EO_OP_DESCRIPTION(ELM_OBJ_GESTURE_LAYER_SUB_ID_CB_DEL, "Use function to remove added callbacks."),
      EO_OP_DESCRIPTION_SENTINEL
