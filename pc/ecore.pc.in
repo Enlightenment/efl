@@ -2,6 +2,8 @@ prefix=@prefix@
 exec_prefix=@exec_prefix@
 libdir=@libdir@
 includedir=@includedir@
+modules=@libdir@/ecore
+module_arch=@MODULE_ARCH@
 
 Name: ecore
 Description: Ecore event abstraction library

@@ -22,6 +22,12 @@ eezefiles_DATA = eeze/checkme
 EXTRA_DIST += $(eezefiles_DATA)
 
 ########################################################################
+# Ecore
+ecorefilesdir = $(datadir)/ecore
+ecorefiles_DATA = ecore/checkme
+EXTRA_DIST += $(ecorefiles_DATA)
+
+########################################################################
 # Ecore_Imf
 ecoreimffilesdir = $(datadir)/ecore_imf
 ecoreimffiles_DATA = ecore_imf/checkme

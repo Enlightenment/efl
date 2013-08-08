@@ -116,6 +116,77 @@ int _ecore_main_lock_count;
 # define CODESET "INVALID"
 #endif
 
+static Eina_Prefix *_ecore_pfx = NULL;
+static Eina_Array *module_list = NULL;
+
+static void
+ecore_system_modules_load(void)
+{
+   char buf[PATH_MAX] = "";
+   char *path;
+
+   if (getenv("EFL_RUN_IN_TREE"))
+     {
+        struct stat st;
+        snprintf(buf, sizeof(buf), "%s/src/modules/ecore/system",
+                 PACKAGE_BUILD_DIR);
+        if (stat(buf, &st) == 0)
+          {
+             const char *built_modules[] = {
+#ifdef HAVE_SYSTEMD
+               "systemd",
+#endif
+               NULL
+             };
+             const char **itr;
+             for (itr = built_modules; *itr != NULL; itr++)
+               {
+                  snprintf(buf, sizeof(buf),
+                           "%s/src/modules/ecore/system/%s/.libs",
+                           PACKAGE_BUILD_DIR, *itr);
+                  module_list = eina_module_list_get(module_list, buf,
+                                                     EINA_FALSE, NULL, NULL);
+               }
+
+             if (module_list)
+               eina_module_list_load(module_list);
+             return;
+          }
+     }
+
+   path = eina_module_environment_path_get("ECORE_MODULES_DIR",
+                                           "/ecore/system");
+   if (path)
+     {
+        module_list = eina_module_arch_list_get(module_list, path, MODULE_ARCH);
+        free(path);
+     }
+
+   path = eina_module_environment_path_get("HOME", "/.ecore/system");
+   if (path)
+     {
+        module_list = eina_module_arch_list_get(module_list, path, MODULE_ARCH);
+        free(path);
+     }
+
+   snprintf(buf, sizeof(buf), "%s/ecore/system",
+            eina_prefix_lib_get(_ecore_pfx));
+   module_list = eina_module_arch_list_get(module_list, buf, MODULE_ARCH);
+
+   eina_module_list_load(module_list);
+}
+
+static void
+ecore_system_modules_unload(void)
+{
+   if (module_list)
+     {
+        eina_module_list_free(module_list);
+        eina_array_free(module_list);
+        module_list = NULL;
+     }
+}
+
 /**
  * @addtogroup Ecore_Init_Group
  *
@@ -167,6 +238,16 @@ ecore_init(void)
    if (_ecore_log_dom < 0)
      {
         EINA_LOG_ERR("Ecore was unable to create a log domain.");
+        goto shutdown_log_dom;
+     }
+
+   _ecore_pfx = eina_prefix_new(NULL, ecore_init,
+                                "ECORE", "ecore", "checkme",
+                                PACKAGE_BIN_DIR, PACKAGE_LIB_DIR,
+                                PACKAGE_DATA_DIR, PACKAGE_DATA_DIR);
+   if (!_ecore_pfx)
+     {
+        ERR("Could not get ecore installation prefix");
         goto shutdown_log_dom;
      }
 
@@ -230,6 +311,9 @@ ecore_init(void)
 		   EINA_LOG_STATE_STOP,
 		   EINA_LOG_STATE_INIT);
 
+
+   ecore_system_modules_load();
+
    return _ecore_init_count;
 
 shutdown_mempool:
@@ -272,6 +356,8 @@ ecore_shutdown(void)
        }
      if (--_ecore_init_count != 0)
        goto unlock;
+
+     ecore_system_modules_unload();
 
      eina_log_timing(_ecore_log_dom,
 		     EINA_LOG_STATE_START,
@@ -345,6 +431,10 @@ ecore_shutdown(void)
      ecore_mempool_shutdown();
      eina_log_domain_unregister(_ecore_log_dom);
      _ecore_log_dom = -1;
+
+     eina_prefix_free(_ecore_pfx);
+     _ecore_pfx = NULL;
+
      eina_shutdown();
 #ifdef HAVE_EVIL
      evil_shutdown();

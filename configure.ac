@@ -549,6 +549,8 @@ AC_ARG_ENABLE([systemd],
     fi
    ],
    [want_systemd="no"])
+AM_CONDITIONAL([WANT_SYSTEMD], [test "${want_systemd}" = "yes"])
+
 
 #### Platform-dependent
 DL_LIBS=""

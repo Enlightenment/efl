@@ -1,0 +1,354 @@
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+#include <Eldbus.h>
+#include <Ecore.h>
+#include <locale.h>
+
+static int _log_dom = -1;
+static Eldbus_Connection *_conn = NULL;
+
+static Eina_List *_objs = NULL;
+static Eina_List *_proxies = NULL;
+
+#ifdef CRITICAL
+#undef CRITICAL
+#endif
+#define CRITICAL(...) EINA_LOG_DOM_CRIT(_log_dom, __VA_ARGS__)
+
+#ifdef ERR
+#undef ERR
+#endif
+#define ERR(...) EINA_LOG_DOM_ERR(_log_dom, __VA_ARGS__)
+
+#ifdef WRN
+#undef WRN
+#endif
+#define WRN(...) EINA_LOG_DOM_WARN(_log_dom, __VA_ARGS__)
+
+#ifdef DBG
+#undef DBG
+#endif
+#define DBG(...) EINA_LOG_DOM_DBG(_log_dom, __VA_ARGS__)
+
+
+static void
+_props_changed_hostname(void *data EINA_UNUSED, const Eldbus_Message *msg)
+{
+   Eldbus_Message_Iter *changed, *entry, *invalidated;
+   const char *iface, *prop;
+
+   if (!eldbus_message_arguments_get(msg, "sa{sv}as",
+                                     &iface, &changed, &invalidated))
+     {
+        ERR("Error getting data from properties changed signal.");
+        return;
+     }
+
+   while (eldbus_message_iter_get_and_next(changed, 'e', &entry))
+     {
+        const void *key;
+        Eldbus_Message_Iter *var;
+        if (!eldbus_message_iter_arguments_get(entry, "sv", &key, &var))
+          continue;
+        if (strcmp(key, "Hostname") == 0)
+          goto changed_hostname;
+     }
+
+   while (eldbus_message_iter_get_and_next(invalidated, 's', &prop))
+     {
+        if (strcmp(prop, "Hostname") == 0)
+          goto changed_hostname;
+     }
+
+   return;
+
+ changed_hostname:
+   ecore_event_add(ECORE_EVENT_HOSTNAME_CHANGED, NULL, NULL, NULL);
+}
+
+static void
+_props_changed_timedate(void *data EINA_UNUSED, const Eldbus_Message *msg)
+{
+   Eldbus_Message_Iter *changed, *entry, *invalidated;
+   const char *iface, *prop;
+
+   if (!eldbus_message_arguments_get(msg, "sa{sv}as",
+                                     &iface, &changed, &invalidated))
+     {
+        ERR("Error getting data from properties changed signal.");
+        return;
+     }
+
+   while (eldbus_message_iter_get_and_next(changed, 'e', &entry))
+     {
+        const void *key;
+        Eldbus_Message_Iter *var;
+        if (!eldbus_message_iter_arguments_get(entry, "sv", &key, &var))
+          continue;
+        if (strcmp(key, "Timezone") == 0)
+          goto changed_timedate;
+     }
+
+   while (eldbus_message_iter_get_and_next(invalidated, 's', &prop))
+     {
+        if (strcmp(prop, "Timezone") == 0)
+          goto changed_timedate;
+     }
+
+   return;
+
+ changed_timedate:
+   ecore_event_add(ECORE_EVENT_SYSTEM_TIMEDATE_CHANGED, NULL, NULL, NULL);
+}
+
+struct locale_cat_desc {
+   int cat;
+   int namelen;
+   const char *name;
+};
+
+static const struct locale_cat_desc locale_cat_desc[] = {
+#define CAT(name) {name, sizeof(#name) - 1, #name}
+   CAT(LC_CTYPE),
+   CAT(LC_NUMERIC),
+   CAT(LC_TIME),
+   CAT(LC_COLLATE),
+   CAT(LC_MONETARY),
+   CAT(LC_MESSAGES),
+   CAT(LC_ALL),
+   CAT(LC_PAPER),
+   CAT(LC_NAME),
+   CAT(LC_ADDRESS),
+   CAT(LC_TELEPHONE),
+   CAT(LC_MEASUREMENT),
+   CAT(LC_IDENTIFICATION),
+#undef CAT
+   {-1, -1, NULL}
+};
+
+static int _locale_parse(const char *str, int *cat, const char **value)
+{
+   const struct locale_cat_desc *itr;
+   const char *p = strchr(str, '=');
+   int klen;
+
+   if (!p) goto end;
+
+   klen = p - str;
+   for (itr = locale_cat_desc; itr->name != NULL; itr++)
+     {
+        if ((klen == itr->namelen) && (memcmp(str, itr->name, klen) == 0))
+          {
+             *cat = itr->cat;
+             *value = str + itr->namelen + 1;
+             return itr - locale_cat_desc;
+          }
+     }
+
+ end:
+   *cat = -1;
+   *value = NULL;
+   return -1;
+}
+
+static void _locale_get(void *data EINA_UNUSED, const Eldbus_Message *msg,
+                        Eldbus_Pending *pending EINA_UNUSED)
+{
+   Eldbus_Message_Iter *variant, *array;
+   const char *errname, *errmsg, *val;
+   Eina_Bool setlocs[EINA_C_ARRAY_LENGTH(locale_cat_desc)];
+   unsigned int i;
+
+   if (eldbus_message_error_get(msg, &errname, &errmsg))
+     {
+        ERR("Message error %s - %s", errname, errmsg);
+        goto end;
+     }
+   if (!eldbus_message_arguments_get(msg, "v", &variant))
+     {
+        ERR("Error getting arguments.");
+        goto end;
+     }
+
+   if (!eldbus_message_iter_get_and_next(variant, 'a', &array))
+     {
+        ERR("Error getting array.");
+        goto end;
+     }
+
+   memset(setlocs, 0, sizeof(setlocs));
+   while (eldbus_message_iter_get_and_next(array, 's', &val))
+     {
+        int cat, idx;
+        const char *value;
+        idx = _locale_parse(val, &cat, &value);
+        if (idx >= 0)
+          setlocs[idx] = EINA_TRUE;
+        setlocale(cat, value);
+     }
+
+   for (i = 0; i < EINA_C_ARRAY_LENGTH(locale_cat_desc); i++)
+     {
+        if ((!setlocs[i]) && (locale_cat_desc[i].cat != LC_ALL))
+          setlocale(locale_cat_desc[i].cat, "C");
+     }
+
+ end:
+   ecore_event_add(ECORE_EVENT_LOCALE_CHANGED, NULL, NULL, NULL);
+}
+
+static void
+_props_changed_locale(void *data, const Eldbus_Message *msg)
+{
+   Eldbus_Proxy *proxy = data;
+   Eldbus_Message_Iter *changed, *entry, *invalidated;
+   const char *iface, *prop;
+
+   if (!eldbus_message_arguments_get(msg, "sa{sv}as",
+                                     &iface, &changed, &invalidated))
+     {
+        ERR("Error getting data from properties changed signal.");
+        return;
+     }
+
+   while (eldbus_message_iter_get_and_next(changed, 'e', &entry))
+     {
+        const void *key;
+        Eldbus_Message_Iter *var;
+        if (!eldbus_message_iter_arguments_get(entry, "sv", &key, &var))
+          continue;
+        if (strcmp(key, "Locale") == 0)
+          goto changed_locale;
+     }
+
+   while (eldbus_message_iter_get_and_next(invalidated, 's', &prop))
+     {
+        if (strcmp(prop, "Locale") == 0)
+          goto changed_locale;
+     }
+
+   return;
+
+ changed_locale:
+   eldbus_proxy_property_get(proxy, "Locale", _locale_get, NULL);
+}
+
+static Eina_Bool
+_property_change_monitor(const char *name,
+                         const char *path,
+                         const char *iface,
+                         Eldbus_Signal_Cb cb)
+{
+   Eldbus_Object *o;
+   Eldbus_Proxy *p;
+   Eldbus_Signal_Handler *s;
+
+   o = eldbus_object_get(_conn, name, path);
+   if (!o)
+     {
+        ERR("could not get object name=%s, path=%s", name, path);
+        return EINA_FALSE;
+     }
+
+   p = eldbus_proxy_get(o, iface);
+   if (!p)
+     {
+        ERR("could not get proxy interface=%s, name=%s, path=%s",
+            iface, name, path);
+        eldbus_object_unref(o);
+        return EINA_FALSE;
+     }
+
+   s = eldbus_proxy_properties_changed_callback_add(p, cb, p);
+   if (!s)
+     {
+        ERR("could not add signal handler for properties changed for proxy "
+            "interface=%s, name=%s, path=%s", iface, name, path);
+        eldbus_proxy_unref(p);
+        eldbus_object_unref(o);
+        return EINA_FALSE;
+     }
+
+   _objs = eina_list_append(_objs, o);
+   _proxies = eina_list_append(_proxies, p);
+   return EINA_TRUE;
+}
+
+static void _ecore_system_systemd_shutdown(void);
+
+static Eina_Bool
+_ecore_system_systemd_init(void)
+{
+   eldbus_init();
+
+   _log_dom = eina_log_domain_register("ecore_system_systemd", NULL);
+   if (_log_dom < 0)
+     {
+        EINA_LOG_ERR("Could not register log domain: ecore_system_systemd");
+        goto error;
+     }
+
+   _conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
+
+   if (!_property_change_monitor("org.freedesktop.hostname1",
+                                 "/org/freedesktop/hostname1",
+                                 "org.freedesktop.hostname1",
+                                 _props_changed_hostname))
+     goto error;
+
+   if (!_property_change_monitor("org.freedesktop.timedate1",
+                                 "/org/freedesktop/timedate1",
+                                 "org.freedesktop.timedate1",
+                                 _props_changed_timedate))
+     goto error;
+
+   if (!_property_change_monitor("org.freedesktop.locale1",
+                                 "/org/freedesktop/locale1",
+                                 "org.freedesktop.locale1",
+                                 _props_changed_locale))
+     goto error;
+
+   DBG("ecore system 'systemd' loaded");
+   return EINA_TRUE;
+
+ error:
+   _ecore_system_systemd_shutdown();
+   return EINA_FALSE;
+}
+
+static void
+_ecore_system_systemd_shutdown(void)
+{
+   DBG("ecore system 'systemd' unloaded");
+
+   while (_proxies)
+     {
+        eldbus_proxy_unref(_proxies->data);
+        _proxies = eina_list_remove_list(_proxies, _proxies);
+     }
+
+   while (_objs)
+     {
+        eldbus_object_unref(_objs->data);
+        _objs = eina_list_remove_list(_objs, _objs);
+     }
+
+   if (_conn)
+     {
+        eldbus_connection_unref(_conn);
+        _conn = NULL;
+     }
+
+   if (_log_dom > 0)
+     {
+        eina_log_domain_unregister(_log_dom);
+        _log_dom = -1;
+     }
+
+   eldbus_shutdown();
+}
+
+EINA_MODULE_INIT(_ecore_system_systemd_init);
+EINA_MODULE_SHUTDOWN(_ecore_system_systemd_shutdown);
