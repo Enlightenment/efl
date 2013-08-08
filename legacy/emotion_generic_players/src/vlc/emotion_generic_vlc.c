@@ -14,7 +14,6 @@
 #include <pthread.h>
 #include <poll.h>
 
-#include <sys/prctl.h>
 #include <signal.h>
 
 #include <vlc/vlc.h>
