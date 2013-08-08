@@ -306,6 +306,7 @@ EAPI Eina_Bool eina_module_load(Eina_Module *m)
 #ifdef HAVE_DLOPEN
    void *dl_handle;
    Eina_Module_Init *initcall;
+   int flag = RTLD_NOW;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(m, EINA_FALSE);
 
@@ -314,10 +315,12 @@ EAPI Eina_Bool eina_module_load(Eina_Module *m)
    if (m->handle)
       goto loaded;
 
-   dl_handle = dlopen(m->file, RTLD_NOW);
+   if (getenv("EINA_MODULE_LAZY_LOAD")) flag = RTLD_LAZY;
+   dl_handle = dlopen(m->file, flag);
    if (!dl_handle)
      {
-        WRN("could not dlopen(\"%s\", RTLD_NOW): %s", m->file, dlerror());
+        WRN("could not dlopen(\"%s\", %s): %s", m->file, dlerror(), 
+            (flag == RTLD_NOW) ? "RTLD_NOW" : "RTLD_LAZY");
         eina_error_set(EINA_ERROR_WRONG_MODULE);
         return EINA_FALSE;
      }
