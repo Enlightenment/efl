@@ -729,6 +729,7 @@ eina_file_refresh(Eina_File *file)
    WIN32_FILE_ATTRIBUTE_DATA fad;
    ULARGE_INTEGER length;
    ULARGE_INTEGER mtime;
+   Eina_Bool r = EINA_FALSE;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(file, EINA_FALSE);
 
@@ -744,12 +745,12 @@ eina_file_refresh(Eina_File *file)
 
    if (file->length != length.QuadPart)
      {
-        eina_file_flush(file, file_stat.st_size);
+        eina_file_flush(file, length.QuadPart);
         r = EINA_TRUE;
      }
 
-   n->length = length.QuadPart;
-   n->mtime = mtime.QuadPart;
+   file->length = length.QuadPart;
+   file->mtime = mtime.QuadPart;
 
    return r;
 }
