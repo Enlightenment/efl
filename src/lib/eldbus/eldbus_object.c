@@ -421,7 +421,7 @@ eldbus_object_event_callback_add(Eldbus_Object *obj, Eldbus_Object_Event_Type ty
                                               ELDBUS_FDO_INTERFACE_OBJECT_MANAGER,
                                               "InterfacesRemoved",
                                               _cb_interfaces_removed, obj);
-           EINA_SAFETY_ON_NULL_RETURN(obj->interfaces_added);
+           EINA_SAFETY_ON_NULL_RETURN(obj->interfaces_removed);
            eldbus_signal_handler_match_extra_set(obj->interfaces_removed,
                                                 "arg0", obj->path, NULL);
            break;
