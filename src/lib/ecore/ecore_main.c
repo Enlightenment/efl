@@ -425,8 +425,8 @@ _ecore_main_fdh_poll_del(Ecore_Fd_Handler *fdh)
         fdh->gfd.fd = fdh->fd;
         fdh->gfd.events = _gfd_events_from_fdh(fdh);
         fdh->gfd.revents = 0;
-        DBG("adding gpoll on %d %08x", fdh->fd, fdh->gfd.events);
-        g_source_add_poll(ecore_glib_source, &fdh->gfd);
+        DBG("removing gpoll on %d %08x", fdh->fd, fdh->gfd.events);
+        g_source_remove_poll(ecore_glib_source, &fdh->gfd);
 #endif
      }
 }
