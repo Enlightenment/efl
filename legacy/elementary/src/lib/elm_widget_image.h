@@ -31,16 +31,18 @@ struct _Elm_Image_Smart_Data
    Evas_Object          *hit_rect;
    Evas_Object          *img;
    Evas_Object          *prev_img;
+   Ecore_Timer          *anim_timer;
+
+   double                scale;
+   double                frame_duration;
 
    Evas_Coord            img_x, img_y, img_w, img_h;
 
    int                   load_size;
-   double                scale;
-   Elm_Image_Orient      orient;
-
    int                   frame_count;
    int                   cur_frame;
-   double                frame_duration;
+
+   Elm_Image_Orient      orient;
 
    Eina_Bool             aspect_fixed : 1;
    Eina_Bool             fill_inside : 1;
@@ -54,8 +56,6 @@ struct _Elm_Image_Smart_Data
    Eina_Bool             edje : 1;
    Eina_Bool             anim : 1;
    Eina_Bool             play : 1;
-
-   Ecore_Timer          *anim_timer;
 };
 
 /**
