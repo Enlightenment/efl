@@ -5817,7 +5817,7 @@ _escaped_char_get(const char *s, const char *s_end)
           }
 
         len = s_end - s;
-        if (len >= sizeof(ustr) + 1)
+        if (len > sizeof(ustr))
            len = sizeof(ustr);
 
         memcpy(ustr, s, len);
