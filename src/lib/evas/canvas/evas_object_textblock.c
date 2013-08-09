@@ -5821,7 +5821,7 @@ _escaped_char_get(const char *s, const char *s_end)
            len = sizeof(ustr);
 
         memcpy(ustr, s, len);
-        ustr[len] = '\0';
+        ustr[len - 1] = '\0';
         uchar[0] = strtol(ustr, NULL, base);
 
         if (uchar[0] == 0)
