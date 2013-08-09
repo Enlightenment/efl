@@ -1057,6 +1057,7 @@ _elm_access_object_unregister(Evas_Object *obj, Evas_Object *hoverobj)
 
    Action_Info *a;
    a = evas_object_data_get(obj, "_elm_access_action_info");
+   evas_object_data_del(obj,  "_elm_access_action_info");
    if (a) free(a);
 }
 
