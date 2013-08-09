@@ -3433,11 +3433,11 @@ st_collections_group_parts_part_name(void)
                     }
                   else
                     {
-                       free(ep);
                        pc->parts_count--;
                        pc->parts = realloc(pc->parts, pc->parts_count * sizeof (Edje_Part *));
                        current_part = pc->parts[i];
                        edje_cc_handlers_hierarchy_rename(ep, current_part);
+                       free(ep);
                        epp->can_override = EINA_FALSE;
                        break;
                     }
