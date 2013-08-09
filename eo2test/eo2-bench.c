@@ -17,8 +17,9 @@ static void report(struct timespec t0, struct timespec t1,
    dt1 = ((t3.tv_sec * 1000000000ULL) + t3.tv_nsec) -
       ((t2.tv_sec * 1000000000ULL) + t2.tv_nsec);
 
-   printf("   #%d           %5u            %5u\n",
-          n, (unsigned int)(dt0/c), (unsigned int)(dt1/c));
+   printf("   #%d              %3u %3u                %3u %3u\n",
+          n, (unsigned int)(dt0/1000000), (unsigned int)(dt0/c),
+          (unsigned int)(dt1/1000000),(unsigned int)(dt1/c));
 }
 
 static void check(int val, int expected)
@@ -56,7 +57,7 @@ run_batch(const char *title, Eo* eo_obj, Eo* eo2_obj, int n)
    int i, k, v;
    struct timespec t0, t1, t2, t3;
 
-   printf("\n%s - %d calls\ncalls/eo_do()  EO [ns]/call  - EO2 [ns]/call\n", title, n);
+   printf("\n%s - %d calls\ncalls/eo_do()  EO [ms] [ns]/call  - EO2 [ms] [ns]/call\n", title, n);
 
    /* 1 call per batch */
    k = 1;
