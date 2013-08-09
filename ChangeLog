@@ -1,3 +1,7 @@
+2013-08-09  Cedric Bail
+
+	* Edje: add edje_object_mmap_set().
+
 2013-08-08  Tom Hacohen
 
 	* Evas textblock:  Make the ellipsis format the same as the surrounding.

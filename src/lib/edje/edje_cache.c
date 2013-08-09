@@ -399,20 +399,12 @@ _edje_file_dangling(Edje_File *edf)
 #endif
 
 Edje_File *
-_edje_cache_file_coll_open(const char *file, const char *coll, int *error_ret, Edje_Part_Collection **edc_ret, Edje *ed)
+_edje_cache_file_coll_open(Eina_File *file, const char *coll, int *error_ret, Edje_Part_Collection **edc_ret, Edje *ed)
 {
-   Eina_File *f;
    Edje_File *edf;
    Eina_List *l, *hist;
    Edje_Part_Collection *edc;
    Edje_Part *ep;
-
-   f = eina_file_open(file, EINA_FALSE);
-   if (!f)
-     {
-        *error_ret = EDJE_LOAD_ERROR_DOES_NOT_EXIST;
-        return NULL;
-     }
 
    if (!_edje_file_hash)
      {
@@ -420,11 +412,9 @@ _edje_cache_file_coll_open(const char *file, const char *coll, int *error_ret, E
 	goto find_list;
      }
 
-   edf = eina_hash_find(_edje_file_hash, f);
+   edf = eina_hash_find(_edje_file_hash, file);
    if (edf)
      {
-        eina_file_close(f);
-
 	edf->references++;
 	goto open;
      }
@@ -432,23 +422,17 @@ _edje_cache_file_coll_open(const char *file, const char *coll, int *error_ret, E
 find_list:
    EINA_LIST_FOREACH(_edje_file_cache, l, edf)
      {
-	if (edf->f == f)
+	if (edf->f == file)
 	  {
-             eina_file_close(f);
-
 	     edf->references = 1;
 	     _edje_file_cache = eina_list_remove_list(_edje_file_cache, l);
-	     eina_hash_direct_add(_edje_file_hash, f, edf);
+	     eina_hash_direct_add(_edje_file_hash, file, edf);
 	     goto open;
 	  }
      }
 
-   edf = _edje_file_open(f, coll, error_ret, edc_ret, eina_file_mtime_get(f));
-   if (!edf)
-     {
-        eina_file_close(f);
-        return NULL;
-     }
+   edf = _edje_file_open(file, coll, error_ret, edc_ret, eina_file_mtime_get(file));
+   if (!edf) return NULL;
 
 #ifdef HAVE_EIO
    if (ed) edf->edjes = eina_list_append(edf->edjes, ed);
@@ -456,7 +440,7 @@ find_list:
    (void) ed;
 #endif
 
-   eina_hash_direct_add(_edje_file_hash, f, edf);
+   eina_hash_direct_add(_edje_file_hash, file, edf);
    /* return edf; */
 
 open:

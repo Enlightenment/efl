@@ -132,6 +132,7 @@ enum
    EDJE_OBJ_SUB_ID_PART_EXTERNAL_PARAM_TYPE_GET,
 
    EDJE_OBJ_SUB_ID_FILE_SET,
+   EDJE_OBJ_SUB_ID_MMAP_SET,
    EDJE_OBJ_SUB_ID_FILE_GET,
    EDJE_OBJ_SUB_ID_LOAD_ERROR_GET,
 
@@ -610,6 +611,19 @@ enum
  * @see edje_object_file_set
  */
 #define edje_obj_file_set(file, group, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_FILE_SET), EO_TYPECHECK(const char*, file), EO_TYPECHECK(const char *, group), EO_TYPECHECK(Eina_Bool *, ret)
+
+/**
+ * @def edje_obj_mmap_set
+ * @since 1.8
+ *
+ * @param[in] file in
+ * @param[in] group in
+ * @param[in] nested in
+ * @param[out] ret out
+ *
+ * @see edje_object_file_set
+ */
+#define edje_obj_mmap_set(file, group, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_MMAP_SET), EO_TYPECHECK(Eina_File*, file), EO_TYPECHECK(const char *, group), EO_TYPECHECK(Eina_Bool *, ret)
 
 /**
  * @def edje_obj_file_get

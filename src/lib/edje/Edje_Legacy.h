@@ -1770,8 +1770,44 @@ EAPI const char  *edje_object_data_get            (const Evas_Object *obj, const
  *
  * @see edje_object_add()
  * @see edje_object_file_get()
+ * @see edje_object_mmap_set()
  */
 EAPI Eina_Bool        edje_object_file_set        (Evas_Object *obj, const char *file, const char *group);
+
+/**
+ * @brief Sets the @b EDJ file (and group within it) to load an Edje
+ * object's contents from
+ *
+ * @param obj A handle to an Edje object
+ * @param file The Eina_File pointing to the EDJ file to load @p from
+ * @param group The name of the group, in @p file, which implements an
+ * Edje object
+ * @return @c EINA_TRUE, on success or @c EINA_FALSE, on errors (check
+ * edje_object_load_error_get() after this call to get errors causes)
+ *
+ * Edje expects EDJ files, which are theming objects' descriptions and
+ * resources packed together in an EET file, to read Edje object
+ * definitions from. They usually are created with the @c .edj
+ * extension. EDJ files, in turn, are assembled from @b textual object
+ * description files, where one describes Edje objects declaratively
+ * -- the EDC files (see @ref edcref "the syntax" for those files).
+ *
+ * Those description files were designed so that many Edje object
+ * definitions -- also called @b groups (or collections) -- could be
+ * packed together <b>in the same EDJ file</b>, so that a whole
+ * application's theme could be packed in one file only. This is the
+ * reason for the @p group argument.
+ *
+ * Use this function after you instantiate a new Edje object, so that
+ * you can "give him life", telling where to get its contents from.
+ *
+ * @see edje_object_add()
+ * @see edje_object_file_get()
+ * @see edje_object_mmap_set()
+ * @since 1.8
+ */
+EAPI Eina_Bool edje_object_mmap_set(Evas_Object *obj, Eina_File *file, const char *group);
+
 
 /**
  * @brief Get the file and group name that a given Edje object is bound to

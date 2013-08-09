@@ -24,6 +24,8 @@ struct _Edje_Drag_Items
    } page;
 };
 
+void _edje_file_add(Edje *ed, Eina_File *f);
+
 /* START - Nested part support */
 #define _edje_smart_nested_type "Evas_Smart_Nested"
 typedef struct _Edje_Nested_Support Edje_Nested_Support;
@@ -77,6 +79,16 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *group)
    Eina_Bool ret = EINA_FALSE;
 
    eo_do(obj, edje_obj_file_set(file, group, &ret));
+   return ret;
+}
+
+EAPI Eina_Bool
+edje_object_mmap_set(Evas_Object *obj, Eina_File *file, const char *group)
+{
+   if (!obj) return EINA_FALSE;
+   Eina_Bool ret = EINA_FALSE;
+
+   eo_do(obj, edje_obj_mmap_set(file, group, &ret));
    return ret;
 }
 
@@ -149,11 +161,14 @@ EAPI Eina_List *
 edje_file_collection_list(const char *file)
 {
    Eina_List *lst = NULL;
+   Eina_File *f;
    Edje_File *edf;
    int error_ret = 0;
 
    if ((!file) || (!*file)) return NULL;
-   edf = _edje_cache_file_coll_open(file, NULL, &error_ret, NULL, NULL);
+   f = eina_file_open(file, EINA_FALSE);
+   if (!f) return NULL;
+   edf = _edje_cache_file_coll_open(f, NULL, &error_ret, NULL, NULL);
    if (edf)
      {
         Eina_Iterator *i;
@@ -168,6 +183,7 @@ edje_file_collection_list(const char *file)
 
         _edje_cache_file_unref(edf);
      }
+   eina_file_close(f);
    return lst;
 }
 
@@ -185,6 +201,7 @@ EAPI Eina_Bool
 edje_file_group_exists(const char *file, const char *glob)
 {
    Edje_File *edf;
+   Eina_File *f;
    int error_ret = 0;
    Eina_Bool succeed = EINA_FALSE;
    Eina_Bool is_glob = EINA_FALSE;
@@ -193,9 +210,11 @@ edje_file_group_exists(const char *file, const char *glob)
    if ((!file) || (!*file) || (!glob))
       return EINA_FALSE;
 
-   edf = _edje_cache_file_coll_open(file, NULL, &error_ret, NULL, NULL);
-   if (!edf)
-      return EINA_FALSE;
+   f = eina_file_open(file, EINA_FALSE);
+   if (!f) return EINA_FALSE;
+
+   edf = _edje_cache_file_coll_open(f, NULL, &error_ret, NULL, NULL);
+   if (!edf) goto on_error;
 
    for (p = glob; *p; p++)
      {
@@ -240,6 +259,8 @@ edje_file_group_exists(const char *file, const char *glob)
 
    DBG("edje_file_group_exists: '%s', '%s': %i.", file, glob, succeed);
 
+ on_error:
+   eina_file_close(f);
    return succeed;
 }
 
@@ -248,12 +269,16 @@ EAPI char *
 edje_file_data_get(const char *file, const char *key)
 {
    Edje_File *edf;
+   Eina_File *f;
    char *str = NULL;
    int error_ret = 0;
 
    if (key)
      {
-        edf = _edje_cache_file_coll_open(file, NULL, &error_ret, NULL, NULL);
+        f = eina_file_open(file, EINA_FALSE);
+        if (!f) return NULL;
+
+        edf = _edje_cache_file_coll_open(f, NULL, &error_ret, NULL, NULL);
         if (edf)
           {
              str = (char*) edje_string_get(eina_hash_find(edf->data, key));
@@ -262,6 +287,8 @@ edje_file_data_get(const char *file, const char *key)
 
              _edje_cache_file_unref(edf);
           }
+
+        eina_file_close(f);
      }
    return str;
 }
@@ -290,7 +317,7 @@ _edje_physics_world_update_cb(void *data, EPhysics_World *world EINA_UNUSED, voi
 #endif
 
 int
-_edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *group, const char *parent, Eina_List *group_path, Eina_Array *nested)
+_edje_object_file_set_internal(Evas_Object *obj, Eina_File *file, const char *group, const char *parent, Eina_List *group_path, Eina_Array *nested)
 {
    Edje *ed;
    Evas *tev;
@@ -310,18 +337,11 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 
    ed = _edje_fetch(obj);
    if (!ed) return 0;
-   if (!file) file = "";
    if (!group) group = "";
-   if (((ed->path) && (!strcmp(file, ed->path))) &&
-       (ed->group) && (!strcmp(group, ed->group)) &&
-       ed->file)
+   if ((ed->file) && (ed->file->f == file) &&
+       (ed->group) && (!strcmp(group, ed->group)))
      {
-        struct stat st;
-
-        if (stat(file, &st) != 0)
-          return 1;
-        if (st.st_mtime == ed->file->mtime)
-          return 1;
+        return 1;
      }
 
    tev = evas_object_evas_get(obj);
@@ -343,13 +363,13 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 
    _edje_file_del(ed);
 
-   eina_stringshare_replace(&ed->path, file);
+   eina_stringshare_replace(&ed->path, file ? eina_file_filename_get(file) : NULL);
    eina_stringshare_replace(&ed->group, group);
 
    ed->parent = eina_stringshare_add(parent);
 
    ed->load_error = EDJE_LOAD_ERROR_NONE;
-   _edje_file_add(ed);
+   _edje_file_add(ed, file);
    ed->block_break = EINA_FALSE;
 
    if (ed->file && ed->file->external_dir)
@@ -567,7 +587,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
                           break;
                        case EDJE_PART_TYPE_GRADIENT:
                           ERR("SPANK ! SPANK ! SPANK ! YOU ARE USING GRADIENT IN PART %s FROM GROUP %s INSIDE FILE %s !! THEY ARE NOW REMOVED !",
-                              ep->name, group, file);
+                              ep->name, group, eina_file_filename_get(file));
                           break;
                        case EDJE_PART_TYPE_SPACER:
                           rp->object = NULL;
@@ -834,7 +854,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
                               if (data == group_path_entry)
                                 {
                                    ERR("recursive loop group '%s' already included inside part '%s' of group '%s' from file '%s'",
-                                       group_path_entry, rp->part->name, group, file);
+                                       group_path_entry, rp->part->name, group, eina_file_filename_get(file));
                                    ed->load_error = EDJE_LOAD_ERROR_RECURSIVE_REFERENCE;
                                    eina_stringshare_del(group_path_entry);
                                    goto on_error;
@@ -862,7 +882,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
                               if (!_edje_object_file_set_internal(child_obj, file, source, rp->part->name, group_path, nested))
                                 {
                                    ERR("impossible to set part '%s' of group '%s' from file '%s' to '%s'",
-                                       rp->part->name, group_path_entry, file, source);
+                                       rp->part->name, group_path_entry, eina_file_filename_get(file), source);
                                    ed->load_error = edje_object_load_error_get(child_obj);
                                    evas_object_del(child_obj);
                                    eina_stringshare_del(group_path_entry);
@@ -1106,13 +1126,20 @@ on_error:
 }
 
 void
-_edje_file_add(Edje *ed)
+_edje_file_add(Edje *ed, Eina_File *f)
 {
    if (!_edje_edd_edje_file) return;
-   ed->file = _edje_cache_file_coll_open(ed->path, ed->group,
-                                         &(ed->load_error),
-                                         &(ed->collection),
-                                         ed);
+   if (!f)
+     {
+        ed->load_error = EDJE_LOAD_ERROR_DOES_NOT_EXIST;
+     }
+   else
+     {
+        ed->file = _edje_cache_file_coll_open(f, ed->group,
+                                              &(ed->load_error),
+                                              &(ed->collection),
+                                              ed);
+     }
 
    if (!ed->collection)
      {

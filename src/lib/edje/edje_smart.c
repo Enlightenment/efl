@@ -333,12 +333,37 @@ _edje_smart_file_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    const char *file = va_arg(*list, const char *);
    const char *group = va_arg(*list, const char *);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Eina_File *f;
    Eina_Array *nested;
+
+   if (ret) *ret = EINA_FALSE;
+
+   f = eina_file_open(file, EINA_FALSE);
+   nested = eina_array_new(8);
+
+   if (_edje_object_file_set_internal(obj, f, group, NULL, NULL, nested))
+     if (ret) *ret = EINA_TRUE;
+
+   eina_array_free(nested);
+   eina_file_close(f);
+   _edje_object_orientation_inform(obj);
+}
+
+static void
+_edje_smart_mmap_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+{
+   Eina_File *f = va_arg(*list, Eina_File *);
+   const char *group = va_arg(*list, const char *);
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Eina_Array *nested;
+
    if (ret) *ret = EINA_FALSE;
 
    nested = eina_array_new(8);
-   if (_edje_object_file_set_internal(obj, file, group, NULL, NULL, nested))
+
+   if (_edje_object_file_set_internal(obj, f, group, NULL, NULL, nested))
      if (ret) *ret = EINA_TRUE;
+
    eina_array_free(nested);
    _edje_object_orientation_inform(obj);
 }
@@ -481,6 +506,7 @@ _edje_smart_class_constructor(Eo_Class *klass)
         EO_OP_FUNC(EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_EXTERNAL_CONTENT_GET), _part_external_content_get),
         EO_OP_FUNC(EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_EXTERNAL_PARAM_TYPE_GET), _part_external_param_type_get),
         EO_OP_FUNC(EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_FILE_SET), _edje_smart_file_set),
+        EO_OP_FUNC(EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_MMAP_SET), _edje_smart_mmap_set),
         EO_OP_FUNC(EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_FILE_GET), _file_get),
         EO_OP_FUNC(EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_LOAD_ERROR_GET), _load_error_get),
         EO_OP_FUNC(EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_MESSAGE_SEND), _message_send),
@@ -626,6 +652,7 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(EDJE_OBJ_SUB_ID_PART_EXTERNAL_CONTENT_GET, "Get an object contained in an part of type EXTERNAL"),
      EO_OP_DESCRIPTION(EDJE_OBJ_SUB_ID_PART_EXTERNAL_PARAM_TYPE_GET, "Facility to query the type of the given parameter of the given part."),
      EO_OP_DESCRIPTION(EDJE_OBJ_SUB_ID_FILE_SET, "Sets the @b EDJ file (and group within it) to load an Edje"),
+     EO_OP_DESCRIPTION(EDJE_OBJ_SUB_ID_MMAP_SET, "Sets the @b EDJ file (and group within it) to load an Edje"),
      EO_OP_DESCRIPTION(EDJE_OBJ_SUB_ID_FILE_GET, "Get the file and group name that a given Edje object is bound to"),
      EO_OP_DESCRIPTION(EDJE_OBJ_SUB_ID_LOAD_ERROR_GET, "Gets the (last) file loading error for a given Edje object"),
      EO_OP_DESCRIPTION(EDJE_OBJ_SUB_ID_MESSAGE_SEND, "Send an (Edje) message to a given Edje object"),
