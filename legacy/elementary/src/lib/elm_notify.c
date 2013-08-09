@@ -462,6 +462,7 @@ _elm_notify_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    elm_notify_allow_events_set(obj, EINA_FALSE);
    if (sd->timer) ecore_timer_del(sd->timer);
 
+   ELM_SAFE_FREE(sd->notify, evas_object_del);
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
 

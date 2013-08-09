@@ -228,6 +228,19 @@ _elm_popup_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
         _list_del(sd);
      }
 
+   // XXX? delete other objects? just to be sure.
+   ELM_SAFE_FREE(sd->notify, evas_object_del);
+   ELM_SAFE_FREE(sd->title_icon, evas_object_del);
+   ELM_SAFE_FREE(sd->content_area, evas_object_del);
+   ELM_SAFE_FREE(sd->text_content_obj, evas_object_del);
+   ELM_SAFE_FREE(sd->action_area, evas_object_del);
+   ELM_SAFE_FREE(sd->box, evas_object_del);
+   ELM_SAFE_FREE(sd->tbl, evas_object_del);
+   ELM_SAFE_FREE(sd->spacer, evas_object_del);
+   ELM_SAFE_FREE(sd->scr, evas_object_del);
+   ELM_SAFE_FREE(sd->content, evas_object_del);
+   ELM_SAFE_FREE(sd->title_text, eina_stringshare_del);
+
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
 
