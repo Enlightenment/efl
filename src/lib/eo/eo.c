@@ -36,8 +36,9 @@ static const Eo_Op_Description *_eo_op_id_desc_get(Eo_Op op);
 /* How we search and store the implementations in classes. */
 #define DICH_CHAIN_LAST_BITS 5
 #define DICH_CHAIN_LAST_SIZE (1 << DICH_CHAIN_LAST_BITS)
-#define DICH_CHAIN1(x) ((x) / DICH_CHAIN_LAST_SIZE)
-#define DICH_CHAIN_LAST(x) ((x) % DICH_CHAIN_LAST_SIZE)
+#define DICH_CHAIN1(x) ((x) >> DICH_CHAIN_LAST_BITS)
+#define DICH_CHAIN_LAST(x) ((x) & ((1 << DICH_CHAIN_LAST_BITS) - 1))
+
 
 #define OP_CLASS_OFFSET_GET(x) (((x) >> EO_OP_CLASS_OFFSET) & 0xffff)
 
@@ -1259,25 +1260,24 @@ _eo_condtor_done(Eo *obj_id)
 static inline void *
 _eo_data_scope_get(const _Eo *obj, const _Eo_Class *klass)
 {
-   if (EINA_LIKELY(klass->desc->data_size > 0))
+   if (EINA_LIKELY((klass->desc->data_size > 0) && (klass->desc->type != EO_CLASS_TYPE_MIXIN)))
+     return ((char *) obj) + _eo_sz + klass->data_offset;
+
+   if (EINA_UNLIKELY(klass->desc->data_size == 0))
+     return NULL;
+   else
+
      {
-        if (EINA_UNLIKELY(klass->desc->type == EO_CLASS_TYPE_MIXIN))
-          {
-             Eo_Extension_Data_Offset *doff_itr = obj->klass->extn_data_off;
+        Eo_Extension_Data_Offset *doff_itr = obj->klass->extn_data_off;
 
-             if (!doff_itr)
-               return NULL;
+        if (!doff_itr)
+          return NULL;
 
-             while (doff_itr->klass)
-               {
-                  if (doff_itr->klass == klass)
-                    return ((char *) obj) + _eo_sz + doff_itr->offset;
-                  doff_itr++;
-               }
-          }
-        else
+        while (doff_itr->klass)
           {
-             return ((char *) obj) + _eo_sz + klass->data_offset;
+             if (doff_itr->klass == klass)
+               return ((char *) obj) + _eo_sz + doff_itr->offset;
+             doff_itr++;
           }
      }
 
