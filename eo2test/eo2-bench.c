@@ -55,16 +55,29 @@ static void
 run_batch(const char *title, Eo* eo_obj, Eo* eo2_obj, int n)
 {
    int i, k, v;
+   Eina_Bool eo1;
    struct timespec t0, t1, t2, t3;
+
+   if (getenv("EO2ONLY") != NULL)
+     {
+        eo1 = EINA_FALSE;
+        t0.tv_sec = t1.tv_sec = 0;
+        t0.tv_nsec = t1.tv_nsec = 0;
+     }
+   else
+     eo1 = EINA_TRUE;
 
    printf("\n%s - %d calls\ncalls/eo_do()  EO [ms] [ns]/call  - EO2 [ms] [ns]/call\n", title, n);
 
    /* 1 call per batch */
    k = 1;
-   EO_RUN_START
-   for (i = 0; i < n; i++)
-     eo_do(eo_obj, eo_inc());
-   EO_RUN_END
+   if (eo1)
+     {
+        EO_RUN_START
+           for (i = 0; i < n; i++)
+             eo_do(eo_obj, eo_inc());
+        EO_RUN_END
+     }
    EO2_RUN_START
    for (i = 0; i < n; i++)
      eo2_do(eo2_obj, eo2_inc(); );
@@ -73,10 +86,13 @@ run_batch(const char *title, Eo* eo_obj, Eo* eo2_obj, int n)
 
    /* 3 calls per batch */
    k = 3;
-   EO_RUN_START
-   for (i = 0; i < n; i++)
-     eo_do(eo_obj, eo_inc(), eo_inc(), eo_inc());
-   EO_RUN_END
+   if (eo1)
+     {
+        EO_RUN_START
+           for (i = 0; i < n; i++)
+             eo_do(eo_obj, eo_inc(), eo_inc(), eo_inc());
+        EO_RUN_END
+     }
    EO2_RUN_START
    for (i = 0; i < n; i++)
      eo2_do(eo2_obj, eo2_inc(); eo2_inc(); eo2_inc(); );
@@ -85,10 +101,13 @@ run_batch(const char *title, Eo* eo_obj, Eo* eo2_obj, int n)
 
    /* 5 calls per batch */
    k = 5;
-   EO_RUN_START
-   for (i = 0; i < n; i++)
-     eo_do(eo_obj, eo_inc(), eo_inc(), eo_inc(), eo_inc(), eo_inc());
-   EO_RUN_END
+   if (eo1)
+     {
+        EO_RUN_START
+           for (i = 0; i < n; i++)
+             eo_do(eo_obj, eo_inc(), eo_inc(), eo_inc(), eo_inc(), eo_inc());
+        EO_RUN_END
+     }
    EO2_RUN_START
    for (i = 0; i < n; i++)
      eo2_do(eo2_obj, eo2_inc(); eo2_inc(); eo2_inc(); eo2_inc(); eo2_inc(); );
@@ -97,10 +116,13 @@ run_batch(const char *title, Eo* eo_obj, Eo* eo2_obj, int n)
 
    /* 7 calls per batch */
    k = 7;
-   EO_RUN_START
-   for (i = 0; i < n; i++)
-     eo_do(eo_obj, eo_inc(), eo_inc(), eo_inc(), eo_inc(), eo_inc(), eo_inc(), eo_inc());
-   EO_RUN_END
+   if (eo1)
+     {
+        EO_RUN_START
+           for (i = 0; i < n; i++)
+             eo_do(eo_obj, eo_inc(), eo_inc(), eo_inc(), eo_inc(), eo_inc(), eo_inc(), eo_inc());
+        EO_RUN_END
+     }
    EO2_RUN_START
    for (i = 0; i < n; i++)
      eo2_do(eo2_obj, eo2_inc(); eo2_inc(); eo2_inc(); eo2_inc(); eo2_inc(); eo2_inc(); eo2_inc(); );
