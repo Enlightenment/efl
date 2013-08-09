@@ -392,6 +392,7 @@ eet_node_del(Eet_Node *n)
      {
       case EET_G_HASH:
         eina_stringshare_del(n->key);
+        /* No break here as we want it to fall through and free the resources */
 
       case EET_G_UNKNOWN:
       case EET_G_VAR_ARRAY:
