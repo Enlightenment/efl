@@ -351,7 +351,7 @@ test_access3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
 
    lbl = elm_label_add(box);
    elm_object_text_set(lbl,
-                       "Move a mount pointer to any object and press F1 to"
+                       "Move a mouse pointer to any object and press F1 to "
                        "move access highlight to the next object.");
    evas_object_size_hint_weight_set(lbl, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(lbl, EVAS_HINT_FILL, EVAS_HINT_FILL);
