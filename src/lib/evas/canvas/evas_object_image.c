@@ -3967,25 +3967,25 @@ evas_object_image_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, v
                             br = o->cur->border.r;
                             bt = o->cur->border.t;
                             bb = o->cur->border.b;
-                            if ((bl + br) > iw)
+                            if ((bl + br) > imagew)
                               {
-                                 bl = iw / 2;
-                                 br = iw - bl;
+                                 bl = imagew / 2;
+                                 br = imagew - bl;
                               }
-                            if ((bl + br) > imw)
+                            if ((bl + br) > imagew)
                               {
-                                 bl = imw / 2;
-                                 br = imw - bl;
+                                 bl = imagew / 2;
+                                 br = imagew - bl;
                               }
-                            if ((bt + bb) > ih)
+                            if ((bt + bb) > imageh)
                               {
-                                 bt = ih / 2;
-                                 bb = ih - bt;
+                                 bt = imageh / 2;
+                                 bb = imageh - bt;
                               }
-                            if ((bt + bb) > imh)
+                            if ((bt + bb) > imageh)
                               {
-                                 bt = imh / 2;
-                                 bb = imh - bt;
+                                 bt = imageh / 2;
+                                 bb = imageh - bt;
                               }
                             if (o->cur->border.scale != 1.0)
                               {
@@ -4053,6 +4053,11 @@ evas_object_image_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, v
                             inw = br; inh = imh - bt - bb;
                             outx = ox + iw - bsr; outy = oy + bst;
                             outw = bsr; outh = ih - bst - bsb;
+                            if (br == 80)
+                              {
+                                 printf("%i %i %ix%i -> %i %i %ix%i\n",
+                                        inx, iny, inw, inh, outx, outy, outw, outh);
+                              }
                             _draw_image(obj, output, context, surface, pixels, inx, iny, inw, inh, outx, outy, outw, outh, o->cur->smooth_scale, do_async);
                             // |
                             // #--
