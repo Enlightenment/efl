@@ -16,9 +16,17 @@ EAPI Eo_Op ELM_OBJ_IMAGE_BASE_ID = EO_NOOP;
 
 static const char SIG_DND[] = "drop";
 static const char SIG_CLICKED[] = "clicked";
+static const char SIG_DOWNLOAD_START[] = "download,start";
+static const char SIG_DOWNLOAD_PROGRESS[] = "download,progress";
+static const char SIG_DOWNLOAD_DONE[] = "download,done";
+static const char SIG_DOWNLOAD_ERROR[] = "download,error";
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_DND, ""},
    {SIG_CLICKED, ""},
+   {SIG_DOWNLOAD_START, ""},
+   {SIG_DOWNLOAD_PROGRESS, ""},
+   {SIG_DOWNLOAD_DONE, ""},
+   {SIG_DOWNLOAD_ERROR, ""},
    {NULL, NULL}
 };
 
@@ -183,6 +191,7 @@ _elm_image_internal_sizing_eval(Evas_Object *obj, Elm_Image_Smart_Data *sd)
 static Eina_Bool
 _elm_image_edje_file_set(Evas_Object *obj,
                          const char *file,
+                         Eina_File *f,
                          const char *group)
 {
    Evas_Object *pclip;
@@ -207,7 +216,16 @@ _elm_image_edje_file_set(Evas_Object *obj,
      }
 
    sd->edje = EINA_TRUE;
-   if (!edje_object_file_set(sd->img, file, group))
+   if (f)
+     {
+        if (!edje_object_mmap_set(sd->img, f, group))
+          {
+             ERR("failed to set edje file '%s', group '%s': %s", file, group,
+                 edje_load_error_str(edje_object_load_error_get(sd->img)));
+             return EINA_FALSE;
+          }
+     }
+   else if (!edje_object_file_set(sd->img, file, group))
      {
         ERR("failed to set edje file '%s', group '%s': %s", file, group,
             edje_load_error_str(edje_object_load_error_get(sd->img)));
@@ -480,6 +498,9 @@ _elm_image_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    if (sd->anim_timer) ecore_timer_del(sd->anim_timer);
    if (sd->img) evas_object_del(sd->img);
    if (sd->prev_img) evas_object_del(sd->prev_img);
+   if (sd->remote) elm_url_cancel(sd->remote);
+   free(sd->remote_data);
+   eina_stringshare_del(sd->key);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
@@ -810,26 +831,24 @@ elm_image_file_set(Evas_Object *obj,
 }
 
 static void
-_elm_image_smart_file_set(Eo *obj, void *_pd, va_list *list)
+_elm_image_smart_internal_file_set(Eo *obj, Elm_Image_Smart_Data *sd,
+                                   const char *file, Eina_File *f, const char *key, Eina_Bool *ret)
 {
-   const char *file = va_arg(*list, const char *);
-   const char *key = va_arg(*list, const char *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-
    Evas_Coord w, h;
-
-   Elm_Image_Smart_Data *sd = _pd;
 
    if (eina_str_has_extension(file, ".edj"))
      {
-        Eina_Bool int_ret = _elm_image_edje_file_set(obj, file, key);
+        Eina_Bool int_ret = _elm_image_edje_file_set(obj, file, f, key);
         if (ret) *ret = int_ret;
         return;
      }
 
    _elm_image_file_set_do(obj);
 
-   evas_object_image_file_set(sd->img, file, key);
+   if (f)
+     evas_object_image_mmap_set(sd->img, f, key);
+   else
+     evas_object_image_file_set(sd->img, file, key);
 
    sd->preloading = EINA_TRUE;
    evas_object_hide(sd->img);
@@ -849,6 +868,108 @@ _elm_image_smart_file_set(Eo *obj, void *_pd, va_list *list)
    _elm_image_internal_sizing_eval(obj, sd);
 
    if (ret) *ret = EINA_TRUE;
+}                                  
+
+static void
+_elm_image_smart_download_done(void *data, Elm_Url *url EINA_UNUSED, Eina_Binbuf *download)
+{
+   Eo *obj = data;
+   Elm_Image_Smart_Data *sd = eo_data_scope_get(obj, MY_CLASS);
+   Eina_File *f;
+   size_t length;
+   Eina_Bool ret = EINA_FALSE;
+
+   if (sd->remote_data) free(sd->remote_data);
+   length = eina_binbuf_length_get(download);
+   sd->remote_data = eina_binbuf_string_steal(download);
+   f = eina_file_virtualize(elm_url_get(url),
+                            sd->remote_data, length,
+                            EINA_FALSE);
+   _elm_image_smart_internal_file_set(obj, sd, elm_url_get(url), f, sd->key, &ret);
+   eina_file_close(f);
+
+   if (!ret)
+     {
+        Elm_Image_Error err = { 0, EINA_TRUE };
+
+        free(sd->remote_data);
+        sd->remote_data = NULL;
+        evas_object_smart_callback_call(obj, SIG_DOWNLOAD_ERROR, &err);
+     }
+   else
+     {
+        evas_object_smart_callback_call(obj, SIG_DOWNLOAD_DONE, NULL);
+     }
+
+   sd->remote = NULL;
+   eina_stringshare_del(sd->key);
+   sd->key = NULL;
+}
+
+static void
+_elm_image_smart_download_cancel(void *data, Elm_Url *url EINA_UNUSED, int error)
+{
+   Eo *obj = data;
+   Elm_Image_Smart_Data *sd = eo_data_scope_get(obj, MY_CLASS);
+   Elm_Image_Error err = { error, EINA_FALSE };
+
+   evas_object_smart_callback_call(obj, SIG_DOWNLOAD_ERROR, &err);
+
+   sd->remote = NULL;
+   eina_stringshare_del(sd->key);
+   sd->key = NULL;
+}
+
+static void
+_elm_image_smart_download_progress(void *data, Elm_Url *url EINA_UNUSED, double now, double total)
+{
+   Eo *obj = data;
+   Elm_Image_Progress progress;
+
+   progress.now = now;
+   progress.total = total;
+   evas_object_smart_callback_call(obj, SIG_DOWNLOAD_PROGRESS, &progress);
+}
+
+static const char *remote_uri[] = {
+  "http://", "https://", "ftp://"
+};
+
+static void
+_elm_image_smart_file_set(Eo *obj, void *_pd, va_list *list)
+{
+   const char *file = va_arg(*list, const char *);
+   const char *key = va_arg(*list, const char *);
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+
+   Elm_Image_Smart_Data *sd = _pd;
+
+   unsigned int i;
+
+   if (sd->remote) elm_url_cancel(sd->remote);
+   sd->remote = NULL;
+
+   for (i = 0; i < sizeof (remote_uri) / sizeof (remote_uri[0]); ++i)
+     if (strncmp(remote_uri[i], file, strlen(remote_uri[i])) == 0)
+       {
+          // Found a remote target !
+          evas_object_hide(sd->img);
+          sd->remote = elm_url_download(file,
+                                        _elm_image_smart_download_done,
+                                        _elm_image_smart_download_cancel,
+                                        _elm_image_smart_download_progress,
+                                        obj);
+          if (sd->remote)
+            {
+               evas_object_smart_callback_call(obj, SIG_DOWNLOAD_START, NULL);
+               eina_stringshare_replace(&sd->key, key);
+               if (ret) *ret = EINA_TRUE;
+               return ;
+            }
+          break;
+       }
+
+   _elm_image_smart_internal_file_set(obj, sd, file, NULL, key, ret);
 }
 
 EAPI void

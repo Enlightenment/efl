@@ -19,4 +19,27 @@ typedef enum
    ELM_IMAGE_FLIP_TRANSVERSE = 7 /**< flip the image along the y = x line (top-left to bottom-right) */
 } Elm_Image_Orient;
 
+/**
+ * Structure associated with smart callback 'download,progress'.
+ * @since 1.8
+ */
+typedef struct _Elm_Image_Progress Elm_Image_Progress;
 
+struct _Elm_Image_Progress
+{
+   double now;
+   double total;
+};
+
+
+/**
+ * Structre associated with smart callback 'download,error'
+ * @since 1.8
+ */
+typedef struct _Elm_Image_Error Elm_Image_Error;
+struct _Elm_Image_Error
+{
+   int status;
+
+   Eina_Bool open_error;
+};

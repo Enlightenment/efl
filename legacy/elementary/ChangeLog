@@ -1533,3 +1533,7 @@
 
         * Fix elm to use key not keyname (otherwise xmodmap and friends
         don't work).
+
+2013-08-09  Cedric Bail
+
+	* Add support for URL in Elm_Image.

@@ -124,6 +124,7 @@ Improvements:
    * Move cursor when mouse moves with longpress.
    * Show magnifier when selection handlers are pressed or moved.
    * Change the method to calculate a distance which be scrolled from linear to sine curve.
+   * Add support for URL in Elm_Image.
 
 Fixes:
    * Now elm_datetime_field_limit_set() can set year limits wihtout problems.

@@ -33,6 +33,10 @@ struct _Elm_Image_Smart_Data
    Evas_Object          *prev_img;
    Ecore_Timer          *anim_timer;
 
+   Elm_Url              *remote;
+   const char           *key;
+   void                 *remote_data;
+
    double                scale;
    double                frame_duration;
 
