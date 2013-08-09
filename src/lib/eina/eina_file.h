@@ -462,6 +462,7 @@ EAPI Eina_File *eina_file_open(const char *name, Eina_Bool shared) EINA_WARN_UNU
 /**
  * @brief Create a virtual file from a memory pointer.
  *
+ * @param virtual_name A virtual name for Eina_File, if #NULL, a generated one will be given
  * @param data The memory pointer to take data from
  * @param length The length of the data in memory
  * @param copy #EINA_TRUE if the data must be copied
@@ -470,7 +471,7 @@ EAPI Eina_File *eina_file_open(const char *name, Eina_Bool shared) EINA_WARN_UNU
  * @since 1.8
  */
 EAPI Eina_File *
-eina_file_virtualize(const void *data, unsigned long long length, Eina_Bool copy) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
+eina_file_virtualize(const char *virtual_name, const void *data, unsigned long long length, Eina_Bool copy) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
 /**
  * @brief Tell if a file is a real file or only exist in memory

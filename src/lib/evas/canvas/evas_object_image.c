@@ -377,7 +377,7 @@ evas_object_image_memfile_set(Evas_Object *eo_obj, void *data, int size, char *f
    return;
    MAGIC_CHECK_END();
 
-   f = eina_file_virtualize(data, size, EINA_TRUE);
+   f = eina_file_virtualize(NULL, data, size, EINA_TRUE);
    if (!f) return ;
    eo_do(eo_obj, evas_obj_image_mmap_set(f, key));
    eina_file_close(f);

@@ -353,25 +353,31 @@ eina_file_path_sanitize(const char *path)
 }
 
 EAPI Eina_File *
-eina_file_virtualize(const void *data, unsigned long long length, Eina_Bool copy)
+eina_file_virtualize(const char *virtual_name, const void *data, unsigned long long length, Eina_Bool copy)
 {
    Eina_File *file;
    Eina_Nano_Time tp;
    long int ti;
    const char *tmpname = "/dev/mem/virtual\\/%16x";
+   int slen;
 
    // Generate an almost uniq filename based on current nsec time.
    if (_eina_time_get(&tp)) return NULL;
    ti = _eina_time_convert(&tp);
 
+   slen = virtual_name ? strlen(virtual_name) + 1 : strlen(tmpname) + 17;
+
    file = malloc(sizeof (Eina_File) +
-                 strlen(tmpname) + 17 +
+                 slen +
                  (copy ? length : 0));
    if (!file) return NULL;
 
    memset(file, 0, sizeof(Eina_File));
    file->filename = (char*) (file + 1);
-   sprintf((char*) file->filename, tmpname, ti);
+   if (virtual_name)
+     strcpy(file->filename, virtual_name);
+   else
+     sprintf((char*) file->filename, tmpname, ti);
 
    eina_lock_new(&file->lock);
    file->mtime = ti / 1000;
