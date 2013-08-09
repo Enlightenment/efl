@@ -127,6 +127,13 @@ epoll_ctl(int                 epfd EINA_UNUSED,
 # endif
 #endif /* HAVE_SYS_TIMERFD_H */
 
+#ifndef TFD_TIMER_ABSTIME
+# define TFD_TIMER_ABSTIME (1 << 0)
+#endif
+#ifndef TFD_TIMER_CANCELON_SET
+# define TFD_TIMER_CANCELON_SET (1 << 1)
+#endif
+
 #ifndef HAVE_TIMERFD_CREATE
 static inline int
 timerfd_create(int clockid EINA_UNUSED,
@@ -763,6 +770,67 @@ static GSourceFuncs ecore_gsource_funcs =
 
 #endif
 
+#ifdef HAVE_SYS_TIMERFD_H
+static int realtime_fd = -1;
+
+static void detect_time_changes_start(void);
+static Eina_Bool
+_realtime_update(void *data EINA_UNUSED, Ecore_Fd_Handler *fdh EINA_UNUSED)
+{
+   char buf[64];
+
+   if (read(realtime_fd, buf, sizeof(buf)) >= 0) return EINA_TRUE;
+
+   DBG("system clock changed");
+   ecore_event_add(ECORE_EVENT_SYSTEM_TIMEDATE_CHANGED, NULL, NULL, NULL);
+
+   close(realtime_fd);
+   realtime_fd = -1;
+   detect_time_changes_start();
+   return EINA_FALSE;
+}
+#endif
+
+static void
+detect_time_changes_start(void)
+{
+#ifdef HAVE_SYS_TIMERFD_H
+   struct itimerspec its;
+
+   if (realtime_fd >= 0) return;
+
+   realtime_fd = timerfd_create(CLOCK_REALTIME, TFD_NONBLOCK | TFD_CLOEXEC);
+   if (realtime_fd < 0) return;
+
+   memset(&its, 0, sizeof(its));
+   if (timerfd_settime(realtime_fd,
+                       TFD_TIMER_ABSTIME | TFD_TIMER_CANCELON_SET,
+                       &its, NULL) < 0)
+     {
+        WRN("Couldn't arm timerfd to detect clock changes: %s",
+            strerror(errno));
+        close(realtime_fd);
+        realtime_fd = -1;
+        return;
+     }
+
+   ecore_main_fd_handler_add(realtime_fd, ECORE_FD_READ,
+                             _realtime_update, NULL, NULL, NULL);
+#endif
+}
+
+static void
+detect_time_changes_stop(void)
+{
+#ifdef HAVE_SYS_TIMERFD_H
+   if (realtime_fd > 0)
+     {
+        close(realtime_fd);
+        realtime_fd = -1;
+     }
+#endif
+}
+
 void
 _ecore_main_loop_init(void)
 {
@@ -818,6 +886,8 @@ _ecore_main_loop_init(void)
           CRIT("Failed to attach glib source to default context");
      }
 #endif
+
+   detect_time_changes_start();
 }
 
 void
@@ -830,6 +900,8 @@ _ecore_main_loop_shutdown(void)
         ecore_glib_source = NULL;
      }
 #endif
+
+   detect_time_changes_stop();
 
    if (epoll_fd >= 0)
      {
