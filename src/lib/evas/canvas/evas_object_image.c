@@ -4053,11 +4053,6 @@ evas_object_image_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, v
                             inw = br; inh = imh - bt - bb;
                             outx = ox + iw - bsr; outy = oy + bst;
                             outw = bsr; outh = ih - bst - bsb;
-                            if (br == 80)
-                              {
-                                 printf("%i %i %ix%i -> %i %i %ix%i\n",
-                                        inx, iny, inw, inh, outx, outy, outw, outh);
-                              }
                             _draw_image(obj, output, context, surface, pixels, inx, iny, inw, inh, outx, outy, outw, outh, o->cur->smooth_scale, do_async);
                             // |
                             // #--
