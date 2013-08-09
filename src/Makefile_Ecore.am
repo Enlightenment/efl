@@ -86,6 +86,25 @@ modules_ecore_system_systemd_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
 modules_ecore_system_systemd_module_la_LIBTOOLFLAGS = --tag=disable-static
 endif
 
+# upower
+
+ecoreupowerpkgdir = $(libdir)/ecore/system/upower/$(MODULE_ARCH)
+ecoreupowerpkg_LTLIBRARIES = modules/ecore/system/upower/module.la
+modules_ecore_system_upower_module_la_SOURCES = \
+modules/ecore/system/upower/ecore_system_upower.c
+modules_ecore_system_upower_module_la_CPPFLAGS = \
+-I$(top_builddir)/src/lib/efl \
+@ECORE_CFLAGS@ \
+@ELDBUS_CFLAGS@
+modules_ecore_system_upower_module_la_LIBADD = \
+@USE_ECORE_LIBS@ \
+@USE_ELDBUS_LIBS@
+modules_ecore_system_upower_module_la_DEPENDENCIES = \
+@USE_ECORE_INTERNAL_LIBS@ \
+@USE_ELDBUS_INTERNAL_LIBS@
+modules_ecore_system_upower_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
+modules_ecore_system_upower_module_la_LIBTOOLFLAGS = --tag=disable-static
+
 
 ### Unit tests
 
