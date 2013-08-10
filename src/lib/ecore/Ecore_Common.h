@@ -271,8 +271,8 @@ EAPI int ecore_thread_main_loop_end(void);
 #define ECORE_EVENT_SIGNAL_EXIT     3 /**< Exit signal event */
 #define ECORE_EVENT_SIGNAL_POWER    4 /**< Power signal event */
 #define ECORE_EVENT_SIGNAL_REALTIME 5 /**< Realtime signal event */
-#define ECORE_EVENT_LOW_MEMORY               6 /**< Low memory state changed, see ecore_low_memory_get() */
-#define ECORE_EVENT_LOW_BATTERY              7 /**< Low battery state changed, see ecore_low_battery_get() */
+#define ECORE_EVENT_MEMORY_STATE             6 /**< Memory state changed, see ecore_memory_state_get() */
+#define ECORE_EVENT_POWER_STATE              7 /**< Power state changed, see ecore_power_state_get() */
 #define ECORE_EVENT_LOCALE_CHANGED           8 /**< Locale changed */
 #define ECORE_EVENT_HOSTNAME_CHANGED         9 /**< Hostname changed */
 #define ECORE_EVENT_SYSTEM_TIMEDATE_CHANGED 10 /**< Time or Date changed */
@@ -519,14 +519,14 @@ EAPI void *ecore_event_current_event_get(void);
  *
  * Ecore is aware of some system events that one may be interested, they are described below:
  *
- * @li #ECORE_EVENT_LOW_MEMORY indicates system changed its free
+ * @li #ECORE_EVENT_MEMORY_STATE indicates system changed its free
  *     memory status, going to or being back from "low memory"
  *     state. When going to low memory state the libraries and
  *     applications may help the system by reducing memory usage,
  *     dropping caches and unused resources. The event carries no
  *     information, the current state should be queried with
  *     ecore_low_memory_get().
- * @li #ECORE_EVENT_LOW_BATTERY indicates system changed its battery
+ * @li #ECORE_EVENT_POWER_STATE indicates system changed its battery
  *     level, going to or being back from "low battery" state. When
  *     going to low battery state the libraries and applications may
  *     help the system by reducing number of wake ups and processing,
@@ -558,19 +558,31 @@ EAPI void *ecore_event_current_event_get(void);
  */
 
 /**
- * @brief Get the current status of low memory.
- * @return #EINA_TRUE if low on memory, #EINA_FALSE if memory usage is under normal levels.
+ * @enum _Ecore_Memory_State
+ * In dicates current system memory state
  * @since 1.8
  */
-EAPI Eina_Bool ecore_low_memory_get(void);
+enum _Ecore_Memory_State    /* Memory state */
+{
+   ECORE_MEMORY_STATE_NORMAL, /**< The normal memory usage state. No need to do anything special here - operation as normal. */
+   ECORE_MEMORY_STATE_LOW /**< The system is low on memory resources. This would indicate that it may be a good idea to free memory you don't need and minimize footprint to avoid general system problems. */
+};
+typedef enum _Ecore_Memory_State Ecore_Memory_State;
 
 /**
- * @brief Set the low memory status.
- * @param status #EINA_TRUE if low on memory, #EINA_FALSE if memory usage is under normal levels.
+ * @brief Get the current status of memory on the system.
+ * @return The current memory state for the system as a whole.
+ * @since 1.8
+ */
+EAPI Ecore_Memory_State ecore_memory_state_get(void);
+
+/**
+ * @brief Set the memory state.
+ * @param state The memory state to set.
  *
- * This function will keep the information about the current low
- * memory status and if it changed will automatically create an
- * #ECORE_EVENT_LOW_MEMORY event.
+ * This function will store information about the current
+ * memory state and if it changed will automatically create an
+ * #ECORE_EVENT_MEMORY_STATE event.
  *
  * @note This function should not be called by user, instead a
  * monitoring entity that is system dependent. Usually an ecore module
@@ -578,22 +590,36 @@ EAPI Eina_Bool ecore_low_memory_get(void);
  *
  * @since 1.8
  */
-EAPI void ecore_low_memory_set(Eina_Bool status);
+EAPI void ecore_memory_state_set(Ecore_Memory_State state);
+       
 
 /**
- * @brief Get the current status of low battery.
- * @return #EINA_TRUE if low on battery, #EINA_FALSE if battery level is reasonable.
+ * @enum _Ecore_Power_State
+ * In dicates current system memory state
  * @since 1.8
  */
-EAPI Eina_Bool ecore_low_battery_get(void);
+enum _Ecore_Power_State    /* Power state */
+{
+   ECORE_POWER_STATE_MAINS, /**< The system is connected to a mains supply of power, thus there is no need to limit processing to save battery life at all. */
+   ECORE_POWER_STATE_BATTERY, /**< The system is running off battery power, but is otherwise running normally. */
+   ECORE_POWER_STATE_LOW /**< The system is low on power (on battery) and the process should do its best to conserve power. For example it may reduce or suspend polling of network resources, turn off animations or reduce framerate etc. */
+};
+typedef enum _Ecore_Power_State Ecore_Power_State;
 
 /**
- * @brief Set the low battery status.
- * @param status #EINA_TRUE if low on battery, #EINA_FALSE if battery level is reasonable.
+ * @brief Get the current power state.
+ * @return The current power state for the system.
+ * @since 1.8
+ */
+EAPI Ecore_Power_State ecore_power_state_get(void);
+
+/**
+ * @brief Set the power state.
+ * @param state The power state to set.
  *
- * This function will keep the information about the current low
- * battery status and if it changed will automatically create an
- * #ECORE_EVENT_LOW_BATTERY event.
+ * This function will store information about the current power
+ * state and if it changed will automatically create an
+ * #ECORE_EVENT_POWER_STATE event.
  *
  * @note This function should not be called by user, instead a
  * monitoring entity that is system dependent. Usually an ecore module
@@ -601,7 +627,8 @@ EAPI Eina_Bool ecore_low_battery_get(void);
  *
  * @since 1.8
  */
-EAPI void ecore_low_battery_set(Eina_Bool status);
+EAPI void ecore_power_state_set(Ecore_Power_State state);
+       
 
 /**
  * @}

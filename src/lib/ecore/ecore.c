@@ -98,8 +98,8 @@ static int _thread_id = -1;
 static int _thread_id_max = 0;
 static int _thread_id_update = 0;
 
-static Eina_Bool _ecore_low_memory = EINA_FALSE;
-static Eina_Bool _ecore_low_battery = EINA_FALSE;
+static Ecore_Power_State _ecore_power_state = ECORE_POWER_STATE_MAINS;
+static Ecore_Memory_State _ecore_memory_state = ECORE_MEMORY_STATE_NORMAL;
 
 #ifdef HAVE_SYSTEMD
 static Ecore_Timer *_systemd_watchdog = NULL;
@@ -1008,34 +1008,32 @@ _thread_callback(void        *data EINA_UNUSED,
    _ecore_main_call_flush();
 }
 
-EAPI Eina_Bool
-ecore_low_memory_get(void)
+EAPI Ecore_Power_State
+ecore_power_state_get(void)
 {
-   return _ecore_low_memory;
+   return _ecore_power_state;
 }
 
 EAPI void
-ecore_low_memory_set(Eina_Bool status)
+ecore_power_state_set(Ecore_Power_State state)
 {
-   status = !!status;
-   if (_ecore_low_memory == status) return;
-   _ecore_low_memory = status;
-   ecore_event_add(ECORE_EVENT_LOW_MEMORY, NULL, NULL, NULL);
+   if (_ecore_power_state == state) return;
+   _ecore_power_state = state;
+   ecore_event_add(ECORE_EVENT_POWER_STATE, NULL, NULL, NULL);
 }
 
-EAPI Eina_Bool
-ecore_low_battery_get(void)
+EAPI Ecore_Memory_State
+ecore_memory_state_get(void)
 {
-   return _ecore_low_battery;
+   return _ecore_memory_state;
 }
 
 EAPI void
-ecore_low_battery_set(Eina_Bool status)
+ecore_memory_state_set(Ecore_Memory_State state)
 {
-   status = !!status;
-   if (_ecore_low_battery == status) return;
-   _ecore_low_battery = status;
-   ecore_event_add(ECORE_EVENT_LOW_BATTERY, NULL, NULL, NULL);
+   if (_ecore_memory_state == state) return;
+   _ecore_memory_state = state;
+   ecore_event_add(ECORE_EVENT_MEMORY_STATE, NULL, NULL, NULL);
 }
 
 

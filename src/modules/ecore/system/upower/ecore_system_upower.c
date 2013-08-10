@@ -32,6 +32,20 @@ static Eldbus_Proxy *_proxy = NULL;
 #endif
 #define DBG(...) EINA_LOG_DOM_DBG(_log_dom, __VA_ARGS__)
 
+static Eina_Bool _ecore_on_battery = EINA_FALSE;
+static Eina_Bool _ecore_low_battery = EINA_FALSE;
+
+static void
+_battery_eval(void)
+{
+   if (_ecore_low_battery)
+     ecore_power_state_set(ECORE_POWER_STATE_LOW);
+   else if (_ecore_on_battery)
+     ecore_power_state_set(ECORE_POWER_STATE_BATTERY);
+   else
+     ecore_power_state_set(ECORE_POWER_STATE_MAINS);
+}
+
 static void
 _on_low_battery_from_variant(Eldbus_Message_Iter *variant)
 {
@@ -44,7 +58,8 @@ _on_low_battery_from_variant(Eldbus_Message_Iter *variant)
      }
 
    DBG("OnLowBattery=%hhu", val);
-   ecore_low_battery_set(val);
+   _ecore_low_battery = val;
+   _battery_eval();
 }
 
 static void
@@ -76,6 +91,50 @@ _on_low_battery_get(Eldbus_Proxy *proxy)
 }
 
 static void
+_on_battery_from_variant(Eldbus_Message_Iter *variant)
+{
+   Eina_Bool val;
+
+   if (!eldbus_message_iter_get_and_next(variant, 'b', &val))
+     {
+        ERR("Error getting OnBattery.");
+        return;
+     }
+
+   DBG("OnBattery=%hhu", val);
+   _ecore_on_battery = val;
+   _battery_eval();
+}
+
+static void
+_on_battery_get_cb(void *data EINA_UNUSED, const Eldbus_Message *msg,
+                        Eldbus_Pending *pending EINA_UNUSED)
+{
+   Eldbus_Message_Iter *variant;
+   const char *errname, *errmsg;
+
+   if (eldbus_message_error_get(msg, &errname, &errmsg))
+     {
+        ERR("Message error %s - %s", errname, errmsg);
+        return;
+     }
+   if (!eldbus_message_arguments_get(msg, "v", &variant))
+     {
+        ERR("Error getting arguments.");
+        return;
+     }
+
+   _on_battery_from_variant(variant);
+}
+
+static void
+_on_battery_get(Eldbus_Proxy *proxy)
+{
+   eldbus_proxy_property_get(proxy, "OnBattery",
+                             _on_battery_get_cb, NULL);
+}
+
+static void
 _props_changed(void *data, const Eldbus_Message *msg)
 {
    Eldbus_Proxy *proxy = data;
@@ -95,22 +154,18 @@ _props_changed(void *data, const Eldbus_Message *msg)
         Eldbus_Message_Iter *var;
         if (!eldbus_message_iter_arguments_get(entry, "sv", &key, &var))
           continue;
-        printf("changed on low battery\n");
+        if (strcmp(key, "OnBattery") == 0)
+          _on_battery_from_variant(var);
         if (strcmp(key, "OnLowBattery") == 0)
-          {
-             _on_low_battery_from_variant(var);
-             return;
-          }
+          _on_low_battery_from_variant(var);
      }
 
    while (eldbus_message_iter_get_and_next(invalidated, 's', &prop))
      {
-        printf("invalidated on low battery\n");
+        if (strcmp(prop, "OnBattery") == 0)
+          _on_battery_get(proxy);
         if (strcmp(prop, "OnLowBattery") == 0)
-          {
-             _on_low_battery_get(proxy);
-             return;
-          }
+          _on_low_battery_get(proxy);
      }
 }
 
