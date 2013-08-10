@@ -3967,25 +3967,26 @@ evas_object_image_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, v
                             br = o->cur->border.r;
                             bt = o->cur->border.t;
                             bb = o->cur->border.b;
-                            if ((bl + br) > imagew)
+                            // fix impossible border settings if img pixels not enough
+                            if ((bl + br) > imw)
                               {
-                                 bl = imagew / 2;
-                                 br = imagew - bl;
+                                 int b0 = bl, b1 = br;
+
+                                 if ((bl + br) > 0)
+                                   {
+                                      bl = (bl * imw) / (bl + br);
+                                      br = imw - bl;
+                                   }
                               }
-                            if ((bl + br) > imagew)
+                            if ((bt + bb) > imh)
                               {
-                                 bl = imagew / 2;
-                                 br = imagew - bl;
-                              }
-                            if ((bt + bb) > imageh)
-                              {
-                                 bt = imageh / 2;
-                                 bb = imageh - bt;
-                              }
-                            if ((bt + bb) > imageh)
-                              {
-                                 bt = imageh / 2;
-                                 bb = imageh - bt;
+                                 int b0 = bt, b1 = bb;
+
+                                 if ((bt + bb) > 0)
+                                   {
+                                      bt = (bt * imh) / (bt + bb);
+                                      bb = imh - bt;
+                                   }
                               }
                             if (o->cur->border.scale != 1.0)
                               {
@@ -3997,6 +3998,35 @@ evas_object_image_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, v
                             else
                               {
                                   bsl = bl; bsr = br; bst = bt; bsb = bb;
+                              }
+                            // adjust output border rendering if it doesnt fit
+                            if ((bsl + bsr) > iw)
+                              {
+                                 int b0 = bsl, b1 = bsr;
+
+                                 if ((bsl + bsr) > 0)
+                                   {
+                                      bsl = (bsl * iw) / (bsl + bsr);
+                                      bsr = iw - bsl;
+                                   }
+                                 if (b0 > 0) bl = (bl * bsl) / b0;
+                                 else bl = 0;
+                                 if (b1 > 0) br = (br * bsr) / b1;
+                                 else br = 0;
+                              }
+                            if ((bst + bsb) > ih)
+                              {
+                                 int b0 = bst, b1 = bsb;
+
+                                 if ((bst + bsb) > 0)
+                                   {
+                                      bst = (bst * ih) / (bst + bsb);
+                                      bsb = ih - bst;
+                                   }
+                                 if (b0 > 0) bt = (bt * bst) / b0;
+                                 else bt = 0;
+                                 if (b1 > 0) bb = (bb * bsb) / b1;
+                                 else bb = 0;
                               }
                             // #--
                             // |
