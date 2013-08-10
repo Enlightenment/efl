@@ -325,6 +325,11 @@ _elm_popup_smart_theme(Eo *obj, void *_pd, va_list *list)
 
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
 
+   /* Since parent of the popup can be notify, we need to set to notify style
+      manually. */
+   if (elm_widget_parent_get(sd->notify) != obj)
+     eo_do(sd->notify, elm_wdg_style_set(elm_widget_style_get(obj), &ret));
+
    if (sd->action_area)
      {
         snprintf(buf, sizeof(buf), "buttons%u", sd->button_count);
