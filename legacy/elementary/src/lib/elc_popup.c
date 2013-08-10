@@ -100,11 +100,16 @@ _on_show(void *data __UNUSED__,
 {
    ELM_POPUP_DATA_GET(obj, sd);
 
-   evas_object_show(sd->notify);
+   /* yeah, ugly, but again, this widget needs a rewrite */
+   if (elm_widget_parent_get(sd->notify) == obj)
+     elm_widget_sub_object_del(obj, sd->notify);
 
 /* FIXME: Should be rewritten popup. This code is for arranging child-parent relation well. Without this code, Popup't top parent will be notify. And there will be no parent for notify. Terrible! */
    elm_widget_sub_object_add(elm_widget_parent_get(obj), sd->notify);
+
    elm_object_content_set(sd->notify, obj);
+
+   evas_object_show(sd->notify);
 
    elm_object_focus_set(obj, EINA_TRUE);
 }
@@ -117,9 +122,12 @@ _on_hide(void *data __UNUSED__,
 {
    ELM_POPUP_DATA_GET(obj, sd);
 
-   evas_object_hide(sd->notify);
-
+   //Revert the obj-tree again.
    elm_object_content_unset(sd->notify);
+   elm_widget_sub_object_add(elm_widget_parent_get(sd->notify), obj);
+   elm_widget_sub_object_add(obj, sd->notify);
+
+   evas_object_hide(sd->notify);
 
 /* FIXME:elm_object_content_unset(notify) deletes callback to revert focus status. */
    elm_object_focus_set(obj, EINA_FALSE);
@@ -325,10 +333,9 @@ _elm_popup_smart_theme(Eo *obj, void *_pd, va_list *list)
 
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
 
-   /* Since parent of the popup can be notify, we need to set the notify style
-      manually. */
-   if (elm_widget_parent_get(sd->notify) != obj)
-     eo_do(sd->notify, elm_wdg_style_set(elm_widget_style_get(obj), &ret));
+   //FIXME: theme set seems corrupted.
+   //if (elm_widget_parent_get(sd->notify) != obj)
+     elm_widget_style_set(sd->notify, elm_widget_style_get(obj));
 
    if (sd->action_area)
      {

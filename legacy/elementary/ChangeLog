@@ -1536,4 +1536,9 @@
 
 2013-08-09  Cedric Bail
 
-	* Add support for URL in Elm_Image.
+        * Add support for URL in Elm_Image.
+
+2013-08-10  ChunEon Park (Hermet)
+
+        * Popup: Fix the corrupted internal widget tree that caused
+        elm_theme_set() doesn't work correctly.
