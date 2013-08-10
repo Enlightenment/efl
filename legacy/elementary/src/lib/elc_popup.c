@@ -325,8 +325,6 @@ _elm_popup_smart_theme(Eo *obj, void *_pd, va_list *list)
 
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
 
-   elm_object_style_set(sd->notify, elm_widget_style_get(obj));
-
    if (sd->action_area)
      {
         snprintf(buf, sizeof(buf), "buttons%u", sd->button_count);
