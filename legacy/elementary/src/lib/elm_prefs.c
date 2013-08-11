@@ -1566,8 +1566,7 @@ _elm_prefs_item_object_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 
    it = _elm_prefs_item_api_entry_common(obj, name);
    if (!it) *ret = NULL;
-
-   *ret = it->w_obj;
+   else *ret = it->w_obj;
 }
 
 EAPI void
