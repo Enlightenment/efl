@@ -324,7 +324,7 @@ _edje_file_open(Eina_File *f, const char *coll, int *error_ret, Edje_Part_Collec
 	return NULL;
      }
 
-   edf->f = f;
+   edf->f = eina_file_dup(f);
    edf->ef = ef;
    edf->mtime = mtime;
 #ifdef HAVE_EIO
