@@ -338,7 +338,15 @@ _edje_smart_file_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 
    if (ret) *ret = EINA_FALSE;
 
-   f = eina_file_open(file, EINA_FALSE);
+   if (file)
+     {
+        f = eina_file_open(file, EINA_FALSE);
+        if (!f) 
+          {
+             ed->load_error = EDJE_LOAD_ERROR_DOES_NOT_EXIST;
+             return ;
+          }
+     }
    nested = eina_array_new(8);
 
    if (_edje_object_file_set_internal(obj, f, group, NULL, NULL, nested))
