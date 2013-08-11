@@ -1131,10 +1131,6 @@ _action_button_set(Evas_Object *obj,
    if (!sd->action_area)
      {
         sd->action_area = elm_layout_add(obj);
-        evas_object_size_hint_weight_set
-          (sd->action_area, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-        evas_object_size_hint_align_set
-          (sd->action_area, EVAS_HINT_FILL, EVAS_HINT_FILL);
         evas_object_event_callback_add
           (sd->action_area, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
            _size_hints_changed_cb, obj);
