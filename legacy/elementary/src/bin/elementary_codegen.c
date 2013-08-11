@@ -385,7 +385,7 @@ _theme_set_write(void)
    _group = strdup(group);
    if (!_group) return EINA_FALSE;
 
-   token = strtok(_group, "/");
+   strtok(_group, "/");
    for (i = 0; i < 3; i++)
      {
 	token = strtok(NULL, "/");
