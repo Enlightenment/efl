@@ -340,8 +340,8 @@ _elm_panes_smart_content_left_size_set(Eo *obj, void *_pd, va_list *list)
    Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    if (size < 0.0) size = 0.0;
-   else if (size > 1.0)
-     size = 1.0;
+   else if (size > 1.0) size = 1.0;
+
    if (sd->horizontal)
      edje_object_part_drag_value_set
        (wd->resize_obj, "elm.bar", 0.0, size);
