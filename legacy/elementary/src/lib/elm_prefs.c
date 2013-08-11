@@ -959,8 +959,8 @@ _elm_prefs_page_load(Evas_Object *obj,
 
         if (!ret)
           ERR("problem while reading from file %s, key %s", sd->file, pname);
-
-        ret->prefs = obj;
+        else
+          ret->prefs = obj;
      }
    else
      ERR("failed to load from requested epb file (%s)", sd->file);
