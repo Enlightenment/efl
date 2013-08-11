@@ -388,6 +388,7 @@ done:
    *new_p = p;
 
    tok = mem_alloc(tok_end - tok_start + 2);
+   if (!tok) return NULL;
    strncpy(tok, tok_start, tok_end - tok_start + 1);
    tok[tok_end - tok_start + 1] = 0;
 
@@ -425,7 +426,7 @@ done:
                }
           }
      }
-   else if ((tok) && (*tok == '('))
+   else if (*tok == '(')
      {
         char *tmp;
         tmp = tok;
