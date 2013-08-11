@@ -1229,9 +1229,7 @@ elm_access_action(Evas_Object *obj, const Elm_Access_Action_Type type, Elm_Acces
 {
    Evas *evas;
    Evas_Object *ho;
-   Elm_Access_Action_Info *a;
-
-   a = (Elm_Access_Action_Info *) action_info;
+   Elm_Access_Action_Info *a = action_info;
 
    switch (type)
      {
