@@ -138,7 +138,6 @@ _scroller_size_calc(Evas_Object *obj)
 {
    Evas_Coord h;
    Evas_Coord h_title = 0;
-   Evas_Coord h_content = 0;
    Evas_Coord h_action_area = 0;
    const char *action_area_height;
 
@@ -164,8 +163,7 @@ _scroller_size_calc(Evas_Object *obj)
                   * elm_config_scale_get() * elm_object_scale_get(obj));
      }
 
-   h_content = h - (h_title + h_action_area);
-   sd->max_sc_h = h_content;
+   sd->max_sc_h = h - (h_title + h_action_area);
 }
 
 static void
