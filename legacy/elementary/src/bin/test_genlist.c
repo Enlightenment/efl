@@ -3299,6 +3299,13 @@ gl20_focus_check_changed(void *data, Evas_Object *obj, void *event_info  __UNUSE
    gl20_focus_on_selection_set(data, obj, nextstate);
 }
 
+static void
+gl20_focus_animate_check_changed(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   elm_win_focus_highlight_animate_set((Evas_Object *)data,
+                                       elm_check_state_get(obj));
+}
+
 void
 test_genlist20(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
@@ -3306,13 +3313,16 @@ test_genlist20(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    unsigned lhand, rhand;
 
    elm_config_focus_highlight_enabled_set(EINA_TRUE);
+   elm_config_focus_highlight_animate_set(EINA_TRUE);
 
    win = elm_win_util_standard_add("genlist-focus", "Genlist Focus");
    elm_win_autodel_set(win, EINA_TRUE);
+   evas_object_resize(win, 300, 500);
+   evas_object_show(win);
 
    bxx = elm_box_add(win);
-   elm_win_resize_object_add(win, bxx);
    evas_object_size_hint_weight_set(bxx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bxx);
    evas_object_show(bxx);
 
    gl = elm_genlist_add(win);
@@ -3329,13 +3339,23 @@ test_genlist20(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
 
    chk = elm_check_add(win);
    elm_object_text_set(chk, "Focus on selection");
+   evas_object_size_hint_weight_set(chk, EVAS_HINT_EXPAND, 0.0);
    evas_object_smart_callback_add(chk, "changed", gl20_focus_check_changed, gl);
    elm_box_pack_end(bx, chk);
    evas_object_show(chk);
 
-   elm_box_pack_end(bxx, bx);
-
    gl20_focus_on_selection_set(gl, chk, EINA_TRUE);
+
+   chk = elm_check_add(win);
+   elm_object_text_set(chk, "Focus Animation");
+   elm_check_state_set(chk, EINA_TRUE);
+   evas_object_size_hint_weight_set(chk, EVAS_HINT_EXPAND, 0.0);
+   evas_object_smart_callback_add(chk, "changed",
+                                  gl20_focus_animate_check_changed, win);
+   elm_box_pack_end(bx, chk);
+   evas_object_show(chk);
+
+   elm_box_pack_end(bxx, bx);
 
    itc1 = elm_genlist_item_class_new();
    itc1->item_style     = "default";
@@ -3370,9 +3390,6 @@ test_genlist20(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
 
    elm_genlist_item_class_free(itc1);
    elm_genlist_item_class_free(itc4);
-
-   evas_object_resize(win, 300, 500);
-   evas_object_show(win);
 }
 
 

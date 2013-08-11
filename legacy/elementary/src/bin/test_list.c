@@ -1287,6 +1287,13 @@ test_list8_focus_check_changed(void *data, Evas_Object *obj, void *event_info  _
    test_list8_focus_on_selection_set(data, obj, nextstate);
 }
 
+static void
+test_list8_focus_animate_check_changed(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   elm_win_focus_highlight_animate_set((Evas_Object *)data,
+                                       elm_check_state_get(obj));
+}
+
 void test_list_focus(const char *name, const char *title, Eina_Bool horiz)
 {
    Evas_Object *win, *li, *bx, *bxx, *chk;
@@ -1294,13 +1301,16 @@ void test_list_focus(const char *name, const char *title, Eina_Bool horiz)
    char buf[256];
 
    elm_config_focus_highlight_enabled_set(EINA_TRUE);
+   elm_config_focus_highlight_animate_set(EINA_TRUE);
 
    win = elm_win_util_standard_add(name, title);
    elm_win_autodel_set(win, EINA_TRUE);
+   evas_object_resize(win, 320, 300);
+   evas_object_show(win);
 
    bxx = elm_box_add(win);
-   elm_win_resize_object_add(win, bxx);
    evas_object_size_hint_weight_set(bxx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bxx);
    evas_object_show(bxx);
 
    li = elm_list_add(win);
@@ -1318,13 +1328,23 @@ void test_list_focus(const char *name, const char *title, Eina_Bool horiz)
 
    chk = elm_check_add(win);
    elm_object_text_set(chk, "Focus on selection");
+   evas_object_size_hint_weight_set(chk, EVAS_HINT_EXPAND, 0.0);
    evas_object_smart_callback_add(chk, "changed", test_list8_focus_check_changed, li);
    elm_box_pack_end(bx, chk);
    evas_object_show(chk);
 
-   elm_box_pack_end(bxx, bx);
-
    test_list8_focus_on_selection_set(li, chk, EINA_TRUE);
+
+   chk = elm_check_add(win);
+   elm_object_text_set(chk, "Focus Animation");
+   elm_check_state_set(chk, EINA_TRUE);
+   evas_object_size_hint_weight_set(chk, EVAS_HINT_EXPAND, 0.0);
+   evas_object_smart_callback_add(chk, "changed",
+                                  test_list8_focus_animate_check_changed, win);
+   elm_box_pack_end(bx, chk);
+   evas_object_show(chk);
+
+   elm_box_pack_end(bxx, bx);
 
    for (idx = 0; _list_focus_combo[idx] >= 0; idx++)
      {
@@ -1343,9 +1363,6 @@ void test_list_focus(const char *name, const char *title, Eina_Bool horiz)
 
    elm_list_go(li);
    evas_object_show(li);
-
-   evas_object_resize(win, 320, 300);
-   evas_object_show(win);
 }
 
 void
