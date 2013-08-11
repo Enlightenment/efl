@@ -1317,7 +1317,7 @@ static Eina_Bool
 _x11_dnd_position(void *data __UNUSED__, int etype __UNUSED__, void *ev)
 {
    Ecore_X_Event_Xdnd_Position *pos = ev;
-   Ecore_X_Rectangle rect;
+   Ecore_X_Rectangle rect = { 0, 0, 0, 0 };
    Dropable *dropable, *dropable_old;
    Elm_Xdnd_Action act;
    
