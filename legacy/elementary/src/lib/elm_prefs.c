@@ -333,7 +333,8 @@ _elm_prefs_item_node_by_name(Elm_Prefs_Smart_Data *sd,
    char *token;
    char *aux = buf;
 
-   strncpy(buf, name, PATH_MAX);
+   strncpy(buf, name, PATH_MAX - 1);
+   buf[PATH_MAX - 1] = '\0';
 
    token = strsep(&aux, ":");
 
