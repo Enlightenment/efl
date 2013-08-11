@@ -1349,7 +1349,7 @@ _item_content_set_hook(Elm_Object_Item *it,
 
    if (VIEW(item))
      {
-        if (!strcmp(part, "start"))
+        if ((!part) || !strcmp(part, "start"))
           edje_object_part_swallow(VIEW(item), "elm.swallow.icon", content);
         else
           edje_object_part_swallow(VIEW(item), "elm.swallow.end", content);
