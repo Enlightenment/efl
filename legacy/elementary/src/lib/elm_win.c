@@ -125,6 +125,7 @@ struct _Elm_Win_Smart_Data
       Eina_Bool    enabled : 1;
       Eina_Bool    theme_changed : 1; /* set true when the focus theme is changed */
       Eina_Bool    animate : 1; /* set true when the focus highlight animate is enabled */
+      Eina_Bool    animate_supported : 1; /* set true when the focus highlight animate is supported by theme */
       Eina_Bool    geometry_changed : 1;
    } focus_highlight;
 
@@ -778,14 +779,14 @@ _elm_win_focus_highlight_reconfigure(Elm_Win_Smart_Data *sd)
           (sd->obj, fobj, "focus_highlight", "top", str);
         sd->focus_highlight.theme_changed = EINA_FALSE;
 
-        if (_elm_config->focus_highlight_animate)
+        if (sd->focus_highlight.animate)
           {
              str = edje_object_data_get(sd->focus_highlight.fobj, "animate");
-             sd->focus_highlight.animate = ((str) && (!strcmp(str, "on")));
+             sd->focus_highlight.animate_supported = ((str) && (!strcmp(str, "on")));
           }
      }
 
-   if ((sd->focus_highlight.animate) && (previous) &&
+   if ((sd->focus_highlight.animate_supported) && (previous) &&
        (!sd->focus_highlight.prev.handled))
      _elm_win_focus_highlight_anim_setup(sd, fobj);
    else
@@ -2987,6 +2988,8 @@ _win_constructor(Eo *obj, void *_pd, va_list *list)
 
    if (_elm_config->focus_highlight_enable)
      elm_win_focus_highlight_enabled_set(obj, EINA_TRUE);
+   if (_elm_config->focus_highlight_animate)
+     elm_win_focus_highlight_animate_set(obj, EINA_TRUE);
 
 #ifdef ELM_DEBUG
    Evas_Modifier_Mask mask = evas_key_modifier_mask_get(sd->evas, "Control");
@@ -5103,6 +5106,52 @@ _focus_highlight_style_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    *ret = sd->focus_highlight.style;
 }
 
+EAPI void
+elm_win_focus_highlight_animate_set(Evas_Object *obj,
+                                    Eina_Bool animate)
+{
+   ELM_WIN_CHECK(obj);
+   eo_do(obj, elm_obj_win_focus_highlight_animate_set(animate));
+}
+
+static void
+_focus_highlight_animate_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool animate = va_arg(*list, int);
+   Elm_Win_Smart_Data *sd = _pd;
+   const char *str;
+
+   animate = !!animate;
+   if (sd->focus_highlight.animate == animate)
+     return;
+
+   sd->focus_highlight.animate = animate;
+   if (animate)
+     {
+        str = edje_object_data_get(sd->focus_highlight.fobj, "animate");
+        sd->focus_highlight.animate_supported = ((str) && (!strcmp(str, "on")));
+     }
+   else
+     sd->focus_highlight.animate_supported = EINA_FALSE;
+}
+
+EAPI Eina_Bool
+elm_win_focus_highlight_animate_get(const Evas_Object *obj)
+{
+   ELM_WIN_CHECK(obj) EINA_FALSE;
+   Eina_Bool ret = EINA_FALSE;
+   eo_do((Eo *) obj, elm_obj_win_focus_highlight_animate_get(&ret));
+   return ret;
+}
+
+static void
+_focus_highlight_animate_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Elm_Win_Smart_Data *sd = _pd;
+   *ret = sd->focus_highlight.animate;
+}
+
 EAPI Eina_Bool
 elm_win_socket_listen(Evas_Object *obj,
                       const char *svcname,
@@ -5368,6 +5417,8 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_FOCUS_HIGHLIGHT_ENABLED_GET), _focus_highlight_enabled_get),
         EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_FOCUS_HIGHLIGHT_STYLE_SET), _focus_highlight_style_set),
         EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_FOCUS_HIGHLIGHT_STYLE_GET), _focus_highlight_style_get),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_FOCUS_HIGHLIGHT_ANIMATE_SET), _focus_highlight_animate_set),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_FOCUS_HIGHLIGHT_ANIMATE_GET), _focus_highlight_animate_get),
         EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_SOCKET_LISTEN), _socket_listen),
         EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_XWINDOW_GET), _xwindow_get),
         EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_WL_WINDOW_GET), _wl_window_get),
@@ -5468,6 +5519,8 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_FOCUS_HIGHLIGHT_ENABLED_GET, "Get the enabled value of the focus highlight for this window."),
      EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_FOCUS_HIGHLIGHT_STYLE_SET, "Set the style for the focus highlight on this window."),
      EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_FOCUS_HIGHLIGHT_STYLE_GET, "Get the style set for the focus highlight object."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_FOCUS_HIGHLIGHT_ANIMATE_SET, "Set the animate status for the focus highlight for this window."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_FOCUS_HIGHLIGHT_ANIMATE_GET, "Get the animate status for the focus highlight for this window."),
      EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_SOCKET_LISTEN, "Create a socket to provide the service for Plug widget."),
      EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_XWINDOW_GET, "Get the Ecore_X_Window of an Evas_Object."),
      EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_WL_WINDOW_GET, "Get the Ecore_Wl_Window of and Evas_Object."),

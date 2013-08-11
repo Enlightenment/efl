@@ -1119,6 +1119,32 @@ EAPI void                  elm_win_focus_highlight_style_set(Evas_Object *obj, c
 EAPI const char           *elm_win_focus_highlight_style_get(const Evas_Object *obj);
 
 /**
+ * Set the animate status for the focus highlight for this window.
+ *
+ * This function will enable or disable the animation of focus highlight only
+ * for the given window, regardless of the global setting for it
+ *
+ * @param obj The window where to enable the highlight animation
+ * @param enabled The enabled value for the highlight animation
+ *
+ * @ingroup Win
+ */
+EAPI void                  elm_win_focus_highlight_animate_set(Evas_Object *obj, Eina_Bool enabled);
+
+/**
+ * Get the animate value of the focus highlight for this window
+ *
+ * @param obj The window in which to check if the focus highlight animation is
+ * enabled
+ *
+ * @return EINA_TRUE if animation is enabled, EINA_FALSE otherwise
+ *
+ * @ingroup Win
+ */
+EAPI Eina_Bool             elm_win_focus_highlight_animate_get(const Evas_Object *obj);
+
+
+/**
  * Sets the keyboard mode of the window.
  *
  * @param obj The window object

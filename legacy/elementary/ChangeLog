@@ -1542,3 +1542,7 @@
 
         * Popup: Fix the corrupted internal widget tree that caused
         elm_theme_set() doesn't work correctly.
+
+2013-08-11  Daniel Juyung Seo (SeoZ)
+
+        * Win Focus: Added elm_win_focus_highlight_animate_set/get().

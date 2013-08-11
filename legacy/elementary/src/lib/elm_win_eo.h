@@ -99,6 +99,8 @@ enum
      ELM_OBJ_WIN_SUB_ID_FOCUS_HIGHLIGHT_ENABLED_GET,
      ELM_OBJ_WIN_SUB_ID_FOCUS_HIGHLIGHT_STYLE_SET,
      ELM_OBJ_WIN_SUB_ID_FOCUS_HIGHLIGHT_STYLE_GET,
+     ELM_OBJ_WIN_SUB_ID_FOCUS_HIGHLIGHT_ANIMATE_SET,
+     ELM_OBJ_WIN_SUB_ID_FOCUS_HIGHLIGHT_ANIMATE_GET,
      ELM_OBJ_WIN_SUB_ID_SOCKET_LISTEN,
      ELM_OBJ_WIN_SUB_ID_XWINDOW_GET,
      ELM_OBJ_WIN_SUB_ID_WL_WINDOW_GET,
@@ -1176,6 +1178,30 @@ enum
  * @see elm_win_focus_highlight_style_get
  */
 #define elm_obj_win_focus_highlight_style_get(ret) ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_FOCUS_HIGHLIGHT_STYLE_GET), EO_TYPECHECK(const char **, ret)
+
+/**
+ * @def elm_obj_win_focus_highlight_animate_set
+ * @since 1.8
+ *
+ * Set the animate status for the focus highlight for this window.
+ *
+ * @param[in] animate
+ *
+ * @see elm_win_focus_highlight_animate_get
+ */
+#define elm_obj_win_focus_highlight_animate_set(animate) ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_FOCUS_HIGHLIGHT_ANIMATE_SET), EO_TYPECHECK(Eina_Bool, animate)
+
+/**
+ * @def elm_obj_win_focus_highlight_animate_get
+ * @since 1.8
+ *
+ * Get the animate status for the focus highlight for this window.
+ *
+ * @param[out] ret
+ *
+ * @see elm_win_focus_highlight_animate_get
+ */
+#define elm_obj_win_focus_highlight_animate_get(ret) ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_FOCUS_HIGHLIGHT_ANIMATE_GET), EO_TYPECHECK(Eina_Bool *, ret)
 
 /**
  * @def elm_obj_win_socket_listen
