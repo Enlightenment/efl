@@ -3970,8 +3970,6 @@ evas_object_image_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, v
                             // fix impossible border settings if img pixels not enough
                             if ((bl + br) > imw)
                               {
-                                 int b0 = bl, b1 = br;
-
                                  if ((bl + br) > 0)
                                    {
                                       bl = (bl * imw) / (bl + br);
@@ -3980,8 +3978,6 @@ evas_object_image_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, v
                               }
                             if ((bt + bb) > imh)
                               {
-                                 int b0 = bt, b1 = bb;
-
                                  if ((bt + bb) > 0)
                                    {
                                       bt = (bt * imh) / (bt + bb);
