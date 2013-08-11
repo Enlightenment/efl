@@ -209,124 +209,138 @@ create_win_bt_clicked(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *
 void
 test_focus4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *gd, *tg, *bt;
-   Evas_Object *lb, *bt1, *bt2, *bt3, *bt4, *bx;
+   Evas_Object *win, *fr, *bx, *bx2, *tg, *bt, *sp;
+   Evas_Object *lb, *bt1, *bt2, *bt3, *bt4;
    Eina_List *custom_chain = NULL;
+
+   elm_config_focus_highlight_enabled_set(EINA_TRUE);
+   elm_config_focus_highlight_animate_set(EINA_TRUE);
 
    win = elm_win_util_standard_add("focus4", "Focus 4");
    elm_win_autodel_set(win, EINA_TRUE);
    elm_win_focus_highlight_enabled_set(win, EINA_TRUE);
    elm_win_focus_highlight_animate_set(win, EINA_TRUE);
-   elm_config_focus_highlight_enabled_set(EINA_TRUE);
-   elm_config_focus_highlight_animate_set(EINA_TRUE);
+   evas_object_resize(win, 320, 320);
+   evas_object_show(win);
+
+   fr = elm_frame_add(win);
+   evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, fr);
+   elm_object_style_set(fr, "pad_large");
+   evas_object_show(fr);
 
    /* First Example - Using Focus Highlight */
-   gd = elm_grid_add(win);
-   elm_grid_size_set(gd, 100, 100);
-   evas_object_size_hint_weight_set(gd, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, gd);
-   evas_object_show(gd);
+   bx = elm_box_add(fr);
+   elm_object_content_set(fr, bx);
+   evas_object_show(bx);
 
-   tg = elm_check_add(win);
-   evas_object_size_hint_weight_set(tg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   tg = elm_check_add(bx);
+   evas_object_size_hint_weight_set(tg, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(tg, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_object_text_set(tg, "Focus Highlight Enabled (Config)");
    elm_check_state_set(tg, EINA_TRUE);
    evas_object_smart_callback_add(tg, "changed", highlight_enabled_cb, NULL);
-   elm_grid_pack(gd, tg, 10, 5, 60, 10);
+   elm_box_pack_end(bx, tg);
    evas_object_show(tg);
 
-   tg = elm_check_add(win);
-   evas_object_size_hint_weight_set(tg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   tg = elm_check_add(bx);
+   evas_object_size_hint_weight_set(tg, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(tg, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_object_text_set(tg, "Focus Highlight Animate (Config)");
    elm_check_state_set(tg, EINA_TRUE);
    evas_object_smart_callback_add(tg, "changed", highlight_animate_cb, NULL);
-   elm_grid_pack(gd, tg, 10, 10, 60, 10);
+   elm_box_pack_end(bx, tg);
    evas_object_show(tg);
 
-   tg = elm_check_add(win);
-   evas_object_size_hint_weight_set(tg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   tg = elm_check_add(bx);
+   evas_object_size_hint_weight_set(tg, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(tg, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_object_text_set(tg, "Focus Highlight Enabled (Win)");
    elm_check_state_set(tg, EINA_TRUE);
    evas_object_smart_callback_add(tg, "changed", win_highlight_enabled_cb, win);
-   elm_grid_pack(gd, tg, 10, 15, 60, 10);
+   elm_box_pack_end(bx, tg);
    evas_object_show(tg);
 
-   tg = elm_check_add(win);
-   evas_object_size_hint_weight_set(tg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   tg = elm_check_add(bx);
+   evas_object_size_hint_weight_set(tg, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(tg, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_object_text_set(tg, "Focus Highlight Animate (Win)");
    elm_check_state_set(tg, EINA_TRUE);
    evas_object_smart_callback_add(tg, "changed", win_highlight_animate_cb, win);
-   elm_grid_pack(gd, tg, 10, 20, 60, 10);
+   elm_box_pack_end(bx, tg);
    evas_object_show(tg);
 
-   bt = elm_button_add(win);
+   bt = elm_button_add(bx);
    elm_object_text_set(bt, "Create Window");
-   elm_grid_pack(gd, bt, 10, 35, 80, 10);
+   evas_object_size_hint_weight_set(tg, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(tg, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(bx, bt);
    evas_object_smart_callback_add(bt, "clicked", create_win_bt_clicked, NULL);
    evas_object_show(bt);
 
+   sp = elm_separator_add(bx);
+   elm_separator_horizontal_set(sp, EINA_TRUE);
+   evas_object_size_hint_weight_set(sp, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(sp, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(bx, sp);
+   evas_object_show(sp);
+
    /* Second Example - Using Custom Chain */
-   lb = elm_label_add(win);
+   lb = elm_label_add(bx);
    elm_object_text_set(lb, "Custom Chain: Please use tab key to check");
-   evas_object_size_hint_weight_set(lb, 0.0, 0.0);
+   evas_object_size_hint_weight_set(lb, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(lb, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_grid_pack(gd, lb, 10, 50, 80, 5);
+   elm_box_pack_end(bx, lb);
    evas_object_show(lb);
 
-   bx = elm_box_add(win);
-   elm_box_horizontal_set(bx, EINA_TRUE);
-   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   bx2 = elm_box_add(bx);
+   elm_box_horizontal_set(bx2, EINA_TRUE);
+   evas_object_size_hint_weight_set(bx2, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(bx2, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(bx, bx2);
+   evas_object_show(bx2);
 
-   bt1 = elm_button_add(win);
+   bt1 = elm_button_add(bx2);
    elm_object_text_set(bt1, "Button 1");
    evas_object_size_hint_weight_set(bt1, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt1, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_box_pack_end(bx, bt1);
+   elm_box_pack_end(bx2, bt1);
    evas_object_show(bt1);
 
-   bt2 = elm_button_add(win);
+   bt2 = elm_button_add(bx2);
    elm_object_text_set(bt2, "Button 2");
    evas_object_size_hint_weight_set(bt2, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt2, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_box_pack_end(bx, bt2);
+   elm_box_pack_end(bx2, bt2);
    evas_object_show(bt2);
 
-   bt3 = elm_button_add(win);
+   bt3 = elm_button_add(bx2);
    elm_object_text_set(bt3, "Button 3");
    evas_object_size_hint_weight_set(bt3, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt3, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_box_pack_end(bx, bt3);
+   elm_box_pack_end(bx2, bt3);
    evas_object_show(bt3);
 
-   bt4 = elm_button_add(win);
+   bt4 = elm_button_add(bx2);
    elm_object_text_set(bt4, "Button 4");
    evas_object_size_hint_weight_set(bt4, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt4, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_box_pack_end(bx, bt4);
+   elm_box_pack_end(bx2, bt4);
    evas_object_show(bt4);
 
    custom_chain = eina_list_append(custom_chain, bt2);
    custom_chain = eina_list_append(custom_chain, bt1);
    custom_chain = eina_list_append(custom_chain, bt4);
    custom_chain = eina_list_append(custom_chain, bt3);
-   elm_object_focus_custom_chain_set(bx, custom_chain);
+   elm_object_focus_custom_chain_set(bx2, custom_chain);
 
-   elm_grid_pack(gd, bx, 10, 55, 80, 30);
-   evas_object_show(bx);
-
-   tg = elm_check_add(win);
+   tg = elm_check_add(bx);
    elm_object_text_set(tg, "Custom Chain");
+   evas_object_size_hint_weight_set(tg, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(tg, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_check_state_set(tg, EINA_TRUE);
    evas_object_smart_callback_add(tg, "changed", custom_chain_unset_cb, bx);
-   elm_grid_pack(gd, tg, 10, 85, 40, 10);
+   elm_box_pack_end(bx, tg);
    evas_object_show(tg);
-
-   evas_object_resize(win, 320, 320);
-   evas_object_show(win);
 }
 #endif
