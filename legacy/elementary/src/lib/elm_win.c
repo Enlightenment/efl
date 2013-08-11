@@ -224,10 +224,10 @@ _elm_win_on_resize_obj_changed_size_hints(void *data,
 EAPI double _elm_startup_time = 0;
 
 static void
-_elm_win_first_frame_do(void *data EINA_UNUSED, Evas *e EINA_UNUSED, void *event_info EINA_UNUSED)
+_elm_win_first_frame_do(void *data, Evas *e EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    double end = ecore_time_unix_get();
-   char *first = getenv("ELM_FIRST_FRAME");
+   char *first = data;
 
    switch (*first)
      {
@@ -235,10 +235,10 @@ _elm_win_first_frame_do(void *data EINA_UNUSED, Evas *e EINA_UNUSED, void *event
       case 'E':
       case 'D': exit(-1);
       case 'T': fprintf(stderr, "Startup time: '%f' - '%f' = '%f' sec\n", end, _elm_startup_time, end - _elm_startup_time);
-         break;
+                break;
      }
 
-   evas_event_callback_del_full(e, EVAS_CALLBACK_RENDER_POST, _elm_win_first_frame_do, NULL);
+   evas_event_callback_del_full(e, EVAS_CALLBACK_RENDER_POST, _elm_win_first_frame_do, data);
 }
 
 static void
@@ -2839,7 +2839,7 @@ _win_constructor(Eo *obj, void *_pd, va_list *list)
 
    if (getenv("ELM_FIRST_FRAME"))
      evas_event_callback_add(ecore_evas_get(tmp_sd.ee), EVAS_CALLBACK_RENDER_POST,
-			     _elm_win_first_frame_do, NULL);
+			     _elm_win_first_frame_do, getenv("ELM_FIRST_FRAME"));
 
    /* copying possibly altered fields back */
 #define SD_CPY(_field)             \
