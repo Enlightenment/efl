@@ -68,24 +68,22 @@ group { name: "elm/label/base/popup/default";
      }
    parts {
       part { name: "left_top_padding";
-         type: RECT;
+         type: SPACER;
          scale: 1;
          description { state: "default" 0.0;
-            fixed: 1 1;
-            visible: 0;
+            min: 50 0;
+            fixed: 1 0;
             align: 0.0 0.0;
-            min: 10 0;
             rel2.relative: 0 0;
          }
       }
       part { name: "right_bottom_padding";
-         type: RECT;
+         type: SPACER;
          scale: 1;
          description { state: "default" 0.0;
-            fixed: 1 1;
-            visible: 0;
-            align: 1.0 1.0;
             min: 10 0;
+            fixed: 1 0;
+            align: 1.0 1.0;
             rel1.relative: 1 1;
          }
       }
@@ -94,7 +92,6 @@ group { name: "elm/label/base/popup/default";
          mouse_events: 0;
          scale: 1;
          description { state: "default" 0.0;
-            min: 380 0;
             text {
                style: "popup_desc_style";
                min: 0 1;
@@ -135,17 +132,14 @@ group { name: "elm/popup/base/default";
          type: RECT;
          scale : 1;
          description { state: "default" 0.0;
-            min: 400 50;
-            fixed : 1 1;
+            min: 0 50;
+            fixed : 0 1;
             align: 0.5 0.0;
             visible: 0;
             color: 172 172 172 255;
-            rel1 {
-               relative: 0.5 0.0;
-               to: "base";
-            }
+            rel1.to: "base";
             rel2 {
-               relative: 0.5 0.0;
+               relative: 1.0 0.0;
                to: "base";
             }
          }
@@ -155,26 +149,24 @@ group { name: "elm/popup/base/default";
          }
       }
       part { name: "left_pad";
-         type: RECT;
+         type: SPACER;
          scale: 1;
          description { state: "default" 0.0;
             min: 10 0;
             max: 10 0;
-            fixed: 1 1;
+            fixed: 1 0;
             align: 0.0 0.0;
-            visible: 0;
             rel1.to: "elm.bg.title";
          }
       }
       part { name: "right_pad";
-         type: RECT;
+         type: SPACER;
          scale: 1;
          description { state: "default" 0.0;
             min: 10 0;
             max: 10 0;
-            fixed: 1 1;
+            fixed: 1 0;
             align: 1.0 1.0;
-            visible: 0;
             rel2.to: "elm.bg.title";
          }
       }
@@ -182,8 +174,8 @@ group { name: "elm/popup/base/default";
          type: SWALLOW;
          scale: 1;
          description { state: "default" 0.0;
-            min: 48 48;
-            max: 48 48;
+            min: 0 0;
+            max: 0 0;
             fixed: 1 1;
             align: 0.0 0.5;
             rel1 {
@@ -198,6 +190,8 @@ group { name: "elm/popup/base/default";
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
+            min: 48 48;
+            max: 48 48;
             visible: 1;
          }
       }
@@ -407,76 +401,60 @@ group { name: "elm/popup/base/default";
 group { name: "elm/popup/content/default";
    parts{
       part { name: "pad_t";
-         type: RECT;
+         type: SPACER;
          scale : 1;
          mouse_events: 0;
          description { state: "default" 0.0;
-            align: 0.5 0.0;
             min: 0 14;
+            align: 0.5 0.0;
             fixed: 0 1;
-            visible: 0;
-            rel1 {
-               relative: 1.0 0.0;
-               to_x: "pad_l";
-            }
-            rel2 {
-               relative: 0.0 0.0;
-               to_x: "pad_r";
-            }
+            rel2.relative: 1.0 0.0;
          }
       }
       part { name: "pad_l";
-         type: RECT;
+         type: SPACER;
          scale: 1;
          description { state: "default" 0.0;
             min : 10 0;
             fixed: 1 0;
             rel2.relative: 0.0 1.0;
-            visible: 0;
             align: 0.0 0.0;
          }
       }
       part { name: "pad_r";
-         type: RECT;
+         type: SPACER;
          scale: 1;
          description { state: "default" 0.0;
             min : 10 0;
             fixed: 1 0;
             rel1.relative: 1.0 0.0;
-            visible: 0;
             align: 1.0 0.0;
+         }
+      }
+      part { name: "pad_b";
+         type: SPACER;
+         scale : 1;
+         description { state: "default" 0.0;
+            min: 0 14;
+            fixed: 0 1;
+            align: 0.5 1.0;
+            rel1.relative: 0.0 1.0;
          }
       }
       part{ name:"elm.swallow.content";
          type: SWALLOW;
          scale : 1;
          description { state: "default" 0.0;
-            min: 380 0;
-            fixed: 1 0;
             rel1 {
-               relative: 0.5 1.0;
-               to: "pad_t";
+               relative: 1.0 1.0;
+               to_x: "pad_l";
+               to_y: "pad_t";
             }
             rel2 {
-               relative: 0.5 0.0;
-               to: "pad_b";
+               relative: 0.0 0.0;
+               to_x: "pad_r";
+               to_y: "pad_b";
             }
-         }
-      }
-      part { name: "pad_b";
-         type: RECT;
-         scale : 1;
-         mouse_events: 0;
-         description { state: "default" 0.0;
-            align: 0.5 1.0;
-            min: 0 14;
-            fixed: 0 1;
-            visible: 0;
-            rel1 {
-               relative: 0.0 1.0;
-               to_x: "pad_l";
-            }
-            rel2.to_x: "pad_r";
          }
       }
    }
@@ -816,9 +794,6 @@ group { name: "elm/popup/buttons1/default";
          description { state: "default" 0.0;
             min: 252 46;
             max: 252 46;
-            fixed : 1 1;
-            rel1.relative: 0.5 0.0;
-            rel2.relative: 0.5 1.0;
          }
       }
    }
@@ -833,7 +808,7 @@ group { name: "elm/popup/buttons2/default";
          description { state: "default" 0.0;
             min: 172 46;
             max: 172 46;
-            fixed : 1 1;
+            fixed : 1 0;
             align: 1.0 0.5;
             rel1.to: "elm.rect.pad_btn";
             rel2 {
@@ -843,13 +818,11 @@ group { name: "elm/popup/buttons2/default";
          }
       }
       part { name: "elm.rect.pad_btn";
-         type: RECT;
+         type: SPACER;
          scale : 1;
          description { state: "default" 0.0;
-            min: 6 46;
-            max: 6 46;
-            fixed : 1 1;
-            visible: 0;
+            min: 6 0;
+            fixed : 1 0;
             rel1.relative: 0.5 0.0;
             rel2.relative: 0.5 1.0;
          }
@@ -860,7 +833,7 @@ group { name: "elm/popup/buttons2/default";
          description { state: "default" 0.0;
             min: 172 46;
             max: 172 46;
-            fixed : 1 1;
+            fixed : 1 0;
             align: 0.0 0.5;
             rel1 {
                relative: 1.0 0.0;
@@ -881,7 +854,7 @@ group { name: "elm/popup/buttons3/default";
          description { state: "default" 0.0;
             min: 120 46;
             max: 120 46;
-            fixed : 1 1;
+            fixed : 1 0;
             align: 1.0 0.5;
             rel1.to: "elm.rect.pad_btn";
             rel2 {
@@ -891,13 +864,12 @@ group { name: "elm/popup/buttons3/default";
          }
       }
       part { name: "elm.rect.pad_btn";
-         type: RECT;
+         type: SPACER;
          scale : 1;
          description { state: "default" 0.0;
             min: 6 46;
             max: 6 46;
-            fixed : 1 1;
-            visible: 0;
+            fixed : 1 0;
             rel1.to: "actionbtn2";
             rel2 {
                relative: 0.0 1.0;
@@ -911,19 +883,18 @@ group { name: "elm/popup/buttons3/default";
          description { state: "default" 0.0;
             min: 120 46;
             max: 120 46;
-            fixed : 1 1;
+            fixed : 1 0;
             rel1.relative: 0.5 0.0;
             rel2.relative: 0.5 1.0;
          }
       }
       part { name: "elm.rect.pad_btn2";
-         type: RECT;
+         type: SPACER;
          scale : 1;
          description { state: "default" 0.0;
             min: 6 46;
             max: 6 46;
-            fixed : 1 1;
-            visible: 0;
+            fixed : 1 0;
             rel1 {
                relative: 1.0 0.0;
                to: "actionbtn2";
@@ -937,7 +908,7 @@ group { name: "elm/popup/buttons3/default";
          description { state: "default" 0.0;
             min: 120 46;
             max: 120 46;
-            fixed : 1 1;
+            fixed : 1 0;
             align: 0.0 0.5;
             rel1 {
                relative: 1.0 0.0;
