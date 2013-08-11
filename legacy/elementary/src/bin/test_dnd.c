@@ -340,7 +340,7 @@ _gl_obj_mouse_move(
    void *event_info)
 {  /* Cancel any drag waiting to start on timeout */
 
-   if (((Evas_Event_Mouse_Move *)event_info)->event_flags | EVAS_EVENT_FLAG_ON_HOLD)
+   if (((Evas_Event_Mouse_Move *)event_info)->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
      {
         drag_anim_st *anim_st = data;
         anim_st_free(anim_st);
