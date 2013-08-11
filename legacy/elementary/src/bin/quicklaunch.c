@@ -166,6 +166,7 @@ main(int argc, char **argv)
    char buf[PATH_MAX];
    struct sigaction action;
    const char *disp;
+   int ret = 0;
 
    if (!eina_init())
      {
@@ -182,7 +183,15 @@ main(int argc, char **argv)
 
    if (!(disp = getenv("DISPLAY"))) disp = "unknown";
    snprintf(buf, sizeof(buf), "/tmp/elm-ql-%i", getuid());
-   if (stat(buf, &st) < 0) mkdir(buf, S_IRUSR | S_IWUSR | S_IXUSR);
+   if (stat(buf, &st) < 0)
+     {
+        ret = mkdir(buf, S_IRUSR | S_IWUSR | S_IXUSR);
+        if (ret < 0)
+          {
+             CRITICAL("cannot create directory '%s'", buf);
+             exit(-1);
+          }
+     }
    snprintf(buf, sizeof(buf), "/tmp/elm-ql-%i/%s", getuid(), disp);
    unlink(buf);
    sock = socket(AF_UNIX, SOCK_STREAM, 0);
