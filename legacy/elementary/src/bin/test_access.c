@@ -318,9 +318,10 @@ _key_down_cb(void *data, int type __UNUSED__, void *ei)
           {
              a->highlight_cycle = EINA_TRUE;
              elm_access_action(data, ELM_ACCESS_ACTION_HIGHLIGHT_NEXT, a);
-             free(a);
           }
      }
+   free(a);
+
    return ECORE_CALLBACK_PASS_ON;
 }
 
