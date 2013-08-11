@@ -259,25 +259,26 @@ static FILE *header_fd = NULL;
   "void %s_%s_callback_del(Evas_Object *o, Edje_Signal_Cb func);\n"
 
 
-const Ecore_Getopt optdesc = {
-  "elm_codegen",
-  "%prog [options] <file.edj> <group> <source_file_name> <header_file_name>",
-  PACKAGE_VERSION,
-  "(C) 2012 - The Enlightenment Project",
-  "BSD",
-  "elm_codegen generates the boilerplate code to get and set the "
-  "parts of a group from a compiled (binary) edje "
-  "file avoiding common errors with typos.\n",
-  0,
-  {
-    ECORE_GETOPT_STORE_STR('p', "prefix", "The prefix for the " \
-			   "generataed code."),
-    ECORE_GETOPT_LICENSE('L', "license"),
-    ECORE_GETOPT_COPYRIGHT('C', "copyright"),
-    ECORE_GETOPT_VERSION('V', "version"),
-    ECORE_GETOPT_HELP('h', "help"),
-    ECORE_GETOPT_SENTINEL
-  }
+const Ecore_Getopt optdesc =
+{
+   "elm_codegen",
+   "%prog [options] <file.edj> <group> <source_file_name> <header_file_name>",
+   PACKAGE_VERSION,
+   "(C) 2012 - The Enlightenment Project",
+   "BSD",
+   "elm_codegen generates the boilerplate code to get and set the "
+      "parts of a group from a compiled (binary) edje "
+      "file avoiding common errors with typos.\n",
+   0,
+   {
+      ECORE_GETOPT_STORE_STR('p', "prefix", "The prefix for the " \
+                             "generataed code."),
+      ECORE_GETOPT_LICENSE('L', "license"),
+      ECORE_GETOPT_COPYRIGHT('C', "copyright"),
+      ECORE_GETOPT_VERSION('V', "version"),
+      ECORE_GETOPT_HELP('h', "help"),
+      ECORE_GETOPT_SENTINEL
+   }
 };
 
 static char *
@@ -339,15 +340,15 @@ _headers_write(const char *filename)
    snprintf(buf, sizeof(buf), H_HEADER, str, str);
    if (fwrite(buf, strlen(buf), 1, header_fd) != 1)
      {
-	free(str);
-	return EINA_FALSE;
+        free(str);
+        return EINA_FALSE;
      }
 
    free(str);
 
    snprintf(buf, sizeof(buf), C_HEADER, filename);
    if (fwrite(buf, strlen(buf), 1, source_fd) != 1)
-	return EINA_FALSE;
+     return EINA_FALSE;
 
    return EINA_TRUE;
 }
@@ -362,8 +363,8 @@ _footer_write(const char *filename)
    snprintf(buf, sizeof(buf), H_FOOTER, str);
    if (fwrite(buf, strlen(buf), 1, header_fd) != 1)
      {
-	free(str);
-	return EINA_FALSE;
+        free(str);
+        return EINA_FALSE;
      }
 
    free(str);
@@ -388,23 +389,23 @@ _theme_set_write(void)
    strtok(_group, "/");
    for (i = 0; i < 3; i++)
      {
-	token = strtok(NULL, "/");
-	if (!token) break;
+        token = strtok(NULL, "/");
+        if (!token) break;
 
-	str[i] = token;
+        str[i] = token;
      }
 
    if (!str[0] || !str[1] || !str[2])
      goto end;
 
    snprintf(buf, sizeof(buf), C_CODEGEN_LAYOUT_ADD, prefix, file, str[0],
-	    str[1], str[2]);
+            str[1], str[2]);
    if (fwrite(buf, strlen(buf), 1, source_fd) != 1)
-       goto end;
+     goto end;
 
    snprintf(buf, sizeof(buf), H_CODEGEN_LAYOUT_ADD, prefix);
    if (fwrite(buf, strlen(buf), 1, header_fd) != 1)
-       goto end;
+     goto end;
 
    ret = EINA_TRUE;
 
@@ -415,7 +416,7 @@ end:
 
 static Eina_Bool
 _part_write(const char *apiname, const char *partname, const char *description,
-	    Edje_Part_Type type)
+            Edje_Part_Type type)
 {
    char buf[1024];
 
@@ -433,38 +434,38 @@ _part_write(const char *apiname, const char *partname, const char *description,
 
    if (description)
      {
-	snprintf(buf, sizeof(buf), "\n/**\n * @brief %s\n */\n", description);
-	if (fwrite(buf, strlen(buf), 1, header_fd) != 1)
-	  goto err;
+        snprintf(buf, sizeof(buf), "\n/**\n * @brief %s\n */\n", description);
+        if (fwrite(buf, strlen(buf), 1, header_fd) != 1)
+          goto err;
      }
 
    switch (type)
      {
       case EDJE_PART_TYPE_BOX:
-	 TEMPLATE_NAME(BOX_APPEND);
-	 TEMPLATE_NAME(BOX_PREPEND);
-	 TEMPLATE_NAME(BOX_INSERT_BEFORE);
-	 TEMPLATE_NAME(BOX_INSERT_AT);
-	 TEMPLATE_NAME(BOX_REMOVE);
-	 TEMPLATE_NAME(BOX_REMOVE_ALL);
-	 break;
+         TEMPLATE_NAME(BOX_APPEND);
+         TEMPLATE_NAME(BOX_PREPEND);
+         TEMPLATE_NAME(BOX_INSERT_BEFORE);
+         TEMPLATE_NAME(BOX_INSERT_AT);
+         TEMPLATE_NAME(BOX_REMOVE);
+         TEMPLATE_NAME(BOX_REMOVE_ALL);
+         break;
 
       case EDJE_PART_TYPE_TABLE:
-	 TEMPLATE_NAME(TABLE_PACK);
-	 TEMPLATE_NAME(TABLE_UNPACK);
-	 TEMPLATE_NAME(TABLE_CLEAR);
-	 break;
+         TEMPLATE_NAME(TABLE_PACK);
+         TEMPLATE_NAME(TABLE_UNPACK);
+         TEMPLATE_NAME(TABLE_CLEAR);
+         break;
 
       case EDJE_PART_TYPE_TEXT:
-	TEMPLATE_NAME(TEXT_SET);
-	TEMPLATE_NAME(TEXT_GET);
-	break;
+         TEMPLATE_NAME(TEXT_SET);
+         TEMPLATE_NAME(TEXT_GET);
+         break;
 
       default:
-	TEMPLATE_NAME(CONTENT_SET);
-	TEMPLATE_NAME(CONTENT_UNSET);
-	TEMPLATE_NAME(CONTENT_GET);
-	break;
+         TEMPLATE_NAME(CONTENT_SET);
+         TEMPLATE_NAME(CONTENT_UNSET);
+         TEMPLATE_NAME(CONTENT_GET);
+         break;
      }
 
 #undef TEMPLATE_NAME
@@ -531,33 +532,33 @@ _parts_parse(Evas_Object *ed)
    parts = edje_edit_parts_list_get(ed);
    EINA_LIST_FOREACH(parts, l, name)
      {
-	if (!(apiname = _part_api_name_get(ed, name)))
-	  {
-	     DBG("filter out part '%s': not API.", name);
-	     continue;
-	  }
+        if (!(apiname = _part_api_name_get(ed, name)))
+          {
+             DBG("filter out part '%s': not API.", name);
+             continue;
+          }
 
-	type = edje_edit_part_type_get(ed, name);
-	if ((type != EDJE_PART_TYPE_SWALLOW) &&
-	    (type != EDJE_PART_TYPE_TEXT)    &&
-	    (type != EDJE_PART_TYPE_BOX)     &&
-	    (type != EDJE_PART_TYPE_TABLE))
-	  {
-	     free(apiname);
-	     continue;
-	  }
+        type = edje_edit_part_type_get(ed, name);
+        if ((type != EDJE_PART_TYPE_SWALLOW) &&
+            (type != EDJE_PART_TYPE_TEXT)    &&
+            (type != EDJE_PART_TYPE_BOX)     &&
+            (type != EDJE_PART_TYPE_TABLE))
+          {
+             free(apiname);
+             continue;
+          }
 
-	description = edje_edit_part_api_description_get(ed, name);
-	if (!_part_write(apiname, name, description, type))
-	  {
-	     ret = EINA_FALSE;
-	     edje_edit_string_free(description);
-	     free(apiname);
-	     break;
-	  }
+        description = edje_edit_part_api_description_get(ed, name);
+        if (!_part_write(apiname, name, description, type))
+          {
+             ret = EINA_FALSE;
+             edje_edit_string_free(description);
+             free(apiname);
+             break;
+          }
 
-	edje_edit_string_free(description);
-	free(apiname);
+        edje_edit_string_free(description);
+        free(apiname);
      }
 
    edje_edit_string_list_free(parts);
@@ -566,24 +567,24 @@ _parts_parse(Evas_Object *ed)
 
 static Eina_Bool
 _program_emit_write(const char *apiname, const char *source, const char *sig,
-		    const char *description)
+                    const char *description)
 {
    char buf[512];
 
    snprintf(buf, sizeof(buf), C_CODEGEN_PROGRAM_EMIT, prefix,
-	    apiname, sig, source);
+            apiname, sig, source);
    if (fwrite(buf, strlen(buf), 1, source_fd) != 1)
      goto err;
 
    if (description)
      {
-	snprintf(buf, sizeof(buf), "\n/**\n * @brief %s\n */\n", description);
-	if (fwrite(buf, strlen(buf), 1, header_fd) != 1)
-	  goto err;
+        snprintf(buf, sizeof(buf), "\n/**\n * @brief %s\n */\n", description);
+        if (fwrite(buf, strlen(buf), 1, header_fd) != 1)
+          goto err;
      }
 
    snprintf(buf, sizeof(buf), H_CODEGEN_PROGRAM_EMIT, prefix,
-	    apiname);
+            apiname);
    if (fwrite(buf, strlen(buf), 1, header_fd) != 1)
      goto err;
 
@@ -596,34 +597,34 @@ _program_emit_write(const char *apiname, const char *source, const char *sig,
 
 static Eina_Bool
 _program_add_write(const char *apiname, const char *source, const char *sig,
-		   const char *description)
+                   const char *description)
 {
-  char buf[512];
+   char buf[512];
 
    snprintf(buf, sizeof(buf), C_CODEGEN_PROGRAM_CALLBACK_ADD, prefix,
-	    apiname, sig, source);
+            apiname, sig, source);
    if (fwrite(buf, strlen(buf), 1, source_fd) != 1)
      goto err;
 
    snprintf(buf, sizeof(buf), C_CODEGEN_PROGRAM_CALLBACK_DEL, prefix,
-	    apiname, sig, source);
+            apiname, sig, source);
    if (fwrite(buf, strlen(buf), 1, source_fd) != 1)
      goto err;
 
    if (description)
      {
-	snprintf(buf, sizeof(buf), "\n/**\n * @brief %s\n */\n", description);
-	if (fwrite(buf, strlen(buf), 1, header_fd) != 1)
-	  goto err;
+        snprintf(buf, sizeof(buf), "\n/**\n * @brief %s\n */\n", description);
+        if (fwrite(buf, strlen(buf), 1, header_fd) != 1)
+          goto err;
      }
 
    snprintf(buf, sizeof(buf), H_CODEGEN_PROGRAM_CALLBACK_ADD, prefix,
-	    apiname);
+            apiname);
    if (fwrite(buf, strlen(buf), 1, header_fd) != 1)
      goto err;
 
    snprintf(buf, sizeof(buf), H_CODEGEN_PROGRAM_CALLBACK_DEL, prefix,
-	    apiname);
+            apiname);
    if (fwrite(buf, strlen(buf), 1, header_fd) != 1)
      goto err;
 
@@ -659,60 +660,60 @@ _programs_parse(Evas_Object *ed)
    programs = edje_edit_programs_list_get(ed);
    EINA_LIST_FOREACH(programs, l, name)
      {
-	if (!(apiname = _program_api_name_get(ed, name)))
-	  {
-	     DBG("filter out program '%s': not API.", name);
-	     continue;
-	  }
+        if (!(apiname = _program_api_name_get(ed, name)))
+          {
+             DBG("filter out program '%s': not API.", name);
+             continue;
+          }
 
-	description = edje_edit_program_api_description_get(ed, name);
-	type = edje_edit_program_action_get(ed, name);
-	if (type == EDJE_ACTION_TYPE_SIGNAL_EMIT)
-	  {
-	     const char *str, *str2;
-	     str = edje_edit_program_state_get(ed, name);
-	     str2 = edje_edit_program_state2_get(ed, name);
+        description = edje_edit_program_api_description_get(ed, name);
+        type = edje_edit_program_action_get(ed, name);
+        if (type == EDJE_ACTION_TYPE_SIGNAL_EMIT)
+          {
+             const char *str, *str2;
+             str = edje_edit_program_state_get(ed, name);
+             str2 = edje_edit_program_state2_get(ed, name);
 
-	     if (!_program_add_write(apiname, str2, str, description))
-	       {
-		  ret = EINA_FALSE;
-		  edje_edit_string_free(str);
-		  edje_edit_string_free(str2);
-		  break;
-	       }
+             if (!_program_add_write(apiname, str2, str, description))
+               {
+                  ret = EINA_FALSE;
+                  edje_edit_string_free(str);
+                  edje_edit_string_free(str2);
+                  break;
+               }
 
-	     edje_edit_string_free(str);
-	     edje_edit_string_free(str2);
-	  }
+             edje_edit_string_free(str);
+             edje_edit_string_free(str2);
+          }
 
-	sig = edje_edit_program_signal_get(ed, name);
-	if (!sig) sig = eina_stringshare_add("");
+        sig = edje_edit_program_signal_get(ed, name);
+        if (!sig) sig = eina_stringshare_add("");
 
-	source = edje_edit_program_source_get(ed, name);
-	if (!source) source = eina_stringshare_add("");
+        source = edje_edit_program_source_get(ed, name);
+        if (!source) source = eina_stringshare_add("");
 
-	if (strlen (sig))
-	  {
-	     if (!_program_emit_write(apiname, source, sig, description))
-	       {
-		  ret = EINA_FALSE;
-		  break;
-	       }
-	  }
+        if (strlen (sig))
+          {
+             if (!_program_emit_write(apiname, source, sig, description))
+               {
+                  ret = EINA_FALSE;
+                  break;
+               }
+          }
 
-	edje_edit_string_free(description);
-	edje_edit_string_free(sig);
-	edje_edit_string_free(source);
-	free(apiname);
+        edje_edit_string_free(description);
+        edje_edit_string_free(sig);
+        edje_edit_string_free(source);
+        free(apiname);
      }
 
    edje_edit_string_list_free(programs);
    if (!ret)
      {
-	edje_edit_string_free(description);
-	edje_edit_string_free(sig);
-	edje_edit_string_free(source);
-	free(apiname);
+        edje_edit_string_free(description);
+        edje_edit_string_free(sig);
+        edje_edit_string_free(source);
+        free(apiname);
      }
 
    return ret;
@@ -727,12 +728,12 @@ _parse(void)
    ed = edje_edit_object_add(ecore_evas_get(ee));
    if (!edje_object_file_set(ed, file, group))
      {
-	Edje_Load_Error err = edje_object_load_error_get(ed);
-	const char *errmsg = edje_load_error_str(err);
-	ERR("could not load group '%s' from file '%s': %s",
-	    group, file, errmsg);
-	evas_object_del(ed);
-	return EINA_FALSE;
+        Edje_Load_Error err = edje_object_load_error_get(ed);
+        const char *errmsg = edje_load_error_str(err);
+        ERR("could not load group '%s' from file '%s': %s",
+            group, file, errmsg);
+        evas_object_del(ed);
+        return EINA_FALSE;
      }
 
    ret = _parts_parse(ed) && _programs_parse(ed);
@@ -767,7 +768,7 @@ main(int argc, char *argv[])
      {
         fprintf(stderr, "Missing action. See '--help or -h'.\n");
         ret = 1;
-	goto error_log;
+        goto error_log;
      }
 
    _log_dom = eina_log_domain_register("elementary_codegen", EINA_COLOR_YELLOW);
@@ -788,10 +789,10 @@ main(int argc, char *argv[])
    else if (quit_option) goto error_getopt;
    else if (arg_index != argc - 4)
      {
-        fprintf(stderr, "Incorrect number of parameters. Requires "	\
-		"fours arguments, an edje, the group, "			\
-		"the source output (foo.c) and the header(foo.h).\n"    \
-		"See %s --help\n", argv[0]);
+        fprintf(stderr, "Incorrect number of parameters. Requires "  \
+                "fours arguments, an edje, the group, "              \
+                "the source output (foo.c) and the header(foo.h).\n" \
+                "See %s --help\n", argv[0]);
         ret = 1;
         goto error_getopt;
      }
@@ -813,33 +814,33 @@ main(int argc, char *argv[])
 
    if (!edje_file_group_exists(file, group))
      {
-	ERR("The group %s not exists", group);
-	ret = 2;
-	goto error_getopt;
+        ERR("The group %s not exists", group);
+        ret = 2;
+        goto error_getopt;
      }
 
    ee = ecore_evas_buffer_new(1, 1);
    if (!ee)
      {
-	ERR("could not create ecore_evas_buffer");
-	ret = 3;
-	goto error_getopt;
+        ERR("could not create ecore_evas_buffer");
+        ret = 3;
+        goto error_getopt;
      }
 
    if (!_file_descriptors_open(source, header))
      {
-	ERR("Could not create the source files, error %d (%s)",
-	    errno, strerror(errno));
-	ret = 4;
-	goto error_getopt;
+        ERR("Could not create the source files, error %d (%s)",
+            errno, strerror(errno));
+        ret = 4;
+        goto error_getopt;
      }
 
    if (!_headers_write(header))
      {
-	ERR("Could not write the header, error %d (%s)",
-	    errno, strerror(errno));
-	ret = 5;
-	goto error_getopt;
+        ERR("Could not write the header, error %d (%s)",
+            errno, strerror(errno));
+        ret = 5;
+        goto error_getopt;
      }
 
    if (!_theme_set_write())
@@ -847,31 +848,31 @@ main(int argc, char *argv[])
 
    if (!_parse())
      {
-	ERR("Could not parsing the EDJE");
-	ret = 6;
-	goto error_getopt;
+        ERR("Could not parsing the EDJE");
+        ret = 6;
+        goto error_getopt;
      }
 
    if (!_footer_write(header))
      {
-	ERR("Could not write the footer, error %d (%s)",
-	    errno, strerror(errno));
-	ret = 7;
-	goto error_getopt;
+        ERR("Could not write the footer, error %d (%s)",
+            errno, strerror(errno));
+        ret = 7;
+        goto error_getopt;
      }
 
    if (!_file_descriptors_close())
      {
-	ERR("Could not close the source files, error %d (%s)",
-	    errno, strerror(errno));
-	ret = 8;
+        ERR("Could not close the source files, error %d (%s)",
+            errno, strerror(errno));
+        ret = 8;
      }
 
- error_getopt:
+error_getopt:
    if (ee)
      ecore_evas_free(ee);
 
- error_log:
+error_log:
    edje_shutdown();
    ecore_evas_shutdown();
    ecore_shutdown();
@@ -880,8 +881,8 @@ main(int argc, char *argv[])
 
    if (ret > 4)
      {
-	unlink(header);
-	unlink(source);
+        unlink(header);
+        unlink(source);
      }
 
    return ret;
