@@ -333,7 +333,7 @@ _edje_smart_file_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    const char *file = va_arg(*list, const char *);
    const char *group = va_arg(*list, const char *);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Eina_File *f;
+   Eina_File *f = NULL;
    Eina_Array *nested;
 
    if (ret) *ret = EINA_FALSE;
@@ -343,6 +343,9 @@ _edje_smart_file_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
         f = eina_file_open(file, EINA_FALSE);
         if (!f) 
           {
+             Edje *ed;
+
+             ed = _edje_fetch(obj);
              ed->load_error = EDJE_LOAD_ERROR_DOES_NOT_EXIST;
              return ;
           }
