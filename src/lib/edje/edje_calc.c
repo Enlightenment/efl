@@ -2355,23 +2355,48 @@ _edje_part_recalc_single(Edje *ed,
    /* Adjust rounding to not loose one pixels compared to float
       information only when rendering to avoid infinite adjustement
       when doing min restricted calc */
-   if (!ed->calc_only)
+   if (ABS(params->final.x) + params->final.w < TO_INT(ADD(ABS(params->eval.x), params->eval.w)))
      {
-        if (ABS(params->final.x) + params->final.w < TO_INT(ADD(ABS(params->eval.x), params->eval.w)))
-	  {
+        if (!ed->calc_only)
+          {
              params->final.w += 1;
-	  }
-        else if (ABS(params->final.x) + params->final.w > TO_INT(ADD(ABS(params->eval.x), params->eval.w)))
-	  {
+          }
+        else
+          {
+             ep->invalidate = EINA_TRUE;
+          }
+     }
+   else if (ABS(params->final.x) + params->final.w > TO_INT(ADD(ABS(params->eval.x), params->eval.w)))
+     {
+        if (!ed->calc_only)
+          {
              params->final.w -= 1;
-	  }
-        if (ABS(params->final.y) + params->final.h < TO_INT(ADD(ABS(params->eval.y), params->eval.h)))
+          }
+        else
+          {
+             ep->invalidate = EINA_TRUE;
+          }
+     }
+   if (ABS(params->final.y) + params->final.h < TO_INT(ADD(ABS(params->eval.y), params->eval.h)))
+     {
+        if (!ed->calc_only)
           {
              params->final.h += 1;
           }
-        else if (ABS(params->final.y) + params->final.h > TO_INT(ADD(ABS(params->eval.y), params->eval.h)))
+        else
+          {
+             ep->invalidate = EINA_TRUE;
+          }
+     }
+   else if (ABS(params->final.y) + params->final.h > TO_INT(ADD(ABS(params->eval.y), params->eval.h)))
+     {
+        if (!ed->calc_only)
           {
              params->final.h -= 1;
+          }
+        else
+          {
+             ep->invalidate = EINA_TRUE;
           }
      }
 
