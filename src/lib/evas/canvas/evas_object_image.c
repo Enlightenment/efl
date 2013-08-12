@@ -392,8 +392,24 @@ _image_init_set(Eina_File *f, const char *file, const char *key,
 
    EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
      {
-        if (f) state_write->u.f = f;
-        else eina_stringshare_replace(&state_write->u.file, file);
+        if (f)
+          {
+             if (!state_write->mmaped_source)
+               eina_stringshare_del(state_write->u.file);
+	     else if (state_write->u.f)
+	       eina_file_close(state_write->u.f);
+             state_write->u.f = eina_file_dup(f);
+          }
+        else
+          {
+             if (!state_write->mmaped_source)
+               eina_stringshare_replace(&state_write->u.file, file);
+             else
+	       {
+                  if (state_write->u.f) eina_file_close(state_write->u.f);
+                  state_write->u.file = eina_stringshare_add(file);
+	       }
+          }
         state_write->mmaped_source = !!f;
         eina_stringshare_replace(&state_write->key, key);
      }
@@ -3548,7 +3564,14 @@ evas_object_image_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
    Eina_Rectangle *r;
 
    /* free obj */
-   if (o->cur->u.file && !o->cur->mmaped_source) eina_stringshare_del(o->cur->u.file);
+   if (!o->cur->mmaped_source)
+     {
+        if (o->cur->u.file) eina_stringshare_del(o->cur->u.file);
+     }
+   else
+     {
+        if (o->cur->u.f) eina_file_close(o->cur->u.f);
+     }
    if (o->cur->key) eina_stringshare_del(o->cur->key);
    if (o->cur->source) _proxy_unset(eo_obj, obj, o);
    if (obj->layer && obj->layer->evas)
