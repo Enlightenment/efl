@@ -1994,7 +1994,7 @@ AM_CONDITIONAL([HAVE_CARES], [test "x${have_cares}" = "xyes"])
 
 if test "x$have_cares" = "xyes" ; then
    ecore_con_resolver="cares"
-elif test "x$have_ipv6" = "xyes" ; then
+elif test -n "$ac_cv_prog_cc_c99" ; then
    ecore_con_resolver="dns.c"
 else
    ecore_con_resolver="fork"
