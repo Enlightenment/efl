@@ -68,6 +68,31 @@ typedef enum
    ELM_PHOTOCAM_ZOOM_MODE_LAST
 } Elm_Photocam_Zoom_Mode;
 
+/**
+ * Structure associated with smart callback 'download,progress'.
+ * @since 1.8
+ */
+typedef struct _Elm_Photocam_Progress Elm_Photocam_Progress;
+
+struct _Elm_Photocam_Progress
+{
+   double now;
+   double total;
+};
+
+
+/**
+ * Structre associated with smart callback 'download,error'
+ * @since 1.8
+ */
+typedef struct _Elm_Photocam_Error Elm_Photocam_Error;
+struct _Elm_Photocam_Error
+{
+   int status;
+
+   Eina_Bool open_error;
+};
+
 #ifdef EFL_EO_API_SUPPORT
 #include "elm_photocam_eo.h"
 #endif

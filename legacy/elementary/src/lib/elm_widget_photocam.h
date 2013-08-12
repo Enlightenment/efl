@@ -80,6 +80,10 @@ struct _Elm_Photocam_Smart_Data
    } g_layer_zoom;
 
    const char     *file;
+   Eina_File      *f;
+
+   Elm_Url        *remote;
+   void           *remote_data;
 
    Ecore_Job      *calc_job;
    Ecore_Timer    *scr_timer;

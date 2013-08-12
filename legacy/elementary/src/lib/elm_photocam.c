@@ -45,6 +45,10 @@ static const char SIG_SCROLL_ANIM_START[] = "scroll,anim,start";
 static const char SIG_SCROLL_ANIM_STOP[] = "scroll,anim,stop";
 static const char SIG_SCROLL_DRAG_START[] = "scroll,drag,start";
 static const char SIG_SCROLL_DRAG_STOP[] = "scroll,drag,stop";
+static const char SIG_DOWNLOAD_START[] = "download,start";
+static const char SIG_DOWNLOAD_PROGRESS[] = "download,progress";
+static const char SIG_DOWNLOAD_DONE[] = "download,done";
+static const char SIG_DOWNLOAD_ERROR[] = "download,error";
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_CLICKED, ""},
    {SIG_PRESS, ""},
@@ -62,10 +66,23 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_SCROLL_ANIM_STOP, ""},
    {SIG_SCROLL_DRAG_START, ""},
    {SIG_SCROLL_DRAG_STOP, ""},
+   {SIG_DOWNLOAD_START, ""},
+   {SIG_DOWNLOAD_PROGRESS, ""},
+   {SIG_DOWNLOAD_DONE, ""},
+   {SIG_DOWNLOAD_ERROR, ""},
    {"focused", ""}, /**< handled by elm_widget */
    {"unfocused", ""}, /**< handled by elm_widget */
    {NULL, NULL}
 };
+
+static inline void
+_photocam_image_file_set(Evas_Object *obj, Elm_Photocam_Smart_Data *sd)
+{
+   if (sd->f)
+     evas_object_image_mmap_set(obj, sd->f, NULL);
+   else
+     evas_object_image_file_set(obj, sd->file, NULL);
+}
 
 static void
 _sizing_eval(Evas_Object *obj)
@@ -225,7 +242,7 @@ _grid_load(Evas_Object *obj,
                   evas_object_image_load_region_set
                     (g->grid[tn].img, g->grid[tn].src.x, g->grid[tn].src.y,
                     g->grid[tn].src.w, g->grid[tn].src.h);
-                  evas_object_image_file_set(g->grid[tn].img, sd->file, NULL);
+                  _photocam_image_file_set(g->grid[tn].img, sd);
                   evas_object_image_preload(g->grid[tn].img, 0);
                   sd->preload_num++;
                   if (sd->preload_num == 1)
@@ -1393,6 +1410,9 @@ _elm_photocam_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    evas_object_del(sd->pan_obj);
    sd->pan_obj = NULL;
 
+   if (sd->f) eina_file_close(sd->f);
+   free(sd->remote_data);
+   if (sd->remote) elm_url_cancel(sd->remote);
    if (sd->file) eina_stringshare_del(sd->file);
    if (sd->calc_job) ecore_job_del(sd->calc_job);
    if (sd->scr_timer) ecore_timer_del(sd->scr_timer);
@@ -1471,31 +1491,24 @@ elm_photocam_file_set(Evas_Object *obj,
 }
 
 static void
-_file_set(Eo *obj, void *_pd, va_list *list)
+_internal_file_set(Eo *obj, Elm_Photocam_Smart_Data *sd, const char *file, Eina_File *f, Evas_Load_Error *ret)
 {
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Evas_Load_Error err;
    int w, h;
    double tz;
-   Evas_Load_Error err;
-
-   const char *file = va_arg(*list, const char *);
-   Evas_Load_Error *ret = va_arg(*list, Evas_Load_Error *);
-   if (ret) *ret = EVAS_LOAD_ERROR_NONE;
-
-   Elm_Photocam_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    if (!eina_stringshare_replace(&sd->file, file)) return;
-   _grid_clear_all(obj);
+   sd->f = eina_file_dup(f);
 
-   evas_object_hide(sd->img);
    evas_object_image_smooth_scale_set(sd->img, (sd->no_smooth == 0));
    evas_object_image_file_set(sd->img, NULL, NULL);
    evas_object_image_load_scale_down_set(sd->img, 0);
-   evas_object_image_file_set(sd->img, sd->file, NULL);
+   _photocam_image_file_set(sd->img, sd);
    err = evas_object_image_load_error_get(sd->img);
    if (err != EVAS_LOAD_ERROR_NONE)
      {
-        ERR("Things are going bad for '%s' (%p)", file, sd->img);
+        ERR("Things are going bad for '%s' (%p) : %i", file, sd->img, err);
         if (ret) *ret = err;
         return;
      }
@@ -1506,17 +1519,9 @@ _file_set(Eo *obj, void *_pd, va_list *list)
    sd->size.imh = h;
    sd->size.w = sd->size.imw / sd->zoom;
    sd->size.h = sd->size.imh / sd->zoom;
-   ELM_SAFE_FREE(sd->g_layer_zoom.bounce.animator, ecore_animator_del);
-   if (sd->zoom_animator)
-     {
-        sd->no_smooth--;
-        if (sd->no_smooth == 0) _smooth_update(obj);
-        ecore_animator_del(sd->zoom_animator);
-        sd->zoom_animator = NULL;
-     }
    evas_object_image_file_set(sd->img, NULL, NULL);
    evas_object_image_load_scale_down_set(sd->img, 8);
-   evas_object_image_file_set(sd->img, sd->file, NULL);
+   _photocam_image_file_set(sd->img, sd);
    err = evas_object_image_load_error_get(sd->img);
    if (err != EVAS_LOAD_ERROR_NONE)
      {
@@ -1528,7 +1533,6 @@ _file_set(Eo *obj, void *_pd, va_list *list)
    evas_object_image_preload(sd->img, 0);
    sd->main_load_pending = EINA_TRUE;
 
-   if (sd->calc_job) ecore_job_del(sd->calc_job);
    sd->calc_job = ecore_job_add(_calc_job_cb, obj);
    evas_object_smart_callback_call(obj, SIG_LOAD, NULL);
    sd->preload_num++;
@@ -1544,6 +1548,118 @@ _file_set(Eo *obj, void *_pd, va_list *list)
    elm_photocam_zoom_set(obj, tz);
 
    if (ret) *ret = evas_object_image_load_error_get(sd->img);
+}
+
+static void
+_elm_photocam_download_done(void *data, Elm_Url *url EINA_UNUSED, Eina_Binbuf *download)
+{
+   Eo *obj = data;
+   Elm_Photocam_Smart_Data *sd = eo_data_scope_get(obj, MY_CLASS);
+   Eina_File *f;
+   size_t length;
+   Evas_Load_Error ret = EVAS_LOAD_ERROR_NONE;
+
+   if (sd->remote_data) free(sd->remote_data);
+   length = eina_binbuf_length_get(download);
+   sd->remote_data = eina_binbuf_string_steal(download);
+   f = eina_file_virtualize(elm_url_get(url),
+                            sd->remote_data, length,
+                            EINA_FALSE);
+   _internal_file_set(obj, sd, elm_url_get(url), f, &ret);
+   eina_file_close(f);
+
+   if (ret != EVAS_LOAD_ERROR_NONE)
+     {
+        Elm_Photocam_Error err = { 0, EINA_TRUE };
+
+        free(sd->remote_data);
+        sd->remote_data = NULL;
+        evas_object_smart_callback_call(obj, SIG_DOWNLOAD_ERROR, &err);
+     }
+   else
+     {
+        evas_object_smart_callback_call(obj, SIG_DOWNLOAD_DONE, NULL);
+     }
+
+   sd->remote = NULL;
+}
+
+static void
+_elm_photocam_download_cancel(void *data, Elm_Url *url EINA_UNUSED, int error)
+{
+   Eo *obj = data;
+   Elm_Photocam_Smart_Data *sd = eo_data_scope_get(obj, MY_CLASS);
+   Elm_Photocam_Error err = { error, EINA_FALSE };
+
+   evas_object_smart_callback_call(obj, SIG_DOWNLOAD_ERROR, &err);
+
+   sd->remote = NULL;
+}
+
+
+static void
+_elm_photocam_download_progress(void *data, Elm_Url *url EINA_UNUSED, double now, double total)
+{
+   Eo *obj = data;
+   Elm_Photocam_Progress progress;
+
+   progress.now = now;
+   progress.total = total;
+   evas_object_smart_callback_call(obj, SIG_DOWNLOAD_PROGRESS, &progress);
+}
+
+
+static const char *remote_uri[] = {
+  "http://", "https://", "ftp://"
+};
+
+static void
+_file_set(Eo *obj, void *_pd, va_list *list)
+{
+   const char *file = va_arg(*list, const char *);
+   Evas_Load_Error *ret = va_arg(*list, Evas_Load_Error *);
+   if (ret) *ret = EVAS_LOAD_ERROR_NONE;
+
+   Elm_Photocam_Smart_Data *sd = _pd;
+   unsigned int i;
+
+   _grid_clear_all(obj);
+   ELM_SAFE_FREE(sd->g_layer_zoom.bounce.animator, ecore_animator_del);
+   if (sd->zoom_animator)
+     {
+        sd->no_smooth--;
+        if (sd->no_smooth == 0) _smooth_update(obj);
+        ecore_animator_del(sd->zoom_animator);
+        sd->zoom_animator = NULL;
+     }
+   if (sd->calc_job) ecore_job_del(sd->calc_job);
+   evas_object_hide(sd->img);
+   if (sd->f) eina_file_close(sd->f);
+   sd->f = NULL;
+
+   free(sd->remote_data);
+   if (sd->remote) elm_url_cancel(sd->remote);
+   sd->remote = NULL;
+
+   for (i = 0; i < sizeof (remote_uri) / sizeof (remote_uri[0]); ++i)
+     if (strncmp(remote_uri[i], file, strlen(remote_uri[i])) == 0)
+       {
+          // Found a remote target !
+          sd->remote = elm_url_download(file,
+                                        _elm_photocam_download_done,
+                                        _elm_photocam_download_cancel,
+                                        _elm_photocam_download_progress,
+                                        obj);
+          if (sd->remote)
+            {
+               evas_object_smart_callback_call(obj, SIG_DOWNLOAD_START, NULL);
+               return ;
+            }
+          break;
+       }
+
+
+   _internal_file_set(obj, sd, file, NULL, ret);
 }
 
 EAPI const char *
