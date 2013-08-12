@@ -388,7 +388,7 @@ test_photocam_remote(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *e
 
    rect = evas_object_rectangle_add(evas_object_evas_get(win));
    evas_object_color_set(rect, 0, 0, 0, 0);
-   evas_object_repeat_events_set(rect,1);
+   evas_object_repeat_events_set(rect, EINA_TRUE);
    evas_object_show(rect);
    evas_object_event_callback_add(rect, EVAS_CALLBACK_MOUSE_WHEEL, _photocam_mouse_wheel_cb, ph);
    evas_object_raise(rect);
@@ -414,7 +414,6 @@ test_photocam_remote(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *e
    evas_object_smart_callback_add(ph, "scroll", my_ph_scroll, win);
 
    elm_photocam_file_set(ph, url);
-
    evas_object_show(ph);
 
    tb2 = elm_table_add(win);
