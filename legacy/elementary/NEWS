@@ -281,6 +281,7 @@ Removals:
    * Naviframe: Dont' be popped if the event is freezed and popping is going on.
    * Ctxpopup: Apply current ctxpopup style to the list.
    * Popup: Fix the corrupted internal widget tree that caused elm_theme_set() doesn't work correctly.
+   * Mapbuf: Ensure that content size calculation is correctly finished because the mapbuf is willing to block the size calculation forcely.
 
 Changes since Elementary 1.0.0:
 -------------------------

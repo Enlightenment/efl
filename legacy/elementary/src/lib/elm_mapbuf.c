@@ -51,6 +51,7 @@ _changed_size_hints_cb(void *data,
                        Evas_Object *obj __UNUSED__,
                        void *event_info __UNUSED__)
 {
+   evas_smart_objects_calculate(e);
    _sizing_eval(data);
 }
 
@@ -74,6 +75,10 @@ _elm_mapbuf_smart_sub_object_del(Eo *obj, void *_pd, va_list *list)
         evas_object_event_callback_del_full
           (sobj, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints_cb,
           obj);
+        evas_object_event_callback_del_full(sobj, EVAS_CALLBACK_MOVE,
+                                            _changed_size_hints_cb, obj);
+        evas_object_event_callback_del_full(sobj, EVAS_CALLBACK_RESIZE,
+                                            _changed_size_hints_cb, obj);
         sd->content = NULL;
         _sizing_eval(obj);
      }
@@ -281,6 +286,10 @@ _elm_mapbuf_smart_content_set(Eo *obj, void *_pd, va_list *list)
         evas_object_event_callback_add
           (content, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
           _changed_size_hints_cb, obj);
+        evas_object_event_callback_add(content, EVAS_CALLBACK_MOVE,
+                                       _changed_size_hints_cb, obj);
+        evas_object_event_callback_add(content, EVAS_CALLBACK_RESIZE,
+                                       _changed_size_hints_cb, obj);
      }
    else
      evas_object_color_set(wd->resize_obj, 0, 0, 0, 0);
