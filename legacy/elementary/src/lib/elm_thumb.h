@@ -25,6 +25,10 @@
  * Ethumb's documentation to change this path, and to see other
  * configuration options.
  *
+ * If you set formatting features such as, aspect, size, format,
+ * orientation, crop, compression, or quality after the thumbnail
+ * has been shown, it needs to be reloaded with elm_thumb_reload.
+ *
  * This widget emits the following signals:
  * - @c "clicked" - This is called when a user has clicked the
  *                  thumbnail object without dragging it around.

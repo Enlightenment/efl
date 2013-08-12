@@ -10,6 +10,22 @@ enum
    ELM_OBJ_THUMB_SUB_ID_FILE_SET,
    ELM_OBJ_THUMB_SUB_ID_FILE_GET,
    ELM_OBJ_THUMB_SUB_ID_PATH_GET,
+   ELM_OBJ_THUMB_SUB_ID_ASPECT_SET,
+   ELM_OBJ_THUMB_SUB_ID_ASPECT_GET,
+   ELM_OBJ_THUMB_SUB_ID_FDO_SIZE_SET,
+   ELM_OBJ_THUMB_SUB_ID_FDO_SIZE_GET,
+   ELM_OBJ_THUMB_SUB_ID_FORMAT_SET,
+   ELM_OBJ_THUMB_SUB_ID_FORMAT_GET,
+   ELM_OBJ_THUMB_SUB_ID_ORIENTATION_SET,
+   ELM_OBJ_THUMB_SUB_ID_ORIENTATION_GET,
+   ELM_OBJ_THUMB_SUB_ID_CROP_ALIGN_SET,
+   ELM_OBJ_THUMB_SUB_ID_CROP_ALIGN_GET,
+   ELM_OBJ_THUMB_SUB_ID_THUMB_SIZE_SET,
+   ELM_OBJ_THUMB_SUB_ID_THUMB_SIZE_GET,
+   ELM_OBJ_THUMB_SUB_ID_COMPRESS_SET,
+   ELM_OBJ_THUMB_SUB_ID_COMPRESS_GET,
+   ELM_OBJ_THUMB_SUB_ID_QUALITY_SET,
+   ELM_OBJ_THUMB_SUB_ID_QUALITY_GET,
    ELM_OBJ_THUMB_SUB_ID_ANIMATE_SET,
    ELM_OBJ_THUMB_SUB_ID_ANIMATE_GET,
    ELM_OBJ_THUMB_SUB_ID_EDITABLE_SET,
@@ -77,6 +93,230 @@ enum
  * @ingroup Thumb
  */
 #define elm_obj_thumb_path_get(file, key) ELM_OBJ_THUMB_ID(ELM_OBJ_THUMB_SUB_ID_PATH_GET), EO_TYPECHECK(const char **, file), EO_TYPECHECK(const char **, key)
+
+/**
+ * @def elm_obj_thumb_aspect_set
+ * @since 1.8
+ *
+ * Set the aspect for the thumb object
+ *
+ * @param[in] setting
+ *
+ * @see elm_thumb_aspect_set
+ *
+ * @ingroup Thumb
+ */
+#define elm_obj_thumb_aspect_set(aspect) ELM_OBJ_THUMB_ID(ELM_OBJ_THUMB_SUB_ID_ASPECT_SET), EO_TYPECHECK(Ethumb_Thumb_Aspect, aspect)
+
+/**
+ * @def elm_obj_thumb_aspect_get
+ * @since 1.8
+ *
+ * Get the aspect of the thumb object
+ * @param[out] ret
+ *
+ * @see elm_thumb_aspect_get
+ *
+ * @ingroup Thumb
+ */
+#define elm_obj_thumb_aspect_get(ret) ELM_OBJ_THUMB_ID(ELM_OBJ_THUMB_SUB_ID_ASPECT_GET), EO_TYPECHECK(Ethumb_Thumb_Aspect *, ret)
+
+/**
+ * @def elm_obj_thumb_fdo_size_set
+ * @since 1.8
+ *
+ * Set the fdo size for the thumb object
+ *
+ * @param[in] setting
+ *
+ * @see elm_thumb_fdo_size_set
+ *
+ * @ingroup Thumb
+ */
+#define elm_obj_thumb_fdo_size_set(size) ELM_OBJ_THUMB_ID(ELM_OBJ_THUMB_SUB_ID_FDO_SIZE_SET), EO_TYPECHECK(Ethumb_Thumb_FDO_Size, size)
+
+/**
+ * @def elm_obj_thumb_fdo_size_get
+ * @since 1.8
+ *
+ * Get the fdo size of the thumb object
+ * @param[out] ret
+ *
+ * @see elm_thumb_fdo_size_get
+ *
+ * @ingroup Thumb
+ */
+#define elm_obj_thumb_fdo_size_get(ret) ELM_OBJ_THUMB_ID(ELM_OBJ_THUMB_SUB_ID_FDO_SIZE_GET), EO_TYPECHECK(Ethumb_Thumb_FDO_Size *, ret)
+
+/**
+ * @def elm_obj_thumb_format_set
+ * @since 1.8
+ *
+ * Set the format for the thumb object
+ *
+ * @param[in] setting
+ *
+ * @see elm_thumb_format_set
+ *
+ * @ingroup Thumb
+ */
+#define elm_obj_thumb_format_set(format) ELM_OBJ_THUMB_ID(ELM_OBJ_THUMB_SUB_ID_FORMAT_SET), EO_TYPECHECK(Ethumb_Thumb_Format, format)
+
+/**
+ * @def elm_obj_thumb_format_get
+ * @since 1.8
+ *
+ * Get the format of the thumb object
+ * @param[out] ret
+ *
+ * @see elm_thumb_format_get
+ *
+ * @ingroup Thumb
+ */
+#define elm_obj_thumb_format_get(ret) ELM_OBJ_THUMB_ID(ELM_OBJ_THUMB_SUB_ID_FORMAT_GET), EO_TYPECHECK(Ethumb_Thumb_Format *, ret)
+
+/**
+ * @def elm_obj_thumb_orientation_set
+ * @since 1.8
+ *
+ * Set the orientation for the thumb object
+ *
+ * @param[in] setting
+ *
+ * @see elm_thumb_orientation_set
+ *
+ * @ingroup Thumb
+ */
+#define elm_obj_thumb_orientation_set(orient) ELM_OBJ_THUMB_ID(ELM_OBJ_THUMB_SUB_ID_ORIENTATION_SET), EO_TYPECHECK(Ethumb_Thumb_Orientation, orient)
+
+/**
+ * @def elm_obj_thumb_orientation_get
+ * @since 1.8
+ *
+ * Get the orientation of the thumb object
+ * @param[out] ret
+ *
+ * @see elm_thumb_orientaion_get
+ *
+ * @ingroup Thumb
+ */
+#define elm_obj_thumb_orientation_get(ret) ELM_OBJ_THUMB_ID(ELM_OBJ_THUMB_SUB_ID_ORIENTATION_GET), EO_TYPECHECK(Ethumb_Thumb_Orientation *, ret)
+
+/**
+ * @def elm_obj_thumb_size_set
+ * @since 1.8
+ *
+ * Set the width and height of the thumbnail
+ *
+ * @param[in] width
+ * @param[in] height
+ *0
+ * @see elm_thumb_size_set
+ *
+ * @ingroup Thumb
+ */
+#define elm_obj_thumb_size_set(tw, th) ELM_OBJ_THUMB_ID(ELM_OBJ_THUMB_SUB_ID_THUMB_SIZE_SET), EO_TYPECHECK(int, tw), EO_TYPECHECK(int, th)
+
+/**
+ * @def elm_obj_thumb_size_get
+ * @since 1.8
+ *
+ * Get the size of the thumbnail.
+ *
+ * @param[out] tw
+ * @param[out] th
+ *
+ * @see elm_thumb_size_get
+ *
+ * @ingroup Thumb
+ */
+#define elm_obj_thumb_size_get(tw, th) ELM_OBJ_THUMB_ID(ELM_OBJ_THUMB_SUB_ID_THUMB_SIZE_GET), EO_TYPECHECK(int *, tw), EO_TYPECHECK(int *, th)
+
+/**
+ * @def elm_obj_thumb_crop_align_set
+ * @since 1.8
+ *
+ * Set the crop alignment of the thumbnail
+ *
+ * @param[in] x coordinate
+ * @param[in] y coordinate
+ *
+ * @see elm_thumb_crop_align_set
+ *
+ * @ingroup Thumb
+ */
+#define elm_obj_thumb_crop_align_set(cropx, cropy) ELM_OBJ_THUMB_ID(ELM_OBJ_THUMB_SUB_ID_CROP_ALIGN_SET), EO_TYPECHECK(double, cropx), EO_TYPECHECK(double, cropy)
+
+/**
+ * @def elm_obj_thumb_crop_align_get
+ * @since 1.8
+ *
+ * Get the crop alignment of the thumbnail.
+ *
+ * @param[out] cropx
+ * @param[out] cropy
+ *
+ * @see elm_thumb_crop_align_get
+ *
+ * @ingroup Thumb
+ */
+#define elm_obj_thumb_crop_align_get(cropx, cropy) ELM_OBJ_THUMB_ID(ELM_OBJ_THUMB_SUB_ID_THUMB_SIZE_GET), EO_TYPECHECK(double *, cropx), EO_TYPECHECK(double *, cropy)
+
+/**
+ * @def elm_obj_thumb_compress_set
+ * @since 1.8
+ *
+ * Set the compression of the thumbnail
+ *
+ * @param[in] compress
+ *
+ * @see elm_thumb_compress_set
+ *
+ * @ingroup Thumb
+ */
+#define elm_obj_thumb_compress_set(compress) ELM_OBJ_THUMB_ID(ELM_OBJ_THUMB_SUB_ID_COMPRESS_SET), EO_TYPECHECK(int, compress)
+
+/**
+ * @def elm_obj_thumb_compress_get
+ * @since 1.8
+ *
+ * Get the compression of the thumbnail.
+ *
+ * @param[out] compress
+ *
+ * @see elm_thumb_compress_get
+ *
+ * @ingroup Thumb
+ */
+#define elm_obj_thumb_compress_get(compress) ELM_OBJ_THUMB_ID(ELM_OBJ_THUMB_SUB_ID_COMPRESS_GET), EO_TYPECHECK(int *, compress)
+
+/**
+ * @def elm_obj_thumb_quality_set
+ * @since 1.8
+ *
+ * Set the quality of the thumbnail
+ *
+ * @param[in] quality
+ *
+ * @see elm_thumb_quality_set
+ *
+ * @ingroup Thumb
+ */
+#define elm_obj_thumb_quality_set(quality) ELM_OBJ_THUMB_ID(ELM_OBJ_THUMB_SUB_ID_QUALITY_SET), EO_TYPECHECK(int, quality)
+
+/**
+ * @def elm_obj_thumb_quality_get
+ * @since 1.8
+ *
+ * Get the quality of the thumbnail.
+ *
+ * @param[out] quality
+ *
+ * @see elm_thumb_quality_get
+ *
+ * @ingroup Thumb
+ */
+#define elm_obj_thumb_quality_get(quality) ELM_OBJ_THUMB_ID(ELM_OBJ_THUMB_SUB_ID_QUALITY_GET), EO_TYPECHECK(int *, quality)
 
 /**
  * @def elm_obj_thumb_animate_set

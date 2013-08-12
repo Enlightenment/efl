@@ -38,7 +38,17 @@ struct _Elm_Thumb_Smart_Data
       const char          *thumb_key;
       Ethumb_Client_Async *request;
 
+      double                cropx;
+      double                cropy;
+      int                  compress;
+      int                  quality;
+      int                  tw;
+      int                  th;
+
+      Ethumb_Thumb_Aspect  aspect;
+      Ethumb_Thumb_FDO_Size size;
       Ethumb_Thumb_Format  format;
+      Ethumb_Thumb_Orientation orient;
 
       Eina_Bool            retry : 1;
 #endif

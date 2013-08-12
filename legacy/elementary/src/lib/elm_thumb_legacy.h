@@ -80,6 +80,217 @@ EAPI void                        elm_thumb_file_get(const Evas_Object *obj, cons
 EAPI void                        elm_thumb_path_get(const Evas_Object *obj, const char **file, const char **key);
 
 /**
+ * Set the aspect for the thumb object.
+ * @since 1.8
+ *
+ * @param obj The thumb object.
+ * @param aspect The aspect setting.
+ *
+ * @see elm_thumb_file_set()
+ *
+ * @ingroup Thumb
+ */
+EAPI void                        elm_thumb_aspect_set(Evas_Object *obj, Ethumb_Thumb_Aspect aspect);
+
+/**
+ * Get the aspect of the thumb object.
+ * @since 1.8
+ *
+ * @param obj The thumb object.
+ * @return getting The aspect setting.
+ *
+ * @see elm_thumb_aspect_set()
+ *
+ * @ingroup Thumb
+ */
+EAPI Ethumb_Thumb_Aspect elm_thumb_aspect_get(const Evas_Object *obj);
+
+/**
+ * Set the FDO size for the thumb object.
+ * @since 1.8
+ *
+ * @param obj The thumb object.
+ * @param size The FDO size setting.
+ *
+ * @see elm_thumb_file_set()
+ *
+ * @ingroup Thumb
+ */
+EAPI void                        elm_thumb_fdo_size_set(Evas_Object *obj, Ethumb_Thumb_FDO_Size size);
+
+/**
+ * Get the fdo size of the thumb object.
+ * @since 1.8
+ *
+ * @param obj The thumb object.
+ * @return getting The FDO size setting.
+ *
+ * @see elm_thumb_fdo_size_set()
+ *
+ * @ingroup Thumb
+ */
+EAPI Ethumb_Thumb_FDO_Size elm_thumb_fdo_size_get(const Evas_Object *obj);
+
+/**
+ * Set the format for the thumb object.
+ * @since 1.8
+ *
+ * @param obj The thumb object.
+ * @param size The format setting.
+ *
+ * @see elm_thumb_file_set()
+ *
+ * @ingroup Thumb
+ */
+EAPI void                        elm_thumb_format_set(Evas_Object *obj, Ethumb_Thumb_Format format);
+
+/**
+ * Get the format of the thumb object.
+ * @since 1.8
+ *
+ * @param obj The thumb object.
+ * @return getting The Format setting.
+ *
+ * @see elm_thumb_format_set()
+ *
+ * @ingroup Thumb
+ */
+EAPI Ethumb_Thumb_Format elm_thumb_format_get(const Evas_Object *obj);
+
+/**
+ * Set the orientation for the thumb object.
+ * @since 1.8
+ *
+ * @param obj The thumb object.
+ * @param size The orientation setting.
+ *
+ * @see elm_thumb_file_set()
+ *
+ * @ingroup Thumb
+ */
+EAPI void                        elm_thumb_orientation_set(Evas_Object *obj, Ethumb_Thumb_Orientation orient);
+
+/**
+ * Get the orientation of the thumb object.
+ * @since 1.8
+ *
+ * @param obj The thumb object.
+ * @return getting The orientation setting.
+ *
+ * @see elm_thumb_orientation_set()
+ *
+ * @ingroup Thumb
+ */
+EAPI Ethumb_Thumb_Orientation elm_thumb_orientation_get(const Evas_Object *obj);
+
+/**
+ * Set the size for the thumb object.
+ * @since 1.8
+ *
+ * @param obj The thumb object.
+ * @param tw The width of the thumb.
+ * @param th The height of the thumb.
+ *
+ * @see elm_thumb_file_set()
+ *
+ * @ingroup Thumb
+ */
+EAPI void                        elm_thumb_size_set(Evas_Object *obj, int tw, int th);
+
+/**
+ * Get the size of the thumb object.
+ * @since 1.8
+ *
+ * @param obj The thumb object.
+ * @return getting The size setting.
+ *
+ * @see elm_thumb_size_set()
+ *
+ * @ingroup Thumb
+ */
+EAPI void elm_thumb_size_get(const Evas_Object *obj, int *tw, int *th);
+
+/**
+ * Set the crop alignment for the thumb object.
+ * @since 1.8
+ *
+ * @param obj The thumb object.
+ * @param cropx The x coordinate of the crop.
+ * @param cropy The y coordinate of the crop.
+ *
+ * @see elm_thumb_file_set()
+ *
+ * @ingroup Thumb
+ */
+EAPI void                        elm_thumb_crop_align_set(Evas_Object *obj, double cropx, double cropy);
+
+/**
+ * Get the crop alignment of the thumb object.
+ * @since 1.8
+ *
+ * @param obj The thumb object.
+ * @return getting The crop align setting.
+ *
+ * @see elm_thumb_crop_align_set()
+ *
+ * @ingroup Thumb
+ */
+EAPI void elm_thumb_crop_align_get(const Evas_Object *obj, double *cropx, double *cropy);
+
+/**
+ * Set the compression for the thumb object.
+ * @since 1.8
+ *
+ * @param obj The thumb object.
+ * @param compress The compression of the thumb.
+ *
+ * @see elm_thumb_file_set()
+ *
+ * @ingroup Thumb
+ */
+EAPI void                        elm_thumb_compress_set(Evas_Object *obj, int compress);
+
+/**
+ * Get the compression of the thumb object.
+ * @since 1.8
+ *
+ * @param obj The thumb object.
+ * @return getting The compress setting.
+ *
+ * @see elm_thumb_compress_set()
+ *
+ * @ingroup Thumb
+ */
+EAPI void elm_thumb_compress_get(const Evas_Object *obj, int *compress);
+
+
+/**
+ * Set the quality for the thumb object.
+ * @since 1.8
+ *
+ * @param obj The thumb object.
+ * @param quality The quality of the thumb.
+ *
+ * @see elm_thumb_file_set()
+ *
+ * @ingroup Thumb
+ */
+EAPI void                        elm_thumb_quality_set(Evas_Object *obj, int quality);
+
+/**
+ * Get the quality of the thumb object.
+ * @since 1.8
+ *
+ * @param obj The thumb object.
+ * @return getting The quality setting.
+ *
+ * @see elm_thumb_quality_set()
+ *
+ * @ingroup Thumb
+ */
+EAPI void elm_thumb_quality_get(const Evas_Object *obj, int *quality);
+
+/**
  * Set the animation state for the thumb object. If its content is an animated
  * video, you may start/stop the animation or tell it to play continuously and
  * looping.
