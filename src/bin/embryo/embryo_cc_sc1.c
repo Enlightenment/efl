@@ -679,10 +679,15 @@ setconfig(char *root)
 	  {
 	     strcat(path, "include");
 	  }
-	len = strlen(path);
-	path[len] = DIRSEP_CHAR;
-	path[len + 1] = '\0';
-	insert_path(path);
+
+        /* Make sure we have enough space for the trailing DIRSEP_CHAR */
+        if (strlen(path) == sizeof(path) - 1)
+          {
+             len = strlen(path);
+             path[len] = DIRSEP_CHAR;
+             path[len + 1] = '\0';
+             insert_path(path);
+          }
      }				/* if */
 }
 
