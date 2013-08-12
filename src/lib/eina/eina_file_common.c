@@ -375,7 +375,7 @@ eina_file_virtualize(const char *virtual_name, const void *data, unsigned long l
    memset(file, 0, sizeof(Eina_File));
    file->filename = (char*) (file + 1);
    if (virtual_name)
-     strcpy(file->filename, virtual_name);
+     strcpy((char*) file->filename, virtual_name);
    else
      sprintf((char*) file->filename, tmpname, ti);
 
