@@ -5415,9 +5415,13 @@ st_collections_group_parts_part_description_limit(void)
     @parameters
         [X axis] [Y axis]
     @effect
-        When the displayed object's size is smaller than its container, this
-        property moves it relatively along both axis inside its container. The
-        default value is "0.5 0.5".
+        When the displayed object's size is smaller (or bigger) than
+        its container, this property moves it relatively along both
+        axis inside its container. @c "0.0" means left/top edges of
+        the object touching container's respective ones, while @c
+        "1.0" stands for right/bottom edges of the object (on
+        horizonal/vertical axis, respectively). The default value is
+        @c "0.5 0.5".
     @endproperty
 */
 static void
