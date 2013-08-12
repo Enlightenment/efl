@@ -435,13 +435,14 @@ elm_main(int    argc,
    grid = elm_gengrid_add(win);
    elm_gengrid_item_size_set(grid, 150, 150);
    evas_object_size_hint_weight_set(grid, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(grid, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(bx, grid);
    evas_object_smart_callback_add(grid, "clicked,double", _double_click, NULL);
    evas_object_smart_callback_add(grid, "longpressed", _long_pressed, NULL);
    evas_object_show(grid);
 
    hbx_1 = elm_box_add(win);
-   evas_object_size_hint_weight_set(hbx_1, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_weight_set(hbx_1, EVAS_HINT_EXPAND, 0.0);
    elm_box_horizontal_set(hbx_1, EINA_TRUE);
    elm_box_pack_end(bx, hbx_1);
    evas_object_show(hbx_1);
@@ -499,7 +500,7 @@ elm_main(int    argc,
    evas_object_show(sp);
 
    hbx_2 = elm_box_add(win);
-   evas_object_size_hint_weight_set(hbx_2, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_weight_set(hbx_2, EVAS_HINT_EXPAND, 0.0);
    elm_box_horizontal_set(hbx_2, EINA_TRUE);
    elm_box_pack_end(bx, hbx_2);
    evas_object_show(hbx_2);
@@ -544,7 +545,7 @@ elm_main(int    argc,
    evas_object_show(ck);
 
    hbx_3 = elm_box_add(win);
-   evas_object_size_hint_weight_set(hbx_3, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_weight_set(hbx_3, EVAS_HINT_EXPAND, 0.0);
    elm_box_horizontal_set(hbx_3, EINA_TRUE);
    elm_box_pack_end(bx, hbx_3);
    evas_object_show(hbx_3);
