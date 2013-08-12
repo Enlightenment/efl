@@ -180,6 +180,24 @@ my_bt_gesture(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED
 }
 
 static void
+my_ph_download_progress(void *data __UNUSED__, Evas_Object *obj, void *event_info)
+{
+   Elm_Photocam_Progress *info = (Elm_Photocam_Progress *) event_info;
+   Evas_Object *pb = evas_object_data_get(obj, "progressbar");
+
+   if (info->total > 0.0)
+     elm_progressbar_value_set(pb, info->now / info->total);
+}
+
+static void
+my_ph_download_done(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   Evas_Object *pb = evas_object_data_get(obj, "progressbar");
+
+   evas_object_hide(pb);
+}
+
+static void
 _photocam_mouse_wheel_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Evas_Object *photocam = data;
@@ -374,7 +392,7 @@ test_photocam(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 void
 test_photocam_remote(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *ph, *tb2, *bt, *box;
+   Evas_Object *win, *ph, *tb2, *bt, *box, *pb;
    // these were just testing - use the "select photo" browser to select one
    static const char *url = "http://eoimages.gsfc.nasa.gov/images/imagerecords/73000/73751/world.topo.bathy.200407.3x21600x10800.jpg";
 
@@ -412,6 +430,8 @@ test_photocam_remote(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *e
    evas_object_smart_callback_add(ph, "scroll,drag,start", my_ph_drag_start, win);
    evas_object_smart_callback_add(ph, "scroll,drag,stop", my_ph_drag_stop, win);
    evas_object_smart_callback_add(ph, "scroll", my_ph_scroll, win);
+   evas_object_smart_callback_add(ph, "download,progress", my_ph_download_progress, win);
+   evas_object_smart_callback_add(ph, "download,done", my_ph_download_done, win);
 
    elm_photocam_file_set(ph, url);
    evas_object_show(ph);
@@ -443,6 +463,14 @@ test_photocam_remote(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *e
    evas_object_size_hint_align_set(bt, 0.1, 0.5);
    elm_table_pack(tb2, bt, 0, 1, 1, 1);
    evas_object_show(bt);
+
+   pb = elm_progressbar_add(win);
+   elm_progressbar_unit_format_set(pb, "Loading %.2f %%");
+   evas_object_size_hint_weight_set(pb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(pb, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_table_pack(tb2, pb, 1, 1, 1, 1);
+   evas_object_show(pb);
+   evas_object_data_set(ph, "progressbar", pb);
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Bring 800,300 500x300");
