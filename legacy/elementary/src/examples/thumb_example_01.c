@@ -42,6 +42,7 @@ elm_main(int argc, char **argv)
    evas_object_smart_callback_add(thumb, "generate,stop", _generation_finished_cb, NULL);
    evas_object_smart_callback_add(thumb, "generate,error", _generation_error_cb, NULL);
 
+   elm_thumb_size_set(thumb, 160, 160);
    elm_thumb_editable_set(thumb, EINA_FALSE);
    snprintf(buf, sizeof(buf), "%s/images/plant_01.jpg", elm_app_data_dir_get());
    elm_thumb_file_set(thumb, buf, NULL);
