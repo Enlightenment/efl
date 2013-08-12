@@ -14,6 +14,13 @@ typedef enum
    ELM_THUMB_ANIMATION_LAST
 } Elm_Thumb_Animation_Setting;
 
+#ifndef ELM_ETHUMB
+typedef int Ethumb_Thumb_FDO_Size;
+typedef int Ethumb_Thumb_Aspect;
+typedef int Ethumb_Thumb_Format;
+typedef int Ethumb_Thumb_Orientation;
+#endif
+
 /**
  * Get the ethumb_client handle so custom configuration can be made.
  *

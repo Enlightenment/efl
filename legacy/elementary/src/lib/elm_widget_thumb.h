@@ -37,6 +37,7 @@ struct _Elm_Thumb_Smart_Data
       const char          *thumb_path;
       const char          *thumb_key;
       Ethumb_Client_Async *request;
+#endif
 
       double                cropx;
       double                cropy;
@@ -51,7 +52,6 @@ struct _Elm_Thumb_Smart_Data
       Ethumb_Thumb_Orientation orient;
 
       Eina_Bool            retry : 1;
-#endif
    } thumb;
 
    Ecore_Event_Handler        *eeh;
