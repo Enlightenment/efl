@@ -44,7 +44,7 @@ static struct {
 static void
 _checkbox_transition_add(Evas_Object *box, const char *label, Eina_Bool *checked)
 {
-   Evas_Object *check = elm_check_add(elm_object_parent_widget_get(box));
+   Evas_Object *check = elm_check_add(box);
    evas_object_size_hint_weight_set(check, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(check, 0.0, 0.0);
    elm_object_text_set(check, label);
@@ -63,7 +63,7 @@ _transit_start(void *data, Evas_Object *o, void *event_info)
 
    trans = elm_transit_add();
    EINA_LIST_FOREACH(objs, l, obj)
-      elm_transit_object_add(trans, obj);
+     elm_transit_object_add(trans, obj);
 
    // FIXME: Should check if there's another transit going before starting a new
    // one
@@ -81,7 +81,7 @@ _transit_start(void *data, Evas_Object *o, void *event_info)
 EAPI_MAIN int
 elm_main(int argc, char **argv)
 {
-   Evas_Object *win, *obj, *icon, *box, *vbox, *btn, *dummy;
+   Evas_Object *win, *icon, *box, *hbox, *btn, *rect;
    Eina_List *objs = NULL;
    char buf[PATH_MAX];
    int i;
@@ -92,61 +92,67 @@ elm_main(int argc, char **argv)
    /* add a window */
    win = elm_win_util_standard_add("transit", "Transit Example");
    elm_win_autodel_set(win, EINA_TRUE);
+   evas_object_resize(win, 300, 100);
+   evas_object_show(win);
 
    box = elm_box_add(win);
    evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, box);
    evas_object_show(box);
 
-   dummy = elm_bg_add(win);
-   evas_object_size_hint_weight_set(dummy, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_box_pack_end(box, dummy);
-   evas_object_show(dummy);
-
    /* add an object that we are going to play with */
-   obj = elm_button_add(win);
-   elm_object_text_set(obj, "Transformed object!");
+   btn = elm_button_add(win);
+   evas_object_size_hint_weight_set(btn, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(btn, EVAS_HINT_FILL, 0.0);
+   elm_object_text_set(btn, "Transformed object!");
    icon = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/icon_07.png", elm_app_data_dir_get());
    elm_image_file_set(icon, buf, NULL);
-   elm_object_part_content_set(obj, "icon", icon);
-   evas_object_move(obj, 160, 60);
-   evas_object_resize(obj, 250, 100);
-   evas_object_show(obj);
+   elm_object_part_content_set(btn, "icon", icon);
+   evas_object_move(btn, 50, 50);
+   evas_object_resize(btn, 200, 50);
+   evas_object_show(btn);
 
-   objs = eina_list_append(objs, obj);
+   objs = eina_list_append(objs, btn);
 
    /* add another object that we are going to play with */
-   obj = elm_button_add(win);
-   elm_object_text_set(obj, "Another object!");
+   btn = elm_button_add(win);
+   evas_object_size_hint_weight_set(btn, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(btn, EVAS_HINT_FILL, 0.0);
+   elm_object_text_set(btn, "Another object!");
    icon = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/icon_08.png", elm_app_data_dir_get());
    elm_image_file_set(icon, buf, NULL);
-   elm_object_part_content_set(obj, "icon", icon);
-   evas_object_move(obj, 160, 60);
-   evas_object_resize(obj, 250, 100);
+   elm_object_part_content_set(btn, "icon", icon);
+   evas_object_move(btn, 50, 50);
+   evas_object_resize(btn, 200, 50);
 
-   objs = eina_list_append(objs, obj);
+   objs = eina_list_append(objs, btn);
+
+   hbox = elm_box_add(win);
+   elm_box_horizontal_set(hbox, EINA_TRUE);
+   evas_object_size_hint_weight_set(hbox, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(hbox, EVAS_HINT_FILL, 0.0);
+   elm_box_pack_end(box, hbox);
+   evas_object_show(hbox);
+
+   for (i = 0; _transitions[i].label; i++)
+     _checkbox_transition_add(hbox, _transitions[i].label, &_transitions[i].checked);
 
    btn = elm_button_add(win);
-   evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_weight_set(btn, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_object_text_set(btn, "Transit!");
-   elm_box_pack_end(box, btn);
+   elm_box_pack_end(hbox, btn);
    evas_object_show(btn);
 
    evas_object_smart_callback_add(btn, "clicked", _transit_start, objs);
 
-   vbox = elm_box_add(win);
-   evas_object_size_hint_weight_set(vbox, EVAS_HINT_EXPAND, EVAS_HINT_FILL);
-   evas_object_size_hint_align_set(vbox, EVAS_HINT_FILL, 0.0);
-
-   for (i = 0; _transitions[i].label; i++)
-     _checkbox_transition_add(vbox, _transitions[i].label, &_transitions[i].checked);
-
-   elm_box_pack_end(box, vbox);
-   evas_object_show(vbox);
-
-   evas_object_show(win);
+   rect = evas_object_rectangle_add(evas_object_evas_get(win));
+   evas_object_color_set(rect, 0, 0, 0, 0);
+   evas_object_size_hint_weight_set(rect, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(rect, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(box, rect);
+   evas_object_show(rect);
 
    elm_run();
    elm_shutdown();
