@@ -1536,7 +1536,8 @@
 
 2013-08-09  Cedric Bail
 
-        * Add support for URL in Elm_Image.
+        * Add support for URL in Elm_Image with the following new smart callback :
+	"download,start", "download,progress", "download,done", "download,error".
 
 2013-08-10  ChunEon Park (Hermet)
 
@@ -1546,3 +1547,7 @@
 2013-08-11  Daniel Juyung Seo (SeoZ)
 
         * Win Focus: Added elm_win_focus_highlight_animate_set/get().
+
+2013-08-12  Cedric Bail
+
+	* Add URL support to Elm_Photocam with the same callback as URL suport in Elm_Image.
