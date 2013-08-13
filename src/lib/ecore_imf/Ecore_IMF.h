@@ -1523,6 +1523,27 @@ EAPI void                          ecore_imf_context_input_panel_language_locale
  */
 EAPI void                          ecore_imf_context_candidate_panel_geometry_get(Ecore_IMF_Context *ctx, int *x, int *y, int *w, int *h);
 
+/**
+ * Set whether the Input Method Context should request to show the input panel in case of only an user's explicit Mouse Up event.
+ * It doesn't request to show the input panel even though the Input Method Context has focus.
+ *
+ * @param ctx An #Ecore_IMF_Context.
+ * @param ondemand If true, the input panel will be shown in case of only Mouse up event. (Focus event will be ignored.)
+ * @ingroup Ecore_IMF_Context_Group
+ * @since 1.8.0
+ */
+EAPI void                          ecore_imf_context_input_panel_show_on_demand_set(Ecore_IMF_Context *ctx, Eina_Bool ondemand);
+
+/**
+ * Get whether the Input Method Context should request to show the input panel in case of only an user's explicit Mouse Up event.
+ *
+ * @param ctx An #Ecore_IMF_Context.
+ * @return @c EINA_TRUE if the input panel will be shown in case of only Mouse up event.
+ * @ingroup Ecore_IMF_Context_Group
+ * @since 1.8.0
+ */
+EAPI Eina_Bool                     ecore_imf_context_input_panel_show_on_demand_get(Ecore_IMF_Context *ctx);
+
 /* The following entry points must be exported by each input method module
  */
 

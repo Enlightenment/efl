@@ -141,6 +141,7 @@ Additions:
      - Add ecore_imf_input_panel_hide API
      - Add ecore_imf_context_input_panel_event_callback_call, clear API
      - Add ECORE_IMF_INPUT_PANEL_LAYOUT_DATETIME layout
+     - Add ecore_imf_context_input_panel_on_demand_set/get API
     * Eio:
      - Add eio_eet_sync symbols.
         

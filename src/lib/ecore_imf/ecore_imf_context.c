@@ -1207,3 +1207,29 @@ ecore_imf_context_candidate_panel_geometry_get(Ecore_IMF_Context *ctx, int *x, i
      ctx->klass->candidate_panel_geometry_get(ctx, x, y, w, h);
 }
 
+EAPI void
+ecore_imf_context_input_panel_show_on_demand_set(Ecore_IMF_Context *ctx, Eina_Bool ondemand)
+{
+   if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
+     {
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_input_panel_show_on_demand_set");
+        return;
+     }
+
+   ctx->input_panel_show_on_demand = ondemand;
+}
+
+EAPI Eina_Bool
+ecore_imf_context_input_panel_show_on_demand_get(Ecore_IMF_Context *ctx)
+{
+   if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
+     {
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_input_panel_show_on_demand_get");
+        return EINA_FALSE;
+     }
+
+   return ctx->input_panel_show_on_demand;
+}
+
