@@ -20,16 +20,19 @@
 # include "config.h"
 #endif
 
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
+#include <fcntl.h>
 
 #include "eina_suite.h"
 #include "Eina.h"
 #include "eina_safety_checks.h"
 
 static int default_dir_rights = 0777;
+const int file_min_offset = 1;
 
 #ifdef EINA_SAFETY_CHECKS
 struct log_ctx {
@@ -254,11 +257,140 @@ START_TEST(eina_file_ls_simple)
 }
 END_TEST
 
+START_TEST(eina_file_map_new_test)
+{
+   const char *eina_map_test_string = "Hello. I'm the eina map test string."; 
+   const char *test_file_name_part = "/example.txt";
+   const char *test_file2_name_part = "/example_big.txt";
+   char *test_file_path, *test_file2_path;
+   char *big_buffer;
+   const char *template = "abcdefghijklmnopqrstuvwxyz";
+   int template_size = strlen (template);
+   int memory_page_size = sysconf(_SC_PAGE_SIZE);
+   const int big_buffer_size = memory_page_size * 1.5;
+   const int iteration_number = big_buffer_size / template_size;
+   int test_string_length = strlen(eina_map_test_string);
+   int test_full_filename_size;
+   int test_full_filename2_size;
+   Eina_File *e_file, *e_file2;
+   void *file_map, *file2_map;  
+   int fd, correct_file_open_check, correct_map_check, map_offset, map_length, file_length, file2_length;
+   int test_file_name_part_size = strlen(test_file_name_part);
+   int test_file2_name_part_size = strlen(test_file2_name_part);
+   int test_dirname_size;
+   int start_point_final, last_chunk_size;
+
+   eina_init();
+
+   Eina_Tmpstr *test_dirname = get_eina_test_file_tmp_dir();
+   fail_if(test_dirname == NULL);
+   test_dirname_size = strlen((char *)test_dirname);
+   
+   // memory allocation
+   test_full_filename_size = test_file_name_part_size + test_dirname_size + 1;
+   test_file_path = (char *)malloc(test_full_filename_size);
+
+   test_full_filename2_size = test_file2_name_part_size + test_dirname_size + 1;
+   test_file2_path = (char *)malloc(test_full_filename2_size);
+
+   // Creating big buffer 1.5 * (memory page size)
+   big_buffer = (char *)malloc(big_buffer_size);
+   // Set first symbol == '/0' to strcat corret work
+   big_buffer[0] = '\0';
+   // iteration_number - quantity of templates that can be fully put in big_buff
+   for (int i = 0; i < iteration_number; i++)
+	   strcat (big_buffer, template);
+   // calculating last chunk of data that < template_size
+   last_chunk_size = big_buffer_size - iteration_number * template_size - file_min_offset;
+   //calculating start point for final iteration_number
+   start_point_final = iteration_number * template_size;
+   strncpy ((big_buffer + start_point_final), template, last_chunk_size);
+   // set last element of big_buffer in '\0' - end of string
+   big_buffer[big_buffer_size - file_min_offset] = '\0';
+   // check big_buffer valid length
+   fail_if((int)strlen(big_buffer) != (big_buffer_size - file_min_offset));
+
+   // generating file 1 full name
+   strcpy(test_file_path, (char *)test_dirname);
+   strcat(test_file_path, test_file_name_part);
+   // generating file 2 full name
+   strcpy(test_file2_path, (char *)test_dirname);
+   strcat(test_file2_path, test_file2_name_part);
+   
+   fd = open(test_file_path, O_WRONLY | O_CREAT | O_TRUNC, S_IWUSR | S_IRUSR);
+   fail_if(fd == 0);   
+   write(fd, eina_map_test_string, strlen(eina_map_test_string));
+   close(fd);
+
+   fd = open(test_file2_path, O_WRONLY | O_CREAT | O_TRUNC, S_IWUSR | S_IRUSR);
+   fail_if(fd == 0);   
+   write(fd, big_buffer, big_buffer_size - file_min_offset);
+   close(fd);
+
+   e_file = eina_file_open(test_file_path, EINA_FALSE);
+   fail_if(!e_file);
+   file_length = eina_file_size_get(e_file);
+   correct_file_open_check = file_length - test_string_length; 
+   // check size of eina_map_test_string == size of file
+   fail_if(correct_file_open_check != 0); 
+
+   e_file2 = eina_file_open(test_file2_path, EINA_FALSE);
+   fail_if(!e_file);
+   file2_length = eina_file_size_get(e_file2);
+   correct_file_open_check = file2_length - (big_buffer_size - file_min_offset); 
+   // check size of big_buffer == size of file
+   fail_if(correct_file_open_check != 0); 
+
+   // test : offset > file -> length  => return NULL
+   map_offset = test_string_length + file_min_offset;
+   map_length = file_min_offset;
+   file_map = eina_file_map_new(e_file, EINA_FILE_WILLNEED, map_offset, map_length); 
+   fail_if(file_map);
+
+   // test : offset + length > file -> length => return NULL
+   map_offset = file_min_offset;
+   map_length = test_string_length;
+   file_map = eina_file_map_new(e_file, EINA_FILE_WILLNEED, map_offset, map_length); 
+   fail_if(file_map);
+
+   // test : offset = 0 AND length = file->length - use eina_file_map_all
+   map_offset = 0;
+   map_length = test_string_length;
+   file_map = eina_file_map_new(e_file, EINA_FILE_WILLNEED, map_offset, map_length); 
+   fail_if(!file_map);
+   correct_map_check= strcmp((char*) file_map, eina_map_test_string); 
+   fail_if(correct_map_check != 0);  
+
+   eina_file_map_free(e_file, file_map);
+
+   // test : offset = memory_page_size AND length = file->length - memory_page_size => correct partly map
+   map_offset = memory_page_size;
+   map_length = big_buffer_size - memory_page_size - file_min_offset;
+   file2_map = eina_file_map_new(e_file2, EINA_FILE_WILLNEED, map_offset, map_length); 
+   fail_if(!file2_map);
+   correct_map_check = strcmp((char*)file2_map, big_buffer + memory_page_size); 
+   fail_if(correct_map_check != 0);  
+  
+   unlink(test_file_path);
+   unlink(test_file2_path);
+   free(test_file_path);
+   free(test_file2_path);
+   eina_file_map_free(e_file, file_map);
+   eina_file_map_free(e_file2, file2_map);   
+   eina_file_close(e_file); 
+   eina_file_close(e_file2);
+   eina_tmpstr_del(test_dirname);
+
+   eina_shutdown();
+}
+END_TEST
+
 void
 eina_test_file(TCase *tc)
 {
    tcase_add_test(tc, eina_file_split_simple);
    tcase_add_test(tc, eina_file_direct_ls_simple);
    tcase_add_test(tc, eina_file_ls_simple);
+   tcase_add_test(tc, eina_file_map_new_test);
 }
 
