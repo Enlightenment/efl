@@ -1102,7 +1102,6 @@ _action_button_set(Evas_Object *obj,
                    Evas_Object *btn,
                    unsigned int idx)
 {
-   int i = 0;
    Action_Area_Data *adata;
    char buf[128];
 
@@ -1153,7 +1152,6 @@ _action_button_set(Evas_Object *obj,
    snprintf(buf, sizeof(buf), "actionbtn%u", idx + 1);
    elm_object_part_content_set
      (sd->action_area, buf, sd->buttons[idx]->btn);
-   evas_object_show(sd->buttons[i]->btn);
 
    if (sd->button_count == 1) _visuals_set(obj);
 
