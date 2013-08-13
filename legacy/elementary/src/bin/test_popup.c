@@ -8,12 +8,16 @@ static Evas_Object *g_popup = NULL;
 static int times = 0;
 
 static void
-_response_cb(void *data, Evas_Object *obj __UNUSED__,
+_response_cb(void *data __UNUSED__, Evas_Object *obj,
              void *event_info __UNUSED__)
 {
-   Evas_Object *popup_data = evas_object_data_get(data, "im");
-   if (popup_data) evas_object_del(popup_data);
-   evas_object_hide(data);
+   evas_object_del(obj);
+}
+
+static void
+_popup_close_cb(void *data, Evas_Object *obj __UNUSED__,
+                void *event_info __UNUSED__)
+{
    evas_object_del(data);
 }
 
@@ -25,12 +29,28 @@ _g_popup_response_cb(void *data, Evas_Object *obj __UNUSED__,
 }
 
 static void
+_restack_block_clicked_cb(void *data __UNUSED__, Evas_Object *obj,
+                          void *event_info __UNUSED__)
+{
+   // remove restacked image if there is any
+   Evas_Object *popup_data = evas_object_data_get(obj, "im");
+   if (popup_data) evas_object_del(popup_data);
+   evas_object_del(obj);
+}
+
+static void
+_restack_popup_close_cb(void *data, Evas_Object *obj __UNUSED__,
+                        void *event_info __UNUSED__)
+{
+   Evas_Object *popup_data = evas_object_data_get(data, "im");
+   if (popup_data) evas_object_del(popup_data);
+   evas_object_del(data);
+}
+
+static void
 _block_clicked_cb(void *data __UNUSED__, Evas_Object *obj,
                   void *event_info __UNUSED__)
 {
-   printf("\nblock,clicked callback\n");
-   Evas_Object *popup_data = evas_object_data_get(obj, "im");
-   if (popup_data) evas_object_del(popup_data);
    evas_object_del(obj);
 }
 
@@ -81,7 +101,7 @@ _popup_center_text_1button_cb(void *data, Evas_Object *obj __UNUSED__,
    btn = elm_button_add(popup);
    elm_object_text_set(btn, "Close");
    elm_object_part_content_set(popup, "button1", btn);
-   evas_object_smart_callback_add(btn, "clicked", _response_cb, popup);
+   evas_object_smart_callback_add(btn, "clicked", _popup_close_cb, popup);
 
    evas_object_show(popup);
 }
@@ -106,7 +126,7 @@ _popup_center_title_text_1button_cb(void *data, Evas_Object *obj __UNUSED__,
    btn = elm_button_add(popup);
    elm_object_text_set(btn, "Close");
    elm_object_part_content_set(popup, "button1", btn);
-   evas_object_smart_callback_add(btn, "clicked", _response_cb, popup);
+   evas_object_smart_callback_add(btn, "clicked", _popup_close_cb, popup);
 
    evas_object_show(popup);
 }
@@ -165,17 +185,17 @@ _popup_bottom_title_text_3button_cb(void *data, Evas_Object *obj __UNUSED__,
    btn1 = elm_button_add(popup);
    elm_object_text_set(btn1, "OK");
    elm_object_part_content_set(popup, "button1", btn1);
-   evas_object_smart_callback_add(btn1, "clicked", _response_cb, popup);
+   evas_object_smart_callback_add(btn1, "clicked", _popup_close_cb, popup);
 
    btn2 = elm_button_add(popup);
    elm_object_text_set(btn2, "Cancel");
    elm_object_part_content_set(popup, "button2", btn2);
-   evas_object_smart_callback_add(btn2, "clicked", _response_cb, popup);
+   evas_object_smart_callback_add(btn2, "clicked", _popup_close_cb, popup);
 
    btn3 = elm_button_add(popup);
    elm_object_text_set(btn3, "Close");
    elm_object_part_content_set(popup, "button3", btn3);
-   evas_object_smart_callback_add(btn3, "clicked", _response_cb, popup);
+   evas_object_smart_callback_add(btn3, "clicked", _popup_close_cb, popup);
 
    evas_object_show(popup);
 }
@@ -208,17 +228,17 @@ _popup_center_title_content_3button_cb(void *data, Evas_Object *obj __UNUSED__,
    btn1 = elm_button_add(popup);
    elm_object_text_set(btn1, "OK");
    elm_object_part_content_set(popup, "button1", btn1);
-   evas_object_smart_callback_add(btn1, "clicked", _response_cb, popup);
+   evas_object_smart_callback_add(btn1, "clicked", _popup_close_cb, popup);
 
    btn2 = elm_button_add(popup);
    elm_object_text_set(btn2, "Cancel");
    elm_object_part_content_set(popup, "button2", btn2);
-   evas_object_smart_callback_add(btn2, "clicked", _response_cb, popup);
+   evas_object_smart_callback_add(btn2, "clicked", _popup_close_cb, popup);
 
    btn3 = elm_button_add(popup);
    elm_object_text_set(btn3, "Close");
    elm_object_part_content_set(popup, "button3", btn3);
-   evas_object_smart_callback_add(btn3, "clicked", _response_cb, popup);
+   evas_object_smart_callback_add(btn3, "clicked", _popup_close_cb, popup);
 
    evas_object_show(popup);
 }
@@ -255,17 +275,17 @@ _popup_center_title_item_3button_cb(void *data, Evas_Object *obj __UNUSED__,
    btn1 = elm_button_add(popup);
    elm_object_text_set(btn1, "OK");
    elm_object_part_content_set(popup, "button1", btn1);
-   evas_object_smart_callback_add(btn1, "clicked", _response_cb, popup);
+   evas_object_smart_callback_add(btn1, "clicked", _popup_close_cb, popup);
 
    btn2 = elm_button_add(popup);
    elm_object_text_set(btn2, "Cancel");
    elm_object_part_content_set(popup, "button2", btn2);
-   evas_object_smart_callback_add(btn2, "clicked", _response_cb, popup);
+   evas_object_smart_callback_add(btn2, "clicked", _popup_close_cb, popup);
 
    btn3 = elm_button_add(popup);
    elm_object_text_set(btn3, "Close");
    elm_object_part_content_set(popup, "button3", btn3);
-   evas_object_smart_callback_add(btn3, "clicked", _response_cb, popup);
+   evas_object_smart_callback_add(btn3, "clicked", _popup_close_cb, popup);
 
    evas_object_show(popup);
 }
@@ -301,8 +321,8 @@ _popup_center_title_text_2button_restack_cb(void *data, Evas_Object *obj __UNUSE
 
    popup = elm_popup_add(data);
    evas_object_size_hint_weight_set(popup, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_smart_callback_add(popup, "block,clicked", _block_clicked_cb,
-                                  NULL);
+   evas_object_smart_callback_add(popup, "block,clicked",
+                                  _restack_block_clicked_cb, NULL);
 
    // popup text
    elm_object_text_set(popup, "When you click the 'Restack' button, "
@@ -319,7 +339,8 @@ _popup_center_title_text_2button_restack_cb(void *data, Evas_Object *obj __UNUSE
    btn2 = elm_button_add(popup);
    elm_object_text_set(btn2, "Close");
    elm_object_part_content_set(popup, "button2", btn2);
-   evas_object_smart_callback_add(btn2, "clicked", _response_cb, popup);
+   evas_object_smart_callback_add(btn2, "clicked",
+                                  _restack_popup_close_cb, popup);
 
    evas_object_show(popup);
 }
@@ -370,7 +391,7 @@ _popup_transparent_cb(void *data, Evas_Object *obj __UNUSED__,
    btn = elm_button_add(popup);
    elm_object_text_set(btn, "Close");
    elm_object_part_content_set(popup, "button1", btn);
-   evas_object_smart_callback_add(btn, "clicked", _response_cb, popup);
+   evas_object_smart_callback_add(btn, "clicked", _popup_close_cb, popup);
    evas_object_show(popup);
 }
 
@@ -402,7 +423,7 @@ _popup_center_title_list_content_1button_cb(void *data, Evas_Object *obj __UNUSE
    btn = elm_button_add(popup);
    elm_object_text_set(btn, "OK");
    elm_object_part_content_set(popup, "button1", btn);
-   evas_object_smart_callback_add(btn, "clicked", _response_cb, popup);
+   evas_object_smart_callback_add(btn, "clicked", _popup_close_cb, popup);
 
    evas_object_show(popup);
 }
@@ -415,6 +436,8 @@ test_popup(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
 
    win = elm_win_util_standard_add("popup", "Popup");
    elm_win_autodel_set(win, EINA_TRUE);
+   evas_object_resize(win, 480, 400);
+   evas_object_show(win);
 
    list = elm_list_add(win);
    evas_object_size_hint_weight_set(list, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -450,9 +473,6 @@ test_popup(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
                         win);
    elm_list_go(list);
    evas_object_show(list);
-   evas_object_show(win);
-   evas_object_resize(win, 480, 400);
 }
 
 #endif
-
