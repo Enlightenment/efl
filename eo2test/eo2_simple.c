@@ -7,7 +7,7 @@ typedef struct
 } Private_Data;
 
 static void
-_inc(Eo *objid EINA_UNUSED, void *obj_data)
+_inc(Eo *obj EINA_UNUSED, void *obj_data)
 {
    Private_Data *data = (Private_Data *) obj_data;
 
@@ -16,7 +16,7 @@ _inc(Eo *objid EINA_UNUSED, void *obj_data)
 EAPI EO2_VOID_FUNC_BODY(eo2_inc);
 
 static int
-_get(Eo *objid EINA_UNUSED, void *obj_data)
+_get(Eo *obj EINA_UNUSED, void *obj_data)
 {
    const Private_Data *data = (Private_Data *) obj_data;
 
@@ -25,7 +25,7 @@ _get(Eo *objid EINA_UNUSED, void *obj_data)
 EAPI EO2_FUNC_BODY(eo2_get, int, -1);
 
 static void
-_set(Eo *objid EINA_UNUSED, void *obj_data, int x)
+_set(Eo *obj EINA_UNUSED, void *obj_data, int x)
 {
    Private_Data *data = (Private_Data *) obj_data;
    data->x = x;
