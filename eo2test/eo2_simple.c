@@ -1,6 +1,9 @@
 #include "Eo.h"
 #include "eo2_simple.h"
 
+EAPI const Eo_Event_Description _EO2_EV_X_CHANGED =
+   EO_EVENT_DESCRIPTION("x,changed", "Called when x has changed.");
+
 typedef struct
 {
    int x;
@@ -31,6 +34,15 @@ _set(Eo *obj EINA_UNUSED, void *obj_data, int x)
    data->x = x;
 }
 EAPI EO2_VOID_FUNC_BODYV(eo2_set, EO2_FUNC_CALL(x), int x);
+
+static void
+_set_evt(Eo *obj, void *obj_data, int x)
+{
+   Private_Data *data = (Private_Data *) obj_data;
+   data->x = x;
+   eo2_do(obj, eo2_event_callback_call(EO2_EV_X_CHANGED, &data->x); );
+}
+EAPI EO2_VOID_FUNC_BODYV(eo2_set_evt, EO2_FUNC_CALL(x), int x);
 
 static void
 _class_hello(const Eo_Class *klass, int a)
@@ -64,9 +76,15 @@ static Eo2_Op_Description op_descs [] = {
        EO2_OP_FUNC(_inc, eo2_inc, "Inc X"),
        EO2_OP_FUNC(_get, eo2_get, "Get X"),
        EO2_OP_FUNC(_set, eo2_set, "Set X"),
+       EO2_OP_FUNC(_set_evt, eo2_set_evt, "Set X + event"),
        EO2_OP_CLASS_FUNC(_class_hello, eo2_class_hello, "Class says hello"),
        EO2_OP_FUNC(NULL, eo2_virtual, "Virtual Func"),
        EO2_OP_SENTINEL
+};
+
+static const Eo_Event_Description *event_desc[] = {
+     EO2_EV_X_CHANGED,
+     NULL
 };
 
 static const Eo_Class_Description class_desc = {
@@ -74,7 +92,7 @@ static const Eo_Class_Description class_desc = {
      "Eo2 Simple",
      EO_CLASS_TYPE_REGULAR,
      EO2_CLASS_DESCRIPTION_OPS(op_descs),
-     NULL,
+     event_desc,
      sizeof(Private_Data),
      NULL,
      NULL
