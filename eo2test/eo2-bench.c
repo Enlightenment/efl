@@ -290,18 +290,69 @@ check:
    return 0;
 }
 
+static int evt_count = 0;
+static Eina_Bool
+_changed_cb(void *data, Eo *obj, const Eo_Event_Description *desc, void *event_info)
+{
+   (void) data;
+   (void) desc;
+   (void) obj;
+   int val = *((int *) event_info);
+   check(val, 66);
+   evt_count++;
+
+   return EO_CALLBACK_CONTINUE;
+}
+
+static void
+event_test()
+{
+   Eo *eo_obj, *eo2_obj;
+
+   printf("\n *** event_test\n");
+
+   eo_obj = eo_add(EO_SIMPLE_CLASS, NULL);
+   eo2_obj = eo2_add(EO2_SIMPLE_CLASS, NULL);
+
+   evt_count = 0;
+   eo_do(eo_obj, eo_event_callback_add(EO_EV_X_CHANGED, _changed_cb, NULL));
+   eo_do(eo_obj, eo_set_evt(66));
+   check(evt_count, 1);
+
+   evt_count = 0;
+   eo2_do(eo2_obj, eo2_event_callback_add(EO2_EV_X_CHANGED, _changed_cb, NULL));
+   eo2_do(eo2_obj, eo2_set_evt(66));
+   check(evt_count, 1);
+}
+
+static void
+class_do_test()
+{
+   printf("\n *** class_do_test\n");
+
+   eo2_class_do(EO2_INHERIT_CLASS, eo2_class_hello(2); );
+}
+
 int
 main(int argc EINA_UNUSED, char** argv EINA_UNUSED, char** env EINA_UNUSED)
 {
    eo_init();
 
-   do_batch_test();
-   override_batch_test();
-   virtual_test();
-   if(cleanup_test())
-     printf("something went wrong in cleanup_test()\n");
+   if (argc > 1)
+     eina_log_domain_level_set("eo", EINA_LOG_LEVEL_DBG);
 
-   eo2_class_do(EO2_INHERIT_CLASS, eo2_class_hello(2); );
+   if(cleanup_test())
+     fprintf(stderr, "something went wrong in cleanup_test()\n");
+
+   class_do_test();
+
+   do_batch_test();
+
+   override_batch_test();
+
+   virtual_test();
+
+   event_test();
 
    eo_shutdown();
 
