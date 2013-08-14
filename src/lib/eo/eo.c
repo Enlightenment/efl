@@ -353,8 +353,6 @@ eo2_do_start(Eo *obj_id, const Eina_Bool do_super, const char *file EINA_UNUSED,
    fptr->klass = klass;
    fptr->obj_data = EO2_INVALID_DATA;
 
-   
-
    return EINA_TRUE;
 }
 
@@ -578,7 +576,7 @@ _eo2_class_funcs_set(_Eo_Class *klass)
    qsort((void*)op_descs, klass->desc->ops.count, sizeof(Eo2_Op_Description), eo2_api_funcs_cmp);
 
    op_id = klass->base_id;
-   /* printf("elaborate class '%s' \n", klass->desc->name); */
+   DBG("Set functions for class '%s'", klass->desc->name);
    for (op_desc = op_descs; op_desc->op_type != EO_OP_TYPE_INVALID; op_desc++)
      {
         if(op_desc->api_func == NULL)
@@ -611,7 +609,7 @@ _eo2_class_funcs_set(_Eo_Class *klass)
                    klass->desc->name, (unsigned long) (op_desc - op_descs));
           }
 
-        /* printf(" %d %p %p %s\n", op_desc->op, op_desc->api_func, op_desc->func, op_desc->doc); */
+        DBG(" %4d %p %p %s", op_desc->op, op_desc->api_func, op_desc->func, op_desc->doc);
         _dich_func_set(klass, op_desc->op, op_desc->func);
      }
 }
