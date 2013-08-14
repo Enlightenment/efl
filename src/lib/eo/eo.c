@@ -490,14 +490,18 @@ static inline const Eo2_Op_Description *
 _eo2_api_desc_get(const void *api_func, const _Eo_Class *klass)
 {
    int imin, imax, imid;
+   const _Eo_Class *cur_klass;
+   const _Eo_Class **kls_itr = NULL;
    Eo2_Op_Description *op_desc;
    Eo2_Op_Description *op_descs;
 
-   while (klass)
+   kls_itr = klass->mro;
+   while (*kls_itr)
      {
+        cur_klass = *kls_itr;
         imin = 0;
-        imax = klass->desc->ops.count - 1;
-        op_descs = klass->desc->ops.descs2;
+        imax = cur_klass->desc->ops.count - 1;
+        op_descs = cur_klass->desc->ops.descs2;
 
         while (imax >= imin)
           {
@@ -512,7 +516,7 @@ _eo2_api_desc_get(const void *api_func, const _Eo_Class *klass)
                return op_desc;
           }
 
-        klass = klass->parent;
+        kls_itr++;
      }
 
    return NULL;
