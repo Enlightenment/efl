@@ -4,6 +4,9 @@ EAPI Eo_Op EO_SIMPLE_BASE_ID = 0;
 
 #define MY_CLASS EO_SIMPLE_CLASS
 
+EAPI const Eo_Event_Description _EO_EV_X_CHANGED =
+   EO_EVENT_DESCRIPTION("x,changed", "Called when x has changed.");
+
 typedef struct
 {
    int x;
@@ -36,6 +39,16 @@ _set(Eo *obj EINA_UNUSED, void *obj_data, va_list *list)
 }
 
 static void
+_set_evt(Eo *obj EINA_UNUSED, void *obj_data, va_list *list)
+{
+   Private_Data *pd = (Private_Data *) obj_data;
+
+   pd->x = va_arg(*list, int);
+
+   eo_do(obj, eo_event_callback_call(EO_EV_X_CHANGED, &pd->x, NULL));
+}
+
+static void
 _constructor(Eo *obj, void *obj_data, va_list *list EINA_UNUSED)
 {
    Private_Data *pd = (Private_Data *) obj_data;
@@ -60,6 +73,7 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(EO_SIMPLE_ID(EO_SIMPLE_SUB_ID_INC), _inc),
         EO_OP_FUNC(EO_SIMPLE_ID(EO_SIMPLE_SUB_ID_GET), _get),
         EO_OP_FUNC(EO_SIMPLE_ID(EO_SIMPLE_SUB_ID_SET), _set),
+        EO_OP_FUNC(EO_SIMPLE_ID(EO_SIMPLE_SUB_ID_SET_EVT), _set_evt),
         EO_OP_FUNC_SENTINEL
    };
 
@@ -69,8 +83,14 @@ _class_constructor(Eo_Class *klass)
 static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(EO_SIMPLE_SUB_ID_INC, "Inc X"),
      EO_OP_DESCRIPTION(EO_SIMPLE_SUB_ID_GET, "Get X"),
-     EO_OP_DESCRIPTION(EO_SIMPLE_SUB_ID_SET, "Get X"),
+     EO_OP_DESCRIPTION(EO_SIMPLE_SUB_ID_SET, "Set X"),
+     EO_OP_DESCRIPTION(EO_SIMPLE_SUB_ID_SET_EVT, "Set X + event"),
      EO_OP_DESCRIPTION_SENTINEL
+};
+
+static const Eo_Event_Description *event_desc[] = {
+     EO_EV_X_CHANGED,
+     NULL
 };
 
 static const Eo_Class_Description class_desc = {
@@ -78,7 +98,7 @@ static const Eo_Class_Description class_desc = {
      "Eo Simple",
      EO_CLASS_TYPE_REGULAR,
      EO_CLASS_DESCRIPTION_OPS(&EO_SIMPLE_BASE_ID, op_desc, EO_SIMPLE_SUB_ID_LAST),
-     NULL,
+     event_desc,
      sizeof(Private_Data),
      _class_constructor,
      NULL
