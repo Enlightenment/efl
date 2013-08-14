@@ -32,7 +32,7 @@ libeo2.so: $(EO_OBJS)
 eo2-bench: libeo2.so $(BENCH_OBJS) ../src/lib/eo/Eo.h ../src/lib/eo/eo_private.h
 	$(CC) $(CFLAGS) $(INCLUDE) $(CONFIG) $(BENCH_OBJS) $(EINA_LIBS) -L. -leo2  -o $@
 
-eo2-bench-static: $(EO_SCR) $(BENCH_SRC)
+eo2-bench-static: $(EO_OBJS) $(BENCH_SRC) ../src/lib/eo/Eo.h ../src/lib/eo/eo_private.h
 	$(CC) $(CFLAGS) $(INCLUDE) $(CONFIG) $(EINA_CFLAGS) $(EINA_LIBS) $(EO_SRC) $(BENCH_SRC) -o $@
 
 .cc.o:
