@@ -1752,6 +1752,31 @@ AC_ARG_ENABLE([gstreamer],
    ],
    [want_gstreamer="yes"])
 
+AC_ARG_ENABLE([tizen],
+   [AC_HELP_STRING([--enable-tizen],
+       [enable tizen support. @<:@default=disabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_tizen="yes"
+    else
+       want_tizen="no"
+    fi
+   ],
+   [want_tizen="no"])
+
+if test "${want_tizen}" = "yes"; then
+     PKG_CHECK_MODULES([TIZEN_CONFIGURATION_MANAGER],
+      [vconf],
+      [have_tizen_vconf="yes"],
+      [have_tizen_vconf="no"])
+  PKG_CHECK_MODULES([TIZEN_CONFIGURATION_MANAGER], [vconf])
+fi
+
+AM_CONDITIONAL([HAVE_TIZEN_CONFIGURATION_MANAGER], [test "${have_tizen_vconf}" = "yes"])
+if test "${have_tizen_vconf}"  = "yes"; then
+  AC_DEFINE(HAVE_TIZEN_CONFIGURATION_MANAGER, 1, [Define to 1 if you have Tizen configuration manager(vconf).])
+fi
+
 ### Default values
 
 if test "${have_windows}" = "yes"; then
@@ -3234,23 +3259,10 @@ EFL_LIB_END([Efreet])
 have_libmount_new="no"
 have_libmount_old="no"
 have_eeze_mount="no"
-want_tizen="no"
 
 EFL_LIB_START_OPTIONAL([Eeze], [test "${have_linux}" = "yes"])
 
 ### Additional options to configure
-AC_ARG_ENABLE([tizen],
-   [AC_HELP_STRING([--enable-tizen],
-       [enable tizen support. @<:@default=disabled@:>@])],
-   [
-    if test "x${enableval}" = "xyes" ; then
-       want_tizen="yes"
-    else
-       want_tizen="no"
-    fi
-   ],
-   [want_tizen="no"])
-
 AC_ARG_WITH([mount],
   [AS_HELP_STRING([--with-mount], [specify mount bin @<:@default=detect@:>@])],
   [with_eeze_mount=$withval], [with_eeze_mount="detect"])

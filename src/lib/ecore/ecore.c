@@ -136,6 +136,9 @@ ecore_system_modules_load(void)
 #ifdef HAVE_SYSTEMD
                "systemd",
 #endif
+#ifdef HAVE_TIZEN_CONFIGURATION_MANAGER
+               "tizen",
+#endif
                NULL
              };
              const char **itr;
