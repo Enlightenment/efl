@@ -79,6 +79,8 @@ enum
    EDJE_OBJ_SUB_ID_PART_TEXT_INPUT_PANEL_RETURN_KEY_TYPE_GET,
    EDJE_OBJ_SUB_ID_PART_TEXT_INPUT_PANEL_RETURN_KEY_DISABLED_SET,
    EDJE_OBJ_SUB_ID_PART_TEXT_INPUT_PANEL_RETURN_KEY_DISABLED_GET,
+   EDJE_OBJ_SUB_ID_PART_TEXT_INPUT_PANEL_SHOW_ON_DEMAND_SET,
+   EDJE_OBJ_SUB_ID_PART_TEXT_INPUT_PANEL_SHOW_ON_DEMAND_GET,
    EDJE_OBJ_SUB_ID_TEXT_INSERT_FILTER_CALLBACK_ADD,
    EDJE_OBJ_SUB_ID_TEXT_INSERT_FILTER_CALLBACK_DEL,
    EDJE_OBJ_SUB_ID_TEXT_INSERT_FILTER_CALLBACK_DEL_FULL,
@@ -489,6 +491,32 @@ enum
  * @see edje_object_part_text_input_panel_return_key_disabled_get
  */
 #define edje_obj_part_text_input_panel_return_key_disabled_get(part, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_INPUT_PANEL_RETURN_KEY_DISABLED_GET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(Eina_Bool *, ret)
+
+/**
+ * @def edje_obj_part_text_input_panel_show_on_demand_set
+ * @since 1.8
+ *
+ * @brief Set the attribute to show the input panel in case of only an user's explicit Mouse Up event.
+ *
+ * @param[in] part
+ * @param[in] ondemand
+ *
+ * @see edje_object_part_text_input_panel_show_on_demand_set
+ */
+#define edje_obj_part_text_input_panel_show_on_demand_set(part, ondemand) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_INPUT_PANEL_SHOW_ON_DEMAND_SET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(Eina_Bool, ondemand)
+
+/**
+ * @def edje_obj_part_text_input_panel_show_on_demand_get
+ * @since 1.8
+ *
+ * @brief Get the attribute to show the input panel in case of only an user's explicit Mouse Up event.
+ *
+ * @param[in] part
+ * @param[out] ret
+ *
+ * @see edje_object_part_text_input_panel_show_on_demand_get
+ */
+#define edje_obj_part_text_input_panel_show_on_demand_get(part, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_INPUT_PANEL_SHOW_ON_DEMAND_GET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(Eina_Bool *, ret)
 
 /**
  * @def edje_obj_text_insert_filter_callback_add
