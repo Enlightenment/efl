@@ -8,16 +8,16 @@ typedef struct
 } Private_Data;
 
 static void
-_inc(Eo *objid, void *obj_data)
+_inc(Eo *obj, void *obj_data)
 {
    Private_Data *data = (Private_Data *) obj_data;
 
-   eo2_do_super(objid, eo2_inc());
+   eo2_do_super(obj, eo2_inc());
    data->y += 1;
 }
 
 static int
-_get(Eo *objid EINA_UNUSED, void *obj_data)
+_get(Eo *obj EINA_UNUSED, void *obj_data)
 {
    const Private_Data *data = (Private_Data *) obj_data;
 
@@ -34,7 +34,7 @@ _class_hello(const Eo_Class *klass, int a)
 }
 
 static int
-_virtual(Eo *objid EINA_UNUSED, void *obj_data EINA_UNUSED, int in)
+_virtual(Eo *obj EINA_UNUSED, void *obj_data EINA_UNUSED, int in)
 {
    return (in * 2);
 }
