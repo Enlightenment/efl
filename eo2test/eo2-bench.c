@@ -67,7 +67,7 @@ run_batch(const char *title, Eo* eo_obj, Eo* eo2_obj, int n)
    else
      eo1 = EINA_TRUE;
 
-   printf("\n%s - %d calls\ncalls/eo_do()  EO [ms] [ns]/call  - EO2 [ms] [ns]/call\n", title, n);
+   printf("%s - %d calls\ncalls/eo_do()  EO [ms] [ns]/call  - EO2 [ms] [ns]/call\n", title, n);
 
    /* 1 call per batch */
    k = 1;
@@ -136,6 +136,8 @@ do_batch_test()
    int a, b, c;
    Eo *eo_obj, *eo2_obj;
 
+   printf("\n *** do_batch_test\n");
+
    eo_obj = eo_add(EO_SIMPLE_CLASS, NULL);
    eo2_obj = eo2_add_custom(EO2_SIMPLE_CLASS, NULL, eo2_simple_constructor(66));
 
@@ -172,6 +174,8 @@ override_batch_test()
    int a, b;
    Eo *eo_obj, *eo2_obj;
 
+   printf("\n *** override_batch_test\n");
+
    a = b = 0;
    eo_obj = eo_add(EO_INHERIT_CLASS, NULL);
    eo2_obj = eo2_add(EO2_INHERIT_CLASS, NULL);
@@ -204,6 +208,8 @@ virtual_test()
    int a;
    Eo *eo2_obj;
 
+   printf("\n *** virtual_test\n");
+
    a = 0;
    eo2_obj = eo2_add_custom(EO2_SIMPLE_CLASS, NULL, eo2_simple_constructor(66));
    eo2_do(eo2_obj, a = eo2_virtual(10); );
@@ -231,6 +237,8 @@ cleanup_test()
 {
    int a;
    Eo *eo2_obj;
+
+   printf("\n *** cleanup_test\n");
 
    eo2_obj = eo2_add_custom(EO2_SIMPLE_CLASS, NULL, eo2_simple_constructor(66));
 
