@@ -103,54 +103,21 @@ _props_changed_timedate(void *data EINA_UNUSED, const Eldbus_Message *msg)
    ecore_event_add(ECORE_EVENT_SYSTEM_TIMEDATE_CHANGED, NULL, NULL, NULL);
 }
 
-struct locale_cat_desc {
-   int cat;
-   int namelen;
-   const char *name;
-};
-
-static const struct locale_cat_desc locale_cat_desc[] = {
-#define CAT(name) {name, sizeof(#name) - 1, #name}
-   CAT(LC_CTYPE),
-   CAT(LC_NUMERIC),
-   CAT(LC_TIME),
-   CAT(LC_COLLATE),
-   CAT(LC_MONETARY),
-   CAT(LC_MESSAGES),
-   CAT(LC_ALL),
-   CAT(LC_PAPER),
-   CAT(LC_NAME),
-   CAT(LC_ADDRESS),
-   CAT(LC_TELEPHONE),
-   CAT(LC_MEASUREMENT),
-   CAT(LC_IDENTIFICATION),
-#undef CAT
-   {-1, -1, NULL}
-};
-
-static int _locale_parse(const char *str, int *cat, const char **value)
+static void _locale_envs_unset(void)
 {
-   const struct locale_cat_desc *itr;
-   const char *p = strchr(str, '=');
-   int klen;
-
-   if (!p) goto end;
-
-   klen = p - str;
-   for (itr = locale_cat_desc; itr->name != NULL; itr++)
-     {
-        if ((klen == itr->namelen) && (memcmp(str, itr->name, klen) == 0))
-          {
-             *cat = itr->cat;
-             *value = str + itr->namelen + 1;
-             return itr - locale_cat_desc;
-          }
-     }
-
- end:
-   *cat = -1;
-   *value = NULL;
-   return -1;
+   unsetenv("LC_CTYPE");
+   unsetenv("LC_NUMERIC");
+   unsetenv("LC_TIME");
+   unsetenv("LC_COLLATE");
+   unsetenv("LC_MONETARY");
+   unsetenv("LC_MESSAGES");
+   unsetenv("LC_ALL");
+   unsetenv("LC_PAPER");
+   unsetenv("LC_NAME");
+   unsetenv("LC_ADDRESS");
+   unsetenv("LC_TELEPHONE");
+   unsetenv("LC_MEASUREMENT");
+   unsetenv("LC_IDENTIFICATION");
 }
 
 static void _locale_get(void *data EINA_UNUSED, const Eldbus_Message *msg,
@@ -158,7 +125,6 @@ static void _locale_get(void *data EINA_UNUSED, const Eldbus_Message *msg,
 {
    Eldbus_Message_Iter *variant, *array;
    const char *errname, *errmsg, *val;
-   Eina_Bool setlocs[EINA_C_ARRAY_LENGTH(locale_cat_desc)];
    unsigned int i;
 
    if (eldbus_message_error_get(msg, &errname, &errmsg))
@@ -178,22 +144,23 @@ static void _locale_get(void *data EINA_UNUSED, const Eldbus_Message *msg,
         goto end;
      }
 
-   memset(setlocs, 0, sizeof(setlocs));
+   _locale_envs_unset();
+
    while (eldbus_message_iter_get_and_next(array, 's', &val))
      {
-        int cat, idx;
-        const char *value;
-        idx = _locale_parse(val, &cat, &value);
-        if (idx >= 0)
-          setlocs[idx] = EINA_TRUE;
-        setlocale(cat, value);
-     }
+        char buf[1024], *value, *type;
 
-   for (i = 0; i < EINA_C_ARRAY_LENGTH(locale_cat_desc); i++)
-     {
-        if ((!setlocs[i]) && (locale_cat_desc[i].cat != LC_ALL))
-          setlocale(locale_cat_desc[i].cat, "C");
+        snprintf(buf, sizeof(buf), "%s", val);
+
+        type = buf;
+
+        value = strchr(buf, '=');
+        *value = 0;
+        value++;
+
+        setenv(type, value, 1);
      }
+   setlocale(__LC_ALL, "");
 
  end:
    ecore_event_add(ECORE_EVENT_LOCALE_CHANGED, NULL, NULL, NULL);
