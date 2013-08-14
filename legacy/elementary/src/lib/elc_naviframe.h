@@ -22,12 +22,10 @@
  * - title icon and
  * - content area.
  *
- * This widget inherits from the @ref Layout one, so that all the
- * functions acting on it also work for naviframe objects.
- *
- * Because this widget is a layout, one places content on those areas
- * by using elm_layout_content_set() on the right swallow part names
- * expected for each, which are:
+ * One can use @ref elm_object_item_part_content_set,
+ * @ref elm_object_item_part_content_get,
+ * @ref elm_object_item_part_content_unset functions to handle the contents.
+ * The swallow part name should be one of these:
  * @li @c "default" - The main content of the current page
  * @li @c "icon" - An icon in the title area of the current page
  * @li @c "prev_btn" - A button of the current page to go to the
@@ -35,7 +33,9 @@
  * @li @c "next_btn" - A button of the current page to go to the next
  *                     page
  *
- * For text, elm_layout_text_set() will work here on:
+ * One can use @ref elm_object_item_part_text_set,
+ * @ref elm_object_item_part_text_get to handle the text parts.
+ * The swallow part name should be one of these:
  * @li @c "default" - Title label in the title area of the current
  *                    page
  * @li @c "subtitle" - Sub-title label in the title area of the
