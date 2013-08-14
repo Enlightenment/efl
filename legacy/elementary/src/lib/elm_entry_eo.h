@@ -93,6 +93,8 @@ enum
    ELM_OBJ_ENTRY_SUB_ID_ANCHOR_HOVER_END,
    ELM_OBJ_ENTRY_SUB_ID_INPUT_PANEL_LAYOUT_VARIATION_SET,
    ELM_OBJ_ENTRY_SUB_ID_INPUT_PANEL_LAYOUT_VARIATION_GET,
+   ELM_OBJ_ENTRY_SUB_ID_INPUT_PANEL_SHOW_ON_DEMAND_SET,
+   ELM_OBJ_ENTRY_SUB_ID_INPUT_PANEL_SHOW_ON_DEMAND_GET,
    ELM_OBJ_ENTRY_SUB_ID_LAST
 };
 
@@ -1238,6 +1240,34 @@ enum
  * @ingroup Entry
  */
 #define elm_obj_entry_input_panel_return_key_autoenabled_set(enabled) ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_INPUT_PANEL_RETURN_KEY_AUTOENABLED_SET), EO_TYPECHECK(Eina_Bool, enabled)
+
+/**
+ * @def elm_obj_entry_input_panel_show_on_demand_set
+ * @since 1.8
+ *
+ * Set the attribute to show the input panel in case of only an user's explicit Mouse Up event.
+ *
+ * @param[in] ondemand
+ *
+ * @see elm_entry_input_panel_show_on_demand_set
+ *
+ * @ingroup Entry
+ */
+#define elm_obj_entry_input_panel_show_on_demand_set(ondemand) ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_INPUT_PANEL_SHOW_ON_DEMAND_SET), EO_TYPECHECK(Eina_Bool, ondemand)
+
+/**
+ * @def elm_obj_entry_input_panel_show_on_demand_get
+ * @since 1.8
+ *
+ * Get the attribute to show the input panel in case of only an user's explicit Mouse Up event.
+ *
+ * @param[out] ret
+ *
+ * @see elm_entry_input_panel_show_on_demand_get
+ *
+ * @ingroup Entry
+ */
+#define elm_obj_entry_input_panel_show_on_demand_get(ret) ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_INPUT_PANEL_SHOW_ON_DEMAND_GET), EO_TYPECHECK(Eina_Bool *, ret)
 
 /**
  * @def elm_obj_entry_imf_context_get

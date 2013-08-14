@@ -1558,3 +1558,7 @@
 
         * Mapbuf: Ensure that content size calculation is correctly finished
         because the mapbuf is willing to block the size calculation forcely.
+
+2013-08-14  Jihoon Kim (jihoon)
+
+        * Entry: Add elm_entry_input_panel_show_on_demand_set/get().

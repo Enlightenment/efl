@@ -1170,3 +1170,27 @@ EAPI void                   elm_entry_input_panel_layout_variation_set(Evas_Obje
  * @since 1.8
  */
 EAPI int                    elm_entry_input_panel_layout_variation_get(const Evas_Object *obj);
+
+/**
+ * Set the attribute to show the input panel in case of only an user's explicit Mouse Up event.
+ * It doesn't request to show the input panel even though it has focus.
+ *
+ * @param obj The entry object
+ * @param ondemand If true, the input panel will be shown in case of only Mouse up event.
+ *                 (Focus event will be ignored.)
+ * @since 1.8
+ *
+ * @ingroup Entry
+ */
+EAPI void                   elm_entry_input_panel_show_on_demand_set(Evas_Object *obj, Eina_Bool ondemand);
+
+/**
+ * Get the attribute to show the input panel in case of only an user's explicit Mouse Up event.
+ *
+ * @param obj The entry object
+ * @return @c EINA_TRUE if the input panel will be shown in case of only Mouse up event.
+ * @since 1.8
+ *
+ * @ingroup Entry
+ */
+EAPI Eina_Bool              elm_entry_input_panel_show_on_demand_get(const Evas_Object *obj);
