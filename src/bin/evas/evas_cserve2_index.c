@@ -821,6 +821,22 @@ cserve2_shared_mempool_buffer_get(Shared_Mempool *sm, int bufferid)
    return data;
 }
 
+int
+cserve2_shared_mempool_buffer_offset_get(Shared_Mempool *sm, int bufferid)
+{
+   Index_Entry *ie;
+
+   if (!sm) return -1;
+   ie = _shared_index_entry_get_by_id(sm->index, bufferid);
+   if (!ie || ie->refcount <= 0)
+     {
+        CRIT("Tried to access invalid buffer or with refcount 0");
+        return -1;
+     }
+
+   return ie->offset;
+}
+
 
 // Shared strings
 
