@@ -784,6 +784,8 @@ _elm_win_focus_highlight_reconfigure(Elm_Win_Smart_Data *sd)
              str = edje_object_data_get(sd->focus_highlight.fobj, "animate");
              sd->focus_highlight.animate_supported = ((str) && (!strcmp(str, "on")));
           }
+        else
+          sd->focus_highlight.animate_supported = EINA_FALSE;
      }
 
    if ((sd->focus_highlight.animate_supported) && (previous) &&
@@ -5119,20 +5121,14 @@ _focus_highlight_animate_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Eina_Bool animate = va_arg(*list, int);
    Elm_Win_Smart_Data *sd = _pd;
-   const char *str;
 
    animate = !!animate;
    if (sd->focus_highlight.animate == animate)
      return;
 
    sd->focus_highlight.animate = animate;
-   if (animate)
-     {
-        str = edje_object_data_get(sd->focus_highlight.fobj, "animate");
-        sd->focus_highlight.animate_supported = ((str) && (!strcmp(str, "on")));
-     }
-   else
-     sd->focus_highlight.animate_supported = EINA_FALSE;
+   sd->focus_highlight.theme_changed = EINA_TRUE;
+   _elm_win_focus_highlight_reconfigure_job_start(sd);
 }
 
 EAPI Eina_Bool
