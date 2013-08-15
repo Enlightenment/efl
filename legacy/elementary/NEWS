@@ -83,7 +83,6 @@ Additions:
    * File Selector : Support elm_object_part_text_set() for the ok, cancel part to change the OK, Cancel button label.
    * Add _elm_access_object_get, deprecate _elm_access_info_get
    * Add elm_win_focus_highlight_animate_set/get().
-   * Add elm_entry_input_panel_show_on_demand_set/get().
 
 Improvements:
 
