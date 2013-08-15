@@ -157,7 +157,7 @@ ecore_imf_module_context_create(const char *ctx_id)
    module = eina_hash_find(modules, ctx_id);
    if (module)
      {
-        ctx = module->create();
+        if (!(ctx = module->create())) return NULL;
         if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
           {
              ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
