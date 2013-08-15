@@ -3541,44 +3541,6 @@ _edje_entry_input_panel_return_key_disabled_get(Edje_Real_Part *rp)
 #endif
 }
 
-#ifdef HAVE_ECORE_IMF
-void
-_edje_entry_input_panel_show_on_demand_set(Edje_Real_Part *rp, Eina_Bool ondemand)
-#else
-void
-_edje_entry_input_panel_show_on_demand_set(Edje_Real_Part *rp, Eina_Bool ondemand __UNUSED__)
-#endif
-{
-   Entry *en;
-
-   if ((rp->type != EDJE_RP_TYPE_TEXT) ||
-       (!rp->typedata.text)) return;
-   en = rp->typedata.text->entry_data;
-   if (!en) return;
-#ifdef HAVE_ECORE_IMF
-   if (en->imf_context)
-     ecore_imf_context_input_panel_show_on_demand_set(en->imf_context, ondemand);
-#endif
-}
-
-Eina_Bool
-_edje_entry_input_panel_show_on_demand_get(Edje_Real_Part *rp)
-{
-   Entry *en;
-
-   if ((rp->type != EDJE_RP_TYPE_TEXT) ||
-       (!rp->typedata.text)) return EINA_FALSE;
-   en = rp->typedata.text->entry_data;
-   if (!en) return EINA_FALSE;
-#ifdef HAVE_ECORE_IMF
-   if (en->imf_context) {
-       Eina_Bool ret = ecore_imf_context_input_panel_show_on_demand_get(en->imf_context);
-       return ret;
-   }
-#endif
-   return EINA_FALSE;
-}
-
 static Evas_Textblock_Cursor *
 _cursor_get(Edje_Real_Part *rp, Edje_Cursor cur)
 {

@@ -1241,27 +1241,6 @@ EAPI void             edje_object_part_text_input_panel_return_key_disabled_set(
 EAPI Eina_Bool        edje_object_part_text_input_panel_return_key_disabled_get(const Evas_Object *obj, const char *part);
 
 /**
- * Set the attribute to show the input panel in case of only an user's explicit Mouse Up event.
- * It doesn't request to show the input panel even though it has focus.
- *
- * @param obj A valid Evas_Object handle
- * @param part The part name
- * @param ondemand If true, the input panel will be shown in case of only Mouse up event. (Focus event will be ignored.)
- * @since 1.8.0
- */
-EAPI void             edje_object_part_text_input_panel_show_on_demand_set(Evas_Object *obj, const char *part, Eina_Bool ondemand);
-
-/**
- * Get the attribute to show the input panel in case of only an user's explicit Mouse Up event.
- *
- * @param obj A valid Evas_Object handle
- * @param part The part name
- * @return @c EINA_TRUE if the input panel will be shown in case of only Mouse up event.
- * @since 1.8.0
- */
-EAPI Eina_Bool        edje_object_part_text_input_panel_show_on_demand_get(const Evas_Object *obj, const char *part);
-
-/**
  * Add a filter function for newly inserted text.
  *
  * Whenever text is inserted (not the same as set) into the given @p part,

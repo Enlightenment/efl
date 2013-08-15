@@ -3135,55 +3135,6 @@ _part_text_input_panel_return_key_disabled_get(Eo *obj EINA_UNUSED, void *_pd, v
 }
 
 EAPI void
-edje_object_part_text_input_panel_show_on_demand_set(Evas_Object *obj, const char *part, Eina_Bool ondemand)
-{
-   if (!obj) return;
-   eo_do(obj, edje_obj_part_text_input_panel_show_on_demand_set(part, ondemand));
-}
-
-void _part_text_input_panel_show_on_demand_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   Eina_Bool ondemand = va_arg(*list, int);
-   Edje *ed = _pd;
-   Edje_Real_Part *rp;
-
-   if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(&ed, part);
-   if (!rp) return;
-   if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
-     {
-        _edje_entry_input_panel_show_on_demand_set(rp, ondemand);
-     }
-}
-
-EAPI Eina_Bool
-edje_object_part_text_input_panel_show_on_demand_get(const Evas_Object *obj, const char *part)
-{
-   if (!obj) return EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *)obj, edje_obj_part_text_input_panel_show_on_demand_get(part, &ret));
-   return ret;
-}
-
-void _part_text_input_panel_show_on_demand_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Edje *ed = _pd;
-   Edje_Real_Part *rp;
-   *ret = EINA_FALSE;
-
-   if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(&ed, part);
-   if (!rp) return;
-   if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
-     {
-        *ret = _edje_entry_input_panel_show_on_demand_get(rp);
-     }
-}
-
-EAPI void
 edje_object_text_insert_filter_callback_add(Evas_Object *obj, const char *part, Edje_Text_Filter_Cb func, void *data)
 {
    if (!obj) return;

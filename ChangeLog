@@ -1,10 +1,6 @@
-2013-08-14  Jihoon Kim
-
-	* Edje: add edje_object_part_text_input_panel_show_on_demand_set/get().
-
 2013-08-13  Jihoon Kim
 
-	* Ecore_IMF: add ecore_imf_context_input_panel_on_demand_set/get().
+	* Ecore_IMF: add ecore_imf_context_input_panel_on_demand_set/get()
 
 2013-08-09  Cedric Bail
 

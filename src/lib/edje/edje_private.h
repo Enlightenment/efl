@@ -2326,8 +2326,6 @@ void _edje_entry_input_panel_return_key_type_set(Edje_Real_Part *rp, Edje_Input_
 Edje_Input_Panel_Return_Key_Type _edje_entry_input_panel_return_key_type_get(Edje_Real_Part *rp);
 void _edje_entry_input_panel_return_key_disabled_set(Edje_Real_Part *rp, Eina_Bool disabled);
 Eina_Bool _edje_entry_input_panel_return_key_disabled_get(Edje_Real_Part *rp);
-void _edje_entry_input_panel_show_on_demand_set(Edje_Real_Part *rp, Eina_Bool ondemand);
-Eina_Bool _edje_entry_input_panel_show_on_demand_get(Edje_Real_Part *rp);
 
 void _edje_external_init(void);
 void _edje_external_shutdown(void);
@@ -2489,8 +2487,6 @@ void _part_text_input_panel_return_key_type_set(Eo *obj, void *_pd, va_list *lis
 void _part_text_input_panel_return_key_type_get(Eo *obj, void *_pd, va_list *list);
 void _part_text_input_panel_return_key_disabled_set(Eo *obj, void *_pd, va_list *list);
 void _part_text_input_panel_return_key_disabled_get(Eo *obj, void *_pd, va_list *list);
-void _part_text_input_panel_show_on_demand_set(Eo *obj, void *_pd, va_list *list);
-void _part_text_input_panel_show_on_demand_get(Eo *obj, void *_pd, va_list *list);
 void _text_insert_filter_callback_add(Eo *obj, void *_pd, va_list *list);
 void _text_insert_filter_callback_del(Eo *obj, void *_pd, va_list *list);
 void _text_insert_filter_callback_del_full(Eo *obj, void *_pd, va_list *list);
