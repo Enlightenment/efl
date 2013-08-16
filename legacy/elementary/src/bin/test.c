@@ -572,7 +572,7 @@ add_tests:
    ADD_TEST(NULL, "Entries", "Entry Emoticon", test_entry_emoticon);
 
    //------------------------------//
-   ADD_TEST(NULL, "Buttons", "Buttons", test_button);
+   ADD_TEST(NULL, "Buttons", "Button", test_button);
 
    //------------------------------//
    ADD_TEST(NULL, "Prefs", "Prefs", test_prefs);
@@ -690,7 +690,7 @@ add_tests:
    ADD_TEST(NULL, "Selectors", "Color Selector", test_colorselector);
    ADD_TEST(NULL, "Selectors", "Segment Control", test_segment_control);
    ADD_TEST(NULL, "Selectors", "Hoversel", test_hoversel);
-   ADD_TEST(NULL, "Selectors", "Radios", test_radio);
+   ADD_TEST(NULL, "Selectors", "Radio", test_radio);
    ADD_TEST(NULL, "Selectors", "Flip Selector", test_flipselector);
    ADD_TEST(NULL, "Selectors", "Dayselector", test_dayselector);
    ADD_TEST(NULL, "Selectors", "Main menu", test_main_menu);
