@@ -134,6 +134,8 @@ static const char *app_locale_dir = NULL;
 
 static Eina_Prefix *app_pfx = NULL;
 
+static Ecore_Event_Handler *system_handlers[2] = { NULL, NULL };
+
 static void
 _prefix_check(void)
 {
@@ -278,6 +280,35 @@ _elm_clouseau_reload()
    return EINA_TRUE;
 }
 
+Eina_Bool _sys_memory_changed(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
+{
+   Ecore_Memory_State state = ecore_memory_state_get();
+
+   if (state != ECORE_MEMORY_STATE_LOW)
+     return ECORE_CALLBACK_PASS_ON;
+
+   elm_cache_all_flush();
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+Eina_Bool _sys_lang_changed(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
+{
+   char *lang;
+
+   lang = getenv("LANG");
+   if (!lang)
+     lang = getenv("LC_MESSAGES");
+   if (!lang)
+     lang = getenv("LC_ALL");
+
+   if (lang)
+     elm_language_set(lang);
+   else
+     ERR("Language not set in environment");
+
+   return ECORE_CALLBACK_PASS_ON;
+}
+
 EAPI int
 elm_init(int    argc,
          char **argv)
@@ -287,6 +318,9 @@ elm_init(int    argc,
    elm_quicklaunch_init(argc, argv);
    elm_quicklaunch_sub_init(argc, argv);
    _prefix_shutdown();
+
+   system_handlers[0] = ecore_event_handler_add(ECORE_EVENT_MEMORY_STATE, _sys_memory_changed, NULL);
+   system_handlers[1] = ecore_event_handler_add(ECORE_EVENT_LOCALE_CHANGED, _sys_lang_changed, NULL);
 
    return _elm_init_count;
 }
@@ -301,6 +335,12 @@ elm_shutdown(void)
      }
    _elm_init_count--;
    if (_elm_init_count > 0) return _elm_init_count;
+
+   if (system_handlers[0])
+     ecore_event_handler_del(system_handlers[0]);
+   if (system_handlers[1])
+     ecore_event_handler_del(system_handlers[1]);
+
    _elm_win_shutdown();
    while (_elm_win_deferred_free) ecore_main_loop_iterate();
 
