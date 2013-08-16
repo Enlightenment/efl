@@ -17,6 +17,7 @@ test_spinner(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
    evas_object_show(bx);
 
    sp = elm_spinner_add(win);
+   elm_spinner_editable_set(sp, EINA_TRUE);
    elm_spinner_label_format_set(sp, "%1.1f units");
    elm_spinner_step_set(sp, 1.3);
    elm_spinner_wrap_set(sp, EINA_TRUE);
