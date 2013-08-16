@@ -226,6 +226,9 @@ void test_web_mobile(void *data, Evas_Object *obj, void *event_info);
 void test_dnd_genlist_default_anim(void *data, Evas_Object *obj, void *event_info);
 void test_dnd_genlist_user_anim(void *data, Evas_Object *obj, void *event_info);
 void test_dnd_genlist_gengrid(void *data, Evas_Object *obj, void *event_info);
+void test_task_switcher(void *data, Evas_Object *obj, void *event_info);
+void test_application_server_message(void *data, Evas_Object *obj, void *event_info);
+void test_application_server_phone(void *data, Evas_Object *obj, void *event_info);
 
 Evas_Object *win, *tbx; // TODO: refactoring
 void *tt;
@@ -794,6 +797,11 @@ add_tests:
    ADD_TEST(NULL, "Miscellaneous", "Accessibility", test_access);
    ADD_TEST(NULL, "Miscellaneous", "Accessibility2", test_access2);
    ADD_TEST(NULL, "Miscellaneous", "Accessibility3", test_access3);
+
+   //------------------------------//
+   ADD_TEST(NULL, "Application client/server", "Task switcher", test_task_switcher);
+   ADD_TEST(NULL, "Application client/server", "Phone", test_application_server_phone);
+   ADD_TEST(NULL, "Application client/server", "Message", test_application_server_message);
 
 #undef ADD_TEST
 

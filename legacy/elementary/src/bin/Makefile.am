@@ -48,6 +48,7 @@ test_3d.c \
 test_access.c \
 test_actionslider.c \
 test_anim.c \
+test_application_server.c \
 test_bg.c \
 test_box.c \
 test_bubble.c \
@@ -126,6 +127,7 @@ test_spinner.c \
 test_store.c \
 test_sys_notify.c \
 test_systray.c \
+test_task_switcher.c \
 test_table.c \
 test_thumb.c \
 test_toolbar.c \
