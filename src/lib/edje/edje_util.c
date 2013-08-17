@@ -144,8 +144,10 @@ _edje_class_member_direct_del(const char *class, Edje_List_Refcount *lookup, Ein
 {
    Eina_List *members;
 
+   if (!lookup) return;
    members = eina_hash_find(hash, class);
-   members = eina_list_remove_list(members, lookup->lookup);
+   if (members)
+     members = eina_list_remove_list(members, lookup->lookup);
    eina_hash_set(hash, class, members);
    free(lookup);
 }
