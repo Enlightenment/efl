@@ -155,8 +155,8 @@ evas_object_is_proxy_visible(Evas_Object *eo_obj, Evas_Object_Protected_Data *ob
 {
    if ((obj->cur->visible) &&
        //FIXME: Check the cached clipper visible properly.
-       ((obj->cur->clipper && obj->cur->clipper->cur->visible) ||
-        (obj->is_smart)) &&
+       ((obj->cur->cache.clip.visible) || (obj->is_smart)) &&
+       (obj->is_smart || !obj->cur->clipper || obj->cur->clipper->cur->visible) &&
        ((obj->cur->cache.clip.a > 0 && obj->cur->render_op == EVAS_RENDER_BLEND)
         || obj->cur->render_op != EVAS_RENDER_BLEND))
      {
