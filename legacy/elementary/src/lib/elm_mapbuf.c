@@ -152,10 +152,12 @@ _configure(Evas_Object *obj, Eina_Bool update_force)
           evas_object_move(sd->content, x, y);
         else
           {
-             evas_smart_objects_calculate(e);
+/* This causes many side effects in calculating mapbuf objects.
+   But it doens't affect to the mapbuf it's special feature, performance. */
+//             evas_smart_objects_calculate(e);
              evas_nochange_push(e);
              evas_object_move(sd->content, x, y);
-             evas_smart_objects_calculate(e);
+//             evas_smart_objects_calculate(e);
              evas_nochange_pop(e);
           }
         _mapbuf(obj);
