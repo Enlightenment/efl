@@ -1011,22 +1011,6 @@ _evas_render_mapped_context_clip_set(Evas_Public_Data *e, Evas_Object *eo_obj, E
              e->engine.func->context_clip_set(e->engine.data.output, ctx, x, y,
                                               w, h);
           }
-        else
-          {
-             Evas_Object_Protected_Data *proxy =
-                proxy_render_data->proxy_obj;
-             if (proxy->cur->clipper)
-               {
-                  x = proxy->cur->clipper->cur->geometry.x +
-                     off_x;
-                  y = proxy->cur->clipper->cur->geometry.y +
-                     off_y;
-                  w = proxy->cur->clipper->cur->geometry.w;
-                  h = proxy->cur->clipper->cur->geometry.h;
-                  e->engine.func->context_clip_set(e->engine.data.output, ctx,
-                                                   x, y, w, h);
-               }
-          }
      }
 }
 
