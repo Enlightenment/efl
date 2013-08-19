@@ -2460,7 +2460,8 @@ typedef enum
 {
    TEXTBLOCK_POSITION_START,
    TEXTBLOCK_POSITION_END,
-   TEXTBLOCK_POSITION_ELSE
+   TEXTBLOCK_POSITION_ELSE,
+   TEXTBLOCK_POSITION_SINGLE
 } Textblock_Position;
 
 /**
@@ -2581,7 +2582,8 @@ _layout_item_ascent_descent_adjust(const Evas_Object *eo_obj,
      {
         void *fi = _ITEM_TEXT(it)->text_props.font_instance;
 
-        if (position == TEXTBLOCK_POSITION_START)
+        if ((position == TEXTBLOCK_POSITION_START) ||
+              (position == TEXTBLOCK_POSITION_SINGLE))
           {
              int asc = 0;
 
@@ -2599,7 +2601,9 @@ _layout_item_ascent_descent_adjust(const Evas_Object *eo_obj,
              if (maxascent && (asc > *maxascent))
                 *maxascent = asc;
           }
-        else if (position == TEXTBLOCK_POSITION_END)
+
+        if ((position == TEXTBLOCK_POSITION_END) ||
+              (position == TEXTBLOCK_POSITION_SINGLE))
           {
              int desc = 0;
 
@@ -2615,7 +2619,7 @@ _layout_item_ascent_descent_adjust(const Evas_Object *eo_obj,
                      ENFN->font_max_descent_get(ENDT, it->format->font.font);
                }
 
-             if (maxdescent && (desc < *maxdescent))
+             if (maxdescent && (desc > *maxdescent))
                 *maxdescent = desc;
           }
      }
@@ -3259,7 +3263,9 @@ _layout_line_finalize(Ctxt *c, Evas_Object_Textblock_Format *fmt)
    Evas_Object_Textblock_Item *it;
    Evas_Coord x = 0;
 
-   c->position = TEXTBLOCK_POSITION_ELSE;
+   if (c->position == TEXTBLOCK_POSITION_START)
+      c->position = TEXTBLOCK_POSITION_ELSE;
+
    /* If there are no text items yet, calc ascent/descent
     * according to the current format. */
    if (c->maxascent + c->maxdescent == 0)
@@ -4298,6 +4304,9 @@ _layout_handle_ellipsis(Ctxt *c, Evas_Object_Textblock_Item *it, Eina_List *i)
    c->ln->items = (Evas_Object_Textblock_Item *)
       eina_inlist_append(EINA_INLIST_GET(c->ln->items),
             EINA_INLIST_GET(_ITEM(ellip_ti)));
+
+   c->position = (c->position == TEXTBLOCK_POSITION_START) ?
+      TEXTBLOCK_POSITION_SINGLE : TEXTBLOCK_POSITION_END;
    _layout_line_finalize(c, ellip_ti->parent.format);
 }
 
@@ -4638,8 +4647,15 @@ _layout_par(Ctxt *c)
              _layout_line_advance(c, it->format);
           }
      }
+
    if (c->ln->items)
      {
+        if (c->par && !EINA_INLIST_GET(c->par)->next)
+          {
+             c->position = (c->position == TEXTBLOCK_POSITION_START) ?
+                TEXTBLOCK_POSITION_SINGLE : TEXTBLOCK_POSITION_END;
+          }
+
         /* Here 'it' is the last format used */
         _layout_line_finalize(c, it->format);
      }
@@ -10222,6 +10238,11 @@ _size_native_calc_line_finalize(const Evas_Object *eo_obj, Eina_List *items,
              _layout_calculate_format_item_size(eo_obj, fi, ascent,
                    descent, &fy, &fw, &fh);
           }
+        else
+          {
+             _layout_item_ascent_descent_adjust(eo_obj, ascent, descent,
+                   it, position);
+          }
 
 loop_advance:
         *w += it->adv;
@@ -10284,6 +10305,8 @@ _size_native_calc_paragraph_size(const Evas_Object *eo_obj,
           }
      }
 
+   *position = (*position == TEXTBLOCK_POSITION_START) ?
+      TEXTBLOCK_POSITION_SINGLE : TEXTBLOCK_POSITION_END;
    _size_native_calc_line_finalize(eo_obj, line_items, &ascent, &descent, &w, *position);
 
    line_items = eina_list_free(line_items);
