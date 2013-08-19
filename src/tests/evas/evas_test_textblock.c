@@ -1386,24 +1386,29 @@ START_TEST(evas_textblock_items)
    buf = "This is an <item absize=93x152 vsize=full></>.";
    evas_object_textblock_text_markup_set(tb, buf);
    evas_object_textblock_size_formatted_get(tb, &w, &h);
-   fail_if((w < 93) || (h != 152));
+   _ck_assert_int(w, >=, 93);
+   ck_assert_int_eq(h, 152);
    evas_textblock_cursor_pos_set(cur, 11);
    evas_textblock_cursor_format_item_geometry_get(cur, NULL, NULL, &w, &h);
-   fail_if((w != 93) || (h != 152));
+   ck_assert_int_eq(w, 93);
+   ck_assert_int_eq(h, 152);
 
    buf = "This is an <item absize=93x152 vsize=ascent></>.";
    evas_object_textblock_text_markup_set(tb, buf);
    evas_object_textblock_size_formatted_get(tb, &w, &h);
-   fail_if((w < 93) || (h <= 152));
+   _ck_assert_int(w, >=, 93);
+   _ck_assert_int(h, >, 152);
    evas_textblock_cursor_pos_set(cur, 11);
    evas_textblock_cursor_format_item_geometry_get(cur, NULL, NULL, &w, &h);
-   fail_if((w != 93) || (h != 152));
+   ck_assert_int_eq(w, 93);
+   ck_assert_int_eq(h, 152);
 
    /* Size is the same as abssize, unless there's scaling applied. */
    buf = "This is an <item size=93x152 vsize=full></>.";
    evas_object_textblock_text_markup_set(tb, buf);
    evas_object_textblock_size_formatted_get(tb, &w, &h);
-   fail_if((w < 93) || (h != 152));
+   _ck_assert_int(w, >=, 93);
+   ck_assert_int_eq(h, 152);
    evas_textblock_cursor_pos_set(cur, 11);
    evas_textblock_cursor_format_item_geometry_get(cur, NULL, NULL, &w, &h);
    fail_if((w != 93) || (h != 152));
@@ -2608,13 +2613,15 @@ START_TEST(evas_textblock_size)
 
    evas_object_textblock_size_formatted_get(tb, &w, &h);
    evas_object_textblock_size_native_get(tb, &nw, &nh);
-   fail_if((w != nw) || (h != nh));
+   ck_assert_int_eq(w, nw);
+   ck_assert_int_eq(h, nh);
    fail_if(w != 0);
 
    evas_object_textblock_text_markup_set(tb, "a<br/>a");
    evas_object_textblock_size_formatted_get(tb, &w, &h2);
    evas_object_textblock_size_native_get(tb, &nw, &nh);
-   fail_if((w != nw) || (h2 != nh));
+   ck_assert_int_eq(w, nw);
+   ck_assert_int_eq(h2, nh);
 
    /* Two lines != double the height */
    fail_if(h * 2 == h2);
