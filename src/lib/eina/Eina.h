@@ -1,5 +1,5 @@
 /* EINA - EFL data type library
- * Copyright (C) 2008-2012 Enlightenment Developers:
+ * Copyright (C) 2008-2013 Enlightenment Developers:
  *           Albin "Lutin" Tonnerre <albin.tonnerre@gmail.com>
  *           Alexandre "diaxen" Becoulet <diaxen@free.fr>
  *           Andre Dieb <andre.dieb@gmail.com>
