@@ -27,6 +27,7 @@ static const char SIG_LANG_CHANGED[] = "language,changed";
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_BLOCK_CLICKED, ""},
    {SIG_TIMEOUT, ""},
+   {SIG_LANG_CHANGED, ""},
    {"focused", ""}, /**< handled by elm_widget */
    {"unfocused", ""}, /**< handled by elm_widget */
    {NULL, NULL}
