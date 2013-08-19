@@ -11,11 +11,9 @@ group { name: "elm/flipselector/base/default";
       image: "flip_t.png" COMP;
       image: "flip_b.png" COMP;
    }
-
    data {
       item: "max_len" FLIP_PICKER_MAX_LEN_STR;
    }
-
    //FIXME: quick successive clicks on, say, up, lead to nastiness
    script {
       public cur, prev, next, lock;
@@ -53,7 +51,6 @@ group { name: "elm/flipselector/base/default";
          set_state(PART:"shadow", "default", 0.0);
          anim(0.2, "animator_top_down", 1);
       }
-
       flip_dn(str[]) {      
          new tmp[FLIP_PICKER_MAX_LEN];
          if (get_int(lock) == 1) {
@@ -88,7 +85,6 @@ group { name: "elm/flipselector/base/default";
          set_state(PART:"shadow", "full", 0.0);
          anim(0.2, "animator_bottom_up", 1);
       }
-      
       public animator_bottom_down(val, Float:pos) {
          new tmp[FLIP_PICKER_MAX_LEN];
 
@@ -109,7 +105,6 @@ group { name: "elm/flipselector/base/default";
             }
          }
       }
-
       public animator_top_down(val, Float:pos) {
          set_tween_state(PART:"elm.top", pos, "default", 0.0, "shrink", 0.0);
          set_tween_state(PART:"top_sheet", pos, "default", 0.0, "shrink",
@@ -120,7 +115,6 @@ group { name: "elm/flipselector/base/default";
          if (pos >= 1.0)
          anim(0.2, "animator_bottom_down", val);
       }
-
       public animator_bottom_up(val, Float:pos) {
          set_tween_state(PART:"elm.bottom", pos, "default", 0.0, "shrink", 0.0);
          set_tween_state(PART:"bottom_sheet", pos, "default", 0.0, "shrink",
@@ -131,7 +125,6 @@ group { name: "elm/flipselector/base/default";
          if (pos >= 1.0)
          anim(0.2, "animator_top_up", val);
       }
-
       public animator_top_up(val, Float:pos) {
          new tmp[FLIP_PICKER_MAX_LEN];
 
@@ -152,7 +145,6 @@ group { name: "elm/flipselector/base/default";
             }
          }
       }
-
       public message(Msg_Type:type, id, ...) {
          /* flip down */
          if ((type == MSG_STRING) && (id == 1)) {
@@ -169,7 +161,6 @@ group { name: "elm/flipselector/base/default";
          }
       }
    }
-
    parts {
       part { name: "shad";
          mouse_events: 0;
@@ -184,7 +175,6 @@ group { name: "elm/flipselector/base/default";
             }
          }
       }
-
       part { name: "base";
          scale: 1;
          description { state: "default" 0.0;
@@ -194,7 +184,6 @@ group { name: "elm/flipselector/base/default";
             image.normal: "flip_base.png";
          }
       }
-
       part { name: "b";
          type: RECT;
          mouse_events: 1;
@@ -209,7 +198,6 @@ group { name: "elm/flipselector/base/default";
             visible: 0;
          }
       }
-
       part { name: "t";
          type: RECT;
          mouse_events: 1;
@@ -224,7 +212,6 @@ group { name: "elm/flipselector/base/default";
             visible: 0;
          }
       }
-
       part { name: "bottom_sheet_static";
          mouse_events: 0;
          description { state: "default" 0.0;
@@ -234,7 +221,6 @@ group { name: "elm/flipselector/base/default";
             image.normal: "flip_b.png";
          }
       }
-
       part { name: "bottom_b";
          mouse_events: 0;
          clip_to: "bottom_clipper";
@@ -253,7 +239,6 @@ group { name: "elm/flipselector/base/default";
             }
          }
       }
-
       part { name: "shadow";
          mouse_events: 0;
          description { state: "default" 0.0;
@@ -271,7 +256,6 @@ group { name: "elm/flipselector/base/default";
             rel2.relative: 1.0 1.0;
          }
       }
-
       part { name: "bottom_sheet";
          mouse_events: 0;
          description { state: "default" 0.0;
@@ -286,7 +270,6 @@ group { name: "elm/flipselector/base/default";
             rel2.relative: 1.0 0.0;
          }
       }
-
       part { name: "elm.bottom";
          mouse_events: 0;
          clip_to: "bottom_clipper";
@@ -311,7 +294,6 @@ group { name: "elm/flipselector/base/default";
             rel2.relative: 1.0 0.5; /* FIXME: same visual effect? --> MAP! */
          }
       }
-
       part { name: "top_sheet_static";
          mouse_events: 0;
          description { state: "default" 0.0;
@@ -321,7 +303,6 @@ group { name: "elm/flipselector/base/default";
             image.normal: "flip_t.png";
          }
       }
-
       part { name: "top_b";
          mouse_events: 0;
          clip_to: "top_clipper";
@@ -341,7 +322,6 @@ group { name: "elm/flipselector/base/default";
             }
          }
       }
-
       part { name: "top_sheet";
          mouse_events: 0;
          description { state: "default" 0.0;
@@ -357,7 +337,6 @@ group { name: "elm/flipselector/base/default";
             rel1.relative: 0.0 1.0;
          }
       }
-
       part { name: "elm.top";
          mouse_events: 0;
          clip_to: "top_clipper";
@@ -381,7 +360,6 @@ group { name: "elm/flipselector/base/default";
             rel1.relative: 0.0 0.5;
          }
       }
-
       part { name: "arrow_top";
          mouse_events: 0;
          clip_to: "disclip";
@@ -416,7 +394,6 @@ group { name: "elm/flipselector/base/default";
             visible: 0;
          }
       }
-
       part {
          type: RECT;
          mouse_events: 0;
@@ -429,7 +406,6 @@ group { name: "elm/flipselector/base/default";
             visible: 1;
          }
       }
-
       part {
          type: RECT;
          mouse_events: 0;
@@ -442,7 +418,6 @@ group { name: "elm/flipselector/base/default";
             visible: 1;
          }
       }
-
       part {
          type: RECT;
          name: "disclip";
@@ -455,7 +430,6 @@ group { name: "elm/flipselector/base/default";
             color: 100 100 100 100;
          }
       }
-
       part {
          type: RECT;
          name: "event_blocker";
@@ -472,7 +446,6 @@ group { name: "elm/flipselector/base/default";
       }
 
    }
-
    programs {
       program { name: "load";
          signal: "load";
