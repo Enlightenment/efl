@@ -320,7 +320,9 @@ _evas_render_phase1_direct(Evas_Public_Data *e,
         eo_obj = obj->object;
         RD("    OBJ [%p", obj);
         if (obj->name)
-          RD(":%s", obj->name);
+          {
+             RD(":%s", obj->name);
+          }
         RD("] changed %i\n", obj->changed);
         if (obj->changed)
           {
@@ -414,7 +416,10 @@ _evas_render_phase1_object_process(Evas_Public_Data *e, Evas_Object *eo_obj,
 
    RDI(level);
    RD("    [--- PROCESS [%p", obj);
-   if (obj->name) RD(":%s", obj->name);
+   if (obj->name) 
+     {
+        RD(":%s", obj->name);
+     }
    RD("] '%s' active = %i, del = %i | %i %i %ix%i\n", obj->type, is_active, obj->delete_me, obj->cur->geometry.x, obj->cur->geometry.y, obj->cur->geometry.w, obj->cur->geometry.h);
 
    if ((!mapped_parent) && ((is_active) || (obj->delete_me != 0)))
@@ -774,7 +779,10 @@ pending_change(void *data, void *gdata EINA_UNUSED)
    if (obj->pre_render_done)
      {
         RD("  OBJ [%p", obj);
-        if (obj->name) RD(":%s", obj->name);
+        if (obj->name) 
+          {
+             RD(":%s", obj->name);
+          }
         RD("] pending change %i -> 0, pre %i\n", obj->changed, obj->pre_render_done);
         obj->func->render_post(eo_obj, obj, obj->private_data);
         obj->pre_render_done = EINA_FALSE;
@@ -1052,7 +1060,10 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
 
    RDI(level);
    RD("      { evas_render_mapped(%p, %p", e, obj);
-   if (obj->name) RD(":%s", obj->name);
+   if (obj->name) 
+     {
+        RD(":%s", obj->name);
+     }
    RD(",   %p, %p,   %i, %i,   %i,   %i)\n", context, surface, off_x, off_y, mapped, level);
 
    if (mapped)
@@ -1738,7 +1749,10 @@ evas_render_updates_internal(Evas *eo_e,
 
                   /* if it's in our outpout rect and it doesn't clip anything */
                   RD("    OBJ: [%p", obj);
-                  if (obj->name) RD(":%s", obj->name);
+                  if (obj->name) 
+                    {
+                       RD(":%s", obj->name);
+                    }
                   RD("] '%s' %i %i %ix%i\n", obj->type, obj->cur->geometry.x, obj->cur->geometry.y, obj->cur->geometry.w, obj->cur->geometry.h);
                   if ((evas_object_is_in_output_rect(eo_obj, obj, ux - fx, uy - fy, uw, uh) ||
                        (obj->is_smart)) &&
@@ -1837,12 +1851,18 @@ evas_render_updates_internal(Evas *eo_e,
         eo_obj = obj->object;
         obj->pre_render_done = EINA_FALSE;
         RD("    OBJ [%p", obj);
-        if (obj->name) RD(":%s", obj->name);
+        if (obj->name) 
+          {
+             RD(":%s", obj->name);
+          }
         RD("] post... %i %i\n", obj->changed, do_draw);
         if ((clean_them) || (obj->changed && do_draw))
           {
              RD("    OBJ [%p", obj);
-             if (obj->name) RD(":%s", obj->name);
+             if (obj->name) 
+               {
+                  RD(":%s", obj->name);
+               }
              RD("] post... func\n");
              obj->func->render_post(eo_obj, obj, obj->private_data);
              obj->restack = EINA_FALSE;
