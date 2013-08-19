@@ -150,7 +150,7 @@ test_flipselector(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
    evas_object_show(bt);
 
    sl = elm_slider_add(bx);
-   elm_object_text_set(sl, "Flip Iterval:");
+   elm_object_text_set(sl, "Flip Interval:");
    elm_slider_unit_format_set(sl, "%1.2f");
    elm_slider_min_max_set(sl, 0, 3.0);
    elm_slider_value_set(sl, 0.85);
