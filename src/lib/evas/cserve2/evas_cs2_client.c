@@ -1085,6 +1085,9 @@ struct _Font_Entry
    unsigned int dpi;
    Font_Rend_Flags wanted_rend;
 
+   char *hkey;
+   int font_data_id;
+
    unsigned int rid; // open
 
    Eina_Hash *glyphs_maps;
@@ -1305,8 +1308,12 @@ _glyph_request_cb(void *data, const void *msg, int size)
    const Msg_Font_Glyphs_Loaded *resp = msg;
    Glyph_Request_Data *grd = data;
    Font_Entry *fe = grd->fe;
-   unsigned int ncaches;
    const char *buf;
+   int i, nglyphs;
+   int namelen;
+   const char *name;
+   Glyph_Map *map;
+   int pos;
 
    if (resp->base.type == CSERVE2_ERROR)
      goto end;
@@ -1317,89 +1324,82 @@ _glyph_request_cb(void *data, const void *msg, int size)
    if (size <= (int) sizeof(*resp)) goto end;
 
    buf = (const char *)resp + sizeof(*resp);
-   for (ncaches = 0; ncaches < resp->ncaches; ncaches++)
+   pos = buf - (const char*) resp;
+
+   pos += sizeof(int);
+   if (pos > size) goto end;
+
+   memcpy(&namelen, buf, sizeof(int));
+   buf += sizeof(int);
+
+   pos += namelen + sizeof(int);
+   if (pos > size) goto end;
+
+   name = eina_stringshare_add_length(buf, namelen);
+   buf += namelen;
+
+   memcpy(&nglyphs, buf, sizeof(int));
+   buf += sizeof(int);
+
+   map = eina_hash_find(fe->glyphs_maps, name);
+   if (!map)
      {
-        int i, nglyphs;
-        int namelen;
-        const char *name;
-        Glyph_Map *map;
-        int pos = buf - (const char*) resp;
+        map = calloc(1, sizeof(*map));
+        map->fe = fe;
+        map->name = name;
+        map->map = eina_file_open(name, EINA_TRUE);
+        map->data = eina_file_map_all(map->map, EINA_FILE_WILLNEED);
+        eina_clist_init(&map->glyphs);
+        eina_hash_direct_add(fe->glyphs_maps, &map->name, map);
+     }
+   else
+      eina_stringshare_del(name);
 
-        pos += sizeof(int);
+   for (i = 0; i < nglyphs; i++)
+     {
+        string_t shm_id;
+        unsigned int idx, offset, glsize;
+        int rows, width, pitch, num_grays, pixel_mode;
+        CS_Glyph_Out *gl;
+
+        pos = buf - (const char*) resp;
+        pos += 8 * sizeof(int);
         if (pos > size) goto end;
 
-        memcpy(&namelen, buf, sizeof(int));
+        memcpy(&idx, buf, sizeof(int));
+        buf += sizeof(int);
+        memcpy(&shm_id, buf, sizeof(string_t));
+        buf += sizeof(string_t);
+        memcpy(&offset, buf, sizeof(int));
+        buf += sizeof(int);
+        memcpy(&glsize, buf, sizeof(int));
+        buf += sizeof(int);
+        memcpy(&rows, buf, sizeof(int));
+        buf += sizeof(int);
+        memcpy(&width, buf, sizeof(int));
+        buf += sizeof(int);
+        memcpy(&pitch, buf, sizeof(int));
+        buf += sizeof(int);
+        memcpy(&num_grays, buf, sizeof(int));
+        buf += sizeof(int);
+        memcpy(&pixel_mode, buf, sizeof(int));
         buf += sizeof(int);
 
-        pos += namelen + sizeof(int);
-        if (pos > size) goto end;
-
-        name = eina_stringshare_add_length(buf, namelen);
-        buf += namelen;
-
-        memcpy(&nglyphs, buf, sizeof(int));
-        buf += sizeof(int);
-
-        map = eina_hash_find(fe->glyphs_maps, name);
-        if (!map)
+        gl = fash_gl_find(fe->fash[grd->hints], idx);
+        if (gl)
           {
-             map = calloc(1, sizeof(*map));
-             map->fe = fe;
-             map->name = name;
-             map->map = eina_file_open(name, EINA_TRUE);
-             map->data = eina_file_map_all(map->map, EINA_FILE_WILLNEED);
-             eina_clist_init(&map->glyphs);
-             eina_hash_direct_add(fe->glyphs_maps, &map->name, map);
-          }
-        else
-          eina_stringshare_del(name);
+             gl->map = map;
+             gl->offset = offset;
+             gl->size = glsize;
+             gl->base.bitmap.rows = rows;
+             gl->base.bitmap.width = width;
+             gl->base.bitmap.pitch = pitch;
+             gl->base.bitmap.buffer = map->data + gl->offset;
+             gl->base.bitmap.num_grays = num_grays;
+             gl->base.bitmap.pixel_mode = pixel_mode;
+             gl->rid = 0;
 
-        for (i = 0; i < nglyphs; i++)
-          {
-             string_t shm_id;
-             unsigned int idx, offset, glsize;
-             int rows, width, pitch, num_grays, pixel_mode;
-             CS_Glyph_Out *gl;
-
-             pos = buf - (const char*) resp;
-             pos += 8 * sizeof(int);
-             if (pos > size) goto end;
-
-             memcpy(&idx, buf, sizeof(int));
-             buf += sizeof(int);
-             memcpy(&shm_id, buf, sizeof(string_t));
-             buf += sizeof(string_t);
-             memcpy(&offset, buf, sizeof(int));
-             buf += sizeof(int);
-             memcpy(&glsize, buf, sizeof(int));
-             buf += sizeof(int);
-             memcpy(&rows, buf, sizeof(int));
-             buf += sizeof(int);
-             memcpy(&width, buf, sizeof(int));
-             buf += sizeof(int);
-             memcpy(&pitch, buf, sizeof(int));
-             buf += sizeof(int);
-             memcpy(&num_grays, buf, sizeof(int));
-             buf += sizeof(int);
-             memcpy(&pixel_mode, buf, sizeof(int));
-             buf += sizeof(int);
-
-             gl = fash_gl_find(fe->fash[grd->hints], idx);
-             if (gl)
-               {
-                  gl->map = map;
-                  gl->offset = offset;
-                  gl->size = glsize;
-                  gl->base.bitmap.rows = rows;
-                  gl->base.bitmap.width = width;
-                  gl->base.bitmap.pitch = pitch;
-                  gl->base.bitmap.buffer = map->data + gl->offset;
-                  gl->base.bitmap.num_grays = num_grays;
-                  gl->base.bitmap.pixel_mode = pixel_mode;
-                  gl->rid = 0;
-
-                  eina_clist_add_head(&map->glyphs, &gl->map_entry);
-               }
+             eina_clist_add_head(&map->glyphs, &gl->map_entry);
           }
      }
 
@@ -1858,7 +1858,8 @@ _shared_image_entry_file_data_find(Image_Entry *ie)
         file = _shared_string_get(fd->path);
         if (!file)
           {
-             ERR("Could not find filename for file %d", fd->id);
+             ERR("Could not find filename for file %d: path id: %d",
+                 fd->id, fd->path);
              add_to_hash = EINA_FALSE;
              continue;
           }
@@ -2191,5 +2192,68 @@ found:
    return idata;
 }
 
+static const Font_Data *
+_shared_font_entry_data_get_by_id(int id)
+{
+   return (Font_Data *)
+         _shared_index_item_get_by_id(&_index.fonts, sizeof(Font_Data), id);
+}
+
+static const Font_Data *
+_shared_font_entry_data_find(Font_Entry *fe)
+{
+   const Font_Data *fd = NULL;
+   Eina_Bool add_to_hash = SHARED_INDEX_ADD_TO_HASH;
+   char hkey[PATH_MAX];
+   int k;
+
+   if (!_index.strings_entries.data || !_index.strings_index.data)
+     return NULL;
+
+   if (!fe || !fe->hkey)
+     return NULL;
+
+   if (fe->font_data_id)
+     {
+        fd = _shared_font_entry_data_get_by_id(fe->font_data_id);
+        if (fd) return fd;
+        fe->font_data_id = 0;
+     }
+
+   // Find in hash
+   fd = eina_hash_find(_index.fonts.entries_by_hkey, fe->hkey);
+   if (fd) return fd;
+
+   // Find in shared index
+   for (k = _index.fonts.last_entry_in_hash;
+        k < _index.fonts.count && k < _index.fonts.header->emptyidx; k++)
+     {
+        const Font_Data *cur;
+        const char *name, *source;
+
+        cur = &(_index.fonts.entries.fontdata[k]);
+        if (!cur->id) return NULL;
+        if (!cur->refcount) continue;
+
+        name = _shared_string_get(cur->name);
+        source = _shared_string_get(cur->file);
+        snprintf(hkey, PATH_MAX, "%s:%s/%u:%u:%u", source, name,
+                 cur->size, cur->dpi, cur->rend_flags);
+
+        if (add_to_hash)
+          {
+             eina_hash_add(_index.fonts.entries_by_hkey, hkey, cur);
+             _index.fonts.last_entry_in_hash++;
+          }
+
+        if (!strcmp(hkey, fe->hkey))
+          {
+             fe->font_data_id = cur->id;
+             return cur;
+          }
+     }
+
+   return fd;
+}
 
 #endif

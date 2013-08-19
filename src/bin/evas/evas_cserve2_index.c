@@ -837,6 +837,20 @@ cserve2_shared_mempool_buffer_offset_get(Shared_Mempool *sm, int bufferid)
    return ie->offset;
 }
 
+size_t
+cserve2_shared_mempool_size_get(Shared_Mempool *sm)
+{
+   if (!sm) return 0;
+   return cserve2_shm_map_size_get(sm->ds->shm);
+}
+
+const char *
+cserve2_shared_mempool_name_get(Shared_Mempool *sm)
+{
+   if (!sm) return NULL;
+   return cserve2_shm_name_get(sm->ds->shm);
+}
+
 
 // Shared strings
 

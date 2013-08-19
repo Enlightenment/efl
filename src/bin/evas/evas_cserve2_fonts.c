@@ -47,7 +47,6 @@ struct _Font_Info
    int dpi;
    int max_h;
    unsigned int runtime_rend;
-   int shmsize;
 };
 
 struct _Font_Source_Info
@@ -281,14 +280,6 @@ _font_slave_load(const void *cmddata, void *data EINA_UNUSED)
    return response;
 }
 
-static Shm_Handle *
-_font_slave_memory_alloc(Font_Info *fi)
-{
-   Shm_Handle *shm = cserve2_shm_request("font", fi->shmsize);
-
-   return shm;
-}
-
 /* This function will load the "index" glyph to the glyph slot of the font.
  * In order to use or render it, one should access it from the glyph slot,
  * or get the glyph using FT_Get_Glyph().
@@ -326,39 +317,48 @@ _font_slave_glyph_load(Font_Info *fi, unsigned int idx, unsigned int hint)
  * given Font Cache.
  */
 static Eina_Bool
-_font_slave_glyph_render(Font_Info *fi, Slave_Msg_Font_Cache *c, unsigned int idx)
+_font_slave_glyph_render(Font_Info *fi, Slave_Msg_Font_Glyphs_Loaded *response,
+                         unsigned int idx)
 {
    Font_Source_Info *fsi = fi->fsi;
    unsigned int glyphsize;
-   char *cachedata = cserve2_shm_map(c->shm);
    FT_Glyph glyph;
    FT_BitmapGlyph bglyph;
+   char *data;
+   int buffer_id = 0;
 
    FT_Get_Glyph(fsi->face->glyph, &glyph);
    FT_Glyph_To_Bitmap(&glyph, FT_RENDER_MODE_NORMAL, 0, 1);
    bglyph = (FT_BitmapGlyph)glyph;
 
    glyphsize = bglyph->bitmap.pitch * bglyph->bitmap.rows;
-
-   if (c->usage + glyphsize > cserve2_shm_size_get(c->shm))
+   if (!glyphsize)
      {
         FT_Done_Glyph(glyph);
         return EINA_FALSE;
      }
 
-   memcpy(cachedata + c->usage, bglyph->bitmap.buffer, glyphsize);
+   buffer_id = cserve2_shared_mempool_buffer_new(response->mempool, glyphsize);
+   data = cserve2_shared_mempool_buffer_get(response->mempool, buffer_id);
+   if (!data)
+     {
+        FT_Done_Glyph(glyph);
+        return EINA_FALSE;
+     }
+   memcpy(data, bglyph->bitmap.buffer, glyphsize);
 
    // TODO: Check if we have problems with alignment
-   c->glyphs[c->nglyphs].index = idx;
-   c->glyphs[c->nglyphs].offset = c->usage;
-   c->glyphs[c->nglyphs].size = glyphsize;
-   c->glyphs[c->nglyphs].rows = bglyph->bitmap.rows;
-   c->glyphs[c->nglyphs].width = bglyph->bitmap.width;
-   c->glyphs[c->nglyphs].pitch = bglyph->bitmap.pitch;
-   c->glyphs[c->nglyphs].num_grays = bglyph->bitmap.num_grays;
-   c->glyphs[c->nglyphs].pixel_mode = bglyph->bitmap.pixel_mode;
-   c->usage += glyphsize;
-   c->nglyphs++;
+   response->glyphs[response->nglyphs].index = idx;
+   response->glyphs[response->nglyphs].buffer_id = buffer_id;
+   response->glyphs[response->nglyphs].offset =
+         cserve2_shared_mempool_buffer_offset_get(response->mempool, buffer_id);
+   response->glyphs[response->nglyphs].size = glyphsize;
+   response->glyphs[response->nglyphs].rows = bglyph->bitmap.rows;
+   response->glyphs[response->nglyphs].width = bglyph->bitmap.width;
+   response->glyphs[response->nglyphs].pitch = bglyph->bitmap.pitch;
+   response->glyphs[response->nglyphs].num_grays = bglyph->bitmap.num_grays;
+   response->glyphs[response->nglyphs].pixel_mode = bglyph->bitmap.pixel_mode;
+   response->nglyphs++;
 
    FT_Done_Glyph(glyph);
 
@@ -465,15 +465,12 @@ _font_slave_glyphs_load(const void *cmddata, void *data EINA_UNUSED)
    Slave_Msg_Font_Glyphs_Loaded *response;
    Font_Info *fi;
    unsigned int i;
-   unsigned int total_glyphs = 0;
 #ifdef DEBUG_LOAD_TIME
    unsigned int gl_load_time = 0;
    unsigned int gl_render_time = 0;
    struct timeval tv_start, tv_end;
    struct timeval rstart, rfinish;
 #endif
-   Eina_List *caches = NULL;
-   Slave_Msg_Font_Cache *c = NULL;
 
    fi = msg->font.ftdata2;
 
@@ -483,41 +480,22 @@ _font_slave_glyphs_load(const void *cmddata, void *data EINA_UNUSED)
 
    _font_slave_size_use(fi);
 
-   if (msg->cache.shm)
+   response = malloc(sizeof(*response)
+                     + sizeof(Slave_Msg_Glyph) * (msg->glyphs.nglyphs));
+   if (!response) return NULL;
+
+   response->nglyphs = 0;
+   response->glyphs = (void *) (response + 1);
+   response->mempool = msg->cache.mempool;
+   if (!response->mempool)
      {
-        c = malloc(sizeof(*c) + sizeof(Slave_Msg_Glyph) *
-                   (msg->glyphs.nglyphs));
-        c->nglyphs = 0;
-        c->glyphs = (void *)(c + 1);
-        c->shm = msg->cache.shm;
-        c->usage = msg->cache.usage;
-        caches = eina_list_append(caches, c);
-        total_glyphs = msg->cache.nglyphs;
+        unsigned shmsize = _font_slave_int_shm_calculate(fi, msg->font.hint);
+        response->mempool = cserve2_shared_mempool_new(shmsize);
+        if (!response->mempool) return NULL;
      }
 
-   if (!fi->shmsize)
-     fi->shmsize = _font_slave_int_shm_calculate(fi, msg->font.hint);
-
-   i = 0;
-
-   while (i < msg->glyphs.nglyphs)
+   for (i = 0; i < msg->glyphs.nglyphs; i++)
      {
-        Eina_Bool r = EINA_TRUE;
-
-        if (!c)
-          {
-             Shm_Handle *shm;
-             shm = _font_slave_memory_alloc(fi);
-             c = malloc(sizeof(*c) + sizeof(Slave_Msg_Glyph) *
-                        (msg->glyphs.nglyphs - i));
-             c->nglyphs = 0;
-             c->glyphs = (void *)(c + 1);
-             c->shm = shm;
-             c->usage = 0;
-             caches = eina_list_append(caches, c);
-             total_glyphs = 0;
-          }
-
 #ifdef DEBUG_LOAD_TIME
         gettimeofday(&tv_start, NULL);
 #endif
@@ -530,31 +508,13 @@ _font_slave_glyphs_load(const void *cmddata, void *data EINA_UNUSED)
              tv_start.tv_sec = tv_end.tv_sec;
              tv_start.tv_usec = tv_end.tv_usec;
 #endif
-             r = _font_slave_glyph_render(fi, c, msg->glyphs.glyphs[i]);
+             _font_slave_glyph_render(fi, response, msg->glyphs.glyphs[i]);
 #ifdef DEBUG_LOAD_TIME
              gettimeofday(&tv_end, NULL);
              gl_render_time += _timeval_sub(&tv_end, &tv_start);
 #endif
           }
-        if (!r) // SHM is full
-          {
-             fi->shmsize = _font_slave_int_shm_prev_calculate
-                   (c->usage, total_glyphs);
-             c = NULL;
-             continue;
-          }
-        i++;
-        total_glyphs++;
      }
-
-   response = malloc(sizeof(*response) +
-                     sizeof(c) * eina_list_count(caches));
-   response->ncaches = eina_list_count(caches);
-   response->caches = (void *)(response + 1);
-
-   i = 0;
-   EINA_LIST_FREE(caches, c)
-     response->caches[i++] = c;
 
 #ifdef DEBUG_LOAD_TIME
    response->gl_load_time = gl_load_time;
@@ -630,6 +590,8 @@ cserve2_font_source_ft_free(void *fontsource)
 {
    Font_Source_Info *fsi = fontsource;
 
+   if (!fsi) return;
+
    FT_Done_Face(fsi->face);
    free(fsi->data);
    free(fsi);
@@ -639,6 +601,8 @@ void
 cserve2_font_ft_free(void *fontinfo)
 {
    Font_Info *fi = fontinfo;
+
+   if (!fi) return;
 
    FT_Done_Size(fi->size);
    free(fi);

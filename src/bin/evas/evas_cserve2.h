@@ -62,6 +62,8 @@ extern Eina_Prefix *_evas_cserve2_pfx;
 typedef struct _Slave Slave;
 typedef struct _Slave_Thread_Data Slave_Thread_Data;
 typedef struct _Shm_Handle Shm_Handle;
+typedef struct _Shared_Array Shared_Array;
+typedef struct _Shared_Mempool Shared_Mempool;
 
 typedef enum {
    FD_READ = 1,
@@ -172,14 +174,13 @@ struct _Slave_Msg_Font_Glyphs_Load {
       unsigned int *glyphs;
    } glyphs;
    struct {
-      Shm_Handle *shm;
-      unsigned int usage;
-      unsigned int nglyphs;
+      Shared_Mempool *mempool;
    } cache;
 };
 
 struct _Slave_Msg_Glyph {
    unsigned int index;
+   unsigned int buffer_id;
    unsigned int offset;
    unsigned int size;
    unsigned int rows;
@@ -191,21 +192,13 @@ struct _Slave_Msg_Glyph {
 
 typedef struct _Slave_Msg_Glyph Slave_Msg_Glyph;
 
-struct _Slave_Msg_Font_Cache {
-   unsigned int nglyphs;
-   Slave_Msg_Glyph *glyphs;
-   Shm_Handle *shm;
-   unsigned int usage;
-};
-
-typedef struct _Slave_Msg_Font_Cache Slave_Msg_Font_Cache;
-
 struct _Slave_Msg_Font_Glyphs_Loaded {
-   unsigned int ncaches;
+   Shared_Mempool *mempool;
    unsigned int gl_load_time;
    unsigned int gl_render_time;
    unsigned int gl_slave_time;
-   Slave_Msg_Font_Cache **caches;
+   Slave_Msg_Glyph *glyphs;
+   unsigned int nglyphs;
 };
 
 typedef struct _Slave_Msg_Font_Load Slave_Msg_Font_Load;
@@ -349,8 +342,6 @@ void cserve2_font_ft_free(void *fontinfo);
 void cserve2_shared_index_init(void);
 void cserve2_shared_index_shutdown(void);
 
-typedef struct _Shared_Array Shared_Array;
-typedef struct _Shared_Mempool Shared_Mempool;
 typedef Eina_Bool (* Shared_Array_Repack_Skip_Cb) (Shared_Array *sa,
                                                    const void *elem,
                                                    void *user_data);
@@ -382,7 +373,9 @@ int cserve2_shared_mempool_buffer_new(Shared_Mempool *sm, int size);
 int cserve2_shared_mempool_buffer_ref(Shared_Mempool *sm, int bufferid);
 void cserve2_shared_mempool_buffer_del(Shared_Mempool *sm, int bufferid);
 void *cserve2_shared_mempool_buffer_get(Shared_Mempool *sm, int bufferid);
-
+int cserve2_shared_mempool_buffer_offset_get(Shared_Mempool *sm, int bufferid);
+size_t cserve2_shared_mempool_size_get(Shared_Mempool *sm);
+const char *cserve2_shared_mempool_name_get(Shared_Mempool *sm);
 
 // Shared strings
 const char *cserve2_shared_strings_table_name_get();

@@ -47,6 +47,9 @@ cserve2_index_list_send(const char *strings_index_path,
    Msg_Index_List msg;
    const int size = sizeof(msg);
 
+   if (!client_list)
+     return;
+
    INF("New shared index: strings: '%s':'%s' files: '%s' images: '%s', fonts: '%s'",
        strings_index_path, strings_entries_path,
        files_index_path, images_index_path, fonts_index_path);
@@ -339,6 +342,7 @@ static void
 _clients_finish(void)
 {
    eina_hash_free(client_list);
+   client_list = NULL;
 }
 
 int

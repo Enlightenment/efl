@@ -184,7 +184,6 @@ struct _Msg_Font_Glyphs_Request {
  */
 struct _Msg_Font_Glyphs_Loaded {
    Msg_Base base;
-   unsigned int ncaches;
 };
 
 struct _Msg_Stats {
@@ -287,6 +286,7 @@ typedef struct _Shm_Object Shm_Object;
 typedef struct _Index_Entry Index_Entry;
 typedef struct _File_Data File_Data;
 typedef struct _Image_Data Image_Data;
+typedef struct _Font_Data Font_Data;
 typedef struct _Glyph_Data Glyph_Data;
 typedef struct _Shared_Array_Header Shared_Array_Header;
 typedef int string_t;
@@ -338,10 +338,21 @@ struct _Image_Data {
    Eina_Bool doload : 1;
 };
 
+struct _Font_Data {
+   SHMOBJECT;
+   string_t name;
+   string_t file;
+   string_t glyph_index_shm;
+   uint32_t rend_flags;
+   uint32_t size;
+   uint32_t dpi;
+};
+
 struct _Glyph_Data {
    SHMOBJECT;
    uint32_t index;
    string_t shm_id;
+   uint32_t buffer_id;
    uint32_t offset;
    uint32_t size;
    uint32_t rows;
