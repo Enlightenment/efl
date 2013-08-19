@@ -155,6 +155,8 @@ static void _locale_get(void *data EINA_UNUSED, const Eldbus_Message *msg,
         type = buf;
 
         value = strchr(buf, '=');
+        if (!value)
+          continue;
         *value = 0;
         value++;
 
