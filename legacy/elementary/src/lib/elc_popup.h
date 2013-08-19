@@ -72,6 +72,7 @@
  * @li @c "block,clicked" - whenever user taps on Blocked Event area.
  * @li @c "focused" - When the popup has received focus. (since 1.8)
  * @li @c "unfocused" - When the popup has lost focus. (since 1.8)
+ * @li "language,changed" - the program's language changed (since 1.8)
  *
  * Styles available for Popup
  * @li "default"

@@ -22,6 +22,7 @@ static const char CONTENT_PART[] = "elm.swallow.content";
 
 static const char SIG_BLOCK_CLICKED[] = "block,clicked";
 static const char SIG_TIMEOUT[] = "timeout";
+static const char SIG_LANG_CHANGED[] = "language,changed";
 
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_BLOCK_CLICKED, ""},
@@ -43,6 +44,8 @@ _elm_popup_smart_translate(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *
 
    EINA_LIST_FOREACH(sd->items, l, it)
       elm_widget_item_translate(it);
+
+   evas_object_smart_callback_call(obj, SIG_LANG_CHANGED, NULL);
 
    if (ret) *ret = EINA_TRUE;
 }
