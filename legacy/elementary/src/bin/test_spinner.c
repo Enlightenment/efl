@@ -82,6 +82,7 @@ test_spinner(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
    elm_box_pack_end(bx, sp);
    evas_object_show(sp);
 
+   evas_object_resize(win, 300, 300);
    evas_object_show(win);
 }
 #endif
