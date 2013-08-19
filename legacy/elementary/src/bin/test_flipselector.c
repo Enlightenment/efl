@@ -103,7 +103,7 @@ test_flipselector(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
    elm_win_resize_object_add(win, bx);
    evas_object_show(bx);
 
-   fp = elm_flipselector_add(win);
+   fp = elm_flipselector_add(bx);
    evas_object_size_hint_weight_set(fp, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_smart_callback_add(fp, "selected", _sel_cb, NULL);
    evas_object_smart_callback_add(fp, "underflowed", _overflow_cb, NULL);
@@ -117,13 +117,13 @@ test_flipselector(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
    elm_box_pack_end(bx, fp);
    evas_object_show(fp);
 
-   bx2 = elm_box_add(win);
+   bx2 = elm_box_add(bx);
    evas_object_size_hint_weight_set(bx2, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_box_horizontal_set(bx2, EINA_TRUE);
    elm_box_pack_end(bx, bx2);
    evas_object_show(bx2);
 
-   fp = elm_flipselector_add(win);
+   fp = elm_flipselector_add(bx2);
    evas_object_smart_callback_add(fp, "underflowed", _overflow_cb, NULL);
    evas_object_smart_callback_add(fp, "overflowed", _underflow_cb, NULL);
    evas_object_size_hint_weight_set(fp, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -133,7 +133,7 @@ test_flipselector(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
         elm_flipselector_item_append(fp, buf, _sel_cb, NULL);
      }
 
-   bt = elm_button_add(win);
+   bt = elm_button_add(bx2);
    elm_object_text_set(bt, "Flip Prev");
    evas_object_smart_callback_add(bt, "clicked", flip_prev_cb, fp);
 
@@ -143,13 +143,13 @@ test_flipselector(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
    elm_box_pack_end(bx2, fp);
    evas_object_show(fp);
 
-   bt = elm_button_add(win);
+   bt = elm_button_add(bx2);
    elm_object_text_set(bt, "Flip Next");
    evas_object_smart_callback_add(bt, "clicked", flip_next_cb, fp);
    elm_box_pack_end(bx2, bt);
    evas_object_show(bt);
 
-   sl = elm_slider_add(win);
+   sl = elm_slider_add(bx);
    elm_object_text_set(sl, "Flip Iterval:");
    elm_slider_unit_format_set(sl, "%1.2f");
    elm_slider_min_max_set(sl, 0, 3.0);
@@ -160,19 +160,19 @@ test_flipselector(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
    evas_object_show(sl);
    evas_object_smart_callback_add(sl, "changed", slider_change_cb, fp);
 
-   bt = elm_button_add(win);
+   bt = elm_button_add(bx);
    elm_object_text_set(bt, "Select Last");
    evas_object_smart_callback_add(bt, "clicked", _last_cb, fp);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
 
-   bt = elm_button_add(win);
+   bt = elm_button_add(bx);
    elm_object_text_set(bt, "Select 2097");
    evas_object_smart_callback_add(bt, "clicked", _third_from_end_cb, fp);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
 
-   bt = elm_button_add(win);
+   bt = elm_button_add(bx);
    elm_object_text_set(bt, "Unselect year");
    evas_object_smart_callback_add(bt, "clicked", _unsel_cb, fp);
    elm_box_pack_end(bx, bt);
