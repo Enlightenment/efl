@@ -676,6 +676,7 @@ _eldbus_service_object_add(Eldbus_Connection *conn, const char *path)
      {
         obj->parent->children = eina_inlist_append(obj->parent->children,
                                                    EINA_INLIST_GET(obj));
+        obj->parent->introspection_dirty = EINA_TRUE;
         return obj;
      }
 
