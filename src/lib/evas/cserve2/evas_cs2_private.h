@@ -41,8 +41,8 @@ struct _Shared_Index
       const char *p; // Random access
       const Index_Entry *index; // TODO for strings
       const Image_Data *idata;
-      const File_Data *fdata;
-      // TODO Fonts
+      const File_Data *filedata;
+      const Font_Data *fontdata;
    } entries;
    int count;
    Eina_Hash *entries_by_hkey;
@@ -64,7 +64,7 @@ struct _Index_Table
    Shared_Index strings_index;
    Shared_Index files;
    Shared_Index images;
-   Shared_Index fonts; // TODO
+   Shared_Index fonts;
 };
 
 int evas_cserve2_init(void);

@@ -54,6 +54,7 @@ static const File_Data *_shared_file_data_get_by_id(unsigned int id);
 static const Shm_Object *_shared_index_item_get_by_id(Shared_Index *si, int elemsize, unsigned int id);
 static const File_Data *_shared_image_entry_file_data_find(Image_Entry *ie);
 static const Image_Data *_shared_image_entry_image_data_find(Image_Entry *ie);
+static const Font_Data *_shared_font_entry_data_find(Font_Entry *fe);
 
 #ifndef UNIX_PATH_MAX
 #define UNIX_PATH_MAX sizeof(((struct sockaddr_un *)NULL)->sun_path)
@@ -1171,6 +1172,8 @@ _font_entry_free(Font_Entry *fe)
      if (fe->fash[i])
        fash_gl_free(fe->fash[i]);
 
+   eina_hash_del_by_key(_index.fonts.entries_by_hkey, fe->hkey);
+   free(fe->hkey);
    eina_stringshare_del(fe->source);
    eina_stringshare_del(fe->name);
    eina_hash_foreach(fe->glyphs_maps, _glyphs_maps_foreach_free, NULL);
@@ -1235,7 +1238,8 @@ _font_load_server_send(Font_Entry *fe, Message_Type type)
 }
 
 Font_Entry *
-evas_cserve2_font_load(const char *source, const char *name, int size, int dpi, Font_Rend_Flags wanted_rend)
+evas_cserve2_font_load(const char *source, const char *name, int size, int dpi,
+                       Font_Rend_Flags wanted_rend)
 {
    Font_Entry *fe;
 
@@ -1260,12 +1264,36 @@ evas_cserve2_font_load(const char *source, const char *name, int size, int dpi, 
    eina_clist_init(&fe->glyphs_queue);
    eina_clist_init(&fe->glyphs_used);
 
+   if (asprintf(&fe->hkey, "%s:%s/%u:%u:%u", fe->name, fe->source,
+                fe->size, fe->dpi, (unsigned int) fe->wanted_rend) == -1)
+     fe->hkey = NULL;
+
    return fe;
 }
 
 int
 evas_cserve2_font_load_wait(Font_Entry *fe)
 {
+#if USE_SHARED_INDEX
+   const Font_Data *fd;
+   Eina_Bool failed;
+   unsigned int rid, rrid;
+
+   rid = fe->rid;
+   rrid = _server_dispatch(&failed);
+   if ((rid == rrid) && !fe->failed)
+     return CSERVE2_NONE;
+
+   fd = _shared_font_entry_data_find(fe);
+   if (fd)
+     {
+        INF("Bypassing socket wait (rid %d)", fe->rid);
+        fe->failed = EINA_FALSE;
+        fe->rid = 0;
+        return CSERVE2_NONE;
+     }
+#endif
+
    if (!_server_dispatch_until(fe->rid))
      return CSERVE2_GENERIC;
 
@@ -1762,7 +1790,9 @@ _server_index_list_set(Msg_Base *data, int size)
 
 
    // 4. Font indexes
-   // TODO
+
+   eina_strlcpy(_index.fonts.path, msg->fonts_index_path, SHARED_BUFFER_PATH_MAX);
+   _shared_index_remap_check(&_index.fonts, sizeof(Font_Data));
 
    return 0;
 }
@@ -1826,7 +1856,7 @@ _shared_image_entry_file_data_find(Image_Entry *ie)
    if (!_index.strings_index.header || !_index.strings_entries.data)
      return NULL;
 
-   if (!_index.files.header || !_index.files.entries.fdata)
+   if (!_index.files.header || !_index.files.entries.filedata)
      return NULL;
 
    // Direct access
@@ -1851,7 +1881,7 @@ _shared_image_entry_file_data_find(Image_Entry *ie)
         const File_Data *fd;
         char fd_hkey[PATH_MAX];
 
-        fd = &(_index.files.entries.fdata[k]);
+        fd = &(_index.files.entries.filedata[k]);
         if (!fd->id) break;
         if (!fd->refcount) continue;
 
