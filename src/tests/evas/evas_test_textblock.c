@@ -1387,7 +1387,7 @@ START_TEST(evas_textblock_items)
    evas_object_textblock_text_markup_set(tb, buf);
    evas_object_textblock_size_formatted_get(tb, &w, &h);
    _ck_assert_int(w, >=, 93);
-   ck_assert_int_eq(h, 152);
+   ck_assert_int_eq(h, 153);
    evas_textblock_cursor_pos_set(cur, 11);
    evas_textblock_cursor_format_item_geometry_get(cur, NULL, NULL, &w, &h);
    ck_assert_int_eq(w, 93);
@@ -1397,7 +1397,7 @@ START_TEST(evas_textblock_items)
    evas_object_textblock_text_markup_set(tb, buf);
    evas_object_textblock_size_formatted_get(tb, &w, &h);
    _ck_assert_int(w, >=, 93);
-   _ck_assert_int(h, >, 152);
+   _ck_assert_int(h, >, 153);
    evas_textblock_cursor_pos_set(cur, 11);
    evas_textblock_cursor_format_item_geometry_get(cur, NULL, NULL, &w, &h);
    ck_assert_int_eq(w, 93);
@@ -1408,7 +1408,7 @@ START_TEST(evas_textblock_items)
    evas_object_textblock_text_markup_set(tb, buf);
    evas_object_textblock_size_formatted_get(tb, &w, &h);
    _ck_assert_int(w, >=, 93);
-   ck_assert_int_eq(h, 152);
+   ck_assert_int_eq(h, 153);
    evas_textblock_cursor_pos_set(cur, 11);
    evas_textblock_cursor_format_item_geometry_get(cur, NULL, NULL, &w, &h);
    fail_if((w != 93) || (h != 152));
@@ -1416,7 +1416,7 @@ START_TEST(evas_textblock_items)
    buf = "This is an <item size=93x152 vsize=ascent></>.";
    evas_object_textblock_text_markup_set(tb, buf);
    evas_object_textblock_size_formatted_get(tb, &w, &h);
-   fail_if((w < 93) || (h <= 152));
+   fail_if((w < 93) || (h <= 153));
    evas_textblock_cursor_pos_set(cur, 11);
    evas_textblock_cursor_format_item_geometry_get(cur, NULL, NULL, &w, &h);
    fail_if((w != 93) || (h != 152));
@@ -1425,7 +1425,7 @@ START_TEST(evas_textblock_items)
    buf = "This is an <item size=93x152 vsize=full></>.";
    evas_object_textblock_text_markup_set(tb, buf);
    evas_object_textblock_size_formatted_get(tb, &w, &h);
-   fail_if((w < (2 * 93)) || (h != (2 * 152)));
+   fail_if((w < (2 * 93)) || (h != (2 * 154)));
    evas_textblock_cursor_pos_set(cur, 11);
    evas_textblock_cursor_format_item_geometry_get(cur, NULL, NULL, &w, &h);
    fail_if((w != (2 * 93)) || (h != (2 * 152)));
@@ -1436,7 +1436,7 @@ START_TEST(evas_textblock_items)
    buf = "This is an <item size=93x152 vsize=ascent></>.";
    evas_object_textblock_text_markup_set(tb, buf);
    evas_object_textblock_size_formatted_get(tb, &w, &h);
-   fail_if((w < (2 * 93)) || (h <= (2 * 152)));
+   fail_if((w < (2 * 93)) || (h <= (2 * 154)));
    evas_textblock_cursor_pos_set(cur, 11);
    evas_textblock_cursor_format_item_geometry_get(cur, NULL, NULL, &w, &h);
    fail_if((w != (2 * 93)) || (h != (2 * 152)));
@@ -1448,7 +1448,7 @@ START_TEST(evas_textblock_items)
    buf = "This is an <item relsize=93x152 vsize=full></>.";
    evas_object_textblock_text_markup_set(tb, buf);
    evas_object_textblock_size_formatted_get(tb, &w, &h);
-   fail_if((w >= 93) || (h >= 152));
+   fail_if((w >= 93) || (h >= 153));
    evas_textblock_cursor_pos_set(cur, 11);
    evas_textblock_cursor_format_item_geometry_get(cur, NULL, NULL, &w, &ih);
    fail_if((w > 108) || (h != ih));
