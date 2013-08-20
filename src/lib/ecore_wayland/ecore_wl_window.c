@@ -263,6 +263,7 @@ ecore_wl_window_surface_create(Ecore_Wl_Window *win)
    if (!win) return NULL;
    if (win->surface) return win->surface;
    win->surface = wl_compositor_create_surface(_ecore_wl_disp->wl.compositor);
+   win->surface_id = wl_proxy_get_id((struct wl_proxy *)win->surface);
    return win->surface;
 }
 
