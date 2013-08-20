@@ -398,6 +398,7 @@ Fixes:
      - Fix some logic issue when using fixed point path.
      - Correctly set match flag of signal callbacks
      - Fix size calculation of flags of signal callbacks
+     - Check for both Lua 5.1 and 5.2.
     * Efreet:
      - Fix desktop command parsing of https.
     * Emotion:

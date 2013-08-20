@@ -1,3 +1,7 @@
+2013-08-20  David Seikel (onefang)
+
+	* Edje Lua: Check for both Lua 5.1 and 5.2.
+
 2013-08-13  Jihoon Kim
 
 	* Ecore_IMF: add ecore_imf_context_input_panel_on_demand_set/get()
