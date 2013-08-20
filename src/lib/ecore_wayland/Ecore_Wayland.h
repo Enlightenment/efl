@@ -218,7 +218,7 @@ struct _Ecore_Wl_Window
         Eina_Bool set : 1;
      } pointer;
 
-   int id;
+   int id, surface_id;
    int x, y;
    int edges;
 
