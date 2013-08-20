@@ -293,6 +293,13 @@ cserve2_shared_array_count_get(Shared_Array *sa)
 }
 
 int
+cserve2_shared_array_map_size_get(Shared_Array *sa)
+{
+   if (!sa || !sa->ds) return 0;
+   return cserve2_shm_map_size_get(sa->ds->shm);
+}
+
+int
 cserve2_shared_array_item_size_get(Shared_Array *sa)
 {
    if (!sa) return -1;
@@ -841,7 +848,8 @@ size_t
 cserve2_shared_mempool_size_get(Shared_Mempool *sm)
 {
    if (!sm) return 0;
-   return cserve2_shm_map_size_get(sm->ds->shm);
+   return cserve2_shm_map_size_get(sm->ds->shm)
+         + cserve2_shared_array_map_size_get(sm->index->sa);
 }
 
 const char *

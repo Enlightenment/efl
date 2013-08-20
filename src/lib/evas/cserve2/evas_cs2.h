@@ -231,6 +231,7 @@ struct _Msg_Stats {
  *
  * Content of the message follows:
  *
+ * * char fonts_index_path[64]
  * * number of font entries;
  * * each font entry:
  *   - unsigned int filelen
@@ -241,15 +242,15 @@ struct _Msg_Stats {
  *   - unsigned int size;
  *   - unsigned int dpi;
  *   - unsigned int unused;
- *   - ncaches:
- *   - each cache:
- *     * usigned int shmnamelen;
- *     * const char shmname;
- *     * unsigned int size;
- *     * unsigned int usage;
- *     * unsigned int nglyphs;
- *     * each glyph:
+ *   - const char glyph_data_shm[64];
+ *   - const char glyph_mempool_shm[64];
+ *   - unsigned int nglyphs;
+ *   - each glyph: Glyph_Data struct
+ *       - unsigned int id;
+ *       - unsigned int refcount;
  *       - unsigned int index;
+ *       - unsigned int shm_id; // shared string id
+ *       - unsigned int buffer_id;
  *       - unsigned int offset;
  *       - unsigned int size;
  *       - unsigned int rows;
@@ -260,6 +261,8 @@ struct _Msg_Stats {
  */
 struct _Msg_Font_Debug {
     Msg_Base base;
+    char fonts_index_path[64];
+    int nfonts;
 };
 
 /**

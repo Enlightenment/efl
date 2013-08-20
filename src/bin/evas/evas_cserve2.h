@@ -352,6 +352,7 @@ const char *cserve2_shared_array_name_get(Shared_Array *sa);
 void cserve2_shared_array_del(Shared_Array *sa);
 int cserve2_shared_array_size_get(Shared_Array *sa);
 int cserve2_shared_array_count_get(Shared_Array *sa);
+int cserve2_shared_array_map_size_get(Shared_Array *sa);
 int cserve2_shared_array_item_size_get(Shared_Array *sa);
 int cserve2_shared_array_generation_id_get(Shared_Array *sa);
 int cserve2_shared_array_size_set(Shared_Array *sa, int newcount);
