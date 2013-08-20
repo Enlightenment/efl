@@ -149,6 +149,13 @@ test_flipselector(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
    elm_box_pack_end(bx2, bt);
    evas_object_show(bt);
 
+   fp = elm_flipselector_add(bx);
+   evas_object_size_hint_weight_set(fp, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_flipselector_item_append(fp, "disabled", NULL, NULL);
+   elm_object_disabled_set(fp, EINA_TRUE);
+   elm_box_pack_end(bx, fp);
+   evas_object_show(fp);
+
    sl = elm_slider_add(bx);
    elm_object_text_set(sl, "Flip Interval:");
    elm_slider_unit_format_set(sl, "%1.2f");
