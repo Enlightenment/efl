@@ -3470,7 +3470,7 @@ EFL_OPTIONAL_INTERNAL_DEPEND_PKG([EDJE], [${want_multisense}], [ecore-audio])
 EFL_ADD_FEATURE([EDJE], [physics])
 EFL_ADD_FEATURE([EDJE], [multisense])
 
-EFL_CHECK_LUA_5_1([EDJE])
+EFL_CHECK_LUA([EDJE])
 EFL_ADD_LIBS([EDJE], [-lm])
 
 EFL_EVAL_PKGS([EDJE])
