@@ -158,15 +158,6 @@ ecore_wl_window_resize(Ecore_Wl_Window *win, int w, int h, int location)
 
    if (!win) return;
 
-   if ((win->type != ECORE_WL_WINDOW_TYPE_FULLSCREEN) || 
-       (win->type != ECORE_WL_WINDOW_TYPE_DND))
-     {
-        win->region.input = 
-          wl_compositor_create_region(_ecore_wl_disp->wl.compositor);
-        wl_region_add(win->region.input, 
-                      win->allocation.x, win->allocation.y, w, h);
-     }
-
    ecore_wl_window_update_size(win, w, h);
 
    if (win->shell_surface)
@@ -186,14 +177,6 @@ ecore_wl_window_resize(Ecore_Wl_Window *win, int w, int h, int location)
 
         wl_shell_surface_resize(win->shell_surface, input->seat, 
                                 input->display->serial, location);
-     }
-
-   if (win->region.input)
-     {
-        if (win->surface)
-          wl_surface_set_input_region(win->surface, win->region.input);
-        wl_region_destroy(win->region.input);
-        win->region.input = NULL;
      }
 }
 
@@ -468,25 +451,36 @@ ecore_wl_window_transparent_get(Ecore_Wl_Window *win)
 EAPI void 
 ecore_wl_window_update_size(Ecore_Wl_Window *win, int w, int h)
 {
-   struct wl_region *opaque = NULL;
+   struct wl_region *region = NULL;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!win) return;
+
    win->allocation.w = w;
    win->allocation.h = h;
 
+   if (!win->surface) return;
+
    if ((!win->transparent) && (!win->alpha))
      {
-        opaque = wl_compositor_create_region(_ecore_wl_disp->wl.compositor);
-        wl_region_add(opaque, win->allocation.x, win->allocation.y,
+        region = wl_compositor_create_region(_ecore_wl_disp->wl.compositor);
+        wl_region_add(region, win->allocation.x, win->allocation.y,
                       win->allocation.w, win->allocation.h);
+        wl_surface_set_opaque_region(win->surface, region);
+        wl_region_destroy(region);
      }
 
-   if (win->surface)
-     wl_surface_set_opaque_region(win->surface, opaque);
-
-   if (opaque) wl_region_destroy(opaque);
+   if ((win->type != ECORE_WL_WINDOW_TYPE_FULLSCREEN) || 
+       (win->type != ECORE_WL_WINDOW_TYPE_DND))
+     {
+        region = 
+          wl_compositor_create_region(_ecore_wl_disp->wl.compositor);
+        wl_region_add(region, win->allocation.x, win->allocation.y, 
+                      win->allocation.w, win->allocation.h);
+        wl_surface_set_input_region(win->surface, region);
+        wl_region_destroy(region);
+     }
 }
 
 EAPI void 
