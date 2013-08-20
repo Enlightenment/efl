@@ -1387,7 +1387,7 @@ START_TEST(evas_textblock_items)
    evas_object_textblock_text_markup_set(tb, buf);
    evas_object_textblock_size_formatted_get(tb, &w, &h);
    _ck_assert_int(w, >=, 93);
-   ck_assert_int_eq(h, 153);
+   _ck_assert_int(h, >=, 153);
    evas_textblock_cursor_pos_set(cur, 11);
    evas_textblock_cursor_format_item_geometry_get(cur, NULL, NULL, &w, &h);
    ck_assert_int_eq(w, 93);
@@ -1397,7 +1397,7 @@ START_TEST(evas_textblock_items)
    evas_object_textblock_text_markup_set(tb, buf);
    evas_object_textblock_size_formatted_get(tb, &w, &h);
    _ck_assert_int(w, >=, 93);
-   _ck_assert_int(h, >, 153);
+   _ck_assert_int(h, >=, 153);
    evas_textblock_cursor_pos_set(cur, 11);
    evas_textblock_cursor_format_item_geometry_get(cur, NULL, NULL, &w, &h);
    ck_assert_int_eq(w, 93);
@@ -1408,7 +1408,7 @@ START_TEST(evas_textblock_items)
    evas_object_textblock_text_markup_set(tb, buf);
    evas_object_textblock_size_formatted_get(tb, &w, &h);
    _ck_assert_int(w, >=, 93);
-   ck_assert_int_eq(h, 153);
+   _ck_assert_int(h, >=, 153);
    evas_textblock_cursor_pos_set(cur, 11);
    evas_textblock_cursor_format_item_geometry_get(cur, NULL, NULL, &w, &h);
    fail_if((w != 93) || (h != 152));
