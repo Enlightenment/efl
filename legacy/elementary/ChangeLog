@@ -1511,6 +1511,7 @@
         not entry. This prevents the asynchronous states between ime and
         conformant.
 
+<<<<<<< HEAD
 2013-07-23  ChunEon Park (Hermet)
 
         * File Selector : Support elm_object_part_text_set() for the ok, cancel
@@ -1562,3 +1563,7 @@
 2013-08-19  ChunEon Park (Hermet)
 
         * Popup: Support "language,changed" smart callback.
+
+2013-08-22  Thiep Ha
+
+        * Add hide effect for notify.

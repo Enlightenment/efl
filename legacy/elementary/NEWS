@@ -127,6 +127,7 @@ Improvements:
    * Change the method to calculate a distance which be scrolled from linear to sine curve.
    * Add support for URL in Elm_Image and Elm_Photocam.
    * Popup: Support "language,changed" smart callback.
+   * Add hide effect for notify.
 
 Fixes:
    * Now elm_datetime_field_limit_set() can set year limits wihtout problems.
