@@ -457,6 +457,9 @@ ecore_wl_window_update_size(Ecore_Wl_Window *win, int w, int h)
 
    if (!win) return;
 
+   if ((win->allocation.w == w) && (win->allocation.h == h))
+     return;
+
    win->allocation.w = w;
    win->allocation.h = h;
 
