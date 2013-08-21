@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-07-12 07:09+0900\n"
+"POT-Creation-Date: 2013-08-22 04:28+0900\n"
 "PO-Revision-Date: 2012-11-16 21:51+0100\n"
 "Last-Translator: Aníbal Garrido <khany@member.trisquel.info>\n"
 "Language-Team: http://trasno.net/ <proxecto@trasno.net>\n"
@@ -16,20 +16,20 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/lib/elc_fileselector.c:841
+#: src/lib/elc_fileselector.c:847
 msgid "Up"
 msgstr "Arriba"
 
-#: src/lib/elc_fileselector.c:856
+#: src/lib/elc_fileselector.c:862
 msgid "Home"
 msgstr "Cartafol persoal"
 
-#: src/lib/elc_fileselector.c:1073 src/lib/elm_entry.c:1294
-#: src/lib/elm_entry.c:1319
+#: src/lib/elc_fileselector.c:1079 src/lib/elm_entry.c:1269
+#: src/lib/elm_entry.c:1294
 msgid "Cancel"
 msgstr "Cancelar"
 
-#: src/lib/elc_fileselector.c:1082
+#: src/lib/elc_fileselector.c:1088
 msgid "OK"
 msgstr "Aceptar"
 
@@ -42,8 +42,8 @@ msgid "Clicked"
 msgstr "Premido"
 
 #: src/lib/elm_button.c:281 src/lib/elm_check.c:219 src/lib/elm_gengrid.c:694
-#: src/lib/elm_genlist.c:1423 src/lib/elm_list.c:1476 src/lib/elm_radio.c:264
-#: src/lib/elm_spinner.c:526 src/lib/elm_toolbar.c:1996
+#: src/lib/elm_genlist.c:1381 src/lib/elm_list.c:1481 src/lib/elm_radio.c:264
+#: src/lib/elm_spinner.c:539 src/lib/elm_toolbar.c:1996
 msgid "State: Disabled"
 msgstr "Estado: Desactivado"
 
@@ -51,47 +51,47 @@ msgstr "Estado: Desactivado"
 msgid "Button"
 msgstr "Botón"
 
-#: src/lib/elm_calendar.c:141
+#: src/lib/elm_calendar.c:142
 msgid "%B %Y"
 msgstr "%B %Y"
 
-#: src/lib/elm_calendar.c:150
+#: src/lib/elm_calendar.c:151
 msgid "%B"
 msgstr ""
 
-#: src/lib/elm_calendar.c:159
+#: src/lib/elm_calendar.c:160
 msgid "%Y"
 msgstr ""
 
-#: src/lib/elm_calendar.c:273
+#: src/lib/elm_calendar.c:274
 msgid "calendar item"
 msgstr "calendario"
 
-#: src/lib/elm_calendar.c:299
+#: src/lib/elm_calendar.c:300
 #, fuzzy
 msgid "calendar decrement month button"
 msgstr "Botón de diminución do calendario"
 
-#: src/lib/elm_calendar.c:304
+#: src/lib/elm_calendar.c:305
 #, fuzzy
 msgid "calendar decrement year button"
 msgstr "Botón de diminución do calendario"
 
-#: src/lib/elm_calendar.c:309
+#: src/lib/elm_calendar.c:310
 #, fuzzy
 msgid "calendar increment month button"
 msgstr "Botón de aumento do calendario"
 
-#: src/lib/elm_calendar.c:314
+#: src/lib/elm_calendar.c:315
 #, fuzzy
 msgid "calendar increment year button"
 msgstr "Botón de aumento do calendario"
 
-#: src/lib/elm_calendar.c:319
+#: src/lib/elm_calendar.c:320
 msgid "calendar month"
 msgstr "mes do calendario"
 
-#: src/lib/elm_calendar.c:324
+#: src/lib/elm_calendar.c:325
 #, fuzzy
 msgid "calendar year"
 msgstr "calendario"
@@ -129,7 +129,7 @@ msgstr "Estado: Editable"
 msgid "Clock"
 msgstr "Reloxo"
 
-#: src/lib/elm_colorselector.c:1356
+#: src/lib/elm_colorselector.c:1370
 msgid "color selector palette item"
 msgstr "Paleta de selección de cor"
 
@@ -141,23 +141,23 @@ msgstr "Predeterminado: LTR"
 msgid "diskselector item"
 msgstr "Selector de disco"
 
-#: src/lib/elm_entry.c:1287
+#: src/lib/elm_entry.c:1262
 msgid "Copy"
 msgstr "Copiar"
 
-#: src/lib/elm_entry.c:1291
+#: src/lib/elm_entry.c:1266
 msgid "Cut"
 msgstr "Cortar"
 
-#: src/lib/elm_entry.c:1306
+#: src/lib/elm_entry.c:1281
 msgid "Select"
 msgstr "Seleccionar"
 
-#: src/lib/elm_entry.c:1313
+#: src/lib/elm_entry.c:1288
 msgid "Paste"
 msgstr "Pegar"
 
-#: src/lib/elm_entry.c:3148
+#: src/lib/elm_entry.c:3121
 msgid "Entry"
 msgstr "Entrada"
 
@@ -193,23 +193,23 @@ msgstr "botón do panel"
 msgid "progressbar"
 msgstr "barra de progreso"
 
-#: src/lib/elm_radio.c:295
+#: src/lib/elm_radio.c:293
 msgid "Radio"
 msgstr "Radio"
 
-#: src/lib/elm_slider.c:828
+#: src/lib/elm_slider.c:862
 msgid "slider"
 msgstr "Barra de desprazamento"
 
-#: src/lib/elm_spinner.c:615
+#: src/lib/elm_spinner.c:628
 msgid "spinner increment button"
 msgstr "botón de aumento"
 
-#: src/lib/elm_spinner.c:624
+#: src/lib/elm_spinner.c:637
 msgid "spinner decrement button"
 msgstr "botón de disminución"
 
-#: src/lib/elm_spinner.c:632
+#: src/lib/elm_spinner.c:645
 msgid "spinner"
 msgstr "botón de spinner"
 

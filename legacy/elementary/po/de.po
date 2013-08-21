@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elementary 0.7.0.57309\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-07-12 07:09+0900\n"
+"POT-Creation-Date: 2013-08-22 04:28+0900\n"
 "PO-Revision-Date: 2011-02-25 20:22+0100\n"
 "Last-Translator: Fabian Nowak <timystery@arcor.de>\n"
 "Language-Team: German\n"
@@ -19,20 +19,20 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: src/lib/elc_fileselector.c:841
+#: src/lib/elc_fileselector.c:847
 msgid "Up"
 msgstr "Aufwärts"
 
-#: src/lib/elc_fileselector.c:856
+#: src/lib/elc_fileselector.c:862
 msgid "Home"
 msgstr "Persönlicher Ordner"
 
-#: src/lib/elc_fileselector.c:1073 src/lib/elm_entry.c:1294
-#: src/lib/elm_entry.c:1319
+#: src/lib/elc_fileselector.c:1079 src/lib/elm_entry.c:1269
+#: src/lib/elm_entry.c:1294
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: src/lib/elc_fileselector.c:1082
+#: src/lib/elc_fileselector.c:1088
 msgid "OK"
 msgstr "OK"
 
@@ -45,8 +45,8 @@ msgid "Clicked"
 msgstr ""
 
 #: src/lib/elm_button.c:281 src/lib/elm_check.c:219 src/lib/elm_gengrid.c:694
-#: src/lib/elm_genlist.c:1423 src/lib/elm_list.c:1476 src/lib/elm_radio.c:264
-#: src/lib/elm_spinner.c:526 src/lib/elm_toolbar.c:1996
+#: src/lib/elm_genlist.c:1381 src/lib/elm_list.c:1481 src/lib/elm_radio.c:264
+#: src/lib/elm_spinner.c:539 src/lib/elm_toolbar.c:1996
 msgid "State: Disabled"
 msgstr ""
 
@@ -54,43 +54,43 @@ msgstr ""
 msgid "Button"
 msgstr ""
 
-#: src/lib/elm_calendar.c:141
+#: src/lib/elm_calendar.c:142
 msgid "%B %Y"
 msgstr ""
 
-#: src/lib/elm_calendar.c:150
+#: src/lib/elm_calendar.c:151
 msgid "%B"
 msgstr ""
 
-#: src/lib/elm_calendar.c:159
+#: src/lib/elm_calendar.c:160
 msgid "%Y"
 msgstr ""
 
-#: src/lib/elm_calendar.c:273
+#: src/lib/elm_calendar.c:274
 msgid "calendar item"
 msgstr ""
 
-#: src/lib/elm_calendar.c:299
+#: src/lib/elm_calendar.c:300
 msgid "calendar decrement month button"
 msgstr ""
 
-#: src/lib/elm_calendar.c:304
+#: src/lib/elm_calendar.c:305
 msgid "calendar decrement year button"
 msgstr ""
 
-#: src/lib/elm_calendar.c:309
+#: src/lib/elm_calendar.c:310
 msgid "calendar increment month button"
 msgstr ""
 
-#: src/lib/elm_calendar.c:314
+#: src/lib/elm_calendar.c:315
 msgid "calendar increment year button"
 msgstr ""
 
-#: src/lib/elm_calendar.c:319
+#: src/lib/elm_calendar.c:320
 msgid "calendar month"
 msgstr ""
 
-#: src/lib/elm_calendar.c:324
+#: src/lib/elm_calendar.c:325
 msgid "calendar year"
 msgstr ""
 
@@ -127,7 +127,7 @@ msgstr ""
 msgid "Clock"
 msgstr ""
 
-#: src/lib/elm_colorselector.c:1356
+#: src/lib/elm_colorselector.c:1370
 msgid "color selector palette item"
 msgstr ""
 
@@ -139,23 +139,23 @@ msgstr "Standard: LTR"
 msgid "diskselector item"
 msgstr ""
 
-#: src/lib/elm_entry.c:1287
+#: src/lib/elm_entry.c:1262
 msgid "Copy"
 msgstr "Kopieren"
 
-#: src/lib/elm_entry.c:1291
+#: src/lib/elm_entry.c:1266
 msgid "Cut"
 msgstr "Ausschneiden"
 
-#: src/lib/elm_entry.c:1306
+#: src/lib/elm_entry.c:1281
 msgid "Select"
 msgstr "Auswählen"
 
-#: src/lib/elm_entry.c:1313
+#: src/lib/elm_entry.c:1288
 msgid "Paste"
 msgstr "Einfügen"
 
-#: src/lib/elm_entry.c:3148
+#: src/lib/elm_entry.c:3121
 msgid "Entry"
 msgstr ""
 
@@ -191,23 +191,23 @@ msgstr ""
 msgid "progressbar"
 msgstr ""
 
-#: src/lib/elm_radio.c:295
+#: src/lib/elm_radio.c:293
 msgid "Radio"
 msgstr ""
 
-#: src/lib/elm_slider.c:828
+#: src/lib/elm_slider.c:862
 msgid "slider"
 msgstr ""
 
-#: src/lib/elm_spinner.c:615
+#: src/lib/elm_spinner.c:628
 msgid "spinner increment button"
 msgstr ""
 
-#: src/lib/elm_spinner.c:624
+#: src/lib/elm_spinner.c:637
 msgid "spinner decrement button"
 msgstr ""
 
-#: src/lib/elm_spinner.c:632
+#: src/lib/elm_spinner.c:645
 msgid "spinner"
 msgstr ""
 
