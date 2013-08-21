@@ -190,7 +190,7 @@ enum
  * @def elm_obj_genlist_multi_select_get
  * @since 1.8
  *
- * Gets if multi-selection in genlist is enabled or disabled.
+ * Get if multi-selection in genlist is enabled or disabled.
  *
  * @param[out] ret
  *
@@ -289,7 +289,7 @@ enum
  * @def elm_obj_genlist_mode_get
  * @since 1.8
  *
- * Gets the horizontal stretching mode.
+ * Get the horizontal stretching mode.
  *
  * @param[out] ret
  *

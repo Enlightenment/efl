@@ -311,7 +311,7 @@ EAPI Evas_Object      *elm_web_add(Evas_Object *parent);
 EAPI void              elm_web_zoom_mode_set(Evas_Object *obj, Elm_Web_Zoom_Mode mode);
 
 /**
- * Gets the currently set zoom mode
+ * Get the currently set zoom mode
  *
  * @param obj The web object
  *
@@ -323,7 +323,7 @@ EAPI void              elm_web_zoom_mode_set(Evas_Object *obj, Elm_Web_Zoom_Mode
 EAPI Elm_Web_Zoom_Mode elm_web_zoom_mode_get(const Evas_Object *obj);
 
 /**
- * Gets boolean properties from Elm_Web_Window_Features
+ * Get boolean properties from Elm_Web_Window_Features
  * (such as statusbar, menubar, etc) that are on a window.
  *
  * @param wf The web window features object

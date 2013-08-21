@@ -79,7 +79,7 @@ enum
  * @def elm_obj_icon_order_lookup_get
  * @since 1.8
  *
- * Gets the icon lookup order.
+ * Get the icon lookup order.
  *
  * @param[out] ret
  *

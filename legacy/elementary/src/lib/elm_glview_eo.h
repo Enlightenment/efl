@@ -27,7 +27,7 @@ enum
  * @def elm_obj_glview_gl_api_get
  * @since 1.8
  *
- * Gets the gl api struct for gl rendering
+ * Get the gl api struct for gl rendering
  *
  * @param[out] ret
  *
@@ -101,7 +101,7 @@ enum
  * @def elm_obj_glview_size_get
  * @since 1.8
  *
- * Gets the size of the glview.
+ * Get the size of the glview.
  *
  * @param[out] w
  * @param[out] h

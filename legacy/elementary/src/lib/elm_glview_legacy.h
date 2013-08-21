@@ -9,7 +9,7 @@
 EAPI Evas_Object *elm_glview_add(Evas_Object *parent);
 
 /**
- * Gets the gl api struct for gl rendering
+ * Get the gl api struct for gl rendering
  *
  * @param obj The glview object
  * @return The api object or NULL if it cannot be created
@@ -78,7 +78,7 @@ EAPI Eina_Bool    elm_glview_render_policy_set(Evas_Object *obj, Elm_GLView_Rend
 EAPI void         elm_glview_size_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h);
 
 /**
- * Gets the size of the glview.
+ * Get the size of the glview.
  *
  * @param obj The glview object
  * @param w width of the glview object

@@ -1781,7 +1781,7 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_OBJ_IMAGE_SUB_ID_SCALE_SET, "'Virtual' function on setting the scale for the object's image size."),
      EO_OP_DESCRIPTION(ELM_OBJ_IMAGE_SUB_ID_SCALE_GET, "'Virtual' function on retrieving the scale for the object's image size."),
 
-     EO_OP_DESCRIPTION(ELM_OBJ_IMAGE_SUB_ID_OBJECT_SIZE_GET, "Gets the current size of the image."),
+     EO_OP_DESCRIPTION(ELM_OBJ_IMAGE_SUB_ID_OBJECT_SIZE_GET, "Get the current size of the image."),
 
      EO_OP_DESCRIPTION(ELM_OBJ_IMAGE_SUB_ID_SMOOTH_SET, "Set the smooth effect for an image."),
      EO_OP_DESCRIPTION(ELM_OBJ_IMAGE_SUB_ID_SMOOTH_GET, "Get the smooth effect for an image."),

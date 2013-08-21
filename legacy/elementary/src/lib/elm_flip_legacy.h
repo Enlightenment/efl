@@ -201,7 +201,7 @@ EAPI void                 elm_flip_interaction_direction_enabled_set(Evas_Object
  * @param dir The direction to check
  * @return If that direction is enabled or not
  *
- * Gets the enabled state set by elm_flip_interaction_direction_enabled_set()
+ * Get the enabled state set by elm_flip_interaction_direction_enabled_set()
  *
  * @see elm_flip_interaction_set()
  *

@@ -4040,7 +4040,7 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_OBJ_TOOLBAR_SUB_ID_ALIGN_SET, "Set the alignment of the items."),
      EO_OP_DESCRIPTION(ELM_OBJ_TOOLBAR_SUB_ID_ALIGN_GET, "Get the alignment of the items."),
      EO_OP_DESCRIPTION(ELM_OBJ_TOOLBAR_SUB_ID_ICON_ORDER_LOOKUP_SET, "Sets icon lookup order, for toolbar items' icons."),
-     EO_OP_DESCRIPTION(ELM_OBJ_TOOLBAR_SUB_ID_ICON_ORDER_LOOKUP_GET, "Gets the icon lookup order."),
+     EO_OP_DESCRIPTION(ELM_OBJ_TOOLBAR_SUB_ID_ICON_ORDER_LOOKUP_GET, "Get the icon lookup order."),
      EO_OP_DESCRIPTION(ELM_OBJ_TOOLBAR_SUB_ID_HORIZONTAL_SET, "Change a toolbar's orientation."),
      EO_OP_DESCRIPTION(ELM_OBJ_TOOLBAR_SUB_ID_HORIZONTAL_GET, "Get a toolbar's orientation."),
      EO_OP_DESCRIPTION(ELM_OBJ_TOOLBAR_SUB_ID_ITEMS_COUNT, "Get the number of items in a toolbar."),

@@ -308,7 +308,7 @@ EAPI char     *elm_quicklaunch_exe_path_get(const char *exe);
 EAPI Eina_Bool elm_policy_set(unsigned int policy, int value);
 
 /**
- * Gets the policy value for given policy identifier.
+ * Get the policy value for given policy identifier.
  *
  * @param policy policy identifier, as in #Elm_Policy.
  * @return The currently set policy value, for that

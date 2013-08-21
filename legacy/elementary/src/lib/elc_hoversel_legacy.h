@@ -54,7 +54,7 @@ EAPI void                         elm_hoversel_hover_parent_set(Evas_Object *obj
  * @param obj The hoversel object
  * @return The used parent
  *
- * Gets the hover parent object.
+ * Get the hover parent object.
  *
  * @see elm_hoversel_hover_parent_set()
  *

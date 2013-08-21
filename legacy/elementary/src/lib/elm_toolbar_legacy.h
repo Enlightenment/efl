@@ -53,7 +53,7 @@ EAPI int                          elm_toolbar_icon_size_get(const Evas_Object *o
 EAPI void                         elm_toolbar_icon_order_lookup_set(Evas_Object *obj, Elm_Icon_Lookup_Order order);
 
 /**
- * Gets the icon lookup order.
+ * Get the icon lookup order.
  *
  * @param obj The toolbar object.
  * @return The icon lookup order.

@@ -1107,7 +1107,7 @@ EAPI void                  elm_win_focus_highlight_style_set(Evas_Object *obj, c
 /**
  * Get the style set for the focus highlight object
  *
- * Gets the style set for this windows highlight object, or NULL if none
+ * Get the style set for this windows highlight object, or NULL if none
  * is set.
  *
  * @param obj The window to retrieve the highlights style from
@@ -1155,7 +1155,7 @@ EAPI Eina_Bool             elm_win_focus_highlight_animate_get(const Evas_Object
 EAPI void                  elm_win_keyboard_mode_set(Evas_Object *obj, Elm_Win_Keyboard_Mode mode);
 
 /**
- * Gets the keyboard mode of the window.
+ * Get the keyboard mode of the window.
  *
  * @param obj The window object
  * @return The mode, one of #Elm_Win_Keyboard_Mode
@@ -1175,7 +1175,7 @@ EAPI Elm_Win_Keyboard_Mode elm_win_keyboard_mode_get(const Evas_Object *obj);
 EAPI void                  elm_win_keyboard_win_set(Evas_Object *obj, Eina_Bool is_keyboard);
 
 /**
- * Gets whether the window is a keyboard.
+ * Get whether the window is a keyboard.
  *
  * @param obj The window object
  * @return If the window is a virtual keyboard
@@ -1195,7 +1195,7 @@ EAPI Eina_Bool             elm_win_keyboard_win_get(const Evas_Object *obj);
 EAPI void                  elm_win_indicator_mode_set(Evas_Object *obj, Elm_Win_Indicator_Mode mode);
 
 /**
- * Gets the indicator mode of the window.
+ * Get the indicator mode of the window.
  *
  * @param obj The window object
  * @return The mode, one of #Elm_Win_Indicator_Mode
@@ -1215,7 +1215,7 @@ EAPI Elm_Win_Indicator_Mode elm_win_indicator_mode_get(const Evas_Object *obj);
 EAPI void                  elm_win_indicator_opacity_set(Evas_Object *obj, Elm_Win_Indicator_Opacity_Mode mode);
 
 /**
- * Gets the indicator opacity mode of the window.
+ * Get the indicator opacity mode of the window.
  *
  * @param obj The window object
  * @return The mode, one of #Elm_Win_Indicator_Opacity_Mode

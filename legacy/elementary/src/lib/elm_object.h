@@ -62,7 +62,7 @@ EAPI void      elm_object_domain_translatable_part_text_set(Evas_Object *obj, co
 #define elm_object_translatable_part_text_set(obj, part, text)     elm_object_domain_translatable_part_text_set((obj), (part), NULL, (text))
 
 /**
- * Gets the original string set as translatable for an object
+ * Get the original string set as translatable for an object
  *
  * When setting translated strings, the function elm_object_part_text_get()
  * will return the translation returned by @c gettext(). To get the

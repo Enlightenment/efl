@@ -112,7 +112,7 @@ EAPI void             elm_image_smooth_set(Evas_Object *obj, Eina_Bool smooth);
 EAPI Eina_Bool        elm_image_smooth_get(const Evas_Object *obj);
 
 /**
- * Gets the current size of the image.
+ * Get the current size of the image.
  *
  * @param obj The image object.
  * @param w Pointer to store width, or NULL.

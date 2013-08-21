@@ -2985,8 +2985,8 @@ _on_rotation_broke_tolerance(Rotate_Type *st)
  * @param y1 first finger y location.
  * @param x2 second finger x location.
  * @param y2 second finger y location.
- * @param x  Gets center point x cord (output)
- * @param y  Gets center point y cord (output)
+ * @param x  Get center point x cord (output)
+ * @param y  Get center point y cord (output)
  *
  * @return length of the line between (x1,y1), (x2,y2) in pixels.
  *

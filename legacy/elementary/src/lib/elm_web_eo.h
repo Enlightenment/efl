@@ -192,7 +192,7 @@ enum
  * @def elm_obj_web_tab_propagate_get
  * @since 1.8
  *
- * Gets the status of the tab propagation
+ * Get the status of the tab propagation
  *
  * @param[out] ret
  *
@@ -235,7 +235,7 @@ enum
  * @def elm_obj_web_url_get
  * @since 1.8
  *
- * Gets the current URL for the object
+ * Get the current URL for the object
  *
  * @param[out] ret
  *
@@ -249,7 +249,7 @@ enum
  * @def elm_obj_web_title_get
  * @since 1.8
  *
- * Gets the current title
+ * Get the current title
  *
  * @param[out] ret
  *
@@ -280,7 +280,7 @@ enum
  * @def elm_obj_web_bg_color_get
  * @since 1.8
  *
- * Gets the background color to be used by the web object
+ * Get the background color to be used by the web object
  *
  * @param[out] r
  * @param[out] g
@@ -297,7 +297,7 @@ enum
  * @def elm_obj_web_selection_get
  * @since 1.8
  *
- * Gets a copy of the currently selected text
+ * Get a copy of the currently selected text
  *
  * @param[out] ret
  *
@@ -404,7 +404,7 @@ enum
  * @def elm_obj_web_text_matches_highlight_get
  * @since 1.8
  *
- * Gets whether highlighting marks is enabled
+ * Get whether highlighting marks is enabled
  *
  * @param[out] ret
  *
@@ -418,7 +418,7 @@ enum
  * @def elm_obj_web_load_progress_get
  * @since 1.8
  *
- * Gets the overall loading progress of the page
+ * Get the overall loading progress of the page
  *
  * @param[out] ret
  *
@@ -560,7 +560,7 @@ enum
  * @def elm_obj_web_history_enabled_get
  * @since 1.8
  *
- * Gets whether browsing history is enabled for the given object
+ * Get whether browsing history is enabled for the given object
  *
  * @param[out] ret
  *
@@ -602,7 +602,7 @@ enum
  * @def elm_obj_web_zoom_get
  * @since 1.8
  *
- * Gets the current zoom level set on the web object
+ * Get the current zoom level set on the web object
  *
  * @param[out] ret
  *
@@ -630,7 +630,7 @@ enum
  * @def elm_obj_web_zoom_mode_get
  * @since 1.8
  *
- * Gets the currently set zoom mode
+ * Get the currently set zoom mode
  *
  * @param[out] ret
  *
@@ -692,7 +692,7 @@ enum
  * @def elm_obj_web_inwin_mode_get
  * @since 1.8
  *
- * Gets whether Inwin mode is set for the current object
+ * Get whether Inwin mode is set for the current object
  *
  * @param[out] ret
  *

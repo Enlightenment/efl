@@ -2242,7 +2242,7 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_OBJ_MULTIBUTTONENTRY_SUB_ID_EXPANDED_GET, "Get the value of expanded state."),
      EO_OP_DESCRIPTION(ELM_OBJ_MULTIBUTTONENTRY_SUB_ID_EXPANDED_SET, "Set/Unset the multibuttonentry to expanded state."),
      EO_OP_DESCRIPTION(ELM_OBJ_MULTIBUTTONENTRY_SUB_ID_EDITABLE_SET, "Sets if the multibuttonentry is to be editable or not."),
-     EO_OP_DESCRIPTION(ELM_OBJ_MULTIBUTTONENTRY_SUB_ID_EDITABLE_GET, "Gets whether the multibuttonentry is editable or not."),
+     EO_OP_DESCRIPTION(ELM_OBJ_MULTIBUTTONENTRY_SUB_ID_EDITABLE_GET, "Get whether the multibuttonentry is editable or not."),
      EO_OP_DESCRIPTION(ELM_OBJ_MULTIBUTTONENTRY_SUB_ID_ITEM_PREPEND, "Prepend a new item to the multibuttonentry."),
      EO_OP_DESCRIPTION(ELM_OBJ_MULTIBUTTONENTRY_SUB_ID_ITEM_APPEND, "Append a new item to the multibuttonentry."),
      EO_OP_DESCRIPTION(ELM_OBJ_MULTIBUTTONENTRY_SUB_ID_ITEM_INSERT_BEFORE, "Add a new item to the multibuttonentry before the indicated object."),

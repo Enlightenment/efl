@@ -34,7 +34,7 @@ const Eo_Class *elm_obj_hover_class_get(void) EINA_CONST;
  * @def elm_obj_hover_target_get
  * @since 1.8
  *
- * @brief Gets the target object for the hover.
+ * @brief Get the target object for the hover.
  *
  * @param[out] ret
  *

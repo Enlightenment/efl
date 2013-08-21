@@ -700,7 +700,7 @@ EAPI Eina_Bool elm_config_password_show_last_get(void);
 EAPI void      elm_config_password_show_last_set(Eina_Bool password_show_last);
 
 /**
- * Gets the timeout value in "show last" password mode.
+ * Get the timeout value in "show last" password mode.
  *
  * This gets the time out value for which the last input entered in password
  * mode will be visible.

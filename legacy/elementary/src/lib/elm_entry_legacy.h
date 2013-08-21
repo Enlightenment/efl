@@ -93,7 +93,7 @@ EAPI const char*      elm_entry_text_style_user_peek(const Evas_Object *obj);
 EAPI void               elm_entry_single_line_set(Evas_Object *obj, Eina_Bool single_line);
 
 /**
- * Gets whether the entry is set to be single line.
+ * Get whether the entry is set to be single line.
  *
  * @param obj The entry object
  * @return single_line If true, the text in the entry is set to display
@@ -119,7 +119,7 @@ EAPI Eina_Bool          elm_entry_single_line_get(const Evas_Object *obj);
 EAPI void               elm_entry_password_set(Evas_Object *obj, Eina_Bool password);
 
 /**
- * Gets whether the entry is set to password mode.
+ * Get whether the entry is set to password mode.
  *
  * @param obj The entry object
  * @return If true, the entry is set to display all characters
@@ -149,7 +149,7 @@ EAPI Eina_Bool          elm_entry_password_get(const Evas_Object *obj);
 EAPI void               elm_entry_entry_append(Evas_Object *obj, const char *entry);
 
 /**
- * Gets whether the entry is empty.
+ * Get whether the entry is empty.
  *
  * Empty means no text at all. If there are any markup tags, like an item
  * tag for which no provider finds anything, and no text is displayed, this
@@ -208,7 +208,7 @@ EAPI Evas_Object *      elm_entry_textblock_get(Evas_Object *obj);
 EAPI void               elm_entry_calc_force(Evas_Object *obj);
 
 /**
- * Gets any selected text within the entry.
+ * Get any selected text within the entry.
  *
  * If there's any selected text in the entry, this function returns it as
  * a string in markup format. NULL is returned if no selection exists or
@@ -264,7 +264,7 @@ EAPI void               elm_entry_entry_insert(Evas_Object *obj, const char *ent
 EAPI void               elm_entry_line_wrap_set(Evas_Object *obj, Elm_Wrap_Type wrap);
 
 /**
- * Gets the wrap mode the entry was set to use.
+ * Get the wrap mode the entry was set to use.
  *
  * @param obj The entry object
  * @return Wrap type
@@ -296,7 +296,7 @@ EAPI Elm_Wrap_Type      elm_entry_line_wrap_get(const Evas_Object *obj);
 EAPI void               elm_entry_editable_set(Evas_Object *obj, Eina_Bool editable);
 
 /**
- * Gets whether the entry is editable or not.
+ * Get whether the entry is editable or not.
  *
  * @param obj The entry object
  * @return If true, the entry is editable by the user.
@@ -441,7 +441,7 @@ EAPI void               elm_entry_cursor_selection_begin(Evas_Object *obj);
 EAPI void               elm_entry_cursor_selection_end(Evas_Object *obj);
 
 /**
- * Gets whether a format node exists at the current cursor position.
+ * Get whether a format node exists at the current cursor position.
  *
  * A format node is anything that defines how the text is rendered. It can
  * be a visible format node, such as a line break or a paragraph separator,
@@ -460,7 +460,7 @@ EAPI void               elm_entry_cursor_selection_end(Evas_Object *obj);
 EAPI Eina_Bool          elm_entry_cursor_is_format_get(const Evas_Object *obj);
 
 /**
- * Gets if the current cursor position holds a visible format node.
+ * Get if the current cursor position holds a visible format node.
  *
  * @param obj The entry object
  * @return EINA_TRUE if the current cursor is a visible format, EINA_FALSE
@@ -473,7 +473,7 @@ EAPI Eina_Bool          elm_entry_cursor_is_format_get(const Evas_Object *obj);
 EAPI Eina_Bool          elm_entry_cursor_is_visible_format_get(const Evas_Object *obj);
 
 /**
- * Gets the character pointed by the cursor at its current position.
+ * Get the character pointed by the cursor at its current position.
  *
  * This function returns a string with the utf8 character stored at the
  * current cursor position.
@@ -708,7 +708,7 @@ EAPI void               elm_entry_markup_filter_remove(Evas_Object *obj, Elm_Ent
 EAPI Eina_Bool          elm_entry_file_set(Evas_Object *obj, const char *file, Elm_Text_Format format);
 
 /**
- * Gets the file being edited by the entry.
+ * Get the file being edited by the entry.
  *
  * This function can be used to retrieve any file set on the entry for
  * edition, along with the format used to load and save it.

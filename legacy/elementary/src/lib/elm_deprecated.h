@@ -516,7 +516,7 @@ EINA_DEPRECATED EAPI Eina_Bool                   elm_label_slide_get(const Evas_
 EINA_DEPRECATED EAPI void      elm_object_domain_translatable_text_part_set(Evas_Object *obj, const char *part, const char *domain, const char *text);
 
 /**
- * Gets the original string set as translatable for an object
+ * Get the original string set as translatable for an object
  *
  * When setting translated strings, the function elm_object_part_text_get()
  * will return the translation returned by @c gettext(). To get the
@@ -1118,7 +1118,7 @@ EINA_DEPRECATED EAPI void                  elm_icon_prescale_set(Evas_Object *ob
 EINA_DEPRECATED EAPI int                   elm_icon_prescale_get(const Evas_Object *obj);
 
 /**
- * Gets the image object of the icon. DO NOT MODIFY THIS.
+ * Get the image object of the icon. DO NOT MODIFY THIS.
  *
  * @param obj The icon object
  * @return The internal icon object

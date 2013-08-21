@@ -89,7 +89,7 @@ EAPI const char           *elm_icon_standard_get(const Evas_Object *obj);
 EAPI void                  elm_icon_order_lookup_set(Evas_Object *obj, Elm_Icon_Lookup_Order order);
 
 /**
- * Gets the icon lookup order.
+ * Get the icon lookup order.
  *
  * @param obj The icon object
  * @return The icon lookup order

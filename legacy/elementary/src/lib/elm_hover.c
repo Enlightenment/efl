@@ -882,7 +882,7 @@ _class_constructor(Eo_Class *klass)
 
 static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_OBJ_HOVER_SUB_ID_TARGET_SET, "Sets the target object for the hover."),
-     EO_OP_DESCRIPTION(ELM_OBJ_HOVER_SUB_ID_TARGET_GET, "Gets the target object for the hover."),
+     EO_OP_DESCRIPTION(ELM_OBJ_HOVER_SUB_ID_TARGET_GET, "Get the target object for the hover."),
      EO_OP_DESCRIPTION(ELM_OBJ_HOVER_SUB_ID_BEST_CONTENT_LOCATION_GET, "Returns the best swallow location for content in the hover."),
      EO_OP_DESCRIPTION(ELM_OBJ_HOVER_SUB_ID_DISMISS, "Dismiss a hover object."),
      EO_OP_DESCRIPTION_SENTINEL

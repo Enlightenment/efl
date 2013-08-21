@@ -375,7 +375,7 @@
  * @def elm_obj_layout_part_cursor_style_get
  * @since 1.8
  *
- * Gets a specific cursor style for an edje part.
+ * Get a specific cursor style for an edje part.
  *
  * @param[in] part_name
  * @param[out] ret
@@ -402,7 +402,7 @@
  * @def elm_obj_layout_part_cursor_engine_only_get
  * @since 1.8
  *
- * Gets a specific cursor engine_only for an edje part.
+ * Get a specific cursor engine_only for an edje part.
  *
  * @param[in] part_name
  * @param[out] ret

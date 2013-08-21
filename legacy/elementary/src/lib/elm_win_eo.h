@@ -817,7 +817,7 @@ enum
  * @def elm_obj_win_keyboard_mode_get
  * @since 1.8
  *
- * Gets the keyboard mode of the window.
+ * Get the keyboard mode of the window.
  *
  * @param[out] ret
  *
@@ -841,7 +841,7 @@ enum
  * @def elm_obj_win_keyboard_win_get
  * @since 1.8
  *
- * Gets whether the window is a keyboard.
+ * Get whether the window is a keyboard.
  *
  * @param[out] ret
  *
@@ -865,7 +865,7 @@ enum
  * @def elm_obj_win_indicator_mode_get
  * @since 1.8
  *
- * Gets the indicator mode of the window.
+ * Get the indicator mode of the window.
  *
  * @param[out] ret
  *
@@ -889,7 +889,7 @@ enum
  * @def elm_obj_win_indicator_opacity_get
  * @since 1.8
  *
- * Gets the indicator opacity mode of the window.
+ * Get the indicator opacity mode of the window.
  *
  * @param[out] ret
  *

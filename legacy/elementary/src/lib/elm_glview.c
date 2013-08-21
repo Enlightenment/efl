@@ -596,12 +596,12 @@ _class_constructor(Eo_Class *klass)
 }
 
 static const Eo_Op_Description op_desc[] = {
-     EO_OP_DESCRIPTION(ELM_OBJ_GLVIEW_SUB_ID_GL_API_GET, "Gets the gl api struct for gl rendering."),
+     EO_OP_DESCRIPTION(ELM_OBJ_GLVIEW_SUB_ID_GL_API_GET, "Get the gl api struct for gl rendering."),
      EO_OP_DESCRIPTION(ELM_OBJ_GLVIEW_SUB_ID_MODE_SET, "Set the mode of the GLView."),
      EO_OP_DESCRIPTION(ELM_OBJ_GLVIEW_SUB_ID_RESIZE_POLICY_SET, "Set the resize policy for the glview object."),
      EO_OP_DESCRIPTION(ELM_OBJ_GLVIEW_SUB_ID_RENDER_POLICY_SET, "Set the render policy for the glview object."),
      EO_OP_DESCRIPTION(ELM_OBJ_GLVIEW_SUB_ID_SIZE_SET, "Sets the size of the glview."),
-     EO_OP_DESCRIPTION(ELM_OBJ_GLVIEW_SUB_ID_SIZE_GET, "Gets the size of the glview."),
+     EO_OP_DESCRIPTION(ELM_OBJ_GLVIEW_SUB_ID_SIZE_GET, "Get the size of the glview."),
      EO_OP_DESCRIPTION(ELM_OBJ_GLVIEW_SUB_ID_INIT_FUNC_SET, "Set the init function that runs once in the main loop."),
      EO_OP_DESCRIPTION(ELM_OBJ_GLVIEW_SUB_ID_DEL_FUNC_SET, "Set the render function that runs in the main loop."),
      EO_OP_DESCRIPTION(ELM_OBJ_GLVIEW_SUB_ID_RESIZE_FUNC_SET, "Set the resize function that gets called when resize happens."),

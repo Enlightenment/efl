@@ -542,7 +542,7 @@ EAPI Elm_Object_Item             *elm_list_at_xy_item_get(const Evas_Object *obj
 EAPI void elm_list_focus_on_selection_set(Evas_Object *obj, Eina_Bool enabled);
 
 /**
- * Gets whether focus upon item's selection mode is enabled.
+ * Get whether focus upon item's selection mode is enabled.
  *
  * @param obj The genlist object
  * @return The tree effect status

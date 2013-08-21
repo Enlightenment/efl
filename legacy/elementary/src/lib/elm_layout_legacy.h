@@ -467,7 +467,7 @@ EAPI Eina_Bool                    elm_layout_part_cursor_unset(Evas_Object *obj,
 EAPI Eina_Bool                    elm_layout_part_cursor_style_set(Evas_Object *obj, const char *part_name, const char *style);
 
 /**
- * Gets a specific cursor style for an edje part.
+ * Get a specific cursor style for an edje part.
  *
  * @param obj The layout object.
  * @param part_name a part from loaded edje group.
@@ -533,7 +533,7 @@ EAPI Eina_Bool                    elm_layout_edje_object_can_access_set(Evas_Obj
 EAPI Eina_Bool                    elm_layout_edje_object_can_access_get(Evas_Object *obj);
 
 /**
- * Gets a specific cursor engine_only for an edje part.
+ * Get a specific cursor engine_only for an edje part.
  *
  * @param obj The layout object.
  * @param part_name a part from loaded edje group.

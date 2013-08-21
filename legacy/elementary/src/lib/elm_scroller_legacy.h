@@ -59,7 +59,7 @@ EAPI void                          elm_scroller_region_show(Evas_Object *obj, Ev
 EAPI void                          elm_scroller_policy_set(Evas_Object *obj, Elm_Scroller_Policy policy_h, Elm_Scroller_Policy policy_v);
 
 /**
- * @brief Gets scrollbar visibility policy
+ * @brief Get scrollbar visibility policy
  *
  * @param obj The scroller object
  * @param policy_h Horizontal scrollbar policy

@@ -158,7 +158,7 @@ enum
  * @def elm_obj_entry_single_line_get
  * @since 1.8
  *
- * Gets whether the entry is set to be single line.
+ * Get whether the entry is set to be single line.
  *
  * @param[out] ret
  *
@@ -186,7 +186,7 @@ enum
  * @def elm_obj_entry_password_get
  * @since 1.8
  *
- * Gets whether the entry is set to password mode.
+ * Get whether the entry is set to password mode.
  *
  * @param[out] ret
  *
@@ -214,7 +214,7 @@ enum
  * @def elm_obj_entry_is_empty
  * @since 1.8
  *
- * Gets whether the entry is empty.
+ * Get whether the entry is empty.
  *
  * @param[out] ret
  *
@@ -255,7 +255,7 @@ enum
  * @def elm_obj_entry_selection_get
  * @since 1.8
  *
- * Gets any selected text within the entry.
+ * Get any selected text within the entry.
  *
  * @param[out] ret
  *
@@ -297,7 +297,7 @@ enum
  * @def elm_obj_entry_line_wrap_get
  * @since 1.8
  *
- * Gets the wrap mode the entry was set to use.
+ * Get the wrap mode the entry was set to use.
  *
  * @param[out] ret
  *
@@ -325,7 +325,7 @@ enum
  * @def elm_obj_entry_editable_get
  * @since 1.8
  *
- * Gets whether the entry is editable or not.
+ * Get whether the entry is editable or not.
  *
  * @param[out] ret
  *
@@ -517,7 +517,7 @@ enum
  * @def elm_obj_entry_cursor_is_format_get
  * @since 1.8
  *
- * Gets whether a format node exists at the current cursor position.
+ * Get whether a format node exists at the current cursor position.
  *
  * @param[out] ret
  *
@@ -531,7 +531,7 @@ enum
  * @def elm_obj_entry_cursor_is_visible_format_get
  * @since 1.8
  *
- * Gets if the current cursor position holds a visible format node.
+ * Get if the current cursor position holds a visible format node.
  *
  * @param[out] ret
  *
@@ -545,7 +545,7 @@ enum
  * @def elm_obj_entry_cursor_content_get
  * @since 1.8
  *
- * Gets the character pointed by the cursor at its current position.
+ * Get the character pointed by the cursor at its current position.
  *
  * @param[out] ret
  *
@@ -794,7 +794,7 @@ enum
  * @def elm_obj_entry_file_get
  * @since 1.8
  *
- * Gets the file being edited by the entry.
+ * Get the file being edited by the entry.
  *
  * @param[out] file
  * @param[out] format

@@ -89,7 +89,7 @@ enum
  * @def elm_obj_multibuttonentry_editable_get
  * @since 1.8
  *
- * Gets whether the multibuttonentry is editable or not.
+ * Get whether the multibuttonentry is editable or not.
  *
  * @param[out] ret
  *

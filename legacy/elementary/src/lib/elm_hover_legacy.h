@@ -22,7 +22,7 @@ EAPI Evas_Object *elm_hover_add(Evas_Object *parent);
 EAPI void         elm_hover_parent_set(Evas_Object *obj, Evas_Object *parent);
 
 /**
- * @brief Gets the parent object for the hover.
+ * @brief Get the parent object for the hover.
  *
  * @param obj The hover object
  * @return The parent object to locate the hover over.
@@ -46,7 +46,7 @@ EAPI Evas_Object *elm_hover_parent_get(const Evas_Object *obj);
 EAPI void         elm_hover_target_set(Evas_Object *obj, Evas_Object *target);
 
 /**
- * @brief Gets the target object for the hover.
+ * @brief Get the target object for the hover.
  *
  * @param obj The hover object
  * @return The target object for the hover.

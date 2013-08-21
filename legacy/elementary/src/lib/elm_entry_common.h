@@ -351,7 +351,7 @@ typedef enum {
 /**
  * Get the text of the contextual menu item.
  *
- * Gets the text of the contextual menu item of entry.
+ * Get the text of the contextual menu item of entry.
  *
  * @param item The item to get the label
  * @return The text of contextual menu item
@@ -365,7 +365,7 @@ EAPI const char                  *elm_entry_context_menu_item_label_get(const El
 /**
  * Get the icon object of the contextual menu item.
  *
- * Gets the icon object packed in the contextual menu item of entry.
+ * Get the icon object packed in the contextual menu item of entry.
  *
  * @param item The item to get the icon from
  * @param icon_file The image file path on disk used for the icon or standard

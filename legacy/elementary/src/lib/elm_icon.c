@@ -1146,7 +1146,7 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_OBJ_ICON_SUB_ID_STANDARD_SET, "Set the icon by icon standards names."),
      EO_OP_DESCRIPTION(ELM_OBJ_ICON_SUB_ID_STANDARD_GET, "Get the icon name set by icon standard names."),
      EO_OP_DESCRIPTION(ELM_OBJ_ICON_SUB_ID_ORDER_LOOKUP_SET, "Sets the icon lookup order used by elm_icon_standard_set()."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ICON_SUB_ID_ORDER_LOOKUP_GET, "Gets the icon lookup order."),
+     EO_OP_DESCRIPTION(ELM_OBJ_ICON_SUB_ID_ORDER_LOOKUP_GET, "Get the icon lookup order."),
      EO_OP_DESCRIPTION_SENTINEL
 };
 static const Eo_Class_Description class_desc = {

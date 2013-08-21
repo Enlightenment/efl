@@ -138,7 +138,7 @@ EAPI void elm_web_useragent_set(Evas_Object *obj, const char *user_agent);
 EAPI const char* elm_web_useragent_get(const Evas_Object *obj);
 
 /**
- * Gets the status of the tab propagation
+ * Get the status of the tab propagation
  *
  * @param obj The web object to query
  * @return @c EINA_TRUE if tab propagation is enabled, @c EINA_FALSE otherwise
@@ -180,7 +180,7 @@ EAPI void              elm_web_tab_propagate_set(Evas_Object *obj, Eina_Bool pro
 EAPI Eina_Bool         elm_web_url_set(Evas_Object *obj, const char *url);
 
 /**
- * Gets the current URL for the object
+ * Get the current URL for the object
  *
  * The returned string must not be freed and is guaranteed to be
  * stringshared.
@@ -212,7 +212,7 @@ EAPI const char       *elm_web_url_get(const Evas_Object *obj);
 EINA_DEPRECATED EAPI Eina_Bool         elm_web_uri_set(Evas_Object *obj, const char *uri);
 
 /**
- * Gets the current URI for the object
+ * Get the current URI for the object
  *
  * The returned string must not be freed and is guaranteed to be
  * stringshared.
@@ -230,7 +230,7 @@ EINA_DEPRECATED EAPI Eina_Bool         elm_web_uri_set(Evas_Object *obj, const c
 EINA_DEPRECATED EAPI const char       *elm_web_uri_get(const Evas_Object *obj);
 
 /**
- * Gets the current title
+ * Get the current title
  *
  * The returned string must not be freed and is guaranteed to be
  * stringshared.
@@ -260,7 +260,7 @@ EAPI const char       *elm_web_title_get(const Evas_Object *obj);
 EAPI void              elm_web_bg_color_set(Evas_Object *obj, int r, int g, int b, int a);
 
 /**
- * Gets the background color to be used by the web object
+ * Get the background color to be used by the web object
  *
  * This is the color that will be used by default when the loaded page
  * does not set it's own. Color values are pre-multiplied.
@@ -276,7 +276,7 @@ EAPI void              elm_web_bg_color_set(Evas_Object *obj, int r, int g, int 
 EAPI void              elm_web_bg_color_get(const Evas_Object *obj, int *r, int *g, int *b, int *a);
 
 /**
- * Gets a copy of the currently selected text
+ * Get a copy of the currently selected text
  *
  * The string returned must be freed by the user when it's done with it.
  *
@@ -378,7 +378,7 @@ EAPI Eina_Bool         elm_web_text_matches_unmark_all(Evas_Object *obj);
 EAPI Eina_Bool         elm_web_text_matches_highlight_set(Evas_Object *obj, Eina_Bool highlight);
 
 /**
- * Gets whether highlighting marks is enabled
+ * Get whether highlighting marks is enabled
  *
  * @param obj The web object
  *
@@ -390,7 +390,7 @@ EAPI Eina_Bool         elm_web_text_matches_highlight_set(Evas_Object *obj, Eina
 EAPI Eina_Bool         elm_web_text_matches_highlight_get(const Evas_Object *obj);
 
 /**
- * Gets the overall loading progress of the page
+ * Get the overall loading progress of the page
  *
  * Returns the estimated loading progress of the page, with a value between
  * 0.0 and 1.0. This is an estimated progress accounting for all the frames
@@ -539,7 +539,7 @@ EAPI Eina_Bool         elm_web_forward_possible_get(Evas_Object *obj);
 EAPI Eina_Bool         elm_web_navigate_possible_get(Evas_Object *obj, int steps);
 
 /**
- * Gets whether browsing history is enabled for the given object
+ * Get whether browsing history is enabled for the given object
  *
  * @param obj The web object
  *
@@ -575,7 +575,7 @@ EAPI void              elm_web_history_enabled_set(Evas_Object *obj, Eina_Bool e
 EAPI void              elm_web_zoom_set(Evas_Object *obj, double zoom);
 
 /**
- * Gets the current zoom level set on the web object
+ * Get the current zoom level set on the web object
  *
  * Note that this is the zoom level set on the web object and not that
  * of the underlying Webkit one. In the ::ELM_WEB_ZOOM_MODE_MANUAL mode,
@@ -635,7 +635,7 @@ EAPI void              elm_web_region_bring_in(Evas_Object *obj, int x, int y, i
 EAPI void              elm_web_inwin_mode_set(Evas_Object *obj, Eina_Bool value);
 
 /**
- * Gets whether Inwin mode is set for the current object
+ * Get whether Inwin mode is set for the current object
  *
  * @param obj The web object
  *

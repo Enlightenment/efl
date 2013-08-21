@@ -63,7 +63,7 @@ EINA_DEPRECATED EAPI Evas_Object *elm_toggle_add(Evas_Object *parent);
 EINA_DEPRECATED EAPI void         elm_toggle_label_set(Evas_Object *obj, const char *label);
 
 /**
- * @brief Gets the label of the toggle
+ * @brief Get the label of the toggle
  *
  * @param obj  toggle object
  * @return The label of the toggle
@@ -123,7 +123,7 @@ EINA_DEPRECATED EAPI Evas_Object *elm_toggle_icon_unset(Evas_Object *obj);
 EINA_DEPRECATED EAPI void         elm_toggle_states_labels_set(Evas_Object *obj, const char *onlabel, const char *offlabel);
 
 /**
- * @brief Gets the labels associated with the on and off states of the
+ * @brief Get the labels associated with the on and off states of the
  * toggle.
  *
  * @param obj The toggle object
@@ -146,7 +146,7 @@ EINA_DEPRECATED EAPI void         elm_toggle_states_labels_get(const Evas_Object
 EINA_DEPRECATED EAPI void         elm_toggle_state_set(Evas_Object *obj, Eina_Bool state);
 
 /**
- * @brief Gets the state of the toggle to @p state.
+ * @brief Get the state of the toggle to @p state.
  *
  * @param obj The toggle object
  * @return The state of @p obj
@@ -2148,7 +2148,7 @@ EINA_DEPRECATED EAPI void          elm_genlist_item_icons_orphan(Elm_Object_Item
 EINA_DEPRECATED EAPI void                          elm_genlist_horizontal_set(Evas_Object *obj, Elm_List_Mode mode);
 
 /**
- * Gets the horizontal stretching mode.
+ * Get the horizontal stretching mode.
  *
  * @param obj The genlist object
  * @return The mode to use
@@ -4253,7 +4253,7 @@ EINA_DEPRECATED EAPI void                         elm_list_item_del(Elm_Object_I
 EINA_DEPRECATED EAPI void               elm_entry_icon_set(Evas_Object *obj, Evas_Object *icon);
 
 /**
- * Gets the leftmost widget of the scrolled entry. This object is
+ * Get the leftmost widget of the scrolled entry. This object is
  * owned by the scrolled entry and should not be modified.
  *
  * @param obj The scrolled entry object
@@ -4293,7 +4293,7 @@ EINA_DEPRECATED EAPI Evas_Object       *elm_entry_icon_unset(Evas_Object *obj);
 EINA_DEPRECATED EAPI void               elm_entry_end_set(Evas_Object *obj, Evas_Object *end);
 
 /**
- * Gets the endmost widget of the scrolled entry. This object is owned
+ * Get the endmost widget of the scrolled entry. This object is owned
  * by the scrolled entry and should not be modified.
  *
  * @param obj The scrolled entry object
@@ -5463,7 +5463,7 @@ EINA_DEPRECATED EAPI int       elm_edje_collection_cache_get(void);
 EINA_DEPRECATED EAPI void      elm_edje_collection_cache_set(int size);
 
 /**
- * Gets whether browsing history is enabled for the given object
+ * Get whether browsing history is enabled for the given object
  *
  * @param obj The web object
  *
@@ -6336,7 +6336,7 @@ EINA_DEPRECATED EAPI Eina_Bool                     elm_genlist_always_select_mod
 EINA_DEPRECATED EAPI void                          elm_genlist_no_select_mode_set(Evas_Object *obj, Eina_Bool no_select);
 
 /**
- * Gets whether the no select mode is enabled.
+ * Get whether the no select mode is enabled.
  *
  * @param obj The genlist object
  * @return The no select mode

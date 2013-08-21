@@ -46,7 +46,7 @@ EAPI void                          elm_genlist_clear(Evas_Object *obj);
 EAPI void                          elm_genlist_multi_select_set(Evas_Object *obj, Eina_Bool multi);
 
 /**
- * Gets if multi-selection in genlist is enabled or disabled.
+ * Get if multi-selection in genlist is enabled or disabled.
  *
  * @param obj The genlist object
  * @return Multi-select enabled/disabled
@@ -91,7 +91,7 @@ EAPI Eina_Bool                     elm_genlist_multi_select_get(const Evas_Objec
 EAPI void                          elm_genlist_mode_set(Evas_Object *obj, Elm_List_Mode mode);
 
 /**
- * Gets the horizontal stretching mode.
+ * Get the horizontal stretching mode.
  *
  * @param obj The genlist object
  * @return The mode to use
@@ -661,7 +661,7 @@ EAPI void elm_genlist_focus_on_selection_set(Evas_Object *obj, Eina_Bool enabled
 
 
 /**
- * Gets whether focus upon item's selection mode is enabled.
+ * Get whether focus upon item's selection mode is enabled.
  *
  * @param obj The genlist object
  * @return The tree effect status

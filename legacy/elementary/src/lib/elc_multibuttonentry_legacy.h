@@ -258,7 +258,7 @@ EAPI void                       elm_multibuttonentry_item_filter_remove(Evas_Obj
 EAPI void elm_multibuttonentry_editable_set(Evas_Object *obj, Eina_Bool editable);
 
 /**
- * Gets whether the multibuttonentry is editable or not.
+ * Get whether the multibuttonentry is editable or not.
  *
  * @param obj The multibuttonentry object
  * @return EINA_TRUE if the multibuttonentry is editable by the user. EINA_FALSE if not.
