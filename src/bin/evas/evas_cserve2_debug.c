@@ -197,59 +197,6 @@ struct _Font_Entry
       _src += sizeof(_dst); \
    } while(0)
 
-#if 0
-static Glyph_Entry *
-_parse_glyph_entry(char **msg)
-{
-   Glyph_Entry *ge;
-   char *buf = *msg;
-
-   ge = calloc(1, sizeof(*ge));
-
-   READIT(ge->index, buf);
-   READIT(ge->offset, buf);
-   READIT(ge->size, buf);
-   READIT(ge->rows, buf);
-   READIT(ge->width, buf);
-   READIT(ge->pitch, buf);
-   READIT(ge->num_grays, buf);
-   READIT(ge->pixel_mode, buf);
-
-   *msg = buf;
-
-   return ge;
-}
-
-static Cache_Entry *
-_parse_cache_entry(char **msg)
-{
-   Cache_Entry *ce;
-   char *buf = *msg;
-   unsigned int n;
-
-   ce = calloc(1, sizeof(*ce));
-
-   READIT(n, buf);
-   ce->shmname = eina_stringshare_add_length(buf, n);
-   buf += n;
-
-   READIT(ce->size, buf);
-   READIT(ce->usage, buf);
-
-   READIT(n, buf);
-   while (n--)
-     {
-        Glyph_Entry *ge;
-        ge = _parse_glyph_entry(&buf);
-        ce->glyphs = eina_list_append(ce->glyphs, ge);
-     }
-
-   *msg = buf;
-
-   return ce;
-}
-#endif
-
 static Font_Entry *
 _parse_font_entry(char **msg)
 {
