@@ -297,9 +297,9 @@ typedef int string_t;
 
 struct _Shared_Array_Header {
    int32_t tag;
+   int32_t generation_id;
    int32_t elemsize;
    int32_t count;
-   int32_t generation_id;
    int32_t emptyidx;
    int32_t sortedidx;
    int32_t _reserved1;
@@ -310,6 +310,8 @@ struct _Shm_Object {
    SHMOBJECT;
 };
 
+#define STRING_INDEX_ARRAY_TAG ('S' | 'T' << 8 | 'R' << 16 | 'N' << 24)
+#define STRING_MEMPOOL_FAKETAG ('S' | 'T' << 8 | 'R' << 16 | 'M' << 24)
 struct _Index_Entry {
    SHMOBJECT;
    // Block entry
@@ -318,6 +320,7 @@ struct _Index_Entry {
    int32_t shmid;
 };
 
+#define FILE_DATA_ARRAY_TAG ('F' | 'I' << 8 | 'L' << 16 | 'E' << 24)
 struct _File_Data {
    SHMOBJECT;
    string_t path;
@@ -331,6 +334,7 @@ struct _File_Data {
    Eina_Bool invalid : 1;
 };
 
+#define IMAGE_DATA_ARRAY_TAG ('I' | 'M' << 8 | 'A' << 16 | 'G' << 24)
 struct _Image_Data {
    SHMOBJECT;
    uint32_t file_id;
@@ -341,6 +345,7 @@ struct _Image_Data {
    Eina_Bool doload : 1;
 };
 
+#define FONT_DATA_ARRAY_TAG ('F' | 'O' << 8 | 'N' << 16 | 'T' << 24)
 struct _Font_Data {
    SHMOBJECT;
    string_t name;
@@ -351,6 +356,8 @@ struct _Font_Data {
    uint32_t dpi;
 };
 
+#define GLYPH_INDEX_ARRAY_TAG ('G' | 'L' << 8 | 'I' << 16 | 'D' << 24)
+#define GLYPH_DATA_ARRAY_TAG ('G' | 'L' << 8 | 'P' << 16 | 'H' << 24)
 struct _Glyph_Data {
    SHMOBJECT;
    uint32_t index;

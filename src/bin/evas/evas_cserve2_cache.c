@@ -121,6 +121,7 @@ struct _File_Watch {
    Eina_List *entries;
 };
 
+static unsigned int _generation_id = 0;
 static unsigned int _entry_id = 0;
 static unsigned int _glyph_id = 0;
 static unsigned int _font_data_id = 0;
@@ -341,7 +342,9 @@ _repack()
         DBG("Repacking file data array: %s",
             cserve2_shared_array_name_get(_file_data_array));
 
-        sa = cserve2_shared_array_repack(_file_data_array,
+        _generation_id++;
+
+        sa = cserve2_shared_array_repack(_file_data_array, _generation_id,
                                          _repack_skip_cb,
                                          _shm_object_id_cmp_cb, NULL);
         if (!sa)
@@ -364,7 +367,10 @@ skip_files:
         DBG("Repacking image data array: %s",
             cserve2_shared_array_name_get(_image_data_array));
 
-        sa = cserve2_shared_array_repack(_image_data_array,
+        if (!updated)
+          _generation_id++;
+
+        sa = cserve2_shared_array_repack(_image_data_array, _generation_id,
                                          _repack_skip_cb,
                                          _shm_object_id_cmp_cb, NULL);
         if (!sa)
@@ -387,7 +393,10 @@ skip_images:
         DBG("Repacking font data array: %s",
             cserve2_shared_array_name_get(_font_data_array));
 
-        sa = cserve2_shared_array_repack(_font_data_array,
+        if (!updated)
+          _generation_id++;
+
+        sa = cserve2_shared_array_repack(_font_data_array, _generation_id,
                                          _repack_skip_cb,
                                          _shm_object_id_cmp_cb, NULL);
         if (!sa)
@@ -404,12 +413,19 @@ skip_images:
 skip_fonts:
 
    if (updated)
-     cserve2_index_list_send(cserve2_shared_strings_index_name_get(),
-                             cserve2_shared_strings_table_name_get(),
-                             cserve2_shared_array_name_get(_file_data_array),
-                             cserve2_shared_array_name_get(_image_data_array),
-                             cserve2_shared_array_name_get(_font_data_array),
-                             NULL);
+     {
+        // TODO: Update strings table generation_id?
+        cserve2_shared_array_generation_id_set(_font_data_array, _generation_id);
+        cserve2_shared_array_generation_id_set(_image_data_array, _generation_id);
+        cserve2_shared_array_generation_id_set(_file_data_array, _generation_id);
+        cserve2_index_list_send(_generation_id,
+                                cserve2_shared_strings_index_name_get(),
+                                cserve2_shared_strings_table_name_get(),
+                                cserve2_shared_array_name_get(_file_data_array),
+                                cserve2_shared_array_name_get(_image_data_array),
+                                cserve2_shared_array_name_get(_font_data_array),
+                                NULL);
+     }
 }
 
 
@@ -1224,9 +1240,16 @@ cserve2_cache_init(void)
                                 EINA_FREE_CB(_font_entry_free),
                                 5);
 
-   _file_data_array = cserve2_shared_array_new(1, sizeof(File_Data), 0);
-   _image_data_array = cserve2_shared_array_new(1, sizeof(Image_Data), 0);
-   _font_data_array = cserve2_shared_array_new(1, sizeof(Font_Data), 0);
+   _generation_id++;
+   _file_data_array = cserve2_shared_array_new(FILE_DATA_ARRAY_TAG,
+                                               _generation_id,
+                                               sizeof(File_Data), 0);
+   _image_data_array = cserve2_shared_array_new(IMAGE_DATA_ARRAY_TAG,
+                                                _generation_id,
+                                                sizeof(Image_Data), 0);
+   _font_data_array = cserve2_shared_array_new(FONT_DATA_ARRAY_TAG,
+                                               _generation_id,
+                                               sizeof(Font_Data), 0);
 }
 
 void
@@ -1411,7 +1434,8 @@ cserve2_cache_client_new(Client *client)
    client->images.referencing = eina_hash_int32_new(_entry_free_cb);
    client->fonts.referencing = NULL;
 
-   cserve2_index_list_send(cserve2_shared_strings_index_name_get(),
+   cserve2_index_list_send(_generation_id,
+                           cserve2_shared_strings_index_name_get(),
                            cserve2_shared_strings_table_name_get(),
                            cserve2_shared_array_name_get(_file_data_array),
                            cserve2_shared_array_name_get(_image_data_array),
@@ -1958,13 +1982,18 @@ _glyphs_load_request_response(Glyphs_Request *req,
 
    if (!mempool)
      {
-        mempool = cserve2_shared_mempool_new(0);
+        mempool = cserve2_shared_mempool_new(GLYPH_DATA_ARRAY_TAG,
+                                             _generation_id, 0);
         font_mem_usage += cserve2_shared_mempool_size_get(mempool);
      }
+   else
+     cserve2_shared_mempool_generation_id_set(mempool, _generation_id);
 
    if (!fe->glyph_datas)
      {
-        fe->glyph_datas = cserve2_shared_array_new(1, sizeof(Glyph_Data), 0);
+        fe->glyph_datas = cserve2_shared_array_new(GLYPH_INDEX_ARRAY_TAG,
+                                                   _generation_id,
+                                                   sizeof(Glyph_Data), 0);
         font_mem_usage += cserve2_shared_array_map_size_get(fe->glyph_datas);
      }
 

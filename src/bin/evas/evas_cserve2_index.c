@@ -149,7 +149,7 @@ _block_rbtree_block_find(const Block *node, const void *key,
 // Data shm
 
 static Data_Shm *
-_shared_data_shm_new(int size)
+_shared_data_shm_new(const char *infix, int size)
 {
    Data_Shm *ds;
    size_t mapping_size;
@@ -162,7 +162,7 @@ _shared_data_shm_new(int size)
 
    mapping_size = cserve2_shm_size_normalize((size_t) size);
 
-   ds->shm = cserve2_shm_request("data", mapping_size);
+   ds->shm = cserve2_shm_request(infix, mapping_size);
    if (!ds->shm)
      {
         ERR("Could not create shm of size %u", (unsigned) mapping_size);
@@ -228,7 +228,7 @@ _shared_data_shm_resize(Data_Shm *ds, size_t newsize)
 // Arrays
 
 Shared_Array *
-cserve2_shared_array_new(int tag, int elemsize, int initcount)
+cserve2_shared_array_new(int tag, int generation_id, int elemsize, int initcount)
 {
    Shared_Array *sa;
    Data_Shm *ds;
@@ -243,7 +243,7 @@ cserve2_shared_array_new(int tag, int elemsize, int initcount)
    if (!initcount) initcount = 1;
    mapping_size = cserve2_shm_size_normalize(elemsize * initcount
                                              + sizeof(Shared_Array_Header));
-   ds = _shared_data_shm_new(mapping_size);
+   ds = _shared_data_shm_new("array", mapping_size);
    if (!ds)
      {
         free(sa);
@@ -254,7 +254,7 @@ cserve2_shared_array_new(int tag, int elemsize, int initcount)
    sa->header = (Shared_Array_Header *) ds->data;
    sa->header->count = (mapping_size - sizeof(Shared_Array_Header)) / elemsize;
    sa->header->elemsize = elemsize;
-   sa->header->generation_id = 1;
+   sa->header->generation_id = generation_id;
    sa->header->emptyidx = 0;
    sa->header->sortedidx = 0;
    sa->header->tag = tag;
@@ -311,6 +311,16 @@ cserve2_shared_array_generation_id_get(Shared_Array *sa)
 {
    if (!sa) return -1;
    return sa->header->generation_id;
+}
+
+int cserve2_shared_array_generation_id_set(Shared_Array *sa, int generation_id)
+{
+   if (!sa) return -1;
+   if (sa->header->generation_id == generation_id)
+     return 0;
+
+   sa->header->generation_id = generation_id;
+   return 1;
 }
 
 int
@@ -388,7 +398,7 @@ cserve2_shared_array_foreach(Shared_Array *sa, Eina_Each_Cb cb, void *data)
 }
 
 Shared_Array *
-cserve2_shared_array_repack(Shared_Array *sa,
+cserve2_shared_array_repack(Shared_Array *sa, int generation_id,
                             Shared_Array_Repack_Skip_Cb skip,
                             Eina_Compare_Cb cmp,
                             void *user_data)
@@ -413,13 +423,12 @@ cserve2_shared_array_repack(Shared_Array *sa,
      }
 
    // Create new array
-   sa2 = cserve2_shared_array_new(0, elemsize, newcount);
+   sa2 = cserve2_shared_array_new(sa->header->tag, generation_id, elemsize, newcount);
    if (!sa)
      {
         ERR("Can not repack array: failed to create new array");
         return NULL;
      }
-   sa2->header->generation_id = sa->header->generation_id + 1;
 
    // Write data
    dstdata = sa2->ds->data + sizeof(Shared_Array_Header);
@@ -567,16 +576,15 @@ _shared_index_entry_get_by_id(Shared_Index *si, unsigned int id)
 }
 
 static Shared_Index *
-_shared_index_new()
+_shared_index_new(int tag, int generation_id)
 {
    Shared_Index *si;
    Index_Entry *ie;
-   int tag = 1234; // FIXME?
 
    si = calloc(1, sizeof(Shared_Index));
    if (!si) return NULL;
 
-   si->sa = cserve2_shared_array_new(tag, sizeof(Index_Entry), 1);
+   si->sa = cserve2_shared_array_new(tag, generation_id, sizeof(Index_Entry), 0);
    if (!si->sa)
      {
         free(si);
@@ -607,7 +615,7 @@ _shared_index_del(Shared_Index *si)
 // Shared memory pool
 
 Shared_Mempool *
-cserve2_shared_mempool_new(int initsize)
+cserve2_shared_mempool_new(int indextag, int generation_id, int initsize)
 {
    Shared_Mempool *sm;
    size_t mapping_size;
@@ -620,14 +628,14 @@ cserve2_shared_mempool_new(int initsize)
    if (!initsize) initsize = 1;
    mapping_size = cserve2_shm_size_normalize((size_t) initsize);
 
-   sm->ds = _shared_data_shm_new(mapping_size);
+   sm->ds = _shared_data_shm_new("mempool", mapping_size);
    if (!sm->ds)
      {
         free(sm);
         return NULL;
      }
 
-   sm->index = _shared_index_new();
+   sm->index = _shared_index_new(indextag, generation_id);
    if (!sm->index)
      {
         _shared_data_shm_del(sm->ds);
@@ -859,6 +867,24 @@ cserve2_shared_mempool_name_get(Shared_Mempool *sm)
    return cserve2_shm_name_get(sm->ds->shm);
 }
 
+int
+cserve2_shared_mempool_generation_id_get(Shared_Mempool *sm)
+{
+   if (!sm) return -1;
+   return sm->index->sa->header->generation_id;
+}
+
+int
+cserve2_shared_mempool_generation_id_set(Shared_Mempool *sm, int generation_id)
+{
+   if (!sm) return -1;
+   if (sm->index->sa->header->generation_id == generation_id)
+     return 0;
+
+   sm->index->sa->header->generation_id = generation_id;
+   return 1;
+}
+
 
 // Shared strings
 
@@ -959,9 +985,15 @@ cserve2_shared_index_init(void)
 {
    if (!_instances)
      {
+        char faketag[5] = {0};
+        int ifaketag = STRING_MEMPOOL_FAKETAG;
+
         DBG("Initializing shared index");
-        _string_mempool = cserve2_shared_mempool_new(4096);
+        _string_mempool = cserve2_shared_mempool_new(STRING_INDEX_ARRAY_TAG, 0, 0);
         _string_entries = eina_hash_string_djb2_new(NULL);
+
+        memcpy(faketag, &ifaketag, sizeof(int));
+        cserve2_shared_string_add(faketag);
      }
    _instances++;
 }

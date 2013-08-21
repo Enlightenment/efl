@@ -490,7 +490,8 @@ _font_slave_glyphs_load(const void *cmddata, void *data EINA_UNUSED)
    if (!response->mempool)
      {
         unsigned shmsize = _font_slave_int_shm_calculate(fi, msg->font.hint);
-        response->mempool = cserve2_shared_mempool_new(shmsize);
+        response->mempool = cserve2_shared_mempool_new(GLYPH_DATA_ARRAY_TAG,
+                                                       0, shmsize);
         if (!response->mempool) return NULL;
      }
 

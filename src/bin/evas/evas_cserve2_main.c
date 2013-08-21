@@ -36,7 +36,8 @@ cserve2_client_error_send(Client *client, unsigned int rid, int error_code)
 }
 
 void
-cserve2_index_list_send(const char *strings_index_path,
+cserve2_index_list_send(int generation_id,
+                        const char *strings_index_path,
                         const char *strings_entries_path,
                         const char *files_index_path,
                         const char *images_index_path,
@@ -56,6 +57,7 @@ cserve2_index_list_send(const char *strings_index_path,
 
    memset(&msg, 0, size);
    msg.base.type = CSERVE2_INDEX_LIST;
+   msg.generation_id = generation_id;
    if (strings_index_path)
      eina_strlcpy(msg.strings_index_path, strings_index_path, 64);
    if (strings_entries_path)

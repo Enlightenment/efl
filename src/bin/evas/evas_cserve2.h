@@ -254,7 +254,7 @@ void cserve2_client_del(Client *client);
 void cserve2_client_deliver(Client *client);
 void cserve2_client_error_send(Client *client, unsigned int rid, int error_code);
 ssize_t cserve2_client_send(Client *client, const void *data, size_t size);
-void cserve2_index_list_send(const char *strings_index_path, const char *strings_entries_path, const char *files_index_path, const char *images_index_path, const char *fonts_index_path, Client *client);
+void cserve2_index_list_send(int generation_id, const char *strings_index_path, const char *strings_entries_path, const char *files_index_path, const char *images_index_path, const char *fonts_index_path, Client *client);
 
 Eina_Bool cserve2_fd_watch_add(int fd, Fd_Flags flags, Fd_Watch_Cb cb, const void *data);
 Eina_Bool cserve2_fd_watch_del(int fd);
@@ -347,7 +347,7 @@ typedef Eina_Bool (* Shared_Array_Repack_Skip_Cb) (Shared_Array *sa,
                                                    void *user_data);
 
 // Shared arrays (arrays of fixed size object)
-Shared_Array *cserve2_shared_array_new(int tag, int elemsize, int initcount);
+Shared_Array *cserve2_shared_array_new(int tag, int generation_id, int elemsize, int initcount);
 const char *cserve2_shared_array_name_get(Shared_Array *sa);
 void cserve2_shared_array_del(Shared_Array *sa);
 int cserve2_shared_array_size_get(Shared_Array *sa);
@@ -355,10 +355,11 @@ int cserve2_shared_array_count_get(Shared_Array *sa);
 int cserve2_shared_array_map_size_get(Shared_Array *sa);
 int cserve2_shared_array_item_size_get(Shared_Array *sa);
 int cserve2_shared_array_generation_id_get(Shared_Array *sa);
+int cserve2_shared_array_generation_id_set(Shared_Array *sa, int generation_id);
 int cserve2_shared_array_size_set(Shared_Array *sa, int newcount);
 int cserve2_shared_array_item_new(Shared_Array *sa);
 void *cserve2_shared_array_item_data_get(Shared_Array *sa, int elemid);
-Shared_Array *cserve2_shared_array_repack(Shared_Array *sa,
+Shared_Array *cserve2_shared_array_repack(Shared_Array *sa, int generation_id,
                                           Shared_Array_Repack_Skip_Cb skip,
                                           Eina_Compare_Cb cmp, void *user_data);
 int cserve2_shared_array_item_find(Shared_Array *sa, void *data,
@@ -368,7 +369,7 @@ void *cserve2_shared_array_item_data_find(Shared_Array *sa, void *data,
 int cserve2_shared_array_foreach(Shared_Array *sa, Eina_Each_Cb cb, void *data);
 
 // Shared buffers and memory pools
-Shared_Mempool *cserve2_shared_mempool_new(int initsize);
+Shared_Mempool *cserve2_shared_mempool_new(int indextag, int generation_id, int initsize);
 void cserve2_shared_mempool_del(Shared_Mempool *sm);
 int cserve2_shared_mempool_buffer_new(Shared_Mempool *sm, int size);
 int cserve2_shared_mempool_buffer_ref(Shared_Mempool *sm, int bufferid);
@@ -377,6 +378,8 @@ void *cserve2_shared_mempool_buffer_get(Shared_Mempool *sm, int bufferid);
 int cserve2_shared_mempool_buffer_offset_get(Shared_Mempool *sm, int bufferid);
 size_t cserve2_shared_mempool_size_get(Shared_Mempool *sm);
 const char *cserve2_shared_mempool_name_get(Shared_Mempool *sm);
+int cserve2_shared_mempool_generation_id_get(Shared_Mempool *sm);
+int cserve2_shared_mempool_generation_id_set(Shared_Mempool *sm, int generation_id);
 
 // Shared strings
 const char *cserve2_shared_strings_table_name_get();
