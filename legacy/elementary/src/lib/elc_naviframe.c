@@ -329,11 +329,9 @@ _elm_naviframe_smart_theme(Eo *obj, void *_pd, va_list *list)
      {
         eo_do(VIEW(it), elm_wdg_style_get(&sstyle));
         if ((style && sstyle) && strcmp(style, sstyle))
-          {
-             _item_style_set(it, it->style);
-             _item_signals_emit(it);
-             _item_title_visible_update(it);
-          }
+          _item_style_set(it, it->style);
+        _item_signals_emit(it);
+        _item_title_visible_update(it);
      }
 
    elm_layout_sizing_eval(obj);
