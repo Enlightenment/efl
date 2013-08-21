@@ -45,41 +45,31 @@ _bt_m1(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 void
 test_slider(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bx, *sl, *ic, *sl1, *bx2, *bt;
+   Evas_Object *win, *fr, *bx, *sl, *ic, *sl1, *bx2, *bt;
    char buf[PATH_MAX];
 
    win = elm_win_util_standard_add("slider", "Slider");
    elm_win_autodel_set(win, EINA_TRUE);
+   evas_object_show(win);
 
-   bx = elm_box_add(win);
-   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, bx);
+   fr = elm_frame_add(win);
+   evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, fr);
+   elm_object_style_set(fr, "pad_large");
+   evas_object_show(fr);
+
+   bx = elm_box_add(fr);
+   elm_object_content_set(fr, bx);
    evas_object_show(bx);
 
-   ic = elm_icon_add(win);
+   // disabled horizontal slider
+   ic = elm_icon_add(bx);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_image_file_set(ic, buf, NULL);
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
-
-   sl = elm_slider_add(win);
-   sl1 = sl;
-   elm_object_text_set(sl, "Horizontal");
-   elm_object_part_content_set(sl, "icon", ic);
-   elm_slider_unit_format_set(sl, "%1.1f units");
-   elm_slider_span_size_set(sl, 120);
-   evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);
-   evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
-   elm_box_pack_end(bx, sl);
    evas_object_show(ic);
-   evas_object_show(sl);
 
-   /* horizontal disable state */
-   ic = elm_icon_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
-   elm_image_file_set(ic, buf, NULL);
-   evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
-
-   sl = elm_slider_add(win);
+   sl = elm_slider_add(bx);
    elm_object_text_set(sl, "Disabled");
    elm_object_part_content_set(sl, "icon", ic);
    elm_slider_unit_format_set(sl, "%1.1f units");
@@ -90,15 +80,34 @@ test_slider(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);
    evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx, sl);
-   evas_object_show(ic);
    evas_object_show(sl);
 
-   ic = elm_icon_add(win);
+   // normal horizontal slider
+   ic = elm_icon_add(bx);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_image_file_set(ic, buf, NULL);
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
 
-   sl = elm_slider_add(win);
+   sl1 = sl = elm_slider_add(bx);
+   elm_object_text_set(sl, "Horizontal");
+   elm_object_part_content_set(sl, "icon", ic);
+   elm_slider_unit_format_set(sl, "%1.1f units");
+   elm_slider_indicator_format_set(sl, "%1.1f");
+   elm_slider_span_size_set(sl, 120);
+   evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);
+   evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
+   elm_box_pack_end(bx, sl);
+   evas_object_show(ic);
+   evas_object_show(sl);
+
+   // horizontally inverted slider
+   ic = elm_icon_add(bx);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
+   elm_image_file_set(ic, buf, NULL);
+   evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
+   evas_object_show(ic);
+
+   sl = elm_slider_add(bx);
    elm_object_text_set(sl, "Horizontal inverted");
    elm_object_part_content_set(sl, "end", ic);
    elm_slider_unit_format_set(sl, "%3.0f units");
@@ -112,16 +121,16 @@ test_slider(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_size_hint_align_set(sl, 0.5, 0.5);
    evas_object_size_hint_weight_set(sl, 0.0, 0.0);
    elm_box_pack_end(bx, sl);
-   evas_object_show(ic);
    evas_object_show(sl);
 
-   /* label2 disable */
-   ic = elm_icon_add(win);
+   // disabled horizontally inverted slider
+   ic = elm_icon_add(bx);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_image_file_set(ic, buf, NULL);
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
+   evas_object_show(ic);
 
-   sl = elm_slider_add(win);
+   sl = elm_slider_add(bx);
    elm_object_text_set(sl, "Disabled inverted");
    elm_object_part_content_set(sl, "end", ic);
    elm_slider_span_size_set(sl, 80);
@@ -135,10 +144,10 @@ test_slider(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_size_hint_align_set(sl, 0.5, 0.5);
    evas_object_size_hint_weight_set(sl, 0.0, 0.0);
    elm_box_pack_end(bx, sl);
-   evas_object_show(ic);
    evas_object_show(sl);
 
-   sl = elm_slider_add(win);
+   // scale doubled slider
+   sl = elm_slider_add(bx);
    elm_slider_indicator_show_set(sl, EINA_FALSE);
    elm_object_text_set(sl, "Scale doubled");
    elm_slider_unit_format_set(sl, "%3.0f units");
@@ -151,22 +160,24 @@ test_slider(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    elm_slider_inverted_set(sl, EINA_TRUE);
    elm_object_scale_set(sl, 2.0);
    elm_box_pack_end(bx, sl);
-   evas_object_show(ic);
    evas_object_show(sl);
 
-   bx2 = elm_box_add(win);
+   // horizontal box
+   bx2 = elm_box_add(bx);
    evas_object_size_hint_weight_set(bx2, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bx2, 0.5, EVAS_HINT_FILL);
    elm_box_horizontal_set(bx2, EINA_TRUE);
    elm_box_pack_end(bx, bx2);
    evas_object_show(bx2);
 
-   ic = elm_icon_add(win);
+   // vertical inverted slider
+   ic = elm_icon_add(bx2);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_image_file_set(ic, buf, NULL);
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_HORIZONTAL, 1, 1);
+   evas_object_show(ic);
 
-   sl = elm_slider_add(win);
+   sl = elm_slider_add(bx2);
    elm_object_part_content_set(sl, "icon", ic);
    elm_object_text_set(sl, "Vertical inverted");
    elm_slider_inverted_set(sl, EINA_TRUE);
@@ -179,19 +190,18 @@ test_slider(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    elm_object_scale_set(sl, 1.0);
    elm_slider_horizontal_set(sl, EINA_FALSE);
    elm_box_pack_end(bx2, sl);
-   evas_object_show(ic);
    evas_object_show(sl);
 
    evas_object_smart_callback_add(sl1, "changed", _change_cb, sl);
 
-   /* vertical disable state */
-
-   ic = elm_icon_add(win);
+   // disabled vertical slider
+   ic = elm_icon_add(bx2);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_image_file_set(ic, buf, NULL);
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_HORIZONTAL, 1, 1);
+   evas_object_show(ic);
 
-   sl = elm_slider_add(win);
+   sl = elm_slider_add(bx2);
    elm_object_part_content_set(sl, "icon", ic);
    elm_object_text_set(sl, "Disabled vertical");
    elm_slider_inverted_set(sl, EINA_TRUE);
@@ -205,10 +215,10 @@ test_slider(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    elm_slider_horizontal_set(sl, EINA_FALSE);
    elm_object_disabled_set(sl, EINA_TRUE);
    elm_box_pack_end(bx2, sl);
-   evas_object_show(ic);
    evas_object_show(sl);
 
-   sl = elm_slider_add(win);
+   // normal vertical slider
+   sl = elm_slider_add(bx2);
    elm_object_text_set(sl, "Vertical");
    elm_slider_unit_format_set(sl, "%1.1f units");
    elm_slider_span_size_set(sl, 60);
@@ -222,12 +232,13 @@ test_slider(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    elm_box_pack_end(bx2, sl);
    evas_object_show(sl);
 
+   // box for bottom buttons
    bx2 = elm_box_add(win);
    evas_object_size_hint_weight_set(bx2, EVAS_HINT_EXPAND, 0.0);
    elm_box_horizontal_set(bx2, EINA_TRUE);
    elm_box_pack_end(bx, bx2);
    evas_object_show(bx2);
-   
+
    bt = elm_button_add(win);
    elm_object_text_set(bt, "0");
    evas_object_smart_callback_add(bt, "clicked", _bt_0, sl);
@@ -241,17 +252,15 @@ test_slider(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    elm_box_pack_end(bx2, bt);
 
    bt = elm_button_add(win);
-   elm_object_text_set(bt, "+.1");
+   elm_object_text_set(bt, "+0.1");
    evas_object_smart_callback_add(bt, "clicked", _bt_p1, sl);
    evas_object_show(bt);
    elm_box_pack_end(bx2, bt);
 
    bt = elm_button_add(win);
-   elm_object_text_set(bt, "-.1");
+   elm_object_text_set(bt, "-0.1");
    evas_object_smart_callback_add(bt, "clicked", _bt_m1, sl);
    evas_object_show(bt);
    elm_box_pack_end(bx2, bt);
-
-   evas_object_show(win);
 }
 #endif
