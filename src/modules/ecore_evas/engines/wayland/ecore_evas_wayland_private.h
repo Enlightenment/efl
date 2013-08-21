@@ -81,12 +81,14 @@ void _ecore_evas_wl_common_pointer_xy_get(const Ecore_Evas *ee, Evas_Coord *x, E
 
 #ifdef BUILD_ECORE_EVAS_WAYLAND_SHM
 void _ecore_evas_wayland_shm_resize(Ecore_Evas *ee, int location);
+void _ecore_evas_wayland_shm_resize_edge_set(Ecore_Evas *ee, int edge);
 void _ecore_evas_wayland_shm_transparent_do(Ecore_Evas *ee, int transparent);
 void _ecore_evas_wayland_shm_alpha_do(Ecore_Evas *ee, int transparent);
 #endif
 
 #ifdef BUILD_ECORE_EVAS_WAYLAND_EGL
 void _ecore_evas_wayland_egl_resize(Ecore_Evas *ee, int location);
+void _ecore_evas_wayland_egl_resize_edge_set(Ecore_Evas *ee, int edge);
 #endif
 
 #endif /* _ECORE_EVAS_WAYLAND_PRIVATE_H_ */
