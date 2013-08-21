@@ -622,18 +622,14 @@ _list_add(Evas_Object *obj)
    ELM_POPUP_DATA_GET(obj, sd);
    Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
+   //Table
    sd->tbl = elm_table_add(obj);
-
-   evas_object_event_callback_add
-     (sd->tbl, EVAS_CALLBACK_DEL, _on_table_del, obj);
-
-   edje_object_part_swallow
-     (wd->resize_obj, CONTENT_PART, sd->tbl);
-   evas_object_size_hint_weight_set
-     (sd->tbl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(sd->tbl, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_event_callback_add(sd->tbl, EVAS_CALLBACK_DEL,
+                                  _on_table_del, obj);
+   edje_object_part_swallow(wd->resize_obj, CONTENT_PART, sd->tbl);
    evas_object_show(sd->tbl);
 
+   //Spacer
    sd->spacer = evas_object_rectangle_add(evas_object_evas_get(obj));
    evas_object_color_set(sd->spacer, 0, 0, 0, 0);
    elm_table_pack(sd->tbl, sd->spacer, 0, 0, 1, 1);
@@ -642,12 +638,11 @@ _list_add(Evas_Object *obj)
    sd->scr = elm_scroller_add(obj);
    elm_scroller_content_min_limit(sd->scr, EINA_TRUE, EINA_FALSE);
    elm_scroller_bounce_set(sd->scr, EINA_FALSE, EINA_TRUE);
-   evas_object_size_hint_weight_set
-     (sd->scr, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_weight_set(sd->scr,
+                                    EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(sd->scr, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_event_callback_add
-     (sd->scr, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _size_hints_changed_cb,
-     obj);
+   evas_object_event_callback_add(sd->scr, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                  _size_hints_changed_cb, obj);
    elm_table_pack(sd->tbl, sd->scr, 0, 0, 1, 1);
    evas_object_show(sd->scr);
 
