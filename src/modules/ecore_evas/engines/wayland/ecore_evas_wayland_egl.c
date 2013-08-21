@@ -329,13 +329,10 @@ _ecore_evas_wl_resize(Ecore_Evas *ee, int w, int h)
         if (wdata->win)
           {
              Ecore_Wl_Window *win;
-             Evas_Engine_Info_Wayland_Egl *einfo;
 
              win = wdata->win;
 
-             if ((einfo = (Evas_Engine_Info_Wayland_Egl *)evas_engine_info_get(ee->evas)))
-               einfo->info.edges = win->edges;
-
+             _ecore_evas_wayland_egl_resize_edge_set(ee, win->edges);
              win->edges = 0;
 
              win->server_allocation = win->allocation;
@@ -550,7 +547,6 @@ _ecore_evas_wayland_egl_resize(Ecore_Evas *ee, int location)
    wdata = ee->engine.data;
    if (wdata->win) 
      {
-        Evas_Engine_Info_Wayland_Egl *einfo;
         int fw, fh;
 
         wdata->win->resizing = EINA_TRUE;
@@ -561,8 +557,17 @@ _ecore_evas_wayland_egl_resize(Ecore_Evas *ee, int location)
         else
           ecore_wl_window_resize(wdata->win, ee->w + fh, ee->h + fw, location);
 
-        if ((einfo = (Evas_Engine_Info_Wayland_Egl *)evas_engine_info_get(ee->evas)))
-          einfo->info.edges = location;
+        _ecore_evas_wayland_egl_resize_edge_set(ee, location);
      }
 }
+
+void 
+_ecore_evas_wayland_egl_resize_edge_set(Ecore_Evas *ee, int edge)
+{
+   Evas_Engine_Info_Wayland_Egl *einfo;
+
+   if ((einfo = (Evas_Engine_Info_Wayland_Egl *)evas_engine_info_get(ee->evas)))
+     einfo->info.edges = edge;
+}
+
 #endif
