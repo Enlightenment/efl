@@ -772,8 +772,8 @@ _on_text_clicked(void *data __UNUSED__,
 
 static void
 _on_text_activated(void *data,
-		   Evas_Object *obj,
-		   void *event_info __UNUSED__)
+                   Evas_Object *obj,
+                   void *event_info __UNUSED__)
 {
    Evas_Object *fs = data;
    const char *p;
@@ -791,8 +791,8 @@ _on_text_activated(void *data,
 
 static void
 _on_text_unfocused(void *data,
-		   Evas_Object *obj __UNUSED__,
-		   void *event_info __UNUSED__)
+                   Evas_Object *obj __UNUSED__,
+                   void *event_info __UNUSED__)
 {
    ELM_FILESELECTOR_DATA_GET(data, sd);
    _anchors_do(data, sd->path);
@@ -1258,7 +1258,7 @@ _selected_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    fp = elm_object_text_get(sd->path_entry);
    if (ecore_file_exists(fp))
      {
-	eina_stringshare_replace(&sd->selection, fp);
+        eina_stringshare_replace(&sd->selection, fp);
 
         *ret = sd->selection;
         return;
