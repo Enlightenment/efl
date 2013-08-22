@@ -1566,3 +1566,10 @@
 2013-08-22  Thiep Ha
 
         * Add hide effect for notify.
+
+2013-08-22  ChunEon Park (Hermet)
+
+        * Widget: Improve performance in applying widget theme. It prevents
+        applying themes more strictly if it tries to apply same theme. This
+        increases the performance hugely in case that user applies a specific
+        theme to the window object.

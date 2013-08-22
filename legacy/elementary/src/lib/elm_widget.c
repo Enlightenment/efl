@@ -1039,6 +1039,8 @@ _elm_widget_sub_object_add(Eo *obj, void *_pd, va_list *list)
      (sobj, EVAS_CALLBACK_DEL, _on_sub_obj_del, obj);
    if (_elm_widget_is(sobj))
      {
+        ELM_WIDGET_DATA_GET(sobj, sdc);
+
         evas_object_event_callback_add
           (sobj, EVAS_CALLBACK_HIDE, _on_sub_obj_hide, NULL);
 
@@ -1046,7 +1048,8 @@ _elm_widget_sub_object_add(Eo *obj, void *_pd, va_list *list)
         th = elm_widget_theme_get(sobj);
         mirrored = elm_widget_mirrored_get(sobj);
 
-        if ((scale != pscale) || (th != pth) || (pmirrored != mirrored))
+        if ((scale != pscale) || (!sdc->on_create && th != pth) ||
+            (pmirrored != mirrored))
           elm_widget_theme(sobj);
 
         if (elm_widget_focus_get(sobj)) _parents_focus(obj);
@@ -3763,12 +3766,14 @@ _elm_widget_theme_set(Eo *obj, void *_pd, va_list *list)
 {
    Elm_Theme *th = va_arg(*list, Elm_Theme *);
    Elm_Widget_Smart_Data *sd = _pd;
+   Eina_Bool apply = EINA_FALSE;
    if (sd->theme != th)
      {
+        if (elm_widget_theme_get(obj) != th) apply = EINA_TRUE;
         if (sd->theme) elm_theme_free(sd->theme);
         sd->theme = th;
         if (th) th->ref++;
-        elm_widget_theme(obj);
+        if (apply) elm_widget_theme(obj);
      }
 }
 
@@ -5875,9 +5880,13 @@ elm_widget_tree_dot_dump(const Evas_Object *top,
 static void
 _constructor(Eo *obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
 {
+   ELM_WIDGET_DATA_GET(obj, sd);
+
+   sd->on_create = EINA_TRUE;
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj, evas_obj_type_set(MY_CLASS_NAME));
    eo_do(obj, elm_wdg_parent_set(eo_parent_get(obj)));
+   sd->on_create = EINA_FALSE;
 }
 
 static void

@@ -128,6 +128,7 @@ Improvements:
    * Add support for URL in Elm_Image and Elm_Photocam.
    * Popup: Support "language,changed" smart callback.
    * Add hide effect for notify.
+   * Widget: Improve performance in applying widget theme. It prevents applying themes more strictly if it tries to apply same theme. This increases the performance hugely in case that user applies a specific theme to the window object.
 
 Fixes:
    * Now elm_datetime_field_limit_set() can set year limits wihtout problems.

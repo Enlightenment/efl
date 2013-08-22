@@ -436,6 +436,7 @@ typedef struct _Elm_Widget_Smart_Data
    Eina_Bool                     highlighted : 1;
    Eina_Bool                     highlight_root : 1;
    Eina_Bool                     on_translate : 1;
+   Eina_Bool                     on_create : 1;
 } Elm_Widget_Smart_Data;
 
 /**
