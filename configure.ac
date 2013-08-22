@@ -236,7 +236,14 @@ po_makefile_in=po/Makefile.in
 have_po="yes"
 ],
 [
+m4_ifdef([AM_GNU_GETTEXT], [
+AM_GNU_GETTEXT([external])
+po_makefile_in=po/Makefile.in
+have_po="yes"
+],
+[
 have_po="no"
+])
 ])
 AC_SUBST([LTLIBINTL])
 LOCALE_DIR="${localedir}"
