@@ -351,6 +351,7 @@ struct _Font_Data {
    string_t name;
    string_t file;
    string_t glyph_index_shm;
+   string_t mempool_shm;
    uint32_t rend_flags;
    uint32_t size;
    uint32_t dpi;

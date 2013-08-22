@@ -1974,9 +1974,12 @@ _glyphs_load_request_response(Glyphs_Request *req,
    Shared_Mempool *mempool = msg->mempool;
    unsigned int j;
    string_t shm_id = 0;
+   Font_Data *fd;
 
    if (!msg->nglyphs)
      return _glyphs_loaded_msg_create(req, size);
+
+   fd = _font_data_find(fe->font_data_id);
 
    DBG("Font memory usage [begin]: %d / %d", font_mem_usage, max_font_usage);
 
@@ -1995,6 +1998,8 @@ _glyphs_load_request_response(Glyphs_Request *req,
                                                    _generation_id,
                                                    sizeof(Glyph_Data), 0);
         font_mem_usage += cserve2_shared_array_map_size_get(fe->glyph_datas);
+        fd->glyph_index_shm = cserve2_shared_string_add(
+                 cserve2_shared_array_name_get(fe->glyph_datas));
      }
 
    shm_id = cserve2_shared_string_add(cserve2_shared_mempool_name_get(mempool));
@@ -2058,6 +2063,9 @@ _glyphs_load_request_response(Glyphs_Request *req,
 #endif
 
    fe->mempool = mempool;
+   if (!fd->mempool_shm)
+     fd->mempool_shm = cserve2_shared_string_add(
+              cserve2_shared_mempool_name_get(mempool));
 
    DBG("Font memory usage [end]: %d / %d", font_mem_usage, max_font_usage);
    _font_lru_flush();
