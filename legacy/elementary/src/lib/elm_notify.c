@@ -249,8 +249,8 @@ _timer_cb(void *data)
    sd->timer = NULL;
    if (!evas_object_visible_get(obj)) goto end;
 
-   hide_signal = edje_object_data_get(sd->notify, "emit_hide_finished_signal");
-   if ((hide_signal) && (!strcmp(hide_signal, "yes")))
+   hide_signal = edje_object_data_get(sd->notify, "hide_finished_signal");
+   if ((hide_signal) && (!strcmp(hide_signal, "on")))
      {
         sd->in_timeout = EINA_TRUE;
         edje_object_signal_emit(sd->notify, "elm,state,hide", "elm");
@@ -301,8 +301,8 @@ _elm_notify_smart_hide(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
      return;
    eo_do_super(obj, MY_CLASS, evas_obj_smart_hide());
 
-   hide_signal = edje_object_data_get(sd->notify, "emit_hide_finished_signal");
-   if ((hide_signal) && (!strcmp(hide_signal, "yes")))
+   hide_signal = edje_object_data_get(sd->notify, "hide_finished_signal");
+   if ((hide_signal) && (!strcmp(hide_signal, "on")))
      {
         if (!sd->in_timeout)
           edje_object_signal_emit(sd->notify, "elm,state,hide", "elm");

@@ -19,7 +19,7 @@ group { name: "elm/notify/block_events/default";
 }
 group { name: "elm/notify/top/default";
      //this group is a design similar to the inwin group
-   data.item: "emit_hide_finished_signal" "yes";
+   data.item: "hide_finished_signal" "on";
    images {
       image: "shad_circ.png" COMP;
       image: "bt_dis_base.png" COMP;
@@ -111,7 +111,7 @@ group { name: "elm/notify/top/default";
 }
 group { name: "elm/notify/center/default";
      //this group is a design similar to the inwin group
-   data.item: "emit_hide_finished_signal" "yes";
+   data.item: "hide_finished_signal" "on";
    images {
       image: "bt_dis_base.png" COMP;
    }
@@ -187,7 +187,7 @@ group { name: "elm/notify/center/default";
 
 group { name: "elm/notify/bottom/default";
      //this group is a design similar to the inwin group
-   data.item: "emit_hide_finished_signal" "yes";
+   data.item: "hide_finished_signal" "on";
    images {
       image: "shad_circ.png" COMP;
       image: "bt_dis_base.png" COMP;
@@ -279,7 +279,7 @@ group { name: "elm/notify/bottom/default";
 }
 group { name: "elm/notify/left/default";
      //this group is a design similar to the inwin group
-   data.item: "emit_hide_finished_signal" "yes";
+   data.item: "hide_finished_signal" "on";
    images {
       image: "shad_circ.png" COMP;
       image: "bt_dis_base.png" COMP;
@@ -371,7 +371,7 @@ group { name: "elm/notify/left/default";
 }
 group { name: "elm/notify/right/default";
      //this group is a design similar to the inwin group
-   data.item: "emit_hide_finished_signal" "yes";
+   data.item: "hide_finished_signal" "on";
    images {
       image: "shad_circ.png" COMP;
       image: "bt_dis_base.png" COMP;
@@ -463,7 +463,7 @@ group { name: "elm/notify/right/default";
 }
 group { name: "elm/notify/top_left/default";
      //this group is a design similar to the inwin group
-   data.item: "emit_hide_finished_signal" "yes";
+   data.item: "hide_finished_signal" "on";
    images {
       image: "shad_circ.png" COMP;
       image: "bt_dis_base.png" COMP;
@@ -555,7 +555,7 @@ group { name: "elm/notify/top_left/default";
 }
 group { name: "elm/notify/top_right/default";
      //this group is a design similar to the inwin group
-   data.item: "emit_hide_finished_signal" "yes";
+   data.item: "hide_finished_signal" "on";
    images {
       image: "shad_circ.png" COMP;
       image: "bt_dis_base.png" COMP;
@@ -647,7 +647,7 @@ group { name: "elm/notify/top_right/default";
 }
 group { name: "elm/notify/bottom_left/default";
      //this group is a design similar to the inwin group
-   data.item: "emit_hide_finished_signal" "yes";
+   data.item: "hide_finished_signal" "on";
    images {
       image: "shad_circ.png" COMP;
       image: "bt_dis_base.png" COMP;
@@ -739,7 +739,7 @@ group { name: "elm/notify/bottom_left/default";
 }
 group { name: "elm/notify/bottom_right/default";
      //this group is a design similar to the inwin group
-   data.item: "emit_hide_finished_signal" "yes";
+   data.item: "hide_finished_signal" "on";
    images {
       image: "shad_circ.png" COMP;
       image: "bt_dis_base.png" COMP;
