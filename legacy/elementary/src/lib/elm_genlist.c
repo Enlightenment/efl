@@ -792,11 +792,13 @@ _item_tree_effect_finish(Elm_Genlist_Smart_Data *sd)
 static void
 _elm_genlist_item_position_state_update(Elm_Gen_Item *it)
 {
+   unsigned idx = it->item->order_num_in;
+
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
    
    if (!it->item->nostacking)
      {
-        if ((it->item->order_num_in & 0x1) ^ it->item->stacking_even)
+        if ((idx & 0x1) ^ it->item->stacking_even)
           {
              if (it->deco_all_view) evas_object_stack_below(it->deco_all_view, sd->stack[0]);
              else evas_object_stack_below(VIEW(it), sd->stack[0]);
@@ -808,7 +810,7 @@ _elm_genlist_item_position_state_update(Elm_Gen_Item *it)
           }
      }
 
-   if (it->item->order_num_in & 0x1)
+   if (idx & 0x1)
      {
         edje_object_signal_emit(VIEW(it), "elm,state,odd", "elm");
         if (it->deco_all_view)
@@ -820,6 +822,62 @@ _elm_genlist_item_position_state_update(Elm_Gen_Item *it)
         if (it->deco_all_view)
           edje_object_signal_emit(it->deco_all_view, "elm,state,even", "elm");
      }
+
+   if (sd->item_count == 1)
+     {
+        edje_object_signal_emit(VIEW(it), "elm,state,list,single", "elm");
+        if (it->deco_all_view)
+          edje_object_signal_emit(it->deco_all_view, "elm,state,list,single", "elm");
+     }
+   else if (idx == 0)
+     {
+        edje_object_signal_emit(VIEW(it), "elm,state,list,first", "elm");
+        if (it->deco_all_view)
+          edje_object_signal_emit(it->deco_all_view, "elm,state,list,first", "elm");
+     }
+   else if (idx == sd->item_count - 1)
+     {
+        edje_object_signal_emit(VIEW(it), "elm,state,list,last", "elm");
+        if (it->deco_all_view)
+          edje_object_signal_emit(it->deco_all_view, "elm,state,list,last", "elm");
+     }
+   else if (idx > 0)
+     {
+        edje_object_signal_emit(VIEW(it), "elm,state,list,middle", "elm");
+        if (it->deco_all_view)
+          edje_object_signal_emit(it->deco_all_view, "elm,state,list,middle", "elm");
+     }
+
+   if (it->parent)
+     {
+        unsigned first_idx = it->parent->item->order_num_in + 1;
+        unsigned count = eina_list_count(it->parent->item->items);
+
+        if (count == 1)
+          {
+             edje_object_signal_emit(VIEW(it), "elm,state,group,single", "elm");
+             if (it->deco_all_view)
+               edje_object_signal_emit(it->deco_all_view, "elm,state,group,single", "elm");
+          }
+        else if (idx == first_idx)
+          {
+             edje_object_signal_emit(VIEW(it), "elm,state,group,first", "elm");
+             if (it->deco_all_view)
+               edje_object_signal_emit(it->deco_all_view, "elm,state,group,first", "elm");
+          }
+        else if (it == eina_list_data_get(eina_list_last(it->parent->item->items)))
+          {
+             edje_object_signal_emit(VIEW(it), "elm,state,group,last", "elm");
+             if (it->deco_all_view)
+               edje_object_signal_emit(it->deco_all_view, "elm,state,group,last", "elm");
+          }
+        else if (idx > first_idx)
+          {
+             edje_object_signal_emit(VIEW(it), "elm,state,group,middle", "elm");
+             if (it->deco_all_view)
+               edje_object_signal_emit(it->deco_all_view, "elm,state,group,middle", "elm");
+          }
+     }
 }
 
 static void
@@ -827,6 +885,19 @@ _item_order_update(const Eina_Inlist *l,
                    int start)
 {
    Elm_Gen_Item *it, *it2;
+
+   /*
+    * always update position state of previous item, it may have been
+    * marked as "single" if it was the only element at the time, or
+    * "middle", "first" or "last" in the case of insert into different
+    * positions.
+    */
+   if ((l->prev) && (start > 0))
+     {
+        it = ELM_GEN_ITEM_FROM_INLIST(l->prev);
+        it->item->order_num_in = start - 1;
+        _elm_genlist_item_position_state_update(it);
+     }
 
    for (it = ELM_GEN_ITEM_FROM_INLIST(l); l; l = l->next,
         it = ELM_GEN_ITEM_FROM_INLIST(l))
