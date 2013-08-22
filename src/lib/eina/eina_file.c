@@ -509,7 +509,7 @@ eina_file_mmap_faulty(void *addr, long page_size)
 
         eina_lock_take(&f->lock);
 
-        if (f->global_map)
+        if (f->global_map != MAP_FAILED)
           {
              if ((unsigned char *) addr < (((unsigned char *)f->global_map) + f->length) &&
                  (((unsigned char *) addr) + page_size) >= (unsigned char *) f->global_map)

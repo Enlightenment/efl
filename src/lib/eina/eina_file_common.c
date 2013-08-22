@@ -48,6 +48,11 @@
 # include <Escape.h>
 #endif
 
+#ifdef MAP_FAILED
+# undef MAP_FAILED
+#endif
+#define MAP_FAILED ((void *)-1)
+
 Eina_Hash *_eina_file_cache = NULL;
 Eina_Lock _eina_file_lock_cache;
 
@@ -281,7 +286,7 @@ eina_file_flush(Eina_File *file, unsigned long int length)
    Eina_List *l;
 
    // File size changed
-   if (file->global_map)
+   if (file->global_map != MAP_FAILED)
      {
         // Forget global map
         tmp = malloc(sizeof (Eina_File_Map));
@@ -295,7 +300,7 @@ eina_file_flush(Eina_File *file, unsigned long int length)
              file->dead_map = eina_list_append(file->dead_map, tmp);
           }
 
-        file->global_map = NULL;
+        file->global_map = MAP_FAILED;
         file->refcount = 0;
      }
 
