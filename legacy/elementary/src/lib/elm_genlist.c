@@ -790,7 +790,7 @@ _item_tree_effect_finish(Elm_Genlist_Smart_Data *sd)
 }
 
 static void
-_elm_genlist_item_odd_even_update(Elm_Gen_Item *it)
+_elm_genlist_item_position_state_update(Elm_Gen_Item *it)
 {
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
    
@@ -832,7 +832,7 @@ _item_order_update(const Eina_Inlist *l,
         it = ELM_GEN_ITEM_FROM_INLIST(l))
      {
         it->item->order_num_in = start++;
-        _elm_genlist_item_odd_even_update(it);
+        _elm_genlist_item_position_state_update(it);
         it2 = ELM_GEN_ITEM_FROM_INLIST(l->next);
         if (it2 && (it->item->order_num_in != it2->item->order_num_in))
           return;
@@ -1074,7 +1074,7 @@ _decorate_all_item_realize(Elm_Gen_Item *it,
    edje_object_mirrored_set
      (it->deco_all_view, elm_widget_mirrored_get(WIDGET(it)));
 
-   _elm_genlist_item_odd_even_update(it);
+   _elm_genlist_item_position_state_update(it);
    _elm_genlist_item_state_update(it, NULL);
 
    if (effect_on)
@@ -2924,7 +2924,7 @@ _decorate_all_item_unrealize(Elm_Gen_Item *it)
    edje_object_part_unswallow(it->deco_all_view, VIEW(it));
    evas_object_smart_member_add(VIEW(it), GL_IT(it)->wsd->pan_obj);
    elm_widget_sub_object_add(WIDGET(it), VIEW(it));
-   _elm_genlist_item_odd_even_update(it);
+   _elm_genlist_item_position_state_update(it);
    _elm_genlist_item_state_update(it, NULL);
 
    if (it->item->wsd->reorder_mode)
