@@ -230,8 +230,8 @@ EFL_INIT
 
 AM_GNU_GETTEXT_VERSION([0.17])
 
-m4_ifdef([AM_GNU_GETTEXT], [
-AM_GNU_GETTEXT([external])
+m4_ifdef([AC_GNU_GETTEXT], [
+AC_GNU_GETTEXT([external])
 po_makefile_in=po/Makefile.in
 have_po="yes"
 ],
