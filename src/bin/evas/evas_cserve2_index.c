@@ -544,6 +544,14 @@ _shared_index_entry_get_by_id(Shared_Index *si, unsigned int id)
    base = si->sa->ds->data + sizeof(Shared_Array_Header);
    elemsize = si->sa->header->elemsize;
 
+   // Direct access, works for non-repacked arrays
+   if ((int) id < high)
+     {
+        obj = (Index_Entry *) (base + (elemsize * id));
+        if (obj->id == id)
+          return obj;
+     }
+
    // Binary search
    start_high = high;
    while(high != low)

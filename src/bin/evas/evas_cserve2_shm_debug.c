@@ -286,6 +286,14 @@ _shared_index_item_get_by_id(Shm_File *si, int elemsize, unsigned int id)
 
    base = si->data  + sizeof(Shared_Array_Header);
 
+   // Direct access, works for non-repacked arrays
+   if ((int) id < high)
+     {
+        obj = (Shm_Object *) (base + (elemsize * id));
+        if (obj->id == id)
+          return obj;
+     }
+
    // Binary search
    start_high = high;
    while(high != low)
