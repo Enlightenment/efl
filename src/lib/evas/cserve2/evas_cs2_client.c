@@ -440,6 +440,10 @@ _image_opened_cb(void *data, const void *msg_received, int size)
     * -- jpeg
     */
    //DBG("Received OPENED for RID: %d [open_rid: %d]", answer->rid, ie->open_rid);
+
+   if (ie->server_id && !ie->open_rid)
+     return;
+
    if (answer->rid != ie->open_rid)
      {
         WRN("Message rid (%d) differs from expected rid (open_rid: %d)", answer->rid, ie->open_rid);
@@ -536,6 +540,10 @@ _image_loaded_cb(void *data, const void *msg_received, int size)
    Image_Entry *ie = data;
 
    //DBG("Received LOADED for RID: %d [load_rid: %d]", answer->rid, ie->load_rid);
+
+   if (!ie->load_rid)
+     return;
+
    if (answer->rid != ie->load_rid)
      {
         WRN("Message rid (%d) differs from expected rid (load_rid: %d)", answer->rid, ie->load_rid);
@@ -926,7 +934,7 @@ evas_cserve2_image_load_wait(Image_Entry *ie)
 
 #if USE_SHARED_INDEX
    fd = _shared_image_entry_file_data_find(ie);
-   if (fd)
+   if (fd && fd->valid)
      {
         INF("Bypassing socket wait (open_rid %d)", ie->open_rid);
         ie->w = fd->w;
@@ -935,6 +943,7 @@ evas_cserve2_image_load_wait(Image_Entry *ie)
         ie->animated.loop_hint = fd->loop_hint;
         ie->animated.loop_count = fd->loop_count;
         ie->animated.frame_count = fd->frame_count;
+        ie->server_id = fd->id;
         ie->open_rid = 0;
         return CSERVE2_NONE;
      }
@@ -981,7 +990,7 @@ evas_cserve2_image_load_data_wait(Image_Entry *ie)
 
 #if USE_SHARED_INDEX
    idata = _shared_image_entry_image_data_find(ie);
-   if (idata)
+   if (idata && idata->valid)
      {
         // FIXME: Ugly copy & paste from _loaded_handle
         Data_Entry *dentry = ie->data2;
@@ -2196,7 +2205,7 @@ _shared_image_entry_image_data_find(Image_Entry *ie)
          eina_hash_find(_index.images.entries_by_hkey, ie->cache_key);
    if (idata)
      {
-        ERR("Image found in shared index (by cache_key).");
+        DBG("Image found in shared index (by cache_key).");
         goto found;
      }
 
@@ -2254,6 +2263,12 @@ _shared_image_entry_image_data_find(Image_Entry *ie)
      return NULL;
 
 found:
+   if (!idata->valid)
+     {
+        DBG("Found image but it is not ready yet: %d", idata->id);
+        return NULL;
+     }
+
    shmpath = _shared_string_get(idata->shm_id);
    if (!shmpath)
      {

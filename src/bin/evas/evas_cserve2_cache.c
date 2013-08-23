@@ -618,6 +618,7 @@ _open_request_response(Entry *entry, Slave_Msg_Image_Opened *resp, int *size)
         fd->loader_data = cserve2_shared_string_add(ldata);
      }
 
+   fd->valid = EINA_TRUE;
    return _image_opened_msg_create(fd, size);
 }
 
@@ -831,6 +832,7 @@ _load_request_response(Image_Entry *ientry,
    idata = _image_data_find(ENTRYID(ientry));
    if (!idata) return NULL;
 
+   idata->valid = EINA_TRUE;
    _entry_load_finish(ASENTRY(ientry));
    ASENTRY(ientry)->request = NULL;
 
@@ -1529,6 +1531,7 @@ _image_entry_new(Client *client, int rid,
         idata->opts.degree = opts->degree;
         idata->opts.orientation = opts->orientation;
      }
+   idata->valid = EINA_FALSE;
    idata->file_id = ref->entry->id;
    idata->refcount = 1;
    idata->id = image_id;
@@ -2463,10 +2466,11 @@ cserve2_cache_file_open(Client *client, unsigned int client_file_id,
         ERR("Could not create new file entry!");
         return -1;
      }
-   fd->id = file_id; // FIXME: write last (?)
+   fd->valid = EINA_FALSE;
    fd->refcount = 1;
    fd->path = cserve2_shared_string_add(path);
    fd->key = cserve2_shared_string_add(key);
+   fd->id = file_id;
 
    fentry = calloc(1, sizeof(File_Entry));
    ASENTRY(fentry)->type = CSERVE2_IMAGE_FILE;

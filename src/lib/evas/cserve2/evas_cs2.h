@@ -332,6 +332,7 @@ struct _File_Data {
    int loop_hint;
    Eina_Bool alpha : 1;
    Eina_Bool invalid : 1;
+   Eina_Bool valid : 1;
 };
 
 #define IMAGE_DATA_ARRAY_TAG ('I' | 'M' << 8 | 'A' << 16 | 'G' << 24)
@@ -343,6 +344,7 @@ struct _Image_Data {
    Eina_Bool alpha_sparse : 1;
    Eina_Bool unused : 1;
    Eina_Bool doload : 1;
+   Eina_Bool valid : 1;
 };
 
 #define FONT_DATA_ARRAY_TAG ('F' | 'O' << 8 | 'N' << 16 | 'T' << 24)
