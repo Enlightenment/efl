@@ -24,15 +24,15 @@ cserve2_client_error_send(Client *client, unsigned int rid, int error_code)
    int size;
    Msg_Error msg;
 
-    // clear the struct with possible paddings, since it is not aligned.
-    memset(&msg, 0, sizeof(msg));
-    msg.base.rid = rid;
-    msg.base.type = CSERVE2_ERROR;
-    msg.error = error_code;
+   // clear the struct with possible paddings, since it is not aligned.
+   memset(&msg, 0, sizeof(msg));
+   msg.base.rid = rid;
+   msg.base.type = CSERVE2_ERROR;
+   msg.error = error_code;
 
-    size = sizeof(msg);
-    cserve2_client_send(client, &size, sizeof(size));
-    cserve2_client_send(client, &msg, sizeof(msg));
+   size = sizeof(msg);
+   cserve2_client_send(client, &size, sizeof(size));
+   cserve2_client_send(client, &msg, sizeof(msg));
 }
 
 void

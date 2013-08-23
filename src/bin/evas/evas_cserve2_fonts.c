@@ -335,7 +335,7 @@ _font_slave_glyph_render(Font_Info *fi, Slave_Msg_Font_Glyphs_Loaded *response,
    if (!glyphsize)
      {
         FT_Done_Glyph(glyph);
-        return EINA_FALSE;
+        goto on_error;
      }
 
    buffer_id = cserve2_shared_mempool_buffer_new(response->mempool, glyphsize);
@@ -343,7 +343,7 @@ _font_slave_glyph_render(Font_Info *fi, Slave_Msg_Font_Glyphs_Loaded *response,
    if (!data)
      {
         FT_Done_Glyph(glyph);
-        return EINA_FALSE;
+        goto on_error;
      }
    memcpy(data, bglyph->bitmap.buffer, glyphsize);
 
@@ -363,6 +363,13 @@ _font_slave_glyph_render(Font_Info *fi, Slave_Msg_Font_Glyphs_Loaded *response,
    FT_Done_Glyph(glyph);
 
    return EINA_TRUE;
+
+on_error:
+   // Create invalid entry for this index.
+   memset(&response->glyphs[response->nglyphs], 0, sizeof(Slave_Msg_Glyph));
+   response->glyphs[response->nglyphs].index = idx;
+   response->nglyphs++;
+   return EINA_FALSE;
 }
 
 static void
