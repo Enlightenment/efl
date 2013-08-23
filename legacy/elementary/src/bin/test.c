@@ -330,7 +330,7 @@ _menu_create(const char *option_str)
 }
 
 static void
-_entry_activated_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_entry_changed_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    const char *str = elm_entry_entry_get(obj);
    if (!str) return;
@@ -479,8 +479,7 @@ my_win_main(const char *autorun, Eina_Bool test_win_only)
    elm_entry_scrollable_set(en, EINA_TRUE);
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   //evas_object_smart_callback_add(en, "activated", _entry_activated_cb, NULL);
-   evas_object_smart_callback_add(en, "changed,user", _entry_activated_cb, NULL);
+   evas_object_smart_callback_add(en, "changed,user", _entry_changed_cb, NULL);
    elm_box_pack_end(bx1, en);
    evas_object_show(en);
    elm_object_focus_set(en, EINA_TRUE);
