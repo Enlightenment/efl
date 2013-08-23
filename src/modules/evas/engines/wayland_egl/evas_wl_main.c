@@ -227,12 +227,7 @@ eng_window_use(Evas_GL_Wl_Window *gw)
 
    if (_evas_gl_wl_window)
      {
-        if ((eglGetCurrentContext() != 
-             _evas_gl_wl_window->egl_context[0]) ||
-            (eglGetCurrentSurface(EGL_READ) != 
-                _evas_gl_wl_window->egl_surface[0]) ||
-            (eglGetCurrentSurface(EGL_DRAW) != 
-                _evas_gl_wl_window->egl_surface[0]))
+        if (eglGetCurrentContext() != _evas_gl_wl_window->egl_context[0])
           force = EINA_TRUE;
      }
 
