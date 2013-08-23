@@ -715,7 +715,6 @@ static void
 _object_manager_iface_added_emit(Eldbus_Service_Object *obj,
                                  Eldbus_Service_Object *parent)
 {
-   Eina_List *l;
    Eldbus_Service_Interface *iface;
    Eldbus_Message_Iter *iter, *array;
    Eldbus_Message *sig = eldbus_message_signal_new(parent->path,
@@ -726,7 +725,7 @@ _object_manager_iface_added_emit(Eldbus_Service_Object *obj,
    eldbus_message_iter_arguments_append(iter, "oa{sa{sv}}", obj->path,
                                        &array);
 
-   EINA_LIST_FOREACH(obj->iface_added, l, iface)
+   EINA_LIST_FREE(obj->iface_added, iface)
      {
         if (!_propmgr_iface_props_append(iface, array))
           {
@@ -737,6 +736,7 @@ _object_manager_iface_added_emit(Eldbus_Service_Object *obj,
      }
    eldbus_message_iter_container_close(iter, array);
    eldbus_connection_send(parent->conn, sig, NULL, NULL, -1);
+   return;
 
 done:
    obj->iface_added = eina_list_free(obj->iface_added);
