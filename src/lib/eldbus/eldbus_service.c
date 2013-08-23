@@ -1115,7 +1115,10 @@ _interface_free(Eldbus_Service_Interface *interface)
          * Let's not send any signal */
         obj->iface_added = eina_list_remove_list(obj->iface_added, l);
         if (!obj->iface_added && !obj->iface_removed && obj->idler_iface_changed)
-          obj->idler_iface_changed = ecore_idler_del(obj->idler_iface_changed);
+          {
+             ecore_idler_del(obj->idler_iface_changed);
+             obj->idler_iface_changed = NULL;
+          }
      }
    else
      {
