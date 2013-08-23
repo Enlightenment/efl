@@ -974,6 +974,101 @@ fail:
    return NULL;
 }
 
+static Eina_Bool
+_idler_propschanged(void *data)
+{
+   Eldbus_Service_Interface *iface = data;
+   Eldbus_Message *msg;
+   Eldbus_Message_Iter *main_iter, *dict, *array_invalidate;
+   Eina_Hash *added = NULL;
+   Property *prop;
+
+   iface->idler_propschanged = NULL;
+
+   added = eina_hash_string_small_new(NULL);
+   msg = eldbus_message_signal_new(iface->obj->path, properties_iface->name,
+                                  properties_iface->signals[0].name);
+   EINA_SAFETY_ON_NULL_GOTO(msg, error);
+
+   main_iter = eldbus_message_iter_get(msg);
+   if (!eldbus_message_iter_arguments_append(main_iter, "sa{sv}", iface->name, &dict))
+     {
+        eldbus_message_unref(msg);
+        goto error;
+     }
+
+   if (!iface->props_changed)
+     goto invalidate;
+   while ((prop = eina_array_pop(iface->props_changed)))
+     {
+        Eldbus_Message_Iter *entry, *var;
+        Eldbus_Message *error_reply = NULL;
+        Eina_Bool ret;
+        Eldbus_Property_Get_Cb getter = NULL;
+
+        if (eina_hash_find(added, prop->property->name))
+          continue;
+        eina_hash_add(added, prop->property->name, prop);
+
+        if (prop->property->get_func)
+          getter = prop->property->get_func;
+        else if (iface->get_func)
+          getter = iface->get_func;
+
+        if (!getter || prop->is_invalidate)
+          continue;
+
+        EINA_SAFETY_ON_FALSE_GOTO(
+                eldbus_message_iter_arguments_append(dict, "{sv}", &entry), error);
+
+        eldbus_message_iter_basic_append(entry, 's', prop->property->name);
+        var = eldbus_message_iter_container_new(entry, 'v',
+                                               prop->property->type);
+
+        ret = getter(iface, prop->property->name, var, NULL, &error_reply);
+        if (!ret)
+          {
+             eldbus_message_unref(msg);
+             if (error_reply)
+               {
+                  ERR("Error reply was set without pass any input message.");
+                  eldbus_message_unref(error_reply);
+               }
+             ERR("Getter of property %s returned error.", prop->property->name);
+             goto error;
+          }
+
+        eldbus_message_iter_container_close(entry, var);
+        eldbus_message_iter_container_close(dict, entry);
+     }
+invalidate:
+   eldbus_message_iter_container_close(main_iter, dict);
+
+   eldbus_message_iter_arguments_append(main_iter, "as", &array_invalidate);
+
+   if (!iface->prop_invalidated)
+     goto end;
+   while ((prop = eina_array_pop(iface->prop_invalidated)))
+     {
+        if (!prop->is_invalidate)
+          continue;
+        eldbus_message_iter_basic_append(array_invalidate, 's',
+                                        prop->property->name);
+     }
+end:
+   eldbus_message_iter_container_close(main_iter, array_invalidate);
+
+   eldbus_service_signal_send(iface, msg);
+error:
+   if (added)
+     eina_hash_free(added);
+   if (iface->props_changed)
+     eina_array_flush(iface->props_changed);
+   if (iface->prop_invalidated)
+     eina_array_flush(iface->prop_invalidated);
+   return ECORE_CALLBACK_CANCEL;
+}
+
 static void
 _interface_free(Eldbus_Service_Interface *interface)
 {
@@ -985,6 +1080,15 @@ _interface_free(Eldbus_Service_Interface *interface)
        interface == objmanager)
      return;
 
+   /**
+    * flush props changes before remove interface
+    */
+   if (interface->idler_propschanged)
+     {
+        ecore_idler_del(interface->idler_propschanged);
+        _idler_propschanged(interface);
+     }
+
    eina_hash_free(interface->methods);
    while ((sig = eina_array_pop(interface->sign_of_signals)))
      eina_stringshare_del(sig);
@@ -992,8 +1096,6 @@ _interface_free(Eldbus_Service_Interface *interface)
    eina_hash_free(interface->properties);
    if (interface->props_changed)
      eina_array_free(interface->props_changed);
-   if (interface->idler_propschanged)
-     ecore_idler_del(interface->idler_propschanged);
    if (interface->prop_invalidated)
      eina_array_free(interface->prop_invalidated);
 
@@ -1031,8 +1133,10 @@ _object_free(Eldbus_Service_Object *obj)
 
    /* Flush ObjectManager interface before the entire object goes away */
    if (obj->idler_iface_changed)
-     ecore_idler_del(obj->idler_iface_changed);
-   _object_manager_changes_process(obj);
+     {
+        ecore_idler_del(obj->idler_iface_changed);
+        _object_manager_changes_process(obj);
+     }
 
    iterator = eina_hash_iterator_data_new(obj->interfaces);
    EINA_ITERATOR_FOREACH(iterator, iface)
@@ -1254,101 +1358,6 @@ eldbus_service_object_data_del(Eldbus_Service_Interface *iface, const char *key)
    ELDBUS_SERVICE_INTERFACE_CHECK_RETVAL(iface, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(key, NULL);
    return eldbus_data_del(&(((Eldbus_Service_Object *)iface->obj)->data), key);
-}
-
-static Eina_Bool
-_idler_propschanged(void *data)
-{
-   Eldbus_Service_Interface *iface = data;
-   Eldbus_Message *msg;
-   Eldbus_Message_Iter *main_iter, *dict, *array_invalidate;
-   Eina_Hash *added = NULL;
-   Property *prop;
-
-   iface->idler_propschanged = NULL;
-
-   added = eina_hash_string_small_new(NULL);
-   msg = eldbus_message_signal_new(iface->obj->path, properties_iface->name,
-                                  properties_iface->signals[0].name);
-   EINA_SAFETY_ON_NULL_GOTO(msg, error);
-
-   main_iter = eldbus_message_iter_get(msg);
-   if (!eldbus_message_iter_arguments_append(main_iter, "sa{sv}", iface->name, &dict))
-     {
-        eldbus_message_unref(msg);
-        goto error;
-     }
-
-   if (!iface->props_changed)
-     goto invalidate;
-   while ((prop = eina_array_pop(iface->props_changed)))
-     {
-        Eldbus_Message_Iter *entry, *var;
-        Eldbus_Message *error_reply = NULL;
-        Eina_Bool ret;
-        Eldbus_Property_Get_Cb getter = NULL;
-
-        if (eina_hash_find(added, prop->property->name))
-          continue;
-        eina_hash_add(added, prop->property->name, prop);
-
-        if (prop->property->get_func)
-          getter = prop->property->get_func;
-        else if (iface->get_func)
-          getter = iface->get_func;
-
-        if (!getter || prop->is_invalidate)
-          continue;
-
-        EINA_SAFETY_ON_FALSE_GOTO(
-                eldbus_message_iter_arguments_append(dict, "{sv}", &entry), error);
-
-        eldbus_message_iter_basic_append(entry, 's', prop->property->name);
-        var = eldbus_message_iter_container_new(entry, 'v',
-                                               prop->property->type);
-
-        ret = getter(iface, prop->property->name, var, NULL, &error_reply);
-        if (!ret)
-          {
-             eldbus_message_unref(msg);
-             if (error_reply)
-               {
-                  ERR("Error reply was set without pass any input message.");
-                  eldbus_message_unref(error_reply);
-               }
-             ERR("Getter of property %s returned error.", prop->property->name);
-             goto error;
-          }
-
-        eldbus_message_iter_container_close(entry, var);
-        eldbus_message_iter_container_close(dict, entry);
-     }
-invalidate:
-   eldbus_message_iter_container_close(main_iter, dict);
-
-   eldbus_message_iter_arguments_append(main_iter, "as", &array_invalidate);
-
-   if (!iface->prop_invalidated)
-     goto end;
-   while ((prop = eina_array_pop(iface->prop_invalidated)))
-     {
-        if (!prop->is_invalidate)
-          continue;
-        eldbus_message_iter_basic_append(array_invalidate, 's',
-                                        prop->property->name);
-     }
-end:
-   eldbus_message_iter_container_close(main_iter, array_invalidate);
-
-   eldbus_service_signal_send(iface, msg);
-error:
-   if (added)
-     eina_hash_free(added);
-   if (iface->props_changed)
-     eina_array_flush(iface->props_changed);
-   if (iface->prop_invalidated)
-     eina_array_flush(iface->prop_invalidated);
-   return ECORE_CALLBACK_CANCEL;
 }
 
 EAPI Eina_Bool

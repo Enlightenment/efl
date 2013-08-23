@@ -1135,6 +1135,13 @@ _eldbus_connection_free(Eldbus_Connection *conn)
    conn->refcount = 1;
    eldbus_cbs_free_dispatch(&(conn->cbs_free), conn);
 
+   /**
+    * Flush all messages in outgoing queue, also this will send all
+    * ObjectManager and Property changed signals of all paths that
+    * this connection is server.
+    */
+   dbus_connection_flush(conn->dbus_conn);
+
    EINA_INLIST_FOREACH_SAFE(conn->pendings, list, p)
      eldbus_pending_cancel(p);
 
