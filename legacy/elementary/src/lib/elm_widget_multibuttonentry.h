@@ -78,15 +78,11 @@ struct _Elm_Multibuttonentry_Smart_Data
                                              * total number of
                                              * invisible buttons */
 
-   Evas_Object                        *rect_for_end;
-
    Eina_List                          *items;
    Eina_List                          *filter_list;
    Elm_Object_Item                    *selected_it; /* selected item */
 
    const char                         *label_str, *guide_text_str;
-
-   MultiButtonEntry_Closed_Button_Type end_type;
 
    int                                 n_str;
    Multibuttonentry_View_State         view_state;
