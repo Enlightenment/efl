@@ -786,7 +786,15 @@ _object_manager_changes_process(void *data)
    obj->idler_iface_changed = NULL;
 
    if (!parent)
-     return EINA_FALSE;
+     {
+        const char *name;
+
+        obj->iface_added = eina_list_free(obj->iface_added);
+        EINA_LIST_FREE(obj->iface_removed, name)
+          eina_stringshare_del(name);
+
+        return EINA_FALSE;
+     }
 
    if (obj->iface_added)
      _object_manager_iface_added_emit(obj, parent);
