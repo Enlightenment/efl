@@ -750,8 +750,8 @@ _object_manager_iface_removed_emit(Eldbus_Service_Object *obj,
    const char *name;
    Eldbus_Message_Iter *iter, *array;
    Eldbus_Message *sig = eldbus_message_signal_new(parent->path,
-                                                 ELDBUS_FDO_INTERFACE_OBJECT_MANAGER,
-                                                 "InterfacesRemoved");
+                                                   ELDBUS_FDO_INTERFACE_OBJECT_MANAGER,
+                                                   "InterfacesRemoved");
    EINA_SAFETY_ON_NULL_RETURN(sig);
 
    iter = eldbus_message_iter_get(sig);
@@ -759,7 +759,7 @@ _object_manager_iface_removed_emit(Eldbus_Service_Object *obj,
 
    EINA_LIST_FOREACH(obj->iface_removed, l, name)
      {
-        eldbus_message_iter_arguments_append(array, name);
+        eldbus_message_iter_arguments_append(array, "s", name);
         eina_stringshare_del(name);
      }
    eldbus_message_iter_container_close(iter, array);
