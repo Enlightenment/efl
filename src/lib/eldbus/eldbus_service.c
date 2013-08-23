@@ -1469,8 +1469,5 @@ eldbus_service_object_manager_detach(Eldbus_Service_Interface *iface)
    ret = eina_hash_del(obj->interfaces, objmanager->name, NULL);
    obj->objmanager = NULL;
    obj->introspection_dirty = EINA_TRUE;
-   //properties + introspectable
-   if (eina_hash_population(iface->obj->interfaces) < 3)
-     eldbus_service_object_unregister(iface);
    return ret;
 }
