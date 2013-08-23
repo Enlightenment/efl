@@ -477,6 +477,7 @@ my_win_main(const char *autorun, Eina_Bool test_win_only)
    en = elm_entry_add(win);
    elm_entry_single_line_set(en, EINA_TRUE);
    elm_entry_scrollable_set(en, EINA_TRUE);
+   elm_object_part_text_set(en, "guide", "Type widget name here to search.");
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_smart_callback_add(en, "changed,user", _entry_changed_cb, NULL);
