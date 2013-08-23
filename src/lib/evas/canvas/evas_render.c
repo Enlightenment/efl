@@ -1618,16 +1618,13 @@ evas_render_updates_internal(Evas *eo_e,
 
    if (e->framespace.changed)
      {
-        int fx, fy, fw, fh;
-
-        fx = e->viewport.x - e->framespace.x;
-        fy = e->viewport.y - e->framespace.y;
-        fw = e->viewport.w + e->framespace.w;
-        fh = e->viewport.h + e->framespace.h;
-        if (fx < 0) fx = 0;
-        if (fy < 0) fy = 0;
+        /* NB: If the framespace changes, we need to add a redraw rectangle
+         * which covers the Whole viewport. This is because 'framespace' is 
+         * defined as "the space IN the viewport which is Occupied by the 
+         * window frame" */
         e->engine.func->output_redraws_rect_add(e->engine.data.output,
-                                                fx, fy, fw, fh);
+                                                e->viewport.x, e->viewport.y,
+                                                e->viewport.w, e->viewport.h);
      }
 
    if (redraw_all)
