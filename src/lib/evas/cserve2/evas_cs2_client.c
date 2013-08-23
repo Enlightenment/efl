@@ -1661,12 +1661,91 @@ evas_cserve2_font_glyph_bitmap_get(Font_Entry *fe, unsigned int idx, Font_Hint_F
 
 static Eina_Bool _shared_index_remap_check(Shared_Index *si, int elemsize);
 
+static Eina_Bool
+_string_index_refresh(void)
+{
+   size_t sz;
+   Eina_Bool ret = EINA_FALSE;
+
+   if (!_index.strings_entries.data
+       && _index.strings_entries.path[0]
+       && _index.strings_index.path[0])
+     {
+        _index.strings_entries.f = eina_file_open(_index.strings_entries.path, EINA_TRUE);
+        _index.strings_entries.size = eina_file_size_get(_index.strings_entries.f);
+        if (_index.strings_entries.size > 0)
+          _index.strings_entries.data = eina_file_map_all(_index.strings_entries.f, EINA_FILE_RANDOM);
+
+        if (!_index.strings_entries.data)
+          {
+             ERR("Could not map strings entries from: '%s'", _index.strings_entries.path);
+             eina_file_close(_index.strings_entries.f);
+             _index.strings_entries.f = NULL;
+             _index.strings_entries.data = NULL;
+             ret = EINA_FALSE;
+          }
+        else
+          {
+             DBG("Mapped string entries from %s", _index.strings_entries.path);
+             ret = EINA_TRUE;
+          }
+     }
+
+   if (_index.strings_entries.data &&
+       (!_index.strings_index.data && _index.strings_index.path[0]))
+     {
+        _index.strings_index.f = eina_file_open(_index.strings_index.path, EINA_TRUE);
+        sz = eina_file_size_get(_index.strings_index.f);
+        if (sz >= sizeof(Shared_Array_Header))
+          _index.strings_index.data = eina_file_map_all(_index.strings_index.f, EINA_FILE_RANDOM);
+
+        if (_index.strings_index.data)
+          {
+             DBG("Mapped string indexes from %s", _index.strings_index.path);
+             sz = eina_file_size_get(_index.strings_index.f);
+             _index.strings_index.count = (sz - sizeof(Shared_Array_Header)) / sizeof(Index_Entry);
+             if (_index.strings_index.count > _index.strings_index.header->count)
+               {
+                  WRN("Detected larger index than advertised: %d > %d",
+                      _index.strings_index.count, _index.strings_index.header->count);
+                  _index.strings_index.count = _index.strings_index.header->count;
+               }
+             ret = EINA_TRUE;
+          }
+        else
+          {
+             ERR("Could not map string indexes from %s", _index.strings_index.path);
+             eina_file_close(_index.strings_index.f);
+             eina_file_map_free(_index.strings_entries.f, _index.strings_entries.data);
+             eina_file_close(_index.strings_entries.f);
+             _index.strings_index.f = NULL;
+             _index.strings_entries.f = NULL;
+             _index.strings_entries.data = NULL;
+             ret = EINA_FALSE;
+          }
+     }
+
+   _shared_index_remap_check(&_index.strings_index, sizeof(Index_Entry));
+   if (_index.strings_entries.data)
+     {
+        if (eina_file_refresh(_index.strings_entries.f)
+            || (_index.strings_entries.size != (int) eina_file_size_get(_index.strings_entries.f)))
+          {
+             eina_file_map_free(_index.strings_entries.f, _index.strings_entries.data);
+             _index.strings_entries.data = eina_file_map_all(_index.strings_entries.f, EINA_FILE_RANDOM);
+             _index.strings_entries.size = eina_file_size_get(_index.strings_entries.f);
+             return EINA_TRUE;
+          }
+     }
+
+   return ret;
+}
+
 // Returns the number of correctly opened index arrays
 static int
 _server_index_list_set(Msg_Base *data, int size)
 {
    Msg_Index_List *msg = (Msg_Index_List *) data;
-   unsigned sz;
 
    // TODO #1: Check populate rule.
    // TODO #2: Protect memory for read-only access.
@@ -1713,68 +1792,7 @@ _server_index_list_set(Msg_Base *data, int size)
 
    eina_strlcpy(_index.strings_entries.path, msg->strings_entries_path, SHARED_BUFFER_PATH_MAX);
    eina_strlcpy(_index.strings_index.path, msg->strings_index_path, SHARED_BUFFER_PATH_MAX);
-
-   if (!_index.strings_entries.data
-       && _index.strings_entries.path[0]
-       && _index.strings_index.path[0])
-     {
-        _index.strings_entries.f = eina_file_open(_index.strings_entries.path, EINA_TRUE);
-        _index.strings_entries.size = eina_file_size_get(_index.strings_entries.f);
-        if (_index.strings_entries.size > 0)
-          _index.strings_entries.data = eina_file_map_all(_index.strings_entries.f, EINA_FILE_RANDOM);
-
-        if (!_index.strings_entries.data)
-          {
-             ERR("Could not map strings entries from: '%s'", _index.strings_entries.path);
-             eina_file_close(_index.strings_entries.f);
-             _index.strings_entries.f = NULL;
-             _index.strings_entries.data = NULL;
-          }
-        else DBG("Mapped string entries from %s", _index.strings_entries.path);
-     }
-
-   if (_index.strings_entries.data &&
-       (!_index.strings_index.data && _index.strings_index.path[0]))
-     {
-        _index.strings_index.f = eina_file_open(_index.strings_index.path, EINA_TRUE);
-        sz = eina_file_size_get(_index.strings_index.f);
-        if (sz >= sizeof(Shared_Array_Header))
-          _index.strings_index.data = eina_file_map_all(_index.strings_index.f, EINA_FILE_RANDOM);
-
-        if (_index.strings_index.data)
-          {
-             DBG("Mapped string indexes from %s", _index.strings_index.path);
-             sz = eina_file_size_get(_index.strings_index.f);
-             _index.strings_index.count = (sz - sizeof(Shared_Array_Header)) / sizeof(Index_Entry);
-             if (_index.strings_index.count > _index.strings_index.header->count)
-               {
-                  WRN("Detected larger index than advertised: %d > %d",
-                      _index.strings_index.count, _index.strings_index.header->count);
-                  _index.strings_index.count = _index.strings_index.header->count;
-               }
-          }
-        else
-          {
-             ERR("Could not map string indexes from %s", _index.strings_index.path);
-             eina_file_close(_index.strings_index.f);
-             eina_file_map_free(_index.strings_entries.f, _index.strings_entries.data);
-             eina_file_close(_index.strings_entries.f);
-             _index.strings_index.f = NULL;
-             _index.strings_entries.f = NULL;
-             _index.strings_entries.data = NULL;
-          }
-     }
-
-   _shared_index_remap_check(&_index.strings_index, sizeof(Index_Entry));
-   if (_index.strings_entries.data)
-     {
-        if (eina_file_refresh(_index.strings_entries.f))
-          {
-             eina_file_map_free(_index.strings_entries.f, _index.strings_entries.data);
-             _index.strings_entries.data = eina_file_map_all(_index.strings_entries.f, EINA_FILE_RANDOM);
-             _index.strings_entries.size = eina_file_size_get(_index.strings_entries.f);
-          }
-     }
+   _string_index_refresh();
 
 
    // 2. File indexes
@@ -1803,12 +1821,29 @@ _shared_string_get(int id)
 {
    Index_Entry *ie;
 
+   if (!_index.strings_entries.data)
+     {
+        CRIT("Strings table is not valid: no data");
+        return NULL;
+     }
+
    ie = (Index_Entry *)
          _shared_index_item_get_by_id(&_index.strings_index, sizeof(*ie), id);
    if (!ie) return NULL;
    if (ie->offset < 0) return NULL;
    if (!ie->refcount) return NULL;
-   if (ie->offset + ie->length > _index.strings_entries.size) return NULL;
+   if (ie->offset + ie->length > _index.strings_entries.size)
+     {
+        if (eina_file_refresh(_index.strings_entries.f)
+            || (_index.strings_entries.size != (int) eina_file_size_get(_index.strings_entries.f)))
+          {
+             DBG("String entries size has changed from %d to %d",
+                 _index.strings_entries.size, (int) eina_file_size_get(_index.strings_entries.f));
+             if (_string_index_refresh())
+               return _shared_string_get(id);
+          }
+        return NULL;
+     }
 
    return _index.strings_entries.data + ie->offset;
 }
@@ -1821,7 +1856,7 @@ static const char *
 _shared_file_data_hkey_get(char *hkey, const char *file, const char *key,
                            size_t hkey_size)
 {
-   size_t keylen, filelen;
+   size_t keylen = 0, filelen;
 
    if (key) keylen = strlen(key) + 1;
    filelen = strlen(file);
@@ -2071,6 +2106,7 @@ _shared_index_remap_check(Shared_Index *si, int elemsize)
              si->f = NULL;
              return EINA_FALSE;
           }
+        si->count = (filesize - sizeof(Shared_Array_Header)) / elemsize;
         refresh = EINA_TRUE;
      }
 
