@@ -249,6 +249,7 @@
  *
  * Default text parts of the entry that you can use for are:
  * @li "default" - text of the entry
+ * @li "guide" - placeholder of the entry
  *
  * Supported elm_object common APIs.
  * @li @ref elm_object_signal_emit

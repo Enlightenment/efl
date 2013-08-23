@@ -1026,7 +1026,7 @@ group { name: "elm/entry/base-single/default";
             text {
                style: "entry_single_textblock_guide_style";
                min: 0 1;
-               align: 0.0 0.0;
+               align: 0.0 0.5;
             }
          }
          description { state: "hidden" 0.0;
@@ -1197,7 +1197,7 @@ group { name: "elm/entry/base-password/default";
             text {
                style: "entry_single_textblock_guide_style";
                min: 0 1;
-               align: 0.0 0.0;
+               align: 0.0 0.5;
             }
          }
          description { state: "hidden" 0.0;
