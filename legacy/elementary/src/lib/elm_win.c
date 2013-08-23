@@ -63,6 +63,7 @@ struct _Elm_Win_Smart_Data
    Evas                 *evas;
    Evas_Object          *parent; /* parent *window* object*/
    Evas_Object          *img_obj, *frame_obj;
+   Evas_Object          *client_obj; /* rect representing the client */
    Eo                   *layout;
    Eo                   *box;
    Evas_Object          *obj; /* The object itself */
@@ -628,8 +629,8 @@ _elm_win_resize_job(void *data)
         int fx, fy, fw, fh;
 
         evas_output_framespace_get(sd->evas, &fx, &fy, &fw, &fh);
-        evas_object_resize(sd->frame_obj, w + fw, h + fh);
         evas_object_move(sd->frame_obj, -fx, -fy);
+        evas_object_resize(sd->frame_obj, w + fw, h + fh);
      }
 
    evas_object_resize(sd->obj, w, h);
@@ -2176,6 +2177,58 @@ static struct _resize_info _border_corner[4] =
 #endif
 
 static void
+_elm_win_frame_obj_move(void *data,
+                        Evas *e __UNUSED__,
+                        Evas_Object *obj __UNUSED__,
+                        void *event_info __UNUSED__)
+{
+   Elm_Win_Smart_Data *sd;
+   int fx, fy, fw, fh;
+   int ox, oy, ow, oh;
+   int x, y, w, h;
+
+   if (!(sd = data)) return;
+   if (!sd->client_obj) return;
+
+   evas_object_geometry_get(sd->frame_obj, &fx, &fy, &fw, &fh);
+   evas_object_geometry_get(sd->client_obj, &ox, &oy, &ow, &oh);
+
+   evas_output_framespace_get(sd->evas, &x, &y, &w, &h);
+   if ((x != (ox - fx)) || (y != (oy - fy)) || 
+       (w != (fw - ow)) || (h != (fh - oh)))
+     {
+        evas_output_framespace_set(sd->evas, (ox - fx), (oy - fy), 
+                                   (fw - ow), (fh - oh));
+     }
+}
+
+static void
+_elm_win_frame_obj_resize(void *data,
+                          Evas *e __UNUSED__,
+                          Evas_Object *obj __UNUSED__,
+                          void *event_info __UNUSED__)
+{
+   Elm_Win_Smart_Data *sd;
+   int fx, fy, fw, fh;
+   int ox, oy, ow, oh;
+   int x, y, w, h;
+
+   if (!(sd = data)) return;
+   if (!sd->client_obj) return;
+
+   evas_object_geometry_get(sd->frame_obj, &fx, &fy, &fw, &fh);
+   evas_object_geometry_get(sd->client_obj, &ox, &oy, &ow, &oh);
+
+   evas_output_framespace_get(sd->evas, &x, &y, &w, &h);
+   if ((x != (ox - fx)) || (y != (oy - fy)) || 
+       (w != (fw - ow)) || (h != (fh - oh)))
+     {
+        evas_output_framespace_set(sd->evas, (ox - fx), (oy - fy), 
+                                   (fw - ow), (fh - oh));
+     }
+}
+
+static void
 _elm_win_frame_cb_resize_show(void *data,
                               Evas_Object *obj __UNUSED__,
                               const char *sig __UNUSED__,
@@ -2346,10 +2399,8 @@ _elm_win_frame_add(Elm_Win_Smart_Data *sd,
                    const char *style)
 {
    Evas_Object *obj = sd->obj;
-   int w, h;
+   int w, h, mw, mh;
    short layer;
-   const char *framespacestr;
-   int fx = 0, fy = 0, fw = 0, fh = 0;
 
    sd->frame_obj = edje_object_add(sd->evas);
    layer = evas_object_layer_get(obj);
@@ -2362,13 +2413,24 @@ _elm_win_frame_add(Elm_Win_Smart_Data *sd,
         return;
      }
 
-   framespacestr = edje_object_data_get(sd->frame_obj, "framespace");
-   if (framespacestr)
-       sscanf(framespacestr, "%d %d %d %d", &fx, &fy, &fw, &fh);
-   evas_output_framespace_set(sd->evas, fx, fy, fw, fh);
+   sd->client_obj = evas_object_rectangle_add(sd->evas);
+   evas_object_color_set(sd->client_obj, 0, 0, 0, 0);
+   /* NB: Tried pass_events here, but that fails to send events */
+   evas_object_repeat_events_set(sd->client_obj, EINA_TRUE);
+   edje_object_part_swallow(sd->frame_obj, "elm.swallow.client", 
+                            sd->client_obj);
 
+   evas_object_event_callback_add
+     (sd->frame_obj, EVAS_CALLBACK_MOVE, _elm_win_frame_obj_move, sd);
+   evas_object_event_callback_add
+     (sd->frame_obj, EVAS_CALLBACK_RESIZE, _elm_win_frame_obj_resize, sd);
+
+   /* NB: Do NOT remove these calls !! Needed to calculate proper 
+    * framespace on inital show of the window */
+   edje_object_size_min_calc(sd->frame_obj, &mw, &mh);
    evas_object_move(sd->frame_obj, 0, 0);
-   evas_object_resize(sd->frame_obj, 1, 1);
+   evas_object_resize(sd->frame_obj, mw, mh);
+   evas_object_smart_calculate(sd->frame_obj);
 
    edje_object_signal_callback_add
      (sd->frame_obj, "elm,action,move,start", "elm",
@@ -2405,8 +2467,20 @@ static void
 _elm_win_frame_del(Elm_Win_Smart_Data *sd)
 {
    int w, h;
+
+   if (sd->client_obj) 
+     {
+        evas_object_del(sd->client_obj);
+        sd->client_obj = NULL;
+     }
+
    if (sd->frame_obj)
      {
+        evas_object_event_callback_del_full
+          (sd->frame_obj, EVAS_CALLBACK_MOVE, _elm_win_frame_obj_move, sd);
+        evas_object_event_callback_del_full
+          (sd->frame_obj, EVAS_CALLBACK_RESIZE, _elm_win_frame_obj_resize, sd);
+
         edje_object_signal_callback_del
           (sd->frame_obj, "elm,action,move,start", "elm",
               _elm_win_frame_cb_move_start);
