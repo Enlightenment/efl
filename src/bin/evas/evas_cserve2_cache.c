@@ -498,6 +498,8 @@ _image_loaded_msg_create(Image_Entry *ientry, Image_Data *idata, int *size)
    else
      idata->shm_id = cserve2_shared_string_add(shmpath);
 
+   idata->valid = EINA_TRUE;
+
    buf = (char *)msg + sizeof(*msg);
    memcpy(buf, shmpath, path_len);
 
@@ -832,7 +834,6 @@ _load_request_response(Image_Entry *ientry,
    idata = _image_data_find(ENTRYID(ientry));
    if (!idata) return NULL;
 
-   idata->valid = EINA_TRUE;
    _entry_load_finish(ASENTRY(ientry));
    ASENTRY(ientry)->request = NULL;
 

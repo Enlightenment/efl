@@ -1969,7 +1969,17 @@ _shared_index_item_get_by_id(Shared_Index *si, int elemsize, unsigned int id)
    high = si->header->emptyidx; // Should be si->header->sortedidx
 
    if (high > si->count)
-     high = si->count;
+     {
+        if (eina_file_refresh(si->f))
+          {
+             WRN("Refreshing indexes.");
+             _string_index_refresh();
+             _shared_index_remap_check(si, elemsize);
+             high = MIN(si->header->emptyidx, si->count);
+          }
+        else
+          high = si->count;
+     }
 
    base = si->data  + sizeof(Shared_Array_Header);
 
@@ -2128,12 +2138,26 @@ _shared_index_remap_check(Shared_Index *si, int elemsize)
 
    if (si->count != si->header->count)
      {
+        int oldcount;
         // generation_id should have been incremented. Maybe we are hitting
         // a race condition here, when cserve2 grows an index.
         WRN("Reported index count differs from known count: %d vs %d",
             si->header->count, si->count);
+        oldcount = si->count;
+        eina_file_refresh(si->f);
         filesize = eina_file_size_get(si->f);
         si->count = (filesize - sizeof(Shared_Array_Header)) / elemsize;
+        if (si->count != oldcount)
+          {
+             DBG("Remapping current index");
+             eina_file_map_free(si->f, si->data);
+             si->data = eina_file_map_all(si->f, EINA_FILE_RANDOM);
+             if (!si->data)
+               {
+                  ERR("Failed to remap index: %m");
+                  return EINA_FALSE;
+               }
+          }
         if (si->count > si->header->count)
           {
              WRN("Index reports %d elements, but file can contain only %d",
