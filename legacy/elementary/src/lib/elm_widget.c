@@ -5736,7 +5736,7 @@ _elm_widget_item_signal_callback_del(Elm_Widget_Item *item,
                edje_object_signal_callback_del_full(item->view, emission,
                                                     source,
                                                     _elm_widget_item_signal_cb,
-                                                    data);
+                                                    wisd);
           }
      }
 
