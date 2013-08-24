@@ -97,6 +97,19 @@ group { name: "elm/border/base/default";
          }
       }
       part {
+         name: "elm.swallow.client";
+         type: SWALLOW;
+         description {
+            state: "default" 0.0;
+            rel1 {
+               offset: 0 22;
+            }
+            rel2 {
+               offset: -1 -5;
+            }
+         }
+      }
+      part {
          name: "icon_area";
          type: RECT;
          description {
