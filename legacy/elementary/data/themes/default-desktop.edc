@@ -1395,11 +1395,34 @@ collections {
             tag:  "link" "+ color=#00000080 underline=on underline_color=#00000080";
             tag:  "hilight" "+ font=Sans:style=Bold";
          }
+         style { name: "entry_textblock_guide_style";
+            base: "font=Sans font_size=10 color=#00000040 wrap=word text_class=entry";
+            tag:  "em" "+ font=Sans:style=Oblique";
+            tag:  "hilight" "+ font=Sans:style=Bold";
+         }
       }
       data {
 //         item: context_menu_orientation "horizontal";
       }
       parts {
+         part { name: "elm.guide";
+            type: TEXTBLOCK;
+            mouse_events: 0;
+            scale: 1;
+            description { state: "default" 0.0;
+               rel1.to: "elm.text";
+               rel2.to: "elm.text";
+               text {
+                  style: "entry_textblock_guide_style";
+                  min: 0 1;
+                  align: 0.0 0.0;
+               }
+            }
+            description { state: "hidden" 0.0;
+               inherit: "default" 0.0;
+               visible: 0;
+            }
+         }
          part { name: "elm.text";
             type: TEXTBLOCK;
             mouse_events: 1;
@@ -1450,6 +1473,18 @@ collections {
             action: STATE_SET "default" 0.0;
             target: "elm.text";
          }
+         program { name: "gdisable";
+            signal: "elm,guide,disabled";
+            source: "elm";
+            action: STATE_SET "hidden" 0.0;
+            target: "elm.guide";
+         }
+         program { name: "genable";
+            signal: "elm,guide,enabled";
+            source: "elm";
+            action: STATE_SET "default" 0.0;
+            target: "elm.guide";
+         }
       }
    }
 
@@ -1476,8 +1511,31 @@ collections {
             tag:  "link" "+ color=#00000080 underline=on underline_color=#00000080";
             tag:  "hilight" "+ font=Sans:style=Bold";
          }
+         style { name: "entry_textblock_guide_style_charwrap";
+            base: "font=Sans font_size=10 color=#00000040 wrap=char text_class=entry";
+            tag:  "em" "+ font=Sans:style=Oblique";
+            tag:  "hilight" "+ font=Sans:style=Bold";
+         }
       }
       parts {
+         part { name: "elm.guide";
+            type: TEXTBLOCK;
+            mouse_events: 0;
+            scale: 1;
+            description { state: "default" 0.0;
+               rel1.to: "elm.text";
+               rel2.to: "elm.text";
+               text {
+                  style: "entry_textblock_guide_style_charwrap";
+                  min: 0 1;
+                  align: 0.0 0.0;
+               }
+            }
+            description { state: "hidden" 0.0;
+               inherit: "default" 0.0;
+               visible: 0;
+            }
+         }
          part { name: "elm.text";
             type: TEXTBLOCK;
             mouse_events: 1;
@@ -1527,11 +1585,41 @@ collections {
             action: STATE_SET "default" 0.0;
             target: "elm.text";
          }
+         program { name: "gdisable";
+            signal: "elm,guide,disabled";
+            source: "elm";
+            action: STATE_SET "hidden" 0.0;
+            target: "elm.guide";
+         }
+         program { name: "genable";
+            signal: "elm,guide,enabled";
+            source: "elm";
+            action: STATE_SET "default" 0.0;
+            target: "elm.guide";
+         }
       }
    }
 
    group { name: "elm/entry/base-nowrap/default";
       parts {
+         part { name: "elm.guide";
+            type: TEXTBLOCK;
+            mouse_events: 0;
+            scale: 1;
+            description { state: "default" 0.0;
+               rel1.to: "elm.text";
+               rel2.to: "elm.text";
+               text {
+                  style: "entry_textblock_guide_style";
+                  min: 0 1;
+                  align: 0.0 0.0;
+               }
+            }
+            description { state: "hidden" 0.0;
+               inherit: "default" 0.0;
+               visible: 0;
+            }
+         }
          part { name: "elm.text";
             type: TEXTBLOCK;
             mouse_events: 1;
@@ -1593,6 +1681,18 @@ collections {
             action: STATE_SET "default" 0.0;
             target: "elm.text";
          }
+         program { name: "gdisable";
+            signal: "elm,guide,disabled";
+            source: "elm";
+            action: STATE_SET "hidden" 0.0;
+            target: "elm.guide";
+         }
+         program { name: "genable";
+            signal: "elm,guide,enabled";
+            source: "elm";
+            action: STATE_SET "default" 0.0;
+            target: "elm.guide";
+         }
 /*
          program { name: "selmode0";
             signal: "elm,state,select,on";
@@ -1633,8 +1733,33 @@ collections {
             tag:  "link" "+ color=#00000080 underline=on underline_color=#00000080";
             tag:  "hilight" "+ font=Sans:style=Bold";
          }
+         style { name: "entry_single_textblock_guide_style";
+            base: "font=Sans font_size=10 color=#00000080 wrap=none";
+            tag:  "br" "";
+            tag:  "ps" "";
+            tag:  "em" "+ font=Sans:style=Oblique";
+            tag:  "hilight" "+ font=Sans:style=Bold";
+         }
       }
       parts {
+         part { name: "elm.guide";
+            type: TEXTBLOCK;
+            mouse_events: 0;
+            scale: 1;
+            description { state: "default" 0.0;
+               rel1.to: "elm.text";
+               rel2.to: "elm.text";
+               text {
+                  style: "entry_single_textblock_guide_style";
+                  min: 0 1;
+                  align: 0.0 0.5;
+               }
+            }
+            description { state: "hidden" 0.0;
+               inherit: "default" 0.0;
+               visible: 0;
+            }
+         }
          part { name: "elm.text";
             type: TEXTBLOCK;
             mouse_events: 1;
@@ -1679,6 +1804,18 @@ collections {
             source: "elm";
             action: STATE_SET "default" 0.0;
             target: "elm.text";
+         }
+         program { name: "gdisable";
+            signal: "elm,guide,disabled";
+            source: "elm";
+            action: STATE_SET "hidden" 0.0;
+            target: "elm.guide";
+         }
+         program { name: "genable";
+            signal: "elm,guide,enabled";
+            source: "elm";
+            action: STATE_SET "default" 0.0;
+            target: "elm.guide";
          }
       }
    }
@@ -1880,6 +2017,24 @@ collections {
 
    group { name: "elm/entry/base-password/default";
       parts {
+         part { name: "elm.guide";
+            type: TEXTBLOCK;
+            mouse_events: 0;
+            scale: 1;
+            description { state: "default" 0.0;
+               rel1.to: "elm.text";
+               rel2.to: "elm.text";
+               text {
+                  style: "entry_single_textblock_guide_style";
+                  min: 0 1;
+                  align: 0.0 0.5;
+               }
+            }
+            description { state: "hidden" 0.0;
+               inherit: "default" 0.0;
+               visible: 0;
+            }
+         }
          part { name: "elm.text";
             type: TEXTBLOCK;
             mouse_events: 1;
@@ -1925,6 +2080,18 @@ collections {
             source: "elm";
             action: STATE_SET "default" 0.0;
             target: "elm.text";
+         }
+         program { name: "gdisable";
+            signal: "elm,guide,disabled";
+            source: "elm";
+            action: STATE_SET "hidden" 0.0;
+            target: "elm.guide";
+         }
+         program { name: "genable";
+            signal: "elm,guide,enabled";
+            source: "elm";
+            action: STATE_SET "default" 0.0;
+            target: "elm.guide";
          }
       }
    }
