@@ -99,6 +99,7 @@ static int
 _ecore_x_error_handle(Display *d,
                       XErrorEvent *ev)
 {
+   if (!_ecore_xlib_sync) goto skip;
    switch (ev->error_code)
      {
       case BadRequest:	/* bad request code */
@@ -153,6 +154,7 @@ _ecore_x_error_handle(Display *d,
         ERR("BadImplementation");
         break;
      }
+skip:
    if (d == _ecore_x_disp)
      {
         _error_request_code = ev->request_code;
