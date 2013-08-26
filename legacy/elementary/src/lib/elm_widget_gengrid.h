@@ -25,6 +25,7 @@ struct _Elm_Gengrid_Smart_Data
    Evas_Object                          *hit_rect;
    Evas_Object                          *pan_obj;
    Evas_Object                          *obj; // the object itself
+   Evas_Object                          *stack; // stacking markers in pan for selectraise feature
 
    Eina_List                            *selected; /* a list of
                                                     * selected

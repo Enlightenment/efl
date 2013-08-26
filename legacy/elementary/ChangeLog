@@ -1573,3 +1573,7 @@
         applying themes more strictly if it tries to apply same theme. This
         increases the performance hugely in case that user applies a specific
         theme to the window object.
+
+2013-08-26  Daniel Juyung Seo (SeoZ)
+
+        * Gengrid: implement selectraise feature.

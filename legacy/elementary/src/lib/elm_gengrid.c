@@ -292,17 +292,21 @@ static void
 _item_unselect(Elm_Gen_Item *it)
 {
    Elm_Gen_Item_Type *item = GG_IT(it);
+   Elm_Gengrid_Smart_Data *sd = item->wsd;
 
-   if ((it->generation < item->wsd->generation) || (!it->highlighted))
+   if ((it->generation < sd->generation) || (!it->highlighted))
      return;
 
    edje_object_signal_emit(VIEW(it), "elm,state,unselected", "elm");
    evas_object_smart_callback_call(WIDGET(it), SIG_UNHIGHLIGHTED, it);
+
+   evas_object_stack_below(VIEW(it), sd->stack);
+
    it->highlighted = EINA_FALSE;
    if (it->selected)
      {
         it->selected = EINA_FALSE;
-        item->wsd->selected = eina_list_remove(item->wsd->selected, it);
+        sd->selected = eina_list_remove(sd->selected, it);
         evas_object_smart_callback_call(WIDGET(it), SIG_UNSELECTED, it);
      }
 }
@@ -465,13 +469,21 @@ _long_press_cb(void *data)
 static void
 _item_highlight(Elm_Gen_Item *it)
 {
-   if ((GG_IT(it)->wsd->select_mode == ELM_OBJECT_SELECT_MODE_NONE)
-       || (!GG_IT(it)->wsd->highlight) || (it->highlighted) ||
-       (it->generation < GG_IT(it)->wsd->generation))
+   const char *selectraise = NULL;
+   Elm_Gengrid_Smart_Data *sd = GG_IT(it)->wsd;
+
+   if ((sd->select_mode == ELM_OBJECT_SELECT_MODE_NONE)
+       || (!sd->highlight) || (it->highlighted) ||
+       (it->generation < sd->generation))
      return;
 
    edje_object_signal_emit(VIEW(it), "elm,state,selected", "elm");
    evas_object_smart_callback_call(WIDGET(it), SIG_HIGHLIGHTED, it);
+
+   selectraise = edje_object_data_get(VIEW(it), "selectraise");
+   if ((selectraise) && (!strcmp(selectraise, "on")))
+     evas_object_stack_above(VIEW(it), sd->stack);
+
    it->highlighted = EINA_TRUE;
 }
 
@@ -747,6 +759,8 @@ _item_realize(Elm_Gen_Item *it)
             it->itc->item_style ? it->itc->item_style : "default");
    elm_widget_theme_object_set(WIDGET(it), VIEW(it), "gengrid", style,
                                elm_widget_style_get(WIDGET(it)));
+   evas_object_stack_below(VIEW(it), GG_IT(it)->wsd->stack);
+
    it->spacer =
      evas_object_rectangle_add(evas_object_evas_get(WIDGET(it)));
    evas_object_color_set(it->spacer, 0, 0, 0, 0);
@@ -2377,7 +2391,6 @@ _elm_gengrid_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Eina_Bool bounce = _elm_config->thumbscroll_bounce_enable;
    Elm_Gengrid_Pan_Smart_Data *pan_data;
-
    Elm_Gengrid_Smart_Data *priv = _pd;
    Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
@@ -2432,6 +2445,10 @@ _elm_gengrid_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    pan_data->wobj = obj;
    pan_data->wsd = priv;
 
+   priv->stack = evas_object_rectangle_add(evas_object_evas_get(obj));
+   evas_object_smart_member_add(priv->stack, priv->pan_obj);
+   evas_object_raise(priv->stack);
+
    eo_do(obj, elm_scrollable_interface_extern_pan_set(priv->pan_obj));
 }
 
@@ -2444,6 +2461,7 @@ _elm_gengrid_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    eo_unref(sd->pan_obj);
    evas_object_del(sd->pan_obj);
    sd->pan_obj = NULL;
+   ELM_SAFE_FREE(sd->stack, evas_object_del);
 
    if (sd->calc_job) ecore_job_del(sd->calc_job);
 
