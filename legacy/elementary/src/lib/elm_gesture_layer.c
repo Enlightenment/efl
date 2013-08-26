@@ -3738,6 +3738,8 @@ _elm_gesture_layer_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 
+   elm_widget_sub_object_add(eo_parent_get(obj), obj);
+
    Elm_Gesture_Layer_Smart_Data *priv = _pd;
 
    priv->line_min_length =
@@ -3830,8 +3832,6 @@ _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj, evas_obj_type_set(MY_CLASS_NAME));
-
-   elm_widget_sub_object_add(eo_parent_get(obj), obj);
 }
 
 EAPI Eina_Bool
