@@ -1,7 +1,4 @@
 /**
- * @enum Elm_List_Mode
- * @typedef Elm_List_Mode
- *
  * Set list's resizing behavior, transverse axis scrolling and items
  * cropping. See each mode's description for more details.
  *
