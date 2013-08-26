@@ -1365,6 +1365,8 @@ _glyph_map_remap_check(Glyph_Map *map)
    if (eina_file_refresh(map->mempool.f)
        || (eina_file_size_get(map->mempool.f) != (size_t) map->mempool.size))
      {
+        CS_Glyph_Out *gl;
+
         WRN("Glyph pool has been resized.");
         eina_file_map_free(map->mempool.f, map->mempool.data);
         map->mempool.data = eina_file_map_all(map->mempool.f, EINA_FILE_RANDOM);
@@ -1373,6 +1375,17 @@ _glyph_map_remap_check(Glyph_Map *map)
         else
           map->mempool.size = 0;
         changed = EINA_TRUE;
+
+        // Remap loaded glyphs
+        EINA_CLIST_FOR_EACH_ENTRY(gl, &map->fe->map->glyphs,
+                                  CS_Glyph_Out, map_entry)
+          {
+             if (map->mempool.data)
+               gl->base.bitmap.buffer = (unsigned char *)
+                     map->mempool.data + gl->offset;
+             else
+               gl->base.bitmap.buffer = NULL;
+          }
      }
 
    map->index.generation_id = _index.generation_id;
@@ -2050,6 +2063,7 @@ _shared_image_entry_file_data_find(Image_Entry *ie)
         if (!fd->id) break;
         if (!fd->refcount) continue;
 
+        key = _shared_string_get(fd->key);
         file = _shared_string_get(fd->path);
         if (!file)
           {
@@ -2058,7 +2072,11 @@ _shared_image_entry_file_data_find(Image_Entry *ie)
              add_to_hash = EINA_FALSE;
              continue;
           }
-        key = _shared_string_get(fd->key);
+
+        // Note: The strings base pointer may change if the index grows
+        if ((key < _index.strings_entries.data) ||
+            (key > _index.strings_entries.data + _index.strings_entries.size))
+          key = _shared_string_get(fd->key);
 
         _shared_file_data_hkey_get(fd_hkey, file, key, PATH_MAX);
 
@@ -2385,6 +2403,12 @@ _shared_image_entry_image_data_find(Image_Entry *ie)
                   add_to_hash = EINA_FALSE;
                   continue;
                }
+
+             // Note: The strings base pointer may change if the index grows
+             if ((key < _index.strings_entries.data) ||
+                 (key > _index.strings_entries.data + _index.strings_entries.size))
+               key = _shared_string_get(fd->key);
+
              keylen = key ? strlen(key) : 0;
              filelen = strlen(file);
 
