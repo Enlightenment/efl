@@ -1136,22 +1136,59 @@ _interface_free(Eldbus_Service_Interface *interface)
    free(interface);
 }
 
+static void _children_ifaces_add_removed_flush(Eldbus_Service_Object *obj)
+{
+   Eldbus_Service_Object *children;
+
+   EINA_INLIST_FOREACH(obj->children, children)
+     {
+        /**
+         * if there a object manager in some child
+         * that object manager is responsible for they
+         * children objects
+         */
+        if (!obj->objmanager)
+          _children_ifaces_add_removed_flush(children);
+     }
+
+   if (obj->idler_iface_changed)
+     {
+        ecore_idler_del(obj->idler_iface_changed);
+        _object_manager_changes_process(obj);
+     }
+}
+
 static void
 _object_free(Eldbus_Service_Object *obj)
 {
    Eina_Iterator *iterator;
    Eldbus_Service_Interface *iface;
 
-   /* Flush ObjectManager interface before the entire object goes away */
-   if (obj->idler_iface_changed)
+   if (obj->objmanager)
      {
-        ecore_idler_del(obj->idler_iface_changed);
-        _object_manager_changes_process(obj);
+        Eldbus_Service_Object *children;
+
+        /**
+         * Flush the iface_add/removed of all children objects
+         * that this object is the ObjectManager
+         */
+        EINA_INLIST_FOREACH(obj->children, children)
+          _children_ifaces_add_removed_flush(children);
      }
 
    iterator = eina_hash_iterator_data_new(obj->interfaces);
    EINA_ITERATOR_FOREACH(iterator, iface)
      _interface_free(iface);
+
+   /**
+    * Flush our iface_add/removed if this object are
+    * children of some other path with ObjectManager
+    */
+   if (obj->idler_iface_changed)
+     {
+        ecore_idler_del(obj->idler_iface_changed);
+        _object_manager_changes_process(obj);
+     }
 
    while (obj->children)
      {
@@ -1171,6 +1208,7 @@ _object_free(Eldbus_Service_Object *obj)
              child->parent = NULL;
           }
      }
+
    if (obj->parent)
      obj->parent->children = eina_inlist_remove(obj->parent->children,
 						EINA_INLIST_GET(obj));
@@ -1458,16 +1496,20 @@ eldbus_service_object_manager_attach(Eldbus_Service_Interface *iface)
 EAPI Eina_Bool
 eldbus_service_object_manager_detach(Eldbus_Service_Interface *iface)
 {
-   Eldbus_Service_Object *obj;
+   Eldbus_Service_Object *obj, *children;
    Eina_Bool ret;
 
    ELDBUS_SERVICE_INTERFACE_CHECK_RETVAL(iface, EINA_FALSE);
    obj = iface->obj;
+   if (!obj->objmanager)
+     return EINA_TRUE;
 
-   /* Flush our iface_added/iface_removed before our ObjectManager goes away */
-   if (obj->idler_iface_changed)
-     ecore_idler_del(obj->idler_iface_changed);
-   _object_manager_changes_process(obj);
+   /**
+    * Flush the iface_add/removed of all children objects
+    * that this object is the ObjectManager
+    */
+   EINA_INLIST_FOREACH(obj->children, children)
+     _children_ifaces_add_removed_flush(children);
 
    ret = eina_hash_del(obj->interfaces, objmanager->name, NULL);
    obj->objmanager = NULL;
