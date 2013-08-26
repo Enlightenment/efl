@@ -1264,16 +1264,17 @@ _object_unregister(DBusConnection *conn EINA_UNUSED, void *user_data)
 }
 
 static DBusHandlerResult
-_object_handler(DBusConnection *conn EINA_UNUSED, DBusMessage *msg, void *user_data)
+_object_handler(DBusConnection *dbus_conn EINA_UNUSED, DBusMessage *msg, void *user_data)
 {
    Eldbus_Service_Object *obj;
    Eldbus_Service_Interface *iface;
    const Eldbus_Method *method;
-   Eldbus_Message *eldbus_msg;
-   Eldbus_Message *reply;
+   Eldbus_Message *eldbus_msg, *reply;
+   Eldbus_Connection *conn;
 
    obj = user_data;
    if (!obj) return DBUS_HANDLER_RESULT_NOT_YET_HANDLED;
+   conn = obj->conn;
 
    DBG("Connection@%p Got message:\n"
           "  Type: %s\n"
@@ -1299,6 +1300,9 @@ _object_handler(DBusConnection *conn EINA_UNUSED, DBusMessage *msg, void *user_d
    dbus_message_ref(eldbus_msg->dbus_msg);
    dbus_message_iter_init(eldbus_msg->dbus_msg, &eldbus_msg->iterator->dbus_iterator);
 
+   eldbus_init();
+   eldbus_connection_ref(conn);
+
    if (!_have_signature(method->in, eldbus_msg))
      reply = eldbus_message_error_new(eldbus_msg, DBUS_ERROR_INVALID_SIGNATURE,
                                       "See introspectable to know the expected signature");
@@ -1318,7 +1322,10 @@ _object_handler(DBusConnection *conn EINA_UNUSED, DBusMessage *msg, void *user_d
 
    eldbus_message_unref(eldbus_msg);
    if (reply)
-     _eldbus_connection_send(obj->conn, reply, NULL, NULL, -1);
+     _eldbus_connection_send(conn, reply, NULL, NULL, -1);
+
+   eldbus_connection_unref(conn);
+   eldbus_shutdown();
 
    return DBUS_HANDLER_RESULT_HANDLED;
 }
