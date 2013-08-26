@@ -1141,6 +1141,7 @@ _glyphs_map_free(Glyph_Map *map)
    eina_file_close(map->mempool.f);
    eina_file_map_free(map->index.f, map->index.data);
    eina_file_close(map->index.f);
+   eina_hash_free(map->index.entries_by_hkey);
    map->fe->map = NULL;
    free(map);
 }
@@ -1338,11 +1339,14 @@ _glyph_map_open(Font_Entry *fe, const char *indexpath, const char *datapath)
 
    map->fe = fe;
    eina_clist_init(&map->glyphs);
-   eina_strlcpy(map->index.path, indexpath, SHARED_BUFFER_PATH_MAX);
    eina_strlcpy(map->mempool.path, datapath, SHARED_BUFFER_PATH_MAX);
 
-   map->index.generation_id = _index.generation_id;
-   _shared_index_remap_check(&map->index, sizeof(Glyph_Data));
+   if (indexpath)
+     {
+        eina_strlcpy(map->index.path, indexpath, SHARED_BUFFER_PATH_MAX);
+        map->index.generation_id = _index.generation_id;
+        _shared_index_remap_check(&map->index, sizeof(Glyph_Data));
+     }
 
    map->mempool.f = eina_file_open(map->mempool.path, EINA_TRUE);
    map->mempool.size = eina_file_size_get(map->mempool.f);
@@ -1350,6 +1354,22 @@ _glyph_map_open(Font_Entry *fe, const char *indexpath, const char *datapath)
 
    fe->map = map;
    return map;
+}
+
+static void
+_glyph_map_remap_check(Glyph_Map *map)
+{
+   if (eina_file_refresh(map->mempool.f)
+       || (eina_file_size_get(map->mempool.f) != (size_t) map->mempool.size))
+     {
+        WRN("Glyph pool has been resized.");
+        eina_file_map_free(map->mempool.f, map->mempool.data);
+        map->mempool.data = eina_file_map_all(map->mempool.f, EINA_FILE_RANDOM);
+        if (map->mempool.data)
+          map->mempool.size = eina_file_size_get(map->mempool.f);
+        else
+          map->mempool.size = 0;
+     }
 }
 
 static void
@@ -1405,6 +1425,8 @@ _glyph_request_cb(void *data, const void *msg, int size)
           datapath = name;
         fe->map = _glyph_map_open(fe, idxpath, datapath);
      }
+   else
+     _glyph_map_remap_check(fe->map);
 
    for (i = 0; i < nglyphs; i++)
      {
@@ -1450,6 +1472,12 @@ _glyph_request_cb(void *data, const void *msg, int size)
              gl->base.bitmap.num_grays = num_grays;
              gl->base.bitmap.pixel_mode = pixel_mode;
              gl->rid = 0;
+
+             if (gl->offset + glsize > (size_t) fe->map->mempool.size)
+               {
+                  ERR("Glyph is out of the buffer. Set buffer to NULL.");
+                  gl->base.bitmap.buffer = NULL;
+               }
 
              eina_clist_add_head(&fe->map->glyphs, &gl->map_entry);
           }
