@@ -55,6 +55,7 @@ static const Shm_Object *_shared_index_item_get_by_id(Shared_Index *si, int elem
 static const File_Data *_shared_image_entry_file_data_find(Image_Entry *ie);
 static const Image_Data *_shared_image_entry_image_data_find(Image_Entry *ie);
 static const Font_Data *_shared_font_entry_data_find(Font_Entry *fe);
+static Eina_Bool _shared_index_remap_check(Shared_Index *si, int elemsize);
 
 #ifndef UNIX_PATH_MAX
 #define UNIX_PATH_MAX sizeof(((struct sockaddr_un *)NULL)->sun_path)
@@ -1100,7 +1101,7 @@ struct _Font_Entry
 
    unsigned int rid; // open
 
-   Eina_Hash *glyphs_maps;
+   Glyph_Map *map;
    Fash_Glyph2 *fash[3]; // one per hinting value
 
    Eina_Clist glyphs_queue;
@@ -1114,10 +1115,8 @@ struct _Font_Entry
 struct _Glyph_Map
 {
    Font_Entry *fe;
-   const char *name;
-   unsigned int size;
-   Eina_File *map;
-   unsigned char *data;
+   Shared_Index index;
+   Shared_Buffer mempool;
    Eina_Clist glyphs;
 };
 
@@ -1135,12 +1134,15 @@ struct _CS_Glyph_Out
 };
 
 static void
-_glyphs_map_free(Glyph_Map *m)
+_glyphs_map_free(Glyph_Map *map)
 {
-   eina_file_map_free(m->map, m->data);
-   eina_file_close(m->map);
-   eina_stringshare_del(m->name);
-   free(m);
+   if (!map) return;
+   eina_file_map_free(map->mempool.f, map->mempool.data);
+   eina_file_close(map->mempool.f);
+   eina_file_map_free(map->index.f, map->index.data);
+   eina_file_close(map->index.f);
+   map->fe->map = NULL;
+   free(map);
 }
 
 static void
@@ -1150,26 +1152,12 @@ _glyph_out_free(void *gl)
 
    if (glout->map)
      {
-        // FIXME: Invalid write of size 8 here (64 bit machine)
         eina_clist_remove(&glout->map_entry);
         if (eina_clist_empty(&glout->map->glyphs))
-          {
-             eina_hash_del(glout->map->fe->glyphs_maps, &glout->map->name,
-                           NULL);
-             _glyphs_map_free(glout->map);
-          }
+          _glyphs_map_free(glout->map);
      }
 
    free(glout);
-}
-
-static Eina_Bool
-_glyphs_maps_foreach_free(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, void *data, void *fdata EINA_UNUSED)
-{
-   Glyph_Map *m = data;
-
-   _glyphs_map_free(m);
-   return EINA_TRUE;
 }
 
 static void
@@ -1185,8 +1173,7 @@ _font_entry_free(Font_Entry *fe)
    free(fe->hkey);
    eina_stringshare_del(fe->source);
    eina_stringshare_del(fe->name);
-   eina_hash_foreach(fe->glyphs_maps, _glyphs_maps_foreach_free, NULL);
-   eina_hash_free(fe->glyphs_maps);
+   _glyphs_map_free(fe->map);
    free(fe);
 }
 
@@ -1269,7 +1256,6 @@ evas_cserve2_font_load(const char *source, const char *name, int size, int dpi,
         return NULL;
      }
 
-   fe->glyphs_maps = eina_hash_stringshared_new(NULL);
    eina_clist_init(&fe->glyphs_queue);
    eina_clist_init(&fe->glyphs_used);
 
@@ -1339,6 +1325,33 @@ typedef struct
    unsigned int rid;
 } Glyph_Request_Data;
 
+static Glyph_Map *
+_glyph_map_open(Font_Entry *fe, const char *indexpath, const char *datapath)
+{
+   Glyph_Map *map;
+
+   if (!fe) return NULL;
+   if (fe->map) return fe->map;
+
+   map = calloc(1, sizeof(*map));
+   if (!map) return NULL;
+
+   map->fe = fe;
+   eina_clist_init(&map->glyphs);
+   eina_strlcpy(map->index.path, indexpath, SHARED_BUFFER_PATH_MAX);
+   eina_strlcpy(map->mempool.path, datapath, SHARED_BUFFER_PATH_MAX);
+
+   map->index.generation_id = _index.generation_id;
+   _shared_index_remap_check(&map->index, sizeof(Glyph_Data));
+
+   map->mempool.f = eina_file_open(map->mempool.path, EINA_TRUE);
+   map->mempool.size = eina_file_size_get(map->mempool.f);
+   map->mempool.data = eina_file_map_all(map->mempool.f, EINA_FILE_RANDOM);
+
+   fe->map = map;
+   return map;
+}
+
 static void
 _glyph_request_cb(void *data, const void *msg, int size)
 {
@@ -1349,7 +1362,6 @@ _glyph_request_cb(void *data, const void *msg, int size)
    int i, nglyphs;
    int namelen;
    const char *name;
-   Glyph_Map *map;
    int pos;
 
    if (resp->base.type == CSERVE2_ERROR)
@@ -1372,25 +1384,27 @@ _glyph_request_cb(void *data, const void *msg, int size)
    pos += namelen + sizeof(int);
    if (pos > size) goto end;
 
-   name = eina_stringshare_add_length(buf, namelen);
+   name = buf; //eina_stringshare_add_length(buf, namelen);
    buf += namelen;
 
    memcpy(&nglyphs, buf, sizeof(int));
    buf += sizeof(int);
 
-   map = eina_hash_find(fe->glyphs_maps, name);
-   if (!map)
+   if (!fe->map)
      {
-        map = calloc(1, sizeof(*map));
-        map->fe = fe;
-        map->name = name;
-        map->map = eina_file_open(name, EINA_TRUE);
-        map->data = eina_file_map_all(map->map, EINA_FILE_WILLNEED);
-        eina_clist_init(&map->glyphs);
-        eina_hash_direct_add(fe->glyphs_maps, &map->name, map);
+        const Font_Data *fd;
+        const char *idxpath = NULL, *datapath;
+
+        fd = _shared_font_entry_data_find(fe);
+        if (fd)
+          {
+             idxpath = _shared_string_get(fd->glyph_index_shm);
+             datapath = _shared_string_get(fd->mempool_shm);
+          }
+        else
+          datapath = name;
+        fe->map = _glyph_map_open(fe, idxpath, datapath);
      }
-   else
-      eina_stringshare_del(name);
 
    for (i = 0; i < nglyphs; i++)
      {
@@ -1425,18 +1439,19 @@ _glyph_request_cb(void *data, const void *msg, int size)
         gl = fash_gl_find(fe->fash[grd->hints], idx);
         if (gl)
           {
-             gl->map = map;
+             gl->map = fe->map;
              gl->offset = offset;
              gl->size = glsize;
              gl->base.bitmap.rows = rows;
              gl->base.bitmap.width = width;
              gl->base.bitmap.pitch = pitch;
-             gl->base.bitmap.buffer = map->data + gl->offset;
+             gl->base.bitmap.buffer = (unsigned char *)
+                   fe->map->mempool.data + gl->offset;
              gl->base.bitmap.num_grays = num_grays;
              gl->base.bitmap.pixel_mode = pixel_mode;
              gl->rid = 0;
 
-             eina_clist_add_head(&map->glyphs, &gl->map_entry);
+             eina_clist_add_head(&fe->map->glyphs, &gl->map_entry);
           }
      }
 
@@ -1667,8 +1682,6 @@ evas_cserve2_font_glyph_bitmap_get(Font_Entry *fe, unsigned int idx, Font_Hint_F
 
 
 // Fast access to shared index tables
-
-static Eina_Bool _shared_index_remap_check(Shared_Index *si, int elemsize);
 
 static Eina_Bool
 _string_index_refresh(void)
