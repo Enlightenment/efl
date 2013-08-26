@@ -1356,9 +1356,12 @@ _glyph_map_open(Font_Entry *fe, const char *indexpath, const char *datapath)
    return map;
 }
 
-static void
+static Eina_Bool
 _glyph_map_remap_check(Glyph_Map *map)
 {
+   Eina_Bool changed = EINA_FALSE;
+   int oldcount;
+
    if (eina_file_refresh(map->mempool.f)
        || (eina_file_size_get(map->mempool.f) != (size_t) map->mempool.size))
      {
@@ -1369,7 +1372,78 @@ _glyph_map_remap_check(Glyph_Map *map)
           map->mempool.size = eina_file_size_get(map->mempool.f);
         else
           map->mempool.size = 0;
+        changed = EINA_TRUE;
      }
+
+   map->index.generation_id = _index.generation_id;
+   oldcount = map->index.count;
+   _shared_index_remap_check(&map->index, sizeof(Glyph_Data));
+   changed |= (oldcount != map->index.count);
+
+   return changed;
+}
+
+static int
+_font_entry_glyph_map_rebuild_check(Font_Entry *fe, Font_Hint_Flags hints)
+{
+   Eina_Bool changed = EINA_FALSE;
+   int cnt = 0;
+
+   if (!fe->map)
+     {
+        const Font_Data *fd;
+        const char *idxpath, *datapath;
+
+        fd = _shared_font_entry_data_find(fe);
+        if (!fd) return -1;
+
+        idxpath = _shared_string_get(fd->glyph_index_shm);
+        datapath = _shared_string_get(fd->mempool_shm);
+        if (!idxpath || !datapath) return -1;
+
+        fe->map =_glyph_map_open(fe, idxpath, datapath);
+        changed = EINA_TRUE;
+     }
+
+   changed |= _glyph_map_remap_check(fe->map);
+   if (changed && fe->map && fe->map->index.data && fe->map->mempool.data)
+     {
+        CS_Glyph_Out *gl;
+        const Glyph_Data *gd;
+        int k, tot = 0;
+
+        DBG("Rebuilding font hash based on shared index...");
+        for (k = 0; k < fe->map->index.count; k++)
+          {
+             gd = &(fe->map->index.entries.gldata[k]);
+             if (!gd->id) break;
+             if (!gd->refcount) continue;
+
+             tot++;
+             gl = fash_gl_find(fe->fash[hints], gd->index);
+             if (gl && gl->base.bitmap.buffer) continue;
+
+             if (!gl) gl = calloc(1, sizeof(*gl));
+             gl->map = fe->map;
+             gl->offset = gd->offset;
+             gl->size = gd->size;
+             gl->base.bitmap.rows = gd->rows;
+             gl->base.bitmap.width = gd->width;
+             gl->base.bitmap.pitch = gd->pitch;
+             gl->base.bitmap.buffer = (unsigned char *)
+                   fe->map->mempool.data + gl->offset;
+             gl->base.bitmap.num_grays = gd->num_grays;
+             gl->base.bitmap.pixel_mode = gd->pixel_mode;
+             gl->rid = 0;
+
+             eina_clist_add_head(&fe->map->glyphs, &gl->map_entry);
+             fash_gl_add(fe->fash[hints], gd->index, gl);
+             cnt++;
+          }
+        DBG("Added %d glyphs to the font hash (out of %d scanned)", cnt, tot);
+     }
+
+   return cnt;
 }
 
 static void
@@ -1668,7 +1742,8 @@ evas_cserve2_font_glyph_used(Font_Entry *fe, unsigned int idx, Font_Hint_Flags h
 }
 
 RGBA_Font_Glyph_Out *
-evas_cserve2_font_glyph_bitmap_get(Font_Entry *fe, unsigned int idx, Font_Hint_Flags hints)
+evas_cserve2_font_glyph_bitmap_get(Font_Entry *fe, unsigned int idx,
+                                   Font_Hint_Flags hints)
 {
    Fash_Glyph2 *fash;
    CS_Glyph_Out *out;
@@ -1687,7 +1762,7 @@ evas_cserve2_font_glyph_bitmap_get(Font_Entry *fe, unsigned int idx, Font_Hint_F
    if (!fash)
      {
         // this should not happen really, so let the user know he fucked up
-        ERR("%s was called with a hinting value that was not requested!", __FUNCTION__);
+        ERR("was called with a hinting value that was not requested!");
         return NULL;
      }
 
@@ -1696,9 +1771,14 @@ evas_cserve2_font_glyph_bitmap_get(Font_Entry *fe, unsigned int idx, Font_Hint_F
      {
         // again, if we are asking for a bitmap we were supposed to already
         // have requested the glyph, it must be there
-        ERR("%s was called with a glyph index that was not requested!", __FUNCTION__);
+        ERR("was called with a glyph index that was not requested!");
         return NULL;
      }
+
+#if USE_SHARED_INDEX
+   _font_entry_glyph_map_rebuild_check(fe, hints);
+#endif
+
    if (out->rid)
      _server_dispatch_until(out->rid);
 

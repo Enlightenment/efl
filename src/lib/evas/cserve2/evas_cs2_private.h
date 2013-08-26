@@ -39,10 +39,11 @@ struct _Shared_Index
    union
    {
       const char *p; // Random access
-      const Index_Entry *index; // TODO for strings
+      const Index_Entry *index;
       const Image_Data *idata;
       const File_Data *filedata;
       const Font_Data *fontdata;
+      const Glyph_Data *gldata;
    } entries;
    int count;
    Eina_Hash *entries_by_hkey;
