@@ -117,9 +117,11 @@ struct _Ethumb_Client
       Eina_Free_Cb         free_data;
    } die;
    Eldbus_Proxy           *proxy;
+   Eldbus_Signal_Handler  *generated_sig_handler;
    EINA_REFCOUNT;
    Eina_Bool              connected : 1;
    Eina_Bool              server_started : 1;
+   Eina_Bool              invalid : 1;
 };
 
 struct _ethumb_pending_add
@@ -132,7 +134,7 @@ struct _ethumb_pending_add
    Ethumb_Client_Generate_Cb generated_cb;
    void                     *data;
    Eina_Free_Cb              free_data;
-   Eldbus_Pending            *pending_call;
+   Eldbus_Pending           *pending_call;
    Ethumb_Client            *client;
 };
 
@@ -142,6 +144,7 @@ struct _ethumb_pending_remove
    Ethumb_Client_Generate_Cancel_Cb cancel_cb;
    void                            *data;
    Eina_Free_Cb                     free_data;
+   Eldbus_Pending                  *pending_call;
    Ethumb_Client                   *client;
 };
 
@@ -197,13 +200,16 @@ _ethumb_client_free(Ethumb_Client *client)
    void *data;
    Eldbus_Object *obj;
 
-   if (!client->connected)
-     goto end_connection;
-
+   if (client->invalid) return;
+   client->invalid = EINA_TRUE;
    EINA_LIST_FREE(client->pending_add, data)
      {
         struct _ethumb_pending_add *pending = data;
-        eldbus_pending_cancel(pending->pending_call);
+        pending->client = NULL;
+        if (pending->pending_call)
+          eldbus_pending_cancel(pending->pending_call);
+        else
+          free(pending);
      }
 
    EINA_LIST_FREE(client->pending_gen, data)
@@ -223,22 +229,47 @@ _ethumb_client_free(Ethumb_Client *client)
         struct _ethumb_pending_remove *pending = data;
         if (pending->free_data)
           pending->free_data(pending->data);
-        free(pending);
+        pending->client = NULL;
+        if (pending->pending_call)
+          eldbus_pending_cancel(pending->pending_call);
+        else
+          free(pending);
      }
 
-end_connection:
    if (client->old_ethumb_conf)
-     ethumb_free(client->old_ethumb_conf);
+     {
+        ethumb_free(client->old_ethumb_conf);
+        client->old_ethumb_conf = NULL;
+     }
 
-   ethumb_free(client->ethumb);
+   if (client->ethumb)
+     {
+        ethumb_free(client->ethumb);
+        client->ethumb = NULL;
+     }
 
-   eldbus_name_owner_changed_callback_del(client->conn, _ethumb_dbus_bus_name,
-                                         _ethumb_client_name_owner_changed,
-                                         client);
-   obj = eldbus_proxy_object_get(client->proxy);
-   eldbus_proxy_unref(client->proxy);
-   eldbus_object_unref(obj);
-   if (client->conn) eldbus_connection_unref(client->conn);
+   if (client->conn)
+     eldbus_name_owner_changed_callback_del(client->conn,
+                                            _ethumb_dbus_bus_name,
+                                            _ethumb_client_name_owner_changed,
+                                            client);
+   if (client->generated_sig_handler)
+     {
+        eldbus_signal_handler_del(client->generated_sig_handler);
+        client->generated_sig_handler = NULL;
+     }
+   if (client->proxy)
+     {
+        obj = eldbus_proxy_object_get(client->proxy);
+        eldbus_proxy_unref(client->proxy);
+        client->proxy = NULL;
+        if (obj) eldbus_object_unref(obj);
+     }
+   if (client->conn)
+     {
+        eldbus_connection_unref(client->conn);
+        client->conn = NULL;
+     }
 
    if (client->connect.free_data)
      client->connect.free_data(client->connect.data);
@@ -266,6 +297,7 @@ static void
 _ethumb_client_name_owner_changed(void *context, const char *bus EINA_UNUSED, const char *old_id, const char *new_id)
 {
    Ethumb_Client *client = context;
+
    DBG("NameOwnerChanged from=[%s] to=[%s]", old_id, new_id);
    if (new_id[0])
      {
@@ -278,6 +310,7 @@ _ethumb_client_name_owner_changed(void *context, const char *bus EINA_UNUSED, co
         return;
      }
    INF("Server disconnected");
+   EINA_REFCOUNT_REF(client);
    client->connected = EINA_FALSE;
    if (client->die.cb)
      {
@@ -290,6 +323,7 @@ _ethumb_client_name_owner_changed(void *context, const char *bus EINA_UNUSED, co
         client->die.free_data = NULL;
         client->die.data = NULL;
      }
+   EINA_REFCOUNT_UNREF(client) _ethumb_client_free(client);
 }
 
 static void
@@ -297,10 +331,11 @@ _ethumb_client_report_connect(Ethumb_Client *client, Eina_Bool success)
 {
    if (!client->connect.cb)
      {
-        ERR("already called?!");
+        //ERR("already called?!");
         return;
      }
 
+   EINA_REFCOUNT_REF(client);
    if (success)
      INF("Success connecting to Ethumb server.");
    else
@@ -314,6 +349,7 @@ _ethumb_client_report_connect(Ethumb_Client *client, Eina_Bool success)
      }
    client->connect.cb = NULL;
    client->connect.data = NULL;
+   EINA_REFCOUNT_UNREF(client) _ethumb_client_free(client);
 }
 
 static void
@@ -338,10 +374,19 @@ _ethumb_client_new_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pen
         return;
      }
 
-   obj = eldbus_object_get(client->conn, _ethumb_dbus_bus_name, opath);
-   client->proxy = eldbus_proxy_get(obj, _ethumb_dbus_objects_interface);
-   eldbus_proxy_signal_handler_add(client->proxy, "generated",
-                                  _ethumb_client_generated_cb, client);
+   if (client->generated_sig_handler)
+     {
+        eldbus_signal_handler_del(client->generated_sig_handler);
+        client->generated_sig_handler = NULL;
+     }
+   if (!client->proxy)
+     {
+        obj = eldbus_object_get(client->conn, _ethumb_dbus_bus_name, opath);
+        client->proxy = eldbus_proxy_get(obj, _ethumb_dbus_objects_interface);
+     }
+   client->generated_sig_handler =
+     eldbus_proxy_signal_handler_add(client->proxy, "generated",
+                                     _ethumb_client_generated_cb, client);
    _ethumb_client_report_connect(client, 1);
 }
 
@@ -382,8 +427,7 @@ _ethumb_client_exists_end(void *data, Ecore_Thread *thread EINA_UNUSED)
                       ethumb_exists(cb->client->ethumb));
 
         cb->client->ethumb = tmp;
-        EINA_REFCOUNT_UNREF(cb->client)
-        _ethumb_client_free(cb->client);
+        EINA_REFCOUNT_UNREF(cb->client) _ethumb_client_free(cb->client);
         ethumb_free(cb->dup);
         free(cb);
      }
@@ -580,8 +624,7 @@ ethumb_client_disconnect(Ethumb_Client *client)
 {
    EINA_SAFETY_ON_NULL_RETURN(client);
 
-   EINA_REFCOUNT_UNREF(client)
-   _ethumb_client_free(client);
+   EINA_REFCOUNT_UNREF(client) _ethumb_client_free(client);
 }
 
 /**
@@ -838,6 +881,7 @@ _ethumb_client_generated_cb(void *data, const Eldbus_Message *msg)
    struct _ethumb_pending_gen *pending;
    Eina_List *l;
 
+   if (!client) return;
    if (!eldbus_message_arguments_get(msg, "iayayb", &id, &thumb_iter,
                                     &thumb_key_iter, &success))
      {
@@ -890,6 +934,8 @@ _ethumb_client_queue_add_cb(void *data, const Eldbus_Message *msg, Eldbus_Pendin
    struct _ethumb_pending_gen *generating;
    Ethumb_Client *client = pending->client;
 
+   pending->pending_call = NULL;
+   if (!client) goto end;
    client->pending_add = eina_list_remove(client->pending_add, pending);
 
    if (eldbus_message_error_get(msg, &errname, &errmsg))
@@ -957,8 +1003,8 @@ _ethumb_client_queue_add(Ethumb_Client *client, const char *file, const char *ke
    _ethumb_client_dbus_append_bytearray(main_itr, thumb_key);
 
    pending->pending_call = eldbus_proxy_send(client->proxy, msg,
-                                            _ethumb_client_queue_add_cb,
-                                            pending, -1);
+                                             _ethumb_client_queue_add_cb,
+                                             pending, -1);
    client->pending_add = eina_list_append(client->pending_add, pending);
 
    return pending->id;
@@ -972,6 +1018,8 @@ _ethumb_client_queue_remove_cb(void *data, const Eldbus_Message *msg, Eldbus_Pen
    Ethumb_Client *client = pending->client;
    const char *errname, *errmsg;
 
+   pending->pending_call = NULL;
+   if (!client) goto end;
    client->pending_remove = eina_list_remove(client->pending_remove, pending);
 
    if (eldbus_message_error_get(msg, &errname, &errmsg))
@@ -1030,8 +1078,10 @@ ethumb_client_generate_cancel(Ethumb_Client *client, int id, Ethumb_Client_Gener
    pending->free_data = free_data;
    pending->client = client;
 
-   eldbus_proxy_call(client->proxy, "queue_remove",
-                    _ethumb_client_queue_remove_cb, pending, -1, "i", pending->id);
+   pending->pending_call =
+     eldbus_proxy_call(client->proxy, "queue_remove",
+                       _ethumb_client_queue_remove_cb, pending, -1,
+                       "i", pending->id);
    client->pending_remove = eina_list_append(client->pending_remove, pending);
 
    /*
@@ -1050,6 +1100,7 @@ ethumb_client_generate_cancel(Ethumb_Client *client, int id, Ethumb_Client_Gener
              continue;
           }
         eldbus_pending_cancel(pending_add->pending_call);
+        pending_add->pending_call = NULL;
         found = 1;
         break;
      }
@@ -1096,7 +1147,11 @@ ethumb_client_generate_cancel_all(Ethumb_Client *client)
    EINA_LIST_FREE(client->pending_add, data)
      {
         struct _ethumb_pending_add *pending = data;
-        eldbus_pending_cancel(pending->pending_call);
+        if (pending->pending_call)
+          eldbus_pending_cancel(pending->pending_call);
+        pending->pending_call = NULL;
+        pending->client = NULL;
+        free(pending);
      }
 
    EINA_LIST_FREE(client->pending_gen, data)
@@ -1938,8 +1993,7 @@ ethumb_client_thumb_exists_cancel(Ethumb_Exists *exists)
      ecore_thread_cancel(async->thread);
 
    ethumb_free(exists->dup);
-   EINA_REFCOUNT_UNREF(exists->client)
-   _ethumb_client_free(exists->client);
+   EINA_REFCOUNT_UNREF(exists->client) _ethumb_client_free(exists->client);
    free(exists);
 }
 
@@ -2044,10 +2098,13 @@ static Eina_List *idle_tasks[2] = { NULL, NULL };
 static void
 _ethumb_client_async_free(Ethumb_Client_Async *async)
 {
-   EINA_REFCOUNT_UNREF(async->client)
-   _ethumb_client_free(async->client);
+   Ethumb_Client *client = async->client;
    ethumb_free(async->dup);
    free(async);
+   if (client)
+     {
+        EINA_REFCOUNT_UNREF(client) _ethumb_client_free(client);
+     }
 }
 
 static void
