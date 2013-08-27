@@ -1,3 +1,7 @@
+2013-08-27  Jaehyun Cho
+
+    * Fix edje play sample parameter checking.
+
 2013-08-27  Tom Hacohen
 
 	* Evas bidi: Fixed a bug causing BiDi not to work in some cases.

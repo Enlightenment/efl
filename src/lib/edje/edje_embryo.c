@@ -900,7 +900,7 @@ _edje_embryo_fn_play_sample(Embryo_Program *ep, Embryo_Cell *params)
    char *sample_name = NULL;
    float speed = 1.0;
 
-   CHKPARAM(1);
+   CHKPARAM(2);
    ed = embryo_program_data_get(ep);
    GETSTR(sample_name, params[1]);
    if ((!sample_name)) return 0;

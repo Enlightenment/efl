@@ -129,6 +129,7 @@ Additions:
      - Add threshold support to Edje draggable part.
      - Reduce load time of Edje_Object using Evas_Object_Textblock and many styles.
      - Add edje_object_mmap_set.
+     - Fix play sample parameter checking.
     * Eeze:
      - Add a dummy libmount replacement for when libmount is not there.
     * Ecore_Con:
