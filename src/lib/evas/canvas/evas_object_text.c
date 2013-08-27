@@ -1915,7 +1915,7 @@ evas_object_text_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
    Evas_Object_Text *o = eo_data_scope_get(eo_obj, MY_CLASS);
 
    /* free obj */
-   if (o->items) _evas_object_text_items_clear(o);
+   _evas_object_text_items_clear(o);
    if (o->cur.utf8_text) eina_stringshare_del(o->cur.utf8_text);
    if (o->cur.font) eina_stringshare_del(o->cur.font);
    if (o->cur.fdesc) evas_font_desc_unref(o->cur.fdesc);
