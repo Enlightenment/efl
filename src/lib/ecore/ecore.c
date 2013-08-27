@@ -34,7 +34,6 @@
 #if HAVE_MALLINFO
 #include <malloc.h>
 
-
 static Ecore_Version _version = { VMAJ, VMIN, VMIC, VREV };
 EAPI Ecore_Version *ecore_version = &_version;
 
@@ -281,18 +280,19 @@ ecore_init(void)
 
    eina_lock_new(&_ecore_main_loop_lock);
 
+#if defined(GLIB_INTEGRATION_ALWAYS)
+   if (_ecore_glib_always_integrate) ecore_main_loop_glib_integrate();
+#endif
+   _ecore_parent = eo_add(ECORE_PARENT_CLASS, NULL);
+
 #if HAVE_MALLINFO
    if (getenv("ECORE_MEM_STAT"))
      {
         _ecore_memory_pid = getpid();
         ecore_animator_add(_ecore_memory_statistic, NULL);
+        _ecore_memory_statistic(NULL);
      }
 #endif
-
-#if defined(GLIB_INTEGRATION_ALWAYS)
-   if (_ecore_glib_always_integrate) ecore_main_loop_glib_integrate();
-#endif
-   _ecore_parent = eo_add(ECORE_PARENT_CLASS, NULL);
 
 #ifdef HAVE_SYSTEMD
    if (getenv("WATCHDOG_USEC"))
@@ -310,12 +310,11 @@ ecore_init(void)
      }
 #endif
 
+   ecore_system_modules_load();
+
    eina_log_timing(_ecore_log_dom,
 		   EINA_LOG_STATE_STOP,
 		   EINA_LOG_STATE_INIT);
-
-
-   ecore_system_modules_load();
 
    return _ecore_init_count;
 
