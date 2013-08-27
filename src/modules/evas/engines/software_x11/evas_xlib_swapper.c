@@ -824,19 +824,9 @@ evas_xlib_swapper_buffer_state_get(X_Swapper *swp)
    flags = (DRI2BufferFlags *)(&(swp->buf->flags));
    if (flags->data.idx_reuse != swp->last_count)
      {
-        static int force_full_on_reuse_change = -1;
-        
         swp->last_count = flags->data.idx_reuse;
-        if (force_full_on_reuse_change == -1)
-          {
-             if (getenv("EVAS_FORCE_FULL_ON_REUSE_CHANGE")) force_full_on_reuse_change = 1;
-             else force_full_on_reuse_change = 0;
-          }
-        if (force_full_on_reuse_change)
-          {
-             if (swap_debug) printf("Reuse changed - force FULL\n");
-             return MODE_FULL;
-          }
+        if (swap_debug) printf("Reuse changed - force FULL\n");
+        return MODE_FULL;
      }
    if (swap_debug) printf("Swap state idx_reuse = %i (0=FULL, 1=COPY, 2=DOUBLE, 3=TRIPLE)\n", flags->data.idx_reuse);
    if (flags->data.idx_reuse == 0) return MODE_FULL;
