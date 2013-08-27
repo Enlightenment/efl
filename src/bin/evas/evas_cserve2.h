@@ -388,5 +388,6 @@ int cserve2_shared_string_add(const char *str);
 int cserve2_shared_string_ref(int id);
 void cserve2_shared_string_del(int id);
 const char *cserve2_shared_string_get(int id);
+int cserve2_shared_strings_repack(Shared_Array_Repack_Skip_Cb skip, Eina_Compare_Cb cmp);
 
 #endif /* _EVAS_CSERVE2_H */

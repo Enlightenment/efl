@@ -896,6 +896,8 @@ cserve2_shared_mempool_generation_id_set(Shared_Mempool *sm, int generation_id)
 
 // Shared strings
 
+static int _shared_strings_unref_items = 0;
+
 const char *
 cserve2_shared_strings_table_name_get()
 {
@@ -957,7 +959,12 @@ new_entry:
 int
 cserve2_shared_string_ref(int id)
 {
+   Index_Entry *ie;
    if (id <= 0) return 0;
+   ie = _shared_index_entry_get_by_id(_string_mempool->index, id);
+   if (!ie) return 0;
+   if (!ie->refcount)
+     _string_mempool--;
    return cserve2_shared_mempool_buffer_ref(_string_mempool, id);
 }
 
@@ -975,6 +982,7 @@ cserve2_shared_string_del(int id)
                CRIT("Invalid free");
           }
      }
+   _shared_strings_unref_items++;
 }
 
 const char *
@@ -982,6 +990,35 @@ cserve2_shared_string_get(int id)
 {
    if (id <= 0) return NULL;
    return cserve2_shared_mempool_buffer_get(_string_mempool, id);
+}
+
+int
+cserve2_shared_strings_repack(Shared_Array_Repack_Skip_Cb skip,
+                              Eina_Compare_Cb cmp)
+{
+   int count;
+
+   if (!_string_mempool->index) return -1;
+   count = _string_mempool->index->lastid;
+   if (!count) return -1;
+   if (_shared_strings_unref_items * 100 / count >= 25
+       && _shared_strings_unref_items > 100)
+     {
+        Shared_Array *sa;
+        int genid;
+
+        genid = _string_mempool->index->sa->header->generation_id + 1;
+        sa = cserve2_shared_array_repack(_string_mempool->index->sa, genid,
+                                         skip, cmp, NULL);
+        if (!sa) return -1;
+
+        cserve2_shared_array_del(_string_mempool->index->sa);
+        _string_mempool->index->sa = sa;
+        _shared_strings_unref_items = 0;
+        return 1;
+     }
+
+   return 0;
 }
 
 
@@ -1002,6 +1039,7 @@ cserve2_shared_index_init(void)
 
         memcpy(faketag, &ifaketag, sizeof(int));
         cserve2_shared_string_add(faketag);
+        _shared_strings_unref_items = 0;
      }
    _instances++;
 }

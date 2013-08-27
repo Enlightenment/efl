@@ -318,8 +318,8 @@ static Eina_Bool
 _repack_skip_cb(Shared_Array *sa EINA_UNUSED, const void *elem,
                 void *user_data EINA_UNUSED)
 {
-   const File_Data *fd = elem;
-   return (!fd->refcount);
+   const Shm_Object *obj = elem;
+   return (!obj->refcount);
 }
 
 static void
@@ -410,6 +410,9 @@ skip_images:
         updated = EINA_TRUE;
      }
 skip_fonts:
+
+   if (cserve2_shared_strings_repack(_repack_skip_cb, _shm_object_id_cmp_cb) == 1)
+     updated = EINA_TRUE;
 
    if (updated)
      {
