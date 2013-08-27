@@ -76,6 +76,8 @@ _elm_inwin_smart_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 
+   elm_widget_sub_object_add(eo_parent_get(obj), obj);
+
    elm_widget_can_focus_set(obj, EINA_FALSE);
    elm_widget_highlight_ignore_set(obj, EINA_TRUE);
 
@@ -123,8 +125,6 @@ _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj, evas_obj_type_set(MY_CLASS_NAME));
-
-   elm_widget_sub_object_add(parent, obj);
 }
 
 EAPI void

@@ -585,6 +585,8 @@ _elm_menu_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 
+   elm_widget_sub_object_add(eo_parent_get(obj), obj);
+
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
    priv->location = elm_icon_add(obj);
@@ -696,8 +698,6 @@ _constructor(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
-
-   elm_widget_sub_object_add(eo_parent_get(obj), obj);
 
    elm_menu_parent_set(obj, eo_parent_get(obj));
    elm_hover_target_set(sd->hv, sd->location);

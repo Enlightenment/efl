@@ -338,6 +338,8 @@ _elm_mapbuf_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 
+   elm_widget_sub_object_add(eo_parent_get(obj), obj);
+
    evas_object_static_clip_set(rect, EINA_TRUE);
    evas_object_pass_events_set(rect, EINA_TRUE);
    evas_object_color_set(rect, 0, 0, 0, 0);
@@ -366,8 +368,6 @@ _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME));
-
-   elm_widget_sub_object_add(eo_parent_get(obj), obj);
 }
 
 static void

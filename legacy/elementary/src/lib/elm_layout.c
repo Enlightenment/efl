@@ -1354,6 +1354,8 @@ _elm_layout_smart_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
    Evas_Object *edje;
 
+   elm_widget_sub_object_add(eo_parent_get(obj), obj);
+
    /* has to be there *before* parent's smart_add() */
    edje = edje_object_add(evas_object_evas_get(obj));
    elm_widget_resize_object_set(obj, edje);
@@ -2179,7 +2181,6 @@ _constructor(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
-   elm_widget_sub_object_add(eo_parent_get(obj), obj);
 }
 
 static void

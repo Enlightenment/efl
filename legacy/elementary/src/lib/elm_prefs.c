@@ -48,6 +48,8 @@ static void
 _elm_prefs_smart_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
+
+   elm_widget_sub_object_add(eo_parent_get(obj), obj);
 }
 
 static void _item_free(Elm_Prefs_Item_Node *it);
@@ -532,8 +534,6 @@ _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
          evas_obj_type_set(MY_CLASS_NAME),
          evas_obj_smart_callbacks_descriptions_set(_elm_prefs_smart_callbacks,
                                                    NULL));
-
-   elm_widget_sub_object_add(eo_parent_get(obj), obj);
 }
 
 static Eina_Bool

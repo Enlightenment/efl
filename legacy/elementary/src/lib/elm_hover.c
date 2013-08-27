@@ -541,6 +541,8 @@ _elm_hover_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 
+   elm_widget_sub_object_add(eo_parent_get(obj), obj);
+
    for (i = 0; i < sizeof(priv->subs) / sizeof(priv->subs[0]); i++)
      priv->subs[i].swallow = _content_aliases[i].alias;
 
@@ -654,8 +656,6 @@ _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
-
-   elm_widget_sub_object_add(eo_parent_get(obj), obj);
 }
 
 EAPI void

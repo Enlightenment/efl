@@ -197,6 +197,8 @@ _set_render_policy_callback(Evas_Object *obj)
 static void
 _elm_glview_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
+   elm_widget_sub_object_add(eo_parent_get(obj), obj);
+
    // Create image to render Evas_GL Surface
    Evas_Object *img = evas_object_image_filled_add(evas_object_evas_get(obj));
    elm_widget_resize_object_set(obj, img);
@@ -293,8 +295,6 @@ _constructor(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
         eo_error_set(obj);
         return;
      }
-
-   elm_widget_sub_object_add(eo_parent_get(obj), obj);
 }
 
 EAPI Evas_GL_API *

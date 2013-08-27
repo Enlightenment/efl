@@ -269,11 +269,14 @@ _access_state_cb(void *data __UNUSED__, Evas_Object *obj)
 
 static void
 _elm_radio_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+
 {
    Elm_Radio_Smart_Data *priv = _pd;
    Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
+
+   elm_widget_sub_object_add(eo_parent_get(obj), obj);
 
    if (!elm_layout_theme_set(obj, "radio", "base", elm_widget_style_get(obj)))
      CRITICAL("Failed to set layout!");
@@ -338,8 +341,6 @@ _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
-
-   elm_widget_sub_object_add(eo_parent_get(obj), obj);
 }
 
 EAPI void

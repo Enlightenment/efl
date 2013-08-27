@@ -144,6 +144,7 @@ _elm_route_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 
+   elm_widget_sub_object_add(eo_parent_get(obj), obj);
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
    evas_object_event_callback_add
@@ -194,7 +195,6 @@ _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME));
-   elm_widget_sub_object_add(eo_parent_get(obj), obj);
 }
 
 #ifdef ELM_EMAP

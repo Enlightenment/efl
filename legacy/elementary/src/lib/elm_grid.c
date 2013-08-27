@@ -131,7 +131,10 @@ _elm_grid_smart_theme(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 static void
 _elm_grid_smart_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
+   elm_widget_sub_object_add(eo_parent_get(obj), obj);
+
    Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+
    Evas_Object *grid = evas_object_grid_add(evas_object_evas_get(obj));
    elm_widget_resize_object_set(obj, grid);
    evas_object_grid_size_set(wd->resize_obj, 100, 100);
@@ -180,8 +183,6 @@ _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj, evas_obj_type_set(MY_CLASS_NAME));
-
-   elm_widget_sub_object_add(eo_parent_get(obj), obj);
 }
 
 EAPI void

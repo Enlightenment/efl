@@ -257,6 +257,8 @@ _elm_photo_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 
+   elm_widget_sub_object_add(eo_parent_get(obj), obj);
+
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
    priv->icon = elm_icon_add(obj);
@@ -276,8 +278,6 @@ _elm_photo_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    evas_object_smart_callback_add
      (priv->icon, "thumb,done", _on_thumb_done, obj);
-
-   elm_widget_sub_object_add(obj, priv->icon);
 
    _elm_photo_internal_image_follow(obj);
 

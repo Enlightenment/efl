@@ -242,6 +242,8 @@ _view_smart_add(Evas_Object *obj)
 {
    View_Smart_Data *sd;
 
+   elm_widget_sub_object_add(eo_parent_get(obj), obj);
+
    sd = calloc(1, sizeof(View_Smart_Data));
    evas_object_smart_data_set(obj, sd);
 
@@ -1222,7 +1224,6 @@ _constructor(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME),
          evas_obj_smart_callbacks_descriptions_set(_elm_web_smart_callbacks, NULL));
-   elm_widget_sub_object_add(eo_parent_get(obj), obj);
 }
 
 EAPI Evas_Object *

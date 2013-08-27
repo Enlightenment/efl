@@ -53,6 +53,7 @@ _elm_separator_smart_add(Eo *obj, void *_pd __UNUSED__,
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 
+   elm_widget_sub_object_add(eo_parent_get(obj), obj);
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
    if (!elm_layout_theme_set
@@ -77,8 +78,6 @@ _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME));
-
-   elm_widget_sub_object_add(eo_parent_get(obj), obj);
 }
 
 EAPI void
