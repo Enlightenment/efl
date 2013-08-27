@@ -1380,6 +1380,8 @@ _canvas_event_feed_mouse_cancel(Eo *eo_e, void *_pd, va_list *list)
    const void *data = va_arg(*list, const void *);
 
    Evas_Public_Data *e = _pd;
+   Evas_Coord_Touch_Point *point;
+   Eina_List *l, *ll;
    int i;
 
    if (e->is_frozen) return;
@@ -1390,7 +1392,11 @@ _canvas_event_feed_mouse_cancel(Eo *eo_e, void *_pd, va_list *list)
         if ((e->pointer.button & (1 << i)))
           evas_event_feed_mouse_up(eo_e, i + 1, 0, timestamp, data);
      }
-   // FIXME: multi cancel too?
+   EINA_LIST_FOREACH_SAFE(e->touch_points, l, ll, point)
+     {
+        if (point->state == EVAS_TOUCH_POINT_DOWN)
+          evas_event_feed_multi_up(eo_e, point->id, point->x, point->y, 0, 0, 0, 0, 0, 0, 0, 0, timestamp, data);
+     }
    _evas_unwalk(e);
 }
 
