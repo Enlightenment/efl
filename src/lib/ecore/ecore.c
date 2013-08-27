@@ -31,12 +31,14 @@
 #include "Ecore.h"
 #include "ecore_private.h"
 
-#if HAVE_MALLINFO
+#if defined HAVE_MALLINFO
 #include <malloc.h>
+#endif
 
 static Ecore_Version _version = { VMAJ, VMIN, VMIC, VREV };
 EAPI Ecore_Version *ecore_version = &_version;
 
+#ifdef HAVE_MALLINFO
 #define KEEP_MAX(Global, Local) \
   if (Global < (Local))         \
     Global = Local;
