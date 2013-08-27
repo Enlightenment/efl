@@ -205,11 +205,16 @@ _ethumb_client_free(Ethumb_Client *client)
    EINA_LIST_FREE(client->pending_add, data)
      {
         struct _ethumb_pending_add *pending = data;
-        pending->client = NULL;
         if (pending->pending_call)
-          eldbus_pending_cancel(pending->pending_call);
+          {
+             eldbus_pending_cancel(pending->pending_call);
+             pending->client = NULL;
+          }
         else
-          free(pending);
+          {
+             pending->client = NULL;
+             free(pending);
+          }
      }
 
    EINA_LIST_FREE(client->pending_gen, data)
@@ -229,11 +234,16 @@ _ethumb_client_free(Ethumb_Client *client)
         struct _ethumb_pending_remove *pending = data;
         if (pending->free_data)
           pending->free_data(pending->data);
-        pending->client = NULL;
         if (pending->pending_call)
-          eldbus_pending_cancel(pending->pending_call);
+          {
+             eldbus_pending_cancel(pending->pending_call);
+             pending->client = NULL;
+          }
         else
-          free(pending);
+          {
+             pending->client = NULL;
+             free(pending);
+          }
      }
 
    if (client->old_ethumb_conf)
@@ -937,7 +947,7 @@ _ethumb_client_queue_add_cb(void *data, const Eldbus_Message *msg, Eldbus_Pendin
    pending->pending_call = NULL;
    if (!client) goto end;
    client->pending_add = eina_list_remove(client->pending_add, pending);
-
+   
    if (eldbus_message_error_get(msg, &errname, &errmsg))
      {
         ERR("Error: %s %s", errname, errmsg);
@@ -950,6 +960,7 @@ _ethumb_client_queue_add_cb(void *data, const Eldbus_Message *msg, Eldbus_Pendin
         goto end;
      }
 
+   
    generating = calloc(1, sizeof(*generating));
    generating->id = id;
    generating->file = pending->file;
@@ -1002,10 +1013,11 @@ _ethumb_client_queue_add(Ethumb_Client *client, const char *file, const char *ke
    _ethumb_client_dbus_append_bytearray(main_itr, thumb);
    _ethumb_client_dbus_append_bytearray(main_itr, thumb_key);
 
+   client->pending_add = eina_list_append(client->pending_add, pending);
+   
    pending->pending_call = eldbus_proxy_send(client->proxy, msg,
                                              _ethumb_client_queue_add_cb,
                                              pending, -1);
-   client->pending_add = eina_list_append(client->pending_add, pending);
 
    return pending->id;
 }
@@ -1099,7 +1111,8 @@ ethumb_client_generate_cancel(Ethumb_Client *client, int id, Ethumb_Client_Gener
              l = l->next;
              continue;
           }
-        eldbus_pending_cancel(pending_add->pending_call);
+        if (pending_add->pending_call)
+          eldbus_pending_cancel(pending_add->pending_call);
         pending_add->pending_call = NULL;
         found = 1;
         break;
