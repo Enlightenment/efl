@@ -135,15 +135,17 @@ static void
 _cserve2_client_open(Client *client)
 {
    Msg_Open *msg = (Msg_Open *)client->msg.buf;
-   const char *path, *key;
+   const char *path, *key, *end;
 
    path = ((const char *)msg) + sizeof(*msg) + msg->path_offset;
    key = ((const char *)msg) + sizeof(*msg) + msg->key_offset;
+   end = key + strlen(key) + 1;
 
    INF("Received OPEN command: RID=%d", msg->base.rid);
    INF("File_ID: %d, path=\"%s\", key=\"%s\", has_load_opts=%d",
        msg->file_id, path, key, (int) msg->has_load_opts);
 
+   if (!key[0]) key = NULL;
    cserve2_cache_file_open(client, msg->file_id, path, key, msg->base.rid);
 
    if (!msg->has_load_opts)
@@ -152,8 +154,7 @@ _cserve2_client_open(Client *client)
    else
      {
         // FIXME: Check message size first?
-        Evas_Image_Load_Opts *opts =
-              (Evas_Image_Load_Opts*) (key + strlen(key) + 1);
+        Evas_Image_Load_Opts *opts = (Evas_Image_Load_Opts *) end;
 
         DBG("Load Options:");
         DBG("\tdpi: %03.1f", opts->dpi);

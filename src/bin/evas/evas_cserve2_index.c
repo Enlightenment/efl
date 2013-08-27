@@ -921,7 +921,7 @@ cserve2_shared_string_add(const char *str)
    char *data;
    int len, id;
 
-   if (!str) return -1;
+   if (!str) return 0;
 
    // Find in known strings
    id = (int) (intptr_t) eina_hash_find(_string_entries, str);
@@ -945,7 +945,7 @@ new_entry:
    if (!ie)
      {
         ERR("Could not store new string in shm");
-        return -1;
+        return 0;
      }
 
    data = _string_mempool->ds->data + ie->offset;
@@ -957,7 +957,7 @@ new_entry:
 int
 cserve2_shared_string_ref(int id)
 {
-   if (!id) return 0;
+   if (id <= 0) return 0;
    return cserve2_shared_mempool_buffer_ref(_string_mempool, id);
 }
 
@@ -966,7 +966,7 @@ cserve2_shared_string_del(int id)
 {
    const char *data;
 
-   if (!id) return;
+   if (id <= 0) return;
    if ((data = _shared_mempool_buffer_del(_string_mempool, id)) != NULL)
      {
         if (!eina_hash_del_by_key(_string_entries, data))
@@ -980,7 +980,7 @@ cserve2_shared_string_del(int id)
 const char *
 cserve2_shared_string_get(int id)
 {
-   if (!id) return NULL;
+   if (id <= 0) return NULL;
    return cserve2_shared_mempool_buffer_get(_string_mempool, id);
 }
 

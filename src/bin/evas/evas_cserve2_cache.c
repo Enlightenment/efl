@@ -197,7 +197,6 @@ _entry_load_reused(Entry *e)
 #endif
 }
 
-
 static int
 _shm_object_id_cmp_cb(const void *data1, const void *data2)
 {
@@ -545,7 +544,7 @@ _font_loaded_send(Client *client, unsigned int rid)
 static void *
 _open_request_build(Entry *entry, int *bufsize)
 {
-   const char *loader_data;
+   const char *loader_data, *key, *path;
    char *buf;
    int size, pathlen, keylen, loaderlen;
    Slave_Msg_Image_Open msg;
@@ -561,8 +560,12 @@ _open_request_build(Entry *entry, int *bufsize)
         return NULL;
      }
 
-   pathlen = strlen(cserve2_shared_string_get(fd->path)) + 1;
-   keylen = strlen(cserve2_shared_string_get(fd->key)) + 1;
+   path = cserve2_shared_string_get(fd->path);
+   key = cserve2_shared_string_get(fd->key);
+   if (!path) path = "";
+   if (!key) key = "";
+   pathlen = strlen(path) + 1;
+   keylen = strlen(key) + 1;
 
    memset(&msg, 0, sizeof(msg));
    loader_data = cserve2_shared_string_get(fd->loader_data);
@@ -574,8 +577,8 @@ _open_request_build(Entry *entry, int *bufsize)
    if (!buf) return NULL;
 
    memcpy(buf, &msg, sizeof(msg));
-   memcpy(buf + sizeof(msg), cserve2_shared_string_get(fd->path), pathlen);
-   memcpy(buf + sizeof(msg) + pathlen, cserve2_shared_string_get(fd->key), keylen);
+   memcpy(buf + sizeof(msg), path, pathlen);
+   memcpy(buf + sizeof(msg) + pathlen, key, keylen);
    if (msg.has_loader_data)
      memcpy(buf + sizeof(msg) + pathlen + keylen, loader_data, loaderlen);
 
@@ -661,7 +664,7 @@ static void *
 _load_request_build(Image_Entry *ientry, int *bufsize)
 {
    char *buf, *ptr;
-   const char *shmpath, *loader_data;
+   const char *shmpath, *loader_data, *path, *key;
    int size;
    int shmlen, filelen, keylen, loaderlen;
    Slave_Msg_Image_Load msg;
@@ -686,8 +689,12 @@ _load_request_build(Image_Entry *ientry, int *bufsize)
 
    shmpath = cserve2_shm_name_get(ientry->shm);
    shmlen = strlen(shmpath) + 1;
-   filelen = strlen(cserve2_shared_string_get(fd->path)) + 1;
-   keylen = strlen(cserve2_shared_string_get(fd->key)) + 1;
+   path = cserve2_shared_string_get(fd->path);
+   key = cserve2_shared_string_get(fd->key);
+   if (!path) path = "";
+   if (!key) key = "";
+   filelen = strlen(path) + 1;
+   keylen = strlen(key) + 1;
    loader_data = cserve2_shared_string_get(fd->loader_data);
    if (loader_data)
      loaderlen = strlen(loader_data) + 1;
@@ -724,11 +731,12 @@ _load_request_build(Image_Entry *ientry, int *bufsize)
 
    memcpy(ptr, shmpath, shmlen);
    ptr += shmlen;
-   memcpy(ptr, cserve2_shared_string_get(fd->path), filelen);
+   memcpy(ptr, path, filelen);
    ptr += filelen;
-   memcpy(ptr, cserve2_shared_string_get(fd->key), keylen);
+   memcpy(ptr, key, keylen);
    ptr += keylen;
-   if (loaderlen > 0) memcpy(ptr, cserve2_shared_string_get(fd->loader_data), loaderlen);
+   if (loaderlen > 0)
+     memcpy(ptr, loader_data, loaderlen);
 
    *bufsize = size;
 
