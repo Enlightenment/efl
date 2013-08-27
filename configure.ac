@@ -1893,7 +1893,7 @@ AC_MSG_RESULT([${have_isfinite}])
 
 # mallinfo, timerfd_create, clock_gettime
 
-AC_CHECK_FUNCS_ONCE([mallinfo timerfd_create clock_gettime])
+AC_CHECK_FUNCS_ONCE([mallinfo timerfd_create clock_gettime malloc_info])
 
 if ! test "x${ac_cv_func_clock_gettime}" = "xyes" ; then
    AC_CHECK_LIB([rt], [clock_gettime],
