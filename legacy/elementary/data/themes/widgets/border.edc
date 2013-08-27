@@ -198,6 +198,7 @@ group { name: "elm/border/base/default";
             state: "default" 0.0;
             visible: 1;
             align: 0.0 0.0;
+            fixed: 1 1;
             rel1 {
                relative: 1.0 0.0;
                offset: 9 2;
@@ -509,6 +510,7 @@ group { name: "elm/border/base/default";
             state: "default" 0.0;
             visible: 0;
             align: 0.0 1.0;
+            fixed: 1 1;
             rel1 {
                relative: 0.0 1.0;
                offset: -1 0;
@@ -576,6 +578,7 @@ group { name: "elm/border/base/default";
             state: "default" 0.0;
             min: 20 10;
             max: 20 10;
+            fixed: 1 1;
             rel1 {
                relative: 0.5 0.0;
                offset: 0 -10;
