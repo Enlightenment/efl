@@ -87,7 +87,7 @@ evas_bidi_is_rtl_str(const Eina_Unicode *str)
    for ( ; *str ; str++)
      {
         type = fribidi_get_bidi_type((FriBidiChar) *str);
-        if (FRIBIDI_IS_LETTER(type) && FRIBIDI_IS_RTL(type))
+        if (FRIBIDI_IS_RTL(type))
           {
              return EINA_TRUE;
           }

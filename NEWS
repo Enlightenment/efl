@@ -329,6 +329,7 @@ Fixes:
      - Fix infinite loop if app use ecore evas image
      - Fix a long-standing off-by-1 in the C "simd" multiplier.
      - Skip the map rendering if all points are transparent.
+     - Evas bidi: Fixed a bug causing BiDi not to work in some cases.
     * Ecore:
      - Don't leak fd on exec.
      - Fix fd handler increase issue when ecore_pipe_add/del is called repeatedly.
