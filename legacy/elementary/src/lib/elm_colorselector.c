@@ -1976,7 +1976,6 @@ _mode_set(Eo *obj, void *_pd, va_list *list)
           elm_layout_content_set(obj, "palette", sd->palette_box);
         if (!elm_layout_content_set(obj, "elm.selector", sd->col_bars_area))
           elm_layout_content_set(obj, "selector", sd->col_bars_area);
-        elm_layout_content_set(obj, "selector", sd->col_bars_area);
         elm_layout_signal_emit(obj, "elm,state,both", "elm");
         sd->focused = ELM_COLORSELECTOR_PALETTE;
         sd->selected = sd->items;

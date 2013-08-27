@@ -3,7 +3,7 @@ group { name: "elm/colorselector/palette/default";
    data.item: "horizontal_pad" "10";
    data.item: "vertical_pad" "10";
    parts {
-      part { name: "picker";
+      part { name: "elm.picker";
          type: SWALLOW;
          scale: 1;
          description { state: "default" 0.0;
@@ -20,8 +20,8 @@ group { name: "elm/colorselector/palette/default";
             min: 0 20;
             fixed: 0 1;
             rel1.relative: 0.0 1.0;
-            rel1.to: "picker";
-            rel2.to: "picker";
+            rel1.to: "elm.picker";
+            rel2.to: "elm.picker";
             align: 0.0 0.0;
          }
          description { state: "disabled" 0.0;
