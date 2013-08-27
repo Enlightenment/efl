@@ -1923,6 +1923,7 @@ evas_object_text_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
    if (o->cur.text) free(o->cur.text);
    if (o->font && obj->layer && obj->layer->evas)
       evas_font_free(obj->layer->evas->evas, o->font);
+   o->font = NULL;
 #ifdef BIDI_SUPPORT
    evas_bidi_paragraph_props_unref(o->bidi_par_props);
 #endif
