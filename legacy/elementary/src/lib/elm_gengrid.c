@@ -321,13 +321,14 @@ _item_mouse_move_cb(void *data,
    Evas_Event_Mouse_Move *ev = event_info;
    Evas_Coord ox, oy, ow, oh, it_scrl_x, it_scrl_y;
    Evas_Coord minw = 0, minh = 0, x, y, dx, dy, adx, ady;
+   Elm_Gengrid_Smart_Data *sd = GG_IT(it)->wsd;
 
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
      {
-        if (!GG_IT(it)->wsd->on_hold)
+        if (!sd->on_hold)
           {
-             GG_IT(it)->wsd->on_hold = EINA_TRUE;
-             if (!GG_IT(it)->wsd->was_selected)
+             sd->on_hold = EINA_TRUE;
+             if (!sd->was_selected)
                _item_unselect(it);
           }
      }
@@ -339,36 +340,29 @@ _item_mouse_move_cb(void *data,
         return;
      }
 
-   if ((!it->down) || (GG_IT(it)->wsd->longpressed))
+   if ((!it->down) || (sd->longpressed))
      {
         ELM_SAFE_FREE(it->long_timer, ecore_timer_del);
-        if ((GG_IT(it)->wsd->reorder_mode) &&
-            (GG_IT(it)->wsd->reorder_it))
+        if ((sd->reorder_mode) && (sd->reorder_it))
           {
              evas_object_geometry_get
-               (GG_IT(it)->wsd->pan_obj, &ox, &oy, &ow, &oh);
+               (sd->pan_obj, &ox, &oy, &ow, &oh);
 
-             it_scrl_x = ev->cur.canvas.x -
-               GG_IT(it)->wsd->reorder_it->dx;
-             it_scrl_y = ev->cur.canvas.y -
-               GG_IT(it)->wsd->reorder_it->dy;
+             it_scrl_x = ev->cur.canvas.x - sd->reorder_it->dx;
+             it_scrl_y = ev->cur.canvas.y - sd->reorder_it->dy;
 
-             if (it_scrl_x < ox) GG_IT(it)->wsd->reorder_item_x = ox;
-             else if (it_scrl_x + GG_IT(it)->wsd->item_width > ox + ow)
-               GG_IT(it)->wsd->reorder_item_x =
-                 ox + ow - GG_IT(it)->wsd->item_width;
-             else GG_IT(it)->wsd->reorder_item_x = it_scrl_x;
+             if (it_scrl_x < ox) sd->reorder_item_x = ox;
+             else if (it_scrl_x + sd->item_width > ox + ow)
+               sd->reorder_item_x = ox + ow - sd->item_width;
+             else sd->reorder_item_x = it_scrl_x;
 
-             if (it_scrl_y < oy) GG_IT(it)->wsd->reorder_item_y = oy;
-             else if (it_scrl_y + GG_IT(it)->wsd->item_height > oy + oh)
-               GG_IT(it)->wsd->reorder_item_y =
-                 oy + oh - GG_IT(it)->wsd->item_height;
-             else GG_IT(it)->wsd->reorder_item_y = it_scrl_y;
+             if (it_scrl_y < oy) sd->reorder_item_y = oy;
+             else if (it_scrl_y + sd->item_height > oy + oh)
+               sd->reorder_item_y = oy + oh - sd->item_height;
+             else sd->reorder_item_y = it_scrl_y;
 
-             if (GG_IT(it)->wsd->calc_job)
-               ecore_job_del(GG_IT(it)->wsd->calc_job);
-             GG_IT(it)->wsd->calc_job =
-               ecore_job_add(_calc_job, GG_IT(it)->wsd->obj);
+             if (sd->calc_job) ecore_job_del(sd->calc_job);
+             sd->calc_job = ecore_job_add(_calc_job, sd->obj);
           }
         return;
      }
@@ -496,6 +490,7 @@ _item_mouse_down_cb(void *data,
    Evas_Event_Mouse_Down *ev = event_info;
    Elm_Gen_Item *it = data;
    Evas_Coord x, y;
+   Elm_Gengrid_Smart_Data *sd = GG_IT(it)->wsd;
 
    if (ev->button != 1) return;
 
@@ -504,15 +499,15 @@ _item_mouse_down_cb(void *data,
    evas_object_geometry_get(obj, &x, &y, NULL, NULL);
    it->dx = ev->canvas.x - x;
    it->dy = ev->canvas.y - y;
-   GG_IT(it)->wsd->longpressed = EINA_FALSE;
+   sd->longpressed = EINA_FALSE;
 
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
-     GG_IT(it)->wsd->on_hold = EINA_TRUE;
-   else GG_IT(it)->wsd->on_hold = EINA_FALSE;
+     sd->on_hold = EINA_TRUE;
+   else sd->on_hold = EINA_FALSE;
 
-   if (GG_IT(it)->wsd->on_hold) return;
+   if (sd->on_hold) return;
 
-   GG_IT(it)->wsd->was_selected = it->selected;
+   sd->was_selected = it->selected;
    _item_highlight(it);
    if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
      {
@@ -744,22 +739,23 @@ _item_realize(Elm_Gen_Item *it)
 {
    char buf[1024];
    char style[1024];
+   Elm_Gengrid_Smart_Data *sd = GG_IT(it)->wsd;
 
    if ((it->realized) ||
-       (it->generation < GG_IT(it)->wsd->generation))
+       (it->generation < sd->generation))
      return;
 
    VIEW(it) = edje_object_add(evas_object_evas_get(WIDGET(it)));
    edje_object_scale_set
      (VIEW(it), elm_widget_scale_get(WIDGET(it)) * elm_config_scale_get());
    edje_object_mirrored_set(VIEW(it), elm_widget_mirrored_get(WIDGET(it)));
-   evas_object_smart_member_add(VIEW(it), GG_IT(it)->wsd->pan_obj);
+   evas_object_smart_member_add(VIEW(it), sd->pan_obj);
    elm_widget_sub_object_add(WIDGET(it), VIEW(it));
    snprintf(style, sizeof(style), "item/%s",
             it->itc->item_style ? it->itc->item_style : "default");
    elm_widget_theme_object_set(WIDGET(it), VIEW(it), "gengrid", style,
                                elm_widget_style_get(WIDGET(it)));
-   evas_object_stack_below(VIEW(it), GG_IT(it)->wsd->stack);
+   evas_object_stack_below(VIEW(it), sd->stack);
 
    it->spacer =
      evas_object_rectangle_add(evas_object_evas_get(WIDGET(it)));
@@ -834,29 +830,29 @@ _item_realize(Elm_Gen_Item *it)
 
    if (it->group)
      {
-        if ((!GG_IT(it)->wsd->group_item_width)
-            && (!GG_IT(it)->wsd->group_item_height))
+        if ((!sd->group_item_width)
+            && (!sd->group_item_height))
           {
              edje_object_size_min_restricted_calc
-               (VIEW(it), &GG_IT(it)->wsd->group_item_width,
-               &GG_IT(it)->wsd->group_item_height,
-               GG_IT(it)->wsd->group_item_width,
-               GG_IT(it)->wsd->group_item_height);
+               (VIEW(it), &sd->group_item_width,
+               &sd->group_item_height,
+               sd->group_item_width,
+               sd->group_item_height);
           }
      }
    else
      {
-        if ((!GG_IT(it)->wsd->item_width)
-            && (!GG_IT(it)->wsd->item_height))
+        if ((!sd->item_width)
+            && (!sd->item_height))
           {
              edje_object_size_min_restricted_calc
-               (VIEW(it), &GG_IT(it)->wsd->item_width,
-               &GG_IT(it)->wsd->item_height,
-               GG_IT(it)->wsd->item_width,
-               GG_IT(it)->wsd->item_height);
+               (VIEW(it), &sd->item_width,
+               &sd->item_height,
+               sd->item_width,
+               sd->item_height);
              elm_coords_finger_size_adjust
-               (1, &GG_IT(it)->wsd->item_width, 1,
-               &GG_IT(it)->wsd->item_height);
+               (1, &sd->item_width, 1,
+               &sd->item_height);
           }
 
         evas_object_event_callback_add
@@ -896,6 +892,7 @@ _reorder_item_move_animator_cb(void *data)
    Elm_Gen_Item *it = data;
    Evas_Coord dx, dy;
    double tt, t;
+   Elm_Gengrid_Smart_Data *sd = GG_IT(it)->wsd;
 
    tt = REORDER_EFFECT_TIME;
    t = ((0.0 > (t = ecore_loop_time_get() -
@@ -927,17 +924,16 @@ _reorder_item_move_animator_cb(void *data)
              Evas_Coord vw, vh;
 
              evas_object_geometry_get
-               (GG_IT(it)->wsd->pan_obj, NULL, NULL, &vw, &vh);
-             if (GG_IT(it)->wsd->horizontal)
+               (sd->pan_obj, NULL, NULL, &vw, &vh);
+             if (sd->horizontal)
                evas_object_resize
-                 (VIEW(it), GG_IT(it)->wsd->group_item_width, vh);
+                 (VIEW(it), sd->group_item_width, vh);
              else
                evas_object_resize
-                 (VIEW(it), vw, GG_IT(it)->wsd->group_item_height);
+                 (VIEW(it), vw, sd->group_item_height);
           }
         else
-          evas_object_resize(VIEW(it), GG_IT(it)->wsd->item_width,
-                             GG_IT(it)->wsd->item_height);
+          evas_object_resize(VIEW(it), sd->item_width, sd->item_height);
         GG_IT(it)->moving = EINA_FALSE;
         GG_IT(it)->item_reorder_move_animator = NULL;
 
@@ -949,19 +945,14 @@ _reorder_item_move_animator_cb(void *data)
      {
         Evas_Coord vw, vh;
 
-        evas_object_geometry_get
-          (GG_IT(it)->wsd->pan_obj, NULL, NULL, &vw, &vh);
-        if (GG_IT(it)->wsd->horizontal)
-          evas_object_resize
-            (VIEW(it), GG_IT(it)->wsd->group_item_width, vh);
+        evas_object_geometry_get(sd->pan_obj, NULL, NULL, &vw, &vh);
+        if (sd->horizontal)
+          evas_object_resize(VIEW(it), sd->group_item_width, vh);
         else
-          evas_object_resize
-            (VIEW(it), vw, GG_IT(it)->wsd->group_item_height);
+          evas_object_resize(VIEW(it), vw, sd->group_item_height);
      }
    else
-     evas_object_resize
-       (VIEW(it), GG_IT(it)->wsd->item_width,
-       GG_IT(it)->wsd->item_height);
+     evas_object_resize(VIEW(it), sd->item_width, sd->item_height);
 
    return ECORE_CALLBACK_RENEW;
 }
@@ -2032,15 +2023,15 @@ _item_position_update(Eina_Inlist *list,
 static void
 _elm_gengrid_item_del_not_serious(Elm_Gen_Item *it)
 {
+   Elm_Gengrid_Smart_Data *sd = GG_IT(it)->wsd;
+
    elm_widget_item_pre_notify_del(it);
-   it->generation = GG_IT(it)->wsd->generation - 1; /* This means that the
-                                                     * item is deleted */
+   it->generation = sd->generation - 1; /* This means that the item is deleted */
 
    if (it->walking > 0) return;
 
    if (it->selected)
-     GG_IT(it)->wsd->selected =
-       eina_list_remove(GG_IT(it)->wsd->selected, it);
+     sd->selected = eina_list_remove(sd->selected, it);
 
    if (it->itc->func.del)
      it->itc->func.del((void *)it->base.data, WIDGET(it));
@@ -2049,29 +2040,24 @@ _elm_gengrid_item_del_not_serious(Elm_Gen_Item *it)
 static void
 _elm_gengrid_item_del_serious(Elm_Gen_Item *it)
 {
+   Elm_Gengrid_Smart_Data *sd = GG_IT(it)->wsd;
+
    _elm_gengrid_item_del_not_serious(it);
-   GG_IT(it)->wsd->items = eina_inlist_remove
-       (GG_IT(it)->wsd->items, EINA_INLIST_GET(it));
+   sd->items = eina_inlist_remove(sd->items, EINA_INLIST_GET(it));
    if (it->tooltip.del_cb)
      it->tooltip.del_cb((void *)it->tooltip.data, WIDGET(it), it);
-   GG_IT(it)->wsd->walking -= it->walking;
+   sd->walking -= it->walking;
    ELM_SAFE_FREE(it->long_timer, ecore_timer_del);
    if (it->group)
-     GG_IT(it)->wsd->group_items =
-       eina_list_remove(GG_IT(it)->wsd->group_items, it);
+     sd->group_items = eina_list_remove(sd->group_items, it);
 
-   if (GG_IT(it)->wsd->state)
-     {
-        eina_inlist_sorted_state_free(GG_IT(it)->wsd->state);
-        GG_IT(it)->wsd->state = NULL;
-     }
-   if (GG_IT(it)->wsd->calc_job) ecore_job_del(GG_IT(it)->wsd->calc_job);
-   GG_IT(it)->wsd->calc_job =
-     ecore_job_add(GG_IT(it)->wsd->calc_cb, GG_IT(it)->wsd->obj);
+   ELM_SAFE_FREE(sd->state, eina_inlist_sorted_state_free);
+   if (sd->calc_job) ecore_job_del(sd->calc_job);
+   sd->calc_job = ecore_job_add(sd->calc_cb, sd->obj);
 
-   if (GG_IT(it)->wsd->last_selected_item == (Elm_Object_Item *)it)
-     GG_IT(it)->wsd->last_selected_item = NULL;
-   GG_IT(it)->wsd->item_count--;
+   if (sd->last_selected_item == (Elm_Object_Item *)it)
+     sd->last_selected_item = NULL;
+   sd->item_count--;
 
    ELM_SAFE_FREE(it->item, free);
 }
@@ -2297,39 +2283,39 @@ static void
 _item_select(Elm_Gen_Item *it)
 {
    Evas_Object *obj = WIDGET(it);
+   Elm_Gengrid_Smart_Data *sd = GG_IT(it)->wsd;
 
-   if ((it->generation < GG_IT(it)->wsd->generation) || (it->decorate_it_set) ||
+   if ((it->generation < sd->generation) || (it->decorate_it_set) ||
        (it->select_mode == ELM_OBJECT_SELECT_MODE_NONE) ||
-       (GG_IT(it)->wsd->select_mode == ELM_OBJECT_SELECT_MODE_NONE))
+       (sd->select_mode == ELM_OBJECT_SELECT_MODE_NONE))
      return;
    if (!it->selected)
      {
         it->selected = EINA_TRUE;
-        GG_IT(it)->wsd->selected =
-          eina_list_append(GG_IT(it)->wsd->selected, it);
+        sd->selected = eina_list_append(sd->selected, it);
      }
-   else if (GG_IT(it)->wsd->select_mode != ELM_OBJECT_SELECT_MODE_ALWAYS)
+   else if (sd->select_mode != ELM_OBJECT_SELECT_MODE_ALWAYS)
      return;
 
    evas_object_ref(obj);
    it->walking++;
-   GG_IT(it)->wsd->walking++;
+   sd->walking++;
    if (it->func.func) it->func.func((void *)it->func.data, WIDGET(it), it);
-   if (it->generation == GG_IT(it)->wsd->generation)
+   if (it->generation == sd->generation)
      evas_object_smart_callback_call(WIDGET(it), SIG_SELECTED, it);
    it->walking--;
-   GG_IT(it)->wsd->walking--;
-   if ((GG_IT(it)->wsd->clear_me) && (!GG_IT(it)->wsd->walking))
+   sd->walking--;
+   if ((sd->clear_me) && (!sd->walking))
      _elm_gengrid_clear(WIDGET(it), EINA_TRUE);
    else
      {
-        if ((!it->walking) && (it->generation < GG_IT(it)->wsd->generation))
+        if ((!it->walking) && (it->generation < sd->generation))
           {
              it->del_cb(it);
              elm_widget_item_free(it);
           }
         else
-          GG_IT(it)->wsd->last_selected_item = (Elm_Object_Item *)it;
+          sd->last_selected_item = (Elm_Object_Item *)it;
      }
    evas_object_unref(obj);
 }
