@@ -364,7 +364,7 @@ try_extension:
    if (loader)
      {
         module = evas_module_find_type(EVAS_MODULE_TYPE_IMAGE_LOADER, loader);
-        if (_image_file_header(fd, skey, &load_opts, result, module))
+        if (module && _image_file_header(fd, skey, &load_opts, result, module))
           goto success;
         loader = NULL;
         module = NULL;
