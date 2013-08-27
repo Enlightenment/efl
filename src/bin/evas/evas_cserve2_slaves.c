@@ -128,7 +128,7 @@ _slave_proc_dead_cb(int pid, int status EINA_UNUSED)
 {
    Slave_Proc *s;
 
-   DBG("Child dead with pid '%d'.", pid);
+   INF("Child dead with pid '%d'.", pid);
    s = _slave_proc_find(pid);
    if (!s)
      {

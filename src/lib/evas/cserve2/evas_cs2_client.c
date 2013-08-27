@@ -1447,13 +1447,15 @@ _font_entry_glyph_map_rebuild_check(Font_Entry *fe, Font_Hint_Flags hints)
                    fe->map->mempool.data + gl->offset;
              gl->base.bitmap.num_grays = gd->num_grays;
              gl->base.bitmap.pixel_mode = gd->pixel_mode;
+             gl->idx = gd->index;
              gl->rid = 0;
 
              eina_clist_add_head(&fe->map->glyphs, &gl->map_entry);
              fash_gl_add(fe->fash[hints], gd->index, gl);
              cnt++;
           }
-        DBG("Added %d glyphs to the font hash (out of %d scanned)", cnt, tot);
+        if (cnt)
+          DBG("Added %d glyphs to the font hash (out of %d scanned)", cnt, tot);
      }
 
    return cnt;

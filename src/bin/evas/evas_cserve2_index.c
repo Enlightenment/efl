@@ -550,11 +550,15 @@ _shared_index_entry_get_by_id(Shared_Index *si, unsigned int id)
         obj = (Index_Entry *) (base + (elemsize * id));
         if (obj->id == id)
           return obj;
+        if (obj->id < id)
+          low = id + 1;
+        else
+          high = id;
      }
 
    // Binary search
    start_high = high;
-   while(high != low)
+   while(high > low)
      {
         cur = low + ((high - low) / 2);
         obj = (Index_Entry *) (base + (elemsize * cur));
