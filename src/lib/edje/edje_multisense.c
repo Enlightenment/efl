@@ -6,11 +6,20 @@
 
 static Eo *out = NULL;
 static int outs = 0;
+static Eina_Bool outfail = EINA_FALSE;
 
 static Eina_Bool _play_finished(void *data EINA_UNUSED, Eo *in, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
   eo_del(in);
 
+   return EINA_TRUE;
+}
+
+static Eina_Bool _out_fail(void *data EINA_UNUSED, Eo *output EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   outfail = EINA_TRUE;
+   eo_del(out);
+   out = NULL;
    return EINA_TRUE;
 }
 
@@ -93,11 +102,13 @@ _edje_multisense_internal_sound_sample_play(Edje *ed, const char *sample_name, c
    int i;
    Eina_Bool ret;
 
-    if (!sample_name)
-      {
-         ERR("Given Sample Name is NULL\n");
-         return EINA_FALSE;
-      }
+   if (outfail) return EINA_FALSE;
+   
+   if (!sample_name)
+     {
+        ERR("Given Sample Name is NULL\n");
+        return EINA_FALSE;
+     }
 
    if ((!ed) || (!ed->file) || (!ed->file->sound_dir))
      return EINA_FALSE;
@@ -153,7 +164,8 @@ _edje_multisense_internal_sound_sample_play(Edje *ed, const char *sample_name, c
                         eo_event_callback_add(ECORE_AUDIO_EV_IN_STOPPED, _play_finished, NULL));
             if (!out)
               {
-                 out = eo_add(ECORE_AUDIO_OBJ_OUT_PULSE_CLASS, NULL);
+                 out = eo_add(ECORE_AUDIO_OBJ_OUT_PULSE_CLASS, NULL,
+                              eo_event_callback_add(ECORE_AUDIO_EV_OUT_PULSE_CONTEXT_FAIL, _out_fail, NULL));
                  if (out) outs++;
               }
             if (!out)
@@ -195,6 +207,9 @@ _edje_multisense_internal_sound_tone_play(Edje *ed, const char *tone_name, const
         ERR("Given Tone Name is NULL");
         return EINA_FALSE;
      }
+   
+   if (outfail) return EINA_FALSE;
+   
    if ((!ed) || (!ed->file) || (!ed->file->sound_dir))
      return EINA_FALSE;
 
@@ -210,7 +225,11 @@ _edje_multisense_internal_sound_tone_play(Edje *ed, const char *tone_name, const
              eo_do(in, eo_event_callback_add(ECORE_AUDIO_EV_IN_STOPPED, _play_finished, NULL));
 
              if (!out)
-               out = eo_add(ECORE_AUDIO_OBJ_OUT_PULSE_CLASS, NULL);
+               {
+                  out = eo_add(ECORE_AUDIO_OBJ_OUT_PULSE_CLASS, NULL,
+                               eo_event_callback_add(ECORE_AUDIO_EV_OUT_PULSE_CONTEXT_FAIL, _out_fail, NULL));
+                  if (out) outs++;
+               }
 
              eo_do(out, ecore_audio_obj_out_input_attach(in, &ret));
              if (!ret) {

@@ -52,6 +52,28 @@ enum _Ecore_Audio_Obj_Out_Pulse_Sub_Ids
 
 #define ECORE_AUDIO_OBJ_OUT_PULSE_ID(sub_id) (ECORE_AUDIO_OBJ_OUT_PULSE_BASE_ID + EO_TYPECHECK(enum _Ecore_Audio_Obj_Out_Pulse_Sub_Ids, sub_id))
 
+extern EAPI const Eo_Event_Description _ECORE_AUDIO_EV_OUT_PULSE_CONTEXT_READY;
+   
+/**
+ * @brief The output context is ready
+ *
+ * @since 1.8
+ *
+ * Emitted when the outout context is ready for playback
+ */
+#define ECORE_AUDIO_EV_OUT_PULSE_CONTEXT_READY (&(_ECORE_AUDIO_EV_OUT_PULSE_CONTEXT_READY))
+   
+extern EAPI const Eo_Event_Description _ECORE_AUDIO_EV_OUT_PULSE_CONTEXT_FAIL;
+   
+/**
+ * @brief The output context has failed
+ *
+ * @since 1.8
+ *
+ * Emitted when the outout context has failed. At this point the output is unusable and will never work, so it is advisable to delete it.
+ */
+#define ECORE_AUDIO_EV_OUT_PULSE_CONTEXT_FAIL (&(_ECORE_AUDIO_EV_OUT_PULSE_CONTEXT_FAIL))
+   
 /**
  * @}
  */

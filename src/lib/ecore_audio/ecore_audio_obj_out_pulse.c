@@ -25,13 +25,19 @@ EAPI Eo_Op ECORE_AUDIO_OBJ_OUT_PULSE_BASE_ID = EO_NOOP;
 #define MY_CLASS ECORE_AUDIO_OBJ_OUT_PULSE_CLASS
 #define MY_CLASS_NAME "ecore_audio_obj_out_pulse"
 
-const Eo_Event_Description _ECORE_AUDIO_EV_OUT_PULSE_CONTEXT_READY;
+EAPI const Eo_Event_Description _ECORE_AUDIO_EV_OUT_PULSE_CONTEXT_READY =
+  EO_EVENT_DESCRIPTION("context,ready", "Called when the output is ready for playback.");
 #define ECORE_AUDIO_EV_OUT_PULSE_CONTEXT_READY (&(_ECORE_AUDIO_EV_OUT_PULSE_CONTEXT_READY))
+EAPI const Eo_Event_Description _ECORE_AUDIO_EV_OUT_PULSE_CONTEXT_FAIL =
+  EO_EVENT_DESCRIPTION("context,fail", "Called when context fails.");
+#define ECORE_AUDIO_EV_OUT_PULSE_CONTEXT_FAIL (&(_ECORE_AUDIO_EV_OUT_PULSE_CONTEXT_FAIL))
+
 
 struct _Ecore_Audio_Pulse_Class {
   pa_mainloop_api *api;
   pa_context *context;
   pa_context_state_t state;
+  Ecore_Job *state_job;
   Eina_List *outputs;
 };
 
@@ -213,17 +219,38 @@ static void _state_cb(pa_context *context, void *data EINA_UNUSED)
   pa_context_state_t state;
 
   state = pa_context_get_state(context);
+  class_vars.state = state;
 
   if (state == PA_CONTEXT_READY) {
     DBG("PA context ready.");
     EINA_LIST_FOREACH(class_vars.outputs, out, eo_obj) {
       eo_do(eo_obj, eo_event_callback_call(ECORE_AUDIO_EV_OUT_PULSE_CONTEXT_READY, NULL, NULL));
     }
+  } else if ((state == PA_CONTEXT_FAILED) || (state == PA_CONTEXT_TERMINATED)) {
+    DBG("PA context fail.");
+    EINA_LIST_FOREACH(class_vars.outputs, out, eo_obj) {
+      eo_do(eo_obj, eo_event_callback_call(ECORE_AUDIO_EV_OUT_PULSE_CONTEXT_FAIL, NULL, NULL));
+    }
   } else {
     DBG("Connection state %i", state);
   }
 
-  class_vars.state = state;
+}
+
+static void _state_job(void *data EINA_UNUSED)
+{
+   if ((class_vars.state == PA_CONTEXT_FAILED) ||
+       (class_vars.state == PA_CONTEXT_TERMINATED))
+     {
+        Eo *eo_obj;
+        Eina_List *out;
+        
+        DBG("PA context fail.");
+        EINA_LIST_FOREACH(class_vars.outputs, out, eo_obj) {
+           eo_do(eo_obj, eo_event_callback_call(ECORE_AUDIO_EV_OUT_PULSE_CONTEXT_FAIL, NULL, NULL));
+        }
+     }
+   class_vars.state_job = NULL;
 }
 
 static void _constructor(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
@@ -249,6 +276,8 @@ static void _constructor(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list EINA_U
   }
 
   class_vars.outputs = eina_list_append(class_vars.outputs, eo_obj);
+  if (class_vars.state_job) eo_del(class_vars.state_job);
+  class_vars.state_job = ecore_job_add(_state_job, NULL);
 }
 
 static void _destructor(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
@@ -281,6 +310,7 @@ static const Eo_Op_Description op_desc[] = {
 
 static const Eo_Event_Description *event_desc[] = {
     ECORE_AUDIO_EV_OUT_PULSE_CONTEXT_READY,
+    ECORE_AUDIO_EV_OUT_PULSE_CONTEXT_FAIL,
     NULL
 };
 
