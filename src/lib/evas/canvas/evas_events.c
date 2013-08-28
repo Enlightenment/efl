@@ -1394,8 +1394,10 @@ _canvas_event_feed_mouse_cancel(Eo *eo_e, void *_pd, va_list *list)
      }
    EINA_LIST_FOREACH_SAFE(e->touch_points, l, ll, point)
      {
-        if (point->state == EVAS_TOUCH_POINT_DOWN)
-          evas_event_feed_multi_up(eo_e, point->id, point->x, point->y, 0, 0, 0, 0, 0, 0, 0, 0, timestamp, data);
+        if ((point->state == EVAS_TOUCH_POINT_DOWN) ||
+            (point->state == EVAS_TOUCH_POINT_MOVE))
+          evas_event_feed_multi_up(eo_e, point->id, point->x, point->y,
+                                   0, 0, 0, 0, 0, 0, 0, 0, timestamp, data);
      }
    _evas_unwalk(e);
 }
