@@ -308,6 +308,13 @@ _color_set(Eo *obj, void *_pd, va_list *list)
    Elm_Bg_Smart_Data *sd = _pd;
    Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
+   // reset color
+   if ((r == -1) && (g == -1) && (b == -1))
+     {
+        ELM_SAFE_FREE(sd->rect, evas_object_del);
+        return;
+     }
+
    if (!sd->rect)
      {
         sd->rect = evas_object_rectangle_add

@@ -84,6 +84,7 @@ Additions:
    * Add _elm_access_object_get, deprecate _elm_access_info_get
    * Add elm_win_focus_highlight_animate_set/get().
    * Add selectraise feature to gengrid.
+   * Add bg reset feature.
 
 Improvements:
 

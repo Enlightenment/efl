@@ -1577,3 +1577,7 @@
 2013-08-26  Daniel Juyung Seo (SeoZ)
 
         * Gengrid: implement selectraise feature.
+
+2013-08-28  DAniel Juyung Seo (SeoZ)
+
+        * Bg: Add bg reset feature.

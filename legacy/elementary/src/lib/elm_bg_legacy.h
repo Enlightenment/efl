@@ -98,6 +98,8 @@ EAPI Elm_Bg_Option                elm_bg_option_get(const Evas_Object *obj);
  * previously called elm_bg_file_set(), so that you just want a solid
  * color background.
  *
+ * @note You can reset the color by setting @r, @g, @b as -1, -1, -1.
+ *
  * @see elm_bg_color_get()
  *
  * @ingroup Bg
