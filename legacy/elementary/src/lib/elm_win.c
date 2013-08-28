@@ -2136,11 +2136,21 @@ static void
 _elm_win_frame_cb_move_start(void *data,
                              Evas_Object *obj __UNUSED__,
                              const char *sig __UNUSED__,
-                             const char *source __UNUSED__)
+                             const char *source)
 {
    ELM_WIN_DATA_GET(data, sd);
 
    if (!sd) return;
+
+#ifdef HAVE_ELEMENTARY_WAYLAND
+   if (!strcmp(source, "elm"))
+     ecore_wl_window_cursor_from_name_set(sd->wl.win, ELM_CURSOR_HAND1);
+   else
+     ecore_wl_window_cursor_default_restore(sd->wl.win);
+#else
+   (void)source;
+#endif
+
    /* FIXME: Change mouse pointer */
 
    /* NB: Wayland handles moving surfaces by itself so we cannot
@@ -2150,6 +2160,21 @@ _elm_win_frame_cb_move_start(void *data,
     * the move is finished */
 
    ecore_evas_wayland_move(sd->ee, sd->screen.x, sd->screen.y);
+}
+
+static void
+_elm_win_frame_cb_move_stop(void *data,
+                            Evas_Object *obj __UNUSED__,
+                            const char *sig __UNUSED__,
+                            const char *source __UNUSED__)
+{
+   ELM_WIN_DATA_GET(data, sd);
+
+   if (!sd) return;
+
+#ifdef HAVE_ELEMENTARY_WAYLAND
+   ecore_wl_window_cursor_default_restore(sd->wl.win);
+#endif
 }
 
 #ifdef HAVE_ELEMENTARY_WAYLAND
@@ -2436,6 +2461,9 @@ _elm_win_frame_add(Elm_Win_Smart_Data *sd,
      (sd->frame_obj, "elm,action,move,start", "elm",
      _elm_win_frame_cb_move_start, obj);
    edje_object_signal_callback_add
+     (sd->frame_obj, "elm,action,move,stop", "elm",
+     _elm_win_frame_cb_move_stop, obj);
+   edje_object_signal_callback_add
      (sd->frame_obj, "elm,action,resize,show", "*",
      _elm_win_frame_cb_resize_show, obj);
    edje_object_signal_callback_add
@@ -2484,6 +2512,9 @@ _elm_win_frame_del(Elm_Win_Smart_Data *sd)
         edje_object_signal_callback_del
           (sd->frame_obj, "elm,action,move,start", "elm",
               _elm_win_frame_cb_move_start);
+        edje_object_signal_callback_del
+          (sd->frame_obj, "elm,action,move,stop", "elm",
+              _elm_win_frame_cb_move_stop);
         edje_object_signal_callback_del
           (sd->frame_obj, "elm,action,resize,show", "*",
               _elm_win_frame_cb_resize_show);
