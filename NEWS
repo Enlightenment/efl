@@ -207,6 +207,7 @@ Improvements:
      - Optimized path for when map use the same color for all corner.
      - Asynchronous preload of GL texture.
      - Add neon assembly for upscaling and map routines
+     - Use mmap/munmap for image data allocation on system that have mmap.
     * Ecore_Con:
      - Rebase dns.c against upstream
     * Edje:

@@ -1,6 +1,10 @@
+2013-08-29  Cedric Bail
+
+	* Evas: use mmap/munmap to allocate surface.
+
 2013-08-27  Jaehyun Cho
 
-    * Fix edje play sample parameter checking.
+	* Edje: Fix edje play sample parameter checking.
 
 2013-08-27  Tom Hacohen
 

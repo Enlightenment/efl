@@ -2,6 +2,10 @@
 # include "config.h"  /* so that EAPI in Eet.h is correctly defined */
 #endif
 
+#ifdef HAVE_SYS_MMAN_H
+# include <sys/mman.h>
+#endif
+
 #ifdef BUILD_LOADER_EET
 # include <Eet.h>
 #endif
@@ -104,6 +108,69 @@ static const Evas_Cache2_Image_Func      _evas_common_image_func2 =
   NULL
 };
 #endif
+
+static inline size_t
+_evas_common_rgba_image_surface_size(unsigned int w, unsigned int h, Eina_Bool alpha_only)
+{
+#define PAGE_SIZE (4 * 1024)
+#ifdef HAVE_SYS_MMAN_H
+# define ALIGN_TO_PAGE(Siz) (((Siz / PAGE_SIZE) + (Siz % PAGE_SIZE ? 1 : 0)) * PAGE_SIZE)
+#else
+# define ALIGN_TO_PAGE(Siz) Siz
+#endif
+   size_t siz;
+
+   if (alpha_only)
+     siz = w * h * sizeof(DATA8);
+   else
+     siz = w * h * sizeof(DATA32);
+
+   if (siz < PAGE_SIZE) return siz;
+
+   return ALIGN_TO_PAGE(siz);
+
+#undef ALIGN_TO_PAGE
+}
+
+static void *
+_evas_common_rgba_image_surface_mmap(unsigned int w, unsigned int h, Eina_Bool alpha_only)
+{
+   size_t siz;
+   void *r;
+
+   siz = _evas_common_rgba_image_surface_size(w, h, alpha_only);
+
+#ifdef HAVE_SYS_MMAN_H
+   if (siz < PAGE_SIZE)
+     return malloc(siz);
+
+   r = mmap(NULL, siz, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
+   if (r == MAP_FAILED)
+     r = mmap(NULL, siz, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+   if (r == MAP_FAILED)
+     r = NULL;
+
+   return r;
+#else
+   return malloc(siz);
+#endif
+}
+
+static void
+_evas_common_rgba_image_surface_munmap(void *data, unsigned int w, unsigned int h, Eina_Bool alpha_only)
+{
+#ifdef HAVE_SYS_MMAN_H
+   size_t siz;
+
+   siz = _evas_common_rgba_image_surface_size(w, h, alpha_only);
+   if (siz < PAGE_SIZE)
+     free(data);
+   else
+     munmap(data, siz);
+#else
+   free(data);
+#endif
+}
 
 EAPI void
 evas_common_image_init(void)
@@ -305,7 +372,9 @@ evas_common_rgba_image_unload(Image_Entry *ie)
 
    if (im->image.data && !im->image.no_free)
      {
-        free(im->image.data);
+        _evas_common_rgba_image_surface_munmap(im->image.data,
+                                               ie->allocated.w, ie->allocated.h,
+                                               (im->flags & RGBA_IMAGE_ALPHA_ONLY));
 #ifdef SURFDBG
         surfs = eina_list_remove(surfs, ie);
 #endif        
@@ -373,19 +442,18 @@ _evas_common_rgba_image_surface_alloc(Image_Entry *ie, unsigned int w, unsigned 
 #endif
    if (im->image.no_free) return 0;
 
-   if (im->flags & RGBA_IMAGE_ALPHA_ONLY)
-     siz = w * h * sizeof(DATA8);
-   else
-     siz = w * h * sizeof(DATA32);
+   siz = _evas_common_rgba_image_surface_size(w, h, (im->flags & RGBA_IMAGE_ALPHA_ONLY));
 
    if (im->image.data)
      {
-        free(im->image.data);
+        _evas_common_rgba_image_surface_munmap(im->image.data,
+                                               ie->allocated.w, ie->allocated.h,
+                                               (im->flags & RGBA_IMAGE_ALPHA_ONLY));
 #ifdef SURFDBG
         surfs = eina_list_remove(surfs, ie);
 #endif        
      }
-   im->image.data = malloc(siz);
+   im->image.data = _evas_common_rgba_image_surface_mmap(w, h, (im->flags & RGBA_IMAGE_ALPHA_ONLY));
    if (!im->image.data) return -1;
    ie->allocated.w = w;
    ie->allocated.h = h;
@@ -439,7 +507,9 @@ _evas_common_rgba_image_surface_delete(Image_Entry *ie)
 
    if (im->image.data && !im->image.no_free)
      {
-        free(im->image.data);
+        _evas_common_rgba_image_surface_munmap(im->image.data,
+                                               ie->allocated.w, ie->allocated.h,
+                                               (im->flags & RGBA_IMAGE_ALPHA_ONLY));
 #ifdef SURFDBG
         surfs = eina_list_remove(surfs, ie);
 #endif
@@ -682,7 +752,10 @@ evas_common_image_colorspace_normalize(RGBA_Image *im)
 #endif
 	     if (!im->image.no_free)
                {
-                  free(im->image.data);
+                  _evas_common_rgba_image_surface_munmap(im->image.data,
+                                                         im->cache_entry.allocated.w,
+                                                         im->cache_entry.allocated.h,
+                                                         (im->flags & RGBA_IMAGE_ALPHA_ONLY));
 #ifdef SURFDBG
                   surfs = eina_list_remove(surfs, im);
 #endif                  
