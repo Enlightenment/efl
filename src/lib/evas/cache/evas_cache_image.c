@@ -1231,6 +1231,26 @@ evas_cache_image_unload_all(Evas_Cache_Image *cache)
    eina_hash_foreach(cache->inactiv, _evas_cache_image_unload_cb, NULL);
 }
 
+static int async_frozen = 0;
+
+EAPI int
+evas_cache_async_frozen_get(void)
+{
+   return async_frozen;
+}
+
+EAPI void
+evas_cache_async_freeze(void)
+{
+   async_frozen++;
+}
+
+EAPI void
+evas_cache_async_thaw(void)
+{
+   async_frozen--;
+}
+
 EAPI Eina_Bool
 evas_cache_image_is_loaded(Image_Entry *im)
 {

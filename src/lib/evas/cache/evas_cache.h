@@ -169,6 +169,10 @@ EAPI void                     evas_cache_image_preload_cancel(Image_Entry *im, c
 
 EAPI void                     evas_cache_image_wakeup(void);
 
+EAPI int                      evas_cache_async_frozen_get(void);
+EAPI void                     evas_cache_async_freeze(void);
+EAPI void                     evas_cache_async_thaw(void);
+
 #ifdef __cplusplus
 }
 #endif

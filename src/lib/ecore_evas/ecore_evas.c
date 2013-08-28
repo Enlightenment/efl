@@ -97,7 +97,6 @@ _ecore_evas_idle_enter(void *data EINA_UNUSED)
              if (ee->engine.func->fn_render)
                rend |= ee->engine.func->fn_render(ee);
           }
-
 #ifdef ECORE_EVAS_ASYNC_RENDER_DEBUG
         if ((ee->in_async_render) && (ee->async_render_start <= 0.0))
           {

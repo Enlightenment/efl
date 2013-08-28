@@ -271,7 +271,8 @@ evas_common_rgba_image_unload(Image_Entry *ie)
    if (!ie->flags.loaded) return;
    if ((!ie->info.module) && (!ie->data1)) return;
    if (!ie->file && !ie->f) return;
-   if (ie->references > 0) return;
+   if ((evas_cache_async_frozen_get() == 0) &&
+       (ie->references > 0)) return;
 
    ie->flags.loaded = 0;
 

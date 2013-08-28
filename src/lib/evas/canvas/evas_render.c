@@ -2236,6 +2236,7 @@ _canvas_render_dump(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
    Evas_Layer *lay;
 
    evas_render_rendering_wait(e);
+   evas_cache_async_freeze();
 
    EINA_INLIST_FOREACH(e->layers, lay)
      {
@@ -2261,6 +2262,7 @@ _canvas_render_dump(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
    GC_ALL(evas_object_image_pixels_cow);
    GC_ALL(evas_object_image_load_opts_cow);
    GC_ALL(evas_object_image_state_cow);
+   evas_cache_async_thaw();
 }
 
 void
