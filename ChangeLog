@@ -1,5 +1,9 @@
 2013-08-29  Cedric Bail
 
+	* Evas: add interceptor for focus_set.
+
+2013-08-28  Cedric Bail
+
 	* Evas: use mmap/munmap to allocate surface.
 
 2013-08-27  Jaehyun Cho

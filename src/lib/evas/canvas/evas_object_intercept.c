@@ -129,6 +129,24 @@ evas_object_intercept_call_layer_set(Evas_Object *eo_obj,
 }
 
 int
+evas_object_intercept_call_focus_set(Evas_Object *eo_obj,
+                                     Evas_Object_Protected_Data *obj,
+                                     Eina_Bool focus)
+{
+   int ret;
+
+   if (!obj->interceptors) return 0;
+   if (obj->intercepted) return 0;
+   obj->intercepted = EINA_TRUE;
+   ret = !!(obj->interceptors->focus_set.func);
+   if (ret)
+     obj->interceptors->focus_set.func(obj->interceptors->focus_set.data, eo_obj, focus);
+   obj->intercepted = EINA_FALSE;
+   return ret;
+}
+
+
+int
 evas_object_intercept_call_color_set(Evas_Object *eo_obj,
                                      Evas_Object_Protected_Data *obj,
                                      int r, int g, int b, int a)
@@ -461,6 +479,38 @@ evas_object_intercept_layer_set_callback_del(Evas_Object *eo_obj, Evas_Object_In
    obj->interceptors->layer_set.func = NULL;
    data = obj->interceptors->layer_set.data;
    obj->interceptors->layer_set.data = NULL;
+   evas_object_intercept_deinit(eo_obj);
+   return data;
+}
+
+EAPI void
+evas_object_intercept_focus_set_callback_add(Evas_Object *eo_obj, Evas_Object_Intercept_Focus_Set_Cb func, const void *data)
+{
+   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   if (!func) return;
+   evas_object_intercept_init(eo_obj);
+   if (!obj->interceptors) return;
+   obj->interceptors->focus_set.func = func;
+   obj->interceptors->focus_set.data = (void *)data;
+}
+
+EAPI void *
+evas_object_intercept_focus_set_callback_del(Evas_Object *eo_obj, Evas_Object_Intercept_Focus_Set_Cb func)
+{
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   void *data;
+
+   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
+   return NULL;
+   MAGIC_CHECK_END();
+   if (!func) return NULL;
+   if (!obj->interceptors) return NULL;
+   obj->interceptors->focus_set.func = NULL;
+   data = obj->interceptors->focus_set.data;
+   obj->interceptors->focus_set.data = NULL;
    evas_object_intercept_deinit(eo_obj);
    return data;
 }

@@ -238,6 +238,10 @@ struct _Evas_Intercept_Func
       Evas_Object_Intercept_Clip_Unset_Cb func;
       void *data;
    } clip_unset;
+   struct {
+      Evas_Object_Intercept_Focus_Set_Cb func;
+      void *data;
+   } focus_set;
 };
 
 struct _Evas_Smart_Cb_Description_Array
@@ -1015,18 +1019,19 @@ void evas_object_inform_call_image_preloaded(Evas_Object *obj);
 void evas_object_inform_call_image_unloaded(Evas_Object *obj);
 void evas_object_inform_call_image_resize(Evas_Object *obj);
 void evas_object_intercept_cleanup(Evas_Object *obj);
-int evas_object_intercept_call_show(Evas_Object *obj);
-int evas_object_intercept_call_hide(Evas_Object *obj);
+int evas_object_intercept_call_show(Evas_Object *obj, Evas_Object_Protected_Data *pd);
+int evas_object_intercept_call_hide(Evas_Object *obj, Evas_Object_Protected_Data *pd);
 int evas_object_intercept_call_move(Evas_Object *obj, Evas_Object_Protected_Data *pd, Evas_Coord x, Evas_Coord y);
-int evas_object_intercept_call_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h);
-int evas_object_intercept_call_raise(Evas_Object *obj);
-int evas_object_intercept_call_lower(Evas_Object *obj);
-int evas_object_intercept_call_stack_above(Evas_Object *obj, Evas_Object *above);
-int evas_object_intercept_call_stack_below(Evas_Object *obj, Evas_Object *below);
-int evas_object_intercept_call_layer_set(Evas_Object *obj, int l);
-int evas_object_intercept_call_color_set(Evas_Object *obj, int r, int g, int b, int a);
+int evas_object_intercept_call_resize(Evas_Object *obj, Evas_Object_Protected_Data *pd, Evas_Coord w, Evas_Coord h);
+int evas_object_intercept_call_raise(Evas_Object *obj, Evas_Object_Protected_Data *pd);
+int evas_object_intercept_call_lower(Evas_Object *obj, Evas_Object_Protected_Data *pd);
+int evas_object_intercept_call_stack_above(Evas_Object *obj, Evas_Object_Protected_Data *pd, Evas_Object *above);
+int evas_object_intercept_call_stack_below(Evas_Object *obj, Evas_Object_Protected_Data *pd, Evas_Object *below);
+int evas_object_intercept_call_layer_set(Evas_Object *obj, Evas_Object_Protected_Data *pd, int l);
+int evas_object_intercept_call_color_set(Evas_Object *obj, Evas_Object_Protected_Data *pd, int r, int g, int b, int a);
 int evas_object_intercept_call_clip_set(Evas_Object *obj, Evas_Object_Protected_Data *pd, Evas_Object *clip);
-int evas_object_intercept_call_clip_unset(Evas_Object *obj);
+int evas_object_intercept_call_clip_unset(Evas_Object *obj, Evas_Object_Protected_Data *pd);
+int evas_object_intercept_call_focus_set(Evas_Object *obj, Evas_Object_Protected_Data *pd, Eina_Bool focus);
 void evas_object_grabs_cleanup(Evas_Object *obj, Evas_Object_Protected_Data *pd);
 void evas_key_grab_free(Evas_Object *obj, Evas_Object_Protected_Data *pd, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers);
 void evas_font_dir_cache_free(void);

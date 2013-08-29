@@ -60,6 +60,7 @@ Additions:
      - Change mapping policy for image loader.
      - textblock: Use max ascent/descent at the edges of the textblock.
      - textblock: Make the ellipsis format the same as the surrounding.
+     - Add interceptor for focus_set.
     * Ecore_X:
      - Add window profile support.
        ECORE_X_ATOM_E_WINDOW_PROFILE_SUPPORTED

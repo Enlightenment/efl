@@ -2511,6 +2511,7 @@ typedef void (*Evas_Object_Intercept_Lower_Cb)(void *data, Evas_Object *obj);
 typedef void (*Evas_Object_Intercept_Stack_Above_Cb)(void *data, Evas_Object *obj, Evas_Object *above);
 typedef void (*Evas_Object_Intercept_Stack_Below_Cb)(void *data, Evas_Object *obj, Evas_Object *above);
 typedef void (*Evas_Object_Intercept_Layer_Set_Cb)(void *data, Evas_Object *obj, int l);
+typedef void (*Evas_Object_Intercept_Focus_Set_Cb)(void *data, Evas_Object *obj, Eina_Bool focus);
 typedef void (*Evas_Object_Intercept_Color_Set_Cb)(void *data, Evas_Object *obj, int r, int g, int b, int a);
 typedef void (*Evas_Object_Intercept_Clip_Set_Cb)(void *data, Evas_Object *obj, Evas_Object *clip);
 typedef void (*Evas_Object_Intercept_Clip_Unset_Cb)(void *data, Evas_Object *obj);

@@ -28,6 +28,7 @@ _focus_set(Eo *eo_obj, void *_pd, va_list *list)
 
    event_id = _evas_event_counter;
    if (obj->focused == focus) goto end;
+   if (evas_object_intercept_call_focus_set(eo_obj, obj, focus)) goto end;
    if (focus)
      {
         if (obj->layer->evas->focused)
