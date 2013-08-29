@@ -214,7 +214,6 @@ struct _Ecore_Wl_Window
      } pointer;
 
    int id, surface_id;
-   int x, y;
    int edges;
 
    Eina_Rectangle allocation;
