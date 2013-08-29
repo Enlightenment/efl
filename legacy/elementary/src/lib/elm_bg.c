@@ -296,7 +296,7 @@ elm_bg_color_set(Evas_Object *obj,
                  int b)
 {
    ELM_BG_CHECK(obj);
-   eo_do(obj, elm_obj_bg_color_set(r, g, b));
+   eo_do(obj, elm_obj_bg_color_set(r, g, b, 255));
 }
 
 static void
@@ -305,6 +305,7 @@ _color_set(Eo *obj, void *_pd, va_list *list)
    int r = va_arg(*list, int);
    int g = va_arg(*list, int);
    int b = va_arg(*list, int);
+   int a = va_arg(*list, int);
    Elm_Bg_Smart_Data *sd = _pd;
    Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
@@ -325,7 +326,7 @@ _color_set(Eo *obj, void *_pd, va_list *list)
         elm_layout_sizing_eval(obj);
      }
 
-   evas_object_color_set(sd->rect, r, g, b, 255);
+   evas_object_color_set(sd->rect, r, g, b, a);
 }
 
 EAPI void
@@ -335,7 +336,7 @@ elm_bg_color_get(const Evas_Object *obj,
                  int *b)
 {
    ELM_BG_CHECK(obj);
-   eo_do((Eo *) obj, elm_obj_bg_color_get(r, g, b));
+   eo_do((Eo *) obj, elm_obj_bg_color_get(r, g, b, NULL));
 }
 
 static void
@@ -344,9 +345,10 @@ _color_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    int *r = va_arg(*list, int *);
    int *g = va_arg(*list, int *);
    int *b = va_arg(*list, int *);
+   int *a = va_arg(*list, int *);
    Elm_Bg_Smart_Data *sd = _pd;
 
-   evas_object_color_get(sd->rect, r, g, b, NULL);
+   evas_object_color_get(sd->rect, r, g, b, a);
 }
 
 EAPI void

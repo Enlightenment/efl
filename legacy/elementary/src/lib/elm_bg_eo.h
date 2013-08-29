@@ -88,12 +88,13 @@ enum
  * @param[in] r
  * @param[in] g
  * @param[in] b
+ * @param[in] a
  *
  * @see elm_bg_color_set
  *
  * @ingroup Bg
  */
-#define elm_obj_bg_color_set(r, g, b) ELM_OBJ_BG_ID(ELM_OBJ_BG_SUB_ID_COLOR_SET), EO_TYPECHECK(int, r), EO_TYPECHECK(int, g), EO_TYPECHECK(int, b)
+#define elm_obj_bg_color_set(r, g, b, a) ELM_OBJ_BG_ID(ELM_OBJ_BG_SUB_ID_COLOR_SET), EO_TYPECHECK(int, r), EO_TYPECHECK(int, g), EO_TYPECHECK(int, b), EO_TYPECHECK(int, a)
 
 /**
  * @def elm_obj_bg_color_get
@@ -104,12 +105,13 @@ enum
  * @param[out] r
  * @param[out] g
  * @param[out] b
+ * @param[out] a
  *
  * @see elm_bg_color_get
  *
  * @ingroup Bg
  */
-#define elm_obj_bg_color_get(r, g, b) ELM_OBJ_BG_ID(ELM_OBJ_BG_SUB_ID_COLOR_GET), EO_TYPECHECK(int *, r), EO_TYPECHECK(int *, g), EO_TYPECHECK(int *, b)
+#define elm_obj_bg_color_get(r, g, b, a) ELM_OBJ_BG_ID(ELM_OBJ_BG_SUB_ID_COLOR_GET), EO_TYPECHECK(int *, r), EO_TYPECHECK(int *, g), EO_TYPECHECK(int *, b), EO_TYPECHECK(int *, a)
 
 /**
  * @def elm_obj_bg_load_size_set
