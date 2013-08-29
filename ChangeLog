@@ -1,3 +1,7 @@
+2013-08-29  Boris Faure
+
+	* Edje: export EINA_VERSION_MAJOR/MINOR when compiling edc files
+
 2013-08-29  Cedric Bail
 
 	* Evas: add interceptor for focus_set.

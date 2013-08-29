@@ -843,23 +843,31 @@ compile(void)
         buf2[0] = '\0';
         if (getenv("EFL_RUN_IN_TREE"))
           {
-             snprintf(buf2, sizeof(buf2), "%s/src/bin/edje/epp/epp" EPP_EXT,
+             snprintf(buf2, sizeof(buf2),
+                      "%s/src/bin/edje/epp/epp" EPP_EXT,
                       PACKAGE_BUILD_DIR);
              if (!ecore_file_exists(buf2))
                buf2[0] = '\0';
           }
 
         if (buf2[0] == '\0')
-          snprintf(buf2, sizeof(buf2), "%s/edje/utils/" MODULE_ARCH "/epp" EPP_EXT,
+          snprintf(buf2, sizeof(buf2),
+                   "%s/edje/utils/" MODULE_ARCH "/epp" EPP_EXT,
                    eina_prefix_lib_get(pfx));
         if (ecore_file_exists(buf2))
           {
              if (anotate)
-               snprintf(buf, sizeof(buf), "%s -anotate -a %s %s -I%s %s -o %s",
-                        buf2, watchfile ? watchfile : "/dev/null", file_in, inc, def, tmpn);
+               snprintf(buf, sizeof(buf), "%s -anotate -a %s %s -I%s %s -o %s"
+                        " -DEINA_VERSION_MAJOR=%d -DEFL_VERSION_MINOR=%d",
+                        buf2, watchfile ? watchfile : "/dev/null", file_in,
+                        inc, def, tmpn,
+                        EINA_VERSION_MAJOR, EINA_VERSION_MINOR);
              else
-               snprintf(buf, sizeof(buf), "%s -a %s %s -I%s %s -o %s",
-                        buf2, watchfile ? watchfile : "/dev/null", file_in, inc, def, tmpn);
+               snprintf(buf, sizeof(buf), "%s -a %s %s -I%s %s -o %s"
+                        " -DEINA_VERSION_MAJOR=%d -DEFL_VERSION_MINOR=%d",
+                        buf2, watchfile ? watchfile : "/dev/null", file_in,
+                        inc, def, tmpn,
+                        EINA_VERSION_MAJOR, EINA_VERSION_MINOR);
              ret = system(buf);
           }
         else
