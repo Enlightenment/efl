@@ -193,7 +193,7 @@ _layer_set(Eo *eo_obj, void *_obj, va_list *list)
    Evas_Object_Protected_Data *obj = _obj;
 
    if (obj->delete_me) return;
-   if (evas_object_intercept_call_layer_set(eo_obj, l)) return;
+   if (evas_object_intercept_call_layer_set(eo_obj, obj, l)) return;
    if (obj->smart.parent) return;
    if (obj->cur->layer == l)
      {

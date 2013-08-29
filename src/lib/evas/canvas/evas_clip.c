@@ -374,7 +374,7 @@ _clip_unset(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
    obj->clip.cache_clipees_answer = eina_list_free(obj->clip.cache_clipees_answer);
 
    /* unclip */
-   if (evas_object_intercept_call_clip_unset(eo_obj)) return;
+   if (evas_object_intercept_call_clip_unset(eo_obj, obj)) return;
    if (obj->is_smart)
      {
         eo_do(eo_obj, evas_obj_smart_clip_unset());

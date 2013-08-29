@@ -792,7 +792,7 @@ _size_set(Eo *eo_obj, void *_pd, va_list *list)
    if (!obj->layer) return;
    if (w < 0) w = 0; if (h < 0) h = 0;
 
-   if (evas_object_intercept_call_resize(eo_obj, w, h)) return;
+   if (evas_object_intercept_call_resize(eo_obj, obj, w, h)) return;
 
    if (obj->doing.in_resize > 0)
      {
@@ -1373,7 +1373,7 @@ _show(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 {
    if (!obj->layer) return;
    if (obj->delete_me) return;
-   if (evas_object_intercept_call_show(eo_obj)) return;
+   if (evas_object_intercept_call_show(eo_obj, obj)) return;
    if (obj->is_smart)
      {
         eo_do(eo_obj, evas_obj_smart_show());
@@ -1422,7 +1422,7 @@ _hide(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
    MAGIC_CHECK_END();
    if (!obj->layer) return;
    if (obj->delete_me) return;
-   if (evas_object_intercept_call_hide(eo_obj)) return;
+   if (evas_object_intercept_call_hide(eo_obj, obj)) return;
    if (obj->is_smart)
      {
         eo_do(eo_obj, evas_obj_smart_hide());
@@ -1580,7 +1580,7 @@ _color_set(Eo *eo_obj, void *_pd, va_list *list)
         ERR("Evas only handles pre multiplied colors!");
      }
 
-   if (evas_object_intercept_call_color_set(eo_obj, r, g, b, a)) return;
+   if (evas_object_intercept_call_color_set(eo_obj, obj, r, g, b, a)) return;
    if (obj->is_smart)
      {
         eo_do(eo_obj, evas_obj_smart_color_set(r, g, b, a));

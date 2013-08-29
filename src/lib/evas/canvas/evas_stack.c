@@ -49,9 +49,10 @@ evas_object_raise(Evas_Object *eo_obj)
 void
 _raise(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
 {
-   if (evas_object_intercept_call_raise(eo_obj)) return;
-
    Evas_Object_Protected_Data *obj = _pd;
+
+   if (evas_object_intercept_call_raise(eo_obj, obj)) return;
+
    if (!((EINA_INLIST_GET(obj))->next))
      {
         evas_object_inform_call_restack(eo_obj);
@@ -105,9 +106,10 @@ evas_object_lower(Evas_Object *eo_obj)
 void
 _lower(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
 {
-   if (evas_object_intercept_call_lower(eo_obj)) return;
-
    Evas_Object_Protected_Data *obj = _pd;
+
+   if (evas_object_intercept_call_lower(eo_obj, obj)) return;
+
    if (!((EINA_INLIST_GET(obj))->prev))
      {
         evas_object_inform_call_restack(eo_obj);
@@ -162,16 +164,17 @@ evas_object_stack_above(Evas_Object *eo_obj, Evas_Object *above)
 void
 _stack_above(Eo *eo_obj, void *_pd, va_list *list)
 {
+   Evas_Object_Protected_Data *obj = _pd;
    Evas_Object *eo_above = va_arg(*list, Evas_Object *);
+
    if (!eo_above) return;
    if (eo_obj == eo_above) return;
-   if (evas_object_intercept_call_stack_above(eo_obj, eo_above)) return;
+   if (evas_object_intercept_call_stack_above(eo_obj, obj, eo_above)) return;
    if (!eo_above)
      {
         evas_object_raise(eo_obj);
         return;
      }
-   Evas_Object_Protected_Data *obj = _pd;
    Evas_Object_Protected_Data *above = eo_data_scope_get(eo_above, EVAS_OBJ_CLASS);
    if ((EINA_INLIST_GET(obj))->prev == EINA_INLIST_GET(above))
      {
@@ -250,15 +253,16 @@ void
 _stack_below(Eo *eo_obj, void *_pd, va_list *list)
 {
    Evas_Object *eo_below = va_arg(*list, Evas_Object *);
+   Evas_Object_Protected_Data *obj = _pd;
+
    if (!eo_below) return;
    if (eo_obj == eo_below) return;
-   if (evas_object_intercept_call_stack_below(eo_obj, eo_below)) return;
+   if (evas_object_intercept_call_stack_below(eo_obj, obj, eo_below)) return;
    if (!eo_below)
      {
         evas_object_lower(eo_obj);
         return;
      }
-   Evas_Object_Protected_Data *obj = _pd;
    Evas_Object_Protected_Data *below = eo_data_scope_get(eo_below, EVAS_OBJ_CLASS);
    if ((EINA_INLIST_GET(obj))->next == EINA_INLIST_GET(below))
      {
