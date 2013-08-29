@@ -1,6 +1,6 @@
 2013-08-29  Boris Faure
 
-	* Edje: export EINA_VERSION_MAJOR/MINOR when compiling edc files
+	* Edje: export EFL_VERSION_MAJOR/MINOR when compiling edc files
 
 2013-08-29  Cedric Bail
 

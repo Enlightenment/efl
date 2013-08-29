@@ -858,13 +858,13 @@ compile(void)
           {
              if (anotate)
                snprintf(buf, sizeof(buf), "%s -anotate -a %s %s -I%s %s -o %s"
-                        " -DEINA_VERSION_MAJOR=%d -DEFL_VERSION_MINOR=%d",
+                        " -DEFL_VERSION_MAJOR=%d -DEFL_VERSION_MINOR=%d",
                         buf2, watchfile ? watchfile : "/dev/null", file_in,
                         inc, def, tmpn,
                         EINA_VERSION_MAJOR, EINA_VERSION_MINOR);
              else
                snprintf(buf, sizeof(buf), "%s -a %s %s -I%s %s -o %s"
-                        " -DEINA_VERSION_MAJOR=%d -DEFL_VERSION_MINOR=%d",
+                        " -DEFL_VERSION_MAJOR=%d -DEFL_VERSION_MINOR=%d",
                         buf2, watchfile ? watchfile : "/dev/null", file_in,
                         inc, def, tmpn,
                         EINA_VERSION_MAJOR, EINA_VERSION_MINOR);
