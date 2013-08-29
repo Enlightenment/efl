@@ -188,6 +188,7 @@ _output_xlib_setup(int w, int h, int rot, Display *disp, Drawable draw,
 //   re->ob->onebuf = 1;
 
    evas_software_xlib_outbuf_debug_set(re->ob, debug);
+   if (re->tb) evas_common_tilebuf_free(re->tb);
    re->tb = evas_common_tilebuf_new(w, h);
    if (!re->tb)
      {
@@ -227,6 +228,7 @@ _output_swapbuf_setup(int w, int h, int rot, Display *disp, Drawable draw,
 	return NULL;
      }
 
+   if (re->tb) evas_common_tilebuf_free(re->tb);
    re->tb = evas_common_tilebuf_new(w, h);
    if (!re->tb)
      {
@@ -278,6 +280,7 @@ _output_xcb_setup(int w, int h, int rot, xcb_connection_t *conn,
 
    evas_software_xcb_outbuf_debug_set(re->ob, debug);
 
+   if (re->tb) evas_common_tilebuf_free(re->tb);
    re->tb = evas_common_tilebuf_new(w, h);
    if (!re->tb)
      {

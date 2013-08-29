@@ -1003,6 +1003,7 @@ eng_setup(Evas *eo_e, void *in)
         free(re);
         return 0;
      }
+   if (re->tb) evas_common_tilebuf_free(re->tb);
    re->tb = evas_common_tilebuf_new(re->win->w, re->win->h);
    if (!re->tb)
      {
