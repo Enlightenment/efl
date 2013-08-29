@@ -249,8 +249,15 @@ eng_setup(Evas *eo_evas, void *einfo)
 
         if ((re) && (re->ob)) ponebuf = re->ob->onebuf;
 
-        /* we have an existing render engine */
+        /* free any existing tile buffer */
+        if (re->tb) evas_common_tilebuf_free(re->tb);
+
+        /* we have an existing output buffer, free it */
         if (re->ob) re->outbuf_free(re->ob);
+
+        /* create new tile buffer */
+        if ((re->tb = evas_common_tilebuf_new(w, h)))
+          evas_common_tilebuf_set_tile_size(re->tb, TILESIZE, TILESIZE);
 
         if ((re->ob = evas_swapbuf_setup(epd->output.w, epd->output.h,
                                          info->info.rotation,
