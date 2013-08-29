@@ -77,7 +77,6 @@ _popup_center_text_cb(void *data, Evas_Object *obj __UNUSED__,
    Evas_Object *popup;
 
    popup = elm_popup_add(data);
-   evas_object_size_hint_weight_set(popup, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_object_text_set(popup, "This Popup has content area and "
                        "timeout value is 3 seconds");
    elm_popup_timeout_set(popup, 3.0);
@@ -93,7 +92,6 @@ _popup_center_text_1button_cb(void *data, Evas_Object *obj __UNUSED__,
    Evas_Object *btn;
 
    popup = elm_popup_add(data);
-   evas_object_size_hint_weight_set(popup, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_object_text_set(popup, "This Popup has content area and "
                        "action area set, action area has one button Close");
 
@@ -114,7 +112,6 @@ _popup_center_title_text_1button_cb(void *data, Evas_Object *obj __UNUSED__,
    Evas_Object *btn;
 
    popup = elm_popup_add(data);
-   evas_object_size_hint_weight_set(popup, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 
    // popup text
    elm_object_text_set(popup, "This Popup has title area, content area and "
@@ -139,7 +136,6 @@ _popup_center_title_text_block_clicked_event_cb(void *data,
    Evas_Object *popup;
 
    popup = elm_popup_add(data);
-   evas_object_size_hint_weight_set(popup, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_smart_callback_add(popup, "block,clicked", _block_clicked_cb,
                                   NULL);
 
@@ -163,7 +159,6 @@ _popup_bottom_title_text_3button_cb(void *data, Evas_Object *obj __UNUSED__,
 
    popup = elm_popup_add(data);
    elm_popup_orient_set(popup, ELM_POPUP_ORIENT_BOTTOM);
-   evas_object_size_hint_weight_set(popup, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 
    // popup text
    elm_object_text_set(popup, "This Popup has title area, content area and "
@@ -209,7 +204,6 @@ _popup_center_title_content_3button_cb(void *data, Evas_Object *obj __UNUSED__,
    char buf[256];
 
    popup = elm_popup_add(data);
-   evas_object_size_hint_weight_set(popup, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 
    // popup title
    elm_object_part_text_set(popup, "title,text", "Title");
@@ -252,7 +246,6 @@ _popup_center_title_item_3button_cb(void *data, Evas_Object *obj __UNUSED__,
    Evas_Object *popup, *icon1, *btn1, *btn2, *btn3;
 
    popup = elm_popup_add(data);
-   evas_object_size_hint_weight_set(popup, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 
    // popup title
    elm_object_part_text_set(popup, "title,text", "Title");
@@ -320,7 +313,6 @@ _popup_center_title_text_2button_restack_cb(void *data, Evas_Object *obj __UNUSE
    Evas_Object *btn, *btn2;
 
    popup = elm_popup_add(data);
-   evas_object_size_hint_weight_set(popup, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_smart_callback_add(popup, "block,clicked",
                                   _restack_block_clicked_cb, NULL);
 
@@ -362,7 +354,6 @@ _popup_center_text_1button_hide_show_cb(void *data, Evas_Object *obj __UNUSED__,
      }
 
    g_popup = elm_popup_add(data);
-   evas_object_size_hint_weight_set(g_popup, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_object_text_set(g_popup, "Hide this popup by using the button."
                        "When you click list item again, you can see this popup.");
 
@@ -384,7 +375,6 @@ _popup_transparent_cb(void *data, Evas_Object *obj __UNUSED__,
 
    popup = elm_popup_add(data);
    elm_object_style_set(popup, "transparent");
-   evas_object_size_hint_weight_set(popup, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_object_text_set(popup, "This Popup has transparent background");
 
    // popup buttons
