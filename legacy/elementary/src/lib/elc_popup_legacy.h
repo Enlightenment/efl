@@ -38,7 +38,8 @@ EAPI Elm_Wrap_Type elm_popup_content_text_wrap_type_get(const Evas_Object *obj) 
  * @param obj The popup object
  * @param orient  the orientation of the popup
  *
- * Sets the position in which popup will appear in its parent
+ * Sets the position in which popup will appear in its parent. By default,
+ * #ELM_POPUP_ORIENT_CENTER is set.
  *
  * @ingroup Popup
  * @see @ref Elm_Popup_Orient for possible values.
