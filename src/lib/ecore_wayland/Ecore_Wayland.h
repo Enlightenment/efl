@@ -218,7 +218,11 @@ struct _Ecore_Wl_Window
    int edges;
 
    Eina_Rectangle allocation;
-   Eina_Rectangle saved_allocation, server_allocation;
+
+   struct 
+     {
+        int w, h;
+     } saved, server;
 
    /* Eina_Bool redraw_scheduled : 1; */
    /* Eina_Bool resize_scheduled : 1; */
