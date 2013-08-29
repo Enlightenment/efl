@@ -707,6 +707,40 @@ EAPI Eina_Bool ecore_wl_window_alpha_get(Ecore_Wl_Window *win);
 EAPI Ecore_Wl_Window *ecore_wl_window_surface_find(struct wl_surface *surface);
 
 /**
+ * Set the input region of the Ecore_Wl_Window.
+ * 
+ * To set an empty region, pass width and height as 0.
+ * 
+ * An empty input region means the entire window surface will accept input.
+ * 
+ * @param win The window
+ * @param x The left point of the region.
+ * @param y The top point of the region.
+ * @param w The width of the region.
+ * @param h The height of the region.
+ * 
+ * @ingroup Ecore_Wl_Window_Group
+ * @since 1.8
+ */
+EAPI void ecore_wl_window_input_region_set(Ecore_Wl_Window *win, int x, int y, int w, int h);
+
+/**
+ * Set the opaque region of the Ecore_Wl_Window
+ * 
+ * To set an empty region, pass width and height as 0.
+ * 
+ * @param win The window
+ * @param x The left point of the region.
+ * @param y The top point of the region.
+ * @param w The width of the region.
+ * @param h The height of the region.
+ * 
+ * @ingroup Ecore_Wl_Window_Group
+ * @since 1.8
+ */
+EAPI void ecore_wl_window_opaque_region_set(Ecore_Wl_Window *win, int x, int y, int w, int h);
+
+/**
  * @defgroup Ecore_Wl_Dnd_Group Functions dealing with Wayland Drag-n-Drop
  * @ingroup Ecore_Wl_Group
  *
