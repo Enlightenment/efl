@@ -508,12 +508,7 @@ eng_window_use(Evas_GL_X11_Window *gw)
 #ifdef GL_GLES
    if (_evas_gl_x11_window)
      {
-        if ((eglGetCurrentContext() !=
-             _evas_gl_x11_window->egl_context[0]) ||
-            (eglGetCurrentSurface(EGL_READ) !=
-                _evas_gl_x11_window->egl_surface[0]) ||
-            (eglGetCurrentSurface(EGL_DRAW) !=
-                _evas_gl_x11_window->egl_surface[0]))
+        if (eglGetCurrentContext() != _evas_gl_x11_window->egl_context[0])
            force_use = EINA_TRUE;
      }
 #else
