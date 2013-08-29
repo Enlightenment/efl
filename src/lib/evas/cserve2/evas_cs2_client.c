@@ -17,6 +17,7 @@
 
 #ifdef EVAS_CSERVE2
 
+#define TIMEOUT 1000
 #define USE_SHARED_INDEX 1
 #define SHARED_INDEX_ADD_TO_HASH 1
 #define HKEY_LOAD_OPTS_STR_LEN 215
@@ -395,6 +396,7 @@ _server_dispatch_until(unsigned int rid)
      {
         rrid = _server_dispatch(&failed);
         if (rrid == rid) break;
+#if TIMEOUT
         else if (failed)
           {
              int sel;
@@ -402,8 +404,8 @@ _server_dispatch_until(unsigned int rid)
              //DBG("Waiting for request %d...", rid);
              FD_ZERO(&rfds);
              FD_SET(socketfd, &rfds);
-             tv.tv_sec = 1;
-             tv.tv_usec = 0;
+             tv.tv_sec = TIMEOUT / 1000;
+             tv.tv_usec = TIMEOUT * 1000;
              sel = select(socketfd + 1, &rfds, NULL, NULL, &tv);
              if (sel == -1)
                {
@@ -425,6 +427,7 @@ _server_dispatch_until(unsigned int rid)
                   return EINA_FALSE;
                }
           }
+#endif
      }
    return EINA_TRUE;
 }
