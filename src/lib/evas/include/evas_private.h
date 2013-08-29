@@ -193,54 +193,67 @@ struct _Evas_Intercept_Func
    struct {
       Evas_Object_Intercept_Show_Cb func;
       void *data;
+      Eina_Bool intercepted;
    } show;
    struct {
       Evas_Object_Intercept_Hide_Cb func;
       void *data;
+      Eina_Bool intercepted;
    } hide;
    struct {
       Evas_Object_Intercept_Move_Cb func;
       void *data;
+      Eina_Bool intercepted;
    } move;
    struct {
       Evas_Object_Intercept_Resize_Cb func;
       void *data;
+      Eina_Bool intercepted;
    } resize;
    struct {
       Evas_Object_Intercept_Raise_Cb func;
       void *data;
+      Eina_Bool intercepted;
    } raise;
    struct {
       Evas_Object_Intercept_Lower_Cb func;
       void *data;
+      Eina_Bool intercepted;
    } lower;
    struct {
       Evas_Object_Intercept_Stack_Above_Cb func;
       void *data;
+      Eina_Bool intercepted;
    } stack_above;
    struct {
       Evas_Object_Intercept_Stack_Below_Cb func;
       void *data;
+      Eina_Bool intercepted;
    } stack_below;
    struct {
       Evas_Object_Intercept_Layer_Set_Cb func;
       void *data;
+      Eina_Bool intercepted;
    } layer_set;
    struct {
       Evas_Object_Intercept_Color_Set_Cb func;
       void *data;
+      Eina_Bool intercepted;
    } color_set;
    struct {
       Evas_Object_Intercept_Clip_Set_Cb func;
       void *data;
+      Eina_Bool intercepted;
    } clip_set;
    struct {
       Evas_Object_Intercept_Clip_Unset_Cb func;
       void *data;
+      Eina_Bool intercepted;
    } clip_unset;
    struct {
       Evas_Object_Intercept_Focus_Set_Cb func;
       void *data;
+      Eina_Bool intercepted;
    } focus_set;
 };
 
@@ -637,10 +650,9 @@ struct _Evas_Object_Protected_Data
    Eina_Bool                   rect_del : 1;
    Eina_Bool                   mouse_in : 1;
    Eina_Bool                   pre_render_done : 1;
-   Eina_Bool                   intercepted : 1;
    Eina_Bool                   focused : 1;
-
    Eina_Bool                   in_layer : 1;
+
    Eina_Bool                   no_propagate : 1;
    Eina_Bool                   changed : 1;
    Eina_Bool                   changed_move : 1;
@@ -648,8 +660,8 @@ struct _Evas_Object_Protected_Data
    Eina_Bool                   changed_map : 1;
    Eina_Bool                   changed_pchange : 1;
    Eina_Bool                   changed_src_visible : 1;
-
    Eina_Bool                   del_ref : 1;
+
    Eina_Bool                   is_frame : 1;
    Eina_Bool                   child_has_map : 1;
    Eina_Bool                   eo_del_called : 1;

@@ -53,12 +53,12 @@ evas_object_intercept_cleanup(Evas_Object *eo_obj)
      int ret;								\
                                                                         \
      if (!obj->interceptors) return 0;					\
-     if (obj->intercepted) return 0;					\
-     obj->intercepted = EINA_TRUE;					\
+     if (obj->interceptors->Type.intercepted) return 0;			\
+     obj->interceptors->Type.intercepted = EINA_TRUE;			\
      ret = !!(obj->interceptors->Type.func);				\
      if (ret)								\
        obj->interceptors->Type.func(obj->interceptors->Type.data, eo_obj); \
-     obj->intercepted = EINA_FALSE;					\
+     obj->interceptors->Type.intercepted = EINA_FALSE;			\
      return ret;                                                        \
   }
 
@@ -76,13 +76,13 @@ EVAS_OBJECT_INTERCEPT_CALL_SIMPLE(lower);
      int ret;								\
                                                                         \
      if (!obj->interceptors) return 0;					\
-     if (obj->intercepted) return 0;					\
-     obj->intercepted = EINA_TRUE;					\
+     if (obj->interceptors->Type.intercepted) return 0;			\
+     obj->interceptors->Type.intercepted = EINA_TRUE;			\
      ret = !!(obj->interceptors->Type.func);				\
      if (ret)								\
        obj->interceptors->Type.func(obj->interceptors->Type.data,       \
                                     eo_obj, a , b);                     \
-     obj->intercepted = EINA_FALSE;					\
+     obj->interceptors->Type.intercepted = EINA_FALSE;			\
      return ret;                                                        \
   }
 
@@ -98,13 +98,13 @@ EVAS_OBJECT_INTERCEPT_CALL_GEOMETRY(resize);
      int ret;								\
                                                                         \
      if (!obj->interceptors) return 0;					\
-     if (obj->intercepted) return 0;					\
-     obj->intercepted = EINA_TRUE;					\
+     if (obj->interceptors->Type.intercepted) return 0;			\
+     obj->interceptors->Type.intercepted = EINA_TRUE;			\
      ret = !!(obj->interceptors->Type.func);				\
      if (ret)								\
        obj->interceptors->Type.func(obj->interceptors->Type.data,       \
                                     eo_obj, rel_to);                    \
-     obj->intercepted = EINA_FALSE;					\
+     obj->interceptors->Type.intercepted = EINA_FALSE;			\
      return ret;                                                        \
   }
 
@@ -119,12 +119,12 @@ evas_object_intercept_call_layer_set(Evas_Object *eo_obj,
    int ret;
 
    if (!obj->interceptors) return 0;
-   if (obj->intercepted) return 0;
-   obj->intercepted = EINA_TRUE;
+   if (obj->interceptors->layer_set.intercepted) return 0;
+   obj->interceptors->layer_set.intercepted = EINA_TRUE;
    ret = !!(obj->interceptors->layer_set.func);
    if (ret)
      obj->interceptors->layer_set.func(obj->interceptors->layer_set.data, eo_obj, l);
-   obj->intercepted = EINA_FALSE;
+   obj->interceptors->layer_set.intercepted = EINA_FALSE;
    return ret;
 }
 
@@ -136,12 +136,12 @@ evas_object_intercept_call_focus_set(Evas_Object *eo_obj,
    int ret;
 
    if (!obj->interceptors) return 0;
-   if (obj->intercepted) return 0;
-   obj->intercepted = EINA_TRUE;
+   if (obj->interceptors->focus_set.intercepted) return 0;
+   obj->interceptors->focus_set.intercepted = EINA_TRUE;
    ret = !!(obj->interceptors->focus_set.func);
    if (ret)
      obj->interceptors->focus_set.func(obj->interceptors->focus_set.data, eo_obj, focus);
-   obj->intercepted = EINA_FALSE;
+   obj->interceptors->focus_set.intercepted = EINA_FALSE;
    return ret;
 }
 
@@ -154,12 +154,12 @@ evas_object_intercept_call_color_set(Evas_Object *eo_obj,
    int ret;
 
    if (!obj->interceptors) return 0;
-   if (obj->intercepted) return 0;
-   obj->intercepted = EINA_TRUE;
+   if (obj->interceptors->color_set.intercepted) return 0;
+   obj->interceptors->color_set.intercepted = EINA_TRUE;
    ret = !!(obj->interceptors->color_set.func);
    if (ret)
      obj->interceptors->color_set.func(obj->interceptors->color_set.data, eo_obj, r, g, b, a);
-   obj->intercepted = EINA_FALSE;
+   obj->interceptors->color_set.intercepted = EINA_FALSE;
    return ret;
 }
 
@@ -169,12 +169,12 @@ evas_object_intercept_call_clip_set(Evas_Object *eo_obj, Evas_Object_Protected_D
    int ret;
 
    if (!obj->interceptors) return 0;
-   if (obj->intercepted) return 0;
-   obj->intercepted = EINA_TRUE;
+   if (obj->interceptors->clip_set.intercepted) return 0;
+   obj->interceptors->clip_set.intercepted = EINA_TRUE;
    ret = !!(obj->interceptors->clip_set.func);
    if (ret)
      obj->interceptors->clip_set.func(obj->interceptors->clip_set.data, eo_obj, clip);
-   obj->intercepted = EINA_FALSE;
+   obj->interceptors->clip_set.intercepted = EINA_FALSE;
    return ret;
 }
 
@@ -184,12 +184,12 @@ evas_object_intercept_call_clip_unset(Evas_Object *eo_obj, Evas_Object_Protected
    int ret;
 
    if (!obj->interceptors) return 0;
-   if (obj->intercepted) return 0;
-   obj->intercepted = EINA_TRUE;
+   if (obj->interceptors->clip_unset.intercepted) return 0;
+   obj->interceptors->clip_unset.intercepted = EINA_TRUE;
    ret = !!(obj->interceptors->clip_unset.func);
    if (ret)
      obj->interceptors->clip_unset.func(obj->interceptors->clip_unset.data, eo_obj);
-   obj->intercepted = EINA_FALSE;
+   obj->interceptors->clip_unset.intercepted = EINA_FALSE;
    return ret;
 }
 
