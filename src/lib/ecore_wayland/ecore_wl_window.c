@@ -107,11 +107,6 @@ ecore_wl_window_free(Ecore_Wl_Window *win)
    if (win->anim_callback) wl_callback_destroy(win->anim_callback);
    win->anim_callback = NULL;
 
-   if (win->region.input) wl_region_destroy(win->region.input);
-   win->region.input = NULL;
-   if (win->region.opaque) wl_region_destroy(win->region.opaque);
-   win->region.opaque = NULL;
-
    if (win->shell_surface) wl_shell_surface_destroy(win->shell_surface);
    win->shell_surface = NULL;
    if (win->surface) wl_surface_destroy(win->surface);
@@ -636,10 +631,6 @@ _ecore_wl_window_cb_configure(void *data, struct wl_shell_surface *shell_surface
      {
         if (win->type == ECORE_WL_WINDOW_TYPE_TOPLEVEL)
           win->edges = edges;
-        if (win->region.input) wl_region_destroy(win->region.input);
-        win->region.input = NULL;
-        if (win->region.opaque) wl_region_destroy(win->region.opaque);
-        win->region.opaque = NULL;
 
         _ecore_wl_window_configure_send(win, w, h);
      }
