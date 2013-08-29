@@ -256,7 +256,7 @@ eng_setup(Evas *eo_evas, void *einfo)
         if (re->ob) re->outbuf_free(re->ob);
 
         /* create new tile buffer */
-        if ((re->tb = evas_common_tilebuf_new(w, h)))
+        if ((re->tb = evas_common_tilebuf_new(epd->output.w, epd->output.h)))
           evas_common_tilebuf_set_tile_size(re->tb, TILESIZE, TILESIZE);
 
         if ((re->ob = evas_swapbuf_setup(epd->output.w, epd->output.h,
