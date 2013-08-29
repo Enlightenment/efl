@@ -208,11 +208,6 @@ struct _Ecore_Wl_Window
 
    struct 
      {
-        struct wl_region *input, *opaque;
-     } region;
-
-   struct 
-     {
         struct wl_surface *surface;
         int hot_x, hot_y;
         Eina_Bool set : 1;
