@@ -276,7 +276,8 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
 
              _ecore_evas_wayland_resize_edge_set(ee, win->edges);
 
-             win->server_allocation = win->allocation;
+             win->server.w = win->allocation.w;
+             win->server.h = win->allocation.h;
              ecore_wl_window_update_size(wdata->win, ev->w, ev->h);
           }
      }
