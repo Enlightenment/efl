@@ -141,6 +141,10 @@ _evas_common_rgba_image_surface_mmap(unsigned int w, unsigned int h, Eina_Bool a
    siz = _evas_common_rgba_image_surface_size(w, h, alpha_only);
 
 #ifdef HAVE_SYS_MMAN_H
+#ifndef MAP_HUGETLB
+# define MAP_HUGETLB 0
+#endif
+
    if (siz < PAGE_SIZE)
      return malloc(siz);
 
