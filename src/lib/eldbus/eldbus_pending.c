@@ -51,8 +51,8 @@ cb_pending(DBusPendingCall *dbus_pending, void *user_data)
         INF("timeout to pending %p", pending);
         dbus_pending_call_cancel(dbus_pending);
         msg = eldbus_message_error_new(pending->msg_sent,
-                                      "org.enlightenment.DBus.Timeout",
-                                      "This call was not completed.");
+                                       ELDBUS_ERROR_PENDING_TIMEOUT,
+                                       "This call was not completed in time.");
         eldbus_pending_dispatch(pending, msg);
         return;
      }
@@ -218,8 +218,8 @@ eldbus_pending_cancel(Eldbus_Pending *pending)
    dbus_pending_call_cancel(pending->dbus_pending);
 
    error_message = eldbus_message_error_new(pending->msg_sent,
-                                           ELDBUS_ERROR_PENDING_CANCELED,
-                                           "Canceled by user.");
+                                            ELDBUS_ERROR_PENDING_CANCELED,
+                                            "Canceled by user.");
    eldbus_pending_dispatch(pending, error_message);
 }
 

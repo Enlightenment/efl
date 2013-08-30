@@ -126,6 +126,7 @@ extern "C" {
 #define ELDBUS_FDO_INTERFACE_INTROSPECTABLE "org.freedesktop.DBus.Introspectable"
 #define ELDBUS_FDO_INTEFACE_PEER "org.freedesktop.DBus.Peer"
 #define ELDBUS_ERROR_PENDING_CANCELED "org.enlightenment.DBus.Canceled"
+#define ELDBUS_ERROR_PENDING_TIMEOUT "org.enlightenment.DBus.Timeout"
 
 typedef struct _Eldbus_Version
 {
