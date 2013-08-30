@@ -111,6 +111,7 @@ typedef enum
    ELDBUS_PROXY_EVENT_PROPERTY_CHANGED = 0,
    ELDBUS_PROXY_EVENT_PROPERTY_REMOVED,
    ELDBUS_PROXY_EVENT_DEL,
+   ELDBUS_PROXY_EVENT_PROPERTY_LOADED,
    ELDBUS_PROXY_EVENT_LAST    /**< sentinel, not a real event type */
 } Eldbus_Proxy_Event_Type;
 
@@ -120,6 +121,11 @@ typedef struct _Eldbus_Proxy_Event_Property_Changed
    const Eldbus_Proxy *proxy;
    const Eina_Value *value;
 } Eldbus_Proxy_Event_Property_Changed;
+
+typedef struct _Eldbus_Proxy_Event_Property_Loaded
+{
+   const Eldbus_Proxy *proxy;
+} Eldbus_Proxy_Event_Property_Loaded;
 
 typedef struct _Eldbus_Proxy_Event_Property_Removed
 {

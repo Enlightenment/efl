@@ -333,7 +333,7 @@ _property_changed_iter(void *data, const void *key, Eldbus_Message_Iter *var)
    event.value = value;
    event.proxy = proxy;
    _eldbus_proxy_event_callback_call(proxy, ELDBUS_PROXY_EVENT_PROPERTY_CHANGED,
-                                    &event);
+                                     &event);
    eina_value_free(st_value);
    eina_value_flush(&stack_value);
 }
@@ -689,7 +689,7 @@ eldbus_proxy_property_get_all(Eldbus_Proxy *proxy, Eldbus_Message_Cb cb, const v
 {
    ELDBUS_PROXY_CHECK_RETVAL(proxy, NULL);
    return eldbus_proxy_call(proxy->obj->properties, "GetAll", cb, data, -1,
-                           "s", proxy->interface);
+                            "s", proxy->interface);
 }
 
 EAPI Eldbus_Signal_Handler *
@@ -698,7 +698,7 @@ eldbus_proxy_properties_changed_callback_add(Eldbus_Proxy *proxy, Eldbus_Signal_
    Eldbus_Signal_Handler *sh;
    ELDBUS_PROXY_CHECK_RETVAL(proxy, NULL);
    sh = eldbus_proxy_signal_handler_add(proxy->obj->properties,
-                                       "PropertiesChanged", cb, data);
+                                        "PropertiesChanged", cb, data);
    EINA_SAFETY_ON_NULL_RETURN_VAL(sh, NULL);
    eldbus_signal_handler_match_extra_set(sh, "arg0", proxy->interface, NULL);
    return sh;
@@ -733,6 +733,7 @@ _props_get_all(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending EI
    Eldbus_Proxy *proxy = data;
    Eldbus_Message_Iter *dict;
    const char *name, *error_msg;
+   Eldbus_Proxy_Event_Property_Loaded event;
 
    if (eldbus_message_error_get(msg, &name, &error_msg))
      {
@@ -750,6 +751,10 @@ _props_get_all(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending EI
         return;
      }
    eldbus_message_iter_dict_iterate(dict, "sv", _property_iter, proxy);
+
+   event.proxy = proxy;
+   _eldbus_proxy_event_callback_call(proxy, ELDBUS_PROXY_EVENT_PROPERTY_LOADED,
+                                     &event);
 }
 
 EAPI void
