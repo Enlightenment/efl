@@ -81,6 +81,20 @@ eldbus_object_managed_objects_get(Eldbus_Object *obj, Eldbus_Message_Cb cb, cons
    return p;
 }
 
+EAPI Eldbus_Signal_Handler *
+eldbus_object_manager_interfaces_added(Eldbus_Object *obj, Eldbus_Signal_Cb cb, const void *cb_data)
+{
+   return eldbus_object_signal_handler_add(obj, ELDBUS_FDO_INTERFACE_OBJECT_MANAGER,
+                                           "InterfacesAdded", cb, cb_data);
+}
+
+EAPI Eldbus_Signal_Handler *
+eldbus_object_manager_interfaces_removed(Eldbus_Object *obj, Eldbus_Signal_Cb cb, const void *cb_data)
+{
+   return eldbus_object_signal_handler_add(obj, ELDBUS_FDO_INTERFACE_OBJECT_MANAGER,
+                                           "InterfacesRemoved", cb, cb_data);
+}
+
 EAPI Eldbus_Pending *
 eldbus_hello(Eldbus_Connection *conn, Eldbus_Message_Cb cb, const void *cb_data)
 {
