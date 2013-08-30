@@ -799,16 +799,11 @@ _button_clicked_cb(void *data,
                    Evas_Object *obj,
                    void *event_info __UNUSED__)
 {
-   Eina_Bool is_right = EINA_FALSE;
    Color_Bar_Data *cb_data = data;
    double x, y, step;
    ELM_COLORSELECTOR_DATA_GET(cb_data->parent, sd);
 
-   if (obj == cb_data->rbt)
-     {
-        is_right = EINA_TRUE;
-        step = 1.0;
-     }
+   if (obj == cb_data->rbt) step = 1.0;
    else step = -1.0;
 
    edje_object_part_drag_value_get(cb_data->colorbar, "elm.arrow", &x, &y);
@@ -835,14 +830,8 @@ _button_clicked_cb(void *data,
         break;
      }
 
-   if (is_right)
-     {
-        if (x > 1.0) x = 1.0;
-     }
-   else
-     {
-        if (x < 0.0) x = 0.0;
-     }
+   if (x > 1.0) x = 1.0;
+   else if (x < 0.0) x = 0.0;
 
    edje_object_part_drag_value_set(cb_data->colorbar, "elm.arrow", x, y);
    _update_hsla_from_colorbar(cb_data->parent, cb_data->color_type, x);
@@ -855,28 +844,17 @@ _button_repeat_cb(void *data,
                   Evas_Object *obj __UNUSED__,
                   void *event_info __UNUSED__)
 {
-   Eina_Bool is_right = EINA_FALSE;
    Color_Bar_Data *cb_data = data;
    double x, y, step;
 
-   if (obj == cb_data->rbt)
-     {
-        is_right = EINA_TRUE;
-        step = 1.0;
-     }
-   else step = -1.0;
+   if (obj == cb_data->rbt) step = 1.0 / BASE_STEP;
+   else step = -1.0 / BASE_STEP;
 
    edje_object_part_drag_value_get(cb_data->colorbar, "elm.arrow", &x, &y);
-   x += step / BASE_STEP;
+   x += step;
 
-   if (is_right)
-     {
-        if (x > 1.0) x = 1.0;
-     }
-   else
-     {
-        if (x < 0.0) x = 0.0;
-     }
+   if (x > 1.0) x = 1.0;
+   else if (x < 0.0) x = 0.0;
 
    edje_object_part_drag_value_set(cb_data->colorbar, "elm.arrow", x, y);
    _update_hsla_from_colorbar(cb_data->parent, cb_data->color_type, x);
