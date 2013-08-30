@@ -98,9 +98,14 @@ EAPI Eldbus_Pending        *eldbus_object_introspect(Eldbus_Object *obj, Eldbus_
  * After enable you can call eldbus_proxy_property_local_get() or
  * eldbus_proxy_property_local_get_all() to get cached properties.
  *
- * @note After enable, it will asynchrony get the properties values.
+ * @param proxy bus+path+interface that the properties belong
+ * @param enable enable or disable properties monitor
+ * @return EINA_TRUE if already have cached properties
+ * EINA_FALSE if it will asynchrony get the properties.
+ * You should listen for a ELDBUS_PROXY_EVENT_PROPERTY_LOADED
+ * to know when properties finish to load.
  */
-EAPI void eldbus_proxy_properties_monitor(Eldbus_Proxy *proxy, Eina_Bool enable) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool eldbus_proxy_properties_monitor(Eldbus_Proxy *proxy, Eina_Bool enable) EINA_ARG_NONNULL(1);
 
 EAPI Eldbus_Pending        *eldbus_proxy_property_get(Eldbus_Proxy *proxy, const char *name, Eldbus_Message_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2, 3);
 EAPI Eldbus_Pending        *eldbus_proxy_property_set(Eldbus_Proxy *proxy, const char *name, const char *sig, const void *value, Eldbus_Message_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2, 3, 4);

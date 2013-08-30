@@ -757,28 +757,15 @@ _props_get_all(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending EI
                                      &event);
 }
 
-EAPI void
+EAPI Eina_Bool
 eldbus_proxy_properties_monitor(Eldbus_Proxy *proxy, Eina_Bool enable)
 {
-   ELDBUS_PROXY_CHECK(proxy);
+   ELDBUS_PROXY_CHECK_RETVAL(proxy, EINA_FALSE);
    if (proxy->monitor_enabled == enable)
-     return;
+     return proxy->props ? !!eina_hash_population(proxy->props) : EINA_FALSE;
 
    proxy->monitor_enabled = enable;
-   if (enable)
-     {
-        if (!proxy->props)
-          proxy->props = eina_hash_string_superfast_new(_props_cache_free);
-        eldbus_proxy_property_get_all(proxy, _props_get_all, proxy);
-
-        if (proxy->properties_changed)
-          return;
-        proxy->properties_changed =
-                 eldbus_proxy_properties_changed_callback_add(proxy,
-                                                             _properties_changed,
-                                                             proxy);
-     }
-   else
+   if (!enable)
      {
         Eldbus_Proxy_Context_Event *ce_prop_changed, *ce_prop_removed;
         ce_prop_changed = proxy->event_handlers + ELDBUS_PROXY_EVENT_PROPERTY_CHANGED;
@@ -794,7 +781,21 @@ eldbus_proxy_properties_monitor(Eldbus_Proxy *proxy, Eina_Bool enable)
              eldbus_signal_handler_unref(proxy->properties_changed);
              proxy->properties_changed = NULL;
           }
+        return EINA_TRUE;
      }
+
+   if (!proxy->props)
+     proxy->props = eina_hash_string_superfast_new(_props_cache_free);
+
+   eldbus_proxy_property_get_all(proxy, _props_get_all, proxy);
+
+   if (proxy->properties_changed)
+     return !!eina_hash_population(proxy->props);
+   proxy->properties_changed =
+            eldbus_proxy_properties_changed_callback_add(proxy,
+                                                         _properties_changed,
+                                                         proxy);
+   return !!eina_hash_population(proxy->props);
 }
 
 EAPI Eina_Value *
