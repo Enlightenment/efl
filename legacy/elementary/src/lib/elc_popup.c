@@ -1171,34 +1171,32 @@ _elm_popup_smart_content_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    unsigned int i;
 
    if (!part || !strcmp(part, "default"))
-     {
-       int_ret = _content_set(obj, content);
-       goto end;
-     }
+     int_ret = _content_set(obj, content);
    else if (!strcmp(part, "title,icon"))
-     {
-        int_ret = _title_icon_set(obj, content);
-        goto end;
-     }
+     int_ret = _title_icon_set(obj, content);
    else if (!strncmp(part, "button", 6))
      {
         i = atoi(part + 6) - 1;
 
         if (i >= ELM_POPUP_ACTION_BUTTON_MAX)
-          goto err;
+          {
+             ERR("The part name is invalid! : popup=%p", obj);
+             int_ret = EINA_FALSE;
+             return;
+          }
 
         _action_button_set(obj, content, i);
 
         int_ret = EINA_TRUE;
-        goto end;
+     }
+   else
+     {
+        eo_do_super(obj, MY_CLASS,
+                    elm_obj_container_content_set(part, content, &int_ret));
      }
 
-err:
-   ERR("The part name is invalid! : popup=%p", obj);
-   int_ret = EINA_FALSE;
-
-end:
    if (ret) *ret = int_ret;
+   return;
 }
 
 static Evas_Object *
