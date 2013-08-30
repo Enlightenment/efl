@@ -17,6 +17,7 @@ static const char SIG_DISMISSED[] = "dismissed";
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_SELECTED, ""},
    {SIG_DISMISSED, ""},
+   {"clicked", ""}, /**< handled by parent button class */
    {NULL, NULL}
 };
 

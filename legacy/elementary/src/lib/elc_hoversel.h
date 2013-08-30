@@ -23,7 +23,7 @@
  * - @c "clicked" - the user clicked the hoversel button and popped up
  *   the sel
  * - @c "selected" - an item in the hoversel list is selected. event_info
- *   is the item
+ *   is the selected item
  * - @c "dismissed" - the hover is dismissed
  *
  * Default content parts of the hoversel widget that you can use for are:

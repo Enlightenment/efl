@@ -93,6 +93,27 @@ _cleanup_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *e
    free(data);
 }
 
+static void
+_hoversel_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
+                     void *event_info __UNUSED__)
+{
+   printf("Hover button is clicked and 'clicked' callback is called.\n");
+}
+
+static void
+_hoversel_selected_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
+                      void *event_info)
+{
+   printf("'selected' callback is called. (selected item : %p)\n", event_info);
+}
+
+static void
+_hoversel_dismissed_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
+                       void *event_info __UNUSED__)
+{
+   printf("'dismissed' callback is called.\n");
+}
+
 void
 test_hoversel(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
@@ -135,6 +156,12 @@ test_hoversel(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    elm_hoversel_item_add(hoversel, "Item 4 - Long Label Here", "close", ELM_ICON_STANDARD, NULL, NULL);
    evas_object_size_hint_weight_set(hoversel, 0.0, 0.0);
    evas_object_size_hint_align_set(hoversel, 0.5, 0.5);
+   evas_object_smart_callback_add(hoversel, "clicked",
+                                  _hoversel_clicked_cb, NULL);
+   evas_object_smart_callback_add(hoversel, "selected",
+                                  _hoversel_selected_cb, NULL);
+   evas_object_smart_callback_add(hoversel, "dismissed",
+                                  _hoversel_dismissed_cb, NULL);
    elm_box_pack_end(bx, hoversel);
    evas_object_show(hoversel);
 
