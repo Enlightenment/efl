@@ -123,10 +123,6 @@ _internal_resource_make_current(void *eng_data, EVGL_Context *ctx)
    else
       context = (void*)rsc->context;
 
-   // Update in case they've changed
-   if (rsc->id == evgl_engine->main_tid)
-      rsc->surface = evgl_engine->funcs->evas_surface_get(eng_data);
-
    surface = (void*)rsc->surface;
 
    // Do the make current
