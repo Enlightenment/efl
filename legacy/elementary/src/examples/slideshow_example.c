@@ -215,7 +215,6 @@ elm_main(int    argc,
    notify = elm_notify_add(win);
    elm_notify_align_set(notify, 0.5, 1.0);
    evas_object_size_hint_weight_set(notify, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, notify);
    elm_notify_timeout_set(notify, 3.0);
 
    bx = elm_box_add(win);
