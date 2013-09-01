@@ -282,8 +282,10 @@ check:
 
    /* wrong object */
    check(eo2_call_stack_depth(), 0);
+#ifdef HAVE_EO_ID
    // segfault if eo2_do_end is called !!
    eo2_do((Eo *)69, eo2_set(0););
+#endif
 
    eo_del(eo2_obj);
 
