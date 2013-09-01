@@ -5,13 +5,13 @@
 #ifndef ELM_LIB_QUICKLAUNCH
 
 static void
-_print_clicked(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_print_clicked(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    printf("bubble clicked\n");
 }
 
 static void
-my_entry_anchor_bt(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+my_entry_anchor_bt(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *av = data;
    elm_entry_anchor_hover_end(av);
@@ -78,31 +78,31 @@ my_entry_anchor(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-my_entry_anchor_edge_left(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+my_entry_anchor_edge_left(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    printf("left\n");
 }
 
 static void
-my_entry_anchor_edge_right(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+my_entry_anchor_edge_right(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    printf("right\n");
 }
 
 static void
-my_entry_anchor_edge_top(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+my_entry_anchor_edge_top(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    printf("top\n");
 }
 
 static void
-my_entry_anchor_edge_bottom(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+my_entry_anchor_edge_bottom(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    printf("bottom\n");
 }
 
 static void
-my_entry_anchor_scroll(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+my_entry_anchor_scroll(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Coord x, y, w, h, vw, vh;
 
@@ -112,7 +112,7 @@ my_entry_anchor_scroll(void *data __UNUSED__, Evas_Object *obj, void *event_info
 }
 
 void
-test_entry_anchor(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_entry_anchor(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *en, *sc, *bx, *bb, *ic;
    char buf[PATH_MAX];

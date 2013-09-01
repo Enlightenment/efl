@@ -5,51 +5,51 @@
 #ifndef ELM_LIB_QUICKLAUNCH
 
 void
-_delay_change_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_delay_change_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
     printf("delay,changed! slider value : %d\n", (int)round(elm_slider_value_get(obj)));
 }
 
 void
-_change_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+_change_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
     double val = elm_slider_value_get(obj);
     elm_slider_value_set(data, val);
 }
 
 void
-_change_print_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_change_print_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    double val = elm_slider_value_get(obj);
    printf("change to %3.3f\n", val);
 }
 
 void
-_bt_0(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_bt_0(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    elm_slider_value_set(data, 0.0);
 }
 
 void
-_bt_1(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_bt_1(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    elm_slider_value_set(data, 1.0);
 }
 
 void
-_bt_p1(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_bt_p1(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    elm_slider_value_set(data, elm_slider_value_get(data) + 0.1);
 }
 
 void
-_bt_m1(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_bt_m1(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    elm_slider_value_set(data, elm_slider_value_get(data) - 0.1);
 }
 
 void
-test_slider(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_slider(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *fr, *bx, *sl, *ic, *sl1, *bx2, *bt;
    char buf[PATH_MAX];

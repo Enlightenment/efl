@@ -21,19 +21,19 @@ struct _My_Item
 
 // callbacks just to see user interacting with genlist
 static void
-_st_selected(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_st_selected(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    printf("selected: %p\n", event_info);
 }
 
 static void
-_st_double_clicked(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_st_double_clicked(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    printf("double clicked: %p\n", event_info);
 }
 
 static void
-_st_longpress(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_st_longpress(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    printf("longpress %p\n", event_info);
 }
@@ -85,7 +85,7 @@ static const Elm_Store_Item_Mapping it1_mapping[] =
 ////   * This function runs inside a thread outside efl mainloop. Be careful! *
 //     ************************************************************************
 static Eina_Bool
-_st_store_list(void *data __UNUSED__, Elm_Store_Item_Info *item_info)
+_st_store_list(void *data EINA_UNUSED, Elm_Store_Item_Info *item_info)
 {
    Elm_Store_Item_Info_Filesystem *info = (Elm_Store_Item_Info_Filesystem *)item_info;
    int id;
@@ -122,7 +122,7 @@ _st_store_list(void *data __UNUSED__, Elm_Store_Item_Info *item_info)
 ////   * This function runs inside a thread outside efl mainloop. Be careful! *
 //     ************************************************************************
 static void
-_st_store_fetch(void *data __UNUSED__, Elm_Store_Item *sti)
+_st_store_fetch(void *data EINA_UNUSED, Elm_Store_Item *sti)
 {
    const char *path = elm_store_item_filesystem_path_get(sti);
    My_Item *myit;
@@ -214,7 +214,7 @@ _st_store_fetch(void *data __UNUSED__, Elm_Store_Item *sti)
 ////// ************************************************************************
 
 static void
-_st_store_unfetch(void *data __UNUSED__, Elm_Store_Item *sti)
+_st_store_unfetch(void *data EINA_UNUSED, Elm_Store_Item *sti)
 {
    My_Item *myit = elm_store_item_data_get(sti);
    if (!myit) return;
@@ -226,7 +226,7 @@ _st_store_unfetch(void *data __UNUSED__, Elm_Store_Item *sti)
 }
 
 void
-test_store(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_store(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *gl, *bx;
    Elm_Store *st;

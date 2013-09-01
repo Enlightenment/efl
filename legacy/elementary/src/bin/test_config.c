@@ -94,7 +94,7 @@ _profile_update(Evas_Object *win)
 }
 
 static void
-_bt_profile_set(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_bt_profile_set(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    App_Data *ad = evas_object_data_get((Evas_Object *)data, "ad");
    Evas_Object *rd = elm_radio_selected_object_get(ad->curr.rdg);
@@ -107,7 +107,7 @@ _bt_profile_set(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUS
 }
 
 static void
-_bt_available_profiles_set(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_bt_available_profiles_set(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    App_Data *ad = evas_object_data_get((Evas_Object *)data, "ad");
    Eina_List *l = NULL;
@@ -138,7 +138,7 @@ _bt_available_profiles_set(void *data, Evas_Object *obj __UNUSED__, void *event_
 }
 
 static void
-_bt_win_add(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_bt_win_add(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    App_Data *ad = evas_object_data_get((Evas_Object *)data, "ad");
    Evas_Object *rd = elm_radio_selected_object_get(ad->new.rdg);
@@ -172,13 +172,13 @@ _bt_win_add(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__
 }
 
 static void
-_win_profile_changed_cb(void *data __UNUSED__, Evas_Object *obj, void *event __UNUSED__)
+_win_profile_changed_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event EINA_UNUSED)
 {
    _profile_update(obj);
 }
 
 static void
-_win_del_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_win_del_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    App_Data *ad = evas_object_data_get(obj, "ad");
    Evas_Object *o;
@@ -417,7 +417,7 @@ _plug_add(Evas_Object *win, Evas_Object *bx, const char *name)
    } while(0)
 
 void
-test_config(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_config(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    App_Data *ad;
    Prof_Data *pd = (Prof_Data *)data;

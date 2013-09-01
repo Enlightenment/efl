@@ -5,28 +5,28 @@
 #ifndef ELM_LIB_QUICKLAUNCH
 
 static void
-aspect_fixed_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+aspect_fixed_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Object *ic = (Evas_Object *)data;
    elm_image_aspect_fixed_set(ic, elm_check_state_get(obj));
 }
 
 static void
-fill_outside_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+fill_outside_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Object *ic = (Evas_Object *)data;
    elm_image_fill_outside_set(ic, elm_check_state_get(obj));
 }
 
 static void
-smooth_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+smooth_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Object *ic = (Evas_Object *)data;
    elm_image_smooth_set(ic, elm_check_state_get(obj));
 }
 
 static void
-bt_clicked(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+bt_clicked(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *ic;
    char buf[PATH_MAX];
@@ -52,7 +52,7 @@ bt_clicked(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
 }
 
 void
-test_icon(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_icon(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *box, *content_box, *hbox, *tg, *bt;
    win = elm_win_util_standard_add("icon test", "Icon Test");
@@ -122,13 +122,13 @@ test_icon(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info _
 }
 
 static void
-icon_clicked(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+icon_clicked(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    printf("clicked!\n");
 }
 
 void
-test_icon_transparent(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_icon_transparent(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *ic;
    char buf[PATH_MAX];

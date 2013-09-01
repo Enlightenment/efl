@@ -5,16 +5,16 @@
 #ifndef ELM_LIB_QUICKLAUNCH
 
 static void
-_click_me(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
-          void *event_info __UNUSED__)
+_click_me(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
+          void *event_info EINA_UNUSED)
 {
    fputs(":-)\n", stderr);
 }
 
 void
-test_main_menu(void *data __UNUSED__,
-               Evas_Object *obj __UNUSED__,
-               void *event_info __UNUSED__)
+test_main_menu(void *data EINA_UNUSED,
+               Evas_Object *obj EINA_UNUSED,
+               void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *menu, *label, *bx;
    Elm_Object_Item *menu_it, *menu_it1;

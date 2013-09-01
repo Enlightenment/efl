@@ -13,7 +13,7 @@ static Evas_Object *l = NULL;
 static Evas_Object *n = NULL;
 
 static Eina_Bool
-_ev_handler(void *data __UNUSED__,
+_ev_handler(void *data EINA_UNUSED,
             int type,
             void *event)
 {
@@ -44,18 +44,18 @@ _ev_handler(void *data __UNUSED__,
 }
 
 static void
-_bt_clicked(void *data __UNUSED__,
-            Evas_Object *obj __UNUSED__,
-            void *event_info __UNUSED__)
+_bt_clicked(void *data EINA_UNUSED,
+            Evas_Object *obj EINA_UNUSED,
+            void *event_info EINA_UNUSED)
 {
    elm_sys_notify_simple_send
       ("", elm_entry_entry_get(s), elm_entry_entry_get(b));
 }
 
 void
-test_sys_notify(void *data __UNUSED__,
-                Evas_Object *obj __UNUSED__,
-                void *event_info __UNUSED__)
+test_sys_notify(void *data EINA_UNUSED,
+                Evas_Object *obj EINA_UNUSED,
+                void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bx, *it;
 

@@ -17,7 +17,7 @@
 #ifndef ELM_LIB_QUICKLAUNCH
 static void
 my_fileselector_done(void            *data,
-                     Evas_Object *obj __UNUSED__,
+                     Evas_Object *obj EINA_UNUSED,
                      void            *event_info)
 {
    /* event_info conatin the full path of the selected file
@@ -31,7 +31,7 @@ my_fileselector_done(void            *data,
 }
 
 static void
-my_fileselector_selected(void *data   __UNUSED__,
+my_fileselector_selected(void *data   EINA_UNUSED,
                          Evas_Object *obj,
                          void        *event_info)
 {
@@ -45,8 +45,8 @@ my_fileselector_selected(void *data   __UNUSED__,
 
 static void
 _is_save_clicked(void            *data,
-                 Evas_Object *obj __UNUSED__,
-                 void *event_info __UNUSED__)
+                 Evas_Object *obj EINA_UNUSED,
+                 void *event_info EINA_UNUSED)
 {
    Evas_Object *fs = data;
    printf("Toggle Is save\n");
@@ -58,8 +58,8 @@ _is_save_clicked(void            *data,
 
 static void
 _folder_only_clicked(void            *data,
-                     Evas_Object *obj __UNUSED__,
-                     void *event_info __UNUSED__)
+                     Evas_Object *obj EINA_UNUSED,
+                     void *event_info EINA_UNUSED)
 {
    Evas_Object *fs = data;
    printf("Toggle Folder only\n");
@@ -71,8 +71,8 @@ _folder_only_clicked(void            *data,
 
 static void
 _expandable_clicked(void            *data,
-                    Evas_Object *obj __UNUSED__,
-                    void *event_info __UNUSED__)
+                    Evas_Object *obj EINA_UNUSED,
+                    void *event_info EINA_UNUSED)
 {
    Evas_Object *fs = data;
    printf("Toggle Expandable\n");
@@ -84,8 +84,8 @@ _expandable_clicked(void            *data,
 
 static void
 _buttons_clicked(void            *data,
-                    Evas_Object *obj __UNUSED__,
-                    void *event_info __UNUSED__)
+                    Evas_Object *obj EINA_UNUSED,
+                    void *event_info EINA_UNUSED)
 {
    Evas_Object *fs = data;
    printf("Toggle Buttons\n");
@@ -97,8 +97,8 @@ _buttons_clicked(void            *data,
 
 static void
 _sel_get_clicked(void            *data,
-                 Evas_Object *obj __UNUSED__,
-                 void *event_info __UNUSED__)
+                 Evas_Object *obj EINA_UNUSED,
+                 void *event_info EINA_UNUSED)
 {
    Evas_Object *fs = data;
    printf("Get Selected: %s\n", elm_fileselector_selected_get(fs));
@@ -106,8 +106,8 @@ _sel_get_clicked(void            *data,
 
 static void
 _path_get_clicked(void            *data,
-                  Evas_Object *obj __UNUSED__,
-                  void *event_info __UNUSED__)
+                  Evas_Object *obj EINA_UNUSED,
+                  void *event_info EINA_UNUSED)
 {
    Evas_Object *fs = data;
    printf("Get Path: %s\n", elm_fileselector_path_get(fs));
@@ -115,8 +115,8 @@ _path_get_clicked(void            *data,
 
 static void
 _mode_cycle_clicked(void            *data,
-                    Evas_Object *obj __UNUSED__,
-                    void *event_info __UNUSED__)
+                    Evas_Object *obj EINA_UNUSED,
+                    void *event_info EINA_UNUSED)
 {
    Evas_Object *fs = data;
    Elm_Fileselector_Mode mode;
@@ -128,9 +128,9 @@ _mode_cycle_clicked(void            *data,
 }
 
 void
-test_fileselector(void *data       __UNUSED__,
-                  Evas_Object *obj __UNUSED__,
-                  void *event_info __UNUSED__)
+test_fileselector(void *data       EINA_UNUSED,
+                  Evas_Object *obj EINA_UNUSED,
+                  void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *fs, *vbox, *hbox, *bt, *sep;
 

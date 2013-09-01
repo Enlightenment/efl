@@ -4,7 +4,7 @@
 #include <Elementary.h>
 #ifndef ELM_LIB_QUICKLAUNCH
 
-static void _changed_cb(void* data __UNUSED__, Evas_Object* obj, void* event_info)
+static void _changed_cb(void* data EINA_UNUSED, Evas_Object* obj, void* event_info)
 {
    char buf[256];
    Elm_Dayselector_Day day = (Elm_Dayselector_Day) event_info;
@@ -41,7 +41,7 @@ static void _changed_cb(void* data __UNUSED__, Evas_Object* obj, void* event_inf
 }
 
 void
-test_dayselector(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_dayselector(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bx, *dayselector, *monday;
    Eina_List *weekdays_list;

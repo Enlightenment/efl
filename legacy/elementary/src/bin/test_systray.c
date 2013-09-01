@@ -13,9 +13,9 @@ static Evas_Object *r    = NULL;
 static Eo          *item = NULL;
 
 static Eina_Bool
-_ev_handler(void *data __UNUSED__,
-            int type __UNUSED__,
-            void *event __UNUSED__)
+_ev_handler(void *data EINA_UNUSED,
+            int type EINA_UNUSED,
+            void *event EINA_UNUSED)
 {
    Eina_Bool ret;
 
@@ -33,34 +33,34 @@ _ev_handler(void *data __UNUSED__,
 }
 
 static void
-_bt_clicked(void *data __UNUSED__,
-            Evas_Object *obj __UNUSED__,
-            void *event_info __UNUSED__)
+_bt_clicked(void *data EINA_UNUSED,
+            Evas_Object *obj EINA_UNUSED,
+            void *event_info EINA_UNUSED)
 {
    eo_do(item, elm_obj_systray_icon_name_set(elm_entry_entry_get(i)));
    eo_do(item, elm_obj_systray_att_icon_name_set(elm_entry_entry_get(ai)));
 }
 
 static void
- _r_clicked(void *data __UNUSED__,
-            Evas_Object *obj __UNUSED__,
-            void *event_info __UNUSED__)
+ _r_clicked(void *data EINA_UNUSED,
+            Evas_Object *obj EINA_UNUSED,
+            void *event_info EINA_UNUSED)
 {
    eo_do(item, elm_obj_systray_status_set(elm_radio_value_get(r)));
 }
 
 static void
 _menu_clicked(void *data,
-            Evas_Object *obj __UNUSED__,
-            void *event_info __UNUSED__)
+            Evas_Object *obj EINA_UNUSED,
+            void *event_info EINA_UNUSED)
 {
    printf("Menu Item Clicked: %s\n", (const char *) data);
 }
 
 void
-test_systray(void *data __UNUSED__,
-             Evas_Object *obj __UNUSED__,
-             void *event_info __UNUSED__)
+test_systray(void *data EINA_UNUSED,
+             Evas_Object *obj EINA_UNUSED,
+             void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bx, *it;
    Elm_Object_Item *it2;

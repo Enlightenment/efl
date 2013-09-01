@@ -13,7 +13,7 @@ enum _slide_style
 };
 
 void
-test_label(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_label(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bx, *lb;
 
@@ -78,7 +78,7 @@ test_label(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
 }
 
 static void
-_cb_size_radio_changed(void *data, Evas_Object *obj, void *event __UNUSED__)
+_cb_size_radio_changed(void *data, Evas_Object *obj, void *event EINA_UNUSED)
 {
    Evas_Object *lb = (Evas_Object *)data;
    int style =  elm_radio_value_get((Evas_Object *)obj);
@@ -102,7 +102,7 @@ _cb_size_radio_changed(void *data, Evas_Object *obj, void *event __UNUSED__)
 }
 
 static void
-_change_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+_change_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Object *lb = (Evas_Object *)data;
    double val = elm_slider_value_get(obj);
@@ -112,7 +112,7 @@ _change_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 }
 
 void
-test_label2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_label2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *gd, *rect, *lb, *rd, *rdg, *sl;
 

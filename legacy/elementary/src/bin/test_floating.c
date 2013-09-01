@@ -12,14 +12,14 @@ typedef struct _Testitem
 
 
 static Elm_Genlist_Item_Class itc1;
-static char *glf_text_get(void *data, Evas_Object *obj __UNUSED__, const char *part __UNUSED__)
+static char *glf_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNUSED)
 {
    char buf[256];
    snprintf(buf, sizeof(buf), "Item # %i", (int)(uintptr_t)data);
    return strdup(buf);
 }
 
-static Evas_Object *glf_content_get(void *data __UNUSED__, Evas_Object *obj, const char *part __UNUSED__)
+static Evas_Object *glf_content_get(void *data EINA_UNUSED, Evas_Object *obj, const char *part EINA_UNUSED)
 {
    char buf[PATH_MAX];
    Evas_Object *ic = elm_icon_add(obj);
@@ -28,11 +28,11 @@ static Evas_Object *glf_content_get(void *data __UNUSED__, Evas_Object *obj, con
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
    return ic;
 }
-static Eina_Bool glf_state_get(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const char *part __UNUSED__)
+static Eina_Bool glf_state_get(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNUSED)
 {
    return EINA_FALSE;
 }
-static void glf_del(void *data __UNUSED__, Evas_Object *obj __UNUSED__)
+static void glf_del(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED)
 {
 }
 
@@ -55,7 +55,7 @@ anim(void *data)
 }
 
 static void
-_del(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_del(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Ecore_Animator *ani = data;
 
@@ -63,7 +63,7 @@ _del(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event
 }
 
 void
-test_floating(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_floating(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *gl;
    int i;

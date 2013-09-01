@@ -20,7 +20,7 @@ typedef struct Progressbar
 static Progressbar _test_progressbar;
 
 static Eina_Bool
-_my_progressbar_value_set (void *data __UNUSED__)
+_my_progressbar_value_set (void *data EINA_UNUSED)
 {
    double progress;
 
@@ -39,7 +39,7 @@ _my_progressbar_value_set (void *data __UNUSED__)
 }
 
 static void
-my_progressbar_test_start(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+my_progressbar_test_start(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    fprintf(stderr, "s1\n");
    elm_progressbar_pulse(_test_progressbar.pb2, EINA_TRUE);
@@ -58,7 +58,7 @@ my_progressbar_test_start(void *data __UNUSED__, Evas_Object *obj __UNUSED__, vo
 }
 
 static void
-my_progressbar_test_stop(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+my_progressbar_test_stop(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    elm_progressbar_pulse(_test_progressbar.pb2, EINA_FALSE);
    elm_progressbar_pulse(_test_progressbar.pb5, EINA_FALSE);
@@ -75,7 +75,7 @@ my_progressbar_test_stop(void *data __UNUSED__, Evas_Object *obj __UNUSED__, voi
 }
 
 static void
-my_progressbar_destroy(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+my_progressbar_destroy(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    my_progressbar_test_stop(NULL, NULL, NULL);
    evas_object_del(obj);
@@ -94,7 +94,7 @@ my_progressbar_format_cb(double val)
 }
 
 void
-test_progressbar(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_progressbar(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *pb, *bx, *hbx, *bt, *bt_bx, *ic1, *ic2;
    char buf[PATH_MAX];

@@ -5,7 +5,7 @@
 #ifndef ELM_LIB_QUICKLAUNCH
 
 static void
-_cb_size_radio_changed(void *data, Evas_Object *obj, void *event __UNUSED__)
+_cb_size_radio_changed(void *data, Evas_Object *obj, void *event EINA_UNUSED)
 {
    Evas_Object *o_bg = data;
    int size;
@@ -14,7 +14,7 @@ _cb_size_radio_changed(void *data, Evas_Object *obj, void *event __UNUSED__)
 }
 
 static void
-_cb_radio_changed(void *data, Evas_Object *obj, void *event __UNUSED__)
+_cb_radio_changed(void *data, Evas_Object *obj, void *event EINA_UNUSED)
 {
    Evas_Object *o_bg = data;
 
@@ -22,7 +22,7 @@ _cb_radio_changed(void *data, Evas_Object *obj, void *event __UNUSED__)
 }
 
 static void
-_cb_overlay_changed(void *data, Evas_Object *obj, void *event __UNUSED__)
+_cb_overlay_changed(void *data, Evas_Object *obj, void *event EINA_UNUSED)
 {
    Evas_Object *o_bg = data;
 
@@ -42,7 +42,7 @@ _cb_overlay_changed(void *data, Evas_Object *obj, void *event __UNUSED__)
 }
 
 static void
-_cb_color_changed(void *data, Evas_Object *obj, void *event __UNUSED__)
+_cb_color_changed(void *data, Evas_Object *obj, void *event EINA_UNUSED)
 {
    Evas_Object *o_bg = data;
    double val = 0.0;
@@ -59,7 +59,7 @@ _cb_color_changed(void *data, Evas_Object *obj, void *event __UNUSED__)
 }
 
 void
-test_bg_plain(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_bg_plain(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bg;
 
@@ -89,7 +89,7 @@ test_bg_plain(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 }
 
 void
-test_bg_image(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_bg_image(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bg;
    Evas_Object *box, *hbox, *o_bg;
@@ -162,7 +162,7 @@ test_bg_image(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 }
 
 void
-test_bg_options(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_bg_options(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bg;
    Evas_Object *box, *hbox, *o_bg;

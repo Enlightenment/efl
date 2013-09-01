@@ -9,14 +9,14 @@ static void drag_stop_cb(void *mydata, Evas_Object *obj, void *evdata);
 static void drag_start_cb(void *mydata, Evas_Object *obj, void *evdata);
 
 static void
-_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
-            void *event_info __UNUSED__)
+_clicked_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
+            void *event_info EINA_UNUSED)
 {
    printf("photo clicked\n");
 }
 
 void
-test_photo(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_photo(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *sc, *tb, *ph;
    int i, j, n;
@@ -106,19 +106,19 @@ test_photo(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
 
 /* Never called, elm_photo never call "drop" smart cb */
 static void
-drop_cb(void *mydata __UNUSED__, Evas_Object *obj, void *evdata __UNUSED__)
+drop_cb(void *mydata EINA_UNUSED, Evas_Object *obj, void *evdata EINA_UNUSED)
 {
    printf("Drop on obj %p\n", obj);
 }
 
 static void
-drag_start_cb(void *mydata __UNUSED__, Evas_Object *obj __UNUSED__, void *evdata __UNUSED__)
+drag_start_cb(void *mydata EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *evdata EINA_UNUSED)
 {
 
 }
 
 static void
-drag_stop_cb(void *mydata __UNUSED__, Evas_Object *obj __UNUSED__, void *evdata __UNUSED__)
+drag_stop_cb(void *mydata EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *evdata EINA_UNUSED)
 {
 
 }

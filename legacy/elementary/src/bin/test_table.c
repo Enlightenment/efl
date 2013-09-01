@@ -4,7 +4,7 @@
 #include <Elementary.h>
 #ifndef ELM_LIB_QUICKLAUNCH
 void
-test_table(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_table(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *tb, *bt;
 
@@ -62,7 +62,7 @@ test_table(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
 }
 
 void
-test_table2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_table2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *tb, *bt;
 
@@ -121,7 +121,7 @@ test_table2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 }
 
 static void
-my_tb_ch(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+my_tb_ch(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win = data;
    Evas_Object *tb = evas_object_data_get(win, "tb");
@@ -132,7 +132,7 @@ my_tb_ch(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 }
 
 void
-test_table3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_table3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *tb, *bt;
 
@@ -176,7 +176,7 @@ test_table3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 }
 
 void
-test_table4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_table4(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *tb, *bt;
 
@@ -220,7 +220,7 @@ test_table4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 }
 
 void
-test_table5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_table5(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *tb, *bt;
 
@@ -272,7 +272,7 @@ test_table5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 }
 
 void
-test_table6(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_table6(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *tb, *bt;
 
@@ -331,7 +331,7 @@ test_table6(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 }
 
 void
-test_table7(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_table7(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *tb, *bt;
 

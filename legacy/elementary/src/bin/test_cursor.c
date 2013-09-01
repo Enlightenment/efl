@@ -18,7 +18,7 @@ typedef struct _Testitem
 static Elm_Gengrid_Item_Class gic;
 
 char *
-grd_lbl_get(void *data, Evas_Object *obj __UNUSED__, const char *part __UNUSED__)
+grd_lbl_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNUSED)
 {
    const Testitem *ti = data;
    char buf[256];
@@ -45,7 +45,7 @@ grd_content_get(void *data, Evas_Object *obj, const char *part)
 static Elm_Genlist_Item_Class itct;
 
 static void
-glt_exp(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+glt_exp(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Elm_Object_Item *glit = event_info;
    Evas_Object *gl = elm_object_item_widget_get(glit);
@@ -67,28 +67,28 @@ glt_exp(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 }
 
 static void
-glt_con(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+glt_con(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Elm_Object_Item *glit = event_info;
    elm_genlist_item_subitems_clear(glit);
 }
 
 static void
-glt_exp_req(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+glt_exp_req(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Elm_Object_Item *glit = event_info;
    elm_genlist_item_expanded_set(glit, EINA_TRUE);
 }
 
 static void
-glt_con_req(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+glt_con_req(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Elm_Object_Item *glit = event_info;
    elm_genlist_item_expanded_set(glit, EINA_FALSE);
 }
 
 char *
-glt_text_get(void *data, Evas_Object *obj __UNUSED__, const char *part __UNUSED__)
+glt_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNUSED)
 {
    char buf[256];
    snprintf(buf, sizeof(buf), "Item mode %i", (int)(uintptr_t)data);
@@ -96,7 +96,7 @@ glt_text_get(void *data, Evas_Object *obj __UNUSED__, const char *part __UNUSED_
 }
 
 void
-test_cursor(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_cursor(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bg, *bx, *bt, *list, *entry, *ck;
    Elm_Object_Item *lit;
@@ -163,7 +163,7 @@ test_cursor(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 }
 
 void
-test_cursor2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_cursor2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bx, *o, *grid, *gl;
    Elm_Object_Item *glit1, *glit2, *glit3;
@@ -281,7 +281,7 @@ test_cursor2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
 }
 
 void
-test_cursor3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_cursor3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bx, *o;
    Elm_Object_Item *lit;
@@ -386,7 +386,7 @@ test_cursor3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
 }
 
 void
-test_cursor4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_cursor4(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bx, *ly, *bt;
    char buf[PATH_MAX];

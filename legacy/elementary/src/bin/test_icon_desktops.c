@@ -6,7 +6,7 @@
 static Elm_Genlist_Item_Class *it_desk = NULL;
 
 static char *
-desk_gl_text_get(void *data, Evas_Object *obj __UNUSED__, const char *part __UNUSED__)
+desk_gl_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNUSED)
 {
 #ifdef ELM_EFREET
    Efreet_Desktop *d = (Efreet_Desktop *)data;
@@ -37,7 +37,7 @@ desk_gl_content_get(void *data, Evas_Object *obj, const char *part)
 #endif
 }
 static void
-desk_gl_del(void *data, Evas_Object *obj __UNUSED__)
+desk_gl_del(void *data, Evas_Object *obj EINA_UNUSED)
 {
 #ifdef ELM_EFREET
    Efreet_Desktop *d = (Efreet_Desktop *)data;
@@ -50,7 +50,7 @@ desk_gl_del(void *data, Evas_Object *obj __UNUSED__)
 
 #ifdef ELM_EFREET
 static void
-desktop_sel(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+desktop_sel(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Efreet_Desktop *d = data;
    if (!d) return;
@@ -62,7 +62,7 @@ desktop_sel(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__
 #endif
 
 void
-test_icon_desktops(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_icon_desktops(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *gl;
 #ifdef ELM_EFREET

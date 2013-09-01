@@ -5,7 +5,7 @@
 #ifndef ELM_LIB_QUICKLAUNCH
 
 void
-test_conformant(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+test_conformant(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    Evas_Object *win, *conform, *btn, *bx, *en;
 
@@ -82,13 +82,13 @@ test_conformant(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event 
 }
 
 static void
-popobj(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+popobj(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    elm_naviframe_item_pop(data);
 }
 
 void
-test_conformant2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+test_conformant2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    Evas_Object *win, *conform, *btn, *bx, *en, *pg;
 

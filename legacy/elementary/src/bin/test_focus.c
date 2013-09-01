@@ -6,7 +6,7 @@
 #ifndef ELM_LIB_QUICKLAUNCH
 
 static Eina_Bool
-_event(void *data __UNUSED__, Evas_Object *obj __UNUSED__, Evas_Object *src __UNUSED__, Evas_Callback_Type type, void *event_info)
+_event(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, Evas_Object *src EINA_UNUSED, Evas_Callback_Type type, void *event_info)
 {
    if (type == EVAS_CALLBACK_KEY_DOWN)
      printf ("Key Down:");
@@ -22,7 +22,7 @@ _event(void *data __UNUSED__, Evas_Object *obj __UNUSED__, Evas_Object *src __UN
 }
 
 static void
-_on_key_down(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *einfo __UNUSED__)
+_on_key_down(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *einfo EINA_UNUSED)
 {
    //Evas_Event_Key_Down *event = einfo;
    //printf("%s %p Key %s Parent %p\n", evas_object_type_get(obj),
@@ -30,14 +30,14 @@ _on_key_down(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUSE
 }
 
 static void
-my_disable(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+my_disable(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *bt = data;
    elm_object_disabled_set(bt, EINA_TRUE);
 }
 
 static void
-my_enable(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+my_enable(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *bt = data;
    elm_object_disabled_set(bt, EINA_FALSE);
@@ -52,13 +52,13 @@ my_show(Evas_Object *obj)
 }
 
 static void
-_tb_sel(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_tb_sel(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    printf("tb sel %p\n", obj);
 }
 
 void
-test_focus(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_focus(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *tbx, *tbar, *menu;
    Elm_Object_Item *tb_it;

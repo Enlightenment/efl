@@ -12,7 +12,7 @@ static const char *names[] =
 };
 
 static void
-_del(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_del(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win = data;
    Ecore_Animator *ani = evas_object_data_get(win, "animator");
@@ -64,7 +64,7 @@ anim(void *data)
 }
 
 void
-test_anim(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_anim(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bg, *bub, *sh;
    Ecore_Animator *ani;

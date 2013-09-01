@@ -44,7 +44,7 @@ _update(Evas_Object *prefs, Evas_Object *layout)
 }
 
 static void
-_page_loaded_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+_page_loaded_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Object *layout = data;
 
@@ -64,8 +64,8 @@ _item_changed_cb(void *data, Evas_Object *obj, void *event_info)
 }
 
 void
-test_prefs(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
-           void *event_info __UNUSED__)
+test_prefs(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
+           void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bg, *prefs, *layout;
    Elm_Prefs_Data *prefs_data;

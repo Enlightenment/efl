@@ -7,7 +7,7 @@
 static Evas_Object *menu;
 
 static void 
-_resize(void *data, Evas *evas __UNUSED__, Evas_Object *obj, void *event __UNUSED__)
+_resize(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj, void *event EINA_UNUSED)
 {
    Evas_Coord w, h;
    Evas_Object *rect = data;
@@ -17,7 +17,7 @@ _resize(void *data, Evas *evas __UNUSED__, Evas_Object *obj, void *event __UNUSE
 }
 
 static void
-_show(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_show(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Evas_Event_Mouse_Down *ev = event_info;
    elm_menu_move(data, ev->canvas.x, ev->canvas.y);
@@ -105,7 +105,7 @@ _populate_1(Evas_Object *obj, Elm_Object_Item *menu_it)
 }
 
 void
-test_menu(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_menu(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *rect;
    Elm_Object_Item *menu_it;
@@ -137,7 +137,7 @@ test_menu(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info _
 }
 
 static void
-_parent_set_bt_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_parent_set_bt_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *mn = data;
    if (!mn) return;
@@ -152,7 +152,7 @@ _parent_set_bt_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info
 }
 
 static void
-_icon_set_bt_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_icon_set_bt_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Elm_Object_Item *menu_it = data;
    const char *icon_name = NULL;
@@ -168,7 +168,7 @@ _icon_set_bt_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info _
 }
 
 static void
-_item_select_bt_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_item_select_bt_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Elm_Object_Item *menu_it = data;
    if (!menu_it) return;
@@ -177,7 +177,7 @@ _item_select_bt_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_inf
 }
 
 static void
-_separators_bt_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_separators_bt_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    const Eina_List *sis = NULL;
    const Eina_List *l = NULL;
@@ -196,7 +196,7 @@ _separators_bt_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info
 }
 
 static void
-_open_bt_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_open_bt_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *mn = data;
    if (!mn) return;
@@ -205,7 +205,7 @@ _open_bt_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNU
 }
 
 static void
-_close_bt_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_close_bt_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *mn = data;
    if (!mn) return;
@@ -214,7 +214,7 @@ _close_bt_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UN
 }
 
 void
-test_menu2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_menu2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bx, *o_bg, *rect, *rect2, *mn, *bt, *vbx;
    Elm_Object_Item *menu_it, *menu_it2;

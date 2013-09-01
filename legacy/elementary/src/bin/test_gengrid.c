@@ -14,11 +14,11 @@
 static Elm_Gengrid_Item_Class *gic, *ggic;
 
 Evas_Object *grid_content_get(void *data, Evas_Object *obj, const char *part);
-char *grid_text_get(void *data, Evas_Object *obj __UNUSED__,
-                    const char *part __UNUSED__);
-Eina_Bool grid_state_get(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
-                         const char *part __UNUSED__);
-void grid_del(void *data __UNUSED__, Evas_Object *obj __UNUSED__);
+char *grid_text_get(void *data, Evas_Object *obj EINA_UNUSED,
+                    const char *part EINA_UNUSED);
+Eina_Bool grid_state_get(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
+                         const char *part EINA_UNUSED);
+void grid_del(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED);
 
 typedef struct _Item_Data
 {
@@ -113,7 +113,7 @@ set_api_state(api_data *api)
 }
 
 static void
-_api_bt_clicked(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+_api_bt_clicked(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {  /* Will add here a SWITCH command containing code to modify test-object */
    /* in accordance a->state value. */
    api_data *a = data;
@@ -150,68 +150,68 @@ static const char *cur[4] =
 
 static int n_current_pic = 0;
 static void
-_horizontal_grid(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+_horizontal_grid(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Object *grid = data;
    elm_gengrid_horizontal_set(grid, elm_check_state_get(obj));
 }
 
 static void
-grid_drag_up(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+grid_drag_up(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    printf("Drag up: %p\n", event_info);
 }
 
 static void
-grid_drag_right(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+grid_drag_right(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    printf("Drag right: %p\n", event_info);
 }
 
 static void
-grid_drag_down(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+grid_drag_down(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    printf("Drag down: %p\n", event_info);
 }
 
 static void
-grid_drag_left(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+grid_drag_left(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    printf("Drag left: %p\n", event_info);
 }
 
 static void
-grid_drag_stop(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+grid_drag_stop(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    printf("Drag stop: %p\n", event_info);
 }
 
 static void
-grid_selected(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+grid_selected(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    printf("Selected: %p\n", event_info);
 }
 
 static void
-grid_double_clicked(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+grid_double_clicked(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    printf("Double clicked: %p\n", event_info);
 }
 
 static void
-grid_longpress(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+grid_longpress(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    printf("longpress %p\n", event_info);
 }
 
 static void
-grid_moved(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+grid_moved(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    printf("moved %p\n", event_info);
 }
 
 static void
-grid_item_check_changed(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+grid_item_check_changed(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Item_Data *id = data;
    id->onoff = elm_check_state_get(obj);
@@ -219,7 +219,7 @@ grid_item_check_changed(void *data, Evas_Object *obj, void *event_info __UNUSED_
 }
 
 char *
-grid_text_get(void *data, Evas_Object *obj __UNUSED__, const char *part __UNUSED__)
+grid_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNUSED)
 {
    const Item_Data *id = data;
    char buf[256];
@@ -252,13 +252,13 @@ grid_content_get(void *data, Evas_Object *obj, const char *part)
 }
 
 Eina_Bool
-grid_state_get(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const char *part __UNUSED__)
+grid_state_get(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNUSED)
 {
    return EINA_FALSE;
 }
 
 void
-grid_del(void *data __UNUSED__, Evas_Object *obj __UNUSED__)
+grid_del(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED)
 {
 	free(data);
 }
@@ -270,13 +270,13 @@ grid_sel(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_cleanup_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_cleanup_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    free(data);
 }
 
 static void
-always_select_mode_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+always_select_mode_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    api_data *api = data;
    if (elm_check_state_get(obj))
@@ -286,14 +286,14 @@ always_select_mode_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 }
 
 static void
-multi_select_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+multi_select_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    api_data *api = data;
    elm_gengrid_multi_select_set(api->grid, elm_check_state_get(obj));
 }
 
 static void
-clear_bt_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+clear_bt_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    api_data *api = data;
    elm_gengrid_clear(api->grid);
@@ -348,7 +348,7 @@ create_gengrid(Evas_Object *obj, int items)
 }
 
 static void
-restore_bt_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+restore_bt_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    api_data *api = data;
    elm_box_clear(api->box);
@@ -358,7 +358,7 @@ restore_bt_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __U
 }
 
 static void
-filled_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+filled_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Object *box = (Evas_Object *)data;
    Evas_Object *grid;
@@ -371,7 +371,7 @@ filled_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 }
 
 static void
-filled_bt_clicked(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+filled_bt_clicked(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *box, *content_box, *grid, *tg;
 
@@ -403,7 +403,7 @@ filled_bt_clicked(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
 }
 
 static void
-cursor_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+cursor_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Object *grid = (Evas_Object *)data;
    Elm_Object_Item *item = NULL;
@@ -425,7 +425,7 @@ cursor_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 }
 
 static void
-cursor_bt_clicked(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+cursor_bt_clicked(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *box, *content_box, *hbox, *grid, *tg;
 
@@ -463,7 +463,7 @@ cursor_bt_clicked(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
 }
 
 static void
-_btn_bring_in_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_btn_bring_in_clicked_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    if (!data) return;
    Elm_Object_Item *it = elm_gengrid_selected_item_get(data);
@@ -472,7 +472,7 @@ _btn_bring_in_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_in
 }
 
 static void
-_btn_show_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_btn_show_clicked_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    if (!data) return;
    Elm_Object_Item *it = elm_gengrid_selected_item_get(data);
@@ -481,7 +481,7 @@ _btn_show_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info _
 }
 
 void
-test_gengrid(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_gengrid(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bt, *bxx, *bx, *tg;
    api_data *api = calloc(1, sizeof(api_data));
@@ -578,7 +578,7 @@ test_gengrid(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
 }
 
 static void
-_before_bt_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_before_bt_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Item_Data *id;
    Evas_Object *grid = data;
@@ -606,7 +606,7 @@ compare_cb(const void *data1, const void *data2)
 }
 
 static void
-_sorted_bt_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_sorted_bt_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Item_Data *id;
    Evas_Object *grid = data;
@@ -622,7 +622,7 @@ _sorted_bt_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __U
 }
 
 static void
-_after_bt_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_after_bt_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Item_Data *id;
    Evas_Object *grid = data;
@@ -642,7 +642,7 @@ _after_bt_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UN
 }
 
 static void
-_delete_bt_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_delete_bt_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *grid = data;
    Eina_List *l, *l2, *l3;
@@ -655,7 +655,7 @@ _delete_bt_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __U
 }
 
 static void
-_prepend_bt_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_prepend_bt_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Item_Data *id;
    Evas_Object *grid = data;
@@ -670,7 +670,7 @@ _prepend_bt_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __
 }
 
 static void
-_append_bt_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_append_bt_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Item_Data *id;
    Evas_Object *grid = data;
@@ -685,7 +685,7 @@ _append_bt_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __U
 }
 
 static void
-_size_changed(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+_size_changed(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Object *grid = data;
    int size = elm_spinner_value_get(obj);
@@ -695,7 +695,7 @@ _size_changed(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 }
 
 void
-test_gengrid2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_gengrid2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *grid, *bx, *hbx, *bt, *ck;
 
@@ -790,7 +790,7 @@ test_gengrid2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 }
 
 void
-test_gengrid3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_gengrid3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *grid;
    static Item_Data id[144];
@@ -905,8 +905,8 @@ _gengrid_create(Evas_Object *obj, int items, const char *style)
 }
 
 static void
-_item_style_sel_cb(void *data, Evas_Object *obj __UNUSED__,
-                   void *event_info __UNUSED__)
+_item_style_sel_cb(void *data, Evas_Object *obj EINA_UNUSED,
+                   void *event_info EINA_UNUSED)
 {
    _gengrid_create(NULL, (12*12), data);
 }
@@ -960,8 +960,8 @@ _elm_min_set(Evas_Object *obj, Evas_Object *parent, Evas_Coord w, Evas_Coord h)
 }
 
 void
-test_gengrid_item_styles(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
-                         void *event_info __UNUSED__)
+test_gengrid_item_styles(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
+                         void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *box, *gengrid, *list, *table;
 
@@ -991,7 +991,7 @@ test_gengrid_item_styles(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
 }
 
 static void
-_bring_in2_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_bring_in2_clicked_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *grid;
    static Item_Data id[5000];
@@ -1040,7 +1040,7 @@ _bring_in2_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *
 }
 
 static void
-_bring_in1_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_bring_in1_clicked_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *grid;
    static Item_Data id[5000];
@@ -1089,7 +1089,7 @@ _bring_in1_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *
 
 
 static void
-_show2_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_show2_clicked_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *grid;
    static Item_Data id[10000];
@@ -1138,7 +1138,7 @@ _show2_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
 }
 
 static void
-_show1_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_show1_clicked_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *grid;
    static Item_Data id[10000];
@@ -1186,7 +1186,7 @@ _show1_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
 }
 
 void
-test_gengrid4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_gengrid4(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bt, *bx;
    api_data *api = calloc(1, sizeof(api_data));

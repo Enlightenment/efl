@@ -16,8 +16,8 @@ static Elm_Gengrid_Item_Class gic;
 
 char *
 grdt_lbl_get(void            *data,
-             Evas_Object *obj __UNUSED__,
-             const char *part __UNUSED__)
+             Evas_Object *obj EINA_UNUSED,
+             const char *part EINA_UNUSED)
 {
    const Testitem *ti = data;
    char buf[256];
@@ -47,8 +47,8 @@ grdt_content_get(void        *data,
 static Elm_Genlist_Item_Class itct;
 
 static void
-gltt_exp(void *data       __UNUSED__,
-         Evas_Object *obj __UNUSED__,
+gltt_exp(void *data       EINA_UNUSED,
+         Evas_Object *obj EINA_UNUSED,
          void            *event_info)
 {
    Elm_Object_Item *glit = event_info;
@@ -70,8 +70,8 @@ gltt_exp(void *data       __UNUSED__,
 }
 
 static void
-gltt_con(void *data       __UNUSED__,
-         Evas_Object *obj __UNUSED__,
+gltt_con(void *data       EINA_UNUSED,
+         Evas_Object *obj EINA_UNUSED,
          void            *event_info)
 {
    Elm_Object_Item *glit = event_info;
@@ -79,8 +79,8 @@ gltt_con(void *data       __UNUSED__,
 }
 
 static void
-gltt_exp_req(void *data       __UNUSED__,
-             Evas_Object *obj __UNUSED__,
+gltt_exp_req(void *data       EINA_UNUSED,
+             Evas_Object *obj EINA_UNUSED,
              void            *event_info)
 {
    Elm_Object_Item *glit = event_info;
@@ -88,8 +88,8 @@ gltt_exp_req(void *data       __UNUSED__,
 }
 
 static void
-gltt_con_req(void *data       __UNUSED__,
-             Evas_Object *obj __UNUSED__,
+gltt_con_req(void *data       EINA_UNUSED,
+             Evas_Object *obj EINA_UNUSED,
              void            *event_info)
 {
    Elm_Object_Item *glit = event_info;
@@ -98,8 +98,8 @@ gltt_con_req(void *data       __UNUSED__,
 
 char *
 gltt_text_get(void            *data,
-               Evas_Object *obj __UNUSED__,
-               const char *part __UNUSED__)
+               Evas_Object *obj EINA_UNUSED,
+               const char *part EINA_UNUSED)
 {
    char buf[256];
    snprintf(buf, sizeof(buf), "Item mode %i", (int)(uintptr_t)data);
@@ -107,10 +107,10 @@ gltt_text_get(void            *data,
 }
 
 static Evas_Object *
-_tt_item_icon(void *data   __UNUSED__,
-              Evas_Object *obj __UNUSED__,
+_tt_item_icon(void *data   EINA_UNUSED,
+              Evas_Object *obj EINA_UNUSED,
               Evas_Object *tt,
-              void *item   __UNUSED__)
+              void *item   EINA_UNUSED)
 {
    Evas_Object *ic = elm_icon_add(tt);
    char buf[PATH_MAX];
@@ -123,10 +123,10 @@ _tt_item_icon(void *data   __UNUSED__,
 }
 
 static Evas_Object *
-_tt_item_icon2(void *data   __UNUSED__,
-              Evas_Object *obj __UNUSED__,
+_tt_item_icon2(void *data   EINA_UNUSED,
+              Evas_Object *obj EINA_UNUSED,
               Evas_Object *tt,
-              void *item   __UNUSED__)
+              void *item   EINA_UNUSED)
 {
    Evas_Object *ic = elm_icon_add(tt);
    char buf[PATH_MAX];
@@ -137,10 +137,10 @@ _tt_item_icon2(void *data   __UNUSED__,
 }
 
 static Evas_Object *
-_tt_item_icon3(void *data   __UNUSED__,
-              Evas_Object *obj __UNUSED__,
+_tt_item_icon3(void *data   EINA_UNUSED,
+              Evas_Object *obj EINA_UNUSED,
               Evas_Object *tt,
-              void *item   __UNUSED__)
+              void *item   EINA_UNUSED)
 {
    int w, h, sw, sh;
    Evas_Object *ic = elm_icon_add(tt);
@@ -164,10 +164,10 @@ _tt_item_icon3(void *data   __UNUSED__,
 }
 
 static Evas_Object *
-_tt_item_label(void *data   __UNUSED__,
-              Evas_Object *obj __UNUSED__,
+_tt_item_label(void *data   EINA_UNUSED,
+              Evas_Object *obj EINA_UNUSED,
               Evas_Object *tt,
-              void *item   __UNUSED__)
+              void *item   EINA_UNUSED)
 {
    Evas_Object *l = elm_label_add(tt);
    elm_object_text_set(l, "Something useful here?<ps/>"
@@ -180,7 +180,7 @@ _tt_item_label(void *data   __UNUSED__,
 
 static void
 _tt_item_icon_del(void            *data,
-                  Evas_Object *obj __UNUSED__,
+                  Evas_Object *obj EINA_UNUSED,
                   void            *event_info)
 {
    // test to check for del_cb behavior!
@@ -189,9 +189,9 @@ _tt_item_icon_del(void            *data,
 }
 
 static void
-_tt_text_replace(void *data       __UNUSED__,
+_tt_text_replace(void *data       EINA_UNUSED,
                  Evas_Object     *obj,
-                 void *event_info __UNUSED__)
+                 void *event_info EINA_UNUSED)
 {
    static int count = 0;
    char buf[64];
@@ -201,10 +201,10 @@ _tt_text_replace(void *data       __UNUSED__,
 }
 
 static void
-_tt_timer_del(void *data       __UNUSED__,
-              Evas *e          __UNUSED__,
+_tt_timer_del(void *data       EINA_UNUSED,
+              Evas *e          EINA_UNUSED,
               Evas_Object     *obj,
-              void *event_info __UNUSED__)
+              void *event_info EINA_UNUSED)
 {
    Ecore_Timer *timer = evas_object_data_del(obj, "test-timer");
    if (!timer) return;
@@ -219,9 +219,9 @@ _tt_text_replace_timer_cb(void *data)
 }
 
 static void
-_tt_text_replace_timed(void *data       __UNUSED__,
+_tt_text_replace_timed(void *data       EINA_UNUSED,
                        Evas_Object     *obj,
-                       void *event_info __UNUSED__)
+                       void *event_info EINA_UNUSED)
 {
    Ecore_Timer *timer = evas_object_data_get(obj, "test-timer");
    if (timer)
@@ -240,8 +240,8 @@ _tt_text_replace_timed(void *data       __UNUSED__,
 }
 
 static Evas_Object *
-_tt_icon(void *data   __UNUSED__,
-         Evas_Object *obj __UNUSED__,
+_tt_icon(void *data   EINA_UNUSED,
+         Evas_Object *obj EINA_UNUSED,
          Evas_Object *tt)
 {
    Evas_Object *ic = elm_icon_add(tt);
@@ -255,8 +255,8 @@ _tt_icon(void *data   __UNUSED__,
 }
 
 static Evas_Object *
-_tt_icon2(void *data   __UNUSED__,
-          Evas_Object *obj __UNUSED__,
+_tt_icon2(void *data   EINA_UNUSED,
+          Evas_Object *obj EINA_UNUSED,
           Evas_Object *tt)
 {
    Evas_Object *ic = elm_icon_add(tt);
@@ -270,7 +270,7 @@ _tt_icon2(void *data   __UNUSED__,
 
 static void
 _tt_icon_del(void            *data,
-             Evas_Object *obj __UNUSED__,
+             Evas_Object *obj EINA_UNUSED,
              void            *event_info)
 {
    // test to check for del_cb behavior!
@@ -291,9 +291,9 @@ _tt_icon_replace_timer_cb(void *data)
 }
 
 static void
-_tt_icon_replace_timed(void *data       __UNUSED__,
+_tt_icon_replace_timed(void *data       EINA_UNUSED,
                        Evas_Object     *obj,
-                       void *event_info __UNUSED__)
+                       void *event_info EINA_UNUSED)
 {
    Ecore_Timer *timer = evas_object_data_get(obj, "test-timer");
    if (timer)
@@ -320,9 +320,9 @@ _tt_style_replace_timer_cb(void *data)
 }
 
 static void
-_tt_style_replace_timed(void *data       __UNUSED__,
+_tt_style_replace_timed(void *data       EINA_UNUSED,
                         Evas_Object     *obj,
-                        void *event_info __UNUSED__)
+                        void *event_info EINA_UNUSED)
 {
    Ecore_Timer *timer = evas_object_data_get(obj, "test-timer");
    if (timer)
@@ -341,9 +341,9 @@ _tt_style_replace_timed(void *data       __UNUSED__,
 }
 
 static void
-_tt_visible_lock_toggle(void *data       __UNUSED__,
+_tt_visible_lock_toggle(void *data       EINA_UNUSED,
                         Evas_Object     *obj,
-                        void *event_info __UNUSED__)
+                        void *event_info EINA_UNUSED)
 {
    static int locked = 0;
 
@@ -367,9 +367,9 @@ _tt_visible_lock_toggle(void *data       __UNUSED__,
 }
 
 void
-test_tooltip(void *data       __UNUSED__,
-             Evas_Object *obj __UNUSED__,
-             void *event_info __UNUSED__)
+test_tooltip(void *data       EINA_UNUSED,
+             Evas_Object *obj EINA_UNUSED,
+             void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bx, *tb, *bt, *se, *lst;
    Elm_Object_Item *tb_it;
@@ -505,9 +505,9 @@ test_tooltip(void *data       __UNUSED__,
 }
 
 void
-test_tooltip2(void *data       __UNUSED__,
-              Evas_Object *obj __UNUSED__,
-              void *event_info __UNUSED__)
+test_tooltip2(void *data       EINA_UNUSED,
+              Evas_Object *obj EINA_UNUSED,
+              void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bx, *grid, *gl;
    Elm_Object_Item *glit1, *glit2, *glit3;

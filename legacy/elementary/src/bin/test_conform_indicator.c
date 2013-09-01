@@ -10,7 +10,7 @@ static Evas_Object *win_port = NULL;
 static Evas_Object *win_land = NULL;
 
 static void
-_rot_0(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_rot_0(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win = data;
    if (rotate_with_resize)
@@ -20,7 +20,7 @@ _rot_0(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 }
 
 static void
-_rot_90(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_rot_90(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win = data;
    if (rotate_with_resize)
@@ -30,7 +30,7 @@ _rot_90(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 }
 
 static void
-_rot_180(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_rot_180(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win = data;
    if (rotate_with_resize)
@@ -40,7 +40,7 @@ _rot_180(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 }
 
 static void
-_rot_270(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_rot_270(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win = data;
    if (rotate_with_resize)
@@ -50,7 +50,7 @@ _rot_270(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 }
 
 static void
-_visible_change_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_visible_change_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    printf("visible change before=%d\n",vis);
    Evas_Object *win = (Evas_Object *) data;
@@ -69,9 +69,9 @@ _visible_change_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __U
 }
 
 static void
-_launch_conformant_indicator_window_btn_cb(void *data __UNUSED__,
-                                           Evas_Object *obj __UNUSED__,
-                                           void *event_info __UNUSED__)
+_launch_conformant_indicator_window_btn_cb(void *data EINA_UNUSED,
+                                           Evas_Object *obj EINA_UNUSED,
+                                           void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *conform, *bt, *bx;
    Evas_Object *plug_port = NULL, *plug_land = NULL;
@@ -176,7 +176,7 @@ _launch_conformant_indicator_window_btn_cb(void *data __UNUSED__,
 }
 
 static void
-_mouse_down_cb(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_mouse_down_cb(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Evas_Event_Mouse_Down *ev = event_info;
    Evas_Object *sub_obj = data;
@@ -187,7 +187,7 @@ _mouse_down_cb(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, v
 }
 
 static void
-_mouse_move_cb(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_mouse_move_cb(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Evas_Event_Mouse_Move *ev = event_info;
    Evas_Object *sub_obj = data;
@@ -330,8 +330,8 @@ _create_landscape(void)
 }
 
 static void
-_indicator_service_start_btn_cb(void *data, Evas_Object *obj __UNUSED__,
-                                void *event __UNUSED__)
+_indicator_service_start_btn_cb(void *data, Evas_Object *obj EINA_UNUSED,
+                                void *event EINA_UNUSED)
 {
    elm_object_disabled_set(data, EINA_TRUE);
 
@@ -347,8 +347,8 @@ _indicator_service_start_btn_cb(void *data, Evas_Object *obj __UNUSED__,
 }
 
 void
-test_conformant_indicator(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
-                          void *event __UNUSED__)
+test_conformant_indicator(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
+                          void *event EINA_UNUSED)
 {
    Evas_Object *win, *btn, *bx;
 

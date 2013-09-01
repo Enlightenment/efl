@@ -4,7 +4,7 @@
 #include <Elementary.h>
 #ifndef ELM_LIB_QUICKLAUNCH
 static void
-_bt_repeated(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_bt_repeated(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    static int count;
    char buf[16];
@@ -16,7 +16,7 @@ _bt_repeated(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED_
 }
 
 static void
-_bt_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_bt_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    int param = (int)(uintptr_t)(data);
 
@@ -24,7 +24,7 @@ _bt_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__
 }
 
 static void
-_bt_unpressed(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_bt_unpressed(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    int param = (int)(uintptr_t)(data);
 
@@ -32,7 +32,7 @@ _bt_unpressed(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED
 }
 
 void
-test_button(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_button(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *scr, *bx, *ic, *bt;
    char buf[PATH_MAX];

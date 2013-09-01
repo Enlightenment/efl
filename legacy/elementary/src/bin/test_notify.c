@@ -5,40 +5,40 @@
 #ifndef ELM_LIB_QUICKLAUNCH
 
 static void
-_bt(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_bt(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *notify = data;
    evas_object_show(notify);
 }
 
 static void
-_bt_close(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_bt_close(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *notify = data;
    evas_object_hide(notify);
 }
 
 static void
-_bt_timer_close(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_bt_timer_close(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *notify = data;
    elm_notify_timeout_set(notify, 2.0);
 }
 
 static void
-_notify_timeout(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_notify_timeout(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    printf("Notify timed out!\n");
 }
 
 static void
-_notify_block(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_notify_block(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    printf("Notify block area clicked!!\n");
 }
 
 void
-test_notify(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_notify(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bx, *tb, *notify, *bt, *lb;
 

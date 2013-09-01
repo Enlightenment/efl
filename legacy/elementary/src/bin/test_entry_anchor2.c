@@ -4,14 +4,14 @@
 #include <Elementary.h>
 #ifndef ELM_LIB_QUICKLAUNCH
 static void
-my_entry_anchor_bt(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+my_entry_anchor_bt(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *av = data;
    elm_entry_anchor_hover_end(av);
 }
 
 static void
-_anchor_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_anchor_clicked_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Elm_Entry_Anchor_Info *ev = event_info;
    printf("anchor click %d: '%s' (%d, %d)\n", ev->button, ev->name, ev->x, ev->y);
@@ -78,7 +78,7 @@ _anchor_hover_opened_cb(void *data, Evas_Object *obj, void *event_info)
 }
 
 void
-test_entry_anchor2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_entry_anchor2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *en;
 

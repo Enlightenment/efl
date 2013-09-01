@@ -9,7 +9,7 @@
 static Evas_Object *indicator[IND_NUM];
 
 static void
-_mouse_down(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *o __UNUSED__, void *event_info)
+_mouse_down(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *o EINA_UNUSED, void *event_info)
 {
    Evas_Event_Mouse_Down *ev = event_info;
 
@@ -21,7 +21,7 @@ _mouse_down(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *o __UNUSED__
 }
 
 static void
-_mouse_up(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *o __UNUSED__, void *event_info)
+_mouse_up(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *o EINA_UNUSED, void *event_info)
 {
    Evas_Event_Mouse_Up *ev = event_info;
    if (ev->button != 1) return;
@@ -30,7 +30,7 @@ _mouse_up(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *o __UNUSED__, 
 }
 
 static void
-_mouse_move(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *o __UNUSED__, void *event_info)
+_mouse_move(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *o EINA_UNUSED, void *event_info)
 {
    Evas_Event_Mouse_Move *ev = event_info;
    printf("MOUSE: move @ %4i %4i\n", ev->cur.canvas.x, ev->cur.canvas.y);
@@ -39,7 +39,7 @@ _mouse_move(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *o __UNUSED__
 }
 
 static void
-_multi_down(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *o __UNUSED__, void *event_info)
+_multi_down(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *o EINA_UNUSED, void *event_info)
 {
    Evas_Event_Multi_Down *ev = event_info;
    printf("MULTI: down @ %4i %4i | dev: %i\n", ev->canvas.x, ev->canvas.y, ev->device);
@@ -50,7 +50,7 @@ _multi_down(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *o __UNUSED__
 }
 
 static void
-_multi_up(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *o __UNUSED__, void *event_info)
+_multi_up(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *o EINA_UNUSED, void *event_info)
 {
    Evas_Event_Multi_Up *ev = event_info;
    printf("MULTI: up    @ %4i %4i | dev: %i\n", ev->canvas.x, ev->canvas.y, ev->device);
@@ -59,7 +59,7 @@ _multi_up(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *o __UNUSED__, 
 }
 
 static void
-_multi_move(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *o __UNUSED__, void *event_info)
+_multi_move(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *o EINA_UNUSED, void *event_info)
 {
    Evas_Event_Multi_Move *ev = event_info;
    printf("MULTI: move @ %4i %4i | dev: %i\n", ev->cur.canvas.x,
@@ -70,14 +70,14 @@ _multi_move(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *o __UNUSED__
 }
 
 void
-my_bt_rot(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+my_bt_rot(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win = data;
    elm_win_rotation_set(win, elm_win_rotation_get(win) + 90);
 }
 
 void
-test_multi(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_multi(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bg, *r, *bx, *bt;
    int i;

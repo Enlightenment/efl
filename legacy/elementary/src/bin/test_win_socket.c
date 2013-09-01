@@ -5,7 +5,7 @@
 #ifndef ELM_LIB_QUICKLAUNCH
 
 static void
-_win_del(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_win_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *socket_win = data;
    evas_object_del(socket_win);
@@ -142,7 +142,7 @@ fill(Evas_Object *win, Eina_Bool do_bg)
 }
 
 void
-test_win_socket(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_win_socket(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bx, *lb;
    Evas_Object *win_socket;

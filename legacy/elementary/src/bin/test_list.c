@@ -221,7 +221,7 @@ Scroll to end
 }
 
 static void
-_api_bt_clicked(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+_api_bt_clicked(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {  /* Will add here a SWITCH command containing code to modify test-object */
    /* in accordance a->state value. */
    api_data *a = data;
@@ -237,54 +237,54 @@ _api_bt_clicked(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 
 static void
 my_show_it(void        *data,
-           Evas_Object *obj __UNUSED__,
-           void        *event_info __UNUSED__)
+           Evas_Object *obj EINA_UNUSED,
+           void        *event_info EINA_UNUSED)
 {
    elm_list_item_show(data);
 }
 
 static void
-scroll_top(void        *data __UNUSED__,
-           Evas_Object *obj __UNUSED__,
-           void        *event_info __UNUSED__)
+scroll_top(void        *data EINA_UNUSED,
+           Evas_Object *obj EINA_UNUSED,
+           void        *event_info EINA_UNUSED)
 {
    printf("Top edge!\n");
 }
 
 static void
-scroll_bottom(void        *data __UNUSED__,
-              Evas_Object *obj __UNUSED__,
-              void        *event_info __UNUSED__)
+scroll_bottom(void        *data EINA_UNUSED,
+              Evas_Object *obj EINA_UNUSED,
+              void        *event_info EINA_UNUSED)
 {
    printf("Bottom edge!\n");
 }
 
 static void
-scroll_left(void        *data __UNUSED__,
-            Evas_Object *obj __UNUSED__,
-            void        *event_info __UNUSED__)
+scroll_left(void        *data EINA_UNUSED,
+            Evas_Object *obj EINA_UNUSED,
+            void        *event_info EINA_UNUSED)
 {
    printf("Left edge!\n");
 }
 
 static void
-scroll_right(void        *data __UNUSED__,
-             Evas_Object *obj __UNUSED__,
-             void        *event_info __UNUSED__)
+scroll_right(void        *data EINA_UNUSED,
+             Evas_Object *obj EINA_UNUSED,
+             void        *event_info EINA_UNUSED)
 {
    printf("Right edge!\n");
 }
 
 static void
-_cleanup_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_cleanup_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    free(data);
 }
 
 void
-test_list(void        *data __UNUSED__,
-          Evas_Object *obj __UNUSED__,
-          void        *event_info __UNUSED__)
+test_list(void        *data EINA_UNUSED,
+          Evas_Object *obj EINA_UNUSED,
+          void        *event_info EINA_UNUSED)
 {
    Evas_Object *win, *li, *ic, *ic2, *bx, *tb2, *bt, *bxx;
    char buf[PATH_MAX];
@@ -438,9 +438,9 @@ test_list(void        *data __UNUSED__,
 }
 
 void
-test_list_horizontal(void        *data __UNUSED__,
-                     Evas_Object *obj __UNUSED__,
-                     void        *event_info __UNUSED__)
+test_list_horizontal(void        *data EINA_UNUSED,
+                     Evas_Object *obj EINA_UNUSED,
+                     void        *event_info EINA_UNUSED)
 {
    Evas_Object *win, *li, *ic, *ic2, *bx, *tb2, *bt;
    char buf[PATH_MAX];
@@ -566,25 +566,25 @@ test_list_horizontal(void        *data __UNUSED__,
 
 static void
 my_li2_clear(void        *data,
-             Evas_Object *obj __UNUSED__,
-             void        *event_info __UNUSED__)
+             Evas_Object *obj EINA_UNUSED,
+             void        *event_info EINA_UNUSED)
 {
    elm_list_clear(data);
 }
 
 static void
-my_li2_sel(void        *data __UNUSED__,
+my_li2_sel(void        *data EINA_UNUSED,
            Evas_Object *obj,
-           void        *event_info __UNUSED__)
+           void        *event_info EINA_UNUSED)
 {
    Elm_Object_Item *list_it = elm_list_selected_item_get(obj);
    elm_list_item_selected_set(list_it, 0);
 }
 
 void
-test_list2(void        *data __UNUSED__,
-           Evas_Object *obj __UNUSED__,
-           void        *event_info __UNUSED__)
+test_list2(void        *data EINA_UNUSED,
+           Evas_Object *obj EINA_UNUSED,
+           void        *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bg, *li, *ic, *ic2, *bx, *bx2, *bt;
    char buf[PATH_MAX];
@@ -697,16 +697,16 @@ test_list2(void        *data __UNUSED__,
 /***********/
 
 static void
-_bt_clicked(void        *data __UNUSED__,
-            Evas_Object *obj __UNUSED__,
-            void        *event_info __UNUSED__)
+_bt_clicked(void        *data EINA_UNUSED,
+            Evas_Object *obj EINA_UNUSED,
+            void        *event_info EINA_UNUSED)
 {
    printf("button was clicked\n");
 }
 
 static void
-_it_clicked(void *data, Evas_Object *obj __UNUSED__,
-                 void *event_info __UNUSED__)
+_it_clicked(void *data, Evas_Object *obj EINA_UNUSED,
+                 void *event_info EINA_UNUSED)
 {
    printf("item was clicked\n");
    if (!data) return;
@@ -723,9 +723,9 @@ _it_clicked(void *data, Evas_Object *obj __UNUSED__,
 }
 
 void
-test_list3(void        *data __UNUSED__,
-           Evas_Object *obj __UNUSED__,
-           void        *event_info __UNUSED__)
+test_list3(void        *data EINA_UNUSED,
+           Evas_Object *obj EINA_UNUSED,
+           void        *event_info EINA_UNUSED)
 {
    Evas_Object *win, *li, *ic, *ic2, *bx;
    char buf[PATH_MAX];
@@ -829,8 +829,8 @@ struct Pginfo
 
 static void
 test_list4_back_cb(void        *data,
-                   Evas_Object *obj __UNUSED__,
-                   void        *event_info __UNUSED__)
+                   Evas_Object *obj EINA_UNUSED,
+                   void        *event_info EINA_UNUSED)
 {
    struct Pginfo *info = data;
    if (!info) return;
@@ -840,7 +840,7 @@ test_list4_back_cb(void        *data,
 
 static void
 test_list4_swipe(void        *data,
-                 Evas_Object *obj __UNUSED__,
+                 Evas_Object *obj EINA_UNUSED,
                  void        *event_info)
 {
    Evas_Object *box, *entry, *button;
@@ -879,9 +879,9 @@ test_list4_swipe(void        *data,
 }
 
 void
-test_list4(void        *data __UNUSED__,
-           Evas_Object *obj __UNUSED__,
-           void        *event_info __UNUSED__)
+test_list4(void        *data EINA_UNUSED,
+           Evas_Object *obj EINA_UNUSED,
+           void        *event_info EINA_UNUSED)
 {
    Evas_Object *win, *li, *ic, *ic2, *naviframe;
    static struct Pginfo info = {NULL, NULL};
@@ -978,15 +978,15 @@ struct list5_data_cb
 
 static void
 test_list5_item_del(void        *data,
-                    Evas_Object *obj __UNUSED__,
-                    void        *event_info __UNUSED__)
+                    Evas_Object *obj EINA_UNUSED,
+                    void        *event_info EINA_UNUSED)
 {
    elm_object_item_del(data);
 }
 
 static void
-test_list5_swipe(void        *data __UNUSED__,
-                 Evas_Object *obj __UNUSED__,
+test_list5_swipe(void        *data EINA_UNUSED,
+                 Evas_Object *obj EINA_UNUSED,
                  void        *event_info)
 {
    Evas_Object *button;
@@ -1004,9 +1004,9 @@ test_list5_swipe(void        *data __UNUSED__,
 }
 
 void
-test_list5(void        *data __UNUSED__,
-           Evas_Object *obj __UNUSED__,
-           void        *event_info __UNUSED__)
+test_list5(void        *data EINA_UNUSED,
+           Evas_Object *obj EINA_UNUSED,
+           void        *event_info EINA_UNUSED)
 {
    Evas_Object *win, *li;
    static struct list5_data_cb info;
@@ -1032,8 +1032,8 @@ test_list5(void        *data __UNUSED__,
 }
 
 static void
-_first_bt_clicked(void *data, Evas_Object *obj __UNUSED__,
-                  void *event_info __UNUSED__)
+_first_bt_clicked(void *data, Evas_Object *obj EINA_UNUSED,
+                  void *event_info EINA_UNUSED)
 {
    char str[128];
    Evas_Object *li = data, *lb;
@@ -1049,8 +1049,8 @@ _first_bt_clicked(void *data, Evas_Object *obj __UNUSED__,
 }
 
 static void
-_prev_bt_clicked(void *data, Evas_Object *obj __UNUSED__,
-                 void *event_info __UNUSED__)
+_prev_bt_clicked(void *data, Evas_Object *obj EINA_UNUSED,
+                 void *event_info EINA_UNUSED)
 {
    char str[128];
    Evas_Object *li = data, *lb;
@@ -1069,8 +1069,8 @@ _prev_bt_clicked(void *data, Evas_Object *obj __UNUSED__,
 }
 
 static void
-_next_bt_clicked(void *data, Evas_Object *obj __UNUSED__,
-                 void *event_info __UNUSED__)
+_next_bt_clicked(void *data, Evas_Object *obj EINA_UNUSED,
+                 void *event_info EINA_UNUSED)
 {
    char str[128];
    Evas_Object *li = data, *lb;
@@ -1089,8 +1089,8 @@ _next_bt_clicked(void *data, Evas_Object *obj __UNUSED__,
 }
 
 static void
-_last_bt_clicked(void *data, Evas_Object *obj __UNUSED__,
-                 void *event_info __UNUSED__)
+_last_bt_clicked(void *data, Evas_Object *obj EINA_UNUSED,
+                 void *event_info EINA_UNUSED)
 {
    char str[128];
    Evas_Object *li = data, *lb;
@@ -1106,9 +1106,9 @@ _last_bt_clicked(void *data, Evas_Object *obj __UNUSED__,
 }
 
 void
-test_list6(void        *data __UNUSED__,
-           Evas_Object *obj __UNUSED__,
-           void        *event_info __UNUSED__)
+test_list6(void        *data EINA_UNUSED,
+           Evas_Object *obj EINA_UNUSED,
+           void        *event_info EINA_UNUSED)
 {
    Evas_Object *win, *gd, *bt, *li, *lb;
 
@@ -1178,17 +1178,17 @@ test_list6(void        *data __UNUSED__,
 }
 
 static void
-_it_clicked_cb(void *data __UNUSED__, Evas_Object *li,
-                 void *event_info __UNUSED__)
+_it_clicked_cb(void *data EINA_UNUSED, Evas_Object *li,
+                 void *event_info EINA_UNUSED)
 {
    Elm_Object_Item *lit = elm_list_selected_item_get(li);
    printf("Item clicked. %s is selected\n", elm_object_item_text_get(lit));
 }
 
 void
-test_list7(void        *data __UNUSED__,
-           Evas_Object *obj __UNUSED__,
-           void        *event_info __UNUSED__)
+test_list7(void        *data EINA_UNUSED,
+           Evas_Object *obj EINA_UNUSED,
+           void        *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bg, *li;
    char buf[PATH_MAX];
@@ -1281,14 +1281,14 @@ test_list8_focus_on_selection_set(Evas_Object *gl, Evas_Object *chk, Eina_Bool f
 }
 
 static void
-test_list8_focus_check_changed(void *data, Evas_Object *obj, void *event_info  __UNUSED__)
+test_list8_focus_check_changed(void *data, Evas_Object *obj, void *event_info  EINA_UNUSED)
 {
    Eina_Bool nextstate = !elm_list_focus_on_selection_get(data);
    test_list8_focus_on_selection_set(data, obj, nextstate);
 }
 
 static void
-test_list8_focus_animate_check_changed(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+test_list8_focus_animate_check_changed(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    elm_win_focus_highlight_animate_set((Evas_Object *)data,
                                        elm_check_state_get(obj));
@@ -1366,25 +1366,25 @@ void test_list_focus(const char *name, const char *title, Eina_Bool horiz)
 }
 
 void
-test_list8(void        *data __UNUSED__,
-           Evas_Object *obj __UNUSED__,
-           void        *event_info __UNUSED__)
+test_list8(void        *data EINA_UNUSED,
+           Evas_Object *obj EINA_UNUSED,
+           void        *event_info EINA_UNUSED)
 {
     test_list_focus("list-focus", "List Focus", EINA_FALSE);
 }
 
 void
-test_list9(void        *data __UNUSED__,
-           Evas_Object *obj __UNUSED__,
-           void        *event_info __UNUSED__)
+test_list9(void        *data EINA_UNUSED,
+           Evas_Object *obj EINA_UNUSED,
+           void        *event_info EINA_UNUSED)
 {
     test_list_focus("list-focus-horizontal", "List Focus Horizontal", EINA_TRUE);
 }
 
 void
-test_list_separator(void        *data __UNUSED__,
-                    Evas_Object *obj __UNUSED__,
-                    void        *event_info __UNUSED__)
+test_list_separator(void        *data EINA_UNUSED,
+                    Evas_Object *obj EINA_UNUSED,
+                    void        *event_info EINA_UNUSED)
 {
    Evas_Object *win, *li, *ic, *ic2, *bx, *bxx;
    char buf[PATH_MAX];

@@ -4,7 +4,7 @@
 #include <Elementary.h>
 #ifndef ELM_LIB_QUICKLAUNCH
 
-static void _pos_selected_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info)
+static void _pos_selected_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info)
 {
    Elm_Actionslider_Pos ipos, mpos, epos;
 
@@ -69,7 +69,7 @@ static void _pos_selected_cb(void *data __UNUSED__, Evas_Object *obj, void *even
 }
 
 static void
-_position_change_magnetic_cb(void *data __UNUSED__, Evas_Object * obj, void *event_info)
+_position_change_magnetic_cb(void *data EINA_UNUSED, Evas_Object * obj, void *event_info)
 {
    if (!strcmp((char *)event_info, "left"))
      elm_actionslider_magnet_pos_set(obj, ELM_ACTIONSLIDER_LEFT);
@@ -78,7 +78,7 @@ _position_change_magnetic_cb(void *data __UNUSED__, Evas_Object * obj, void *eve
 }
 
 static void
-_magnet_enable_disable_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info)
+_magnet_enable_disable_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info)
 {
    if (!strcmp((char *)event_info, "left"))
       elm_actionslider_magnet_pos_set(obj, ELM_ACTIONSLIDER_CENTER);
@@ -87,7 +87,7 @@ _magnet_enable_disable_cb(void *data __UNUSED__, Evas_Object *obj, void *event_i
 }
 
 void
-test_actionslider(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
+test_actionslider(void *data EINA_UNUSED, Evas_Object * obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bx, *as;
 

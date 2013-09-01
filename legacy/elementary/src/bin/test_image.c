@@ -20,7 +20,7 @@ static const struct {
 };
 
 static void
-my_im_ch(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+my_im_ch(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win = data;
    Evas_Object *im = evas_object_data_get(win, "im");
@@ -33,7 +33,7 @@ my_im_ch(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 }
 
 void
-test_image(void *data __UNUSED__, Evas_Object *obj  __UNUSED__, void *event_info __UNUSED__)
+test_image(void *data EINA_UNUSED, Evas_Object *obj  EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *box, *im, *rd, *rdg = NULL;
    int i;
@@ -85,7 +85,7 @@ test_image(void *data __UNUSED__, Evas_Object *obj  __UNUSED__, void *event_info
 }
 
 void
-test_remote_image(void *data __UNUSED__, Evas_Object *obj  __UNUSED__, void *event_info __UNUSED__)
+test_remote_image(void *data EINA_UNUSED, Evas_Object *obj  EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *box, *im, *rd, *rdg = NULL;
    int i;

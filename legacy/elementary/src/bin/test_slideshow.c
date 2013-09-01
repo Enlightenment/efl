@@ -15,25 +15,25 @@ static const char *img8 = PACKAGE_DATA_DIR"/images/mystrale.jpg";
 static const char *img9 = PACKAGE_DATA_DIR"/images/mystrale_2.jpg";
 
 static void
-_notify_show(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_notify_show(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    evas_object_show(data);
 }
 
 static void
-_next(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_next(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    elm_slideshow_next(data);
 }
 
 static void
-_previous(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_previous(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    elm_slideshow_previous(data);
 }
 
 static void
-_mouse_in(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_mouse_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    elm_notify_timeout_set(data, 0.0);
    evas_object_show(data);
@@ -41,7 +41,7 @@ _mouse_in(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *eve
 
 
 static void
-_mouse_out(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    elm_notify_timeout_set(data, 3.0);
 }
@@ -54,14 +54,14 @@ _hv_select(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_layout_select(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+_layout_select(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    elm_slideshow_layout_set(slideshow, data);
    elm_object_text_set(obj, data);
 }
 
 static void
-_start(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_start(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    elm_slideshow_timeout_set(slideshow, elm_spinner_value_get(data));
 
@@ -70,7 +70,7 @@ _start(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 }
 
 static void
-_stop(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_stop(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    elm_slideshow_timeout_set(slideshow, 0.0);
    elm_object_disabled_set(bt_start, EINA_FALSE);
@@ -78,7 +78,7 @@ _stop(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNU
 }
 
 static void
-_spin(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_spin(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    if (elm_slideshow_timeout_get(slideshow) > 0)
      elm_slideshow_timeout_set(slideshow, elm_spinner_value_get(data));
@@ -99,7 +99,7 @@ _get(void *data, Evas_Object *obj)
 }
 
 static void
-_slide_transition(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_slide_transition(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Elm_Object_Item *slide_it = (Elm_Object_Item *) event_info;
    if (data == slide_it)
@@ -107,7 +107,7 @@ _slide_transition(void *data, Evas_Object *obj __UNUSED__, void *event_info __UN
 }
 
 void
-test_slideshow(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_slideshow(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *notify, *bx, *bt, *hv, *spin;
    const Eina_List *l;

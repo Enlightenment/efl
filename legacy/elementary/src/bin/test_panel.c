@@ -20,7 +20,7 @@ static Eina_Bool _dir_has_subs(const char *path);
 static Eina_List *dirs = NULL;
 
 static void
-_tstatus(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+_tstatus(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Elm_Object_Item *tb_it;
    const char *status;
@@ -35,7 +35,7 @@ _tstatus(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 }
 
 static void
-_bstatus(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+_bstatus(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Elm_Object_Item *tb_it;
    const char *status;
@@ -50,7 +50,7 @@ _bstatus(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 }
 
 static char *
-_text_get(void *data, Evas_Object *obj __UNUSED__, const char *source __UNUSED__)
+_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *source EINA_UNUSED)
 {
    return strdup(ecore_file_file_get(data));
 }
@@ -75,13 +75,13 @@ _content_get(void *data, Evas_Object *obj, const char *source)
 }
 
 static Eina_Bool
-_state_get(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const char *source __UNUSED__)
+_state_get(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const char *source EINA_UNUSED)
 {
    return EINA_FALSE;
 }
 
 static void
-_item_del(void *data, Evas_Object *obj __UNUSED__)
+_item_del(void *data, Evas_Object *obj EINA_UNUSED)
 {
    eina_stringshare_del(data);
 }
@@ -155,7 +155,7 @@ _dir_has_subs(const char *path)
 }
 
 void
-test_panel(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_panel(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *panel, *bx, *vbx, *toolbar;
    Evas_Object *list;

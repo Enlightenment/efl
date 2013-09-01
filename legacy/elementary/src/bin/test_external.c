@@ -7,7 +7,7 @@
 
 
 void
-test_external_button(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_external_button(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *ly;
    char buf[PATH_MAX];
@@ -27,7 +27,7 @@ test_external_button(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *e
 }
 
 void
-test_external_slider(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_external_slider(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *ly;
    char buf[PATH_MAX];
@@ -47,7 +47,7 @@ test_external_slider(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *e
 }
 
 void
-test_external_scroller(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_external_scroller(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *ly;
    char buf[PATH_MAX];
@@ -107,7 +107,7 @@ _timer_cb(void *data)
 }
 
 static void
-_bt_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_bt_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *edje = data;
    Evas_Object *bt1, *bt2, *bt3, *pb1, *pb2, *pb3, *pb4, *pb5, *pb6, *pb7;
@@ -140,7 +140,7 @@ _bt_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__
 }
 
 void
-test_external_pbar(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_external_pbar(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *ly, *edje, *bt;
    char buf[PATH_MAX];
@@ -164,7 +164,7 @@ test_external_pbar(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *eve
 }
 
 void
-test_external_video(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_external_video(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *ly;
    char buf[PATH_MAX];

@@ -182,7 +182,7 @@ _cube_update(Evas_Object *win, Cube *c)
 }
 
 void
-_ch_rot_x(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+_ch_rot_x(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Object *win = data;
    rotx = elm_slider_value_get(obj);
@@ -190,7 +190,7 @@ _ch_rot_x(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 }
 
 void
-_ch_rot_y(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+_ch_rot_y(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Object *win = data;
    roty = elm_slider_value_get(obj);
@@ -198,7 +198,7 @@ _ch_rot_y(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 }
 
 void
-_ch_rot_z(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+_ch_rot_z(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Object *win = data;
    rotz = elm_slider_value_get(obj);
@@ -206,7 +206,7 @@ _ch_rot_z(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 }
 
 void
-_ch_cx(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+_ch_cx(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Object *win = data;
    cxo = elm_slider_value_get(obj);
@@ -214,7 +214,7 @@ _ch_cx(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 }
 
 void
-_ch_cy(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+_ch_cy(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Object *win = data;
    cyo = elm_slider_value_get(obj);
@@ -222,7 +222,7 @@ _ch_cy(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 }
 
 void
-_ch_foc(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+_ch_foc(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Object *win = data;
    focv = elm_slider_value_get(obj);
@@ -230,7 +230,7 @@ _ch_foc(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 }
 
 void
-_ch_z0(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+_ch_z0(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Object *win = data;
    z0v = elm_slider_value_get(obj);
@@ -238,7 +238,7 @@ _ch_z0(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 }
 
 void
-test_3d(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_3d(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bx, *sl;
 

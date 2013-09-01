@@ -26,7 +26,7 @@ _elm_prefs_cc_log_cb(const Eina_Log_Domain *d,
                      const char *fnc,
                      int _line,
                      const char *fmt,
-                     __UNUSED__ void *data,
+                     EINA_UNUSED void *data,
                      va_list args)
 {
    if ((d->name) && (d->namelen == sizeof("elm_prefs_cc") - 1) &&

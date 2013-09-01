@@ -46,12 +46,12 @@ static void _gl_del(void *data, Evas_Object *obj);
 static void _test_eio_clear(void *data, Evas_Object *obj, void *event);
 
 static void
-_sel_file(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_sel_file(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
 }
 
 static Eina_Bool
-_ls_filter_cb(void *data __UNUSED__, Eio_File *handler __UNUSED__, const char *file __UNUSED__)
+_ls_filter_cb(void *data EINA_UNUSED, Eio_File *handler EINA_UNUSED, const char *file EINA_UNUSED)
 {
   return EINA_TRUE;
 }
@@ -66,7 +66,7 @@ _compare_cb(const void *data1, const void *data2)
 }
 
 static void
-_ls_main_cb(void *data, Eio_File *handler __UNUSED__, const char *file)
+_ls_main_cb(void *data, Eio_File *handler EINA_UNUSED, const char *file)
 {
    elm_genlist_item_sorted_insert(data,
                                   &it_eio,
@@ -79,7 +79,7 @@ _ls_main_cb(void *data, Eio_File *handler __UNUSED__, const char *file)
 }
 
 static void
-_ls_done_cb(void *data __UNUSED__, Eio_File *handler __UNUSED__)
+_ls_done_cb(void *data EINA_UNUSED, Eio_File *handler EINA_UNUSED)
 {
 #ifdef _WIN32
    FILETIME tc;
@@ -116,13 +116,13 @@ _ls_done_cb(void *data __UNUSED__, Eio_File *handler __UNUSED__)
 }
 
 static void
-_ls_error_cb(void *data __UNUSED__, Eio_File *handler __UNUSED__, int error)
+_ls_error_cb(void *data EINA_UNUSED, Eio_File *handler EINA_UNUSED, int error)
 {
    fprintf(stderr, "error: [%s]\n", strerror(error));
 }
 
 static void
-_file_chosen(void *data, Evas_Object *obj __UNUSED__, void *event_info)
+_file_chosen(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    const char *file = event_info;
    if (file)
@@ -159,7 +159,7 @@ _file_chosen(void *data, Evas_Object *obj __UNUSED__, void *event_info)
 }
 
 static char *
-_gl_text_get(void *data, Evas_Object *obj __UNUSED__, const char *part __UNUSED__)
+_gl_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNUSED)
 {
    char buf[PATH_MAX];
    snprintf(buf, sizeof(buf), "Item # %s", (char*)data);
@@ -167,30 +167,30 @@ _gl_text_get(void *data, Evas_Object *obj __UNUSED__, const char *part __UNUSED_
 }
 
 static Evas_Object *
-_gl_content_get(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const char *part __UNUSED__)
+_gl_content_get(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNUSED)
 {
    return NULL;
 }
 
 static Eina_Bool
-_gl_state_get(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const char *part __UNUSED__)
+_gl_state_get(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNUSED)
 {
    return EINA_FALSE;
 }
 
 static void
-_gl_del(void *data __UNUSED__, Evas_Object *obj __UNUSED__)
+_gl_del(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED)
 {
 }
 
 static void
-_test_eio_clear(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+_test_eio_clear(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    elm_genlist_clear(data);
 }
 
 void
-test_eio(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_eio(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *vbox, *hbox, *ic, *bt, *fs_bt, *gl;
 

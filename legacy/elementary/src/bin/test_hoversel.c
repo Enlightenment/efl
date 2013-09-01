@@ -73,7 +73,7 @@ set_api_state(api_data *api)
 }
 
 static void
-_api_bt_clicked(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+_api_bt_clicked(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {  /* Will add here a SWITCH command containing code to modify test-object */
    /* in accordance a->state value. */
    api_data *a = data;
@@ -88,34 +88,34 @@ _api_bt_clicked(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 }
 
 static void
-_cleanup_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_cleanup_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    free(data);
 }
 
 static void
-_hoversel_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
-                     void *event_info __UNUSED__)
+_hoversel_clicked_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
+                     void *event_info EINA_UNUSED)
 {
    printf("Hover button is clicked and 'clicked' callback is called.\n");
 }
 
 static void
-_hoversel_selected_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
+_hoversel_selected_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
                       void *event_info)
 {
    printf("'selected' callback is called. (selected item : %p)\n", event_info);
 }
 
 static void
-_hoversel_dismissed_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
-                       void *event_info __UNUSED__)
+_hoversel_dismissed_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
+                       void *event_info EINA_UNUSED)
 {
    printf("'dismissed' callback is called.\n");
 }
 
 void
-test_hoversel(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_hoversel(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bx, *bt, *ic, *bxx, *hoversel;
    char buf[PATH_MAX];

@@ -8,21 +8,21 @@
 static Evas_Object *foc = NULL;
 
 static void
-_foc(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_foc(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    foc = obj;
    printf("foc -> %p\n", foc);
 }
 
 static void
-_unfoc(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_unfoc(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    foc = NULL;
    printf("foc -> %p\n", foc);
 }
 
 static void
-_add(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_add(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *bx = data, *en;
 
@@ -39,19 +39,19 @@ _add(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 }
 
 static void
-_del(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_del(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    if (foc) evas_object_del(foc);
 }
 
 static void
-_hide(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_hide(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    if (foc) evas_object_hide(foc);
 }
 
 void
-test_focus3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_focus3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bx, *bt, *en;
 
@@ -107,33 +107,33 @@ test_focus3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 }
 
 static void
-highlight_enabled_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+highlight_enabled_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    elm_config_focus_highlight_enabled_set(elm_check_state_get(obj));
 }
 
 static void
-highlight_animate_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+highlight_animate_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    elm_config_focus_highlight_animate_set(elm_check_state_get(obj));
 }
 
 static void
-win_highlight_enabled_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+win_highlight_enabled_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    elm_win_focus_highlight_enabled_set((Evas_Object *)data,
                                        elm_check_state_get(obj));
 }
 
 static void
-win_highlight_animate_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+win_highlight_animate_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    elm_win_focus_highlight_animate_set((Evas_Object *)data,
                                        elm_check_state_get(obj));
 }
 
 static void
-custom_chain_unset_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+custom_chain_unset_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Object *c, *child = NULL;
    Evas_Object *bx = (Evas_Object *)data;
@@ -169,7 +169,7 @@ custom_chain_unset_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 }
 
 static void
-create_win_bt_clicked(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+create_win_bt_clicked(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *gd, *bt;
 
@@ -207,7 +207,7 @@ create_win_bt_clicked(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *
 }
 
 void
-test_focus4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_focus4(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *fr, *bx, *bx2, *tg, *bt, *sp;
    Evas_Object *lb, *bt1, *bt2, *bt3, *bt4;

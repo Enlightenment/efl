@@ -4,31 +4,31 @@
 #include <Elementary.h>
 #ifndef ELM_LIB_QUICKLAUNCH
 void
-my_bt_go_300_300(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+my_bt_go_300_300(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    elm_scroller_region_bring_in((Evas_Object *)data, 300, 300, 318, 318);
 }
 
 void
-my_bt_go_900_300(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+my_bt_go_900_300(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    elm_scroller_region_bring_in((Evas_Object *)data, 900, 300, 318, 318);
 }
 
 void
-my_bt_go_300_900(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+my_bt_go_300_900(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    elm_scroller_region_bring_in((Evas_Object *)data, 300, 900, 318, 318);
 }
 
 void
-my_bt_go_900_900(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+my_bt_go_900_900(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    elm_scroller_region_bring_in((Evas_Object *)data, 900, 900, 318, 318);
 }
 
 void
-my_bt_freeze_toggle(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+my_bt_freeze_toggle(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    if (elm_check_state_get(obj))
      elm_object_scroll_freeze_push((Evas_Object *)data);
@@ -37,7 +37,7 @@ my_bt_freeze_toggle(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 }
 
 void
-my_bt_hold_toggle(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+my_bt_hold_toggle(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    if (elm_check_state_get(obj))
      elm_object_scroll_hold_push((Evas_Object *)data);
@@ -47,7 +47,7 @@ my_bt_hold_toggle(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 
 void
 my_bt_block_movements_x_axis(void *data, Evas_Object *obj,
-                             void *event_info __UNUSED__)
+                             void *event_info EINA_UNUSED)
 {
    Elm_Scroller_Movement_Block block;
 
@@ -74,7 +74,7 @@ my_bt_block_movements_x_axis(void *data, Evas_Object *obj,
 void
 my_bt_snap_to_pages(void *data,
                     Evas_Object *obj,
-                    void *event_info __UNUSED__)
+                    void *event_info EINA_UNUSED)
 {
    if (elm_check_state_get(obj))
      {
@@ -88,7 +88,7 @@ my_bt_snap_to_pages(void *data,
 
 void
 my_bt_block_movements_y_axis(void *data, Evas_Object *obj,
-                             void *event_info __UNUSED__)
+                             void *event_info EINA_UNUSED)
 {
    Elm_Scroller_Movement_Block block;
 
@@ -113,9 +113,9 @@ my_bt_block_movements_y_axis(void *data, Evas_Object *obj,
 }
 
 void
-page_change_cb(void *data __UNUSED__,
+page_change_cb(void *data EINA_UNUSED,
                Evas_Object *obj,
-               void *event_info __UNUSED__)
+               void *event_info EINA_UNUSED)
 {
    int page_x = 0, page_y = 0;
 
@@ -125,7 +125,7 @@ page_change_cb(void *data __UNUSED__,
 }
 
 void
-_sc_move_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_sc_move_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Coord x = 0, y = 0;
    evas_object_geometry_get(obj, &x, &y, NULL, NULL);
@@ -133,7 +133,7 @@ _sc_move_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info _
 }
 
 void
-_sc_resize_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_sc_resize_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Coord w = 0, h = 0;
    evas_object_geometry_get(obj, NULL, NULL, &w, &h);
@@ -141,7 +141,7 @@ _sc_resize_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info
 }
 
 void
-test_scroller(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_scroller(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bg2, *tb, *tb2, *sc, *bt, *ck1, *ck2, *bx, *bx2, *fr,
        *ck3, *ck4, *ck5;
@@ -295,13 +295,13 @@ test_scroller(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 }
 
 void
-click_through(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+click_through(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    printf("click went through on %p\n", obj);
 }
 
 void
-test_scroller2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_scroller2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bt, *bx, *bx2, *sc, *tb, *tb2, *rc;
    int i, j;

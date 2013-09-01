@@ -58,14 +58,14 @@ _custom_context_new(Evas_Coord from_w, Evas_Coord from_h, Evas_Coord to_w, Evas_
 }
 
 static void
-_custom_context_free(Elm_Transit_Effect *effect, Elm_Transit *transit __UNUSED__)
+_custom_context_free(Elm_Transit_Effect *effect, Elm_Transit *transit EINA_UNUSED)
 {
    Custom_Effect *custom_effect = effect;
    free(custom_effect);
 }
 
 static void
-_transit_rotation_translation_color(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_transit_rotation_translation_color(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Elm_Transit *trans;
 
@@ -88,7 +88,7 @@ _transit_rotation_translation_color(void *data __UNUSED__, Evas_Object *obj, voi
 }
 
 static void
-_transit_wipe(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_transit_wipe(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Elm_Transit *trans;
 
@@ -105,13 +105,13 @@ _transit_wipe(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED
 }
 
 static void
-_transit_del_cb(void *data, Elm_Transit *transit __UNUSED__)
+_transit_del_cb(void *data, Elm_Transit *transit EINA_UNUSED)
 {
    evas_object_freeze_events_set(data, EINA_FALSE);
 }
 
 static void
-_transit_image_animation(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_transit_image_animation(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Eina_List *images = NULL;
    char buf[PATH_MAX];
@@ -141,7 +141,7 @@ _transit_image_animation(void *data, Evas_Object *obj __UNUSED__, void *event_in
 }
 
 static void
-_transit_resizing(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_transit_resizing(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Elm_Transit *trans;
 
@@ -155,7 +155,7 @@ _transit_resizing(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
 }
 
 static void
-_transit_flip(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+_transit_flip(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Elm_Transit *trans;
    Evas_Object *obj2 = data;
@@ -171,7 +171,7 @@ _transit_flip(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 }
 
 static void
-_transit_zoom(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_transit_zoom(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Elm_Transit *trans;
 
@@ -185,7 +185,7 @@ _transit_zoom(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 }
 
 static void
-_transit_blend(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+_transit_blend(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Elm_Transit *trans;
    Evas_Object *obj2 = data;
@@ -201,7 +201,7 @@ _transit_blend(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 }
 
 static void
-_transit_fade(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+_transit_fade(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Elm_Transit *trans;
    Evas_Object *obj2 = data;
@@ -217,7 +217,7 @@ _transit_fade(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 }
 
 static void
-_transit_resizable_flip(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+_transit_resizable_flip(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Elm_Transit *trans;
    Evas_Object *obj2 = data;
@@ -234,7 +234,7 @@ _transit_resizable_flip(void *data, Evas_Object *obj, void *event_info __UNUSED_
 
 /* Translation, Rotation, Color, Wipe, ImagemAnimation Effect */
 void
-test_transit(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_transit(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bx, *bt, *ic;
    char buf[PATH_MAX];
@@ -279,7 +279,7 @@ test_transit(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
 
 /* Resizing Effect */
 void
-test_transit2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_transit2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bt;
 
@@ -299,7 +299,7 @@ test_transit2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
 /* Flip Effect */
 void
-test_transit3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_transit3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bt, *bt2;
 
@@ -326,7 +326,7 @@ test_transit3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
 /* Zoom Effect */
 void
-test_transit4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_transit4(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bt;
 
@@ -347,7 +347,7 @@ test_transit4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
 /* Blend Effect */
 void
-test_transit5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_transit5(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bt, *bt2, *ic;
    char buf[PATH_MAX];
@@ -387,7 +387,7 @@ test_transit5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
 /* Fade Effect */
 void
-test_transit6(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_transit6(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bt, *bt2, *ic;
    char buf[PATH_MAX];
@@ -427,7 +427,7 @@ test_transit6(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
 /* Resizable Flip Effect */
 void
-test_transit7(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_transit7(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bt, *bt2;
 
@@ -454,7 +454,7 @@ test_transit7(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
 /* Custom Effect */
 void
-test_transit8(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_transit8(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bt;
    Elm_Transit *trans;
@@ -488,7 +488,7 @@ test_transit8(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
 /* Chain Transit Effect */
 void
-test_transit9(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_transit9(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bt, *bt2, *bt3, *bt4;
    Elm_Transit *trans, *trans2, *trans3, *trans4;

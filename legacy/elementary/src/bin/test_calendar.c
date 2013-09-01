@@ -93,7 +93,7 @@ set_api_state(api_data *api)
 }
 
 static void
-_api_bt_clicked(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+_api_bt_clicked(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {  /* Will add here a SWITCH command containing code to modify test-object */
    /* in accordance a->state value. */
    api_data *a = data;
@@ -108,14 +108,14 @@ _api_bt_clicked(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 }
 
 static void
-_cleanup_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_cleanup_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    free(data);
 }
 
 /* A simple test, just displaying calendar in it's default state */
 void
-test_calendar(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_calendar(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *cal, *bx, *bxx, *bt;
    api_data *api = calloc(1, sizeof(api_data));
@@ -203,13 +203,13 @@ _print_cal_shown_info(Evas_Object *cal, Evas_Object *en)
 }
 
 void
-_print_cal_shown_info_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+_print_cal_shown_info_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    _print_cal_shown_info(obj, data);
 }
 
 static void
-_print_cal_info_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+_print_cal_info_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    _print_cal_info(obj, data);
 }
@@ -225,7 +225,7 @@ _format_month_year(struct tm *stm)
 /* A test intended to cover all the calendar api and much use cases as
    possible */
 void
-test_calendar2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_calendar2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bx, *bxh, *cal, *cal2, *cal3, *en;
    Elm_Calendar_Mark *mark;
@@ -329,7 +329,7 @@ test_calendar2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
 
 
 void
-test_calendar3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_calendar3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *cal, *en, *bx;
    struct tm selected_time;

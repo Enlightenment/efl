@@ -106,7 +106,7 @@ set_api_state(api_data *api)
 }
 
 static void
-_api_bt_clicked(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+_api_bt_clicked(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {  /* Will add here a SWITCH command containing code to modify test-object */
    /* in accordance a->state value. */
    api_data *a = data;
@@ -121,13 +121,13 @@ _api_bt_clicked(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 }
 
 static void
-_cleanup_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_cleanup_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    free(data);
 }
 
 void
-test_box_vert(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_box_vert(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bx, *ic, *bxx, *bt;
    char buf[PATH_MAX];
@@ -184,7 +184,7 @@ test_box_vert(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 }
 
 static void
-_del_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+_del_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    elm_box_unpack(data, obj);
    evas_object_move(obj, 0, 0);
@@ -193,7 +193,7 @@ _del_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 }
 
 void
-test_box_vert2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_box_vert2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bx, *bt;
 
@@ -250,7 +250,7 @@ test_box_vert2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
 }
 
 void
-test_box_horiz(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_box_horiz(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bx, *ic, *bxx, *bt;
    char buf[PATH_MAX];
@@ -373,7 +373,7 @@ _radio_new(Evas_Object *obj)
 }
 
 static void
-_pack_start_btn_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_pack_start_btn_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *rd;
    if (!data) return;
@@ -384,7 +384,7 @@ _pack_start_btn_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __U
 }
 
 static void
-_pack_before_btn_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_pack_before_btn_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *rd, *selected_rd, *rdg;
    if (!data) return;
@@ -401,7 +401,7 @@ _pack_before_btn_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __
 }
 
 static void
-_pack_after_btn_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_pack_after_btn_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *rd, *selected_rd, *rdg;
    if (!data) return;
@@ -418,7 +418,7 @@ _pack_after_btn_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __U
 }
 
 static void
-_pack_end_btn_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_pack_end_btn_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *rd;
    if (!data) return;
@@ -429,7 +429,7 @@ _pack_end_btn_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNU
 }
 
 static void
-_unpack_btn_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_unpack_btn_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *rdg, *selected_rd;
    if (!data) return;
@@ -447,7 +447,7 @@ _unpack_btn_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSE
 }
 
 static void
-_unpack_all_btn_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_unpack_all_btn_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *radio, *rdg;
    Eina_List *rl, *l;
@@ -468,7 +468,7 @@ _unpack_all_btn_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __U
 }
 
 void
-test_box_pack(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_box_pack(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *sc, *bt;
    Evas_Object *box, *lbox, *rbox;
@@ -557,7 +557,7 @@ test_box_pack(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 }
 
 static void
-_cb_check_changed(void *data, Evas_Object *obj, void *event __UNUSED__)
+_cb_check_changed(void *data, Evas_Object *obj, void *event EINA_UNUSED)
 {
    Eina_Bool homo;
    Evas_Object *box = data;
@@ -567,7 +567,7 @@ _cb_check_changed(void *data, Evas_Object *obj, void *event __UNUSED__)
 }
 
 void
-test_box_homo(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_box_homo(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win;
    Evas_Object *box, *o_bg;
@@ -627,7 +627,7 @@ _test_box_transition_change(void *data)
 }
 
 static void
-_win_del(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_win_del(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Transitions_Data *tdata = data;
    if (!data) return;
@@ -635,7 +635,7 @@ _win_del(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 }
 
 void
-test_box_transition(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_box_transition(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bx, *bt;
    Transitions_Data *tdata;

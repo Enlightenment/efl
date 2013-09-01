@@ -128,7 +128,7 @@ set_api_state(api_data *api)
 }
 
 static void
-_api_bt_clicked(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+_api_bt_clicked(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {  /* Will add here a SWITCH command containing code to modify test-object */
    /* in accordance a->state value. */
    api_data *a = data;
@@ -143,14 +143,14 @@ _api_bt_clicked(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 }
 
 static void
-_disk_sel(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info)
+_disk_sel(void *data EINA_UNUSED, Evas_Object * obj EINA_UNUSED, void *event_info)
 {
    Elm_Object_Item *ds_it = event_info;
    printf("Equinox: %s\n", elm_object_item_text_get(ds_it));
 }
 
 static void
-_disk_next(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info)
+_disk_next(void *data EINA_UNUSED, Evas_Object * obj EINA_UNUSED, void *event_info)
 {
    Elm_Object_Item *next_ds_it, *prev_ds_it, *ds_it = event_info;
    prev_ds_it = elm_diskselector_item_prev_get(ds_it);
@@ -160,14 +160,14 @@ _disk_next(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info
 }
 
 static void
-_print_disk_info_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_print_disk_info_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Elm_Object_Item *ds_it = event_info;
    printf("Selected label: %s\n", elm_object_item_text_get(ds_it));
 }
 
 static void
-_item_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_item_clicked_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Elm_Object_Item *ds_it = event_info;
    printf("Clicked label: %s\n", elm_object_item_text_get(ds_it));
@@ -201,13 +201,13 @@ _disk_create(Evas_Object *parent, Eina_Bool rnd)
 }
 
 static void
-_cleanup_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_cleanup_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    free(data);
 }
 
 void
-test_diskselector(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_diskselector(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bx, *disk, *ic, *bxx, *bt;
    Elm_Object_Item *ds_it;

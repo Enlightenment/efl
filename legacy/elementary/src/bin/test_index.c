@@ -102,7 +102,7 @@ set_api_state(api_data *api)
 }
 
 static void
-_api_bt_clicked(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+_api_bt_clicked(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {  /* Will add here a SWITCH command containing code to modify test-object */
    /* in accordance a->state value. */
    api_data *a = data;
@@ -117,7 +117,7 @@ _api_bt_clicked(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 }
 
 static Elm_Genlist_Item_Class itci;
-char *gli_text_get(void *data, Evas_Object *obj __UNUSED__, const char *part __UNUSED__)
+char *gli_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNUSED)
 {
    char buf[256];
    int j = (uintptr_t)data;
@@ -129,7 +129,7 @@ char *gli_text_get(void *data, Evas_Object *obj __UNUSED__, const char *part __U
 }
 
 void
-_index_delay_changed_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_index_delay_changed_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    // called on a change but delayed in case multiple changes happen in a
    // short timespan
@@ -138,14 +138,14 @@ _index_delay_changed_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void
 }
 
 void
-_index_changed_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_index_changed_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    // this is called on every change, no matter how often
    // elm_genlist_item_bring_in(event_info);
 }
 
 void
-_index_selected_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_index_selected_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    // called on final select
    elm_genlist_item_bring_in(elm_object_item_data_get(event_info),
@@ -153,20 +153,20 @@ _index_selected_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *eve
 }
 
 static void
-_cleanup_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_cleanup_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    free(data);
 }
 
 static void
-id_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+id_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    printf("Current Index : %s\n", elm_index_item_letter_get((const Elm_Object_Item *)event_info));
 }
 
 static void
 _omit_check_changed_cb(void *data, Evas_Object *obj,
-                       void *event_info __UNUSED__)
+                       void *event_info EINA_UNUSED)
 {
    Evas_Object *id = data;
    Eina_Bool omit = elm_check_state_get(obj);
@@ -177,7 +177,7 @@ _omit_check_changed_cb(void *data, Evas_Object *obj,
 }
 
 void
-test_index(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_index(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bxx, *gl, *id, *bt, *tb, *ck;
    Elm_Object_Item *glit;
@@ -272,7 +272,7 @@ typedef struct _Test_Index2_Elements
 } Test_Index2_Elements;
 
 void
-test_index2_del(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_index2_del(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    /* FIXME it won't be called if elm_test main window is closed */
    free(data);
@@ -305,7 +305,7 @@ test_index2_icmp(const void *data1, const void *data2)
 }
 
 void
-test_index2_it_add(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_index2_it_add(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Test_Index2_Elements *gui = data;
    Elm_Object_Item *list_it;
@@ -325,7 +325,7 @@ test_index2_it_add(void *data, Evas_Object *obj __UNUSED__, void *event_info __U
 }
 
 void
-test_index2_it_del(void *data, Evas_Object *obj __UNUSED__, void *event_info)
+test_index2_it_del(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Test_Index2_Elements *gui = data;
    const char *label, *label_next;
@@ -356,13 +356,13 @@ test_index2_it_del(void *data, Evas_Object *obj __UNUSED__, void *event_info)
 }
 
 void
-test_index2_id_changed(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+test_index2_id_changed(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    elm_list_item_show(elm_object_item_data_get(event_info));
 }
 
 void
-test_index2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_index2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *box, *bt;
    Test_Index2_Elements *gui;
@@ -419,15 +419,15 @@ test_index2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 /***** Index Horizontal Mode ******/
 
 void
-_index_list_changed_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
+_index_list_changed_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
                        void *event_info)
 {
    elm_list_item_bring_in(elm_object_item_data_get(event_info));
 }
 
 void
-test_index_horizontal(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
-                      void *event_info __UNUSED__)
+test_index_horizontal(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
+                      void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *list, *id, *tb;
    Elm_Object_Item *lit;

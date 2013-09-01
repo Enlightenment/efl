@@ -49,7 +49,7 @@ _item_ptr_cmp(const void *d1, const void *d2)
 static Elm_Genlist_Item_Class *itc1;
 static Elm_Gengrid_Item_Class *gic;
 static char *
-gl_text_get(void *data, Evas_Object *obj __UNUSED__, const char *part __UNUSED__)
+gl_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNUSED)
 {
    return strdup(data);
 }
@@ -69,7 +69,7 @@ gl_content_get(void *data, Evas_Object *obj, const char *part)
 }
 
 static void
-_win_del(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_win_del(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    printf("<%s> <%d> will del <%p>\n", __func__, __LINE__, data);
    elm_drop_item_container_del(data);
@@ -82,7 +82,7 @@ _win_del(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 }
 
 static Elm_Object_Item *
-_gl_item_getcb(Evas_Object *obj, Evas_Coord x, Evas_Coord y, int *xposret __UNUSED__, int *yposret)
+_gl_item_getcb(Evas_Object *obj, Evas_Coord x, Evas_Coord y, int *xposret EINA_UNUSED, int *yposret)
 {  /* This function returns pointer to item under (x,y) coords */
    printf("<%s> <%d> obj=<%p>\n", __func__, __LINE__, obj);
    Elm_Object_Item *gli;
@@ -110,7 +110,7 @@ _grid_item_getcb(Evas_Object *obj, Evas_Coord x, Evas_Coord y, int *xposret, int
 }
 
 static Eina_Bool
-_gl_dropcb(void *data __UNUSED__, Evas_Object *obj, Elm_Object_Item *it, Elm_Selection_Data *ev, int xposret __UNUSED__, int yposret)
+_gl_dropcb(void *data EINA_UNUSED, Evas_Object *obj, Elm_Object_Item *it, Elm_Selection_Data *ev, int xposret EINA_UNUSED, int yposret)
 {  /* This function is called when data is dropped on the genlist */
    printf("<%s> <%d> str=<%s>\n", __func__, __LINE__, (char *) ev->data);
    if (!ev->data)
@@ -163,7 +163,7 @@ _gl_dropcb(void *data __UNUSED__, Evas_Object *obj, Elm_Object_Item *it, Elm_Sel
 }
 
 static Eina_Bool
-_grid_dropcb(void *data __UNUSED__, Evas_Object *obj, Elm_Object_Item *it, Elm_Selection_Data *ev, int xposret __UNUSED__, int yposret EINA_UNUSED)
+_grid_dropcb(void *data EINA_UNUSED, Evas_Object *obj, Elm_Object_Item *it, Elm_Selection_Data *ev, int xposret EINA_UNUSED, int yposret EINA_UNUSED)
 {  /* This function is called when data is dropped on the genlist */
    printf("<%s> <%d> str=<%s>\n", __func__, __LINE__, (char *) ev->data);
    if (!ev->data)
@@ -324,9 +324,9 @@ _gl_anim_start(void *data)
 static void
 _gl_obj_mouse_up(
    void *data,
-   Evas *e __UNUSED__,
-   Evas_Object *obj __UNUSED__,
-   void *event_info __UNUSED__)
+   Evas *e EINA_UNUSED,
+   Evas_Object *obj EINA_UNUSED,
+   void *event_info EINA_UNUSED)
 {  /* Cancel any drag waiting to start on timeout */
    drag_anim_st *anim_st = data;
    anim_st_free(anim_st);
@@ -335,8 +335,8 @@ _gl_obj_mouse_up(
 static void
 _gl_obj_mouse_move(
    void *data,
-   Evas *e __UNUSED__,
-   Evas_Object *obj __UNUSED__,
+   Evas *e EINA_UNUSED,
+   Evas_Object *obj EINA_UNUSED,
    void *event_info)
 {  /* Cancel any drag waiting to start on timeout */
 
@@ -350,8 +350,8 @@ _gl_obj_mouse_move(
 static void
 _gl_obj_mouse_down(
    void *data,
-   Evas *e __UNUSED__,
-   Evas_Object *obj __UNUSED__,
+   Evas *e EINA_UNUSED,
+   Evas_Object *obj EINA_UNUSED,
    void *event_info)
 {  /* Launch a timer to start drag animation */
    Evas_Event_Mouse_Down *ev = event_info;
@@ -369,7 +369,7 @@ _gl_obj_mouse_down(
 /* END   - Handling drag start animation */
 
 static void
-_gl_dragdone(void *data, Evas_Object *obj __UNUSED__, Eina_Bool doaccept)
+_gl_dragdone(void *data, Evas_Object *obj EINA_UNUSED, Eina_Bool doaccept)
 {
    printf("<%s> <%d> data=<%p> doaccept=<%d>\n",
          __func__, __LINE__, data, doaccept);
@@ -681,7 +681,7 @@ _grid_data_getcb(Evas_Object *obj,  /* The genlist object */
 }
 
 void
-test_dnd_genlist_default_anim(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_dnd_genlist_default_anim(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    char buf[PATH_MAX];
    Evas_Object *win, *gl, *bxx;
@@ -741,7 +741,7 @@ test_dnd_genlist_default_anim(void *data __UNUSED__, Evas_Object *obj __UNUSED__
 }
 
 void
-test_dnd_genlist_user_anim(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_dnd_genlist_user_anim(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    char buf[PATH_MAX];
    Evas_Object *win, *gl, *bxx;
@@ -806,7 +806,7 @@ test_dnd_genlist_user_anim(void *data __UNUSED__, Evas_Object *obj __UNUSED__, v
 }
 
 void
-test_dnd_genlist_gengrid(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_dnd_genlist_gengrid(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    char buf[PATH_MAX];
    Evas_Object *win, *bxx;

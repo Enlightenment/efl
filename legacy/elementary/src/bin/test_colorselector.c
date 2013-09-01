@@ -6,7 +6,7 @@
 
 static void
 _colorselector_changed_cb(void *data, Evas_Object *obj,
-                          void *event_info __UNUSED__)
+                          void *event_info EINA_UNUSED)
 {
    Evas_Object *re = data;
    int r, g, b, a;
@@ -23,7 +23,7 @@ _colorselector_changed_cb(void *data, Evas_Object *obj,
 }
 
 static void
-_color_item_selected_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
+_color_item_selected_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
                         void *event_info)
 {
    int r = 0, g = 0, b = 0 ,a = 0;
@@ -34,7 +34,7 @@ _color_item_selected_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
 }
 
 static void
-_color_item_longpressed_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
+_color_item_longpressed_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
                            void *event_info)
 {
    int r = 0,g = 0,b = 0 ,a = 0;
@@ -46,45 +46,45 @@ _color_item_longpressed_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
 }
 
 static void
-_palette_cb(void *data, Evas_Object *obj __UNUSED__,
-            void *event_info __UNUSED__)
+_palette_cb(void *data, Evas_Object *obj EINA_UNUSED,
+            void *event_info EINA_UNUSED)
 {
    Evas_Object *cs = data;
    elm_colorselector_mode_set(cs, ELM_COLORSELECTOR_PALETTE);
 }
 
 static void
-_components_cb(void *data, Evas_Object *obj __UNUSED__,
-               void *event_info __UNUSED__)
+_components_cb(void *data, Evas_Object *obj EINA_UNUSED,
+               void *event_info EINA_UNUSED)
 {
    Evas_Object *cs = data;
    elm_colorselector_mode_set(cs, ELM_COLORSELECTOR_COMPONENTS);
 }
 
 static void
-_both_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_both_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *cs = data;
    elm_colorselector_mode_set(cs, ELM_COLORSELECTOR_BOTH);
 }
 
 static void
-_picker_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_picker_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *cs = data;
    elm_colorselector_mode_set(cs, ELM_COLORSELECTOR_PICKER);
 }
 
 static void
-_all_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_all_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *cs = data;
    elm_colorselector_mode_set(cs, ELM_COLORSELECTOR_ALL);
 }
 
 void
-test_colorselector(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
-                   void *event_info __UNUSED__)
+test_colorselector(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
+                   void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bx, *bx2, *cs, *fr, *re, *bt;
    int r, g, b, a;

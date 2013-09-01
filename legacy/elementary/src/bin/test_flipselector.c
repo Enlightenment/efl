@@ -5,7 +5,7 @@
 #ifndef ELM_LIB_QUICKLAUNCH
 
 void
-_sel_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_sel_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Elm_Object_Item *it;
 
@@ -14,7 +14,7 @@ _sel_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 }
 
 void
-_unsel_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_unsel_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Elm_Object_Item *it;
    Evas_Object *fp = data;
@@ -23,7 +23,7 @@ _unsel_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 }
 
 void
-_last_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_last_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Elm_Object_Item *it;
    Evas_Object *fp = data;
@@ -32,7 +32,7 @@ _last_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 }
 
 void
-_third_from_end_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_third_from_end_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Elm_Object_Item *it;
    Evas_Object *fp = data;
@@ -43,19 +43,19 @@ _third_from_end_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __U
 }
 
 void
-_underflow_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_underflow_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    printf("underflow!\n");
 }
 
 void
-_overflow_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_overflow_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    printf("overflow!\n");
 }
 
 void
-slider_change_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+slider_change_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Object *fl = (Evas_Object *)data;
 
@@ -64,21 +64,21 @@ slider_change_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 }
 
 void
-flip_next_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+flip_next_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *fp = data;
    elm_flipselector_flip_next(fp);
 }
 
 void
-flip_prev_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+flip_prev_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *fp = data;
    elm_flipselector_flip_prev(fp);
 }
 
 void
-test_flipselector(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_flipselector(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    char buf[8];
    unsigned int i;

@@ -4,7 +4,7 @@
 #include <Elementary.h>
 #ifndef ELM_LIB_QUICKLAUNCH
 static void
-icon_clicked(void *data , Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+icon_clicked(void *data , Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *ic;
    ic = data;
@@ -16,7 +16,7 @@ icon_clicked(void *data , Evas_Object *obj __UNUSED__, void *event_info __UNUSED
 }
 
 void
-test_icon_animated(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_icon_animated(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *ic;
    char buf[PATH_MAX];

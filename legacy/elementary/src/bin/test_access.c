@@ -5,7 +5,7 @@
 #ifndef ELM_LIB_QUICKLAUNCH
 
 static void
-_cleanup_cb(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_cleanup_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    elm_config_access_set(EINA_FALSE);
 }
@@ -17,7 +17,7 @@ typedef struct _Item_Data
 } Item_Data;
 
 static Elm_Genlist_Item_Class *itc1, *itc2;
-char *gl_access_text_get(void *data, Evas_Object *obj __UNUSED__, const char *part __UNUSED__)
+char *gl_access_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNUSED)
 {
    char buf[256];
    Item_Data *id = data;
@@ -25,7 +25,7 @@ char *gl_access_text_get(void *data, Evas_Object *obj __UNUSED__, const char *pa
    return strdup(buf);
 }
 
-Evas_Object *gl_access_content_get(void *data __UNUSED__, Evas_Object *obj, const char *part)
+Evas_Object *gl_access_content_get(void *data EINA_UNUSED, Evas_Object *obj, const char *part)
 {
    char buf[PATH_MAX];
    Evas_Object *bt;
@@ -49,7 +49,7 @@ Evas_Object *gl_access_content_get(void *data __UNUSED__, Evas_Object *obj, cons
 }
 
 static void
-gl_del(void *data, Evas_Object *obj __UNUSED__)
+gl_del(void *data, Evas_Object *obj EINA_UNUSED)
 {
 	free(data);
 }
@@ -78,7 +78,7 @@ grid_access_content_get(void *data, Evas_Object *obj, const char *part)
    return NULL;
 }
 
-Evas_Object *gl_access_content_full_get(void *data __UNUSED__, Evas_Object *obj, const char *part)
+Evas_Object *gl_access_content_full_get(void *data EINA_UNUSED, Evas_Object *obj, const char *part)
 {
    int i;
    Evas_Object *grid;
@@ -115,7 +115,7 @@ Evas_Object *gl_access_content_full_get(void *data __UNUSED__, Evas_Object *obj,
    return grid;
 }
 
-static void _realized(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *ei)
+static void _realized(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ei)
 {
    Evas_Object *content, *bt;
    Eina_List *items;
@@ -150,7 +150,7 @@ static void _realized(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *
 }
 
 void
-test_access(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_access(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    int i;
    Evas_Object *win, *bx, *gl;
@@ -228,7 +228,7 @@ test_access(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 }
 
 void
-test_access2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_access2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    int i, j, k;
    char buf[PATH_MAX];
@@ -304,7 +304,7 @@ test_access2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
 }
 
 static Eina_Bool
-_key_down_cb(void *data, int type __UNUSED__, void *ei)
+_key_down_cb(void *data, int type EINA_UNUSED, void *ei)
 {
    Elm_Access_Action_Info *a;
    Ecore_Event_Key *ev = ei;
@@ -326,14 +326,14 @@ _key_down_cb(void *data, int type __UNUSED__, void *ei)
 }
 
 static char *
-_access_info_cb(void *data, Evas_Object *obj __UNUSED__)
+_access_info_cb(void *data, Evas_Object *obj EINA_UNUSED)
 {
    if (data) return strdup(data);
    return NULL;
 }
 
 void
-test_access3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_access3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    char buf[PATH_MAX];
    Evas_Object *win, *box, *lbl, *ly, *btn;

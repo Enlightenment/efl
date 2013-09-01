@@ -49,7 +49,7 @@ static int _log_dom = -1;
 #define DBG(...) EINA_LOG_DOM_DBG(_log_dom, __VA_ARGS__)
 
 static void
-post_fork(void *data __UNUSED__)
+post_fork(void *data EINA_UNUSED)
 {
    sigaction(SIGINT, &old_sigint, NULL);
    sigaction(SIGTERM, &old_sigterm, NULL);
@@ -72,14 +72,14 @@ post_fork(void *data __UNUSED__)
 }
 
 static void
-child_handler(int x __UNUSED__, siginfo_t *info __UNUSED__, void *data __UNUSED__)
+child_handler(int x EINA_UNUSED, siginfo_t *info EINA_UNUSED, void *data EINA_UNUSED)
 {
    int status;
    while (waitpid(-1, &status, WNOHANG) > 0);
 }
 
 static void
-crash_handler(int x __UNUSED__, siginfo_t *info __UNUSED__, void *data __UNUSED__)
+crash_handler(int x EINA_UNUSED, siginfo_t *info EINA_UNUSED, void *data EINA_UNUSED)
 {
    double t;
 

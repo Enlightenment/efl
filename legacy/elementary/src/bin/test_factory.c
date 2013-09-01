@@ -13,7 +13,7 @@
 #define DEFSZ 64
 
 static void
-fac_unrealize(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+fac_unrealize(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    // setting factory content to null deletes it
    printf("--------DELETE for factory %p [f: %p]\n", elm_object_content_get(obj), obj);
@@ -21,7 +21,7 @@ fac_unrealize(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED
 }
 
 static void
-fac_realize_end(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+fac_realize_end(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Object *win = data;
    Evas_Object *bx, *bt;
@@ -56,7 +56,7 @@ fac_realize_end(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 }
 
 static void
-fac_realize2(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+fac_realize2(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Object *win = data;
    Evas_Object *bx, *fc;
@@ -94,7 +94,7 @@ fac_realize2(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 }
 
 static void
-fac_realize1(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+fac_realize1(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Object *win = data;
    Evas_Object *bx, *fc;
@@ -132,7 +132,7 @@ fac_realize1(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 }
 
 void
-test_factory(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_factory(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bx, *sc, *fc;
    int i;

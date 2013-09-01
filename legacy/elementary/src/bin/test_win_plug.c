@@ -9,10 +9,10 @@
 static int try_num = 0;
 
 static void
-_timer_del(void *data       __UNUSED__,
-	      Evas *e          __UNUSED__,
+_timer_del(void *data       EINA_UNUSED,
+	      Evas *e          EINA_UNUSED,
 	      Evas_Object     *obj,
-	      void *event_info __UNUSED__)
+	      void *event_info EINA_UNUSED)
 {
    Ecore_Timer *timer = evas_object_data_del(obj, "test-timer");
    if (!timer) return;
@@ -44,9 +44,9 @@ cb_plug_connect(void *data)
 }
 
 static void
-cb_plug_disconnected(void *data __UNUSED__,
+cb_plug_disconnected(void *data EINA_UNUSED,
                     Evas_Object *obj,
-                    void *event_info __UNUSED__)
+                    void *event_info EINA_UNUSED)
 {
    Ecore_Timer *timer = evas_object_data_get(obj, "test-timer");
    if (timer)
@@ -60,8 +60,8 @@ cb_plug_disconnected(void *data __UNUSED__,
 }
 
 static void
-cb_plug_resized(void *data __UNUSED__,
-                Evas_Object *obj __UNUSED__,
+cb_plug_resized(void *data EINA_UNUSED,
+                Evas_Object *obj EINA_UNUSED,
                 void *event_info)
 {
    Evas_Coord_Size *size = event_info;
@@ -69,7 +69,7 @@ cb_plug_resized(void *data __UNUSED__,
 }
 
 static void
-cb_mouse_down(void *data __UNUSED__, Evas *evas __UNUSED__, Evas_Object *obj, void *event_info)
+cb_mouse_down(void *data EINA_UNUSED, Evas *evas EINA_UNUSED, Evas_Object *obj, void *event_info)
 {
    Evas_Event_Mouse_Down *ev = event_info;
    
@@ -77,7 +77,7 @@ cb_mouse_down(void *data __UNUSED__, Evas *evas __UNUSED__, Evas_Object *obj, vo
 }
 
 static void
-cb_mouse_move(void *data, Evas *evas __UNUSED__, Evas_Object *obj, void *event_info)
+cb_mouse_move(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj, void *event_info)
 {
    Evas_Event_Mouse_Move *ev = event_info;
    Evas_Object *orig = data;
@@ -144,7 +144,7 @@ create_handles(Evas_Object *obj)
 }
 
 void
-test_win_plug(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_win_plug(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bg, *plug;
    char buf[PATH_MAX];

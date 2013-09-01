@@ -15,7 +15,7 @@ static int current = 0;
 static Eina_Module *module[2];
 
 static void
-_first_city_cb(void *data __UNUSED__, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
+_first_city_cb(void *data EINA_UNUSED, Evas_Object *o EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    if (!current) return;
    current = 0;
@@ -23,14 +23,14 @@ _first_city_cb(void *data __UNUSED__, Evas_Object *o __UNUSED__, void *event_inf
 }
 
 static void
-_second_city_cb(void *dat __UNUSED__, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
+_second_city_cb(void *dat EINA_UNUSED, Evas_Object *o EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    if (current) return;
    current = 1;
    elm_flip_go(fl, ELM_FLIP_ROTATE_XZ_CENTER_AXIS);
 }
 
-static void _apply_cb(void *data __UNUSED__, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
+static void _apply_cb(void *data EINA_UNUSED, Evas_Object *o EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    EWeather *eweather = eweather_object_eweather_get(weather[current]);
 
@@ -42,7 +42,7 @@ static void _apply_cb(void *data __UNUSED__, Evas_Object *o __UNUSED__, void *ev
 }
 
 static void
-_hover_select_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_hover_select_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    EWeather *eweather = eweather_object_eweather_get(weather[0]);
    module[0] = eweather_plugin_search(eweather, elm_object_item_text_get(event_info));
@@ -54,7 +54,7 @@ _hover_select_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event
 #endif
 
 void
-test_weather(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_weather(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win;
 #ifdef HAVE_ELEMENTARY_EWEATHER

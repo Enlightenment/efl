@@ -28,38 +28,38 @@ _content_new(Evas_Object *parent, const char *img)
 }
 
 void
-_navi_pop(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_navi_pop(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    elm_naviframe_item_pop(data);
 }
 
 void
-_navi_it_del(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_navi_it_del(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    elm_object_item_del(data);
 }
 
 void
-_title_clicked(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_title_clicked(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    printf("Title Clicked!\n");
 }
 
 void
-_title_visible(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_title_visible(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    elm_naviframe_item_title_visible_set(data,
                                !elm_naviframe_item_title_visible_get(data));
 }
 
 void
-_promote(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_promote(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    elm_naviframe_item_promote(data);
 }
 
 void
-_page7(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_page7(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *bt, *bt2, *content, *nf = data;
    Elm_Object_Item *it;
@@ -81,7 +81,7 @@ _page7(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 }
 
 void
-_page6(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_page6(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *bt, *bt2, *content, *nf = data;
    Elm_Object_Item *it;
@@ -103,7 +103,7 @@ _page6(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 }
 
 void
-_page5(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_page5(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *bt, *bt2, *content, *nf = data;
    Elm_Object_Item *it;
@@ -130,7 +130,7 @@ _page5(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 }
 
 void
-_page4(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_page4(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *bt, *ic, *content, *nf = data;
    char buf[PATH_MAX];
@@ -165,7 +165,7 @@ _page4(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 }
 
 void
-_page3(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_page3(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *bt2, *content, *nf = data;
 
@@ -185,7 +185,7 @@ _page3(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 }
 
 void
-_page2(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_page2(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *bt, *content, *ic, *nf = data;
    Elm_Object_Item *it;
@@ -207,7 +207,7 @@ _page2(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 }
 
 void
-test_naviframe(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_naviframe(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *nf, *btn, *content;
    Elm_Object_Item *it;
@@ -237,7 +237,7 @@ test_naviframe(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
 }
 
 void
-test_naviframe2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_naviframe2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *nf, *sc, *btn, *ico, *content;
    Elm_Object_Item *it;

@@ -6,7 +6,7 @@
 
 
 static void
-_dismissed(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_dismissed(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Object *ctxpopup_data = evas_object_data_get(obj, "im");
    if (ctxpopup_data) evas_object_del(ctxpopup_data);
@@ -40,7 +40,7 @@ _print_current_dir(Evas_Object *obj)
 }
 
 static void
-_btn_clicked(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+_btn_clicked(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    printf("Button Clicked\n");
 
@@ -70,7 +70,7 @@ _btn_clicked(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 }
 
 static void
-_ctxpopup_item_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_ctxpopup_item_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    printf("ctxpopup item selected: %s\n",
    elm_object_item_text_get(event_info));
@@ -97,7 +97,7 @@ _ctxpopup_item_new(Evas_Object *obj, const char *label, const char *icon)
 
 
 static void
-_list_item_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_list_item_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Object *ctxpopup;
    Elm_Object_Item *it = NULL;
@@ -123,7 +123,7 @@ _list_item_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED
 }
 
 static void
-_list_item_cb2(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_list_item_cb2(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Object *ctxpopup;
    Elm_Object_Item *it = NULL;
@@ -148,7 +148,7 @@ _list_item_cb2(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSE
 }
 
 static void
-_list_item_cb3(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_list_item_cb3(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Object *ctxpopup;
    Elm_Object_Item *it = NULL;
@@ -172,7 +172,7 @@ _list_item_cb3(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSE
 }
 
 static void
-_list_item_cb4(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_list_item_cb4(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Object *ctxpopup;
    Evas_Coord x,y;
@@ -198,7 +198,7 @@ _list_item_cb4(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSE
 
 
 static void
-_list_item_cb5(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_list_item_cb5(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Object *ctxpopup, *btn, *sc, *bx;
    Evas_Coord x,y;
@@ -235,7 +235,7 @@ _list_item_cb5(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSE
 }
 
 static void
-_list_item_cb6(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_list_item_cb6(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Object *ctxpopup, *btn, *sc, *bx;
    Evas_Coord x,y;
@@ -272,7 +272,7 @@ _list_item_cb6(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSE
 }
 
 static void
-_ctxpopup_item_disable_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_ctxpopup_item_disable_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    printf("ctxpopup item selected: %s\n",
           elm_object_item_text_get(event_info));
@@ -281,7 +281,7 @@ _ctxpopup_item_disable_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, vo
 }
 
 static void
-_ctxpopup_item_delete_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info)
+_ctxpopup_item_delete_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info)
 {
    printf("ctxpopup item selected: %s\n",
           elm_object_item_text_get(event_info));
@@ -290,7 +290,7 @@ _ctxpopup_item_delete_cb(void *data __UNUSED__, Evas_Object *obj, void *event_in
 }
 
 static void
-_list_item_cb7(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_list_item_cb7(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Object *ctxpopup;
    Evas_Coord x,y;
@@ -309,13 +309,13 @@ _list_item_cb7(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSE
    _print_current_dir(ctxpopup);
 }
 
-static void _list_clicked(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+static void _list_clicked(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    elm_list_item_selected_set(event_info, EINA_FALSE);
 }
 
 void
-test_ctxpopup(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_ctxpopup(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *list;
 

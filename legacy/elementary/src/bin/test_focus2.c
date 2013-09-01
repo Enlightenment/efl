@@ -5,7 +5,7 @@
 #ifndef ELM_LIB_QUICKLAUNCH
 
 static void
-_focus_in(void *data __UNUSED__, Evas *e __UNUSED__, void *event_info)
+_focus_in(void *data EINA_UNUSED, Evas *e EINA_UNUSED, void *event_info)
 {
    const char *type = evas_object_type_get(event_info);
    if ((type) && (!strcmp(type, "elm_widget")))
@@ -14,7 +14,7 @@ _focus_in(void *data __UNUSED__, Evas *e __UNUSED__, void *event_info)
 }
 
 static void
-_focus_out(void *data __UNUSED__, Evas *e __UNUSED__, void *event_info)
+_focus_out(void *data EINA_UNUSED, Evas *e EINA_UNUSED, void *event_info)
 {
    const char *type = evas_object_type_get(event_info);
    if ((type) && (!strcmp(type, "elm_widget")))
@@ -23,7 +23,7 @@ _focus_out(void *data __UNUSED__, Evas *e __UNUSED__, void *event_info)
 }
 
 static void
-_focus_obj(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
+_focus_obj(void *data, Evas_Object *o EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *newfocus = data;
    const char *type = evas_object_type_get(newfocus);
@@ -34,7 +34,7 @@ _focus_obj(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
 }
 
 static void
-_focus_layout_part(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
+_focus_layout_part(void *data, Evas_Object *o EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *ed = elm_layout_edje_get(data);
 
@@ -46,7 +46,7 @@ _focus_layout_part(void *data, Evas_Object *o __UNUSED__, void *event_info __UNU
 
 
 void
-test_focus2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_focus2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bx, *ly, *bt, *en, *en1, *bt1, *bt2;
    char buf[PATH_MAX];

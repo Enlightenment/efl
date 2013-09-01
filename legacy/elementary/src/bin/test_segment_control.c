@@ -5,14 +5,14 @@
 #ifndef ELM_LIB_QUICKLAUNCH
 
 static void
-changed_cb(void *data __UNUSED__, Evas_Object *o __UNUSED__, void *event)
+changed_cb(void *data EINA_UNUSED, Evas_Object *o EINA_UNUSED, void *event)
 {
    Elm_Object_Item *it = event;
    printf("Segment Item (%p) %s\n", it, elm_object_item_text_get(it));
 }
 
 void
-test_segment_control(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_segment_control(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bx, *sc, *ic;
    Elm_Object_Item *seg_it;

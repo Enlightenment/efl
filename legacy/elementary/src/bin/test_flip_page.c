@@ -63,7 +63,7 @@ static State state =
 };
 
 static Slice *
-_slice_new(State *st __UNUSED__, Evas_Object *obj)
+_slice_new(State *st EINA_UNUSED, Evas_Object *obj)
 {
    Slice *sl;
 
@@ -85,7 +85,7 @@ _slice_free(Slice *sl)
 
 static void
 _slice_apply(State *st, Slice *sl,
-             Evas_Coord x __UNUSED__, Evas_Coord y __UNUSED__, Evas_Coord w, Evas_Coord h __UNUSED__,
+             Evas_Coord x EINA_UNUSED, Evas_Coord y EINA_UNUSED, Evas_Coord w, Evas_Coord h EINA_UNUSED,
              Evas_Coord ox, Evas_Coord oy, Evas_Coord ow, Evas_Coord oh)
 {
    Evas_Map *m;
@@ -129,7 +129,7 @@ _slice_apply(State *st, Slice *sl,
 }
 
 static void
-_slice_3d(State *st __UNUSED__, Slice *sl, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
+_slice_3d(State *st EINA_UNUSED, Slice *sl, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
 {
    Evas_Map *m = (Evas_Map *)evas_object_map_get(sl->obj);
    int i;
@@ -149,7 +149,7 @@ _slice_3d(State *st __UNUSED__, Slice *sl, Evas_Coord x, Evas_Coord y, Evas_Coor
 }
 
 static void
-_slice_light(State *st __UNUSED__, Slice *sl, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
+_slice_light(State *st EINA_UNUSED, Slice *sl, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
 {
    Evas_Map *m = (Evas_Map *)evas_object_map_get(sl->obj);
    int i;
@@ -177,7 +177,7 @@ _slice_light(State *st __UNUSED__, Slice *sl, Evas_Coord x, Evas_Coord y, Evas_C
 }
 
 static void
-_slice_xyz(State *st __UNUSED__, Slice *sl,
+_slice_xyz(State *st EINA_UNUSED, Slice *sl,
            double xx1, double yy1, double zz1,
            double xx2, double yy2, double zz2,
            double xx3, double yy3, double zz3,
@@ -190,7 +190,7 @@ _slice_xyz(State *st __UNUSED__, Slice *sl,
 }
 
 static void
-_slice_uv(State *st __UNUSED__, Slice *sl,
+_slice_uv(State *st EINA_UNUSED, Slice *sl,
            double u1, double v1,
            double u2, double v2,
            double u3, double v3,
@@ -739,7 +739,7 @@ _update_curl_job(void *data)
 }
 
 static void
-im_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+im_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    State *st = &state;
    Evas_Event_Mouse_Down *ev = event_info;
@@ -766,7 +766,7 @@ im_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *ev
 }
 
 static void
-im_up_cb(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+im_up_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    State *st = &state;
    Evas_Event_Mouse_Up *ev = event_info;
@@ -818,7 +818,7 @@ im_up_cb(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__,
 }
 
 static void
-im_move_cb(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+im_move_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    State *st = &state;
    Evas_Event_Mouse_Move *ev = event_info;
@@ -835,7 +835,7 @@ im_move_cb(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUSED_
 }
 
 void
-test_flip_page(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_flip_page(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *im, *im2, *rc;
    char buf[PATH_MAX];

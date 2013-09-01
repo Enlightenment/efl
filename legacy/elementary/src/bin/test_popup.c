@@ -8,29 +8,29 @@ static Evas_Object *g_popup = NULL;
 static int times = 0;
 
 static void
-_response_cb(void *data __UNUSED__, Evas_Object *obj,
-             void *event_info __UNUSED__)
+_response_cb(void *data EINA_UNUSED, Evas_Object *obj,
+             void *event_info EINA_UNUSED)
 {
    evas_object_del(obj);
 }
 
 static void
-_popup_close_cb(void *data, Evas_Object *obj __UNUSED__,
-                void *event_info __UNUSED__)
+_popup_close_cb(void *data, Evas_Object *obj EINA_UNUSED,
+                void *event_info EINA_UNUSED)
 {
    evas_object_del(data);
 }
 
 static void
-_g_popup_response_cb(void *data, Evas_Object *obj __UNUSED__,
-             void *event_info __UNUSED__)
+_g_popup_response_cb(void *data, Evas_Object *obj EINA_UNUSED,
+             void *event_info EINA_UNUSED)
 {
    evas_object_hide(data);
 }
 
 static void
-_restack_block_clicked_cb(void *data __UNUSED__, Evas_Object *obj,
-                          void *event_info __UNUSED__)
+_restack_block_clicked_cb(void *data EINA_UNUSED, Evas_Object *obj,
+                          void *event_info EINA_UNUSED)
 {
    // remove restacked image if there is any
    Evas_Object *popup_data = evas_object_data_get(obj, "im");
@@ -39,8 +39,8 @@ _restack_block_clicked_cb(void *data __UNUSED__, Evas_Object *obj,
 }
 
 static void
-_restack_popup_close_cb(void *data, Evas_Object *obj __UNUSED__,
-                        void *event_info __UNUSED__)
+_restack_popup_close_cb(void *data, Evas_Object *obj EINA_UNUSED,
+                        void *event_info EINA_UNUSED)
 {
    Evas_Object *popup_data = evas_object_data_get(data, "im");
    if (popup_data) evas_object_del(popup_data);
@@ -48,22 +48,22 @@ _restack_popup_close_cb(void *data, Evas_Object *obj __UNUSED__,
 }
 
 static void
-_block_clicked_cb(void *data __UNUSED__, Evas_Object *obj,
-                  void *event_info __UNUSED__)
+_block_clicked_cb(void *data EINA_UNUSED, Evas_Object *obj,
+                  void *event_info EINA_UNUSED)
 {
    evas_object_del(obj);
 }
 
 static void
-_item_selected_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
+_item_selected_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
                   void *event_info)
 {
    printf("popup item selected: %s\n", elm_object_item_text_get(event_info));
 }
 
 static void
-_list_click(void *data __UNUSED__, Evas_Object *obj,
-            void *event_info __UNUSED__)
+_list_click(void *data EINA_UNUSED, Evas_Object *obj,
+            void *event_info EINA_UNUSED)
 {
    Elm_Object_Item *it = elm_list_selected_item_get(obj);
    if (!it) return;
@@ -71,8 +71,8 @@ _list_click(void *data __UNUSED__, Evas_Object *obj,
 }
 
 static void
-_popup_center_text_cb(void *data, Evas_Object *obj __UNUSED__,
-                      void *event_info __UNUSED__)
+_popup_center_text_cb(void *data, Evas_Object *obj EINA_UNUSED,
+                      void *event_info EINA_UNUSED)
 {
    Evas_Object *popup;
 
@@ -85,8 +85,8 @@ _popup_center_text_cb(void *data, Evas_Object *obj __UNUSED__,
 }
 
 static void
-_popup_center_text_1button_cb(void *data, Evas_Object *obj __UNUSED__,
-                              void *event_info __UNUSED__)
+_popup_center_text_1button_cb(void *data, Evas_Object *obj EINA_UNUSED,
+                              void *event_info EINA_UNUSED)
 {
    Evas_Object *popup;
    Evas_Object *btn;
@@ -105,8 +105,8 @@ _popup_center_text_1button_cb(void *data, Evas_Object *obj __UNUSED__,
 }
 
 static void
-_popup_center_title_text_1button_cb(void *data, Evas_Object *obj __UNUSED__,
-                                    void *event_info __UNUSED__)
+_popup_center_title_text_1button_cb(void *data, Evas_Object *obj EINA_UNUSED,
+                                    void *event_info EINA_UNUSED)
 {
    Evas_Object *popup;
    Evas_Object *btn;
@@ -130,8 +130,8 @@ _popup_center_title_text_1button_cb(void *data, Evas_Object *obj __UNUSED__,
 
 static void
 _popup_center_title_text_block_clicked_event_cb(void *data,
-                                                Evas_Object *obj __UNUSED__,
-                                                void *event_info __UNUSED__)
+                                                Evas_Object *obj EINA_UNUSED,
+                                                void *event_info EINA_UNUSED)
 {
    Evas_Object *popup;
 
@@ -150,8 +150,8 @@ _popup_center_title_text_block_clicked_event_cb(void *data,
 }
 
 static void
-_popup_bottom_title_text_3button_cb(void *data, Evas_Object *obj __UNUSED__,
-                                    void *event_info __UNUSED__)
+_popup_bottom_title_text_3button_cb(void *data, Evas_Object *obj EINA_UNUSED,
+                                    void *event_info EINA_UNUSED)
 {
    Evas_Object *popup;
    Evas_Object *icon, *btn1, *btn2, *btn3;
@@ -196,8 +196,8 @@ _popup_bottom_title_text_3button_cb(void *data, Evas_Object *obj __UNUSED__,
 }
 
 static void
-_popup_center_title_content_3button_cb(void *data, Evas_Object *obj __UNUSED__,
-                                       void *event_info __UNUSED__)
+_popup_center_title_content_3button_cb(void *data, Evas_Object *obj EINA_UNUSED,
+                                       void *event_info EINA_UNUSED)
 {
    Evas_Object *popup;
    Evas_Object *icon, *btn, *btn1, *btn2, *btn3;
@@ -238,8 +238,8 @@ _popup_center_title_content_3button_cb(void *data, Evas_Object *obj __UNUSED__,
 }
 
 static void
-_popup_center_title_item_3button_cb(void *data, Evas_Object *obj __UNUSED__,
-                                    void *event_info __UNUSED__)
+_popup_center_title_item_3button_cb(void *data, Evas_Object *obj EINA_UNUSED,
+                                    void *event_info EINA_UNUSED)
 {
    char buf[256];
    unsigned int i;
@@ -284,7 +284,7 @@ _popup_center_title_item_3button_cb(void *data, Evas_Object *obj __UNUSED__,
 }
 
 static void
-_restack_btn_clicked(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+_restack_btn_clicked(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Object *im;
    char buf[PATH_MAX];
@@ -306,8 +306,8 @@ _restack_btn_clicked(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 }
 
 static void
-_popup_center_title_text_2button_restack_cb(void *data, Evas_Object *obj __UNUSED__,
-                                    void *event_info __UNUSED__)
+_popup_center_title_text_2button_restack_cb(void *data, Evas_Object *obj EINA_UNUSED,
+                                    void *event_info EINA_UNUSED)
 {
    Evas_Object *popup;
    Evas_Object *btn, *btn2;
@@ -338,8 +338,8 @@ _popup_center_title_text_2button_restack_cb(void *data, Evas_Object *obj __UNUSE
 }
 
 static void
-_popup_center_text_1button_hide_show_cb(void *data, Evas_Object *obj __UNUSED__,
-                              void *event_info __UNUSED__)
+_popup_center_text_1button_hide_show_cb(void *data, Evas_Object *obj EINA_UNUSED,
+                              void *event_info EINA_UNUSED)
 {
    Evas_Object *btn;
    char str[128];
@@ -367,8 +367,8 @@ _popup_center_text_1button_hide_show_cb(void *data, Evas_Object *obj __UNUSED__,
 }
 
 static void
-_popup_transparent_cb(void *data, Evas_Object *obj __UNUSED__,
-                      void *event_info __UNUSED__)
+_popup_transparent_cb(void *data, Evas_Object *obj EINA_UNUSED,
+                      void *event_info EINA_UNUSED)
 {
    Evas_Object *popup;
    Evas_Object *btn;
@@ -386,14 +386,14 @@ _popup_transparent_cb(void *data, Evas_Object *obj __UNUSED__,
 }
 
 static void
-_list_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_list_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    evas_object_del(data);
 }
 
 static void
-_popup_center_title_list_content_1button_cb(void *data, Evas_Object *obj __UNUSED__,
-                                            void *event_info __UNUSED__)
+_popup_center_title_list_content_1button_cb(void *data, Evas_Object *obj EINA_UNUSED,
+                                            void *event_info EINA_UNUSED)
 {
    Evas_Object *popup, *list;
    Evas_Object *btn;
@@ -419,8 +419,8 @@ _popup_center_title_list_content_1button_cb(void *data, Evas_Object *obj __UNUSE
 }
 
 void
-test_popup(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
-           void *event_info __UNUSED__)
+test_popup(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
+           void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *list;
 

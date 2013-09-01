@@ -13,7 +13,7 @@ static int rotate_with_resize = 0;
 static Eina_Bool fullscreen = EINA_FALSE;
 
 static void
-my_bt_38_alpha_on(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+my_bt_38_alpha_on(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win = data;
    Evas_Object *bg = evas_object_data_get(win, "bg");
@@ -22,7 +22,7 @@ my_bt_38_alpha_on(void *data, Evas_Object *obj __UNUSED__, void *event_info __UN
 }
 
 static void
-my_bt_38_alpha_off(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+my_bt_38_alpha_off(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win = data;
    Evas_Object *bg = evas_object_data_get(win, "bg");
@@ -48,7 +48,7 @@ _unwith(void *data)
 }
 
 static void
-my_bt_38_iconify(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+my_bt_38_iconify(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win = data;
    printf("iconify, current %i\n", elm_win_iconified_get(win));
@@ -57,7 +57,7 @@ my_bt_38_iconify(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNU
 }
 
 static void
-my_bt_38_withdraw(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+my_bt_38_withdraw(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win = data;
    printf("withdraw, current %i\n", elm_win_withdrawn_get(win));
@@ -66,14 +66,14 @@ my_bt_38_withdraw(void *data, Evas_Object *obj __UNUSED__, void *event_info __UN
 }
 
 static void
-my_ck_38_resize(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+my_ck_38_resize(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
 //   Evas_Object *win = data;
    rotate_with_resize = elm_check_state_get(obj);
 }
 
 static void
-my_bt_38_rot_0(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+my_bt_38_rot_0(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win = data;
    if (rotate_with_resize)
@@ -83,7 +83,7 @@ my_bt_38_rot_0(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSE
 }
 
 static void
-my_bt_38_rot_90(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+my_bt_38_rot_90(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win = data;
    if (rotate_with_resize)
@@ -93,7 +93,7 @@ my_bt_38_rot_90(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUS
 }
 
 static void
-my_bt_38_rot_180(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+my_bt_38_rot_180(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win = data;
    if (rotate_with_resize)
@@ -103,7 +103,7 @@ my_bt_38_rot_180(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNU
 }
 
 static void
-my_bt_38_rot_270(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+my_bt_38_rot_270(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win = data;
    if (rotate_with_resize)
@@ -113,7 +113,7 @@ my_bt_38_rot_270(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNU
 }
 
 static void
-my_ck_38_fullscreen(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+my_ck_38_fullscreen(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Object *win = data;
    fullscreen = elm_check_state_get(obj);
@@ -121,7 +121,7 @@ my_ck_38_fullscreen(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 }
 
 static void
-my_ck_38_borderless(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+my_ck_38_borderless(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Object *win = data;
    Eina_Bool borderless = elm_check_state_get(obj);
@@ -129,7 +129,7 @@ my_ck_38_borderless(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 }
 
 static void
-my_win_move(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+my_win_move(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Coord x, y;
    elm_win_screen_position_get(obj, &x, &y);
@@ -137,7 +137,7 @@ my_win_move(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__
 }
 
 static void
-_win_resize(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_win_resize(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Coord w, h;
    evas_object_geometry_get(obj, NULL, NULL, &w, &h);
@@ -145,25 +145,25 @@ _win_resize(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *e
 }
 
 static void
-_win_foc_in(void *data __UNUSED__, Evas *e __UNUSED__, void *event_info __UNUSED__)
+_win_foc_in(void *data EINA_UNUSED, Evas *e EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    printf("FOC IN\n");
 }
 
 static void
-_win_foc_out(void *data __UNUSED__, Evas *e __UNUSED__, void *event_info __UNUSED__)
+_win_foc_out(void *data EINA_UNUSED, Evas *e EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    printf("FOC OUT\n");
 }
 
 static void
-_close_win(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_close_win(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    evas_object_del(data);
 }
 
 void
-test_win_state(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_win_state(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bg, *sl, *bx, *bx2, *bt, *ck;
 
@@ -321,7 +321,7 @@ test_win_state(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
 }
 
 void
-test_win_state2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_win_state2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bg, *sl, *bx, *bx2, *bt, *ck;
    char buf[PATH_MAX];

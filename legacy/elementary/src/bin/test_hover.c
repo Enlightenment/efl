@@ -2,7 +2,7 @@
 #include <Elementary.h>
 #ifndef ELM_LIB_QUICKLAUNCH
 static void
-my_hover_bt(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+my_hover_bt(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *hv = data;
 
@@ -10,15 +10,15 @@ my_hover_bt(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__
 }
 
 static void
-_top_bt_clicked(void *data, Evas_Object *obj __UNUSED__,
-                void *event_info __UNUSED__)
+_top_bt_clicked(void *data, Evas_Object *obj EINA_UNUSED,
+                void *event_info EINA_UNUSED)
 {
    Evas_Object *hv = (Evas_Object *)data;
    elm_hover_dismiss(hv);
 }
 
 void
-test_hover(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_hover(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bg, *bx, *bt, *hv, *ic;
    char buf[PATH_MAX];
@@ -100,7 +100,7 @@ test_hover(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
 }
 
 void
-test_hover2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_hover2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bg, *bx, *bt, *hv, *ic;
    char buf[PATH_MAX];

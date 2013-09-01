@@ -5,8 +5,8 @@
 #ifndef ELM_LIB_QUICKLAUNCH
 
 static void
-_item_selected_cb(void *data __UNUSED__,
-                  Evas_Object *obj __UNUSED__,
+_item_selected_cb(void *data EINA_UNUSED,
+                  Evas_Object *obj EINA_UNUSED,
                   void *event_info)
 {
    Elm_Object_Item *mbe_it = event_info;
@@ -15,8 +15,8 @@ _item_selected_cb(void *data __UNUSED__,
 
 // "item,added" smart callback of multibuttonentry.
 static void
-_item_added_cb(void *data __UNUSED__,
-               Evas_Object *obj __UNUSED__,
+_item_added_cb(void *data EINA_UNUSED,
+               Evas_Object *obj EINA_UNUSED,
                void *event_info)
 {
    Elm_Object_Item *mbe_it = event_info;
@@ -25,17 +25,17 @@ _item_added_cb(void *data __UNUSED__,
 
 // "item,deleted" smart callback
 static void
-_item_deleted_cb(void *data __UNUSED__,
-                 Evas_Object *obj __UNUSED__,
-                 void *event_info __UNUSED__)
+_item_deleted_cb(void *data EINA_UNUSED,
+                 Evas_Object *obj EINA_UNUSED,
+                 void *event_info EINA_UNUSED)
 {
    printf("deleted item\n");
 }
 
 // "item,clicked" smart callback
 static void
-_item_clicked_cb(void *data __UNUSED__,
-                 Evas_Object *obj __UNUSED__,
+_item_clicked_cb(void *data EINA_UNUSED,
+                 Evas_Object *obj EINA_UNUSED,
                  void *event_info )
 {
    Elm_Object_Item *mbe_it = event_info;
@@ -43,9 +43,9 @@ _item_clicked_cb(void *data __UNUSED__,
 }
 
 static void
-_mbe_clicked_cb(void *data __UNUSED__,
+_mbe_clicked_cb(void *data EINA_UNUSED,
                 Evas_Object *obj,
-                void *event_info __UNUSED__ )
+                void *event_info EINA_UNUSED )
 {
    //Unset the multibuttonentry to contracted mode of single line
    elm_multibuttonentry_expanded_set(obj, EINA_TRUE);
@@ -66,9 +66,9 @@ _mbe_clicked_cb(void *data __UNUSED__,
 }
 
 static void
-_mbe_unfocused_cb(void *data __UNUSED__,
+_mbe_unfocused_cb(void *data EINA_UNUSED,
                   Evas_Object *obj,
-                  void *event_info __UNUSED__ )
+                  void *event_info EINA_UNUSED )
 {
    //Set the multibuttonentry to contracted mode of single line
    elm_multibuttonentry_expanded_set(obj, EINA_FALSE);
@@ -76,46 +76,46 @@ _mbe_unfocused_cb(void *data __UNUSED__,
 }
 
 static void
-_mbe_focused_cb(void *data __UNUSED__,
-                Evas_Object *obj __UNUSED__,
-                void *event_info __UNUSED__ )
+_mbe_focused_cb(void *data EINA_UNUSED,
+                Evas_Object *obj EINA_UNUSED,
+                void *event_info EINA_UNUSED )
 {
    printf("multibuttonentry focused!\n");
 }
 
 // "expanded" smart callback
 static void
-_expanded_cb(void *data __UNUSED__,
-             Evas_Object *obj __UNUSED__,
-             void *event_info __UNUSED__)
+_expanded_cb(void *data EINA_UNUSED,
+             Evas_Object *obj EINA_UNUSED,
+             void *event_info EINA_UNUSED)
 {
    printf("expanded!\n");
 }
 
 // "contracted" smart callback
 static void
-_contracted_cb(void *data __UNUSED__,
-           Evas_Object *obj __UNUSED__,
-           void *event_info __UNUSED__)
+_contracted_cb(void *data EINA_UNUSED,
+           Evas_Object *obj EINA_UNUSED,
+           void *event_info EINA_UNUSED)
 {
    printf("contracted!\n");
 }
 
 // "contracted,state,changed" smart callback
 static void
-_shrink_state_changed_cb(void *data __UNUSED__,
-                         Evas_Object *obj __UNUSED__,
-                         void *event_info __UNUSED__)
+_shrink_state_changed_cb(void *data EINA_UNUSED,
+                         Evas_Object *obj EINA_UNUSED,
+                         void *event_info EINA_UNUSED)
 {
    printf("contracted state changed! \n");
 }
 
 // "item verified" confirm callback
 static Eina_Bool
-_item_filter_cb(Evas_Object *obj __UNUSED__,
+_item_filter_cb(Evas_Object *obj EINA_UNUSED,
                 const char* item_label,
-                void *item_data __UNUSED__,
-                void *data __UNUSED__)
+                void *item_data EINA_UNUSED,
+                void *data EINA_UNUSED)
 {
    printf("%s, label: %s\n", __func__, item_label);
 
@@ -123,9 +123,9 @@ _item_filter_cb(Evas_Object *obj __UNUSED__,
 }
 
 static void
-_button_clicked_cb(void *data __UNUSED__,
-                   Evas_Object *obj __UNUSED__,
-                   void *event_info __UNUSED__)
+_button_clicked_cb(void *data EINA_UNUSED,
+                   Evas_Object *obj EINA_UNUSED,
+                   void *event_info EINA_UNUSED)
 {
    printf("%s button is clicked\n", __func__);
 }
@@ -195,9 +195,9 @@ _add_buttons(Evas_Object *parent)
 }
 
 void
-test_multibuttonentry(void *data __UNUSED__,
-                      Evas_Object *obj __UNUSED__,
-                      void *event_info __UNUSED__)
+test_multibuttonentry(void *data EINA_UNUSED,
+                      Evas_Object *obj EINA_UNUSED,
+                      void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *sc, *bx;
    Evas_Object *ly;

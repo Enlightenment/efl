@@ -50,7 +50,7 @@ set_api_state(api_data *api)
 }
 
 static void
-_api_bt_clicked(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+_api_bt_clicked(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {  /* Will add here a SWITCH command containing code to modify test-object */
    /* in accordance a->state value. */
    api_data *a = data;
@@ -89,7 +89,7 @@ create_dir_struct(void)
 
 static void
 _file_chosen(void            *data,
-             Evas_Object *obj __UNUSED__,
+             Evas_Object *obj EINA_UNUSED,
              void            *event_info)
 {
    Evas_Object *entry = data;
@@ -100,8 +100,8 @@ _file_chosen(void            *data,
 
 static void
 _inwin_mode_toggle(void            *data,
-                   Evas_Object *obj __UNUSED__,
-                   void *event_info __UNUSED__)
+                   Evas_Object *obj EINA_UNUSED,
+                   void *event_info EINA_UNUSED)
 {
    Evas_Object *fs_en = data;
    Eina_Bool value = elm_fileselector_entry_inwin_mode_get(fs_en);
@@ -111,8 +111,8 @@ _inwin_mode_toggle(void            *data,
 
 static void
 _folder_only_toggle(void            *data,
-                    Evas_Object *obj __UNUSED__,
-                    void *event_info __UNUSED__)
+                    Evas_Object *obj EINA_UNUSED,
+                    void *event_info EINA_UNUSED)
 {
    Evas_Object *fs_en = data;
    Evas_Object *ic = elm_object_part_content_get(fs_en, "button icon");
@@ -133,8 +133,8 @@ _folder_only_toggle(void            *data,
 
 static void
 _expandable_toggle(void            *data,
-                   Evas_Object *obj __UNUSED__,
-                   void *event_info __UNUSED__)
+                   Evas_Object *obj EINA_UNUSED,
+                   void *event_info EINA_UNUSED)
 {
    Evas_Object *fs_en = data;
    Eina_Bool value = elm_fileselector_entry_expandable_get(fs_en);
@@ -144,8 +144,8 @@ _expandable_toggle(void            *data,
 
 static void
 _disabled_toggle(void            *data,
-                 Evas_Object *obj __UNUSED__,
-                 void *event_info __UNUSED__)
+                 Evas_Object *obj EINA_UNUSED,
+                 void *event_info EINA_UNUSED)
 {
    Evas_Object *fs_en = data;
    Eina_Bool value = elm_object_disabled_get(fs_en);
@@ -154,15 +154,15 @@ _disabled_toggle(void            *data,
 }
 
 static void
-_cleanup_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_cleanup_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    free(data);
 }
 
 void
-test_fileselector_entry(void *data       __UNUSED__,
-                        Evas_Object *obj __UNUSED__,
-                        void *event_info __UNUSED__)
+test_fileselector_entry(void *data       EINA_UNUSED,
+                        Evas_Object *obj EINA_UNUSED,
+                        void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *vbox, *hbox, *ic, *bt, *fs_en, *en, *lb, *bxx;
    api_data *api = calloc(1, sizeof(api_data));

@@ -90,7 +90,7 @@ _infra_data_alloc(void)
 }
 
 static void
-my_win_del(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+my_win_del(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {  /* called when my_win_main is requested to be deleted */
    _infra_data_free(data);
 }
@@ -478,7 +478,7 @@ zoom_end(void *data , void *event_info)
 }
 
 static Evas_Event_Flags
-zoom_abort(void *data , void *event_info __UNUSED__)
+zoom_abort(void *data , void *event_info EINA_UNUSED)
 {
    printf("zoom abort\n");
    _color_and_icon_set(data, ZOOM_NAME, MAX_ZOOM, MAX_ZOOM, ABORT_COLOR);
@@ -513,7 +513,7 @@ rotate_end(void *data , void *event_info)
 }
 
 static Evas_Event_Flags
-rotate_abort(void *data , void *event_info __UNUSED__)
+rotate_abort(void *data , void *event_info EINA_UNUSED)
 {
    _color_and_icon_set(data, ROTATE_NAME, MAX_ROTATE, MAX_ROTATE, ABORT_COLOR);
    printf("rotate abort\n");
@@ -551,8 +551,8 @@ Evas_Object *create_gesture_box(Evas_Object *win, icon_properties *icons,
 }
 
 void
-test_gesture_layer2(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
-      void *event_info __UNUSED__)
+test_gesture_layer2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
+      void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *tb, *lb, *bx;
    Evas_Object *r; /* Gesture layer transparent object */

@@ -114,7 +114,7 @@ apply_changes(Photo_Object *po)
 
 /* Zoom out animation */
 static void
-zoom_out_animation_operation(void *_po, Elm_Transit *transit __UNUSED__,
+zoom_out_animation_operation(void *_po, Elm_Transit *transit EINA_UNUSED,
       double progress)
 {
    Photo_Object *po = (Photo_Object *) _po;
@@ -123,7 +123,7 @@ zoom_out_animation_operation(void *_po, Elm_Transit *transit __UNUSED__,
 }
 
 static void
-zoom_out_animation_end(void *_po, Elm_Transit *transit __UNUSED__)
+zoom_out_animation_end(void *_po, Elm_Transit *transit EINA_UNUSED)
 {
    Photo_Object *po = (Photo_Object *) _po;
 
@@ -268,8 +268,8 @@ momentum_end(void *_po, void *event_info)
 }
 
 static void
-_win_del_req(void *data, Evas_Object *obj __UNUSED__,
-      void *event_info __UNUSED__)
+_win_del_req(void *data, Evas_Object *obj EINA_UNUSED,
+      void *event_info EINA_UNUSED)
 {
    Photo_Object **photo_array = (Photo_Object **) data;
 
@@ -354,8 +354,8 @@ photo_object_add(Evas_Object *parent, Evas_Object *ic, const char *icon, Evas_Co
 }
 
 void
-test_gesture_layer(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
-      void *event_info __UNUSED__)
+test_gesture_layer(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
+      void *event_info EINA_UNUSED)
 {
    Evas_Coord w, h;
    Evas_Object *win, *bg;

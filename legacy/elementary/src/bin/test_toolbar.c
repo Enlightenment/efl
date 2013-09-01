@@ -4,7 +4,7 @@
 #include <Elementary.h>
 #ifndef ELM_LIB_QUICKLAUNCH
 static void
-_tb_sel1_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_tb_sel1_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    char buf[PATH_MAX];
    snprintf(buf, sizeof(buf), "%s/images/panel_01.jpg", elm_app_data_dir_get());
@@ -12,7 +12,7 @@ _tb_sel1_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__
 }
 
 static void
-_tb_sel2_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_tb_sel2_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    char buf[PATH_MAX];
    snprintf(buf, sizeof(buf), "%s/images/rock_01.jpg", elm_app_data_dir_get());
@@ -20,7 +20,7 @@ _tb_sel2_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__
 }
 
 static void
-_tb_sel3_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_tb_sel3_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    char buf[PATH_MAX];
    snprintf(buf, sizeof(buf), "%s/images/wood_01.jpg", elm_app_data_dir_get());
@@ -28,21 +28,21 @@ _tb_sel3_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__
 }
 
 static void
-_tb_sel3a_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_tb_sel3a_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    _tb_sel3_cb(data, obj, event_info);
    elm_toolbar_item_state_set(event_info, elm_toolbar_item_state_next(event_info));
 }
 
 static void
-_tb_sel3b_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_tb_sel3b_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    _tb_sel3_cb(data, obj, event_info);
    elm_toolbar_item_state_unset(event_info);
 }
 
 static void
-_tb_sel4_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_tb_sel4_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    char buf[PATH_MAX];
    snprintf(buf, sizeof(buf), "%s/images/sky_03.jpg", elm_app_data_dir_get());
@@ -50,19 +50,19 @@ _tb_sel4_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__
 }
 
 static void
-_tb_sel4a_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_tb_sel4a_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    elm_toolbar_item_state_set(event_info, elm_toolbar_item_state_prev(event_info));
 }
 
 static void
-_tb_sel5_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_tb_sel5_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    elm_photo_file_set(data, NULL);
 }
 
 static void
-toolbar_clicked_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+toolbar_clicked_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Elm_Object_Item *it = elm_toolbar_more_item_get(obj);
 
@@ -87,7 +87,7 @@ toolbar_clicked_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info __U
 }
 
 void
-test_toolbar(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_toolbar(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bx, *tb, *ph, *menu;
    Evas_Object *ph1, *ph2, *ph3, *ph4;
@@ -191,7 +191,7 @@ test_toolbar(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
 }
 
 void
-test_toolbar2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_toolbar2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bx, *tb, *ph, *menu;
    Evas_Object *ph1, *ph2, *ph3, *ph4;
@@ -295,7 +295,7 @@ test_toolbar2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 }
 
 void
-test_toolbar3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_toolbar3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bx, *tb, *ph, *menu;
    Evas_Object *ph1, *ph2, *ph3, *ph4;
@@ -399,7 +399,7 @@ test_toolbar3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
 /* The same test of toolbar, but using hide shrink mode instead of menu */
 void
-test_toolbar4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_toolbar4(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bx, *tb, *ph, *menu;
    Evas_Object *ph1, *ph2, *ph3, *ph4;
@@ -503,7 +503,7 @@ test_toolbar4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
 /* Toolbar with multiple state buttons */
 void
-test_toolbar5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_toolbar5(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bx, *tb, *ph, *menu;
    Evas_Object *ph1, *ph2, *ph3, *ph4;
@@ -611,7 +611,7 @@ test_toolbar5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 }
 
 void
-test_toolbar6(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_toolbar6(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bx, *tb, *ph, *menu;
    Evas_Object *ph1, *ph2, *ph3, *ph4;
@@ -715,7 +715,7 @@ test_toolbar6(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 }
 
 void
-test_toolbar7(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_toolbar7(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bx, *tb, *ph, *menu;
    Evas_Object *ph1, *ph2, *ph3, *ph4;
@@ -820,7 +820,7 @@ test_toolbar7(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 }
 
 void
-test_toolbar8(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_toolbar8(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bx, *tb, *ph, *sl;
    Evas_Object *ph1, *ph2, *ph3, *ph4;
@@ -959,7 +959,7 @@ test_toolbar8(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 }
 
 void
-test_toolbar9(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_toolbar9(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bx, *tb, *ph;
    Evas_Object *ph1, *ph2, *ph3, *ph4;

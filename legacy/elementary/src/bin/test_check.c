@@ -7,7 +7,7 @@
 static Eina_Bool eb;
 
 static void
-changed_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+changed_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Object *ck2 = data;
    printf("ck %p to %i\n", obj, elm_check_state_get(obj));
@@ -16,13 +16,13 @@ changed_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 }
 
 static void
-state_changed_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+state_changed_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    printf("State Pointer Value: %d\n", eb);
 }
 
 void
-test_check(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_check(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bx, *ic, *ck, *ck0;
    char buf[PATH_MAX];
@@ -110,7 +110,7 @@ test_check(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
 }
 
 void
-test_check_toggle(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_check_toggle(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bx, *ic, *tg;
    char buf[PATH_MAX];

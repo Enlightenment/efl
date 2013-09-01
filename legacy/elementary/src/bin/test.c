@@ -259,7 +259,7 @@ _elm_test_add(Eina_List **p_list, const char *icon, const char *category, const 
 }
 
 void
-my_win_del(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+my_win_del(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    elm_exit(); /* exit the program's main loop that runs in elm_run() */
 }
@@ -272,7 +272,7 @@ _ui_tg_changed(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_frame_clicked(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_frame_clicked(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    printf("frame %p is: %s\n", obj, elm_frame_collapse_get(obj) ? "collapsed" : "expanded");
 }
@@ -330,7 +330,7 @@ _menu_create(const char *option_str)
 }
 
 static void
-_entry_changed_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_entry_changed_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    const char *str = elm_entry_entry_get(obj);
    if (!str) return;
@@ -339,7 +339,7 @@ _entry_changed_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info __UN
 
 #if 0
 static void
-_btn_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_btn_clicked_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    const char *str = elm_entry_entry_get(data);
    if (!str) return;
