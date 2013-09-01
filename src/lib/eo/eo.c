@@ -458,7 +458,7 @@ eo2_call_resolve_internal(const Eo_Class *klass_id, const Eo_Op op, Eo2_Op_Call_
              ERR("you called a pure virtual func");
              return EINA_FALSE;
           }
-        call->klass_id = (Eo_Class *) klass->class_id;
+        call->klass_id = _eo_class_id_get(klass);
         call->obj_id = fptr->obj_id;
         call->func = func->func;
 
