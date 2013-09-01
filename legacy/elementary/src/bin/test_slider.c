@@ -5,6 +5,12 @@
 #ifndef ELM_LIB_QUICKLAUNCH
 
 void
+_delay_change_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+{
+    printf("delay,changed! slider value : %d\n", (int)round(elm_slider_value_get(obj)));
+}
+
+void
 _change_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
     double val = elm_slider_value_get(obj);
@@ -120,6 +126,7 @@ test_slider(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    elm_slider_inverted_set(sl, EINA_TRUE);
    evas_object_size_hint_align_set(sl, 0.5, 0.5);
    evas_object_size_hint_weight_set(sl, 0.0, 0.0);
+   evas_object_smart_callback_add(sl, "delay,changed", _delay_change_cb, NULL);
    elm_box_pack_end(bx, sl);
    evas_object_show(sl);
 
