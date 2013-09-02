@@ -372,6 +372,7 @@ Fixes:
      - Fix return type of function ecore_wl_outputs_get().
     * Ecore_Input_Evas:
      - Fix ecore_input_evas didn't check the device id of mouse event.
+     - Check the state of last mouse event more properly.
     * Ecore-imf:
      - Fix crash when ecore_imf_context_del is called in ecore_imf_context_input_panel_callback_call.
     * Eio:

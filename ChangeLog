@@ -1,3 +1,7 @@
+2013-09-02  Shinwoo Kim
+
+        * Ecore_Input_Evas: Check the state of last mouse event more properly.
+
 2013-08-29  Boris Faure
 
 	* Edje: export EFL_VERSION_MAJOR/MINOR when compiling edc files

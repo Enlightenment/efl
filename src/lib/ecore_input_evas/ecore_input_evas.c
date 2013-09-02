@@ -341,6 +341,7 @@ _ecore_event_evas_key(Ecore_Event_Key *e, Ecore_Event_Press press)
 static Eina_Bool
 _ecore_event_evas_mouse_button(Ecore_Event_Mouse_Button *e, Ecore_Event_Press press, Eina_Bool faked)
 {
+   Ecore_Event_Last *eel;
    Ecore_Input_Window *lookup;
    Evas_Button_Flags flags = EVAS_BUTTON_NONE;
 
@@ -352,11 +353,15 @@ _ecore_event_evas_mouse_button(Ecore_Event_Mouse_Button *e, Ecore_Event_Press pr
    if (_last_events_enable)
      {
         //error handle: if ecore up without ecore down
-        if ((press == ECORE_UP) && (!_ecore_event_evas_lookup(e->multi.device, e->buttons, EINA_FALSE)))
-        {
-           INF("ButtonEvent: up event without down event.");
-           return ECORE_CALLBACK_PASS_ON;
-        }
+        if (press == ECORE_UP)
+          {
+             eel = _ecore_event_evas_lookup(e->multi.device, e->buttons, EINA_FALSE);
+             if ((!eel) || (eel->state == ECORE_INPUT_UP))
+               {
+                  INF("ButtonEvent: up event without down event.");
+                  return ECORE_CALLBACK_PASS_ON;
+               }
+          }
      }
 
    if (!faked) _ecore_event_evas_push_mouse_button(e, press);
