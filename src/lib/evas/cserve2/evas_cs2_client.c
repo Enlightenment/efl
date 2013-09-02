@@ -1434,6 +1434,7 @@ _font_entry_glyph_map_rebuild_check(Font_Entry *fe, Font_Hint_Flags hints)
              gd = &(fe->map->index.entries.gldata[k]);
              if (!gd->id) break;
              if (!gd->refcount) continue;
+             if (gd->hint != hints) continue;
 
              tot++;
              gl = fash_gl_find(fe->fash[hints], gd->index);
@@ -1523,7 +1524,7 @@ _glyph_request_cb(void *data, const void *msg, int size)
    for (i = 0; i < nglyphs; i++)
      {
         string_t shm_id;
-        unsigned int idx, offset, glsize;
+        unsigned int idx, offset, glsize, hints;
         int rows, width, pitch, num_grays, pixel_mode;
         CS_Glyph_Out *gl;
 
@@ -1549,8 +1550,15 @@ _glyph_request_cb(void *data, const void *msg, int size)
         buf += sizeof(int);
         memcpy(&pixel_mode, buf, sizeof(int));
         buf += sizeof(int);
+        memcpy(&hints, buf, sizeof(int));
+        buf += sizeof(int);
+        if (hints != grd->hints)
+          {
+             WRN("Invalid hints received: %d vs %d. Skip.", hints, grd->hints);
+             continue;
+          }
 
-        gl = fash_gl_find(fe->fash[grd->hints], idx);
+        gl = fash_gl_find(fe->fash[hints], idx);
         if (gl)
           {
              gl->map = fe->map;

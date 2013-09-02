@@ -373,6 +373,7 @@ struct _Glyph_Data {
    uint32_t pitch;
    uint32_t num_grays;
    uint32_t pixel_mode;
+   uint32_t hint;
 };
 
 struct _Msg_Error {

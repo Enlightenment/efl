@@ -300,10 +300,10 @@ _glyph_data_print(Glyph_Data *gd)
         "FT_PIXEL_MODE_LCD_V"
    };
    printf("  GLYPH id: %-4u refcount %-2u: index: %-6u offset: %-6u size: %-3u "
-          "%2ux%-3u pitch: %-2u grays: %-3u pixel mode: %s\n",
+          "%2ux%-3u pitch: %-2u grays: %-3u pixel mode: %s hint: %d\n",
           gd->id, gd->refcount, gd->index, gd->offset, gd->size,
           gd->width, gd->rows, gd->pitch,
-          gd->num_grays, pxmode[gd->pixel_mode]);
+          gd->num_grays, pxmode[gd->pixel_mode], gd->hint);
 }
 
 static void

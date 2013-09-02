@@ -586,7 +586,7 @@ _glyphs_all_print(Shm_File *sf)
    int nglyphs = 0;
    int mem_used = 0;
 
-   printf("  GlyphID Refcnt  Index  Size  Rows Width Pitch Grays  Mode  "
+   printf("  GlyphID Refcnt  Index  Size  Rows Width Pitch Grays H M  "
           "BufID Offset ShmPath\n");
 
    for (k = 0; k < sf->header->count; k++)
@@ -597,9 +597,9 @@ _glyphs_all_print(Shm_File *sf)
         if (!gd) break;
         if (!gd->id) continue;
 
-        printf(" %8u %6u %6u %5u %5u %5u %5u %5u %5u %6u %6u '%s'\n",
+        printf(" %8u %6u %6u %5u %5u %5u %5u %5u %1u %1u %6u %6u '%s'\n",
                gd->id, gd->refcount, gd->index, gd->size, gd->rows, gd->width,
-               gd->pitch, gd->num_grays, gd->pixel_mode, gd->buffer_id,
+               gd->pitch, gd->num_grays, gd->hint, gd->pixel_mode, gd->buffer_id,
                gd->offset, _shared_string_get(gd->shm_id));
 
         nglyphs++;
@@ -621,7 +621,8 @@ _fonts_all_print_full(void)
 
    printf("List of loaded fonts: %s\n", eina_file_filename_get(sf_fonts->f));
    printf("Rendering flags: "
-          "R: Regular, S: Slanted, W: Weight, X: Invalid\n\n");
+          "R: Regular, S: Slanted, W: Weight, X: Invalid\n");
+   printf("H: Hint, M: Pixel mode\n\n");
    printf_newline(0);
 
    for (k = 0; k < sf_fonts->header->count; k++)
