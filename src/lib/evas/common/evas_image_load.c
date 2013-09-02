@@ -195,6 +195,8 @@ _evas_image_file_header(Evas_Module *em, Image_Entry *ie, int *error)
           }
         else
           {
+             evas_image_load_func->file_close(ie->loader_data);
+             ie->loader_data = NULL;
              evas_module_unload(em);
              INF("failed to load file head using module '%s' (%p): "
                  "%s (%s)",
