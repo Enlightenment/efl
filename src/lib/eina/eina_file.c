@@ -320,7 +320,7 @@ eina_file_real_close(Eina_File *file)
    if (file->global_map != MAP_FAILED)
      munmap(file->global_map, file->length);
 
-   close(file->fd);
+   if (file->fd != -1) close(file->fd);
 
    free(file);
 }

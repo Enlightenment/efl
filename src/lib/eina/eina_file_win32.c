@@ -378,8 +378,8 @@ eina_file_real_close(Eina_File *file)
    if (file->global_map != MAP_FAILED)
      UnmapViewOfFile(file->global_map);
 
-   CloseHandle(file->fm);
-   CloseHandle(file->handle);
+   if (file->fm) CloseHandle(file->fm);
+   if (file->handle) CloseHandle(file->handle);
 
    free(file);
 }
