@@ -876,6 +876,8 @@ cb_signal_dispatcher(Eldbus_Connection *conn, DBusMessage *msg)
                if (!dbus_message_has_sender(msg, sh->sender)) continue;
           }
         if (sh->path && !dbus_message_has_path(msg, sh->path)) continue;
+        if (sh->interface && !dbus_message_has_interface(msg, sh->interface))
+          continue;
         if (sh->member && !dbus_message_has_member(msg, sh->member)) continue;
         if (!extra_arguments_check(msg, sh)) continue;
 
