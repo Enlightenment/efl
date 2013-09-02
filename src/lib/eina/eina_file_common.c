@@ -301,7 +301,7 @@ eina_file_flush(Eina_File *file, unsigned long int length)
           }
 
         file->global_map = MAP_FAILED;
-        file->refcount = 0;
+        file->global_refcount = 0;
      }
 
    it = eina_hash_iterator_data_new(file->map);
