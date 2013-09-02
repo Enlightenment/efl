@@ -490,19 +490,6 @@ EINA_DEPRECATED EAPI Elm_Gen_Item *elm_gen_item_prev_get(const Elm_Gen_Item *it)
 EINA_DEPRECATED EAPI Evas_Object  *elm_gen_item_widget_get(const Elm_Gen_Item *it);
 
 /**
- * Get the widget object's handle which contains a given item
- *
- * @param it The Elementary object item
- * @return The widget object
- *
- * @note This returns the widget object itself that an item belongs to.
- * @note Every elm_object_item supports this API
- * @deprecated Use elm_object_item_widget_get() instead
- * @ingroup General
- */
-EINA_DEPRECATED EAPI Evas_Object                 *elm_object_item_object_get(const Elm_Object_Item *it);
-
-/**
  * Set the text to show in the anchorblock
  *
  * Sets the text of the anchorblock to @p text. This text can include markup
@@ -3303,7 +3290,7 @@ EINA_DEPRECATED EAPI void                  elm_slideshow_show(Elm_Object_Item *i
  *
  * This returns the toolbar object itself that an item belongs to.
  *
- * @deprecated use elm_object_item_object_get() instead.
+ * @deprecated use elm_object_item_widget_get() instead.
  */
 EINA_DEPRECATED EAPI Evas_Object *elm_toolbar_item_toolbar_get(const Elm_Object_Item *it);
 

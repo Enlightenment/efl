@@ -1578,6 +1578,10 @@
 
         * Gengrid: implement selectraise feature.
 
-2013-08-28  DAniel Juyung Seo (SeoZ)
+2013-08-28  Daniel Juyung Seo (SeoZ)
 
         * Bg: Add bg reset feature.
+
+2013-09-02  ChunEon Park (Hermet)
+
+        * Widget: Introduce elm_object_item_object_get() API.

@@ -1859,3 +1859,9 @@ elm_object_item_cursor_engine_only_get(const Elm_Object_Item *it)
 {
    return elm_widget_item_cursor_engine_only_get(it);
 }
+
+EAPI const Evas_Object *
+elm_object_item_object_get(const Elm_Object_Item *it)
+{
+   return _elm_widget_item_object_get((Elm_Widget_Item*)it);
+}

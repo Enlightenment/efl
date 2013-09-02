@@ -5771,6 +5771,13 @@ _elm_widget_item_translate(Elm_Widget_Item *item)
 #endif
 }
 
+EAPI const Evas_Object *
+_elm_widget_item_object_get(const Elm_Widget_Item *item)
+{
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN(item, NULL);
+   return item->view;
+}
+
 /* happy debug functions */
 #ifdef ELM_DEBUG
 static void
