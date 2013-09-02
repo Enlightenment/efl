@@ -5232,7 +5232,7 @@ enum
  *
  * @see evas_object_focus_set
  */
-#define evas_obj_focus_set(focus) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_FOCUS_SET), EO_TYPECHECK(Eina_Bool, focus)
+#define evas_obj_focus_set(focus, succeed) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_FOCUS_SET), EO_TYPECHECK(Eina_Bool, focus), EO_TYPECHECK(Eina_Bool *, succeed)
 
 /**
  * @def evas_obj_focus_get
