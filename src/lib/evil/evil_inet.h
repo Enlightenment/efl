@@ -18,6 +18,9 @@
 #define __EVIL_INET_H__
 
 
+#if ! _WIN32_WINNT >= _WIN32_WINNT_VISTA
+
+
 /**
  * @file evil_inet.h
  * @brief The file that provides functions ported from Unix in arpa/inet.h.
@@ -140,6 +143,8 @@ EAPI const char *evil_inet_ntop(int af, const char *src, void *dst, size_t size)
  */
 #define inet_ntop(x,y,z,s) evil_inet_ntop(x,y,z,s)
 
+
+#endif /* _WIN32_WINNT >= _WIN32_WINNT_VISTA */
 
 
 /**

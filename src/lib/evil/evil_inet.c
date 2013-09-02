@@ -22,6 +22,8 @@
  * * modification of the management of the error
  */
 
+#if ! _WIN32_WINNT >= _WIN32_WINNT_VISTA
+
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif /* HAVE_CONFIG_H */
@@ -467,7 +469,6 @@ evil_inet_pton(int af, const char *src, void *dst)
   return (result > -1 ? 1 : -1);
 }
 
-
 /* const char *
  * inet_ntop4(src, dst, size)
  *     format an IPv4 address, more or less like inet_ntoa()
@@ -643,3 +644,5 @@ const char *evil_inet_ntop(int af, const char *src, void *dst, size_t size)
     return NULL;
   return result;
 }
+
+#endif
