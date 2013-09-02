@@ -16,8 +16,11 @@ EAPI Eina_Bool lockdebug = EINA_FALSE;
 EAPI int lockmax = 0;
 #endif
 
+Eina_List *all_evases = NULL;
+
 static int _evas_init_count = 0;
 int _evas_log_dom_global = -1;
+
 EAPI int
 evas_init(void)
 {
@@ -108,6 +111,9 @@ evas_shutdown(void)
    evas_object_image_load_opts_cow = NULL;
    evas_object_image_state_cow = NULL;
 
+   eina_list_free(all_evases);
+   all_evases = NULL;
+
    evas_thread_shutdown();
    _evas_preload_thread_shutdown();
    evas_async_events_shutdown();
@@ -171,6 +177,8 @@ _constructor(Eo *eo_obj, void *class_data, va_list *list EINA_UNUSED)
    EVAS_ARRAY_SET(e, texts_unref_queue);
 
 #undef EVAS_ARRAY_SET
+
+   all_evases = eina_list_append(all_evases, e);
 }
 
 EAPI void
@@ -265,6 +273,8 @@ _destructor(Eo *eo_e, void *_pd, va_list *list EINA_UNUSED)
    if (e->locks.lock.list) free(e->locks.lock.list);
 
    if (e->engine.module) evas_module_unref(e->engine.module);
+
+   all_evases = eina_list_remove(all_evases, e);
 
    eina_array_flush(&e->delete_objects);
    eina_array_flush(&e->active_objects);

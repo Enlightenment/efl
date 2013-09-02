@@ -1248,6 +1248,7 @@ void              evas_font_dir_cache_free(void);
 
 EAPI int          evas_async_events_process_blocking(void);
 void	          evas_render_rendering_wait(Evas_Public_Data *evas);
+void              evas_render_sync(void);
 
 void              evas_thread_init(void);
 void              evas_thread_shutdown(void);

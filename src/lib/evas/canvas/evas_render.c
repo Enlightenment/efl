@@ -1473,6 +1473,21 @@ evas_render_rendering_wait(Evas_Public_Data *evas)
    while (evas->rendering) evas_async_events_process_blocking();
 }
 
+/* syncs ALL async rendering canvases */
+void
+evas_render_sync(void)
+{
+   Eina_List *l;
+   void *d;
+
+   EINA_LIST_FOREACH(all_evases, l, d)
+     {
+        Evas_Public_Data *e = d;
+        if (!e->rendering) continue;
+        evas_render_rendering_wait(e);
+     }
+}
+
 static Eina_Bool
 _drop_scie_ref(const void *container EINA_UNUSED, void *data, void *fdata EINA_UNUSED)
 {
