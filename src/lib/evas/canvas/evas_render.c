@@ -2264,6 +2264,19 @@ _canvas_render_dump(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
 
         EINA_INLIST_FOREACH(lay->objects, obj)
           {
+             if (obj->proxy)
+               {
+                  EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, obj->proxy, Evas_Object_Proxy_Data, proxy_write)
+                    {
+                       if (proxy_write->surface)
+                         {
+                            e->engine.func->image_map_surface_free(e->engine.data.output,
+                                                                   proxy_write->surface);
+                            proxy_write->surface = NULL;
+                         }
+                    }
+                  EINA_COW_WRITE_END(evas_object_proxy_cow, obj->proxy, proxy_write);
+               }
              if ((obj->type) && (!strcmp(obj->type, "image")))
                evas_object_inform_call_image_unloaded(obj->object);
              _evas_render_dump_map_surfaces(obj->object);
@@ -2282,6 +2295,24 @@ _canvas_render_dump(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
    GC_ALL(evas_object_image_pixels_cow);
    GC_ALL(evas_object_image_load_opts_cow);
    GC_ALL(evas_object_image_state_cow);
+   
+   evas_fonts_zero_pressure(eo_e);
+   
+   if ((e->engine.func) && (e->engine.func->output_idle_flush) &&
+       (e->engine.data.output))
+     e->engine.func->output_idle_flush(e->engine.data.output);
+   
+   OBJS_ARRAY_FLUSH(&e->active_objects);
+   OBJS_ARRAY_FLUSH(&e->render_objects);
+   OBJS_ARRAY_FLUSH(&e->restack_objects);
+   OBJS_ARRAY_FLUSH(&e->delete_objects);
+   OBJS_ARRAY_FLUSH(&e->obscuring_objects);
+   OBJS_ARRAY_FLUSH(&e->temporary_objects);
+   eina_array_foreach(&e->clip_changes, _evas_clip_changes_free, NULL);
+   eina_array_clean(&e->clip_changes);
+   
+   e->invalidate = EINA_TRUE;
+   
    evas_cache_async_thaw();
 }
 
