@@ -4,7 +4,6 @@
 
 static Eina_Thread evas_thread_worker;
 static Eina_Condition evas_thread_queue_condition;
-static Eina_Lock evas_thread_block_lock;
 static Eina_Lock evas_thread_queue_lock;
 static Eina_Bool evas_thread_queue_ready = EINA_FALSE;
 static Eina_Inarray evas_thread_queue;
@@ -56,19 +55,7 @@ evas_thread_queue_flush(Evas_Thread_Command_Cb cb, void *data)
     evas_thread_queue_append(cb, data, EINA_TRUE);
 }
 
-EAPI void
-evas_thread_queue_block(void)
-{
-   eina_lock_take(&evas_thread_block_lock);
-}
-
-EAPI void
-evas_thread_queue_unblock(void)
-{
-   eina_lock_release(&evas_thread_block_lock);
-}
-
-static void *
+static void*
 evas_thread_worker_func(void *data EINA_UNUSED, Eina_Thread thread EINA_UNUSED)
 {
     while (1)
@@ -96,8 +83,6 @@ evas_thread_worker_func(void *data EINA_UNUSED, Eina_Thread thread EINA_UNUSED)
               continue;
            }
 
-         eina_lock_take(&evas_thread_block_lock);
-         
          cmd = evas_thread_queue.members;
          evas_thread_queue.members = evas_thread_queue_cache;
          evas_thread_queue_cache = cmd;
@@ -124,7 +109,6 @@ evas_thread_worker_func(void *data EINA_UNUSED, Eina_Thread thread EINA_UNUSED)
               cmd++;
               len--;
            }
-         eina_lock_release(&evas_thread_block_lock);
       }
 
 out:
@@ -144,8 +128,6 @@ evas_thread_init(void)
 
     if (!eina_lock_new(&evas_thread_queue_lock))
       CRIT("Could not create draw thread lock");
-    if (!eina_lock_new(&evas_thread_block_lock))
-      CRIT("Could not create draw thread block lock");
     if (!eina_condition_new(&evas_thread_queue_condition, &evas_thread_queue_lock))
       CRIT("Could not create draw thread condition");
     if (!eina_thread_create(&evas_thread_worker, EINA_THREAD_NORMAL, 0,
@@ -172,7 +154,6 @@ evas_thread_shutdown(void)
       evas_async_events_process();
 
     eina_thread_join(evas_thread_worker);
-    eina_lock_free(&evas_thread_block_lock);
     eina_lock_free(&evas_thread_queue_lock);
     eina_condition_free(&evas_thread_queue_condition);
 
