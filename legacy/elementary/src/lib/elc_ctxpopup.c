@@ -15,12 +15,14 @@ EAPI Eo_Op ELM_OBJ_CTXPOPUP_BASE_ID = EO_NOOP;
 
 EAPI const char ELM_CTXPOPUP_SMART_NAME[] = "elm_ctxpopup";
 
-static const char SIG_DISMISSED[] = "dismissed";
-static const char SIG_LANG_CHANGED[] = "language,changed";
+#define ELM_PRIV_CTXPOPUP_SIGNALS(cmd) \
+   cmd(SIG_DISMISSED, "dismissed", "") \
+   cmd(SIG_LANG_CHANGED, "language,changed", "")
+
+ELM_PRIV_CTXPOPUP_SIGNALS(ELM_PRIV_STATIC_VARIABLE_DECLARE);
 
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
-   {SIG_DISMISSED, ""},
-   {SIG_LANG_CHANGED, ""},
+   ELM_PRIV_CTXPOPUP_SIGNALS(ELM_PRIV_SMART_CALLBACKS_DESC)
    {"focused", ""}, /**< handled by elm_widget */
    {"unfocused", ""}, /**< handled by elm_widget */
    {NULL, NULL}

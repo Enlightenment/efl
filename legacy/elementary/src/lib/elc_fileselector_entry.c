@@ -15,37 +15,27 @@ EAPI Eo_Op ELM_OBJ_FILESELECTOR_ENTRY_BASE_ID = EO_NOOP;
 
 EAPI const char ELM_FILESELECTOR_ENTRY_SMART_NAME[] = "elm_fileselector_entry";
 
-static const char SIG_CHANGED[] = "changed";
-static const char SIG_ACTIVATED[] = "activated";
-static const char SIG_PRESS[] = "press";
-static const char SIG_LONGPRESSED[] = "longpressed";
-static const char SIG_CLICKED[] = "clicked";
-static const char SIG_CLICKED_DOUBLE[] = "clicked,double";
-static const char SIG_FOCUSED[] = "focused";
-static const char SIG_UNFOCUSED[] = "unfocused";
-static const char SIG_SELECTION_PASTE[] = "selection,paste";
-static const char SIG_SELECTION_COPY[] = "selection,copy";
-static const char SIG_SELECTION_CUT[] = "selection,cut";
-static const char SIG_UNPRESSED[] = "unpressed";
-static const char SIG_FILE_CHOSEN[] = "file,chosen";
-static const char SIG_LANG_CHANGED[] = "language,changed";
+#define ELM_PRIV_FILESELECTOR_ENTRY_SIGNALS(cmd) \
+   cmd(SIG_CHANGED, "changed", "") \
+   cmd(SIG_ACTIVATED, "activated", "") \
+   cmd(SIG_PRESS, "press", "") \
+   cmd(SIG_LONGPRESSED, "longpressed", "") \
+   cmd(SIG_CLICKED, "clicked", "") \
+   cmd(SIG_CLICKED_DOUBLE, "clicked,double", "") \
+   cmd(SIG_FOCUSED, "focused", "") \
+   cmd(SIG_UNFOCUSED, "unfocused", "") \
+   cmd(SIG_SELECTION_PASTE, "selection,paste", "") \
+   cmd(SIG_SELECTION_COPY, "selection,copy", "") \
+   cmd(SIG_SELECTION_CUT, "selection,cut", "") \
+   cmd(SIG_UNPRESSED, "unpressed", "") \
+   cmd(SIG_FILE_CHOSEN, "file,chosen", "s") \
+   cmd(SIG_LANG_CHANGED, "language,changed", "")
+
+ELM_PRIV_FILESELECTOR_ENTRY_SIGNALS(ELM_PRIV_STATIC_VARIABLE_DECLARE);
 
 static const Evas_Smart_Cb_Description _smart_callbacks[] =
 {
-   {SIG_CHANGED, ""},
-   {SIG_ACTIVATED, ""},
-   {SIG_PRESS, ""},
-   {SIG_LONGPRESSED, ""},
-   {SIG_CLICKED, ""},
-   {SIG_CLICKED_DOUBLE, ""},
-   {SIG_FOCUSED, ""},
-   {SIG_UNFOCUSED, ""},
-   {SIG_SELECTION_PASTE, ""},
-   {SIG_SELECTION_COPY, ""},
-   {SIG_SELECTION_CUT, ""},
-   {SIG_UNPRESSED, ""},
-   {SIG_FILE_CHOSEN, "s"},
-   {SIG_LANG_CHANGED, ""},
+   ELM_PRIV_FILESELECTOR_ENTRY_SIGNALS(ELM_PRIV_SMART_CALLBACKS_DESC)
    {NULL, NULL}
 };
 

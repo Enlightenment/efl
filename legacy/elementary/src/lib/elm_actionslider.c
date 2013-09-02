@@ -23,12 +23,15 @@ static const Elm_Layout_Part_Alias_Description _text_aliases[] =
    {NULL, NULL}
 };
 
-static const char SIG_CHANGED[] = "pos_changed";
-static const char SIG_SELECTED[] = "selected";
+#define ELM_PRIV_ACTIONSLIDER_SIGNALS(cmd) \
+   cmd(SIG_CHANGED, "pos_changed", "") \
+   cmd(SIG_SELECTED, "selected", "")
+
+ELM_PRIV_ACTIONSLIDER_SIGNALS(ELM_PRIV_STATIC_VARIABLE_DECLARE);
+
 static const Evas_Smart_Cb_Description _smart_callbacks[] =
 {
-   {SIG_CHANGED, ""},
-   {SIG_SELECTED, ""},
+   ELM_PRIV_ACTIONSLIDER_SIGNALS(ELM_PRIV_SMART_CALLBACKS_DESC)
    {NULL, NULL}
 };
 

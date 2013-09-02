@@ -30,13 +30,15 @@ EAPI Eo_Op ELM_OBJ_FILESELECTOR_BASE_ID = EO_NOOP;
 static Elm_Genlist_Item_Class *list_itc[ELM_FILE_LAST];
 static Elm_Gengrid_Item_Class *grid_itc[ELM_FILE_LAST];
 
-static const char SIG_DIRECTORY_OPEN[] = "directory,open";
-static const char SIG_DONE[] = "done";
-static const char SIG_SELECTED[] = "selected";
+#define ELM_PRIV_FILESELECTOR_SIGNALS(cmd) \
+   cmd(SIG_DIRECTORY_OPEN, "directory,open", "s") \
+   cmd(SIG_DONE, "done", "s") \
+   cmd(SIG_SELECTED, "selected", "s")
+
+ELM_PRIV_FILESELECTOR_SIGNALS(ELM_PRIV_STATIC_VARIABLE_DECLARE);
+
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
-   {SIG_DIRECTORY_OPEN, "s"},
-   {SIG_DONE, "s"},
-   {SIG_SELECTED, "s"},
+   ELM_PRIV_FILESELECTOR_SIGNALS(ELM_PRIV_SMART_CALLBACKS_DESC)
    {NULL, NULL}
 };
 

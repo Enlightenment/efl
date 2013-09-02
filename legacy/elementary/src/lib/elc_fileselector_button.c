@@ -14,12 +14,14 @@ EAPI Eo_Op ELM_OBJ_FILESELECTOR_BUTTON_BASE_ID = EO_NOOP;
 
 #define DEFAULT_WINDOW_TITLE "Select a file"
 
-static const char SIG_FILE_CHOSEN[] = "file,chosen";
-static const char SIG_LANG_CHANGED[] = "language,changed";
+#define ELM_PRIV_FILESELECTOR_BUTTON_SIGNALS(cmd) \
+   cmd(SIG_FILE_CHOSEN, "file,chosen", "s") \
+   cmd(SIG_LANG_CHANGED, "language,changed", "")
+
+ELM_PRIV_FILESELECTOR_BUTTON_SIGNALS(ELM_PRIV_STATIC_VARIABLE_DECLARE);
 
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
-   {SIG_FILE_CHOSEN, "s"},
-   {SIG_LANG_CHANGED, ""},
+   ELM_PRIV_FILESELECTOR_BUTTON_SIGNALS(ELM_PRIV_SMART_CALLBACKS_DESC)
    {"focused", ""}, /**< handled by elm_widget */
    {"unfocused", ""}, /**< handled by elm_widget */
    {NULL, NULL}
