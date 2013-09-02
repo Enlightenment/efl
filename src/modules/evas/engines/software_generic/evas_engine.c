@@ -962,7 +962,7 @@ eng_image_mmap(void *data EINA_UNUSED, Eina_File *f, const char *key, int *error
    *error = EVAS_LOAD_ERROR_NONE;
 #ifdef EVAS_CSERVE2
    // FIXME: Need to pass fd to make that useful, so just get the filename for now.
-   if (evas_cserve2_use_get())
+   if (evas_cserve2_use_get() && !eina_file_virtual(f))
      {
         Image_Entry *ie;
         ie = evas_cache2_image_open(evas_common_image_cache2_get(),
@@ -1006,7 +1006,7 @@ static void
 eng_image_free(void *data EINA_UNUSED, void *image)
 {
 #ifdef EVAS_CSERVE2
-   if (evas_cserve2_use_get())
+   if (evas_cserve2_use_get() && evas_cache2_image_cached(image))
      {
         evas_cache2_image_close(image);
         return;
@@ -1031,7 +1031,7 @@ eng_image_size_set(void *data EINA_UNUSED, void *image, int w, int h)
    Image_Entry *im = image;
    if (!im) return NULL;
 #ifdef EVAS_CSERVE2
-   if (evas_cserve2_use_get())
+   if (evas_cserve2_use_get() && evas_cache2_image_cached(im))
      return evas_cache2_image_size_set(im, w, h);
 #endif
    return evas_cache_image_size_set(im, w, h);
@@ -1043,7 +1043,7 @@ eng_image_dirty_region(void *data EINA_UNUSED, void *image, int x, int y, int w,
    Image_Entry *im = image;
    if (!im) return NULL;
 #ifdef EVAS_CSERVE2
-   if (evas_cserve2_use_get())
+   if (evas_cserve2_use_get() && evas_cache2_image_cached(im))
      return evas_cache2_image_dirty(im, x, y, w, h);
 #endif
    return evas_cache_image_dirty(im, x, y, w, h);
@@ -1063,7 +1063,7 @@ eng_image_data_get(void *data EINA_UNUSED, void *image, int to_write, DATA32 **i
    im = image;
 
 #ifdef EVAS_CSERVE2
-   if (evas_cserve2_use_get())
+   if (evas_cserve2_use_get() && evas_cache2_image_cached(&im->cache_entry))
      {
         error = evas_cache2_image_load_data(&im->cache_entry);
         if (err) *err = error;
@@ -1157,7 +1157,7 @@ eng_image_data_preload_request(void *data EINA_UNUSED, void *image, const Eo *ta
    if (!im) return;
 
 #ifdef EVAS_CSERVE2
-   if (evas_cserve2_use_get())
+   if (evas_cserve2_use_get() && evas_cache2_image_cached(&im->cache_entry))
      {
         evas_cache2_image_preload_data(&im->cache_entry, target);
         return;
@@ -1171,7 +1171,7 @@ eng_image_data_preload_cancel(void *data EINA_UNUSED, void *image, const Eo *tar
 {
    RGBA_Image *im = image;
 #ifdef EVAS_CSERVE2
-   if (evas_cserve2_use_get())
+   if (evas_cserve2_use_get() && evas_cache2_image_cached(&im->cache_entry))
      return;
 #endif
 

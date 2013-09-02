@@ -76,6 +76,7 @@ EAPI Image_Entry * evas_cache2_image_size_set(Image_Entry *im, unsigned int w, u
 EAPI Image_Entry * evas_cache2_image_dirty(Image_Entry *im, unsigned int x, unsigned int y, unsigned int w, unsigned int h);
 EAPI Image_Entry * evas_cache2_image_empty(Evas_Cache2 *cache);
 EAPI void evas_cache2_image_surface_alloc(Image_Entry *ie, int w, int h);
+EAPI Eina_Bool evas_cache2_image_cached(Image_Entry *ie);
 
 EAPI int evas_cache2_flush(Evas_Cache2 *cache);
 EAPI void evas_cache2_limit_set(Evas_Cache2 *cache, int limit);

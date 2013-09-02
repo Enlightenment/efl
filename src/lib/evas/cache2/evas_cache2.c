@@ -549,6 +549,13 @@ evas_cache2_shutdown(Evas_Cache2 *cache)
    free(cache);
 }
 
+EAPI Eina_Bool
+evas_cache2_image_cached(Image_Entry *ie)
+{
+   if (!ie) return EINA_FALSE;
+   return (ie->cache2 != NULL);
+}
+
 EAPI void
 evas_cache2_image_cache_key_create(char *hkey, const char *path, size_t pathlen,
                                    const char *key, size_t keylen,
