@@ -197,12 +197,12 @@ _list_del(Elm_Popup_Smart_Data *sd)
 static void
 _items_remove(Elm_Popup_Smart_Data *sd)
 {
-   Elm_Popup_Item *item;
+   Elm_Popup_Item *it;
 
    if (!sd->items) return;
 
-   EINA_LIST_FREE(sd->items, item)
-     elm_widget_item_del(item);
+   EINA_LIST_FREE(sd->items, it)
+     elm_widget_item_del(it);
 
    sd->items = NULL;
 }
@@ -259,14 +259,14 @@ _mirrored_set(Evas_Object *obj,
               Eina_Bool rtl)
 {
    Eina_List *elist;
-   Elm_Popup_Item *item;
+   Elm_Popup_Item *it;
 
    ELM_POPUP_DATA_GET(obj, sd);
 
    elm_object_mirrored_set(sd->notify, rtl);
    if (sd->items)
-     EINA_LIST_FOREACH(sd->items, elist, item)
-       edje_object_mirrored_set(VIEW(item), rtl);
+     EINA_LIST_FOREACH(sd->items, elist, it)
+       edje_object_mirrored_set(VIEW(it), rtl);
 }
 
 static void
@@ -318,7 +318,7 @@ _access_obj_process(Eo *obj, Eina_Bool is_access)
 static void
 _elm_popup_smart_theme(Eo *obj, void *_pd, va_list *list)
 {
-   Elm_Popup_Item *item;
+   Elm_Popup_Item *it;
    unsigned int i = 0;
    Eina_List *elist;
    char buf[128];
@@ -361,25 +361,25 @@ _elm_popup_smart_theme(Eo *obj, void *_pd, va_list *list)
      }
    else if (sd->items)
      {
-        EINA_LIST_FOREACH(sd->items, elist, item)
+        EINA_LIST_FOREACH(sd->items, elist, it)
           {
              elm_widget_theme_object_set
-               (obj, VIEW(item), "popup", "item", elm_widget_style_get(obj));
-             if (item->label)
+               (obj, VIEW(it), "popup", "item", elm_widget_style_get(obj));
+             if (it->label)
                {
                   edje_object_part_text_escaped_set
-                    (VIEW(item), "elm.text", item->label);
+                    (VIEW(it), "elm.text", it->label);
                   edje_object_signal_emit
-                    (VIEW(item), "elm,state,item,text,visible", "elm");
+                    (VIEW(it), "elm,state,item,text,visible", "elm");
                }
-             if (item->icon)
+             if (it->icon)
                edje_object_signal_emit
-                 (VIEW(item), "elm,state,item,icon,visible", "elm");
-             if (item->disabled)
+                 (VIEW(it), "elm,state,item,icon,visible", "elm");
+             if (it->disabled)
                edje_object_signal_emit
-                 (VIEW(item), "elm,state,item,disabled", "elm");
-             evas_object_show(VIEW(item));
-             edje_object_message_signal_process(VIEW(item));
+                 (VIEW(it), "elm,state,item,disabled", "elm");
+             evas_object_show(VIEW(it));
+             edje_object_message_signal_process(VIEW(it));
           }
         _scroller_size_calc(obj);
      }
@@ -402,21 +402,21 @@ _elm_popup_smart_theme(Eo *obj, void *_pd, va_list *list)
 }
 
 static void
-_item_sizing_eval(Elm_Popup_Item *item)
+_item_sizing_eval(Elm_Popup_Item *it)
 {
    Evas_Coord min_w = -1, min_h = -1, max_w = -1, max_h = -1;
 
    edje_object_size_min_restricted_calc
-     (VIEW(item), &min_w, &min_h, min_w, min_h);
-   evas_object_size_hint_min_set(VIEW(item), min_w, min_h);
-   evas_object_size_hint_max_set(VIEW(item), max_w, max_h);
+     (VIEW(it), &min_w, &min_h, min_w, min_h);
+   evas_object_size_hint_min_set(VIEW(it), min_w, min_h);
+   evas_object_size_hint_max_set(VIEW(it), max_w, max_h);
 }
 
 static void
 _elm_popup_smart_sizing_eval(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Eina_List *elist;
-   Elm_Popup_Item *item;
+   Elm_Popup_Item *it;
    Evas_Coord h_box = 0, minh_box = 0;
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
 
@@ -425,10 +425,10 @@ _elm_popup_smart_sizing_eval(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    if (sd->items)
      {
-        EINA_LIST_FOREACH(sd->items, elist, item)
+        EINA_LIST_FOREACH(sd->items, elist, it)
           {
-             _item_sizing_eval(item);
-             evas_object_size_hint_min_get(VIEW(item), NULL, &minh_box);
+             _item_sizing_eval(it);
+             evas_object_size_hint_min_get(VIEW(it), NULL, &minh_box);
              if (minh_box != -1) h_box += minh_box;
           }
         evas_object_size_hint_min_set(sd->spacer, 0, MIN(h_box, sd->max_sc_h));
@@ -447,7 +447,7 @@ _elm_popup_smart_sizing_eval(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 static void
 _elm_popup_smart_sub_object_del(Eo *obj, void *_pd, va_list *list)
 {
-   Elm_Popup_Item *item;
+   Elm_Popup_Item *it;
 
    Evas_Object *sobj = va_arg(*list, Evas_Object *);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
@@ -466,15 +466,15 @@ _elm_popup_smart_sub_object_del(Eo *obj, void *_pd, va_list *list)
         edje_object_message_signal_process(wd->resize_obj);
         sd->title_icon = NULL;
      }
-   else if ((item =
+   else if ((it =
                evas_object_data_get(sobj, "_popup_icon_parent_item")) != NULL)
      {
-        if (sobj == item->icon)
+        if (sobj == it->icon)
           {
-             edje_object_part_unswallow(VIEW(item), sobj);
+             edje_object_part_unswallow(VIEW(it), sobj);
              edje_object_signal_emit
-               (VIEW(item), "elm,state,item,icon,hidden", "elm");
-             item->icon = NULL;
+               (VIEW(it), "elm,state,item,icon,hidden", "elm");
+             it->icon = NULL;
           }
      }
 
@@ -660,179 +660,179 @@ _item_select_cb(void *data,
                 const char *emission __UNUSED__,
                 const char *source __UNUSED__)
 {
-   Elm_Popup_Item *item = data;
+   Elm_Popup_Item *it = data;
 
-   if (!item || item->disabled) return;
-   if (item->func)
-     item->func((void *)item->base.data, WIDGET(item), data);
+   if (!it || it->disabled) return;
+   if (it->func)
+     it->func((void *)it->base.data, WIDGET(it), data);
 }
 
 static void
-_item_text_set(Elm_Popup_Item *item,
+_item_text_set(Elm_Popup_Item *it,
                const char *label)
 {
-   if (!eina_stringshare_replace(&item->label, label)) return;
+   if (!eina_stringshare_replace(&it->label, label)) return;
 
-   edje_object_part_text_escaped_set(VIEW(item), "elm.text", label);
+   edje_object_part_text_escaped_set(VIEW(it), "elm.text", label);
 
-   if (item->label)
+   if (it->label)
      edje_object_signal_emit
-       (VIEW(item), "elm,state,item,text,visible", "elm");
+       (VIEW(it), "elm,state,item,text,visible", "elm");
    else
      edje_object_signal_emit
-       (VIEW(item), "elm,state,item,text,hidden", "elm");
+       (VIEW(it), "elm,state,item,text,hidden", "elm");
 
-   edje_object_message_signal_process(VIEW(item));
+   edje_object_message_signal_process(VIEW(it));
 }
 
 static void
-_item_text_set_hook(Elm_Object_Item *it,
+_item_text_set_hook(Elm_Object_Item *item,
                     const char *part,
                     const char *label)
 {
-   Elm_Popup_Item *item = (Elm_Popup_Item *)it;
+   Elm_Popup_Item *it = (Elm_Popup_Item *)item;
 
    ELM_POPUP_ITEM_CHECK_OR_RETURN(it);
 
    if ((!part) || (!strcmp(part, "default")))
      {
-        _item_text_set(item, label);
+        _item_text_set(it, label);
         return;
      }
 
-   WRN("The part name is invalid! : popup=%p", WIDGET(item));
+   WRN("The part name is invalid! : popup=%p", WIDGET(it));
 }
 
 static const char *
-_item_text_get_hook(const Elm_Object_Item *it,
+_item_text_get_hook(const Elm_Object_Item *item,
                     const char *part)
 {
-   Elm_Popup_Item *item = (Elm_Popup_Item *)it;
+   Elm_Popup_Item *it = (Elm_Popup_Item *)item;
 
    ELM_POPUP_ITEM_CHECK_OR_RETURN(it, NULL);
 
    if ((!part) || (!strcmp(part, "default")))
-     return item->label;
+     return it->label;
 
-   WRN("The part name is invalid! : popup=%p", WIDGET(item));
+   WRN("The part name is invalid! : popup=%p", WIDGET(it));
 
    return NULL;
 }
 
 static void
-_item_icon_set(Elm_Popup_Item *item,
+_item_icon_set(Elm_Popup_Item *it,
                Evas_Object *icon)
 {
-   if (item->icon == icon) return;
+   if (it->icon == icon) return;
 
-   if (item->icon)
-     evas_object_del(item->icon);
+   if (it->icon)
+     evas_object_del(it->icon);
 
-   item->icon = icon;
-   if (item->icon)
+   it->icon = icon;
+   if (it->icon)
      {
-        elm_widget_sub_object_add(WIDGET(item), item->icon);
-        evas_object_data_set(item->icon, "_popup_icon_parent_item", item);
+        elm_widget_sub_object_add(WIDGET(it), it->icon);
+        evas_object_data_set(it->icon, "_popup_icon_parent_item", it);
         edje_object_part_swallow
-          (VIEW(item), CONTENT_PART, item->icon);
+          (VIEW(it), CONTENT_PART, it->icon);
         edje_object_signal_emit
-          (VIEW(item), "elm,state,item,icon,visible", "elm");
+          (VIEW(it), "elm,state,item,icon,visible", "elm");
      }
    else
-     edje_object_signal_emit(VIEW(item), "elm,state,item,icon,hidden", "elm");
+     edje_object_signal_emit(VIEW(it), "elm,state,item,icon,hidden", "elm");
 
-   edje_object_message_signal_process(item->base.view);
+   edje_object_message_signal_process(it->base.view);
 }
 
 static void
-_item_content_set_hook(Elm_Object_Item *it,
+_item_content_set_hook(Elm_Object_Item *item,
                        const char *part,
                        Evas_Object *content)
 {
-   Elm_Popup_Item *item = (Elm_Popup_Item *)it;
+   Elm_Popup_Item *it = (Elm_Popup_Item *)item;
 
    ELM_POPUP_ITEM_CHECK_OR_RETURN(it);
 
    if ((!(part)) || (!strcmp(part, "default")))
-     _item_icon_set(item, content);
+     _item_icon_set(it, content);
    else
-     WRN("The part name is invalid! : popup=%p", WIDGET(item));
+     WRN("The part name is invalid! : popup=%p", WIDGET(it));
 }
 
 static Evas_Object *
-_item_content_get_hook(const Elm_Object_Item *it,
+_item_content_get_hook(const Elm_Object_Item *item,
                        const char *part)
 {
-   Elm_Popup_Item *item = (Elm_Popup_Item *)it;
+   Elm_Popup_Item *it = (Elm_Popup_Item *)item;
 
    ELM_POPUP_ITEM_CHECK_OR_RETURN(it, NULL);
 
    if ((!(part)) || (!strcmp(part, "default")))
-     return item->icon;
+     return it->icon;
 
-   WRN("The part name is invalid! : popup=%p", WIDGET(item));
+   WRN("The part name is invalid! : popup=%p", WIDGET(it));
 
    return NULL;
 }
 
 static Evas_Object *
-_item_icon_unset(Elm_Popup_Item *item)
+_item_icon_unset(Elm_Popup_Item *it)
 {
-   Evas_Object *icon = item->icon;
+   Evas_Object *icon = it->icon;
 
-   if (!item->icon) return NULL;
-   elm_widget_sub_object_del(WIDGET(item), icon);
+   if (!it->icon) return NULL;
+   elm_widget_sub_object_del(WIDGET(it), icon);
    evas_object_data_del(icon, "_popup_icon_parent_item");
-   edje_object_part_unswallow(item->base.view, icon);
-   edje_object_signal_emit(VIEW(item), "elm,state,item,icon,hidden", "elm");
-   item->icon = NULL;
+   edje_object_part_unswallow(it->base.view, icon);
+   edje_object_signal_emit(VIEW(it), "elm,state,item,icon,hidden", "elm");
+   it->icon = NULL;
 
    return icon;
 }
 
 static Evas_Object *
-_item_content_unset_hook(const Elm_Object_Item *it,
+_item_content_unset_hook(const Elm_Object_Item *item,
                          const char *part)
 {
    Evas_Object *content = NULL;
-   Elm_Popup_Item *item = (Elm_Popup_Item *)it;
+   Elm_Popup_Item *it = (Elm_Popup_Item *)item;
 
    ELM_POPUP_ITEM_CHECK_OR_RETURN(it, NULL);
 
    if ((!(part)) || (!strcmp(part, "default")))
-     content = _item_icon_unset(item);
+     content = _item_icon_unset(it);
    else
-     WRN("The part name is invalid! : popup=%p", WIDGET(item));
+     WRN("The part name is invalid! : popup=%p", WIDGET(it));
 
    return content;
 }
 
 static void
-_item_disable_hook(Elm_Object_Item *it)
+_item_disable_hook(Elm_Object_Item *item)
 {
-   Elm_Popup_Item *item = (Elm_Popup_Item *)it;
+   Elm_Popup_Item *it = (Elm_Popup_Item *)item;
 
    ELM_POPUP_ITEM_CHECK_OR_RETURN(it);
 
    if (elm_widget_item_disabled_get(it))
-     edje_object_signal_emit(VIEW(item), "elm,state,item,disabled", "elm");
+     edje_object_signal_emit(VIEW(it), "elm,state,item,disabled", "elm");
    else
-     edje_object_signal_emit(VIEW(item), "elm,state,item,enabled", "elm");
+     edje_object_signal_emit(VIEW(it), "elm,state,item,enabled", "elm");
 }
 
 static void
-_item_del_pre_hook(Elm_Object_Item *it)
+_item_del_pre_hook(Elm_Object_Item *item)
 {
-   Elm_Popup_Item *item = (Elm_Popup_Item *)it;
+   Elm_Popup_Item *it = (Elm_Popup_Item *)item;
 
    ELM_POPUP_ITEM_CHECK_OR_RETURN(it);
-   ELM_POPUP_DATA_GET(WIDGET(item), sd);
+   ELM_POPUP_DATA_GET(WIDGET(it), sd);
 
-   if (item->icon)
-     evas_object_del(item->icon);
+   if (it->icon)
+     evas_object_del(it->icon);
 
-   eina_stringshare_del(item->label);
-   sd->items = eina_list_remove(sd->items, item);
+   eina_stringshare_del(it->label);
+   sd->items = eina_list_remove(sd->items, it);
    if (!eina_list_count(sd->items))
      {
         sd->items = NULL;
@@ -849,26 +849,26 @@ _item_signal_emit_hook(Elm_Object_Item *it,
 }
 
 static void
-_item_new(Elm_Popup_Item *item)
+_item_new(Elm_Popup_Item *it)
 {
-   elm_widget_item_text_set_hook_set(item, _item_text_set_hook);
-   elm_widget_item_text_get_hook_set(item, _item_text_get_hook);
-   elm_widget_item_content_set_hook_set(item, _item_content_set_hook);
-   elm_widget_item_content_get_hook_set(item, _item_content_get_hook);
-   elm_widget_item_content_unset_hook_set(item, _item_content_unset_hook);
-   elm_widget_item_disable_hook_set(item, _item_disable_hook);
-   elm_widget_item_del_pre_hook_set(item, _item_del_pre_hook);
-   elm_widget_item_signal_emit_hook_set(item, _item_signal_emit_hook);
-   VIEW(item) = edje_object_add
-       (evas_object_evas_get(WIDGET(item)));
-   elm_widget_theme_object_set(WIDGET(item), VIEW(item), "popup", "item",
-                               elm_widget_style_get(WIDGET(item)));
-   edje_object_mirrored_set(VIEW(item), elm_widget_mirrored_get(WIDGET(item)));
+   elm_widget_item_text_set_hook_set(it, _item_text_set_hook);
+   elm_widget_item_text_get_hook_set(it, _item_text_get_hook);
+   elm_widget_item_content_set_hook_set(it, _item_content_set_hook);
+   elm_widget_item_content_get_hook_set(it, _item_content_get_hook);
+   elm_widget_item_content_unset_hook_set(it, _item_content_unset_hook);
+   elm_widget_item_disable_hook_set(it, _item_disable_hook);
+   elm_widget_item_del_pre_hook_set(it, _item_del_pre_hook);
+   elm_widget_item_signal_emit_hook_set(it, _item_signal_emit_hook);
+   VIEW(it) = edje_object_add
+       (evas_object_evas_get(WIDGET(it)));
+   elm_widget_theme_object_set(WIDGET(it), VIEW(it), "popup", "item",
+                               elm_widget_style_get(WIDGET(it)));
+   edje_object_mirrored_set(VIEW(it), elm_widget_mirrored_get(WIDGET(it)));
    edje_object_signal_callback_add
-     (VIEW(item), "elm,action,click", "", _item_select_cb, item);
+     (VIEW(it), "elm,action,click", "", _item_select_cb, it);
    evas_object_size_hint_align_set
-     (VIEW(item), EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_show(VIEW(item));
+     (VIEW(it), EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_show(VIEW(it));
 }
 
 static Eina_Bool
@@ -1841,12 +1841,12 @@ _item_append(Eo *obj, void *_pd, va_list *list)
    if (ret) *ret = NULL;
 
    Evas_Object *prev_content;
-   Elm_Popup_Item *item;
+   Elm_Popup_Item *it;
 
    Elm_Popup_Smart_Data *sd = _pd;
 
-   item = elm_widget_item_new(obj, Elm_Popup_Item);
-   if (!item) return;
+   it = elm_widget_item_new(obj, Elm_Popup_Item);
+   if (!it) return;
    if (sd->content || sd->text_content_obj)
      {
         prev_content = elm_layout_content_get
@@ -1859,20 +1859,20 @@ _item_append(Eo *obj, void *_pd, va_list *list)
    if (!sd->items)
      _list_add(obj);
 
-   item->func = func;
-   item->base.data = data;
+   it->func = func;
+   it->base.data = data;
 
-   _item_new(item);
-   _item_icon_set(item, icon);
-   _item_text_set(item, label);
+   _item_new(it);
+   _item_icon_set(it, icon);
+   _item_text_set(it, label);
 
-   elm_box_pack_end(sd->box, VIEW(item));
-   sd->items = eina_list_append(sd->items, item);
+   elm_box_pack_end(sd->box, VIEW(it));
+   sd->items = eina_list_append(sd->items, it);
 
    _scroller_size_calc(obj);
    elm_layout_sizing_eval(obj);
 
-   if (ret) *ret = (Elm_Object_Item *)item;
+   if (ret) *ret = (Elm_Object_Item *)it;
 }
 
 static void
