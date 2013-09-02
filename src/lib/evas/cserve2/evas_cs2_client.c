@@ -2201,6 +2201,8 @@ _shared_index_remap_check(Shared_Index *si, int elemsize)
              eina_file_map_free(si->f, si->data);
              eina_file_close(si->f);
              eina_hash_free(si->entries_by_hkey);
+             si->f = NULL;
+             si->data = NULL;
              memset(si, 0, sizeof(*si));
           }
         return EINA_FALSE;
