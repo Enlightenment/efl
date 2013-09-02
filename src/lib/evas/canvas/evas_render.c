@@ -2250,7 +2250,7 @@ _canvas_render_dump(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
    Evas_Public_Data *e = _pd;
    Evas_Layer *lay;
 
-   evas_render_rendering_wait(e);
+   evas_render_sync();
    evas_cache_async_freeze();
 
    EINA_INLIST_FOREACH(e->layers, lay)
