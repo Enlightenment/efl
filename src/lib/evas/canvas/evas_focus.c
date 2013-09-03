@@ -10,14 +10,13 @@
 EAPI void
 evas_object_focus_set(Evas_Object *eo_obj, Eina_Bool focus)
 {
-   eo_do(eo_obj, evas_obj_focus_set(focus, NULL));
+   eo_do(eo_obj, evas_obj_focus_set(focus));
 }
 
 void
 _focus_set(Eo *eo_obj, void *_pd, va_list *list)
 {
    Eina_Bool focus = va_arg(*list, int);
-   Eina_Bool *r = va_arg(*list, Eina_Bool *);
 
    int event_id = 0;
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
@@ -25,21 +24,17 @@ _focus_set(Eo *eo_obj, void *_pd, va_list *list)
    MAGIC_CHECK_END();
    Evas_Object_Protected_Data *obj = _pd;
 
-   if (r) *r = EINA_FALSE;
-
    _evas_object_event_new();
 
    event_id = _evas_event_counter;
-   if (obj->focused == focus) goto success_end;
+   if (obj->focused == focus) goto end;
    if (evas_object_intercept_call_focus_set(eo_obj, obj, focus)) goto end;
    if (focus)
      {
-        Eina_Bool success = EINA_TRUE;
-
         if (obj->layer->evas->focused)
-          eo_do(obj->layer->evas->focused,
-                evas_obj_focus_set(0, &success));
-        if (!success) goto end;
+	  eo_do(obj->layer->evas->focused, evas_obj_focus_set(0));
+	
+        if (obj->layer->evas->focused) goto end;
         obj->focused = 1;
         obj->layer->evas->focused = eo_obj;
         evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_FOCUS_IN, NULL, event_id);
@@ -54,9 +49,6 @@ _focus_set(Eo *eo_obj, void *_pd, va_list *list)
         evas_event_callback_call(obj->layer->evas->evas,
                                  EVAS_CALLBACK_CANVAS_OBJECT_FOCUS_OUT, eo_obj);
      }
-
- success_end:
-   if (r) *r = EINA_TRUE;
 
  end:
    _evas_post_event_callback_call(obj->layer->evas->evas, obj->layer->evas);
