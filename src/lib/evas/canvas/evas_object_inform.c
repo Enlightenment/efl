@@ -66,6 +66,8 @@ void
 evas_object_inform_call_image_preloaded(Evas_Object *eo_obj)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   EINA_SAFETY_ON_NULL_RETURN(obj);
+
    if (!_evas_object_image_preloading_get(eo_obj)) return;
    _evas_object_image_preloading_check(eo_obj);
    _evas_object_image_preloading_set(eo_obj, 0);
