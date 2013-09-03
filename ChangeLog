@@ -1,3 +1,8 @@
+2013-09-03  Tom Hacohen
+
+	* Evas textblock: fixed an issue with markup_get and markup_to_utf8
+	behaving differently (markup_get was misbehaving).
+
 2013-09-02  Shinwoo Kim
 
         * Ecore_Input_Evas: Check the state of last mouse event more properly.

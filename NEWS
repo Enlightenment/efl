@@ -333,6 +333,7 @@ Fixes:
      - Fix a long-standing off-by-1 in the C "simd" multiplier.
      - Skip the map rendering if all points are transparent.
      - Evas bidi: Fixed a bug causing BiDi not to work in some cases.
+     - Evas textblock: fixed an issue with markup_get and markup_to_utf8 behaving differently (markup_get was misbehaving).
     * Ecore:
      - Don't leak fd on exec.
      - Fix fd handler increase issue when ecore_pipe_add/del is called repeatedly.

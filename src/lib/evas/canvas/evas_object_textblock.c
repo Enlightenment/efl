@@ -6129,6 +6129,43 @@ _markup_get_format_append(Eina_Strbuf *txt, Evas_Object_Textblock_Node_Format *f
 
 /**
  * @internal
+ * An helper function to _markup_get_text_append and others, used for getting
+ * back only the "dangerous" escapes.
+ */
+static void
+_markup_get_text_utf8_append(Eina_Strbuf *sbuf, const char *text)
+{
+   int ch, pos = 0, pos2 = 0;
+
+   for (;;)
+     {
+        pos = pos2;
+        pos2 = evas_string_char_next_get(text, pos2, &ch);
+        if ((ch <= 0) || (pos2 <= 0)) break;
+
+        if (ch == _NEWLINE)
+           eina_strbuf_append(sbuf, "<br/>");
+        else if (ch == _TAB)
+           eina_strbuf_append(sbuf, "<tab/>");
+        else if (ch == '<')
+           eina_strbuf_append(sbuf, "&lt;");
+        else if (ch == '>')
+           eina_strbuf_append(sbuf, "&gt;");
+        else if (ch == '&')
+           eina_strbuf_append(sbuf, "&amp;");
+        else if (ch == _PARAGRAPH_SEPARATOR)
+           eina_strbuf_append(sbuf, "<ps/>");
+        else if (ch == _REPLACEMENT_CHAR)
+           eina_strbuf_append(sbuf, "&#xfffc;");
+        else if (ch != '\r')
+          {
+             eina_strbuf_append_length(sbuf, text + pos, pos2 - pos);
+          }
+     }
+}
+
+/**
+ * @internal
  * An helper function to markup get. Appends the text in text.
  *
  * @param txt the strbuf to append to.
@@ -6137,25 +6174,10 @@ _markup_get_format_append(Eina_Strbuf *txt, Evas_Object_Textblock_Node_Format *f
 static void
 _markup_get_text_append(Eina_Strbuf *txt, const Eina_Unicode *text)
 {
-   char *p = eina_unicode_unicode_to_utf8(text, NULL);
-   char *base = p;
-   while (*p)
-     {
-        const char *escape;
-        int adv;
+   char *base = eina_unicode_unicode_to_utf8(text, NULL);
 
-        escape = _escaped_char_match(p, &adv);
-        if (escape)
-          {
-             p += adv;
-             eina_strbuf_append(txt, escape);
-          }
-        else
-          {
-             eina_strbuf_append_char(txt, *p);
-             p++;
-          }
-     }
+   _markup_get_text_utf8_append(txt, base);
+
    free(base);
 }
 EAPI const char *
@@ -6377,7 +6399,6 @@ evas_textblock_text_utf8_to_markup(const Evas_Object *eo_obj, const char *text)
 {
    Eina_Strbuf *sbuf;
    char *str = NULL;
-   int ch, pos = 0, pos2 = 0;
 
    (void) eo_obj;
 
@@ -6385,31 +6406,8 @@ evas_textblock_text_utf8_to_markup(const Evas_Object *eo_obj, const char *text)
 
    sbuf = eina_strbuf_new();
 
-   for (;;)
-     {
-        pos = pos2;
-        pos2 = evas_string_char_next_get(text, pos2, &ch);
-        if ((ch <= 0) || (pos2 <= 0)) break;
+   _markup_get_text_utf8_append(sbuf, text);
 
-        if (ch == _NEWLINE)
-           eina_strbuf_append(sbuf, "<br/>");
-        else if (ch == _TAB)
-           eina_strbuf_append(sbuf, "<tab/>");
-        else if (ch == '<')
-           eina_strbuf_append(sbuf, "&lt;");
-        else if (ch == '>')
-           eina_strbuf_append(sbuf, "&gt;");
-        else if (ch == '&')
-           eina_strbuf_append(sbuf, "&amp;");
-        else if (ch == _PARAGRAPH_SEPARATOR)
-           eina_strbuf_append(sbuf, "<ps/>");
-        else if (ch == _REPLACEMENT_CHAR)
-           eina_strbuf_append(sbuf, "&#xfffc;");
-        else if (ch != '\r')
-          {
-             eina_strbuf_append_length(sbuf, text + pos, pos2 - pos);
-          }
-     }
    str = eina_strbuf_string_steal(sbuf);
    eina_strbuf_free(sbuf);
    return str;
