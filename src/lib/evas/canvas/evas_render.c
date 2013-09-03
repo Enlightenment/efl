@@ -1,6 +1,7 @@
 #include "evas_common_private.h"
 #include "evas_private.h"
 #include <math.h>
+#include <assert.h>
 #ifdef EVAS_CSERVE2
 #include "evas_cs2_private.h"
 #endif
@@ -89,6 +90,8 @@ struct _Render_Updates
 
 static Eina_Bool
 evas_render_updates_internal(Evas *eo_e, unsigned char make_updates, unsigned char do_draw, Evas_Render_Done_Cb done_func, void *done_data, Eina_Bool do_async);
+
+static Eina_List *_rendering_evases = NULL;
 
 #ifdef EVAS_RENDER_DEBUG_TIMING
 static double
@@ -1472,19 +1475,20 @@ evas_render_rendering_wait(Evas_Public_Data *evas)
    while (evas->rendering) evas_async_events_process_blocking();
 }
 
-/* syncs ALL async rendering canvases */
+/*
+ * Syncs ALL async rendering canvases. Must be called in the main thread.
+ */
 void
 evas_render_sync(void)
 {
-   Eina_List *l;
-   void *d;
+   Evas_Public_Data *evas;
 
-   EINA_LIST_FOREACH(all_evases, l, d)
-     {
-        Evas_Public_Data *e = d;
-        if (!e->rendering) continue;
-        evas_render_rendering_wait(e);
-     }
+   if (!_rendering_evases) return;
+
+   evas = eina_list_data_get(eina_list_last(_rendering_evases));
+   evas_render_rendering_wait(evas);
+
+   assert(_rendering_evases == NULL);
 }
 
 static Eina_Bool
@@ -1837,6 +1841,7 @@ evas_render_updates_internal(Evas *eo_e,
           {
              eo_ref(eo_e);
              e->rendering = EINA_TRUE;
+             _rendering_evases = eina_list_append(_rendering_evases, e);
 
              evas_thread_queue_flush((Evas_Thread_Command_Cb)done_func, done_data);
           }
@@ -2034,6 +2039,7 @@ evas_render_wakeup(Evas *eo_e)
    eina_array_clean(&e->texts_unref_queue);
 
    /* post rendering */
+   _rendering_evases = eina_list_remove(_rendering_evases, e);
    e->rendering = EINA_FALSE;
 
    post.updated_area = ret_updates;

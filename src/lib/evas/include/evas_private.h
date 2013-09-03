@@ -443,8 +443,6 @@ struct _Evas_Public_Data
    Eina_Bool      rendering : 1;
 };
 
-extern Eina_List *all_evases;
-
 struct _Evas_Layer
 {
    EINA_INLIST;
