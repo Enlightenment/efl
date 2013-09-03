@@ -285,6 +285,8 @@ eina_file_flush(Eina_File *file, unsigned long int length)
    Eina_List *dead_map = NULL;
    Eina_List *l;
 
+   eina_lock_take(&file->lock);
+
    // File size changed
    if (file->global_map != MAP_FAILED)
      {
@@ -325,6 +327,8 @@ eina_file_flush(Eina_File *file, unsigned long int length)
      }
 
    file->dead_map = eina_list_merge(file->dead_map, dead_map);
+
+   eina_lock_release(&file->lock);
 }
 
 // Private to this file API
