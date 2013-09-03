@@ -940,7 +940,7 @@ evas_cserve2_image_load_wait(Image_Entry *ie)
    fd = _shared_image_entry_file_data_find(ie);
    if (fd && fd->valid)
      {
-        INF("Bypassing socket wait (open_rid %d)", ie->open_rid);
+        DBG("Bypassing socket wait (open_rid %d)", ie->open_rid);
         ie->w = fd->w;
         ie->h = fd->h;
         ie->flags.alpha = fd->alpha;
@@ -1003,7 +1003,7 @@ evas_cserve2_image_load_data_wait(Image_Entry *ie)
 
         shmpath = _shared_string_get(idata->shm_id);
         if (!shmpath) goto load_wait;
-        INF("Bypassing image load socket wait. Image found: %d in %s",
+        DBG("Bypassing image load socket wait. Image found: %d in %s",
             idata->id, shmpath);
 
         dentry->shm.mmap_offset = 0;
@@ -1286,7 +1286,7 @@ evas_cserve2_font_load_wait(Font_Entry *fe)
    fd = _shared_font_entry_data_find(fe);
    if (fd)
      {
-        INF("Bypassing socket wait (rid %d)", fe->rid);
+        DBG("Bypassing socket wait (rid %d)", fe->rid);
         fe->failed = EINA_FALSE;
         fe->rid = 0;
         return CSERVE2_NONE;
