@@ -1234,7 +1234,7 @@ enum
  * @def elm_obj_win_wl_window_get
  * @since 1.8
  *
- * Get the Ecore_Wl_Window of and Evas_Object
+ * Get the Ecore_Wl_Window of an Evas_Object
  *
  * @param[out] ret
  *
