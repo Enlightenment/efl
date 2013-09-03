@@ -1099,8 +1099,7 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
      }
 
    // set render_pre - for child objs that may not have gotten it.
-   //obj->pre_render_done = EINA_TRUE;
-
+   obj->pre_render_done = EINA_TRUE;
    RD("          Hasmap: %p (%d) %p %d -> %d\n",obj->func->can_map,
       obj->func->can_map ? obj->func->can_map(eo_obj): -1,
       obj->map->cur.map, obj->map->cur.usemap,
