@@ -26,6 +26,8 @@ typedef void (*Op_Callback)(void *data, const void *msg, int size);
 struct _File_Entry {
    unsigned int file_id;
    unsigned int server_file_id;
+   unsigned int refcount;
+   Eina_Stringshare *hkey;
 };
 
 struct _Client_Request {
@@ -46,6 +48,7 @@ static unsigned int _file_id = 0;
 static unsigned int _data_id = 0;
 
 static Eina_List *_requests = NULL;
+static Eina_Hash *_file_entries = NULL;
 
 // Shared index table
 static Index_Table _index;
@@ -79,6 +82,15 @@ _memory_zero_cmp(void *data, size_t len)
      if (*cdata++ != 0) return EINA_FALSE;
 
    return EINA_TRUE;
+}
+
+static void
+_file_entry_free(void *data)
+{
+   File_Entry *fentry = data;
+   if (!fentry) return;
+   eina_stringshare_del(fentry->hkey);
+   free(fentry);
 }
 
 static void
@@ -304,6 +316,7 @@ evas_cserve2_init(void)
         return 0;
      }
 
+   _file_entries = eina_hash_string_superfast_new(EINA_FREE_CB(_file_entry_free));
    return cserve2_init;
 }
 
@@ -313,6 +326,12 @@ evas_cserve2_shutdown(void)
    const char zeros[sizeof(Msg_Index_List)] = {0};
    Msg_Index_List *empty = (Msg_Index_List *) zeros;
 
+   if (cserve2_init <= 0)
+     {
+        CRIT("cserve2 is already shutdown");
+        return -1;
+     }
+
    if ((--cserve2_init) > 0)
      return cserve2_init;
 
@@ -320,6 +339,9 @@ evas_cserve2_shutdown(void)
    empty->base.type = CSERVE2_INDEX_LIST;
    _server_index_list_set((Msg_Base *) empty, sizeof(Msg_Index_List));
    _server_disconnect();
+
+   eina_hash_free(_file_entries);
+   _file_entries = NULL;
 
    return cserve2_init;
 }
@@ -674,6 +696,7 @@ _image_open_server_send(Image_Entry *ie, const char *file, const char *key,
    int size;
    char *buf;
    char filebuf[PATH_MAX];
+   char *file_hkey;
    Msg_Open msg_open;
    File_Entry *fentry;
    Data_Entry *dentry;
@@ -696,22 +719,34 @@ _image_open_server_send(Image_Entry *ie, const char *file, const char *key,
    flen++;
 
    if (!key) key = "";
+   klen = strlen(key) + 1;
 
-   fentry = calloc(1, sizeof(*fentry));
+   file_hkey = alloca(flen + klen);
+   memcpy(file_hkey, file, flen);
+   file_hkey[flen - 1] = ':';
+   memcpy(file_hkey + flen, key, klen);
+   fentry = eina_hash_find(_file_entries, file_hkey);
    if (!fentry)
-     return 0;
+     {
+        fentry = calloc(1, sizeof(*fentry));
+        if (!fentry)
+          return 0;
+
+        fentry->file_id = ++_file_id;
+        fentry->hkey = eina_stringshare_add(file_hkey);
+        eina_hash_direct_add(_file_entries, fentry->hkey, fentry);
+     }
+   fentry->refcount++;
 
    dentry = calloc(1, sizeof(*dentry));
    if (!dentry)
      {
-        free(fentry);
+        if (!(--fentry->refcount))
+          eina_hash_del(_file_entries, fentry->hkey, fentry);
         return 0;
      }
 
    memset(&msg_open, 0, sizeof(msg_open));
-
-   fentry->file_id = ++_file_id;
-   klen = strlen(key) + 1;
 
    msg_open.base.rid = _next_rid();
    msg_open.base.type = CSERVE2_OPEN;
@@ -727,7 +762,8 @@ _image_open_server_send(Image_Entry *ie, const char *file, const char *key,
    buf = malloc(size);
    if (!buf)
      {
-        free(fentry);
+        if (!(--fentry->refcount))
+          eina_hash_del(_file_entries, fentry->hkey, fentry);
         free(dentry);
         return 0;
      }
@@ -741,8 +777,9 @@ _image_open_server_send(Image_Entry *ie, const char *file, const char *key,
      {
         ERR("Couldn't send message to server.");
         free(buf);
-        free(fentry);
         free(dentry);
+        if (!(--fentry->refcount))
+          eina_hash_del(_file_entries, fentry->hkey, fentry);
         return 0;
      }
 
@@ -848,7 +885,8 @@ _image_close_server_send(Image_Entry *ie)
    msg.base.type = CSERVE2_CLOSE;
    msg.file_id = fentry->file_id;
 
-   free(fentry);
+   if (!(--fentry->refcount))
+     eina_hash_del(_file_entries, fentry->hkey, fentry);
    ie->data1 = NULL;
 
    if (!_server_send(&msg, sizeof(msg), NULL, NULL))
