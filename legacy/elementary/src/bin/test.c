@@ -680,19 +680,19 @@ add_tests:
    ADD_TEST(NULL, "Selectors", "Index", test_index);
    ADD_TEST(NULL, "Selectors", "Index 2", test_index2);
    ADD_TEST(NULL, "Selectors", "Index Horizontal", test_index_horizontal);
-   ADD_TEST(NULL, "Selectors", "File Selector", test_fileselector);
-   ADD_TEST(NULL, "Selectors", "File Selector Entry", test_fileselector_entry);
-   ADD_TEST(NULL, "Selectors", "File Selector Button", test_fileselector_button);
+   ADD_TEST(NULL, "Selectors", "FileSelector", test_fileselector);
+   ADD_TEST(NULL, "Selectors", "FileSelector Entry", test_fileselector_entry);
+   ADD_TEST(NULL, "Selectors", "FileSelector Button", test_fileselector_button);
    ADD_TEST(NULL, "Selectors", "Actionslider", test_actionslider);
    ADD_TEST(NULL, "Selectors", "Menu", test_menu);
    ADD_TEST(NULL, "Selectors", "Menu 2", test_menu2);
-   ADD_TEST(NULL, "Selectors", "Disk Selector", test_diskselector);
-   ADD_TEST(NULL, "Selectors", "Color Selector", test_colorselector);
-   ADD_TEST(NULL, "Selectors", "Segment Control", test_segment_control);
+   ADD_TEST(NULL, "Selectors", "DiskSelector", test_diskselector);
+   ADD_TEST(NULL, "Selectors", "ColorSelector", test_colorselector);
+   ADD_TEST(NULL, "Selectors", "SegmentControl", test_segment_control);
    ADD_TEST(NULL, "Selectors", "Hoversel", test_hoversel);
    ADD_TEST(NULL, "Selectors", "Radio", test_radio);
-   ADD_TEST(NULL, "Selectors", "Flip Selector", test_flipselector);
-   ADD_TEST(NULL, "Selectors", "Dayselector", test_dayselector);
+   ADD_TEST(NULL, "Selectors", "FlipSelector", test_flipselector);
+   ADD_TEST(NULL, "Selectors", "DaySelector", test_dayselector);
    ADD_TEST(NULL, "Selectors", "Main menu", test_main_menu);
 
 
