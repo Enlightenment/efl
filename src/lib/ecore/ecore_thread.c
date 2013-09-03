@@ -1135,9 +1135,14 @@ ecore_thread_local_data_set(Ecore_Thread *thread,
 
    r = eina_hash_set(worker->hash, key, d);
    CDB(worker->cond);
-   ret = r->data;
-   free(r);
-   return ret;
+   
+   if (r)
+     {
+   	ret = r->data;
+	free(r);
+	return ret;
+     }
+   return NULL;
 }
 
 EAPI void *
@@ -1246,9 +1251,13 @@ ecore_thread_global_data_set(const char  *key,
    LRWKU(_ecore_thread_global_hash_lock);
    CDB(_ecore_thread_global_hash_cond);
 
-   ret = r->data;
-   free(r);
-   return ret;
+   if (r)
+     {
+        ret = r->data;
+        free(r);
+        return ret;
+     }
+   return NULL;
 }
 
 EAPI void *
