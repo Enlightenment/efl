@@ -19,39 +19,82 @@
 EAPI Ecore_Compose_State
 ecore_compose_get(const Eina_List *seq, char **seqstr_ret)
 {
-   Comp *c, *cend;
+   const char *p, *pend;
+   const unsigned char *psz;
    Eina_List *l;
    const char *s;
    int i = 0;
+   static int complen = 0;
 
    if (!seq) return ECORE_COMPOSE_NONE;
    l = (Eina_List *)seq;
    s = l->data;
-   cend = (Comp *)comp + (sizeof(comp) / sizeof(comp[0]));
-   for (c = (Comp *)comp; c->s && s;)
+
+   // calc comp string len first time around
+   if (complen == 0)
      {
-        // doesn't match -> jump to next level entry
-        if (!(!strcmp(s, c->s)))
+        int zeros = 0;
+
+        for (p = comp; ; p++)
           {
-             c += c->jump + 1;
-             if (c >= cend)
+             if (!(*p)) zeros++;
+             else zeros = 0;
+             // end marker - 4 0 bytes in a row
+             if (zeros == 4)
                {
-                  return ECORE_COMPOSE_NONE;
+                  complen = p - comp - 3;
+                  break;
                }
           }
+     }
+   // walk special comp string/byte array looking for our match
+   pend = comp + complen;
+   for (p = comp; (p < pend) && s;)
+     {
+        int len, jump = -1, bsize = -1;
+        
+        len = strlen(p);
+        psz = (unsigned char *)(p + len + 1);
+        // decode jump amount to next entry
+        if (!(psz[0] & 0x80)) // < 0x80
+          {
+             jump = psz[0];
+             bsize = 1;
+          }
+        else if ((psz[0] & 0xc0) == 0xc0) // < 0x200000
+          {
+             jump = (((psz[0] & 0x1f) << 16) | (psz[1] << 8) | (psz[2]));
+             bsize = 3;
+          }
+        else // >= 0x4000
+          {
+             jump = (((psz[0] & 0x3f) << 8) | (psz[1]));
+             bsize = 2;
+          }
+
+        // doesn't match -> jump to next level entry
+        if (!(!strcmp(s, p)))
+          {
+             p = p + jump;
+             if (p >= pend) return ECORE_COMPOSE_NONE;
+          }
+        // matches
         else
           {
-             cend = c + c->jump;
+             pend = p + jump;
              // advance to next sequence member
              l = l->next;
              i++;
              if (l) s = l->data;
              else s = NULL;
-             c++;
-             // if advanced item jump is an endpoint - it's the string we want
-             if (c->jump == 0)
+             p = p + len + 1 + bsize;
+             len = strlen(p);
+             psz = (unsigned char *)(p + len + 1);
+             // leaf nodes all are short so psz[0] has the full value
+             if ((len + 2) == psz[0])
                {
-                  if (seqstr_ret) *seqstr_ret = strdup(c->s);
+                  // final leaf node, so return string here
+                  if (seqstr_ret) *seqstr_ret = strdup(p);
                   return ECORE_COMPOSE_DONE;
                }
           }
