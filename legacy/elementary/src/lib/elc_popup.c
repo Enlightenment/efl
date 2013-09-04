@@ -1558,8 +1558,6 @@ elm_popup_add(Evas_Object *parent)
    Evas_Object *obj = eo_add(MY_CLASS, parent);
    eo_unref(obj);
 
-   /* access: parent could be any object such as elm_list which does
-      not know elc_popup as its child object in the focus_next();    */
    Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
    wd->highlight_root = EINA_TRUE;
 
