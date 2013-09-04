@@ -1296,3 +1296,13 @@ EAPI void                  elm_win_floating_mode_set(Evas_Object *obj, Eina_Bool
  */
 EAPI Eina_Bool             elm_win_floating_mode_get(const Evas_Object *obj);
 
+/**
+ * Get the Ecore_Window of an Evas_Object
+ * 
+ * @param obj The window object
+ * @return The Ecore_Window of an Evas_Object
+ * 
+ * @ingroup Win
+ * @since 1.8
+ */
+EAPI Ecore_Window          elm_win_window_id_get(const Evas_Object *obj);
