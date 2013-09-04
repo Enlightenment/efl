@@ -159,7 +159,7 @@ ecore_evas_wayland_egl_new_internal(const char *disp_name, unsigned int parent,
    ee->prop.request_pos = 0;
    ee->prop.sticky = 0;
    ee->prop.draw_frame = frame;
-   ee->alpha = EINA_FALSE;
+   ee->alpha = EINA_TRUE;
 
    /* NB: Disabled for right now as it causes textgrid (terminology) 
     * to not draw text anymore */
@@ -184,6 +184,7 @@ ecore_evas_wayland_egl_new_internal(const char *disp_name, unsigned int parent,
    wdata->win = 
      ecore_wl_window_new(p, x, y, w + fw, h + fh, 
                          ECORE_WL_WINDOW_BUFFER_TYPE_EGL_WINDOW);
+   ecore_wl_window_alpha_set(wdata->win, ee->alpha);
    ee->prop.window = wdata->win->id;
 
    ee->evas = evas_new();
@@ -335,7 +336,8 @@ _ecore_evas_wl_resize(Ecore_Evas *ee, int w, int h)
              _ecore_evas_wayland_egl_resize_edge_set(ee, win->edges);
              win->edges = 0;
 
-             win->server_allocation = win->allocation;
+             win->server.w = win->allocation.w;
+             win->server.h = win->allocation.h;
              ecore_wl_window_update_size(wdata->win, w, h);
           }
 
@@ -460,23 +462,20 @@ _ecore_evas_wayland_egl_alpha_do(Ecore_Evas *ee, int alpha)
 
    if (!ee) return;
    if ((ee->alpha == alpha)) return;
-   ee->alpha = alpha;
+   ee->alpha = EINA_TRUE;
    wdata = ee->engine.data;
 
-   if (wdata->win) ecore_wl_window_alpha_set(wdata->win, alpha);
+   if (wdata->win) ecore_wl_window_alpha_set(wdata->win, ee->alpha);
 
    evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
 
    if ((einfo = (Evas_Engine_Info_Wayland_Egl *)evas_engine_info_get(ee->evas)))
      {
-        einfo->info.destination_alpha = alpha;
+        einfo->info.destination_alpha = ee->alpha;
         if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
           ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
         evas_damage_rectangle_add(ee->evas, 0, 0, ee->w + fw, ee->h + fh);
      }
-
-   if (wdata->win)
-     ecore_wl_window_update_size(wdata->win, ee->w + fw, ee->h + fh);
 }
 
 static void
@@ -484,7 +483,7 @@ _ecore_evas_wl_alpha_set(Ecore_Evas *ee, int alpha)
 {
    if (ee->in_async_render)
      {
-        ee->delayed.alpha = alpha;
+        ee->delayed.alpha = EINA_TRUE;
         ee->delayed.alpha_changed = EINA_TRUE;
         return;
      }
@@ -503,24 +502,21 @@ _ecore_evas_wayland_egl_transparent_do(Ecore_Evas *ee, int transparent)
 
    if (!ee) return;
    if ((ee->transparent == transparent)) return;
-   ee->transparent = transparent;
+   ee->transparent = EINA_TRUE;
 
    wdata = ee->engine.data;
    if (wdata->win)
-     ecore_wl_window_transparent_set(wdata->win, transparent);
+     ecore_wl_window_transparent_set(wdata->win, ee->transparent);
 
    evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
 
    if ((einfo = (Evas_Engine_Info_Wayland_Egl *)evas_engine_info_get(ee->evas)))
      {
-        einfo->info.destination_alpha = transparent;
+        einfo->info.destination_alpha = ee->transparent;
         if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
           ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
         evas_damage_rectangle_add(ee->evas, 0, 0, ee->w + fw, ee->h + fh);
      }
-
-   if (wdata->win)
-     ecore_wl_window_update_size(wdata->win, ee->w + fw, ee->h + fh);
 }
 
 static void 
@@ -528,7 +524,7 @@ _ecore_evas_wl_transparent_set(Ecore_Evas *ee, int transparent)
 {
    if (ee->in_async_render)
      {
-        ee->delayed.transparent = transparent;
+        ee->delayed.transparent = EINA_TRUE;
         ee->delayed.transparent_changed = EINA_TRUE;
         return;
      }
