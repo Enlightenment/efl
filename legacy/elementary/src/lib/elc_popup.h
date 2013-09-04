@@ -14,15 +14,15 @@
  * bottom, left, top-left, top-right, bottom-left and bottom-right.
  * Content part of Popup can be an Evas Object set by application or
  * it can be Text set by application or set of items containing an
- * icon and/or text.  The content/item-list can be removed using
+ * icon and/or text. The content/item-list can be removed using
  * elm_object_content_set with second parameter passed as NULL.
  *
  * The following figures show the textual layouts of popup in which Title
- * Area and Action area area are optional ones.  Action area can have
+ * Area and Action area are optional ones. Action area can have
  * up to 3 buttons handled using elm_object common APIs mentioned
  * below. If user wants to have more than 3 buttons then these buttons
- * can be put inside the items of a list as content.  User needs to
- * handle the clicked signal of these action buttons if required.  No
+ * can be put inside the items of a list as content. User needs to
+ * handle the clicked signal of these action buttons if required. No
  * event is processed by the widget automatically when clicked on
  * these action buttons.
  *
@@ -52,13 +52,13 @@
  * </pre>
  *
  * Timeout can be set on expiry of which popup instance hides and
- * sends a smart signal "timeout" to the user.  The visible region of
+ * sends a smart signal "timeout" to the user. The visible region of
  * popup is surrounded by a translucent region called Blocked Event
- * area.  By clicking on Blocked Event area, the signal
+ * area. By clicking on Blocked Event area, the signal
  * "block,clicked" is sent to the application. This block event area
- * can be avoided by using API elm_popup_allow_events_set.  When gets
+ * can be avoided by using API elm_popup_allow_events_set. When gets
  * hidden, popup does not get destroyed automatically, application
- * should destroy the popup instance after use.  To control the
+ * should destroy the popup instance after use. To control the
  * maximum height of the internal scroller for item, we use the height
  * of the action area which is passed by theme based on the number of
  * buttons currently set to popup.
