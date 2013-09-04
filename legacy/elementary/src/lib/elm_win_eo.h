@@ -104,6 +104,7 @@ enum
      ELM_OBJ_WIN_SUB_ID_SOCKET_LISTEN,
      ELM_OBJ_WIN_SUB_ID_XWINDOW_GET,
      ELM_OBJ_WIN_SUB_ID_WL_WINDOW_GET,
+     ELM_OBJ_WIN_SUB_ID_WINDOW_ID_GET,
      ELM_OBJ_WIN_SUB_ID_LAST
   };
 
@@ -1241,6 +1242,18 @@ enum
  * @see elm_win_wl_window_get
  */
 #define elm_obj_win_wl_window_get(ret) ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_WL_WINDOW_GET), EO_TYPECHECK(Ecore_Wl_Window **, ret)
+
+/**
+ * @def elm_obj_win_window_id_get
+ * @since 1.8
+ *
+ * Get the Ecore_Window of an Evas_Object
+ *
+ * @param[out] ret
+ *
+ * @see elm_win_window_id_get
+ */
+#define elm_obj_win_window_id_get(ret) ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_WINDOW_ID_GET), EO_TYPECHECK(Ecore_Window *, ret)
 
 /**
  * @}
