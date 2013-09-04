@@ -2585,28 +2585,24 @@ elm_config_indicator_service_get(int rotation)
 void
 _elm_config_profile_set(const char *profile)
 {
-   Eina_Bool changed = EINA_FALSE;
-
    if (_elm_profile)
      {
-        if (strcmp(_elm_profile, profile))
-          changed = 1;
+        if (!strcmp(_elm_profile, profile))
+          return;
+
         free(_elm_profile);
      }
 
    _elm_profile = strdup(profile);
 
-   if (changed)
-     {
-        _config_free(_elm_config);
-        _elm_config = NULL;
-        _config_load();
-        _config_apply();
-        _elm_config_font_overlay_apply();
-        _elm_rescale();
-        _elm_recache();
-        _elm_clouseau_reload();
-     }
+   _config_free(_elm_config);
+   _elm_config = NULL;
+   _config_load();
+   _config_apply();
+   _elm_config_font_overlay_apply();
+   _elm_rescale();
+   _elm_recache();
+   _elm_clouseau_reload();
 }
 
 void

@@ -1270,15 +1270,6 @@ _config_display_update(Evas_Object *win)
      }
 }
 
-static void
-_profile_change_do(Evas_Object *win,
-                   const char  *profile)
-{
-   elm_config_profile_set(profile);
-   elm_config_all_flush();
-   _config_display_update(win);
-}
-
 static Eina_Bool
 _config_all_changed(void *data,
                     int ev_type EINA_UNUSED,
@@ -1332,7 +1323,7 @@ _profile_use(void            *data,
 
    elm_config_profile_set(selection); /* just here to update info for getters below */
 
-   _profile_change_do(elm_object_top_widget_get(li), selection);
+   _config_display_update(elm_object_top_widget_get(li));
    elm_config_all_flush();
    elm_config_save(); /* make sure new profile has its data dir */
 }
@@ -1370,8 +1361,8 @@ _profile_reset(void            *data,
 
    elm_config_reload();
 
-   _profile_change_do(elm_object_top_widget_get(li), curr);
    elm_config_all_flush();
+   _config_display_update(elm_object_top_widget_get(li));
    elm_config_save(); /* make sure new profile has its data dir */
 }
 

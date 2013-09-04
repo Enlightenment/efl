@@ -1585,3 +1585,7 @@
 2013-09-02  ChunEon Park (Hermet)
 
         * Widget: Introduce elm_object_item_object_get() API.
+
+2013-09-04  Ryuan Choi (ryuan)
+
+        * elm_config : profile may be broken when clicked reset button in profiles tab
