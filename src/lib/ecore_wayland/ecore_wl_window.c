@@ -631,6 +631,8 @@ ecore_wl_window_opaque_region_set(Ecore_Wl_Window *win, int x, int y, int w, int
         else
           wl_surface_set_opaque_region(win->surface, NULL);
      }
+   else
+     wl_surface_set_opaque_region(win->surface, NULL);
 }
 
 /* local functions */
