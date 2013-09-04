@@ -81,6 +81,9 @@ _popup_center_text_cb(void *data, Evas_Object *obj EINA_UNUSED,
                        "timeout value is 3 seconds");
    elm_popup_timeout_set(popup, 3.0);
    evas_object_smart_callback_add(popup, "timeout", _response_cb, popup);
+
+   // popup show should be called after adding all the contents and the buttons
+   // of popup to set the focus into popup's contents correctly.
    evas_object_show(popup);
 }
 
@@ -101,6 +104,8 @@ _popup_center_text_1button_cb(void *data, Evas_Object *obj EINA_UNUSED,
    elm_object_part_content_set(popup, "button1", btn);
    evas_object_smart_callback_add(btn, "clicked", _popup_close_cb, popup);
 
+   // popup show should be called after adding all the contents and the buttons
+   // of popup to set the focus into popup's contents correctly.
    evas_object_show(popup);
 }
 
@@ -125,6 +130,8 @@ _popup_center_title_text_1button_cb(void *data, Evas_Object *obj EINA_UNUSED,
    elm_object_part_content_set(popup, "button1", btn);
    evas_object_smart_callback_add(btn, "clicked", _popup_close_cb, popup);
 
+   // popup show should be called after adding all the contents and the buttons
+   // of popup to set the focus into popup's contents correctly.
    evas_object_show(popup);
 }
 
@@ -146,6 +153,8 @@ _popup_center_title_text_block_clicked_event_cb(void *data,
    // popup title
    elm_object_part_text_set(popup, "title,text", "Title");
 
+   // popup show should be called after adding all the contents and the buttons
+   // of popup to set the focus into popup's contents correctly.
    evas_object_show(popup);
 }
 
@@ -192,6 +201,8 @@ _popup_bottom_title_text_3button_cb(void *data, Evas_Object *obj EINA_UNUSED,
    elm_object_part_content_set(popup, "button3", btn3);
    evas_object_smart_callback_add(btn3, "clicked", _popup_close_cb, popup);
 
+   // popup show should be called after adding all the contents and the buttons
+   // of popup to set the focus into popup's contents correctly.
    evas_object_show(popup);
 }
 
@@ -234,6 +245,8 @@ _popup_center_title_content_3button_cb(void *data, Evas_Object *obj EINA_UNUSED,
    elm_object_part_content_set(popup, "button3", btn3);
    evas_object_smart_callback_add(btn3, "clicked", _popup_close_cb, popup);
 
+   // popup show should be called after adding all the contents and the buttons
+   // of popup to set the focus into popup's contents correctly.
    evas_object_show(popup);
 }
 
@@ -280,6 +293,8 @@ _popup_center_title_item_3button_cb(void *data, Evas_Object *obj EINA_UNUSED,
    elm_object_part_content_set(popup, "button3", btn3);
    evas_object_smart_callback_add(btn3, "clicked", _popup_close_cb, popup);
 
+   // popup show should be called after adding all the contents and the buttons
+   // of popup to set the focus into popup's contents correctly.
    evas_object_show(popup);
 }
 
@@ -334,6 +349,8 @@ _popup_center_title_text_2button_restack_cb(void *data, Evas_Object *obj EINA_UN
    evas_object_smart_callback_add(btn2, "clicked",
                                   _restack_popup_close_cb, popup);
 
+   // popup show should be called after adding all the contents and the buttons
+   // of popup to set the focus into popup's contents correctly.
    evas_object_show(popup);
 }
 
@@ -363,6 +380,8 @@ _popup_center_text_1button_hide_show_cb(void *data, Evas_Object *obj EINA_UNUSED
    elm_object_part_content_set(g_popup, "button1", btn);
    evas_object_smart_callback_add(btn, "clicked", _g_popup_response_cb, g_popup);
 
+   // popup show should be called after adding all the contents and the buttons
+   // of popup to set the focus into popup's contents correctly.
    evas_object_show(g_popup);
 }
 
@@ -382,6 +401,9 @@ _popup_transparent_cb(void *data, Evas_Object *obj EINA_UNUSED,
    elm_object_text_set(btn, "Close");
    elm_object_part_content_set(popup, "button1", btn);
    evas_object_smart_callback_add(btn, "clicked", _popup_close_cb, popup);
+
+   // popup show should be called after adding all the contents and the buttons
+   // of popup to set the focus into popup's contents correctly.
    evas_object_show(popup);
 }
 
@@ -415,6 +437,8 @@ _popup_center_title_list_content_1button_cb(void *data, Evas_Object *obj EINA_UN
    elm_object_part_content_set(popup, "button1", btn);
    evas_object_smart_callback_add(btn, "clicked", _popup_close_cb, popup);
 
+   // popup show should be called after adding all the contents and the buttons
+   // of popup to set the focus into popup's contents correctly.
    evas_object_show(popup);
 }
 

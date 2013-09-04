@@ -63,6 +63,11 @@
  * of the action area which is passed by theme based on the number of
  * buttons currently set to popup.
  *
+ * Popup sets the focus to itself when evas_object_show is called on popup.
+ * To set the focus into popup's contents and buttons automatically,
+ * evas_object_show on popup should be called after setting all the contents
+ * and buttons of popup.
+ *
  * This widget inherits from the @ref Layout one, so that all the
  * functions acting on it also work for popup objects (@since 1.8).
  *
