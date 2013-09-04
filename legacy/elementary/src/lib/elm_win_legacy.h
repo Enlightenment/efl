@@ -1299,6 +1299,8 @@ EAPI Eina_Bool             elm_win_floating_mode_get(const Evas_Object *obj);
 /**
  * Get the Ecore_Window of an Evas_Object
  * 
+ * When Elementary is using a Wayland engine, this function will return the surface id of the elm window's surface.
+ * 
  * @param obj The window object
  * @return The Ecore_Window of an Evas_Object
  * 
