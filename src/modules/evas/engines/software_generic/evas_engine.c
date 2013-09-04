@@ -949,10 +949,19 @@ eng_image_load(void *data EINA_UNUSED, const char *file, const char *key, int *e
         ie = evas_cache2_image_open(evas_common_image_cache2_get(),
                                     file, key, lo, error);
         if (ie)
-          *error = evas_cache2_image_open_wait(ie);
+          {
+             *error = evas_cache2_image_open_wait(ie);
+             if ((*error != EVAS_LOAD_ERROR_NONE) && ie->animated.animated)
+               {
+                  evas_cache2_image_close(ie);
+                  goto use_local_cache;
+               }
+          }
         return ie;
      }
+use_local_cache:
 #endif
+
    return evas_common_load_image_from_file(file, key, lo, error);
 }
 
@@ -968,10 +977,19 @@ eng_image_mmap(void *data EINA_UNUSED, Eina_File *f, const char *key, int *error
         ie = evas_cache2_image_open(evas_common_image_cache2_get(),
                                     eina_file_filename_get(f), key, lo, error);
         if (ie)
-          *error = evas_cache2_image_open_wait(ie);
+          {
+            *error = evas_cache2_image_open_wait(ie);
+            if ((*error != EVAS_LOAD_ERROR_NONE) && ie->animated.animated)
+              {
+                 evas_cache2_image_close(ie);
+                 goto use_local_cache;
+              }
+          }
         return ie;
      }
+use_local_cache:
 #endif
+
    return evas_common_load_image_from_mmap(f, key, lo, error);
 }
 
@@ -1295,7 +1313,7 @@ eng_image_draw(void *data EINA_UNUSED, void *context, void *surface, void *image
         if (im->cache_entry.space == EVAS_COLORSPACE_ARGB8888)
           {
 #if EVAS_CSERVE2
-             if (evas_cserve2_use_get())
+             if (evas_cserve2_use_get() && evas_cache2_image_cached(&im->cache_entry))
                evas_cache2_image_load_data(&im->cache_entry);
              else
 #endif

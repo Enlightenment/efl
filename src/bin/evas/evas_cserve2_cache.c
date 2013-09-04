@@ -444,6 +444,7 @@ _image_opened_msg_create(File_Data *fd, int *size)
    msg->image.loop_count = fd->loop_count;
    msg->image.loop_hint = fd->loop_hint;
    msg->image.alpha = fd->alpha;
+   msg->image.animated = fd->animated;
 
    *size = sizeof(*msg);
 
@@ -615,6 +616,7 @@ _open_request_response(Entry *entry, Slave_Msg_Image_Opened *resp, int *size)
 
    fd->w = resp->w;
    fd->h = resp->h;
+   fd->animated = resp->animated;
    fd->frame_count = resp->frame_count;
    fd->loop_count = resp->loop_count;
    fd->loop_hint = resp->loop_hint;

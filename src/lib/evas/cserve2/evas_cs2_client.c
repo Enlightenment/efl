@@ -505,6 +505,7 @@ _image_opened_cb(void *data, const void *msg_received, int size)
    ie->animated.loop_hint = msg->image.loop_hint;
    ie->animated.loop_count = msg->image.loop_count;
    ie->animated.frame_count = msg->image.frame_count;
+   ie->animated.animated = msg->image.animated;
 }
 
 static void
@@ -985,9 +986,9 @@ evas_cserve2_image_load_wait(Image_Entry *ie)
         ie->animated.loop_hint = fd->loop_hint;
         ie->animated.loop_count = fd->loop_count;
         ie->animated.frame_count = fd->frame_count;
+        ie->animated.animated = fd->animated;
         ie->server_id = fd->id;
         ie->open_rid = 0;
-        return CSERVE2_NONE;
      }
 #endif
 
@@ -997,6 +998,12 @@ evas_cserve2_image_load_wait(Image_Entry *ie)
           return CSERVE2_GENERIC;
         if (!ie->data1)
           return CSERVE2_GENERIC;
+     }
+
+   if (ie->animated.animated)
+     {
+        WRN("This image is animated. cserve2 does not support animations");
+        return CSERVE2_GENERIC;
      }
 
    return CSERVE2_NONE;

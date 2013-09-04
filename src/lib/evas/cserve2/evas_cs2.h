@@ -73,6 +73,7 @@ struct _Msg_Opened {
       int loop_count;
       int loop_hint; /* include Evas.h? Copy the enum around? */
       Eina_Bool alpha : 1;
+      Eina_Bool animated : 1;
    } image;
 };
 
@@ -333,6 +334,7 @@ struct _File_Data {
    Eina_Bool alpha : 1;
    Eina_Bool invalid : 1;
    Eina_Bool valid : 1;
+   Eina_Bool animated : 1;
 };
 
 #define IMAGE_DATA_ARRAY_TAG ('I' | 'M' << 8 | 'A' << 16 | 'G' << 24)

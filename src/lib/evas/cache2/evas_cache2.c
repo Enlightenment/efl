@@ -873,6 +873,9 @@ evas_cache2_image_scale_load(Image_Entry *im,
    int                  error = EVAS_LOAD_ERROR_NONE;
    Image_Entry          *ret;
 
+   if (!im->cache2)
+     return im;
+
    if (!smooth && im->scale_hint != EVAS_IMAGE_SCALE_HINT_STATIC)
      goto parent_out;
 

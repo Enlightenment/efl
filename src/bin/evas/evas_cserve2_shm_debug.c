@@ -519,7 +519,8 @@ _images_all_print_full(void)
              printf("          Loader:        %s\n",
                     _shared_string_get(fd->loader_data));
              printf("          Geometry:      %dx%d\n", fd->w, fd->h);
-             printf("          Animation:     frames: %d, loop: %d, hint: %d\n",
+             printf("          Animation:     anim: %s, frames: %d, loop: %d, hint: %d\n",
+                    fd->animated ? "YES" : "NO",
                     fd->frame_count, fd->loop_count, fd->loop_hint);
              printf("          Alpha:         %s\n", fd->alpha ? "YES" : "NO");
              printf("          Invalid:       %s\n", fd->invalid ? "YES" : "NO");
