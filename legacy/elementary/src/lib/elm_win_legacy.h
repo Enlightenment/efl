@@ -1262,7 +1262,7 @@ EAPI Ecore_X_Window elm_win_xwindow_get(const Evas_Object *obj);
 
 /* Wayland specific call - returns NULL on non-Wayland engines */
 /**
- * Get the Ecore_Wl_Window of and Evas_Object
+ * Get the Ecore_Wl_Window of an Evas_Object
  *
  * @param obj the object
  *
