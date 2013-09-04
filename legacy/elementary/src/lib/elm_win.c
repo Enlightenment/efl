@@ -5410,6 +5410,67 @@ elm_win_floating_mode_get(const Evas_Object *obj)
    return sd->floating;
 }
 
+static void 
+_window_id_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+{
+   Ecore_Window *ret = va_arg(*list, Ecore_Window *);
+   Elm_Win_Smart_Data *sd = _pd;
+
+   if ((ENGINE_COMPARE(ELM_WAYLAND_SHM)) || (ENGINE_COMPARE(ELM_WAYLAND_EGL)))
+     {
+#if HAVE_ELEMENTARY_WAYLAND
+        if (sd->wl.win)
+          {
+             *ret = (Ecore_Window)sd->wl.win->surface_id;
+             return;
+          }
+        if (sd->parent)
+          {
+             Ecore_Wl_Window *parent;
+
+             parent = elm_win_wl_window_get(sd->parent);
+             if (parent) *ret = (Ecore_Window)parent->surface_id;
+             return;
+          }
+#endif
+     }
+   else
+     {
+#ifdef HAVE_ELEMENTARY_X
+        _elm_win_xwindow_get(sd);
+        if (sd->x.xwin)
+          {
+             *ret = (Ecore_Window)sd->x.xwin;
+             return;
+          }
+        if (sd->parent)
+          {
+             *ret = (Ecore_Window)elm_win_xwindow_get(sd->parent);
+             return;
+          }
+#endif
+     }
+
+   *ret = 0;
+}
+
+EAPI Ecore_Window 
+elm_win_window_id_get(const Evas_Object *obj)
+{
+   if (!obj) return 0;
+
+   if (!evas_object_smart_type_check_ptr(obj, MY_CLASS_NAME))
+     {
+        Ecore_Evas *ee = ecore_evas_ecore_evas_get(evas_object_evas_get(obj));
+        return ecore_evas_window_get(ee);
+     }
+
+   ELM_WIN_CHECK(obj) 0;
+   Ecore_Window ret = 0;
+   eo_do((Eo *) obj, elm_obj_win_window_id_get(&ret));
+   return ret;
+}
+
 static void
 _class_constructor(Eo_Class *klass)
 {
@@ -5522,6 +5583,7 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_SOCKET_LISTEN), _socket_listen),
         EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_XWINDOW_GET), _xwindow_get),
         EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_WL_WINDOW_GET), _wl_window_get),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_WINDOW_ID_GET), _window_id_get),
         EO_OP_FUNC_SENTINEL
    };
 
@@ -5624,6 +5686,7 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_SOCKET_LISTEN, "Create a socket to provide the service for Plug widget."),
      EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_XWINDOW_GET, "Get the Ecore_X_Window of an Evas_Object."),
      EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_WL_WINDOW_GET, "Get the Ecore_Wl_Window of and Evas_Object."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_WINDOW_ID_GET, "Get the Ecore_Window of an Evas_Object."),
      EO_OP_DESCRIPTION_SENTINEL
 };
 
