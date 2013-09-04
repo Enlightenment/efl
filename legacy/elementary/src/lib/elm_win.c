@@ -1690,7 +1690,6 @@ _elm_win_xwindow_get(Elm_Win_Smart_Data *sd)
 {
    sd->x.xwin = _elm_ee_xwin_get(sd->ee);
 }
-
 #endif
 
 #ifdef HAVE_ELEMENTARY_X
