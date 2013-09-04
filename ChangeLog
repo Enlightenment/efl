@@ -1,3 +1,7 @@
+2013-09-04  Michael Bouchaud (yoz)
+
+        * fix edje_object_scale_set to be recursive
+
 2013-09-03  Tom Hacohen
 
 	* Evas textblock: fixed an issue with markup_get and markup_to_utf8
