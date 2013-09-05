@@ -857,20 +857,27 @@ static void
 _elm_naviframe_smart_sizing_eval(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Evas_Coord minw = -1, minh = -1;
-   Elm_Naviframe_Item *it;
+   Elm_Naviframe_Item *it, *top;
    Evas_Coord x, y, w, h;
 
    Elm_Naviframe_Smart_Data *sd = _pd;
 
+   if (!sd->stack) return;
+
+   top = (EINA_INLIST_CONTAINER_GET(sd->stack->last, Elm_Naviframe_Item));
    evas_object_geometry_get(obj, &x, &y, &w, &h);
    EINA_INLIST_FOREACH(sd->stack, it)
      {
         evas_object_move(VIEW(it), x, y);
         evas_object_resize(VIEW(it), w, h);
-        edje_object_size_min_calc(elm_layout_edje_get(VIEW(it)),
-                                  &it->minw, &it->minh);
-        if (it->minw > minw) minw = it->minw;
-        if (it->minh > minh) minh = it->minh;
+
+        if (it == top)
+          {
+             edje_object_size_min_calc(elm_layout_edje_get(VIEW(it)),
+                                       &it->minw, &it->minh);
+             minw = it->minw;
+             minh = it->minh;
+          }
      }
 
    evas_object_size_hint_min_set(obj, minw, minh);
