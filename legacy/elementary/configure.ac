@@ -802,7 +802,7 @@ extern char **environ;
   AC_DEFINE(HAVE_ENVIRON, 1, [extern environ exists])
 ])
 
-AC_OUTPUT([
+AC_CONFIG_FILES([
 Makefile
 elementary.spec
 elementary.pc
@@ -836,6 +836,8 @@ cmakeconfig/ElementaryConfig.cmake
 cmakeconfig/ElementaryConfigVersion.cmake
 pkgbuild/PKGBUILD
 ])
+
+AC_OUTPUT
 
 #####################################################################
 ## Info
