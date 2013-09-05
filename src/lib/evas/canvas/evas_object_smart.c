@@ -51,6 +51,16 @@ typedef struct
    _Evas_Event_Description *desc;
 } _eo_evas_smart_cb_info;
 
+
+typedef struct _Evas_Object_Smart_Iterator Evas_Object_Smart_Iterator;
+struct _Evas_Object_Smart_Iterator
+{
+   Eina_Iterator iterator;
+
+   const Eina_Inlist *current;
+   Evas_Object *parent;
+};
+
 static Eina_Bool
 _eo_evas_smart_cb(void *data, Eo *eo_obj, const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
 {
@@ -445,6 +455,76 @@ EAPI void
 evas_smart_legacy_type_register(const char *type, const Eo_Class *klass)
 {
    eina_hash_set(_evas_smart_class_names_hash_table, type, klass);
+}
+
+static Eina_Bool
+_evas_object_smart_iterator_next(Evas_Object_Smart_Iterator *it, void **data)
+{
+   Evas_Object *eo;
+
+   if (!it->current) return EINA_FALSE;
+
+   eo = ((const Evas_Object_Protected_Data*)(it->current))->object;
+   if (data) *data = eo;
+
+   it->current = it->current->next;
+
+   return EINA_TRUE;
+}
+
+static Evas_Object *
+_evas_object_smart_iterator_get_container(Evas_Object_Smart_Iterator *it)
+{
+   return it->parent;
+}
+
+static void
+_evas_object_smart_iterator_free(Evas_Object_Smart_Iterator *it)
+{
+   eo_unref(it->parent);
+   free(it);
+}
+
+// Should we have an eo_children_iterator_new API and just inherit from it ?
+EAPI Eina_Iterator *
+evas_object_smart_iterator_new(const Evas_Object *o)
+{
+   Eina_Iterator *ret = NULL;
+   eo_do((Eo *)o, evas_obj_smart_iterator_new(&ret));
+   return ret;
+}
+
+static void
+_iterator_new(Eo *o, void *_pd, va_list *list)
+{
+   Eina_Iterator **ret = va_arg(*list, Eina_Iterator **);
+
+   Evas_Object_Smart_Iterator *it;
+
+   const Evas_Object_Smart *priv = _pd;
+
+   if (!priv->contained)
+     {
+        *ret = NULL;
+        return ;
+     }
+
+   it = calloc(1, sizeof(Evas_Object_Smart_Iterator));
+   if (!it)
+     {
+        *ret = NULL;
+        return ;
+     }
+
+   EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
+   it->parent = eo_ref(o);
+   it->current = priv->contained;
+
+   it->iterator.next = FUNC_ITERATOR_NEXT(_evas_object_smart_iterator_next);
+   it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(_evas_object_smart_iterator_get_container);
+   it->iterator.free = FUNC_ITERATOR_FREE(_evas_object_smart_iterator_free);
+
+   *ret = &it->iterator;
 }
 
 EAPI Eina_List *
@@ -1709,6 +1789,7 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_MEMBER_ADD), _smart_member_add),
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_MEMBER_DEL), _smart_member_del),
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_MEMBERS_GET), _smart_members_get),
+        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_ITERATOR_NEW), _iterator_new),
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_CALLBACKS_DESCRIPTIONS_SET), _smart_callbacks_descriptions_set),
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_CALLBACKS_DESCRIPTIONS_GET), _smart_callbacks_descriptions_get),
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_CALLBACK_DESCRIPTION_FIND), _smart_callback_description_find),
@@ -1749,6 +1830,7 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(EVAS_OBJ_SMART_SUB_ID_MEMBER_ADD, "Set an Evas object as a member of a given smart object."),
      EO_OP_DESCRIPTION(EVAS_OBJ_SMART_SUB_ID_MEMBER_DEL, "Removes a member object from a given smart object."),
      EO_OP_DESCRIPTION(EVAS_OBJ_SMART_SUB_ID_MEMBERS_GET, "Retrieves the list of the member objects of a given Evas smart"),
+     EO_OP_DESCRIPTION(EVAS_OBJ_SMART_SUB_ID_ITERATOR_NEW, "Retrieves an iterator of the member object of a given Evas smart"),
      EO_OP_DESCRIPTION(EVAS_OBJ_SMART_SUB_ID_CALLBACKS_DESCRIPTIONS_SET, "Set an smart object instance's smart callbacks descriptions."),
      EO_OP_DESCRIPTION(EVAS_OBJ_SMART_SUB_ID_CALLBACKS_DESCRIPTIONS_GET, "Retrieve an smart object's know smart callback descriptions (both"),
      EO_OP_DESCRIPTION(EVAS_OBJ_SMART_SUB_ID_CALLBACK_DESCRIPTION_FIND, "Find callback description for callback called name."),

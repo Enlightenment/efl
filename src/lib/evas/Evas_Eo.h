@@ -2978,6 +2978,7 @@ enum
    EVAS_OBJ_SMART_SUB_ID_MEMBER_ADD,
    EVAS_OBJ_SMART_SUB_ID_MEMBER_DEL,
    EVAS_OBJ_SMART_SUB_ID_MEMBERS_GET,
+   EVAS_OBJ_SMART_SUB_ID_ITERATOR_NEW,
    EVAS_OBJ_SMART_SUB_ID_CALLBACKS_DESCRIPTIONS_SET,
    EVAS_OBJ_SMART_SUB_ID_CALLBACKS_DESCRIPTIONS_GET,
    EVAS_OBJ_SMART_SUB_ID_CALLBACK_DESCRIPTION_FIND,
@@ -3059,8 +3060,23 @@ enum
  * @param[out] list out
  *
  * @see evas_object_smart_members_get
+ * @see evas_object_smart_iterator_new
  */
 #define evas_obj_smart_members_get(list) EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_MEMBERS_GET), EO_TYPECHECK(Eina_List **, list)
+
+/**
+ * @def evas_obj_smart_iterator_new
+ * @since 1.8
+ *
+ * Retrieves an iterator of the member objects of a given Evas smart
+ * object
+ *
+ * @param[out] iterator out
+ *
+ * @see evas_object_smart_iterator_new
+ * @see evas_object_smart_members_get
+ */
+#define evas_obj_smart_iterator_new(it) EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_ITERATOR_NEW), EO_TYPECHECK(Eina_Iterator **, it)
 
 /**
  * @def evas_obj_smart_callback_priority_add

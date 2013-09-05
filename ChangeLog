@@ -1,3 +1,7 @@
+2013-09-05  Cedric Bail
+
+	* Evas: Add evas_object_smart_iterator_new().
+
 2013-09-04  Michael Bouchaud (yoz)
 
         * fix edje_object_scale_set to be recursive

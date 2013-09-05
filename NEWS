@@ -209,6 +209,7 @@ Improvements:
      - Asynchronous preload of GL texture.
      - Add neon assembly for upscaling and map routines
      - Use mmap/munmap for image data allocation on system that have mmap.
+     - Add iterator for walking child of smart objects, table and a box.
     * Ecore_Con:
      - Rebase dns.c against upstream
     * Edje:

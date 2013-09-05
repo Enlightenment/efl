@@ -6322,8 +6322,24 @@ EAPI void         evas_object_smart_member_del(Evas_Object *obj) EINA_ARG_NONNUL
  *
  * @see evas_object_smart_member_add()
  * @see evas_object_smart_member_del()
+ * @see evas_object_smart_iterator_new()
  */
 EAPI Eina_List   *evas_object_smart_members_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
+
+/**
+ * Retrieves an iterator of the member objects of a given Evas smart
+ * object
+ *
+ * @param obj the smart object to get members from
+ * @return Returns the iterator of the member objects of @p obj.
+ *
+ * @since 1.8
+ *
+ * @see evas_object_smart_member_add()
+ * @see evas_object_smart_member_del()
+ * @see evas_object_smart_members_get()
+ */
+EAPI Eina_Iterator   *evas_object_smart_iterator_new(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
 /**
  * Gets the parent smart object of a given Evas object, if it has one.
