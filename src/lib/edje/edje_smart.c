@@ -450,6 +450,8 @@ _edje_smart_class_constructor(Eo_Class *klass)
         EO_OP_FUNC(EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_IMF_CONTEXT_RESET), _part_text_imf_context_reset),
         EO_OP_FUNC(EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_INPUT_PANEL_LAYOUT_SET), _part_text_input_panel_layout_set),
         EO_OP_FUNC(EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_INPUT_PANEL_LAYOUT_GET), _part_text_input_panel_layout_get),
+        EO_OP_FUNC(EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_INPUT_PANEL_VARIATION_SET), _part_text_input_panel_layout_variation_set),
+        EO_OP_FUNC(EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_INPUT_PANEL_VARIATION_GET), _part_text_input_panel_layout_variation_get),
         EO_OP_FUNC(EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_AUTOCAPITAL_TYPE_SET), _part_text_autocapital_type_set),
         EO_OP_FUNC(EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_AUTOCAPITAL_TYPE_GET), _part_text_autocapital_type_get),
         EO_OP_FUNC(EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_PREDICTION_ALLOW_SET), _part_text_prediction_allow_set),

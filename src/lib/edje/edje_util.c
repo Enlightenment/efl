@@ -2706,10 +2706,18 @@ _part_text_input_panel_layout_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 EAPI void
 edje_object_part_text_input_panel_layout_variation_set(Evas_Object *obj, const char *part, int variation)
 {
-   Edje *ed;
+   eo_do((Eo *)obj, edje_obj_part_text_input_panel_variation_set(part, variation));
+}
+
+void
+_part_text_input_panel_layout_variation_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   const char *part = va_arg(*list, const char *);
+   int variation = va_arg(*list, int);
+
+   Edje *ed = _pd;
    Edje_Real_Part *rp;
 
-   ed = _edje_fetch(obj);
    if ((!ed) || (!part)) return;
    rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
@@ -2722,18 +2730,30 @@ edje_object_part_text_input_panel_layout_variation_set(Evas_Object *obj, const c
 EAPI int
 edje_object_part_text_input_panel_layout_variation_get(const Evas_Object *obj, const char *part)
 {
-   Edje *ed;
+   int ret = 0;
+   if (obj)
+     eo_do((Eo *)obj, edje_obj_part_text_input_panel_variation_get(part, &ret));
+   return ret;
+}
+
+void
+_part_text_input_panel_layout_variation_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   const char *part = va_arg(*list, const char *);
+   int *r = va_arg(*list, int *);
+
+   Edje *ed = _pd;
    Edje_Real_Part *rp;
 
-   ed = _edje_fetch(obj);
-   if ((!ed) || (!part)) return 0;
+   if (*r) *r = 0;
+   if ((!ed) || (!part)) return ;
    rp = _edje_real_part_recursive_get(&ed, part);
-   if (!rp) return 0;
+   if (!rp) return ;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      {
-        return _edje_entry_input_panel_layout_variation_get(rp);
+        if (*r) *r = _edje_entry_input_panel_layout_variation_get(rp);
      }
-   return 0;
+   return ;
 }
 
 EAPI void

@@ -2471,6 +2471,8 @@ void _part_text_cursor_pos_get(Eo *obj, void *_pd, va_list *list);
 void _part_text_imf_context_reset(Eo *obj, void *_pd, va_list *list);
 void _part_text_input_panel_layout_set(Eo *obj, void *_pd, va_list *list);
 void _part_text_input_panel_layout_get(Eo *obj, void *_pd, va_list *list);
+void _part_text_input_panel_layout_variation_set(Eo *obj, void *_pd, va_list *list);
+void _part_text_input_panel_layout_variation_get(Eo *obj, void *_pd, va_list *list);
 void _part_text_autocapital_type_set(Eo *obj, void *_pd, va_list *list);
 void _part_text_autocapital_type_get(Eo *obj, void *_pd, va_list *list);
 void _part_text_prediction_allow_set(Eo *obj, void *_pd, va_list *list);
