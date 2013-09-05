@@ -114,6 +114,8 @@ ecore_wl_window_free(Ecore_Wl_Window *win)
    if (win->anim_callback) wl_callback_destroy(win->anim_callback);
    win->anim_callback = NULL;
 
+   if (win->subsurfs) _ecore_wl_subsurfs_del_all(win);
+
    if (win->shell_surface) wl_shell_surface_destroy(win->shell_surface);
    win->shell_surface = NULL;
    if (win->surface) wl_surface_destroy(win->surface);
