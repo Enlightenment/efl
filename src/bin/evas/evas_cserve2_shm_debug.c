@@ -467,13 +467,14 @@ _images_all_print_full(void)
         printf("Refcount        %d\n", id->refcount);
         printf("Sparse alpha    %s\n"
                "Unused:         %s\n"
-               "Load requested: %s\n",
+               "Load requested: %s\n"
+               "Valid:          %s\n",
                id->alpha_sparse ? "YES" : "NO",
                id->unused ? "YES" : "NO",
-               id->doload ? "YES" : "NO");
+               id->doload ? "YES" : "NO",
+               id->valid ? "YES" : "NO");
         printf("Shm Path:       '%s'\n",
                id->shm_id ? _shared_string_get(id->shm_id) : "");
-
         printf("LoadOpts: width          %d\n", id->opts.w);
         printf("          height         %d\n", id->opts.h);
         printf("          degree         %d\n", id->opts.degree);

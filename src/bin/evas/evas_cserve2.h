@@ -331,6 +331,8 @@ void cserve2_request_cancel(Slave_Request *req, Client *client, Error_Type err);
 void cserve2_request_cancel_all(Slave_Request *req, Error_Type err);
 void cserve2_requests_init(void);
 void cserve2_requests_shutdown(void);
+void cserve2_request_dependents_drop(Slave_Request *req, Slave_Request_Type type);
+void cserve2_entry_request_drop(void *data, Slave_Request_Type type);
 
 void cserve2_font_init(void);
 void cserve2_font_shutdown(void);

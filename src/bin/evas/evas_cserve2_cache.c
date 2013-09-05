@@ -154,6 +154,8 @@ static int unused_mem_usage = 0;
 static int max_font_usage = 10 * 4 * 1024; /* in kbytes */
 static int font_mem_usage = 0;
 
+#define MAX_PREEMPTIVE_LOAD_SIZE (320*320*4)
+
 #ifdef DEBUG_LOAD_TIME
 static int
 _timeval_sub(const struct timeval *tv2, const struct timeval *tv1)
@@ -603,8 +605,10 @@ static Msg_Opened *
 _open_request_response(Entry *entry, Slave_Msg_Image_Opened *resp, int *size)
 {
    File_Data *fd;
+   Slave_Request *req;
 
    _entry_load_finish(entry);
+   req = entry->request;
    entry->request = NULL;
 
    fd = _file_data_find(entry->id);
@@ -629,7 +633,24 @@ _open_request_response(Entry *entry, Slave_Msg_Image_Opened *resp, int *size)
      }
 
    fd->valid = EINA_TRUE;
+
+   // If the image is too large, cancel pre-emptive load.
+   if (fd->w * fd->h * 4 >= MAX_PREEMPTIVE_LOAD_SIZE)
+     {
+        DBG("Not pre-loading this image ");
+        cserve2_request_dependents_drop(req, CSERVE2_REQ_IMAGE_SPEC_LOAD);
+     }
+
    return _image_opened_msg_create(fd, size);
+}
+
+void
+cserve2_entry_request_drop(void *data, Slave_Request_Type type EINA_UNUSED)
+{
+   Entry *e = data;
+
+   if (!e) return;
+   e->request = NULL;
 }
 
 static void

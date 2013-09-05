@@ -289,6 +289,38 @@ cserve2_request_cancel_all(Slave_Request *req, Error_Type err)
 }
 
 void
+cserve2_request_dependents_drop(Slave_Request *req, Slave_Request_Type type)
+{
+   Slave_Request *dep;
+   Eina_List *l, *l_next;
+
+   if (type != CSERVE2_REQ_IMAGE_SPEC_LOAD)
+     {
+        CRIT("Only CSERVE2_REQ_IMAGE_SPEC_LOAD is supported.");
+        return;
+     }
+
+   EINA_LIST_FOREACH_SAFE(req->dependents, l, l_next, dep)
+     {
+        if (dep->type == type)
+          {
+             req->dependents = eina_list_remove_list(req->dependents, l);
+
+             if (dep->processing)
+               dep->cancelled = EINA_TRUE;
+             else
+               {
+                  cserve2_entry_request_drop(dep->data, type);
+                  requests[type].waiting = eina_inlist_remove(
+                           requests[type].waiting, EINA_INLIST_GET(dep));
+                  dep->funcs->msg_free(dep->msg, dep->data);
+                  free(dep);
+               }
+          }
+     }
+}
+
+void
 cserve2_requests_init(void)
 {
    DBG("Initializing requests.");
