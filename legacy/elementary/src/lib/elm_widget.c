@@ -372,31 +372,31 @@ _elm_widget_smart_resize(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 static void
 _elm_widget_smart_show(Eo *obj, void *_pd EINA_UNUSED, va_list *params_list EINA_UNUSED)
 {
-   Eina_List *list;
+   Eina_Iterator *it;
    Evas_Object *o;
 
-   if ((list = evas_object_smart_members_get(obj)))
+   it = evas_object_smart_iterator_new(obj);
+   EINA_ITERATOR_FOREACH(it, o)
      {
-        EINA_LIST_FREE(list, o)
-          {
-             if (evas_object_data_get(o, "_elm_leaveme")) continue;
-             evas_object_show(o);
-          }
+       if (evas_object_data_get(o, "_elm_leaveme")) continue;
+       evas_object_show(o);
      }
+   eina_iterator_free(it);
 }
 
 static void
 _elm_widget_smart_hide(Eo *obj, void *_pd EINA_UNUSED, va_list *params_list EINA_UNUSED)
 {
-   Eina_List *list;
+   Eina_Iterator *it;
    Evas_Object *o;
 
-   list = evas_object_smart_members_get(obj);
-   EINA_LIST_FREE(list, o)
+   it = evas_object_smart_iterator_new(obj);
+   EINA_ITERATOR_FOREACH(it, o)
      {
         if (evas_object_data_get(o, "_elm_leaveme")) continue;
         evas_object_hide(o);
      }
+   eina_iterator_free(it);
 }
 
 static void
@@ -406,50 +406,47 @@ _elm_widget_smart_color_set(Eo *obj, void *_pd EINA_UNUSED, va_list *params_list
    int g = va_arg(*params_list, int);
    int b = va_arg(*params_list, int);
    int a = va_arg(*params_list, int);
-   Eina_List *list;
+   Eina_Iterator *it;
    Evas_Object *o;
 
-   if ((list = evas_object_smart_members_get(obj)))
+   it = evas_object_smart_iterator_new(obj);
+   EINA_ITERATOR_FOREACH(it, o)
      {
-        EINA_LIST_FREE(list, o)
-          {
-             if (evas_object_data_get(o, "_elm_leaveme")) continue;
-             evas_object_color_set(o, r, g, b, a);
-          }
+       if (evas_object_data_get(o, "_elm_leaveme")) continue;
+       evas_object_color_set(o, r, g, b, a);
      }
+   eina_iterator_free(it);
 }
 
 static void
 _elm_widget_smart_clip_set(Eo *obj, void *_pd EINA_UNUSED, va_list *params_list)
 {
    Evas_Object *clip = va_arg(*params_list, Evas_Object *);
-   Eina_List *list;
+   Eina_Iterator *it;
    Evas_Object *o;
 
-   if ((list = evas_object_smart_members_get(obj)))
+   it = evas_object_smart_iterator_new(obj);
+   EINA_ITERATOR_FOREACH(it, o)
      {
-        EINA_LIST_FREE(list, o)
-          {
-             if (evas_object_data_get(o, "_elm_leaveme")) continue;
-             evas_object_clip_set(o, clip);
-          }
+       if (evas_object_data_get(o, "_elm_leaveme")) continue;
+       evas_object_clip_set(o, clip);
      }
+   eina_iterator_free(it);
 }
 
 static void
 _elm_widget_smart_clip_unset(Eo *obj, void *_pd EINA_UNUSED, va_list *params_list EINA_UNUSED)
 {
-   Eina_List *list;
+   Eina_Iterator *it;
    Evas_Object *o;
 
-   if ((list = evas_object_smart_members_get(obj)))
+   it = evas_object_smart_iterator_new(obj);
+   EINA_ITERATOR_FOREACH(it, o)
      {
-        EINA_LIST_FREE(list, o)
-          {
-             if (evas_object_data_get(o, "_elm_leaveme")) continue;
-             evas_object_clip_unset(o);
-          }
+       if (evas_object_data_get(o, "_elm_leaveme")) continue;
+       evas_object_clip_unset(o);
      }
+   eina_iterator_free(it);
 }
 
 static void
