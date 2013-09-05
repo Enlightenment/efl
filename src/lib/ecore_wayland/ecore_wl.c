@@ -4,6 +4,7 @@
 
 #include <fcntl.h>
 #include "ecore_wl_private.h"
+#include <subsurface-client-protocol.h>
 
 /* local function prototypes */
 static Eina_Bool _ecore_wl_shutdown(Eina_Bool close);
@@ -398,7 +399,7 @@ _ecore_wl_shutdown(Eina_Bool close)
         if (_ecore_wl_disp->wl.compositor)
           wl_compositor_destroy(_ecore_wl_disp->wl.compositor);
         if (_ecore_wl_disp->wl.subcompositor)
-          wl_compositor_destroy(_ecore_wl_disp->wl.subcompositor);
+          wl_subcompositor_destroy(_ecore_wl_disp->wl.subcompositor);
         if (_ecore_wl_disp->wl.display)
           {
              wl_registry_destroy(_ecore_wl_disp->wl.registry);
