@@ -359,6 +359,9 @@ void                 _elm_config_shutdown(void);
 void                 _elm_config_sub_shutdown(void);
 Eina_Bool            _elm_config_save(void);
 void                 _elm_config_reload(void);
+size_t               _elm_config_user_dir_snprintf(char *dst, size_t size,
+                                                   const char *fmt, ...)
+                                                   EINA_PRINTF(3, 4);
 
 void                 _elm_recache(void);
 

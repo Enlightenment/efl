@@ -72,10 +72,6 @@ static size_t      _elm_data_dir_snprintf(char       *dst,
                                           size_t      size,
                                           const char *fmt, ...)
                                           EINA_PRINTF(3, 4);
-static size_t _elm_user_dir_snprintf(char       *dst,
-                                     size_t      size,
-                                     const char *fmt, ...)
-                                     EINA_PRINTF(3, 4);
 
 #define ELM_CONFIG_VAL(edd, type, member, dtype) \
   EET_DATA_DESCRIPTOR_ADD_BASIC(edd, type, #member, member, dtype)
@@ -501,11 +497,11 @@ end:
    return off;
 }
 
-static size_t
-_elm_user_dir_snprintf(char       *dst,
-                       size_t      size,
-                       const char *fmt,
-                       ...)
+size_t
+_elm_config_user_dir_snprintf(char       *dst,
+                              size_t      size,
+                              const char *fmt,
+                              ...)
 {
    const char *home = NULL;
    size_t user_dir_len, off;
@@ -565,7 +561,7 @@ _elm_config_profile_dir_get(const char *prof,
    if (!is_user)
      goto not_user;
 
-   _elm_user_dir_snprintf(buf, sizeof(buf), "config/%s", prof);
+   _elm_config_user_dir_snprintf(buf, sizeof(buf), "config/%s", prof);
 
    if (ecore_file_is_dir(buf))
      return strdup(buf);
@@ -782,7 +778,7 @@ _elm_config_profiles_list(void)
    const char *dir;
    size_t len;
 
-   len = _elm_user_dir_snprintf(buf, sizeof(buf), "config");
+   len = _elm_config_user_dir_snprintf(buf, sizeof(buf), "config");
 
    file_it = eina_file_stat_ls(buf);
    if (!file_it)
@@ -876,7 +872,7 @@ _profile_fetch_from_conf(void)
      }
 
    // user profile
-   _elm_user_dir_snprintf(buf, sizeof(buf), "config/profile.cfg");
+   _elm_config_user_dir_snprintf(buf, sizeof(buf), "config/profile.cfg");
    ef = eet_open(buf, EET_FILE_MODE_READ);
    if (ef)
      {
@@ -1017,7 +1013,7 @@ _config_user_load(void)
    Eet_File *ef;
    char buf[PATH_MAX];
 
-   _elm_user_dir_snprintf(buf, sizeof(buf), "config/%s/base.cfg",
+   _elm_config_user_dir_snprintf(buf, sizeof(buf), "config/%s/base.cfg",
                           _elm_profile);
 
    ef = eet_open(buf, EET_FILE_MODE_READ);
@@ -1247,11 +1243,12 @@ _elm_config_profile_save(void)
    Eet_File *ef;
    size_t len;
 
-   len = _elm_user_dir_snprintf(buf, sizeof(buf), "config/profile.cfg");
+   len = _elm_config_user_dir_snprintf(buf, sizeof(buf), "config/profile.cfg");
    if (len + 1 >= sizeof(buf))
      return EINA_FALSE;
 
-   len = _elm_user_dir_snprintf(buf2, sizeof(buf2), "config/profile.cfg.tmp");
+   len = _elm_config_user_dir_snprintf(buf2, sizeof(buf2),
+                                       "config/profile.cfg.tmp");
    if (len + 1 >= sizeof(buf2))
      return EINA_FALSE;
 
@@ -1295,7 +1292,8 @@ _elm_config_save(void)
    Eet_File *ef;
    size_t len;
 
-   len = _elm_user_dir_snprintf(buf, sizeof(buf), "config/%s", _elm_profile);
+   len = _elm_config_user_dir_snprintf(buf, sizeof(buf), "config/%s",
+                                       _elm_profile);
    if (len + 1 >= sizeof(buf))
      return EINA_FALSE;
 
