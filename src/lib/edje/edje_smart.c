@@ -598,6 +598,8 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(EDJE_OBJ_SUB_ID_PART_TEXT_IMF_CONTEXT_RESET, "Reset the input method context if needed."),
      EO_OP_DESCRIPTION(EDJE_OBJ_SUB_ID_PART_TEXT_INPUT_PANEL_LAYOUT_SET, "Set the layout of the input panel."),
      EO_OP_DESCRIPTION(EDJE_OBJ_SUB_ID_PART_TEXT_INPUT_PANEL_LAYOUT_GET, "Get the layout of the input panel."),
+     EO_OP_DESCRIPTION(EDJE_OBJ_SUB_ID_PART_TEXT_INPUT_PANEL_VARIATION_SET, "Set the variation of the input panel."),
+     EO_OP_DESCRIPTION(EDJE_OBJ_SUB_ID_PART_TEXT_INPUT_PANEL_VARIATION_GET, "Get the variation of the input panel."),
      EO_OP_DESCRIPTION(EDJE_OBJ_SUB_ID_PART_TEXT_AUTOCAPITAL_TYPE_SET, "Set the autocapitalization type on the immodule."),
      EO_OP_DESCRIPTION(EDJE_OBJ_SUB_ID_PART_TEXT_AUTOCAPITAL_TYPE_GET, "Retrieves the autocapitalization type"),
      EO_OP_DESCRIPTION(EDJE_OBJ_SUB_ID_PART_TEXT_PREDICTION_ALLOW_SET, "Set whether the prediction is allowed or not."),
