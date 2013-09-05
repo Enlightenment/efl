@@ -1309,6 +1309,8 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
           {
              obj->layer->evas->engine.func->context_multiplier_unset
                (e->engine.data.output, context);
+             obj->layer->evas->engine.func->context_render_op_set
+               (e->engine.data.output, context, obj->cur->render_op);
              evas_draw_image_map_async_check
                (obj, e->engine.data.output, context, surface,
                 obj->map->surface, obj->map->spans,
