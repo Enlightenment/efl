@@ -1,3 +1,7 @@
+2013-09-06  Cedric Bail
+
+	* Edje: Add border information to Image sets.
+
 2013-09-05  Cedric Bail
 
 	* Evas: Add evas_object_smart_iterator_new().

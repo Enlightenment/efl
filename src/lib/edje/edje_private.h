@@ -580,6 +580,11 @@ struct _Edje_Image_Directory_Set_Entry
        int h;
      } min, max;
    } size;
+
+   struct {
+      int l, r, t, b;
+      FLOAT_T scale_by;
+   } border;
 };
 
 struct _Edje_Sound_Sample /*Sound Sample*/

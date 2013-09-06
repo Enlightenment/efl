@@ -161,6 +161,8 @@ static void st_images_set_name(void);
 static void ob_images_set_image(void);
 static void st_images_set_image_image(void);
 static void st_images_set_image_size(void);
+static void st_images_set_image_border(void);
+static void st_images_set_image_border_scale_by(void);
 
 static void st_fonts_font(void);
 
@@ -401,6 +403,8 @@ New_Statement_Handler statement_handlers[] =
      {"images.set.name", st_images_set_name},
      {"images.set.image.image", st_images_set_image_image},
      {"images.set.image.size", st_images_set_image_size},
+     {"images.set.image.border", st_images_set_image_border},
+     {"images.set.image.scale_by", st_images_set_image_border_scale_by},
      {"fonts.font", st_fonts_font},
      {"data.item", st_data_item},
      {"data.file", st_data_file},
@@ -416,10 +420,14 @@ New_Statement_Handler statement_handlers[] =
      {"collections.set.name", st_images_set_name}, /* dup */
      {"collections.set.image.image", st_images_set_image_image}, /* dup */
      {"collections.set.image.size", st_images_set_image_size}, /* dup */
+     {"collections.set.image.border", st_images_set_image_border}, /* dup */
+     {"collections.set.image.scale_by", st_images_set_image_border_scale_by}, /* dup */
      {"collections.images.image", st_images_image}, /* dup */
      {"collections.images.set.name", st_images_set_name}, /* dup */
      {"collections.images.set.image.image", st_images_set_image_image}, /* dup */
      {"collections.images.set.image.size", st_images_set_image_size}, /* dup */
+     {"collections.images.set.image.border", st_images_set_image_border}, /* dup */
+     {"collections.images.set.image.scale_by", st_images_set_image_border_scale_by}, /* dup */
      {"collections.font", st_fonts_font}, /* dup */
      {"collections.fonts.font", st_fonts_font}, /* dup */
      {"collections.styles.style.name", st_styles_style_name}, /* dup */
@@ -451,13 +459,17 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.limits.vertical", st_collections_group_limits_vertical},
      {"collections.group.externals.external", st_externals_external}, /* dup */
      {"collections.group.image", st_images_image}, /* dup */
-     {"collections.group.set.name", st_images_set_name},
-     {"collections.group.set.image.image", st_images_set_image_image},
-     {"collections.group.set.image.size", st_images_set_image_size},
+     {"collections.group.set.name", st_images_set_name}, /* dup */
+     {"collections.group.set.image.image", st_images_set_image_image}, /* dup */
+     {"collections.group.set.image.size", st_images_set_image_size}, /* dup */
+     {"collections.group.set.image.border", st_images_set_image_border}, /* dup */
+     {"collections.group.set.image.scale_by", st_images_set_image_border_scale_by}, /* dup */
      {"collections.group.images.image", st_images_image}, /* dup */
-     {"collections.group.images.set.name", st_images_set_name},
-     {"collections.group.images.set.image.image", st_images_set_image_image},
-     {"collections.group.images.set.image.size", st_images_set_image_size},
+     {"collections.group.images.set.name", st_images_set_name}, /* dup */
+     {"collections.group.images.set.image.image", st_images_set_image_image}, /* dup */
+     {"collections.group.images.set.image.size", st_images_set_image_size}, /* dup */
+     {"collections.group.images.set.image.border", st_images_set_image_border}, /* dup */
+     {"collections.group.images.set.image.scale_by", st_images_set_image_border_scale_by}, /* dup */
      {"collections.group.font", st_fonts_font}, /* dup */
      {"collections.group.fonts.font", st_fonts_font}, /* dup */
      {"collections.group.styles.style.name", st_styles_style_name}, /* dup */
@@ -469,13 +481,17 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.color_classes.color_class.color3", st_color_class_color3}, /* dup */
      {"collections.group.parts.alias", st_collections_group_parts_alias },
      {"collections.group.parts.image", st_images_image}, /* dup */
-     {"collections.group.parts.set.name", st_images_set_name},
-     {"collections.group.parts.set.image.image", st_images_set_image_image},
-     {"collections.group.parts.set.image.size", st_images_set_image_size},
+     {"collections.group.parts.set.name", st_images_set_name}, /* dup */
+     {"collections.group.parts.set.image.image", st_images_set_image_image}, /* dup */
+     {"collections.group.parts.set.image.size", st_images_set_image_size}, /* dup */
+     {"collections.group.parts.set.image.border", st_images_set_image_border}, /* dup */
+     {"collections.group.parts.set.image.scale_by", st_images_set_image_border_scale_by}, /* dup */
      {"collections.group.parts.images.image", st_images_image}, /* dup */
-     {"collections.group.parts.images.set.name", st_images_set_name},
-     {"collections.group.parts.images.set.image.image", st_images_set_image_image},
-     {"collections.group.parts.images.set.image.size", st_images_set_image_size},
+     {"collections.group.parts.images.set.name", st_images_set_name}, /* dup */
+     {"collections.group.parts.images.set.image.image", st_images_set_image_image}, /* dup */
+     {"collections.group.parts.images.set.image.size", st_images_set_image_size}, /* dup */
+     {"collections.group.parts.images.set.image.border", st_images_set_image_border}, /* dup */
+     {"collections.group.parts.images.set.image.scale_by", st_images_set_image_border_scale_by}, /* dup */
      {"collections.group.parts.font", st_fonts_font}, /* dup */
      {"collections.group.parts.fonts.font", st_fonts_font}, /* dup */
      {"collections.group.parts.styles.style.name", st_styles_style_name}, /* dup */
@@ -521,13 +537,17 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.multiline", st_collections_group_parts_part_multiline},
      {"collections.group.parts.part.access", st_collections_group_parts_part_access},
      {"collections.group.parts.part.image", st_images_image}, /* dup */
-     {"collections.group.parts.part.set.name", st_images_set_name},
-     {"collections.group.parts.part.set.image.image", st_images_set_image_image},
-     {"collections.group.parts.part.set.image.size", st_images_set_image_size},
+     {"collections.group.parts.part.set.name", st_images_set_name}, /* dup */
+     {"collections.group.parts.part.set.image.image", st_images_set_image_image}, /* dup */
+     {"collections.group.parts.part.set.image.size", st_images_set_image_size}, /* dup */
+     {"collections.group.parts.part.set.image.border", st_images_set_image_border}, /* dup */
+     {"collections.group.parts.part.set.image.scale_by", st_images_set_image_border_scale_by}, /* dup */
      {"collections.group.parts.part.images.image", st_images_image}, /* dup */
-     {"collections.group.parts.part.images.set.name", st_images_set_name},
-     {"collections.group.parts.part.images.set.image.image", st_images_set_image_image},
-     {"collections.group.parts.part.images.set.image.size", st_images_set_image_size},
+     {"collections.group.parts.part.images.set.name", st_images_set_name}, /* dup */
+     {"collections.group.parts.part.images.set.image.image", st_images_set_image_image}, /* dup */
+     {"collections.group.parts.part.images.set.image.size", st_images_set_image_size}, /* dup */
+     {"collections.group.parts.part.images.set.image.border", st_images_set_image_border}, /* dup */
+     {"collections.group.parts.part.images.set.image.scale_by", st_images_set_image_border_scale_by}, /* dup */
      {"collections.group.parts.part.font", st_fonts_font}, /* dup */
      {"collections.group.parts.part.fonts.font", st_fonts_font}, /* dup */
      {"collections.group.parts.part.styles.style.name", st_styles_style_name}, /* dup */
@@ -591,13 +611,17 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.image.normal", st_collections_group_parts_part_description_image_normal},
      {"collections.group.parts.part.description.image.tween", st_collections_group_parts_part_description_image_tween},
      {"collections.group.parts.part.description.image.image", st_images_image}, /* dup */
-     {"collections.group.parts.part.description.image.set.name", st_images_set_name},
-     {"collections.group.parts.part.description.image.set.image.image", st_images_set_image_image},
-     {"collections.group.parts.part.description.image.set.image.size", st_images_set_image_size},
+     {"collections.group.parts.part.description.image.set.name", st_images_set_name}, /* dup */
+     {"collections.group.parts.part.description.image.set.image.image", st_images_set_image_image}, /* dup */
+     {"collections.group.parts.part.description.image.set.image.size", st_images_set_image_size}, /* dup */
+     {"collections.group.parts.part.description.images.set.image.border", st_images_set_image_border}, /* dup */
+     {"collections.group.parts.part.description.images.set.image.scale_by", st_images_set_image_border_scale_by}, /* dup */
      {"collections.group.parts.part.description.image.images.image", st_images_image}, /* dup */
-     {"collections.group.parts.part.description.image.images.set.name", st_images_set_name},
-     {"collections.group.parts.part.description.image.images.set.image.image", st_images_set_image_image},
-     {"collections.group.parts.part.description.image.images.set.image.size", st_images_set_image_size},
+     {"collections.group.parts.part.description.image.images.set.name", st_images_set_name}, /* dup */
+     {"collections.group.parts.part.description.image.images.set.image.image", st_images_set_image_image}, /* dup */
+     {"collections.group.parts.part.description.image.images.set.image.size", st_images_set_image_size}, /* dup */
+     {"collections.group.parts.part.description.image.images.set.image.border", st_images_set_image_border}, /* dup */
+     {"collections.group.parts.part.description.image.images.set.image.scale_by", st_images_set_image_border_scale_by}, /* dup */
      {"collections.group.parts.part.description.image.border", st_collections_group_parts_part_description_image_border},
      {"collections.group.parts.part.description.image.middle", st_collections_group_parts_part_description_image_middle},
      {"collections.group.parts.part.description.image.border_scale", st_collections_group_parts_part_description_image_border_scale},
@@ -681,9 +705,11 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.params.bool", st_collections_group_parts_part_description_params_bool},
      {"collections.group.parts.part.description.params.choice", st_collections_group_parts_part_description_params_choice},
      {"collections.group.parts.part.description.images.image", st_images_image}, /* dup */
-     {"collections.group.parts.part.description.images.set.name", st_images_set_name},
-     {"collections.group.parts.part.description.images.set.image.image", st_images_set_image_image},
-     {"collections.group.parts.part.description.images.set.image.size", st_images_set_image_size},
+     {"collections.group.parts.part.description.images.set.name", st_images_set_name}, /* dup */
+     {"collections.group.parts.part.description.images.set.image.image", st_images_set_image_image}, /* dup */
+     {"collections.group.parts.part.description.images.set.image.size", st_images_set_image_size}, /* dup */
+     {"collections.group.parts.part.description.images.set.image.border", st_images_set_image_border}, /* dup */
+     {"collections.group.parts.part.description.images.set.image.scale_by", st_images_set_image_border_scale_by}, /* dup */
      {"collections.group.parts.part.description.font", st_fonts_font}, /* dup */
      {"collections.group.parts.part.description.fonts.font", st_fonts_font}, /* dup */
      {"collections.group.parts.part.description.styles.style.name", st_styles_style_name}, /* dup */
@@ -694,13 +720,17 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.color_classes.color_class.color2", st_color_class_color2}, /* dup */
      {"collections.group.parts.part.description.color_classes.color_class.color3", st_color_class_color3}, /* dup */
      {"collections.group.parts.part.description.programs.image", st_images_image}, /* dup */
-     {"collections.group.parts.part.description.programs.set.name", st_images_set_name},
-     {"collections.group.parts.part.description.programs.set.image.image", st_images_set_image_image},
-     {"collections.group.parts.part.description.programs.set.image.size", st_images_set_image_size},
+     {"collections.group.parts.part.description.programs.set.name", st_images_set_name}, /* dup */
+     {"collections.group.parts.part.description.programs.set.image.image", st_images_set_image_image}, /* dup */
+     {"collections.group.parts.part.description.programs.set.image.size", st_images_set_image_size}, /* dup */
+     {"collections.group.parts.part.description.programs.set.image.border", st_images_set_image_border}, /* dup */
+     {"collections.group.parts.part.description.programs.set.image.scale_by", st_images_set_image_border_scale_by}, /* dup */
      {"collections.group.parts.part.description.programs.images.image", st_images_image}, /* dup */
-     {"collections.group.parts.part.description.programs.images.set.name", st_images_set_name},
-     {"collections.group.parts.part.description.programs.images.set.image.image", st_images_set_image_image},
-     {"collections.group.parts.part.description.programs.images.set.image.size", st_images_set_image_size},
+     {"collections.group.parts.part.description.programs.images.set.name", st_images_set_name}, /* dup */
+     {"collections.group.parts.part.description.programs.images.set.image.image", st_images_set_image_image}, /* dup */
+     {"collections.group.parts.part.description.programs.images.set.image.size", st_images_set_image_size}, /* dup */
+     {"collections.group.parts.part.description.programs.images.set.image.border", st_images_set_image_border}, /* dup */
+     {"collections.group.parts.part.description.programs.images.set.image.scale_by", st_images_set_image_border_scale_by}, /* dup */
      {"collections.group.parts.part.description.programs.font", st_fonts_font}, /* dup */
      {"collections.group.parts.part.description.programs.fonts.font", st_fonts_font}, /* dup */
      {"collections.group.parts.part.description.programs.program.name", st_collections_group_programs_program_name}, /* dup */
@@ -722,13 +752,17 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.program.after", st_collections_group_programs_program_after}, /* dup */
      {"collections.group.parts.part.description.program.api", st_collections_group_programs_program_api}, /* dup */
      {"collections.group.parts.part.programs.image", st_images_image}, /* dup */
-     {"collections.group.parts.part.programs.set.name", st_images_set_name},
-     {"collections.group.parts.part.programs.set.image.image", st_images_set_image_image},
-     {"collections.group.parts.part.programs.set.image.size", st_images_set_image_size},
+     {"collections.group.parts.part.programs.set.name", st_images_set_name}, /* dup */
+     {"collections.group.parts.part.programs.set.image.image", st_images_set_image_image}, /* dup */
+     {"collections.group.parts.part.programs.set.image.size", st_images_set_image_size}, /* dup */
+     {"collections.group.parts.part.programs.set.image.border", st_images_set_image_border}, /* dup */
+     {"collections.group.parts.part.programs.set.image.scale_by", st_images_set_image_border_scale_by}, /* dup */
      {"collections.group.parts.part.programs.images.image", st_images_image}, /* dup */
-     {"collections.group.parts.part.programs.images.set.name", st_images_set_name},
-     {"collections.group.parts.part.programs.images.set.image.image", st_images_set_image_image},
-     {"collections.group.parts.part.programs.images.set.image.size", st_images_set_image_size},
+     {"collections.group.parts.part.programs.images.set.name", st_images_set_name}, /* dup */
+     {"collections.group.parts.part.programs.images.set.image.image", st_images_set_image_image}, /* dup */
+     {"collections.group.parts.part.programs.images.set.image.size", st_images_set_image_size}, /* dup */
+     {"collections.group.parts.part.programs.images.set.image.border", st_images_set_image_border}, /* dup */
+     {"collections.group.parts.part.programs.images.set.image.scale_by", st_images_set_image_border_scale_by}, /* dup */
      {"collections.group.parts.part.programs.font", st_fonts_font}, /* dup */
      {"collections.group.parts.part.programs.fonts.font", st_fonts_font}, /* dup */
      {"collections.group.parts.part.programs.program.name", st_collections_group_programs_program_name}, /* dup */
@@ -750,13 +784,17 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.program.after", st_collections_group_programs_program_after}, /* dup */
      {"collections.group.parts.part.program.api", st_collections_group_programs_program_api}, /* dup */
      {"collections.group.parts.programs.image", st_images_image}, /* dup */
-     {"collections.group.parts.programs.set.name", st_images_set_name},
-     {"collections.group.parts.programs.set.image.image", st_images_set_image_image},
-     {"collections.group.parts.programs.set.image.size", st_images_set_image_size},
+     {"collections.group.parts.programs.set.name", st_images_set_name}, /* dup */
+     {"collections.group.parts.programs.set.image.image", st_images_set_image_image}, /* dup */
+     {"collections.group.parts.programs.set.image.size", st_images_set_image_size}, /* dup */
+     {"collections.group.parts.programs.set.image.border", st_images_set_image_border}, /* dup */
+     {"collections.group.parts.programs.set.image.scale_by", st_images_set_image_border_scale_by}, /* dup */
      {"collections.group.parts.programs.images.image", st_images_image}, /* dup */
-     {"collections.group.parts.programs.images.set.name", st_images_set_name},
-     {"collections.group.parts.programs.images.set.image.image", st_images_set_image_image},
-     {"collections.group.parts.programs.images.set.image.size", st_images_set_image_size},
+     {"collections.group.parts.programs.images.set.name", st_images_set_name}, /* dup */
+     {"collections.group.parts.programs.images.set.image.image", st_images_set_image_image}, /* dup */
+     {"collections.group.parts.programs.images.set.image.size", st_images_set_image_size}, /* dup */
+     {"collections.group.parts.programs.images.set.image.border", st_images_set_image_border}, /* dup */
+     {"collections.group.parts.programs.images.set.image.scale_by", st_images_set_image_border_scale_by}, /* dup */
      {"collections.group.parts.programs.font", st_fonts_font}, /* dup */
      {"collections.group.parts.programs.fonts.font", st_fonts_font}, /* dup */
      {"collections.group.parts.programs.program.name", st_collections_group_programs_program_name}, /* dup */
@@ -806,13 +844,17 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.programs.program.after", st_collections_group_programs_program_after},
      {"collections.group.programs.program.api", st_collections_group_programs_program_api},
      {"collections.group.programs.image", st_images_image}, /* dup */
-     {"collections.group.programs.set.name", st_images_set_name},
-     {"collections.group.programs.set.image.image", st_images_set_image_image},
-     {"collections.group.programs.set.image.size", st_images_set_image_size},
+     {"collections.group.programs.set.name", st_images_set_name}, /* dup */
+     {"collections.group.programs.set.image.image", st_images_set_image_image}, /* dup */
+     {"collections.group.programs.set.image.size", st_images_set_image_size}, /* dup */
+     {"collections.group.programs.set.image.border", st_images_set_image_border}, /* dup */
+     {"collections.group.programs.set.image.scale_by", st_images_set_image_border_scale_by}, /* dup */
      {"collections.group.programs.images.image", st_images_image}, /* dup */
-     {"collections.group.programs.images.set.name", st_images_set_name},
-     {"collections.group.programs.images.set.image.image", st_images_set_image_image},
-     {"collections.group.programs.images.set.image.size", st_images_set_image_size},
+     {"collections.group.programs.images.set.name", st_images_set_name}, /* dup */
+     {"collections.group.programs.images.set.image.image", st_images_set_image_image}, /* dup */
+     {"collections.group.programs.images.set.image.size", st_images_set_image_size}, /* dup */
+     {"collections.group.programs.images.set.image.border", st_images_set_image_border}, /* dup */
+     {"collections.group.programs.images.set.image.scale_by", st_images_set_image_border_scale_by}, /* dup */
      {"collections.group.programs.font", st_fonts_font}, /* dup */
      {"collections.group.programs.fonts.font", st_fonts_font} /* dup */
 };
@@ -1694,6 +1736,72 @@ st_images_set_image_size(void)
 	   entry->size.max.w, entry->size.max.h);
        exit(-1);
      }
+}
+
+/**
+    @page edcref
+    @property
+        border
+    @parameters
+        [left] [right] [top] [bottom]
+    @since 1.8
+    @effect
+        If set, the area (in pixels) of each side of the image will be
+        displayed as a fixed size border, from the side -> inwards, preventing
+        the corners from being changed on a resize.
+    @endproperty
+*/
+static void
+st_images_set_image_border(void)
+{
+   Edje_Image_Directory_Set_Entry *entry;
+   Edje_Image_Directory_Set *set;
+
+   set = edje_file->image_dir->sets + edje_file->image_dir->sets_count - 1;
+   entry = eina_list_data_get(eina_list_last(set->entries));
+
+   entry->border.l = parse_int_range(0, 0, 0x7fffffff);
+   entry->border.r = parse_int_range(1, 0, 0x7fffffff);
+   entry->border.t = parse_int_range(2, 0, 0x7fffffff);
+   entry->border.b = parse_int_range(3, 0, 0x7fffffff);
+}
+
+
+/**
+    @page edcref
+    @property
+        border_scale_by
+    @parameters
+        0.0 or bigger (0.0 or 1.0 to turn it off)
+    @since 1.8
+    @effect
+        If border scaling is enabled then normally the OUTPUT border sizes
+        (e.g. if 3 pixels on the left edge are set as a border, then normally
+        at scale 1.0, those 3 columns will always be the exact 3 columns of
+        output, or at scale 2.0 they will be 6 columns, or 0.33 they will merge
+        into a single column). This property multiplies the input scale
+        factor by this multiplier, allowing the creation of "supersampled"
+        borders to make much higher resolution outputs possible by always using
+        the highest resolution artwork and then runtime scaling it down.
+    @endproperty
+*/
+static void
+st_images_set_image_border_scale_by(void)
+{
+   Edje_Part_Description_Image *ed;
+
+   check_arg_count(1);
+
+   if (current_part->type != EDJE_PART_TYPE_IMAGE)
+     {
+        ERR("parse error %s:%i. image attributes in non-IMAGE part.",
+            file_in, line - 1);
+        exit(-1);
+     }
+
+   ed = (Edje_Part_Description_Image*) current_desc;
+
+   ed->image.border.scale_by = FROM_DOUBLE(parse_float_range(0, 0.0, 999999999.0));
 }
 
 /**
