@@ -329,7 +329,8 @@ eo2_do_start(Eo *obj_id, const Eina_Bool do_super, const char *file EINA_UNUSED,
      }
    else
      {
-        obj = _eo_obj_pointer_get((Eo_Id)obj_id);
+        EO_OBJ_POINTER_RETURN_VAL(obj_id, _obj, EINA_FALSE);
+        obj = _obj;
         if (!obj) return EINA_FALSE;
         if (do_super)
           klass = _eo2_kls_itr_next(obj->klass, obj->klass);
