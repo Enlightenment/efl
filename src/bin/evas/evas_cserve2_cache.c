@@ -27,6 +27,22 @@ typedef struct _File_Watch File_Watch;
 typedef struct _Font_Source Font_Source;
 typedef struct _Font_Entry Font_Entry;
 
+static const Evas_Image_Load_Opts empty_lo = {
+  { 0, 0, 0, 0 },
+  {
+    0, 0, 0, 0,
+    0, 0,
+    0,
+    0
+  },
+  0.0,
+  0, 0,
+  0,
+  0,
+
+  EINA_FALSE
+};
+
 typedef enum {
    CSERVE2_IMAGE_FILE,
    CSERVE2_IMAGE_DATA,
@@ -550,11 +566,12 @@ _font_loaded_send(Client *client, unsigned int rid)
 static void *
 _open_request_build(Entry *entry, int *bufsize)
 {
+   Slave_Msg_Image_Open msg = { { { 0,0,0,0}, 0,0,0,0,0, } };
    const char *loader_data, *key, *path;
-   char *buf;
-   int size, pathlen, keylen, loaderlen;
-   Slave_Msg_Image_Open msg;
+   void *buf;
+   size_t pathlen, keylen, loaderlen;
    File_Data *fd;
+   Eina_Binbuf *bb;
 
    if (!entry || entry->type != CSERVE2_IMAGE_FILE)
      return NULL;
@@ -568,30 +585,33 @@ _open_request_build(Entry *entry, int *bufsize)
 
    path = cserve2_shared_string_get(fd->path);
    key = cserve2_shared_string_get(fd->key);
+   loader_data = cserve2_shared_string_get(fd->loader_data);
    if (!path) path = "";
    if (!key) key = "";
+   if (!loader_data) loader_data = "";
    pathlen = strlen(path) + 1;
    keylen = strlen(key) + 1;
+   loaderlen = strlen(loader_data) + 1;
 
-   memset(&msg, 0, sizeof(msg));
-   loader_data = cserve2_shared_string_get(fd->loader_data);
-   msg.has_loader_data = !!loader_data;
-   loaderlen = msg.has_loader_data ? (strlen(loader_data) + 1) : 0;
+   msg.lo.region.x = fd->lo.region.x;
+   msg.lo.region.y = fd->lo.region.y;
+   msg.lo.region.w = fd->lo.region.w;
+   msg.lo.region.h = fd->lo.region.h;
+   msg.lo.dpi = fd->lo.dpi;
+   msg.lo.w = fd->lo.w;
+   msg.lo.h = fd->lo.h;
+   msg.lo.scale_down_by = fd->lo.scale_down_by;
+   msg.lo.orientation = fd->lo.orientation;
 
-   size = sizeof(msg) + pathlen + keylen + loaderlen;
-   buf = malloc(size);
-   if (!buf) return NULL;
+   bb = eina_binbuf_new();
+   eina_binbuf_append_length(bb, (unsigned char *) &msg, sizeof(msg));
+   eina_binbuf_append_length(bb, (unsigned char *) path, pathlen);
+   eina_binbuf_append_length(bb, (unsigned char *) key, keylen);
+   eina_binbuf_append_length(bb, (unsigned char *) loader_data, loaderlen);
 
-   memcpy(buf, &msg, sizeof(msg));
-   memcpy(buf + sizeof(msg), path, pathlen);
-   memcpy(buf + sizeof(msg) + pathlen, key, keylen);
-   if (msg.has_loader_data)
-     memcpy(buf + sizeof(msg) + pathlen + keylen, loader_data, loaderlen);
-
-   *bufsize = size;
-
-   _entry_load_start(entry);
-
+   *bufsize = eina_binbuf_length_get(bb);
+   buf = eina_binbuf_string_steal(bb);
+   eina_binbuf_free(bb);
    return buf;
 }
 
@@ -940,17 +960,66 @@ _image_entry_size_get(Image_Entry *ientry)
    return size / 1024;
 }
 
+static Eina_Bool
+_evas_image_load_opts_empty(Evas_Image_Load_Opts *lo)
+{
+   if (!lo) return EINA_TRUE;
+
+   return ((lo->scale_down_by == 0)
+           && (lo->dpi == 0.0)
+           && (lo->w == 0) && (lo->h == 0)
+           && (lo->region.x == 0) && (lo->region.y == 0)
+           && (lo->region.w == 0) && (lo->region.h == 0)
+           && (lo->orientation == 0));
+}
+
+static void
+_file_hkey_get(char *buf, size_t sz, const char *path, const char *key,
+               Evas_Image_Load_Opts *lo)
+{
+   // Same as _evas_cache_image_loadopts_append() but not optimized :)
+   if (lo && _evas_image_load_opts_empty(lo))
+     lo = NULL;
+
+   if (!lo)
+     snprintf(buf, sz, "%s:%s", path, key);
+   else
+     {
+        if (lo->orientation)
+          {
+             snprintf(buf, sz, "%s:%s//@/%d/%f/%dx%d/%d+%d.%dx%d",
+                      path, key, lo->scale_down_by, lo->dpi, lo->w, lo->h,
+                      lo->region.x, lo->region.y, lo->region.w, lo->region.h);
+          }
+        else
+          {
+             snprintf(buf, sz, "%s:%s//@/%d/%f/%dx%d/%d+%d.%dx%d/o",
+                      path, key, lo->scale_down_by, lo->dpi, lo->w, lo->h,
+                      lo->region.x, lo->region.y, lo->region.w, lo->region.h);
+          }
+     }
+}
+
 static void
 _file_id_free(File_Data *fd)
 {
+   Evas_Image_Load_Opts lo = empty_lo;
    char buf[4096];
 
-   DBG("Removing entry file id: %d, file: \"%s:%s\"",
-       fd->id, cserve2_shared_string_get(fd->path),
-       cserve2_shared_string_get(fd->key));
-   snprintf(buf, sizeof(buf), "%s:%s",
-            cserve2_shared_string_get(fd->path),
-            cserve2_shared_string_get(fd->key));
+   lo.region.x = fd->lo.region.x;
+   lo.region.y = fd->lo.region.y;
+   lo.region.w = fd->lo.region.w;
+   lo.region.h = fd->lo.region.h;
+   lo.dpi = fd->lo.dpi;
+   lo.w = fd->lo.w;
+   lo.h = fd->lo.h;
+   lo.scale_down_by = fd->lo.scale_down_by;
+   lo.orientation = fd->lo.orientation;
+
+   _file_hkey_get(buf, sizeof(buf), cserve2_shared_string_get(fd->path),
+                  cserve2_shared_string_get(fd->key), &lo);
+
+   DBG("Removing entry file id: %u, file: \"%s\"", fd->id, buf);
    eina_hash_del_by_key(file_ids, buf);
 }
 
@@ -2450,7 +2519,8 @@ _cserve2_cache_font_debug(unsigned int rid, unsigned int *size)
 
 int
 cserve2_cache_file_open(Client *client, unsigned int client_file_id,
-                        const char *path, const char *key, unsigned int rid)
+                        const char *path, const char *key, unsigned int rid,
+                        Evas_Image_Load_Opts *lo)
 {
    unsigned int file_id;
    File_Data *fd;
@@ -2460,6 +2530,7 @@ cserve2_cache_file_open(Client *client, unsigned int client_file_id,
    File_Entry *fentry;
    int idx;
 
+#if 0
    // look for this file on client references
    ref = eina_hash_find(client->files.referencing, &client_file_id);
    if (ref)
@@ -2483,9 +2554,10 @@ cserve2_cache_file_open(Client *client, unsigned int client_file_id,
           _image_opened_send(client, fd, rid);
         return 0;
      }
+#endif
 
    // search whether the file is already opened by another client
-   snprintf(buf, sizeof(buf), "%s:%s", path, key);
+   _file_hkey_get(buf, sizeof(buf), path, key, lo);
    file_id = (unsigned int)(uintptr_t)eina_hash_find(file_ids, buf);
    if (file_id)
      {
@@ -2527,9 +2599,19 @@ cserve2_cache_file_open(Client *client, unsigned int client_file_id,
         return -1;
      }
    fd->valid = EINA_FALSE;
-   fd->refcount = 1;
    fd->path = cserve2_shared_string_add(path);
    fd->key = cserve2_shared_string_add(key);
+   if (!lo) lo = (Evas_Image_Load_Opts *) &empty_lo;
+   fd->lo.region.x = lo->region.x;
+   fd->lo.region.y = lo->region.y;
+   fd->lo.region.w = lo->region.w;
+   fd->lo.region.h = lo->region.h;
+   fd->lo.dpi = lo->dpi;
+   fd->lo.w = lo->w;
+   fd->lo.h = lo->h;
+   fd->lo.scale_down_by = lo->scale_down_by;
+   fd->lo.orientation = lo->orientation;
+   fd->refcount = 1;
    fd->id = file_id;
 
    fentry = calloc(1, sizeof(File_Entry));

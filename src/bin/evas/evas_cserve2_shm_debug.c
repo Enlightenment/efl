@@ -384,7 +384,7 @@ _strings_all_print(Eina_Bool full)
 }
 
 static void
-_files_all_print(Eina_Bool full)
+_files_all_print_short()
 {
    int k;
 
@@ -401,7 +401,7 @@ _files_all_print(Eina_Bool full)
 
         fd = _shared_array_item_get(sf_files, k);
         if (!fd) break;
-        if (!fd->id || (!full && !fd->refcount)) continue;
+        if (!fd->id || !fd->refcount) continue;
 
         printf("%7d %7d %5dx%-6d %d %d %6.6s %6d %6d '%s':'%s'\n",
                k, fd->id, fd->w, fd->h, !!fd->alpha, !!fd->invalid,
@@ -411,6 +411,51 @@ _files_all_print(Eina_Bool full)
      }
 
    printf_newline(1);
+}
+
+static void
+_files_all_print_all(void)
+{
+   int k;
+
+   if (!sf_files) return;
+
+   printf("List of opened image files: %s\n", eina_file_filename_get(sf_files->f));
+   printf_newline(0);
+
+   for (k = 0; k < sf_files->header->count; k++)
+     {
+        File_Data *fd;
+
+        fd = _shared_array_item_get(sf_files, k);
+        if (!fd) break;
+        if (!fd->id) continue;
+
+        printf("File #%-8d %d\n", k, fd->id);
+        printf("Path:Key:      '%s':'%s'\n",
+               _shared_string_get(fd->path), _shared_string_get(fd->key));
+        printf("LoadOpts:      Region:      %d,%d-%dx%d\n",
+               fd->lo.region.x, fd->lo.region.y, fd->lo.region.w, fd->lo.region.h);
+        if (fd->lo.dpi != 0)
+          printf("               DPI:         %f\n");
+        else
+          printf("               DPI:         0\n");
+        printf("               Requested:   %dx%d\n", fd->lo.w, fd->lo.h);
+        printf("               Scale down:  %d\n", fd->lo.scale_down_by);
+        printf("               Orientation: %s\n", fd->lo.orientation ? "YES" : "NO");
+        printf("Loader:        %s\n", _shared_string_get(fd->loader_data));
+        printf("Geometry:      %dx%d\n", fd->w, fd->h);
+        printf("Animation:     anim: %s, frames: %d, loop: %d, hint: %d\n",
+               fd->animated ? "YES" : "NO",
+               fd->frame_count, fd->loop_count, fd->loop_hint);
+        printf("Alpha:         %s\n", fd->alpha ? "YES" : "NO");
+        printf("Invalid:       %s\n", fd->invalid ? "YES" : "NO");
+
+        printf_newline(0);
+     }
+
+   printf("\n\n");
+   fflush(stdout);
 }
 
 static void
@@ -752,7 +797,8 @@ main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 
    _index_tables_summary_print();
    _strings_all_print(full);
-   _files_all_print(full);
+   _files_all_print_short();
+   if (full) _files_all_print_all();
    _images_all_print_short();
    if (full) _images_all_print_full();
    _fonts_all_print_short();

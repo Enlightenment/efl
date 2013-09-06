@@ -23,6 +23,22 @@
 #define HKEY_LOAD_OPTS_STR_LEN 215
 typedef void (*Op_Callback)(void *data, const void *msg, int size);
 
+static const Evas_Image_Load_Opts empty_lo = {
+  { 0, 0, 0, 0 },
+  {
+    0, 0, 0, 0,
+    0, 0,
+    0,
+    0
+  },
+  0.0,
+  0, 0,
+  0,
+  0,
+
+  EINA_FALSE
+};
+
 struct _File_Entry {
    unsigned int file_id;
    unsigned int server_file_id;
@@ -2053,26 +2069,45 @@ _shared_string_get(int id)
    do { if (!_shared_index_remap_check(&(si), sizeof(typ))) { \
    CRIT("Failed to remap index"); return NULL; } } while (0)
 
-static const char *
-_shared_file_data_hkey_get(char *hkey, const char *file, const char *key,
-                           size_t hkey_size)
+
+static Eina_Bool
+_evas_image_load_opts_empty(Evas_Image_Load_Opts *lo)
 {
-   size_t keylen = 0, filelen;
+   if (!lo) return EINA_TRUE;
 
-   if (key) keylen = strlen(key) + 1;
-   filelen = strlen(file);
+   return ((lo->scale_down_by == 0)
+           && (lo->dpi == 0.0)
+           && (lo->w == 0) && (lo->h == 0)
+           && (lo->region.x == 0) && (lo->region.y == 0)
+           && (lo->region.w == 0) && (lo->region.h == 0)
+           && (lo->orientation == 0));
+}
 
-   if (filelen + keylen + 1 > hkey_size)
-     return NULL;
+static void
+_file_hkey_get(char *buf, size_t sz, const char *path, const char *key,
+               Evas_Image_Load_Opts *lo)
+{
+   // Same as _evas_cache_image_loadopts_append() but not optimized :)
+   if (lo && _evas_image_load_opts_empty(lo))
+     lo = NULL;
 
-   memcpy(hkey, file, filelen);
-   hkey[filelen] = ':';
-   if (key)
-     memcpy(hkey + filelen + 1, key, keylen);
+   if (!lo)
+     snprintf(buf, sz, "%s:%s", path, key);
    else
-     memcpy(hkey + filelen + 1, "(null)", 7);
-
-   return hkey;
+     {
+        if (lo->orientation)
+          {
+             snprintf(buf, sz, "%s:%s//@/%d/%f/%dx%d/%d+%d.%dx%d",
+                      path, key, lo->scale_down_by, lo->dpi, lo->w, lo->h,
+                      lo->region.x, lo->region.y, lo->region.w, lo->region.h);
+          }
+        else
+          {
+             snprintf(buf, sz, "%s:%s//@/%d/%f/%dx%d/%d+%d.%dx%d/o",
+                      path, key, lo->scale_down_by, lo->dpi, lo->w, lo->h,
+                      lo->region.x, lo->region.y, lo->region.w, lo->region.h);
+          }
+     }
 }
 
 static const File_Data *
@@ -2104,7 +2139,7 @@ _shared_image_entry_file_data_find(Image_Entry *ie)
      }
 
    // Check hash
-   _shared_file_data_hkey_get(hkey, ie->file, ie->key, PATH_MAX);
+   _file_hkey_get(hkey, sizeof(hkey), ie->file, ie->key, &ie->load_opts);
    fdata = eina_hash_find(_index.files.entries_by_hkey, hkey);
    if (fdata)
      return fdata;
@@ -2116,6 +2151,7 @@ _shared_image_entry_file_data_find(Image_Entry *ie)
         const char *file, *key;
         const File_Data *fd;
         char fd_hkey[PATH_MAX];
+        Evas_Image_Load_Opts lo = empty_lo;
 
         fd = &(_index.files.entries.filedata[k]);
         if (!fd->id) break;
@@ -2136,7 +2172,17 @@ _shared_image_entry_file_data_find(Image_Entry *ie)
             (key > _index.strings_entries.data + _index.strings_entries.size))
           key = _shared_string_get(fd->key);
 
-        _shared_file_data_hkey_get(fd_hkey, file, key, PATH_MAX);
+        lo.region.x = fd->lo.region.x;
+        lo.region.y = fd->lo.region.y;
+        lo.region.w = fd->lo.region.w;
+        lo.region.h = fd->lo.region.h;
+        lo.dpi = fd->lo.dpi;
+        lo.w = fd->lo.w;
+        lo.h = fd->lo.h;
+        lo.scale_down_by = fd->lo.scale_down_by;
+        lo.orientation = fd->lo.orientation;
+
+        _file_hkey_get(fd_hkey, sizeof(fd_hkey), file, key, &lo);
 
         if (add_to_hash)
           {

@@ -5,7 +5,7 @@
 #include "evas_cs2.h"
 
 #ifndef CSERVE2_LOG_LEVEL
-#define CSERVE2_LOG_LEVEL 2
+#define CSERVE2_LOG_LEVEL 4
 #endif
 
 #ifdef CRIT
@@ -103,8 +103,17 @@ typedef enum {
 } Slave_Command;
 
 struct _Slave_Msg_Image_Open {
-   Eina_Bool has_loader_data : 1;
-   // Optionally followed by:
+   struct {
+      struct {
+         unsigned int x, y, w, h;
+      } region;
+      double       dpi;
+      unsigned int w, h;
+      int          scale_down_by;
+      Eina_Bool    orientation;
+   } lo;
+   // const char path[];
+   // const char key[];
    // const char loader[];
 };
 
@@ -308,7 +317,7 @@ void cserve2_cache_init(void);
 void cserve2_cache_shutdown(void);
 void cserve2_cache_client_new(Client *client);
 void cserve2_cache_client_del(Client *client);
-int cserve2_cache_file_open(Client *client, unsigned int client_file_id, const char *path, const char *key, unsigned int rid);
+int cserve2_cache_file_open(Client *client, unsigned int client_file_id, const char *path, const char *key, unsigned int rid, Evas_Image_Load_Opts *lo);
 void cserve2_cache_file_close(Client *client, unsigned int client_file_id);
 int cserve2_cache_image_entry_create(Client *client, int rid, unsigned int client_file_id, unsigned int image_id, Evas_Image_Load_Opts *opts);
 void cserve2_rgba_image_scale_do(void *src_data, void *dst_data, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int alpha, int smooth);

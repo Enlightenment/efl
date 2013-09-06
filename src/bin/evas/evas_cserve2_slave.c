@@ -318,7 +318,8 @@ _image_file_header(Eina_File *fd, Eina_Stringshare *key, Evas_Image_Load_Opts *l
 
 static Error_Type
 image_open(const char *file, const char *key,
-           Slave_Msg_Image_Opened *result, const char **use_loader)
+           Slave_Msg_Image_Opened *result, const char **use_loader,
+           Evas_Image_Load_Opts *load_opts)
 {
    Evas_Module *module;
    Eina_File *fd;
@@ -327,9 +328,6 @@ image_open(const char *file, const char *key,
    unsigned int i;
    Error_Type ret = CSERVE2_NONE;
    Eina_Stringshare *skey = eina_stringshare_add(key);
-   Evas_Image_Load_Opts load_opts;
-
-   memset(&load_opts, 0, sizeof(load_opts));
 
    fd = eina_file_open(file, EINA_FALSE);
    if (!fd)
@@ -344,7 +342,7 @@ image_open(const char *file, const char *key,
    module = evas_module_find_type(EVAS_MODULE_TYPE_IMAGE_LOADER, loader);
    if (module)
      {
-        if (_image_file_header(fd, skey, &load_opts, result, module))
+        if (_image_file_header(fd, skey, load_opts, result, module))
           goto success;
      }
 
@@ -364,7 +362,7 @@ try_extension:
    if (loader)
      {
         module = evas_module_find_type(EVAS_MODULE_TYPE_IMAGE_LOADER, loader);
-        if (module && _image_file_header(fd, skey, &load_opts, result, module))
+        if (module && _image_file_header(fd, skey, load_opts, result, module))
           goto success;
         loader = NULL;
         module = NULL;
@@ -376,7 +374,7 @@ try_extension:
         loader = loaders_name[i];
         module = evas_module_find_type(EVAS_MODULE_TYPE_IMAGE_LOADER, loader);
         if (!module) continue;
-        if (_image_file_header(fd, skey, &load_opts, result, module))
+        if (_image_file_header(fd, skey, load_opts, result, module))
           goto success;
      }
 
@@ -487,22 +485,32 @@ done:
 static void
 handle_image_open(int wfd, void *params)
 {
-   Slave_Msg_Image_Open *p;
+   Slave_Msg_Image_Open *msg = params;
    Slave_Msg_Image_Opened result;
+   Evas_Image_Load_Opts load_opts;
    Error_Type err;
    const char *loader = NULL, *file, *key, *ptr;
    char *resp;
    size_t resp_size;
 
-   p = params;
-   file = (const char *)(p + sizeof(Slave_Msg_Image_Open));
+   memset(&load_opts, 0, sizeof(load_opts));
+   load_opts.region.x = msg->lo.region.x;
+   load_opts.region.y = msg->lo.region.y;
+   load_opts.region.w = msg->lo.region.w;
+   load_opts.region.h = msg->lo.region.h;
+   load_opts.dpi = msg->lo.dpi;
+   load_opts.w = msg->lo.w;
+   load_opts.h = msg->lo.h;
+   load_opts.scale_down_by = msg->lo.scale_down_by;
+   load_opts.orientation = msg->lo.orientation;
+
+   file = (const char *) (msg + 1);
    key = file + strlen(file) + 1;
    ptr = key + strlen(key) + 1;
-   if (p->has_loader_data)
-     loader = ptr;
+   loader = ptr;
 
    memset(&result, 0, sizeof(result));
-   if ((err = image_open(file, key, &result, &loader))
+   if ((err = image_open(file, key, &result, &loader, &load_opts))
        != CSERVE2_NONE)
      {
         printf("OPEN failed at %s:%d\n", __FUNCTION__, __LINE__);

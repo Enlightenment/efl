@@ -136,6 +136,8 @@ _cserve2_client_open(Client *client)
 {
    Msg_Open *msg = (Msg_Open *)client->msg.buf;
    const char *path, *key, *end;
+   Evas_Image_Load_Opts *opts = NULL;
+   Evas_Image_Load_Opts opts_copy;
 
    path = ((const char *)msg) + sizeof(*msg) + msg->path_offset;
    key = ((const char *)msg) + sizeof(*msg) + msg->key_offset;
@@ -146,7 +148,14 @@ _cserve2_client_open(Client *client)
        msg->file_id, path, key, (int) msg->has_load_opts);
 
    if (!key[0]) key = NULL;
-   cserve2_cache_file_open(client, msg->file_id, path, key, msg->base.rid);
+   if (msg->has_load_opts)
+     {
+        opts = &opts_copy;
+        memcpy(&opts_copy, end, sizeof(opts_copy));
+     }
+
+   cserve2_cache_file_open(client, msg->file_id, path, key, msg->base.rid,
+                           opts);
 
    if (!msg->has_load_opts)
      cserve2_cache_image_entry_create(client, msg->base.rid,
@@ -154,7 +163,6 @@ _cserve2_client_open(Client *client)
    else
      {
         // FIXME: Check message size first?
-        Evas_Image_Load_Opts *opts = (Evas_Image_Load_Opts *) end;
 
         DBG("Load Options:");
         DBG("\tdpi: %03.1f", opts->dpi);

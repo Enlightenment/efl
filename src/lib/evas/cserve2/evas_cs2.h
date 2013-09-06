@@ -324,9 +324,20 @@ struct _Index_Entry {
 #define FILE_DATA_ARRAY_TAG ('F' | 'I' << 8 | 'L' << 16 | 'E' << 24)
 struct _File_Data {
    SHMOBJECT;
+   // Hash entry elements (see Evas_Image_Load_Opts)
    string_t path;
    string_t key;
-   string_t loader_data;
+   struct {
+      struct {
+         unsigned int x, y, w, h;
+      } region;
+      double       dpi;
+      unsigned int w, h;
+      int          scale_down_by;
+      Eina_Bool    orientation;
+   } lo;
+   // Properties set after opening the file
+   string_t loader_data; // Can also be set during open (force this loader)
    int w, h;
    int frame_count;
    int loop_count;
