@@ -1818,7 +1818,6 @@ _dbg_info_get(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
    eo_do_super(eo_obj, MY_CLASS, eo_dbg_info_get(root));
    Eo_Dbg_Info *group = EO_DBG_INFO_LIST_APPEND(root, MY_CLASS_NAME);
    Eo_Dbg_Info *node;
-   const char *text = NULL;
    double dblw, dblh;
    double dblx, dbly;
    double scale;
@@ -1897,21 +1896,27 @@ _dbg_info_get(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
 
    EO_DBG_INFO_APPEND(group, "Has focus", EINA_VALUE_TYPE_CHAR, focus);
 
-   switch (m)
      {
-      case EVAS_OBJECT_POINTER_MODE_AUTOGRAB:
-         text = "EVAS_OBJECT_POINTER_MODE_AUTOGRAB";
-         break;
-      case EVAS_OBJECT_POINTER_MODE_NOGRAB:
-         text = "EVAS_OBJECT_POINTER_MODE_NOGRAB";
-         break;
-      case EVAS_OBJECT_POINTER_MODE_NOGRAB_NO_REPEAT_UPDOWN:
-         text = "EVAS_OBJECT_POINTER_MODE_NOGRAB_NO_REPEAT_UPDOWN";
-         break;
-     }
+        const char *text = NULL;
+        switch (m)
+          {
+           case EVAS_OBJECT_POINTER_MODE_AUTOGRAB:
+              text = "EVAS_OBJECT_POINTER_MODE_AUTOGRAB";
+              break;
+           case EVAS_OBJECT_POINTER_MODE_NOGRAB:
+              text = "EVAS_OBJECT_POINTER_MODE_NOGRAB";
+              break;
+           case EVAS_OBJECT_POINTER_MODE_NOGRAB_NO_REPEAT_UPDOWN:
+              text = "EVAS_OBJECT_POINTER_MODE_NOGRAB_NO_REPEAT_UPDOWN";
+              break;
+           default:
+              text = NULL;
+              break;
+          }
 
-   if (text)
-      EO_DBG_INFO_APPEND(group, "Pointer Mode", EINA_VALUE_TYPE_STRING, text);
+        if (text)
+           EO_DBG_INFO_APPEND(group, "Pointer Mode", EINA_VALUE_TYPE_STRING, text);
+     }
 
    EO_DBG_INFO_APPEND(group, "Pass Events", EINA_VALUE_TYPE_CHAR, pass_event);
    EO_DBG_INFO_APPEND(group, "Repeat Events", EINA_VALUE_TYPE_CHAR, repeat_event);
