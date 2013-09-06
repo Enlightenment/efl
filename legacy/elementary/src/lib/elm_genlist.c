@@ -1281,11 +1281,8 @@ _item_cache_add(Elm_Gen_Item *it)
      {
         evas_object_del(VIEW(it));
         VIEW(it) = NULL;
-        if (it->spacer)
-          {
-             evas_object_del(it->spacer);
-             it->spacer = NULL;
-          }
+        ELM_SAFE_FREE(it->spacer, evas_object_del);
+
         evas_event_thaw(evas_object_evas_get(obj));
         evas_event_thaw_eval(evas_object_evas_get(obj));
 
@@ -3006,14 +3003,11 @@ _decorate_all_item_unrealize(Elm_Gen_Item *it)
           (it->deco_all_view, "elm,state,reorder,mode_unset", "elm");
      }
 
-   evas_object_del(it->deco_all_view);
-   it->deco_all_view = NULL;
-   elm_widget_stringlist_free(it->item->deco_all_texts);
-   it->item->deco_all_texts = NULL;
-   elm_widget_stringlist_free(it->item->deco_all_contents);
-   it->item->deco_all_contents = NULL;
-   elm_widget_stringlist_free(it->item->deco_all_states);
-   it->item->deco_all_states = NULL;
+   ELM_SAFE_FREE(it->deco_all_view, evas_object_del);
+   ELM_SAFE_FREE(it->item->deco_all_texts, elm_widget_stringlist_free);
+   ELM_SAFE_FREE(it->item->deco_all_contents, elm_widget_stringlist_free);
+   ELM_SAFE_FREE(it->item->deco_all_states, elm_widget_stringlist_free);
+
    EINA_LIST_FREE(it->item->deco_all_content_objs, icon)
      evas_object_del(icon);
    edje_object_message_signal_process(it->deco_all_view);
@@ -3057,11 +3051,7 @@ _elm_genlist_item_del_serious(Elm_Gen_Item *it)
    if (it->group)
      sd->group_items = eina_list_remove(sd->group_items, it);
 
-   if (sd->state)
-     {
-        eina_inlist_sorted_state_free(sd->state);
-        sd->state = NULL;
-     }
+   ELM_SAFE_FREE(sd->state, eina_inlist_sorted_state_free);
    if (sd->calc_job) ecore_job_del(sd->calc_job);
    sd->calc_job = ecore_job_add(_calc_job, sd->obj);
 
@@ -3877,8 +3867,7 @@ _item_process_post(Elm_Genlist_Smart_Data *sd,
         it->item->block->changed = 0;
         if (sd->pan_changed)
           {
-             if (sd->calc_job) ecore_job_del(sd->calc_job);
-             sd->calc_job = NULL;
+             ELM_SAFE_FREE(sd->calc_job, ecore_job_del);
              _calc_job(sd->obj);
              sd->pan_changed = EINA_FALSE;
           }
@@ -3986,21 +3975,13 @@ _item_queue(Elm_Genlist_Smart_Data *sd,
 //   evas_event_freeze(evas_object_evas_get(sd->obj));
    while ((sd->queue) && ((!sd->blocks) || (!sd->blocks->next)))
      {
-        if (sd->queue_idle_enterer)
-          {
-             ecore_idle_enterer_del(sd->queue_idle_enterer);
-             sd->queue_idle_enterer = NULL;
-          }
+        ELM_SAFE_FREE(sd->queue_idle_enterer, ecore_idle_enterer_del);
         _queue_process(sd);
      }
    while ((sd->queue) && (sd->blocks) &&
           (sd->homogeneous) && (sd->mode == ELM_LIST_COMPRESS))
      {
-        if (sd->queue_idle_enterer)
-          {
-             ecore_idle_enterer_del(sd->queue_idle_enterer);
-             sd->queue_idle_enterer = NULL;
-          }
+        ELM_SAFE_FREE(sd->queue_idle_enterer, ecore_idle_enterer_del);
         _queue_process(sd);
      }
 
@@ -4291,19 +4272,16 @@ _decorate_item_unrealize(Elm_Gen_Item *it)
    if (!it->item->deco_it_view) return;
 
    evas_event_freeze(evas_object_evas_get(obj));
-   elm_widget_stringlist_free(it->item->deco_it_texts);
-   it->item->deco_it_texts = NULL;
-   elm_widget_stringlist_free(it->item->deco_it_contents);
-   it->item->deco_it_contents = NULL;
-   elm_widget_stringlist_free(it->item->deco_it_states);
+   ELM_SAFE_FREE(it->item->deco_it_texts, elm_widget_stringlist_free);
+   ELM_SAFE_FREE(it->item->deco_it_contents, elm_widget_stringlist_free);
+   ELM_SAFE_FREE(it->item->deco_it_states, elm_widget_stringlist_free);
 
    EINA_LIST_FREE(it->item->deco_it_content_objs, content)
      evas_object_del(content);
 
    edje_object_part_unswallow(it->item->deco_it_view, VIEW(it));
    evas_object_smart_member_add(VIEW(it), sd->pan_obj);
-   evas_object_del(it->item->deco_it_view);
-   it->item->deco_it_view = NULL;
+   ELM_SAFE_FREE(it->item->deco_it_view, evas_object_del);
 
    if (sd->mode_item == it)
      sd->mode_item = NULL;
@@ -4429,11 +4407,7 @@ _item_unrealize_cb(Elm_Gen_Item *it)
      {
         evas_object_del(VIEW(it));
         VIEW(it) = NULL;
-        if (it->spacer)
-          {
-             evas_object_del(it->spacer);
-             it->spacer = NULL;
-          }
+        ELM_SAFE_FREE(it->spacer, evas_object_del);
      }
    else
      {
@@ -4912,8 +4886,7 @@ _elm_genlist_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
         sd->stack[i] = NULL;
      }
    eo_unref(sd->pan_obj);
-   evas_object_del(sd->pan_obj);
-   sd->pan_obj = NULL;
+   ELM_SAFE_FREE(sd->pan_obj, evas_object_del);
 
    _item_cache_zero(sd);
    if (sd->calc_job) ecore_job_del(sd->calc_job);
@@ -5041,11 +5014,7 @@ _elm_genlist_clear(Evas_Object *obj,
 
    if (!standby) sd->generation++;
 
-   if (sd->state)
-     {
-        eina_inlist_sorted_state_free(sd->state);
-        sd->state = NULL;
-     }
+   ELM_SAFE_FREE(sd->state, eina_inlist_sorted_state_free);
 
    if (sd->walking > 0)
      {
@@ -5075,11 +5044,7 @@ _elm_genlist_clear(Evas_Object *obj,
    sd->pan_changed = EINA_TRUE;
    if (!sd->queue)
      {
-        if (sd->calc_job)
-          {
-             ecore_job_del(sd->calc_job);
-             sd->calc_job = NULL;
-          }
+        ELM_SAFE_FREE(sd->calc_job, ecore_job_del);
         _clear(sd);
      }
    sd->pan_x = 0;
@@ -5087,8 +5052,7 @@ _elm_genlist_clear(Evas_Object *obj,
    sd->minw = 0;
    sd->minh = 0;
 
-   if (sd->alpha_bg) evas_object_del(sd->alpha_bg);
-   sd->alpha_bg = NULL;
+   ELM_SAFE_FREE(sd->alpha_bg, evas_object_del);
 
    if (sd->pan_obj)
      {
@@ -6443,12 +6407,9 @@ elm_genlist_item_item_class_update(Elm_Object_Item *item,
    it->itc = itc;
    it->item->nocache_once = EINA_TRUE;
 
-   elm_widget_stringlist_free(it->texts);
-   it->texts = NULL;
-   elm_widget_stringlist_free(it->contents);
-   it->contents = NULL;
-   elm_widget_stringlist_free(it->states);
-   it->states = NULL;
+   ELM_SAFE_FREE(it->texts, elm_widget_stringlist_free);
+   ELM_SAFE_FREE(it->contents, elm_widget_stringlist_free);
+   ELM_SAFE_FREE(it->states, elm_widget_stringlist_free);
 
    if (it->flipped)
      {
@@ -6641,8 +6602,7 @@ elm_genlist_item_cursor_unset(Elm_Object_Item *item)
 
    if (VIEW(it)) elm_widget_item_cursor_unset(it);
 
-   eina_stringshare_del(it->mouse_cursor);
-   it->mouse_cursor = NULL;
+   ELM_SAFE_FREE(it->mouse_cursor, eina_stringshare_del);
 }
 
 EAPI void
