@@ -1572,20 +1572,27 @@ _item_realize(Elm_Gen_Item *it,
     }
    treesize = edje_object_data_get(VIEW(it), "treesize");
    if (treesize) tsize = atoi(treesize);
-   if (!it->spacer && treesize)
+
+   if (edje_object_part_exists(VIEW(it), "elm.swallow.pad"))
      {
-        it->spacer =
-          evas_object_rectangle_add(evas_object_evas_get(WIDGET(it)));
-        evas_object_color_set(it->spacer, 0, 0, 0, 0);
-        elm_widget_sub_object_add(WIDGET(it), it->spacer);
-     }
-   if (it->spacer)
-     {
+        if (!it->spacer && treesize)
+          {
+             it->spacer =
+                evas_object_rectangle_add(evas_object_evas_get(WIDGET(it)));
+             evas_object_color_set(it->spacer, 0, 0, 0, 0);
+             elm_widget_sub_object_add(WIDGET(it), it->spacer);
+          }
+
         evas_object_size_hint_min_set
-          (it->spacer, (it->item->expanded_depth * tsize) *
-          elm_config_scale_get(), 1);
+           (it->spacer, (it->item->expanded_depth * tsize) *
+            elm_config_scale_get(), 1);
         edje_object_part_swallow(VIEW(it), "elm.swallow.pad", it->spacer);
      }
+   else
+     {
+        ELM_SAFE_FREE(it->spacer, evas_object_del);
+     }
+
    if (!calc)
      {
         edje_object_signal_callback_add

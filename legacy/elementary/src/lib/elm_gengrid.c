@@ -757,12 +757,15 @@ _item_realize(Elm_Gen_Item *it)
                                elm_widget_style_get(WIDGET(it)));
    evas_object_stack_below(VIEW(it), sd->stack);
 
-   it->spacer =
-     evas_object_rectangle_add(evas_object_evas_get(WIDGET(it)));
-   evas_object_color_set(it->spacer, 0, 0, 0, 0);
-   elm_widget_sub_object_add(WIDGET(it), it->spacer);
-   evas_object_size_hint_min_set(it->spacer, 2 * elm_config_scale_get(), 1);
-   edje_object_part_swallow(VIEW(it), "elm.swallow.pad", it->spacer);
+   if (edje_object_part_exists(VIEW(it), "elm.swallow.pad"))
+     {
+        it->spacer =
+           evas_object_rectangle_add(evas_object_evas_get(WIDGET(it)));
+        evas_object_color_set(it->spacer, 0, 0, 0, 0);
+        elm_widget_sub_object_add(WIDGET(it), it->spacer);
+        evas_object_size_hint_min_set(it->spacer, 2 * elm_config_scale_get(), 1);
+        edje_object_part_swallow(VIEW(it), "elm.swallow.pad", it->spacer);
+     }
 
    /* access */
    if (_elm_config->access_mode) _access_widget_item_register(it);
