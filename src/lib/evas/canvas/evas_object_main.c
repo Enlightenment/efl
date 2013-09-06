@@ -1818,6 +1818,7 @@ _dbg_info_get(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
    eo_do_super(eo_obj, MY_CLASS, eo_dbg_info_get(root));
    Eo_Dbg_Info *group = EO_DBG_INFO_LIST_APPEND(root, MY_CLASS_NAME);
    Eo_Dbg_Info *node;
+   const char *name;
    double dblw, dblh;
    double dblx, dbly;
    double scale;
@@ -1839,6 +1840,7 @@ _dbg_info_get(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
    eo_do(eo_obj,
 	 evas_obj_visibility_get(&visible),
          evas_obj_layer_get(&layer),
+         evas_obj_name_get(&name),
          evas_obj_position_get(&x, &y),
          evas_obj_size_get(&w, &h),
          evas_obj_scale_get(&scale),
@@ -1856,6 +1858,10 @@ _dbg_info_get(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
          evas_obj_clipees_has(&clipees_has));
 
    EO_DBG_INFO_APPEND(group, "Visibility", EINA_VALUE_TYPE_CHAR, visible);
+
+   if (name)
+      EO_DBG_INFO_APPEND(group, "Name", EINA_VALUE_TYPE_STRING, name);
+
    EO_DBG_INFO_APPEND(group, "Layer", EINA_VALUE_TYPE_INT, layer);
 
    node = EO_DBG_INFO_LIST_APPEND(group, "Position");
