@@ -2391,7 +2391,8 @@ eet_identity_certificate_print(const unsigned char *certificate,
 #define EET_G_HASH           104 /**< Hash table group type */
 #define EET_G_UNION          105 /**< Union group type */
 #define EET_G_VARIANT        106 /**< Selectable subtype group */
-#define EET_G_LAST           107 /**< Last group type */
+#define EET_G_UNKNOWN_NESTED 107 /**< Unknown nested group type. @since 1.8 */
+#define EET_G_LAST           108 /**< Last group type */
 
 #define EET_I_LIMIT          128 /**< Other type exist but are reserved for internal purpose. */
 
@@ -3092,6 +3093,32 @@ eet_data_descriptor_encode(Eet_Data_Descriptor *edd,
   do {                                                                         \
        struct_type ___ett;                                                     \
        eet_data_descriptor_element_add(edd, name, EET_T_UNKNOW, EET_G_UNKNOWN, \
+                                       (char *)(& (___ett.member)) -           \
+                                       (char *)(& (___ett)),                   \
+                                       0, /* 0,  */ NULL, subtype);            \
+    } while (0)
+
+/**
+ * Add a nested sub-element type to a data descriptor
+ * @param edd The data descriptor to add the type to.
+ * @param struct_type The type of the struct.
+ * @param name The string name to use to encode/decode this member
+ *        (must be a constant global and never change).
+ * @param member The struct member itself to be encoded.
+ * @param subtype The type of sub-type struct to add.
+ *
+ * This macro lets you easily add a sub-type: a struct that is nested into
+ * this one. If your data is pointed by this element instead of being nested,
+ * you should use EET_DATA_DESCRIPTOR_ADD_SUB().
+ * All the parameters are the same as for EET_DATA_DESCRIPTOR_ADD_SUB().
+ *
+ * @since 1.8.0
+ * @ingroup Eet_Data_Group
+ */
+#define EET_DATA_DESCRIPTOR_ADD_SUB_NESTED(edd, struct_type, name, member, subtype)   \
+  do {                                                                         \
+       struct_type ___ett;                                                     \
+       eet_data_descriptor_element_add(edd, name, EET_T_UNKNOW, EET_G_UNKNOWN_NESTED, \
                                        (char *)(& (___ett.member)) -           \
                                        (char *)(& (___ett)),                   \
                                        0, /* 0,  */ NULL, subtype);            \

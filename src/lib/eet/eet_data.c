@@ -548,7 +548,8 @@ static const Eet_Data_Group_Type_Codec eet_group_codec[] =
    { eet_data_get_list, eet_data_put_list },
    { eet_data_get_hash, eet_data_put_hash },
    { eet_data_get_union, eet_data_put_union },
-   { eet_data_get_variant, eet_data_put_variant }
+   { eet_data_get_variant, eet_data_put_variant },
+   { eet_data_get_unknown, eet_data_put_unknown }
 };
 
 static int _eet_data_words_bigendian = -1;
@@ -4570,8 +4571,16 @@ eet_data_get_unknown(Eet_Free_Context     *context,
 
              if (edd)
                {
-                  ptr = (void **)(((char *)data));
-                  *ptr = (void *)data_ret;
+                  if (subtype && ede->group_type == EET_G_UNKNOWN_NESTED)
+                    {
+                       memcpy(data, data_ret, subtype->size);
+                       free(data_ret);
+                    }
+                  else 
+                    {
+                       ptr = (void **)(((char *)data));
+                       *ptr = (void *)data_ret;
+                    }
                }
              else
                {
@@ -4680,11 +4689,18 @@ eet_data_put_unknown(Eet_Dictionary      *ed,
    if (IS_SIMPLE_TYPE(ede->type))
      data = eet_data_put_type(ed, ede->type, data_in, &size);
    else if (ede->subtype)
-     if (*((char **)data_in))
-       data = _eet_data_descriptor_encode(ed,
-                                          ede->subtype,
-                                          *((char **)((char *)(data_in))),
-                                          &size);
+     {
+        if (ede->group_type == EET_G_UNKNOWN_NESTED)
+          data = _eet_data_descriptor_encode(ed,
+                                             ede->subtype,
+                                             data_in,
+                                             &size);
+        else if (*((char **)data_in))
+          data = _eet_data_descriptor_encode(ed,
+                                             ede->subtype,
+                                             *((char **)((char *)(data_in))),
+                                             &size);
+     }
 
    if (data)
      eet_data_encode(ed,
