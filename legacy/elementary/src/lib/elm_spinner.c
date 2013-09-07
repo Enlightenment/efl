@@ -614,7 +614,7 @@ _access_spinner_register(Evas_Object *obj, Eina_Bool is_access)
           (obj, elm_layout_edje_get(obj), decrement_part);
 
         _elm_access_edje_object_part_object_unregister
-          (obj, elm_layout_edje_get(obj), "access_text");
+          (obj, elm_layout_edje_get(obj), "access.text");
 
         return;
      }
@@ -639,7 +639,7 @@ _access_spinner_register(Evas_Object *obj, Eina_Bool is_access)
 
    /* register spinner label */
    ao = _elm_access_edje_object_part_object_register
-          (obj, elm_layout_edje_get(obj), "access_text");
+          (obj, elm_layout_edje_get(obj), "access.text");
 
    ai = _elm_access_info_get(ao);
    _elm_access_text_set(ai, ELM_ACCESS_TYPE, E_("spinner"));
@@ -797,7 +797,7 @@ _elm_spinner_smart_focus_next(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
         decrement_part = "left_bt";
      }
 
-   ao = _access_object_get(obj, "access_text");
+   ao = _access_object_get(obj, "access.text");
    items = eina_list_append(items, ao);
 
    ao = _access_object_get(obj, decrement_part);

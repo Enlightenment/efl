@@ -275,6 +275,7 @@ Fixes:
    imf is available, the keyboard mode should be decided by ime, but not entry.
    This prevents the asynchronous states between ime and conformant.
    * Flip : Fix the flip page to not flip on a direction if the direction is disabled.
+   * Spinner : change part name to access.text from access_text on default style.
 
 Removals:
 
