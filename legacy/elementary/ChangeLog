@@ -1589,3 +1589,7 @@
 2013-09-04  Ryuan Choi (ryuan)
 
         * elm_config : profile may be broken when clicked reset button in profiles tab
+
+2013-09-07  Shinwoo Kim
+
+        * elm_access : delete access object in job when its hover object is deleted
