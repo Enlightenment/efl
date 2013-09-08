@@ -660,10 +660,8 @@ _elm_gengrid_item_index_update(Elm_Gen_Item *it)
 static void
 _item_unrealize_cb(Elm_Gen_Item *it)
 {
-   evas_object_del(VIEW(it));
-   VIEW(it) = NULL;
-   evas_object_del(it->spacer);
-   it->spacer = NULL;
+   ELM_SAFE_FREE(VIEW(it), evas_object_del);
+   ELM_SAFE_FREE(it->spacer, evas_object_del);
 }
 
 static char *
@@ -2233,11 +2231,7 @@ _elm_gengrid_clear(Evas_Object *obj,
 
    if (!standby) sd->generation++;
 
-   if (sd->state)
-     {
-        eina_inlist_sorted_state_free(sd->state);
-        sd->state = NULL;
-     }
+   ELM_SAFE_FREE(sd->state, eina_inlist_sorted_state_free);
 
    if (sd->walking > 0)
      {
@@ -2450,8 +2444,7 @@ _elm_gengrid_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    elm_gengrid_clear(obj);
    eo_unref(sd->pan_obj);
-   evas_object_del(sd->pan_obj);
-   sd->pan_obj = NULL;
+   ELM_SAFE_FREE(sd->pan_obj, evas_object_del);
    ELM_SAFE_FREE(sd->stack, evas_object_del);
 
    if (sd->calc_job) ecore_job_del(sd->calc_job);
@@ -3330,8 +3323,7 @@ elm_gengrid_item_cursor_unset(Elm_Object_Item *item)
    if (VIEW(it))
      elm_widget_item_cursor_unset(it);
 
-   eina_stringshare_del(it->mouse_cursor);
-   it->mouse_cursor = NULL;
+   ELM_SAFE_FREE(it->mouse_cursor, eina_stringshare_del);
 }
 
 EAPI void
