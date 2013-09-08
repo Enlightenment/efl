@@ -1341,13 +1341,12 @@ _profile_reset(void            *data,
                Evas_Object *obj EINA_UNUSED,
                void *event_info EINA_UNUSED)
 {
-   const char *selection, *curr;
+   const char *selection;
    const char *pdir;
    Evas_Object *li;
 
    li = data;
    selection = elm_object_item_data_get(elm_list_selected_item_get(li));
-   curr = elm_config_profile_get();
 
    elm_config_all_flush();
    elm_config_save(); /* dump config into old profile's data dir */
