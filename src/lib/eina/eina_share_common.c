@@ -236,11 +236,9 @@ _eina_share_common_population_stats(Eina_Share *share)
               share->population_group[i].max);
 }
 
-void
-eina_share_common_population_add(Eina_Share *share, int slen)
+static void
+eina_share_common_population_nolock_add(Eina_Share *share, int slen)
 {
-   eina_lock_take(&_mutex_big);
-
    share->population.count++;
    if (share->population.count > share->population.max)
       share->population.max = share->population.count;
@@ -253,19 +251,29 @@ eina_share_common_population_add(Eina_Share *share, int slen)
            share->population_group[slen].max =
               share->population_group[slen].count;
      }
+}
 
+void
+eina_share_common_population_add(Eina_Share *share, int slen)
+{
+   eina_lock_take(&_mutex_big);
+   eina_share_common_population_nolock_add(share, slen);
    eina_lock_release(&_mutex_big);
+}
+
+static void
+eina_share_common_population_nolock_del(Eina_Share *share, int slen)
+{
+   share->population.count--;
+   if (slen < 4)
+      share->population_group[slen].count--;
 }
 
 void
 eina_share_common_population_del(Eina_Share *share, int slen)
 {
    eina_lock_take(&_mutex_big);
-
-   share->population.count--;
-   if (slen < 4)
-      share->population_group[slen].count--;
-
+   eina_share_common_population_nolock_del(chare, slen);
    eina_lock_release(&_mutex_big);
 }
 
@@ -301,8 +309,14 @@ static void _eina_share_common_population_shutdown(EINA_UNUSED Eina_Share *share
 }
 static void _eina_share_common_population_stats(EINA_UNUSED Eina_Share *share) {
 }
+static void eina_share_common_population_nolock_add(EINA_UNUSED Eina_Share *share,
+                                                    EINA_UNUSED int slen) {
+}
 void eina_share_common_population_add(EINA_UNUSED Eina_Share *share,
                                       EINA_UNUSED int slen) {
+}
+static void eina_share_common_population_nolock_del(EINA_UNUSED Eina_Share *share,
+                                                    EINA_UNUSED int slen) {
 }
 void eina_share_common_population_del(EINA_UNUSED Eina_Share *share,
                                       EINA_UNUSED int slen) {
@@ -801,9 +815,9 @@ eina_share_common_ref(Eina_Share *share, const char *str)
      }
    node->references++;
 
-   eina_lock_release(&_mutex_big);
+   eina_share_common_population_nolock_add(share, node->length);
 
-   eina_share_common_population_add(share, node->length);
+   eina_lock_release(&_mutex_big);
 
    return str;
 }
@@ -827,7 +841,7 @@ eina_share_common_del(Eina_Share *share, const char *str)
       goto on_error;
 
    slen = node->length;
-   eina_share_common_population_del(share, slen);
+   eina_share_common_population_nolock_del(share, slen);
    if (node->references > 1)
      {
         node->references--;
