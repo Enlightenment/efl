@@ -260,7 +260,7 @@ enum
  *
  * @ingroup Thumb
  */
-#define elm_obj_thumb_crop_align_get(cropx, cropy) ELM_OBJ_THUMB_ID(ELM_OBJ_THUMB_SUB_ID_THUMB_SIZE_GET), EO_TYPECHECK(double *, cropx), EO_TYPECHECK(double *, cropy)
+#define elm_obj_thumb_crop_align_get(cropx, cropy) ELM_OBJ_THUMB_ID(ELM_OBJ_THUMB_SUB_ID_CROP_ALIGN_GET), EO_TYPECHECK(double *, cropx), EO_TYPECHECK(double *, cropy)
 
 /**
  * @def elm_obj_thumb_compress_set
