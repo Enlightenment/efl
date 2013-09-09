@@ -870,6 +870,7 @@ _item_realize(Elm_Gen_Item *it)
         if (elm_widget_item_disabled_get(it))
           edje_object_signal_emit(VIEW(it), "elm,state,disabled", "elm");
      }
+   edje_object_message_signal_process(VIEW(it));
    evas_object_show(VIEW(it));
 
    if (it->tooltip.content_cb)
