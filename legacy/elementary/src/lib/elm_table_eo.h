@@ -15,6 +15,7 @@ enum
    ELM_OBJ_TABLE_SUB_ID_PACK_SET,
    ELM_OBJ_TABLE_SUB_ID_PACK_GET,
    ELM_OBJ_TABLE_SUB_ID_CLEAR,
+   ELM_OBJ_TABLE_SUB_ID_CHILD_GET,
    ELM_OBJ_TABLE_SUB_ID_LAST
 };
 
@@ -160,3 +161,17 @@ enum
  * @ingroup Table
  */
 #define elm_obj_table_clear(clear) ELM_OBJ_TABLE_ID(ELM_OBJ_TABLE_SUB_ID_CLEAR), EO_TYPECHECK(Eina_Bool, clear)
+
+/**
+ * @def elm_obj_table_child_get
+ * @since 1.8
+ *
+ * @brief Get child object of table at given coordinates.
+ *
+ * @param[in] col column number of child object
+ * @param[in] row row number of child object
+ * @param[out] ret object at given col and row
+ *
+ * @ingroup Table
+ */
+#define elm_obj_table_child_get(col, row, ret) ELM_OBJ_TABLE_ID(ELM_OBJ_TABLE_SUB_ID_CHILD_GET), EO_TYPECHECK(int, col), EO_TYPECHECK(int, row), EO_TYPECHECK(Evas_Object **, ret)

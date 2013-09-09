@@ -125,3 +125,14 @@ EAPI void      elm_table_pack_get(Evas_Object *subobj, int *col, int *row, int *
  * @ingroup Table
  */
 EAPI void      elm_table_clear(Evas_Object *obj, Eina_Bool clear);
+
+/**
+ * @brief Get child object of table at given coordinates.
+ *
+ * @param obj The table object
+ * @param col Column number of child object
+ * @param row Row number of child object
+ *
+ * @return Child of object if find if not return NULL.
+ */
+EAPI Evas_Object *elm_table_child_get(Evas_Object *obj, int col, int row);

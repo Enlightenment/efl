@@ -403,6 +403,16 @@ elm_table_pack_get(Evas_Object *subobj,
    eo_do(obj, elm_obj_table_pack_get(subobj, col, row, colspan, rowspan));
 }
 
+EAPI Evas_Object *
+elm_table_child_get(Evas_Object *obj, int col, int row)
+{
+   Evas_Object *ret;
+   ELM_TABLE_CHECK(obj) NULL;
+
+   eo_do(obj, elm_obj_table_child_get(col, row, &ret));
+   return ret;
+}
+
 static void
 _pack_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
@@ -441,6 +451,19 @@ _clear(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 }
 
 static void
+_child_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+{
+   int col = va_arg(*list, int);
+   int row = va_arg(*list, int);
+   Evas_Object **ret = va_arg(*list, Evas_Object **);
+
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+
+   if (ret)
+     *ret = evas_object_table_child_get(wd->resize_obj, col, row);
+}
+
+static void
 _class_constructor(Eo_Class *klass)
 {
    const Eo_Op_Func_Description func_desc[] = {
@@ -465,6 +488,7 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_OBJ_TABLE_ID(ELM_OBJ_TABLE_SUB_ID_PACK_SET), _pack_set),
         EO_OP_FUNC(ELM_OBJ_TABLE_ID(ELM_OBJ_TABLE_SUB_ID_PACK_GET), _pack_get),
         EO_OP_FUNC(ELM_OBJ_TABLE_ID(ELM_OBJ_TABLE_SUB_ID_CLEAR), _clear),
+        EO_OP_FUNC(ELM_OBJ_TABLE_ID(ELM_OBJ_TABLE_SUB_ID_CHILD_GET), _child_get),
         EO_OP_FUNC_SENTINEL
    };
    eo_class_funcs_set(klass, func_desc);
@@ -482,6 +506,7 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_OBJ_TABLE_SUB_ID_PACK_SET, "Set the packing location of an existing child of the table."),
      EO_OP_DESCRIPTION(ELM_OBJ_TABLE_SUB_ID_PACK_GET, "Get the packing location of an existing child of the table."),
      EO_OP_DESCRIPTION(ELM_OBJ_TABLE_SUB_ID_CLEAR, "Faster way to remove all child objects from a table object."),
+     EO_OP_DESCRIPTION(ELM_OBJ_TABLE_SUB_ID_CHILD_GET, "Get child object of table at given coordinates."),
      EO_OP_DESCRIPTION_SENTINEL
 };
 
