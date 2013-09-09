@@ -702,12 +702,94 @@ evas_gl_common_image_map_draw(Evas_Engine_GL_Context *gc, Evas_GL_Image *im,
 }
 
 void
+evas_gl_common_image_push(Evas_Engine_GL_Context *gc, Evas_GL_Image *im,
+			  int dx, int dy, int dw, int dh,
+                          int sx, int sy, int sw, int sh,
+                          int cx, int cy, int cw, int ch,
+                          int r, int g, int b, int a, int smooth,
+                          int yuv, int yuy2, int nv12)
+{
+   double ssx, ssy, ssw, ssh;
+   int nx, ny, nw, nh;
+
+   nx = dx; ny = dy; nw = dw; nh = dh;
+   RECTS_CLIP_TO_RECT(nx, ny, nw, nh,
+                      cx, cy, cw, ch);
+   if ((nw < 1) || (nh < 1)) return;
+   if ((nx == dx) && (ny == dy) && (nw == dw) && (nh == dh))
+     {
+        if (yuv)
+          evas_gl_common_context_yuv_push(gc,
+                                          im->tex,
+                                          sx, sy, sw, sh,
+                                          dx, dy, dw, dh,
+                                          r, g, b, a,
+                                          smooth);
+        else if (yuy2)
+          evas_gl_common_context_yuy2_push(gc,
+                                           im->tex,
+                                           sx, sy, sw, sh,
+                                           dx, dy, dw, dh,
+                                           r, g, b, a,
+                                           smooth);
+        else if (nv12)
+          evas_gl_common_context_nv12_push(gc,
+                                           im->tex,
+                                           sx, sy, sw, sh,
+                                           dx, dy, dw, dh,
+                                           r, g, b, a,
+                                           smooth);
+        else
+          evas_gl_common_context_image_push(gc,
+                                            im->tex,
+                                            sx, sy, sw, sh,
+                                            dx, dy, dw, dh,
+                                            r, g, b, a,
+                                            smooth, im->tex_only);
+        return;
+     }
+
+   ssx = (double)sx + ((double)(sw * (nx - dx)) / (double)(dw));
+   ssy = (double)sy + ((double)(sh * (ny - dy)) / (double)(dh));
+   ssw = ((double)sw * (double)(nw)) / (double)(dw);
+   ssh = ((double)sh * (double)(nh)) / (double)(dh);
+
+   if (yuv)
+     evas_gl_common_context_yuv_push(gc,
+                                     im->tex,
+                                     ssx, ssy, ssw, ssh,
+                                     nx, ny, nw, nh,
+                                     r, g, b, a,
+                                     smooth);
+   else if (yuy2)
+     evas_gl_common_context_yuy2_push(gc,
+                                      im->tex,
+                                      ssx, ssy, ssw, ssh,
+                                      nx, ny, nw, nh,
+                                      r, g, b, a,
+                                      smooth);
+   else if (nv12)
+     evas_gl_common_context_nv12_push(gc,
+                                      im->tex,
+                                      ssx, ssy, ssw, ssh,
+                                      nx, ny, nw, nh,
+                                      r, g, b, a,
+                                      smooth);
+   else
+     evas_gl_common_context_image_push(gc,
+                                       im->tex,
+                                       ssx, ssy, ssw, ssh,
+                                       nx, ny, nw, nh,
+                                       r, g, b, a,
+                                       smooth, im->tex_only);
+}
+
+void
 evas_gl_common_image_draw(Evas_Engine_GL_Context *gc, Evas_GL_Image *im, int sx, int sy, int sw, int sh, int dx, int dy, int dw, int dh, int smooth)
 {
    static Cutout_Rects *rects = NULL;
    RGBA_Draw_Context *dc;
    int r, g, b, a;
-   double ssx, ssy, ssw, ssh;
    Cutout_Rect  *rct;
    int c, cx, cy, cw, ch;
    int i;
@@ -755,111 +837,22 @@ evas_gl_common_image_draw(Evas_Engine_GL_Context *gc, Evas_GL_Image *im, int sx,
      {
         if (gc->dc->clip.use)
           {
-             int nx, ny, nw, nh;
-
-             nx = dx; ny = dy; nw = dw; nh = dh;
-             RECTS_CLIP_TO_RECT(nx, ny, nw, nh,
-                                gc->dc->clip.x, gc->dc->clip.y,
-                                gc->dc->clip.w, gc->dc->clip.h);
-             if ((nw < 1) || (nh < 1)) return;
-             if ((nx == dx) && (ny == dy) && (nw == dw) && (nh == dh))
-               {
-                  if (yuv)
-                    evas_gl_common_context_yuv_push(gc,
-                                                    im->tex,
-                                                    sx, sy, sw, sh,
-                                                    dx, dy, dw, dh,
-                                                    r, g, b, a,
-                                                    smooth);
-                  else if (yuy2)
-                    evas_gl_common_context_yuy2_push(gc,
-						     im->tex,
-						     sx, sy, sw, sh,
-						     dx, dy, dw, dh,
-						     r, g, b, a,
-						     smooth);
-                  else if (nv12)
-                    evas_gl_common_context_nv12_push(gc,
-						     im->tex,
-						     sx, sy, sw, sh,
-						     dx, dy, dw, dh,
-						     r, g, b, a,
-						     smooth);
-                  else
-
-                    evas_gl_common_context_image_push(gc,
-                                                      im->tex,
-                                                      sx, sy, sw, sh,
-                                                      dx, dy, dw, dh,
-                                                      r, g, b, a,
-                                                      smooth, im->tex_only);
-                  return;
-               }
-
-             ssx = (double)sx + ((double)(sw * (nx - dx)) / (double)(dw));
-             ssy = (double)sy + ((double)(sh * (ny - dy)) / (double)(dh));
-             ssw = ((double)sw * (double)(nw)) / (double)(dw);
-             ssh = ((double)sh * (double)(nh)) / (double)(dh);
-
-             if (yuv)
-               evas_gl_common_context_yuv_push(gc,
-                                               im->tex,
-                                               ssx, ssy, ssw, ssh,
-                                               nx, ny, nw, nh,
-                                               r, g, b, a,
-                                               smooth);
-             else if (yuy2)
-               evas_gl_common_context_yuy2_push(gc,
-						im->tex,
-						ssx, ssy, ssw, ssh,
-						nx, ny, nw, nh,
-						r, g, b, a,
-						smooth);
-             else if (nv12)
-               evas_gl_common_context_nv12_push(gc,
-						im->tex,
-						ssx, ssy, ssw, ssh,
-						nx, ny, nw, nh,
-						r, g, b, a,
-						smooth);
-             else
-               evas_gl_common_context_image_push(gc,
-                                                 im->tex,
-                                                 ssx, ssy, ssw, ssh,
-                                                 nx, ny, nw, nh,
-                                                 r, g, b, a,
-                                                 smooth, im->tex_only);
+             evas_gl_common_image_push(gc, im,
+                                       dx, dy, dw, dh,
+                                       sx, sy, sw, sh,
+                                       gc->dc->clip.x, gc->dc->clip.y,
+                                       gc->dc->clip.w, gc->dc->clip.h,
+                                       r, g, b, a, smooth,
+                                       yuv, yuy2, nv12);
           }
         else
           {
-             if (yuv)
-               evas_gl_common_context_yuv_push(gc,
-                                               im->tex,
-                                               sx, sy, sw, sh,
-                                               dx, dy, dw, dh,
-                                               r, g, b, a,
-                                               smooth);
-             else if (yuy2)
-               evas_gl_common_context_yuy2_push(gc,
-						im->tex,
-						sx, sy, sw, sh,
-						dx, dy, dw, dh,
-						r, g, b, a,
-						smooth);
-             else if (nv12)
-               evas_gl_common_context_nv12_push(gc,
-						im->tex,
-						sx, sy, sw, sh,
-						dx, dy, dw, dh,
-						r, g, b, a,
-						smooth);
-             else
-               evas_gl_common_context_image_push(gc,
-                                                 im->tex,
-                                                 sx, sy, sw, sh,
-                                                 dx, dy, dw, dh,
-                                                 r, g, b, a,
-                                                 smooth, im->tex_only);
+             evas_gl_common_image_push(gc, im,
+                                       dx, dy, dw, dh,
+                                       sx, sy, sw, sh,
+                                       sx, sy, sw, sh,
+                                       r, g, b, a, smooth,
+                                       yuv, yuy2, nv12);
           }
         return;
      }
@@ -877,76 +870,14 @@ evas_gl_common_image_draw(Evas_Engine_GL_Context *gc, Evas_GL_Image *im, int sx,
    rects = evas_common_draw_context_apply_cutouts(dc, rects);
    for (i = 0; i < rects->active; ++i)
      {
-        int nx, ny, nw, nh;
-
         rct = rects->rects + i;
-        nx = dx; ny = dy; nw = dw; nh = dh;
-        RECTS_CLIP_TO_RECT(nx, ny, nw, nh, rct->x, rct->y, rct->w, rct->h);
-        if ((nw < 1) || (nh < 1)) continue;
-        if ((nx == dx) && (ny == dy) && (nw == dw) && (nh == dh))
-          {
-             if (yuv)
-               evas_gl_common_context_yuv_push(gc,
-                                               im->tex,
-                                               sx, sy, sw, sh,
-                                               dx, dy, dw, dh,
-                                               r, g, b, a,
-                                               smooth);
-             else if (yuy2)
-               evas_gl_common_context_yuy2_push(gc,
-						im->tex,
-						sx, sy, sw, sh,
-						dx, dy, dw, dh,
-						r, g, b, a,
-						smooth);
-             else if (nv12)
-               evas_gl_common_context_nv12_push(gc,
-						im->tex,
-						sx, sy, sw, sh,
-						dx, dy, dw, dh,
-						r, g, b, a,
-						smooth);
-             else
-               evas_gl_common_context_image_push(gc,
-                                                 im->tex,
-                                                 sx, sy, sw, sh,
-                                                 dx, dy, dw, dh,
-                                                 r, g, b, a,
-                                                 smooth, im->tex_only);
-             continue;
-          }
-        ssx = (double)sx + ((double)(sw * (nx - dx)) / (double)(dw));
-        ssy = (double)sy + ((double)(sh * (ny - dy)) / (double)(dh));
-        ssw = ((double)sw * (double)(nw)) / (double)(dw);
-        ssh = ((double)sh * (double)(nh)) / (double)(dh);
-        if (yuv)
-          evas_gl_common_context_yuv_push(gc,
-                                          im->tex,
-                                          ssx, ssy, ssw, ssh,
-                                          nx, ny, nw, nh,
-                                          r, g, b, a,
-                                          smooth);
-        else if (yuy2)
-          evas_gl_common_context_yuy2_push(gc,
-					   im->tex,
-					   ssx, ssy, ssw, ssh,
-					   nx, ny, nw, nh,
-					   r, g, b, a,
-					   smooth);
-        else if (nv12)
-          evas_gl_common_context_nv12_push(gc,
-					   im->tex,
-					   ssx, ssy, ssw, ssh,
-					   nx, ny, nw, nh,
-					   r, g, b, a,
-					   smooth);
-        else
-          evas_gl_common_context_image_push(gc,
-                                            im->tex,
-                                            ssx, ssy, ssw, ssh,
-                                            nx, ny, nw, nh,
-                                            r, g, b, a,
-                                            smooth, im->tex_only);
+
+        evas_gl_common_image_push(gc, im,
+                                  dx, dy, dw, dh,
+                                  sx, sy, sw, sh,
+                                  rct->x, rct->y, rct->w, rct->h,
+                                  r, g, b, a, smooth,
+                                  yuv, yuy2, nv12);
      }
    /* restore clip info */
    gc->dc->clip.use = c; gc->dc->clip.x = cx; gc->dc->clip.y = cy; gc->dc->clip.w = cw; gc->dc->clip.h = ch;
