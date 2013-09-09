@@ -357,22 +357,29 @@ _elm_popup_smart_theme(Eo *obj, void *_pd, va_list *list)
      {
         EINA_LIST_FOREACH(sd->items, elist, it)
           {
-             elm_layout_theme_set
-                (VIEW(it), "popup", "item", elm_widget_style_get(obj));
-             if (it->label)
+             if (!elm_layout_theme_set
+                 (VIEW(it), "popup", "item", elm_widget_style_get(obj)))
+               CRITICAL("Failed to set layout!");
+             else
                {
-                  elm_layout_text_set(VIEW(it), "elm.text", it->label);
-                  elm_layout_signal_emit(VIEW(it),
-                                         "elm,state,item,text,visible", "elm");
+                  if (it->label)
+                    {
+                       elm_layout_text_set(VIEW(it), "elm.text", it->label);
+                       elm_layout_signal_emit(VIEW(it),
+                                              "elm,state,item,text,visible",
+                                              "elm");
+                    }
+                  if (it->icon)
+                    elm_layout_signal_emit(VIEW(it),
+                                           "elm,state,item,icon,visible",
+                                           "elm");
+                  if (it->disabled)
+                    elm_layout_signal_emit(VIEW(it),
+                                           "elm,state,item,disabled", "elm");
+                  evas_object_show(VIEW(it));
+                  edje_object_message_signal_process(
+                     elm_layout_edje_get(VIEW(it)));
                }
-             if (it->icon)
-               elm_layout_signal_emit(VIEW(it),
-                                      "elm,state,item,icon,visible", "elm");
-             if (it->disabled)
-               elm_layout_signal_emit(VIEW(it),
-                                      "elm,state,item,disabled", "elm");
-             evas_object_show(VIEW(it));
-             edje_object_message_signal_process(elm_layout_edje_get(VIEW(it)));
           }
         _scroller_size_calc(obj);
      }
@@ -854,12 +861,16 @@ _item_new(Elm_Popup_Item *it)
    elm_widget_item_signal_emit_hook_set(it, _item_signal_emit_hook);
 
    VIEW(it) = elm_layout_add(WIDGET(it));
-   elm_layout_theme_set(VIEW(it), "popup", "item",
-                        elm_widget_style_get(WIDGET(it)));
-   elm_layout_signal_callback_add(VIEW(it), "elm,action,click", "",
-                                  _item_select_cb, it);
-   evas_object_size_hint_align_set(VIEW(it), EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_show(VIEW(it));
+   if (!elm_layout_theme_set(VIEW(it), "popup", "item",
+                             elm_widget_style_get(WIDGET(it))))
+     CRITICAL("Failed to set layout!");
+   else
+     {
+        elm_layout_signal_callback_add(VIEW(it), "elm,action,click", "",
+                                       _item_select_cb, it);
+        evas_object_size_hint_align_set(VIEW(it), EVAS_HINT_FILL, EVAS_HINT_FILL);
+        evas_object_show(VIEW(it));
+     }
 }
 
 static Eina_Bool
@@ -1519,9 +1530,10 @@ _elm_popup_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    if (!elm_layout_theme_set
        (priv->content_area, "popup", "content", elm_widget_style_get(obj)))
      CRITICAL("Failed to set layout!");
-   evas_object_event_callback_add
-     (priv->content_area, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-     _size_hints_changed_cb, obj);
+   else
+     evas_object_event_callback_add
+        (priv->content_area, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+         _size_hints_changed_cb, obj);
 
    priv->content_text_wrap_type = ELM_WRAP_MIXED;
    evas_object_smart_callback_add
