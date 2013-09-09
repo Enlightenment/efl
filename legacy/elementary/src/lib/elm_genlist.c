@@ -3076,6 +3076,16 @@ _item_del(Elm_Gen_Item *it)
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
 
    evas_event_freeze(evas_object_evas_get(obj));
+
+   // FIXME: relative will be better to be fixed. it is too harsh.
+   if (it->item->rel)
+      it->item->rel->item->rel_revs =
+         eina_list_remove(it->item->rel->item->rel_revs, it);
+   if (it->item->rel_revs)
+     {
+        Elm_Gen_Item *tmp;
+        EINA_LIST_FREE(it->item->rel_revs, tmp) tmp->item->rel = NULL;
+     }
    elm_genlist_item_subitems_clear((Elm_Object_Item *)it);
    if (sd->show_item == it) sd->show_item = NULL;
    if (it->realized) _elm_genlist_item_unrealize(it, EINA_FALSE);
@@ -4015,6 +4025,9 @@ _item_move_after(Elm_Gen_Item *it,
 
    sd->items = eina_inlist_append_relative
        (sd->items, EINA_INLIST_GET(it), EINA_INLIST_GET(after));
+   if (it->item->rel)
+      it->item->rel->item->rel_revs =
+         eina_list_remove(it->item->rel->item->rel_revs, it);
    it->item->rel = after;
    after->item->rel_revs = eina_list_append(after->item->rel_revs, it);
    it->item->before = EINA_FALSE;
@@ -4084,6 +4097,9 @@ _item_move_before(Elm_Gen_Item *it,
    if (it->item->block) _item_block_del(it);
    sd->items = eina_inlist_prepend_relative
        (sd->items, EINA_INLIST_GET(it), EINA_INLIST_GET(before));
+   if (it->item->rel)
+      it->item->rel->item->rel_revs =
+         eina_list_remove(it->item->rel->item->rel_revs, it);
    it->item->rel = before;
    before->item->rel_revs = eina_list_append(before->item->rel_revs, it);
    it->item->before = EINA_TRUE;
