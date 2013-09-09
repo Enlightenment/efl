@@ -982,7 +982,10 @@ evas_cache2_image_load_data(Image_Entry *ie)
    int error = EVAS_LOAD_ERROR_NONE;
 
    if ((ie->flags.loaded) && (!ie->animated.animated))
-     return error;
+     {
+        evas_cserve2_image_hit(ie);
+        return EVAS_LOAD_ERROR_NONE;
+     }
 
    ie->flags.in_progress = EINA_TRUE;
 

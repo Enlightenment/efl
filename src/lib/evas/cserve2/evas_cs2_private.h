@@ -14,6 +14,7 @@ typedef struct _Shared_Buffer Shared_Buffer;
 struct _Data_Entry
 {
    unsigned int image_id;
+   unsigned int hit_count;
    void (*preloaded_cb)(void *, Eina_Bool);
    struct {
       const char *path;
@@ -81,6 +82,7 @@ Eina_Bool evas_cserve2_image_preload(Image_Entry *ie, void (*preloaded_cb)(void 
 void evas_cserve2_dispatch(void);
 
 void *evas_cserve2_image_data_get(Image_Entry *ie);
+unsigned int evas_cserve2_image_hit(Image_Entry *ie);
 
 Font_Entry *evas_cserve2_font_load(const char *source, const char *name, int size, int dpi, Font_Rend_Flags wanted_rend);
 EAPI int evas_cserve2_font_load_wait(Font_Entry *fe);
