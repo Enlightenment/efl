@@ -2975,7 +2975,7 @@ elm_gengrid_item_update(Elm_Object_Item *item)
    if (!it->realized) return;
    if (it->want_unrealize) return;
 
-   _elm_gengrid_item_unrealize(it, EINA_FALSE);
+   _elm_gengrid_item_unrealize(it, EINA_TRUE);
    _item_realize(it);
    _item_place(it, it->x, it->y);
 }
