@@ -867,13 +867,10 @@ _profile_fetch_from_conf(void)
    Eet_File *ef = NULL;
    int len = 0;
 
-   _elm_profile = strdup("default");
-
    // if env var - use profile without question
    s = getenv("ELM_PROFILE");
    if (s)
      {
-        free(_elm_profile);
         _elm_profile = strdup(s);
         return;
      }
@@ -886,16 +883,15 @@ _profile_fetch_from_conf(void)
         p = eet_read(ef, "config", &len);
         if (p)
           {
-             free(_elm_profile);
              _elm_profile = malloc(len + 1);
              memcpy(_elm_profile, p, len);
              _elm_profile[len] = 0;
              free(p);
+             eet_close(ef);
+             return;
           }
         eet_close(ef);
-        if (!p) ef = NULL;
      }
-   if (ef) return;
 
    // system profile
    _elm_data_dir_snprintf(buf, sizeof(buf), "config/profile.cfg");
@@ -905,14 +901,17 @@ _profile_fetch_from_conf(void)
         p = eet_read(ef, "config", &len);
         if (p)
           {
-             free(_elm_profile);
              _elm_profile = malloc(len + 1);
              memcpy(_elm_profile, p, len);
              _elm_profile[len] = 0;
              free(p);
+             eet_close(ef);
+             return;
           }
         eet_close(ef);
      }
+
+   _elm_profile = strdup("default");
 }
 
 static void
