@@ -157,7 +157,7 @@ ecore_evas_wayland_shm_new_internal(const char *disp_name, unsigned int parent, 
    ee->prop.request_pos = 0;
    ee->prop.sticky = 0;
    ee->prop.draw_frame = frame;
-   ee->alpha = EINA_TRUE;
+   ee->alpha = EINA_FALSE;
 
    if (getenv("ECORE_EVAS_FORCE_SYNC_RENDER"))
      ee->can_async_render = 0;
@@ -181,7 +181,6 @@ ecore_evas_wayland_shm_new_internal(const char *disp_name, unsigned int parent, 
    wdata->win = 
      ecore_wl_window_new(p, x, y, w + fw, h + fh, 
                          ECORE_WL_WINDOW_BUFFER_TYPE_SHM);
-   ecore_wl_window_alpha_set(wdata->win, ee->alpha);
    ee->prop.window = wdata->win->id;
 
    ee->evas = evas_new();
@@ -201,7 +200,7 @@ ecore_evas_wayland_shm_new_internal(const char *disp_name, unsigned int parent, 
    if ((einfo = (Evas_Engine_Info_Wayland_Shm *)evas_engine_info_get(ee->evas)))
      {
         einfo->info.wl_shm = ecore_wl_shm_get();
-        einfo->info.destination_alpha = ee->alpha;
+        einfo->info.destination_alpha = EINA_TRUE;
         einfo->info.rotation = ee->rotation;
         einfo->info.wl_surface = ecore_wl_window_surface_create(wdata->win);
         if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
@@ -461,7 +460,7 @@ _ecore_evas_wayland_shm_alpha_do(Ecore_Evas *ee, int alpha)
 
    if (!ee) return;
    if ((ee->alpha == alpha)) return;
-   ee->alpha = EINA_TRUE;
+   ee->alpha = alpha;
    wdata = ee->engine.data;
 
    if (wdata->win) ecore_wl_window_alpha_set(wdata->win, ee->alpha);
@@ -470,7 +469,7 @@ _ecore_evas_wayland_shm_alpha_do(Ecore_Evas *ee, int alpha)
 
    if ((einfo = (Evas_Engine_Info_Wayland_Shm *)evas_engine_info_get(ee->evas)))
      {
-        einfo->info.destination_alpha = ee->alpha;
+        einfo->info.destination_alpha = EINA_TRUE;//ee->alpha;
         if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
           ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
         evas_damage_rectangle_add(ee->evas, 0, 0, ee->w + fw, ee->h + fh);
@@ -482,7 +481,7 @@ _ecore_evas_wl_alpha_set(Ecore_Evas *ee, int alpha)
 {
    if (ee->in_async_render)
      {
-        ee->delayed.alpha = EINA_TRUE;
+        ee->delayed.alpha = alpha;
         ee->delayed.alpha_changed = EINA_TRUE;
         return;
      }
@@ -500,7 +499,7 @@ _ecore_evas_wayland_shm_transparent_do(Ecore_Evas *ee, int transparent)
 
    if (!ee) return;
    if ((ee->transparent == transparent)) return;
-   ee->transparent = EINA_TRUE;
+   ee->transparent = transparent;
 
    wdata = ee->engine.data;
    if (wdata->win)
@@ -510,7 +509,7 @@ _ecore_evas_wayland_shm_transparent_do(Ecore_Evas *ee, int transparent)
 
    if ((einfo = (Evas_Engine_Info_Wayland_Shm *)evas_engine_info_get(ee->evas)))
      {
-        einfo->info.destination_alpha = ee->transparent;
+        einfo->info.destination_alpha = EINA_TRUE;//ee->transparent;
         if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
           ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
         evas_damage_rectangle_add(ee->evas, 0, 0, ee->w + fw, ee->h + fh);
@@ -522,7 +521,7 @@ _ecore_evas_wl_transparent_set(Ecore_Evas *ee, int transparent)
 {
    if (ee->in_async_render)
      {
-        ee->delayed.transparent = EINA_TRUE;
+        ee->delayed.transparent = transparent;
         ee->delayed.transparent_changed = EINA_TRUE;
         return;
      }
