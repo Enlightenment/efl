@@ -348,6 +348,9 @@ _on_ethumb_thumb_error(Ethumb_Client *client __UNUSED__,
         ERR("Something odd happened with a thumbnail request");
         return;
      }
+   evas_object_event_callback_del_full
+	   (sd->view, EVAS_CALLBACK_IMAGE_PRELOADED, _on_thumb_preloaded,
+	    sd);
 
    pending_request--;
    sd->thumb.request = NULL;
@@ -632,6 +635,9 @@ _elm_thumb_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
         eo_data_unref(sd->obj, sd);
         sd->thumb.retry = EINA_FALSE;
      }
+   evas_object_event_callback_del_full
+	   (sd->view, EVAS_CALLBACK_IMAGE_PRELOADED, _on_thumb_preloaded,
+	    sd);
 
    eina_stringshare_del(sd->thumb.thumb_path);
    eina_stringshare_del(sd->thumb.thumb_key);
