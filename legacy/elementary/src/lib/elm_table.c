@@ -403,16 +403,6 @@ elm_table_pack_get(Evas_Object *subobj,
    eo_do(obj, elm_obj_table_pack_get(subobj, col, row, colspan, rowspan));
 }
 
-EAPI Evas_Object *
-elm_table_child_get(Evas_Object *obj, int col, int row)
-{
-   Evas_Object *ret;
-   ELM_TABLE_CHECK(obj) NULL;
-
-   eo_do(obj, elm_obj_table_child_get(col, row, &ret));
-   return ret;
-}
-
 static void
 _pack_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
@@ -448,6 +438,16 @@ _clear(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    evas_object_table_clear(wd->resize_obj, clear);
+}
+
+EAPI Evas_Object *
+elm_table_child_get(const Evas_Object *obj, int col, int row)
+{
+   Evas_Object *ret;
+   ELM_TABLE_CHECK(obj) NULL;
+
+   eo_do((Eo *)obj, elm_obj_table_child_get(col, row, &ret));
+   return ret;
 }
 
 static void

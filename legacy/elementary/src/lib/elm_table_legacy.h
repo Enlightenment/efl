@@ -135,4 +135,4 @@ EAPI void      elm_table_clear(Evas_Object *obj, Eina_Bool clear);
  *
  * @return Child of object if find if not return NULL.
  */
-EAPI Evas_Object *elm_table_child_get(Evas_Object *obj, int col, int row);
+EAPI Evas_Object *elm_table_child_get(const Evas_Object *obj, int col, int row);
