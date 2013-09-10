@@ -209,6 +209,7 @@ struct _EVGL_Resource
    EVGL_Context        *current_ctx;
    void                *current_eng;
 
+   EVGLNative_Surface   direct_surface;
    int                  direct_rendered;
    Evas_Object         *direct_img_obj;
    int                  get_pixels_set;

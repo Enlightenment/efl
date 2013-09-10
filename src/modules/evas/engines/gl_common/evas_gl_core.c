@@ -43,12 +43,7 @@ _internal_resources_create(void *eng_data)
         return NULL;
      }
 
-   /*
    // Create resource surface
-   // Use Evas' surface if it's in the same thread
-   if (rsc->id == evgl_engine->main_tid)
-      rsc->surface = evgl_engine->funcs->evas_surface_get(evgl_engine->engine_data);
-      */
    rsc->window = evgl_engine->funcs->native_window_create(eng_data);
    if (!rsc->window)
      {
@@ -60,12 +55,6 @@ _internal_resources_create(void *eng_data)
    if (!rsc->surface)
      {
         ERR("Error creating native surface");
-        goto error;
-     }
-
-   if (!rsc->surface)
-     {
-        ERR("Internal resource surface failed.");
         goto error;
      }
 
@@ -90,7 +79,7 @@ _internal_resources_destroy(void *eng_data, EVGL_Resource *rsc)
    if ((!eng_data) || (!rsc)) return;
 
    if (rsc->context)
-        evgl_engine->funcs->context_destroy(eng_data, rsc->context);
+      evgl_engine->funcs->context_destroy(eng_data, rsc->context);
    if (rsc->surface)
       evgl_engine->funcs->surface_destroy(eng_data, rsc->surface);
    if (rsc->window)
@@ -123,7 +112,14 @@ _internal_resource_make_current(void *eng_data, EVGL_Context *ctx)
    else
       context = (void*)rsc->context;
 
-   surface = (void*)rsc->surface;
+   // Set the surface to evas surface if it's there
+   if (rsc->id == evgl_engine->main_tid)
+      rsc->direct_surface = evgl_engine->funcs->evas_surface_get(eng_data);
+
+   if (rsc->direct_surface)
+      surface = (void*)rsc->direct_surface;
+   else
+      surface = (void*)rsc->surface;
 
    // Do the make current
    ret = evgl_engine->funcs->make_current(eng_data, surface, context, 1);
