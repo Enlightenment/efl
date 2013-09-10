@@ -412,7 +412,8 @@ ecore_wl_window_transparent_set(Ecore_Wl_Window *win, Eina_Bool transparent)
 
    if (!win) return;
    win->transparent = transparent;
-   ecore_wl_window_update_size(win, win->allocation.w, win->allocation.h);
+   if (win->transparent)
+     ecore_wl_window_opaque_region_set(win, 0, 0, 0, 0);
 }
 
 EAPI Eina_Bool
@@ -432,7 +433,8 @@ ecore_wl_window_alpha_set(Ecore_Wl_Window *win, Eina_Bool alpha)
 
    if (!win) return;
    win->alpha = alpha;
-   ecore_wl_window_update_size(win, win->allocation.w, win->allocation.h);
+   if (win->alpha)
+     ecore_wl_window_opaque_region_set(win, 0, 0, 0, 0);
 }
 
 EAPI Eina_Bool
