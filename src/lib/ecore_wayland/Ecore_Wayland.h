@@ -192,8 +192,7 @@ struct _Ecore_Wl_Input
 
    struct 
      {
-        Ecore_Fd_Handler *hdlr;
-        int timerfd;
+        Ecore_Timer *tmr;
         unsigned int sym, key, time;
      } repeat;
 };

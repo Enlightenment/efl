@@ -19,7 +19,6 @@
 
 #include "ecore_wl_private.h"
 #include <sys/mman.h>
-#include <sys/timerfd.h>
 #include <ctype.h>
 
 /* FIXME: This gives BTN_LEFT/RIGHT/MIDDLE for linux systems ... 
@@ -69,7 +68,7 @@ static void _ecore_wl_input_cb_keyboard_enter(void *data, struct wl_keyboard *ke
 static void _ecore_wl_input_cb_keyboard_leave(void *data, struct wl_keyboard *keyboard EINA_UNUSED, unsigned int serial, struct wl_surface *surface);
 static void _ecore_wl_input_cb_keyboard_key(void *data, struct wl_keyboard *keyboard EINA_UNUSED, unsigned int serial, unsigned int timestamp, unsigned int key, unsigned int state);
 static void _ecore_wl_input_cb_keyboard_modifiers(void *data, struct wl_keyboard *keyboard EINA_UNUSED, unsigned int serial EINA_UNUSED, unsigned int depressed, unsigned int latched, unsigned int locked, unsigned int group);
-static Eina_Bool _ecore_wl_input_cb_keyboard_repeat(void *data, Ecore_Fd_Handler *handler EINA_UNUSED);
+static Eina_Bool _ecore_wl_input_cb_keyboard_repeat(void *data);
 static void _ecore_wl_input_cb_touch_down(void *data, struct wl_touch *touch, unsigned int serial, unsigned int timestamp, struct wl_surface *surface EINA_UNUSED, int id EINA_UNUSED, wl_fixed_t x, wl_fixed_t y);
 static void _ecore_wl_input_cb_touch_up(void *data, struct wl_touch *touch, unsigned int serial, unsigned int timestamp, int id EINA_UNUSED);
 static void _ecore_wl_input_cb_touch_motion(void *data, struct wl_touch *touch EINA_UNUSED, unsigned int timestamp, int id, wl_fixed_t x, wl_fixed_t y);
@@ -320,14 +319,6 @@ _ecore_wl_input_add(Ecore_Wl_Display *ewd, unsigned int id)
    input->cursor_surface = 
      wl_compositor_create_surface(_ecore_wl_disp->wl.compositor);
 
-   input->repeat.timerfd = 
-     timerfd_create(CLOCK_MONOTONIC, (TFD_CLOEXEC | TFD_NONBLOCK));
-
-   input->repeat.hdlr = 
-     ecore_main_fd_handler_add(input->repeat.timerfd, ECORE_FD_READ, 
-                               _ecore_wl_input_cb_keyboard_repeat, input, 
-                               NULL, NULL);
-
    ewd->input = input;
 }
 
@@ -382,11 +373,8 @@ _ecore_wl_input_del(Ecore_Wl_Input *input)
    wl_list_remove(&input->link);
    if (input->seat) wl_seat_destroy(input->seat);
 
-   if (input->repeat.hdlr) ecore_main_fd_handler_del(input->repeat.hdlr);
-   input->repeat.hdlr = NULL;
-
-   if (input->repeat.timerfd) close(input->repeat.timerfd);
-   input->repeat.timerfd = 0;
+   if (input->repeat.tmr) ecore_timer_del(input->repeat.tmr);
+   input->repeat.tmr = NULL;
 
    free(input);
 }
@@ -638,7 +626,6 @@ _ecore_wl_input_cb_keyboard_key(void *data, struct wl_keyboard *keyboard EINA_UN
    xkb_keysym_t sym = XKB_KEY_NoSymbol;
    char key[32], keyname[32], compose[32];
    Ecore_Event_Key *e;
-   struct itimerspec ts;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -707,30 +694,21 @@ _ecore_wl_input_cb_keyboard_key(void *data, struct wl_keyboard *keyboard EINA_UN
         input->repeat.key = 0;
         input->repeat.time = 0;
 
-        ts.it_interval.tv_sec = 0;
-        ts.it_interval.tv_nsec = 0;
-        ts.it_value.tv_sec = 0;
-        ts.it_value.tv_nsec = 0;
-
-        timerfd_settime(input->repeat.timerfd, 0, &ts, NULL);
+        if (input->repeat.tmr) ecore_timer_del(input->repeat.tmr);
+        input->repeat.tmr = NULL;
      }
-   else if ((state)) //&& 
-            /* ((!input->repeat.key) ||  */
-            /*     ((keycode) && (keycode != input->repeat.key)))) */
+   else if (state)
      {
         input->repeat.sym = sym;
         input->repeat.key = keycode;
         input->repeat.time = timestamp;
 
-        /* interval after expires */
-        ts.it_interval.tv_sec = 0;
-        ts.it_interval.tv_nsec = 35 * 1000 * 1000;
-
-        /* initial expiration */
-        ts.it_value.tv_sec = 0;
-        ts.it_value.tv_nsec = 500 * 1000 * 1000;
-
-        timerfd_settime(input->repeat.timerfd, 0, &ts, NULL);
+        if (!input->repeat.tmr)
+          {
+             input->repeat.tmr = 
+               ecore_timer_add(0.025, _ecore_wl_input_cb_keyboard_repeat, input);
+             ecore_timer_delay(input->repeat.tmr, 0.4);
+          }
      }
 }
 
@@ -762,19 +740,14 @@ _ecore_wl_input_cb_keyboard_modifiers(void *data, struct wl_keyboard *keyboard E
 }
 
 static Eina_Bool 
-_ecore_wl_input_cb_keyboard_repeat(void *data, Ecore_Fd_Handler *handler EINA_UNUSED)
+_ecore_wl_input_cb_keyboard_repeat(void *data)
 {
    Ecore_Wl_Input *input;
    Ecore_Wl_Window *win = NULL;
-   unsigned long long int xp;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!(input = data)) return ECORE_CALLBACK_RENEW;
-
-   /* Trap for EAGAIN */
-   if (read(input->repeat.timerfd, &xp, sizeof(xp)) != sizeof(xp))
-     return ECORE_CALLBACK_RENEW;
 
    if ((win = input->keyboard_focus))
      _ecore_wl_input_cb_keyboard_key(input, NULL, input->display->serial, 
@@ -937,17 +910,8 @@ _ecore_wl_input_cb_keyboard_leave(void *data, struct wl_keyboard *keyboard EINA_
    if (!surface) return;
    if (!(input = data)) return;
 
-   if (input->repeat.timerfd)
-     {
-        struct itimerspec ts;
-        
-        ts.it_interval.tv_sec = 0;
-        ts.it_interval.tv_nsec = 0;
-        ts.it_value.tv_sec = 0;
-        ts.it_value.tv_nsec = 0;
-
-        timerfd_settime(input->repeat.timerfd, 0, &ts, NULL);
-     }
+   if (input->repeat.tmr) ecore_timer_del(input->repeat.tmr);
+   input->repeat.tmr = NULL;
 
    if (!input->timestamp)
      {
