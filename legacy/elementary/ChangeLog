@@ -1598,3 +1598,8 @@
 
         * ProgressBar: Added support for more than one progress status  in  a
           single progress bar
+
+2013-09-10  Ryuan Choi (ryuan)
+
+        * elc_fileselector : Navigate (if needed) and select file with "selected"
+        signal when user typed file path on path_entry.

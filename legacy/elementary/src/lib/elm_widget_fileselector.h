@@ -68,6 +68,7 @@ struct _Listing_Request
 
    Evas_Object                 *obj;
    const char                  *path;
+   const char                  *selected;
    Eina_Bool                    first : 1;
 };
 
