@@ -71,24 +71,13 @@ _item_disable_hook(Elm_Object_Item *it)
 
    if (elm_widget_item_disabled_get(item))
      {
-        edje_object_signal_emit(VIEW(item), "elm,state,disabled", "elm");
+        elm_layout_signal_emit(VIEW(item), "elm,state,disabled", "elm");
         if (item->submenu.open) _submenu_hide(item);
      }
    else
-     edje_object_signal_emit(VIEW(item), "elm,state,enabled", "elm");
+     elm_layout_signal_emit(VIEW(item), "elm,state,enabled", "elm");
 
-   edje_object_message_signal_process(VIEW(item));
-}
-
-static void
-_item_sizing_eval(Elm_Menu_Item *item)
-{
-   Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
-
-   if (!item->separator) elm_coords_finger_size_adjust(1, &minw, 1, &minh);
-   edje_object_size_min_restricted_calc(VIEW(item), &minw, &minh, minw, minh);
-   evas_object_size_hint_min_set(VIEW(item), minw, minh);
-   evas_object_size_hint_max_set(VIEW(item), maxw, maxh);
+   edje_object_message_signal_process(elm_layout_edje_get(VIEW(item)));
 }
 
 static void
@@ -101,7 +90,7 @@ _submenu_sizing_eval(Elm_Menu_Item *parent_it)
    ELM_MENU_DATA_GET_OR_RETURN(WIDGET(parent_it), sd);
 
    EINA_LIST_FOREACH(parent_it->submenu.items, l, item)
-     _item_sizing_eval(item);
+     elm_layout_sizing_eval(VIEW(item));
 
    evas_object_geometry_get
      (parent_it->submenu.location, &x_p, &y_p, &w_p, &h_p);
@@ -161,7 +150,7 @@ _sizing_eval(Evas_Object *obj)
    if (!sd->parent) return;
 
    EINA_LIST_FOREACH(sd->items, l, item)
-     _item_sizing_eval(item);
+     elm_layout_sizing_eval(VIEW(item));
 
    evas_object_geometry_get(sd->location, NULL, NULL, &w_p, &h_p);
    evas_object_geometry_get(sd->parent, &x2, &y2, &w2, &h2);
@@ -213,20 +202,22 @@ _elm_menu_smart_theme(Eo *obj, void *_pd, va_list *list)
      {
         EINA_LIST_FOREACH(l, _l, item)
           {
-             edje_object_mirrored_set(VIEW(item), elm_widget_mirrored_get(obj));
              ll = eina_list_append(ll, item->submenu.items);
              if (item->separator)
-               elm_widget_theme_object_set
-                 (obj, VIEW(item), "menu", "separator",
-                 elm_widget_style_get(obj));
+               {
+                  if (!elm_layout_theme_set(VIEW(item), "menu", "separator",
+                                            elm_widget_style_get(obj)))
+                    CRITICAL("Failed to set layout!");
+               }
              else if (item->submenu.bx)
                {
                   if (sd->menu_bar && !item->parent) s = "main_menu_submenu";
                   else s = "item_with_submenu";
 
-                  elm_widget_theme_object_set
-                    (obj, VIEW(item), "menu", s,
-                    elm_widget_style_get(obj));
+                  if (!elm_layout_theme_set(VIEW(item), "menu", s,
+                                            elm_widget_style_get(obj)))
+                    CRITICAL("Failed to set layout!");
+
                   elm_object_item_text_set((Elm_Object_Item *)item,
                                            item->label);
                   if (item->icon_str)
@@ -235,9 +226,10 @@ _elm_menu_smart_theme(Eo *obj, void *_pd, va_list *list)
                }
              else
                {
-                  elm_widget_theme_object_set
-                    (obj, VIEW(item), "menu", "item",
-                    elm_widget_style_get(obj));
+                  if (!elm_layout_theme_set(VIEW(item), "menu", "item",
+                                            elm_widget_style_get(obj)))
+                    CRITICAL("Failed to set layout!");
+
                   elm_object_item_text_set((Elm_Object_Item *)item,
                                            item->label);
                   if (item->icon_str)
@@ -245,9 +237,11 @@ _elm_menu_smart_theme(Eo *obj, void *_pd, va_list *list)
                                                 item->icon_str);
                }
              _item_disable_hook((Elm_Object_Item *)item);
+             /* SEOZ
              edje_object_scale_set
                (VIEW(item), elm_widget_scale_get(obj) *
                elm_config_scale_get());
+               */
           }
      }
 
@@ -272,12 +266,12 @@ _item_text_set_hook(Elm_Object_Item *it,
    eina_stringshare_replace(&item->label, label);
 
    if (label)
-     edje_object_signal_emit(VIEW(item), "elm,state,text,visible", "elm");
+     elm_layout_signal_emit(VIEW(item), "elm,state,text,visible", "elm");
    else
-     edje_object_signal_emit(VIEW(item), "elm,state,text,hidden", "elm");
+     elm_layout_signal_emit(VIEW(item), "elm,state,text,hidden", "elm");
 
-   edje_object_message_signal_process(VIEW(item));
-   edje_object_part_text_set(VIEW(item), "elm.text", label);
+   edje_object_message_signal_process(elm_layout_edje_get(VIEW(item)));
+   elm_layout_text_set(VIEW(item), "elm.text", label);
 
    _sizing_eval(WIDGET(item));
 }
@@ -306,10 +300,8 @@ _item_content_set_hook(Elm_Object_Item *it,
    if (item->content) evas_object_del(item->content);
 
    item->content = content;
-   elm_widget_sub_object_add(WIDGET(item), item->content);
    if (item->content)
-     edje_object_part_swallow
-       (VIEW(item), "elm.swallow.content", item->content);
+     elm_layout_content_set(VIEW(item), "elm.swallow.content", item->content);
 
    _sizing_eval(WIDGET(item));
 }
@@ -488,38 +480,42 @@ _elm_menu_smart_show(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
 static void
 _item_obj_create(Elm_Menu_Item *item)
 {
-   VIEW(item) = edje_object_add(evas_object_evas_get(WIDGET(item)));
-   edje_object_mirrored_set(VIEW(item), elm_widget_mirrored_get(WIDGET(item)));
+   VIEW(item) = elm_layout_add(WIDGET(item));
    evas_object_size_hint_weight_set
      (VIEW(item), EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_fill_set(VIEW(item), EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_widget_theme_object_set
-     (WIDGET(item), VIEW(item), "menu", "item",
-     elm_widget_style_get(WIDGET(item)));
-
-   edje_object_signal_callback_add
-     (VIEW(item), "elm,action,click", "", _menu_item_select_cb, item);
-   edje_object_signal_callback_add
-     (VIEW(item), "elm,action,activate", "", _menu_item_activate_cb, item);
-   edje_object_signal_callback_add
-     (VIEW(item), "elm,action,inactivate", "", _menu_item_inactivate_cb,
-     item);
-   evas_object_show(VIEW(item));
+   if (!elm_layout_theme_set(VIEW(item), "menu", "item",
+                        elm_widget_style_get(WIDGET(item))))
+     CRITICAL("Failed to set layout!");
+   else
+     {
+        elm_layout_signal_callback_add(VIEW(item), "elm,action,click", "",
+                                       _menu_item_select_cb, item);
+        elm_layout_signal_callback_add(VIEW(item), "elm,action,activate", "",
+                                       _menu_item_activate_cb, item);
+        elm_layout_signal_callback_add(VIEW(item), "elm,action,inactivate", "",
+                                       _menu_item_inactivate_cb,
+                                       item);
+        evas_object_show(VIEW(item));
+     }
 }
 
 static void
 _item_separator_obj_create(Elm_Menu_Item *item)
 {
-   VIEW(item) = edje_object_add(evas_object_evas_get(WIDGET(item)));
+   VIEW(item) = elm_layout_add(WIDGET(item));
    evas_object_size_hint_weight_set
      (VIEW(item), EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_fill_set(VIEW(item), EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_widget_theme_object_set
-     (WIDGET(item), VIEW(item), "menu", "separator",
-     elm_widget_style_get(WIDGET(item)));
-   edje_object_signal_callback_add
-     (VIEW(item), "elm,action,activate", "", _menu_item_activate_cb, item);
-   evas_object_show(VIEW(item));
+   if (!elm_layout_theme_set(VIEW(item), "menu", "separator",
+                             elm_widget_style_get(WIDGET(item))))
+     CRITICAL("Failed to set layout!");
+   else
+     {
+        elm_layout_signal_callback_add
+           (VIEW(item), "elm,action,activate", "", _menu_item_activate_cb, item);
+        evas_object_show(VIEW(item));
+     }
 }
 
 static void
@@ -551,23 +547,27 @@ _item_submenu_obj_create(Elm_Menu_Item *item)
      (item->submenu.hv, elm_hover_best_content_location_get
        (item->submenu.hv, ELM_HOVER_AXIS_VERTICAL), item->submenu.bx);
 
-   edje_object_mirrored_set(VIEW(item), elm_widget_mirrored_get(WIDGET(item)));
-
    if (sd->menu_bar && !item->parent)
-     elm_widget_theme_object_set(WIDGET(item), VIEW(item), "menu",
-                                 "main_menu_submenu",
-                                 elm_widget_style_get(WIDGET(item)));
+     {
+        if (!elm_layout_theme_set(VIEW(item), "menu",
+                                  "main_menu_submenu",
+                                  elm_widget_style_get(WIDGET(item))))
+          CRITICAL("Failed to set layout!");
+     }
    else
-     elm_widget_theme_object_set(WIDGET(item), VIEW(item), "menu",
-                                 "item_with_submenu",
-                                 elm_widget_style_get(WIDGET(item)));
+     {
+        if (!elm_layout_theme_set(VIEW(item), "menu",
+                                  "item_with_submenu",
+                                  elm_widget_style_get(WIDGET(item))))
+          CRITICAL("Failed to set layout!");
+     }
 
    elm_object_item_text_set((Elm_Object_Item *)item, item->label);
 
    if (item->icon_str)
      elm_menu_item_icon_name_set((Elm_Object_Item *)item, item->icon_str);
 
-   edje_object_signal_callback_add(VIEW(item), "elm,action,open", "",
+   elm_layout_signal_callback_add(VIEW(item), "elm,action,open", "",
                                    _submenu_open_cb, item);
    evas_object_event_callback_add
      (VIEW(item), EVAS_CALLBACK_MOVE, _item_move_resize_cb, item);
@@ -967,9 +967,8 @@ _item_add(Eo *obj, void *_pd, va_list *list)
    _item_obj_create(subitem);
    elm_object_item_text_set((Elm_Object_Item *)subitem, label);
 
-   elm_widget_sub_object_add(WIDGET(subitem), subitem->content);
-   edje_object_part_swallow
-     (VIEW(subitem), "elm.swallow.content", subitem->content);
+   elm_layout_content_set(VIEW(subitem), "elm.swallow.content",
+                          subitem->content);
 
    if (icon) elm_menu_item_icon_name_set((Elm_Object_Item *)subitem, icon);
 
@@ -1006,12 +1005,12 @@ elm_menu_item_icon_name_set(Elm_Object_Item *it,
         elm_icon_standard_set(item->content, icon)))
      {
         eina_stringshare_replace(&item->icon_str, icon);
-        edje_object_signal_emit(VIEW(item), "elm,state,icon,visible", "elm");
+        elm_layout_signal_emit(VIEW(item), "elm,state,icon,visible", "elm");
      }
    else
-     edje_object_signal_emit(VIEW(item), "elm,state,icon,hidden", "elm");
+     elm_layout_signal_emit(VIEW(item), "elm,state,icon,hidden", "elm");
 
-   edje_object_message_signal_process(VIEW(item));
+   edje_object_message_signal_process(elm_layout_edje_get(VIEW(item)));
    _sizing_eval(WIDGET(item));
 }
 
@@ -1136,15 +1135,15 @@ elm_menu_item_selected_set(Elm_Object_Item *it,
    item->selected = selected;
    if (selected)
      {
-        edje_object_signal_emit(VIEW(item), "elm,state,selected", "elm");
+        elm_layout_signal_emit(VIEW(item), "elm,state,selected", "elm");
         _menu_item_activate_cb(item, NULL, NULL, NULL);
      }
    else
      {
-        edje_object_signal_emit(VIEW(item), "elm,state,unselected", "elm");
+        elm_layout_signal_emit(VIEW(item), "elm,state,unselected", "elm");
         _menu_item_inactivate_cb(item, NULL, NULL, NULL);
      }
-   edje_object_message_signal_process(VIEW(item));
+   edje_object_message_signal_process(elm_layout_edje_get(VIEW(item)));
 }
 
 EAPI Eina_Bool
