@@ -39,7 +39,6 @@ _elm_access_smart_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 
    elm_widget_sub_object_add(eo_parent_get(obj), obj);
-   elm_widget_can_focus_set(obj, _elm_config->access_mode);
 }
 
 static Eina_Bool
@@ -1414,14 +1413,6 @@ elm_access_highlight_next_set(Evas_Object *obj, Elm_Highlight_Direction dir, Eva
 }
 
 static void
-_elm_access_smart_access(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
-{
-   Eina_Bool is_access = va_arg(*list, int);
-
-   elm_widget_can_focus_set(obj, is_access);
-}
-
-static void
 _class_constructor(Eo_Class *klass)
 {
    const Eo_Op_Func_Description func_desc[] = {
@@ -1431,7 +1422,6 @@ _class_constructor(Eo_Class *klass)
 
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ON_FOCUS), _elm_access_smart_on_focus),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ACTIVATE), _elm_access_smart_activate),
-        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ACCESS), _elm_access_smart_access),
 
         EO_OP_FUNC_SENTINEL
    };

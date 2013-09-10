@@ -2597,6 +2597,7 @@ elm_widget_focus_next_get(const Evas_Object *obj,
 static void
 _elm_widget_focus_next_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
+   Elm_Access_Info *ac;
    Elm_Focus_Direction dir = va_arg(*list, Elm_Focus_Direction);
    Evas_Object **next = va_arg(*list, Evas_Object **);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
@@ -2608,10 +2609,19 @@ _elm_widget_focus_next_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    *next = NULL;
 
    /* Ignore if disabled */
-   if ((!evas_object_visible_get(obj))
-       || (elm_widget_disabled_get(obj))
-       || (elm_widget_tree_unfocusable_get(obj)))
-     return;
+   if (_elm_config->access_mode && _elm_access_auto_highlight_get())
+     {
+        if (!evas_object_visible_get(obj)
+            || (elm_widget_tree_unfocusable_get(obj)))
+          return;
+     }
+   else
+     {
+        if ((!evas_object_visible_get(obj))
+            || (elm_widget_disabled_get(obj))
+            || (elm_widget_tree_unfocusable_get(obj)))
+          return;
+     }
 
    /* Try use hook */
    if (_elm_widget_focus_chain_manager_is(obj))
@@ -2645,16 +2655,19 @@ _elm_widget_focus_next_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
         return;
      }
 
-   if (!elm_widget_can_focus_get(obj))
-     return;
-
-   /* focusable object but does not have access info */
-   if (_elm_config->access_mode)
+   /* access object does not check sd->can_focus, because an object could
+      have highlight even though the object is not focusable. */
+   if (_elm_config->access_mode && _elm_access_auto_highlight_get())
      {
-        Elm_Access_Info *ac;
-        ac= _elm_access_info_get(obj);
+        ac = _elm_access_info_get(obj);
         if (!ac) return;
+
+        /* check whether the hover object is visible or not */
+        if (!evas_object_visible_get(ac->hoverobj))
+          return;
      }
+   else if (!elm_widget_can_focus_get(obj))
+     return;
 
    if (elm_widget_focus_get(obj))
      {
