@@ -70,9 +70,6 @@ init_shaders(GLData *gld)
       "}                            \n";
 
    GLbyte fShaderStr[] =
-      "#ifdef GL_ES                                 \n"
-      "precision mediump float;                     \n"
-      "#endif                                       \n"
       "void main()                                  \n"
       "{                                            \n"
       "  gl_FragColor = vec4 ( 1.0, 0.0, 0.0, 1.0 );\n"
