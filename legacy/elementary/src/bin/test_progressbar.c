@@ -38,6 +38,26 @@ _my_progressbar_value_set (void *data EINA_UNUSED)
    return ECORE_CALLBACK_CANCEL;
 }
 
+static Eina_Bool
+_my_progressbar_value_set2(void *data EINA_UNUSED)
+{
+   double progress;
+
+   progress = elm_progressbar_value_get (_test_progressbar.pb1);
+   if (progress < 1.0) progress += 0.0123;
+   else progress = 0.0;
+   elm_progressbar_part_value_set(_test_progressbar.pb1, "elm.cur.progressbar", progress);
+   elm_progressbar_value_set(_test_progressbar.pb2, progress);
+   elm_progressbar_part_value_set(_test_progressbar.pb2, "elm.cur.progressbar1", progress-0.15);
+   elm_progressbar_part_value_set(_test_progressbar.pb3, "elm.cur.progressbar", progress);
+   elm_progressbar_part_value_set(_test_progressbar.pb3, "elm.cur.progressbar1", progress-0.15);
+
+   if (progress < 1.0) return ECORE_CALLBACK_RENEW;
+
+   _test_progressbar.timer = NULL;
+   return ECORE_CALLBACK_CANCEL;
+}
+
 static void
 my_progressbar_test_start(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
@@ -58,12 +78,37 @@ my_progressbar_test_start(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, 
 }
 
 static void
+my_progressbar_test_start2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   fprintf(stderr, "s1\n");
+
+   elm_object_disabled_set(_test_progressbar.btn_start, EINA_TRUE);
+   elm_object_disabled_set(_test_progressbar.btn_stop, EINA_FALSE);
+
+   if (!_test_progressbar.timer)
+     _test_progressbar.timer = ecore_timer_add(0.1,
+                                               _my_progressbar_value_set2, NULL);
+}
+
+static void
 my_progressbar_test_stop(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
+   elm_progressbar_pulse(_test_progressbar.pb1, EINA_FALSE);
    elm_progressbar_pulse(_test_progressbar.pb2, EINA_FALSE);
-   elm_progressbar_pulse(_test_progressbar.pb5, EINA_FALSE);
-   elm_progressbar_pulse(_test_progressbar.pb7, EINA_FALSE);
+   elm_progressbar_pulse(_test_progressbar.pb3, EINA_FALSE);
+   elm_object_disabled_set(_test_progressbar.btn_start, EINA_FALSE);
+   elm_object_disabled_set(_test_progressbar.btn_stop, EINA_TRUE);
 
+   if (_test_progressbar.timer)
+     {
+        ecore_timer_del(_test_progressbar.timer);
+        _test_progressbar.timer = NULL;
+     }
+}
+
+static void
+my_progressbar_test_stop2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
    elm_object_disabled_set(_test_progressbar.btn_start, EINA_FALSE);
    elm_object_disabled_set(_test_progressbar.btn_stop, EINA_TRUE);
 
@@ -220,6 +265,73 @@ test_progressbar(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    elm_object_text_set(bt, "Stop");
    elm_object_disabled_set(bt, EINA_TRUE);
    evas_object_smart_callback_add(bt, "clicked", my_progressbar_test_stop, NULL);
+   elm_box_pack_end(bt_bx, bt);
+   evas_object_show(bt);
+   _test_progressbar.btn_stop = bt;
+
+   evas_object_show(win);
+}
+
+void
+test_progressbar2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Evas_Object *win, *pb, *bx, *bt, *bt_bx;
+
+   win = elm_win_util_standard_add("progressbar", "Progressbar2");
+   evas_object_smart_callback_add(win, "delete,request",
+                                  my_progressbar_destroy, NULL);
+
+   bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bx);
+   evas_object_show(bx);
+
+   pb = elm_progressbar_add(win);
+   elm_object_text_set(pb, "Style: default");
+   evas_object_size_hint_align_set(pb, EVAS_HINT_FILL, 0.5);
+   evas_object_size_hint_weight_set(pb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_progressbar_span_size_set(pb, 200);
+   elm_box_pack_end(bx, pb);
+   evas_object_show(pb);
+   _test_progressbar.pb1 = pb;
+
+   pb = elm_progressbar_add(win);
+   elm_object_style_set(pb, "recording");
+   elm_object_text_set(pb, "Style: Recording");
+   evas_object_size_hint_align_set(pb, EVAS_HINT_FILL, 0.5);
+   evas_object_size_hint_weight_set(pb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_progressbar_span_size_set(pb, 200);
+   elm_box_pack_end(bx, pb);
+   evas_object_show(pb);
+   _test_progressbar.pb2 = pb;
+
+   pb = elm_progressbar_add(win);
+   elm_object_style_set(pb, "recording");
+   elm_object_text_set(pb, "Style: Recording 2");
+   evas_object_size_hint_align_set(pb, EVAS_HINT_FILL, 0.5);
+   evas_object_size_hint_weight_set(pb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_progressbar_span_size_set(pb, 200);
+   elm_box_pack_end(bx, pb);
+   evas_object_show(pb);
+   _test_progressbar.pb3 = pb;
+
+   bt_bx = elm_box_add(win);
+   elm_box_horizontal_set(bt_bx, EINA_TRUE);
+   evas_object_size_hint_weight_set(bt_bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_box_pack_end(bx, bt_bx);
+   evas_object_show(bt_bx);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Start");
+   evas_object_smart_callback_add(bt, "clicked", my_progressbar_test_start2, NULL);
+   elm_box_pack_end(bt_bx, bt);
+   evas_object_show(bt);
+   _test_progressbar.btn_start = bt;
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Stop");
+   elm_object_disabled_set(bt, EINA_TRUE);
+   evas_object_smart_callback_add(bt, "clicked", my_progressbar_test_stop2, NULL);
    elm_box_pack_end(bt_bx, bt);
    evas_object_show(bt);
    _test_progressbar.btn_stop = bt;

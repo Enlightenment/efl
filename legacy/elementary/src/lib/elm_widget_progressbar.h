@@ -18,6 +18,8 @@
  * Base layout smart data extended with progressbar instance data.
  */
 typedef struct _Elm_Progressbar_Smart_Data Elm_Progressbar_Smart_Data;
+typedef struct _Elm_Progress_Status Elm_Progress_Status;
+
 struct _Elm_Progressbar_Smart_Data
 {
    Evas_Object          *spacer;
@@ -30,9 +32,16 @@ struct _Elm_Progressbar_Smart_Data
    Eina_Bool             inverted : 1;
    Eina_Bool             pulse : 1;
    Eina_Bool             pulse_state : 1;
+   Eina_List             *progress_status;
 
    char                 *(*unit_format_func)(double val);
    void                  (*unit_format_free)(char *str);
+};
+
+struct _Elm_Progress_Status
+{
+   const char            *part_name;
+   double                val;
 };
 
 /**

@@ -249,3 +249,36 @@ EAPI void                         elm_progressbar_inverted_set(Evas_Object *obj,
  * @ingroup Progressbar
  */
 EAPI Eina_Bool                    elm_progressbar_inverted_get(const Evas_Object *obj);
+
+/**
+ * Set the progress value (in percentage) on a given progress bar
+ * widget for the given part name
+ *
+ * @since 1.8
+ *
+ * @param obj  The progress bar object
+ * @param part The partname to which val have to set
+ * @param val The progress value (@b must be between @c 0.0 and @c
+ * 1.0)
+ *
+ * Use this call to set progress bar status for more than one progress status .
+ *
+ * @ingroup Progressbar
+ */
+EAPI void                         elm_progressbar_part_value_set(Evas_Object *obj, const char *part, double val);
+
+/**
+ * Get the progress value (in percentage) on a given progress bar
+ * widget for a particular part
+ *
+ * @since 1.8
+ *
+ * @param obj The progress bar object
+ * @param part The part name of the progress bar
+ * @return The value of the progressbar
+ *
+ * @see elm_progressbar_value_set() for more details
+ *
+ * @ingroup Progressbar
+ */
+EAPI double                       elm_progressbar_part_value_get(const Evas_Object *obj, const char *part);

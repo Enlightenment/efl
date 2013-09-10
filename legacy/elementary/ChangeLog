@@ -1593,3 +1593,8 @@
 2013-09-07  Shinwoo Kim
 
         * elm_access : delete access object in job when its hover object is deleted
+
+2013-09-10  Niraj Kumar
+
+        * ProgressBar: Added support for more than one progress status  in  a
+          single progress bar

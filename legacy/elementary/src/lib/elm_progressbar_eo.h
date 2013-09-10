@@ -23,6 +23,8 @@ enum
    ELM_OBJ_PROGRESSBAR_SUB_ID_HORIZONTAL_GET,
    ELM_OBJ_PROGRESSBAR_SUB_ID_INVERTED_SET,
    ELM_OBJ_PROGRESSBAR_SUB_ID_INVERTED_GET,
+   ELM_OBJ_PROGRESSBAR_SUB_ID_PART_VALUE_SET,
+   ELM_OBJ_PROGRESSBAR_SUB_ID_PART_VALUE_GET,
    ELM_OBJ_PROGRESSBAR_SUB_ID_LAST
 };
 
@@ -229,3 +231,35 @@ enum
  * @ingroup Progressbar
  */
 #define elm_obj_progressbar_inverted_get(ret) ELM_OBJ_PROGRESSBAR_ID(ELM_OBJ_PROGRESSBAR_SUB_ID_INVERTED_GET), EO_TYPECHECK(Eina_Bool *, ret)
+
+/**
+ * @def elm_progressbar_part_value_set
+ * @since 1.8
+ *
+ * Modified to support more than one progress status
+ * Set the value of the progress status a particular part
+ *
+ * @param[in] part
+ * @param[in] val
+ *
+ * @see elm_progressbar_part_value_set
+ *
+ * @ingroup Progressbar
+ */
+#define elm_obj_progressbar_part_value_set(part, val) ELM_OBJ_PROGRESSBAR_ID(ELM_OBJ_PROGRESSBAR_SUB_ID_PART_VALUE_SET), EO_TYPECHECK(const char*, part), EO_TYPECHECK(double, val)
+
+/**
+ * @def elm_progressbar_part_value_get
+ * @since 1.8
+ *
+ * Modified to support more than one progress status
+ * Get the value of the progress status of a particular part
+ *
+ * @param[in] part
+ * @param[out] ret
+ *
+ * @see elm_progressbar_part_value_get
+ *
+ * @ingroup Progressbar
+ */
+#define elm_obj_progressbar_part_value_get(part, ret) ELM_OBJ_PROGRESSBAR_ID(ELM_OBJ_PROGRESSBAR_SUB_ID_PART_VALUE_GET), EO_TYPECHECK(const char*, part), EO_TYPECHECK(double *, ret)

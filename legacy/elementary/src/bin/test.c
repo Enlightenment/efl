@@ -127,6 +127,7 @@ void test_gengrid4(void *data, Evas_Object *obj, void *event_info);
 void test_win_state(void *data, Evas_Object *obj, void *event_info);
 void test_win_state2(void *data, Evas_Object *obj, void *event_info);
 void test_progressbar(void *data, Evas_Object *obj, void *event_info);
+void test_progressbar2(void *data, Evas_Object *obj, void *event_info);
 void test_fileselector(void *data, Evas_Object *obj, void *event_info);
 void test_separator(void *data, Evas_Object *obj, void *event_info);
 void test_scroller(void *data, Evas_Object *obj, void *event_info);
@@ -715,6 +716,7 @@ add_tests:
    ADD_TEST(NULL, "Range Values", "Spinner", test_spinner);
    ADD_TEST(NULL, "Range Values", "Slider", test_slider);
    ADD_TEST(NULL, "Range Values", "Progressbar", test_progressbar);
+   ADD_TEST(NULL, "Range Values", "Progressbar 2", test_progressbar2);
 
    //------------------------------//
    ADD_TEST(NULL, "Booleans", "Check", test_check);

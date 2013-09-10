@@ -83,6 +83,7 @@
  * @author Ryuan Choi (ryuan) <ryuan.choi@samsung.com> <ryuan.choi@gmail.com>
  * @author Hosang Kim <hosang12.kim@@samsung.com>
  * @author Youngbok Shin <youngb.shin@@samsung.com>
+ * @author Niraj Kumar <niraj.kr@@samsung.com> <niraj.kumar.ait@@gmail.com>
  *
  * Please contact <enlightenment-devel@lists.sourceforge.net> to get in
  * contact with the developers and maintainers.
