@@ -96,8 +96,8 @@ evas_swapbuf_reconfigure(Outbuf *ob, int x, int y, int w, int h, unsigned int ro
    if (!ob) return;
 
    /* check that something was actually changed */
-   if ((ob->w == w) && (ob->h == h) && (ob->rotation == rotation) && 
-       (ob->depth == depth) && (ob->priv.destination_alpha == alpha))
+   if ((ob->w == w) && (ob->h == h) && 
+       (ob->rotation == rotation) && (ob->depth == depth)) 
      return;
 
    /* set some properties */
