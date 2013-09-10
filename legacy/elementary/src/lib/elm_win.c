@@ -2229,7 +2229,7 @@ _elm_win_frame_obj_move(void *data,
      }
 
 #ifdef HAVE_ELEMENTARY_WAYLAND
-   ecore_wl_window_opaque_region_set(sd->wl.win, -fx, -sy, sw, sh);
+   ecore_wl_window_opaque_region_set(sd->wl.win, -fx, -(fy - sy), sw, sh);
 #endif
 }
 
@@ -2261,7 +2261,7 @@ _elm_win_frame_obj_resize(void *data,
      }
 
 #ifdef HAVE_ELEMENTARY_WAYLAND
-   ecore_wl_window_opaque_region_set(sd->wl.win, -fx, -sy, sw, sh);
+   ecore_wl_window_opaque_region_set(sd->wl.win, -fx, -(fy - sy), sw, sh);
 #endif
 }
 
