@@ -26,8 +26,8 @@ EAPI Eo_Op ELM_WIDGET_BASE_ID = EO_NOOP;
   if (!sd) return
 
 #define ELM_WIDGET_FOCUS_GET(obj)                                    \
-  ((_elm_access_read_mode_get()) ? (elm_widget_highlight_get(obj)) : \
-                                  (elm_widget_focus_get(obj)))
+  ((_elm_access_auto_highlight_get()) ? (elm_widget_highlight_get(obj)) : \
+                                        (elm_widget_focus_get(obj)))
 
 typedef struct _Elm_Event_Cb_Data         Elm_Event_Cb_Data;
 typedef struct _Elm_Translate_String_Data Elm_Translate_String_Data;
@@ -2019,8 +2019,14 @@ _elm_widget_focus_cycle(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    if (target)
      {
         /* access */
-        if (_elm_config->access_mode && _elm_access_read_mode_get())
+        if (_elm_config->access_mode)
           {
+             /* highlight cycle does not steal a focus, only after window gets
+                the ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_ACTIVATE message,
+                target will steal focus, or focus its own job. */
+             if (!_elm_access_auto_highlight_get())
+               elm_widget_focus_steal(target);
+
              _elm_access_highlight_set(target);
              elm_widget_focus_region_show(target);
           }

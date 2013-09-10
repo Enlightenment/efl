@@ -26,7 +26,7 @@ struct _Action_Info
 typedef struct _Action_Info Action_Info;
 
 static Eina_Bool mouse_event_enable = EINA_TRUE;
-static Eina_Bool read_mode = EINA_FALSE;
+static Eina_Bool auto_highlight = EINA_FALSE;
 static Elm_Access_Action_Type action_by = ELM_ACCESS_ACTION_FIRST;
 
 static Evas_Object * _elm_access_add(Evas_Object *parent);
@@ -396,17 +396,17 @@ _elm_access_mouse_event_enabled_set(Eina_Bool enabled)
 }
 
 void
-_elm_access_read_mode_set(Eina_Bool enabled)
+_elm_access_auto_highlight_set(Eina_Bool enabled)
 {
    enabled = !!enabled;
-   if (read_mode == enabled) return;
-   read_mode = enabled;
+   if (auto_highlight == enabled) return;
+   auto_highlight = enabled;
 }
 
 Eina_Bool
-_elm_access_read_mode_get()
+_elm_access_auto_highlight_get(void)
 {
-   return read_mode;
+   return auto_highlight;
 }
 
 void
@@ -501,7 +501,7 @@ _access_highlight_next_get(Evas_Object *obj, Elm_Focus_Direction dir)
      }
    while (parent);
 
-   _elm_access_read_mode_set(EINA_TRUE);
+   _elm_access_auto_highlight_set(EINA_TRUE);
 
    if (dir == ELM_FOCUS_NEXT)
      type = ELM_ACCESS_ACTION_HIGHLIGHT_NEXT;
@@ -539,7 +539,7 @@ _access_highlight_next_get(Evas_Object *obj, Elm_Focus_Direction dir)
 
    action_by = ELM_ACCESS_ACTION_FIRST;
 
-   _elm_access_read_mode_set(EINA_FALSE);
+   _elm_access_auto_highlight_set(EINA_FALSE);
 
    return ret;
 }
@@ -625,7 +625,7 @@ _elm_access_highlight_object_activate(Evas_Object *obj, Elm_Activate act)
    highlight = _access_highlight_object_get(obj);
    if (!highlight) return;
 
-   _elm_access_read_mode_set(EINA_FALSE);
+   _elm_access_auto_highlight_set(EINA_FALSE);
 
    if (!elm_object_focus_get(highlight))
      elm_object_focus_set(highlight, EINA_TRUE);
@@ -660,7 +660,7 @@ _elm_access_highlight_cycle(Evas_Object *obj, Elm_Focus_Direction dir)
      }
    while (parent);
 
-   _elm_access_read_mode_set(EINA_TRUE);
+   _elm_access_auto_highlight_set(EINA_TRUE);
 
    if (dir == ELM_FOCUS_NEXT)
      type = ELM_ACCESS_ACTION_HIGHLIGHT_NEXT;
@@ -693,7 +693,7 @@ _elm_access_highlight_cycle(Evas_Object *obj, Elm_Focus_Direction dir)
 
    action_by = ELM_ACCESS_ACTION_FIRST;
 
-   _elm_access_read_mode_set(EINA_FALSE);
+   _elm_access_auto_highlight_set(EINA_FALSE);
 }
 
 EAPI char *
@@ -1295,9 +1295,9 @@ elm_access_action(Evas_Object *obj, const Elm_Access_Action_Type type, Elm_Acces
         evas = evas_object_evas_get(obj);
         if (!evas) return EINA_FALSE;
 
-        _elm_access_mouse_event_enabled_set(EINA_TRUE);
-
         evas_event_feed_mouse_in(evas, 0, NULL);
+
+        _elm_access_mouse_event_enabled_set(EINA_TRUE);
         evas_event_feed_mouse_move(evas, a->x, a->y, 0, NULL);
         _elm_access_mouse_event_enabled_set(EINA_FALSE);
 

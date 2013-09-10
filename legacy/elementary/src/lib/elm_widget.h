@@ -501,11 +501,10 @@ struct _Elm_Access_Info
 
 void                  _elm_access_shutdown();
 void                  _elm_access_mouse_event_enabled_set(Eina_Bool enabled);
-/* elm_widget_focus_list_next_get();, elm_widget_focus_next_get();
-   and elm_widget_focus_cycle(); use _elm_access_read_mode to use
-   focus chain */
-void                  _elm_access_read_mode_set(Eina_Bool enabled);
-Eina_Bool             _elm_access_read_mode_get();
+
+/* if auto_higlight is EINA_TRUE, it  does not steal a focus, it just moves a highlight */
+void                  _elm_access_auto_highlight_set(Eina_Bool enabled);
+Eina_Bool             _elm_access_auto_highlight_get(void);
 void                  _elm_access_widget_item_access_order_set(Elm_Widget_Item *item, Eina_List *objs);
 const Eina_List      *_elm_access_widget_item_access_order_get(const Elm_Widget_Item *item);
 void                  _elm_access_widget_item_access_order_unset(Elm_Widget_Item *item);
