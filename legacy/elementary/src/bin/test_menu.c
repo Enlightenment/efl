@@ -4,20 +4,9 @@
 #include <Elementary.h>
 #ifndef ELM_LIB_QUICKLAUNCH
 
-static Evas_Object *menu;
-
-static void 
-_resize(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj, void *event EINA_UNUSED)
-{
-   Evas_Coord w, h;
-   Evas_Object *rect = data;
-
-   evas_object_geometry_get(obj, NULL, NULL, &w, &h);
-   evas_object_resize(rect, w, h);
-}
-
 static void
-_show(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+_menu_show_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
+              void *event_info)
 {
    Evas_Event_Mouse_Down *ev = event_info;
    elm_menu_move(data, ev->canvas.x, ev->canvas.y);
@@ -25,7 +14,7 @@ _show(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
 }
 
 static void
-_populate_4(Elm_Object_Item *menu_it)
+_populate_4(Evas_Object *menu, Elm_Object_Item *menu_it)
 {
    Elm_Object_Item *menu_it2;
 
@@ -44,7 +33,7 @@ _populate_4(Elm_Object_Item *menu_it)
 }
 
 static void
-_populate_3(Elm_Object_Item *menu_it)
+_populate_3(Evas_Object *menu, Elm_Object_Item *menu_it)
 {
    Elm_Object_Item *menu_it2;
 
@@ -58,14 +47,14 @@ _populate_3(Elm_Object_Item *menu_it)
 }
 
 static void
-_populate_2(Elm_Object_Item *menu_it)
+_populate_2(Evas_Object *menu, Elm_Object_Item *menu_it)
 {
    Elm_Object_Item *menu_it2, *menu_it3;
 
    elm_menu_item_add(menu, menu_it, "system-reboot", "menu 2", NULL, NULL);
    menu_it2 = elm_menu_item_add(menu, menu_it, "system-shutdown", "menu 3",
                                 NULL, NULL);
-   _populate_3(menu_it2);
+   _populate_3(menu, menu_it2);
 
    elm_menu_item_separator_add(menu, menu_it);
    elm_menu_item_separator_add(menu, menu_it);
@@ -83,16 +72,16 @@ _populate_2(Elm_Object_Item *menu_it)
                                 NULL, NULL);
    elm_object_item_disabled_set(menu_it3, EINA_TRUE);
 
-   _populate_4(menu_it2);
+   _populate_4(menu, menu_it2);
 }
 
 static void
-_populate_1(Evas_Object *obj, Elm_Object_Item *menu_it)
+_populate_1(Evas_Object *menu, Elm_Object_Item *menu_it)
 {
    Elm_Object_Item *menu_it2, *menu_it3;
    Evas_Object *radio;
 
-   radio = elm_radio_add(obj);
+   radio = elm_radio_add(menu);
    elm_radio_state_value_set(radio, 0);
    elm_radio_value_set(radio, 0);
    elm_object_text_set(radio, "radio in menu");
@@ -101,22 +90,30 @@ _populate_1(Evas_Object *obj, Elm_Object_Item *menu_it)
    menu_it3 = elm_menu_item_add(menu, menu_it, NULL, NULL, NULL, NULL);
    elm_object_item_content_set(menu_it3, radio);
 
-   _populate_2(menu_it2);
+   _populate_2(menu, menu_it2);
 }
 
 void
-test_menu(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+test_menu(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
+          void *event_info EINA_UNUSED)
 {
-   Evas_Object *win, *rect;
+   Evas_Object *win, *rect, *lbl, *menu;
    Elm_Object_Item *menu_it;
 
    win = elm_win_util_standard_add("menu", "Menu");
    elm_win_autodel_set(win, EINA_TRUE);
+   evas_object_resize(win, 350, 200);
+   evas_object_show(win);
+
+   lbl = elm_label_add(win);
+   elm_object_text_set(lbl, "Click background to populate menu!");
+   evas_object_size_hint_weight_set(lbl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, lbl);
+   evas_object_show(lbl);
 
    rect = evas_object_rectangle_add(evas_object_evas_get(win));
-   evas_object_move(rect, 0, 0);
-   evas_object_resize(rect, 350, 200);
    evas_object_size_hint_weight_set(rect, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, rect);
    evas_object_color_set(rect, 0, 0, 0, 0);
    evas_object_show(rect);
 
@@ -125,19 +122,17 @@ test_menu(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info
 
    menu_it = elm_menu_item_add(menu, NULL, "mail-reply-all", "second item",
                                NULL, NULL);
-   _populate_1(win, menu_it);
+   _populate_1(menu, menu_it);
 
    elm_menu_item_add(menu, menu_it, "window-new", "sub menu", NULL, NULL);
 
-   evas_object_event_callback_add(win, EVAS_CALLBACK_RESIZE, _resize, rect);
-   evas_object_event_callback_add(rect, EVAS_CALLBACK_MOUSE_DOWN, _show, menu);
-
-   evas_object_resize(win, 350, 200);
-   evas_object_show(win);
+   evas_object_event_callback_add(rect, EVAS_CALLBACK_MOUSE_DOWN,
+                                  _menu_show_cb, menu);
 }
 
 static void
-_parent_set_bt_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_parent_set_bt_clicked(void *data, Evas_Object *obj EINA_UNUSED,
+                       void *event_info EINA_UNUSED)
 {
    Evas_Object *mn = data;
    if (!mn) return;
@@ -152,7 +147,8 @@ _parent_set_bt_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_inf
 }
 
 static void
-_icon_set_bt_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_icon_set_bt_clicked(void *data, Evas_Object *obj EINA_UNUSED,
+                     void *event_info EINA_UNUSED)
 {
    Elm_Object_Item *menu_it = data;
    const char *icon_name = NULL;
@@ -168,7 +164,8 @@ _icon_set_bt_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info 
 }
 
 static void
-_item_select_bt_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_item_select_bt_clicked(void *data, Evas_Object *obj EINA_UNUSED,
+                        void *event_info EINA_UNUSED)
 {
    Elm_Object_Item *menu_it = data;
    if (!menu_it) return;
@@ -177,7 +174,8 @@ _item_select_bt_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_in
 }
 
 static void
-_separators_bt_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_separators_bt_clicked(void *data, Evas_Object *obj EINA_UNUSED,
+                       void *event_info EINA_UNUSED)
 {
    const Eina_List *sis = NULL;
    const Eina_List *l = NULL;
@@ -196,7 +194,8 @@ _separators_bt_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_inf
 }
 
 static void
-_open_bt_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_open_bt_clicked(void *data, Evas_Object *obj EINA_UNUSED,
+                 void *event_info EINA_UNUSED)
 {
    Evas_Object *mn = data;
    if (!mn) return;
@@ -222,6 +221,8 @@ test_menu2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
 
    win = elm_win_util_standard_add("menu2", "Menu 2");
    elm_win_autodel_set(win, EINA_TRUE);
+   evas_object_resize(win, 320, 320);
+   evas_object_show(win);
 
    bx = elm_box_add(win);
    elm_box_horizontal_set(bx, EINA_TRUE);
@@ -298,9 +299,6 @@ test_menu2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
    elm_box_pack_end(vbx, bt);
    evas_object_smart_callback_add(bt, "clicked", _close_bt_clicked, mn);
    evas_object_show(bt);
-
-   evas_object_resize(win, 320, 320);
-   evas_object_show(win);
 }
 
 #endif
