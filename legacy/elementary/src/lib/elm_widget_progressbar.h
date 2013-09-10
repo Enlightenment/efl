@@ -32,7 +32,7 @@ struct _Elm_Progressbar_Smart_Data
    Eina_Bool             inverted : 1;
    Eina_Bool             pulse : 1;
    Eina_Bool             pulse_state : 1;
-   Eina_List             *progress_status;
+   Eina_List            *progress_status;
 
    char                 *(*unit_format_func)(double val);
    void                  (*unit_format_free)(char *str);
@@ -40,7 +40,7 @@ struct _Elm_Progressbar_Smart_Data
 
 struct _Elm_Progress_Status
 {
-   const char            *part_name;
+   const char           *part_name;
    double                val;
 };
 
