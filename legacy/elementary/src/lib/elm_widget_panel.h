@@ -22,7 +22,8 @@ typedef struct _Elm_Panel_Smart_Data Elm_Panel_Smart_Data;
 struct _Elm_Panel_Smart_Data
 {
    Evas_Object                          *bx, *content;
-
+   Evas_Object                          *event;
+   
    Elm_Panel_Orient                      orient;
 
    Eina_Bool                             hidden : 1;

@@ -121,10 +121,12 @@ _orient_set_do(Evas_Object *obj)
 }
 
 static void
-_elm_panel_smart_theme(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+_elm_panel_smart_theme(Eo *obj, void *_pd, va_list *list)
 {
    const char *str;
-
+   Evas_Coord minw = 0, minh = 0;
+   Elm_Panel_Smart_Data *sd = _pd;
+   
    Eina_Bool int_ret = EINA_FALSE;
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    if (ret) *ret = EINA_FALSE;
@@ -144,7 +146,15 @@ _elm_panel_smart_theme(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
      elm_widget_highlight_in_theme_set(obj, EINA_FALSE);
 
    _orient_set_do(obj);
-
+   
+   evas_object_hide(sd->event);
+   elm_coords_finger_size_adjust(1, &minw, 1, &minh);
+   evas_object_size_hint_min_set(sd->event, minw, minh);
+   
+   if (edje_object_part_exists
+       (wd->resize_obj, "elm.swallow.event"))
+     elm_layout_content_set(obj, "elm.swallow.event", sd->event);
+   
    elm_layout_sizing_eval(obj);
 
    if (ret) *ret = EINA_TRUE;
@@ -342,7 +352,8 @@ static void
 _elm_panel_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Panel_Smart_Data *priv = _pd;
-
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 
    elm_widget_sub_object_add(eo_parent_get(obj), obj);
@@ -366,6 +377,20 @@ _elm_panel_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
 
+   priv->event = evas_object_rectangle_add(evas_object_evas_get(obj));
+   evas_object_color_set(priv->event, 0, 0, 0, 0);
+   evas_object_pass_events_set(priv->event, EINA_TRUE);
+   if (edje_object_part_exists
+       (wd->resize_obj, "elm.swallow.event"))
+     {
+        Evas_Coord minw = 0, minh = 0;
+        
+        elm_coords_finger_size_adjust(1, &minw, 1, &minh);
+        evas_object_size_hint_min_set(priv->event, minw, minh);
+        elm_layout_content_set(obj, "elm.swallow.event", priv->event);
+     }
+   elm_widget_sub_object_add(obj, priv->event);
+   
    elm_layout_sizing_eval(obj);
 }
 
