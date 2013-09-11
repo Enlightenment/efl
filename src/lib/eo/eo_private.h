@@ -139,6 +139,11 @@ struct _Eo_Class
 
    const _Eo_Class **mro;
 
+   /* cached object for faster allocation */
+   Eina_Trash  *trash;
+   Eina_Lock    trash_lock;
+   unsigned int trash_count;
+
    unsigned int obj_size; /**< size of an object of this class */
    unsigned int chain_size;
    unsigned int base_id;
@@ -204,6 +209,8 @@ _eo_del_internal(const char *file, int line, _Eo *obj)
 static inline void
 _eo_free(_Eo *obj)
 {
+   _Eo_Class *klass = (_Eo_Class*) obj->klass;
+
 #ifdef EO_DEBUG
    if (obj->datarefcount)
      {
@@ -211,7 +218,19 @@ _eo_free(_Eo *obj)
      }
 #endif
    _eo_id_release(obj->obj_id);
-   free(obj);
+
+   eina_lock_take(&klass->trash_lock);
+   if (klass->trash_count <= 8)
+     {
+        eina_trash_push(&klass->trash, obj);
+        klass->trash_count++;
+        eina_lock_release(&klass->trash_lock);
+     }
+   else
+     {
+        eina_lock_release(&klass->trash_lock);
+        free(obj);
+     }
 }
 
 static inline _Eo *

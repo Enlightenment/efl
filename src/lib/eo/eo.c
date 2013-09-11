@@ -687,6 +687,8 @@ eo_class_funcs_set(Eo_Class *klass_id, const Eo_Op_Func_Description *func_descs)
 static void
 eo_class_free(_Eo_Class *klass)
 {
+   void *object;
+
    if (klass->constructed)
      {
         if (klass->desc->class_destructor)
@@ -694,6 +696,11 @@ eo_class_free(_Eo_Class *klass)
 
         _dich_func_clean_all(klass);
      }
+
+   EINA_TRASH_CLEAN(&klass->trash, object)
+     free(object);
+
+   eina_lock_free(&klass->trash_lock);
 
    free(klass);
 }
@@ -886,6 +893,7 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
 
    klass = calloc(1, _eo_class_sz + extn_sz + mro_sz + mixins_sz);
    EINA_MAGIC_SET(klass, EO_CLASS_EINA_MAGIC);
+   eina_lock_new(&klass->trash_lock);
    klass->parent = parent;
    klass->desc = desc;
    klass->extensions = (const _Eo_Class **) ((char *) klass + _eo_class_sz);
@@ -1073,6 +1081,7 @@ EAPI Eo *
 eo_add_internal(const char *file, int line, const Eo_Class *klass_id, Eo *parent_id, ...)
 {
    Eina_Bool do_err;
+   _Eo *obj;
    _Eo_Class *klass = _eo_class_pointer_get(klass_id);
    EO_MAGIC_RETURN_VAL(klass, EO_CLASS_EINA_MAGIC, NULL);
 
@@ -1087,7 +1096,19 @@ eo_add_internal(const char *file, int line, const Eo_Class *klass_id, Eo *parent
         return NULL;
      }
 
-   _Eo *obj = calloc(1, klass->obj_size);
+   eina_lock_take(&klass->trash_lock);
+   obj = eina_trash_pop(&klass->trash);
+   if (obj)
+     {
+        memset(obj, 0, klass->obj_size);
+        klass->trash_count--;
+     }
+   else
+     {
+        obj = calloc(1, klass->obj_size);
+     }
+   eina_lock_release(&klass->trash_lock);
+
    obj->refcount++;
    obj->klass = klass;
 
