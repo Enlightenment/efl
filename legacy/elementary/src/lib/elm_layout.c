@@ -516,7 +516,7 @@ _elm_layout_smart_focus_direction(Eo *obj, void *_pd, va_list *list)
 
    if (!sd->subs) return;
 
-   /* Focus chain (This block is diferent of elm_win cycle) */
+   /* Focus chain (This block is different from elm_win cycle) */
    if ((items = elm_widget_focus_custom_chain_get(obj)))
      list_data_get = eina_list_data_get;
    else
