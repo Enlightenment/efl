@@ -222,6 +222,11 @@ struct _Ecore_Wl_Window
         int w, h;
      } saved, server;
 
+   struct 
+     {
+        int x, y, w, h;
+     } opaque;
+
    /* Eina_Bool redraw_scheduled : 1; */
    /* Eina_Bool resize_scheduled : 1; */
    Eina_Bool alpha : 1;
