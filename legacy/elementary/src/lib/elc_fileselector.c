@@ -837,10 +837,13 @@ _on_text_activated(void *data,
              Elm_Object_Item *item = elm_genlist_first_item_get(sd->files_list);
              while (item)
                {
-                   const char *item_path = elm_object_item_data_get(item);
-                   if (!strcmp(item_path, path))
-                     elm_genlist_item_selected_set(item, EINA_TRUE);
-                   item = elm_genlist_item_next_get(item);
+                  const char *item_path = elm_object_item_data_get(item);
+                  if (!strcmp(item_path, path))
+                    {
+                       elm_genlist_item_selected_set(item, EINA_TRUE);
+                       break;
+                    }
+                  item = elm_genlist_item_next_get(item);
                }
           }
         else
@@ -848,13 +851,13 @@ _on_text_activated(void *data,
              Elm_Object_Item *item = elm_gengrid_first_item_get(sd->files_list);
              while (item)
                {
-                   const char *item_path = elm_object_item_data_get(item);
-                   if (!strcmp(item_path, path))
-                     {
+                  const char *item_path = elm_object_item_data_get(item);
+                  if (!strcmp(item_path, path))
+                    {
                        elm_gengrid_item_selected_set(item, EINA_TRUE);
                        break;
-                     }
-                   item = elm_gengrid_item_next_get(item);
+                    }
+                  item = elm_gengrid_item_next_get(item);
                }
           }
      }
