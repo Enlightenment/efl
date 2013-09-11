@@ -1,6 +1,7 @@
 #include "evas_common_private.h"
 #include "evas_engine.h"
 #include "evas_gl_core_private.h"
+#include "subsurface-client-protocol.h"
 
 #ifdef HAVE_DLSYM
 # include <dlfcn.h>
@@ -51,11 +52,20 @@ struct _Render_Engine
      } func;
 };
 
+typedef struct _Subsurface Subsurface;
+struct _Subsurface
+{
+   struct wl_surface *surface;
+   struct wl_surface *psurface;
+   struct wl_subsurface *subsurface;
+};
+
 typedef struct _Native Native;
 struct _Native
 {
    Evas_Native_Surface ns;
    void *egl_surface;
+   Subsurface *subsurf;
 };
 
 /* local function prototypes */
@@ -1707,7 +1717,12 @@ eng_image_dirty_region(void *data, void *image, int x, int y, int w, int h)
 
    if (!(re = (Render_Engine *)data)) return NULL;
    if (!(im = image)) return NULL;
-   if (im->native.data) return image;
+   if (im->native.data)
+     {
+        Native *n = im->native.data;
+        if (n->ns.type == EVAS_NATIVE_SURFACE_OPENGL)
+          return image;
+     }
    eng_window_use(re->win);
    evas_gl_common_image_dirty(image, x, y, w, h);
    return image;
@@ -1995,6 +2010,52 @@ eng_image_border_get(void *data EINA_UNUSED, void *image EINA_UNUSED, int *l EIN
 {
 }
 
+static void
+_subsurface_setup(Render_Engine *re, Native *n)
+{
+   struct wl_subcompositor *subcomp;
+
+   if (n->subsurf)
+     return;
+
+   subcomp = re->info->info.subcompositor;
+   if (!subcomp || !re->info->info.surface) return;
+
+   n->subsurf = malloc(sizeof(*n->subsurf));
+   n->subsurf->surface = wl_compositor_create_surface(re->info->info.compositor);
+   if (!n->subsurf->surface)
+     goto error;
+
+   n->subsurf->psurface = re->info->info.surface;
+   n->subsurf->subsurface = wl_subcompositor_get_subsurface
+      (subcomp, n->subsurf->surface, n->subsurf->psurface);
+   if (!n->subsurf->subsurface)
+     goto subsurf_error;
+
+   printf("**** created surface: %p\n", n->subsurf);
+
+   return;
+
+subsurf_error:
+   wl_surface_destroy(n->subsurf->surface);
+error:
+   free(n->subsurf);
+   n->subsurf = NULL;
+}
+
+static void
+_subsurface_destroy(Native *n)
+{
+   if (!n->subsurf)
+     return;
+
+   printf("**** destroying surface: %p\n", n->subsurf);
+   wl_subsurface_destroy(n->subsurf->subsurface);
+   wl_surface_destroy(n->subsurf->surface);
+   free(n->subsurf);
+   n->subsurf = NULL;
+}
+
 static Eina_Bool
 eng_image_draw(void *data, void *context, void *surface, void *image, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int smooth, Eina_Bool do_async EINA_UNUSED)
 {
@@ -2029,8 +2090,23 @@ eng_image_draw(void *data, void *context, void *surface, void *image, int src_x,
         // Reset clip
         evgl_direct_img_clip_set(0, 0, 0, 0, 0);
      }
+   else if ((n) && (n->ns.type == EVAS_NATIVE_SURFACE_WL_BUFFER) &&
+            ((src_w == dst_w) && (src_h == dst_h)))
+     {
+        _subsurface_setup(re, n);
+        if (!n->subsurf) return EINA_FALSE;
+
+        wl_subsurface_set_position(n->subsurf->subsurface, dst_x, dst_y);
+        wl_surface_attach(n->subsurf->surface, n->ns.data.wayland.buffer, 0, 0);
+        wl_surface_damage(n->subsurf->surface, src_x, src_y, src_w, src_h);
+        wl_surface_commit(n->subsurf->surface);
+
+        printf(">>> render subsurface for img: %p: %d, %d + %dx%d ==>>> %d,%d + %dx%d\n", im, src_x, src_y, src_w, src_h, dst_x, dst_y, dst_w, dst_h);
+     }
    else
      {
+        if ((n) && (n->ns.type == EVAS_NATIVE_SURFACE_WL_BUFFER))
+          _subsurface_destroy(n);
         eng_window_use(re->win);
         evas_gl_common_context_target_surface_set(re->win->gl_context, surface);
         re->win->gl_context->dc = context;
@@ -2038,6 +2114,7 @@ eng_image_draw(void *data, void *context, void *surface, void *image, int src_x,
                                   src_x, src_y, src_w, src_h,
                                   dst_x, dst_y, dst_w, dst_h,
                                   smooth);
+        printf(">>> render content for img: %p: %d, %d + %dx%d ==>>> %d,%d + %dx%d\n", im, src_x, src_y, src_w, src_h, dst_x, dst_y, dst_w, dst_h);
      }
 
    return EINA_FALSE;
@@ -2152,6 +2229,15 @@ eng_image_native_set(void *data, void *image, void *native)
                                                      NULL, 1,
                                                      EVAS_COLORSPACE_ARGB8888);
           }
+        else if ((ns) && (ns->type == EVAS_NATIVE_SURFACE_WL_BUFFER))
+          {
+             im = evas_gl_common_image_new_from_data(re->win->gl_context,
+                                                     ns->data.wayland.w,
+                                                     ns->data.wayland.h,
+                                                     ns->data.wayland.pixels,
+                                                     ns->data.wayland.alpha,
+                                                     ns->data.wayland.format);
+          }
         else
           return NULL;
      }
@@ -2169,6 +2255,20 @@ eng_image_native_set(void *data, void *image, void *native)
                   ens = im->native.data;
                   if ((ens->data.opengl.texture_id == tex) &&
                       (ens->data.opengl.framebuffer_id == fbo))
+                    return im;
+               }
+          }
+        else if (ns->type == EVAS_NATIVE_SURFACE_WL_BUFFER)
+          {
+             if (im->native.data)
+               {
+                  Evas_Native_Surface *ens;
+                  void *buffer = ns->data.wayland.buffer;
+                  unsigned int bufferid = ns->data.wayland.id;
+
+                  ens = im->native.data;
+                  if ((ens->data.wayland.buffer == buffer) &&
+                      (ens->data.wayland.id == bufferid))
                     return im;
                }
           }
@@ -2203,10 +2303,38 @@ eng_image_native_set(void *data, void *image, void *native)
                }
           }
      }
+   else if (ns->type == EVAS_NATIVE_SURFACE_WL_BUFFER)
+     {
+        unsigned int bufferid = ns->data.wayland.id;
+        im2 = eina_hash_find(re->win->gl_context->shared->native_tex_hash, &bufferid);
+        if (im2 == im) return im;
+        if (im2)
+          {
+             n = im2->native.data;
+             if (n)
+               {
+                  evas_gl_common_image_ref(im2);
+                  _subsurface_destroy(im->native.data);
+                  evas_gl_common_image_free(im);
+                  return im2;
+               }
+          }
+     }
 
-   im2 = evas_gl_common_image_new_from_data(re->win->gl_context,
-                                            im->w, im->h, NULL, im->alpha,
-                                            EVAS_COLORSPACE_ARGB8888);
+   if (ns->type == EVAS_NATIVE_SURFACE_OPENGL)
+     im2 = evas_gl_common_image_new_from_data(re->win->gl_context,
+                                              im->w, im->h, NULL, im->alpha,
+                                              EVAS_COLORSPACE_ARGB8888);
+   else
+     im2 = evas_gl_common_image_new_from_data(re->win->gl_context,
+                                             ns->data.wayland.w,
+                                             ns->data.wayland.h,
+                                             ns->data.wayland.pixels,
+                                             ns->data.wayland.alpha,
+                                             ns->data.wayland.format);
+
+   if (im->native.data)
+     _subsurface_destroy(im->native.data);
    evas_gl_common_image_free(im);
    if (!(im = im2)) return NULL;
 
@@ -2239,7 +2367,29 @@ eng_image_native_set(void *data, void *image, void *native)
                   evas_gl_common_image_native_enable(im);
                }
           }
-    }
+     }
+   else
+     {
+        n = calloc(1, sizeof(Native));
+        if (n)
+          {
+             memcpy(&(n->ns), ns, sizeof(Evas_Native_Surface));
+
+             eina_hash_add(re->win->gl_context->shared->native_tex_hash,
+                           &texid, im);
+
+             n->egl_surface = 0;
+             im->native.yinvert = 1;
+             im->native.loose = 0;
+             im->native.data = n;
+             // im->native.func.data = re;
+             // im->native.func.bind = _native_bind_cb;
+             // im->native.func.unbind = _native_unbind_cb;
+             // im->native.func.free = _native_free_cb;
+             // im->native.target = GL_TEXTURE_2D;
+             // im->native.mipmap = 0;
+          }
+     }
 
    return im;
 }

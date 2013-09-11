@@ -209,6 +209,8 @@ ecore_evas_wayland_egl_new_internal(const char *disp_name, unsigned int parent,
         einfo->info.rotation = ee->rotation;
         einfo->info.depth = 32;
         einfo->info.surface = ecore_wl_window_surface_create(wdata->win);
+        einfo->info.compositor = ecore_wl_compositor_get();
+        einfo->info.subcompositor = ecore_wl_subcompositor_get();
         if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
           {
              ERR("Failed to set Evas Engine Info for '%s'", ee->driver);

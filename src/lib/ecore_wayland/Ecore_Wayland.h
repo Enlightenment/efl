@@ -488,6 +488,8 @@ EAPI struct wl_shm *ecore_wl_shm_get(void);
  */
 EAPI struct wl_display *ecore_wl_display_get(void);
 
+EAPI struct wl_compositor *ecore_wl_compositor_get(void);
+
 /**
  * Retrieves the size of the current screen.
  *
@@ -955,6 +957,9 @@ EAPI void ecore_wl_subsurf_sync_set(Ecore_Wl_Subsurf *ess, Eina_Bool val);
  * @since 1.8
  */
 EAPI void ecore_wl_subsurf_opaque_region_set(Ecore_Wl_Subsurf *ess, int x, int y, int w, int h);
+
+EAPI void *ecore_wl_subcompositor_get(void);
+
 #ifdef __cplusplus
 }
 #endif

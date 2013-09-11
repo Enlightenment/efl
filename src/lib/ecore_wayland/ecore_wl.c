@@ -353,6 +353,36 @@ ecore_wl_server_mode_set(Eina_Bool on)
    _ecore_wl_server_mode = on;
 }
 
+EAPI struct wl_compositor *
+ecore_wl_compositor_get(void)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if ((!_ecore_wl_disp) || (!_ecore_wl_disp->wl.display)) return NULL;
+
+   if (!_ecore_wl_disp->wl.compositor)
+     ecore_wl_sync();
+
+   if (!_ecore_wl_disp->wl.compositor) return NULL;
+
+   return _ecore_wl_disp->wl.compositor;
+}
+
+EAPI void *
+ecore_wl_subcompositor_get(void)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if ((!_ecore_wl_disp) || (!_ecore_wl_disp->wl.display)) return NULL;
+
+   if (!_ecore_wl_disp->wl.subcompositor)
+     ecore_wl_sync();
+
+   if (!_ecore_wl_disp->wl.subcompositor) return NULL;
+
+   return _ecore_wl_disp->wl.subcompositor;
+}
+
 /* local functions */
 static Eina_Bool
 _ecore_wl_shutdown(Eina_Bool close)

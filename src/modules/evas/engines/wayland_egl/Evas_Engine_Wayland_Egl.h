@@ -25,6 +25,8 @@ struct _Evas_Engine_Info_Wayland_Egl
      {
         struct wl_display *display;
         struct wl_surface *surface;
+        void *compositor;
+        void *subcompositor;
         int depth, screen, rotation, edges;
         unsigned int destination_alpha : 1;
      } info;

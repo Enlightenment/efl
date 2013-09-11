@@ -443,13 +443,14 @@ struct _Evas_Pixel_Import_Source
 };
 
 /* magic version number to know what the native surf struct looks like */
-#define EVAS_NATIVE_SURFACE_VERSION 2
+#define EVAS_NATIVE_SURFACE_VERSION 3
 
 typedef enum _Evas_Native_Surface_Type
 {
    EVAS_NATIVE_SURFACE_NONE,
    EVAS_NATIVE_SURFACE_X11,
-   EVAS_NATIVE_SURFACE_OPENGL
+   EVAS_NATIVE_SURFACE_OPENGL,
+   EVAS_NATIVE_SURFACE_WL_BUFFER
 } Evas_Native_Surface_Type;
 
 struct _Evas_Native_Surface
@@ -470,6 +471,15 @@ struct _Evas_Native_Surface
          unsigned int format; /**< same as 'format' for glTexImage2D() */
          unsigned int x, y, w, h; /**< region inside the texture to use (image size is assumed as texture size, with 0, 0 being the top-left and co-ordinates working down to the right and bottom being positive) */
       } opengl;
+      struct
+      {
+         void *buffer; /**< wl_buffer pointer */
+         void *pixels; /**< pixel buffer pointer */
+         unsigned int id; /**< wl_proxy id (buffer id) */
+         unsigned int format;
+         unsigned int w, h;
+         Eina_Bool alpha;
+      } wayland;
    } data;
 };
 
