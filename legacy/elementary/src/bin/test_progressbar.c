@@ -37,29 +37,6 @@ _my_progressbar_value_set(void *data)
    return ECORE_CALLBACK_CANCEL;
 }
 
-static Eina_Bool
-_my_progressbar_value_set2(void *data)
-{
-   Progressbar_Data *pd = data;
-   if (!pd) return ECORE_CALLBACK_CANCEL;
-
-   double progress;
-
-   progress = elm_progressbar_value_get (pd->pb1);
-   if (progress < 1.0) progress += 0.0123;
-   else progress = 0.0;
-   elm_progressbar_part_value_set(pd->pb1, "elm.cur.progressbar", progress);
-   elm_progressbar_value_set(pd->pb2, progress);
-   elm_progressbar_part_value_set(pd->pb2, "elm.cur.progressbar1", progress-0.15);
-   elm_progressbar_part_value_set(pd->pb3, "elm.cur.progressbar", progress);
-   elm_progressbar_part_value_set(pd->pb3, "elm.cur.progressbar1", progress-0.15);
-
-   if (progress < 1.0) return ECORE_CALLBACK_RENEW;
-
-   pd->timer = NULL;
-   return ECORE_CALLBACK_CANCEL;
-}
-
 static void
 my_progressbar_test_start(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
@@ -82,21 +59,6 @@ my_progressbar_test_start(void *data, Evas_Object *obj EINA_UNUSED, void *event_
 }
 
 static void
-my_progressbar_test_start2(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
-{
-   Progressbar_Data *pd = data;
-   if (!pd) return;
-
-   fprintf(stderr, "s1\n");
-
-   elm_object_disabled_set(pd->btn_start, EINA_TRUE);
-   elm_object_disabled_set(pd->btn_stop, EINA_FALSE);
-
-   if (!pd->timer)
-     pd->timer = ecore_timer_add(0.1, _my_progressbar_value_set2, pd);
-}
-
-static void
 my_progressbar_test_stop(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Progressbar_Data *pd = data;
@@ -105,22 +67,6 @@ my_progressbar_test_stop(void *data, Evas_Object *obj EINA_UNUSED, void *event_i
    elm_progressbar_pulse(pd->pb1, EINA_FALSE);
    elm_progressbar_pulse(pd->pb2, EINA_FALSE);
    elm_progressbar_pulse(pd->pb3, EINA_FALSE);
-   elm_object_disabled_set(pd->btn_start, EINA_FALSE);
-   elm_object_disabled_set(pd->btn_stop, EINA_TRUE);
-
-   if (pd->timer)
-     {
-        ecore_timer_del(pd->timer);
-        pd->timer = NULL;
-     }
-}
-
-static void
-my_progressbar_test_stop2(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
-{
-   Progressbar_Data *pd = data;
-   if (!pd) return;
-
    elm_object_disabled_set(pd->btn_start, EINA_FALSE);
    elm_object_disabled_set(pd->btn_stop, EINA_TRUE);
 
@@ -290,6 +236,60 @@ test_progressbar(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    evas_object_show(win);
 }
 
+static Eina_Bool
+_progressbar2_timer_cb(void *data)
+{
+   Progressbar_Data *pd = data;
+   if (!pd) return ECORE_CALLBACK_CANCEL;
+
+   double progress;
+
+   progress = elm_progressbar_value_get (pd->pb1);
+   if (progress < 1.0) progress += 0.0123;
+   else progress = 0.0;
+   elm_progressbar_part_value_set(pd->pb1, "elm.cur.progressbar", progress);
+   elm_progressbar_value_set(pd->pb2, progress);
+   elm_progressbar_part_value_set(pd->pb2, "elm.cur.progressbar1", progress-0.15);
+   elm_progressbar_part_value_set(pd->pb3, "elm.cur.progressbar", progress);
+   elm_progressbar_part_value_set(pd->pb3, "elm.cur.progressbar1", progress-0.15);
+
+   if (progress < 1.0) return ECORE_CALLBACK_RENEW;
+
+   pd->timer = NULL;
+   return ECORE_CALLBACK_CANCEL;
+}
+
+static void
+_pg2_start_btn_clicked_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Progressbar_Data *pd = data;
+   if (!pd) return;
+
+   fprintf(stderr, "s1\n");
+
+   elm_object_disabled_set(pd->btn_start, EINA_TRUE);
+   elm_object_disabled_set(pd->btn_stop, EINA_FALSE);
+
+   if (!pd->timer)
+     pd->timer = ecore_timer_add(0.1, _progressbar2_timer_cb, pd);
+}
+
+static void
+_pg2_stop_btn_clicked_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Progressbar_Data *pd = data;
+   if (!pd) return;
+
+   elm_object_disabled_set(pd->btn_start, EINA_FALSE);
+   elm_object_disabled_set(pd->btn_stop, EINA_TRUE);
+
+   if (pd->timer)
+     {
+        ecore_timer_del(pd->timer);
+        pd->timer = NULL;
+     }
+}
+
 void
 test_progressbar2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
@@ -345,7 +345,7 @@ test_progressbar2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Start");
-   evas_object_smart_callback_add(bt, "clicked", my_progressbar_test_start2, pd);
+   evas_object_smart_callback_add(bt, "clicked", _pg2_start_btn_clicked_cb, pd);
    elm_box_pack_end(bt_bx, bt);
    evas_object_show(bt);
    pd->btn_start = bt;
@@ -353,7 +353,7 @@ test_progressbar2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Stop");
    elm_object_disabled_set(bt, EINA_TRUE);
-   evas_object_smart_callback_add(bt, "clicked", my_progressbar_test_stop2, pd);
+   evas_object_smart_callback_add(bt, "clicked", _pg2_stop_btn_clicked_cb, pd);
    elm_box_pack_end(bt_bx, bt);
    evas_object_show(bt);
    pd->btn_stop = bt;
