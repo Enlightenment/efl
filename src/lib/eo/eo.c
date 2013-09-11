@@ -687,7 +687,7 @@ eo_class_funcs_set(Eo_Class *klass_id, const Eo_Op_Func_Description *func_descs)
 static void
 eo_class_free(_Eo_Class *klass)
 {
-   void *object;
+   void *data;
 
    if (klass->constructed)
      {
@@ -697,10 +697,14 @@ eo_class_free(_Eo_Class *klass)
         _dich_func_clean_all(klass);
      }
 
-   EINA_TRASH_CLEAN(&klass->trash, object)
-     free(object);
+   EINA_TRASH_CLEAN(&klass->objects.trash, data)
+     free(data);
 
-   eina_lock_free(&klass->trash_lock);
+   EINA_TRASH_CLEAN(&klass->iterators.trash, data)
+     free(data);
+
+   eina_lock_free(&klass->objects.trash_lock);
+   eina_lock_free(&klass->iterators.trash_lock);
 
    free(klass);
 }
@@ -893,7 +897,8 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
 
    klass = calloc(1, _eo_class_sz + extn_sz + mro_sz + mixins_sz);
    EINA_MAGIC_SET(klass, EO_CLASS_EINA_MAGIC);
-   eina_lock_new(&klass->trash_lock);
+   eina_lock_new(&klass->objects.trash_lock);
+   eina_lock_new(&klass->iterators.trash_lock);
    klass->parent = parent;
    klass->desc = desc;
    klass->extensions = (const _Eo_Class **) ((char *) klass + _eo_class_sz);
@@ -1077,6 +1082,96 @@ eo_parent_set(Eo *obj_id, const Eo *parent_id)
    return EINA_TRUE;
 }
 
+/* Children accessor */
+typedef struct _Eo_Children_Iterator Eo_Children_Iterator;
+struct _Eo_Children_Iterator
+{
+   Eina_Iterator iterator;
+   Eina_List *current;
+   _Eo *obj;
+   Eo *obj_id;
+   
+};
+
+static Eina_Bool
+_eo_children_iterator_next(Eo_Children_Iterator *it, void **data)
+{
+   if (!it->current) return EINA_FALSE;
+
+   if (data) *data = eina_list_data_get(it->current);
+   it->current = eina_list_next(it->current);
+
+   return EINA_TRUE;
+}
+
+static Eo *
+_eo_children_iterator_container(Eo_Children_Iterator *it)
+{
+   return it->obj_id;
+}
+
+static void
+_eo_children_iterator_free(Eo_Children_Iterator *it)
+{
+   _Eo_Class *klass;
+   _Eo *obj;
+
+   klass = (_Eo_Class*) it->obj->klass;
+   obj = it->obj;
+
+   eina_lock_take(&klass->iterators.trash_lock);
+   if (klass->iterators.trash_count < 8)
+     {
+        klass->iterators.trash_count++;
+        eina_trash_push(&klass->iterators.trash, it);
+     }
+   else
+     {
+        free(it);
+     }
+   eina_lock_release(&klass->iterators.trash_lock);
+   
+   _eo_unref(obj);
+}
+
+EAPI Eina_Iterator *
+eo_childrens_iterator_new(Eo *obj_id)
+{
+   Eo_Children_Iterator *it;
+   _Eo_Class *klass;
+
+   EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, NULL);
+
+   if (!obj->children) return NULL;
+
+   klass = (_Eo_Class*) obj->klass;
+
+   eina_lock_take(&klass->iterators.trash_lock);
+   it = eina_trash_pop(&klass->iterators.trash);
+   if (it)
+     {
+        klass->iterators.trash_count--;
+        memset(it, 0, sizeof (Eo_Children_Iterator));
+     }
+   else
+     {
+        it = calloc(1, sizeof (Eo_Children_Iterator));
+     }
+   eina_lock_release(&klass->iterators.trash_lock);
+   if (!it) return NULL;
+
+   EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
+   it->current = obj->children;
+   it->obj = _eo_ref(obj);
+   it->obj_id = obj_id;
+
+   it->iterator.next = FUNC_ITERATOR_NEXT(_eo_children_iterator_next);
+   it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(_eo_children_iterator_container);
+   it->iterator.free = FUNC_ITERATOR_FREE(_eo_children_iterator_free);
+
+   return &it->iterator;
+}
+
 EAPI Eo *
 eo_add_internal(const char *file, int line, const Eo_Class *klass_id, Eo *parent_id, ...)
 {
@@ -1096,18 +1191,18 @@ eo_add_internal(const char *file, int line, const Eo_Class *klass_id, Eo *parent
         return NULL;
      }
 
-   eina_lock_take(&klass->trash_lock);
-   obj = eina_trash_pop(&klass->trash);
+   eina_lock_take(&klass->objects.trash_lock);
+   obj = eina_trash_pop(&klass->objects.trash);
    if (obj)
      {
         memset(obj, 0, klass->obj_size);
-        klass->trash_count--;
+        klass->objects.trash_count--;
      }
    else
      {
         obj = calloc(1, klass->obj_size);
      }
-   eina_lock_release(&klass->trash_lock);
+   eina_lock_release(&klass->objects.trash_lock);
 
    obj->refcount++;
    obj->klass = klass;

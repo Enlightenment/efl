@@ -140,9 +140,18 @@ struct _Eo_Class
    const _Eo_Class **mro;
 
    /* cached object for faster allocation */
-   Eina_Trash  *trash;
-   Eina_Lock    trash_lock;
-   unsigned int trash_count;
+   struct {
+      Eina_Trash  *trash;
+      Eina_Lock    trash_lock;
+      unsigned int trash_count;
+   } objects;
+
+   /* cached iterator for faster allocation cycle */
+   struct {
+      Eina_Trash  *trash;
+      Eina_Lock    trash_lock;
+      unsigned int trash_count;
+   } iterators;
 
    unsigned int obj_size; /**< size of an object of this class */
    unsigned int chain_size;
@@ -219,18 +228,17 @@ _eo_free(_Eo *obj)
 #endif
    _eo_id_release(obj->obj_id);
 
-   eina_lock_take(&klass->trash_lock);
-   if (klass->trash_count <= 8)
+   eina_lock_take(&klass->objects.trash_lock);
+   if (klass->objects.trash_count <= 8)
      {
-        eina_trash_push(&klass->trash, obj);
-        klass->trash_count++;
-        eina_lock_release(&klass->trash_lock);
+        eina_trash_push(&klass->objects.trash, obj);
+        klass->objects.trash_count++;
      }
    else
      {
-        eina_lock_release(&klass->trash_lock);
         free(obj);
      }
+   eina_lock_release(&klass->objects.trash_lock);
 }
 
 static inline _Eo *

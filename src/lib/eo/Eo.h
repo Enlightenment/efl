@@ -797,6 +797,15 @@ EAPI Eo *eo_add_internal(const char *file, int line, const Eo_Class *klass, Eo *
 EAPI Eo *eo_parent_get(const Eo *obj);
 
 /**
+ * @brief Get an iterator on all childrens
+ * @param obj the object to get the childrens from.
+ * @return a pointer to an Eina_Iterator containing all the childrens.
+ *
+ * @see eo_parent_set()
+ */
+EAPI Eina_Iterator *eo_childrens_iterator_new(Eo *obj_id);
+
+/**
  * @brief Set the parent of an object
  * @param obj the object to get the parent of.
  * @param parent the new parent.
