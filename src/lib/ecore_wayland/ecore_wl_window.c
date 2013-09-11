@@ -419,6 +419,9 @@ ecore_wl_window_transparent_set(Ecore_Wl_Window *win, Eina_Bool transparent)
    win->transparent = transparent;
    if (win->transparent)
      ecore_wl_window_opaque_region_set(win, 0, 0, 0, 0);
+   else
+     ecore_wl_window_opaque_region_set(win, win->opaque.x, win->opaque.y, 
+                                       win->opaque.w, win->opaque.h);
 }
 
 EAPI Eina_Bool
