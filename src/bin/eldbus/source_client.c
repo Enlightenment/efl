@@ -313,7 +313,7 @@ source_client_signal_generate(const DBus_Signal *sig, Eina_Strbuf *c_code, Eina_
    Eina_Strbuf *string_free = eina_strbuf_new();
 
    eina_strbuf_append_printf(c_init_function, "   eldbus_proxy_signal_handler_add(proxy, \"%s\", %s, proxy);\n", sig->name, sig->cb_name);
-   eina_strbuf_append_printf(c_header, "int %s;\n", sig->signal_event);
+   eina_strbuf_append_printf(c_header, "int %s = 0;\n", sig->signal_event);
    eina_strbuf_append_printf(h, "extern int %s;\n", sig->signal_event);
    eina_strbuf_append_printf(c_init_function, "   if (!%s)\n", sig->signal_event);
    eina_strbuf_append_printf(c_init_function, "     %s = ecore_event_type_new();\n", sig->signal_event);
