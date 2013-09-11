@@ -1538,6 +1538,7 @@ evas_render_updates_internal(Evas *eo_e,
 #ifdef EVAS_RENDER_DEBUG_TIMING
    double start_time = _time_get();
 #endif
+   Eina_Rectangle clip_rect;
 
    MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
    return EINA_FALSE;
@@ -1581,6 +1582,51 @@ evas_render_updates_internal(Evas *eo_e,
                                               &e->delete_objects,
                                               &e->render_objects,
                                               &redraw_all);
+
+   if (!strncmp(e->engine.module->definition->name, "wayland", 7))
+     {
+        /* check for master clip */
+        if (!e->framespace.clip)
+          {
+             e->framespace.clip = evas_object_rectangle_add(eo_e);
+             evas_object_color_set(e->framespace.clip, 255, 255, 255, 255);
+             evas_object_move(e->framespace.clip, 0, 0);
+             evas_object_resize(e->framespace.clip, 
+                                e->viewport.w - e->framespace.w, 
+                                e->viewport.h - e->framespace.h);
+             evas_object_show(e->framespace.clip);
+          }
+
+        /* setup master clip rectangle for comparison to objects */
+        EINA_RECTANGLE_SET(&clip_rect, e->framespace.x, e->framespace.y, 
+                           e->viewport.w - e->framespace.w, 
+                           e->viewport.h - e->framespace.h);
+
+        for (i = 0; i < e->render_objects.count; ++i)
+          {
+             Eina_Rectangle obj_rect;
+
+             obj = eina_array_data_get(&e->render_objects, i);
+             if (obj->delete_me) continue;
+             if (obj->is_frame) continue;
+             if (obj->object == e->framespace.clip) continue;
+
+             /* setup object rectangle for comparison to clip rectangle */
+             EINA_RECTANGLE_SET(&obj_rect, 
+                                obj->cur->geometry.x, obj->cur->geometry.y, 
+                                obj->cur->geometry.w, obj->cur->geometry.h);
+
+             /* check if this object intersects with the master clip */
+             if (!eina_rectangles_intersect(&clip_rect, &obj_rect))
+               continue;
+
+             if (!evas_object_clip_get(obj->object))
+               {
+                  /* clip this object to the master clip */
+                  evas_object_clip_set(obj->object, e->framespace.clip);
+               }
+          }
+     }
 
    /* phase 1.5. check if the video should be inlined or stay in their overlay */
    alpha = e->engine.func->canvas_alpha_get(e->engine.data.output,
@@ -1912,6 +1958,27 @@ evas_render_updates_internal(Evas *eo_e,
              obj->restack = EINA_FALSE;
              evas_object_change_reset(eo_obj);
           }
+     }
+
+   if (!strncmp(e->engine.module->definition->name, "wayland", 7))
+     {
+        /* unclip objects from master clip */
+        for (i = 0; i < e->render_objects.count; ++i)
+          {
+             obj = eina_array_data_get(&e->render_objects, i);
+             if (obj->is_frame) continue;
+             if (obj->object == e->framespace.clip) continue;
+
+             if (evas_object_clip_get(obj->object) == e->framespace.clip)
+               {
+                  /* unclip this object from the master clip */
+                  evas_object_clip_unset(obj->object);
+               }
+          }
+
+        /* delete master clip */
+        evas_object_del(e->framespace.clip);
+        e->framespace.clip = NULL;
      }
 
    e->changed = EINA_FALSE;
