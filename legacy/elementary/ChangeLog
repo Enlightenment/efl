@@ -1607,3 +1607,7 @@
 2013-09-10  Jose Roberto de Souza (zehortigoza)
 
         * table : Introduce elm_table_child_get() API.
+
+2013-09-11  Daniel Juyung Seo (SeoZ)
+
+        * flip : Added support for focus direction.

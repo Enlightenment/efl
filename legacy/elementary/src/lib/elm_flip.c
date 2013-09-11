@@ -132,6 +132,45 @@ _elm_flip_smart_focus_next(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *
 }
 
 static void
+_elm_flip_smart_focus_direction_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+{
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   if (!elm_widget_can_focus_get(obj))
+     *ret = EINA_TRUE;
+   else
+     *ret = EINA_FALSE;
+}
+
+static void
+_elm_flip_smart_focus_direction(Eo *obj, void *_pd, va_list *list)
+{
+   Evas_Object *base = va_arg(*list, Evas_Object *);
+   double degree = va_arg(*list, double);
+   Evas_Object **direction = va_arg(*list, Evas_Object **);
+   double *weight = va_arg(*list, double *);
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   if (ret) *ret = EINA_FALSE;
+   Eina_Bool int_ret;
+   Elm_Flip_Smart_Data *sd = _pd;
+
+   Eina_List *l = NULL;
+   void *(*list_data_get)(const Eina_List *list);
+
+   list_data_get = eina_list_data_get;
+
+   if (sd->front.content)
+     l = eina_list_append(l, sd->front.content);
+   if (sd->back.content)
+     l = eina_list_append(l, sd->back.content);
+
+   int_ret = elm_widget_focus_list_direction_get
+            (obj, base, l, list_data_get, degree, direction, weight);
+
+   if (ret) *ret = int_ret;
+   eina_list_free(l);
+}
+
+static void
 _changed_size_hints_cb(void *data,
                        Evas *e __UNUSED__,
                        Evas_Object *obj __UNUSED__,
@@ -2180,6 +2219,8 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME), _elm_flip_smart_theme),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_NEXT_MANAGER_IS), _elm_flip_smart_focus_next_manager_is),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_NEXT), _elm_flip_smart_focus_next),
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_DIRECTION_MANAGER_IS), _elm_flip_smart_focus_direction_manager_is),
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_DIRECTION), _elm_flip_smart_focus_direction),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_SUB_OBJECT_ADD), _elm_flip_smart_sub_object_add),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_SUB_OBJECT_DEL), _elm_flip_smart_sub_object_del),
 
