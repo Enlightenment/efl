@@ -86,7 +86,7 @@ Additions:
    * Add selectraise feature to gengrid.
    * Add bg reset feature.
    * Add elm_object_item_object_get().
-   * Added support for more than one progress status in a progressbar.
+   * Add support for more than one progress status in a progressbar.
    * Add elm_table_child_get().
 
 Improvements:

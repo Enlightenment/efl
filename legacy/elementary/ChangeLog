@@ -1603,7 +1603,7 @@
 
         * elc_fileselector : Navigate (if needed) and select file with "selected"
         signal when user typed file path on path_entry.
-        
-2013-09-10 Jose Roberto de Souza (zehortigoza)
+
+2013-09-10  Jose Roberto de Souza (zehortigoza)
 
         * table : Introduce elm_table_child_get() API.
