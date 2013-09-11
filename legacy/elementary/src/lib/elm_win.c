@@ -2463,6 +2463,8 @@ _elm_win_frame_add(Elm_Win_Smart_Data *sd,
    edje_object_part_swallow(sd->frame_obj, "elm.swallow.client", 
                             sd->client_obj);
 
+   evas_object_is_frame_object_set(sd->frame_obj, EINA_TRUE);
+
    evas_object_event_callback_add
      (sd->frame_obj, EVAS_CALLBACK_MOVE, _elm_win_frame_obj_move, sd);
    evas_object_event_callback_add
