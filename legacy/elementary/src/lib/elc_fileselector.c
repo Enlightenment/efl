@@ -888,7 +888,6 @@ _anchor_clicked(void *data,
    // keep a ref to path 'couse it will be destroyed by _populate
    p = eina_stringshare_add(info->name);
    _populate(fs, p, NULL, NULL);
-   evas_object_smart_callback_call(data, SIG_SELECTED, (void *)p);
    eina_stringshare_del(p);
    /* After anchor was clicked, entry will be focused, and will be editable.
     * It's wrong. So remove focus. */
