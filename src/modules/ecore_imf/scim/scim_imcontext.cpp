@@ -2721,8 +2721,22 @@ slot_get_surrounding_text(IMEngineInstanceBase *si,
      {
         SCIM_DEBUG_FRONTEND(2) << "Surrounding text: " << surrounding <<"\n";
         SCIM_DEBUG_FRONTEND(2) << "Cursor Index    : " << cursor_index <<"\n";
+        if (!surrounding)
+          return false;
+
+        if (cursor_index < 0)
+          {
+             free(surrounding);
+             surrounding = NULL;
+             return false;
+          }
+
         WideString before(utf8_mbstowcs(String(surrounding, surrounding + cursor_index)));
         WideString after(utf8_mbstowcs(String(surrounding + cursor_index)));
+
+        free(surrounding);
+        surrounding = NULL;
+
         if (maxlen_before > 0 && ((unsigned int)maxlen_before) < before.length())
           before = WideString(before.begin() + (before.length() - maxlen_before), before.end());
         else if (maxlen_before == 0) before = WideString();

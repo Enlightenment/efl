@@ -1,3 +1,7 @@
+2013-09-06  Jihoon Kim
+
+	* ecore_imf: Fix memory leak in scim immodule
+
 2013-09-06  Cedric Bail
 
 	* Edje: Add border information to Image sets.

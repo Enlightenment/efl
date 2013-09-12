@@ -378,6 +378,7 @@ Fixes:
      - Check the state of last mouse event more properly.
     * Ecore-imf:
      - Fix crash when ecore_imf_context_del is called in ecore_imf_context_input_panel_callback_call.
+     - Fix memory leak in scim immodule
     * Eio:
      - Don't leak fd on exec.
      - eio functions no longer crash when passed NULL and throw errors accordingly.
