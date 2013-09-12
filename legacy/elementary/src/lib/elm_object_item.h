@@ -34,27 +34,6 @@ typedef void                  (*Elm_Object_Item_Signal_Cb)(void *data, Elm_Objec
 EAPI Evas_Object                 *elm_object_item_widget_get(const Elm_Object_Item *it);
 
 /**
- * Get the object item's internal object handle.
- *
- * @param it The Elementary object item
- * @return The Internal object of the object item.
- *
- * @note This function should only be used if you really need to refer the
- * internal object's properties (i.e geometry). Since the object items are
- * managed/controlled by the widget, the object could be deleted, resized, moved
- * and so on by the widget. So you should not modify the object directly nor you
- * should not treat the object without validation, we don't guarantee the result
- * of any of these behavior.
- *
- * Some widget items may return @c NULL for this API if the items @p are not
- * based on the evas object.
- *
- * @since 1.8
- * @ingroup General
- */
-EAPI const Evas_Object           *elm_object_item_object_get(const Elm_Object_Item *it);
-
-/**
  * Set a content of an object item
  *
  * @param it The Elementary object item

@@ -85,7 +85,6 @@ Additions:
    * Add elm_win_focus_highlight_animate_set/get().
    * Add selectraise feature to gengrid.
    * Add bg reset feature.
-   * Add elm_object_item_object_get().
    * Add support for more than one progress status in a progressbar.
    * Add elm_table_child_get().
    * Add support for flip focus direction.
