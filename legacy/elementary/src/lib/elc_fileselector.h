@@ -41,6 +41,8 @@
  * @ref Layout:
  * - @c "selected" - the user has clicked on a file (when not in
  *      folders-only mode) or directory (when in folders-only mode)
+ * - @c "selected,invalid" - the user has tried to access wrong path
+ *      which does not exist.
  * - @c "directory,open" - the list has been populated with new
  *      content (@c event_info is a pointer to the directory's
  *      path, a @b stringshared string)

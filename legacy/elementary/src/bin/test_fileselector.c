@@ -44,6 +44,37 @@ my_fileselector_selected(void *data   EINA_UNUSED,
 }
 
 static void
+_popup_close_cb(void *data, Evas_Object *obj EINA_UNUSED,
+                void *event_info EINA_UNUSED)
+{
+   evas_object_del(data);
+}
+
+static void
+my_fileselector_invalid(void *data   EINA_UNUSED,
+                        Evas_Object *obj EINA_UNUSED,
+                        void        *event_info)
+{
+   Evas_Object *popup;
+   Evas_Object *btn;
+   char error_msg[256];
+
+   snprintf(error_msg, 256, "No such file or directory: %s", (char *)event_info);
+
+   popup = elm_popup_add(data);
+   elm_popup_content_text_wrap_type_set(popup, ELM_WRAP_CHAR);
+   elm_object_part_text_set(popup, "title,text", "Error");
+   elm_object_text_set(popup, error_msg);
+
+   btn = elm_button_add(popup);
+   elm_object_text_set(btn, "OK");
+   elm_object_part_content_set(popup, "button1", btn);
+   evas_object_smart_callback_add(btn, "clicked", _popup_close_cb, popup);
+
+   evas_object_show(popup);
+}
+
+static void
 _is_save_clicked(void            *data,
                  Evas_Object *obj EINA_UNUSED,
                  void *event_info EINA_UNUSED)
@@ -172,6 +203,8 @@ test_fileselector(void *data       EINA_UNUSED,
    /* the 'selected' cb is called when the user click on a file/dir */
    evas_object_smart_callback_add(fs, "selected", my_fileselector_selected,
                                   win);
+   evas_object_smart_callback_add(fs, "selected,invalid",
+                                  my_fileselector_invalid, win);
 
    /* test buttons */
    sep = elm_separator_add(win);

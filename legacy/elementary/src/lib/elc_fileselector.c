@@ -33,7 +33,8 @@ static Elm_Gengrid_Item_Class *grid_itc[ELM_FILE_LAST];
 #define ELM_PRIV_FILESELECTOR_SIGNALS(cmd) \
    cmd(SIG_DIRECTORY_OPEN, "directory,open", "s") \
    cmd(SIG_DONE, "done", "s") \
-   cmd(SIG_SELECTED, "selected", "s")
+   cmd(SIG_SELECTED, "selected", "s") \
+   cmd(SIG_SELECTED_INVALID, "selected,invalid", "s")
 
 ELM_PRIV_FILESELECTOR_SIGNALS(ELM_PRIV_STATIC_VARIABLE_DECLARE);
 
@@ -813,8 +814,12 @@ _on_text_activated(void *data,
 
    path = elm_object_text_get(obj);
 
-   // FIXME: Needs some feedback to user like alert.
-   if (!ecore_file_exists(path)) goto end;
+   if (!ecore_file_exists(path))
+     {
+        evas_object_smart_callback_call(fs, SIG_SELECTED, (void *)path);
+        evas_object_smart_callback_call(fs, SIG_SELECTED_INVALID, (void *)path);
+        goto end;
+     }
 
    if (ecore_file_is_dir(path))
      {
@@ -822,6 +827,10 @@ _on_text_activated(void *data,
         p = eina_stringshare_add(path);
         _populate(fs, p, NULL, NULL);
         eina_stringshare_del(p);
+
+        if (sd->only_folder)
+          evas_object_smart_callback_call(fs, SIG_SELECTED, (void *)path);
+
         goto end;
      }
 
@@ -829,7 +838,12 @@ _on_text_activated(void *data,
    if (!dir) goto end;
 
    if (strcmp(dir, sd->path))
-     _populate(fs, dir, NULL, path);
+     {
+        _populate(fs, dir, NULL, path);
+
+        if (sd->only_folder)
+          evas_object_smart_callback_call(fs, SIG_SELECTED, (void *)path);
+     }
    else
      {
         if (sd->mode == ELM_FILESELECTOR_LIST)

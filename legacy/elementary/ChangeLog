@@ -1607,3 +1607,7 @@
 2013-09-11  Daniel Juyung Seo (SeoZ)
 
         * flip : Added support for focus direction.
+
+2013-09-12  Ryuan Choi (ryuan)
+
+        * elc_fileselector : Added "selected,invalid" smart callbacks.
