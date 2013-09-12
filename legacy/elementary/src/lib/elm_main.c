@@ -1899,3 +1899,22 @@ elm_object_item_cursor_engine_only_get(const Elm_Object_Item *it)
 {
    return elm_widget_item_cursor_engine_only_get(it);
 }
+
+EAPI Evas_Object *
+elm_object_item_track(Elm_Object_Item *it)
+{
+   return elm_widget_item_track((Elm_Widget_Item *)it);
+}
+
+void
+elm_object_item_untrack(Elm_Object_Item *it)
+{
+   elm_widget_item_untrack((Elm_Widget_Item *)it);
+}
+
+int
+elm_object_item_track_get(const Elm_Object_Item *it)
+{
+   return elm_widget_item_track_get((Elm_Widget_Item *)it);
+}
+

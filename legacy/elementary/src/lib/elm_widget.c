@@ -4867,6 +4867,68 @@ _elm_widget_orientation_set(Eo *obj __UNUSED__, void *_pd, va_list *list)
    if (ret) *ret = EINA_TRUE;
 }
 
+static void
+_track_obj_del(void *data, Evas *e, Evas_Object *obj, void *event_info);
+
+static void
+_track_obj_update(Evas_Object *track, Evas_Object *obj)
+{
+   //Geometry
+   Evas_Coord x, y, w, h;
+   evas_object_geometry_get(obj, &x, &y, &w, &h);
+   evas_object_move(track, x, y);
+   evas_object_resize(track, w, h);
+
+   //Visibility
+   if (evas_object_visible_get(obj)) evas_object_show(track);
+   else evas_object_hide(track);
+}
+
+static void
+_track_obj_view_update(void *data, Evas *e EINA_UNUSED, Evas_Object *obj,
+                       void *event_info EINA_UNUSED)
+{
+   Evas_Object *track = data;
+   _track_obj_update(track, obj);
+}
+
+static void
+_track_obj_view_del(void *data, Evas *e EINA_UNUSED,
+                    Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Elm_Widget_Item *item = data;
+
+   while (evas_object_ref_get(item->track_obj) > 0)
+     evas_object_unref(item->track_obj);
+
+   evas_object_event_callback_del(item->track_obj, EVAS_CALLBACK_DEL,
+                                  _track_obj_del);
+   evas_object_del(item->track_obj);
+   item->track_obj = NULL;
+}
+
+static void
+_track_obj_del(void *data, Evas *e EINA_UNUSED,
+                    Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Elm_Widget_Item *item = data;
+   item->track_obj = NULL;
+
+   if (!item->view) return;
+
+   evas_object_event_callback_del(item->view, EVAS_CALLBACK_RESIZE,
+                                  _track_obj_view_update);
+   evas_object_event_callback_del(item->view, EVAS_CALLBACK_MOVE,
+                                  _track_obj_view_update);
+   evas_object_event_callback_del(item->view, EVAS_CALLBACK_SHOW,
+                                  _track_obj_view_update);
+   evas_object_event_callback_del(item->view, EVAS_CALLBACK_HIDE,
+                                  _track_obj_view_update);
+   evas_object_event_callback_del(item->view, EVAS_CALLBACK_DEL,
+                                  _track_obj_view_del);
+}
+
+
 /**
  * @internal
  *
@@ -4922,6 +4984,13 @@ _elm_widget_item_free(Elm_Widget_Item *item)
 
    if (item->access_info)
      eina_stringshare_del(item->access_info);
+
+   if (item->track_obj)
+     {
+        evas_object_event_callback_del(item->track_obj, EVAS_CALLBACK_DEL,
+                                       _track_obj_del);
+        evas_object_del(item->track_obj);
+     }
 
    EINA_LIST_FREE(item->signals, wisd)
      {
@@ -5202,6 +5271,66 @@ _elm_widget_item_domain_part_text_translatable_set(Elm_Widget_Item *item,
    item->on_translate = EINA_TRUE;
    _elm_widget_item_part_text_set(item, part, text);
    item->on_translate = EINA_FALSE;
+}
+
+EAPI Evas_Object *
+elm_widget_item_track(Elm_Widget_Item *item)
+{
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN(item, NULL);
+
+   if (item->track_obj)
+     {
+        evas_object_ref(item->track_obj);
+        return item->track_obj;
+     }
+
+   if (!item->view) return NULL;
+
+   Evas_Object *track =
+      evas_object_rectangle_add(evas_object_evas_get(item->widget));
+   evas_object_color_set(track, 0, 0, 0, 0);
+   evas_object_pass_events_set(track, EINA_TRUE);
+   _track_obj_update(track, item->view);
+   evas_object_event_callback_add(track, EVAS_CALLBACK_DEL, _track_obj_del,
+                                  item);
+
+   evas_object_event_callback_add(item->view, EVAS_CALLBACK_RESIZE,
+                                  _track_obj_view_update, track);
+   evas_object_event_callback_add(item->view, EVAS_CALLBACK_MOVE,
+                                  _track_obj_view_update, track);
+   evas_object_event_callback_add(item->view, EVAS_CALLBACK_SHOW,
+                                  _track_obj_view_update, track);
+   evas_object_event_callback_add(item->view, EVAS_CALLBACK_HIDE,
+                                  _track_obj_view_update, track);
+   evas_object_event_callback_add(item->view, EVAS_CALLBACK_DEL,
+                                  _track_obj_view_del, item);
+
+   evas_object_ref(track);
+
+   item->track_obj = track;
+
+   return track;
+}
+
+void
+elm_widget_item_untrack(Elm_Widget_Item *item)
+{
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
+
+   if (!item->track_obj) return;
+   evas_object_unref(item->track_obj);
+
+   if (evas_object_ref_get(item->track_obj) == 0)
+     evas_object_del(item->track_obj);
+}
+
+int
+elm_widget_item_track_get(const Elm_Widget_Item *item)
+{
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN(item, 0);
+
+   if (!item->track_obj) return 0;
+   return evas_object_ref_get(item->track_obj);
 }
 
 typedef struct _Elm_Widget_Item_Tooltip Elm_Widget_Item_Tooltip;

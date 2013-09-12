@@ -652,3 +652,76 @@ EAPI void                         elm_object_item_cursor_engine_only_set(Elm_Obj
  * @ingroup General
  */
 EAPI Eina_Bool                    elm_object_item_cursor_engine_only_get(const Elm_Object_Item *it);
+
+/**
+ * This returns track object of the item.
+ *
+ * @param it The Elementary Object Item to be tracked.
+ * @return The track object. 
+ *
+ * @note This gets a rectangle object that represents the object item's internal
+ *       object. If you wanna check the geometry, visibility of the item, you
+ *       can call the evas apis such as evas_object_geometry_get(),
+ *       evas_object_visible_get() to the track object. Note that all of the
+ *       widget items may/may not have the internal object so this api may
+ *       return @c NULL if the widget item doesn't have it. Additionally, the
+ *       widget item is managed/controlled by the widget, the widget item could
+ *       be changed(moved, resized even deleted) anytime by it's own widget's
+ *       decision. So please dont' change the track object as well as don't
+ *       keep the track object in your side as possible but get the track object
+ *       at the moment you need to refer. Otherwise, you need to add some
+ *       callbacks to the track object to track it's attributes changes.
+ *
+ * @warning After use the track object, please call the
+ *          elm_object_item_untrack() paired to elm_object_item_track()
+ *          definitely to free the track object properly. Don't delete the
+ *          track object.
+ *
+ * @see elm_object_item_untrack()
+ * @see elm_object_item_track_get() 
+ *
+ * @since 1.8
+ *
+ * @ingroup General
+ */
+EAPI Evas_Object                 *elm_object_item_track(Elm_Object_Item *it);
+
+/**
+ * This retrieve the track object of the item.
+ *
+ * @param it The Elementary Object Item that returned track object.
+ *
+ * @note This retrieves the track object that was returned from
+ *       elm_object_item_track(). 
+ *
+ * @see elm_object_item_track()
+ * @see elm_object_item_track_get() 
+ *
+ * @since 1.8
+ *
+ * @ingroup General
+ */
+EAPI void                         elm_object_item_untrack(Elm_Object_Item *it);
+
+/**
+ * Get the track object reference count.
+ *
+ * @param it The Elementary Object Item that returned track object.
+ *
+ * @note This gets the reference count for the track object. Whenever you call
+ *       the elm_object_item_track(), the reference count will be increased by
+ *       one. Likely the referece count will be decreased again when you call
+ *       the elm_object_item_untrack(). Unless the reference count reaches to
+ *       zero, the track object won't be deleted. So please be sure to call
+ *       elm_object_item_untrack() paired to the elm_object_item_track() call
+ *        count.
+ *
+ * @see elm_object_item_track()
+ * @see elm_object_item_track_get() 
+ *
+ * @since 1.8
+ *
+ * @ingroup General
+ */
+EAPI int                          elm_object_item_track_get(const Elm_Object_Item *it);
+

@@ -1611,3 +1611,8 @@
 2013-09-12  Ryuan Choi (ryuan)
 
         * elc_fileselector : Added "selected,invalid" smart callbacks.
+
+2013-09-12  ChunEon Park (Hermet)
+
+        * elm_object_item : Introduces new APIs, elm_object_item_track(),
+        elm_object_item_untrack(), elm_object_item_track_get().

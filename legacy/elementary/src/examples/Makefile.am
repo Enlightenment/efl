@@ -148,7 +148,8 @@ transit_example_03.c \
 transit_example_04.c \
 web_example_01.c \
 web_example_02.c \
-win_example.c
+win_example.c \
+track_example_01.c
 
 .edc.edj:
 	$(EDJE_CC) $(EDJE_FLAGS) $< $@
@@ -286,7 +287,8 @@ transit_example_03 \
 transit_example_04 \
 web_example_01 \
 web_example_02 \
-win_example
+win_example \
+track_example_01.c
 
 if ELEMENTARY_WINDOWS_BUILD
 efl_thread_1_SOURCES = efl_thread_win32_1.c

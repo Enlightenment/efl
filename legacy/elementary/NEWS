@@ -89,6 +89,7 @@ Additions:
    * Add elm_table_child_get().
    * Add support for flip focus direction.
    * Add "selected,invalid" smart callback for fileselector.
+   * elm_object_item : Introduces new APIs, elm_object_item_track(), elm_object_item_untrack(), elm_object_item_track_get().
 
 Improvements:
 

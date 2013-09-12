@@ -579,6 +579,7 @@ struct _Elm_Widget_Item
    Eina_List                     *access_order;
    Eina_Inlist                   *translate_strings;
    Eina_List                     *signals;
+   Evas_Object                   *track_obj;
 
    Eina_Bool                      disabled : 1;
    Eina_Bool                      on_translate : 1;
@@ -771,6 +772,10 @@ EAPI void             _elm_widget_item_domain_translatable_part_text_set(Elm_Wid
 EAPI const char *     _elm_widget_item_translatable_part_text_get(const Elm_Widget_Item *item, const char *part);
 EAPI void             _elm_widget_item_translate(Elm_Widget_Item *item);
 EAPI void             _elm_widget_item_domain_part_text_translatable_set(Elm_Widget_Item *item, const char *part, const char *domain, Eina_Bool translatable);
+
+EAPI Evas_Object     *elm_widget_item_track(Elm_Widget_Item *item);
+EAPI void             elm_widget_item_untrack(Elm_Widget_Item *item);
+EAPI int              elm_widget_item_track_get(const Elm_Widget_Item *item);
 
 /**
  * Function to operate on a given widget's scrollabe children when necessary.
