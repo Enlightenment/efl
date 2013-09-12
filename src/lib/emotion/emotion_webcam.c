@@ -123,7 +123,7 @@ _emotion_check_device(Emotion_Webcam *ew)
 
    EINA_REFCOUNT_INIT(ew);
 
-   if (fd > 0) close(fd);
+   if (fd >= 0) close(fd);
 
    return;
 
