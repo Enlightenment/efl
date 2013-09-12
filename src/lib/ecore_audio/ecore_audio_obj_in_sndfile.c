@@ -135,6 +135,7 @@ static void _format_set(Eo *eo_obj, void *_pd, va_list *list)
   switch (format) {
     case ECORE_AUDIO_FORMAT_AUTO:
       obj->sfinfo.format = 0;
+      break;
     case ECORE_AUDIO_FORMAT_WAV:
       obj->sfinfo.format = SF_FORMAT_WAV|SF_FORMAT_PCM_16;
       break;
