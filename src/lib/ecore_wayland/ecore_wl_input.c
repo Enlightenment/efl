@@ -196,6 +196,8 @@ _ecore_wl_input_cursor_update(void *data)
    unsigned int delay;
 
    cursor_image = input->cursor->images[input->cursor_current_index];
+   if (!cursor_image) return ECORE_CALLBACK_RENEW;
+
    if ((buffer = wl_cursor_image_get_buffer(cursor_image)))
      {
         ecore_wl_input_pointer_set(input, input->cursor_surface,
@@ -206,7 +208,7 @@ _ecore_wl_input_cursor_update(void *data)
                           cursor_image->width, cursor_image->height);
         wl_surface_commit(input->cursor_surface);
 
-        if (!input->cursor_frame_cb)
+        if ((input->cursor->image_count > 1) && (!input->cursor_frame_cb))
           _ecore_wl_input_cb_pointer_frame(input, NULL, 0);
      }
 
@@ -515,7 +517,7 @@ _ecore_wl_input_cb_pointer_frame(void *data, struct wl_callback *callback, unsig
         return;
      }
 
-   if (!input->cursor_frame_cb)
+   if ((input->cursor->image_count > 1) && (!input->cursor_frame_cb))
      {
         input->cursor_frame_cb = wl_surface_frame(input->cursor_surface);
         wl_callback_add_listener(input->cursor_frame_cb, 
