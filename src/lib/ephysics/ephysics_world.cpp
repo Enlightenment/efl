@@ -407,8 +407,8 @@ _ephysics_world_free(EPhysics_World *world)
    eina_condition_free(&world->condition);
    eina_lock_free(&world->mutex);
 
-   free(world);
    INF("World %p deleted.", world);
+   free(world);
    ephysics_dom_count_dec();
 }
 
