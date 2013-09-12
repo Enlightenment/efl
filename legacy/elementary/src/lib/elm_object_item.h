@@ -657,7 +657,7 @@ EAPI Eina_Bool                    elm_object_item_cursor_engine_only_get(const E
  * This returns track object of the item.
  *
  * @param it The Elementary Object Item to be tracked.
- * @return The track object. 
+ * @return The track object.
  *
  * @note This gets a rectangle object that represents the object item's internal
  *       object. If you wanna check the geometry, visibility of the item, you
@@ -678,7 +678,7 @@ EAPI Eina_Bool                    elm_object_item_cursor_engine_only_get(const E
  *          track object.
  *
  * @see elm_object_item_untrack()
- * @see elm_object_item_track_get() 
+ * @see elm_object_item_track_get()
  *
  * @since 1.8
  *
@@ -692,10 +692,10 @@ EAPI Evas_Object                 *elm_object_item_track(Elm_Object_Item *it);
  * @param it The Elementary Object Item that returned track object.
  *
  * @note This retrieves the track object that was returned from
- *       elm_object_item_track(). 
+ *       elm_object_item_track().
  *
  * @see elm_object_item_track()
- * @see elm_object_item_track_get() 
+ * @see elm_object_item_track_get()
  *
  * @since 1.8
  *
@@ -717,7 +717,7 @@ EAPI void                         elm_object_item_untrack(Elm_Object_Item *it);
  *        count.
  *
  * @see elm_object_item_track()
- * @see elm_object_item_track_get() 
+ * @see elm_object_item_track_get()
  *
  * @since 1.8
  *
