@@ -1,4 +1,4 @@
-2013-09-06  Jihoon Kim
+2013-09-12  Jihoon Kim
 
 	* ecore_imf: Fix memory leak in scim immodule
 
