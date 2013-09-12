@@ -4985,13 +4985,6 @@ _elm_widget_item_free(Elm_Widget_Item *item)
    if (item->access_info)
      eina_stringshare_del(item->access_info);
 
-   if (item->track_obj)
-     {
-        evas_object_event_callback_del(item->track_obj, EVAS_CALLBACK_DEL,
-                                       _track_obj_del);
-        evas_object_del(item->track_obj);
-     }
-
    EINA_LIST_FREE(item->signals, wisd)
      {
         eina_stringshare_del(wisd->emission);
