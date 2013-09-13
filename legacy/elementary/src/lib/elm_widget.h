@@ -776,6 +776,7 @@ EAPI void             _elm_widget_item_domain_part_text_translatable_set(Elm_Wid
 EAPI Evas_Object     *elm_widget_item_track(Elm_Widget_Item *item);
 EAPI void             elm_widget_item_untrack(Elm_Widget_Item *item);
 EAPI int              elm_widget_item_track_get(const Elm_Widget_Item *item);
+EAPI void             _elm_widget_item_track_cancel(Elm_Widget_Item *item);
 
 /**
  * Function to operate on a given widget's scrollabe children when necessary.
@@ -1000,8 +1001,15 @@ EAPI void             elm_widget_tree_dot_dump(const Evas_Object *top, FILE *out
   _elm_widget_item_del_pre_hook_set((Elm_Widget_Item *)item, (Elm_Widget_Del_Pre_Cb)func)
 
 /**
+ * Convenience function to query track_cancel.
+ * @see _elm_widget_item_del_pre_hook_set()
+ */
+#define elm_widget_item_track_cancel(item) \
+  _elm_widget_item_track_cancel((Elm_Widget_Item *)item)
+
+/**
  * Convenience function to query translate hook.
- * @see _elm_widget_item_translate()
+ * @see _elm_widget_item_track_cancel()
  */
 #define elm_widget_item_translate(item) \
   _elm_widget_item_translate((Elm_Widget_Item *)item)

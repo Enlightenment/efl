@@ -5266,6 +5266,19 @@ _elm_widget_item_domain_part_text_translatable_set(Elm_Widget_Item *item,
    item->on_translate = EINA_FALSE;
 }
 
+EAPI void
+_elm_widget_item_track_cancel(Elm_Widget_Item *item)
+{
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
+
+   if (!item->track_obj) return;
+
+   while (evas_object_ref_get(item->track_obj) > 0)
+     evas_object_unref(item->track_obj);
+
+   evas_object_del(item->track_obj);
+}
+
 EAPI Evas_Object *
 elm_widget_item_track(Elm_Widget_Item *item)
 {
