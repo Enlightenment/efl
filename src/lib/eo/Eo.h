@@ -803,7 +803,7 @@ EAPI Eo *eo_parent_get(const Eo *obj);
  *
  * @see eo_parent_set()
  */
-EAPI Eina_Iterator *eo_childrens_iterator_new(Eo *obj_id);
+EAPI Eina_Iterator *eo_children_iterator_new(Eo *obj_id);
 
 /**
  * @brief Set the parent of an object

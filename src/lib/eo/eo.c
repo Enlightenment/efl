@@ -1135,7 +1135,7 @@ _eo_children_iterator_free(Eo_Children_Iterator *it)
 }
 
 EAPI Eina_Iterator *
-eo_childrens_iterator_new(Eo *obj_id)
+eo_children_iterator_new(Eo *obj_id)
 {
    Eo_Children_Iterator *it;
    _Eo_Class *klass;
