@@ -288,7 +288,7 @@ transit_example_04 \
 web_example_01 \
 web_example_02 \
 win_example \
-track_example_01.c
+track_example_01
 
 if ELEMENTARY_WINDOWS_BUILD
 efl_thread_1_SOURCES = efl_thread_win32_1.c
