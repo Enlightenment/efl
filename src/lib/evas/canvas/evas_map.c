@@ -420,7 +420,7 @@ _evas_object_map_parent_check(Evas_Object *eo_parent)
    if (!parent) return EINA_FALSE;
    list = evas_object_smart_members_get_direct(parent->smart.parent);
    EINA_INLIST_FOREACH(list, o)
-     if (o->map->cur.usemap) break ;
+     if (o->map->cur.usemap) break;
    if (o) return EINA_FALSE; /* Still some child have a map enable */
    parent->child_has_map = EINA_FALSE;
    _evas_object_map_parent_check(parent->smart.parent);
