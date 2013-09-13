@@ -623,7 +623,7 @@ _map_set(Eo *eo_obj, void *_pd, va_list *list)
           map_write->cur.map = _evas_map_dup(map);
         EINA_COW_WRITE_END(evas_object_map_cow, obj->map, map_write);
         if (obj->map->cur.usemap)
-           evas_object_mapped_clip_across_mark(eo_obj, obj);
+          evas_object_mapped_clip_across_mark(eo_obj, obj);
      }
 
    _evas_map_calc_map_geometry(eo_obj);
