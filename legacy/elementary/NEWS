@@ -281,6 +281,7 @@ Fixes:
    * Flip : Fix the flip page to not flip on a direction if the direction is disabled.
    * Spinner : change part name to access.text from access_text on default style.
    * Fix fileselector only send "selected" signal without selection when file path is typed on the path entry.
+   * Fix spinner arrow key focus movement bug.
 
 Removals:
 
