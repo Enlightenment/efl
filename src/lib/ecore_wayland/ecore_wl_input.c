@@ -240,11 +240,11 @@ ecore_wl_input_cursor_from_name_set(Ecore_Wl_Input *input, const char *cursor_na
 
    _pointer_update_stop(input);
 
+   eina_stringshare_replace(&input->cursor_name, cursor_name);
+
    /* No cursor. Set to default Left Pointer */
    if (!cursor_name) 
      eina_stringshare_replace(&input->cursor_name, "left_ptr");
-   else
-     eina_stringshare_replace(&input->cursor_name, cursor_name);
 
    /* try to get this cursor from the theme */
    if (!(cursor = ecore_wl_cursor_get(input->cursor_name)))
