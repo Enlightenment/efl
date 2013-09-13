@@ -544,12 +544,12 @@ _elm_gengrid_item_unrealize(Elm_Gen_Item *it,
    EINA_LIST_FREE(it->content_objs, content)
      evas_object_del(content);
 
+   elm_widget_item_track_cancel(it);
+
    it->unrealize_cb(it);
 
    it->realized = EINA_FALSE;
    it->want_unrealize = EINA_FALSE;
-
-   elm_widget_item_track_cancel(it);
 
    evas_event_thaw(evas_object_evas_get(WIDGET(it)));
    evas_event_thaw_eval(evas_object_evas_get(WIDGET(it)));

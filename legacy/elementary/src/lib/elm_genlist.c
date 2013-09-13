@@ -343,12 +343,12 @@ _elm_genlist_item_unrealize(Elm_Gen_Item *it,
 
    ELM_SAFE_FREE(it->item_focus_chain, eina_list_free);
 
+   elm_widget_item_track_cancel(it);
+
    it->unrealize_cb(it);
 
    it->realized = EINA_FALSE;
    it->want_unrealize = EINA_FALSE;
-
-   elm_widget_item_track_cancel(it);
 
    evas_event_thaw(evas_object_evas_get(WIDGET(it)));
    evas_event_thaw_eval(evas_object_evas_get(WIDGET(it)));
