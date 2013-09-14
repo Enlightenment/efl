@@ -2,15 +2,15 @@
 # include "elementary_config.h"
 #endif
 
+#ifdef HAVE_EMOTION
+# include <Emotion.h>
+#endif
+
 #include <Elementary.h>
 
 #include "elm_priv.h"
 #include "elm_widget_layout.h"
 #include "elm_widget_video.h"
-
-#ifdef HAVE_EMOTION
-# include <Emotion.h>
-#endif
 
 /* TODO: add buffering support to Emotion and display buffering
  * progress in the theme when needed */

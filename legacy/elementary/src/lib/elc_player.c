@@ -2,14 +2,14 @@
 # include "elementary_config.h"
 #endif
 
+#ifdef HAVE_EMOTION
+# include <Emotion.h>
+#endif
+
 #include <Elementary.h>
 #include "elm_priv.h"
 #include "elm_widget_layout.h"
 #include "elm_widget_player.h"
-
-#ifdef HAVE_EMOTION
-# include <Emotion.h>
-#endif
 
 EAPI Eo_Op ELM_OBJ_PLAYER_BASE_ID = EO_NOOP;
 
