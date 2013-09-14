@@ -806,7 +806,7 @@ elm_menu_close(Evas_Object *obj)
 }
 
 static void
-_close(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+_menu_close(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Menu_Smart_Data *sd = _pd;
    _menu_hide(obj, sd->hv, NULL);
@@ -1291,7 +1291,7 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_PARENT_GET), _parent_get),
 
         EO_OP_FUNC(ELM_OBJ_MENU_ID(ELM_OBJ_MENU_SUB_ID_MOVE), _move),
-        EO_OP_FUNC(ELM_OBJ_MENU_ID(ELM_OBJ_MENU_SUB_ID_CLOSE), _close),
+        EO_OP_FUNC(ELM_OBJ_MENU_ID(ELM_OBJ_MENU_SUB_ID_CLOSE), _menu_close),
         EO_OP_FUNC(ELM_OBJ_MENU_ID(ELM_OBJ_MENU_SUB_ID_ITEM_ADD), _item_add),
         EO_OP_FUNC(ELM_OBJ_MENU_ID(ELM_OBJ_MENU_SUB_ID_ITEM_SEPARATOR_ADD), _item_separator_add),
         EO_OP_FUNC(ELM_OBJ_MENU_ID(ELM_OBJ_MENU_SUB_ID_ITEMS_GET), _items_get),
