@@ -742,7 +742,6 @@ _items_fix(Evas_Object *obj)
                   // this may call up user and it may modify the list item
                   // but we're safe as we're flagged as walking.
                   // just don't process further
-                  Evas_Coord ew, eh;
                   edje_object_message_signal_process(VIEW(it));
                   if (it->deleted)
                     continue;
@@ -751,10 +750,15 @@ _items_fix(Evas_Object *obj)
                     elm_coords_finger_size_adjust(1, &mw, 1, &mh);
                   edje_object_size_min_restricted_calc
                     (VIEW(it), &mw, &mh, mw, mh);
+                  /*
+                  FIXME: this fixed T179 but introduced T286.
+                  Temporarily disable these lines until it gets fixed correctly.
+                  Evas_Coord ew, eh;
                   edje_object_parts_extends_calc
                     (VIEW(it), NULL, NULL, &ew, &eh);
                   mw = mw > ew ? mw : ew;
                   mh = mh > eh ? mh : eh;
+                  */
                   if (!it->is_separator)
                     elm_coords_finger_size_adjust(1, &mw, 1, &mh);
                   evas_object_size_hint_min_set(VIEW(it), mw, mh);
