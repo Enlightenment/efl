@@ -596,7 +596,7 @@ l3_tim_cb(void *data)
    sly = (int)(uintptr_t)evas_object_data_get(data, "sly");
    snprintf(buf, sizeof(buf), "slot.%i.%i", slx, sly);
    elm_object_part_content_unset(ly, buf);
-   edje_object_signal_emit(elm_layout_edje_get(ly2), "drag", "app");
+   elm_layout_signal_emit(ly2, "drag", "app");
    return EINA_FALSE;
 }
 
@@ -633,7 +633,7 @@ l3_ic_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, voi
    evas_object_data_set(obj, "px", (void *)(uintptr_t)(x));
    evas_object_data_set(obj, "py", (void *)(uintptr_t)(y));
 
-   edje_object_signal_emit(elm_layout_edje_get(ly2), "click", "app");
+   elm_layout_signal_emit(ly2, "click", "app");
 
    if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
      {
@@ -676,10 +676,10 @@ l3_ic_up_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void 
            (elm_object_top_widget_get(obj), "mbs");
         EINA_LIST_FOREACH(list, l, mb)
            evas_object_color_set(mb, 255, 255, 255, 255);
-        edje_object_signal_emit(elm_layout_edje_get(ly2), "drop", "app");
+        elm_layout_signal_emit(ly2, "drop", "app");
      }
    else
-      edje_object_signal_emit(elm_layout_edje_get(ly2), "unclick", "app");
+      elm_layout_signal_emit(ly2, "unclick", "app");
 }
 
 static void
@@ -712,7 +712,7 @@ l3_ic_move_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, voi
              evas_object_data_del(obj, "timer");
              ecore_timer_del(tim);
           }
-        edje_object_signal_emit(elm_layout_edje_get(ly2), "cancel", "app");
+        elm_layout_signal_emit(ly2, "cancel", "app");
         return;
      }
 }
@@ -803,7 +803,7 @@ test_launcher3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
                   elm_layout_file_set(ly2, buf, "launcher_icon");
                   evas_object_size_hint_weight_set(ly2, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
                   evas_object_size_hint_align_set(ly2, EVAS_HINT_FILL, EVAS_HINT_FILL);
-                  edje_object_part_text_set(elm_layout_edje_get(ly2), "label", names[m]);
+                  elm_layout_text_set(ly2, "label", names[m]);
 
                   ic = elm_icon_add(win);
                   elm_object_scale_set(ic, 0.5);
