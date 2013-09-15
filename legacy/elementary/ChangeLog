@@ -1418,8 +1418,8 @@
 2013-06-11  ChunEon Park (Hermet)
 
         * Keep the smart members of the naviframe views whenever resize object is changed.
-		  This prevents the dangling view objects of the naviframe and keep the layer
-		  consistency.
+        This prevents the dangling view objects of the naviframe and keep the layer
+        consistency.
 
 2013-06-13  Ryuan Choi (ryuan)
 
@@ -1440,7 +1440,7 @@
 
 2013-06-20  Youngbok Shin
 
-	    * Fix non-scrollable entry did not comply focus_highlight data.
+        * Fix non-scrollable entry did not comply focus_highlight data.
 
 2013-06-22  Thiep Ha
 
@@ -1466,7 +1466,7 @@
 2013-06-26  Daniel Zaoui (JackDanielZ)
 
         * Gesture Layer: add APIs to add/del multiple callbacks for a same
-	gesture/type/state.
+        gesture/type/state.
 
 2013-06-25  Ryuan Choi (ryuan)
 
