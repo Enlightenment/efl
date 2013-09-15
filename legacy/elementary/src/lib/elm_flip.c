@@ -1979,6 +1979,13 @@ _elm_flip_go_to(Evas_Object *obj,
    _configure(obj);
    // FIXME: end hack
    evas_object_smart_callback_call(obj, SIG_ANIMATE_BEGIN, NULL);
+
+   // set focus to the content object when flip go to is called
+   if (elm_object_focus_get(obj))
+     {
+        if (front) elm_object_focus_set(sd->front.content, EINA_TRUE);
+        else elm_object_focus_set(sd->back.content, EINA_TRUE);
+     }
 }
 
 EAPI void

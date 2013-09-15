@@ -1620,3 +1620,8 @@
 2013-09-14  Daniel Juyung Seo (SeoZ)
 
         * spinner : fixed arrow key focus movement bug.
+
+2013-09-15  Daniel Juyung Seo (SeoZ)
+
+        * flip : set the focus to it's content object when flip go to is called
+        while flip is focused.
