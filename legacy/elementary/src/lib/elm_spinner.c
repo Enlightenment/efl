@@ -436,7 +436,7 @@ _elm_spinner_smart_event(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    void *event_info = va_arg(*list, void *);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    if (ret) *ret = EINA_FALSE;
-   Eina_Bool horz = !!strcmp(elm_widget_style_get(obj), "vertical");
+   Eina_Bool horz = !!strncmp(elm_widget_style_get(obj), "vertical", 8);
 
    if (elm_widget_disabled_get(obj)) return;
    if (type == EVAS_CALLBACK_KEY_DOWN)
