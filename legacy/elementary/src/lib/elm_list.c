@@ -1405,7 +1405,11 @@ _item_text_set_hook(Elm_Object_Item *it,
 {
    Elm_List_Item *list_it = (Elm_List_Item *)it;
 
-   if (part && strcmp(part, "default")) return;
+   if (part && strcmp(part, "default"))
+     {
+        edje_object_part_text_escaped_set(VIEW(list_it), part, text);
+        return;
+     }
    if (!eina_stringshare_replace(&list_it->label, text)) return;
    if (VIEW(list_it))
      edje_object_part_text_escaped_set(VIEW(list_it), "elm.text", text);
