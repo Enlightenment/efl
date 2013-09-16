@@ -4813,7 +4813,7 @@ _elm_widget_orientation_mode_disabled_set(Eo *obj, void *_pd, va_list *list)
         if (!sd_parent) orient_mode = 0;
         else orient_mode = sd_parent->orient_mode;
      }
-   eo_do((Eo *) obj, elm_wdg_orientation_set(orient_mode, NULL));
+   eo_do(obj, elm_wdg_orientation_set(orient_mode, NULL));
 }
 
 EAPI Eina_Bool
