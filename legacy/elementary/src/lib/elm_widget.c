@@ -4799,7 +4799,7 @@ elm_widget_orientation_mode_disabled_set(Evas_Object *obj, Eina_Bool disabled)
 }
 
 static void
-_elm_widget_orientation_mode_disabled_set(Eo *obj __UNUSED__, void *_pd, va_list *list)
+_elm_widget_orientation_mode_disabled_set(Eo *obj, void *_pd, va_list *list)
 {
    Eina_Bool disabled = va_arg(*list, int);
    int orient_mode = -1;
@@ -4844,7 +4844,7 @@ elm_widget_orientation_set(Evas_Object *obj, int rotation)
 }
 
 static void
-_elm_widget_orientation_set(Eo *obj __UNUSED__, void *_pd, va_list *list)
+_elm_widget_orientation_set(Eo *obj, void *_pd, va_list *list)
 {
    Evas_Object *child;
    Eina_List *l;
