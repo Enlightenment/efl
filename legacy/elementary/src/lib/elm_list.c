@@ -707,6 +707,7 @@ _items_fix(Evas_Object *obj)
                {
                   edje_object_part_text_escaped_set
                      (VIEW(it), "elm.text", it->label);
+                  elm_widget_item_part_text_custom_update(it);
 
                   if ((!it->icon) && (minh[0] > 0))
                     {
@@ -1411,6 +1412,7 @@ _item_text_set_hook(Elm_Object_Item *it,
 
    if (part && strcmp(part, "default"))
      {
+        elm_widget_item_part_text_custom_set(list_it, part, text);
         edje_object_part_text_escaped_set(VIEW(list_it), part, text);
         return;
      }
@@ -1423,7 +1425,8 @@ static const char *
 _item_text_get_hook(const Elm_Object_Item *it,
                     const char *part)
 {
-   if (part && strcmp(part, "default")) return NULL;
+   if (part && strcmp(part, "default"))
+     return elm_widget_item_part_text_custom_get(it, part);
    return ((Elm_List_Item *)it)->label;
 }
 

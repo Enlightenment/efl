@@ -579,6 +579,7 @@ struct _Elm_Widget_Item
    Eina_List                     *access_order;
    Eina_Inlist                   *translate_strings;
    Eina_List                     *signals;
+   Eina_Hash                     *labels;
    Evas_Object                   *track_obj;
 
    Eina_Bool                      disabled : 1;
@@ -753,6 +754,9 @@ EAPI Evas_Object     *_elm_widget_item_part_content_get(const Elm_Widget_Item *i
 EAPI Evas_Object     *_elm_widget_item_part_content_unset(Elm_Widget_Item *item, const char *part);
 EAPI void             _elm_widget_item_part_text_set(Elm_Widget_Item *item, const char *part, const char *label);
 EAPI const char      *_elm_widget_item_part_text_get(const Elm_Widget_Item *item, const char *part);
+EAPI void             _elm_widget_item_part_text_custom_set(Elm_Widget_Item *item, const char *part, const char *label);
+EAPI const char      *_elm_widget_item_part_text_custom_get(Elm_Widget_Item *item, const char *part);
+EAPI void             _elm_widget_item_part_text_custom_update(Elm_Widget_Item *item);
 
 EAPI void             _elm_widget_item_signal_callback_add(Elm_Widget_Item *item, const char *emission, const char *source, Elm_Widget_Item_Signal_Cb func, void *data);
 EAPI void            *_elm_widget_item_signal_callback_del(Elm_Widget_Item *it, const char *emission, const char *source, Elm_Widget_Item_Signal_Cb func);
@@ -1013,6 +1017,27 @@ EAPI void             elm_widget_tree_dot_dump(const Evas_Object *top, FILE *out
  */
 #define elm_widget_item_translate(item) \
   _elm_widget_item_translate((Elm_Widget_Item *)item)
+
+/**
+ * Convenience function to save additional text part content.
+ * @see _elm_widget_item_part_text_custom_set()
+ */
+#define elm_widget_item_part_text_custom_set(item, part, text) \
+  _elm_widget_item_part_text_custom_set((Elm_Widget_Item *)item, part, text)
+
+/**
+ * Convenience function to get additional text part content.
+ * @see _elm_widget_item_part_text_custom_set()
+ */
+#define elm_widget_item_part_text_custom_get(item, part) \
+  _elm_widget_item_part_text_custom_get((Elm_Widget_Item *)item, part)
+
+/**
+ * Convenience function to update additional text part content.
+ * @see _elm_widget_item_part_text_custom_set()
+ */
+#define elm_widget_item_part_text_custom_update(item) \
+  _elm_widget_item_part_text_custom_update((Elm_Widget_Item *)item)
 
 #define ELM_WIDGET_ITEM_CHECK_OR_RETURN(item, ...)              \
    do {                                                         \

@@ -30,12 +30,19 @@ EAPI Eo_Op ELM_WIDGET_BASE_ID = EO_NOOP;
                                         (elm_widget_focus_get(obj)))
 
 typedef struct _Elm_Event_Cb_Data         Elm_Event_Cb_Data;
+typedef struct _Elm_Label_Data            Elm_Label_Data;
 typedef struct _Elm_Translate_String_Data Elm_Translate_String_Data;
 
 struct _Elm_Event_Cb_Data
 {
    Elm_Event_Cb func;
    const void  *data;
+};
+
+struct _Elm_Label_Data
+{
+   const char *part;
+   const char *text;
 };
 
 struct _Elm_Translate_String_Data
@@ -5003,6 +5010,7 @@ _elm_widget_item_free(Elm_Widget_Item *item)
                                                      item->translate_strings);
         free(ts);
      }
+   eina_hash_free(item->labels);
 
    EINA_MAGIC_SET(item, EINA_MAGIC_NONE);
    free(item);
@@ -5752,6 +5760,77 @@ _elm_widget_item_part_text_get(const Elm_Widget_Item *item,
         return NULL;
      }
    return item->text_get_func((Elm_Object_Item *)item, part);
+}
+
+static void
+_elm_widget_item_part_text_custom_free(void *data)
+{
+   Elm_Label_Data *label;
+   label = data;
+   eina_stringshare_del(label->part);
+   eina_stringshare_del(label->text);
+   free(label);
+}
+
+EAPI void
+_elm_widget_item_part_text_custom_set(Elm_Widget_Item *item,
+                                      const char *part,
+                                      const char *text)
+{
+   Elm_Label_Data *label;
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
+
+   if (!item->text_get_func)
+     {
+        ERR("%s does not support elm_object_item_part_text_get() API.",
+            elm_widget_type_get(item->widget));
+        return;
+     }
+   if (!item->labels)
+     item->labels =
+        eina_hash_stringshared_new(_elm_widget_item_part_text_custom_free);
+   label = eina_hash_find(item->labels, part);
+   if (!label)
+     {
+        label = malloc(sizeof(Elm_Label_Data));
+        label->part = eina_stringshare_add(part);
+        label->text = eina_stringshare_add(text);
+        eina_hash_add(item->labels, part, label);
+     }
+   else
+     eina_stringshare_replace(&label->text, text);
+}
+
+EAPI const char *
+_elm_widget_item_part_text_custom_get(Elm_Widget_Item *item,
+                                      const char *part)
+{
+   Elm_Label_Data *label;
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN(item, NULL);
+   label = eina_hash_find(item->labels, part);
+   return label ? label->text : NULL;
+}
+
+static Eina_Bool
+_elm_widget_item_part_text_custom_foreach(const Eina_Hash *labels EINA_UNUSED,
+                                          const void *key EINA_UNUSED,
+                                          void *data,
+                                          void *func_data)
+{
+   Elm_Label_Data *label;
+   Elm_Widget_Item *item;
+   label = data;
+   item = func_data;
+   item->text_set_func((Elm_Object_Item *)item, label->part, label->text);
+   return EINA_TRUE;
+}
+
+EAPI void
+_elm_widget_item_part_text_custom_update(Elm_Widget_Item *item)
+{
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
+   eina_hash_foreach(item->labels,
+                     _elm_widget_item_part_text_custom_foreach, item);
 }
 
 EAPI void
