@@ -416,6 +416,12 @@ _rotation_do(Ecore_Evas *ee, int rotation, int resize)
         /* record the current rotation of the ecore_evas */
         ee->rotation = rotation;
 
+        ecore_wl_window_opaque_region_set(wdata->win, 
+                                          wdata->win->opaque.x, 
+                                          wdata->win->opaque.y,
+                                          wdata->win->opaque.w,
+                                          wdata->win->opaque.h);
+
         /* send a mouse_move process
          * 
          * NB: Is This Really Needed ?? */
