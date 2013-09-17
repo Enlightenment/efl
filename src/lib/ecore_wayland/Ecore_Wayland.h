@@ -213,7 +213,7 @@ struct _Ecore_Wl_Window
      } pointer;
 
    int id, surface_id;
-   int edges;
+   int edges, rotation;
 
    Eina_Rectangle allocation;
 
@@ -731,8 +731,6 @@ EAPI void ecore_wl_window_input_region_set(Ecore_Wl_Window *win, int x, int y, i
 /**
  * Set the opaque region of the Ecore_Wl_Window
  * 
- * To set an empty region, pass width and height as 0.
- * 
  * @param win The window
  * @param x The left point of the region.
  * @param y The top point of the region.
@@ -743,6 +741,28 @@ EAPI void ecore_wl_window_input_region_set(Ecore_Wl_Window *win, int x, int y, i
  * @since 1.8
  */
 EAPI void ecore_wl_window_opaque_region_set(Ecore_Wl_Window *win, int x, int y, int w, int h);
+
+/**
+ * Set the rotation of the Ecore_Wl_Window
+ * 
+ * @param win The window
+ * @param rotation The degree of rotation for this window
+ * 
+ * @ingroup Ecore_Wl_Window_Group
+ * @since 1.8
+ */
+EAPI void ecore_wl_window_rotation_set(Ecore_Wl_Window *win, int rotation);
+
+/**
+ * Get the rotation of the Ecore_Wl_Window
+ * 
+ * @param win The window
+ * @return The degree of rotation for this window
+ * 
+ * @ingroup Ecore_Wl_Window_Group
+ * @since 1.8
+ */
+EAPI int ecore_wl_window_rotation_get(Ecore_Wl_Window *win);
 
 /**
  * @defgroup Ecore_Wl_Dnd_Group Functions dealing with Wayland Drag-n-Drop
