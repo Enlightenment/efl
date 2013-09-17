@@ -365,6 +365,8 @@ _ecore_evas_wl_rotation_set(Ecore_Evas *ee, int rotation, int resize)
 
    if (ee->rotation == rotation) return;
 
+   _ecore_evas_wl_common_rotation_set(ee, rotation, resize);
+
    einfo = (Evas_Engine_Info_Wayland_Egl *)evas_engine_info_get(ee->evas);
    if (!einfo) return;
 
@@ -372,8 +374,6 @@ _ecore_evas_wl_rotation_set(Ecore_Evas *ee, int rotation, int resize)
 
    if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
      ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
-
-   _ecore_evas_wl_common_rotation_set(ee, rotation, resize);
 }
 
 static void 
