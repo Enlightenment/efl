@@ -2,7 +2,7 @@ CC       = gcc
 CFLAGS   = -O2 -std=gnu99 -Wall -Wextra
 CFLAGS_PG= -g -pg -std=gnu99 -Wall -Wextra
 INCLUDE  = -I. -I../ -I../src/lib/eo/ -I../build
-CONFIG   = -DHAVE_CONFIG_H=1
+CONFIG   = -DHAVE_CONFIG_H=1 -DEFL_EO_API_SUPPORT=1 -DEFL_BETA_API_SUPPORT=1
 EINA_CFLAGS = `pkg-config --cflags eina`
 EINA_LIBS   = `pkg-config --libs eina`
 EO_SRC  = ../src/lib/eo/eo_ptr_indirection.c ../src/lib/eo/eo.c ../src/lib/eo/eo_base_class.c ../src/lib/eo/eo2_base_class.c
