@@ -49,6 +49,9 @@
  * last event happening on those time frames will actually be
  * reported.
  *
+ * Supported elm_object_item common APIs
+ * @li elm_object_item_del
+ *
  * Here are some examples on its usage:
  * @li @ref index_example_01
  * @li @ref index_example_02

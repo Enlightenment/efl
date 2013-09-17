@@ -49,6 +49,7 @@
  * @li "default" - Label of the diskselector item
  *
  * Supported elm_object_item common APIs.
+ * @li @ref elm_object_item_del
  * @li @ref elm_object_item_part_text_set
  * @li @ref elm_object_item_part_text_get
  * @li @ref elm_object_item_part_content_set

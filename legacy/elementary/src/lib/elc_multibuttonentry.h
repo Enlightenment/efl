@@ -46,6 +46,7 @@
  * @li "default" - A label of the multi-button entry item
  *
  * Supported elm_object_item common APIs.
+ * @li @ref elm_object_item_del
  * @li @ref elm_object_item_part_text_set
  * @li @ref elm_object_item_part_text_get
  */

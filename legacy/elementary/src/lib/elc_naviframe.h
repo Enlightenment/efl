@@ -63,6 +63,7 @@
  *
  * All the parts, for content and text, described here will also be
  * reachable by naviframe @b items direct calls:
+ * @li @ref elm_object_item_del
  * @li @ref elm_object_item_part_text_set
  * @li @ref elm_object_item_part_text_get
  * @li @ref elm_object_item_part_content_set

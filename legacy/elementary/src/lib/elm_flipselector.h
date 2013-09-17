@@ -43,8 +43,9 @@
  * @li @ref elm_object_disabled_get
  *
  * Supported elm_object_item common APIs.
- * @li @ref elm_object_item_text_set
+ * @li @ref elm_object_item_del
  * @li @ref elm_object_item_part_text_set
+ * @li @ref elm_object_item_part_text_get
  * @li @ref elm_object_item_signal_emit
  *
  * Here is an example on its usage:

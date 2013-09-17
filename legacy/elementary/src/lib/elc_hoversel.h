@@ -41,6 +41,7 @@
  * @li @ref elm_object_part_content_unset
  *
  * Supported elm_object_item common APIs.
+ * @li elm_object_item_del
  * @li elm_object_item_part_text_get
  *
  * See @ref tutorial_hoversel for an example.

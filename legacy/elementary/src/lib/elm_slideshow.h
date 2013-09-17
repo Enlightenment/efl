@@ -60,6 +60,9 @@
  * - @c "focused" - When the slideshow has received focus. (since 1.8)
  * - @c "unfocused" - When the slideshow has lost focus. (since 1.8)
  *
+ * Supported @c elm_object_item common APIs.
+ * @li @ref elm_object_item_del
+ *
  * List of examples for the slideshow widget:
  * @li @ref slideshow_example
  */
