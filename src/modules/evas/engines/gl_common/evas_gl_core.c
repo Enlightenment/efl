@@ -1695,7 +1695,7 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
              // Destroy created resources
              if (sfc->buffers_allocated)
                {
-                  if (!_surface_buffers_allocate(evgl_engine, sfc, 0, 0, 1))
+                  if (!_surface_buffers_allocate(eng_data, sfc, 0, 0, 1))
                     {
                        ERR("Unable to destroy surface buffers!");
                        return 0;
@@ -1708,7 +1708,7 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
              // Create internal buffers if not yet created
              if (!sfc->buffers_allocated)
                {
-                  if (!_surface_buffers_allocate(evgl_engine, sfc, sfc->w, sfc->h, 1))
+                  if (!_surface_buffers_allocate(eng_data, sfc, sfc->w, sfc->h, 1))
                     {
                        ERR("Unable Create Specificed Surfaces.  Unsupported format!");
                        return 0;
