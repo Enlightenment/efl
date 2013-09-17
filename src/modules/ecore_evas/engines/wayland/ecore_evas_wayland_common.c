@@ -293,58 +293,79 @@ _rotation_do(Ecore_Evas *ee, int rotation, int resize)
 
    wdata = ee->engine.data;
 
+   /* calculate difference in rotation */
    rot_dif = ee->rotation - rotation;
    if (rot_dif < 0) rot_dif = -rot_dif;
 
+   /* set ecore_wayland window rotation */
+   ecore_wl_window_rotation_set(wdata->win, rotation);
+
+   /* check if rotation is just a flip */
    if (rot_dif != 180)
      {
-        int minw, minh, maxw, maxh, basew, baseh, stepw, steph;
-        int ww, hh;
+        int minw, minh, maxw, maxh;
+        int basew, baseh, stepw, steph;
 
+        /* check if we are rotating with resize */
         if (!resize)
           {
+             int fw, fh;
+
+             /* grab framespace width & height */
+             evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
+
+             /* check for fullscreen */
              if (!ee->prop.fullscreen)
                {
-                  int fw, fh;
-                  evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
-                  if ((rotation == 0) || (rotation == 180))
-                    {
-                       ecore_wl_window_resize(wdata->win, ee->h + fw, ee->w + fh, 0);
-                    }
-                  else
-                    {
-                       ecore_wl_window_resize(wdata->win, ee->h + fh, ee->w + fw, 0);
-                    }
-                  if ((ee->rotation == 0) || (ee->rotation == 180))
-                    {
-                       evas_output_size_set(ee->evas, ee->w + fw, ee->h + fh);
-                       evas_output_viewport_set(ee->evas, 0, 0, ee->w + fw, ee->h + fh);
-                    }
-                  else
-                    {
-                       evas_output_size_set(ee->evas, ee->h + fw, ee->w + fh);
-                       evas_output_viewport_set(ee->evas, 0, 0, ee->h + fw, ee->w + fh);
-                    }
+                  /* resize the ecore_wayland window */
+                  ecore_wl_window_resize(wdata->win, 
+                                         ee->req.h + fw, ee->req.w + fh, 0);
+
+                  /* resize the canvas */
+                  evas_output_size_set(ee->evas, ee->req.h + fw, 
+                                       ee->req.w + fh);
+                  evas_output_viewport_set(ee->evas, 0, 0, 
+                                           ee->req.h + fw, ee->req.w + fh);
                }
              else
                {
-                  evas_output_size_set(ee->evas, ee->req.w, ee->req.h);
-                  evas_output_viewport_set(ee->evas, 0, 0, ee->req.w, ee->req.h);
-                  if (ee->func.fn_resize) ee->func.fn_resize(ee);
+                  /* resize the canvas based on rotation */
+                  if ((rotation == 0) || (rotation == 180))
+                    {
+                       /* resize the ecore_wayland window */
+                       ecore_wl_window_resize(wdata->win, 
+                                              ee->req.w, ee->req.h, 0);
+
+                       /* resize the canvas */
+                       evas_output_size_set(ee->evas, ee->req.w, ee->req.h);
+                       evas_output_viewport_set(ee->evas, 0, 0, 
+                                                ee->req.w, ee->req.h);
+                    }
+                  else
+                    {
+                       /* resize the ecore_wayland window */
+                       ecore_wl_window_resize(wdata->win, 
+                                              ee->req.h, ee->req.w, 0);
+
+                       /* resize the canvas */
+                       evas_output_size_set(ee->evas, ee->req.h, ee->req.w);
+                       evas_output_viewport_set(ee->evas, 0, 0, 
+                                                ee->req.h, ee->req.w);
+                    }
                }
-             if ((ee->rotation == 90) || (ee->rotation == 270))
-               evas_damage_rectangle_add(ee->evas, 0, 0, ee->req.h, ee->req.w);
-             else
+
+             /* call the ecore_evas' resize function */
+             if (ee->func.fn_resize) ee->func.fn_resize(ee);
+
+             /* add canvas damage */
+             if ((ee->rotation == 0) || (ee->rotation == 180))
                evas_damage_rectangle_add(ee->evas, 0, 0, ee->req.w, ee->req.h);
-             ww = ee->h;
-             hh = ee->w;
-             ee->w = ww;
-             ee->h = hh;
-             ee->req.w = ww;
-             ee->req.h = hh;
+             else
+               evas_damage_rectangle_add(ee->evas, 0, 0, ee->req.h, ee->req.w);
           }
         else
           {
+             /* resize the canvas based on rotation */
              if ((rotation == 0) || (rotation == 180))
                {
                   evas_output_size_set(ee->evas, ee->w, ee->h);
@@ -355,35 +376,60 @@ _rotation_do(Ecore_Evas *ee, int rotation, int resize)
                   evas_output_size_set(ee->evas, ee->h, ee->w);
                   evas_output_viewport_set(ee->evas, 0, 0, ee->h, ee->w);
                }
+
+             /* call the ecore_evas' resize function */
              if (ee->func.fn_resize) ee->func.fn_resize(ee);
-             if ((ee->rotation == 90) || (ee->rotation == 270))
-               evas_damage_rectangle_add(ee->evas, 0, 0, ee->h, ee->w);
-             else
+
+             /* add canvas damage */
+             if ((ee->rotation == 0) || (ee->rotation == 180))
                evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
+             else
+               evas_damage_rectangle_add(ee->evas, 0, 0, ee->h, ee->w);
           }
+
+        /* get min, max, base, & step sizes */
         ecore_evas_size_min_get(ee, &minw, &minh);
         ecore_evas_size_max_get(ee, &maxw, &maxh);
         ecore_evas_size_base_get(ee, &basew, &baseh);
         ecore_evas_size_step_get(ee, &stepw, &steph);
+
+        /* record the current rotation of the ecore_evas */
         ee->rotation = rotation;
+
+        /* reset min, max, base, & step sizes */
         ecore_evas_size_min_set(ee, minh, minw);
         ecore_evas_size_max_set(ee, maxh, maxw);
         ecore_evas_size_base_set(ee, baseh, basew);
         ecore_evas_size_step_set(ee, steph, stepw);
+
+        /* send a mouse_move process
+         * 
+         * NB: Is This Really Needed ?? */
         _ecore_evas_mouse_move_process(ee, ee->mouse.x, ee->mouse.y,
                                        ecore_loop_time_get());
      }
    else
      {
+        /* resize the ecore_wayland window */
+        ecore_wl_window_resize(wdata->win, ee->w, ee->h, 0);
+
+        /* record the current rotation of the ecore_evas */
         ee->rotation = rotation;
+
+        /* send a mouse_move process
+         * 
+         * NB: Is This Really Needed ?? */
         _ecore_evas_mouse_move_process(ee, ee->mouse.x, ee->mouse.y,
                                        ecore_loop_time_get());
+
+        /* call the ecore_evas' resize function */
         if (ee->func.fn_resize) ee->func.fn_resize(ee);
 
-        if ((ee->rotation == 90) || (ee->rotation == 270))
-          evas_damage_rectangle_add(ee->evas, 0, 0, ee->h, ee->w);
-        else
+        /* add canvas damage */
+        if ((ee->rotation == 0) || (ee->rotation == 180))
           evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
+        else
+          evas_damage_rectangle_add(ee->evas, 0, 0, ee->h, ee->w);
      }
 }
 
