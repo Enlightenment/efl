@@ -1663,9 +1663,10 @@ _item_pop(Eo *obj, void *_pd, va_list *list)
    it = (Elm_Naviframe_Item *)elm_naviframe_top_item_get(obj);
    if (!it) return;
 
-   if (it->animator || it->popping) return;
-
+   if (it->popping) return;
    it->popping = EINA_TRUE;
+
+   ELM_SAFE_FREE(it->animator, ecore_animator_del);
 
    if (it->pop_cb)
      {
