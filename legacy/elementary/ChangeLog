@@ -1625,3 +1625,8 @@
 
         * flip : set the focus to it's content object when flip go to is called
         while flip is focused.
+
+2013-09-18  Tom Hacohen (TAsn)
+
+        * Gesture layer: Fix gesture layer with "pointer" events.
+
