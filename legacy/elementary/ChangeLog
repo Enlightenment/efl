@@ -1633,7 +1633,7 @@
 2012-09-18  Michael Bouchaud (yoz)
 
         * Elm_Widget_Item: Introduces new widget APIs,
-        elm_widget_item_part_custom_set(),
-        elm_widget_item_part_custom_get(),
-        elm_widget_item_part_custom_update()
+        elm_widget_item_part_text_custom_set(),
+        elm_widget_item_part_text_custom_get(),
+        elm_widget_item_part_text_custom_update()
 
