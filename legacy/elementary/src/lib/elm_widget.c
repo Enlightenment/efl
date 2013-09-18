@@ -5829,8 +5829,9 @@ EAPI void
 _elm_widget_item_part_text_custom_update(Elm_Widget_Item *item)
 {
    ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
-   eina_hash_foreach(item->labels,
-                     _elm_widget_item_part_text_custom_foreach, item);
+   if (item->labels)
+     eina_hash_foreach(item->labels,
+                       _elm_widget_item_part_text_custom_foreach, item);
 }
 
 EAPI void
