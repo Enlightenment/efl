@@ -54,7 +54,7 @@ extern int _eo_log_dom;
 #endif
 #define DBG(...) EINA_LOG_DOM_DBG(_eo_log_dom, __VA_ARGS__)
 
-typedef size_t  Eo_Id;
+typedef uintptr_t Eo_Id;
 typedef struct _Eo_Class _Eo_Class;
 typedef struct _Eo_Internal _Eo;
 
