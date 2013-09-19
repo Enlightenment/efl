@@ -56,7 +56,7 @@ extern int _eo_log_dom;
 
 typedef uintptr_t Eo_Id;
 typedef struct _Eo_Class _Eo_Class;
-typedef struct _Eo_Internal _Eo;
+typedef struct _Eo_Object _Eo;
 
 /* Retrieves the pointer to the object from the id */
 static inline _Eo *_eo_obj_pointer_get(const Eo_Id obj_id);
@@ -72,7 +72,7 @@ static inline void _eo_free_ids_tables(void);
 
 void _eo_condtor_done(Eo *obj);
 
-struct _Eo_Internal {
+struct _Eo_Object {
 #ifndef HAVE_EO_ID
      EINA_MAGIC
 #endif
