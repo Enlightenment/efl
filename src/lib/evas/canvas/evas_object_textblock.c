@@ -2489,6 +2489,7 @@ struct _Ctxt
    int x, y;
    int w, h;
    int wmax, hmax;
+   int ascent, descent;
    int maxascent, maxdescent;
    int marginl, marginr;
    int line_no;
@@ -2643,6 +2644,7 @@ _layout_line_new(Ctxt *c, Evas_Object_Textblock_Format *fmt)
    c->marginr = fmt->margin.r;
    c->par->lines = (Evas_Object_Textblock_Line *)eina_inlist_append(EINA_INLIST_GET(c->par->lines), EINA_INLIST_GET(c->ln));
    c->x = 0;
+   c->ascent = c->descent = 0;
    c->maxascent = c->maxdescent = 0;
    c->ln->line_no = -1;
    c->ln->par = c->par;
@@ -3268,9 +3270,9 @@ _layout_line_finalize(Ctxt *c, Evas_Object_Textblock_Format *fmt)
 
    /* If there are no text items yet, calc ascent/descent
     * according to the current format. */
-   if (c->maxascent + c->maxdescent == 0)
-      _layout_format_ascent_descent_adjust(c->obj, &c->maxascent,
-            &c->maxdescent, fmt);
+   if (c->ascent + c->descent == 0)
+      _layout_format_ascent_descent_adjust(c->obj, &c->ascent,
+            &c->descent, fmt);
 
    /* Adjust all the item sizes according to the final line size,
     * and update the x positions of all the items of the line. */
@@ -3280,8 +3282,8 @@ _layout_line_finalize(Ctxt *c, Evas_Object_Textblock_Format *fmt)
           {
              Evas_Object_Textblock_Format_Item *fi = _ITEM_FORMAT(it);
              if (!fi->formatme) goto loop_advance;
-             _layout_calculate_format_item_size(c->obj, fi, &c->maxascent,
-                   &c->maxdescent, &fi->y, &fi->parent.w, &fi->parent.h);
+             _layout_calculate_format_item_size(c->obj, fi, &c->ascent,
+                   &c->descent, &fi->y, &fi->parent.w, &fi->parent.h);
              fi->parent.adv = fi->parent.w;
           }
         else
@@ -3290,10 +3292,10 @@ _layout_line_finalize(Ctxt *c, Evas_Object_Textblock_Format *fmt)
              _layout_item_ascent_descent_adjust(c->obj, &asc, &desc,
                    it, c->position);
 
-             if (asc > c->maxascent)
-                c->maxascent = asc;
-             if (desc > c->maxdescent)
-                c->maxdescent = desc;
+             if (asc > c->ascent)
+                c->ascent = asc;
+             if (desc > c->descent)
+                c->descent = desc;
           }
 
 loop_advance:
@@ -3304,19 +3306,19 @@ loop_advance:
      }
 
    c->ln->y = (c->y - c->par->y) + c->o->style_pad.t;
-   c->ln->h = c->maxascent + c->maxdescent;
-   c->ln->baseline = c->maxascent;
+   c->ln->h = c->ascent + c->descent;
+   c->ln->baseline = c->ascent;
    if (c->have_underline2)
      {
-        if (c->maxdescent < 4) c->underline_extend = 4 - c->maxdescent;
+        if (c->descent < 4) c->underline_extend = 4 - c->descent;
      }
    else if (c->have_underline)
      {
-        if (c->maxdescent < 2) c->underline_extend = 2 - c->maxdescent;
+        if (c->descent < 2) c->underline_extend = 2 - c->descent;
      }
    c->ln->line_no = c->line_no - c->ln->par->line_no;
    c->line_no++;
-   c->y += c->maxascent + c->maxdescent;
+   c->y += c->ascent + c->descent;
    if (c->w >= 0)
      {
         c->ln->x = c->marginl + c->o->style_pad.l +
@@ -4441,24 +4443,24 @@ _layout_par(Ctxt *c)
 
         if (it->type == EVAS_TEXTBLOCK_ITEM_TEXT)
           {
-             _layout_item_ascent_descent_adjust(c->obj, &c->maxascent,
-                   &c->maxdescent, it, c->position);
+             _layout_item_ascent_descent_adjust(c->obj, &c->ascent,
+                   &c->descent, it, c->position);
           }
         else
           {
              Evas_Object_Textblock_Format_Item *fi = _ITEM_FORMAT(it);
              if (fi->formatme)
                {
-                  prevdescent = c->maxdescent;
-                  prevascent = c->maxascent;
+                  prevdescent = c->descent;
+                  prevascent = c->ascent;
                   /* If there are no text items yet, calc ascent/descent
                    * according to the current format. */
-                  if (c->maxascent + c->maxdescent == 0)
-                     _layout_item_ascent_descent_adjust(c->obj, &c->maxascent,
-                           &c->maxdescent, it, c->position);
+                  if (c->ascent + c->descent == 0)
+                     _layout_item_ascent_descent_adjust(c->obj, &c->ascent,
+                           &c->descent, it, c->position);
 
-                  _layout_calculate_format_item_size(c->obj, fi, &c->maxascent,
-                        &c->maxdescent, &fi->y, &fi->parent.w, &fi->parent.h);
+                  _layout_calculate_format_item_size(c->obj, fi, &c->ascent,
+                        &c->descent, &fi->y, &fi->parent.w, &fi->parent.h);
                   fi->parent.adv = fi->parent.w;
                }
           }
@@ -4607,8 +4609,8 @@ _layout_par(Ctxt *c)
 
                        /* We didn't end up using the item, so revert the ascent
                         * and descent changes. */
-                       c->maxdescent = prevdescent;
-                       c->maxascent = prevascent;
+                       c->descent = prevdescent;
+                       c->ascent = prevascent;
 
                        adv_line = 0;
                        redo_item = 1;
@@ -4959,6 +4961,7 @@ _layout(const Evas_Object *eo_obj, int w, int h, int *w_ret, int *h_ret)
    c->w = w;
    c->h = h;
    c->wmax = c->hmax = 0;
+   c->ascent = c->descent = 0;
    c->maxascent = c->maxdescent = 0;
    c->marginl = c->marginr = 0;
    c->have_underline = 0;
