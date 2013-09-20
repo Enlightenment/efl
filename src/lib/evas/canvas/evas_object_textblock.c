@@ -2558,18 +2558,75 @@ _layout_format_ascent_descent_adjust(const Evas_Object *eo_obj,
      }
 }
 
+static void
+_layout_item_max_ascent_descent_calc(const Evas_Object *eo_obj,
+      Evas_Coord *maxascent, Evas_Coord *maxdescent,
+      Evas_Object_Textblock_Item *it, Textblock_Position position)
+{
+   void *fi = NULL;
+   *maxascent = *maxdescent = 0;
+
+   if (it->type == EVAS_TEXTBLOCK_ITEM_TEXT)
+     {
+        fi = _ITEM_TEXT(it)->text_props.font_instance;
+     }
+
+   if ((position == TEXTBLOCK_POSITION_START) ||
+         (position == TEXTBLOCK_POSITION_SINGLE))
+     {
+        Evas_Coord asc = 0;
+
+        if (fi)
+          {
+             asc = evas_common_font_instance_max_ascent_get(fi);
+          }
+        else
+          {
+             Evas_Object_Protected_Data *obj =
+                eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+             asc = ENFN->font_max_ascent_get(ENDT,
+                   it->format->font.font);
+          }
+
+        if (asc > *maxascent)
+           *maxascent = asc;
+     }
+
+   if ((position == TEXTBLOCK_POSITION_END) ||
+         (position == TEXTBLOCK_POSITION_SINGLE))
+     {
+        /* Calculate max descent. */
+        Evas_Coord desc = 0;
+
+        if (fi)
+          {
+             desc = evas_common_font_instance_max_descent_get(fi);
+          }
+        else
+          {
+             Evas_Object_Protected_Data *obj =
+                eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+             desc = ENFN->font_max_descent_get(ENDT,
+                   it->format->font.font);
+          }
+
+        if (desc > *maxdescent)
+           *maxdescent = desc;
+     }
+}
+
 /**
  * @internal
  * Adjust the ascent/descent of the item and context.
  *
- * @param maxascent The ascent to update - Not NUL.
- * @param maxdescent The descent to update - Not NUL.
+ * @param ascent The ascent to update - Not NUL.
+ * @param descent The descent to update - Not NUL.
  * @param it The format to adjust - NOT NULL.
  * @param position The position inside the textblock
  */
 static void
 _layout_item_ascent_descent_adjust(const Evas_Object *eo_obj,
-      Evas_Coord *maxascent, Evas_Coord *maxdescent,
+      Evas_Coord *ascent, Evas_Coord *descent,
       Evas_Object_Textblock_Item *it, Textblock_Position position)
 {
    if (!it->format || !it->format->font.font)
@@ -2577,51 +2634,33 @@ _layout_item_ascent_descent_adjust(const Evas_Object *eo_obj,
         return;
      }
 
-   _layout_format_ascent_descent_adjust(eo_obj, maxascent, maxdescent, it->format);
+   _layout_format_ascent_descent_adjust(eo_obj, ascent, descent, it->format);
 
    if (it->type == EVAS_TEXTBLOCK_ITEM_TEXT)
      {
-        void *fi = _ITEM_TEXT(it)->text_props.font_instance;
-
-        if ((position == TEXTBLOCK_POSITION_START) ||
-              (position == TEXTBLOCK_POSITION_SINGLE))
           {
-             int asc = 0;
+             void *fi = _ITEM_TEXT(it)->text_props.font_instance;
+             int asc = 0, desc = 0;
 
              if (fi)
                {
-                  asc = evas_common_font_instance_max_ascent_get(fi);
+                  asc = evas_common_font_instance_ascent_get(fi);
+                  desc = evas_common_font_instance_descent_get(fi);
                }
              else
                {
                   Evas_Object_Protected_Data *obj =
                      eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
-                  asc = ENFN->font_max_ascent_get(ENDT, it->format->font.font);
-               }
-
-             if (maxascent && (asc > *maxascent))
-                *maxascent = asc;
-          }
-
-        if ((position == TEXTBLOCK_POSITION_END) ||
-              (position == TEXTBLOCK_POSITION_SINGLE))
-          {
-             int desc = 0;
-
-             if (fi)
-               {
-                  desc = evas_common_font_instance_max_descent_get(fi);
-               }
-             else
-               {
-                  Evas_Object_Protected_Data *obj =
-                     eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+                  asc =
+                     ENFN->font_ascent_get(ENDT, it->format->font.font);
                   desc =
-                     ENFN->font_max_descent_get(ENDT, it->format->font.font);
+                     ENFN->font_descent_get(ENDT, it->format->font.font);
                }
 
-             if (maxdescent && (desc > *maxdescent))
-                *maxdescent = desc;
+             if (ascent && (asc > *ascent))
+                *ascent = asc;
+             if (descent && (desc > *descent))
+                *descent = desc;
           }
      }
 }
@@ -3265,9 +3304,6 @@ _layout_line_finalize(Ctxt *c, Evas_Object_Textblock_Format *fmt)
    Evas_Object_Textblock_Item *it;
    Evas_Coord x = 0;
 
-   if (c->position == TEXTBLOCK_POSITION_START)
-      c->position = TEXTBLOCK_POSITION_ELSE;
-
    /* If there are no text items yet, calc ascent/descent
     * according to the current format. */
    if (c->ascent + c->descent == 0)
@@ -3289,13 +3325,20 @@ _layout_line_finalize(Ctxt *c, Evas_Object_Textblock_Format *fmt)
         else
           {
              Evas_Coord asc = 0, desc = 0;
+             Evas_Coord maxasc = 0, maxdesc = 0;
              _layout_item_ascent_descent_adjust(c->obj, &asc, &desc,
+                   it, c->position);
+             _layout_item_max_ascent_descent_calc(c->obj, &maxasc, &maxdesc,
                    it, c->position);
 
              if (asc > c->ascent)
                 c->ascent = asc;
              if (desc > c->descent)
                 c->descent = desc;
+             if (maxasc > c->maxascent)
+                c->maxascent = maxasc;
+             if (maxdesc > c->maxdescent)
+                c->maxdescent = maxdesc;
           }
 
 loop_advance:
@@ -3307,6 +3350,34 @@ loop_advance:
 
    c->ln->y = (c->y - c->par->y) + c->o->style_pad.t;
    c->ln->h = c->ascent + c->descent;
+
+   /* Handle max ascent and descent if at the edges */
+     {
+        /* If it's the start, offset the line according to the max ascent. */
+        if (((c->position == TEXTBLOCK_POSITION_START) ||
+                 (c->position == TEXTBLOCK_POSITION_SINGLE))
+              && (c->maxascent > c->ascent))
+          {
+             Evas_Coord ascdiff;
+
+             ascdiff = c->maxascent - c->ascent;
+             c->ln->y += ascdiff;
+             c->y += ascdiff;
+          }
+
+        /* If it's the end, add the adjustment to the line height. */
+        if (((c->position == TEXTBLOCK_POSITION_END) ||
+                 (c->position == TEXTBLOCK_POSITION_SINGLE))
+              && (c->maxdescent > c->descent))
+          {
+             Evas_Coord descdiff;
+
+             descdiff = c->maxdescent - c->descent;
+             c->ln->h += descdiff;
+             c->y += descdiff;
+          }
+     }
+
    c->ln->baseline = c->ascent;
    if (c->have_underline2)
      {
@@ -3341,6 +3412,9 @@ loop_advance:
         if (new_wmax > c->wmax)
            c->wmax = new_wmax;
      }
+
+   if (c->position == TEXTBLOCK_POSITION_START)
+      c->position = TEXTBLOCK_POSITION_ELSE;
 }
 
 /**
