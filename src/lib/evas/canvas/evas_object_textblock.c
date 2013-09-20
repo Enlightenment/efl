@@ -10355,8 +10355,16 @@ _size_native_calc_line_finalize(const Evas_Object *eo_obj, Eina_List *items,
           }
         else
           {
+             Evas_Coord maxasc = 0, maxdesc = 0;
              _layout_item_ascent_descent_adjust(eo_obj, ascent, descent,
                    it, it->format);
+             _layout_item_max_ascent_descent_calc(eo_obj, &maxasc, &maxdesc,
+                   it, position);
+
+             if (maxasc > *ascent)
+                *ascent = maxasc;
+             if (maxdesc > *descent)
+                *descent = maxdesc;
           }
 
 loop_advance:
@@ -10420,9 +10428,15 @@ _size_native_calc_paragraph_size(const Evas_Object *eo_obj,
           }
      }
 
-   *position = (*position == TEXTBLOCK_POSITION_START) ?
-      TEXTBLOCK_POSITION_SINGLE : TEXTBLOCK_POSITION_END;
+   if (!EINA_INLIST_GET(par)->next)
+     {
+        *position = (*position == TEXTBLOCK_POSITION_START) ?
+           TEXTBLOCK_POSITION_SINGLE : TEXTBLOCK_POSITION_END;
+     }
    _size_native_calc_line_finalize(eo_obj, line_items, &ascent, &descent, &w, *position);
+
+   if (*position == TEXTBLOCK_POSITION_START)
+      *position = TEXTBLOCK_POSITION_ELSE;
 
    line_items = eina_list_free(line_items);
 
