@@ -1451,7 +1451,7 @@ START_TEST(evas_textblock_items)
    fail_if((w >= 93) || (h >= 153));
    evas_textblock_cursor_pos_set(cur, 11);
    evas_textblock_cursor_format_item_geometry_get(cur, NULL, NULL, &w, &ih);
-   fail_if((w > 108) || (h != ih));
+   fail_if((w > 108) || (h <= ih));
 
    buf = "This is an <item relize=93x152 vsize=ascent></>.";
    evas_object_textblock_text_markup_set(tb, buf);
