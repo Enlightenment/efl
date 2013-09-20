@@ -4384,6 +4384,12 @@ _layout_par(Ctxt *c)
                 EINA_INLIST_GET(c->par->lines)->last;
              if (ln)
                 c->line_no = c->par->line_no + ln->line_no + 1;
+
+             /* After this par we are no longer at the beginning, as there
+              * must be some text in the par. */
+             if (c->position == TEXTBLOCK_POSITION_START)
+                c->position = TEXTBLOCK_POSITION_ELSE;
+
              return 0;
           }
         c->par->text_node->dirty = EINA_FALSE;
