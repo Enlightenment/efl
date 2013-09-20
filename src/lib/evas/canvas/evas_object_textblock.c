@@ -2523,10 +2523,8 @@ _layout_format_ascent_descent_adjust(const Evas_Object *eo_obj,
 
    if (fmt->font.font)
      {
-        //	ascent = c->ENFN->font_max_ascent_get(c->ENDT, fmt->font.font);
-        //	descent = c->ENFN->font_max_descent_get(c->ENDT, fmt->font.font);
-        ascent = ENFN->font_ascent_get(ENDT, fmt->font.font);
-        descent = ENFN->font_descent_get(ENDT, fmt->font.font);
+        ascent = *maxascent;
+        descent = *maxdescent;
         if (fmt->linesize > 0)
           {
              if ((ascent + descent) < fmt->linesize)
@@ -2630,42 +2628,48 @@ _layout_item_max_ascent_descent_calc(const Evas_Object *eo_obj,
 static void
 _layout_item_ascent_descent_adjust(const Evas_Object *eo_obj,
       Evas_Coord *ascent, Evas_Coord *descent,
-      Evas_Object_Textblock_Item *it, Textblock_Position position)
+      Evas_Object_Textblock_Item *it, Evas_Object_Textblock_Format *fmt)
 {
-   if (!it->format || !it->format->font.font)
+   void *fi = NULL;
+   int asc = 0, desc = 0;
+
+   if ((!it || !it->format || !it->format->font.font) &&
+         (!fmt || !fmt->font.font))
      {
         return;
      }
 
-   _layout_format_ascent_descent_adjust(eo_obj, ascent, descent, it->format);
-
-   if (it->type == EVAS_TEXTBLOCK_ITEM_TEXT)
+   if (it)
      {
+        fmt = it->format;
+
+        if (it->type == EVAS_TEXTBLOCK_ITEM_TEXT)
           {
-             void *fi = _ITEM_TEXT(it)->text_props.font_instance;
-             int asc = 0, desc = 0;
-
-             if (fi)
-               {
-                  asc = evas_common_font_instance_ascent_get(fi);
-                  desc = evas_common_font_instance_descent_get(fi);
-               }
-             else
-               {
-                  Evas_Object_Protected_Data *obj =
-                     eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
-                  asc =
-                     ENFN->font_ascent_get(ENDT, it->format->font.font);
-                  desc =
-                     ENFN->font_descent_get(ENDT, it->format->font.font);
-               }
-
-             if (ascent && (asc > *ascent))
-                *ascent = asc;
-             if (descent && (desc > *descent))
-                *descent = desc;
+             fi = _ITEM_TEXT(it)->text_props.font_instance;
           }
      }
+
+   if (fi)
+     {
+        asc = evas_common_font_instance_ascent_get(fi);
+        desc = evas_common_font_instance_descent_get(fi);
+     }
+   else
+     {
+        Evas_Object_Protected_Data *obj =
+           eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+        asc =
+           ENFN->font_ascent_get(ENDT, fmt->font.font);
+        desc =
+           ENFN->font_descent_get(ENDT, fmt->font.font);
+     }
+
+   if (ascent && (asc > *ascent))
+      *ascent = asc;
+   if (descent && (desc > *descent))
+      *descent = desc;
+
+   _layout_format_ascent_descent_adjust(eo_obj, ascent, descent, fmt);
 }
 
 /**
@@ -3308,7 +3312,7 @@ _layout_last_line_max_descent_adjust_calc(Ctxt *c, const Evas_Object_Textblock_P
                   Evas_Coord asc = 0, desc = 0;
                   Evas_Coord maxasc = 0, maxdesc = 0;
                   _layout_item_ascent_descent_adjust(c->obj, &asc, &desc,
-                        it, c->position);
+                        it, it->format);
                   _layout_item_max_ascent_descent_calc(c->obj, &maxasc, &maxdesc,
                         it, c->position);
 
@@ -3346,8 +3350,8 @@ _layout_line_finalize(Ctxt *c, Evas_Object_Textblock_Format *fmt)
    /* If there are no text items yet, calc ascent/descent
     * according to the current format. */
    if (c->ascent + c->descent == 0)
-      _layout_format_ascent_descent_adjust(c->obj, &c->ascent,
-            &c->descent, fmt);
+      _layout_item_ascent_descent_adjust(c->obj, &c->ascent, &c->descent,
+            NULL, fmt);
 
    /* Adjust all the item sizes according to the final line size,
     * and update the x positions of all the items of the line. */
@@ -3366,7 +3370,7 @@ _layout_line_finalize(Ctxt *c, Evas_Object_Textblock_Format *fmt)
              Evas_Coord asc = 0, desc = 0;
              Evas_Coord maxasc = 0, maxdesc = 0;
              _layout_item_ascent_descent_adjust(c->obj, &asc, &desc,
-                   it, c->position);
+                   it, it->format);
              _layout_item_max_ascent_descent_calc(c->obj, &maxasc, &maxdesc,
                    it, c->position);
 
@@ -4545,7 +4549,7 @@ _layout_par(Ctxt *c)
         if (it->type == EVAS_TEXTBLOCK_ITEM_TEXT)
           {
              _layout_item_ascent_descent_adjust(c->obj, &c->ascent,
-                   &c->descent, it, c->position);
+                   &c->descent, it, it->format);
           }
         else
           {
@@ -4558,7 +4562,7 @@ _layout_par(Ctxt *c)
                    * according to the current format. */
                   if (c->ascent + c->descent == 0)
                      _layout_item_ascent_descent_adjust(c->obj, &c->ascent,
-                           &c->descent, it, c->position);
+                           &c->descent, it, it->format);
 
                   _layout_calculate_format_item_size(c->obj, fi, &c->ascent,
                         &c->descent, &fi->y, &fi->parent.w, &fi->parent.h);
@@ -10323,7 +10327,7 @@ _size_native_calc_line_finalize(const Evas_Object *eo_obj, Eina_List *items,
         /* If there are no text items yet, calc ascent/descent
          * according to the current format. */
         _layout_item_ascent_descent_adjust(eo_obj, &asc, &desc,
-              it, position);
+              it, it->format);
 
         if (asc > *ascent)
            *ascent = asc;
@@ -10352,7 +10356,7 @@ _size_native_calc_line_finalize(const Evas_Object *eo_obj, Eina_List *items,
         else
           {
              _layout_item_ascent_descent_adjust(eo_obj, ascent, descent,
-                   it, position);
+                   it, it->format);
           }
 
 loop_advance:
@@ -10403,7 +10407,7 @@ _size_native_calc_paragraph_size(const Evas_Object *eo_obj,
                    * according to the current format. */
                   if (it && (ascent + descent == 0))
                      _layout_item_ascent_descent_adjust(eo_obj, &ascent,
-                           &descent, it, *position);
+                           &descent, it, it->format);
 
                   _layout_calculate_format_item_size(eo_obj, fi, &ascent,
                         &descent, &fy, &fw, &fh);
@@ -10412,7 +10416,7 @@ _size_native_calc_paragraph_size(const Evas_Object *eo_obj,
         else
           {
              _layout_item_ascent_descent_adjust(eo_obj, &ascent,
-                   &descent, it, *position);
+                   &descent, it, it->format);
           }
      }
 
