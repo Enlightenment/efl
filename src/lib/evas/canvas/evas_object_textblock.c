@@ -2566,6 +2566,9 @@ _layout_item_max_ascent_descent_calc(const Evas_Object *eo_obj,
    void *fi = NULL;
    *maxascent = *maxdescent = 0;
 
+   if (!it || !it->format || !it->format->font.font)
+      return;
+
    if (it->type == EVAS_TEXTBLOCK_ITEM_TEXT)
      {
         fi = _ITEM_TEXT(it)->text_props.font_instance;
@@ -3289,6 +3292,42 @@ _layout_calculate_format_item_size(const Evas_Object *eo_obj,
    *_h = h;
 }
 
+static Evas_Coord
+_layout_last_line_max_descent_adjust_calc(Ctxt *c, const Evas_Object_Textblock_Paragraph *last_vis_par)
+{
+   if (last_vis_par->lines)
+     {
+        Evas_Object_Textblock_Line *ln = (Evas_Object_Textblock_Line *)
+           EINA_INLIST_GET(last_vis_par->lines)->last;
+        Evas_Object_Textblock_Item *it;
+
+        EINA_INLIST_FOREACH(ln->items, it)
+          {
+             if (it->type == EVAS_TEXTBLOCK_ITEM_TEXT)
+               {
+                  Evas_Coord asc = 0, desc = 0;
+                  Evas_Coord maxasc = 0, maxdesc = 0;
+                  _layout_item_ascent_descent_adjust(c->obj, &asc, &desc,
+                        it, c->position);
+                  _layout_item_max_ascent_descent_calc(c->obj, &maxasc, &maxdesc,
+                        it, c->position);
+
+                  if (desc > c->descent)
+                     c->descent = desc;
+                  if (maxdesc > c->maxdescent)
+                     c->maxdescent = maxdesc;
+               }
+          }
+
+        if (c->maxdescent > c->descent)
+          {
+             return c->maxdescent - c->descent;
+          }
+     }
+
+   return 0;
+}
+
 /**
  * @internal
  * Order the items in the line, update it's properties and update it's
@@ -3363,18 +3402,6 @@ loop_advance:
              ascdiff = c->maxascent - c->ascent;
              c->ln->y += ascdiff;
              c->y += ascdiff;
-          }
-
-        /* If it's the end, add the adjustment to the line height. */
-        if (((c->position == TEXTBLOCK_POSITION_END) ||
-                 (c->position == TEXTBLOCK_POSITION_SINGLE))
-              && (c->maxdescent > c->descent))
-          {
-             Evas_Coord descdiff;
-
-             descdiff = c->maxdescent - c->descent;
-             c->ln->h += descdiff;
-             c->y += descdiff;
           }
      }
 
@@ -5153,7 +5180,10 @@ _layout(const Evas_Object *eo_obj, int w, int h, int *w_ret, int *h_ret)
             EINA_INLIST_GET(c->paragraphs)->last;
 
       if (last_vis_par)
-         c->hmax = last_vis_par->y + last_vis_par->h;
+        {
+           c->hmax = last_vis_par->y + last_vis_par->h +
+              _layout_last_line_max_descent_adjust_calc(c, last_vis_par);
+        }
    }
 
    /* Clean the rest of the format stack */
