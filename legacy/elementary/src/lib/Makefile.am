@@ -151,6 +151,7 @@ elm_app_common.h \
 elm_app_server_eo.h \
 elm_app_server_view_eo.h \
 elm_app_server_view.h \
+elm_app_server_eet.h \
 elm_app_server.h \
 elm_app_client_eo.h \
 elm_app_client.h \
