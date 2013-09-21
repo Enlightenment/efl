@@ -248,12 +248,12 @@ _map_clicked_double(void *data EINA_UNUSED, Evas_Object *obj, void *event_info)
 {
    printf("clicked,double\n");
    double lon, lat;
-   Evas_Event_Mouse_Down *down = event_info;
-   if (!down) return;
+   Evas_Event_Mouse_Down *ev = event_info;
+   if (!ev) return;
    if (elm_map_zoom_get(obj) < 5) return;
 
-   elm_map_canvas_to_region_convert(obj, down->canvas.x, down->canvas.y, &lon, &lat);
-   printf("x:%d, y:%d, lon:%lf, lat:%lf\n", down->canvas.x, down->canvas.y, lon, lat);
+   elm_map_canvas_to_region_convert(obj, ev->canvas.x, ev->canvas.y, &lon, &lat);
+   printf("x:%d, y:%d, lon:%lf, lat:%lf\n", ev->canvas.x, ev->canvas.y, lon, lat);
 
    if (!route_clas)
      {
@@ -300,9 +300,9 @@ _map_longpressed(void *data EINA_UNUSED, Evas_Object *obj, void *event_info)
 {
    if (!event_info) return;
    double lon, lat;
-   Evas_Event_Mouse_Down *down = (Evas_Event_Mouse_Down *)event_info;
-   elm_map_canvas_to_region_convert(obj, down->canvas.x, down->canvas.y, &lon, &lat);
-   printf("longpressed, x:%d, y:%d, lon:%lf, lat:%lf\n", down->canvas.x, down->canvas.y, lon, lat);
+   Evas_Event_Mouse_Down *ev = event_info;
+   elm_map_canvas_to_region_convert(obj, ev->canvas.x, ev->canvas.y, &lon, &lat);
+   printf("longpressed, x:%d, y:%d, lon:%lf, lat:%lf\n", ev->canvas.x, ev->canvas.y, lon, lat);
 
    if (elm_map_zoom_get(obj) < 8) return;
    if (name) elm_map_name_del(name);
@@ -822,20 +822,20 @@ _submenu_ovl_add(void *data, Elm_Object_Item *parent)
 static void
 _map_mouse_down(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj, void *event_info)
 {
-   Evas_Event_Mouse_Down *down = event_info;
+   Evas_Event_Mouse_Down *ev = event_info;
    Elm_Object_Item *menu_it;
-   if (!down) return;
+   if (!ev) return;
 
-   if (down->button == 2)
+   if (ev->button == 2)
      {
-        old_x = down->canvas.x;
-        old_y = down->canvas.y;
+        old_x = ev->canvas.x;
+        old_y = ev->canvas.y;
         old_d = 0.0;
      }
-   else if (down->button == 3)
+   else if (ev->button == 3)
      {
-        down_x = down->canvas.x;
-        down_y = down->canvas.y;
+        down_x = ev->canvas.x;
+        down_y = ev->canvas.y;
         if (!menu)
           {
              menu = elm_menu_add(obj);
@@ -853,7 +853,7 @@ _map_mouse_down(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj, void *even
              menu_it = elm_menu_item_add(menu, NULL, "", "Overlay", NULL, NULL);
              _submenu_ovl_add(data, menu_it);
           }
-         elm_menu_move(menu, down->canvas.x, down->canvas.y);
+         elm_menu_move(menu, ev->canvas.x, ev->canvas.y);
          evas_object_show(menu);
      }
 }
