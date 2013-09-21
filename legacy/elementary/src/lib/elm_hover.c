@@ -44,11 +44,14 @@ const Elm_Layout_Part_Alias_Description _content_aliases[] =
    {NULL, NULL}
 };
 
-static const char SIG_CLICKED[] = "clicked";
-static const char SIG_SMART_LOCATION_CHANGED[] = "smart,changed";
+#define ELM_PRIV_HOVER_SIGNALS(cmd) \
+   cmd(SIG_CLICKED, "clicked", "") \
+   cmd(SIG_SMART_LOCATION_CHANGED, "smart,changed", "")
+
+ELM_PRIV_HOVER_SIGNALS(ELM_PRIV_STATIC_VARIABLE_DECLARE);
+
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
-   {SIG_CLICKED, ""},
-   {SIG_SMART_LOCATION_CHANGED, ""},
+   ELM_PRIV_HOVER_SIGNALS(ELM_PRIV_SMART_CALLBACKS_DESC)
    {"focused", ""}, /**< handled by elm_widget */
    {"unfocused", ""}, /**< handled by elm_widget */
    {NULL, NULL}
