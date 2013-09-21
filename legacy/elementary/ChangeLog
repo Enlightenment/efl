@@ -1630,7 +1630,7 @@
 
         * Gesture layer: Fix gesture layer with "pointer" events.
 
-2012-09-18  Michael Bouchaud (yoz)
+2013-09-18  Michael Bouchaud (yoz)
 
         * Elm_Widget_Item: Introduces new widget APIs,
         elm_widget_item_part_text_custom_set(),
