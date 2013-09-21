@@ -33,6 +33,7 @@
  * This widget emits the following signals, besides the ones sent from
  * @ref Layout:
  * @li @c "clicked" - the user clicked the empty space in the hover to dismiss
+ * @li @c "dismissed" - the user clicked the empty space in the hover to dismiss (since 1.8)
  * @li @c "smart,changed" - a content object placed under the "smart"
  *                   policy was replaced to a new slot direction.
  * @li @c "focused" - When the hover has received focus. (since 1.8)

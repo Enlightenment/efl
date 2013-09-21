@@ -1,6 +1,14 @@
 #include "elementary_config.h"
 #include <Elementary.h>
 #ifndef ELM_LIB_QUICKLAUNCH
+
+static void
+_dismissed_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
+              void *event_info EINA_UNUSED)
+{
+   printf("hover dismissed callback is called!\n");
+}
+
 static void
 my_hover_bt(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
@@ -34,6 +42,7 @@ test_hover(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
    evas_object_show(bx);
 
    hv = elm_hover_add(win);
+   evas_object_smart_callback_add(hv, "dismissed", _dismissed_cb, NULL);
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Button");

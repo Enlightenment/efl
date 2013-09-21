@@ -46,6 +46,7 @@ const Elm_Layout_Part_Alias_Description _content_aliases[] =
 
 #define ELM_PRIV_HOVER_SIGNALS(cmd) \
    cmd(SIG_CLICKED, "clicked", "") \
+   cmd(SIG_DISMISSED, "dismissed", "") \
    cmd(SIG_SMART_LOCATION_CHANGED, "smart,changed", "")
 
 ELM_PRIV_HOVER_SIGNALS(ELM_PRIV_STATIC_VARIABLE_DECLARE);
@@ -533,6 +534,7 @@ _hov_dismiss_cb(void *data,
 {
    evas_object_hide(data);
    evas_object_smart_callback_call(data, SIG_CLICKED, NULL);
+   evas_object_smart_callback_call(data, SIG_DISMISSED, NULL);
 }
 
 static void
@@ -577,7 +579,10 @@ _elm_hover_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    sd->on_del = EINA_TRUE;
 
    if (evas_object_visible_get(obj))
-     evas_object_smart_callback_call(obj, SIG_CLICKED, NULL);
+     {
+        evas_object_smart_callback_call(obj, SIG_CLICKED, NULL);
+        evas_object_smart_callback_call(obj, SIG_DISMISSED, NULL);
+     }
 
    elm_hover_target_set(obj, NULL);
 

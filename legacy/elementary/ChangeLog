@@ -1637,3 +1637,6 @@
         elm_widget_item_part_text_custom_get(),
         elm_widget_item_part_text_custom_update()
 
+2013-09-21  Daniel Juyung Seo (SeoZ)
+
+        * hover: added "dismissed" callback.
