@@ -381,9 +381,9 @@ _menu_hide(void *data,
 }
 
 static void
-_hover_clicked_cb(void *data,
-                  Evas_Object *obj,
-                  void *event_info)
+_hover_dismissed_cb(void *data,
+                    Evas_Object *obj,
+                    void *event_info)
 {
    _menu_hide(data, obj, event_info);
    evas_object_smart_callback_call(data, SIG_CLICKED, NULL);
@@ -533,8 +533,8 @@ _item_submenu_obj_create(Elm_Menu_Item *item)
    if (sd->menu_bar && !item->parent)
      {
         elm_object_style_set(hv, "main_menu_submenu");
-        evas_object_smart_callback_add(hv, "clicked",
-                                       _hover_clicked_cb, WIDGET(item));
+        evas_object_smart_callback_add(hv, "dismissed",
+                                       _hover_dismissed_cb, WIDGET(item));
      }
    else
      elm_object_style_set(hv, "submenu");
@@ -595,7 +595,8 @@ _elm_menu_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    elm_widget_mirrored_set(priv->hv, EINA_FALSE);
 
    elm_object_style_set(priv->hv, "menu");
-   evas_object_smart_callback_add(priv->hv, "clicked", _hover_clicked_cb, obj);
+   evas_object_smart_callback_add(priv->hv, "dismissed",
+                                  _hover_dismissed_cb, obj);
 
    priv->bx = elm_box_add(obj);
    elm_widget_mirrored_set(priv->bx, EINA_FALSE);
@@ -667,13 +668,14 @@ _elm_menu_menu_bar_set(Eo *obj, Eina_Bool menu_bar)
         if (menu_bar)
           {
              evas_object_smart_callback_add(item->submenu.hv, "clicked",
-                                            _hover_clicked_cb, WIDGET(item));
+                                            _hover_dismissed_cb, WIDGET(item));
              elm_object_style_set(item->submenu.hv, "main_menu_submenu");
           }
         else
           {
              evas_object_smart_callback_del_full(item->submenu.hv, "clicked",
-                                                 _hover_clicked_cb, WIDGET(item));
+                                                 _hover_dismissed_cb,
+                                                 WIDGET(item));
              elm_object_style_set(item->submenu.hv, "submenu");
           }
      }
