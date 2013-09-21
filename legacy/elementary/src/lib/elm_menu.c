@@ -522,30 +522,30 @@ static void
 _item_submenu_obj_create(Elm_Menu_Item *item)
 {
    ELM_MENU_DATA_GET(WIDGET(item), sd);
+   Evas_Object *hv, *bx;
 
    item->submenu.location = elm_icon_add(sd->bx);
-   item->submenu.hv = elm_hover_add(sd->bx);
-   elm_widget_mirrored_set(item->submenu.hv, EINA_FALSE);
-   elm_hover_target_set(item->submenu.hv, item->submenu.location);
-   elm_hover_parent_set(item->submenu.hv, sd->parent);
+   item->submenu.hv = hv = elm_hover_add(sd->bx);
+   elm_widget_mirrored_set(hv, EINA_FALSE);
+   elm_hover_target_set(hv, item->submenu.location);
+   elm_hover_parent_set(hv, sd->parent);
 
    if (sd->menu_bar && !item->parent)
      {
-        elm_object_style_set(item->submenu.hv, "main_menu_submenu");
-        evas_object_smart_callback_add(item->submenu.hv, "clicked",
+        elm_object_style_set(hv, "main_menu_submenu");
+        evas_object_smart_callback_add(hv, "clicked",
                                        _hover_clicked_cb, WIDGET(item));
      }
    else
-     elm_object_style_set(item->submenu.hv, "submenu");
+     elm_object_style_set(hv, "submenu");
 
-   item->submenu.bx = elm_box_add(sd->bx);
-   elm_widget_mirrored_set(item->submenu.bx, EINA_FALSE);
-   evas_object_size_hint_weight_set
-     (item->submenu.bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_show(item->submenu.bx);
+   item->submenu.bx = bx = elm_box_add(sd->bx);
+   elm_widget_mirrored_set(bx, EINA_FALSE);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(bx);
    elm_object_part_content_set
-     (item->submenu.hv, elm_hover_best_content_location_get
-       (item->submenu.hv, ELM_HOVER_AXIS_VERTICAL), item->submenu.bx);
+      (hv, elm_hover_best_content_location_get
+       (hv, ELM_HOVER_AXIS_VERTICAL), bx);
 
    if (sd->menu_bar && !item->parent)
      {
@@ -574,8 +574,8 @@ _item_submenu_obj_create(Elm_Menu_Item *item)
    evas_object_event_callback_add
      (VIEW(item), EVAS_CALLBACK_RESIZE, _item_move_resize_cb, item);
 
-   evas_object_event_callback_add
-     (item->submenu.bx, EVAS_CALLBACK_RESIZE, _menu_resize_cb, WIDGET(item));
+   evas_object_event_callback_add(bx, EVAS_CALLBACK_RESIZE,
+                                  _menu_resize_cb, WIDGET(item));
 }
 
 static void
