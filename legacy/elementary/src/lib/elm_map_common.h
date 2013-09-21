@@ -599,7 +599,7 @@ EAPI int                   elm_map_overlay_class_zoom_max_get(const Elm_Map_Over
  *
  * @ingroup Map
  */
-EAPI Eina_List *      elm_map_overlay_group_members_get(const Elm_Map_Overlay *grp);
+EAPI Eina_List *           elm_map_overlay_group_members_get(const Elm_Map_Overlay *grp);
 
 /**
  * Follow a other overlay.
@@ -658,7 +658,7 @@ EAPI void                  elm_map_overlay_bubble_content_clear(Elm_Map_Overlay 
  *
  * @ingroup Map
  */
-EAPI void                             elm_map_overlay_polygon_region_add(Elm_Map_Overlay *overlay, double lon, double lat);
+EAPI void                  elm_map_overlay_polygon_region_add(Elm_Map_Overlay *overlay, double lon, double lat);
 
 /**
  * Remove a route from the map.
