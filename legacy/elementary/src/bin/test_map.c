@@ -820,10 +820,30 @@ _submenu_ovl_add(void *data, Elm_Object_Item *parent)
 }
 
 static void
+_submenu_info_add(Evas_Object *map, Elm_Object_Item *parent)
+{
+   if (!map || !parent) return;
+   char buf[PATH_MAX] = { 0 };
+   double lon = 0.0, lat = 0.0;
+
+   elm_map_canvas_to_region_convert(map,
+                                    down_x, down_y,
+                                    &lon, &lat);
+
+   snprintf(buf, PATH_MAX, "Longitude : %f", lon);
+   elm_menu_item_add(menu, parent, NULL, buf, NULL, NULL);
+
+   snprintf(buf, PATH_MAX, "Latitude : %f", lat);
+   elm_menu_item_add(menu, parent, NULL, buf, NULL, NULL);
+}
+
+static void
 _map_mouse_down(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj, void *event_info)
 {
    Evas_Event_Mouse_Down *ev = event_info;
    Elm_Object_Item *menu_it;
+   static Elm_Object_Item *info_it = NULL;
+
    if (!ev) return;
 
    if (ev->button == 2)
@@ -852,8 +872,14 @@ _map_mouse_down(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj, void *even
              _submenu_track_add(data, menu_it);
              menu_it = elm_menu_item_add(menu, NULL, "", "Overlay", NULL, NULL);
              _submenu_ovl_add(data, menu_it);
+
+             info_it = elm_menu_item_add(menu, NULL, "", "Info", NULL, NULL);
           }
-         elm_menu_move(menu, ev->canvas.x, ev->canvas.y);
+
+        elm_menu_item_subitems_clear(info_it);
+        _submenu_info_add(obj, info_it);
+
+        elm_menu_move(menu, ev->canvas.x, ev->canvas.y);
          evas_object_show(menu);
      }
 }
