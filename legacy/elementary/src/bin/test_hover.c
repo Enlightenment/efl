@@ -20,17 +20,13 @@ _top_bt_clicked(void *data, Evas_Object *obj EINA_UNUSED,
 void
 test_hover(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Evas_Object *win, *bg, *bx, *bt, *hv, *ic;
+   Evas_Object *win, *bx, *bt, *hv, *ic;
    char buf[PATH_MAX];
 
-   win = elm_win_add(NULL, "hover", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Hover");
+   win = elm_win_util_standard_add("hover", "Hover");
    elm_win_autodel_set(win, EINA_TRUE);
-
-   bg = elm_bg_add(win);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, bg);
-   evas_object_show(bg);
+   evas_object_resize(win, 440, 440);
+   evas_object_show(win);
 
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -92,27 +88,18 @@ test_hover(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
    elm_object_text_set(bt, "Right");
    elm_object_part_content_set(hv, "right", bt);
    evas_object_show(bt);
-
-   evas_object_size_hint_min_set(bg, 160, 160);
-   evas_object_size_hint_max_set(bg, 640, 640);
-   evas_object_resize(win, 440, 440);
-   evas_object_show(win);
 }
 
 void
 test_hover2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Evas_Object *win, *bg, *bx, *bt, *hv, *ic;
+   Evas_Object *win, *bx, *bt, *hv, *ic;
    char buf[PATH_MAX];
 
-   win = elm_win_add(NULL, "hover2", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Hover 2");
+   win = elm_win_util_standard_add("hover2", "Hover 2");
    elm_win_autodel_set(win, EINA_TRUE);
-
-   bg = elm_bg_add(win);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, bg);
-   evas_object_show(bg);
+   evas_object_resize(win, 440, 440);
+   evas_object_show(win);
 
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -172,10 +159,5 @@ test_hover2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    elm_object_text_set(bt, "Right");
    elm_object_part_content_set(hv, "right", bt);
    evas_object_show(bt);
-
-   evas_object_size_hint_min_set(bg, 160, 160);
-   evas_object_size_hint_max_set(bg, 640, 640);
-   evas_object_resize(win, 440, 440);
-   evas_object_show(win);
 }
 #endif
