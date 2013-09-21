@@ -1644,3 +1644,7 @@
 2013-09-21  Daniel Juyung Seo (SeoZ)
 
         * menu: added "dismissed" callback.
+
+2013-09-21  Daniel Juyung Seo (SeoZ)
+
+        * menu: added elm_menu_item_subitems_clear.

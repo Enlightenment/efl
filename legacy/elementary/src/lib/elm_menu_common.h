@@ -83,6 +83,21 @@ EAPI Eina_Bool                    elm_menu_item_is_separator(Elm_Object_Item *it
 EAPI const Eina_List             *elm_menu_item_subitems_get(const Elm_Object_Item *it);
 
 /**
+ * Remove all sub-items (children) of the given item
+ * @since 1.8
+ *
+ * @param it The item
+ *
+ * This removes all items that are children (and their descendants) of the
+ * given item @p it.
+ *
+ * @see elm_object_item_del()
+ *
+ * @ingroup Menu
+ */
+EAPI void                         elm_menu_item_subitems_clear(Elm_Object_Item *it);
+
+/**
  * @brief Get the position of a menu item
  *
  * @param it The menu item

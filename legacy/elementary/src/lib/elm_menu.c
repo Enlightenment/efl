@@ -897,12 +897,10 @@ static Eina_Bool
 _item_del_pre_hook(Elm_Object_Item *it)
 {
    Elm_Menu_Item *item = (Elm_Menu_Item *)it;
-   Elm_Object_Item *_item;
 
    ELM_MENU_DATA_GET(WIDGET(item), sd);
 
-   EINA_LIST_FREE(item->submenu.items, _item)
-     elm_object_item_del(_item);
+   elm_menu_item_subitems_clear(it);
    if (item->label) eina_stringshare_del(item->label);
    if (item->content) evas_object_del(item->content);
    if (item->submenu.hv) evas_object_del(item->submenu.hv);
@@ -1112,6 +1110,18 @@ elm_menu_item_subitems_get(const Elm_Object_Item *it)
    ELM_MENU_ITEM_CHECK_OR_RETURN(it, NULL);
 
    return ((Elm_Menu_Item *)it)->submenu.items;
+}
+
+EAPI void
+elm_menu_item_subitems_clear(Elm_Object_Item *it)
+{
+   Elm_Object_Item *sub_it;
+   Eina_List *l, *l_next;
+
+   ELM_MENU_ITEM_CHECK_OR_RETURN(it);
+   EINA_LIST_FOREACH_SAFE(((Elm_Menu_Item *)it)->submenu.items,
+                          l, l_next, sub_it)
+     elm_object_item_del(sub_it);
 }
 
 EAPI const Eina_List *
