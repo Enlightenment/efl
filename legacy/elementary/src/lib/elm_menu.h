@@ -14,13 +14,13 @@
  * anywhere.
  *
  * Signals that you can add callbacks for are:
- * @li "clicked" - the user clicked the empty space in the menu to dismiss.
+ * @li @c "clicked" - the user clicked the empty space in the menu to dismiss.
  *
  * Default content parts of the menu items that you can use for are:
- * @li "default" - A main content of the menu item
+ * @li @c "default" - A main content of the menu item
  *
  * Default text parts of the menu items that you can use for are:
- * @li "default" - label in the menu item
+ * @li @c "default" - label in the menu item
  *
  * Supported elm_object_item common APIs.
  * @li @ref elm_object_item_del
