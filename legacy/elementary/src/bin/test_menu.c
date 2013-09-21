@@ -5,6 +5,13 @@
 #ifndef ELM_LIB_QUICKLAUNCH
 
 static void
+_menu_dismissed_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
+                   void *event_info EINA_UNUSED)
+{
+   printf("menu dismissed callback is called!\n");
+}
+
+static void
 _menu_show_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
               void *event_info)
 {
@@ -118,6 +125,8 @@ test_menu(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    evas_object_show(rect);
 
    menu = elm_menu_add(win);
+   evas_object_smart_callback_add(menu, "dismissed", _menu_dismissed_cb, NULL);
+
    elm_menu_item_add(menu, NULL, NULL, "first item", NULL, NULL);
 
    menu_it = elm_menu_item_add(menu, NULL, "mail-reply-all", "second item",

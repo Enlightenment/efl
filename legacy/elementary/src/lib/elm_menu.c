@@ -14,7 +14,8 @@ EAPI Eo_Op ELM_OBJ_MENU_BASE_ID = EO_NOOP;
 #define MY_CLASS_NAME "elm_menu"
 
 #define ELM_PRIV_MENU_SIGNALS(cmd) \
-   cmd(SIG_CLICKED, "clicked", "")
+   cmd(SIG_CLICKED, "clicked", "") \
+   cmd(SIG_DISMISSED, "dismissed", "")
 
 ELM_PRIV_MENU_SIGNALS(ELM_PRIV_STATIC_VARIABLE_DECLARE);
 
@@ -391,6 +392,7 @@ _hover_dismissed_cb(void *data,
 {
    _menu_hide(data, obj, event_info);
    evas_object_smart_callback_call(data, SIG_CLICKED, NULL);
+   evas_object_smart_callback_call(data, SIG_DISMISSED, NULL);
 }
 
 static void
