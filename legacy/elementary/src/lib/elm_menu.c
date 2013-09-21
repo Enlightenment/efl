@@ -13,9 +13,13 @@ EAPI Eo_Op ELM_OBJ_MENU_BASE_ID = EO_NOOP;
 
 #define MY_CLASS_NAME "elm_menu"
 
-static const char SIG_CLICKED[] = "clicked";
+#define ELM_PRIV_MENU_SIGNALS(cmd) \
+   cmd(SIG_CLICKED, "clicked", "")
+
+ELM_PRIV_MENU_SIGNALS(ELM_PRIV_STATIC_VARIABLE_DECLARE);
+
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
-   {SIG_CLICKED, ""},
+   ELM_PRIV_MENU_SIGNALS(ELM_PRIV_SMART_CALLBACKS_DESC)
    {NULL, NULL}
 };
 
