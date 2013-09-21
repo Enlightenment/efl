@@ -880,7 +880,7 @@ _map_mouse_down(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj, void *even
         _submenu_info_add(obj, info_it);
 
         elm_menu_move(menu, ev->canvas.x, ev->canvas.y);
-         evas_object_show(menu);
+        evas_object_show(menu);
      }
 }
 
