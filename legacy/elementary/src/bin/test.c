@@ -47,6 +47,7 @@ void test_layout(void *data, Evas_Object *obj, void *event_info);
 void test_layout2(void *data, Evas_Object *obj, void *event_info);
 void test_hover(void *data, Evas_Object *obj, void *event_info);
 void test_hover2(void *data, Evas_Object *obj, void *event_info);
+void test_hover3(void *data, Evas_Object *obj, void *event_info);
 void test_entry(void *data, Evas_Object *obj, void *event_info);
 void test_entry_style_user(void *data, Evas_Object *obj, void *event_info);
 void test_entry_scrolled(void *data, Evas_Object *obj, void *event_info);
@@ -729,6 +730,7 @@ add_tests:
    ADD_TEST(NULL, "Popups", "Ctxpopup", test_ctxpopup);
    ADD_TEST(NULL, "Popups", "Hover", test_hover);
    ADD_TEST(NULL, "Popups", "Hover 2", test_hover2);
+   ADD_TEST(NULL, "Popups", "Hover 3", test_hover3);
    ADD_TEST(NULL, "Popups", "Notify", test_notify);
    ADD_TEST(NULL, "Popups", "Tooltip", test_tooltip);
    ADD_TEST(NULL, "Popups", "Tooltip 2", test_tooltip2);
