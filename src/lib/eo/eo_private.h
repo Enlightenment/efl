@@ -164,6 +164,14 @@ struct _Eo_Class
    /* [extensions data offset] + NULL */
 };
 
+typedef struct
+{
+   EINA_INLIST;
+   const Eo *ref_obj;
+   const char *file;
+   int line;
+} Eo_Xref_Node;
+
 static inline void
 _eo_condtor_reset(_Eo *obj)
 {

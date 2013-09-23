@@ -1251,14 +1251,6 @@ fail:
    return NULL;
 }
 
-typedef struct
-{
-   EINA_INLIST;
-   const Eo *ref_obj;
-   const char *file;
-   int line;
-} Eo_Xref_Node;
-
 EAPI Eo *
 eo_xref_internal(const char *file, int line, Eo *obj_id, const Eo *ref_obj_id)
 {
@@ -1430,8 +1422,8 @@ _eo_data_xunref_internal(_Eo *obj, void *data, const _Eo *ref_obj)
 {
 #ifdef EO_DEBUG
    const _Eo_Class *klass = obj->klass;
-   Eina_Bool in_range = (((char *)data >= (((char *) obj) + _eo_sz) &&
-                          ((char *)data < (((char *) obj) + klass->obj_size)))
+   Eina_Bool in_range = (((char *)data >= (((char *) obj) + _eo_sz)) &&
+                         ((char *)data < (((char *) obj) + klass->obj_size)));
    if (!in_range)
      {
         ERR("Data %p is not in the data range of the object %p (%s).", data, (Eo *)obj->obj_id, obj->klass->desc->name);
