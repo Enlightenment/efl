@@ -5213,11 +5213,14 @@ _evas_object_image_video_overlay_show(Evas_Object *eo_obj)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    Evas_Object_Image *o = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Public_Data *e = obj->layer->evas;
 
    if (obj->cur->cache.clip.x != obj->prev->cache.clip.x ||
        obj->cur->cache.clip.y != obj->prev->cache.clip.y ||
        o->created || !o->video_visible)
-     o->pixels->video.move(o->pixels->video.data, eo_obj, &o->pixels->video, obj->cur->cache.clip.x, obj->cur->cache.clip.y);
+     o->pixels->video.move(o->pixels->video.data, eo_obj, &o->pixels->video,
+                           obj->cur->cache.clip.x + e->framespace.x,
+                           obj->cur->cache.clip.y + e->framespace.y);
    if (obj->cur->cache.clip.w != obj->prev->cache.clip.w ||
        obj->cur->cache.clip.h != obj->prev->cache.clip.h ||
        o->created || !o->video_visible)
