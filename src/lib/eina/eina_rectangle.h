@@ -39,6 +39,10 @@
  * @{
  */
 
+#define EINA_RECTANGLE_INIT { 0, 0, 0, 0}
+#define EINA_RECTANGLE_FORMAT "dx%d - %dx%d"
+#define EINA_RECTANGLE_ARGS(r) (r)->x, (r)->y, (r)->w, (r)->h
+
 /**
  * @typedef Eina_Rectangle
  * Simple rectangle structure.
@@ -68,6 +72,12 @@ static inline void        eina_rectangle_union(Eina_Rectangle *dst, const Eina_R
 static inline Eina_Bool   eina_rectangle_intersection(Eina_Rectangle *dst, const Eina_Rectangle *src) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT;
 static inline void        eina_rectangle_rescale_in(const Eina_Rectangle *out, const Eina_Rectangle *in, Eina_Rectangle *res) EINA_ARG_NONNULL(1, 2, 3);
 static inline void        eina_rectangle_rescale_out(const Eina_Rectangle *out, const Eina_Rectangle *in, Eina_Rectangle *res) EINA_ARG_NONNULL(1, 2, 3);
+static inline Eina_Bool   eina_rectangle_is_valid(const Eina_Rectangle *r) EINA_ARG_NONNULL(1);
+static inline Eina_Bool   eina_rectangle_x_cut(Eina_Rectangle *thiz, Eina_Rectangle *slice, Eina_Rectangle *remainder, int amount) EINA_ARG_NONNULL(1);
+static inline Eina_Bool   eina_rectangle_y_cut(Eina_Rectangle *thiz, Eina_Rectangle *slice, Eina_Rectangle *remainder, int amount) EINA_ARG_NONNULL(1);
+static inline Eina_Bool   eina_rectangle_width_cut(Eina_Rectangle *thiz, Eina_Rectangle *slice, Eina_Rectangle *remainder, int amount) EINA_ARG_NONNULL(1);
+static inline Eina_Bool   eina_rectangle_height_cut(Eina_Rectangle *thiz, Eina_Rectangle *slice, Eina_Rectangle *remainder, int amount) EINA_ARG_NONNULL(1);
+static inline Eina_Bool   eina_rectangle_subtract(Eina_Rectangle *thiz, Eina_Rectangle *other, Eina_Rectangle out[4]) EINA_ARG_NONNULL(1);
 
 
 /**
