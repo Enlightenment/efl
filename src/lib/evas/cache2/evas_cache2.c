@@ -799,7 +799,8 @@ evas_cache2_image_open_wait(Image_Entry *im)
 }
 
 static Image_Entry *
-_scaled_image_find(Image_Entry *im, int src_x, int src_y, int src_w, int src_h, int dst_w, int dst_h, int smooth)
+_scaled_image_find(Image_Entry *im, int src_x, int src_y, int src_w,
+                   int src_h, int dst_w, int dst_h, int smooth)
 {
    size_t               pathlen, keylen, size;
    char                 *hkey;

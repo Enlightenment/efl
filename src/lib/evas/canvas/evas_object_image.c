@@ -3998,53 +3998,15 @@ evas_object_image_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, v
                            (o->cur->border.b == 0) &&
                            (o->cur->border.fill != 0))
                          {
-#ifdef EVAS_CSERVE2
-                            if (evas_cserve2_use_get())
-                              {
-                                 Image_Entry *ie;
-                                 void *data = pixels;
-                                 int w = imagew, h = imageh;
-                                 Eina_Bool mustclose = EINA_FALSE;
-
-                                 ie = evas_cache2_image_scale_load
-                                   ((Image_Entry *)pixels,
-                                    0, 0,
-                                    imagew, imageh,
-                                    iw, ih, o->cur->smooth_scale);
-                                 if (ie != &((RGBA_Image *)pixels)->cache_entry)
-                                   {
-                                      data = ie;
-                                      w = iw;
-                                      h = ih;
-                                      mustclose = EINA_TRUE;
-                                   }
-
-                                 _draw_image
-                                   (obj, output, context, surface, data,
-                                    0, 0,
-                                    w, h,
-                                    obj->cur->geometry.x + ix + x,
-                                    obj->cur->geometry.y + iy + y,
-                                    iw, ih,
-                                    o->cur->smooth_scale,
-                                    do_async);
-
-                                 if (mustclose)
-                                   evas_cache2_image_close(ie);
-                              }
-                            else
-#endif
-                              {
-                                 _draw_image
-                                   (obj, output, context, surface, pixels,
-                                    0, 0,
-                                    imagew, imageh,
-                                    obj->cur->geometry.x + ix + x,
-                                    obj->cur->geometry.y + iy + y,
-                                    iw, ih,
-                                    o->cur->smooth_scale,
-                                    do_async);
-                              }
+                            _draw_image
+                              (obj, output, context, surface, pixels,
+                               0, 0,
+                               imagew, imageh,
+                               obj->cur->geometry.x + ix + x,
+                               obj->cur->geometry.y + iy + y,
+                               iw, ih,
+                               o->cur->smooth_scale,
+                               do_async);
                          }
                        else
                          {

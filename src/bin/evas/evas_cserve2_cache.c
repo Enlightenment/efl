@@ -506,6 +506,8 @@ _image_loaded_msg_create(Image_Entry *ientry, Image_Data *idata, int *size)
    msg->shm.mmap_size = cserve2_shm_map_size_get(ientry->shm);
    msg->shm.image_size = cserve2_shm_size_get(ientry->shm);
    msg->alpha_sparse = idata->alpha_sparse;
+   msg->image.w = idata->w;
+   msg->image.h = idata->h;
 
    if (idata->shm_id)
      {
@@ -805,12 +807,21 @@ _scaling_do(Shm_Handle *scale_shm, Image_Data *idata, Image_Entry *original)
    char *scale_map, *orig_map;
    void *src_data, *dst_data;
    File_Data *fd;
+   Image_Data *orig_idata;
 
+#warning FIXME Remove this call, add alpha flag to Image_Data
    fd = _file_data_find(idata->file_id);
    if (!fd)
      {
         ERR("Could not find file data %u for image %u",
             idata->file_id, idata->id);
+        return -1;
+     }
+
+   orig_idata = _image_data_find(original->base.id);
+   if (!orig_idata)
+     {
+        ERR("Could not find image %u", original->base.id);
         return -1;
      }
 
@@ -833,14 +844,16 @@ _scaling_do(Shm_Handle *scale_shm, Image_Data *idata, Image_Entry *original)
    src_data = orig_map + cserve2_shm_map_offset_get(original->shm);
    dst_data = scale_map + cserve2_shm_map_offset_get(scale_shm);
 
-   DBG("Scaling image ([%d,%d:%dx%d] --> [%d,%d:%dx%d])",
+   DBG("Scaling image ([%dx%d]:[%d,%d:%dx%d] --> [%d,%d:%dx%d])",
+       orig_idata->w, orig_idata->h,
        idata->opts.scale_load.src_x, idata->opts.scale_load.src_y,
        idata->opts.scale_load.src_w, idata->opts.scale_load.src_h,
        0, 0,
        idata->opts.scale_load.dst_w, idata->opts.scale_load.dst_h);
 
    cserve2_rgba_image_scale_do(
-            src_data, dst_data,
+            src_data, orig_idata->w, orig_idata->h,
+            dst_data,
             idata->opts.scale_load.src_x, idata->opts.scale_load.src_y,
             idata->opts.scale_load.src_w, idata->opts.scale_load.src_h,
             0, 0,
@@ -875,6 +888,8 @@ _scaling_prepare_and_do(Image_Entry *ientry, Image_Data *idata)
    cserve2_shared_string_del(idata->shm_id);
    ientry->shm = scale_shm;
    idata->shm_id = 0;
+   idata->w = idata->opts.scale_load.dst_w;
+   idata->h = idata->opts.scale_load.dst_h;
 
    return 0;
 }
@@ -894,6 +909,9 @@ _load_request_response(Image_Entry *ientry,
    idata->alpha_sparse = resp->alpha_sparse;
    if (!idata->doload)
      DBG("Entry %d loaded by speculative preload.", idata->id);
+
+   idata->w = resp->w;
+   idata->h = resp->h;
 
    if (_scaling_needed(idata, resp))
      {
@@ -2781,7 +2799,7 @@ do_scaling:
                  CSERVE2_REQ_IMAGE_LOAD,
                  0, NULL, 0, &_load_funcs, orig_entry);
      }
-   if (orig_entry->base.request || !orig_entry->shm)
+   if (orig_entry->base.request || !orig_entry->shm || !orig_data->valid)
      return -1; // Not loaded yet
 
    if (ientry->shm)

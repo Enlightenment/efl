@@ -90,6 +90,9 @@ struct _Msg_Loaded {
       int mmap_size;
       int image_size;
    } shm;
+   struct {
+      unsigned int w, h; // Real dimensions of this image. May differ from Msg_Opened::image::{w,h} after scaling.
+   } image;
    Eina_Bool alpha_sparse : 1;
 };
 
@@ -354,6 +357,7 @@ struct _Image_Data {
    uint32_t file_id;
    string_t shm_id;
    Evas_Image_Load_Opts opts;
+   uint32_t w, h;
    Eina_Bool alpha_sparse : 1;
    Eina_Bool unused : 1;
    Eina_Bool doload : 1;
