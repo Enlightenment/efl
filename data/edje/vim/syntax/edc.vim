@@ -45,6 +45,7 @@ syn keyword	edcLabel	homogeneous contained
 syn keyword	edcLabel	on perspective light perspective_on contained
 syn keyword	edcLabel	backface_cull alpha center focus zplane focal contained
 syn keyword	edcLabel	int double string external script_only contained
+syn keyword	edcLabel	insert_before insert_after contained
 
 syn keyword	edcConstant 	COMP RAW LOSSY NONE ON_HOLD AUTOGRAB NOGRAB
 syn keyword	edcConstant 	TEXT IMAGE RECT TEXTBLOCK SWALLOW GRADIENT GROUP

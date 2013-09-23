@@ -44,6 +44,7 @@ syn keyword	cLabel		spread scale_hint elipsis ellipsis pointer_mode prefer
 syn keyword	cLabel		precise_is_inside use_alternate_font_metrics options
 syn keyword	cLabel		aspect_mode position span angle repch api
 syn keyword	cLabel		external params size_range border_scale minmul
+syn keyword	cLabel		insert_before insert_after
 
 syn keyword	cLabel		mass density material restitution friction
 syn keyword	cLabel		ignore_part_pos light_on damping sleep
