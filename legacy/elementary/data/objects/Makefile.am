@@ -9,7 +9,7 @@ EDJE_FLAGS = $(EDJE_FLAGS_VERBOSE_$(V)) -id $(top_srcdir)/data/objects -fd $(top
 
 filesdir = $(datadir)/elementary/objects
 
-files_DATA = test.edj test_external.edj multip.edj cursors.edj font_preview.edj postit_ent.edj multibuttonentry.edj test_prefs.edj test_prefs.epb
+files_DATA = test.edj test_external.edj multip.edj cursors.edj font_preview.edj postit_ent.edj multibuttonentry.edj test_prefs.edj test_prefs.epb test_focus_custom.edj
 
 ELM_PREFS_CC = $(top_builddir)/src/bin/@ELM_PREFS_CC_PRG@
 
@@ -23,6 +23,7 @@ cursors.edc \
 font_preview.edc \
 postit_ent.edc \
 multibuttonentry.edc \
+test_focus_custom.edc \
 over.png \
 under.png \
 sky.jpg \
@@ -77,6 +78,11 @@ test_prefs.epb: Makefile test_prefs.epc
 	$(ELM_PREFS_CC) $(ELM_PREFS_FLAGS) \
 	$(top_srcdir)/data/objects/test_prefs.epc \
 	$(top_builddir)/data/objects/test_prefs.epb
+
+test_focus_custom.edj: Makefile test_focus_custom.edc
+	$(EDJE_CC) $(EDJE_FLAGS) \
+	$(top_srcdir)/data/objects/test_focus_custom.edc \
+	$(top_builddir)/data/objects/test_focus_custom.edj
 
 clean-local:
 	rm -f *.edj
