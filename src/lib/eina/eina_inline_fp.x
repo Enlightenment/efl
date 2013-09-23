@@ -80,6 +80,23 @@ eina_f16p16_float_to(Eina_F16p16 v)
    return r;
 }
 
+static inline Eina_F16p16
+eina_f16p16_double_from(double v)
+{
+   Eina_F16p16 r;
+
+   r = (Eina_F16p16)(v * 65536.0 + (v < 0 ? -0.5 : 0.5));
+   return r;
+}
+
+static inline double
+eina_f16p16_double_to(Eina_F16p16 v)
+{
+   double r;
+
+   r = v / 65536.0;
+   return r;
+}
 
 
 static inline Eina_F8p24

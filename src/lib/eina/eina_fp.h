@@ -60,8 +60,14 @@ static inline unsigned int eina_f32p32_fracc_get(Eina_F32p32 v);
 EAPI Eina_F32p32           eina_f32p32_cos(Eina_F32p32 a);
 EAPI Eina_F32p32           eina_f32p32_sin(Eina_F32p32 a);
 
+
+#define EINA_F16P16_ONE (1 << 16)
+#define EINA_F16P16_HALF (1 << 15)
+
 static inline Eina_F16p16  eina_f16p16_int_from(int32_t v);
 static inline int32_t      eina_f16p16_int_to(Eina_F16p16 v);
+static inline Eina_F16p16  eina_f16p16_double_from(double v);
+static inline double       eina_f16p16_double_to(Eina_F16p16 v);
 static inline Eina_F16p16  eina_f16p16_float_from(float v);
 static inline float        eina_f16p16_float_to(Eina_F16p16 v);
 
