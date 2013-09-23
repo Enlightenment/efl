@@ -2,12 +2,12 @@
 # This file is put in the public domain.
 # Marc Furtià  i Puig <marc.furtia@gmail.com>, 2013.
 # Joan Coll <jcoll2@gmail.com>, 2013.
-#: src/lib/elm_config.c:2416
+#: src/lib/elm_config.c:2413
 msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-08-22 04:28+0900\n"
+"POT-Creation-Date: 2013-09-24 02:44+0900\n"
 "PO-Revision-Date: 2013-03-22 00:32+0100\n"
 "Last-Translator: JoanColl <jcoll2@gmail.com>\n"
 "Language-Team: Catalan\n"
@@ -16,24 +16,24 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/lib/elc_fileselector.c:847
+#: src/lib/elc_fileselector.c:939
 msgid "Up"
 msgstr "Amunt"
 
-#: src/lib/elc_fileselector.c:862
+#: src/lib/elc_fileselector.c:954
 msgid "Home"
 msgstr "Carpeta personal"
 
-#: src/lib/elc_fileselector.c:1079 src/lib/elm_entry.c:1269
+#: src/lib/elc_fileselector.c:1169 src/lib/elm_entry.c:1269
 #: src/lib/elm_entry.c:1294
 msgid "Cancel"
 msgstr "Cancel·la"
 
-#: src/lib/elc_fileselector.c:1088
+#: src/lib/elc_fileselector.c:1178
 msgid "OK"
 msgstr "Accepta"
 
-#: src/lib/elm_bubble.c:217
+#: src/lib/elm_bubble.c:219
 msgid "Bubble"
 msgstr "Bombolla "
 
@@ -41,9 +41,9 @@ msgstr "Bombolla "
 msgid "Clicked"
 msgstr "Clicat"
 
-#: src/lib/elm_button.c:281 src/lib/elm_check.c:219 src/lib/elm_gengrid.c:694
-#: src/lib/elm_genlist.c:1381 src/lib/elm_list.c:1481 src/lib/elm_radio.c:264
-#: src/lib/elm_spinner.c:539 src/lib/elm_toolbar.c:1996
+#: src/lib/elm_button.c:281 src/lib/elm_check.c:219 src/lib/elm_gengrid.c:702
+#: src/lib/elm_genlist.c:1452 src/lib/elm_list.c:1492 src/lib/elm_radio.c:264
+#: src/lib/elm_spinner.c:550 src/lib/elm_toolbar.c:1996
 msgid "State: Disabled"
 msgstr "Estat: desactivat "
 
@@ -104,7 +104,7 @@ msgstr "Estat: desactivat"
 msgid "State"
 msgstr "Estat"
 
-#: src/lib/elm_check.c:308
+#: src/lib/elm_check.c:310
 msgid "Check"
 msgstr "Comprova"
 
@@ -120,15 +120,15 @@ msgstr "botó decrement de rellotge per am,pm"
 msgid "State: Editable"
 msgstr "Estat: Editable "
 
-#: src/lib/elm_clock.c:693
+#: src/lib/elm_clock.c:695
 msgid "Clock"
 msgstr "Rellotge"
 
-#: src/lib/elm_colorselector.c:1370
+#: src/lib/elm_colorselector.c:1348
 msgid "color selector palette item"
 msgstr "paleta de selecció de color"
 
-#: src/lib/elm_config.c:2432
+#: src/lib/elm_config.c:2429
 msgid "default:LTR"
 msgstr "Per defecte: LTR"
 
@@ -152,11 +152,11 @@ msgstr "Selecciona"
 msgid "Paste"
 msgstr "Enganxa "
 
-#: src/lib/elm_entry.c:3121
+#: src/lib/elm_entry.c:3123
 msgid "Entry"
 msgstr "Entrada"
 
-#: src/lib/elm_gengrid.c:724
+#: src/lib/elm_gengrid.c:732
 msgid "Gengrid Item"
 msgstr "Quadrícula genèrica"
 
@@ -184,27 +184,27 @@ msgstr "estat: tancat"
 msgid "panel button"
 msgstr "botó del tauler"
 
-#: src/lib/elm_progressbar.c:274
+#: src/lib/elm_progressbar.c:297
 msgid "progressbar"
 msgstr "barra de progrés "
 
-#: src/lib/elm_radio.c:293
+#: src/lib/elm_radio.c:296
 msgid "Radio"
 msgstr "Opció"
 
-#: src/lib/elm_slider.c:862
+#: src/lib/elm_slider.c:864
 msgid "slider"
 msgstr "control lliscant"
 
-#: src/lib/elm_spinner.c:628
+#: src/lib/elm_spinner.c:639
 msgid "spinner increment button"
 msgstr "botó d'increment del spinner"
 
-#: src/lib/elm_spinner.c:637
+#: src/lib/elm_spinner.c:648
 msgid "spinner decrement button"
 msgstr "botó de decrement del spinner"
 
-#: src/lib/elm_spinner.c:645
+#: src/lib/elm_spinner.c:656
 msgid "spinner"
 msgstr "spinner"
 

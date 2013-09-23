@@ -5,12 +5,12 @@
 # Automatically generated, 2012.
 # Danny Moshnakov <dm@agent.co.il>, 2012.
 #
-#: src/lib/elm_config.c:2416
+#: src/lib/elm_config.c:2413
 msgid ""
 msgstr ""
 "Project-Id-Version: elementary 1.7.99.76688\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-08-22 04:28+0900\n"
+"POT-Creation-Date: 2013-09-24 02:44+0900\n"
 "PO-Revision-Date: 2012-09-14 22:20+0300\n"
 "Last-Translator: Danny Moshnakov <dm@agent.co.il>\n"
 "Language-Team: ru <ru>\n"
@@ -21,24 +21,24 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
-#: src/lib/elc_fileselector.c:847
+#: src/lib/elc_fileselector.c:939
 msgid "Up"
 msgstr "Вверх"
 
-#: src/lib/elc_fileselector.c:862
+#: src/lib/elc_fileselector.c:954
 msgid "Home"
 msgstr "Дом"
 
-#: src/lib/elc_fileselector.c:1079 src/lib/elm_entry.c:1269
+#: src/lib/elc_fileselector.c:1169 src/lib/elm_entry.c:1269
 #: src/lib/elm_entry.c:1294
 msgid "Cancel"
 msgstr "Отмена"
 
-#: src/lib/elc_fileselector.c:1088
+#: src/lib/elc_fileselector.c:1178
 msgid "OK"
 msgstr "ОК"
 
-#: src/lib/elm_bubble.c:217
+#: src/lib/elm_bubble.c:219
 msgid "Bubble"
 msgstr ""
 
@@ -46,9 +46,9 @@ msgstr ""
 msgid "Clicked"
 msgstr "Нажато"
 
-#: src/lib/elm_button.c:281 src/lib/elm_check.c:219 src/lib/elm_gengrid.c:694
-#: src/lib/elm_genlist.c:1381 src/lib/elm_list.c:1481 src/lib/elm_radio.c:264
-#: src/lib/elm_spinner.c:539 src/lib/elm_toolbar.c:1996
+#: src/lib/elm_button.c:281 src/lib/elm_check.c:219 src/lib/elm_gengrid.c:702
+#: src/lib/elm_genlist.c:1452 src/lib/elm_list.c:1492 src/lib/elm_radio.c:264
+#: src/lib/elm_spinner.c:550 src/lib/elm_toolbar.c:1996
 msgid "State: Disabled"
 msgstr "Состояние: Отключено"
 
@@ -114,7 +114,7 @@ msgstr "Состояние: Выключено"
 msgid "State"
 msgstr "Состояние"
 
-#: src/lib/elm_check.c:308
+#: src/lib/elm_check.c:310
 msgid "Check"
 msgstr "Флажок"
 
@@ -133,15 +133,15 @@ msgstr "кнопка уменьшения календаря"
 msgid "State: Editable"
 msgstr "Состояние: Отключено"
 
-#: src/lib/elm_clock.c:693
+#: src/lib/elm_clock.c:695
 msgid "Clock"
 msgstr ""
 
-#: src/lib/elm_colorselector.c:1370
+#: src/lib/elm_colorselector.c:1348
 msgid "color selector palette item"
 msgstr "элемент выбора цвета палитры"
 
-#: src/lib/elm_config.c:2432
+#: src/lib/elm_config.c:2429
 msgid "default:LTR"
 msgstr "по умолчанию: ЛНП"
 
@@ -165,11 +165,11 @@ msgstr "Выбрать"
 msgid "Paste"
 msgstr "Вставить"
 
-#: src/lib/elm_entry.c:3121
+#: src/lib/elm_entry.c:3123
 msgid "Entry"
 msgstr "Запись"
 
-#: src/lib/elm_gengrid.c:724
+#: src/lib/elm_gengrid.c:732
 msgid "Gengrid Item"
 msgstr "Элемент сетки"
 
@@ -199,27 +199,27 @@ msgstr "Состояние: Отключено"
 msgid "panel button"
 msgstr ""
 
-#: src/lib/elm_progressbar.c:274
+#: src/lib/elm_progressbar.c:297
 msgid "progressbar"
 msgstr "индикатор прогресса"
 
-#: src/lib/elm_radio.c:293
+#: src/lib/elm_radio.c:296
 msgid "Radio"
 msgstr "Радио флажок"
 
-#: src/lib/elm_slider.c:862
+#: src/lib/elm_slider.c:864
 msgid "slider"
 msgstr "бегунок"
 
-#: src/lib/elm_spinner.c:628
+#: src/lib/elm_spinner.c:639
 msgid "spinner increment button"
 msgstr "кнопка увеличения счетчика"
 
-#: src/lib/elm_spinner.c:637
+#: src/lib/elm_spinner.c:648
 msgid "spinner decrement button"
 msgstr "кнопка уменьшения счетчика"
 
-#: src/lib/elm_spinner.c:645
+#: src/lib/elm_spinner.c:656
 msgid "spinner"
 msgstr "счетчик"
 

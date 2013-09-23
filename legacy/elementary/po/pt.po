@@ -1,12 +1,12 @@
 # Portuguese translation for Elementary.
 # This file is put in the public domain.
 # Sérgio Marques <smarquespt@gmail.com>, 2011.
-#: src/lib/elm_config.c:2416
+#: src/lib/elm_config.c:2413
 msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-08-22 04:28+0900\n"
+"POT-Creation-Date: 2013-09-24 02:44+0900\n"
 "PO-Revision-Date: 2013-01-06 01:24+0100\n"
 "Last-Translator: Sérgio Marques <smarquespt@gmail.com>\n"
 "Language-Team: \n"
@@ -17,24 +17,24 @@ msgstr ""
 "X-Launchpad-Export-Date: 2012-12-07 16:20+0000\n"
 "X-Generator: Poedit 1.5.4\n"
 
-#: src/lib/elc_fileselector.c:847
+#: src/lib/elc_fileselector.c:939
 msgid "Up"
 msgstr "Para cima"
 
-#: src/lib/elc_fileselector.c:862
+#: src/lib/elc_fileselector.c:954
 msgid "Home"
 msgstr "Pasta pessoal"
 
-#: src/lib/elc_fileselector.c:1079 src/lib/elm_entry.c:1269
+#: src/lib/elc_fileselector.c:1169 src/lib/elm_entry.c:1269
 #: src/lib/elm_entry.c:1294
 msgid "Cancel"
 msgstr "Cancelar"
 
-#: src/lib/elc_fileselector.c:1088
+#: src/lib/elc_fileselector.c:1178
 msgid "OK"
 msgstr "Aceitar"
 
-#: src/lib/elm_bubble.c:217
+#: src/lib/elm_bubble.c:219
 msgid "Bubble"
 msgstr "Balão"
 
@@ -42,9 +42,9 @@ msgstr "Balão"
 msgid "Clicked"
 msgstr "Clicado"
 
-#: src/lib/elm_button.c:281 src/lib/elm_check.c:219 src/lib/elm_gengrid.c:694
-#: src/lib/elm_genlist.c:1381 src/lib/elm_list.c:1481 src/lib/elm_radio.c:264
-#: src/lib/elm_spinner.c:539 src/lib/elm_toolbar.c:1996
+#: src/lib/elm_button.c:281 src/lib/elm_check.c:219 src/lib/elm_gengrid.c:702
+#: src/lib/elm_genlist.c:1452 src/lib/elm_list.c:1492 src/lib/elm_radio.c:264
+#: src/lib/elm_spinner.c:550 src/lib/elm_toolbar.c:1996
 msgid "State: Disabled"
 msgstr "Estado: inativo"
 
@@ -105,7 +105,7 @@ msgstr "Estado: desligado"
 msgid "State"
 msgstr "Estado"
 
-#: src/lib/elm_check.c:308
+#: src/lib/elm_check.c:310
 msgid "Check"
 msgstr "Seleção"
 
@@ -121,15 +121,15 @@ msgstr "botão de redução do relógio para am, pm"
 msgid "State: Editable"
 msgstr "Estado: editável"
 
-#: src/lib/elm_clock.c:693
+#: src/lib/elm_clock.c:695
 msgid "Clock"
 msgstr "Relógio"
 
-#: src/lib/elm_colorselector.c:1370
+#: src/lib/elm_colorselector.c:1348
 msgid "color selector palette item"
 msgstr "item do seletor de cor"
 
-#: src/lib/elm_config.c:2432
+#: src/lib/elm_config.c:2429
 msgid "default:LTR"
 msgstr "padrão: LTR"
 
@@ -153,11 +153,11 @@ msgstr "Selecionar"
 msgid "Paste"
 msgstr "Colar"
 
-#: src/lib/elm_entry.c:3121
+#: src/lib/elm_entry.c:3123
 msgid "Entry"
 msgstr "Entrada"
 
-#: src/lib/elm_gengrid.c:724
+#: src/lib/elm_gengrid.c:732
 msgid "Gengrid Item"
 msgstr "Item da grelha genérica"
 
@@ -185,27 +185,27 @@ msgstr "estado: fechado"
 msgid "panel button"
 msgstr "botão do painel"
 
-#: src/lib/elm_progressbar.c:274
+#: src/lib/elm_progressbar.c:297
 msgid "progressbar"
 msgstr "barra de progresso"
 
-#: src/lib/elm_radio.c:293
+#: src/lib/elm_radio.c:296
 msgid "Radio"
 msgstr "Opção"
 
-#: src/lib/elm_slider.c:862
+#: src/lib/elm_slider.c:864
 msgid "slider"
 msgstr "barra deslizante"
 
-#: src/lib/elm_spinner.c:628
+#: src/lib/elm_spinner.c:639
 msgid "spinner increment button"
 msgstr "botão de aumento do spinner"
 
-#: src/lib/elm_spinner.c:637
+#: src/lib/elm_spinner.c:648
 msgid "spinner decrement button"
 msgstr "botão de diminuição do spinner"
 
-#: src/lib/elm_spinner.c:645
+#: src/lib/elm_spinner.c:656
 msgid "spinner"
 msgstr "spinner"
 

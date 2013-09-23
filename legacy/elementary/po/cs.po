@@ -2,12 +2,12 @@
 #
 # Vít Pelčák <vit@pelcak.org>, 2011.
 # Tomáš Čech <sleep_walker@suse.cz>, 2012.
-#: src/lib/elm_config.c:2416
+#: src/lib/elm_config.c:2413
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-08-22 04:28+0900\n"
+"POT-Creation-Date: 2013-09-24 02:44+0900\n"
 "PO-Revision-Date: 2012-12-16 21:59+0100\n"
 "Last-Translator: Tomáš Čech <sleep_walker@suse.cz>\n"
 "Language-Team: Czech <kde-i18n-doc@kde.org>\n"
@@ -18,24 +18,24 @@ msgstr ""
 "X-Generator: Lokalize 1.4\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
 
-#: src/lib/elc_fileselector.c:847
+#: src/lib/elc_fileselector.c:939
 msgid "Up"
 msgstr "Nahoru"
 
-#: src/lib/elc_fileselector.c:862
+#: src/lib/elc_fileselector.c:954
 msgid "Home"
 msgstr "Domů"
 
-#: src/lib/elc_fileselector.c:1079 src/lib/elm_entry.c:1269
+#: src/lib/elc_fileselector.c:1169 src/lib/elm_entry.c:1269
 #: src/lib/elm_entry.c:1294
 msgid "Cancel"
 msgstr "Zrušit"
 
-#: src/lib/elc_fileselector.c:1088
+#: src/lib/elc_fileselector.c:1178
 msgid "OK"
 msgstr "OK"
 
-#: src/lib/elm_bubble.c:217
+#: src/lib/elm_bubble.c:219
 msgid "Bubble"
 msgstr "Bublina"
 
@@ -43,9 +43,9 @@ msgstr "Bublina"
 msgid "Clicked"
 msgstr "Kliknuto"
 
-#: src/lib/elm_button.c:281 src/lib/elm_check.c:219 src/lib/elm_gengrid.c:694
-#: src/lib/elm_genlist.c:1381 src/lib/elm_list.c:1481 src/lib/elm_radio.c:264
-#: src/lib/elm_spinner.c:539 src/lib/elm_toolbar.c:1996
+#: src/lib/elm_button.c:281 src/lib/elm_check.c:219 src/lib/elm_gengrid.c:702
+#: src/lib/elm_genlist.c:1452 src/lib/elm_list.c:1492 src/lib/elm_radio.c:264
+#: src/lib/elm_spinner.c:550 src/lib/elm_toolbar.c:1996
 msgid "State: Disabled"
 msgstr "Stav: Zakázáno"
 
@@ -111,7 +111,7 @@ msgstr "Stav: Vypnuto"
 msgid "State"
 msgstr "Stav"
 
-#: src/lib/elm_check.c:308
+#: src/lib/elm_check.c:310
 msgid "Check"
 msgstr "Ověřit"
 
@@ -127,15 +127,15 @@ msgstr "odečítací tlačítko hodin pro am,pm"
 msgid "State: Editable"
 msgstr "Stav: Upravitelný"
 
-#: src/lib/elm_clock.c:693
+#: src/lib/elm_clock.c:695
 msgid "Clock"
 msgstr "Hodiny"
 
-#: src/lib/elm_colorselector.c:1370
+#: src/lib/elm_colorselector.c:1348
 msgid "color selector palette item"
 msgstr "položka výběru barvy z palety"
 
-#: src/lib/elm_config.c:2432
+#: src/lib/elm_config.c:2429
 msgid "default:LTR"
 msgstr "výchozí:LTR"
 
@@ -159,11 +159,11 @@ msgstr "Vybrat"
 msgid "Paste"
 msgstr "Vložit"
 
-#: src/lib/elm_entry.c:3121
+#: src/lib/elm_entry.c:3123
 msgid "Entry"
 msgstr "Vstup"
 
-#: src/lib/elm_gengrid.c:724
+#: src/lib/elm_gengrid.c:732
 msgid "Gengrid Item"
 msgstr "Položka mřížky"
 
@@ -191,27 +191,27 @@ msgstr "stav: zavřeno"
 msgid "panel button"
 msgstr "tlačítko panelu"
 
-#: src/lib/elm_progressbar.c:274
+#: src/lib/elm_progressbar.c:297
 msgid "progressbar"
 msgstr "ukazatel průběhu"
 
-#: src/lib/elm_radio.c:293
+#: src/lib/elm_radio.c:296
 msgid "Radio"
 msgstr "Přepínač"
 
-#: src/lib/elm_slider.c:862
+#: src/lib/elm_slider.c:864
 msgid "slider"
 msgstr "šoupátko"
 
-#: src/lib/elm_spinner.c:628
+#: src/lib/elm_spinner.c:639
 msgid "spinner increment button"
 msgstr "přičítací tlačítko spinneru"
 
-#: src/lib/elm_spinner.c:637
+#: src/lib/elm_spinner.c:648
 msgid "spinner decrement button"
 msgstr "odečítací tlačítko spinneru"
 
-#: src/lib/elm_spinner.c:645
+#: src/lib/elm_spinner.c:656
 msgid "spinner"
 msgstr "spinner"
 
