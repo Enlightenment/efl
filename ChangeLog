@@ -1,3 +1,9 @@
+2013-09-24  Jorge Zapata
+
+	* Eina: add a substraction in rectangles and more helpers,
+	add functions to alloc strings from a printf format,
+	add double_from/to and helper defines in f16p16.
+
 2013-09-12  Jihoon Kim
 
 	* ecore_imf: Fix memory leak in scim immodule

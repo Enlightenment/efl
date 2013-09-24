@@ -36,6 +36,11 @@ Additions:
      - Add eina_tiler_empty()
      - Add eina_file_virtualize() and eina_file_virtual()
      - Add eina_file_refresh()
+     - Add eina_rectangle_is_valid(), eina_rectangle_max_x(), eina_rectangle_max_y(), eina_rectangle_x_cut(),
+     eina_rectangle_y_cut(), eina_rectangle_width_cut(), eina_rectangle_height_cut(), eina_rectangle_subtract(),
+     EINA_RECTANGLE_INIT, EINA_RECTANGLE_FORMAT, EINA_RECTANGLE_ARGS.
+     - Add eina_str_vprintf_length(), eina_str_vprintf_dup(), eina_str_printf_dup().
+     - Add eina_f16p16_double_from(), eina_f16p16_double_to().
     * Eet:
      - Add eet_mmap()
      - Add eet_data_descriptor_name_get()
