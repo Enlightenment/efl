@@ -113,7 +113,7 @@ _delay_change(void *data)
 {
    ELM_SPINNER_DATA_GET(data, sd);
 
-   sd->delay = NULL;
+   sd->delay_timer = NULL;
    evas_object_smart_callback_call(data, SIG_DELAY_CHANGED, NULL);
 
    return ECORE_CALLBACK_CANCEL;
@@ -148,8 +148,8 @@ _value_set(Evas_Object *obj,
    sd->val = new_val;
 
    evas_object_smart_callback_call(obj, SIG_CHANGED, NULL);
-   if (sd->delay) ecore_timer_del(sd->delay);
-   sd->delay = ecore_timer_add(0.2, _delay_change, obj);
+   if (sd->delay_timer) ecore_timer_del(sd->delay_timer);
+   sd->delay_timer = ecore_timer_add(0.2, _delay_change, obj);
 
    return EINA_TRUE;
 }
@@ -299,7 +299,7 @@ _spin_value(void *data)
 
    if (_value_set(data, sd->val + real_speed)) _label_write(data);
    sd->interval = sd->interval / 1.05;
-   ecore_timer_interval_set(sd->spin, sd->interval);
+   ecore_timer_interval_set(sd->spin_timer, sd->interval);
 
    return ECORE_CALLBACK_RENEW;
 }
@@ -311,8 +311,8 @@ _val_inc_start(Evas_Object *obj)
 
    sd->interval = sd->first_interval;
    sd->spin_speed = sd->step;
-   if (sd->spin) ecore_timer_del(sd->spin);
-   sd->spin = ecore_timer_add(sd->interval, _spin_value, obj);
+   if (sd->spin_timer) ecore_timer_del(sd->spin_timer);
+   sd->spin_timer = ecore_timer_add(sd->interval, _spin_value, obj);
    _spin_value(obj);
 }
 
@@ -323,7 +323,7 @@ _val_inc_stop(Evas_Object *obj)
 
    sd->interval = sd->first_interval;
    sd->spin_speed = 0;
-   ELM_SAFE_FREE(sd->spin, ecore_timer_del);
+   ELM_SAFE_FREE(sd->spin_timer, ecore_timer_del);
 }
 
 static void
@@ -333,8 +333,8 @@ _val_dec_start(Evas_Object *obj)
 
    sd->interval = sd->first_interval;
    sd->spin_speed = -sd->step;
-   if (sd->spin) ecore_timer_del(sd->spin);
-   sd->spin = ecore_timer_add(sd->interval, _spin_value, obj);
+   if (sd->spin_timer) ecore_timer_del(sd->spin_timer);
+   sd->spin_timer = ecore_timer_add(sd->interval, _spin_value, obj);
    _spin_value(obj);
 }
 
@@ -345,7 +345,7 @@ _val_dec_stop(Evas_Object *obj)
 
    sd->interval = sd->first_interval;
    sd->spin_speed = 0;
-   ELM_SAFE_FREE(sd->spin, ecore_timer_del);
+   ELM_SAFE_FREE(sd->spin_timer, ecore_timer_del);
 }
 
 static void
@@ -407,8 +407,8 @@ _entry_activated_cb(void *data,
 
    _entry_value_apply(data);
    evas_object_smart_callback_call(data, SIG_CHANGED, NULL);
-   if (sd->delay) ecore_timer_del(sd->delay);
-   sd->delay = ecore_timer_add(0.2, _delay_change, data);
+   if (sd->delay_timer) ecore_timer_del(sd->delay_timer);
+   sd->delay_timer = ecore_timer_add(0.2, _delay_change, data);
 }
 
 static void
@@ -514,16 +514,9 @@ _elm_spinner_smart_on_focus(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 
    if (!elm_widget_focus_get(obj))
      {
-        if (sd->delay)
-          {
-             ecore_timer_del(sd->delay);
-             sd->delay = NULL;
-          }
-        if (sd->spin)
-          {
-             ecore_timer_del(sd->spin);
-             sd->spin = NULL;
-          }
+        ELM_SAFE_FREE(sd->delay_timer, ecore_timer_del);
+        ELM_SAFE_FREE(sd->spin_timer, ecore_timer_del);
+
         _entry_value_apply(obj);
      }
 
@@ -721,8 +714,8 @@ _elm_spinner_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    Elm_Spinner_Smart_Data *sd = _pd;
 
    if (sd->label) eina_stringshare_del(sd->label);
-   if (sd->delay) ecore_timer_del(sd->delay);
-   if (sd->spin) ecore_timer_del(sd->spin);
+   if (sd->delay_timer) ecore_timer_del(sd->delay_timer);
+   if (sd->spin_timer) ecore_timer_del(sd->spin_timer);
 
    if (sd->special_values)
      {

@@ -32,7 +32,7 @@ struct _Elm_Spinner_Smart_Data
                                          // this is reset to 0 when drag stops.
    double                spin_speed, interval, first_interval;
    int                   round;
-   Ecore_Timer          *delay, *spin;
+   Ecore_Timer          *delay_timer, *spin_timer;
    Eina_List            *special_values;
 
    Eina_Bool             entry_visible : 1;
