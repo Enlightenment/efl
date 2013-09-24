@@ -339,6 +339,50 @@ START_TEST(str_convert)
 END_TEST
 #endif
 
+static size_t _eina_str_printf_length(const char *fmt, ...)
+{
+   va_list ap;
+   size_t ret;
+
+   va_start(ap, fmt);
+   ret = eina_str_vprintf_length(fmt, ap);
+   va_end(ap);
+
+   return ret;
+}
+
+START_TEST(str_printf_length)
+{
+   size_t len;
+   eina_init();
+
+   len = _eina_str_printf_length("test%d", 5);
+   fail_if(len != 5);
+
+   len = _eina_str_printf_length("");
+   fail_if(len != 0);
+
+   eina_shutdown();
+}
+END_TEST
+
+START_TEST(str_printf_dup)
+{
+   char *s;
+   eina_init();
+
+   s = eina_str_printf_dup("test%d", 5);
+   fail_if(s == NULL);
+   free(s);
+
+   s = eina_str_printf_dup("");
+   fail_if(s == NULL);
+   free(s);
+
+   eina_shutdown();
+}
+END_TEST
+
 void
 eina_test_str(TCase *tc)
 {
@@ -349,4 +393,6 @@ eina_test_str(TCase *tc)
 #ifdef HAVE_ICONV
    tcase_add_test(tc, str_convert);
 #endif
+   tcase_add_test(tc, str_printf_length);
+   tcase_add_test(tc, str_printf_dup);
 }
