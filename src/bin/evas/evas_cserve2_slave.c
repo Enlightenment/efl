@@ -456,6 +456,7 @@ image_load(const char *file, const char *key, const char *shmfile,
 
    result->w = property.w;
    result->h = property.h;
+   result->alpha = property.alpha;
 
    if (property.alpha && property.premul)
      {

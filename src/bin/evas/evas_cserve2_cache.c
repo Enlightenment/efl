@@ -508,6 +508,7 @@ _image_loaded_msg_create(Image_Entry *ientry, Image_Data *idata, int *size)
    msg->alpha_sparse = idata->alpha_sparse;
    msg->image.w = idata->w;
    msg->image.h = idata->h;
+   msg->alpha = idata->alpha;
 
    if (idata->shm_id)
      {
@@ -806,17 +807,7 @@ _scaling_do(Shm_Handle *scale_shm, Image_Data *idata, Image_Entry *original)
 {
    char *scale_map, *orig_map;
    void *src_data, *dst_data;
-   File_Data *fd;
    Image_Data *orig_idata;
-
-#warning FIXME Remove this call, add alpha flag to Image_Data
-   fd = _file_data_find(idata->file_id);
-   if (!fd)
-     {
-        ERR("Could not find file data %u for image %u",
-            idata->file_id, idata->id);
-        return -1;
-     }
 
    orig_idata = _image_data_find(original->base.id);
    if (!orig_idata)
@@ -858,7 +849,7 @@ _scaling_do(Shm_Handle *scale_shm, Image_Data *idata, Image_Entry *original)
             idata->opts.scale_load.src_w, idata->opts.scale_load.src_h,
             0, 0,
             idata->opts.scale_load.dst_w, idata->opts.scale_load.dst_h,
-            fd->alpha, idata->opts.scale_load.smooth);
+            idata->alpha, idata->opts.scale_load.smooth);
 
    cserve2_shm_unmap(original->shm);
    cserve2_shm_unmap(scale_shm);
@@ -906,6 +897,7 @@ _load_request_response(Image_Entry *ientry,
    _entry_load_finish(ASENTRY(ientry));
    ASENTRY(ientry)->request = NULL;
 
+   idata->alpha = resp->alpha;
    idata->alpha_sparse = resp->alpha_sparse;
    if (!idata->doload)
      DBG("Entry %d loaded by speculative preload.", idata->id);

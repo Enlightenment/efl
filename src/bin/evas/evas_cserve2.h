@@ -146,6 +146,7 @@ struct _Slave_Msg_Image_Load {
 
 struct _Slave_Msg_Image_Loaded {
    int w, h;
+   Eina_Bool alpha : 1;
    Eina_Bool alpha_sparse : 1;
 };
 
