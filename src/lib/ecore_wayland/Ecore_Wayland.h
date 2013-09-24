@@ -233,6 +233,7 @@ struct _Ecore_Wl_Window
    Eina_Bool transparent : 1;
    Eina_Bool moving : 1;
    Eina_Bool resizing : 1;
+   Eina_Bool has_buffer : 1;
 
    Ecore_Wl_Window_Type type;
    Ecore_Wl_Window_Buffer_Type buffer_type;
