@@ -842,6 +842,7 @@ _scaling_do(Shm_Handle *scale_shm, Image_Data *idata, Image_Entry *original)
        0, 0,
        idata->opts.scale_load.dst_w, idata->opts.scale_load.dst_h);
 
+   idata->alpha = orig_idata->alpha;
    cserve2_rgba_image_scale_do(
             src_data, orig_idata->w, orig_idata->h,
             dst_data,
@@ -2721,10 +2722,10 @@ try_again:
         goto do_scaling;
      }
 
-   if (first_attempt)
+   if (first_attempt && unscaled.scale_load.smooth)
      {
         first_attempt = EINA_FALSE;
-        memset(&unscaled, 0, sizeof(unscaled));
+        unscaled.scale_load.smooth = 0;
         goto try_again;
      }
 
