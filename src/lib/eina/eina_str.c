@@ -666,30 +666,30 @@ eina_str_vprintf_length(const char *format, va_list args)
 EAPI char *
 eina_str_vprintf_dup(const char *format, va_list args)
 {
-    size_t length;
-    char *ret;
-    va_list copy;
+   size_t length;
+   char *ret;
+   va_list copy;
 
-    /* be sure to use a copy or the printf implementation will
-     * step into the args
-     */
-    va_copy(copy, args);
-    length = eina_str_vprintf_length(format, copy);
-    va_end(copy);
+   /* be sure to use a copy or the printf implementation will
+    * step into the args
+    */
+   va_copy(copy, args);
+   length = eina_str_vprintf_length(format, copy);
+   va_end(copy);
 
-    ret = calloc(length, sizeof(char));
-    vsprintf(ret, format, args);
-    return ret;
+   ret = calloc(length, sizeof(char));
+   vsprintf(ret, format, args);
+   return ret;
 }
 
 EAPI char *
 eina_str_printf_dup(const char *format, ...)
 {
-    char *ret;
-    va_list args;
+   char *ret;
+   va_list args;
 
-    va_start(args, format);
-    ret = eina_str_vprintf_dup(format, args);
-    va_end(args);
-    return ret;
+   va_start(args, format);
+   ret = eina_str_vprintf_dup(format, args);
+   va_end(args);
+   return ret;
 }
