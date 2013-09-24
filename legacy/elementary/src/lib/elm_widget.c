@@ -978,6 +978,15 @@ _elm_widget_sub_object_add(Eo *obj, void *_pd, va_list *list)
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    if (ret) *ret = EINA_FALSE;
 
+   /* NOTE: In the following two lines, 'sobj' is correct. Do not change it.
+    * Due to elementary's scale policy, scale and pscale can be different in
+    * some cases. This happens when sobj's previous parent and new parent have
+    * different scale value.
+    * For example, if sobj's previous parent's scale is 5 and new parent's scale
+    * is 2 while sobj's scale is 0. Then 'pscale' is 5 and 'scale' is 2. So we
+    * need to reset sobj's scale to 5.
+    * Note that each widget's scale is 0 by default.
+    */
    double scale, pscale = elm_widget_scale_get(sobj);
    Elm_Theme *th, *pth = elm_widget_theme_get(sobj);
    Eina_Bool mirrored, pmirrored = elm_widget_mirrored_get(obj);
