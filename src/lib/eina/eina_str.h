@@ -351,7 +351,7 @@ static inline size_t eina_strlen_bounded(const char *str, size_t maxlen) EINA_PU
  * @param format The printf format
  * @param args The printf args
  * @return The length needed for such format and args
- * @since 1.7.9
+ * @since 1.8
  */
 EAPI size_t eina_str_vprintf_length(const char *format, va_list args);
 
@@ -363,7 +363,7 @@ EAPI size_t eina_str_vprintf_length(const char *format, va_list args);
  * @return A newly allocated string
  *
  * @see eina_str_dup_printf
- * @since 1.7.9
+ * @since 1.8
  */
 EAPI char * eina_str_vprintf_dup(const char *format, va_list args);
 
@@ -374,7 +374,7 @@ EAPI char * eina_str_vprintf_dup(const char *format, va_list args);
  * @return A newly allocated string
  *
  * @see eina_str_dup_vprintf
- * @since 1.7.9
+ * @since 1.8
  */
 EAPI char * eina_str_printf_dup(const char *format, ...);
 
