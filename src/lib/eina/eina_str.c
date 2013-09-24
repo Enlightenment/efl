@@ -656,11 +656,11 @@ eina_str_toupper(char **str)
 EAPI size_t
 eina_str_vprintf_length(const char *format, va_list args)
 {
-    char c;
-    size_t len;
+   ssize_t len = vsnprintf(NULL, 0, format, args);
+   if (len < 0)
+     return 0;
 
-    len = vsnprintf(&c, 1, format, args) + 1;
-    return len;
+   return len;
 }
 
 EAPI char *
