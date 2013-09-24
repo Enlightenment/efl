@@ -196,7 +196,8 @@ ecore_wl_window_commit(Ecore_Wl_Window *win)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!win) return;
-   if (win->surface) wl_surface_commit(win->surface);
+   if ((win->surface) && (win->has_buffer)) 
+     wl_surface_commit(win->surface);
 }
 
 EAPI void 
@@ -227,6 +228,7 @@ ecore_wl_window_buffer_attach(Ecore_Wl_Window *win, struct wl_buffer *buffer, in
                y = 0;
 
              win->edges = 0;
+             win->has_buffer = (buffer != NULL);
 
              /* if (buffer) */
              wl_surface_attach(win->surface, buffer, x, y);
