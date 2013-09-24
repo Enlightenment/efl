@@ -369,8 +369,9 @@ _evas_render_phase1_direct(Evas_Public_Data *e,
                {
                   //                  obj->func->render_pre(eo_obj);
                }
-             else if ((obj->rect_del) ||
-                      (evas_object_is_opaque(eo_obj, obj) && evas_object_is_visible(eo_obj, obj)))
+             else if (evas_object_is_visible(eo_obj, obj) &&
+                      ((obj->rect_del) ||
+                      (evas_object_is_opaque(eo_obj, obj))))
                {
                   RD("    rect del\n");
                   _evas_render_cur_clip_cache_del(e, obj);
