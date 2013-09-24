@@ -530,6 +530,7 @@ mtrace \
 realpath \
 strlcpy \
 geteuid \
+vasprintf \
 ])
 
 AC_FUNC_ALLOCA

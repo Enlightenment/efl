@@ -666,8 +666,13 @@ eina_str_vprintf_length(const char *format, va_list args)
 EAPI char *
 eina_str_vprintf_dup(const char *format, va_list args)
 {
-   size_t length;
    char *ret;
+#if HAVE_VASPRINTF
+   if (vasprintf(&ret, format, args) < 0)
+     return NULL;
+   return ret;
+#else
+   size_t length;
    va_list copy;
 
    /* be sure to use a copy or the printf implementation will
@@ -680,6 +685,7 @@ eina_str_vprintf_dup(const char *format, va_list args)
    ret = calloc(length, sizeof(char));
    vsprintf(ret, format, args);
    return ret;
+#endif
 }
 
 EAPI char *
