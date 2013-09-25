@@ -402,12 +402,12 @@ static void
 _const_ops_class_constructor(Eo *klass)
 {
    const Eo_Op_Func_Description func_desc[] = {
-        EO_OP_FUNC(SIMPLE_ID(SIMPLE_SUB_ID_A_SET), (eo_op_func_type) _const_ops_a_set),
-        EO_OP_FUNC(SIMPLE_ID(SIMPLE_SUB_ID_A_PRINT), (eo_op_func_type) _const_ops_a_print),
-        EO_OP_FUNC_CLASS(SIMPLE_ID(SIMPLE_SUB_ID_A_SET), (eo_op_func_type_class) _const_ops_a_set),
-        EO_OP_FUNC_CLASS(SIMPLE_ID(SIMPLE_SUB_ID_A_PRINT), (eo_op_func_type_class) _const_ops_a_print),
-        EO_OP_FUNC(SIMPLE_ID(SIMPLE_SUB_ID_CLASS_HI_PRINT), (eo_op_func_type) _const_ops_class_hi_print),
-        EO_OP_FUNC(SIMPLE_ID(SIMPLE_SUB_ID_CLASS_HI_PRINT), (eo_op_func_type) _const_ops_class_hi_print),
+        EO_OP_FUNC(SIMPLE_ID(SIMPLE_SUB_ID_A_SET), _const_ops_a_set),
+        EO_OP_FUNC(SIMPLE_ID(SIMPLE_SUB_ID_A_PRINT), _const_ops_a_print),
+        EO_OP_FUNC_CLASS(SIMPLE_ID(SIMPLE_SUB_ID_A_SET),  _const_ops_a_set),
+        EO_OP_FUNC_CLASS(SIMPLE_ID(SIMPLE_SUB_ID_A_PRINT), _const_ops_a_print),
+        EO_OP_FUNC(SIMPLE_ID(SIMPLE_SUB_ID_CLASS_HI_PRINT), _const_ops_class_hi_print),
+        EO_OP_FUNC(SIMPLE_ID(SIMPLE_SUB_ID_CLASS_HI_PRINT), _const_ops_class_hi_print),
         EO_OP_FUNC_SENTINEL
    };
 

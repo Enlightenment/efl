@@ -30,7 +30,7 @@ _a_print(Eo *obj EINA_UNUSED, void *class_data, va_list *list)
 }
 
 static void
-_class_print(const Eo *klass, va_list *list)
+_class_print(Eo *klass, void *data EINA_UNUSED, va_list *list)
 {
    (void) list;
    printf("Print %s-%s\n", eo_class_name_get(klass), eo_class_name_get(MY_CLASS));
@@ -39,7 +39,7 @@ _class_print(const Eo *klass, va_list *list)
 }
 
 static void
-_class_print2(const Eo *klass, va_list *list)
+_class_print2(Eo *klass, void *data EINA_UNUSED, va_list *list)
 {
    (void) list;
    printf("Print %s-%s\n", eo_class_name_get(klass), eo_class_name_get(MY_CLASS));

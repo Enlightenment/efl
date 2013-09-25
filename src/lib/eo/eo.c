@@ -301,15 +301,18 @@ _eo_op_internal(const char *file, int line, _Eo eo_ptr, const _Eo_Class *cur_kla
         const op_type_funcs *func = _eo_kls_itr_func_get(cur_klass, op);
         if (EINA_LIKELY(func != NULL))
           {
+             void *func_data = NULL;
+             Eo *calling_obj;
              if (op_type == EO_OP_TYPE_REGULAR)
                {
-                  void *func_data = _eo_data_scope_get(eo_ptr.obj, func->src);
-                  func->func((Eo *)eo_ptr.obj->obj_id, func_data, p_list);
+                  func_data = _eo_data_scope_get(eo_ptr.obj, func->src);
+                  calling_obj = (Eo *)eo_ptr.obj->obj_id;
                }
              else
                {
-                  ((eo_op_func_type_class) func->func)(_eo_class_id_get(cur_klass), p_list);
+                  calling_obj = _eo_class_id_get(cur_klass);
                }
+             func->func(calling_obj, func_data, p_list);
              return EINA_TRUE;
           }
      }

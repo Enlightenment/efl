@@ -33,7 +33,7 @@ _a_print(Eo *obj EINA_UNUSED, void *class_data, va_list *list)
 }
 
 static void
-_class_hi_print(const Eo *klass, va_list *list)
+_class_hi_print(Eo *klass, void *data EINA_UNUSED, va_list *list)
 {
    (void) list;
    printf("Hi Print %s\n", eo_class_name_get(klass));

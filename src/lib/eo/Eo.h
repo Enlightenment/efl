@@ -256,16 +256,6 @@ typedef unsigned int Eo_Op;
 typedef void (*eo_op_func_type)(Eo *, void *class_data, va_list *list);
 
 /**
- * @typedef eo_op_func_type_class
- * The type of the class Op functions. This is the same as #eo_op_func_type,\
- * exepct that it's for usage with class functions, and not with object
- * functions.
- *
- * @see eo_op_func_type
- */
-typedef void (*eo_op_func_type_class)(const Eo *, va_list *list);
-
-/**
  * @addtogroup Eo_Events Eo's Event Handling
  * @{
  */
@@ -416,7 +406,7 @@ typedef struct _Eo_Op_Func_Description Eo_Op_Func_Description;
  *
  * @see EO_OP_FUNC
  */
-#define EO_OP_FUNC_CLASS(op, func) { op, (eo_op_func_type) EO_TYPECHECK(eo_op_func_type_class, func), EO_OP_TYPE_CLASS }
+#define EO_OP_FUNC_CLASS(op, func) { op, EO_TYPECHECK(eo_op_func_type, func), EO_OP_TYPE_CLASS }
 
 /**
  * @def EO_OP_FUNC_SENTINEL
