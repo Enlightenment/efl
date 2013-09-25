@@ -337,8 +337,7 @@ _elm_mapbuf_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    elm_widget_resize_object_set(obj, rect);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
-
-   elm_widget_sub_object_add(eo_parent_get(obj), obj);
+   elm_widget_sub_object_parent_add(obj);
 
    evas_object_static_clip_set(rect, EINA_TRUE);
    evas_object_pass_events_set(rect, EINA_TRUE);

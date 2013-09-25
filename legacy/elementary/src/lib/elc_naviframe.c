@@ -1321,6 +1321,7 @@ _elm_naviframe_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
+   elm_widget_sub_object_parent_add(obj);
 
    priv->dummy_edje = wd->resize_obj;
    evas_object_smart_member_add(priv->dummy_edje, obj);
@@ -1331,8 +1332,6 @@ _elm_naviframe_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    evas_object_event_callback_add(obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                   _on_obj_size_hints_changed, obj);
    elm_widget_can_focus_set(obj, EINA_TRUE);
-
-   elm_widget_sub_object_add(eo_parent_get(obj), obj);
 }
 
 static Eina_Bool

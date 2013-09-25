@@ -362,7 +362,7 @@ _app_server_view_constructor(Eo *obj, void *_pd, va_list *list)
 
    eo_do_super(obj, MY_CLASS, eo_constructor());
 
-   server = eo_parent_get(obj);
+   eo_do(obj, eo_parent_get(&server));
    EINA_SAFETY_ON_TRUE_GOTO(!server || !eo_isa(server, ELM_APP_SERVER_CLASS), error);
 
    if (!id)

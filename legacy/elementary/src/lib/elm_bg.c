@@ -106,8 +106,7 @@ _elm_bg_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    Elm_Bg_Smart_Data *priv = _pd;
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
-
-   elm_widget_sub_object_add(eo_parent_get(obj), obj);
+   elm_widget_sub_object_parent_add(obj);
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
    priv->option = ELM_BG_OPTION_SCALE;

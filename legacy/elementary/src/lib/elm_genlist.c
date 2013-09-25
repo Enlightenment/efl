@@ -4817,16 +4817,14 @@ _decorate_item_unset(Elm_Genlist_Smart_Data *sd)
 static void
 _elm_genlist_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
-   Evas_Coord minw, minh;
-   Elm_Genlist_Pan_Smart_Data *pan_data;
-   int i;
-
    Elm_Genlist_Smart_Data *priv = _pd;
    Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Elm_Genlist_Pan_Smart_Data *pan_data;
+   Evas_Coord minw, minh;
+   int i;
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
-
-   elm_widget_sub_object_add(eo_parent_get(obj), obj);
+   elm_widget_sub_object_parent_add(obj);
 
    priv->hit_rect = evas_object_rectangle_add(evas_object_evas_get(obj));
    evas_object_smart_member_add(priv->hit_rect, obj);

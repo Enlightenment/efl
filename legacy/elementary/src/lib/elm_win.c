@@ -2764,12 +2764,14 @@ _win_constructor(Eo *obj, void *_pd, va_list *list)
 
    const char *name = va_arg(*list, const char *);
    Elm_Win_Type type = va_arg(*list, Elm_Win_Type);
-   Evas_Object *parent = eo_parent_get(obj);
+   Evas_Object *parent;
    Evas *e;
    const Eina_List *l;
    const char *fontpath, *fallback = NULL;
 
    Elm_Win_Smart_Data tmp_sd;
+
+   eo_do(obj, eo_parent_get(&parent));
 
    /* just to store some data while trying out to create a canvas */
    memset(&tmp_sd, 0, sizeof(Elm_Win_Smart_Data));
@@ -2959,7 +2961,7 @@ _win_constructor(Eo *obj, void *_pd, va_list *list)
         return;
      }
 
-   eo_parent_set(obj, ecore_evas_get(tmp_sd.ee));
+   eo_do(obj, eo_parent_set(ecore_evas_get(tmp_sd.ee)));
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME),

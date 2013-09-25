@@ -792,14 +792,12 @@ _access_info_cb(void *data, Evas_Object *obj __UNUSED__)
 static void
 _elm_datetime_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
-   int idx;
-   Datetime_Field *field;
-
    Elm_Datetime_Smart_Data *priv = _pd;
+   Datetime_Field *field;
+   int idx;
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
-
-   elm_widget_sub_object_add(eo_parent_get(obj), obj);
+   elm_widget_sub_object_parent_add(obj);
 
    if (!elm_layout_theme_set(obj, "datetime", "base",
                              elm_widget_style_get(obj)))

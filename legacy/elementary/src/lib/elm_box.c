@@ -407,8 +407,7 @@ _elm_box_smart_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
                                   _on_size_hints_changed, obj);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
-
-   elm_widget_sub_object_add(eo_parent_get(obj), obj);
+   elm_widget_sub_object_parent_add(obj);
 
    evas_object_smart_callback_add(wd->resize_obj, SIG_CHILD_ADDED,
                                   _child_added_cb_proxy, obj);

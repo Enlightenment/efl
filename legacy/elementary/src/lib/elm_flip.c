@@ -1848,8 +1848,7 @@ _elm_flip_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    Elm_Flip_Smart_Data *priv = _pd;
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
-
-   elm_widget_sub_object_add(eo_parent_get(obj), obj);
+   elm_widget_sub_object_parent_add(obj);
 
    priv->clip = evas_object_rectangle_add(evas_object_evas_get(obj));
    evas_object_static_clip_set(priv->clip, EINA_TRUE);

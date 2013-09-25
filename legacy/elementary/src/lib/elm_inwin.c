@@ -75,8 +75,7 @@ static void
 _elm_inwin_smart_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
-
-   elm_widget_sub_object_add(eo_parent_get(obj), obj);
+   elm_widget_sub_object_parent_add(obj);
 
    elm_widget_can_focus_set(obj, EINA_FALSE);
    elm_widget_highlight_ignore_set(obj, EINA_TRUE);
@@ -115,7 +114,9 @@ elm_win_inwin_add(Evas_Object *parent)
 static void
 _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   Evas_Object *parent = eo_parent_get(obj);
+   Evas_Object *parent;
+
+   eo_do(obj, eo_parent_get(&parent));
 
    if (!eo_isa(parent, ELM_OBJ_WIN_CLASS))
      {

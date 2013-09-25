@@ -242,7 +242,7 @@ _view_smart_add(Evas_Object *obj)
 {
    View_Smart_Data *sd;
 
-   elm_widget_sub_object_add(eo_parent_get(obj), obj);
+   elm_widget_sub_object_parent_add(obj);
 
    sd = calloc(1, sizeof(View_Smart_Data));
    evas_object_smart_data_set(obj, sd);

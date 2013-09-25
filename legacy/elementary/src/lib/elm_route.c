@@ -143,8 +143,7 @@ _elm_route_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    Elm_Route_Smart_Data *priv = _pd;
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
-
-   elm_widget_sub_object_add(eo_parent_get(obj), obj);
+   elm_widget_sub_object_parent_add(obj);
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
    evas_object_event_callback_add

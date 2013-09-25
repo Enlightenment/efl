@@ -197,16 +197,18 @@ _set_render_policy_callback(Evas_Object *obj)
 static void
 _elm_glview_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
-   elm_widget_sub_object_add(eo_parent_get(obj), obj);
+   Elm_Glview_Smart_Data *priv = _pd;
+   Evas_Object *img;
+
+   elm_widget_sub_object_parent_add(obj);
 
    // Create image to render Evas_GL Surface
-   Evas_Object *img = evas_object_image_filled_add(evas_object_evas_get(obj));
+   img = evas_object_image_filled_add(evas_object_evas_get(obj));
    elm_widget_resize_object_set(obj, img);
    evas_object_image_size_set(img, 1, 1);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 
-   Elm_Glview_Smart_Data *priv = _pd;
    // Evas_GL
    priv->evasgl = evas_gl_new(evas_object_evas_get(obj));
    if (!priv->evasgl)

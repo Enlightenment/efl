@@ -174,8 +174,7 @@ _elm_fileselector_button_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED
    Elm_Fileselector_Button_Smart_Data *priv = _pd;
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
-
-   elm_widget_sub_object_add(eo_parent_get(obj), obj);
+   elm_widget_sub_object_parent_add(obj);
 
    priv->window_title = eina_stringshare_add(DEFAULT_WINDOW_TITLE);
    if (getenv("HOME")) priv->fsd.path = eina_stringshare_add(getenv("HOME"));

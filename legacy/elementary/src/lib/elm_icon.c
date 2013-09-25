@@ -607,11 +607,10 @@ _elm_icon_thumb_resize_cb(void *data,
 static void
 _elm_icon_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
-
-   elm_widget_sub_object_add(eo_parent_get(obj), obj);
-
    Elm_Icon_Smart_Data *priv = _pd;
+
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
+   elm_widget_sub_object_parent_add(obj);
 
    priv->lookup_order = ELM_ICON_LOOKUP_THEME_FDO;
 

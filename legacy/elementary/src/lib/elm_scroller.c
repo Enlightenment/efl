@@ -744,14 +744,12 @@ _elm_scroller_content_viewport_resize_cb(Evas_Object *obj,
 static void
 _elm_scroller_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
-   Evas_Coord minw, minh;
-
    Elm_Scroller_Smart_Data *priv = _pd;
    Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Evas_Coord minw, minh;
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
-
-   elm_widget_sub_object_add(eo_parent_get(obj), obj);
+   elm_widget_sub_object_parent_add(obj);
    elm_widget_can_focus_set(obj, EINA_TRUE);
 
    if (!elm_layout_theme_set

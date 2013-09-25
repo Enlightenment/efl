@@ -1320,14 +1320,13 @@ _g_layer_zoom_end_cb(void *data,
 static void
 _elm_photocam_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
-   Evas_Coord minw, minh;
-   Elm_Photocam_Pan_Smart_Data *pan_data;
-   Eina_Bool bounce = _elm_config->thumbscroll_bounce_enable;
-   Evas_Object *edje;
-
    Elm_Photocam_Smart_Data *priv = _pd;
+   Eina_Bool bounce = _elm_config->thumbscroll_bounce_enable;
+   Elm_Photocam_Pan_Smart_Data *pan_data;
+   Evas_Object *edje;
+   Evas_Coord minw, minh;
 
-   elm_widget_sub_object_add(eo_parent_get(obj), obj);
+   elm_widget_sub_object_parent_add(obj);
 
    edje = edje_object_add(evas_object_evas_get(obj));
    elm_widget_resize_object_set(obj, edje);

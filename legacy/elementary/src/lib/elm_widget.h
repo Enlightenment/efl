@@ -601,6 +601,7 @@ EAPI Eina_Bool        elm_widget_theme(Evas_Object *obj);
 EAPI void             elm_widget_theme_specific(Evas_Object *obj, Elm_Theme *th, Eina_Bool force);
 EAPI void             elm_widget_translate(Evas_Object *obj);
 EAPI void             elm_widget_on_show_region_hook_set(Evas_Object *obj, void (*func)(void *data, Evas_Object *obj), void *data);
+EAPI Eina_Bool        elm_widget_sub_object_parent_add(Evas_Object *sobj);
 EAPI Eina_Bool        elm_widget_sub_object_add(Evas_Object *obj, Evas_Object *sobj);
 EAPI Eina_Bool        elm_widget_sub_object_del(Evas_Object *obj, Evas_Object *sobj);
 EAPI void             elm_widget_resize_object_set(Evas_Object *obj, Evas_Object *sobj);

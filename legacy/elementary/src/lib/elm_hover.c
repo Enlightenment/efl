@@ -540,13 +540,11 @@ _hov_dismiss_cb(void *data,
 static void
 _elm_hover_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
+   Elm_Hover_Smart_Data *priv = _pd;
    unsigned int i;
 
-   Elm_Hover_Smart_Data *priv = _pd;
-
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
-
-   elm_widget_sub_object_add(eo_parent_get(obj), obj);
+   elm_widget_sub_object_parent_add(obj);
 
    for (i = 0; i < sizeof(priv->subs) / sizeof(priv->subs[0]); i++)
      priv->subs[i].swallow = _content_aliases[i].alias;

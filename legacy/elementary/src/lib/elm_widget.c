@@ -953,6 +953,18 @@ _elm_widget_on_show_region_hook_set(Eo *obj EINA_UNUSED, void *_pd, va_list *lis
 }
 
 EAPI Eina_Bool
+elm_widget_sub_object_parent_add(Evas_Object *sobj)
+{
+   Eina_Bool ret = EINA_FALSE;
+   Eo *parent;
+
+   eo_do(sobj, eo_parent_get(&parent));
+   eo_do(parent, elm_wdg_sub_object_add(sobj, &ret));
+
+   return ret;
+}
+
+EAPI Eina_Bool
 elm_widget_sub_object_add(Evas_Object *obj,
                           Evas_Object *sobj)
 {
@@ -963,7 +975,7 @@ elm_widget_sub_object_add(Evas_Object *obj,
 
    Eina_Bool ret = EINA_FALSE;
    eo_do(obj, elm_wdg_sub_object_add(sobj, &ret));
-
+   // FIXME: better handle the error case in the eo called function than here.
    if (ret) return EINA_TRUE;
 
 err:
@@ -6120,12 +6132,15 @@ elm_widget_tree_dot_dump(const Evas_Object *top,
 static void
 _constructor(Eo *obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
 {
+   Eo *parent;
    ELM_WIDGET_DATA_GET(obj, sd);
 
    sd->on_create = EINA_TRUE;
    eo_do_super(obj, MY_CLASS, eo_constructor());
-   eo_do(obj, evas_obj_type_set(MY_CLASS_NAME));
-   eo_do(obj, elm_wdg_parent_set(eo_parent_get(obj)));
+   eo_do(obj,
+         evas_obj_type_set(MY_CLASS_NAME),
+         eo_parent_get(&parent));
+   eo_do(obj, elm_wdg_parent_set(parent));
    sd->on_create = EINA_FALSE;
 }
 

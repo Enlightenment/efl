@@ -1490,13 +1490,14 @@ _elm_popup_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Popup_Smart_Data *priv = _pd;
    Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
+   elm_widget_sub_object_parent_add(obj);
 
    evas_object_size_hint_weight_set
      (wd->resize_obj, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set
      (wd->resize_obj, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_widget_sub_object_add(eo_parent_get(obj), obj);
 
    if (!elm_layout_theme_set(obj, "popup", "base", elm_widget_style_get(obj)))
      CRITICAL("Failed to set layout!");

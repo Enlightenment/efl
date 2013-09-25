@@ -629,12 +629,11 @@ end:
 static void
 _elm_player_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
-   char buf[256];
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
-
-   elm_widget_sub_object_add(eo_parent_get(obj), obj);
-
    Elm_Player_Smart_Data *priv = _pd;
+   char buf[256];
+
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
+   elm_widget_sub_object_parent_add(obj);
 
    if (!elm_layout_theme_set(obj, "player", "base", elm_widget_style_get(obj)))
      CRITICAL("Failed to set layout!");

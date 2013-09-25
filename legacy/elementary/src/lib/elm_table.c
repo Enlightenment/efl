@@ -185,7 +185,7 @@ _elm_table_smart_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
    Evas_Object *table;
 
-   elm_widget_sub_object_add(eo_parent_get(obj), obj);
+   elm_widget_sub_object_parent_add(obj);
 
    table = evas_object_table_add(evas_object_evas_get(obj));
    elm_widget_resize_object_set(obj, table);

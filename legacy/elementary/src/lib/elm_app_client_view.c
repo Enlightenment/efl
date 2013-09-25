@@ -164,7 +164,7 @@ _app_client_view_constructor(Eo *eo, void *_pd, va_list *list)
    EINA_SAFETY_ON_NULL_GOTO(path, error);
    eo_do_super(eo, MY_CLASS, eo_constructor());
 
-   parent = eo_parent_get(eo);
+   eo_do(eo, eo_parent_get(&parent));
    EINA_SAFETY_ON_TRUE_GOTO((!parent) ||
                             (!eo_isa(parent, ELM_APP_CLIENT_CLASS)), error);
 
