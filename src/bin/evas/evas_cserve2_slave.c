@@ -434,8 +434,8 @@ image_load(const char *file, const char *key, const char *shmfile,
      }
 
    memset(&property, 0, sizeof (property));
-   property.w = params->w;
-   property.h = params->h;
+   property.w = params->opts.w; // Should we rather use params->w ?
+   property.h = params->opts.h;
 
    skey = eina_stringshare_add(key);
    loader_data = _image_file_open(fd, skey, opts, module, &property, &animated, &funcs);
@@ -443,6 +443,14 @@ image_load(const char *file, const char *key, const char *shmfile,
      {
         printf("LOAD failed at %s:%d: could not open image %s:%s\n",
                __FUNCTION__, __LINE__, file, skey);
+        goto done;
+     }
+
+   if (params->shm.mmap_size < (int) (property.w * property.h * 4))
+     {
+        printf("LOAD failed at %s:%d: shm map is too small (%d) for this image (%ux%u)\n",
+               __FUNCTION__, __LINE__,
+               params->shm.mmap_size, property.w , property.h);
         goto done;
      }
 

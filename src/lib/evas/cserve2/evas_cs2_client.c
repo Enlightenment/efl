@@ -705,15 +705,56 @@ _build_absolute_path(const char *path, char buf[], int size)
    return len;
 }
 
+// NOTE: Copy & paste from evas_cserve2_cache.c (TODO: Merge into common file)
+static Eina_Bool
+_evas_image_load_opts_empty(Evas_Image_Load_Opts *lo)
+{
+   if (!lo) return EINA_TRUE;
+
+   return ((lo->scale_down_by == 0)
+           && (lo->dpi == 0.0)
+           && (lo->w == 0) && (lo->h == 0)
+           && (lo->region.x == 0) && (lo->region.y == 0)
+           && (lo->region.w == 0) && (lo->region.h == 0)
+           && (lo->orientation == 0));
+}
+
+static void
+_file_hkey_get(char *buf, size_t sz, const char *path, const char *key,
+               Evas_Image_Load_Opts *lo)
+{
+   // Same as _evas_cache_image_loadopts_append() but not optimized :)
+   if (lo && _evas_image_load_opts_empty(lo))
+     lo = NULL;
+
+   if (!lo)
+     snprintf(buf, sz, "%s:%s", path, key);
+   else
+     {
+        if (lo->orientation)
+          {
+             snprintf(buf, sz, "%s:%s//@/%d/%f/%dx%d/%d+%d.%dx%d",
+                      path, key, lo->scale_down_by, lo->dpi, lo->w, lo->h,
+                      lo->region.x, lo->region.y, lo->region.w, lo->region.h);
+          }
+        else
+          {
+             snprintf(buf, sz, "%s:%s//@/%d/%f/%dx%d/%d+%d.%dx%d/o",
+                      path, key, lo->scale_down_by, lo->dpi, lo->w, lo->h,
+                      lo->region.x, lo->region.y, lo->region.w, lo->region.h);
+          }
+     }
+}
+
 static unsigned int
 _image_open_server_send(Image_Entry *ie, const char *file, const char *key,
                         Evas_Image_Load_Opts *opts)
 {
    int flen, klen;
-   int size;
+   int size, hkey_len;
    char *buf;
    char filebuf[PATH_MAX];
-   char *file_hkey;
+   char *hkey;
    Msg_Open msg_open;
    File_Entry *fentry;
    Data_Entry *dentry;
@@ -738,11 +779,10 @@ _image_open_server_send(Image_Entry *ie, const char *file, const char *key,
    if (!key) key = "";
    klen = strlen(key) + 1;
 
-   file_hkey = alloca(flen + klen);
-   memcpy(file_hkey, file, flen);
-   file_hkey[flen - 1] = ':';
-   memcpy(file_hkey + flen, key, klen);
-   fentry = eina_hash_find(_file_entries, file_hkey);
+   hkey_len = flen + klen + 1024;
+   hkey = alloca(hkey_len);
+   _file_hkey_get(hkey, hkey_len, filebuf, key, opts);
+   fentry = eina_hash_find(_file_entries, hkey);
    if (!fentry)
      {
         fentry = calloc(1, sizeof(*fentry));
@@ -750,7 +790,7 @@ _image_open_server_send(Image_Entry *ie, const char *file, const char *key,
           return 0;
 
         fentry->file_id = ++_file_id;
-        fentry->hkey = eina_stringshare_add(file_hkey);
+        fentry->hkey = eina_stringshare_add(hkey);
         eina_hash_direct_add(_file_entries, fentry->hkey, fentry);
      }
    fentry->refcount++;
@@ -2068,47 +2108,6 @@ _shared_string_get(int id)
 #define SHARED_INDEX_CHECK(si, typ) \
    do { if (!_shared_index_remap_check(&(si), sizeof(typ))) { \
    CRIT("Failed to remap index"); return NULL; } } while (0)
-
-
-static Eina_Bool
-_evas_image_load_opts_empty(Evas_Image_Load_Opts *lo)
-{
-   if (!lo) return EINA_TRUE;
-
-   return ((lo->scale_down_by == 0)
-           && (lo->dpi == 0.0)
-           && (lo->w == 0) && (lo->h == 0)
-           && (lo->region.x == 0) && (lo->region.y == 0)
-           && (lo->region.w == 0) && (lo->region.h == 0)
-           && (lo->orientation == 0));
-}
-
-static void
-_file_hkey_get(char *buf, size_t sz, const char *path, const char *key,
-               Evas_Image_Load_Opts *lo)
-{
-   // Same as _evas_cache_image_loadopts_append() but not optimized :)
-   if (lo && _evas_image_load_opts_empty(lo))
-     lo = NULL;
-
-   if (!lo)
-     snprintf(buf, sz, "%s:%s", path, key);
-   else
-     {
-        if (lo->orientation)
-          {
-             snprintf(buf, sz, "%s:%s//@/%d/%f/%dx%d/%d+%d.%dx%d",
-                      path, key, lo->scale_down_by, lo->dpi, lo->w, lo->h,
-                      lo->region.x, lo->region.y, lo->region.w, lo->region.h);
-          }
-        else
-          {
-             snprintf(buf, sz, "%s:%s//@/%d/%f/%dx%d/%d+%d.%dx%d/o",
-                      path, key, lo->scale_down_by, lo->dpi, lo->w, lo->h,
-                      lo->region.x, lo->region.y, lo->region.w, lo->region.h);
-          }
-     }
-}
 
 static const File_Data *
 _shared_image_entry_file_data_find(Image_Entry *ie)
