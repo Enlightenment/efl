@@ -1219,6 +1219,9 @@ _canvas_font_path_clear(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list EINA_UNUS
 	eina_stringshare_del(evas->font_path->data);
 	evas->font_path = eina_list_remove(evas->font_path, evas->font_path->data);
      }
+
+   if (fc_config)
+      FcConfigAppFontClear(fc_config);
 }
 
 EAPI void
@@ -1237,6 +1240,10 @@ _canvas_font_path_append(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list)
    Evas_Public_Data *e = _pd;
    if (!path) return;
    e->font_path = eina_list_append(e->font_path, eina_stringshare_add(path));
+
+   evas_font_init();
+   if (fc_config)
+      FcConfigAppFontAddDir(fc_config, (const FcChar8 *) path);
 }
 
 EAPI void
@@ -1255,6 +1262,10 @@ _canvas_font_path_prepend(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list)
    Evas_Public_Data *e = _pd;
    if (!path) return;
    e->font_path = eina_list_prepend(e->font_path, eina_stringshare_add(path));
+
+   evas_font_init();
+   if (fc_config)
+      FcConfigAppFontAddDir(fc_config, (const FcChar8 *) path);
 }
 
 EAPI const Eina_List *

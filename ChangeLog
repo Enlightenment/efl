@@ -1,5 +1,9 @@
 2013-09-25  Tom Hacohen
 
+	* Evas font: Make the evas_font_path_* functions apply to fontconfig searches.
+
+2013-09-25  Tom Hacohen
+
 	* Evas font: Use our own fontconfig configuration so we don't get
 	affected by changes made to the default fontconfig configuration.
 
