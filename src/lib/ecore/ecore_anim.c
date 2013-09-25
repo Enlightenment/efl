@@ -143,7 +143,7 @@ _do_tick(void)
                     eina_inlist_remove(EINA_INLIST_GET(animators),
                                        EINA_INLIST_GET(animator));
 
-                  eo_parent_set(animator->obj, NULL);
+                  eo_do(animator->obj, eo_parent_set(NULL));
                   if (eo_destructed_is(animator->obj))
                      eo_manual_free(animator->obj);
                   else
@@ -559,7 +559,7 @@ _ecore_animator_shutdown(void)
         animator = animators;
         animators = (Ecore_Animator_Private_Data *)eina_inlist_remove(EINA_INLIST_GET(animators), EINA_INLIST_GET(animators));
 
-        eo_parent_set(animator->obj, NULL);
+        eo_do(animator->obj, eo_parent_set(NULL));
         if (eo_destructed_is(animator->obj))
            eo_manual_free(animator->obj);
         else

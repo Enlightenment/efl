@@ -175,7 +175,7 @@ _ecore_poller_cb_timer(void *data EINA_UNUSED)
                      {
                         pollers[i] = (Ecore_Poller_Private_Data *)eina_inlist_remove(EINA_INLIST_GET(pollers[i]), EINA_INLIST_GET(poller));
 
-                        eo_parent_set(poller->obj, NULL);
+                        eo_do(poller->obj, eo_parent_set(NULL));
                         if (eo_destructed_is(poller->obj))
                            eo_manual_free(poller->obj);
                         else
@@ -408,7 +408,7 @@ ecore_poller_del(Ecore_Poller *obj)
    data = poller->data;
    pollers[poller->ibit] = (Ecore_Poller_Private_Data *)eina_inlist_remove(EINA_INLIST_GET(pollers[poller->ibit]), EINA_INLIST_GET(poller));
 
-   eo_parent_set(poller->obj, NULL);
+   eo_do(poller->obj, eo_parent_set(NULL));
    if (eo_destructed_is(poller->obj))
       eo_manual_free(obj);
    else
@@ -447,7 +447,7 @@ _ecore_poller_shutdown(void)
         while ((poller = pollers[i]))
           {
              pollers[i] = (Ecore_Poller_Private_Data *)eina_inlist_remove(EINA_INLIST_GET(pollers[i]), EINA_INLIST_GET(pollers[i]));
-             eo_parent_set(poller->obj, NULL);
+             eo_do(poller->obj, eo_parent_set(NULL));
              if (eo_destructed_is(poller->obj))
                 eo_manual_free(poller->obj);
              else

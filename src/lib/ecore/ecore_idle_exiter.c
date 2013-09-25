@@ -152,7 +152,7 @@ _ecore_idle_exiter_shutdown(void)
      {
         idle_exiters = (Ecore_Idle_Exiter_Private_Data *)eina_inlist_remove(EINA_INLIST_GET(idle_exiters), EINA_INLIST_GET(idle_exiters));
 
-        eo_parent_set(ie->obj, NULL);
+        eo_do(ie->obj, eo_parent_set(NULL));
         if (eo_destructed_is(ie->obj))
           eo_manual_free(ie->obj);
         else
@@ -213,7 +213,7 @@ _ecore_idle_exiter_call(void)
 
                   idle_exiters = (Ecore_Idle_Exiter_Private_Data *)eina_inlist_remove(EINA_INLIST_GET(idle_exiters), EINA_INLIST_GET(ie));
 
-                  eo_parent_set(ie->obj, NULL);
+                  eo_do(ie->obj, eo_parent_set(NULL));
                   if (eo_destructed_is(ie->obj))
                     eo_manual_free(ie->obj);
                   else

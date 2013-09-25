@@ -137,7 +137,7 @@ _ecore_idler_shutdown(void)
      {
         idlers = (Ecore_Idler_Private_Data *)eina_inlist_remove(EINA_INLIST_GET(idlers), EINA_INLIST_GET(idlers));
 
-        eo_parent_set(ie->obj, NULL);
+        eo_do(ie->obj, eo_parent_set(NULL));
         if (eo_destructed_is(ie->obj))
           eo_manual_free(ie->obj);
         else
@@ -194,7 +194,7 @@ _ecore_idler_all_call(void)
 
                   idlers = (Ecore_Idler_Private_Data *)eina_inlist_remove(EINA_INLIST_GET(idlers), EINA_INLIST_GET(ie));
 
-                  eo_parent_set(ie->obj, NULL);
+                  eo_do(ie->obj, eo_parent_set(NULL));
                   if (eo_destructed_is(ie->obj))
                      eo_manual_free(ie->obj);
                   else

@@ -202,7 +202,7 @@ _ecore_idle_enterer_shutdown(void)
      {
         idle_enterers = (Ecore_Idle_Enterer_Private_Data *)eina_inlist_remove(EINA_INLIST_GET(idle_enterers), EINA_INLIST_GET(idle_enterers));
 
-        eo_parent_set(ie->obj, NULL);
+        eo_do(ie->obj, eo_parent_set(NULL));
         if (eo_destructed_is(ie->obj))
           eo_manual_free(ie->obj);
         else
@@ -262,7 +262,7 @@ _ecore_idle_enterer_call(void)
 
                   idle_enterers = (Ecore_Idle_Enterer_Private_Data *)eina_inlist_remove(EINA_INLIST_GET(idle_enterers), EINA_INLIST_GET(ie));
 
-                  eo_parent_set(ie->obj, NULL);
+                  eo_do(ie->obj, eo_parent_set(NULL));
                   if (eo_destructed_is(ie->obj))
                     eo_manual_free(ie->obj);
                   else

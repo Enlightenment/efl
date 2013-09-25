@@ -127,7 +127,7 @@ ecore_job_del(Ecore_Job *obj)
    Ecore_Job_Private_Data *job = eo_data_scope_get(obj, MY_CLASS);
    data = job->data;
    ecore_event_del(job->event);
-   eo_parent_set(obj, NULL);
+   eo_do(obj, eo_parent_set(NULL));
    return data;
 }
 
@@ -158,7 +158,7 @@ static void
 _ecore_job_event_free(void *data,
                       void *job EINA_UNUSED)
 {
-   eo_parent_set(data, NULL);
+   eo_do(data, eo_parent_set(NULL));
 
    Ecore_Job *obj = data;
 

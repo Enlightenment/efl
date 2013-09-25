@@ -632,7 +632,7 @@ _ecore_timer_del(Ecore_Timer *obj)
         if (timer->delete_me)
           timers_delete_me--;
 
-        eo_parent_set(obj, NULL);
+        eo_do(obj, eo_parent_set(NULL));
 
         if (eo_destructed_is(obj))
           eo_manual_free(obj);
@@ -671,7 +671,7 @@ _ecore_timer_shutdown(void)
         timers = (Ecore_Timer_Private_Data *)eina_inlist_remove(EINA_INLIST_GET(timers), EINA_INLIST_GET(timers));
 
         eo_data_unref(timer->obj, timer);
-        eo_parent_set(timer->obj, NULL);
+        eo_do(timer->obj, eo_parent_set(NULL));
         if (eo_destructed_is(timer->obj))
           eo_manual_free(timer->obj);
         else
@@ -683,7 +683,7 @@ _ecore_timer_shutdown(void)
         suspended = (Ecore_Timer_Private_Data *)eina_inlist_remove(EINA_INLIST_GET(suspended), EINA_INLIST_GET(suspended));
 
         eo_data_unref(timer->obj, timer);
-        eo_parent_set(timer->obj, NULL);
+        eo_do(timer->obj, eo_parent_set(NULL));
         if (eo_destructed_is(timer->obj))
           eo_manual_free(timer->obj);
         else
@@ -715,7 +715,7 @@ _ecore_timer_cleanup(void)
              timers = (Ecore_Timer_Private_Data *)eina_inlist_remove(EINA_INLIST_GET(timers), EINA_INLIST_GET(timer));
 
              eo_data_unref(timer->obj, timer);
-             eo_parent_set(timer->obj, NULL);
+             eo_do(timer->obj, eo_parent_set(NULL));
              if (eo_destructed_is(timer->obj))
                eo_manual_free(timer->obj);
              else
@@ -740,7 +740,7 @@ _ecore_timer_cleanup(void)
              suspended = (Ecore_Timer_Private_Data *)eina_inlist_remove(EINA_INLIST_GET(suspended), EINA_INLIST_GET(timer));
 
              eo_data_unref(timer->obj, timer);
-             eo_parent_set(timer->obj, NULL);
+             eo_do(timer->obj, eo_parent_set(NULL));
              if (eo_destructed_is(timer->obj))
                 eo_manual_free(timer->obj);
              else
