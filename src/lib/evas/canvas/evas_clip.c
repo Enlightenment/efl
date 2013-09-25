@@ -390,14 +390,17 @@ _clip_unset(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
                }
              EINA_COW_STATE_WRITE_END(obj->cur->clipper, state_write, cur);
 
-             if (obj->cur->clipper->cur->visible)
+             if ((obj->cur->clipper->cur) && (obj->cur->clipper->cur->visible))
                {
-                  Evas_Public_Data *e = obj->cur->clipper->layer->evas;
-                  evas_damage_rectangle_add(e->evas,
-                                            obj->cur->clipper->cur->geometry.x + e->framespace.x,
-                                            obj->cur->clipper->cur->geometry.y + e->framespace.y,
-                                            obj->cur->clipper->cur->geometry.w,
-                                            obj->cur->clipper->cur->geometry.h);
+                  if (obj->cur->clipper->layer)
+                    {
+                       Evas_Public_Data *e = obj->cur->clipper->layer->evas;
+                       evas_damage_rectangle_add(e->evas,
+                                                 obj->cur->clipper->cur->geometry.x + e->framespace.x,
+                                                 obj->cur->clipper->cur->geometry.y + e->framespace.y,
+                                                 obj->cur->clipper->cur->geometry.w,
+                                                 obj->cur->clipper->cur->geometry.h);
+                    }
                }
           }
 	evas_object_change(obj->cur->clipper->object, obj->cur->clipper);
