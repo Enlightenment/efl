@@ -607,7 +607,7 @@ evas_object_del(Evas_Object *eo_obj)
 
    obj->eo_del_called = EINA_TRUE;
 
-   eo_parent_set(eo_obj, NULL);
+   eo_do(eo_obj, eo_parent_set(NULL));
 //   eo_del(eo_obj);
 }
 

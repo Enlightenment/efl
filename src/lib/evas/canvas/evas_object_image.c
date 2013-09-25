@@ -318,10 +318,15 @@ _constructor(Eo *eo_obj, void *class_data, va_list *list EINA_UNUSED)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    Evas_Object_Image *o = class_data;
-   Evas *eo_e = evas_object_evas_get(eo_parent_get(eo_obj));
+   Evas *eo_e;
+   Eo *parent;
    Evas_Colorspace cspace;
 
    eo_do_super(eo_obj, MY_CLASS, eo_constructor());
+
+   eo_do(eo_obj, eo_parent_get(&parent));
+   eo_e = evas_object_evas_get(parent);
+
    evas_object_image_init(eo_obj);
    evas_object_inject(eo_obj, obj, eo_e);
 

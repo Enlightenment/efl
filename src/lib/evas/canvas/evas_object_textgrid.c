@@ -1043,11 +1043,15 @@ evas_object_textgrid_add(Evas *e)
 static void
 _constructor(Eo *eo_obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
 {
+   Eo *eo_parent;
+
    eo_do_super(eo_obj, MY_CLASS, eo_constructor());
 
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    evas_object_textgrid_init(eo_obj);
-   evas_object_inject(eo_obj, obj, evas_object_evas_get(eo_parent_get(eo_obj)));
+
+   eo_do(eo_obj, eo_parent_get(&eo_parent));
+   evas_object_inject(eo_obj, obj, evas_object_evas_get(eo_parent));
 }
 
 EAPI void

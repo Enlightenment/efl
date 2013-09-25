@@ -5350,6 +5350,7 @@ _constructor(Eo *eo_obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    Evas_Object_Textblock *o;
+   Eo *eo_parent;
 
    eo_do_super(eo_obj, MY_CLASS, eo_constructor());
 
@@ -5362,7 +5363,9 @@ _constructor(Eo *eo_obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED
    o->cursor = calloc(1, sizeof(Evas_Textblock_Cursor));
    _format_command_init();
    evas_object_textblock_init(eo_obj);
-   evas_object_inject(eo_obj, obj, evas_object_evas_get(eo_parent_get(eo_obj)));
+
+   eo_do(eo_obj, eo_parent_get(&eo_parent));
+   evas_object_inject(eo_obj, obj, evas_object_evas_get(eo_parent));
 }
 
 EAPI Evas_Textblock_Style *
