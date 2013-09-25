@@ -234,7 +234,7 @@ START_TEST(eo_composite_tests)
    fail_if(!obj2);
 
    eo_composite_attach(obj2, obj);
-   eo_parent_set(obj2, NULL);
+   eo_do(obj2, eo_parent_set(NULL));
    fail_if(eo_composite_is(obj2));
 
    eo_unref(obj2);
@@ -655,6 +655,9 @@ START_TEST(eo_magic_checks)
 
    while (1)
      {
+        Eo *parent = NULL;
+        Eo *wref = NULL;
+
         obj = eo_add((Eo_Class *) buf, NULL);
         fail_if(obj);
 
@@ -687,11 +690,11 @@ START_TEST(eo_magic_checks)
 
         fail_if(0 != eo_ref_get((Eo *) buf));
 
-        Eo *wref = NULL;
-        eo_do((Eo *) buf, eo_wref_add(&wref));
+        eo_do((Eo *) buf,
+	      eo_wref_add(&wref),
+	      eo_parent_get(&parent));
         fail_if(wref);
-
-        fail_if(eo_parent_get((Eo *) buf));
+        fail_if(parent);
 
         eo_error_set((Eo *) buf);
 
