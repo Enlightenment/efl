@@ -858,6 +858,21 @@ EAPI Eina_Inlist *eina_inlist_sort(Eina_Inlist *head, Eina_Compare_Cb func);
        it; it = (EINA_INLIST_GET(it)->prev ? _EINA_INLIST_CONTAINER(it, EINA_INLIST_GET(it)->prev) : NULL))
 
 /**
+ * @def EINA_INLIST_REVERSE_FOREACH_FROM
+ * @param list The last list to traversed in reverse order.
+ * @param it The pointer to the list item, i.e. a pointer to each item
+ * that is part of the list.
+ * @see EINA_INLIST_REVERSE_FOREACH()
+ * @since 1.8
+ *
+ * EINA_INLIST_REVERSE_FOREACH() starts from last list of the given list.
+ * This starts from given list, not the last one.
+ */
+#define EINA_INLIST_REVERSE_FOREACH_FROM(list, it)                                \
+  for (it = NULL, it = (list ? _EINA_INLIST_CONTAINER(it, list) : NULL); \
+       it; it = (EINA_INLIST_GET(it)->prev ? _EINA_INLIST_CONTAINER(it, EINA_INLIST_GET(it)->prev) : NULL))
+
+/**
  * @def EINA_INLIST_FREE
  * @param list The list to free.
  * @param it The pointer to the list item, i.e. a pointer to each item
