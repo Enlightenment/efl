@@ -2335,6 +2335,90 @@ EAPI Eina_Bool edje_edit_state_text_fit_y_get(Evas_Object *obj, const char *part
  */
 EAPI void edje_edit_state_text_fit_y_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool fit);
 
+/** Get if the text part forces the minimum horizontal size of the container to be equal to the minimum horizontal size of the text part
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain state.
+ * @param state The name of the state to get the the minimum horizontal size of the container to be equal (not including the state value).
+ * @param value The state value.
+ *
+ * @return EINA_TRUE If the part forces container's minimum horizontal size, EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool edje_edit_state_text_min_x_get(Evas_Object *obj, const char *part, const char *state, double value);
+
+/** Get if the text part forces the maximum horizontal size of the container to be equal to the maximum horizontal size of the text part
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain state.
+ * @param state The name of the state to get the the minimum horizontal size of the container to be equal (not including the state value).
+ * @param value The state value.
+ *
+ * @return EINA_TRUE If the part forces container's maximum horizontal size, EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool edje_edit_state_text_max_x_get(Evas_Object *obj, const char *part, const char *state, double value);
+
+/** Get if the text part forces the minimum vertical size of the container to be equal to the minimum vertical size of the text part
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain state.
+ * @param state The name of the state to get the the minimum vertical size of the container to be equal (not including the state value).
+ * @param value The state value.
+ *
+ * @return EINA_TRUE If the part forces container's minimum vertical size, EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool edje_edit_state_text_min_y_get(Evas_Object *obj, const char *part, const char *state, double value);
+
+/** Get if the text part forces the maximum vertical size of the container to be equal to the maximum vertical size of the text part
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain state.
+ * @param state The name of the state to get the the maximum vertical size of the container to be equal (not including the state value).
+ * @param value The state value.
+ *
+ * @return EINA_TRUE If the part forces container's maximum vertical size, EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool edje_edit_state_text_max_y_get(Evas_Object *obj, const char *part, const char *state, double value);
+
+/** Set if the text part forces the minimum horizontal size of the container to be equal to the minimum horizontal size of the text part
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain state.
+ * @param state The name of the state to set the the minimum horizontal size of the container to be equal (not including the state value).
+ * @param value The state value.
+ * @param v EINA_TRUE to make the text force it's forces container's minimum horizontal size, EINA_FALSE otherwise.
+ */
+EAPI void edje_edit_state_text_min_x_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool v);
+
+/** Set if the text part forces the maximum horizontal size of the container to be equal to the maximum horizontal size of the text part
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain state.
+ * @param state The name of the state to set the the maximum horizontal size of the container to be equal (not including the state value).
+ * @param value The state value.
+ * @param v EINA_TRUE to make the text force it's forces container's maximum horizontal size, EINA_FALSE otherwise.
+ */
+EAPI void edje_edit_state_text_max_x_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool v);
+
+/** Set if the text part forces the minimum vertical size of the container to be equal to the minimum vertical size of the text part
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain state.
+ * @param state The name of the state to set the the minimum vertical size of the container to be equal (not including the state value).
+ * @param value The state value.
+ * @param v EINA_TRUE to make the text force it's forces container's minimum vertical size, EINA_FALSE otherwise.
+ */
+EAPI void edje_edit_state_text_min_y_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool v);
+
+/** Set if the text part forces the maximum vertical size of the container to be equal to the maximum vertical size of the text part
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain state.
+ * @param state The name of the state to set the the maximum vertical size of the container to be equal (not including the state value).
+ * @param value The state value.
+ * @param v EINA_TRUE to make the text force it's forces container's maximum vertical size, EINA_FALSE otherwise.
+ */
+EAPI void edje_edit_state_text_max_y_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool v);
+
 /** Get the list of all the fonts in the given edje.
  *
  * Use edje_edit_string_list_free() when you don't need the list anymore.

@@ -4265,41 +4265,45 @@ FUNC_TEXT_DOUBLE(align_x, align.x);
 FUNC_TEXT_DOUBLE(align_y, align.y);
 FUNC_TEXT_DOUBLE(elipsis, elipsis);
 
-#define FUNC_TEXT_BOOL_FIT(Value)					\
-  EAPI Eina_Bool							\
-  edje_edit_state_text_fit_##Value##_get(Evas_Object *obj, const char *part, const char *state, double value) \
+#define FUNC_TEXT_BOOL(Name, Type)					\
+  EAPI Eina_Bool                                                        \
+  edje_edit_state_text_##Name##_##Type##_get(Evas_Object *obj, const char *part, const char *state, double value) \
   {									\
      Edje_Part_Description_Text *txt;					\
 									\
      eina_error_set(0);							\
 									\
      GET_PD_OR_RETURN(EINA_FALSE);					\
-                                                                        \
+									\
      if ((rp->part->type != EDJE_PART_TYPE_TEXT) &&                     \
          (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK))                  \
        return EINA_FALSE;                                               \
-									\
+                                                                        \
      txt = (Edje_Part_Description_Text *) pd;				\
-     return txt->text.fit_##Value;					\
+     return txt->text.Name##_##Type;					\
   }									\
   EAPI void								\
-  edje_edit_state_text_fit_##Value##_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool fit) \
+  edje_edit_state_text_##Name##_##Type##_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool v) \
   {									\
      Edje_Part_Description_Text *txt;					\
 									\
      GET_PD_OR_RETURN();						\
-                                                                        \
+									\
      if ((rp->part->type != EDJE_PART_TYPE_TEXT) &&                     \
          (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK))                  \
        return;                                                          \
-									\
+                                                                        \
      txt = (Edje_Part_Description_Text *) pd;				\
-     txt->text.fit_##Value = fit ? 1 : 0;				\
+     txt->text.Name##_##Type = v ? 1 : 0;				\
      edje_object_calc_force(obj);					\
   }
 
-FUNC_TEXT_BOOL_FIT(x);
-FUNC_TEXT_BOOL_FIT(y);
+FUNC_TEXT_BOOL(fit, x);
+FUNC_TEXT_BOOL(fit, y);
+FUNC_TEXT_BOOL(min, x);
+FUNC_TEXT_BOOL(min, y);
+FUNC_TEXT_BOOL(max, x);
+FUNC_TEXT_BOOL(max, y);
 
 EAPI Eina_List *
 edje_edit_fonts_list_get(Evas_Object *obj)
@@ -7024,7 +7028,10 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
 	  BUF_APPENDF(I6"text_class: \"%s\";\n", txt->text.text_class);
 	if (txt->text.fit_x || txt->text.fit_y)
 	  BUF_APPENDF(I6"fit: %d %d;\n", txt->text.fit_x, txt->text.fit_y);
-        //TODO Support min & max
+    if (txt->text.min_x || txt->text.min_y)
+  	  BUF_APPENDF(I6"min: \"%d\" \"%d\";\n", txt->text.min_x, txt->text.min_y);
+    if (txt->text.max_x || txt->text.max_y)
+      BUF_APPENDF(I6"max: %d %d;\n", txt->text.max_x, txt->text.max_y);
 	if (TO_DOUBLE(txt->text.align.x) != 0.5 || TO_DOUBLE(txt->text.align.y) != 0.5)
 	  BUF_APPENDF(I6"align: %g %g;\n", TO_DOUBLE(txt->text.align.x), TO_DOUBLE(txt->text.align.y));
         //TODO Support source
