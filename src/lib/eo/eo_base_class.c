@@ -16,6 +16,9 @@ typedef struct _Eo_Callback_Description Eo_Callback_Description;
 
 typedef struct
 {
+   Eina_List *children;
+   Eo *parent;
+
    Eina_Inlist *generic_data;
    Eo ***wrefs;
 
@@ -106,6 +109,147 @@ _data_get(Eo *obj EINA_UNUSED, void *class_data, va_list *list)
              return;
           }
      }
+}
+
+static void
+_parent_set(Eo *obj, void *class_data, va_list *list)
+{
+   Private_Data *pd = (Private_Data *) class_data;
+
+   EO_PARAMETER_GET(Eo *, parent_id, list);
+
+   if (pd->parent == parent_id)
+     return ;
+
+   if (eo_composite_is(obj))
+     {
+        eo_composite_detach(obj, pd->parent);
+     }
+
+   if (pd->parent)
+     {
+        Private_Data *old_parent_pd;
+
+        old_parent_pd = eo_data_scope_get(pd->parent, EO_BASE_CLASS);
+        old_parent_pd->children = eina_list_remove(old_parent_pd->children,
+                                                   obj);
+        eo_xunref(obj, pd->parent);
+     }
+
+   pd->parent = parent_id;
+   if (pd->parent)
+     {
+        Private_Data *parent_pd = NULL;
+
+        parent_pd = eo_data_scope_get(parent_id, EO_BASE_CLASS);
+        parent_pd->children = eina_list_append(parent_pd->children,
+                                               obj);
+        eo_xref(obj, pd->parent);
+     }
+}
+
+static void
+_parent_get(Eo *obj EINA_UNUSED, void *class_data, va_list *list)
+{
+   Private_Data *pd = (Private_Data *) class_data;
+
+   EO_PARAMETER_GET(Eo **, parent_id, list);
+
+   if (!parent_id) return ;
+   *parent_id = pd->parent;
+}
+
+
+/* Children accessor */
+typedef struct _Eo_Children_Iterator Eo_Children_Iterator;
+struct _Eo_Children_Iterator
+{
+   Eina_Iterator iterator;
+   Eina_List *current;
+   _Eo *obj;
+   Eo *obj_id;
+   
+};
+
+static Eina_Bool
+_eo_children_iterator_next(Eo_Children_Iterator *it, void **data)
+{
+   if (!it->current) return EINA_FALSE;
+
+   if (data) *data = eina_list_data_get(it->current);
+   it->current = eina_list_next(it->current);
+
+   return EINA_TRUE;
+}
+
+static Eo *
+_eo_children_iterator_container(Eo_Children_Iterator *it)
+{
+   return it->obj_id;
+}
+
+static void
+_eo_children_iterator_free(Eo_Children_Iterator *it)
+{
+   _Eo_Class *klass;
+   _Eo *obj;
+
+   klass = (_Eo_Class*) it->obj->klass;
+   obj = it->obj;
+
+   eina_lock_take(&klass->iterators.trash_lock);
+   if (klass->iterators.trash_count < 8)
+     {
+        klass->iterators.trash_count++;
+        eina_trash_push(&klass->iterators.trash, it);
+     }
+   else
+     {
+        free(it);
+     }
+   eina_lock_release(&klass->iterators.trash_lock);
+   
+   _eo_unref(obj);
+}
+
+static void
+_children_iterator_new(Eo *obj_id, void *class_data, va_list *list)
+{
+   Private_Data *pd = class_data;
+   _Eo_Class *klass;
+
+   EO_PARAMETER_GET(Eo_Children_Iterator **, it, list);
+   EO_OBJ_POINTER_RETURN(obj_id, obj);
+
+   if (!it) return ;
+   *it = NULL;
+
+   if (!pd->children) return ;
+
+   klass = (_Eo_Class *) obj->klass;
+
+   eina_lock_take(&klass->iterators.trash_lock);
+   *it = eina_trash_pop(&klass->iterators.trash);
+   if (*it)
+     {
+        klass->iterators.trash_count--;
+        memset(*it, 0, sizeof (Eo_Children_Iterator));
+     }
+   else
+     {
+        *it = calloc(1, sizeof (Eo_Children_Iterator));
+     }
+   eina_lock_release(&klass->iterators.trash_lock);
+   if (!*it) return ;
+
+   EINA_MAGIC_SET(&(*it)->iterator, EINA_MAGIC_ITERATOR);
+   (*it)->current = obj->children;
+   (*it)->obj = _eo_ref(obj);
+   (*it)->obj_id = obj_id;
+
+   (*it)->iterator.next = FUNC_ITERATOR_NEXT(_eo_children_iterator_next);
+   (*it)->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(_eo_children_iterator_container);
+   (*it)->iterator.free = FUNC_ITERATOR_FREE(_eo_children_iterator_free);
 }
 
 static void
@@ -746,7 +890,12 @@ _constructor(Eo *obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
 static void
 _destructor(Eo *obj, void *class_data, va_list *list EINA_UNUSED)
 {
+   Private_Data *pd = class_data;
+
    DBG("%p - %s.", obj, eo_class_name_get(MY_CLASS));
+
+   while (pd->children)
+     eo_do(eina_list_data_get(pd->children), eo_parent_set(NULL));
 
    _eo_generic_data_del_all(class_data);
    _wref_destruct(class_data);
@@ -763,6 +912,9 @@ _class_constructor(Eo_Class *klass)
    const Eo_Op_Func_Description func_desc[] = {
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DESTRUCTOR), _destructor),
+        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_PARENT_SET), _parent_set),
+        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_PARENT_GET), _parent_get),
+        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CHILDREN_ITERATOR_NEW), _children_iterator_new),
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DATA_SET), _data_set),
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DATA_GET), _data_get),
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DATA_DEL), _data_del),
@@ -791,6 +943,9 @@ _class_constructor(Eo_Class *klass)
 static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(EO_BASE_SUB_ID_CONSTRUCTOR, "Constructor"),
      EO_OP_DESCRIPTION(EO_BASE_SUB_ID_DESTRUCTOR, "Destructor"),
+     EO_OP_DESCRIPTION(EO_BASE_SUB_ID_PARENT_SET, "Set parent"),
+     EO_OP_DESCRIPTION(EO_BASE_SUB_ID_PARENT_GET, "Get parent"),
+     EO_OP_DESCRIPTION(EO_BASE_SUB_ID_CHILDREN_ITERATOR_NEW, "Children Iterator"),
      EO_OP_DESCRIPTION(EO_BASE_SUB_ID_DATA_SET, "Set data for key."),
      EO_OP_DESCRIPTION(EO_BASE_SUB_ID_DATA_GET, "Get data for key."),
      EO_OP_DESCRIPTION(EO_BASE_SUB_ID_DATA_DEL, "Del key."),

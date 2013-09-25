@@ -1043,133 +1043,17 @@ eo_isa(const Eo *obj_id, const Eo_Class *klass_id)
    return (func && (func->func == _eo_class_isa_func));
 }
 
-EAPI Eina_Bool
-eo_parent_set(Eo *obj_id, const Eo *parent_id)
-{
-   EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, EINA_FALSE);
-   if (parent_id)
-     {
-        EO_OBJ_POINTER_RETURN_VAL(parent_id, parent, EINA_FALSE);
-     }
-
-   if (obj->parent == parent_id)
-      return EINA_TRUE;
-
-   _eo_ref(obj);
-
-   if (eo_composite_is(obj_id))
-     {
-        eo_composite_detach(obj_id, obj->parent);
-     }
-
-   if (obj->parent)
-     {
-        EO_OBJ_POINTER_RETURN_VAL(obj->parent, obj_parent, EINA_FALSE);
-        obj_parent->children = eina_list_remove(obj_parent->children, obj_id);
-        eo_xunref(obj_id, obj->parent);
-     }
-
-   obj->parent = (Eo *) parent_id;
-   if (obj->parent)
-     {
-        EO_OBJ_POINTER_RETURN_VAL(parent_id, parent, EINA_FALSE);
-        parent->children = eina_list_append(parent->children, obj_id);
-        eo_xref(obj_id, obj->parent);
-     }
-
-   _eo_unref(obj);
-
-   return EINA_TRUE;
-}
-
-/* Children accessor */
-typedef struct _Eo_Children_Iterator Eo_Children_Iterator;
-struct _Eo_Children_Iterator
-{
-   Eina_Iterator iterator;
-   Eina_List *current;
-   _Eo *obj;
-   Eo *obj_id;
-   
-};
-
-static Eina_Bool
-_eo_children_iterator_next(Eo_Children_Iterator *it, void **data)
-{
-   if (!it->current) return EINA_FALSE;
-
-   if (data) *data = eina_list_data_get(it->current);
-   it->current = eina_list_next(it->current);
-
-   return EINA_TRUE;
-}
-
-static Eo *
-_eo_children_iterator_container(Eo_Children_Iterator *it)
-{
-   return it->obj_id;
-}
-
+// A little bit hacky, but does the job
 static void
-_eo_children_iterator_free(Eo_Children_Iterator *it)
+_eo_parent_internal_set(_Eo *obj, ...)
 {
-   _Eo_Class *klass;
-   _Eo *obj;
+   va_list p_list;
 
-   klass = (_Eo_Class*) it->obj->klass;
-   obj = it->obj;
-
-   eina_lock_take(&klass->iterators.trash_lock);
-   if (klass->iterators.trash_count < 8)
-     {
-        klass->iterators.trash_count++;
-        eina_trash_push(&klass->iterators.trash, it);
-     }
-   else
-     {
-        free(it);
-     }
-   eina_lock_release(&klass->iterators.trash_lock);
-   
-   _eo_unref(obj);
-}
-
-EAPI Eina_Iterator *
-eo_children_iterator_new(Eo *obj_id)
-{
-   Eo_Children_Iterator *it;
-   _Eo_Class *klass;
-
-   EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, NULL);
-
-   if (!obj->children) return NULL;
-
-   klass = (_Eo_Class*) obj->klass;
-
-   eina_lock_take(&klass->iterators.trash_lock);
-   it = eina_trash_pop(&klass->iterators.trash);
-   if (it)
-     {
-        klass->iterators.trash_count--;
-        memset(it, 0, sizeof (Eo_Children_Iterator));
-     }
-   else
-     {
-        it = calloc(1, sizeof (Eo_Children_Iterator));
-     }
-   eina_lock_release(&klass->iterators.trash_lock);
-   if (!it) return NULL;
-
-   EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
-   it->current = obj->children;
-   it->obj = _eo_ref(obj);
-   it->obj_id = obj_id;
-
-   it->iterator.next = FUNC_ITERATOR_NEXT(_eo_children_iterator_next);
-   it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(_eo_children_iterator_container);
-   it->iterator.free = FUNC_ITERATOR_FREE(_eo_children_iterator_free);
-
-   return &it->iterator;
+   va_start(p_list, obj);
+   _eo_op_internal("eo.c", 1049, obj, obj->klass,
+                   EO_OP_TYPE_REGULAR, EO_BASE_ID(EO_BASE_SUB_ID_PARENT_SET),
+                   &p_list);
+   va_end(p_list);
 }
 
 EAPI Eo *
@@ -1212,11 +1096,12 @@ eo_add_internal(const char *file, int line, const Eo_Class *klass_id, Eo *parent
 #endif
    Eo_Id obj_id = _eo_id_allocate(obj);
    obj->obj_id = obj_id;
-   eo_parent_set((Eo *)obj_id, parent_id);
 
    _eo_condtor_reset(obj);
 
    _eo_ref(obj);
+
+   _eo_parent_internal_set(obj, parent_id);
 
    /* Run the relevant do stuff. */
      {
@@ -1322,7 +1207,7 @@ eo_unref(const Eo *obj_id)
 EAPI void
 eo_del(const Eo *obj)
 {
-   eo_parent_set((Eo *) obj, NULL);
+   eo_do((Eo *) obj, eo_parent_set(NULL));
    eo_unref(obj);
 }
 
@@ -1332,14 +1217,6 @@ eo_ref_get(const Eo *obj_id)
    EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, 0);
 
    return obj->refcount;
-}
-
-EAPI Eo *
-eo_parent_get(const Eo *obj_id)
-{
-   EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, NULL);
-
-   return obj->parent;
 }
 
 EAPI void
@@ -1624,7 +1501,8 @@ eo_composite_attach(Eo *comp_obj_id, Eo *parent_id)
 
    comp_obj->composite = EINA_TRUE;
    parent->composite_objects = eina_list_prepend(parent->composite_objects, comp_obj_id);
-   eo_parent_set(comp_obj_id, parent_id);
+
+   eo_do(comp_obj_id, eo_parent_set(parent_id));
 }
 
 EAPI void
@@ -1635,7 +1513,7 @@ eo_composite_detach(Eo *comp_obj_id, Eo *parent_id)
 
    comp_obj->composite = EINA_FALSE;
    parent->composite_objects = eina_list_remove(parent->composite_objects, comp_obj_id);
-   eo_parent_set(comp_obj_id, NULL);
+   eo_do(comp_obj_id, eo_parent_set(NULL));
 }
 
 EAPI Eina_Bool

@@ -214,11 +214,6 @@ _eo_del_internal(const char *file, int line, _Eo *obj)
           }
      }
 
-   while (obj->children)
-     {
-        eo_parent_set(eina_list_data_get(obj->children), NULL); // ZZZ
-     }
-
    obj->del = EINA_TRUE;
    obj->refcount--;
 }

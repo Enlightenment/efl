@@ -788,39 +788,6 @@ EAPI void eo_error_set_internal(const Eo *obj, const char *file, int line);
 EAPI Eo *eo_add_internal(const char *file, int line, const Eo_Class *klass, Eo *parent, ...);
 
 /**
- * @brief Get the parent of an object
- * @param obj the object to get the parent of.
- * @return a pointer to the parent object.
- *
- * @see eo_parent_set()
- */
-EAPI Eo *eo_parent_get(const Eo *obj);
-
-/**
- * @brief Get an iterator on all childrens
- * @param obj the object to get the childrens from.
- * @return a pointer to an Eina_Iterator containing all the childrens.
- *
- * @see eo_parent_set()
- */
-EAPI Eina_Iterator *eo_children_iterator_new(Eo *obj_id);
-
-/**
- * @brief Set the parent of an object
- * @param obj the object to get the parent of.
- * @param parent the new parent.
- * @return @c EINA_TRUE on success, @c EINA_FALSE on failure.
- *
- * Parents keep references to their children so in order to delete objects
- * that have parents you need to set parent to NULL or use eo_del() that
- * does that for you (and also unrefs the object).
- *
- * @see eo_del()
- * @see eo_parent_get()
- */
-EAPI Eina_Bool eo_parent_set(Eo *obj, const Eo *parent);
-
-/**
  * @brief Get a pointer to the data of an object for a specific class.
  * @param obj the object to work on.
  * @param klass the klass associated with the data.
@@ -1094,6 +1061,9 @@ extern EAPI Eo_Op EO_BASE_BASE_ID;
 enum {
      EO_BASE_SUB_ID_CONSTRUCTOR,
      EO_BASE_SUB_ID_DESTRUCTOR,
+     EO_BASE_SUB_ID_PARENT_SET,
+     EO_BASE_SUB_ID_PARENT_GET,
+     EO_BASE_SUB_ID_CHILDREN_ITERATOR_NEW,
      EO_BASE_SUB_ID_DATA_SET,
      EO_BASE_SUB_ID_DATA_GET,
      EO_BASE_SUB_ID_DATA_DEL,
@@ -1162,6 +1132,36 @@ enum {
  * @see #eo_base_data_get
  */
 #define eo_base_data_del(key) EO_BASE_ID(EO_BASE_SUB_ID_DATA_DEL), EO_TYPECHECK(const char *, key)
+
+/**
+ * @brief Set the parent of an object
+ * @param[in] parent the new parent.
+ *
+ * Parents keep references to their children so in order to delete objects
+ * that have parents you need to set parent to NULL or use eo_del() that
+ * does that for you (and also unrefs the object).
+ *
+ * @see eo_del()
+ * @see eo_parent_get()
+ */
+#define eo_parent_set(parent) EO_BASE_ID(EO_BASE_SUB_ID_PARENT_SET), EO_TYPECHECK(Eo *, parent)
+
+/**
+ * @brief Get the parent of an object
+ * @param[out] a pointer to the parent object.
+ *
+ * @see eo_parent_set()
+ */
+#define eo_parent_get(parent) EO_BASE_ID(EO_BASE_SUB_ID_PARENT_GET), EO_TYPECHECK(Eo **, parent)
+
+/**
+ * @brief Get an iterator on all childrens
+ * @param obj the object to get the childrens from.
+ * @return a pointer to an Eina_Iterator containing all the childrens.
+ *
+ * @see eo_parent_set()
+ */
+#define eo_children_iterator_new(it) EO_BASE_ID(EO_BASE_SUB_ID_CHILDREN_ITERATOR_NEW), EO_TYPECHECK(Eina_Iterator **, it)
 
 /**
  * @def eo_wref_add
