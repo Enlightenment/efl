@@ -48,6 +48,22 @@ static Evas_Font_Dir *object_text_font_cache_dir_add(char *dir);
 static void object_text_font_cache_dir_del(char *dir, Evas_Font_Dir *fd);
 static int evas_object_text_font_string_parse(char *buffer, char dest[14][256]);
 
+#ifdef HAVE_FONTCONFIG
+static FcConfig *fc_config = NULL;
+#endif
+
+static void
+evas_font_init(void)
+{
+   static Eina_Bool fc_init = EINA_FALSE;
+   if (fc_init)
+      return;
+   fc_init = EINA_TRUE;
+#ifdef HAVE_FONTCONFIG
+   fc_config = FcInitLoadConfigAndFonts();
+#endif
+}
+
 void
 evas_font_dir_cache_free(void)
 {
@@ -57,6 +73,13 @@ evas_font_dir_cache_free(void)
         eina_hash_free(font_dirs);
         font_dirs = NULL;
      }
+#ifdef HAVE_FONTCONFIG
+   if (fc_config)
+     {
+        FcConfigDestroy(fc_config);
+        fc_config = NULL;
+     }
+#endif
 }
 
 const char *
@@ -484,6 +507,8 @@ evas_font_load(Evas *eo_evas, Evas_Font_Description *fdesc, const char *source, 
    if (fdesc->weight == EVAS_FONT_WEIGHT_BOLD)
       wanted_rend |= FONT_REND_WEIGHT;
 
+   evas_font_init();
+
    EINA_LIST_FOREACH(fonts_cache, l, fd)
      {
         if (!evas_font_desc_cmp(fdesc, fd->fdesc))
@@ -710,11 +735,11 @@ evas_font_load(Evas *eo_evas, Evas_Font_Description *fdesc, const char *source, 
         if (fdesc->lang)
            FcPatternAddString (p_nm, FC_LANG, (FcChar8 *) fdesc->lang);
 
-	FcConfigSubstitute(NULL, p_nm, FcMatchPattern);
+	FcConfigSubstitute(fc_config, p_nm, FcMatchPattern);
 	FcDefaultSubstitute(p_nm);
 
 	/* do matching */
-	set = FcFontSort(NULL, p_nm, FcTrue, NULL, &res);
+	set = FcFontSort(fc_config, p_nm, FcTrue, NULL, &res);
 	if (!set)
 	  {
 	     ERR("No fontconfig font matches '%s'. It was the last resource, no font found!", fdesc->name);
@@ -777,10 +802,12 @@ evas_font_dir_available_list(const Evas *eo_evas)
    FcObjectSet *os;
    int i;
 
+   evas_font_init();
+
    p = FcPatternCreate();
    os = FcObjectSetBuild(FC_FAMILY, FC_STYLE, NULL);
 
-   if (p && os) set = FcFontList(NULL, p, os);
+   if (p && os) set = FcFontList(fc_config, p, os);
 
    if (p) FcPatternDestroy(p);
    if (os) FcObjectSetDestroy(os);

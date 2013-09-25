@@ -67,6 +67,7 @@ Additions:
      - textblock: Use max ascent/descent at the edges of the textblock.
      - textblock: Make the ellipsis format the same as the surrounding.
      - Add interceptor for focus_set.
+     - Evas font: Use our own fontconfig configuration so we don't get affected by changes made to the default fontconfig configuration.
     * Ecore_X:
      - Add window profile support.
        ECORE_X_ATOM_E_WINDOW_PROFILE_SUPPORTED

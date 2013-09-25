@@ -1,3 +1,8 @@
+2013-09-25  Tom Hacohen
+
+	* Evas font: Use our own fontconfig configuration so we don't get
+	affected by changes made to the default fontconfig configuration.
+
 2013-09-06  Christophe Sadoine
 
 	* Eet: Added EET_DATA_DESCRIPTOR_ADD_SUB_NESTED().
