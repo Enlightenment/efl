@@ -1,4 +1,6 @@
 check-results.xml
 *_suite
+test_*.log
+test_*.trs
 *_suite.log
 *_suite.trs
