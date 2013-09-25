@@ -28,7 +28,13 @@ over.png \
 under.png \
 sky.jpg \
 clo.png \
-cross.png
+cross.png \
+border.png \
+border2.png \
+border3.png \
+border4.png \
+border5.png \
+border6.png
 
 test.edj: Makefile $(EXTRA_DIST)
 	$(EDJE_CC) $(EDJE_FLAGS) \
