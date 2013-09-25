@@ -833,8 +833,6 @@ static void
 _elm_image_smart_internal_file_set(Eo *obj, Elm_Image_Smart_Data *sd,
                                    const char *file, Eina_File *f, const char *key, Eina_Bool *ret)
 {
-   Evas_Coord w, h;
-
    if (eina_str_has_extension(file, ".edj"))
      {
         Eina_Bool int_ret = _elm_image_edje_file_set(obj, file, f, key);
@@ -849,14 +847,8 @@ _elm_image_smart_internal_file_set(Eo *obj, Elm_Image_Smart_Data *sd,
    else
      evas_object_image_file_set(sd->img, file, key);
 
-   sd->preloading = EINA_TRUE;
    evas_object_hide(sd->img);
 
-   eo_do(obj, elm_obj_image_size_get(&w, &h));
-
-   evas_object_image_load_size_set(sd->img, w, h);
-
-   evas_object_image_preload(sd->img, EINA_FALSE);
    if (evas_object_image_load_error_get(sd->img) != EVAS_LOAD_ERROR_NONE)
      {
         ERR("Things are going bad for '%s' (%p)", file, sd->img);
