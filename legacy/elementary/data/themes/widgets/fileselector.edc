@@ -104,6 +104,7 @@ group { name: "elm/fileselector/base/default";
             }
          }
       }
+      // TODO: Rename it to elm.swallow.name at elm 2.0.
       part { name: "elm.swallow.filename";
          type: SWALLOW;
          description { state: "default" 0.0;

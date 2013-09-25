@@ -132,6 +132,7 @@ _elm_fileselector_smart_theme(Eo *obj, void *_pd, va_list *list)
      }
 
    SWALLOW("elm.swallow.path", sd->path_entry);
+   SWALLOW("elm.swallow.filename", sd->name_entry);
 
    snprintf(buf, sizeof(buf), "fileselector/actions/%s", style);
    SWALLOW("elm.swallow.filters", sd->filter_hoversel);
@@ -383,6 +384,7 @@ _signal_first(Listing_Request *lreq)
         elm_gengrid_clear(lreq->sd->files_grid);
         eina_stringshare_replace(&lreq->sd->path, lreq->path);
         _anchors_do(lreq->obj, lreq->path);
+        elm_object_text_set(lreq->sd->name_entry, "");
      }
 
    lreq->first = EINA_FALSE;
@@ -427,7 +429,10 @@ _ls_main_cb(void *data,
                                               _file_list_cmp, NULL, NULL);
 
         if (lreq->selected && !strcmp(info->path, lreq->selected))
-          elm_genlist_item_selected_set(item, EINA_TRUE);
+          {
+             elm_genlist_item_selected_set(item, EINA_TRUE);
+             elm_object_text_set(lreq->sd->name_entry, ecore_file_file_get(info->path));
+          }
      }
    else if (lreq->sd->mode == ELM_FILESELECTOR_GRID)
      {
@@ -436,7 +441,10 @@ _ls_main_cb(void *data,
                                               _file_grid_cmp, NULL, NULL);
 
         if (lreq->selected && !strcmp(info->path, lreq->selected))
-          elm_gengrid_item_selected_set(item, EINA_TRUE);
+          {
+             elm_gengrid_item_selected_set(item, EINA_TRUE);
+             elm_object_text_set(lreq->sd->name_entry, ecore_file_file_get(info->path));
+          }
      }
 }
 
@@ -509,6 +517,7 @@ _populate(Evas_Object *obj,
         elm_gengrid_clear(sd->files_grid);
         eina_stringshare_replace(&sd->path, path);
         _anchors_do(obj, path);
+        elm_object_text_set(sd->name_entry, "");
      }
 
    EINA_ITERATOR_FOREACH(it, file)
@@ -559,7 +568,10 @@ _populate(Evas_Object *obj,
                                             parent_it, ELM_GENLIST_ITEM_NONE,
                                             NULL, NULL);
              if (selected && !strcmp(entry, selected))
-               elm_genlist_item_selected_set(item, EINA_TRUE);
+               {
+                  elm_genlist_item_selected_set(item, EINA_TRUE);
+                  elm_object_text_set(sd->name_entry, ecore_file_file_get(entry));
+               }
           }
         else if (sd->mode == ELM_FILESELECTOR_GRID)
           {
@@ -568,7 +580,10 @@ _populate(Evas_Object *obj,
                                             entry, /* item data */
                                             NULL, NULL);
              if (selected && !strcmp(entry, selected))
-               elm_gengrid_item_selected_set(item, EINA_TRUE);
+               {
+                  elm_gengrid_item_selected_set(item, EINA_TRUE);
+                  elm_object_text_set(sd->name_entry, ecore_file_file_get(entry));
+               }
           }
      }
 
@@ -666,7 +681,7 @@ _sel_do(void *data)
      }
    else
      {
-        _anchors_do(sdata->fs, path);
+        elm_object_text_set(sd->name_entry, ecore_file_file_get(path));
      }
 
    /* We need to send callback when:
@@ -766,10 +781,25 @@ _ok(void *data,
     Evas_Object *obj __UNUSED__,
     void *event_info __UNUSED__)
 {
+   const char *name;
+   const char *selection = NULL;
    Evas_Object *fs = data;
+   ELM_FILESELECTOR_DATA_GET(fs, sd);
 
-   evas_object_smart_callback_call
-     (fs, SIG_DONE, (void *)elm_fileselector_selected_get(fs));
+   if (!sd->path)
+     {
+        evas_object_smart_callback_call(fs, SIG_DONE, NULL);
+        return;
+     }
+
+   name = elm_object_text_get(sd->name_entry);
+   if (name && name[0] != '\0')
+     selection = eina_stringshare_printf("%s/%s", sd->path, name);
+   else
+     selection = eina_stringshare_add(elm_fileselector_selected_get(fs));
+
+   evas_object_smart_callback_call(fs, SIG_DONE, (void *)selection);
+   eina_stringshare_del(selection);
 }
 
 static void
@@ -855,6 +885,7 @@ _on_text_activated(void *data,
                   if (!strcmp(item_path, path))
                     {
                        elm_genlist_item_selected_set(item, EINA_TRUE);
+                       elm_object_text_set(sd->name_entry, ecore_file_file_get(path));
                        break;
                     }
                   item = elm_genlist_item_next_get(item);
@@ -869,6 +900,7 @@ _on_text_activated(void *data,
                   if (!strcmp(item_path, path))
                     {
                        elm_gengrid_item_selected_set(item, EINA_TRUE);
+                       elm_object_text_set(sd->name_entry, ecore_file_file_get(path));
                        break;
                     }
                   item = elm_gengrid_item_next_get(item);
@@ -1016,6 +1048,19 @@ _elm_fileselector_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    elm_widget_sub_object_add(obj, en);
    priv->path_entry = en;
 
+   // name entry
+   en = elm_entry_add(obj);
+   elm_entry_scrollable_set(en, EINA_TRUE);
+   elm_widget_mirrored_automatic_set(en, EINA_FALSE);
+   elm_entry_editable_set(en, EINA_TRUE);
+   elm_entry_single_line_set(en, EINA_TRUE);
+   elm_entry_line_wrap_set(en, ELM_WRAP_CHAR);
+   evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
+
+   elm_widget_sub_object_add(obj, en);
+   priv->name_entry = en;
+
    elm_fileselector_buttons_ok_cancel_set(obj, EINA_TRUE);
    elm_fileselector_is_save_set(obj, EINA_FALSE);
 
@@ -1083,7 +1128,7 @@ _is_save_set(Eo *obj, void *_pd, va_list *list)
    Eina_Bool is_save = va_arg(*list, int);
    Elm_Fileselector_Smart_Data *sd = _pd;
 
-   elm_object_disabled_set(sd->path_entry, !is_save);
+   elm_object_disabled_set(sd->name_entry, !is_save);
 
    if (is_save) elm_layout_signal_emit(obj, "elm,state,save,on", "elm");
    else elm_layout_signal_emit(obj, "elm,state,save,off", "elm");
@@ -1103,7 +1148,7 @@ _is_save_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Elm_Fileselector_Smart_Data *sd = _pd;
-   *ret = !elm_object_disabled_get(sd->path_entry);
+   *ret = !elm_object_disabled_get(sd->name_entry);
 }
 
 EAPI void
