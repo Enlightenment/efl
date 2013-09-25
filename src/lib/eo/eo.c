@@ -898,7 +898,7 @@ eo_class_new(const Eo_Class_Description *desc, const Eo *parent_id, ...)
      }
 
 #ifdef HAVE_EO_ID
-   hndl = NULL;
+   (void) hndl;
    klass = calloc(1, _eo_class_sz + extn_sz + mro_sz + mixins_sz);
 #else
    hndl = calloc(1, _eo_handle_sz + _eo_class_sz + extn_sz + mro_sz + mixins_sz);
@@ -1097,7 +1097,7 @@ eo_add_internal(const char *file, int line, const Eo *klass_id, Eo *parent_id, .
    else
      {
 #ifdef HAVE_EO_ID
-        hndl = NULL;
+        (void) hndl;
         obj = calloc(1, klass->obj_size);
 #else
         hndl = calloc(1, klass->obj_size);
