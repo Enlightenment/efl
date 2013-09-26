@@ -408,11 +408,20 @@ eo_do_internal(const char *file, int line, const Eo *obj_id, ...)
 }
 
 EAPI Eina_Bool
-eo_vdo_internal(const char *file, int line, Eo *obj_id, va_list *ops)
+eo_vdo_internal(const char *file, int line, const Eo *obj_id, va_list *ops)
 {
-   EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, EINA_FALSE);
+   Eina_Bool obj_ref = !_eo_is_a_class(obj_id);
 
-   return _eo_obj_dov_internal(file, line, obj, ops);
+   if (obj_ref)
+     {
+        EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, EINA_FALSE);
+        return _eo_obj_dov_internal(file, line, obj, ops);
+     }
+   else
+     {
+        EO_CLASS_POINTER_RETURN_VAL(obj_id, klass, EINA_FALSE);
+        return _eo_class_dov_internal(file, line, klass, ops);
+     }
 }
 
 EAPI Eina_Bool

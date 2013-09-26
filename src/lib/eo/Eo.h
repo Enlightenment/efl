@@ -638,7 +638,7 @@ EAPI Eina_Bool eo_do_internal(const char *file, int line, const Eo *obj, ...);
  *
  * @see #eo_vdo
  */
-EAPI Eina_Bool eo_vdo_internal(const char *file, int line, Eo *obj, va_list *ops);
+EAPI Eina_Bool eo_vdo_internal(const char *file, int line, const Eo *obj, va_list *ops);
 
 /**
  * @brief Calls the super function for the specific op.
