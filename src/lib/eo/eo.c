@@ -520,9 +520,20 @@ eo_class_get(const Eo *obj_id)
 }
 
 EAPI const char *
-eo_class_name_get(const Eo *klass_id)
+eo_class_name_get(const Eo *obj_id)
 {
-   EO_CLASS_POINTER_RETURN_VAL(klass_id, klass, NULL);
+   const _Eo_Class *klass;
+
+   if (_eo_is_a_class(obj_id))
+     {
+        EO_CLASS_POINTER_RETURN_VAL(obj_id, _klass, NULL);
+        klass = _klass;
+     }
+     else
+     {
+        EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, NULL);
+        klass = obj->klass;
+     }
 
    return klass->desc->name;
 }
