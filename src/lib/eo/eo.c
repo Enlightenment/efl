@@ -134,6 +134,19 @@ _dich_func_clean_all(_Eo_Class *klass)
 static const Eo_Op_Description noop_desc =
         EO_OP_DESCRIPTION(EO_NOOP, "No operation.");
 
+
+static inline Eina_Bool
+_eo_is_a_class(const Eo *obj_id)
+{
+#ifdef HAVE_EO_ID
+   return (((((Eo_Id) obj_id) >> REF_TAG_SHIFT) & 0x1) == 0x0);
+#else
+   /* fortunately EO_OBJ_POINTER_RETURN* will handle NULL obj_id */
+   if (!obj_id) return EINA_FALSE;
+   return (((_Eo_Handle *) obj_id)->is_a_class == 1);
+#endif
+}
+
 static inline _Eo_Class *
 _eo_class_pointer_get(const Eo *klass_id)
 {
