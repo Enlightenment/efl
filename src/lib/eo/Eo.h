@@ -651,7 +651,7 @@ EAPI Eina_Bool eo_vdo_internal(const char *file, int line, const Eo *obj, va_lis
  *
  * @see #eo_do
  */
-#define eo_do_super(obj, cur_klass, ...) eo_do_super_internal(__FILE__, __LINE__, obj, cur_klass, EO_OP_TYPE_REGULAR, __VA_ARGS__)
+#define eo_do_super(obj, cur_klass, ...) eo_do_super_internal(__FILE__, __LINE__, obj, cur_klass, __VA_ARGS__)
 
 /**
  * @brief Calls the super function for the specific op.
@@ -664,13 +664,12 @@ EAPI Eina_Bool eo_vdo_internal(const char *file, int line, const Eo *obj, va_lis
  *
  * @see #eo_class_do
  */
-#define eo_class_do_super(klass, cur_klass, ...) eo_class_do_super_internal(__FILE__, __LINE__, klass, cur_klass, __VA_ARGS__)
+#define eo_class_do_super(klass, cur_klass, ...) eo_do_super(klass, cur_klass, __VA_ARGS__)
 
 /**
  * @brief Calls the super function for the specific op.
  * @param obj The object to work on
  * @param cur_klass The *current* class (use the class *after* this in the MRO).
- * @param op_type The type of the ops that are passed.
  * @param op The wanted op.
  * @param ... list of parameters.
  * @return @c EINA_TRUE on success.
@@ -680,22 +679,7 @@ EAPI Eina_Bool eo_vdo_internal(const char *file, int line, const Eo *obj, va_lis
  * @see #eo_do
  * @see #eo_do_super
  */
-EAPI Eina_Bool eo_do_super_internal(const char *file, int line, Eo *obj, const Eo *cur_klass, Eo_Op_Type op_type, Eo_Op op, ...);
-
-/**
- * @brief Calls the super function for the specific op.
- * @param klass The klass to work on
- * @param cur_klass The *current* class (use the class *after* this in the MRO).
- * @param op The wanted op.
- * @param ... list of parameters.
- * @return @c EINA_TRUE on success.
- *
- * Don't use this function, use the wrapping macros instead.
- *
- * @see #eo_class_do
- * @see #eo_class_do_super
- */
-EAPI Eina_Bool eo_class_do_super_internal(const char *file, int line, const Eo *klass, const Eo *cur_klass, Eo_Op op, ...);
+EAPI Eina_Bool eo_do_super_internal(const char *file, int line, const Eo *obj, const Eo *cur_klass, Eo_Op op, ...);
 
 /**
  * @brief Gets the class of the object.
