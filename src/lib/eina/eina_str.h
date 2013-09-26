@@ -345,39 +345,6 @@ static inline size_t eina_str_join(char *dst, size_t size, char sep, const char 
 
 static inline size_t eina_strlen_bounded(const char *str, size_t maxlen) EINA_PURE EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
-/**
- * @brief Gets the length needed for a string based on a printf format and args
- * 
- * @param format The printf format
- * @param args The printf args
- * @return The length needed for such format and args
- * @since 1.8
- */
-EAPI size_t eina_str_vprintf_length(const char *format, va_list args);
-
-/**
- * @brief Gets a newly allocated string that represents the printf format and args
- *
- * @param format The printf format
- * @param args The printf args
- * @return A newly allocated string
- *
- * @see eina_str_dup_printf
- * @since 1.8
- */
-EAPI char * eina_str_vprintf_dup(const char *format, va_list args);
-
-/**
- * @brief Gets a newly allocated string that represents the printf format and args
- *
- * @param format The printf format
- * @return A newly allocated string
- *
- * @see eina_str_dup_vprintf
- * @since 1.8
- */
-EAPI char * eina_str_printf_dup(const char *format, ...);
-
 #include "eina_inline_str.x"
 
 /**
