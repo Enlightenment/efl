@@ -89,14 +89,12 @@ _mapbuf(Evas_Object *obj)
    ELM_MAPBUF_DATA_GET(obj, sd);
    Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
-   evas_object_geometry_get(wd->resize_obj, &x, &y, &w, &h);
-   evas_object_resize(sd->content, w, h);
-
    if (sd->enabled)
      {
         static Evas_Map *m = NULL;
 
         if (!m) m = evas_map_new(4);
+        evas_object_geometry_get(wd->resize_obj, &x, &y, &w, &h);
         evas_map_util_points_populate_from_geometry(m, x, y, w, h, 0);
         evas_map_smooth_set(m, sd->smooth);
         evas_map_alpha_set(m, sd->alpha);
@@ -107,7 +105,6 @@ _mapbuf(Evas_Object *obj)
      {
         evas_object_map_set(sd->content, NULL);
         evas_object_map_enable_set(sd->content, EINA_FALSE);
-        evas_object_move(sd->content, x, y);
      }
 }
 
@@ -219,6 +216,8 @@ _elm_mapbuf_smart_resize(Eo *obj, void *_pd, va_list *list)
    Evas_Coord h = va_arg(*list, Evas_Coord);
    eo_do_super(obj, MY_CLASS, evas_obj_smart_resize(w, h));
 
+   ELM_MAPBUF_DATA_GET(obj, sd);
+   if (sd->content) evas_object_resize(sd->content, w, h);
    _mapbuf_auto_eval(obj, _pd);
    _configure(obj, EINA_FALSE);
 }
