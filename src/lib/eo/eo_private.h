@@ -58,6 +58,10 @@ typedef uintptr_t Eo_Id;
 typedef struct _Eo_Class _Eo_Class;
 typedef struct _Eo_Object _Eo_Object;
 typedef struct _Eo_Handle _Eo_Handle;
+typedef union _Eo {
+     _Eo_Object *obj;
+     _Eo_Class  *klass;
+} _Eo;
 
 /* Retrieves the pointer to the object from the id */
 static inline _Eo_Object *_eo_obj_pointer_get(const Eo_Id obj_id);
