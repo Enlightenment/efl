@@ -2420,7 +2420,7 @@ _smart_type_check_ptr(Eo *eo_obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *li
 }
 
 static void
-_class_constructor(Eo_Class *klass)
+_class_constructor(Eo *klass)
 {
    const Eo_Op_Func_Description func_desc[] = {
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),

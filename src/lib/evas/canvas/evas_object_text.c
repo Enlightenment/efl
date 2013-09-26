@@ -2481,7 +2481,7 @@ _evas_object_text_recalc(Evas_Object *eo_obj, Eina_Unicode *text)
 }
 
 static void
-_class_constructor(Eo_Class *klass)
+_class_constructor(Eo *klass)
 {
    const Eo_Op_Func_Description func_desc[] = {
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),

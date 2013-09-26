@@ -138,12 +138,12 @@ EAPI extern const Eo_Event_Description _DRAG_START_LEFT_EVENT;
 #define EVAS_SMART_DRAG_START_RIGHT_EVENT (&(_DRAG_START_RIGHT_EVENT))
 #define EVAS_SMART_DRAG_START_LEFT_EVENT (&(_DRAG_START_LEFT_EVENT))
 
-const Eo_Class *evas_smart_signal_interface_get(void) EINA_CONST;
-const Eo_Class *evas_smart_clickable_interface_get(void) EINA_CONST;
-const Eo_Class *evas_smart_scrollable_interface_get(void) EINA_CONST;
-const Eo_Class *evas_smart_zoomable_interface_get(void) EINA_CONST;
-const Eo_Class *evas_smart_selectable_interface_get(void) EINA_CONST;
-const Eo_Class *evas_smart_draggable_interface_get(void) EINA_CONST;
+const Eo *evas_smart_signal_interface_get(void) EINA_CONST;
+const Eo *evas_smart_clickable_interface_get(void) EINA_CONST;
+const Eo *evas_smart_scrollable_interface_get(void) EINA_CONST;
+const Eo *evas_smart_zoomable_interface_get(void) EINA_CONST;
+const Eo *evas_smart_selectable_interface_get(void) EINA_CONST;
+const Eo *evas_smart_draggable_interface_get(void) EINA_CONST;
 
 #define EVAS_SMART_SIGNAL_INTERFACE evas_smart_signal_interface_get()
 #define EVAS_SMART_CLICKABLE_INTERFACE evas_smart_clickable_interface_get()
@@ -154,7 +154,7 @@ const Eo_Class *evas_smart_draggable_interface_get(void) EINA_CONST;
 
 #define EVAS_CLASS evas_class_get()
 
-const Eo_Class *evas_class_get(void) EINA_CONST;
+const Eo *evas_class_get(void) EINA_CONST;
 
 extern EAPI Eo_Op EVAS_CANVAS_BASE_ID;
 
@@ -1767,7 +1767,7 @@ enum
 
 #define EVAS_OBJ_RECTANGLE_CLASS evas_object_rectangle_class_get()
 
-const Eo_Class *evas_object_rectangle_class_get(void) EINA_CONST;
+const Eo *evas_object_rectangle_class_get(void) EINA_CONST;
 
 extern EAPI Eo_Op EVAS_OBJ_RECTANGLE_BASE_ID;
 
@@ -1790,7 +1790,7 @@ enum
 
 #define EVAS_OBJ_TEXT_CLASS evas_object_text_class_get()
 
-const Eo_Class *evas_object_text_class_get(void) EINA_CONST;
+const Eo *evas_object_text_class_get(void) EINA_CONST;
 
 extern EAPI Eo_Op EVAS_OBJ_TEXT_BASE_ID;
 
@@ -2265,7 +2265,7 @@ enum
 
 #define EVAS_OBJ_TEXTBLOCK_CLASS evas_object_textblock_class_get()
 
-const Eo_Class *evas_object_textblock_class_get(void) EINA_CONST;
+const Eo *evas_object_textblock_class_get(void) EINA_CONST;
 
 extern EAPI Eo_Op EVAS_OBJ_TEXTBLOCK_BASE_ID;
 
@@ -2640,7 +2640,7 @@ enum
 
 #define EVAS_OBJ_TEXTGRID_CLASS evas_object_textgrid_class_get()
 
-const Eo_Class *evas_object_textgrid_class_get(void) EINA_CONST;
+const Eo *evas_object_textgrid_class_get(void) EINA_CONST;
 
 extern EAPI Eo_Op EVAS_OBJ_TEXTGRID_BASE_ID;
 
@@ -2864,7 +2864,7 @@ enum
  * @{
  */
 #define EVAS_OBJ_LINE_CLASS evas_object_line_class_get()
-const Eo_Class *evas_object_line_class_get(void) EINA_CONST;
+const Eo *evas_object_line_class_get(void) EINA_CONST;
 
 extern EAPI Eo_Op EVAS_OBJ_LINE_BASE_ID;
 
@@ -2918,7 +2918,7 @@ enum
  * @{
  */
 #define EVAS_OBJ_POLYGON_CLASS evas_object_polygon_class_get()
-const Eo_Class *evas_object_polygon_class_get(void) EINA_CONST;
+const Eo *evas_object_polygon_class_get(void) EINA_CONST;
 
 extern EAPI Eo_Op EVAS_OBJ_POLYGON_BASE_ID;
 
@@ -2967,7 +2967,7 @@ enum
  */
 #define EVAS_OBJ_SMART_CLASS evas_object_smart_class_get()
 
-const Eo_Class *evas_object_smart_class_get(void) EINA_CONST;
+const Eo *evas_object_smart_class_get(void) EINA_CONST;
 
 extern EAPI Eo_Op EVAS_OBJ_SMART_BASE_ID;
 
@@ -3333,7 +3333,7 @@ enum
 
 #define EVAS_OBJ_SMART_CLIPPED_CLASS evas_object_smart_clipped_eo_class_get()
 
-const Eo_Class *evas_object_smart_clipped_eo_class_get(void) EINA_CONST;
+const Eo *evas_object_smart_clipped_eo_class_get(void) EINA_CONST;
 
 extern EAPI Eo_Op EVAS_OBJ_SMART_CLIPPED_BASE_ID;
 
@@ -3353,7 +3353,7 @@ enum
  */
 #define EVAS_OBJ_BOX_CLASS evas_object_box_class_get()
 
-const Eo_Class *evas_object_box_class_get(void) EINA_CONST;
+const Eo *evas_object_box_class_get(void) EINA_CONST;
 
 extern EAPI Eo_Op EVAS_OBJ_BOX_BASE_ID;
 
@@ -3899,7 +3899,7 @@ enum
  */
 #define EVAS_OBJ_TABLE_CLASS evas_object_table_class_get()
 
-const Eo_Class *evas_object_table_class_get(void) EINA_CONST;
+const Eo *evas_object_table_class_get(void) EINA_CONST;
 
 extern EAPI Eo_Op EVAS_OBJ_TABLE_BASE_ID;
 
@@ -4160,7 +4160,7 @@ enum
  */
 #define EVAS_OBJ_GRID_CLASS evas_object_grid_class_get()
 
-const Eo_Class *evas_object_grid_class_get(void) EINA_CONST;
+const Eo *evas_object_grid_class_get(void) EINA_CONST;
 
 extern EAPI Eo_Op EVAS_OBJ_GRID_BASE_ID;
 
@@ -4359,7 +4359,7 @@ enum
 
 #define EVAS_COMMON_CLASS evas_common_class_get()
 
-const Eo_Class *evas_common_class_get(void) EINA_CONST;
+const Eo *evas_common_class_get(void) EINA_CONST;
 
 extern EAPI Eo_Op EVAS_COMMON_BASE_ID;
 
@@ -5531,10 +5531,10 @@ enum
 
 #define EVAS_OBJ_CLASS evas_object_class_get()
 
-const Eo_Class *evas_object_class_get(void) EINA_CONST;
+const Eo *evas_object_class_get(void) EINA_CONST;
 
 #define EVAS_OBJ_IMAGE_CLASS evas_object_image_class_get()
-const Eo_Class *evas_object_image_class_get(void) EINA_CONST;
+const Eo *evas_object_image_class_get(void) EINA_CONST;
 
 extern EAPI Eo_Op EVAS_OBJ_IMAGE_BASE_ID;
 
@@ -6542,7 +6542,7 @@ enum
  */
 
 #define EVAS_OUT_CLASS evas_out_class_get()
-const Eo_Class *evas_out_class_get(void) EINA_CONST;
+const Eo *evas_out_class_get(void) EINA_CONST;
 extern EAPI Eo_Op EVAS_OUT_BASE_ID;
 
 enum

@@ -75,7 +75,7 @@ _destructor(Eo *obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
 }
 
 static void
-_class_constructor(Eo_Class *klass)
+_class_constructor(Eo *klass)
 {
    const Eo_Op_Func_Description func_desc[] = {
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
@@ -94,7 +94,7 @@ _class_constructor(Eo_Class *klass)
 }
 
 static void
-_class_destructor(Eo_Class *klass EINA_UNUSED)
+_class_destructor(Eo *klass EINA_UNUSED)
 {
    free(class_var);
 }

@@ -173,7 +173,7 @@ _signal_interface_del(void *data)
 }
 
 static void
-_signal_interface_constructor(Eo_Class *klass EINA_UNUSED)
+_signal_interface_constructor(Eo *klass EINA_UNUSED)
 {
    signals_hash_table = eina_hash_string_superfast_new(_signal_interface_del);
    ADD_INTERFACE_SIGNALS(_clickable_events_desc);
@@ -186,7 +186,7 @@ _signal_interface_constructor(Eo_Class *klass EINA_UNUSED)
 #undef ADD_SIGNAL
 
 static void
-_signal_interface_destructor(Eo_Class *klass EINA_UNUSED)
+_signal_interface_destructor(Eo *klass EINA_UNUSED)
 {
    eina_hash_free(signals_hash_table);
 }

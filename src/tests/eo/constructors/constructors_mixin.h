@@ -13,6 +13,6 @@ enum {
 #define mixin_add_and_print(x) MIXIN_ID(MIXIN_SUB_ID_ADD_AND_SET), EO_TYPECHECK(int, x)
 
 #define MIXIN_CLASS mixin_class_get()
-const Eo_Class *mixin_class_get(void);
+const Eo *mixin_class_get(void);
 
 #endif

@@ -11,7 +11,7 @@ extern "C" {
  * @{
  */
 #define ECORE_POLLER_CLASS ecore_poller_class_get()
-const Eo_Class *ecore_poller_class_get(void) EINA_CONST;
+const Eo *ecore_poller_class_get(void) EINA_CONST;
 extern EAPI Eo_Op ECORE_POLLER_BASE_ID;
 
 enum
@@ -74,7 +74,7 @@ enum
  */
 
 #define ECORE_ANIMATOR_CLASS ecore_animator_class_get()
-const Eo_Class *ecore_animator_class_get(void) EINA_CONST;
+const Eo *ecore_animator_class_get(void) EINA_CONST;
 
 extern EAPI Eo_Op ECORE_ANIMATOR_BASE_ID;
 
@@ -123,7 +123,7 @@ enum
  */
 
 #define ECORE_TIMER_CLASS ecore_timer_class_get()
-const Eo_Class *ecore_timer_class_get(void) EINA_CONST;
+const Eo *ecore_timer_class_get(void) EINA_CONST;
 extern EAPI Eo_Op ECORE_TIMER_BASE_ID;
 
 enum
@@ -235,7 +235,7 @@ enum
  */
 
 #define ECORE_IDLER_CLASS ecore_idler_class_get()
-const Eo_Class *ecore_idler_class_get(void) EINA_CONST;
+const Eo *ecore_idler_class_get(void) EINA_CONST;
 
 extern EAPI Eo_Op ECORE_IDLER_BASE_ID;
 
@@ -264,7 +264,7 @@ enum
  */
 
 #define ECORE_IDLE_ENTERER_CLASS ecore_idle_enterer_class_get()
-const Eo_Class *ecore_idle_enterer_class_get(void) EINA_CONST;
+const Eo *ecore_idle_enterer_class_get(void) EINA_CONST;
 
 extern EAPI Eo_Op ECORE_IDLE_ENTERER_BASE_ID;
 
@@ -306,7 +306,7 @@ enum
  */
 
 #define ECORE_IDLE_EXITER_CLASS ecore_idle_exiter_class_get()
-const Eo_Class *ecore_idle_exiter_class_get(void) EINA_CONST;
+const Eo *ecore_idle_exiter_class_get(void) EINA_CONST;
 
 extern EAPI Eo_Op ECORE_IDLE_EXITER_BASE_ID;
 
@@ -341,7 +341,7 @@ enum
  */
 
 #define ECORE_JOB_CLASS ecore_job_class_get()
-const Eo_Class *ecore_job_class_get(void) EINA_CONST;
+const Eo *ecore_job_class_get(void) EINA_CONST;
 
 extern EAPI Eo_Op ECORE_JOB_BASE_ID;
 

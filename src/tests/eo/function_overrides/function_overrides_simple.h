@@ -27,6 +27,6 @@ extern const Eo_Event_Description _SIG_A_CHANGED;
 #define SIG_A_CHANGED (&(_SIG_A_CHANGED))
 
 #define SIMPLE_CLASS simple_class_get()
-const Eo_Class *simple_class_get(void);
+const Eo *simple_class_get(void);
 
 #endif

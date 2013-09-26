@@ -287,7 +287,7 @@ static void _destructor(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list EINA_UN
   class_vars.outputs = eina_list_remove(class_vars.outputs, eo_obj);
 }
 
-static void _class_constructor(Eo_Class *klass)
+static void _class_constructor(Eo *klass)
 {
   const Eo_Op_Func_Description func_desc[] = {
       /* Virtual functions of parent class implemented in this class */

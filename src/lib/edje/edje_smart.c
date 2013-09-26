@@ -380,7 +380,7 @@ _edje_smart_mmap_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 }
 
 static void
-_edje_smart_class_constructor(Eo_Class *klass)
+_edje_smart_class_constructor(Eo *klass)
 {
    const Eo_Op_Func_Description func_desc[] = {
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _edje_smart_constructor),

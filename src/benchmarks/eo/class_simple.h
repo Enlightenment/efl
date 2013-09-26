@@ -18,6 +18,6 @@ typedef struct
 #define simple_a_set(a) SIMPLE_ID(SIMPLE_SUB_ID_A_SET), EO_TYPECHECK(int, a)
 
 #define SIMPLE_CLASS simple_class_get()
-const Eo_Class *simple_class_get(void);
+const Eo *simple_class_get(void);
 
 #endif

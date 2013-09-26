@@ -121,7 +121,7 @@ START_TEST(eo_data_fetch)
         NULL
    };
 
-   const Eo_Class *klass = eo_class_new(&class_desc, EO_BASE_CLASS, NULL);
+   const Eo *klass = eo_class_new(&class_desc, EO_BASE_CLASS, NULL);
    fail_if(!klass);
 
    Eo *obj = eo_add(klass, NULL);
@@ -148,7 +148,7 @@ START_TEST(eo_isa_tests)
 {
    eo_init();
 
-   const Eo_Class *klass, *iface, *mixin;
+   const Eo *klass, *iface, *mixin;
 
      {
         /* Usually should be const, not const only for the test... */
@@ -246,7 +246,7 @@ END_TEST
 
 static Eina_Bool _man_should_con = EINA_TRUE;
 static Eina_Bool _man_should_des = EINA_TRUE;
-static const Eo_Class *cur_klass = NULL;
+static const Eo *cur_klass = NULL;
 
 static void
 _man_con(Eo *obj, void *data EINA_UNUSED, va_list *list EINA_UNUSED)
@@ -266,7 +266,7 @@ _man_des(Eo *obj, void *data EINA_UNUSED, va_list *list EINA_UNUSED)
 
 
 static void
-_man_class_constructor(Eo_Class *klass)
+_man_class_constructor(Eo *klass)
 {
    const Eo_Op_Func_Description func_desc[] = {
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _man_con),
@@ -294,7 +294,7 @@ START_TEST(eo_man_free)
         NULL
    };
 
-   const Eo_Class *klass = eo_class_new(&class_desc, EO_BASE_CLASS, NULL);
+   const Eo *klass = eo_class_new(&class_desc, EO_BASE_CLASS, NULL);
    fail_if(!klass);
    cur_klass = klass;
 
@@ -504,7 +504,7 @@ _a_set(Eo *obj EINA_UNUSED, void *class_data EINA_UNUSED, va_list *list EINA_UNU
 }
 
 static void
-_op_errors_class_constructor(Eo_Class *klass)
+_op_errors_class_constructor(Eo *klass)
 {
    const Eo_Op_Func_Description func_desc[] = {
         EO_OP_FUNC(SIMPLE_ID(SIMPLE_SUB_ID_LAST), _a_set),
@@ -531,7 +531,7 @@ START_TEST(eo_op_errors)
         NULL
    };
 
-   const Eo_Class *klass = eo_class_new(&class_desc, SIMPLE_CLASS, NULL);
+   const Eo *klass = eo_class_new(&class_desc, SIMPLE_CLASS, NULL);
    fail_if(!klass);
 
    Eo *obj = eo_add(klass, NULL);
@@ -658,7 +658,7 @@ START_TEST(eo_magic_checks)
         Eo *parent = NULL;
         Eo *wref = NULL;
 
-        obj = eo_add((Eo_Class *) buf, NULL);
+        obj = eo_add((Eo *) buf, NULL);
         fail_if(obj);
 
         obj = eo_add(SIMPLE_CLASS, NULL);
@@ -666,15 +666,15 @@ START_TEST(eo_magic_checks)
 
         fail_if(eo_do((Eo *) buf, EO_NOOP));
         fail_if(eo_do_super((Eo *) buf, SIMPLE_CLASS, EO_NOOP));
-        fail_if(eo_do_super(obj, (const Eo_Class *) buf, EO_NOOP));
+        fail_if(eo_do_super(obj, (const Eo *) buf, EO_NOOP));
         fail_if(eo_class_get((Eo *) buf));
-        fail_if(eo_class_name_get((Eo_Class*) buf));
-        eo_class_funcs_set((Eo_Class *) buf, NULL);
-        eo_class_do((Eo_Class *) buf, NULL);
-        eo_class_do_super((Eo_Class *) buf, SIMPLE_CLASS, EO_NOOP);
-        eo_class_do_super(SIMPLE_CLASS, (Eo_Class *) buf, EO_NOOP);
+        fail_if(eo_class_name_get((Eo*) buf));
+        eo_class_funcs_set((Eo *) buf, NULL);
+        eo_class_do((Eo *) buf, NULL);
+        eo_class_do_super((Eo *) buf, SIMPLE_CLASS, EO_NOOP);
+        eo_class_do_super(SIMPLE_CLASS, (Eo *) buf, EO_NOOP);
 
-        fail_if(eo_class_new(NULL, (Eo_Class *) buf), NULL);
+        fail_if(eo_class_new(NULL, (Eo *) buf), NULL);
 
         eo_xref(obj, (Eo *) buf);
         eo_xunref(obj, (Eo *) buf);
@@ -686,7 +686,7 @@ START_TEST(eo_magic_checks)
         eo_del((Eo *) buf);
 
         eo_isa((Eo *) buf, SIMPLE_CLASS);
-        eo_isa(obj, (Eo_Class *) buf);
+        eo_isa(obj, (Eo *) buf);
 
         fail_if(0 != eo_ref_get((Eo *) buf));
 
@@ -738,7 +738,7 @@ _a_print(Eo *obj EINA_UNUSED, void *class_data EINA_UNUSED, va_list *list EINA_U
 }
 
 static void
-_class_hi_print(const Eo_Class *klass EINA_UNUSED, va_list *list EINA_UNUSED)
+_class_hi_print(const Eo *klass EINA_UNUSED, va_list *list EINA_UNUSED)
 {
    printf("Hi\n");
 }
@@ -750,7 +750,7 @@ enum {
 };
 
 static void
-_eo_multiple_do_class_constructor(Eo_Class *klass)
+_eo_multiple_do_class_constructor(Eo *klass)
 {
    const Eo_Op_Func_Description func_desc[] = {
         EO_OP_FUNC(MULTI_ID(MULTI_SUB_ID_A_PRINT), _a_print),
@@ -784,7 +784,7 @@ START_TEST(eo_multiple_do)
         NULL
    };
 
-   const Eo_Class *klass = eo_class_new(&class_desc, SIMPLE_CLASS, NULL);
+   const Eo *klass = eo_class_new(&class_desc, SIMPLE_CLASS, NULL);
    fail_if(!klass);
 
    Eo *obj = eo_add(klass, NULL);
@@ -841,7 +841,7 @@ START_TEST(eo_pointers_indirection)
         NULL
    };
 
-   const Eo_Class *klass = eo_class_new(&class_desc, EO_BASE_CLASS, NULL);
+   const Eo *klass = eo_class_new(&class_desc, EO_BASE_CLASS, NULL);
    fail_if(!klass);
 
    /* Check simple id validity */

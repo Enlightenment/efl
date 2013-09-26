@@ -19,6 +19,6 @@ enum {
 #define mixin_ab_sum_get(sum) MIXIN_ID(MIXIN_SUB_ID_AB_SUM_GET), EO_TYPECHECK(int *, sum)
 
 #define MIXIN_CLASS mixin_class_get()
-const Eo_Class *mixin_class_get(void);
+const Eo *mixin_class_get(void);
 
 #endif

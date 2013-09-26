@@ -39,7 +39,7 @@ _print2(Eo *obj EINA_UNUSED, void *class_data EINA_UNUSED, va_list *list EINA_UN
 }
 
 static void
-_class_print(const Eo_Class *klass, va_list *list)
+_class_print(const Eo *klass, va_list *list)
 {
    (void) list;
    printf("Print %s-%s\n", eo_class_name_get(klass), eo_class_name_get(MY_CLASS));
@@ -48,7 +48,7 @@ _class_print(const Eo_Class *klass, va_list *list)
 }
 
 static void
-_class_constructor(Eo_Class *klass)
+_class_constructor(Eo *klass)
 {
    const Eo_Op_Func_Description func_desc[] = {
         EO_OP_FUNC(SIMPLE_ID(SIMPLE_SUB_ID_A_SET), _a_set),

@@ -87,7 +87,7 @@ static void _constructor(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
 
 }
 
-static void _class_constructor(Eo_Class *klass)
+static void _class_constructor(Eo *klass)
 {
   const Eo_Op_Func_Description func_desc[] = {
       /* Virtual functions of parent class implemented in this class */

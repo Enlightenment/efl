@@ -13,6 +13,6 @@ enum {
 #define inherit_prot_print() INHERIT_ID(INHERIT_SUB_ID_PROT_PRINT)
 
 #define INHERIT_CLASS inherit_class_get()
-const Eo_Class *inherit_class_get(void);
+const Eo *inherit_class_get(void);
 
 #endif
