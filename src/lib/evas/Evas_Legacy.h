@@ -4738,6 +4738,9 @@ EAPI void                          evas_object_image_video_surface_set(Evas_Obje
  */
 EAPI const Evas_Video_Surface     *evas_object_image_video_surface_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
+EAPI void evas_object_image_video_surface_caps_set(Evas_Object *obj, unsigned int caps) EINA_ARG_NONNULL(1);
+EAPI unsigned int evas_object_image_video_surface_caps_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+
 /**
  * Set the scale hint of a given image of the canvas.
  *

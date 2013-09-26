@@ -486,6 +486,16 @@ struct _Evas_Video_Surface
    void               *data;
 };
 
+typedef enum _Evas_Video_Surface_Caps
+{
+   EVAS_VIDEO_SURFACE_MOVE = 1,
+   EVAS_VIDEO_SURFACE_RESIZE = 2,
+   EVAS_VIDEO_SURFACE_CLIP = 4,
+   EVAS_VIDEO_SURFACE_BELOW = 8,
+   EVAS_VIDEO_SURFACE_STACKING_CHECK = 16,
+   EVAS_VIDEO_SURFACE_IGNORE_WINDOW = 32,
+} Evas_Video_Surface_Caps;
+
 #define EVAS_LAYER_MIN                   -32768 /**< bottom-most layer number */
 #define EVAS_LAYER_MAX                   32767 /**< top-most layer number */
 

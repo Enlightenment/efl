@@ -64,6 +64,7 @@ struct _Evas_Object_Image_Pixels
    } func;
 
    Evas_Video_Surface video;
+   unsigned int video_caps;
 };
 
 struct _Evas_Object_Image_State
@@ -216,7 +217,7 @@ static const Evas_Object_Image_Load_Opts default_load_opts = {
 };
 
 static const Evas_Object_Image_Pixels default_pixels = {
-  NULL, { NULL, NULL }, { 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL }
+  NULL, { NULL, NULL }, { 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL }, ~0x0
 };
 
 static const Evas_Object_Image_State default_state = {
@@ -2576,6 +2577,52 @@ _image_video_surface_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
    const Evas_Object_Image *o = _pd;
 
    *surf = (!o->video_surface ? NULL : &o->pixels->video);
+}
+
+EAPI void
+evas_object_image_video_surface_caps_set(Evas_Object *eo_obj, unsigned int caps)
+{
+   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+   eo_do(eo_obj, evas_obj_image_video_surface_caps_set(caps));
+}
+
+static void
+_image_video_surface_caps_set(Eo *eo_obj, void *_pd, va_list *list)
+{
+   unsigned int caps = va_arg(*list, unsigned int);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Image *o = _pd;
+
+   _evas_object_image_cleanup(eo_obj, obj, o);
+
+   if (caps == o->pixels->video_caps)
+      return;
+
+   EINA_COW_PIXEL_WRITE_BEGIN(o, pixi_write)
+     pixi_write->video_caps = caps;
+   EINA_COW_PIXEL_WRITE_END(o, pixi_write)
+}
+
+EAPI unsigned int
+evas_object_image_video_surface_caps_get(const Evas_Object *eo_obj)
+{
+   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
+   return 0;
+   MAGIC_CHECK_END();
+   unsigned int caps = ~0x0;
+   eo_do((Eo *)eo_obj, evas_obj_image_video_surface_caps_get(&caps));
+   return caps;
+}
+
+static void
+_image_video_surface_caps_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   unsigned int *caps = va_arg(*list, unsigned int *);
+   const Evas_Object_Image *o = _pd;
+
+   *caps = (!o->video_surface ? 0 : o->pixels->video_caps);
 }
 
 EAPI void
@@ -5359,6 +5406,8 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_COLORSPACE_GET), _image_colorspace_get),
         EO_OP_FUNC(EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_VIDEO_SURFACE_SET), _image_video_surface_set),
         EO_OP_FUNC(EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_VIDEO_SURFACE_GET), _image_video_surface_get),
+        EO_OP_FUNC(EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_VIDEO_SURFACE_CAPS_SET), _image_video_surface_caps_set),
+        EO_OP_FUNC(EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_VIDEO_SURFACE_CAPS_GET), _image_video_surface_caps_get),
         EO_OP_FUNC(EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_NATIVE_SURFACE_SET), _image_native_surface_set),
         EO_OP_FUNC(EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_NATIVE_SURFACE_GET), _image_native_surface_get),
         EO_OP_FUNC(EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_SCALE_HINT_SET), _image_scale_hint_set),
@@ -5437,6 +5486,8 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(EVAS_OBJ_IMAGE_SUB_ID_COLORSPACE_GET, "Get the colorspace of a given image of the canvas."),
      EO_OP_DESCRIPTION(EVAS_OBJ_IMAGE_SUB_ID_VIDEO_SURFACE_SET, "Set the video surface linked to a given image of the canvas."),
      EO_OP_DESCRIPTION(EVAS_OBJ_IMAGE_SUB_ID_VIDEO_SURFACE_GET, "Get the video surface linekd to a given image of the canvas."),
+     EO_OP_DESCRIPTION(EVAS_OBJ_IMAGE_SUB_ID_VIDEO_SURFACE_CAPS_SET, "Set the surface capabilities (clip, resize, scale) of the video surface associated with this image."),
+     EO_OP_DESCRIPTION(EVAS_OBJ_IMAGE_SUB_ID_VIDEO_SURFACE_CAPS_GET, "Get the surface capabilities (clip, resize, scale) of the video surface associated with this image."),
      EO_OP_DESCRIPTION(EVAS_OBJ_IMAGE_SUB_ID_NATIVE_SURFACE_SET, "Set the native surface of a given image of the canvas."),
      EO_OP_DESCRIPTION(EVAS_OBJ_IMAGE_SUB_ID_NATIVE_SURFACE_GET, "Get the native surface of a given image of the canvas."),
      EO_OP_DESCRIPTION(EVAS_OBJ_IMAGE_SUB_ID_SCALE_HINT_SET, "Set the scale hint of a given image of the canvas."),

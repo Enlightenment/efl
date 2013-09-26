@@ -5592,6 +5592,8 @@ enum
    EVAS_OBJ_IMAGE_SUB_ID_COLORSPACE_GET,
    EVAS_OBJ_IMAGE_SUB_ID_VIDEO_SURFACE_SET,
    EVAS_OBJ_IMAGE_SUB_ID_VIDEO_SURFACE_GET,
+   EVAS_OBJ_IMAGE_SUB_ID_VIDEO_SURFACE_CAPS_SET,
+   EVAS_OBJ_IMAGE_SUB_ID_VIDEO_SURFACE_CAPS_GET,
    EVAS_OBJ_IMAGE_SUB_ID_NATIVE_SURFACE_SET,
    EVAS_OBJ_IMAGE_SUB_ID_NATIVE_SURFACE_GET,
    EVAS_OBJ_IMAGE_SUB_ID_SCALE_HINT_SET,
@@ -6378,6 +6380,30 @@ enum
  * @see evas_object_image_video_surface_get
  */
 #define evas_obj_image_video_surface_get(surf) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_VIDEO_SURFACE_GET), EO_TYPECHECK(const Evas_Video_Surface **, surf)
+
+/**
+ * @def evas_obj_image_video_surface_caps_set
+ * @since 1.8
+ *
+ * Set the video surface capabilities to a given image of the canvas
+ *
+ * @param[in] caps in
+ *
+ * @see evas_object_image_video_surface_caps_set
+ */
+#define evas_obj_image_video_surface_caps_set(caps) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_VIDEO_SURFACE_CAPS_SET), EO_TYPECHECK(unsigned int, caps)
+
+/**
+ * @def evas_obj_image_video_surface_caps_get
+ * @since 1.8
+ *
+ * Get the video surface capabilities to a given image of the canvas
+ *
+ * @param[out] caps out
+ *
+ * @see evas_object_image_video_surface_caps_get
+ */
+#define evas_obj_image_video_surface_caps_get(caps) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_VIDEO_SURFACE_CAPS_GET), EO_TYPECHECK(unsigned int *, caps)
 
 /**
  * @def evas_obj_image_native_surface_set

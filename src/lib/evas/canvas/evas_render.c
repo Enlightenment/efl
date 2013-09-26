@@ -810,6 +810,10 @@ _evas_render_can_use_overlay(Evas_Public_Data *e, Evas_Object *eo_obj)
    Eina_Bool nooverlay;
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    Evas_Object_Protected_Data *tmp = NULL;
+   Evas_Coord imgw, imgh;
+   unsigned int caps;
+   Eina_Bool surface_below, stacking_check, object_above = EINA_FALSE;
+   Eina_Bool ignore_window;
 
    video_parent = _evas_object_image_video_parent_get(eo_obj);
 
@@ -831,6 +835,62 @@ _evas_render_can_use_overlay(Evas_Public_Data *e, Evas_Object *eo_obj)
        (obj->cur->cache.clip.b != 255) ||
        (obj->cur->cache.clip.a != 255))
      return EINA_FALSE;
+
+   caps = evas_object_image_video_surface_caps_get(eo_obj);
+
+   /* check if surface is above the canvas */
+   surface_below = !!(caps & EVAS_VIDEO_SURFACE_BELOW);
+   if (!surface_below)
+     {
+        /* above canvas, must support resize and clipping */
+
+        /* check if video surface supports resize */
+        evas_object_image_size_get(eo_obj, &imgw, &imgh);
+        if ((obj->cur->geometry.w != imgw) ||
+            (obj->cur->geometry.h != imgh))
+          {
+             if (!(caps & EVAS_VIDEO_SURFACE_RESIZE))
+                return EINA_FALSE;
+          }
+        /* check if video surface supports clipping */
+        evas_object_image_size_get(eo_obj, &imgw, &imgh);
+        if ((obj->cur->cache.clip.x != obj->cur->geometry.x) ||
+            (obj->cur->cache.clip.y != obj->cur->geometry.y) ||
+            (obj->cur->cache.clip.w != obj->cur->geometry.w) ||
+            (obj->cur->cache.clip.h != obj->cur->geometry.h))
+          {
+             if (!(caps & EVAS_VIDEO_SURFACE_CLIP))
+                return EINA_FALSE;
+          }
+     }
+
+   /* check for window/surface/canvas limits */
+   ignore_window = !!(caps & EVAS_VIDEO_SURFACE_IGNORE_WINDOW);
+   if (!ignore_window)
+     {
+        Evas_Coord x1, x2, y1, y2;
+        Evas_Coord fx, fy, fw, fh;
+
+        fx = e->framespace.x;
+        fy = e->framespace.y;
+        fw = e->framespace.w;
+        fh = e->framespace.h;
+
+        x1 = obj->cur->geometry.x + fx;
+        y1 = obj->cur->geometry.y + fy;
+        x2 = obj->cur->geometry.x + obj->cur->geometry.w + fx;
+        y2 = obj->cur->geometry.y + obj->cur->geometry.h + fy;
+
+        if ((x1 < fx) || (y1 < fy) ||
+            (x2 > e->output.w - (fw - fx)) ||
+            (y2 > e->output.h - (fh - fy)))
+          return EINA_FALSE;
+     }
+
+   /* check if there are other objects above the video object? */
+   stacking_check = !!(caps & EVAS_VIDEO_SURFACE_STACKING_CHECK);
+   if (!stacking_check)
+     return EINA_TRUE;
 
    /* Check presence of transparent object on top of the video object */
    EINA_RECTANGLE_SET(&zone,
@@ -877,6 +937,12 @@ _evas_render_can_use_overlay(Evas_Public_Data *e, Evas_Object *eo_obj)
             (!eo_isa(eo_current, EVAS_OBJ_SMART_CLASS)))
           {
              Eina_Bool included = EINA_FALSE;
+
+             if (!surface_below)
+               {
+                  object_above = EINA_TRUE;
+                  break;
+               }
 
              if (evas_object_is_opaque(eo_current, current) ||
                  ((current->func->has_opaque_rect) &&
@@ -990,7 +1056,7 @@ _evas_render_can_use_overlay(Evas_Public_Data *e, Evas_Object *eo_obj)
    EINA_LIST_FREE(opaques, r)
      eina_rectangle_free(r);
 
-   if (nooverlay)
+   if (nooverlay || object_above)
      return EINA_FALSE;
 
    return EINA_TRUE;
