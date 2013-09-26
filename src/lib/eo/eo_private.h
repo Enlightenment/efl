@@ -127,7 +127,9 @@ typedef struct
 
 struct _Eo_Class
 {
+#ifndef HAVE_EO_ID
    EINA_MAGIC
+#endif
    Eo_Class_Id class_id;
    const _Eo_Class *parent;
    const Eo_Class_Description *desc;

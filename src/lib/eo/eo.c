@@ -373,8 +373,7 @@ eo_do_super_internal(const char *file, int line, Eo *obj_id, const Eo_Class *cur
    va_list p_list;
 
    EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, EINA_FALSE);
-   _Eo_Class *cur_klass = _eo_class_pointer_get(cur_klass_id);
-   EO_MAGIC_RETURN_VAL(cur_klass, EO_CLASS_EINA_MAGIC, EINA_FALSE);
+   EO_CLASS_POINTER_RETURN_VAL(cur_klass_id, cur_klass, EINA_FALSE);
 
    /* Advance the kls itr. */
    nklass = _eo_kls_itr_next(obj->klass, cur_klass, op);
@@ -433,8 +432,7 @@ eo_class_do_internal(const char *file, int line, const Eo_Class *klass_id, ...)
    Eo_Op op = EO_NOOP;
    va_list p_list;
 
-   _Eo_Class *klass = _eo_class_pointer_get(klass_id);
-   EO_MAGIC_RETURN_VAL(klass, EO_CLASS_EINA_MAGIC, EINA_FALSE);
+   EO_CLASS_POINTER_RETURN_VAL(klass_id, klass, EINA_FALSE);
 
    va_start(p_list, klass_id);
 
@@ -459,13 +457,11 @@ EAPI Eina_Bool
 eo_class_do_super_internal(const char *file, int line, const Eo_Class *klass_id,
                            const Eo_Class *cur_klass_id, Eo_Op op, ...)
 {
-   _Eo_Class *klass = _eo_class_pointer_get(klass_id);
-   _Eo_Class *cur_klass = _eo_class_pointer_get(cur_klass_id);
    const _Eo_Class *nklass;
    Eina_Bool ret = EINA_TRUE;
    va_list p_list;
-   EO_MAGIC_RETURN_VAL(klass, EO_CLASS_EINA_MAGIC, EINA_FALSE);
-   EO_MAGIC_RETURN_VAL(cur_klass, EO_CLASS_EINA_MAGIC, EINA_FALSE);
+   EO_CLASS_POINTER_RETURN_VAL(klass_id, klass, EINA_FALSE);
+   EO_CLASS_POINTER_RETURN_VAL(cur_klass_id, cur_klass, EINA_FALSE);
 
    /* Advance the kls itr. */
    nklass = _eo_kls_itr_next(klass, cur_klass, op);
@@ -494,8 +490,7 @@ eo_class_get(const Eo *obj_id)
 EAPI const char *
 eo_class_name_get(const Eo_Class *klass_id)
 {
-   _Eo_Class *klass = _eo_class_pointer_get(klass_id);
-   EO_MAGIC_RETURN_VAL(klass, EO_CLASS_EINA_MAGIC, NULL);
+   EO_CLASS_POINTER_RETURN_VAL(klass_id, klass, NULL);
 
    return klass->desc->name;
 }
@@ -652,8 +647,7 @@ _eo_class_constructor(_Eo_Class *klass)
 EAPI void
 eo_class_funcs_set(Eo_Class *klass_id, const Eo_Op_Func_Description *func_descs)
 {
-   _Eo_Class *klass = _eo_class_pointer_get(klass_id);
-   EO_MAGIC_RETURN(klass, EO_CLASS_EINA_MAGIC);
+   EO_CLASS_POINTER_RETURN(klass_id, klass);
 
    const Eo_Op_Func_Description *itr;
    itr = func_descs;
@@ -775,11 +769,13 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
    Eina_List *extn_list, *mro, *mixins;
 
    _Eo_Class *parent = _eo_class_pointer_get(parent_id);
+#ifndef HAVE_EO_ID
    if (parent && !EINA_MAGIC_CHECK(parent, EO_CLASS_EINA_MAGIC))
      {
         EINA_MAGIC_FAIL(parent, EO_CLASS_EINA_MAGIC);
         return NULL;
      }
+#endif
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(desc, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(desc->name, NULL);
@@ -896,7 +892,9 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
      }
 
    klass = calloc(1, _eo_class_sz + extn_sz + mro_sz + mixins_sz);
+#ifndef HAVE_EO_ID
    EINA_MAGIC_SET(klass, EO_CLASS_EINA_MAGIC);
+#endif
    eina_lock_new(&klass->objects.trash_lock);
    eina_lock_new(&klass->iterators.trash_lock);
    klass->parent = parent;
@@ -1033,8 +1031,7 @@ EAPI Eina_Bool
 eo_isa(const Eo *obj_id, const Eo_Class *klass_id)
 {
    EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, EINA_FALSE);
-   _Eo_Class *klass = _eo_class_pointer_get(klass_id);
-   EO_MAGIC_RETURN_VAL(klass, EO_CLASS_EINA_MAGIC, EINA_FALSE);
+   EO_CLASS_POINTER_RETURN_VAL(klass_id, klass, EINA_FALSE);
    const op_type_funcs *func = _dich_func_get(obj->klass,
          klass->base_id + klass->desc->ops.count);
 
@@ -1061,8 +1058,7 @@ eo_add_internal(const char *file, int line, const Eo_Class *klass_id, Eo *parent
 {
    Eina_Bool do_err;
    _Eo *obj;
-   _Eo_Class *klass = _eo_class_pointer_get(klass_id);
-   EO_MAGIC_RETURN_VAL(klass, EO_CLASS_EINA_MAGIC, NULL);
+   EO_CLASS_POINTER_RETURN_VAL(klass_id, klass, NULL);
 
    if (parent_id)
      {
@@ -1349,8 +1345,7 @@ eo_data_scope_get(const Eo *obj_id, const Eo_Class *klass_id)
 {
    void *ret;
    EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, NULL);
-   _Eo_Class *klass = _eo_class_pointer_get(klass_id);
-   EO_MAGIC_RETURN_VAL(klass, EO_CLASS_EINA_MAGIC, NULL);
+   EO_CLASS_POINTER_RETURN_VAL(klass_id, klass, NULL);
 
 #ifdef EO_DEBUG
    if (!_eo_class_mro_has(obj->klass, klass))
@@ -1381,8 +1376,8 @@ eo_data_xref_internal(const char *file, int line, const Eo *obj_id, const Eo_Cla
    _Eo_Class *klass = NULL;
    if (klass_id)
      {
-        klass = _eo_class_pointer_get(klass_id);
-        EO_MAGIC_RETURN_VAL(klass, EO_CLASS_EINA_MAGIC, NULL);
+        EO_CLASS_POINTER_RETURN_VAL(klass_id, klass2, NULL);
+        klass = klass2;
 
 #ifdef EO_DEBUG
         if (!_eo_class_mro_has(obj->klass, klass))
