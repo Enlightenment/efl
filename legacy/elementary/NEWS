@@ -287,6 +287,7 @@ Fixes:
    * Spinner : change part name to access.text from access_text on default style.
    * Fix fileselector only send "selected" signal without selection when file path is typed on the path entry.
    * Fix spinner arrow key focus movement bug.
+   * Fix the layout to swallow the contents again when theme is changed.
 
 Removals:
 
