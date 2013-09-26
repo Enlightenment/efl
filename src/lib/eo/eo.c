@@ -23,6 +23,7 @@ static Eo_Op _eo_ops_last_id = 0;
 
 static size_t _eo_sz = 0;
 static size_t _eo_class_sz = 0;
+static size_t _eo_handle_sz = 0;
 
 static void _eo_condtor_reset(_Eo *obj);
 static inline void *_eo_data_scope_get(const _Eo *obj, const _Eo_Class *klass);
@@ -46,8 +47,6 @@ static const Eo_Op_Description *_eo_op_id_desc_get(Eo_Op op);
       (_Eo_Class *) (((id <= _eo_classes_last_id) && (id > 0)) ? \
       (_eo_classes[id - 1]) : NULL); \
       })
-
-#define EO_ALIGN_SIZE(size) eina_mempool_alignof(size)
 
 static inline void
 _dich_chain_alloc(Dich_Chain1 *chain1)
@@ -141,7 +140,7 @@ _eo_class_pointer_get(const Eo_Class *klass_id)
 #ifdef HAVE_EO_ID
    return ID_CLASS_GET((Eo_Class_Id)klass_id);
 #else
-   return (_Eo_Class *)klass_id;
+   return (_Eo_Class *) EO_FROM_HANDLE(klass_id);
 #endif
 }
 
@@ -151,7 +150,7 @@ Eo_Class * _eo_class_id_get(const _Eo_Class *klass)
 #ifdef HAVE_EO_ID
    return (Eo_Class *)klass->class_id;
 #else
-   return (Eo_Class *)klass;
+   return (Eo_Class *) HANDLE_FROM_EO(klass);
 #endif
 }
 
@@ -692,7 +691,11 @@ eo_class_free(_Eo_Class *klass)
      }
 
    EINA_TRASH_CLEAN(&klass->objects.trash, data)
+#ifdef HAVE_EO_ID
      free(data);
+#else
+     free((void *) HANDLE_FROM_EO(data));
+#endif
 
    EINA_TRASH_CLEAN(&klass->iterators.trash, data)
      free(data);
@@ -700,7 +703,11 @@ eo_class_free(_Eo_Class *klass)
    eina_lock_free(&klass->objects.trash_lock);
    eina_lock_free(&klass->iterators.trash_lock);
 
+#ifdef HAVE_EO_ID
    free(klass);
+#else
+   free((void *) HANDLE_FROM_EO(klass));
+#endif
 }
 
 /* DEVCHECK */
@@ -764,6 +771,7 @@ EAPI const Eo_Class *
 eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
 {
    _Eo_Class *klass;
+   _Eo_Handle *hndl;
    va_list p_list;
    size_t extn_sz, mro_sz, mixins_sz;
    Eina_List *extn_list, *mro, *mixins;
@@ -891,8 +899,13 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
         DBG("Finished building Mixins list for class '%s'", desc->name);
      }
 
+#ifdef HAVE_EO_ID
+   hndl = NULL;
    klass = calloc(1, _eo_class_sz + extn_sz + mro_sz + mixins_sz);
-#ifndef HAVE_EO_ID
+#else
+   hndl = calloc(1, _eo_handle_sz + _eo_class_sz + extn_sz + mro_sz + mixins_sz);
+   hndl->is_a_class = 1;
+   klass = (_Eo_Class *) EO_FROM_HANDLE(hndl);
    EINA_MAGIC_SET(klass, EO_CLASS_EINA_MAGIC);
 #endif
    eina_lock_new(&klass->objects.trash_lock);
@@ -961,7 +974,11 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
         extn_data_itr->offset = 0;
      }
 
+#ifdef HAVE_EO_ID
    klass->obj_size = _eo_sz + extn_data_off;
+#else
+   klass->obj_size = _eo_handle_sz + _eo_sz + extn_data_off;
+#endif
    if (getenv("EO_DEBUG"))
      {
         fprintf(stderr, "Eo class '%s' will take %u bytes per object.\n",
@@ -1058,6 +1075,7 @@ eo_add_internal(const char *file, int line, const Eo_Class *klass_id, Eo *parent
 {
    Eina_Bool do_err;
    _Eo *obj;
+   _Eo_Handle *hndl;
    EO_CLASS_POINTER_RETURN_VAL(klass_id, klass, NULL);
 
    if (parent_id)
@@ -1080,7 +1098,14 @@ eo_add_internal(const char *file, int line, const Eo_Class *klass_id, Eo *parent
      }
    else
      {
+#ifdef HAVE_EO_ID
+        hndl = NULL;
         obj = calloc(1, klass->obj_size);
+#else
+        hndl = calloc(1, klass->obj_size);
+        hndl->is_a_class = 0;
+        obj  = EO_FROM_HANDLE(hndl);
+#endif
      }
    eina_lock_release(&klass->objects.trash_lock);
 
@@ -1419,6 +1444,7 @@ eo_init(void)
 
    _eo_sz = EO_ALIGN_SIZE(sizeof (_Eo));
    _eo_class_sz = EO_ALIGN_SIZE(sizeof (_Eo_Class));
+   _eo_handle_sz = EO_ALIGN_SIZE(sizeof (_Eo_Handle));
 
    _eo_classes = NULL;
    _eo_classes_last_id = EO_CLASS_IDS_FIRST - 1;

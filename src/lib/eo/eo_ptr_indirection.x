@@ -184,6 +184,13 @@ _eo_id_mem_protect(void *ptr, Eina_Bool may_not_write)
 # define UNPROTECT(_ptr_)
 #endif
 
+#define EO_ALIGN_SIZE(size) eina_mempool_alignof(size)
+
+#ifndef HAVE_EO_ID
+# define HANDLE_FROM_EO(eo) (Eo_Id)( eo ? (((char *) eo) - EO_ALIGN_SIZE(sizeof (_Eo_Handle))) : NULL )
+# define EO_FROM_HANDLE(hndl) (_Eo *) ( hndl ? (((char *) hndl) + EO_ALIGN_SIZE(sizeof (_Eo_Handle))) : NULL )
+#endif
+
 /* Entry */
 typedef struct
 {
@@ -270,7 +277,7 @@ _eo_obj_pointer_get(const Eo_Id obj_id)
 
    return NULL;
 #else
-   return (_Eo *)obj_id;
+   return EO_FROM_HANDLE(obj_id);
 #endif
 }
 
@@ -390,7 +397,7 @@ _eo_id_allocate(const _Eo *obj)
                               (entry - _current_table->entries),
                               entry->generation);
 #else
-   return (Eo_Id)obj;
+   return HANDLE_FROM_EO(obj);
 #endif
 }
 
@@ -445,7 +452,7 @@ _eo_id_release(const Eo_Id obj_id)
 
    ERR("obj_id %p is not pointing to a valid object. Maybe it has already been freed.", (void *)obj_id);
 #else
-   EINA_MAGIC_SET((_Eo *) obj_id, EO_FREED_EINA_MAGIC);
+   EINA_MAGIC_SET(EO_FROM_HANDLE(obj_id), EO_FREED_EINA_MAGIC);
 #endif
 }
 
