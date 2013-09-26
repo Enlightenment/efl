@@ -439,14 +439,11 @@ static int
 _evas_common_rgba_image_surface_alloc(Image_Entry *ie, unsigned int w, unsigned int h)
 {
    RGBA_Image   *im = (RGBA_Image *) ie;
-   size_t        siz = 0;
 
 #ifdef EVAS_CSERVE2
    if (ie->data1) return 0;
 #endif
    if (im->image.no_free) return 0;
-
-   siz = _evas_common_rgba_image_surface_size(w, h, (im->flags & RGBA_IMAGE_ALPHA_ONLY));
 
    if (im->image.data)
      {
@@ -465,6 +462,8 @@ _evas_common_rgba_image_surface_alloc(Image_Entry *ie, unsigned int w, unsigned 
    surfs = eina_list_append(surfs, ie);
 #endif   
 #ifdef HAVE_VALGRIND
+   size_t        siz = 0;
+   siz = _evas_common_rgba_image_surface_size(w, h, (im->flags & RGBA_IMAGE_ALPHA_ONLY));
 # ifdef VALGRIND_MAKE_READABLE
    VALGRIND_MAKE_READABLE(im->image.data, siz);
 # else
