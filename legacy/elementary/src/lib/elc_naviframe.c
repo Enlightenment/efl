@@ -1665,8 +1665,6 @@ _item_pop(Eo *obj, void *_pd, va_list *list)
    if (it->popping) return;
    it->popping = EINA_TRUE;
 
-   ELM_SAFE_FREE(it->animator, ecore_animator_del);
-
    if (it->pop_cb)
      {
         if (!it->pop_cb(it->pop_data, (Elm_Object_Item *)it))
