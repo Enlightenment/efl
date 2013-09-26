@@ -3386,7 +3386,11 @@ _part_swallow(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    if (rpcur)
      {
         /* the object is already swallowed in the requested part */
-        if (rpcur == rp) return;
+        if (rpcur == rp)
+          {
+             *ret = EINA_TRUE;
+             return;
+          }
         /* The object is already swallowed somewhere, unswallow it first */
         edje_object_part_unswallow(ed->obj, obj_swallow);
      }
