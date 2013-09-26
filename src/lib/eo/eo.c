@@ -389,18 +389,18 @@ eo_do_internal(const char *file, int line, const Eo *obj_id, ...)
 {
    Eina_Bool ret = EINA_TRUE;
    va_list p_list;
-   Eina_Bool obj_ref = !_eo_is_a_class(obj_id);
+   Eina_Bool class_ref = _eo_is_a_class(obj_id);
 
    va_start(p_list, obj_id);
-   if (obj_ref)
-     {
-        EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, EINA_FALSE);
-        ret = _eo_obj_dov_internal(file, line, obj, &p_list);
-     }
-   else
+   if (class_ref)
      {
         EO_CLASS_POINTER_RETURN_VAL(obj_id, klass, EINA_FALSE);
         ret = _eo_class_dov_internal(file, line, klass, &p_list);
+     }
+   else
+     {
+        EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, EINA_FALSE);
+        ret = _eo_obj_dov_internal(file, line, obj, &p_list);
      }
    va_end(p_list);
 
@@ -410,17 +410,17 @@ eo_do_internal(const char *file, int line, const Eo *obj_id, ...)
 EAPI Eina_Bool
 eo_vdo_internal(const char *file, int line, const Eo *obj_id, va_list *ops)
 {
-   Eina_Bool obj_ref = !_eo_is_a_class(obj_id);
+   Eina_Bool class_ref = _eo_is_a_class(obj_id);
 
-   if (obj_ref)
-     {
-        EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, EINA_FALSE);
-        return _eo_obj_dov_internal(file, line, obj, ops);
-     }
-   else
+   if (class_ref)
      {
         EO_CLASS_POINTER_RETURN_VAL(obj_id, klass, EINA_FALSE);
         return _eo_class_dov_internal(file, line, klass, ops);
+     }
+   else
+     {
+        EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, EINA_FALSE);
+        return _eo_obj_dov_internal(file, line, obj, ops);
      }
 }
 
