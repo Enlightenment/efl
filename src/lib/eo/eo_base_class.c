@@ -744,13 +744,13 @@ _ev_freeze_get(Eo *obj EINA_UNUSED, void *class_data, va_list *list)
 }
 
 static void
-_ev_global_freeze(const Eo_Class *klass EINA_UNUSED, va_list *list EINA_UNUSED)
+_ev_global_freeze(const Eo *klass EINA_UNUSED, va_list *list EINA_UNUSED)
 {
    event_freeze_count++;
 }
 
 static void
-_ev_global_thaw(const Eo_Class *klass EINA_UNUSED, va_list *list EINA_UNUSED)
+_ev_global_thaw(const Eo *klass EINA_UNUSED, va_list *list EINA_UNUSED)
 {
    if (event_freeze_count > 0)
      {
@@ -763,7 +763,7 @@ _ev_global_thaw(const Eo_Class *klass EINA_UNUSED, va_list *list EINA_UNUSED)
 }
 
 static void
-_ev_global_freeze_get(const Eo_Class *klass EINA_UNUSED, va_list *list)
+_ev_global_freeze_get(const Eo *klass EINA_UNUSED, va_list *list)
 {
    EO_PARAMETER_GET(int *, ret, list);
 
@@ -905,7 +905,7 @@ _destructor(Eo *obj, void *class_data, va_list *list EINA_UNUSED)
 }
 
 static void
-_class_constructor(Eo_Class *klass)
+_class_constructor(Eo *klass)
 {
    event_freeze_count = 0;
 

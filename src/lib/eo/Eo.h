@@ -41,13 +41,6 @@ extern "C" {
 typedef struct _Eo_Opaque Eo;
 
 /**
- * @typedef Eo_Class
- * The basic Object class type.
- * @ingroup Eo_Class
- */
-typedef struct _Eo_Class_Opaque Eo_Class;
-
-/**
  * @typedef Eo_Callback_Priority
  *
  * Callback priority value. Range is -32k - 32k. The lower the number, the
@@ -270,7 +263,7 @@ typedef void (*eo_op_func_type)(Eo *, void *class_data, va_list *list);
  *
  * @see eo_op_func_type
  */
-typedef void (*eo_op_func_type_class)(const Eo_Class *, va_list *list);
+typedef void (*eo_op_func_type_class)(const Eo *, va_list *list);
 
 /**
  * @addtogroup Eo_Events Eo's Event Handling
@@ -339,13 +332,13 @@ typedef struct _Eo_Event_Description Eo_Event_Description;
  * You must use this macro if you want thread safety in class creation.
  */
 #define EO_DEFINE_CLASS(class_get_func_name, class_desc, parent_class, ...) \
-EAPI const Eo_Class * \
+EAPI const Eo * \
 class_get_func_name(void) \
 { \
-   const Eo_Class *_tmp_parent_class; \
+   const Eo *_tmp_parent_class; \
    static volatile char lk_init = 0; \
    static Eina_Lock _my_lock; \
-   static const Eo_Class * volatile _my_class = NULL; \
+   static const Eo * volatile _my_class = NULL; \
    if (EINA_LIKELY(!!_my_class)) return _my_class; \
    \
    eina_lock_take(&_eo_class_creation_lock); \
@@ -474,8 +467,8 @@ struct _Eo_Class_Description
    } ops; /**< The ops description, should be filled using #EO_CLASS_DESCRIPTION_OPS */
    const Eo_Event_Description **events; /**< The event descriptions for this class. */
    size_t data_size; /**< The size of data (private + protected + public) this class needs per object. */
-   void (*class_constructor)(Eo_Class *klass); /**< The constructor of the class. */
-   void (*class_destructor)(Eo_Class *klass); /**< The destructor of the class. */
+   void (*class_constructor)(Eo *klass); /**< The constructor of the class. */
+   void (*class_destructor)(Eo *klass); /**< The destructor of the class. */
 };
 
 /**
@@ -550,7 +543,7 @@ typedef struct _Eo_Class_Description Eo_Class_Description;
  *
  * @see #EO_DEFINE_CLASS
  */
-EAPI const Eo_Class *eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent, ...);
+EAPI const Eo *eo_class_new(const Eo_Class_Description *desc, const Eo *parent, ...);
 
 /**
  * @brief Check if an object "is a" klass.
@@ -560,7 +553,7 @@ EAPI const Eo_Class *eo_class_new(const Eo_Class_Description *desc, const Eo_Cla
  *
  * Notice: This function does not support composite objects.
  */
-EAPI Eina_Bool eo_isa(const Eo *obj, const Eo_Class *klass);
+EAPI Eina_Bool eo_isa(const Eo *obj, const Eo *klass);
 
 /**
  * @brief Sets the OP functions for a class.
@@ -569,7 +562,7 @@ EAPI Eina_Bool eo_isa(const Eo *obj, const Eo_Class *klass);
  *
  * Should be called from within the class constructor.
  */
-EAPI void eo_class_funcs_set(Eo_Class *klass, const Eo_Op_Func_Description *func_descs);
+EAPI void eo_class_funcs_set(Eo *klass, const Eo_Op_Func_Description *func_descs);
 
 /**
  * @brief Gets the name of the passed class.
@@ -578,7 +571,7 @@ EAPI void eo_class_funcs_set(Eo_Class *klass, const Eo_Op_Func_Description *func
  *
  * @see eo_class_get()
  */
-EAPI const char *eo_class_name_get(const Eo_Class *klass);
+EAPI const char *eo_class_name_get(const Eo *obj);
 
 /**
  * @}
@@ -660,7 +653,7 @@ EAPI Eina_Bool eo_vdo_internal(const char *file, int line, Eo *obj, Eo_Op_Type o
  *
  * @see #eo_class_do
  */
-EAPI Eina_Bool eo_class_do_internal(const char *file, int line, const Eo_Class *klass, ...);
+EAPI Eina_Bool eo_class_do_internal(const char *file, int line, const Eo *klass, ...);
 
 /**
  * @brief Calls the super function for the specific op.
@@ -702,7 +695,7 @@ EAPI Eina_Bool eo_class_do_internal(const char *file, int line, const Eo_Class *
  * @see #eo_do
  * @see #eo_do_super
  */
-EAPI Eina_Bool eo_do_super_internal(const char *file, int line, Eo *obj, const Eo_Class *cur_klass, Eo_Op_Type op_type, Eo_Op op, ...);
+EAPI Eina_Bool eo_do_super_internal(const char *file, int line, Eo *obj, const Eo *cur_klass, Eo_Op_Type op_type, Eo_Op op, ...);
 
 /**
  * @brief Calls the super function for the specific op.
@@ -717,7 +710,7 @@ EAPI Eina_Bool eo_do_super_internal(const char *file, int line, Eo *obj, const E
  * @see #eo_class_do
  * @see #eo_class_do_super
  */
-EAPI Eina_Bool eo_class_do_super_internal(const char *file, int line, const Eo_Class *klass, const Eo_Class *cur_klass, Eo_Op op, ...);
+EAPI Eina_Bool eo_class_do_super_internal(const char *file, int line, const Eo *klass, const Eo *cur_klass, Eo_Op op, ...);
 
 /**
  * @brief Gets the class of the object.
@@ -726,7 +719,7 @@ EAPI Eina_Bool eo_class_do_super_internal(const char *file, int line, const Eo_C
  *
  * @see eo_class_name_get()
  */
-EAPI const Eo_Class *eo_class_get(const Eo *obj);
+EAPI const Eo *eo_class_get(const Eo *obj);
 
 /**
  * @def eo_error_set
@@ -753,7 +746,7 @@ EAPI void eo_error_set_internal(const Eo *obj, const char *file, int line);
  */
 #define eo_add(klass, parent, ...) \
    ({ \
-    const Eo_Class *_tmp_klass = klass; \
+    const Eo *_tmp_klass = klass; \
     eo_add_internal(__FILE__, __LINE__, _tmp_klass, parent, eo_constructor(), ## __VA_ARGS__, EO_NOOP); \
     })
 
@@ -769,7 +762,7 @@ EAPI void eo_error_set_internal(const Eo *obj, const char *file, int line);
  */
 #define eo_add_custom(klass, parent, ...) \
    ({ \
-    const Eo_Class *_tmp_klass = klass; \
+    const Eo *_tmp_klass = klass; \
     eo_add_internal(__FILE__, __LINE__, _tmp_klass, parent, ## __VA_ARGS__, EO_NOOP); \
     })
 
@@ -785,7 +778,7 @@ EAPI void eo_error_set_internal(const Eo *obj, const char *file, int line);
  *
  * @see #eo_add
  */
-EAPI Eo *eo_add_internal(const char *file, int line, const Eo_Class *klass, Eo *parent, ...);
+EAPI Eo *eo_add_internal(const char *file, int line, const Eo *klass, Eo *parent, ...);
 
 /**
  * @brief Get a pointer to the data of an object for a specific class.
@@ -794,7 +787,7 @@ EAPI Eo *eo_add_internal(const char *file, int line, const Eo_Class *klass, Eo *
  * @return a pointer to the data.
  * @deprecated use eo_data_scope_get or eo_data_ref instead.
  */
-EAPI void *eo_data_get(const Eo *obj, const Eo_Class *klass) EINA_DEPRECATED;
+EAPI void *eo_data_get(const Eo *obj, const Eo *klass) EINA_DEPRECATED;
 
 /**
  * @brief Get a pointer to the data of an object for a specific class.
@@ -807,7 +800,7 @@ EAPI void *eo_data_get(const Eo *obj, const Eo_Class *klass) EINA_DEPRECATED;
  * @see eo_data_ref()
  * @see eo_data_unref()
  */
-EAPI void *eo_data_scope_get(const Eo *obj, const Eo_Class *klass);
+EAPI void *eo_data_scope_get(const Eo *obj, const Eo *klass);
 
 /**
  * @def eo_data_xref(obj, klass, ref_obj)
@@ -835,7 +828,7 @@ EAPI void *eo_data_scope_get(const Eo *obj, const Eo_Class *klass);
  *
  * @see eo_data_xunref_internal()
  */
-EAPI void *eo_data_xref_internal(const char *file, int line, const Eo *obj, const Eo_Class *klass, const Eo *ref_obj);
+EAPI void *eo_data_xref_internal(const char *file, int line, const Eo *obj, const Eo *klass, const Eo *ref_obj);
 
 /**
  * @def eo_data_xunref(obj, data, ref_obj)
@@ -1044,7 +1037,7 @@ EAPI Eina_Bool eo_composite_is(const Eo *comp_obj);
  * @brief Use #EO_BASE_CLASS
  * @internal
  * */
-EAPI const Eo_Class *eo_base_class_get(void);
+EAPI const Eo *eo_base_class_get(void);
 
 /**
  * @typedef eo_base_data_free_func

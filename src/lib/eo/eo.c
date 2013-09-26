@@ -135,7 +135,7 @@ static const Eo_Op_Description noop_desc =
         EO_OP_DESCRIPTION(EO_NOOP, "No operation.");
 
 static inline _Eo_Class *
-_eo_class_pointer_get(const Eo_Class *klass_id)
+_eo_class_pointer_get(const Eo *klass_id)
 {
 #ifdef HAVE_EO_ID
    return ID_CLASS_GET((Eo_Class_Id)klass_id);
@@ -145,12 +145,12 @@ _eo_class_pointer_get(const Eo_Class *klass_id)
 }
 
 static inline
-Eo_Class * _eo_class_id_get(const _Eo_Class *klass)
+Eo * _eo_class_id_get(const _Eo_Class *klass)
 {
 #ifdef HAVE_EO_ID
-   return (Eo_Class *)klass->class_id;
+   return (Eo *) klass->class_id;
 #else
-   return (Eo_Class *) HANDLE_FROM_EO(klass);
+   return (Eo *) HANDLE_FROM_EO(klass);
 #endif
 }
 
@@ -364,7 +364,7 @@ eo_vdo_internal(const char *file, int line, Eo *obj_id, Eo_Op_Type op_type, va_l
 }
 
 EAPI Eina_Bool
-eo_do_super_internal(const char *file, int line, Eo *obj_id, const Eo_Class *cur_klass_id,
+eo_do_super_internal(const char *file, int line, Eo *obj_id, const Eo *cur_klass_id,
                      Eo_Op_Type op_type, Eo_Op op, ...)
 {
    const _Eo_Class *nklass;
@@ -425,7 +425,7 @@ _eo_class_op_internal(const char *file, int line, _Eo_Class *klass, const _Eo_Cl
 }
 
 EAPI Eina_Bool
-eo_class_do_internal(const char *file, int line, const Eo_Class *klass_id, ...)
+eo_class_do_internal(const char *file, int line, const Eo *klass_id, ...)
 {
    Eina_Bool ret = EINA_TRUE;
    Eo_Op op = EO_NOOP;
@@ -453,8 +453,8 @@ eo_class_do_internal(const char *file, int line, const Eo_Class *klass_id, ...)
 }
 
 EAPI Eina_Bool
-eo_class_do_super_internal(const char *file, int line, const Eo_Class *klass_id,
-                           const Eo_Class *cur_klass_id, Eo_Op op, ...)
+eo_class_do_super_internal(const char *file, int line, const Eo *klass_id,
+                           const Eo *cur_klass_id, Eo_Op op, ...)
 {
    const _Eo_Class *nklass;
    Eina_Bool ret = EINA_TRUE;
@@ -476,7 +476,7 @@ eo_class_do_super_internal(const char *file, int line, const Eo_Class *klass_id,
    return ret;
 }
 
-EAPI const Eo_Class *
+EAPI const Eo *
 eo_class_get(const Eo *obj_id)
 {
    EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, NULL);
@@ -487,7 +487,7 @@ eo_class_get(const Eo *obj_id)
 }
 
 EAPI const char *
-eo_class_name_get(const Eo_Class *klass_id)
+eo_class_name_get(const Eo *klass_id)
 {
    EO_CLASS_POINTER_RETURN_VAL(klass_id, klass, NULL);
 
@@ -644,7 +644,7 @@ _eo_class_constructor(_Eo_Class *klass)
 }
 
 EAPI void
-eo_class_funcs_set(Eo_Class *klass_id, const Eo_Op_Func_Description *func_descs)
+eo_class_funcs_set(Eo *klass_id, const Eo_Op_Func_Description *func_descs)
 {
    EO_CLASS_POINTER_RETURN(klass_id, klass);
 
@@ -767,8 +767,8 @@ _eo_class_isa_func(Eo *obj_id EINA_UNUSED, void *class_data EINA_UNUSED, va_list
    /* Do nonthing. */
 }
 
-EAPI const Eo_Class *
-eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
+EAPI const Eo *
+eo_class_new(const Eo_Class_Description *desc, const Eo *parent_id, ...)
 {
    _Eo_Class *klass;
    _Eo_Handle *hndl;
@@ -838,7 +838,7 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
         extn_id = va_arg(p_list, Eo_Class_Id *);
         while (extn_id)
           {
-             extn = _eo_class_pointer_get((Eo_Class *)extn_id);
+             extn = _eo_class_pointer_get((Eo *)extn_id);
              switch (extn->desc->type)
                {
                 case EO_CLASS_TYPE_REGULAR:
@@ -1045,7 +1045,7 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
 }
 
 EAPI Eina_Bool
-eo_isa(const Eo *obj_id, const Eo_Class *klass_id)
+eo_isa(const Eo *obj_id, const Eo *klass_id)
 {
    EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, EINA_FALSE);
    EO_CLASS_POINTER_RETURN_VAL(klass_id, klass, EINA_FALSE);
@@ -1071,7 +1071,7 @@ _eo_parent_internal_set(_Eo *obj, ...)
 }
 
 EAPI Eo *
-eo_add_internal(const char *file, int line, const Eo_Class *klass_id, Eo *parent_id, ...)
+eo_add_internal(const char *file, int line, const Eo *klass_id, Eo *parent_id, ...)
 {
    Eina_Bool do_err;
    _Eo *obj;
@@ -1360,13 +1360,13 @@ _eo_data_xunref_internal(_Eo *obj, void *data, const _Eo *ref_obj)
 }
 
 EAPI void *
-eo_data_get(const Eo *obj_id, const Eo_Class *klass_id)
+eo_data_get(const Eo *obj_id, const Eo *klass_id)
 {
    return eo_data_scope_get(obj_id, klass_id);
 }
 
 EAPI void *
-eo_data_scope_get(const Eo *obj_id, const Eo_Class *klass_id)
+eo_data_scope_get(const Eo *obj_id, const Eo *klass_id)
 {
    void *ret;
    EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, NULL);
@@ -1393,7 +1393,7 @@ eo_data_scope_get(const Eo *obj_id, const Eo_Class *klass_id)
 }
 
 EAPI void *
-eo_data_xref_internal(const char *file, int line, const Eo *obj_id, const Eo_Class *klass_id, const Eo *ref_obj_id)
+eo_data_xref_internal(const char *file, int line, const Eo *obj_id, const Eo *klass_id, const Eo *ref_obj_id)
 {
    void *ret;
    EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, NULL);
