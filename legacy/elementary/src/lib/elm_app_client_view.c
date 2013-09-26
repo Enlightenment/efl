@@ -93,19 +93,19 @@ _prop_changed(void *user_data, Eldbus_Proxy *proxy EINA_UNUSED, void *event_info
                                       NULL, NULL));
    else if (!strcmp(prop_event->name, "NewEvents"))
      eo_do(eo, eo_event_callback_call(ELM_APP_CLIENT_VIEW_EV_NEW_EVENTS_CHANGED,
-                                      (void *)(long)_int_prop_get(v), NULL));
+                                      (void *)(uintptr_t)_int_prop_get(v), NULL));
    else if (!strcmp(prop_event->name, "Progress"))
      eo_do(eo, eo_event_callback_call(ELM_APP_CLIENT_VIEW_EV_PROGRESS_CHANGED,
-                                      (void *)(long)_short_prop_get(v), NULL));
+                                      (void *)(uintptr_t)_short_prop_get(v), NULL));
    else if (!strcmp(prop_event->name, "State"))
      {
         cdata->state = _string_state_to_id(_string_prop_get(v));
         eo_do(eo, eo_event_callback_call(ELM_APP_CLIENT_VIEW_EV_STATE_CHANGED,
-                                         (void *)(long)cdata->state, NULL));
+                                         (void *)(uintptr_t)cdata->state, NULL));
      }
    else if (!strcmp(prop_event->name, "WindowId"))
      eo_do(eo, eo_event_callback_call(ELM_APP_CLIENT_VIEW_EV_WINDOW_CHANGED,
-                                      (void *)(long)_int_prop_get(v), NULL));
+                                      (void *)(uintptr_t)_int_prop_get(v), NULL));
    else
       return;
 
@@ -149,7 +149,7 @@ elm_app_client_view_internal_state_set(Eo *eo, Elm_App_View_State state)
    if (!changed)
      return;
    eo_do(eo, eo_event_callback_call(ELM_APP_CLIENT_VIEW_EV_STATE_CHANGED,
-                                    (void *)(long)cdata->state, NULL));
+                                    (void *)(uintptr_t)cdata->state, NULL));
 }
 
 static void

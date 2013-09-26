@@ -1318,13 +1318,13 @@ _elm_widget_can_focus_set(Eo *obj, void *_pd, va_list *list)
 
         evas_object_event_callback_add(obj, EVAS_CALLBACK_KEY_DOWN,
                                        _propagate_event,
-                                       (void *)(long)EVAS_CALLBACK_KEY_DOWN);
+                                       (void *)(uintptr_t)EVAS_CALLBACK_KEY_DOWN);
         evas_object_event_callback_add(obj, EVAS_CALLBACK_KEY_UP,
                                        _propagate_event,
-                                       (void *)(long)EVAS_CALLBACK_KEY_UP);
+                                       (void *)(uintptr_t)EVAS_CALLBACK_KEY_UP);
         evas_object_event_callback_add(obj, EVAS_CALLBACK_MOUSE_WHEEL,
                                        _propagate_event,
-                                       (void *)(long)EVAS_CALLBACK_MOUSE_WHEEL);
+                                       (void *)(uintptr_t)EVAS_CALLBACK_MOUSE_WHEEL);
      }
    else
      {
