@@ -102,6 +102,7 @@ struct _Eina_Hash_Element
 {
    EINA_RBTREE;
    Eina_Hash_Tuple tuple;
+   int             hash;
 };
 
 struct _Eina_Hash_Foreach_Data
@@ -172,18 +173,21 @@ _eina_hash_hash_rbtree_cmp_node(const Eina_Hash_Head *left,
 
 static inline int
 _eina_hash_key_rbtree_cmp_key_data(const Eina_Hash_Element *hash_element,
-                                   const Eina_Hash_Tuple *tuple,
+                                   const Eina_Hash_Element *tuple,
                                    EINA_UNUSED unsigned int key_length,
                                    Eina_Key_Cmp cmp)
 {
    int result;
 
-   result = cmp(hash_element->tuple.key,
-                hash_element->tuple.key_length,
-                tuple->key,
-                tuple->key_length);
+   result = hash_element->hash - tuple->hash;
+   if (!result)
+     result = cmp(hash_element->tuple.key,
+                  hash_element->tuple.key_length,
+                  tuple->tuple.key,
+                  tuple->tuple.key_length);
 
-   if (result == 0 && tuple->data && tuple->data != hash_element->tuple.data)
+   if (result == 0 && tuple->tuple.data &&
+       tuple->tuple.data != hash_element->tuple.data)
      return 1;
 
    return result;
@@ -196,8 +200,10 @@ _eina_hash_key_rbtree_cmp_node(const Eina_Hash_Element *left,
 {
    int result;
 
-   result = cmp(left->tuple.key, left->tuple.key_length,
-                right->tuple.key, right->tuple.key_length);
+   result = left->hash - right->hash;
+   if (result == 0)
+     result = cmp(left->tuple.key, left->tuple.key_length,
+                  right->tuple.key, right->tuple.key_length);
 
    if (result < 0)
      return EINA_RBTREE_LEFT;
@@ -214,6 +220,7 @@ eina_hash_add_alloc_by_hash(Eina_Hash *hash,
    Eina_Hash_Element *new_hash_element = NULL;
    Eina_Hash_Head *hash_head;
    Eina_Error error = 0;
+   int original_key;
    int hash_num;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(hash, EINA_FALSE);
@@ -224,6 +231,7 @@ eina_hash_add_alloc_by_hash(Eina_Hash *hash,
    error = EINA_ERROR_OUT_OF_MEMORY;
 
    /* Apply eina mask to hash. */
+   original_key = key_hash;
    hash_num = key_hash & hash->mask;
    key_hash &= EINA_HASH_RBTREE_MASK;
 
@@ -272,6 +280,7 @@ eina_hash_add_alloc_by_hash(Eina_Hash *hash,
    /* Setup the element */
    new_hash_element->tuple.key_length = key_length;
    new_hash_element->tuple.data = (void *)data;
+   new_hash_element->hash = original_key;
    if (alloc_length > 0)
      {
         new_hash_element->tuple.key = (char *)(new_hash_element + 1);
@@ -326,8 +335,10 @@ _eina_hash_find_by_hash(const Eina_Hash *hash,
                         Eina_Hash_Head **hash_head)
 {
    Eina_Hash_Element *hash_element;
+   Eina_Hash_Element tmp;
    int rb_hash = key_hash & EINA_HASH_RBTREE_MASK;
 
+   tmp.hash = key_hash;
    key_hash &= hash->mask;
 
    if (!hash->buckets)
@@ -342,9 +353,11 @@ _eina_hash_find_by_hash(const Eina_Hash *hash,
    if (!*hash_head)
      return NULL;
 
+   tmp.tuple = *tuple;
+
    hash_element = (Eina_Hash_Element *)
      eina_rbtree_inline_lookup((*hash_head)->head,
-                               tuple, 0,
+                               &tmp, 0,
                                EINA_RBTREE_CMP_KEY_CB(
                                  _eina_hash_key_rbtree_cmp_key_data),
                                (const void *)hash->key_cmp_cb);
