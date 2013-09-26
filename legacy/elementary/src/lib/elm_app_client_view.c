@@ -219,7 +219,7 @@ _dbus_action_do(Eo *eo, Eldbus_Proxy *proxy, const char *action, Elm_App_Client_
 }
 
 static void
-_resume(Eo *eo, void *_pd, va_list *list)
+_client_resume(Eo *eo, void *_pd, va_list *list)
 {
    Elm_App_Client_View_Data *data = _pd;
    Elm_App_Client_View_Cb cb = va_arg(*list, Elm_App_Client_View_Cb);
@@ -229,7 +229,7 @@ _resume(Eo *eo, void *_pd, va_list *list)
 }
 
 static void
-_pause(Eo *eo, void *_pd, va_list *list)
+_client_pause(Eo *eo, void *_pd, va_list *list)
 {
    Elm_App_Client_View_Data *data = _pd;
    Elm_App_Client_View_Cb cb = va_arg(*list, Elm_App_Client_View_Cb);
@@ -239,7 +239,7 @@ _pause(Eo *eo, void *_pd, va_list *list)
 }
 
 static void
-_close(Eo *eo, void *_pd, va_list *list)
+_client_close(Eo *eo, void *_pd, va_list *list)
 {
    Elm_App_Client_View_Data *data = _pd;
    Elm_App_Client_View_Cb cb = va_arg(*list, Elm_App_Client_View_Cb);
@@ -258,23 +258,23 @@ static void _eo_string_prop_get(void *_pd, va_list *list, const char *prop)
    *title = _string_prop_get(v);
 }
 
-static void _title_get(Eo *eo EINA_UNUSED, void *_pd, va_list *list)
+static void _client_title_get(Eo *eo EINA_UNUSED, void *_pd, va_list *list)
 {
    _eo_string_prop_get(_pd, list, "Title");
 }
 
-static void _icon_get(Eo *eo EINA_UNUSED, void *_pd, va_list *list)
+static void _client_icon_get(Eo *eo EINA_UNUSED, void *_pd, va_list *list)
 {
    _eo_string_prop_get(_pd, list, "IconName");
 }
 
-static void _icon_pixels_get(Eo *eo EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+static void _client_icon_pixels_get(Eo *eo EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
    //Elm_App_Client_View_Data *data = _pd;
    //TODO
 }
 
-static void _progress_get(Eo *eo EINA_UNUSED, void *_pd, va_list *list)
+static void _client_progress_get(Eo *eo EINA_UNUSED, void *_pd, va_list *list)
 {
    Elm_App_Client_View_Data *data = _pd;
    short *progress = va_arg(*list, short *);
@@ -284,7 +284,7 @@ static void _progress_get(Eo *eo EINA_UNUSED, void *_pd, va_list *list)
    *progress = _short_prop_get(v);
 }
 
-static void _new_events_get(Eo *eo EINA_UNUSED, void *_pd, va_list *list)
+static void _client_new_events_get(Eo *eo EINA_UNUSED, void *_pd, va_list *list)
 {
    Elm_App_Client_View_Data *data = _pd;
    int *new_events = va_arg(*list, int *);
@@ -294,7 +294,7 @@ static void _new_events_get(Eo *eo EINA_UNUSED, void *_pd, va_list *list)
    *new_events = _int_prop_get(v);
 }
 
-static void _state_get(Eo *eo EINA_UNUSED, void *_pd, va_list *list)
+static void _client_state_get(Eo *eo EINA_UNUSED, void *_pd, va_list *list)
 {
    Elm_App_Client_View_Data *data = _pd;
    Elm_App_View_State *state = va_arg(*list, Elm_App_View_State *);
@@ -302,7 +302,7 @@ static void _state_get(Eo *eo EINA_UNUSED, void *_pd, va_list *list)
    *state = data->state;
 }
 
-static void _window_get(Eo *eo EINA_UNUSED, void *_pd, va_list *list)
+static void _client_window_get(Eo *eo EINA_UNUSED, void *_pd, va_list *list)
 {
    Elm_App_Client_View_Data *data = _pd;
    int *window = va_arg(*list, int *);
@@ -312,7 +312,7 @@ static void _window_get(Eo *eo EINA_UNUSED, void *_pd, va_list *list)
    *window = _int_prop_get(v);
 }
 
-static void _path_get(Eo *eo EINA_UNUSED, void *_pd, va_list *list)
+static void _client_path_get(Eo *eo EINA_UNUSED, void *_pd, va_list *list)
 {
    Elm_App_Client_View_Data *data = _pd;
    const char **ret = va_arg(*list, const char **);
@@ -322,7 +322,7 @@ static void _path_get(Eo *eo EINA_UNUSED, void *_pd, va_list *list)
    *ret = eldbus_object_path_get(obj);
 }
 
-static void _package_get(Eo *eo EINA_UNUSED, void *_pd, va_list *list)
+static void _client_package_get(Eo *eo EINA_UNUSED, void *_pd, va_list *list)
 {
    Elm_App_Client_View_Data *data = _pd;
    const char **ret = va_arg(*list, const char **);
@@ -365,18 +365,18 @@ _class_constructor(Eo_Class *klass)
       EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
       EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DESTRUCTOR), _destructor),
       EO_OP_FUNC(ELM_APP_CLIENT_VIEW_ID(ELM_APP_CLIENT_VIEW_SUB_ID_CONSTRUCTOR), _app_client_view_constructor),
-      EO_OP_FUNC(ELM_APP_CLIENT_VIEW_ID(ELM_APP_CLIENT_VIEW_SUB_ID_CLOSE), _close),
-      EO_OP_FUNC(ELM_APP_CLIENT_VIEW_ID(ELM_APP_CLIENT_VIEW_SUB_ID_PAUSE), _pause),
-      EO_OP_FUNC(ELM_APP_CLIENT_VIEW_ID(ELM_APP_CLIENT_VIEW_SUB_ID_RESUME), _resume),
-      EO_OP_FUNC(ELM_APP_CLIENT_VIEW_ID(ELM_APP_CLIENT_VIEW_SUB_ID_TITLE_GET), _title_get),
-      EO_OP_FUNC(ELM_APP_CLIENT_VIEW_ID(ELM_APP_CLIENT_VIEW_SUB_ID_ICON_GET), _icon_get),
-      EO_OP_FUNC(ELM_APP_CLIENT_VIEW_ID(ELM_APP_CLIENT_VIEW_SUB_ID_ICON_PIXELS_GET), _icon_pixels_get),
-      EO_OP_FUNC(ELM_APP_CLIENT_VIEW_ID(ELM_APP_CLIENT_VIEW_SUB_ID_PROGRESS_GET), _progress_get),
-      EO_OP_FUNC(ELM_APP_CLIENT_VIEW_ID(ELM_APP_CLIENT_VIEW_SUB_ID_NEW_EVENTS_GET), _new_events_get),
-      EO_OP_FUNC(ELM_APP_CLIENT_VIEW_ID(ELM_APP_CLIENT_VIEW_SUB_ID_STATE_GET), _state_get),
-      EO_OP_FUNC(ELM_APP_CLIENT_VIEW_ID(ELM_APP_CLIENT_VIEW_SUB_ID_WINDOW_GET), _window_get),
-      EO_OP_FUNC(ELM_APP_CLIENT_VIEW_ID(ELM_APP_CLIENT_VIEW_SUB_ID_PATH_GET), _path_get),
-      EO_OP_FUNC(ELM_APP_CLIENT_VIEW_ID(ELM_APP_CLIENT_VIEW_SUB_ID_PACKAGE_GET), _package_get),
+      EO_OP_FUNC(ELM_APP_CLIENT_VIEW_ID(ELM_APP_CLIENT_VIEW_SUB_ID_CLOSE), _client_close),
+      EO_OP_FUNC(ELM_APP_CLIENT_VIEW_ID(ELM_APP_CLIENT_VIEW_SUB_ID_PAUSE), _client_pause),
+      EO_OP_FUNC(ELM_APP_CLIENT_VIEW_ID(ELM_APP_CLIENT_VIEW_SUB_ID_RESUME), _client_resume),
+      EO_OP_FUNC(ELM_APP_CLIENT_VIEW_ID(ELM_APP_CLIENT_VIEW_SUB_ID_TITLE_GET), _client_title_get),
+      EO_OP_FUNC(ELM_APP_CLIENT_VIEW_ID(ELM_APP_CLIENT_VIEW_SUB_ID_ICON_GET), _client_icon_get),
+      EO_OP_FUNC(ELM_APP_CLIENT_VIEW_ID(ELM_APP_CLIENT_VIEW_SUB_ID_ICON_PIXELS_GET), _client_icon_pixels_get),
+      EO_OP_FUNC(ELM_APP_CLIENT_VIEW_ID(ELM_APP_CLIENT_VIEW_SUB_ID_PROGRESS_GET), _client_progress_get),
+      EO_OP_FUNC(ELM_APP_CLIENT_VIEW_ID(ELM_APP_CLIENT_VIEW_SUB_ID_NEW_EVENTS_GET), _client_new_events_get),
+      EO_OP_FUNC(ELM_APP_CLIENT_VIEW_ID(ELM_APP_CLIENT_VIEW_SUB_ID_STATE_GET), _client_state_get),
+      EO_OP_FUNC(ELM_APP_CLIENT_VIEW_ID(ELM_APP_CLIENT_VIEW_SUB_ID_WINDOW_GET), _client_window_get),
+      EO_OP_FUNC(ELM_APP_CLIENT_VIEW_ID(ELM_APP_CLIENT_VIEW_SUB_ID_PATH_GET), _client_path_get),
+      EO_OP_FUNC(ELM_APP_CLIENT_VIEW_ID(ELM_APP_CLIENT_VIEW_SUB_ID_PACKAGE_GET), _client_package_get),
       EO_OP_FUNC_SENTINEL
    };
    eo_class_funcs_set(klass, func_desc);

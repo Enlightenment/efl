@@ -184,7 +184,7 @@ static const Eldbus_Service_Interface_Desc iface_desc = {
 };
 
 static void
-_resume(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+_server_resume(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_App_Server_View_Data *data = _pd;
 
@@ -193,7 +193,7 @@ _resume(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 }
 
 static void
-_pause(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+_server_pause(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_App_Server_View_Data *data = _pd;
 
@@ -202,7 +202,7 @@ _pause(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 }
 
 static void
-_close(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+_server_close(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_App_Server_View_Data *data = _pd;
 
@@ -211,7 +211,7 @@ _close(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 }
 
 static void
-_shallow(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+_server_shallow(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_App_Server_View_Data *data = _pd;
 
@@ -220,7 +220,7 @@ _shallow(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 }
 
 static void
-_state_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
+_server_state_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_App_Server_View_Data *data = _pd;
    Elm_App_View_State *ret = va_arg(*list, Elm_App_View_State *);
@@ -228,7 +228,7 @@ _state_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
 }
 
 static void
-_window_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+_server_window_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Elm_App_Server_View_Data *data = _pd;
    Evas_Object *win = va_arg(*list, Evas_Object *);
@@ -241,7 +241,7 @@ _window_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 }
 
 static void
-_title_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+_server_title_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Elm_App_Server_View_Data *data = _pd;
    const char *title = va_arg(*list, const char *);
@@ -253,7 +253,7 @@ _title_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 }
 
 static void
-_title_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+_server_title_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Elm_App_Server_View_Data *data = _pd;
    const char **ret = va_arg(*list, const char **);
@@ -261,7 +261,7 @@ _title_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 }
 
 static void
-_icon_name_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+_server_icon_name_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Elm_App_Server_View_Data *data = _pd;
    const char *icon = va_arg(*list, const char *);
@@ -273,7 +273,7 @@ _icon_name_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 }
 
 static void
-_icon_name_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+_server_icon_name_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Elm_App_Server_View_Data *data = _pd;
    const char **ret = va_arg(*list, const char **);
@@ -281,7 +281,7 @@ _icon_name_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 }
 
 static void
-_icon_pixels_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
+_server_icon_pixels_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_App_Server_View_Data *data = _pd;
    //TODO
@@ -289,13 +289,13 @@ _icon_pixels_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
 }
 
 static void
-_icon_pixels_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+_server_icon_pixels_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
    //TODO
 }
 
 static void
-_progress_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+_server_progress_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Elm_App_Server_View_Data *data = _pd;
    short progress = va_arg(*list, int);
@@ -306,7 +306,7 @@ _progress_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 }
 
 static void
-_progress_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+_server_progress_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Elm_App_Server_View_Data *data = _pd;
    short *ret = va_arg(*list, short *);
@@ -315,7 +315,7 @@ _progress_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 }
 
 static void
-_new_events_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+_server_new_events_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Elm_App_Server_View_Data *data = _pd;
    int events = va_arg(*list, int);
@@ -326,7 +326,7 @@ _new_events_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 }
 
 static void
-_new_events_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+_server_new_events_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Elm_App_Server_View_Data *data = _pd;
    int *ret = va_arg(*list, int *);
@@ -335,7 +335,7 @@ _new_events_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 }
 
 static void
-_id_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+_server_id_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Elm_App_Server_View_Data *data = _pd;
    Eina_Stringshare **ret = va_arg(*list, Eina_Stringshare **);
@@ -344,7 +344,7 @@ _id_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 }
 
 static void
-_path_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+_server_path_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Elm_App_Server_View_Data *data = _pd;
    const char **ret = va_arg(*list, const char **);
@@ -441,24 +441,24 @@ _class_constructor(Eo_Class *klass)
       EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
       EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DESTRUCTOR), _destructor),
       EO_OP_FUNC(ELM_APP_SERVER_VIEW_ID(ELM_APP_SERVER_VIEW_SUB_ID_CONSTRUCTOR), _app_server_view_constructor),
-      EO_OP_FUNC(ELM_APP_SERVER_VIEW_ID(ELM_APP_SERVER_VIEW_SUB_ID_RESUME), _resume),
-      EO_OP_FUNC(ELM_APP_SERVER_VIEW_ID(ELM_APP_SERVER_VIEW_SUB_ID_PAUSE), _pause),
-      EO_OP_FUNC(ELM_APP_SERVER_VIEW_ID(ELM_APP_SERVER_VIEW_SUB_ID_CLOSE), _close),
-      EO_OP_FUNC(ELM_APP_SERVER_VIEW_ID(ELM_APP_SERVER_VIEW_SUB_ID_SHALLOW), _shallow),
-      EO_OP_FUNC(ELM_APP_SERVER_VIEW_ID(ELM_APP_SERVER_VIEW_SUB_ID_STATE_GET), _state_get),
-      EO_OP_FUNC(ELM_APP_SERVER_VIEW_ID(ELM_APP_SERVER_VIEW_SUB_ID_WINDOW_SET), _window_set),
-      EO_OP_FUNC(ELM_APP_SERVER_VIEW_ID(ELM_APP_SERVER_VIEW_SUB_ID_TITLE_SET), _title_set),
-      EO_OP_FUNC(ELM_APP_SERVER_VIEW_ID(ELM_APP_SERVER_VIEW_SUB_ID_TITLE_GET), _title_get),
-      EO_OP_FUNC(ELM_APP_SERVER_VIEW_ID(ELM_APP_SERVER_VIEW_SUB_ID_ICON_NAME_SET), _icon_name_set),
-      EO_OP_FUNC(ELM_APP_SERVER_VIEW_ID(ELM_APP_SERVER_VIEW_SUB_ID_ICON_NAME_GET), _icon_name_get),
-      EO_OP_FUNC(ELM_APP_SERVER_VIEW_ID(ELM_APP_SERVER_VIEW_SUB_ID_ICON_PIXELS_SET), _icon_pixels_set),
-      EO_OP_FUNC(ELM_APP_SERVER_VIEW_ID(ELM_APP_SERVER_VIEW_SUB_ID_ICON_PIXELS_GET), _icon_pixels_get),
-      EO_OP_FUNC(ELM_APP_SERVER_VIEW_ID(ELM_APP_SERVER_VIEW_SUB_ID_PROGRESS_SET), _progress_set),
-      EO_OP_FUNC(ELM_APP_SERVER_VIEW_ID(ELM_APP_SERVER_VIEW_SUB_ID_PROGRESS_GET), _progress_get),
-      EO_OP_FUNC(ELM_APP_SERVER_VIEW_ID(ELM_APP_SERVER_VIEW_SUB_ID_NEW_EVENTS_SET), _new_events_set),
-      EO_OP_FUNC(ELM_APP_SERVER_VIEW_ID(ELM_APP_SERVER_VIEW_SUB_ID_NEW_EVENTS_GET), _new_events_get),
-      EO_OP_FUNC(ELM_APP_SERVER_VIEW_ID(ELM_APP_SERVER_VIEW_SUB_ID_ID_GET), _id_get),
-      EO_OP_FUNC(ELM_APP_SERVER_VIEW_ID(ELM_APP_SERVER_VIEW_SUB_ID_PATH_GET), _path_get),
+      EO_OP_FUNC(ELM_APP_SERVER_VIEW_ID(ELM_APP_SERVER_VIEW_SUB_ID_RESUME), _server_resume),
+      EO_OP_FUNC(ELM_APP_SERVER_VIEW_ID(ELM_APP_SERVER_VIEW_SUB_ID_PAUSE), _server_pause),
+      EO_OP_FUNC(ELM_APP_SERVER_VIEW_ID(ELM_APP_SERVER_VIEW_SUB_ID_CLOSE), _server_close),
+      EO_OP_FUNC(ELM_APP_SERVER_VIEW_ID(ELM_APP_SERVER_VIEW_SUB_ID_SHALLOW), _server_shallow),
+      EO_OP_FUNC(ELM_APP_SERVER_VIEW_ID(ELM_APP_SERVER_VIEW_SUB_ID_STATE_GET), _server_state_get),
+      EO_OP_FUNC(ELM_APP_SERVER_VIEW_ID(ELM_APP_SERVER_VIEW_SUB_ID_WINDOW_SET), _server_window_set),
+      EO_OP_FUNC(ELM_APP_SERVER_VIEW_ID(ELM_APP_SERVER_VIEW_SUB_ID_TITLE_SET), _server_title_set),
+      EO_OP_FUNC(ELM_APP_SERVER_VIEW_ID(ELM_APP_SERVER_VIEW_SUB_ID_TITLE_GET), _server_title_get),
+      EO_OP_FUNC(ELM_APP_SERVER_VIEW_ID(ELM_APP_SERVER_VIEW_SUB_ID_ICON_NAME_SET), _server_icon_name_set),
+      EO_OP_FUNC(ELM_APP_SERVER_VIEW_ID(ELM_APP_SERVER_VIEW_SUB_ID_ICON_NAME_GET), _server_icon_name_get),
+      EO_OP_FUNC(ELM_APP_SERVER_VIEW_ID(ELM_APP_SERVER_VIEW_SUB_ID_ICON_PIXELS_SET), _server_icon_pixels_set),
+      EO_OP_FUNC(ELM_APP_SERVER_VIEW_ID(ELM_APP_SERVER_VIEW_SUB_ID_ICON_PIXELS_GET), _server_icon_pixels_get),
+      EO_OP_FUNC(ELM_APP_SERVER_VIEW_ID(ELM_APP_SERVER_VIEW_SUB_ID_PROGRESS_SET), _server_progress_set),
+      EO_OP_FUNC(ELM_APP_SERVER_VIEW_ID(ELM_APP_SERVER_VIEW_SUB_ID_PROGRESS_GET), _server_progress_get),
+      EO_OP_FUNC(ELM_APP_SERVER_VIEW_ID(ELM_APP_SERVER_VIEW_SUB_ID_NEW_EVENTS_SET), _server_new_events_set),
+      EO_OP_FUNC(ELM_APP_SERVER_VIEW_ID(ELM_APP_SERVER_VIEW_SUB_ID_NEW_EVENTS_GET), _server_new_events_get),
+      EO_OP_FUNC(ELM_APP_SERVER_VIEW_ID(ELM_APP_SERVER_VIEW_SUB_ID_ID_GET), _server_id_get),
+      EO_OP_FUNC(ELM_APP_SERVER_VIEW_ID(ELM_APP_SERVER_VIEW_SUB_ID_PATH_GET), _server_path_get),
       EO_OP_FUNC_SENTINEL
    };
    eo_class_funcs_set(klass, func_desc);
