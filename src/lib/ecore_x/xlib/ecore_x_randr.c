@@ -671,7 +671,7 @@ ecore_x_randr_screen_current_size_set(Ecore_X_Window root, int w, int h, int w_m
 
 /*
  * @brief get detailed information for all modes related to a root window's screen
- * @param root window which's screen's ressources are queried
+ * @param root window which's screen's resources are queried
  * @param num number of modes returned
  * @return modes' information
  */
@@ -2483,7 +2483,7 @@ err:
 
 /**
  * @brief gets the width and hight of a given mode
- * @param mode the mode which's size is to be looked up
+ * @param mode the mode whose size is to be looked up
  * @param w width of given mode in px
  * @param h height of given mode in px
  */
