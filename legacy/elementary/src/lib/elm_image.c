@@ -889,6 +889,12 @@ _elm_image_smart_download_done(void *data, Elm_Url *url EINA_UNUSED, Eina_Binbuf
      }
    else
      {
+        if (evas_object_visible_get(obj))
+          {
+             Evas_Object *eobj = elm_image_object_get(obj);
+             evas_object_image_preload(eobj, EINA_FALSE);
+          }
+
         evas_object_smart_callback_call(obj, SIG_DOWNLOAD_DONE, NULL);
      }
 
