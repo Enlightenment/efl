@@ -166,7 +166,7 @@ struct _Eo_Children_Iterator
 {
    Eina_Iterator iterator;
    Eina_List *current;
-   _Eo *obj;
+   _Eo_Object *obj;
    Eo *obj_id;
    
 };
@@ -192,7 +192,7 @@ static void
 _eo_children_iterator_free(Eo_Children_Iterator *it)
 {
    _Eo_Class *klass;
-   _Eo *obj;
+   _Eo_Object *obj;
 
    klass = (_Eo_Class*) it->obj->klass;
    obj = it->obj;

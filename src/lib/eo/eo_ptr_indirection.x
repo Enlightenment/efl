@@ -191,14 +191,14 @@ _eo_id_mem_protect(void *ptr, Eina_Bool may_not_write)
 
 #ifndef HAVE_EO_ID
 # define HANDLE_FROM_EO(eo) (Eo_Id)( eo ? (((char *) eo) - EO_ALIGN_SIZE(sizeof (_Eo_Handle))) : NULL )
-# define EO_FROM_HANDLE(hndl) (_Eo *) ( hndl ? (((char *) hndl) + EO_ALIGN_SIZE(sizeof (_Eo_Handle))) : NULL )
+# define EO_FROM_HANDLE(hndl) (_Eo_Object *) ( hndl ? (((char *) hndl) + EO_ALIGN_SIZE(sizeof (_Eo_Handle))) : NULL )
 #endif
 
 /* Entry */
 typedef struct
 {
    /* Pointer to the object */
-   _Eo *ptr;
+   _Eo_Object *ptr;
    /* Indicates where to find the next entry to recycle */
    Table_Index next_in_fifo;
    /* Active flag */
@@ -258,7 +258,7 @@ extern Generation_Counter _eo_generation_counter;
 /* Macro used for readability */
 #define TABLE_FROM_IDS _eo_ids_tables[mid_table_id][table_id]
 
-static inline _Eo *
+static inline _Eo_Object *
 _eo_obj_pointer_get(const Eo_Id obj_id)
 {
 #ifdef HAVE_EO_ID
@@ -373,7 +373,7 @@ _search_tables(void)
 }
 
 static inline Eo_Id
-_eo_id_allocate(const _Eo *obj)
+_eo_id_allocate(const _Eo_Object *obj)
 {
 #ifdef HAVE_EO_ID
    _Eo_Id_Entry *entry = NULL;
@@ -393,7 +393,7 @@ _eo_id_allocate(const _Eo *obj)
    if (_eo_generation_counter == MAX_GENERATIONS)
      _eo_generation_counter = 1;
    /* Fill the entry and return it's Eo Id */
-   entry->ptr = (_Eo *)obj;
+   entry->ptr = (_Eo_Object *)obj;
    entry->active = 1;
    entry->generation = _eo_generation_counter;
    PROTECT(_current_table);

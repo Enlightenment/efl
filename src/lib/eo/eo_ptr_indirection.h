@@ -9,14 +9,14 @@
 #ifdef HAVE_EO_ID
 
 #define EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, ret) \
-   _Eo *obj; \
+   _Eo_Object *obj; \
    do { \
         obj = _eo_obj_pointer_get((Eo_Id)obj_id); \
         if (!obj) return ret; \
    } while (0)
 
 #define EO_OBJ_POINTER_RETURN(obj_id, obj)   \
-   _Eo *obj; \
+   _Eo_Object *obj; \
    do { \
         obj = _eo_obj_pointer_get((Eo_Id)obj_id);   \
         if (!obj) return; \
@@ -39,14 +39,14 @@
 #else
 
 #define EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, ret) \
-   _Eo *obj; \
+   _Eo_Object *obj; \
    do { \
         obj = _eo_obj_pointer_get((Eo_Id)obj_id); \
         EO_MAGIC_RETURN_VAL(obj, EO_EINA_MAGIC, ret);  \
    } while (0)
 
 #define EO_OBJ_POINTER_RETURN(obj_id, obj)   \
-   _Eo *obj; \
+   _Eo_Object *obj; \
    do { \
         obj = _eo_obj_pointer_get((Eo_Id)obj_id);   \
         EO_MAGIC_RETURN(obj, EO_EINA_MAGIC);  \

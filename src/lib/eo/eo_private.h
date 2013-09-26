@@ -56,14 +56,14 @@ extern int _eo_log_dom;
 
 typedef uintptr_t Eo_Id;
 typedef struct _Eo_Class _Eo_Class;
-typedef struct _Eo_Object _Eo;
+typedef struct _Eo_Object _Eo_Object;
 typedef struct _Eo_Handle _Eo_Handle;
 
 /* Retrieves the pointer to the object from the id */
-static inline _Eo *_eo_obj_pointer_get(const Eo_Id obj_id);
+static inline _Eo_Object *_eo_obj_pointer_get(const Eo_Id obj_id);
 
 /* Allocates an entry for the given object */
-static inline Eo_Id _eo_id_allocate(const _Eo *obj);
+static inline Eo_Id _eo_id_allocate(const _Eo_Object *obj);
 
 /* Releases an entry by the object id */
 static inline void _eo_id_release(const Eo_Id obj_id);
@@ -180,13 +180,13 @@ typedef struct
 } Eo_Xref_Node;
 
 static inline void
-_eo_condtor_reset(_Eo *obj)
+_eo_condtor_reset(_Eo_Object *obj)
 {
    obj->condtor_done = EINA_FALSE;
 }
 
 static inline void
-_eo_del_internal(const char *file, int line, _Eo *obj)
+_eo_del_internal(const char *file, int line, _Eo_Object *obj)
 {
    Eina_Bool do_err;
    /* We need that for the event callbacks that may ref/unref. */
@@ -226,7 +226,7 @@ _eo_del_internal(const char *file, int line, _Eo *obj)
 }
 
 static inline void
-_eo_free(_Eo *obj)
+_eo_free(_Eo_Object *obj)
 {
    _Eo_Class *klass = (_Eo_Class*) obj->klass;
 
@@ -255,15 +255,15 @@ _eo_free(_Eo *obj)
    eina_lock_release(&klass->objects.trash_lock);
 }
 
-static inline _Eo *
-_eo_ref(_Eo *obj)
+static inline _Eo_Object *
+_eo_ref(_Eo_Object *obj)
 {
    obj->refcount++;
    return obj;
 }
 
 static inline void
-_eo_unref(_Eo *obj)
+_eo_unref(_Eo_Object *obj)
 {
    --(obj->refcount);
    if (obj->refcount == 0)

@@ -25,10 +25,10 @@ static size_t _eo_sz = 0;
 static size_t _eo_class_sz = 0;
 static size_t _eo_handle_sz = 0;
 
-static void _eo_condtor_reset(_Eo *obj);
-static inline void *_eo_data_scope_get(const _Eo *obj, const _Eo_Class *klass);
-static inline void *_eo_data_xref_internal(const char *file, int line, _Eo *obj, const _Eo_Class *klass, const _Eo *ref_obj);
-static inline void _eo_data_xunref_internal(_Eo *obj, void *data, const _Eo *ref_obj);
+static void _eo_condtor_reset(_Eo_Object *obj);
+static inline void *_eo_data_scope_get(const _Eo_Object *obj, const _Eo_Class *klass);
+static inline void *_eo_data_xref_internal(const char *file, int line, _Eo_Object *obj, const _Eo_Class *klass, const _Eo_Object *ref_obj);
+static inline void _eo_data_xunref_internal(_Eo_Object *obj, void *data, const _Eo_Object *ref_obj);
 static const _Eo_Class *_eo_op_class_get(Eo_Op op);
 static const Eo_Op_Description *_eo_op_id_desc_get(Eo_Op op);
 
@@ -262,7 +262,7 @@ _eo_kls_itr_func_get(const _Eo_Class *cur_klass, Eo_Op op)
    while (0)
 
 static inline Eina_Bool
-_eo_op_internal(const char *file, int line, _Eo *obj, const _Eo_Class *cur_klass,
+_eo_op_internal(const char *file, int line, _Eo_Object *obj, const _Eo_Class *cur_klass,
                 Eo_Op_Type op_type, Eo_Op op, va_list *p_list)
 {
 #ifdef EO_DEBUG
@@ -307,7 +307,7 @@ _eo_op_internal(const char *file, int line, _Eo *obj, const _Eo_Class *cur_klass
 }
 
 static inline Eina_Bool
-_eo_dov_internal(const char *file, int line, _Eo *obj, Eo_Op_Type op_type, va_list *p_list)
+_eo_dov_internal(const char *file, int line, _Eo_Object *obj, Eo_Op_Type op_type, va_list *p_list)
 {
    Eina_Bool prev_error;
    Eina_Bool ret = EINA_TRUE;
@@ -1059,7 +1059,7 @@ eo_isa(const Eo *obj_id, const Eo *klass_id)
 
 // A little bit hacky, but does the job
 static void
-_eo_parent_internal_set(_Eo *obj, ...)
+_eo_parent_internal_set(_Eo_Object *obj, ...)
 {
    va_list p_list;
 
@@ -1074,7 +1074,7 @@ EAPI Eo *
 eo_add_internal(const char *file, int line, const Eo *klass_id, Eo *parent_id, ...)
 {
    Eina_Bool do_err;
-   _Eo *obj;
+   _Eo_Object *obj;
    _Eo_Handle *hndl;
    EO_CLASS_POINTER_RETURN_VAL(klass_id, klass, NULL);
 
@@ -1264,7 +1264,7 @@ _eo_condtor_done(Eo *obj_id)
 }
 
 static inline void *
-_eo_data_scope_get(const _Eo *obj, const _Eo_Class *klass)
+_eo_data_scope_get(const _Eo_Object *obj, const _Eo_Class *klass)
 {
    if (EINA_LIKELY((klass->desc->data_size > 0) && (klass->desc->type != EO_CLASS_TYPE_MIXIN)))
      return ((char *) obj) + _eo_sz + klass->data_offset;
@@ -1291,7 +1291,7 @@ _eo_data_scope_get(const _Eo *obj, const _Eo_Class *klass)
 }
 
 static inline void *
-_eo_data_xref_internal(const char *file, int line, _Eo *obj, const _Eo_Class *klass, const _Eo *ref_obj)
+_eo_data_xref_internal(const char *file, int line, _Eo_Object *obj, const _Eo_Class *klass, const _Eo_Object *ref_obj)
 {
    void *data = NULL;
    if (klass != NULL)
@@ -1316,7 +1316,7 @@ _eo_data_xref_internal(const char *file, int line, _Eo *obj, const _Eo_Class *kl
 }
 
 static inline void
-_eo_data_xunref_internal(_Eo *obj, void *data, const _Eo *ref_obj)
+_eo_data_xunref_internal(_Eo_Object *obj, void *data, const _Eo_Object *ref_obj)
 {
 #ifdef EO_DEBUG
    const _Eo_Class *klass = obj->klass;
@@ -1442,9 +1442,9 @@ eo_init(void)
 
    eina_init();
 
-   _eo_sz = EO_ALIGN_SIZE(sizeof (_Eo));
-   _eo_class_sz = EO_ALIGN_SIZE(sizeof (_Eo_Class));
-   _eo_handle_sz = EO_ALIGN_SIZE(sizeof (_Eo_Handle));
+   _eo_sz = EO_ALIGN_SIZE(sizeof(_Eo_Object));
+   _eo_class_sz = EO_ALIGN_SIZE(sizeof(_Eo_Class));
+   _eo_handle_sz = EO_ALIGN_SIZE(sizeof(_Eo_Handle));
 
    _eo_classes = NULL;
    _eo_classes_last_id = EO_CLASS_IDS_FIRST - 1;
