@@ -57,12 +57,14 @@
  * it to the fifo.
  */
 
+/* most significant bit is kept to tag Eo_Id with 1 */
 #if SIZEOF_UINTPTR_T == 4
 /* 32 bits */
 # define BITS_MID_TABLE_ID        5
 # define BITS_TABLE_ID            5
 # define BITS_ENTRY_ID           12
-# define BITS_GENERATION_COUNTER 10
+# define BITS_GENERATION_COUNTER  9
+# define REF_TAG_SHIFT           31
 # define DROPPED_TABLES           0
 # define DROPPED_ENTRIES          4
 typedef int16_t Table_Index;
@@ -72,7 +74,8 @@ typedef uint16_t Generation_Counter;
 # define BITS_MID_TABLE_ID       11
 # define BITS_TABLE_ID           11
 # define BITS_ENTRY_ID           12
-# define BITS_GENERATION_COUNTER 30
+# define BITS_GENERATION_COUNTER 29
+# define REF_TAG_SHIFT           63
 # define DROPPED_TABLES           2
 # define DROPPED_ENTRIES          3
 typedef int16_t Table_Index;
@@ -236,7 +239,8 @@ extern Generation_Counter _eo_generation_counter;
 
 /* Macro used to compose an Eo id */
 #define EO_COMPOSE_PARTIAL_ID(MID_TABLE, TABLE)                         \
-   (((Eo_Id)(MID_TABLE & MASK_MID_TABLE_ID) << SHIFT_MID_TABLE_ID)   |  \
+   (((Eo_Id) 0x1 << REF_TAG_SHIFT)                                   |  \
+    ((Eo_Id)(MID_TABLE & MASK_MID_TABLE_ID) << SHIFT_MID_TABLE_ID)   |  \
     ((Eo_Id)(TABLE & MASK_TABLE_ID) << SHIFT_TABLE_ID))
 
 #define EO_COMPOSE_FINAL_ID(PARTIAL_ID, ENTRY, GENERATION)     \
