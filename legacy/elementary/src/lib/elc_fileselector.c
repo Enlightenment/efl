@@ -75,6 +75,7 @@ _mirrored_set(Evas_Object *obj, Eina_Bool rtl)
    elm_widget_mirrored_set(sd->cancel_button, rtl);
    elm_widget_mirrored_set(sd->ok_button, rtl);
    elm_widget_mirrored_set(sd->files_list, rtl);
+   elm_widget_mirrored_set(sd->files_grid, rtl);
    elm_widget_mirrored_set(sd->up_button, rtl);
    elm_widget_mirrored_set(sd->home_button, rtl);
 }
