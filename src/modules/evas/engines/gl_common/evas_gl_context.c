@@ -1166,37 +1166,31 @@ static int
 pipe_region_intersects(Evas_Engine_GL_Context *gc, int n,
                        int x, int y, int w, int h)
 {
-   int i, rx, ry, rw, rh, ii;
+   int i, rx, ry, rw, rh, end;
+   const GLshort *v;
 
    rx = gc->pipe[n].region.x;
    ry = gc->pipe[n].region.y;
    rw = gc->pipe[n].region.w;
    rh = gc->pipe[n].region.h;
-   if (!RECTS_INTERSECT(x, y, w, h, rx, ry, rw, rh))
-      return 0;
+   if (!RECTS_INTERSECT(x, y, w, h, rx, ry, rw, rh)) return 0;
 
    // a hack for now. map pipes use their whole bounding box for intersects
    // which at worst case reduces to old pipeline flushes, but cheaper than
    // full quad region or triangle intersects right now
    if (gc->pipe[n].region.type == RTYPE_MAP) return 1;
-
-   for (i = 0,
-        ii = 0;
-
-        i < gc->pipe[n].array.num;
-
-        i += (3 * 2),
-        ii += (3 * 3 * 2))
+   end = gc->pipe[n].array.num;
+   v = gc->pipe[n].array.vertex;
+   for (i = 0; i < end; i += (3 * 3 * 2))
      {  // tri 1...
         // 0, 1, 2 < top left
         // 3, 4, 5 < top right
-        // 6. 7, 8 < bottom left
-        rx = gc->pipe[n].array.vertex[ii + 0];
-        ry = gc->pipe[n].array.vertex[ii + 1];
-        rw = gc->pipe[n].array.vertex[ii + 3] - rx;
-        rh = gc->pipe[n].array.vertex[ii + 7] - ry;
-        if (RECTS_INTERSECT(x, y, w, h, rx, ry, rw, rh))
-           return 1;
+        // 6, 7, 8 < bottom left
+        rx = v[i + 0];
+        ry = v[i + 1];
+        rw = v[i + 3] - rx;
+        rh = v[i + 7] - ry;
+        if (RECTS_INTERSECT(x, y, w, h, rx, ry, rw, rh)) return 1;
      }
    return 0;
 }
