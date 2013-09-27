@@ -66,10 +66,6 @@ _elm_panes_smart_theme(Eo *obj, void *_pd, va_list *list)
    eo_do_super(obj, MY_CLASS, elm_wdg_theme(&int_ret));
    if (!int_ret) return;
 
-   if (edje_object_part_exists
-       (wd->resize_obj, "elm.swallow.event"))
-     elm_layout_content_set(obj, "elm.swallow.event", sd->event);
-   
    size = elm_panes_content_left_size_get(obj);
 
    if (sd->fixed)
