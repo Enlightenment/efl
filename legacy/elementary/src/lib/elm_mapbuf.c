@@ -82,29 +82,12 @@ _elm_mapbuf_smart_sub_object_del(Eo *obj, void *_pd, va_list *list)
 }
 
 static void
-_mapbuf(Evas_Object *obj)
-{
-   Evas_Coord x, y, w, h;
-
-   ELM_MAPBUF_DATA_GET(obj, sd);
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
-
-   static Evas_Map *m = NULL;
-
-   if (!m) m = evas_map_new(4);
-   evas_object_geometry_get(wd->resize_obj, &x, &y, &w, &h);
-   evas_map_util_points_populate_from_geometry(m, x, y, w, h, 0);
-   evas_map_smooth_set(m, sd->smooth);
-   evas_map_alpha_set(m, sd->alpha);
-   evas_object_map_set(sd->content, m);
-   evas_object_map_enable_set(sd->content, EINA_TRUE);
-}
-
-static void
 _configure(Evas_Object *obj, Eina_Bool update_force)
 {
    ELM_MAPBUF_DATA_GET(obj, sd);
    Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+
+   static Evas_Map *m = NULL;
 
    if (!sd->content) return;
 
@@ -125,7 +108,12 @@ _configure(Evas_Object *obj, Eina_Bool update_force)
 //             evas_smart_objects_calculate(e);
              evas_nochange_pop(e);
 
-             _mapbuf(obj);
+             if (!m) m = evas_map_new(4);
+             evas_map_util_points_populate_from_geometry(m, x, y, w, h, 0);
+             evas_map_smooth_set(m, sd->smooth);
+             evas_map_alpha_set(m, sd->alpha);
+             evas_object_map_set(sd->content, m);
+             evas_object_map_enable_set(sd->content, EINA_TRUE);
           }
         else
           evas_object_move(sd->content, x, y);
