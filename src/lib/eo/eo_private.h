@@ -57,7 +57,7 @@ extern int _eo_log_dom;
 typedef uintptr_t Eo_Id;
 typedef struct _Eo_Class _Eo_Class;
 typedef struct _Eo_Object _Eo_Object;
-typedef struct _Eo_Header Eo_Header;
+typedef struct _Eo_Base Eo_Base;
 typedef union _Eo {
      _Eo_Object *obj;
      _Eo_Class  *klass;
@@ -77,7 +77,7 @@ static inline void _eo_free_ids_tables(void);
 
 void _eo_condtor_done(Eo *obj);
 
-struct _Eo_Header
+struct _Eo_Base
 {
 #ifndef HAVE_EO_ID
      EINA_MAGIC
@@ -87,7 +87,7 @@ struct _Eo_Header
 
 struct _Eo_Object
 {
-     Eo_Header header;
+     Eo_Base header;
      Eo *parent;
      Eina_List *children;
      const _Eo_Class *klass;
@@ -130,7 +130,7 @@ typedef struct
 
 struct _Eo_Class
 {
-   Eo_Header header;
+   Eo_Base header;
 
    const _Eo_Class *parent;
    const Eo_Class_Description *desc;
@@ -176,7 +176,7 @@ typedef struct
 } Eo_Xref_Node;
 
 static inline
-Eo *_eo_header_id_get(const Eo_Header *header)
+Eo *_eo_header_id_get(const Eo_Base *header)
 {
 #ifdef HAVE_EO_ID
    return (Eo *) header->id;
@@ -188,13 +188,13 @@ Eo *_eo_header_id_get(const Eo_Header *header)
 static inline
 Eo *_eo_class_id_get(const _Eo_Class *klass)
 {
-   return _eo_header_id_get((Eo_Header *) klass);
+   return _eo_header_id_get((Eo_Base *) klass);
 }
 
 static inline
 Eo *_eo_id_get(const Eo *obj)
 {
-   return _eo_header_id_get((Eo_Header *) obj);
+   return _eo_header_id_get((Eo_Base *) obj);
 }
 
 static inline void

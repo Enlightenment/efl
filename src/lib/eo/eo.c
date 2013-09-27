@@ -143,7 +143,7 @@ _eo_is_a_class(const Eo *obj_id)
 #else
    /* fortunately EO_OBJ_POINTER_RETURN* will handle NULL obj_id */
    if (!obj_id) return EINA_FALSE;
-   oid = ((Eo_Header *) obj_id)->id;
+   oid = ((Eo_Base *) obj_id)->id;
 #endif
    return (((oid >> REF_TAG_SHIFT) & 0x1) == 0x0);
 }
@@ -761,9 +761,9 @@ eo_class_new(const Eo_Class_Description *desc, const Eo *parent_id, ...)
 
    _Eo_Class *parent = _eo_class_pointer_get(parent_id);
 #ifndef HAVE_EO_ID
-   if (parent && !EINA_MAGIC_CHECK((Eo_Header *) parent, EO_CLASS_EINA_MAGIC))
+   if (parent && !EINA_MAGIC_CHECK((Eo_Base *) parent, EO_CLASS_EINA_MAGIC))
      {
-        EINA_MAGIC_FAIL((Eo_Header *) parent, EO_CLASS_EINA_MAGIC);
+        EINA_MAGIC_FAIL((Eo_Base *) parent, EO_CLASS_EINA_MAGIC);
         return NULL;
      }
 #endif
@@ -884,7 +884,7 @@ eo_class_new(const Eo_Class_Description *desc, const Eo *parent_id, ...)
 
    klass = calloc(1, _eo_class_sz + extn_sz + mro_sz + mixins_sz);
 #ifndef HAVE_EO_ID
-   EINA_MAGIC_SET((Eo_Header *) klass, EO_CLASS_EINA_MAGIC);
+   EINA_MAGIC_SET((Eo_Base *) klass, EO_CLASS_EINA_MAGIC);
 #endif
    eina_lock_new(&klass->objects.trash_lock);
    eina_lock_new(&klass->iterators.trash_lock);
@@ -1079,7 +1079,7 @@ eo_add_internal(const char *file, int line, const Eo *klass_id, Eo *parent_id, .
    obj->klass = klass;
 
 #ifndef HAVE_EO_ID
-   EINA_MAGIC_SET((Eo_Header *) obj, EO_EINA_MAGIC);
+   EINA_MAGIC_SET((Eo_Base *) obj, EO_EINA_MAGIC);
 #endif
    Eo_Id obj_id = _eo_id_allocate(obj);
    obj->header.id = obj_id;
