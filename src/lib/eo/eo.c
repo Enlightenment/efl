@@ -297,7 +297,7 @@ _eo_op_internal(const char *file, int line, Eo_Base *eo_ptr, const _Eo_Class *cu
              if (op_type == EO_OP_TYPE_REGULAR)
                {
                   func_data = _eo_data_scope_get((_Eo_Object *) eo_ptr, func->src);
-                  calling_obj = _eo_id_get((Eo *) eo_ptr);
+                  calling_obj = _eo_id_get((_Eo_Object *) eo_ptr);
                }
              else
                {
@@ -1114,7 +1114,7 @@ eo_add_internal(const char *file, int line, const Eo *klass_id, Eo *parent_id, .
 
    _eo_unref(obj);
 
-   return _eo_id_get((Eo *) obj);
+   return _eo_id_get(obj);
 
 fail:
    /* Unref twice, once for the ref above, and once for the basic object ref. */
@@ -1297,7 +1297,7 @@ _eo_data_xunref_internal(_Eo_Object *obj, void *data, const _Eo_Object *ref_obj)
 #endif
    if (obj->datarefcount == 0)
      {
-        ERR("Data for object %lx (%s) is already not referenced.", (unsigned long) _eo_id_get((Eo *) obj), obj->klass->desc->name);
+        ERR("Data for object %lx (%s) is already not referenced.", (unsigned long) _eo_id_get(obj), obj->klass->desc->name);
      }
    else
      {

@@ -190,7 +190,7 @@ Eo *_eo_class_id_get(const _Eo_Class *klass)
 }
 
 static inline
-Eo *_eo_id_get(const Eo *obj)
+Eo *_eo_id_get(const _Eo_Object *obj)
 {
    return _eo_header_id_get((Eo_Base *) obj);
 }
@@ -208,13 +208,13 @@ _eo_del_internal(const char *file, int line, _Eo_Object *obj)
    /* We need that for the event callbacks that may ref/unref. */
    obj->refcount++;
 
-   eo_do(_eo_id_get((Eo *) obj), eo_event_callback_call(EO_EV_DEL, NULL, NULL));
+   eo_do(_eo_id_get(obj), eo_event_callback_call(EO_EV_DEL, NULL, NULL));
 
    const _Eo_Class *klass = obj->klass;
 
    _eo_condtor_reset(obj);
 
-   do_err = eo_do(_eo_id_get((Eo *) obj), eo_destructor());
+   do_err = eo_do(_eo_id_get(obj), eo_destructor());
    if (EINA_UNLIKELY(!do_err))
      {
         ERR("in %s:%d: Object of class '%s' - One of the object destructors have failed.",
@@ -233,7 +233,7 @@ _eo_del_internal(const char *file, int line, _Eo_Object *obj)
         Eo *emb_obj;
         EINA_LIST_FOREACH_SAFE(obj->composite_objects, itr, itr_n, emb_obj)
           {
-             eo_composite_detach(emb_obj, _eo_id_get((Eo *) obj));
+             eo_composite_detach(emb_obj, _eo_id_get(obj));
           }
      }
 
@@ -252,7 +252,7 @@ _eo_free(_Eo_Object *obj)
         ERR("Object %p data still referenced %d time(s).", obj, obj->datarefcount);
      }
 #endif
-   _eo_id_release((Eo_Id) _eo_id_get((Eo *) obj));
+   _eo_id_release((Eo_Id) _eo_id_get(obj));
 
    eina_lock_take(&klass->objects.trash_lock);
    if (klass->objects.trash_count <= 8)
@@ -301,7 +301,7 @@ _eo_unref(_Eo_Object *obj)
           {
              Eina_Inlist *nitr = obj->data_xrefs->next;
              Eo_Xref_Node *xref = EINA_INLIST_CONTAINER_GET(obj->data_xrefs, Eo_Xref_Node);
-             ERR("Data of object 0x%lx is still referenced by object %p", (unsigned long) _eo_id_get((Eo *) obj), xref->ref_obj);
+             ERR("Data of object 0x%lx is still referenced by object %p", (unsigned long) _eo_id_get(obj), xref->ref_obj);
 
              free(xref);
              obj->data_xrefs = nitr;
