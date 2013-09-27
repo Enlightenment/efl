@@ -23,7 +23,6 @@ static Eo_Op _eo_ops_last_id = 0;
 
 static size_t _eo_sz = 0;
 static size_t _eo_class_sz = 0;
-static size_t _eo_handle_sz = 0;
 
 static void _eo_condtor_reset(_Eo_Object *obj);
 static inline void *_eo_data_scope_get(const _Eo_Object *obj, const _Eo_Class *klass);
@@ -138,13 +137,15 @@ static const Eo_Op_Description noop_desc =
 static inline Eina_Bool
 _eo_is_a_class(const Eo *obj_id)
 {
+   Eo_Id oid;
 #ifdef HAVE_EO_ID
-   return (((((Eo_Id) obj_id) >> REF_TAG_SHIFT) & 0x1) == 0x0);
+   oid = (Eo_Id) obj_id;
 #else
    /* fortunately EO_OBJ_POINTER_RETURN* will handle NULL obj_id */
    if (!obj_id) return EINA_FALSE;
-   return (((_Eo_Handle *) obj_id)->is_a_class == 1);
+   oid = ((Eo_Header *) obj_id)->id;
 #endif
+   return (((oid >> REF_TAG_SHIFT) & 0x1) == 0x0);
 }
 
 static inline _Eo_Class *
@@ -153,17 +154,7 @@ _eo_class_pointer_get(const Eo *klass_id)
 #ifdef HAVE_EO_ID
    return ID_CLASS_GET((Eo_Id)klass_id);
 #else
-   return (_Eo_Class *) EO_FROM_HANDLE(klass_id);
-#endif
-}
-
-static inline
-Eo * _eo_class_id_get(const _Eo_Class *klass)
-{
-#ifdef HAVE_EO_ID
-   return (Eo *) klass->header.id;
-#else
-   return (Eo *) HANDLE_FROM_EO(klass);
+   return (_Eo_Class *) klass_id;
 #endif
 }
 
@@ -306,7 +297,7 @@ _eo_op_internal(const char *file, int line, _Eo eo_ptr, const _Eo_Class *cur_kla
              if (op_type == EO_OP_TYPE_REGULAR)
                {
                   func_data = _eo_data_scope_get(eo_ptr.obj, func->src);
-                  calling_obj = (Eo *)eo_ptr.obj->header.id;
+                  calling_obj = _eo_id_get((Eo *) eo_ptr.obj);
                }
              else
                {
@@ -692,23 +683,15 @@ eo_class_free(_Eo_Class *klass)
      }
 
    EINA_TRASH_CLEAN(&klass->objects.trash, data)
-#ifdef HAVE_EO_ID
-     free(data);
-#else
-     free((void *) HANDLE_FROM_EO(data));
-#endif
+      free(data);
 
    EINA_TRASH_CLEAN(&klass->iterators.trash, data)
-     free(data);
+      free(data);
 
    eina_lock_free(&klass->objects.trash_lock);
    eina_lock_free(&klass->iterators.trash_lock);
 
-#ifdef HAVE_EO_ID
    free(klass);
-#else
-   free((void *) HANDLE_FROM_EO(klass));
-#endif
 }
 
 /* DEVCHECK */
@@ -772,7 +755,6 @@ EAPI const Eo *
 eo_class_new(const Eo_Class_Description *desc, const Eo *parent_id, ...)
 {
    _Eo_Class *klass;
-   _Eo_Handle *hndl;
    va_list p_list;
    size_t extn_sz, mro_sz, mixins_sz;
    Eina_List *extn_list, *mro, *mixins;
@@ -900,13 +882,8 @@ eo_class_new(const Eo_Class_Description *desc, const Eo *parent_id, ...)
         DBG("Finished building Mixins list for class '%s'", desc->name);
      }
 
-#ifdef HAVE_EO_ID
-   (void) hndl;
    klass = calloc(1, _eo_class_sz + extn_sz + mro_sz + mixins_sz);
-#else
-   hndl = calloc(1, _eo_handle_sz + _eo_class_sz + extn_sz + mro_sz + mixins_sz);
-   hndl->is_a_class = 1;
-   klass = (_Eo_Class *) EO_FROM_HANDLE(hndl);
+#ifndef HAVE_EO_ID
    EINA_MAGIC_SET((Eo_Header *) klass, EO_CLASS_EINA_MAGIC);
 #endif
    eina_lock_new(&klass->objects.trash_lock);
@@ -975,11 +952,7 @@ eo_class_new(const Eo_Class_Description *desc, const Eo *parent_id, ...)
         extn_data_itr->offset = 0;
      }
 
-#ifdef HAVE_EO_ID
    klass->obj_size = _eo_sz + extn_data_off;
-#else
-   klass->obj_size = _eo_handle_sz + _eo_sz + extn_data_off;
-#endif
    if (getenv("EO_DEBUG"))
      {
         fprintf(stderr, "Eo class '%s' will take %u bytes per object.\n",
@@ -1076,7 +1049,6 @@ eo_add_internal(const char *file, int line, const Eo *klass_id, Eo *parent_id, .
 {
    Eina_Bool do_err;
    _Eo_Object *obj;
-   _Eo_Handle *hndl;
    EO_CLASS_POINTER_RETURN_VAL(klass_id, klass, NULL);
 
    if (parent_id)
@@ -1099,14 +1071,7 @@ eo_add_internal(const char *file, int line, const Eo *klass_id, Eo *parent_id, .
      }
    else
      {
-#ifdef HAVE_EO_ID
-        (void) hndl;
         obj = calloc(1, klass->obj_size);
-#else
-        hndl = calloc(1, klass->obj_size);
-        hndl->is_a_class = 0;
-        obj  = EO_FROM_HANDLE(hndl);
-#endif
      }
    eina_lock_release(&klass->objects.trash_lock);
 
@@ -1149,7 +1114,7 @@ eo_add_internal(const char *file, int line, const Eo *klass_id, Eo *parent_id, .
 
    _eo_unref(obj);
 
-   return (Eo *)obj_id;
+   return _eo_id_get((Eo *) obj);
 
 fail:
    /* Unref twice, once for the ref above, and once for the basic object ref. */
@@ -1303,7 +1268,7 @@ _eo_data_xref_internal(const char *file, int line, _Eo_Object *obj, const _Eo_Cl
    (obj->datarefcount)++;
 #ifdef EO_DEBUG
    Eo_Xref_Node *xref = calloc(1, sizeof(*xref));
-   xref->ref_obj = (Eo *)ref_obj->header.id;
+   xref->ref_obj = _eo_id_get(ref_obj);
    xref->file = file;
    xref->line = line;
 
@@ -1332,7 +1297,7 @@ _eo_data_xunref_internal(_Eo_Object *obj, void *data, const _Eo_Object *ref_obj)
 #endif
    if (obj->datarefcount == 0)
      {
-        ERR("Data for object %lx (%s) is already not referenced.", (unsigned long)obj->header.id, obj->klass->desc->name);
+        ERR("Data for object %lx (%s) is already not referenced.", (unsigned long) _eo_id_get((Eo *) obj), obj->klass->desc->name);
      }
    else
      {
@@ -1342,7 +1307,7 @@ _eo_data_xunref_internal(_Eo_Object *obj, void *data, const _Eo_Object *ref_obj)
    Eo_Xref_Node *xref = NULL;
    EINA_INLIST_FOREACH(obj->data_xrefs, xref)
      {
-        if (xref->ref_obj == (Eo *)ref_obj->header.id)
+        if (xref->ref_obj == _eo_id_get(ref_obj))
           break;
      }
 
@@ -1353,7 +1318,7 @@ _eo_data_xunref_internal(_Eo_Object *obj, void *data, const _Eo_Object *ref_obj)
      }
    else
      {
-        ERR("ref_obj (0x%lx) does not reference data (%p) of obj (0x%lx).", (unsigned long)ref_obj->header.id, data, (unsigned long)obj->header.id);
+        ERR("ref_obj (0x%lx) does not reference data (%p) of obj (0x%lx).", (unsigned long) _eo_id_get(ref_obj), data, (unsigned long)_eo_id_get(obj));
      }
 #else
    (void) ref_obj;
@@ -1445,7 +1410,6 @@ eo_init(void)
 
    _eo_sz = EO_ALIGN_SIZE(sizeof(_Eo_Object));
    _eo_class_sz = EO_ALIGN_SIZE(sizeof(_Eo_Class));
-   _eo_handle_sz = EO_ALIGN_SIZE(sizeof(_Eo_Handle));
 
    _eo_classes = NULL;
    _eo_classes_last_id = EO_CLASS_IDS_FIRST - 1;

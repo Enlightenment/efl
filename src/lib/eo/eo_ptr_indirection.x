@@ -189,11 +189,6 @@ _eo_id_mem_protect(void *ptr, Eina_Bool may_not_write)
 
 #define EO_ALIGN_SIZE(size) eina_mempool_alignof(size)
 
-#ifndef HAVE_EO_ID
-# define HANDLE_FROM_EO(eo) (Eo_Id)( eo ? (((char *) eo) - EO_ALIGN_SIZE(sizeof (_Eo_Handle))) : NULL )
-# define EO_FROM_HANDLE(hndl) (_Eo_Object *) ( hndl ? (((char *) hndl) + EO_ALIGN_SIZE(sizeof (_Eo_Handle))) : NULL )
-#endif
-
 /* Entry */
 typedef struct
 {
@@ -281,7 +276,7 @@ _eo_obj_pointer_get(const Eo_Id obj_id)
 
    return NULL;
 #else
-   return EO_FROM_HANDLE(obj_id);
+   return (_Eo_Object *) obj_id;
 #endif
 }
 
@@ -372,6 +367,7 @@ _search_tables(void)
    return NULL;
 }
 
+/* Gives a fake id that serves as a marker if eo id is off. */
 static inline Eo_Id
 _eo_id_allocate(const _Eo_Object *obj)
 {
@@ -401,7 +397,9 @@ _eo_id_allocate(const _Eo_Object *obj)
                               (entry - _current_table->entries),
                               entry->generation);
 #else
-   return HANDLE_FROM_EO(obj);
+   Eo_Id ret = 0x1;
+   (void) obj;
+   return ret << REF_TAG_SHIFT;
 #endif
 }
 
