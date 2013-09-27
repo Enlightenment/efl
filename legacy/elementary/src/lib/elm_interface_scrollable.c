@@ -2163,7 +2163,11 @@ _elm_scroll_scroll_to_x_animator(void *data)
    Evas_Coord px, py;
    double t, tt;
 
-   if (!sid->pan_obj) return ECORE_CALLBACK_CANCEL;
+   if (!sid->pan_obj)
+     {
+        sid->scrollto.x.animator = NULL;
+        return ECORE_CALLBACK_CANCEL;
+     }
 
    t = ecore_loop_time_get();
    tt = (t - sid->scrollto.x.t_start) /
