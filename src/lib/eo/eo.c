@@ -457,7 +457,7 @@ eo_class_get(const Eo *obj_id)
    if (_eo_is_a_class(obj_id))
      {
         EO_CLASS_POINTER_RETURN_VAL(obj_id, _klass, NULL);
-        return obj_id;
+        return NULL;
      }
 
    EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, NULL);
