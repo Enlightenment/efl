@@ -52,7 +52,6 @@ _elm_panes_smart_theme(Eo *obj, void *_pd, va_list *list)
    if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret = EINA_FALSE;
    Elm_Layout_Smart_Data *ld = eo_data_scope_get(obj, ELM_OBJ_LAYOUT_CLASS);
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
    if (sd->horizontal)
      eina_stringshare_replace(&ld->group, "horizontal");
