@@ -89,23 +89,15 @@ _mapbuf(Evas_Object *obj)
    ELM_MAPBUF_DATA_GET(obj, sd);
    Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
-   if (sd->enabled)
-     {
-        static Evas_Map *m = NULL;
+   static Evas_Map *m = NULL;
 
-        if (!m) m = evas_map_new(4);
-        evas_object_geometry_get(wd->resize_obj, &x, &y, &w, &h);
-        evas_map_util_points_populate_from_geometry(m, x, y, w, h, 0);
-        evas_map_smooth_set(m, sd->smooth);
-        evas_map_alpha_set(m, sd->alpha);
-        evas_object_map_set(sd->content, m);
-        evas_object_map_enable_set(sd->content, EINA_TRUE);
-     }
-   else
-     {
-        evas_object_map_set(sd->content, NULL);
-        evas_object_map_enable_set(sd->content, EINA_FALSE);
-     }
+   if (!m) m = evas_map_new(4);
+   evas_object_geometry_get(wd->resize_obj, &x, &y, &w, &h);
+   evas_map_util_points_populate_from_geometry(m, x, y, w, h, 0);
+   evas_map_smooth_set(m, sd->smooth);
+   evas_map_alpha_set(m, sd->alpha);
+   evas_object_map_set(sd->content, m);
+   evas_object_map_enable_set(sd->content, EINA_TRUE);
 }
 
 static void
@@ -122,9 +114,7 @@ _configure(Evas_Object *obj, Eina_Bool update_force)
 
    if ((update_force) || ((x != x2) || (y != y2) || (w != w2) || (h != h2)))
      {
-        if (!sd->enabled)
-          evas_object_move(sd->content, x, y);
-        else
+        if (sd->enabled)
           {
              Evas *e = evas_object_evas_get(obj);
 /* This causes many side effects in calculating mapbuf objects.
@@ -134,8 +124,11 @@ _configure(Evas_Object *obj, Eina_Bool update_force)
              evas_object_move(sd->content, x, y);
 //             evas_smart_objects_calculate(e);
              evas_nochange_pop(e);
+
+             _mapbuf(obj);
           }
-        _mapbuf(obj);
+        else
+          evas_object_move(sd->content, x, y);
      }
 }
 
@@ -361,6 +354,12 @@ _internal_enable_set(Eo *obj, Elm_Mapbuf_Smart_Data *sd, Eina_Bool enabled)
    sd->enabled = enabled;
 
    if (sd->content) evas_object_static_clip_set(sd->content, sd->enabled);
+
+   if (!sd->enabled && sd->content)
+     {
+        evas_object_map_set(sd->content, NULL);
+        evas_object_map_enable_set(sd->content, EINA_FALSE);
+     }
    _configure(obj, EINA_TRUE);
 }
 
