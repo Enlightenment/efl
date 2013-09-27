@@ -605,13 +605,6 @@ EAPI Eina_Bool eo_shutdown(void);
 #define eo_vdo(obj, args) eo_vdo_internal(__FILE__, __LINE__, obj, args)
 
 /**
- * @def eo_class_do
- * A convenience wrapper around eo_class_do_internal()
- * @see eo_class_do_internal
- */
-#define eo_class_do(klass, ...) eo_do(klass, __VA_ARGS__)
-
-/**
  * @brief Calls op functions of an object
  * @param obj The object to work on
  * @param ... NULL terminated list of OPs and parameters.
@@ -649,19 +642,6 @@ EAPI Eina_Bool eo_vdo_internal(const char *file, int line, const Eo *obj, va_lis
  * @see #eo_do
  */
 #define eo_do_super(obj, cur_klass, ...) eo_do_super_internal(__FILE__, __LINE__, obj, cur_klass, __VA_ARGS__)
-
-/**
- * @brief Calls the super function for the specific op.
- * @param klass The klass to work on
- * @param cur_klass The *current* class (use the class *after* this in the MRO).
- * @param ... list of parameters.
- * @return @c EINA_TRUE on success.
- *
- * Unlike eo_class_do(), this function only accepts one op.
- *
- * @see #eo_class_do
- */
-#define eo_class_do_super(klass, cur_klass, ...) eo_do_super(klass, cur_klass, __VA_ARGS__)
 
 /**
  * @brief Calls the super function for the specific op.

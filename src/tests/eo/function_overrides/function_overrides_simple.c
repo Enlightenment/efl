@@ -34,8 +34,8 @@ _class_print(Eo_Class *klass, void *data EINA_UNUSED, va_list *list)
 {
    (void) list;
    printf("Print %s-%s\n", eo_class_name_get(klass), eo_class_name_get(MY_CLASS));
-   fail_if(eo_class_do_super(klass, MY_CLASS, simple_class_print()));
-   fail_if(eo_class_do_super(klass, MY_CLASS, simple_class_print2()));
+   fail_if(eo_do_super(klass, MY_CLASS, simple_class_print()));
+   fail_if(eo_do_super(klass, MY_CLASS, simple_class_print2()));
 }
 
 static void

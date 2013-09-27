@@ -45,13 +45,13 @@ main(int argc, char *argv[])
    fail_if(eo_do(obj, simple_class_print()));
 #endif
 
-   fail_if(!eo_class_do(SIMPLE_CLASS, simple_class_print()));
-   fail_if(!eo_class_do(INHERIT_CLASS, simple_class_print()));
-   fail_if(!eo_class_do(INHERIT2_CLASS, simple_class_print()));
-   fail_if(!eo_class_do(INHERIT3_CLASS, simple_class_print()));
+   fail_if(!eo_do(SIMPLE_CLASS, simple_class_print()));
+   fail_if(!eo_do(INHERIT_CLASS, simple_class_print()));
+   fail_if(!eo_do(INHERIT2_CLASS, simple_class_print()));
+   fail_if(!eo_do(INHERIT3_CLASS, simple_class_print()));
 
 #ifdef EO_DEBUG
-   fail_if(eo_class_do(SIMPLE_CLASS, simple_a_print()));
+   fail_if(eo_do(SIMPLE_CLASS, simple_a_print()));
 #endif
 
    eo_do_super(obj, SIMPLE_CLASS, eo_constructor());

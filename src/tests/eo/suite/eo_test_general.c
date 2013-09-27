@@ -670,9 +670,9 @@ START_TEST(eo_magic_checks)
         fail_if(eo_class_get((Eo *) buf));
         fail_if(eo_class_name_get((Eo_Class*) buf));
         eo_class_funcs_set((Eo_Class *) buf, NULL);
-        eo_class_do((Eo_Class *) buf, NULL);
-        eo_class_do_super((Eo_Class *) buf, SIMPLE_CLASS, EO_NOOP);
-        eo_class_do_super(SIMPLE_CLASS, (Eo_Class *) buf, EO_NOOP);
+        eo_do((Eo_Class *) buf, NULL);
+        eo_do_super((Eo_Class *) buf, SIMPLE_CLASS, EO_NOOP);
+        eo_do_super(SIMPLE_CLASS, (Eo_Class *) buf, EO_NOOP);
 
         fail_if(eo_class_new(NULL, (Eo_Class *) buf), NULL);
 
@@ -791,7 +791,7 @@ START_TEST(eo_multiple_do)
    fail_if(!obj);
 
    fail_if(!eo_do(obj, simple_a_print(), multi_a_print(), multi_a_print()));
-   fail_if(!eo_class_do(klass, simple_class_hi_print(), multi_class_hi_print(), multi_class_hi_print()));
+   fail_if(!eo_do(klass, simple_class_hi_print(), multi_class_hi_print(), multi_class_hi_print()));
 
    eo_unref(obj);
 
