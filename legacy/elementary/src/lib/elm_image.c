@@ -94,8 +94,6 @@ _img_new(Evas_Object *obj)
    evas_object_repeat_events_set(img, EINA_TRUE);
    evas_object_event_callback_add
      (img, EVAS_CALLBACK_IMAGE_PRELOADED, _on_image_preloaded, sd);
-   evas_object_event_callback_add
-     (img, EVAS_CALLBACK_MOUSE_UP, _on_mouse_up, obj);
 
    evas_object_smart_member_add(img, obj);
    elm_widget_sub_object_add(obj, img);
@@ -211,8 +209,6 @@ _elm_image_edje_file_set(Evas_Object *obj,
         evas_object_smart_member_add(sd->img, obj);
         if (sd->show) evas_object_show(sd->img);
         evas_object_clip_set(sd->img, pclip);
-        evas_object_event_callback_add
-           (sd->img, EVAS_CALLBACK_MOUSE_UP, _on_mouse_up, obj);
      }
 
    sd->edje = EINA_TRUE;
