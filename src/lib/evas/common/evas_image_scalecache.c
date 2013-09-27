@@ -663,7 +663,7 @@ evas_common_rgba_image_scalecache_do_cbs(Image_Entry *ie, RGBA_Image *dst,
         if (im->cache_entry.space == EVAS_COLORSPACE_ARGB8888)
           {
 #ifdef EVAS_CSERVE2
-             if (evas_cserve2_use_get())
+             if (evas_cserve2_use_get() && evas_cache2_image_cached(&im->cache_entry))
                evas_cache2_image_load_data(&im->cache_entry);
              else
 #endif

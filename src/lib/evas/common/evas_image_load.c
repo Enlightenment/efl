@@ -243,18 +243,10 @@ evas_common_load_rgba_image_module_from_file(Image_Entry *ie)
    struct evas_image_foreach_loader_data fdata;
 
 #ifdef EVAS_CSERVE2
-   if (evas_cserve2_use_get())
-     {
-        ERR("This function shouldn't be called anymore!");
-        // DBG("try cserve2 '%s' '%s'", ie->file, ie->key ? ie->key : "");
-        // if (evas_cserve2_image_load(ie, ie->file, ie->key, &(ie->load_opts)))
-        //   {
-        //      DBG("try cserve2 '%s' '%s' loaded!",
-        //          ie->file, ie->key ? ie->key : "");
-        //      return EVAS_LOAD_ERROR_NONE;
-        //   }
-     }
+   if (evas_cserve2_use_get() && evas_cache2_image_cached(ie))
+     CRIT("This function shouldn't be called anymore!");
 #endif
+
    if (ie->f)
      {
         len = strlen(eina_file_filename_get(ie->f));
@@ -368,25 +360,8 @@ evas_common_load_rgba_image_data_from_file(Image_Entry *ie)
    if ((ie->flags.loaded) && (!ie->animated.animated)) return EVAS_LOAD_ERROR_GENERIC;
 
 #ifdef EVAS_CSERVE2
-   if (ie->data1)
-     {
-        ERR("This function shouldn't be called anymore!");
-        // DBG("try cserve2 image data '%s' '%s'",
-        //     ie->file, ie->key ? ie->key : "");
-        // if (evas_cserve2_image_data_load(ie))
-        //   {
-        //      RGBA_Image *im = (RGBA_Image *)ie;
-        //      im->image.data = evas_cserve2_image_data_get(ie);
-        //      DBG("try cserve2 image data '%s' '%s' loaded!",
-        //          ie->file, ie->key ? ie->key : "");
-        //      if (im->image.data)
-        //        {
-        //           im->image.no_free = 1;
-        //           return EVAS_LOAD_ERROR_NONE;
-        //        }
-        //   }
-        // return EVAS_LOAD_ERROR_GENERIC;
-     }
+   if (evas_cserve2_use_get() && evas_cache2_image_cached(ie))
+     CRIT("This function shouldn't be called anymore!");
 #endif
 
    if (!ie->info.module) return EVAS_LOAD_ERROR_GENERIC;

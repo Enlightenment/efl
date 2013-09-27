@@ -966,7 +966,7 @@ evas_cache2_image_close(Image_Entry *im)
    if (references > 0)
      return;
 
-   if (im->flags.dirty)
+   if (im->flags.dirty || im->animated.animated)
      {
         _evas_cache2_image_entry_delete(cache, im);
         return;
