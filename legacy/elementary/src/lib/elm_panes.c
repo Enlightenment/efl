@@ -46,7 +46,7 @@ _elm_panes_smart_theme(Eo *obj, void *_pd, va_list *list)
 {
    double size;
    Evas_Coord minw = 0, minh = 0;
-   
+
    Elm_Panes_Smart_Data *sd = _pd;
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    if (ret) *ret = EINA_FALSE;
@@ -61,7 +61,7 @@ _elm_panes_smart_theme(Eo *obj, void *_pd, va_list *list)
    evas_object_hide(sd->event);
    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
    evas_object_size_hint_min_set(sd->event, minw, minh);
-   
+
    eo_do_super(obj, MY_CLASS, elm_wdg_theme(&int_ret));
    if (!int_ret) return;
 
@@ -195,7 +195,7 @@ _elm_panes_smart_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
    Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
    ELM_PANES_DATA_GET(obj, sd);
-   
+
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
    elm_widget_sub_object_parent_add(obj);
 
