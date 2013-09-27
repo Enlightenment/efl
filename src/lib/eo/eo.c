@@ -1038,7 +1038,7 @@ _eo_parent_internal_set(_Eo_Object *obj, ...)
    va_list p_list;
 
    va_start(p_list, obj);
-   _eo_op_internal("eo.c", 1049, (_Eo)obj, obj->klass,
+   _eo_op_internal(__FILE__, __LINE__, (_Eo)obj, obj->klass,
                    EO_OP_TYPE_REGULAR, EO_BASE_ID(EO_BASE_SUB_ID_PARENT_SET),
                    &p_list);
    va_end(p_list);
