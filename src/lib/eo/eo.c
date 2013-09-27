@@ -327,26 +327,36 @@ _eo_op_internal(const char *file, int line, Eo_Base *eo_ptr, const _Eo_Class *cu
 }
 
 static inline Eina_Bool
-_eo_obj_dov_internal(const char *file, int line, _Eo_Object *obj, va_list *p_list)
+_eo_dov_internal(const char *file, int line, Eo_Base *obj, const _Eo_Class *klass, Eo_Op_Type op_type, va_list *p_list)
 {
-   Eina_Bool prev_error;
    Eina_Bool ret = EINA_TRUE;
    Eo_Op op = EO_NOOP;
-
-   prev_error = obj->do_error;
-   _eo_ref(obj);
 
    op = va_arg(*p_list, Eo_Op);
    while (op)
      {
-        if (!_eo_op_internal(file, line, (Eo_Base *) obj, obj->klass, EO_OP_TYPE_REGULAR, op, p_list))
+        if (!_eo_op_internal(file, line, obj, klass, op_type, op, p_list))
           {
-             _EO_OP_ERR_NO_OP_PRINT(file, line, op, obj->klass);
+             _EO_OP_ERR_NO_OP_PRINT(file, line, op, klass);
              ret = EINA_FALSE;
              break;
           }
         op = va_arg(*p_list, Eo_Op);
      }
+
+   return ret;
+}
+
+static inline Eina_Bool
+_eo_obj_dov_internal(const char *file, int line, _Eo_Object *obj, va_list *p_list)
+{
+   Eina_Bool prev_error;
+   Eina_Bool ret = EINA_TRUE;
+
+   prev_error = obj->do_error;
+   _eo_ref(obj);
+
+   ret = _eo_dov_internal(file, line, (Eo_Base *) obj, obj->klass, EO_OP_TYPE_REGULAR, p_list);
 
    if (obj->do_error)
      ret = EINA_FALSE;
@@ -360,22 +370,7 @@ _eo_obj_dov_internal(const char *file, int line, _Eo_Object *obj, va_list *p_lis
 static inline Eina_Bool
 _eo_class_dov_internal(const char *file, int line, _Eo_Class *klass, va_list *p_list)
 {
-   Eina_Bool ret = EINA_TRUE;
-   Eo_Op op = EO_NOOP;
-
-   op = va_arg(*p_list, Eo_Op);
-   while (op)
-     {
-        if (!_eo_op_internal(file, line, (Eo_Base *) klass, klass, EO_OP_TYPE_CLASS, op, p_list))
-          {
-             _EO_OP_ERR_NO_OP_PRINT(file, line, op, klass);
-             ret = EINA_FALSE;
-             break;
-          }
-        op = va_arg(*p_list, Eo_Op);
-     }
-
-   return ret;
+   return _eo_dov_internal(file, line, (Eo_Base *) klass, klass, EO_OP_TYPE_CLASS, p_list);
 }
 
 EAPI Eina_Bool
