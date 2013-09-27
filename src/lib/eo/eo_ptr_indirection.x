@@ -456,7 +456,7 @@ _eo_id_release(const Eo_Id obj_id)
 
    ERR("obj_id %p is not pointing to a valid object. Maybe it has already been freed.", (void *)obj_id);
 #else
-   EINA_MAGIC_SET(EO_FROM_HANDLE(obj_id), EO_FREED_EINA_MAGIC);
+   EINA_MAGIC_SET((Eo_Header *) obj_id, EO_FREED_EINA_MAGIC);
 #endif
 }
 

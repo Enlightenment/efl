@@ -161,7 +161,7 @@ static inline
 Eo * _eo_class_id_get(const _Eo_Class *klass)
 {
 #ifdef HAVE_EO_ID
-   return (Eo *) klass->class_id;
+   return (Eo *) klass->header.id;
 #else
    return (Eo *) HANDLE_FROM_EO(klass);
 #endif
@@ -306,7 +306,7 @@ _eo_op_internal(const char *file, int line, _Eo eo_ptr, const _Eo_Class *cur_kla
              if (op_type == EO_OP_TYPE_REGULAR)
                {
                   func_data = _eo_data_scope_get(eo_ptr.obj, func->src);
-                  calling_obj = (Eo *)eo_ptr.obj->obj_id;
+                  calling_obj = (Eo *)eo_ptr.obj->header.id;
                }
              else
                {
@@ -779,9 +779,9 @@ eo_class_new(const Eo_Class_Description *desc, const Eo *parent_id, ...)
 
    _Eo_Class *parent = _eo_class_pointer_get(parent_id);
 #ifndef HAVE_EO_ID
-   if (parent && !EINA_MAGIC_CHECK(parent, EO_CLASS_EINA_MAGIC))
+   if (parent && !EINA_MAGIC_CHECK((Eo_Header *) parent, EO_CLASS_EINA_MAGIC))
      {
-        EINA_MAGIC_FAIL(parent, EO_CLASS_EINA_MAGIC);
+        EINA_MAGIC_FAIL((Eo_Header *) parent, EO_CLASS_EINA_MAGIC);
         return NULL;
      }
 #endif
@@ -907,7 +907,7 @@ eo_class_new(const Eo_Class_Description *desc, const Eo *parent_id, ...)
    hndl = calloc(1, _eo_handle_sz + _eo_class_sz + extn_sz + mro_sz + mixins_sz);
    hndl->is_a_class = 1;
    klass = (_Eo_Class *) EO_FROM_HANDLE(hndl);
-   EINA_MAGIC_SET(klass, EO_CLASS_EINA_MAGIC);
+   EINA_MAGIC_SET((Eo_Header *) klass, EO_CLASS_EINA_MAGIC);
 #endif
    eina_lock_new(&klass->objects.trash_lock);
    eina_lock_new(&klass->iterators.trash_lock);
@@ -1024,7 +1024,7 @@ eo_class_new(const Eo_Class_Description *desc, const Eo *parent_id, ...)
      }
 
    eina_lock_take(&_eo_class_creation_lock);
-   klass->class_id = ++_eo_classes_last_id;
+   klass->header.id = ++_eo_classes_last_id;
      {
         /* FIXME: Handle errors. */
         size_t arrsize = _eo_classes_last_id * sizeof(*_eo_classes);
@@ -1036,7 +1036,7 @@ eo_class_new(const Eo_Class_Description *desc, const Eo *parent_id, ...)
            memset(tmp, 0, arrsize);
 
         _eo_classes = tmp;
-        _eo_classes[klass->class_id - 1] = klass;
+        _eo_classes[klass->header.id - 1] = klass;
      }
    eina_lock_release(&_eo_class_creation_lock);
 
@@ -1114,10 +1114,10 @@ eo_add_internal(const char *file, int line, const Eo *klass_id, Eo *parent_id, .
    obj->klass = klass;
 
 #ifndef HAVE_EO_ID
-   EINA_MAGIC_SET(obj, EO_EINA_MAGIC);
+   EINA_MAGIC_SET((Eo_Header *) obj, EO_EINA_MAGIC);
 #endif
    Eo_Id obj_id = _eo_id_allocate(obj);
-   obj->obj_id = obj_id;
+   obj->header.id = obj_id;
 
    _eo_condtor_reset(obj);
 
@@ -1303,7 +1303,7 @@ _eo_data_xref_internal(const char *file, int line, _Eo_Object *obj, const _Eo_Cl
    (obj->datarefcount)++;
 #ifdef EO_DEBUG
    Eo_Xref_Node *xref = calloc(1, sizeof(*xref));
-   xref->ref_obj = (Eo *)ref_obj->obj_id;
+   xref->ref_obj = (Eo *)ref_obj->header.id;
    xref->file = file;
    xref->line = line;
 
@@ -1325,14 +1325,14 @@ _eo_data_xunref_internal(_Eo_Object *obj, void *data, const _Eo_Object *ref_obj)
                          ((char *)data < (((char *) obj) + klass->obj_size)));
    if (!in_range)
      {
-        ERR("Data %p is not in the data range of the object %p (%s).", data, (Eo *)obj->obj_id, obj->klass->desc->name);
+        ERR("Data %p is not in the data range of the object %p (%s).", data, (Eo *)obj->headr.id, obj->klass->desc->name);
      }
 #else
    (void) data;
 #endif
    if (obj->datarefcount == 0)
      {
-        ERR("Data for object %lx (%s) is already not referenced.", (unsigned long)obj->obj_id, obj->klass->desc->name);
+        ERR("Data for object %lx (%s) is already not referenced.", (unsigned long)obj->header.id, obj->klass->desc->name);
      }
    else
      {
@@ -1342,7 +1342,7 @@ _eo_data_xunref_internal(_Eo_Object *obj, void *data, const _Eo_Object *ref_obj)
    Eo_Xref_Node *xref = NULL;
    EINA_INLIST_FOREACH(obj->data_xrefs, xref)
      {
-        if (xref->ref_obj == (Eo *)ref_obj->obj_id)
+        if (xref->ref_obj == (Eo *)ref_obj->header.id)
           break;
      }
 
@@ -1353,7 +1353,7 @@ _eo_data_xunref_internal(_Eo_Object *obj, void *data, const _Eo_Object *ref_obj)
      }
    else
      {
-        ERR("ref_obj (0x%lx) does not reference data (%p) of obj (0x%lx).", (unsigned long)ref_obj->obj_id, data, (unsigned long)obj->obj_id);
+        ERR("ref_obj (0x%lx) does not reference data (%p) of obj (0x%lx).", (unsigned long)ref_obj->header.id, data, (unsigned long)obj->header.id);
      }
 #else
    (void) ref_obj;
