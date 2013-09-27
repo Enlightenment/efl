@@ -184,7 +184,7 @@ Eo *_eo_header_id_get(const Eo_Base *header)
 }
 
 static inline
-Eo *_eo_class_id_get(const _Eo_Class *klass)
+Eo_Class *_eo_class_id_get(const _Eo_Class *klass)
 {
    return _eo_header_id_get((Eo_Base *) klass);
 }
