@@ -17,7 +17,7 @@ EAPI Eina_Lock _eo_class_creation_lock;
 int _eo_log_dom = -1;
 
 static _Eo_Class **_eo_classes;
-static Eo_Class_Id _eo_classes_last_id;
+static Eo_Id _eo_classes_last_id;
 static Eina_Bool _eo_init_count = 0;
 static Eo_Op _eo_ops_last_id = 0;
 
@@ -151,7 +151,7 @@ static inline _Eo_Class *
 _eo_class_pointer_get(const Eo *klass_id)
 {
 #ifdef HAVE_EO_ID
-   return ID_CLASS_GET((Eo_Class_Id)klass_id);
+   return ID_CLASS_GET((Eo_Id)klass_id);
 #else
    return (_Eo_Class *) EO_FROM_HANDLE(klass_id);
 #endif
@@ -832,11 +832,11 @@ eo_class_new(const Eo_Class_Description *desc, const Eo *parent_id, ...)
         DBG("Started building extensions list for class '%s'", desc->name);
         extn_list = NULL;
         const _Eo_Class *extn = NULL;
-        const Eo_Class_Id *extn_id = NULL;
+        const Eo_Id *extn_id = NULL;
 
         va_start(p_list, parent_id);
 
-        extn_id = va_arg(p_list, Eo_Class_Id *);
+        extn_id = va_arg(p_list, Eo_Id *);
         while (extn_id)
           {
              extn = _eo_class_pointer_get((Eo *)extn_id);
@@ -850,7 +850,7 @@ eo_class_new(const Eo_Class_Description *desc, const Eo *parent_id, ...)
                    break;
                }
 
-             extn_id = va_arg(p_list, Eo_Class_Id *);
+             extn_id = va_arg(p_list, Eo_Id *);
           }
 
         va_end(p_list);

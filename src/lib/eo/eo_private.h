@@ -85,6 +85,8 @@ struct _Eo_Object {
 #ifndef HAVE_EO_ID
      EINA_MAGIC
 #endif
+     Eo_Id obj_id;
+
      Eo *parent;
      Eina_List *children;
      const _Eo_Class *klass;
@@ -94,8 +96,6 @@ struct _Eo_Object {
 #endif
 
      Eina_List *composite_objects;
-
-     Eo_Id obj_id;
 
      int refcount;
      int datarefcount;
@@ -107,13 +107,6 @@ struct _Eo_Object {
      Eina_Bool del:1;
      Eina_Bool manual_free:1;
 };
-
-/**
- * @typedef Eo_Class_Id
- * An Id of a class.
- * @ingroup Eo_Class
- */
-typedef uintptr_t Eo_Class_Id;
 
 typedef struct _Dich_Chain1 Dich_Chain1;
 
@@ -139,7 +132,8 @@ struct _Eo_Class
 #ifndef HAVE_EO_ID
    EINA_MAGIC
 #endif
-   Eo_Class_Id class_id;
+   Eo_Id class_id;
+
    const _Eo_Class *parent;
    const Eo_Class_Description *desc;
    Dich_Chain1 *chain; /**< The size is chain size */
