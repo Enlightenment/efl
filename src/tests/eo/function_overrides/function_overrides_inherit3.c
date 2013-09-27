@@ -19,7 +19,7 @@ _a_set(Eo *obj, void *class_data EINA_UNUSED, va_list *list)
 }
 
 static void
-_class_constructor(Eo *klass)
+_class_constructor(Eo_Class *klass)
 {
    const Eo_Op_Func_Description func_desc[] = {
         EO_OP_FUNC(SIMPLE_ID(SIMPLE_SUB_ID_A_SET), _a_set),

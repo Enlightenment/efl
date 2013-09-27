@@ -83,7 +83,7 @@ START_TEST(eo_incomplete_desc)
    eo_init();
    eina_log_print_cb_set(_eo_test_print_cb, &ctx);
 
-   const Eo *klass;
+   const Eo_Class *klass;
    static Eo_Op TMP_BASE_ID = EO_NOOP;
 
    enum {
@@ -186,9 +186,9 @@ START_TEST(eo_inherit_errors)
    eo_init();
    eina_log_print_cb_set(_eo_test_print_cb, &ctx);
 
-   const Eo *klass;
-   const Eo *klass_mixin;
-   const Eo *klass_simple;
+   const Eo_Class *klass;
+   const Eo_Class *klass_mixin;
+   const Eo_Class *klass_simple;
 
    static const Eo_Class_Description class_desc_simple = {
         EO_VERSION,
@@ -253,10 +253,10 @@ START_TEST(eo_inconsistent_mro)
    eo_init();
    eina_log_print_cb_set(_eo_test_print_cb, &ctx);
 
-   const Eo *klass;
-   const Eo *klass_mixin;
-   const Eo *klass_mixin2;
-   const Eo *klass_mixin3;
+   const Eo_Class *klass;
+   const Eo_Class *klass_mixin;
+   const Eo_Class *klass_mixin2;
+   const Eo_Class *klass_mixin3;
 
    static const Eo_Class_Description class_desc_simple = {
         EO_VERSION,
@@ -328,14 +328,14 @@ START_TEST(eo_inconsistent_mro)
 }
 END_TEST
 
-static void _stub_class_constructor(Eo *klass EINA_UNUSED) {}
+static void _stub_class_constructor(Eo_Class *klass EINA_UNUSED) {}
 
 START_TEST(eo_bad_interface)
 {
    eo_init();
    eina_log_print_cb_set(_eo_test_safety_print_cb, &ctx);
 
-   const Eo *klass;
+   const Eo_Class *klass;
 
    static Eo_Class_Description class_desc = {
         EO_VERSION,
@@ -399,7 +399,7 @@ _const_ops_class_hi_print(Eo *obj EINA_UNUSED, void *class_data EINA_UNUSED, va_
 }
 
 static void
-_const_ops_class_constructor(Eo *klass)
+_const_ops_class_constructor(Eo_Class *klass)
 {
    const Eo_Op_Func_Description func_desc[] = {
         EO_OP_FUNC(SIMPLE_ID(SIMPLE_SUB_ID_A_SET), _const_ops_a_set),
@@ -419,7 +419,7 @@ START_TEST(eo_op_types)
    eo_init();
    eina_log_print_cb_set(_eo_test_print_cb, &ctx);
 
-   const Eo *klass;
+   const Eo_Class *klass;
 
    static Eo_Class_Description class_desc = {
         EO_VERSION,

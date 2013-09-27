@@ -11289,7 +11289,7 @@ _evas_textblock_format_offset_get(const Evas_Object_Textblock_Node_Format *n)
 #endif
 
 static void
-_class_constructor(Eo *klass)
+_class_constructor(Eo_Class *klass)
 {
    const Eo_Op_Func_Description func_desc[] = {
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),

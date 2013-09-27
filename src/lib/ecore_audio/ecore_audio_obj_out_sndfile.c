@@ -214,7 +214,7 @@ static void _destructor(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
   eo_do_super(eo_obj, MY_CLASS, eo_destructor());
 }
 
-static void _class_constructor(Eo *klass)
+static void _class_constructor(Eo_Class *klass)
 {
   const Eo_Op_Func_Description func_desc[] = {
       /* Virtual functions of parent class implemented in this class */

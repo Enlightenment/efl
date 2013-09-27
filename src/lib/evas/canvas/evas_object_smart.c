@@ -379,7 +379,7 @@ _smart_type_check(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
    *type_check = EINA_FALSE;
 
    const Evas_Smart_Class *sc;
-   Eo *klass;
+   Eo_Class *klass;
 
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    if (!obj) return;
@@ -420,7 +420,7 @@ evas_object_smart_type_check_ptr(const Evas_Object *eo_obj, const char *type)
 static void
 _smart_type_check_ptr(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
 {
-   Eo *klass;
+   Eo_Class *klass;
    const Evas_Smart_Class *sc;
    const char* type = va_arg(*list, const char *);
    Eina_Bool *type_check = va_arg(*list, Eina_Bool *);
@@ -452,7 +452,7 @@ _smart_type_check_ptr(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
 }
 
 EAPI void
-evas_smart_legacy_type_register(const char *type, const Eo *klass)
+evas_smart_legacy_type_register(const char *type, const Eo_Class *klass)
 {
    eina_hash_set(_evas_smart_class_names_hash_table, type, klass);
 }
@@ -1782,7 +1782,7 @@ static void *evas_object_smart_engine_data_get(Evas_Object *eo_obj)
 }
 
 static void
-_class_constructor(Eo *klass)
+_class_constructor(Eo_Class *klass)
 {
    const Eo_Op_Func_Description func_desc[] = {
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
@@ -1823,7 +1823,7 @@ _class_constructor(Eo *klass)
 }
 
 static void
-_class_destructor(Eo *klass EINA_UNUSED)
+_class_destructor(Eo_Class *klass EINA_UNUSED)
 {
    eina_hash_free(_evas_smart_class_names_hash_table);
 }

@@ -417,6 +417,6 @@ GENERIC_ALLOC_FREE_HEADER(Ecore_Win32_Handler, ecore_win32_handler);
 
 extern Eo *_ecore_parent;
 #define ECORE_PARENT_CLASS ecore_parent_class_get()
-const Eo *ecore_parent_class_get(void) EINA_CONST;
+const Eo_Class *ecore_parent_class_get(void) EINA_CONST;
 
 #endif

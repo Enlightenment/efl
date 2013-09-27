@@ -1000,7 +1000,7 @@ _evas_get(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
 }
 
 static void
-_class_constructor(Eo *klass)
+_class_constructor(Eo_Class *klass)
 {
    const Eo_Op_Func_Description func_desc[] = {
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),

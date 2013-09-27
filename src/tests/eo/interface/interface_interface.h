@@ -19,6 +19,6 @@ enum {
 #define interface_ab_sum_get(sum) INTERFACE_ID(INTERFACE_SUB_ID_AB_SUM_GET), EO_TYPECHECK(int *, sum)
 
 #define INTERFACE_CLASS interface_class_get()
-const Eo *interface_class_get(void);
+const Eo_Class *interface_class_get(void);
 
 #endif

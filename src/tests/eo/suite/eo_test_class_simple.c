@@ -33,7 +33,7 @@ _a_print(Eo *obj EINA_UNUSED, void *class_data, va_list *list)
 }
 
 static void
-_class_hi_print(Eo *klass, void *data EINA_UNUSED, va_list *list)
+_class_hi_print(Eo_Class *klass, void *data EINA_UNUSED, va_list *list)
 {
    (void) list;
    printf("Hi Print %s\n", eo_class_name_get(klass));
@@ -49,7 +49,7 @@ _dbg_info_get(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
 }
 
 static void
-_class_constructor(Eo *klass)
+_class_constructor(Eo_Class *klass)
 {
    const Eo_Op_Func_Description func_desc[] = {
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DBG_INFO_GET), _dbg_info_get),

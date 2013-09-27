@@ -1,6 +1,6 @@
 #define EDJE_OBJ_CLASS edje_object_class_get()
 
-const Eo *edje_object_class_get(void) EINA_CONST;
+const Eo_Class *edje_object_class_get(void) EINA_CONST;
 
 extern EAPI Eo_Op EDJE_OBJ_BASE_ID;
 
@@ -2258,4 +2258,4 @@ enum
 
 #define EDJE_EDIT_CLASS edje_edit_class_get()
 
-const Eo *edje_edit_class_get(void) EINA_CONST;
+const Eo_Class *edje_edit_class_get(void) EINA_CONST;

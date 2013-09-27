@@ -41,7 +41,7 @@ extern "C"
  *
  * @return The Eo class ID
  */
-const Eo *ecore_audio_obj_out_class_get() EINA_CONST;
+const Eo_Class *ecore_audio_obj_out_class_get() EINA_CONST;
 
 extern EAPI Eo_Op ECORE_AUDIO_OBJ_OUT_BASE_ID;
 

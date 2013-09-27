@@ -7844,7 +7844,7 @@ edje_edit_print_internal_status(Evas_Object *obj)
 }
 
 static void
-_edje_edit_class_constructor(Eo *klass)
+_edje_edit_class_constructor(Eo_Class *klass)
 {
    const Eo_Op_Func_Description func_desc[] = {
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _edje_edit_constructor),

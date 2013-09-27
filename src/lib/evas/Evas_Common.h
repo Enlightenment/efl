@@ -4436,7 +4436,7 @@ EAPI int                               evas_smart_usage_get(const Evas_Smart *s)
  *
  * @ingroup Evas_Smart_Object_Group
  */
-EAPI void evas_smart_legacy_type_register(const char *type, const Eo *klass) EINA_ARG_NONNULL(1, 2);
+EAPI void evas_smart_legacy_type_register(const char *type, const Eo_Class *klass) EINA_ARG_NONNULL(1, 2);
 
 /**
  * @}

@@ -42,6 +42,6 @@ enum {
 #define simple_b_get(b) SIMPLE_ID(SIMPLE_SUB_ID_B_GET), EO_TYPECHECK(int *, b)
 
 #define SIMPLE_CLASS simple_class_get()
-const Eo *simple_class_get(void);
+const Eo_Class *simple_class_get(void);
 
 #endif
