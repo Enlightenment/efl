@@ -738,7 +738,7 @@ _a_print(Eo *obj EINA_UNUSED, void *class_data EINA_UNUSED, va_list *list EINA_U
 }
 
 static void
-_class_hi_print(const Eo_Class *klass EINA_UNUSED, va_list *list EINA_UNUSED)
+_class_hi_print(Eo_Class *klass EINA_UNUSED, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
 {
    printf("Hi\n");
 }
