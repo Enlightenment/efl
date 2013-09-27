@@ -41,6 +41,13 @@ extern "C" {
 typedef struct _Eo_Opaque Eo;
 
 /**
+ * @typedef Eo_Class
+ * The basic class type - should be removed, just for compat.
+ * @deprecated
+ */
+typedef struct _Eo_Opaque Eo_Class;
+
+/**
  * @typedef Eo_Callback_Priority
  *
  * Callback priority value. Range is -32k - 32k. The lower the number, the
