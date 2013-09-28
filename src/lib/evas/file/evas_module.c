@@ -136,6 +136,7 @@ EVAS_EINA_STATIC_MODULE_DEFINE(image_loader, generic);
 EVAS_EINA_STATIC_MODULE_DEFINE(image_loader, gif);
 EVAS_EINA_STATIC_MODULE_DEFINE(image_loader, ico);
 EVAS_EINA_STATIC_MODULE_DEFINE(image_loader, jpeg);
+EVAS_EINA_STATIC_MODULE_DEFINE(image_loader, jp2k);
 EVAS_EINA_STATIC_MODULE_DEFINE(image_loader, pmaps);
 EVAS_EINA_STATIC_MODULE_DEFINE(image_loader, png);
 EVAS_EINA_STATIC_MODULE_DEFINE(image_loader, psd);
@@ -206,6 +207,9 @@ static const struct {
 #endif
 #ifdef EVAS_STATIC_BUILD_JPEG
   EVAS_EINA_STATIC_MODULE_USE(image_loader, jpeg),
+#endif
+#ifdef EVAS_STATIC_BUILD_JP2K
+  EVAS_EINA_STATIC_MODULE_USE(image_loader, jp2k),
 #endif
 #ifdef EVAS_STATIC_BUILD_PMAPS
   EVAS_EINA_STATIC_MODULE_USE(image_loader, pmaps),

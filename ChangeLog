@@ -1,3 +1,7 @@
+2013-10-01  Vincent Torri
+
+	* Evas: add JPEG 2000 support.
+
 2013-09-25  Tom Hacohen
 
 	* Evas font: Make the evas_font_path_* functions apply to fontconfig searches.

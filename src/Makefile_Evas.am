@@ -1275,6 +1275,33 @@ endif
 endif
 endif
 
+if BUILD_LOADER_JP2K
+if EVAS_STATIC_BUILD_JP2K
+lib_evas_libevas_la_SOURCES += modules/evas/loaders/jp2k/evas_image_load_jp2k.c
+lib_evas_libevas_la_CPPFLAGS += @evas_image_loader_jp2k_cflags@
+lib_evas_libevas_la_LIBADD += @evas_image_loader_jp2k_libs@
+if EVAS_CSERVE2
+bin_evas_evas_cserve2_slave_SOURCES += modules/evas/loaders/jp2k/evas_image_load_jp2k.c
+bin_evas_evas_cserve2_slave_CPPFLAGS += @evas_image_loader_jp2k_cflags@
+bin_evas_evas_cserve2_slave_LDADD += @evas_image_loader_jp2k_libs@
+endif
+else
+loaderjp2kpkgdir = $(libdir)/evas/modules/loaders/jp2k/$(MODULE_ARCH)
+loaderjp2kpkg_LTLIBRARIES = modules/evas/loaders/jp2k/module.la
+modules_evas_loaders_jp2k_module_la_SOURCES = modules/evas/loaders/jp2k/evas_image_load_jp2k.c
+modules_evas_loaders_jp2k_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-I$(top_srcdir)/src/lib/evas/include \
+@EVAS_CFLAGS@ \
+@evas_image_loader_jp2k_cflags@
+modules_evas_loaders_jp2k_module_la_LIBADD = \
+@USE_EVAS_LIBS@ \
+@evas_image_loader_jp2k_libs@
+modules_evas_loaders_jp2k_module_la_DEPENDENCIES = @USE_EVAS_INTERNAL_LIBS@
+modules_evas_loaders_jp2k_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
+modules_evas_loaders_jp2k_module_la_LIBTOOLFLAGS = --tag=disable-static
+endif
+endif
+
 if BUILD_LOADER_PMAPS
 if EVAS_STATIC_BUILD_PMAPS
 lib_evas_libevas_la_SOURCES += modules/evas/loaders/pmaps/evas_image_load_pmaps.c
