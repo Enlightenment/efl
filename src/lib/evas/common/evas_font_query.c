@@ -175,12 +175,14 @@ evas_common_font_query_kerning(RGBA_Font_Int *fi, FT_UInt left, FT_UInt right,
    int *result;
    FT_Vector delta;
    int key[2];
+   int hash;
    int error = 1;
 
    key[0] = left;
    key[1] = right;
+   hash = eina_hash_int32(&left, sizeof (int)) ^ eina_hash_int32(&right, sizeof (int));
 
-   result = eina_hash_find(fi->kerning, key);
+   result = eina_hash_find_by_hash(fi->kerning, key, sizeof (int) * 2, hash);
    if (result)
      {
 	*kerning = result[2];
@@ -194,7 +196,7 @@ evas_common_font_query_kerning(RGBA_Font_Int *fi, FT_UInt left, FT_UInt right,
    evas_common_font_int_reload(fi);
    FTLOCK();
    if (FT_Get_Kerning(fi->src->ft.face,
-		      key[0], key[1],
+		      left, right,
 		      FT_KERNING_DEFAULT, &delta) == 0)
      {
 	int *push;
@@ -205,11 +207,11 @@ evas_common_font_query_kerning(RGBA_Font_Int *fi, FT_UInt left, FT_UInt right,
 	push = malloc(sizeof (int) * 3);
 	if (!push) return 1;
 
-	push[0] = key[0];
-	push[1] = key[1];
+	push[0] = left;
+	push[1] = right;
 	push[2] = *kerning;
 
-	eina_hash_direct_add(fi->kerning, push, push);
+	eina_hash_direct_add_by_hash(fi->kerning, push, sizeof(int) * 2, hash, push);
 
 	goto on_correct;
      }
