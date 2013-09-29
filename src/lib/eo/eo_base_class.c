@@ -121,7 +121,7 @@ _parent_set(Eo *obj, void *class_data, va_list *list)
    if (pd->parent == parent_id)
      return ;
 
-   if (eo_composite_is(obj))
+   if (eo_composite_is(obj) && pd->parent)
      {
         eo_composite_detach(obj, pd->parent);
      }
