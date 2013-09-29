@@ -82,7 +82,7 @@ _elm_mapbuf_smart_sub_object_del(Eo *obj, void *_pd, va_list *list)
 }
 
 static void
-_configure(Evas_Object *obj, Eina_Bool update_force)
+_configure(Evas_Object *obj)
 {
    ELM_MAPBUF_DATA_GET(obj, sd);
    Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
@@ -91,33 +91,20 @@ _configure(Evas_Object *obj, Eina_Bool update_force)
 
    if (!sd->content) return;
 
-   Evas_Coord x, y, w, h, x2, y2, w2, h2;
+   Evas_Coord x, y, w, h;
    evas_object_geometry_get(wd->resize_obj, &x, &y, &w, &h);
-   evas_object_geometry_get(sd->content, &x2, &y2, &w2, &h2);
 
-   if ((update_force) || ((x != x2) || (y != y2) || (w != w2) || (h != h2)))
+   if (sd->enabled)
      {
-        if (sd->enabled)
-          {
-             Evas *e = evas_object_evas_get(obj);
-/* This causes many side effects in calculating mapbuf objects.
-   But it doesn't affect to the mapbuf it's own special feature, performance. */
-//             evas_smart_objects_calculate(e);
-             evas_nochange_push(e);
-             evas_object_move(sd->content, x, y);
-//             evas_smart_objects_calculate(e);
-             evas_nochange_pop(e);
-
-             if (!m) m = evas_map_new(4);
-             evas_map_util_points_populate_from_geometry(m, x, y, w, h, 0);
-             evas_map_smooth_set(m, sd->smooth);
-             evas_map_alpha_set(m, sd->alpha);
-             evas_object_map_set(sd->content, m);
-             evas_object_map_enable_set(sd->content, EINA_TRUE);
-          }
-        else
-          evas_object_move(sd->content, x, y);
+        if (!m) m = evas_map_new(4);
+        evas_map_util_points_populate_from_geometry(m, x, y, w, h, 0);
+        evas_map_smooth_set(m, sd->smooth);
+        evas_map_alpha_set(m, sd->alpha);
+        evas_object_map_set(sd->content, m);
+        evas_object_map_enable_set(sd->content, EINA_TRUE);
      }
+   else
+     evas_object_move(sd->content, x, y);
 }
 
 static void
@@ -165,7 +152,7 @@ _elm_mapbuf_smart_move(Eo *obj, void *_pd, va_list *list)
 
    _mapbuf_auto_eval(obj, _pd);
    _mapbuf_auto_smooth(obj, _pd);
-   _configure(obj, EINA_FALSE);
+   _configure(obj);
 }
 
 static void
@@ -178,7 +165,7 @@ _elm_mapbuf_smart_resize(Eo *obj, void *_pd, va_list *list)
    ELM_MAPBUF_DATA_GET(obj, sd);
    if (sd->content) evas_object_resize(sd->content, w, h);
    _mapbuf_auto_eval(obj, _pd);
-   _configure(obj, EINA_FALSE);
+   _configure(obj);
 }
 
 static void
@@ -187,7 +174,7 @@ _elm_mapbuf_smart_show(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    eo_do_super(obj, MY_CLASS, evas_obj_smart_show());
 
    _mapbuf_auto_eval(obj, _pd);
-   _configure(obj, EINA_FALSE);
+   _configure(obj);
 }
 
 static void
@@ -196,7 +183,7 @@ _elm_mapbuf_smart_hide(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    eo_do_super(obj, MY_CLASS, evas_obj_smart_hide());
 
    _mapbuf_auto_eval(obj, _pd);
-   _configure(obj, EINA_FALSE);
+   _configure(obj);
 }
 
 static void
@@ -235,7 +222,7 @@ _elm_mapbuf_smart_content_set(Eo *obj, void *_pd, va_list *list)
      evas_object_color_set(wd->resize_obj, 0, 0, 0, 0);
 
    _sizing_eval(obj);
-   _configure(obj, EINA_TRUE);
+   _configure(obj);
 
    if (ret) *ret = EINA_TRUE;
 }
@@ -348,7 +335,7 @@ _internal_enable_set(Eo *obj, Elm_Mapbuf_Smart_Data *sd, Eina_Bool enabled)
         evas_object_map_set(sd->content, NULL);
         evas_object_map_enable_set(sd->content, EINA_FALSE);
      }
-   _configure(obj, EINA_TRUE);
+   _configure(obj);
 }
 
 static void
@@ -394,7 +381,7 @@ _smooth_set(Eo *obj, void *_pd, va_list *list)
    if (sd->smooth == smooth) return;
    sd->smooth = smooth;
    sd->smooth_saved = smooth;
-   _configure(obj, EINA_TRUE);
+   _configure(obj);
 }
 
 EAPI Eina_Bool
@@ -430,7 +417,7 @@ _alpha_set(Eo *obj, void *_pd, va_list *list)
 
    if (sd->alpha == alpha) return;
    sd->alpha = alpha;
-   _configure(obj, EINA_TRUE);
+   _configure(obj);
 }
 
 EAPI Eina_Bool
@@ -476,7 +463,7 @@ _auto_set(Eo *obj, void *_pd, va_list *list)
 
         _internal_enable_set(obj, _pd, EINA_FALSE);
      }
-   _configure(obj, EINA_TRUE);
+   _configure(obj);
 }
 
 EAPI Eina_Bool

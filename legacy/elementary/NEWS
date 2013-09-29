@@ -141,6 +141,10 @@ Improvements:
    * Add hide effect for notify.
    * Widget: Improve performance in applying widget theme. It prevents applying themes more strictly if it tries to apply same theme. This increases the performance hugely in case that user applies a specific theme to the window object.
    * Flip now sets the focus to it's content object when flip go to is called while flip is focused.
+   * mapbuf: Dont' move the content to not be calculated. Mapbuf expects the
+   content is static object and it won't be updated by content position.
+   This actually reduces the mapbuf calculation time muchly in case of complex
+   layout.
 
 Fixes:
    * Now elm_datetime_field_limit_set() can set year limits wihtout problems.
