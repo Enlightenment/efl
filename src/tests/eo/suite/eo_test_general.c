@@ -878,15 +878,15 @@ START_TEST(eo_pointers_indirection)
         if(!eo_isa(objs[obj_id], klass))
           fail_if(!eo_isa(objs[obj_id], klass));
      }
-   /* Deletion of half of the objects */
-   for ( obj_id = 0; obj_id < NB_OBJS; obj_id+=2)
+   /* Deletion of a few objects */
+   for ( obj_id = 0; obj_id < NB_OBJS; obj_id+=2000)
      {
         eo_unref(objs[obj_id]);
         if(eo_isa(objs[obj_id], klass))
           fail_if(eo_isa(objs[obj_id], klass));
      }
-   /* Creation of half of the objects */
-   for ( obj_id = 0; obj_id < NB_OBJS; obj_id+=2)
+   /* Creation of the deleted objects */
+   for ( obj_id = 0; obj_id < NB_OBJS; obj_id+=2000)
      {
         objs[obj_id] = eo_add(klass, NULL);
         if(!objs[obj_id])
