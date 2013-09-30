@@ -427,22 +427,26 @@ eo_do_super_internal(const char *file, int line, const Eo *obj_id, const Eo_Clas
 
    EO_CLASS_POINTER_RETURN_VAL(cur_klass_id, cur_klass, EINA_FALSE);
 
-   va_start(p_list, op);
    if (_eo_is_a_class(obj_id))
      {
         EO_CLASS_POINTER_RETURN_VAL(obj_id, klass, EINA_FALSE);
+
+        va_start(p_list, op);
         nklass = _eo_kls_itr_next(klass, cur_klass, op);
         op_ret = _eo_op_internal(file, line, (Eo_Base *) klass, nklass, EO_OP_TYPE_CLASS, op, &p_list);
+        va_end(p_list);
      }
    else
      {
         EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, EINA_FALSE);
+
+        va_start(p_list, op);
         nklass = _eo_kls_itr_next(obj->klass, cur_klass, op);
         op_ret = _eo_op_internal(file, line, (Eo_Base *) obj, nklass, EO_OP_TYPE_REGULAR, op, &p_list);
         if (obj->do_error)
           ret = EINA_FALSE;
+        va_end(p_list);
      }
-   va_end(p_list);
 
    if (!op_ret)
      _EO_OP_ERR_NO_OP_PRINT(file, line, op, nklass);
