@@ -798,7 +798,7 @@ _elm_genlist_item_position_state_update(Elm_Gen_Item *it)
    unsigned idx = it->item->order_num_in;
 
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
-   
+
    if (!it->item->nostacking)
      {
         if ((idx & 0x1) ^ it->item->stacking_even)
@@ -2842,7 +2842,7 @@ static void
 _item_unhighlight(Elm_Gen_Item *it)
 {
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
-   
+
    if ((it->generation < GL_IT(it)->wsd->generation) || (!it->highlighted))
      return;
 
@@ -3242,7 +3242,7 @@ _item_mouse_move_cb(void *data,
 
    minw /= 2;
    minh /= 2;
-   
+
    // gah! annoying drag detection - leave this alone
    if (h < w)
      {
@@ -3256,7 +3256,7 @@ _item_mouse_move_cb(void *data,
      }
    if (minw < 5) minw = 5;
    if (minh < 5) minh = 5;
-   
+
    if ((adx > minw) || (ady > minh))
      {
         it->dragging = EINA_TRUE;
@@ -4883,7 +4883,7 @@ _elm_genlist_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
         priv->stack[i] = evas_object_rectangle_add(evas_object_evas_get(obj));
         evas_object_smart_member_add(priv->stack[i], priv->pan_obj);
      }
-   
+
    eo_do(obj, elm_scrollable_interface_extern_pan_set(priv->pan_obj));
 
    edje_object_size_min_calc(wd->resize_obj, &minw, &minh);

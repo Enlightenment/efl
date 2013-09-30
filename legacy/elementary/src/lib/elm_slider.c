@@ -497,7 +497,7 @@ _elm_slider_smart_theme(Eo *obj, void *_pd, va_list *list)
    if (sd->popup)
      edje_object_scale_set(sd->popup, elm_widget_scale_get(obj) *
                            elm_config_scale_get());
-   
+
    if (sd->horizontal)
      evas_object_size_hint_min_set
        (sd->spacer, (double)sd->size * elm_widget_scale_get(obj) *
@@ -865,7 +865,7 @@ _elm_slider_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
      (_elm_access_info_get(obj), ELM_ACCESS_INFO, _access_info_cb, NULL);
    _elm_access_callback_set
      (_elm_access_info_get(obj), ELM_ACCESS_STATE, _access_state_cb, NULL);
-   
+
    evas_object_smart_changed(obj);
 }
 
@@ -978,7 +978,7 @@ _elm_slider_unit_format_set(Eo *obj, void *_pd, va_list *list)
    const char *units = va_arg(*list, const char *);
    Elm_Slider_Smart_Data *sd = _pd;
    Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
-   
+
    eina_stringshare_replace(&sd->units, units);
    if (units)
      {

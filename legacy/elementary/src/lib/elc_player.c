@@ -220,7 +220,7 @@ _update_slider(void *data,
    length = elm_video_play_length_get(sd->video);
    pos = elm_video_play_position_get(sd->video);
 
-   elm_object_disabled_set(sd->slider, 
+   elm_object_disabled_set(sd->slider,
                            (!seekable) | elm_widget_disabled_get(data));
    elm_slider_min_max_set(sd->slider, 0, length);
    if ((elm_slider_value_get(sd->slider) != pos) &&
@@ -383,7 +383,7 @@ _eject(void *data,
        void *event_info __UNUSED__)
 {
    ELM_PLAYER_DATA_GET(data, sd);
-   
+
    elm_layout_signal_emit(data, "elm,button,eject", "elm");
    emotion_object_eject(elm_video_emotion_get(sd->video));
    evas_object_smart_callback_call(data, SIG_EJECT_CLICKED, NULL);
@@ -393,7 +393,7 @@ static void
 _mute_toggle(Evas_Object *obj)
 {
    ELM_PLAYER_DATA_GET(obj, sd);
-   
+
    if (!elm_video_audio_mute_get(sd->video))
      {
         elm_video_audio_mute_set(sd->video, EINA_TRUE);
@@ -480,7 +480,7 @@ _player_button_add(Evas_Object *obj,
    Evas_Object *ic;
    Evas_Object *bt;
    char buf[256];
-   
+
    ic = elm_icon_add(obj);
    snprintf(buf, sizeof(buf), "media_player/%s/%s", name,
             elm_widget_style_get(obj));
@@ -491,7 +491,7 @@ _player_button_add(Evas_Object *obj,
    elm_widget_mirrored_automatic_set(bt, EINA_FALSE);
    elm_object_content_set(bt, ic);
    evas_object_show(ic);
-   
+
    snprintf(buf, sizeof(buf), "media_player/%s/%s", name,
             elm_widget_style_get(obj));
    elm_object_style_set(bt, buf);
@@ -554,16 +554,16 @@ _elm_player_smart_content_set(Eo *obj, void *_pd, va_list *list)
 
    if (part && strcmp(part, "video"))
      {
-        eo_do_super(obj, MY_CLASS, 
+        eo_do_super(obj, MY_CLASS,
                     elm_obj_container_content_set(part, content, &int_ret));
         if (ret) *ret = int_ret;
         return;
      }
    if ((!part) || (!strcmp(part, "video"))) part = "elm.swallow.content";
-   eo_do_super(obj, MY_CLASS, 
+   eo_do_super(obj, MY_CLASS,
                elm_obj_container_content_set(part, content, &int_ret));
    if (ret) *ret = int_ret;
-   
+
    if (!_elm_video_check(content)) return;
    if (sd->video == content) goto end;
 
@@ -599,7 +599,7 @@ _elm_player_smart_content_set(Eo *obj, void *_pd, va_list *list)
    elm_object_disabled_set(sd->slider, !seekable);
    elm_slider_min_max_set(sd->slider, 0, length);
    elm_slider_value_set(sd->slider, pos);
-   
+
    elm_slider_value_set(sd->vslider,
                         elm_video_audio_level_get(sd->video) * 100.0);
    // XXX: get mute

@@ -1418,7 +1418,7 @@ _elm_naviframe_smart_event(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    if (ret) *ret = EINA_TRUE;
 
    //FIXME: Replace this below code to elm_naviframe_item_pop() at elm 2.0.
-   ///Leave for compatibility. 
+   ///Leave for compatibility.
    if (it->title_prev_btn)
      evas_object_smart_callback_call(it->title_prev_btn, SIG_CLICKED, NULL);
 }

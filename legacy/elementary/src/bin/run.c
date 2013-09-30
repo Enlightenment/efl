@@ -138,22 +138,22 @@ main(int argc, char **argv)
 	sargc = argc - 1;
 	sargv = &(argv[1]);
      }
-   
+
    slen = 0;
    envnum = 0;
-   
+
    // header:
    //  UL 'total bytes'
    //  UL 'argnum'
    //  UL 'envnum'
    slen += sizeof(unsigned long) * 3;
-   
+
    for (i = 0; i < sargc; i++)
      {
 	slen += sizeof(unsigned long);
 	slen += strlen(sargv[i]) + 1;
      }
-   
+
 #ifdef HAVE_ENVIRON
    // count how much space is needed for environment
    for (i = 0; environ[i]; i++)
@@ -170,7 +170,7 @@ main(int argc, char **argv)
 
    // allocate buffer on stack
    sbuf = alloca(slen);
-   
+
    // fill in header
    ((unsigned long *)(sbuf))[0] = slen - sizeof(unsigned long);
    ((unsigned long *)(sbuf))[1] = sargc;
@@ -187,7 +187,7 @@ main(int argc, char **argv)
 	pos += strlen(sargv[i]) + 1;
         n++;
      }
-   
+
 #ifdef HAVE_ENVIRON
    // fill in environ
    for (i = 0; environ[i]; i++)
@@ -203,7 +203,7 @@ main(int argc, char **argv)
    ((unsigned long *)(sbuf))[n] = (unsigned long)pos - (unsigned long)sbuf;
    n++;
    strcpy((char *)pos, cwd);
-   
+
    if (write(sock, sbuf, slen) < 0)
      printf("elementary_quicklaunch: cannot write to socket '%s'\n", buf);
    close(sock);

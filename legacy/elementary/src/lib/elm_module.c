@@ -48,7 +48,7 @@ _elm_module_shutdown(void)
    if (modules)
      {
         Eina_List *tl = NULL;
-        
+
         it = eina_hash_iterator_data_new(modules);
 
         EINA_ITERATOR_FOREACH(it, m) tl = eina_list_append(tl, m);

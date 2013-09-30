@@ -129,15 +129,15 @@ _color_picker_init(Elm_Colorselector_Smart_Data *sd)
      }
 
    color = (sd->a << 24) |
-     (((sd->r * sd->a) / 255) << 16) | 
-     (((sd->g * sd->a) / 255) << 8) | 
+     (((sd->r * sd->a) / 255) << 16) |
+     (((sd->g * sd->a) / 255) << 8) |
      (((sd->b * sd->a) / 255));
 
    if (sd->a == 255)
      evas_object_image_alpha_set(sd->picker_display, EINA_FALSE);
    else
      evas_object_image_alpha_set(sd->picker_display, EINA_TRUE);
-   
+
    pixels = evas_object_image_data_get(sd->picker_display, EINA_TRUE);
    copy = pixels;
    for (y = 0; y < 17; y++)
@@ -634,7 +634,7 @@ _mouse_grab_pixels(void *data, int type __UNUSED__, void *event __UNUSED__)
 
    return EINA_TRUE;
 }
-#endif   
+#endif
 
 static void
 _mouse_in_canvas(void *data, Evas *e __UNUSED__, void *event_info __UNUSED__)
@@ -1449,10 +1449,10 @@ _palette_colors_load(Evas_Object *obj)
         item->color->a = color->a;
 
         elm_box_pack_end(sd->palette_box, VIEW(item));
-        evas_object_color_set(item->color_obj, 
-                              (item->color->r * item->color->a) / 255, 
-                              (item->color->g * item->color->a) / 255, 
-                              (item->color->b * item->color->a) / 255, 
+        evas_object_color_set(item->color_obj,
+                              (item->color->r * item->color->a) / 255,
+                              (item->color->g * item->color->a) / 255,
+                              (item->color->b * item->color->a) / 255,
                               item->color->a);
 
         sd->items = eina_list_append(sd->items, item);
@@ -1513,7 +1513,7 @@ _elm_colorselector_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
      elm_layout_content_set(obj, "selector", priv->col_bars_area);
 
    elm_layout_signal_emit(obj, "elm,state,both", "elm");
-   
+
    /* setup the color picker */
    priv->picker = elm_box_add(obj);
    elm_box_horizontal_set(priv->picker, EINA_TRUE);
@@ -1964,7 +1964,7 @@ _mode_set(Eo *obj, void *_pd, va_list *list)
         elm_layout_signal_emit(obj, "elm,state,picker", "elm");
         sd->focused = ELM_COLORSELECTOR_PICKER;
         break;
-         
+
       case ELM_COLORSELECTOR_ALL:
         if (!elm_layout_content_set(obj, "elm.palette", sd->palette_box))
           elm_layout_content_set(obj, "palette", sd->palette_box);
@@ -2041,9 +2041,9 @@ elm_colorselector_palette_item_color_set(Elm_Object_Item *it,
    item->color->b = b;
    item->color->a = a;
    evas_object_color_set(item->color_obj,
-                         (item->color->r * item->color->a) / 255, 
-                         (item->color->g * item->color->a) / 255, 
-                         (item->color->b * item->color->a) / 255, 
+                         (item->color->r * item->color->a) / 255,
+                         (item->color->g * item->color->a) / 255,
+                         (item->color->b * item->color->a) / 255,
                          item->color->a);
    _colors_save(WIDGET(it));
 }
@@ -2096,9 +2096,9 @@ _palette_color_add(Eo *obj, void *_pd, va_list *list)
 
    elm_box_pack_end(sd->palette_box, VIEW(item));
    evas_object_color_set(item->color_obj,
-                         (item->color->r * item->color->a) / 255, 
-                         (item->color->g * item->color->a) / 255, 
-                         (item->color->b * item->color->a) / 255, 
+                         (item->color->r * item->color->a) / 255,
+                         (item->color->g * item->color->a) / 255,
+                         (item->color->b * item->color->a) / 255,
                          item->color->a);
 
    sd->items = eina_list_append(sd->items, item);

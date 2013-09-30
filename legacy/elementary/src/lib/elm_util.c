@@ -51,7 +51,7 @@ double
 _elm_atof(const char *s)
 {
    char *cradix, *buf, *p;
-   
+
    if ((!s) || (!s[0])) return 0.0;
    cradix = nl_langinfo(RADIXCHAR);
    if (!cradix) return atof(s);

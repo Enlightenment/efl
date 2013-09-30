@@ -126,7 +126,7 @@ _elm_panel_smart_theme(Eo *obj, void *_pd, va_list *list)
    const char *str;
    Evas_Coord minw = 0, minh = 0;
    Elm_Panel_Smart_Data *sd = _pd;
-   
+
    Eina_Bool int_ret = EINA_FALSE;
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    if (ret) *ret = EINA_FALSE;
@@ -146,15 +146,15 @@ _elm_panel_smart_theme(Eo *obj, void *_pd, va_list *list)
      elm_widget_highlight_in_theme_set(obj, EINA_FALSE);
 
    _orient_set_do(obj);
-   
+
    evas_object_hide(sd->event);
    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
    evas_object_size_hint_min_set(sd->event, minw, minh);
-   
+
    if (edje_object_part_exists
        (wd->resize_obj, "elm.swallow.event"))
      elm_layout_content_set(obj, "elm.swallow.event", sd->event);
-   
+
    elm_layout_sizing_eval(obj);
 
    if (ret) *ret = EINA_TRUE;
@@ -382,13 +382,13 @@ _elm_panel_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
        (wd->resize_obj, "elm.swallow.event"))
      {
         Evas_Coord minw = 0, minh = 0;
-        
+
         elm_coords_finger_size_adjust(1, &minw, 1, &minh);
         evas_object_size_hint_min_set(priv->event, minw, minh);
         elm_layout_content_set(obj, "elm.swallow.event", priv->event);
      }
    elm_widget_sub_object_add(obj, priv->event);
-   
+
    elm_layout_sizing_eval(obj);
 }
 

@@ -53,7 +53,7 @@ test_video(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
    evas_object_size_hint_align_set(bt, 0.5, 0.1);
    elm_table_pack(tb, bt, 0, 0, 1, 1);
    evas_object_show(bt);
-   
+
    evas_object_resize(win, 800, 500);
    evas_object_show(win);
 }

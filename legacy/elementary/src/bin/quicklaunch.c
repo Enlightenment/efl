@@ -114,7 +114,7 @@ handle_run(int fd, unsigned long bytes)
         return;
      }
    close(fd);
-   
+
    argc = ((unsigned long *)(buf))[0];
    envnum = ((unsigned long *)(buf))[1];
 
@@ -123,7 +123,7 @@ handle_run(int fd, unsigned long bytes)
         CRITICAL("no executable specified");
         return;
      }
-   
+
    argv = alloca(argc * sizeof(char *));
    if (envnum > 0) envir = alloca(envnum * sizeof(char *));
    off = ((unsigned long *)(buf))[2 + argc + envnum] - sizeof(unsigned long);
@@ -321,7 +321,7 @@ main(int argc, char **argv)
 	len = sizeof(struct sockaddr_un);
 	fd = accept(sock, (struct sockaddr *)&client, &len);
 	elm_quicklaunch_sub_init(argc, argv);
-// don't seed since we are doing this AFTER launch request        
+// don't seed since we are doing this AFTER launch request
 //	elm_quicklaunch_seed();
 	if (fd >= 0)
 	  {

@@ -98,7 +98,7 @@ test_prefs(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
                                   layout);
 
    elm_prefs_autosave_set(prefs, EINA_TRUE);
-   
+
    prefs_data =
      elm_prefs_data_new("./test_prefs.cfg", NULL, EET_FILE_MODE_READ_WRITE);
 

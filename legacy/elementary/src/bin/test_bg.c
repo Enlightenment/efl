@@ -10,7 +10,7 @@ _cb_size_radio_changed(void *data, Evas_Object *obj, void *event EINA_UNUSED)
    Evas_Object *o_bg = data;
    int size;
    size = elm_radio_value_get((Evas_Object *)obj);
-   elm_bg_load_size_set(o_bg, size, size); 
+   elm_bg_load_size_set(o_bg, size, size);
 }
 
 static void

@@ -5986,7 +5986,7 @@ _elm_widget_item_signal_callback_del(Elm_Widget_Item *item,
 {
    Elm_Widget_Item_Signal_Data *wisd;
    Eina_List *l;
- 
+
    ELM_WIDGET_ITEM_CHECK_OR_RETURN(item, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(func, NULL);
 

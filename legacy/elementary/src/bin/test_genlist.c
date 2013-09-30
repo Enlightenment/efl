@@ -3410,7 +3410,7 @@ _genlist_renew(Evas_Object *obj, const char *style)
    int i;
 
    if (!obj) return;
-   
+
    elm_genlist_clear(obj);
 
    check = evas_object_data_get(obj, "check");
@@ -3418,7 +3418,7 @@ _genlist_renew(Evas_Object *obj, const char *style)
      elm_genlist_mode_set(obj, ELM_LIST_COMPRESS);
    else
      elm_genlist_mode_set(obj, ELM_LIST_SCROLL);
-     
+
    ic = elm_genlist_item_class_new();
    ic->item_style = style;
    ic->func.text_get = gl_text_get;
@@ -3492,7 +3492,7 @@ test_genlist_item_styles(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
     _genlist_renew(gl, "default");
    elm_box_pack_end(box, gl);
    evas_object_show(gl);
-   
+
    check = elm_check_add(win);
    elm_object_text_set(check, "Compress");
    elm_box_pack_end(box, check);

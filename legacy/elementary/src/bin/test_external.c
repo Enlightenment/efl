@@ -102,7 +102,7 @@ _timer_cb(void *data)
    elm_object_disabled_set(bt1, EINA_FALSE);
    elm_object_disabled_set(bt2, EINA_FALSE);
    elm_object_disabled_set(bt3, EINA_FALSE);
-   
+
    return ECORE_CALLBACK_CANCEL;
 }
 

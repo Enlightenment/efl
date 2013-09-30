@@ -837,13 +837,13 @@ _elm_datetime_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
      {
         Elm_Access_Info *ai;
-        
+
         priv->access_obj = _elm_access_edje_object_part_object_register
           (obj, elm_layout_edje_get(obj), "elm.access");
         if (!priv->access_obj)
           priv->access_obj = _elm_access_edje_object_part_object_register
           (obj, elm_layout_edje_get(obj), "access");
-        
+
         ai = _elm_access_info_get(priv->access_obj);
         _elm_access_text_set(ai, ELM_ACCESS_TYPE, "date time");
         _elm_access_callback_set(ai, ELM_ACCESS_INFO, _access_info_cb, obj);
@@ -1039,11 +1039,11 @@ _elm_datetime_field_limit_set(Eo *obj, void *_pd, va_list *list)
    if (min > max) return;
 
    field = sd->field_list + fieldtype;
-   if (((min >= mapping[fieldtype].def_min) && 
+   if (((min >= mapping[fieldtype].def_min) &&
         (min <= mapping[fieldtype].def_max)) ||
        (field->type == ELM_DATETIME_YEAR))
      field->min = min;
-   if (((max >= mapping[fieldtype].def_min) && 
+   if (((max >= mapping[fieldtype].def_min) &&
         (max <= mapping[fieldtype].def_max)) ||
        (field->type == ELM_DATETIME_YEAR))
      field->max = max;
@@ -1248,7 +1248,7 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME), _elm_datetime_smart_theme),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ON_FOCUS), _elm_datetime_smart_on_focus),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_DISABLE), _elm_datetime_smart_disable),
-      
+
         EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_SIZING_EVAL), _elm_datetime_smart_sizing_eval),
 
         EO_OP_FUNC(ELM_OBJ_DATETIME_ID(ELM_OBJ_DATETIME_SUB_ID_FORMAT_GET), _format_get),

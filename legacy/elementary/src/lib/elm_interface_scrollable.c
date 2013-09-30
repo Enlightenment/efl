@@ -538,9 +538,9 @@ _elm_direction_arrows_eval(Elm_Scrollable_Smart_Interface_Data *sid)
    Eina_Bool go_left = EINA_TRUE, go_right = EINA_TRUE;
    Eina_Bool go_up = EINA_TRUE, go_down = EINA_TRUE;
    Evas_Coord x = 0, y = 0, mx = 0, my = 0, minx = 0, miny = 0;
-   
+
    if (!sid->edje_obj || !sid->pan_obj) return;
-   
+
    eo_do(sid->pan_obj, elm_obj_pan_pos_max_get(&mx, &my));
    eo_do(sid->pan_obj, elm_obj_pan_pos_min_get(&minx, &miny));
    eo_do(sid->pan_obj, elm_obj_pan_pos_get(&x, &y));
@@ -722,7 +722,7 @@ _elm_scroll_scroll_bar_h_visibility_adjust(
         if (sid->cb_func.content_min_limit)
           sid->cb_func.content_min_limit(sid->obj, sid->min_w, sid->min_h);
      }
-   
+
    _elm_direction_arrows_eval(sid);
    return scroll_h_vis_change;
 }

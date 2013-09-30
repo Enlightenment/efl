@@ -531,7 +531,7 @@ _elm_entry_smart_theme(Eo *obj, void *_pd, va_list *list)
    if (sd->scroll)
      {
         Eina_Bool ok = EINA_FALSE;
-        
+
         eo_do(obj, elm_scrollable_interface_mirrored_set(elm_widget_mirrored_get(obj)));
 
         if (sd->single_line)
@@ -1518,7 +1518,7 @@ _mouse_down_cb(void *data,
    sd->downx = ev->canvas.x;
    sd->downy = ev->canvas.y;
    sd->long_pressed = EINA_FALSE;
-   
+
     if (ev->button == 1)
       {
          ELM_SAFE_FREE(sd->longpress_timer, ecore_timer_del);
@@ -3409,7 +3409,7 @@ _password_set(Eo *obj, void *_pd, va_list *list)
    else
      {
 #ifdef HAVE_ELEMENTARY_X
-        elm_drop_target_add(obj, ELM_SEL_FORMAT_MARKUP, 
+        elm_drop_target_add(obj, ELM_SEL_FORMAT_MARKUP,
                             NULL, NULL,
                             NULL, NULL,
                             NULL, NULL,
@@ -3668,7 +3668,7 @@ _editable_set(Eo *obj, void *_pd, va_list *list)
 
 #ifdef HAVE_ELEMENTARY_X
    if (editable)
-     elm_drop_target_add(obj, ELM_SEL_FORMAT_MARKUP, 
+     elm_drop_target_add(obj, ELM_SEL_FORMAT_MARKUP,
                          NULL, NULL,
                          NULL, NULL,
                          NULL, NULL,

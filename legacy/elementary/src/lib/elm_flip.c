@@ -1334,7 +1334,7 @@ _flip(Evas_Object *obj)
         else
           _flip_do(obj, t, sd->mode, 0, 0);
      }
-   
+
    if (t >= 1.0)
      {
 #if 0 // this breaks manual flipping. :/

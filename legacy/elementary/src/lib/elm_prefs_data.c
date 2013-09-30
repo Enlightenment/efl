@@ -693,7 +693,7 @@ elm_prefs_data_value_set(Elm_Prefs_Data *prefs_data,
      }
 
    name = strrchr(path, ':');
-   if (!name) 
+   if (!name)
      {
         ERR("invalid item path: %s", path);
         return EINA_FALSE;
@@ -710,7 +710,7 @@ elm_prefs_data_value_set(Elm_Prefs_Data *prefs_data,
    if (!values)
      {
         /* new key, must add one */
-        values = eina_hash_string_superfast_new(_data_values_hash_free_cb); 
+        values = eina_hash_string_superfast_new(_data_values_hash_free_cb);
         eina_hash_set(prefs_data->keys, key, values);
      }
 
@@ -769,7 +769,7 @@ elm_prefs_data_value_get(const Elm_Prefs_Data *prefs_data,
    EINA_SAFETY_ON_NULL_RETURN_VAL(value, EINA_FALSE);
 
    name = strrchr(path, ':');
-   if (!name) 
+   if (!name)
      {
         ERR("invalid item path: %s", path);
         return EINA_FALSE;

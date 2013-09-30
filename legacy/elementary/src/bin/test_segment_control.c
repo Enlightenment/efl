@@ -48,7 +48,7 @@ test_segment_control(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
      {
         const struct exp_mode *em = exp_modes + i;
 
-        //segment control 
+        //segment control
         sc = elm_segment_control_add(bx);
         evas_object_size_hint_weight_set(sc, em->weight.w, em->weight.h);
         evas_object_size_hint_align_set(sc, em->align.x, em->align.y);
@@ -72,7 +72,7 @@ test_segment_control(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
         evas_object_show(sc);
         elm_box_pack_end(bx, sc);
 
-        //segment control 2 
+        //segment control 2
         sc = elm_segment_control_add(bx);
         evas_object_size_hint_weight_set(sc, em->weight.w, em->weight.h);
         evas_object_size_hint_align_set(sc, em->align.x, em->align.y);
@@ -113,7 +113,7 @@ test_segment_control(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
         evas_object_show(sc);
         elm_box_pack_end(bx, sc);
 
-        //segment control 4 (text only disabled) 
+        //segment control 4 (text only disabled)
         sc = elm_segment_control_add(bx);
         evas_object_size_hint_weight_set(sc, em->weight.w, em->weight.h);
         evas_object_size_hint_align_set(sc, em->align.x, em->align.y);

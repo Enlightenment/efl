@@ -513,7 +513,7 @@ _elm_config_user_dir_snprintf(char       *dst,
      (dst, size, '/', home, strlen(home),
          ELEMENTARY_BASE_DIR, sizeof(ELEMENTARY_BASE_DIR) - 1);
 #else
-#ifdef DOXDG   
+#ifdef DOXDG
    home = getenv("XDG_CONFIG_HOME");
    if (home)
      {
@@ -522,7 +522,7 @@ _elm_config_user_dir_snprintf(char       *dst,
               "elementary", sizeof("elementary") - 1);
      }
    else
-#endif     
+#endif
      {
         home = getenv("HOME");
         if (!home) home = "/";
@@ -535,7 +535,7 @@ _elm_config_user_dir_snprintf(char       *dst,
         user_dir_len = eina_str_join_len
           (dst, size, '/', home, strlen(home),
               ELEMENTARY_BASE_DIR, sizeof(ELEMENTARY_BASE_DIR) - 1);
-#endif        
+#endif
      }
 #endif
 
@@ -2485,10 +2485,10 @@ _elm_config_sub_init(void)
         if (ecore_x_init(NULL))
           {
              _root_1st = ecore_x_window_root_first_get();
-             
+
              if (!ecore_x_screen_is_composited(0))
                _elm_config->compositing = 0;
-             
+
              ecore_x_atoms_get(_atom_names, ATOM_COUNT, _atom);
              ecore_x_event_mask_set(_root_1st,
                                     ECORE_X_EVENT_MASK_WINDOW_PROPERTY);
@@ -2497,13 +2497,13 @@ _elm_config_sub_init(void)
              if (!getenv("ELM_PROFILE"))
                {
                   char *s;
-                  
+
                   s = ecore_x_window_prop_string_get(_root_1st,
                                                      _atom[ATOM_E_PROFILE]);
                   if (s)
                     {
                        int changed = 0;
-                       
+
                        if (_elm_profile)
                          {
                             if (strcmp(_elm_profile, s)) changed = 1;

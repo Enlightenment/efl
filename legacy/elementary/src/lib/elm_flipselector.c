@@ -257,7 +257,7 @@ _on_item_changed(Elm_Flipselector_Smart_Data *sd)
    item = DATA_GET(sd->current);
    if (!item) return;
    if (sd->deleting) return;
-   
+
    if (item->func)
      item->func((void *)item->base.data, WIDGET(item), item);
    if (!item->deleted)
@@ -586,7 +586,7 @@ _elm_flipselector_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    Elm_Flipselector_Smart_Data *sd = _pd;
 
    sd->deleting = EINA_TRUE;
-   
+
    if (sd->walking) ERR("flipselector deleted while walking.\n");
 
    while (sd->items)

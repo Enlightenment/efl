@@ -160,7 +160,7 @@ static void
 _elm_cursor_obj_del(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Elm_Cursor *cur = data;
-   
+
    if (cur)
      {
         evas_object_event_callback_del_full(cur->obj, EVAS_CALLBACK_DEL,

@@ -859,7 +859,7 @@ _elm_image_smart_internal_file_set(Eo *obj, Elm_Image_Smart_Data *sd,
    _elm_image_internal_sizing_eval(obj, sd);
 
    if (ret) *ret = EINA_TRUE;
-}                                  
+}
 
 static void
 _elm_image_smart_download_done(void *data, Elm_Url *url EINA_UNUSED, Eina_Binbuf *download)

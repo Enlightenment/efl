@@ -1010,7 +1010,7 @@ _elm_win_state_change(Ecore_Evas *ee)
         ch_maximized = EINA_TRUE;
      }
 
-   
+
    profile = ecore_evas_window_profile_get(sd->ee);
    ch_profile = _elm_win_profile_set(sd, profile);
 
@@ -2221,10 +2221,10 @@ _elm_win_frame_obj_move(void *data,
    evas_object_geometry_get(sd->spacer_obj, &sx, &sy, &sw, &sh);
 
    evas_output_framespace_get(sd->evas, &x, &y, &w, &h);
-   if ((x != (ox - fx)) || (y != (oy - fy)) || 
+   if ((x != (ox - fx)) || (y != (oy - fy)) ||
        (w != (fw - ow)) || (h != (fh - oh)))
      {
-        evas_output_framespace_set(sd->evas, (ox - fx), (oy - fy), 
+        evas_output_framespace_set(sd->evas, (ox - fx), (oy - fy),
                                    (fw - ow), (fh - oh));
      }
 
@@ -2253,10 +2253,10 @@ _elm_win_frame_obj_resize(void *data,
    evas_object_geometry_get(sd->spacer_obj, &sx, &sy, &sw, &sh);
 
    evas_output_framespace_get(sd->evas, &x, &y, &w, &h);
-   if ((x != (ox - fx)) || (y != (oy - fy)) || 
+   if ((x != (ox - fx)) || (y != (oy - fy)) ||
        (w != (fw - ow)) || (h != (fh - oh)))
      {
-        evas_output_framespace_set(sd->evas, (ox - fx), (oy - fy), 
+        evas_output_framespace_set(sd->evas, (ox - fx), (oy - fy),
                                    (fw - ow), (fh - oh));
      }
 
@@ -2453,14 +2453,14 @@ _elm_win_frame_add(Elm_Win_Smart_Data *sd,
    sd->spacer_obj = evas_object_rectangle_add(sd->evas);
    evas_object_color_set(sd->spacer_obj, 0, 0, 0, 0);
    evas_object_repeat_events_set(sd->spacer_obj, EINA_TRUE);
-   edje_object_part_swallow(sd->frame_obj, "elm.swallow.frame_spacer", 
+   edje_object_part_swallow(sd->frame_obj, "elm.swallow.frame_spacer",
                             sd->spacer_obj);
 
    sd->client_obj = evas_object_rectangle_add(sd->evas);
    evas_object_color_set(sd->client_obj, 0, 0, 0, 0);
    /* NB: Tried pass_events here, but that fails to send events */
    evas_object_repeat_events_set(sd->client_obj, EINA_TRUE);
-   edje_object_part_swallow(sd->frame_obj, "elm.swallow.client", 
+   edje_object_part_swallow(sd->frame_obj, "elm.swallow.client",
                             sd->client_obj);
 
    evas_object_is_frame_object_set(sd->frame_obj, EINA_TRUE);
@@ -2470,7 +2470,7 @@ _elm_win_frame_add(Elm_Win_Smart_Data *sd,
    evas_object_event_callback_add
      (sd->frame_obj, EVAS_CALLBACK_RESIZE, _elm_win_frame_obj_resize, sd);
 
-   /* NB: Do NOT remove these calls !! Needed to calculate proper 
+   /* NB: Do NOT remove these calls !! Needed to calculate proper
     * framespace on inital show of the window */
    edje_object_size_min_calc(sd->frame_obj, &mw, &mh);
    evas_object_move(sd->frame_obj, 0, 0);
@@ -2516,7 +2516,7 @@ _elm_win_frame_del(Elm_Win_Smart_Data *sd)
 {
    int w, h;
 
-   if (sd->client_obj) 
+   if (sd->client_obj)
      {
         evas_object_del(sd->client_obj);
         sd->client_obj = NULL;
@@ -5433,7 +5433,7 @@ elm_win_floating_mode_get(const Evas_Object *obj)
    return sd->floating;
 }
 
-static void 
+static void
 _window_id_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
 {
    Ecore_Window *ret = va_arg(*list, Ecore_Window *);
@@ -5477,7 +5477,7 @@ _window_id_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
    *ret = 0;
 }
 
-EAPI Ecore_Window 
+EAPI Ecore_Window
 elm_win_window_id_get(const Evas_Object *obj)
 {
    if (!obj) return 0;

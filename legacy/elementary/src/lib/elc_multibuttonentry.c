@@ -189,13 +189,13 @@ _shrink_mode_set(Evas_Object *obj,
                   edje_object_size_min_calc(sd->end, &w_label_count, NULL);
                   elm_coords_finger_size_adjust(1, &w_label_count, 1, NULL);
                }
-             
+
              if ((w < 0) || (w < w_label_count))
                {
                   elm_box_unpack(sd->box, item->button);
                   evas_object_hide(item->button);
                   item->visible = EINA_FALSE;
-                  
+
                   count++;
                   snprintf(buf, sizeof(buf), "... + %d", count);
                   edje_object_part_text_escaped_set(sd->end, "elm.text", buf);
@@ -205,7 +205,7 @@ _shrink_mode_set(Evas_Object *obj,
                     (sd->end, w_label_count, h);
                   elm_box_pack_end(sd->box, sd->end);
                   evas_object_show(sd->end);
-                  
+
                   sd->view_state = MULTIBUTTONENTRY_VIEW_SHRINK;
                   evas_object_smart_callback_call
                     (obj, SIG_EXPAND_STATE_CHANGED, (void *)1);
@@ -508,7 +508,7 @@ _button_resize(Evas_Object *obj,
 
    size_str = edje_object_data_get(btn, "button_max_size");
    if (size_str) button_max_width = atoi(size_str);
-   
+
    button_max_width *= elm_widget_scale_get(obj) * elm_config_scale_get();
 
    // decide the size of button
@@ -567,7 +567,7 @@ _access_multibuttonentry_label_register(Evas_Object *obj, Eina_Bool is_access)
 {
    ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN(obj, sd);
    Evas_Object *po;
-   
+
    po = (Evas_Object *)edje_object_part_object_get(sd->label, "elm.text");
    if (is_access)
      {

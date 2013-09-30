@@ -72,7 +72,7 @@ static void
 cb_mouse_down(void *data EINA_UNUSED, Evas *evas EINA_UNUSED, Evas_Object *obj, void *event_info)
 {
    Evas_Event_Mouse_Down *ev = event_info;
-   
+
    if (ev->button == 1) elm_object_focus_set(obj, EINA_TRUE);
 }
 

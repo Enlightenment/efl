@@ -83,7 +83,7 @@ _elm_url_data(void *data, int type EINA_UNUSED, void *event)
    if (url_data->url_con != r->target) return EINA_TRUE;
 
    eina_binbuf_append_length(r->download, url_data->data, url_data->size);
-     
+
    return EINA_TRUE;
 }
 
