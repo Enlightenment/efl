@@ -2669,7 +2669,8 @@ cserve2_cache_file_close(Client *client, unsigned int client_file_id)
 }
 
 static int
-_cserve2_cache_fast_scaling_check(Client *client, Image_Entry *ientry)
+_cserve2_cache_fast_scaling_check(Client *client, Image_Entry *ientry,
+                                  int client_file_id)
 {
    Eina_Iterator *iter;
    Image_Entry *i;
@@ -2694,13 +2695,13 @@ _cserve2_cache_fast_scaling_check(Client *client, Image_Entry *ientry)
    // Copy opts w/o scaling
    memset(&unscaled, 0, sizeof(unscaled));
    unscaled.dpi = idata->opts.dpi;
-   //unscaled.w = idata->opts.w;
-   //unscaled.h = idata->opts.h;
-   //unscaled.scale_down_by = idata->opts.scale_down_by;
-   //unscaled.region.x = idata->opts.region.x;
-   //unscaled.region.y = idata->opts.region.y;
-   //unscaled.region.w = idata->opts.region.w;
-   //unscaled.region.h = idata->opts.region.h;
+   unscaled.w = idata->opts.w;
+   unscaled.h = idata->opts.h;
+   unscaled.scale_down_by = idata->opts.scale_down_by;
+   unscaled.region.x = idata->opts.region.x;
+   unscaled.region.y = idata->opts.region.y;
+   unscaled.region.w = idata->opts.region.w;
+   unscaled.region.h = idata->opts.region.h;
    unscaled.scale_load.scale_hint = 0;
    unscaled.degree = idata->opts.degree;
    unscaled.orientation = idata->opts.orientation;
@@ -2762,18 +2763,20 @@ try_again:
             scaled_count, ENTRYID(ientry));
 
         // FIXME: The value 4 is completely arbitrary. No benchmarks done yet.
-        if (scaled_count >= 4)
+        if (scaled_count >= 4 && (unused_mem_usage < max_unused_mem_usage))
           {
              DBG("Forcing load of original image now!");
 
-             orig_entry = _image_entry_new(client, 0, idata->file_id,
+             orig_entry = _image_entry_new(client, 0, client_file_id,
                                            0, &unscaled, buf, sizeof(buf));
              if (!orig_entry) return -1;
-             _entry_unused_push(orig_entry);
 
              orig_data = _image_data_find(ENTRYID(orig_entry));
+             orig_data->unused = EINA_TRUE;
              fentry = _file_entry_find(orig_data->file_id);
              fentry->images = eina_list_append(fentry->images, orig_entry);
+             // TODO: Check validity of this call. Leak VS immediate delete?
+             //_entry_unused_push(orig_entry);
           }
         else
           return -1;
@@ -2885,7 +2888,7 @@ cserve2_cache_image_entry_create(Client *client, int rid,
 
    if (opts && opts->scale_load.dst_w && opts->scale_load.dst_h)
      {
-        if (!_cserve2_cache_fast_scaling_check(client, ientry))
+        if (!_cserve2_cache_fast_scaling_check(client, ientry, client_file_id))
           return 0;
      }
 
