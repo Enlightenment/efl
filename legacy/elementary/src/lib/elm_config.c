@@ -380,6 +380,7 @@ _desc_init(void)
    ELM_CONFIG_VAL(D, T, focus_highlight_animate, T_UCHAR);
    ELM_CONFIG_VAL(D, T, toolbar_shrink_mode, T_INT);
    ELM_CONFIG_VAL(D, T, fileselector_expand_enable, T_UCHAR);
+   ELM_CONFIG_VAL(D, T, fileselector_double_tap_navigation_enable, T_UCHAR);
    ELM_CONFIG_VAL(D, T, inwin_dialogs_enable, T_UCHAR);
    ELM_CONFIG_VAL(D, T, icon_size, T_INT);
    ELM_CONFIG_VAL(D, T, longpress_timeout, T_DOUBLE);
@@ -1125,6 +1126,7 @@ _config_load(void)
    _elm_config->focus_highlight_animate = EINA_TRUE;
    _elm_config->toolbar_shrink_mode = 2;
    _elm_config->fileselector_expand_enable = EINA_FALSE;
+   _elm_config->fileselector_double_tap_navigation_enable = EINA_FALSE;
    _elm_config->inwin_dialogs_enable = EINA_FALSE;
    _elm_config->icon_size = 32;
    _elm_config->longpress_timeout = 1.0;
@@ -1672,6 +1674,9 @@ _env_get(void)
 
    s = getenv("ELM_FILESELECTOR_EXPAND_ENABLE");
    if (s) _elm_config->fileselector_expand_enable = !!atoi(s);
+
+   s = getenv("ELM_FILESELECTOR_DOUBLE_TAP_NAVIGATION_ENABLE");
+   if (s) _elm_config->fileselector_double_tap_navigation_enable = !!atoi(s);
 
    s = getenv("ELM_INWIN_DIALOGS_ENABLE");
    if (s) _elm_config->inwin_dialogs_enable = !!atoi(s);

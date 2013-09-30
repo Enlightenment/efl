@@ -1659,3 +1659,8 @@
         the content is static object and it won't be updated by content
         position. This actually reduces the mapbuf calculation time muchly in
         case of complex layout.
+
+2013-10-01  Ryuan Choi (ryuan)
+
+        * fileselector: Add the configuration fileselector_double_tap_navigation_enable.
+        It makes fileselector navigate folder using double tap instead of single tap.

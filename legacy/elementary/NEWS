@@ -94,6 +94,7 @@ Additions:
    * Add "dismissed" smart callback for hover.
    * Add "dismissed" smart callback for menu.
    * Add elm_menu_item_subitems_clear().
+   * Add the configuration fileselector_double_tap_navigation_enable.
 
 Improvements:
 

@@ -49,7 +49,7 @@ _elm_fileselector_smart_del_do(Elm_Fileselector_Smart_Data *sd)
 {
    if (sd->path) eina_stringshare_del(sd->path);
    if (sd->selection) eina_stringshare_del(sd->selection);
-   if (sd->sel_idler) free(ecore_idler_del(sd->sel_idler));
+   if (sd->populate_idler) free(ecore_idler_del(sd->populate_idler));
 
    eo_do_super(sd->obj, MY_CLASS, evas_obj_smart_del());
 }
@@ -658,42 +658,57 @@ _on_list_contract_req(void *data       __UNUSED__,
 }
 
 static Eina_Bool
-_sel_do(void *data)
+_populate_do(void *data)
 {
    struct sel_data *sdata = data;
-   const char *path;
    const char *p;
-   Eina_Bool is_dir;
 
    ELM_FILESELECTOR_DATA_GET(sdata->fs, sd);
-   path = sdata->path;
-   is_dir = ecore_file_is_dir(path);
 
-   /* We need to populate, if path is directory and:
-    * - mode is GRID;
-    * - mode is LIST and 'not expand mode';
-    *   in other cases update anchors. */
-   if (((!sd->expand) || (sd->mode == ELM_FILESELECTOR_GRID)) && (is_dir))
-     {
-        /* keep a ref to path 'couse it will be destroyed by _populate */
-        p = eina_stringshare_add(path);
-        _populate(sdata->fs, p, NULL, NULL);
-        eina_stringshare_del(p);
-     }
-   else
-     {
-        elm_object_text_set(sd->name_entry, ecore_file_file_get(path));
-     }
+   /* keep a ref to path 'couse it will be destroyed by _populate */
+   p = eina_stringshare_add(sdata->path);
+   _populate(sdata->fs, p, NULL, NULL);
+   eina_stringshare_del(p);
 
-   /* We need to send callback when:
-    * - path is dir and mode is ONLY FOLDER
-    * - path is file and mode is NOT ONLY FOLDER */
-   if (is_dir == sd->only_folder)
-     evas_object_smart_callback_call(sdata->fs, SIG_SELECTED, (void *)path);
-
-   sd->sel_idler = NULL;
+   sd->populate_idler = NULL;
    free(sdata);
    return ECORE_CALLBACK_CANCEL;
+}
+
+static void
+_on_item_double_clicked(void *data,
+                  Evas_Object *obj __UNUSED__,
+                  void *event_info)
+{
+   //This event_info could be a list or gengrid item
+   Elm_Object_Item *it = event_info;
+   struct sel_data *sdata;
+   void *old_sdata;
+   const char *path;
+   Eina_Bool is_dir;
+
+   ELM_FILESELECTOR_DATA_GET(data, sd);
+
+   if (!sd->double_tap_navigation) return;
+
+   path = elm_object_item_data_get(it);
+   if (!path) return;
+
+   is_dir = ecore_file_is_dir(path);
+   if (!is_dir) return;
+
+   sdata = malloc(sizeof(*sdata));
+   if (!sdata) return;
+
+   sdata->fs = data;
+   sdata->path = path;
+
+   if (sd->populate_idler)
+     {
+        old_sdata = ecore_idler_del(sd->populate_idler);
+        free(old_sdata);
+     }
+   sd->populate_idler = ecore_idler_add(_populate_do, sdata);
 }
 
 static void
@@ -704,37 +719,66 @@ _on_item_selected(void *data,
    //This event_info could be a list or gengrid item
    Elm_Object_Item *it = event_info;
    struct sel_data *sdata;
-   void *old_sd;
-   char *dir;
+   void *old_sdata;
    const char *path;
+   char *parent_path;
+   Eina_Bool is_dir;
 
    ELM_FILESELECTOR_DATA_GET(data, sd);
 
    path = elm_object_item_data_get(it);
-   if (!path)
-     return;
+   if (!path) return;
 
-   if (sd->only_folder)
-     eina_stringshare_replace(&sd->path, path);
-   else
+   is_dir = ecore_file_is_dir(path);
+
+   /* We need to send callback when:
+    * - path is dir and mode is ONLY FOLDER
+    * - path is file and mode is NOT ONLY FOLDER */
+   if (is_dir == sd->only_folder)
      {
-        dir = ecore_file_dir_get(path);
-        if (!dir) return;
+        elm_object_text_set(sd->name_entry, ecore_file_file_get(path));
+        evas_object_smart_callback_call(data, SIG_SELECTED, (void *)path);
+     }
+   else
+     elm_object_text_set(sd->name_entry, "");
 
-        eina_stringshare_replace(&sd->path, dir);
-        free(dir);
+   /* We need to populate, if path is directory and:
+    * - mode is GRID;
+    * - mode is LIST and 'not expand mode';
+    *   in other cases update anchors. */
+   if (!is_dir) return;
+
+   if (sd->expand && sd->mode == ELM_FILESELECTOR_LIST)
+     {
+        if (sd->only_folder)
+          {
+             parent_path = ecore_file_dir_get(path);
+             eina_stringshare_replace(&sd->path, parent_path);
+             _anchors_do(data, parent_path);
+             free(parent_path);
+          }
+        else
+          {
+             eina_stringshare_replace(&sd->path, path);
+             _anchors_do(data, path);
+          }
+       return;
      }
 
+   if (sd->double_tap_navigation) return;
+
    sdata = malloc(sizeof(*sdata));
+   if (!sdata) return;
+
    sdata->fs = data;
    sdata->path = path;
 
-   if (sd->sel_idler)
+   if (sd->populate_idler)
      {
-        old_sd = ecore_idler_del(sd->sel_idler);
-        free(old_sd);
+        old_sdata = ecore_idler_del(sd->populate_idler);
+        free(old_sdata);
      }
-   sd->sel_idler = ecore_idler_add(_sel_do, sdata);
+   sd->populate_idler = ecore_idler_add(_populate_do, sdata);
 }
 
 static void
@@ -956,6 +1000,7 @@ _elm_fileselector_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
    priv->expand = !!_elm_config->fileselector_expand_enable;
+   priv->double_tap_navigation = !!_elm_config->fileselector_double_tap_navigation_enable;
 
    if (!elm_layout_theme_set
        (obj, "fileselector", "base", elm_widget_style_get(obj)))
@@ -1019,6 +1064,7 @@ _elm_fileselector_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    elm_gengrid_align_set(grid, 0.0, 0.0);
 
    evas_object_smart_callback_add(li, "selected", _on_item_selected, obj);
+   evas_object_smart_callback_add(li, "clicked,double", _on_item_double_clicked, obj);
    evas_object_smart_callback_add
      (li, "expand,request", _on_list_expand_req, obj);
    evas_object_smart_callback_add
@@ -1026,6 +1072,7 @@ _elm_fileselector_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    evas_object_smart_callback_add(li, "expanded", _on_list_expanded, obj);
    evas_object_smart_callback_add(li, "contracted", _on_list_contracted, obj);
    evas_object_smart_callback_add(grid, "selected", _on_item_selected, obj);
+   evas_object_smart_callback_add(grid, "clicked,double", _on_item_double_clicked, obj);
 
    elm_widget_sub_object_add(obj, li);
    elm_widget_sub_object_add(obj, grid);

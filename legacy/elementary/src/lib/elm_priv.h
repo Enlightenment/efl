@@ -209,6 +209,7 @@ struct _Elm_Config
    unsigned char focus_highlight_animate;
    int           toolbar_shrink_mode;
    unsigned char fileselector_expand_enable;
+   unsigned char fileselector_double_tap_navigation_enable;
    unsigned char inwin_dialogs_enable;
    int           icon_size;
    double        longpress_timeout;

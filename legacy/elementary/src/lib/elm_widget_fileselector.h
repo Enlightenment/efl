@@ -41,7 +41,7 @@ struct _Elm_Fileselector_Smart_Data
 
    const char              *path;
    const char              *selection;
-   Ecore_Idler             *sel_idler;
+   Ecore_Idler             *populate_idler;
 
    const char              *path_separator;
 
@@ -53,6 +53,7 @@ struct _Elm_Fileselector_Smart_Data
 
    Eina_Bool             only_folder : 1;
    Eina_Bool             expand : 1;
+   Eina_Bool             double_tap_navigation : 1;
 };
 
 struct sel_data
