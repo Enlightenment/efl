@@ -380,18 +380,22 @@ eo_do_internal(const char *file, int line, const Eo *obj_id, ...)
    va_list p_list;
    Eina_Bool class_ref = _eo_is_a_class(obj_id);
 
-   va_start(p_list, obj_id);
    if (class_ref)
      {
         EO_CLASS_POINTER_RETURN_VAL(obj_id, klass, EINA_FALSE);
+
+        va_start(p_list, obj_id);
         ret = _eo_class_dov_internal(file, line, klass, &p_list);
+        va_end(p_list);
      }
    else
      {
         EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, EINA_FALSE);
+
+        va_start(p_list, obj_id);
         ret = _eo_obj_dov_internal(file, line, obj, &p_list);
+        va_end(p_list);
      }
-   va_end(p_list);
 
    return ret;
 }
