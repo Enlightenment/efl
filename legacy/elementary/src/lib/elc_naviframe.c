@@ -1283,7 +1283,7 @@ _elm_naviframe_smart_focus_next(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    if (ret) *ret = int_ret;
 
 end:
-   if (!*ret)
+   if (ret && !*ret)
      {
         *next = obj;
         *ret = !elm_widget_focus_get(obj);
