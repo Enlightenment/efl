@@ -69,6 +69,9 @@
 
 EAPI Eo_Op EVAS_OBJ_TEXTBLOCK_BASE_ID = EO_NOOP;
 
+//#define LYDBG(f, args...) printf(f, ##args)
+#define LYDBG(f, args...)
+
 #define MY_CLASS EVAS_OBJ_TEXTBLOCK_CLASS
 
 #define MY_CLASS_NAME "Evas_Object_Textblock"
@@ -495,7 +498,7 @@ struct _Evas_Object_Textblock
    const char                         *repch;
    const char                         *bidi_delimiters;
    struct {
-      int                              w, h;
+      int                              w, h, oneline_h;
       Eina_Bool                        valid : 1;
    } formatted, native;
    Eina_Bool                           redraw : 1;
@@ -532,11 +535,9 @@ static int evas_object_textblock_is_opaque(Evas_Object *eo_obj,
 static int evas_object_textblock_was_opaque(Evas_Object *eo_obj,
 					    Evas_Object_Protected_Data *obj,
 					    void *type_private_data);
-
 static void evas_object_textblock_coords_recalc(Evas_Object *eo_obj,
 						Evas_Object_Protected_Data *obj,
 						void *type_private_data);
-
 static void evas_object_textblock_scale_update(Evas_Object *eo_obj,
 					       Evas_Object_Protected_Data *obj,
 					       void *type_private_data);
@@ -560,7 +561,7 @@ static const Evas_Object_Func object_func =
      evas_object_textblock_was_opaque,
      NULL,
      NULL,
-     evas_object_textblock_coords_recalc,
+     NULL, /*evas_object_textblock_coords_recalc, <- disable - not useful. */
      evas_object_textblock_scale_update,
      NULL,
      NULL,
@@ -5104,6 +5105,7 @@ _layout(const Evas_Object *eo_obj, int w, int h, int *w_ret, int *h_ret)
    Ctxt ctxt, *c;
    int style_pad_l = 0, style_pad_r = 0, style_pad_t = 0, style_pad_b = 0;
 
+   LYDBG("ZZ: layout %p %4ix%4i | w=%4i | last_w=%4i --- '%s'\n", eo_obj, w, h, obj->cur->geometry.w, o->last_w, o->markup_text);
    /* setup context */
    c = &ctxt;
    c->obj = (Evas_Object *)eo_obj;
@@ -5269,6 +5271,7 @@ _layout(const Evas_Object *eo_obj, int w, int h, int *w_ret, int *h_ret)
         o->style_pad.t = style_pad_t;
         o->style_pad.b = style_pad_b;
         _paragraphs_clear(eo_obj, c->paragraphs);
+        LYDBG("ZZ: ... layout #2\n");
         _layout(eo_obj, w, h, w_ret, h_ret);
      }
 }
@@ -5287,8 +5290,19 @@ _relayout(const Evas_Object *eo_obj)
    _layout(eo_obj, obj->cur->geometry.w, obj->cur->geometry.h,
          &o->formatted.w, &o->formatted.h);
    o->formatted.valid = 1;
+   o->formatted.oneline_h = 0;
    o->last_w = obj->cur->geometry.w;
+   LYDBG("ZZ: --------- layout %p @ %ix%i = %ix%i\n", eo_obj, obj->cur->geometry.w, obj->cur->geometry.h, o->formatted.w, o->formatted.h);
    o->last_h = obj->cur->geometry.h;
+   if ((o->paragraphs) && (!EINA_INLIST_GET(o->paragraphs)->next) &&
+       (o->paragraphs->lines) && (!EINA_INLIST_GET(o->paragraphs->lines)->next))
+     {
+        if (obj->cur->geometry.h < o->formatted.h)
+          {
+             LYDBG("ZZ: 1 line only... lasth == formatted h (%i)\n", o->formatted.h);
+             o->formatted.oneline_h = o->formatted.h;
+          }
+     }
    o->changed = 0;
    o->content_changed = 0;
    o->format_changed = EINA_FALSE;
@@ -5312,8 +5326,14 @@ _find_layout_item_line_match(Evas_Object *eo_obj, Evas_Object_Textblock_Node_Tex
    Evas_Object_Textblock_Paragraph *found_par;
    Evas_Object_Textblock_Line *ln;
    Evas_Object_Textblock *o = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
 
-   if (!o->formatted.valid) _relayout(eo_obj);
+   evas_object_textblock_coords_recalc(eo_obj, obj, obj->private_data);
+   if (!o->formatted.valid)
+     {
+        LYDBG("ZZ: relayout 1\n");
+        _relayout(eo_obj);
+     }
 
    found_par = n->par;
    if (found_par)
@@ -7423,7 +7443,14 @@ evas_textblock_cursor_line_char_first(Evas_Textblock_Cursor *cur)
    if (!cur) return;
    TB_NULL_CHECK(cur->node);
    Evas_Object_Textblock *o = eo_data_scope_get(cur->obj, MY_CLASS);
-   if (!o->formatted.valid) _relayout(cur->obj);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(cur->obj, EVAS_OBJ_CLASS);
+
+   evas_object_textblock_coords_recalc(cur->obj, obj, obj->private_data);
+   if (!o->formatted.valid)
+     {
+        LYDBG("ZZ: relayout 2\n");
+        _relayout(cur->obj);
+     }
 
    _find_layout_item_match(cur, &ln, &it);
 
@@ -7456,7 +7483,14 @@ evas_textblock_cursor_line_char_last(Evas_Textblock_Cursor *cur)
    if (!cur) return;
    TB_NULL_CHECK(cur->node);
    Evas_Object_Textblock *o = eo_data_scope_get(cur->obj, MY_CLASS);
-   if (!o->formatted.valid) _relayout(cur->obj);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(cur->obj, EVAS_OBJ_CLASS);
+
+   evas_object_textblock_coords_recalc(cur->obj, obj, obj->private_data);
+   if (!o->formatted.valid)
+     {
+        LYDBG("ZZ: relayout 3\n");
+        _relayout(cur->obj);
+     }
 
    _find_layout_item_match(cur, &ln, &it);
 
@@ -7992,8 +8026,16 @@ evas_textblock_cursor_line_set(Evas_Textblock_Cursor *cur, int line)
    Evas_Object_Textblock_Item *it;
 
    if (!cur) return EINA_FALSE;
+
    Evas_Object_Textblock *o = eo_data_scope_get(cur->obj, MY_CLASS);
-   if (!o->formatted.valid) _relayout(cur->obj);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(cur->obj, EVAS_OBJ_CLASS);
+
+   evas_object_textblock_coords_recalc(cur->obj, obj, obj->private_data);
+   if (!o->formatted.valid)
+     {
+        LYDBG("ZZ: relayout 4\n");
+        _relayout(cur->obj);
+     }
 
    ln = _find_layout_line_num(cur->obj, line);
    if (!ln) return EINA_FALSE;
@@ -8265,6 +8307,7 @@ static void
 _evas_textblock_changed(Evas_Object_Textblock *o, Evas_Object *eo_obj)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   LYDBG("ZZ: invalidate 1 %p\n", eo_obj);
    o->formatted.valid = 0;
    o->native.valid = 0;
    o->content_changed = 1;
@@ -9244,7 +9287,14 @@ evas_textblock_cursor_geometry_bidi_get(const Evas_Textblock_Cursor *cur, Evas_C
 {
    if (!cur) return EINA_FALSE;
    Evas_Object_Textblock *o = eo_data_scope_get(cur->obj, MY_CLASS);
-   if (!o->formatted.valid) _relayout(cur->obj);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(cur->obj, EVAS_OBJ_CLASS);
+
+   evas_object_textblock_coords_recalc(cur->obj, obj, obj->private_data);
+   if (!o->formatted.valid)
+     {
+        LYDBG("ZZ: relayout 5\n");
+        _relayout(cur->obj);
+     }
 
    if (ctype == EVAS_TEXTBLOCK_CURSOR_UNDER)
      {
@@ -9425,7 +9475,14 @@ evas_textblock_cursor_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Coord 
    int ret = -1;
    if (!cur) return -1;
    Evas_Object_Textblock *o = eo_data_scope_get(cur->obj, MY_CLASS);
-   if (!o->formatted.valid) _relayout(cur->obj);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(cur->obj, EVAS_OBJ_CLASS);
+
+   evas_object_textblock_coords_recalc(cur->obj, obj, obj->private_data);
+   if (!o->formatted.valid)
+     {
+        LYDBG("ZZ: relayout 6\n");
+        _relayout(cur->obj);
+     }
 
    if (ctype == EVAS_TEXTBLOCK_CURSOR_UNDER)
      {
@@ -9492,7 +9549,14 @@ _evas_textblock_cursor_char_pen_geometry_common_get(int (*query_func) (void *dat
 
    if (!cur) return -1;
    Evas_Object_Textblock *o = eo_data_scope_get(cur->obj, MY_CLASS);
-   if (!o->formatted.valid) _relayout(cur->obj);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(cur->obj, EVAS_OBJ_CLASS);
+
+   evas_object_textblock_coords_recalc(cur->obj, obj, obj->private_data);
+   if (!o->formatted.valid)
+     {
+        LYDBG("ZZ: relayout 7\n");
+        _relayout(cur->obj);
+     }
 
    if (!cur->node)
      {
@@ -9621,7 +9685,14 @@ evas_textblock_cursor_line_geometry_get(const Evas_Textblock_Cursor *cur, Evas_C
 
    if (!cur) return -1;
    Evas_Object_Textblock *o = eo_data_scope_get(cur->obj, MY_CLASS);
-   if (!o->formatted.valid) _relayout(cur->obj);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(cur->obj, EVAS_OBJ_CLASS);
+
+   evas_object_textblock_coords_recalc(cur->obj, obj, obj->private_data);
+   if (!o->formatted.valid)
+     {
+        LYDBG("ZZ: relayout 8\n");
+        _relayout(cur->obj);
+     }
    if (!cur->node)
      {
         ln = o->paragraphs->lines;
@@ -9670,7 +9741,14 @@ evas_textblock_cursor_char_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord x, E
 
    if (!cur) return EINA_FALSE;
    Evas_Object_Textblock *o = eo_data_scope_get(cur->obj, MY_CLASS);
-   if (!o->formatted.valid) _relayout(cur->obj);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(cur->obj, EVAS_OBJ_CLASS);
+
+   evas_object_textblock_coords_recalc(cur->obj, obj, obj->private_data);
+   if (!o->formatted.valid)
+     {
+        LYDBG("ZZ: relayout 9\n");
+        _relayout(cur->obj);
+     }
    x += o->style_pad.l;
    y += o->style_pad.t;
 
@@ -9777,7 +9855,14 @@ evas_textblock_cursor_line_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord y)
 
    if (!cur) return -1;
    Evas_Object_Textblock *o = eo_data_scope_get(cur->obj, MY_CLASS);
-   if (!o->formatted.valid) _relayout(cur->obj);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(cur->obj, EVAS_OBJ_CLASS);
+
+   evas_object_textblock_coords_recalc(cur->obj, obj, obj->private_data);
+   if (!o->formatted.valid)
+     {
+        LYDBG("ZZ: relayout 10\n");
+        _relayout(cur->obj);
+     }
    y += o->style_pad.t;
 
    found_par = _layout_find_paragraph_by_y(o, y);
@@ -10165,7 +10250,14 @@ evas_textblock_cursor_range_geometry_get(const Evas_Textblock_Cursor *cur1, cons
    if (!cur2 || !cur2->node) return NULL;
    if (cur1->obj != cur2->obj) return NULL;
    Evas_Object_Textblock *o = eo_data_scope_get(cur1->obj, MY_CLASS);
-   if (!o->formatted.valid) _relayout(cur1->obj);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(cur1->obj, EVAS_OBJ_CLASS);
+
+   evas_object_textblock_coords_recalc(cur1->obj, obj, obj->private_data);
+   if (!o->formatted.valid)
+     {
+        LYDBG("ZZ: relayout 11\n");
+        _relayout(cur1->obj);
+     }
    if (evas_textblock_cursor_compare(cur1, cur2) > 0)
      {
 	const Evas_Textblock_Cursor *tc;
@@ -10235,7 +10327,14 @@ evas_textblock_cursor_format_item_geometry_get(const Evas_Textblock_Cursor *cur,
 
    if (!cur || !evas_textblock_cursor_format_is_visible_get(cur)) return EINA_FALSE;
    Evas_Object_Textblock *o = eo_data_scope_get(cur->obj, MY_CLASS);
-   if (!o->formatted.valid) _relayout(cur->obj);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(cur->obj, EVAS_OBJ_CLASS);
+
+   evas_object_textblock_coords_recalc(cur->obj, obj, obj->private_data);
+   if (!o->formatted.valid)
+     {
+        LYDBG("ZZ: relayout 12\n");
+        _relayout(cur->obj);
+     }
    if (!evas_textblock_cursor_format_is_visible_get(cur)) return EINA_FALSE;
    _find_layout_item_line_match(cur->obj, cur->node, cur->pos, &ln, &it);
    fi = _ITEM_FORMAT(it);
@@ -10358,7 +10457,14 @@ _textblock_size_formatted_get(Eo *eo_obj, void *_pd, va_list *list)
    const Evas_Object_Textblock *o = _pd;
    Evas_Coord *w = va_arg(*list, Evas_Coord *);
    Evas_Coord *h = va_arg(*list, Evas_Coord *);
-   if (!o->formatted.valid) _relayout(eo_obj);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+
+   evas_object_textblock_coords_recalc(eo_obj, obj, obj->private_data);
+   if (!o->formatted.valid)
+     {
+        LYDBG("ZZ: relayout 13\n");
+        _relayout(eo_obj);
+     }   
    if (w) *w = o->formatted.w;
    if (h) *h = o->formatted.h;
 }
@@ -10522,7 +10628,14 @@ _textblock_size_native_get(Eo *eo_obj, void *_pd, va_list *list)
         Textblock_Position position = TEXTBLOCK_POSITION_START;
         /* We just want the layout objects to update, should probably
          * split that. */
-        if (!o->formatted.valid) _relayout(eo_obj);
+        Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+
+        evas_object_textblock_coords_recalc(eo_obj, obj, obj->private_data);
+        if (!o->formatted.valid)
+          {
+             LYDBG("ZZ: relayout 14\n");
+             _relayout(eo_obj);
+          }
         EINA_INLIST_FOREACH(o->paragraphs, par)
           {
              Evas_Coord tw, th;
@@ -10557,7 +10670,14 @@ _textblock_style_insets_get(Eo *eo_obj, void *_pd, va_list *list)
    Evas_Coord *r = va_arg(*list, Evas_Coord *);
    Evas_Coord *t = va_arg(*list, Evas_Coord *);
    Evas_Coord *b = va_arg(*list, Evas_Coord *);
-   if (!o->formatted.valid) _relayout(eo_obj);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+
+   evas_object_textblock_coords_recalc(eo_obj, obj, obj->private_data);
+   if (!o->formatted.valid)
+     {
+        LYDBG("ZZ: relayout 15\n");
+        _relayout(eo_obj);
+     }
    if (l) *l = o->style_pad.l;
    if (r) *r = o->style_pad.r;
    if (t) *t = o->style_pad.t;
@@ -10604,18 +10724,6 @@ _dbg_info_get(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
      }
 }
 
-/** @internal
- * FIXME: DELETE ME! DELETE ME!
- * This is an ugly workaround to get around the fact that
- * evas_object_textblock_coords_recalc isn't really called when it's supposed
- * to. When that bug is fixed please remove this. */
-static void
-_workaround_object_coords_recalc(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *eo_obj, void *event_info EINA_UNUSED)
-{
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
-   evas_object_textblock_coords_recalc(eo_obj, obj, obj->private_data);
-}
-
 /* all nice and private */
 static void
 evas_object_textblock_init(Evas_Object *eo_obj)
@@ -10636,8 +10744,6 @@ evas_object_textblock_init(Evas_Object *eo_obj)
    evas_object_textblock_text_markup_set(eo_obj, "");
 
    o->legacy_newline = EINA_TRUE;
-   evas_object_event_callback_priority_add(eo_obj, EVAS_CALLBACK_RESIZE, -1000,
-         _workaround_object_coords_recalc, NULL);
 }
 
 static void
@@ -11076,6 +11182,38 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
 }
 
 static void
+evas_object_textblock_coords_recalc(Evas_Object *eo_obj EINA_UNUSED,
+                                    Evas_Object_Protected_Data *obj,
+                                    void *type_private_data)
+{
+   Evas_Object_Textblock *o = type_private_data;
+
+   if (
+       // width changed thus we may have to re-wrap or change centering etc.
+       (obj->cur->geometry.w != o->last_w) ||
+       // if valign not top OR we have ellipsis, then if height changed we need to re-eval valign or ... spot
+       (((o->valign != 0.0) || (o->have_ellipsis)) &&
+           (
+               ((o->formatted.oneline_h == 0) &&
+                   (obj->cur->geometry.h != o->last_h)) ||
+               ((o->formatted.oneline_h != 0) &&
+                   (((obj->cur->geometry.h != o->last_h) &&
+                     (o->formatted.oneline_h < obj->cur->geometry.h))))
+           )
+       ) ||
+       // obviously if content text changed we need to reformat it
+       (o->content_changed) ||
+       // if format changed (eg styles) we need to re-format/match tags etc.
+       (o->format_changed)
+      )
+     {
+        LYDBG("ZZ: invalidate 2 %p ## %i != %i || %3.3f || %i && %i != %i | %i %i\n", eo_obj, obj->cur->geometry.w, o->last_w, o->valign, o->have_ellipsis, obj->cur->geometry.h, o->last_h, o->content_changed, o->format_changed);
+	o->formatted.valid = 0;
+	o->changed = 1;
+     }
+}
+
+static void
 evas_object_textblock_render_pre(Evas_Object *eo_obj,
 				 Evas_Object_Protected_Data *obj,
 				 void *type_private_data)
@@ -11092,11 +11230,11 @@ evas_object_textblock_render_pre(Evas_Object *eo_obj,
    /* elsewhere, decoding video etc. */
    /* then when this is done the object needs to figure if it changed and */
    /* if so what and where and add the appropriate redraw textblocks */
-   if ((o->changed) || (o->content_changed) || (o->format_changed) ||
-       ((obj->cur->geometry.w != o->last_w) ||
-           (((o->valign != 0.0) || (o->have_ellipsis)) &&
-               (obj->cur->geometry.h != o->last_h))))
+
+   evas_object_textblock_coords_recalc(eo_obj, obj, obj->private_data);
+   if (o->changed)
      {
+        LYDBG("ZZ: relayout 16\n");
         _relayout(eo_obj);
         o->redraw = 0;
         evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes,
@@ -11239,21 +11377,6 @@ evas_object_textblock_was_opaque(Evas_Object *eo_obj EINA_UNUSED,
 }
 
 static void
-evas_object_textblock_coords_recalc(Evas_Object *eo_obj EINA_UNUSED,
-                                    Evas_Object_Protected_Data *obj,
-                                    void *type_private_data)
-{
-   Evas_Object_Textblock *o = type_private_data;
-   if ((obj->cur->geometry.w != o->last_w) ||
-       (((o->valign != 0.0) || (o->have_ellipsis)) &&
-           (obj->cur->geometry.h != o->last_h)))
-     {
-	o->formatted.valid = 0;
-	o->changed = 1;
-     }
-}
-
-static void
 evas_object_textblock_scale_update(Evas_Object *eo_obj EINA_UNUSED,
                                    Evas_Object_Protected_Data *obj EINA_UNUSED,
                                    void *type_private_data)
@@ -11313,8 +11436,14 @@ _evas_textblock_check_item_node_link(Evas_Object *eo_obj)
    Evas_Object_Textblock_Item *it;
 
    if (!o) return EINA_FALSE;
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
 
-   if (!o->formatted.valid) _relayout(eo_obj);
+   evas_object_textblock_coords_recalc(eo_obj, obj, obj->private_data);
+   if (!o->formatted.valid)
+     {
+        LYDBG("ZZ: relayout 17\n");
+        _relayout(eo_obj);
+     }
 
    EINA_INLIST_FOREACH(o->paragraphs, par)
      {
