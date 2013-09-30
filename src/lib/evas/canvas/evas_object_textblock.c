@@ -1939,7 +1939,7 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
               !strcmp(underlines_named[i].param, param))
             {
                fmt->underline = underlines_named[i].underline;
-               fmt->underline2 = underlines_named[i].underline2;;
+               fmt->underline2 = underlines_named[i].underline2;
                fmt->underline_dash = underlines_named[i].underline_dash;
                break;
             }
