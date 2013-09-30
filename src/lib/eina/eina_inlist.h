@@ -843,7 +843,7 @@ EAPI Eina_Inlist *eina_inlist_sort(Eina_Inlist *head, Eina_Compare_Cb func);
  * that is part of the list.
  */
 #define EINA_INLIST_FOREACH_SAFE(list, list2, it) \
-   for (it = NULL, it = (list ? _EINA_INLIST_CONTAINER(it, list) : NULL), list2 = it ? ((EINA_INLIST_GET(it) ? EINA_INLIST_GET(it)->next : NULL)) : NULL; \
+   for (it = NULL, it = (list ? _EINA_INLIST_CONTAINER(it, list) : NULL), list2 = it ? EINA_INLIST_GET(it)->next : NULL; \
         it; \
         it = list2 ? _EINA_INLIST_CONTAINER(it, list2) : NULL, list2 = list2 ? list2->next : NULL)
 
