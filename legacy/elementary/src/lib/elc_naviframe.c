@@ -69,7 +69,12 @@ _prev_page_focus_recover(Elm_Naviframe_Item *it)
    if (newest)
      elm_object_focus_set(newest, EINA_TRUE);
    else
-     elm_object_focus_set(VIEW(it), EINA_TRUE);
+     {
+        if (elm_object_focus_allow_get(VIEW(it)))
+          elm_object_focus_set(VIEW(it), EINA_TRUE);
+        else
+          elm_object_focus_set(WIDGET(it), EINA_TRUE);
+     }
 }
 
 static void
@@ -1260,7 +1265,7 @@ _elm_naviframe_smart_focus_next(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    Eina_Bool int_ret;
 
    top_it = (Elm_Naviframe_Item *)elm_naviframe_top_item_get(obj);
-   if (!top_it) return;
+   if (!top_it) goto end;
 
    list_data_get = eina_list_data_get;
 
@@ -1274,8 +1279,15 @@ _elm_naviframe_smart_focus_next(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
      }
 
    int_ret = elm_widget_focus_list_next_get(obj, l, list_data_get, dir, next);
-   if (ret) *ret = int_ret;
    eina_list_free(l);
+   if (ret) *ret = int_ret;
+
+end:
+   if (!*ret)
+     {
+        *next = obj;
+        *ret = !elm_widget_focus_get(obj);
+     }
 }
 
 static void
@@ -1521,7 +1533,12 @@ _item_push(Eo *obj, void *_pd, va_list *list)
         it->animator = ecore_animator_add(_push_transition_cb, it);
      }
    else
-     elm_object_focus_set(VIEW(it), EINA_TRUE);
+     {
+        if (elm_object_focus_allow_get(VIEW(it)))
+          elm_object_focus_set(VIEW(it), EINA_TRUE);
+        else
+          elm_object_focus_set(WIDGET(it), EINA_TRUE);
+     }
 
    sd->stack = eina_inlist_append(sd->stack, EINA_INLIST_GET(it));
 
@@ -1629,7 +1646,10 @@ _item_insert_after(Eo *obj, void *_pd, va_list *list)
                              EINA_FALSE);
         evas_object_show(VIEW(it));
         evas_object_hide(VIEW(after));
-        elm_object_focus_set(VIEW(it), EINA_TRUE);
+        if (elm_object_focus_allow_get(VIEW(it)))
+          elm_object_focus_set(VIEW(it), EINA_TRUE);
+        else
+          elm_object_focus_set(WIDGET(it), EINA_TRUE);
      }
 
    elm_layout_sizing_eval(obj);
