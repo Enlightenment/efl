@@ -433,8 +433,6 @@ _eo_callback_remove(Private_Data *pd, Eo_Callback_Description *cb)
    Eo_Callback_Description *itr, *pitr = NULL;
 
    itr = pd->callbacks;
-   if (pd->callbacks == cb)
-      pd->callbacks = cb->next;
 
    for ( ; itr; )
      {
@@ -446,6 +444,10 @@ _eo_callback_remove(Private_Data *pd, Eo_Callback_Description *cb)
              if (pitr)
                {
                   pitr->next = titr->next;
+               }
+             else
+               {
+                  pd->callbacks = titr->next;
                }
              free(titr);
           }
