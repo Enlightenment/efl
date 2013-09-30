@@ -69,7 +69,6 @@ _box_custom_layout(Evas_Object *o,
 
 static void
 _index_box_clear(Evas_Object *obj,
-                 Evas_Object *box __UNUSED__,
                  int level)
 {
    Eina_List *l;
@@ -201,7 +200,6 @@ _omit_calc(void *data, int num_of_items, int max_num_of_items)
 // FIXME: always have index filled
 static void
 _index_box_auto_fill(Evas_Object *obj,
-                     Evas_Object *box,
                      int level)
 {
    int i = 0, max_num_of_items = 0, num_of_items = 0, g = 0, skip = 0;
@@ -303,7 +301,7 @@ _index_box_auto_fill(Evas_Object *obj,
         evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
         evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
         elm_widget_sub_object_add(obj, o);
-        evas_object_box_append(box, o);
+        evas_object_box_append(sd->bx[level], o);
         stacking = edje_object_data_get(o, "stacking");
 
         if (stacking)
@@ -323,7 +321,7 @@ _index_box_auto_fill(Evas_Object *obj,
           _access_widget_item_register(it);
      }
 
-   evas_object_smart_calculate(box);
+   evas_object_smart_calculate(sd->bx[level]);
    sd->level_active[level] = EINA_TRUE;
 }
 
@@ -341,8 +339,8 @@ _elm_index_smart_theme(Eo *obj, void *_pd, va_list *list)
    Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
    Elm_Layout_Smart_Data *ld = eo_data_scope_get(obj, ELM_OBJ_LAYOUT_CLASS);
 
-   _index_box_clear(obj, sd->bx[0], 0);
-   _index_box_clear(obj, sd->bx[1], 1);
+   _index_box_clear(obj, 0);
+   _index_box_clear(obj, 1);
 
    if (sd->horizontal)
      eina_stringshare_replace(&ld->group, "base/horizontal");
@@ -393,11 +391,11 @@ _elm_index_smart_theme(Eo *obj, void *_pd, va_list *list)
    edje_object_message_signal_process(wd->resize_obj);
 
    elm_layout_sizing_eval(obj);
-   _index_box_auto_fill(obj, sd->bx[0], 0);
+   _index_box_auto_fill(obj, 0);
 
    if (sd->autohide_disabled)
      {
-        if (sd->level == 1) _index_box_auto_fill(obj, sd->bx[1], 1);
+        if (sd->level == 1) _index_box_auto_fill(obj, 1);
         elm_layout_signal_emit(obj, "elm,state,active", "elm");
      }
    else elm_layout_signal_emit(obj, "elm,state,inactive", "elm");
@@ -436,7 +434,7 @@ _item_del_pre_hook(Elm_Object_Item *it)
    ELM_INDEX_DATA_GET(WIDGET(it), sd);
 
    _item_free((Elm_Index_Item *)it);
-   _index_box_clear(WIDGET(it), sd->bx[sd->level], sd->level);
+   _index_box_clear(WIDGET(it), sd->level);
 
    return EINA_TRUE;
 }
@@ -714,7 +712,7 @@ _on_mouse_down(void *data,
    sd->dy = ev->canvas.y - y;
    if (!sd->autohide_disabled)
      {
-        _index_box_clear(data, sd->bx[1], 1);
+        _index_box_clear(data, 1);
         elm_layout_signal_emit(data, "elm,state,active", "elm");
      }
    _sel_eval(data, ev->canvas.x, ev->canvas.y);
@@ -818,7 +816,7 @@ _on_mouse_in_access(void *data,
 
    if (!sd->autohide_disabled)
      {
-        _index_box_clear(data, sd->bx[1], 1);
+        _index_box_clear(data, 1);
         elm_layout_signal_emit(data, "elm,state,active", "elm");
      }
 }
@@ -884,8 +882,8 @@ _index_resize_cb(void *data,
 
    Elm_Index_Item *it;
 
-   _index_box_clear(data, sd->bx[0], 0);
-   _index_box_auto_fill(data, sd->bx[0], 0);
+   _index_box_clear(data, 0);
+   _index_box_auto_fill(data, 0);
 
    it = (Elm_Index_Item *)elm_index_selected_item_get(obj, sd->level);
    if (it)
@@ -1144,7 +1142,7 @@ _autohide_disabled_set(Eo *obj, void *_pd, va_list *list)
    sd->level = 0;
    if (sd->autohide_disabled)
      {
-        _index_box_clear(obj, sd->bx[1], 1);
+        _index_box_clear(obj, 1);
         elm_layout_signal_emit(obj, "elm,state,active", "elm");
      }
    else
@@ -1318,7 +1316,7 @@ _item_append(Eo *obj, void *_pd, va_list *list)
    if (!it) return;
 
    sd->items = eina_list_append(sd->items, it);
-   _index_box_clear(obj, sd->bx[sd->level], sd->level);
+   _index_box_clear(obj, sd->level);
 
    *ret = (Elm_Object_Item *)it;
 }
@@ -1352,7 +1350,7 @@ _item_prepend(Eo *obj, void *_pd, va_list *list)
    if (!it) return;
 
    sd->items = eina_list_prepend(sd->items, it);
-   _index_box_clear(obj, sd->bx[sd->level], sd->level);
+   _index_box_clear(obj, sd->level);
 
    *ret = (Elm_Object_Item *)it;
 }
@@ -1404,7 +1402,7 @@ _item_insert_after(Eo *obj, void *_pd, va_list *list)
    if (!it) return;
 
    sd->items = eina_list_append_relative(sd->items, it, after);
-   _index_box_clear(obj, sd->bx[sd->level], sd->level);
+   _index_box_clear(obj, sd->level);
 
    *ret = (Elm_Object_Item *)it;
 }
@@ -1446,7 +1444,7 @@ _item_insert_before(Eo *obj, void *_pd, va_list *list)
    if (!it) return;
 
    sd->items = eina_list_prepend_relative(sd->items, it, before);
-   _index_box_clear(obj, sd->bx[sd->level], sd->level);
+   _index_box_clear(obj, sd->level);
 
    *ret = (Elm_Object_Item *)it;
 }
@@ -1510,7 +1508,7 @@ _item_sorted_insert(Eo *obj, void *_pd, va_list *list)
              it = NULL;
           }
      }
-   _index_box_clear(obj, sd->bx[sd->level], sd->level);
+   _index_box_clear(obj, sd->level);
 
    if (!it)
      *ret = NULL;
@@ -1551,7 +1549,7 @@ _item_clear(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    Elm_Index_Smart_Data *sd = _pd;
 
-   _index_box_clear(obj, sd->bx[sd->level], sd->level);
+   _index_box_clear(obj, sd->level);
    EINA_LIST_FOREACH(sd->items, l, it)
      {
         if (it->level != sd->level) continue;
@@ -1575,12 +1573,12 @@ _level_go(Eo *obj, void *_pd, va_list *list)
    int level = va_arg(*list, int);
    (void) level;
    Elm_Index_Smart_Data *sd = _pd;
-   _index_box_clear(obj, sd->bx[0], 0);
-   _index_box_auto_fill(obj, sd->bx[0], 0);
+   _index_box_clear(obj, 0);
+   _index_box_auto_fill(obj, 0);
    if (sd->level == 1)
      {
-        _index_box_clear(obj, sd->bx[1], 1);
-        _index_box_auto_fill(obj, sd->bx[1], 1);
+        _index_box_clear(obj, 1);
+        _index_box_auto_fill(obj, 1);
      }
 }
 
@@ -1723,12 +1721,12 @@ _omit_enabled_set(Eo *obj, void *_pd, va_list *list)
    if (sd->omit_enabled == enabled) return;
    sd->omit_enabled = enabled;
 
-   _index_box_clear(obj, sd->bx[0], 0);
-   _index_box_auto_fill(obj, sd->bx[0], 0);
+   _index_box_clear(obj, 0);
+   _index_box_auto_fill(obj, 0);
    if (sd->level == 1)
      {
-        _index_box_clear(obj, sd->bx[1], 1);
-        _index_box_auto_fill(obj, sd->bx[1], 1);
+        _index_box_clear(obj, 1);
+        _index_box_auto_fill(obj, 1);
      }
 }
 
