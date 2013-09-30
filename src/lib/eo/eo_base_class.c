@@ -430,9 +430,9 @@ struct _Eo_Callback_Description
 static void
 _eo_callback_remove(Private_Data *pd, Eo_Callback_Description *cb)
 {
-   Eo_Callback_Description *itr, *pitr;
+   Eo_Callback_Description *itr, *pitr = NULL;
 
-   itr = pitr = pd->callbacks;
+   itr = pd->callbacks;
    if (pd->callbacks == cb)
       pd->callbacks = cb->next;
 
