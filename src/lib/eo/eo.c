@@ -496,7 +496,7 @@ _eo_class_base_op_init(_Eo_Class *klass)
 
    klass->base_id = _eo_ops_last_id;
 
-   if (desc && desc->ops.base_op_id)
+   if (desc->ops.base_op_id)
       *(desc->ops.base_op_id) = klass->base_id;
 
    _eo_ops_last_id += desc->ops.count + 1;
