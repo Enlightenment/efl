@@ -211,12 +211,12 @@ EAPI void                 elm_calendar_format_function_set(Evas_Object *obj, Elm
  * struct tm selected_time;
  * time_t current_time;
  *
- * current_time = time(NULL) + 5 * 84600;
+ * current_time = time(NULL) + 5 * (24 * 60 * 60);
  * localtime_r(&current_time, &selected_time);
  * elm_calendar_mark_add(cal, "holiday", selected_time,
  *     ELM_CALENDAR_ANNUALLY);
  *
- * current_time = time(NULL) + 1 * 84600;
+ * current_time = time(NULL) + 1 * (24 * 60 * 60);
  * localtime_r(&current_time, &selected_time);
  * elm_calendar_mark_add(cal, "checked", selected_time, ELM_CALENDAR_UNIQUE);
  *
