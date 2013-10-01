@@ -59,7 +59,6 @@ ecore_file_download_example \
 ecore_idler_example \
 ecore_imf_example \
 ecore_job_example \
-ecore_pipe_gstreamer_example \
 ecore_pipe_simple_example \
 ecore_poller_example \
 ecore_server_bench \
@@ -201,6 +200,7 @@ ecore_job_example_SOURCES = ecore_job_example.c
 ecore_job_example_LDADD = $(ECORE_COMMON_LDADD)
 
 if HAVE_GSTREAMER
+EXTRA_PROGRAMS += ecore_pipe_gstreamer_example
 ecore_pipe_gstreamer_example_SOURCES = ecore_pipe_gstreamer_example.c
 ecore_pipe_gstreamer_example_LDADD = $(ECORE_COMMON_LDADD) @GSTREAMER_LIBS@
 ecore_pipe_gstreamer_example_CFLAGS = @GSTREAMER_CFLAGS@
