@@ -320,7 +320,7 @@ void cserve2_cache_client_new(Client *client);
 void cserve2_cache_client_del(Client *client);
 int cserve2_cache_file_open(Client *client, unsigned int client_file_id, const char *path, const char *key, unsigned int rid, Evas_Image_Load_Opts *lo);
 void cserve2_cache_file_close(Client *client, unsigned int client_file_id);
-int cserve2_cache_image_entry_create(Client *client, int rid, unsigned int client_file_id, unsigned int image_id, Evas_Image_Load_Opts *opts);
+int cserve2_cache_image_entry_create(Client *client, int rid, unsigned int client_file_id, unsigned int image_id, const Evas_Image_Load_Opts *opts);
 void cserve2_rgba_image_scale_do(void *src_data, int src_full_w, int src_full_h, void *dst_data, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int alpha, int smooth);
 void cserve2_cache_image_load(Client *client, unsigned int client_image_id, unsigned int rid);
 void cserve2_cache_image_preload(Client *client, unsigned int client_image_id, unsigned int rid);

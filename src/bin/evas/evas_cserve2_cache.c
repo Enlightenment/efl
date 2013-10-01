@@ -932,10 +932,8 @@ static void
 _image_key_set(unsigned int file_id, const Evas_Image_Load_Opts *opts,
                char *buf, int size)
 {
-   const char empty[sizeof(Evas_Image_Load_Opts)] = {0};
-
    if (!opts)
-     opts = (Evas_Image_Load_Opts *) &empty;
+     opts = &empty_lo;
 
    snprintf(buf, size,
             "%u:%0.3f:%dx%d:%d:%d,%d+%dx%d:!([%d,%d:%dx%d]-[%dx%d:%d]):%d:%d",
@@ -950,7 +948,7 @@ _image_key_set(unsigned int file_id, const Evas_Image_Load_Opts *opts,
 }
 
 static unsigned int
-_image_opts_id_get(unsigned int file_id, Evas_Image_Load_Opts *opts,
+_image_opts_id_get(unsigned int file_id, const Evas_Image_Load_Opts *opts,
                    char *buf, int size)
 {
    uintptr_t image_id;
@@ -1580,7 +1578,7 @@ cserve2_cache_client_del(Client *client)
 static Image_Entry *
 _image_entry_new(Client *client, int rid,
                  unsigned int client_file_id, unsigned int client_image_id,
-                 Evas_Image_Load_Opts *opts, char *buf, size_t buf_size)
+                 const Evas_Image_Load_Opts *opts, char *buf, size_t buf_size)
 {
    Reference *ref, *oldref;
    Image_Entry *ientry;
@@ -2823,7 +2821,7 @@ int
 cserve2_cache_image_entry_create(Client *client, int rid,
                                  unsigned int client_file_id,
                                  unsigned int client_image_id,
-                                 Evas_Image_Load_Opts *opts)
+                                 const Evas_Image_Load_Opts *opts)
 {
    Image_Data *idata;
    Image_Entry *ientry;
@@ -2832,9 +2830,12 @@ cserve2_cache_image_entry_create(Client *client, int rid,
    unsigned int image_id = 0;
    char buf[4096];
 
+   if (!opts)
+     opts = &empty_lo;
+
    // search whether the image is already loaded by another client
    ref = eina_hash_find(client->files.referencing, &client_file_id);
-   if (ref && opts)
+   if (ref)
      image_id = _image_opts_id_get(ref->entry->id, opts, buf, sizeof(buf));
 
    if (image_id)
