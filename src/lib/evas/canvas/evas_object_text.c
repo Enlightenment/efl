@@ -45,6 +45,7 @@ struct _Evas_Object_Text
       Evas_Object_Text_Item    *ellipsis_start;
       Evas_Object_Text_Item    *ellipsis_end;
       Evas_Coord                w, h;
+      int                       advance;
    } last_computed;
 
    Evas_BiDi_Paragraph_Props  *bidi_par_props;
@@ -707,8 +708,7 @@ _evas_object_text_layout(Evas_Object *eo_obj, Evas_Object_Text *o, Eina_Unicode 
        !memcmp(&o->cur, &o->prev, sizeof (o->cur)) &&
        o->cur.text == text &&
        obj->cur->scale == obj->prev->scale &&
-       o->last_computed.w == obj->cur->geometry.w &&
-       o->last_computed.h == obj->cur->geometry.h)
+       o->last_computed.advance <= obj->cur->geometry.w)
      return;
 
    evas_object_content_change(eo_obj, obj);
@@ -905,6 +905,7 @@ _evas_object_text_layout(Evas_Object *eo_obj, Evas_Object_Text *o, Eina_Unicode 
    if (o->cur.text != text) free(o->cur.text);
    o->cur.text = text;
    o->prev = o->cur;
+   o->last_computed.advance = advance;
 
    _evas_object_text_item_order(eo_obj, o);
 
@@ -2232,10 +2233,10 @@ evas_object_text_render_pre(Evas_Object *eo_obj,
 	 (obj->cur->geometry.h != o->last_computed.h))) ||
        (obj->cur->scale != obj->prev->scale))
      {
-       _evas_object_text_recalc(eo_obj, o->cur.text);
-	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes,
+        _evas_object_text_recalc(eo_obj, o->cur.text);
+        evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes,
 					    eo_obj, obj);
-	goto done;
+        goto done;
      }
    /* now figure what changed and add draw rects
     if it just became visible or invisible */
