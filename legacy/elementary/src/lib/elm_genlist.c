@@ -4475,8 +4475,22 @@ _item_block_recalc(Item_Block *itb,
                   if (!it->item->mincalcd) changed = EINA_TRUE;
                   if (changed)
                     {
-                       _item_realize(it, in, EINA_TRUE);
-                       _elm_genlist_item_unrealize(it, EINA_TRUE);
+                       Eina_Bool doit = EINA_TRUE;
+                       
+                       if (itb->sd->homogeneous)
+                         {
+                            if ((it->group) && (itb->sd->group_item_height == 0))
+                              doit = EINA_TRUE;
+                            else if (itb->sd->item_height == 0)
+                              doit = EINA_TRUE;
+                            else
+                              doit = EINA_FALSE;
+                         }
+                       if (doit)
+                         {
+                            _item_realize(it, in, EINA_TRUE);
+                            _elm_genlist_item_unrealize(it, EINA_TRUE);
+                         }
                     }
                }
              else
