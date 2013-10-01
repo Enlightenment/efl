@@ -740,8 +740,12 @@ _elm_image_smart_memfile_set(Eo *obj, void *_pd, va_list *list)
    evas_object_image_memfile_set
      (sd->img, (void *)img, size, (char *)format, (char *)key);
 
-   sd->preloading = EINA_TRUE;
-   evas_object_image_preload(sd->img, EINA_FALSE);
+   if (evas_object_visible_get(obj))
+     {
+        sd->preloading = EINA_TRUE;
+        evas_object_image_preload(sd->img, EINA_FALSE);
+     }
+
    if (evas_object_image_load_error_get(sd->img) != EVAS_LOAD_ERROR_NONE)
      {
         ERR("Things are going bad for some random " FMT_SIZE_T
@@ -845,6 +849,12 @@ _elm_image_smart_internal_file_set(Eo *obj, Elm_Image_Smart_Data *sd,
 
    evas_object_hide(sd->img);
 
+   if (evas_object_visible_get(obj))
+     {
+        sd->preloading = EINA_TRUE;
+        evas_object_image_preload(sd->img, EINA_FALSE);
+     }
+
    if (evas_object_image_load_error_get(sd->img) != EVAS_LOAD_ERROR_NONE)
      {
         ERR("Things are going bad for '%s' (%p)", file, sd->img);
@@ -887,8 +897,8 @@ _elm_image_smart_download_done(void *data, Elm_Url *url EINA_UNUSED, Eina_Binbuf
      {
         if (evas_object_visible_get(obj))
           {
-             Evas_Object *eobj = elm_image_object_get(obj);
-             evas_object_image_preload(eobj, EINA_FALSE);
+             sd->preloading = EINA_TRUE;
+             evas_object_image_preload(sd->img, EINA_FALSE);
           }
 
         evas_object_smart_callback_call(obj, SIG_DOWNLOAD_DONE, NULL);
