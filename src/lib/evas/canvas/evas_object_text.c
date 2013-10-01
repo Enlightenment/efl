@@ -46,6 +46,7 @@ struct _Evas_Object_Text
       Evas_Object_Text_Item    *ellipsis_end;
       Evas_Coord                w, h;
       int                       advance;
+      Eina_Bool                 ellipsis;
    } last_computed;
 
    Evas_BiDi_Paragraph_Props  *bidi_par_props;
@@ -708,9 +709,11 @@ _evas_object_text_layout(Evas_Object *eo_obj, Evas_Object_Text *o, Eina_Unicode 
        !memcmp(&o->cur, &o->prev, sizeof (o->cur)) &&
        o->cur.text == text &&
        obj->cur->scale == obj->prev->scale &&
-       o->last_computed.advance <= obj->cur->geometry.w)
+       ((o->last_computed.advance <= obj->cur->geometry.w && !o->last_computed.ellipsis) ||
+        o->last_computed.w == obj->cur->geometry.w))
      return;
 
+   o->last_computed.ellipsis = EINA_FALSE;
    evas_object_content_change(eo_obj, obj);
 
    if (o->items) _evas_object_text_items_clean(obj, o);
@@ -776,10 +779,11 @@ _evas_object_text_layout(Evas_Object *eo_obj, Evas_Object_Text *o, Eina_Unicode 
      }
 
    /* Handle ellipsis */
-   if ((o->cur.ellipsis >= 0.0) && (advance > obj->cur->geometry.w) && (obj->cur->geometry.w > 0))
+   if (pos && (o->cur.ellipsis >= 0.0) && (advance > obj->cur->geometry.w) && (obj->cur->geometry.w > 0))
      {
         Evas_Coord ellip_frame = obj->cur->geometry.w;
         Evas_Object_Text_Item *start_ellip_it = NULL, *end_ellip_it = NULL;
+
         /* Account of the ellipsis item width. As long as ellipsis != 0
          * we have a left ellipsis. And the same with 1 and right. */
         if (o->cur.ellipsis != 0)
@@ -841,12 +845,14 @@ _evas_object_text_layout(Evas_Object *eo_obj, Evas_Object_Text *o, Eina_Unicode 
                         0);
                   if (cut > 0)
                     {
+                       
                        start_ellip_it->text_pos = itr->text_pos;
                        start_ellip_it->visual_pos = itr->visual_pos;
                        if (!_layout_text_item_trim(obj, o, itr, cut, EINA_FALSE))
                          {
                             _evas_object_text_item_del(o, itr);
                          }
+                       o->last_computed.ellipsis = EINA_TRUE;
                     }
                }
 
@@ -890,6 +896,7 @@ _evas_object_text_layout(Evas_Object *eo_obj, Evas_Object_Text *o, Eina_Unicode 
                     {
                        itr = (Evas_Object_Text_Item *) EINA_INLIST_GET(itr)->next;
                     }
+                  o->last_computed.ellipsis = EINA_TRUE;
                }
 
              /* Remove the rest of the items */
@@ -897,7 +904,7 @@ _evas_object_text_layout(Evas_Object *eo_obj, Evas_Object_Text *o, Eina_Unicode 
                {
                   Eina_Inlist *itrn = EINA_INLIST_GET(itr)->next;
                   if ((itr != start_ellip_it) && (itr != end_ellip_it))
-                     _evas_object_text_item_del(o, itr);
+		    _evas_object_text_item_del(o, itr);
                   itr = (Evas_Object_Text_Item *) itrn;
                }
           }
@@ -905,7 +912,18 @@ _evas_object_text_layout(Evas_Object *eo_obj, Evas_Object_Text *o, Eina_Unicode 
    if (o->cur.text != text) free(o->cur.text);
    o->cur.text = text;
    o->prev = o->cur;
-   o->last_computed.advance = advance;
+
+   {
+      Evas_Object_Text_Item *itr = o->items;
+      advance = 0;
+
+      while (itr)
+        {
+           advance += itr->adv;
+           itr = (Evas_Object_Text_Item *) EINA_INLIST_GET(itr)->next;
+        }
+      o->last_computed.advance = advance;
+   }
 
    _evas_object_text_item_order(eo_obj, o);
 
@@ -2464,8 +2482,12 @@ _evas_object_text_recalc(Evas_Object *eo_obj, Eina_Unicode *text)
         h = _evas_object_text_vert_advance_get(eo_obj, o);
 	evas_text_style_pad_get(o->cur.style, &l, &r, &t, &b);
 
-        eo_do_super(eo_obj, MY_CLASS,
-                    evas_obj_size_set(w + l + r, h + t + b));
+        if (o->cur.ellipsis >= 0.0)
+          eo_do_super(eo_obj, MY_CLASS,
+                      evas_obj_size_set(obj->cur->geometry.w, h + t + b));
+        else
+          eo_do_super(eo_obj, MY_CLASS,
+                      evas_obj_size_set(w + l + r, h + t + b));
 ////        obj->cur->cache.geometry.validity = 0;
      }
    else
@@ -2473,6 +2495,7 @@ _evas_object_text_recalc(Evas_Object *eo_obj, Eina_Unicode *text)
 	int t = 0, b = 0;
 
 	evas_text_style_pad_get(o->cur.style, NULL, NULL, &t, &b);
+
         eo_do_super(eo_obj, MY_CLASS,
                     evas_obj_size_set(0, o->max_ascent + o->max_descent + t + b));
 ////        obj->cur->cache.geometry.validity = 0;
