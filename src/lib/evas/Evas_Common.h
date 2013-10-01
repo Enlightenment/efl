@@ -400,17 +400,6 @@ typedef struct _Evas_Event_Key_Up        Evas_Event_Key_Up; /**< Event structure
 typedef struct _Evas_Event_Hold          Evas_Event_Hold; /**< Event structure for #EVAS_CALLBACK_HOLD event callbacks */
 typedef struct _Evas_Event_Render_Post   Evas_Event_Render_Post; /**< Event structure that may come with #EVAS_CALLBACK_RENDER_POST event callbacks @since 1.8 */
 
-typedef enum _Evas_Load_Error
-{
-   EVAS_LOAD_ERROR_NONE = 0, /**< No error on load */
-   EVAS_LOAD_ERROR_GENERIC = 1, /**< A non-specific error occurred */
-   EVAS_LOAD_ERROR_DOES_NOT_EXIST = 2, /**< File (or file path) does not exist */
-   EVAS_LOAD_ERROR_PERMISSION_DENIED = 3, /**< Permission denied to an existing file (or path) */
-   EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED = 4, /**< Allocation of resources failure prevented load */
-   EVAS_LOAD_ERROR_CORRUPT_FILE = 5, /**< File corrupt (but was detected as a known format) */
-   EVAS_LOAD_ERROR_UNKNOWN_FORMAT = 6 /**< File is not a known format */
-} Evas_Load_Error; /**< Evas image load error codes one can get - see evas_load_error_str() too. */
-
 typedef enum _Evas_Alloc_Error
 {
    EVAS_ALLOC_ERROR_NONE = 0, /**< No allocation error */
