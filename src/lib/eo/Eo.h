@@ -446,6 +446,15 @@ typedef struct _Eo_Op_Description Eo_Op_Description;
  */
 #define EO_VERSION 1
 
+typedef struct _Eo2_Op_Description
+{
+   void *func;             /**< The static function to call for the op. */
+   void *api_func;         /**< The EAPI function offering this op. */
+   Eo_Op op;               /**< The op. */
+   Eo_Op_Type op_type;     /**< The type of the Op. */
+   const char *doc;        /**< Explanation about the Op. */
+} Eo2_Op_Description;
+
 /**
  * @struct _Eo_Class_Description
  * This struct holds the description of a class.
@@ -460,6 +469,7 @@ struct _Eo_Class_Description
    struct {
         Eo_Op *base_op_id;
         const Eo_Op_Description *descs;
+        Eo2_Op_Description *descs2;       /**< EO2 */
         size_t count;
    } ops; /**< The ops description, should be filled using #EO_CLASS_DESCRIPTION_OPS */
    const Eo_Event_Description **events; /**< The event descriptions for this class. */
@@ -481,7 +491,7 @@ typedef struct _Eo_Class_Description Eo_Class_Description;
  * @param op_descs the op descriptions array.
  * @param count the number of ops in the op descriptions array.
  */
-#define EO_CLASS_DESCRIPTION_OPS(base_op_id, op_descs, count) { base_op_id, op_descs, count }
+#define EO_CLASS_DESCRIPTION_OPS(base_op_id, op_descs, count) { base_op_id, op_descs, NULL, count }
 
 /**
  * @def EO_OP_DESCRIPTION(op, doc)
@@ -590,6 +600,231 @@ EAPI Eina_Bool eo_init(void);
  */
 EAPI Eina_Bool eo_shutdown(void);
 
+/************************************ EO2 ************************************/
+
+#define EO2_VERSION 2
+
+// computes size of Eo2_Op_Description[]
+#define EO2_OP_DESC_SIZE(desc) (sizeof(desc)/sizeof(*desc) - 1)
+
+// An helper macro to help populating #Eo_Class_Description.
+#define EO2_CLASS_DESCRIPTION_OPS(op_descs) { NULL, NULL, op_descs, EO2_OP_DESC_SIZE(op_descs) }
+
+// to fetch internal function and object data at once
+typedef struct _Eo2_Op_Call_Data
+{
+   Eo       *obj_id;
+   Eo_Class *klass_id;
+   void     *func;
+   void     *data;
+} Eo2_Op_Call_Data;
+
+typedef void (*Eo2_Hook_Call)(const Eo_Class *klass_id, const Eo *obj_id, void *func, ...);
+
+EAPI extern Eo2_Hook_Call eo2_hook_call_pre;
+EAPI extern Eo2_Hook_Call eo2_hook_call_post;
+
+// to pass the internal function call to EO2_FUNC_BODY (as Func parameter)
+#define EO2_FUNC_CALL(...) __VA_ARGS__
+#define EO2_CLASS_FUNC_CALL(...) __VA_ARGS__
+
+#define EO2_HOOK_CALL_PREPARE(Hook)                                     \
+     if (Hook)                                                          \
+       Hook(call.klass_id, call.obj_id, call.func);
+
+#define EO2_HOOK_CALL_PREPAREV(Hook, ...)                               \
+     if (Hook)                                                          \
+       Hook(call.klass_id, call.obj_id, call.func, __VA_ARGS__);
+
+// cache OP id, get real fct and object data then do the call
+#define EO2_FUNC_COMMON_OP(Name, DefRet, Type)                          \
+     Eo2_Op_Call_Data call;                                             \
+     static Eo_Op op = EO_NOOP;                                         \
+     if ( op == EO_NOOP )                                               \
+        op = eo2_api_op_id_get((void*)Name, Type);                      \
+     if (!eo2_call_resolve(op, &call)) return DefRet;                   \
+     __##Name##_func _func_ = (__##Name##_func) call.func;              \
+
+// to define an EAPI function
+#define EO2_FUNC_BODY(Name, Ret, DefRet)                                \
+  Ret                                                                   \
+  Name(void)                                                            \
+  {                                                                     \
+     typedef Ret (*__##Name##_func)(Eo *, void *obj_data);              \
+     Ret _r;								\
+     EO2_FUNC_COMMON_OP(Name, DefRet, EO_OP_TYPE_REGULAR);              \
+     EO2_HOOK_CALL_PREPARE(eo2_hook_call_pre);                          \
+     _r = _func_(call.obj_id, call.data);                               \
+     EO2_HOOK_CALL_PREPARE(eo2_hook_call_post);                         \
+     return _r;                                                         \
+  }
+
+#define EO2_VOID_FUNC_BODY(Name)					\
+  void									\
+  Name(void)                                                            \
+  {                                                                     \
+     typedef void (*__##Name##_func)(Eo *, void *obj_data);             \
+     EO2_FUNC_COMMON_OP(Name, , EO_OP_TYPE_REGULAR);                    \
+     EO2_HOOK_CALL_PREPARE(eo2_hook_call_pre);                          \
+     _func_(call.obj_id, call.data);                                    \
+     EO2_HOOK_CALL_PREPARE(eo2_hook_call_post);                         \
+  }
+
+#define EO2_FUNC_BODYV(Name, Ret, DefRet, Arguments, ...)               \
+  Ret                                                                   \
+  Name(__VA_ARGS__)                                                     \
+  {                                                                     \
+     typedef Ret (*__##Name##_func)(Eo *, void *obj_data, __VA_ARGS__); \
+     Ret _r;								\
+     EO2_FUNC_COMMON_OP(Name, DefRet, EO_OP_TYPE_REGULAR);              \
+     EO2_HOOK_CALL_PREPAREV(eo2_hook_call_pre, Arguments);              \
+     _r = _func_(call.obj_id, call.data, Arguments);                    \
+     EO2_HOOK_CALL_PREPAREV(eo2_hook_call_post, Arguments);             \
+     return _r;                                                         \
+  }
+
+#define EO2_VOID_FUNC_BODYV(Name, Arguments, ...)                       \
+  void                                                                  \
+  Name(__VA_ARGS__)                                                     \
+  {                                                                     \
+     typedef void (*__##Name##_func)(Eo *, void *obj_data, __VA_ARGS__);\
+     EO2_FUNC_COMMON_OP(Name, , EO_OP_TYPE_REGULAR);                    \
+     EO2_HOOK_CALL_PREPAREV(eo2_hook_call_pre, Arguments);              \
+     _func_(call.obj_id, call.data, Arguments);                         \
+     EO2_HOOK_CALL_PREPAREV(eo2_hook_call_post, Arguments);             \
+  }
+
+// to define a EAPI class function
+#define EO2_CLASS_FUNC_BODY(Name, Ret, DefRet)                          \
+  Ret                                                                   \
+  Name(void)                                                            \
+  {                                                                     \
+     typedef Ret (*__##Name##_func)(Eo_Class *);                        \
+     Ret _r;                                                            \
+     EO2_FUNC_COMMON_OP(Name, DefRet, EO_OP_TYPE_CLASS);                \
+     EO2_HOOK_CALL_PREPARE(eo2_hook_call_pre);                          \
+     _r = _func_(call.klass_id);                                        \
+     EO2_HOOK_CALL_PREPARE(eo2_hook_call_post);                         \
+     return _r;                                                         \
+  }
+
+#define EO2_VOID_CLASS_FUNC_BODY(Name)                                  \
+  void                                                                  \
+  Name(void)                                                            \
+  {                                                                     \
+     typedef Ret (*__##Name##_func)(Eo_Class *);                        \
+     Ret _r;                                                            \
+     EO2_FUNC_COMMON_OP(Name, , EO_OP_TYPE_CLASS);                      \
+     EO2_HOOK_CALL_PREPARE(eo2_hook_call_pre);                          \
+     _func_(call.klass_id);                                             \
+     EO2_HOOK_CALL_PREPARE(eo2_hook_call_post);                         \
+     return _r;                                                         \
+  }
+
+#define EO2_CLASS_FUNC_BODYV(Name, Ret, DefRet, Arguments, ...)   \
+  Ret                                                             \
+  Name(__VA_ARGS__)                                               \
+  {                                                               \
+     typedef Ret (*__##Name##_func)(Eo_Class *, __VA_ARGS__);     \
+     Ret _r;                                                      \
+     EO2_FUNC_COMMON_OP(Name, DefRet, EO_OP_TYPE_CLASS);          \
+     EO2_HOOK_CALL_PREPAREV(eo2_hook_call_pre, Arguments);        \
+     _r = _func_(call.klass_id, Arguments);                       \
+     EO2_HOOK_CALL_PREPAREV(eo2_hook_call_post, Arguments);       \
+     return _r;                                                   \
+  }
+
+#define EO2_VOID_CLASS_FUNC_BODYV(Name, Arguments, ...)           \
+  void                                                            \
+  Name(__VA_ARGS__)                                               \
+  {                                                               \
+     typedef void (*__##Name##_func)(Eo_Class *, __VA_ARGS__);    \
+     EO2_FUNC_COMMON_OP(Name, , EO_OP_TYPE_CLASS);                \
+     EO2_HOOK_CALL_PREPAREV(eo2_hook_call_pre, Arguments);        \
+     _func_(call.klass_id, Arguments);                            \
+     EO2_HOOK_CALL_PREPAREV(eo2_hook_call_post, Arguments);       \
+  }
+
+// OP ID of an overriding function
+#define EO2_OP_OVERRIDE ((Eo_Op) -1)
+
+#define EO2_OP_FUNC(_private, _api, _doc) {_private, _api, EO_NOOP, EO_OP_TYPE_REGULAR, _doc}
+#define EO2_OP_CLASS_FUNC(_private, _api, _doc) {_private, _api, EO_NOOP, EO_OP_TYPE_CLASS, _doc}
+#define EO2_OP_FUNC_OVERRIDE(_private, _api) {_private, _api, EO2_OP_OVERRIDE, EO_OP_TYPE_REGULAR, NULL}
+#define EO2_OP_CLASS_FUNC_OVERRIDE(_private, _api) {_private, _api, EO2_OP_OVERRIDE, EO_OP_TYPE_CLASS, NULL}
+#define EO2_OP_SENTINEL { NULL, NULL, 0, EO_OP_TYPE_INVALID, NULL}
+
+// returns the OP id corresponding to the given api_func
+EAPI Eo_Op eo2_api_op_id_get(const void *api_func, const Eo_Op_Type);
+
+// gets the real function pointer and the object data
+#define eo2_call_resolve(op, call) eo2_call_resolve_internal(NULL, op, call)
+EAPI Eina_Bool eo2_call_resolve_internal(const Eo_Class *klass, const Eo_Op op, Eo2_Op_Call_Data *call);
+
+// start of eo2_do barrier, gets the object pointer and ref it, put it on the stask
+EAPI Eina_Bool eo2_do_start(Eo *obj_id, const Eina_Bool do_super, const char *file, const char *func, int line);
+EAPI Eina_Bool eo2_class_do_start(const Eo_Class *klass_id, const Eina_Bool do_super, const char *file, const char *func, int line);
+
+// end of the eo2_do barrier, unref the obj, move the stack pointer
+EAPI void eo2_do_end(Eo **ojb);
+EAPI void eo2_class_do_end(const Eo_Class **klass);
+
+EAPI int eo2_call_stack_depth();
+
+#define EO2_DO_CLEANUP __attribute__((cleanup(eo2_do_end)))
+#define EO2_CLASS_DO_CLEANUP __attribute__((cleanup(eo2_class_do_end)))
+
+// eo object method calls batch,
+#define eo2_do(objid, ...)                            \
+  do                                                  \
+    {                                                 \
+       Eo *_objid_ = objid;                           \
+       if (eo2_do_start(_objid_, EINA_FALSE, __FILE__, __FUNCTION__, __LINE__))	\
+         {                                            \
+            Eo *_id_clean_ EO2_DO_CLEANUP = _objid_;  \
+            __VA_ARGS__;                              \
+            (void) _id_clean_;                        \
+         }                                            \
+    } while (0)
+
+#define eo2_do_super(objid, ...)                      \
+  do                                                  \
+    {                                                 \
+       Eo *_objid_ = objid;                           \
+       if (eo2_do_start(_objid_, EINA_TRUE, __FILE__, __FUNCTION__, __LINE__))          \
+         {                                            \
+            Eo *_id_clean_ EO2_DO_CLEANUP = _objid_;  \
+            __VA_ARGS__;                              \
+            (void) _id_clean_;                        \
+         }                                            \
+    } while (0)
+
+#define eo2_class_do(clsid, ...)                                        \
+  do                                                                    \
+    {                                                                   \
+       const Eo_Class *_clsid_ = clsid;                                 \
+       if (eo2_class_do_start(_clsid_, EINA_FALSE, __FILE__, __FUNCTION__, __LINE__)) \
+         {                                                              \
+            const Eo_Class *_id_clean_ EO2_CLASS_DO_CLEANUP = _clsid_;  \
+            __VA_ARGS__;                                                \
+            (void) _id_clean_;                                          \
+         }                                                              \
+    } while (0)
+
+#define eo2_class_super_do(clsid, ...)                                  \
+  do                                                                    \
+    {                                                                   \
+       const Eo_Class *_clsid_ = clsid;                                 \
+       if (eo2_class_do_start(_clsid_, EINA_TRUE, __FILE__, __FUNCTION__, __LINE__)) \
+         {                                                              \
+            const Eo_Class *_id_clean_ EO2_CLASS_DO_CLEANUP = _clsid_;  \
+            __VA_ARGS__;                                                \
+            (void) _id_clean_;                                          \
+         }                                                              \
+    } while (0)
+
+/*****************************************************************************/
+
 /**
  * @def eo_do
  * A convenience wrapper around eo_do_internal()
@@ -695,6 +930,17 @@ EAPI void eo_error_set_internal(const Eo *obj, const char *file, int line);
     const Eo_Class *_tmp_klass = klass; \
     eo_add_internal(__FILE__, __LINE__, _tmp_klass, parent, eo_constructor(), ## __VA_ARGS__, EO_NOOP); \
     })
+#define eo2_add(klass, parent, ...) \
+   ({ \
+    const Eo_Class *_tmp_klass = klass; \
+    Eo *_tmp_obj = eo2_add_internal_start(__FILE__, __LINE__, _tmp_klass, parent); \
+    eo2_do(_tmp_obj, \
+           eo2_constructor(); \
+           __VA_ARGS__; \
+           _tmp_obj = eo2_add_internal_end(__FILE__, __LINE__, _tmp_obj); \
+          ); \
+    _tmp_obj; \
+    })
 
 /**
  * @def eo_add_custom
@@ -711,6 +957,16 @@ EAPI void eo_error_set_internal(const Eo *obj, const char *file, int line);
     const Eo_Class *_tmp_klass = klass; \
     eo_add_internal(__FILE__, __LINE__, _tmp_klass, parent, ## __VA_ARGS__, EO_NOOP); \
     })
+#define eo2_add_custom(klass, parent, ...) \
+   ({ \
+    const Eo_Class *_tmp_klass = klass; \
+    Eo *_tmp_obj = eo2_add_internal_start(__FILE__, __LINE__, _tmp_klass, parent); \
+    eo2_do(_tmp_obj, \
+           __VA_ARGS__; \
+           _tmp_obj = eo2_add_internal_end(__FILE__, __LINE__, _tmp_obj); \
+          ); \
+    _tmp_obj; \
+    })
 
 /**
  * @brief Create a new object.
@@ -725,6 +981,8 @@ EAPI void eo_error_set_internal(const Eo *obj, const char *file, int line);
  * @see #eo_add
  */
 EAPI Eo *eo_add_internal(const char *file, int line, const Eo_Class *klass, Eo *parent, ...);
+EAPI Eo * eo2_add_internal_start(const char *file, int line, const Eo_Class *klass_id, Eo *parent_id);
+EAPI Eo * eo2_add_internal_end(const char *file, int line, const Eo *obj);
 
 /**
  * @brief Get a pointer to the data of an object for a specific class.
@@ -1009,11 +1267,13 @@ enum {
  * The class type for the Eo base class.
  */
 #define EO_BASE_CLASS eo_base_class_get()
+#define EO2_BASE_CLASS eo2_base_class_get()
 /**
  * @brief Use #EO_BASE_CLASS
  * @internal
  * */
 EAPI const Eo_Class *eo_base_class_get(void);
+EAPI const Eo_Class *eo2_base_class_get(void);
 
 /**
  * @typedef eo_base_data_free_func
@@ -1073,6 +1333,8 @@ enum {
  * @see #eo_base_data_del
  */
 #define eo_base_data_set(key, data, free_func) EO_BASE_ID(EO_BASE_SUB_ID_DATA_SET), EO_TYPECHECK(const char *, key), EO_TYPECHECK(const void *, data), EO_TYPECHECK(eo_base_data_free_func, free_func)
+EAPI void
+eo2_base_data_set(const char *key, const void *data, eo_base_data_free_func free_func);
 
 /**
  * @def eo_base_data_get(key, data)
@@ -1084,6 +1346,8 @@ enum {
  * @see #eo_base_data_del
  */
 #define eo_base_data_get(key, data) EO_BASE_ID(EO_BASE_SUB_ID_DATA_GET), EO_TYPECHECK(const char *, key), EO_TYPECHECK(void **, data)
+EAPI void
+eo2_base_data_get(const char *key);
 
 /**
  * @def eo_dbg_info_get(root_node)
@@ -1091,6 +1355,8 @@ enum {
  * @param[in] root node of the tree
  */
 #define eo_dbg_info_get(root_node) EO_BASE_ID(EO_BASE_SUB_ID_DBG_INFO_GET), EO_TYPECHECK(Eo_Dbg_Info *, root_node)
+EAPI void
+eo2_dbg_info_get(Eo_Dbg_Info *root_node);
 
 /**
  * @def eo_base_data_del(key)
@@ -1101,6 +1367,8 @@ enum {
  * @see #eo_base_data_get
  */
 #define eo_base_data_del(key) EO_BASE_ID(EO_BASE_SUB_ID_DATA_DEL), EO_TYPECHECK(const char *, key)
+EAPI void
+eo2_base_data_del(const char *key);
 
 /**
  * @brief Set the parent of an object
@@ -1114,6 +1382,8 @@ enum {
  * @see eo_parent_get()
  */
 #define eo_parent_set(parent) EO_BASE_ID(EO_BASE_SUB_ID_PARENT_SET), EO_TYPECHECK(Eo *, parent)
+EAPI void
+eo2_parent_set(Eo *parent_id);
 
 /**
  * @brief Get the parent of an object
@@ -1122,6 +1392,8 @@ enum {
  * @see eo_parent_set()
  */
 #define eo_parent_get(parent) EO_BASE_ID(EO_BASE_SUB_ID_PARENT_GET), EO_TYPECHECK(Eo **, parent)
+EAPI Eo *
+eo2_parent_get();
 
 /**
  * @brief Get an iterator on all childrens
@@ -1131,6 +1403,8 @@ enum {
  * @see eo_parent_set()
  */
 #define eo_children_iterator_new(it) EO_BASE_ID(EO_BASE_SUB_ID_CHILDREN_ITERATOR_NEW), EO_TYPECHECK(Eina_Iterator **, it)
+EAPI Eina_Iterator *
+eo2_children_iterator_new();
 
 /**
  * @def eo_wref_add
@@ -1145,6 +1419,8 @@ enum {
  * @see #eo_wref_del
  */
 #define eo_wref_add(wref) EO_BASE_ID(EO_BASE_SUB_ID_WREF_ADD), EO_TYPECHECK(Eo **, wref)
+EAPI void
+eo2_wref_add(Eo **wref);
 
 /**
  * @def eo_wref_del
@@ -1154,6 +1430,8 @@ enum {
  * @see #eo_wref_add
  */
 #define eo_wref_del(wref) EO_BASE_ID(EO_BASE_SUB_ID_WREF_DEL), EO_TYPECHECK(Eo **, wref)
+EAPI void
+eo2_wref_del(Eo **wref);
 
 /**
  * @def eo_weak_ref
@@ -1170,6 +1448,10 @@ enum {
 #define eo_weak_ref(wref)			\
   do {						\
     if (*wref) eo_do(*wref, eo_wref_add(wref));	\
+  } while (0);
+#define eo2_weak_ref(wref)			   \
+  do {						   \
+    if (*wref) eo2_do(*wref, eo2_wref_add(wref));  \
   } while (0);
 
 /**
@@ -1189,6 +1471,10 @@ enum {
   do {						\
     if (*wref) eo_do(*wref, eo_wref_del(wref));	\
   } while (0);
+#define eo2_weak_unref(wref)			   \
+  do {						   \
+    if (*wref) eo2_do(*wref, eo2_wref_del(wref));  \
+  } while (0);
 
 /**
  * @def eo_wref_del_safe
@@ -1201,6 +1487,7 @@ enum {
  * @see #eo_wref_del
  */
 #define eo_wref_del_safe(wref) eo_weak_unref(wref)
+#define eo2_wref_del_safe(wref) eo2_weak_unref(wref)
 
 /**
  * @def eo_constructor
@@ -1211,6 +1498,8 @@ enum {
  * @see #eo_destructor
  */
 #define eo_constructor() EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR)
+EAPI void
+eo2_constructor();
 
 /**
  * @def eo_destructor
@@ -1221,6 +1510,8 @@ enum {
  * @see #eo_constructor
  */
 #define eo_destructor() EO_BASE_ID(EO_BASE_SUB_ID_DESTRUCTOR)
+EAPI void
+eo2_destructor();
 
 /**
  * @addtogroup Eo_Events Eo's Event Handling
@@ -1313,6 +1604,8 @@ struct _Eo_Callback_Array_Item
  * @see eo_event_callback_forwarder_del()
  */
 #define eo_event_callback_forwarder_add(desc, new_obj) EO_BASE_ID(EO_BASE_SUB_ID_EVENT_CALLBACK_FORWARDER_ADD), EO_TYPECHECK(const Eo_Event_Description *, desc), EO_TYPECHECK(Eo *, new_obj)
+EAPI void
+eo2_event_callback_forwarder_add(const Eo_Event_Description *desc, Eo *new_obj);
 
 /**
  * @def eo_event_callback_forwarder_del
@@ -1323,6 +1616,8 @@ struct _Eo_Callback_Array_Item
  * @see eo_event_callback_forwarder_add()
  */
 #define eo_event_callback_forwarder_del(desc, new_obj) EO_BASE_ID(EO_BASE_SUB_ID_EVENT_CALLBACK_FORWARDER_DEL), EO_TYPECHECK(const Eo_Event_Description *, desc), EO_TYPECHECK(Eo *, new_obj)
+EAPI void
+eo2_event_callback_forwarder_del(const Eo_Event_Description *desc, Eo *new_obj);
 
 /**
  * @def eo_event_freeze
@@ -1333,6 +1628,8 @@ struct _Eo_Callback_Array_Item
  * @see #eo_event_thaw
  */
 #define eo_event_freeze() EO_BASE_ID(EO_BASE_SUB_ID_EVENT_FREEZE)
+EAPI void
+eo2_event_freeze();
 
 /**
  * @def eo_event_thaw
@@ -1343,6 +1640,8 @@ struct _Eo_Callback_Array_Item
  * @see #eo_event_freeze
  */
 #define eo_event_thaw() EO_BASE_ID(EO_BASE_SUB_ID_EVENT_THAW)
+EAPI void
+eo2_event_thaw();
 
 /**
  * @def eo_event_freeze_get
@@ -1356,6 +1655,8 @@ struct _Eo_Callback_Array_Item
  * @see #eo_event_thaw
  */
 #define eo_event_freeze_get(fcount) EO_BASE_ID(EO_BASE_SUB_ID_EVENT_FREEZE_GET), EO_TYPECHECK(int *, fcount)
+EAPI int
+eo2_event_freeze_get();
 
 /**
  * @def eo_event_global_freeze
@@ -1367,6 +1668,8 @@ struct _Eo_Callback_Array_Item
  * @see #eo_event_global_thaw
  */
 #define eo_event_global_freeze() EO_BASE_ID(EO_BASE_SUB_ID_EVENT_GLOBAL_FREEZE)
+EAPI void
+eo2_event_global_freeze();
 
 /**
  * @def eo_event_global_thaw
@@ -1378,6 +1681,8 @@ struct _Eo_Callback_Array_Item
  * @see #eo_event_global_freeze
  */
 #define eo_event_global_thaw() EO_BASE_ID(EO_BASE_SUB_ID_EVENT_GLOBAL_THAW)
+EAPI void
+eo2_event_global_thaw();
 
 /**
  * @def eo_event_global_freeze_get
@@ -1392,6 +1697,8 @@ struct _Eo_Callback_Array_Item
  * @see #eo_event_global_thaw
  */
 #define eo_event_global_freeze_get(fcount) EO_BASE_ID(EO_BASE_SUB_ID_EVENT_GLOBAL_FREEZE_GET), EO_TYPECHECK(int *, fcount)
+EAPI int
+eo2_event_global_freeze_get();
 
 /**
  * @def eo_event_callback_add(obj, desc, cb, data)
@@ -1407,6 +1714,9 @@ struct _Eo_Callback_Array_Item
 #define eo_event_callback_add(desc, cb, data) \
    eo_event_callback_priority_add(desc, \
          EO_CALLBACK_PRIORITY_DEFAULT, cb, data)
+#define eo2_event_callback_add(desc, cb, data) \
+   eo2_event_callback_priority_add(desc, \
+         EO_CALLBACK_PRIORITY_DEFAULT, cb, data)
 
 /**
  * @def eo_event_callback_priority_add
@@ -1421,6 +1731,11 @@ struct _Eo_Callback_Array_Item
  * @see #eo_event_callback_add
  */
 #define eo_event_callback_priority_add(desc, priority, cb, data) EO_BASE_ID(EO_BASE_SUB_ID_EVENT_CALLBACK_PRIORITY_ADD), EO_TYPECHECK(const Eo_Event_Description *, desc), EO_TYPECHECK(Eo_Callback_Priority, priority), EO_TYPECHECK(Eo_Event_Cb, cb), EO_TYPECHECK(const void *, data)
+EAPI void
+eo2_event_callback_priority_add(const Eo_Event_Description *desc,
+                                Eo_Callback_Priority priority,
+                                Eo_Event_Cb func,
+                                const void *user_data);
 
 /**
  * @def eo_event_callback_del
@@ -1431,6 +1746,10 @@ struct _Eo_Callback_Array_Item
  *
  */
 #define eo_event_callback_del(desc, func, user_data) EO_BASE_ID(EO_BASE_SUB_ID_EVENT_CALLBACK_DEL), EO_TYPECHECK(const Eo_Event_Description *, desc), EO_TYPECHECK(Eo_Event_Cb, func), EO_TYPECHECK(const void *, user_data)
+EAPI void
+eo2_event_callback_del(const Eo_Event_Description *desc,
+                       Eo_Event_Cb func,
+                       const void *user_data);
 
 /**
  * @def eo_event_callback_array_add(obj, desc, cb, data)
@@ -1445,6 +1764,9 @@ struct _Eo_Callback_Array_Item
 #define eo_event_callback_array_add(array, data) \
    eo_event_callback_array_priority_add(array, \
          EO_CALLBACK_PRIORITY_DEFAULT, data)
+#define eo2_event_callback_array_add(array, data) \
+   eo2_event_callback_array_priority_add(array, \
+         EO_CALLBACK_PRIORITY_DEFAULT, data)
 
 /**
  * @def eo_event_callback_priority_add
@@ -1458,6 +1780,10 @@ struct _Eo_Callback_Array_Item
  * @see #eo_event_callback_add
  */
 #define eo_event_callback_array_priority_add(array, priority, data) EO_BASE_ID(EO_BASE_SUB_ID_EVENT_CALLBACK_ARRAY_PRIORITY_ADD), EO_TYPECHECK(const Eo_Callback_Array_Item *, array), EO_TYPECHECK(Eo_Callback_Priority, priority), EO_TYPECHECK(const void *, data)
+EAPI void
+eo2_event_callback_array_priority_add(const Eo_Callback_Array_Item *array,
+                                      Eo_Callback_Priority priority,
+                                      const void *user_data);
 
 /**
  * @def eo_event_callback_del
@@ -1467,6 +1793,9 @@ struct _Eo_Callback_Array_Item
  *
  */
 #define eo_event_callback_array_del(array, user_data) EO_BASE_ID(EO_BASE_SUB_ID_EVENT_CALLBACK_ARRAY_DEL), EO_TYPECHECK(const Eo_Callback_Array_Item *, array), EO_TYPECHECK(const void *, user_data)
+EAPI void
+eo2_event_callback_array_del(const Eo_Callback_Array_Item *array,
+                             const void *user_data);
 
 /**
  * @def eo_event_callback_call
@@ -1476,6 +1805,8 @@ struct _Eo_Callback_Array_Item
  * @param[out] aborted @c EINA_TRUE if one of the callbacks aborted the call, @c EINA_FALSE otherwise.
  */
 #define eo_event_callback_call(desc, event_info, aborted) EO_BASE_ID(EO_BASE_SUB_ID_EVENT_CALLBACK_CALL), EO_TYPECHECK(const Eo_Event_Description *, desc), EO_TYPECHECK(const void *, event_info), EO_TYPECHECK(Eina_Bool *, aborted)
+EAPI Eina_Bool
+eo2_event_callback_call(const Eo_Event_Description *desc, void *event_info);
 
 /**
  * @}
