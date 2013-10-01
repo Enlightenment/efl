@@ -228,6 +228,8 @@ _index_box_auto_fill(Evas_Object *obj,
 
         edje_object_size_min_restricted_calc(o, NULL, &mh, 0, 0);
 
+        evas_object_del(o);
+
         EINA_LIST_FOREACH(sd->items, l, it)
            if (it->level == level) num_of_items++;
 
