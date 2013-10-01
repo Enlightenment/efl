@@ -1896,6 +1896,10 @@ evas_render_updates_internal(Evas *eo_e,
           }
         else if (haveup)
           {
+             EINA_LIST_FOREACH(e->video_objects, ll, eo_obj)
+               {
+                  _evas_object_image_video_overlay_do(eo_obj);
+               }
              evas_event_callback_call(eo_e, EVAS_CALLBACK_RENDER_FLUSH_PRE, NULL);
              e->engine.func->output_flush(e->engine.data.output,
                                           EVAS_RENDER_MODE_SYNC);
@@ -2085,6 +2089,12 @@ evas_render_wakeup(Evas *eo_e)
    /* flush redraws */
    if (haveup)
      {
+        Eina_List *ll;
+        Evas_Object *eo_obj;
+        EINA_LIST_FOREACH(e->video_objects, ll, eo_obj)
+          {
+             _evas_object_image_video_overlay_do(eo_obj);
+          }
         evas_event_callback_call(eo_e, EVAS_CALLBACK_RENDER_FLUSH_PRE, NULL);
         e->engine.func->output_flush(e->engine.data.output,
                                      EVAS_RENDER_MODE_ASYNC_END);

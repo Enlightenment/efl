@@ -126,6 +126,13 @@ struct _Evas_Object_Image
    Eina_Bool         proxy_src_clip : 1;
    Eina_Bool         written : 1;
    Eina_Bool         direct_render : 1;
+   struct
+   {
+      Eina_Bool      video_move : 1;
+      Eina_Bool      video_resize : 1;
+      Eina_Bool      video_show : 1;
+      Eina_Bool      video_hide : 1;
+   } delayed;
 };
 
 /* private methods for image objects */
@@ -5213,21 +5220,21 @@ _evas_object_image_video_overlay_show(Evas_Object *eo_obj)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    Evas_Object_Image *o = eo_data_scope_get(eo_obj, MY_CLASS);
-   Evas_Public_Data *e = obj->layer->evas;
 
    if (obj->cur->cache.clip.x != obj->prev->cache.clip.x ||
        obj->cur->cache.clip.y != obj->prev->cache.clip.y ||
        o->created || !o->video_visible)
-     o->pixels->video.move(o->pixels->video.data, eo_obj, &o->pixels->video,
-                           obj->cur->cache.clip.x + e->framespace.x,
-                           obj->cur->cache.clip.y + e->framespace.y);
+     o->delayed.video_move = EINA_TRUE;
+
    if (obj->cur->cache.clip.w != obj->prev->cache.clip.w ||
        obj->cur->cache.clip.h != obj->prev->cache.clip.h ||
        o->created || !o->video_visible)
-     o->pixels->video.resize(o->pixels->video.data, eo_obj, &o->pixels->video, obj->cur->cache.clip.w, obj->cur->cache.clip.h);
+     o->delayed.video_resize = EINA_TRUE;
+
    if (!o->video_visible || o->created)
      {
-        o->pixels->video.show(o->pixels->video.data, eo_obj, &o->pixels->video);
+        o->delayed.video_show = EINA_TRUE;
+        o->delayed.video_hide = EINA_FALSE;
      }
    else
      {
@@ -5254,11 +5261,43 @@ _evas_object_image_video_overlay_hide(Evas_Object *eo_obj)
    Evas_Object_Image *o = eo_data_scope_get(eo_obj, MY_CLASS);
 
    if (o->video_visible || o->created)
-     o->pixels->video.hide(o->pixels->video.data, eo_obj, &o->pixels->video);
+     {
+        o->delayed.video_hide = EINA_TRUE;
+        o->delayed.video_show = EINA_FALSE;
+     }
    if (evas_object_is_visible(eo_obj, obj))
      o->pixels->video.update_pixels(o->pixels->video.data, eo_obj, &o->pixels->video);
    o->video_visible = EINA_FALSE;
    o->created = EINA_FALSE;
+}
+
+void
+_evas_object_image_video_overlay_do(Evas_Object *eo_obj)
+{
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Object_Image *o = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Public_Data *e = obj->layer->evas;
+
+   if (o->delayed.video_move)
+     o->pixels->video.move(o->pixels->video.data, eo_obj, &o->pixels->video,
+                           obj->cur->cache.clip.x + e->framespace.x,
+                           obj->cur->cache.clip.y + e->framespace.y);
+
+   if (o->delayed.video_resize)
+     o->pixels->video.resize(o->pixels->video.data, eo_obj,
+                             &o->pixels->video,
+                             obj->cur->cache.clip.w,
+                             obj->cur->cache.clip.h);
+
+   if (o->delayed.video_show)
+     o->pixels->video.show(o->pixels->video.data, eo_obj, &o->pixels->video);
+   else if (o->delayed.video_hide)
+     o->pixels->video.hide(o->pixels->video.data, eo_obj, &o->pixels->video);
+
+   o->delayed.video_move = EINA_FALSE;
+   o->delayed.video_resize = EINA_FALSE;
+   o->delayed.video_show = EINA_FALSE;
+   o->delayed.video_hide = EINA_FALSE;
 }
 
 static void
