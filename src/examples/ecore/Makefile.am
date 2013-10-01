@@ -179,8 +179,7 @@ ecore_fd_handler_example_LDADD = $(ECORE_COMMON_LDADD)
 if HAVE_CRYPTO_GNUTLS
 EXTRA_PROGRAMS += ecore_fd_handler_gnutls_example
 ecore_fd_handler_gnutls_example_SOURCES = ecore_fd_handler_gnutls_example.c
-ecore_fd_handler_gnutls_example_LDADD = $(ECORE_COMMON_LDADD) @ECORE_CON_LIBS@
-ecore_fd_handler_gnutls_example_CFLAGS = @ECORE_CON_CFLAGS@
+ecore_fd_handler_gnutls_example_LDADD = $(ECORE_CON_COMMON_LDADD)
 endif
 
 ecore_file_download_example_SOURCES = ecore_file_download_example.c
