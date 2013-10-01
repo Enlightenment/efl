@@ -230,6 +230,62 @@ evas_common_font_get_line_advance(RGBA_Font *fn)
 //   return ret;
 }
 
+EAPI int
+evas_common_font_instance_underline_position_get(RGBA_Font_Int *fi)
+{
+   int position = 0;
+
+   if (!fi) goto end;
+
+   evas_common_font_int_reload(fi);
+   if (fi->src->current_size != fi->size)
+     {
+        FTLOCK();
+        FT_Activate_Size(fi->ft.size);
+        FTUNLOCK();
+        fi->src->current_size = fi->size;
+     }
+
+   position = FT_MulFix(fi->src->ft.face->underline_position,
+         fi->src->ft.face->size->metrics.x_scale);
+   position = FONT_METRIC_ROUNDUP(abs(position));
+
+end:
+   /* This almost surely means a broken font, offset at least by one pixel. */
+   if (position == 0)
+      position = 1;
+
+   return position;
+}
+
+EAPI int
+evas_common_font_instance_underline_thickness_get(RGBA_Font_Int *fi)
+{
+   int thickness = 0;
+
+   if (!fi) goto end;
+
+   evas_common_font_int_reload(fi);
+   if (fi->src->current_size != fi->size)
+     {
+        FTLOCK();
+        FT_Activate_Size(fi->ft.size);
+        FTUNLOCK();
+        fi->src->current_size = fi->size;
+     }
+
+   thickness = FT_MulFix(fi->src->ft.face->underline_thickness,
+         fi->src->ft.face->size->metrics.x_scale);
+   thickness = FONT_METRIC_ROUNDUP(thickness);
+
+end:
+   /* This almost surely means a broken font, make it at least one pixel. */
+   if (thickness == 0)
+      thickness = 1;
+
+   return thickness;
+}
+
 /* Set of common functions that are used in a couple of places. */
 
 static void
