@@ -1541,7 +1541,11 @@ _font_entry_glyph_map_rebuild_check(Font_Entry *fe, Font_Hint_Flags hints)
              gl = fash_gl_find(fe->fash[hints], gd->index);
              if (gl && gl->base.bitmap.buffer) continue;
 
-             if (!gl) gl = calloc(1, sizeof(*gl));
+             if (!gl)
+               {
+                  gl = calloc(1, sizeof(*gl));
+                  eina_clist_element_init(&gl->map_entry);
+               }
              gl->map = fe->map;
              gl->offset = gd->offset;
              gl->size = gd->size;
@@ -1555,7 +1559,8 @@ _font_entry_glyph_map_rebuild_check(Font_Entry *fe, Font_Hint_Flags hints)
              gl->idx = gd->index;
              gl->rid = 0;
 
-             eina_clist_add_head(&fe->map->glyphs, &gl->map_entry);
+             if (!eina_clist_element_is_linked(&gl->map_entry))
+               eina_clist_add_head(&fe->map->glyphs, &gl->map_entry);
              fash_gl_add(fe->fash[hints], gd->index, gl);
              cnt++;
           }
@@ -1676,8 +1681,12 @@ _glyph_request_cb(void *data, const void *msg, int size)
 
              if (gl->offset + glsize > (size_t) fe->map->mempool.size)
                {
-                  ERR("Glyph is out of the buffer. Set buffer to NULL.");
-                  gl->base.bitmap.buffer = NULL;
+                  WRN("Glyph offset out of the buffer. Refreshing map.");
+                  if (!_glyph_map_remap_check(fe->map))
+                    {
+                       ERR("Failed to remap glyph mempool!");
+                       gl->base.bitmap.buffer = NULL;
+                    }
                }
 
              eina_clist_add_head(&fe->map->glyphs, &gl->map_entry);
@@ -2017,7 +2026,7 @@ _server_index_list_set(Msg_Base *data, int size)
 
    if (_index.generation_id == msg->generation_id)
      {
-        ERR("New index generation_id is the same as before: %d",
+        WRN("New index generation_id is the same as before: %d",
             _index.generation_id);
      }
 
