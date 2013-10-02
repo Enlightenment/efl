@@ -30,7 +30,7 @@ _class_hello(const Eo_Class *klass, int a)
 {
    printf("Hello %d - body %s - EAPI %s\n", a, eo_class_name_get(klass), eo_class_name_get(EO2_SIMPLE_CLASS)); 
 
-   eo2_class_super_do(klass, eo2_class_hello(a * 2));
+   eo2_do_super(klass, EO2_INHERIT_CLASS, eo2_class_hello(a * 2));
 }
 
 static int

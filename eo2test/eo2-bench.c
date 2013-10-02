@@ -284,7 +284,9 @@ check:
    check(eo2_call_stack_depth(), 0);
 #ifdef HAVE_EO_ID
    // segfault if eo2_do_end is called !!
-   eo2_do((Eo *)69, eo2_set(0););
+   Eo *other = eo2_add_custom(EO2_SIMPLE_CLASS, NULL, eo2_simple_constructor(66));
+   eo_del(other);
+   eo2_do((Eo *)((uintptr_t)other + 666), eo2_set(0););
 #endif
 
    eo_del(eo2_obj);
@@ -332,7 +334,7 @@ class_do_test()
 {
    printf("\n *** class_do_test\n");
 
-   eo2_class_do(EO2_INHERIT_CLASS, eo2_class_hello(2); );
+   eo2_do(EO2_INHERIT_CLASS, eo2_class_hello(2); );
 }
 
 int
