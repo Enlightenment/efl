@@ -41,17 +41,17 @@ extern "C" {
 typedef struct _Ecore_Ipc_Server Ecore_Ipc_Server; /**< An IPC connection handle */
 typedef struct _Ecore_Ipc_Client Ecore_Ipc_Client; /**< An IPC connection handle */
 
-EAPI unsigned short     _ecore_ipc_swap_16(unsigned short v);
-EAPI unsigned int       _ecore_ipc_swap_32(unsigned int v);
-EAPI unsigned long long _ecore_ipc_swap_64(unsigned long long v);
+EAPI unsigned short     _ecore_ipc_swap_16(unsigned short v) EINA_DEPRECATED;
+EAPI unsigned int       _ecore_ipc_swap_32(unsigned int v) EINA_DEPRECATED;
+EAPI unsigned long long _ecore_ipc_swap_64(unsigned long long v) EINA_DEPRECATED;
 
 #ifdef WORDS_BIGENDIAN
-#define ECORE_IPC_SWAP2NET64(x) _ecore_ipc_swap_64(x)
-#define ECORE_IPC_SWAP2CPU64(x) _ecore_ipc_swap_64(x)
-#define ECORE_IPC_SWAP2NET32(x) _ecore_ipc_swap_32(x)
-#define ECORE_IPC_SWAP2CPU32(x) _ecore_ipc_swap_32(x)
-#define ECORE_IPC_SWAP2NET16(x) _ecore_ipc_swap_16(x)
-#define ECORE_IPC_SWAP2CPU16(x) _ecore_ipc_swap_16(x)
+#define ECORE_IPC_SWAP2NET64(x) eina_swap64(x)
+#define ECORE_IPC_SWAP2CPU64(x) eina_swap64(x)
+#define ECORE_IPC_SWAP2NET32(x) eina_swap32(x)
+#define ECORE_IPC_SWAP2CPU32(x) eina_swap32(x)
+#define ECORE_IPC_SWAP2NET16(x) eina_swap16(x)
+#define ECORE_IPC_SWAP2CPU16(x) eina_swap16(x)
 #define ECORE_IPC_SWAP2NET8(x) (x)
 #define ECORE_IPC_SWAP2CPU8(x) (x)
 #else
