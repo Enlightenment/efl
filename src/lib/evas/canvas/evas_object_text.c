@@ -2475,19 +2475,29 @@ _evas_object_text_recalc(Evas_Object *eo_obj, Eina_Unicode *text)
 
    if ((o->font) && (o->items))
      {
-	int w, h;
-	int l = 0, r = 0, t = 0, b = 0;
+        int h;
+        int  l = 0, r = 0, t = 0, b = 0;
 
-        w = _evas_object_text_horiz_advance_get(eo_obj, o);
         h = _evas_object_text_vert_advance_get(eo_obj, o);
-	evas_text_style_pad_get(o->cur.style, &l, &r, &t, &b);
+        evas_text_style_pad_get(o->cur.style, &l, &r, &t, &b);
 
         if (o->cur.ellipsis >= 0.0)
-          eo_do_super(eo_obj, MY_CLASS,
-                      evas_obj_size_set(obj->cur->geometry.w, h + t + b));
+          {
+             int min;
+
+             min = o->last_computed.advance < obj->cur->geometry.w ? o->last_computed.advance : obj->cur->geometry.w;
+             eo_do_super(eo_obj, MY_CLASS,
+                         evas_obj_size_set(min, h + t + b));
+          }
         else
-          eo_do_super(eo_obj, MY_CLASS,
-                      evas_obj_size_set(w + l + r, h + t + b));
+          {
+             int w;
+
+             w = _evas_object_text_horiz_advance_get(eo_obj, o);
+
+             eo_do_super(eo_obj, MY_CLASS,
+                         evas_obj_size_set(w + l + r, h + t + b));
+          }
 ////        obj->cur->cache.geometry.validity = 0;
      }
    else
