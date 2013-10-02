@@ -764,65 +764,38 @@ EAPI Eo_Op eo2_api_op_id_get(const void *api_func, const Eo_Op_Type);
 EAPI Eina_Bool eo2_call_resolve_internal(const Eo_Class *klass, const Eo_Op op, Eo2_Op_Call_Data *call);
 
 // start of eo2_do barrier, gets the object pointer and ref it, put it on the stask
-EAPI Eina_Bool eo2_do_start(Eo *obj, const Eo_Class *cur_klass, const char *file, const char *func, int line);
-EAPI Eina_Bool eo2_class_do_start(const Eo_Class *klass_id, const Eina_Bool do_super, const char *file, const char *func, int line);
+EAPI Eina_Bool eo2_do_start(const Eo *obj, const Eo_Class *cur_klass, const char *file, const char *func, int line);
 
 // end of the eo2_do barrier, unref the obj, move the stack pointer
-EAPI void eo2_do_end(Eo **ojb);
-EAPI void eo2_class_do_end(const Eo_Class **klass);
+EAPI void eo2_do_end(const Eo **ojb);
 
 EAPI int eo2_call_stack_depth();
 
 #define EO2_DO_CLEANUP __attribute__((cleanup(eo2_do_end)))
-#define EO2_CLASS_DO_CLEANUP __attribute__((cleanup(eo2_class_do_end)))
 
 // eo object method calls batch,
-#define eo2_do(objid, ...)                            \
-  do                                                  \
-    {                                                 \
-       Eo *_objid_ = objid;                           \
-       if (eo2_do_start(_objid_, NULL, __FILE__, __FUNCTION__, __LINE__))	\
-         {                                            \
-            Eo *_id_clean_ EO2_DO_CLEANUP = _objid_;  \
-            __VA_ARGS__;                              \
-            (void) _id_clean_;                        \
-         }                                            \
+#define eo2_do(eoid, ...)                                                  \
+  do                                                                       \
+    {                                                                      \
+       const Eo *_eoid_ = eoid;                                            \
+       if (eo2_do_start(_eoid_, NULL, __FILE__, __FUNCTION__, __LINE__))   \
+         {                                                                 \
+            const Eo *_id_clean_ EO2_DO_CLEANUP = _eoid_;                  \
+            __VA_ARGS__;                                                   \
+            (void) _id_clean_;                                             \
+         }                                                                 \
     } while (0)
 
-#define eo2_do_super(objid, clsid, ...)               \
-  do                                                  \
-    {                                                 \
-       Eo *_objid_ = objid;                           \
-       if (eo2_do_start(_objid_, clsid, __FILE__, __FUNCTION__, __LINE__))          \
-         {                                            \
-            Eo *_id_clean_ EO2_DO_CLEANUP = _objid_;  \
-            __VA_ARGS__;                              \
-            (void) _id_clean_;                        \
-         }                                            \
-    } while (0)
-
-#define eo2_class_do(clsid, ...)                                        \
-  do                                                                    \
-    {                                                                   \
-       const Eo_Class *_clsid_ = clsid;                                 \
-       if (eo2_class_do_start(_clsid_, EINA_FALSE, __FILE__, __FUNCTION__, __LINE__)) \
-         {                                                              \
-            const Eo_Class *_id_clean_ EO2_CLASS_DO_CLEANUP = _clsid_;  \
-            __VA_ARGS__;                                                \
-            (void) _id_clean_;                                          \
-         }                                                              \
-    } while (0)
-
-#define eo2_class_super_do(clsid, ...)                                  \
-  do                                                                    \
-    {                                                                   \
-       const Eo_Class *_clsid_ = clsid;                                 \
-       if (eo2_class_do_start(_clsid_, EINA_TRUE, __FILE__, __FUNCTION__, __LINE__)) \
-         {                                                              \
-            const Eo_Class *_id_clean_ EO2_CLASS_DO_CLEANUP = _clsid_;  \
-            __VA_ARGS__;                                                \
-            (void) _id_clean_;                                          \
-         }                                                              \
+#define eo2_do_super(eoid, clsid, ...)                                     \
+  do                                                                       \
+    {                                                                      \
+       const Eo *_eoid_ = eoid;                                            \
+       if (eo2_do_start(_eoid_, clsid, __FILE__, __FUNCTION__, __LINE__))  \
+         {                                                                 \
+            const Eo *_id_clean_ EO2_DO_CLEANUP = _eoid_;                  \
+            __VA_ARGS__;                                                   \
+            (void) _id_clean_;                                             \
+         }                                                                 \
     } while (0)
 
 /*****************************************************************************/

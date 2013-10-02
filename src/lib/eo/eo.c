@@ -281,7 +281,7 @@ _eo2_kls_itr_next(const _Eo_Class *orig_kls, const _Eo_Class *cur_klass)
 #define EO2_CALL_STACK_DEPTH 5
 typedef struct _Eo2_Stack_Frame
 {
-   Eo                *eo_id;
+   const Eo          *eo_id;
    Eo_Base           *base;
    const _Eo_Class   *cur_klass;
    void              *obj_data;
@@ -312,27 +312,14 @@ eo2_call_stack_depth()
      return (1 + (eo2_call_stack.frame_ptr - eo2_call_stack.stack));
 }
 
-EAPI Eina_Bool
-eo2_do_start(Eo *eo_id, const Eo_Class *cur_klass_id, const char *file EINA_UNUSED, const char *func EINA_UNUSED, int line EINA_UNUSED)
+static inline Eina_Bool
+_eo2_obj_do(const Eo *eo_id, const Eo_Class *cur_klass_id, Eina_Bool same_eo_id,
+            Eo2_Stack_Frame *fptr, Eo2_Stack_Frame *nfptr)
 {
    _Eo_Object *obj;
    const _Eo_Class *klass;
-   Eo2_Stack_Frame *fptr, *nfptr;
-   Eina_Bool empty_stack = (eo2_call_stack.frame_ptr == NULL);
 
-   fptr = eo2_call_stack.frame_ptr;
-   if (((fptr - eo2_call_stack.stack) + 1) >= EO2_CALL_STACK_DEPTH)
-     {
-        ERR("eo2 call stack overflow !!!");
-        return EINA_FALSE;
-     }
-
-   if (empty_stack)
-     nfptr = &eo2_call_stack.stack[0];
-   else
-     nfptr = fptr + 1;
-
-   if ((!empty_stack) && (fptr->eo_id == eo_id))
+   if (same_eo_id)
      {
         obj = (_Eo_Object *)fptr->base;
         memcpy(nfptr, fptr, sizeof(Eo2_Stack_Frame));
@@ -341,8 +328,8 @@ eo2_do_start(Eo *eo_id, const Eo_Class *cur_klass_id, const char *file EINA_UNUS
      {
         EO_OBJ_POINTER_RETURN_VAL(eo_id, _obj, EINA_FALSE);
         obj = _obj;
-        nfptr->base = (Eo_Base *)_obj;
         nfptr->eo_id = eo_id;
+        nfptr->base = (Eo_Base *)_obj;
      }
 
    if (cur_klass_id)
@@ -361,6 +348,70 @@ eo2_do_start(Eo *eo_id, const Eo_Class *cur_klass_id, const char *file EINA_UNUS
 
    _eo_ref(obj);
 
+   return EINA_TRUE;
+}
+
+static inline Eina_Bool
+_eo2_class_do(const Eo *eo_id, const Eo_Class *cur_klass_id, Eina_Bool same_eo_id,
+            Eo2_Stack_Frame *fptr, Eo2_Stack_Frame *nfptr)
+{
+   const _Eo_Class *klass;
+
+   if (same_eo_id)
+     {
+        klass = (_Eo_Class *)fptr->base;
+        memcpy(nfptr, fptr, sizeof(Eo2_Stack_Frame));
+     }
+   else
+     {
+        EO_CLASS_POINTER_RETURN_VAL(eo_id, _klass, EINA_FALSE);
+        klass = _klass;
+        nfptr->eo_id = eo_id;
+        nfptr->base = (Eo_Base *)_klass;
+     }
+
+   if(cur_klass_id)
+     {
+        EO_CLASS_POINTER_RETURN_VAL(cur_klass_id, cur_klass, EINA_FALSE);
+        nfptr->cur_klass = _eo2_kls_itr_next(klass, cur_klass);
+     }
+   else
+     nfptr->cur_klass = klass;
+
+   nfptr->obj_data = EO2_INVALID_DATA;
+
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
+eo2_do_start(const Eo *eo_id, const Eo_Class *cur_klass_id, const char *file EINA_UNUSED, const char *func EINA_UNUSED, int line EINA_UNUSED)
+{
+   Eo2_Stack_Frame *fptr, *nfptr;
+   Eina_Bool empty_stack = (eo2_call_stack.frame_ptr == NULL);
+
+   fptr = eo2_call_stack.frame_ptr;
+   if (((fptr - eo2_call_stack.stack) + 1) >= EO2_CALL_STACK_DEPTH)
+     {
+        ERR("eo2 call stack overflow !!!");
+        return EINA_FALSE;
+     }
+
+   if (empty_stack)
+     nfptr = &eo2_call_stack.stack[0];
+   else
+     nfptr = fptr + 1;
+
+   if(_eo_is_a_class(eo_id))
+     {
+        if (!_eo2_class_do(eo_id, cur_klass_id, ((!empty_stack) && (fptr->eo_id == eo_id)), fptr, nfptr))
+          return EINA_FALSE;
+      }
+   else
+     {
+        if (!_eo2_obj_do(eo_id, cur_klass_id, ((!empty_stack) && (fptr->eo_id == eo_id)), fptr, nfptr))
+          return EINA_FALSE;
+      }
+
    if (empty_stack)
      eo2_call_stack.frame_ptr = &eo2_call_stack.stack[0];
    else
@@ -369,57 +420,14 @@ eo2_do_start(Eo *eo_id, const Eo_Class *cur_klass_id, const char *file EINA_UNUS
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
-eo2_class_do_start(const Eo_Class *klass_id, const Eina_Bool do_super, const char *file EINA_UNUSED, const char *func EINA_UNUSED, int line EINA_UNUSED)
-{
-   Eo2_Stack_Frame *fptr;
-   const _Eo_Class *klass;
-
-   klass = NULL;
-   fptr = eo2_call_stack.frame_ptr;
-
-   if ((fptr != NULL) && (_eo_class_id_get(fptr->cur_klass) == (Eo *)klass_id))
-     {
-        if (do_super)
-          klass = _eo2_kls_itr_next(fptr->cur_klass, fptr->cur_klass);
-        else
-          klass = fptr->cur_klass;
-        eo2_call_stack.frame_ptr++;
-     }
-   else
-     {
-        EO_CLASS_POINTER_RETURN_VAL(klass_id, _klass, EINA_FALSE);
-        if (do_super)
-          klass = _eo2_kls_itr_next(_klass, _klass);
-        else
-          klass = _klass;
-        if (fptr == NULL)
-          eo2_call_stack.frame_ptr = &eo2_call_stack.stack[0];
-        else
-          eo2_call_stack.frame_ptr++;
-     }
-
-   fptr = eo2_call_stack.frame_ptr;
-
-   if ((fptr - eo2_call_stack.stack) >= EO2_CALL_STACK_DEPTH)
-     ERR("eo2 call stack overflow !!!");
-
-   fptr->base = NULL;
-   fptr->eo_id = NULL;
-   fptr->cur_klass = klass;
-   fptr->obj_data = EO2_INVALID_DATA;
-
-   return EINA_TRUE;
-}
-
-static inline void
-_eo2_do_end(const Eina_Bool obj_do)
+EAPI void
+eo2_do_end(const Eo **eo_id)
 {
    Eo2_Stack_Frame *fptr;
 
    fptr = eo2_call_stack.frame_ptr;
 
-   if(obj_do)
+   if(!_eo_is_a_class(*eo_id))
      _eo_unref((_Eo_Object *)fptr->base);
 
    memset(fptr, 0, sizeof (Eo2_Stack_Frame));
@@ -429,18 +437,6 @@ _eo2_do_end(const Eina_Bool obj_do)
      eo2_call_stack.frame_ptr = NULL;
    else
      eo2_call_stack.frame_ptr--;
-}
-
-EAPI void
-eo2_do_end(Eo **eo_id EINA_UNUSED)
-{
-   _eo2_do_end(EINA_TRUE);
-}
-
-EAPI void
-eo2_class_do_end(const Eo_Class **klass_id EINA_UNUSED)
-{
-   _eo2_do_end(EINA_FALSE);
 }
 
 EAPI Eina_Bool
@@ -476,7 +472,7 @@ eo2_call_resolve_internal(const Eo_Class *klass_id, const Eo_Op op, Eo2_Op_Call_
              return EINA_FALSE;
           }
         call->klass = _eo_class_id_get(klass);
-        call->obj = fptr->eo_id;
+        call->obj = (Eo *)fptr->eo_id;
         call->func = func->func;
 
         if (obj)
