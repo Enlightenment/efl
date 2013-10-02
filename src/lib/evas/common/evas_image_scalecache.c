@@ -658,7 +658,6 @@ evas_common_rgba_image_scalecache_do_cbs(Image_Entry *ie, RGBA_Image *dst,
  */
    if ((dst_region_w == 0) || (dst_region_h == 0) ||
        (src_region_w == 0) || (src_region_h == 0)) return EINA_FALSE;
-   LKL(im->cache.lock);
    if ((src_region_w == dst_region_w) && (src_region_h == dst_region_h))
      {
         if (im->cache_entry.space == EVAS_COLORSPACE_ARGB8888)
@@ -673,7 +672,6 @@ evas_common_rgba_image_scalecache_do_cbs(Image_Entry *ie, RGBA_Image *dst,
 	evas_common_image_colorspace_normalize(im);
 
 //        noscales++;
-        LKU(im->cache.lock);
         if (im->image.data)
           {
              return cb_sample(im, dst, dc,
@@ -684,6 +682,7 @@ evas_common_rgba_image_scalecache_do_cbs(Image_Entry *ie, RGBA_Image *dst,
           }
         return EINA_FALSE;
      }
+   LKL(im->cache.lock);
    LKL(cache_lock);
    sci = _sci_find(im, dc, smooth,
                    src_region_x, src_region_y, src_region_w, src_region_h,
