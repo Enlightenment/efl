@@ -689,6 +689,7 @@ _evas_object_text_layout(Evas_Object *eo_obj, Evas_Object_Text *o, Eina_Unicode 
    Evas_Coord advance = 0;
    size_t pos, visual_pos;
    int len = eina_unicode_strlen(text);
+   int l = 0, r = 0;
 #ifdef BIDI_SUPPORT
    int par_len = len;
    int *segment_idxs = NULL;
@@ -767,11 +768,15 @@ _evas_object_text_layout(Evas_Object *eo_obj, Evas_Object_Text *o, Eina_Unicode 
           }
      }
 
+   evas_text_style_pad_get(o->cur.style, &l, &r, NULL, NULL);
+
    /* Handle ellipsis */
-   if (pos && (o->cur.ellipsis >= 0.0) && (advance > obj->cur->geometry.w) && (obj->cur->geometry.w > 0))
+   if (pos && (o->cur.ellipsis >= 0.0) && (advance + l + r > obj->cur->geometry.w) && (obj->cur->geometry.w > 0))
      {
         Evas_Coord ellip_frame = obj->cur->geometry.w;
         Evas_Object_Text_Item *start_ellip_it = NULL, *end_ellip_it = NULL;
+
+        o->last_computed.ellipsis = EINA_TRUE;
 
         /* Account of the ellipsis item width. As long as ellipsis != 0
          * we have a left ellipsis. And the same with 1 and right. */
@@ -815,7 +820,7 @@ _evas_object_text_layout(Evas_Object *eo_obj, Evas_Object_Text *o, Eina_Unicode 
              Evas_Object_Text_Item *itr = o->items;
              advance = 0;
 
-             while (itr && (advance + itr->adv < ellipsis_coord))
+             while (itr && (advance + l + r + itr->adv < ellipsis_coord))
                {
                   Eina_Inlist *itrn = EINA_INLIST_GET(itr)->next;
                   if ((itr != start_ellip_it) && (itr != end_ellip_it))
@@ -830,7 +835,7 @@ _evas_object_text_layout(Evas_Object *eo_obj, Evas_Object_Text *o, Eina_Unicode 
                   int cut = 1 + ENFN->font_last_up_to_pos(ENDT,
                         o->font,
                         &itr->text_props,
-                        ellipsis_coord - advance,
+                        ellipsis_coord - (advance + l + r),
                         0);
                   if (cut > 0)
                     {
@@ -841,7 +846,6 @@ _evas_object_text_layout(Evas_Object *eo_obj, Evas_Object_Text *o, Eina_Unicode 
                          {
                             _evas_object_text_item_del(o, itr);
                          }
-                       o->last_computed.ellipsis = EINA_TRUE;
                     }
                }
 
@@ -858,7 +862,7 @@ _evas_object_text_layout(Evas_Object *eo_obj, Evas_Object_Text *o, Eina_Unicode 
                {
                   if (itr != end_ellip_it) /* was start_ellip_it */
                     {
-                       if (advance + itr->adv >= ellip_frame)
+                       if (advance + l + r + itr->adv >= ellip_frame)
                          {
                             break;
                          }
@@ -875,7 +879,7 @@ _evas_object_text_layout(Evas_Object *eo_obj, Evas_Object_Text *o, Eina_Unicode 
              int cut = ENFN->font_last_up_to_pos(ENDT,
                    o->font,
                    &itr->text_props,
-                   ellip_frame - advance,
+                   ellip_frame - (advance + l + r),
                    0);
              if (cut >= 0)
                {
@@ -885,7 +889,6 @@ _evas_object_text_layout(Evas_Object *eo_obj, Evas_Object_Text *o, Eina_Unicode 
                     {
                        itr = (Evas_Object_Text_Item *) EINA_INLIST_GET(itr)->next;
                     }
-                  o->last_computed.ellipsis = EINA_TRUE;
                }
 
              /* Remove the rest of the items */
@@ -2475,7 +2478,7 @@ _evas_object_text_recalc(Evas_Object *eo_obj, Eina_Unicode *text)
           {
              int min;
 
-             min = w + l + r < obj->cur->geometry.w ? w + l + r : obj->cur->geometry.w;
+             min = w + l + r < obj->cur->geometry.w || obj->cur->geometry.w == 0 ? w + l + r : obj->cur->geometry.w;
              eo_do_super(eo_obj, MY_CLASS,
                          evas_obj_size_set(min, h + t + b));
           }
