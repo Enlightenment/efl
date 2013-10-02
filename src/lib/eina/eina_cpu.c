@@ -92,6 +92,9 @@ void _x86_simd(Eina_Cpu_Features *features)
     * 28 = HTT (Hyper Threading)
     * ecx
     * 0 = SSE3
+    * 9 = SSSE3
+    * 19 = SSE4.1
+    * 20 = SSE4.2
     */
    if ((d >> 23) & 1)
       *features |= EINA_CPU_MMX;
@@ -104,6 +107,15 @@ void _x86_simd(Eina_Cpu_Features *features)
 
    if (c & 1)
       *features |= EINA_CPU_SSE3;
+
+   if ((c >> 9) & 1)
+      *features |= EINA_CPU_SSSE3;
+
+   if ((c >> 19) & 1)
+      *features |= EINA_CPU_SSE41;
+
+   if ((c >> 20) & 1)
+      *features |= EINA_CPU_SSE42;
 }
 #endif
 
@@ -118,17 +130,32 @@ void _x86_simd(Eina_Cpu_Features *features)
 /* FIXME the features checks should be called when this function is called?
  * or make it static by doing eina_cpu_init() and return a local var
  */
+EAPI Eina_Cpu_Features eina_cpu_features = 0;
+
+Eina_Bool
+eina_cpu_init(void)
+{
+#if defined(__i386__) || defined(__x86_64__)
+   _x86_simd(&eina_cpu_features);
+#endif
+   // FIXME: Handle NEON and friends
+
+   return EINA_TRUE;
+}
+
+Eina_Bool
+eina_cpu_shutdown(void)
+{
+   return EINA_TRUE;
+}
+
 /**
  *
  * @return
  */
 EAPI Eina_Cpu_Features eina_cpu_features_get(void)
 {
-   Eina_Cpu_Features ecf = 0;
-#if defined(__i386__) || defined(__x86_64__)
-   _x86_simd(&ecf);
-#endif
-   return ecf;
+   return eina_cpu_features;
 }
 
 static int _cpu_count = -1;

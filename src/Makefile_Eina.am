@@ -57,6 +57,7 @@ lib/eina/eina_trash.h \
 lib/eina/eina_iterator.h \
 lib/eina/eina_main.h \
 lib/eina/eina_cpu.h \
+lib/eina/eina_inline_cpu.x \
 lib/eina/eina_sched.h \
 lib/eina/eina_tiler.h \
 lib/eina/eina_hamster.h \
