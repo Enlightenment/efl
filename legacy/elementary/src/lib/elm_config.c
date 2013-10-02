@@ -216,7 +216,8 @@ _prop_change_delay_cb(void *data __UNUSED__)
      }
    _prop_config_get();
    _prop_change_delay_timer = NULL;
-   return EINA_FALSE;
+
+   return ECORE_CALLBACK_CANCEL;
 }
 
 static Eina_Bool
@@ -990,11 +991,7 @@ _elm_recache(void)
    edje_file_cache_set(_elm_config->edje_cache);
    edje_collection_cache_set(_elm_config->edje_collection_cache);
 
-   if (_elm_cache_flush_poller)
-     {
-        ecore_poller_del(_elm_cache_flush_poller);
-        _elm_cache_flush_poller = NULL;
-     }
+   ELM_SAFE_FREE(_elm_cache_flush_poller, ecore_poller_del);
    if (_elm_config->cache_flush_enable)
      {
         if (_elm_config->cache_flush_poll_interval > 0)

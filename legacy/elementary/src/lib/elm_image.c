@@ -39,11 +39,7 @@ _on_image_preloaded(void *data,
    Elm_Image_Smart_Data *sd = data;
    sd->preloading = EINA_FALSE;
    if (sd->show) evas_object_show(obj);
-   if (sd->prev_img)
-     {
-        evas_object_del(sd->prev_img);
-        sd->prev_img = NULL;
-     }
+   ELM_SAFE_FREE(sd->prev_img, evas_object_del);
 }
 
 static void
@@ -196,8 +192,7 @@ _elm_image_edje_file_set(Evas_Object *obj,
 
    ELM_IMAGE_DATA_GET(obj, sd);
 
-   if (sd->prev_img) evas_object_del(sd->prev_img);
-   sd->prev_img = NULL;
+   ELM_SAFE_FREE(sd->prev_img, evas_object_del);
 
    if (!sd->edje)
      {
@@ -550,11 +545,7 @@ _elm_image_smart_show(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    evas_object_show(sd->img);
 
-   if (sd->prev_img)
-     {
-        evas_object_del(sd->prev_img);
-        sd->prev_img = NULL;
-     }
+   ELM_SAFE_FREE(sd->prev_img, evas_object_del);
 }
 
 static void
@@ -567,8 +558,7 @@ _elm_image_smart_hide(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    sd->show = EINA_FALSE;
    evas_object_hide(sd->img);
 
-   if (sd->prev_img) evas_object_del(sd->prev_img);
-   sd->prev_img = NULL;
+   ELM_SAFE_FREE(sd->prev_img, evas_object_del);
 }
 
 static void
@@ -705,7 +695,7 @@ _elm_image_file_set_do(Evas_Object *obj)
 
    ELM_IMAGE_DATA_GET(obj, sd);
 
-   if (sd->prev_img) evas_object_del(sd->prev_img);
+   ELM_SAFE_FREE(sd->prev_img, evas_object_del);
    if (sd->img)
      {
         pclip = evas_object_clip_get(sd->img);
@@ -1215,11 +1205,7 @@ _elm_image_smart_preload_disabled_set(Eo *obj EINA_UNUSED, void *_pd, va_list *l
    if (disable)
      {
         if (sd->show && sd->img) evas_object_show(sd->img);
-        if (sd->prev_img)
-          {
-             evas_object_del(sd->prev_img);
-             sd->prev_img = NULL;
-          }
+        ELM_SAFE_FREE(sd->prev_img, evas_object_del);
      }
 }
 
