@@ -69,6 +69,7 @@ Additions:
      - Evas font: Use our own fontconfig configuration so we don't get affected by changes made to the default fontconfig configuration.
      - Evas font: Make the evas_font_path_* functions apply to fontconfig searches.
      - Add JPEG 2000 loader.
+     - Evas textblock: Use correct font underline properties when drawing underlines.
     * Ecore_X:
      - Add window profile support.
        ECORE_X_ATOM_E_WINDOW_PROFILE_SUPPORTED

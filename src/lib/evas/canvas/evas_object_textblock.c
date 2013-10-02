@@ -3460,6 +3460,8 @@ loop_advance:
      }
 
    c->ln->baseline = c->ascent;
+   /* FIXME: Actually needs to be adjusted using the actual font value.
+    * Also, underline_extend is actually not being used. */
    if (c->have_underline2)
      {
         if (c->descent < 4) c->underline_extend = 4 - c->descent;
@@ -11087,6 +11089,11 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
    ITEM_WALK_END();
 
    /* normal text and lines */
+   /* Get the thickness and position, and save them for non-text items. */
+   int line_thickness =
+           evas_common_font_instance_underline_thickness_get(NULL);
+   int line_position =
+           evas_common_font_instance_underline_position_get(NULL);
    ITEM_WALK()
      {
         Evas_Object_Textblock_Text_Item *ti;
@@ -11094,23 +11101,30 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
         /* NORMAL TEXT */
         if (ti)
           {
+             void *fi = _ITEM_TEXT(itr)->text_props.font_instance;
              COLOR_SET(normal);
              DRAW_TEXT(0, 0);
+             line_thickness =
+                evas_common_font_instance_underline_thickness_get(fi);
+             line_position =
+                evas_common_font_instance_underline_position_get(fi);
           }
 
         /* STRIKETHROUGH */
-        DRAW_FORMAT(strikethrough, (ln->h / 2), 1);
+        DRAW_FORMAT(strikethrough, (ln->h / 2), line_thickness);
 
         /* UNDERLINE */
-        DRAW_FORMAT(underline, ln->baseline + 1, 1);
+        DRAW_FORMAT(underline, ln->baseline + line_position, line_thickness);
 
         /* UNDERLINE DASHED */
-        DRAW_FORMAT_DASHED(underline_dash, ln->baseline + 1, 1,
+        DRAW_FORMAT_DASHED(underline_dash, ln->baseline + line_position,
+                         line_thickness,
                          ti->parent.format->underline_dash_width,
                          ti->parent.format->underline_dash_gap);
 
         /* UNDERLINE2 */
-        DRAW_FORMAT(underline2, ln->baseline + 3, 1);
+        DRAW_FORMAT(underline2, ln->baseline + line_position + line_thickness +
+              line_position, line_thickness);
      }
    ITEM_WALK_END();
 }

@@ -1,3 +1,8 @@
+2013-10-02  Tom Hacohen
+
+	* Evas textblock: Use correct font underline properties when drawing
+	underlines.
+
 2013-10-01  Vincent Torri
 
 	* Evas: add JPEG 2000 support.
