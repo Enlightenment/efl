@@ -325,20 +325,9 @@ _evas_object_text_char_at_coords(const Evas_Object *eo_obj,
 }
 
 static Evas_Coord
-_evas_object_text_horiz_advance_get(const Evas_Object *eo_obj,
-      const Evas_Object_Text *o)
+_evas_object_text_horiz_advance_get(const Evas_Object_Text *o)
 {
-   Evas_Object_Text_Item *it;
-   Evas_Coord adv;
-   (void) eo_obj;
-
-   adv = 0;
-   EINA_INLIST_FOREACH(EINA_INLIST_GET(o->items), it)
-     {
-        adv += it->adv;
-     }
-
-   return adv;
+   return o->last_computed.advance;
 }
 
 static Evas_Coord
@@ -1256,14 +1245,14 @@ evas_object_text_horiz_advance_get(const Evas_Object *eo_obj)
 }
 
 static void
-_text_horiz_advance_get(Eo *eo_obj, void *_pd, va_list *list)
+_text_horiz_advance_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Evas_Coord *horiz = va_arg(*list, Evas_Coord *);
    *horiz = 0;
    const Evas_Object_Text *o = _pd;
    if (!o->font) return;
    if (!o->items) return;
-   *horiz = _evas_object_text_horiz_advance_get(eo_obj, o);
+   *horiz = _evas_object_text_horiz_advance_get(o);
 }
 
 EAPI Evas_Coord
@@ -2475,9 +2464,10 @@ _evas_object_text_recalc(Evas_Object *eo_obj, Eina_Unicode *text)
 
    if ((o->font) && (o->items))
      {
-        int h;
-        int  l = 0, r = 0, t = 0, b = 0;
+        int w, h;
+        int l = 0, r = 0, t = 0, b = 0;
 
+        w = _evas_object_text_horiz_advance_get(o);
         h = _evas_object_text_vert_advance_get(eo_obj, o);
         evas_text_style_pad_get(o->cur.style, &l, &r, &t, &b);
 
@@ -2485,16 +2475,12 @@ _evas_object_text_recalc(Evas_Object *eo_obj, Eina_Unicode *text)
           {
              int min;
 
-             min = o->last_computed.advance < obj->cur->geometry.w ? o->last_computed.advance : obj->cur->geometry.w;
+             min = w + l + r < obj->cur->geometry.w ? w + l + r : obj->cur->geometry.w;
              eo_do_super(eo_obj, MY_CLASS,
                          evas_obj_size_set(min, h + t + b));
           }
         else
           {
-             int w;
-
-             w = _evas_object_text_horiz_advance_get(eo_obj, o);
-
              eo_do_super(eo_obj, MY_CLASS,
                          evas_obj_size_set(w + l + r, h + t + b));
           }
