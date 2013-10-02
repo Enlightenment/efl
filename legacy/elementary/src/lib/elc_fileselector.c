@@ -4,7 +4,6 @@
  *  - user defined icon/label cb
  *  - show/hide/add buttons ???
  *  - show/hide hidden files
- *  - double click to choose a file
  *  - multi-selection
  *  - make variable/function names that are sensible
  *  - Pattern Filter support
@@ -31,6 +30,7 @@ static Elm_Genlist_Item_Class *list_itc[ELM_FILE_LAST];
 static Elm_Gengrid_Item_Class *grid_itc[ELM_FILE_LAST];
 
 #define ELM_PRIV_FILESELECTOR_SIGNALS(cmd) \
+   cmd(SIG_ACTIVATED, "activated", "s") \
    cmd(SIG_DIRECTORY_OPEN, "directory,open", "s") \
    cmd(SIG_DONE, "done", "s") \
    cmd(SIG_SELECTED, "selected", "s") \
@@ -712,6 +712,25 @@ _on_item_double_clicked(void *data,
 }
 
 static void
+_on_item_activated(void *data,
+                   Evas_Object *obj __UNUSED__,
+                   void *event_info)
+{
+   //This event_info could be a list or gengrid item
+   Elm_Object_Item *it = event_info;
+   const char *path;
+   Eina_Bool is_dir;
+
+   path = elm_object_item_data_get(it);
+   if (!path) return;
+
+   is_dir = ecore_file_is_dir(path);
+   if (is_dir) return;
+
+   evas_object_smart_callback_call(data, SIG_ACTIVATED, (void *)path);
+}
+
+static void
 _on_item_selected(void *data,
                   Evas_Object *obj __UNUSED__,
                   void *event_info)
@@ -1065,6 +1084,7 @@ _elm_fileselector_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    evas_object_smart_callback_add(li, "selected", _on_item_selected, obj);
    evas_object_smart_callback_add(li, "clicked,double", _on_item_double_clicked, obj);
+   evas_object_smart_callback_add(li, "activated", _on_item_activated, obj);
    evas_object_smart_callback_add
      (li, "expand,request", _on_list_expand_req, obj);
    evas_object_smart_callback_add
@@ -1073,6 +1093,7 @@ _elm_fileselector_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    evas_object_smart_callback_add(li, "contracted", _on_list_contracted, obj);
    evas_object_smart_callback_add(grid, "selected", _on_item_selected, obj);
    evas_object_smart_callback_add(grid, "clicked,double", _on_item_double_clicked, obj);
+   evas_object_smart_callback_add(grid, "activated", _on_item_activated, obj);
 
    elm_widget_sub_object_add(obj, li);
    elm_widget_sub_object_add(obj, grid);

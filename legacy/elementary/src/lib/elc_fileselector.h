@@ -39,6 +39,9 @@
  *
  * This widget emits the following signals, besides the ones sent from
  * @ref Layout:
+ * - @c "activated" - the user activated a file. This can happen by
+ *      double-clicking or pressing Enter key. (@c event_info is a
+ *      pointer to the activated file path)
  * - @c "selected" - the user has clicked on a file (when not in
  *      folders-only mode) or directory (when in folders-only mode)
  * - @c "selected,invalid" - the user has tried to access wrong path

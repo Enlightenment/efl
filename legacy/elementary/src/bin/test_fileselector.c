@@ -75,6 +75,14 @@ my_fileselector_invalid(void *data   EINA_UNUSED,
 }
 
 static void
+my_fileselector_activated(void *data EINA_UNUSED,
+                          Evas_Object *obj EINA_UNUSED,
+                          void *event_info)
+{
+   printf("Activated file: %s\n", (char *)event_info);
+}
+
+static void
 _is_save_clicked(void            *data,
                  Evas_Object *obj EINA_UNUSED,
                  void *event_info EINA_UNUSED)
@@ -205,6 +213,8 @@ test_fileselector(void *data       EINA_UNUSED,
                                   win);
    evas_object_smart_callback_add(fs, "selected,invalid",
                                   my_fileselector_invalid, win);
+   evas_object_smart_callback_add(fs, "activated", my_fileselector_activated,
+                                  win);
 
    /* test buttons */
    sep = elm_separator_add(win);

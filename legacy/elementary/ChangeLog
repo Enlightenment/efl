@@ -1664,3 +1664,7 @@
 
         * fileselector: Add the configuration fileselector_double_tap_navigation_enable.
         It makes fileselector navigate folder using double tap instead of single tap.
+
+2013-10-02  Ryuan Choi (ryuan)
+        * fileselector: Add "activated" smart callback. It can be used to execute
+        a file activated by double-clicking or pressing Enter key.
