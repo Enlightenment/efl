@@ -21,7 +21,9 @@
 #define USE_SHARED_INDEX 1
 #define SHARED_INDEX_ADD_TO_HASH 1
 #define HKEY_LOAD_OPTS_STR_LEN 215
-typedef void (*Op_Callback)(void *data, const void *msg, int size);
+#define SPECIAL_RID_INDEX_LIST ((unsigned int) 0xFFFFFF42)
+
+typedef Eina_Bool (*Op_Callback)(void *data, const void *msg, int size);
 
 static const Evas_Image_Load_Opts empty_lo = {
   { 0, 0, 0, 0 },
@@ -47,8 +49,8 @@ struct _File_Entry {
 };
 
 struct _Client_Request {
-   Message_Type type;
-   unsigned int rid;
+   Msg_Base *msg;
+   int msg_size;
    Op_Callback cb;
    void *data;
 };
@@ -76,6 +78,11 @@ static const File_Data *_shared_image_entry_file_data_find(Image_Entry *ie);
 static const Image_Data *_shared_image_entry_image_data_find(Image_Entry *ie);
 static const Font_Data *_shared_font_entry_data_find(Font_Entry *fe);
 static Eina_Bool _shared_index_remap_check(Shared_Index *si, int elemsize);
+
+static Eina_Bool _server_dispatch_until(unsigned int rid);
+unsigned int _image_load_server_send(Image_Entry *ie);
+static unsigned int _image_open_server_send(Image_Entry *ie);
+static unsigned int _glyph_request_server_send(Font_Entry *fe, Font_Hint_Flags hints, Eina_Bool used);
 
 #ifndef UNIX_PATH_MAX
 #define UNIX_PATH_MAX sizeof(((struct sockaddr_un *)NULL)->sun_path)
@@ -213,12 +220,12 @@ _server_disconnect(void)
 }
 
 static void
-_request_answer_add(Message_Type type, unsigned int rid, Op_Callback cb, void *data)
+_request_answer_add(Msg_Base *msg, int size, Op_Callback cb, void *data)
 {
    Client_Request *cr = calloc(1, sizeof(*cr));
 
-   cr->type = type;
-   cr->rid = rid;
+   cr->msg = msg;
+   cr->msg_size = size;
    cr->cb = cb;
    cr->data = data;
 
@@ -239,7 +246,7 @@ _server_safe_send(int fd, const void *data, int size)
           {
              if ((errno == EAGAIN) || (errno == EINTR))
                continue;
-             DBG("send() failed with error [%d] %s", errno, strerror(errno));
+             ERR("send() failed with error %d %m", errno);
              return EINA_FALSE;
           }
         sent += ret;
@@ -249,18 +256,114 @@ _server_safe_send(int fd, const void *data, int size)
 }
 
 static Eina_Bool
-_server_send(const void *buf, int size, Op_Callback cb, void *data)
+_request_resend(unsigned int rid)
 {
-   const Msg_Base *msg;
+   Eina_List *l;
+   Client_Request *cr;
+   Eina_Bool found = EINA_FALSE;
+
+   EINA_LIST_FOREACH(_requests, l, cr)
+     {
+        if (rid)
+          {
+             if (cr->msg->rid != rid)
+               continue;
+             found = EINA_TRUE;
+          }
+
+        DBG("Sending request %d again: type %d", cr->msg->rid, cr->msg->type);
+
+        if (!_server_safe_send(socketfd, &cr->msg_size, sizeof(cr->msg_size)))
+          return EINA_FALSE;
+        if (!_server_safe_send(socketfd, cr->msg, cr->msg_size))
+          return EINA_FALSE;
+
+        if (found) break;
+     }
+
+   if (rid)
+     return found;
+
+   return EINA_TRUE;
+}
+
+static void
+_shared_index_close(Shared_Index *si)
+{
+   if (!si) return;
+
+   if (si->f)
+     {
+        if (si->data)
+          eina_file_map_free(si->f, si->data);
+        eina_file_close(si->f);
+     }
+   if (si->entries_by_hkey)
+     eina_hash_free(si->entries_by_hkey);
+   si->f = NULL;
+   si->data = NULL;
+   memset(si, 0, sizeof(Shared_Index));
+}
+
+static void
+_shared_index_close_all()
+{
+   DBG("Closing all index files");
+   if (_index.strings_entries.f)
+     {
+        if (_index.strings_entries.data)
+          eina_file_map_free(_index.strings_entries.f, _index.strings_entries.data);
+        eina_file_close(_index.strings_entries.f);
+        _index.strings_entries.data = NULL;
+        _index.strings_entries.f = NULL;
+     }
+   _shared_index_close(&_index.strings_index);
+   _shared_index_close(&_index.files);
+   _shared_index_close(&_index.images);
+   _shared_index_close(&_index.fonts);
+   _index.generation_id = 0;
+}
+
+static Eina_Bool
+_server_reconnect()
+{
+   _shared_index_close_all();
+
+   errno = 0;
+   _server_disconnect();
+   if (!_server_connect())
+     goto on_error;
+
+   if (!_server_dispatch_until(SPECIAL_RID_INDEX_LIST))
+     goto on_error;
+
+#warning TODO: Reopen all files, images, fonts...
+
+   DBG("Re-sending %d requests...", eina_list_count(_requests));
+   if (!_request_resend(0))
+     goto on_error;
+
+   INF("Successfully reconnected to cserve2");
+   return EINA_TRUE;
+
+on_error:
+   ERR("Unable to reconnect to server: %d %m", errno);
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_server_send(void *buf, int size, Op_Callback cb, void *data)
+{
+   Msg_Base *msg;
    if (!_server_safe_send(socketfd, &size, sizeof(size)))
      {
         ERR("Couldn't send message size to server.");
-        return EINA_FALSE;
+        goto on_error;
      }
    if (!_server_safe_send(socketfd, buf, size))
      {
         ERR("Couldn't send message body to server.");
-        return EINA_FALSE;
+        goto on_error;
      }
 
    msg = buf;
@@ -271,13 +374,40 @@ _server_send(const void *buf, int size, Op_Callback cb, void *data)
       case CSERVE2_PRELOAD:
       case CSERVE2_FONT_LOAD:
       case CSERVE2_FONT_GLYPHS_LOAD:
-         _request_answer_add(msg->type, msg->rid, cb, data);
-         break;
+        _request_answer_add(msg, size, cb, data);
+        break;
+      case CSERVE2_CLOSE:
+      case CSERVE2_UNLOAD:
+      case CSERVE2_FONT_UNLOAD:
+      case CSERVE2_FONT_GLYPHS_USED:
+        free(msg);
+        break;
       default:
-         break;
+        ERR("Invalid message type %d", msg->type);
+        free(msg);
+        return EINA_FALSE;
      }
 
    return EINA_TRUE;
+
+on_error:
+   ERR("Socket error: %d %m", errno);
+   switch (errno)
+     {
+      case EPIPE:
+      case EBADF:
+        WRN("Trying to reconnect to server...");
+        if (!_server_reconnect())
+          {
+             free(buf);
+             return EINA_FALSE;
+          }
+        return _server_send(buf, size, cb, data);
+      default:
+        ERR("Can not recover from this error!");
+        free(buf);
+        return EINA_FALSE;
+     }
 }
 
 static int sr_size = 0;
@@ -290,12 +420,21 @@ _server_read(int *size)
    int n;
    void *ret;
 
+   if (socketfd < 0)
+     return NULL;
+
    if (sr_size)
      goto get_data;
 
    n = recv(socketfd, &sr_size, sizeof(sr_size), 0);
    if (n < 0)
      return NULL;
+   if (n == 0)
+     {
+        DBG("Socket connection closed by server.");
+        _server_disconnect();
+        return NULL;
+     }
 
    sr_buf = malloc(sr_size);
 
@@ -400,20 +539,27 @@ _server_dispatch(Eina_Bool *failed)
       case CSERVE2_INDEX_LIST:
         _server_index_list_set(msg, size);
         free(msg);
-        return 0;
-      default: break;
+        return SPECIAL_RID_INDEX_LIST;
+      default:
+        break;
      }
 
    // Normal client to server requests
    EINA_LIST_FOREACH_SAFE(_requests, l, l_next, cr)
      {
-        if (cr->rid != msg->rid) // dispatch this answer
+        Eina_Bool remove = EINA_TRUE;
+
+        if (cr->msg->rid != msg->rid) // dispatch this answer
           continue;
 
-        _requests = eina_list_remove_list(_requests, l);
         if (cr->cb)
-          cr->cb(cr->data, msg, size);
-        free(cr);
+          remove = cr->cb(cr->data, msg, size);
+        if (remove)
+          {
+             _requests = eina_list_remove_list(_requests, l);
+             free(cr->msg);
+             free(cr);
+          }
      }
 
    rid = msg->rid;
@@ -438,6 +584,16 @@ _server_dispatch_until(unsigned int rid)
         else if (failed)
           {
              int sel;
+
+             if (socketfd == -1)
+               {
+                  DBG("Reconnecting to server...");
+                  if (!_server_connect())
+                    {
+                       ERR("Could not reconnect to cserve2!");
+                       return EINA_FALSE;
+                    }
+               }
 
              //DBG("Waiting for request %d...", rid);
              FD_ZERO(&rfds);
@@ -470,7 +626,7 @@ _server_dispatch_until(unsigned int rid)
    return EINA_TRUE;
 }
 
-static void
+static Eina_Bool
 _image_opened_cb(void *data, const void *msg_received, int size)
 {
    const Msg_Base *answer = msg_received;
@@ -481,15 +637,15 @@ _image_opened_cb(void *data, const void *msg_received, int size)
     * and so we would have to check that open_rid is equal to answer->rid.
     * -- jpeg
     */
-   //DBG("Received OPENED for RID: %d [open_rid: %d]", answer->rid, ie->open_rid);
+   DBG("Received OPENED for RID: %d [open_rid: %d]", answer->rid, ie->open_rid);
 
    if (ie->server_id && !ie->open_rid)
-     return;
+     return EINA_TRUE;
 
    if (answer->rid != ie->open_rid)
      {
         WRN("Message rid (%d) differs from expected rid (open_rid: %d)", answer->rid, ie->open_rid);
-        return;
+        return EINA_TRUE;
      }
    ie->open_rid = 0;
 
@@ -505,14 +661,14 @@ _image_opened_cb(void *data, const void *msg_received, int size)
           ERR("Invalid message type received: %d (%s)", answer->type, __FUNCTION__);
         free(ie->data1);
         ie->data1 = NULL;
-        return;
+        return EINA_TRUE;
      }
    else if (size < (int) sizeof(*msg))
      {
         ERR("Received message is too small");
         free(ie->data1);
         ie->data1 = NULL;
-        return;
+        return EINA_TRUE;
      }
 
    ie->w = msg->image.w;
@@ -522,6 +678,8 @@ _image_opened_cb(void *data, const void *msg_received, int size)
    ie->animated.loop_count = msg->image.loop_count;
    ie->animated.frame_count = msg->image.frame_count;
    ie->animated.animated = msg->image.animated;
+
+   return EINA_TRUE;
 }
 
 static void
@@ -575,29 +733,29 @@ fail:
    ie->data2 = NULL;
 }
 
-static void
+static Eina_Bool
 _image_loaded_cb(void *data, const void *msg_received, int size)
 {
    const Msg_Base *answer = msg_received;
    const Msg_Loaded *msg = msg_received;
    Image_Entry *ie = data;
 
-   //DBG("Received LOADED for RID: %d [load_rid: %d]", answer->rid, ie->load_rid);
+   DBG("Received LOADED for RID: %d [load_rid: %d]", answer->rid, ie->load_rid);
 
    if (!ie->load_rid)
-     return;
+     return EINA_TRUE;
 
    if (answer->rid != ie->load_rid)
      {
         WRN("Message rid (%d) differs from expected rid (load_rid: %d)", answer->rid, ie->load_rid);
-        return;
+        return EINA_TRUE;
      }
    ie->load_rid = 0;
 
    if (!ie->data2)
      {
         ERR("No data2 for loaded file");
-        return;
+        return EINA_TRUE;
      }
 
    if (answer->type != CSERVE2_LOADED)
@@ -607,18 +765,29 @@ _image_loaded_cb(void *data, const void *msg_received, int size)
              const Msg_Error *msg_error = msg_received;
              ERR("Couldn't load image: '%s':'%s'; error: %d",
                  ie->file, ie->key, msg_error->error);
+
+             if (msg_error->error == CSERVE2_NOT_LOADED)
+               {
+#warning Code path to check
+                  DBG("Trying to reopen the image");
+                  ie->open_rid = _image_open_server_send(ie);
+                  if (_server_dispatch_until(ie->open_rid))
+                    if (_request_resend(answer->rid))
+                      return EINA_TRUE;
+               }
           }
         else
           ERR("Invalid message type received: %d (%s)", answer->type, __FUNCTION__);
         free(ie->data2);
         ie->data2 = NULL;
-        return;
+        return EINA_TRUE;
      }
 
    _loaded_handle(ie, msg, size);
+   return EINA_TRUE;
 }
 
-static void
+static Eina_Bool
 _image_preloaded_cb(void *data, const void *msg_received, int size)
 {
    const Msg_Base *answer = msg_received;
@@ -633,7 +802,7 @@ _image_preloaded_cb(void *data, const void *msg_received, int size)
    if (!ie->data2)
      {
         ERR("No data2 for preloaded file");
-        return;
+        return EINA_TRUE;
      }
 
    if (answer->type != CSERVE2_PRELOAD &&
@@ -650,7 +819,7 @@ _image_preloaded_cb(void *data, const void *msg_received, int size)
         if (dentry->preloaded_cb)
           dentry->preloaded_cb(data, EINA_FALSE);
         dentry->preloaded_cb = NULL;
-        return;
+        return EINA_TRUE;
      }
 
    _loaded_handle(ie, msg_received, size);
@@ -661,6 +830,8 @@ _image_preloaded_cb(void *data, const void *msg_received, int size)
         dentry->preloaded_cb(data, EINA_TRUE);
         dentry->preloaded_cb = NULL;
      }
+
+   return EINA_TRUE;
 }
 
 static int
@@ -716,7 +887,11 @@ _evas_image_load_opts_empty(Evas_Image_Load_Opts *lo)
            && (lo->w == 0) && (lo->h == 0)
            && (lo->region.x == 0) && (lo->region.y == 0)
            && (lo->region.w == 0) && (lo->region.h == 0)
-           && (lo->orientation == 0));
+           && (lo->orientation == 0)
+           && (lo->scale_load.src_x == 0) && (lo->scale_load.src_y == 0)
+           && (lo->scale_load.src_w == 0) && (lo->scale_load.src_h == 0)
+           && (lo->scale_load.dst_w == 0) && (lo->scale_load.dst_h == 0)
+           && (lo->scale_load.scale_hint == 0)); // Skip smooth
 }
 
 static void
@@ -747,8 +922,7 @@ _file_hkey_get(char *buf, size_t sz, const char *path, const char *key,
 }
 
 static unsigned int
-_image_open_server_send(Image_Entry *ie, const char *file, const char *key,
-                        Evas_Image_Load_Opts *opts)
+_image_open_server_send(Image_Entry *ie)
 {
    int flen, klen;
    int size, hkey_len;
@@ -758,6 +932,8 @@ _image_open_server_send(Image_Entry *ie, const char *file, const char *key,
    Msg_Open msg_open;
    File_Entry *fentry;
    Data_Entry *dentry;
+   const char *file, *key;
+   Evas_Image_Load_Opts *opts = NULL;
 
    if (cserve2_init == 0)
      {
@@ -765,8 +941,14 @@ _image_open_server_send(Image_Entry *ie, const char *file, const char *key,
         return 0;
      }
 
+   if (!_evas_image_load_opts_empty(&ie->load_opts))
+     opts = &ie->load_opts;
+
    ie->data1 = NULL;
    ie->data2 = NULL;
+
+   file = ie->file;
+   key = ie->key;
 
    flen = _build_absolute_path(file, filebuf, sizeof(filebuf));
    if (!flen)
@@ -833,16 +1015,13 @@ _image_open_server_send(Image_Entry *ie, const char *file, const char *key,
    if (!_server_send(buf, size, _image_opened_cb, ie))
      {
         ERR("Couldn't send message to server.");
-        free(buf);
         free(dentry);
         if (!(--fentry->refcount))
           eina_hash_del(_file_entries, fentry->hkey, fentry);
         return 0;
      }
 
-   free(buf);
    ie->data1 = fentry;
-
    dentry->image_id = msg_open.image_id;
    ie->data2 = dentry;
 
@@ -853,7 +1032,8 @@ unsigned int
 _image_load_server_send(Image_Entry *ie)
 {
    Data_Entry *dentry;
-   Msg_Load msg;
+   Msg_Load *msg;
+   unsigned int rid;
 
    if (cserve2_init == 0)
      return 0;
@@ -871,23 +1051,24 @@ _image_load_server_send(Image_Entry *ie)
         return 0;
      }
 
-   memset(&msg, 0, sizeof(msg));
+   msg = calloc(1, sizeof(Msg_Load));
+   msg->base.rid = _next_rid();
+   msg->base.type = CSERVE2_LOAD;
+   msg->image_id = dentry->image_id;
 
-   msg.base.rid = _next_rid();
-   msg.base.type = CSERVE2_LOAD;
-   msg.image_id = dentry->image_id;
-
-   if (!_server_send(&msg, sizeof(msg), _image_loaded_cb, ie))
+   rid = msg->base.rid;
+   if (!_server_send(msg, sizeof(Msg_Load), _image_loaded_cb, ie))
      return 0;
 
-   return msg.base.rid;
+   return rid;
 }
 
 unsigned int
 _image_preload_server_send(Image_Entry *ie, void (*preloaded_cb)(void *im, Eina_Bool success))
 {
    Data_Entry *dentry;
-   Msg_Preload msg;
+   Msg_Preload *msg;
+   unsigned int rid;
 
    if (cserve2_init == 0)
      return 0;
@@ -900,23 +1081,24 @@ _image_preload_server_send(Image_Entry *ie, void (*preloaded_cb)(void *im, Eina_
      }
    dentry->preloaded_cb = preloaded_cb;
 
-   memset(&msg, 0, sizeof(msg));
+   msg = calloc(1, sizeof(Msg_Preload));
+   msg->base.rid = _next_rid();
+   msg->base.type = CSERVE2_PRELOAD;
+   msg->image_id = dentry->image_id;
 
-   msg.base.rid = _next_rid();
-   msg.base.type = CSERVE2_PRELOAD;
-   msg.image_id = dentry->image_id;
-
-   if (!_server_send(&msg, sizeof(msg), _image_preloaded_cb, ie))
+   rid = msg->base.rid;
+   if (!_server_send(msg, sizeof(Msg_Preload), _image_preloaded_cb, ie))
      return 0;
 
-   return msg.base.rid;
+   return rid;
 }
 
 unsigned int
 _image_close_server_send(Image_Entry *ie)
 {
-   Msg_Close msg;
+   Msg_Close *msg;
    File_Entry *fentry;
+   unsigned int rid;
 
    if (cserve2_init == 0)
      return 0;
@@ -937,26 +1119,28 @@ _image_close_server_send(Image_Entry *ie)
         ie->data2 = NULL;
      }
 
-   memset(&msg, 0, sizeof(msg));
-   msg.base.rid = _next_rid();
-   msg.base.type = CSERVE2_CLOSE;
-   msg.file_id = fentry->file_id;
+   msg = calloc(1, sizeof(Msg_Close));
+   msg->base.rid = _next_rid();
+   msg->base.type = CSERVE2_CLOSE;
+   msg->file_id = fentry->file_id;
 
    if (!(--fentry->refcount))
      eina_hash_del(_file_entries, fentry->hkey, fentry);
    ie->data1 = NULL;
 
-   if (!_server_send(&msg, sizeof(msg), NULL, NULL))
+   rid = msg->base.rid;
+   if (!_server_send(msg, sizeof(Msg_Close), NULL, NULL))
      return 0;
 
-   return msg.base.rid;
+   return rid;
 }
 
 unsigned int
 _image_unload_server_send(Image_Entry *ie)
 {
-   Msg_Unload msg;
+   Msg_Unload *msg;
    Data_Entry *dentry;
+   unsigned int rid;
 
    if (cserve2_init == 0)
      return 0;
@@ -971,37 +1155,30 @@ _image_unload_server_send(Image_Entry *ie)
    if (dentry->shm.f)
      eina_file_close(dentry->shm.f);
 
-   // if (dentry->shm.path)
-   //   free(dentry->shm.path);
-   memset(&msg, 0, sizeof(msg));
-   msg.base.rid = _next_rid();
-   msg.base.type = CSERVE2_UNLOAD;
-   msg.image_id = dentry->image_id;
+   msg = calloc(1, sizeof(Msg_Unload));
+   msg->base.rid = _next_rid();
+   msg->base.type = CSERVE2_UNLOAD;
+   msg->image_id = dentry->image_id;
 
    free(dentry);
    ie->data2 = NULL;
 
-   if (!_server_send(&msg, sizeof(msg), NULL, NULL))
+   rid = msg->base.rid;
+   if (!_server_send(msg, sizeof(Msg_Unload), NULL, NULL))
      return 0;
 
-   return msg.base.rid;
+   return rid;
 }
 
 Eina_Bool
 evas_cserve2_image_load(Image_Entry *ie)
 {
    unsigned int rid;
-   const char *file, *key;
-   Evas_Image_Load_Opts *opts = NULL;
 
    if (!ie)
      return EINA_FALSE;
 
-   file = ie->file;
-   key = ie->key;
-   if (!_memory_zero_cmp(&ie->load_opts, sizeof(ie->load_opts)))
-     opts = &ie->load_opts;
-   rid = _image_open_server_send(ie, file, key, opts);
+   rid = _image_open_server_send(ie);
    if (!rid)
      return EINA_FALSE;
 
@@ -1282,7 +1459,7 @@ _font_entry_free(Font_Entry *fe)
    free(fe);
 }
 
-static void
+static Eina_Bool
 _font_loaded_cb(void *data, const void *msg, int size)
 {
    const Msg_Base *m = msg;
@@ -1293,6 +1470,8 @@ _font_loaded_cb(void *data, const void *msg, int size)
    if ((size < (int) sizeof(*m))
        || (m->type == CSERVE2_ERROR))
      fe->failed = EINA_TRUE;
+
+   return EINA_TRUE;
 }
 
 static unsigned int
@@ -1330,10 +1509,9 @@ _font_load_server_send(Font_Entry *fe, Message_Type type)
    if (type == CSERVE2_FONT_LOAD)
      cb = _font_loaded_cb;
 
-   if (_server_send(msg, size, cb, fe))
-     ret = msg->base.rid;
-
-   free(msg);
+   ret = msg->base.rid;
+   if (!_server_send(msg, size, cb, fe))
+     return 0;
 
    return ret;
 }
@@ -1465,6 +1643,23 @@ _glyph_map_remap_check(Glyph_Map *map)
 {
    Eina_Bool changed = EINA_FALSE;
    int oldcount;
+   const void *oldmap = map->mempool.data;
+
+   if (!map->mempool.f)
+     {
+        WRN("The glyph mempool has been closed.");
+        if (!map->mempool.path)
+          return EINA_FALSE;
+
+        DBG("Remapping from %s", map->mempool.path);
+        map->mempool.f = eina_file_open(map->mempool.path, EINA_TRUE);
+        if (!map->mempool.f)
+          {
+             ERR("Could not open shm file: %d %m", errno);
+             return EINA_FALSE;
+          }
+        map->mempool.size = 0;
+     }
 
    if (eina_file_refresh(map->mempool.f)
        || (eina_file_size_get(map->mempool.f) != (size_t) map->mempool.size))
@@ -1481,6 +1676,7 @@ _glyph_map_remap_check(Glyph_Map *map)
         changed = EINA_TRUE;
 
         // Remap loaded glyphs
+#warning Infinite loop again here. FONT RELOAD IS STILL BROKEN.
         EINA_CLIST_FOR_EACH_ENTRY(gl, &map->fe->map->glyphs,
                                   CS_Glyph_Out, map_entry)
           {
@@ -1496,6 +1692,7 @@ _glyph_map_remap_check(Glyph_Map *map)
    oldcount = map->index.count;
    _shared_index_remap_check(&map->index, sizeof(Glyph_Data));
    changed |= (oldcount != map->index.count);
+   changed |= (oldmap != map->mempool.data);
 
    return changed;
 }
@@ -1571,7 +1768,7 @@ _font_entry_glyph_map_rebuild_check(Font_Entry *fe, Font_Hint_Flags hints)
    return cnt;
 }
 
-static void
+static Eina_Bool
 _glyph_request_cb(void *data, const void *msg, int size)
 {
    const Msg_Font_Glyphs_Loaded *resp = msg;
@@ -1583,11 +1780,56 @@ _glyph_request_cb(void *data, const void *msg, int size)
    const char *name;
    int pos;
 
-   if (resp->base.type == CSERVE2_ERROR)
+   if (!fe || !fe->fash[grd->hints])
      goto end;
 
-   if (!fe->fash[grd->hints])
-     goto end;
+   if (resp->base.type == CSERVE2_ERROR)
+     {
+        const Msg_Error *err = msg;
+        ERR("We got an error message when waiting for glyphs: %d", err->error);
+
+        if (err->error == CSERVE2_NOT_LOADED)
+          {
+             DBG("Reloading the font: %s from %s", fe->name, fe->source);
+
+             // This will crash for sure.
+             /*
+             for (i = 0; i < 3; i++)
+               {
+                  if (fe->fash[i])
+                    fash_gl_free(fe->fash[i]);
+                  fe->fash[i] = NULL;
+               }
+             _glyphs_map_free(fe->map);
+             fe->map = NULL;
+             */
+
+             if (!(fe->rid = _font_load_server_send(fe, CSERVE2_FONT_LOAD)))
+               {
+                  ERR("Failed to send font load message");
+                  free(data);
+                  return EINA_TRUE;
+               }
+
+#warning Code path to check
+
+             if (fe->glyphs_queue_count)
+               _glyph_request_server_send(fe, grd->hints, EINA_FALSE);
+
+             if (fe->glyphs_used_count)
+               _glyph_request_server_send(fe, grd->hints, EINA_TRUE);
+
+             DBG("Resending glyph load message now...");
+             if (!_request_resend(err->base.rid))
+               {
+                  free(data);
+                  return EINA_TRUE;
+               }
+             return EINA_FALSE;
+          }
+        free(data);
+        return EINA_TRUE;
+     }
 
    if (size <= (int) sizeof(*resp)) goto end;
 
@@ -1686,15 +1928,23 @@ _glyph_request_cb(void *data, const void *msg, int size)
                     {
                        ERR("Failed to remap glyph mempool!");
                        gl->base.bitmap.buffer = NULL;
+                       //gl->base.bitmap.rows = 0;
+                       //gl->base.bitmap.width = 0;
                     }
                }
 
-             eina_clist_add_head(&fe->map->glyphs, &gl->map_entry);
+             if (!eina_clist_element_is_linked(&gl->map_entry))
+               eina_clist_add_head(&fe->map->glyphs, &gl->map_entry);
           }
      }
 
-end:
    free(grd);
+   return EINA_TRUE;
+
+end:
+   ERR("An unknown error occured when waiting for glyph data!");
+   free(grd);
+   return EINA_TRUE;
 }
 
 static unsigned int
@@ -1782,12 +2032,12 @@ _glyph_request_server_send(Font_Entry *fe, Font_Hint_Flags hints, Eina_Bool used
    else
      cb = NULL;
 
-   if (_server_send(msg, size, cb, grd))
-     ret = msg->base.rid;
-   else
-     free(grd);
-
-   free(msg);
+   ret = msg->base.rid;
+   if (!_server_send(msg, size, cb, grd))
+     {
+        free(grd);
+        return 0;
+     }
 
    return ret;
 }
@@ -1916,7 +2166,12 @@ evas_cserve2_font_glyph_bitmap_get(Font_Entry *fe, unsigned int idx,
 #endif
 
    if (out->rid)
-     _server_dispatch_until(out->rid);
+     if (!_server_dispatch_until(out->rid))
+       {
+          ERR("failed to load the requested glyphs");
+          //fe->failed = EINA_TRUE;
+          //return NULL;
+       }
 
    // promote shm and font entry in lru or something
 
@@ -2050,10 +2305,7 @@ _server_index_list_set(Msg_Base *data, int size)
                   SHARED_BUFFER_PATH_MAX) != 0)
      {
         DBG("Updating string indexes shm to: '%s'", msg->strings_index_path);
-        eina_file_map_free(_index.strings_index.f, _index.strings_index.data);
-        eina_file_close(_index.strings_index.f);
-        _index.strings_index.f = NULL;
-        _index.strings_index.data = NULL;
+        _shared_index_close(&_index.strings_index);
      }
 
    eina_strlcpy(_index.strings_entries.path, msg->strings_entries_path, SHARED_BUFFER_PATH_MAX);

@@ -2769,6 +2769,7 @@ try_again:
                                            0, &unscaled, buf, sizeof(buf));
              if (!orig_entry) return -1;
 
+             image_id = orig_entry->base.id;
              orig_data = _image_data_find(ENTRYID(orig_entry));
              orig_data->unused = EINA_TRUE;
              fentry = _file_entry_find(orig_data->file_id);
@@ -2914,12 +2915,17 @@ cserve2_cache_image_load(Client *client, unsigned int client_image_id, unsigned 
      {
         ERR("Can't load: client %d has no image id %d",
             client->id, client_image_id);
+        cserve2_client_error_send(client, rid, CSERVE2_NOT_LOADED);
         return;
      }
 
    ientry = (Image_Entry *) ref->entry;
    idata = _image_data_find(ENTRYID(ientry));
-   if (!idata) return;
+   if (!idata)
+     {
+        cserve2_client_error_send(client, rid, CSERVE2_INVALID_CACHE);
+        return;
+     }
 
    fd = _file_data_find(idata->file_id);
    if (!fd || fd->invalid)
@@ -3120,6 +3126,7 @@ cserve2_cache_font_glyphs_load(Client *client, const char *source,
    if (!req)
      {
         free(glyphs);
+        cserve2_client_error_send(client, rid, CSERVE2_NOT_LOADED);
         return -1;
      }
 
@@ -3153,6 +3160,7 @@ cserve2_cache_font_glyphs_used(Client *client, const char *source,
    if (!req)
      {
         free(glyphs);
+        cserve2_client_error_send(client, rid, CSERVE2_NOT_LOADED);
         return 0;
      }
 

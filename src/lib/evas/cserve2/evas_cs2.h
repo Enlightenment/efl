@@ -39,6 +39,7 @@ typedef enum {
    CSERVE2_LOADER_DIED,
    CSERVE2_LOADER_EXEC_ERR,
    CSERVE2_INVALID_CACHE, // invalid cserve cache entry
+   CSERVE2_NOT_LOADED,
    CSERVE2_FILE_CHANGED,
    CSERVE2_REQUEST_CANCEL
 } Error_Type;

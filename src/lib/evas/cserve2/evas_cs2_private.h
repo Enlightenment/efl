@@ -17,7 +17,6 @@ struct _Data_Entry
    unsigned int hit_count;
    void (*preloaded_cb)(void *, Eina_Bool);
    struct {
-      const char *path;
       int mmap_offset;
       int use_offset;
       int mmap_size;

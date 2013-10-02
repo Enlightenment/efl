@@ -548,8 +548,14 @@ evas_common_font_int_cache_glyph_render(RGBA_Font_Glyph *fg)
         fg->glyph_out = evas_cserve2_font_glyph_bitmap_get(fi->cs2_handler,
                                                            fg->index,
                                                            fg->fi->hinting);
-        if (fg->glyph_out)
-          return EINA_TRUE;
+        if (!fg->glyph_out)
+          {
+             if (!fi->fash) fi->fash = _fash_gl_new();
+             if (fi->fash) _fash_gl_add(fi->fash, fg->index, (void *)(-1));
+             free(fg);
+             return EINA_FALSE;
+          }
+        return EINA_TRUE;
      }
 #endif
 

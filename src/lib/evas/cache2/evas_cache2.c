@@ -997,10 +997,10 @@ evas_cache2_image_load_data(Image_Entry *ie)
         error = evas_cserve2_image_load_data_wait(ie);
 
         RGBA_Image *im = (RGBA_Image *)ie;
-        DBG("try cserve2 image data '%s' '%s' loaded!",
-            ie->file, ie->key ? ie->key : "");
         if ((error == CSERVE2_NONE) && im->image.data)
           {
+             DBG("try cserve2 image data '%s' '%s' loaded!",
+                 ie->file, ie->key ? ie->key : "");
              error = EVAS_LOAD_ERROR_NONE;
           }
         else

@@ -304,7 +304,12 @@ evas_common_font_draw_prepare(Evas_Text_Props *text_props)
 
         fg = evas_common_font_int_cache_glyph_get(fi, idx);
         if (!fg) continue;
-        if (!fg->glyph_out) evas_common_font_int_cache_glyph_render(fg);
+        if (!fg->glyph_out)
+          if (!evas_common_font_int_cache_glyph_render(fg))
+            {
+               fg = NULL;
+               goto error;
+            }
 	
 	glyph = eina_inarray_grow(glyphs, 1);
 	if (!glyph) goto error;
