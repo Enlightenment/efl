@@ -690,7 +690,7 @@ __constructor(Eo *obj, void *obj_data)
 {
    Test_Event_Speed_Data *conf = (Test_Event_Speed_Data *) obj_data;
 
-   eo2_do_super(obj, eo2_constructor());
+   eo2_do_super(obj, TEST_EVENT2_SPEED_CLASS, eo2_constructor());
 
    conf->count = 0;
 }
@@ -698,7 +698,7 @@ __constructor(Eo *obj, void *obj_data)
 static void
 __destructor(Eo *obj, void *obj_data EINA_UNUSED)
 {
-   eo2_do_super(obj, eo2_destructor());
+   eo2_do_super(obj, TEST_EVENT2_SPEED_CLASS, eo2_destructor());
 }
 
 static Eo2_Op_Description op_descs [] = {
