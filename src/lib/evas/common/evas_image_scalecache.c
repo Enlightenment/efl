@@ -682,7 +682,6 @@ evas_common_rgba_image_scalecache_do_cbs(Image_Entry *ie, RGBA_Image *dst,
           }
         return EINA_FALSE;
      }
-   LKL(im->cache.lock);
    LKL(cache_lock);
    sci = _sci_find(im, dc, smooth,
                    src_region_x, src_region_y, src_region_w, src_region_h,
@@ -702,7 +701,6 @@ evas_common_rgba_image_scalecache_do_cbs(Image_Entry *ie, RGBA_Image *dst,
 	evas_common_image_colorspace_normalize(im);
 
 //        misses++;
-        LKU(im->cache.lock);
         if (im->image.data)
           {
              if (smooth)
@@ -720,6 +718,7 @@ evas_common_rgba_image_scalecache_do_cbs(Image_Entry *ie, RGBA_Image *dst,
           }
         return EINA_FALSE;
      }
+   LKL(im->cache.lock);
    if (sci->populate_me)
      {
         int size, osize, used;
@@ -781,6 +780,7 @@ evas_common_rgba_image_scalecache_do_cbs(Image_Entry *ie, RGBA_Image *dst,
                   ct = evas_common_draw_context_new();
                   evas_common_draw_context_set_render_op(ct, _EVAS_RENDER_COPY);
                }
+             LKU(im->cache.lock);
              if (im->cache_entry.space == EVAS_COLORSPACE_ARGB8888)
                {
 #ifdef EVAS_CSERVE2
@@ -790,6 +790,7 @@ evas_common_rgba_image_scalecache_do_cbs(Image_Entry *ie, RGBA_Image *dst,
 #endif
                     evas_cache_image_load_data(&im->cache_entry);
                }
+             LKL(im->cache.lock);
              evas_common_image_colorspace_normalize(im);
              if (im->image.data)
                {
@@ -908,6 +909,7 @@ evas_common_rgba_image_scalecache_do_cbs(Image_Entry *ie, RGBA_Image *dst,
      }
    else
      {
+        LKU(im->cache.lock);
         if (im->cache_entry.space == EVAS_COLORSPACE_ARGB8888)
           {
 #ifdef EVAS_CSERVE2
@@ -919,7 +921,6 @@ evas_common_rgba_image_scalecache_do_cbs(Image_Entry *ie, RGBA_Image *dst,
           }
 	evas_common_image_colorspace_normalize(im);
 //        misses++;
-        LKU(im->cache.lock);
         if (im->image.data)
           {
              if (smooth)
