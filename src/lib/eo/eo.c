@@ -278,7 +278,8 @@ _eo2_kls_itr_next(const _Eo_Class *orig_kls, const _Eo_Class *cur_klass)
 
 // FIXME: per thread stack, grow/shrink
 #define EO2_INVALID_DATA (void *) -1
-#define EO2_CALL_STACK_DEPTH 5
+#define EO2_CALL_STACK_DEPTH 100
+
 typedef struct _Eo2_Stack_Frame
 {
    const Eo          *eo_id;
@@ -289,47 +290,56 @@ typedef struct _Eo2_Stack_Frame
 } Eo2_Stack_Frame;
 
 typedef struct _Eo2_Call_Stack {
-     Eo2_Stack_Frame stack[EO2_CALL_STACK_DEPTH];
+     Eo2_Stack_Frame *stack;
      Eo2_Stack_Frame *frame_ptr;
 } Eo2_Call_Stack;
 
-static Eo2_Call_Stack eo2_call_stack = {
-       {
-            { NULL, NULL, NULL, EO2_INVALID_DATA },
-            { NULL, NULL, NULL, EO2_INVALID_DATA },
-            { NULL, NULL, NULL, EO2_INVALID_DATA },
-            { NULL, NULL, NULL, EO2_INVALID_DATA },
-            { NULL, NULL, NULL, EO2_INVALID_DATA },
-       },
-       NULL };
+static Eo2_Call_Stack eo2_call_stack = { NULL, NULL };
+
+static Eina_Bool
+_eo2_call_stack_init()
+{
+   eo2_call_stack.stack = calloc(EO2_CALL_STACK_DEPTH, sizeof(Eo2_Stack_Frame));
+   if (!eo2_call_stack.stack)
+     return EINA_FALSE;
+
+   // first frame is never used
+   eo2_call_stack.frame_ptr = &eo2_call_stack.stack[0];
+
+   return EINA_TRUE;
+}
+
+static void
+_eo2_call_stack_free()
+{
+   if (eo2_call_stack.stack)
+     free(eo2_call_stack.stack);
+}
 
 EAPI int
 eo2_call_stack_depth()
 {
-   if (eo2_call_stack.frame_ptr == NULL)
-     return 0;
-   else
-     return (1 + (eo2_call_stack.frame_ptr - eo2_call_stack.stack));
+   return (eo2_call_stack.frame_ptr - eo2_call_stack.stack);
 }
 
 static inline Eina_Bool
-_eo2_obj_do(const Eo *eo_id, const Eo_Class *cur_klass_id, Eina_Bool same_eo_id,
-            Eo2_Stack_Frame *fptr, Eo2_Stack_Frame *nfptr)
+_eo2_obj_do(const Eo *eo_id, const Eo_Class *cur_klass_id,
+            Eo2_Stack_Frame *fptr, Eo2_Stack_Frame *pfptr)
 {
    _Eo_Object *obj;
    const _Eo_Class *klass;
 
-   if (same_eo_id)
+   if (pfptr)
      {
-        obj = (_Eo_Object *)fptr->base;
-        memcpy(nfptr, fptr, sizeof(Eo2_Stack_Frame));
+        obj = (_Eo_Object *)pfptr->base;
+        memcpy(fptr, pfptr, sizeof(Eo2_Stack_Frame));
      }
    else
      {
         EO_OBJ_POINTER_RETURN_VAL(eo_id, _obj, EINA_FALSE);
         obj = _obj;
-        nfptr->eo_id = eo_id;
-        nfptr->base = (Eo_Base *)_obj;
+        fptr->eo_id = eo_id;
+        fptr->base = (Eo_Base *)_obj;
      }
 
    if (cur_klass_id)
@@ -340,10 +350,10 @@ _eo2_obj_do(const Eo *eo_id, const Eo_Class *cur_klass_id, Eina_Bool same_eo_id,
    else
      klass = obj->klass;
 
-   if (klass != nfptr->cur_klass)
+   if (klass != fptr->cur_klass)
      {
-        nfptr->cur_klass = klass;
-        nfptr->obj_data = EO2_INVALID_DATA;
+        fptr->cur_klass = klass;
+        fptr->obj_data = EO2_INVALID_DATA;
      }
 
    _eo_ref(obj);
@@ -352,33 +362,33 @@ _eo2_obj_do(const Eo *eo_id, const Eo_Class *cur_klass_id, Eina_Bool same_eo_id,
 }
 
 static inline Eina_Bool
-_eo2_class_do(const Eo *eo_id, const Eo_Class *cur_klass_id, Eina_Bool same_eo_id,
-            Eo2_Stack_Frame *fptr, Eo2_Stack_Frame *nfptr)
+_eo2_class_do(const Eo *eo_id, const Eo_Class *cur_klass_id,
+              Eo2_Stack_Frame *fptr, Eo2_Stack_Frame *pfptr)
 {
    const _Eo_Class *klass;
 
-   if (same_eo_id)
+   if (pfptr)
      {
-        klass = (_Eo_Class *)fptr->base;
-        memcpy(nfptr, fptr, sizeof(Eo2_Stack_Frame));
+        klass = (_Eo_Class *)pfptr->base;
+        memcpy(fptr, pfptr, sizeof(Eo2_Stack_Frame));
      }
    else
      {
         EO_CLASS_POINTER_RETURN_VAL(eo_id, _klass, EINA_FALSE);
         klass = _klass;
-        nfptr->eo_id = eo_id;
-        nfptr->base = (Eo_Base *)_klass;
+        fptr->eo_id = eo_id;
+        fptr->base = (Eo_Base *)_klass;
      }
 
    if(cur_klass_id)
      {
         EO_CLASS_POINTER_RETURN_VAL(cur_klass_id, cur_klass, EINA_FALSE);
-        nfptr->cur_klass = _eo2_kls_itr_next(klass, cur_klass);
+        fptr->cur_klass = _eo2_kls_itr_next(klass, cur_klass);
      }
    else
-     nfptr->cur_klass = klass;
+     fptr->cur_klass = klass;
 
-   nfptr->obj_data = EO2_INVALID_DATA;
+   fptr->obj_data = EO2_INVALID_DATA;
 
    return EINA_TRUE;
 }
@@ -386,8 +396,7 @@ _eo2_class_do(const Eo *eo_id, const Eo_Class *cur_klass_id, Eina_Bool same_eo_i
 EAPI Eina_Bool
 eo2_do_start(const Eo *eo_id, const Eo_Class *cur_klass_id, const char *file EINA_UNUSED, const char *func EINA_UNUSED, int line EINA_UNUSED)
 {
-   Eo2_Stack_Frame *fptr, *nfptr;
-   Eina_Bool empty_stack = (eo2_call_stack.frame_ptr == NULL);
+   Eo2_Stack_Frame *fptr, *pfptr;
 
    fptr = eo2_call_stack.frame_ptr;
    if (((fptr - eo2_call_stack.stack) + 1) >= EO2_CALL_STACK_DEPTH)
@@ -396,26 +405,19 @@ eo2_do_start(const Eo *eo_id, const Eo_Class *cur_klass_id, const char *file EIN
         return EINA_FALSE;
      }
 
-   if (empty_stack)
-     nfptr = &eo2_call_stack.stack[0];
-   else
-     nfptr = fptr + 1;
-
+   pfptr  = ((fptr->eo_id == eo_id) ? fptr : NULL);
    if(_eo_is_a_class(eo_id))
      {
-        if (!_eo2_class_do(eo_id, cur_klass_id, ((!empty_stack) && (fptr->eo_id == eo_id)), fptr, nfptr))
+        if (!_eo2_class_do(eo_id, cur_klass_id, (fptr + 1), pfptr))
           return EINA_FALSE;
       }
    else
      {
-        if (!_eo2_obj_do(eo_id, cur_klass_id, ((!empty_stack) && (fptr->eo_id == eo_id)), fptr, nfptr))
+        if (!_eo2_obj_do(eo_id, cur_klass_id, (fptr + 1), pfptr))
           return EINA_FALSE;
       }
 
-   if (empty_stack)
-     eo2_call_stack.frame_ptr = &eo2_call_stack.stack[0];
-   else
-     eo2_call_stack.frame_ptr++;
+   eo2_call_stack.frame_ptr++;
 
    return EINA_TRUE;
 }
@@ -434,7 +436,7 @@ eo2_do_end(const Eo **eo_id)
    fptr->obj_data = EO2_INVALID_DATA;
 
    if (fptr == &eo2_call_stack.stack[0])
-     eo2_call_stack.frame_ptr = NULL;
+     ERR("eo2 call stack underflow !!!");
    else
      eo2_call_stack.frame_ptr--;
 }
@@ -1937,6 +1939,12 @@ eo_init(void)
    /* bootstrap EO_CLASS_CLASS */
    (void) eo_class_class_get();
 
+   if (!_eo2_call_stack_init())
+     {
+        EINA_LOG_ERR("Could not init eo2 call stack.");
+        return EINA_FALSE;
+     }
+
    return EINA_TRUE;
 }
 
@@ -1963,6 +1971,8 @@ eo_shutdown(void)
      free(_eo_classes);
 
    eina_spinlock_free(&_eo_class_creation_lock);
+
+   _eo2_call_stack_free();
 
    _eo_free_ids_tables();
 
