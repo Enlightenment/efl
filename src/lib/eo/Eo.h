@@ -764,7 +764,7 @@ EAPI Eo_Op eo2_api_op_id_get(const void *api_func, const Eo_Op_Type);
 EAPI Eina_Bool eo2_call_resolve_internal(const Eo_Class *klass, const Eo_Op op, Eo2_Op_Call_Data *call);
 
 // start of eo2_do barrier, gets the object pointer and ref it, put it on the stask
-EAPI Eina_Bool eo2_do_start(Eo *obj, const Eina_Bool do_super, const char *file, const char *func, int line);
+EAPI Eina_Bool eo2_do_start(Eo *obj, const Eo_Class *cur_klass, const char *file, const char *func, int line);
 EAPI Eina_Bool eo2_class_do_start(const Eo_Class *klass_id, const Eina_Bool do_super, const char *file, const char *func, int line);
 
 // end of the eo2_do barrier, unref the obj, move the stack pointer
@@ -781,7 +781,7 @@ EAPI int eo2_call_stack_depth();
   do                                                  \
     {                                                 \
        Eo *_objid_ = objid;                           \
-       if (eo2_do_start(_objid_, EINA_FALSE, __FILE__, __FUNCTION__, __LINE__))	\
+       if (eo2_do_start(_objid_, NULL, __FILE__, __FUNCTION__, __LINE__))	\
          {                                            \
             Eo *_id_clean_ EO2_DO_CLEANUP = _objid_;  \
             __VA_ARGS__;                              \
@@ -789,11 +789,11 @@ EAPI int eo2_call_stack_depth();
          }                                            \
     } while (0)
 
-#define eo2_do_super(objid, ...)                      \
+#define eo2_do_super(objid, clsid, ...)               \
   do                                                  \
     {                                                 \
        Eo *_objid_ = objid;                           \
-       if (eo2_do_start(_objid_, EINA_TRUE, __FILE__, __FUNCTION__, __LINE__))          \
+       if (eo2_do_start(_objid_, clsid, __FILE__, __FUNCTION__, __LINE__))          \
          {                                            \
             Eo *_id_clean_ EO2_DO_CLEANUP = _objid_;  \
             __VA_ARGS__;                              \
