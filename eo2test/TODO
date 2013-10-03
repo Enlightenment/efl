@@ -1,19 +1,18 @@
 
-- remove eo2_class_ as done in eo
+- eo_composite_attach
+   check that the class of comp_obj is part of parent extensions
 
 - Eo2_Call_Stack
    grow/shrink
    per thread stack
-   memcpy/reuse similar frame
 
 - cleanup EO2_VERSION specific code in eo.c and eo_private.c
 
-- m4 __attribute__ cleanup
+- m4 __attribute__ cleanup ??? don't remember what it means
 
-- Fix composite objects (?)
-
-- Move the Op_Descs to be set using a function inside the class_constructor???
-   Have to check if it works on windows or not. If it does, it's and no need to do this crap.
+- Move the Op_Descs to be set using a function inside the class_constructor
+   check if it works ASIS on windows
+   if it does, do nothing
 
 - function name from pointer
    dladdr backtrace ??
