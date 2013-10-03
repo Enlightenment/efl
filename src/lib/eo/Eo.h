@@ -1327,7 +1327,7 @@ eo2_base_data_set(const char *key, const void *data, eo_base_data_free_func free
  * @see #eo_base_data_del
  */
 #define eo_base_data_get(key, data) EO_BASE_ID(EO_BASE_SUB_ID_DATA_GET), EO_TYPECHECK(const char *, key), EO_TYPECHECK(void **, data)
-EAPI void
+EAPI void *
 eo2_base_data_get(const char *key);
 
 /**

@@ -2014,7 +2014,11 @@ eo_composite_attach(Eo *comp_obj_id, Eo *parent_id)
 
    comp_obj->composite = EINA_TRUE;
    *comp_dst = comp_obj;
-   eo_do(comp_obj_id, eo_parent_set(parent_id));
+
+   if (comp_obj->klass->desc->version == EO2_VERSION)
+     eo2_do(comp_obj_id, eo2_parent_set(parent_id));
+   else
+     eo_do(comp_obj_id, eo_parent_set(parent_id));
 
    return EINA_TRUE;
 }
@@ -2036,7 +2040,10 @@ eo_composite_detach(Eo *comp_obj_id, Eo *parent_id)
           {
              comp_obj->composite = EINA_FALSE;
              *comp_itr = NULL;
-             eo_do(comp_obj_id, eo_parent_set(NULL));
+             if (comp_obj->klass->desc->version == EO2_VERSION)
+                eo2_do(comp_obj_id, eo2_parent_set(NULL));
+             else
+                eo_do(comp_obj_id, eo_parent_set(NULL));
              return EINA_TRUE;
           }
      }

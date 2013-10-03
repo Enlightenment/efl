@@ -102,7 +102,7 @@ _data_get(Eo *obj EINA_UNUSED, void *class_data, const char *key)
 
    return NULL;
 }
-EAPI EO2_VOID_FUNC_BODYV(eo2_base_data_get, EO2_FUNC_CALL(key), const char *key);
+EAPI EO2_FUNC_BODYV(eo2_base_data_get, void*, NULL, EO2_FUNC_CALL(key), const char *key);
 
 static void
 _parent_set(Eo *obj, void *class_data, Eo *parent_id)
