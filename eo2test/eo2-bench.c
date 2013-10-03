@@ -22,13 +22,14 @@ static void report(struct timespec t0, struct timespec t1,
           (unsigned int)(dt1/1000000),(unsigned int)(dt1/c));
 }
 
-static void check(int val, int expected)
+#define check(val, ex) do_check(val, ex, __LINE__)
+static void do_check(int val, int expected, int line)
 {
    static int count = 0;
    count++;
    if (val != expected)
      {
-        fprintf(stderr, "check #%d failed %d != %d\n", count, val, expected);
+        fprintf(stderr, "check line %d #%d failed %d != %d\n", line, count, val, expected);
         exit(count);
      }
 }
@@ -284,9 +285,7 @@ check:
    check(eo2_call_stack_depth(), 0);
 #ifdef HAVE_EO_ID
    // segfault if eo2_do_end is called !!
-   Eo *other = eo2_add_custom(EO2_SIMPLE_CLASS, NULL, eo2_simple_constructor(66));
-   eo_del(other);
-   eo2_do((Eo *)((uintptr_t)other + 666), eo2_set(0););
+   eo2_do((Eo *)((uintptr_t)eo2_obj + 666), eo2_set(0););
 #endif
 
    eo_del(eo2_obj);
@@ -327,6 +326,9 @@ event_test()
    eo2_do(eo2_obj, eo2_event_callback_add(EO2_EV_X_CHANGED, _changed_cb, NULL));
    eo2_do(eo2_obj, eo2_set_evt(66));
    check(evt_count, 1);
+
+   eo_del(eo_obj);
+   eo_del(eo2_obj);
 }
 
 static void
