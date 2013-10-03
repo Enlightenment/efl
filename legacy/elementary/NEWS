@@ -308,6 +308,7 @@ Removals:
    * Popup: Fix the corrupted internal widget tree that caused elm_theme_set() doesn't work correctly.
    * Mapbuf: Ensure that content size calculation is correctly finished because the mapbuf is willing to block the size calculation forcely.
    * Gesture layer: Fix gesture layer with "pointer" events.
+   * Focus: update the focus highlight style when theme is changed.
 
 Changes since Elementary 1.0.0:
 -------------------------

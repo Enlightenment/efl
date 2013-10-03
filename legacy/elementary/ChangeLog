@@ -1668,3 +1668,6 @@
 2013-10-02  Ryuan Choi (ryuan)
         * fileselector: Add "activated" smart callback. It can be used to execute
         a file activated by double-clicking or pressing Enter key.
+
+2013-10-03  ChunEon Park (Hermet)
+        * Focus: update the focus highlight style when theme is changed.

@@ -5208,6 +5208,14 @@ elm_win_focus_highlight_style_set(Evas_Object *obj,
 }
 
 static void
+_elm_win_smart_theme(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
+{
+   Elm_Win_Smart_Data *sd = _pd;
+   sd->focus_highlight.theme_changed = EINA_TRUE;
+   _elm_win_focus_highlight_reconfigure_job_start(sd);
+}
+
+static void
 _focus_highlight_style_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    const char *style = va_arg(*list, const char *);
@@ -5512,6 +5520,7 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_NEXT), _elm_win_smart_focus_next),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_DIRECTION_MANAGER_IS), _elm_win_smart_focus_direction_manager_is),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_DIRECTION), _elm_win_smart_focus_direction),
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME), _elm_win_smart_theme),
 
         EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_WIN_CONSTRUCTOR), _win_constructor),
         EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_RESIZE_OBJECT_ADD), _resize_object_add),
