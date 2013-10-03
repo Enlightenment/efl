@@ -4,8 +4,10 @@
 
 #include "eo_simple.h"
 #include "eo_inherit.h"
+#include "eo_composite.h"
 #include "eo2_simple.h"
 #include "eo2_inherit.h"
+#include "eo2_composite.h"
 
 static void report(struct timespec t0, struct timespec t1,
                    struct timespec t2, struct timespec t3, int n, int c)
@@ -332,6 +334,81 @@ event_test()
 }
 
 static void
+composite_test()
+{
+   Eo *eo_obj, *eo2_obj;
+   Eo *simple, *simple2;
+   int a;
+
+   /* EO */
+   eo_obj = eo_add(EO_COMPOSITE_CLASS, NULL);
+   check(eo_composite_is(eo_obj), 0);
+
+   eo_do(eo_obj, eo_base_data_get("simple-obj", (void **) &simple));
+   eo_ref(simple);
+   check(eo_composite_is(simple), 1);
+
+   eo_do(eo_obj, eo_event_callback_add(EO_EV_X_CHANGED, _changed_cb, NULL));
+
+   evt_count = 0;
+   eo_do(eo_obj, eo_set_evt(66));
+   check(evt_count, 1);
+
+   eo_do(eo_obj, eo_get(&a));
+   check(a, 66);
+
+   /* disable the callback forwarder, and fail if it's still called. */
+   eo_do(simple, eo_event_callback_forwarder_del(EO_EV_X_CHANGED, eo_obj));
+
+   evt_count = 0;
+   eo_do(eo_obj, eo_set_evt(66));
+   check(evt_count, 0);
+
+   check(eo_composite_is(simple), 1);
+   eo_composite_detach(simple, eo_obj);
+   check(eo_composite_is(simple), 0);
+   eo_composite_attach(simple, eo_obj);
+   check(eo_composite_is(simple), 1);
+
+   eo_unref(simple);
+   eo_unref(eo_obj);
+
+   /* EO2 */
+   simple2 = NULL;
+   eo2_obj = eo2_add(EO2_COMPOSITE_CLASS, NULL);
+   check(eo_composite_is(eo2_obj), 0);
+
+   eo2_do(eo2_obj, simple2 = eo2_base_data_get("simple-obj"));
+   eo_ref(simple2);
+   check(eo_composite_is(simple2), 1);
+
+   eo2_do(eo2_obj, eo2_event_callback_add(EO2_EV_X_CHANGED, _changed_cb, NULL));
+
+   evt_count = 0;
+   eo2_do(eo2_obj, eo2_set_evt(66));
+   check(evt_count, 1);
+
+   eo2_do(eo2_obj, eo2_get(&a));
+   check(a, 66);
+
+   /* disable the callback forwarder, and fail if it's still called. */
+   eo2_do(simple2, eo2_event_callback_forwarder_del(EO2_EV_X_CHANGED, eo2_obj));
+
+   evt_count = 0;
+   eo2_do(eo2_obj, eo2_set_evt(66));
+   check(evt_count, 0);
+
+   check(eo_composite_is(simple2), 1);
+   eo_composite_detach(simple2, eo2_obj);
+   check(eo_composite_is(simple2), 0);
+   eo_composite_attach(simple2, eo2_obj);
+   check(eo_composite_is(simple2), 1);
+
+   eo_unref(simple2);
+   eo_unref(eo2_obj);
+}
+
+static void
 class_do_test()
 {
    printf("\n *** class_do_test\n");
@@ -359,6 +436,8 @@ main(int argc EINA_UNUSED, char** argv EINA_UNUSED, char** env EINA_UNUSED)
    virtual_test();
 
    event_test();
+
+   composite_test();
 
    eo_shutdown();
 

@@ -7,8 +7,8 @@ EINA_CFLAGS = `pkg-config --cflags eina`
 EINA_LIBS   = `pkg-config --libs eina`
 EO_SRC  = ../src/lib/eo/eo_ptr_indirection.c ../src/lib/eo/eo.c ../src/lib/eo/eo_base_class.c ../src/lib/eo/eo2_base_class.c
 EO_OBJS  = eo_ptr_indirection.o eo.o eo_base_class.o eo2_base_class.o
-BENCH_SRC  = eo2_simple.c eo_simple.c eo2_inherit.c eo_inherit.c eo2-bench.c
-BENCH_OBJS  = eo2_simple.o eo_simple.o eo2_inherit.o eo_inherit.o eo2-bench.o
+BENCH_SRC  = eo2_simple.c eo_simple.c eo2_inherit.c eo_inherit.c eo2_composite.c eo_composite.c eo2-bench.c
+BENCH_OBJS  = eo2_simple.o eo_simple.o eo2_inherit.o eo_inherit.o eo2_composite.o eo_composite.o eo2-bench.o
 
 all: eo2-bench eo2-bench-pg test
 
