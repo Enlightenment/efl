@@ -1978,7 +1978,10 @@ eo_composite_attach(Eo *comp_obj_id, Eo *parent_id)
    comp_obj->composite = EINA_TRUE;
    parent->composite_objects = eina_list_prepend(parent->composite_objects, comp_obj_id);
 
-   eo_do(comp_obj_id, eo_parent_set(parent_id));
+   if (comp_obj->klass->desc->version == EO2_VERSION)
+     eo2_do(comp_obj_id, eo2_parent_set(parent_id));
+   else
+     eo_do(comp_obj_id, eo_parent_set(parent_id));
 }
 
 EAPI void
@@ -1989,7 +1992,10 @@ eo_composite_detach(Eo *comp_obj_id, Eo *parent_id)
 
    comp_obj->composite = EINA_FALSE;
    parent->composite_objects = eina_list_remove(parent->composite_objects, comp_obj_id);
-   eo_do(comp_obj_id, eo_parent_set(NULL));
+   if (comp_obj->klass->desc->version == EO2_VERSION)
+     eo2_do(comp_obj_id, eo2_parent_set(NULL));
+   else
+     eo_do(comp_obj_id, eo_parent_set(NULL));
 }
 
 EAPI Eina_Bool
