@@ -1,3 +1,7 @@
+2013-10-04  ChunEon Park (Hermet)
+
+	* Eina: fix eina_file_map_lines() to not drop of one character in the last line.
+
 2013-10-02  Cedric Bail
 
 	* Eina: add eina_swap16(), eina_swap32(), eina_swap64().
