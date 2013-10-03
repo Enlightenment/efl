@@ -490,22 +490,47 @@ eo2_call_resolve(const Eo_Op op, Eo2_Op_Call_Data *call)
      }
 
    /* Try composite objects */
-   /* FIXME!!! */
+   if (obj)
+     {
+        Eina_List *itr;
+        Eo *emb_eo_id;
+        EINA_LIST_FOREACH((obj)->composite_objects, itr, emb_eo_id)
+          {
+             /* should never return */
+             EO_OBJ_POINTER_RETURN_VAL(emb_eo_id, emb_obj, EINA_FALSE);
+
+             func = _dich_func_get(emb_obj->klass, op);
+             if (func == NULL)
+               continue;
+
+             if (EINA_LIKELY(func->func && func->src ))
+               {
+                  call->obj = _eo_id_get(emb_obj);
+                  call->klass = _eo_class_id_get(emb_obj->klass);
+                  call->func = func->func;
+                  call->data = _eo_data_scope_get(emb_obj, func->src);
+
+                  return EINA_TRUE;
+               }
+          }
+     }
+
+   ERR("func %d could not be resolved in class '%s'", op, klass->desc->name);
+
    return EINA_FALSE;
 }
 
 
 static inline const Eo2_Op_Description *
-_eo2_api_desc_get(const void *api_func, const _Eo_Class *klass)
+_eo2_api_desc_get(const void *api_func, const _Eo_Class *klass, const _Eo_Class **extns)
 {
    int imin, imax, imid;
    const _Eo_Class *cur_klass;
    const _Eo_Class **kls_itr = NULL;
-   Eo2_Op_Description *op_desc;
-   Eo2_Op_Description *op_descs;
+   const Eo2_Op_Description *op_desc;
+   const Eo2_Op_Description *op_descs;
 
-   kls_itr = klass->mro;
-   while (*kls_itr)
+   for (kls_itr = klass->mro ; *kls_itr ; kls_itr++)
      {
         cur_klass = *kls_itr;
         imin = 0;
@@ -525,7 +550,19 @@ _eo2_api_desc_get(const void *api_func, const _Eo_Class *klass)
                return op_desc;
           }
 
-        kls_itr++;
+     }
+
+   if (extns)
+     {
+        for (kls_itr = extns ; *kls_itr ; kls_itr++)
+          {
+             cur_klass = *kls_itr;
+             if (cur_klass->desc->type == EO_CLASS_TYPE_REGULAR)
+               {
+                  op_desc = _eo2_api_desc_get(api_func, cur_klass, NULL);
+                  if (op_desc) return op_desc;
+               }
+          }
      }
 
    return NULL;
@@ -547,7 +584,7 @@ eo2_api_op_id_get(const void *api_func, const Eo_Op_Type op_type)
         return EO_NOOP;
      }
 
-   desc = _eo2_api_desc_get(api_func, klass);
+   desc = _eo2_api_desc_get(api_func, klass, klass->extensions);
 
    if (desc == NULL)
      {
@@ -607,7 +644,7 @@ _eo2_class_funcs_set(_Eo_Class *klass)
                ERR("Can't inherit from a NULL parent. Class '%s', Func index: %lu",
                    klass->desc->name, (unsigned long) (op_desc - op_descs));
 
-             api_desc = _eo2_api_desc_get(op_desc->api_func, klass->parent);
+             api_desc = _eo2_api_desc_get(op_desc->api_func, klass->parent, klass->extensions);
 
              if (api_desc == NULL)
                ERR("Can't find api func %p description in class hierarchy. Class '%s', Func index: %lu",
