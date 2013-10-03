@@ -8887,7 +8887,6 @@ evas_textblock_cursor_content_get(const Evas_Textblock_Cursor *cur)
         char *ret;
         fnode = _evas_textblock_node_visible_at_pos_get(
                  evas_textblock_cursor_format_get(cur));
-        if (!fnode) return NULL;
 
         buf = eina_strbuf_new();
         _markup_get_format_append(buf, fnode);
