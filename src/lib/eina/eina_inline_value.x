@@ -1296,6 +1296,7 @@ eina_value_hash_vset(Eina_Value *value, const char *key, va_list args)
              eina_value_type_flush(desc->subtype, mem);
              eina_hash_del_by_key(desc->hash, key);
              free(mem);
+             return EINA_FALSE;
           }
      }
 
@@ -1378,6 +1379,7 @@ eina_value_hash_pset(Eina_Value *value, const char *key, const void *ptr)
              eina_value_type_flush(desc->subtype, mem);
              eina_hash_del_by_key(desc->hash, key);
              free(mem);
+             return EINA_FALSE;
           }
      }
 
