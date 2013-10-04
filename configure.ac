@@ -792,6 +792,10 @@ AC_DEFINE_IF([HAVE_DIRENT_H], [test "x${have_dirent}" = "xyes"],
 ### Checks for structures
 
 ### Checks for compiler characteristics
+AC_CHECK_HEADER([byteswap.h], [have_byteswap="yes"], [have_byteswap="no"])
+
+EINA_CONFIG([HAVE_BYTESWAP_H], [test "x${have_byteswap}" = "xyes"])
+
 EFL_CHECK_GCC_BUILTIN([bswap16], [HAVE_BSWAP16])
 EFL_CHECK_GCC_BUILTIN([bswap32], [HAVE_BSWAP32])
 EFL_CHECK_GCC_BUILTIN([bswap64], [HAVE_BSWAP64])

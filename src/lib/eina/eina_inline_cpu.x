@@ -23,11 +23,27 @@
 #ifndef EINA_INLINE_CPU_X_
 #define EINA_INLINE_CPU_X_
 
+#ifdef EINA_HAVE_BYTESWAP_H
+# include <byteswap.h>
+#endif
+
+#ifdef __has_builtin
+# define EINA_HAS_BUILTIN(x) __has_builtin(x)
+#elif (defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 8)))
+# define EINA_HAS_BUILTIN(x) 1
+#else
+# define EINA_HAS_BUILTIN(x) 0  // Compatibility for the rest of the world
+#endif
+
 static inline unsigned short
 eina_swap16(unsigned short x)
 {
-#ifdef EINA_HAVE_BSWAP16
+#if defined EINA_HAVE_BSWAP16 && EINA_HAS_BUILTIN(__builtin_bswap16)
   return __builtin_bswap16(x);
+#elif defined _MSC_VER          /* Windows. Apparently in <stdlib.h>. */
+  return _byteswap_ushort(x);
+#elif defined EINA_HAVE_BYTESWAP_H
+  return bswap_16(x);
 #else
   return (((x & 0xff00) >> 8) |
           ((x & 0x00ff) << 8));
@@ -39,6 +55,10 @@ eina_swap32(unsigned int x)
 {
 #ifdef EINA_HAVE_BSWAP32
   return __builtin_bswap32(x);
+#elif defined _MSC_VER          /* Windows. Apparently in <stdlib.h>. */
+  return _byteswap_ulong(x);
+#elif defined EINA_HAVE_BYTESWAP_H
+  return bswap_32(x);
 #else
   return (x >> 24) |
         ((x >>  8) & 0x0000FF00) |
@@ -52,6 +72,10 @@ eina_swap64(unsigned long long x)
 {
 #ifdef EINA_HAVE_BSWAP64
   return __builtin_bswap64(x);
+#elif defined _MSC_VER          /* Windows. Apparently in <stdlib.h>. */
+  return _byteswap_uint64(x);
+#elif defined EINA_HAVE_BYTESWAP_H
+  return bswap_64(x);
 #else
   return (((x & 0xff00000000000000ull) >> 56) |
           ((x & 0x00ff000000000000ull) >> 40) |
