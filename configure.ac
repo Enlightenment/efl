@@ -783,6 +783,8 @@ CFLAGS="${CFLAGS} ${EINA_CFLAGS}"
 AC_CHECK_HEADERS([sys/mman.h])
 CFLAGS="${CFLAGS_save}"
 
+AC_CHECK_HEADER([byteswap.h], [have_byteswap="yes"], [have_byteswap="no"])
+
 ### Checks for types
 
 EINA_CONFIG([HAVE_DIRENT_H], [test "x${have_dirent}" = "xyes"])
@@ -792,8 +794,6 @@ AC_DEFINE_IF([HAVE_DIRENT_H], [test "x${have_dirent}" = "xyes"],
 ### Checks for structures
 
 ### Checks for compiler characteristics
-AC_CHECK_HEADER([byteswap.h], [have_byteswap="yes"], [have_byteswap="no"])
-
 EINA_CONFIG([HAVE_BYTESWAP_H], [test "x${have_byteswap}" = "xyes"])
 
 EFL_CHECK_GCC_BUILTIN([bswap16], [HAVE_BSWAP16])
