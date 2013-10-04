@@ -4491,6 +4491,24 @@ _item_block_recalc(Item_Block *itb,
                             _item_realize(it, in, EINA_TRUE);
                             _elm_genlist_item_unrealize(it, EINA_TRUE);
                          }
+                       else
+                         {
+                            if (it->group)
+                              {
+                                 it->item->w = it->item->minw =
+                                   sd->group_item_width;
+                                 it->item->h = it->item->minh =
+                                   sd->group_item_height;
+                              }
+                            else
+                              {
+                                 it->item->w = it->item->minw =
+                                   sd->item_width;
+                                 it->item->h = it->item->minh =
+                                   sd->item_height;
+                              }
+                            it->item->mincalcd = EINA_TRUE;
+                         }
                     }
                }
              else
@@ -4512,6 +4530,7 @@ _item_block_recalc(Item_Block *itb,
                             it->item->h = it->item->minh =
                                 sd->item_height;
                          }
+                       it->item->mincalcd = EINA_TRUE;
                     }
                   else
                     {
