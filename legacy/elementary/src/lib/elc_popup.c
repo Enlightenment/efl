@@ -315,7 +315,7 @@ _elm_popup_smart_theme(Eo *obj, void *_pd, va_list *list)
    Elm_Popup_Item *it;
    unsigned int i = 0;
    Eina_List *elist;
-   char buf[128];
+   char buf[1024], style[1024];
 
    Eina_Bool int_ret;
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
@@ -331,34 +331,29 @@ _elm_popup_smart_theme(Eo *obj, void *_pd, va_list *list)
 
    //FIXME: theme set seems corrupted.
    //if (elm_widget_parent_get(sd->notify) != obj)
-     elm_widget_style_set(sd->notify, elm_widget_style_get(obj));
+   snprintf(style, sizeof(style), "popup/%s", elm_widget_style_get(obj));
+   elm_widget_style_set(sd->notify, style);
 
    if (sd->action_area)
      {
-        snprintf(buf, sizeof(buf), "buttons%u", sd->button_count);
-        if (!elm_layout_theme_set(sd->action_area, "popup", buf,
-                                  elm_widget_style_get(obj)))
+        snprintf(buf, sizeof(buf), "buttons%i", sd->button_count);
+        if (!elm_layout_theme_set(sd->action_area, "popup", buf, style))
           CRITICAL("Failed to set layout!");
         for (i = 0; i < ELM_POPUP_ACTION_BUTTON_MAX; i++)
           {
              if (!sd->buttons[i]) continue;
-             elm_object_style_set(sd->buttons[i]->btn, buf);
+             elm_object_style_set(sd->buttons[i]->btn, style);
           }
      }
-   if (!elm_layout_theme_set(sd->content_area, "popup", "content",
-                             elm_widget_style_get(obj)))
+   if (!elm_layout_theme_set(sd->content_area, "popup", "content", style))
      CRITICAL("Failed to set layout!");
    if (sd->text_content_obj)
-     {
-        snprintf(buf, sizeof(buf), "popup/%s", elm_widget_style_get(obj));
-        elm_object_style_set(sd->text_content_obj, buf);
-     }
+       elm_object_style_set(sd->text_content_obj, style);
    else if (sd->items)
      {
         EINA_LIST_FOREACH(sd->items, elist, it)
           {
-             if (!elm_layout_theme_set
-                 (VIEW(it), "popup", "item", elm_widget_style_get(obj)))
+             if (!elm_layout_theme_set(VIEW(it), "popup", "item", style))
                CRITICAL("Failed to set layout!");
              else
                {
@@ -572,9 +567,9 @@ _button_remove(Evas_Object *obj,
           {
              sd->buttons[i] = sd->buttons[i + 1];
 
-             snprintf(buf, sizeof(buf), "actionbtn%d", pos + 1);
+             snprintf(buf, sizeof(buf), "elm.swallow.content.button%i", pos + 1);
              elm_object_part_content_unset(sd->action_area, buf);
-             snprintf(buf, sizeof(buf), "actionbtn%d", pos);
+             snprintf(buf, sizeof(buf), "elm.swallow.content.button%i", pos);
              elm_object_part_content_set
                (sd->action_area, buf, sd->buttons[i]->btn);
           }
@@ -591,9 +586,11 @@ _button_remove(Evas_Object *obj,
      }
    else
      {
-        snprintf(buf, sizeof(buf), "buttons%u", sd->button_count);
-        if (!elm_layout_theme_set
-            (sd->action_area, "popup", buf, elm_widget_style_get(obj)))
+        char style[1024];
+        
+        snprintf(style, sizeof(style), "popup/%s", elm_widget_style_get(obj));
+        snprintf(buf, sizeof(buf), "buttons%i", sd->button_count);
+        if (!elm_layout_theme_set(sd->action_area, "popup", buf, style))
           CRITICAL("Failed to set layout!");
      }
 }
@@ -621,6 +618,8 @@ _restack_cb(void *data __UNUSED__,
 static void
 _list_add(Evas_Object *obj)
 {
+   char style[1024];
+   
    ELM_POPUP_DATA_GET(obj, sd);
    Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
 
@@ -637,7 +636,9 @@ _list_add(Evas_Object *obj)
    elm_table_pack(sd->tbl, sd->spacer, 0, 0, 1, 1);
 
    //Scroller
+   snprintf(style, sizeof(style), "popup/%s", elm_widget_style_get(obj));
    sd->scr = elm_scroller_add(obj);
+   elm_widget_style_set(sd->scr, style);
    elm_scroller_content_min_limit(sd->scr, EINA_TRUE, EINA_FALSE);
    elm_scroller_bounce_set(sd->scr, EINA_FALSE, EINA_TRUE);
    evas_object_size_hint_weight_set(sd->scr,
@@ -851,6 +852,8 @@ _item_signal_emit_hook(Elm_Object_Item *it,
 static void
 _item_new(Elm_Popup_Item *it)
 {
+   char style[1024];
+   
    elm_widget_item_text_set_hook_set(it, _item_text_set_hook);
    elm_widget_item_text_get_hook_set(it, _item_text_get_hook);
    elm_widget_item_content_set_hook_set(it, _item_content_set_hook);
@@ -861,8 +864,9 @@ _item_new(Elm_Popup_Item *it)
    elm_widget_item_signal_emit_hook_set(it, _item_signal_emit_hook);
 
    VIEW(it) = elm_layout_add(WIDGET(it));
-   if (!elm_layout_theme_set(VIEW(it), "popup", "item",
-                             elm_widget_style_get(WIDGET(it))))
+   
+   snprintf(style, sizeof(style), "popup/%s", elm_widget_style_get(WIDGET(it)));
+   if (!elm_layout_theme_set(VIEW(it), "popup", "item", style))
      CRITICAL("Failed to set layout!");
    else
      {
@@ -927,7 +931,7 @@ _content_text_set(Evas_Object *obj,
                   const char *text)
 {
    Evas_Object *ao;
-   char buf[128];
+   char style[1024];
 
    ELM_POPUP_DATA_GET(obj, sd);
    Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
@@ -942,12 +946,12 @@ _content_text_set(Evas_Object *obj,
    if (!text) goto end;
 
    sd->text_content_obj = elm_label_add(obj);
+   snprintf(style, sizeof(style), "popup/%s", elm_widget_style_get(obj));
+   elm_object_style_set(sd->text_content_obj, style);
 
    evas_object_event_callback_add
      (sd->text_content_obj, EVAS_CALLBACK_DEL, _on_text_content_del, obj);
 
-   snprintf(buf, sizeof(buf), "popup/%s", elm_widget_style_get(obj));
-   elm_object_style_set(sd->text_content_obj, buf);
    elm_label_line_wrap_set(sd->text_content_obj, sd->content_text_wrap_type);
    elm_object_text_set(sd->text_content_obj, text);
    evas_object_size_hint_weight_set
@@ -1104,7 +1108,7 @@ _action_button_set(Evas_Object *obj,
                    unsigned int idx)
 {
    Action_Area_Data *adata;
-   char buf[128];
+   char buf[128], style[1024];
 
    ELM_POPUP_DATA_GET(obj, sd);
    Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
@@ -1125,32 +1129,33 @@ _action_button_set(Evas_Object *obj,
         sd->no_shift = EINA_FALSE;
      }
 
-   snprintf(buf, sizeof(buf), "buttons%u", sd->button_count);
+   snprintf(buf, sizeof(buf), "buttons%i", sd->button_count);
    if (!sd->action_area)
      {
         sd->action_area = elm_layout_add(obj);
         evas_object_event_callback_add
           (sd->action_area, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
            _size_hints_changed_cb, obj);
-
         edje_object_part_swallow
           (wd->resize_obj, "elm.swallow.action_area", sd->action_area);
      }
 
-   if (!elm_layout_theme_set(sd->action_area, "popup", buf,
-                             elm_widget_style_get(obj)))
+   snprintf(style, sizeof(style), "popup/%s", elm_widget_style_get(obj));
+   if (!elm_layout_theme_set(sd->action_area, "popup", buf, style))
      CRITICAL("Failed to set layout!");
 
    adata = ELM_NEW(Action_Area_Data);
    adata->obj = obj;
    adata->btn = btn;
 
+   elm_object_style_set(btn, style);
+   
    evas_object_event_callback_add
      (btn, EVAS_CALLBACK_DEL, _on_button_del, obj);
 
    sd->buttons[idx] = adata;
 
-   snprintf(buf, sizeof(buf), "actionbtn%u", idx + 1);
+   snprintf(buf, sizeof(buf), "elm.swallow.content.button%i", idx + 1);
    elm_object_part_content_set
      (sd->action_area, buf, sd->buttons[idx]->btn);
 
@@ -1490,7 +1495,8 @@ _elm_popup_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Popup_Smart_Data *priv = _pd;
    Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
-
+   char style[1024];
+   
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
    elm_widget_sub_object_parent_add(obj);
 
@@ -1499,18 +1505,20 @@ _elm_popup_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    evas_object_size_hint_align_set
      (wd->resize_obj, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
-   if (!elm_layout_theme_set(obj, "popup", "base", elm_widget_style_get(obj)))
+   snprintf(style, sizeof(style), "%s", "default");
+   if (!elm_layout_theme_set(obj, "popup", "base", style))
      CRITICAL("Failed to set layout!");
+   
+   snprintf(style, sizeof(style), "popup/%s", "default");
 
    priv->notify = elm_notify_add(obj);
+   elm_object_style_set(priv->notify, style);
    elm_notify_align_set(priv->notify, 0.5, 0.5);
    elm_notify_allow_events_set(priv->notify, EINA_FALSE);
    evas_object_size_hint_weight_set
      (priv->notify, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set
      (priv->notify, EVAS_HINT_FILL, EVAS_HINT_FILL);
-
-   elm_object_style_set(priv->notify, "popup");
 
    evas_object_event_callback_add(obj, EVAS_CALLBACK_SHOW, _on_show, NULL);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_HIDE, _on_hide, NULL);
@@ -1528,8 +1536,7 @@ _elm_popup_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
      (obj, "elm,state,action_area,hidden", "elm", _layout_change_cb, obj);
 
    priv->content_area = elm_layout_add(obj);
-   if (!elm_layout_theme_set
-       (priv->content_area, "popup", "content", elm_widget_style_get(obj)))
+   if (!elm_layout_theme_set(priv->content_area, "popup", "content", style))
      CRITICAL("Failed to set layout!");
    else
      evas_object_event_callback_add
