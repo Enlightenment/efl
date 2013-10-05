@@ -187,7 +187,7 @@ static void
 _webkit_view_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
    Evas_Object **ret = va_arg(*list, Evas_Object **);
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    *ret = wd->resize_obj;
 }
 
@@ -363,7 +363,7 @@ _useragent_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    const char *user_agent = va_arg(*list, const char *);
 
 #ifdef HAVE_ELEMENTARY_WEB
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    ewk_view_user_agent_set(wd->resize_obj, user_agent);
 #else
@@ -387,7 +387,7 @@ _useragent_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    const char **ret = va_arg(*list, const char **);
 
 #ifdef HAVE_ELEMENTARY_WEB
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    *ret = ewk_view_user_agent_get(wd->resize_obj);
 #else
@@ -419,7 +419,7 @@ elm_web_url_set(Evas_Object *obj,
 static void
 _url_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    const char *url = va_arg(*list, const char *);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
@@ -451,7 +451,7 @@ static void
 _url_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
    const char **ret = va_arg(*list, const char **);
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    *ret = ewk_view_url_get(wd->resize_obj);
 }
 
@@ -468,7 +468,7 @@ static void
 _title_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
    const char **ret = va_arg(*list, const char **);
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    *ret = ewk_view_title_get(wd->resize_obj);
 }
 
@@ -764,7 +764,7 @@ _load_progress_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    *ret = -1.0;
 
 #ifdef HAVE_ELEMENTARY_WEB
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    *ret = ewk_view_load_progress_get(wd->resize_obj);
 #else
@@ -788,7 +788,7 @@ _stop(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
 
 #ifdef HAVE_ELEMENTARY_WEB
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    int_ret = ewk_view_stop(wd->resize_obj);
 #else
@@ -814,7 +814,7 @@ _reload(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
 
 #ifdef HAVE_ELEMENTARY_WEB
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    int_ret = ewk_view_reload(wd->resize_obj);
 #else
@@ -840,7 +840,7 @@ _reload_full(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
 
 #ifdef HAVE_ELEMENTARY_WEB
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    int_ret = ewk_view_reload_bypass_cache(wd->resize_obj);
 #else
@@ -866,7 +866,7 @@ _back(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
 
 #ifdef HAVE_ELEMENTARY_WEB
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    int_ret = ewk_view_back(wd->resize_obj);
 #else
@@ -892,7 +892,7 @@ _forward(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
 
 #ifdef HAVE_ELEMENTARY_WEB
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    int_ret = ewk_view_forward(wd->resize_obj);
 #else
@@ -923,7 +923,7 @@ _navigate(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 #ifdef HAVE_ELEMENTARY_WEB
    Ewk_Back_Forward_List *history;
    Ewk_Back_Forward_List_Item *item = NULL;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    history = ewk_view_back_forward_list_get(wd->resize_obj);
    if (history)
@@ -955,7 +955,7 @@ _back_possible_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    *ret = EINA_FALSE;
 
 #ifdef HAVE_ELEMENTARY_WEB
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    *ret = ewk_view_back_possible(wd->resize_obj);
 #else
@@ -979,7 +979,7 @@ _forward_possible_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    *ret = EINA_FALSE;
 
 #ifdef HAVE_ELEMENTARY_WEB
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    *ret = ewk_view_forward_possible(wd->resize_obj);
 #else
@@ -1006,7 +1006,7 @@ _navigate_possible_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 
 #ifdef HAVE_ELEMENTARY_WEB
    Ewk_Back_Forward_List *history;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    history = ewk_view_back_forward_list_get(wd->resize_obj);
    if (history && ewk_back_forward_list_item_at_index_get(history, steps))
