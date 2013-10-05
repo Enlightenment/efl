@@ -830,7 +830,7 @@ _elm_multibuttonentry_smart_sizing_eval(Eo *obj, void *_pd, va_list *list EINA_U
    Evas_Coord left, right, top, bottom;
 
    Elm_Multibuttonentry_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    evas_object_size_hint_min_get(sd->box, &minw, &minh);
    edje_object_part_geometry_get
@@ -1031,7 +1031,7 @@ static void
 _callbacks_register(Evas_Object *obj)
 {
    ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN(obj, sd);
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    elm_layout_signal_callback_add
      (obj, "mouse,clicked,1", "*", _mouse_clicked_signal_cb, sd);
@@ -1449,7 +1449,7 @@ static void
 _elm_multibuttonentry_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Multibuttonentry_Smart_Data *priv = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
    elm_widget_sub_object_parent_add(obj);
