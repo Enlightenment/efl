@@ -1007,7 +1007,14 @@ AC_ARG_ENABLE([wayland],
 
 if test "${want_wayland}" = "yes"; then
    EFL_PKG_CHECK_STRICT([wayland-client])
-   WAYLAND_SCANNER_RULES(['$(top_srcdir)/data/ecore/ecore_wayland/protocol'])
+dnl This is a problem. unless you somehow have this macro defined
+dnl magically... you cant do dev on efl. configure is totally broken.
+dnl you end up with something like:
+dnl
+dnl ./configure: line 25508: syntax error near unexpected token `'$(top_srcdir)/data/ecore/ecore_wayland/protocol''
+dnl ./configure: line 25508: `WAYLAND_SCANNER_RULES('$(top_srcdir)/data/ecore/ecore_wayland/protocol')'
+
+dnl   WAYLAND_SCANNER_RULES(['$(top_srcdir)/data/ecore/ecore_wayland/protocol'])
 fi
 
 # Fb
