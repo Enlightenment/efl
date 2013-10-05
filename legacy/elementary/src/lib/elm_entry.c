@@ -469,7 +469,7 @@ _elm_entry_smart_theme(Eo *obj, void *_pd, va_list *list)
    if (ret) *ret = EINA_FALSE;
 
    Elm_Entry_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    Eina_Bool int_ret = EINA_FALSE;
    eo_do_super(obj, MY_CLASS, elm_wdg_theme(&int_ret));
@@ -2583,7 +2583,7 @@ _elm_entry_smart_callback_add(Eo *obj, void *_pd, va_list *list)
    Evas_Object *ro;
 
    Elm_Entry_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    ro = wd->resize_obj;
 
@@ -2613,7 +2613,7 @@ _elm_entry_smart_callback_del(Eo *obj, void *_pd, va_list *list)
    Evas_Object *ro;
 
    Elm_Entry_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    ro = wd->resize_obj;
 
@@ -2955,7 +2955,7 @@ _elm_entry_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 #endif
 
    Elm_Entry_Smart_Data *priv = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
    elm_widget_sub_object_parent_add(obj);
