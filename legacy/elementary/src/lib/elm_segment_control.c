@@ -41,7 +41,7 @@ _elm_segment_control_smart_sizing_eval(Eo *obj, void *_pd, va_list *list EINA_UN
    int item_count;
 
    Elm_Segment_Control_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    item_count = eina_list_count(sd->items);
 
@@ -78,8 +78,7 @@ _position_items(Elm_Segment_Control_Smart_Data *sd)
    int item_count;
    Elm_Segment_Item *it;
    int bx, by, bw, bh, pos;
-
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(sd->obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(sd->obj, wd);
 
    item_count = eina_list_count(sd->items);
    if (item_count <= 0) return;
@@ -531,7 +530,7 @@ _access_state_cb(void *data, Evas_Object *obj __UNUSED__)
    Elm_Segment_Item *it = (Elm_Segment_Item *)data;
    ELM_SEGMENT_CONTROL_ITEM_CHECK_OR_RETURN(it, NULL);
    ELM_SEGMENT_CONTROL_DATA_GET(WIDGET(it), sd);
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(WIDGET(it), ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(WIDGET(it), wd, NULL);
 
    if (wd->disabled)
      return strdup(E_("State: Disabled"));
