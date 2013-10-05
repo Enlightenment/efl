@@ -472,7 +472,6 @@ _access_highlight_next_get(Evas_Object *obj, Elm_Focus_Direction dir)
 {
    int type;
    Evas_Object *ho, *parent, *target;
-   Elm_Widget_Smart_Data *wd;
    Eina_Bool ret;
 
    target = NULL;
@@ -488,7 +487,7 @@ _access_highlight_next_get(Evas_Object *obj, Elm_Focus_Direction dir)
    /* find highlight root */
    do
      {
-        wd = eo_data_scope_get(parent, ELM_OBJ_WIDGET_CLASS);
+        ELM_WIDGET_DATA_GET_OR_RETURN(parent, wd, ret);
         if (wd->highlight_root)
           {
              /* change highlight root */
@@ -637,7 +636,6 @@ _elm_access_highlight_cycle(Evas_Object *obj, Elm_Focus_Direction dir)
 {
    int type;
    Evas_Object *ho, *parent;
-   Elm_Widget_Smart_Data *wd;
 
    ho = _access_highlight_object_get(obj);
    if (!ho) return;
@@ -647,7 +645,7 @@ _elm_access_highlight_cycle(Evas_Object *obj, Elm_Focus_Direction dir)
    /* find highlight root */
    do
      {
-        wd = eo_data_scope_get(parent, ELM_OBJ_WIDGET_CLASS);
+        ELM_WIDGET_DATA_GET_OR_RETURN(parent, wd);
         if (wd->highlight_root)
           {
              /* change highlight root */
