@@ -95,8 +95,7 @@ _thumb_ready_inform(Elm_Thumb_Smart_Data *sd,
 {
    Evas_Coord mw, mh;
    Evas_Coord aw, ah;
-
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(sd->obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(sd->obj, wd);
 
    if ((sd->is_video) && (sd->thumb.format == ETHUMB_THUMB_EET))
      {
@@ -206,8 +205,8 @@ _thumb_finish(Elm_Thumb_Smart_Data *sd,
    Eina_List *l, *ll;
    Evas *evas;
    int r;
+   ELM_WIDGET_DATA_GET_OR_RETURN(sd->obj, wd);
 
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(sd->obj, ELM_OBJ_WIDGET_CLASS);
    evas = evas_object_evas_get(sd->obj);
    if ((sd->view) && (sd->is_video ^ sd->was_video))
      {
@@ -358,7 +357,7 @@ _on_ethumb_thumb_error(Ethumb_Client *client __UNUSED__,
    ERR("could not generate thumbnail for %s (key: %s)",
        sd->thumb.file, sd->thumb.key ? sd->thumb.key : "");
 
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(data, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(data, wd);
    elm_layout_signal_emit
      (wd->resize_obj, EDJE_SIGNAL_GENERATE_ERROR, "elm");
    evas_object_smart_callback_call
@@ -398,7 +397,7 @@ _thumb_start(Elm_Thumb_Smart_Data *sd)
 
    if (!sd->file) return;
 
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(sd->obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(sd->obj, wd);
    elm_layout_signal_emit
      (wd->resize_obj, EDJE_SIGNAL_PULSE_START, "elm");
    elm_layout_signal_emit
@@ -458,7 +457,7 @@ _on_die_cb(void *data __UNUSED__,
 static void
 _thumb_show(Elm_Thumb_Smart_Data *sd)
 {
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(sd->obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(sd->obj, wd);
    evas_object_show(wd->resize_obj);
 
    if (!_elm_ethumb_client)
@@ -498,7 +497,7 @@ _elm_thumb_smart_hide(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 #else
    (void) _pd;
 #endif
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_hide());
 
@@ -560,7 +559,7 @@ _elm_thumb_smart_theme(Eo *obj, void *_pd __UNUSED__, va_list *list)
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret = EINA_FALSE;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    eo_do_super(obj, MY_CLASS, elm_wdg_theme(&int_ret));
    if (!int_ret) return;
@@ -595,7 +594,7 @@ elm_need_ethumb(void)
 static void
 _elm_thumb_smart_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
    elm_widget_sub_object_parent_add(obj);
