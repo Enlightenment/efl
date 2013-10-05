@@ -34,8 +34,7 @@ static void
 _elm_dayselector_smart_sizing_eval(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
    Evas_Coord min_w = -1, min_h = -1;
-
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    elm_coords_finger_size_adjust(ELM_DAYSELECTOR_MAX, &min_w, 1, &min_h);
    edje_object_size_min_restricted_calc
@@ -532,7 +531,7 @@ static void
 _week_start_set(Eo *obj, void *_pd, va_list *list)
 {
    Elm_Dayselector_Day day = va_arg(*list, Elm_Dayselector_Day);
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    Eina_List *l;
    char buf[1024];
    Elm_Dayselector_Item *it;

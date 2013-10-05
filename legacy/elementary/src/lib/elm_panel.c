@@ -35,7 +35,7 @@ _elm_panel_smart_sizing_eval(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    Evas_Coord mw = -1, mh = -1;
 
    Elm_Panel_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    if (sd->delete_me) return;
 
@@ -60,7 +60,7 @@ static void
 _orient_set_do(Evas_Object *obj)
 {
    ELM_PANEL_DATA_GET(obj, sd);
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    switch (sd->orient)
      {
@@ -131,7 +131,7 @@ _elm_panel_smart_theme(Eo *obj, void *_pd, va_list *list)
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    if (ret) *ret = EINA_FALSE;
 
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    eo_do_super(obj, MY_CLASS, elm_wdg_theme(&int_ret));
    if (!int_ret) return;
@@ -177,7 +177,7 @@ _elm_panel_smart_focus_next(Eo *obj, void *_pd, va_list *list)
    Eina_Bool int_ret = EINA_FALSE;
 
    Elm_Panel_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    if (!sd->content) goto end;
 
@@ -223,7 +223,7 @@ _panel_toggle(void *data __UNUSED__,
               const char *source __UNUSED__)
 {
    ELM_PANEL_DATA_GET(obj, sd);
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    if (sd->hidden)
      {
@@ -352,7 +352,7 @@ static void
 _elm_panel_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Panel_Smart_Data *priv = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
    elm_widget_sub_object_parent_add(obj);
@@ -399,7 +399,7 @@ _elm_panel_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    Eina_List *l;
 
    Elm_Panel_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    sd->delete_me = EINA_TRUE;
 
@@ -421,7 +421,7 @@ _elm_panel_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 static void
 _elm_panel_smart_access(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    Eina_Bool is_access = va_arg(*list, int);
    if (is_access)

@@ -88,7 +88,7 @@ static Evas_Object *
 _access_object_get(const Evas_Object *obj, const char* part)
 {
    Evas_Object *po, *ao;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
 
    po = (Evas_Object *)edje_object_part_object_get(wd->resize_obj, part);
    ao = evas_object_data_get(po, "_part_access_obj");
@@ -146,7 +146,7 @@ _scroller_size_calc(Evas_Object *obj)
    const char *action_area_height;
 
    ELM_POPUP_DATA_GET(obj, sd);
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    if (!sd->items) return;
 
@@ -269,7 +269,7 @@ _access_obj_process(Eo *obj, Eina_Bool is_access)
    Evas_Object *ao;
 
    ELM_POPUP_DATA_GET(obj, sd);
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    if (is_access)
      {
@@ -322,7 +322,7 @@ _elm_popup_smart_theme(Eo *obj, void *_pd, va_list *list)
    if (ret) *ret = EINA_FALSE;
 
    Elm_Popup_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    eo_do_super(obj, MY_CLASS, elm_wdg_theme(&int_ret));
    if (!int_ret) return;
@@ -417,7 +417,7 @@ _elm_popup_smart_sizing_eval(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
 
    Elm_Popup_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    if (sd->items)
      {
@@ -452,7 +452,7 @@ _elm_popup_smart_sub_object_del(Eo *obj, void *_pd, va_list *list)
    Eina_Bool int_ret;
 
    Elm_Popup_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    eo_do_super(obj, MY_CLASS, elm_wdg_sub_object_del(sobj, &int_ret));
    if (!int_ret) return;
@@ -547,7 +547,7 @@ _button_remove(Evas_Object *obj,
    char buf[128];
 
    ELM_POPUP_DATA_GET(obj, sd);
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    if (!sd->button_count) return;
 
@@ -621,7 +621,7 @@ _list_add(Evas_Object *obj)
    char style[1024];
    
    ELM_POPUP_DATA_GET(obj, sd);
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    //Table
    sd->tbl = elm_table_add(obj);
@@ -885,7 +885,7 @@ _title_text_set(Evas_Object *obj,
    Eina_Bool title_visibility_old, title_visibility_current;
 
    ELM_POPUP_DATA_GET(obj, sd);
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
    if (sd->title_text == text) return EINA_TRUE;
 
@@ -934,7 +934,7 @@ _content_text_set(Evas_Object *obj,
    char style[1024];
 
    ELM_POPUP_DATA_GET(obj, sd);
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
    if (sd->items)
      {
@@ -1044,7 +1044,7 @@ _title_icon_set(Evas_Object *obj,
    Eina_Bool title_visibility_old, title_visibility_current;
 
    ELM_POPUP_DATA_GET(obj, sd);
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
    if (sd->title_icon == icon) return EINA_TRUE;
    title_visibility_old = (sd->title_text) || (sd->title_icon);
@@ -1073,7 +1073,7 @@ _content_set(Evas_Object *obj,
              Evas_Object *content)
 {
    ELM_POPUP_DATA_GET(obj, sd);
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
    if (sd->content && sd->content == content) return EINA_TRUE;
    if (sd->items)
@@ -1111,7 +1111,7 @@ _action_button_set(Evas_Object *obj,
    char buf[128], style[1024];
 
    ELM_POPUP_DATA_GET(obj, sd);
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    if (idx >= ELM_POPUP_ACTION_BUTTON_MAX) return;
 
@@ -1296,7 +1296,7 @@ _title_icon_unset(Evas_Object *obj)
    Evas_Object *icon;
 
    ELM_POPUP_DATA_GET(obj, sd);
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
 
    if (!sd->title_icon) return NULL;
 
@@ -1494,7 +1494,7 @@ static void
 _elm_popup_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Popup_Smart_Data *priv = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    char style[1024];
    
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
@@ -1578,7 +1578,7 @@ elm_popup_add(Evas_Object *parent)
    Evas_Object *obj = eo_add(MY_CLASS, parent);
    eo_unref(obj);
 
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
    wd->highlight_root = EINA_TRUE;
 
    return obj;

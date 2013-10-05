@@ -93,7 +93,7 @@ _elm_panes_smart_focus_next(Eo *obj, void *_pd, va_list *list)
    Evas_Object *left, *right;
 
    Elm_Panes_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    Elm_Focus_Direction dir = va_arg(*list, Elm_Focus_Direction);
    Evas_Object **next = va_arg(*list, Evas_Object **);
@@ -193,7 +193,7 @@ _on_unpressed(void *data,
 static void
 _elm_panes_smart_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    ELM_PANES_DATA_GET(obj, sd);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
@@ -309,7 +309,7 @@ _elm_panes_smart_content_left_size_get(Eo *obj, void *_pd, va_list *list)
    double w, h;
 
    Elm_Panes_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    edje_object_part_drag_value_get
      (wd->resize_obj, "elm.bar", &w, &h);
@@ -331,7 +331,7 @@ _elm_panes_smart_content_left_size_set(Eo *obj, void *_pd, va_list *list)
 {
    double size = va_arg(*list, double);
    Elm_Panes_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    if (size < 0.0) size = 0.0;
    else if (size > 1.0) size = 1.0;

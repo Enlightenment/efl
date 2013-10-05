@@ -83,7 +83,7 @@ _on_sub_object_size_hint_change(void *data,
                                 Evas_Object *obj __UNUSED__,
                                 void *event_info __UNUSED__)
 {
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(data, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(data, wd);
    if (wd->frozen) return;
    eo_do(data, elm_obj_layout_sizing_eval());
 }
@@ -102,7 +102,8 @@ static void
 _sizing_eval(Evas_Object *obj, Elm_Layout_Smart_Data *sd)
 {
    Evas_Coord minh = -1, minw = -1;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(sd->obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(sd->obj, wd);
+
    edje_object_size_min_calc(wd->resize_obj, &minw, &minh);
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, -1, -1);
@@ -131,7 +132,7 @@ _icon_signal_emit(Elm_Layout_Smart_Data *sd,
    snprintf(buf, sizeof(buf), "elm,state,%s,%s", type,
             visible ? "visible" : "hidden");
 
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(sd->obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(sd->obj, wd);
    edje_object_signal_emit(wd->resize_obj, buf, "elm");
 
    /* themes might need immediate action here */
@@ -150,7 +151,7 @@ _text_signal_emit(Elm_Layout_Smart_Data *sd,
    //Send signals for all text parts after elm 2.0
    if (sub_d->type != TEXT || strcmp("elm.text", sub_d->part)) return;
 
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(sd->obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(sd->obj, wd);
 
    if (strncmp(sub_d->part, "elm.text.", sizeof("elm.text.") - 1) == 0)
      type = sub_d->part + sizeof("elm.text.") - 1;
@@ -206,7 +207,7 @@ _parts_text_fix(Elm_Layout_Smart_Data *sd)
 {
    const Eina_List *l;
    Elm_Layout_Sub_Object_Data *sub_d;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(sd->obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(sd->obj, wd);
 
    EINA_LIST_FOREACH(sd->subs, l, sub_d)
      {
@@ -233,7 +234,7 @@ _parts_cursors_apply(Elm_Layout_Smart_Data *sd)
    const Eina_List *l;
    const char *file, *group;
    Elm_Layout_Sub_Object_Cursor *pc;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(sd->obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(sd->obj, wd);
 
    edje_object_file_get(wd->resize_obj, &file, &group);
 
@@ -281,7 +282,7 @@ _visuals_refresh(Evas_Object *obj,
                  Elm_Layout_Smart_Data *sd)
 {
 
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    _parts_swallow_fix(sd, wd);
    _parts_text_fix(sd);
@@ -301,7 +302,7 @@ _visuals_refresh(Evas_Object *obj,
 static void
 _elm_layout_smart_disable(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
 
@@ -325,7 +326,7 @@ _elm_layout_smart_theme(Eo *obj, void *_pd, va_list *list)
    const char *fh;
 
    Elm_Layout_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    eo_do_super(obj, MY_CLASS, elm_wdg_theme(&int_ret));
    if (!int_ret) return;
@@ -376,7 +377,7 @@ _elm_layout_list_data_get(const Eina_List *list)
 static void
 _elm_layout_smart_on_focus(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret = EINA_FALSE;
@@ -477,7 +478,7 @@ _elm_layout_smart_sub_object_del(Eo *obj, void *_pd, va_list *list)
    Eina_Bool int_ret = EINA_FALSE;
 
    Elm_Layout_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    evas_object_event_callback_del_full
      (sobj, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
@@ -618,9 +619,8 @@ _elm_layout_part_aliasing_eval(const Evas_Object *obj EINA_UNUSED,
 
    if (!*part)
      {
-        Elm_Widget_Smart_Data *wd = eo_data_scope_get(sd->obj, ELM_OBJ_WIDGET_CLASS);
         ERR("no default content part set for object %p -- "
-            "part must not be NULL", wd->obj);
+            "part must not be NULL", sd->obj);
         return EINA_FALSE;
      }
 
@@ -652,7 +652,7 @@ _sub_box_remove(Evas_Object *obj,
        ((Evas_Object *)sub_d->p.box.reference,
        EVAS_CALLBACK_DEL, _box_reference_del, sub_d);
 
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(sd->obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(sd->obj, wd, NULL);
    edje_object_part_box_remove
      (wd->resize_obj, sub_d->part, child);
 
@@ -687,7 +687,7 @@ _sub_table_remove(Evas_Object *obj,
                   Elm_Layout_Sub_Object_Data *sub_d)
 {
    Evas_Object *child;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(sd->obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(sd->obj, wd, NULL);
 
    child = sub_d->obj; /* sub_d will die in _elm_layout_smart_sub_object_del */
 
@@ -743,7 +743,7 @@ _elm_layout_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    Eina_List *l;
 
    Elm_Layout_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    elm_layout_freeze(obj);
 
@@ -838,7 +838,7 @@ _elm_layout_smart_file_set(Eo *obj, void *_pd, va_list *list)
    Eina_Bool int_ret = EINA_FALSE;
 
    Elm_Layout_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    int_ret =
      edje_object_file_set(wd->resize_obj, file, group);
@@ -875,7 +875,7 @@ _elm_layout_smart_theme_set(Eo *obj, void *_pd, va_list *list)
    Eina_Bool int_ret = EINA_FALSE;
 
    Elm_Layout_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    eina_stringshare_replace(&(sd->klass), klass);
    eina_stringshare_replace(&(sd->group), group);
@@ -907,7 +907,7 @@ _elm_layout_smart_signal_emit(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    const char *emission = va_arg(*list, const char *);
    const char *source = va_arg(*list, const char *);
 
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    edje_object_signal_emit(wd->resize_obj, emission, source);
 }
@@ -934,7 +934,7 @@ _elm_layout_smart_signal_callback_add(Eo *obj, void *_pd, va_list *list)
    Edje_Signal_Data *esd;
 
    Elm_Layout_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    esd = ELM_NEW(Edje_Signal_Data);
    if (!esd) return;
@@ -977,7 +977,7 @@ _elm_layout_smart_signal_callback_del(Eo *obj, void *_pd, va_list *list)
    if (ret) *ret = NULL;
 
    Elm_Layout_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    EINA_LIST_FOREACH(sd->edje_signals, l, esd)
      {
@@ -1024,7 +1024,7 @@ _elm_layout_smart_content_set(Eo *obj, void *_pd, va_list *list)
    if (ret) *ret = EINA_FALSE;
 
    Elm_Layout_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    if (!_elm_layout_part_aliasing_eval(obj, sd, &part, EINA_FALSE))
      return;
@@ -1134,7 +1134,7 @@ _elm_layout_smart_content_unset(Eo *obj, void *_pd, va_list *list)
    if (ret) *ret = NULL;
 
    Elm_Layout_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    if (!_elm_layout_part_aliasing_eval(obj, sd, &part, EINA_FALSE))
      return;
@@ -1180,7 +1180,7 @@ static void
 _elm_layout_smart_text_set(Eo *obj, void *_pd, va_list *list)
 {
    Elm_Layout_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    const char *part = va_arg(*list, const char *);
    const char *text = va_arg(*list, const char *);
@@ -1257,7 +1257,7 @@ static void
 _elm_layout_smart_text_get(Eo *obj, void *_pd, va_list *list)
 {
    Elm_Layout_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    const char *part = va_arg(*list, const char *);
    const char **text = va_arg(*list, const char **);
@@ -1293,7 +1293,7 @@ _elm_layout_smart_box_append(Eo *obj, void *_pd, va_list *list)
    if (ret) *ret = EINA_FALSE;
 
    Elm_Layout_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    if (!edje_object_part_box_append
          (wd->resize_obj, part, child))
@@ -1346,7 +1346,7 @@ _elm_layout_smart_box_prepend(Eo *obj, void *_pd, va_list *list)
    if (ret) *ret = EINA_FALSE;
 
    Elm_Layout_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    if (!edje_object_part_box_prepend
          (wd->resize_obj, part, child))
@@ -1402,7 +1402,7 @@ _elm_layout_smart_box_insert_before(Eo *obj, void *_pd, va_list *list)
    if (ret) *ret = EINA_FALSE;
 
    Elm_Layout_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    if (!edje_object_part_box_insert_before
          (wd->resize_obj, part, child, reference))
@@ -1462,7 +1462,7 @@ _elm_layout_smart_box_insert_at(Eo *obj, void *_pd, va_list *list)
    if (ret) *ret = EINA_FALSE;
 
    Elm_Layout_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    if (!edje_object_part_box_insert_at
          (wd->resize_obj, part, child, pos))
@@ -1558,7 +1558,7 @@ _elm_layout_smart_box_remove_all(Eo *obj, void *_pd, va_list *list)
    EINA_SAFETY_ON_NULL_RETURN(part);
 
    Elm_Layout_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    Elm_Layout_Sub_Object_Data *sub_d;
    Eina_List *lst;
@@ -1614,7 +1614,7 @@ _elm_layout_smart_table_pack(Eo *obj, void *_pd, va_list *list)
    if (ret) *ret = EINA_FALSE;
 
    Elm_Layout_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    if (!edje_object_part_table_pack
          (wd->resize_obj, part, child, col,
@@ -1715,7 +1715,7 @@ _elm_layout_smart_table_clear(Eo *obj, void *_pd, va_list *list)
    EINA_SAFETY_ON_NULL_RETURN(part);
 
    Elm_Layout_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    Elm_Layout_Sub_Object_Data *sub_d;
    Eina_List *lst;
@@ -1753,7 +1753,7 @@ _elm_layout_smart_edje_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
    Evas_Object **ret = va_arg(*list, Evas_Object **);
 
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    *ret = wd->resize_obj;
 }
@@ -1774,7 +1774,7 @@ _elm_layout_smart_data_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    const char *key = va_arg(*list, const char *);
    const char **ret = va_arg(*list, const char **);
 
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    *ret = edje_object_data_get(wd->resize_obj, key);
 }
@@ -1816,7 +1816,7 @@ _elm_layout_smart_freeze(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    int *ret = va_arg(*list, int *);
    int int_ret = 1;
 
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    if ((wd->frozen)++ != 0)
      {
@@ -1845,7 +1845,7 @@ _elm_layout_smart_thaw(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    int *ret = va_arg(*list, int *);
    int int_ret = 0;
 
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    if (--(wd->frozen) != 0)
      {
@@ -1881,7 +1881,7 @@ _elm_layout_smart_part_cursor_set(Eo *obj, void *_pd, va_list *list)
    if (ret) *ret = EINA_FALSE;
 
    Elm_Layout_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    EINA_SAFETY_ON_NULL_RETURN(part_name);
 
    Evas_Object *part_obj;
@@ -2130,7 +2130,7 @@ _elm_layout_smart_edje_object_can_access_set(Eo *obj, void *_pd EINA_UNUSED, va_
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    if (ret) *ret = EINA_FALSE;
 
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    wd->can_access = !!can_access;
    if (ret) *ret = EINA_TRUE;
@@ -2149,7 +2149,7 @@ static void
 _elm_layout_smart_edje_object_can_access_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    *ret = wd->can_access;
 }
@@ -2159,7 +2159,7 @@ _dbg_info_get(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
 {
    Eo_Dbg_Info *root = (Eo_Dbg_Info *) va_arg(*list, Eo_Dbg_Info *);
    eo_do_super(eo_obj, MY_CLASS, eo_dbg_info_get(root));
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(eo_obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(eo_obj, wd);
 
    if (!wd) return;
 

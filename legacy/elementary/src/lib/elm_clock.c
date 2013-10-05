@@ -339,7 +339,7 @@ static void
 _time_update(Evas_Object *obj)
 {
    ELM_CLOCK_DATA_GET(obj, sd);
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    Edje_Message_Int msg;
    const char *style = elm_widget_style_get(obj);
@@ -664,7 +664,7 @@ static void
 _elm_clock_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Clock_Smart_Data *priv = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
    elm_widget_sub_object_parent_add(obj);
@@ -785,7 +785,7 @@ _elm_clock_smart_focus_next(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 static void
 _access_obj_process(Evas_Object *obj, Eina_Bool is_access)
 {
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    /* clock object */
    evas_object_propagate_events_set(obj, !is_access);

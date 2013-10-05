@@ -127,7 +127,7 @@ static Eina_Bool
 _elm_prefs_save(void *data)
 {
    ELM_PREFS_DATA_GET(data, sd);
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(data, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(data, wd, ECORE_CALLBACK_CANCEL);
 
    if (!sd->dirty || !sd->prefs_data) goto end;
 
@@ -295,7 +295,7 @@ _elm_prefs_item_changed_report(Eo *obj,
                                Elm_Prefs_Item_Node *it)
 {
    char buf[PATH_MAX];
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    snprintf(buf, sizeof(buf), "%s:%s", it->page->name, it->name);
 
@@ -397,7 +397,7 @@ _prefs_data_autosaved_cb(void *cb_data,
                          void *event_info)
 {
    ELM_PREFS_DATA_GET(cb_data, sd);
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(cb_data, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(cb_data, wd);
 
    evas_object_smart_callback_call
      (wd->obj, SIG_PAGE_SAVED, event_info);
@@ -560,7 +560,7 @@ _item_changed_cb(Evas_Object *it_obj)
    snprintf(buf, sizeof(buf), "%s:%s", it->page->name, it->name);
 
    ELM_PREFS_DATA_GET(it->prefs, sd);
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(it->prefs, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(it->prefs, wd);
 
    if (sd->values_fetching) goto end;
 

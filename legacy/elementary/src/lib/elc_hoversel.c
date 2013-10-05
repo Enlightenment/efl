@@ -43,7 +43,7 @@ _elm_hoversel_smart_theme(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    Eina_Bool int_ret;
 
    Elm_Hoversel_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    char buf[4096];
    const char *style;

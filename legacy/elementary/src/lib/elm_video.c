@@ -112,7 +112,7 @@ _elm_video_smart_sizing_eval(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
 #ifdef HAVE_EMOTION
    Elm_Video_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    Evas_Coord minw = -1, minh = -1;
    Evas_Coord w, h;

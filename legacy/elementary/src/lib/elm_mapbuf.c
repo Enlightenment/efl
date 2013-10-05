@@ -85,7 +85,7 @@ static void
 _configure(Evas_Object *obj)
 {
    ELM_MAPBUF_DATA_GET(obj, sd);
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    static Evas_Map *m = NULL;
 
@@ -190,7 +190,7 @@ static void
 _elm_mapbuf_smart_content_set(Eo *obj, void *_pd, va_list *list)
 {
    Elm_Mapbuf_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    const char *part = va_arg(*list, const char *);
    Evas_Object *content = va_arg(*list, Evas_Object *);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
@@ -248,7 +248,7 @@ _elm_mapbuf_smart_content_unset(Eo *obj, void *_pd, va_list *list)
    if (ret) *ret = NULL;
 
    Elm_Mapbuf_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    if (part && strcmp(part, "default")) return;
    if (!sd->content) return;

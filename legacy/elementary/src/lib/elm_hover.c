@@ -317,7 +317,7 @@ _elm_hover_smart_sizing_eval(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    if (elm_widget_mirrored_get(obj)) ofs_x = w - (x2 - x) - w2;
    else ofs_x = x2 - x;
 
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    evas_object_move(wd->resize_obj, x, y);
    evas_object_resize(wd->resize_obj, w, h);
    evas_object_size_hint_min_set(sd->offset, ofs_x, y2 - y);

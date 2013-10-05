@@ -64,7 +64,7 @@ _activate(Evas_Object *obj)
 static void
 _elm_button_smart_sizing_eval(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    Evas_Coord minw = -1, minh = -1;
 
    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
@@ -286,7 +286,7 @@ _access_state_cb(void *data __UNUSED__, Evas_Object *obj)
 static void
 _elm_button_smart_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
    elm_widget_sub_object_parent_add(obj);

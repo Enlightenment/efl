@@ -29,7 +29,7 @@ _elm_bg_smart_sizing_eval(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    const char *p;
 
    Elm_Bg_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    if ((!sd->img) || (!sd->file)) return;
    if (((p = strrchr(sd->file, '.'))) && (!strcasecmp(p, ".edj"))) return;
@@ -171,7 +171,7 @@ _file_set(Eo *obj, void *_pd, va_list *list)
    const char *group = va_arg(*list, const char *);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Elm_Bg_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    const char *p;
    Eina_Bool int_ret;
@@ -306,7 +306,7 @@ _color_set(Eo *obj, void *_pd, va_list *list)
    int b = va_arg(*list, int);
    int a = va_arg(*list, int);
    Elm_Bg_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    // reset color
    if ((r == -1) && (g == -1) && (b == -1))

@@ -39,7 +39,7 @@ _elm_glview_smart_on_focus(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    if (ret) *ret = EINA_FALSE;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    Eina_Bool int_ret = EINA_FALSE;
 
    eo_do_super(obj, MY_CLASS, elm_wdg_on_focus(&int_ret));
@@ -57,7 +57,7 @@ static void
 _glview_update_surface(Evas_Object *obj)
 {
    ELM_GLVIEW_DATA_GET(obj, sd);
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    if (!sd) return;
 
    if (sd->surface)
@@ -163,7 +163,7 @@ static void
 _set_render_policy_callback(Evas_Object *obj)
 {
    ELM_GLVIEW_DATA_GET(obj, sd);
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    switch (sd->render_policy)
      {
@@ -333,7 +333,7 @@ _mode_set(Eo *obj, void *_pd, va_list *list)
    Elm_GLView_Mode mode = va_arg(*list, Elm_GLView_Mode);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Elm_Glview_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    // Set the configs
    if (mode & ELM_GLVIEW_ALPHA) sd->config->color_format = EVAS_GL_RGBA_8888;
@@ -557,7 +557,7 @@ static void
 _changed_set(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Glview_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    evas_object_image_pixels_dirty_set
      (wd->resize_obj, EINA_TRUE);

@@ -561,7 +561,7 @@ _elm_genlist_smart_sizing_eval(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    Evas_Coord vmw = 0, vmh = 0;
 
    Elm_Genlist_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    if (sd->on_sub_del) return;;
 
@@ -4851,7 +4851,7 @@ static void
 _elm_genlist_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Genlist_Smart_Data *priv = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    Elm_Genlist_Pan_Smart_Data *pan_data;
    Evas_Coord minw, minh;
    int i;

@@ -479,7 +479,7 @@ _elm_list_smart_sizing_eval(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    double xw, yw;
 
    Elm_List_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    evas_object_size_hint_min_get(sd->box, &minw, &minh);
    evas_object_size_hint_max_get(sd->box, &maxw, &maxh);
@@ -539,7 +539,7 @@ static void
 _elm_list_mode_set_internal(Evas_Object *obj)
 {
    Elm_List_Smart_Data *sd = eo_data_scope_get(obj, MY_CLASS);
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    if (sd->mode == ELM_LIST_LIMIT)
      {
         if (!sd->h_mode)
@@ -1697,7 +1697,7 @@ _elm_list_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    Evas_Coord minw, minh;
 
    Elm_List_Smart_Data *priv = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
    elm_widget_sub_object_parent_add(obj);

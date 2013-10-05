@@ -160,7 +160,7 @@ _val_set(Evas_Object *obj)
    double pos = 0.0;
 
    ELM_SPINNER_DATA_GET(obj, sd);
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    if (sd->val_max > sd->val_min)
      pos = ((sd->val - sd->val_min) / (sd->val_max - sd->val_min));
@@ -182,7 +182,7 @@ _drag_cb(void *data,
    Eina_Bool ret = EINA_FALSE;
 
    ELM_SPINNER_DATA_GET(obj, sd);
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    if (sd->entry_visible) return;
    eo_do((Eo *)wd->resize_obj,
@@ -213,7 +213,7 @@ _drag_stop_cb(void *data,
               const char *source __UNUSED__)
 {
    ELM_SPINNER_DATA_GET(data, sd);
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(data, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(data, wd);
 
    sd->drag_start_val = 0;
    edje_object_part_drag_value_set
@@ -415,8 +415,7 @@ static void
 _elm_spinner_smart_sizing_eval(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
    Evas_Coord minw = -1, minh = -1;
-
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
    edje_object_size_min_restricted_calc
@@ -655,7 +654,7 @@ static void
 _elm_spinner_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Spinner_Smart_Data *priv = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
    elm_widget_sub_object_parent_add(obj);

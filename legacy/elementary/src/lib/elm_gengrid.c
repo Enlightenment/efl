@@ -2379,7 +2379,7 @@ _elm_gengrid_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    Eina_Bool bounce = _elm_config->thumbscroll_bounce_enable;
    Elm_Gengrid_Pan_Smart_Data *pan_data;
    Elm_Gengrid_Smart_Data *priv = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
    elm_widget_sub_object_parent_add(obj);

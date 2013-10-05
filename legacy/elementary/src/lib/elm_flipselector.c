@@ -53,7 +53,7 @@ _elm_flipselector_smart_sizing_eval(Eo *obj, void *_pd, va_list *list EINA_UNUSE
    Evas_Coord minw = -1, minh = -1, w, h;
 
    Elm_Flipselector_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    if (sd->evaluating) return;
 
@@ -97,7 +97,7 @@ _update_view(Evas_Object *obj)
    Elm_Flipselector_Item *item;
 
    ELM_FLIPSELECTOR_DATA_GET(obj, sd);
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    label = NULL;
    item = DATA_GET(sd->current);
@@ -271,7 +271,7 @@ _send_msg(Elm_Flipselector_Smart_Data *sd,
           char *label)
 {
    Edje_Message_String msg;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(sd->obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(sd->obj, wd);
 
    msg.str = label;
    edje_object_message_send
@@ -366,7 +366,7 @@ _elm_flipselector_smart_theme(Eo *obj, void *_pd, va_list *list)
    if (ret) *ret = EINA_FALSE;
 
    Elm_Flipselector_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    eo_do_super(obj, MY_CLASS, elm_wdg_theme(&int_ret));
    if (!int_ret) return;

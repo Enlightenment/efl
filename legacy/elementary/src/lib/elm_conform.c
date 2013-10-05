@@ -227,11 +227,8 @@ static void
 _conformant_parts_swallow(Evas_Object *obj)
 {
    Evas *e;
-   Elm_Widget_Smart_Data *wd;
-
    ELM_CONFORMANT_DATA_GET(obj, sd);
-
-   wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    e = evas_object_evas_get(obj);
 
    sd->scroller = NULL;
@@ -463,10 +460,8 @@ static void
 _indicator_mode_set(Evas_Object *conformant, Elm_Win_Indicator_Mode indmode)
 {
    Evas_Object *old_indi = NULL;
-   Elm_Widget_Smart_Data *wd;
-
    ELM_CONFORMANT_DATA_GET(conformant, sd);
-   wd = eo_data_scope_get(conformant, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(conformant, wd);
 
    sd->indmode = indmode;
 

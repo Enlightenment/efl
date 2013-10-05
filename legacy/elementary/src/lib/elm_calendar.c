@@ -67,8 +67,7 @@ _elm_calendar_smart_sizing_eval(Eo *obj, void *_pd EINA_UNUSED, va_list *list EI
 
 {
    Evas_Coord minw = -1, minh = -1;
-
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    // 7x8 (1 month+year, days, 6 dates.)
    elm_coords_finger_size_adjust(7, &minw, 8, &minh);
@@ -946,7 +945,7 @@ _elm_calendar_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    int i, t;
 
    Elm_Calendar_Smart_Data *priv = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
    elm_widget_sub_object_parent_add(obj);

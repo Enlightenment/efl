@@ -30,7 +30,7 @@ _sizing_eval(Evas_Object *obj)
    double scale;
 
    ELM_PHOTO_DATA_GET(obj, sd);
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    if (sd->size <= 0) return;
 
@@ -54,7 +54,7 @@ _elm_photo_smart_theme(Eo *obj, void *_pd, va_list *list)
    if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret = EINA_FALSE;
    Elm_Photo_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    eo_do_super(obj, MY_CLASS, elm_wdg_theme(&int_ret));
    if (!int_ret) return;
@@ -84,7 +84,7 @@ _icon_move_resize_cb(void *data,
    Evas_Coord w, h;
 
    ELM_PHOTO_DATA_GET(data, sd);
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    if (sd->fill_inside)
      {
@@ -253,7 +253,7 @@ static void
 _elm_photo_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Photo_Smart_Data *priv = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
    elm_widget_sub_object_parent_add(obj);

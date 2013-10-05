@@ -131,7 +131,7 @@ _elm_grid_smart_theme(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 static void
 _elm_grid_smart_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    Evas_Object *grid;
 
    elm_widget_sub_object_parent_add(obj);
@@ -345,7 +345,7 @@ static void
 _children_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
    Eina_List **ret = va_arg(*list, Eina_List **);
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    *ret = evas_object_grid_children_get(wd->resize_obj);
    return;
 }

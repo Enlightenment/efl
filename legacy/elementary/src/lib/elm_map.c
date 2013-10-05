@@ -768,11 +768,11 @@ _downloaded_cb(void *data,
           ((gi->wsd)->obj, SIG_TILE_LOADED_FAIL, NULL);
      }
 
-   Elm_Widget_Smart_Data *wwd = eo_data_scope_get(gi->wsd->obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(gi->wsd->obj, wd);
    gi->job = NULL;
    gi->wsd->download_num--;
    if (!gi->wsd->download_num)
-     edje_object_signal_emit(wwd->resize_obj,
+     edje_object_signal_emit(wd->resize_obj,
                              "elm,state,busy,stop", "elm");
 }
 
@@ -783,8 +783,7 @@ _download_job(void *data)
    ELM_MAP_DATA_GET(obj, sd);
    Eina_List *l, *ll;
    Grid_Item *gi;
-
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, ECORE_CALLBACK_CANCEL);
 
    if (!eina_list_count(sd->download_list))
      {
@@ -2986,7 +2985,7 @@ _route_cb(void *data,
 
    route = data;
    sd = route->wsd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(sd->obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(sd->obj, wd);
 
    route->job = NULL;
    if (status == 200)
@@ -3023,7 +3022,7 @@ _name_cb(void *data,
 
    name = data;
    sd = name->wsd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(sd->obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(sd->obj, wd);
 
    name->job = NULL;
    if (status == 200)
@@ -3059,7 +3058,7 @@ _name_list_cb(void *data,
 
    name_list = data;
    sd = name_list->wsd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(sd->obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(sd->obj, wd);
 
    name_list->job = NULL;
    if (status == 200)
@@ -3125,7 +3124,7 @@ _name_request(const Evas_Object *obj,
 
    ELM_MAP_DATA_GET(obj, sd);
    EINA_SAFETY_ON_NULL_RETURN_VAL(sd->src_name, NULL);
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
 
    fname = _prepare_download();
    url = sd->src_name->url_cb
@@ -3189,7 +3188,7 @@ _name_list_request(const Evas_Object *obj,
 
    ELM_MAP_DATA_GET(obj, sd);
    EINA_SAFETY_ON_NULL_RETURN_VAL(sd->src_name, NULL);
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
 
    fname = _prepare_download();
    url = sd->src_name->url_cb
@@ -3805,7 +3804,7 @@ _elm_map_smart_on_focus(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    if (ret) *ret = EINA_FALSE;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    Eina_Bool int_ret = EINA_FALSE;
 
    eo_do_super(obj, MY_CLASS, elm_wdg_on_focus(&int_ret));
@@ -4532,7 +4531,7 @@ _paused_set(Eo *obj, void *_pd, va_list *list)
    Eina_Bool paused = va_arg(*list, int);
 #ifdef HAVE_ELEMENTARY_ECORE_CON
    Elm_Map_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    if (sd->paused == !!paused) return;
    sd->paused = !!paused;
@@ -4985,7 +4984,7 @@ _route_add(Eo *obj, void *_pd, va_list *list)
    char fname[PATH_MAX], fname2[PATH_MAX];
 
    Elm_Map_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    EINA_SAFETY_ON_NULL_RETURN(sd->src_route);
 

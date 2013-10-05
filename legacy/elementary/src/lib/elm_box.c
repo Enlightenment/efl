@@ -72,8 +72,7 @@ _elm_box_smart_focus_next(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
      list_data_get = eina_list_data_get;
    else
      {
-        Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
-
+        ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
         Evas_Object_Box_Data *bd =
           evas_object_smart_data_get(wd->resize_obj);
 
@@ -112,7 +111,7 @@ _elm_box_smart_focus_direction(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_li
      list_data_get = eina_list_data_get;
    else
      {
-        Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+        ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
         Evas_Object_Box_Data *bd =
           evas_object_smart_data_get(wd->resize_obj);
 
@@ -136,7 +135,7 @@ _elm_box_smart_theme(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    eo_do_super(obj, MY_CLASS, elm_wdg_theme(&int_ret));
    if (!int_ret) return;
 
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    evas_object_smart_calculate(wd->resize_obj);
 
    if (ret) *ret = EINA_TRUE;
@@ -149,7 +148,7 @@ _sizing_eval(Evas_Object *obj)
    Evas_Coord w, h;
 
    ELM_BOX_DATA_GET(obj, sd);
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    if (sd->delete_me)
      return;
@@ -395,7 +394,7 @@ _transition_layout_animation_exec(Evas_Object *obj,
 static void
 _elm_box_smart_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    elm_widget_resize_object_set(obj,
                                 evas_object_box_add(evas_object_evas_get(obj)));
 
@@ -427,7 +426,7 @@ _elm_box_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    Elm_Box_Smart_Data *sd = _pd;
    sd->delete_me = EINA_TRUE;
 
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    evas_object_event_callback_del_full
      (wd->resize_obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
      _on_size_hints_changed, obj);
@@ -478,7 +477,7 @@ _horizontal_set(Eo *obj, void *_pd, va_list *list)
 {
    Eina_Bool horizontal = va_arg(*list, int);
    Elm_Box_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    sd->horizontal = !!horizontal;
    evas_object_smart_calculate(wd->resize_obj);
@@ -514,7 +513,7 @@ _homogeneous_set(Eo *obj, void *_pd, va_list *list)
 {
    Eina_Bool homogeneous = va_arg(*list, int);
    Elm_Box_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    sd->homogeneous = !!homogeneous;
    evas_object_smart_calculate(wd->resize_obj);
@@ -550,7 +549,7 @@ _pack_start(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 
 {
    Evas_Object *subobj = va_arg(*list, Evas_Object *);
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    elm_widget_sub_object_add(obj, subobj);
    evas_object_box_prepend(wd->resize_obj, subobj);
@@ -568,7 +567,7 @@ static void
 _pack_end(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
    Evas_Object *subobj = va_arg(*list, Evas_Object *);
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    elm_widget_sub_object_add(obj, subobj);
    evas_object_box_append(wd->resize_obj, subobj);
@@ -588,7 +587,7 @@ _pack_before(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
    Evas_Object *subobj = va_arg(*list, Evas_Object *);
    Evas_Object *before = va_arg(*list, Evas_Object *);
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    elm_widget_sub_object_add(obj, subobj);
 
@@ -610,7 +609,7 @@ _pack_after(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
    Evas_Object *subobj = va_arg(*list, Evas_Object *);
    Evas_Object *after = va_arg(*list, Evas_Object *);
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    elm_widget_sub_object_add(obj, subobj);
    evas_object_box_insert_after
@@ -628,7 +627,7 @@ static void
 _clear(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
    /* EINA_TRUE means to delete objects as well */
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    evas_object_box_remove_all(wd->resize_obj, EINA_TRUE);
 }
 
@@ -645,7 +644,7 @@ static void
 _unpack(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
    Evas_Object *subobj = va_arg(*list, Evas_Object *);
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    if (evas_object_box_remove(wd->resize_obj, subobj))
      elm_widget_sub_object_del(obj, subobj);
@@ -664,7 +663,7 @@ _unpack_all(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
    Evas_Object_Box_Data *bd;
    Evas_Object_Box_Option *opt;
    Eina_List *l;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    ELM_BOX_CHECK(obj);
    bd = evas_object_smart_data_get(wd->resize_obj);
@@ -691,7 +690,7 @@ _layout_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    Evas_Object_Box_Layout cb = va_arg(*list, Evas_Object_Box_Layout);
    const void *data = va_arg(*list, const void *);
    Ecore_Cb free_data = va_arg(*list, Ecore_Cb);
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    if (cb)
      evas_object_box_layout_set
        (wd->resize_obj, cb, data, free_data);
@@ -805,7 +804,7 @@ static void
 _children_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
    Eina_List **ret = va_arg(*list, Eina_List **);
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    *ret = evas_object_box_children_get(wd->resize_obj);
 }
 
@@ -823,7 +822,7 @@ _padding_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
    Evas_Coord horizontal = va_arg(*list, Evas_Coord);
    Evas_Coord vertical = va_arg(*list, Evas_Coord);
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    evas_object_box_padding_set
      (wd->resize_obj, horizontal, vertical);
@@ -843,7 +842,7 @@ _padding_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
    Evas_Coord *horizontal = va_arg(*list, Evas_Coord *);
    Evas_Coord *vertical = va_arg(*list, Evas_Coord *);
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    evas_object_box_padding_get
      (wd->resize_obj, horizontal, vertical);
 }
@@ -862,7 +861,7 @@ _align_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
    double horizontal = va_arg(*list, double);
    double vertical = va_arg(*list, double);
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    evas_object_size_hint_align_set
      (wd->resize_obj, horizontal, vertical);
@@ -882,7 +881,7 @@ _align_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
    double *horizontal = va_arg(*list, double *);
    double *vertical = va_arg(*list, double *);
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    evas_object_size_hint_align_get
      (wd->resize_obj, horizontal, vertical);
@@ -902,7 +901,7 @@ _recalculate(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    if (sd->recalc) return;
 
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    evas_object_smart_need_recalculate_set
      (wd->resize_obj, EINA_TRUE);
    sd->recalc++;

@@ -86,7 +86,7 @@ _val_set(Evas_Object *obj)
    double pos;
 
    ELM_PROGRESSBAR_DATA_GET(obj, sd);
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    rtl = elm_widget_mirrored_get(obj);
    Elm_Progress_Status *ps;
@@ -109,8 +109,7 @@ static void
 _elm_progressbar_smart_sizing_eval(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
    Evas_Coord minw = -1, minh = -1;
-
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    edje_object_size_min_restricted_calc
      (wd->resize_obj, &minw, &minh, minw, minh);
@@ -178,7 +177,7 @@ _elm_progressbar_smart_theme(Eo *obj, void *_pd, va_list *list)
    if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret = EINA_FALSE;
    Elm_Layout_Smart_Data *ld = eo_data_scope_get(obj, ELM_OBJ_LAYOUT_CLASS);
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    if (sd->horizontal)
      eina_stringshare_replace(&ld->group, "horizontal");
@@ -264,7 +263,7 @@ static void
 _elm_progressbar_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Progressbar_Smart_Data *priv = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
    elm_widget_sub_object_parent_add(obj);
@@ -595,7 +594,7 @@ _unit_format_set(Eo *obj, void *_pd, va_list *list)
 {
    const char *units = va_arg(*list, const char *);
    Elm_Progressbar_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    eina_stringshare_replace(&sd->units, units);
    if (units)
@@ -703,7 +702,7 @@ _inverted_set(Eo *obj, void *_pd, va_list *list)
 {
    Eina_Bool inverted = va_arg(*list, int);
    Elm_Progressbar_Smart_Data*sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    inverted = !!inverted;
    if (sd->inverted == inverted) return;

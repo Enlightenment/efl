@@ -36,7 +36,7 @@ static void
 _sizing_eval(Evas_Object *obj,
              Elm_Frame_Smart_Data *sd EINA_UNUSED)
 {
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    Evas_Coord minw = -1, minh = -1;
    Evas_Coord cminw = -1, cminh = -1;
 
@@ -122,7 +122,7 @@ _on_recalc_done(void *data,
                 const char *src __UNUSED__)
 {
    ELM_FRAME_DATA_GET(data, sd);
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(data, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(data, wd);
 
    evas_object_smart_callback_del
      (wd->resize_obj, "recalc", _recalc);
@@ -138,7 +138,7 @@ _on_frame_clicked(void *data,
                   const char *src __UNUSED__)
 {
    ELM_FRAME_DATA_GET(data, sd);
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(data, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(data, wd);
 
    if (sd->anim) return;
 
@@ -171,7 +171,7 @@ _elm_frame_smart_calculate(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 static void
 _elm_frame_smart_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
    elm_widget_sub_object_parent_add(obj);
@@ -271,7 +271,7 @@ _collapse_set(Eo *obj, void *_pd, va_list *list)
 {
    Eina_Bool collapse = va_arg(*list, int);
    Elm_Frame_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    collapse = !!collapse;
    if (sd->collapsed == collapse) return;
@@ -297,7 +297,7 @@ _collapse_go(Eo *obj, void *_pd, va_list *list)
 {
    Eina_Bool collapse = va_arg(*list, int);
    Elm_Frame_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    collapse = !!collapse;
    if (sd->collapsed == collapse) return;
