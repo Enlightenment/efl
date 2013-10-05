@@ -95,6 +95,4 @@ void _ecore_wl_dnd_del(Ecore_Wl_Dnd_Source *source);
 void _ecore_wl_events_init(void);
 void _ecore_wl_events_shutdown(void);
 
-void _ecore_wl_subsurfs_del_all(Ecore_Wl_Window *win);
-
 #endif

@@ -12,6 +12,7 @@
 # include <wayland-client.h>
 # include <wayland-cursor.h>
 # include <xkbcommon/xkbcommon.h>
+# include <subsurface-client-protocol.h>
 
 # ifdef EAPI
 #  undef EAPI
@@ -35,7 +36,6 @@ typedef struct _Ecore_Wl_Display Ecore_Wl_Display;
 typedef struct _Ecore_Wl_Output Ecore_Wl_Output;
 typedef struct _Ecore_Wl_Input Ecore_Wl_Input;
 typedef struct _Ecore_Wl_Global Ecore_Wl_Global; /** @since 1.7.6 */
-typedef struct _Ecore_Wl_Subsurf Ecore_Wl_Subsurf; /** @since 1.8 */
 
 # ifndef _ECORE_WAYLAND_WINDOW_PREDEF
 typedef struct _Ecore_Wl_Window Ecore_Wl_Window;
@@ -252,8 +252,6 @@ struct _Ecore_Wl_Window
    /* FIXME: Ideally we should record the cursor name for this window 
     * so we can compare and avoid unnecessary cursor set calls to wayland */
 
-   Ecore_Wl_Subsurf *subsurfs;
-
    void *data;
 };
 
@@ -384,7 +382,6 @@ struct _Ecore_Wl_Event_Interfaces_Bound
  * @li @ref Ecore_Wl_Window_Group
  * @li @ref Ecore_Wl_Input_Group
  * @li @ref Ecore_Wl_Dnd_Group
- * @li @ref Ecore_Wl_Subsurf
  */
 
 EAPI extern int ECORE_WL_EVENT_MOUSE_IN;
@@ -868,93 +865,6 @@ EAPI struct wl_array *ecore_wl_dnd_drag_types_get(Ecore_Wl_Input *input);
 
 EAPI void ecore_wl_server_mode_set(Eina_Bool on);
 
-/**
- * @defgroup Ecore_Wl_Subsurf Functions to manipulate subsurfaces.
- * @ingroup Ecore_Wl_Group
- *
- * Functions to manipulate wayland subsurfaces, using Ecore_Wl_Subsurf.
- *
- * This API is intended to expose Wayland subsurface functionality, although it
- * should not be necessary for most applications to use it, as soon as we have
- * means to make Evas automatically switch Evas images to use subsurfaces.
- *
- * It can/should be used, for instance, when subsurfaces are needed to be not
- * in sync with the main window surface.
- */
-
-/**
- * Create and return a new subsurface.
- *
- * Create a new surface (and subsurface interface), with the parent surface
- * being the one associated with the given @param win.
- *
- * The @param win must be visible, otherwise there will be no surface created
- * for it yet.
- *
- * @ingroup Ecore_Wl_Subsurf
- * @since 1.8
- */
-EAPI Ecore_Wl_Subsurf *ecore_wl_subsurf_create(Ecore_Wl_Window *win);
-
-/**
- * Destroy the given subsurface, as well as the surface associated with it.
- *
- * @ingroup Ecore_Wl_Subsurf
- * @since 1.8
- */
-EAPI void ecore_wl_subsurf_del(Ecore_Wl_Subsurf *ess);
-
-/**
- * Return the wl_surface associated with this subsurface.
- *
- * @ingroup Ecore_Wl_Subsurf
- * @since 1.8
- */
-EAPI struct wl_surface *ecore_wl_subsurf_surface_get(Ecore_Wl_Subsurf *ess);
-
-/**
- * Set the position of this subsurface, relative to its parent surface.
- *
- * @ingroup Ecore_Wl_Subsurf
- * @since 1.8
- */
-EAPI void ecore_wl_subsurf_position_set(Ecore_Wl_Subsurf *ess, int x, int y);
-
-/**
- * Get the position of this subsurface, relative to its parent surface.
- *
- * @ingroup Ecore_Wl_Subsurf
- * @since 1.8
- */
-EAPI void ecore_wl_subsurf_position_get(Ecore_Wl_Subsurf *ess, int *x, int *y);
-
-/**
- * @ingroup Ecore_Wl_Subsurf
- * @since 1.8
- */
-EAPI void ecore_wl_subsurf_place_above(Ecore_Wl_Subsurf *ess, struct wl_surface *surface);
-
-/**
- * @ingroup Ecore_Wl_Subsurf
- * @since 1.8
- */
-EAPI void ecore_wl_subsurf_place_below(Ecore_Wl_Subsurf *ess, struct wl_surface *surface);
-
-/**
- * @ingroup Ecore_Wl_Subsurf
- * @since 1.8
- */
-EAPI void ecore_wl_subsurf_sync_set(Ecore_Wl_Subsurf *ess, Eina_Bool val);
-
-/**
- * Set an opaque region for the given subsurface.
- *
- * Use a 0x0 region size to unset the opaque region.
- *
- * @ingroup Ecore_Wl_Subsurf
- * @since 1.8
- */
-EAPI void ecore_wl_subsurf_opaque_region_set(Ecore_Wl_Subsurf *ess, int x, int y, int w, int h);
 #ifdef __cplusplus
 }
 #endif

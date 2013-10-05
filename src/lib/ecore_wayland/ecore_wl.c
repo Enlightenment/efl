@@ -4,7 +4,6 @@
 
 #include <fcntl.h>
 #include "ecore_wl_private.h"
-#include <subsurface-client-protocol.h>
 
 /* local function prototypes */
 static Eina_Bool _ecore_wl_shutdown(Eina_Bool close);
