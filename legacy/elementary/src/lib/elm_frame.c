@@ -158,7 +158,7 @@ static void
 _elm_frame_smart_calculate(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Frame_Smart_Data *sd = _pd;
-   Elm_Layout_Smart_Data *ld = eo_data_scope_get(obj, elm_obj_layout_class_get());
+   ELM_LAYOUT_DATA_GET(obj, ld);
 
    if (ld->needs_size_calc)
      {

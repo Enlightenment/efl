@@ -869,7 +869,7 @@ _custom_widget_base_theme_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
    const char *klass = va_arg(*list, const char *);
    const char *group = va_arg(*list, const char *);
-   Elm_Layout_Smart_Data *ld = eo_data_scope_get(obj, ELM_OBJ_LAYOUT_CLASS);
+   ELM_LAYOUT_DATA_GET(obj, ld);
 
    EINA_SAFETY_ON_NULL_RETURN(klass);
    EINA_SAFETY_ON_NULL_RETURN(group);

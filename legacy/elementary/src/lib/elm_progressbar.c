@@ -176,7 +176,7 @@ _elm_progressbar_smart_theme(Eo *obj, void *_pd, va_list *list)
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret = EINA_FALSE;
-   Elm_Layout_Smart_Data *ld = eo_data_scope_get(obj, ELM_OBJ_LAYOUT_CLASS);
+   ELM_LAYOUT_DATA_GET(obj, ld);
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    if (sd->horizontal)

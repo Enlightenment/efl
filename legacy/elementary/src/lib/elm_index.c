@@ -339,7 +339,7 @@ _elm_index_smart_theme(Eo *obj, void *_pd, va_list *list)
 
    Elm_Index_Smart_Data *sd = _pd;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-   Elm_Layout_Smart_Data *ld = eo_data_scope_get(obj, ELM_OBJ_LAYOUT_CLASS);
+   ELM_LAYOUT_DATA_GET(obj, ld);
 
    _index_box_clear(obj, 0);
    _index_box_clear(obj, 1);

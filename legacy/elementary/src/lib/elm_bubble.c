@@ -269,7 +269,7 @@ _pos_set(Eo *obj, void *_pd, va_list *list)
 {
    Elm_Bubble_Pos pos = va_arg(*list, Elm_Bubble_Pos);
    Elm_Bubble_Smart_Data *sd = _pd;
-   Elm_Layout_Smart_Data *ld = eo_data_scope_get(obj, ELM_OBJ_LAYOUT_CLASS);
+   ELM_LAYOUT_DATA_GET(obj, ld);
 
    if (pos < ELM_BUBBLE_POS_TOP_LEFT || pos > ELM_BUBBLE_POS_BOTTOM_RIGHT)
      return;
