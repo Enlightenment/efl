@@ -581,7 +581,7 @@ static void
 _elm_toolbar_smart_on_focus(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    ELM_TOOLBAR_DATA_GET(obj, sd);
    Eina_Bool int_ret = EINA_FALSE;
 
@@ -798,7 +798,7 @@ end:
 static int
 _elm_toolbar_icon_size_get(Evas_Object *obj)
 {
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, 0);
    const char *icon_size = edje_object_data_get
        (wd->resize_obj, "icon_size");
 
@@ -1088,7 +1088,7 @@ _sizing_eval(Evas_Object *obj)
    Evas_Coord w, h;
 
    ELM_TOOLBAR_DATA_GET(obj, sd);
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    evas_object_smart_need_recalculate_set(sd->bx, EINA_TRUE);
    evas_object_smart_calculate(sd->bx);
@@ -1159,7 +1159,7 @@ _elm_toolbar_smart_theme(Eo *obj, void *_pd, va_list *list)
    Elm_Toolbar_Item *it;
    double scale = 0;
    Elm_Toolbar_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    if (ret) *ret = EINA_FALSE;
