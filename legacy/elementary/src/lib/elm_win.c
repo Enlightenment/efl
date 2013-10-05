@@ -1067,7 +1067,7 @@ _elm_win_smart_focus_next(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    if (ret) *ret = EINA_FALSE;
 
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    const Eina_List *items;
    void *(*list_data_get)(const Eina_List *list);
@@ -1116,7 +1116,7 @@ _elm_win_smart_focus_direction(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    const Eina_List *items;
    void *(*list_data_get)(const Eina_List *list);
 
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    /* Focus chain */
    if (wd->subobjs)
