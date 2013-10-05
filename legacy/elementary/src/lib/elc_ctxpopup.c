@@ -231,7 +231,7 @@ _base_geometry_calc(Evas_Object *obj,
    int idx;
 
    ELM_CTXPOPUP_DATA_GET(obj, sd);
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, ELM_CTXPOPUP_DIRECTION_DOWN);
 
    if (!rect || !sd->parent) return ELM_CTXPOPUP_DIRECTION_DOWN;
 
@@ -406,7 +406,7 @@ _arrow_update(Evas_Object *obj,
    double drag;
 
    ELM_CTXPOPUP_DATA_GET(obj, sd);
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    evas_object_geometry_get(obj, &x, &y, NULL, NULL);
    evas_object_geometry_get
@@ -645,7 +645,7 @@ _elm_ctxpopup_smart_sizing_eval(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    Evas_Coord_Point list_size = { 0, 0 };
 
    Elm_Ctxpopup_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    if (!sd->arrow) return;  /* simple way to flag "under deletion" */
    if (!sd->parent) return; /* do not calculate sizes unless parent is set */
@@ -1219,7 +1219,7 @@ elm_ctxpopup_add(Evas_Object *parent)
 
    /* access: parent could be any object such as elm_list which does
       not know elc_ctxpopup as its child object in the focus_next(); */
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
    wd->highlight_root = EINA_TRUE;
 
    return obj;
