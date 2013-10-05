@@ -319,7 +319,7 @@ _elm_scroller_smart_sizing_eval(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    double xw = 0.0, yw = 0.0;
 
    Elm_Scroller_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    if (sd->content)
      {
@@ -745,7 +745,7 @@ static void
 _elm_scroller_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Scroller_Smart_Data *priv = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    Evas_Coord minw, minh;
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
@@ -1238,7 +1238,7 @@ static void
 _propagate_events_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
    Eina_Bool propagation = va_arg(*list, int);
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    evas_object_propagate_events_set(wd->resize_obj, propagation);
 }
@@ -1257,7 +1257,7 @@ static void
 _propagate_events_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    *ret = evas_object_propagate_events_get(wd->resize_obj);
 }
 
