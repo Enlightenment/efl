@@ -91,7 +91,7 @@ _elm_plug_smart_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
    Evas_Object *p_obj;
    Ecore_Evas *ee;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
    elm_widget_sub_object_parent_add(obj);
@@ -143,7 +143,7 @@ static void
 _image_object_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
    Evas_Object **ret = va_arg(*list, Evas_Object **);
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    *ret = wd->resize_obj;
 }
 
