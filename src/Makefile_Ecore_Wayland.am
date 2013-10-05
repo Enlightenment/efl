@@ -31,6 +31,8 @@ lib_ecore_wayland_libecore_wayland_la_LIBADD = @ECORE_WAYLAND_LIBS@
 lib_ecore_wayland_libecore_wayland_la_DEPENDENCIES = @ECORE_WAYLAND_INTERNAL_LIBS@
 lib_ecore_wayland_libecore_wayland_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 
+wayland_protocoldir = $(top_srcdir)/data/ecore/ecore_wayland/protocol
+
 lib/ecore_wayland/subsurface-protocol.c: $(wayland_protocoldir)/subsurface.xml
 	$(AM_V_GEN)$(wayland_scanner) code < $< > $@
 
