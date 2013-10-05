@@ -84,7 +84,6 @@ _on_sub_object_size_hint_change(void *data,
                                 void *event_info __UNUSED__)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(data, wd);
-   if (wd->frozen) return;
    eo_do(data, elm_obj_layout_sizing_eval());
 }
 
@@ -501,10 +500,8 @@ _elm_layout_smart_sub_object_del(Eo *obj, void *_pd, va_list *list)
         break;
      }
 
-   if (wd->frozen) goto end;
    eo_do(obj, elm_obj_layout_sizing_eval());
 
-end:
    if (ret) *ret = EINA_TRUE;
 }
 
@@ -1070,8 +1067,6 @@ _elm_layout_smart_content_set(Eo *obj, void *_pd, va_list *list)
         _icon_signal_emit(sd, sub_d, EINA_TRUE);
      }
 
-   if (wd->frozen) goto end;
-
    eo_do(obj, elm_obj_layout_sizing_eval());
 
 end:
@@ -1230,8 +1225,7 @@ _elm_layout_smart_text_set(Eo *obj, void *_pd, va_list *list)
 
    _text_signal_emit(sd, sub_d, !!text);
 
-   if (!wd->frozen)
-     eo_do(obj, elm_obj_layout_sizing_eval());
+   eo_do(obj, elm_obj_layout_sizing_eval());
 
    if (_elm_config->access_mode == ELM_ACCESS_MODE_ON &&
        wd->can_access && !(sub_d->obj))
@@ -1315,10 +1309,8 @@ _elm_layout_smart_box_append(Eo *obj, void *_pd, va_list *list)
    sub_d->obj = child;
    sd->subs = eina_list_append(sd->subs, sub_d);
 
-   if (wd->frozen) goto end;
    eo_do(obj, elm_obj_layout_sizing_eval());
 
-end:
    if (ret) *ret = EINA_TRUE;
 }
 
@@ -1368,10 +1360,8 @@ _elm_layout_smart_box_prepend(Eo *obj, void *_pd, va_list *list)
    sub_d->obj = child;
    sd->subs = eina_list_prepend(sd->subs, sub_d);
 
-   if (wd->frozen) goto end;;
    eo_do(obj, elm_obj_layout_sizing_eval());
 
-end:
    if (ret) *ret = EINA_TRUE;
 }
 
@@ -1429,10 +1419,8 @@ _elm_layout_smart_box_insert_before(Eo *obj, void *_pd, va_list *list)
    evas_object_event_callback_add
      ((Evas_Object *)reference, EVAS_CALLBACK_DEL, _box_reference_del, sub_d);
 
-   if (wd->frozen) goto end;
    eo_do(obj, elm_obj_layout_sizing_eval());
 
-end:
    if (ret) *ret = EINA_TRUE;
 }
 
@@ -1486,10 +1474,8 @@ _elm_layout_smart_box_insert_at(Eo *obj, void *_pd, va_list *list)
    sub_d->p.box.pos = pos;
    sd->subs = eina_list_append(sd->subs, sub_d);
 
-   if (wd->frozen) goto end;
    eo_do(obj, elm_obj_layout_sizing_eval());
 
-end:
    if (ret) *ret = EINA_TRUE;
 }
 
@@ -1643,10 +1629,8 @@ _elm_layout_smart_table_pack(Eo *obj, void *_pd, va_list *list)
    sub_d->p.table.rowspan = rowspan;
    sd->subs = eina_list_append(sd->subs, sub_d);
 
-   if (wd->frozen) goto end;
    eo_do(obj, elm_obj_layout_sizing_eval());
 
-end:
    if (ret) *ret = EINA_TRUE;
 }
 
@@ -1794,7 +1778,7 @@ static void
 _elm_layout_smart_sizing_eval(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Layout_Smart_Data *sd = _pd;
-
+   if (sd->frozen) return;
    if (sd->needs_size_calc) return;
    sd->needs_size_calc = EINA_TRUE;
 
@@ -1817,10 +1801,11 @@ _elm_layout_smart_freeze(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    int int_ret = 1;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+   ELM_LAYOUT_DATA_GET(obj, sd);
 
-   if ((wd->frozen)++ != 0)
+   if ((sd->frozen)++ != 0)
      {
-        int_ret = wd->frozen;
+        int_ret = sd->frozen;
         goto end;
      }
 
@@ -1846,10 +1831,11 @@ _elm_layout_smart_thaw(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    int int_ret = 0;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+   ELM_LAYOUT_DATA_GET(obj, sd);
 
-   if (--(wd->frozen) != 0)
+   if (--(sd->frozen) != 0)
      {
-        int_ret = wd->frozen;
+        int_ret = sd->frozen;
         goto end;
      }
 

@@ -81,6 +81,7 @@ typedef struct _Elm_Layout_Smart_Data
    Eina_List            *edje_signals;
    Eina_List            *parts_cursors;
    const char           *klass, *group;
+   int                   frozen; /**< Layout freeze counter */
 
    Eina_Bool             needs_size_calc : 1;
 } Elm_Layout_Smart_Data;

@@ -413,7 +413,6 @@ typedef struct _Elm_Widget_Smart_Data
    void                        (*on_show_region)(void *data,
                                                  Evas_Object *obj);
 
-   int                           frozen;
    int                           orient_mode; /* -1 is disabled */
 
    Eina_Bool                     drag_x_locked : 1;
