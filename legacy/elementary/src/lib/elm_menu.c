@@ -345,7 +345,7 @@ _parent_del_cb(void *data,
                void *event_info __UNUSED__)
 {
    ELM_MENU_DATA_GET(data, sd);
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(data, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(data, wd);
 
    evas_object_event_callback_del_full
      (obj, EVAS_CALLBACK_RESIZE, _parent_resize_cb, wd->obj);
