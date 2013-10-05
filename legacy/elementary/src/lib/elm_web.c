@@ -234,7 +234,7 @@ _view_pan_animator(void *data)
    sd->mouse.y = y;
 
 end:
-   return EINA_TRUE;
+   return ECORE_CALLBACK_RENEW;
 }
 
 static void
@@ -1100,7 +1100,7 @@ _bring_in_anim_cb(void *data,
         sd->bring_in.animator = NULL;
      }
 
-   return EINA_TRUE;
+   return ECORE_CALLBACK_RENEW;
 }
 
 #endif
