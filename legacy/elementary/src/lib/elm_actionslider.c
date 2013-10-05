@@ -64,7 +64,7 @@ _elm_actionslider_smart_sizing_eval(Eo *obj, void *_pd, va_list *list EINA_UNUSE
    Evas_Coord minw = -1, minh = -1;
 
    Elm_Actionslider_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
    evas_object_size_hint_min_set(sd->drag_button_base, minw, minh);
@@ -85,7 +85,7 @@ _mirroredness_change_eval(Evas_Object *obj)
    double pos;
    char *left;
 
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    left = (char *)elm_layout_text_get(obj, "elm.text.left");
    if (left) left = strdup(left);
@@ -110,7 +110,7 @@ _elm_actionslider_smart_theme(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret = EINA_FALSE;
 
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    mirrored = elm_object_mirrored_get(obj);
 
@@ -146,7 +146,7 @@ _drag_button_move_cb(void *data,
    double pos = 0.0;
 
    ELM_ACTIONSLIDER_DATA_GET(obj, sd);
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    if (!sd->mouse_down) return;
 
@@ -183,7 +183,7 @@ _button_animator(void *data)
    double cur_position = 0.0, new_position = 0.0;
 
    ELM_ACTIONSLIDER_DATA_GET(obj, sd);
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, ECORE_CALLBACK_CANCEL);
 
    edje_object_part_drag_value_get
      (wd->resize_obj, "elm.drag_button_base",
@@ -255,7 +255,7 @@ _drag_button_up_cb(void *data,
    double position = 0.0;
 
    ELM_ACTIONSLIDER_DATA_GET(obj, sd);
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    sd->mouse_down = EINA_FALSE;
 
@@ -395,7 +395,7 @@ static void
 _elm_actionslider_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Actionslider_Smart_Data *priv = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
    elm_widget_sub_object_parent_add(obj);
@@ -465,7 +465,7 @@ _indicator_pos_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 
    Elm_Actionslider_Pos pos = va_arg(*list, Elm_Actionslider_Pos);
 
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    pos = _get_pos_by_orientation(obj, pos);
    if (pos == ELM_ACTIONSLIDER_CENTER) position = 0.5;
@@ -492,7 +492,7 @@ _indicator_pos_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 
    Elm_Actionslider_Pos *ret = va_arg(*list, Elm_Actionslider_Pos *);
 
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    edje_object_part_drag_value_get
      (wd->resize_obj, "elm.drag_button_base", &position,
