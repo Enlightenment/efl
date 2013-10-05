@@ -280,7 +280,7 @@ _elm_radio_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
      CRITICAL("Failed to set layout!");
 
    elm_layout_signal_callback_add
-     (obj, "elm,action,radio,toggle", "", _radio_on_cb, obj);
+     (obj, "elm,action,radio,toggle", "*", _radio_on_cb, obj);
 
    priv->group = calloc(1, sizeof(Group));
    priv->group->radios = eina_list_append(priv->group->radios, obj);

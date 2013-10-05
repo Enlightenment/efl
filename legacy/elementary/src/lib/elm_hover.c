@@ -553,7 +553,7 @@ _elm_hover_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
      CRITICAL("Failed to set layout!");
 
    elm_layout_signal_callback_add
-     (obj, "elm,action,dismiss", "", _hov_dismiss_cb, obj);
+     (obj, "elm,action,dismiss", "*", _hov_dismiss_cb, obj);
 
    priv->offset = evas_object_rectangle_add(evas_object_evas_get(obj));
    evas_object_pass_events_set(priv->offset, EINA_TRUE);
@@ -830,7 +830,8 @@ elm_hover_dismiss(Evas_Object *obj)
 static void
 _elm_hover_dismiss(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   elm_layout_signal_emit(obj, "elm,action,dismiss", "");
+   elm_layout_signal_emit(obj, "elm,action,dismiss", ""); // XXX: for compat
+   elm_layout_signal_emit(obj, "elm,action,dismiss", "elm");
 }
 
 static void

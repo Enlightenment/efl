@@ -406,16 +406,16 @@ _time_update(Evas_Object *obj)
                edje_object_signal_emit
                  (sd->digit[i], "elm,state,edit,on", "elm");
              edje_object_signal_callback_add
-               (sd->digit[i], "elm,action,up,start", "",
+               (sd->digit[i], "elm,action,up,start", "*",
                _on_clock_val_up_start, obj);
              edje_object_signal_callback_add
-               (sd->digit[i], "elm,action,up,stop", "",
+               (sd->digit[i], "elm,action,up,stop", "*",
                _on_clock_val_change_stop, obj);
              edje_object_signal_callback_add
-               (sd->digit[i], "elm,action,down,start", "",
+               (sd->digit[i], "elm,action,down,start", "*",
                _on_clock_val_down_start, obj);
              edje_object_signal_callback_add
-               (sd->digit[i], "elm,action,down,stop", "",
+               (sd->digit[i], "elm,action,down,stop", "*",
                _on_clock_val_change_stop, obj);
 
              mw = mh = -1;
@@ -440,16 +440,16 @@ _time_update(Evas_Object *obj)
                edje_object_signal_emit
                  (sd->am_pm_obj, "elm,state,edit,on", "elm");
              edje_object_signal_callback_add
-               (sd->am_pm_obj, "elm,action,up,start", "",
+               (sd->am_pm_obj, "elm,action,up,start", "*",
                _on_clock_val_up_start, obj);
              edje_object_signal_callback_add
-               (sd->am_pm_obj, "elm,action,up,stop", "",
+               (sd->am_pm_obj, "elm,action,up,stop", "*",
                _on_clock_val_change_stop, obj);
              edje_object_signal_callback_add
-               (sd->am_pm_obj, "elm,action,down,start", "",
+               (sd->am_pm_obj, "elm,action,down,start", "*",
                _on_clock_val_down_start, obj);
              edje_object_signal_callback_add
-               (sd->am_pm_obj, "elm,action,down,stop", "",
+               (sd->am_pm_obj, "elm,action,down,stop", "*",
                _on_clock_val_change_stop, obj);
 
              mw = mh = -1;

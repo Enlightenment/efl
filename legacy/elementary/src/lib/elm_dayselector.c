@@ -101,7 +101,8 @@ _update_items(Evas_Object *obj)
    rtl = elm_widget_mirrored_get(obj);
    EINA_LIST_FOREACH(sd->items, l, it)
      {
-        elm_object_signal_emit(VIEW(it), it->day_style, "");
+        elm_object_signal_emit(VIEW(it), it->day_style, ""); // XXX: compat
+        elm_object_signal_emit(VIEW(it), it->day_style, "elm");
         if (it->day == sd->week_start)
           {
              if (rtl) elm_object_signal_emit(VIEW(it), ITEM_POS_RIGHT, "elm");
@@ -291,13 +292,13 @@ _elm_dayselector_smart_content_set(Eo *obj, void *_pd, va_list *list)
      (VIEW(it), EVAS_CALLBACK_DEL, _item_del_cb, obj);
 
    elm_object_signal_callback_add
-     (VIEW(it), ITEM_TYPE_WEEKDAY_DEFAULT, "", _item_signal_emit_cb, it);
+     (VIEW(it), ITEM_TYPE_WEEKDAY_DEFAULT, "*", _item_signal_emit_cb, it);
    elm_object_signal_callback_add
-     (VIEW(it), ITEM_TYPE_WEEKDAY_STYLE1, "", _item_signal_emit_cb, it);
+     (VIEW(it), ITEM_TYPE_WEEKDAY_STYLE1, "*", _item_signal_emit_cb, it);
    elm_object_signal_callback_add
-     (VIEW(it), ITEM_TYPE_WEEKEND_DEFAULT, "", _item_signal_emit_cb, it);
+     (VIEW(it), ITEM_TYPE_WEEKEND_DEFAULT, "*", _item_signal_emit_cb, it);
    elm_object_signal_callback_add
-     (VIEW(it), ITEM_TYPE_WEEKEND_STYLE1, "", _item_signal_emit_cb, it);
+     (VIEW(it), ITEM_TYPE_WEEKEND_STYLE1, "*", _item_signal_emit_cb, it);
 
    elm_layout_sizing_eval(obj);
    _update_items(obj);
@@ -335,13 +336,13 @@ _elm_dayselector_smart_content_unset(Eo *obj, void *_pd, va_list *list)
    evas_object_event_callback_del(content, EVAS_CALLBACK_DEL, _item_del_cb);
 
    elm_object_signal_callback_del
-     (content, ITEM_TYPE_WEEKDAY_DEFAULT, "", _item_signal_emit_cb);
+     (content, ITEM_TYPE_WEEKDAY_DEFAULT, "*", _item_signal_emit_cb);
    elm_object_signal_callback_del
-     (content, ITEM_TYPE_WEEKDAY_STYLE1, "", _item_signal_emit_cb);
+     (content, ITEM_TYPE_WEEKDAY_STYLE1, "*", _item_signal_emit_cb);
    elm_object_signal_callback_del
-     (content, ITEM_TYPE_WEEKEND_DEFAULT, "", _item_signal_emit_cb);
+     (content, ITEM_TYPE_WEEKEND_DEFAULT, "*", _item_signal_emit_cb);
    elm_object_signal_callback_del
-     (content, ITEM_TYPE_WEEKEND_STYLE1, "", _item_signal_emit_cb);
+     (content, ITEM_TYPE_WEEKEND_STYLE1, "*", _item_signal_emit_cb);
 
    snprintf(buf, sizeof(buf), "day%d,default", _item_location_get(sd, it));
    elm_layout_signal_emit(obj, buf, "elm");

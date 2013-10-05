@@ -612,7 +612,8 @@ _item_contract_emit(Elm_Gen_Item *it)
    Elm_Gen_Item *it2;
    Eina_List *l;
 
-   edje_object_signal_emit(VIEW(it), "elm,state,contract_flip", "");
+   edje_object_signal_emit(VIEW(it), "elm,state,contract_flip", ""); // XXX: for compat
+   edje_object_signal_emit(VIEW(it), "elm,state,contract_flip", "elm");
    it->item->tree_effect_finished = EINA_FALSE;
 
    EINA_LIST_FOREACH(it->item->items, l, it2)
@@ -634,7 +635,10 @@ _item_tree_effect_before(Elm_Gen_Item *it)
                it2->item->tree_effect_hide_me = EINA_TRUE;
              if (sd->move_effect_mode ==
                  ELM_GENLIST_TREE_EFFECT_EXPAND)
-               edje_object_signal_emit(VIEW(it2), "elm,state,hide", "");
+               {
+                  edje_object_signal_emit(VIEW(it2), "elm,state,hide", ""); // XXX: for compat
+                  edje_object_signal_emit(VIEW(it2), "elm,state,hide", "elm");
+               }
              else if (sd->move_effect_mode ==
                       ELM_GENLIST_TREE_EFFECT_CONTRACT)
                _item_contract_emit(it2);
@@ -686,7 +690,8 @@ _item_tree_effect(Elm_Genlist_Smart_Data *sd,
                {
                   if (!it->item->tree_effect_finished)
                     {
-                       edje_object_signal_emit(VIEW(it), "flip_item", "");
+                       edje_object_signal_emit(VIEW(it), "flip_item", ""); // XXX: for compat
+                       edje_object_signal_emit(VIEW(it), "elm,action,flip_item", "elm");
                        _item_position
                          (it, VIEW(it), it->item->scrl_x, it->item->scrl_y);
                        it->item->tree_effect_finished = EINA_TRUE;
@@ -708,7 +713,8 @@ _item_tree_effect(Elm_Genlist_Smart_Data *sd,
                {
                   if (!it->item->tree_effect_finished)
                     {
-                       edje_object_signal_emit(VIEW(it), "elm,state,hide", "");
+                       edje_object_signal_emit(VIEW(it), "elm,state,hide", ""); // XXX: for compat
+                       edje_object_signal_emit(VIEW(it), "elm,state,hide", "elm");
                        it->item->tree_effect_finished = EINA_TRUE;
                     }
                }
@@ -774,7 +780,10 @@ _item_tree_effect_finish(Elm_Genlist_Smart_Data *sd)
              it->item->old_scrl_y = it->item->scrl_y;
              if (GL_IT(it)->wsd->move_effect_mode ==
                  ELM_GENLIST_TREE_EFFECT_EXPAND)
-               edje_object_signal_emit(VIEW(it), "elm,state,show", "");
+               {
+                  edje_object_signal_emit(VIEW(it), "elm,state,show", ""); // XXX: for compat
+                  edje_object_signal_emit(VIEW(it), "elm,state,show", "elm");
+               }
           }
      }
 
@@ -1710,7 +1719,10 @@ _item_realize(Elm_Gen_Item *it,
           {
              if (sd->move_effect_mode
                  != ELM_GENLIST_TREE_EFFECT_NONE)
-               edje_object_signal_emit(VIEW(it), "elm,state,hide", "");
+               {
+                  edje_object_signal_emit(VIEW(it), "elm,state,hide", ""); // XXX: for compat
+                  edje_object_signal_emit(VIEW(it), "elm,state,hide", "elm");
+               }
              it->item->tree_effect_hide_me = EINA_FALSE;
           }
 
@@ -1877,7 +1889,8 @@ _tree_effect_animator_cb(void *data)
                        if (t >= (((num - 1) * effect_duration) /
                                  expanded_item_num))
                          {
-                            edje_object_signal_emit(VIEW(it), "flip_item", "");
+                            edje_object_signal_emit(VIEW(it), "flip_item", ""); // XXX: for compat
+                            edje_object_signal_emit(VIEW(it), "elm,action,flip_item", "elm");
                             _item_position(it, VIEW(it), it->item->scrl_x,
                                            it->item->scrl_y);
                             it->item->tree_effect_finished = EINA_TRUE;

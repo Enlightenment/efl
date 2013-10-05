@@ -658,7 +658,7 @@ _item_new(Evas_Object *obj,
      {
         _item_text_set_hook((Elm_Object_Item *)it, "default", it->label);
         edje_object_signal_callback_add
-          (VIEW(it), "elm,action,click", "", _item_click_cb, it);
+          (VIEW(it), "elm,action,click", "*", _item_click_cb, it);
      }
 
    //XXX: ACCESS

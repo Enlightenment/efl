@@ -259,7 +259,7 @@ _on_slideshow_end(void *data,
    elm_layout_content_unset(data, "elm.swallow.2");
 
    elm_layout_content_set(data, "elm.swallow.1", VIEW(item));
-   elm_layout_signal_emit(data, "anim,end", "elm");
+   elm_layout_signal_emit(data, "elm,anim,end", "elm");
    // XXX: fort backwards compat
    elm_layout_signal_emit(data, "anim,end", "slideshow");
 
@@ -340,7 +340,7 @@ _elm_slideshow_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
      priv->layout.current = eina_list_data_get(priv->layout.list);
 
    edje_object_signal_callback_add
-     (wd->resize_obj, "end", "elm", _on_slideshow_end,
+     (wd->resize_obj, "elm,end", "elm", _on_slideshow_end,
      obj);
    // XXX: for backwards compat :(
    edje_object_signal_callback_add
@@ -491,11 +491,15 @@ elm_slideshow_item_show(Elm_Object_Item *it)
    elm_layout_content_set(WIDGET(item), "elm.swallow.2", VIEW(next));
 
    if (!sd->transition)
+     sprintf(buf, "elm,none,next");
+   else
+     snprintf(buf, sizeof(buf), "elm,%s,next", sd->transition);
+   elm_layout_signal_emit(WIDGET(item), buf, "elm");
+   // XXX: for backwards compat
+   if (!sd->transition)
      sprintf(buf,"none,next");
    else
      snprintf(buf, sizeof(buf), "%s,next", sd->transition);
-   elm_layout_signal_emit(WIDGET(item), buf, "elm");
-   // XXX: for backwards compat
    elm_layout_signal_emit(WIDGET(item), buf, "slideshow");
 
    sd->previous = sd->current;
@@ -533,11 +537,15 @@ _elm_slideshow_next(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    elm_layout_content_set(obj, "elm.swallow.2", VIEW(next));
 
    if (!sd->transition)
+     sprintf(buf, "elm,none,next");
+   else
+     snprintf(buf, sizeof(buf), "elm,%s,next", sd->transition);
+   elm_layout_signal_emit(obj, buf, "elm");
+   // XXX: for backwards compat
+   if (!sd->transition)
      sprintf(buf,"none,next");
    else
      snprintf(buf, sizeof(buf), "%s,next", sd->transition);
-   elm_layout_signal_emit(obj, buf, "elm");
-   // XXX: for backwards compat
    elm_layout_signal_emit(obj, buf, "slideshow");
 
    sd->previous = sd->current;
@@ -575,11 +583,15 @@ _elm_slideshow_previous(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    elm_layout_content_set(obj, "elm.swallow.2", VIEW(prev));
 
    if (!sd->transition)
+     sprintf(buf, "elm,none,previous");
+   else
+     snprintf(buf, 1024, "elm,%s,previous", sd->transition);
+   elm_layout_signal_emit(obj, buf, "elm");
+   // XXX: for backwards compat
+   if (!sd->transition)
      sprintf(buf,"none,previous");
    else
      snprintf(buf, 1024, "%s,previous", sd->transition);
-   elm_layout_signal_emit(obj, buf, "elm");
-   // XXX: for backwards compat
    elm_layout_signal_emit(obj, buf, "slideshow");
 
    sd->previous = sd->current;
@@ -746,9 +758,10 @@ _elm_slideshow_layout_set(Eo *obj, void *_pd, va_list *list)
    Elm_Slideshow_Smart_Data *sd = _pd;
 
    sd->layout.current = layout;
-   snprintf(buf, sizeof(buf), "layout,%s", layout);
+   snprintf(buf, sizeof(buf), "elm,layout,%s", layout);
    elm_layout_signal_emit(obj, buf, "elm");
    // XXX: for bakcwards compat
+   snprintf(buf, sizeof(buf), "layout,%s", layout);
    elm_layout_signal_emit(obj, buf, "slideshow");
 }
 

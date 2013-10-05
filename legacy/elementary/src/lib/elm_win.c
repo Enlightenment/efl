@@ -2124,10 +2124,10 @@ _elm_win_focus_highlight_init(Elm_Win_Smart_Data *sd)
    sd->focus_highlight.theme_changed = EINA_TRUE;
 
    edje_object_signal_callback_add(sd->focus_highlight.fobj,
-                                   "elm,action,focus,hide,end", "",
+                                   "elm,action,focus,hide,end", "*",
                                    _elm_win_focus_highlight_hide, NULL);
    edje_object_signal_callback_add(sd->focus_highlight.fobj,
-                                   "elm,action,focus,anim,end", "",
+                                   "elm,action,focus,anim,end", "*",
                                    _elm_win_focus_highlight_anim_end, sd->obj);
    _elm_win_focus_highlight_reconfigure_job_start(sd);
 }

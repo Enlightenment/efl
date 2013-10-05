@@ -294,13 +294,13 @@ _elm_check_smart_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
    elm_widget_sub_object_parent_add(obj);
 
    edje_object_signal_callback_add
-     (wd->resize_obj, "elm,action,check,on", "",
+     (wd->resize_obj, "elm,action,check,on", "*",
      _on_check_on, obj);
    edje_object_signal_callback_add
-     (wd->resize_obj, "elm,action,check,off", "",
+     (wd->resize_obj, "elm,action,check,off", "*",
      _on_check_off, obj);
    edje_object_signal_callback_add
-     (wd->resize_obj, "elm,action,check,toggle", "",
+     (wd->resize_obj, "elm,action,check,toggle", "*",
      _on_check_toggle, obj);
 
    _elm_access_object_register(obj, wd->resize_obj);

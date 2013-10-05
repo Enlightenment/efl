@@ -1137,13 +1137,13 @@ _elm_ctxpopup_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
      CRITICAL("Failed to set layout!");
 
    elm_layout_signal_callback_add
-     (obj, "elm,action,hide,finished", "", _hide_finished_cb, obj);
+     (obj, "elm,action,hide,finished", "*", _hide_finished_cb, obj);
 
    //Background
    priv->bg = edje_object_add(evas_object_evas_get(obj));
    elm_widget_theme_object_set(obj, priv->bg, "ctxpopup", "bg", "default");
    edje_object_signal_callback_add
-     (priv->bg, "elm,action,click", "", _bg_clicked_cb, obj);
+     (priv->bg, "elm,action,click", "*", _bg_clicked_cb, obj);
 
    evas_object_stack_below(priv->bg, obj);
 

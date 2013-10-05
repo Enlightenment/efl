@@ -1183,13 +1183,13 @@ _item_new(Evas_Object *obj,
      _on_item_size_hints_changed, obj);
 
    elm_object_signal_callback_add
-     (VIEW(it), "elm,action,show,finished", "", _on_item_show_finished, it);
+     (VIEW(it), "elm,action,show,finished", "*", _on_item_show_finished, it);
    elm_object_signal_callback_add
-     (VIEW(it), "elm,action,pushed,finished", "", _on_item_push_finished, it);
+     (VIEW(it), "elm,action,pushed,finished", "*", _on_item_push_finished, it);
    elm_object_signal_callback_add
-     (VIEW(it), "elm,action,popped,finished", "", _on_item_pop_finished, it);
+     (VIEW(it), "elm,action,popped,finished", "*", _on_item_pop_finished, it);
    elm_object_signal_callback_add
-     (VIEW(it), "elm,action,title,clicked", "", _on_item_title_clicked, it);
+     (VIEW(it), "elm,action,title,clicked", "*", _on_item_title_clicked, it);
 
    _item_style_set(it, item_style);
 

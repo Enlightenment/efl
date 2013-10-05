@@ -299,7 +299,8 @@ _popup_show(void *data,
         evas_object_layer_set(sd->popup, evas_object_layer_get(data));
         evas_object_raise(sd->popup);
         evas_object_show(sd->popup);
-        edje_object_signal_emit(sd->popup, "popup,show", "elm");
+        edje_object_signal_emit(sd->popup, "popup,show", "elm"); // XXX: for compat
+        edje_object_signal_emit(sd->popup, "elm,popup,show", "elm");
      }
 }
 
@@ -314,7 +315,8 @@ _popup_hide(void *data,
      {
         if (!sd->popup_hiding)
           {
-             edje_object_signal_emit(sd->popup, "popup,hide", "elm");
+             edje_object_signal_emit(sd->popup, "popup,hide", "elm"); // XXX: for compat
+             edje_object_signal_emit(sd->popup, "elm,popup,hide", "elm");
              sd->popup_hiding = EINA_TRUE;
           }
      }
@@ -812,8 +814,10 @@ _elm_slider_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    elm_layout_signal_callback_add(obj, "drag,stop", "*", _drag_stop, obj);
    elm_layout_signal_callback_add(obj, "drag,step", "*", _drag_step, obj);
    elm_layout_signal_callback_add(obj, "drag,page", "*", _drag_stop, obj);
-   elm_layout_signal_callback_add(obj, "popup,show", "elm", _popup_show, obj);
-   elm_layout_signal_callback_add(obj, "popup,hide", "elm", _popup_hide, obj);
+   elm_layout_signal_callback_add(obj, "popup,show", "elm", _popup_show, obj); // XXX: for compat
+   elm_layout_signal_callback_add(obj, "popup,hide", "elm", _popup_hide, obj); // XXX: for compat
+   elm_layout_signal_callback_add(obj, "elm,popup,show", "elm", _popup_show, obj);
+   elm_layout_signal_callback_add(obj, "elm,popup,hide", "elm", _popup_hide, obj);
    elm_layout_signal_callback_add(obj, "*", "popup,emit", _popup_emit, obj);
    edje_object_part_drag_value_set
      (wd->resize_obj, "elm.dragable.slider", 0.0, 0.0);
@@ -833,7 +837,9 @@ _elm_slider_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
                        elm_widget_style_get(obj));
         edje_object_scale_set(priv->popup, elm_widget_scale_get(obj) *
                               elm_config_scale_get());
-        edje_object_signal_callback_add(priv->popup, "popup,hide,done", "elm",
+        edje_object_signal_callback_add(priv->popup, "popup,hide,done", "elm", // XXX: for compat
+                                        _popup_hide_done, obj);
+        edje_object_signal_callback_add(priv->popup, "elm,popup,hide,done", "elm",
                                         _popup_hide_done, obj);
 
         /* create a rectangle to track position+size of the dragable */

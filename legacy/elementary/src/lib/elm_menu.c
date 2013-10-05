@@ -495,11 +495,11 @@ _item_obj_create(Elm_Menu_Item *item)
      CRITICAL("Failed to set layout!");
    else
      {
-        elm_layout_signal_callback_add(VIEW(item), "elm,action,click", "",
+        elm_layout_signal_callback_add(VIEW(item), "elm,action,click", "*",
                                        _menu_item_select_cb, item);
-        elm_layout_signal_callback_add(VIEW(item), "elm,action,activate", "",
+        elm_layout_signal_callback_add(VIEW(item), "elm,action,activate", "*",
                                        _menu_item_activate_cb, item);
-        elm_layout_signal_callback_add(VIEW(item), "elm,action,inactivate", "",
+        elm_layout_signal_callback_add(VIEW(item), "elm,action,inactivate", "*",
                                        _menu_item_inactivate_cb,
                                        item);
         evas_object_show(VIEW(item));
@@ -519,7 +519,7 @@ _item_separator_obj_create(Elm_Menu_Item *item)
    else
      {
         elm_layout_signal_callback_add
-           (VIEW(item), "elm,action,activate", "", _menu_item_activate_cb, item);
+           (VIEW(item), "elm,action,activate", "*", _menu_item_activate_cb, item);
         evas_object_show(VIEW(item));
      }
 }
@@ -573,7 +573,7 @@ _item_submenu_obj_create(Elm_Menu_Item *item)
    if (item->icon_str)
      elm_menu_item_icon_name_set((Elm_Object_Item *)item, item->icon_str);
 
-   elm_layout_signal_callback_add(VIEW(item), "elm,action,open", "",
+   elm_layout_signal_callback_add(VIEW(item), "elm,action,open", "*",
                                    _submenu_open_cb, item);
    evas_object_event_callback_add
      (VIEW(item), EVAS_CALLBACK_MOVE, _item_move_resize_cb, item);

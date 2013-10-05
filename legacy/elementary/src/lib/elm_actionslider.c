@@ -407,13 +407,13 @@ _elm_actionslider_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    evas_object_color_set(priv->drag_button_base, 0, 0, 0, 0);
 
    edje_object_signal_callback_add
-     (wd->resize_obj, "elm.drag_button,mouse,up", "",
+     (wd->resize_obj, "elm.drag_button,mouse,up", "*",
      _drag_button_up_cb, obj);
    edje_object_signal_callback_add
-     (wd->resize_obj, "elm.drag_button,mouse,down", "",
+     (wd->resize_obj, "elm.drag_button,mouse,down", "*",
      _drag_button_down_cb, obj);
    edje_object_signal_callback_add
-     (wd->resize_obj, "elm.drag_button,mouse,move", "",
+     (wd->resize_obj, "elm.drag_button,mouse,move", "*",
      _drag_button_move_cb, obj);
 
    if (!elm_layout_theme_set

@@ -292,13 +292,13 @@ _elm_button_smart_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
    elm_widget_sub_object_parent_add(obj);
 
    edje_object_signal_callback_add
-     (wd->resize_obj, "elm,action,click", "",
+     (wd->resize_obj, "elm,action,click", "*",
      _on_clicked_signal, obj);
    edje_object_signal_callback_add
-     (wd->resize_obj, "elm,action,press", "",
+     (wd->resize_obj, "elm,action,press", "*",
      _on_pressed_signal, obj);
    edje_object_signal_callback_add
-     (wd->resize_obj, "elm,action,unpress", "",
+     (wd->resize_obj, "elm,action,unpress", "*",
      _on_unpressed_signal, obj);
 
    _elm_access_object_register(obj, wd->resize_obj);

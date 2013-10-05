@@ -1102,11 +1102,11 @@ _animate_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    if ((sd->is_video) && (sd->thumb.format == ETHUMB_THUMB_EET))
      {
         if (setting == ELM_THUMB_ANIMATION_LOOP)
-          edje_object_signal_emit(sd->view, "animate_loop", "");
+          edje_object_signal_emit(sd->view, "elm,action,animate_loop", "elm");
         else if (setting == ELM_THUMB_ANIMATION_START)
-          edje_object_signal_emit(sd->view, "animate", "");
+          edje_object_signal_emit(sd->view, "elm,action,animate", "elm");
         else if (setting == ELM_THUMB_ANIMATION_STOP)
-          edje_object_signal_emit(sd->view, "animate_stop", "");
+          edje_object_signal_emit(sd->view, "elm,action,animate_stop", "elm");
      }
 #endif
 }
