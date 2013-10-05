@@ -45,7 +45,7 @@ _elm_fileselector_button_smart_theme(Eo *obj, void *_pd EINA_UNUSED, va_list *li
    char buf[4096];
    const char *style;
 
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    style = eina_stringshare_add(elm_widget_style_get(obj));
 
