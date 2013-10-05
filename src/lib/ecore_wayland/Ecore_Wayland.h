@@ -12,7 +12,6 @@
 # include <wayland-client.h>
 # include <wayland-cursor.h>
 # include <xkbcommon/xkbcommon.h>
-# include <subsurface-client-protocol.h>
 
 # ifdef EAPI
 #  undef EAPI
