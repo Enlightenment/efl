@@ -398,8 +398,6 @@ _ecore_wl_shutdown(Eina_Bool close)
           wl_data_device_manager_destroy(_ecore_wl_disp->wl.data_device_manager);
         if (_ecore_wl_disp->wl.compositor)
           wl_compositor_destroy(_ecore_wl_disp->wl.compositor);
-        if (_ecore_wl_disp->wl.subcompositor)
-          wl_subcompositor_destroy(_ecore_wl_disp->wl.subcompositor);
         if (_ecore_wl_disp->wl.display)
           {
              wl_registry_destroy(_ecore_wl_disp->wl.registry);
@@ -517,11 +515,6 @@ _ecore_wl_cb_handle_global(void *data, struct wl_registry *registry, unsigned in
      {
         ewd->wl.compositor =
           wl_registry_bind(registry, id, &wl_compositor_interface, 3);
-     }
-   else if (!strcmp(interface, "wl_subcompositor"))
-     {
-        ewd->wl.subcompositor =
-           wl_registry_bind(registry, id, &wl_subcompositor_interface, 1);
      }
    else if (!strcmp(interface, "wl_output"))
      _ecore_wl_output_add(ewd, id);
