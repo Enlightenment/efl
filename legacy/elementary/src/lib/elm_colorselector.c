@@ -1073,7 +1073,7 @@ _elm_colorselector_smart_theme(Eo *obj, void *_pd, va_list *list)
    unsigned int v_pad = DEFAULT_VER_PAD;
 
    Elm_Colorselector_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret = EINA_FALSE;
@@ -1223,7 +1223,7 @@ _elm_colorselector_smart_sizing_eval(Eo *obj, void *_pd, va_list *list EINA_UNUS
    Evas_Coord minw = -1, minh = -1;
 
    Elm_Colorselector_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
 
@@ -1469,7 +1469,7 @@ _elm_colorselector_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    unsigned int v_pad = DEFAULT_VER_PAD;
 
    Elm_Colorselector_Smart_Data *priv = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
    elm_widget_sub_object_parent_add(obj);
@@ -1912,7 +1912,7 @@ _mode_set(Eo *obj, void *_pd, va_list *list)
 {
    Elm_Colorselector_Mode mode = va_arg(*list, Elm_Colorselector_Mode);
    Elm_Colorselector_Smart_Data *sd = _pd;
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    Evas_Object *o;
 
    if (sd->mode == mode) return;
