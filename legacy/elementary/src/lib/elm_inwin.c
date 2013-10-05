@@ -25,8 +25,7 @@ _elm_inwin_smart_sizing_eval(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_
 {
    Evas_Object *content;
    Evas_Coord minw = -1, minh = -1;
-
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    content = elm_layout_content_get(obj, NULL);
 
@@ -138,7 +137,7 @@ elm_win_inwin_activate(Evas_Object *obj)
 static void
 _elm_inwin_smart_activate(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    evas_object_raise(obj);
    evas_object_show(obj);
