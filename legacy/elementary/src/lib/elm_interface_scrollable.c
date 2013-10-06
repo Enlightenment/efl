@@ -1463,7 +1463,7 @@ _elm_scroll_bounce_eval(Elm_Scrollable_Smart_Interface_Data *sid)
           {
              if (sid->bouncemex)
                {
-                  if (sid->scrollto.x.animator) ecore_animator_del(sid->scrollto.x.animator);
+                  ELM_SAFE_FREE(sid->scrollto.x.animator, ecore_animator_del);
                   sid->down.bounce_x_animator =
                     ecore_animator_add(_elm_scroll_bounce_x_animator, sid->obj);
                   sid->down.anim_start2 = ecore_loop_time_get();
@@ -1483,7 +1483,7 @@ _elm_scroll_bounce_eval(Elm_Scrollable_Smart_Interface_Data *sid)
           {
              if (sid->bouncemey)
                {
-                  if (sid->scrollto.y.animator) ecore_animator_del(sid->scrollto.y.animator);
+                  ELM_SAFE_FREE(sid->scrollto.y.animator, ecore_animator_del);
                   sid->down.bounce_y_animator =
                     ecore_animator_add(_elm_scroll_bounce_y_animator, sid->obj);
                   sid->down.anim_start3 = ecore_loop_time_get();
