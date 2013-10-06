@@ -788,7 +788,7 @@ group { name: "elm/popup/content/default";
 group { name: "elm/popup/buttons1/default";
    data.item: "action_area_height" "140";
    parts{
-      part{ name:"actionbtn1";
+      part{ name:"elm.swallow.content.button1";
          type: SWALLOW;
          scale : 1;
          description { state: "default" 0.0;
@@ -802,7 +802,7 @@ group { name: "elm/popup/buttons1/default";
 group { name: "elm/popup/buttons2/default";
    data.item: "action_area_height" "140";
    parts{
-      part{ name:"actionbtn1";
+      part{ name:"elm.swallow.content.button1";
          type: SWALLOW;
          scale : 1;
          description { state: "default" 0.0;
@@ -827,7 +827,7 @@ group { name: "elm/popup/buttons2/default";
             rel2.relative: 0.5 1.0;
          }
       }
-      part{ name:"actionbtn2";
+      part{ name:"elm.swallow.content.button2";
          type: SWALLOW;
          scale : 1;
          description { state: "default" 0.0;
@@ -848,7 +848,7 @@ group { name: "elm/popup/buttons2/default";
 group { name: "elm/popup/buttons3/default";
    data.item: "action_area_height" "140";
    parts{
-      part{ name:"actionbtn1";
+      part{ name:"elm.swallow.content.button1";
          type: SWALLOW;
          scale : 1;
          description { state: "default" 0.0;
@@ -870,14 +870,14 @@ group { name: "elm/popup/buttons3/default";
             min: 6 46;
             max: 6 46;
             fixed : 1 0;
-            rel1.to: "actionbtn2";
+            rel1.to: "elm.swallow.content.button2";
             rel2 {
                relative: 0.0 1.0;
-               to: "actionbtn2";
+               to: "elm.swallow.content.button2";
             }
          }
       }
-      part{ name:"actionbtn2";
+      part{ name:"elm.swallow.content.button2";
          type: SWALLOW;
          scale : 1;
          description { state: "default" 0.0;
@@ -897,12 +897,12 @@ group { name: "elm/popup/buttons3/default";
             fixed : 1 0;
             rel1 {
                relative: 1.0 0.0;
-               to: "actionbtn2";
+               to: "elm.swallow.content.button2";
             }
-            rel2.to: "actionbtn2";
+            rel2.to: "elm.swallow.content.button2";
          }
       }
-      part{ name:"actionbtn3";
+      part{ name:"elm.swallow.content.button3";
          type: SWALLOW;
          scale : 1;
          description { state: "default" 0.0;
