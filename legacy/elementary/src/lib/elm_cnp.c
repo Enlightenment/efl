@@ -2775,7 +2775,7 @@ _wl_dropable_data_handle(Wl_Cnp_Selection *sel, char *data)
         sdata.data = entrytag;
         drop->dropcb(drop->cbdata, drop->obj, &sdata);
         ecore_wl_dnd_drag_end(ecore_wl_input_get());
-        if (savedtypes.imgfile) free(savedtypes.imgfile);
+        free(savedtypes.imgfile);
         savedtypes.imgfile = NULL;
      }
    else if (drop->types & ELM_SEL_FORMAT_IMAGE)
@@ -2784,7 +2784,7 @@ _wl_dropable_data_handle(Wl_Cnp_Selection *sel, char *data)
         sdata.data = (char *)savedtypes.imgfile;
         drop->dropcb(drop->cbdata, drop->obj, &sdata);
         ecore_wl_dnd_drag_end(ecore_wl_input_get());
-        if (savedtypes.imgfile) free(savedtypes.imgfile);
+        free(savedtypes.imgfile);
         savedtypes.imgfile = NULL;
      }
 }
