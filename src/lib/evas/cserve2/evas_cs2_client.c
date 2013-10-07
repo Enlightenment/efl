@@ -262,6 +262,7 @@ _request_resend(unsigned int rid)
    Client_Request *cr;
    Eina_Bool found = EINA_FALSE;
 
+   DBG("Re-sending %d requests...", eina_list_count(_requests));
    EINA_LIST_FOREACH(_requests, l, cr)
      {
         if (rid)
@@ -337,9 +338,13 @@ _server_reconnect()
    if (!_server_dispatch_until(SPECIAL_RID_INDEX_LIST))
      goto on_error;
 
-#warning TODO: Reopen all files, images, fonts...
+   /* NOTE: (TODO?)
+    * Either we reopen all images & fonts now
+    * Or we wait until new data is required again to request cserve2 to load
+    * it for us. Not sure which approch is the best now.
+    * So, for the moment, we'll just wait until the client needs new data.
+    */
 
-   DBG("Re-sending %d requests...", eina_list_count(_requests));
    if (!_request_resend(0))
      goto on_error;
 
@@ -768,7 +773,7 @@ _image_loaded_cb(void *data, const void *msg_received, int size)
 
              if (msg_error->error == CSERVE2_NOT_LOADED)
                {
-#warning Code path to check
+#warning Code path to check: cserve2 restart
                   DBG("Trying to reopen the image");
                   ie->open_rid = _image_open_server_send(ie);
                   if (_server_dispatch_until(ie->open_rid))
@@ -1399,6 +1404,7 @@ struct _Glyph_Map
    Shared_Index index;
    Shared_Buffer mempool;
    Eina_Clist glyphs;
+   Eina_List *mempool_lru;
 };
 
 struct _CS_Glyph_Out
@@ -1409,15 +1415,27 @@ struct _CS_Glyph_Out
    unsigned int idx;
    unsigned int rid;
    Glyph_Map *map;
+   Shared_Buffer *sb;
    unsigned int offset;
    unsigned int size;
    Eina_Bool used;
+   int refcount;
+   int pending_ref;
 };
 
 static void
 _glyphs_map_free(Glyph_Map *map)
 {
+   Shared_Buffer *mempool;
+
    if (!map) return;
+
+   EINA_LIST_FREE(map->mempool_lru, mempool)
+     {
+        eina_file_map_free(mempool->f, mempool->data);
+        eina_file_close(mempool->f);
+        free(mempool);
+     }
    eina_file_map_free(map->mempool.f, map->mempool.data);
    eina_file_close(map->mempool.f);
    eina_file_map_free(map->index.f, map->index.data);
@@ -1643,48 +1661,52 @@ _glyph_map_remap_check(Glyph_Map *map)
 {
    Eina_Bool changed = EINA_FALSE;
    int oldcount;
-   const void *oldmap = map->mempool.data;
-
-   if (!map->mempool.f)
-     {
-        WRN("The glyph mempool has been closed.");
-        if (!map->mempool.path)
-          return EINA_FALSE;
-
-        DBG("Remapping from %s", map->mempool.path);
-        map->mempool.f = eina_file_open(map->mempool.path, EINA_TRUE);
-        if (!map->mempool.f)
-          {
-             ERR("Could not open shm file: %d %m", errno);
-             return EINA_FALSE;
-          }
-        map->mempool.size = 0;
-     }
 
    if (eina_file_refresh(map->mempool.f)
        || (eina_file_size_get(map->mempool.f) != (size_t) map->mempool.size))
      {
         CS_Glyph_Out *gl;
+        Shared_Buffer *oldbuf = NULL;
 
         WRN("Glyph pool has been resized.");
-        eina_file_map_free(map->mempool.f, map->mempool.data);
-        map->mempool.data = eina_file_map_all(map->mempool.f, EINA_FILE_RANDOM);
-        if (map->mempool.data)
-          map->mempool.size = eina_file_size_get(map->mempool.f);
+
+        // Queue old mempool into mempool_lru unless refcount == 0
+        // We want to keep the old glyph bitmap data in memory because of
+        // asynchronous rendering and also because remap could happen
+        // after some glyphs have been requested but not all for the current
+        // draw.
+
+        if (map->mempool.refcount > 0)
+          {
+             oldbuf = calloc(1, sizeof(Glyph_Map));
+             oldbuf->f = eina_file_dup(map->mempool.f);
+             oldbuf->data = map->mempool.data;
+             oldbuf->size = map->mempool.size;
+             oldbuf->refcount = map->mempool.refcount;
+             eina_strlcpy(oldbuf->path, map->mempool.path, SHARED_BUFFER_PATH_MAX);
+             map->mempool_lru = eina_list_append(map->mempool_lru, oldbuf);
+          }
         else
-          map->mempool.size = 0;
+          {
+             eina_file_map_free(map->mempool.f, map->mempool.data);
+          }
+        map->mempool.data = eina_file_map_all(map->mempool.f, EINA_FILE_RANDOM);
+        map->mempool.size = eina_file_size_get(map->mempool.f);
+        map->mempool.refcount = 0;
         changed = EINA_TRUE;
 
-        // Remap loaded glyphs
-#warning Infinite loop again here. FONT RELOAD IS STILL BROKEN.
+        // Remap unused but loaded glyphs
         EINA_CLIST_FOR_EACH_ENTRY(gl, &map->fe->map->glyphs,
                                   CS_Glyph_Out, map_entry)
           {
-             if (map->mempool.data)
-               gl->base.bitmap.buffer = (unsigned char *)
-                     map->mempool.data + gl->offset;
-             else
-               gl->base.bitmap.buffer = NULL;
+             if (!gl->refcount)
+               {
+                  gl->sb = &map->mempool;
+                  gl->base.bitmap.buffer = (unsigned char *) gl->sb->data + gl->offset;
+               }
+             else if (oldbuf)
+               gl->sb = oldbuf;
+             else CRIT("Invalid refcount state");
           }
      }
 
@@ -1692,7 +1714,6 @@ _glyph_map_remap_check(Glyph_Map *map)
    oldcount = map->index.count;
    _shared_index_remap_check(&map->index, sizeof(Glyph_Data));
    changed |= (oldcount != map->index.count);
-   changed |= (oldmap != map->mempool.data);
 
    return changed;
 }
@@ -1744,6 +1765,7 @@ _font_entry_glyph_map_rebuild_check(Font_Entry *fe, Font_Hint_Flags hints)
                   eina_clist_element_init(&gl->map_entry);
                }
              gl->map = fe->map;
+             gl->sb = &fe->map->mempool;
              gl->offset = gd->offset;
              gl->size = gd->size;
              gl->base.bitmap.rows = gd->rows;
@@ -1790,19 +1812,8 @@ _glyph_request_cb(void *data, const void *msg, int size)
 
         if (err->error == CSERVE2_NOT_LOADED)
           {
+             // This can happen in case cserve2 restarted.
              DBG("Reloading the font: %s from %s", fe->name, fe->source);
-
-             // This will crash for sure.
-             /*
-             for (i = 0; i < 3; i++)
-               {
-                  if (fe->fash[i])
-                    fash_gl_free(fe->fash[i]);
-                  fe->fash[i] = NULL;
-               }
-             _glyphs_map_free(fe->map);
-             fe->map = NULL;
-             */
 
              if (!(fe->rid = _font_load_server_send(fe, CSERVE2_FONT_LOAD)))
                {
@@ -1811,7 +1822,7 @@ _glyph_request_cb(void *data, const void *msg, int size)
                   return EINA_TRUE;
                }
 
-#warning Code path to check
+#warning Code path to check: cserve2 restart
 
              if (fe->glyphs_queue_count)
                _glyph_request_server_send(fe, grd->hints, EINA_FALSE);
@@ -1910,13 +1921,14 @@ _glyph_request_cb(void *data, const void *msg, int size)
         if (gl)
           {
              gl->map = fe->map;
+             gl->sb = &fe->map->mempool;
              gl->offset = offset;
              gl->size = glsize;
              gl->base.bitmap.rows = rows;
              gl->base.bitmap.width = width;
              gl->base.bitmap.pitch = pitch;
-             gl->base.bitmap.buffer = (unsigned char *)
-                   fe->map->mempool.data + gl->offset;
+             gl->base.bitmap.buffer =
+               (unsigned char *) gl->map->mempool.data + gl->offset;
              gl->base.bitmap.num_grays = num_grays;
              gl->base.bitmap.pixel_mode = pixel_mode;
              gl->rid = 0;
@@ -1926,7 +1938,13 @@ _glyph_request_cb(void *data, const void *msg, int size)
                   WRN("Glyph offset out of the buffer. Refreshing map.");
                   if (!_glyph_map_remap_check(fe->map))
                     {
-                       ERR("Failed to remap glyph mempool!");
+                       // This is very problematic. Evas expects the glyph to
+                       // be valid after this point.
+                       // We could set rows & width to 0 to avoid crashes but
+                       // then display might be b0rken.
+                       // Also, all the previous glyphs might be out of the
+                       // memory range now, so we're in a pretty bad situation.
+                       CRIT("Failed to remap glyph mempool!");
                        gl->base.bitmap.buffer = NULL;
                        //gl->base.bitmap.rows = 0;
                        //gl->base.bitmap.width = 0;
@@ -2067,16 +2085,15 @@ evas_cserve2_font_glyph_request(Font_Entry *fe, unsigned int idx, Font_Hint_Flag
    if (!glyph)
      {
         glyph = calloc(1, sizeof(*glyph));
-
         glyph->idx = idx;
-
         fash_gl_add(fash, idx, glyph);
-
         eina_clist_add_head(&fe->glyphs_queue, &glyph->map_entry);
         fe->glyphs_queue_count++;
      }
    else if (!glyph->used)
      {
+        // FIXME: This code path seems unused (not logical)
+        CRIT("Is this code path even valid?");
         eina_clist_add_head(&fe->glyphs_used, &glyph->used_list);
         fe->glyphs_used_count++;
         glyph->used = EINA_TRUE;
@@ -2114,6 +2131,7 @@ evas_cserve2_font_glyph_used(Font_Entry *fe, unsigned int idx, Font_Hint_Flags h
    if (!glyph)
      return EINA_FALSE;
 
+   // Glyph was requested but the bitmap data was not loaded yet.
    if (!glyph->map)
      return EINA_TRUE;
 
@@ -2162,7 +2180,8 @@ evas_cserve2_font_glyph_bitmap_get(Font_Entry *fe, unsigned int idx,
      }
 
 #if USE_SHARED_INDEX
-   _font_entry_glyph_map_rebuild_check(fe, hints);
+#warning TODO MUST REIMPLEMENT THIS FUNCTION
+   //_font_entry_glyph_map_rebuild_check(fe, hints);
 #endif
 
    if (out->rid)
@@ -2174,8 +2193,77 @@ evas_cserve2_font_glyph_bitmap_get(Font_Entry *fe, unsigned int idx,
        }
 
    // promote shm and font entry in lru or something
-
    return &(out->base);
+}
+
+void
+evas_cserve2_font_glyph_ref(RGBA_Font_Glyph_Out *glyph, Eina_Bool incref)
+{
+   CS_Glyph_Out *glout;
+
+   EINA_SAFETY_ON_FALSE_RETURN(evas_cserve2_use_get());
+
+   // For debugging only.
+   static int inc = 0, dec = 0;
+   if (incref) inc++; else dec++;
+
+   // glout = (CS_Glyph_Out *) glyph;
+   glout = (CS_Glyph_Out *) (((char *) glyph) - offsetof(CS_Glyph_Out, base));
+
+   if (incref)
+     {
+        if (!glout->sb)
+          {
+             // This can happen when cserve2 restarted.
+             glout->pending_ref++;
+             return;
+          }
+        else if (!glout->refcount)
+          glout->sb->refcount++;
+        if (glout->pending_ref)
+          {
+             glout->refcount += glout->pending_ref;
+             glout->pending_ref = 0;
+          }
+        glout->refcount++;
+        return;
+     }
+
+   EINA_SAFETY_ON_FALSE_RETURN(glout->refcount > 0);
+   EINA_SAFETY_ON_NULL_RETURN(glout->sb);
+   if (glout->pending_ref)
+     {
+        glout->refcount += glout->pending_ref;
+        glout->pending_ref = 0;
+        glout->sb->refcount++;
+     }
+
+   glout->refcount--;
+   if (!glout->refcount)
+     {
+        EINA_SAFETY_ON_FALSE_RETURN(glout->sb->refcount > 0);
+        glout->sb->refcount--;
+
+        if (!glout->sb->refcount)
+          DBG("Shared buffer %p reached refcount ZERO. %d/%d", glout->sb, dec, inc);
+
+        //if (glout->sb->data != glout->map->mempool.data)
+        if (glout->sb != &glout->map->mempool)
+          {
+             if (!glout->sb->refcount)
+               {
+                  DBG("Glyph shared buffer reached refcount 0. Unmapping.");
+                  glout->map->mempool_lru =
+                    eina_list_remove(glout->map->mempool_lru, glout->sb);
+                  eina_file_map_free(glout->sb->f, glout->sb->data);
+                  eina_file_close(glout->sb->f);
+                  free(glout->sb);
+               }
+             glout->sb = &glout->map->mempool;
+             glout->base.bitmap.buffer =
+               (unsigned char *) glout->sb->data + glout->offset;
+          }
+     }
 }
 
 
@@ -2720,7 +2808,7 @@ _shared_image_entry_image_data_find(Image_Entry *ie)
         const File_Data *fdata = _shared_image_entry_file_data_find(ie);
         if (!fdata)
           {
-             ERR("File is not opened by cserve2");
+             DBG("File is not opened by cserve2");
              return NULL;
           }
         file_id = fdata->id;

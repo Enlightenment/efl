@@ -56,6 +56,7 @@ struct _Shared_Buffer
    Eina_File *f;
    char *data;
    int size;
+   int refcount;
 };
 
 struct _Index_Table
@@ -89,4 +90,5 @@ void evas_cserve2_font_free(Font_Entry *fe);
 Eina_Bool evas_cserve2_font_glyph_request(Font_Entry *fe, unsigned int idx, Font_Hint_Flags hints);
 Eina_Bool evas_cserve2_font_glyph_used(Font_Entry *fe, unsigned int idx, Font_Hint_Flags hints) EINA_WARN_UNUSED_RESULT;
 RGBA_Font_Glyph_Out *evas_cserve2_font_glyph_bitmap_get(Font_Entry *fe, unsigned int idx, Font_Hint_Flags hints);
+void evas_cserve2_font_glyph_ref(RGBA_Font_Glyph_Out *glyph, Eina_Bool incref);
 #endif
