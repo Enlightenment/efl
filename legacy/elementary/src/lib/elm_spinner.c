@@ -297,9 +297,9 @@ _spin_value(void *data)
         real_speed = sd->spin_speed > 0 ? sd->round : -sd->round;
      }
 
-   if (_value_set(data, sd->val + real_speed)) _label_write(data);
    sd->interval = sd->interval / 1.05;
    ecore_timer_interval_set(sd->spin_timer, sd->interval);
+   if (_value_set(data, sd->val + real_speed)) _label_write(data);
 
    return ECORE_CALLBACK_RENEW;
 }
