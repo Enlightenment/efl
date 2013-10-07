@@ -2370,7 +2370,7 @@ _wl_elm_drag_start(Evas_Object *obj, Elm_Sel_Format format EINA_UNUSED, const ch
 {
    Ecore_Evas *ee;
    Evas_Object *icon = NULL;
-   int x, y, x2 = 0, y2 = 0, x3, y3, w, h;
+   int x, y, x2 = 0, y2 = 0, x3, y3, w = 0, h = 0;
    const char *types[1] = { 0, };
 
    _wl_elm_dnd_init();
@@ -2465,12 +2465,11 @@ static Eina_Bool
 _wl_dnd_enter(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Wl_Event_Dnd_Enter *ev;
-   Dropable *drop;
    int i = 0;
 
    ev = event;
 
-   if ((drop = _wl_dropable_find(ev->win)))
+   if (_wl_dropable_find(ev->win))
      _wl_dropable_all_set(ev->win, 0, 0, EINA_FALSE);
 
    if ((!ev->num_types) || (!ev->types)) return ECORE_CALLBACK_PASS_ON;
