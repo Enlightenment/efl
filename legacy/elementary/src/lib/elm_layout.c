@@ -2147,8 +2147,6 @@ _dbg_info_get(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
    eo_do_super(eo_obj, MY_CLASS, eo_dbg_info_get(root));
    ELM_WIDGET_DATA_GET_OR_RETURN(eo_obj, wd);
 
-   if (!wd) return;
-
    if (eo_isa(wd->resize_obj, EDJE_OBJ_CLASS))
      {
         Eo_Dbg_Info *group = EO_DBG_INFO_LIST_APPEND(root, MY_CLASS_NAME);
