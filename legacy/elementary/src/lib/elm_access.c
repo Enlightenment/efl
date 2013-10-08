@@ -665,8 +665,7 @@ _elm_access_highlight_cycle(Evas_Object *obj, Elm_Focus_Direction dir)
 
    action_by = type;
 
-   if (!ho) elm_widget_focus_cycle(obj, dir);
-   else if (!_access_action_callback_call(ho, type, NULL))
+   if (!_access_action_callback_call(ho, type, NULL))
      {
         Elm_Access_Info *info = _elm_access_info_get(ho);
         Evas_Object *comming = NULL;
