@@ -296,6 +296,7 @@ Fixes:
    * Fix the layout to swallow the contents again when theme is changed.
    * elm_player breaks theme due to poor namespacing
    * elm_popup breaks theme due to poor namespacing
+   * ctxpopup: fix elm_object_content_unset didn't unpack content from box
 
 Removals:
 

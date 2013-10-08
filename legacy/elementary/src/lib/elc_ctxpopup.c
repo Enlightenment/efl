@@ -857,6 +857,7 @@ _elm_ctxpopup_smart_content_unset(Eo *obj, void *_pd, va_list *list)
    content = sd->content;
    if (!content) goto end;
 
+   elm_box_unpack(sd->box, content);
    sd->content = NULL;
    sd->dir = ELM_CTXPOPUP_DIRECTION_UNKNOWN;
 

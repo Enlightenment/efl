@@ -1680,3 +1680,6 @@
         handle styles at all (so styles were broken with the given
         namespace).
 
+2013-10-08  Daesung Kim (ad960009)
+
+        * ctxpopup : fix elm_object_content_unset didn't unpack content from box
