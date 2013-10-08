@@ -179,7 +179,7 @@ _shm_files_list(const char *folder)
    const Eina_File_Direct_Info *f_info;
    char pattern[64];
 
-   sprintf(pattern, "/evas-shm-%x-", (int) getuid());
+   sprintf(pattern, "/evas-shm-%05d-", (int) getuid());
    iter = eina_file_direct_ls(folder);
    EINA_ITERATOR_FOREACH(iter, f_info)
      {
@@ -191,7 +191,7 @@ _shm_files_list(const char *folder)
              lst = eina_list_append(lst, strdup(shmname));
           }
         else
-          DBG("cserve2 cleanup: ignoring %s", f_info->path);
+          DBG("cserve2 scan: ignoring %s", f_info->path);
      }
    eina_iterator_free(iter);
 

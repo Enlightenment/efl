@@ -77,8 +77,8 @@ cserve2_shm_request(const char *infix, size_t size)
      }
 
    do {
-        snprintf(shmname, sizeof(shmname), "/evas-shm-%x-%s-%08x",
-                 (int) getuid(), infix, ++id);
+        snprintf(shmname, sizeof(shmname), "/evas-shm-%05d-%05d-%s-%08x",
+                 (int) getuid(), (int) getpid(), infix, ++id);
         fd = shm_open(shmname, O_RDWR | O_CREAT | O_EXCL, S_IRUSR | S_IWUSR);
         if (fd == -1 && errno != EEXIST)
           {
@@ -304,7 +304,7 @@ _cserve2_shm_cleanup()
    const Eina_File_Direct_Info *f_info;
    char pattern[NAME_MAX];
 
-   sprintf(pattern, "evas-shm-%x-", (int) getuid());
+   sprintf(pattern, "evas-shm-%05d-", (int) getuid());
    iter = eina_file_direct_ls("/dev/shm");
    EINA_ITERATOR_FOREACH(iter, f_info)
      {
