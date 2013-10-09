@@ -424,6 +424,7 @@ Fixes:
     * Emotion:
      - Fix memory leak in gstreamer_ecore_x_check.
      - Fix backend priority order.
+     - Add two events to trigger webcam plug and unplug
     * Ethumb:
      - Fix memory leak in error case.
     * Eeze:

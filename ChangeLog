@@ -1,3 +1,7 @@
+2013-10-10  Michael Bouchaud (yoz)
+
+	* Emotion: add two events to trigger webcam plug and unplug
+
 2013-10-04  ChunEon Park (Hermet)
 
 	* Eina: fix eina_file_map_lines() to not drop of one character in the last line.

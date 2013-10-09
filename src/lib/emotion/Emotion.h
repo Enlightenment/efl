@@ -1287,7 +1287,9 @@ EAPI Evas_Object *emotion_object_image_get(const Evas_Object *obj);
 
 typedef struct _Emotion_Webcam Emotion_Webcam; /**< Webcam description */
 
-EAPI extern int EMOTION_WEBCAM_UPDATE; /**< Ecore_Event triggered when a new webcam is plugged in */
+EAPI extern int EMOTION_WEBCAM_UPDATE; /**< Ecore_Event triggered when a new webcam is plugged or unplugged */
+EAPI extern int EMOTION_WEBCAM_ADD; /**< Ecore_Event triggered when a new webcam is plugged in @since 1.8*/
+EAPI extern int EMOTION_WEBCAM_DEL; /**< Ecore_Event triggered when a webcam is unplugged @since 1.8 */
 
 /**
  * @brief Get a list of active and available webcam
