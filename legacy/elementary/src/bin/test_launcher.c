@@ -443,7 +443,8 @@ test_launcher2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    elm_object_content_set(sc, bx);
    evas_object_show(bx);
 
-   elm_scroller_page_relative_set(sc, 1.0, 1.0);
+   //content size of one page is 550 x 410
+   elm_scroller_page_size_set(sc, 555, 410);
    evas_object_show(sc);
 
    tb2 = elm_table_add(win);
@@ -496,7 +497,7 @@ test_launcher2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
 
    evas_object_show(tb2);
 
-   evas_object_resize(win, 520, 410);
+   evas_object_resize(win, 555, 410);
    evas_object_show(win);
 }
 
