@@ -1529,23 +1529,26 @@ _elm_scroll_content_pos_set(Eo *obj, void *_pd, va_list *list)
    eo_do(sid->pan_obj, elm_obj_pan_pos_min_get(&minx, &miny));
    eo_do(sid->pan_obj, elm_obj_pan_pos_get(&px, &py));
 
-   if (_paging_is_enabled(sid) && sid->page_snap_horiz)
+   if (_paging_is_enabled(sid))
      {
-        //we passed one page to the right
-        if (x > sid->current_page.x + sid->pagesize_h)
-          x = sid->current_page.x + sid->pagesize_h;
-        //we passed one page to the left
-        if (x < sid->current_page.x - sid->pagesize_h)
-          x = sid->current_page.x - sid->pagesize_h;
-     }
-   if (_paging_is_enabled(sid) && sid->page_snap_vert)
-     {
-        //we passed one page to the bottom
-        if (y > sid->current_page.y + sid->pagesize_v)
-          y = sid->current_page.y + sid->pagesize_v;
-        //we passed one page to the top
-        if (y < sid->current_page.y - sid->pagesize_v)
-          y = sid->current_page.y - sid->pagesize_v;
+        if (sid->page_snap_horiz)
+          {
+             //we passed one page to the right
+             if (x > sid->current_page.x + sid->pagesize_h)
+               x = sid->current_page.x + sid->pagesize_h;
+             //we passed one page to the left
+             if (x < sid->current_page.x - sid->pagesize_h)
+               x = sid->current_page.x - sid->pagesize_h;
+          }
+        if (sid->page_snap_vert)
+          {
+             //we passed one page to the bottom
+             if (y > sid->current_page.y + sid->pagesize_v)
+               y = sid->current_page.y + sid->pagesize_v;
+             //we passed one page to the top
+             if (y < sid->current_page.y - sid->pagesize_v)
+               y = sid->current_page.y - sid->pagesize_v;
+          }
      }
 
    if (!_elm_config->thumbscroll_bounce_enable)
