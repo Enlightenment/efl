@@ -307,7 +307,7 @@ size_t cserve2_shm_map_size_get(const Shm_Handle *shm);
 size_t cserve2_shm_size_get(const Shm_Handle *shm);
 void *cserve2_shm_map(Shm_Handle *shm);
 void cserve2_shm_unmap(Shm_Handle *shm);
-size_t cserve2_shm_size_normalize(size_t size);
+size_t cserve2_shm_size_normalize(size_t size, size_t align);
 
 void cserve2_command_run(Client *client, Message_Type type);
 

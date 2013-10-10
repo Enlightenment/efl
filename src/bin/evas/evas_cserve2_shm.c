@@ -35,7 +35,7 @@ struct _Shm_Handle
 static int id = 0;
 
 size_t
-cserve2_shm_size_normalize(size_t size)
+cserve2_shm_size_normalize(size_t size, size_t align)
 {
    long pagesize;
    size_t normalized;
@@ -47,7 +47,11 @@ cserve2_shm_size_normalize(size_t size)
         pagesize = 4096;
      }
 
-   normalized = ((size + pagesize - 1) / pagesize) * pagesize;
+   if (align)
+     align = ((align + pagesize - 1) / pagesize) * pagesize;
+   else
+     align = pagesize;
+   normalized = ((size + align - 1) / align) * align;
 
    return normalized;
 }
@@ -89,7 +93,7 @@ cserve2_shm_request(const char *infix, size_t size)
           }
    } while (fd == -1);
 
-   map_size = cserve2_shm_size_normalize(size);
+   map_size = cserve2_shm_size_normalize(size, 0);
 
    if (ftruncate(fd, map_size) == -1)
      {
@@ -135,7 +139,7 @@ cserve2_shm_segment_request(Shm_Handle *shm, size_t size)
         return NULL;
      }
 
-   map_size  = cserve2_shm_size_normalize(size);
+   map_size  = cserve2_shm_size_normalize(size, 0);
    map_size += map->length;
 
    if (ftruncate(fd, map_size) == -1)
@@ -186,7 +190,7 @@ cserve2_shm_resize(Shm_Handle *shm, size_t newsize)
         return NULL;
      }
 
-   map_size  = cserve2_shm_size_normalize(newsize);
+   map_size = cserve2_shm_size_normalize(newsize, 0);
    if (ftruncate(fd, map_size))
      {
         ERR("Could not set the size of the shm: %m");

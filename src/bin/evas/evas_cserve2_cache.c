@@ -171,6 +171,7 @@ static int max_font_usage = 10 * 4 * 1024; /* in kbytes */
 static int font_mem_usage = 0;
 
 #define MAX_PREEMPTIVE_LOAD_SIZE (320*320*4)
+#define ARRAY_REPACK_TRIGGER_PERCENT 25 // repack when array conains 25% holes
 
 #ifdef DEBUG_LOAD_TIME
 static int
@@ -354,7 +355,7 @@ _repack()
 
    count = cserve2_shared_array_size_get(_file_data_array);
    if ((count > 0) && (_freed_file_entry_count > 100 ||
-                       ((_freed_file_entry_count * 100) / count >= 10)))
+     ((_freed_file_entry_count * 100) / count >= ARRAY_REPACK_TRIGGER_PERCENT)))
      {
         DBG("Repacking file data array: %s",
             cserve2_shared_array_name_get(_file_data_array));
@@ -379,7 +380,7 @@ skip_files:
 
    count = cserve2_shared_array_size_get(_image_data_array);
    if ((count > 0) && (_freed_image_entry_count > 100 ||
-                       ((_freed_image_entry_count * 100) / count >= 10)))
+     ((_freed_image_entry_count * 100) / count >= ARRAY_REPACK_TRIGGER_PERCENT)))
      {
         DBG("Repacking image data array: %s",
             cserve2_shared_array_name_get(_image_data_array));
@@ -405,7 +406,7 @@ skip_images:
 
    count = cserve2_shared_array_size_get(_font_data_array);
    if ((count > 0) && (_freed_font_entry_count > 100 ||
-                       ((_freed_font_entry_count * 100) / count >= 10)))
+     ((_freed_font_entry_count * 100) / count >= ARRAY_REPACK_TRIGGER_PERCENT)))
      {
         DBG("Repacking font data array: %s",
             cserve2_shared_array_name_get(_font_data_array));
@@ -1145,7 +1146,6 @@ _file_data_free(File_Data *fd)
         cserve2_shared_string_del(fd->key);
         cserve2_shared_string_del(fd->path);
         cserve2_shared_string_del(fd->loader_data);
-        memset((char *) fd + sizeof(fd->id), 0, sizeof(*fd) - sizeof(fd->id));
      }
 }
 

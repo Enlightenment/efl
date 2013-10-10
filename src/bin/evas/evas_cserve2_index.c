@@ -64,6 +64,9 @@ struct _Block
 // fragmentation (after del). 16 is convenient for debugging with hd :)
 #define DATA_BLOCKSIZE 8
 
+// Recommended minimum size for arrays and mempools
+#define ARRAY_MINSIZE (32 * 1024)
+
 static inline int
 _data_blocksize_roundup(int len)
 {
@@ -160,7 +163,7 @@ _shared_data_shm_new(const char *infix, int size)
    ds = calloc(1, sizeof(Data_Shm));
    if (!ds) return NULL;
 
-   mapping_size = cserve2_shm_size_normalize((size_t) size);
+   mapping_size = cserve2_shm_size_normalize((size_t) size, 0);
 
    ds->shm = cserve2_shm_request(infix, mapping_size);
    if (!ds->shm)
@@ -200,7 +203,7 @@ _shared_data_shm_resize(Data_Shm *ds, size_t newsize)
    if (newsize <= 0)
      return -1;
 
-   mapping_size = cserve2_shm_size_normalize(newsize);
+   mapping_size = cserve2_shm_size_normalize(newsize, ARRAY_MINSIZE);
    cserve2_shm_unmap(ds->shm);
    ds->data = NULL;
 
@@ -242,7 +245,8 @@ cserve2_shared_array_new(int tag, int generation_id, int elemsize, int initcount
 
    if (!initcount) initcount = 1;
    mapping_size = cserve2_shm_size_normalize(elemsize * initcount
-                                             + sizeof(Shared_Array_Header));
+                                             + sizeof(Shared_Array_Header),
+                                             ARRAY_MINSIZE);
    ds = _shared_data_shm_new("array", mapping_size);
    if (!ds)
      {
@@ -330,7 +334,8 @@ cserve2_shared_array_size_set(Shared_Array *sa, int newcount)
 
    if (!sa) return -1;
    mapping_size = cserve2_shm_size_normalize(sa->header->elemsize * newcount
-                                             + sizeof(Shared_Array_Header));
+                                             + sizeof(Shared_Array_Header),
+                                             ARRAY_MINSIZE);
    if (_shared_data_shm_resize(sa->ds, mapping_size) < 0)
      {
         sa->header = NULL;
@@ -638,7 +643,7 @@ cserve2_shared_mempool_new(int indextag, int generation_id, int initsize)
    if (!sm) return NULL;
 
    if (!initsize) initsize = 1;
-   mapping_size = cserve2_shm_size_normalize((size_t) initsize);
+   mapping_size = cserve2_shm_size_normalize((size_t) initsize, ARRAY_MINSIZE);
 
    sm->ds = _shared_data_shm_new("mempool", mapping_size);
    if (!sm->ds)

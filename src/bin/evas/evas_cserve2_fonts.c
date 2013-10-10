@@ -26,7 +26,7 @@
 #define _EVAS_FONT_SLANT_TAN 0.221694663
 
 #define CHECK_CHARS "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-#define MIN_GLYPHS 50
+#define MIN_GLYPHS 100 // 26*2 + a nice margin :)
 #define MAX_CACHE_SIZE 1 * 1024 * 1024 // 1MB
 
 #define EVAS_FONT_ROUND_26_6_TO_INT(x) \
@@ -406,24 +406,6 @@ end:
 }
 
 static unsigned int
-_font_slave_int_shm_prev_calculate(unsigned int size, unsigned int nglyphs)
-{
-   unsigned int average;
-   unsigned int newsize;
-
-   if (!nglyphs) return cserve2_shm_size_normalize(1);
-   average = size / nglyphs;
-
-   newsize = MIN_GLYPHS * average;
-   newsize = cserve2_shm_size_normalize(newsize);
-
-   if (newsize > MAX_CACHE_SIZE)
-     return MAX_CACHE_SIZE;
-
-   return newsize;
-}
-
-static unsigned int
 _font_slave_int_shm_calculate(Font_Info *fi, unsigned int hint)
 {
    const char *c;
@@ -441,7 +423,7 @@ _font_slave_int_shm_calculate(Font_Info *fi, unsigned int hint)
    average = size / i; // average glyph size
    size = MIN_GLYPHS * average;
 
-   size = cserve2_shm_size_normalize(size);
+   size = cserve2_shm_size_normalize(size, 0);
 
    if (size > MAX_CACHE_SIZE)
      return MAX_CACHE_SIZE; // Assumes no glyph will be bigger than this
