@@ -25,7 +25,7 @@ struct _Evas_Cache_Preload
    Image_Entry *ie;
 };
 
-static LK(engine_lock);
+static SLK(engine_lock);
 static LK(wakeup);
 static int _evas_cache_mutex_init = 0;
 
@@ -199,9 +199,9 @@ _evas_cache_image_entry_delete(Evas_Cache_Image *cache, Image_Entry *ie)
    ie->cache = NULL;
    cache->func.surface_delete(ie);
 
-   LKD(ie->lock);
-   LKD(ie->lock_cancel);
-   LKD(ie->lock_task);
+   SLKD(ie->lock);
+   SLKD(ie->lock_cancel);
+   SLKD(ie->lock_task);
    cache->func.dealloc(ie);
 }
 
@@ -271,9 +271,9 @@ _evas_cache_image_entry_new(Evas_Cache_Image *cache,
    if (tstamp) ie->tstamp = *tstamp;
    else memset(&ie->tstamp, 0, sizeof(Image_Timestamp));
 
-   LKI(ie->lock);
-   LKI(ie->lock_cancel);
-   LKI(ie->lock_task);
+   SLKI(ie->lock);
+   SLKI(ie->lock_cancel);
+   SLKI(ie->lock_task);
 
    if (lo) ie->load_opts = *lo;
    if (ie->file || ie->f)
@@ -315,9 +315,9 @@ _evas_cache_image_entry_surface_alloc(Evas_Cache_Image *cache,
 {
    int wmin = w > 0 ? w : 1;
    int hmin = h > 0 ? h : 1;
-   LKL(engine_lock);
+   SLKL(engine_lock);
    _evas_cache_image_entry_surface_alloc__locked(cache, ie, wmin, hmin);
-   LKU(engine_lock);
+   SLKU(engine_lock);
 }
 
 static void
@@ -331,7 +331,7 @@ _evas_cache_image_async_heavy(void *data)
 
    current = data;
 
-   LKL(current->lock);
+   SLKL(current->lock);
    pchannel = current->channel;
    current->channel++;
    cache = current->cache;
@@ -352,7 +352,7 @@ _evas_cache_image_async_heavy(void *data)
           {
              current->flags.loaded = 1;
 
-             LKL(current->lock_task);
+             SLKL(current->lock_task);
              EINA_LIST_FREE(current->tasks, task)
                {
                   if (task != &dummy_task)
@@ -361,12 +361,12 @@ _evas_cache_image_async_heavy(void *data)
                        free(task);
                     }
                }
-             LKU(current->lock_task);
+             SLKU(current->lock_task);
           }
      }
    current->channel = pchannel;
    // check the unload cancel flag
-   LKL(current->lock_cancel);
+   SLKL(current->lock_cancel);
    if (current->flags.unload_cancel)
      {
         current->flags.unload_cancel = EINA_FALSE;
@@ -374,8 +374,8 @@ _evas_cache_image_async_heavy(void *data)
         current->flags.loaded = 0;
         current->flags.preload_done = 0;
      }
-   LKU(current->lock_cancel);
-   LKU(current->lock);
+   SLKU(current->lock_cancel);
+   SLKU(current->lock);
 }
 
 static void
@@ -460,9 +460,9 @@ _evas_cache_image_entry_preload_add(Image_Entry *ie, const Eo *target,
 
    ie->targets = (Evas_Cache_Target *)
       eina_inlist_append(EINA_INLIST_GET(ie->targets), EINA_INLIST_GET(tg));
-   LKL(ie->lock_task);
+   SLKL(ie->lock_task);
    ie->tasks = eina_list_append(ie->tasks, task);
-   LKU(ie->lock_task);
+   SLKU(ie->lock_task);
 
    if (!ie->preload)
      {
@@ -485,7 +485,7 @@ _evas_cache_image_entry_preload_remove(Image_Entry *ie, const Eo *target)
 
    if (target)
      {
-        LKL(ie->lock_task);
+        SLKL(ie->lock_task);
         l = ie->tasks;
         EINA_INLIST_FOREACH(ie->targets, tg)
           {
@@ -499,7 +499,7 @@ _evas_cache_image_entry_preload_remove(Image_Entry *ie, const Eo *target)
                   task = eina_list_data_get(l);
                   ie->tasks = eina_list_remove_list(ie->tasks, l);
                   if (task != &dummy_task) free(task);
-                  LKU(ie->lock_task);
+                  SLKU(ie->lock_task);
 
                   free(tg);
                   break;
@@ -507,7 +507,7 @@ _evas_cache_image_entry_preload_remove(Image_Entry *ie, const Eo *target)
 
              l = eina_list_next(l);
           }
-        LKU(ie->lock_task);
+        SLKU(ie->lock_task);
      }
    else
      {
@@ -520,10 +520,10 @@ _evas_cache_image_entry_preload_remove(Image_Entry *ie, const Eo *target)
              free(tg);
           }
 
-        LKL(ie->lock_task);
+        SLKL(ie->lock_task);
         EINA_LIST_FREE(ie->tasks, task)
           if (task != &dummy_task) free(task);
-        LKU(ie->lock_task);
+        SLKU(ie->lock_task);
      }
 
    if ((!ie->targets) && (ie->preload) && (!ie->flags.pending))
@@ -565,7 +565,7 @@ evas_cache_image_init(const Evas_Cache_Image_Func *cb)
 
    if (_evas_cache_mutex_init++ == 0)
      {
-        LKI(engine_lock);
+        SLKI(engine_lock);
         LKI(wakeup);
         eina_condition_new(&cond_wakeup, &wakeup);
      }
@@ -649,7 +649,7 @@ evas_cache_image_shutdown(Evas_Cache_Image *cache)
    if (--_evas_cache_mutex_init == 0)
      {
         eina_condition_free(&cond_wakeup);
-        LKD(engine_lock);
+        SLKD(engine_lock);
         LKD(wakeup);
      }
 }
@@ -1170,11 +1170,11 @@ evas_cache_image_load_data(Image_Entry *im)
 
    if ((im->flags.loaded) && (!im->animated.animated)) return error;
    
-   LKL(im->lock);
+   SLKL(im->lock);
    im->flags.in_progress = EINA_TRUE;
    error = im->cache->func.load(im);
    im->flags.in_progress = EINA_FALSE;
-   LKU(im->lock);
+   SLKU(im->lock);
    
    im->flags.loaded = 1;
    if (im->cache->func.debug) im->cache->func.debug("load", im);
@@ -1193,23 +1193,23 @@ evas_cache_image_unload_data(Image_Entry *im)
    if (im->flags.in_progress) return;
    evas_cache_image_preload_cancel(im, NULL);
    
-   LKL(im->lock_cancel);
-   if (LKT(im->lock) == EINA_FALSE) /* can't get image lock - busy async load */
+   SLKL(im->lock_cancel);
+   if (SLKT(im->lock) == EINA_FALSE) /* can't get image lock - busy async load */
      {
         im->flags.unload_cancel = EINA_TRUE;
-        LKU(im->lock_cancel);
+        SLKU(im->lock_cancel);
         return;
      }
-   LKU(im->lock_cancel);
+   SLKU(im->lock_cancel);
 
    if ((!im->flags.loaded) || (!im->file && !im->f) || (!im->info.module) || 
        (im->flags.dirty))
      {
-        LKU(im->lock);
+        SLKU(im->lock);
         return;
      }
    im->cache->func.destructor(im);
-   LKU(im->lock);
+   SLKU(im->lock);
    //FIXME: imagedataunload - inform owners
 }
 

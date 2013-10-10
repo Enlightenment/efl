@@ -156,6 +156,13 @@ extern EAPI int _evas_log_dom_global;
 # define __ARM_ARCH__ 73
 #endif
 
+#define SLK(x) Eina_Spinlock x
+#define SLKI(x) eina_spinlock_new(&(x))
+#define SLKD(x) eina_spinlock_free(&(x))
+#define SLKL(x) eina_spinlock_take(&(x))
+#define SLKT(x) eina_spinlock_take_try(&(x))
+#define SLKU(x) eina_spinlock_release(&(x))
+
 #define LK(x)  Eina_Lock x
 #define LKI(x) eina_lock_new(&(x))
 #define LKD(x) eina_lock_free(&(x))
@@ -600,9 +607,9 @@ struct _Image_Entry
         Evas_Image_Load_Func *loader;
      } info;
 
-   LK(lock);
-   LK(lock_cancel);
-   LK(lock_task);
+   SLK(lock);
+   SLK(lock_cancel);
+   SLK(lock_task);
 
    /* for animation feature */
    Evas_Image_Animated   animated;
@@ -796,7 +803,7 @@ struct _RGBA_Image
    } image;
 
    struct {
-      LK(lock);
+      SLK(lock);
       Eina_List *list;
       Eina_Hash *hash;
       unsigned long long orig_usage;

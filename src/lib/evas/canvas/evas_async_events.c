@@ -37,7 +37,7 @@ static Eina_Condition _thread_feedback_cond;
 
 static int _thread_loop = 0;
 
-static Eina_Lock _thread_id_lock;
+static Eina_Spinlock _thread_id_lock;
 static int _thread_id = -1;
 static int _thread_id_max = 0;
 static int _thread_id_update = 0;
@@ -46,7 +46,7 @@ static int _fd_write = -1;
 static int _fd_read = -1;
 static pid_t _fd_pid = 0;
 
-static Eina_Lock async_lock;
+static Eina_Spinlock async_lock;
 static Eina_Inarray async_queue;
 static Evas_Event_Async *async_queue_cache = NULL;
 static unsigned int async_queue_cache_max = 0;
@@ -99,7 +99,7 @@ evas_async_events_init(void)
    fcntl(_fd_read, F_SETFL, O_NONBLOCK);
 #endif
 
-   eina_lock_new(&async_lock);
+   eina_spinlock_new(&async_lock);
    eina_inarray_step_set(&async_queue, sizeof (Eina_Inarray), sizeof (Evas_Event_Async), 16);
 
    eina_lock_new(&_thread_mutex);
@@ -108,7 +108,7 @@ evas_async_events_init(void)
    eina_lock_new(&_thread_feedback_mutex);
    eina_condition_new(&_thread_feedback_cond, &_thread_feedback_mutex);
 
-   eina_lock_new(&_thread_id_lock);
+   eina_spinlock_new(&_thread_id_lock);
 
    return _init_evas_event;
 }
@@ -123,9 +123,9 @@ evas_async_events_shutdown(void)
    eina_lock_free(&_thread_mutex);
    eina_condition_free(&_thread_feedback_cond);
    eina_lock_free(&_thread_feedback_mutex);
-   eina_lock_free(&_thread_id_lock);
+   eina_spinlock_free(&_thread_id_lock);
 
-   eina_lock_free(&async_lock);
+   eina_spinlock_free(&async_lock);
    eina_inarray_flush(&async_queue);
    free(async_queue_cache);
 
@@ -180,7 +180,7 @@ _evas_async_events_process_single(void)
         unsigned int len, max;
         int nr;
 
-        eina_lock_take(&async_lock);
+        eina_spinlock_take(&async_lock);
 
         ev = async_queue.members;
         async_queue.members = async_queue_cache;
@@ -193,7 +193,7 @@ _evas_async_events_process_single(void)
         len = async_queue.len;
         async_queue.len = 0;
 
-        eina_lock_release(&async_lock);
+        eina_spinlock_release(&async_lock);
 
         DBG("Evas async events queue length: %u", len);
         nr = len;
@@ -269,13 +269,13 @@ evas_async_events_put(const void *target, Evas_Callback_Type type, void *event_i
 
    _evas_async_events_fork_handle();
 
-   eina_lock_take(&async_lock);
+   eina_spinlock_take(&async_lock);
 
    count = async_queue.len;
    ev = eina_inarray_grow(&async_queue, 1);
    if (!ev)
      {
-        eina_lock_release(&async_lock);
+        eina_spinlock_release(&async_lock);
         return EINA_FALSE;
      }
 
@@ -284,7 +284,7 @@ evas_async_events_put(const void *target, Evas_Callback_Type type, void *event_i
    ev->type = type;
    ev->event_info = event_info;
 
-   eina_lock_release(&async_lock);
+   eina_spinlock_release(&async_lock);
 
    if (count == 0)
      {
@@ -365,14 +365,14 @@ evas_thread_main_loop_begin(void)
    order = malloc(sizeof (Evas_Safe_Call));
    if (!order) return -1;
 
-   eina_lock_take(&_thread_id_lock);
+   eina_spinlock_take(&_thread_id_lock);
    order->current_id = ++_thread_id_max;
    if (order->current_id < 0)
      {
         _thread_id_max = 0;
         order->current_id = ++_thread_id_max;
      }
-   eina_lock_release(&_thread_id_lock);
+   eina_spinlock_release(&_thread_id_lock);
 
    eina_lock_new(&order->m);
    eina_condition_new(&order->c, &order->m);
