@@ -107,8 +107,8 @@ EAPI Eina_Bool        elm_naviframe_item_title_visible_get(const Elm_Object_Item
  * @param func the callback function.
  *
  * @warning Don't set "clicked" callback to the prev button additionally if the
- * function does a exact same logic with this @c func. When hardware back key is
- * pressed then both callbacks will be called.
+ * function does an exact same logic with this @c func. When hardware back key
+ * is pressed then both callbacks will be called.
  *
  * @since 1.8
  * @ingroup Naviframe
