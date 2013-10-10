@@ -825,7 +825,8 @@ EFL_ADD_CFLAGS([EINA], [${EFL_PTHREAD_CFLAGS}])
 
 EINA_CONFIG([HAVE_PTHREAD_BARRIER], [test "x${efl_have_pthread_barrier}" = "xyes"])
 EINA_CONFIG([HAVE_PTHREAD_AFFINITY], [test "x${efl_have_setaffinity}" = "xyes"])
-EINA_CONFIG([HAVE_DEBUG_THREADS], [test "$want_debug_threads" = "yes"])
+EINA_CONFIG([HAVE_DEBUG_THREADS], [test "x${want_debug_threads}" = "xyes"])
+EINA_CONFIG([HAVE_POSIX_SPINLOCK], [test "x${efl_have_posix_threads_spinlock}" = "xyes"])
 
 ### Modules
 

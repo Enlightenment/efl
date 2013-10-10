@@ -19,6 +19,10 @@
 #ifndef EINA_INLINE_LOCK_POSIX_X_
 #define EINA_INLINE_LOCK_POSIX_X_
 
+#ifdef EINA_HAVE_POSIX_SPINLOCK
+# include <sched.h>
+#endif
+
 #include <errno.h>
 #ifndef __USE_UNIX98
 # define __USE_UNIX98
@@ -49,6 +53,11 @@ typedef struct _Eina_RWLock Eina_RWLock;
 typedef struct _Eina_Condition Eina_Condition;
 typedef pthread_key_t Eina_TLS;
 typedef sem_t Eina_Semaphore;
+#ifdef EINA_HAVE_POSIX_SPINLOCK
+typedef pthread_spinlock_t Eina_Spinlock;
+#else
+typedef Eina_Lock Eina_Spinlock;
+#endif
 
 struct _Eina_Lock
 {
@@ -577,5 +586,79 @@ eina_barrier_wait(Eina_Barrier *barrier)
 #include "eina_inline_lock_barrier.x"
 #endif
 
+static inline Eina_Bool
+eina_spinlock_new(Eina_Spinlock *spinlock)
+{
+#ifdef EINA_HAVE_POSIX_SPINLOCK
+   return pthread_spin_init(spinlock, PTHREAD_PROCESS_PRIVATE) == 0 ? EINA_TRUE : EINA_FALSE;
+#else
+   return eina_lock_new(spinlock);
+#endif
+}
+
+static inline Eina_Lock_Result
+eina_spinlock_take(Eina_Spinlock *spinlock)
+{
+#ifdef EINA_HAVE_POSIX_SPINLOCK
+   Eina_Bool yield;
+   int t;
+
+   do {
+      yield = EINA_FALSE;
+
+      t = pthread_spin_trylock(spinlock);
+      if (t != 0)
+        {
+           if (errno == EBUSY)
+             {
+                sched_yield();
+                yield = EINA_TRUE;
+             }
+           else if (errno == EDEADLK)
+             {
+                return EINA_LOCK_DEADLOCK;
+             }
+        }
+
+   } while (t != 0 && yield);
+
+   return t ? EINA_LOCK_FAIL : EINA_LOCK_SUCCEED;
+#else
+   return eina_lock_take(spinlock);
+#endif
+}
+
+static inline Eina_Lock_Result
+eina_spinlock_take_try(Eina_Spinlock *spinlock)
+{
+#ifdef EINA_HAVE_POSIX_SPINLOCK
+   int t;
+
+   t = pthread_spin_trylock(spinlock);
+   return t ? EINA_LOCK_FAIL : EINA_LOCK_SUCCEED;
+#else
+   return eina_lock_take_try(spinlock);
+#endif
+}
+
+static inline Eina_Lock_Result
+eina_spinlock_release(Eina_Spinlock *spinlock)
+{
+#ifdef EINA_HAVE_POSIX_SPINLOCK
+   return pthread_spin_unlock(spinlock) ? EINA_LOCK_FAIL : EINA_LOCK_SUCCEED;
+#else
+   return eina_lock_release(spinlock);
+#endif
+}
+
+static inline void
+eina_spinlock_free(Eina_Spinlock *spinlock)
+{
+#ifdef EINA_HAVE_POSIX_SPINLOCK
+   pthread_spin_destroy(spinlock);
+#else
+   eina_lock_free(spinlock);
+#endif
+}
 
 #endif

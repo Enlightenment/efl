@@ -1,3 +1,7 @@
+2013-10-11  Cedric Bail
+
+	* Eina: add Eina_Spinlock API.
+
 2013-10-10  Carsten Haitzler (The Rasterman)
 
         * Ecore-con: use dlopen/dlsym (eina_module) to load libcurl to

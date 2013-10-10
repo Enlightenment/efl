@@ -28,6 +28,7 @@
 EAPI extern Eina_Bool _threads_activated;
 
 typedef HANDLE    Eina_Lock;
+typedef Eina_Lock Eina_Spinlock;
 typedef Eina_Lock Eina_RWLock;
 typedef DWORD     Eina_TLS;
 typedef void *    Eina_Semaphore;
@@ -202,6 +203,36 @@ eina_semaphore_release(Eina_Semaphore *sem EINA_UNUSED,
                        int count_release EINA_UNUSED)
 {
    return EINA_FALSE;
+}
+
+static inline Eina_Bool
+eina_spinlock_new(Eina_Spinlock *spinlock)
+{
+   return eina_lock_new(spinlock);
+}
+
+static inline void
+eina_spinlock_free(Eina_Spinlock *spinlock)
+{
+   eina_lock_free(spinlock);
+}
+
+static inline Eina_Lock_Result
+eina_spinlock_take(Eina_Spinlock *spinlock)
+{
+   return eina_lock_take(spinlock);
+}
+
+static inline Eina_Lock_Result
+eina_spinlock_take_try(Eina_Spinlock *spinlock)
+{
+   return eina_lock_take_try(spinlock);
+}
+
+static inline Eina_Lock_Result
+eina_spinlock_release(Eina_Spinlock *spinlock)
+{
+   return eina_lock_release(spinlock);
 }
 
 #include "eina_inline_lock_barrier.x"

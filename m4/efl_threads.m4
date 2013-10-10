@@ -116,11 +116,13 @@ if test "x${_efl_have_posix_threads}" = "xyes" ; then
    AC_LINK_IFELSE(
       [AC_LANG_PROGRAM([[
 #include <pthread.h>
+#include <sched.h>
                        ]],
                        [[
 pthread_spinlock_t lock;
 int res;
 res = pthread_spin_init(&lock, PTHREAD_PROCESS_PRIVATE);
+sched_yield();
                        ]])],
       [efl_have_posix_threads_spinlock="yes"],
       [efl_have_posix_threads_spinlock="no"])

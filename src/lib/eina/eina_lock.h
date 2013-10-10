@@ -113,6 +113,16 @@ static inline void eina_barrier_free(Eina_Barrier *barrier);
 /** @relates static Eina_Bool eina_barrier_wait(Eina_Barrier *barrier); @since 1.8 */
 static inline Eina_Bool eina_barrier_wait(Eina_Barrier *barrier);
 
+/** @relates static Eina_Bool eina_spinlock_new(Eina_Spinlock *spinlock); @since 1.8 */
+static inline Eina_Bool eina_spinlock_new(Eina_Spinlock *spinlock);
+/** @relates static Eina_Lock_Result eina_spinlock_take(Eina_Spinlock *spinlock); @since 1.8 */
+static inline Eina_Lock_Result eina_spinlock_take(Eina_Spinlock *spinlock);
+/** @relates static Eina_Lock_Result eina_spinlock_take(Eina_Spinlock *spinlock); @since 1.8 */
+static inline Eina_Lock_Result eina_spinlock_take_try(Eina_Spinlock *spinlock);
+/** @relates static Eina_Lock_Result eina_spinlock_release(Eina_Spinlock *spinlock); @since 1.8 */
+static inline Eina_Lock_Result eina_spinlock_release(Eina_Spinlock *spinlock);
+/** @relates static void eina_spinlock_free(Eina_Spinlock *spinlock); @since 1.8 */
+static inline void eina_spinlock_free(Eina_Spinlock *spinlock);
 
 #ifdef EINA_HAVE_DEBUG_THREADS
 # define EINA_MAIN_LOOP_CHECK_RETURN_VAL(val)				\

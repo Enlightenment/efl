@@ -30,6 +30,7 @@ typedef struct _Eina_Condition Eina_Condition;
 typedef struct _Eina_RWLock    Eina_RWLock;
 typedef DWORD                  Eina_TLS;
 typedef HANDLE                 Eina_Semaphore;
+typedef Eina_Lock              Eina_Spinlock;
 
 #if _WIN32_WINNT >= 0x0600
 struct _Eina_Condition
@@ -549,6 +550,37 @@ eina_semaphore_release(Eina_Semaphore *sem, int count_release)
      return EINA_FALSE;
 
    return ReleaseSemaphore(*sem, count_release, NULL) ? EINA_TRUE : EINA_FALSE;
+}
+
+// FIXME: Implement proper spinlock = http://www.codeproject.com/Articles/184046/Spin-Lock-in-C
+static inline Eina_Bool
+eina_spinlock_new(Eina_Spinlock *spinlock)
+{
+   return eina_lock_new(spinlock);
+}
+
+static inline Eina_Lock_Result
+eina_spinlock_take(Eina_Spinlock *spinlock)
+{
+   return eina_lock_take(spinlock);
+}
+
+static inline Eina_Lock_Result
+eina_spinlock_take_try(Eina_Spinlock *spinlock)
+{
+   return eina_lock_take_try(spinlock);
+}
+
+static inline Eina_Lock_Result
+eina_spinlock_release(Eina_Spinlock *spinlock)
+{
+   return eina_lock_release(spinlock);
+}
+
+static inline void
+eina_spinlock_free(Eina_Spinlock *spinlock)
+{
+   eina_lock_free(spinlock);
 }
 
 #include "eina_inline_lock_barrier.x"
