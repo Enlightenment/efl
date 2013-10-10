@@ -1683,3 +1683,9 @@
 2013-10-08  Daesung Kim (ad960009)
 
         * ctxpopup : fix elm_object_content_unset didn't unpack content from box
+
+2013-10-10  ChunEon Park (Hermet)
+
+        * scroller : fix the scroller to locate the current page correctly
+        in case that the scroller is suddenly resized and then the drag
+        couldn't capture the page location.

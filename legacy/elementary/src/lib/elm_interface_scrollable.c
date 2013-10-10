@@ -948,6 +948,13 @@ _elm_scroll_scroll_bar_read_and_update(
    x = _round(vx * (double)mx + minx, 1);
    y = _round(vy * (double)my + miny, 1);
    eo_do(sid->pan_obj, elm_obj_pan_pos_get(&px, &py));
+
+   if (!sid->freeze && _paging_is_enabled(sid))
+     {
+        x = _elm_scroll_page_x_get(sid, x - px, EINA_FALSE);
+        y = _elm_scroll_page_y_get(sid, y - py, EINA_FALSE);
+     }
+
    eo_do(sid->pan_obj, elm_obj_pan_pos_set(x, y));
    if ((px != x) || (py != y))
      {
