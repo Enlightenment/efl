@@ -17,9 +17,6 @@
 #elif HAVE_OPENSSL
 # include <openssl/ssl.h>
 #endif
-#ifdef HAVE_CURL
-#include <curl/curl.h>
-#endif
 
 #define READBUFSIZ 65536
 
@@ -199,11 +196,10 @@ struct _Ecore_Con_Server
 #endif
 };
 
-#ifdef HAVE_CURL
 struct _Ecore_Con_Url
 {
    ECORE_MAGIC;
-   CURL *curl_easy;
+   void *curl_easy;
    struct curl_slist *headers;
    Eina_List *additional_headers;
    Eina_List *response_headers;
@@ -226,7 +222,6 @@ struct _Ecore_Con_Url
    Eina_Bool dead : 1;
    Eina_Bool multi : 1;
 };
-#endif
 
 struct _Ecore_Con_Info
 {

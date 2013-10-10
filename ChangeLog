@@ -1,3 +1,8 @@
+2013-10-10  Carsten Haitzler (The Rasterman)
+
+        * Ecore-con: use dlopen/dlsym (eina_module) to load libcurl to
+        save memory (private pages) when not yet used by the process
+
 2013-10-10  Michael Bouchaud (yoz)
 
 	* Emotion: add two events to trigger webcam plug and unplug

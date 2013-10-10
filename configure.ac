@@ -1969,26 +1969,12 @@ EFL_LIB_END([Ecore])
 
 EFL_LIB_START([Ecore_Con])
 
-### Additional options to configure
-
-AC_ARG_ENABLE([curl],
-   [AC_HELP_STRING([--disable-curl], [disable curl support. @<:@default=enabled@:>@])],
-   [
-    if test "x${enableval}" = "xyes" ; then
-       want_curl="yes"
-    else
-       want_curl="no"
-    fi
-   ],
-   [want_curl="yes"])
-
 ### Default values
 
 want_ecore_con_local_sockets="yes"
 want_ecore_con_abstract_sockets="yes"
 
 if test "${have_wince}" = "yes"; then
-   want_curl="no"
    want_cares="no"
    want_ecore_con_local_sockets="no"
    want_ecore_con_abstract_sockets="no"
@@ -2027,8 +2013,6 @@ EFL_INTERNAL_DEPEND_PKG([ECORE_CON], [ecore])
 
 EFL_ADD_LIBS([ECORE_CON], [-lm])
 
-EFL_OPTIONAL_DEPEND_PKG([ECORE_CON], [${want_curl}], [CURL], [libcurl])
-
 EFL_OPTIONAL_DEPEND_PKG([ECORE_CON], [${want_cares}],
    [CARES], [libcares >= 1.6.1])
 AM_CONDITIONAL([HAVE_CARES], [test "x${have_cares}" = "xyes"])
@@ -2043,7 +2027,6 @@ fi
 
 EFL_OPTIONAL_DEPEND_PKG([ECORE_CON], [${want_systemd}], [SYSTEMD], [libsystemd-daemon])
 
-EFL_ADD_FEATURE([ECORE_CON], [curl])
 EFL_ADD_FEATURE([ECORE_CON], [cares])
 EFL_ADD_FEATURE([ECORE_CON], [local-sockets], [${want_ecore_con_local_sockets}])
 EFL_ADD_FEATURE([ECORE_CON], [abstract-sockets], [${want_ecore_con_abstract_sockets}])

@@ -223,6 +223,7 @@ Improvements:
      - Add iterator for walking child of smart objects, table and a box.
     * Ecore_Con:
      - Rebase dns.c against upstream
+     - URL support now dynamically loads libcurl at runtime via eina_module.
     * Edje:
      - Entry: cursor position and location will be passed when it's really changed in case of mouse down, move, and up event.
      - Entry: remove ecore_imf_context_reset in mouse up event because it's useless.
