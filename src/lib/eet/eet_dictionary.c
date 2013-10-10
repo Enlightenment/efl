@@ -21,7 +21,7 @@ eet_dictionary_add(void)
      return NULL;
 
    memset(new->hash, -1, sizeof (int) * 256);
-   eina_lock_new(&new->mutex);
+   eina_spinlock_new(&new->mutex);
 
    return new;
 }
@@ -33,7 +33,7 @@ eet_dictionary_free(Eet_Dictionary *ed)
 
    if (!ed) return;
 
-   eina_lock_free(&ed->mutex);
+   eina_spinlock_free(&ed->mutex);
 
    for (i = 0; i < ed->count; ++i)
      if (ed->all_allocated[i >> 8] & (1 << (i & 0x7)))
@@ -108,7 +108,7 @@ eet_dictionary_string_add(Eet_Dictionary *ed,
    hash = _eet_hash_gen(string, 8);
    len = strlen(string) + 1;
 
-   eina_lock_take(&ed->mutex);
+   eina_spinlock_take(&ed->mutex);
 
    idx = _eet_dictionary_lookup(ed, string, len, hash, &pidx);
 
@@ -118,7 +118,7 @@ eet_dictionary_string_add(Eet_Dictionary *ed,
             ((ed->all[idx].str == string) ||
                 (!strcmp(ed->all[idx].str, string))))
 	  {
-	    eina_lock_release(&ed->mutex);
+	    eina_spinlock_release(&ed->mutex);
 	    return idx;
 	  }
      }
@@ -174,11 +174,11 @@ eet_dictionary_string_add(Eet_Dictionary *ed,
      }
 
    cnt = ed->count++;
-   eina_lock_release(&ed->mutex);
+   eina_spinlock_release(&ed->mutex);
    return cnt;
 
  on_error:
-   eina_lock_release(&ed->mutex);
+   eina_spinlock_release(&ed->mutex);
    return -1;
 }
 
@@ -192,12 +192,12 @@ eet_dictionary_string_get_size(const Eet_Dictionary *ed,
 
    if (idx < 0) goto done;
 
-   eina_lock_take((Eina_Lock*) &ed->mutex);
+   eina_spinlock_take((Eina_Spinlock*) &ed->mutex);
 
    if (idx < ed->count)
      length = ed->all[idx].len;
 
-   eina_lock_release((Eina_Lock*) &ed->mutex);
+   eina_spinlock_release((Eina_Spinlock*) &ed->mutex);
 
  done:
    return length;
@@ -219,12 +219,12 @@ eet_dictionary_string_get_hash(const Eet_Dictionary *ed,
 
    if (idx < 0) goto done;
 
-   eina_lock_take((Eina_Lock*) &ed->mutex);
+   eina_spinlock_take((Eina_Spinlock*) &ed->mutex);
 
    if (idx < ed->count)
      hash = ed->all_hash[idx];
 
-   eina_lock_release((Eina_Lock*) &ed->mutex);
+   eina_spinlock_release((Eina_Spinlock*) &ed->mutex);
 
  done:
    return hash;
@@ -240,7 +240,7 @@ eet_dictionary_string_get_char(const Eet_Dictionary *ed,
 
    if (idx < 0) goto done;
 
-   eina_lock_take((Eina_Lock*) &ed->mutex);
+   eina_spinlock_take((Eina_Spinlock*) &ed->mutex);
 
    if (idx < ed->count)
      {
@@ -255,7 +255,7 @@ eet_dictionary_string_get_char(const Eet_Dictionary *ed,
         s = ed->all[idx].str;
      }
 
-   eina_lock_release((Eina_Lock*) &ed->mutex);
+   eina_spinlock_release((Eina_Spinlock*) &ed->mutex);
 
  done:
    return s;
@@ -333,14 +333,14 @@ _eet_dictionary_test(const Eet_Dictionary *ed,
 
    if (idx < 0) goto done;
 
-   eina_lock_take((Eina_Lock*) &ed->mutex);
+   eina_spinlock_take((Eina_Spinlock*) &ed->mutex);
 
    if (!(idx < ed->count)) goto unlock_done;
 
    limit = EINA_TRUE;
 
  unlock_done:
-   eina_lock_release((Eina_Lock*) &ed->mutex);
+   eina_spinlock_release((Eina_Spinlock*) &ed->mutex);
 
  done:
    return limit;
@@ -353,7 +353,7 @@ eet_dictionary_convert_get(const Eet_Dictionary *ed,
 {
    Eet_Convert *result;
 
-   eina_lock_take((Eina_Lock*) &ed->mutex);
+   eina_spinlock_take((Eina_Spinlock*) &ed->mutex);
 
    *str = ed->all[idx].str;
 
@@ -373,7 +373,7 @@ eet_dictionary_convert_get(const Eet_Dictionary *ed,
    eina_hash_add(ed->converts, &idx, result);
 
  done:
-   eina_lock_release((Eina_Lock*) &ed->mutex);
+   eina_spinlock_release((Eina_Spinlock*) &ed->mutex);
 
    return result;
 }
@@ -394,7 +394,7 @@ eet_dictionary_string_get_float(const Eet_Dictionary *ed,
 
    if (!(convert->type & EET_D_FLOAT))
      {
-        eina_lock_take((Eina_Lock*) &ed->mutex);
+        eina_spinlock_take((Eina_Spinlock*) &ed->mutex);
         if (!_eet_dictionary_string_get_float_cache(str, ed->all[idx].len,
                                                     &convert->f))
           {
@@ -404,13 +404,13 @@ eet_dictionary_string_get_float(const Eet_Dictionary *ed,
              if (eina_convert_atod(str, ed->all[idx].len, &mantisse,
                                    &exponent) == EINA_FALSE)
                {
-                  eina_lock_release((Eina_Lock*) &ed->mutex);
+                  eina_spinlock_release((Eina_Spinlock*) &ed->mutex);
                   return EINA_FALSE;
                }
 
              convert->f = ldexpf((float)mantisse, exponent);
           }
-        eina_lock_release((Eina_Lock*) &ed->mutex);
+        eina_spinlock_release((Eina_Spinlock*) &ed->mutex);
 
         convert->type |= EET_D_FLOAT;
      }
@@ -435,7 +435,7 @@ eet_dictionary_string_get_double(const Eet_Dictionary *ed,
 
    if (!(convert->type & EET_D_DOUBLE))
      {
-        eina_lock_take((Eina_Lock*) &ed->mutex);
+        eina_spinlock_take((Eina_Spinlock*) &ed->mutex);
 
         if (!_eet_dictionary_string_get_double_cache(str, ed->all[idx].len,
                                                      &convert->d))
@@ -446,13 +446,13 @@ eet_dictionary_string_get_double(const Eet_Dictionary *ed,
              if (eina_convert_atod(str, ed->all[idx].len, &mantisse,
                                    &exponent) == EINA_FALSE)
                {
-                  eina_lock_release((Eina_Lock*) &ed->mutex);
+                  eina_spinlock_release((Eina_Spinlock*) &ed->mutex);
                   return EINA_FALSE;
                }
 
              convert->d = ldexp((double)mantisse, exponent);
           }
-        eina_lock_release((Eina_Lock*) &ed->mutex);
+        eina_spinlock_release((Eina_Spinlock*) &ed->mutex);
 
         convert->type |= EET_D_DOUBLE;
      }
@@ -479,13 +479,13 @@ eet_dictionary_string_get_fp(const Eet_Dictionary *ed,
      {
         Eina_F32p32 fp;
 
-        eina_lock_take((Eina_Lock*) &ed->mutex);
+        eina_spinlock_take((Eina_Spinlock*) &ed->mutex);
         if (!eina_convert_atofp(str, ed->all[idx].len, &fp))
           {
-             eina_lock_release((Eina_Lock*) &ed->mutex);
+             eina_spinlock_release((Eina_Spinlock*) &ed->mutex);
              return EINA_FALSE;
           }
-        eina_lock_release((Eina_Lock*) &ed->mutex);
+        eina_spinlock_release((Eina_Spinlock*) &ed->mutex);
 
         convert->fp = fp;
         convert->type |= EET_D_FIXED_POINT;
@@ -505,7 +505,7 @@ eet_dictionary_string_check(Eet_Dictionary *ed,
    if ((!ed) || (!string))
      return 0;
 
-   eina_lock_take(&ed->mutex);
+   eina_spinlock_take(&ed->mutex);
 
    if ((ed->start <= string) && (string < ed->end))
      res = 1;
@@ -520,7 +520,7 @@ eet_dictionary_string_check(Eet_Dictionary *ed,
             }
      }
 
-   eina_lock_release(&ed->mutex);
+   eina_spinlock_release(&ed->mutex);
 
    return res;
 }

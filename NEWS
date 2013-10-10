@@ -202,6 +202,7 @@ Improvements:
     * Eet:
      - Display more information with eet -l -v.
      - Force thread to always run during eet_cache_concurrency test.
+     - Use Eina_Spinlock for locking dictionnary instead of Eina_Lock.
     * Evas:
      - Reduced number of enqueued font commands when rendering textgrid objects
      - Use Eina_File in webp, gif, tiff, png and eet loader
