@@ -69,7 +69,7 @@ static Eina_Share *stringshare_share;
 static const char EINA_MAGIC_STRINGSHARE_NODE_STR[] = "Eina Stringshare Node";
 
 extern Eina_Bool _share_common_threads_activated;
-static Eina_Lock _mutex_small;
+static Eina_Spinlock _mutex_small;
 
 /* Stringshare optimizations */
 static const unsigned char _eina_stringshare_single[512] = {
@@ -396,7 +396,7 @@ error:
 static void
 _eina_stringshare_small_init(void)
 {
-   eina_lock_new(&_mutex_small);
+   eina_spinlock_new(&_mutex_small);
    memset(&_eina_small_share, 0, sizeof(_eina_small_share));
 }
 
@@ -428,7 +428,7 @@ _eina_stringshare_small_shutdown(void)
         *p_bucket = NULL;
      }
 
-   eina_lock_free(&_mutex_small);
+   eina_spinlock_free(&_mutex_small);
 }
 
 static void
@@ -586,9 +586,9 @@ eina_stringshare_del(Eina_Stringshare *str)
    else if (slen < 4)
      {
         eina_share_common_population_del(stringshare_share, slen);
-        eina_lock_take(&_mutex_small);
+        eina_spinlock_take(&_mutex_small);
         _eina_stringshare_small_del(str, slen);
-        eina_lock_release(&_mutex_small);
+        eina_spinlock_release(&_mutex_small);
 
         return;
      }
@@ -619,9 +619,9 @@ eina_stringshare_add_length(const char *str, unsigned int slen)
         const char *s;
 
         eina_share_common_population_add(stringshare_share, slen);
-        eina_lock_take(&_mutex_small);
+        eina_spinlock_take(&_mutex_small);
         s = _eina_stringshare_small_add(str, slen);
-        eina_lock_release(&_mutex_small);
+        eina_spinlock_release(&_mutex_small);
 
         return s;
      }
@@ -738,9 +738,9 @@ eina_stringshare_ref(Eina_Stringshare *str)
         const char *s;
 
         eina_share_common_population_add(stringshare_share, slen);
-        eina_lock_take(&_mutex_small);
+        eina_spinlock_take(&_mutex_small);
         s = _eina_stringshare_small_add(str, slen);
-        eina_lock_release(&_mutex_small);
+        eina_spinlock_release(&_mutex_small);
 
         return s;
      }

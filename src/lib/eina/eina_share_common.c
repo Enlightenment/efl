@@ -174,7 +174,7 @@ struct _Eina_Share_Common_Head
 
 Eina_Bool _share_common_threads_activated = EINA_FALSE;
 
-static Eina_Lock _mutex_big;
+static Eina_Spinlock _mutex_big;
 
 #ifdef EINA_STRINGSHARE_USAGE
 
@@ -256,9 +256,9 @@ eina_share_common_population_nolock_add(Eina_Share *share, int slen)
 void
 eina_share_common_population_add(Eina_Share *share, int slen)
 {
-   eina_lock_take(&_mutex_big);
+   eina_spinlock_take(&_mutex_big);
    eina_share_common_population_nolock_add(share, slen);
-   eina_lock_release(&_mutex_big);
+   eina_spinlock_release(&_mutex_big);
 }
 
 static void
@@ -272,9 +272,9 @@ eina_share_common_population_nolock_del(Eina_Share *share, int slen)
 void
 eina_share_common_population_del(Eina_Share *share, int slen)
 {
-   eina_lock_take(&_mutex_big);
+   eina_spinlock_take(&_mutex_big);
    eina_share_common_population_nolock_del(chare, slen);
-   eina_lock_release(&_mutex_big);
+   eina_spinlock_release(&_mutex_big);
 }
 
 static void
@@ -634,7 +634,7 @@ eina_share_common_init(Eina_Share **_share,
    if (_eina_share_common_count++ != 0)
      return EINA_TRUE;
 
-   eina_lock_new(&_mutex_big);
+   eina_spinlock_new(&_mutex_big);
    return EINA_TRUE;
 
  on_error:
@@ -659,7 +659,7 @@ eina_share_common_shutdown(Eina_Share **_share)
    unsigned int i;
    Eina_Share *share = *_share;
 
-   eina_lock_take(&_mutex_big);
+   eina_spinlock_take(&_mutex_big);
 
    _eina_share_common_population_stats(share);
 
@@ -676,7 +676,7 @@ eina_share_common_shutdown(Eina_Share **_share)
 
    _eina_share_common_population_shutdown(share);
 
-   eina_lock_release(&_mutex_big);
+   eina_spinlock_release(&_mutex_big);
 
    free(*_share);
    *_share = NULL;
@@ -685,7 +685,7 @@ eina_share_common_shutdown(Eina_Share **_share)
    if (--_eina_share_common_count != 0)
      return EINA_TRUE;
 
-   eina_lock_free(&_mutex_big);
+   eina_spinlock_free(&_mutex_big);
 
    return EINA_TRUE;
 }
@@ -752,7 +752,7 @@ eina_share_common_add_length(Eina_Share *share,
 
    hash = eina_hash_superfast(str, slen);
 
-   eina_lock_take(&_mutex_big);
+   eina_spinlock_take(&_mutex_big);
    p_bucket = share->share->buckets + EINA_SHARE_COMMON_BUCKET_IDX(hash);
 
    ed = _eina_share_common_find_hash(*p_bucket, EINA_SHARE_COMMON_NODE_HASH(hash));
@@ -764,27 +764,27 @@ eina_share_common_add_length(Eina_Share *share,
                                                     str,
                                                     slen,
                                                     null_size);
-        eina_lock_release(&_mutex_big);
+        eina_spinlock_release(&_mutex_big);
         return s;
      }
 
-   EINA_MAGIC_CHECK_SHARE_COMMON_HEAD(ed, eina_lock_release(&_mutex_big), NULL);
+   EINA_MAGIC_CHECK_SHARE_COMMON_HEAD(ed, eina_spinlock_release(&_mutex_big), NULL);
 
    el = _eina_share_common_head_find(ed, str, slen);
    if (el)
      {
         EINA_MAGIC_CHECK_SHARE_COMMON_NODE(el,
                                            share->node_magic,
-                                           eina_lock_release(&_mutex_big));
+                                           eina_spinlock_release(&_mutex_big));
         el->references++;
-                                           eina_lock_release(&_mutex_big);
+                                           eina_spinlock_release(&_mutex_big);
         return el->str;
      }
 
    el = _eina_share_common_node_alloc(slen, null_size);
    if (!el)
      {
-                                           eina_lock_release(&_mutex_big);
+                                           eina_spinlock_release(&_mutex_big);
         return NULL;
      }
 
@@ -793,7 +793,7 @@ eina_share_common_add_length(Eina_Share *share,
    ed->head = el;
    _eina_share_common_population_head_add(share, ed);
 
-   eina_lock_release(&_mutex_big);
+   eina_spinlock_release(&_mutex_big);
 
    return el->str;
 }
@@ -806,18 +806,18 @@ eina_share_common_ref(Eina_Share *share, const char *str)
    if (!str)
       return NULL;
 
-   eina_lock_take(&_mutex_big);
+   eina_spinlock_take(&_mutex_big);
    node = _eina_share_common_node_from_str(str, share->node_magic);
    if (!node)
      {
-        eina_lock_release(&_mutex_big);
+        eina_spinlock_release(&_mutex_big);
         return str;
      }
    node->references++;
 
    eina_share_common_population_nolock_add(share, node->length);
 
-   eina_lock_release(&_mutex_big);
+   eina_spinlock_release(&_mutex_big);
 
    return str;
 }
@@ -834,7 +834,7 @@ eina_share_common_del(Eina_Share *share, const char *str)
    if (!str)
       return EINA_TRUE;
 
-   eina_lock_take(&_mutex_big);
+   eina_spinlock_take(&_mutex_big);
 
    node = _eina_share_common_node_from_str(str, share->node_magic);
    if (!node)
@@ -845,7 +845,7 @@ eina_share_common_del(Eina_Share *share, const char *str)
    if (node->references > 1)
      {
         node->references--;
-        eina_lock_release(&_mutex_big);
+        eina_spinlock_release(&_mutex_big);
         return EINA_TRUE;
      }
 
@@ -855,7 +855,7 @@ eina_share_common_del(Eina_Share *share, const char *str)
    if (!ed)
       goto on_error;
 
-   EINA_MAGIC_CHECK_SHARE_COMMON_HEAD(ed, eina_lock_release(&_mutex_big), EINA_FALSE);
+   EINA_MAGIC_CHECK_SHARE_COMMON_HEAD(ed, eina_spinlock_release(&_mutex_big), EINA_FALSE);
 
    if (node != &ed->builtin_node)
      {
@@ -872,12 +872,12 @@ eina_share_common_del(Eina_Share *share, const char *str)
    else
       _eina_share_common_population_head_del(share, ed);
 
-   eina_lock_release(&_mutex_big);
+   eina_spinlock_release(&_mutex_big);
 
    return EINA_TRUE;
 
 on_error:
-   eina_lock_release(&_mutex_big);
+   eina_spinlock_release(&_mutex_big);
    /* possible segfault happened before here, but... */
    return EINA_FALSE;
 }
@@ -913,7 +913,7 @@ eina_share_common_dump(Eina_Share *share, void (*additional_dump)(
    printf("DDD:   len   ref string\n");
    printf("DDD:-------------------\n");
 
-   eina_lock_take(&_mutex_big);
+   eina_spinlock_take(&_mutex_big);
    for (i = 0; i < EINA_SHARE_COMMON_BUCKETS; i++)
      {
         if (!share->share->buckets[i])
@@ -958,7 +958,7 @@ eina_share_common_dump(Eina_Share *share, void (*additional_dump)(
               share->population_group[i].max);
 #endif
 
-   eina_lock_release(&_mutex_big);
+   eina_spinlock_release(&_mutex_big);
 }
 
 /**

@@ -1,7 +1,8 @@
 2013-10-11  Cedric Bail
 
 	* Eina: add Eina_Spinlock API,
-	use Eina_Spinlock in Eina_Log.
+	use Eina_Spinlock in Eina_Log,
+	replace Eina_Lock by Eina_Spinlock in Eina_Stringshare.
 
 2013-10-10  Carsten Haitzler (The Rasterman)
 

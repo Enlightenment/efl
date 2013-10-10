@@ -198,7 +198,7 @@ Improvements:
      - Eina_Tiler now take tile size into account.
      - Improve support for 64bits system.
      - eina_strlcat now work with a NULL source.
-     - Use Eina_Spinlock for eina_log.
+     - Use Eina_Spinlock for eina_log, eina_stringshare.
     * Eet:
      - Display more information with eet -l -v.
      - Force thread to always run during eet_cache_concurrency test.
