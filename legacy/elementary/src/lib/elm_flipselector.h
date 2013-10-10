@@ -24,7 +24,8 @@
  *
  * This widget emits the following signals, besides the ones sent from
  * @ref Layout:
- * - @c "selected" - when the widget's selected text item is changed
+ * - @c "selected" - when the widget's selected text item is changed. The @c
+ *   event_info parameter is the item that was selected.
  * - @c "overflowed" - when the widget's current selection is changed
  *   from the first item in its list to the last
  * - @c "underflowed" - when the widget's current selection is changed
