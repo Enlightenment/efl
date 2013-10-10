@@ -21,6 +21,12 @@
 # define LKL(x) eina_lock_take(&(x))
 # define LKU(x) eina_lock_release(&(x))
 
+# define SLK(x) Eina_Spinlock x
+# define SLKI(x) eina_spinlock_new(&(x))
+# define SLKD(x) eina_spinlock_free(&(x))
+# define SLKL(x) eina_spinlock_take(&(x))
+# define SLKU(x) eina_spinlock_release(&(x))
+
 # define CD(x) Eina_Condition x
 # define CDI(x, m) eina_condition_new(&(x), &(m))
 # define CDD(x) eina_condition_free(&(x))
@@ -92,7 +98,7 @@ struct _Ecore_Pthread_Worker
 
    int cancel;
 
-   LK(cancel_mutex);
+   SLK(cancel_mutex);
 
    Eina_Bool message_run : 1;
    Eina_Bool feedback_run : 1;
@@ -135,8 +141,8 @@ static int _ecore_thread_count = 0;
 static Eina_List *_ecore_running_job = NULL;
 static Eina_List *_ecore_pending_job_threads = NULL;
 static Eina_List *_ecore_pending_job_threads_feedback = NULL;
-static LK(_ecore_pending_job_threads_mutex);
-static LK(_ecore_running_job_mutex);
+static SLK(_ecore_pending_job_threads_mutex);
+static SLK(_ecore_running_job_mutex);
 
 static Eina_Hash *_ecore_thread_global_hash = NULL;
 static LRWK(_ecore_thread_global_hash_lock);
@@ -170,7 +176,7 @@ static PH(get_main_loop_thread) (void)
 static void
 _ecore_thread_worker_free(Ecore_Pthread_Worker *worker)
 {
-   LKD(worker->cancel_mutex);
+   SLKD(worker->cancel_mutex);
    CDD(worker->cond);
    LKD(worker->mutex);
 
@@ -319,41 +325,41 @@ _ecore_short_job(PH(thread))
    Ecore_Pthread_Worker *work;
    int cancel;
 
-   LKL(_ecore_pending_job_threads_mutex);
+   SLKL(_ecore_pending_job_threads_mutex);
    
    if (!_ecore_pending_job_threads)
      {
-        LKU(_ecore_pending_job_threads_mutex);
+        SLKU(_ecore_pending_job_threads_mutex);
         return;
      }
    
    work = eina_list_data_get(_ecore_pending_job_threads);
    _ecore_pending_job_threads = eina_list_remove_list(_ecore_pending_job_threads,
                                                       _ecore_pending_job_threads);
-   LKU(_ecore_pending_job_threads_mutex);
+   SLKU(_ecore_pending_job_threads_mutex);
 
-   LKL(_ecore_running_job_mutex);
+   SLKL(_ecore_running_job_mutex);
    _ecore_running_job = eina_list_append(_ecore_running_job, work);
-   LKU(_ecore_running_job_mutex);
+   SLKU(_ecore_running_job_mutex);
    
-   LKL(work->cancel_mutex);
+   SLKL(work->cancel_mutex);
    cancel = work->cancel;
-   LKU(work->cancel_mutex);
+   SLKU(work->cancel_mutex);
    work->self = thread;
    if (!cancel)
      work->u.short_run.func_blocking((void *) work->data, (Ecore_Thread*) work);
 
-   LKL(_ecore_running_job_mutex);
+   SLKL(_ecore_running_job_mutex);
    _ecore_running_job = eina_list_remove(_ecore_running_job, work);
-   LKU(_ecore_running_job_mutex);
+   SLKU(_ecore_running_job_mutex);
    
    if (work->reschedule)
      {
         work->reschedule = EINA_FALSE;
         
-        LKL(_ecore_pending_job_threads_mutex);
+        SLKL(_ecore_pending_job_threads_mutex);
         _ecore_pending_job_threads = eina_list_append(_ecore_pending_job_threads, work);
-        LKU(_ecore_pending_job_threads_mutex);
+        SLKU(_ecore_pending_job_threads_mutex);
      }
    else
      {
@@ -367,40 +373,40 @@ _ecore_feedback_job(PH(thread))
    Ecore_Pthread_Worker *work;
    int cancel;
    
-   LKL(_ecore_pending_job_threads_mutex);
+   SLKL(_ecore_pending_job_threads_mutex);
    
    if (!_ecore_pending_job_threads_feedback)
      {
-        LKU(_ecore_pending_job_threads_mutex);
+        SLKU(_ecore_pending_job_threads_mutex);
         return;
      }
    
    work = eina_list_data_get(_ecore_pending_job_threads_feedback);
    _ecore_pending_job_threads_feedback = eina_list_remove_list(_ecore_pending_job_threads_feedback,
                                                                _ecore_pending_job_threads_feedback);
-   LKU(_ecore_pending_job_threads_mutex);
-   LKL(_ecore_running_job_mutex);
+   SLKU(_ecore_pending_job_threads_mutex);
+   SLKL(_ecore_running_job_mutex);
    _ecore_running_job = eina_list_append(_ecore_running_job, work);
-   LKU(_ecore_running_job_mutex);
+   SLKU(_ecore_running_job_mutex);
    
-   LKL(work->cancel_mutex);
+   SLKL(work->cancel_mutex);
    cancel = work->cancel;
-   LKU(work->cancel_mutex);
+   SLKU(work->cancel_mutex);
    work->self = thread;
    if (!cancel)
      work->u.feedback_run.func_heavy((void *) work->data, (Ecore_Thread *) work);
 
-   LKL(_ecore_running_job_mutex);
+   SLKL(_ecore_running_job_mutex);
    _ecore_running_job = eina_list_remove(_ecore_running_job, work);
-   LKU(_ecore_running_job_mutex);
+   SLKU(_ecore_running_job_mutex);
 
    if (work->reschedule)
      {
         work->reschedule = EINA_FALSE;
         
-        LKL(_ecore_pending_job_threads_mutex);
+        SLKL(_ecore_pending_job_threads_mutex);
         _ecore_pending_job_threads_feedback = eina_list_append(_ecore_pending_job_threads_feedback, work);
-        LKU(_ecore_pending_job_threads_mutex);
+        SLKU(_ecore_pending_job_threads_mutex);
      }
    else
      {
@@ -434,13 +440,13 @@ restart:
 
    /* FIXME: Check if there is feedback running task todo, and switch to feedback run handler. */
 
-   LKL(_ecore_pending_job_threads_mutex);
+   SLKL(_ecore_pending_job_threads_mutex);
    if (_ecore_pending_job_threads || _ecore_pending_job_threads_feedback)
      {
-        LKU(_ecore_pending_job_threads_mutex);
+        SLKU(_ecore_pending_job_threads_mutex);
         goto restart;
      }
-   LKU(_ecore_pending_job_threads_mutex);
+   SLKU(_ecore_pending_job_threads_mutex);
 
    /* Sleep a little to prevent premature death */
 #ifdef _WIN32
@@ -449,17 +455,17 @@ restart:
    usleep(50);
 #endif
 
-   LKL(_ecore_pending_job_threads_mutex);
+   SLKL(_ecore_pending_job_threads_mutex);
    if (_ecore_pending_job_threads || _ecore_pending_job_threads_feedback)
      {
-        LKU(_ecore_pending_job_threads_mutex);
+        SLKU(_ecore_pending_job_threads_mutex);
         goto restart;
      }
    _ecore_thread_count--;
 
    ecore_main_loop_thread_safe_call_async((Ecore_Cb) _ecore_thread_join,
 					  (void*)(intptr_t)PHS());
-   LKU(_ecore_pending_job_threads_mutex);
+   SLKU(_ecore_pending_job_threads_mutex);
 
    return NULL;
 }
@@ -477,7 +483,7 @@ _ecore_thread_worker_new(void)
        _ecore_thread_worker_count++;
      }
 
-   LKI(result->cancel_mutex);
+   SLKI(result->cancel_mutex);
    LKI(result->mutex);
    CDI(result->cond, result->mutex);
 
@@ -491,10 +497,10 @@ _ecore_thread_init(void)
    if (_ecore_thread_count_max <= 0)
      _ecore_thread_count_max = 1;
 
-   LKI(_ecore_pending_job_threads_mutex);
+   SLKI(_ecore_pending_job_threads_mutex);
    LRWKI(_ecore_thread_global_hash_lock);
    LKI(_ecore_thread_global_hash_mutex);
-   LKI(_ecore_running_job_mutex);
+   SLKI(_ecore_running_job_mutex);
    CDI(_ecore_thread_global_hash_cond, _ecore_thread_global_hash_mutex);
 }
 
@@ -507,7 +513,7 @@ _ecore_thread_shutdown(void)
     Eina_Bool test;
     int iteration = 0;
 
-    LKL(_ecore_pending_job_threads_mutex);
+    SLKL(_ecore_pending_job_threads_mutex);
 
     EINA_LIST_FREE(_ecore_pending_job_threads, work)
       {
@@ -523,17 +529,17 @@ _ecore_thread_shutdown(void)
          free(work);
       }
 
-    LKU(_ecore_pending_job_threads_mutex);
-    LKL(_ecore_running_job_mutex);
+    SLKU(_ecore_pending_job_threads_mutex);
+    SLKL(_ecore_running_job_mutex);
 
     EINA_LIST_FOREACH(_ecore_running_job, l, work)
       ecore_thread_cancel((Ecore_Thread*) work);
 
-    LKU(_ecore_running_job_mutex);
+    SLKU(_ecore_running_job_mutex);
 
     do
       {
-	 LKL(_ecore_pending_job_threads_mutex);
+	 SLKL(_ecore_pending_job_threads_mutex);
 	 if (_ecore_thread_count > 0)
 	   {
 	      test = EINA_TRUE;
@@ -542,7 +548,7 @@ _ecore_thread_shutdown(void)
 	   {
 	      test = EINA_FALSE;
 	   }
-	 LKU(_ecore_pending_job_threads_mutex);
+	 SLKU(_ecore_pending_job_threads_mutex);
 	 iteration++;
 	 if (test) usleep(50000);
       }
@@ -562,10 +568,10 @@ _ecore_thread_shutdown(void)
          free(work);
       }
 
-    LKD(_ecore_pending_job_threads_mutex);
+    SLKD(_ecore_pending_job_threads_mutex);
     LRWKD(_ecore_thread_global_hash_lock);
     LKD(_ecore_thread_global_hash_mutex);
-    LKD(_ecore_running_job_mutex);
+    SLKD(_ecore_running_job_mutex);
     CDD(_ecore_thread_global_hash_cond);
 }
 
@@ -605,27 +611,27 @@ ecore_thread_run(Ecore_Thread_Cb func_blocking,
    work->self = 0;
    work->hash = NULL;
 
-   LKL(_ecore_pending_job_threads_mutex);
+   SLKL(_ecore_pending_job_threads_mutex);
    _ecore_pending_job_threads = eina_list_append(_ecore_pending_job_threads, work);
 
    if (_ecore_thread_count == _ecore_thread_count_max)
      {
-        LKU(_ecore_pending_job_threads_mutex);
+        SLKU(_ecore_pending_job_threads_mutex);
         return (Ecore_Thread *)work;
      }
 
-   LKU(_ecore_pending_job_threads_mutex);
+   SLKU(_ecore_pending_job_threads_mutex);
 
    /* One more thread could be created. */
    eina_threads_init();
 
-   LKL(_ecore_pending_job_threads_mutex);
+   SLKL(_ecore_pending_job_threads_mutex);
 
  retry:
    if (PHC(thread, _ecore_thread_worker, NULL))
      {
         _ecore_thread_count++;
-	LKU(_ecore_pending_job_threads_mutex);
+	SLKU(_ecore_pending_job_threads_mutex);
         return (Ecore_Thread *)work;
      }
    if (!tried)
@@ -645,7 +651,7 @@ ecore_thread_run(Ecore_Thread_Cb func_blocking,
 	_ecore_thread_worker_free(work);
         work = NULL;
      }
-   LKU(_ecore_pending_job_threads_mutex);
+   SLKU(_ecore_pending_job_threads_mutex);
 
    eina_threads_shutdown();
 
@@ -661,9 +667,9 @@ ecore_thread_cancel(Ecore_Thread *thread)
 
    if (!work)
      return EINA_TRUE;
-   LKL(work->cancel_mutex);
+   SLKL(work->cancel_mutex);
    cancel = work->cancel;
-   LKU(work->cancel_mutex);
+   SLKU(work->cancel_mutex);
    if (cancel)
      return EINA_FALSE;
 
@@ -675,7 +681,7 @@ ecore_thread_cancel(Ecore_Thread *thread)
           goto on_exit;
      }
 
-   LKL(_ecore_pending_job_threads_mutex);
+   SLKL(_ecore_pending_job_threads_mutex);
 
    if ((have_main_loop_thread) &&
        (PHE(get_main_loop_thread(), PHS())))
@@ -687,7 +693,7 @@ ecore_thread_cancel(Ecore_Thread *thread)
                  {
                     _ecore_pending_job_threads = eina_list_remove_list(_ecore_pending_job_threads, l);
 
-                    LKU(_ecore_pending_job_threads_mutex);
+                    SLKU(_ecore_pending_job_threads_mutex);
 
                     if (work->func_cancel)
                       work->func_cancel((void *)work->data, (Ecore_Thread *)work);
@@ -703,7 +709,7 @@ ecore_thread_cancel(Ecore_Thread *thread)
                  {
                     _ecore_pending_job_threads_feedback = eina_list_remove_list(_ecore_pending_job_threads_feedback, l);
 
-                    LKU(_ecore_pending_job_threads_mutex);
+                    SLKU(_ecore_pending_job_threads_mutex);
 
                     if (work->func_cancel)
                       work->func_cancel((void *)work->data, (Ecore_Thread *)work);
@@ -714,15 +720,15 @@ ecore_thread_cancel(Ecore_Thread *thread)
             }
      }
 
-   LKU(_ecore_pending_job_threads_mutex);
+   SLKU(_ecore_pending_job_threads_mutex);
 
    work = (Ecore_Pthread_Worker *)thread;
 
    /* Delay the destruction */
  on_exit:
-   LKL(work->cancel_mutex);
+   SLKL(work->cancel_mutex);
    work->cancel = EINA_TRUE;
-   LKU(work->cancel_mutex);
+   SLKU(work->cancel_mutex);
 
    return EINA_FALSE;
 }
@@ -734,7 +740,7 @@ ecore_thread_check(Ecore_Thread *thread)
    int cancel;
 
    if (!worker) return EINA_TRUE;
-   LKL(worker->cancel_mutex);
+   SLKL(worker->cancel_mutex);
 
    cancel = worker->cancel;
    /* FIXME: there is an insane bug driving me nuts here. I don't know if
@@ -742,7 +748,7 @@ ecore_thread_check(Ecore_Thread *thread)
     But ecore_thread_check will only work correctly with a printf, all the volatile,
     lock and even usleep don't help here... */
    /* fprintf(stderr, "wc: %i\n", cancel); */
-   LKU(worker->cancel_mutex);
+   SLKU(worker->cancel_mutex);
    return cancel;
 }
 
@@ -813,26 +819,26 @@ ecore_thread_feedback_run(Ecore_Thread_Cb        func_heavy,
 
    worker->no_queue = EINA_FALSE;
 
-   LKL(_ecore_pending_job_threads_mutex);
+   SLKL(_ecore_pending_job_threads_mutex);
    _ecore_pending_job_threads_feedback = eina_list_append(_ecore_pending_job_threads_feedback, worker);
 
    if (_ecore_thread_count == _ecore_thread_count_max)
      {
-        LKU(_ecore_pending_job_threads_mutex);
+        SLKU(_ecore_pending_job_threads_mutex);
         return (Ecore_Thread *)worker;
      }
 
-   LKU(_ecore_pending_job_threads_mutex);
+   SLKU(_ecore_pending_job_threads_mutex);
 
    /* One more thread could be created. */
    eina_threads_init();
 
-   LKL(_ecore_pending_job_threads_mutex);
+   SLKL(_ecore_pending_job_threads_mutex);
  retry:
    if (PHC(thread, _ecore_thread_worker, NULL))
      {
         _ecore_thread_count++;
-	LKU(_ecore_pending_job_threads_mutex);
+	SLKU(_ecore_pending_job_threads_mutex);
         return (Ecore_Thread *)worker;
      }
    if (!tried)
@@ -841,12 +847,12 @@ ecore_thread_feedback_run(Ecore_Thread_Cb        func_heavy,
 	tried = EINA_TRUE;
 	goto retry;
      }
-   LKU(_ecore_pending_job_threads_mutex);
+   SLKU(_ecore_pending_job_threads_mutex);
 
    eina_threads_shutdown();
 
 on_error:
-   LKL(_ecore_pending_job_threads_mutex);
+   SLKL(_ecore_pending_job_threads_mutex);
    if (_ecore_thread_count == 0)
      {
         _ecore_pending_job_threads_feedback = eina_list_remove(_ecore_pending_job_threads_feedback,
@@ -862,7 +868,7 @@ on_error:
              worker = NULL;
           }
      }
-   LKU(_ecore_pending_job_threads_mutex);
+   SLKU(_ecore_pending_job_threads_mutex);
 
    return (Ecore_Thread *)worker;
 }
@@ -1004,9 +1010,9 @@ ecore_thread_pending_get(void)
    int ret;
 
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(0);
-   LKL(_ecore_pending_job_threads_mutex);
+   SLKL(_ecore_pending_job_threads_mutex);
    ret = eina_list_count(_ecore_pending_job_threads);
-   LKU(_ecore_pending_job_threads_mutex);
+   SLKU(_ecore_pending_job_threads_mutex);
    return ret;
 }
 
@@ -1016,9 +1022,9 @@ ecore_thread_pending_feedback_get(void)
    int ret;
 
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(0);
-   LKL(_ecore_pending_job_threads_mutex);
+   SLKL(_ecore_pending_job_threads_mutex);
    ret = eina_list_count(_ecore_pending_job_threads_feedback);
-   LKU(_ecore_pending_job_threads_mutex);
+   SLKU(_ecore_pending_job_threads_mutex);
    return ret;
 }
 
@@ -1028,9 +1034,9 @@ ecore_thread_pending_total_get(void)
    int ret;
 
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(0);
-   LKL(_ecore_pending_job_threads_mutex);
+   SLKL(_ecore_pending_job_threads_mutex);
    ret = eina_list_count(_ecore_pending_job_threads) + eina_list_count(_ecore_pending_job_threads_feedback);
-   LKU(_ecore_pending_job_threads_mutex);
+   SLKU(_ecore_pending_job_threads_mutex);
    return ret;
 }
 
@@ -1064,9 +1070,9 @@ ecore_thread_available_get(void)
 {
    int ret;
 
-   LKL(_ecore_pending_job_threads_mutex);
+   SLKL(_ecore_pending_job_threads_mutex);
    ret = _ecore_thread_count_max - _ecore_thread_count;
-   LKU(_ecore_pending_job_threads_mutex);
+   SLKU(_ecore_pending_job_threads_mutex);
    return ret;
 }
 

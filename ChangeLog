@@ -5,6 +5,7 @@
 	Eina_Chained_Mempool.
 	* Eet: replace Eina_Lock by Eina_Spinlock in Eet_Dictionnary.
 	* Evas: replace Eina_Lock by Eina_Spinlock in Evas_ScaleCache, Evas_Async_Events and Image_Entry.
+	* Ecore: use Eina_Spinlock for Ecore_Thread.
 
 2013-10-10  Carsten Haitzler (The Rasterman)
 
