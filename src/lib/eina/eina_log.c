@@ -143,53 +143,11 @@ static Eina_Thread _main_thread;
       }                                                           \
    } while (0)
 
-#ifdef EFL_HAVE_POSIX_THREADS_SPINLOCK
-
-static pthread_spinlock_t _log_lock;
-
-static Eina_Bool _eina_log_spinlock_init(void)
-{
-   if (pthread_spin_init(&_log_lock, PTHREAD_PROCESS_PRIVATE) == 0)
-     return EINA_TRUE;
-
-   fprintf(stderr,
-           "ERROR: pthread_spin_init(%p, PTHREAD_PROCESS_PRIVATE): %s\n",
-           &_log_lock, strerror(errno));
-   return EINA_FALSE;
-}
-
-#   define LOG_LOCK()                                                  \
-   if (_threads_enabled)                                               \
-         do {                                                          \
-            if (0) {                                                   \
-               fprintf(stderr, "+++LOG LOG_LOCKED!   [%s, %lu]\n",     \
-                       __FUNCTION__, (unsigned long)eina_thread_self()); } \
-            if (EINA_UNLIKELY(_threads_enabled)) {                     \
-               pthread_spin_lock(&_log_lock); }                        \
-         } while (0)
-#   define LOG_UNLOCK()                                                \
-   if (_threads_enabled)                                               \
-         do {                                                          \
-            if (EINA_UNLIKELY(_threads_enabled)) {                     \
-               pthread_spin_unlock(&_log_lock); }                      \
-            if (0) {                                                   \
-               fprintf(stderr,                                         \
-                       "---LOG LOG_UNLOCKED! [%s, %lu]\n",             \
-                       __FUNCTION__, (unsigned long)eina_thread_self()); } \
-         } while (0)
-#   define INIT() _eina_log_spinlock_init()
-#   define SHUTDOWN() pthread_spin_destroy(&_log_lock)
-
-#else /* ! EFL_HAVE_POSIX_THREADS_SPINLOCK */
-
-static Eina_Lock _log_mutex;
-#   define LOG_LOCK() if(_threads_enabled) {eina_lock_take(&_log_mutex); }
-#   define LOG_UNLOCK() if(_threads_enabled) {eina_lock_release(&_log_mutex); }
-#   define INIT() eina_lock_new(&_log_mutex)
-#   define SHUTDOWN() eina_lock_free(&_log_mutex)
-
-#endif /* ! EFL_HAVE_POSIX_THREADS_SPINLOCK */
-
+static Eina_Spinlock _log_mutex;
+#   define LOG_LOCK() if(_threads_enabled) {eina_spinlock_take(&_log_mutex); }
+#   define LOG_UNLOCK() if(_threads_enabled) {eina_spinlock_release(&_log_mutex); }
+#   define INIT() eina_spinlock_new(&_log_mutex)
+#   define SHUTDOWN() eina_spinlock_free(&_log_mutex)
 
 // List of domains registered
 static Eina_Log_Domain *_log_domains = NULL;
