@@ -247,9 +247,26 @@ _c_init(void)
    if (_c_fail) return EINA_FALSE;
    _c = calloc(1, sizeof(Ecore_Con_Curl));
    if (!_c) goto error;
-   _c->mod = eina_module_new("libcurl.so.4");
+
+#define LOAD(x) \
+   if (!_c->mod) { \
+      if ((_c->mod = eina_module_new(x))) { \
+         if (!eina_module_load(_c->mod)) { \
+            eina_module_free(_c->mod); \
+            _c->mod = NULL; \
+         } \
+      } \
+   }
+#if defined(_WIN32) || defined(__CYGWIN__)
+   LOAD("libcurl.dll"); // try 1
+   LOAD("curllib.dll"); // if fail try 2
+#elif defined(__APPLE__) && defined(__MACH__)
+   LOAD("libcurl.4.dylib"); // try 1
+   LOAD("libcurl.so.4"); // if fail try 2
+#else   
+   LOAD("libcurl.so.4"); // try only
+#endif   
    if (!_c->mod) goto error;
-   if (!eina_module_load(_c->mod)) goto error;
 
 #define SYM(x) if (!(_c->x = eina_module_symbol_get(_c->mod, #x))) goto error
    SYM(curl_global_init);
