@@ -14,10 +14,30 @@ lib/ecore_wayland/ecore_wl_dnd.c \
 lib/ecore_wayland/ecore_wl_input.c \
 lib/ecore_wayland/ecore_wl_output.c \
 lib/ecore_wayland/ecore_wl_window.c \
+lib/ecore_wayland/ecore_wl_subsurf.c \
 lib/ecore_wayland/ecore_wl_private.h
+
+lib_ecore_wayland_libecore_wayland_la_BUILT_SOURCES = \
+lib/ecore_wayland/subsurface-protocol.c \
+lib/ecore_wayland/subsurface-client-protocol.h
+
+CLEANFILES += $(lib_ecore_wayland_libecore_wayland_la_BUILT_SOURCES)
+
+lib_ecore_wayland_libecore_wayland_la_SOURCES += $(lib_ecore_wayland_libecore_wayland_la_BUILT_SOURCES)
+
+BUILT_SOURCES += $(lib_ecore_wayland_libecore_wayland_la_BUILT_SOURCES)
 
 lib_ecore_wayland_libecore_wayland_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @ECORE_WAYLAND_CFLAGS@
 lib_ecore_wayland_libecore_wayland_la_LIBADD = @ECORE_WAYLAND_LIBS@
 lib_ecore_wayland_libecore_wayland_la_DEPENDENCIES = @ECORE_WAYLAND_INTERNAL_LIBS@
 lib_ecore_wayland_libecore_wayland_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
+
+wayland_protocoldir = $(top_srcdir)/data/ecore/ecore_wayland/protocol
+
+lib/ecore_wayland/subsurface-protocol.c: $(wayland_protocoldir)/subsurface.xml
+	$(AM_V_GEN)$(wayland_scanner) code < $< > $@
+
+lib/ecore_wayland/subsurface-client-protocol.h: $(wayland_protocoldir)/subsurface.xml
+	$(AM_V_GEN)$(wayland_scanner) client-header < $< > $@
+
 endif
