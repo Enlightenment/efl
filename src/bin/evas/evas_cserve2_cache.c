@@ -1865,17 +1865,20 @@ _glyphs_loaded_msg_create(Glyphs_Request *req, int *resp_size)
 {
    Msg_Font_Glyphs_Loaded *msg;
    unsigned int size;
-   const char *shmname;
-   unsigned int shmname_size;
+   const char *shmname, *idxname;
+   unsigned int shmname_size, idxname_size;
    unsigned int k;
    char *response, *buf;
 
    shmname = cserve2_shared_mempool_name_get(req->fe->mempool);
    shmname_size = strlen(shmname) + 1;
 
+   idxname = cserve2_shared_array_name_get(req->fe->glyph_datas);
+   idxname_size = strlen(idxname) + 1;
+
    size = sizeof(Msg_Font_Glyphs_Loaded);
-   size += sizeof(int) * 2;
-   size += shmname_size;
+   size += sizeof(int) * 3;
+   size += shmname_size + idxname_size;
    size += req->nanswer * 10 * sizeof(int);
 
    response = malloc(size);
@@ -1888,6 +1891,10 @@ _glyphs_loaded_msg_create(Glyphs_Request *req, int *resp_size)
    buf += sizeof(int);
    memcpy(buf, shmname, shmname_size);
    buf += shmname_size;
+   memcpy(buf, &idxname_size, sizeof(int));
+   buf += sizeof(int);
+   memcpy(buf, idxname, idxname_size);
+   buf += idxname_size;
    memcpy(buf, &req->nanswer, sizeof(int));
    buf += sizeof(int);
 
@@ -2123,15 +2130,7 @@ _glyphs_load_request_response(Glyphs_Request *req,
 
    DBG("Font memory usage [begin]: %d / %d", font_mem_usage, max_font_usage);
 
-   if (!mempool)
-     {
-        mempool = cserve2_shared_mempool_new(GLYPH_DATA_ARRAY_TAG,
-                                             _generation_id, 0);
-        font_mem_usage += cserve2_shared_mempool_size_get(mempool);
-     }
-   else
-     cserve2_shared_mempool_generation_id_set(mempool, _generation_id);
-
+   cserve2_shared_mempool_generation_id_set(mempool, _generation_id);
    if (!fe->glyph_datas)
      {
         fe->glyph_datas = cserve2_shared_array_new(GLYPH_INDEX_ARRAY_TAG,

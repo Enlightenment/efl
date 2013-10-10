@@ -56,6 +56,8 @@ fash_gl_free(Fash_Glyph2 *fash)
 {
    int i;
 
+   if (!fash) return;
+
    for (i = 0; i < 256; i++)
      if (fash->bucket[i]) _fash_gl2_free(fash, fash->bucket[i]);
    free(fash);

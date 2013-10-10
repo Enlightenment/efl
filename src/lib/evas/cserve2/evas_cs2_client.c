@@ -60,6 +60,9 @@ typedef struct _Client_Request Client_Request;
 
 static int cserve2_init = 0;
 static int socketfd = -1;
+static int sr_size = 0;
+static int sr_got = 0;
+static char *sr_buf = NULL;
 
 static unsigned int _rid_count = 0;
 static unsigned int _file_id = 0;
@@ -206,6 +209,7 @@ _server_connect(void)
 #endif
 
    socketfd = s;
+   sr_size = 0;
 
    DBG("connected to cserve2 server.");
    return EINA_TRUE;
@@ -217,6 +221,7 @@ _server_disconnect(void)
    if (socketfd != -1)
      close(socketfd);
    socketfd = -1;
+   sr_size = 0;
 }
 
 static void
@@ -414,10 +419,6 @@ on_error:
         return EINA_FALSE;
      }
 }
-
-static int sr_size = 0;
-static int sr_got = 0;
-static char *sr_buf = NULL;
 
 static void *
 _server_read(int *size)
@@ -773,7 +774,6 @@ _image_loaded_cb(void *data, const void *msg_received, int size)
 
              if (msg_error->error == CSERVE2_NOT_LOADED)
                {
-#warning Code path to check: cserve2 restart
                   DBG("Trying to reopen the image");
                   ie->open_rid = _image_open_server_send(ie);
                   if (_server_dispatch_until(ie->open_rid))
@@ -1418,6 +1418,7 @@ struct _CS_Glyph_Out
    Shared_Buffer *sb;
    unsigned int offset;
    unsigned int size;
+   unsigned int hint;
    Eina_Bool used;
    int refcount;
    int pending_ref;
@@ -1449,6 +1450,9 @@ static void
 _glyph_out_free(void *gl)
 {
    CS_Glyph_Out *glout = gl;
+
+   if (glout->used)
+     eina_clist_remove(&glout->used_list);
 
    if (glout->map)
      {
@@ -1657,16 +1661,72 @@ _glyph_map_open(Font_Entry *fe, const char *indexpath, const char *datapath)
 }
 
 static Eina_Bool
-_glyph_map_remap_check(Glyph_Map *map)
+_glyph_map_remap_check(Glyph_Map *map, const char *idxpath, const char *datapath)
 {
    Eina_Bool changed = EINA_FALSE;
+   Shared_Buffer *oldbuf = NULL;
    int oldcount;
 
-   if (eina_file_refresh(map->mempool.f)
-       || (eina_file_size_get(map->mempool.f) != (size_t) map->mempool.size))
+   // Note: Since the shm name contains cserve2's PID it should most likely
+   // always change in case of crash/restart
+
+   if ((datapath && strcmp(datapath, map->mempool.path))
+       || (idxpath && strcmp(idxpath, map->index.path)))
+     {
+        CS_Glyph_Out *gl, *cursor;
+
+        WRN("Glyph pool has changed location.");
+
+        // Force reopening index
+        _shared_index_close(&map->index);
+        eina_strlcpy(map->index.path, idxpath, SHARED_BUFFER_PATH_MAX);
+
+        // Reopen mempool
+        if (map->mempool.refcount > 0)
+          {
+             oldbuf = calloc(1, sizeof(Glyph_Map));
+             oldbuf->f = map->mempool.f;
+             oldbuf->data = map->mempool.data;
+             oldbuf->size = map->mempool.size;
+             oldbuf->refcount = map->mempool.refcount;
+             eina_strlcpy(oldbuf->path, map->mempool.path, SHARED_BUFFER_PATH_MAX);
+             map->mempool_lru = eina_list_append(map->mempool_lru, oldbuf);
+          }
+        else
+          {
+             eina_file_map_free(map->mempool.f, map->mempool.data);
+             eina_file_close(map->mempool.f);
+          }
+
+        eina_strlcpy(map->mempool.path, datapath, SHARED_BUFFER_PATH_MAX);
+        map->mempool.f = eina_file_open(datapath, EINA_TRUE);
+        map->mempool.data = eina_file_map_all(map->mempool.f, EINA_FILE_RANDOM);
+        map->mempool.size = eina_file_size_get(map->mempool.f);
+        map->mempool.refcount = 0;
+
+        EINA_CLIST_FOR_EACH_ENTRY_SAFE(gl, cursor, &map->glyphs,
+                                       CS_Glyph_Out, map_entry)
+          {
+             if (!gl->refcount)
+               {
+                  gl->sb = NULL;
+                  gl->base.bitmap.buffer = NULL;
+               }
+             else
+               gl->sb = oldbuf;
+          }
+
+        if (!eina_clist_count(&map->glyphs))
+          return EINA_TRUE;
+
+        map->index.generation_id = _index.generation_id;
+        _shared_index_remap_check(&map->index, sizeof(Glyph_Data));
+        return EINA_TRUE;
+     }
+   else if (eina_file_refresh(map->mempool.f) ||
+            (eina_file_size_get(map->mempool.f) != (size_t) map->mempool.size))
      {
         CS_Glyph_Out *gl;
-        Shared_Buffer *oldbuf = NULL;
 
         WRN("Glyph pool has been resized.");
 
@@ -1682,21 +1742,18 @@ _glyph_map_remap_check(Glyph_Map *map)
              oldbuf->f = eina_file_dup(map->mempool.f);
              oldbuf->data = map->mempool.data;
              oldbuf->size = map->mempool.size;
-             oldbuf->refcount = map->mempool.refcount;
+             //oldbuf->refcount = map->mempool.refcount;
              eina_strlcpy(oldbuf->path, map->mempool.path, SHARED_BUFFER_PATH_MAX);
              map->mempool_lru = eina_list_append(map->mempool_lru, oldbuf);
           }
         else
-          {
-             eina_file_map_free(map->mempool.f, map->mempool.data);
-          }
+          eina_file_map_free(map->mempool.f, map->mempool.data);
         map->mempool.data = eina_file_map_all(map->mempool.f, EINA_FILE_RANDOM);
         map->mempool.size = eina_file_size_get(map->mempool.f);
         map->mempool.refcount = 0;
-        changed = EINA_TRUE;
 
         // Remap unused but loaded glyphs
-        EINA_CLIST_FOR_EACH_ENTRY(gl, &map->fe->map->glyphs,
+        EINA_CLIST_FOR_EACH_ENTRY(gl, &map->glyphs,
                                   CS_Glyph_Out, map_entry)
           {
              if (!gl->refcount)
@@ -1705,9 +1762,15 @@ _glyph_map_remap_check(Glyph_Map *map)
                   gl->base.bitmap.buffer = (unsigned char *) gl->sb->data + gl->offset;
                }
              else if (oldbuf)
-               gl->sb = oldbuf;
-             else CRIT("Invalid refcount state");
+               {
+                  gl->sb = oldbuf;
+                  gl->sb->refcount++;
+               }
+             else
+               ERR("Invalid refcounting here.");
           }
+
+        changed = EINA_TRUE;
      }
 
    map->index.generation_id = _index.generation_id;
@@ -1723,11 +1786,11 @@ _font_entry_glyph_map_rebuild_check(Font_Entry *fe, Font_Hint_Flags hints)
 {
    Eina_Bool changed = EINA_FALSE;
    int cnt = 0;
+   const char *idxpath = NULL, *datapath = NULL;
 
    if (!fe->map)
      {
         const Font_Data *fd;
-        const char *idxpath, *datapath;
 
         fd = _shared_font_entry_data_find(fe);
         if (!fd) return -1;
@@ -1740,7 +1803,7 @@ _font_entry_glyph_map_rebuild_check(Font_Entry *fe, Font_Hint_Flags hints)
         changed = EINA_TRUE;
      }
 
-   changed |= _glyph_map_remap_check(fe->map);
+   changed |= _glyph_map_remap_check(fe->map, idxpath, datapath);
    if (changed && fe->map && fe->map->index.data && fe->map->mempool.data)
      {
         CS_Glyph_Out *gl;
@@ -1762,12 +1825,16 @@ _font_entry_glyph_map_rebuild_check(Font_Entry *fe, Font_Hint_Flags hints)
              if (!gl)
                {
                   gl = calloc(1, sizeof(*gl));
+                  gl->idx = gd->index;
                   eina_clist_element_init(&gl->map_entry);
+                  eina_clist_element_init(&gl->used_list);
+                  fash_gl_add(fe->fash[hints], gl->idx, gl);
                }
              gl->map = fe->map;
              gl->sb = &fe->map->mempool;
              gl->offset = gd->offset;
              gl->size = gd->size;
+             gl->hint = gd->hint;
              gl->base.bitmap.rows = gd->rows;
              gl->base.bitmap.width = gd->width;
              gl->base.bitmap.pitch = gd->pitch;
@@ -1798,8 +1865,8 @@ _glyph_request_cb(void *data, const void *msg, int size)
    Font_Entry *fe = grd->fe;
    const char *buf;
    int i, nglyphs;
-   int namelen;
-   const char *name;
+   int shmname_len, idxname_len;
+   const char *shmname, *idxname;
    int pos;
 
    if (!fe || !fe->fash[grd->hints])
@@ -1821,8 +1888,6 @@ _glyph_request_cb(void *data, const void *msg, int size)
                   free(data);
                   return EINA_TRUE;
                }
-
-#warning Code path to check: cserve2 restart
 
              if (fe->glyphs_queue_count)
                _glyph_request_server_send(fe, grd->hints, EINA_FALSE);
@@ -1850,35 +1915,32 @@ _glyph_request_cb(void *data, const void *msg, int size)
    pos += sizeof(int);
    if (pos > size) goto end;
 
-   memcpy(&namelen, buf, sizeof(int));
+   memcpy(&shmname_len, buf, sizeof(int));
    buf += sizeof(int);
 
-   pos += namelen + sizeof(int);
+   pos += shmname_len + sizeof(int);
    if (pos > size) goto end;
 
-   name = buf; //eina_stringshare_add_length(buf, namelen);
-   buf += namelen;
+   shmname = buf;
+   buf += shmname_len;
+
+   memcpy(&idxname_len, buf, sizeof(int));
+   buf += sizeof(int);
+
+   pos += idxname_len + sizeof(int);
+   if (pos > size) goto end;
+
+   idxname = buf;
+   buf += idxname_len;
 
    memcpy(&nglyphs, buf, sizeof(int));
    buf += sizeof(int);
 
-   if (!fe->map)
-     {
-        const Font_Data *fd;
-        const char *idxpath = NULL, *datapath;
+   if (fe->map)
+     _glyph_map_remap_check(fe->map, idxname, shmname);
 
-        fd = _shared_font_entry_data_find(fe);
-        if (fd)
-          {
-             idxpath = _shared_string_get(fd->glyph_index_shm);
-             datapath = _shared_string_get(fd->mempool_shm);
-          }
-        else
-          datapath = name;
-        fe->map = _glyph_map_open(fe, idxpath, datapath);
-     }
-   else
-     _glyph_map_remap_check(fe->map);
+   if (!fe->map)
+     fe->map = _glyph_map_open(fe, idxname, shmname);
 
    for (i = 0; i < nglyphs; i++)
      {
@@ -1918,42 +1980,30 @@ _glyph_request_cb(void *data, const void *msg, int size)
           }
 
         gl = fash_gl_find(fe->fash[hints], idx);
-        if (gl)
+        if (!gl)
           {
-             gl->map = fe->map;
-             gl->sb = &fe->map->mempool;
-             gl->offset = offset;
-             gl->size = glsize;
-             gl->base.bitmap.rows = rows;
-             gl->base.bitmap.width = width;
-             gl->base.bitmap.pitch = pitch;
-             gl->base.bitmap.buffer =
-               (unsigned char *) gl->map->mempool.data + gl->offset;
-             gl->base.bitmap.num_grays = num_grays;
-             gl->base.bitmap.pixel_mode = pixel_mode;
-             gl->rid = 0;
-
-             if (gl->offset + glsize > (size_t) fe->map->mempool.size)
-               {
-                  WRN("Glyph offset out of the buffer. Refreshing map.");
-                  if (!_glyph_map_remap_check(fe->map))
-                    {
-                       // This is very problematic. Evas expects the glyph to
-                       // be valid after this point.
-                       // We could set rows & width to 0 to avoid crashes but
-                       // then display might be b0rken.
-                       // Also, all the previous glyphs might be out of the
-                       // memory range now, so we're in a pretty bad situation.
-                       CRIT("Failed to remap glyph mempool!");
-                       gl->base.bitmap.buffer = NULL;
-                       //gl->base.bitmap.rows = 0;
-                       //gl->base.bitmap.width = 0;
-                    }
-               }
-
-             if (!eina_clist_element_is_linked(&gl->map_entry))
-               eina_clist_add_head(&fe->map->glyphs, &gl->map_entry);
+             gl = calloc(1, sizeof(*gl));
+             gl->idx = idx;
+             eina_clist_element_init(&gl->map_entry);
+             eina_clist_element_init(&gl->used_list);
+             fash_gl_add(fe->fash[hints], idx, gl);
           }
+        gl->map = fe->map;
+        gl->sb = &fe->map->mempool;
+        gl->offset = offset;
+        gl->size = glsize;
+        gl->hint = hints;
+        gl->base.bitmap.rows = rows;
+        gl->base.bitmap.width = width;
+        gl->base.bitmap.pitch = pitch;
+        gl->base.bitmap.buffer =
+              (unsigned char *) gl->map->mempool.data + gl->offset;
+        gl->base.bitmap.num_grays = num_grays;
+        gl->base.bitmap.pixel_mode = pixel_mode;
+        gl->rid = 0;
+
+        if (!eina_clist_element_is_linked(&gl->map_entry))
+          eina_clist_add_head(&fe->map->glyphs, &gl->map_entry);
      }
 
    free(grd);
@@ -2023,14 +2073,14 @@ _glyph_request_server_send(Font_Entry *fe, Font_Hint_Flags hints, Eina_Bool used
         if (!used)
           {
              gl = EINA_CLIST_ENTRY(itr, CS_Glyph_Out, map_entry);
-             gl->rid = msg->base.rid;
              eina_clist_remove(&gl->map_entry);
+             gl->rid = msg->base.rid;
           }
         else
           {
              gl = EINA_CLIST_ENTRY(itr, CS_Glyph_Out, used_list);
-             gl->used = EINA_FALSE;
              eina_clist_remove(&gl->used_list);
+             gl->used = EINA_FALSE;
           }
         glyphs[nglyphs++] = gl->idx;
      }
@@ -2082,6 +2132,17 @@ evas_cserve2_font_glyph_request(Font_Entry *fe, unsigned int idx, Font_Hint_Flag
      }
 
    glyph = fash_gl_find(fash, idx);
+
+   // Check map is still valid, otherwise we want to request the glyph again
+   if (glyph && glyph->map && (&glyph->map->mempool != glyph->sb))
+     {
+        if (!glyph->refcount)
+          {
+             fash_gl_del(fash, idx);
+             glyph = NULL;
+          }
+     }
+
    if (!glyph)
      {
         glyph = calloc(1, sizeof(*glyph));
@@ -2092,8 +2153,7 @@ evas_cserve2_font_glyph_request(Font_Entry *fe, unsigned int idx, Font_Hint_Flag
      }
    else if (!glyph->used)
      {
-        // FIXME: This code path seems unused (not logical)
-        CRIT("Is this code path even valid?");
+        // This can happen in case of cserve2 restart. (corner case)
         eina_clist_add_head(&fe->glyphs_used, &glyph->used_list);
         fe->glyphs_used_count++;
         glyph->used = EINA_TRUE;
@@ -2135,6 +2195,21 @@ evas_cserve2_font_glyph_used(Font_Entry *fe, unsigned int idx, Font_Hint_Flags h
    if (!glyph->map)
      return EINA_TRUE;
 
+   // Glyph was stored in a dead buffer. Need to reload it :)
+   if (&glyph->map->mempool != glyph->sb)
+     {
+        if (!glyph->refcount)
+          {
+             fash_gl_del(fash, idx);
+             return EINA_FALSE;
+          }
+        else
+          {
+             // Keep old buffer, it is still valid.
+             return EINA_TRUE;
+          }
+     }
+
    if (glyph->used)
      return EINA_TRUE;
 
@@ -2170,6 +2245,7 @@ evas_cserve2_font_glyph_bitmap_get(Font_Entry *fe, unsigned int idx,
         return NULL;
      }
 
+try_again:
    out = fash_gl_find(fash, idx);
    if (!out)
      {
@@ -2179,17 +2255,35 @@ evas_cserve2_font_glyph_bitmap_get(Font_Entry *fe, unsigned int idx,
         return NULL;
      }
 
+   if (out->map && (&out->map->mempool != out->sb))
+     {
+        // If the map is not valid, this is a good time to reload the glyph.
+        if (!out->refcount)
+          {
+             fash_gl_del(fash, idx);
+             if (!evas_cserve2_font_glyph_request(fe, idx, hints))
+               return NULL;
+
+             DBG("Requesting again this glyph: %d", idx);
+             goto try_again;
+          }
+        else // Can't reload now since the map is used.
+          return &out->base;
+     }
+
+
 #if USE_SHARED_INDEX
-#warning TODO MUST REIMPLEMENT THIS FUNCTION
+   // FIXME/TODO: Reimplement the following function.
+   // This is probably not the best point to call it, though.
    //_font_entry_glyph_map_rebuild_check(fe, hints);
 #endif
 
    if (out->rid)
      if (!_server_dispatch_until(out->rid))
        {
-          ERR("failed to load the requested glyphs");
-          //fe->failed = EINA_TRUE;
-          //return NULL;
+          ERR("failed to load the requested glyphs, resending request");
+          if (!_request_resend(out->rid))
+            return NULL;
        }
 
    // promote shm and font entry in lru or something
@@ -2202,10 +2296,6 @@ evas_cserve2_font_glyph_ref(RGBA_Font_Glyph_Out *glyph, Eina_Bool incref)
    CS_Glyph_Out *glout;
 
    EINA_SAFETY_ON_FALSE_RETURN(evas_cserve2_use_get());
-
-   // For debugging only.
-   static int inc = 0, dec = 0;
-   if (incref) inc++; else dec++;
 
    // glout = (CS_Glyph_Out *) glyph;
    glout = (CS_Glyph_Out *) (((char *) glyph) - offsetof(CS_Glyph_Out, base));
@@ -2229,13 +2319,19 @@ evas_cserve2_font_glyph_ref(RGBA_Font_Glyph_Out *glyph, Eina_Bool incref)
         return;
      }
 
-   EINA_SAFETY_ON_FALSE_RETURN(glout->refcount > 0);
-   EINA_SAFETY_ON_NULL_RETURN(glout->sb);
+   EINA_SAFETY_ON_FALSE_RETURN((glout->refcount + glout->pending_ref) > 0);
+   if (!glout->sb)
+     {
+        glout->pending_ref--;
+        return;
+     }
+
    if (glout->pending_ref)
      {
+        if (!glout->refcount && (glout->pending_ref > 0))
+          glout->sb->refcount++;
         glout->refcount += glout->pending_ref;
         glout->pending_ref = 0;
-        glout->sb->refcount++;
      }
 
    glout->refcount--;
@@ -2244,24 +2340,19 @@ evas_cserve2_font_glyph_ref(RGBA_Font_Glyph_Out *glyph, Eina_Bool incref)
         EINA_SAFETY_ON_FALSE_RETURN(glout->sb->refcount > 0);
         glout->sb->refcount--;
 
-        if (!glout->sb->refcount)
-          DBG("Shared buffer %p reached refcount ZERO. %d/%d", glout->sb, dec, inc);
-
-        //if (glout->sb->data != glout->map->mempool.data)
         if (glout->sb != &glout->map->mempool)
           {
              if (!glout->sb->refcount)
                {
-                  DBG("Glyph shared buffer reached refcount 0. Unmapping.");
+                  DBG("Glyph shared buffer reached refcount 0. Unmapping %p from %s",
+                      glout->sb->data, glout->sb->path);
                   glout->map->mempool_lru =
                     eina_list_remove(glout->map->mempool_lru, glout->sb);
                   eina_file_map_free(glout->sb->f, glout->sb->data);
                   eina_file_close(glout->sb->f);
                   free(glout->sb);
                }
-             glout->sb = &glout->map->mempool;
-             glout->base.bitmap.buffer =
-               (unsigned char *) glout->sb->data + glout->offset;
+             fash_gl_del(glout->map->fe->fash[glout->hint], glout->idx);
           }
      }
 }
@@ -2281,14 +2372,17 @@ _string_index_refresh(void)
        && _index.strings_index.path[0])
      {
         _index.strings_entries.f = eina_file_open(_index.strings_entries.path, EINA_TRUE);
-        _index.strings_entries.size = eina_file_size_get(_index.strings_entries.f);
+        if (_index.strings_entries.f)
+          _index.strings_entries.size = eina_file_size_get(_index.strings_entries.f);
+        else
+          _index.strings_entries.size = 0;
         if (_index.strings_entries.size > 0)
           _index.strings_entries.data = eina_file_map_all(_index.strings_entries.f, EINA_FILE_RANDOM);
 
         if (!_index.strings_entries.data)
           {
              ERR("Could not map strings entries from: '%s'", _index.strings_entries.path);
-             eina_file_close(_index.strings_entries.f);
+             if (_index.strings_entries.f) eina_file_close(_index.strings_entries.f);
              _index.strings_entries.f = NULL;
              _index.strings_entries.data = NULL;
              ret = EINA_FALSE;
@@ -2304,7 +2398,13 @@ _string_index_refresh(void)
        (!_index.strings_index.data && _index.strings_index.path[0]))
      {
         _index.strings_index.f = eina_file_open(_index.strings_index.path, EINA_TRUE);
-        sz = eina_file_size_get(_index.strings_index.f);
+        if (_index.strings_index.f)
+          sz = eina_file_size_get(_index.strings_index.f);
+        else
+          {
+             sz = 0;
+             _index.strings_index.data = NULL;
+          }
         if (sz >= sizeof(Shared_Array_Header))
           _index.strings_index.data = eina_file_map_all(_index.strings_index.f, EINA_FILE_RANDOM);
 
@@ -2324,9 +2424,13 @@ _string_index_refresh(void)
         else
           {
              ERR("Could not map string indexes from %s", _index.strings_index.path);
-             eina_file_close(_index.strings_index.f);
-             eina_file_map_free(_index.strings_entries.f, _index.strings_entries.data);
-             eina_file_close(_index.strings_entries.f);
+             if (_index.strings_index.f) eina_file_close(_index.strings_index.f);
+             if (_index.strings_entries.f)
+               {
+                  if (_index.strings_entries.data)
+                    eina_file_map_free(_index.strings_entries.f, _index.strings_entries.data);
+                  eina_file_close(_index.strings_entries.f);
+               }
              _index.strings_index.f = NULL;
              _index.strings_entries.f = NULL;
              _index.strings_entries.data = NULL;

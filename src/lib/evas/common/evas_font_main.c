@@ -560,6 +560,9 @@ evas_common_font_int_cache_glyph_render(RGBA_Font_Glyph *fg)
 #endif
 
    /* no cserve2 case */
+   if (fg->glyph_out)
+     return EINA_TRUE;
+
    FTLOCK();
    error = FT_Glyph_To_Bitmap(&(fg->glyph), FT_RENDER_MODE_NORMAL, 0, 1);
    if (error)
