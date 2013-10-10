@@ -70,7 +70,7 @@ typedef short Eo_Callback_Priority;
  * Don't touch it if you don't know what you are doing.
  * @internal
  */
-EAPI extern Eina_Lock _eo_class_creation_lock;
+EAPI extern Eina_Spinlock _eo_class_creation_lock;
 
 /**
  * @internal
@@ -334,31 +334,31 @@ class_get_func_name(void) \
 { \
    const Eo_Class *_tmp_parent_class; \
    static volatile char lk_init = 0; \
-   static Eina_Lock _my_lock; \
+   static Eina_Spinlock _my_lock; \
    static const Eo_Class * volatile _my_class = NULL; \
    if (EINA_LIKELY(!!_my_class)) return _my_class; \
    \
-   eina_lock_take(&_eo_class_creation_lock); \
+   eina_spinlock_take(&_eo_class_creation_lock); \
    if (!lk_init) \
-      eina_lock_new(&_my_lock); \
-   if (lk_init < 2) eina_lock_take(&_my_lock); \
+      eina_spinlock_new(&_my_lock); \
+   if (lk_init < 2) eina_spinlock_take(&_my_lock); \
    if (!lk_init) \
       lk_init = 1; \
    else \
      { \
-        if (lk_init < 2) eina_lock_release(&_my_lock); \
-        eina_lock_release(&_eo_class_creation_lock); \
+        if (lk_init < 2) eina_spinlock_release(&_my_lock); \
+        eina_spinlock_release(&_eo_class_creation_lock); \
         return _my_class; \
      } \
-   eina_lock_release(&_eo_class_creation_lock); \
+   eina_spinlock_release(&_eo_class_creation_lock); \
    _tmp_parent_class = parent_class; \
    _my_class = eo_class_new(class_desc, _tmp_parent_class, __VA_ARGS__); \
-   eina_lock_release(&_my_lock); \
+   eina_spinlock_release(&_my_lock); \
    \
-   eina_lock_take(&_eo_class_creation_lock); \
-   eina_lock_free(&_my_lock); \
+   eina_spinlock_take(&_eo_class_creation_lock); \
+   eina_spinlock_free(&_my_lock); \
    lk_init = 2; \
-   eina_lock_release(&_eo_class_creation_lock); \
+   eina_spinlock_release(&_eo_class_creation_lock); \
    return _my_class; \
 }
 

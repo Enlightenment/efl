@@ -13,7 +13,7 @@
 #define EO_OP_IDS_FIRST 1
 
 /* Used inside the class_get functions of classes, see #EO_DEFINE_CLASS */
-EAPI Eina_Lock _eo_class_creation_lock;
+EAPI Eina_Spinlock _eo_class_creation_lock;
 int _eo_log_dom = -1;
 
 static _Eo_Class **_eo_classes;
@@ -691,8 +691,8 @@ eo_class_free(_Eo_Class *klass)
    EINA_TRASH_CLEAN(&klass->iterators.trash, data)
       free(data);
 
-   eina_lock_free(&klass->objects.trash_lock);
-   eina_lock_free(&klass->iterators.trash_lock);
+   eina_spinlock_free(&klass->objects.trash_lock);
+   eina_spinlock_free(&klass->iterators.trash_lock);
 
    free(klass);
 }
@@ -889,8 +889,8 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
 #ifndef HAVE_EO_ID
    EINA_MAGIC_SET((Eo_Base *) klass, EO_CLASS_EINA_MAGIC);
 #endif
-   eina_lock_new(&klass->objects.trash_lock);
-   eina_lock_new(&klass->iterators.trash_lock);
+   eina_spinlock_new(&klass->objects.trash_lock);
+   eina_spinlock_new(&klass->iterators.trash_lock);
    klass->parent = parent;
    klass->desc = desc;
    klass->extensions = (const _Eo_Class **) ((char *) klass + _eo_class_sz);
@@ -999,7 +999,7 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
           }
      }
 
-   eina_lock_take(&_eo_class_creation_lock);
+   eina_spinlock_take(&_eo_class_creation_lock);
    klass->header.id = ++_eo_classes_last_id;
      {
         /* FIXME: Handle errors. */
@@ -1014,7 +1014,7 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
         _eo_classes = tmp;
         _eo_classes[klass->header.id - 1] = klass;
      }
-   eina_lock_release(&_eo_class_creation_lock);
+   eina_spinlock_release(&_eo_class_creation_lock);
 
    _eo_class_constructor(klass);
 
@@ -1065,7 +1065,7 @@ eo_add_internal(const char *file, int line, const Eo_Class *klass_id, Eo *parent
         return NULL;
      }
 
-   eina_lock_take(&klass->objects.trash_lock);
+   eina_spinlock_take(&klass->objects.trash_lock);
    obj = eina_trash_pop(&klass->objects.trash);
    if (obj)
      {
@@ -1076,7 +1076,7 @@ eo_add_internal(const char *file, int line, const Eo_Class *klass_id, Eo *parent
      {
         obj = calloc(1, klass->obj_size);
      }
-   eina_lock_release(&klass->objects.trash_lock);
+   eina_spinlock_release(&klass->objects.trash_lock);
 
    obj->refcount++;
    obj->klass = klass;
@@ -1424,7 +1424,7 @@ eo_init(void)
         return EINA_FALSE;
      }
 
-   if (!eina_lock_new(&_eo_class_creation_lock))
+   if (!eina_spinlock_new(&_eo_class_creation_lock))
      {
         EINA_LOG_ERR("Could not init lock.");
         return EINA_FALSE;
@@ -1471,7 +1471,7 @@ eo_shutdown(void)
    if (_eo_classes)
      free(_eo_classes);
 
-   eina_lock_free(&_eo_class_creation_lock);
+   eina_spinlock_free(&_eo_class_creation_lock);
 
    _eo_free_ids_tables();
 
