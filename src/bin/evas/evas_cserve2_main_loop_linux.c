@@ -131,8 +131,6 @@ _signalfd_handler(int fd, Fd_Flags flags EINA_UNUSED, void *data EINA_UNUSED)
              _signal_handle_child(&sinfo);
              break;
            case SIGINT:
-           case SIGTERM:
-           case SIGQUIT:
              _signal_handle_exit(&sinfo);
              break;
            case SIGUSR1:
@@ -161,10 +159,8 @@ _signalfd_setup(void)
 
    sigemptyset(&mask);
    sigaddset(&mask, SIGCHLD);
-   sigaddset(&mask, SIGTERM);
-   sigaddset(&mask, SIGQUIT);
-   sigaddset(&mask, SIGUSR1);
-   sigaddset(&mask, SIGUSR2);
+   sigaddset(&mask, SIGUSR1); // ignored
+   sigaddset(&mask, SIGUSR2); // ignored
 
    if (sigprocmask(SIG_BLOCK, &mask, NULL) == -1)
      {
