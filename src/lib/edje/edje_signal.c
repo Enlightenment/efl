@@ -201,6 +201,7 @@ _edje_signal_callback_push(const Edje_Signal_Callback_Group *cgp,
         Edje_Signal_Callback_Matches *tmp;
 
         tmp = (Edje_Signal_Callback_Matches*) gp->matches;
+
         if (EINA_REFCOUNT_GET(tmp) == 1)
           {
              eina_hash_del(signal_match, tmp, tmp);
@@ -215,6 +216,8 @@ _edje_signal_callback_push(const Edje_Signal_Callback_Group *cgp,
                (void) 0; // Nothing to do because the case where refcount == 1 was already handle above.
              gp->matches = tmp_dup;
           }
+
+        assert(gp->matches->hashed == 0);
      }
 
    // search an empty spot now
@@ -388,7 +391,10 @@ _edje_signal_callback_patterns_ref(const Edje_Signal_Callback_Group *gp)
         tmp->patterns = NULL;
 
         _edje_callbacks_patterns_init((Edje_Signal_Callback_Group*) gp);
-        eina_hash_add(signal_match, tmp, tmp);
+	eina_hash_add(signal_match, tmp, tmp);
+	// We should be able to use direct_add, but if I do so valgrind stack explode and
+	// it bagain to be a pain to debug efl apps. I can't understand what is going on.
+        // eina_hash_direct_add(signal_match, tmp, tmp);
         tmp->hashed = EINA_TRUE;
      }
    else
