@@ -2240,6 +2240,11 @@ eet_data_descriptor_element_add(Eet_Data_Descriptor *edd,
 /*    ede->counter_offset = counter_offset; */
    ede->counter_name = counter_name;
 
+   if (subtype)
+     INF("Adding '%s' of size %i to '%s' at offset %i.", 
+         subtype->name, subtype->size,
+         edd->name, offset);
+
    ede->subtype = subtype;
 }
 
