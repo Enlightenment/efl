@@ -83,7 +83,7 @@ struct _Chained_Mempool
 #ifdef EINA_HAVE_DEBUG_THREADS
    Eina_Thread self;
 #endif
-   Eina_Lock mutex;
+   Eina_Spinlock mutex;
 };
 
 typedef struct _Chained_Pool Chained_Pool;
@@ -262,7 +262,7 @@ eina_chained_mempool_malloc(void *data, EINA_UNUSED unsigned int size)
    Chained_Pool *p = NULL;
    void *mem;
 
-   if (!eina_lock_take(&pool->mutex))
+   if (!eina_spinlock_take(&pool->mutex))
      {
 #ifdef EINA_HAVE_DEBUG_THREADS
         assert(eina_thread_equal(pool->self, eina_thread_self()));
@@ -288,7 +288,7 @@ eina_chained_mempool_malloc(void *data, EINA_UNUSED unsigned int size)
         p = _eina_chained_mp_pool_new(pool);
         if (!p)
           {
-             eina_lock_release(&pool->mutex);
+             eina_spinlock_release(&pool->mutex);
              return NULL;
           }
 
@@ -299,7 +299,7 @@ eina_chained_mempool_malloc(void *data, EINA_UNUSED unsigned int size)
 
    mem = _eina_chained_mempool_alloc_in(pool, p);
 
-   eina_lock_release(&pool->mutex);
+   eina_spinlock_release(&pool->mutex);
 
    return mem;
 }
@@ -312,7 +312,7 @@ eina_chained_mempool_free(void *data, void *ptr)
    Chained_Pool *p;
 
    // look 4 pool
-   if (!eina_lock_take(&pool->mutex))
+   if (!eina_spinlock_take(&pool->mutex))
      {
 #ifdef EINA_HAVE_DEBUG_THREADS
         assert(eina_thread_equal(pool->self, eina_thread_self()));
@@ -343,7 +343,7 @@ eina_chained_mempool_free(void *data, void *ptr)
      }
 #endif
 
-   eina_lock_release(&pool->mutex);
+   eina_spinlock_release(&pool->mutex);
    return;
 }
 
@@ -357,7 +357,7 @@ eina_chained_mempool_repack(void *data,
   Chained_Pool *tail;
 
   /* FIXME: Improvement - per Chained_Pool lock */
-   if (!eina_lock_take(&pool->mutex))
+   if (!eina_spinlock_take(&pool->mutex))
      {
 #ifdef EINA_HAVE_DEBUG_THREADS
         assert(eina_thread_equal(pool->self, eina_thread_self()));
@@ -430,7 +430,7 @@ eina_chained_mempool_repack(void *data,
      }
 
    /* FIXME: improvement - reorder pool so that the most used one get in front */
-   eina_lock_release(&pool->mutex);
+   eina_spinlock_release(&pool->mutex);
 }
 
 static void *
@@ -486,7 +486,7 @@ eina_chained_mempool_init(const char *context,
    mp->self = eina_thread_self();
 #endif
 
-   eina_lock_new(&mp->mutex);
+   eina_spinlock_new(&mp->mutex);
 
    return mp;
 }
@@ -524,7 +524,7 @@ eina_chained_mempool_shutdown(void *data)
    VALGRIND_DESTROY_MEMPOOL(mp);
 #endif
 
-   eina_lock_free(&mp->mutex);
+   eina_spinlock_free(&mp->mutex);
 
 #ifdef EINA_HAVE_DEBUG_THREADS
    assert(eina_thread_equal(mp->self, eina_thread_self()));

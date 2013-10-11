@@ -14,7 +14,6 @@ lib/ecore_wayland/ecore_wl_dnd.c \
 lib/ecore_wayland/ecore_wl_input.c \
 lib/ecore_wayland/ecore_wl_output.c \
 lib/ecore_wayland/ecore_wl_window.c \
-lib/ecore_wayland/ecore_wl_subsurf.c \
 lib/ecore_wayland/ecore_wl_private.h
 
 lib_ecore_wayland_libecore_wayland_la_BUILT_SOURCES = \
