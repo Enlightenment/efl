@@ -95,6 +95,9 @@ _entry_focus_in_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 
    if (en->imf_context)
      ecore_imf_context_focus_in(en->imf_context);
+
+   // notify the cursor information
+   _imf_cursor_info_set(en);
 }
 
 static void
