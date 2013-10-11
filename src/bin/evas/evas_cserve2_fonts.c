@@ -365,9 +365,15 @@ _font_slave_glyph_render(Font_Info *fi, Slave_Msg_Font_Glyphs_Loaded *response,
    return EINA_TRUE;
 
 on_error:
-   // Create invalid entry for this index.
+   // Create invalid entry for this index. There will be an empty slot in
+   // the mempool (usually 8 bytes) because we need the Glyph_Data index entry.
+   ERR("Could not load glyph %d. Creating empty invalid entry.", idx);
    memset(&response->glyphs[response->nglyphs], 0, sizeof(Slave_Msg_Glyph));
+   if (buffer_id > 0)
+     cserve2_shared_mempool_buffer_del(response->mempool, buffer_id);
+   buffer_id = cserve2_shared_mempool_buffer_new(response->mempool, 1);
    response->glyphs[response->nglyphs].index = idx;
+   response->glyphs[response->nglyphs].buffer_id = buffer_id;
    response->nglyphs++;
    return EINA_FALSE;
 }
@@ -480,7 +486,8 @@ _font_slave_glyphs_load(const void *cmddata, void *data EINA_UNUSED)
      {
         unsigned shmsize = _font_slave_int_shm_calculate(fi, msg->font.hint);
         response->mempool = cserve2_shared_mempool_new(GLYPH_DATA_ARRAY_TAG,
-                                                       0, shmsize);
+                                                       sizeof(Glyph_Data), 0,
+                                                       shmsize);
         if (!response->mempool) return NULL;
      }
 

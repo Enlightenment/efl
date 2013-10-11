@@ -152,11 +152,6 @@ _shm_file_probe(Shm_File *sf)
         sf_fonts = sf;
         break;
 
-      case GLYPH_INDEX_ARRAY_TAG:
-        DBG("Found index table with tag '%4.4s'", (char *) &sf->header->tag);
-        sf->tag = sf->header->tag;
-        break;
-
       case GLYPH_DATA_ARRAY_TAG:
         DBG("Found index table with tag '%4.4s'", (char *) &sf->header->tag);
         sf->tag = sf->header->tag;
@@ -647,7 +642,7 @@ _glyphs_all_print(Shm_File *sf)
         printf(" %8u %6u %6u %5u %5u %5u %5u %5u %1u %1u %6u %6u '%s'\n",
                gd->id, gd->refcount, gd->index, gd->size, gd->rows, gd->width,
                gd->pitch, gd->num_grays, gd->hint, gd->pixel_mode, gd->buffer_id,
-               gd->offset, _shared_string_get(gd->shm_id));
+               gd->offset, _shared_string_get(gd->mempool_id));
 
         nglyphs++;
         mem_used += gd->size;

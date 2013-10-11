@@ -381,7 +381,7 @@ void *cserve2_shared_array_item_data_find(Shared_Array *sa, void *data,
 int cserve2_shared_array_foreach(Shared_Array *sa, Eina_Each_Cb cb, void *data);
 
 // Shared buffers and memory pools
-Shared_Mempool *cserve2_shared_mempool_new(int indextag, int generation_id, int initsize);
+Shared_Mempool *cserve2_shared_mempool_new(int indextag, int index_elemsize, int generation_id, int initsize);
 void cserve2_shared_mempool_del(Shared_Mempool *sm);
 int cserve2_shared_mempool_buffer_new(Shared_Mempool *sm, int size);
 int cserve2_shared_mempool_buffer_ref(Shared_Mempool *sm, int bufferid);
@@ -392,6 +392,7 @@ size_t cserve2_shared_mempool_size_get(Shared_Mempool *sm);
 const char *cserve2_shared_mempool_name_get(Shared_Mempool *sm);
 int cserve2_shared_mempool_generation_id_get(Shared_Mempool *sm);
 int cserve2_shared_mempool_generation_id_set(Shared_Mempool *sm, int generation_id);
+Shared_Array *cserve2_shared_mempool_index_get(Shared_Mempool *sm);
 
 // Shared strings
 const char *cserve2_shared_strings_table_name_get();

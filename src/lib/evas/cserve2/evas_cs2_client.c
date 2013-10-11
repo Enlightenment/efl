@@ -597,9 +597,7 @@ static Eina_Bool
 _server_dispatch_until(unsigned int rid)
 {
    Eina_Bool failed;
-   fd_set rfds;
    unsigned int rrid;
-   struct timeval tv;
 
    while (1)
      {
@@ -608,6 +606,8 @@ _server_dispatch_until(unsigned int rid)
 #if TIMEOUT
         else if (failed)
           {
+             fd_set rfds;
+             struct timeval tv;
              int sel;
 
              if (socketfd == -1)

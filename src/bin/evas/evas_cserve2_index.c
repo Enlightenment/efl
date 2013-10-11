@@ -593,15 +593,20 @@ _shared_index_entry_get_by_id(Shared_Index *si, unsigned int id)
 }
 
 static Shared_Index *
-_shared_index_new(int tag, int generation_id)
+_shared_index_new(int tag, int index_elemsize, int generation_id)
 {
    Shared_Index *si;
    Index_Entry *ie;
 
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(index_elemsize >= 0, NULL);
+
    si = calloc(1, sizeof(Shared_Index));
    if (!si) return NULL;
 
-   si->sa = cserve2_shared_array_new(tag, generation_id, sizeof(Index_Entry), 0);
+   if (!index_elemsize)
+     index_elemsize = sizeof(Index_Entry);
+
+   si->sa = cserve2_shared_array_new(tag, generation_id, index_elemsize, 0);
    if (!si->sa)
      {
         free(si);
@@ -632,12 +637,14 @@ _shared_index_del(Shared_Index *si)
 // Shared memory pool
 
 Shared_Mempool *
-cserve2_shared_mempool_new(int indextag, int generation_id, int initsize)
+cserve2_shared_mempool_new(int indextag, int index_elemsize,
+                           int generation_id, int initsize)
 {
    Shared_Mempool *sm;
    size_t mapping_size;
 
-   if (initsize < 0) return NULL;
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(initsize >= 0, NULL);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(index_elemsize >= 0, NULL);
 
    sm = calloc(1, sizeof(Shared_Mempool));
    if (!sm) return NULL;
@@ -652,7 +659,7 @@ cserve2_shared_mempool_new(int indextag, int generation_id, int initsize)
         return NULL;
      }
 
-   sm->index = _shared_index_new(indextag, generation_id);
+   sm->index = _shared_index_new(indextag, index_elemsize, generation_id);
    if (!sm->index)
      {
         _shared_data_shm_del(sm->ds);
@@ -662,6 +669,13 @@ cserve2_shared_mempool_new(int indextag, int generation_id, int initsize)
 
    sm->empty_size = mapping_size;
    return sm;
+}
+
+Shared_Array *
+cserve2_shared_mempool_index_get(Shared_Mempool *sm)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(sm, NULL);
+   return sm->index->sa;
 }
 
 static void
@@ -1043,7 +1057,7 @@ cserve2_shared_index_init(void)
         int ifaketag = STRING_MEMPOOL_FAKETAG;
 
         DBG("Initializing shared index");
-        _string_mempool = cserve2_shared_mempool_new(STRING_INDEX_ARRAY_TAG, 0, 0);
+        _string_mempool = cserve2_shared_mempool_new(STRING_INDEX_ARRAY_TAG, 0, 0, 0);
         _string_entries = eina_hash_string_djb2_new(NULL);
 
         memcpy(faketag, &ifaketag, sizeof(int));

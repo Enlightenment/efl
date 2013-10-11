@@ -379,14 +379,17 @@ struct _Font_Data {
    uint32_t dpi;
 };
 
-#define GLYPH_INDEX_ARRAY_TAG ('G' | 'L' << 8 | 'I' << 16 | 'D' << 24)
 #define GLYPH_DATA_ARRAY_TAG ('G' | 'L' << 8 | 'P' << 16 | 'H' << 24)
 struct _Glyph_Data {
+   // Index_Entry
    SHMOBJECT;
+   int32_t length;
+   int32_t offset;
+   int32_t shmid;
+   // Glyph data stuff
    uint32_t index;
-   string_t shm_id;
+   string_t mempool_id; // TODO: Merge with shmid? (Internally impossible atm)
    uint32_t buffer_id;
-   uint32_t offset;
    uint32_t size;
    uint32_t rows;
    uint32_t width;
