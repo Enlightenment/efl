@@ -74,9 +74,11 @@ static Eina_Hash *_file_entries = NULL;
 // Shared index table
 static Index_Table _index;
 static const char *_shared_string_get(int id);
+static const char *_shared_string_safe_get(int id); // Do not allow remap during search
+static Eina_Bool _string_index_refresh(void);
 static int _server_index_list_set(Msg_Base *data, int size);
 static const File_Data *_shared_file_data_get_by_id(unsigned int id);
-static const Shm_Object *_shared_index_item_get_by_id(Shared_Index *si, int elemsize, unsigned int id);
+static const Shm_Object *_shared_index_item_get_by_id(Shared_Index *si, int elemsize, unsigned int id, Eina_Bool safe);
 static const File_Data *_shared_image_entry_file_data_find(Image_Entry *ie);
 static const Image_Data *_shared_image_entry_image_data_find(Image_Entry *ie);
 static const Font_Data *_shared_font_entry_data_find(Font_Entry *fe);
@@ -1788,6 +1790,7 @@ _font_entry_glyph_map_rebuild_check(Font_Entry *fe, Font_Hint_Flags hints)
    int cnt = 0;
    const char *idxpath = NULL, *datapath = NULL;
 
+   _string_index_refresh();
    if (!fe->map)
      {
         const Font_Data *fd;
@@ -1795,8 +1798,8 @@ _font_entry_glyph_map_rebuild_check(Font_Entry *fe, Font_Hint_Flags hints)
         fd = _shared_font_entry_data_find(fe);
         if (!fd) return -1;
 
-        idxpath = _shared_string_get(fd->glyph_index_shm);
-        datapath = _shared_string_get(fd->mempool_shm);
+        idxpath = _shared_string_safe_get(fd->glyph_index_shm);
+        datapath = _shared_string_safe_get(fd->mempool_shm);
         if (!idxpath || !datapath) return -1;
 
         fe->map =_glyph_map_open(fe, idxpath, datapath);
@@ -2527,7 +2530,7 @@ _server_index_list_set(Msg_Base *data, int size)
 
 // FIXME: (almost) copy & paste from evas_cserve2_cache.c
 static const char *
-_shared_string_get(int id)
+_shared_string_internal_get(int id, Eina_Bool safe)
 {
    Index_Entry *ie;
 
@@ -2538,24 +2541,37 @@ _shared_string_get(int id)
      }
 
    ie = (Index_Entry *)
-         _shared_index_item_get_by_id(&_index.strings_index, sizeof(*ie), id);
+     _shared_index_item_get_by_id(&_index.strings_index, sizeof(*ie), id, safe);
    if (!ie) return NULL;
    if (ie->offset < 0) return NULL;
    if (!ie->refcount) return NULL;
    if (ie->offset + ie->length > _index.strings_entries.size)
      {
+        if (safe) return NULL;
         if (eina_file_refresh(_index.strings_entries.f)
             || (_index.strings_entries.size != (int) eina_file_size_get(_index.strings_entries.f)))
           {
              DBG("String entries size has changed from %d to %d",
                  _index.strings_entries.size, (int) eina_file_size_get(_index.strings_entries.f));
              if (_string_index_refresh())
-               return _shared_string_get(id);
+               return _shared_string_internal_get(id, EINA_FALSE);
           }
         return NULL;
      }
 
    return _index.strings_entries.data + ie->offset;
+}
+
+static const char *
+_shared_string_safe_get(int id)
+{
+   return _shared_string_internal_get(id, EINA_TRUE);
+}
+
+static const char *
+_shared_string_get(int id)
+{
+   return _shared_string_internal_get(id, EINA_FALSE);
 }
 
 #define SHARED_INDEX_CHECK(si, typ) \
@@ -2597,6 +2613,7 @@ _shared_image_entry_file_data_find(Image_Entry *ie)
      return fdata;
 
    // Scan shared index
+   _string_index_refresh();
    for (k = _index.files.last_entry_in_hash;
         k < _index.files.count && k < _index.files.header->emptyidx; k++)
      {
@@ -2609,8 +2626,8 @@ _shared_image_entry_file_data_find(Image_Entry *ie)
         if (!fd->id) break;
         if (!fd->refcount) continue;
 
-        key = _shared_string_get(fd->key);
-        file = _shared_string_get(fd->path);
+        key = _shared_string_safe_get(fd->key);
+        file = _shared_string_safe_get(fd->path);
         if (!file)
           {
              ERR("Could not find filename for file %d: path id: %d",
@@ -2618,11 +2635,6 @@ _shared_image_entry_file_data_find(Image_Entry *ie)
              add_to_hash = EINA_FALSE;
              continue;
           }
-
-        // Note: The strings base pointer may change if the index grows
-        if ((key < _index.strings_entries.data) ||
-            (key > _index.strings_entries.data + _index.strings_entries.size))
-          key = _shared_string_get(fd->key);
 
         lo.region.x = fd->lo.region.x;
         lo.region.y = fd->lo.region.y;
@@ -2650,7 +2662,8 @@ _shared_image_entry_file_data_find(Image_Entry *ie)
 }
 
 static const Shm_Object *
-_shared_index_item_get_by_id(Shared_Index *si, int elemsize, unsigned int id)
+_shared_index_item_get_by_id(Shared_Index *si, int elemsize, unsigned int id,
+                             Eina_Bool safe)
 {
    const Shm_Object *obj;
    const char *base;
@@ -2665,7 +2678,7 @@ _shared_index_item_get_by_id(Shared_Index *si, int elemsize, unsigned int id)
 
    if (high > si->count)
      {
-        if (eina_file_refresh(si->f))
+        if ((!safe) && eina_file_refresh(si->f))
           {
              WRN("Refreshing indexes.");
              _string_index_refresh();
@@ -2717,7 +2730,7 @@ static const File_Data *
 _shared_file_data_get_by_id(unsigned int id)
 {
    return (const File_Data *)
-         _shared_index_item_get_by_id(&_index.files, sizeof(File_Data), id);
+     _shared_index_item_get_by_id(&_index.files, sizeof(File_Data), id, EINA_FALSE);
 }
 
 static inline Eina_Bool
@@ -2932,6 +2945,7 @@ _shared_image_entry_image_data_find(Image_Entry *ie)
 
    // Linear search in non-hashed entries. O(n)
    DBG("Looking for loaded image with file id %d", file_id);
+   _string_index_refresh();
    for (k = _index.images.last_entry_in_hash; k < _index.images.count; k++)
      {
         const char *file, *key;
@@ -2953,19 +2967,14 @@ _shared_image_entry_image_data_find(Image_Entry *ie)
                   continue;
                }
 
-             key = _shared_string_get(fd->key);
-             file = _shared_string_get(fd->path);
+             key = _shared_string_safe_get(fd->key);
+             file = _shared_string_safe_get(fd->path);
              if (!file)
                {
                   ERR("No filename for file %d", fd->id);
                   add_to_hash = EINA_FALSE;
                   continue;
                }
-
-             // Note: The strings base pointer may change if the index grows
-             if ((key < _index.strings_entries.data) ||
-                 (key > _index.strings_entries.data + _index.strings_entries.size))
-               key = _shared_string_get(fd->key);
 
              keylen = key ? strlen(key) : 0;
              filelen = strlen(file);
@@ -2996,7 +3005,7 @@ found:
         return NULL;
      }
 
-   shmpath = _shared_string_get(idata->shm_id);
+   shmpath = _shared_string_safe_get(idata->shm_id);
    if (!shmpath)
      {
         ERR("Found image but it is not loaded yet: %d (doload %d)",
@@ -3012,7 +3021,7 @@ static const Font_Data *
 _shared_font_entry_data_get_by_id(int id)
 {
    return (Font_Data *)
-         _shared_index_item_get_by_id(&_index.fonts, sizeof(Font_Data), id);
+     _shared_index_item_get_by_id(&_index.fonts, sizeof(Font_Data), id, EINA_FALSE);
 }
 
 static const Font_Data *
@@ -3051,8 +3060,8 @@ _shared_font_entry_data_find(Font_Entry *fe)
         if (!cur->id) return NULL;
         if (!cur->refcount) continue;
 
-        name = _shared_string_get(cur->name);
-        source = _shared_string_get(cur->file);
+        name = _shared_string_safe_get(cur->name);
+        source = _shared_string_safe_get(cur->file);
         snprintf(hkey, PATH_MAX, "%s:%s/%u:%u:%u", source, name,
                  cur->size, cur->dpi, cur->rend_flags);
 
