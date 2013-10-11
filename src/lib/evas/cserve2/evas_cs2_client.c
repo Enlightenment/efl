@@ -44,7 +44,7 @@ static const Evas_Image_Load_Opts empty_lo = {
 struct _File_Entry {
    unsigned int file_id;
    unsigned int server_file_id;
-   unsigned int refcount;
+   EINA_REFCOUNT;
    Eina_Stringshare *hkey;
 };
 
@@ -980,14 +980,16 @@ _image_open_server_send(Image_Entry *ie)
 
         fentry->file_id = ++_file_id;
         fentry->hkey = eina_stringshare_add(hkey);
+        EINA_REFCOUNT_INIT(fentry);
         eina_hash_direct_add(_file_entries, fentry->hkey, fentry);
      }
-   fentry->refcount++;
+   else
+     EINA_REFCOUNT_REF(fentry);
 
    dentry = calloc(1, sizeof(*dentry));
    if (!dentry)
      {
-        if (!(--fentry->refcount))
+        EINA_REFCOUNT_UNREF(fentry)
           eina_hash_del(_file_entries, fentry->hkey, fentry);
         return 0;
      }
@@ -1008,7 +1010,7 @@ _image_open_server_send(Image_Entry *ie)
    buf = malloc(size);
    if (!buf)
      {
-        if (!(--fentry->refcount))
+        EINA_REFCOUNT_UNREF(fentry)
           eina_hash_del(_file_entries, fentry->hkey, fentry);
         free(dentry);
         return 0;
@@ -1023,7 +1025,7 @@ _image_open_server_send(Image_Entry *ie)
      {
         ERR("Couldn't send message to server.");
         free(dentry);
-        if (!(--fentry->refcount))
+        EINA_REFCOUNT_UNREF(fentry)
           eina_hash_del(_file_entries, fentry->hkey, fentry);
         return 0;
      }
@@ -1131,7 +1133,7 @@ _image_close_server_send(Image_Entry *ie)
    msg->base.type = CSERVE2_CLOSE;
    msg->file_id = fentry->file_id;
 
-   if (!(--fentry->refcount))
+   EINA_REFCOUNT_UNREF(fentry)
      eina_hash_del(_file_entries, fentry->hkey, fentry);
    ie->data1 = NULL;
 
@@ -1422,8 +1424,8 @@ struct _CS_Glyph_Out
    unsigned int size;
    unsigned int hint;
    Eina_Bool used;
-   int refcount;
    int pending_ref;
+   EINA_REFCOUNT;
 };
 
 static void
@@ -1684,13 +1686,12 @@ _glyph_map_remap_check(Glyph_Map *map, const char *idxpath, const char *datapath
         eina_strlcpy(map->index.path, idxpath, SHARED_BUFFER_PATH_MAX);
 
         // Reopen mempool
-        if (map->mempool.refcount > 0)
+        if (EINA_REFCOUNT_GET(&map->mempool) > 0)
           {
              oldbuf = calloc(1, sizeof(Glyph_Map));
              oldbuf->f = map->mempool.f;
              oldbuf->data = map->mempool.data;
              oldbuf->size = map->mempool.size;
-             oldbuf->refcount = map->mempool.refcount;
              eina_strlcpy(oldbuf->path, map->mempool.path, SHARED_BUFFER_PATH_MAX);
              map->mempool_lru = eina_list_append(map->mempool_lru, oldbuf);
           }
@@ -1704,18 +1705,21 @@ _glyph_map_remap_check(Glyph_Map *map, const char *idxpath, const char *datapath
         map->mempool.f = eina_file_open(datapath, EINA_TRUE);
         map->mempool.data = eina_file_map_all(map->mempool.f, EINA_FILE_RANDOM);
         map->mempool.size = eina_file_size_get(map->mempool.f);
-        map->mempool.refcount = 0;
+        EINA_REFCOUNT_GET(&map->mempool) = 0;
 
         EINA_CLIST_FOR_EACH_ENTRY_SAFE(gl, cursor, &map->glyphs,
                                        CS_Glyph_Out, map_entry)
           {
-             if (!gl->refcount)
+             if (!EINA_REFCOUNT_GET(gl))
                {
                   gl->sb = NULL;
                   gl->base.bitmap.buffer = NULL;
                }
              else
-               gl->sb = oldbuf;
+               {
+                  gl->sb = oldbuf;
+                  EINA_REFCOUNT_REF(gl->sb);
+               }
           }
 
         if (!eina_clist_count(&map->glyphs))
@@ -1738,13 +1742,12 @@ _glyph_map_remap_check(Glyph_Map *map, const char *idxpath, const char *datapath
         // after some glyphs have been requested but not all for the current
         // draw.
 
-        if (map->mempool.refcount > 0)
+        if (EINA_REFCOUNT_GET(&map->mempool) > 0)
           {
              oldbuf = calloc(1, sizeof(Glyph_Map));
              oldbuf->f = eina_file_dup(map->mempool.f);
              oldbuf->data = map->mempool.data;
              oldbuf->size = map->mempool.size;
-             //oldbuf->refcount = map->mempool.refcount;
              eina_strlcpy(oldbuf->path, map->mempool.path, SHARED_BUFFER_PATH_MAX);
              map->mempool_lru = eina_list_append(map->mempool_lru, oldbuf);
           }
@@ -1752,13 +1755,13 @@ _glyph_map_remap_check(Glyph_Map *map, const char *idxpath, const char *datapath
           eina_file_map_free(map->mempool.f, map->mempool.data);
         map->mempool.data = eina_file_map_all(map->mempool.f, EINA_FILE_RANDOM);
         map->mempool.size = eina_file_size_get(map->mempool.f);
-        map->mempool.refcount = 0;
+        EINA_REFCOUNT_GET(&map->mempool) = 0;
 
         // Remap unused but loaded glyphs
         EINA_CLIST_FOR_EACH_ENTRY(gl, &map->glyphs,
                                   CS_Glyph_Out, map_entry)
           {
-             if (!gl->refcount)
+             if (!EINA_REFCOUNT_GET(gl))
                {
                   gl->sb = &map->mempool;
                   gl->base.bitmap.buffer = (unsigned char *) gl->sb->data + gl->offset;
@@ -1766,7 +1769,7 @@ _glyph_map_remap_check(Glyph_Map *map, const char *idxpath, const char *datapath
              else if (oldbuf)
                {
                   gl->sb = oldbuf;
-                  gl->sb->refcount++;
+                  EINA_REFCOUNT_REF(gl->sb);
                }
              else
                ERR("Invalid refcounting here.");
@@ -2139,7 +2142,7 @@ evas_cserve2_font_glyph_request(Font_Entry *fe, unsigned int idx, Font_Hint_Flag
    // Check map is still valid, otherwise we want to request the glyph again
    if (glyph && glyph->map && (&glyph->map->mempool != glyph->sb))
      {
-        if (!glyph->refcount)
+        if (!EINA_REFCOUNT_GET(glyph))
           {
              fash_gl_del(fash, idx);
              glyph = NULL;
@@ -2201,7 +2204,7 @@ evas_cserve2_font_glyph_used(Font_Entry *fe, unsigned int idx, Font_Hint_Flags h
    // Glyph was stored in a dead buffer. Need to reload it :)
    if (&glyph->map->mempool != glyph->sb)
      {
-        if (!glyph->refcount)
+        if (!EINA_REFCOUNT_GET(glyph))
           {
              fash_gl_del(fash, idx);
              return EINA_FALSE;
@@ -2261,7 +2264,7 @@ try_again:
    if (out->map && (&out->map->mempool != out->sb))
      {
         // If the map is not valid, this is a good time to reload the glyph.
-        if (!out->refcount)
+        if (!EINA_REFCOUNT_GET(out))
           {
              fash_gl_del(fash, idx);
              if (!evas_cserve2_font_glyph_request(fe, idx, hints))
@@ -2311,18 +2314,20 @@ evas_cserve2_font_glyph_ref(RGBA_Font_Glyph_Out *glyph, Eina_Bool incref)
              glout->pending_ref++;
              return;
           }
-        else if (!glout->refcount)
-          glout->sb->refcount++;
+        else if (!EINA_REFCOUNT_GET(glout))
+          EINA_REFCOUNT_REF(glout->sb);
         if (glout->pending_ref)
           {
-             glout->refcount += glout->pending_ref;
+             EINA_REFCOUNT_GET(glout) += glout->pending_ref;
              glout->pending_ref = 0;
           }
-        glout->refcount++;
+        EINA_REFCOUNT_REF(glout);
         return;
      }
 
-   EINA_SAFETY_ON_FALSE_RETURN((glout->refcount + glout->pending_ref) > 0);
+   EINA_SAFETY_ON_FALSE_RETURN
+     ((EINA_REFCOUNT_GET(glout) + glout->pending_ref) > 0);
+
    if (!glout->sb)
      {
         glout->pending_ref--;
@@ -2331,23 +2336,26 @@ evas_cserve2_font_glyph_ref(RGBA_Font_Glyph_Out *glyph, Eina_Bool incref)
 
    if (glout->pending_ref)
      {
-        if (!glout->refcount && (glout->pending_ref > 0))
-          glout->sb->refcount++;
-        glout->refcount += glout->pending_ref;
+        if (!EINA_REFCOUNT_GET(glout) && (glout->pending_ref > 0))
+          EINA_REFCOUNT_REF(glout->sb);
+        EINA_REFCOUNT_GET(glout) += glout->pending_ref;
         glout->pending_ref = 0;
      }
 
-   glout->refcount--;
-   if (!glout->refcount)
+   EINA_REFCOUNT_UNREF(glout)
      {
-        EINA_SAFETY_ON_FALSE_RETURN(glout->sb->refcount > 0);
-        glout->sb->refcount--;
+        Eina_Bool noref = EINA_FALSE;
+
+        EINA_SAFETY_ON_FALSE_RETURN(EINA_REFCOUNT_GET(glout->sb) > 0);
+        EINA_REFCOUNT_UNREF(glout->sb)
+          noref = EINA_TRUE;
 
         if (glout->sb != &glout->map->mempool)
           {
-             if (!glout->sb->refcount)
+             if (noref)
                {
-                  DBG("Glyph shared buffer reached refcount 0. Unmapping %p from %s",
+                  DBG("Glyph shared buffer reached refcount 0. "
+                      "Unmapping %p from %s",
                       glout->sb->data, glout->sb->path);
                   glout->map->mempool_lru =
                     eina_list_remove(glout->map->mempool_lru, glout->sb);

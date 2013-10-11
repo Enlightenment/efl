@@ -56,7 +56,7 @@ struct _Shared_Buffer
    Eina_File *f;
    char *data;
    int size;
-   int refcount;
+   EINA_REFCOUNT;
 };
 
 struct _Index_Table
