@@ -600,27 +600,16 @@ static inline Eina_Lock_Result
 eina_spinlock_take(Eina_Spinlock *spinlock)
 {
 #ifdef EINA_HAVE_POSIX_SPINLOCK
-   Eina_Bool yield;
    int t;
 
    do {
-      yield = EINA_FALSE;
-
       t = pthread_spin_trylock(spinlock);
       if (t != 0)
         {
-           if (errno == EBUSY)
-             {
-                sched_yield();
-                yield = EINA_TRUE;
-             }
-           else if (errno == EDEADLK)
-             {
-                return EINA_LOCK_DEADLOCK;
-             }
+           if (errno == EBUSY) sched_yield();
+           else if (errno == EDEADLK) return EINA_LOCK_DEADLOCK;
         }
-
-   } while (t != 0 && yield);
+   } while (t != 0);
 
    return t ? EINA_LOCK_FAIL : EINA_LOCK_SUCCEED;
 #else
