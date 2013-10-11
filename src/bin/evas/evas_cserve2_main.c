@@ -234,8 +234,8 @@ _cserve2_client_font_glyphs_request(Client *client)
 
    if (msg->base.type == CSERVE2_FONT_GLYPHS_LOAD)
      {
-        INF("Received CSERVE2_FONT_GLYPHS_LOAD command: RID=%d",
-            msg->base.rid);
+        INF("Received CSERVE2_FONT_GLYPHS_LOAD command: RID=%d (%d glyphs)",
+            msg->base.rid, msg->nglyphs);
         cserve2_cache_font_glyphs_load(client, source, fontpath,
                                        msg->hint, msg->rend_flags, msg->size,
                                        msg->dpi, glyphs, msg->nglyphs,
@@ -243,8 +243,8 @@ _cserve2_client_font_glyphs_request(Client *client)
      }
    else
      {
-        INF("Received CSERVE2_FONT_GLYPHS_USED command: RID=%d",
-            msg->base.rid);
+        INF("Received CSERVE2_FONT_GLYPHS_USED command: RID=%d (%d glyphs)",
+            msg->base.rid, msg->nglyphs);
         cserve2_cache_font_glyphs_used(client, source, fontpath,
                                        msg->hint, msg->rend_flags, msg->size,
                                        msg->dpi, glyphs, msg->nglyphs,

@@ -364,9 +364,37 @@ on_error:
 }
 
 static Eina_Bool
+_request_answer_required(int type, Eina_Bool *valid)
+{
+   switch (type)
+     {
+      case CSERVE2_OPEN:
+      case CSERVE2_LOAD:
+      case CSERVE2_PRELOAD:
+      case CSERVE2_FONT_LOAD:
+      case CSERVE2_FONT_GLYPHS_LOAD:
+        if (valid) *valid = EINA_TRUE;
+        return EINA_TRUE;
+      case CSERVE2_CLOSE:
+      case CSERVE2_UNLOAD:
+      case CSERVE2_FONT_UNLOAD:
+      case CSERVE2_FONT_GLYPHS_USED:
+        if (valid) *valid = EINA_TRUE;
+        return EINA_FALSE;
+      default:
+        ERR("Invalid message type %d", type);
+        if (valid) *valid = EINA_FALSE;
+        return EINA_FALSE;
+     }
+}
+
+static Eina_Bool
 _server_send(void *buf, int size, Op_Callback cb, void *data)
 {
-   Msg_Base *msg;
+   Msg_Base *msg = buf;
+   int type = msg->type;
+   Eina_Bool valid = EINA_TRUE;
+
    if (!_server_safe_send(socketfd, &size, sizeof(size)))
      {
         ERR("Couldn't send message size to server.");
@@ -378,31 +406,16 @@ _server_send(void *buf, int size, Op_Callback cb, void *data)
         goto on_error;
      }
 
-   msg = buf;
-   switch (msg->type)
-     {
-      case CSERVE2_OPEN:
-      case CSERVE2_LOAD:
-      case CSERVE2_PRELOAD:
-      case CSERVE2_FONT_LOAD:
-      case CSERVE2_FONT_GLYPHS_LOAD:
-        _request_answer_add(msg, size, cb, data);
-        break;
-      case CSERVE2_CLOSE:
-      case CSERVE2_UNLOAD:
-      case CSERVE2_FONT_UNLOAD:
-      case CSERVE2_FONT_GLYPHS_USED:
-        free(msg);
-        break;
-      default:
-        ERR("Invalid message type %d", msg->type);
-        free(msg);
-        return EINA_FALSE;
-     }
+   if (_request_answer_required(type, &valid))
+     _request_answer_add(msg, size, cb, data);
+   else
+     free(msg);
 
-   return EINA_TRUE;
+   return valid;
 
 on_error:
+   if (!_request_answer_required(type, NULL))
+     return EINA_FALSE;
    ERR("Socket error: %d %m", errno);
    switch (errno)
      {
@@ -532,6 +545,7 @@ _server_dispatch(Eina_Bool *failed)
    Eina_List *l, *l_next;
    Client_Request *cr;
    Msg_Base *msg;
+   Eina_Bool found;
 
    msg = _server_read(&size);
    if (!msg)
@@ -560,6 +574,7 @@ _server_dispatch(Eina_Bool *failed)
         if (cr->msg->rid != msg->rid) // dispatch this answer
           continue;
 
+        found = EINA_TRUE;
         if (cr->cb)
           remove = cr->cb(cr->data, msg, size);
         if (remove)
@@ -571,8 +586,10 @@ _server_dispatch(Eina_Bool *failed)
      }
 
    rid = msg->rid;
-   free(msg);
+   if (!found)
+     WRN("Got unexpected response %d for request %d", msg->type, rid);
 
+   free(msg);
    return rid;
 }
 
@@ -1786,6 +1803,7 @@ _glyph_map_remap_check(Glyph_Map *map, const char *idxpath, const char *datapath
    return changed;
 }
 
+#if USE_SHARED_INDEX
 static int
 _font_entry_glyph_map_rebuild_check(Font_Entry *fe, Font_Hint_Flags hints)
 {
@@ -1862,6 +1880,7 @@ _font_entry_glyph_map_rebuild_check(Font_Entry *fe, Font_Hint_Flags hints)
 
    return cnt;
 }
+#endif
 
 static Eina_Bool
 _glyph_request_cb(void *data, const void *msg, int size)
@@ -1907,6 +1926,7 @@ _glyph_request_cb(void *data, const void *msg, int size)
                   free(data);
                   return EINA_TRUE;
                }
+             // Keep this request in the list for now
              return EINA_FALSE;
           }
         free(data);
@@ -2166,7 +2186,7 @@ evas_cserve2_font_glyph_request(Font_Entry *fe, unsigned int idx, Font_Hint_Flag
      }
 
    /* FIXME crude way to manage a queue, but it will work for now */
-   if (fe->glyphs_queue_count == 50)
+   if (fe->glyphs_queue_count >= 50)
      _glyph_request_server_send(fe, hints, EINA_FALSE);
 
    return EINA_TRUE;
@@ -2240,7 +2260,7 @@ evas_cserve2_font_glyph_bitmap_get(Font_Entry *fe, unsigned int idx,
    if (fe->glyphs_queue_count)
      _glyph_request_server_send(fe, hints, EINA_FALSE);
 
-   if (fe->glyphs_used_count)
+   if (fe->glyphs_used_count >= 50)
      _glyph_request_server_send(fe, hints, EINA_TRUE);
 
    fash = fe->fash[hints];
@@ -2279,9 +2299,7 @@ try_again:
 
 
 #if USE_SHARED_INDEX
-   // FIXME/TODO: Reimplement the following function.
-   // This is probably not the best point to call it, though.
-   //_font_entry_glyph_map_rebuild_check(fe, hints);
+   _font_entry_glyph_map_rebuild_check(fe, hints);
 #endif
 
    if (out->rid)
