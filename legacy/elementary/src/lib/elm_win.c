@@ -5211,8 +5211,18 @@ static void
 _elm_win_smart_theme(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Win_Smart_Data *sd = _pd;
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Eina_Bool int_ret = EINA_FALSE;
+
+   if (ret) *ret = EINA_TRUE;
+
+   eo_do_super(obj, MY_CLASS, elm_wdg_theme(&int_ret));
+   if (!int_ret) return;
+
    sd->focus_highlight.theme_changed = EINA_TRUE;
    _elm_win_focus_highlight_reconfigure_job_start(sd);
+
+   if (ret) *ret = EINA_TRUE;
 }
 
 static void
