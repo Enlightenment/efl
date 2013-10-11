@@ -1008,7 +1008,6 @@ AC_ARG_ENABLE([wayland],
 
 if test "${want_wayland}" = "yes"; then
    EFL_PKG_CHECK_STRICT([wayland-client])
-   AC_PATH_PROG([wayland_scanner], [wayland-scanner], [AC_MSG_ERROR("wayland-scanner is needed to compile ecore_wayland protocol")])
 fi
 
 # Fb
