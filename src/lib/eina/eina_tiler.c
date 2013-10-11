@@ -33,7 +33,6 @@
 #include "eina_config.h"
 #include "eina_private.h"
 #include "eina_tiler.h"
-#include "eina_error.h"
 
 /*============================================================================*
 *                                  Local                                     *
@@ -1386,11 +1385,7 @@ eina_tile_grid_slicer_iterator_new(int x,
      return NULL;
 
    it = calloc(1, sizeof(*it));
-   if (!it)
-     {
-        eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
-        return NULL;
-     }
+   if (!it) return NULL;
 
    EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
 

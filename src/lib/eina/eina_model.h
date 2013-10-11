@@ -302,16 +302,7 @@
  * @{
  */
 
-/**
- * @var EINA_ERROR_MODEL_FAILED
- * Defined when model-specific errors happens.
- */
 EAPI extern Eina_Error EINA_ERROR_MODEL_FAILED;
-
-/**
- * @var EINA_ERROR_MODEL_METHOD_MISSING
- * Defined when model-specific errors happens.
- */
 EAPI extern Eina_Error EINA_ERROR_MODEL_METHOD_MISSING;
 
 /**

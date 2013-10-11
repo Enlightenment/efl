@@ -201,12 +201,7 @@ EAPI Eina_Bool   eina_magic_string_static_set(Eina_Magic  magic,
  */
 #define EINA_MAGIC_NONE 0x1234fedc
 
-/**
- * @var EINA_ERROR_MAGIC_FAILED
- * Error identifier corresponding to magic check failure.
- */
 EAPI extern Eina_Error EINA_ERROR_MAGIC_FAILED;
-
 
 #ifdef EINA_MAGIC_DEBUG
 

@@ -27,7 +27,6 @@
 #include "eina_config.h"
 #include "eina_private.h"
 #include "eina_alloca.h"
-#include "eina_error.h"
 #include "eina_log.h"
 #include "eina_mempool.h"
 #include "eina_lock.h"
@@ -1204,10 +1203,6 @@ _eina_model_event_callback_call(Eina_Model *model, const char *name, const void 
    return EINA_FALSE;
 }
 
-static const char EINA_ERROR_MODEL_FAILED_STR[] = "Model check failed.";
-static const char EINA_ERROR_MODEL_METHOD_MISSING_STR[] = "Model method is missing.";
-static const char EINA_MAGIC_MODEL_STR[] = "Eina Model";
-
 static void _eina_model_unref(Eina_Model *model);
 
 /**
@@ -1422,7 +1417,7 @@ _eina_model_type_base_properties_compare(const Eina_Model *a, const Eina_Model *
           }
 
         *cmp = eina_value_compare(&atmp, &btmp);
-        if (eina_error_get() != 0)
+        if (*cmp == -2)
           {
              char *astr = eina_value_to_string(&atmp);
              char *bstr = eina_value_to_string(&btmp);
@@ -1509,7 +1504,7 @@ _eina_model_type_base_children_compare(const Eina_Model *a, const Eina_Model *b,
           }
 
         *cmp = eina_model_compare(achild, bchild);
-        if (eina_error_get())
+        if (*cmp == -2)
           {
              ERR("Could not compare children #%d %p (%s) and %p (%s) "
                  "from models %p (%s) and %p (%s)", i,
@@ -3035,11 +3030,6 @@ eina_model_init(void)
         goto on_init_fail_lock_debug;
      }
 
-   EINA_ERROR_MODEL_FAILED = eina_error_msg_static_register(
-                                                            EINA_ERROR_MODEL_FAILED_STR);
-   EINA_ERROR_MODEL_METHOD_MISSING = eina_error_msg_static_register(
-                                                                    EINA_ERROR_MODEL_METHOD_MISSING_STR);
-
    EINA_MODEL_TYPE_BASE = &_EINA_MODEL_TYPE_BASE;
    EINA_MODEL_TYPE_MIXIN = &_EINA_MODEL_TYPE_MIXIN;
    EINA_MODEL_TYPE_GENERIC = &_EINA_MODEL_TYPE_GENERIC;
@@ -3430,7 +3420,6 @@ _eina_model_unref(Eina_Model *model)
 #define EINA_MODEL_TYPE_CALL_OPTIONAL_RETURN(model, method, def_retval, ...) \
   do                                                                    \
     {                                                                   \
-       eina_error_set(0);                                               \
        if (model->desc->ops.type.method)                                \
          return model->desc->ops.type.method(model, ## __VA_ARGS__);    \
        DBG("Optional method" # method "() not implemented for model %p (%s)", \
@@ -3442,7 +3431,6 @@ _eina_model_unref(Eina_Model *model)
 #define EINA_MODEL_TYPE_CALL_OPTIONAL(model, method, ...)               \
   do                                                                    \
     {                                                                   \
-       eina_error_set(0);                                               \
        if (model->desc->ops.type.method)                                \
          model->desc->ops.type.method(model, ## __VA_ARGS__);           \
        else                                                             \
@@ -3454,10 +3442,8 @@ _eina_model_unref(Eina_Model *model)
 #define EINA_MODEL_TYPE_CALL_MANDATORY_RETURN(model, method, def_retval, ...) \
   do                                                                    \
     {                                                                   \
-       eina_error_set(0);                                               \
        if (model->desc->ops.type.method)                                \
          return model->desc->ops.type.method(model, ## __VA_ARGS__);    \
-       eina_error_set(EINA_ERROR_MODEL_METHOD_MISSING);                 \
        CRITICAL("Mandatory method" # method "() not implemented for model %p (%s)", \
                 model, model->desc->cache.types[0]->name);              \
        return def_retval;                                               \
@@ -3467,12 +3453,10 @@ _eina_model_unref(Eina_Model *model)
 #define EINA_MODEL_TYPE_CALL_MANDATORY(model, method, ...)              \
   do                                                                    \
     {                                                                   \
-       eina_error_set(0);                                               \
        if (model->desc->ops.type.method)                                \
          model->desc->ops.type.method(model, ## __VA_ARGS__);           \
        else                                                             \
          {                                                              \
-            eina_error_set(EINA_ERROR_MODEL_METHOD_MISSING);            \
             CRITICAL("Mandatory method" # method "() not implemented for model %p (%s)", \
                      model, model->desc->cache.types[0]->name);         \
          }                                                              \
@@ -3483,10 +3467,8 @@ _eina_model_unref(Eina_Model *model)
 #define EINA_MODEL_TYPE_CALL_RETURN(model, method, def_retval, ...)     \
   do                                                                    \
     {                                                                   \
-       eina_error_set(0);                                               \
        if (model->desc->ops.type.method)                                \
          return model->desc->ops.type.method(model, ## __VA_ARGS__);    \
-       eina_error_set(EINA_ERROR_MODEL_METHOD_MISSING);                 \
        ERR("Method" # method "() not implemented for model %p (%s)",    \
            model, model->desc->cache.types[0]->name);                   \
        return def_retval;                                               \
@@ -3496,12 +3478,10 @@ _eina_model_unref(Eina_Model *model)
 #define EINA_MODEL_TYPE_CALL(model, method, ...)                        \
   do                                                                    \
     {                                                                   \
-       eina_error_set(0);                                               \
        if (model->desc->ops.type.method)                                \
          model->desc->ops.type.method(model, ## __VA_ARGS__);           \
        else                                                             \
          {                                                              \
-            eina_error_set(EINA_ERROR_MODEL_METHOD_MISSING);            \
             ERR("Method" # method "() not implemented for model %p (%s)", \
                 model, model->desc->cache.types[0]->name);              \
          }                                                              \
@@ -3985,8 +3965,7 @@ eina_model_compare(const Eina_Model *a, const Eina_Model *b)
         ERR("Models %p (%s) and %p (%s) can't compare",
             a, desc_a->cache.types[0]->name,
             b, desc_b->cache.types[0]->name);
-        eina_error_set(EINA_ERROR_MODEL_METHOD_MISSING);
-        return -1;
+        return -2;
      }
    else if ((desc_a->ops.type.compare) && (desc_b->ops.type.compare))
      {
@@ -4012,8 +3991,7 @@ eina_model_compare(const Eina_Model *a, const Eina_Model *b)
         ERR("Could not compare models %p (%s) and %p (%s)",
             a, desc_a->cache.types[0]->name,
             b, desc_b->cache.types[0]->name);
-        eina_error_set(EINA_ERROR_MODEL_FAILED);
-        return -1;
+        return -2;
      }
 
    return cmp;
@@ -4026,7 +4004,6 @@ eina_model_load(Eina_Model *model)
 
    EINA_MODEL_INSTANCE_CHECK_VAL(model, EINA_FALSE);
 
-   eina_error_set(0);
    if (model->desc->ops.type.load)
      {
         ret = model->desc->ops.type.load(model);
@@ -4035,7 +4012,6 @@ eina_model_load(Eina_Model *model)
      }
    else
      {
-        eina_error_set(EINA_ERROR_MODEL_METHOD_MISSING);
         ret = EINA_FALSE;
         ERR("Method load() not implemented for model %p (%s)",
             model, model->desc->cache.types[0]->name);
@@ -4051,7 +4027,6 @@ eina_model_unload(Eina_Model *model)
 
    EINA_MODEL_INSTANCE_CHECK_VAL(model, EINA_FALSE);
 
-   eina_error_set(0);
    if (model->desc->ops.type.unload)
      {
         ret = model->desc->ops.type.unload(model);
@@ -4061,7 +4036,6 @@ eina_model_unload(Eina_Model *model)
      }
    else
      {
-        eina_error_set(EINA_ERROR_MODEL_METHOD_MISSING);
         ret = EINA_FALSE;
         ERR("Method unload() not implemented for model %p (%s)",
             model, model->desc->cache.types[0]->name);
@@ -4090,7 +4064,6 @@ eina_model_property_set(Eina_Model *model, const const char *name, const Eina_Va
    EINA_SAFETY_ON_NULL_RETURN_VAL(value, EINA_FALSE);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(eina_value_type_check(value->type), EINA_FALSE);
 
-   eina_error_set(0);
    if (model->desc->ops.type.property_set)
      {
         ret = model->desc->ops.type.property_set(model, name, value);
@@ -4100,7 +4073,6 @@ eina_model_property_set(Eina_Model *model, const const char *name, const Eina_Va
      }
    else
      {
-        eina_error_set(EINA_ERROR_MODEL_METHOD_MISSING);
         ret = EINA_FALSE;
         ERR("Method property_set() not implemented for model %p (%s)",
             model, model->desc->cache.types[0]->name);
@@ -4117,7 +4089,6 @@ eina_model_property_del(Eina_Model *model, const char *name)
    EINA_MODEL_INSTANCE_CHECK_VAL(model, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(name, EINA_FALSE);
 
-   eina_error_set(0);
    if (model->desc->ops.type.property_del)
      {
         ret = model->desc->ops.type.property_del(model, name);
@@ -4127,7 +4098,6 @@ eina_model_property_del(Eina_Model *model, const char *name)
      }
    else
      {
-        eina_error_set(EINA_ERROR_MODEL_METHOD_MISSING);
         ret = EINA_FALSE;
         ERR("Method property_del() not implemented for model %p (%s)",
             model, model->desc->cache.types[0]->name);
@@ -4173,7 +4143,6 @@ eina_model_child_set(Eina_Model *model, unsigned int position, Eina_Model *child
    EINA_MODEL_INSTANCE_CHECK_VAL(model, EINA_FALSE);
    EINA_MODEL_INSTANCE_CHECK_VAL(child, EINA_FALSE);
 
-   eina_error_set(0);
    if (model->desc->ops.type.child_set)
      {
         ret = model->desc->ops.type.child_set(model, position, child);
@@ -4183,7 +4152,6 @@ eina_model_child_set(Eina_Model *model, unsigned int position, Eina_Model *child
      }
    else
      {
-        eina_error_set(EINA_ERROR_MODEL_METHOD_MISSING);
         ret = EINA_FALSE;
         ERR("Method child_set() not implemented for model %p (%s)",
             model, model->desc->cache.types[0]->name);
@@ -4199,7 +4167,6 @@ eina_model_child_del(Eina_Model *model, unsigned int position)
 
    EINA_MODEL_INSTANCE_CHECK_VAL(model, EINA_FALSE);
 
-   eina_error_set(0);
    if (model->desc->ops.type.child_del)
      {
         ret = model->desc->ops.type.child_del(model, position);
@@ -4213,7 +4180,6 @@ eina_model_child_del(Eina_Model *model, unsigned int position)
      }
    else
      {
-        eina_error_set(EINA_ERROR_MODEL_METHOD_MISSING);
         ret = EINA_FALSE;
         ERR("Method child_del() not implemented for model %p (%s)",
             model, model->desc->cache.types[0]->name);
@@ -4230,7 +4196,6 @@ eina_model_child_insert_at(Eina_Model *model, unsigned int position, Eina_Model 
    EINA_MODEL_INSTANCE_CHECK_VAL(model, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(child, EINA_FALSE);
 
-   eina_error_set(0);
    if (model->desc->ops.type.child_insert_at)
      {
         ret = model->desc->ops.type.child_insert_at(model, position, child);
@@ -4244,7 +4209,6 @@ eina_model_child_insert_at(Eina_Model *model, unsigned int position, Eina_Model 
      }
    else
      {
-        eina_error_set(EINA_ERROR_MODEL_METHOD_MISSING);
         ret = EINA_FALSE;
         ERR("Method child_insert_at() not implemented for model %p (%s)",
             model, model->desc->cache.types[0]->name);
@@ -4266,7 +4230,6 @@ eina_model_child_append(Eina_Model *model, Eina_Model *child)
    if (position < 0)
      return -1;
 
-   eina_error_set(0);
    if (model->desc->ops.type.child_insert_at)
      {
         ret = model->desc->ops.type.child_insert_at(model, position, child);
@@ -4280,7 +4243,6 @@ eina_model_child_append(Eina_Model *model, Eina_Model *child)
      }
    else
      {
-        eina_error_set(EINA_ERROR_MODEL_METHOD_MISSING);
         ret = EINA_FALSE;
         ERR("Method child_insert_at() not implemented for model %p (%s)",
             model, model->desc->cache.types[0]->name);

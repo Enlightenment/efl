@@ -13,7 +13,6 @@
 #include "eina_private.h"
 #include "eina_str.h"
 #include "eina_magic.h"
-#include "eina_error.h"
 #include "eina_safety_checks.h"
 #include "eina_strbuf.h"
 #include "eina_strbuf_common.h"
@@ -88,14 +87,8 @@ _eina_strbuf_common_init(size_t csize, Eina_Strbuf *buf)
    buf->size = EINA_STRBUF_INIT_SIZE;
    buf->step = EINA_STRBUF_INIT_STEP;
    
-   eina_error_set(0);
    buf->buf = calloc(csize, buf->size);
-   if (EINA_UNLIKELY(!buf->buf))
-     {
-        eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
-        return EINA_FALSE;
-     }
-
+   if (EINA_UNLIKELY(!buf->buf)) return EINA_FALSE;
    return EINA_TRUE;
 }
 
@@ -159,16 +152,11 @@ _eina_strbuf_common_resize(size_t csize, Eina_Strbuf *buf, size_t size)
 
    /* reallocate the buffer to the new size */
    buffer = realloc(buf->buf, new_size * csize);
-   if (EINA_UNLIKELY(!buffer))
-     {
-        eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
-        return EINA_FALSE;
-     }
+   if (EINA_UNLIKELY(!buffer)) return EINA_FALSE;
 
    buf->buf = buffer;
    buf->size = new_size;
    buf->step = new_step;
-   eina_error_set(0);
    return EINA_TRUE;
 }
 
@@ -239,8 +227,7 @@ _eina_strbuf_common_insert_length(size_t csize,
  * @return Newly allocated string buffer instance.
  *
  * This function creates a new string buffer. On error, @c NULL is
- * returned and Eina error is set to #EINA_ERROR_OUT_OF_MEMORY. To
- * free the resources, use eina_strbuf_common_free().
+ * returned. To free the resources, use eina_strbuf_common_free().
  *
  * @see eina_strbuf_common_free()
  * @see eina_strbuf_common_append()
@@ -251,13 +238,8 @@ eina_strbuf_common_new(size_t csize)
 {
    Eina_Strbuf *buf;
 
-   eina_error_set(0);
    buf = malloc(sizeof(Eina_Strbuf));
-   if (EINA_UNLIKELY(!buf))
-     {
-        eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
-        return NULL;
-     }
+   if (EINA_UNLIKELY(!buf)) return NULL;
    if (EINA_UNLIKELY(!_eina_strbuf_common_init(csize, buf)))
      {
         eina_strbuf_common_free(buf);
@@ -276,8 +258,7 @@ eina_strbuf_common_new(size_t csize)
  * @return Newly allocated string buffer instance.
  *
  * This function creates a new string buffer. On error, @c NULL is
- * returned and Eina error is set to #EINA_ERROR_OUT_OF_MEMORY. To
- * free the resources, use eina_strbuf_common_free().
+ * returned. To free the resources, use eina_strbuf_common_free().
  *
  * @see eina_strbuf_common_free()
  * @see eina_strbuf_common_append()
@@ -291,14 +272,9 @@ eina_strbuf_common_manage_new(size_t csize,
 {
    Eina_Strbuf *buf;
 
-   eina_error_set(0);
    buf = malloc(sizeof(Eina_Strbuf));
-   if (EINA_UNLIKELY(!buf))
-     {
-        eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
-        return NULL;
-     }
-  if (EINA_UNLIKELY(!_eina_strbuf_common_manage_init(csize, buf, str, len)))
+   if (EINA_UNLIKELY(!buf)) return NULL;
+   if (EINA_UNLIKELY(!_eina_strbuf_common_manage_init(csize, buf, str, len)))
     {
         eina_strbuf_common_free(buf);
         return NULL;

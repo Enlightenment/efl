@@ -91,19 +91,14 @@ START_TEST(eina_barrier_test_simple)
     eina_barrier_wait(&barrier);
 
     eina_thread_join(wk1);
-    ck_assert_int_eq(eina_error_get(), 0);
 
     eina_thread_join(wk2);
-    ck_assert_int_eq(eina_error_get(), 0);
 
     eina_thread_join(wk3);
-    ck_assert_int_eq(eina_error_get(), 0);
 
     eina_thread_join(wk4);
-    ck_assert_int_eq(eina_error_get(), 0);
 
     eina_thread_join(wk5);
-    ck_assert_int_eq(eina_error_get(), 0);
 
     eina_barrier_free(&barrier);
 

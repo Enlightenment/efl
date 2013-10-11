@@ -100,11 +100,7 @@ eina_one_big_malloc(void *data, EINA_UNUSED unsigned int size)
    if (!pool->base)
      {
 	pool->base = malloc(pool->item_size * pool->max);
-	if (!pool->base)
-	  {
-	     eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
-	     goto retry_smaller;
-	  }
+	if (!pool->base) goto retry_smaller;
 #ifndef NVALGRIND
         VALGRIND_MAKE_MEM_NOACCESS(pool->base, pool->item_size * pool->max);
 #endif
@@ -118,11 +114,8 @@ eina_one_big_malloc(void *data, EINA_UNUSED unsigned int size)
      }
 
  retry_smaller:
-   eina_error_set(0);
    mem = malloc(sizeof(Eina_Inlist) + pool->item_size);
-   if (!mem)
-      eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
-   else
+   if (mem)
      {
         pool->over++;
         /* Only need to zero list elements and not the payload here */

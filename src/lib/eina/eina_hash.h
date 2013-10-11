@@ -330,8 +330,8 @@ typedef Eina_Bool    (*Eina_Hash_Foreach)(const Eina_Hash *hash, const void *key
  * @return The new hash table.
  *
  * This function creates a new hash table using user-defined callbacks
- * to manage the hash table. On failure, @c NULL is returned
- * and #EINA_ERROR_OUT_OF_MEMORY is set. If @p key_cmp_cb or @p key_hash_cb
+ * to manage the hash table. On failure, @c NULL is returned.
+ * If @p key_cmp_cb or @p key_hash_cb
  * are @c NULL, @c NULL is returned. If @p buckets_power_size is
  * smaller or equal than 2, or if it is greater or equal than 17,
  * @c NULL is returned.
@@ -518,9 +518,7 @@ EAPI Eina_Hash *eina_hash_stringshared_new(Eina_Free_Cb data_free_cb);
  * values as unique. Failure to use sufficient uniqueness will
  * result in unexpected results when inserting data pointers accessed
  * with eina_hash_find(), and removed with eina_hash_del(). Key
- * strings are case sensitive. If an error occurs, eina_error_get()
- * should be used to determine if an allocation error occurred during
- * this function. This function returns #EINA_FALSE if an error
+ * strings are case sensitive. This function returns #EINA_FALSE if an error
  * occurred, #EINA_TRUE otherwise.
  */
 EAPI Eina_Bool  eina_hash_add(Eina_Hash  *hash,
@@ -548,9 +546,7 @@ EAPI Eina_Bool  eina_hash_add(Eina_Hash  *hash,
  * with eina_hash_find(), and removed with eina_hash_del(). This
  * function does not make a copy of @p key, so it must be a string
  * constant or stored elsewhere ( in the object being added). Key
- * strings are case sensitive. If an error occurs, eina_error_get()
- * should be used to determine if an allocation error occurred during
- * this function. This function returns #EINA_FALSE if an error
+ * strings are case sensitive. This function returns #EINA_FALSE if an error
  * occurred, #EINA_TRUE otherwise.
  */
 EAPI Eina_Bool eina_hash_direct_add(Eina_Hash  *hash,
@@ -630,8 +626,7 @@ EAPI void *eina_hash_modify(Eina_Hash  *hash,
  * This function modifies the data of @p key with @p data in @p
  * hash. If no entry is found, @p data is added to @p hash with the
  * key @p key. On success this function returns the old entry,
- * otherwise it returns @c NULL. To check for errors, use
- * eina_error_get().
+ * otherwise it returns @c NULL.
  */
 EAPI void *eina_hash_set(Eina_Hash  *hash,
                          const void *key,
@@ -722,9 +717,7 @@ EAPI int       eina_hash_population(const Eina_Hash *hash) EINA_ARG_NONNULL(1);
  * not forget to count '\\0' for string when setting the value of
  * @p key_length. @p key_hash is expected to always match
  * @p key. Otherwise, one cannot be sure to find it again with @ref
- * eina_hash_find_by_hash. Key strings are case sensitive. If an error
- * occurs, eina_error_get() should be used to determine if an
- * allocation error occurred during this function. This function
+ * eina_hash_find_by_hash. Key strings are case sensitive. This function
  * returns #EINA_FALSE if an error occurred, #EINA_TRUE otherwise.
  *
  * @see eina_hash_add()
@@ -758,9 +751,7 @@ EAPI Eina_Bool eina_hash_add_by_hash(Eina_Hash  *hash,
  * not forget to count '\\0' for string when setting the value of
  * @p key_length. @p key_hash is expected to always match
  * @p key. Otherwise, one cannot be sure to find it again with @ref
- * eina_hash_find_by_hash. Key strings are case sensitive. If an error
- * occurs, eina_error_get() should be used to determine if an
- * allocation error occurred during this function. This function
+ * eina_hash_find_by_hash. Key strings are case sensitive. This function
  * returns #EINA_FALSE if an error occurred, #EINA_TRUE otherwise.
  *
  * @see eina_hash_direct_add()
@@ -934,9 +925,8 @@ EAPI void *eina_hash_modify_by_hash(Eina_Hash  *hash,
  * valid iterator that will always return false on
  * eina_iterator_next(), thus keeping API sane.
  *
- * If the memory can not be allocated, NULL is returned
- * and #EINA_ERROR_OUT_OF_MEMORY is set. Otherwise, a valid iterator is
- * returned.
+ * If the memory can not be allocated, NULL is returned.
+ * Otherwise, a valid iterator is returned.
  *
  * @warning if the hash structure changes then the iterator becomes
  *    invalid! That is, if you add or remove items this iterator
@@ -955,9 +945,8 @@ EAPI Eina_Iterator *eina_hash_iterator_key_new(const Eina_Hash *hash) EINA_MALLO
  * valid iterator that will always return false on
  * eina_iterator_next(), thus keeping API sane.
  *
- * If the memory can not be allocated, @c NULL is returned
- * and #EINA_ERROR_OUT_OF_MEMORY is set. Otherwise, a valid iterator is
- * returned.
+ * If the memory can not be allocated, @c NULL is returned.
+ * Otherwise, a valid iterator is returned.
  *
  * @warning if the hash structure changes then the iterator becomes
  * invalid. That is, if you add or remove items this iterator behavior
@@ -976,9 +965,8 @@ EAPI Eina_Iterator *eina_hash_iterator_data_new(const Eina_Hash *hash) EINA_MALL
  * valid iterator that will always return false on
  * eina_iterator_next(), thus keeping API sane.
  *
- * If the memory can not be allocated, @c NULL is returned
- * and #EINA_ERROR_OUT_OF_MEMORY is set. Otherwise, a valid iterator is
- * returned.
+ * If the memory can not be allocated, @c NULL is returned.
+ * Otherwise, a valid iterator is returned.
  *
  * @note iterator data will provide values as Eina_Hash_Tuple that should not
  *   be modified!

@@ -224,8 +224,8 @@ struct _Eina_Inarray
  *
  * If the @a step is 0, then a safe default is chosen.
  *
- * On failure, @c NULL is returned and #EINA_ERROR_OUT_OF_MEMORY is
- * set. If @a member_size is zero, then @c NULL is returned.
+ * On failure, @c NULL is returned. If @a member_size is zero, then @c NULL
+ * is returned.
  *
  * @see eina_inarray_free()
  *
@@ -618,9 +618,8 @@ EAPI unsigned int eina_inarray_count(const Eina_Inarray *array) EINA_ARG_NONNULL
  * This function returns a newly allocated iterator associated to
  * @p array.
  *
- * If the memory can not be allocated, @c NULL is returned
- * and #EINA_ERROR_OUT_OF_MEMORY is set. Otherwise, a valid iterator is
- * returned.
+ * If the memory can not be allocated, @c NULL is returned.
+ * Otherwise, a valid iterator is returned.
  *
  * @warning if the array structure changes then the iterator becomes
  *          invalid! That is, if you add or remove members this
@@ -641,8 +640,7 @@ EAPI Eina_Iterator *eina_inarray_iterator_new(const Eina_Inarray *array) EINA_MA
  * Unlike eina_inarray_iterator_new(), this will walk the array backwards.
  *
  * If the memory can not be allocated, @c NULL is returned
- * and #EINA_ERROR_OUT_OF_MEMORY is set. Otherwise, a valid iterator is
- * returned.
+ * Otherwise, a valid iterator is returned.
  *
  * @warning if the array structure changes then the iterator becomes
  *          invalid! That is, if you add or remove nodes this iterator
@@ -660,9 +658,8 @@ EAPI Eina_Iterator *eina_inarray_iterator_reversed_new(const Eina_Inarray *array
  * This function returns a newly allocated accessor associated to
  * @p array.
  *
- * If the memory can not be allocated, @c NULL is returned
- * and #EINA_ERROR_OUT_OF_MEMORY is set. Otherwise, a valid accessor is
- * returned.
+ * If the memory can not be allocated, @c NULL is returned.
+ * Otherwise, a valid accessor is returned.
  *
  * @since 1.2
  */

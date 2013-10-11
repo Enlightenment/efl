@@ -64,8 +64,6 @@ EAPI extern const Eina_Value_Type *_EINA_VALUE_TYPE_BASICS_END;
     {                                                                   \
        if (type->method)                                                \
          type->method(type, ##__VA_ARGS__);                             \
-       else                                                             \
-         eina_error_set(no_method_err);                                 \
     }                                                                   \
   while (0)
 
@@ -74,7 +72,6 @@ EAPI extern const Eina_Value_Type *_EINA_VALUE_TYPE_BASICS_END;
     {                                                                   \
        if (type->method)                                                \
          return type->method(type, ##__VA_ARGS__);                      \
-       eina_error_set(no_method_err);                                   \
        return def_ret;                                                  \
     }                                                                   \
   while (0)
@@ -126,12 +123,11 @@ eina_value_setup(Eina_Value *value, const Eina_Value_Type *type)
 
    if (EINA_VALUE_TYPE_DEFAULT(type))
      {
-        eina_error_set(0);
         return EINA_TRUE;
      }
 
    EINA_VALUE_TYPE_DISPATCH_RETURN(type, setup,
-                                   EINA_ERROR_VALUE_FAILED, EINA_FALSE, mem);
+                                   0, EINA_FALSE, mem);
 }
 
 static inline void
@@ -157,11 +153,10 @@ eina_value_flush(Eina_Value *value)
           }
         else if (type->value_size > 8)
           eina_value_inner_free(type->value_size, mem);
-        eina_error_set(0);
         return;
      }
 
-   EINA_VALUE_TYPE_DISPATCH(type, flush, EINA_ERROR_VALUE_FAILED, mem);
+   EINA_VALUE_TYPE_DISPATCH(type, flush, 0, mem);
    if (type->value_size > 8)
      eina_value_inner_free(type->value_size, mem);
    value->type = NULL;
@@ -177,7 +172,6 @@ eina_value_compare(const Eina_Value *a, const Eina_Value *b)
    EINA_SAFETY_ON_NULL_RETURN_VAL(b, -1);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(a->type == b->type, -1);
 
-   eina_error_set(0);
    type = a->type;
    pa = eina_value_memory_get(a);
    pb = eina_value_memory_get(b);
@@ -306,7 +300,7 @@ eina_value_compare(const Eina_Value *a, const Eina_Value *b)
      }
 #endif
 
-   EINA_VALUE_TYPE_DISPATCH_RETURN(type, compare, EINA_ERROR_VALUE_FAILED,
+   EINA_VALUE_TYPE_DISPATCH_RETURN(type, compare, 0,
                                    EINA_FALSE, pa, pb);
 }
 
@@ -342,7 +336,6 @@ eina_value_vset(Eina_Value *value, va_list args)
 
    type = value->type;
    mem = eina_value_memory_get(value);
-   eina_error_set(0);
 #ifndef EINA_VALUE_NO_OPTIMIZE
    if (type == EINA_VALUE_TYPE_UCHAR)
      {
@@ -433,11 +426,7 @@ eina_value_vset(Eina_Value *value, va_list args)
         else
           {
              char *tmp = strdup(str);
-             if (!tmp)
-               {
-                  eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
-                  return EINA_FALSE;
-               }
+             if (!tmp) return EINA_FALSE;
              free(value->value.ptr);
              value->value.ptr = tmp;
           }
@@ -445,7 +434,7 @@ eina_value_vset(Eina_Value *value, va_list args)
      }
 #endif
 
-   EINA_VALUE_TYPE_DISPATCH_RETURN(value, vset, EINA_ERROR_VALUE_FAILED,
+   EINA_VALUE_TYPE_DISPATCH_RETURN(value, vset, 0,
                                    EINA_FALSE, mem, args);
 }
 
@@ -461,14 +450,13 @@ eina_value_vget(const Eina_Value *value, va_list args)
    type = value->type;
    mem = eina_value_memory_get(value);
    ptr = va_arg(args, void *);
-   eina_error_set(0);
    if (EINA_VALUE_TYPE_DEFAULT(type))
      {
         memcpy(ptr, mem, type->value_size);
         return EINA_TRUE;
      }
 
-   EINA_VALUE_TYPE_DISPATCH_RETURN(value, pget, EINA_ERROR_VALUE_FAILED,
+   EINA_VALUE_TYPE_DISPATCH_RETURN(value, pget, 0,
                                    EINA_FALSE, mem, ptr);
 }
 
@@ -483,7 +471,6 @@ eina_value_pset(Eina_Value *value, const void *ptr)
 
    type = value->type;
    mem = eina_value_memory_get(value);
-   eina_error_set(0);
 
    if (EINA_VALUE_TYPE_DEFAULT(type))
      {
@@ -506,11 +493,7 @@ eina_value_pset(Eina_Value *value, const void *ptr)
              else
                {
                   char *tmp = strdup(str);
-                  if (!tmp)
-                    {
-                       eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
-                       return EINA_FALSE;
-                    }
+                  if (!tmp) return EINA_FALSE;
                   free(value->value.ptr);
                   value->value.ptr = tmp;
                }
@@ -521,7 +504,7 @@ eina_value_pset(Eina_Value *value, const void *ptr)
         return EINA_TRUE;
      }
 
-   EINA_VALUE_TYPE_DISPATCH_RETURN(value, pset, EINA_ERROR_VALUE_FAILED,
+   EINA_VALUE_TYPE_DISPATCH_RETURN(value, pset, 0,
                                    EINA_FALSE, mem, ptr);
 }
 
@@ -536,14 +519,13 @@ eina_value_pget(const Eina_Value *value, void *ptr)
 
    type = value->type;
    mem = eina_value_memory_get(value);
-   eina_error_set(0);
    if (EINA_VALUE_TYPE_DEFAULT(type))
      {
         memcpy(ptr, mem, type->value_size);
         return EINA_TRUE;
      }
 
-   EINA_VALUE_TYPE_DISPATCH_RETURN(value, pget, EINA_ERROR_VALUE_FAILED,
+   EINA_VALUE_TYPE_DISPATCH_RETURN(value, pget, 0,
                                    EINA_FALSE, mem, ptr);
 }
 
@@ -1281,11 +1263,7 @@ eina_value_hash_vset(Eina_Value *value, const char *key, va_list args)
    if (!mem)
      {
         mem = malloc(desc->subtype->value_size);
-        if (!mem)
-          {
-             eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
-             return EINA_FALSE;
-          }
+        if (!mem) return EINA_FALSE;
         if (!eina_hash_add(desc->hash, key, mem))
           {
              free(mem);
@@ -1364,11 +1342,7 @@ eina_value_hash_pset(Eina_Value *value, const char *key, const void *ptr)
    if (!mem)
      {
         mem = malloc(desc->subtype->value_size);
-        if (!mem)
-          {
-             eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
-             return EINA_FALSE;
-          }
+        if (!mem) return EINA_FALSE;
         if (!eina_hash_add(desc->hash, key, mem))
           {
              free(mem);
@@ -1678,11 +1652,7 @@ static inline Eina_Bool
 eina_value_type_setup(const Eina_Value_Type *type, void *mem)
 {
    EINA_SAFETY_ON_FALSE_RETURN_VAL(eina_value_type_check(type), EINA_FALSE);
-   if (!type->setup)
-     {
-        eina_error_set(EINA_ERROR_VALUE_FAILED);
-        return EINA_FALSE;
-     }
+   if (!type->setup) return EINA_FALSE;
    return type->setup(type, mem);
 }
 
@@ -1690,11 +1660,7 @@ static inline Eina_Bool
 eina_value_type_flush(const Eina_Value_Type *type, void *mem)
 {
    EINA_SAFETY_ON_FALSE_RETURN_VAL(eina_value_type_check(type), EINA_FALSE);
-   if (!type->flush)
-     {
-        eina_error_set(EINA_ERROR_VALUE_FAILED);
-        return EINA_FALSE;
-     }
+   if (!type->flush) return EINA_FALSE;
    return type->flush(type, mem);
 }
 
@@ -1702,11 +1668,7 @@ static inline Eina_Bool
 eina_value_type_copy(const Eina_Value_Type *type, const void *src, void *dst)
 {
    EINA_SAFETY_ON_FALSE_RETURN_VAL(eina_value_type_check(type), EINA_FALSE);
-   if (!type->copy)
-     {
-        eina_error_set(EINA_ERROR_VALUE_FAILED);
-        return EINA_FALSE;
-     }
+   if (!type->copy) return EINA_FALSE;
    return type->copy(type, src, dst);
 }
 
@@ -1714,11 +1676,7 @@ static inline int
 eina_value_type_compare(const Eina_Value_Type *type, const void *a, const void *b)
 {
    EINA_SAFETY_ON_FALSE_RETURN_VAL(eina_value_type_check(type), EINA_FALSE);
-   if (!type->compare)
-     {
-        eina_error_set(EINA_ERROR_VALUE_FAILED);
-        return EINA_FALSE;
-     }
+   if (!type->compare) return EINA_FALSE;
    return type->compare(type, a, b);
 }
 
@@ -1726,11 +1684,7 @@ static inline Eina_Bool
 eina_value_type_convert_to(const Eina_Value_Type *type, const Eina_Value_Type *convert, const void *type_mem, void *convert_mem)
 {
    EINA_SAFETY_ON_FALSE_RETURN_VAL(eina_value_type_check(type), EINA_FALSE);
-   if (!type->convert_to)
-     {
-        eina_error_set(EINA_ERROR_VALUE_FAILED);
-        return EINA_FALSE;
-     }
+   if (!type->convert_to) return EINA_FALSE;
    return type->convert_to(type, convert, type_mem, convert_mem);
 }
 
@@ -1738,11 +1692,7 @@ static inline Eina_Bool
 eina_value_type_convert_from(const Eina_Value_Type *type, const Eina_Value_Type *convert, void *type_mem, const void *convert_mem)
 {
    EINA_SAFETY_ON_FALSE_RETURN_VAL(eina_value_type_check(type), EINA_FALSE);
-   if (!type->convert_from)
-     {
-        eina_error_set(EINA_ERROR_VALUE_FAILED);
-        return EINA_FALSE;
-     }
+   if (!type->convert_from) return EINA_FALSE;
    return type->convert_from(type, convert, type_mem, convert_mem);
 }
 
@@ -1750,11 +1700,7 @@ static inline Eina_Bool
 eina_value_type_vset(const Eina_Value_Type *type, void *mem, va_list args)
 {
    EINA_SAFETY_ON_FALSE_RETURN_VAL(eina_value_type_check(type), EINA_FALSE);
-   if (!type->vset)
-     {
-        eina_error_set(EINA_ERROR_VALUE_FAILED);
-        return EINA_FALSE;
-     }
+   if (!type->vset) return EINA_FALSE;
    return type->vset(type, mem, args);
 }
 
@@ -1762,11 +1708,7 @@ static inline Eina_Bool
 eina_value_type_pset(const Eina_Value_Type *type, void *mem, const void *ptr)
 {
    EINA_SAFETY_ON_FALSE_RETURN_VAL(eina_value_type_check(type), EINA_FALSE);
-   if (!type->pset)
-     {
-        eina_error_set(EINA_ERROR_VALUE_FAILED);
-        return EINA_FALSE;
-     }
+   if (!type->pset) return EINA_FALSE;
    return type->pset(type, mem, ptr);
 }
 
@@ -1774,11 +1716,7 @@ static inline Eina_Bool
 eina_value_type_pget(const Eina_Value_Type *type, const void *mem, void *ptr)
 {
    EINA_SAFETY_ON_FALSE_RETURN_VAL(eina_value_type_check(type), EINA_FALSE);
-   if (!type->pget)
-     {
-        eina_error_set(EINA_ERROR_VALUE_FAILED);
-        return EINA_FALSE;
-     }
+   if (!type->pget) return EINA_FALSE;
    return type->pget(type, mem, ptr);
 }
 

@@ -80,8 +80,6 @@ static const char EINA_ERROR_SAFETY_FAILED_STR[] = "Safety check failed.";
 Eina_Bool
 eina_safety_checks_init(void)
 {
-   EINA_ERROR_SAFETY_FAILED = eina_error_msg_static_register(
-         EINA_ERROR_SAFETY_FAILED_STR);
    return EINA_TRUE;
 }
 

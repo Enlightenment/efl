@@ -141,7 +141,6 @@ START_TEST(eina_counter_break)
                         "safety check failed: name == NULL");
       cnt = eina_counter_new(NULL);
       fail_if(cnt);
-      fail_if(eina_error_get() != EINA_ERROR_SAFETY_FAILED);
       fail_unless(ctx.did);
 
 #ifdef SHOW_LOG
@@ -150,7 +149,6 @@ START_TEST(eina_counter_break)
       TEST_MAGIC_SAFETY("eina_counter_free",
                         "safety check failed: counter == NULL");
       eina_counter_free(NULL);
-      fail_if(eina_error_get() != EINA_ERROR_SAFETY_FAILED);
       fail_unless(ctx.did);
 
 #ifdef SHOW_LOG
@@ -159,7 +157,6 @@ START_TEST(eina_counter_break)
       TEST_MAGIC_SAFETY("eina_counter_start",
                         "safety check failed: counter == NULL");
       eina_counter_start(NULL);
-      fail_if(eina_error_get() != EINA_ERROR_SAFETY_FAILED);
       fail_unless(ctx.did);
 
 #ifdef SHOW_LOG
@@ -168,7 +165,6 @@ START_TEST(eina_counter_break)
       TEST_MAGIC_SAFETY("eina_counter_stop",
                         "safety check failed: counter == NULL");
       eina_counter_stop(NULL, 0);
-      fail_if(eina_error_get() != EINA_ERROR_SAFETY_FAILED);
       fail_unless(ctx.did);
 
 
@@ -179,7 +175,6 @@ START_TEST(eina_counter_break)
                         "safety check failed: counter == NULL");
       dump = eina_counter_dump(NULL);
       fail_if(dump);
-      fail_if(eina_error_get() != EINA_ERROR_SAFETY_FAILED);
       fail_unless(ctx.did);
 
       eina_log_print_cb_set(eina_log_print_cb_stderr, NULL);

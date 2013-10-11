@@ -33,7 +33,6 @@
 #include "eina_config.h"
 #include "eina_private.h"
 #include "eina_rbtree.h"
-#include "eina_error.h"
 
 /* undefs EINA_ARG_NONULL() so NULL checks are not compiled out! */
 #include "eina_safety_checks.h"
@@ -219,7 +218,6 @@ eina_hash_add_alloc_by_hash(Eina_Hash *hash,
 {
    Eina_Hash_Element *new_hash_element = NULL;
    Eina_Hash_Head *hash_head;
-   Eina_Error error = 0;
    int original_key;
    int hash_num;
 
@@ -227,8 +225,6 @@ eina_hash_add_alloc_by_hash(Eina_Hash *hash,
    EINA_SAFETY_ON_NULL_RETURN_VAL(key, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(data, EINA_FALSE);
    EINA_MAGIC_CHECK_HASH(hash);
-
-   error = EINA_ERROR_OUT_OF_MEMORY;
 
    /* Apply eina mask to hash. */
    original_key = key_hash;
@@ -299,7 +295,6 @@ eina_hash_add_alloc_by_hash(Eina_Hash *hash,
    return EINA_TRUE;
 
 on_error:
-   eina_error_set(error);
    return EINA_FALSE;
 }
 
@@ -729,7 +724,6 @@ eina_hash_new(Eina_Key_Length key_length_cb,
    /* FIXME: Use mempool. */
    Eina_Hash *new;
 
-   eina_error_set(0);
    EINA_SAFETY_ON_NULL_RETURN_VAL(key_cmp_cb, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(key_hash_cb, NULL);
    EINA_SAFETY_ON_TRUE_RETURN_VAL(buckets_power_size <= 2, NULL);
@@ -754,7 +748,6 @@ eina_hash_new(Eina_Key_Length key_length_cb,
    return new;
 
 on_error:
-   eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
    return NULL;
 }
 
@@ -1234,13 +1227,8 @@ eina_hash_iterator_data_new(const Eina_Hash *hash)
    EINA_SAFETY_ON_NULL_RETURN_VAL(hash, NULL);
    EINA_MAGIC_CHECK_HASH(hash);
 
-   eina_error_set(0);
    it = calloc(1, sizeof (Eina_Iterator_Hash));
-   if (!it)
-     {
-        eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
-        return NULL;
-     }
+   if (!it) return NULL;
 
    it->hash = hash;
    it->get_content = FUNC_ITERATOR_GET_CONTENT(_eina_hash_iterator_data_get_content);
@@ -1265,13 +1253,8 @@ eina_hash_iterator_key_new(const Eina_Hash *hash)
    EINA_SAFETY_ON_NULL_RETURN_VAL(hash, NULL);
    EINA_MAGIC_CHECK_HASH(hash);
 
-   eina_error_set(0);
    it = calloc(1, sizeof (Eina_Iterator_Hash));
-   if (!it)
-     {
-        eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
-        return NULL;
-     }
+   if (!it) return NULL;
 
    it->hash = hash;
    it->get_content = FUNC_ITERATOR_GET_CONTENT(
@@ -1297,13 +1280,8 @@ eina_hash_iterator_tuple_new(const Eina_Hash *hash)
    EINA_SAFETY_ON_NULL_RETURN_VAL(hash, NULL);
    EINA_MAGIC_CHECK_HASH(hash);
 
-   eina_error_set(0);
    it = calloc(1, sizeof (Eina_Iterator_Hash));
-   if (!it)
-     {
-        eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
-        return NULL;
-     }
+   if (!it) return NULL;
 
    it->hash = hash;
    it->get_content = FUNC_ITERATOR_GET_CONTENT(

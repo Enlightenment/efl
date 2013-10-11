@@ -92,13 +92,6 @@ EAPI Eina_Error EINA_ERROR_CONVERT_P_NOT_FOUND = 0;
 EAPI Eina_Error EINA_ERROR_CONVERT_0X_NOT_FOUND = 0;
 EAPI Eina_Error EINA_ERROR_CONVERT_OUTRUN_STRING_LENGTH = 0;
 
-static const char EINA_ERROR_CONVERT_0X_NOT_FOUND_STR[] =
-   "Error during string conversion to float, First '0x' was not found.";
-static const char EINA_ERROR_CONVERT_P_NOT_FOUND_STR[] =
-   "Error during string conversion to float, First 'p' was not found.";
-static const char EINA_ERROR_CONVERT_OUTRUN_STRING_LENGTH_STR[] =
-   "Error outrun string limit during conversion string conversion to float.";
-
 /**
  * @endcond
  */
@@ -112,10 +105,6 @@ static const char EINA_ERROR_CONVERT_OUTRUN_STRING_LENGTH_STR[] =
  * This function sets up the convert module of Eina. It is called by
  * eina_init().
  *
- * This function sets up the error module of Eina and registers the
- * errors #EINA_ERROR_CONVERT_0X_NOT_FOUND, #EINA_ERROR_CONVERT_P_NOT_FOUND
- * and #EINA_ERROR_CONVERT_OUTRUN_STRING_LENGTH.
- *
  * @see eina_init()
  */
 Eina_Bool
@@ -128,13 +117,6 @@ eina_convert_init(void)
         EINA_LOG_ERR("Could not register log domain: eina_convert");
         return EINA_FALSE;
      }
-
-#define EEMR(n) n = eina_error_msg_static_register(n ## _STR)
-   EEMR(EINA_ERROR_CONVERT_0X_NOT_FOUND);
-   EEMR(EINA_ERROR_CONVERT_P_NOT_FOUND);
-   EEMR(EINA_ERROR_CONVERT_OUTRUN_STRING_LENGTH);
-#undef EEMR
-
    return EINA_TRUE;
 }
 
@@ -239,7 +221,6 @@ eina_convert_atod(const char *src, int length, long long *m, long *e)
 
    if (strncmp(str, "0x", 2))
      {
-        eina_error_set(EINA_ERROR_CONVERT_0X_NOT_FOUND);
         DBG("'0x' not found in '%s'", src);
         return EINA_FALSE;
      }
@@ -268,7 +249,6 @@ eina_convert_atod(const char *src, int length, long long *m, long *e)
    /* Compute the exponent. */
    if (*str != 'p')
      {
-        eina_error_set(EINA_ERROR_CONVERT_P_NOT_FOUND);
         DBG("'p' not found in '%s'", src);
         return EINA_FALSE;
      }
@@ -304,7 +284,6 @@ eina_convert_atod(const char *src, int length, long long *m, long *e)
    return EINA_TRUE;
 
 on_length_error:
-   eina_error_set(EINA_ERROR_CONVERT_OUTRUN_STRING_LENGTH);
    return EINA_FALSE;
 }
 

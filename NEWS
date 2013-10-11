@@ -180,6 +180,8 @@ Removed:
      - Remove support for DirectFB, XRender, WinCE, Glew, Direct3d, X11-16 and X11-8.
     * Ecore_DirectFB:
      - Removed
+    * Eina error status:
+     - eina error status from efl now don't also report error in addition to return.
 
 Improvements:
     * EFL:

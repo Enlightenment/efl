@@ -105,7 +105,6 @@ main(int argc, const char *argv[])
 
    // Modify or add an entry to the hash with eina_hash_set
    // Let's first add a new entry
-   eina_error_set(0);
    Phone_Entry *p1 = malloc(sizeof(*p1));
    p1->name = "Raul Seixas";
    p1->number = "+55 01 234-56789";
@@ -113,14 +112,8 @@ main(int argc, const char *argv[])
 			strdup("raulzito"));
    if (!nick)
      {
-	Eina_Error err = eina_error_get();
-	if (!err)
-	  {
-	     printf("No previous nick found for Raul Seixas. ");
-	     printf("Creating new entry.\n");
-	  }
-	else
-	  printf("Error when setting nick for Raul Seixas\n");
+        printf("No previous nick found for Raul Seixas. ");
+        printf("Creating new entry.\n");
      }
    else
      {
@@ -131,7 +124,6 @@ main(int argc, const char *argv[])
    printf("\n");
 
    // Now change the nick
-   eina_error_set(0);
    nick = eina_hash_set(phone_book, &p1,
 			strdup("raulzao"));
    if (nick)
@@ -142,14 +134,8 @@ main(int argc, const char *argv[])
      }
    else
      {
-	Eina_Error err = eina_error_get();
-	if (err)
-	  printf("Error when changing nick for Raul Seixas\n");
-	else
-	  {
-	     printf("No previous nick found for Raul Seixas. ");
-	     printf("Creating new entry.\n");
-	  }
+        printf("No previous nick found for Raul Seixas. ");
+        printf("Creating new entry.\n");
      }
 
    // There are many ways to iterate over our Phone book.

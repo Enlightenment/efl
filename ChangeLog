@@ -1,3 +1,10 @@
+2013-10-11  Carsten Haitzler (The Rasterman)
+
+        * deprecate/remove all the eina_error setting (and getting)
+        within efl no one uses it and it frankly it much more pain
+        than it's worth. the api's are still there, and efl api's still
+        fail as they did before.. they just don't ALSO set eina_error.
+        
 2013-10-11  Cedric Bail
 
 	* Eina: add Eina_Spinlock API,

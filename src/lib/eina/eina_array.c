@@ -28,7 +28,6 @@
 
 #include "eina_config.h"
 #include "eina_private.h"
-#include "eina_error.h"
 #include "eina_log.h"
 
 /* undefs EINA_ARG_NONULL() so NULL checks are not compiled out! */
@@ -185,13 +184,8 @@ eina_array_grow(Eina_Array *array)
    EINA_MAGIC_CHECK_ARRAY(array);
 
    total = array->total + array->step;
-   eina_error_set(0);
    tmp = realloc(array->data, sizeof (void *) * total);
-   if (EINA_UNLIKELY(!tmp))
-     {
-        eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
-        return 0;
-     }
+   if (EINA_UNLIKELY(!tmp)) return 0;
 
    array->total = total;
    array->data = tmp;
@@ -266,13 +260,8 @@ eina_array_new(unsigned int step)
 {
    Eina_Array *array;
 
-   eina_error_set(0);
    array = malloc(sizeof (Eina_Array));
-   if (!array)
-     {
-        eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
-        return NULL;
-     }
+   if (!array) return NULL;
 
    EINA_MAGIC_SET(array, EINA_MAGIC_ARRAY);
 
@@ -390,13 +379,8 @@ eina_array_remove(Eina_Array *array, Eina_Bool (*keep)(void *data,
         return EINA_TRUE;
      }
 
-   eina_error_set(0);
    tmp = malloc(sizeof (void *) * array->total);
-   if (!tmp)
-     {
-        eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
-        return EINA_FALSE;
-     }
+   if (!tmp) return EINA_FALSE;
 
    memcpy(tmp, array->data, limit * sizeof(void *));
    total = limit;
@@ -438,13 +422,8 @@ eina_array_iterator_new(const Eina_Array *array)
    EINA_SAFETY_ON_NULL_RETURN_VAL(array, NULL);
    EINA_MAGIC_CHECK_ARRAY(array);
 
-   eina_error_set(0);
    it = calloc(1, sizeof (Eina_Iterator_Array));
-   if (!it)
-     {
-        eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
-        return NULL;
-     }
+   if (!it) return NULL;
 
    EINA_MAGIC_SET(it,            EINA_MAGIC_ARRAY_ITERATOR);
    EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
@@ -468,13 +447,8 @@ eina_array_accessor_new(const Eina_Array *array)
    EINA_SAFETY_ON_NULL_RETURN_VAL(array, NULL);
    EINA_MAGIC_CHECK_ARRAY(array);
 
-   eina_error_set(0);
    ac = calloc(1, sizeof (Eina_Accessor_Array));
-   if (!ac)
-     {
-        eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
-        return NULL;
-     }
+   if (!ac) return NULL;
 
    EINA_MAGIC_SET(ac,            EINA_MAGIC_ARRAY_ACCESSOR);
    EINA_MAGIC_SET(&ac->accessor, EINA_MAGIC_ACCESSOR);

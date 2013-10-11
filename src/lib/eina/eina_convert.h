@@ -158,23 +158,8 @@
  * @{
  */
 
-/**
- * @var EINA_ERROR_CONVERT_P_NOT_FOUND
- * Error identifier corresponding to string not containing 'p'.
- */
-
 EAPI extern Eina_Error EINA_ERROR_CONVERT_P_NOT_FOUND;
-
-/**
- * @var EINA_ERROR_CONVERT_0X_NOT_FOUND
- * Error identifier corresponding to string not containing '0x'.
- */
 EAPI extern Eina_Error EINA_ERROR_CONVERT_0X_NOT_FOUND;
-
-/**
- * @var EINA_ERROR_CONVERT_OUTRUN_STRING_LENGTH
- * Error identifier corresponding to length of the string being too small.
- */
 EAPI extern Eina_Error EINA_ERROR_CONVERT_OUTRUN_STRING_LENGTH;
 
 /**
@@ -269,14 +254,7 @@ EAPI int       eina_convert_dtoa(double d, char *des) EINA_ARG_NONNULL(2);
  * The mantiss and exponent are stored in the buffers pointed
  * respectively by @p m and @p e.
  *
- * If the string is invalid, the error is set to:
- *
- * @li #EINA_ERROR_CONVERT_0X_NOT_FOUND if no 0x is found,
- * @li #EINA_ERROR_CONVERT_P_NOT_FOUND if no p is found,
- * @li #EINA_ERROR_CONVERT_OUTRUN_STRING_LENGTH if @p length is not
- * correct.
- *
- * In those cases, #EINA_FALSE is returned, otherwise #EINA_TRUE is
+ * If the string is invalid #EINA_FALSE is returned, otherwise #EINA_TRUE is
  * returned.
  */
 EAPI Eina_Bool eina_convert_atod(const char *src,
@@ -346,14 +324,7 @@ EAPI int       eina_convert_fptoa(Eina_F32p32 fp,
  * The mantiss and exponent are stored in the buffers pointed
  * respectively by @p m and @p e.
  *
- * If the string is invalid, the error is set to:
- *
- * @li #EINA_ERROR_CONVERT_0X_NOT_FOUND if no 0x is found,
- * @li #EINA_ERROR_CONVERT_P_NOT_FOUND if no p is found,
- * @li #EINA_ERROR_CONVERT_OUTRUN_STRING_LENGTH if @p length is not
- * correct.
- *
- * In those cases, or if @p fp is @c NULL, #EINA_FALSE is returned,
+ * If the string is invalid, #EINA_FALSE is returned,
  * otherwise @p fp is computed and #EINA_TRUE is returned.
  *
  * @note The code uses eina_convert_atod() and do the correct bit

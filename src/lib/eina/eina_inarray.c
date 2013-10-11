@@ -25,7 +25,6 @@
 
 #include "eina_config.h"
 #include "eina_private.h"
-#include "eina_error.h"
 #include "eina_log.h"
 
 /* undefs EINA_ARG_NONULL() so NULL checks are not compiled out! */
@@ -82,7 +81,6 @@ static int _eina_inarray_log_dom = -1;
             EINA_MAGIC_FAIL(d, EINA_MAGIC_INARRAY);     \
             return __VA_ARGS__;                         \
          }                                              \
-       eina_error_set(0);                               \
     }                                                   \
   while(0)
 
@@ -94,7 +92,6 @@ static int _eina_inarray_log_dom = -1;
             EINA_MAGIC_FAIL(d, EINA_MAGIC_INARRAY_ITERATOR);    \
             return __VA_ARGS__;                                 \
          }                                                      \
-       eina_error_set(0);                                       \
     }                                                           \
   while(0)
 
@@ -106,7 +103,6 @@ static int _eina_inarray_log_dom = -1;
             EINA_MAGIC_FAIL(d, EINA_MAGIC_INARRAY_ACCESSOR);    \
             return __VA_ARGS__;                                 \
          }                                                      \
-       eina_error_set(0);                                       \
     }                                                           \
   while(0)
 
@@ -137,11 +133,7 @@ _eina_inarray_resize(Eina_Inarray *array, unsigned int new_size)
      new_max = ((new_size / array->step) + 1) * array->step;
 
    tmp = realloc(array->members, new_max * array->member_size);
-   if ((!tmp) && (new_max > 0))
-     {
-        eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
-        return EINA_FALSE;
-     }
+   if ((!tmp) && (new_max > 0)) return EINA_FALSE;
 
    array->members = tmp;
    array->max = new_max;
@@ -342,12 +334,7 @@ eina_inarray_new(unsigned int member_size, unsigned int step)
    EINA_SAFETY_ON_TRUE_RETURN_VAL(member_size == 0, NULL);
 
    ret = malloc(sizeof(*ret));
-   if (!ret)
-     {
-        eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
-        return NULL;
-     }
-   eina_error_set(0);
+   if (!ret) return NULL;
    _eina_inarray_setup(ret, member_size, step);
    return ret;
 }
@@ -730,13 +717,8 @@ eina_inarray_iterator_new(const Eina_Inarray *array)
 
    EINA_MAGIC_CHECK_INARRAY(array, NULL);
 
-   eina_error_set(0);
    it = calloc(1, sizeof(Eina_Iterator_Inarray));
-   if (!it)
-     {
-        eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
-        return NULL;
-     }
+   if (!it) return NULL;
 
    EINA_MAGIC_SET(it,            EINA_MAGIC_INARRAY_ITERATOR);
    EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
@@ -759,13 +741,8 @@ eina_inarray_iterator_reversed_new(const Eina_Inarray *array)
 
    EINA_MAGIC_CHECK_INARRAY(array, NULL);
 
-   eina_error_set(0);
    it = calloc(1, sizeof(Eina_Iterator_Inarray));
-   if (!it)
-     {
-        eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
-        return NULL;
-     }
+   if (!it) return NULL;
 
    EINA_MAGIC_SET(it,            EINA_MAGIC_INARRAY_ITERATOR);
    EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
@@ -789,13 +766,8 @@ eina_inarray_accessor_new(const Eina_Inarray *array)
 
    EINA_MAGIC_CHECK_INARRAY(array, NULL);
 
-   eina_error_set(0);
    ac = calloc(1, sizeof(Eina_Accessor_Inarray));
-   if (!ac)
-     {
-        eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
-        return NULL;
-     }
+   if (!ac) return NULL;
 
    EINA_MAGIC_SET(ac,            EINA_MAGIC_INARRAY_ACCESSOR);
    EINA_MAGIC_SET(&ac->accessor, EINA_MAGIC_ACCESSOR);

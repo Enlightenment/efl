@@ -587,13 +587,7 @@ EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_BLOB;
  */
 EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_STRUCT;
 
-/**
- * @var EINA_ERROR_VALUE_FAILED
- * Error identifier corresponding to value check failure.
- *
- * @since 1.2
- */
-EAPI extern int EINA_ERROR_VALUE_FAILED;
+EAPI extern Eina_Error EINA_ERROR_VALUE_FAILED;
 
 /**
  * @defgroup Eina_Value_Value_Group Generic Value management
@@ -625,8 +619,7 @@ struct _Eina_Value
  * eg. #EINA_VALUE_TYPE_ARRAY uses eina_value_array_set(),
  * eina_value_array_get() and so on.
  *
- * On failure, @c NULL is returned and either #EINA_ERROR_OUT_OF_MEMORY
- * or #EINA_ERROR_VALUE_FAILED is set.
+ * On failure, @c NULL is returned.
  *
  * @note this calls creates from mempool and then uses
  *       eina_value_setup(). Consider using eina_value_flush() and
@@ -664,8 +657,7 @@ EAPI void eina_value_free(Eina_Value *value) EINA_ARG_NONNULL(1);
  * @note Existing contents are ignored! If the value was previously used, then
  *       use eina_value_flush() first.
  *
- * On failure, #EINA_FALSE is returned and #EINA_ERROR_OUT_OF_MEMORY
- * or #EINA_ERROR_VALUE_FAILED is set.
+ * On failure, #EINA_FALSE is returned.
  *
  * @see eina_value_flush()
  *
@@ -1103,8 +1095,7 @@ struct _Eina_Value_Array
  * Create a new generic value storage of type array. The members are
  * managed using the description specified by @a subtype.
  *
- * On failure, @c NULL is returned and #EINA_ERROR_OUT_OF_MEMORY
- * or #EINA_ERROR_VALUE_FAILED is set.
+ * On failure, @c NULL is returned.
  *
  * @note this creates from mempool and then uses
  *       eina_value_array_setup().  @see eina_value_free() @see
@@ -1132,8 +1123,7 @@ EAPI Eina_Value *eina_value_array_new(const Eina_Value_Type *subtype,
  * @note Existing contents are ignored! If the value was previously used, then
  *       use eina_value_flush() first.
  *
- * On failure, #EINA_FALSE is returned and #EINA_ERROR_OUT_OF_MEMORY
- * or #EINA_ERROR_VALUE_FAILED is set.
+ * On failure, #EINA_FALSE is returned.
  *
  * @see eina_value_flush()
  *
@@ -1753,8 +1743,7 @@ struct _Eina_Value_List
  * Create a new generic value storage of type list. The members are
  * managed using the description specified by @a subtype.
  *
- * On failure, @c NULL is returned and #EINA_ERROR_OUT_OF_MEMORY
- * or #EINA_ERROR_VALUE_FAILED is set.
+ * On failure, @c NULL is returned.
  *
  * @note this creates from mempool and then uses
  *       eina_value_list_setup().
@@ -1782,8 +1771,7 @@ EAPI Eina_Value *eina_value_list_new(const Eina_Value_Type *subtype) EINA_ARG_NO
  * @note Existing contents are ignored! If the value was previously used, then
  *       use eina_value_flush() first.
  *
- * On failure, #EINA_FALSE is returned and #EINA_ERROR_OUT_OF_MEMORY
- * or #EINA_ERROR_VALUE_FAILED is set.
+ * On failure, #EINA_FALSE is returned.
  *
  * @see eina_value_flush()
  *
@@ -2379,8 +2367,7 @@ struct _Eina_Value_Hash
  * Create a new generic value storage of type hash. The members are
  * managed using the description specified by @a subtype.
  *
- * On failure, @c NULL is returned and #EINA_ERROR_OUT_OF_MEMORY
- * or #EINA_ERROR_VALUE_FAILED is set.
+ * On failure, @c NULL is returned.
  *
  * @note this creates from mempool and then uses
  *       eina_value_hash_setup().
@@ -2410,8 +2397,7 @@ EAPI Eina_Value *eina_value_hash_new(const Eina_Value_Type *subtype, unsigned in
  * @note Existing contents are ignored! If the value was previously used, then
  *       use eina_value_flush() first.
  *
- * On failure, #EINA_FALSE is returned and #EINA_ERROR_OUT_OF_MEMORY
- * or #EINA_ERROR_VALUE_FAILED is set.
+ * On failure, #EINA_FALSE is returned.
  *
  * @see eina_value_flush()
  *
@@ -2942,8 +2928,7 @@ struct _Eina_Value_Struct
  * Create a new generic value storage of type struct. The members are
  * managed using the description specified by @a desc.
  *
- * On failure, @c NULL is returned and #EINA_ERROR_OUT_OF_MEMORY
- * or #EINA_ERROR_VALUE_FAILED is set.
+ * On failure, @c NULL is returned.
  *
  * @note this creates from mempool and then uses
  *       eina_value_struct_setup().
@@ -2971,8 +2956,7 @@ EAPI Eina_Value *eina_value_struct_new(const Eina_Value_Struct_Desc *desc) EINA_
  * @note Existing contents are ignored! If the value was previously used, then
  *       use eina_value_flush() first.
  *
- * On failure, #EINA_FALSE is returned and #EINA_ERROR_OUT_OF_MEMORY
- * or #EINA_ERROR_VALUE_FAILED is set.
+ * On failure, #EINA_FALSE is returned.
  *
  * @see eina_value_flush()
  *

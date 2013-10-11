@@ -639,9 +639,8 @@ EAPI unsigned int   eina_inlist_count(const Eina_Inlist *list) EINA_WARN_UNUSED_
  * will always return false on eina_iterator_next(), thus keeping API
  * sane.
  *
- * If the memory can not be allocated, @c NULL is returned
- * and #EINA_ERROR_OUT_OF_MEMORY is set. Otherwise, a valid iterator
- * is returned.
+ * If the memory can not be allocated, @c NULL is returned.
+ * Otherwise, a valid iterator is returned.
  *
  * @warning if the list structure changes then the iterator becomes
  *    invalid, and if you add or remove nodes iterator
@@ -658,8 +657,8 @@ EAPI Eina_Iterator *eina_inlist_iterator_new(const Eina_Inlist *in_list) EINA_MA
  * This function returns a newly allocated accessor associated to
  * @p in_list. If @p in_list is @c NULL or the count member of @p in_list is
  * less or equal than @c 0, this function returns @c NULL. If the memory can
- * not be allocated, @c NULL is returned and #EINA_ERROR_OUT_OF_MEMORY is
- * set. Otherwise, a valid accessor is returned.
+ * not be allocated, @c NULL is returned and Otherwise, a valid accessor is
+ * returned.
  */
 EAPI Eina_Accessor *eina_inlist_accessor_new(const Eina_Inlist *in_list) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
 
@@ -676,7 +675,7 @@ EAPI Eina_Accessor *eina_inlist_accessor_new(const Eina_Inlist *in_list) EINA_MA
  * sorted and the result will be sorted. If @p list is @c NULLL, item
  * is returned. On success, a new list pointer that should be
  * used in place of the one given to this function is
- * returned. Otherwise, the old pointer is returned. See eina_error_get().
+ * returned. Otherwise, the old pointer is returned.
  *
  * @note O(log2(n)) comparisons (calls to @p func) average/worst case
  * performance. As said in eina_list_search_sorted_near_list(),
@@ -738,7 +737,7 @@ EAPI void eina_inlist_sorted_state_free(Eina_Inlist_Sorted_State *state);
  * list with an updated state.. If @p list is @c NULLL, item
  * is returned. On success, a new list pointer that should be
  * used in place of the one given to this function is
- * returned. Otherwise, the old pointer is returned. See eina_error_get().
+ * returned. Otherwise, the old pointer is returned.
  *
  * @note O(log2(n)) comparisons (calls to @p func) average/worst case
  * performance. As said in eina_list_search_sorted_near_list(),

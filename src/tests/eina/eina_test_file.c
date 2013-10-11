@@ -94,7 +94,6 @@ START_TEST(eina_file_split_simple)
    TEST_MAGIC_SAFETY("eina_file_split", "safety check failed: path == NULL");
    ea = eina_file_split(NULL);
    fail_if(ea);
-   fail_if(eina_error_get() != EINA_ERROR_SAFETY_FAILED);
    fail_unless(ctx.did);
 
    eina_log_print_cb_set(eina_log_print_cb_stderr, NULL);

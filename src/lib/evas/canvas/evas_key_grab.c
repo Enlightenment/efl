@@ -40,34 +40,7 @@ evas_key_grab_new(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, const ch
           }
      }
    obj->grabs = eina_list_append(obj->grabs, g);
-   if (eina_error_get())
-     {
-        MERR_BAD();
-        evas_mem_free(sizeof(Eina_List));
-        obj->grabs = eina_list_append(obj->grabs, g);
-        if (eina_error_get())
-          {
-             MERR_FATAL();
-             free(g->keyname);
-             free(g);
-             return NULL;
-          }
-     }
    obj->layer->evas->grabs = eina_list_append(obj->layer->evas->grabs, g);
-   if (eina_error_get())
-     {
-        MERR_BAD();
-        evas_mem_free(sizeof(Eina_List));
-        obj->layer->evas->grabs = eina_list_append(obj->layer->evas->grabs, g);
-        if (eina_error_get())
-          {
-             MERR_FATAL();
-             obj->grabs = eina_list_remove(obj->grabs, g);
-             free(g->keyname);
-             free(g);
-             return NULL;
-          }
-     }
    return g;
 }
 

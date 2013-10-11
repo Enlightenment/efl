@@ -42,46 +42,6 @@
  * @{
  */
 
-/**
- * @var EINA_ERROR_THREAD_CREATION_FAILED
- * Generic error happened and thread couldn't be created.
- * @since 1.8
- */
-EAPI extern Eina_Error EINA_ERROR_THREAD_CREATION_FAILED;
-
-/**
- * @var EINA_ERROR_THREAD_CREATION_FAILED_RESOURCES
- * System lacked resources to create thread.
- * @since 1.8
- */
-EAPI extern Eina_Error EINA_ERROR_THREAD_CREATION_FAILED_RESOURCES;
-
-/**
- * @var EINA_ERROR_THREAD_CREATION_FAILED_PERMISSIONS
- * System lacked permissions to create thread.
- * @since 1.8
- */
-EAPI extern Eina_Error EINA_ERROR_THREAD_CREATION_FAILED_PERMISSIONS;
-
-/**
- * @var EINA_ERROR_THREAD_JOIN_DEADLOCK
- * The system has detected a deadlock situation where both threads
- * would wait each other. Or the thread wanted to wait for itself.
- * @since 1.8
- */
-EAPI extern Eina_Error EINA_ERROR_THREAD_JOIN_DEADLOCK;
-
-/**
- * @var EINA_ERROR_THREAD_JOIN_INVALID
- * One of the following happened:
- * @li thread is not a joinable.
- * @li thread does not exist.
- * @li another thread is already waiting for that thread.
- * @since 1.8
- */
-EAPI extern Eina_Error EINA_ERROR_THREAD_JOIN_INVALID;
-
-
 typedef unsigned long int Eina_Thread;
 
 typedef void *(*Eina_Thread_Cb)(void *data, Eina_Thread t);

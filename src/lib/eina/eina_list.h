@@ -361,11 +361,6 @@ struct _Eina_List_Accounting
  * extern void *my_data;
  *
  * list = eina_list_append(list, my_data);
- * if (eina_error_get())
- *   {
- *      fprintf(stderr, "ERROR: Memory is low. List allocation failed.\n");
- *      exit(-1);
- *   }
  * @endcode
  *
  * @warning @p list must be a pointer to the first element of the list(or NULL).
@@ -394,11 +389,6 @@ EAPI Eina_List            *eina_list_append(Eina_List *list, const void *data) E
  * extern void *my_data;
  *
  * list = eina_list_prepend(list, my_data);
- * if (eina_error_get())
- *   {
- *      fprintf(stderr, "ERROR: Memory is low. List allocation failed.\n");
- *      exit(-1);
- *   }
  * @endcode
  *
  * @warning @p list must be a pointer to the first element of the list.
@@ -431,17 +421,7 @@ EAPI Eina_List            *eina_list_prepend(Eina_List *list, const void *data) 
  * extern void *relative_member;
  *
  * list = eina_list_append(list, relative_member);
- * if (eina_error_get())
- *   {
- *      fprintf(stderr, "ERROR: Memory is low. List allocation failed.\n");
- *      exit(-1);
- *   }
  * list = eina_list_append_relative(list, my_data, relative_member);
- * if (eina_error_get())
- *   {
- *      fprintf(stderr, "ERROR: Memory is low. List allocation failed.\n");
- *      exit(-1);
- *   }
  * @endcode
  *
  * @warning @p list must be a pointer to the first element of the list.
@@ -496,17 +476,7 @@ EAPI Eina_List            *eina_list_append_relative_list(Eina_List *list, const
  * extern void *relative_member;
  *
  * list = eina_list_append(list, relative_member);
- * if (eina_error_get_error())
- *   {
- *      fprintf(stderr, "ERROR: Memory is low. List allocation failed.\n");
- *      exit(-1);
- *   }
  * list = eina_list_prepend_relative(list, my_data, relative_member);
- * if (eina_error_get())
- *   {
- *      fprintf(stderr, "ERROR: Memory is low. List allocation failed.\n");
- *      exit(-1);
- *   }
  * @endcode
  *
  * @warning @p list must be a pointer to the first element of the list.
@@ -548,7 +518,7 @@ EAPI Eina_List            *eina_list_prepend_relative_list(Eina_List *list, cons
  * sorted and the result will be sorted. If @p list is @c NULLL, a new
  * list is returned. On success, a new list pointer that should be
  * used in place of the one given to this function is
- * returned. Otherwise, the old pointer is returned. See eina_error_get().
+ * returned. Otherwise, the old pointer is returned.
  *
  * @note O(log2(n)) comparisons (calls to @p func) average/worst case
  * performance as it uses eina_list_search_sorted_near_list() and thus
@@ -1310,9 +1280,8 @@ static inline unsigned int eina_list_count(const Eina_List *list) EINA_PURE;
  * will always return false on eina_iterator_next(), thus keeping API
  * sane.
  *
- * If the memory can not be allocated, NULL is returned
- * and #EINA_ERROR_OUT_OF_MEMORY is set. Otherwise, a valid iterator
- * is returned.
+ * If the memory can not be allocated, NULL is returned.
+ * Otherwise, a valid iterator is returned.
  *
  * @warning @p list must be a pointer to the first element of the list.
  *
@@ -1337,9 +1306,8 @@ EAPI Eina_Iterator        *eina_list_iterator_new(const Eina_List *list) EINA_MA
  *
  * Unlike eina_list_iterator_new(), this will walk the list backwards.
  *
- * If the memory can not be allocated, NULL is returned
- * and #EINA_ERROR_OUT_OF_MEMORY is set. Otherwise, a valid iterator
- * is returned.
+ * If the memory can not be allocated, NULL is returned.
+ * Otherwise, a valid iterator is returned.
  *
  * @warning @p list must be a pointer to the first element of the list.
  *
@@ -1359,8 +1327,8 @@ EAPI Eina_Iterator        *eina_list_iterator_reversed_new(const Eina_List *list
  * This function returns a newly allocated accessor associated to
  * @p list. If @p list is @c NULL or the count member of @p list is
  * less or equal than 0, this function returns @c NULL. If the memory can
- * not be allocated, @c NULL is returned and #EINA_ERROR_OUT_OF_MEMORY is
- * set. Otherwise, a valid accessor is returned.
+ * not be allocated, @c NULL is returned Otherwise, a valid accessor is
+ * returned.
  *
  * @warning @p list must be a pointer to the first element of the list.
  */

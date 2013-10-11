@@ -71,7 +71,6 @@
 #include "eina_private.h"
 #include "eina_hash.h"
 #include "eina_rbtree.h"
-#include "eina_error.h"
 #include "eina_lock.h"
 
 /* undefs EINA_ARG_NONULL() so NULL checks are not compiled out! */
@@ -401,9 +400,6 @@ _eina_share_common_head_alloc(int slen)
    const size_t head_size = offsetof(Eina_Share_Common_Head, builtin_node.str);
 
    head = malloc(head_size + slen);
-   if (!head)
-      eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
-
    return head;
 }
 
@@ -546,9 +542,6 @@ _eina_share_common_node_alloc(unsigned int slen, unsigned int null_size)
    const size_t node_size = offsetof(Eina_Share_Common_Node, str);
 
    node = malloc(node_size + slen + null_size);
-   if (!node)
-      eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
-
    return node;
 }
 

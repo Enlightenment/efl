@@ -68,7 +68,6 @@
 
 #include "eina_config.h"
 #include "eina_private.h"
-#include "eina_error.h"
 #include "eina_log.h"
 #include "eina_mempool.h"
 
@@ -532,10 +531,8 @@ eina_list_append(Eina_List *list, const void *data)
 {
    Eina_List *l, *new_l;
 
-   eina_error_set(0);
    new_l = _eina_list_mempool_list_new(list);
-   if (!new_l)
-     return list;
+   if (!new_l) return list;
 
    new_l->next = NULL;
    new_l->data = (void *)data;
@@ -562,10 +559,8 @@ eina_list_prepend(Eina_List *list, const void *data)
 {
    Eina_List *new_l;
 
-   eina_error_set(0);
    new_l = _eina_list_mempool_list_new(list);
-   if (!new_l)
-     return list;
+   if (!new_l) return list;
 
    new_l->prev = NULL;
    new_l->next = list;
@@ -613,10 +608,8 @@ eina_list_append_relative_list(Eina_List *list,
    if ((!list) || (!relative))
      return eina_list_append(list, data);
 
-   eina_error_set(0);
    new_l = _eina_list_mempool_list_new(list);
-   if (!new_l)
-     return list;
+   if (!new_l) return list;
 
    EINA_MAGIC_CHECK_LIST(relative, NULL);
    new_l->next = relative->next;
@@ -665,10 +658,8 @@ eina_list_prepend_relative_list(Eina_List *list,
    if ((!list) || (!relative))
      return eina_list_prepend(list, data);
 
-   eina_error_set(0);
    new_l = _eina_list_mempool_list_new(list);
-   if (!new_l)
-     return list;
+   if (!new_l) return list;
 
    EINA_MAGIC_CHECK_LIST(relative, NULL);
 
@@ -1493,13 +1484,8 @@ eina_list_iterator_new(const Eina_List *list)
 {
    Eina_Iterator_List *it;
 
-   eina_error_set(0);
    it = calloc(1, sizeof (Eina_Iterator_List));
-   if (!it)
-     {
-        eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
-        return NULL;
-     }
+   if (!it) return NULL;
 
    EINA_MAGIC_SET(it,            EINA_MAGIC_LIST_ITERATOR);
    EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
@@ -1521,13 +1507,8 @@ eina_list_iterator_reversed_new(const Eina_List *list)
 {
    Eina_Iterator_List *it;
 
-   eina_error_set(0);
    it = calloc(1, sizeof (Eina_Iterator_List));
-   if (!it)
-     {
-        eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
-        return NULL;
-     }
+   if (!it) return NULL;
 
    EINA_MAGIC_SET(it,            EINA_MAGIC_LIST_ITERATOR);
    EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
@@ -1551,13 +1532,8 @@ eina_list_accessor_new(const Eina_List *list)
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(list, NULL);
 
-   eina_error_set(0);
    ac = calloc(1, sizeof (Eina_Accessor_List));
-   if (!ac)
-     {
-        eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
-        return NULL;
-     }
+   if (!ac) return NULL;
 
    EINA_MAGIC_SET(ac,            EINA_MAGIC_LIST_ACCESSOR);
    EINA_MAGIC_SET(&ac->accessor, EINA_MAGIC_ACCESSOR);

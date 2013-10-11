@@ -826,8 +826,6 @@ _eo_dbg_info_convert_to(const Eina_Value_Type *type EINA_UNUSED, const Eina_Valu
         free(inner_val);
         return ret;
      }
-
-   eina_error_set(EINA_ERROR_VALUE_FAILED);
    return EINA_FALSE;
 }
 

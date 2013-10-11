@@ -167,7 +167,6 @@ START_TEST(eina_inlist_simple)
 
       tmp2 = eina_inlist_remove(NULL, EINA_INLIST_GET(tmp));
       fail_if(tmp2 != NULL);
-      fail_if(eina_error_get() != EINA_ERROR_SAFETY_FAILED);
       fail_unless(ctx.did);
    }
 
@@ -177,7 +176,6 @@ START_TEST(eina_inlist_simple)
    TEST_MAGIC_SAFETY("eina_inlist_remove",
                      "safety check failed: item == NULL");
    lst = eina_inlist_remove(lst, NULL);
-   fail_if(eina_error_get() != EINA_ERROR_SAFETY_FAILED);
    fail_unless(ctx.did);
 
 #ifdef SHOW_LOG
@@ -186,7 +184,6 @@ START_TEST(eina_inlist_simple)
    TEST_MAGIC_SAFETY("eina_inlist_append",
                      "safety check failed: new_l == NULL");
    lst = eina_inlist_append(lst, NULL);
-   fail_if(eina_error_get() != EINA_ERROR_SAFETY_FAILED);
    fail_unless(ctx.did);
 
 #ifdef SHOW_LOG
@@ -195,7 +192,6 @@ START_TEST(eina_inlist_simple)
    TEST_MAGIC_SAFETY("eina_inlist_append_relative",
                      "safety check failed: new_l == NULL");
    lst = eina_inlist_append_relative(lst, NULL, NULL);
-   fail_if(eina_error_get() != EINA_ERROR_SAFETY_FAILED);
    fail_unless(ctx.did);
 
 #ifdef SHOW_LOG
@@ -204,7 +200,6 @@ START_TEST(eina_inlist_simple)
    TEST_MAGIC_SAFETY("eina_inlist_prepend",
                      "safety check failed: new_l == NULL");
    lst = eina_inlist_prepend(lst, NULL);
-   fail_if(eina_error_get() != EINA_ERROR_SAFETY_FAILED);
    fail_unless(ctx.did);
 
 #ifdef SHOW_LOG
@@ -213,7 +208,6 @@ START_TEST(eina_inlist_simple)
    TEST_MAGIC_SAFETY("eina_inlist_prepend_relative",
                      "safety check failed: new_l == NULL");
    lst = eina_inlist_prepend_relative(lst, NULL, NULL);
-   fail_if(eina_error_get() != EINA_ERROR_SAFETY_FAILED);
    fail_unless(ctx.did);
 
 #ifdef SHOW_LOG
@@ -222,7 +216,6 @@ START_TEST(eina_inlist_simple)
    TEST_MAGIC_SAFETY("eina_inlist_find",
                      "safety check failed: item == NULL");
    lst = eina_inlist_find(lst, NULL);
-   fail_if(eina_error_get() != EINA_ERROR_SAFETY_FAILED);
    fail_unless(ctx.did);
 
 #ifdef SHOW_LOG
@@ -231,7 +224,6 @@ START_TEST(eina_inlist_simple)
    TEST_MAGIC_SAFETY("eina_inlist_demote",
                      "safety check failed: list == NULL");
    lst = eina_inlist_demote(NULL, NULL);
-   fail_if(eina_error_get() != EINA_ERROR_SAFETY_FAILED);
    fail_unless(ctx.did);
 
 #ifdef SHOW_LOG
@@ -240,7 +232,6 @@ START_TEST(eina_inlist_simple)
    TEST_MAGIC_SAFETY("eina_inlist_demote",
                      "safety check failed: item == NULL");
    lst = eina_inlist_demote((void*)1L, NULL);
-   fail_if(eina_error_get() != EINA_ERROR_SAFETY_FAILED);
    fail_unless(ctx.did);
    lst = NULL;
 
@@ -250,7 +241,6 @@ START_TEST(eina_inlist_simple)
    TEST_MAGIC_SAFETY("eina_inlist_promote",
                      "safety check failed: list == NULL");
    lst = eina_inlist_promote(NULL, NULL);
-   fail_if(eina_error_get() != EINA_ERROR_SAFETY_FAILED);
    fail_unless(ctx.did);
 
 #ifdef SHOW_LOG
@@ -259,7 +249,6 @@ START_TEST(eina_inlist_simple)
    TEST_MAGIC_SAFETY("eina_inlist_promote",
                      "safety check failed: item == NULL");
    lst = eina_inlist_promote((void*)1L, NULL);
-   fail_if(eina_error_get() != EINA_ERROR_SAFETY_FAILED);
    fail_unless(ctx.did);
    lst = NULL;
 
@@ -269,7 +258,6 @@ START_TEST(eina_inlist_simple)
    TEST_MAGIC_SAFETY("eina_inlist_sorted_insert",
                      "safety check failed: item == NULL");
    lst = eina_inlist_sorted_insert(NULL, NULL, NULL);
-   fail_if(eina_error_get() != EINA_ERROR_SAFETY_FAILED);
    fail_unless(ctx.did);
 
 #ifdef SHOW_LOG
@@ -278,7 +266,6 @@ START_TEST(eina_inlist_simple)
    TEST_MAGIC_SAFETY("eina_inlist_sorted_insert",
                      "safety check failed: func == NULL");
    lst = eina_inlist_sorted_insert(NULL, (void*)1L, NULL);
-   fail_if(eina_error_get() != EINA_ERROR_SAFETY_FAILED);
    fail_unless(ctx.did);
    lst = NULL;
 

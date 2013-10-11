@@ -65,8 +65,6 @@ _tz_convert_to(const Eina_Value_Type *type, const Eina_Value_Type *convert, cons
 {
    struct timezone v = *(struct timezone*)type_mem;
 
-   eina_error_set(0);
-
    if (convert == EINA_VALUE_TYPE_UCHAR)
      {
         unsigned char other_mem = v.tz_minuteswest;
@@ -130,8 +128,6 @@ _tz_convert_to(const Eina_Value_Type *type, const Eina_Value_Type *convert, cons
         other_mem = buf; /* required due &buf == buf */
         return eina_value_type_pset(convert, convert_mem, &other_mem);
      }
-
-   eina_error_set(EINA_ERROR_VALUE_FAILED);
    return EINA_FALSE;
 }
 

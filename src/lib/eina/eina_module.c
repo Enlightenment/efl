@@ -45,7 +45,6 @@
 #include "eina_config.h"
 #include "eina_private.h"
 #include "eina_alloca.h"
-#include "eina_error.h"
 #include "eina_file.h"
 #include "eina_log.h"
 
@@ -188,11 +187,6 @@ static void _dir_arch_list_cb(const char *name, const char *path, void *data)
  * @cond LOCAL
  */
 
-static const char EINA_ERROR_WRONG_MODULE_STR[] =
-   "Wrong file format or no file module found";
-static const char EINA_ERROR_MODULE_INIT_FAILED_STR[] =
-   "Module initialisation function failed";
-
 EAPI Eina_Error EINA_ERROR_WRONG_MODULE = 0;
 EAPI Eina_Error EINA_ERROR_MODULE_INIT_FAILED = 0;
 
@@ -209,8 +203,7 @@ EAPI Eina_Error EINA_ERROR_MODULE_INIT_FAILED = 0;
  * This function sets up the module loader module of Eina. It is
  * called by eina_init().
  *
- * This function sets up the module module of Eina. It also registers
- * the errors #EINA_ERROR_WRONG_MODULE and #EINA_ERROR_MODULE_INIT_FAILED.
+ * This function sets up the module module of Eina.
  *
  * @see eina_init()
  */
@@ -224,12 +217,6 @@ eina_module_init(void)
         EINA_LOG_ERR("Could not register log domain: eina_module");
         return EINA_FALSE;
      }
-
-#define EEMR(n) n = eina_error_msg_static_register(n ## _STR)
-   EEMR(EINA_ERROR_WRONG_MODULE);
-   EEMR(EINA_ERROR_MODULE_INIT_FAILED);
-#undef EEMR
-
    return EINA_TRUE;
 }
 
@@ -321,7 +308,6 @@ EAPI Eina_Bool eina_module_load(Eina_Module *m)
      {
         WRN("could not dlopen(\"%s\", %s): %s", m->file, dlerror(), 
             (flag == RTLD_NOW) ? "RTLD_NOW" : "RTLD_LAZY");
-        eina_error_set(EINA_ERROR_WRONG_MODULE);
         return EINA_FALSE;
      }
 
@@ -334,7 +320,6 @@ EAPI Eina_Bool eina_module_load(Eina_Module *m)
 
    WRN("could not find eina's entry symbol %s inside module %s, or the init function failed",
        EINA_MODULE_SYMBOL_INIT, m->file);
-   eina_error_set(EINA_ERROR_MODULE_INIT_FAILED);
    dlclose(dl_handle);
    return EINA_FALSE;
 ok:
@@ -343,8 +328,6 @@ ok:
 loaded:
    m->ref++;
    DBG("ref %d", m->ref);
-
-   eina_error_set(0);
    return EINA_TRUE;
 #else
    (void) m;

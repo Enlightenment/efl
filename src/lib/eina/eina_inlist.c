@@ -27,7 +27,6 @@
 
 #include "eina_config.h"
 #include "eina_private.h"
-#include "eina_error.h"
 #include "eina_log.h"
 
 /* undefs EINA_ARG_NONULL() so NULL checks are not compiled out! */
@@ -342,7 +341,6 @@ eina_inlist_remove(Eina_Inlist *list, Eina_Inlist *item)
    EINA_SAFETY_ON_NULL_RETURN_VAL(item, list);
    if (EINA_UNLIKELY((item != list) && (!item->prev) && (!item->next)))
      {
-        eina_error_set(EINA_ERROR_SAFETY_FAILED);
         EINA_LOG_ERR("safety check failed: item %p does not appear to be part of an inlist!", item);
         return list;
      }
@@ -870,13 +868,8 @@ eina_inlist_iterator_new(const Eina_Inlist *list)
 {
    Eina_Iterator_Inlist *it;
 
-   eina_error_set(0);
    it = calloc(1, sizeof (Eina_Iterator_Inlist));
-   if (!it)
-     {
-        eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
-        return NULL;
-     }
+   if (!it) return NULL;
 
    it->head = list;
    it->current = list;
@@ -897,13 +890,8 @@ eina_inlist_accessor_new(const Eina_Inlist *list)
 {
    Eina_Accessor_Inlist *ac;
 
-   eina_error_set(0);
    ac = calloc(1, sizeof (Eina_Accessor_Inlist));
-   if (!ac)
-     {
-        eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
-        return NULL;
-     }
+   if (!ac) return NULL;
 
    ac->head = list;
    ac->current = list;

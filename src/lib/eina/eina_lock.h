@@ -129,7 +129,6 @@ static inline void eina_spinlock_free(Eina_Spinlock *spinlock);
   do {									\
     if (EINA_UNLIKELY(!eina_main_loop_is()))				\
       {									\
-	eina_error_set(EINA_ERROR_NOT_MAIN_LOOP);			\
 	EINA_LOG_ERR("You are calling %s from outside"			\
 		     "of the main loop threads in %s at line %i",	\
 		     __FUNCTION__,					\
@@ -142,7 +141,6 @@ static inline void eina_spinlock_free(Eina_Spinlock *spinlock);
   do {									\
     if (EINA_UNLIKELY(!eina_main_loop_is()))				\
       {									\
-	eina_error_set(EINA_ERROR_NOT_MAIN_LOOP);			\
 	EINA_LOG_ERR("You are calling %s from outside"			\
 		     "of the main loop threads in %s at line %i",	\
 		     __FUNCTION__,					\

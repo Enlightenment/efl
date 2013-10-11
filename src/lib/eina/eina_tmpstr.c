@@ -32,7 +32,6 @@
 
 #include "eina_config.h"
 #include "eina_private.h"
-#include "eina_error.h"
 #include "eina_log.h"
 #include "eina_lock.h"
 #include "eina_share_common.h"

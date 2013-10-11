@@ -69,16 +69,11 @@ _eina_rbtree_iterator_list_new(Eina_Iterator_Rbtree *it, const Eina_Rbtree *tree
 {
    Eina_Iterator_Rbtree_List *new;
 
-   eina_error_set(0);
    new = eina_trash_pop(&it->trash);
    if (!new)
      {
         new = malloc(sizeof (Eina_Iterator_Rbtree_List));
-        if (!new)
-          {
-             eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
-             return NULL;
-          }
+        if (!new) return NULL;
      }
 
    new->tree = (Eina_Rbtree *)tree;
@@ -195,13 +190,8 @@ _eina_rbtree_iterator_build(const Eina_Rbtree *root, unsigned char mask)
    Eina_Iterator_Rbtree_List *first;
    Eina_Iterator_Rbtree *it;
 
-   eina_error_set(0);
    it = calloc(1, sizeof (Eina_Iterator_Rbtree));
-   if (!it)
-     {
-        eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
-        return NULL;
-     }
+   if (!it) return NULL;
 
    eina_trash_init(&it->trash);
 

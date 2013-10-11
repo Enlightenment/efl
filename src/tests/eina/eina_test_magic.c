@@ -121,7 +121,6 @@ START_TEST(eina_magic_simple)
    TEST_MAGIC_SAFETY("eina_magic_string_set",
                      "safety check failed: magic_name == NULL");
    eina_magic_string_set(EINA_MAGIC_TEST2, NULL);
-   fail_if(eina_error_get() != EINA_ERROR_SAFETY_FAILED);
    fail_unless(ctx.did);
 
 #ifdef SHOW_LOG
@@ -131,7 +130,6 @@ START_TEST(eina_magic_simple)
                      "safety check failed: magic_name == NULL");
    eina_magic_string_set(EINA_MAGIC_TEST2, NULL);
    fail_unless(ctx.did);
-   fail_if(eina_error_get() != EINA_ERROR_SAFETY_FAILED);
 #endif
 
    eina_magic_string_set(EINA_MAGIC_TEST2, EINA_MAGIC_STRING);

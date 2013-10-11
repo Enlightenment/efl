@@ -129,8 +129,7 @@ typedef struct _Eina_Counter Eina_Counter;
  *
  * This function returns a new counter. It is characterized by @p
  * name. If @p name is @c NULL, the function returns @c NULL
- * immediately. If memory allocation fails, @c NULL is returned and the
- * error is set to #EINA_ERROR_OUT_OF_MEMORY.
+ * immediately. If memory allocation fails, @c NULL is returned.
  *
  * Whe the new counter is not needed anymore, use eina_counter_free() to
  * free the allocated memory.
@@ -160,7 +159,7 @@ EAPI void          eina_counter_free(Eina_Counter *counter) EINA_ARG_NONNULL(1);
  *
  * This function adds the clock associated to @p counter in a list. If
  * the memory needed by that clock can not be allocated, the function
- * returns and the error is set to #EINA_ERROR_OUT_OF_MEMORY.
+ * returns and nothing is done.
  *
  * To stop the timing, eina_counter_stop() must be called with the
  * same counter.

@@ -39,7 +39,6 @@
 
 #include "eina_config.h"
 #include "eina_private.h"
-#include "eina_error.h"
 #include "eina_log.h"
 #include "eina_magic.h"
 #include "eina_mempool.h"
@@ -943,11 +942,7 @@ eina_matrixsparse_new(unsigned long rows, unsigned long cols, void (*free_func)(
    EINA_SAFETY_ON_FALSE_RETURN_VAL(cols > 0, NULL);
 
    m = malloc(sizeof(Eina_Matrixsparse));
-   if (!m)
-     {
-        eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
-        return NULL;
-     }
+   if (!m) return NULL;
 
    EINA_MAGIC_SET(m, EINA_MAGIC_MATRIXSPARSE);
    
@@ -960,7 +955,6 @@ eina_matrixsparse_new(unsigned long rows, unsigned long cols, void (*free_func)(
    m->free.func = free_func;
    m->free.user_data = (void *)user_data;
 
-   eina_error_set(0);
    return m;
 }
 
@@ -1364,11 +1358,7 @@ eina_matrixsparse_iterator_new(const Eina_Matrixsparse *m)
    Eina_Matrixsparse_Iterator *it;
 
    it = calloc(1, sizeof(*it));
-   if (!it)
-     {
-        eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
-        return NULL;
-     }
+   if (!it) return NULL;
 
    EINA_MAGIC_SET(it,            EINA_MAGIC_MATRIXSPARSE_ITERATOR);
    EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
@@ -1391,11 +1381,7 @@ eina_matrixsparse_iterator_complete_new(const Eina_Matrixsparse *m)
    Eina_Matrixsparse_Iterator_Complete *it;
 
    it = calloc(1, sizeof(*it));
-   if (!it)
-     {
-        eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
-        return NULL;
-     }
+   if (!it) return NULL;
 
    EINA_MAGIC_SET(it,            EINA_MAGIC_MATRIXSPARSE_ITERATOR);
    EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);

@@ -50,7 +50,6 @@
  * // all these files will emit warning from EINA_ARG_NONNULL()
  * #include <Evas.h>  // third party headers
  * #include <Ecore.h>
- * #include <eina_error.h> // eina own header
  *
  * #include <eina_safety_checks.h>
  * // all these files below will NOT emit warning from EINA_ARG_NONNULL(),
@@ -77,9 +76,8 @@
  * options to @c configure script.
  *
  * Whenever these macros capture an error, EINA_LOG_ERR() will be
- * called and @c eina_error set to @c EINA_ERROR_SAFETY_FAILED and can
- * be checked with eina_error_get() after call.
- *
+ * called.
+ * 
  * @see EINA_SAFETY_ON_NULL_RETURN(), EINA_SAFETY_ON_NULL_RETURN_VAL()
  *      and other macros.
  *
@@ -89,10 +87,6 @@
 #include "eina_config.h"
 #include "eina_error.h"
 
-/**
- * @var EINA_ERROR_SAFETY_FAILED
- * Error identifier corresponding to safety check failure.
- */
 EAPI extern Eina_Error EINA_ERROR_SAFETY_FAILED;
 
 #ifdef EINA_SAFETY_CHECKS
@@ -104,7 +98,6 @@ EAPI extern Eina_Error EINA_ERROR_SAFETY_FAILED;
     {                                                                     \
        if (EINA_UNLIKELY((exp) == NULL))                                  \
          {                                                                \
-            eina_error_set(EINA_ERROR_SAFETY_FAILED);                     \
             EINA_LOG_ERR("%s", "safety check failed: " # exp " == NULL"); \
             return;                                                       \
          }                                                                \
@@ -116,7 +109,6 @@ EAPI extern Eina_Error EINA_ERROR_SAFETY_FAILED;
     {                                                                     \
        if (EINA_UNLIKELY((exp) == NULL))                                  \
          {                                                                \
-            eina_error_set(EINA_ERROR_SAFETY_FAILED);                     \
             EINA_LOG_ERR("%s", "safety check failed: " # exp " == NULL"); \
             return (val);                                                 \
          }                                                                \
@@ -128,7 +120,6 @@ EAPI extern Eina_Error EINA_ERROR_SAFETY_FAILED;
     {                                                                     \
        if (EINA_UNLIKELY((exp) == NULL))                                  \
          {                                                                \
-            eina_error_set(EINA_ERROR_SAFETY_FAILED);                     \
             EINA_LOG_ERR("%s", "safety check failed: " # exp " == NULL"); \
             goto label;                                                   \
          }                                                                \
@@ -140,7 +131,6 @@ EAPI extern Eina_Error EINA_ERROR_SAFETY_FAILED;
     {                                                                     \
        if (EINA_UNLIKELY(exp))                                            \
          {                                                                \
-            eina_error_set(EINA_ERROR_SAFETY_FAILED);                     \
             EINA_LOG_ERR("%s", "safety check failed: " # exp " is true"); \
             return;                                                       \
          }                                                                \
@@ -152,7 +142,6 @@ EAPI extern Eina_Error EINA_ERROR_SAFETY_FAILED;
     {                                                                     \
        if (EINA_UNLIKELY(exp))                                            \
          {                                                                \
-            eina_error_set(EINA_ERROR_SAFETY_FAILED);                     \
             EINA_LOG_ERR("%s", "safety check failed: " # exp " is true"); \
             return val;                                                   \
          }                                                                \
@@ -164,7 +153,6 @@ EAPI extern Eina_Error EINA_ERROR_SAFETY_FAILED;
     {                                                                     \
        if (EINA_UNLIKELY(exp))                                            \
          {                                                                \
-            eina_error_set(EINA_ERROR_SAFETY_FAILED);                     \
             EINA_LOG_ERR("%s", "safety check failed: " # exp " is true"); \
             goto label;                                                   \
          }                                                                \
@@ -176,7 +164,6 @@ EAPI extern Eina_Error EINA_ERROR_SAFETY_FAILED;
     {                                                                      \
        if (EINA_UNLIKELY(!(exp)))                                          \
          {                                                                 \
-            eina_error_set(EINA_ERROR_SAFETY_FAILED);                      \
             EINA_LOG_ERR("%s", "safety check failed: " # exp " is false"); \
             return;                                                        \
          }                                                                 \
@@ -188,7 +175,6 @@ EAPI extern Eina_Error EINA_ERROR_SAFETY_FAILED;
     {                                                                      \
        if (EINA_UNLIKELY(!(exp)))                                          \
          {                                                                 \
-            eina_error_set(EINA_ERROR_SAFETY_FAILED);                      \
             EINA_LOG_ERR("%s", "safety check failed: " # exp " is false"); \
             return val;                                                    \
          }                                                                 \
@@ -200,7 +186,6 @@ EAPI extern Eina_Error EINA_ERROR_SAFETY_FAILED;
     {                                                                      \
        if (EINA_UNLIKELY(!(exp)))                                          \
          {                                                                 \
-            eina_error_set(EINA_ERROR_SAFETY_FAILED);                      \
             EINA_LOG_ERR("%s", "safety check failed: " # exp " is false"); \
             goto label;                                                    \
          }                                                                 \

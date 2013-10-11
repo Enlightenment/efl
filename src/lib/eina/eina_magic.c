@@ -29,7 +29,6 @@
 
 #include "eina_config.h"
 #include "eina_private.h"
-#include "eina_error.h"
 #include "eina_log.h"
 
 /* undefs EINA_ARG_NONULL() so NULL checks are not compiled out! */
@@ -126,8 +125,6 @@ _eina_magic_strings_alloc(void)
 
 EAPI Eina_Error EINA_ERROR_MAGIC_FAILED = 0;
 
-static const char EINA_ERROR_MAGIC_FAILED_STR[] = "Magic check failed.";
-
 /**
  * @internal
  * @brief Initialize the magic string module.
@@ -149,9 +146,6 @@ eina_magic_string_init(void)
         EINA_LOG_ERR("Could not register log domain: eina_magic_string");
         return EINA_FALSE;
      }
-   EINA_ERROR_MAGIC_FAILED = eina_error_msg_static_register(
-         EINA_ERROR_MAGIC_FAILED_STR);
-
    return EINA_TRUE;
 }
 
@@ -272,7 +266,6 @@ eina_magic_fail(void *d,
                 const char *fnc,
                 int line)
 {
-   eina_error_set(EINA_ERROR_MAGIC_FAILED);
    if (!d)
       eina_log_print(EINA_LOG_DOMAIN_GLOBAL, EINA_LOG_LEVEL_ERR,
                      file, fnc, line,

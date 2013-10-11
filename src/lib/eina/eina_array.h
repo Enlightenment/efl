@@ -253,8 +253,7 @@ struct _Eina_Array
  * another element will increase the buffer by @p step elements again.
  *
  * This function return a valid array on success, or @c NULL if memory
- * allocation fails. In that case, the error is set
- * to #EINA_ERROR_OUT_OF_MEMORY.
+ * allocation fails.
  */
 EAPI Eina_Array *eina_array_new(unsigned int step) EINA_WARN_UNUSED_RESULT EINA_MALLOC EINA_WARN_UNUSED_RESULT;
 
@@ -325,7 +324,7 @@ EAPI void eina_array_flush(Eina_Array *array) EINA_ARG_NONNULL(1);
  * check of @p array. If it is @c NULL or invalid, the program may crash.
  *
  * If it wasn't able to remove items due to an allocation failure, it will
- * return #EINA_FALSE and the error is set to #EINA_ERROR_OUT_OF_MEMORY.
+ * return #EINA_FALSE.
  */
 EAPI Eina_Bool eina_array_remove(Eina_Array * array,
                                  Eina_Bool (*keep)(void *data, void *gdata),
@@ -363,8 +362,7 @@ static inline unsigned int eina_array_count(const Eina_Array *array) EINA_ARG_NO
  * This function returns a newly allocated iterator associated to
  * @p array. If @p array is @c NULL or the count member of @p array is
  * less or equal than 0, this function returns @c NULL. If the memory can
- * not be allocated, NULL is returned and #EINA_ERROR_OUT_OF_MEMORY is
- * set. Otherwise, a valid iterator is returned.
+ * not be allocated, NULL is returned. Otherwise, a valid iterator is returned.
  */
 EAPI Eina_Iterator        *eina_array_iterator_new(const Eina_Array *array) EINA_MALLOC EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
@@ -377,8 +375,8 @@ EAPI Eina_Iterator        *eina_array_iterator_new(const Eina_Array *array) EINA
  * This function returns a newly allocated accessor associated to
  * @p array. If @p array is @c NULL or the count member of @p array is
  * less or equal than 0, this function returns @c NULL. If the memory can
- * not be allocated, @c NULL is returned and #EINA_ERROR_OUT_OF_MEMORY is
- * set. Otherwise, a valid accessor is returned.
+ * not be allocated, @c NULL is returned Otherwise, a valid accessor is
+ * returned.
  */
 EAPI Eina_Accessor        *eina_array_accessor_new(const Eina_Array *array) EINA_MALLOC EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 /**

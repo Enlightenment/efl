@@ -28,7 +28,6 @@
 #include "eina_config.h"
 #include "eina_private.h"
 #include "eina_inlist.h"
-#include "eina_error.h"
 
 /* undefs EINA_ARG_NONULL() so NULL checks are not compiled out! */
 #include "eina_safety_checks.h"
@@ -70,9 +69,6 @@ struct _Eina_Clock
 };
 
 #ifdef _WIN32
-static const char EINA_ERROR_COUNTER_WINDOWS_STR[] =
-   "Change your OS, you moron !";
-static int EINA_ERROR_COUNTER_WINDOWS = 0;
 LARGE_INTEGER _eina_counter_frequency;
 #endif
 
@@ -134,8 +130,7 @@ _eina_counter_asiprintf(char *base, int *position, const char *format, ...)
  * eina_counter_init(). It is called by eina_init().
  *
  * This function sets up the error module of Eina and only on Windows,
- * it initializes the high precision timer. It also registers, only on
- * Windows, the error #EINA_ERROR_COUNTER_WINDOWS. It is also called
+ * it initializes the high precision timer. It is also called
  * by eina_init(). It returns 0 on failure, otherwise it returns the
  * number of times it has already been called.
  *
@@ -145,14 +140,7 @@ Eina_Bool
 eina_counter_init(void)
 {
 #ifdef _WIN32
-   EINA_ERROR_COUNTER_WINDOWS = eina_error_msg_static_register(
-         EINA_ERROR_COUNTER_WINDOWS_STR);
-   if (!QueryPerformanceFrequency(&_eina_counter_frequency))
-     {
-        eina_error_set(EINA_ERROR_COUNTER_WINDOWS);
-        return EINA_FALSE;
-     }
-
+   if (!QueryPerformanceFrequency(&_eina_counter_frequency)) return EINA_FALSE;
 #endif /* _WIN2 */
    return EINA_TRUE;
 }
@@ -187,14 +175,8 @@ eina_counter_new(const char *name)
    EINA_SAFETY_ON_NULL_RETURN_VAL(name, NULL);
 
    length = strlen(name) + 1;
-
-        eina_error_set(0);
    counter = calloc(1, sizeof (Eina_Counter) + length);
-   if (!counter)
-     {
-        eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
-        return NULL;
-     }
+   if (!counter) return NULL;
 
    counter->name = (char *)(counter + 1);
    memcpy((char *)counter->name, name, length);
@@ -225,16 +207,10 @@ eina_counter_start(Eina_Counter *counter)
    Eina_Nano_Time tp;
 
    EINA_SAFETY_ON_NULL_RETURN(counter);
-   if (_eina_time_get(&tp) != 0)
-      return;
+   if (_eina_time_get(&tp) != 0) return;
 
-   eina_error_set(0);
    clk = calloc(1, sizeof (Eina_Clock));
-   if (!clk)
-     {
-        eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
-        return;
-     }
+   if (!clk) return;
 
    counter->clocks = eina_inlist_prepend(counter->clocks, EINA_INLIST_GET(clk));
 

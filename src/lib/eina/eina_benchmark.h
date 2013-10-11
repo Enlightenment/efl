@@ -365,9 +365,8 @@ typedef void (*Eina_Benchmark_Specimens)(int request);
  * to name the gnuplot file that eina_benchmark_run() will create.
  *
  * This function return a valid benchmark on success, or @c NULL if
- * memory allocation fails. In that case, the error is set
- * to #EINA_ERROR_OUT_OF_MEMORY.
- *
+ * memory allocation fails.
+ * 
  * When the new module is not needed anymore, use
  * eina_benchmark_free() to free the allocated memory.
  */
@@ -403,10 +402,8 @@ EAPI void            eina_benchmark_free(Eina_Benchmark *bench);
  * increasing by @p count_step from @p count_start to @p count_end is passed to @p
  * bench_cb when eina_benchmark_run() is called.
  *
- * If @p bench is @c NULL, this function returns immediately. If the
- * allocation of the memory of the test to add fails, the error is set
- * to #EINA_ERROR_OUT_OF_MEMORY. This function returns #EINA_FALSE
- * on failure, #EINA_TRUE otherwise.
+ * If @p bench is @c NULL, this function returns immediately.
+ * This function returns #EINA_FALSE on failure, #EINA_TRUE otherwise.
  */
 EAPI Eina_Bool       eina_benchmark_register(Eina_Benchmark          *bench,
                                              const char              *name,

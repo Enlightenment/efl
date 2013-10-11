@@ -68,9 +68,6 @@ _new_va(const char *name,
    Eina_Mempool_Backend *be = NULL;
    Eina_Mempool *mp;
 
-   Eina_Error err = EINA_ERROR_NOT_MEMPOOL_MODULE;
-
-   eina_error_set(0);
    if (getenv("EINA_MEMPOOL_PASS"))
      {
         be = eina_hash_find(_backends, "pass_through");
@@ -79,10 +76,8 @@ _new_va(const char *name,
    else be = eina_hash_find(_backends, name);
    if ((!be) || (!be->init)) goto on_error;
 
-   err = EINA_ERROR_OUT_OF_MEMORY;
    mp = calloc(1, sizeof(Eina_Mempool));
-   if (!mp)
-      goto on_error;
+   if (!mp) goto on_error;
 
    /* Work around ABI incompability introduced in Eina 1.1 */
 #define SBP(Property) mp->backend.Property = be->Property;
@@ -104,11 +99,9 @@ _new_va(const char *name,
      }
 
    mp->backend_data = mp->backend.init(context, options, args);
-
    return mp;
 
 on_error:
-   eina_error_set(err);
    return NULL;
 }
 
@@ -143,9 +136,6 @@ void      pass_through_shutdown(void);
 
 EAPI Eina_Error EINA_ERROR_NOT_MEMPOOL_MODULE = 0;
 
-static const char EINA_ERROR_NOT_MEMPOOL_MODULE_STR[] =
-   "Not a memory pool module.";
-
 /**
  * @endcond
  */
@@ -179,8 +169,6 @@ eina_mempool_init(void)
         return 0;
      }
 
-   EINA_ERROR_NOT_MEMPOOL_MODULE = eina_error_msg_static_register(
-         EINA_ERROR_NOT_MEMPOOL_MODULE_STR);
    _backends = eina_hash_string_superfast_new(NULL);
 
    /* dynamic backends */

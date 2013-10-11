@@ -87,8 +87,7 @@ typedef struct _Eina_Matrixsparse_Cell      Eina_Matrixsparse_Cell;
  *        eina_matrixsparse_cell_idx_clear() and possible others.
  * @param user_data given to @a free_func as first parameter.
  *
- * @return Newly allocated matrix or @c NULL if allocation failed and eina_error
- *         is set.
+ * @return Newly allocated matrix or @c NULL if allocation failed.
  */
 EAPI Eina_Matrixsparse *eina_matrixsparse_new(unsigned long rows,
                                               unsigned long cols,

@@ -254,15 +254,7 @@ cserve2_client_accept(int fd)
    while (eina_hash_find(client_list, &client->id))
      client->id = _client_id++;
 
-   if (!eina_hash_add(client_list, &client->id, client))
-     {
-        Eina_Error err = eina_error_get();
-        ERR("Could not add client to the list: \"%s\"",
-            eina_error_msg_get(err));
-        free(client);
-        close(fd);
-        return;
-     }
+   eina_hash_add(client_list, &client->id, client);
 
    cserve2_fd_watch_add(fd, FD_READ | FD_ERROR, cserve2_message_handler,
                         client);

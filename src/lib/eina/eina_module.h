@@ -105,16 +105,7 @@ typedef void (*Eina_Module_Shutdown)(void);
  */
 #define EINA_MODULE_SHUTDOWN(f) EAPI Eina_Module_Shutdown __eina_module_shutdown = &f
 
-/**
- * @var EINA_ERROR_WRONG_MODULE
- * Error identifier corresponding to a wrong module.
- */
 extern EAPI Eina_Error EINA_ERROR_WRONG_MODULE;
-
-/**
- * @var EINA_ERROR_MODULE_INIT_FAILED
- * Error identifier corresponding to a failure during the initialisation of a module.
- */
 extern EAPI Eina_Error EINA_ERROR_MODULE_INIT_FAILED;
 
 /**
@@ -156,13 +147,12 @@ EAPI Eina_Bool
  *
  * This function load the shared file object passed in
  * eina_module_new(). If it is a internal Eina module (like the
- * mempools), it also initialize it. It the shared file object can not
- * be loaded, the error #EINA_ERROR_WRONG_MODULE is set and
- * and #EINA_FALSE is returned. If it is a internal Eina module and the
- * module can not be initialized, the error #EINA_ERROR_MODULE_INIT_FAILED
- * is set and #EINA_FALSE is returned. If the module has already been loaded,
- * it's reference counter is increased by one and #EINA_TRUE is returned.
- * If @p module is @c NULL, the function returns immediately #EINA_FALSE.
+ * mempools), it also initialize it. If the shared file object can not
+ * be loaded, #EINA_FALSE is returned. If it is an internal Eina module and the
+ * module can not be initialized, #EINA_FALSE is returned. If the module has
+ * already been loaded, it's reference counter is increased by one and
+ * #EINA_TRUE is returned. If @p module is @c NULL, the function returns
+ * immediately #EINA_FALSE.
  *
  * When the symbols of the shared file objects are not needed
  * anymore, call eina_module_unload() to unload the module.

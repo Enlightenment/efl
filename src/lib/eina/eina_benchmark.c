@@ -142,13 +142,8 @@ eina_benchmark_new(const char *name, const char *run)
 {
    Eina_Benchmark *new;
 
-        eina_error_set(0);
    new = calloc(1, sizeof (Eina_Benchmark));
-   if (!new)
-     {
-        eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
-        return NULL;
-     }
+   if (!new) return NULL;
 
    new->name = name;
    new->run = run;
@@ -203,13 +198,8 @@ eina_benchmark_register(Eina_Benchmark *bench,
    if (count_step == 0)
       return EINA_FALSE;
 
-        eina_error_set(0);
    run = calloc(1, sizeof (Eina_Run));
-   if (!run)
-     {
-        eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
-        return EINA_FALSE;
-     }
+   if (!run) return EINA_FALSE;
 
    run->cb = bench_cb;
    run->name = name;

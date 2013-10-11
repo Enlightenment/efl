@@ -23,7 +23,6 @@
 #include <stdlib.h>
 
 #include "eina_config.h"
-#include "eina_error.h"
 #include "eina_thread.h"
 #include "eina_sched.h"
 #ifdef _WIN32
@@ -33,18 +32,6 @@
 /* undefs EINA_ARG_NONULL() so NULL checks are not compiled out! */
 #include "eina_safety_checks.h"
 #include "eina_thread.h"
-
-EAPI Eina_Error EINA_ERROR_THREAD_CREATION_FAILED = 0;
-EAPI Eina_Error EINA_ERROR_THREAD_CREATION_FAILED_RESOURCES = 0;
-EAPI Eina_Error EINA_ERROR_THREAD_CREATION_FAILED_PERMISSIONS = 0;
-EAPI Eina_Error EINA_ERROR_THREAD_JOIN_DEADLOCK = 0;
-EAPI Eina_Error EINA_ERROR_THREAD_JOIN_INVALID = 0;
-
-static const char EINA_ERROR_THREAD_CREATION_FAILED_STR[] = "Generic error creating thread";
-static const char EINA_ERROR_THREAD_CREATION_FAILED_RESOURCES_STR[] = "No resources to create thread";
-static const char EINA_ERROR_THREAD_CREATION_FAILED_PERMISSIONS_STR[] = "No permissions to create thread";
-static const char EINA_ERROR_THREAD_JOIN_DEADLOCK_STR[] = "Deadlock detected";
-static const char EINA_ERROR_THREAD_JOIN_INVALID_STR[] = "Invalid thread to join";
 
 #ifdef _WIN32
 # define WIN32_LEAN_AND_MEAN
@@ -161,11 +148,7 @@ _eina_thread_join(Eina_Thread t)
    void *ret;
 
    tw = _eina_thread_win32_find(t);
-   if (!tw)
-     {
-        eina_error_set(EINA_ERROR_THREAD_JOIN_INVALID);
-        return NULL;
-     }
+   if (!tw) return NULL;
 
    WaitForSingleObject(tw->thread, INFINITE);
    CloseHandle(tw->thread);
@@ -193,13 +176,7 @@ _eina_thread_join(Eina_Thread t)
    void *ret = NULL;
    int err = pthread_join(t, &ret);
 
-   if (err == 0)
-     return ret;
-   else if (err == EDEADLK)
-     eina_error_set(EINA_ERROR_THREAD_JOIN_DEADLOCK);
-   else
-     eina_error_set(EINA_ERROR_THREAD_JOIN_INVALID);
-
+   if (err == 0) return ret;
    return NULL;
 }
 
@@ -228,14 +205,7 @@ _eina_thread_create(Eina_Thread *t, int affinity, void *(*func)(void *data), voi
    err = pthread_create(t, &attr, func, data);
    pthread_attr_destroy(&attr);
 
-   if (err == 0)
-     return EINA_TRUE;
-   else if (err == EAGAIN)
-     eina_error_set(EINA_ERROR_THREAD_CREATION_FAILED_RESOURCES);
-   else if (err == EPERM)
-     eina_error_set(EINA_ERROR_THREAD_CREATION_FAILED_PERMISSIONS);
-   else
-     eina_error_set(EINA_ERROR_THREAD_CREATION_FAILED);
+   if (err == 0) return EINA_TRUE;
 
    return EINA_FALSE;
 }
@@ -306,14 +276,8 @@ eina_thread_create(Eina_Thread *t,
    EINA_SAFETY_ON_NULL_RETURN_VAL(t, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(func, EINA_FALSE);
 
-   eina_error_set(0);
-
    c = malloc(sizeof (Eina_Thread_Call));
-   if (!c)
-     {
-        eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
-        return EINA_FALSE;
-     }
+   if (!c) return EINA_FALSE;
 
    c->func = func;
    c->data = data;
@@ -324,28 +288,18 @@ eina_thread_create(Eina_Thread *t,
      return EINA_TRUE;
 
    free(c);
-   if (eina_error_get() == 0)
-     eina_error_set(EINA_ERROR_THREAD_CREATION_FAILED);
-
    return EINA_FALSE;
 }
 
 EAPI void *
 eina_thread_join(Eina_Thread t)
 {
-   eina_error_set(0);
    return _eina_thread_join(t);
 }
 
 Eina_Bool
 eina_thread_init(void)
 {
-   EINA_ERROR_THREAD_CREATION_FAILED = eina_error_msg_static_register(EINA_ERROR_THREAD_CREATION_FAILED_STR);
-   EINA_ERROR_THREAD_CREATION_FAILED_RESOURCES = eina_error_msg_static_register(EINA_ERROR_THREAD_CREATION_FAILED_RESOURCES_STR);
-   EINA_ERROR_THREAD_CREATION_FAILED_PERMISSIONS = eina_error_msg_static_register(EINA_ERROR_THREAD_CREATION_FAILED_PERMISSIONS_STR);
-   EINA_ERROR_THREAD_JOIN_DEADLOCK = eina_error_msg_static_register(EINA_ERROR_THREAD_JOIN_DEADLOCK_STR);
-   EINA_ERROR_THREAD_JOIN_INVALID = eina_error_msg_static_register(EINA_ERROR_THREAD_JOIN_INVALID_STR);
-
    return EINA_TRUE;
 }
 

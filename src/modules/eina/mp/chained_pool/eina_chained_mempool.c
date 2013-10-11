@@ -33,7 +33,6 @@
 
 #include "eina_config.h"
 #include "eina_inlist.h"
-#include "eina_error.h"
 #include "eina_module.h"
 #include "eina_mempool.h"
 #include "eina_trash.h"
@@ -123,13 +122,8 @@ _eina_chained_mp_pool_new(Chained_Mempool *pool)
    Chained_Pool *p;
    unsigned char *ptr;
 
-   eina_error_set(0);
    p = malloc(pool->alloc_size);
-   if (!p)
-     {
-        eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
-        return NULL;
-     }
+   if (!p) return NULL;
 
 #ifdef EINA_DEBUG_MALLOC
    {

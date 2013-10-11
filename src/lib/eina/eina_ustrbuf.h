@@ -39,8 +39,7 @@ typedef struct _Eina_Strbuf Eina_UStrbuf;
  * @return Newly allocated string buffer instance.
  *
  * This function creates a new string buffer. On error, @c NULL is
- * returned and Eina error is set to #EINA_ERROR_OUT_OF_MEMORY. To
- * free the resources, use eina_ustrbuf_free().
+ * returned. To free the resources, use eina_ustrbuf_free().
  *
  * @see eina_ustrbuf_free()
  * @see eina_ustrbuf_append()
@@ -57,8 +56,7 @@ EAPI Eina_UStrbuf *eina_ustrbuf_new(void) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
  * @return Newly allocated string buffer instance.
  *
  * This function creates a new string buffer. On error, @c NULL is
- * returned and Eina error is set to #EINA_ERROR_OUT_OF_MEMORY. To
- * free the resources, use eina_strbuf_free().
+ * returned. To free the resources, use eina_strbuf_free().
  *
  * @see eina_ustrbuf_free()
  * @see eina_ustrbuf_append()
@@ -77,8 +75,7 @@ EAPI Eina_UStrbuf *eina_ustrbuf_manage_new(Eina_Unicode *str) EINA_MALLOC EINA_W
  * @return Newly allocated string buffer instance.
  *
  * This function creates a new string buffer. On error, @c NULL is
- * returned and Eina error is set to #EINA_ERROR_OUT_OF_MEMORY. To
- * free the resources, use eina_ustrbuf_free().
+ * returned. To free the resources, use eina_ustrbuf_free().
  *
  * @see eina_ustrbuf_manage_new()
  * @since 1.2.0

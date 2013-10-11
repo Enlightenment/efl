@@ -64,11 +64,6 @@ emotion_video_stream_new(Emotion_Gstreamer_Video *ev)
    if (!vstream) return NULL;
 
    ev->video_streams = eina_list_append(ev->video_streams, vstream);
-   if (eina_error_get())
-     {
-        free(vstream);
-        return NULL;
-     }
    return vstream;
 }
 
@@ -1893,11 +1888,6 @@ _emotion_gstreamer_video_pipeline_parse(Emotion_Gstreamer_Video *ev,
         astream = calloc(1, sizeof(Emotion_Audio_Stream));
         if (!astream) continue;
         ev->audio_streams = eina_list_append(ev->audio_streams, astream);
-        if (eina_error_get())
-          {
-             free(astream);
-             continue;
-          }
 
         astream->length_time = length_time;
         astream->channels = channels;

@@ -37,7 +37,6 @@
 #include "eina_config.h"
 #include "eina_private.h"
 #include "eina_alloca.h"
-#include "eina_error.h"
 #include "eina_log.h"
 #include "eina_lock.h"
 #include "eina_share_common.h"
@@ -212,30 +211,15 @@ _eina_stringshare_small_bucket_resize(Eina_Stringshare_Small_Bucket *bucket,
    void *tmp;
 
    tmp = realloc((void *)bucket->strings, size * sizeof(bucket->strings[0]));
-   if (!tmp)
-     {
-        eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
-        return 0;
-     }
-
+   if (!tmp) return 0;
    bucket->strings = tmp;
 
    tmp = realloc(bucket->lengths, size * sizeof(bucket->lengths[0]));
-   if (!tmp)
-     {
-        eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
-        return 0;
-     }
-
+   if (!tmp) return 0;
    bucket->lengths = tmp;
 
    tmp = realloc(bucket->references, size * sizeof(bucket->references[0]));
-   if (!tmp)
-     {
-        eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
-        return 0;
-     }
-
+   if (!tmp) return 0;
    bucket->references = tmp;
 
    bucket->size = size;
@@ -256,11 +240,7 @@ _eina_stringshare_small_bucket_insert_at(
    if (!bucket)
      {
         *p_bucket = bucket = calloc(1, sizeof(*bucket));
-        if (!bucket)
-          {
-             eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
-             return NULL;
-          }
+        if (!bucket) return NULL;
      }
 
    if (bucket->count + 1 >= bucket->size)
@@ -271,11 +251,7 @@ _eina_stringshare_small_bucket_insert_at(
      }
 
    snew = malloc(length + 1);
-   if (!snew)
-     {
-        eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
-        return NULL;
-     }
+   if (!snew) return NULL;
 
    memcpy(snew, str, length);
    snew[length] = '\0';
