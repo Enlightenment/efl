@@ -970,6 +970,36 @@ EAPI Eina_Bool eo_composite_is(const Eo *comp_obj);
  */
 
 /**
+ * @addtogroup Eo_Class_Class Eo's Class class.
+ * @{
+ */
+
+/**
+ * @def EO_CLASS_CLASS
+ * The class type for the Eo Class class.
+ */
+#define EO_CLASS_CLASS eo_class_class_get()
+/**
+ * @brief Use #EO_CLASS_CLASS
+ * @internal
+ * */
+EAPI const Eo_Class *eo_class_class_get(void);
+
+/**
+ * @var EO_CLASS_CLASS_BASE_ID
+ * #EO_CLASS_CLASS 's base id.
+ */
+extern EAPI Eo_Op EO_CLASS_CLASS_BASE_ID;
+
+enum {
+     EO_CLASS_CLASS_SUB_ID_LAST
+};
+
+/**
+ * @}
+ */
+
+/**
  * @addtogroup Eo_Class_Base Eo's Base class.
  * @{
  */
