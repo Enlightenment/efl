@@ -35,62 +35,6 @@ extern "C" {
 #endif
 
 /**
- * @typedef Eo
- * The basic Object type.
- */
-typedef struct _Eo_Opaque Eo;
-
-/**
- * @typedef Eo_Class
- * The basic class type - should be removed, just for compat.
- * @deprecated
- */
-typedef Eo Eo_Class;
-
-/**
- * @typedef Eo_Callback_Priority
- *
- * Callback priority value. Range is -32k - 32k. The lower the number, the
- * higher the priority.
- *
- * @see EO_CALLBACK_PRIORITY_AFTER
- * @see EO_CALLBACK_PRIORITY_BEFORE
- * @see EO_CALLBACK_PRIORITY_DEFAULT
- */
-typedef short Eo_Callback_Priority;
-
-#ifdef EFL_BETA_API_SUPPORT
-
-/**
- * @var _eo_class_creation_lock
- * This variable is used for locking purposes in the class_get function
- * defined in #EO_DEFINE_CLASS.
- * This is just to work around the fact that we need to init locks before
- * using them.
- * Don't touch it if you don't know what you are doing.
- * @internal
- */
-EAPI extern Eina_Spinlock _eo_class_creation_lock;
-
-/**
- * @internal
- * An enum representing the possible types of an Op.
- */
-enum _Eo_Op_Type
-{
-   EO_OP_TYPE_INVALID = -1, /**< Invalid op. */
-   EO_OP_TYPE_REGULAR = 0, /**< Regular op. */
-   EO_OP_TYPE_CLASS, /**< Class op - a class op. Like static in Java/C++. */
-};
-
-/**
- * @internal
- * @typedef Eo_Op_Type
- * A convenience typedef for #_Eo_Op_Type.
- */
-typedef enum _Eo_Op_Type Eo_Op_Type;
-
-/**
  * @page eo_main Eo
  *
  * @date 2012 (created)
@@ -149,6 +93,62 @@ typedef enum _Eo_Op_Type Eo_Op_Type;
  * @addtogroup Eo
  * @{
  */
+
+/**
+ * @typedef Eo
+ * The basic Object type.
+ */
+typedef struct _Eo_Opaque Eo;
+
+/**
+ * @typedef Eo_Class
+ * The basic class type - should be removed, just for compat.
+ * @deprecated
+ */
+typedef Eo Eo_Class;
+
+/**
+ * @typedef Eo_Callback_Priority
+ *
+ * Callback priority value. Range is -32k - 32k. The lower the number, the
+ * higher the priority.
+ *
+ * @see EO_CALLBACK_PRIORITY_AFTER
+ * @see EO_CALLBACK_PRIORITY_BEFORE
+ * @see EO_CALLBACK_PRIORITY_DEFAULT
+ */
+typedef short Eo_Callback_Priority;
+
+#ifdef EFL_BETA_API_SUPPORT
+
+/**
+ * @var _eo_class_creation_lock
+ * This variable is used for locking purposes in the class_get function
+ * defined in #EO_DEFINE_CLASS.
+ * This is just to work around the fact that we need to init locks before
+ * using them.
+ * Don't touch it if you don't know what you are doing.
+ * @internal
+ */
+EAPI extern Eina_Spinlock _eo_class_creation_lock;
+
+/**
+ * @internal
+ * An enum representing the possible types of an Op.
+ */
+enum _Eo_Op_Type
+{
+   EO_OP_TYPE_INVALID = -1, /**< Invalid op. */
+   EO_OP_TYPE_REGULAR = 0, /**< Regular op. */
+   EO_OP_TYPE_CLASS, /**< Class op - a class op. Like static in Java/C++. */
+};
+
+/**
+ * @internal
+ * @typedef Eo_Op_Type
+ * A convenience typedef for #_Eo_Op_Type.
+ */
+typedef enum _Eo_Op_Type Eo_Op_Type;
 
 /**
  * @addtogroup Eo_Debug_Information Eo's Debug information helper.
