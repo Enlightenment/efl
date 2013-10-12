@@ -184,7 +184,7 @@ _eo_children_iterator_free(Eo_Children_Iterator *it)
    klass = (_Eo_Class*) it->obj->klass;
    obj = it->obj;
 
-   eina_lock_take(&klass->iterators.trash_lock);
+   eina_spinlock_take(&klass->iterators.trash_lock);
    if (klass->iterators.trash_count < 8)
      {
         klass->iterators.trash_count++;
@@ -194,7 +194,7 @@ _eo_children_iterator_free(Eo_Children_Iterator *it)
      {
         free(it);
      }
-   eina_lock_release(&klass->iterators.trash_lock);
+   eina_spinlock_release(&klass->iterators.trash_lock);
 
    _eo_unref(obj);
 }
@@ -212,7 +212,7 @@ _children_iterator_new(Eo *obj_id, void *class_data)
 
    klass = (_Eo_Class *) obj->klass;
 
-   eina_lock_take(&klass->iterators.trash_lock);
+   eina_spinlock_take(&klass->iterators.trash_lock);
    it = eina_trash_pop(&klass->iterators.trash);
    if (it)
      {
@@ -223,7 +223,7 @@ _children_iterator_new(Eo *obj_id, void *class_data)
      {
         it = calloc(1, sizeof (Eo_Children_Iterator));
      }
-   eina_lock_release(&klass->iterators.trash_lock);
+   eina_spinlock_release(&klass->iterators.trash_lock);
    if (!it) return NULL;
 
    EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);

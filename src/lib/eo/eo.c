@@ -681,7 +681,7 @@ eo2_add_internal_start(const char *file, int line, const Eo_Class *klass_id, Eo 
         return NULL;
      }
 
-   eina_lock_take(&klass->objects.trash_lock);
+   eina_spinlock_take(&klass->objects.trash_lock);
    obj = eina_trash_pop(&klass->objects.trash);
    if (obj)
      {
@@ -692,7 +692,7 @@ eo2_add_internal_start(const char *file, int line, const Eo_Class *klass_id, Eo 
      {
         obj = calloc(1, klass->obj_size);
      }
-   eina_lock_release(&klass->objects.trash_lock);
+   eina_spinlock_release(&klass->objects.trash_lock);
 
    obj->refcount++;
    obj->klass = klass;
@@ -947,7 +947,7 @@ eo_class_get(const Eo *eo_id)
 {
    if (_eo_is_a_class(eo_id))
      {
-        EO_CLASS_POINTER_RETURN_VAL(obj_id, _klass, NULL);
+        EO_CLASS_POINTER_RETURN_VAL(eo_id, _klass, NULL);
         return eo_class_class_get();
      }
 
