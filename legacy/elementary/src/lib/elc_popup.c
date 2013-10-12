@@ -870,7 +870,7 @@ _item_new(Elm_Popup_Item *it)
      CRITICAL("Failed to set layout!");
    else
      {
-        elm_layout_signal_callback_add(VIEW(it), "elm,action,click", "",
+        elm_layout_signal_callback_add(VIEW(it), "elm,action,click", "*",
                                        _item_select_cb, it);
         evas_object_size_hint_align_set(VIEW(it), EVAS_HINT_FILL, EVAS_HINT_FILL);
         evas_object_show(VIEW(it));
