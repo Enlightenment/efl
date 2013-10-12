@@ -5,8 +5,8 @@ INCLUDE  = -I. -I../ -I../src/lib/eo/ -I../build
 CONFIG   = -DHAVE_CONFIG_H=1 -DEFL_EO_API_SUPPORT=1 -DEFL_BETA_API_SUPPORT=1
 EINA_CFLAGS = `pkg-config --cflags eina`
 EINA_LIBS   = `pkg-config --libs eina`
-EO_SRC  = ../src/lib/eo/eo_ptr_indirection.c ../src/lib/eo/eo.c ../src/lib/eo/eo_class_class.c ../src/lib/eo/eo_base_class.c ../src/lib/eo/eo2_base_class.c
-EO_OBJS  = eo_ptr_indirection.o eo.o eo_class_class.o eo_base_class.o eo2_base_class.o
+EO_SRC  = ../src/lib/eo/eo_ptr_indirection.c ../src/lib/eo/eo.c ../src/lib/eo/eo_class_class.c ../src/lib/eo/eo2_class_class.c  ../src/lib/eo/eo_base_class.c ../src/lib/eo/eo2_base_class.c
+EO_OBJS  = eo_ptr_indirection.o eo.o eo_class_class.o eo2_class_class.o eo_base_class.o eo2_base_class.o
 BENCH_SRC  = eo2_simple.c eo_simple.c eo2_inherit.c eo_inherit.c eo2_composite.c eo_composite.c eo2-bench.c
 BENCH_OBJS  = eo2_simple.o eo_simple.o eo2_inherit.o eo_inherit.o eo2_composite.o eo_composite.o eo2-bench.o
 
@@ -19,6 +19,9 @@ eo_ptr_indirection.o: ../src/lib/eo/eo_ptr_indirection.c ../src/lib/eo/Eo.h ../s
 	$(CC) $(CFLAGS) -fPIC -c $(INCLUDE) $(CONFIG) $(EINA_CFLAGS) $< -o $@
 
 eo_class_class.o: ../src/lib/eo/eo_class_class.c ../src/lib/eo/Eo.h ../src/lib/eo/eo_private.h
+	$(CC) $(CFLAGS) -fPIC -c $(INCLUDE) $(CONFIG) $(EINA_CFLAGS) $< -o $@
+
+eo2_class_class.o: ../src/lib/eo/eo2_class_class.c ../src/lib/eo/Eo.h ../src/lib/eo/eo_private.h
 	$(CC) $(CFLAGS) -fPIC -c $(INCLUDE) $(CONFIG) $(EINA_CFLAGS) $< -o $@
 
 eo_base_class.o: ../src/lib/eo/eo_base_class.c ../src/lib/eo/Eo.h ../src/lib/eo/eo_private.h
