@@ -949,7 +949,7 @@ _class_constructor(Eo_Class *klass EINA_UNUSED)
    event_freeze_count = 0;
 }
 
-Eo2_Op_Description op_descs [] = {
+static Eo2_Op_Description op_descs [] = {
        EO2_OP_FUNC(_constructor, eo2_constructor, "Constructor."),
        EO2_OP_FUNC(_destructor, eo2_destructor, "Destructor."),
        EO2_OP_FUNC(_parent_set, eo2_parent_set, "Set parent."),
