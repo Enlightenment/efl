@@ -460,7 +460,7 @@ group { name: "elm/popup/content/default";
    }
 }
 
-   group { name: "elm/popup/item/default";
+   group { name: "elm/popup/item/popup/default";
       script {
          public item_state = POPUP_ITEM_STATE_ENABLED;
       }
@@ -664,7 +664,7 @@ group { name: "elm/popup/content/default";
          program { name: "item_unclick";
             signal: "mouse,up,1";
             source: "over1";
-            action: SIGNAL_EMIT "elm,action,click" "";
+            action: SIGNAL_EMIT "elm,action,click" "elm";
          }
          program { name: "disable";
             signal: "elm,state,item,disabled";
@@ -785,7 +785,7 @@ group { name: "elm/popup/content/default";
       }
    }
 
-group { name: "elm/popup/buttons1/default";
+group { name: "elm/popup/buttons1/popup/default";
    data.item: "action_area_height" "140";
    parts{
       part{ name:"elm.swallow.content.button1";
@@ -799,7 +799,7 @@ group { name: "elm/popup/buttons1/default";
    }
 }
 
-group { name: "elm/popup/buttons2/default";
+group { name: "elm/popup/buttons2/popup/default";
    data.item: "action_area_height" "140";
    parts{
       part{ name:"elm.swallow.content.button1";
@@ -845,7 +845,7 @@ group { name: "elm/popup/buttons2/default";
    }
 }
 
-group { name: "elm/popup/buttons3/default";
+group { name: "elm/popup/buttons3/popup/default";
    data.item: "action_area_height" "140";
    parts{
       part{ name:"elm.swallow.content.button1";
