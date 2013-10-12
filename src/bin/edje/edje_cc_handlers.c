@@ -71,7 +71,7 @@
  *      <li>@ref sec_collections_group "Group"</li>
  *      <ul>
  *        <li>@ref sec_collections_group_script "Script"</li>
- *        <li>@ref sec_collections_group_limits "Limits"</li>
+ *        <li>@ref sec_collections_group_imits "Limits"</li>
  *        <li>@ref sec_toplevel_data "Data"</li>
  *        <li>@ref sec_collections_group_parts "Parts"</li>
  *        <ul>
@@ -5509,8 +5509,19 @@ st_collections_group_parts_part_description_limit(void)
 
         pc = eina_list_data_get(eina_list_last(edje_collections));
         count = pc->limits.parts_count++;
-        pc->limits.parts = realloc(pc->limits.parts,
-                                   pc->limits.parts_count * sizeof (Edje_Part_Limit));
+        // XXX: the data_queue_part_lookup uses a pointer TO the
+        // int id to fill in with the name in the parts[] array
+        // BUT... we REALLOC it.. which means this memory can
+        // be reloacted on realloc... so the lookups are invalid.
+        // 
+        // as a QUICK fix this will just over-allocate a big big blob
+        // so we can queue a lot of limit lookups
+// OLD code.... fix sometime
+//        pc->limits.parts = realloc(pc->limits.parts,
+//                                   pc->limits.parts_count * sizeof (Edje_Part_Limit));
+// temporary over-alloc of 128 slots to fix realloc + lookup bug
+        if (!pc->limits.parts)
+          pc->limits.parts = malloc(128 * sizeof (Edje_Part_Limit));
         data_queue_part_lookup(pc, current_part->name,
                                &(pc->limits.parts[count].part));
      }
