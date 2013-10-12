@@ -669,6 +669,8 @@ START_TEST(eo_magic_checks)
         fail_if(eo_do_super(obj, (const Eo_Class *) buf, EO_NOOP));
         fail_if(eo_class_get((Eo *) buf));
         fail_if(eo_class_name_get((Eo_Class*) buf));
+        fail_if(eo_class_get(obj) != SIMPLE_CLASS);
+        fail_if(eo_class_get(SIMPLE_CLASS) != EO_CLASS_CLASS);
         eo_class_funcs_set((Eo_Class *) buf, NULL);
         eo_do((Eo_Class *) buf, NULL);
         eo_do_super((Eo_Class *) buf, SIMPLE_CLASS, EO_NOOP);
