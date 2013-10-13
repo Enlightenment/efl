@@ -71,7 +71,7 @@
  *      <li>@ref sec_collections_group "Group"</li>
  *      <ul>
  *        <li>@ref sec_collections_group_script "Script"</li>
- *        <li>@ref sec_collections_group_imits "Limits"</li>
+ *        <li>@ref sec_collections_group_limits "Limits"</li>
  *        <li>@ref sec_toplevel_data "Data"</li>
  *        <li>@ref sec_collections_group_parts "Parts"</li>
  *        <ul>
