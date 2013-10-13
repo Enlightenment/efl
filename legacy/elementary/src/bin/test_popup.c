@@ -386,6 +386,65 @@ _popup_center_text_1button_hide_show_cb(void *data, Evas_Object *obj EINA_UNUSED
 }
 
 static void
+_toggle_button_cb(void *data,
+                  Evas_Object *obj,
+                  void *event_info EINA_UNUSED)
+{
+   Evas_Object *btn = data;
+   char buf[] = "button0";
+   int i;
+
+   i = (int)(uintptr_t)evas_object_data_get(btn, "index");
+
+   buf[6] = '0' + i + 1;
+   if (evas_object_visible_get(btn))
+     {
+        elm_object_part_content_unset(obj, buf);
+        evas_object_hide(btn);
+     }
+   else
+     elm_object_part_content_set(obj, buf, btn);
+}
+
+static void
+_popup_center_text_3button_add_remove_button_cb(void *data,
+                                                Evas_Object *obj EINA_UNUSED,
+                                                void *event_info EINA_UNUSED)
+{
+   Evas_Object *popup;
+   Evas_Object *btns[3];
+
+   char buf[256];
+   int i;
+
+   popup = elm_popup_add(data);
+
+   // popup title
+   elm_object_part_text_set(popup, "title,text",
+                            "Click the item to toggle button");
+
+   // popup buttons
+   for (i = 0; i < 3; ++i)
+     {
+        snprintf(buf, sizeof(buf), "Btn #%d", i + 1);
+        btns[i] = elm_button_add(popup);
+        evas_object_data_set(btns[i], "index", (void*)(uintptr_t)i);
+        elm_object_text_set(btns[i], buf);
+
+        elm_popup_item_append(popup, buf, NULL, _toggle_button_cb, btns[i]);
+
+        snprintf(buf, sizeof(buf), "button%d", i + 1);
+        elm_object_part_content_set(popup, buf, btns[i]);
+        evas_object_smart_callback_add(btns[i], "clicked",
+                                       _popup_close_cb, popup);
+     }
+
+   // popup show should be called after adding all the contents and the buttons
+   // of popup to set the focus into popup's contents correctly.
+   evas_object_show(popup);
+}
+
+static void
 _popup_transparent_cb(void *data, Evas_Object *obj EINA_UNUSED,
                       void *event_info EINA_UNUSED)
 {
@@ -480,6 +539,8 @@ test_popup(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
                         _popup_center_title_text_2button_restack_cb, win);
    elm_list_item_append(list, "popup-center-text + 1 button (check hide, show)", NULL, NULL,
                         _popup_center_text_1button_hide_show_cb, win);
+   elm_list_item_append(list, "popup-center-text + 3 button (check add, remove buttons)", NULL, NULL,
+                        _popup_center_text_3button_add_remove_button_cb, win);
    elm_list_item_append(list, "popup-transparent", NULL, NULL,
                         _popup_transparent_cb, win);
    elm_list_item_append(list, "popup-center-title + list content + 1 button",

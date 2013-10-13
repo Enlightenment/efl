@@ -221,7 +221,7 @@ _elm_popup_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
      (sd->content, EVAS_CALLBACK_DEL, _on_content_del);
    evas_object_event_callback_del(obj, EVAS_CALLBACK_SHOW, _on_show);
 
-   sd->button_count = 0;
+   sd->last_button_number = 0;
 
    for (i = 0; i < ELM_POPUP_ACTION_BUTTON_MAX; i++)
      {
@@ -336,7 +336,7 @@ _elm_popup_smart_theme(Eo *obj, void *_pd, va_list *list)
 
    if (sd->action_area)
      {
-        snprintf(buf, sizeof(buf), "buttons%i", sd->button_count);
+        snprintf(buf, sizeof(buf), "buttons%i", sd->last_button_number);
         if (!elm_layout_theme_set(sd->action_area, "popup", buf, style))
           CRITICAL("Failed to set layout!");
         for (i = 0; i < ELM_POPUP_ACTION_BUTTON_MAX; i++)
@@ -549,37 +549,36 @@ _button_remove(Evas_Object *obj,
    ELM_POPUP_DATA_GET(obj, sd);
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   if (!sd->button_count) return;
+   if (!sd->last_button_number) return;
 
    if (!sd->buttons[pos]) return;
 
-   if (delete) evas_object_del(sd->buttons[pos]->btn);
-
-   evas_object_event_callback_del
-     (sd->buttons[pos]->btn, EVAS_CALLBACK_DEL, _on_button_del);
-   ELM_SAFE_FREE(sd->buttons[pos], free);
-   sd->button_count -= 1;
-
-   if (!sd->no_shift)
+   if (delete)
      {
-        /* shift left the remaining buttons */
-        for (i = pos; i < ELM_POPUP_ACTION_BUTTON_MAX - 1; i++)
-          {
-             sd->buttons[i] = sd->buttons[i + 1];
+        evas_object_del(sd->buttons[pos]->btn);
+     }
+   else
+     {
+        evas_object_event_callback_del
+          (sd->buttons[pos]->btn, EVAS_CALLBACK_DEL, _on_button_del);
+        snprintf(buf, sizeof(buf), "elm.swallow.content.button%i", pos + 1);
+        elm_object_part_content_unset(sd->action_area, buf);
+     }
 
-             snprintf(buf, sizeof(buf), "elm.swallow.content.button%i", pos + 1);
-             elm_object_part_content_unset(sd->action_area, buf);
-             snprintf(buf, sizeof(buf), "elm.swallow.content.button%i", pos);
-             elm_object_part_content_set
-               (sd->action_area, buf, sd->buttons[i]->btn);
+   ELM_SAFE_FREE(sd->buttons[pos], free);
+
+   for (i = ELM_POPUP_ACTION_BUTTON_MAX - 1; i >= 0; i--)
+     {
+        if (sd->buttons[i])
+          {
+             sd->last_button_number = i + 1;
+             break;
           }
      }
 
-   if (!sd->button_count)
+   if (!sd->last_button_number)
      {
         _visuals_set(obj);
-        edje_object_part_unswallow
-          (obj, edje_object_part_swallow_get(obj, "elm.swallow.action_area"));
         evas_object_del(sd->action_area);
         sd->action_area = NULL;
         edje_object_message_signal_process(wd->resize_obj);
@@ -589,7 +588,7 @@ _button_remove(Evas_Object *obj,
         char style[1024];
         
         snprintf(style, sizeof(style), "popup/%s", elm_widget_style_get(obj));
-        snprintf(buf, sizeof(buf), "buttons%i", sd->button_count);
+        snprintf(buf, sizeof(buf), "buttons%i", sd->last_button_number);
         if (!elm_layout_theme_set(sd->action_area, "popup", buf, style))
           CRITICAL("Failed to set layout!");
      }
@@ -1107,7 +1106,6 @@ _action_button_set(Evas_Object *obj,
                    Evas_Object *btn,
                    unsigned int idx)
 {
-   Action_Area_Data *adata;
    char buf[128], style[1024];
 
    ELM_POPUP_DATA_GET(obj, sd);
@@ -1121,15 +1119,29 @@ _action_button_set(Evas_Object *obj,
         return;
      }
 
-   if (!sd->buttons[idx]) sd->button_count++;
-   else
+   if (sd->buttons[idx])
      {
-        sd->no_shift = EINA_TRUE;
         evas_object_del(sd->buttons[idx]->btn);
-        sd->no_shift = EINA_FALSE;
+        free(sd->buttons[idx]);
      }
 
-   snprintf(buf, sizeof(buf), "buttons%i", sd->button_count);
+   sd->buttons[idx] = ELM_NEW(Action_Area_Data);
+   sd->buttons[idx]->obj = obj;
+   sd->buttons[idx]->btn = btn;
+
+   evas_object_event_callback_add
+     (btn, EVAS_CALLBACK_DEL, _on_button_del, obj);
+
+   for (unsigned int i = ELM_POPUP_ACTION_BUTTON_MAX - 1; i >= idx; i--)
+     {
+        if (sd->buttons[i])
+          {
+             sd->last_button_number = i + 1;
+             break;
+          }
+     }
+
+   snprintf(buf, sizeof(buf), "buttons%i", sd->last_button_number);
    if (!sd->action_area)
      {
         sd->action_area = elm_layout_add(obj);
@@ -1138,28 +1150,17 @@ _action_button_set(Evas_Object *obj,
            _size_hints_changed_cb, obj);
         edje_object_part_swallow
           (wd->resize_obj, "elm.swallow.action_area", sd->action_area);
+
+        _visuals_set(obj);
      }
 
    snprintf(style, sizeof(style), "popup/%s", elm_widget_style_get(obj));
    if (!elm_layout_theme_set(sd->action_area, "popup", buf, style))
      CRITICAL("Failed to set layout!");
 
-   adata = ELM_NEW(Action_Area_Data);
-   adata->obj = obj;
-   adata->btn = btn;
-
-   elm_object_style_set(btn, style);
-   
-   evas_object_event_callback_add
-     (btn, EVAS_CALLBACK_DEL, _on_button_del, obj);
-
-   sd->buttons[idx] = adata;
-
    snprintf(buf, sizeof(buf), "elm.swallow.content.button%i", idx + 1);
    elm_object_part_content_set
      (sd->action_area, buf, sd->buttons[idx]->btn);
-
-   if (sd->button_count == 1) _visuals_set(obj);
 
    edje_object_message_signal_process(wd->resize_obj);
    if (sd->items) _scroller_size_calc(obj);

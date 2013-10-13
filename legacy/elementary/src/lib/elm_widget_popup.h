@@ -38,12 +38,11 @@ struct _Elm_Popup_Smart_Data
    const char           *title_text;
    Action_Area_Data     *buttons[ELM_POPUP_ACTION_BUTTON_MAX];
    Elm_Wrap_Type         content_text_wrap_type;
-   unsigned int          button_count;
+   unsigned int          last_button_number;
    Evas_Coord            max_sc_w;
    Evas_Coord            max_sc_h;
 
    Eina_Bool             visible : 1;
-   Eina_Bool             no_shift : 1;
    Eina_Bool             scr_size_recalc : 1;
 };
 

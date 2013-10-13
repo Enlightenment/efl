@@ -147,6 +147,7 @@ Improvements:
    content is static object and it won't be updated by content position.
    This actually reduces the mapbuf calculation time muchly in case of complex
    layout.
+   * Popup: Change the behavior of adding/removing buttons dynamically. User defined button's position is kept.
 
 Fixes:
    * Now elm_datetime_field_limit_set() can set year limits wihtout problems.
