@@ -89,7 +89,7 @@ _gl_item_getcb(Evas_Object *obj, Evas_Coord x, Evas_Coord y, int *xposret EINA_U
    gli = elm_genlist_at_xy_item_get(obj, x, y, yposret);
    if (gli)
      printf("over <%s>, gli=<%p> yposret %i\n",
-           elm_object_item_part_text_get(gli, "elm.text"), gli, *yposret);
+           (char *)elm_object_item_data_get(gli), gli, *yposret);
    else
      printf("over none, yposret %i\n", *yposret);
    return gli;
@@ -103,7 +103,7 @@ _grid_item_getcb(Evas_Object *obj, Evas_Coord x, Evas_Coord y, int *xposret, int
    item = elm_gengrid_at_xy_item_get(obj, x, y, xposret, yposret);
    if (item)
      printf("over <%s>, item=<%p> xposret %i yposret %i\n",
-           elm_object_item_part_text_get(item, "elm.text"), item, *xposret, *yposret);
+           (char *)elm_object_item_data_get(item), item, *xposret, *yposret);
    else
      printf("over none, xposret %i yposret %i\n", *xposret, *yposret);
    return item;
@@ -490,7 +490,7 @@ _gl_get_drag_data(Evas_Object *obj, Elm_Object_Item *it, Eina_List **items)
 
         EINA_LIST_FOREACH(*items, l, it)
           {
-             t = elm_object_item_part_text_get(it, "elm.text");
+             t = (char *)elm_object_item_data_get(it);
              if (t)
                len += strlen(t);
           }
@@ -500,7 +500,7 @@ _gl_get_drag_data(Evas_Object *obj, Elm_Object_Item *it, Eina_List **items)
 
         EINA_LIST_FOREACH(*items, l, it)
           {
-             t = elm_object_item_part_text_get(it, "elm.text");
+             t = (char *)elm_object_item_data_get(it);
              if (t)
                {
                   strcat((char *) drag_data, "#");
@@ -537,7 +537,7 @@ _grid_get_drag_data(Evas_Object *obj, Elm_Object_Item *it, Eina_List **items)
 
         EINA_LIST_FOREACH(*items, l, it)
           {
-             t = elm_object_item_part_text_get(it, "elm.text");
+             t = (char *)elm_object_item_data_get(it);
              if (t)
                len += strlen(t);
           }
@@ -547,7 +547,7 @@ _grid_get_drag_data(Evas_Object *obj, Elm_Object_Item *it, Eina_List **items)
 
         EINA_LIST_FOREACH(*items, l, it)
           {
-             t = elm_object_item_part_text_get(it, "elm.text");
+             t = (char *)elm_object_item_data_get(it);
              if (t)
                {
                   strcat((char *) drag_data, "#");
@@ -888,6 +888,147 @@ test_dnd_genlist_gengrid(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, v
         evas_object_show(grid);
      }
 
+   evas_object_resize(win, 680, 800);
+   evas_object_show(win);
+}
+
+static Eina_Bool _drop_box_button_new_cb(void *data, Evas_Object *obj, Elm_Selection_Data *ev)
+{
+   Evas_Object *win = data;
+   char *p = strchr(ev->data, '#');
+   while(p)
+     {
+        p++;
+        char *p2 = strchr(p, '#');
+        if (p2)
+          {
+             *p2 = '\0';
+             Evas_Object *ic = elm_icon_add(win);
+             elm_image_file_set(ic, p, NULL);
+             evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
+             Evas_Object *bt = elm_button_add(win);
+             elm_object_text_set(bt, "Dropped button");
+             elm_object_part_content_set(bt, "icon", ic);
+             elm_box_pack_end(obj, bt);
+             evas_object_show(bt);
+             evas_object_show(ic);
+             p = p2;
+          }
+        else p = NULL;
+     }
+   return EINA_TRUE;
+}
+
+static Eina_Bool _drop_but_icon_change_cb(void *data, Evas_Object *obj, Elm_Selection_Data *ev)
+{
+   Evas_Object *win = data;
+   Evas_Object *ic = elm_icon_add(win);
+   char *p = strchr(ev->data, '#');
+   p++;
+   char *p2 = strchr(p, '#');
+   *p2 = '\0';
+   elm_image_file_set(ic, p, NULL);
+   evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
+   evas_object_del(elm_object_part_content_get(obj, "icon"));
+   elm_object_part_content_set(obj, "icon", ic);
+   evas_object_show(ic);
+   return EINA_TRUE;
+}
+
+static Eina_Bool _drop_bg_change_cb(void *data EINA_UNUSED, Evas_Object *obj, Elm_Selection_Data *ev)
+{
+   char *p = strchr(ev->data, '#');
+   p++;
+   char *p2 = strchr(p, '#');
+   *p2 = '\0';
+   elm_bg_file_set(obj, p, NULL);
+   return EINA_TRUE;
+}
+
+void
+test_dnd_overlapping(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   char buf[PATH_MAX];
+   Evas_Object *win, *bxx, *bg;
+   int i;
+
+   win = elm_win_util_standard_add("dnd-overlapping", "DnD-Overlapping");
+   elm_win_autodel_set(win, EINA_TRUE);
+
+   bg = elm_bg_add(win);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_drop_target_add(bg, ELM_SEL_FORMAT_TARGETS, NULL, NULL, NULL, NULL, NULL, NULL, _drop_bg_change_cb, NULL);
+   elm_win_resize_object_add(win, bg);
+
+   /* And show the background. */
+   evas_object_show(bg);
+   bxx = elm_box_add(win);
+   elm_box_horizontal_set(bxx, EINA_TRUE);
+   evas_object_size_hint_weight_set(bxx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bxx);
+   evas_object_show(bxx);
+
+     {
+        Evas_Object *grid = elm_gengrid_add(bxx);
+        evas_object_smart_callback_add(win, "delete,request", _win_del, grid);
+        elm_gengrid_item_size_set(grid,
+              elm_config_scale_get() * 100,
+              elm_config_scale_get() * 100);
+        elm_gengrid_horizontal_set(grid, EINA_FALSE);
+        elm_gengrid_reorder_mode_set(grid, EINA_FALSE);
+        elm_gengrid_multi_select_set(grid, EINA_TRUE); /* We allow multi drag */
+        evas_object_size_hint_weight_set(grid, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        evas_object_size_hint_align_set(grid, EVAS_HINT_FILL, EVAS_HINT_FILL);
+
+        gic = elm_gengrid_item_class_new();
+        gic->item_style = "default";
+        gic->func.text_get = gl_text_get;
+        gic->func.content_get = gl_content_get;
+
+        elm_drag_item_container_add(grid, ANIM_TIME, DRAG_TIMEOUT,
+              _grid_item_getcb, _grid_data_getcb);
+        for (i = 0; i < 10; i++)
+          {
+             snprintf(buf, sizeof(buf), "%s/images/%s", elm_app_data_dir_get(), img[(i % 9)]);
+             const char *path = eina_stringshare_add(buf);
+             elm_gengrid_item_append(grid, gic, path, NULL, NULL);
+          }
+        elm_box_pack_end(bxx, grid);
+        evas_object_show(grid);
+     }
+
+     {
+        Evas_Object *ic, *bt;
+        Evas_Object *vert_box = elm_box_add(bxx);
+        evas_object_size_hint_weight_set(vert_box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        elm_box_pack_end(bxx, vert_box);
+        evas_object_show(vert_box);
+        elm_drop_target_add(vert_box, ELM_SEL_FORMAT_TARGETS, NULL, NULL, NULL, NULL, NULL, NULL, _drop_box_button_new_cb, win);
+
+        ic = elm_icon_add(win);
+        snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
+        elm_image_file_set(ic, buf, NULL);
+        evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
+        bt = elm_button_add(win);
+        elm_object_text_set(bt, "Drop into me to change my icon");
+        elm_drop_target_add(bt, ELM_SEL_FORMAT_TARGETS, NULL, NULL, NULL, NULL, NULL, NULL, _drop_but_icon_change_cb, win);
+        elm_object_part_content_set(bt, "icon", ic);
+        elm_box_pack_end(vert_box, bt);
+        evas_object_show(bt);
+        evas_object_show(ic);
+
+        ic = elm_icon_add(win);
+        snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
+        elm_image_file_set(ic, buf, NULL);
+        evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
+        bt = elm_button_add(win);
+        elm_object_text_set(bt, "No action on drop");
+        elm_object_part_content_set(bt, "icon", ic);
+        elm_object_disabled_set(bt, EINA_TRUE);
+        elm_box_pack_end(vert_box, bt);
+        evas_object_show(bt);
+        evas_object_show(ic);
+     }
    evas_object_resize(win, 680, 800);
    evas_object_show(win);
 }

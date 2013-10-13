@@ -228,6 +228,7 @@ void test_web_mobile(void *data, Evas_Object *obj, void *event_info);
 void test_dnd_genlist_default_anim(void *data, Evas_Object *obj, void *event_info);
 void test_dnd_genlist_user_anim(void *data, Evas_Object *obj, void *event_info);
 void test_dnd_genlist_gengrid(void *data, Evas_Object *obj, void *event_info);
+void test_dnd_overlapping(void *data, Evas_Object *obj, void *event_info);
 void test_task_switcher(void *data, Evas_Object *obj, void *event_info);
 void test_application_server_message(void *data, Evas_Object *obj, void *event_info);
 void test_application_server_phone(void *data, Evas_Object *obj, void *event_info);
@@ -791,6 +792,7 @@ add_tests:
    ADD_TEST(NULL, "Drag & Drop", "Genlist DnD Dflt Anim", test_dnd_genlist_default_anim);
    ADD_TEST(NULL, "Drag & Drop", "Genlist DnD User Anim", test_dnd_genlist_user_anim);
    ADD_TEST(NULL, "Drag & Drop", "Genlist-Gengrid DnD", test_dnd_genlist_gengrid);
+   ADD_TEST(NULL, "Drag & Drop", "Overlapping DnD", test_dnd_overlapping);
 
    //------------------------------//
    ADD_TEST(NULL, "Miscellaneous", "Copy And Paste", test_cnp);

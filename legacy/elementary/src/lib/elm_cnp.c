@@ -7,9 +7,9 @@
 # include <sys/mman.h>
 #endif
 
-//#define DEBUGON 1
+#define DEBUGON 1
 #ifdef DEBUGON
-# define cnp_debug(x...) fprintf(stderr, __FILE__": " x)
+# define cnp_debug(fmt, args...) fprintf(stderr, __FILE__":%s : " fmt , __FUNCTION__, ##args)
 #else
 # define cnp_debug(x...) do { } while (0)
 #endif
@@ -1136,21 +1136,52 @@ _x11_dropable_find(Ecore_X_Window win)
 static Dropable *
 _x11_dropable_geom_find(Ecore_X_Window win, Evas_Coord px, Evas_Coord py)
 {
-   Eina_List *l;
-   Dropable *dropable;
-   Evas_Coord x, y, w, h;
+   Eina_List *itr, *top_objects_list = NULL;
+   Evas *evas = NULL;
+   Evas_Object *top_obj;
+   Dropable *dropable = NULL;
 
    if (!drops) return NULL;
-   EINA_LIST_FOREACH(drops, l, dropable)
+   /* Find the Evas connected to the window */
+   EINA_LIST_FOREACH(drops, itr, dropable)
      {
         if (_x11_elm_widget_xwin_get(dropable->obj) == win)
           {
-             evas_object_geometry_get(dropable->obj, &x, &y, &w, &h);
-             if ((px >= x) && (py >= y) && (px < (x + w)) && (py < (y + h)))
-               return dropable;
+             evas = evas_object_evas_get(dropable->obj);
+             break;
           }
      }
-   return NULL;
+   if (!evas) return NULL;
+
+   /* We retrieve the (non-smart) objects pointed by (px, py) */
+   top_objects_list = evas_tree_objects_at_xy_get(evas, NULL, px, py);
+   /* We walk on this list from the last because if the list contains more than one
+    * element, all but the last will repeat events. The last one can repeat events
+    * or not. Anyway, this last one is the first that has to be taken into account
+    * for the determination of the drop target.
+    */
+   EINA_LIST_REVERSE_FOREACH(top_objects_list, itr, top_obj)
+     {
+        Evas_Object *object = top_obj;
+        /* We search for the dropable data into the object. If not found, we search into its parent.
+         * For example, if a button is a drop target, the first object will be an (internal) image.
+         * The drop target is attached to the button, i.e to image's parent. That's why we need to
+         * walk on the parents until NULL.
+         * If we find this dropable data, we found our drop target.
+         */
+        while (object)
+          {
+             eo_do(object, eo_base_data_get("__elm_dropable", (void **)&dropable));
+             if (dropable)
+                goto end;
+             else
+                object = evas_object_smart_parent_get(object);
+          }
+     }
+end:
+   eina_list_free(top_objects_list);
+   if (dropable) cnp_debug("Drop target %p of type %s found\n", dropable->obj, eo_class_name_get(eo_class_get(dropable->obj)));
+   return dropable;
 }
 
 static void
@@ -1352,7 +1383,7 @@ _x11_dnd_position(void *data __UNUSED__, int etype __UNUSED__, void *ev)
         else
           {
              ecore_x_dnd_send_status(EINA_FALSE, EINA_FALSE, rect, pos->action);
-             cnp_debug("dnd position not in obj\n");
+             cnp_debug("dnd position (%d, %d) not in obj\n", x, y);
              _x11_dnd_dropable_handle(dropable_old, 0, 0, EINA_FALSE,
                                       act);
              // CCCCCCC: call dnd exit on last obj
@@ -1459,7 +1490,7 @@ found:
                   snprintf(entrytag, len + 1, tagstring, savedtypes.imgfile);
                   ddata.data = entrytag;
                   cnp_debug("Insert %s\n", (char *)ddata.data);
-                  dropable->dropcb(dropable->cbdata, dropable->obj, &ddata);
+                  if (dropable->dropcb) dropable->dropcb(dropable->cbdata, dropable->obj, &ddata);
                   ecore_x_dnd_send_finished();
                   if (savedtypes.imgfile) free(savedtypes.imgfile);
                   savedtypes.imgfile = NULL;
@@ -1810,6 +1841,7 @@ _x11_elm_drop_target_add(Evas_Object *obj, Elm_Sel_Format format,
    /* Create new drop */
    drop = calloc(1, sizeof(Dropable));
    if (!drop) return EINA_FALSE;
+
    /* FIXME: Check for eina's deranged error method */
    drops = eina_list_append(drops, drop);
 
@@ -1829,6 +1861,7 @@ _x11_elm_drop_target_add(Evas_Object *obj, Elm_Sel_Format format,
    drop->types = format;
    drop->obj = obj;
 
+   eo_do(obj, eo_base_data_set("__elm_dropable", drop, NULL));
    evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL,
                                   /* I love C and varargs */
                                   (Evas_Object_Event_Cb)elm_drop_target_del,
@@ -1856,28 +1889,25 @@ _x11_elm_drop_target_add(Evas_Object *obj, Elm_Sel_Format format,
 static Eina_Bool
 _x11_elm_drop_target_del(Evas_Object *obj)
 {
-   Dropable *drop, *del, *dropable;
-   Eina_List *item, *l;
+   Dropable *dropable;
+   Eina_List *l;
    Ecore_X_Window xwin;
    Eina_Bool have_drops = EINA_FALSE;
 
    _x11_elm_cnp_init();
 
-   del = NULL;
-   EINA_LIST_FOREACH(drops, item, drop)
+   eo_do(obj, eo_base_data_get("__elm_dropable", (void **)&dropable));
+   if (dropable)
      {
-        if (drop->obj == obj)
-          {
-             drops = eina_list_remove_list(drops, item);
-             del = drop;
-             break;
-          }
+        drops = eina_list_remove(drops, dropable);
+        eo_do(obj, eo_base_data_del("__elm_dropable"));
+        free(dropable);
+        dropable = NULL;
      }
-   if (!del) return EINA_FALSE;
+   else return EINA_FALSE;
 
    evas_object_event_callback_del(obj, EVAS_CALLBACK_FREE,
                                   (Evas_Object_Event_Cb)elm_drop_target_del);
-   if (del) free(del);
 
    /* TODO BUG: we should handle dnd-aware per window, not just the last that reelased it */
 
@@ -3589,7 +3619,7 @@ _cont_drag_done_cb(void *data, Evas_Object *obj __UNUSED__)
 static Eina_Bool
 _cont_obj_drag_start(void *data)
 {  /* Start a drag-action when timer expires */
-   cnp_debug("%s In\n", __FUNCTION__);
+   cnp_debug("In\n");
    Item_Container_Drag_Info *st = data;
    st->tm = NULL;
    Elm_Drag_User_Info *info = &st->user_info;
@@ -3646,7 +3676,7 @@ _anim_icons_make(Eina_List *icons)
 static Eina_Bool
 _drag_anim_play(void *data, double pos)
 {  /* Impl of the animation of icons, called on frame time */
-   cnp_debug("%s In\n", __FUNCTION__);
+   cnp_debug("In\n");
    Item_Container_Drag_Info *st = data;
    Eina_List *l;
    Anim_Icon *sti;
@@ -3685,7 +3715,7 @@ _drag_anim_play(void *data, double pos)
 static inline Eina_Bool
 _drag_anim_start(void *data)
 {  /* Start default animation */
-   cnp_debug("%s In\n", __FUNCTION__);
+   cnp_debug("In\n");
    Item_Container_Drag_Info *st = data;
 
    st->tm = NULL;
@@ -3707,7 +3737,7 @@ _drag_anim_start(void *data)
 static Eina_Bool
 _cont_obj_anim_start(void *data)
 {  /* Start a drag-action when timer expires */
-   cnp_debug("%s In\n", __FUNCTION__);
+   cnp_debug("In\n");
    Item_Container_Drag_Info *st = data;
    int xposret, yposret;  /* Unused */
    Elm_Object_Item *it = (st->itemgetcb) ?
@@ -3753,7 +3783,7 @@ static void
 _cont_obj_mouse_down(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *event_info)
 {  /* Launch a timer to start dragging */
    Evas_Event_Mouse_Down *ev = event_info;
-   cnp_debug("%s In - event %X\n", __FUNCTION__, ev->event_flags);
+   cnp_debug("In - event %X\n", ev->event_flags);
    if (ev->button != 1)
      return;  /* We only process left-click at the moment */
 
@@ -3778,10 +3808,10 @@ static Eina_Bool elm_drag_item_container_del_internal(Evas_Object *obj, Eina_Boo
 static void
 _cont_obj_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {  /* Cancel any drag waiting to start on timeout */
-   cnp_debug("%s In\n", __FUNCTION__);
+   cnp_debug("In\n");
    if (((Evas_Event_Mouse_Move *)event_info)->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
      {
-        cnp_debug("%s event on hold - have to cancel DnD\n", __FUNCTION__);
+        cnp_debug("event on hold - have to cancel DnD\n");
         Item_Container_Drag_Info *st = data;
 
         evas_object_event_callback_del_full
@@ -3794,7 +3824,7 @@ _cont_obj_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__
 
         _anim_st_free(st);
      }
-   cnp_debug("%s Out\n", __FUNCTION__);
+   cnp_debug("Out\n");
 }
 
 static void
@@ -3802,7 +3832,7 @@ _cont_obj_mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
 {  /* Cancel any drag waiting to start on timeout */
    Item_Container_Drag_Info *st = data;
 
-   cnp_debug("%s In\n", __FUNCTION__);
+   cnp_debug("In\n");
    if (((Evas_Event_Mouse_Up *)event_info)->button != 1)
      return;  /* We only process left-click at the moment */
 
