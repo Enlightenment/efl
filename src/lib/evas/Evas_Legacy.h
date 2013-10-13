@@ -1272,6 +1272,24 @@ EAPI void evas_event_feed_hold(Evas *e, int hold, unsigned int timestamp, const 
 EAPI void evas_event_refeed_event(Evas *e, void *event_copy, Evas_Callback_Type event_type) EINA_ARG_NONNULL(1);
 
 /**
+ * Retrieve a list of Evas objects lying over a given position in
+ * a canvas.
+ *
+ * @param e A handle to the canvas.
+ * @param stop An Evas Object where to stop searching.
+ * @param x The horizontal coordinate of the position.
+ * @param y The vertical coordinate of the position.
+ *
+ * This function will traverse all the layers of the given canvas,
+ * from top to bottom, querying for objects with areas covering the
+ * given position. It will enter the smart objects.
+ * It will not append to the list pass events as hidden objects.
+ * Call eina_list_free on the returned list after usage.
+ *
+ */
+EAPI Eina_List *evas_tree_objects_at_xy_get(Evas *eo_e, Evas_Object *stop, int x, int y) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
+
+/**
  * @}
  */
 

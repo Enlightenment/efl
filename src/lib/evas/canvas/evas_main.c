@@ -1103,6 +1103,7 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_SMART_OBJECTS_CALCULATE), _canvas_smart_objects_calculate),
         EO_OP_FUNC(EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_SMART_OBJECTS_CALCULATE_COUNT_GET), _canvas_smart_objects_calculate_count_get),
         EO_OP_FUNC(EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_RENDER_ASYNC), _canvas_render_async),
+        EO_OP_FUNC(EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_TREE_OBJECTS_AT_XY_GET), _canvas_tree_objects_at_xy_get),
         EO_OP_FUNC_SENTINEL
    };
 
@@ -1207,6 +1208,7 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(EVAS_CANVAS_SUB_ID_SMART_OBJECTS_CALCULATE, "Call user-provided calculate() smart functions."),
      EO_OP_DESCRIPTION(EVAS_CANVAS_SUB_ID_SMART_OBJECTS_CALCULATE_COUNT_GET, "Get the internal counter that counts the number of smart calculations."),
      EO_OP_DESCRIPTION(EVAS_CANVAS_SUB_ID_RENDER_ASYNC, "Renders the canvas asynchronously."),
+     EO_OP_DESCRIPTION(EVAS_CANVAS_SUB_ID_TREE_OBJECTS_AT_XY_GET, "Retrieve a list of Evas objects lying over a given position in a canvas."),
      EO_OP_DESCRIPTION_SENTINEL
 };
 

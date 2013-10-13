@@ -257,6 +257,7 @@ enum
    EVAS_CANVAS_SUB_ID_SMART_OBJECTS_CALCULATE,
    EVAS_CANVAS_SUB_ID_SMART_OBJECTS_CALCULATE_COUNT_GET,
    EVAS_CANVAS_SUB_ID_RENDER_ASYNC,
+   EVAS_CANVAS_SUB_ID_TREE_OBJECTS_AT_XY_GET,
    EVAS_CANVAS_SUB_ID_LAST
 };
 
@@ -1158,6 +1159,23 @@ enum
  * @see evas_event_refeed_event
  */
 #define evas_canvas_event_refeed_event(event_copy, event_type) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_EVENT_REFEED_EVENT), EO_TYPECHECK(void *, event_copy), EO_TYPECHECK(Evas_Callback_Type, event_type)
+
+/**
+ * @def evas_canvas_tree_objects_at_xy_get
+ * @since 1.8
+ *
+ * Retrieve a list of Evas objects lying over a given position in
+ * a canvas.
+ *
+ * @param[in] stop An Evas Object where to stop searching.
+ * @param[in] x The horizontal coordinate of the position.
+ * @param[in] y The vertical coordinate of the position.
+ * @param[out] list of Evas Objects.
+ *
+ * @see evas_tree_objects_at_xy_get
+ */
+#define evas_canvas_tree_objects_at_xy_get(stop, x, y, ret) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_TREE_OBJECTS_AT_XY_GET), EO_TYPECHECK(Evas_Object *, stop), EO_TYPECHECK(int, x), EO_TYPECHECK(int, y), EO_TYPECHECK(Eina_List **, ret)
+
 /**
  * @}
  */

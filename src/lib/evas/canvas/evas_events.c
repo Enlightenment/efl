@@ -861,14 +861,14 @@ _evas_event_object_list_in_get(Evas *eo_e, Eina_List *in,
                                              no_rep, source);
 }
 
-Eina_List *
-evas_event_objects_event_list(Evas *eo_e, Evas_Object *stop, int x, int y)
+static Eina_List *
+_evas_event_objects_event_list_no_frozen_check(Evas *eo_e, Evas_Object *stop, int x, int y)
 {
    Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CLASS);
    Evas_Layer *lay;
    Eina_List *in = NULL;
 
-   if ((!e->layers) || (e->is_frozen)) return NULL;
+   if (!e->layers) return NULL;
 
    EINA_INLIST_REVERSE_FOREACH((EINA_INLIST_GET(e->layers)), lay)
      {
@@ -879,6 +879,37 @@ evas_event_objects_event_list(Evas *eo_e, Evas_Object *stop, int x, int y)
         if (no_rep) return in;
      }
    return in;
+}
+
+EAPI Eina_List *
+evas_tree_objects_at_xy_get(Evas *eo_e, Evas_Object *stop, int x, int y)
+{
+   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
+   return NULL;
+   MAGIC_CHECK_END();
+   Eina_List *list = NULL;
+   eo_do(eo_e, evas_canvas_tree_objects_at_xy_get(stop, x, y, &list));
+   return list;
+}
+
+void
+_canvas_tree_objects_at_xy_get(Eo *eo_e, void *_pd EINA_UNUSED, va_list *list)
+{
+   Evas_Object *stop = va_arg(*list, Evas_Object *);
+   int x = va_arg(*list, int);
+   int y = va_arg(*list, int);
+   Eina_List **in = va_arg(*list, Eina_List **);
+
+   *in = _evas_event_objects_event_list_no_frozen_check(eo_e, stop, x, y);
+}
+
+Eina_List *
+evas_event_objects_event_list(Evas *eo_e, Evas_Object *stop, int x, int y)
+{
+   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CLASS);
+
+   if ((!e->layers) || (e->is_frozen)) return NULL;
+   return _evas_event_objects_event_list_no_frozen_check(eo_e, stop, x, y);
 }
 
 static Eina_List *
