@@ -565,13 +565,13 @@ _elm_flipselector_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
      CRITICAL("Failed to set layout!");
 
    elm_layout_signal_callback_add
-     (obj, "elm,action,up,start", "", _signal_val_up_start, obj);
+     (obj, "elm,action,up,start", "*", _signal_val_up_start, obj);
    elm_layout_signal_callback_add
-     (obj, "elm,action,up,stop", "", _signal_val_change_stop, obj);
+     (obj, "elm,action,up,stop", "*", _signal_val_change_stop, obj);
    elm_layout_signal_callback_add
-     (obj, "elm,action,down,start", "", _signal_val_down_start, obj);
+     (obj, "elm,action,down,start", "*", _signal_val_down_start, obj);
    elm_layout_signal_callback_add
-     (obj, "elm,action,down,stop", "", _signal_val_change_stop, obj);
+     (obj, "elm,action,down,stop", "*", _signal_val_change_stop, obj);
 
    priv->first_interval = FLIP_FIRST_INTERVAL;
 
