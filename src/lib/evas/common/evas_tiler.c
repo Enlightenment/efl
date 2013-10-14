@@ -939,14 +939,14 @@ evas_common_tilebuf_get_render_rects(Tilebuf *tb)
           }
         return rects;
      }
-   
+
    rbuf = malloc(sizeof(Tilebuf_Rect) * num);
    if (!rbuf) return NULL;
-   
+
    for (i = 0, n = tb->rects.head; n; n = n->next)
      {
         rect_t cur;
-        
+
         cur = ((rect_node_t *)n)->rect;
         RECTS_CLIP_TO_RECT(cur.left, cur.top, cur.width, cur.height,
                            0, 0, tb->outbuf_w, tb->outbuf_h);
@@ -966,6 +966,10 @@ evas_common_tilebuf_get_render_rects(Tilebuf *tb)
              i++;
           }
      }
+
+   // It is possible that due to the clipping we do not return any rectangle here.
+   if (!rects) free(rbuf);
+
    return rects;
 }
 
