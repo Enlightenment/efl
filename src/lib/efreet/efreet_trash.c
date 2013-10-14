@@ -111,6 +111,7 @@ efreet_trash_dir_get(const char *file)
                 if (s_src.st_dev == s_dest.st_dev)
                 {
                     strncpy(buf, dir, PATH_MAX);
+                    buf[PATH_MAX - 1] = 0;
                     continue;
                 }
                 else
