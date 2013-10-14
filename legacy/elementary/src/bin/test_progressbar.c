@@ -237,25 +237,53 @@ test_progressbar(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
 }
 
 static Eina_Bool
+_set_progress_val(Evas_Object *pb, double inc_value, char *part_name)
+{
+   double progress;
+
+   progress = elm_progressbar_part_value_get(pb, part_name);
+
+   if (progress < 1.0)
+      progress += inc_value;
+   else
+      return EINA_TRUE;
+
+   elm_progressbar_part_value_set(pb, part_name, progress);
+
+   return EINA_FALSE;
+}
+
+static Eina_Bool
 _progressbar2_timer_cb(void *data)
 {
    Progressbar_Data *pd = data;
-   if (!pd) return ECORE_CALLBACK_CANCEL;
-
    double progress;
 
-   progress = elm_progressbar_value_get (pd->pb1);
-   if (progress < 1.0) progress += 0.0123;
-   else progress = 0.0;
-   elm_progressbar_part_value_set(pd->pb1, "elm.cur.progressbar", progress);
-   elm_progressbar_value_set(pd->pb2, progress);
-   elm_progressbar_part_value_set(pd->pb2, "elm.cur.progressbar1", progress-0.15);
-   elm_progressbar_part_value_set(pd->pb3, "elm.cur.progressbar", progress);
-   elm_progressbar_part_value_set(pd->pb3, "elm.cur.progressbar1", progress-0.15);
+   if (!pd) 
+      {
+         pd->timer = NULL;
+         return ECORE_CALLBACK_CANCEL;
+      }
 
-   if (progress < 1.0) return ECORE_CALLBACK_RENEW;
+   progress = elm_progressbar_value_get (pd->pb1);
+
+   if (progress < 1.0)
+      {
+         progress += 0.0123;
+         elm_progressbar_part_value_set(pd->pb1, "elm.cur.progressbar", progress);
+         elm_progressbar_value_set(pd->pb2, progress);
+         elm_progressbar_part_value_set(pd->pb3, "elm.cur.progressbar", progress);
+         elm_progressbar_part_value_set(pd->pb4, "elm.cur.progressbar", progress);
+      }
+
+   _set_progress_val(pd->pb2, 0.00723, "elm.cur.progressbar1");
+   _set_progress_val(pd->pb3, 0.00523, "elm.cur.progressbar1");
+
+   if (!_set_progress_val(pd->pb4, 0.00423, "elm.cur.progressbar1"))
+     return ECORE_CALLBACK_RENEW;
 
    pd->timer = NULL;
+
    return ECORE_CALLBACK_CANCEL;
 }
 
@@ -318,8 +346,8 @@ test_progressbar2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
    pd->pb1 = pb;
 
    pb = elm_progressbar_add(win);
-   elm_object_style_set(pb, "recording");
-   elm_object_text_set(pb, "Style: Recording");
+   elm_object_style_set(pb, "double");
+   elm_object_text_set(pb, "Style: double");
    evas_object_size_hint_weight_set(pb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(pb, EVAS_HINT_FILL, 0.5);
    elm_progressbar_span_size_set(pb, elm_config_scale_get() * 200);
@@ -328,14 +356,25 @@ test_progressbar2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
    pd->pb2 = pb;
 
    pb = elm_progressbar_add(win);
-   elm_object_style_set(pb, "recording");
-   elm_object_text_set(pb, "Style: Recording 2");
+   elm_object_style_set(pb, "double");
+   elm_object_text_set(pb, "Style: double 2");
    evas_object_size_hint_weight_set(pb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(pb, EVAS_HINT_FILL, 0.5);
    elm_progressbar_span_size_set(pb, elm_config_scale_get() * 200);
    elm_box_pack_end(bx, pb);
    evas_object_show(pb);
    pd->pb3 = pb;
+
+   pb = elm_progressbar_add(win);
+   elm_object_style_set(pb, "double");
+   elm_progressbar_horizontal_set(pb, EINA_FALSE);
+   elm_object_text_set(pb, "Style: Vertical");
+   evas_object_size_hint_weight_set(pb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(pb, EVAS_HINT_FILL, 0.5);
+   elm_progressbar_span_size_set(pb, elm_config_scale_get() * 200);
+   elm_box_pack_end(bx, pb);
+   evas_object_show(pb);
+   pd->pb4 = pb;
 
    bt_bx = elm_box_add(win);
    elm_box_horizontal_set(bt_bx, EINA_TRUE);
