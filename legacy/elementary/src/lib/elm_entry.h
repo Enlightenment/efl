@@ -229,6 +229,7 @@
  * @li "selection,changed": The current selection has changed.
  * @li "selection,cleared": The current selection has been cleared.
  * @li "cursor,changed": The cursor has changed position.
+ * @li "cursor,changed,manual": The cursor has changed position manually.
  * @li "anchor,clicked": An anchor has been clicked. The event_info
  * parameter for the callback will be an #Elm_Entry_Anchor_Info.
  * @li "anchor,in": Mouse cursor has moved into an anchor. The event_info
