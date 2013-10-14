@@ -4966,8 +4966,7 @@ _copied_map_colors_get(Edje_Part_Description_Common *parent)
    int i;
 
    if (parent->map.colors_count == 0) return NULL;
-   colors = (Edje_Map_Color **) malloc(sizeof(Edje_Map_Color **) *
-                                       parent->map.colors_count);
+   colors = malloc(sizeof(Edje_Map_Color *) * parent->map.colors_count);
 
    for (i = 0; i < (int)parent->map.colors_count; i++)
      {
@@ -5192,7 +5191,7 @@ st_collections_group_parts_part_description_inherit(void)
 	     if (min_dst)
 	       {
                   WRN("%s:%i: couldn't find an exact match in part '%s' when looking for '%s' %lf. Falling back to nearest one '%s' %lf.",
-                      file_in, line - 1, ep->name, parent_name, parent_val, parent ? parent->state.name : NULL, parent ? parent->state.value : NULL);
+                      file_in, line - 1, ep->name, parent_name, parent_val, parent ? parent->state.name : NULL, parent ? parent->state.value : 0);
                }
           }
 
