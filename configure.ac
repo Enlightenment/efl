@@ -1261,8 +1261,6 @@ ARG_ENABLE_EVAS_IMAGE_LOADER(XPM, static)
 
 ### Default values
 
-want_evas_cserve2="yes"
-
 want_evas_engine_software_gdi="${have_win32}"
 want_evas_engine_software_ddraw="${have_win32}"
 want_evas_engine_gl_cocoa="${want_cocoa}"
@@ -1608,6 +1606,20 @@ AC_CHECK_LIB([m], [lround],
 [EFL_CHECK_GCC_BUILTIN([lround], [HAVE_LROUND])]
 )
 
+
+# Evas cserve2
+
+AC_ARG_ENABLE([cserve],
+   [AC_HELP_STRING([--enable-cserve],
+       [enable shared cache server (cserve2). @<:@default=enabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_evas_cserve2="yes"
+    else
+       want_evas_cserve2="no"
+    fi
+   ],
+   [want_evas_cserve2="yes"])
 
 if test "x${want_evas_image_loader_generic}" = "xyes" || test "x${want_evas_cserve2}" = "xyes" ; then
    EFL_ADD_LIBS([EVAS], [${requirements_libs_shm}])
