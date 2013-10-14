@@ -148,6 +148,12 @@ _evas_common_rgba_image_surface_mmap(unsigned int w, unsigned int h, Eina_Bool a
    if (siz < PAGE_SIZE)
      return malloc(siz);
 
+#if defined (__MacOSX__) || (defined (__MACH__) && defined (__APPLE__))
+# ifndef MAP_ANONYMOUS
+#  define MAP_ANONYMOUS MAP_ANON
+# endif
+#endif
+
    r = mmap(NULL, siz, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
    if (r == MAP_FAILED)
      r = mmap(NULL, siz, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
