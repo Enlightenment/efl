@@ -97,7 +97,7 @@ _on_item_clicked(void *data,
 static void
 _activate(Evas_Object *obj)
 {
-   const Elm_Hoversel_Item *item;
+   Elm_Hoversel_Item *item;
    Evas_Object *bt, *bx, *ic;
    const Eina_List *l;
    char buf[4096];
@@ -145,7 +145,7 @@ _activate(Evas_Object *obj)
 
    EINA_LIST_FOREACH(sd->items, l, item)
      {
-        bt = elm_button_add(bx);
+        VIEW(item) = bt = elm_button_add(bx);
         elm_widget_mirrored_automatic_set(bt, EINA_FALSE);
         elm_widget_mirrored_set(bt, elm_widget_mirrored_get(obj));
         elm_object_style_set(bt, buf);
@@ -202,6 +202,15 @@ _item_text_get_hook(const Elm_Object_Item *it,
 {
    if (part && strcmp(part, "default")) return NULL;
    return ((Elm_Hoversel_Item *)it)->label;
+}
+
+static void
+_item_signal_emit_hook(Elm_Object_Item *it,
+                       const char *emission,
+                       const char *source)
+{
+   if (VIEW(it))
+     elm_object_signal_emit(VIEW(it), emission, source);
 }
 
 static Eina_Bool
@@ -508,6 +517,7 @@ _item_add(Eo *obj, void *_pd, va_list *list)
 
    elm_widget_item_del_pre_hook_set(item, _item_del_pre_hook);
    elm_widget_item_text_get_hook_set(item, _item_text_get_hook);
+   elm_widget_item_signal_emit_hook_set(item, _item_signal_emit_hook);
 
    item->label = eina_stringshare_add(label);
    item->icon_file = eina_stringshare_add(icon_file);

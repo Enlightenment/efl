@@ -1694,3 +1694,8 @@
 
         * popup : Change the behavior about adding or removing buttons to keep the
         user defined position of button.
+
+2013-10-14  Daniel Juyung Seo (SeoZ)
+
+        * hoversel: Support elm_object_item_signal_emit in hoversel. This works
+        only when the item is created.

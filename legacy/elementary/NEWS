@@ -96,6 +96,7 @@ Additions:
    * Add elm_menu_item_subitems_clear().
    * Add the configuration fileselector_double_tap_navigation_enable.
    * Add "activated" smart callback for fileselector.
+   * Add elm_object_item_signal_emit support in hoversel. This works only when the item is created.
 
 Improvements:
 
