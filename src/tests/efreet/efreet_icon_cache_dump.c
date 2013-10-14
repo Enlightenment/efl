@@ -55,7 +55,9 @@ dump(Efreet_Icon_Theme *theme)
     free(keys);
 
     start = ecore_time_get() - start;
-    avg = start / count;
+    avg = 0;
+    if (count > 0)
+        avg = start / count;
     printf("read: %s - %u paths (time: %f) (avg %f)\n", theme->name.internal, count, start, avg);
     eet_close(ef);
     eet_clearcache();
