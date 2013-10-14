@@ -28,13 +28,17 @@ main(int argc, char *argv[])
 {
    char path[PATH_MAX];
    FILE *log;
+   mode_t um;
 
    strcpy(path, "/tmp/efreetd_XXXXXX");
+   um = umask(0077);
    if (mkstemp(path) < 0)
      {
         perror("mkstemp");
+        umask(um);
         return 1;
      }
+   umask(um);
    if (chmod(path, 0700) < 0)
      {
         perror("chmod");
