@@ -1274,19 +1274,19 @@ _elm_image_smart_orient_set(Eo *obj, void *_pd, va_list *list)
    switch (orient)
      {
       case ELM_IMAGE_FLIP_HORIZONTAL:
-        _elm_image_flip_horizontal(obj, sd);
-	sd->orient = orient;
-        return;
+         _elm_image_flip_horizontal(obj, sd);
+         sd->orient = orient;
+         return;
 
       case ELM_IMAGE_FLIP_VERTICAL:
-        _elm_image_flip_vertical(obj, sd);
-	sd->orient = orient;
-        return;
+         _elm_image_flip_vertical(obj, sd);
+         sd->orient = orient;
+         return;
 
       case ELM_IMAGE_ROTATE_180:
-        _elm_image_smart_rotate_180(obj, sd);
-	sd->orient = orient;
-        return;
+         _elm_image_smart_rotate_180(obj, sd);
+         sd->orient = orient;
+         return;
 
      case ELM_IMAGE_ORIENT_NONE:
         sd->orient = orient;
@@ -1319,27 +1319,27 @@ _elm_image_smart_orient_set(Eo *obj, void *_pd, va_list *list)
       case ELM_IMAGE_FLIP_TRANSPOSE:
         to = data;
         hw = -hw + 1;
-	sd->orient = orient;
+        sd->orient = orient;
         break;
 
       case ELM_IMAGE_FLIP_TRANSVERSE:
         to = data + hw - 1;
         w = -w;
         hw = hw - 1;
-	sd->orient = orient;
+        sd->orient = orient;
         break;
 
       case ELM_IMAGE_ROTATE_90:
         to = data + w - 1;
         hw = -hw - 1;
-	sd->orient = orient;
+        sd->orient = orient;
         break;
 
       case ELM_IMAGE_ROTATE_270:
         to = data + hw - w;
         w = -w;
         hw = hw + 1;
-	sd->orient = orient;
+        sd->orient = orient;
         break;
 
       default:

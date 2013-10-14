@@ -70,9 +70,9 @@ fill(Evas_Object *win, Eina_Bool do_bg)
    elm_entry_anchor_hover_style_set(av, "popout");
    elm_entry_anchor_hover_parent_set(av, win);
    elm_object_text_set(av,
-			   "Hi there. This is the most recent message in the "
-			   "list of messages. It has one <a href=tel:+614321234>+61 432 1234</a> "
-			   "(phone number) to click on.");
+                       "Hi there. This is the most recent message in the "
+                       "list of messages. It has one <a href=tel:+614321234>+61 432 1234</a> "
+                       "(phone number) to click on.");
    elm_object_content_set(bb, av);
    evas_object_show(av);
    elm_box_pack_end(bx, bb);
@@ -94,19 +94,19 @@ fill(Evas_Object *win, Eina_Bool do_bg)
    elm_entry_anchor_hover_style_set(av, "popout");
    elm_entry_anchor_hover_parent_set(av, win);
    elm_object_text_set(av,
-			   "Hey what are you doing? This is the second last message "
-			   "Hi there. This is the most recent message in the "
-			   "list. It's a longer one so it can wrap more and "
-			   "contains a <a href=contact:john>John</a> contact "
-			   "link in it to test popups on links. The idea is that "
-			   "all SMS's are scanned for things that look like phone "
-			   "numbers or names that are in your contacts list, and "
-			   "if they are, they become clickable links that pop up "
-			   "a menus of obvious actions to perform on this piece "
-			   "of information. This of course can be later explicitly "
-			   "done by links maybe running local apps or even being "
-			   "web URL's too that launch the web browser and point it "
-			   "to that URL. <item relsize=16x16 vsize=full href=emoticon/omg></item>");
+                       "Hey what are you doing? This is the second last message "
+                       "Hi there. This is the most recent message in the "
+                       "list. It's a longer one so it can wrap more and "
+                       "contains a <a href=contact:john>John</a> contact "
+                       "link in it to test popups on links. The idea is that "
+                       "all SMS's are scanned for things that look like phone "
+                       "numbers or names that are in your contacts list, and "
+                       "if they are, they become clickable links that pop up "
+                       "a menus of obvious actions to perform on this piece "
+                       "of information. This of course can be later explicitly "
+                       "done by links maybe running local apps or even being "
+                       "web URL's too that launch the web browser and point it "
+                       "to that URL. <item relsize=16x16 vsize=full href=emoticon/omg></item>");
    elm_object_content_set(bb, av);
    evas_object_show(av);
    elm_box_pack_end(bx, bb);

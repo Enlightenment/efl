@@ -1442,8 +1442,8 @@ _overlay_default_show(Overlay_Default *ovl)
         disp = ovl->content;
         evas_object_geometry_get(disp, NULL, NULL, &w, &h);
         if (w <= 0 || h <= 0) evas_object_size_hint_min_get(disp, &w, &h);
-		ovl->w = w;
-		ovl->h = h;
+        ovl->w = w;
+        ovl->h = h;
      }
    else if (!(ovl->icon) && ovl->clas_content)
      {
@@ -2563,7 +2563,7 @@ _overlay_show(Elm_Map_Overlay *overlay)
       case ELM_MAP_OVERLAY_TYPE_SCALE:
         if (overlay->visible) _overlay_scale_show(overlay->ovl);
         else _overlay_scale_hide(overlay->ovl);
-	break;
+        break;
       default:
         ERR("Invalid overlay type to show: %d", overlay->type);
      }

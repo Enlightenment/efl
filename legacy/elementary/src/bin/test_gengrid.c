@@ -260,7 +260,7 @@ grid_state_get(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const char 
 void
 grid_del(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED)
 {
-	free(data);
+   free(data);
 }
 
 static void

@@ -20,8 +20,8 @@ test_thumb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
         "sky_03.jpg",
         "sky_04.jpg",
         "wood_01.jpg",
-	"mystrale.jpg",
-	"mystrale_2.jpg"
+        "mystrale.jpg",
+        "mystrale_2.jpg"
      };
 
    elm_need_ethumb();

@@ -180,7 +180,7 @@ _sizing_eval(Evas_Object *obj)
 
    hover = eo_data_scope_get(sd->hv, ELM_OBJ_WIDGET_CLASS);
    edje_object_part_geometry_get(hover->resize_obj, "bottom", NULL,
-				 NULL, &bw, &bh);
+                                 NULL, &bw, &bh);
    evas_object_size_hint_min_set(obj, bw, bh);
 
    EINA_LIST_FOREACH(sd->items, l, item)
@@ -707,7 +707,7 @@ _constructor(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL),
-	 eo_parent_get(&parent));
+         eo_parent_get(&parent));
 
    elm_menu_parent_set(obj, parent);
    elm_hover_target_set(sd->hv, sd->location);

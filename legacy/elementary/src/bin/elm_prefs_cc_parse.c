@@ -925,10 +925,10 @@ check_min_arg_count(int min_required_args)
 
    if (num_args < min_required_args)
      {
-	ERR("%s:%i got %i arguments, but expected at least %i",
-	    file_in, line - 1, num_args, min_required_args);
+        ERR("%s:%i got %i arguments, but expected at least %i",
+            file_in, line - 1, num_args, min_required_args);
         err_show();
-	exit(-1);
+        exit(-1);
      }
 }
 

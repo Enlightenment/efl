@@ -661,8 +661,8 @@ elm_quicklaunch_init(int    argc,
    if (!_elm_lib_dir) _elm_lib_dir = eina_stringshare_add("/");
 
    eina_log_timing(_elm_log_dom,
-		   EINA_LOG_STATE_STOP,
-		   EINA_LOG_STATE_INIT);
+                   EINA_LOG_STATE_STOP,
+                   EINA_LOG_STATE_INIT);
 
    return _elm_ql_init_count;
 }

@@ -234,7 +234,7 @@ _overlays_num_check(Evas_Object *obj)
           }
      }
    printf("Number of (visible/total) overlays in viewport: %d/%d\n",
-		   cnt_visible, cnt);
+          cnt_visible, cnt);
 }
 
 static void

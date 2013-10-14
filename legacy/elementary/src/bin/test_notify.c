@@ -95,7 +95,7 @@ test_notify(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
 
    lb = elm_label_add(win);
    elm_object_text_set(lb, "Bottom position. This notify uses a timeout of 5 sec.<br/>"
-	 "<b>The events outside the window are blocked.</b>");
+                       "<b>The events outside the window are blocked.</b>");
    elm_box_pack_end(bx, lb);
    evas_object_show(lb);
 
@@ -357,7 +357,7 @@ test_notify(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    evas_object_size_hint_weight_set(lb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(lb, 0.0, 0.5);
    elm_object_text_set(lb, "Fill Bottom. This notify fills horizontal area.<br/>"
-	 "<b>elm_notify_align_set(notify, ELM_NOTIFY_ALIGN_FILL, 1.0); </b>");
+                       "<b>elm_notify_align_set(notify, ELM_NOTIFY_ALIGN_FILL, 1.0); </b>");
    elm_box_pack_end(bx, lb);
    evas_object_show(lb);
 

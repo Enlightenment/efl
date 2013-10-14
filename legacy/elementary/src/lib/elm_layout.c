@@ -291,7 +291,7 @@ _visuals_refresh(Evas_Object *obj,
    eo_do(obj, elm_obj_layout_sizing_eval());
 
    edje_object_signal_callback_del(wd->resize_obj,
-				   "edje,change,file", "edje",
+                                   "edje,change,file", "edje",
                                    _reload_theme);
    edje_object_signal_callback_add(wd->resize_obj,
                                    "edje,change,file", "edje",

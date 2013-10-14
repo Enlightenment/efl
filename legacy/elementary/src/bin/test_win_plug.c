@@ -10,9 +10,9 @@ static int try_num = 0;
 
 static void
 _timer_del(void *data       EINA_UNUSED,
-	      Evas *e          EINA_UNUSED,
-	      Evas_Object     *obj,
-	      void *event_info EINA_UNUSED)
+           Evas *e          EINA_UNUSED,
+           Evas_Object     *obj,
+           void *event_info EINA_UNUSED)
 {
    Ecore_Timer *timer = evas_object_data_del(obj, "test-timer");
    if (!timer) return;

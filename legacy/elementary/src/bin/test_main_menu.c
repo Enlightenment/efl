@@ -49,7 +49,7 @@ test_main_menu(void *data EINA_UNUSED,
      {
         label = elm_label_add(win);
         elm_object_text_set(label, "(ELM_DISABLE_EXTERNAL_MENU environment "
-			    "variable is set. Using local menu instead)");
+                            "variable is set. Using local menu instead)");
         evas_object_size_hint_weight_set(label, EVAS_HINT_EXPAND,
                                          EVAS_HINT_EXPAND);
         elm_box_pack_end(bx, label);

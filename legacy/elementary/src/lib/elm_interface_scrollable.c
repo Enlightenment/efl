@@ -388,9 +388,9 @@ EAPI Eo_Op ELM_SCROLLABLE_INTERFACE_BASE_ID = EO_NOOP;
 #define MY_SCROLLABLE_INTERFACE_NAME "elm_interface_scrollable"
 
 #define ELM_SCROLL_IFACE_DATA_GET_OR_RETURN(o, ptr)     \
-  Elm_Scrollable_Smart_Interface_Data *ptr =		\
-    (!eo_isa(o, MY_SCROLLABLE_INTERFACE) ? NULL :	\
-     eo_data_scope_get(o, MY_SCROLLABLE_INTERFACE));		\
+  Elm_Scrollable_Smart_Interface_Data *ptr =            \
+    (!eo_isa(o, MY_SCROLLABLE_INTERFACE) ? NULL :       \
+     eo_data_scope_get(o, MY_SCROLLABLE_INTERFACE));    \
   if (!ptr)                                             \
     {                                                   \
        CRITICAL("No interface data for object %p (%s)", \
@@ -399,9 +399,9 @@ EAPI Eo_Op ELM_SCROLLABLE_INTERFACE_BASE_ID = EO_NOOP;
     }
 
 #define ELM_SCROLL_IFACE_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
-  Elm_Scrollable_Smart_Interface_Data *ptr =		     \
-    (!eo_isa(o, MY_SCROLLABLE_INTERFACE) ? NULL :	     \
-     eo_data_scope_get(o, MY_SCROLLABLE_INTERFACE));		     \
+  Elm_Scrollable_Smart_Interface_Data *ptr =                 \
+    (!eo_isa(o, MY_SCROLLABLE_INTERFACE) ? NULL :            \
+     eo_data_scope_get(o, MY_SCROLLABLE_INTERFACE));         \
   if (!ptr)                                                  \
     {                                                        \
        CRITICAL("No interface data for object %p (%s)",      \

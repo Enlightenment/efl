@@ -41,16 +41,16 @@ main(int argc, char **argv)
 
    if (!getcwd(buf, sizeof(buf) - 1))
      {
-	fprintf(stderr, "elementary_quicklaunch: currect working dir too big.\n");
-	exit(-1);
+        fprintf(stderr, "elementary_quicklaunch: currect working dir too big.\n");
+        exit(-1);
      }
    cwd = strdup(buf);
    if (!(disp = getenv("DISPLAY"))) disp = "unknown";
    snprintf(buf, sizeof(buf), "/tmp/elm-ql-%i/%s", getuid(), disp);
    if ((sock = socket(AF_UNIX, SOCK_STREAM, 0)) < 0)
      {
-	perror("elementary_quicklaunch: socket(AF_UNIX, SOCK_STREAM, 0)");
-	exit(-1);
+        perror("elementary_quicklaunch: socket(AF_UNIX, SOCK_STREAM, 0)");
+        exit(-1);
      }
    socket_unix.sun_family = AF_UNIX;
    strncpy(socket_unix.sun_path, buf, sizeof(socket_unix.sun_path));
@@ -58,85 +58,85 @@ main(int argc, char **argv)
    socket_unix_len = LENGTH_OF_SOCKADDR_UN(&socket_unix);
    if (connect(sock, (struct sockaddr *)&socket_unix, socket_unix_len) < 0)
      {
-	perror("elementary_quicklaunch: connect(sock, (struct sockaddr *)&socket_unix, socket_unix_len)");
-	printf("elementary_quicklaunch: cannot connect to socket '%s'\n", buf);
-	exit(1);
+        perror("elementary_quicklaunch: connect(sock, (struct sockaddr *)&socket_unix, socket_unix_len)");
+        printf("elementary_quicklaunch: cannot connect to socket '%s'\n", buf);
+        exit(1);
      }
    exe = argv[0];
    if (!(((exe[0] == '/')) ||
-	 ((exe[0] == '.') && (exe[1] == '/')) ||
-	 ((exe[0] == '.') && (exe[1] == '.') && (exe[2] == '/'))))
+         ((exe[0] == '.') && (exe[1] == '/')) ||
+         ((exe[0] == '.') && (exe[1] == '.') && (exe[2] == '/'))))
      {
-	char *path = getenv("PATH");
-	int exelen = strlen(argv[0]);
-	if (path)
-	  {
-	     const char *p, *pp;
+        char *path = getenv("PATH");
+        int exelen = strlen(argv[0]);
+        if (path)
+          {
+             const char *p, *pp;
 
-	     p = path;
-	     pp = p;
-	     exe = NULL;
-	     for (;;)
-	       {
-		  if ((*p == ':') || (!*p))
-		    {
-		       unsigned int len;
+             p = path;
+             pp = p;
+             exe = NULL;
+             for (;;)
+               {
+                  if ((*p == ':') || (!*p))
+                    {
+                       unsigned int len;
 
-		       len = p - pp;
-		       if (len < (sizeof(buf) - exelen - 3))
-			 {
-			    strncpy(buf, pp, len);
-			    strcpy(buf + len, "/");
-			    strcpy(buf + len + 1, argv[0]);
-			    if (!access(buf, R_OK | X_OK))
-			      {
-				 exe = buf;
-				 break;
-			      }
-			    if (!*p) break;
-			    p++;
-			    pp = p;
-			 }
-		    }
-		  else
-		    {
-		       if (!*p) break;
-		       p++;
-		    }
-	       }
-	  }
+                       len = p - pp;
+                       if (len < (sizeof(buf) - exelen - 3))
+                         {
+                            strncpy(buf, pp, len);
+                            strcpy(buf + len, "/");
+                            strcpy(buf + len + 1, argv[0]);
+                            if (!access(buf, R_OK | X_OK))
+                              {
+                                 exe = buf;
+                                 break;
+                              }
+                            if (!*p) break;
+                            p++;
+                            pp = p;
+                         }
+                    }
+                  else
+                    {
+                       if (!*p) break;
+                       p++;
+                    }
+               }
+          }
      }
    if (exe)
      {
-	if (!lstat(exe, &st))
-	  {
-	     if (S_ISLNK(st.st_mode))
-	       {
-		  char buf2[PATH_MAX];
+        if (!lstat(exe, &st))
+          {
+             if (S_ISLNK(st.st_mode))
+               {
+                  char buf2[PATH_MAX];
 
-		  ssize_t len = readlink(exe, buf2, sizeof(buf2) - 1);
-		  if (len >= 0)
-		    {
-		       char *p;
-		       buf2[len] = 0;
-		       p = strrchr(buf2, '/');
-		       if (p) p++;
-		       else p = buf2;
-		       if (!strncasecmp(p, "elementary_run", 14))
-			 we_are_elementary_run = 1;
-		    }
-	       }
-	  }
+                  ssize_t len = readlink(exe, buf2, sizeof(buf2) - 1);
+                  if (len >= 0)
+                    {
+                       char *p;
+                       buf2[len] = 0;
+                       p = strrchr(buf2, '/');
+                       if (p) p++;
+                       else p = buf2;
+                       if (!strncasecmp(p, "elementary_run", 14))
+                         we_are_elementary_run = 1;
+                    }
+               }
+          }
      }
    if (we_are_elementary_run)
      {
-	sargc = argc;
-	sargv = argv;
+        sargc = argc;
+        sargv = argv;
      }
    else
      {
-	sargc = argc - 1;
-	sargv = &(argv[1]);
+        sargc = argc - 1;
+        sargv = &(argv[1]);
      }
 
    slen = 0;
@@ -150,16 +150,16 @@ main(int argc, char **argv)
 
    for (i = 0; i < sargc; i++)
      {
-	slen += sizeof(unsigned long);
-	slen += strlen(sargv[i]) + 1;
+        slen += sizeof(unsigned long);
+        slen += strlen(sargv[i]) + 1;
      }
 
 #ifdef HAVE_ENVIRON
    // count how much space is needed for environment
    for (i = 0; environ[i]; i++)
      {
-	slen += sizeof(unsigned long);
-	slen += strlen(environ[i]) + 1;
+        slen += sizeof(unsigned long);
+        slen += strlen(environ[i]) + 1;
         envnum++;
      }
 #endif
@@ -182,9 +182,9 @@ main(int argc, char **argv)
    // fill in args
    for (i = 0; i < sargc; i++)
      {
-	((unsigned long *)(sbuf))[n] = (unsigned long)pos - (unsigned long)sbuf;
-	strcpy((char *)pos, sargv[i]);
-	pos += strlen(sargv[i]) + 1;
+        ((unsigned long *)(sbuf))[n] = (unsigned long)pos - (unsigned long)sbuf;
+        strcpy((char *)pos, sargv[i]);
+        pos += strlen(sargv[i]) + 1;
         n++;
      }
 
@@ -192,9 +192,9 @@ main(int argc, char **argv)
    // fill in environ
    for (i = 0; environ[i]; i++)
      {
-	((unsigned long *)(sbuf))[n] = (unsigned long)pos - (unsigned long)sbuf;
-	strcpy((char *)pos, environ[i]);
-	pos += strlen(environ[i]) + 1;
+        ((unsigned long *)(sbuf))[n] = (unsigned long)pos - (unsigned long)sbuf;
+        strcpy((char *)pos, environ[i]);
+        pos += strlen(environ[i]) + 1;
         n++;
      }
 #endif

@@ -129,7 +129,7 @@ _terminate_cb(void *data EINA_UNUSED, Eo *obj, const Eo_Event_Description *desc 
 
    printf("terminate cb\n");
    eo_do(obj, elm_app_server_save(),
-	 elm_app_server_title_get(&title));
+         elm_app_server_title_get(&title));
 
    printf("Closing: %s\n", title);
    eo_unref(obj);

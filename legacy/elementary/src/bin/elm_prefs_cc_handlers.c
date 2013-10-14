@@ -241,9 +241,9 @@ static void st_collection_page_autosave(void);
             @li SWALLOW - Swallows an Evas_Object.
             @li SAVE - Button that will get all the values bounded to items and
             save it on CFG file.
-	    @li ACTION - Button that will emit a signal to .C file and call a
+            @li ACTION - Button that will emit a signal to .C file and call a
             smart callback.
-	    @li RESET - Button that will return all the values bounded to items
+            @li RESET - Button that will return all the values bounded to items
             as default declared on .EPC file.
     @endproperty
 

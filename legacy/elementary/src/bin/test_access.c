@@ -51,7 +51,7 @@ Evas_Object *gl_access_content_get(void *data EINA_UNUSED, Evas_Object *obj, con
 static void
 gl_del(void *data, Evas_Object *obj EINA_UNUSED)
 {
-	free(data);
+   free(data);
 }
 
 static Elm_Gengrid_Item_Class *gic;

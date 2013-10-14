@@ -161,7 +161,7 @@ test_weather(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
     Evas_Object *lbl;
 
     lbl = elm_label_add(win);
-	evas_object_size_hint_weight_set(lbl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    evas_object_size_hint_weight_set(lbl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
     elm_win_resize_object_add(win, lbl);
     elm_object_text_set(lbl, "libeweather is required to display the forecast.");
     evas_object_show(lbl);

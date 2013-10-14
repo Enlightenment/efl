@@ -100,10 +100,10 @@ static FILE *header_fd = NULL;
   "   return elm_layout_content_unset(o, \"%s\");\n"          \
   "}\n\n"
 
-#define H_CODEGEN_PART_CONTENT_SET			      \
+#define H_CODEGEN_PART_CONTENT_SET                            \
   "void %s_%s_set(Evas_Object *o, Evas_Object *value);\n"
 
-#define H_CODEGEN_PART_TEXT_SET			        \
+#define H_CODEGEN_PART_TEXT_SET                               \
   "void %s_%s_set(Evas_Object *o, const char *value);\n"
 
 #define H_CODEGEN_PART_CONTENT_UNSET                    \
@@ -116,7 +116,7 @@ static FILE *header_fd = NULL;
   "   return elm_layout_content_get(o, \"%s\");\n"      \
   "}\n\n"
 
-#define H_CODEGEN_PART_CONTENT_GET		       \
+#define H_CODEGEN_PART_CONTENT_GET                      \
   "Evas_Object *%s_%s_get(const Evas_Object *o);\n"
 
 #define C_CODEGEN_PART_TEXT_GET                        \
@@ -126,7 +126,7 @@ static FILE *header_fd = NULL;
   "   return elm_layout_text_get(o, \"%s\");\n"        \
   "}\n\n"
 
-#define H_CODEGEN_PART_TEXT_GET			    \
+#define H_CODEGEN_PART_TEXT_GET                        \
   "const char *%s_%s_get(const Evas_Object *o);\n"
 
 #define C_CODEGEN_PART_BOX_APPEND                                \
@@ -234,7 +234,7 @@ static FILE *header_fd = NULL;
   "   elm_layout_signal_emit(o, \"%s\", \"%s\");\n"     \
   "}\n\n"
 
-#define H_CODEGEN_PROGRAM_EMIT	        \
+#define H_CODEGEN_PROGRAM_EMIT                          \
   "void %s_%s_emit(Evas_Object *o);\n"
 
 #define C_CODEGEN_PROGRAM_CALLBACK_ADD                                      \

@@ -219,8 +219,8 @@ _photocam_mouse_wheel_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
    int _zoom = zoom;
    while (_zoom>1)
      {
-	_zoom /= 2;
-	val++;
+        _zoom /= 2;
+        val++;
      }
 
    elm_photocam_zoom_mode_set(photocam, ELM_PHOTOCAM_ZOOM_MODE_MANUAL);
