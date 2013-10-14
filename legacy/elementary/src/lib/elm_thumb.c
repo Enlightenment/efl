@@ -691,6 +691,31 @@ _reload(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
 #endif
 }
 
+static void
+_elm_thumb_smart_on_focus(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+{
+   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   if (ret) *ret = EINA_FALSE;
+   Eina_Bool int_ret = EINA_FALSE;
+
+   eo_do_super(obj, MY_CLASS, elm_wdg_on_focus(&int_ret));
+   if (!int_ret) return;
+
+   if (elm_widget_focus_get(obj))
+     {
+        elm_layout_signal_emit(wd->resize_obj, "elm,action,focus", "elm");
+        evas_object_focus_set(wd->resize_obj, EINA_TRUE);
+     }
+   else
+     {
+        elm_layout_signal_emit(wd->resize_obj, "elm,action,unfocus", "elm");
+        evas_object_focus_set(wd->resize_obj, EINA_FALSE);
+     }
+
+   if (ret) *ret = EINA_TRUE;
+}
+
 EAPI void
 elm_thumb_file_set(Evas_Object *obj,
                    const char *file,
@@ -1201,6 +1226,8 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_DEL), _elm_thumb_smart_del),
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_SHOW), _elm_thumb_smart_show),
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_HIDE), _elm_thumb_smart_hide),
+
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ON_FOCUS), _elm_thumb_smart_on_focus),
 
         EO_OP_FUNC(ELM_OBJ_THUMB_ID(ELM_OBJ_THUMB_SUB_ID_RELOAD), _reload),
         EO_OP_FUNC(ELM_OBJ_THUMB_ID(ELM_OBJ_THUMB_SUB_ID_FILE_SET), _file_set),
