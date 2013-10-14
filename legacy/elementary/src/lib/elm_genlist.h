@@ -108,9 +108,17 @@
  * @image html img/widget/genlist/preview-03.png
  * @image latex img/widget/genlist/preview-03.eps
  *
- * - one_icon - Only 1 icon (left) @since 1.7
- * - end_icon - Only 1 icon (at end/right) @since 1.7
- * - no_icon - No icon (at end/right) @since 1.7
+ * - one_icon - Only 1 icon (left) (since 1.7)
+ * - end_icon - Only 1 icon (at end/right) (since 1.7)
+ * - no_icon - No icon (at end/right) (since 1.7)
+ * - full - Only 1 icon, elm.swallow.content,  which consumes whole area of
+ * genlist itemj (since 1.7)
+ *
+ * If one wants to use more icons and texts than are offered in theme, there
+ * are two solutions. One is to use 'full' style that has one big swallow part.
+ * You can swallow anything there. The other solution is to customize genlist
+ * item style in application side by using elm_theme_extension_add() and its
+ * own edc. Please refer @ref theme_example_01 for that.
  *
  * @section Genlist_Items Structure of items
  *
