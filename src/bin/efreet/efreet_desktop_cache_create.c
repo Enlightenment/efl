@@ -152,7 +152,10 @@ cache_scan(const char *path, const char *base_id, int priority, int recurse, int
             if (*base_id)
                 snprintf(id, sizeof(id), "%s-%s", base_id, fname);
             else
-                strcpy(id, fname);
+            {
+                strncpy(id, fname, PATH_MAX);
+                id[PATH_MAX - 1] = '\0';
+            }
             file_id = id;
         }
 
