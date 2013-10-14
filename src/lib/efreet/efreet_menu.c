@@ -3177,7 +3177,10 @@ efreet_menu_app_dir_scan(Efreet_Menu_Internal *internal, const char *path, const
         if (id)
             snprintf(buf2, sizeof(buf2), "%s-%s", id, fname);
         else
-            strcpy(buf2, fname);
+        {
+            strncpy(buf2, fname, PATH_MAX);
+            buf2[PATH_MAX - 1] = '\0';
+        }
 
         if (info->type == EINA_FILE_DIR)
         {
@@ -3285,7 +3288,10 @@ efreet_menu_directory_dir_scan(const char *path, const char *relative_path,
         if (relative_path)
             snprintf(buf2, sizeof(buf2), "%s/%s", relative_path, fname);
         else
-            strcpy(buf2, fname);
+        {
+            strncpy(buf2, fname, PATH_MAX);
+            buf2[PATH_MAX - 1] = '\0';
+        }
 
         if (info->type == EINA_FILE_DIR)
             efreet_menu_directory_dir_scan(info->path, buf2, cache);
