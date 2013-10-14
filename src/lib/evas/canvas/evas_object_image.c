@@ -1258,8 +1258,8 @@ _image_size_set(Eo *eo_obj, void *_pd, va_list *list)
    _evas_object_image_cleanup(eo_obj, obj, o);
    if (w < 1) w = 1;
    if (h < 1) h = 1;
-   if (w > 32768) return;
-   if (h > 32768) return;
+   if (w >= 32768) return;
+   if (h >= 32768) return;
    if ((w == o->cur->image.w) &&
        (h == o->cur->image.h)) return;
 
