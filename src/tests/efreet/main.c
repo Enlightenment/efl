@@ -123,7 +123,7 @@ main(int argc, char ** argv)
                {
                   for (i = 0; tests[i].name; i++)
                     printf("%s\n", tests[i].name);
-                  run = eina_list_free(run);
+                  eina_list_free(run);
                   return 0;
                }
              run = eina_list_append(run, argv[i]);
