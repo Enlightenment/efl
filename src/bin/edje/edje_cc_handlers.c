@@ -5192,9 +5192,8 @@ st_collections_group_parts_part_description_inherit(void)
 	     if (min_dst)
 	       {
                   WRN("%s:%i: couldn't find an exact match in part '%s' when looking for '%s' %lf. Falling back to nearest one '%s' %lf.",
-                      file_in, line - 1, ep->name, parent_name, parent_val, parent->state.name, parent->state.value);
+                      file_in, line - 1, ep->name, parent_name, parent_val, parent ? parent->state.name : NULL, parent ? parent->state.value : NULL);
                }
-                    
           }
 
         if (!parent)
