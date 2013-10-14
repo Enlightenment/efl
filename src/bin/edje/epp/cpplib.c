@@ -1888,7 +1888,6 @@ cpp_push_buffer(cpp_reader * pfile, unsigned char *buffer, long length)
    if (buf == pfile->buffer_stack)
       cpp_fatal("macro or `#include' recursion too deep");
    buf--;
-   if (!buf) return NULL;
    memset((char *)buf, 0, sizeof(cpp_buffer));
    CPP_BUFFER(pfile) = buf;
 #else
