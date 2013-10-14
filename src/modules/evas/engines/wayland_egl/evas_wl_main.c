@@ -212,6 +212,7 @@ eng_window_free(Evas_GL_Wl_Window *gw)
      {
         if (context) eglDestroyContext(gw->egl_disp, context);
         eglTerminate(gw->egl_disp);
+        eglReleaseThread();
         context = EGL_NO_CONTEXT;
      }
 
