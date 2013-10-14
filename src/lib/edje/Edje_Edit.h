@@ -3487,6 +3487,51 @@ EAPI Edje_Tween_Mode edje_edit_program_transition_get(Evas_Object *obj, const ch
  */
 EAPI Eina_Bool edje_edit_program_transition_set(Evas_Object *obj, const char *prog, Edje_Tween_Mode transition);
 
+/** Get the interpolation value 1 of the transition.
+ *  Can be used with one of transition type: EDJE_TWEEN_MODE_ACCELERATE_FACTOR, EDJE_TWEEN_MODE_DECELERATE_FACTOR, EDJE_TWEEN_MODE_SINUSOIDAL_FACTOR, EDJE_TWEEN_MODE_DIVISOR_INTERP, EDJE_TWEEN_MODE_BOUNCE or EDJE_TWEEN_MODE_SPRING.
+ *
+ * @param obj Object being edited.
+ * @param prog The name of the program to get the interpolation value 1.
+ *
+ * @return interpolation value 1.
+ */
+EAPI double
+edje_edit_program_transition_value1_get(Evas_Object *obj, const char *prog);
+
+/** Set the interpolation value 1 of the transition.
+ *  Can be used with one of transition type: EDJE_TWEEN_MODE_ACCELERATE_FACTOR, EDJE_TWEEN_MODE_DECELERATE_FACTOR, EDJE_TWEEN_MODE_SINUSOIDAL_FACTOR, EDJE_TWEEN_MODE_DIVISOR_INTERP, EDJE_TWEEN_MODE_BOUNCE or EDJE_TWEEN_MODE_SPRING.
+ *
+ * @param obj Object being edited.
+ * @param prog The name of the program to get the interpolation value 1.
+ * @param value The interpolation value 1 for the transition.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool
+edje_edit_program_transition_value1_set(Evas_Object *obj, const char *prog, double value);
+
+/** Get the interpolation value 2 of the transition.
+ *  Can be used with one of transition type: EDJE_TWEEN_MODE_DIVISOR_INTERP, EDJE_TWEEN_MODE_BOUNCE or EDJE_TWEEN_MODE_SPRING.
+ * @param obj Object being edited.
+ * @param prog The name of the program to get the interpolation value 2.
+ *
+ * @return interpolation value 2.
+ */
+EAPI double
+edje_edit_program_transition_value2_get(Evas_Object *obj, const char *prog);
+
+/** Set the interpolation value 2 of the transition.
+ *  Can be used with one of transition type: EDJE_TWEEN_MODE_DIVISOR_INTERP, EDJE_TWEEN_MODE_BOUNCE or EDJE_TWEEN_MODE_SPRING.
+ *
+ * @param obj Object being edited.
+ * @param prog The name of the program to get the interpolation value 2.
+ * @param value The interpolation value 2 for the transition.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool
+edje_edit_program_transition_value2_set(Evas_Object *obj, const char *prog, double value);
+
 /** Get the duration of the transition in seconds.
  *
  * @param obj Object being edited.
