@@ -263,7 +263,6 @@ ecore_fb_callback_lose_set(void (*func) (void *data), void *data)
 {
    _ecore_fb_func_fb_lost = func;
    _ecore_fb_func_fb_lost_data = data;
-
 }
 
 /**
