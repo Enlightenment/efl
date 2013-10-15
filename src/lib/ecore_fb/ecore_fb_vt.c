@@ -254,7 +254,7 @@ ecore_fb_callback_gain_set(void (*func) (void *data), void *data)
  * @param data The data to pass to the callback.
  *
  * This function sets the callback @p func which will be called when a
- * virtual terminal is lost (someone wants the tv from you and you
+ * virtual terminal is lost (someone wants the vt from you and you
  * want to give up that vt). @p data will be pass to @p func if the
  * callback is called.
  */
