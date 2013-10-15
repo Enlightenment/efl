@@ -233,7 +233,7 @@ enum
 #define elm_obj_progressbar_inverted_get(ret) ELM_OBJ_PROGRESSBAR_ID(ELM_OBJ_PROGRESSBAR_SUB_ID_INVERTED_GET), EO_TYPECHECK(Eina_Bool *, ret)
 
 /**
- * @def elm_progressbar_part_value_set
+ * @def elm_obj_progressbar_part_value_set
  * @since 1.8
  *
  * Modified to support more than one progress status
@@ -249,7 +249,7 @@ enum
 #define elm_obj_progressbar_part_value_set(part, val) ELM_OBJ_PROGRESSBAR_ID(ELM_OBJ_PROGRESSBAR_SUB_ID_PART_VALUE_SET), EO_TYPECHECK(const char*, part), EO_TYPECHECK(double, val)
 
 /**
- * @def elm_progressbar_part_value_get
+ * @def elm_obj_progressbar_part_value_get
  * @since 1.8
  *
  * Modified to support more than one progress status
