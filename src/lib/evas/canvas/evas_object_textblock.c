@@ -10934,8 +10934,12 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
         switch (ti->parent.format->style & EVAS_TEXT_STYLE_MASK_BASIC)
           {
            case EVAS_TEXT_STYLE_SHADOW:
+             shad_dst = 1;
+             haveshad = 1;
+             break;
            case EVAS_TEXT_STYLE_OUTLINE_SOFT_SHADOW:
              shad_dst = 1;
+             shad_sz = 2;
              haveshad = 1;
              break;
            case EVAS_TEXT_STYLE_OUTLINE_SHADOW:
@@ -11032,7 +11036,7 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
         ti = (itr->type == EVAS_TEXTBLOCK_ITEM_TEXT) ? _ITEM_TEXT(itr) : NULL;
         if (!ti) continue;
 
-        if (ti->parent.format->style == EVAS_TEXT_STYLE_GLOW)
+        if ((ti->parent.format->style & EVAS_TEXT_STYLE_MASK_BASIC) == EVAS_TEXT_STYLE_GLOW)
           {
              for (j = 0; j < 5; j++)
                {
@@ -11061,9 +11065,9 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
         ti = (itr->type == EVAS_TEXTBLOCK_ITEM_TEXT) ? _ITEM_TEXT(itr) : NULL;
         if (!ti) continue;
 
-        if ((ti->parent.format->style == EVAS_TEXT_STYLE_OUTLINE) ||
-              (ti->parent.format->style == EVAS_TEXT_STYLE_OUTLINE_SHADOW) ||
-              (ti->parent.format->style == EVAS_TEXT_STYLE_OUTLINE_SOFT_SHADOW))
+        if (((ti->parent.format->style & EVAS_TEXT_STYLE_MASK_BASIC) == EVAS_TEXT_STYLE_OUTLINE) ||
+            ((ti->parent.format->style & EVAS_TEXT_STYLE_MASK_BASIC) == EVAS_TEXT_STYLE_OUTLINE_SHADOW) ||
+            ((ti->parent.format->style & EVAS_TEXT_STYLE_MASK_BASIC) == EVAS_TEXT_STYLE_OUTLINE_SOFT_SHADOW))
           {
              COLOR_SET(outline);
              DRAW_TEXT(-1, 0);
