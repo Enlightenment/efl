@@ -356,6 +356,8 @@ Fixes:
      - Skip the map rendering if all points are transparent.
      - Evas bidi: Fixed a bug causing BiDi not to work in some cases.
      - Evas textblock: fixed an issue with markup_get and markup_to_utf8 behaving differently (markup_get was misbehaving).
+     - Fixed the map surface to be updated properly. By tranversing the whole of the map target's tree, it decides to update the map surface to be redrawn if one of the objects is changed except the clipper itself.
+
     * Ecore:
      - Don't leak fd on exec.
      - Fix fd handler increase issue when ecore_pipe_add/del is called repeatedly.

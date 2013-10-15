@@ -1,5 +1,12 @@
 2013-10-15  ChunEon Park (Hermet)
 
+        * Fixed the map surface to be updated properly. By tranversing the 
+        whole of the map target's tree, it decides to update the map
+        surface to be redrawn if one of the objects is changed except the
+        clipper itself.
+
+2013-10-15  ChunEon Park (Hermet)
+
         * Fixed memory leak in the edje map color transition.
 
 2013-10-11  Carsten Haitzler (The Rasterman)
