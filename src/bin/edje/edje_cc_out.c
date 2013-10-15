@@ -27,6 +27,7 @@
 
 typedef struct _External_Lookup External_Lookup;
 typedef struct _Part_Lookup Part_Lookup;
+typedef struct _Part_Lookup_Key Part_Lookup_Key;
 typedef struct _Program_Lookup Program_Lookup;
 typedef struct _Group_Lookup Group_Lookup;
 typedef struct _Image_Lookup Image_Lookup;
@@ -39,11 +40,25 @@ struct _External_Lookup
    char *name;
 };
 
-struct _Part_Lookup
+struct _Part_Lookup_Key
 {
    Edje_Part_Collection *pc;
+   
+   union {
+      int *dest;
+      struct {
+         unsigned char **base;
+         int offset;
+      } reallocated;
+   } mem;
+
+   Eina_Bool stable : 1;
+};
+
+struct _Part_Lookup
+{
+   Part_Lookup_Key key;
    char *name;
-   int *dest;
 };
 
 struct _Program_Lookup
@@ -201,28 +216,96 @@ error_and_abort(Eet_File *ef EINA_UNUSED, const char *fmt, ...)
 }
 
 static unsigned int
-_double_pointer_key_length(const void *key EINA_UNUSED)
+_part_lookup_key_length(const void *key EINA_UNUSED)
 {
-   return sizeof (void*) * 2;
+   return sizeof (Part_Lookup_Key);
 }
 
 static int
-_double_pointer_key_cmp(const void *key1, int key1_length,
+_part_lookup_key_pc_cmp(const void *key1, int key1_length EINA_UNUSED,
                         const void *key2, int key2_length EINA_UNUSED)
 {
-   return memcmp(key1, key2, key1_length);
+   const Part_Lookup_Key *a = key1;
+   const Part_Lookup_Key *b = key2;
+   uintptr_t delta;
+
+   delta = a->pc - b->pc;
+   if (delta) return delta;
+
+   if (a->stable) return a->mem.dest - b->mem.dest;
+
+   delta = a->mem.reallocated.base - b->mem.reallocated.base;
+   if (delta) return delta;
+   return a->mem.reallocated.offset - b->mem.reallocated.offset;
 }
 
 static int
-_double_pointer_key_hash(const void *key, int key_length EINA_UNUSED)
+_part_lookup_key_pc_hash(const void *key, int key_length EINA_UNUSED)
 {
+   const Part_Lookup_Key *a = key;
+
+   if (a->stable)
+     {
 #ifdef __LP64__
-   return eina_hash_int64(key, sizeof (void*)) ^
-     eina_hash_int64((void*)(((unsigned char*) key) + sizeof (void*)), sizeof (void*));
+        return eina_hash_int64((uintptr_t) &a->pc, sizeof (void*)) ^
+          eina_hash_int64((uintptr_t) &a->mem.dest, sizeof (void*));
 #else
-   /* double 32 bits pointer is ... 64bits awesome ! */
-   return eina_hash_int64(key, key_length);
+        return eina_hash_int32((uintptr_t*) &a->pc, sizeof (void*)) ^
+          eina_hash_int32((uintptr_t*) &a->mem.dest, sizeof (void*));
 #endif
+     }
+   else
+     {
+#ifdef __LP64__
+        return eina_hash_int64((uintptr_t *) &a->pc, sizeof (void*)) ^
+          eina_hash_int64((uintptr_t *) &a->mem.reallocated.base, sizeof (void*)) ^
+          eina_hash_int32((unsigned int *) &a->mem.reallocated.offset, sizeof (int));
+#else
+        return eina_hash_int32((uintptr_t *) &a->pc, sizeof (void*)) ^
+          eina_hash_int32((uintptr_t *) &a->mem.reallocated.base, sizeof (void*)) ^
+          eina_hash_int32((unsigned int *) &a->mem.reallocated.offset, sizeof (int));
+#endif
+     }
+}
+
+static int
+_part_lookup_key_cmp(const void *key1, int key1_length EINA_UNUSED,
+                     const void *key2, int key2_length EINA_UNUSED)
+{
+   const Part_Lookup_Key *a = key1;
+   const Part_Lookup_Key *b = key2;
+   uintptr_t delta;
+
+   if (a->stable) return a->mem.dest - b->mem.dest;
+
+   delta = a->mem.reallocated.base - b->mem.reallocated.base;
+   if (delta) return delta;
+   return a->mem.reallocated.offset - b->mem.reallocated.offset;
+}
+
+static int
+_part_lookup_key_hash(const void *key, int key_length EINA_UNUSED)
+{
+   const Part_Lookup_Key *a = key;
+
+   if (a->stable)
+     {
+#ifdef __LP64__
+        return eina_hash_int64((uintptr_t *) &a->mem.dest, sizeof (void*));
+#else
+        return eina_hash_int32((uintptr_t *) &a->mem.dest, sizeof (void*));
+#endif
+     }
+   else
+     {
+#ifdef __LP64__
+        return eina_hash_int64((uintptr_t *) &a->mem.reallocated.base, sizeof (void*)) ^
+          eina_hash_int32((unsigned int *) &a->mem.reallocated.offset, sizeof (int));
+#else
+        return eina_hash_int32((uintptr_t *) &a->mem.reallocated.base, sizeof (void*)) ^
+          eina_hash_int32((unsigned int *) &a->mem.reallocated.offset, sizeof (int));
+#endif
+     }
 }
 
 static void
@@ -238,10 +321,14 @@ data_setup(void)
    edd_edje_file = _edje_edd_edje_file;
    edd_edje_part_collection = _edje_edd_edje_part_collection;
 
-   part_dest_lookup = eina_hash_pointer_new(EINA_FREE_CB(eina_list_free));
-   part_pc_dest_lookup = eina_hash_new(EINA_KEY_LENGTH(_double_pointer_key_length),
-                                       EINA_KEY_CMP(_double_pointer_key_cmp),
-                                       EINA_KEY_HASH(_double_pointer_key_hash),
+   part_dest_lookup = eina_hash_new(EINA_KEY_LENGTH(_part_lookup_key_length),
+                                    EINA_KEY_CMP(_part_lookup_key_cmp),
+                                    EINA_KEY_HASH(_part_lookup_key_hash),
+                                    EINA_FREE_CB(eina_list_free),
+                                    8);
+   part_pc_dest_lookup = eina_hash_new(EINA_KEY_LENGTH(_part_lookup_key_length),
+                                       EINA_KEY_CMP(_part_lookup_key_pc_cmp),
+                                       EINA_KEY_HASH(_part_lookup_key_pc_hash),
                                        EINA_FREE_CB(data_part_lookup_free),
                                        8);
 }
@@ -1812,12 +1899,13 @@ data_queue_face_group_lookup(const char *name)
 void
 data_queue_part_lookup(Edje_Part_Collection *pc, const char *name, int *dest)
 {
-   void *key[2];
+   Part_Lookup_Key key;
    Part_Lookup *pl = NULL;
    Eina_List *list;
 
-   key[0] = pc;
-   key[1] = dest;
+   key.pc = pc;
+   key.mem.dest = dest;
+   key.stable = EINA_TRUE;
 
    pl = eina_hash_find(part_pc_dest_lookup, &key);
    if (pl)
@@ -1829,9 +1917,9 @@ data_queue_part_lookup(Edje_Part_Collection *pc, const char *name, int *dest)
           }
         else
           {
-             list = eina_hash_find(part_dest_lookup, &pl->dest);
+             list = eina_hash_find(part_dest_lookup, &pl->key);
              list = eina_list_remove(list, pl);
-             eina_hash_set(part_dest_lookup, &pl->dest, list);
+             eina_hash_set(part_dest_lookup, &pl->key, list);
              eina_hash_del(part_pc_dest_lookup, &key, pl);
           }
         return;
@@ -1840,15 +1928,63 @@ data_queue_part_lookup(Edje_Part_Collection *pc, const char *name, int *dest)
    if (!name[0]) return;
 
    pl = mem_alloc(SZ(Part_Lookup));
-   pl->pc = pc;
    pl->name = mem_strdup(name);
-   pl->dest = dest;
+   pl->key.pc = pc;
+   pl->key.mem.dest = dest;
+   pl->key.stable = EINA_TRUE;
 
    eina_hash_add(part_pc_dest_lookup, &key, pl);
 
-   list = eina_hash_find(part_dest_lookup, &pl->dest);
+   list = eina_hash_find(part_dest_lookup, &pl->key);
    list = eina_list_prepend(list, pl);
-   eina_hash_set(part_dest_lookup, &pl->dest, list);
+   eina_hash_set(part_dest_lookup, &pl->key, list);
+}
+
+void
+data_queue_part_reallocated_lookup(Edje_Part_Collection *pc, const char *name,
+				   unsigned char **base, int offset)
+{
+   Part_Lookup_Key key;
+   Part_Lookup *pl = NULL;
+   Eina_List *list;
+
+   key.pc = pc;
+   key.mem.reallocated.base = base;
+   key.mem.reallocated.offset = offset;
+   key.stable = EINA_FALSE;
+
+   pl = eina_hash_find(part_pc_dest_lookup, &key);
+   if (pl)
+     {
+        if (name[0])
+          {
+             free(pl->name);
+             pl->name = mem_strdup(name);
+          }
+        else
+          {
+             list = eina_hash_find(part_dest_lookup, &pl->key);
+             list = eina_list_remove(list, pl);
+             eina_hash_set(part_dest_lookup, &pl->key, list);
+             eina_hash_del(part_pc_dest_lookup, &key, pl);
+          }
+        return;
+     }
+
+   if (!name[0]) return;
+
+   pl = mem_alloc(SZ(Part_Lookup));
+   pl->name = mem_strdup(name);
+   pl->key.pc = pc;
+   pl->key.mem.reallocated.base = base;
+   pl->key.mem.reallocated.offset = offset;
+   pl->key.stable = EINA_FALSE;
+
+   eina_hash_add(part_pc_dest_lookup, &key, pl);
+
+   list = eina_hash_find(part_dest_lookup, &pl->key);
+   list = eina_list_prepend(list, pl);
+   eina_hash_set(part_dest_lookup, &pl->key, list);
 }
 
 void
@@ -1857,21 +1993,27 @@ data_queue_copied_part_lookup(Edje_Part_Collection *pc, int *src, int *dest)
    Eina_List *list;
    Eina_List *l;
    Part_Lookup *pl;
+   Part_Lookup_Key key;
 
-   list = eina_hash_find(part_dest_lookup, &src);
+   key.pc = NULL;
+   key.mem.dest = src;
+   key.stable = EINA_TRUE;
+
+   list = eina_hash_find(part_dest_lookup, &key);
    EINA_LIST_FOREACH(list, l, pl)
-     data_queue_part_lookup(pc, pl->name, dest);
+     if (pl->key.stable)
+       data_queue_part_lookup(pc, pl->name, dest);
 }
 
 void
 data_queue_anonymous_lookup(Edje_Part_Collection *pc, Edje_Program *ep, int *dest)
 {
-   Eina_List *l, *l2;
+   Eina_List *l, *l1, *l2, *l3;
    Program_Lookup *pl;
 
    if (!ep) return; /* FIXME: should we stop compiling ? */
 
-   EINA_LIST_FOREACH(program_lookups, l, pl)
+   EINA_LIST_FOREACH_SAFE(program_lookups, l, l1, pl)
      {
         if (pl->u.ep == ep)
           {
@@ -1880,16 +2022,16 @@ data_queue_anonymous_lookup(Edje_Part_Collection *pc, Edje_Program *ep, int *des
 
              cd = eina_list_data_get(eina_list_last(codes));
 
-             EINA_LIST_FOREACH(cd->programs, l2, cp)
+             EINA_LIST_FOREACH_SAFE(cd->programs, l2, l3, cp)
                {
                   if (&(cp->id) == pl->dest)
                     {
-                       cd->programs = eina_list_remove(cd->programs, cp);
+                       cd->programs = eina_list_remove_list(cd->programs, l2);
                        free(cp);
                        cp = NULL;
                     }
                }
-             program_lookups = eina_list_remove(program_lookups, pl);
+             program_lookups = eina_list_remove_list(program_lookups, l);
              free(pl);
           }
      }
@@ -2053,6 +2195,20 @@ handle_slave_lookup(Eina_List *list, int *master, int value)
        *sl->slave = value;
 }
 
+static void
+data_process_part_set(Part_Lookup *target, int value)
+{
+   if (target->key.stable)
+     {
+        *(target->key.mem.dest) = value;
+     }
+   else
+     {
+        *((int*)(*target->key.mem.reallocated.base +
+                 target->key.mem.reallocated.offset)) = value;
+     }
+}
+
 void
 data_process_lookups(void)
 {
@@ -2149,30 +2305,43 @@ data_process_lookups(void)
 
         if (!strcmp(part->name, "-"))
           {
-             *(part->dest) = -1;
+             data_process_part_set(part, -1);
           }
         else
           {
              char *alias;
-             alias = eina_hash_find(part->pc->alias, part->name);
+             alias = eina_hash_find(part->key.pc->alias, part->name);
              if (!alias)
                alias = part->name;
-             for (i = 0; i < part->pc->parts_count; ++i)
+             for (i = 0; i < part->key.pc->parts_count; ++i)
                {
-                  ep = part->pc->parts[i];
+                  ep = part->key.pc->parts[i];
 
                   if ((ep->name) && (!strcmp(ep->name, alias)))
                     {
-                       handle_slave_lookup(part_slave_lookups, part->dest, ep->id);
-                       *(part->dest) = ep->id;
+                       int *master;
+
+                       if (part->key.stable)
+                         {
+                            master = part->key.mem.dest;
+                         }
+                       else
+                         {
+                            master = (int*)(*part->key.mem.reallocated.base +
+                                            part->key.mem.reallocated.offset);
+                         }
+                       handle_slave_lookup(part_slave_lookups,
+                                           master,
+                                           ep->id);
+                       data_process_part_set(part, ep->id);
                        break;
                     }
                }
 
-             if (i == part->pc->parts_count)
+             if (i == part->key.pc->parts_count)
                {
                   ERR("Unable to find part name \"%s\" needed in group '%s'.",
-                      alias, part->pc->part);
+                      alias, part->key.pc->part);
                   exit(-1);
                }
           }
