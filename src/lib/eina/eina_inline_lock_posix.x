@@ -608,11 +608,10 @@ eina_spinlock_take(Eina_Spinlock *spinlock)
         {
            if (errno == EBUSY) sched_yield();
            else if (errno == EDEADLK) return EINA_LOCK_DEADLOCK;
-           else return EINA_LOCK_FAIL;
         }
    } while (t != 0);
 
-   return EINA_LOCK_SUCCEED;
+   return t ? EINA_LOCK_FAIL : EINA_LOCK_SUCCEED;
 #else
    return eina_lock_take(spinlock);
 #endif
