@@ -83,7 +83,8 @@ BuildRequires:  pkgconfig(fribidi)
 BuildRequires:  pkgconfig(fontconfig)
 BuildRequires:  pkgconfig(harfbuzz)
 BuildRequires:  pkgconfig(libdri2)
-BuildRequires:  opengl-es-devel
+BuildRequires:  pkgconfig(gles20)
+BuildRequires:  pkgconfig(libtbm)
 
 #eeze
 BuildRequires:  libudev-devel
@@ -142,7 +143,7 @@ Headers, pkgconfig files and other files needed for development with EFL.
 NOCONFIGURE=1 ./autogen.sh
 %configure --disable-physics --enable-tizen --enable-g-main-loop \
 		--disable-xim --disable-scim --enable-gesture \
-		--enable-tile-rotate --disable-rpath --with-x11=xlib --with-opengl=none
+		--enable-tile-rotate --disable-rpath --with-x11=xlib --with-opengl=es
 
 make
 
