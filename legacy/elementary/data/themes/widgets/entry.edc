@@ -1566,7 +1566,7 @@ group { name: "elm/entry/magnifier/default";
             visible: 0;
          }
       }
-      part { name: "swallow";
+      part { name: "elm.swallow.content";
          type: SWALLOW;
          mouse_events: 0;
          scale: 1;
@@ -1610,7 +1610,7 @@ group { name: "elm/entry/magnifier/default";
          source: "elm";
          action: STATE_SET "default" 0.0;
          target: "bg";
-         target: "swallow";
+         target: "elm.swallow.content";
          target: "outline";
       }
       program { name: "magnifier_hide";
@@ -1618,7 +1618,7 @@ group { name: "elm/entry/magnifier/default";
          source: "elm";
          action: STATE_SET "hidden" 0.0;
          target: "bg";
-         target: "swallow";
+         target: "elm.swallow.content";
          target: "outline";
       }
    }

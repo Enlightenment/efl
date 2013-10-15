@@ -1340,7 +1340,7 @@ _magnifier_create(void *data)
 
    sd->mgf_clip = evas_object_rectangle_add(evas_object_evas_get(data));
    evas_object_color_set(sd->mgf_clip, 255, 255, 255, 255);
-   edje_object_part_swallow(sd->mgf_bg, "swallow", sd->mgf_clip);
+   edje_object_part_swallow(sd->mgf_bg, "elm.swallow.content", sd->mgf_clip);
 
    if (sd->scroll)
      {
