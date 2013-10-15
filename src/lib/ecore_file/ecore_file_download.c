@@ -26,7 +26,6 @@ struct _Ecore_File_Download_Job
    Ecore_File_Download_Progress_Cb progress_cb;
 };
 
-#ifdef HAVE_CURL
 Ecore_File_Download_Job *_ecore_file_download_curl(const char *url, const char *dst,
                                                    Ecore_File_Download_Completion_Cb completion_cb,
                                                    Ecore_File_Download_Progress_Cb progress_cb,
@@ -35,7 +34,6 @@ Ecore_File_Download_Job *_ecore_file_download_curl(const char *url, const char *
 
 static Eina_Bool _ecore_file_download_url_complete_cb(void *data, int type, void *event);
 static Eina_Bool _ecore_file_download_url_progress_cb(void *data, int type, void *event);
-#endif
 
 static Ecore_Event_Handler *_url_complete_handler = NULL;
 static Ecore_Event_Handler *_url_progress_download = NULL;
@@ -54,10 +52,8 @@ ecore_file_download_init(void)
         ecore_con_shutdown();
         return 0;
      }
-#ifdef HAVE_CURL
    _url_complete_handler = ecore_event_handler_add(ECORE_CON_EVENT_URL_COMPLETE, _ecore_file_download_url_complete_cb, NULL);
    _url_progress_download = ecore_event_handler_add(ECORE_CON_EVENT_URL_PROGRESS, _ecore_file_download_url_progress_cb, NULL);
-#endif
    return 1;
 }
 
@@ -77,7 +73,6 @@ ecore_file_download_shutdown(void)
    ecore_con_shutdown();
 }
 
-# ifdef HAVE_CURL
 static Eina_Bool
 _ecore_file_download_headers_foreach_cb(const Eina_Hash *hash EINA_UNUSED, const void *key, void *data, void *fdata)
 {
@@ -86,7 +81,6 @@ _ecore_file_download_headers_foreach_cb(const Eina_Hash *hash EINA_UNUSED, const
 
    return EINA_TRUE;
 }
-# endif
 
 static Eina_Bool
 _ecore_file_download(const char *url,
@@ -131,7 +125,6 @@ _ecore_file_download(const char *url,
         else
           return EINA_FALSE;
      }
-#ifdef HAVE_CURL
    else if ((!strncmp(url, "http://", 7)) || (!strncmp(url, "https://", 8)) ||
             (!strncmp(url, "ftp://", 6)))
      {
@@ -148,18 +141,6 @@ _ecore_file_download(const char *url,
              return EINA_FALSE;
           }
      }
-#else
-   else if ((!strncmp(url, "http://", 7)) || (!strncmp(url, "https://", 8)) ||
-            (!strncmp(url, "ftp://", 6)))
-     {
-        (void)completion_cb;
-        (void)progress_cb;
-        (void)data;
-        (void)job_ret;
-        (void)headers;
-        return EINA_FALSE;
-     }
-#endif
    else
      {
         return EINA_FALSE;
@@ -251,15 +232,12 @@ EAPI Eina_Bool
 ecore_file_download_protocol_available(const char *protocol)
 {
    if (!strncmp(protocol, "file://", 7)) return EINA_TRUE;
-#ifdef HAVE_CURL
    else if (!strncmp(protocol, "http://", 7)) return EINA_TRUE;
    else if (!strncmp(protocol, "ftp://", 6)) return EINA_TRUE;
-#endif
 
    return EINA_FALSE;
 }
 
-# ifdef HAVE_CURL
 static int
 _ecore_file_download_url_compare_job(const void *data1, const void *data2)
 {
@@ -391,9 +369,7 @@ ecore_file_download_abort(Ecore_File_Download_Job *job)
 
    if (job->completion_cb)
      job->completion_cb(ecore_con_url_data_get(job->url_con), job->dst, 1);
-#ifdef HAVE_CURL
    ecore_con_url_free(job->url_con);
-#endif
    _job_list = eina_list_remove(_job_list, job);
    fclose(job->file);
    free(job->dst);
