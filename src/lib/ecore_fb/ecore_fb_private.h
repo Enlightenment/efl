@@ -36,40 +36,41 @@
 /* ecore_fb_li.c */
 struct _Ecore_Fb_Input_Device
 {
-        int fd;
-        Ecore_Fd_Handler *handler;
-        int listen;
-        struct {
-                Ecore_Fb_Input_Device_Cap cap;
-                char *name;
-                char *dev;
-        } info;
-        struct
-        {
-                /* common mouse */
-                int x,y;
-                int w,h;
-                
-                double last;
-                double prev;
-                double threshold;
-                Eina_Bool did_double;
-                Eina_Bool did_triple;
-                /* absolute axis */
-                int min_w, min_h;
-                double rel_w, rel_h;
-                int event;
-                int prev_button;
-                int last_button;
-        } mouse;
-        struct
-        {
-                int shift;
-                int ctrl;
-                int alt;
-                int lock;
-        } keyboard;
-        void *window;
+   int fd;
+   Ecore_Fd_Handler *handler;
+   int listen;
+   struct 
+     {
+        Ecore_Fb_Input_Device_Cap cap;
+        char *name;
+        char *dev;
+     } info;
+   struct
+     {
+        /* common mouse */
+        int x,y;
+        int w,h;
+
+        double last;
+        double prev;
+        double threshold;
+        Eina_Bool did_double;
+        Eina_Bool did_triple;
+        /* absolute axis */
+        int min_w, min_h;
+        double rel_w, rel_h;
+        int event;
+        int prev_button;
+        int last_button;
+     } mouse;
+   struct
+     {
+        int shift;
+        int ctrl;
+        int alt;
+        int lock;
+     } keyboard;
+   void *window;
 };
 
 /* ecore_fb_ts.c */
