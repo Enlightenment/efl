@@ -2873,9 +2873,20 @@ _edje_physics_body_add(Edje *ed, Edje_Real_Part *rp, EPhysics_World *world)
 
 #define INTP(_x1, _x2, _p) TO_INT(FINTP(_x1, _x2, _p))
 
+static void
+_map_colors_free(Edje_Calc_Params *pf)
+{
+   Edje_Map_Color **colors = pf->map->colors;
+   int i;
+
+   for (i = 0; i < (int) pf->map->colors_count; i++)
+     free(colors[i]);
+   free (colors);
+}
+
 static Eina_Bool
-map_colors_interp(Edje_Calc_Params *p1, Edje_Calc_Params *p2,
-                  Edje_Calc_Params_Map *pmap, FLOAT_T pos)
+_map_colors_interp(Edje_Calc_Params *p1, Edje_Calc_Params *p2,
+                   Edje_Calc_Params_Map *pmap, FLOAT_T pos)
 {
    Edje_Map_Color *col, *col2, *col3;
    int i, j, idx = 0;
@@ -2949,8 +2960,7 @@ map_colors_interp(Edje_Calc_Params *p1, Edje_Calc_Params *p2,
 static void
 _edje_map_prop_set(Evas_Map *map, const  Edje_Calc_Params *pf,
                    Edje_Part_Description_Common *chosen_desc,
-                   Edje_Real_Part *ep, Evas_Object *mo,
-                   Eina_Bool map_colors_free)
+                   Edje_Real_Part *ep, Evas_Object *mo)
 {
    Edje_Map_Color **colors = pf->map->colors;
    int colors_cnt = pf->map->colors_count;
@@ -2985,25 +2995,11 @@ _edje_map_prop_set(Evas_Map *map, const  Edje_Calc_Params *pf,
      }
    else
      {
-        if (map_colors_free)
+        for (i = 0; i < colors_cnt; i++)
           {
-             for (i = 0; i < colors_cnt; i++)
-               {
-                  color = colors[i];
-                  evas_map_point_color_set(map, color->idx, color->r, color->g,
-                                           color->b, color->a);
-                  free(colors[i]);
-               }
-             free (colors);
-          }
-        else
-          {
-             for (i = 0; i < colors_cnt; i++)
-               {
-                  color = colors[i];
-                  evas_map_point_color_set(map, color->idx, color->r, color->g,
-                                           color->b, color->a);
-               }
+             color = colors[i];
+             evas_map_point_color_set(map, color->idx, color->r, color->g,
+                                      color->b, color->a);
           }
      }
 
@@ -3604,7 +3600,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
 
 #define MIX(P1, P2, P3, pos, info)                                      \
                   P3->info = P1->map->info + TO_INT(SCALE(pos, P2->map->info - P1->map->info));
-                  map_colors_free = map_colors_interp(p1, p2, p3_write, pos);
+                  map_colors_free = _map_colors_interp(p1, p2, p3_write, pos);
 
                   if (p1->lighted && p2->lighted)
                     {
@@ -3906,7 +3902,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
              // create map and populate with part geometry
              if (!map) map = evas_map_new(4);
 
-             _edje_map_prop_set(map, pf, chosen_desc, ep, mo, map_colors_free);
+             _edje_map_prop_set(map, pf, chosen_desc, ep, mo);
 
              if (ep->nested_smart)
                {  /* Apply map to smart obj holding nested parts */
@@ -3946,6 +3942,8 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                }
           }
      }
+
+   if (map_colors_free) _map_colors_free(pf);
 
 #ifdef HAVE_EPHYSICS
    ep->prev_description = chosen_desc;

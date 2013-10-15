@@ -1,3 +1,7 @@
+2013-10-15  ChunEon Park (Hermet)
+
+        * Fixed memory leak in the edje map color transition.
+
 2013-10-11  Carsten Haitzler (The Rasterman)
 
         * deprecate/remove all the eina_error setting (and getting)
