@@ -347,7 +347,6 @@ _ecore_file_download_curl(const char *url, const char *dst,
 
    return job;
 }
-#endif
 
 /**
  * @brief Abort the given download job and call the completion_cb
