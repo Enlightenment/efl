@@ -889,8 +889,9 @@ evas_object_smart_callback_del_full(Evas_Object *eo_obj, const char *event, Evas
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return NULL;
    MAGIC_CHECK_END();
-   o = eo_data_scope_get(eo_obj, MY_CLASS);
    if (!event) return NULL;
+   o = eo_data_scope_get(eo_obj, MY_CLASS);
+   if (!o) return NULL;
 
    const _Evas_Event_Description *event_desc = eina_hash_find(signals_hash_table, event);
    if (!event_desc) return NULL;
