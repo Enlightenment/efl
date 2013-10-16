@@ -271,15 +271,15 @@ _progressbar2_timer_cb(void *data)
       {
          progress += 0.0123;
          elm_progressbar_part_value_set(pd->pb1, "elm.cur.progressbar", progress);
-         elm_progressbar_value_set(pd->pb2, progress);
-         elm_progressbar_part_value_set(pd->pb3, "elm.cur.progressbar", progress);
-         elm_progressbar_part_value_set(pd->pb4, "elm.cur.progressbar", progress);
+         elm_progressbar_part_value_set(pd->pb2, "elm.cur.progressbar1", progress);
+         elm_progressbar_part_value_set(pd->pb3, "elm.cur.progressbar1", progress);
+         elm_progressbar_part_value_set(pd->pb4, "elm.cur.progressbar1", progress);
       }
 
-   _set_progress_val(pd->pb2, 0.00723, "elm.cur.progressbar1");
-   _set_progress_val(pd->pb3, 0.00523, "elm.cur.progressbar1");
+   _set_progress_val(pd->pb2, 0.00723, "elm.cur.progressbar");
+   _set_progress_val(pd->pb3, 0.00523, "elm.cur.progressbar");
 
-   if (!_set_progress_val(pd->pb4, 0.00423, "elm.cur.progressbar1"))
+   if (!_set_progress_val(pd->pb4, 0.00423, "elm.cur.progressbar"))
      return ECORE_CALLBACK_RENEW;
 
    pd->timer = NULL;
