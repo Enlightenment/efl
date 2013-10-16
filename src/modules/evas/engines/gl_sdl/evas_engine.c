@@ -365,6 +365,7 @@ eng_image_alpha_set(void *data EINA_UNUSED, void *image, int has_alpha)
         
         if (!im->im->image.data)
           evas_cache_image_load_data(&im->im->cache_entry);
+        evas_gl_common_image_alloc_ensure(im);
         im_new = evas_gl_common_image_new_from_copied_data(im->gc, im->im->cache_entry.w, im->im->cache_entry.h, im->im->image.data,
                                                            eng_image_alpha_get(data, image),
                                                            eng_image_colorspace_get(data, image));
@@ -414,6 +415,7 @@ eng_image_colorspace_set(void *data EINA_UNUSED, void *image, int cspace)
    if (im->native.data) return;
    /* FIXME: can move to gl_common */
    if (im->cs.space == cspace) return;
+   evas_gl_common_image_alloc_ensure(im);
    evas_cache_image_colorspace(&im->im->cache_entry, cspace);
    switch (cspace)
      {
@@ -566,6 +568,7 @@ eng_image_size_set(void *data, void *image, int w, int h)
          break;
      }
 
+   evas_gl_common_image_alloc_ensure(im_old);
    if ((im_old->im) &&
        ((int)im_old->im->cache_entry.w == w) &&
        ((int)im_old->im->cache_entry.h == h))
@@ -621,6 +624,7 @@ eng_image_data_get(void *data EINA_UNUSED, void *image, int to_write, DATA32 **i
         return im;
      }
    error = evas_cache_image_load_data(&im->im->cache_entry);
+   evas_gl_common_image_alloc_ensure(im);
    switch (im->cs.space)
      {
       case EVAS_COLORSPACE_ARGB8888:
@@ -670,6 +674,7 @@ eng_image_data_put(void *data EINA_UNUSED, void *image, DATA32 *image_data)
    if (!image) return NULL;
    im = image;
    if (im->native.data) return image;
+   evas_gl_common_image_alloc_ensure(im);
    switch (im->cs.space)
      {
       case EVAS_COLORSPACE_ARGB8888:

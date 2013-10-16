@@ -453,6 +453,7 @@ eng_image_alpha_set(void *data, void *image, int has_alpha)
         
         if (!im->im->image.data)
           evas_cache_image_load_data(&im->im->cache_entry);
+        evas_gl_common_image_alloc_ensure(im);
         im_new = evas_gl_common_image_new_from_copied_data
            (im->gc, im->im->cache_entry.w, im->im->cache_entry.h, 
                im->im->image.data,
@@ -523,6 +524,7 @@ eng_image_colorspace_set(void *data, void *image, int cspace)
    /* FIXME: can move to gl_common */
    if (im->cs.space == cspace) return;
    eng_window_use(re->win);
+   evas_gl_common_image_alloc_ensure(im);
    evas_cache_image_colorspace(&im->im->cache_entry, cspace);
    switch (cspace)
      {
@@ -676,7 +678,8 @@ eng_image_size_set(void *data, void *image, int w, int h)
         w &= ~0x1;
         break;
      }
-   
+
+   evas_gl_common_image_alloc_ensure(im_old);
    if ((im_old->im) &&
        ((int)im_old->im->cache_entry.w == w) &&
        ((int)im_old->im->cache_entry.h == h))
@@ -744,6 +747,7 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data, i
      }
    eng_window_use(re->win);
    error = evas_cache_image_load_data(&im->im->cache_entry);
+   evas_gl_common_image_alloc_ensure(im);
    switch (im->cs.space)
      {
       case EVAS_COLORSPACE_ARGB8888:
@@ -795,6 +799,7 @@ eng_image_data_put(void *data, void *image, DATA32 *image_data)
    im = image;
    if (im->native.data) return image;
    eng_window_use(re->win);
+   evas_gl_common_image_alloc_ensure(im);
    if ((im->tex) && (im->tex->pt) && (im->tex->pt->dyn.data))
      {
         if (im->tex->pt->dyn.data == image_data)

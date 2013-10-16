@@ -1,6 +1,14 @@
 #include "evas_gl_private.h"
 
 void
+evas_gl_common_image_alloc_ensure(Evas_GL_Image *im)
+{
+   if (!im->im) return;
+   im->im = (RGBA_Image *)evas_cache_image_size_set(&im->im->cache_entry,
+                                                    im->w, im->h);
+}
+
+void
 evas_gl_common_image_all_unload(Evas_Engine_GL_Context *gc)
 {
    Eina_List *l;
@@ -332,6 +340,7 @@ evas_gl_common_image_alpha_set(Evas_GL_Image *im, int alpha)
    if (im->alpha == alpha) return im;
    im->alpha = alpha;
    if (!im->im) return im;
+   evas_gl_common_image_alloc_ensure(im);
    evas_cache_image_load_data(&im->im->cache_entry);
    im->im->cache_entry.flags.alpha = alpha ? 1 : 0;
 
@@ -395,14 +404,15 @@ evas_gl_common_image_native_disable(Evas_GL_Image *im)
         im->tex = NULL;
      }
    im->tex_only = 0;
-
    im->im = (RGBA_Image *)evas_cache_image_empty(evas_common_image_cache_get());
    im->im->cache_entry.flags.alpha = im->alpha;
    im->cs.space = EVAS_COLORSPACE_ARGB8888;
    evas_cache_image_colorspace(&im->im->cache_entry, im->cs.space);
+/*
    im->im = (RGBA_Image *)evas_cache_image_size_set(&im->im->cache_entry, im->w, im->h);
    if (!im->tex)
      im->tex = evas_gl_common_texture_new(im->gc, im->im);
+ */
 }
 
 void
@@ -538,6 +548,7 @@ evas_gl_common_image_dirty(Evas_GL_Image *im, unsigned int x, unsigned int y, un
      }
    if (im->im)
      {
+        evas_gl_common_image_alloc_ensure(im);
         im->im = (RGBA_Image *)evas_cache_image_dirty(&im->im->cache_entry, x, y, w, h);
      }
    im->dirty = 1;
@@ -549,6 +560,7 @@ evas_gl_common_image_update(Evas_Engine_GL_Context *gc, Evas_GL_Image *im)
    Image_Entry *ie;
    if (!im->im) return;
    ie = (Image_Entry *)(im->im);
+   evas_gl_common_image_alloc_ensure(im);
 /*
    if ((im->cs.space == EVAS_COLORSPACE_YCBCR422P601_PL) ||
        (im->cs.space == EVAS_COLORSPACE_YCBCR422P709_PL))
@@ -716,6 +728,7 @@ evas_gl_common_image_push(Evas_Engine_GL_Context *gc, Evas_GL_Image *im,
    RECTS_CLIP_TO_RECT(nx, ny, nw, nh,
                       cx, cy, cw, ch);
    if ((nw < 1) || (nh < 1)) return;
+   if (!im->tex) return;
    if ((nx == dx) && (ny == dy) && (nw == dw) && (nh == dh))
      {
         if (yuv)

@@ -715,6 +715,7 @@ void              evas_gl_common_texture_nv12_update(Evas_GL_Texture *tex, DATA8
 Evas_GL_Texture  *evas_gl_common_texture_nv12tiled_new(Evas_Engine_GL_Context *gc, DATA8 **rows, unsigned int w, unsigned int h);
 void              evas_gl_common_texture_nv12tiled_update(Evas_GL_Texture *tex, DATA8 **row, unsigned int w, unsigned int h);
 
+void              evas_gl_common_image_alloc_ensure(Evas_GL_Image *im);
 void              evas_gl_common_image_all_unload(Evas_Engine_GL_Context *gc);
 
 void              evas_gl_common_image_ref(Evas_GL_Image *im);
