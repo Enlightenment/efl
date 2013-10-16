@@ -267,7 +267,7 @@ _elm_mapbuf_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Mapbuf_Smart_Data *priv = _pd;
    Evas_Object *rect = evas_object_rectangle_add(evas_object_evas_get(obj));
-   elm_widget_resize_object_set(obj, rect);
+   elm_widget_resize_object_set(obj, rect, EINA_TRUE);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
    elm_widget_sub_object_parent_add(obj);

@@ -138,7 +138,7 @@ _elm_web_smart_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
    Evas_Object *resize_obj;
 
    resize_obj = _view_add(obj);
-   elm_widget_resize_object_set(obj, resize_obj);
+   elm_widget_resize_object_set(obj, resize_obj, EINA_TRUE);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 

@@ -728,7 +728,7 @@ _allow_events_set(Eo *obj, void *_pd, va_list *list)
      {
         sd->block_events = elm_layout_add(obj);
         _block_events_theme_apply(obj);
-        elm_widget_resize_object_set(obj, sd->block_events);
+        elm_widget_resize_object_set(obj, sd->block_events, EINA_TRUE);
         elm_layout_signal_callback_add
           (sd->block_events, "elm,action,click", "elm",
           _block_area_clicked_cb, obj);

@@ -396,7 +396,8 @@ _elm_box_smart_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    elm_widget_resize_object_set(obj,
-                                evas_object_box_add(evas_object_evas_get(obj)));
+                                evas_object_box_add(evas_object_evas_get(obj)),
+                                EINA_TRUE);
 
    evas_object_box_layout_set(wd->resize_obj, _elm_box_custom_layout,
                               obj, NULL);

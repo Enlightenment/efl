@@ -4757,7 +4757,7 @@ _scrollable_set(Eo *obj, void *_pd, va_list *list)
         /* we now must re-theme ourselves to a scroller decoration
          * and move the entry looking object to be the content of the
          * scrollable view */
-        elm_widget_resize_object_set(obj, NULL);
+        elm_widget_resize_object_set(obj, NULL, EINA_TRUE);
         elm_widget_sub_object_add(obj, sd->entry_edje);
 
         if (!sd->scr_edje)
@@ -4776,7 +4776,7 @@ _scrollable_set(Eo *obj, void *_pd, va_list *list)
              evas_object_propagate_events_set(sd->scr_edje, EINA_TRUE);
           }
 
-        elm_widget_resize_object_set(obj, sd->scr_edje);
+        elm_widget_resize_object_set(obj, sd->scr_edje, EINA_TRUE);
 
         eo_do(obj, elm_scrollable_interface_objects_set(sd->scr_edje, sd->hit_rect));
 
@@ -4795,7 +4795,7 @@ _scrollable_set(Eo *obj, void *_pd, va_list *list)
              eo_do(obj, elm_scrollable_interface_content_set(NULL));
              evas_object_hide(sd->scr_edje);
           }
-        elm_widget_resize_object_set(obj, sd->entry_edje);
+        elm_widget_resize_object_set(obj, sd->entry_edje, EINA_TRUE);
 
         if (sd->scr_edje)
           elm_widget_sub_object_add(obj, sd->scr_edje);

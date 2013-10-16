@@ -283,7 +283,7 @@ _elm_photo_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    _sizing_eval(obj);
 
    elm_widget_resize_object_set
-       (obj, edje_object_add(evas_object_evas_get(obj)));
+       (obj, edje_object_add(evas_object_evas_get(obj)), EINA_TRUE);
 
    elm_widget_theme_object_set
      (obj, wd->resize_obj, "photo", "base", "default");

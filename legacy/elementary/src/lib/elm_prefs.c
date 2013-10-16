@@ -1195,7 +1195,7 @@ _elm_prefs_file_set(Eo *obj, void *_pd, va_list *list)
         return;
      }
 
-   elm_widget_resize_object_set(obj, sd->root->w_obj);
+   elm_widget_resize_object_set(obj, sd->root->w_obj, EINA_TRUE);
 
    _elm_prefs_values_get_default(sd->root, EINA_FALSE);
 

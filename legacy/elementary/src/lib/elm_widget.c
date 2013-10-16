@@ -159,7 +159,7 @@ _on_sub_obj_del(void *data,
    if (obj == sd->resize_obj)
      {
         /* already dels sub object */
-        elm_widget_resize_object_set(sd->obj, NULL);
+        elm_widget_resize_object_set(sd->obj, NULL, EINA_TRUE);
         return;
      }
    else if (obj == sd->hover_obj)
@@ -251,7 +251,7 @@ _elm_widget_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
         Evas_Object *r_obj = priv->resize_obj;
         priv->resize_obj = NULL;
 
-        elm_widget_resize_object_set(obj, r_obj);
+        elm_widget_resize_object_set(obj, r_obj, EINA_TRUE);
      }
 }
 
@@ -1190,21 +1190,24 @@ _elm_widget_sub_object_del(Eo *obj, void *_pd, va_list *list)
 /*
  * @internal
  *
- * a resize object is a sub object with some more callbacks on it and
- * a smart member of the parent
+ * a resize object is a smart member of the parent.
+ * a resize object is added to and deleted from the sub object of the parent
+ * if the third argument, Eina_Bool sub_obj, is set as EINA_TRUE.
  */
 EAPI void
 elm_widget_resize_object_set(Evas_Object *obj,
-                             Evas_Object *sobj)
+                             Evas_Object *sobj,
+                             Eina_Bool sub_obj)
 {
    ELM_WIDGET_CHECK(obj);
-   eo_do(obj, elm_wdg_resize_object_set(sobj));
+   eo_do(obj, elm_wdg_resize_object_set(sobj, sub_obj));
 }
 
 static void
 _elm_widget_resize_object_set(Eo *obj, void *_pd, va_list *list)
 {
    Evas_Object *sobj = va_arg(*list, Evas_Object *);
+   Eina_Bool sub_obj = va_arg(*list, int);
    Evas_Object *parent;
 
    Elm_Widget_Smart_Data *sd = _pd;
@@ -1222,7 +1225,7 @@ _elm_widget_resize_object_set(Eo *obj, void *_pd, va_list *list)
              if (elm_widget_focus_get(sd->resize_obj)) _parents_unfocus(obj);
           }
 
-        elm_widget_sub_object_del(obj, sd->resize_obj);
+        if (sub_obj) elm_widget_sub_object_del(obj, sd->resize_obj);
      }
 
    sd->resize_obj = sobj;
@@ -1238,12 +1241,13 @@ _elm_widget_resize_object_set(Eo *obj, void *_pd, va_list *list)
         if (sdp)
           {
              if (sdp->resize_obj == sobj)
-               elm_widget_resize_object_set(parent, NULL);
-             else
+               elm_widget_resize_object_set(parent, NULL, sub_obj);
+             else if (sub_obj)
                elm_widget_sub_object_del(parent, sobj);
           }
      }
-   elm_widget_sub_object_add(obj, sobj);
+   if (sub_obj) elm_widget_sub_object_add(obj, sobj);
+
    evas_object_smart_member_add(sobj, obj);
 
    _smart_reconfigure(sd);

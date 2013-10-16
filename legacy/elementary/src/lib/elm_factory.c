@@ -258,7 +258,7 @@ _content_set_hook(Evas_Object *obj, const char *part, Evas_Object *content)
    wd->content = content;
    if (!content) return;
 
-   elm_widget_resize_object_set(obj, content);
+   elm_widget_resize_object_set(obj, content, EINA_TRUE);
    evas_object_event_callback_add(content, EVAS_CALLBACK_DEL, _child_del, obj);
    evas_object_event_callback_add(content, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                   _child_change, obj);

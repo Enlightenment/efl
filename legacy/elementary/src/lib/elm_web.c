@@ -1145,7 +1145,7 @@ _elm_web_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    elm_object_text_set(resize_obj, "WebKit not supported!");
 #endif
 
-   elm_widget_resize_object_set(obj, resize_obj);
+   elm_widget_resize_object_set(obj, resize_obj, EINA_TRUE);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 

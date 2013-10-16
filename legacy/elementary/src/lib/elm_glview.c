@@ -205,7 +205,7 @@ _elm_glview_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    // Create image to render Evas_GL Surface
    img = evas_object_image_filled_add(evas_object_evas_get(obj));
-   elm_widget_resize_object_set(obj, img);
+   elm_widget_resize_object_set(obj, img, EINA_TRUE);
    evas_object_image_size_set(img, 1, 1);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());

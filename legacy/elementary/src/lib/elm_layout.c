@@ -718,7 +718,7 @@ _elm_layout_smart_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 
    /* has to be there *before* parent's smart_add() */
    edje = edje_object_add(evas_object_evas_get(obj));
-   elm_widget_resize_object_set(obj, edje);
+   elm_widget_resize_object_set(obj, edje, EINA_TRUE);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 

@@ -1275,7 +1275,7 @@ _elm_diskselector_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    evas_event_freeze(evas);
 
    edje = edje_object_add(evas);
-   elm_widget_resize_object_set(obj, edje);
+   elm_widget_resize_object_set(obj, edje, EINA_TRUE);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 

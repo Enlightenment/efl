@@ -45,7 +45,7 @@ _resize_object_reset(Evas_Object *obj, Elm_Naviframe_Item *it,
    //Recover previous smart members.
    if (prev_it)
      {
-        elm_widget_resize_object_set(obj, NULL);
+        elm_widget_resize_object_set(obj, NULL, EINA_TRUE);
         elm_widget_sub_object_add(obj, VIEW(prev_it));
         evas_object_smart_member_add(VIEW(prev_it), obj);
      }
@@ -54,7 +54,7 @@ _resize_object_reset(Evas_Object *obj, Elm_Naviframe_Item *it,
 
    if (it)
      {
-        elm_widget_resize_object_set(obj, VIEW(it));
+        elm_widget_resize_object_set(obj, VIEW(it), EINA_TRUE);
         evas_object_raise(VIEW(it));
      }
 }

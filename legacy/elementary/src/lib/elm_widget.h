@@ -131,7 +131,7 @@
  *      (priv->sub, "elm,action,click", "", _clicked_signal_cb, obj);
  *    // set this sub object as the "resize object". widgets get 1 resize
  *    // object that is resized along with the object wrapper.
- *    elm_widget_resize_object_set(obj, priv->sub);
+ *    elm_widget_resize_object_set(obj, priv->sub, EINA_TRUE);
  * }
  *
  * static void
@@ -603,7 +603,7 @@ EAPI void             elm_widget_on_show_region_hook_set(Evas_Object *obj, void 
 EAPI Eina_Bool        elm_widget_sub_object_parent_add(Evas_Object *sobj);
 EAPI Eina_Bool        elm_widget_sub_object_add(Evas_Object *obj, Evas_Object *sobj);
 EAPI Eina_Bool        elm_widget_sub_object_del(Evas_Object *obj, Evas_Object *sobj);
-EAPI void             elm_widget_resize_object_set(Evas_Object *obj, Evas_Object *sobj);
+EAPI void             elm_widget_resize_object_set(Evas_Object *obj, Evas_Object *sobj, Eina_Bool sub_obj);
 EAPI void             elm_widget_hover_object_set(Evas_Object *obj, Evas_Object *sobj);
 EAPI void             elm_widget_signal_emit(Evas_Object *obj, const char *emission, const char *source);
 EAPI void             elm_widget_signal_callback_add(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func, void *data);
@@ -1621,9 +1621,10 @@ typedef void * (*list_data_get_func_type)(const Eina_List * l);
  * No description supplied by the EAPI.
  *
  * @param[in] sobj
+ * @param[in] sub_object
  *
  */
-#define elm_wdg_resize_object_set(sobj) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_RESIZE_OBJECT_SET), EO_TYPECHECK(Evas_Object *, sobj)
+#define elm_wdg_resize_object_set(sobj, sub_obj) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_RESIZE_OBJECT_SET), EO_TYPECHECK(Evas_Object *, sobj), EO_TYPECHECK(Eina_Bool, sub_obj)
 
 /**
  * @def elm_wdg_hover_object_set

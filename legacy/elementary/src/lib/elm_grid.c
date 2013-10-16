@@ -137,7 +137,7 @@ _elm_grid_smart_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
    elm_widget_sub_object_parent_add(obj);
 
    grid = evas_object_grid_add(evas_object_evas_get(obj));
-   elm_widget_resize_object_set(obj, grid);
+   elm_widget_resize_object_set(obj, grid, EINA_TRUE);
    evas_object_grid_size_set(wd->resize_obj, 100, 100);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
