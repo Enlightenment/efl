@@ -2290,9 +2290,8 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
                   ee->delayed.alpha_changed = EINA_TRUE;
                   return;
                }
+             evas_sync(ee->evas);
           }
-        if (ee->in_async_render)
-        evas_sync(ee->evas);  
         _alpha_do(ee, alpha);
      }
    else if (!strcmp(ee->driver, "opengl_x11"))
