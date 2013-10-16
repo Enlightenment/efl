@@ -5631,7 +5631,7 @@ enum
  * Set the source file from where an image object must fetch the real
  * image data (it may be an Eet file, besides pure image ones).
  *
- * @param[in] file in The image file path.
+ * @param[in] file The image file path.
  * @param[in] key The image key in @p file (if its an Eet one), or @c
  *
  * @see evas_object_image_file_set
