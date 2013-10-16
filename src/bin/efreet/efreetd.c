@@ -26,29 +26,22 @@ quit(void)
 int
 main(int argc, char *argv[])
 {
-   char path[PATH_MAX];
    FILE *log;
-   mode_t um;
-
-   strcpy(path, "/tmp/efreetd_XXXXXX");
-   um = umask(0077);
-   if (mkstemp(path) < 0)
-     {
-        perror("mkstemp");
-        umask(um);
-        return 1;
-     }
-   umask(um);
-   if (chmod(path, 0700) < 0)
-     {
-        perror("chmod");
-        return 1;
-     }
-
-   log = fopen(path, "wb");
-   if (!log) return 1;
+   int fd;
 
    if (!eina_init()) return 1;
+
+   fd = eina_file_mkstemp("efreetd_XXXXXX", NULL);
+   if (fd < 0)
+     {
+        EINA_LOG_ERR("mkstemp");
+        goto eina_error;
+     }
+
+   log = fdopen(fd, "wb");
+   if (!log)
+        goto eina_error;
+
    eina_log_print_cb_set(eina_log_print_cb_file, log);
 
    efreetd_log_dom = eina_log_domain_register("efreetd", EFREETD_DEFAULT_LOG_COLOR);
@@ -91,6 +84,7 @@ ecore_error:
    if (efreetd_log_dom >= 0)
      eina_log_domain_unregister(efreetd_log_dom);
    efreetd_log_dom = -1;
+eina_error:
    eina_shutdown();
    return 1;
 }

@@ -223,9 +223,9 @@ main(int argc, char **argv)
     int lockfd = -1, tmpfd;
     int changed = 0;
     int i;
-    char file[PATH_MAX] = { '\0' };
-    char util_file[PATH_MAX] = { '\0' };
-    mode_t um;
+    char path_name[PATH_MAX] = { '\0' };
+    Eina_Tmpstr *file = NULL;
+    Eina_Tmpstr *util_file = NULL;
 
     if (!eina_init()) goto eina_error;
     _efreet_desktop_cache_log_dom =
@@ -273,11 +273,11 @@ main(int argc, char **argv)
     if (!efreet_init()) goto efreet_error;
 
     /* create homedir */
-    snprintf(file, sizeof(file), "%s/efreet", efreet_cache_home_get());
-    if (!ecore_file_exists(file))
+    snprintf(path_name, sizeof(path_name), "%s/efreet", efreet_cache_home_get());
+    if (!ecore_file_exists(path_name))
     {
-        if (!ecore_file_mkpath(file)) goto efreet_error;
-        efreet_setowner(file);
+        if (!ecore_file_mkpath(path_name)) goto efreet_error;
+        efreet_setowner(path_name);
     }
 
     /* lock process, so that we only run one copy of this program */
@@ -296,21 +296,13 @@ main(int argc, char **argv)
     }
 
     /* create cache */
-    snprintf(file, sizeof(file), "%s.XXXXXX", efreet_desktop_cache_file());
-    /* set secure umask for temporary files */
-    um = umask(0077);
-    tmpfd = mkstemp(file);
-    umask(um);
+    tmpfd = eina_file_mkstemp("efreet_desktop_cache_XXXXXX", &file);
     if (tmpfd < 0) goto error;
     close(tmpfd);
     ef = eet_open(file, EET_FILE_MODE_READ_WRITE);
     if (!ef) goto error;
 
-    snprintf(util_file, sizeof(util_file), "%s.XXXXXX", efreet_desktop_util_cache_file());
-    /* set secure umask for temporary files */
-    um = umask(0077);
-    tmpfd = mkstemp(util_file);
-    umask(um);
+    tmpfd = eina_file_mkstemp("efreet_desktop_util_cache_XXXXXX", &util_file);
     if (tmpfd < 0) goto error;
     close(tmpfd);
     util_ef = eet_open(util_file, EET_FILE_MODE_READ_WRITE);
@@ -450,6 +442,8 @@ main(int argc, char **argv)
         printf("%c\n", c);
     }
 
+    eina_tmpstr_del(file);
+    eina_tmpstr_del(util_file);
     EINA_LIST_FREE(systemdirs, dir)
         eina_stringshare_del(dir);
     eina_list_free(extra_dirs);
@@ -461,6 +455,8 @@ main(int argc, char **argv)
     close(lockfd);
     return 0;
 error:
+    eina_tmpstr_del(file);
+    eina_tmpstr_del(util_file);
     IF_FREE(dir);
 edd_error:
     if (old_file_ids)
