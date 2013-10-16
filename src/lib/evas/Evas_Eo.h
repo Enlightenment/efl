@@ -4574,10 +4574,10 @@ enum
  * @since 1.8
  * Retrieves the general/main color of the given Evas object.
  *
- * @param r out
- * @param g out
- * @param b out
- * @param a out
+ * @param[out] r out
+ * @param[out] g out
+ * @param[out] b out
+ * @param[out] a out
  *
  * @see evas_object_color_get
  */
@@ -5631,8 +5631,8 @@ enum
  * Set the source file from where an image object must fetch the real
  * image data (it may be an Eet file, besides pure image ones).
  *
- * @param[in] file in
- * @param[in] key in
+ * @param[in] file in The image file path.
+ * @param[in] key The image key in @p file (if its an Eet one), or @c
  *
  * @see evas_object_image_file_set
  */
@@ -5656,17 +5656,17 @@ enum
  * @def evas_obj_image_file_get
  * @since 1.8
  *
- * This is the same as evas_object_image_file_set() but the file to be loaded
- * may exist at an address in memory (the data for the file, not the filename
- * itself). The @p data at the address is copied and stored for future use, so
- * no @p data needs to be kept after this call is made. It will be managed and
- * freed for you when no longer needed. The @p size is limited to 2 gigabytes
- * in size, and must be greater than 0. A @c NULL @p data pointer is also
- * invalid. Set the filename to @c NULL to reset to empty state and have the
- * image file data freed from memory using evas_object_image_file_set().
+ * Retrieve the source file from where an image object is to fetch the
+ * real image data (it may be an Eet file, besides pure image ones).
  *
- * @param[in] file out
- * @param[in] key out
+ * @param[out] file Location to store the image file path.
+ * @param[out] key Location to store the image key (if @p file is an Eet
+ * one).
+ *
+ * You must @b not modify the strings on the returned pointers.
+ *
+ * @note Use @c NULL pointers on the file components you're not
+ * interested in: they'll be ignored by the function.
  *
  * @see evas_object_image_file_get
  */
@@ -6655,7 +6655,7 @@ EO_TYPECHECK(Eina_Bool *, ret)
  *
  * Gets the engine specific output parameters for a given output.
  *
- * @param[ret] info The engine parameters return (NULL on failure)
+ * @param[out] info The engine parameters return (NULL on failure)
  *
  * @see evas_out_engine_info_set
  * @see evas_output_viewport_get
