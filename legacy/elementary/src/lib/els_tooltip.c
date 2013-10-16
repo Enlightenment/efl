@@ -318,7 +318,6 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
              if (win)
                ecore_x_window_shape_input_rectangle_set(win, 0, 0, 0, 0);
 #endif
-             evas_object_show(tt->tt_win);
           }
 
         str = edje_object_data_get(tt->tooltip, "pad_x");
@@ -529,6 +528,7 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
         edje_object_message_send(tt->tooltip, EDJE_MESSAGE_FLOAT_SET, 1, msg);
      }
 #undef FDIF
+   if (tt->tt_win) evas_object_show(tt->tt_win);
 }
 
 static void
