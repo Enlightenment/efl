@@ -60,5 +60,6 @@ void eina_test_model(TCase *tc);
 void eina_test_cow(TCase *tc);
 void eina_test_barrier(TCase *tc);
 void eina_test_tmpstr(TCase *tc);
+void eina_test_locking(TCase *tc);
 
 #endif /* EINA_SUITE_H_ */

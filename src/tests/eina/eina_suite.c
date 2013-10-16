@@ -73,6 +73,7 @@ static const Eina_Test_Case etc[] = {
    //   { "Model", eina_test_model },
    { "Barrier", eina_test_barrier },
    { "Tmp String", eina_test_tmpstr },
+   { "Locking", eina_test_locking },
    { NULL, NULL }
 };
 
