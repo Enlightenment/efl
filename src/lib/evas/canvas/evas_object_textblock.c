@@ -2332,6 +2332,8 @@ static void
 _format_param_parse(const char *item, const char **key, Eina_Tmpstr **val)
 {
    const char *start, *end;
+   char *tmp, *s, *d;
+   size_t len;
 
    start = strchr(item, '=');
    *key = eina_stringshare_add_length(item, start - item);
@@ -2356,38 +2358,22 @@ _format_param_parse(const char *item, const char **key, Eina_Tmpstr **val)
      }
 
    /* Null terminate before the spaces */
-   if (end)
-     {
-        char *tmp = alloca(end - start + 1);
-        char *s, *d;
+   if (end) len = end - start;
+   else len = strlen(start);
 
-        for (d = tmp, s = (char *)start; s < end; s++)
-          {
-             if (*s != '\\')
-               {
-                  *d = *s;
-                  d++;
-               }
-          }
-        *d = 0;
-        *val = eina_tmpstr_add(tmp);
-     }
-   else
-     {
-        char *tmp = alloca(strlen(start) + 1);
-        char *s, *d;
+   tmp = (char*) eina_tmpstr_add_length(start, len);
 
-        for (d = tmp, s = (char *)start; *s; s++)
+   for (d = tmp, s = tmp; *s; s++)
+     {
+        if (*s != '\\')
           {
-             if (*s != '\\')
-               {
-                  *d = *s;
-                  d++;
-               }
+             *d = *s;
+             d++;
           }
-        *d = 0;
-        *val = eina_tmpstr_add(tmp);
      }
+   *d = '\0';
+
+   *val = tmp;
 }
 
 /**
