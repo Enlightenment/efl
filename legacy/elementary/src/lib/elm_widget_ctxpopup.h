@@ -51,6 +51,7 @@ struct _Elm_Ctxpopup_Smart_Data
    Eina_Bool              list_visible : 1;
    Eina_Bool              horizontal : 1;
    Eina_Bool              finished : 1;
+   Eina_Bool              emitted : 1;
    Eina_Bool              visible : 1;
 };
 

@@ -520,7 +520,9 @@ _show_signals_emit(Evas_Object *obj,
 
    if (!sd->visible) return;
    if ((sd->list) && (!sd->list_visible)) return;
+   if (sd->emitted) return;
 
+   sd->emitted = EINA_TRUE;
    switch (dir)
      {
       case ELM_CTXPOPUP_DIRECTION_UP:
@@ -989,13 +991,13 @@ _on_show(void *data __UNUSED__,
 
    if (!sd->content) return;
 
+   sd->emitted = EINA_FALSE;
    sd->visible = EINA_TRUE;
 
    evas_object_show(sd->bg);
    evas_object_show(sd->arrow);
 
-   edje_object_signal_emit(sd->bg, "elm,state,show", "elm");
-   elm_layout_signal_emit(obj, "elm,state,show", "elm");
+   _show_signals_emit(obj, sd->dir);
 
    elm_layout_sizing_eval(obj);
 
