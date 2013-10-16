@@ -884,7 +884,7 @@ eina_file_mkstemp(const char *templatename, Eina_Tmpstr **path)
     * Make sure temp file is created with secure permissions,
     * http://man7.org/linux/man-pages/man3/mkstemp.3.html#NOTES
     */
-   old_umask = umask(0077);
+   old_umask = umask(S_IRWXG|S_IRWXO);
    fd = mkstemp(buffer);
    umask(old_umask);
 
