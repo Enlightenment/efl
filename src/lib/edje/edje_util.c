@@ -6267,6 +6267,7 @@ _edje_object_part_swallow_free_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, E
    Edje_User_Defined *eud;
    Eina_List *l;
    Edje *ed;
+   Edje_Real_Part *rp;
 
    ed = evas_object_data_get(obj, ".edje");
 
@@ -6276,6 +6277,9 @@ _edje_object_part_swallow_free_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, E
           _edje_user_definition_free(eud);
           break;
        }
+   rp = evas_object_data_get(obj, "\377 edje.swallowing_part");
+   if (rp)
+     edje_object_part_unswallow(ed->obj, obj);
 
    return;
 }
