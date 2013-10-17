@@ -1548,7 +1548,7 @@ evas_render_rendering_wait(Evas_Public_Data *evas)
  * Syncs ALL async rendering canvases. Must be called in the main thread.
  */
 void
-evas_render_sync(void)
+evas_all_sync(void)
 {
    Evas_Public_Data *evas;
 
@@ -2401,7 +2401,7 @@ _canvas_render_dump(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
    Evas_Public_Data *e = _pd;
    Evas_Layer *lay;
 
-   evas_render_sync();
+   evas_all_sync();
    evas_cache_async_freeze();
 
    EINA_INLIST_FOREACH(e->layers, lay)
