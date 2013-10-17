@@ -33,21 +33,23 @@ struct _Elm_Calendar_Smart_Data
    double                   interval, first_interval;
    int                      year_min, year_max, spin_speed;
    int                      today_it, selected_it, first_day_it;
-   Elm_Calendar_Weekday     first_week_day;
    Ecore_Timer             *spin_month, *spin_year, *update_timer;
    Elm_Calendar_Format_Cb   format_func;
    const char              *weekdays[ELM_DAY_LAST];
    struct tm                current_time, selected_time, shown_time;
    Day_Color                day_color[42]; // EINA_DEPRECATED
-   Elm_Calendar_Select_Mode select_mode;
    Evas_Object             *inc_btn_month_access;
    Evas_Object             *dec_btn_month_access;
    Evas_Object             *month_access;
    Evas_Object             *inc_btn_year_access;
    Evas_Object             *dec_btn_year_access;
    Evas_Object             *year_access;
-   Eina_Bool                selected : 1;
+
+   Elm_Calendar_Weekday     first_week_day;
+   Elm_Calendar_Select_Mode select_mode;
    Elm_Calendar_Selectable  selectable;
+
+   Eina_Bool                selected : 1;
    Eina_Bool                double_spinners : 1;
 };
 
