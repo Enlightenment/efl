@@ -414,7 +414,7 @@ _elm_popup_smart_sizing_eval(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    Eina_List *elist;
    Elm_Popup_Item *it;
    Evas_Coord h_box = 0, minh_box = 0;
-   Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
+   Evas_Coord minw = -1, minh = -1;
 
    Elm_Popup_Smart_Data *sd = _pd;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
@@ -438,7 +438,7 @@ _elm_popup_smart_sizing_eval(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    edje_object_size_min_calc(wd->resize_obj, &minw, &minh);
 
    evas_object_size_hint_min_set(obj, minw, minh);
-   evas_object_size_hint_max_set(obj, maxw, maxh);
+   evas_object_size_hint_max_set(obj, -1, -1);
 }
 
 static void

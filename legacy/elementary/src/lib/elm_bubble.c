@@ -48,14 +48,14 @@ static const char *corner_string[] =
 static void
 _elm_bubble_smart_sizing_eval(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
+   Evas_Coord minw = -1, minh = -1;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
    edje_object_size_min_restricted_calc
      (wd->resize_obj, &minw, &minh, minw, minh);
    evas_object_size_hint_min_set(obj, minw, minh);
-   evas_object_size_hint_max_set(obj, maxw, maxh);
+   evas_object_size_hint_max_set(obj, -1, -1);
 }
 
 static void
