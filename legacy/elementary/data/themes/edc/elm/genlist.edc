@@ -1,0 +1,5699 @@
+#define ODD(_NAME, _SRC) \
+   group { name: _NAME; \
+      inherit: _SRC; \
+      parts { \
+         part { name: "base"; \
+            description { state: "default" 0.0; \
+               color: 56 56 56 255; \
+               color_class: "list_item_base_odd"; \
+            } \
+         } \
+      } \
+   }
+#define COMPRESS(_NAME, _SRC) \
+   group { name: _NAME; \
+      inherit: _SRC; \
+      parts { \
+         part { name: "elm.text"; \
+            description { state: "default" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "selected" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "disabled" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "flip_enabled" 0.0; \
+               text.min: 0 1; \
+            } \
+         } \
+         part { name: "label2"; \
+            description { state: "default" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "selected" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "disabled" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "flip_enabled" 0.0; \
+               text.min: 0 1; \
+            } \
+         } \
+         part { name: "label3"; \
+            description { state: "default" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "selected" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "disabled" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "flip_enabled" 0.0; \
+               text.min: 0 1; \
+            } \
+         } \
+      } \
+   }
+#define COMPRESS_ODD(_NAME, _SRC) \
+   group { name: _NAME; \
+      inherit: _SRC; \
+      parts { \
+         part { name: "elm.text"; \
+            description { state: "default" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "selected" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "disabled" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "flip_enabled" 0.0; \
+               text.min: 0 1; \
+            } \
+         } \
+         part { name: "label2"; \
+            description { state: "default" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "selected" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "disabled" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "flip_enabled" 0.0; \
+               text.min: 0 1; \
+            } \
+         } \
+         part { name: "label3"; \
+            description { state: "default" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "selected" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "disabled" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "flip_enabled" 0.0; \
+               text.min: 0 1; \
+            } \
+         } \
+         part { name: "base"; \
+            description { state: "default" 0.0; \
+               color: 56 56 56 255; \
+               color_class: "list_item_base_odd"; \
+            } \
+         } \
+      } \
+   }
+
+#define TREEPAD 19
+
+group { name: "elm/genlist/item/group_index/default";
+   data.item: "texts" "elm.text";
+   data.item: "contents" "elm.swallow.icon elm.swallow.end";
+   data.item: "treesize" TREEPAD;
+   
+   images.image: "shadow_square_tiny.png" COMP;
+   images.image: "bevel_out.png" COMP;
+   images.image: "horizontal_separated_bar_small_glow.png" COMP;
+   
+   parts {
+      part { name: "shadow_vbar"; mouse_events: 0;
+         description { state: "default" 0.0;
+            rel1.offset: -3 -2;
+            rel1.to: "base_vbar";
+            rel2.offset: 2 4;
+            rel2.to: "base_vbar";
+            image.normal: "shadow_square_tiny.png";
+            image.border: 6 6 6 6;
+            fill.smooth: 0;
+         }
+      }
+      part { name: "base_vbar"; mouse_events: 0;
+         description { state: "default" 0.0;
+            image.normal: "vgrad_med_lighter.png";
+            fill.smooth: 0;
+            min: 5 13;
+            TILED_HORIZ(120)
+         }
+      }
+      part { name: "bevel_vbar"; mouse_events: 0;
+         description { state: "default" 0.0;
+            rel1.to: "base_vbar";
+            rel2.to: "base_vbar";
+            image.normal: "bevel_out.png";
+            image.border: 1 1 1 1;
+            image.middle: 0;
+            fill.smooth: 0;
+            min: 5 5;
+         }
+      }
+      
+      part { name: "elm.text"; type: TEXT; mouse_events: 0;
+         effect: SHADOW BOTTOM;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.offset: 2 3;
+            rel1.relative: 1.0 0.0;
+            rel1.to_x: "elm.swallow.icon";
+            rel2.offset: -3 -3;
+            rel2.relative: 0.0 1.0;
+            rel2.to_x: "elm.swallow.end";
+            color: 255 255 255 255;
+            color3: 0 0 0 128;
+            color_class: "list_group_item";
+            text { font: FNBD; size: 10;
+               min: 1 1;
+               align: 0.0 0.5;
+               text_class: "list_group_item";
+            }
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            color: 21 21 21 255;
+            color3: 255 255 255 25;
+            color_class: "list_group_item_disabled";
+         }
+      }
+      part { name: "elm.swallow.pad"; type: SWALLOW;
+         description { state: "default" 0.0;
+            fixed: 1 0;
+            align: 0.0 0.5;
+            rel1.offset: 2 2;
+            rel2.relative: 0.0 1.0;
+            rel2.offset: 2 -3;
+         }
+      }
+      part { name: "elm.swallow.icon"; type: SWALLOW;
+         description { state: "default" 0.0;
+            fixed: 1 0;
+            align: 0.0 0.5;
+            rel1.to_x: "elm.swallow.pad";
+            rel1.relative: 1.0 0.0;
+            rel1.offset: -1 2;
+            rel2.to_x: "elm.swallow.pad";
+            rel2.relative: 1.0 1.0;
+            rel2.offset: -1 -3;
+         }
+      }
+      part { name: "elm.swallow.end"; type: SWALLOW;
+         description { state: "default" 0.0;
+            fixed: 1 0;
+            align: 1.0 0.5;
+            rel1.offset: -3 2;
+            rel1.relative: 1.0 0.0;
+            rel2.offset: -3 -3;
+         }
+      }
+      part { name: "bar"; mouse_events: 0;
+         description { state: "default" 0.0;
+            image.normal: "horizontal_separated_bar_small_glow.png";
+            image.border: 4 4 4 4;
+            fill.smooth: 0;
+            rel1.relative: 0.0 1.0;
+            rel1.offset: -3 -6;
+            rel2.offset: 2 3;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+             color: 255 255 255 64;
+         }
+      }
+      program {
+         signal: "elm,state,disabled"; source: "elm";
+         action: STATE_SET "disabled" 0.0;
+         target: "elm.text";
+         target: "bar";
+      }
+      program {
+         signal: "elm,state,enabled"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "elm.text";
+         target: "bar";
+      }
+   }
+}
+group { name: "elm/genlist/item_compress/group_index/default";
+   inherit: "elm/genlist/item/group_index/default";
+   parts {
+      part { name: "elm.text";
+         description { state: "default" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "selected" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "disabled" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "flip_enabled" 0.0;
+            text.min: 0 1;
+         }
+      }
+   }
+}
+
+group { name: "elm/genlist/item/default/default";
+   data.item: "selectraise" "on";
+   data.item: "texts" "elm.text";
+   data.item: "contents" "elm.swallow.icon elm.swallow.end";
+   data.item: "treesize" TREEPAD;
+   data.item: "flips" "elm.text.flip";
+#define IMGP() \
+   images.image: "bevel_curved_horiz_out.png" COMP; \
+   images.image: "shadow_rounded_horiz.png" COMP; \
+   images.image: "vgrad_med_dark.png" COMP; \
+   images.image: "bevel_horiz_out.png" COMP; \
+   images.image: "shine.png" COMP;
+   IMGP()
+   parts {
+//---------------------------------------------------------------------------
+#define BASEP() \
+      part { name: "event"; type: RECT; \
+         description { state: "default" 0.0; \
+            color: 0 0 0 0; \
+         } \
+         description { state: "disabled" 0.0; \
+            inherit: "default" 0.0; \
+            visible: 0; \
+         } \
+      } \
+      part { name: "base"; type: RECT; mouse_events: 0; \
+         description { state: "default" 0.0; \
+            color: 64 64 64 255; \
+            color_class: "list_item_base"; \
+         } \
+         description { state: "odd" 0.0; \
+            color: 56 56 56 255; \
+            color_class: "list_item_base_odd"; \
+         } \
+      } \
+      program { \
+         signal: "elm,state,odd"; source: "elm"; \
+         action: STATE_SET "odd" 1.0; \
+         target: "base"; \
+      } \
+      program { \
+         signal: "elm,state,even"; source: "elm"; \
+         action: STATE_SET "default" 0.0; \
+         target: "base"; \
+      } \
+      part { name: "bevel"; mouse_events: 0; \
+         description { state: "default" 0.0; \
+            image.normal: "bevel_curved_horiz_out.png"; \
+            image.border: 0 0 2 2; \
+            image.middle: 0; \
+            fill.smooth: 0; \
+         } \
+      } \
+      part { name: "sel_shadow"; mouse_events: 0; \
+         description { state: "default" 0.0; \
+            image.normal: "shadow_rounded_horiz.png"; \
+            image.border: 0 0 9 9; \
+            rel1.offset: 0 -4; \
+            rel2.offset: -1 5; \
+            fill.smooth: 0; \
+            visible: 0; \
+         } \
+         description { state: "selected" 0.0; \
+            inherit: "default" 0.0; \
+            visible: 1; \
+         } \
+      } \
+      part { name: "sel_base"; mouse_events: 0; \
+         description { state: "default" 0.0; \
+            image.normal: "vgrad_med_dark.png"; \
+            fill.smooth: 0; \
+            visible: 0; \
+            TILED_HORIZ(120) \
+         } \
+         description { state: "selected" 0.0; \
+            inherit: "default" 0.0; \
+            visible: 1; \
+         } \
+      } \
+      part { name: "sel_bevel"; mouse_events: 0; \
+         description { state: "default" 0.0; \
+            image.normal: "bevel_horiz_out.png"; \
+            image.border: 0 0 2 2; \
+            image.middle: 0; \
+            fill.smooth: 0; \
+            visible: 0; \
+         } \
+         description { state: "selected" 0.0; \
+            inherit: "default" 0.0; \
+            visible: 1; \
+         } \
+      } \
+      program { \
+         signal: "elm,state,selected"; source: "elm"; \
+         action: STATE_SET "selected" 0.0; \
+         target: "sel_shadow"; \
+         target: "sel_base"; \
+         target: "sel_bevel"; \
+      } \
+      program { \
+         signal: "elm,state,unselected"; source: "elm"; \
+         action: STATE_SET "default" 0.0; \
+         target: "sel_shadow"; \
+         target: "sel_base"; \
+         target: "sel_bevel"; \
+      } \
+      program { \
+         signal: "elm,state,disabled"; source: "elm"; \
+         action: STATE_SET "disabled" 0.0; \
+         target: "event"; \
+      } \
+      program { \
+         signal: "elm,state,enabled"; source: "elm"; \
+         action: STATE_SET "default" 0.0; \
+         target: "event"; \
+      }
+#define TOPP() \
+      part { name: "sel_shine"; mouse_events: 0; \
+         description { state: "default" 0.0; \
+            image.normal: "shine.png"; \
+            rel1.offset: 0 -2; \
+            rel1.to: "sel_base"; \
+            rel2.relative: 1.0 0.0; \
+            rel2.offset: -1 2; \
+            rel2.to: "sel_base"; \
+            visible: 0; \
+            FIXED_SIZE(69, 5) \
+         } \
+         description { state: "selected" 0.0; \
+            inherit: "default" 0.0; \
+            visible: 1; \
+         } \
+      } \
+      part { name: "event_block"; type: RECT; \
+         description { state: "default" 0.0; \
+            color: 0 0 0 0; \
+            visible: 0; \
+         } \
+         description { state: "disabled" 0.0; \
+            inherit: "default" 0.0; \
+            visible: 1; \
+         } \
+      } \
+      program { \
+         signal: "elm,state,selected"; source: "elm"; \
+         action: STATE_SET "selected" 0.0; \
+         target: "sel_shine"; \
+      } \
+      program { \
+         signal: "elm,state,unselected"; source: "elm"; \
+         action: STATE_SET "default" 0.0; \
+         target: "sel_shine"; \
+      } \
+      program { \
+         signal: "elm,state,disabled"; source: "elm"; \
+         action: STATE_SET "disabled" 0.0; \
+         target: "event_block"; \
+      } \
+      program { \
+         signal: "elm,state,enabled"; source: "elm"; \
+         action: STATE_SET "default" 0.0; \
+         target: "event_block"; \
+      }
+//---------------------------------------------------------------------------
+      BASEP()
+
+      //##//
+      part { name: "elm.text"; type: TEXT; mouse_events: 0;
+         effect: SHADOW BOTTOM;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.offset: 2 3;
+            rel1.relative: 1.0 0.0;
+            rel1.to_x: "elm.swallow.icon";
+            rel2.offset: -3 -3;
+            rel2.relative: 0.0 1.0;
+            rel2.to_x: "elm.swallow.end";
+            color: 255 255 255 255;
+            color3: 0 0 0 128;
+            color_class: "list_item";
+            text { font: FN; size: 10;
+               min: 1 1;
+               align: 0.0 0.5;
+               text_class: "list_item";
+            }
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "label2"; type: TEXT; mouse_events: 0;
+         effect: SHADOW BOTTOM;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.to: "elm.text";
+            rel2.to: "elm.text";
+            color: 21 21 21 255;
+            color3: 255 255 255 25;
+            color_class: "list_item_disabled";
+            text { font: FN; size: 10;
+               text_source: "elm.text";
+               align: 0.0 0.5;
+               text_class: "list_item";
+            }
+            visible: 0;
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "label3"; type: TEXT; mouse_events: 0;
+         effect: GLOW;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.offset: -2 -3;
+            rel1.to: "elm.text";
+            rel2.offset: -1 1;
+            rel2.to: "elm.text";
+            color: 51 153 255 255;
+            color2: 51 153 255 24;
+            color3: 51 153 255 18;
+            color_class: "list_item_selected";
+            text { font: FN; size: 10;
+               text_source: "elm.text";
+               align: 0.0 0.5;
+               text_class: "list_item";
+            }
+            visible: 0;
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "elm.text.flip"; type: SWALLOW;
+         scale: 1;
+         description { state: "default" 0.0;
+            visible: 0;
+            rel1.to_y: "elm.text";
+            rel2.to_y: "elm.text";
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+      program {
+         signal: "elm,state,selected"; source: "elm";
+         action: STATE_SET "selected" 0.0;
+         target: "elm.text";
+         target: "label2";
+         target: "label3";
+      }
+      program {
+         signal: "elm,state,unselected"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "elm.text";
+         target: "label2";
+         target: "label3";
+      }
+      program {
+         signal: "elm,state,disabled"; source: "elm";
+         action: STATE_SET "disabled" 0.0;
+         target: "elm.text";
+         target: "label2";
+         target: "label3";
+      }
+      program {
+         signal: "elm,state,enabled"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "elm.text";
+         target: "label2";
+         target: "label3";
+      }
+      program {
+         signal: "elm,state,flip,enabled"; source: "elm";
+         action: STATE_SET "flip_enabled" 0.0;
+         target: "elm.text";
+         target: "label2";
+         target: "label3";
+         target: "elm.text.flip";
+      }
+      program {
+         signal: "elm,state,flip,disabled"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "elm.text";
+         target: "label2";
+         target: "label3";
+         target: "elm.text.flip";
+      }
+      //##//
+      part { name: "elm.swallow.pad"; type: SWALLOW;
+         description { state: "default" 0.0;
+            fixed: 1 0;
+            align: 0.0 0.5;
+            rel1.offset: 2 2;
+            rel2.relative: 0.0 1.0;
+            rel2.offset: 2 -3;
+         }
+      }
+      part { name: "elm.swallow.icon"; type: SWALLOW;
+         description { state: "default" 0.0;
+            fixed: 1 0;
+            align: 0.0 0.5;
+            aspect: 1.0 1.0;
+            rel1.to_x: "elm.swallow.pad";
+            rel1.relative: 1.0 0.0;
+            rel1.offset: -1 2;
+            rel2.to_x: "elm.swallow.pad";
+            rel2.relative: 1.0 1.0;
+            rel2.offset: -1 -3;
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "elm.swallow.end"; type: SWALLOW;
+         description { state: "default" 0.0;
+            fixed: 1 0;
+            align: 1.0 0.5;
+            aspect: 1.0 1.0;
+            rel1.offset: -3 2;
+            rel1.relative: 1.0 0.0;
+            rel2.offset: -3 -3;
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      program {
+         signal: "elm,state,flip,enabled"; source: "elm";
+         action: STATE_SET "flip_enabled" 0.0;
+         target: "elm.swallow.icon";
+         target: "elm.swallow.end";
+      }
+      program {
+         signal: "elm,state,flip,disabled"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "elm.swallow.icon";
+         target: "elm.swallow.end";
+      }
+      //##//
+
+      TOPP()
+   }
+}
+ODD("elm/genlist/item_odd/default/default", "elm/genlist/item/default/default")
+COMPRESS("elm/genlist/item_compress/default/default", "elm/genlist/item/default/default")
+COMPRESS_ODD("elm/genlist/item_compress_odd/default/default", "elm/genlist/item/default/default")
+
+group { name: "elm/genlist/item/default_style/default";
+   data.item: "selectraise" "on";
+   data.item: "texts" "elm.text";
+   data.item: "contents" "elm.swallow.icon elm.swallow.end";
+   data.item: "treesize" TREEPAD;
+   data.item: "flips" "elm.text.flip";
+   styles.style { name: "genlist_style";
+      base: "font="FN" font_size=10 align=left valign=0.5 color=#fff style=shadow,bottom shadow_color=#00000080 text_class=list_item";
+      tag: "br" "\n";
+      tag: "ps" "ps";
+      tag: "hilight" "+ font_weight=Bold";
+      tag: "b" "+ font_weight=Bold";
+      tag: "tab" "\t";
+   }
+   styles.style { name: "genlist_style_selected";
+      base: "font="FN" font_size=10 align=left valign=0.5 color=#3399ffff style=glow glow_color=#3399ff18 glow2_color=#3399ff12 text_class=list_item_selected";
+      tag: "br" "\n";
+      tag: "ps" "ps";
+      tag: "hilight" "+ font_weight=Bold";
+      tag: "b" "+ font_weight=Bold";
+      tag: "tab" "\t";
+   }
+   styles.style { name: "genlist_style_disabled";
+      base: "font="FN" font_size=10 align=left valign=0.5 color=#151515 style=shadow,bottom shadow_color=#ffffff19 text_class=list_item";
+      tag: "br" "\n";
+      tag: "ps" "ps";
+      tag: "hilight" "+ font_weight=Bold";
+      tag: "b" "+ font_weight=Bold";
+      tag: "tab" "\t";
+   }
+   
+   IMGP()
+   parts {
+      BASEP()
+        
+      //##//
+      part { name: "elm.text"; type: TEXTBLOCK; mouse_events: 0;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.offset: 2 7;
+            rel1.relative: 1.0 0.0;
+            rel1.to_x: "elm.swallow.icon";
+            rel2.offset: -3 -4;
+            rel2.relative: 0.0 1.0;
+            rel2.to_x: "elm.swallow.end";
+            color_class: "list_item";
+            text { font: FN; size: 10;
+               min: 1 1;
+               align: 0.0 0.5;
+               text_class: "list_item";
+               style: "genlist_style";
+            }
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "label2"; type: TEXTBLOCK; mouse_events: 0;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.to: "elm.text";
+            rel2.to: "elm.text";
+            color_class: "list_item_disabled";
+            text { font: FN; size: 10;
+               text_source: "elm.text";
+               align: 0.0 0.5;
+               text_class: "list_item";
+               style: "genlist_style_disabled";
+            }
+            visible: 0;
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "label3"; type: TEXTBLOCK; mouse_events: 0;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.offset: 0 0;
+            rel1.to: "elm.text";
+            rel2.offset: -1 -1;
+            rel2.to: "elm.text";
+            color_class: "list_item_selected";
+            text { font: FN; size: 10;
+               text_source: "elm.text";
+               align: 0.0 0.5;
+               text_class: "list_item";
+               style: "genlist_style_selected";
+            }
+            visible: 0;
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "elm.text.flip"; type: SWALLOW;
+         scale: 1;
+         description { state: "default" 0.0;
+            visible: 0;
+            rel1.to_y: "elm.text";
+            rel2.to_y: "elm.text";
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+      program {
+         signal: "elm,state,selected"; source: "elm";
+         action: STATE_SET "selected" 0.0;
+         target: "elm.text";
+         target: "label2";
+         target: "label3";
+      }
+      program {
+         signal: "elm,state,unselected"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "elm.text";
+         target: "label2";
+         target: "label3";
+      }
+      program {
+         signal: "elm,state,disabled"; source: "elm";
+         action: STATE_SET "disabled" 0.0;
+         target: "elm.text";
+         target: "label2";
+         target: "label3";
+      }
+      program {
+         signal: "elm,state,enabled"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "elm.text";
+         target: "label2";
+         target: "label3";
+      }
+      program {
+         signal: "elm,state,flip,enabled"; source: "elm";
+         action: STATE_SET "flip_enabled" 0.0;
+         target: "elm.text";
+         target: "label2";
+         target: "label3";
+         target: "elm.text.flip";
+      }
+      program {
+         signal: "elm,state,flip,disabled"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "elm.text";
+         target: "label2";
+         target: "label3";
+         target: "elm.text.flip";
+      }
+      //##//
+      part { name: "elm.swallow.pad"; type: SWALLOW;
+         description { state: "default" 0.0;
+            fixed: 1 0;
+            align: 0.0 0.5;
+            rel1.offset: 2 2;
+            rel2.relative: 0.0 1.0;
+            rel2.offset: 2 -3;
+         }
+      }
+      part { name: "elm.swallow.icon"; type: SWALLOW;
+         description { state: "default" 0.0;
+            fixed: 1 0;
+            align: 0.0 0.5;
+            aspect: 1.0 1.0;
+            rel1.to_x: "elm.swallow.pad";
+            rel1.relative: 1.0 0.0;
+            rel1.offset: -1 2;
+            rel2.to_x: "elm.swallow.pad";
+            rel2.relative: 1.0 1.0;
+            rel2.offset: -1 -3;
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "elm.swallow.end"; type: SWALLOW;
+         description { state: "default" 0.0;
+            fixed: 1 0;
+            align: 1.0 0.5;
+            aspect: 1.0 1.0;
+            rel1.offset: -3 2;
+            rel1.relative: 1.0 0.0;
+            rel2.offset: -3 -3;
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      program {
+         signal: "elm,state,flip,enabled"; source: "elm";
+         action: STATE_SET "flip_enabled" 0.0;
+         target: "elm.swallow.icon";
+         target: "elm.swallow.end";
+      }
+      program {
+         signal: "elm,state,flip,disabled"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "elm.swallow.icon";
+         target: "elm.swallow.end";
+      }
+      //##//
+      
+      TOPP()
+   }
+}
+ODD("elm/genlist/item_odd/default_style/default", "elm/genlist/item/default_style/default")
+COMPRESS("elm/genlist/item_compress/default_style/default", "elm/genlist/item/default_style/default")
+COMPRESS_ODD("elm/genlist/item_compress_odd/default_style/default", "elm/genlist/item/default_style/default")
+
+group { name: "elm/genlist/item/one_icon/default";
+   data.item: "selectraise" "on";
+   data.item: "texts" "elm.text";
+   data.item: "contents" "elm.swallow.icon";
+   data.item: "treesize" TREEPAD;
+   data.item: "flips" "elm.text.flip";
+   IMGP()
+   parts {
+      BASEP()
+
+      //##//
+      part { name: "elm.text"; type: TEXT; mouse_events: 0;
+         effect: SHADOW BOTTOM;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.offset: 2 3;
+            rel1.relative: 1.0 0.0;
+            rel1.to_x: "elm.swallow.icon";
+            rel2.offset: -3 -3;
+            color: 255 255 255 255;
+            color3: 0 0 0 128;
+            color_class: "list_item";
+            text { font: FN; size: 10;
+               min: 0 1;
+               align: 0.0 0.5;
+               text_class: "list_item";
+            }
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "label2"; type: TEXT; mouse_events: 0;
+         effect: SHADOW BOTTOM;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.to: "elm.text";
+            rel2.to: "elm.text";
+            color: 21 21 21 255;
+            color3: 255 255 255 25;
+            color_class: "list_item_disabled";
+            text { font: FN; size: 10;
+               text_source: "elm.text";
+               align: 0.0 0.5;
+               text_class: "list_item";
+            }
+            visible: 0;
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "label3"; type: TEXT; mouse_events: 0;
+         effect: GLOW;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.offset: -2 -3;
+            rel1.to: "elm.text";
+            rel2.offset: -1 1;
+            rel2.to: "elm.text";
+            color: 51 153 255 255;
+            color2: 51 153 255 24;
+            color3: 51 153 255 18;
+            color_class: "list_item_selected";
+            text { font: FN; size: 10;
+               text_source: "elm.text";
+               align: 0.0 0.5;
+               text_class: "list_item";
+            }
+            visible: 0;
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "elm.text.flip"; type: SWALLOW;
+         scale: 1;
+         description { state: "default" 0.0;
+            visible: 0;
+            rel1.to_y: "elm.text";
+            rel2.to_y: "elm.text";
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+      program {
+         signal: "elm,state,selected"; source: "elm";
+         action: STATE_SET "selected" 0.0;
+         target: "elm.text";
+         target: "label2";
+         target: "label3";
+      }
+      program {
+         signal: "elm,state,unselected"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "elm.text";
+         target: "label2";
+         target: "label3";
+      }
+      program {
+         signal: "elm,state,disabled"; source: "elm";
+         action: STATE_SET "disabled" 0.0;
+         target: "elm.text";
+         target: "label2";
+         target: "label3";
+      }
+      program {
+         signal: "elm,state,enabled"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "elm.text";
+         target: "label2";
+         target: "label3";
+      }
+      program {
+         signal: "elm,state,flip,enabled"; source: "elm";
+         action: STATE_SET "flip_enabled" 0.0;
+         target: "elm.text";
+         target: "label2";
+         target: "label3";
+         target: "elm.text.flip";
+      }
+      program {
+         signal: "elm,state,flip,disabled"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "elm.text";
+         target: "label2";
+         target: "label3";
+         target: "elm.text.flip";
+      }
+      //##//
+      part { name: "elm.swallow.pad"; type: SWALLOW;
+         description { state: "default" 0.0;
+            fixed: 1 0;
+            align: 0.0 0.5;
+            rel1.offset: 2 2;
+            rel2.relative: 0.0 1.0;
+            rel2.offset: 2 -3;
+         }
+      }
+      part { name: "elm.swallow.icon"; type: SWALLOW;
+         description { state: "default" 0.0;
+            fixed: 1 0;
+            align: 0.0 0.5;
+            aspect: 1.0 1.0;
+            rel1.to_x: "elm.swallow.pad";
+            rel1.relative: 1.0 0.0;
+            rel1.offset: -1 2;
+            rel2.to_x: "elm.swallow.pad";
+            rel2.relative: 1.0 1.0;
+            rel2.offset: -1 -3;
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      program {
+         signal: "elm,state,flip,enabled"; source: "elm";
+         action: STATE_SET "flip_enabled" 0.0;
+         target: "elm.swallow.icon";
+      }
+      program {
+         signal: "elm,state,flip,disabled"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "elm.swallow.icon";
+      }
+      //##//
+
+      TOPP()
+   }
+}
+ODD("elm/genlist/item_odd/one_icon/default", "elm/genlist/item/one_icon/default")
+COMPRESS("elm/genlist/item_compress/one_icon/default", "elm/genlist/item/one_icon/default")
+COMPRESS_ODD("elm/genlist/item_compress_odd/one_icon/default", "elm/genlist/item/one_icon/default")
+
+group { name: "elm/genlist/item/end_icon/default";
+   data.item: "selectraise" "on";
+   data.item: "texts" "elm.text";
+   data.item: "contents" "elm.swallow.icon";
+   data.item: "treesize" TREEPAD;
+   data.item: "flips" "elm.text.flip";
+   IMGP()
+   parts {
+      BASEP()
+
+      //##//
+      part { name: "elm.text"; type: TEXT; mouse_events: 0;
+         effect: SHADOW BOTTOM;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.offset: 2 3;
+            rel1.relative: 1.0 0.0;
+            rel1.to_x: "elm.swallow.pad";
+            rel2.offset: -3 -3;
+            rel2.relative: 0.0 1.0;
+            rel2.to_x: "elm.swallow.icon";
+            color: 255 255 255 255;
+            color3: 0 0 0 128;
+            color_class: "list_item";
+            text { font: FN; size: 10;
+               min: 1 1;
+               align: 0.0 0.5;
+               text_class: "list_item";
+            }
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "label2"; type: TEXT; mouse_events: 0;
+         effect: SHADOW BOTTOM;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.to: "elm.text";
+            rel2.to: "elm.text";
+            color: 21 21 21 255;
+            color3: 255 255 255 25;
+            color_class: "list_item_disabled";
+            text { font: FN; size: 10;
+               text_source: "elm.text";
+               align: 0.0 0.5;
+               text_class: "list_item";
+            }
+            visible: 0;
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "label3"; type: TEXT; mouse_events: 0;
+         effect: GLOW;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.offset: -2 -3;
+            rel1.to: "elm.text";
+            rel2.offset: -1 1;
+            rel2.to: "elm.text";
+            color: 51 153 255 255;
+            color2: 51 153 255 24;
+            color3: 51 153 255 18;
+            color_class: "list_item_selected";
+            text { font: FN; size: 10;
+               text_source: "elm.text";
+               align: 0.0 0.5;
+               text_class: "list_item";
+            }
+            visible: 0;
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "elm.text.flip"; type: SWALLOW;
+         scale: 1;
+         description { state: "default" 0.0;
+            visible: 0;
+            rel1.to_y: "elm.text";
+            rel2.to_y: "elm.text";
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+      program {
+         signal: "elm,state,selected"; source: "elm";
+         action: STATE_SET "selected" 0.0;
+         target: "elm.text";
+         target: "label2";
+         target: "label3";
+      }
+      program {
+         signal: "elm,state,unselected"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "elm.text";
+         target: "label2";
+         target: "label3";
+      }
+      program {
+         signal: "elm,state,disabled"; source: "elm";
+         action: STATE_SET "disabled" 0.0;
+         target: "elm.text";
+         target: "label2";
+         target: "label3";
+      }
+      program {
+         signal: "elm,state,enabled"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "elm.text";
+         target: "label2";
+         target: "label3";
+      }
+      program {
+         signal: "elm,state,flip,enabled"; source: "elm";
+         action: STATE_SET "flip_enabled" 0.0;
+         target: "elm.text";
+         target: "label2";
+         target: "label3";
+         target: "elm.text.flip";
+      }
+      program {
+         signal: "elm,state,flip,disabled"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "elm.text";
+         target: "label2";
+         target: "label3";
+         target: "elm.text.flip";
+      }
+      //##//
+      part { name: "elm.swallow.pad"; type: SWALLOW;
+         description { state: "default" 0.0;
+            fixed: 1 0;
+            align: 0.0 0.5;
+            rel1.offset: 2 2;
+            rel2.relative: 0.0 1.0;
+            rel2.offset: 2 -3;
+         }
+      }
+      part { name: "elm.swallow.icon"; type: SWALLOW;
+         description { state: "default" 0.0;
+            fixed: 1 0;
+            align: 1.0 0.5;
+            aspect: 1.0 1.0;
+            rel1.offset: -3 2;
+            rel1.relative: 1.0 0.0;
+            rel2.offset: -3 -3;
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      program {
+         signal: "elm,state,flip,enabled"; source: "elm";
+         action: STATE_SET "flip_enabled" 0.0;
+         target: "elm.swallow.icon";
+      }
+      program {
+         signal: "elm,state,flip,disabled"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "elm.swallow.icon";
+      }
+      //##//
+
+      TOPP()
+   }
+}
+ODD("elm/genlist/item_odd/end_icon/default", "elm/genlist/item/end_icon/default")
+COMPRESS("elm/genlist/item_compress/end_icon/default", "elm/genlist/item/end_icon/default")
+COMPRESS_ODD("elm/genlist/item_compress_odd/end_icon/default", "elm/genlist/item/end_icon/default")
+
+group { name: "elm/genlist/item/no_icon/default";
+   data.item: "selectraise" "on";
+   data.item: "texts" "elm.text";
+   data.item: "treesize" TREEPAD;
+   data.item: "flips" "elm.text.flip";
+   IMGP()
+   parts {
+      BASEP()
+
+      //##//
+      part { name: "elm.text"; type: TEXT; mouse_events: 0;
+         effect: SHADOW BOTTOM;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.offset: 2 3;
+            rel1.relative: 1.0 0.0;
+            rel1.to_x: "elm.swallow.pad";
+            rel2.offset: -3 -3;
+            color: 255 255 255 255;
+            color3: 0 0 0 128;
+            color_class: "list_item";
+            text { font: FN; size: 10;
+               min: 1 1;
+               align: 0.0 0.5;
+               text_class: "list_item";
+            }
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "label2"; type: TEXT; mouse_events: 0;
+         effect: SHADOW BOTTOM;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.to: "elm.text";
+            rel2.to: "elm.text";
+            color: 21 21 21 255;
+            color3: 255 255 255 25;
+            color_class: "list_item_disabled";
+            text { font: FN; size: 10;
+               text_source: "elm.text";
+               align: 0.0 0.5;
+               text_class: "list_item";
+            }
+            visible: 0;
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "label3"; type: TEXT; mouse_events: 0;
+         effect: GLOW;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.offset: -2 -3;
+            rel1.to: "elm.text";
+            rel2.offset: -1 1;
+            rel2.to: "elm.text";
+            color: 51 153 255 255;
+            color2: 51 153 255 24;
+            color3: 51 153 255 18;
+            color_class: "list_item_selected";
+            text { font: FN; size: 10;
+               text_source: "elm.text";
+               align: 0.0 0.5;
+               text_class: "list_item";
+            }
+            visible: 0;
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "elm.text.flip"; type: SWALLOW;
+         scale: 1;
+         description { state: "default" 0.0;
+            visible: 0;
+            rel1.to_y: "elm.text";
+            rel2.to_y: "elm.text";
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+      program {
+         signal: "elm,state,selected"; source: "elm";
+         action: STATE_SET "selected" 0.0;
+         target: "elm.text";
+         target: "label2";
+         target: "label3";
+      }
+      program {
+         signal: "elm,state,unselected"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "elm.text";
+         target: "label2";
+         target: "label3";
+      }
+      program {
+         signal: "elm,state,disabled"; source: "elm";
+         action: STATE_SET "disabled" 0.0;
+         target: "elm.text";
+         target: "label2";
+         target: "label3";
+      }
+      program {
+         signal: "elm,state,enabled"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "elm.text";
+         target: "label2";
+         target: "label3";
+      }
+      program {
+         signal: "elm,state,flip,enabled"; source: "elm";
+         action: STATE_SET "flip_enabled" 0.0;
+         target: "elm.text";
+         target: "label2";
+         target: "label3";
+         target: "elm.text.flip";
+      }
+      program {
+         signal: "elm,state,flip,disabled"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "elm.text";
+         target: "label2";
+         target: "label3";
+         target: "elm.text.flip";
+      }
+      //##//
+      part { name: "elm.swallow.pad"; type: SWALLOW;
+         description { state: "default" 0.0;
+            fixed: 1 0;
+            align: 0.0 0.5;
+            rel1.offset: 2 2;
+            rel2.relative: 0.0 1.0;
+            rel2.offset: 2 -3;
+         }
+      }
+      //##//
+
+      TOPP()
+   }
+}
+ODD("elm/genlist/item_odd/no_icon/default", "elm/genlist/item/no_icon/default")
+COMPRESS("elm/genlist/item_compress/no_icon/default", "elm/genlist/item/no_icon/default")
+COMPRESS_ODD("elm/genlist/item_compress_odd/no_icon/default", "elm/genlist/item/no_icon/default")
+
+group { name: "elm/genlist/item/full/default";
+   data.item: "selectraise" "on";
+   data.item: "contents" "elm.swallow.content";
+   data.item: "treesize" TREEPAD;
+   data.item: "flips" "elm.text.flip";
+   IMGP()
+   parts {
+      BASEP()
+
+      //##//
+      part { name: "elm.swallow.content"; type: SWALLOW;
+         scale: 1;
+         description { state: "default" 0.0;
+            min: 19 19;
+            rel1.offset: -1 2;
+            rel1.relative: 1.0 0.0;
+            rel1.to_x: "elm.swallow.pad";
+            rel2.offset: -3 -3;
+         }
+      }
+      //##//
+      part { name: "elm.swallow.pad"; type: SWALLOW;
+         description { state: "default" 0.0;
+            fixed: 1 0;
+            align: 0.0 0.5;
+            rel1.offset: 2 2;
+            rel2.relative: 0.0 1.0;
+            rel2.offset: 2 -3;
+         }
+      }
+      //##//
+
+      TOPP()
+   }
+}
+ODD("elm/genlist/item_odd/full/default", "elm/genlist/item/full/default")
+group { name: "elm/genlist/item_compress/full/default";
+   inherit: "elm/genlist/item/full/default";
+}
+group { name: "elm/genlist/item_compress_odd/full/default";
+   inherit: "elm/genlist/item_odd/full/default";
+}
+
+/////////////////////////////////////////////////////////////////////////////
+//-- tree
+//-- tree_odd
+//-- tree_compress
+//-- tree_compress_odd
+group { name: "elm/genlist/tree/default/default";
+   inherit: "elm/genlist/item/default/default";
+   // XXX: these need to be... done specially.
+//   alias: "elm/genlist/tree/tree_effect/default";
+//   alias: "elm/genlist/item/tree_effect/default";
+//   alias: "elm/genlist/tree/effect_parts/default";
+//   alias: "elm/genlist/item/effect_parts/default";
+#define TREEIMGS() \
+   images.image: "sym_left_light_normal.png" COMP; \
+   images.image: "sym_left_glow_normal.png" COMP; \
+   images.image: "sym_left_dark_normal.png" COMP; \
+   images.image: "sym_right_light_normal.png" COMP; \
+   images.image: "sym_right_glow_normal.png" COMP; \
+   images.image: "sym_right_dark_normal.png" COMP; \
+   images.image: "sym_down_light_normal.png" COMP; \
+   images.image: "sym_down_glow_normal.png" COMP; \
+   images.image: "sym_down_dark_normal.png" COMP;
+   TREEIMGS()
+   parts {
+      part { name: "elm.swallow.icon";
+         description { state: "default" 0.0;
+            rel1.to_x: "arrow";
+            rel1.offset: 1 2;
+            rel2.to_x: "arrow";
+            rel2.offset: 1 -3;
+         }
+         description { state: "flip_enabled" 0.0;
+            rel1.to_x: "arrow";
+            rel1.offset: 1 2;
+            rel2.to_x: "arrow";
+            rel2.offset: 1 -3;
+         }
+      }
+#define ARROW() \
+      part { name: "arrow_img_l"; mouse_events: 0; insert_after: "sel_bevel"; \
+         clip_to: "arrow_clip_l"; \
+         scale: 1; \
+         ignore_flags: ON_HOLD; \
+         description { state: "default" 0.0; \
+            fixed: 1 1; \
+            min: 15 15; \
+            max: 15 15; \
+            rel1.to: "arrow"; \
+            rel2.to: "arrow"; \
+            image.normal: "sym_right_light_normal.png"; \
+         } \
+         description { state: "selected" 0.0; \
+            inherit: "default" 0.0; \
+            image.normal: "sym_right_glow_normal.png"; \
+         } \
+         description { state: "disabled" 0.0; \
+            inherit: "default" 0.0; \
+            image.normal: "sym_right_dark_normal.png"; \
+         } \
+         description { state: "default" 1.0; \
+            inherit: "default" 0.0; \
+            image.normal: "sym_down_light_normal.png"; \
+         } \
+         description { state: "selected" 1.0; \
+            inherit: "default" 0.0; \
+            image.normal: "sym_down_glow_normal.png"; \
+         } \
+         description { state: "disabled" 1.0; \
+            inherit: "default" 0.0; \
+            image.normal: "sym_down_dark_normal.png"; \
+         } \
+      } \
+      part { name: "arrow_img_r"; mouse_events: 0; \
+         clip_to: "arrow_clip_r"; \
+         scale: 1; \
+         ignore_flags: ON_HOLD; \
+         description { state: "default" 0.0; \
+            fixed: 1 1; \
+            min: 15 15; \
+            max: 15 15; \
+            rel1.to: "arrow"; \
+            rel2.to: "arrow"; \
+            image.normal: "sym_left_light_normal.png"; \
+         } \
+         description { state: "selected" 0.0; \
+            inherit: "default" 0.0; \
+            image.normal: "sym_left_glow_normal.png"; \
+         } \
+         description { state: "disabled" 0.0; \
+            inherit: "default" 0.0; \
+            image.normal: "sym_left_dark_normal.png"; \
+         } \
+         description { state: "default" 1.0; \
+            inherit: "default" 0.0; \
+            image.normal: "sym_down_light_normal.png"; \
+         } \
+         description { state: "selected" 1.0; \
+            inherit: "default" 0.0; \
+            image.normal: "sym_down_glow_normal.png"; \
+         } \
+         description { state: "disabled" 1.0; \
+            inherit: "default" 0.0; \
+            image.normal: "sym_down_dark_normal.png"; \
+         } \
+      } \
+      part { name: "arrow"; type: RECT; insert_before: "sel_shine"; \
+         description { state: "default" 0.0; \
+            fixed: 1 0; \
+            min: 15 15; \
+            aspect: 1.0 1.0; \
+            align: 0.0 0.5; \
+            rel1.to_x: "elm.swallow.pad"; \
+            rel1.relative: 1.0 0.0; \
+            rel1.offset: -2 2; \
+            rel2.to_x: "elm.swallow.pad"; \
+            rel2.relative: 1.0 1.0; \
+            rel2.offset: -2 -3; \
+            color: 0 0 0 0; \
+         } \
+      } \
+      part { name: "arrow_clip_l"; type: RECT; \
+         description { state: "default" 0.0; \
+            rel1.to: "arrow_img_l"; \
+            rel2.to: "arrow_img_l"; \
+            visible: 1; \
+         } \
+         description { state: "rtl" 0.0; \
+            visible: 0; \
+         } \
+      } \
+      part { name: "arrow_clip_r"; type: RECT; \
+         description { state: "default" 0.0; \
+            rel1.to: "arrow_img_r"; \
+            rel2.to: "arrow_img_r"; \
+            visible: 0; \
+         } \
+         description { state: "rtl" 0.0; \
+            visible: 1; \
+         } \
+      } \
+      program { \
+         signal: "mouse,up,1"; source: "arrow"; \
+         action: SIGNAL_EMIT "elm,action,expand,toggle" "elm"; \
+      } \
+      program { name: "arr1"; \
+         signal: "elm,state,expanded"; source: "elm"; \
+         script { \
+            new st[31], Float:vl; \
+            get_state(PART:"arrow_img_l", st, 30, vl); \
+            set_state(PART:"arrow_img_l", st, 1.0); \
+            set_state(PART:"arrow_img_r", st, 1.0); \
+         } \
+      } \
+      program { name: "arr2"; \
+         signal: "elm,state,contracted"; source: "elm"; \
+         script { \
+            new st[31], Float:vl; \
+            get_state(PART:"arrow_img_l", st, 30, vl); \
+            set_state(PART:"arrow_img_l", st, 0.0); \
+            set_state(PART:"arrow_img_r", st, 0.0); \
+         } \
+      } \
+      program { name: "arr3"; \
+         signal: "elm,state,selected"; source: "elm"; \
+         script { \
+            new st[31], Float:vl; \
+            get_state(PART:"arrow_img_l", st, 30, vl); \
+            set_state(PART:"arrow_img_l", "selected", vl); \
+            set_state(PART:"arrow_img_r", "selected", vl); \
+         } \
+      } \
+      program { name: "arr4"; \
+         signal: "elm,state,unselected"; source: "elm"; \
+         script { \
+            new st[31], Float:vl; \
+            get_state(PART:"arrow_img_l", st, 30, vl); \
+            set_state(PART:"arrow_img_l", "default", vl); \
+            set_state(PART:"arrow_img_r", "default", vl); \
+         } \
+      } \
+      program { name: "arr5"; \
+         signal: "elm,state,enabled"; source: "elm"; \
+         script { \
+            new st[31], Float:vl; \
+            get_state(PART:"arrow_img_l", st, 30, vl); \
+            set_state(PART:"arrow_img_l", "default", vl); \
+            set_state(PART:"arrow_img_r", "default", vl); \
+         } \
+      } \
+      program { name: "arr6"; \
+         signal: "elm,state,disabled"; source: "elm"; \
+         script { \
+            new st[31], Float:vl; \
+            get_state(PART:"arrow_img_l", st, 30, vl); \
+            set_state(PART:"arrow_img_l", "disabled", vl); \
+            set_state(PART:"arrow_img_r", "disabled", vl); \
+         } \
+      } \
+      program { \
+         signal: "edje,state,rtl"; source: "edje"; \
+         action: STATE_SET "rtl" 0.0; \
+         target: "arrow_clip_l"; \
+         target: "arrow_clip_r"; \
+      } \
+      program { \
+         signal: "edje,state,ltr"; source: "edje"; \
+         action: STATE_SET "default" 0.0; \
+         target: "arrow_clip_l"; \
+         target: "arrow_clip_r"; \
+      }
+      ARROW()
+   }
+}
+ODD("elm/genlist/tree_odd/default/default", "elm/genlist/tree/default/default")
+COMPRESS("elm/genlist/tree_compress/default/default", "elm/genlist/tree/default/default")
+COMPRESS_ODD("elm/genlist/tree_compress_odd/default/default", "elm/genlist/tree/default/default")
+
+group { name: "elm/genlist/tree/default_style/default";
+   inherit: "elm/genlist/item/default_style/default";
+   TREEIMGS()
+   parts {
+      part { name: "elm.swallow.icon";
+         description { state: "default" 0.0;
+            rel1.to_x: "arrow";
+            rel1.offset: 1 2;
+            rel2.to_x: "arrow";
+            rel2.offset: 1 -3;
+         }
+         description { state: "flip_enabled" 0.0;
+            rel1.to_x: "arrow";
+            rel1.offset: 1 2;
+            rel2.to_x: "arrow";
+            rel2.offset: 1 -3;
+         }
+      }
+      ARROW()
+   }
+}
+ODD("elm/genlist/tree_odd/default_style/default", "elm/genlist/tree/default_style/default")
+COMPRESS("elm/genlist/tree_compress/default_style/default", "elm/genlist/tree/default_style/default")
+COMPRESS_ODD("elm/genlist/tree_compress_odd/default_style/default", "elm/genlist/tree/default_style/default")
+
+group { name: "elm/genlist/tree/one_icon/default";
+   inherit: "elm/genlist/item/one_icon/default";
+   TREEIMGS()
+   parts {
+      part { name: "elm.swallow.icon";
+         description { state: "default" 0.0;
+            rel1.to_x: "arrow";
+            rel1.offset: 1 2;
+            rel2.to_x: "arrow";
+            rel2.offset: 1 -3;
+         }
+         description { state: "flip_enabled" 0.0;
+            rel1.to_x: "arrow";
+            rel1.offset: 1 2;
+            rel2.to_x: "arrow";
+            rel2.offset: 1 -3;
+         }
+      }
+      ARROW()
+   }
+}
+ODD("elm/genlist/tree_odd/one_icon/default", "elm/genlist/tree/one_icon/default")
+COMPRESS("elm/genlist/tree_compress/one_icon/default", "elm/genlist/tree/one_icon/default")
+COMPRESS_ODD("elm/genlist/tree_compress_odd/one_icon/default", "elm/genlist/tree/one_icon/default")
+
+group { name: "elm/genlist/tree/end_icon/default";
+   inherit: "elm/genlist/item/end_icon/default";
+   TREEIMGS()
+   parts {
+      part { name: "elm.text";
+         description { state: "default" 0.0;
+            rel1.to_x: "arrow";
+            rel1.offset: 1 2;
+         }
+         description { state: "selected" 0.0;
+            rel1.to_x: "arrow";
+            rel1.offset: 1 2;
+         }
+         description { state: "disabled" 0.0;
+            rel1.to_x: "arrow";
+            rel1.offset: 1 2;
+         }
+         description { state: "flip_enabled" 0.0;
+            rel1.to_x: "arrow";
+            rel1.offset: 1 2;
+         }
+      }
+      ARROW()
+   }
+}
+ODD("elm/genlist/tree_odd/end_icon/default", "elm/genlist/tree/end_icon/default")
+COMPRESS("elm/genlist/tree_compress/end_icon/default", "elm/genlist/tree/end_icon/default")
+COMPRESS_ODD("elm/genlist/tree_compress_odd/end_icon/default", "elm/genlist/tree/end_icon/default")
+
+group { name: "elm/genlist/tree/no_icon/default";
+   inherit: "elm/genlist/item/no_icon/default";
+   TREEIMGS()
+   parts {
+      part { name: "elm.text";
+         description { state: "default" 0.0;
+            rel1.to_x: "arrow";
+            rel1.offset: 1 2;
+         }
+         description { state: "selected" 0.0;
+            rel1.to_x: "arrow";
+            rel1.offset: 1 2;
+         }
+         description { state: "disabled" 0.0;
+            rel1.to_x: "arrow";
+            rel1.offset: 1 2;
+         }
+         description { state: "flip_enabled" 0.0;
+            rel1.to_x: "arrow";
+            rel1.offset: 1 2;
+         }
+      }
+      ARROW()
+   }
+}
+ODD("elm/genlist/tree_odd/no_icon/default", "elm/genlist/tree/no_icon/default")
+COMPRESS("elm/genlist/tree_compress/no_icon/default", "elm/genlist/tree/no_icon/default")
+COMPRESS_ODD("elm/genlist/tree_compress_odd/no_icon/default", "elm/genlist/tree/no_icon/default")
+
+group { name: "elm/genlist/tree/full/default";
+   inherit: "elm/genlist/item/full/default";
+   TREEIMGS()
+   parts {
+      part { name: "elm.swallow.content";
+         description { state: "default" 0.0;
+            rel1.to_x: "arrow";
+            rel1.offset: 1 2;
+         }
+         description { state: "selected" 0.0;
+            rel1.to_x: "arrow";
+            rel1.offset: 1 2;
+         }
+         description { state: "disabled" 0.0;
+            rel1.to_x: "arrow";
+            rel1.offset: 1 2;
+         }
+         description { state: "flip_enabled" 0.0;
+            rel1.to_x: "arrow";
+            rel1.offset: 1 2;
+         }
+      }
+      ARROW()
+   }
+}
+ODD("elm/genlist/tree_odd/full/default", "elm/genlist/tree/full/default")
+group { name: "elm/genlist/tree_compress/full/default";
+   inherit: "elm/genlist/tree/full/default";
+}
+group { name: "elm/genlist/tree_compress_odd/full/default";
+   inherit: "elm/genlist/tree_odd/full/default";
+}
+
+#define GENLIST_PART_MAP_START(param_x, param_y, param_z) \
+   description { state: "map_transition" 0.0; \
+      inherit: "default" 0.0; \
+      color: 50 50 50 255; \
+      map { \
+         perspective: "point"; \
+         on: 1; \
+         smooth: 1; \
+         perspective_on: 1; \
+         backface_cull: 1; \
+         rotation { \
+            center: "point"; \
+            x: param_x; \
+            y: param_y; \
+            z: param_z; \
+         } \
+      } \
+   } \
+   description { state: "hide" 0.0; \
+      inherit: "default" 0.0; \
+      visible: 0; \
+   }
+
+#define GENLIST_PART_MAP_FINISH(param_x, param_y, param_z) \
+   description { state: "map_rotate" 0.0; \
+      inherit: "default" 0.0; \
+      map { \
+         perspective: "point"; \
+         on: 1; \
+         smooth: 1; \
+         perspective_on: 1; \
+         backface_cull: 1; \
+         rotation { \
+            center: "point"; \
+            x: param_x; \
+            y: param_y; \
+            z: param_z; \
+         } \
+      } \
+   }
+
+group { name: "elm/genlist/tree/tree_effect/default";
+   data.item: "selectraise" "on";
+   data.item: "texts" "elm.text";
+   data.item: "contents" "elm.swallow.icon elm.swallow.end";
+   data.item: "treesize" TREEPAD;
+   data.item: "flips" "elm.text.flip";
+   broadcast_signal: 1;
+   parts {
+      alias: "elm.swallow.pad" "group:elm.swallow.pad";
+      alias: "elm.swallow.icon" "group:elm.swallow.icon";
+      alias: "elm.swallow.end" "group:elm.swallow.end";
+      alias: "elm.text" "group:elm.text";
+      part { name: "point"; type: RECT;
+         scale: 1;
+         description { state: "default" 0.0;
+            color: 0 0 0 0;
+            rel1.relative: 0.0 0.0;
+            rel2.relative: 1.0 0.0;
+         }
+      }
+      part { name: "event"; type: RECT;
+         description { state: "default" 0.0;
+            color: 0 0 0 0;
+         }
+      }
+      part { name: "group"; type: GROUP;
+         source: "elm/genlist/tree/default/default";
+         description { state: "default" 0.0;
+         }
+         GENLIST_PART_MAP_START(-90.0, 0, 0)
+         GENLIST_PART_MAP_FINISH(0, 0, 0)
+      }
+   }
+   programs {
+      program {
+         signal: "elm,action,flip_item"; source: "elm";
+         action: STATE_SET "map_transition" 0.0;
+         target: "group";
+         after: "rot2";
+      }
+      program { name: "rot2";
+         action: STATE_SET "map_rotate" 0.0;
+         transition: LINEAR 0.2;
+         target: "group";
+         after: "rot3";
+      }
+      program { name: "rot3";
+         action: STATE_SET "default" 0.0;
+         target: "group";
+      }
+      
+      program {
+         signal: "elm,state,contract_flip"; source: "elm";
+         action: STATE_SET "map_rotate" 0.0;
+         target: "group";
+         after: "rotb2";
+      }
+      program { name: "rotb2";
+         action: STATE_SET "map_transition" 0.0;
+         transition: LINEAR 0.5;
+         target: "group";
+         after: "rotb3";
+      }
+      program { name: "rotb3";
+         action: STATE_SET "hide" 0.0;
+         target: "group";
+      }
+      
+      program {
+         signal: "elm,state,show"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "group";
+      }
+      program {
+         signal: "elm,state,hide"; source: "elm";
+         action: STATE_SET "hide" 0.0;
+         target: "group";
+      }
+      program {
+         signal: "mouse,up,1";
+         source: "group:arrow";
+         action:  SIGNAL_EMIT "elm,action,expand,toggle" "elm";
+      }
+   }
+}
+
+group { name: "elm/genlist/item/tree_effect/default";
+   inherit: "elm/genlist/tree/tree_effect/default";
+   parts {
+      part { name: "group"; type: GROUP;
+         source: "elm/genlist/item/default/default";
+      }
+   }
+}
+
+group { name: "elm/genlist/item/icon_top_text_bottom/default";
+   data.item: "selectraise" "on";
+   data.item: "texts" "elm.text";
+   data.item: "contents" "elm.swallow.icon";
+   data.item: "treesize" TREEPAD;
+   data.item: "flips" "elm.text.flip";
+   IMGP()
+   parts {
+      BASEP()
+
+      //##//
+      part { name: "elm.text"; type: TEXT; mouse_events: 0;
+         effect: SHADOW BOTTOM;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.offset: 2 3;
+            rel1.relative: 1.0 1.0;
+            rel1.to_x: "elm.swallow.pad";
+            rel1.to_y: "elm.swallow.icon";
+            rel2.offset: -3 -3;
+            color: 255 255 255 255;
+            color3: 0 0 0 128;
+            color_class: "list_item";
+            text { font: FN; size: 10;
+               min: 1 1;
+               align: 0.5 0.5;
+               text_class: "list_item";
+            }
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "label2"; type: TEXT; mouse_events: 0;
+         effect: SHADOW BOTTOM;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.to: "elm.text";
+            rel2.to: "elm.text";
+            color: 21 21 21 255;
+            color3: 255 255 255 25;
+            color_class: "list_item_disabled";
+            text { font: FN; size: 10;
+               text_source: "elm.text";
+               align: 0.5 0.5;
+               text_class: "list_item";
+            }
+            visible: 0;
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "label3"; type: TEXT; mouse_events: 0;
+         effect: GLOW;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.offset: 0 -3;
+            rel1.to: "elm.text";
+            rel2.offset: -1 1;
+            rel2.to: "elm.text";
+            color: 51 153 255 255;
+            color2: 51 153 255 24;
+            color3: 51 153 255 18;
+            color_class: "list_item_selected";
+            text { font: FN; size: 10;
+               text_source: "elm.text";
+               align: 0.5 0.5;
+               text_class: "list_item";
+            }
+            visible: 0;
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "elm.text.flip"; type: SWALLOW;
+         scale: 1;
+         description { state: "default" 0.0;
+            visible: 0;
+            rel1.to_y: "elm.text";
+            rel2.to_y: "elm.text";
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+      program {
+         signal: "elm,state,selected"; source: "elm";
+         action: STATE_SET "selected" 0.0;
+         target: "elm.text";
+         target: "label2";
+         target: "label3";
+      }
+      program {
+         signal: "elm,state,unselected"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "elm.text";
+         target: "label2";
+         target: "label3";
+      }
+      program {
+         signal: "elm,state,disabled"; source: "elm";
+         action: STATE_SET "disabled" 0.0;
+         target: "elm.text";
+         target: "label2";
+         target: "label3";
+      }
+      program {
+         signal: "elm,state,enabled"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "elm.text";
+         target: "label2";
+         target: "label3";
+      }
+      program {
+         signal: "elm,state,flip,enabled"; source: "elm";
+         action: STATE_SET "flip_enabled" 0.0;
+         target: "elm.text";
+         target: "label2";
+         target: "label3";
+         target: "elm.text.flip";
+      }
+      program {
+         signal: "elm,state,flip,disabled"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "elm.text";
+         target: "label2";
+         target: "label3";
+         target: "elm.text.flip";
+      }
+      //##//
+      part { name: "sizer.content"; type: TEXT; mouse_events: 0;
+         scale: 1;
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            rel1.to_x: "elm.swallow.pad";
+            rel1.relative: 1.0 0.0;
+            rel1.offset: -1 2;
+            rel2.relative: 1.0 0.0;
+            rel2.offset: -1 2;
+            align: 0.5 0.0;
+            color_class: "list_item";
+            text { font: FN; size: 10;
+               min: 1 1;
+               align: 0.5 0.5;
+               text_class: "list_item";
+               text: "M";
+            }
+            visible: 0;
+         }
+      }
+      part { name: "elm.swallow.pad"; type: SWALLOW;
+         description { state: "default" 0.0;
+            fixed: 1 0;
+            align: 0.0 0.5;
+            rel1.offset: 2 2;
+            rel2.relative: 0.0 1.0;
+            rel2.offset: 2 -3;
+         }
+      }
+      part { name: "elm.swallow.icon"; type: SWALLOW;
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            aspect: 1.0 1.0;
+            rel1.to: "sizer.content";
+            rel2.to: "sizer.content";
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      program {
+         signal: "elm,state,flip,enabled"; source: "elm";
+         action: STATE_SET "flip_enabled" 0.0;
+         target: "elm.swallow.icon";
+      }
+      program {
+         signal: "elm,state,flip,disabled"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "elm.swallow.icon";
+      }
+      //##//
+
+      TOPP()
+   }
+}
+ODD("elm/genlist/item_odd/icon_top_text_bottom/default", "elm/genlist/item/icon_top_text_bottom/default")
+COMPRESS("elm/genlist/item_compress/icon_top_text_bottom/default", "elm/genlist/item/icon_top_text_bottom/default")
+COMPRESS_ODD("elm/genlist/item_compress_odd/icon_top_text_bottom/default", "elm/genlist/item/icon_top_text_bottom/default")
+
+group { name: "elm/genlist/tree/icon_top_text_bottom/default";
+   inherit: "elm/genlist/item/icon_top_text_bottom/default";
+   TREEIMGS()
+   parts {
+      part { name: "sizer.content";
+         description { state: "default" 0.0;
+            rel1.to_x: "arrow";
+            rel1.offset: 1 2;
+         }
+      }
+      part { name: "elm.text";
+         description { state: "default" 0.0;
+            rel1.to_x: "arrow";
+            rel1.offset: 1 2;
+         }
+         description { state: "flip_enabled" 0.0;
+            rel1.to_x: "arrow";
+            rel1.offset: 1 2;
+         }
+      }
+      ARROW()
+   }
+}
+ODD("elm/genlist/tree_odd/icon_top_text_bottom/default", "elm/genlist/tree/icon_top_text_bottom/default")
+COMPRESS("elm/genlist/tree_compress/icon_top_text_bottom/default", "elm/genlist/tree/icon_top_text_bottom/default")
+COMPRESS_ODD("elm/genlist/tree_compress_odd/icon_top_text_bottom/default", "elm/genlist/tree/icon_top_text_bottom/default")
+
+#define COMPRESS_SUB(_NAME, _SRC) \
+   group { name: _NAME; \
+      inherit: _SRC; \
+      parts { \
+         part { name: "elm.text"; \
+            description { state: "default" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "selected" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "disabled" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "flip_enabled" 0.0; \
+               text.min: 0 1; \
+            } \
+         } \
+         part { name: "label2"; \
+            description { state: "default" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "selected" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "disabled" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "flip_enabled" 0.0; \
+               text.min: 0 1; \
+            } \
+         } \
+         part { name: "label3"; \
+            description { state: "default" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "selected" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "disabled" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "flip_enabled" 0.0; \
+               text.min: 0 1; \
+            } \
+         } \
+         part { name: "elm.text.sub"; \
+            description { state: "default" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "selected" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "disabled" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "flip_enabled" 0.0; \
+               text.min: 0 1; \
+            } \
+         } \
+         part { name: "label4"; \
+            description { state: "default" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "selected" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "disabled" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "flip_enabled" 0.0; \
+               text.min: 0 1; \
+            } \
+         } \
+         part { name: "label5"; \
+            description { state: "default" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "selected" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "disabled" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "flip_enabled" 0.0; \
+               text.min: 0 1; \
+            } \
+         } \
+      } \
+   }
+#define COMPRESS_SUB_ODD(_NAME, _SRC) \
+   group { name: _NAME; \
+      inherit: _SRC; \
+      parts { \
+         part { name: "elm.text"; \
+            description { state: "default" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "selected" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "disabled" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "flip_enabled" 0.0; \
+               text.min: 0 1; \
+            } \
+         } \
+         part { name: "label2"; \
+            description { state: "default" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "selected" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "disabled" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "flip_enabled" 0.0; \
+               text.min: 0 1; \
+            } \
+         } \
+         part { name: "label3"; \
+            description { state: "default" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "selected" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "disabled" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "flip_enabled" 0.0; \
+               text.min: 0 1; \
+            } \
+         } \
+         part { name: "elm.text.sub"; \
+            description { state: "default" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "selected" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "disabled" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "flip_enabled" 0.0; \
+               text.min: 0 1; \
+            } \
+         } \
+         part { name: "label4"; \
+            description { state: "default" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "selected" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "disabled" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "flip_enabled" 0.0; \
+               text.min: 0 1; \
+            } \
+         } \
+         part { name: "label5"; \
+            description { state: "default" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "selected" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "disabled" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "flip_enabled" 0.0; \
+               text.min: 0 1; \
+            } \
+         } \
+         part { name: "base"; \
+            description { state: "default" 0.0; \
+               color: 56 56 56 255; \
+               color_class: "list_item_base_odd"; \
+            } \
+         } \
+      } \
+   }
+group { name: "elm/genlist/item/double_label/default";
+   data.item: "selectraise" "on";
+   data.item: "texts" "elm.text elm.text.sub";
+   data.item: "contents" "elm.swallow.icon elm.swallow.end";
+   data.item: "treesize" TREEPAD;
+   data.item: "flips" "elm.text.flip";
+   IMGP()
+   parts {
+      BASEP()
+
+      //##//
+      part { name: "elm.text"; type: TEXT; mouse_events: 0;
+         effect: SHADOW BOTTOM;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.offset: 2 3;
+            rel1.relative: 1.0 0.0;
+            rel1.to_x: "elm.swallow.icon";
+            rel2.offset: -3 -3;
+            rel2.relative: 0.0 0.0;
+            rel2.to_x: "elm.swallow.end";
+            rel2.to_y: "elm.text.sub";
+            color: 255 255 255 255;
+            color3: 0 0 0 128;
+            color_class: "list_item";
+            align: 0.0 0.0;
+            text { font: FN; size: 10;
+               min: 1 1;
+               align: 0.0 0.0;
+               text_class: "list_item";
+            }
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "label2"; type: TEXT; mouse_events: 0;
+         effect: SHADOW BOTTOM;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.to: "elm.text";
+            rel2.to: "elm.text";
+            color: 21 21 21 255;
+            color3: 255 255 255 25;
+            color_class: "list_item_disabled";
+            text { font: FN; size: 10;
+               text_source: "elm.text";
+               align: 0.0 0.5;
+               text_class: "list_item";
+            }
+            visible: 0;
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "label3"; type: TEXT; mouse_events: 0;
+         effect: GLOW;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.offset: -2 -3;
+            rel1.to: "elm.text";
+            rel2.offset: -1 1;
+            rel2.to: "elm.text";
+            color: 51 153 255 255;
+            color2: 51 153 255 24;
+            color3: 51 153 255 18;
+            color_class: "list_item_selected";
+            text { font: FN; size: 10;
+               text_source: "elm.text";
+               align: 0.0 0.5;
+               text_class: "list_item";
+            }
+            visible: 0;
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "elm.text.flip"; type: SWALLOW;
+         scale: 1;
+         description { state: "default" 0.0;
+            visible: 0;
+            rel1.to_y: "elm.text";
+            rel2.to_y: "elm.text";
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+      part { name: "elm.text.sub"; type: TEXT; mouse_events: 0;
+         effect: SHADOW BOTTOM;
+         scale: 1;
+         description { state: "default" 0.0;
+            fixed: 0 1;
+            rel1.offset: 2 -3;
+            rel1.relative: 1.0 1.0;
+            rel1.to_x: "elm.swallow.icon";
+            rel2.offset: -3 -3;
+            rel2.relative: 0.0 1.0;
+            rel2.to_x: "elm.swallow.end";
+            color: 255 255 255 255;
+            color3: 0 0 0 128;
+            color_class: "list_item_sub";
+            align: 0.0 1.0;
+            text { font: FN; size: 8;
+               min: 1 1;
+               align: 0.0 1.0;
+               text_class: "list_item_sub";
+            }
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "label4"; type: TEXT; mouse_events: 0;
+         effect: SHADOW BOTTOM;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.to: "elm.text.sub";
+            rel2.to: "elm.text.sub";
+            color: 21 21 21 255;
+            color3: 255 255 255 25;
+            color_class: "list_item_sub_disabled";
+            text { font: FN; size: 8;
+               text_source: "elm.text.sub";
+               align: 0.0 1.0;
+               text_class: "list_item_sub";
+            }
+            visible: 0;
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "label5"; type: TEXT; mouse_events: 0;
+         effect: GLOW;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.offset: -2 -4;
+            rel1.to: "elm.text.sub";
+            rel2.offset: -1 0;
+            rel2.to: "elm.text.sub";
+            color: 51 153 255 255;
+            color2: 51 153 255 24;
+            color3: 51 153 255 18;
+            color_class: "list_item_sub_selected";
+            text { font: FN; size: 8;
+               text_source: "elm.text.sub";
+               align: 0.0 1.0;
+               text_class: "list_item_sub";
+            }
+            visible: 0;
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      program {
+         signal: "elm,state,selected"; source: "elm";
+         action: STATE_SET "selected" 0.0;
+         target: "elm.text";
+         target: "label2";
+         target: "label3";
+         target: "elm.text.sub";
+         target: "label4";
+         target: "label5";
+      }
+      program {
+         signal: "elm,state,unselected"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "elm.text";
+         target: "label2";
+         target: "label3";
+         target: "elm.text.sub";
+         target: "label4";
+         target: "label5";
+      }
+      program {
+         signal: "elm,state,disabled"; source: "elm";
+         action: STATE_SET "disabled" 0.0;
+         target: "elm.text";
+         target: "label2";
+         target: "label3";
+         target: "elm.text.sub";
+         target: "label4";
+         target: "label5";
+      }
+      program {
+         signal: "elm,state,enabled"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "elm.text";
+         target: "label2";
+         target: "label3";
+         target: "elm.text.sub";
+         target: "label4";
+         target: "label5";
+      }
+      program {
+         signal: "elm,state,flip,enabled"; source: "elm";
+         action: STATE_SET "flip_enabled" 0.0;
+         target: "elm.text";
+         target: "label2";
+         target: "label3";
+         target: "elm.text.sub";
+         target: "label4";
+         target: "label5";
+         target: "elm.text.flip";
+      }
+      program {
+         signal: "elm,state,flip,disabled"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "elm.text";
+         target: "label2";
+         target: "label3";
+         target: "elm.text.sub";
+         target: "label4";
+         target: "label5";
+         target: "elm.text.flip";
+      }
+      //##//
+      part { name: "elm.swallow.pad"; type: SWALLOW;
+         description { state: "default" 0.0;
+            fixed: 1 0;
+            align: 0.0 0.5;
+            rel1.offset: 2 2;
+            rel2.relative: 0.0 1.0;
+            rel2.offset: 2 -3;
+         }
+      }
+      part { name: "elm.swallow.icon"; type: SWALLOW;
+         description { state: "default" 0.0;
+            fixed: 1 0;
+            align: 0.0 0.5;
+            aspect: 1.0 1.0;
+            rel1.to_x: "elm.swallow.pad";
+            rel1.relative: 1.0 0.0;
+            rel1.offset: -1 2;
+            rel2.to_x: "elm.swallow.pad";
+            rel2.relative: 1.0 1.0;
+            rel2.offset: -1 -3;
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "elm.swallow.end"; type: SWALLOW;
+         description { state: "default" 0.0;
+            fixed: 1 0;
+            align: 1.0 0.5;
+            aspect: 1.0 1.0;
+            rel1.offset: -3 2;
+            rel1.relative: 1.0 0.0;
+            rel2.offset: -3 -3;
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      program {
+         signal: "elm,state,flip,enabled"; source: "elm";
+         action: STATE_SET "flip_enabled" 0.0;
+         target: "elm.swallow.icon";
+         target: "elm.swallow.end";
+      }
+      program {
+         signal: "elm,state,flip,disabled"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "elm.swallow.icon";
+         target: "elm.swallow.end";
+      }
+      //##//
+
+      TOPP()
+   }
+}
+ODD("elm/genlist/item_odd/double_label/default", "elm/genlist/item/double_label/default")
+COMPRESS_SUB("elm/genlist/item_compress/double_label/default", "elm/genlist/item/double_label/default")
+COMPRESS_SUB_ODD("elm/genlist/item_compress_odd/double_label/default", "elm/genlist/item/double_label/default")
+
+group { name: "elm/genlist/tree/double_label/default";
+   inherit: "elm/genlist/item/double_label/default";
+   TREEIMGS()
+   parts {
+      part { name: "elm.swallow.icon";
+         description { state: "default" 0.0;
+            rel1.to_x: "arrow";
+            rel1.offset: 1 2;
+            rel2.to_x: "arrow";
+            rel2.offset: 1 -3;
+         }
+         description { state: "flip_enabled" 0.0;
+            rel1.to_x: "arrow";
+            rel1.offset: 1 2;
+            rel2.to_x: "arrow";
+            rel2.offset: 1 -3;
+         }
+      }
+      ARROW()
+   }
+}
+ODD("elm/genlist/tree_odd/double_label/default", "elm/genlist/tree/double_label/default")
+COMPRESS_SUB("elm/genlist/tree_compress/double_label/default", "elm/genlist/tree/double_label/default")
+COMPRESS_SUB_ODD("elm/genlist/tree_compress_odd/double_label/default", "elm/genlist/tree/double_label/default")
+
+#define COMPRESS_T1T2(_NAME, _SRC) \
+   group { name: _NAME; \
+      inherit: _SRC; \
+      parts { \
+         part { name: "elm.text"; \
+            description { state: "default" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "selected" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "disabled" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "flip_enabled" 0.0; \
+               text.min: 0 1; \
+            } \
+         } \
+         part { name: "label2"; \
+            description { state: "default" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "selected" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "disabled" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "flip_enabled" 0.0; \
+               text.min: 0 1; \
+            } \
+         } \
+         part { name: "label3"; \
+            description { state: "default" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "selected" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "disabled" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "flip_enabled" 0.0; \
+               text.min: 0 1; \
+            } \
+         } \
+         part { name: "elm.title.1"; \
+            description { state: "default" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "selected" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "disabled" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "flip_enabled" 0.0; \
+               text.min: 0 1; \
+            } \
+         } \
+         part { name: "label4"; \
+            description { state: "default" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "selected" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "disabled" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "flip_enabled" 0.0; \
+               text.min: 0 1; \
+            } \
+         } \
+         part { name: "label5"; \
+            description { state: "default" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "selected" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "disabled" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "flip_enabled" 0.0; \
+               text.min: 0 1; \
+            } \
+         } \
+         part { name: "elm.title.2"; \
+            description { state: "default" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "selected" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "disabled" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "flip_enabled" 0.0; \
+               text.min: 0 1; \
+            } \
+         } \
+         part { name: "label6"; \
+            description { state: "default" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "selected" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "disabled" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "flip_enabled" 0.0; \
+               text.min: 0 1; \
+            } \
+         } \
+         part { name: "label7"; \
+            description { state: "default" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "selected" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "disabled" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "flip_enabled" 0.0; \
+               text.min: 0 1; \
+            } \
+         } \
+      } \
+   }
+#define COMPRESS_T1T2_ODD(_NAME, _SRC) \
+   group { name: _NAME; \
+      inherit: _SRC; \
+      parts { \
+         part { name: "elm.text"; \
+            description { state: "default" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "selected" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "disabled" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "flip_enabled" 0.0; \
+               text.min: 0 1; \
+            } \
+         } \
+         part { name: "label2"; \
+            description { state: "default" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "selected" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "disabled" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "flip_enabled" 0.0; \
+               text.min: 0 1; \
+            } \
+         } \
+         part { name: "label3"; \
+            description { state: "default" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "selected" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "disabled" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "flip_enabled" 0.0; \
+               text.min: 0 1; \
+            } \
+         } \
+         part { name: "elm.title.1"; \
+            description { state: "default" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "selected" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "disabled" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "flip_enabled" 0.0; \
+               text.min: 0 1; \
+            } \
+         } \
+         part { name: "label4"; \
+            description { state: "default" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "selected" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "disabled" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "flip_enabled" 0.0; \
+               text.min: 0 1; \
+            } \
+         } \
+         part { name: "label5"; \
+            description { state: "default" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "selected" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "disabled" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "flip_enabled" 0.0; \
+               text.min: 0 1; \
+            } \
+         } \
+         part { name: "elm.title.2"; \
+            description { state: "default" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "selected" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "disabled" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "flip_enabled" 0.0; \
+               text.min: 0 1; \
+            } \
+         } \
+         part { name: "label6"; \
+            description { state: "default" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "selected" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "disabled" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "flip_enabled" 0.0; \
+               text.min: 0 1; \
+            } \
+         } \
+         part { name: "label7"; \
+            description { state: "default" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "selected" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "disabled" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "flip_enabled" 0.0; \
+               text.min: 0 1; \
+            } \
+         } \
+         part { name: "base"; \
+            description { state: "default" 0.0; \
+               color: 56 56 56 255; \
+               color_class: "list_item_base_odd"; \
+            } \
+         } \
+      } \
+   }
+group { name: "elm/genlist/item/message/default";
+   data.item: "selectraise" "on";
+   data.item: "texts" "elm.text elm.title.1 elm.title.2";
+   data.item: "contents" "elm.swallow.icon";
+   data.item: "treesize" TREEPAD;
+   data.item: "flips" "elm.text.flip";
+   IMGP()
+   parts {
+      BASEP()
+
+      //##//
+      part { name: "elm.text"; type: TEXT; mouse_events: 0;
+         effect: SHADOW BOTTOM;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.offset: 2 3;
+            rel1.relative: 1.0 0.0;
+            rel1.to_x: "elm.swallow.pad";
+            rel2.offset: -3 2;
+            rel2.relative: 1.0 0.0;
+            color: 255 255 255 255;
+            color3: 0 0 0 128;
+            color_class: "list_item";
+            align: 0.0 0.0;
+            text { font: FN; size: 10;
+               min: 1 1;
+               align: 0.0 0.0;
+               text_class: "list_item";
+            }
+            fixed: 0 1;
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "label2"; type: TEXT; mouse_events: 0;
+         effect: SHADOW BOTTOM;
+         scale: 1;
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            rel1.to: "elm.text";
+            rel2.to: "elm.text";
+            color: 21 21 21 255;
+            color3: 255 255 255 25;
+            color_class: "list_item_disabled";
+            text { font: FN; size: 10;
+               text_source: "elm.text";
+               align: 0.0 0.5;
+               text_class: "list_item";
+            }
+            visible: 0;
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "label3"; type: TEXT; mouse_events: 0;
+         effect: GLOW;
+         scale: 1;
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            rel1.offset: -2 -3;
+            rel1.to: "elm.text";
+            rel2.offset: -1 1;
+            rel2.to: "elm.text";
+            color: 51 153 255 255;
+            color2: 51 153 255 24;
+            color3: 51 153 255 18;
+            color_class: "list_item_selected";
+            text { font: FN; size: 10;
+               text_source: "elm.text";
+               align: 0.0 0.5;
+               text_class: "list_item";
+            }
+            visible: 0;
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "elm.text.flip"; type: SWALLOW;
+         scale: 1;
+         description { state: "default" 0.0;
+            visible: 0;
+            rel1.to_y: "elm.text";
+            rel2.to_y: "elm.text";
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+      //##//
+      part { name: "elm.title.1"; type: TEXT; mouse_events: 0;
+         effect: SHADOW BOTTOM;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.offset: 2 3;
+            rel1.relative: 1.0 1.0;
+            rel1.to_x: "elm.swallow.pad";
+            rel1.to_y: "elm.text";
+            rel2.offset: -3 -3;
+            rel2.relative: 1.0 0.0;
+            rel2.to_y: "elm.title.2";
+            color: 255 255 255 255;
+            color3: 0 0 0 128;
+            color_class: "list_item";
+            text { font: FN; size: 10;
+               min: 1 1;
+               align: 0.0 0.5;
+               text_class: "list_item";
+            }
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "label4"; type: TEXT; mouse_events: 0;
+         effect: SHADOW BOTTOM;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.to: "elm.title.1";
+            rel2.to: "elm.title.1";
+            color: 21 21 21 255;
+            color3: 255 255 255 25;
+            color_class: "list_item_disabled";
+            text { font: FN; size: 10;
+               text_source: "elm.title.1";
+               align: 0.0 0.5;
+               text_class: "list_item";
+            }
+            visible: 0;
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "label5"; type: TEXT; mouse_events: 0;
+         effect: GLOW;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.offset: -2 -3;
+            rel1.to: "elm.title.1";
+            rel2.offset: -1 1;
+            rel2.to: "elm.title.1";
+            color: 51 153 255 255;
+            color2: 51 153 255 24;
+            color3: 51 153 255 18;
+            color_class: "list_item_selected";
+            text { font: FN; size: 10;
+               text_source: "elm.title.1";
+               align: 0.0 0.5;
+               text_class: "list_item";
+            }
+            visible: 0;
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      //##//
+      part { name: "elm.title.2"; type: TEXT; mouse_events: 0;
+         effect: SHADOW BOTTOM;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.offset: 2 -3;
+            rel1.relative: 1.0 1.0;
+            rel1.to_x: "elm.swallow.pad";
+            rel2.offset: -3 -3;
+            color: 255 255 255 255;
+            color3: 0 0 0 128;
+            color_class: "list_item";
+            align: 0.0 1.0;
+            text { font: FN; size: 10;
+               min: 1 1;
+               align: 0.0 1.0;
+               text_class: "list_item";
+            }
+            fixed: 0 1;
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "label6"; type: TEXT; mouse_events: 0;
+         effect: SHADOW BOTTOM;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.to: "elm.title.2";
+            rel2.to: "elm.title.2";
+            color: 21 21 21 255;
+            color3: 255 255 255 25;
+            color_class: "list_item_disabled";
+            text { font: FN; size: 10;
+               text_source: "elm.title.2";
+               align: 0.0 0.5;
+               text_class: "list_item";
+            }
+            visible: 0;
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "label7"; type: TEXT; mouse_events: 0;
+         effect: GLOW;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.offset: -2 -3;
+            rel1.to: "elm.title.2";
+            rel2.offset: -1 2;
+            rel2.to: "elm.title.2";
+            color: 51 153 255 255;
+            color2: 51 153 255 24;
+            color3: 51 153 255 18;
+            color_class: "list_item_selected";
+            text { font: FN; size: 10;
+               text_source: "elm.title.2";
+               align: 0.0 0.5;
+               text_class: "list_item";
+            }
+            visible: 0;
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      program {
+         signal: "elm,state,selected"; source: "elm";
+         action: STATE_SET "selected" 0.0;
+         target: "elm.text";
+         target: "label2";
+         target: "label3";
+         target: "elm.title.1";
+         target: "elm.title.2";
+         target: "label4";
+         target: "label5";
+         target: "label6";
+         target: "label7";
+      }
+      program {
+         signal: "elm,state,unselected"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "elm.text";
+         target: "label2";
+         target: "label3";
+         target: "elm.title.1";
+         target: "elm.title.2";
+         target: "label4";
+         target: "label5";
+         target: "label6";
+         target: "label7";
+      }
+      program {
+         signal: "elm,state,disabled"; source: "elm";
+         action: STATE_SET "disabled" 0.0;
+         target: "elm.text";
+         target: "label2";
+         target: "label3";
+         target: "elm.title.1";
+         target: "elm.title.2";
+         target: "label4";
+         target: "label5";
+         target: "label6";
+         target: "label7";
+      }
+      program {
+         signal: "elm,state,enabled"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "elm.text";
+         target: "label2";
+         target: "label3";
+         target: "elm.title.1";
+         target: "elm.title.2";
+         target: "label4";
+         target: "label5";
+         target: "label6";
+         target: "label7";
+      }
+      program {
+         signal: "elm,state,flip,enabled"; source: "elm";
+         action: STATE_SET "flip_enabled" 0.0;
+         target: "elm.text";
+         target: "label2";
+         target: "label3";
+         target: "elm.text.flip";
+         target: "elm.title.1";
+         target: "elm.title.2";
+         target: "label4";
+         target: "label5";
+         target: "label6";
+         target: "label7";
+      }
+      program {
+         signal: "elm,state,flip,disabled"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "elm.text";
+         target: "label2";
+         target: "label3";
+         target: "elm.text.flip";
+         target: "elm.title.1";
+         target: "elm.title.2";
+         target: "label4";
+         target: "label5";
+         target: "label6";
+         target: "label7";
+      }
+      //##//
+      part { name: "elm.swallow.pad"; type: SWALLOW;
+         description { state: "default" 0.0;
+            fixed: 1 0;
+            align: 0.0 0.5;
+            rel1.offset: 2 2;
+            rel2.relative: 0.0 1.0;
+            rel2.offset: 2 -3;
+         }
+      }
+      //##//
+
+      TOPP()
+   }
+}
+ODD("elm/genlist/item_odd/message/default", "elm/genlist/item/message/default")
+COMPRESS_T1T2("elm/genlist/item_compress/message/default", "elm/genlist/item/message/default")
+COMPRESS_T1T2_ODD("elm/genlist/item_compress_odd/message/default", "elm/genlist/item/message/default")
+
+group { name: "elm/genlist/item/media/default";
+   data.item: "selectraise" "on";
+   data.item: "texts" "elm.text.title elm.text.album-artist";
+   data.item: "treesize" TREEPAD;
+   data.item: "flips" "elm.text.flip";
+   IMGP()
+   parts {
+      BASEP()
+
+      //##//
+      part { name: "elm.text.title"; type: TEXT; mouse_events: 0;
+         effect: SHADOW BOTTOM;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.offset: 2 3;
+            rel1.relative: 1.0 0.0;
+            rel1.to_x: "elm.swallow.pad";
+            rel2.offset: -3 -3;
+            rel2.relative: 1.0 0.0;
+            rel2.to_y: "elm.text.album-artist";
+            color: 255 255 255 255;
+            color3: 0 0 0 128;
+            color_class: "list_item";
+            align: 0.0 0.0;
+            text { font: FN; size: 10;
+               min: 1 1;
+               align: 0.0 0.0;
+               text_class: "list_item";
+            }
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "label2"; type: TEXT; mouse_events: 0;
+         effect: SHADOW BOTTOM;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.to: "elm.text.title";
+            rel2.to: "elm.text.title";
+            color: 21 21 21 255;
+            color3: 255 255 255 25;
+            color_class: "list_item_disabled";
+            text { font: FN; size: 10;
+               text_source: "elm.text.title";
+               align: 0.0 0.5;
+               text_class: "list_item";
+            }
+            visible: 0;
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "label3"; type: TEXT; mouse_events: 0;
+         effect: GLOW;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.offset: -2 -3;
+            rel1.to: "elm.text.title";
+            rel2.offset: -1 1;
+            rel2.to: "elm.text.title";
+            color: 51 153 255 255;
+            color2: 51 153 255 24;
+            color3: 51 153 255 18;
+            color_class: "list_item_selected";
+            text { font: FN; size: 10;
+               text_source: "elm.text.title";
+               align: 0.0 0.5;
+               text_class: "list_item";
+            }
+            visible: 0;
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "elm.text.flip"; type: SWALLOW;
+         scale: 1;
+         description { state: "default" 0.0;
+            visible: 0;
+            rel1.to_y: "elm.text.title";
+            rel2.to_y: "elm.text.title";
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+      part { name: "elm.text.album-artist"; type: TEXT; mouse_events: 0;
+         effect: SHADOW BOTTOM;
+         scale: 1;
+         description { state: "default" 0.0;
+            fixed: 0 1;
+            rel1.offset: 2 -3;
+            rel1.relative: 1.0 1.0;
+            rel1.to_x: "elm.swallow.pad";
+            rel2.offset: -3 -3;
+            rel2.relative: 1.0 1.0;
+            color: 255 255 255 255;
+            color3: 0 0 0 128;
+            color_class: "list_item_sub";
+            align: 0.0 1.0;
+            text { font: FN; size: 8;
+               min: 1 1;
+               align: 0.0 1.0;
+               text_class: "list_item_sub";
+            }
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "label4"; type: TEXT; mouse_events: 0;
+         effect: SHADOW BOTTOM;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.to: "elm.text.album-artist";
+            rel2.to: "elm.text.album-artist";
+            color: 21 21 21 255;
+            color3: 255 255 255 25;
+            color_class: "list_item_sub_disabled";
+            text { font: FN; size: 8;
+               text_source: "elm.text.album-artist";
+               align: 0.0 1.0;
+               text_class: "list_item_sub";
+            }
+            visible: 0;
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "label5"; type: TEXT; mouse_events: 0;
+         effect: GLOW;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.offset: -2 -4;
+            rel1.to: "elm.text.album-artist";
+            rel2.offset: -1 0;
+            rel2.to: "elm.text.album-artist";
+            color: 51 153 255 255;
+            color2: 51 153 255 24;
+            color3: 51 153 255 18;
+            color_class: "list_item_sub_selected";
+            text { font: FN; size: 8;
+               text_source: "elm.text.album-artist";
+               align: 0.0 1.0;
+               text_class: "list_item_sub";
+            }
+            visible: 0;
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      program {
+         signal: "elm,state,selected"; source: "elm";
+         action: STATE_SET "selected" 0.0;
+         target: "elm.text.title";
+         target: "label2";
+         target: "label3";
+         target: "elm.text.album-artist";
+         target: "label4";
+         target: "label5";
+      }
+      program {
+         signal: "elm,state,unselected"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "elm.text.title";
+         target: "label2";
+         target: "label3";
+         target: "elm.text.album-artist";
+         target: "label4";
+         target: "label5";
+      }
+      program {
+         signal: "elm,state,disabled"; source: "elm";
+         action: STATE_SET "disabled" 0.0;
+         target: "elm.text.title";
+         target: "label2";
+         target: "label3";
+         target: "elm.text.album-artist";
+         target: "label4";
+         target: "label5";
+      }
+      program {
+         signal: "elm,state,enabled"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "elm.text.title";
+         target: "label2";
+         target: "label3";
+         target: "elm.text.album-artist";
+         target: "label4";
+         target: "label5";
+      }
+      program {
+         signal: "elm,state,flip,enabled"; source: "elm";
+         action: STATE_SET "flip_enabled" 0.0;
+         target: "elm.text.title";
+         target: "label2";
+         target: "label3";
+         target: "elm.text.album-artist";
+         target: "label4";
+         target: "label5";
+         target: "elm.text.flip";
+      }
+      program {
+         signal: "elm,state,flip,disabled"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "elm.text.title";
+         target: "label2";
+         target: "label3";
+         target: "elm.text.album-artist";
+         target: "label4";
+         target: "label5";
+         target: "elm.text.flip";
+      }
+      //##//
+      part { name: "elm.swallow.pad"; type: SWALLOW;
+         description { state: "default" 0.0;
+            fixed: 1 0;
+            align: 0.0 0.5;
+            rel1.offset: 2 2;
+            rel2.relative: 0.0 1.0;
+            rel2.offset: 2 -3;
+         }
+      }
+      //##//
+
+      TOPP()
+   }
+}
+#define COMPRESS_MEDIA(_NAME, _SRC) \
+   group { name: _NAME; \
+      inherit: _SRC; \
+      parts { \
+         part { name: "elm.text.title"; \
+            description { state: "default" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "selected" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "disabled" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "flip_enabled" 0.0; \
+               text.min: 0 1; \
+            } \
+         } \
+         part { name: "label2"; \
+            description { state: "default" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "selected" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "disabled" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "flip_enabled" 0.0; \
+               text.min: 0 1; \
+            } \
+         } \
+         part { name: "label3"; \
+            description { state: "default" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "selected" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "disabled" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "flip_enabled" 0.0; \
+               text.min: 0 1; \
+            } \
+         } \
+         part { name: "elm.text.album-artist"; \
+            description { state: "default" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "selected" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "disabled" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "flip_enabled" 0.0; \
+               text.min: 0 1; \
+            } \
+         } \
+         part { name: "label4"; \
+            description { state: "default" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "selected" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "disabled" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "flip_enabled" 0.0; \
+               text.min: 0 1; \
+            } \
+         } \
+         part { name: "label5"; \
+            description { state: "default" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "selected" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "disabled" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "flip_enabled" 0.0; \
+               text.min: 0 1; \
+            } \
+         } \
+      } \
+   }
+#define COMPRESS_MEDIA_ODD(_NAME, _SRC) \
+   group { name: _NAME; \
+      inherit: _SRC; \
+      parts { \
+         part { name: "elm.text.title"; \
+            description { state: "default" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "selected" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "disabled" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "flip_enabled" 0.0; \
+               text.min: 0 1; \
+            } \
+         } \
+         part { name: "label2"; \
+            description { state: "default" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "selected" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "disabled" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "flip_enabled" 0.0; \
+               text.min: 0 1; \
+            } \
+         } \
+         part { name: "label3"; \
+            description { state: "default" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "selected" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "disabled" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "flip_enabled" 0.0; \
+               text.min: 0 1; \
+            } \
+         } \
+         part { name: "elm.text.album-artist"; \
+            description { state: "default" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "selected" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "disabled" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "flip_enabled" 0.0; \
+               text.min: 0 1; \
+            } \
+         } \
+         part { name: "label4"; \
+            description { state: "default" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "selected" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "disabled" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "flip_enabled" 0.0; \
+               text.min: 0 1; \
+            } \
+         } \
+         part { name: "label5"; \
+            description { state: "default" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "selected" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "disabled" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "flip_enabled" 0.0; \
+               text.min: 0 1; \
+            } \
+         } \
+         part { name: "base"; \
+            description { state: "default" 0.0; \
+               color: 56 56 56 255; \
+               color_class: "list_item_base_odd"; \
+            } \
+         } \
+      } \
+   }
+ODD("elm/genlist/item_odd/media/default", "elm/genlist/item/media/default")
+COMPRESS_MEDIA("elm/genlist/item_compress/media/default", "elm/genlist/item/media/default")
+COMPRESS_MEDIA_ODD("elm/genlist/item_compress_odd/media/default", "elm/genlist/item/media/default")
+      
+group { name: "elm/genlist/item/media-album/default";
+   data.item: "selectraise" "on";
+   data.item: "texts" "elm.text.title elm.text.trackno elm.text.length";
+   data.item: "treesize" TREEPAD;
+   data.item: "flips" "elm.text.flip";
+   IMGP()
+   parts {
+      BASEP()
+
+      //##//
+      part { name: "elm.text.trackno"; type: TEXT; mouse_events: 0;
+         effect: SHADOW BOTTOM;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.offset: 2 3;
+            rel1.relative: 1.0 0.0;
+            rel1.to_x: "elm.swallow.pad";
+            rel2.offset: 2 -3;
+            rel2.relative: 1.0 0.0;
+            rel2.to_x: "elm.swallow.pad";
+            rel2.to_y: "elm.text.length";
+            color: 255 255 255 255;
+            color3: 0 0 0 128;
+            color_class: "list_item";
+            align: 0.0 0.0;
+            text { font: FN; size: 10;
+               min: 1 1;
+               align: 0.0 0.0;
+               text_class: "list_item";
+            }
+            fixed: 1 0;
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "label2"; type: TEXT; mouse_events: 0;
+         effect: SHADOW BOTTOM;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.to: "elm.text.trackno";
+            rel2.to: "elm.text.trackno";
+            color: 21 21 21 255;
+            color3: 255 255 255 25;
+            color_class: "list_item_disabled";
+            text { font: FN; size: 10;
+               text_source: "elm.text.trackno";
+               align: 0.0 0.5;
+               text_class: "list_item";
+            }
+            visible: 0;
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "label3"; type: TEXT; mouse_events: 0;
+         effect: GLOW;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.offset: -2 -3;
+            rel1.to: "elm.text.trackno";
+            rel2.offset: -1 1;
+            rel2.to: "elm.text.trackno";
+            color: 51 153 255 255;
+            color2: 51 153 255 24;
+            color3: 51 153 255 18;
+            color_class: "list_item_selected";
+            text { font: FN; size: 10;
+               text_source: "elm.text.trackno";
+               align: 0.0 0.5;
+               text_class: "list_item";
+            }
+            visible: 0;
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "elm.text.flip"; type: SWALLOW;
+         scale: 1;
+         description { state: "default" 0.0;
+            visible: 0;
+            rel1.to_y: "elm.text.trackno";
+            rel2.to_y: "elm.text.trackno";
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+      part { name: "dot"; type: TEXT; mouse_events: 0;
+         scale: 1;
+         description { state: "default" 0.0;
+            visible: 0;
+            fixed: 1 1;
+            align: 0.0 0.0;
+            rel1.to: "elm.text.trackno";
+            rel1.relative: 1.0 0.0;
+            rel1.offset: 2 0;
+            rel2.to: "elm.text.trackno";
+            rel2.offset: 2 -1;
+            text { font: FN; size: 10;
+               min: 1 1;
+               align: 0.0 0.5;
+               text: ":";
+            }
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+         }
+      }
+      part { name: "elm.text.title"; type: TEXT; mouse_events: 0;
+         effect: SHADOW BOTTOM;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.offset: 2 0;
+            rel1.relative: 1.0 0.0;
+            rel1.to_x: "dot";
+            rel1.to_y: "elm.text.trackno";
+            rel2.offset: -3 -1;
+            rel2.relative: 1.0 1.0;
+            rel2.to_y: "elm.text.trackno";
+            color: 255 255 255 255;
+            color3: 0 0 0 128;
+            color_class: "list_item";
+            align: 0.0 0.0;
+            text { font: FN; size: 10;
+               min: 1 1;
+               align: 0.0 0.0;
+               text_class: "list_item";
+            }
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "label6"; type: TEXT; mouse_events: 0;
+         effect: SHADOW BOTTOM;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.to: "elm.text.title";
+            rel2.to: "elm.text.title";
+            color: 21 21 21 255;
+            color3: 255 255 255 25;
+            color_class: "list_item_disabled";
+            text { font: FN; size: 10;
+               text_source: "elm.text.title";
+               align: 0.0 0.5;
+               text_class: "list_item";
+            }
+            visible: 0;
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "label7"; type: TEXT; mouse_events: 0;
+         effect: GLOW;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.offset: -2 -3;
+            rel1.to: "elm.text.title";
+            rel2.offset: -1 1;
+            rel2.to: "elm.text.title";
+            color: 51 153 255 255;
+            color2: 51 153 255 24;
+            color3: 51 153 255 18;
+            color_class: "list_item_selected";
+            text { font: FN; size: 10;
+               text_source: "elm.text.title";
+               align: 0.0 0.5;
+               text_class: "list_item";
+            }
+            visible: 0;
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      
+      part { name: "elm.text.length"; type: TEXT; mouse_events: 0;
+         effect: SHADOW BOTTOM;
+         scale: 1;
+         description { state: "default" 0.0;
+            fixed: 0 1;
+            rel1.offset: 2 -3;
+            rel1.relative: 1.0 1.0;
+            rel1.to_x: "elm.swallow.pad";
+            rel2.offset: -3 -3;
+            rel2.relative: 1.0 1.0;
+            color: 255 255 255 255;
+            color3: 0 0 0 128;
+            color_class: "list_item_sub";
+            align: 0.0 1.0;
+            text { font: FN; size: 8;
+               min: 1 1;
+               align: 0.0 1.0;
+               text_class: "list_item_sub";
+            }
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "label4"; type: TEXT; mouse_events: 0;
+         effect: SHADOW BOTTOM;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.to: "elm.text.length";
+            rel2.to: "elm.text.length";
+            color: 21 21 21 255;
+            color3: 255 255 255 25;
+            color_class: "list_item_sub_disabled";
+            text { font: FN; size: 8;
+               text_source: "elm.text.length";
+               align: 0.0 1.0;
+               text_class: "list_item_sub";
+            }
+            visible: 0;
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "label5"; type: TEXT; mouse_events: 0;
+         effect: GLOW;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.offset: -2 -4;
+            rel1.to: "elm.text.length";
+            rel2.offset: -1 0;
+            rel2.to: "elm.text.length";
+            color: 51 153 255 255;
+            color2: 51 153 255 24;
+            color3: 51 153 255 18;
+            color_class: "list_item_sub_selected";
+            text { font: FN; size: 8;
+               text_source: "elm.text.length";
+               align: 0.0 1.0;
+               text_class: "list_item_sub";
+            }
+            visible: 0;
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      program {
+         signal: "elm,state,selected"; source: "elm";
+         action: STATE_SET "selected" 0.0;
+         target: "elm.text.trackno";
+         target: "label2";
+         target: "label3";
+         target: "elm.text.title";
+         target: "label6";
+         target: "label7";
+         target: "elm.text.length";
+         target: "label4";
+         target: "label5";
+      }
+      program {
+         signal: "elm,state,unselected"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "elm.text.trackno";
+         target: "label2";
+         target: "label3";
+         target: "elm.text.title";
+         target: "label6";
+         target: "label7";
+         target: "elm.text.length";
+         target: "label4";
+         target: "label5";
+      }
+      program {
+         signal: "elm,state,disabled"; source: "elm";
+         action: STATE_SET "disabled" 0.0;
+         target: "elm.text.trackno";
+         target: "label2";
+         target: "label3";
+         target: "elm.text.title";
+         target: "label6";
+         target: "label7";
+         target: "elm.text.length";
+         target: "label4";
+         target: "label5";
+      }
+      program {
+         signal: "elm,state,enabled"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "elm.text.trackno";
+         target: "label2";
+         target: "label3";
+         target: "elm.text.title";
+         target: "label6";
+         target: "label7";
+         target: "elm.text.length";
+         target: "label4";
+         target: "label5";
+      }
+      program {
+         signal: "elm,state,flip,enabled"; source: "elm";
+         action: STATE_SET "flip_enabled" 0.0;
+         target: "elm.text.trackno";
+         target: "label2";
+         target: "label3";
+         target: "elm.text.title";
+         target: "label6";
+         target: "label7";
+         target: "elm.text.length";
+         target: "label4";
+         target: "label5";
+         target: "elm.text.flip";
+      }
+      program {
+         signal: "elm,state,flip,disabled"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "elm.text.trackno";
+         target: "label2";
+         target: "label3";
+         target: "elm.text.title";
+         target: "label6";
+         target: "label7";
+         target: "elm.text.length";
+         target: "label4";
+         target: "label5";
+         target: "elm.text.flip";
+      }
+      //##//
+      part { name: "elm.swallow.pad"; type: SWALLOW;
+         description { state: "default" 0.0;
+            fixed: 1 0;
+            align: 0.0 0.5;
+            rel1.offset: 2 2;
+            rel2.relative: 0.0 1.0;
+            rel2.offset: 2 -3;
+         }
+      }
+      //##//
+
+      TOPP()
+   }
+}
+ODD("elm/genlist/item_odd/media-album/default", "elm/genlist/item/media-album/default")
+group { name: "elm/genlist/item_compress/media-album/default";
+   inherit: "elm/genlist/item/media-album/default";
+   parts {
+      part { name: "elm.text.title";
+         description { state: "default" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "selected" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "disabled" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "flip_enabled" 0.0;
+            text.min: 0 1;
+         }
+      }
+      part { name: "label2";
+         description { state: "default" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "selected" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "disabled" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "flip_enabled" 0.0;
+            text.min: 0 1;
+         }
+      }
+      part { name: "label3";
+         description { state: "default" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "selected" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "disabled" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "flip_enabled" 0.0;
+            text.min: 0 1;
+         }
+      }
+      part { name: "elm.text.length";
+         description { state: "default" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "selected" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "disabled" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "flip_enabled" 0.0;
+            text.min: 0 1;
+         }
+      }
+      part { name: "label4";
+         description { state: "default" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "selected" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "disabled" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "flip_enabled" 0.0;
+            text.min: 0 1;
+         }
+      }
+      part { name: "label5";
+         description { state: "default" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "selected" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "disabled" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "flip_enabled" 0.0;
+            text.min: 0 1;
+         }
+      }
+   }
+}
+group { name: "elm/genlist/item_compress_odd/media-album/default";
+   inherit: "elm/genlist/item_odd/media-album/default";
+   parts {
+      part { name: "elm.text.title";
+         description { state: "default" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "selected" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "disabled" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "flip_enabled" 0.0;
+            text.min: 0 1;
+         }
+      }
+      part { name: "label2";
+         description { state: "default" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "selected" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "disabled" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "flip_enabled" 0.0;
+            text.min: 0 1;
+         }
+      }
+      part { name: "label3";
+         description { state: "default" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "selected" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "disabled" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "flip_enabled" 0.0;
+            text.min: 0 1;
+         }
+      }
+      part { name: "elm.text.length";
+         description { state: "default" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "selected" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "disabled" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "flip_enabled" 0.0;
+            text.min: 0 1;
+         }
+      }
+      part { name: "label4";
+         description { state: "default" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "selected" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "disabled" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "flip_enabled" 0.0;
+            text.min: 0 1;
+         }
+      }
+      part { name: "label5";
+         description { state: "default" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "selected" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "disabled" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "flip_enabled" 0.0;
+            text.min: 0 1;
+         }
+      }
+   }
+}
+
+group { name: "elm/genlist/item/media-preview/default";
+   data.item: "selectraise" "on";
+   data.item: "texts" "elm.text elm.text.artist";
+   data.item: "contents" "elm.swallow.preview";
+   data.item: "treesize" TREEPAD;
+   data.item: "flips" "elm.text.flip";
+   IMGP()
+   parts {
+      BASEP()
+
+      //##//
+      part { name: "elm.text"; type: TEXT; mouse_events: 0;
+         effect: SHADOW BOTTOM;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.offset: 2 3;
+            rel1.relative: 1.0 0.0;
+            rel1.to_x: "elm.swallow.preview";
+            rel2.offset: -3 -3;
+            rel2.relative: 1.0 0.0;
+            rel2.to_y: "elm.text.artist";
+            color: 255 255 255 255;
+            color3: 0 0 0 128;
+            color_class: "list_item";
+            align: 0.0 0.0;
+            text { font: FN; size: 10;
+               min: 1 1;
+               align: 0.0 0.0;
+               text_class: "list_item";
+            }
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "label2"; type: TEXT; mouse_events: 0;
+         effect: SHADOW BOTTOM;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.to: "elm.text";
+            rel2.to: "elm.text";
+            color: 21 21 21 255;
+            color3: 255 255 255 25;
+            color_class: "list_item_disabled";
+            text { font: FN; size: 10;
+               text_source: "elm.text";
+               align: 0.0 0.5;
+               text_class: "list_item";
+            }
+            visible: 0;
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "label3"; type: TEXT; mouse_events: 0;
+         effect: GLOW;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.offset: -2 -3;
+            rel1.to: "elm.text";
+            rel2.offset: -1 1;
+            rel2.to: "elm.text";
+            color: 51 153 255 255;
+            color2: 51 153 255 24;
+            color3: 51 153 255 18;
+            color_class: "list_item_selected";
+            text { font: FN; size: 10;
+               text_source: "elm.text";
+               align: 0.0 0.5;
+               text_class: "list_item";
+            }
+            visible: 0;
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "elm.text.flip"; type: SWALLOW;
+         scale: 1;
+         description { state: "default" 0.0;
+            visible: 0;
+            rel1.to_y: "elm.text";
+            rel2.to_y: "elm.text";
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+      part { name: "elm.text.artist"; type: TEXT; mouse_events: 0;
+         effect: SHADOW BOTTOM;
+         scale: 1;
+         description { state: "default" 0.0;
+            fixed: 0 1;
+            rel1.offset: 2 -3;
+            rel1.relative: 1.0 1.0;
+            rel1.to_x: "elm.swallow.preview";
+            rel2.offset: -3 -3;
+            rel2.relative: 1.0 1.0;
+            color: 255 255 255 255;
+            color3: 0 0 0 128;
+            color_class: "list_item_sub";
+            align: 0.0 1.0;
+            text { font: FN; size: 8;
+               min: 1 1;
+               align: 0.0 1.0;
+               text_class: "list_item_sub";
+            }
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "label4"; type: TEXT; mouse_events: 0;
+         effect: SHADOW BOTTOM;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.to: "elm.text.artist";
+            rel2.to: "elm.text.artist";
+            color: 21 21 21 255;
+            color3: 255 255 255 25;
+            color_class: "list_item_sub_disabled";
+            text { font: FN; size: 8;
+               text_source: "elm.text.artist";
+               align: 0.0 1.0;
+               text_class: "list_item_sub";
+            }
+            visible: 0;
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "label5"; type: TEXT; mouse_events: 0;
+         effect: GLOW;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.offset: -2 -4;
+            rel1.to: "elm.text.artist";
+            rel2.offset: -1 0;
+            rel2.to: "elm.text.artist";
+            color: 51 153 255 255;
+            color2: 51 153 255 24;
+            color3: 51 153 255 18;
+            color_class: "list_item_sub_selected";
+            text { font: FN; size: 8;
+               text_source: "elm.text.artist";
+               align: 0.0 1.0;
+               text_class: "list_item_sub";
+            }
+            visible: 0;
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      program {
+         signal: "elm,state,selected"; source: "elm";
+         action: STATE_SET "selected" 0.0;
+         target: "elm.text";
+         target: "label2";
+         target: "label3";
+         target: "elm.text.artist";
+         target: "label4";
+         target: "label5";
+      }
+      program {
+         signal: "elm,state,unselected"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "elm.text";
+         target: "label2";
+         target: "label3";
+         target: "elm.text.artist";
+         target: "label4";
+         target: "label5";
+      }
+      program {
+         signal: "elm,state,disabled"; source: "elm";
+         action: STATE_SET "disabled" 0.0;
+         target: "elm.text";
+         target: "label2";
+         target: "label3";
+         target: "elm.text.artist";
+         target: "label4";
+         target: "label5";
+      }
+      program {
+         signal: "elm,state,enabled"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "elm.text";
+         target: "label2";
+         target: "label3";
+         target: "elm.text.artist";
+         target: "label4";
+         target: "label5";
+      }
+      program {
+         signal: "elm,state,flip,enabled"; source: "elm";
+         action: STATE_SET "flip_enabled" 0.0;
+         target: "elm.text";
+         target: "label2";
+         target: "label3";
+         target: "elm.text.artist";
+         target: "label4";
+         target: "label5";
+         target: "elm.text.flip";
+      }
+      program {
+         signal: "elm,state,flip,disabled"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "elm.text";
+         target: "label2";
+         target: "label3";
+         target: "elm.text.artist";
+         target: "label4";
+         target: "label5";
+         target: "elm.text.flip";
+      }
+      //##//
+      part { name: "elm.swallow.pad"; type: SWALLOW;
+         description { state: "default" 0.0;
+            fixed: 1 0;
+            align: 0.0 0.5;
+            rel1.offset: 2 2;
+            rel2.relative: 0.0 1.0;
+            rel2.offset: 2 -3;
+         }
+      }
+      part { name: "elm.swallow.preview"; type: SWALLOW;
+         description { state: "default" 0.0;
+            fixed: 1 0;
+            align: 0.0 0.5;
+            aspect: 1.0 1.0;
+            rel1.to_x: "elm.swallow.pad";
+            rel1.relative: 1.0 0.0;
+            rel1.offset: -1 2;
+            rel2.to_x: "elm.swallow.pad";
+            rel2.relative: 1.0 1.0;
+            rel2.offset: -1 -3;
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      program {
+         signal: "elm,state,flip,enabled"; source: "elm";
+         action: STATE_SET "flip_enabled" 0.0;
+         target: "elm.swallow.preview";
+      }
+      program {
+         signal: "elm,state,flip,disabled"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "elm.swallow.preview";
+      }
+      //##//
+
+      TOPP()
+   }
+}
+ODD("elm/genlist/item_odd/media-preview/default", "elm/genlist/item/media-preview/default")
+group { name: "elm/genlist/item_compress/media-preview/default";
+   inherit: "elm/genlist/item/media-preview/default";
+   parts {
+      part { name: "elm.text";
+         description { state: "default" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "selected" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "disabled" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "flip_enabled" 0.0;
+            text.min: 0 1;
+         }
+      }
+      part { name: "label2";
+         description { state: "default" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "selected" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "disabled" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "flip_enabled" 0.0;
+            text.min: 0 1;
+         }
+      }
+      part { name: "label3";
+         description { state: "default" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "selected" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "disabled" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "flip_enabled" 0.0;
+            text.min: 0 1;
+         }
+      }
+      part { name: "elm.text.artist";
+         description { state: "default" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "selected" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "disabled" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "flip_enabled" 0.0;
+            text.min: 0 1;
+         }
+      }
+      part { name: "label4";
+         description { state: "default" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "selected" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "disabled" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "flip_enabled" 0.0;
+            text.min: 0 1;
+         }
+      }
+      part { name: "label5";
+         description { state: "default" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "selected" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "disabled" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "flip_enabled" 0.0;
+            text.min: 0 1;
+         }
+      }
+   }
+}
+group { name: "elm/genlist/item_odd_compress/media-preview/default";
+   inherit: "elm/genlist/item_odd/media-preview/default";
+   parts {
+      part { name: "elm.text";
+         description { state: "default" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "selected" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "disabled" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "flip_enabled" 0.0;
+            text.min: 0 1;
+         }
+      }
+      part { name: "label2";
+         description { state: "default" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "selected" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "disabled" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "flip_enabled" 0.0;
+            text.min: 0 1;
+         }
+      }
+      part { name: "label3";
+         description { state: "default" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "selected" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "disabled" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "flip_enabled" 0.0;
+            text.min: 0 1;
+         }
+      }
+      part { name: "elm.text.artist";
+         description { state: "default" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "selected" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "disabled" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "flip_enabled" 0.0;
+            text.min: 0 1;
+         }
+      }
+      part { name: "label4";
+         description { state: "default" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "selected" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "disabled" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "flip_enabled" 0.0;
+            text.min: 0 1;
+         }
+      }
+      part { name: "label5";
+         description { state: "default" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "selected" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "disabled" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "flip_enabled" 0.0;
+            text.min: 0 1;
+         }
+      }
+   }
+}
+
+#define COMPRESS_MODE(_NAME, _SRC) \
+   group { name: _NAME; \
+      inherit: _SRC; \
+      parts { \
+         part { name: "elm.text.mode"; \
+            description { state: "default" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "selected" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "disabled" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "flip_enabled" 0.0; \
+               text.min: 0 1; \
+            } \
+         } \
+         part { name: "label2"; \
+            description { state: "default" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "selected" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "disabled" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "flip_enabled" 0.0; \
+               text.min: 0 1; \
+            } \
+         } \
+         part { name: "label3"; \
+            description { state: "default" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "selected" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "disabled" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "flip_enabled" 0.0; \
+               text.min: 0 1; \
+            } \
+         } \
+      } \
+   }
+#define COMPRESS_MODE_ODD(_NAME, _SRC) \
+   group { name: _NAME; \
+      inherit: _SRC; \
+      parts { \
+         part { name: "elm.text.mode"; \
+            description { state: "default" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "selected" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "disabled" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "flip_enabled" 0.0; \
+               text.min: 0 1; \
+            } \
+         } \
+         part { name: "label2"; \
+            description { state: "default" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "selected" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "disabled" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "flip_enabled" 0.0; \
+               text.min: 0 1; \
+            } \
+         } \
+         part { name: "label3"; \
+            description { state: "default" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "selected" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "disabled" 0.0; \
+               text.min: 0 1; \
+            } \
+            description { state: "flip_enabled" 0.0; \
+               text.min: 0 1; \
+            } \
+         } \
+         part { name: "base"; \
+            description { state: "default" 0.0; \
+               color: 56 56 56 255; \
+               color_class: "list_item_base_odd"; \
+            } \
+         } \
+      } \
+   }
+group { name: "elm/genlist/item/mode/default";
+   data.item: "selectraise" "on";
+   data.item: "texts" "elm.text.mode";
+   data.item: "mode_part" "elm.swallow.original";
+   data.item: "treesize" TREEPAD;
+   data.item: "flips" "elm.text.mode.flip";
+   IMGP()
+   parts {
+      BASEP()
+
+      //##//
+      part { name: "elm.text.mode"; type: TEXT; mouse_events: 0;
+         effect: SHADOW BOTTOM;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.offset: 2 3;
+            rel1.relative: 1.0 0.0;
+            rel1.to_x: "elm.swallow.pad";
+            rel2.offset: -3 -3;
+            color: 255 255 255 255;
+            color3: 0 0 0 128;
+            color_class: "list_item";
+            text { font: FN; size: 10;
+               min: 1 1;
+               align: 0.0 0.5;
+               text_class: "list_item";
+            }
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "label2"; type: TEXT; mouse_events: 0;
+         effect: SHADOW BOTTOM;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.to: "elm.text.mode";
+            rel2.to: "elm.text.mode";
+            color: 21 21 21 255;
+            color3: 255 255 255 25;
+            color_class: "list_item_disabled";
+            text { font: FN; size: 10;
+               text_source: "elm.text.mode";
+               align: 0.0 0.5;
+               text_class: "list_item";
+            }
+            visible: 0;
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "label3"; type: TEXT; mouse_events: 0;
+         effect: GLOW;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.offset: -2 -3;
+            rel1.to: "elm.text.mode";
+            rel2.offset: -1 1;
+            rel2.to: "elm.text.mode";
+            color: 51 153 255 255;
+            color2: 51 153 255 24;
+            color3: 51 153 255 18;
+            color_class: "list_item_selected";
+            text { font: FN; size: 10;
+               text_source: "elm.text.mode";
+               align: 0.0 0.5;
+               text_class: "list_item";
+            }
+            visible: 0;
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "elm.text.mode.flip"; type: SWALLOW;
+         scale: 1;
+         description { state: "default" 0.0;
+            visible: 0;
+            rel1.to_y: "elm.text.mode";
+            rel2.to_y: "elm.text.mode";
+         }
+         description { state: "flip_enabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+      program {
+         signal: "elm,state,selected"; source: "elm";
+         action: STATE_SET "selected" 0.0;
+         target: "elm.text.mode";
+         target: "label2";
+         target: "label3";
+      }
+      program {
+         signal: "elm,state,unselected"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "elm.text.mode";
+         target: "label2";
+         target: "label3";
+      }
+      program {
+         signal: "elm,state,disabled"; source: "elm";
+         action: STATE_SET "disabled" 0.0;
+         target: "elm.text.mode";
+         target: "label2";
+         target: "label3";
+      }
+      program {
+         signal: "elm,state,enabled"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "elm.text.mode";
+         target: "label2";
+         target: "label3";
+      }
+      program {
+         signal: "elm,state,flip,enabled"; source: "elm";
+         action: STATE_SET "flip_enabled" 0.0;
+         target: "elm.text.mode";
+         target: "label2";
+         target: "label3";
+         target: "elm.text.mode.flip";
+      }
+      program {
+         signal: "elm,state,flip,disabled"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "elm.text.mode";
+         target: "label2";
+         target: "label3";
+         target: "elm.text.mode.flip";
+      }
+      //##//
+      part { name: "elm.swallow.pad"; type: SWALLOW;
+         description { state: "default" 0.0;
+            fixed: 1 0;
+            align: 0.0 0.5;
+            rel1.offset: 2 2;
+            rel2.relative: 0.0 1.0;
+            rel2.offset: 2 -3;
+         }
+      }
+      //##//
+      part { name: "event_block_layer"; type: RECT;
+         description { state: "default" 0.0;
+            rel1.to: "base";
+            rel2.to: "base";
+            color: 0 0 0 0;
+         }
+         description { state: "repeat_events" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "pers"; type: SPACER;
+         description { state: "default" 0.0;
+            rel1.relative: 0.0 1.0;
+         }
+      }
+      part { name: "elm.swallow.original"; type: SWALLOW;
+         description { state: "default" 0.0;
+            fixed: 1 0;
+            align: 0.0 0.5;
+         }
+         description { state: "slide" 0.0;
+            inherit: "default" 0.0;
+            rel1.relative: 1.0 0.0;
+            rel2.relative: 2.0 1.0;
+         }
+         description { state: "rotate" 0.0;
+            inherit: "default" 0.0;
+            map {
+               perspective: "pers";
+               on: 1;
+               smooth: 1;
+               perspective_on: 1;
+               backface_cull: 1;
+               rotation {
+                  center: "pers";
+               }
+            }
+         }
+         description { state: "rotate2" 0.0;
+            inherit: "rotate" 0.0;
+            map.rotation.x: 90.0;
+         }
+      }
+      program {
+         signal: "elm,state,slide,active"; source: "elm";
+         action: STATE_SET "slide" 0.0;
+         target: "elm.swallow.original";
+         transition: ACCELERATE 0.5 CURRENT;
+         after: "unblock_event";
+      }
+      program { name: "unblock_event";
+         action: STATE_SET "repeat_events" 0.0;
+         target: "event_block_layer";
+      }
+      program {
+         signal: "elm,state,slide,passive"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "event_block_layer";
+         after: "slide_left2";
+      }
+      program { name: "slide_left2";
+         action: STATE_SET "default" 0.0;
+         target: "elm.swallow.original";
+         transition: DECELERATE 0.5 CURRENT;
+         after: "slide_left_finished";
+      }
+      program { name: "slide_left_finished";
+         action: SIGNAL_EMIT "elm,state,slide,passive,finished" "elm";
+      }
+      program {      
+         signal: "elm,state,rotate,active"; source: "elm";
+         action: STATE_SET "rotate" 0.0;
+         target: "elm.swallow.original";
+         after: "rotate_on2";
+      }
+      program { name: "rotate_on2";
+         action: STATE_SET "rotate2" 0.0;
+         target: "elm.swallow.original";
+         transition: LINEAR 0.5;
+         after: "unblock_event";
+      }
+      program {
+         signal: "elm,state,rotate,passive"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "event_block_layer";
+         after: "rotate_off2";
+      }
+      program { name: "rotate_off2";
+         action: STATE_SET "rotate" 0.0;
+         transition: LINEAR 0.5;
+         target: "elm.swallow.original";
+         after: "rotate_off3";
+      }
+      program { name: "rotate_off3";
+         action: STATE_SET "default" 0.0;
+         target: "elm.swallow.original";
+         after: "rotate_off_finished";
+      }
+      program { name: "rotate_off_finished";
+         action: SIGNAL_EMIT "elm,state,rotate,passive,finished" "elm";
+      }
+      
+      TOPP()
+   }
+}
+ODD("elm/genlist/item_odd/mode/default", "elm/genlist/item/mode/default")
+COMPRESS_MODE("elm/genlist/item_compress/mode/default", "elm/genlist/item/mode/default")
+COMPRESS_MODE_ODD("elm/genlist/item_compress_odd/mode/default", "elm/genlist/item/mode/default")
+
+group { name: "elm/genlist/tree/mode/default";
+   inherit: "elm/genlist/item/mode/default";
+   TREEIMGS()
+   parts {
+      part { name: "elm.text.mode";
+         description { state: "default" 0.0;
+            rel1.to_x: "arrow";
+            rel1.offset: 1 2;
+         }
+         description { state: "flip_enabled" 0.0;
+            rel1.to_x: "arrow";
+            rel1.offset: 1 2;
+         }
+      }
+      ARROW()
+   }
+}
+ODD("elm/genlist/tree_odd/mode/default", "elm/genlist/tree/mode/default")
+COMPRESS_MODE("elm/genlist/tree_compress/mode/default", "elm/genlist/tree/mode/default")
+COMPRESS_MODE_ODD("elm/genlist/tree_compress_odd/mode/default", "elm/genlist/tree/mode/default")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#define COMPRESS_EDIT(_NAME, _SRC) \
+   group { name: _NAME; \
+      inherit: _SRC; \
+   }
+#define COMPRESS_EDIT_ODD(_NAME, _SRC) \
+   group { name: _NAME; \
+      inherit: _SRC; \
+      parts { \
+         part { name: "base"; \
+            description { state: "default" 0.0; \
+               color: 56 56 56 255; \
+               color_class: "list_item_base_odd"; \
+            } \
+         } \
+      } \
+   }
+group { name: "elm/genlist/item/edit/default";
+   data.item: "contents" "elm.edit.icon.1 elm.edit.icon.2";
+   data.item: "selectraise" "on";
+   images.image: "vgrad_med_dark.png" COMP;
+   images.image: "bevel_horiz_out.png" COMP;
+   images.image: "shadow_horiz.png" COMP;
+   parts {
+      part { name: "base"; type: RECT; mouse_events: 0;
+         description { state: "default" 0.0;
+            color: 64 64 64 255;
+            color_class: "list_item_base";
+         }
+         description { state: "odd" 0.0;
+            color: 56 56 56 255;
+            color_class: "list_item_base_odd";
+         }
+      }
+      program {
+         signal: "elm,state,odd"; source: "elm";
+         action: STATE_SET "odd" 1.0;
+         target: "base";
+      }
+      program {
+         signal: "elm,state,even"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "base";
+      }
+      
+      part { name: "sel_shadow1"; mouse_events: 0;
+         description { state: "default" 0.0;
+            image.normal: "shadow_horiz.png";
+            image.border: 0 0 9 9;
+            rel1.offset: 0 -4;
+            rel2.offset: -1 5;
+            rel2.to_x: "elm.swallow.decorate.content";
+            rel2.relative: 0.0 1.0;
+            fill.smooth: 0;
+            visible: 0;
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+      part { name: "sel_shadow2"; mouse_events: 0;
+         description { state: "default" 0.0;
+            image.normal: "shadow_horiz.png";
+            image.border: 0 0 9 9;
+            rel1.to_x: "elm.swallow.decorate.content";
+            rel1.relative: 1.0 0.0;
+            rel1.offset: 0 -4;
+            rel2.offset: -1 5;
+            fill.smooth: 0;
+            visible: 0;
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+      part { name: "sel_base"; mouse_events: 0;
+         description { state: "default" 0.0;
+            image.normal: "vgrad_med_dark.png";
+            fill.smooth: 0;
+            visible: 0;
+            TILED_HORIZ(120)
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+      part { name: "sel_bevel"; mouse_events: 0;
+         description { state: "default" 0.0;
+            image.normal: "bevel_horiz_out.png";
+            image.border: 0 0 2 2;
+            image.middle: 0;
+            fill.smooth: 0;
+            visible: 0;
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+      program {
+         signal: "elm,state,selected"; source: "elm";
+         action: STATE_SET "selected" 0.0;
+         target: "sel_base";
+         target: "sel_bevel";
+         target: "sel_shadow1";
+         target: "sel_shadow2";
+      }
+      program {
+         signal: "elm,state,unselected"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "sel_base";
+         target: "sel_bevel";
+         target: "sel_shadow1";
+         target: "sel_shadow2";
+      }
+
+      part { name: "elm.edit.icon.1"; type: SWALLOW;
+         description { state: "default" 0.0;
+            fixed: 1 0;
+            align: 1.0 0.5;
+            rel2.relative: 0.0 1.0;
+            rel1.offset: -1 2;
+            rel2.offset: -1 -3;
+         }
+         description { state: "on" 0.0;
+            inherit: "default" 0.0;
+            align: 0.0 0.5;
+            rel1.offset: 2 2;
+            rel2.offset: 2 -3;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "elm.edit.icon.2"; type: SWALLOW;
+         description { state: "default" 0.0;
+            fixed: 1 0;
+            align: 0.0 0.5;
+            rel1.relative: 1.0 0.0;
+            rel1.offset: 1 2;
+            rel2.offset: 1 -3;
+         }
+         description { state: "on" 0.0;
+            inherit: "default" 0.0;
+            align: 1.0 0.5;
+            rel1.offset: -3 2;
+            rel2.offset: -3 -3;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      
+      part { name: "elm.swallow.decorate.content"; type: SWALLOW;
+         description { state: "default" 0.0;
+         }
+         description { state: "on" 0.0;
+            inherit: "default" 0.0;
+            rel1.to_x: "elm.edit.icon.1";
+            rel1.relative: 1.0 0.0;
+            rel1.offset: 3 0;
+            rel2.to_x: "elm.edit.icon.2";
+            rel2.relative: 0.0 1.0;
+            rel2.offset: -2 -1;
+         }
+      }
+      program {
+         signal: "elm,state,decorate,enabled,effect"; source: "elm";
+         action: STATE_SET "on" 0.0;
+         target: "elm.swallow.decorate.content";
+         target: "elm.edit.icon.1";
+         target: "elm.edit.icon.2";
+         transition: DECELERATE 0.5;
+      }
+      program {
+         signal: "elm,state,decorate,disabled,effect"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "elm.swallow.decorate.content";
+         target: "elm.edit.icon.1";
+         target: "elm.edit.icon.2";
+         transition: ACCELERATE 0.5;
+      }
+      program {
+         signal: "elm,state,decorate,enabled"; source: "elm";
+         action: STATE_SET "on" 0.0;
+         target: "elm.swallow.decorate.content";
+      }
+      program {
+         signal: "elm,state,decorate,disabled"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "elm.swallow.decorate.content";
+      }
+   }
+}
+ODD("elm/genlist/item_odd/edit/default", "elm/genlist/item/edit/default")
+COMPRESS_EDIT("elm/genlist/item_compress/edit/default", "elm/genlist/item/edit/default")
+COMPRESS_EDIT_ODD("elm/genlist/item_compress_odd/edit/default", "elm/genlist/item/edit/default")
+
+group { name: "elm/genlist/tree/edit/default";
+   inherit: "elm/genlist/item/edit/default";
+}
+ODD("elm/genlist/tree_odd/edit/default", "elm/genlist/tree/edit/default")
+COMPRESS_EDIT("elm/genlist/tree_compress/edit/default", "elm/genlist/tree/edit/default")
+COMPRESS_EDIT_ODD("elm/genlist/tree_compress_odd/edit/default", "elm/genlist/tree/edit/default")
+
+#undef ODD
+#undef COMPRESS
+#undef COMPRESS_ODD
+#undef BASEP
+#undef TOPP
+#undef TREEPAD
+#undef IMGP
+#undef TREEIMGS
+#undef ARROW
+#undef GENLIST_PART_MAP_START
+#undef GENLIST_PART_MAP_FINISH
+#undef COMPRESS_SUB
+#undef COMPRESS_SUB_ODD
+#undef COMPRESS_T1T2
+#undef COMPRESS_T1T2_ODD
+#undef COMPRESS_MEDIA
+#undef COMPRESS_MEDIA_ODD
+#undef COMPRESS_MODE
+#undef COMPRESS_MODE_ODD
+#undef COMPRESS_EDIT
+#undef COMPRESS_EDIT_ODD

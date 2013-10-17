@@ -1,12 +1,12 @@
 # Italian translation for Elementary.
 # This file is put in the public domain.
 # Massimo Maiurana <maiurana@gmail.com>, 2011.
-#: src/lib/elm_config.c:2413
+#: src/lib/elm_config.c:2415
 msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-09-24 02:44+0900\n"
+"POT-Creation-Date: 2013-10-17 16:33+0900\n"
 "PO-Revision-Date: 2013-01-04 22:08+0100\n"
 "Last-Translator: Massimo Maiurana <maiurana@gmail.com>\n"
 "Language-Team: none\n"
@@ -15,24 +15,24 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/lib/elc_fileselector.c:939
+#: src/lib/elc_fileselector.c:1153
 msgid "Up"
 msgstr "Su"
 
-#: src/lib/elc_fileselector.c:954
+#: src/lib/elc_fileselector.c:1168
 msgid "Home"
 msgstr "Home"
 
-#: src/lib/elc_fileselector.c:1169 src/lib/elm_entry.c:1269
+#: src/lib/elc_fileselector.c:1406 src/lib/elm_entry.c:1269
 #: src/lib/elm_entry.c:1294
 msgid "Cancel"
 msgstr "Annulla"
 
-#: src/lib/elc_fileselector.c:1178
+#: src/lib/elc_fileselector.c:1415
 msgid "OK"
 msgstr "OK"
 
-#: src/lib/elm_bubble.c:219
+#: src/lib/elm_bubble.c:216
 msgid "Bubble"
 msgstr "Bolla"
 
@@ -40,70 +40,70 @@ msgstr "Bolla"
 msgid "Clicked"
 msgstr "Cliccato"
 
-#: src/lib/elm_button.c:281 src/lib/elm_check.c:219 src/lib/elm_gengrid.c:702
-#: src/lib/elm_genlist.c:1452 src/lib/elm_list.c:1492 src/lib/elm_radio.c:264
-#: src/lib/elm_spinner.c:550 src/lib/elm_toolbar.c:1996
+#: src/lib/elm_button.c:281 src/lib/elm_check.c:218 src/lib/elm_gengrid.c:702
+#: src/lib/elm_genlist.c:1461 src/lib/elm_list.c:1492 src/lib/elm_radio.c:263
+#: src/lib/elm_spinner.c:542 src/lib/elm_toolbar.c:1996
 msgid "State: Disabled"
 msgstr "Stato: disabilitato"
 
-#: src/lib/elm_button.c:307
+#: src/lib/elm_button.c:306
 msgid "Button"
 msgstr "Bottone"
 
-#: src/lib/elm_calendar.c:142
+#: src/lib/elm_calendar.c:141
 msgid "%B %Y"
 msgstr "%B %Y"
 
-#: src/lib/elm_calendar.c:151
+#: src/lib/elm_calendar.c:150
 msgid "%B"
 msgstr "%B"
 
-#: src/lib/elm_calendar.c:160
+#: src/lib/elm_calendar.c:159
 msgid "%Y"
 msgstr "%Y"
 
-#: src/lib/elm_calendar.c:274
+#: src/lib/elm_calendar.c:273
 msgid "calendar item"
 msgstr "voce del calendario"
 
-#: src/lib/elm_calendar.c:300
+#: src/lib/elm_calendar.c:299
 msgid "calendar decrement month button"
 msgstr "bottone di diminuzione del mese"
 
-#: src/lib/elm_calendar.c:305
+#: src/lib/elm_calendar.c:304
 msgid "calendar decrement year button"
 msgstr "bottone di diminuzione dell'anno"
 
-#: src/lib/elm_calendar.c:310
+#: src/lib/elm_calendar.c:309
 msgid "calendar increment month button"
 msgstr "bottone di aumento del mese"
 
-#: src/lib/elm_calendar.c:315
+#: src/lib/elm_calendar.c:314
 msgid "calendar increment year button"
 msgstr "bottone di aumento dell'anno"
 
-#: src/lib/elm_calendar.c:320
+#: src/lib/elm_calendar.c:319
 msgid "calendar month"
 msgstr "mese del calendario"
 
-#: src/lib/elm_calendar.c:325
+#: src/lib/elm_calendar.c:324
 msgid "calendar year"
 msgstr "anno del calendario"
 
-#: src/lib/elm_check.c:51 src/lib/elm_check.c:232 src/lib/elm_radio.c:91
-#: src/lib/elm_radio.c:265
+#: src/lib/elm_check.c:51 src/lib/elm_check.c:231 src/lib/elm_radio.c:91
+#: src/lib/elm_radio.c:264
 msgid "State: On"
 msgstr "Stato: attivo"
 
-#: src/lib/elm_check.c:57 src/lib/elm_check.c:244 src/lib/elm_radio.c:267
+#: src/lib/elm_check.c:57 src/lib/elm_check.c:243 src/lib/elm_radio.c:266
 msgid "State: Off"
 msgstr "Stato: inattivo"
 
-#: src/lib/elm_check.c:228 src/lib/elm_check.c:241
+#: src/lib/elm_check.c:227 src/lib/elm_check.c:240
 msgid "State"
 msgstr "Stato"
 
-#: src/lib/elm_check.c:310
+#: src/lib/elm_check.c:308
 msgid "Check"
 msgstr "Controllo"
 
@@ -119,7 +119,7 @@ msgstr "bottone di diminuzione dell'orologio per am-pm"
 msgid "State: Editable"
 msgstr "Stato: modificabile"
 
-#: src/lib/elm_clock.c:695
+#: src/lib/elm_clock.c:694
 msgid "Clock"
 msgstr "Orologio"
 
@@ -127,11 +127,11 @@ msgstr "Orologio"
 msgid "color selector palette item"
 msgstr "palette selezione colore"
 
-#: src/lib/elm_config.c:2429
+#: src/lib/elm_config.c:2431
 msgid "default:LTR"
 msgstr "predefintito: LTR"
 
-#: src/lib/elm_diskselector.c:671
+#: src/lib/elm_diskselector.c:670
 msgid "diskselector item"
 msgstr "selettore disco"
 
@@ -151,7 +151,7 @@ msgstr "Seleziona"
 msgid "Paste"
 msgstr "Incolla"
 
-#: src/lib/elm_entry.c:3123
+#: src/lib/elm_entry.c:3122
 msgid "Entry"
 msgstr "Voce"
 
@@ -159,11 +159,11 @@ msgstr "Voce"
 msgid "Gengrid Item"
 msgstr "Voce della griglia generica"
 
-#: src/lib/elm_index.c:102
+#: src/lib/elm_index.c:101
 msgid "Index"
 msgstr "Indice"
 
-#: src/lib/elm_index.c:129
+#: src/lib/elm_index.c:128
 msgid "Index Item"
 msgstr "Voce dell'indice"
 
@@ -183,27 +183,27 @@ msgstr "Stato: chiuso"
 msgid "panel button"
 msgstr "bottone del pannello"
 
-#: src/lib/elm_progressbar.c:297
+#: src/lib/elm_progressbar.c:295
 msgid "progressbar"
 msgstr "barra avanzamento"
 
-#: src/lib/elm_radio.c:296
+#: src/lib/elm_radio.c:294
 msgid "Radio"
 msgstr "Opzione"
 
-#: src/lib/elm_slider.c:864
+#: src/lib/elm_slider.c:868
 msgid "slider"
 msgstr "cursore"
 
-#: src/lib/elm_spinner.c:639
+#: src/lib/elm_spinner.c:631
 msgid "spinner increment button"
 msgstr "bottone di aumento"
 
-#: src/lib/elm_spinner.c:648
+#: src/lib/elm_spinner.c:640
 msgid "spinner decrement button"
 msgstr "bottone di diminuzione"
 
-#: src/lib/elm_spinner.c:656
+#: src/lib/elm_spinner.c:648
 msgid "spinner"
 msgstr "spinner bottoni"
 

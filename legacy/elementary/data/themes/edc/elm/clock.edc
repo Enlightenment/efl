@@ -1,0 +1,397 @@
+group { name: "elm/clock/flipdigit/default";
+   images.image: "digit_na.png" COMP;
+   images.image: "digit_0.png" COMP;
+   images.image: "digit_1.png" COMP;
+   images.image: "digit_2.png" COMP;
+   images.image: "digit_3.png" COMP;
+   images.image: "digit_4.png" COMP;
+   images.image: "digit_5.png" COMP;
+   images.image: "digit_6.png" COMP;
+   images.image: "digit_7.png" COMP;
+   images.image: "digit_8.png" COMP;
+   images.image: "digit_9.png" COMP;
+   images.image: "icon_arrow_up.png" COMP;
+   images.image: "icon_arrow_down.png" COMP;
+   script {
+      public v0_cur, v0_lock, v0_next;
+
+      public animator1(val, Float:pos) {
+         new v;
+         set_int(v0_lock, 0);
+         v = get_int(v0_next);
+         if (v >= 0) {
+            set_int(v0_next, -1);
+            message(MSG_INT, 1, v);
+         }
+      }
+      public message(Msg_Type:type, id, ...) {
+         if ((type == MSG_INT) && (id == 1)) {
+            new value, buf[11];
+
+            value = getarg(2);
+            if (get_int(v0_lock) == 1) {
+               set_int(v0_next, value);
+               return;
+            }
+            set_int(v0_cur, value);
+            set_int(v0_lock, 1);
+            snprintf(buf, 10, "%i", get_int(v0_cur));
+            set_state(PART:"digit", buf, 0.0);
+            anim(1.0, "animator1", 1);
+         }
+      }
+   }
+   parts {
+      part { name: "digit_bg";
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.to: "digit";
+            rel2.to: "digit";
+            image.normal: "digit_na.png";
+            color: 255 255 255 128;
+         }
+      }
+      part { name: "b";
+         type: RECT;
+         scale: 1;
+         mouse_events: 1;
+         description { state: "default" 0.0;
+            visible: 0;
+            rel1.relative: 0.0 0.5;
+            color: 0 0 0 0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+      part { name: "t";
+         type: RECT;
+         scale: 1;
+         mouse_events: 1;
+         description { state: "default" 0.0;
+            visible: 0;
+            rel2.relative: 1.0 0.5;
+            color: 0 0 0 0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+      part { name: "digit";
+         mouse_events: 0;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.to_y: "atop";
+            rel1.relative: 0.0 1.0;
+            rel2.to_y: "abot";
+            rel2.relative: 1.0 0.0;
+            aspect: (52/72) (52/72); aspect_preference: BOTH;
+            image.normal: "digit_0.png";
+         }
+#define DIGIT_DESC(_DIGIT) \
+   description { state: _DIGIT 0.0; \
+      inherit: "default" 0.0; \
+      image.normal: "digit_"_DIGIT".png"; \
+   }
+         DIGIT_DESC("0")
+         DIGIT_DESC("1")
+         DIGIT_DESC("2")
+         DIGIT_DESC("3")
+         DIGIT_DESC("4")
+         DIGIT_DESC("5")
+         DIGIT_DESC("6")
+         DIGIT_DESC("7")
+         DIGIT_DESC("8")
+         DIGIT_DESC("9")
+      }
+#undef DIGIT_DESC
+      part { name: "atop";
+         mouse_events: 0;
+         scale: 1;
+         description { state: "default" 0.0;
+            visible: 0;
+            rel1.relative: 0.0 0.0;
+            rel2.relative: 1.0 0.2;
+            align: 0.5 0.0;
+            aspect: 1 1; aspect_preference: BOTH;
+            image.normal: "icon_arrow_up.png";
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+      part { name: "abot";
+         mouse_events: 0;
+         scale: 1;
+         description { state: "default" 0.0;
+            visible: 0;
+            rel1.relative: 0.0 0.8;
+            rel2.relative: 1.0 1.0;
+            align: 0.5 0.0;
+            aspect: 1 1; aspect_preference: BOTH;
+            image.normal: "icon_arrow_down.png";
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+      part { name: "access.t";
+         type: RECT;
+         description { state: "default" 0.0;
+            rel1.to: "t";
+            rel2.to: "t";
+            color: 0 0 0 0;
+            visible: 0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+      part { name: "access.b";
+         type: RECT;
+         description { state: "default" 0.0;
+            rel1.to: "b";
+            rel2.to: "b";
+            color: 0 0 0 0;
+            visible: 0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+   }
+   programs {
+      program { name: "load";
+         signal: "load";
+         source: "";
+         script {
+            set_int(v0_cur, 0);
+            set_int(v0_lock, 0);
+            set_int(v0_next, -1);
+         }
+      }
+      program { name: "edit_on";
+         signal: "elm,state,edit,on";
+         source: "elm";
+         action: STATE_SET "visible" 0.0;
+         target: "atop";
+         target: "abot";
+         target: "t";
+         target: "b";
+      }
+      program { name: "edit_off";
+         signal: "elm,state,edit,off";
+         source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "atop";
+         target: "abot";
+         target: "t";
+         target: "b";
+      }
+      program { name: "up";
+         signal: "mouse,down,1";
+         source: "t";
+         action: SIGNAL_EMIT "elm,action,up,start" "elm";
+      }
+      program { name: "up,stop";
+         signal: "mouse,up,1";
+         source: "t";
+         action: SIGNAL_EMIT "elm,action,up,stop" "elm";
+      }
+      program { name: "down";
+         signal: "mouse,down,1";
+         source: "b";
+         action: SIGNAL_EMIT "elm,action,down,start" "elm";
+      }
+      program { name: "down,stop";
+         signal: "mouse,up,1";
+         source: "b";
+         action: SIGNAL_EMIT "elm,action,down,stop" "elm";
+      }
+      program { name: "access_edit_on";
+         signal: "elm,state,access,edit,on";
+         source: "elm";
+         action: STATE_SET "visible" 0.0;
+         target: "access.t";
+         target: "access.b";
+      }
+      program { name: "access_edit_off";
+         signal: "elm,state,access,edit,off";
+         source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "access.t";
+         target: "access.b";
+      }
+      program { name: "access,up";
+         signal: "mouse,down,1";
+         source: "access.t";
+         action: SIGNAL_EMIT "elm,action,up,start" "elm";
+      }
+      program { name: "access,up,stop";
+         signal: "mouse,up,1";
+         source: "access.t";
+         action: SIGNAL_EMIT "elm,action,up,stop" "elm";
+      }
+      program { name: "access,down";
+         signal: "mouse,down,1";
+         source: "access.b";
+         action: SIGNAL_EMIT "elm,action,down,start" "elm";
+      }
+      program { name: "access,down,stop";
+         signal: "mouse,up,1";
+         source: "access.b";
+         action: SIGNAL_EMIT "elm,action,down,stop" "elm";
+      }
+   }
+}
+
+
+group { name: "elm/clock/flipampm/default";
+   inherit: "elm/clock/flipdigit/default";
+   images.image: "digit_nm.png" COMP;
+   images.image: "digit_am.png" COMP;
+   images.image: "digit_pm.png" COMP;
+   parts {
+      part { name: "digit_bg";
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.to: "digit";
+            rel2.to: "digit";
+            image.normal: "digit_nm.png";
+            color: 255 255 255 128;
+         }
+      }
+      part { name: "digit";
+         mouse_events: 0;
+         scale: 1;
+         description { state: "default" 0.0;	
+            aspect: (48/31) (48/31); aspect_preference: BOTH;
+            image.normal: "digit_am.png";
+         }
+#define DIGIT_DESC(_DIGIT, _AMPM) \
+   description { state: _DIGIT 0.0; \
+      inherit: "default" 0.0; \
+      image.normal: "digit_"_AMPM".png"; \
+   }
+         DIGIT_DESC("0", "am")
+         DIGIT_DESC("1", "pm")
+      }
+#undef DIGIT_DESC
+   }
+}
+
+#define SWALLOW_PART(_NAME, _R1X, _R1Y, _R2X, _R2Y) \
+   part { name: _NAME; \
+      type: SWALLOW; \
+      description { state: "default" 0.0; \
+         rel1.relative: _R1X _R1Y; \
+         rel2.relative: _R2X _R2Y; \
+      } \
+   }
+
+#define HOLE_PART(_NAME, _R1X, _R1Y, _R2X, _R2Y, _AX, _AY, _OX, _OY, _W, _H) \
+   part { name: _NAME; \
+         mouse_events: 0; \
+         description { state: "default" 0.0; \
+            rel1.relative: _R1X _R1Y; \
+            rel1.offset: _OX _OY; \
+            rel2.relative: _R2X _R2Y; \
+            rel2.offset: _OX _OY; \
+            align: _AX _AY; \
+            min: _W _H; \
+            max: _W _H; \
+            fixed: 1 1; \
+            image.normal: "hole_tiny.png"; \
+         } \
+      }
+
+group { name: "elm/clock/base-all/default";
+   images.image: "hole_tiny.png" COMP;
+   parts {
+      SWALLOW_PART("d0", 0.0, 0.0, 0.125, 1.0)
+      SWALLOW_PART("d1", 0.125, 0.0, 0.25, 1.0)
+      HOLE_PART("c0t", 0.25, 0.5, 0.3125, 0.5, 0.5, 1.0, 0, -2, 4, 4)
+      HOLE_PART("c0b", 0.25, 0.5, 0.3125, 0.5, 0.5, 0.0, 0, 1, 4, 4)
+      SWALLOW_PART("d2", 0.3125, 0.0, 0.4375, 1.0)
+      SWALLOW_PART("d3", 0.4375, 0.0, 0.5625, 1.0)
+      HOLE_PART("c1t", 0.5625, 0.5, 0.625, 0.5, 0.5, 1.0, 0, -2, 4, 4)
+      HOLE_PART("c1b", 0.5625, 0.5, 0.625, 0.5, 0.5, 0.0, 0, 1, 4, 4)
+      SWALLOW_PART("d4", 0.625, 0.0, 0.75, 1.0)
+      SWALLOW_PART("d5", 0.75, 0.0, 0.875, 1.0)
+      SWALLOW_PART("ampm", 0.875, 0.0, 1.0, 1.0)
+   }
+}
+
+group { name: "elm/clock/base-seconds/default";
+   parts {
+      SWALLOW_PART("d0", 0.0, 0.0, 0.142857143, 1.0)
+      SWALLOW_PART("d1", 0.142857143, 0.0, 0.285714286, 1.0)
+      HOLE_PART("c0t", 0.285714286, 0.5, 0.357142857, 0.5, 0.5, 1.0, 0, -2, 4, 4)
+      HOLE_PART("c0b", 0.285714286, 0.5, 0.357142857, 0.5, 0.5, 0.0, 0, 1, 4, 4)
+      SWALLOW_PART("d2", 0.357142857, 0.0, 0.5, 1.0)
+      SWALLOW_PART("d3", 0.5, 0.0, 0.642857143, 1.0)
+      HOLE_PART("c1t", 0.642857143, 0.5, 0.714285714, 0.5, 0.5, 1.0, 0, -2, 4, 4)
+      HOLE_PART("c1b", 0.642857143, 0.5, 0.714285714, 0.5, 0.5, 0.0, 0, 1, 4, 4)
+      SWALLOW_PART("d4", 0.714285714, 0.0, 0.857142857, 1.0)
+      SWALLOW_PART("d5", 0.857142857, 0.0, 1.0, 1.0)
+   }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+group { name: "elm/clock/base-am_pm/default";
+   parts {
+      SWALLOW_PART("d0", 0.0, 0.0, 0.181818182, 1.0)
+      SWALLOW_PART("d1", 0.181818182, 0.0, 0.363636364, 1.0)
+      HOLE_PART("c0t", 0.363636364, 0.5, 0.454545455, 0.5, 0.5, 1.0, 0, -2, 4, 4)
+      HOLE_PART("c0b", 0.363636364, 0.5, 0.454545455, 0.5, 0.5, 0.0, 0, 1, 4, 4)
+      SWALLOW_PART("d2", 0.454545455, 0.0, 0.636363636, 1.0)
+      SWALLOW_PART("d3", 0.636363636, 0.0, 0.818181818, 1.0)
+      SWALLOW_PART("ampm", 0.818181818, 0.0, 1.0, 1.0)
+   }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+group { name: "elm/clock/base/default";
+   parts {
+      part { name: "base";
+         type: RECT;
+         scale : 1;
+         description { state: "default" 0.0;
+            color: 0 0 0 0;
+            visible: 0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+      SWALLOW_PART("d0", 0.0, 0.0, 0.222222222, 1.0)
+      SWALLOW_PART("d1", 0.222222222, 0.0, 0.444444444, 1.0)
+      HOLE_PART("c0t", 0.444444444, 0.5, 0.555555556, 0.5, 0.5, 1.0, 0, -2, 4, 4)
+      HOLE_PART("c0b", 0.444444444, 0.5, 0.555555556, 0.5, 0.5, 0.0, 0, 1, 4, 4)
+      SWALLOW_PART("d2", 0.555555556, 0.0, 0.777777778, 1.0)
+      SWALLOW_PART("d3", 0.777777778, 0.0, 1.0, 1.0)
+   }
+   programs {
+      program { name: "access_on";
+         signal: "elm,state,access,on";
+         source: "elm";
+         action: STATE_SET "visible" 0.0;
+         target: "base";
+      }
+      program { name: "access_off";
+         signal: "elm,state,access,off";
+         source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "base";
+      }
+   }
+}
+#undef SWALLOW_PART
+#undef HOLE_PART

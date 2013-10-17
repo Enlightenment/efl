@@ -1,0 +1,1398 @@
+// === toolbar default base with scrolling arrows etc.
+group { name: "elm/toolbar/base/default";
+   images.image: "vgrad_med_lighter.png" COMP;
+   images.image: "bevel_out.png" COMP;
+   images.image: "shine.png" COMP;
+   images.image: "shadow_square_tiny.png" COMP;
+   images.image: "sym_left_light_normal.png" COMP;
+   images.image: "sym_left_glow_normal.png" COMP;
+   images.image: "sym_right_light_normal.png" COMP;
+   images.image: "sym_right_glow_normal.png" COMP;
+   images.image: "sym_up_light_normal.png" COMP;
+   images.image: "sym_up_glow_normal.png" COMP;
+   images.image: "sym_down_light_normal.png" COMP;
+   images.image: "sym_down_glow_normal.png" COMP;
+   parts {
+      part { name: "shadow"; mouse_events: 0;
+         description { state: "default" 0.0;
+            rel1.offset: -1 0;
+            rel2.offset: 0 1;
+            image.normal: "shadow_square_tiny.png";
+            image.border: 6 6 6 6;
+            fill.smooth: 0;
+         }
+      }
+      part { name: "base";
+         description { state: "default" 0.0;
+            image.normal: "vgrad_med_lighter.png";
+            rel1.offset: 2 2;
+            rel2.offset: -3 -3;
+            fill.smooth: 0;
+            TILED_HORIZ(120)
+         }
+      }
+      part { name: "clipper"; type: RECT;
+         description { state: "default" 0.0;
+            rel1.to: "base";
+            rel2.to: "base";
+         }
+      }
+      part { name: "elm.swallow.content"; type: SWALLOW;
+         clip_to: "clipper";
+         description { state: "default" 0.0;
+            rel1.offset: 2 2;
+            rel2.offset: -3 -3;
+         }
+      }
+      part { name: "bevel"; mouse_events: 0;
+         description { state: "default" 0.0;
+            rel1.to: "base";
+            rel2.to: "base";
+            image.normal: "bevel_out.png";
+            image.border: 1 1 1 1;
+            image.middle: 0;
+            fill.smooth: 0;
+         }
+      }
+      
+      part { name: "arrow_clipper_l"; type: RECT;
+         description { state: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+      part { name: "arrow_l"; mouse_events: 0;
+         clip_to: "arrow_clipper_l";
+         description { state: "default" 0.0;
+            rel1.to: "arrow_l_ev";
+            rel2.to: "arrow_l_ev";
+            image.normal: "sym_left_light_normal.png";
+            FIXED_SIZE(15, 15)
+         }
+         description { state: "clicked" 0.0;
+            inherit: "default" 0.0;
+            image.normal: "sym_left_glow_normal.png";
+         }
+      }
+      part { name: "arrow_l_ev"; type: RECT;
+         scale: 1;
+         clip_to: "arrow_clipper_l";
+         description { state: "default" 0.0;
+            rel1.to: "base";
+            rel2.to: "base";
+            align: 0.0 0.5;
+            color: 0 0 0 0;
+            FIXED_SIZE(23, 23)
+         }
+      }
+      
+      part { name: "arrow_clipper_r"; type: RECT;
+         description { state: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+      part { name: "arrow_r"; mouse_events: 0;
+         clip_to: "arrow_clipper_r";
+         description { state: "default" 0.0;
+            rel1.to: "arrow_r_ev";
+            rel2.to: "arrow_r_ev";
+            image.normal: "sym_right_light_normal.png";
+            FIXED_SIZE(15, 15)
+         }
+         description { state: "clicked" 0.0;
+            inherit: "default" 0.0;
+            image.normal: "sym_right_glow_normal.png";
+         }
+      }
+      part { name: "arrow_r_ev"; type: RECT;
+         scale: 1;
+         clip_to: "arrow_clipper_r";
+         description { state: "default" 0.0;
+            rel1.to: "base";
+            rel2.to: "base";
+            align: 1.0 0.5;
+            color: 0 0 0 0;
+            FIXED_SIZE(23, 23)
+         }
+      }
+      part { name: "shine"; mouse_events: 0;
+         description { state: "default" 0.0;
+            image.normal: "shine.png";
+            rel1.offset: 0 -2;
+            rel1.to: "base";
+            rel2.relative: 1.0 0.0;
+            rel2.offset: -1 2;
+            rel2.to: "base";
+            FIXED_SIZE(69, 5)
+         }
+      }
+      
+      part { name: "arrow_clipper_u"; type: RECT;
+         description { state: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+      part { name: "arrow_u"; mouse_events: 0;
+         clip_to: "arrow_clipper_u";
+         description { state: "default" 0.0;
+            rel1.to: "arrow_u_ev";
+            rel2.to: "arrow_u_ev";
+            image.normal: "sym_up_light_normal.png";
+            FIXED_SIZE(15, 15)
+         }
+         description { state: "clicked" 0.0;
+            inherit: "default" 0.0;
+            image.normal: "sym_up_glow_normal.png";
+         }
+      }
+      part { name: "arrow_u_ev"; type: RECT;
+         scale: 1;
+         clip_to: "arrow_clipper_u";
+         description { state: "default" 0.0;
+            rel1.to: "base";
+            rel2.to: "base";
+            align: 0.5 0.0;
+            color: 0 0 0 0;
+            FIXED_SIZE(23, 23)
+         }
+      }
+      
+      part { name: "arrow_clipper_d"; type: RECT;
+         description { state: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+      part { name: "arrow_d"; mouse_events: 0;
+         clip_to: "arrow_clipper_d";
+         description { state: "default" 0.0;
+            rel1.to: "arrow_d_ev";
+            rel2.to: "arrow_d_ev";
+            image.normal: "sym_down_light_normal.png";
+            FIXED_SIZE(15, 15)
+         }
+         description { state: "clicked" 0.0;
+            inherit: "default" 0.0;
+            image.normal: "sym_down_glow_normal.png";
+         }
+      }
+      part { name: "arrow_d_ev"; type: RECT;
+         scale: 1;
+         clip_to: "arrow_clipper_d";
+         description { state: "default" 0.0;
+            rel1.to: "base";
+            rel2.to: "base";
+            align: 0.5 1.0;
+            color: 0 0 0 0;
+            FIXED_SIZE(23, 23)
+         }
+      }
+   }
+   programs {
+//      program {
+//         signal: "elm,orient,horizontal"; source: "elm";
+//      }
+//      program {
+//         signal: "elm,orient,vertical"; source: "elm";
+//      }
+      program {
+         signal: "elm,action,show,left"; source: "elm";
+         action: STATE_SET "visible" 0.0;
+         target: "arrow_clipper_l";
+         target: "arrow_clipper_l";
+      }
+      program {
+         signal: "elm,action,hide,left"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "arrow_clipper_l";
+         target: "arrow_clipper_l";
+      }
+      program {
+         signal: "mouse,down,1*"; source: "arrow_l_ev";
+         action: SIGNAL_EMIT "elm,action,left" "elm";
+         after: "arrow_l_repeat";
+      }
+      program { name: "arrow_l_repeat";
+         action: SIGNAL_EMIT "elm,action,left" "elm";
+         in: 0.3 0.0;
+         after: "arrow_l_repeat";
+      }
+      program {
+         signal: "mouse,up,1"; source: "arrow_l_ev";
+         action: ACTION_STOP;
+         target: "arrow_l_repeat";
+      }
+      program {
+         signal: "mouse,down,1*"; source: "arrow_l_ev";
+         action: STATE_SET "clicked" 0.0;
+         target: "arrow_l";
+      }
+      program {
+         signal: "mouse,up,1"; source: "arrow_l_ev";
+         action: STATE_SET "default" 0.0;
+         target: "arrow_l";
+      }
+      
+      program {
+         signal: "elm,action,show,right"; source: "elm";
+         action: STATE_SET "visible" 0.0;
+         target: "arrow_clipper_r";
+         target: "arrow_clipper_r";
+      }
+      program {
+         signal: "elm,action,hide,right"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "arrow_clipper_r";
+         target: "arrow_clipper_r";
+      }
+      program {
+         signal: "mouse,down,1*"; source: "arrow_r_ev";
+         action: SIGNAL_EMIT "elm,action,right" "elm";
+         after: "arrow_r_repeat";
+      }
+      program { name: "arrow_r_repeat";
+         action: SIGNAL_EMIT "elm,action,right" "elm";
+         in: 0.3 0.0;
+         after: "arrow_r_repeat";
+      }
+      program {
+         signal: "mouse,up,1"; source: "arrow_r_ev";
+         action: ACTION_STOP;
+         target: "arrow_r_repeat";
+      }
+      program {
+         signal: "mouse,down,1*"; source: "arrow_r_ev";
+         action: STATE_SET "clicked" 0.0;
+         target: "arrow_r";
+      }
+      program {
+         signal: "mouse,up,1"; source: "arrow_r_ev";
+         action: STATE_SET "default" 0.0;
+         target: "arrow_r";
+      }
+      
+      program {
+         signal: "elm,action,show,up"; source: "elm";
+         action: STATE_SET "visible" 0.0;
+         target: "arrow_clipper_u";
+         target: "arrow_clipper_u";
+      }
+      program {
+         signal: "elm,action,hide,up"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "arrow_clipper_u";
+         target: "arrow_clipper_u";
+      }
+      program {
+         signal: "mouse,down,1*"; source: "arrow_u_ev";
+         action: SIGNAL_EMIT "elm,action,up" "elm";
+         after: "arrow_u_repeat";
+      }
+      program { name: "arrow_u_repeat";
+         action: SIGNAL_EMIT "elm,action,up" "elm";
+         in: 0.3 0.0;
+         after: "arrow_u_repeat";
+      }
+      program {
+         signal: "mouse,up,1"; source: "arrow_u_ev";
+         action: ACTION_STOP;
+         target: "arrow_u_repeat";
+      }
+      program {
+         signal: "mouse,down,1*"; source: "arrow_u_ev";
+         action: STATE_SET "clicked" 0.0;
+         target: "arrow_u";
+      }
+      program {
+         signal: "mouse,up,1"; source: "arrow_u_ev";
+         action: STATE_SET "default" 0.0;
+         target: "arrow_u";
+      }
+      
+      program {
+         signal: "elm,action,show,down"; source: "elm";
+         action: STATE_SET "visible" 0.0;
+         target: "arrow_clipper_d";
+         target: "arrow_clipper_d";
+      }
+      program {
+         signal: "elm,action,hide,down"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "arrow_clipper_d";
+         target: "arrow_clipper_d";
+      }
+      program {
+         signal: "mouse,down,1*"; source: "arrow_d_ev";
+         action: SIGNAL_EMIT "elm,action,down" "elm";
+         after: "arrow_d_repeat";
+      }
+      program { name: "arrow_d_repeat";
+         action: SIGNAL_EMIT "elm,action,down" "elm";
+         in: 0.3 0.0;
+         after: "arrow_d_repeat";
+      }
+      program {
+         signal: "mouse,up,1"; source: "arrow_d_ev";
+         action: ACTION_STOP;
+         target: "arrow_d_repeat";
+      }
+      program {
+         signal: "mouse,down,1*"; source: "arrow_d_ev";
+         action: STATE_SET "clicked" 0.0;
+         target: "arrow_d";
+      }
+      program {
+         signal: "mouse,up,1"; source: "arrow_d_ev";
+         action: STATE_SET "default" 0.0;
+         target: "arrow_d";
+      }
+   }
+}
+
+// === item: standard default item
+group { name: "elm/toolbar/item/default";
+   data.item: "transition_animation_on" "1";
+   
+   images.image: "shadow_inset_bevels.png" COMP;
+   images.image: "shadow_angled_in_sides.png" COMP;
+   images.image: "horizontal_separated_bar_small_glow.png" COMP;
+   images.image: "bevel_dark_in.png" COMP;
+#define ICON     1
+#define LABEL    2
+#define MASK     3
+#define DISABLE  4
+   script {   
+      public btmode;
+      public eval_mode(m) {
+         new m1 = m & MASK;
+         new d = m & DISABLE;
+         if (m1 == (ICON | LABEL)) {
+            if (!d) {
+               set_state(PART:"elm.swallow.icon", "default", 0.0);
+               set_state(PART:"icon_clip", "default", 0.0);
+               set_state(PART:"elm.text", "default", 0.0);
+               set_state(PART:"label2", "default", 0.0);
+            } else {
+               set_state(PART:"elm.swallow.icon", "default", 0.0);
+               set_state(PART:"icon_clip", "disabled", 0.0);
+               set_state(PART:"elm.text", "disabled", 0.0);
+               set_state(PART:"label2", "default", 0.0);
+            }
+         } else if (m1 == (ICON)) {
+            if (!d) {
+               set_state(PART:"elm.swallow.icon", "icononly", 0.0);
+               set_state(PART:"icon_clip", "default", 0.0);
+               set_state(PART:"elm.text", "icononly", 0.0);
+               set_state(PART:"label2", "icononly", 0.0);
+            } else {
+               set_state(PART:"elm.swallow.icon", "icononly", 0.0);
+               set_state(PART:"icon_clip", "disabled", 0.0);
+               set_state(PART:"elm.text", "icononly", 0.0);
+               set_state(PART:"label2", "icononly", 0.0);
+            }
+         } else if (m1 == (LABEL)) {
+            if (!d) {
+               set_state(PART:"elm.swallow.icon", "noicon", 0.0);
+               set_state(PART:"icon_clip", "default", 0.0);
+               set_state(PART:"elm.text", "noicon", 0.0);
+               set_state(PART:"label2", "noicon", 0.0);
+            } else {
+               set_state(PART:"elm.swallow.icon", "noicon", 0.0);
+               set_state(PART:"icon_clip", "disabled", 0.0);
+               set_state(PART:"elm.text", "noicon_disabled", 0.0);
+               set_state(PART:"label2", "noicon_disabled", 0.0);
+            }
+         } else {
+            set_state(PART:"elm.swallow.icon", "default", 0.0);
+            set_state(PART:"icon_clip", "default", 0.0);
+            set_state(PART:"elm.text", "default", 0.0);
+            set_state(PART:"label2", "default", 0.0);
+         }
+      }
+   }
+   parts {
+      part { name: "base"; type: SPACER;
+         description { state: "default" 0.0;
+         }
+         description { state: "vert" 0.0;
+            rel1.offset: -1 0;
+            rel2.offset: 0 -1;
+         }
+      }
+      part { name: "shadow1"; mouse_events: 0;
+         description { state: "default" 0.0;
+            rel1.to: "base";
+            rel2.to: "base";
+            image.normal: "shadow_inset_bevels.png";
+            image.border: 2 2 0 1;
+            visible: 0;
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+      part { name: "shadow2"; mouse_events: 0;
+         description { state: "default" 0.0;
+            rel1.offset: 1 0;
+            rel1.to: "shadow1";
+            rel2.offset: -2 -1;
+            rel2.to: "shadow1";
+            image.normal: "shadow_angled_in_sides.png";
+            image.border: 8 8 0 1;
+            image.middle: 0;
+            visible: 0;
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+      part { name: "bend_clip"; type: RECT;
+         description { state: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "vert" 0.0;
+            visible: 1;
+         }
+      }
+      part { name: "bend";
+         clip_to: "bend_clip";
+         description { state: "default" 0.0;
+            min: 2 2;
+            max: 99999 2;
+            rel2.offset: -1 1;
+            rel2.relative: 1.0 0.0;
+            image.normal: "bevel_dark_in.png";
+            image.border: 2 2 2 2;
+            fill.smooth: 0;
+            visible: 0;
+            fixed: 1 1;
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+      
+      part { name: "icon_clip"; type: RECT;
+         description { state: "default" 0.0;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            color: 255 255 255 64;
+         }
+      }
+      part { name: "icon_clip1"; type: RECT;
+         clip_to: "icon_clip";
+         description { state: "default" 0.0;
+            color: 255 255 255 255;
+            visible: 1;
+         }
+         description { state: "animation" 0.0;
+            inherit: "default" 0.0;
+            color: 255 255 255 0;
+            visible: 0;
+         }
+      }
+      part { name: "elm.swallow.icon"; type: SWALLOW;
+         clip_to: "icon_clip1";
+         description { state: "default" 0.0;
+            align: 0.5 0.5;
+            rel1.relative: 0.0 0.0;
+            rel1.offset: 2 2;
+            rel2.to_y: "elm.text";
+            rel2.relative: 1.0 0.0;
+            rel2.offset: -3 -1;
+         }
+         description { state: "noicon" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+            rel1.offset: 2 0;
+            rel2.relative: 1.0 0.0;
+            rel2.offset: -3 -4;
+         }
+         description { state: "icononly" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+            rel2.relative: 1.0 1.0;
+            rel2.offset: -3 -3;
+            rel2.to_y: "icon_clip";
+         }
+      }
+      part { name: "icon_clip2"; type: RECT;
+         clip_to: "icon_clip";
+         description { state: "default" 0.0;
+            color: 255 255 255 0;
+            visible: 0;
+         }
+         description { state: "animation" 0.0;
+            inherit: "default" 0.0;
+            color: 255 255 255 255;
+            visible: 1;
+         }
+      }
+      part { name: "elm.swallow.icon_new"; type: SWALLOW;
+         clip_to: "icon_clip2";
+         description { state: "default" 0.0;
+            align: 0.5 0.5;
+            rel1.relative: 0.0 0.0;
+            rel1.offset: 2 2;
+            rel2.to_y: "elm.text";
+            rel2.relative: 1.0 0.0;
+            rel2.offset: -3 -1;
+         }
+         description { state: "noicon" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+            rel1.offset: 2 0;
+            rel2.relative: 1.0 0.0;
+            rel2.offset: -3 -4;
+         }
+         description { state: "icononly" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+            rel2.relative: 1.0 1.0;
+            rel2.offset: -3 -3;
+            rel2.to_y: "icon_clip";
+         }
+      }
+      
+      part { name: "text_clip1"; type: RECT;
+         description { state: "default" 0.0;
+            color: 255 255 255 255;
+            visible: 1;
+         }
+         description { state: "animation" 0.0;
+            inherit: "default" 0.0;
+            color: 255 255 255 0;
+            visible: 0;
+         }
+      }
+      part { name: "elm.text"; type: TEXT; mouse_events: 0;
+         effect: SHADOW BOTTOM;
+         scale: 1;
+         clip_to: "text_clip1";
+         description { state: "default" 0.0;
+            rel1.offset: 4 -3;
+            rel1.relative: 0.0 1.0;
+            rel2.offset: -5 -3;
+            align: 0.5 1.0;
+            color: FN_COL_DEFAULT;
+            color_class: "toolbar_item";
+            text { font: FN; size: 10;
+               min: 1 1;
+               align: 0.5 0.5;
+               text_class: "toolbar_item";
+            }
+            fixed: 0 1;
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+            color_class: "toolbar_item_selected";
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            color: 21 21 21 255;
+            color3: 255 255 255 25;
+            color_class: "toolbar_item_disabled";
+         }
+         description { state: "noicon" 0.0;
+            inherit: "default" 0.0;
+            rel1.offset: 4 2;
+            rel1.relative: 0.0 0.0;
+            align: 0.5 0.5;
+         }
+         description { state: "noicon_disabled" 0.0;
+            inherit: "noicon" 0.0;
+            color: 21 21 21 255;
+            color3: 255 255 255 25;
+            color_class: "toolbar_item_disabled";
+         }
+         description { state: "icononly" 0.0;
+            inherit: "default" 0.0;
+            text.min: 0 0;
+            visible: 0;
+            fixed: 1 1;
+         }
+      }
+      part { name: "label2"; type: TEXT; mouse_events: 0;
+         effect: GLOW;
+         scale: 1;
+         clip_to: "text_clip1";
+         description { state: "default" 0.0;
+            rel1.offset: -3 -3;
+            rel1.to: "elm.text";
+            rel2.offset: 2 1;
+            rel2.to: "elm.text";
+            color: FN_COL_HIGHLIGHT;
+            color_class: "toolbar_item_active";
+            text { font: FN; size: 10;
+               text_source: "elm.text";
+               align: 0.5 0.5;
+               text_class: "toolbar_item";
+            }
+            visible: 0;
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+         description { state: "noicon" 0.0;
+            inherit: "default" 0.0;
+         }
+         description { state: "noicon_disabled" 0.0;
+            inherit: "noicon" 0.0;
+         }
+         description { state: "icononly" 0.0;
+            inherit: "default" 0.0;
+            text.min: 0 0;
+            visible: 0;
+            fixed: 1 1;
+         }
+      }
+      part { name: "text_clip2"; type: RECT;
+         description { state: "default" 0.0;
+            color: 255 255 255 0;
+            visible: 0;
+         }
+         description { state: "animation" 0.0;
+            inherit: "default" 0.0;
+            color: 255 255 255 255;
+            visible: 1;
+         }
+      }
+      part { name: "elm.text_new"; type: TEXT; mouse_events: 0;
+         effect: SHADOW BOTTOM;
+         scale: 1;
+         clip_to: "text_clip2";
+         description { state: "default" 0.0;
+            rel1.offset: 4 -3;
+            rel1.relative: 0.0 1.0;
+            rel2.offset: -5 -3;
+            align: 0.5 1.0;
+            color: FN_COL_DEFAULT;
+            color_class: "toolbar_item";
+            text { font: FN; size: 10;
+               min: 1 1;
+               align: 0.5 0.5;
+               text_class: "toolbar_item";
+            }
+            fixed: 0 1;
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+            color_class: "toolbar_item_selected";
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            color: 21 21 21 255;
+            color3: 255 255 255 25;
+            color_class: "toolbar_item_disabled";
+         }
+         description { state: "noicon" 0.0;
+            inherit: "default" 0.0;
+            rel1.offset: 4 2;
+            rel1.relative: 0.0 0.0;
+            align: 0.5 0.5;
+         }
+         description { state: "noicon_disabled" 0.0;
+            inherit: "noicon" 0.0;
+            color: 21 21 21 255;
+            color3: 255 255 255 25;
+            color_class: "toolbar_item_disabled";
+         }
+         description { state: "icononly" 0.0;
+            inherit: "default" 0.0;
+            text.min: 0 0;
+            visible: 0;
+            fixed: 1 1;
+         }
+      }
+      part { name: "label2_new"; type: TEXT; mouse_events: 0;
+         effect: GLOW;
+         scale: 1;
+         clip_to: "text_clip2";
+         description { state: "default" 0.0;
+            rel1.offset: -3 -3;
+            rel1.to: "elm.text";
+            rel2.offset: 2 1;
+            rel2.to: "elm.text";
+            color: FN_COL_HIGHLIGHT;
+            color_class: "toolbar_item_active";
+            text { font: FN; size: 10;
+               text_source: "elm.text";
+               align: 0.5 0.5;
+               text_class: "toolbar_item";
+            }
+            visible: 0;
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+         description { state: "noicon" 0.0;
+            inherit: "default" 0.0;
+         }
+         description { state: "noicon_disabled" 0.0;
+            inherit: "noicon" 0.0;
+         }
+         description { state: "icononly" 0.0;
+            inherit: "default" 0.0;
+            text.min: 0 0;
+            visible: 0;
+            fixed: 1 1;
+         }
+      }
+
+      part { name: "bar"; mouse_events: 0;
+         description { state: "default" 0.0;
+            rel1.offset: -3 -7;
+            rel1.relative: 0.0 1.0;
+            rel1.to: "shadow2";
+            rel2.offset: 2 2;
+            rel2.to: "shadow2";
+            image.normal: "horizontal_separated_bar_small_glow.png";
+            image.border: 4 4 4 4;
+            fill.smooth: 0;
+            visible: 0;
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+      part { name: "highlight"; mouse_events: 0;
+         description { state: "default" 0.0;
+            rel1.offset: -3 -7;
+            rel1.relative: 0.0 1.0;
+            rel1.to: "shadow2";
+            rel2.offset: 2 2;
+            rel2.to: "shadow2";
+            image.normal: "horizontal_separated_bar_small_glow.png";
+            image.border: 4 4 4 4;
+            fill.smooth: 0;
+            visible: 0;
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+      part { name: "event"; type: RECT;
+         ignore_flags: ON_HOLD;
+         description { state: "default" 0.0;
+            color: 0 0 0 0;
+         }
+      }
+   }
+   programs {
+      program {
+         signal: "elm,orient,horizontal"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "base";
+         target: "bend_clip";
+      }
+      program {
+         signal: "elm,orient,vertical"; source: "elm";
+         action: STATE_SET "vert" 0.0;
+         target: "base";
+         target: "bend_clip";
+      }
+      
+      program { name: "st0";
+         signal: "load"; source: "";
+         script {
+            set_int(btmode, LABEL | ICON);
+         }
+      }
+      
+      program {
+         signal: "elm,state,selected"; source: "elm";
+         action: STATE_SET "selected" 0.0;
+         target: "elm.text";
+         target: "label2";
+         target: "shadow1";
+         target: "shadow2";
+         target: "bar";
+         target: "bend";
+      }
+      program {
+         signal: "elm,state,unselected"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "elm.text";
+         target: "label2";
+         target: "shadow1";
+         target: "shadow2";
+         target: "bar";
+         target: "bend";
+      }
+      program {
+         signal: "mouse,up,1"; source: "event";
+         action: SIGNAL_EMIT "elm,action,click" "elm";
+      }
+      
+      program {
+         signal: "elm,highlight,on"; source: "elm";
+         action: STATE_SET "selected" 0.0;
+         target: "highlight";
+      }
+      program {
+         signal: "elm,highlight,off"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "highlight";
+      }
+      
+      program {
+         signal:  "mouse,in"; source:  "event";
+         action:  SIGNAL_EMIT "elm,mouse,in" "elm";
+      }
+      program { name: "mouse,out";
+         signal:  "mouse,out"; source:  "event";
+         action:  SIGNAL_EMIT "elm,mouse,out" "elm";
+      }
+      
+      program { name: "st1";
+         signal: "elm,text,hidden"; source: "elm";
+         action: STATE_SET "notext" 0.0;
+         script {
+            new m = get_int(btmode);
+            m &= ~LABEL; set_int(btmode, m);
+            eval_mode(m);
+         }
+      }
+      program { name: "st2";
+         signal: "elm,text,visible"; source: "elm";
+         script {
+            new m = get_int(btmode);
+            m |= LABEL; set_int(btmode, m);
+            eval_mode(m);
+         }
+      }
+      program { name: "st3";
+         signal: "elm,icon,hidden"; source: "elm";
+         script {
+           new m = get_int(btmode);
+            m |= ICON; set_int(btmode, m);
+            eval_mode(m);
+         }
+      }
+      program { name: "st4";
+         signal: "elm,icon,visible"; source: "elm";
+         script {
+            new m = get_int(btmode);
+            m &= ~ICON; set_int(btmode, m);
+            eval_mode(m);
+         }
+      }
+      program { name: "st5";
+         signal: "elm,state,disabled"; source: "elm";
+         script {
+            new m = get_int(btmode);
+            m |= DISABLE; set_int(btmode, m);
+            eval_mode(m);
+         }
+      }
+      program { name: "st6";
+         signal: "elm,state,enabled"; source: "elm";
+         script {
+            new m = get_int(btmode);
+            m &= ~DISABLE; set_int(btmode, m);
+            eval_mode(m);
+         }
+      }
+      
+      program {
+         signal: "elm,state,moving"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "shadow1";
+         target: "shadow2";
+      }
+      
+      program {
+         signal: "elm,state,icon_set,forward"; source: "elm";
+         after: "icon_set,animation";
+      }
+      program {
+         signal: "elm,state,icon_set,backward"; source: "elm";
+         after: "icon_set,animation";
+      }
+      program { name: "icon_set,animation";
+         signal: "elm,state,icon_set"; source: "elm";
+         action: STATE_SET "animation" 0.0;
+         target: "icon_clip1";
+         target: "icon_clip2";
+         transition: LINEAR 0.2;
+         after: "icon_set,animation,done";
+      }
+      program { name: "icon_set,animation,done";
+         action: SIGNAL_EMIT "elm,state,icon_set,done" "elm";
+      }
+
+      program {
+         signal: "elm,state,icon,reset"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "icon_clip1";
+         target: "icon_clip2";
+      }
+
+      program {
+         signal: "elm,state,label_set,forward"; source: "elm";
+         after: "label_set,animation";
+      }
+      program {
+         signal: "elm,state,label_set,backward"; source: "elm";
+         after: "label_set,animation";
+      }
+      program { name: "label_set,animation";
+         signal: "elm,state,label_set"; source: "elm";
+         action: STATE_SET "animation" 0.0;
+         target: "text_clip1";
+         target: "text_clip2";
+         transition: LINEAR 0.2;
+         after: "label_set,animation,done";
+      }
+      program { name: "label_set,animation,done";
+         action: SIGNAL_EMIT "elm,state,label_set,done" "elm";
+      }
+
+      program {
+         signal: "elm,state,label,reset"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "text_clip1";
+         target: "text_clip2";
+      }
+   }
+#undef ICON
+#undef LABEL
+#undef MASK
+#undef DISABLE
+}
+
+// === item: style assumed to exist
+group { name: "elm/toolbar/item/item_horizontal";
+   inherit: "elm/toolbar/item/default";
+   parts {
+      part { name: "elm.swallow.icon";
+         description { state: "default" 0.0;
+            fixed: 1 0;
+            aspect_preference: VERTICAL;
+            align: 0.0 0.5;
+            rel1.offset: 2 2;
+            rel2.relative: 0.0 1.0;
+            rel2.offset: 2 -3;
+         }
+         description { state: "noicon" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+            rel1.offset: 1 0;
+            rel2.relative: 0.0 1.0;
+            rel2.offset: 1 -3;
+         }
+         description { state: "icononly" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+            rel2.relative: 1.0 1.0;
+            rel2.offset: -3 -3;
+            rel2.to_y: "icon_clip";
+         }
+      }
+      part { name: "elm.swallow.icon_new";
+         description { state: "default" 0.0;
+            aspect_preference: VERTICAL;
+            align: 0.0 0.5;
+            rel1.offset: 2 2;
+            rel2.relative: 0.0 1.0;
+            rel2.offset: 2 -3;
+         }
+         description { state: "noicon" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+            rel1.offset: 1 0;
+            rel2.relative: 0.0 1.0;
+            rel2.offset: 1 -3;
+         }
+         description { state: "icononly" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+            rel2.relative: 1.0 1.0;
+            rel2.offset: -3 -3;
+            rel2.to_y: "icon_clip";
+         }
+      }
+      part { name: "elm.text";
+         description { state: "default" 0.0;
+            rel1.offset: 1 2;
+            rel1.relative: 1.0 0.0;
+            rel1.to_x: "elm.swallow.icon";
+            rel2.offset: -5 -3;
+            align: 0.0 0.5;
+            color: 255 255 255 255;
+            color3: 0 0 0 128;
+            color_class: "toolbar_item";
+            text { font: FN; size: 10;
+               min: 1 1;
+               align: 0.0 0.5;
+               text_class: "toolbar_item";
+            }
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+            color_class: "toolbar_item_selected";
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            color: 21 21 21 255;
+            color3: 255 255 255 25;
+            color_class: "toolbar_item_disabled";
+         }
+         description { state: "noicon" 0.0;
+            inherit: "default" 0.0;
+            rel1.offset: 4 2;
+            rel1.relative: 0.0 0.0;
+            rel1.to: "icon_clip";
+            align: 0.5 0.5;
+         }
+         description { state: "noicon_disabled" 0.0;
+            inherit: "noicon" 0.0;
+            color: 21 21 21 255;
+            color3: 255 255 255 25;
+            color_class: "toolbar_item_disabled";
+         }
+         description { state: "icononly" 0.0;
+            inherit: "default" 0.0;
+            text.min: 0 0;
+            visible: 0;
+            fixed: 1 1;
+         }
+      }
+      part { name: "label2";
+         description { state: "default" 0.0;
+            rel1.offset: -2 -3;
+            text.align: 0.0 0.5;
+            align: 0.0 0.5;
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+         description { state: "noicon" 0.0;
+            inherit: "default" 0.0;
+         }
+         description { state: "noicon_disabled" 0.0;
+            inherit: "noicon" 0.0;
+         }
+      }
+      part { name: "elm.text_new";
+         description { state: "default" 0.0;
+            rel1.offset: 1 2;
+            rel1.relative: 1.0 0.0;
+            rel1.to_x: "elm.swallow.icon";
+            rel2.offset: -5 -3;
+            align: 0.0 0.5;
+            color: 255 255 255 255;
+            color3: 0 0 0 128;
+            color_class: "toolbar_item";
+            text { font: FN; size: 10;
+               min: 1 1;
+               align: 0.0 0.5;
+               text_class: "toolbar_item";
+            }
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+            color_class: "toolbar_item_selected";
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            color: 21 21 21 255;
+            color3: 255 255 255 25;
+            color_class: "toolbar_item_disabled";
+         }
+         description { state: "noicon" 0.0;
+            inherit: "default" 0.0;
+            rel1.offset: 4 2;
+            rel1.relative: 0.0 0.0;
+            rel1.to: "icon_clip";
+            align: 0.5 0.5;
+         }
+         description { state: "noicon_disabled" 0.0;
+            inherit: "noicon" 0.0;
+            color: 21 21 21 255;
+            color3: 255 255 255 25;
+            color_class: "toolbar_item_disabled";
+         }
+         description { state: "icononly" 0.0;
+            inherit: "default" 0.0;
+            text.min: 0 0;
+            visible: 0;
+            fixed: 1 1;
+         }
+      }
+      part { name: "label2_new";
+         description { state: "default" 0.0;
+            rel1.offset: -2 -3;
+            text.align: 0.0 0.5;
+            align: 0.0 0.5;
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+         description { state: "noicon" 0.0;
+            inherit: "default" 0.0;
+         }
+         description { state: "noicon_disabled" 0.0;
+            inherit: "noicon" 0.0;
+         }
+      }
+   }
+}
+
+// === item: style assumed to exist
+// XXX: vert vs horiz (should emit)
+// XXX: seriously... why do we have this style?
+group { name: "elm/toolbar/item/item_centered";
+   inherit: "elm/toolbar/item/default";
+   parts {
+   }
+}
+
+// === separator
+group { name: "elm/toolbar/separator/default";
+   images.image: "bevel_dark_in.png" COMP;
+   parts {
+      part { name: "base";
+         description { state: "default" 0.0;
+            min: 2 2;
+            max: 2 99999;
+            rel1.offset: 4 0;
+            rel2.offset: -5 -1;
+            image.normal: "bevel_dark_in.png";
+            image.border: 2 2 2 2;
+            fill.smooth: 0;
+         }
+         description { state: "vert" 0.0;
+            inherit: "default" 0.0;
+            max: 99999 2;
+            rel1.offset: 0 4;
+            rel2.offset: -1 -5;
+         }
+      }
+   }
+   programs {
+      program {
+         signal: "elm,orient,horizontal"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "base";
+      }
+      program {
+         signal: "elm,orient,vertical"; source: "elm";
+         action: STATE_SET "vert" 0.0;
+         target: "base";
+      }
+   }
+}
+
+// === item: just a regular object holder in the toolbar for any child
+group { name: "elm/toolbar/object/default";
+   images.image: "horizontal_separated_bar_small_glow.png" COMP;
+   parts {
+      part { name: "elm.swallow.object"; type: SWALLOW;
+         description { state: "default" 0.0;
+            rel1.offset: 2 2;
+            rel2.offset: -3 -3;
+         }
+      }
+      part { name: "highlight"; mouse_events: 0;
+         description { state: "default" 0.0;
+            rel1.offset: -3 -7;
+            rel1.relative: 0.0 1.0;
+            rel2.offset: 2 2;
+            image.normal: "horizontal_separated_bar_small_glow.png";
+            image.border: 4 4 4 4;
+            fill.smooth: 0;
+            visible: 0;
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+   }
+   programs {
+      program {
+         signal: "elm,highlight,on"; source: "elm";
+         action: STATE_SET "selected" 0.0;
+         target: "highlight";
+      }
+      program {
+         signal: "elm,highlight,off"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "highlight";
+      }
+   }
+}
+
+// === item: the more PANEL that slides out under the toolbar
+// XXX: vert vs horiz (should emit)
+group { name: "elm/toolbar/more/default";
+   images.image: "vgrad_med_lighter.png" COMP;
+   images.image: "bevel_out.png" COMP;
+   images.image: "shine.png" COMP;
+   images.image: "shadow_square_tiny.png" COMP;
+   parts {
+      part { name: "shadow"; mouse_events: 0;
+         description { state: "default" 0.0;
+            rel1.offset: -3 -2;
+            rel1.to: "base";
+            rel2.offset: 2 3;
+            rel2.to: "base";
+            image.normal: "shadow_square_tiny.png";
+            image.border: 6 6 6 6;
+            fill.smooth: 0;
+            visible: 0;
+         }
+         description { state: "open" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+         description { state: "open2" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+      part { name: "base";
+         description { state: "default" 0.0;
+            image.normal: "vgrad_med_lighter.png";
+            rel2.relative: 1.0 0.0;
+            rel1.offset: 2 2;
+            rel2.offset: -3 1;
+            fill.smooth: 0;
+            fixed: 1 1;
+            visible: 0;
+            TILED_HORIZ(120)
+         }
+         description { state: "open" 0.0;
+            inherit: "default" 0.0;
+            rel2.relative: 1.0 1.0;
+            rel2.offset: -3 -3;
+            visible: 1;
+         }
+         description { state: "open2" 0.0;
+            inherit: "default" 0.0;
+            rel2.relative: 1.0 2.0;
+            rel2.offset: -3 -3;
+            visible: 1;
+         }
+      }
+      part { name: "clipper"; type: RECT;
+         description { state: "default" 0.0;
+            rel1.to: "base";
+            rel2.to: "base";
+            fixed: 1 1;
+            visible: 0;
+         }
+         description { state: "open" 0.0;
+            inherit: "default" 0.0;
+            rel2.relative: 1.0 1.0;
+            visible: 1;
+         }
+         description { state: "open2" 0.0;
+            inherit: "default" 0.0;
+            rel2.relative: 1.0 0.5;
+            visible: 1;
+         }
+      }
+      part { name: "clipper2"; type: RECT;
+         description { state: "default" 0.0;
+            rel1.relative: 0.0 0.5;
+            rel1.to: "base";
+            rel2.to: "base";
+            fixed: 1 1;
+            visible: 0;
+         }
+         description { state: "open" 0.0;
+            inherit: "default" 0.0;
+            rel1.relative: 0.0 1.0;
+            visible: 1;
+         }
+         description { state: "open2" 0.0;
+            inherit: "default" 0.0;
+            rel1.relative: 0.0 0.5;
+            visible: 1;
+         }
+      }
+      part { name: "elm.swallow.content"; type: SWALLOW;
+         clip_to: "clipper";
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            rel1.to: "clipper";
+            rel2.to: "clipper";
+         }
+      }
+      part { name: "elm.swallow.content2"; type: SWALLOW;
+         clip_to: "clipper2";
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            rel1.to: "clipper2";
+            rel2.to: "clipper2";
+         }
+      }
+      part { name: "bevel"; mouse_events: 0;
+         description { state: "default" 0.0;
+            rel1.to: "base";
+            rel2.to: "base";
+            image.normal: "bevel_out.png";
+            image.border: 1 1 1 1;
+            image.middle: 0;
+            fill.smooth: 0;
+         }
+      }
+   }
+  programs {
+     program {
+        signal: "elm,state,open"; source: "elm";
+        action: STATE_SET "open" 0.0;
+        target: "shadow";
+        target: "base";
+        target: "clipper";
+        target: "clipper2";
+        transition: DECELERATE 0.15;
+     }
+     program {
+        signal: "elm,state,open2"; source: "elm";
+        action: STATE_SET "open2" 0.0;
+        target: "shadow";
+        target: "base";
+        target: "clipper";
+        target: "clipper2";
+        transition: DECELERATE 0.3;
+     }
+     program {
+        signal: "elm,state,close"; source: "elm";
+        action: STATE_SET "default" 0.0;
+        target: "shadow";
+        target: "base";
+        transition: DECELERATE 0.5;
+     }
+  }
+}

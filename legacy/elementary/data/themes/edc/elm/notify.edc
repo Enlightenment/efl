@@ -1,0 +1,188 @@
+group { name: "elm/notify/block_events/default";
+   parts {
+      part { name: "block_events"; type: RECT;
+         description { state: "default" 0.0;
+            color: 0 0 0 64;
+         }
+      }
+      program {
+         signal: "mouse,clicked,1"; source: "block_events";
+         action: SIGNAL_EMIT "elm,action,click" "elm";
+      }
+   }
+}
+
+group { name: "elm/notify/top/default";
+   images.image: "darken_rounded_square.png" COMP;
+   parts {
+      part { name: "clip"; type: RECT;
+         description { state: "default" 0.0;
+            color: 255 255 255 0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            color: 255 255 255 255;
+         }
+      }
+      part { name: "base";
+         clip_to: "clip";
+         description { state: "default" 0.0;
+            image.normal: "darken_rounded_square.png";
+            image.border: 15 15 15 15;
+            rel1.offset: 10 10;
+            rel2.offset: -10 -10;
+            rel1.relative: 0.0 -1.0;
+            rel2.relative: 1.0 0.0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            rel1.relative: 0.0 0.0;
+            rel2.relative: 1.0 1.0;
+         }
+      }
+      part { name: "elm.swallow.content"; type: SWALLOW;
+         clip_to: "clip";
+         description { state: "default" 0.0;
+            rel1.to: "base";
+            rel1.offset: 12 12;
+            rel2.to: "base";
+            rel2.offset: -13 -13;
+         }
+      }
+   }
+   programs {
+      program {
+         signal: "show"; source: "";
+         action: STATE_SET "visible" 0.0;
+         target: "clip";
+         target: "base";
+         transition: DECELERATE 0.5;
+      }
+      program {
+         signal: "hide"; source: "";
+         action: STATE_SET "default" 0.0;
+         target: "clip";
+         target: "base";
+      }
+      program {
+         signal: "elm,hide"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "clip";
+         target: "base";
+         transition: DECELERATE 0.5;
+      }
+   }
+}
+
+group { name: "elm/notify/bottom/default";
+   inherit: "elm/notify/top/default";
+   parts {
+      part { name: "base";
+         description { state: "default" 0.0;
+            rel1.offset: 10 10;
+            rel2.offset: -10 -10;
+            rel1.relative: 0.0 1.0;
+            rel2.relative: 1.0 2.0;
+         }
+      }
+   }
+}
+
+group { name: "elm/notify/left/default";
+   inherit: "elm/notify/top/default";
+   parts {
+      part { name: "base";
+         description { state: "default" 0.0;
+            rel1.offset: 10 10;
+            rel2.offset: -10 -10;
+            rel1.relative: -1.0 0.0;
+            rel2.relative: 0.0 1.0;
+         }
+      }
+   }
+}
+
+group { name: "elm/notify/right/default";
+   inherit: "elm/notify/top/default";
+   parts {
+      part { name: "base";
+         description { state: "default" 0.0;
+            rel1.offset: 10 10;
+            rel2.offset: -10 -10;
+            rel1.relative: 1.0 0.0;
+            rel2.relative: 2.0 1.0;
+         }
+      }
+   }
+}
+
+group { name: "elm/notify/top_left/default";
+   inherit: "elm/notify/top/default";
+   parts {
+      part { name: "base";
+         description { state: "default" 0.0;
+            rel1.offset: 10 10;
+            rel2.offset: -10 -10;
+            rel1.relative: 0.0 -1.0;
+            rel2.relative: 1.0 0.0;
+         }
+      }
+   }
+}
+
+group { name: "elm/notify/top_right/default";
+   inherit: "elm/notify/top/default";
+   parts {
+      part { name: "base";
+         description { state: "default" 0.0;
+            rel1.offset: 10 10;
+            rel2.offset: -10 -10;
+            rel1.relative: 0.0 -1.0;
+            rel2.relative: 1.0 0.0;
+         }
+      }
+   }
+}
+
+group { name: "elm/notify/bottom_left/default";
+   inherit: "elm/notify/top/default";
+   parts {
+      part { name: "base";
+         description { state: "default" 0.0;
+            rel1.offset: 10 10;
+            rel2.offset: -10 -10;
+            rel1.relative: 0.0 1.0;
+            rel2.relative: 1.0 2.0;
+         }
+      }
+   }
+}
+
+group { name: "elm/notify/bottom_right/default";
+   inherit: "elm/notify/top/default";
+   parts {
+      part { name: "base";
+         description { state: "default" 0.0;
+            rel1.offset: 10 10;
+            rel2.offset: -10 -10;
+            rel1.relative: 0.0 1.0;
+            rel2.relative: 1.0 2.0;
+         }
+      }
+   }
+}
+
+group { name: "elm/notify/center/default";
+   inherit: "elm/notify/top/default";
+   parts {
+      part { name: "base";
+         description { state: "default" 0.0;
+            rel1.offset: 10 10;
+            rel2.offset: -10 -10;
+            rel1.relative: 0.0 0.0;
+            rel2.relative: 1.0 1.0;
+         }
+      }
+   }
+}
+

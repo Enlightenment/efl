@@ -47,3 +47,4 @@ tags
 /config.cache
 *.gmo
 /config.cache-env
+/compile

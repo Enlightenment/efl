@@ -1,0 +1,389 @@
+group { name: "elm/label/base/default";
+   styles {
+      style { name: "label_style";
+         base: "font="FN" font_size=10 text_class=tb_plain align=center color=#ffffffff style=shadow,bottom shadow_color=#00000080";
+         tag: "br" "\n";
+         tag: "hilight" "+ font="FNBD" text_class=tb_light";
+         tag: "b" "+ font="FNBD" text_class=tb_light";
+      }
+   }
+   parts {
+      part { name: "label.text.clip"; type: RECT;
+         description { state: "default" 0.0;
+         }
+      }
+      part { name: "elm.text"; type: TEXTBLOCK;
+         clip_to: "label.text.clip";
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.relative: 0.0 0.0;
+            rel2.relative: 1.0 1.0;
+            text {
+               style: "label_style";
+               min: 0 1;
+            }
+         }
+      }
+   }
+}
+
+group { name: "elm/label/base/marker";
+   styles {
+      style { name: "label_style2";
+         base: "font="FNBD" font_size=10 text_class=tb_plain align=center color=#ffffffff style=shadow,bottom shadow_color=#00000080";
+         tag: "br" "\n";
+         tag: "hilight" "+ font="FNBD" color=#3399ff text_class=tb_light";
+         tag: "b" "+ font="FNBD" color=#3399ff text_class=tb_light";
+      }
+   }
+   parts {
+      part { name: "elm.text"; type: TEXTBLOCK;
+         scale: 1;
+         description { state: "default" 0.0;
+            text { style: "label_style2";
+               min: 1 1;
+            }
+         }
+      }
+   }
+}
+
+group { name: "elm/label/base/slide_long";
+   script {
+      public g_duration, g_stopslide, g_timer_id, g_anim_id;
+
+      public message(Msg_Type:type, id, ...) {
+         if ((type == MSG_FLOAT_SET) && (id == 0)) {
+            new Float:duration;
+            duration = getfarg(2);
+            set_float(g_duration, duration);
+         }
+      }
+      public slide_to_end_anim(val, Float:pos) {
+         new stopflag;
+         new id;
+         stopflag = get_int(g_stopslide);
+         if (stopflag == 1) return;
+         set_tween_state(PART:"elm.text", pos, "slide_begin", 0.0, "slide_end", 0.0);
+         if (pos >= 1.0) {
+            id = timer(0.5, "slide_to_begin", 1);
+            set_int(g_timer_id, id);
+         }
+      }
+      public slide_to_end() {
+         new stopflag;
+         new id;
+         new Float:duration;
+         stopflag = get_int(g_stopslide);
+         if (stopflag == 1) return;
+         duration = get_float(g_duration);
+         id = anim(duration, "slide_to_end_anim", 1);
+         set_int(g_anim_id, id);
+      }
+      public slide_to_begin() {
+         new stopflag;
+         new id;
+         stopflag = get_int(g_stopslide);
+         if (stopflag == 1) return;
+         set_state(PART:"elm.text", "slide_begin", 0.0);
+         id = timer(0.5, "slide_to_end", 1);
+         set_int(g_timer_id, id);
+      }
+      public start_slide() {
+         set_int(g_stopslide, 0);
+         set_state(PART:"elm.text", "slide_begin", 0.0);
+         slide_to_end();
+      }
+      public stop_slide() {
+         new id;
+         set_int(g_stopslide, 1);
+         id = get_int(g_anim_id);
+         cancel_anim(id);
+         id = get_int(g_timer_id);
+         cancel_timer(id);
+         set_state(PART:"elm.text", "default", 0.0);
+      }
+   }
+   parts {
+      part { name: "label.text.clip"; type: RECT;
+         description { state: "default" 0.0;
+         }
+      }
+      part { name: "elm.text"; type: TEXTBLOCK;
+         scale: 1;
+         clip_to: "label.text.clip";
+         description { state: "default" 0.0;
+            rel1.relative: 0.0 0.0;
+            rel2.relative: 1.0 1.0;
+            align: 0.0 0.0;
+            text {
+               style: "label_style";
+               min: 0 1;
+            }
+         }
+         description { state: "slide_end" 0.0;
+            inherit: "default" 0.0;
+            rel1.relative: 0.0 0.0;
+            rel2.relative: 0.0 1.0;
+            align: 1.0 0.0;
+            text {
+               style: "label_style";
+               min: 1 1;
+            }
+         }
+         description { state: "slide_begin" 0.0;
+            inherit: "default" 0.0;
+            rel1.relative: 1.0 0.0;
+            rel2.relative: 1.0 1.0;
+            align: 0.0 0.0;
+            text {
+               style: "label_style";
+               min: 1 1;
+            }
+         }
+      }
+   }
+   programs {
+      program { name: "start_slide";
+         signal: "elm,state,slide,start"; source: "elm"; 
+         script {
+            start_slide();
+         }
+      }
+      program { name: "stop_slide";
+         signal: "elm,state,slide,stop"; source: "elm";
+         script {
+            stop_slide();
+         }
+      }
+   }
+}
+
+
+group { name: "elm/label/base/slide_short";
+   script {
+      public g_duration, g_stopslide, g_timer_id, g_anim_id;
+
+      public message(Msg_Type:type, id, ...) {
+         if ((type == MSG_FLOAT_SET) && (id == 0)) {
+            new Float:duration;
+            duration = getfarg(2);
+            set_float(g_duration, duration);
+         }
+      }
+      public slide_to_end_anim(val, Float:pos) {
+         new stopflag;
+         new id;
+         stopflag = get_int(g_stopslide);
+         if (stopflag == 1) return;
+         set_tween_state(PART:"elm.text", pos, "slide_begin", 0.0, "slide_end", 0.0);
+         if (pos >= 1.0) {
+            id = timer(0.5, "slide_to_begin", 1);
+            set_int(g_timer_id, id);
+         }
+      }
+      public slide_to_end() {
+         new stopflag;
+         new id;
+         new Float:duration;
+         stopflag = get_int(g_stopslide);
+         if (stopflag == 1) return;
+         duration = get_float(g_duration);
+         id = anim(duration, "slide_to_end_anim", 1);
+         set_int(g_anim_id, id);
+      }
+      public slide_to_begin() {
+         new stopflag;
+         new id;
+         stopflag = get_int(g_stopslide);
+         if (stopflag == 1) return;
+         set_state(PART:"elm.text", "slide_begin", 0.0);
+         id = timer(0.5, "slide_to_end", 1);
+         set_int(g_timer_id, id);
+      }
+      public start_slide() {
+         set_int(g_stopslide, 0);
+         set_state(PART:"elm.text", "slide_begin", 0.0);
+         slide_to_end();
+      }
+      public stop_slide() {
+         new id;
+         set_int(g_stopslide, 1);
+         id = get_int(g_anim_id);
+         cancel_anim(id);
+         id = get_int(g_timer_id);
+         cancel_timer(id);
+         set_state(PART:"elm.text", "default", 0.0);
+      }
+   }
+   parts {
+      part { name: "label.text.clip"; type: RECT;
+         description { state: "default" 0.0;
+         }
+      }
+      part { name: "elm.text"; type: TEXTBLOCK;
+         scale: 1;
+         clip_to: "label.text.clip";
+         description { state: "default" 0.0;
+            rel1.relative: 0.0 0.0;
+            rel2.relative: 1.0 1.0;
+            align: 0.0 0.0;
+            text { style: "label_style";
+               min: 0 1;
+            }
+         }
+         description { state: "slide_end" 0.0;
+            inherit: "default" 0.0;
+            rel1.relative: 1.0 0.0;
+            rel2.relative: 1.0 1.0;
+            align: 1.0 0.0;
+            text { style: "label_style";
+               min: 1 1;
+            }
+         }
+         description { state: "slide_begin" 0.0;
+            inherit: "default" 0.0;
+            rel1.relative: 0.0 0.0;
+            rel2.relative: 0.0 1.0;
+            align: 0.0 0.0;
+            text { style: "label_style";
+               min: 1 1;
+            }
+         }
+      }
+   }
+   programs {
+      program { name: "start_slide";
+         signal: "elm,state,slide,start"; source: "elm";
+         script {
+            start_slide();
+         }
+      }
+      program { name: "stop_slide";
+         signal: "elm,state,slide,stop"; source: "elm";
+         script {
+            stop_slide();
+         }
+      }
+   }
+}
+
+group { name: "elm/label/base/slide_bounce";
+   script {
+      public g_duration, g_stopslide, g_timer_id, g_anim_id;
+
+      public message(Msg_Type:type, id, ...) {
+         if ((type == MSG_FLOAT_SET) && (id == 0)) {
+            new Float:duration;
+            duration = getfarg(2);
+            set_float(g_duration, duration);
+         }
+      }
+      public slide_to_end_anim(val, Float:pos) {
+         new stopflag;
+         new id;
+         stopflag = get_int(g_stopslide);
+         if (stopflag == 1) return;
+         set_tween_state(PART:"elm.text", pos, "slide_begin", 0.0, "slide_end", 0.0);
+         if (pos >= 1.0) {
+            id = timer(0.5, "slide_to_begin", 1);
+            set_int(g_timer_id, id);
+         }
+      }
+      public slide_to_end() {
+         new stopflag;
+         new id;
+         new Float:duration;
+         stopflag = get_int(g_stopslide);
+         if (stopflag == 1) return;
+         duration = get_float(g_duration);
+         id = anim(duration, "slide_to_end_anim", 1);
+         set_int(g_anim_id, id);
+      }
+      public slide_to_begin_anim(val, Float:pos) {
+         new stopflag;
+         new id;
+         stopflag = get_int(g_stopslide);
+         if (stopflag == 1) return;
+         set_tween_state(PART:"elm.text", pos, "slide_end", 0.0, "slide_begin", 0.0);
+         if (pos >= 1.0) {
+            id = timer(0.5, "slide_to_end", 1);
+            set_int(g_timer_id, id);
+         }
+      }
+      public slide_to_begin() {
+         new stopflag;
+         new id;
+         new Float:duration;
+         stopflag = get_int(g_stopslide);
+         if (stopflag == 1) return;
+         duration = get_float(g_duration);
+         id = anim(duration, "slide_to_begin_anim", 1);
+         set_int(g_anim_id, id);
+      }
+      public start_slide() {
+         set_int(g_stopslide, 0);
+         set_state(PART:"elm.text", "slide_begin", 0.0);
+         slide_to_end();
+      }
+      public stop_slide() {
+         new id;
+         set_int(g_stopslide, 1);
+         id = get_int(g_anim_id);
+         cancel_anim(id);
+         id = get_int(g_timer_id);
+         cancel_timer(id);
+         set_state(PART:"elm.text", "default", 0.0);
+      }
+   }
+   parts {
+      part { name: "label.text.clip"; type: RECT;
+         description { state: "default" 0.0;
+         }
+      }
+      part { name: "elm.text"; type: TEXTBLOCK;
+         scale: 1;
+         clip_to: "label.text.clip";
+         description { state: "default" 0.0;
+            rel1.relative: 0.0 0.0;
+            rel2.relative: 1.0 1.0;
+            align: 0.0 0.0;
+            text { style: "label_style";
+               min: 0 1;
+            }
+         }
+         description { state: "slide_end" 0.0;
+            inherit: "default" 0.0;
+            rel1.relative: 1.0 0.0;
+            rel2.relative: 1.0 1.0;
+            align: 1.0 0.0;
+            text { style: "label_style";
+               min: 1 1;
+            }
+         }
+         description { state: "slide_begin" 0.0;
+            inherit: "default" 0.0;
+            rel1.relative: 0.0 0.0;
+            rel2.relative: 0.0 1.0;
+            align: 0.0 0.0;
+            text { style: "label_style";
+               min: 1 1;
+            }
+         }
+      }
+   }
+   programs {
+      program { name: "start_slide";
+         signal: "elm,state,slide,start"; source: "elm";
+         script {
+            start_slide();
+         }
+      }
+      program { name: "stop_slide";
+         signal: "elm,state,slide,stop"; source: "elm";
+         script {
+            stop_slide();
+         }
+      }
+   }
+}

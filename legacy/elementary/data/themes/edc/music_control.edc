@@ -1,0 +1,118 @@
+group { name: "modules/music-control/icon";
+   max: 24 24;
+   images.image: "music_control_icon.png" COMP;
+   parts {
+      part { name: "image"; mouse_events: 0;
+         description { state: "default" 0.0;
+            aspect: 1.0 1.0; aspect_preference: BOTH;
+            image.normal: "music_control_icon.png";
+         }
+      }
+   }
+}
+
+group { name: "modules/music-control/main";
+   images.image: "music_control_icon.png" COMP;
+   parts {
+      part { name: "icon";
+         description { state: "default" 0.0;
+            aspect: 1.0 1.0; aspect_preference: BOTH;
+            image.normal: "music_control_icon.png";
+         }
+      }
+   }
+}
+
+group { name: "modules/music-control/popup";
+   min: 150 50;
+   images.image: "icon_prev.png" COMP;
+   images.image: "icon_next.png" COMP;
+   images.image: "icon_pause.png" COMP;
+   images.image: "icon_play.png" COMP;
+   script {
+      public message(Msg_Type:type, id, ...) {
+         new txt[128];
+         getsarg(2, txt, 128);
+         set_text(PART:"player_name", txt);
+      }
+   }
+   parts {
+      part { name: "player_name"; type: TEXT;
+         description { state: "default" 0;
+            text.size: 12;
+            text.text: "Music player";
+            text.font: FN;
+            rel1.relative: 0.0 0.0;
+            rel2.relative: 1.0 0.0;
+            rel2.offset: 0 16;
+         }
+      }
+      part { name: "previous_btn";
+         description { state: "default" 0;
+            aspect: 1.0 1.0; aspect_preference: BOTH;
+            rel1.to: "player_name";
+            rel1.relative: 0.0 1.0;
+            rel2.relative: 0.33 1.0;
+            image.normal: "icon_prev.png";
+         }
+      }
+      part { name: "play_btn";
+         description { state: "default" 0;
+            aspect: 1.0 1.0; aspect_preference: BOTH;
+            rel1.to: "player_name";
+            rel1.relative: 0.33 1.0;
+            rel2.relative: 0.66 1.0;
+            image.normal: "icon_pause.png";
+         }
+         description { state: "play" 0.0;
+            inherit: "default" 0.0;
+            image.normal: "icon_play.png";
+         }
+      }
+      part { name: "next_btn";
+         description { state: "default" 0;
+            aspect: 1.0 1.0; aspect_preference: BOTH;
+            rel1.to: "player_name";
+            rel1.relative: 0.66 1.0;
+            rel2.relative: 1.0 1.0;
+            image.normal: "icon_next.png";
+         }
+      }
+   }
+   programs {
+      program {
+         signal: "mouse,clicked,*"; source: "previous_btn";
+         action: SIGNAL_EMIT "btn,clicked" "previous";
+      }
+      program {
+         signal: "mouse,clicked,*"; source: "play_btn";
+         action: SIGNAL_EMIT "btn,clicked" "play";
+      }
+      program {
+         signal: "mouse,clicked,*"; source: "next_btn";
+         action: SIGNAL_EMIT "btn,clicked" "next";
+      }
+      program {
+         signal: "btn,state,image,play"; source: "play";
+         action: STATE_SET "play" 0.0;
+         transition: LINEAR 0.1;
+         target: "play_btn";
+      }
+      program {
+         signal: "btn,state,image,play,no_delay"; source: "play";
+         action: STATE_SET "play" 0.0;
+         transition: LINEAR 0.0;
+         target: "play_btn";
+      }
+      program {
+         signal: "btn,state,image,pause"; source: "play";
+         action: STATE_SET "default" 0.0;
+         transition: LINEAR 0.1;
+         target: "play_btn";
+      }
+      program {
+         signal: "mouse,clicked,*"; source: "player_name";
+         action: SIGNAL_EMIT "label,clicked" "player_name";
+      }
+   }
+}

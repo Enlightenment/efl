@@ -1,0 +1,745 @@
+group { name: "e/modules/ibar/separator/default";
+   images.image: "bevel_dark_in.png" COMP;
+   parts {
+      part { name: "base";
+         description { state: "default" 0.0;
+            min: 2 2;
+            max: 2 99999;
+            rel1.offset: 4 4;
+            rel2.offset: -5 -5;
+            image.normal: "bevel_dark_in.png";
+            image.border: 2 2 2 2;
+            fill.smooth: 0;
+         }
+      }
+   }
+}
+
+group { name: "e/modules/ibar/separator/horizontal";
+   inherit: "e/modules/ibar/separator/default";
+   parts {
+      part { name: "base";
+         description { state: "default" 0.0;
+            max: 99999 2;
+         }
+      }
+   }
+}
+
+group { name: "e/modules/ibox/icon";
+   alias: "e/modules/ibar/icon";
+   // 1 or 0 if u want an icon holder to raise when the mouse (or keyboard) hilights it
+   data.item: "raise_on_hilight" "0";
+//   data.item: "item_list" "item item2 item3";
+   images.image: "led_tiny_blue.png" COMP;
+   parts {
+      part { name: "item_clip"; type: RECT;
+         description { state: "default" 0.0;
+            rel1.offset: -100 -100;
+            rel2.offset: 99 99;
+            color: 255 255 255 255;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            color: 255 255 255 64;
+         }
+      }
+      part { name: "e.swallow.content"; type: SWALLOW;
+         clip_to: "item_clip";
+         description { state: "default" 0.0;
+            rel1.offset: 3 3;
+            rel2.offset: -4 -4;
+         }
+         description { state: "bounce1" 0.0;
+            inherit: "default" 0.0;
+            rel1.relative: 0.0 0.15;
+            rel2.relative: 1.0 1.15;
+         }
+         description { state: "bounce2" 0.0;
+            inherit: "default" 0.0;
+            rel1.relative: 0.0 -0.15;
+            rel2.relative: 1.0 0.85;
+         }
+      }
+      part { name: "indicator";
+         description { state: "default";
+            min: 10 10;
+            max: 10 10;
+            rel1.relative: 1.0 1.0;
+            rel1.offset: -5 -5;
+            rel2.relative: 1.0 1.0;
+            rel2.offset: -4 -4;
+            image.normal: "led_tiny_blue.png";
+            color: 255 255 255 0;
+            visible: 0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            color: 255 255 255 255;
+            visible: 1;
+         }
+      }
+      part { name: "over"; type: RECT;
+         description { state: "default" 0.0;
+            color: 0 0 0 0;
+         }
+      }
+   }
+   programs {
+//      program {
+//         signal: "e,action,exec"; source: "e";
+//      }
+//      program {
+//         signal: "e,action,start"; source: "e";
+//      }
+//      program { name: "go_active";
+//         signal: "e,state,focused"; source: "e";
+//      }
+//      program { name: "go_passive";
+//         signal: "e,state,unfocused"; source: "e";
+//      }
+//      program {
+//         signal: "e,action,show,label"; source: "e";
+//      }
+//      program {
+//         signal: "e,action,hide,label"; source: "e";
+//      }
+      program {
+         signal: "e,state,starting"; source: "e";
+         action: STATE_SET "disabled" 0.0;
+         target: "item_clip";
+      }
+      program {
+         signal: "e,state,started"; source: "e";
+         action: STATE_SET "default" 0.0;
+         target: "item_clip";
+      }
+      program { name: "ion";
+         signal: "e,state,on"; source: "e";
+         action: STATE_SET "visible" 0.0;
+         target: "indicator";
+         transition: ACCELERATE 0.1;
+      }
+      program { name: "ioff";
+         signal: "e,state,off"; source: "e";
+         action: STATE_SET "default" 0.0;
+         target: "indicator";
+         transition: DECELERATE 0.1;
+      }
+      program {
+         signal: "e,state,on"; source: "e";
+         action: STATE_SET "visible" 0.0;
+         target: "indicator";
+         transition: ACCELERATE 0.2;
+      }
+      program {
+         signal: "e,state,off"; source: "e";
+         action: STATE_SET "default" 0.0;
+         target: "indicator";
+         transition: DECELERATE 0.8;
+      }
+      program {
+         signal: "e,state,urgent"; source: "e";
+         action: STATE_SET "bounce1" 0.0;
+         target: "e.swallow.content";
+         after: "urg1";
+      }
+      program { name: "urg1";
+         action: STATE_SET "bounce2" 0.0;
+         transition: DECELERATE 0.2;
+         target: "e.swallow.content";
+         after: "urg2";
+      }
+      program { name: "urg2";
+         action: STATE_SET "bounce1" 0.0;
+         transition: ACCELERATE 0.2;
+         target: "e.swallow.content";
+         after: "urg1";
+      }
+      program {
+         signal: "e,state,not_urgent"; source: "e";
+         action: STATE_SET "default" 0.0;
+         target: "e.swallow.content";
+      }
+   }
+}
+
+group { name: "e/modules/ibar/menu";
+   images.image: "darken_rounded_square.png" COMP;
+   parts {
+      part { name: "sizer"; type: SPACER;
+         description { state: "default"; }
+         description { state: "hidden";
+            rel1.relative: 0.5 1.0;
+            rel2.relative: 0.5 1.0;
+            minmul: 0 0;
+         }
+      }
+      part { name: "clip"; type: RECT;
+         description { state: "default";
+            rel1.offset: -9999 -9999;
+            rel2.offset: 9999 9999;
+         }
+         description { state: "hidden";
+            inherit: "default";
+            color: 0 0 0 0;
+         }
+      }
+      part { name: "base"; mouse_events: 0;
+         clip_to: "clip";
+         description { state: "default" 0.0;
+            rel1.to: "sizer";
+            rel2.to: "sizer";
+            image.normal: "darken_rounded_square.png";
+            image.border: 15 15 15 15;
+         }
+      }
+      part { name: "e.box"; type: BOX;
+         clip_to: "clip";
+         description { state: "default";
+            rel1.to: "sizer";
+            rel1.offset: 12 12;
+            rel2.to: "sizer";
+            rel2.offset: -13 -13;
+            box { layout: "vertical";
+               padding: 0 0;
+               align: 0.5 0.5;
+               min: 1 1;
+            }
+         }
+      }
+   }
+   programs {
+      program { signal: "e,state,hidden"; source: "e";
+         action: STATE_SET "hidden" 0.0;
+         target: "sizer";
+         target: "clip";
+      }
+      program { signal: "e,action,show"; source: "e";
+         action: STATE_SET "default" 0.0;
+         target: "sizer";
+         target: "clip";
+         transition: DECELERATE 0.2;
+      }
+      program { signal: "e,action,hide"; source: "e";
+         action: STATE_SET "hidden" 0.0;
+         target: "sizer";
+         target: "clip";
+         transition: ACCELERATE 0.2;
+         after: "hide2";
+      }
+      program { name: "hide2";
+         in: 0.2 0.0;
+         action: SIGNAL_EMIT "e,action,hide,done" "";
+      }
+   }
+}
+
+group { name: "e/modules/ibar/menu/item";
+   images.image: "glow_small.png" COMP;
+   parts {
+      part { name: "icon"; type: SPACER;
+         description { state: "default";
+            rel1.offset: 2 2;
+            rel2.offset: 2 -3;
+            align: 0.0 0.5;
+            aspect: 1.0 1.0; aspect_preference: BOTH;
+            min: 48 48;
+            max: 48 48;
+         }
+      }
+      part { name: "glow"; mouse_events: 0;
+         description { state: "default" 0.0;
+            rel1.to: "e.swallow.icon";
+            rel2.to: "e.swallow.icon";
+            image.normal: "glow_small.png";
+            image.border: 7 7 7 7;
+            fill.smooth: 0;
+            color: 255 255 255 0;
+            visible: 0;
+         }
+         description { state: "focus" 0.0;
+            inherit: "default" 0.0;
+            rel1.offset: -4 -4;
+            rel2.offset: 3 3;
+            color: 255 255 255 255;
+            visible: 1;
+         }
+      }
+      part { name: "e.swallow.icon"; type: SWALLOW; mouse_events: 0;
+         clip_to: "icon_clip";
+         description { state: "default";
+            rel1.to: "icon";
+            rel2.to: "icon";
+         }
+         description { state: "focus";
+            inherit: "default";
+            rel1.offset: -2 -2;
+            rel2.offset: 1 1;
+         }
+      }
+      part { name: "e.text.title"; type: TEXT; mouse_events: 0;
+         effect: SHADOW BOTTOM;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.to_x: "icon";
+            rel1.relative: 1.0 0.0;
+            rel1.offset: 3 0;
+            rel2.offset: -3 -3;
+            color: 255 255 255 255;
+            color3: 0 0 0 128;
+            align: 0.0 0.0;
+            color_class: "menu_item";
+            min: 128 0;
+            text { font: FNBD; size: 10;
+               text: "window name thingy";
+               min: 0 1;
+               align: 0.0 0.5;
+               text_class: "menu_item";
+            }
+         }
+         description { state: "focus";
+            inherit: "default";
+            visible: 0;
+         }
+      }
+      part { name: "title2"; type: TEXT; mouse_events: 0;
+         effect: GLOW;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.offset: -2 -3;
+            rel1.to: "e.text.title";
+            rel2.offset: 2 1;
+            rel2.to: "e.text.title";
+            color: 51 153 255 255;
+            color2: 51 153 255 24;
+            color3: 51 153 255 18;
+            color_class: "menu_item_active";
+            min: 128 0;
+            text { font: FNBD; size: 10;
+               text_source: "e.text.title";
+               min: 0 1;
+               align: 0.0 0.5;
+               text_class: "menu_item";
+            }
+            visible: 0;
+         }
+         description { state: "focus" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+      part { name: "icon_clip"; type: RECT;
+         description { state: "default";
+            color: 255 255 255 200;
+            rel1.offset: -9999 -9999;
+            rel2.offset: 9999 9999;
+         }
+         description { state: "focus";
+            inherit: "default";
+            color: 255 255 255 255;
+         }
+      }
+      part { name: "event"; type: RECT;
+         description { state: "default";
+            color: 0 0 0 0;
+         }
+      }
+   }
+   programs {
+      program {
+         signal: "mouse,in"; source: "event";
+         action: STATE_SET "focus" 0.0;
+         target: "e.swallow.icon";
+         target: "e.text.title";
+         target: "title2";
+         target: "icon_clip";
+         target: "glow";
+         transition: ACCELERATE 0.2;
+      }
+      program {
+         signal: "mouse,out"; source: "event";
+         action: STATE_SET "default" 0.0;
+         target: "e.swallow.icon";
+         target: "e.text.title";
+         target: "title2";
+         target: "icon_clip";
+         target: "glow";
+         transition: DECELERATE 0.2;
+      }
+   }
+}
+
+group { name: "e/modules/ibox/icon_overlay";
+   alias: "e/modules/ibar/icon_overlay";
+   images.image: "darken_rounded_square.png" COMP;
+   script {
+      public urgent;
+   }
+   parts {
+      part { name: "item_clip"; type: RECT;
+         description { state: "default" 0.0;
+            rel1.offset: -100 -100;
+            rel2.offset: 99 99;
+            color: 255 255 255 255;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            color: 255 255 255 64;
+         }
+      }
+      part { name: "base"; type: SPACER;
+         description { state: "default" 0.0;
+            rel1.offset: 3 4;
+            rel2.offset: -4 -4;
+         }
+         description { state: "bounce1" 0.0;
+            inherit: "default" 0.0;
+            rel1.relative: 0.0 0.15;
+            rel2.relative: 1.0 1.15;
+         }
+         description { state: "bounce2" 0.0;
+            inherit: "default" 0.0;
+            rel1.relative: 0.0 -0.15;
+            rel2.relative: 1.0 0.85;
+         }
+      }
+      part { name: "background"; type: RECT;
+         clip_to: "item_clip";
+         description { state: "default" 0.0;
+            visible: 0;
+            rel1.to: "base";
+            rel2.to: "base";
+            color: 255 255 255 0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+            color: 255 255 255 255;
+         }
+         description { state: "hidden" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+            rel1.relative: -0.5 -0.5;
+            rel2.relative: 1.5 1.5;
+         }
+         description { state: "huge" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+            rel1.relative: -2.0  -2.0;
+            rel2.relative: 3.0  3.0;
+            color: 255 255 255 0;
+         }
+      }
+      part { name: "e.swallow.content"; type: SWALLOW;
+         clip_to: "background";
+         description {
+            state: "default" 0.0;
+            rel1.to: "background";
+            rel2.to: "background";
+         }
+      }
+      part { name: "bevel"; mouse_events: 0;
+         description { state: "default" 0.0;
+            rel1.offset: -10 -6;
+            rel1.to: "e.text.label";
+            rel2.offset: 9 5;
+            rel2.to: "e.text.label";
+            image.normal: "darken_rounded_square.png";
+            image.border: 15 15 15 15;
+            fill.smooth: 0;
+            fixed: 1 1;
+            color: 255 255 255 0;
+            visible: 0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            color: 255 255 255 255;
+            visible: 1;
+         }
+      }
+      part { name: "e.text.label"; type: TEXT; mouse_events: 0;
+         effect: SHADOW BOTTOM;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.relative: 0.0 1.0;
+            rel2.relative: 1.0 1.0;
+            color: 255 255 255 0;
+            color3: 0 0 0 0;
+            color_class: "module_label";
+            text { font: FN; size: 10;
+               min: 1 1;
+               align: 0.5 0.5;
+               text_class: "module_normal";
+            }
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            rel1.relative: 0.0 0.5;
+            rel2.relative: 1.0 0.5;
+            color: 255 255 255 255;
+            color3: 0 0 0 128;
+         }
+      }
+   }
+   programs {
+//      program {
+//         signal: "e,action,exec"; source: "e";
+//      }
+//      program {
+//         signal: "e,action,start"; source: "e";
+//      }
+      program {
+         signal: "load"; source: "";
+         script {
+            set_int(urgent, 0);
+         }
+      }
+      program { name: "go_active";
+         signal: "e,state,focused"; source: "e";
+         action: STATE_SET "visible" 0.0;
+         target: "background";
+         after: "go_active2";
+      }
+      program { name: "go_active2";
+         action: STATE_SET "hidden" 0.0;
+         transition: LINEAR 0.5;
+         target: "background";
+         after: "go_active";
+      }
+      program { name: "go_passive";
+         signal: "e,state,unfocused"; source: "e";
+         action: ACTION_STOP;
+         target: "go_active";
+         target: "go_active2";
+         after: "go_passive2";
+      }
+      program {
+         signal: "e,action,show,label"; source: "e";
+         action: STATE_SET "visible" 0.0;
+         transition: SINUSOIDAL 0.5;
+         target: "e.text.label";
+         target: "bevel";
+      }
+      program {
+         signal: "e,action,hide,label"; source: "e";
+         action: STATE_SET "default" 0.0;
+         transition: SINUSOIDAL 1.0;
+         target: "e.text.label";
+         target: "bevel";
+      }
+      program { name: "go_passive2";
+         action: STATE_SET "default" 0.0;
+         target: "background";
+         script {
+            if (get_int(urgent) == 1) {
+               run_program(PROGRAM:"go_urgent");
+            } else {
+               run_program(PROGRAM:"go_not_urgent");
+            }
+         }
+      }
+      program {
+         signal: "e,state,urgent"; source: "e";
+         script {
+            set_int(urgent, 1);
+         }
+      }
+      program { name: "go_urgent";
+         signal: "e,state,urgent"; source: "e";
+         action: STATE_SET "disabled" 0.0;
+         target: "item_clip";
+      }
+      program {
+         signal: "e,state,not_urgent"; source: "e";
+         script {
+            set_int(urgent, 0);
+         }
+      }
+      program { name: "go_not_urgent";
+         signal: "e,state,not_urgent"; source: "e";
+         action: STATE_SET "default" 0.0;
+         target: "item_clip";
+      }
+      program {
+         signal: "e,action,exec"; source: "e";
+         after: "exec_start";
+      }
+      program { name: "exec_start";
+         signal: "e,action,start"; source: "e";
+         action: ACTION_STOP;
+         target: "go_active";
+         target: "go_active2";
+         target: "go_passive";
+         target: "go_passive2";
+         target: "go_big";
+         target: "go_big2";
+         after: "go_big";
+      }
+      program { name: "go_big";
+         action: STATE_SET "visible" 0.0;
+         target: "background";
+         after: "go_big2";
+      }
+      program { name: "go_big2";
+         action: STATE_SET "huge" 0.0;
+         transition: LINEAR 0.5;
+         target: "background";
+      }
+   }
+}
+
+group { name: "e/modules/ibox/drop";
+   alias: "e/modules/ibar/drop";
+   images.image: "outline_glow.png" COMP;
+   images.image: "diagonal_stripes.png" COMP;
+   parts {
+      part { name: "base"; mouse_events: 0;
+         description { state: "default" 0.0;
+            rel1.offset: 2 2;
+            rel2.offset: -3 -3;
+            image.normal: "outline_glow.png";
+            image.border: 4 4 4 4;
+            image.middle: 0;
+            fill.smooth: 0;
+         }
+      }
+      part { name: "pat"; mouse_events: 0;
+         description { state: "default" 0.0;
+            rel1.to: "base";
+            rel1.offset: 1 1;
+            rel2.offset: -2 -2;
+            rel2.to: "base";
+            image.normal: "diagonal_stripes.png";
+            color: 255 255 255 25;
+            TILED_PATTERN(240, 240)
+         }
+      }
+   }
+}
+
+group { name: "e/modules/ibox/drop_overlay";
+   alias: "e/modules/ibar/drop_overlay";
+   images.image: "mini_blue_glow_arrow_0.png" COMP;
+   images.image: "mini_blue_glow_arrow_1.png" COMP;
+   images.image: "mini_blue_glow_arrow_2.png" COMP;
+   images.image: "mini_blue_glow_arrow_3.png" COMP;
+   parts {
+      part { name: "drop0"; mouse_events: 0;
+         description { state: "default" 0.0;
+            image.normal: "mini_blue_glow_arrow_0.png";
+            rel1.offset: -10 -10;
+            rel1.relative: 0.0 0.0;
+            rel2.offset: -10 -10;
+            rel2.relative: 0.0 0.0;
+            align: 0.0 0.0;
+            min: 10 10;
+            fixed: 1 1;
+            visible: 0;
+         }
+         description { state: "active" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+         description { state: "hidden" 0.0;
+            inherit: "default" 0.0;
+            rel1.offset: 11 11;
+            rel2.offset: 11 11;
+            min: 1 1;
+            color: 255 255 255 0;
+         }
+      }
+      part { name: "drop1"; mouse_events: 0;
+         description { state: "default" 0.0;
+            image.normal: "mini_blue_glow_arrow_1.png";
+            rel1.offset: 9 -10;
+            rel1.relative: 1.0 0.0;
+            rel2.offset: 9 -10;
+            rel2.relative: 1.0 0.0;
+            align: 1.0 0.0;
+            min: 10 10;
+            fixed: 1 1;
+            visible: 0;
+         }
+         description { state: "active" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+         description { state: "hidden" 0.0;
+            inherit: "default" 0.0;
+            rel1.offset: -12 11;
+            rel2.offset: -12 11;
+            min: 1 1;
+            color: 255 255 255 0;
+         }
+      }
+      part { name: "drop2"; mouse_events: 0;
+         description { state: "default" 0.0;
+            image.normal: "mini_blue_glow_arrow_2.png";
+            rel1.offset: 9 9;
+            rel1.relative: 1.0 1.0;
+            rel2.offset: 9 9;
+            rel2.relative: 1.0 1.0;
+            align: 1.0 1.0;
+            min: 10 10;
+            fixed: 1 1;
+            visible: 0;
+         }
+         description { state: "active" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+         description { state: "hidden" 0.0;
+            inherit: "default" 0.0;
+            rel1.offset: -12 -12;
+            rel2.offset: -12 -12;
+            min: 1 1;
+            color: 255 255 255 0;
+         }
+      }
+      part { name: "drop3"; mouse_events: 0;
+         description { state: "default" 0.0;
+            image.normal: "mini_blue_glow_arrow_3.png";
+            rel1.offset: -10 9;
+            rel1.relative: 0.0 1.0;
+            rel2.offset: -10 9;
+            rel2.relative: 0.0 1.0;
+            align: 0.0 1.0;
+            min: 10 10;
+            fixed: 1 1;
+            visible: 0;
+         }
+         description { state: "active" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+         description { state: "hidden" 0.0;
+            inherit: "default" 0.0;
+            rel1.offset: 11 -12;
+            rel2.offset: 11 -12;
+            min: 1 1;
+            color: 255 255 255 0;
+         }
+      }
+   }
+   programs {
+      program { name: "drop1";
+         signal: "show"; source: "";
+         action: STATE_SET "active" 0.0;
+         target: "drop0";
+         target: "drop1";
+         target: "drop2";
+         target: "drop3";
+         after: "drop2";
+      }
+      program { name: "drop2";
+         action: STATE_SET "hidden" 0.0;
+         transition: LINEAR 0.5;
+         target: "drop0";
+         target: "drop1";
+         target: "drop2";
+         target: "drop3";
+         after: "drop1";
+      }
+   }
+}

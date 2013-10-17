@@ -1,0 +1,7 @@
+color_classes {
+   color_class {
+      name: "comp_focus-out_color";
+      color: 253 253 253 255;
+      color3: 0 0 0 0;
+   }
+}

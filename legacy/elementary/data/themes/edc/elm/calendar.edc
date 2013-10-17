@@ -1,0 +1,534 @@
+#define CIT_STYLES\
+      style { name: "calendar_date_style";\
+         base: "font="FN" font_size=10 color=#ffffff style=shadow,bottom shadow_color=#00000080 align=center";\
+      }\
+      style { name: "calendar_date_holiday_style";\
+         base: "font="FN" font_size=10 color=#808080 style=shadow,bottom shadow_color=#00000080 align=center";\
+      }\
+      style { name: "calendar_date_today_style";\
+         base: "font="FN" font_size=10 color=#3399ff style=glow glow_color=#3399ff18 align=center";\
+      }\
+
+#define CAL_SPIN(_sufix, _signal_sufix, _text, _relative)\
+      part { name: "left_bt"#_sufix; type: RECT;\
+         scale: 1;\
+         description { state: "default" 0.0;\
+            fixed: 1 1;\
+            rel1 { to: #_relative;\
+               offset: 0 0;\
+            }\
+            rel2 { to: #_relative;\
+               offset: 0 -1;\
+            }\
+            align: 0.0 0.5;\
+            min: 15 15;\
+            max: 15 15;\
+            color: 0 0 0 0;\
+         }\
+      }\
+      part { name: "left_bt"#_sufix"_over"; repeat_events: 1;\
+         scale: 1;\
+         description { state: "default" 0.0;\
+            min: 15 15;\
+            max: 15 15;\
+            align: 0.5 0.5;\
+            rel1.to: "left_bt"#_sufix;\
+            rel2.to: "left_bt"#_sufix;\
+            image.normal: "sym_left_light_normal.png";\
+         }\
+         description { state: "rtl" 0.0;\
+            inherit: "default" 0.0;\
+            image.normal: "sym_right_light_normal.png";\
+         }\
+         description { state: "clicked" 0.0;\
+            inherit: "default" 0.0;\
+            image.normal: "sym_left_glow_normal.png";\
+         }\
+         description { state: "clicked_rtl" 0.0;\
+            inherit: "default" 0.0;\
+            image.normal: "sym_right_glow_normal.png";\
+         }\
+      }\
+      part { name: "right_bt"#_sufix; type: RECT;\
+         scale: 1;\
+         description { state: "default" 0.0;\
+            fixed: 1 1;\
+            rel1 { to: #_relative;\
+               offset: -1 0;\
+            }\
+            rel2 { to: #_relative;\
+               offset: -1 -1;\
+            }\
+            align: 1.0 0.5;\
+            min: 15 15;\
+            max: 15 15;\
+            color: 0 0 0 0;\
+         }\
+      }\
+      part { name: "right_bt"#_sufix"_over"; repeat_events: 1;\
+         scale: 1;\
+         description { state: "default" 0.0;\
+            min: 15 15;\
+            max: 15 15;\
+            rel1.to: "right_bt"#_sufix;\
+            rel2.to: "right_bt"#_sufix;\
+            image.normal: "sym_right_light_normal.png";\
+         }\
+         description { state: "rtl" 0.0;\
+            inherit: "default" 0.0;\
+            image.normal: "sym_left_light_normal.png";\
+         }\
+         description { state: "clicked" 0.0;\
+            inherit: "default" 0.0;\
+            image.normal: "sym_right_glow_normal.png";\
+         }\
+         description { state: "clicked_rtl" 0.0;\
+            inherit: "default" 0.0;\
+            image.normal: "sym_left_glow_normal.png";\
+         }\
+      }\
+      part { name: #_text; type: TEXT; mouse_events: 0;\
+         effect: SHADOW BOTTOM; \
+         scale: 1;\
+         description { state: "default" 0.0;\
+            fixed: 1 1;\
+            rel1 { relative: 1.0 0.0;\
+               to: "left_bt"#_sufix;\
+            }\
+            rel2 { relative: 0.0 1.0;\
+               to: "right_bt"#_sufix;\
+            }\
+            color: FN_COL_DEFAULT;\
+            text { font: FNBD; size: 10;\
+               min: 0 1;\
+            }\
+         }\
+      }\
+      programs {\
+         program {\
+            signal: "mouse,down,1"; source: "left_bt"#_sufix;\
+            action: SIGNAL_EMIT "elm,action,decrement,start"#_signal_sufix "elm";\
+         }\
+         program {\
+            signal: "mouse,up,1"; source: "left_bt"#_sufix;\
+            action: SIGNAL_EMIT "elm,action,stop"#_signal_sufix "elm"; \
+         }\
+         program { name:   "left_bt"#_sufix"_click";\
+            signal: "mouse,down,1"; source: "left_bt"#_sufix;\
+            script {\
+               if (get_int(rtl) == 1)\
+                 set_state(PART:"left_bt"#_sufix"_over", "clicked_rtl", 0.0);\
+               else\
+                 set_state(PART:"left_bt"#_sufix"_over", "clicked", 0.0);\
+            }\
+         }\
+         program { name:   "left_bt"#_sufix"_unclick";\
+            signal: "mouse,up,1"; source: "left_bt"#_sufix;\
+            script {\
+               if (get_int(rtl) == 1)\
+                 set_state(PART:"left_bt"#_sufix"_over", "rtl", 0.0);\
+               else\
+                 set_state(PART:"left_bt"#_sufix"_over", "default", 0.0);\
+            }\
+         }\
+         program {\
+            signal: "mouse,down,1"; source: "right_bt"#_sufix;\
+            action: SIGNAL_EMIT "elm,action,increment,start"#_signal_sufix "elm";\
+         }\
+         program {\
+            signal: "mouse,up,1"; source: "right_bt"#_sufix;\
+            action: SIGNAL_EMIT "elm,action,stop"#_signal_sufix "elm";     \
+         }\
+         program { name:   "right_bt"#_sufix"_click";\
+            signal: "mouse,down,1"; source: "right_bt"#_sufix;\
+            script {\
+               if (get_int(rtl) == 1)\
+                 set_state(PART:"right_bt"#_sufix"_over", "clicked_rtl", 0.0);\
+               else\
+                 set_state(PART:"right_bt"#_sufix"_over", "clicked", 0.0);\
+            }\
+         }\
+         program { name:   "right_bt"#_sufix"_unclick";\
+            signal: "mouse,up,1"; source: "right_bt"#_sufix;\
+            script {\
+               if (get_int(rtl) == 1)\
+                 set_state(PART:"right_bt"#_sufix"_over", "rtl", 0.0);\
+               else\
+                 set_state(PART:"right_bt"#_sufix"_over", "default", 0.0);\
+            }\
+         }\
+         program { name:   "rtl"#_sufix;\
+            signal: "edje,state,rtl"; source: "edje";\
+            script {\
+               set_int(rtl, 1);\
+               set_state(PART:"left_bt"#_sufix"_over", "rtl", 0.0);\
+               set_state(PART:"right_bt"#_sufix"_over", "rtl", 0.0);\
+            }\
+         }\
+         program { name:   "ltr"#_sufix;\
+            signal: "edje,state,ltr"; source: "edje";\
+            script {\
+               set_int(rtl, 0);\
+               set_state(PART:"left_bt"#_sufix"_over", "default", 0.0);\
+               set_state(PART:"right_bt"#_sufix"_over", "default", 0.0);\
+            }\
+         }\
+      }
+
+#define CH(_pos) \
+   part { name: "ch_"#_pos".base"; type: SPACER; \
+      description { state: "default" 0.0; \
+         rel1 { \
+            relative: (_pos % 7 / 7) 0.0; \
+            to: "header"; \
+         } \
+         rel2 { \
+            relative: (_pos % 7 / 7 + 1 / 7) 1.0; \
+            to: "header"; \
+         } \
+      } \
+   } \
+   part { name: "ch_"#_pos".text"; type: TEXT; mouse_events: 0; \
+      effect: SHADOW BOTTOM; \
+      scale: 1; \
+      clip_to: "ch_"#_pos".clipper"; \
+      description { state: "default" 0.0; \
+         rel1.to: "ch_"#_pos".base"; \
+         rel2.to: "ch_"#_pos".base"; \
+         color: 21 21 21 255;\
+         color3: 255 255 255 25;\
+         text { font: FN; size: 8; \
+            min: 1 1; \
+         } \
+      } \
+   } \
+   part { name: "ch_"#_pos".clipper"; type: RECT; \
+      description { state: "default" 0.0; \
+         rel1.to: "ch_"#_pos".base"; \
+         rel2.to: "ch_"#_pos".base"; \
+      } \
+   }
+
+#define CIT(_pos) \
+   part { name: "cit_"#_pos".rect"; type: SPACER; \
+      description { state: "default" 0.0; \
+         rel1 { \
+            relative: (_pos % 7 / 7) \
+            (_pos / 7 / 6 - _pos % 7 / 7 / 6); \
+            to: "base"; \
+         } \
+         rel2 { \
+            relative: (_pos % 7 / 7 + 1 / 7) \
+            (_pos / 7 / 6 + 1 / 6 - _pos % 7 / 7 / 6); \
+            to: "base"; \
+         } \
+      } \
+   } \
+   part { name: "cit_"#_pos".event"; type: RECT; repeat_events: 1; \
+      description { state: "default" 0.0; \
+         rel1.to: "cit_"#_pos".rect"; \
+         rel2.to: "cit_"#_pos".rect"; \
+         color: 0 0 0 0; \
+      } \
+   } \
+   part { name: "cit_"#_pos".pat"; mouse_events: 0; \
+      description { state: "default" 0.0; \
+         rel1.to: "cit_"#_pos".selected"; \
+         rel1.offset: 1 1; \
+         rel2.to: "cit_"#_pos".selected"; \
+         rel2.offset: -2 -2; \
+         image.normal: "diagonal_stripes.png"; \
+         color: 255 255 255 25; \
+         TILED_PATTERN(240, 240) \
+         visible: 0; \
+      } \
+      description { state: "selected" 0.0; \
+         inherit: "default" 0.0; \
+         visible: 1; \
+      } \
+   } \
+   part { name: "cit_"#_pos".selected"; mouse_events: 0; \
+      description { state: "default" 0.0; \
+         rel1.to: "cit_"#_pos".rect"; \
+         rel2.to: "cit_"#_pos".rect"; \
+         image.normal: "outline_glow.png"; \
+         image.border: 4 4 4 4; \
+         visible: 0; \
+      } \
+      description { state: "selected" 0.0; \
+         inherit: "default" 0.0; \
+         visible: 1; \
+      } \
+   } \
+   part { name: "cit_"#_pos".selected2"; mouse_events: 0; \
+      description { state: "default" 0.0; \
+         rel1.to: "cit_"#_pos".rect"; \
+         rel2.to: "cit_"#_pos".rect"; \
+         image.normal: "outline_glow.png"; \
+         image.border: 4 4 4 4; \
+         visible: 0; \
+      } \
+      description { state: "hilighted" 0.0; \
+         inherit: "default" 0.0; \
+         color: 255 255 255 128; \
+         visible: 1; \
+      } \
+   } \
+   part { name: "cit_"#_pos".text"; type: TEXTBLOCK; mouse_events: 0; \
+      scale: 1; \
+      description { state: "default" 0.0; \
+         rel1.to: "cit_"#_pos".rect"; \
+         rel2.to: "cit_"#_pos".rect"; \
+         text.style: "calendar_date_style"; \
+         text.min: 1 1; \
+      } \
+      description { state: "holiday" 0.0; \
+         inherit: "default" 0.0; \
+         text.style: "calendar_date_holiday_style"; \
+      } \
+      description { state: "today" 0.0; \
+         inherit: "default" 0.0; \
+         text.style: "calendar_date_today_style"; \
+      } \
+   } \
+   part { name: "cit_"#_pos".check"; mouse_events: 0; \
+      scale: 1; \
+      description { state: "default" 0.0; \
+         fixed: 1 1; \
+         rel1 { \
+            to: "cit_"#_pos".rect"; \
+            relative: 0.6 0.5; \
+         } \
+         rel2 { \
+            to: "cit_"#_pos".rect"; \
+            relative: 0.6 0.5; \
+         } \
+         min: 16 16; \
+         max: 16 16; \
+         aspect: 1 1; \
+         align: 0.0 1.0;\
+         image.normal: "icon_border_remember.png"; \
+         visible: 0; \
+      } \
+      description { state: "visible" 0.0; \
+         inherit: "default" 0.0; \
+         visible: 1; \
+      } \
+   } \
+   part { name: "cit_"#_pos".access"; type: RECT; repeat_events: 1; \
+      description { state: "default" 0.0; \
+         rel1.to: "cit_"#_pos".event"; \
+         rel2.to: "cit_"#_pos".event"; \
+         color: 0 0 0 0; \
+      } \
+   } \
+   programs { \
+      program { \
+         name:    "cit_"#_pos".go_active"; \
+         signal:  "cit_"#_pos",selected"; \
+         source:  "elm"; \
+         action:  STATE_SET "selected" 0.0; \
+         target:  "cit_"#_pos".pat"; \
+         target:  "cit_"#_pos".selected"; \
+      } \
+      program { \
+         name:    "cit_"#_pos".go_passive"; \
+         signal:  "cit_"#_pos",unselected"; \
+         source:  "elm"; \
+         action:  STATE_SET "default" 0.0; \
+         target:  "cit_"#_pos".pat"; \
+         target:  "cit_"#_pos".selected"; \
+      } \
+      program { \
+         name:    "cit_"#_pos".is_today"; \
+         signal:  "cit_"#_pos",today"; \
+         source:  "elm"; \
+         action:  STATE_SET "today" 0.0; \
+         target:  "cit_"#_pos".text"; \
+      } \
+      program { \
+         name:    "cit_"#_pos".not_today"; \
+         signal:  "cit_"#_pos",not_today"; \
+         source:  "elm"; \
+         action:  STATE_SET "default" 0.0; \
+         target:  "cit_"#_pos".text"; \
+      } \
+      program { \
+         source: "cit_"#_pos".clicked"; \
+         signal: "mouse,down,1"; \
+         source: "cit_"#_pos".event"; \
+         action:  STATE_SET "hilighted" 0.0; \
+         target:  "cit_"#_pos".selected2"; \
+      } \
+      program { \
+         source: "cit_"#_pos".clicked"; \
+         signal: "mouse,up,1"; \
+         source: "cit_"#_pos".event"; \
+         action:  STATE_SET "default" 0.0; \
+         target:  "cit_"#_pos".selected2"; \
+      } \
+      program { \
+         source: "cit_"#_pos".clicked"; \
+         signal: "mouse,clicked,1"; \
+         source: "cit_"#_pos".event"; \
+         action: SIGNAL_EMIT "elm,action,selected" #_pos; \
+      } \
+      program { \
+         name:    "cit_"#_pos".clear"; \
+         signal:  "cit_"#_pos",clear"; \
+         source:  "elm"; \
+         action:  STATE_SET "default" 0.0; \
+         target:  "cit_"#_pos".check"; \
+         after:   "cit_"#_pos".holiday_clear"; \
+      } \
+      program { \
+         name:    "cit_"#_pos".holiday_clear"; \
+         script { \
+            new st[31]; \
+            new Float:vl; \
+            get_state(PART:"cit_"#_pos".text", st, 30, vl); \
+            if (!strcmp(st, "holiday")) \
+              set_state(PART:"cit_"#_pos".text", "default", 0.0); \
+         } \
+      } \
+      program { \
+         name:    "cit_"#_pos".checked"; \
+         signal:  "cit_"#_pos",checked"; \
+         source:  "elm"; \
+         action:  STATE_SET "visible" 0.0; \
+         target:  "cit_"#_pos".check"; \
+      } \
+      program { \
+         name:    "cit_"#_pos".holiday"; \
+         signal:  "cit_"#_pos",holiday"; \
+         source:  "elm"; \
+         script { \
+            new st[31]; \
+            new Float:vl; \
+            get_state(PART:"cit_"#_pos".text", st, 30, vl); \
+            if (strcmp(st, "today")) \
+              set_state(PART:"cit_"#_pos".text", "holiday", 0.0); \
+         } \
+      } \
+   }
+
+group { name: "elm/calendar/base/default";
+   images.image: "sym_left_light_normal.png" COMP;
+   images.image: "sym_right_light_normal.png" COMP;
+   images.image: "sym_left_glow_normal.png" COMP;
+   images.image: "sym_right_glow_normal.png" COMP;
+   images.image: "icon_border_remember.png" COMP;
+   images.image: "outline_glow.png" COMP;
+   images.image: "diagonal_stripes.png" COMP;
+   script {
+      public rtl;
+   }
+   styles {
+      CIT_STYLES
+   }
+   parts {
+      part { name: "bg"; type: SPACER;
+         description { state: "default" 0.0;
+            rel1.offset: 1 1;
+            rel2.offset: -2 -2;
+         }
+      }
+      part { name: "spinner-base1"; type: SPACER;
+         description { state: "default" 0.0;
+            min: 24 16;
+            max: 999999 16;
+            rel1.to: "bg";
+            rel2.to: "bg";
+            rel2.relative: 1.0 (1/8);
+            align: 0.5 0.0;
+         }
+      }
+      part { name: "table-base"; type: SPACER;
+         description { state: "default" 0.0;
+            min: 70 60;
+            rel1.to_x: "bg";
+            rel1.to_y: "spinner-base1";
+            rel1.offset: 3 0;
+            rel1.relative: 0.0 1.0;
+            rel2.to: "bg";
+            rel2.offset: -4 -4;
+         }
+      }
+      part { name: "header"; type: SPACER;
+         description { state: "default" 0.0;
+            rel1.to: "table-base";
+            rel2.to: "table-base";
+            rel2.relative: 1.0 (1/7);
+            align: 0.5 0.0;
+            min: 0 16;
+         }
+      }
+      part { name: "header_separator"; mouse_events:  0;
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            rel1.to: "header";
+            rel1.relative: 0.0 1.0;
+            rel1.offset: 0 -2;
+            rel2.to: "header";
+            image.normal: "separator_horiz.png";
+            fill.smooth: 0;
+         }
+      }
+      part { name: "base"; type: SPACER;
+         description { state: "default" 0.0;
+            rel1.to_x: "table-base";
+            rel1.to_y: "header";
+            rel1.relative: 0.0 1.0;
+            rel1.offset: 3 0;
+            rel2.to: "table-base";
+            rel2.offset: -3 0;
+         }
+      }
+
+      CAL_SPIN(,,month_text, spinner-base1)
+      CH(0)   CH(1)   CH(2)   CH(3)   CH(4)   CH(5)   CH(6)
+      CIT(0)  CIT(1)  CIT(2)  CIT(3)  CIT(4)  CIT(5)  CIT(6)
+      CIT(7)  CIT(8)  CIT(9)  CIT(10) CIT(11) CIT(12) CIT(13)
+      CIT(14) CIT(15) CIT(16) CIT(17) CIT(18) CIT(19) CIT(20)
+      CIT(21) CIT(22) CIT(23) CIT(24) CIT(25) CIT(26) CIT(27)
+      CIT(28) CIT(29) CIT(30) CIT(31) CIT(32) CIT(33) CIT(34)
+      CIT(35) CIT(36) CIT(37) CIT(38) CIT(39) CIT(40) CIT(41)
+   }
+}
+
+group { name: "elm/calendar/base/double_spinners";
+   inherit: "elm/calendar/base/default";
+   parts {
+      part { name: "spinner-base1"; type: SPACER;
+         description { state: "default" 0.0;
+            min: 24 24;
+            max: 999999 24;
+            rel1.to: "bg";
+            rel1.offset: 6 6;
+            rel2.to: "bg";
+            rel2.relative: 0.5 1.0;
+            rel2.offset: -7 -7;
+            align: 0.0 0.0;
+         }
+      }
+      part { name: "spinner-base2"; type: SPACER;
+         description { state: "default" 0.0;
+            min: 24 24;
+            max: 999999 24;
+            rel1.to_x: "spinner-base1";
+            rel1.to_y: "bg";
+            rel1.relative: 1.0 0;
+            rel1.offset: 6 6;
+            rel2.to: "bg";
+            rel2.offset: -7 -7;
+            align: 0.0 0.0;
+         }
+      }
+      CAL_SPIN(,,month_text, spinner-base1)
+      CAL_SPIN(_year, year, year_text, spinner-base2)
+   }
+}
+
+#undef CAL_SPIN
+#undef CIT
+#undef CH
