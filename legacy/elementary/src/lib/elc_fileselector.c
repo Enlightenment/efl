@@ -1177,13 +1177,6 @@ _elm_fileselector_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    elm_widget_sub_object_add(obj, pb);
    priv->spinner = pb;
 
-   list_itc[ELM_DIRECTORY]->func.content_get =
-     grid_itc[ELM_DIRECTORY]->func.content_get = _itc_icon_folder_get;
-   list_itc[ELM_FILE_IMAGE]->func.content_get =
-     grid_itc[ELM_FILE_IMAGE]->func.content_get = _itc_icon_image_get;
-   list_itc[ELM_FILE_UNKNOW]->func.content_get =
-     grid_itc[ELM_FILE_UNKNOW]->func.content_get = _itc_icon_file_get;
-
    li = elm_genlist_add(obj);
    elm_widget_mirrored_automatic_set(li, EINA_FALSE);
    evas_object_size_hint_align_set(li, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -1923,6 +1916,14 @@ _class_constructor(Eo_Class *klass)
             _itc_state_get;
         list_itc[i]->func.del = grid_itc[i]->func.del = _itc_del;
      }
+
+   list_itc[ELM_DIRECTORY]->func.content_get =
+     grid_itc[ELM_DIRECTORY]->func.content_get = _itc_icon_folder_get;
+   list_itc[ELM_FILE_IMAGE]->func.content_get =
+     grid_itc[ELM_FILE_IMAGE]->func.content_get = _itc_icon_image_get;
+   list_itc[ELM_FILE_UNKNOW]->func.content_get =
+     grid_itc[ELM_FILE_UNKNOW]->func.content_get = _itc_icon_file_get;
+
 }
 
 static void
