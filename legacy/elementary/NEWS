@@ -101,6 +101,7 @@ Additions:
 
 Improvements:
 
+   * Default theme is now dark (matching Enlightenment).
    * Toolbar widget is now a scrollable widget.
    * Entry widget is now a scrollable layout.
    * Fileselector entry widget is now an elm layout.

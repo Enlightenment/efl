@@ -1703,3 +1703,8 @@
 2013-10-17  Ryuan Choi (ryuan)
 
         * fileselector : Add support multi-selection.
+
+2013-10-17  Carsten Haitzler (The Rasterman)
+
+        * Default theme is now dark.
+
