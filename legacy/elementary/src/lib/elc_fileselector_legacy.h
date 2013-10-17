@@ -211,6 +211,39 @@ EAPI void                  elm_fileselector_mode_set(Evas_Object *obj, Elm_Files
 EAPI Elm_Fileselector_Mode elm_fileselector_mode_get(const Evas_Object *obj);
 
 /**
+ * Enable or disable multi-selection in the file selector widget.
+ *
+ * @param obj The file selector object
+ * @param multi Multi-select enable/disable. Default is disabled.
+ *
+ * This enables (@c EINA_TRUE) or disables (@c EINA_FALSE) multi-selection in
+ * the list/grid of the file selector widget. This allows more than 1 item to
+ * be selected. To retrieve the list of selected paths, use
+ * elm_fileselector_selected_paths_get().
+ *
+ * @see elm_fileselector_selected_paths_get()
+ * @see elm_fileselector_multi_select_get()
+ *
+ * @since 1.8
+ * @ingroup Fileselector
+ */
+EAPI void                  elm_fileselector_multi_select_set(Evas_Object *obj, Eina_Bool multi);
+
+/**
+ * Get if multi-selection in the file selector is enabled or disabled.
+ *
+ * @param obj The file selector object
+ * @return Multi-select enabled/disabled
+ * (@c EINA_TRUE = enabled/@c EINA_FALSE = disabled). Default is @c EINA_FALSE.
+ *
+ * @see elm_fileselector_multi_select_set()
+ *
+ * @since 1.8
+ * @ingroup Fileselector
+ */
+EAPI Eina_Bool             elm_fileselector_multi_select_get(const Evas_Object *obj);
+
+/**
  * Set, programmatically, the currently selected file/directory in
  * the given file selector widget
  *
@@ -242,6 +275,29 @@ EAPI Eina_Bool             elm_fileselector_selected_set(Evas_Object *obj, const
  * @ingroup Fileselector
  */
 EAPI const char           *elm_fileselector_selected_get(const Evas_Object *obj);
+
+/**
+ * Get a list of selected paths in the file selector.
+ *
+ * @param obj The file selector object
+ * @return The list of selected paths, or NULL if not in multi-select mode or none are selected.
+ *
+ * It returns a list of the selected paths. This list pointer is only valid so
+ * long as the selection doesn't change (no items are selected or unselected, or
+ * unselected implicitly by deletion). The list contains const char *.
+ * The order of the items in this list is the order which they were selected,
+ * i.e. the first item in this list is the first item that was selected, and so on.
+ *
+ * @note If not in multi-select mode, consider using function
+ * elm_fileselector_selected_get() instead.
+ *
+ * @see elm_fileselector_multi_select_set()
+ * @see elm_fileselector_selected_get()
+ *
+ * @since 1.8
+ * @ingroup Fileselector
+ */
+EAPI const Eina_List      *elm_fileselector_selected_paths_get(const Evas_Object *obj);
 
 /**
  * Append mime types filter into filter list

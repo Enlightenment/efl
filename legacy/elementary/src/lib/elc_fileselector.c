@@ -4,7 +4,6 @@
  *  - user defined icon/label cb
  *  - show/hide/add buttons ???
  *  - show/hide hidden files
- *  - multi-selection
  *  - make variable/function names that are sensible
  *  - Pattern Filter support
  *  - Custom Filter support
@@ -376,6 +375,13 @@ _signal_first(Listing_Request *lreq)
 {
    if (!lreq->first) return;
 
+   if (lreq->sd->multi)
+     {
+        char *path;
+        EINA_LIST_FREE(lreq->sd->paths, path)
+          free(path);
+     }
+
    evas_object_smart_callback_call
      (lreq->obj, SIG_DIRECTORY_OPEN, (void *)lreq->path);
 
@@ -510,6 +516,13 @@ _populate(Evas_Object *obj,
 
    it = eina_file_stat_ls(path);
    if (!it) return;
+
+   if (sd->multi)
+     {
+        char *path;
+        EINA_LIST_FREE(sd->paths, path)
+          free(path);
+     }
 
    evas_object_smart_callback_call(obj, SIG_DIRECTORY_OPEN, (void *)path);
    if (!parent_it)
@@ -731,6 +744,34 @@ _on_item_activated(void *data,
 }
 
 static void
+_clear_selections(Elm_Fileselector_Smart_Data *sd, Elm_Object_Item *last_selected)
+{
+   Eina_List *items;
+   Elm_Object_Item *sel;
+
+   if (sd->mode == ELM_FILESELECTOR_LIST)
+     {
+        items = eina_list_clone(elm_genlist_selected_items_get(sd->files_list));
+
+        EINA_LIST_FREE(items, sel)
+          {
+            if (sel == last_selected) continue;
+            elm_genlist_item_selected_set(sel, EINA_FALSE);
+          }
+     }
+   else if (sd->mode == ELM_FILESELECTOR_GRID)
+     {
+        items = eina_list_clone(elm_gengrid_selected_items_get(sd->files_grid));
+
+        EINA_LIST_FREE(items, sel)
+          {
+            if (sel == last_selected) continue;
+            elm_gengrid_item_selected_set(sel, EINA_FALSE);
+          }
+     }
+}
+
+static void
 _on_item_selected(void *data,
                   Evas_Object *obj __UNUSED__,
                   void *event_info)
@@ -755,11 +796,46 @@ _on_item_selected(void *data,
     * - path is file and mode is NOT ONLY FOLDER */
    if (is_dir == sd->only_folder)
      {
-        elm_object_text_set(sd->name_entry, ecore_file_file_get(path));
+        if (sd->multi)
+          {
+             Eina_List *li;
+             const char *p;
+             Eina_Strbuf *buf;
+
+             if (sd->dir_selected)
+               {
+                  _clear_selections(sd, it);
+                  sd->dir_selected = EINA_FALSE;
+               }
+
+             buf = eina_strbuf_new();
+             EINA_LIST_FOREACH(sd->paths, li, p)
+               {
+                  eina_strbuf_append(buf, ecore_file_file_get(p));
+                  eina_strbuf_append_length(buf, ", ", 2);
+               }
+
+             sd->paths = eina_list_append(sd->paths, strdup(path));
+             eina_strbuf_append(buf, ecore_file_file_get(path));
+
+             elm_object_text_set(sd->name_entry, eina_strbuf_string_get(buf));
+             eina_strbuf_free(buf);
+          }
+        else
+          elm_object_text_set(sd->name_entry, ecore_file_file_get(path));
+
         evas_object_smart_callback_call(data, SIG_SELECTED, (void *)path);
      }
    else
-     elm_object_text_set(sd->name_entry, "");
+     {
+        if (sd->multi && is_dir && sd->double_tap_navigation)
+          {
+             _clear_selections(sd, it);
+             sd->dir_selected = EINA_TRUE;
+          }
+
+        elm_object_text_set(sd->name_entry, "");
+     }
 
    /* We need to populate, if path is directory and:
     * - mode is GRID;
@@ -798,6 +874,48 @@ _on_item_selected(void *data,
         free(old_sdata);
      }
    sd->populate_idler = ecore_idler_add(_populate_do, sdata);
+}
+
+static void
+_on_item_unselected(void *data,
+                    Evas_Object *obj __UNUSED__,
+                    void *event_info)
+{
+   Eina_List *li, *l;
+   char *path;
+   const char *unselected_path;
+   Eina_Strbuf *buf;
+   Elm_Object_Item *it = event_info;
+   Eina_Bool first = EINA_TRUE;
+
+   ELM_FILESELECTOR_DATA_GET(data, sd);
+
+   if (!sd->multi) return;
+
+   unselected_path = elm_object_item_data_get(it);
+   if (!unselected_path) return;
+
+   buf = eina_strbuf_new();
+   EINA_LIST_FOREACH_SAFE(sd->paths, li, l, path)
+     {
+        if (!strcmp(path, unselected_path))
+          {
+             sd->paths = eina_list_remove_list(sd->paths, li);
+             free(path);
+          }
+        else
+          {
+             if (!first)
+               eina_strbuf_append_length(buf, ", ", 2);
+             else
+               first = EINA_FALSE;
+
+             eina_strbuf_append(buf, ecore_file_file_get(path));
+          }
+     }
+
+   elm_object_text_set(sd->name_entry, eina_strbuf_string_get(buf));
+   eina_strbuf_free(buf);
 }
 
 static void
@@ -1083,6 +1201,7 @@ _elm_fileselector_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    elm_gengrid_align_set(grid, 0.0, 0.0);
 
    evas_object_smart_callback_add(li, "selected", _on_item_selected, obj);
+   evas_object_smart_callback_add(li, "unselected", _on_item_unselected, obj);
    evas_object_smart_callback_add(li, "clicked,double", _on_item_double_clicked, obj);
    evas_object_smart_callback_add(li, "activated", _on_item_activated, obj);
    evas_object_smart_callback_add
@@ -1092,6 +1211,7 @@ _elm_fileselector_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    evas_object_smart_callback_add(li, "expanded", _on_list_expanded, obj);
    evas_object_smart_callback_add(li, "contracted", _on_list_contracted, obj);
    evas_object_smart_callback_add(grid, "selected", _on_item_selected, obj);
+   evas_object_smart_callback_add(grid, "unselected", _on_item_unselected, obj);
    evas_object_smart_callback_add(grid, "clicked,double", _on_item_double_clicked, obj);
    evas_object_smart_callback_add(grid, "activated", _on_item_activated, obj);
 
@@ -1141,6 +1261,7 @@ _elm_fileselector_smart_del(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_U
 {
    Elm_Fileselector_Smart_Data *sd = _pd;
    Elm_Fileselector_Filter *filter;
+   char *path;
 
 #ifdef HAVE_EIO
    if (sd->current) eio_file_cancel(sd->current);
@@ -1155,6 +1276,9 @@ _elm_fileselector_smart_del(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_U
 
         free(filter);
      }
+
+   EINA_LIST_FREE(sd->paths, path)
+     free(path);
 
    sd->files_list = NULL;
    sd->files_grid = NULL;
@@ -1439,6 +1563,70 @@ _mode_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    *ret = sd->mode;
 }
 
+EAPI void
+elm_fileselector_multi_select_set(Evas_Object *obj, Eina_Bool multi)
+{
+   ELM_FILESELECTOR_CHECK(obj);
+   eo_do(obj, elm_obj_fileselector_multi_select_set(multi));
+}
+
+static void
+_multi_select_set(Eo *obj __UNUSED__, void *_pd, va_list *list __UNUSED__)
+{
+   Eina_Bool multi = va_arg(*list, int);
+   Elm_Fileselector_Smart_Data *sd = _pd;
+   char *path;
+
+   multi = !!multi;
+   if (sd->multi == multi) return;
+   sd->multi = multi;
+
+   elm_genlist_multi_select_set(sd->files_list, multi);
+   elm_gengrid_multi_select_set(sd->files_grid, multi);
+
+   if (!sd->multi)
+     {
+        _clear_selections(sd, NULL);
+
+        EINA_LIST_FREE(sd->paths, path)
+          free(path);
+     }
+   else
+     {
+        const Eina_List *selected_items, *li;
+        const Elm_Object_Item *it;
+
+        if (sd->mode == ELM_FILESELECTOR_LIST)
+          selected_items = elm_genlist_selected_items_get(sd->files_list);
+        else
+          selected_items = elm_gengrid_selected_items_get(sd->files_list);
+
+        EINA_LIST_FOREACH(selected_items, li, it)
+          {
+             path = elm_object_item_data_get(it);
+             sd->paths = eina_list_append(sd->paths, strdup(path));
+          }
+     }
+}
+
+EAPI Eina_Bool
+elm_fileselector_multi_select_get(const Evas_Object *obj)
+{
+   ELM_FILESELECTOR_CHECK(obj) EINA_FALSE;
+   Eina_Bool ret = EINA_FALSE;
+   eo_do((Eo *) obj, elm_obj_fileselector_multi_select_get(&ret));
+   return ret;
+}
+
+static void
+_multi_select_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Elm_Fileselector_Smart_Data *sd = _pd;
+
+   *ret = sd->multi;
+}
+
 EAPI const char *
 elm_fileselector_selected_get(const Evas_Object *obj)
 {
@@ -1525,6 +1713,29 @@ _selected_set(Eo *obj, void *_pd, va_list *list)
 
 clean_up:
    free(path);
+}
+
+EAPI const Eina_List *
+elm_fileselector_selected_paths_get(const Evas_Object* obj)
+{
+   ELM_FILESELECTOR_CHECK(obj) NULL;
+   const Eina_List *ret = NULL;
+   eo_do((Eo *) obj, elm_obj_fileselector_selected_paths_get(&ret));
+   return ret;
+}
+
+static void
+_selected_paths_get(Eo *obj __UNUSED__, void *_pd, va_list *list)
+{
+   const Eina_List **ret = va_arg(*list, const Eina_List**);
+   Elm_Fileselector_Smart_Data *sd = _pd;
+
+   if (!ret) return;
+
+   if (sd->multi)
+     *ret = sd->paths;
+   else
+     *ret = NULL;
 }
 
 EAPI Eina_Bool
@@ -1687,8 +1898,11 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_PATH_GET), _path_get),
         EO_OP_FUNC(ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_MODE_SET), _mode_set),
         EO_OP_FUNC(ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_MODE_GET), _mode_get),
+        EO_OP_FUNC(ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_MULTI_SELECT_SET), _multi_select_set),
+        EO_OP_FUNC(ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_MULTI_SELECT_GET), _multi_select_get),
         EO_OP_FUNC(ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_SELECTED_GET), _selected_get),
         EO_OP_FUNC(ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_SELECTED_SET), _selected_set),
+        EO_OP_FUNC(ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_SELECTED_PATHS_GET), _selected_paths_get),
         EO_OP_FUNC(ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_MIME_TYPES_FILTER_APPEND), _mime_types_filter_append),
         EO_OP_FUNC(ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_FILTERS_CLEAR), _filters_clear),
         EO_OP_FUNC_SENTINEL
@@ -1736,8 +1950,11 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_OBJ_FILESELECTOR_SUB_ID_PATH_GET, "Get the parent directory's path that a given file selector widget is displaying."),
      EO_OP_DESCRIPTION(ELM_OBJ_FILESELECTOR_SUB_ID_MODE_SET, "Set the mode in which a given file selector widget will display (layout) file system entries in its view."),
      EO_OP_DESCRIPTION(ELM_OBJ_FILESELECTOR_SUB_ID_MODE_GET, "Get the mode in which a given file selector widget is displaying (layouting) file system entries in its view."),
+     EO_OP_DESCRIPTION(ELM_OBJ_FILESELECTOR_SUB_ID_MULTI_SELECT_SET, "Enable or disable multi-selection in the file selector widget."),
+     EO_OP_DESCRIPTION(ELM_OBJ_FILESELECTOR_SUB_ID_MULTI_SELECT_GET, "Get if multi-selection in file selector widget is enabled or disabled."),
      EO_OP_DESCRIPTION(ELM_OBJ_FILESELECTOR_SUB_ID_SELECTED_GET, "Get the currently selected item's (full) path, in the given file selector widget."),
      EO_OP_DESCRIPTION(ELM_OBJ_FILESELECTOR_SUB_ID_SELECTED_SET, "Set, programmatically, the currently selected file/directory in the given file selector widget."),
+     EO_OP_DESCRIPTION(ELM_OBJ_FILESELECTOR_SUB_ID_SELECTED_PATHS_GET, "Get the currently selected item's (full) path, in the given file selector widget."),
      EO_OP_DESCRIPTION(ELM_OBJ_FILESELECTOR_SUB_ID_MIME_TYPES_FILTER_APPEND, "Append mime type filter"),
      EO_OP_DESCRIPTION(ELM_OBJ_FILESELECTOR_SUB_ID_FILTERS_CLEAR, "Clear filters"),
      EO_OP_DESCRIPTION_SENTINEL

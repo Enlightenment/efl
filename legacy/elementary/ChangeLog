@@ -1699,3 +1699,7 @@
 
         * hoversel: Support elm_object_item_signal_emit in hoversel. This works
         only when the item is created.
+
+2013-10-17  Ryuan Choi (ryuan)
+
+        * fileselector : Add support multi-selection.

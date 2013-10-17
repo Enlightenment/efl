@@ -23,8 +23,11 @@ enum
    ELM_OBJ_FILESELECTOR_SUB_ID_PATH_GET,
    ELM_OBJ_FILESELECTOR_SUB_ID_MODE_SET,
    ELM_OBJ_FILESELECTOR_SUB_ID_MODE_GET,
+   ELM_OBJ_FILESELECTOR_SUB_ID_MULTI_SELECT_SET,
+   ELM_OBJ_FILESELECTOR_SUB_ID_MULTI_SELECT_GET,
    ELM_OBJ_FILESELECTOR_SUB_ID_SELECTED_GET,
    ELM_OBJ_FILESELECTOR_SUB_ID_SELECTED_SET,
+   ELM_OBJ_FILESELECTOR_SUB_ID_SELECTED_PATHS_GET,
    ELM_OBJ_FILESELECTOR_SUB_ID_MIME_TYPES_FILTER_APPEND,
    ELM_OBJ_FILESELECTOR_SUB_ID_FILTERS_CLEAR,
    ELM_OBJ_FILESELECTOR_SUB_ID_LAST
@@ -183,6 +186,30 @@ enum
 #define elm_obj_fileselector_mode_get(ret) ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_MODE_GET), EO_TYPECHECK(Elm_Fileselector_Mode *, ret)
 
 /**
+ * @def elm_obj_fileselector_multi_select_set
+ * @since 1.8
+ *
+ * Enable or disable multi-selection in the fileselector
+ *
+ * @param[in] multi
+ *
+ * @see elm_fileselector_multi_select_set
+ */
+#define elm_obj_fileselector_multi_select_set(multi) ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_MULTI_SELECT_SET), EO_TYPECHECK(Eina_Bool, multi)
+
+/**
+ * @def elm_obj_fileselector_multi_select_get
+ * @since 1.8
+ *
+ * Gets if multi-selection in fileselector is enabled or disabled.
+ *
+ * @param[out] multi
+ *
+ * @see elm_fileselector_multi_select_get
+ */
+#define elm_obj_fileselector_multi_select_get(ret) ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_MULTI_SELECT_GET), EO_TYPECHECK(Eina_Bool *, ret)
+
+/**
  * @def elm_obj_fileselector_selected_get
  * @since 1.8
  *
@@ -208,6 +235,18 @@ enum
  * @see elm_fileselector_selected_set
  */
 #define elm_obj_fileselector_selected_set(_path, ret) ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_SELECTED_SET), EO_TYPECHECK(const char *, _path), EO_TYPECHECK(Eina_Bool *, ret)
+
+/**
+ * @def elm_obj_fileselector_selected_paths_get
+ * @since 1.8
+ *
+ * Get a list of selected paths in the fileselector.
+ *
+ * @param[out] ret
+ *
+ * @see elm_fileselector_selected_paths_get
+ */
+#define elm_obj_fileselector_selected_paths_get(ret) ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_SELECTED_PATHS_GET), EO_TYPECHECK(const Eina_List **, ret)
 
 /**
  * @def elm_obj_fileselector_mime_types_filter_append

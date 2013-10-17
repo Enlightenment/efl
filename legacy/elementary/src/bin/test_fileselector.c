@@ -40,7 +40,17 @@ my_fileselector_selected(void *data   EINA_UNUSED,
    printf("Selected file: %s\n", selected);
 
    /* or you can query the selection */
-   printf("or: %s\n", elm_fileselector_selected_get(obj));
+   if (elm_fileselector_multi_select_get(obj))
+     {
+        const Eina_List *li;
+        const Eina_List *paths = elm_fileselector_selected_paths_get(obj);
+        char *path;
+        printf("All selected files are:\n");
+        EINA_LIST_FOREACH(paths, li, path)
+          printf(" %s\n", path);
+     }
+   else
+     printf("or: %s\n", elm_fileselector_selected_get(obj));
 }
 
 static void
@@ -119,6 +129,17 @@ _expandable_clicked(void            *data,
      elm_fileselector_expandable_set(fs, EINA_FALSE);
    else
      elm_fileselector_expandable_set(fs, EINA_TRUE);
+}
+
+static void
+_multi_clicked(void            *data,
+               Evas_Object *obj EINA_UNUSED,
+               void *event_info EINA_UNUSED)
+{
+   Evas_Object *fs = data;
+   Eina_Bool enabled = elm_fileselector_multi_select_get(fs);
+   printf("Toggle Multiple selection to: %s\n", !enabled ? "On" : "Off");
+   elm_fileselector_multi_select_set(fs, !enabled);
 }
 
 static void
@@ -245,6 +266,13 @@ test_fileselector(void *data       EINA_UNUSED,
    elm_object_text_set(bt, "expandable");
    elm_check_state_set(bt, elm_fileselector_expandable_get(fs));
    evas_object_smart_callback_add(bt, "changed", _expandable_clicked, fs);
+   elm_box_pack_end(hbox, bt);
+   evas_object_show(bt);
+
+   bt = elm_check_add(win);
+   elm_object_text_set(bt, "multiple selection");
+   elm_check_state_set(bt, elm_fileselector_multi_select_get(fs));
+   evas_object_smart_callback_add(bt, "changed", _multi_clicked, fs);
    elm_box_pack_end(hbox, bt);
    evas_object_show(bt);
 
