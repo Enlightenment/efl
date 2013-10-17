@@ -6278,7 +6278,7 @@ _edje_object_part_swallow_free_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, E
           break;
        }
    rp = evas_object_data_get(obj, "\377 edje.swallowing_part");
-   if (rp)
+   if (rp && (rp->part->type == EDJE_PART_TYPE_SWALLOW))
      edje_object_part_unswallow(ed->obj, obj);
 
    return;
