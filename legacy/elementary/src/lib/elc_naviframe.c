@@ -63,7 +63,7 @@ static void
 _prev_page_focus_recover(Elm_Naviframe_Item *it)
 {
    Evas_Object *newest;
-   unsigned int order;
+   unsigned int order = 0;
 
    newest = elm_widget_newest_focus_order_get(VIEW(it), &order, EINA_TRUE);
    if (newest)
