@@ -111,14 +111,12 @@ _thumb_ready_inform(Elm_Thumb_Smart_Data *sd,
           (sd->view, EVAS_ASPECT_CONTROL_BOTH, aw, ah);
      }
 
-   elm_layout_content_set
-     (wd->resize_obj, "elm.swallow.content", sd->view);
+   edje_object_part_swallow(wd->resize_obj, "elm.swallow.content", sd->view);
    eina_stringshare_replace(&(sd->thumb.file), thumb_path);
    eina_stringshare_replace(&(sd->thumb.key), thumb_key);
-   elm_layout_signal_emit
+   edje_object_signal_emit
      (wd->resize_obj, EDJE_SIGNAL_PULSE_STOP, "elm");
-   elm_layout_signal_emit
-     (wd->resize_obj, EDJE_SIGNAL_GENERATE_STOP, "elm");
+   edje_object_signal_emit(wd->resize_obj, EDJE_SIGNAL_GENERATE_STOP, "elm");
    evas_object_smart_callback_call
      (sd->obj, SIG_GENERATE_STOP, NULL);
 }
@@ -301,8 +299,8 @@ _thumb_finish(Elm_Thumb_Smart_Data *sd,
           sd->view = NULL;
 
           wd = eo_data_scope_get(sd->obj, ELM_OBJ_WIDGET_CLASS);
-          elm_layout_signal_emit
-            (wd->resize_obj, EDJE_SIGNAL_LOAD_ERROR, "elm");
+          edje_object_signal_emit
+             (wd->resize_obj, EDJE_SIGNAL_LOAD_ERROR, "elm");
           evas_object_smart_callback_call
             (sd->obj, SIG_LOAD_ERROR, NULL);
        }
@@ -310,8 +308,7 @@ _thumb_finish(Elm_Thumb_Smart_Data *sd,
    return;
 
 err:
-   elm_layout_signal_emit
-     (wd->resize_obj, EDJE_SIGNAL_LOAD_ERROR, "elm");
+   edje_object_signal_emit(wd->resize_obj, EDJE_SIGNAL_LOAD_ERROR, "elm");
    evas_object_smart_callback_call
      (sd->obj, SIG_LOAD_ERROR, NULL);
 }
@@ -358,8 +355,7 @@ _on_ethumb_thumb_error(Ethumb_Client *client __UNUSED__,
        sd->thumb.file, sd->thumb.key ? sd->thumb.key : "");
 
    ELM_WIDGET_DATA_GET_OR_RETURN(data, wd);
-   elm_layout_signal_emit
-     (wd->resize_obj, EDJE_SIGNAL_GENERATE_ERROR, "elm");
+   edje_object_signal_emit(wd->resize_obj, EDJE_SIGNAL_GENERATE_ERROR, "elm");
    evas_object_smart_callback_call
      (sd->obj, SIG_GENERATE_ERROR, NULL);
 }
@@ -398,12 +394,10 @@ _thumb_start(Elm_Thumb_Smart_Data *sd)
    if (!sd->file) return;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(sd->obj, wd);
-   elm_layout_signal_emit
-     (wd->resize_obj, EDJE_SIGNAL_PULSE_START, "elm");
-   elm_layout_signal_emit
-     (wd->resize_obj, EDJE_SIGNAL_GENERATE_START, "elm");
+   edje_object_signal_emit(wd->resize_obj, EDJE_SIGNAL_PULSE_START, "elm");
+   edje_object_signal_emit(wd->resize_obj, EDJE_SIGNAL_GENERATE_START, "elm");
    evas_object_smart_callback_call
-     (sd->obj, SIG_GENERATE_START, NULL);
+      (sd->obj, SIG_GENERATE_START, NULL);
 
    pending_request++;
    ethumb_client_file_set(_elm_ethumb_client, sd->file, sd->key);
@@ -501,18 +495,16 @@ _elm_thumb_smart_hide(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_hide());
 
-   evas_object_hide(wd->resize_obj);
-
 #ifdef ELM_ETHUMB
    if (sd->thumb.request)
      {
         ethumb_client_thumb_async_cancel(_elm_ethumb_client, sd->thumb.request);
         sd->thumb.request = NULL;
 
-        elm_layout_signal_emit
-          (wd->resize_obj, EDJE_SIGNAL_GENERATE_STOP, "elm");
+        edje_object_signal_emit
+           (wd->resize_obj, EDJE_SIGNAL_GENERATE_STOP, "elm");
         evas_object_smart_callback_call
-          (sd->obj, SIG_GENERATE_STOP, NULL);
+           (sd->obj, SIG_GENERATE_STOP, NULL);
      }
 
    if (sd->thumb.retry)
@@ -553,28 +545,6 @@ _elm_thumb_dnd_cb(void *data __UNUSED__,
    return EINA_TRUE;
 }
 
-static void
-_elm_thumb_smart_theme(Eo *obj, void *_pd __UNUSED__, va_list *list)
-{
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
-   Eina_Bool int_ret = EINA_FALSE;
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-
-   eo_do_super(obj, MY_CLASS, elm_wdg_theme(&int_ret));
-   if (!int_ret) return;
-
-   if (!elm_layout_theme_set(wd->resize_obj, "thumb", "base",
-                             elm_widget_style_get(obj)))
-     {
-        if (ret) *ret = EINA_FALSE;
-        CRITICAL("Failed to set layout!");
-        return;
-     }
-
-   if (ret) *ret = EINA_TRUE;
-}
-
 EAPI Eina_Bool
 elm_need_ethumb(void)
 {
@@ -598,10 +568,8 @@ _elm_thumb_smart_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
    elm_widget_sub_object_parent_add(obj);
-   elm_widget_resize_object_set(obj, elm_layout_add(obj), EINA_TRUE);
 
-   if (!elm_layout_theme_set(wd->resize_obj, "thumb", "base",
-                             elm_widget_style_get(obj)))
+   if (!elm_layout_theme_set(obj, "thumb", "base", elm_widget_style_get(obj)))
      CRITICAL("Failed to set layout!");
 
 #ifdef HAVE_ELEMENTARY_ETHUMB
@@ -689,31 +657,6 @@ _reload(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
    if (evas_object_visible_get(obj))
      _thumb_show(sd);
 #endif
-}
-
-static void
-_elm_thumb_smart_on_focus(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
-{
-   Elm_Widget_Smart_Data *wd = eo_data_scope_get(obj, ELM_OBJ_WIDGET_CLASS);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
-   Eina_Bool int_ret = EINA_FALSE;
-
-   eo_do_super(obj, MY_CLASS, elm_wdg_on_focus(&int_ret));
-   if (!int_ret) return;
-
-   if (elm_widget_focus_get(obj))
-     {
-        elm_layout_signal_emit(wd->resize_obj, "elm,action,focus", "elm");
-        evas_object_focus_set(wd->resize_obj, EINA_TRUE);
-     }
-   else
-     {
-        elm_layout_signal_emit(wd->resize_obj, "elm,action,unfocus", "elm");
-        evas_object_focus_set(wd->resize_obj, EINA_FALSE);
-     }
-
-   if (ret) *ret = EINA_TRUE;
 }
 
 EAPI void
@@ -1220,14 +1163,10 @@ _class_constructor(Eo_Class *klass)
    const Eo_Op_Func_Description func_desc[] = {
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
 
-        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME), _elm_thumb_smart_theme),
-
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_ADD), _elm_thumb_smart_add),
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_DEL), _elm_thumb_smart_del),
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_SHOW), _elm_thumb_smart_show),
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_HIDE), _elm_thumb_smart_hide),
-
-        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ON_FOCUS), _elm_thumb_smart_on_focus),
 
         EO_OP_FUNC(ELM_OBJ_THUMB_ID(ELM_OBJ_THUMB_SUB_ID_RELOAD), _reload),
         EO_OP_FUNC(ELM_OBJ_THUMB_ID(ELM_OBJ_THUMB_SUB_ID_FILE_SET), _file_set),
@@ -1299,5 +1238,5 @@ static const Eo_Class_Description class_desc = {
      NULL
 };
 
-EO_DEFINE_CLASS(elm_obj_thumb_class_get, &class_desc, ELM_OBJ_WIDGET_CLASS, EVAS_SMART_CLICKABLE_INTERFACE, NULL);
+EO_DEFINE_CLASS(elm_obj_thumb_class_get, &class_desc, ELM_OBJ_LAYOUT_CLASS, EVAS_SMART_CLICKABLE_INTERFACE, NULL);
 
