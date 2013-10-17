@@ -385,7 +385,7 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
    TTDBG("TTSIZE:  tw=%d,th=%d,ominw=%d,ominh=%d\n", tw, th, ominw, ominh);
 
    if (tt->tt_win)
-     elm_win_screen_size_get(elm_object_top_widget_get(tt->owner), NULL, NULL, &cw, &ch);
+     elm_win_screen_size_get(elm_widget_top_get(tt->owner), NULL, NULL, &cw, &ch);
    if (!cw)
      evas_output_size_get(tt->tt_evas ?: tt->evas, &cw, &ch);
    TTDBG("SCREEN:  cw=%d,ch=%d\n", cw, ch);
@@ -396,7 +396,7 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
    if (tt->tt_win)
      {
         int x, y;
-        Evas_Object *win = elm_object_top_widget_get(tt->owner);
+        Evas_Object *win = elm_widget_top_get(tt->owner);
 #ifdef HAVE_ELEMENTARY_X
         Ecore_X_Window xwin = elm_win_xwindow_get(win);
         if (xwin)
