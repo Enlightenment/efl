@@ -23,7 +23,6 @@ struct _Elm_Photo_Smart_Data
 {
    Evas_Object          *icon;
    int                   size;
-   Eina_Bool             fill_inside;
    Ecore_Timer          *long_press_timer;
 
 #ifdef HAVE_ELEMENTARY_ETHUMB
@@ -36,6 +35,9 @@ struct _Elm_Photo_Smart_Data
       } file, thumb;
    } thumb;
 #endif
+
+   Eina_Bool             fill_inside: 1;
+   Eina_Bool             drag_started: 1; /*<< set true when drag started */
 };
 
 /**

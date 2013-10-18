@@ -111,8 +111,11 @@ static void
 _drag_done_cb(void *unused __UNUSED__,
               Evas_Object *obj)
 {
+   ELM_PHOTO_DATA_GET(obj, sd);
+
    elm_object_scroll_freeze_pop(obj);
    evas_object_smart_callback_call(obj, SIG_DRAG_END, NULL);
+   sd->drag_started = EINA_FALSE;
 }
 
 static void
@@ -174,6 +177,7 @@ _long_press_cb(void *obj)
           {
              elm_object_scroll_freeze_push(obj);
              evas_object_smart_callback_call(obj, SIG_DRAG_START, NULL);
+             sd->drag_started = EINA_TRUE;
           }
      }
 
@@ -213,7 +217,8 @@ _mouse_up(void *data,
 
    ELM_SAFE_FREE(sd->long_press_timer, ecore_timer_del);
 
-   evas_object_smart_callback_call(data, SIG_CLICKED, NULL);
+   if (!sd->drag_started)
+     evas_object_smart_callback_call(data, SIG_CLICKED, NULL);
 }
 
 static inline int
