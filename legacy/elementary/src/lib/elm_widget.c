@@ -1190,9 +1190,8 @@ _elm_widget_sub_object_del(Eo *obj, void *_pd, va_list *list)
 /*
  * @internal
  *
- * a resize object is a smart member of the parent.
- * a resize object is added to and deleted from the sub object of the parent
- * if the third argument, Eina_Bool sub_obj, is set as EINA_TRUE.
+ * a resize object is added to and deleted from the smart member and the sub object
+ * of the parent if the third argument, Eina_Bool sub_obj, is set as EINA_TRUE.
  */
 EAPI void
 elm_widget_resize_object_set(Evas_Object *obj,
@@ -1215,7 +1214,7 @@ _elm_widget_resize_object_set(Eo *obj, void *_pd, va_list *list)
    if (sd->resize_obj == sobj) return;
 
    // orphan previous resize obj
-   if (sd->resize_obj)
+   if (sd->resize_obj && sub_obj)
      {
         evas_object_clip_unset(sd->resize_obj);
         evas_object_smart_member_del(sd->resize_obj);
@@ -1224,8 +1223,7 @@ _elm_widget_resize_object_set(Eo *obj, void *_pd, va_list *list)
           {
              if (elm_widget_focus_get(sd->resize_obj)) _parents_unfocus(obj);
           }
-
-        if (sub_obj) elm_widget_sub_object_del(obj, sd->resize_obj);
+        elm_widget_sub_object_del(obj, sd->resize_obj);
      }
 
    sd->resize_obj = sobj;
@@ -1246,9 +1244,11 @@ _elm_widget_resize_object_set(Eo *obj, void *_pd, va_list *list)
                elm_widget_sub_object_del(parent, sobj);
           }
      }
-   if (sub_obj) elm_widget_sub_object_add(obj, sobj);
-
-   evas_object_smart_member_add(sobj, obj);
+   if (sub_obj)
+     {
+        elm_widget_sub_object_add(obj, sobj);
+        evas_object_smart_member_add(sobj, obj);
+     }
 
    _smart_reconfigure(sd);
 }
