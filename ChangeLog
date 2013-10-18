@@ -1,3 +1,8 @@
+2013-10-18  Youngbok Shin
+
+        * Fixed the textblock format to be drawn according to
+        the glyph's horizontal advance width.
+
 2013-10-15  ChunEon Park (Hermet)
 
         * Fixed the map surface to be updated properly. By tranversing the 

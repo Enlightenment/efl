@@ -10869,14 +10869,7 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
              _og = itr->format->color.oname.g; \
              _ob = itr->format->color.oname.b; \
              _oa = itr->format->color.oname.a; \
-             if (!EINA_INLIST_GET(itr)->next) \
-               { \
-                  DRAW_RECT(itr->x, oy, itr->w, oh, _or, _og, _ob, _oa); \
-               } \
-             else \
-               { \
-                  DRAW_RECT(itr->x, oy, itr->adv, oh, _or, _og, _ob, _oa); \
-               } \
+             DRAW_RECT(itr->x, oy, itr->adv, oh, _or, _og, _ob, _oa); \
           } \
      } \
    while (0)

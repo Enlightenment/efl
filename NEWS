@@ -357,6 +357,7 @@ Fixes:
      - Evas bidi: Fixed a bug causing BiDi not to work in some cases.
      - Evas textblock: fixed an issue with markup_get and markup_to_utf8 behaving differently (markup_get was misbehaving).
      - Fixed the map surface to be updated properly. By tranversing the whole of the map target's tree, it decides to update the map surface to be redrawn if one of the objects is changed except the clipper itself.
+     - Fixed the textblock format to be drawn according to the glyph's horizontal advance width.
 
     * Ecore:
      - Don't leak fd on exec.
