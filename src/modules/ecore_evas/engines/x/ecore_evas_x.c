@@ -54,6 +54,8 @@ struct _Ecore_Evas_Engine_Data_X11 {
    Ecore_X_Pixmap mask;
    Ecore_X_GC     gc;
    Ecore_X_XRegion *damages;
+   Ecore_Timer     *outdelay;
+   Ecore_X_Event_Mouse_Out out_ev;
    Ecore_X_Sync_Counter sync_counter;
    Ecore_X_Window leader;
    Ecore_X_Sync_Counter netwm_sync_counter;
@@ -1036,48 +1038,89 @@ _ecore_evas_x_event_client_message(void *data EINA_UNUSED, int type EINA_UNUSED,
 }
 
 static Eina_Bool
+_fake_out(void *data)
+{
+   Ecore_Evas *ee = data;
+   Ecore_Evas_Engine_Data_X11 *edata = ee->engine.data;
+   Ecore_X_Event_Mouse_Out *e = &(edata->out_ev);
+   
+   edata->outdelay = NULL;
+
+   ecore_event_evas_modifier_lock_update(ee->evas, e->modifiers);
+   _ecore_evas_mouse_move_process(ee, e->x, e->y, e->time);
+   if (e->mode == ECORE_X_EVENT_MODE_GRAB)
+     evas_event_feed_mouse_cancel(ee->evas, e->time, NULL);
+   evas_event_feed_mouse_out(ee->evas, e->time, NULL);
+   if (ee->func.fn_mouse_out) ee->func.fn_mouse_out(ee);
+   if (ee->prop.cursor.object) evas_object_hide(ee->prop.cursor.object);
+   ee->in = EINA_FALSE;
+   return EINA_FALSE;
+}
+
+static Eina_Bool
 _ecore_evas_x_event_mouse_in(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Evas *ee;
    Ecore_X_Event_Mouse_In *e;
+   Ecore_Evas_Engine_Data_X11 *edata;
 
    e = event;
    ee = ecore_event_window_match(e->win);
    if ((!ee) || (ee->ignore_events)) return ECORE_CALLBACK_PASS_ON; /* pass on event */
    if (e->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
-/*    { */
-/*       time_t t; */
-/*       char *ct; */
+   edata = ee->engine.data;
+/*   
+    {
+       time_t t;
+       char *ct;
 
-/*       const char *modes[] = { */
-/*        "MODE_NORMAL", */
-/*        "MODE_WHILE_GRABBED", */
-/*        "MODE_GRAB", */
-/*        "MODE_UNGRAB" */
-/*       }; */
-/*       const char *details[] = { */
-/*        "DETAIL_ANCESTOR", */
-/*        "DETAIL_VIRTUAL", */
-/*        "DETAIL_INFERIOR", */
-/*        "DETAIL_NON_LINEAR", */
-/*        "DETAIL_NON_LINEAR_VIRTUAL", */
-/*        "DETAIL_POINTER", */
-/*        "DETAIL_POINTER_ROOT", */
-/*        "DETAIL_DETAIL_NONE" */
-/*       }; */
-/*       t = time(NULL); */
-/*       ct = ctime(&t); */
-/*       ct[strlen(ct) - 1] = 0; */
-/*       printf("@@ ->IN 0x%x 0x%x %s md=%s dt=%s\n", */
-/*             e->win, e->event_win, */
-/*             ct, */
-/*             modes[e->mode], */
-/*             details[e->detail]); */
-/*    } */
+       const char *modes[] = {
+        "MODE_NORMAL",
+        "MODE_WHILE_GRABBED",
+        "MODE_GRAB",
+        "MODE_UNGRAB"
+       };
+       const char *details[] = {
+        "DETAIL_ANCESTOR",
+        "DETAIL_VIRTUAL",
+        "DETAIL_INFERIOR",
+        "DETAIL_NON_LINEAR",
+        "DETAIL_NON_LINEAR_VIRTUAL",
+        "DETAIL_POINTER",
+        "DETAIL_POINTER_ROOT",
+        "DETAIL_DETAIL_NONE"
+       };
+       t = time(NULL);
+       ct = ctime(&t);
+       ct[strlen(ct) - 1] = 0;
+       printf("@@ ->IN 0x%x 0x%x %s md=%s dt=%s\n",
+             e->win, e->event_win,
+             ct,
+             modes[e->mode],
+             details[e->detail]);
+    }
+ */
    // disable. causes more problems than it fixes
    //   if ((e->mode == ECORE_X_EVENT_MODE_GRAB) ||
    //       (e->mode == ECORE_X_EVENT_MODE_UNGRAB))
    //     return 0;
+
+   // handle click to focus passive buton grab side-effects
+   if ((e->mode == ECORE_X_EVENT_MODE_UNGRAB) &&
+       (e->detail == ECORE_X_EVENT_DETAIL_ANCESTOR) &&
+       (edata->outdelay))
+     {
+        ecore_timer_del(edata->outdelay);
+        edata->outdelay = NULL;
+        return 0;
+     }
+   if (edata->outdelay)
+     {
+        ecore_timer_del(edata->outdelay);
+        edata->outdelay = NULL;
+        _fake_out(ee);
+     }
+   
    /* if (e->mode != ECORE_X_EVENT_MODE_NORMAL) return 0; */
    if (!ee->in)
      {
@@ -1095,46 +1138,68 @@ _ecore_evas_x_event_mouse_out(void *data EINA_UNUSED, int type EINA_UNUSED, void
 {
    Ecore_Evas *ee;
    Ecore_X_Event_Mouse_Out *e;
+   Ecore_Evas_Engine_Data_X11 *edata;
 
    e = event;
    ee = ecore_event_window_match(e->win);
    if ((!ee) || (ee->ignore_events)) return ECORE_CALLBACK_PASS_ON;
    /* pass on event */
    if (e->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
-/*    { */
-/*       time_t t; */
-/*       char *ct; */
+   edata = ee->engine.data;
+/*
+    {
+       time_t t;
+       char *ct;
 
-/*       const char *modes[] = { */
-/*        "MODE_NORMAL", */
-/*        "MODE_WHILE_GRABBED", */
-/*        "MODE_GRAB", */
-/*        "MODE_UNGRAB" */
-/*       }; */
-/*       const char *details[] = { */
-/*        "DETAIL_ANCESTOR", */
-/*        "DETAIL_VIRTUAL", */
-/*        "DETAIL_INFERIOR", */
-/*        "DETAIL_NON_LINEAR", */
-/*        "DETAIL_NON_LINEAR_VIRTUAL", */
-/*        "DETAIL_POINTER", */
-/*        "DETAIL_POINTER_ROOT", */
-/*        "DETAIL_DETAIL_NONE" */
-/*       }; */
-/*       t = time(NULL); */
-/*       ct = ctime(&t); */
-/*       ct[strlen(ct) - 1] = 0; */
-/*       printf("@@ ->OUT 0x%x 0x%x %s md=%s dt=%s\n", */
-/*             e->win, e->event_win, */
-/*             ct, */
-/*             modes[e->mode], */
-/*             details[e->detail]); */
-/*    } */
+       const char *modes[] = {
+        "MODE_NORMAL",
+        "MODE_WHILE_GRABBED",
+        "MODE_GRAB",
+        "MODE_UNGRAB"
+       };
+       const char *details[] = {
+        "DETAIL_ANCESTOR",
+        "DETAIL_VIRTUAL",
+        "DETAIL_INFERIOR",
+        "DETAIL_NON_LINEAR",
+        "DETAIL_NON_LINEAR_VIRTUAL",
+        "DETAIL_POINTER",
+        "DETAIL_POINTER_ROOT",
+        "DETAIL_DETAIL_NONE"
+       };
+       t = time(NULL);
+       ct = ctime(&t);
+       ct[strlen(ct) - 1] = 0;
+       printf("@@ ->OUT 0x%x 0x%x %s md=%s dt=%s\n",
+             e->win, e->event_win,
+             ct,
+             modes[e->mode],
+             details[e->detail]);
+    }
+ */
    // disable. causes more problems than it fixes
    //   if ((e->mode == ECORE_X_EVENT_MODE_GRAB) ||
    //       (e->mode == ECORE_X_EVENT_MODE_UNGRAB))
    //     return 0;
-   /* if (e->mode != ECORE_X_EVENT_MODE_NORMAL) return 0; */
+
+   // click to focus mouse out+in work-around
+   if ((e->mode == ECORE_X_EVENT_MODE_GRAB) &&
+       (e->detail == ECORE_X_EVENT_DETAIL_ANCESTOR))
+     {
+        // defer out handling in case its a "fake" out thanks to click
+        // to focus (which gets us another out soon after
+        if (edata->outdelay) ecore_timer_del(edata->outdelay);
+        edata->out_ev = *e;
+        edata->outdelay = ecore_timer_add(0.05, _fake_out, ee);
+        return 0;
+     }
+   if (edata->outdelay)
+     {
+        ecore_timer_del(edata->outdelay);
+        edata->outdelay = NULL;
+     }
+   
+//   if (e->mode != ECORE_X_EVENT_MODE_NORMAL) return 0;
 //   printf("OUT: ee->in=%i, e->mode=%i, e->detail=%i, dount_count=%i\n",
 //          ee->in, e->mode, e->detail, evas_event_down_count_get(ee->evas));
    if (ee->in)
@@ -1674,6 +1739,11 @@ _ecore_evas_x_free(Ecore_Evas *ee)
           eina_list_remove_list(edata->win_extra, edata->win_extra);
         ecore_event_window_unregister(*winp);
         free(winp);
+     }
+   if (edata->outdelay)
+     {
+        ecore_timer_del(edata->outdelay);
+        edata->outdelay = NULL;
      }
    free(edata);
    _ecore_evas_x_shutdown();
