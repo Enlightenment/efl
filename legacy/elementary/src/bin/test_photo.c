@@ -4,15 +4,23 @@
 #include <Elementary.h>
 #ifndef ELM_LIB_QUICKLAUNCH
 
-static void drop_cb(void *mydata, Evas_Object *obj, void *evdata);
-static void drag_stop_cb(void *mydata, Evas_Object *obj, void *evdata);
-static void drag_start_cb(void *mydata, Evas_Object *obj, void *evdata);
-
 static void
 _clicked_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
             void *event_info EINA_UNUSED)
 {
    printf("photo clicked\n");
+}
+
+static void
+drag_start_cb(void *mydata EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *evdata EINA_UNUSED)
+{
+   printf("Drag start.\n");
+}
+
+static void
+drag_end_cb(void *mydata EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *evdata EINA_UNUSED)
+{
+   printf("Drag end.\n");
 }
 
 void
@@ -21,8 +29,6 @@ test_photo(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
    Evas_Object *win, *sc, *tb, *ph;
    int i, j, n;
    char buf[PATH_MAX];
-   int size = 0;
-   Eina_Bool fill = EINA_FALSE, editable = EINA_FALSE;
 
    const char *img[9] =
      {
@@ -67,12 +73,10 @@ test_photo(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
                                               EVAS_HINT_EXPAND);
              evas_object_size_hint_align_set(ph, EVAS_HINT_FILL,
                                              EVAS_HINT_FILL);
-             evas_object_smart_callback_add(ph, "drop",
-                                            drop_cb, NULL);
              evas_object_smart_callback_add(ph, "drag,start",
                                             drag_start_cb, NULL);
-             evas_object_smart_callback_add(ph, "drag,stop",
-                                            drag_stop_cb, NULL);
+             evas_object_smart_callback_add(ph, "drag,end",
+                                            drag_end_cb, NULL);
 
              if ((n == 2) || (n == 3))
                {
@@ -84,14 +88,6 @@ test_photo(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
           }
      }
 
-   eo_do(ph,
-         elm_obj_photo_size_get(&size),
-         elm_obj_photo_fill_inside_get(&fill),
-         elm_obj_photo_editable_get(&editable));
-   printf("Last Photo Information:\n");
-   printf("\tobject %p, size %d, fill_inside %d, editable %d\n",
-          ph, size, fill, editable);
-
    sc = elm_scroller_add(win);
    evas_object_size_hint_weight_set(sc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, sc);
@@ -102,25 +98,6 @@ test_photo(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
 
    evas_object_resize(win, 300, 300);
    evas_object_show(win);
-}
-
-/* Never called, elm_photo never call "drop" smart cb */
-static void
-drop_cb(void *mydata EINA_UNUSED, Evas_Object *obj, void *evdata EINA_UNUSED)
-{
-   printf("Drop on obj %p\n", obj);
-}
-
-static void
-drag_start_cb(void *mydata EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *evdata EINA_UNUSED)
-{
-
-}
-
-static void
-drag_stop_cb(void *mydata EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *evdata EINA_UNUSED)
-{
-
 }
 
 /* vim:set ts=8 sw=3 sts=3 expandtab cino=>5n-2f0^-2{2(0W1st0 :*/
