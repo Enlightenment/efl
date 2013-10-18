@@ -529,6 +529,7 @@ test_gengrid(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
    evas_object_size_hint_align_set(tg, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_object_text_set(tg, "Multi Select Mode");
    elm_check_state_set(tg, EINA_TRUE);
+   elm_gengrid_multi_select_set(api->grid, EINA_TRUE);
    evas_object_smart_callback_add(tg, "changed", multi_select_cb,
                                   (void *)api);
    elm_box_pack_end(bx, tg);
