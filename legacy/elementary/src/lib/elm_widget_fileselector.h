@@ -27,8 +27,7 @@ struct _Elm_Fileselector_Smart_Data
    Evas_Object             *obj;
    Evas_Object             *path_entry;
    Evas_Object             *name_entry;
-   Evas_Object             *files_list;
-   Evas_Object             *files_grid;
+   Evas_Object             *files_view;
    Evas_Object             *up_button;
    Evas_Object             *home_button;
    Evas_Object             *spinner;

@@ -72,8 +72,7 @@ _mirrored_set(Evas_Object *obj, Eina_Bool rtl)
 
    elm_widget_mirrored_set(sd->cancel_button, rtl);
    elm_widget_mirrored_set(sd->ok_button, rtl);
-   elm_widget_mirrored_set(sd->files_list, rtl);
-   elm_widget_mirrored_set(sd->files_grid, rtl);
+   elm_widget_mirrored_set(sd->files_view, rtl);
    elm_widget_mirrored_set(sd->up_button, rtl);
    elm_widget_mirrored_set(sd->home_button, rtl);
 }
@@ -117,18 +116,8 @@ _elm_fileselector_smart_theme(Eo *obj, void *_pd, va_list *list)
    SWALLOW("elm.swallow.spinner", sd->spinner);
    elm_object_style_set(sd->spinner, "wheel");
 
-   if (sd->mode == ELM_FILESELECTOR_LIST)
-     {
-        if (elm_layout_content_set(obj, "elm.swallow.files", sd->files_list))
-          evas_object_hide(sd->files_grid);
-        else evas_object_hide(sd->files_list);
-     }
-   else
-     {
-        if (elm_layout_content_set(obj, "elm.swallow.files", sd->files_grid))
-          evas_object_hide(sd->files_list);
-        else evas_object_hide(sd->files_grid);
-     }
+   if (!elm_layout_content_set(obj, "elm.swallow.files", sd->files_view))
+     evas_object_hide(sd->files_view);
 
    SWALLOW("elm.swallow.path", sd->path_entry);
    SWALLOW("elm.swallow.filename", sd->name_entry);
@@ -386,8 +375,10 @@ _signal_first(Listing_Request *lreq)
 
    if (!lreq->parent_it)
      {
-        elm_genlist_clear(lreq->sd->files_list);
-        elm_gengrid_clear(lreq->sd->files_grid);
+        if (lreq->sd->mode == ELM_FILESELECTOR_LIST)
+          elm_genlist_clear(lreq->sd->files_view);
+        else
+          elm_gengrid_clear(lreq->sd->files_view);
         eina_stringshare_replace(&lreq->sd->path, lreq->path);
         _anchors_do(lreq->obj, lreq->path);
         elm_object_text_set(lreq->sd->name_entry, "");
@@ -407,8 +398,7 @@ _ls_main_cb(void *data,
 
    if (eio_file_check(handler)) return;
 
-   if (!lreq->sd->files_list || !lreq->sd->files_grid
-       || lreq->sd->current != handler)
+   if (!lreq->sd->files_view || lreq->sd->current != handler)
      {
         eio_file_cancel(handler);
         return;
@@ -427,7 +417,7 @@ _ls_main_cb(void *data,
 
    if (lreq->sd->mode == ELM_FILESELECTOR_LIST)
      {
-        item = elm_genlist_item_sorted_insert(lreq->sd->files_list, list_itc[itcn],
+        item = elm_genlist_item_sorted_insert(lreq->sd->files_view, list_itc[itcn],
                                               eina_stringshare_add(info->path),
                                               lreq->parent_it,
                                               ((lreq->sd->expand) && (itcn == ELM_DIRECTORY))
@@ -442,7 +432,7 @@ _ls_main_cb(void *data,
      }
    else if (lreq->sd->mode == ELM_FILESELECTOR_GRID)
      {
-        item = elm_gengrid_item_sorted_insert(lreq->sd->files_grid, grid_itc[itcn],
+        item = elm_gengrid_item_sorted_insert(lreq->sd->files_view, grid_itc[itcn],
                                               eina_stringshare_add(info->path),
                                               _file_grid_cmp, NULL, NULL);
 
@@ -526,8 +516,11 @@ _populate(Evas_Object *obj,
    evas_object_smart_callback_call(obj, SIG_DIRECTORY_OPEN, (void *)path);
    if (!parent_it)
      {
-        elm_genlist_clear(sd->files_list);
-        elm_gengrid_clear(sd->files_grid);
+        if (mode == ELM_FILESELECTOR_LIST)
+          elm_genlist_clear(lreq->sd->files_view);
+        else
+          elm_gengrid_clear(lreq->sd->files_view);
+
         eina_stringshare_replace(&sd->path, path);
         _anchors_do(obj, path);
         elm_object_text_set(sd->name_entry, "");
@@ -555,14 +548,14 @@ _populate(Evas_Object *obj,
    EINA_LIST_FREE(dirs, entry)
      {
         if (sd->mode == ELM_FILESELECTOR_LIST)
-          elm_genlist_item_append(sd->files_list, list_itc[ELM_DIRECTORY],
+          elm_genlist_item_append(sd->files_view, list_itc[ELM_DIRECTORY],
                                   entry, /* item data */
                                   parent_it,
                                   (sd->expand)
                                   ? ELM_GENLIST_ITEM_TREE : ELM_GENLIST_ITEM_NONE,
                                   NULL, NULL);
         else if (sd->mode == ELM_FILESELECTOR_GRID)
-          elm_gengrid_item_append(sd->files_grid, grid_itc[ELM_DIRECTORY],
+          elm_gengrid_item_append(sd->files_view, grid_itc[ELM_DIRECTORY],
                                   entry, /* item data */
                                   NULL, NULL);
      }
@@ -576,7 +569,7 @@ _populate(Evas_Object *obj,
         if (sd->mode == ELM_FILESELECTOR_LIST)
           {
              Elm_Object_Item *item;
-             item = elm_genlist_item_append(sd->files_list, list_itc[type],
+             item = elm_genlist_item_append(sd->files_view, list_itc[type],
                                             entry, /* item data */
                                             parent_it, ELM_GENLIST_ITEM_NONE,
                                             NULL, NULL);
@@ -589,7 +582,7 @@ _populate(Evas_Object *obj,
         else if (sd->mode == ELM_FILESELECTOR_GRID)
           {
              Elm_Object_Item *item;
-             item = elm_gengrid_item_append(sd->files_grid, grid_itc[type],
+             item = elm_gengrid_item_append(sd->files_view, grid_itc[type],
                                             entry, /* item data */
                                             NULL, NULL);
              if (selected && !strcmp(entry, selected))
@@ -750,7 +743,7 @@ _clear_selections(Elm_Fileselector_Smart_Data *sd, Elm_Object_Item *last_selecte
 
    if (sd->mode == ELM_FILESELECTOR_LIST)
      {
-        items = eina_list_clone(elm_genlist_selected_items_get(sd->files_list));
+        items = eina_list_clone(elm_genlist_selected_items_get(sd->files_view));
 
         EINA_LIST_FREE(items, sel)
           {
@@ -760,7 +753,7 @@ _clear_selections(Elm_Fileselector_Smart_Data *sd, Elm_Object_Item *last_selecte
      }
    else if (sd->mode == ELM_FILESELECTOR_GRID)
      {
-        items = eina_list_clone(elm_gengrid_selected_items_get(sd->files_grid));
+        items = eina_list_clone(elm_gengrid_selected_items_get(sd->files_view));
 
         EINA_LIST_FREE(items, sel)
           {
@@ -1059,7 +1052,7 @@ _on_text_activated(void *data,
      {
         if (sd->mode == ELM_FILESELECTOR_LIST)
           {
-             Elm_Object_Item *item = elm_genlist_first_item_get(sd->files_list);
+             Elm_Object_Item *item = elm_genlist_first_item_get(sd->files_view);
              while (item)
                {
                   const char *item_path = elm_object_item_data_get(item);
@@ -1074,7 +1067,7 @@ _on_text_activated(void *data,
           }
         else
           {
-             Elm_Object_Item *item = elm_gengrid_first_item_get(sd->files_list);
+             Elm_Object_Item *item = elm_gengrid_first_item_get(sd->files_view);
              while (item)
                {
                   const char *item_path = elm_object_item_data_get(item);
@@ -1121,11 +1114,63 @@ _anchor_clicked(void *data,
    elm_object_focus_set(obj, EINA_FALSE);
 }
 
+static Evas_Object *
+_files_list_add(Evas_Object *obj)
+{
+   Evas_Object *li;
+
+   li = elm_genlist_add(obj);
+   elm_widget_mirrored_automatic_set(li, EINA_FALSE);
+   evas_object_size_hint_align_set(li, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(li, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_min_set(li, 100, 100);
+
+   evas_object_smart_callback_add(li, "selected", _on_item_selected, obj);
+   evas_object_smart_callback_add(li, "unselected", _on_item_unselected, obj);
+   evas_object_smart_callback_add(li, "clicked,double", _on_item_double_clicked, obj);
+   evas_object_smart_callback_add(li, "activated", _on_item_activated, obj);
+   evas_object_smart_callback_add
+     (li, "expand,request", _on_list_expand_req, obj);
+   evas_object_smart_callback_add
+     (li, "contract,request", _on_list_contract_req, obj);
+   evas_object_smart_callback_add(li, "expanded", _on_list_expanded, obj);
+   evas_object_smart_callback_add(li, "contracted", _on_list_contracted, obj);
+
+   elm_widget_sub_object_add(obj, li);
+
+   return li;
+}
+
+static Evas_Object *
+_files_grid_add(Evas_Object *obj)
+{
+   Evas_Object *grid;
+   int s;
+
+   grid = elm_gengrid_add(obj);
+   elm_widget_mirrored_automatic_set(grid, EINA_FALSE);
+   evas_object_size_hint_align_set(grid, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(grid, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+
+   // XXX: will fail for dynamic finger size changing
+   s = elm_config_finger_size_get() * 2;
+   elm_gengrid_item_size_set(grid, s, s);
+   elm_gengrid_align_set(grid, 0.0, 0.0);
+
+   evas_object_smart_callback_add(grid, "selected", _on_item_selected, obj);
+   evas_object_smart_callback_add(grid, "unselected", _on_item_unselected, obj);
+   evas_object_smart_callback_add(grid, "clicked,double", _on_item_double_clicked, obj);
+   evas_object_smart_callback_add(grid, "activated", _on_item_activated, obj);
+
+   elm_widget_sub_object_add(obj, grid);
+
+   return grid;
+}
+
 static void
 _elm_fileselector_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
-   Evas_Object *ic, *bt, *li, *en, *grid, *pb;
-   int s;
+   Evas_Object *ic, *bt, *en, *pb;
 
    Elm_Fileselector_Smart_Data *priv = _pd;
 
@@ -1176,41 +1221,8 @@ _elm_fileselector_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    elm_widget_sub_object_add(obj, pb);
    priv->spinner = pb;
 
-   li = elm_genlist_add(obj);
-   elm_widget_mirrored_automatic_set(li, EINA_FALSE);
-   evas_object_size_hint_align_set(li, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_size_hint_weight_set(li, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_min_set(li, 100, 100);
-
-   grid = elm_gengrid_add(obj);
-   elm_widget_mirrored_automatic_set(grid, EINA_FALSE);
-   evas_object_size_hint_align_set(grid, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_size_hint_weight_set(grid, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-
-   // XXX: will fail for dynamic finger size changing
-   s = elm_config_finger_size_get() * 2;
-   elm_gengrid_item_size_set(grid, s, s);
-   elm_gengrid_align_set(grid, 0.0, 0.0);
-
-   evas_object_smart_callback_add(li, "selected", _on_item_selected, obj);
-   evas_object_smart_callback_add(li, "unselected", _on_item_unselected, obj);
-   evas_object_smart_callback_add(li, "clicked,double", _on_item_double_clicked, obj);
-   evas_object_smart_callback_add(li, "activated", _on_item_activated, obj);
-   evas_object_smart_callback_add
-     (li, "expand,request", _on_list_expand_req, obj);
-   evas_object_smart_callback_add
-     (li, "contract,request", _on_list_contract_req, obj);
-   evas_object_smart_callback_add(li, "expanded", _on_list_expanded, obj);
-   evas_object_smart_callback_add(li, "contracted", _on_list_contracted, obj);
-   evas_object_smart_callback_add(grid, "selected", _on_item_selected, obj);
-   evas_object_smart_callback_add(grid, "unselected", _on_item_unselected, obj);
-   evas_object_smart_callback_add(grid, "clicked,double", _on_item_double_clicked, obj);
-   evas_object_smart_callback_add(grid, "activated", _on_item_activated, obj);
-
-   elm_widget_sub_object_add(obj, li);
-   elm_widget_sub_object_add(obj, grid);
-   priv->files_list = li;
-   priv->files_grid = grid;
+   // files_view
+   priv->files_view = _files_list_add(obj);
 
    // path entry
    en = elm_entry_add(obj);
@@ -1272,8 +1284,7 @@ _elm_fileselector_smart_del(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_U
    EINA_LIST_FREE(sd->paths, path)
      free(path);
 
-   sd->files_list = NULL;
-   sd->files_grid = NULL;
+   sd->files_view = NULL;
 
    /* this one matching EINA_REFCOUNT_INIT() */
    EINA_REFCOUNT_UNREF(sd) _elm_fileselector_smart_del_do(sd);
@@ -1521,17 +1532,31 @@ elm_fileselector_mode_set(Evas_Object *obj,
 static void
 _mode_set(Eo *obj, void *_pd, va_list *list)
 {
+   Evas_Object *old;
    Elm_Fileselector_Mode mode = va_arg(*list, Elm_Fileselector_Mode);
 
    Elm_Fileselector_Smart_Data *sd = _pd;
 
    if (mode == sd->mode) return;
 
-   evas_object_hide(elm_layout_content_unset(obj, "elm.swallow.files"));
+   old = elm_layout_content_unset(obj, "elm.swallow.files");
 
    if (mode == ELM_FILESELECTOR_LIST)
-     elm_layout_content_set(obj, "elm.swallow.files", sd->files_list);
-   else elm_layout_content_set(obj, "elm.swallow.files", sd->files_grid);
+     {
+        sd->files_view = _files_list_add(obj);
+        if (sd->multi)
+          elm_genlist_multi_select_set(sd->files_view, EINA_TRUE);
+     }
+   else
+     {
+        sd->files_view = _files_grid_add(obj);
+        if (sd->multi)
+          elm_gengrid_multi_select_set(sd->files_view, EINA_TRUE);
+     }
+
+   elm_layout_content_set(obj, "elm.swallow.files", sd->files_view);
+
+   evas_object_del(old);
 
    sd->mode = mode;
 
@@ -1573,8 +1598,10 @@ _multi_select_set(Eo *obj __UNUSED__, void *_pd, va_list *list __UNUSED__)
    if (sd->multi == multi) return;
    sd->multi = multi;
 
-   elm_genlist_multi_select_set(sd->files_list, multi);
-   elm_gengrid_multi_select_set(sd->files_grid, multi);
+   if (sd->mode == ELM_FILESELECTOR_LIST)
+     elm_genlist_multi_select_set(sd->files_view, multi);
+   else
+     elm_gengrid_multi_select_set(sd->files_view, multi);
 
    if (!sd->multi)
      {
@@ -1589,9 +1616,9 @@ _multi_select_set(Eo *obj __UNUSED__, void *_pd, va_list *list __UNUSED__)
         const Elm_Object_Item *it;
 
         if (sd->mode == ELM_FILESELECTOR_LIST)
-          selected_items = elm_genlist_selected_items_get(sd->files_list);
+          selected_items = elm_genlist_selected_items_get(sd->files_view);
         else
-          selected_items = elm_gengrid_selected_items_get(sd->files_list);
+          selected_items = elm_gengrid_selected_items_get(sd->files_view);
 
         EINA_LIST_FOREACH(selected_items, li, it)
           {
@@ -1651,13 +1678,13 @@ _selected_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 
    if (sd->mode == ELM_FILESELECTOR_LIST)
      {
-        Elm_Object_Item *gl_it = elm_genlist_selected_item_get(sd->files_list);
+        Elm_Object_Item *gl_it = elm_genlist_selected_item_get(sd->files_view);
 
         if (gl_it) *ret = elm_object_item_data_get(gl_it);
      }
    else
      {
-        Elm_Object_Item *gg_it = elm_gengrid_selected_item_get(sd->files_grid);
+        Elm_Object_Item *gg_it = elm_gengrid_selected_item_get(sd->files_view);
 
         if (gg_it) *ret = elm_object_item_data_get(gg_it);
      }
