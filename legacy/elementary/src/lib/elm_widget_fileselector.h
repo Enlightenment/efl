@@ -64,6 +64,8 @@ struct _Elm_Fileselector_Smart_Data
     * so that fileselector will clear current selection when user clicked
     * another item. */
    Eina_Bool             dir_selected : 1;
+
+   Eina_Bool             hidden_visible : 1;
 };
 
 struct sel_data

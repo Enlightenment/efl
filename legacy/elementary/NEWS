@@ -98,6 +98,7 @@ Additions:
    * Add "activated" smart callback for fileselector.
    * Add elm_object_item_signal_emit support in hoversel. This works only when the item is created.
    * Add elm_fileselector_multi_select_set/get() and elm_fileselector_selected_paths_get to support multi-selection.
+   * Add elm_fileselector_hidden_visible_set/get() to show or hide hidden files/directories.
 
 Improvements:
 

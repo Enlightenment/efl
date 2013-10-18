@@ -1708,3 +1708,6 @@
 
         * Default theme is now dark.
 
+2013-10-18  Ryuan Choi (ryuan)
+
+        * fileselector : Add support visibility control of hidden files/directories.

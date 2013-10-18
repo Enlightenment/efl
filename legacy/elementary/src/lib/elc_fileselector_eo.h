@@ -30,6 +30,8 @@ enum
    ELM_OBJ_FILESELECTOR_SUB_ID_SELECTED_PATHS_GET,
    ELM_OBJ_FILESELECTOR_SUB_ID_MIME_TYPES_FILTER_APPEND,
    ELM_OBJ_FILESELECTOR_SUB_ID_FILTERS_CLEAR,
+   ELM_OBJ_FILESELECTOR_SUB_ID_HIDDEN_VISIBLE_SET,
+   ELM_OBJ_FILESELECTOR_SUB_ID_HIDDEN_VISIBLE_GET,
    ELM_OBJ_FILESELECTOR_SUB_ID_LAST
 };
 
@@ -272,6 +274,31 @@ enum
  * @see elm_fileselector_mime_type_filter_append
  */
 #define elm_obj_fileselector_filters_clear() ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_FILTERS_CLEAR)
+
+/**
+ * @def elm_obj_fileselector_hidden_visible_set
+ * @since 1.8
+ *
+ * Enable or disable visibility of hidden files/directories
+ * in the file selector widget.
+ *
+ * @param[in] visible
+ *
+ * @see elm_fileselector_hidden_visible_get
+ */
+#define elm_obj_fileselector_hidden_visible_set(multi) ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_HIDDEN_VISIBLE_SET), EO_TYPECHECK(Eina_Bool, multi)
+
+/**
+ * @def elm_obj_fileselector_hidden_visible_get
+ * @since 1.8
+ *
+ * Get if hiden files/directories in the file selector are visible or not.
+ *
+ * @param[out] visible
+ *
+ * @see elm_fileselector_hidden_visible_set
+ */
+#define elm_obj_fileselector_hidden_visible_get(ret) ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_HIDDEN_VISIBLE_GET), EO_TYPECHECK(Eina_Bool *, ret)
 
 /**
  * @}

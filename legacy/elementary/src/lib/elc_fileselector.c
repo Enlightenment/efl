@@ -3,7 +3,6 @@
  *  - child elements focusing support
  *  - user defined icon/label cb
  *  - show/hide/add buttons ???
- *  - show/hide hidden files
  *  - make variable/function names that are sensible
  *  - Pattern Filter support
  *  - Custom Filter support
@@ -314,7 +313,7 @@ _ls_filter_cb(void *data,
 {
    Listing_Request *lreq = data;
 
-   if (info->path[info->name_start] == '.')
+   if (!lreq->sd->hidden_visible && info->path[info->name_start] == '.')
      return EINA_FALSE;
 
    if (lreq->sd->only_folder && info->type != EINA_FILE_DIR)
@@ -538,7 +537,7 @@ _populate(Evas_Object *obj,
      {
         const char *filename;
 
-        if (file->path[file->name_start] == '.') continue;
+        if (!sd->hidden_visible && file->path[file->name_start] == '.') continue;
 
         filename = eina_stringshare_add(file->path);
         if (file->type == EINA_FILE_DIR)
@@ -1818,6 +1817,45 @@ _filters_clear(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    _populate(obj, sd->path, NULL, NULL);
 }
 
+EAPI void
+elm_fileselector_hidden_visible_set(Evas_Object *obj, Eina_Bool visible)
+{
+   ELM_FILESELECTOR_CHECK(obj);
+   eo_do(obj, elm_obj_fileselector_hidden_visible_set(visible));
+}
+
+static void
+_hidden_visible_set(Eo *obj __UNUSED__, void *_pd, va_list *list EINA_UNUSED)
+{
+   Eina_Bool visible = va_arg(*list, int);
+   Elm_Fileselector_Smart_Data *sd = _pd;
+
+   visible = !!visible;
+   if (sd->hidden_visible == visible) return;
+   sd->hidden_visible = visible;
+
+   _clear_selections(sd, NULL);
+   _populate(obj, sd->path, NULL, NULL);
+}
+
+EAPI Eina_Bool
+elm_fileselector_hidden_visible_get(const Evas_Object *obj)
+{
+   ELM_FILESELECTOR_CHECK(obj) EINA_FALSE;
+   Eina_Bool ret = EINA_FALSE;
+   eo_do((Eo *) obj, elm_obj_fileselector_hidden_visible_get(&ret));
+   return ret;
+}
+
+static void
+_hidden_visible_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
+{
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Elm_Fileselector_Smart_Data *sd = _pd;
+
+   *ret = sd->hidden_visible;
+}
+
 static void
 _elm_fileselector_smart_focus_next_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
 {
@@ -1898,6 +1936,8 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_SELECTED_PATHS_GET), _selected_paths_get),
         EO_OP_FUNC(ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_MIME_TYPES_FILTER_APPEND), _mime_types_filter_append),
         EO_OP_FUNC(ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_FILTERS_CLEAR), _filters_clear),
+        EO_OP_FUNC(ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_HIDDEN_VISIBLE_SET), _hidden_visible_set),
+        EO_OP_FUNC(ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_HIDDEN_VISIBLE_GET), _hidden_visible_get),
         EO_OP_FUNC_SENTINEL
    };
    eo_class_funcs_set(klass, func_desc);
@@ -1958,6 +1998,8 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_OBJ_FILESELECTOR_SUB_ID_SELECTED_PATHS_GET, "Get the currently selected item's (full) path, in the given file selector widget."),
      EO_OP_DESCRIPTION(ELM_OBJ_FILESELECTOR_SUB_ID_MIME_TYPES_FILTER_APPEND, "Append mime type filter"),
      EO_OP_DESCRIPTION(ELM_OBJ_FILESELECTOR_SUB_ID_FILTERS_CLEAR, "Clear filters"),
+     EO_OP_DESCRIPTION(ELM_OBJ_FILESELECTOR_SUB_ID_HIDDEN_VISIBLE_SET, "Enable or disable visibility of hidden files/directories in the file selector widget."),
+     EO_OP_DESCRIPTION(ELM_OBJ_FILESELECTOR_SUB_ID_HIDDEN_VISIBLE_GET, "Get if visibility of hidden files/directories in the file selector widget is enabled or disabled."),
      EO_OP_DESCRIPTION_SENTINEL
 };
 static const Eo_Class_Description class_desc = {

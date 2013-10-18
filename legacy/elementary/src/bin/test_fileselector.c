@@ -144,8 +144,8 @@ _multi_clicked(void            *data,
 
 static void
 _buttons_clicked(void            *data,
-                    Evas_Object *obj EINA_UNUSED,
-                    void *event_info EINA_UNUSED)
+                 Evas_Object *obj EINA_UNUSED,
+                 void *event_info EINA_UNUSED)
 {
    Evas_Object *fs = data;
    printf("Toggle Buttons\n");
@@ -153,6 +153,19 @@ _buttons_clicked(void            *data,
      elm_fileselector_buttons_ok_cancel_set(fs, EINA_FALSE);
    else
      elm_fileselector_buttons_ok_cancel_set(fs, EINA_TRUE);
+}
+
+static void
+_hidden_clicked(void            *data,
+                Evas_Object *obj EINA_UNUSED,
+                void *event_info EINA_UNUSED)
+{
+   Evas_Object *fs = data;
+   printf("Toggle visibility of hidden files/directories\n");
+   if (elm_fileselector_hidden_visible_get(fs))
+     elm_fileselector_hidden_visible_set(fs, EINA_FALSE);
+   else
+     elm_fileselector_hidden_visible_set(fs, EINA_TRUE);
 }
 
 static void
@@ -221,6 +234,13 @@ _option_create(Evas_Object *parent, Evas_Object *fs)
    elm_object_text_set(bt, "buttons");
    elm_check_state_set(bt, elm_fileselector_buttons_ok_cancel_get(fs));
    evas_object_smart_callback_add(bt, "changed", _buttons_clicked, fs);
+   elm_box_pack_end(hbox, bt);
+   evas_object_show(bt);
+
+   bt = elm_check_add(hbox);
+   elm_object_text_set(bt, "hidden");
+   elm_check_state_set(bt, elm_fileselector_hidden_visible_get(fs));
+   evas_object_smart_callback_add(bt, "changed", _hidden_clicked, fs);
    elm_box_pack_end(hbox, bt);
    evas_object_show(bt);
 

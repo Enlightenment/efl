@@ -333,3 +333,32 @@ EAPI Eina_Bool             elm_fileselector_mime_types_filter_append(Evas_Object
  * @ingroup Fileselector
  */
 EAPI void                  elm_fileselector_filters_clear(Evas_Object *obj);
+
+/**
+ * Enable or disable visibility of hidden files/directories
+ * in the file selector widget.
+ *
+ * @param obj The file selector object
+ * @param visible Visibility of hidden files/directories. Default is disabled.
+ *
+ * This enables (@c EINA_TRUE) or disables (@c EINA_FALSE) visibility of hidden
+ * files/directories in the list/grid of the file selector widget.
+ *
+ * @since 1.8
+ * @ingroup Fileselector
+ */
+EAPI void                  elm_fileselector_hidden_visible_set(Evas_Object *obj, Eina_Bool visible);
+
+/**
+ * Get if hiden files/directories in the file selector widget are visible or not.
+ *
+ * @param obj The file selector object
+ * @return Visibility of hidden files/directories
+ * (@c EINA_TRUE = enabled/@c EINA_FALSE = disabled). Default is @c EINA_FALSE.
+ *
+ * @see elm_fileselector_hidden_visible_set()
+ *
+ * @since 1.8
+ * @ingroup Fileselector
+ */
+EAPI Eina_Bool             elm_fileselector_hidden_visible_get(const Evas_Object *obj);
