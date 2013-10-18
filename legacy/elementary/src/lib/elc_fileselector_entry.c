@@ -38,6 +38,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] =
    ELM_PRIV_FILESELECTOR_ENTRY_SIGNALS(ELM_PRIV_SMART_CALLBACKS_DESC)
    {NULL, NULL}
 };
+#undef ELM_PRIV_FILESELECTOR_ENTRY_SIGNALS
 
 #define SIG_FWD(name)                                                       \
   static void                                                               \

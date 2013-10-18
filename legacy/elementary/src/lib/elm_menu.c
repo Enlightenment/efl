@@ -23,6 +23,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    ELM_PRIV_MENU_SIGNALS(ELM_PRIV_SMART_CALLBACKS_DESC)
    {NULL, NULL}
 };
+#undef ELM_PRIV_MENU_SIGNALS
 
 static void
 _elm_menu_smart_translate(Eo *obj EINA_UNUSED, void *_pd, va_list *list)

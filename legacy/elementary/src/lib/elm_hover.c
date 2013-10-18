@@ -57,6 +57,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {"unfocused", ""}, /**< handled by elm_widget */
    {NULL, NULL}
 };
+#undef ELM_PRIV_HOVER_SIGNALS
 
 static void
 _parent_move_cb(void *data,

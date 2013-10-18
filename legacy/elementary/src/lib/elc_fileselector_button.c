@@ -26,6 +26,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {"unfocused", ""}, /**< handled by elm_widget */
    {NULL, NULL}
 };
+#undef ELM_PRIV_FILESELECTOR_BUTTON_SIGNALS
 
 static void
 _elm_fileselector_button_smart_translate(Eo *obj, void *_pd EINA_UNUSED, va_list *list)

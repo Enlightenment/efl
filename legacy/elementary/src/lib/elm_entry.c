@@ -59,6 +59,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    ELM_PRIV_ENTRY_SIGNALS(ELM_PRIV_SMART_CALLBACKS_DESC)
    {NULL, NULL}
 };
+#undef ELM_PRIV_ENTRY_SIGNALS
 
 static const Elm_Layout_Part_Alias_Description _content_aliases[] =
 {

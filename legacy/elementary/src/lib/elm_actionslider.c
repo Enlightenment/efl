@@ -34,6 +34,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] =
    ELM_PRIV_ACTIONSLIDER_SIGNALS(ELM_PRIV_SMART_CALLBACKS_DESC)
    {NULL, NULL}
 };
+#undef ELM_PRIV_ACTIONSLIDER_SIGNALS
 
 static Elm_Actionslider_Pos
 _get_pos_by_orientation(const Evas_Object *obj,

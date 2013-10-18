@@ -40,6 +40,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    ELM_PRIV_FILESELECTOR_SIGNALS(ELM_PRIV_SMART_CALLBACKS_DESC)
    {NULL, NULL}
 };
+#undef ELM_PRIV_FILESELECTOR_SIGNALS
 
 /* final routine on deletion */
 static void
