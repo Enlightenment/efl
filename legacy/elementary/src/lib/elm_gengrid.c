@@ -36,74 +36,49 @@ EAPI const char ELM_GENGRID_PAN_SMART_NAME[] = "elm_gengrid_pan";
 
 #define GG_IT(_it) (_it->item)
 
-static const char SIG_ACTIVATED[] = "activated";
-static const char SIG_CLICKED_DOUBLE[] = "clicked,double";
-static const char SIG_LONGPRESSED[] = "longpressed";
-static const char SIG_SELECTED[] = "selected";
-static const char SIG_UNSELECTED[] = "unselected";
-static const char SIG_REALIZED[] = "realized";
-static const char SIG_UNREALIZED[] = "unrealized";
-static const char SIG_CHANGED[] = "changed";
-static const char SIG_DRAG_START_UP[] = "drag,start,up";
-static const char SIG_DRAG_START_DOWN[] = "drag,start,down";
-static const char SIG_DRAG_START_LEFT[] = "drag,start,left";
-static const char SIG_DRAG_START_RIGHT[] = "drag,start,right";
-static const char SIG_DRAG_STOP[] = "drag,stop";
-static const char SIG_DRAG[] = "drag";
-static const char SIG_SCROLL[] = "scroll";
-static const char SIG_SCROLL_ANIM_START[] = "scroll,anim,start";
-static const char SIG_SCROLL_ANIM_STOP[] = "scroll,anim,stop";
-static const char SIG_SCROLL_DRAG_START[] = "scroll,drag,start";
-static const char SIG_SCROLL_DRAG_STOP[] = "scroll,drag,stop";
-static const char SIG_SCROLL_PAGE_CHANGE[] = "scroll,page,changed";
-static const char SIG_EDGE_TOP[] = "edge,top";
-static const char SIG_EDGE_BOTTOM[] = "edge,bottom";
-static const char SIG_EDGE_LEFT[] = "edge,left";
-static const char SIG_EDGE_RIGHT[] = "edge,right";
-static const char SIG_MOVED[] = "moved";
-static const char SIG_INDEX_UPDATE[] = "index,update";
-static const char SIG_HIGHLIGHTED[] = "highlighted";
-static const char SIG_UNHIGHLIGHTED[] = "unhighlighted";
-static const char SIG_LANG_CHANGED[] = "language,changed";
-static const char SIG_PRESSED[] = "pressed";
-static const char SIG_RELEASED[] = "released";
+#define ELM_PRIV_GENGRID_SIGNALS(cmd) \
+   cmd(SIG_ACTIVATED, "activated", "") \
+   cmd(SIG_CLICKED_DOUBLE, "clicked,double", "") \
+   cmd(SIG_LONGPRESSED, "longpressed", "") \
+   cmd(SIG_SELECTED, "selected", "") \
+   cmd(SIG_UNSELECTED, "unselected", "") \
+   cmd(SIG_REALIZED, "realized", "") \
+   cmd(SIG_UNREALIZED, "unrealized", "") \
+   cmd(SIG_CHANGED, "changed", "") \
+   cmd(SIG_DRAG_START_UP, "drag,start,up", "") \
+   cmd(SIG_DRAG_START_DOWN, "drag,start,down", "") \
+   cmd(SIG_DRAG_START_LEFT, "drag,start,left", "") \
+   cmd(SIG_DRAG_START_RIGHT, "drag,start,right", "") \
+   cmd(SIG_DRAG_STOP, "drag,stop", "") \
+   cmd(SIG_DRAG, "drag", "") \
+   cmd(SIG_SCROLL, "scroll", "") \
+   cmd(SIG_SCROLL_ANIM_START, "scroll,anim,start", "") \
+   cmd(SIG_SCROLL_ANIM_STOP, "scroll,anim,stop", "") \
+   cmd(SIG_SCROLL_DRAG_START, "scroll,drag,start", "") \
+   cmd(SIG_SCROLL_DRAG_STOP, "scroll,drag,stop", "") \
+   cmd(SIG_SCROLL_PAGE_CHANGE, "scroll,page,changed", "") \
+   cmd(SIG_EDGE_TOP, "edge,top", "") \
+   cmd(SIG_EDGE_BOTTOM, "edge,bottom", "") \
+   cmd(SIG_EDGE_LEFT, "edge,left", "") \
+   cmd(SIG_EDGE_RIGHT, "edge,right", "") \
+   cmd(SIG_MOVED, "moved", "") \
+   cmd(SIG_INDEX_UPDATE, "index,update", "") \
+   cmd(SIG_HIGHLIGHTED, "highlighted", "") \
+   cmd(SIG_UNHIGHLIGHTED, "unhighlighted", "") \
+   cmd(SIG_LANG_CHANGED, "language,changed", "") \
+   cmd(SIG_PRESSED, "pressed", "") \
+   cmd(SIG_RELEASED, "released", "")
+
+ELM_PRIV_GENGRID_SIGNALS(ELM_PRIV_STATIC_VARIABLE_DECLARE);
 
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
-   {SIG_ACTIVATED, ""},
-   {SIG_CLICKED_DOUBLE, ""},
-   {SIG_LONGPRESSED, ""},
-   {SIG_SELECTED, ""},
-   {SIG_UNSELECTED, ""},
-   {SIG_REALIZED, ""},
-   {SIG_UNREALIZED, ""},
-   {SIG_CHANGED, ""},
-   {SIG_DRAG_START_UP, ""},
-   {SIG_DRAG_START_DOWN, ""},
-   {SIG_DRAG_START_LEFT, ""},
-   {SIG_DRAG_START_RIGHT, ""},
-   {SIG_DRAG_STOP, ""},
-   {SIG_DRAG, ""},
-   {SIG_SCROLL, ""},
-   {SIG_SCROLL_ANIM_START, ""},
-   {SIG_SCROLL_ANIM_STOP, ""},
-   {SIG_SCROLL_DRAG_START, ""},
-   {SIG_SCROLL_DRAG_STOP, ""},
-   {SIG_EDGE_TOP, ""},
-   {SIG_EDGE_BOTTOM, ""},
-   {SIG_EDGE_LEFT, ""},
-   {SIG_EDGE_RIGHT, ""},
-   {SIG_MOVED, ""},
-   {SIG_HIGHLIGHTED, ""},
-   {SIG_UNHIGHLIGHTED, ""},
-   {SIG_LANG_CHANGED, ""},
-   {SIG_PRESSED, ""},
-   {SIG_RELEASED, ""},
-   {SIG_SCROLL_PAGE_CHANGE, ""},
+   ELM_PRIV_GENGRID_SIGNALS(ELM_PRIV_SMART_CALLBACKS_DESC)
    {"focused", ""}, /**< handled by elm_widget */
    {"unfocused", ""}, /**< handled by elm_widget */
 
    {NULL, NULL}
 };
+#undef ELM_PRIV_GENGRID_SIGNALS
 
 static void
 _elm_gengrid_smart_translate(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
