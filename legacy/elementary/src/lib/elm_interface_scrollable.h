@@ -1119,7 +1119,7 @@ struct _Elm_Scrollable_Smart_Interface_Data
       Evas_Coord      locked_x, locked_y;
       int             hdir, vdir;
 
-      Ecore_Animator *hold_animator;
+      Ecore_Job      *hold_job;
       Ecore_Animator *onhold_animator;
       Ecore_Animator *momentum_animator;
       Ecore_Animator *bounce_x_animator;
@@ -1139,6 +1139,7 @@ struct _Elm_Scrollable_Smart_Interface_Data
       Eina_Bool       dir_y : 1;
       Eina_Bool       hold : 1;
       Eina_Bool       now : 1;
+      Eina_Bool       hold_active : 1;
    } down;
 
    struct

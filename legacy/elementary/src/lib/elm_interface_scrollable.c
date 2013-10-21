@@ -1446,9 +1446,10 @@ _elm_scroll_bounce_eval(Elm_Scrollable_Smart_Interface_Data *sid)
         if (sid->content_info.resized)
           _elm_scroll_wanted_region_set(sid->obj);
      }
-   if (sid->down.hold_animator)
+   if (sid->down.hold_active)
      {
-        ELM_SAFE_FREE(sid->down.hold_animator, ecore_animator_del);
+        sid->down.hold_active = EINA_FALSE;
+        ELM_SAFE_FREE(sid->down.hold_job, ecore_job_del);
         if (sid->content_info.resized)
           _elm_scroll_wanted_region_set(sid->obj);
      }
@@ -1768,9 +1769,10 @@ _elm_scroll_content_region_show_internal(Evas_Object *obj,
         if (sid->content_info.resized)
           _elm_scroll_wanted_region_set(sid->obj);
      }
-   if (sid->down.hold_animator)
+   if (sid->down.hold_active)
      {
-        ELM_SAFE_FREE(sid->down.hold_animator, ecore_animator_del);
+        sid->down.hold_active = EINA_FALSE;
+        ELM_SAFE_FREE(sid->down.hold_job, ecore_job_del);
         _elm_scroll_drag_stop(sid);
         if (sid->content_info.resized)
           _elm_scroll_wanted_region_set(sid->obj);
@@ -1879,7 +1881,7 @@ _elm_scroll_wanted_region_set(Evas_Object *obj)
 
    if (sid->down.now || sid->down.momentum_animator ||
        sid->down.bounce_x_animator || sid->down.bounce_y_animator ||
-       sid->down.hold_animator || sid->down.onhold_animator ||
+       sid->down.hold_active || sid->down.onhold_animator ||
        sid->scrollto.x.animator || sid->scrollto.y.animator)
      return;
 
@@ -2582,9 +2584,10 @@ _elm_scroll_mouse_up_event_cb(void *data,
                     }
                }
           }
-        if (sid->down.hold_animator)
+        if (sid->down.hold_active)
           {
-             ELM_SAFE_FREE(sid->down.hold_animator, ecore_animator_del);
+             sid->down.hold_active = EINA_FALSE;
+             ELM_SAFE_FREE(sid->down.hold_job, ecore_job_del);
              if (sid->content_info.resized)
                _elm_scroll_wanted_region_set(sid->obj);
           }
@@ -2667,9 +2670,9 @@ _elm_scroll_mouse_down_event_cb(void *data,
         if (sid->content_info.resized)
           _elm_scroll_wanted_region_set(sid->obj);
      }
-   if (sid->down.hold_animator)
+   if (sid->down.hold_active)
      {
-        ELM_SAFE_FREE(sid->down.hold_animator, ecore_animator_del);
+        ELM_SAFE_FREE(sid->down.hold_job, ecore_job_del);
         _elm_scroll_drag_stop(sid);
         if (sid->content_info.resized)
           _elm_scroll_wanted_region_set(sid->obj);
@@ -2865,12 +2868,14 @@ _elm_scroll_down_coord_eval(Elm_Scrollable_Smart_Interface_Data *sid,
        _elm_config->thumbscroll_border_friction;
 }
 
-static Eina_Bool
-_elm_scroll_hold_animator(void *data)
+static void
+_elm_scroll_hold_job(void *data)
 {
    Elm_Scrollable_Smart_Interface_Data *sid = data;
    Evas_Coord ox = 0, oy = 0, fx = 0, fy = 0;
 
+   sid->down.hold_active = EINA_FALSE;
+   
    fx = sid->down.hold_x;
    fy = sid->down.hold_y;
 
@@ -2977,8 +2982,6 @@ _elm_scroll_hold_animator(void *data)
 #endif
 
    eo_do(sid->obj, elm_scrollable_interface_content_pos_set(ox, oy, EINA_TRUE));
-
-   return ECORE_CALLBACK_RENEW;
 }
 
 static Eina_Bool
@@ -3276,9 +3279,11 @@ _elm_scroll_mouse_move_event_cb(void *data,
 
              sid->down.hold_x = x;
              sid->down.hold_y = y;
-             if (!sid->down.hold_animator)
-               sid->down.hold_animator =
-                 ecore_animator_add(_elm_scroll_hold_animator, sid);
+             if (!sid->down.hold_job)
+               ecore_job_del(sid->down.hold_job);
+             sid->down.hold_job =
+               ecore_job_add(_elm_scroll_hold_job, sid);
+             sid->down.hold_active = EINA_TRUE;
           }
         else
           {
@@ -4573,7 +4578,7 @@ _elm_scroll_interface_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    eo_do(obj, elm_scrollable_interface_content_set(NULL));
    if (!sid->extern_pan) evas_object_del(sid->pan_obj);
 
-   if (sid->down.hold_animator) ecore_animator_del(sid->down.hold_animator);
+   if (sid->down.hold_job) ecore_job_del(sid->down.hold_job);
    if (sid->down.onhold_animator) ecore_animator_del(sid->down.onhold_animator);
    if (sid->down.momentum_animator) ecore_animator_del(sid->down.momentum_animator);
    if (sid->down.bounce_x_animator) ecore_animator_del(sid->down.bounce_x_animator);
