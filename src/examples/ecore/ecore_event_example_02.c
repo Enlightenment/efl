@@ -1,5 +1,5 @@
 //Compile with:
-// gcc -g -Wall `pkg-config --cflags --libs ecore` -o ecore_event_example_02 ecore_event_example_02.c
+// gcc -g -Wall -o ecore_event_example_02 ecore_event_example_02.c `pkg-config --cflags --libs ecore`
 
 #include <Ecore.h>
 #include <unistd.h>

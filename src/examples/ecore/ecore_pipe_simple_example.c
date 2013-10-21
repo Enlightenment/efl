@@ -1,5 +1,5 @@
 //Compile with:
-//gcc -g -Wall `pkg-config --cflags --libs ecore` -o ecore_pipe_simple_example ecore_pipe_simple_example.c
+//gcc -g -Wall -o ecore_pipe_simple_example ecore_pipe_simple_example.c `pkg-config --cflags --libs ecore`
 
 #include <unistd.h>
 #include <Ecore.h>
