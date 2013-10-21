@@ -522,7 +522,13 @@ _elm_entry_smart_theme(Eo *obj, void *_pd, va_list *list)
      (sd->entry_edje, "elm.text", sd->input_panel_return_key_disabled);
 
    if (sd->cursor_pos != 0)
-     elm_entry_cursor_pos_set(obj, sd->cursor_pos);
+     {
+        // elm_entry_cursor_pos_set -> cursor,changed -> widget_show_region_set
+        // -> smart_objects_calculate will call all smart calculate functions,
+        // and one of them can delete elm_entry.
+        evas_object_ref(obj);
+        elm_entry_cursor_pos_set(obj, sd->cursor_pos);
+     }
 
    if (elm_widget_focus_get(obj))
      edje_object_signal_emit(sd->entry_edje, "elm,action,focus", "elm");
@@ -564,6 +570,9 @@ _elm_entry_smart_theme(Eo *obj, void *_pd, va_list *list)
 
    evas_object_smart_callback_call(obj, SIG_THEME_CHANGED, NULL);
 
+   if (sd->cursor_pos != 0)
+     evas_object_unref(obj);
+
    if (ret) *ret = EINA_TRUE;
 }
 
@@ -582,8 +591,8 @@ _cursor_geometry_recalc(Evas_Object *obj)
           (sd->entry_edje, "elm.text", &cx, &cy, &cw, &ch);
         if (sd->cur_changed)
           {
-             elm_widget_show_region_set(obj, cx, cy, cw, ch, EINA_FALSE);
              sd->cur_changed = EINA_FALSE;
+             elm_widget_show_region_set(obj, cx, cy, cw, ch, EINA_FALSE);
           }
      }
    else
@@ -656,8 +665,8 @@ _deferred_recalc_job(void *data)
           (sd->entry_edje, "elm.text", &cx, &cy, &cw, &ch);
         if (sd->cur_changed)
           {
-             elm_widget_show_region_set(data, cx, cy, cw, ch, EINA_FALSE);
              sd->cur_changed = EINA_FALSE;
+             elm_widget_show_region_set(data, cx, cy, cw, ch, EINA_FALSE);
           }
      }
 }
