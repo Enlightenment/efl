@@ -1711,3 +1711,7 @@
 2013-10-18  Ryuan Choi (ryuan)
 
         * fileselector : Add support visibility control of hidden files/directories.
+
+2013-10-21  Ryuan Choi (ryuan)
+
+        * fileselector : Monitor and update changes of selected path automatically while EIO is working.

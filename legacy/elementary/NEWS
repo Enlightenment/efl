@@ -152,6 +152,7 @@ Improvements:
    This actually reduces the mapbuf calculation time muchly in case of complex
    layout.
    * Popup: Change the behavior of adding/removing buttons dynamically. User defined button's position is kept.
+   * Fileselector: Monitor and update changes of selected path automatically while EIO is working.
 
 Fixes:
    * Now elm_datetime_field_limit_set() can set year limits wihtout problems.

@@ -597,6 +597,7 @@ _populate(Evas_Object *obj,
 #else /* asynchronous listing path */
    if (sd->expand && sd->current) return;
 
+   if (sd->monitor) eio_monitor_del(sd->monitor);
    if (sd->current) eio_file_cancel(sd->current);
 
    lreq = malloc(sizeof (Listing_Request));
@@ -615,6 +616,8 @@ _populate(Evas_Object *obj,
    else
      lreq->selected = NULL;
 
+   /* TODO: sub directory should be monitored for expand mode */
+   sd->monitor = eio_monitor_add(path);
    sd->current = eio_file_stat_ls(path, _ls_filter_cb, _ls_main_cb,
                                   _ls_done_cb, _ls_error_cb, lreq);
    elm_progressbar_pulse(sd->spinner, EINA_TRUE);
@@ -1168,6 +1171,120 @@ _files_grid_add(Evas_Object *obj)
    return grid;
 }
 
+#ifdef HAVE_EIO
+static Eina_Bool
+_resource_created(void *data, int type, void *ev)
+{
+   Evas_Object *obj = data;
+   Eio_Monitor_Event *event = ev;
+   int itcn = ELM_FILE_UNKNOW;
+
+   ELM_FILESELECTOR_DATA_GET(obj, sd);
+
+   if (type == EIO_MONITOR_DIRECTORY_CREATED)
+     itcn = ELM_DIRECTORY;
+   else
+     {
+        if (!_check_filters(sd->current_filter, event->filename))
+          return ECORE_CALLBACK_PASS_ON;
+
+        if (evas_object_image_extension_can_load_get(event->filename))
+          itcn = ELM_FILE_IMAGE;
+     }
+
+   if (sd->mode == ELM_FILESELECTOR_LIST)
+     elm_genlist_item_sorted_insert(sd->files_view, list_itc[itcn],
+                                    eina_stringshare_add(event->filename),
+                                    NULL,
+                                    (sd->expand && itcn == ELM_DIRECTORY)
+                                    ? ELM_GENLIST_ITEM_TREE : ELM_GENLIST_ITEM_NONE,
+                                    _file_list_cmp, NULL, NULL);
+   else
+     elm_gengrid_item_sorted_insert(sd->files_view, grid_itc[itcn],
+                                    eina_stringshare_add(event->filename),
+                                    _file_grid_cmp, NULL, NULL);
+
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool
+_resource_deleted(void *data, int type EINA_UNUSED, void *ev)
+{
+   Evas_Object *obj = data;
+   Eio_Monitor_Event *event = ev;
+   Elm_Object_Item *it = NULL;
+   Eina_Bool selected = EINA_FALSE;
+
+   ELM_FILESELECTOR_DATA_GET(obj, sd);
+
+   if (sd->mode == ELM_FILESELECTOR_LIST)
+     {
+        it = elm_genlist_first_item_get(sd->files_view);
+        while(it)
+          {
+             if (!strcmp(elm_object_item_data_get(it), event->filename))
+               {
+                  selected = elm_genlist_item_selected_get(it);
+                  break;
+               }
+             it = elm_genlist_item_next_get(it);
+          }
+     }
+   else
+     {
+        it = elm_gengrid_first_item_get(sd->files_view);
+        while(it)
+          {
+             if (!strcmp(elm_object_item_data_get(it), event->filename))
+               {
+                  selected = elm_genlist_item_selected_get(it);
+                  break;
+               }
+             it = elm_gengrid_item_next_get(it);
+          }
+     }
+
+   if (it) elm_object_item_del(it);
+
+   if (selected)
+     {
+        if (sd->multi)
+          {
+             Eina_List *li, *l;
+             char *path;
+             Eina_Strbuf *buf;
+             Eina_Bool first = EINA_TRUE;
+
+             buf = eina_strbuf_new();
+             EINA_LIST_FOREACH_SAFE(sd->paths, li, l, path)
+               {
+                  if (!strcmp(path, event->filename))
+                    {
+                       sd->paths = eina_list_remove_list(sd->paths, li);
+                       free(path);
+                    }
+                  else
+                    {
+                       if (!first)
+                         eina_strbuf_append_length(buf, ", ", 2);
+                       else
+                         first = EINA_FALSE;
+
+                       eina_strbuf_append(buf, ecore_file_file_get(path));
+                    }
+               }
+
+             elm_object_text_set(sd->name_entry, eina_strbuf_string_get(buf));
+             eina_strbuf_free(buf);
+          }
+        else
+          elm_object_text_set(sd->name_entry, "");
+     }
+
+   return ECORE_CALLBACK_PASS_ON;
+}
+#endif
+
 static void
 _elm_fileselector_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
@@ -1258,6 +1375,19 @@ _elm_fileselector_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    elm_fileselector_buttons_ok_cancel_set(obj, EINA_TRUE);
    elm_fileselector_is_save_set(obj, EINA_FALSE);
 
+#ifdef HAVE_EIO
+#define HANDLER_ADD(e, fn) \
+   priv->handlers = eina_list_append(priv->handlers, \
+                                     ecore_event_handler_add(e, fn, obj));
+
+   HANDLER_ADD(EIO_MONITOR_FILE_CREATED, _resource_created);
+   HANDLER_ADD(EIO_MONITOR_DIRECTORY_CREATED, _resource_created);
+
+   HANDLER_ADD(EIO_MONITOR_FILE_DELETED, _resource_deleted);
+   HANDLER_ADD(EIO_MONITOR_DIRECTORY_DELETED, _resource_deleted);
+#undef HANDLER_ADD
+#endif
+
    eo_do(obj, elm_wdg_theme(NULL));
 }
 
@@ -1269,7 +1399,15 @@ _elm_fileselector_smart_del(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_U
    char *path;
 
 #ifdef HAVE_EIO
+   Ecore_Event_Handler *h;
+
+   if (sd->monitor) eio_monitor_del(sd->monitor);
    if (sd->current) eio_file_cancel(sd->current);
+
+   EINA_LIST_FREE(sd->handlers, h)
+     {
+        ecore_event_handler_del(h);
+     }
 #endif
 
    EINA_LIST_FREE(sd->filter_list, filter)
