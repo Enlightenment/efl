@@ -1120,6 +1120,7 @@ struct _Elm_Scrollable_Smart_Interface_Data
       int             hdir, vdir;
 
       Ecore_Job      *hold_job;
+      Ecore_Animator *hold_animator;
       Ecore_Animator *onhold_animator;
       Ecore_Animator *momentum_animator;
       Ecore_Animator *bounce_x_animator;
