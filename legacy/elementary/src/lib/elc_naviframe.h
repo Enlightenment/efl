@@ -10,9 +10,11 @@
  *
  * A naviframe holds views (or pages) as its items. Those items are
  * organized in a stack, so that new items get pushed on top of the
- * old, and only the topmost view is displayed at one time. The
- * transition between views is animated, depending on the theme
- * applied to the widget.
+ * old, and only the topmost view is displayed at one time. Due to the
+ * characteristics of a stack, even though you push a new item, previous item
+ * is not deleted. Previous item will be shown when you pop new item. The
+ * transition between views is animated, depending on the theme applied to the
+ * widget.
  *
  * Naviframe views hold spaces to various elements, which are:
  * - back button, used to navigate to previous views,
