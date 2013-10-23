@@ -34,6 +34,8 @@
  * - @c "language,changed" - the program's language changed
  * - @c "focused" - When the spinner has received focus. (since 1.8)
  * - @c "unfocused" - When the spinner has lost focus. (since 1.8)
+ * - @c "spinner,drag,start" - When dragging has started. (since 1.8)
+ * - @c "spinner,drag,stop" - When dragging has stopped. (since 1.8)
  *
  * Available styles for it:
  * - @c "default";

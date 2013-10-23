@@ -3,6 +3,21 @@
 #endif
 #include <Elementary.h>
 #ifndef ELM_LIB_QUICKLAUNCH
+
+static void
+_spinner_drag_start_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
+                       void *event EINA_UNUSED)
+{
+  printf("spinner drag started\n");
+}
+
+static void
+_spinner_drag_stop_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
+                      void *event EINA_UNUSED)
+{
+  printf("spinner drag stopped\n");
+}
+
 void
 test_spinner(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
@@ -24,6 +39,10 @@ test_spinner(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
    elm_spinner_min_max_set(sp, -50.0, 250.0);
    evas_object_size_hint_align_set(sp, EVAS_HINT_FILL, 0.5);
    evas_object_size_hint_weight_set(sp, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_smart_callback_add(sp, "spinner,drag,start",
+                                  _spinner_drag_start_cb, NULL);
+   evas_object_smart_callback_add(sp, "spinner,drag,stop",
+                                  _spinner_drag_stop_cb, NULL);
    elm_box_pack_end(bx, sp);
    evas_object_show(sp);
 

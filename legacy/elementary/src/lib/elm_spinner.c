@@ -17,6 +17,8 @@ EAPI Eo_Op ELM_OBJ_SPINNER_BASE_ID = EO_NOOP;
 #define MY_CLASS_NAME "elm_spinner"
 
 static const char SIG_CHANGED[] = "changed";
+static const char SIG_DRAG_START[] = "spinner,drag,start";
+static const char SIG_DRAG_STOP[] = "spinner,drag,stop";
 static const char SIG_DELAY_CHANGED[] = "delay,changed";
 static const char SIG_LANG_CHANGED[] = "language,changed";
 
@@ -24,6 +26,8 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_CHANGED, ""},
    {SIG_DELAY_CHANGED, ""},
    {SIG_LANG_CHANGED, ""},
+   {SIG_DRAG_START, ""},
+   {SIG_DRAG_STOP, ""},
    {"focused", ""}, /**< handled by elm_widget */
    {"unfocused", ""}, /**< handled by elm_widget */
    {NULL, NULL}
@@ -204,6 +208,8 @@ _drag_start_cb(void *data,
    ELM_SPINNER_DATA_GET(data, sd);
 
    sd->drag_start_val = sd->val;
+
+   evas_object_smart_callback_call(obj, SIG_DRAG_START, NULL);
 }
 
 static void
@@ -218,6 +224,8 @@ _drag_stop_cb(void *data,
    sd->drag_start_val = 0;
    edje_object_part_drag_value_set
      (wd->resize_obj, "elm.dragable.slider", 0.0, 0.0);
+
+   evas_object_smart_callback_call(obj, SIG_DRAG_STOP, NULL);
 }
 
 static void

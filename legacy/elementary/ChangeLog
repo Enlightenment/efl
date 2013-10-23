@@ -1719,3 +1719,7 @@
 2013-10-22  Amitesh Singh (_ami_)
 
         * slider : Show popup on left/right/up/down key down press and hide on left/right/up/down key up press.
+
+2013-10-23  Christophe Sadoine
+
+        * spinner: added signals "spinner,drag,start" and "spinner,drag,stop".
