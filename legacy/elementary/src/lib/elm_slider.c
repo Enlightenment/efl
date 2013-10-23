@@ -370,6 +370,23 @@ _elm_slider_smart_event(Eo *obj, void *_pd, va_list *list)
    if (elm_widget_disabled_get(obj)) return;
 
    if (type == EVAS_CALLBACK_KEY_DOWN) goto key_down;
+   else if (type == EVAS_CALLBACK_KEY_UP)
+     {
+         Evas_Event_Key_Up *ev_up =  event_info;
+
+         if ((!ev_up->string) &&
+             ((!strcmp(ev_up->key, "Left")) ||
+              (!strcmp(ev_up->key, "KP_Left")) ||
+              (!strcmp(ev_up->key, "Right")) ||
+              (!strcmp(ev_up->key, "KP_Right")) ||
+              (!strcmp(ev_up->key, "Up")) ||
+              (!strcmp(ev_up->key, "KP_Up")) ||
+              (!strcmp(ev_up->key, "Down")) ||
+              (!strcmp(ev_up->key, "KP_Down"))))
+             _popup_hide(obj, NULL, NULL, NULL);
+
+         return;
+     }
    else if (type != EVAS_CALLBACK_MOUSE_WHEEL)
      return;
 
@@ -425,6 +442,7 @@ key_down:
    else return;
 
 success:
+   _popup_show(obj, NULL, NULL, NULL);
    _slider_update(obj, EINA_TRUE);
 
    if (ret) *ret = EINA_TRUE;

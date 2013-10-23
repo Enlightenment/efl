@@ -102,6 +102,7 @@ Additions:
 
 Improvements:
 
+   * Slider : Show popup on left/right/up/down key down press and hide on left/right/up/down key up press.
    * Default theme is now dark (matching Enlightenment).
    * Toolbar widget is now a scrollable widget.
    * Entry widget is now a scrollable layout.
