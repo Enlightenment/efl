@@ -81,7 +81,7 @@ EAPI void *ecore_poller_del(Ecore_Poller *poller);
  * @param data The data to pass to the function
  * @return A handle to the new animator
  *
- * This function adds a animator and returns its handle on success and @c NULL
+ * This function adds an animator and returns its handle on success and @c NULL
  * on failure. The function @p func will be called every N seconds where N is
  * the @p frametime interval set by ecore_animator_frametime_set(). The
  * function will be passed the @p data pointer as its parameter.
@@ -98,7 +98,7 @@ EAPI void *ecore_poller_del(Ecore_Poller *poller);
  */
 EAPI Ecore_Animator *ecore_animator_add(Ecore_Task_Cb func, const void *data);
 /**
- * @brief Add a animator that runs for a limited time
+ * @brief Add an animator that runs for a limited time
  *
  * @param runtime The time to run in seconds
  * @param func The function to call when it ticks off
