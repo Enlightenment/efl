@@ -209,13 +209,26 @@ struct _EVGL_Resource
    EVGL_Context        *current_ctx;
    void                *current_eng;
 
-   EVGLNative_Surface   direct_surface;
-   int                  direct_rendered;
-   Evas_Object         *direct_img_obj;
-   int                  get_pixels_set;
+   struct {
+        EVGLNative_Surface   surface;
+        int                  rendered;
+        //Evas_Object         *img;
 
-   int                  master_clip;
-   int                  clip[4];
+        int                  rot;
+        int                  win_w;
+        int                  win_h;
+
+        struct {
+             int             x, y, w, h;
+        } img;
+
+        struct {
+             int             x, y, w, h;
+        } clip;
+
+        Eina_Bool            enabled : 1;
+
+   } direct;
 };
 
 struct _EVGL_Engine

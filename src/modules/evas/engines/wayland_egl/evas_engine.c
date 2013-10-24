@@ -2018,20 +2018,21 @@ eng_image_draw(void *data, void *context, void *surface, void *image, int src_x,
 
         re->win->gl_context->dc = context;
 
-        // Pass the clip info the evas_gl
-        evgl_direct_img_clip_set(1,
-                                 re->win->gl_context->dc->clip.x,
-                                 re->win->gl_context->dc->clip.y,
-                                 re->win->gl_context->dc->clip.w,
-                                 re->win->gl_context->dc->clip.h);
+        // Set necessary info for direct rendering
+        evgl_direct_info_set(re->win->gl_context->w,
+                             re->win->gl_context->h,
+                             re->win->gl_context->rot,
+                             dst_x, dst_y, dst_w, dst_h,
+                             re->win->gl_context->dc->clip.x,
+                             re->win->gl_context->dc->clip.y,
+                             re->win->gl_context->dc->clip.w,
+                             re->win->gl_context->dc->clip.h);
 
         // Call pixel get function
-        evgl_direct_img_obj_set(re->func.obj, re->win->gl_context->rot);
         re->func.pixels_get(re->func.pixels_data_get, re->func.obj);
-        evgl_direct_img_obj_set(NULL, 0);
 
-        // Reset clip
-        evgl_direct_img_clip_set(0, 0, 0, 0, 0);
+        // Clear direct rendering info
+        evgl_direct_info_clear();
      }
    else
      {

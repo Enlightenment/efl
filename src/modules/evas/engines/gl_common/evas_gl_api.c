@@ -20,7 +20,7 @@ void _make_current_check(const char* api)
 
    if (!ctx)
      {
-        CRIT("\e[1;33m%s\e[m: Current Context NOT SET: GL Call Should NOT Be Called without MakeCurrent!!!", api); 
+        CRIT("\e[1;33m%s\e[m: Current Context NOT SET: GL Call Should NOT Be Called without MakeCurrent!!!", api);
      }
 }
 
@@ -157,45 +157,23 @@ _evgl_glReleaseShaderCompiler(void)
 // returns: objc[4] (nc[4]) tranformed  (x, y, width, heigth) in gl coord
 // returns: cc[4] cliped coordinate in original coordinate
 static void
-compute_gl_coordinates(Evas_Object *obj, int rot, int clip_image,
+compute_gl_coordinates(int win_w, int win_h, int rot, int clip_image,
                        int x, int y, int width, int height,
-                       int clip[4],
+                       int img_x, int img_y, int img_w, int img_h,
+                       int clip_x, int clip_y, int clip_w, int clip_h,
                        int imgc[4], int objc[4], int cc[4])
 {
-   Evas_Object_Protected_Data *pd = eo_data_scope_get(obj, EVAS_OBJ_CLASS);
-
-   int obj_x, obj_y, obj_w, obj_h;
-   int clip_x, clip_y, clip_w, clip_h;
-   int out_w, out_h;
-
-   // Original Coordinates
-   obj_x = pd->cur->geometry.x;
-   obj_y = pd->cur->geometry.y;
-   obj_w = pd->cur->geometry.w;
-   obj_h = pd->cur->geometry.h;
-
-   // Clip Region
-   clip_x = clip[0];
-   clip_y = clip[1];
-   clip_w = clip[2];
-   clip_h = clip[3];
-
-   // Output Window Size
-   out_w = pd->layer->evas->output.w;
-   out_h = pd->layer->evas->output.h;
-
-
    if (rot == 0)
      {
         // oringinal image object coordinate in gl coordinate
-        imgc[0] = obj_x;
-        imgc[1] = out_h - obj_y - obj_h;
-        imgc[2] = imgc[0] + obj_w;
-        imgc[3] = imgc[1] + obj_h;
+        imgc[0] = img_x;
+        imgc[1] = win_h - img_y - img_h;
+        imgc[2] = imgc[0] + img_w;
+        imgc[3] = imgc[1] + img_h;
 
         // clip coordinates in gl coordinate
         cc[0] = clip_x;
-        cc[1] = out_h - clip_y - clip_h;
+        cc[1] = win_h - clip_y - clip_h;
         cc[2] = cc[0] + clip_w;
         cc[3] = cc[1] + clip_h;
 
@@ -208,20 +186,20 @@ compute_gl_coordinates(Evas_Object *obj, int rot, int clip_image,
    else if (rot == 180)
      {
         // oringinal image object coordinate in gl coordinate
-        imgc[0] = out_w - obj_x - obj_w;
-        imgc[1] = obj_y;
-        imgc[2] = imgc[0] + obj_w;
-        imgc[3] = imgc[1] + obj_h;
+        imgc[0] = win_w - img_x - img_w;
+        imgc[1] = img_y;
+        imgc[2] = imgc[0] + img_w;
+        imgc[3] = imgc[1] + img_h;
 
         // clip coordinates in gl coordinate
-        cc[0] = out_w - clip_x - clip_w;
+        cc[0] = win_w - clip_x - clip_w;
         cc[1] = clip_y;
         cc[2] = cc[0] + clip_w;
         cc[3] = cc[1] + clip_h;
 
         // transformed (x,y,width,height) in gl coordinate
-        objc[0] = imgc[0] + obj_w - x - width;
-        objc[1] = imgc[1] + obj_h - y - height;
+        objc[0] = imgc[0] + img_w - x - width;
+        objc[1] = imgc[1] + img_h - y - height;
         objc[2] = objc[0] + width;
         objc[3] = objc[1] + height;
 
@@ -229,10 +207,10 @@ compute_gl_coordinates(Evas_Object *obj, int rot, int clip_image,
    else if (rot == 90)
      {
         // oringinal image object coordinate in gl coordinate
-        imgc[0] = obj_y;
-        imgc[1] = obj_x;
-        imgc[2] = imgc[0] + obj_h;
-        imgc[3] = imgc[1] + obj_w;
+        imgc[0] = img_y;
+        imgc[1] = img_x;
+        imgc[2] = imgc[0] + img_h;
+        imgc[3] = imgc[1] + img_w;
 
         // clip coordinates in gl coordinate
         cc[0] = clip_y;
@@ -241,7 +219,7 @@ compute_gl_coordinates(Evas_Object *obj, int rot, int clip_image,
         cc[3] = cc[1] + clip_w;
 
         // transformed (x,y,width,height) in gl coordinate
-        objc[0] = imgc[0] + obj_h - y - height;
+        objc[0] = imgc[0] + img_h - y - height;
         objc[1] = imgc[1] + x;
         objc[2] = objc[0] + height;
         objc[3] = objc[1] + width;
@@ -249,20 +227,20 @@ compute_gl_coordinates(Evas_Object *obj, int rot, int clip_image,
    else if (rot == 270)
      {
         // oringinal image object coordinate in gl coordinate
-        imgc[0] = out_h - obj_y - obj_h;
-        imgc[1] = out_w - obj_x - obj_w;
-        imgc[2] = imgc[0] + obj_h;
-        imgc[3] = imgc[1] + obj_w;
+        imgc[0] = win_h - img_y - img_h;
+        imgc[1] = win_w - img_x - img_w;
+        imgc[2] = imgc[0] + img_h;
+        imgc[3] = imgc[1] + img_w;
 
         // clip coordinates in gl coordinate
-        cc[0] = out_h - clip_y - clip_h;
-        cc[1] = out_w - clip_x - clip_w;
+        cc[0] = win_h - clip_y - clip_h;
+        cc[1] = win_w - clip_x - clip_w;
         cc[2] = cc[0] + clip_h;
         cc[3] = cc[1] + clip_w;
 
         // transformed (x,y,width,height) in gl coordinate
         objc[0] = imgc[0] + y;
-        objc[1] = imgc[1] + obj_w - x - width;
+        objc[1] = imgc[1] + img_w - x - width;
         objc[2] = objc[0] + height;
         objc[3] = objc[1] + width;
      }
@@ -297,7 +275,7 @@ compute_gl_coordinates(Evas_Object *obj, int rot, int clip_image,
    cc[2] = cc[2]-cc[0]; // width
    cc[3] = cc[3]-cc[1]; // height
 
-   //DBG( "\e[1;32m     Img[%d %d %d %d] Original [%d %d %d %d]  Transformed[%d %d %d %d]  Clip[%d %d %d %d] Clipped[%d %d %d %d] \e[m", obj_x, obj_y, obj_w, obj_h, imgc[0], imgc[1], imgc[2], imgc[3], objc[0], objc[1], objc[2], objc[3], clip[0], clip[1], clip[2], clip[3], cc[0], cc[1], cc[2], cc[3]);
+   //DBG( "\e[1;32m     Img[%d %d %d %d] Original [%d %d %d %d]  Transformed[%d %d %d %d]  Clip[%d %d %d %d] Clipped[%d %d %d %d] \e[m", img_x, img_y, img_w, img_h, imgc[0], imgc[1], imgc[2], imgc[3], objc[0], objc[1], objc[2], objc[3], clip[0], clip[1], clip[2], clip[3], cc[0], cc[1], cc[2], cc[3]);
 }
 
 static void
@@ -305,8 +283,6 @@ _evgl_glClear(GLbitfield mask)
 {
    EVGL_Resource *rsc;
    EVGL_Context *ctx;
-   Evas_Object *img;
-   int rot = 0;
    int oc[4] = {0,0,0,0}, nc[4] = {0,0,0,0};
    int cc[4] = {0,0,0,0};
 
@@ -339,35 +315,33 @@ _evgl_glClear(GLbitfield mask)
                   ctx->direct_scissor = 1;
                }
 
-             img = rsc->direct_img_obj;
-             rot = evgl_engine->funcs->rotation_angle_get(rsc->current_eng);
-
              if ((ctx->scissor_updated) && (ctx->scissor_enabled))
                {
-                  compute_gl_coordinates(img, rot, 1,
-                                         ctx->scissor_coord[0],
-                                         ctx->scissor_coord[1],
-                                         ctx->scissor_coord[2],
-                                         ctx->scissor_coord[3],
-                                         rsc->clip, oc, nc, cc);
+                  compute_gl_coordinates(rsc->direct.win_w, rsc->direct.win_h,
+                                         rsc->direct.rot, 1,
+                                         ctx->scissor_coord[0], ctx->scissor_coord[1],
+                                         ctx->scissor_coord[2], ctx->scissor_coord[3],
+                                         rsc->direct.img.x, rsc->direct.img.y,
+                                         rsc->direct.img.w, rsc->direct.img.h,
+                                         rsc->direct.clip.x, rsc->direct.clip.y,
+                                         rsc->direct.clip.w, rsc->direct.clip.h,
+                                         oc, nc, cc);
 
-                  if (rsc->master_clip)
-                    {
-                       RECTS_CLIP_TO_RECT(nc[0], nc[1], nc[2], nc[3], cc[0], cc[1], cc[2], cc[3]);
-                       glScissor(nc[0], nc[1], nc[2], nc[3]);
-                    }
-                  else
-                     glScissor(nc[0], nc[1], nc[2], nc[3]);
+                  RECTS_CLIP_TO_RECT(nc[0], nc[1], nc[2], nc[3], cc[0], cc[1], cc[2], cc[3]);
+                  glScissor(nc[0], nc[1], nc[2], nc[3]);
                   ctx->direct_scissor = 0;
                }
              else
                {
-                  compute_gl_coordinates(img, rot, 0, 0, 0, 0, 0, rsc->clip, oc, nc, cc);
-
-                  if (rsc->master_clip)
-                     glScissor(cc[0], cc[1], cc[2], cc[3]);
-                  else
-                     glScissor(oc[0], oc[1], oc[2], oc[3]);
+                  compute_gl_coordinates(rsc->direct.win_w, rsc->direct.win_h,
+                                         rsc->direct.rot, 0,
+                                         0, 0, 0, 0,
+                                         rsc->direct.img.x, rsc->direct.img.y,
+                                         rsc->direct.img.w, rsc->direct.img.h,
+                                         rsc->direct.clip.x, rsc->direct.clip.y,
+                                         rsc->direct.clip.w, rsc->direct.clip.h,
+                                         oc, nc, cc);
+                  glScissor(cc[0], cc[1], cc[2], cc[3]);
                }
 
              glClear(mask);
@@ -424,7 +398,6 @@ _evgl_glGetIntegerv(GLenum pname, GLint* params)
 {
    EVGL_Resource *rsc;
    EVGL_Context *ctx;
-   Evas_Object_Protected_Data *img;
 
    if (_evgl_direct_enabled())
      {
@@ -450,8 +423,6 @@ _evgl_glGetIntegerv(GLenum pname, GLint* params)
         // Only need to handle it if it's directly rendering to the window
         if (!(rsc->current_ctx->current_fbo))
           {
-             img = eo_data_scope_get(rsc->direct_img_obj, EVAS_OBJ_CLASS);
-
              if (pname == GL_SCISSOR_BOX)
                {
                   if (ctx->scissor_updated)
@@ -475,8 +446,8 @@ _evgl_glGetIntegerv(GLenum pname, GLint* params)
                {
                   params[0] = 0;
                   params[1] = 0;
-                  params[2] = (GLint)img->cur->geometry.w;
-                  params[3] = (GLint)img->cur->geometry.h;
+                  params[2] = (GLint)rsc->direct.img.w;
+                  params[3] = (GLint)rsc->direct.img.h;
                   return;
                }
           }
@@ -490,8 +461,6 @@ _evgl_glReadPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum forma
 {
    EVGL_Resource *rsc;
    EVGL_Context *ctx;
-   Evas_Object *img;
-   int rot = 0;
    int oc[4] = {0,0,0,0}, nc[4] = {0,0,0,0};
    int cc[4] = {0,0,0,0};
 
@@ -520,10 +489,14 @@ _evgl_glReadPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum forma
 
         if (!(rsc->current_ctx->current_fbo))
           {
-             img = rsc->direct_img_obj;
-             rot = evgl_engine->funcs->rotation_angle_get(rsc->current_eng);
-
-             compute_gl_coordinates(img, rot, 1, x, y, width, height, rsc->clip, oc, nc, cc);
+             compute_gl_coordinates(rsc->direct.win_w, rsc->direct.win_h,
+                                    rsc->direct.rot, 1,
+                                    x, y, width, height,
+                                    rsc->direct.img.x, rsc->direct.img.y,
+                                    rsc->direct.img.w, rsc->direct.img.h,
+                                    rsc->direct.clip.x, rsc->direct.clip.y,
+                                    rsc->direct.clip.w, rsc->direct.clip.h,
+                                    oc, nc, cc);
              glReadPixels(nc[0], nc[1], nc[2], nc[3], format, type, pixels);
           }
         else
@@ -542,8 +515,6 @@ _evgl_glScissor(GLint x, GLint y, GLsizei width, GLsizei height)
 {
    EVGL_Resource *rsc;
    EVGL_Context *ctx;
-   Evas_Object *img;
-   int rot = 0;
    int oc[4] = {0,0,0,0}, nc[4] = {0,0,0,0};
    int cc[4] = {0,0,0,0};
 
@@ -575,10 +546,14 @@ _evgl_glScissor(GLint x, GLint y, GLsizei width, GLsizei height)
                   glDisable(GL_SCISSOR_TEST);
                }
 
-             img = rsc->direct_img_obj;
-             rot = evgl_engine->funcs->rotation_angle_get(rsc->current_eng);
-
-             compute_gl_coordinates(img, rot, 1, x, y, width, height, rsc->clip, oc, nc, cc);
+             compute_gl_coordinates(rsc->direct.win_w, rsc->direct.win_h,
+                                    rsc->direct.rot, 1,
+                                    x, y, width, height,
+                                    rsc->direct.img.x, rsc->direct.img.y,
+                                    rsc->direct.img.w, rsc->direct.img.h,
+                                    rsc->direct.clip.x, rsc->direct.clip.y,
+                                    rsc->direct.clip.w, rsc->direct.clip.h,
+                                    oc, nc, cc);
 
              // Keep a copy of the original coordinates
              ctx->scissor_coord[0] = x;
@@ -586,13 +561,8 @@ _evgl_glScissor(GLint x, GLint y, GLsizei width, GLsizei height)
              ctx->scissor_coord[2] = width;
              ctx->scissor_coord[3] = height;
 
-             if (rsc->master_clip)
-               {
-                  RECTS_CLIP_TO_RECT(nc[0], nc[1], nc[2], nc[3], cc[0], cc[1], cc[2], cc[3]);
-                  glScissor(nc[0], nc[1], nc[2], nc[3]);
-               }
-             else
-                glScissor(nc[0], nc[1], nc[2], nc[3]);
+             RECTS_CLIP_TO_RECT(nc[0], nc[1], nc[2], nc[3], cc[0], cc[1], cc[2], cc[3]);
+             glScissor(nc[0], nc[1], nc[2], nc[3]);
 
              ctx->direct_scissor = 0;
 
@@ -629,8 +599,6 @@ _evgl_glViewport(GLint x, GLint y, GLsizei width, GLsizei height)
 {
    EVGL_Resource *rsc;
    EVGL_Context *ctx;
-   Evas_Object *img;
-   int rot = 0;
    int oc[4] = {0,0,0,0}, nc[4] = {0,0,0,0};
    int cc[4] = {0,0,0,0};
 
@@ -663,40 +631,47 @@ _evgl_glViewport(GLint x, GLint y, GLsizei width, GLsizei height)
                   ctx->direct_scissor = 1;
                }
 
-             img = rsc->direct_img_obj;
-             rot = evgl_engine->funcs->rotation_angle_get(rsc->current_eng);
-
              if ((ctx->scissor_updated) && (ctx->scissor_enabled))
                {
                   // Recompute the scissor coordinates
-                  compute_gl_coordinates(img, rot, 1,
-                                         ctx->scissor_coord[0],
-                                         ctx->scissor_coord[1],
-                                         ctx->scissor_coord[2],
-                                         ctx->scissor_coord[3],
-                                         rsc->clip, oc, nc, cc);
+                  compute_gl_coordinates(rsc->direct.win_w, rsc->direct.win_h,
+                                         rsc->direct.rot, 1,
+                                         ctx->scissor_coord[0], ctx->scissor_coord[1],
+                                         ctx->scissor_coord[2], ctx->scissor_coord[3],
+                                         rsc->direct.img.x, rsc->direct.img.y,
+                                         rsc->direct.img.w, rsc->direct.img.h,
+                                         rsc->direct.clip.x, rsc->direct.clip.y,
+                                         rsc->direct.clip.w, rsc->direct.clip.h,
+                                         oc, nc, cc);
 
-                  if (rsc->master_clip)
-                    {
-                       RECTS_CLIP_TO_RECT(nc[0], nc[1], nc[2], nc[3], cc[0], cc[1], cc[2], cc[3]);
-                       glScissor(nc[0], nc[1], nc[2], nc[3]);
-                    }
-                  else
-                     glScissor(nc[0], nc[1], nc[2], nc[3]);
+                  RECTS_CLIP_TO_RECT(nc[0], nc[1], nc[2], nc[3], cc[0], cc[1], cc[2], cc[3]);
+                  glScissor(nc[0], nc[1], nc[2], nc[3]);
 
                   ctx->direct_scissor = 0;
 
                   // Compute the viewport coordinate
-                  compute_gl_coordinates(img, rot, 0, x, y, width, height, rsc->clip, oc, nc, cc);
+                  compute_gl_coordinates(rsc->direct.win_w, rsc->direct.win_h,
+                                         rsc->direct.rot, 0,
+                                         x, y, width, height,
+                                         rsc->direct.img.x, rsc->direct.img.y,
+                                         rsc->direct.img.w, rsc->direct.img.h,
+                                         rsc->direct.clip.x, rsc->direct.clip.y,
+                                         rsc->direct.clip.w, rsc->direct.clip.h,
+                                         oc, nc, cc);
                   glViewport(nc[0], nc[1], nc[2], nc[3]);
                }
              else
                {
-                  compute_gl_coordinates(img, rot, 0, x, y, width, height, rsc->clip, oc, nc, cc);
-                  if (rsc->master_clip)
-                     glScissor(cc[0], cc[1], cc[2], cc[3]);
-                  else
-                     glScissor(oc[0], oc[1], oc[2], oc[3]);
+
+                  compute_gl_coordinates(rsc->direct.win_w, rsc->direct.win_h,
+                                         rsc->direct.rot, 0,
+                                         x, y, width, height,
+                                         rsc->direct.img.x, rsc->direct.img.y,
+                                         rsc->direct.img.w, rsc->direct.img.h,
+                                         rsc->direct.clip.x, rsc->direct.clip.y,
+                                         rsc->direct.clip.w, rsc->direct.clip.h,
+                                         oc, nc, cc);
+                  glScissor(cc[0], cc[1], cc[2], cc[3]);
 
                   glViewport(nc[0], nc[1], nc[2], nc[3]);
                }
@@ -1627,7 +1602,7 @@ void
 _evgld_glShaderSource(GLuint shader, GLsizei count, const char* const * string, const GLint* length)
 {
    EVGL_FUNC_BEGIN();
-#ifdef GL_GLES 
+#ifdef GL_GLES
    glShaderSource(shader, count, (const GLchar * const *) string, length);
 #else
    glShaderSource(shader, count, (const GLchar **) string, length);
@@ -2273,7 +2248,7 @@ _evgld_glShaderSource(GLuint shader, GLsizei count, const char* const* string, c
 finish:
    EVGL_FUNC_END();
 }
-#endif 
+#endif
 
 //-------------------------------------------------------------//
 
@@ -2524,7 +2499,7 @@ _normal_gl_api_get(Evas_GL_API *funcs)
    ORD(glGetShaderPrecisionFormat);
    ORD(glShaderBinary);
    ORD(glReleaseShaderCompiler);
- 
+
 #undef ORD
 
    evgl_api_ext_get(funcs);

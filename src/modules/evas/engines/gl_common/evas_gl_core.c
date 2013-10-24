@@ -114,10 +114,10 @@ _internal_resource_make_current(void *eng_data, EVGL_Context *ctx)
 
    // Set the surface to evas surface if it's there
    if (rsc->id == evgl_engine->main_tid)
-      rsc->direct_surface = evgl_engine->funcs->evas_surface_get(eng_data);
+      rsc->direct.surface = evgl_engine->funcs->evas_surface_get(eng_data);
 
-   if (rsc->direct_surface)
-      surface = (void*)rsc->direct_surface;
+   if (rsc->direct.surface)
+      surface = (void*)rsc->direct.surface;
    else
       surface = (void*)rsc->surface;
 
@@ -1117,7 +1117,7 @@ _evgl_direct_renderable(EVGL_Resource *rsc, EVGL_Surface *sfc)
    if (evgl_engine->direct_force_off) return 0;
    if (rsc->id != evgl_engine->main_tid) return 0;
    if (!sfc->direct_fb_opt) return 0;
-   if (!rsc->direct_img_obj) return 0;
+   if (!rsc->direct.enabled) return 0;
 
    return 1;
 }
@@ -1243,7 +1243,7 @@ _evgl_not_in_pixel_get()
        (ctx) &&
        (ctx->current_sfc) &&
        (ctx->current_sfc->direct_fb_opt) &&
-       (!rsc->direct_img_obj))
+       (!rsc->direct.enabled))
       return 1;
    else
       return 0;
@@ -1384,7 +1384,7 @@ error:
 // Terminate engine and all the resources
 //    - destroy all internal resources
 //    - free allocated engine struct
-void 
+void
 evgl_engine_shutdown(void *eng_data)
 {
    // Check if engine is valid
@@ -1740,7 +1740,7 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
              glBindFramebuffer(GL_FRAMEBUFFER, 0);
              ctx->current_fbo = 0;
           }
-        rsc->direct_rendered = 1;
+        rsc->direct.rendered = 1;
      }
    else
      {
@@ -1757,7 +1757,7 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
              if (ctx->current_fbo)
                 glBindFramebuffer(GL_FRAMEBUFFER, ctx->current_fbo);
           }
-        rsc->direct_rendered = 0;
+        rsc->direct.rendered = 0;
      }
 
    ctx->current_sfc = sfc;
@@ -1820,9 +1820,56 @@ evgl_direct_rendered()
 
    if (!(rsc=_evgl_tls_resource_get())) return 0;
 
-   return rsc->direct_rendered;
+   return rsc->direct.rendered;
 }
 
+
+
+void
+evgl_direct_info_set(int win_w, int win_h, int rot, int img_x, int img_y, int img_w, int img_h, int clip_x, int clip_y, int clip_w, int clip_h)
+{
+   EVGL_Resource *rsc;
+
+   if (!(rsc=_evgl_tls_resource_get())) return;
+
+   // Normally direct rendering isn't allowed if alpha is on and
+   // rotation is not 0.  BUT, if override is on, allow it.
+   if ( (rot==0) ||
+        ((rot!=0) && (evgl_engine->direct_override)) )
+     {
+        rsc->direct.enabled = EINA_TRUE;
+
+        rsc->direct.win_w  = win_w;
+        rsc->direct.win_h  = win_h;
+        rsc->direct.rot    = rot;
+
+        rsc->direct.img.x  = img_x;
+        rsc->direct.img.y  = img_y;
+        rsc->direct.img.w  = img_w;
+        rsc->direct.img.h  = img_h;
+
+        rsc->direct.clip.x = clip_x;
+        rsc->direct.clip.y = clip_y;
+        rsc->direct.clip.w = clip_w;
+        rsc->direct.clip.h = clip_h;
+     }
+   else
+     {
+        rsc->direct.enabled = EINA_FALSE;
+     }
+}
+
+void
+evgl_direct_info_clear()
+{
+   EVGL_Resource *rsc;
+
+   if (!(rsc=_evgl_tls_resource_get())) return;
+
+   rsc->direct.enabled = EINA_FALSE;
+}
+
+/*
 void
 evgl_direct_img_obj_set(Evas_Object *img, int rot)
 {
@@ -1835,12 +1882,12 @@ evgl_direct_img_obj_set(Evas_Object *img, int rot)
    if (rot!=0)
      {
         if (evgl_engine->direct_override)
-           rsc->direct_img_obj = img;
+           rsc->direct.img = img;
         else
-           rsc->direct_img_obj = NULL;
+           rsc->direct.img = NULL;
      }
    else
-      rsc->direct_img_obj = img;
+      rsc->direct.img = img;
 }
 
 Evas_Object *
@@ -1850,8 +1897,9 @@ evgl_direct_img_obj_get()
 
    if (!(rsc=_evgl_tls_resource_get())) return NULL;
 
-   return rsc->direct_img_obj;
+   return rsc->direct.img;
 }
+*/
 
 Evas_GL_API *
 evgl_api_get()
@@ -1862,6 +1910,7 @@ evgl_api_get()
 }
 
 
+/*
 void
 evgl_direct_img_clip_set(int c, int x, int y, int w, int h)
 {
@@ -1876,6 +1925,7 @@ evgl_direct_img_clip_set(int c, int x, int y, int w, int h)
    rsc->clip[3] = h;
 
 }
+*/
 
 void
 evgl_direct_override_get(int *override, int *force_off)

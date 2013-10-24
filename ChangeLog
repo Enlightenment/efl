@@ -1,3 +1,6 @@
+2013-10-24  Sung W. Park (sung_)
+        * EvasGL: Fixed direct rendering mode not clipping to its clip region.
+
 2013-10-18  Youngbok Shin
 
         * Fixed the textblock format to be drawn according to
