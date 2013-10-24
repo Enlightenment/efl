@@ -24,7 +24,7 @@ my_thread_run(void *arg)
 {
    double t = 0.0;
 
-   // inside the pthread function lets loop forever incrimenting a time point
+   // inside the pthread function lets loop forever incrementing a time point
    for (;;)
      {
         struct info *inf = malloc(sizeof(struct info));

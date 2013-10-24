@@ -23,7 +23,7 @@ my_thread_run(LPVOID arg)
 {
    double t = 0.0;
 
-   // inside the thread function lets loop forever incrimenting a time point
+   // inside the thread function lets loop forever incrementing a time point
    for (;;)
      {
         struct info *inf = malloc(sizeof(struct info));
