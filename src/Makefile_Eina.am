@@ -231,6 +231,7 @@ TESTS += tests/eina/eina_suite
 tests_eina_eina_suite_SOURCES = \
 tests/eina/eina_suite.c \
 tests/eina/eina_suite.h \
+tests/eina/eina_test_abi.c \
 tests/eina/eina_test_fp.c \
 tests/eina/eina_test_stringshare.c \
 tests/eina/eina_test_ustringshare.c \
