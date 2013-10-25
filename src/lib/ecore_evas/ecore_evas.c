@@ -2387,8 +2387,8 @@ ecore_evas_pointer_warp(const Ecore_Evas *ee, Evas_Coord x, Evas_Coord y)
         return EINA_FALSE;
      }
 
-   if (ee->func.fn_pointer_warp)
-     return ee->func.fn_pointer_warp(ee, x, y);
+   if (ee->engine.func->fn_pointer_warp)
+     return ee->engine.func->fn_pointer_warp(ee, x, y);
 
    return EINA_FALSE;
 }
