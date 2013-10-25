@@ -240,6 +240,11 @@ EAPI char              *elm_entry_markup_to_utf8(const char *s);
  * @param s The string (in UTF-8) to be converted
  * @return The converted string (in markup). It should be freed.
  *
+ * For example, passing "<align=center>hello</align>&gt;" will return
+ * "&lt;align=center&gt;hello&lt;/align&gt; &amp;gt;". This is useful when you
+ * want to display "&" in label, entry, and some widgets which use textblock
+ * internally.
+ *
  * @ingroup Entry
  */
 EAPI char              *elm_entry_utf8_to_markup(const char *s);
