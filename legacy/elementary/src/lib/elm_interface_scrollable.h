@@ -1119,6 +1119,7 @@ struct _Elm_Scrollable_Smart_Interface_Data
       Evas_Coord      locked_x, locked_y;
       int             hdir, vdir;
 
+      Ecore_Idle_Enterer *hold_enterer;
       Ecore_Animator *hold_animator;
       Ecore_Animator *onhold_animator;
       Ecore_Animator *momentum_animator;
