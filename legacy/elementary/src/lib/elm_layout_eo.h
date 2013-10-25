@@ -45,6 +45,7 @@
    ELM_OBJ_LAYOUT_SUB_ID_THEME_ENABLE,
    ELM_OBJ_LAYOUT_SUB_ID_FREEZE,
    ELM_OBJ_LAYOUT_SUB_ID_THAW,
+   ELM_OBJ_LAYOUT_SUB_ID_SIZING_RESTRICTED_EVAL,
    ELM_OBJ_LAYOUT_SUB_ID_LAST
 };
 
@@ -316,6 +317,16 @@
  * @see elm_layout_sizing_eval
  */
 #define elm_obj_layout_sizing_eval() ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_SIZING_EVAL)
+
+/**
+ * @def elm_obj_layout_sizing_restricted_eval
+ * @since 1.8
+ *
+ * Eval sizing, restricted to current width and/or height
+ *
+ * @see elm_layout_sizing_restricted_eval
+ */
+#define elm_obj_layout_sizing_restricted_eval(width, height) ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_SIZING_RESTRICTED_EVAL), EO_TYPECHECK(Eina_Bool, width), EO_TYPECHECK(Eina_Bool, height)
 
 /**
  * @def elm_obj_layout_part_cursor_set

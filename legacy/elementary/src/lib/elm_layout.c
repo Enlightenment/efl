@@ -101,11 +101,20 @@ static void
 _sizing_eval(Evas_Object *obj, Elm_Layout_Smart_Data *sd)
 {
    Evas_Coord minh = -1, minw = -1;
+   Evas_Coord rest_w = 0, rest_h = 0;
    ELM_WIDGET_DATA_GET_OR_RETURN(sd->obj, wd);
 
-   edje_object_size_min_calc(wd->resize_obj, &minw, &minh);
+   if (sd->restricted_calc_w)
+     rest_w = wd->w;
+   if (sd->restricted_calc_h)
+     rest_h = wd->h;
+
+   edje_object_size_min_restricted_calc(wd->resize_obj, &minw, &minh,
+                                        rest_w, rest_h);
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, -1, -1);
+
+   sd->restricted_calc_w = sd->restricted_calc_h = EINA_FALSE;
 }
 
 /* common content cases for layout objects: icon and text */
@@ -1785,6 +1794,26 @@ _elm_layout_smart_sizing_eval(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    evas_object_smart_changed(obj);
 }
 
+EAPI void
+elm_layout_sizing_restricted_eval(Evas_Object *obj, Eina_Bool w, Eina_Bool h)
+{
+   ELM_LAYOUT_CHECK(obj);
+   eo_do(obj, elm_obj_layout_sizing_restricted_eval(w, h));
+}
+
+static void
+_elm_layout_smart_sizing_restricted_eval(Eo *obj, void *_pd, va_list *list)
+{
+   Elm_Layout_Smart_Data *sd = _pd;
+   Eina_Bool w = va_arg(*list, int);
+   Eina_Bool h = va_arg(*list, int);
+
+   sd->restricted_calc_w = !!w;
+   sd->restricted_calc_h = !!h;
+
+   evas_object_smart_changed(obj);
+}
+
 EAPI int
 elm_layout_freeze(Evas_Object *obj)
 {
@@ -2232,6 +2261,7 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_EDJE_GET), _elm_layout_smart_edje_get),
         EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_DATA_GET), _elm_layout_smart_data_get),
         EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_SIZING_EVAL), _elm_layout_smart_sizing_eval),
+        EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_SIZING_RESTRICTED_EVAL), _elm_layout_smart_sizing_restricted_eval),
         EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_PART_CURSOR_SET), _elm_layout_smart_part_cursor_set),
         EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_PART_CURSOR_GET), _elm_layout_smart_part_cursor_get),
         EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_PART_CURSOR_UNSET), _elm_layout_smart_part_cursor_unset),
@@ -2290,6 +2320,7 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_OBJ_LAYOUT_SUB_ID_THEME_ENABLE, "Checks whenever 'theme' is impemented in current class."),
      EO_OP_DESCRIPTION(ELM_OBJ_LAYOUT_SUB_ID_FREEZE, "Freezes the Elementary layout object."),
      EO_OP_DESCRIPTION(ELM_OBJ_LAYOUT_SUB_ID_THAW, "Thaws the Elementary layout object."),
+     EO_OP_DESCRIPTION(ELM_OBJ_LAYOUT_SUB_ID_SIZING_RESTRICTED_EVAL, "Eval sizing, restricted to current width/height size."),
 
 
      EO_OP_DESCRIPTION_SENTINEL

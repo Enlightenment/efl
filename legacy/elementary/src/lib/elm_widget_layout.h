@@ -84,6 +84,8 @@ typedef struct _Elm_Layout_Smart_Data
    int                   frozen; /**< Layout freeze counter */
 
    Eina_Bool             needs_size_calc : 1;
+   Eina_Bool             restricted_calc_w : 1;
+   Eina_Bool             restricted_calc_h : 1;
 } Elm_Layout_Smart_Data;
 
 /**

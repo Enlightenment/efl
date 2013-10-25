@@ -416,6 +416,24 @@ EAPI const char                  *elm_layout_data_get(const Evas_Object *obj, co
 EAPI void                         elm_layout_sizing_eval(Evas_Object *obj);
 
 /**
+ * Request sizing reevaluation, restricted to current width and/or height
+ *
+ * Useful mostly when there are TEXTBLOCK parts defining the height of the
+ * object and nothing else restricting it to a minimum width. Calling this
+ * function will restrict the minimum size in the Edje calculation to whatever
+ * size it the layout has at the moment.
+ *
+ * @param obj The layout object
+ * @param w   Restrict minimum size to the current width
+ * @param h   Restrict minimum size ot the current height
+ *
+ * @since 1.8
+ *
+ * @ingroup Layout
+ */
+EAPI void                         elm_layout_sizing_restricted_eval(Evas_Object *obj, Eina_Bool w, Eina_Bool h);
+
+/**
  * Sets a specific cursor for an edje part.
  *
  * @param obj The layout object.
