@@ -331,7 +331,9 @@ START_TEST(eina_file_map_new_test)
    file_length = eina_file_size_get(e_file);
    correct_file_open_check = file_length - test_string_length; 
    // check size of eina_map_test_string == size of file
-   fail_if(correct_file_open_check != 0); 
+   fail_if(correct_file_open_check != 0);
+
+   fail_if(eina_file_refresh(e_file));
 
    e_file2 = eina_file_open(test_file2_path, EINA_FALSE);
    fail_if(!e_file);
@@ -384,6 +386,58 @@ START_TEST(eina_file_map_new_test)
 }
 END_TEST
 
+static const char *virtual_file_data = "this\n"
+  "is a test for the sake of testing\n"
+  "it should detect all the line of this\n"
+  "\n"
+  "\r\n"
+  "file !\n"
+  "without any issue !";
+
+START_TEST(eina_test_file_virtualize)
+{
+   Eina_File *f;
+   Eina_File *tmp;
+   Eina_Iterator *it;
+   Eina_File_Line *ln;
+   void *map;
+   const unsigned int check[] = { 1, 2, 3, 6, 7 };
+   int i = 0;
+
+   eina_init();
+
+   f = eina_file_virtualize("gloubi", virtual_file_data, strlen(virtual_file_data), EINA_FALSE);
+   fail_if(!f);
+
+   fail_if(!eina_file_virtual(f));
+
+   tmp = eina_file_dup(f);
+   fail_if(!tmp);
+   eina_file_close(tmp);
+
+   fail_if(strcmp("gloubi", eina_file_filename_get(f)));
+
+   map = eina_file_map_new(f, EINA_FILE_WILLNEED, 7, 7);
+   fail_if(map != (virtual_file_data + 7));
+   eina_file_map_free(f, map);
+
+   it = eina_file_map_lines(f);
+   EINA_ITERATOR_FOREACH(it, ln)
+     {
+        fail_if(ln->index != check[i]);
+        i++;
+     }
+   fail_if(eina_iterator_container_get(it) != f);
+   eina_iterator_free(it);
+
+   fail_if(i != 5);
+
+   eina_file_close(f);
+
+   eina_shutdown();
+}
+END_TEST
+
 void
 eina_test_file(TCase *tc)
 {
@@ -391,5 +445,6 @@ eina_test_file(TCase *tc)
    tcase_add_test(tc, eina_file_direct_ls_simple);
    tcase_add_test(tc, eina_file_ls_simple);
    tcase_add_test(tc, eina_file_map_new_test);
+   tcase_add_test(tc, eina_test_file_virtualize);
 }
 
