@@ -1,3 +1,5 @@
+%bcond_with wayland
+
 Name:           efl
 Version:        1.8.alpha
 Release:        1
@@ -38,7 +40,12 @@ BuildRequires:  pkgconfig(check)
 BuildRequires:  zlib-devel
 BuildRequires:  gettext-tools
 
-#ecore
+%if %{with wayland}
+BuildRequires:  pkgconfig(wayland-client)
+BuildRequires:  pkgconfig(wayland-cursor)
+BuildRequires:  pkgconfig(wayland-egl)
+BuildRequires:  pkgconfig(glesv2)
+%else
 BuildRequires:  pkgconfig(x11)
 BuildRequires:  pkgconfig(xcursor)
 BuildRequires:  pkgconfig(xinerama)
@@ -52,11 +59,14 @@ BuildRequires:  pkgconfig(xscrnsaver)
 BuildRequires:  libXtst-devel
 BuildRequires:  pkgconfig(xi)
 BuildRequires:  pkgconfig(xgesture)
+BuildRequires:  pkgconfig(gles20)
+%endif
 BuildRequires:  glib2-devel
 BuildRequires:  pkgconfig(openssl)
 BuildRequires:  gnutls-devel
 BuildRequires:  curl-devel
 BuildRequires:  pkgconfig(vconf)
+BuildRequires:  pkgconfig(xkbcommon)
 
 #eldbus
 BuildRequires:  dbus-devel
@@ -83,7 +93,6 @@ BuildRequires:  pkgconfig(fribidi)
 BuildRequires:  pkgconfig(fontconfig)
 BuildRequires:  pkgconfig(harfbuzz)
 BuildRequires:  pkgconfig(libdri2)
-BuildRequires:  pkgconfig(gles20)
 BuildRequires:  pkgconfig(libtbm)
 
 #eeze
@@ -143,7 +152,11 @@ Headers, pkgconfig files and other files needed for development with EFL.
 NOCONFIGURE=1 ./autogen.sh
 %configure --disable-physics --enable-tizen --enable-g-main-loop \
 		--disable-xim --disable-scim --enable-gesture \
+%if %{with wayland}
+		--enable-tile-rotate --disable-rpath --with-x11=none --with-opengl=es --enable-wayland --enable-egl
+%else
 		--enable-tile-rotate --disable-rpath --with-x11=xlib --with-opengl=es
+%endif
 
 make
 
@@ -172,6 +185,9 @@ make
 %{_libdir}/emotion/modules/*/*/*.so
 %{_libdir}/ethumb/modules/*/*/*
 %{_libdir}/ethumb_client/utils/*/*
+%if %{with wayland}
+%{_libdir}/ecore_imf/modules/*/*/*.so
+%endif
 %{_libdir}/ecore_evas/engines/*/*/*.so
 %{_libdir}/ecore/*/*/*/*.so
 
@@ -210,3 +226,4 @@ make
 %{_includedir}/*
 %{_libdir}/*.so
 %{_libdir}/pkgconfig/*.pc
+%exclude %{_libdir}/debug/*

@@ -711,6 +711,7 @@ EFL_SELECT_WINDOWS_VERSION
 EFL_ADD_LIBS([EVIL], [-lole32 -lws2_32 -lsecur32 -luuid])
 EVIL_DLFCN_LIBS="-lpsapi"
 
+
 AC_SUBST([EVIL_DLFCN_LIBS])
 
 ### Checks for header files
