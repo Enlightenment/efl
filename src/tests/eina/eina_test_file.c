@@ -188,7 +188,8 @@ START_TEST(eina_file_direct_ls_simple)
         Eina_Iterator *it = eina_file_direct_ls(test_dirname);
         Eina_Bool found_dir = EINA_FALSE;
 
-        while (eina_iterator_next(it, (void **)&dir_info))
+        fail_if(!eina_iterator_container_get(it));
+        EINA_ITERATOR_FOREACH(it, dir_info)
           {
              if (!strcmp(dir_info->path, dirname))
                {
@@ -235,7 +236,8 @@ START_TEST(eina_file_ls_simple)
         Eina_Iterator *it = eina_file_ls(test_dirname);
         Eina_Bool found_dir = EINA_FALSE;
 
-        while (eina_iterator_next(it, (void **)&filename))
+        fail_if(!eina_iterator_container_get(it));
+        EINA_ITERATOR_FOREACH(it, filename)
           {
              if (!strcmp(filename, dirname))
                {
@@ -353,6 +355,7 @@ START_TEST(eina_file_map_new_test)
    map_length = test_string_length;
    file_map = eina_file_map_new(e_file, EINA_FILE_WILLNEED, map_offset, map_length); 
    fail_if(file_map);
+   fail_if(eina_file_map_faulted(e_file, file_map));
 
    // test : offset = 0 AND length = file->length - use eina_file_map_all
    map_offset = 0;
