@@ -67,6 +67,9 @@ START_TEST(eina_test_spinlock)
 
    fail_if(counter != 20000);
 
+   fail_if(eina_spinlock_take_try(&spin) != EINA_LOCK_SUCCEED);
+   fail_if(eina_spinlock_release(&spin) != EINA_LOCK_SUCCEED);
+
    eina_spinlock_free(&spin);
 
    eina_shutdown();
@@ -108,6 +111,7 @@ START_TEST(eina_test_tls)
 }
 END_TEST
 
+static Eina_Barrier barrier;
 static Eina_Lock mtcond;
 static Eina_Condition cond;
 static Eina_RWLock mutex;
@@ -115,7 +119,10 @@ static Eina_RWLock mutex;
 static void *
 _eina_test_rwlock_thread(void *data EINA_UNUSED, Eina_Thread t EINA_UNUSED)
 {
+   fail_if(!eina_barrier_wait(&barrier));
+   fail_if(eina_lock_take(&mtcond) != EINA_LOCK_SUCCEED);
    fail_if(!eina_condition_broadcast(&cond));
+   fail_if(eina_lock_release(&mtcond) != EINA_LOCK_SUCCEED);
 
    fail_if(eina_rwlock_take_write(&mutex) != EINA_LOCK_SUCCEED);
    counter = 7200;
@@ -133,16 +140,20 @@ START_TEST(eina_test_rwlock)
    fail_if(!eina_rwlock_new(&mutex));
    fail_if(!eina_lock_new(&mtcond));
    fail_if(!eina_condition_new(&cond, &mtcond));
+   fail_if(!eina_barrier_new(&barrier, 2));
 
    counter = 42;
+
+   eina_lock_debug(&mutex);
 
    fail_if(eina_rwlock_take_read(&mutex) != EINA_LOCK_SUCCEED);
    fail_if(eina_lock_take(&mtcond) != EINA_LOCK_SUCCEED);
 
    fail_if(!eina_thread_create(&thread, EINA_THREAD_NORMAL, 0, _eina_test_rwlock_thread, NULL));
 
+   fail_if(!eina_barrier_wait(&barrier));
    fail_if(!eina_condition_wait(&cond));
-   fail_if(!eina_lock_release(&mtcond));
+   fail_if(eina_lock_release(&mtcond) != EINA_LOCK_SUCCEED);
 
    fail_if(counter != 42);
    fail_if(eina_rwlock_release(&mutex) != EINA_LOCK_SUCCEED);
@@ -154,6 +165,9 @@ START_TEST(eina_test_rwlock)
    fail_if(eina_rwlock_take_read(&mutex) != EINA_LOCK_SUCCEED);
    fail_if(counter != 7200);
    fail_if(eina_rwlock_release(&mutex) != EINA_LOCK_SUCCEED);
+
+   eina_condition_timedwait(&cond, 0.01);
+   eina_thread_join(thread);
 
    eina_condition_free(&cond);
    eina_lock_free(&mtcond);
