@@ -571,16 +571,18 @@ _evas_common_rgba_image_dirty(Image_Entry *ie_dst, const Image_Entry *ie_src)
    evas_common_rgba_image_scalecache_dirty((Image_Entry *)ie_src);
    evas_common_rgba_image_scalecache_dirty(ie_dst);
    evas_cache_image_load_data(&src->cache_entry);
-   if (_evas_common_rgba_image_surface_alloc(&dst->cache_entry,
-                                             src->cache_entry.w, src->cache_entry.h))
+   if (!evas_cache_image_pixels(ie_dst))
      {
+        if (_evas_common_rgba_image_surface_alloc(&dst->cache_entry,
+                                                  src->cache_entry.w, src->cache_entry.h))
+          {
 #ifdef EVAS_CSERVE2
-        // if (ie_src->data1) evas_cserve2_image_free((Image_Entry*) ie_src);
-        if (ie_src->data1) ERR("Shouldn't reach this point since we are using cache2.");
+             // if (ie_src->data1) evas_cserve2_image_free((Image_Entry*) ie_src);
+             if (ie_src->data1) ERR("Shouldn't reach this point since we are using cache2.");
 #endif
-        return 1;
+             return 1;
+          }
      }
-
 #ifdef EVAS_CSERVE2
    // if (ie_src->data1) evas_cserve2_image_free((Image_Entry*) ie_src);
    if (ie_src->data1) ERR("Shouldn't reach this point since we are using cache2.");
