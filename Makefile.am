@@ -107,7 +107,8 @@ old/README.ethumb \
 old/README.evas \
 old/README.evil \
 spec/efl.spec \
-pkgbuild/PKGBUILD
+pkgbuild/PKGBUILD \
+pkgbuild/efl.install
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA =

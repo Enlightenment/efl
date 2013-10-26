@@ -1,35 +1,45 @@
 # Maintainer: Enlightenment Developers <enlightenment-devel@enlightenment.org>
-pkgname=('efl' 'efl_doc' 'efl_x11')
+pkgname=('efl' 'efl_doc')
 pkgver=@VERSION@
 pkgrel=1
 pkgdesc="Enlightenment Foundation Libraries - GIT development snapshot (Ecore, Eldbus, Edje, Eet, Eeze, Efreet, Eina, Eio, Embryo, Emotion, Eo, Ephysics, Ethumb, & Evas)"
 arch=('i686' 'x86_64' 'arm')
 url="http://www.enlightenment.org"
-license=('BSD' 'LGPL2' 'GPL2')
-makedepends=('doxygen')
+license=('BSD' 'LGPL2.1' 'GPL2' 'custom')
+makedepends=('doxygen' 'check')
 depends=('bullet' 'libpng' 'libjpeg-turbo' 'gstreamer0.10'
-         'gstreamer0.10-base' 'gstreamer0.10-good' 
-	 'gstreamer0.10-bad' 'gstreamer0.10-ugly' 'gstreamer0.10-ffmpeg'
-	 'zlib' 'lua' 'libtiff' 'openssl' 'util-linux' 'curl' 'dbus-core'
-	 'glibc' 'fontconfig' 'freetype2' 'fribidi' 'libpulse'
-	 'libsndfile' 'systemd' 'libx11' 'libxau' 'libxcomposite'
-	 'libxdamage' 'libxdmcp' 'libxext' 'libxfixes' 'libxinerama'
-	 'libxi' 'libxrandr' 'libxrender' 'libxss' 'libxtst'
-	 'libxcursor' 'libxp' 'libgl' 'giflib' 'libwebp' 'harfbuzz')
-provides_efl=("ecore=$pkgver" "eldbus=$pkgver" "edje=$pkgver"
-              "eet=$pkgver" "eeze=$pkgver" "efreet=$pkgver"
-	      "eina=$pkgver" "eio=$pkgver" "embryo=$pkgver" "emotion=$pkgver"
-              "ephysics=$pkgver" "ethumb=$pkgver" "evas=$pkgver")
-options=('strip' 'docs' 'zipman' '!libtool' 'debug')
-buildflags="-O2 -g -fvisibility=hidden -fomit-frame-pointer"
+         'gstreamer0.10-base' 'gstreamer0.10-good'
+         'gstreamer0.10-bad' 'gstreamer0.10-ugly' 'gstreamer0.10-ffmpeg'
+         'zlib' 'lua' 'libtiff' 'openssl' 'util-linux' 'curl' 'dbus'
+         'glibc' 'fontconfig' 'freetype2' 'fribidi' 'libpulse'
+         'libsndfile' 'systemd' 'libx11' 'libxau' 'libxcomposite'
+         'libxdamage' 'libxdmcp' 'libxext' 'libxfixes' 'libxinerama'
+         'libxi' 'libxrandr' 'libxrender' 'libxss' 'libxtst'
+         'libxcursor' 'libxp' 'libgl' 'giflib' 'libwebp' 'harfbuzz')
+provides=("ecore=$pkgver" "eldbus=$pkgver" "edje=$pkgver"
+          "eet=$pkgver" "eeze=$pkgver" "efreet=$pkgver"
+          "eina=$pkgver" "eio=$pkgver" "embryo=$pkgver" "emotion=$pkgver"
+          "ephysics=$pkgver" "ethumb=$pkgver" "evas=$pkgver")
+conflicts=('ecore' 'edje' 'eet' 'eeze' 'efreet' 'eina' 'eio' 'embryo' 'emotion'
+           'ethumb' 'evas')
+options=('!libtool' 'debug')
+install=efl.install
+
+prepare() {
+  sed -i 's/env python$/&2/' "../../src/scripts/eina/eina-bench-cmp"
+}
+
 build() {
   cd "../.."
-  make clean distclean
+  export CFLAGS="$CFLAGS -fvisibility=hidden -fomit-frame-pointer"
+  export CXXFLAGS="$CXXFLAGS -fvisibility=hidden -fomit-frame-pointer"
+  [[ -e Makefile ]] && make clean distclean
   ./configure --prefix=/usr \
   --disable-static --disable-tslib --enable-fb \
   --enable-xinput22 --enable-multisense --enable-systemd \
   --enable-image-loader-webp --enable-harfbuzz
   make
+  make -j1 doc
 }
 
 #check() {
@@ -39,52 +49,29 @@ build() {
 
 package_efl() {
   cd "../.."
-  rm -rf $pkgdir/usr
   make -j1 DESTDIR="$pkgdir/" install
-  install -Dm644 README $pkgdir/usr/share/$pkgname/README
-  install -Dm644 NEWS $pkgdir/usr/share/$pkgname/NEWS
-  install -Dm644 ChangeLog $pkgdir/usr/share/$pkgname/ChangeLog
-  install -Dm644 AUTHORS $pkgdir/usr/share/$pkgname/AUTHORS
-  install -Dm644 COMPLIANCE $pkgdir/usr/share/$pkgname/COMPLIANCE
-  install -Dm644 licenses/COPYING.BSD $pkgdir/usr/share/licenses/$pkgname/COPYING.BSD
-  install -Dm644 licenses/COPYING.GPL $pkgdir/usr/share/licenses/$pkgname/COPYING.GPL
-  install -Dm644 licenses/COPYING.LGPL $pkgdir/usr/share/licenses/$pkgname/COPYING.LGPL
-  install -Dm644 licenses/COPYING.SMALL $pkgdir/usr/share/licenses/$pkgname/COPYING.SMALL
-  ln -s ../licenses/$pkgname/COPYING.BSD $pkgdir/usr/share/$pkgname/COPYING.BSD
-  ln -s ../licenses/$pkgname/COPYING.GPL $pkgdir/usr/share/$pkgname/COPYING.GPL
-  ln -s ../licenses/$pkgname/COPYING.LGPL $pkgdir/usr/share/$pkgname/COPYING.LGPL
-  ln -s ../licenses/$pkgname/COPYING.SMALL $pkgdir/usr/share/$pkgname/COPYING.SMALL
-  rm -rf \
-  $pkgdir/usr/include/evas-1/Evas_Engine_*_X11.h \
-  $pkgdir/usr/include/ecore-x-1 \
-  $pkgdir/usr/lib/evas/modules/engines/*_x11 \
-  $pkgdir/usr/lib/ecore_evas/engines/x \
-  $pkgdir/usr/lib/libecore_x* \
-  $pkgdir/usr/lib/pkgconfig/ecore-x.pc \
-  $pkgdir/usr/lib/pkgconfig/evas-*-x11.pc
+  install -Dm644 README "$pkgdir/usr/share/$pkgname/README"
+  install -Dm644 NEWS "$pkgdir/usr/share/$pkgname/NEWS"
+  install -Dm644 ChangeLog "$pkgdir/usr/share/$pkgname/ChangeLog"
+  install -Dm644 AUTHORS "$pkgdir/usr/share/$pkgname/AUTHORS"
+  install -Dm644 COMPLIANCE "$pkgdir/usr/share/$pkgname/COMPLIANCE"
+  install -Dm644 licenses/COPYING.BSD "$pkgdir/usr/share/licenses/$pkgname/COPYING.BSD"
+  install -Dm644 licenses/COPYING.GPL "$pkgdir/usr/share/licenses/$pkgname/COPYING.GPL"
+  install -Dm644 licenses/COPYING.LGPL "$pkgdir/usr/share/licenses/$pkgname/COPYING.LGPL"
+  install -Dm644 licenses/COPYING.SMALL "$pkgdir/usr/share/licenses/$pkgname/COPYING.SMALL"
+  ln -s "../licenses/$pkgname/COPYING.BSD" "$pkgdir/usr/share/$pkgname/COPYING.BSD"
+  ln -s "../licenses/$pkgname/COPYING.GPL" "$pkgdir/usr/share/$pkgname/COPYING.GPL"
+  ln -s "../licenses/$pkgname/COPYING.LGPL" "$pkgdir/usr/share/$pkgname/COPYING.LGPL"
+  ln -s "../licenses/$pkgname/COPYING.SMALL" "$pkgdir/usr/share/$pkgname/COPYING.SMALL"
 }
 
 package_efl_doc() {
+  pkgdesc="Documentation for the Enlightenment Foundation Libraries"
+  arch=('any')
+  unset license depends provides conflicts install
   cd "../.."
-  rm -rf $pkgdir/usr
-  make -j1 doc
-  mkdir -p $pkgdir/usr/share/$pkgname
-  cp -r doc/html $pkgdir/usr/share/$pkgname/html
-  cp -r doc/latex $pkgdir/usr/share/$pkgname/latex
+  mkdir -p "$pkgdir/usr/share/doc/$pkgname"
+  cp -a doc/html "$pkgdir/usr/share/doc/$pkgname/html"
+  cp -a doc/latex "$pkgdir/usr/share/doc/$pkgname/latex"
 }
 
-package_efl_x11() {
-  cd "../.."
-  rm -rf $pkgdir/usr
-  make -j1 DESTDIR="$pkgdir/" install
-  tar cf /tmp/xf.tar \
-  $pkgdir/usr/include/evas-1/Evas_Engine_*_X11.h \
-  $pkgdir/usr/include/ecore-x-1 \
-  $pkgdir/usr/lib/evas/modules/engines/*_x11 \
-  $pkgdir/usr/lib/ecore_evas/engines/x \
-  $pkgdir/usr/lib/libecore_x* \
-  $pkgdir/usr/lib/pkgconfig/ecore-x.pc \
-  $pkgdir/usr/lib/pkgconfig/evas-*-x11.pc
-  rm -rf $pkgdir/usr
-  tar -C / -P -xf /tmp/xf.tar
-}
