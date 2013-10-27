@@ -291,7 +291,7 @@ EAPI void elm_cnp_selection_loss_callback_set(Evas_Object *obj, Elm_Sel_Type sel
  * @param poscb The function to call when the object has a drag over it
  * @param posdata The application data to pass to posdata
  * @param dropcb The function to call when a drop has occurred
- * @param cbdata The application data to pass to dropcb
+ * @param dropdata The application data to pass to dropcb
  * @return Returns EINA_TRUE, if successful, or EINA_FALSE if not.
  *
  * @ingroup CopyPaste
@@ -302,7 +302,7 @@ EAPI Eina_Bool elm_drop_target_add(Evas_Object *obj, Elm_Sel_Format format,
                                    Elm_Drag_State entercb, void *enterdata,
                                    Elm_Drag_State leavecb, void *leavedata,
                                    Elm_Drag_Pos poscb, void *posdata,
-                                   Elm_Drop_Cb dropcb, void *cbdata);
+                                   Elm_Drop_Cb dropcb, void *dropdata);
 
 /**
  * @brief Deletes the drop target status of an object
@@ -472,7 +472,7 @@ EAPI Eina_Bool elm_drag_item_container_del(Evas_Object *obj);
  * @param poscb The function to call when the object has a drag over it
  * @param posdata The application data to pass to posdata
  * @param dropcb The function to call when a drop has occurred
- * @param cbdata The application data to pass to dropcb
+ * @param dropdata The application data to pass to dropcb
  * @return Returns EINA_TRUE, if successful, or EINA_FALSE if not.
  *
  * @ingroup CopyPaste
@@ -485,7 +485,7 @@ EAPI Eina_Bool elm_drop_item_container_add(Evas_Object *obj,
       Elm_Drag_State entercb, void *enterdata,
       Elm_Drag_State leavecb, void *leavedata,
       Elm_Drag_Item_Container_Pos poscb, void *posdata,
-      Elm_Drop_Item_Container_Cb dropcb, void *cbdata);
+      Elm_Drop_Item_Container_Cb dropcb, void *dropdata);
 
 /**
  * @brief Removes a container from list of drop tragets.
