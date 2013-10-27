@@ -247,8 +247,8 @@ _part_lookup_key_pc_hash(const void *key, int key_length EINA_UNUSED)
    if (a->stable)
      {
 #ifdef __LP64__
-        return eina_hash_int64((uintptr_t) &a->pc, sizeof (void*)) ^
-          eina_hash_int64((uintptr_t) &a->mem.dest, sizeof (void*));
+        return eina_hash_int64((uintptr_t *) &a->pc, sizeof (void*)) ^
+          eina_hash_int64((uintptr_t *) &a->mem.dest, sizeof (void*));
 #else
         return eina_hash_int32((uintptr_t*) &a->pc, sizeof (void*)) ^
           eina_hash_int32((uintptr_t*) &a->mem.dest, sizeof (void*));
