@@ -96,7 +96,7 @@ enum
  *
  * @ingroup Table
  */
-#define elm_obj_table_pack(subobj, column, row, colspan, rowspan) ELM_OBJ_TABLE_ID(ELM_OBJ_TABLE_SUB_ID_PACK), EO_TYPECHECK(Evas_Object *, subobj), EO_TYPECHECK(int, col), EO_TYPECHECK(int, row), EO_TYPECHECK(int, colspan), EO_TYPECHECK(int, rowspan)
+#define elm_obj_table_pack(subobj, column, row, colspan, rowspan) ELM_OBJ_TABLE_ID(ELM_OBJ_TABLE_SUB_ID_PACK), EO_TYPECHECK(Evas_Object *, subobj), EO_TYPECHECK(int, column), EO_TYPECHECK(int, row), EO_TYPECHECK(int, colspan), EO_TYPECHECK(int, rowspan)
 
 /**
  * @def elm_obj_table_unpack
@@ -128,7 +128,7 @@ enum
  *
  * @ingroup Table
  */
-#define elm_obj_table_pack_set(subobj, col, row, colspan, rowspan) ELM_OBJ_TABLE_ID(ELM_OBJ_TABLE_SUB_ID_PACK_SET), EO_TYPECHECK(Evas_Object *, subobj), EO_TYPECHECK(int, col), EO_TYPECHECK(int, row), EO_TYPECHECK(int, colspan), EO_TYPECHECK(int, rowspan)
+#define elm_obj_table_pack_set(subobj, column, row, colspan, rowspan) ELM_OBJ_TABLE_ID(ELM_OBJ_TABLE_SUB_ID_PACK_SET), EO_TYPECHECK(Evas_Object *, subobj), EO_TYPECHECK(int, column), EO_TYPECHECK(int, row), EO_TYPECHECK(int, colspan), EO_TYPECHECK(int, rowspan)
 
 /**
  * @def elm_obj_table_pack_get
@@ -146,7 +146,7 @@ enum
  *
  * @ingroup Table
  */
-#define elm_obj_table_pack_get(subobj, col, row, colspan, rowspan) ELM_OBJ_TABLE_ID(ELM_OBJ_TABLE_SUB_ID_PACK_GET), EO_TYPECHECK(Evas_Object *, subobj), EO_TYPECHECK(int *, col), EO_TYPECHECK(int *, row), EO_TYPECHECK(int *, colspan), EO_TYPECHECK(int *, rowspan)
+#define elm_obj_table_pack_get(subobj, column, row, colspan, rowspan) ELM_OBJ_TABLE_ID(ELM_OBJ_TABLE_SUB_ID_PACK_GET), EO_TYPECHECK(Evas_Object *, subobj), EO_TYPECHECK(int *, column), EO_TYPECHECK(int *, row), EO_TYPECHECK(int *, colspan), EO_TYPECHECK(int *, rowspan)
 
 /**
  * @def elm_obj_table_clear
