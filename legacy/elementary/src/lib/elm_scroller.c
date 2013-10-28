@@ -51,11 +51,13 @@ static void
 _elm_scroller_smart_event(Eo *obj, void *_pd, va_list *list)
 {
    Evas_Object *src = va_arg(*list, Evas_Object *);
-   (void) src;
    Evas_Callback_Type type = va_arg(*list, Evas_Callback_Type);
-   void *event_info = va_arg(*list, void *);
+   Evas_Event_Key_Down *ev = va_arg(*list, void *);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Elm_Scroller_Smart_Data *sd = _pd;
+
    if (ret) *ret = EINA_FALSE;
+   (void) src;
 
    Evas_Coord x = 0;
    Evas_Coord y = 0;
@@ -69,9 +71,6 @@ _elm_scroller_smart_event(Eo *obj, void *_pd, va_list *list)
    Evas_Coord page_y = 0;
    Evas_Coord step_x = 0;
    Evas_Coord step_y = 0;
-   Evas_Event_Key_Down *ev = event_info;
-
-   Elm_Scroller_Smart_Data *sd = _pd;
 
    if (elm_widget_disabled_get(obj)) return;
    if (type != EVAS_CALLBACK_KEY_DOWN) return;

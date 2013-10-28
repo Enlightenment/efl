@@ -644,26 +644,25 @@ _highlight_next_item_get(Evas_Object *obj, Evas_Object *box, Eina_Bool reverse)
 
 
 static void
-_elm_toolbar_smart_event(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+_elm_toolbar_smart_event(Eo *obj, void *_pd, va_list *list)
 {
    Evas_Object *src = va_arg(*list, Evas_Object *);
-   (void) src;
    Evas_Callback_Type type = va_arg(*list, Evas_Callback_Type);
-   (void) type;
-   void *event_info = va_arg(*list, void *);
+   Evas_Event_Key_Down *ev = va_arg(*list, void *);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Elm_Toolbar_Smart_Data *sd = _pd;
+
    if (ret) *ret = EINA_FALSE;
+   (void) src;
+   (void) type;
+
    Elm_Toolbar_Item *it = NULL;
    Evas_Coord x, y, w, h;
 
-   ELM_TOOLBAR_DATA_GET(obj, sd);
-
-   Evas_Event_Key_Down *ev = event_info;
-
    if (elm_widget_disabled_get(obj)) return;
    if (type != EVAS_CALLBACK_KEY_DOWN) return;
-   if (!sd->items) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
+   if (!sd->items) return;
 
    if ((!strcmp(ev->key, "Return")) ||
             ((!strcmp(ev->key, "KP_Enter")) && !ev->string))

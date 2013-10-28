@@ -809,13 +809,14 @@ static void
 _elm_multibuttonentry_smart_event(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
 {
    Evas_Object *src = va_arg(*list, Evas_Object *);
-   (void)src;
    Evas_Callback_Type type = va_arg(*list, Evas_Callback_Type);
-   (void)type;
-   void *event_info = va_arg(*list, void *);
-   (void)event_info;
+   void *ev = va_arg(*list, void *);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+
    if (ret) *ret = EINA_FALSE;
+   (void)src;
+   (void)type;
+   (void)ev;
 
    // ACCESS
    if (_elm_config->access_mode == ELM_ACCESS_MODE_ON) return;

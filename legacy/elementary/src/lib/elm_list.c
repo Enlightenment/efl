@@ -256,11 +256,13 @@ static void
 _elm_list_smart_event(Eo *obj, void *_pd, va_list *list)
 {
    Evas_Object *src = va_arg(*list, Evas_Object *);
-   (void) src;
    Evas_Callback_Type type = va_arg(*list, Evas_Callback_Type);
-   void *event_info = va_arg(*list, void *);
+   Evas_Event_Key_Down *ev = va_arg(*list, void *);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Elm_List_Smart_Data *sd = _pd;
+
    if (ret) *ret = EINA_FALSE;
+   (void) src;
 
    Evas_Coord x = 0;
    Evas_Coord y = 0;
@@ -271,14 +273,11 @@ _elm_list_smart_event(Eo *obj, void *_pd, va_list *list)
    Evas_Coord page_x = 0;
    Evas_Coord page_y = 0;
    Elm_List_Item *it = NULL;
-   Evas_Event_Key_Down *ev = event_info;
-
-   Elm_List_Smart_Data *sd = _pd;
 
    if (elm_widget_disabled_get(obj)) return;
    if (type != EVAS_CALLBACK_KEY_DOWN) return;
-   if (!sd->items) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
+   if (!sd->items) return;
 
    eo_do(obj,
          elm_scrollable_interface_content_pos_get(&x, &y),

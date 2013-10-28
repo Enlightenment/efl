@@ -145,17 +145,15 @@ static void
 _elm_check_smart_event(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
    Evas_Object *src = va_arg(*list, Evas_Object *);
-   (void) src;
    Evas_Callback_Type type = va_arg(*list, Evas_Callback_Type);
-   void *event_info = va_arg(*list, void *);
+   Evas_Event_Key_Down *ev = va_arg(*list, void *);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Evas_Event_Key_Down *ev = event_info;
+
    if (ret) *ret = EINA_FALSE;
+   (void) src;
 
    if (elm_widget_disabled_get(obj)) return;
-
    if (type != EVAS_CALLBACK_KEY_DOWN) return;
-
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
 
    if ((strcmp(ev->key, "Return")) &&

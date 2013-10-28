@@ -185,15 +185,14 @@ static void
 _elm_web_smart_event(Eo *obj, void *_pd, va_list *list)
 {
    Evas_Object *src = va_arg(*list, Evas_Object *);
-   (void) src;
    Evas_Callback_Type type = va_arg(*list, Evas_Callback_Type);
-   void *event_info = va_arg(*list, void *);
+   Evas_Event_Key_Down *ev = va_arg(*list, void *);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+
    if (ret) *ret = EINA_FALSE;
+   (void) src;
 
 #ifdef HAVE_ELEMENTARY_WEB
-   Evas_Event_Key_Down *ev = event_info;
-
    Elm_Web_Smart_Data *sd = _pd;
 
    if (type != EVAS_CALLBACK_KEY_DOWN) return;
@@ -209,7 +208,7 @@ _elm_web_smart_event(Eo *obj, void *_pd, va_list *list)
    (void)obj;
    (void)_pd;
    (void)type;
-   (void)event_info;
+   (void)ev;
 #endif
 }
 

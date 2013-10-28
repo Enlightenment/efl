@@ -1384,17 +1384,18 @@ _elm_naviframe_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 static void
 _elm_naviframe_smart_event(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
-   Evas_Object *source = va_arg(*list, Evas_Object *);
+   Evas_Object *src = va_arg(*list, Evas_Object *);
    Evas_Callback_Type type = va_arg(*list, Evas_Callback_Type);
    Evas_Event_Key_Down *ev = va_arg(*list, Evas_Event_Key_Down *);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Elm_Naviframe_Item *it;
-   (void) source;
 
    if (ret) *ret = EINA_FALSE;
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
+   (void)src;
+
    if (elm_widget_disabled_get(obj)) return;
    if (type != EVAS_CALLBACK_KEY_DOWN) return;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
    if (strcmp(ev->key, "BackSpace")) return;
 
    eo_do(obj, elm_obj_naviframe_top_item_get((Elm_Object_Item **)&it));

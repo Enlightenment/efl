@@ -438,21 +438,21 @@ _elm_spinner_smart_event(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
 
    Evas_Object *src = va_arg(*list, Evas_Object *);
-   (void) src;
    Evas_Callback_Type type = va_arg(*list, Evas_Callback_Type);
-   void *event_info = va_arg(*list, void *);
+   Evas_Event_Key_Down *ev = va_arg(*list, void *);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+
    if (ret) *ret = EINA_FALSE;
+   (void) src;
+
    Eina_Bool horz = !!strncmp(elm_widget_style_get(obj), "vertical", 8);
 
    if (elm_widget_disabled_get(obj)) return;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
+
    if (type == EVAS_CALLBACK_KEY_DOWN)
      {
-        Evas_Event_Key_Down *ev = event_info;
-
-        if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
-        else if (
-           ( (!strcmp(ev->key, "Left") ||
+        if (( (!strcmp(ev->key, "Left") ||
               ((!strcmp(ev->key, "KP_Left")) && (!ev->string)))
              && horz )
            ||
@@ -486,9 +486,6 @@ _elm_spinner_smart_event(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
      }
    else if (type == EVAS_CALLBACK_KEY_UP)
      {
-        Evas_Event_Key_Down *ev = event_info;
-
-        if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
         if (!strcmp(ev->key, "Right") ||
             ((!strcmp(ev->key, "KP_Right")) && (!ev->string)) ||
             !strcmp(ev->key, "Up") ||

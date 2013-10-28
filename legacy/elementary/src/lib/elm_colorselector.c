@@ -1640,24 +1640,22 @@ _palette_box_vertical_item_get(Eina_List* ref_item, enum Palette_Box_Direction d
 static void
 _elm_colorselector_smart_event(Eo *obj, void *_pd, va_list *list)
 {
+   Evas_Object *src = va_arg(*list, Evas_Object *);
+   Evas_Callback_Type type = va_arg(*list, Evas_Callback_Type);
+   Evas_Event_Key_Down *ev = va_arg(*list, void *);
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Elm_Colorselector_Smart_Data *sd = _pd;
    Eina_List *cl = NULL;
    Elm_Color_Item *item = NULL;
    char colorbar_s[128];
 
-   Evas_Object *src = va_arg(*list, Evas_Object *);
-   (void) src;
-   Evas_Callback_Type type = va_arg(*list, Evas_Callback_Type);
-   void *event_info = va_arg(*list, void *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    if (ret) *ret = EINA_FALSE;
+   (void) src;
 
-   if (type != EVAS_CALLBACK_KEY_DOWN) return;
-   Evas_Event_Key_Down *ev = event_info;
-   Elm_Colorselector_Smart_Data *sd = _pd;
-
-   if (!sd) return;
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
    if (elm_widget_disabled_get(obj)) return;
+   if (type != EVAS_CALLBACK_KEY_DOWN) return;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
+   if (!sd) return;
    if (!sd->selected) sd->selected = sd->items;
 
    if ((!strcmp(ev->key, "Left")) ||
