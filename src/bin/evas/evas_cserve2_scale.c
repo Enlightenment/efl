@@ -32,7 +32,8 @@ _cserve2_rgba_image_set(RGBA_Image *im, void *data, int w, int h, int alpha)
 }
 
 void
-cserve2_rgba_image_scale_do(void *src_data, void *dst_data,
+cserve2_rgba_image_scale_do(void *src_data, int src_full_w, int src_full_h,
+                            void *dst_data,
                             int src_x, int src_y, int src_w, int src_h,
                             int dst_x, int dst_y, int dst_w, int dst_h,
                             int alpha, int smooth)
@@ -40,8 +41,7 @@ cserve2_rgba_image_scale_do(void *src_data, void *dst_data,
    RGBA_Image src, dst;
    RGBA_Draw_Context ct;
 
-   _cserve2_rgba_image_set(&src, src_data, src_w, src_h, alpha);
-
+   _cserve2_rgba_image_set(&src, src_data, src_full_w, src_full_h, alpha);
    _cserve2_rgba_image_set(&dst, dst_data, dst_w, dst_h, alpha);
    dst.flags = RGBA_IMAGE_NOTHING;
 

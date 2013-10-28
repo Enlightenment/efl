@@ -90,8 +90,9 @@ _signal_handle_child(struct signalfd_siginfo *sinfo EINA_UNUSED)
 }
 
 static void
-_signal_handle_exit(struct signalfd_siginfo *sinfo)
+_signal_handle_exit(struct signalfd_siginfo *sinfo EINA_UNUSED)
 {
+#if CSERVE2_LOG_LEVEL >= 4
    const char *name;
 
    switch (sinfo->ssi_signo)
@@ -103,6 +104,7 @@ _signal_handle_exit(struct signalfd_siginfo *sinfo)
      }
 
    DBG("Received %s. Honoring request.", name);
+#endif
    terminate = EINA_TRUE;
 }
 
@@ -129,8 +131,6 @@ _signalfd_handler(int fd, Fd_Flags flags EINA_UNUSED, void *data EINA_UNUSED)
              _signal_handle_child(&sinfo);
              break;
            case SIGINT:
-           case SIGTERM:
-           case SIGQUIT:
              _signal_handle_exit(&sinfo);
              break;
            case SIGUSR1:
@@ -159,10 +159,8 @@ _signalfd_setup(void)
 
    sigemptyset(&mask);
    sigaddset(&mask, SIGCHLD);
-   sigaddset(&mask, SIGTERM);
-   sigaddset(&mask, SIGQUIT);
-   sigaddset(&mask, SIGUSR1);
-   sigaddset(&mask, SIGUSR2);
+   sigaddset(&mask, SIGUSR1); // ignored
+   sigaddset(&mask, SIGUSR2); // ignored
 
    if (sigprocmask(SIG_BLOCK, &mask, NULL) == -1)
      {

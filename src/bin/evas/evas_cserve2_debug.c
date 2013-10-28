@@ -177,8 +177,6 @@ _debug_msg_send(void)
 }
 
 typedef struct _Font_Entry Font_Entry;
-typedef struct _Cache_Entry Cache_Entry;
-typedef struct _Glyph_Entry Glyph_Entry;
 
 struct _Font_Entry
 {
@@ -188,27 +186,9 @@ struct _Font_Entry
    unsigned int size;
    unsigned int dpi;
    unsigned int unused;
-   Eina_List *caches;
-};
-
-struct _Cache_Entry
-{
-   const char *shmname;
-   unsigned int size;
-   unsigned int usage;
-   Eina_List *glyphs;
-};
-
-struct _Glyph_Entry
-{
-   unsigned int index;
-   unsigned int offset;
-   unsigned int size;
-   unsigned int rows;
-   unsigned int width;
-   unsigned int pitch;
-   unsigned int num_grays;
-   unsigned int pixel_mode;
+   char glyph_data_shm[64];
+   char glyph_mempool_shm[64];
+   Eina_List *glyphs; // Glyph_Data
 };
 
 #define READIT(_dst, _src) \
@@ -216,57 +196,6 @@ struct _Glyph_Entry
       memcpy(&_dst, _src, sizeof(_dst)); \
       _src += sizeof(_dst); \
    } while(0)
-
-static Glyph_Entry *
-_parse_glyph_entry(char **msg)
-{
-   Glyph_Entry *ge;
-   char *buf = *msg;
-
-   ge = calloc(1, sizeof(*ge));
-
-   READIT(ge->index, buf);
-   READIT(ge->offset, buf);
-   READIT(ge->size, buf);
-   READIT(ge->rows, buf);
-   READIT(ge->width, buf);
-   READIT(ge->pitch, buf);
-   READIT(ge->num_grays, buf);
-   READIT(ge->pixel_mode, buf);
-
-   *msg = buf;
-
-   return ge;
-}
-
-static Cache_Entry *
-_parse_cache_entry(char **msg)
-{
-   Cache_Entry *ce;
-   char *buf = *msg;
-   unsigned int n;
-
-   ce = calloc(1, sizeof(*ce));
-
-   READIT(n, buf);
-   ce->shmname = eina_stringshare_add_length(buf, n);
-   buf += n;
-
-   READIT(ce->size, buf);
-   READIT(ce->usage, buf);
-
-   READIT(n, buf);
-   while (n--)
-     {
-        Glyph_Entry *ge;
-        ge = _parse_glyph_entry(&buf);
-        ce->glyphs = eina_list_append(ce->glyphs, ge);
-     }
-
-   *msg = buf;
-
-   return ce;
-}
 
 static Font_Entry *
 _parse_font_entry(char **msg)
@@ -291,12 +220,18 @@ _parse_font_entry(char **msg)
    READIT(fe->dpi, buf);
    READIT(fe->unused, buf);
 
+   eina_strlcpy(fe->glyph_data_shm, buf, 64);
+   buf += 64;
+   eina_strlcpy(fe->glyph_mempool_shm, buf, 64);
+   buf += 64;
+
    READIT(n, buf);
    while (n--)
      {
-        Cache_Entry *ce;
-        ce = _parse_cache_entry(&buf);
-        fe->caches = eina_list_append(fe->caches, ce);
+        Glyph_Data *gd = calloc(1, sizeof(Glyph_Data));
+        memcpy(gd, buf, sizeof(Glyph_Data));
+        buf += sizeof(Glyph_Data);
+        fe->glyphs = eina_list_append(fe->glyphs, gd);
      }
 
    *msg = buf;
@@ -307,7 +242,7 @@ _parse_font_entry(char **msg)
 static Eina_List *
 _debug_msg_read(void)
 {
-   Msg_Base *msg = NULL;
+   Msg_Font_Debug *msg = NULL;
    char *buf;
    int size;
    unsigned int nfonts;
@@ -317,16 +252,16 @@ _debug_msg_read(void)
    while (!msg)
      msg = _server_read(&size);
 
-   if (msg->type != CSERVE2_FONT_DEBUG)
+   if (msg->base.type != CSERVE2_FONT_DEBUG)
      {
-        ERR("Invalid message received from server."
+        ERR("Invalid message received from server. "
             "Something went badly wrong.");
         return NULL;
      }
 
    buf = (char *)msg + sizeof(*msg);
 
-   READIT(nfonts, buf);
+   nfonts = msg->nfonts;
    while (nfonts--)
      {
         Font_Entry *fe;
@@ -334,34 +269,18 @@ _debug_msg_read(void)
         fonts = eina_list_append(fonts, fe);
      }
 
+   printf("Font index table: %s\n", msg->fonts_index_path);
+   printf("Contains %u fonts\n\n", msg->nfonts);
    return fonts;
-}
-
-static void
-_glyph_entry_free(Glyph_Entry *ge)
-{
-   free(ge);
-}
-
-static void
-_cache_entry_free(Cache_Entry *ce)
-{
-   Glyph_Entry *ge;
-
-   EINA_LIST_FREE(ce->glyphs, ge)
-     _glyph_entry_free(ge);
-
-   eina_stringshare_del(ce->shmname);
-   free(ce);
 }
 
 static void
 _font_entry_free(Font_Entry *fe)
 {
-   Cache_Entry *ce;
+   Glyph_Data *gd;
 
-   EINA_LIST_FREE(fe->caches, ce)
-     _cache_entry_free(ce);
+   EINA_LIST_FREE(fe->glyphs, gd)
+     free(gd);
 
    eina_stringshare_del(fe->name);
    eina_stringshare_del(fe->file);
@@ -369,7 +288,7 @@ _font_entry_free(Font_Entry *fe)
 }
 
 static void
-_glyph_entry_print(Glyph_Entry *ge)
+_glyph_data_print(Glyph_Data *gd)
 {
    const char *pxmode[] = {
         "FT_PIXEL_MODE_NONE",
@@ -380,29 +299,18 @@ _glyph_entry_print(Glyph_Entry *ge)
         "FT_PIXEL_MODE_LCD",
         "FT_PIXEL_MODE_LCD_V"
    };
-   printf("\t\tGLYPH %u offset: %u size: %u %ux%u pitch: %u grays: %u "
-          "pixel mode: %s\n",
-          ge->index, ge->offset, ge->size, ge->width, ge->rows, ge->pitch,
-          ge->num_grays, pxmode[ge->pixel_mode]);
-}
-
-static void
-_cache_entry_print(Cache_Entry *ce)
-{
-   Eina_List *l;
-   Glyph_Entry *ge;
-
-   printf("\tSHM %s used %u/%u\n", ce->shmname, ce->usage, ce->size);
-
-   EINA_LIST_FOREACH(ce->glyphs, l, ge)
-     _glyph_entry_print(ge);
+   printf("  GLYPH id: %-4u refcount %-2u: index: %-6u offset: %-6u size: %-3u "
+          "%2ux%-3u pitch: %-2u grays: %-3u pixel mode: %s hint: %d\n",
+          gd->id, gd->refcount, gd->index, gd->offset, gd->size,
+          gd->width, gd->rows, gd->pitch,
+          gd->num_grays, pxmode[gd->pixel_mode], gd->hint);
 }
 
 static void
 _font_entry_print(Font_Entry *fe)
 {
    Eina_List *l;
-   Cache_Entry *ce;
+   Glyph_Data *gd;
 
    printf("FONT %s:%s size: %u dpi: %u %s%s%s %s\n",
           fe->file, fe->name, fe->size, fe->dpi,
@@ -410,11 +318,37 @@ _font_entry_print(Font_Entry *fe)
           fe->rend_flags & 1 ? "SLANT " : "",
           fe->rend_flags & 2 ? "WEIGHT" : "",
           fe->unused ? "(unused)" : "");
+   printf("  Index:       %s\n"
+          "  Mempool:     %s\n"
+          "  Glyph count: %u\n",
+          fe->glyph_data_shm, fe->glyph_mempool_shm,
+          eina_list_count(fe->glyphs));
 
-   EINA_LIST_FOREACH(fe->caches, l, ce)
-     _cache_entry_print(ce);
+   EINA_LIST_FOREACH(fe->glyphs, l, gd)
+     _glyph_data_print(gd);
 
    putchar('\n');
+}
+
+static void
+_shared_index_print(Msg_Index_List *msg, size_t size)
+{
+   if (size < sizeof(*msg) || msg->base.type != CSERVE2_INDEX_LIST)
+     {
+        ERR("Invalid message received from server. "
+            "Something went wrong.");
+        return;
+     }
+
+   printf("Printing shared indexes status.\n");
+   printf("===============================\n\n");
+   printf("Generation ID:        %-4d\n", msg->generation_id);
+   printf("Strings entries path: %s\n", msg->strings_entries_path);
+   printf("Strings index path:   %s\n", msg->strings_index_path);
+   printf("Files index path:     %s\n", msg->files_index_path);
+   printf("Images index path:    %s\n", msg->images_index_path);
+   printf("Fonts index path:     %s\n", msg->fonts_index_path);
+   printf("\n\n\n");
 }
 
 int
@@ -422,6 +356,8 @@ main(void)
 {
    Eina_List *fonts;
    Font_Entry *fe;
+   Msg_Index_List *msg = NULL;
+   int size;
 
    eina_init();
    _evas_cserve2_debug_log_dom = eina_log_domain_register
@@ -431,6 +367,11 @@ main(void)
         ERR("Could not connect to server.");
         return -1;
      }
+
+   while (!msg)
+     msg = _server_read(&size);
+   _shared_index_print(msg, size);
+
    _debug_msg_send();
    fonts = _debug_msg_read();
    EINA_LIST_FREE(fonts, fe)

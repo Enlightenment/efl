@@ -33,23 +33,23 @@
 // Default LRU size. If 0, all scaled images will be dropped instantly.
 #define DEFAULT_CACHE_LRU_SIZE (4*1024*1024)
 
-static void _evas_cache_image_dirty_add(Image_Entry *im);
-static void _evas_cache_image_dirty_del(Image_Entry *im);
-static void _evas_cache_image_activ_add(Image_Entry *im);
-static void _evas_cache_image_activ_del(Image_Entry *im);
-static void _evas_cache_image_lru_add(Image_Entry *im);
-static void _evas_cache_image_lru_del(Image_Entry *im);
+static void _evas_cache2_image_dirty_add(Image_Entry *im);
+static void _evas_cache2_image_dirty_del(Image_Entry *im);
+static void _evas_cache2_image_activ_add(Image_Entry *im);
+static void _evas_cache2_image_activ_del(Image_Entry *im);
+static void _evas_cache2_image_lru_add(Image_Entry *im);
+static void _evas_cache2_image_lru_del(Image_Entry *im);
 static void _evas_cache2_image_entry_preload_remove(Image_Entry *ie, const void *target);
-// static void _evas_cache_image_lru_nodata_add(Image_Entry *im);
-// static void _evas_cache_image_lru_nodata_del(Image_Entry *im);
+// static void _evas_cache2_image_lru_nodata_add(Image_Entry *im);
+// static void _evas_cache2_image_lru_nodata_del(Image_Entry *im);
 
 static void
-_evas_cache_image_dirty_add(Image_Entry *im)
+_evas_cache2_image_dirty_add(Image_Entry *im)
 {
    if (im->flags.dirty) return;
-   _evas_cache_image_activ_del(im);
-   _evas_cache_image_lru_del(im);
-   // _evas_cache_image_lru_nodata_del(im);
+   _evas_cache2_image_activ_del(im);
+   _evas_cache2_image_lru_del(im);
+   // _evas_cache2_image_lru_nodata_del(im);
    im->flags.dirty = 1;
    im->flags.cached = 1;
    im->cache2->dirty = eina_inlist_prepend(im->cache2->dirty, EINA_INLIST_GET(im));
@@ -61,7 +61,7 @@ _evas_cache_image_dirty_add(Image_Entry *im)
 }
 
 static void
-_evas_cache_image_dirty_del(Image_Entry *im)
+_evas_cache2_image_dirty_del(Image_Entry *im)
 {
    if (!im->flags.dirty) return;
    if (!im->cache2) return;
@@ -71,12 +71,12 @@ _evas_cache_image_dirty_del(Image_Entry *im)
 }
 
 static void
-_evas_cache_image_activ_add(Image_Entry *im)
+_evas_cache2_image_activ_add(Image_Entry *im)
 {
    if (im->flags.activ) return;
-   _evas_cache_image_dirty_del(im);
-   _evas_cache_image_lru_del(im);
-   // _evas_cache_image_lru_nodata_del(im);
+   _evas_cache2_image_dirty_del(im);
+   _evas_cache2_image_lru_del(im);
+   // _evas_cache2_image_lru_nodata_del(im);
    if (!im->cache_key) return;
    im->flags.activ = 1;
    im->flags.cached = 1;
@@ -84,7 +84,7 @@ _evas_cache_image_activ_add(Image_Entry *im)
 }
 
 static void
-_evas_cache_image_activ_del(Image_Entry *im)
+_evas_cache2_image_activ_del(Image_Entry *im)
 {
    if (!im->flags.activ) return;
    if (!im->cache_key) return;
@@ -94,12 +94,12 @@ _evas_cache_image_activ_del(Image_Entry *im)
 }
 
 static void
-_evas_cache_image_lru_add(Image_Entry *im)
+_evas_cache2_image_lru_add(Image_Entry *im)
 {
    if (im->flags.lru) return;
-   _evas_cache_image_dirty_del(im);
-   _evas_cache_image_activ_del(im);
-   // _evas_cache_image_lru_nodata_del(im); 
+   _evas_cache2_image_dirty_del(im);
+   _evas_cache2_image_activ_del(im);
+   // _evas_cache2_image_lru_nodata_del(im);
    if (!im->cache_key) return;
    im->flags.lru = 1;
    im->flags.cached = 1;
@@ -109,7 +109,7 @@ _evas_cache_image_lru_add(Image_Entry *im)
 }
 
 static void
-_evas_cache_image_lru_del(Image_Entry *im)
+_evas_cache2_image_lru_del(Image_Entry *im)
 {
    if (!im->flags.lru) return;
    if (!im->cache_key) return;
@@ -122,19 +122,19 @@ _evas_cache_image_lru_del(Image_Entry *im)
 
 /*
 static void
-_evas_cache_image_lru_nodata_add(Image_Entry *im)
+_evas_cache2_image_lru_nodata_add(Image_Entry *im)
 {
    if (im->flags.lru_nodata) return;
-   _evas_cache_image_dirty_del(im);
-   _evas_cache_image_activ_del(im);
-   _evas_cache_image_lru_del(im);
+   _evas_cache2_image_dirty_del(im);
+   _evas_cache2_image_activ_del(im);
+   _evas_cache2_image_lru_del(im);
    im->flags.lru = 1;
    im->flags.cached = 1;
    im->cache2->lru_nodata = eina_inlist_prepend(im->cache2->lru_nodata, EINA_INLIST_GET(im));
 }
 
 static void
-_evas_cache_image_lru_nodata_del(Image_Entry *im)
+_evas_cache2_image_lru_nodata_del(Image_Entry *im)
 {
    if (!im->flags.lru_nodata) return;
    im->flags.lru = 0;
@@ -177,7 +177,7 @@ _timestamp_build(Image_Timestamp *tstamp, struct stat *st)
 }
 
 static void
-_evas_cache_image_entry_delete(Evas_Cache2 *cache, Image_Entry *ie)
+_evas_cache2_image_entry_delete(Evas_Cache2 *cache, Image_Entry *ie)
 {
    if (!ie) return;
 
@@ -191,10 +191,10 @@ _evas_cache_image_entry_delete(Evas_Cache2 *cache, Image_Entry *ie)
         return;
      }
 
-   _evas_cache_image_dirty_del(ie);
-   _evas_cache_image_activ_del(ie);
-   _evas_cache_image_lru_del(ie);
-   // _evas_cache_image_lru_nodata_del(ie);
+   _evas_cache2_image_dirty_del(ie);
+   _evas_cache2_image_activ_del(ie);
+   _evas_cache2_image_lru_del(ie);
+   // _evas_cache2_image_lru_nodata_del(ie);
 
 
    if (ie->data1)
@@ -220,7 +220,7 @@ _evas_cache_image_entry_delete(Evas_Cache2 *cache, Image_Entry *ie)
 }
 
 static Image_Entry *
-_evas_cache_image_entry_new(Evas_Cache2 *cache,
+_evas_cache2_image_entry_new(Evas_Cache2 *cache,
                             const char *hkey,
                             Image_Timestamp *tstamp,
                             const char *file,
@@ -264,15 +264,15 @@ _evas_cache_image_entry_new(Evas_Cache2 *cache,
           {
              ERR("couldn't load '%s' '%s' with cserve2!",
                  ie->file, ie->key ? ie->key : "");
-             _evas_cache_image_entry_delete(cache, ie);
+             _evas_cache2_image_entry_delete(cache, ie);
              if (error)
                *error = EVAS_LOAD_ERROR_GENERIC;
              return NULL;
           }
      }
 
-   if (ie->cache_key) _evas_cache_image_activ_add(ie);
-   else _evas_cache_image_dirty_add(ie);
+   if (ie->cache_key) _evas_cache2_image_activ_add(ie);
+   else _evas_cache2_image_dirty_add(ie);
 
    if (error)
      *error = EVAS_LOAD_ERROR_NONE;
@@ -319,7 +319,7 @@ _evas_cache2_image_preloaded_cb(void *data, Eina_Bool success)
      }
 
    if (ie->flags.delete_me)
-     _evas_cache_image_entry_delete(ie->cache2, ie);
+     _evas_cache2_image_entry_delete(ie->cache2, ie);
 }
 
 static Eina_Bool
@@ -393,7 +393,7 @@ evas_cache2_image_copied_data(Evas_Cache2 *cache, unsigned int w, unsigned int h
        (cspace == EVAS_COLORSPACE_YCBCR422601_PL))
      w &= ~0x1;
 
-   im = _evas_cache_image_entry_new(cache, NULL, NULL, NULL, NULL, NULL, NULL);
+   im = _evas_cache2_image_entry_new(cache, NULL, NULL, NULL, NULL, NULL, NULL);
    if (!im)
      return NULL;
 
@@ -402,7 +402,7 @@ evas_cache2_image_copied_data(Evas_Cache2 *cache, unsigned int w, unsigned int h
    evas_cache2_image_surface_alloc(im, w, h);
    if (cache->func.copied_data(im, w, h, image_data, alpha, cspace) != 0)
      {
-        _evas_cache_image_entry_delete(cache, im);
+        _evas_cache2_image_entry_delete(cache, im);
         return NULL;
      }
 
@@ -423,14 +423,14 @@ evas_cache2_image_data(Evas_Cache2 *cache, unsigned int w, unsigned int h, DATA3
        (cspace == EVAS_COLORSPACE_YCBCR422601_PL))
      w &= ~0x1;
 
-   im = _evas_cache_image_entry_new(cache, NULL, NULL, NULL, NULL, NULL, NULL);
+   im = _evas_cache2_image_entry_new(cache, NULL, NULL, NULL, NULL, NULL, NULL);
    if (!im) return NULL;
    im->w = w;
    im->h = h;
    im->flags.alpha = alpha;
    if (cache->func.data(im, w, h, image_data, alpha, cspace) != 0)
      {
-        _evas_cache_image_entry_delete(cache, im);
+        _evas_cache2_image_entry_delete(cache, im);
         return NULL;
      }
    im->references = 1;
@@ -444,7 +444,7 @@ evas_cache2_image_empty(Evas_Cache2 *cache)
 {
    Image_Entry *im;
 
-   im = _evas_cache_image_entry_new(cache, NULL, NULL, NULL, NULL, NULL, NULL);
+   im = _evas_cache2_image_entry_new(cache, NULL, NULL, NULL, NULL, NULL, NULL);
    if (!im)
      return NULL;
 
@@ -467,7 +467,7 @@ evas_cache2_image_size_set(Image_Entry *im, unsigned int w, unsigned h)
    if ((im->w == w) && (im->h == h)) return im;
 
    cache = im->cache2;
-   im2 = _evas_cache_image_entry_new(cache, NULL, NULL, NULL, NULL, NULL,
+   im2 = _evas_cache2_image_entry_new(cache, NULL, NULL, NULL, NULL, NULL,
                                      NULL);
    if (!im2) goto on_error;
 
@@ -486,7 +486,7 @@ evas_cache2_image_size_set(Image_Entry *im, unsigned int w, unsigned h)
 
 on_error:
    if (im2)
-     _evas_cache_image_entry_delete(cache, im2);
+     _evas_cache2_image_entry_delete(cache, im2);
    return NULL;
 }
 
@@ -510,7 +510,7 @@ evas_cache2_init(const Evas_Cache2_Image_Func *cb)
 }
 
 static Eina_Bool
-_evas_cache_image_free_cb(EINA_UNUSED const Eina_Hash *hash, EINA_UNUSED const void *key, void *data, void *fdata)
+_evas_cache2_image_free_cb(EINA_UNUSED const Eina_Hash *hash, EINA_UNUSED const void *key, void *data, void *fdata)
 {
    Eina_List **delete_list = fdata;
    *delete_list = eina_list_prepend(*delete_list, data);
@@ -526,20 +526,20 @@ evas_cache2_shutdown(Evas_Cache2 *cache)
    while (cache->lru)
      {
         im = (Image_Entry *)cache->lru;
-        _evas_cache_image_entry_delete(cache, im);
+        _evas_cache2_image_entry_delete(cache, im);
      }
    /* This is mad, I am about to destroy image still alive, but we need to prevent leak. */
    while (cache->dirty)
      {
         im = (Image_Entry *)cache->dirty;
-        _evas_cache_image_entry_delete(cache, im);
+        _evas_cache2_image_entry_delete(cache, im);
      }
 
    delete_list = NULL;
-   eina_hash_foreach(cache->activ, _evas_cache_image_free_cb, &delete_list);
+   eina_hash_foreach(cache->activ, _evas_cache2_image_free_cb, &delete_list);
    while (delete_list)
      {
-        _evas_cache_image_entry_delete(cache, eina_list_data_get(delete_list));
+        _evas_cache2_image_entry_delete(cache, eina_list_data_get(delete_list));
         delete_list = eina_list_remove_list(delete_list, delete_list);
      }
 
@@ -549,8 +549,17 @@ evas_cache2_shutdown(Evas_Cache2 *cache)
    free(cache);
 }
 
-static void
-_create_hash_key(char *hkey, const char *path, size_t pathlen, const char *key, size_t keylen, Evas_Image_Load_Opts *lo)
+EAPI Eina_Bool
+evas_cache2_image_cached(Image_Entry *ie)
+{
+   if (!ie) return EINA_FALSE;
+   return (ie->cache2 != NULL);
+}
+
+EAPI void
+evas_cache2_image_cache_key_create(char *hkey, const char *path, size_t pathlen,
+                                   const char *key, size_t keylen,
+                                   const Evas_Image_Load_Opts *lo)
 {
    const char *ckey = "(null)";
    size_t size;
@@ -561,6 +570,7 @@ _create_hash_key(char *hkey, const char *path, size_t pathlen, const char *key, 
    memcpy(hkey + size, "//://", 5);
    size += 5;
    if (key) ckey = key;
+   else keylen = 6;
    memcpy(hkey + size, ckey, keylen);
    size += keylen;
    if (lo)
@@ -634,7 +644,8 @@ _create_hash_key(char *hkey, const char *path, size_t pathlen, const char *key, 
 }
 
 EAPI Image_Entry *
-evas_cache2_image_open(Evas_Cache2 *cache, const char *path, const char *key, Evas_Image_Load_Opts *lo, int *error)
+evas_cache2_image_open(Evas_Cache2 *cache, const char *path, const char *key,
+                       Evas_Image_Load_Opts *lo, int *error)
 {
    size_t                size;
    size_t                pathlen;
@@ -659,7 +670,7 @@ evas_cache2_image_open(Evas_Cache2 *cache, const char *path, const char *key, Ev
    size = pathlen + keylen + HKEY_LOAD_OPTS_STR_LEN;
    hkey = alloca(sizeof(char) * size);
 
-   _create_hash_key(hkey, path, pathlen, key, keylen, lo);
+   evas_cache2_image_cache_key_create(hkey, path, pathlen, key, keylen, lo);
    DBG("Looking at the hash for key '%s'", hkey);
 
    /* use local var to copy default load options to the image entry */
@@ -697,7 +708,7 @@ evas_cache2_image_open(Evas_Cache2 *cache, const char *path, const char *key, Ev
          * of an image at a given key. we wither find it and keep re-reffing
          * it or we dirty it and get it out */
         DBG("Entry on inactive hash was invalid (file changed or deleted).");
-        _evas_cache_image_dirty_add(im);
+        _evas_cache2_image_dirty_add(im);
         im = NULL;
      }
 
@@ -723,15 +734,15 @@ evas_cache2_image_open(Evas_Cache2 *cache, const char *path, const char *key, Ev
         if (ok)
           {
              /* remove from lru and make it active again */
-             _evas_cache_image_lru_del(im);
-             _evas_cache_image_activ_add(im);
+             _evas_cache2_image_lru_del(im);
+             _evas_cache2_image_activ_add(im);
              goto on_ok;
           }
         DBG("Entry on inactive hash was invalid (file changed or deleted).");
         /* as avtive cache find - if we match in lru and its invalid, dirty */
-        _evas_cache_image_dirty_add(im);
+        _evas_cache2_image_dirty_add(im);
         /* this image never used, so it have to be deleted */
-        _evas_cache_image_entry_delete(cache, im);
+        _evas_cache2_image_entry_delete(cache, im);
         im = NULL;
      }
    if (stat_failed) goto on_stat_error;
@@ -742,7 +753,7 @@ evas_cache2_image_open(Evas_Cache2 *cache, const char *path, const char *key, Ev
      }
    _timestamp_build(&tstamp, &st);
    DBG("Creating a new entry for key '%s'.", hkey);
-   im = _evas_cache_image_entry_new(cache, hkey, &tstamp, path, key,
+   im = _evas_cache2_image_entry_new(cache, hkey, &tstamp, path, key,
                                     lo, error);
    if (!im) goto on_stat_error;
 
@@ -773,7 +784,7 @@ on_stat_error:
      else
        *error = EVAS_LOAD_ERROR_GENERIC;
 
-   if (im) _evas_cache_image_entry_delete(cache, im);
+   if (im) _evas_cache2_image_entry_delete(cache, im);
    return NULL;
 }
 
@@ -788,7 +799,8 @@ evas_cache2_image_open_wait(Image_Entry *im)
 }
 
 static Image_Entry *
-_scaled_image_find(Image_Entry *im, int src_x, int src_y, int src_w, int src_h, int dst_w, int dst_h, int smooth)
+_scaled_image_find(Image_Entry *im, int src_x, int src_y, int src_w,
+                   int src_h, int dst_w, int dst_h, int smooth)
 {
    size_t               pathlen, keylen, size;
    char                 *hkey;
@@ -816,7 +828,8 @@ _scaled_image_find(Image_Entry *im, int src_x, int src_y, int src_w, int src_h, 
    if (!smooth)
      {
         lo.scale_load.smooth = 1;
-        _create_hash_key(hkey, im->file, pathlen, im->key, keylen, &lo);
+        evas_cache2_image_cache_key_create(hkey, im->file, pathlen,
+                                           im->key, keylen, &lo);
 
         ret = eina_hash_find(im->cache2->activ, hkey);
         if (ret) goto found;
@@ -827,7 +840,8 @@ _scaled_image_find(Image_Entry *im, int src_x, int src_y, int src_w, int src_h, 
         lo.scale_load.smooth = smooth;
      }
 
-   _create_hash_key(hkey, im->file, pathlen, im->key, keylen, &lo);
+   evas_cache2_image_cache_key_create(hkey, im->file, pathlen,
+                                      im->key, keylen, &lo);
 
    ret = eina_hash_find(im->cache2->activ, hkey);
    if (ret) goto found;
@@ -838,8 +852,8 @@ _scaled_image_find(Image_Entry *im, int src_x, int src_y, int src_w, int src_h, 
    if (!ret) return NULL;
 
    /* Remove from lru and make it active again */
-   _evas_cache_image_lru_del(ret);
-   _evas_cache_image_activ_add(ret);
+   _evas_cache2_image_lru_del(ret);
+   _evas_cache2_image_activ_add(ret);
 
  found:
    ret->references++;
@@ -859,6 +873,9 @@ evas_cache2_image_scale_load(Image_Entry *im,
    Evas_Image_Load_Opts lo;
    int                  error = EVAS_LOAD_ERROR_NONE;
    Image_Entry          *ret;
+
+   if (!im->cache2)
+     return im;
 
    if (!smooth && im->scale_hint != EVAS_IMAGE_SCALE_HINT_STATIC)
      goto parent_out;
@@ -896,15 +913,16 @@ evas_cache2_image_scale_load(Image_Entry *im,
    lo.scale_load.smooth = smooth;
    lo.scale_load.scale_hint = im->scale_hint;
 
-   _create_hash_key(hkey, im->file, pathlen, im->key, keylen, &lo);
+   evas_cache2_image_cache_key_create(hkey, im->file, pathlen,
+                                      im->key, keylen, &lo);
 
-   ret = _evas_cache_image_entry_new(im->cache2, hkey, NULL, im->file, im->key,
+   ret = _evas_cache2_image_entry_new(im->cache2, hkey, NULL, im->file, im->key,
                                      &lo, &error);
    if (error != EVAS_LOAD_ERROR_NONE)
      {
         ERR("Failed to create scale image entry with error code %d.", error);
 
-        if (ret) _evas_cache_image_entry_delete(im->cache2, ret);
+        if (ret) _evas_cache2_image_entry_delete(im->cache2, ret);
         goto parent_out;
      }
 
@@ -948,13 +966,13 @@ evas_cache2_image_close(Image_Entry *im)
    if (references > 0)
      return;
 
-   if (im->flags.dirty)
+   if (im->flags.dirty || im->animated.animated)
      {
-        _evas_cache_image_entry_delete(cache, im);
+        _evas_cache2_image_entry_delete(cache, im);
         return;
      }
 
-   _evas_cache_image_lru_add(im);
+   _evas_cache2_image_lru_add(im);
    if (cache)
      evas_cache2_flush(cache);
 }
@@ -965,7 +983,10 @@ evas_cache2_image_load_data(Image_Entry *ie)
    int error = EVAS_LOAD_ERROR_NONE;
 
    if ((ie->flags.loaded) && (!ie->animated.animated))
-     return error;
+     {
+        evas_cserve2_image_hit(ie);
+        return EVAS_LOAD_ERROR_NONE;
+     }
 
    ie->flags.in_progress = EINA_TRUE;
 
@@ -976,10 +997,10 @@ evas_cache2_image_load_data(Image_Entry *ie)
         error = evas_cserve2_image_load_data_wait(ie);
 
         RGBA_Image *im = (RGBA_Image *)ie;
-        DBG("try cserve2 image data '%s' '%s' loaded!",
-            ie->file, ie->key ? ie->key : "");
         if ((error == CSERVE2_NONE) && im->image.data)
           {
+             DBG("try cserve2 image data '%s' '%s' loaded!",
+                 ie->file, ie->key ? ie->key : "");
              error = EVAS_LOAD_ERROR_NONE;
           }
         else
@@ -1060,7 +1081,7 @@ evas_cache2_image_writable(Image_Entry *im)
    if (!im->cache_key)
      {
         if (!im->flags.dirty)
-          _evas_cache_image_dirty_add(im);
+          _evas_cache2_image_dirty_add(im);
         return im;
      }
 
@@ -1075,7 +1096,7 @@ evas_cache2_image_writable(Image_Entry *im)
 
 on_error:
    if (im2)
-     _evas_cache_image_entry_delete(cache, im2);
+     _evas_cache2_image_entry_delete(cache, im2);
    return NULL;
 }
 
@@ -1088,7 +1109,7 @@ evas_cache2_image_dirty(Image_Entry *im, unsigned int x, unsigned int y, unsigne
    if (!im->cache_key)
      {
         if (!im->flags.dirty)
-          _evas_cache_image_dirty_add(im);
+          _evas_cache2_image_dirty_add(im);
         im2 = im;
      }
    else
@@ -1123,7 +1144,7 @@ evas_cache2_flush(Evas_Cache2 *cache)
 
         im = (Image_Entry *)cache->lru->last;
         DBG("Remove unused entry from cache.");
-        _evas_cache_image_entry_delete(cache, im);
+        _evas_cache2_image_entry_delete(cache, im);
      }
 
    return cache->usage;

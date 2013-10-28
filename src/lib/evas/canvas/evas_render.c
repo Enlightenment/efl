@@ -1571,7 +1571,7 @@ static Eina_Bool
 _drop_image_cache_ref(const void *container EINA_UNUSED, void *data, void *fdata EINA_UNUSED)
 {
 #ifdef EVAS_CSERVE2
-   if (evas_cserve2_use_get())
+   if (evas_cserve2_use_get() && evas_cache2_image_cached(data))
      evas_cache2_image_close((Image_Entry *)data);
    else
 #endif

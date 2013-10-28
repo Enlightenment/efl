@@ -55,7 +55,11 @@ evas_init(void)
    if (!evas_async_events_init())
      goto shutdown_module;
 #ifdef EVAS_CSERVE2
-   if (getenv("EVAS_CSERVE2")) evas_cserve2_init();
+   {
+      const char *env;
+      env = getenv("EVAS_CSERVE2");
+      if (env && atoi(env)) evas_cserve2_init();
+   }
 #endif
    _evas_preload_thread_init();
 
@@ -94,6 +98,11 @@ evas_shutdown(void)
    eina_log_timing(_evas_log_dom_global,
 		   EINA_LOG_STATE_START,
 		   EINA_LOG_STATE_SHUTDOWN);
+
+#ifdef EVAS_CSERVE2
+   if (evas_cserve2_use_get())
+     evas_cserve2_shutdown();
+#endif
 
    eina_cow_del(evas_object_proxy_cow);
    eina_cow_del(evas_object_map_cow);

@@ -177,47 +177,80 @@ _usage_msg_send(void)
 }
 
 static void
+_shared_index_print(Msg_Base *data, size_t size)
+{
+   Msg_Index_List *msg = (Msg_Index_List *) data;
+
+   if (size < sizeof(*msg) || msg->base.type != CSERVE2_INDEX_LIST)
+     {
+        ERR("Invalid message received from server. "
+            "Something went wrong.");
+        return;
+     }
+
+   printf("Printing shared indexes status.\n");
+   printf("===============================\n\n");
+   printf("Generation ID:        %-4d\n", msg->generation_id);
+   printf("Strings entries path: %s\n", msg->strings_entries_path);
+   printf("Strings index path:   %s\n", msg->strings_index_path);
+   printf("Files index path:     %s\n", msg->files_index_path);
+   printf("Images index path:    %s\n", msg->images_index_path);
+   printf("Fonts index path:     %s\n", msg->fonts_index_path);
+   printf("\n\n\n");
+}
+
+static void
 _usage_msg_read(void)
 {
-   Msg_Stats *msg = NULL;
+   Msg_Stats *stats = NULL;
    int size;
 
    printf("Requesting server statistics.\n\n");
-   while (!msg)
-     msg = _server_read(&size);
 
-   if (msg->base.type != CSERVE2_STATS)
+   while (!stats)
      {
-        ERR("Invalid message received from server."
-            "Something went badly wrong.");
-        return;
+        Msg_Base *msg = _server_read(&size);
+        if (!msg) continue;
+        switch (msg->type)
+          {
+           case CSERVE2_INDEX_LIST:
+             _shared_index_print(msg, size);
+             break;
+           case CSERVE2_STATS:
+             stats = (Msg_Stats *) msg;
+             break;
+           default:
+             ERR("Invalid message received from server. "
+                 "Something went badly wrong.");
+             return;
+          }
      }
 
    printf("Printing server usage.\n");
    printf("======================\n\n");
    printf("\nImage Usage Statistics:\n");
    printf("----------------------\n\n");
-   printf("Image headers usage: %d bytes\n", msg->images.files_size);
-   printf("Image data requested: %d kbytes\n", msg->images.requested_size / 1024);
-   printf("Image data usage: %d kbytes\n", msg->images.images_size / 1024);
-   printf("Image data unused: %d kbytes\n", msg->images.unused_size / 1024);
-   printf("Image headers load time: %dus\n", msg->images.files_load_time);
-   printf("Image headers saved time: %dus\n", msg->images.files_saved_time);
-   printf("Image data load time: %dus\n", msg->images.images_load_time);
-   printf("Image data saved time: %dus\n", msg->images.images_saved_time);
+   printf("Image headers usage: %d bytes\n", stats->images.files_size);
+   printf("Image data requested: %d kbytes\n", stats->images.requested_size / 1024);
+   printf("Image data usage: %d kbytes\n", stats->images.images_size / 1024);
+   printf("Image data unused: %d kbytes\n", stats->images.unused_size / 1024);
+   printf("Image headers load time: %dus\n", stats->images.files_load_time);
+   printf("Image headers saved time: %dus\n", stats->images.files_saved_time);
+   printf("Image data load time: %dus\n", stats->images.images_load_time);
+   printf("Image data saved time: %dus\n", stats->images.images_saved_time);
    printf("\nFont Usage Statistics:\n");
    printf("----------------------\n\n");
-   printf("Requested usage: %d bytes\n", msg->fonts.requested_size);
-   printf("Real usage: %d bytes\n", msg->fonts.real_size);
-   printf("Unused size: %d bytes\n", msg->fonts.unused_size);
-   printf("Fonts load time: %dus\n", msg->fonts.fonts_load_time);
-   printf("Fonts used load time: %dus\n", msg->fonts.fonts_used_load_time);
-   printf("Fonts used saved time: %dus\n", msg->fonts.fonts_used_saved_time);
-   printf("Glyphs load time: %dus\n", msg->fonts.glyphs_load_time);
-   printf("Glyphs render time: %dus\n", msg->fonts.glyphs_render_time);
-   printf("Glyphs saved time: %dus\n", msg->fonts.glyphs_saved_time);
-   printf("Glyphs request time: %dus\n", msg->fonts.glyphs_request_time);
-   printf("Glyphs slave time: %dus\n", msg->fonts.glyphs_slave_time);
+   printf("Requested usage: %d bytes\n", stats->fonts.requested_size);
+   printf("Real usage: %d bytes\n", stats->fonts.real_size);
+   printf("Unused size: %d bytes\n", stats->fonts.unused_size);
+   printf("Fonts load time: %dus\n", stats->fonts.fonts_load_time);
+   printf("Fonts used load time: %dus\n", stats->fonts.fonts_used_load_time);
+   printf("Fonts used saved time: %dus\n", stats->fonts.fonts_used_saved_time);
+   printf("Glyphs load time: %dus\n", stats->fonts.glyphs_load_time);
+   printf("Glyphs render time: %dus\n", stats->fonts.glyphs_render_time);
+   printf("Glyphs saved time: %dus\n", stats->fonts.glyphs_saved_time);
+   printf("Glyphs request time: %dus\n", stats->fonts.glyphs_request_time);
+   printf("Glyphs slave time: %dus\n", stats->fonts.glyphs_slave_time);
 
    printf("\n");
 }

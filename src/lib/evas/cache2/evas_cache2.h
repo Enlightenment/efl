@@ -66,6 +66,7 @@ EAPI void evas_cache2_image_close(Image_Entry *im);
 EAPI int evas_cache2_image_load_data(Image_Entry *ie);
 EAPI void evas_cache2_image_unload_data(Image_Entry *im);
 EAPI void evas_cache2_image_preload_data(Image_Entry *im, const void *target);
+EAPI void evas_cache2_image_cache_key_create(char *hkey, const char *path, size_t pathlen, const char *key, size_t keylen, const Evas_Image_Load_Opts *lo);
 
 EAPI DATA32 * evas_cache2_image_pixels(Image_Entry *im);
 EAPI Image_Entry * evas_cache2_image_writable(Image_Entry *im);
@@ -75,6 +76,7 @@ EAPI Image_Entry * evas_cache2_image_size_set(Image_Entry *im, unsigned int w, u
 EAPI Image_Entry * evas_cache2_image_dirty(Image_Entry *im, unsigned int x, unsigned int y, unsigned int w, unsigned int h);
 EAPI Image_Entry * evas_cache2_image_empty(Evas_Cache2 *cache);
 EAPI void evas_cache2_image_surface_alloc(Image_Entry *ie, int w, int h);
+EAPI Eina_Bool evas_cache2_image_cached(Image_Entry *ie);
 
 EAPI int evas_cache2_flush(Evas_Cache2 *cache);
 EAPI void evas_cache2_limit_set(Evas_Cache2 *cache, int limit);

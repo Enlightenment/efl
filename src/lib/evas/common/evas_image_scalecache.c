@@ -663,7 +663,7 @@ evas_common_rgba_image_scalecache_do_cbs(Image_Entry *ie, RGBA_Image *dst,
         if (im->cache_entry.space == EVAS_COLORSPACE_ARGB8888)
           {
 #ifdef EVAS_CSERVE2
-             if (evas_cserve2_use_get())
+             if (evas_cserve2_use_get() && evas_cache2_image_cached(&im->cache_entry))
                evas_cache2_image_load_data(&im->cache_entry);
              else
 #endif
@@ -759,6 +759,26 @@ evas_common_rgba_image_scalecache_do_cbs(Image_Entry *ie, RGBA_Image *dst,
                }
           }
      }
+
+#ifdef EVAS_CSERVE2
+   if (sci->populate_me && (im->cache_entry.space == EVAS_COLORSPACE_ARGB8888)
+       && evas_cserve2_use_get() && evas_cache2_image_cached(&im->cache_entry))
+     {
+        RGBA_Image *im2 = (RGBA_Image *) evas_cache2_image_scale_load
+          (&im->cache_entry, src_region_x, src_region_y,
+           src_region_w, src_region_h, dst_region_w, dst_region_h, smooth);
+        SLKL(cache_lock);
+        if (im2 != im)
+          {
+             sci->im = im2;
+             sci->populate_me = 0;
+             cache_list = eina_inlist_append(cache_list, (Eina_Inlist *)sci);
+             didpop = 1;
+          }
+        SLKU(cache_lock);
+     }
+#endif
+
    if (sci->populate_me)
      {
 //        INF("##! populate!");

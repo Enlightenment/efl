@@ -24,15 +24,68 @@ cserve2_client_error_send(Client *client, unsigned int rid, int error_code)
    int size;
    Msg_Error msg;
 
-    // clear the struct with possible paddings, since it is not aligned.
-    memset(&msg, 0, sizeof(msg));
-    msg.base.rid = rid;
-    msg.base.type = CSERVE2_ERROR;
-    msg.error = error_code;
+   // clear the struct with possible paddings, since it is not aligned.
+   memset(&msg, 0, sizeof(msg));
+   msg.base.rid = rid;
+   msg.base.type = CSERVE2_ERROR;
+   msg.error = error_code;
 
-    size = sizeof(msg);
-    cserve2_client_send(client, &size, sizeof(size));
-    cserve2_client_send(client, &msg, sizeof(msg));
+   size = sizeof(msg);
+   cserve2_client_send(client, &size, sizeof(size));
+   cserve2_client_send(client, &msg, sizeof(msg));
+}
+
+void
+cserve2_index_list_send(int generation_id,
+                        const char *strings_index_path,
+                        const char *strings_entries_path,
+                        const char *files_index_path,
+                        const char *images_index_path,
+                        const char *fonts_index_path,
+                        Client *client)
+{
+   Eina_Iterator *iter;
+   Msg_Index_List msg;
+   const int size = sizeof(msg);
+
+   if (!client_list)
+     return;
+
+   INF("New shared index: strings: '%s':'%s' files: '%s' images: '%s', fonts: '%s'",
+       strings_index_path, strings_entries_path,
+       files_index_path, images_index_path, fonts_index_path);
+
+   memset(&msg, 0, size);
+   msg.base.type = CSERVE2_INDEX_LIST;
+   msg.generation_id = generation_id;
+   if (strings_index_path)
+     eina_strlcpy(msg.strings_index_path, strings_index_path, 64);
+   if (strings_entries_path)
+     eina_strlcpy(msg.strings_entries_path, strings_entries_path, 64);
+   if (files_index_path)
+     eina_strlcpy(msg.files_index_path, files_index_path, 64);
+   if (images_index_path)
+     eina_strlcpy(msg.images_index_path, images_index_path, 64);
+   if (fonts_index_path)
+     eina_strlcpy(msg.fonts_index_path, fonts_index_path, 64);
+
+   if (!client)
+     {
+        iter = eina_hash_iterator_data_new(client_list);
+        EINA_ITERATOR_FOREACH(iter, client)
+          {
+             DBG("Sending updated list of indexes to client %d", client->id);
+             cserve2_client_send(client, &size, sizeof(size));
+             cserve2_client_send(client, &msg, sizeof(msg));
+          }
+        eina_iterator_free(iter);
+     }
+   else
+     {
+        DBG("Sending updated list of indexes to client %d", client->id);
+        cserve2_client_send(client, &size, sizeof(size));
+        cserve2_client_send(client, &msg, sizeof(msg));
+     }
 }
 
 static void
@@ -82,16 +135,27 @@ static void
 _cserve2_client_open(Client *client)
 {
    Msg_Open *msg = (Msg_Open *)client->msg.buf;
-   const char *path, *key;
+   const char *path, *key, *end;
+   Evas_Image_Load_Opts *opts = NULL;
+   Evas_Image_Load_Opts opts_copy;
 
    path = ((const char *)msg) + sizeof(*msg) + msg->path_offset;
    key = ((const char *)msg) + sizeof(*msg) + msg->key_offset;
+   end = key + strlen(key) + 1;
 
    INF("Received OPEN command: RID=%d", msg->base.rid);
    INF("File_ID: %d, path=\"%s\", key=\"%s\", has_load_opts=%d",
        msg->file_id, path, key, (int) msg->has_load_opts);
 
-   cserve2_cache_file_open(client, msg->file_id, path, key, msg->base.rid);
+   if (!key[0]) key = NULL;
+   if (msg->has_load_opts)
+     {
+        opts = &opts_copy;
+        memcpy(&opts_copy, end, sizeof(opts_copy));
+     }
+
+   cserve2_cache_file_open(client, msg->file_id, path, key, msg->base.rid,
+                           opts);
 
    if (!msg->has_load_opts)
      cserve2_cache_image_entry_create(client, msg->base.rid,
@@ -99,8 +163,6 @@ _cserve2_client_open(Client *client)
    else
      {
         // FIXME: Check message size first?
-        Evas_Image_Load_Opts *opts =
-              (Evas_Image_Load_Opts*) (key + strlen(key) + 1);
 
         DBG("Load Options:");
         DBG("\tdpi: %03.1f", opts->dpi);
@@ -172,8 +234,8 @@ _cserve2_client_font_glyphs_request(Client *client)
 
    if (msg->base.type == CSERVE2_FONT_GLYPHS_LOAD)
      {
-        INF("Received CSERVE2_FONT_GLYPHS_LOAD command: RID=%d",
-            msg->base.rid);
+        INF("Received CSERVE2_FONT_GLYPHS_LOAD command: RID=%d (%d glyphs)",
+            msg->base.rid, msg->nglyphs);
         cserve2_cache_font_glyphs_load(client, source, fontpath,
                                        msg->hint, msg->rend_flags, msg->size,
                                        msg->dpi, glyphs, msg->nglyphs,
@@ -181,8 +243,8 @@ _cserve2_client_font_glyphs_request(Client *client)
      }
    else
      {
-        INF("Received CSERVE2_FONT_GLYPHS_USED command: RID=%d",
-            msg->base.rid);
+        INF("Received CSERVE2_FONT_GLYPHS_USED command: RID=%d (%d glyphs)",
+            msg->base.rid, msg->nglyphs);
         cserve2_cache_font_glyphs_used(client, source, fontpath,
                                        msg->hint, msg->rend_flags, msg->size,
                                        msg->dpi, glyphs, msg->nglyphs,
@@ -291,6 +353,7 @@ static void
 _clients_finish(void)
 {
    eina_hash_free(client_list);
+   client_list = NULL;
 }
 
 int
@@ -327,34 +390,26 @@ main(int argc EINA_UNUSED, const char *argv[])
         goto error;
      }
 
-   cserve2_requests_init();
-
-   cserve2_scale_init();
-
-   cserve2_font_init();
-
-   cserve2_cache_init();
-
    cserve2_shm_init();
-
+   cserve2_shared_index_init();
+   cserve2_requests_init();
+   cserve2_scale_init();
+   cserve2_font_init();
+   cserve2_cache_init();
    _clients_setup();
 
    cserve2_main_loop_run();
 
    _clients_finish();
-
    cserve2_cache_shutdown();
-
    cserve2_font_shutdown();
-
    cserve2_scale_shutdown();
-
    cserve2_requests_shutdown();
-
    cserve2_slaves_shutdown();
 
    cserve2_main_loop_finish();
 
+   cserve2_shared_index_shutdown();
    cserve2_shm_shutdown();
 
    eina_prefix_free(_evas_cserve2_pfx);

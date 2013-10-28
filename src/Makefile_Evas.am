@@ -999,7 +999,8 @@ bin/evas/dummy_slave
 bin_PROGRAMS += \
 bin/evas/evas_cserve2_client \
 bin/evas/evas_cserve2_usage \
-bin/evas/evas_cserve2_debug
+bin/evas/evas_cserve2_debug \
+bin/evas/evas_cserve2_shm_debug
 
 bin_evas_evas_cserve2_SOURCES = \
 bin/evas/evas_cserve2.h \
@@ -1013,6 +1014,7 @@ bin/evas/evas_cserve2_requests.c \
 bin/evas/evas_cserve2_fonts.c \
 bin/evas/evas_cserve2_scale.c \
 bin/evas/evas_cserve2_main_loop_linux.c \
+bin/evas/evas_cserve2_index.c \
 lib/evas/cserve2/evas_cs2_utils.h \
 lib/evas/cserve2/evas_cs2_utils.c
 
@@ -1054,6 +1056,15 @@ bin_evas_evas_cserve2_debug_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 @EINA_CFLAGS@
 bin_evas_evas_cserve2_debug_LDADD = @USE_EINA_LIBS@
 bin_evas_evas_cserve2_debug_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@
+
+bin_evas_evas_cserve2_shm_debug_SOURCES = \
+bin/evas/evas_cserve2_shm_debug.c
+bin_evas_evas_cserve2_shm_debug_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-I$(top_srcdir)/src/lib/evas \
+-I$(top_srcdir)/src/lib/evas/cserve2 \
+@EINA_CFLAGS@
+bin_evas_evas_cserve2_shm_debug_LDADD = @USE_EINA_LIBS@
+bin_evas_evas_cserve2_shm_debug_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@
 
 bin_evas_evas_cserve2_slave_SOURCES = \
 bin/evas/evas_cserve2_slave.c \

@@ -172,9 +172,6 @@ cserve2_client_send(Client *client, const void *data, size_t size)
         // so we must close the connection to the client and remove
         // its references inside our cache.
         WRN("Error on socket with client %d: %s", client->id, strerror(errno));
-        if (client->msg.reading)
-          _client_msg_free(client);
-        cserve2_client_del(client);
         return sent;
      }
    if (sent < 0)

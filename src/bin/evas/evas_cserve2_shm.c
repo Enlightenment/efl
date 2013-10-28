@@ -28,13 +28,14 @@ struct _Shm_Handle
    size_t map_size;
    size_t image_size;
    int refcount;
+   int shmid;
    void *data;
 };
 
 static int id = 0;
 
 size_t
-cserve2_shm_size_normalize(size_t size)
+cserve2_shm_size_normalize(size_t size, size_t align)
 {
    long pagesize;
    size_t normalized;
@@ -46,7 +47,11 @@ cserve2_shm_size_normalize(size_t size)
         pagesize = 4096;
      }
 
-   normalized = ((size + pagesize - 1) / pagesize) * pagesize;
+   if (align)
+     align = ((align + pagesize - 1) / pagesize) * pagesize;
+   else
+     align = pagesize;
+   normalized = ((size + align - 1) / align) * align;
 
    return normalized;
 }
@@ -76,8 +81,8 @@ cserve2_shm_request(const char *infix, size_t size)
      }
 
    do {
-        snprintf(shmname, sizeof(shmname), "/evas-shm-%x-%s-%08x",
-                 (int) getuid(), infix, id++);
+        snprintf(shmname, sizeof(shmname), "/evas-shm-%05d-%05d-%s-%08x",
+                 (int) getuid(), (int) getpid(), infix, ++id);
         fd = shm_open(shmname, O_RDWR | O_CREAT | O_EXCL, S_IRUSR | S_IWUSR);
         if (fd == -1 && errno != EEXIST)
           {
@@ -88,7 +93,7 @@ cserve2_shm_request(const char *infix, size_t size)
           }
    } while (fd == -1);
 
-   map_size = cserve2_shm_size_normalize(size);
+   map_size = cserve2_shm_size_normalize(size, 0);
 
    if (ftruncate(fd, map_size) == -1)
      {
@@ -110,6 +115,100 @@ cserve2_shm_request(const char *infix, size_t size)
 
    shm->image_size = size;
    shm->map_size = map_size;
+   shm->shmid = id;
+
+   return shm;
+}
+
+Shm_Handle *
+cserve2_shm_segment_request(Shm_Handle *shm, size_t size)
+{
+   Shm_Handle *segment;
+   size_t map_size;
+   Shm_Mapping *map = shm->mapping;
+   int fd;
+
+   segment = calloc(1, sizeof (Shm_Handle));
+   if (!segment) return NULL;
+
+   fd = shm_open(map->name, O_RDWR, S_IRUSR | S_IWUSR);
+   if (!fd)
+     {
+        ERR("Could not reopen shm handle: %m");
+        free(segment);
+        return NULL;
+     }
+
+   map_size  = cserve2_shm_size_normalize(size, 0);
+   map_size += map->length;
+
+   if (ftruncate(fd, map_size) == -1)
+     {
+        ERR("Could not set the size of the shm: %m");
+        close(fd);
+        free(segment);
+        return NULL;
+     }
+   close(fd);
+
+   segment->mapping    = map;
+   segment->map_offset = map->length;
+   segment->map_size   = map_size - map->length;
+   segment->image_size = size;
+   segment->image_offset = segment->map_offset;
+   map->length = map_size;
+   map->segments = eina_inlist_append(map->segments, EINA_INLIST_GET(segment));
+
+   return segment;
+}
+
+Shm_Handle *
+cserve2_shm_resize(Shm_Handle *shm, size_t newsize)
+{
+   size_t map_size;
+   int fd;
+
+   if (!shm)
+     return NULL;
+
+   if (shm->map_offset || shm->image_offset)
+     {
+        CRIT("Can not resize shm with non-zero offset");
+        return NULL;
+     }
+
+   if (eina_inlist_count(shm->mapping->segments) > 1)
+     {
+        CRIT("Can not resize shm with more than one segment");
+        return NULL;
+     }
+
+   fd = shm_open(shm->mapping->name, O_RDWR, S_IRUSR | S_IWUSR);
+   if (!fd)
+     {
+        ERR("Could not reopen shm handle: %m");
+        return NULL;
+     }
+
+   map_size = cserve2_shm_size_normalize(newsize, 0);
+   if (ftruncate(fd, map_size))
+     {
+        ERR("Could not set the size of the shm: %m");
+        close(fd);
+        return NULL;
+     }
+
+   if (shm->data)
+     {
+        munmap(shm->data, shm->image_size);
+        shm->data = mmap(NULL, shm->image_size, PROT_WRITE, MAP_SHARED,
+                         fd, shm->image_offset);
+     }
+   close(fd);
+
+   shm->map_size = map_size;
+   shm->image_size = newsize;
+   shm->mapping->length = map_size;
 
    return shm;
 }
@@ -137,6 +236,12 @@ const char *
 cserve2_shm_name_get(const Shm_Handle *shm)
 {
    return shm->mapping->name;
+}
+
+int
+cserve2_shm_id_get(const Shm_Handle *shm)
+{
+   return shm->shmid;
 }
 
 off_t
@@ -203,7 +308,7 @@ _cserve2_shm_cleanup()
    const Eina_File_Direct_Info *f_info;
    char pattern[NAME_MAX];
 
-   sprintf(pattern, "evas-shm-%x-", (int) getuid());
+   sprintf(pattern, "evas-shm-%05d-", (int) getuid());
    iter = eina_file_direct_ls("/dev/shm");
    EINA_ITERATOR_FOREACH(iter, f_info)
      {
@@ -220,6 +325,7 @@ _cserve2_shm_cleanup()
         else
           DBG("cserve2 cleanup: ignoring %s", f_info->path);
      }
+   eina_iterator_free(iter);
 }
 
 void
