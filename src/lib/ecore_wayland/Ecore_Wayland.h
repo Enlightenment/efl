@@ -120,8 +120,6 @@ struct _Ecore_Wl_Display
    struct wl_list outputs;
    struct wl_list globals; /** @since 1.7.6 */
 
-   Eina_Bool init_done;
-
    struct
      {
         struct xkb_context *context;
@@ -368,10 +366,6 @@ struct _Ecore_Wl_Event_Interfaces_Bound
    Eina_Bool compositor : 1;
    Eina_Bool shm : 1;
    Eina_Bool shell : 1;
-   Eina_Bool output : 1;
-   Eina_Bool seat : 1;
-   Eina_Bool data_device_manager : 1;
-   Eina_Bool subcompositor : 1;
 };
 
 /**

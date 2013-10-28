@@ -112,6 +112,8 @@ ecore_evas_wayland_egl_new_internal(const char *disp_name, unsigned int parent,
         ERR("Failed to initialize Ecore_Wayland");
         return NULL;
      }
+   else if (count >= 1)
+     ecore_wl_display_iterate();
 
    if (!(ee = calloc(1, sizeof(Ecore_Evas))))
      {

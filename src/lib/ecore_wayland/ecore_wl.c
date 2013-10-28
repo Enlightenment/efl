@@ -22,7 +22,6 @@ static void _ecore_wl_animator_callback(void *data, struct wl_callback *callback
 static Eina_Bool _ecore_wl_animator_window_add(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, void *data, void *fdata EINA_UNUSED);
 static void _ecore_wl_signal_exit(void);
 static void _ecore_wl_signal_exit_free(void *data EINA_UNUSED, void *event);
-static void _ecore_wl_init_callback(void *data, struct wl_callback *callback, uint32_t serial EINA_UNUSED);
 
 /* local variables */
 static int _ecore_wl_init_count = 0;
@@ -39,11 +38,6 @@ static const struct wl_registry_listener _ecore_wl_registry_listener =
 static const struct wl_callback_listener _ecore_wl_sync_listener =
 {
    _ecore_wl_sync_callback
-};
-
-static const struct wl_callback_listener _ecore_wl_init_sync_listener =
-{
-   _ecore_wl_init_callback
 };
 
 static const struct wl_callback_listener _ecore_wl_anim_listener = 
@@ -72,40 +66,9 @@ EAPI int ECORE_WL_EVENT_SELECTION_DATA_READY = 0;
 EAPI int ECORE_WL_EVENT_DATA_SOURCE_CANCELLED = 0;
 EAPI int ECORE_WL_EVENT_INTERFACES_BOUND = 0;
 
-static void
-_ecore_wl_init_callback(void *data, struct wl_callback *callback, uint32_t serial EINA_UNUSED)
-{
-   Ecore_Wl_Display *ewd = data;
-   Ecore_Wl_Event_Interfaces_Bound *ev;
-
-   wl_callback_destroy(callback);
-   ewd->init_done = EINA_TRUE;
-
-   if (!(ev = calloc(1, sizeof(Ecore_Wl_Event_Interfaces_Bound))))
-     return;
-
-   ev->compositor = (ewd->wl.compositor != NULL);
-   ev->shm = (ewd->wl.shm != NULL);
-   ev->shell = (ewd->wl.shell != NULL);
-   ev->output = (ewd->output != NULL);
-   ev->seat = (ewd->input != NULL);
-   ev->data_device_manager = (ewd->wl.data_device_manager != NULL);
-   ev->subcompositor = (ewd->wl.subcompositor != NULL);
-
-   ecore_event_add(ECORE_WL_EVENT_INTERFACES_BOUND, ev, NULL, NULL);
-}
-
-static void
-_ecore_wl_init_wait(void)
-{
-   while (!_ecore_wl_disp->init_done)
-     wl_display_dispatch(_ecore_wl_disp->wl.display);
-}
-
 EAPI int
 ecore_wl_init(const char *name)
 {
-   struct wl_callback *callback;
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (++_ecore_wl_init_count != 1) return _ecore_wl_init_count;
@@ -218,10 +181,6 @@ ecore_wl_init(const char *name)
    _ecore_wl_window_init();
    _ecore_wl_events_init();
 
-   callback = wl_display_sync(_ecore_wl_disp->wl.display);
-   wl_callback_add_listener(callback, &_ecore_wl_init_sync_listener,
-                            _ecore_wl_disp);
-
    return _ecore_wl_init_count;
 }
 
@@ -253,9 +212,6 @@ EAPI struct wl_shm *
 ecore_wl_shm_get(void)
 {
    if (!_ecore_wl_disp) return NULL;
-
-   _ecore_wl_init_wait();
-
    return _ecore_wl_disp->wl.shm;
 }
 
@@ -272,9 +228,6 @@ ecore_wl_globals_get(void)
 {
    if ((!_ecore_wl_disp) || (!_ecore_wl_disp->wl.display)) 
      return NULL;
-
-   _ecore_wl_init_wait();
-
    return &(_ecore_wl_disp->globals);
 }
 
@@ -283,7 +236,6 @@ ecore_wl_registry_get(void)
 {
    if ((!_ecore_wl_disp) || (!_ecore_wl_disp->wl.display)) 
      return NULL;
-
    return _ecore_wl_disp->wl.registry;
 }
 
@@ -297,7 +249,8 @@ ecore_wl_screen_size_get(int *w, int *h)
 
    if ((!_ecore_wl_disp) || (!_ecore_wl_disp->wl.display)) return;
 
-   _ecore_wl_init_wait();
+   if (!_ecore_wl_disp->output)
+     ecore_wl_sync();
 
    if (!_ecore_wl_disp->output) return;
 
@@ -591,6 +544,20 @@ _ecore_wl_cb_handle_global(void *data, struct wl_registry *registry, unsigned in
      {
         ewd->wl.data_device_manager =
           wl_registry_bind(registry, id, &wl_data_device_manager_interface, 1);
+     }
+
+   if ((ewd->wl.compositor) && (ewd->wl.shm) && (ewd->wl.shell))
+     {
+        Ecore_Wl_Event_Interfaces_Bound *ev;
+
+        if (!(ev = calloc(1, sizeof(Ecore_Wl_Event_Interfaces_Bound))))
+          return;
+
+        ev->compositor = (ewd->wl.compositor != NULL);
+        ev->shm = (ewd->wl.shm != NULL);
+        ev->shell = (ewd->wl.shell != NULL);
+
+        ecore_event_add(ECORE_WL_EVENT_INTERFACES_BOUND, ev, NULL, NULL);
      }
 }
 
