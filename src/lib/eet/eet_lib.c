@@ -1043,6 +1043,16 @@ eet_internal_read2(Eet_File *ef)
 #endif /* ifdef HAVE_SIGNATURE */
      }
 
+   /* At this stage we have a valid eet file, let's tell the system we are likely to need most of its data */
+   if (ef->readfp && ef->ed)
+     {
+        unsigned long int offset;
+
+        offset = (unsigned char*) ef->ed->start - (unsigned char*) ef->data;
+        eina_file_map_populate(ef->readfp, EINA_FILE_WILLNEED, ef->data,
+                               offset, ef->data_size - offset);
+     }
+
    return ef;
 }
 
