@@ -445,12 +445,15 @@ eina_file_dup(Eina_File *file)
 EAPI void
 eina_file_close(Eina_File *file)
 {
+   Eina_Bool leave = EINA_TRUE;
+
    EINA_SAFETY_ON_NULL_RETURN(file);
 
    eina_lock_take(&file->lock);
    file->refcount--;
+   if (file->refcount == 0) leave = EINA_FALSE;
    eina_lock_release(&file->lock);
-   if (file->refcount != 0) return;
+   if (leave) return;
 
    eina_lock_take(&_eina_file_lock_cache);
 
