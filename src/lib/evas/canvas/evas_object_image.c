@@ -2625,12 +2625,23 @@ _image_video_surface_caps_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
    *caps = (!o->video_surface ? 0 : o->pixels->video_caps);
 }
 
+static void
+_on_image_native_surface_del(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *einfo EINA_UNUSED)
+{
+   evas_object_image_native_surface_set(obj, NULL);
+}
+
 EAPI void
 evas_object_image_native_surface_set(Evas_Object *eo_obj, Evas_Native_Surface *surf)
 {
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
+   evas_object_event_callback_del_full
+     (eo_obj, EVAS_CALLBACK_DEL, _on_image_native_surface_del, NULL);
+   if (surf) // We need to unset native surf on del to remove shared hash refs
+     evas_object_event_callback_add
+     (eo_obj, EVAS_CALLBACK_DEL, _on_image_native_surface_del, NULL);
    eo_do(eo_obj, evas_obj_image_native_surface_set(surf));
 }
 
