@@ -556,6 +556,10 @@ _ecore_wl_cb_handle_global(void *data, struct wl_registry *registry, unsigned in
         ev->compositor = (ewd->wl.compositor != NULL);
         ev->shm = (ewd->wl.shm != NULL);
         ev->shell = (ewd->wl.shell != NULL);
+        ev->output = (ewd->output != NULL);
+        ev->seat = (ewd->input != NULL);
+        ev->data_device_manager = (ewd->wl.data_device_manager != NULL);
+        ev->subcompositor = (ewd->wl.subcompositor != NULL);
 
         ecore_event_add(ECORE_WL_EVENT_INTERFACES_BOUND, ev, NULL, NULL);
      }

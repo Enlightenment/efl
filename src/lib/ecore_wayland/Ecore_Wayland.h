@@ -366,6 +366,10 @@ struct _Ecore_Wl_Event_Interfaces_Bound
    Eina_Bool compositor : 1;
    Eina_Bool shm : 1;
    Eina_Bool shell : 1;
+   Eina_Bool output : 1;
+   Eina_Bool seat : 1;
+   Eina_Bool data_device_manager : 1;
+   Eina_Bool subcompositor : 1;
 };
 
 /**
