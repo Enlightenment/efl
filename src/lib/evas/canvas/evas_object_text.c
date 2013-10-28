@@ -201,7 +201,13 @@ _evas_object_text_items_clean(Evas_Object_Protected_Data *obj, Evas_Object_Text 
      }
    else
      {
+        /* It is not guaranteed that the ellipsis are still inside the items, so remove them by force  */
+        if (o->last_computed.ellipsis_start)
+          _evas_object_text_item_del(o, o->last_computed.ellipsis_start);
         o->last_computed.ellipsis_start = NULL;
+
+        if (o->last_computed.ellipsis_end)
+          _evas_object_text_item_del(o, o->last_computed.ellipsis_end);
         o->last_computed.ellipsis_end = NULL;
      }
    while (o->items)
@@ -1047,7 +1053,7 @@ _text_text_set(Eo *eo_obj, void *_pd, va_list *list)
    /* DO II */
    /*Update bidi_props*/
 
-   if (o->items) _evas_object_text_items_clear(o);
+   _evas_object_text_items_clear(o);
 
    _evas_object_text_recalc(eo_obj, text);
    eina_stringshare_replace(&o->cur.utf8_text, _text);
