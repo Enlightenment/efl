@@ -629,7 +629,7 @@ EAPI void eina_file_map_free(Eina_File *file, void *map);
  * @sine 1.8
  */
 EAPI void
-eina_file_map_populate(Eina_File *file, Eina_File_Populate rule, void *map,
+eina_file_map_populate(Eina_File *file, Eina_File_Populate rule, const void *map,
                        unsigned long int offset, unsigned long int length);
 
 /**
