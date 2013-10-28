@@ -222,13 +222,13 @@ _evas_object_text_items_clear(Evas_Object_Text *o)
    if ((o->last_computed.ellipsis_start) &&
        (o->last_computed.ellipsis_start != o->items))
      {
-        _evas_object_text_item_clean(o->last_computed.ellipsis_start);
+        _evas_object_text_item_del(o, o->last_computed.ellipsis_start);
      }
    o->last_computed.ellipsis_start = NULL;
    if ((o->last_computed.ellipsis_end) &&
        (EINA_INLIST_GET(o->last_computed.ellipsis_end) != EINA_INLIST_GET(o->items)->last))
      {
-        _evas_object_text_item_clean(o->last_computed.ellipsis_end);
+        _evas_object_text_item_del(o, o->last_computed.ellipsis_end);
      }
    o->last_computed.ellipsis_end = NULL;
    while (o->items)
