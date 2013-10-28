@@ -873,6 +873,12 @@ EAPI Eina_Iterator *eina_file_xattr_value_get(Eina_File *file EINA_UNUSED)
    return NULL;
 }
 
+EAPI void
+eina_file_map_populate(Eina_File *file EINA_UNUSED, Eina_File_Populate rule EINA_UNUSED, const void *map EINA_UNUSED,
+                       unsigned long int offset EINA_UNUSED, unsigned long int length EINA_UNUSED)
+{
+}
+
 EAPI void *
 eina_file_map_all(Eina_File *file, Eina_File_Populate rule EINA_UNUSED)
 {
