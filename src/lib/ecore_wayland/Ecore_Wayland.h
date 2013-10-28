@@ -120,6 +120,8 @@ struct _Ecore_Wl_Display
    struct wl_list outputs;
    struct wl_list globals; /** @since 1.7.6 */
 
+   Eina_Bool init_done;
+
    struct
      {
         struct xkb_context *context;
@@ -557,6 +559,15 @@ EAPI struct wl_list *ecore_wl_outputs_get(void);
 
 /**
  * Retrieves the Wayland Globals Interface list used for the current Wayland connection.
+ *
+ * This call, if done after the ECORE_WL_EVENT_INTERFACES_BOUND event was
+ * received already, won't block the mainloop or trigger a dispatch. It will
+ * return the current globals immediately. However, if done before this event,
+ * it will probably block the mainloop waiting for the sync "done" event to be
+ * received (by using one or more wl_display_dispatch call), and then finally
+ * return the wl globals list.
+ *
+ * There's no need to call dispatch manually, since this call will do it if necessary.
  *
  * @return The current wayland globals interface list
  *
