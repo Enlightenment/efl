@@ -1590,16 +1590,15 @@ edje_edit_style_add(Evas_Object * obj, const char* style)
    return EINA_TRUE;
 }
 
-EAPI void
+EAPI Eina_Bool
 edje_edit_style_del(Evas_Object * obj, const char* style)
 {
    Edje_Style *s;
 
-   GET_ED_OR_RETURN();
-   //printf("DEL STYLE '%s'\n", style);
+   GET_ED_OR_RETURN(EINA_FALSE);
 
    s = _edje_edit_style_get(ed, style);
-   if (!s) return;
+   if (!s) return EINA_FALSE;
 
    ed->file->styles = eina_list_remove(ed->file->styles, s);
 
@@ -1622,8 +1621,8 @@ edje_edit_style_del(Evas_Object * obj, const char* style)
    free(s);
    s = NULL;
    s = NULL;
+   return EINA_TRUE;
 }
-
 
 EAPI Eina_List *
 edje_edit_style_tags_list_get(Evas_Object * obj, const char* style)

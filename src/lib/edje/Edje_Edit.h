@@ -572,8 +572,10 @@ EAPI Eina_Bool edje_edit_style_add(Evas_Object *obj, const char *style);
  *
  * @param obj Object being edited.
  * @param style Style to delete.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
  */
-EAPI void edje_edit_style_del(Evas_Object *obj, const char *style);
+EAPI Eina_Bool edje_edit_style_del(Evas_Object *obj, const char *style);
 
 /** Get the list of all the tags name in the given text style.
  *
