@@ -31,6 +31,12 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 };
 
 static void
+_activate(Evas_Object *obj)
+{
+   evas_object_smart_callback_call(obj, SIG_CLICKED, NULL);
+}
+
+static void
 _on_image_preloaded(void *data,
                     Evas *e __UNUSED__,
                     Evas_Object *obj,
@@ -626,6 +632,32 @@ _elm_image_smart_theme(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    if (!int_ret) return;
 
    eo_do(obj, elm_obj_image_sizing_eval());
+
+   if (ret) *ret = EINA_TRUE;
+}
+
+static void
+_elm_image_smart_event(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+{
+   Evas_Object *src = va_arg(*list, Evas_Object *);
+   (void) src;
+   Evas_Callback_Type type = va_arg(*list, Evas_Callback_Type);
+   void *event_info = va_arg(*list, void *);
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Evas_Event_Key_Down *ev = event_info;
+   if (ret) *ret = EINA_FALSE;
+
+   if (elm_widget_disabled_get(obj)) return;
+   if (type != EVAS_CALLBACK_KEY_DOWN) return;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
+
+   if ((strcmp(ev->key, "Return")) &&
+       (strcmp(ev->key, "KP_Enter")) &&
+       (strcmp(ev->key, "space")))
+     return;
+
+   _activate(obj);
+   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
 
    if (ret) *ret = EINA_TRUE;
 }
@@ -1660,6 +1692,7 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_CLIP_UNSET), _elm_image_smart_clip_unset),
 
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME), _elm_image_smart_theme),
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_EVENT), _elm_image_smart_event),
 
         EO_OP_FUNC(ELM_OBJ_IMAGE_ID(ELM_OBJ_IMAGE_SUB_ID_ASPECT_FIXED_SET), _elm_image_smart_aspect_fixed_set),
         EO_OP_FUNC(ELM_OBJ_IMAGE_ID(ELM_OBJ_IMAGE_SUB_ID_ASPECT_FIXED_GET), _elm_image_smart_aspect_fixed_get),

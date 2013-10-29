@@ -53,7 +53,6 @@ test_image(void *data EINA_UNUSED, Evas_Object *obj  EINA_UNUSED, void *event_in
    elm_image_resizable_set(im, EINA_TRUE, EINA_TRUE);
    evas_object_size_hint_weight_set(im, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(im, EVAS_HINT_FILL, EVAS_HINT_FILL);
-
    elm_box_pack_end(box, im);
    evas_object_show(im);
 
@@ -129,6 +128,59 @@ test_remote_image(void *data EINA_UNUSED, Evas_Object *obj  EINA_UNUSED, void *e
              elm_radio_group_add(rd, rdg);
           }
      }
+
+   evas_object_resize(win, 320, 480);
+   evas_object_show(win);
+}
+
+static void
+_img_clicked_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   Elm_Transit *trans;
+
+   fprintf(stderr, "%p - clicked\n", obj);
+
+   trans = elm_transit_add();
+   elm_transit_object_add(trans, data);
+   elm_transit_effect_rotation_add(trans, 0, 180);
+   elm_transit_duration_set(trans, 5.0);
+   elm_transit_go(trans);
+}
+
+void
+test_click_image(void *data EINA_UNUSED, Evas_Object *obj  EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *win, *box, *im, *label;
+
+   win = elm_win_util_standard_add("image test", "Image Test");
+   elm_win_autodel_set(win, EINA_TRUE);
+   elm_win_focus_highlight_enabled_set(win, EINA_TRUE);
+
+   box = elm_box_add(win);
+   evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, box);
+   evas_object_show(box);
+
+   im = elm_image_add(win);
+   elm_object_focus_allow_set(im, EINA_TRUE);
+   char buf[PATH_MAX];
+   snprintf(buf, sizeof(buf), "%s/images/logo.png", elm_app_data_dir_get());
+   elm_image_file_set(im, buf, NULL);
+   elm_image_resizable_set(im, EINA_TRUE, EINA_TRUE);
+   evas_object_size_hint_weight_set(im, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(im, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_smart_callback_add(im, "clicked", _img_clicked_cb, im);
+   elm_box_pack_end(box, im);
+   evas_object_show(im);
+
+   label = elm_label_add(win);
+   elm_object_text_set(label, "<b>Press Return/Space/KP_Return key on image to transit.</b>");
+   evas_object_size_hint_weight_set(label, 0.0, 0.0);
+   evas_object_size_hint_align_set(label, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(box, label);
+   evas_object_show(label);
+
+   elm_object_focus_set(im, EINA_TRUE);
 
    evas_object_resize(win, 320, 480);
    evas_object_show(win);
