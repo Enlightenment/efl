@@ -641,9 +641,9 @@ static const Eina_Unicode _ellip_str[2] = { 0x2026, '\0' };
 static Evas_Object_Text_Item *
 _layout_ellipsis_item_new(Evas_Object_Protected_Data *obj, Evas_Object_Text *o)
 {
-   Evas_Object_Text_Item *ellip_ti;
+   Evas_Object_Text_Item *ellip_ti = NULL;
    Evas_Script_Type script;
-   Evas_Font_Instance *script_fi = NULL, *cur_fi;
+   Evas_Font_Instance *script_fi = NULL, *cur_fi = NULL;
    size_t len = 1; /* The length of _ellip_str */
 
    script = evas_common_language_script_type_get(_ellip_str, 1);
@@ -652,10 +652,9 @@ _layout_ellipsis_item_new(Evas_Object_Protected_Data *obj, Evas_Object_Text *o)
      {
         (void) ENFN->font_run_end_get(ENDT, o->font, &script_fi, &cur_fi,
                                       script, _ellip_str, 1);
+	ellip_ti = _evas_object_text_item_new(obj, o, cur_fi,
+					      _ellip_str, script, 0, 0, len);
      }
-
-   ellip_ti = _evas_object_text_item_new(obj, o, cur_fi,
-                                         _ellip_str, script, 0, 0, len);
 
    return ellip_ti;
 }
