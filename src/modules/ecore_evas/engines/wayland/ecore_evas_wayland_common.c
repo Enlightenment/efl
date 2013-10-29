@@ -106,7 +106,6 @@ _ecore_evas_wl_common_cb_mouse_in(void *data EINA_UNUSED, int type EINA_UNUSED, 
    if (ee->func.fn_mouse_in) ee->func.fn_mouse_in(ee);
    ecore_event_evas_modifier_lock_update(ee->evas, ev->modifiers);
    evas_event_feed_mouse_in(ee->evas, ev->timestamp, NULL);
-   _ecore_evas_mouse_move_process(ee, ev->x, ev->y, ev->timestamp);
    ee->in = EINA_TRUE;
    return ECORE_CALLBACK_PASS_ON;
 }
@@ -147,6 +146,7 @@ _ecore_evas_wl_common_cb_focus_in(void *data EINA_UNUSED, int type EINA_UNUSED, 
    ee = ecore_event_window_match(ev->win);
    if ((!ee) || (ee->ignore_events)) return ECORE_CALLBACK_PASS_ON;
    if (ev->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
+   if (ee->prop.focused) return ECORE_CALLBACK_PASS_ON;
    ee->prop.focused = 1;
    evas_focus_in(ee->evas);
    if (ee->func.fn_focus_in) ee->func.fn_focus_in(ee);
@@ -165,6 +165,7 @@ _ecore_evas_wl_common_cb_focus_out(void *data EINA_UNUSED, int type EINA_UNUSED,
    ee = ecore_event_window_match(ev->win);
    if ((!ee) || (ee->ignore_events)) return ECORE_CALLBACK_PASS_ON;
    if (ev->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
+   if (!ee->prop.focused) return ECORE_CALLBACK_PASS_ON;
    evas_focus_out(ee->evas);
    ee->prop.focused = 0;
    if (ee->func.fn_focus_out) ee->func.fn_focus_out(ee);
