@@ -97,4 +97,7 @@ void _ecore_wl_events_shutdown(void);
 
 void _ecore_wl_subsurfs_del_all(Ecore_Wl_Window *win);
 
+struct wl_compositor *ecore_wl_compositor_get(void);
+struct wl_subcompositor *ecore_wl_subcompositor_get(void);
+
 #endif

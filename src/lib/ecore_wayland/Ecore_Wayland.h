@@ -496,6 +496,16 @@ EAPI struct wl_shm *ecore_wl_shm_get(void);
 EAPI struct wl_display *ecore_wl_display_get(void);
 
 /**
+ * Retrieves the Compositor interface.
+ *
+ * This interface is used by clients to request the creation of surfaces and
+ * regions.
+ *
+ * @return The current wayland compositor interface
+ * @since 1.8
+ */
+
+/**
  * Retrieves the size of the current screen.
  *
  * @param w where to return the width. May be NULL. Returns 0 on error.

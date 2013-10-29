@@ -272,6 +272,28 @@ ecore_wl_registry_get(void)
    return _ecore_wl_disp->wl.registry;
 }
 
+struct wl_compositor *
+ecore_wl_compositor_get(void)
+{
+   if ((!_ecore_wl_disp) || (!_ecore_wl_disp->wl.display))
+     return NULL;
+
+   _ecore_wl_init_wait();
+
+   return _ecore_wl_disp->wl.compositor;
+}
+
+struct wl_subcompositor *
+ecore_wl_subcompositor_get(void)
+{
+   if ((!_ecore_wl_disp) || (!_ecore_wl_disp->wl.display))
+     return NULL;
+
+   _ecore_wl_init_wait();
+
+   return _ecore_wl_disp->wl.subcompositor;
+}
+
 EAPI void
 ecore_wl_screen_size_get(int *w, int *h)
 {
