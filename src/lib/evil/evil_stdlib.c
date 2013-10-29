@@ -20,8 +20,6 @@
 #include "evil_macro.h"
 #include "evil_stdlib.h"
 #include "evil_private.h"
-#define APICHAR char
-#include "evil_print.h"
 
 /*
  * Environment variable related functions

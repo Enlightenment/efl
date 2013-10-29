@@ -1,31 +1,6 @@
 #ifndef __EVIL_MACRO_POP_H__
 #define __EVIL_MACRO_POP_H__
 
-
-#ifdef EVIL_CDECL_IS_DEFINED
-# undef __cdecl
-# undef EVIL_CDECL_IS_DEFINED
-#endif
-
-#define fprintf   _evil_fprintfa
-#define printf    _evil_printfa
-#define snprintf  _evil_snprintfa
-#define sprintf   _evil_sprintfa
-#define vfprintf  _evil_vfprintfa
-#define vprintf   _evil_vprintfa
-#define vsnprintf _evil_vsnprintfa
-#define vsprintf  _evil_vsprintfa
-
-#define fscanf    _evil_fscanf
-#define scanf     _evil_scanf
-#define sscanf    _evil_sscanf
-#define vfscanf   _evil_vfscanf
-#define vscanf    _evil_vscanf
-#define vsscanf   _evil_vsscanf
-
-#define asprintf  _evil_asprintf
-#define vasprintf _evil_vasprintf
-
 /* Redefine to GNU specific PRI... and SCN... macros.  */
 
 #define PRId64 "lld"

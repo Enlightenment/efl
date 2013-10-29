@@ -10,4 +10,4 @@ Description: Library that ports on Windows some specific Unix functions.
 Version: @VERSION@
 Libs: -L${libdir} -levil
 Libs.private:
-Cflags: -I${includedir}/evil-@VMAJ@ @EFL_WINDOWS_VERSION_CFLAGS@ -mms-bitfields
+Cflags: -I${includedir}/evil-@VMAJ@ @EFL_WINDOWS_VERSION_CFLAGS@ -mms-bitfields -D__MINGW_PRINTF_FORMAT

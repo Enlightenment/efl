@@ -2,15 +2,6 @@
 #define __EVIL_MACRO_H__
 
 
-#ifndef __cdecl
-# define EVIL_CDECL_IS_DEFINED
-# ifdef __GNUC__
-#  define __cdecl __attribute__((__cdecl__))
-# else
-#  define __cdecl
-# endif
-#endif /* __cdecl */
-
 
 #ifdef EAPI
 # undef EAPI
@@ -29,100 +20,9 @@
 #endif /* _WIN32 */
 
 
-#ifndef __EVIL_GNUC_PREREQ
-# if defined __GNUC__ && defined __GNUC_MINOR__
-#  define __EVIL_GNUC_PREREQ( major, minor )\
-     (__GNUC__ > (major) || (__GNUC__ == (major) && __GNUC_MINOR__ >= (minor)))
-# else
-#  define __EVIL_GNUC_PREREQ( major, minor )
-# endif
-#endif /* __EVIL_GNUC_PREREQ */
-
-
-#ifndef  __EVIL_NOTHROW
-# if __EVIL_GNUC_PREREQ( 3, 3 )
-#  define __EVIL_NOTHROW  __attribute__((__nothrow__))
-# else
-#  define __EVIL_NOTHROW
-# endif
-#endif /* __EVIL_NOTHROW */
-
-
-#ifndef  __EVIL_PRINTF
-# if __EVIL_GNUC_PREREQ( 2, 4 )
-#  define __EVIL_PRINTF(fmt, arg) __attribute__((__format__ (__gnu_printf__, fmt, arg)))
-# else
-#  define __EVIL_PRINTF(fmt, arg)
-# endif
-#endif /* __EVIL_PRINTF */
-
-
 #ifndef PATH_MAX
 # define PATH_MAX MAX_PATH
 #endif /* PATH_MAX */
-#ifdef fprintf
-# undef fprintf
-#endif
-
-#ifdef printf
-# undef printf
-#endif
-
-#ifdef sprintf
-# undef sprintf
-#endif
-
-#ifdef snprintf
-# undef snprintf
-#endif
-
-#ifdef vfprintf
-# undef vfprintf
-#endif
-
-#ifdef vprintf
-# undef vprintf
-#endif
-
-#ifdef vsprintf
-# undef vsprintf
-#endif
-
-#ifdef vsnprintf
-# undef vsnprintf
-#endif
-
-#ifdef fscanf
-# undef fscanf
-#endif
-
-#ifdef scanf
-# undef scanf
-#endif
-
-#ifdef sscanf
-# undef sscanf
-#endif
-
-#ifdef vfscanf
-# undef vfscanf
-#endif
-
-#ifdef vscanf
-# undef vscanf
-#endif
-
-#ifdef vsscanf
-# undef vsscanf
-#endif
-
-#ifdef asprintf
-# undef asprintf
-#endif
-
-#ifdef vasprintf
-# undef vasprintf
-#endif
 
 
 #if defined(_INTTYPES_H_) && defined(PRId64)

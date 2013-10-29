@@ -22,7 +22,7 @@
  * * modification of the management of the error
  */
 
-#if ! _WIN32_WINNT >= _WIN32_WINNT_VISTA
+#if ! (_WIN32_WINNT >= _WIN32_WINNT_VISTA)
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"
@@ -41,8 +41,6 @@
 #include "evil_macro.h"
 #include "evil_inet.h"
 #include "evil_private.h"
-#define APICHAR char
-#include "evil_print.h"
 
 #ifndef EMSGSIZE
 # define EMSGSIZE WSAEMSGSIZE

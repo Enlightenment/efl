@@ -17,8 +17,6 @@
 #include "evil_macro.h"
 #include "evil_util.h"
 #include "evil_private.h"
-#define APICHAR char
-#include "evil_print.h"
 
 
 wchar_t *

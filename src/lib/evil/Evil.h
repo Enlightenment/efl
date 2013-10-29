@@ -71,7 +71,6 @@
  * Recommended reading:
  *
  * @li @ref Evil_Mman
- * @li @ref Evil_Libgen_Group
  * @li @ref Evil_Unistd_Group
  * @li @ref Evil_Dlfcn
  * @li @ref Evil_Pwd_Group
@@ -152,9 +151,7 @@ typedef unsigned long  gid_t;
 #include "evil_fcntl.h"
 #include "evil_inet.h"
 #include "evil_langinfo.h"
-#include "evil_libgen.h"
 #include "evil_main.h"
-#include "evil_print.h"
 #include "evil_stdlib.h"
 #include "evil_stdio.h"
 #include "evil_string.h"

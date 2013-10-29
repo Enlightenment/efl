@@ -22,9 +22,6 @@
 #include "sys/mman.h"
 #include "evil_util.h"
 #include "evil_private.h"
-#define APICHAR char
-#include "evil_print.h"
-#include "evil_private.h"
 
 #ifdef __MINGW32CE__
 # define _get_osfhandle(FILEDES) ((long)FILEDES)
