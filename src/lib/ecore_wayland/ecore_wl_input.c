@@ -469,13 +469,16 @@ _ecore_wl_input_cb_pointer_button(void *data, struct wl_pointer *pointer EINA_UN
         if ((input->pointer_focus) && (!input->grab) && (state))
           ecore_wl_input_grab(input, input->pointer_focus, button);
 
-        _ecore_wl_input_mouse_down_send(input, input->pointer_focus,
-                                        0, button, timestamp);
+        if (input->pointer_focus)
+          _ecore_wl_input_mouse_down_send(input, input->pointer_focus,
+                                          0, button, timestamp);
      }
    else
      {
-        _ecore_wl_input_mouse_up_send(input, input->pointer_focus,
-                                      0, button, timestamp);
+        if (input->pointer_focus)
+          _ecore_wl_input_mouse_up_send(input, input->pointer_focus,
+                                        0, button, timestamp);
+
         if ((input->grab) && (input->grab_button == button) && (!state))
           ecore_wl_input_ungrab(input);
      }
