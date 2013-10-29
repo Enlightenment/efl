@@ -248,11 +248,8 @@ _conformant_parts_swallow(Evas_Object *obj)
         evas_object_color_set(sd->virtualkeypad, 0, 0, 0, 0);
         elm_layout_content_set(obj, VIRTUALKEYPAD_PART, sd->virtualkeypad);
      }
-   else if (sd->virtualkeypad)
-     {
-        evas_object_del(sd->virtualkeypad);
-        sd->virtualkeypad = NULL;
-     }
+   else
+     ELM_SAFE_FREE(sd->virtualkeypad, evas_object_del);
 
    //Clipboard
    if (edje_object_part_exists(wd->resize_obj, CLIPBOARD_PART))
@@ -269,11 +266,8 @@ _conformant_parts_swallow(Evas_Object *obj)
         evas_object_color_set(sd->clipboard, 0, 0, 0, 0);
         elm_layout_content_set(obj, CLIPBOARD_PART, sd->clipboard);
      }
-   else if (sd->clipboard)
-     {
-        evas_object_del(sd->clipboard);
-        sd->clipboard = NULL;
-     }
+   else
+     ELM_SAFE_FREE(sd->clipboard, evas_object_del);
 
    //Softkey
    if (edje_object_part_exists(wd->resize_obj, SOFTKEY_PART))
@@ -290,11 +284,8 @@ _conformant_parts_swallow(Evas_Object *obj)
         evas_object_color_set(sd->softkey, 0, 0, 0, 0);
         elm_layout_content_set(obj, SOFTKEY_PART, sd->softkey);
      }
-   else if (sd->softkey)
-     {
-        evas_object_del(sd->softkey);
-        sd->softkey = NULL;
-     }
+   else
+     ELM_SAFE_FREE(sd->softkey, evas_object_del);
 }
 
 static Eina_Bool
