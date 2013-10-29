@@ -1075,9 +1075,12 @@ _image_entry_free(Image_Entry *ientry)
    if (fd)
      {
         fentry = _file_entry_find(fd->id);
-        fentry->images = eina_list_remove(fentry->images, ientry);
-        if (fentry && !fentry->images && !ASENTRY(fentry)->references)
-          eina_hash_del_by_key(file_entries, &fd->id);
+        if (fentry)
+          {
+             fentry->images = eina_list_remove(fentry->images, ientry);
+             if (!fentry->images && !ASENTRY(fentry)->references)
+               eina_hash_del_by_key(file_entries, &fd->id);
+          }
      }
    else
       ERR("Could not find file data %u for image %u",
@@ -1669,18 +1672,14 @@ static void
 _file_changed_cb(const char *path EINA_UNUSED, Eina_Bool deleted EINA_UNUSED, void *data)
 {
    File_Watch *fw = data;
-   File_Data *fd;
+   File_Entry *fentry;
    Eina_List *l;
 
-   EINA_LIST_FOREACH(fw->entries, l, fd)
+   EINA_LIST_FOREACH(fw->entries, l, fentry)
      {
         Eina_List *ll;
         Image_Entry *ie;
-        File_Entry *fentry;
-
-        fd->invalid = EINA_TRUE;
-        fentry = _file_entry_find(fd->id);
-        if (!fentry) continue;
+        File_Data *fd;
 
         fentry->watcher = NULL;
 
@@ -1688,13 +1687,13 @@ _file_changed_cb(const char *path EINA_UNUSED, Eina_Bool deleted EINA_UNUSED, vo
           {
              Image_Data *idata;
 
+             idata = _image_data_find(ENTRYID(ie));
              eina_hash_set(image_entries, &ENTRYID(ie), NULL);
              if (ASENTRY(ie)->request /*&& !ie->base.request->processing*/)
                cserve2_request_cancel_all(ASENTRY(ie)->request,
                                           CSERVE2_FILE_CHANGED);
              ASENTRY(ie)->request = NULL;
 
-             idata = _image_data_find(ENTRYID(ie));
              if (idata)
                {
                   _image_id_free(idata);
@@ -1703,8 +1702,15 @@ _file_changed_cb(const char *path EINA_UNUSED, Eina_Bool deleted EINA_UNUSED, vo
                }
           }
 
-        _file_id_free(fd);
-        eina_hash_set(file_entries, &fd->id, NULL);
+
+        fd = _file_data_find(ENTRYID(fentry));
+        if (fd)
+          {
+             fd->invalid = EINA_TRUE;
+             _file_id_free(fd);
+             eina_hash_set(file_entries, &fd->id, NULL);
+          }
+
         if (ASENTRY(fentry)->request
             /*&& !ASENTRY(fentry)->request->processing*/)
           {
