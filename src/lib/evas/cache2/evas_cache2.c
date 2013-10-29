@@ -307,6 +307,7 @@ _evas_cache2_image_preloaded_cb(void *data, Eina_Bool success)
 
    ie->cache2->preload = eina_list_remove(ie->cache2->preload, ie);
    ie->flags.preload_done = success;
+   ie->flags.updated_data = EINA_TRUE;
 
    while ((tmp = ie->targets))
      {

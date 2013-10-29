@@ -8,6 +8,12 @@ void
 evas_gl_common_image_alloc_ensure(Evas_GL_Image *im)
 {
    if (!im->im) return;
+#ifdef EVAS_CSERVE2
+   if (evas_cache2_image_cached(&im->im->cache_entry))
+     im->im = (RGBA_Image *)evas_cache2_image_size_set(&im->im->cache_entry,
+                                                        im->w, im->h);
+   else
+#endif
    im->im = (RGBA_Image *)evas_cache_image_size_set(&im->im->cache_entry,
                                                     im->w, im->h);
 }
