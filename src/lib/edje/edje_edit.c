@@ -2592,20 +2592,25 @@ FUNC_PART_DRAG_INT(count, y);
      p = ed->table_parts[rp->part->dragable.Id##_id];			\
      return eina_stringshare_add(p->part->name);			\
   }									\
-  EAPI void								\
+  EAPI Eina_Bool						        \
   edje_edit_part_drag_##Id##_set(Evas_Object *obj, const char *part, const char *e) \
   {									\
      Edje_Real_Part *e_part;						\
 									\
-     GET_RP_OR_RETURN();						\
-     if (!e)								\
+     eina_error_set(0);							\
+     if ((!obj) || (!part))                                             \
+       return EINA_FALSE;                                               \
+									\
+     GET_RP_OR_RETURN(EINA_FALSE);				        \
+     if (!e)				                                \
        {								\
 	  rp->part->dragable.Id##_id = -1;				\
-	  return;							\
+	  return EINA_TRUE;						\
        }								\
-									\
      e_part = _edje_real_part_get(ed, e);				\
+     if (!e_part) return EINA_FALSE;                                    \
      rp->part->dragable.Id##_id = e_part->part->id;			\
+     return EINA_TRUE;                                                  \
   }
 
 FUNC_PART_DRAG_ID(confine);

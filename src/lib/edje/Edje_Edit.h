@@ -1103,8 +1103,10 @@ EAPI const char * edje_edit_part_drag_confine_get(Evas_Object *obj, const char *
  * @param obj Object being edited.
  * @param part Part to set the name that is used as 'confine' for the given draggies.
  * @param confine The name of the confine part or NULL to unset confine.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
  */
-EAPI void edje_edit_part_drag_confine_set(Evas_Object *obj, const char *part, const char *confine);
+EAPI Eina_Bool edje_edit_part_drag_confine_set(Evas_Object *obj, const char *part, const char *confine);
 
 /** Get the name of the part that is used as the receiver of the drag event.
  *
@@ -1120,8 +1122,10 @@ EAPI const char * edje_edit_part_drag_event_get(Evas_Object *obj, const char *pa
  * @param obj Object being edited.
  * @param part Part to set the name that will receive events from the given draggies.
  * @param event The name of the part that will receive events, or NULL to unset.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
  */
-EAPI void edje_edit_part_drag_event_set(Evas_Object *obj, const char *part, const char *event);
+EAPI Eina_Bool edje_edit_part_drag_event_set(Evas_Object *obj, const char *part, const char *event);
 
 
 //@}
