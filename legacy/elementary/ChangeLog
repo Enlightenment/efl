@@ -1723,3 +1723,7 @@
 2013-10-23  Christophe Sadoine
 
         * spinner: added signals "spinner,drag,start" and "spinner,drag,stop".
+
+2013-10-30  Amitesh Singh (_ami_)
+
+        * image: Add support for "clicked" callback on Return/space/KP_Enter key press.
