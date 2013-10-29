@@ -30,10 +30,10 @@ ecore_wl_subsurf_create(Ecore_Wl_Window *win)
    if (!win) return NULL;
    if (!win->surface) return NULL;
 
-   subcomp = ecore_wl_subcompositor_get();
+   subcomp = _ecore_wl_subcompositor_get();
    if (!subcomp) return NULL;
 
-   surface = wl_compositor_create_surface(ecore_wl_compositor_get());
+   surface = wl_compositor_create_surface(_ecore_wl_compositor_get());
    if (!surface)
      return NULL;
 
@@ -182,7 +182,7 @@ ecore_wl_subsurf_opaque_region_set(Ecore_Wl_Subsurf *ess, int x, int y, int w, i
 
    if ((w > 0) && (h > 0))
      {
-        region = wl_compositor_create_region(ecore_wl_compositor_get());
+        region = wl_compositor_create_region(_ecore_wl_compositor_get());
         wl_region_add(region, x, y, w, h);
         wl_surface_set_opaque_region(ess->surface, region);
         wl_region_destroy(region);

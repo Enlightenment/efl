@@ -252,7 +252,7 @@ ecore_wl_window_surface_create(Ecore_Wl_Window *win)
 {
    if (!win) return NULL;
    if (win->surface) return win->surface;
-   win->surface = wl_compositor_create_surface(ecore_wl_compositor_get());
+   win->surface = wl_compositor_create_surface(_ecore_wl_compositor_get());
    win->surface_id = wl_proxy_get_id((struct wl_proxy *)win->surface);
    return win->surface;
 }
@@ -610,7 +610,7 @@ ecore_wl_window_input_region_set(Ecore_Wl_Window *win, int x, int y, int w, int 
              struct wl_region *region = NULL;
 
              region = 
-               wl_compositor_create_region(ecore_wl_compositor_get());
+               wl_compositor_create_region(_ecore_wl_compositor_get());
              wl_region_add(region, x, y, w, h);
              wl_surface_set_input_region(win->surface, region);
              wl_region_destroy(region);
@@ -640,7 +640,7 @@ ecore_wl_window_opaque_region_set(Ecore_Wl_Window *win, int x, int y, int w, int
         struct wl_region *region = NULL;
 
         region = 
-          wl_compositor_create_region(ecore_wl_compositor_get());
+          wl_compositor_create_region(_ecore_wl_compositor_get());
 
         switch (win->rotation)
           {

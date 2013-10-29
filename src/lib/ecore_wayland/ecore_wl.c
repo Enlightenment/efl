@@ -274,7 +274,7 @@ ecore_wl_registry_get(void)
 }
 
 struct wl_compositor *
-ecore_wl_compositor_get(void)
+_ecore_wl_compositor_get(void)
 {
    if ((!_ecore_wl_disp) || (!_ecore_wl_disp->wl.display))
      return NULL;
@@ -285,7 +285,7 @@ ecore_wl_compositor_get(void)
 }
 
 struct wl_subcompositor *
-ecore_wl_subcompositor_get(void)
+_ecore_wl_subcompositor_get(void)
 {
    if ((!_ecore_wl_disp) || (!_ecore_wl_disp->wl.display))
      return NULL;
