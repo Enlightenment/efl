@@ -2368,17 +2368,38 @@ _elm_win_frame_cb_minimize(void *data,
 }
 
 static void
+_elm_win_frame_maximized_state_update(Elm_Win_Smart_Data *sd, Eina_Bool maximized)
+{
+   const char *emission;
+
+   if (maximized)
+     emission = "elm,state,maximized";
+   else
+     emission = "elm,state,unmaximized";
+
+   edje_object_signal_emit(sd->frame_obj, emission, "elm");
+   edje_object_message_signal_process(sd->frame_obj);
+   evas_object_smart_calculate(sd->frame_obj);
+
+   _elm_win_frame_obj_update(sd);
+}
+
+static void
 _elm_win_frame_cb_maximize(void *data,
                            Evas_Object *obj __UNUSED__,
                            const char *sig __UNUSED__,
                            const char *source __UNUSED__)
 {
+   Eina_Bool value;
    ELM_WIN_DATA_GET(data, sd);
 
    if (!sd) return;
-   if (sd->maximized) sd->maximized = EINA_FALSE;
-   else sd->maximized = EINA_TRUE;
-   TRAP(sd, maximized_set, sd->maximized);
+   if (sd->maximized) value = EINA_FALSE;
+   else value = EINA_TRUE;
+
+   _elm_win_frame_maximized_state_update(sd, value);
+
+   TRAP(sd, maximized_set, value);
 }
 
 static void
@@ -3835,7 +3856,7 @@ _maximized_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Eina_Bool maximized = va_arg(*list, int);
    Elm_Win_Smart_Data *sd = _pd;
 
-//   sd->maximized = maximized;
+   _elm_win_frame_maximized_state_update(sd, maximized);
    // YYY: handle if sd->img_obj
    TRAP(sd, maximized_set, maximized);
 #ifdef HAVE_ELEMENTARY_X
