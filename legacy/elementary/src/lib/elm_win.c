@@ -2199,25 +2199,18 @@ static struct _resize_info _border_corner[4] =
 #endif
 
 static void
-_elm_win_frame_obj_move(void *data,
-                        Evas *e __UNUSED__,
-                        Evas_Object *obj __UNUSED__,
-                        void *event_info __UNUSED__)
+_elm_win_frame_obj_update(Elm_Win_Smart_Data *sd)
 {
-   Elm_Win_Smart_Data *sd;
    int fx, fy, fw, fh;
    int ox, oy, ow, oh;
    int sx, sy, sw, sh;
    int x, y, w, h;
-
-   if (!(sd = data)) return;
-   if (!sd->client_obj) return;
-
    evas_object_geometry_get(sd->frame_obj, &fx, &fy, &fw, &fh);
    evas_object_geometry_get(sd->client_obj, &ox, &oy, &ow, &oh);
    evas_object_geometry_get(sd->spacer_obj, &sx, &sy, &sw, &sh);
 
    evas_output_framespace_get(sd->evas, &x, &y, &w, &h);
+
    if ((x != (ox - fx)) || (y != (oy - fy)) ||
        (w != (fw - ow)) || (h != (fh - oh)))
      {
@@ -2231,35 +2224,31 @@ _elm_win_frame_obj_move(void *data,
 }
 
 static void
+_elm_win_frame_obj_move(void *data,
+                        Evas *e __UNUSED__,
+                        Evas_Object *obj __UNUSED__,
+                        void *event_info __UNUSED__)
+{
+   Elm_Win_Smart_Data *sd;
+
+   if (!(sd = data)) return;
+   if (!sd->client_obj) return;
+
+   _elm_win_frame_obj_update(sd);
+}
+
+static void
 _elm_win_frame_obj_resize(void *data,
                           Evas *e __UNUSED__,
                           Evas_Object *obj __UNUSED__,
                           void *event_info __UNUSED__)
 {
    Elm_Win_Smart_Data *sd;
-   int fx, fy, fw, fh;
-   int ox, oy, ow, oh;
-   int sx, sy, sw, sh;
-   int x, y, w, h;
 
    if (!(sd = data)) return;
    if (!sd->client_obj) return;
 
-   evas_object_geometry_get(sd->frame_obj, &fx, &fy, &fw, &fh);
-   evas_object_geometry_get(sd->client_obj, &ox, &oy, &ow, &oh);
-   evas_object_geometry_get(sd->spacer_obj, &sx, &sy, &sw, &sh);
-
-   evas_output_framespace_get(sd->evas, &x, &y, &w, &h);
-   if ((x != (ox - fx)) || (y != (oy - fy)) ||
-       (w != (fw - ow)) || (h != (fh - oh)))
-     {
-        evas_output_framespace_set(sd->evas, (ox - fx), (oy - fy),
-                                   (fw - ow), (fh - oh));
-     }
-
-#ifdef HAVE_ELEMENTARY_WAYLAND
-   ecore_wl_window_opaque_region_set(sd->wl.win, -fx, -(fy - sy), sw, sh);
-#endif
+   _elm_win_frame_obj_update(sd);
 }
 
 static void
