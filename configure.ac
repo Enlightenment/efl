@@ -2772,6 +2772,9 @@ if test "x${want_x11_xlib}" = "xyes" ; then
 
    AC_DEFINE([HAVE_ECORE_X_XLIB], [1], [Defined to 1 if Xlib is enabled.])
    HAVE_ECORE_X_BACKEND="HAVE_ECORE_X_XLIB"
+
+   EFL_EVAL_PKGS([ECORE_X])
+   EFL_CHECK_FUNCS([ECORE_X], [dlopen dlsym])
 fi
 
 ## XCB
