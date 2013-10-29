@@ -1087,7 +1087,14 @@ eng_image_data_get(void *data EINA_UNUSED, void *image, int to_write, DATA32 **i
         if (err) *err = error;
 
         if (to_write)
-          im = (RGBA_Image *)evas_cache2_image_writable(&im->cache_entry);
+          {
+             im = (RGBA_Image *)evas_cache2_image_writable(&im->cache_entry);
+             if (!im)
+               {
+                  *image_data = NULL;
+                  return NULL;
+               }
+          }
      }
    else
 #endif

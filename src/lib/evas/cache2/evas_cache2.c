@@ -1089,15 +1089,13 @@ evas_cache2_image_writable(Image_Entry *im)
                                         evas_cache2_image_pixels(im),
                                         im->flags.alpha, im->space);
    if (!im2)
-     goto on_error;
+     {
+        ERR("Could not create a copy of this image (%dx%d)", im->w, im->h);
+        return NULL;
+     }
 
    evas_cache2_image_close(im);
    return im2;
-
-on_error:
-   if (im2)
-     _evas_cache2_image_entry_delete(cache, im2);
-   return NULL;
 }
 
 EAPI Image_Entry *
