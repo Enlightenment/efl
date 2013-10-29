@@ -1588,8 +1588,8 @@ _image_entry_new(Client *client, int rid,
    ref = eina_hash_find(client->files.referencing, &client_file_id);
    if (!ref)
      {
-        ERR("Couldn't find file id: %d, for image id: %d",
-            client_file_id, image_id);
+        ERR("Couldn't find file id for client image id: %d",
+            client_file_id);
         cserve2_client_error_send(client, rid,
                                   CSERVE2_INVALID_CACHE);
         return NULL;
@@ -2373,7 +2373,7 @@ _font_entry_debug_size_cb(const Eina_Hash *hash EINA_UNUSED,
    // name
    if (fe->src->name)
      {
-        str = cserve2_shared_string_get(fe->src->file);
+        str = cserve2_shared_string_get(fe->src->name);
         di->size+= strlen(str) + 1;
      }
 
@@ -2769,8 +2769,10 @@ try_again:
                                            0, &unscaled, buf, sizeof(buf));
              if (!orig_entry) return -1;
 
-             image_id = orig_entry->base.id;
              orig_data = _image_data_find(ENTRYID(orig_entry));
+             if (!orig_data) return -1;
+
+             image_id = ENTRYID(orig_entry);
              orig_data->unused = EINA_TRUE;
              fentry = _file_entry_find(orig_data->file_id);
              fentry->images = eina_list_append(fentry->images, orig_entry);

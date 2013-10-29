@@ -581,8 +581,6 @@ _shared_index_entry_get_by_id(Shared_Index *si, unsigned int id)
    for (cur = start_high; cur < si->sa->header->count; cur++)
      {
         obj = (Index_Entry *) (base + (elemsize * cur));
-        if (!obj)
-          return NULL;
         if (!obj->id)
           return NULL;
         if (obj->id == id)

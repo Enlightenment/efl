@@ -725,8 +725,8 @@ main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 
    if (isatty(STDOUT_FILENO))
      {
-        ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
-        _termsize = w.ws_col;
+        if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &w) == 0)
+          _termsize = w.ws_col;
      }
 
    if (argc > 1)

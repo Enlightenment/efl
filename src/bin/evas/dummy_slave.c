@@ -170,7 +170,7 @@ int main(int c, char **v)
                    Error_Type err;
                    const char *file, *key;
                    p = params;
-                   file = (const char *)(p + sizeof(*p));
+                   file = (const char *)(p + 1);
                    key = file + strlen(file) + 1;
                    if ((err = image_open(file, key, &result)) != CSERVE2_NONE)
                      error_send(wfd, err);

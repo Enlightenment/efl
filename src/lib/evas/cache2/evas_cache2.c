@@ -657,7 +657,7 @@ evas_cache2_image_open(Evas_Cache2 *cache, const char *path, const char *key,
    Image_Timestamp       tstamp;
    Evas_Image_Load_Opts  prevent;
 
-   if ((!path) || ((!path) && (!key)))
+   if (!path)
      {
         *error = EVAS_LOAD_ERROR_GENERIC;
         return NULL;

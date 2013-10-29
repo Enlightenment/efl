@@ -545,7 +545,7 @@ _server_dispatch(Eina_Bool *failed)
    Eina_List *l, *l_next;
    Client_Request *cr;
    Msg_Base *msg;
-   Eina_Bool found;
+   Eina_Bool found = EINA_FALSE;
 
    msg = _server_read(&size);
    if (!msg)
@@ -1691,8 +1691,9 @@ _glyph_map_remap_check(Glyph_Map *map, const char *idxpath, const char *datapath
    // Note: Since the shm name contains cserve2's PID it should most likely
    // always change in case of crash/restart
 
-   if ((datapath && strcmp(datapath, map->mempool.path))
-       || (idxpath && strcmp(idxpath, map->index.path)))
+   if (datapath && idxpath &&
+       ((strncmp(datapath, map->mempool.path, SHARED_BUFFER_PATH_MAX) != 0) ||
+        (strncmp(idxpath, map->index.path, SHARED_BUFFER_PATH_MAX) != 0)))
      {
         CS_Glyph_Out *gl, *cursor;
 
@@ -1735,7 +1736,13 @@ _glyph_map_remap_check(Glyph_Map *map, const char *idxpath, const char *datapath
              else
                {
                   gl->sb = oldbuf;
-                  EINA_REFCOUNT_REF(gl->sb);
+                  if (gl->sb)
+                    EINA_REFCOUNT_REF(gl->sb);
+                  else
+                    {
+                       ERR("Glyph pool can not be remapped! (invalid refs)");
+                       eina_clist_remove(&gl->map_entry);
+                    }
                }
           }
 
@@ -1824,11 +1831,13 @@ _font_entry_glyph_map_rebuild_check(Font_Entry *fe, Font_Hint_Flags hints)
         if (!idxpath || !datapath) return -1;
 
         fe->map =_glyph_map_open(fe, idxpath, datapath);
+        if (!fe->map) return -1;
+
         changed = EINA_TRUE;
      }
 
    changed |= _glyph_map_remap_check(fe->map, idxpath, datapath);
-   if (changed && fe->map && fe->map->index.data && fe->map->mempool.data)
+   if (changed && fe->map->index.data && fe->map->mempool.data)
      {
         CS_Glyph_Out *gl;
         const Glyph_Data *gd;

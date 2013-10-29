@@ -132,7 +132,7 @@ cserve2_shm_segment_request(Shm_Handle *shm, size_t size)
    if (!segment) return NULL;
 
    fd = shm_open(map->name, O_RDWR, S_IRUSR | S_IWUSR);
-   if (!fd)
+   if (fd == -1)
      {
         ERR("Could not reopen shm handle: %m");
         free(segment);
@@ -184,7 +184,7 @@ cserve2_shm_resize(Shm_Handle *shm, size_t newsize)
      }
 
    fd = shm_open(shm->mapping->name, O_RDWR, S_IRUSR | S_IWUSR);
-   if (!fd)
+   if (fd == -1)
      {
         ERR("Could not reopen shm handle: %m");
         return NULL;
