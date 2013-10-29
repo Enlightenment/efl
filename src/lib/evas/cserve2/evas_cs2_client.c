@@ -187,6 +187,7 @@ _server_connect(void)
         if (errno == EACCES)
           {
              ERR("not authorized to connect to cserve2!");
+             close(s);
              return EINA_FALSE;
           }
         ERR("cserve2 connect failed: [%d] %s. Retrying...", errno, strerror(errno));
@@ -196,6 +197,7 @@ _server_connect(void)
         if (errno == EINTR)
           {
              WRN("received interruption while trying to connect to cserve2!");
+             close(s);
              return EINA_FALSE;
           }
 
