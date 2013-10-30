@@ -36,12 +36,14 @@ static const char SOFTKEY_PART[] = "elm.swallow.softkey";
 
 static const char SIG_VIRTUALKEYPAD_STATE_ON[] = "virtualkeypad,state,on";
 static const char SIG_VIRTUALKEYPAD_STATE_OFF[] = "virtualkeypad,state,off";
+static const char SIG_VIRTUALKEYPAD_SIZE_CHANGED[] = "virtualkeypad,size,changed";
 static const char SIG_CLIPBOARD_STATE_ON[] = "clipboard,state,on";
 static const char SIG_CLIPBOARD_STATE_OFF[] = "clipboard,state,off";
 
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_VIRTUALKEYPAD_STATE_ON, ""},
    {SIG_VIRTUALKEYPAD_STATE_OFF, ""},
+   {SIG_VIRTUALKEYPAD_SIZE_CHANGED, ""},
    {SIG_CLIPBOARD_STATE_ON, ""},
    {SIG_CLIPBOARD_STATE_OFF, ""},
    {NULL, NULL}
@@ -166,6 +168,8 @@ _conformant_part_sizing_eval(Evas_Object *obj,
 
    if (part_type & ELM_CONFORMANT_VIRTUAL_KEYPAD_PART)
      {
+        Evas_Coord_Rectangle rect;
+
 #ifdef HAVE_ELEMENTARY_X
         if ((!_conformant_part_geometry_get_from_env
                ("ILLUME_KBD", &sx, &sy, &sw, &sh)) && (xwin))
@@ -189,6 +193,9 @@ _conformant_part_sizing_eval(Evas_Object *obj,
         DBG("[KEYPAD]: size(%d,%d, %dx%d).", sx, sy, sw, sh);
         _conformant_part_size_hints_set
           (obj, sd->virtualkeypad, sx, sy, sw, sh);
+
+        rect.x = sx; rect.y = sy; rect.w = sw; rect.h = sh;
+        evas_object_smart_callback_call(obj, SIG_VIRTUALKEYPAD_SIZE_CHANGED, (void *)&rect);
      }
 
    if (part_type & ELM_CONFORMANT_SOFTKEY_PART)

@@ -1727,3 +1727,7 @@
 2013-10-30  Amitesh Singh (_ami_)
 
         * image: Add support for "clicked" callback on Return/space/KP_Enter key press.
+
+2013-10-30  Daniel Juyung Seo (SeoZ)
+
+        * conform: Added "virtualkeypad,size,changed" callback on virtualkeypad min size change.

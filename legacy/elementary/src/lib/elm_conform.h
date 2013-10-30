@@ -28,6 +28,9 @@
  * (@since 1.8)
  * @li "virtualkeypad,state,off": if virtualkeypad state is switched to "off".
  * (@since 1.8) 
+ * @li "virtualkeypad,size,changed": this is called when virtualkeypad size is
+ * changed. @c event_info parameter is the virtualkeypad size in
+ * Evas_Coord_Rectangle structure. (@since 1.8)
  * @li "clipboard,state,on": if clipboard state is switched to "on".
  * (@since 1.8)
  * @li "clipboard,state,off": if clipboard state is switched to "off".

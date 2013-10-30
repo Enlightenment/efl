@@ -101,6 +101,7 @@ Additions:
    * Add elm_fileselector_hidden_visible_set/get() to show or hide hidden files/directories.
    * Add signals "spinner,drag,start" and "spinner,drag,stop" to the spinner widget.
    * Add support for "clicked" callback on Return/space/KP_Enter key press for image.
+   * Add "virtualkeypad,size,changed" callback on virtualkeypad min size change for conformant.
 
 Improvements:
 
