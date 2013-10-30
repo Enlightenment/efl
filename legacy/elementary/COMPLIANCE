@@ -29,18 +29,19 @@ F.A.Q.
 
 Q. Where is the licensing information?
 A. See the COPYING file here in this directory. This is the proper legal
-information you will need.
+information you will need. It covers all of elementary, EXCEPT the
+theme which is public domain (the text files only - images are not).
 
 Q. Do I need to make the source public of libraries or applications that I
 build on top of Elementary?
-A. No. Even the default theme is public domain, whihc means you can
+A. No. Even the default theme is public domain, which means you can
 make your own by copying it and starting from there, and you may
 license your copied variation any way you like.
 
 Q. Do I need to provide the source for Elementary?
 A. Yes. In general you do. If you are shipping any of the binaries or
-libraries that are produced, you must provide the EXACT source code
-used to build those binaries. So stick to doing this and you'll be fine.
+libraries built from Elementary, you must provide the EXACT source code
+used to build those binaries.
 
 Q. If I have to provide source, how should I do this?
 A. The best way is to provide a reference in an "about" dialog in the
@@ -65,3 +66,8 @@ source code, provide them as part of the user interface in full (e.g.
 in a dialog), or as files in the filesystem, on actual printed
 material (manuals, papers) that accompany the product or in CD, DVD
 etc. media.
+
+Q. Is there a simpler list of do's and don'ts i can use?
+A. Yes. See http://www.tldrlegal.com. specifically:
+
+http://www.tldrlegal.com/license/gnu-lesser-general-public-license-v2.1-(lgpl-2.1)
