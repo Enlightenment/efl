@@ -4407,8 +4407,6 @@ edje_edit_image_del(Evas_Object *obj, const char* name)
    if (!ed->file->image_dir)
       goto invalid_image;
 
-     return EINA_TRUE;
-
    for (i = 0; i < ed->file->image_dir->entries_count; ++i)
      {
 	de = ed->file->image_dir->entries + i;
