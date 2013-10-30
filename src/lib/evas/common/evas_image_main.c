@@ -291,16 +291,13 @@ _evas_common_rgba_image_delete(Image_Entry *ie)
 
    if (ie->animated.frames)
      {
-        Eina_List *l;
         Image_Entry_Frame *frame;
-        EINA_LIST_FOREACH(ie->animated.frames, l, frame)
+        
+        EINA_LIST_FREE(ie->animated.frames, frame)
           {
-           if (frame)
-             {
-                if (frame->data) free(frame->data);
-                if (frame->info) free(frame->info);
-                free (frame);
-             }
+             if (frame->data) free(frame->data);
+             if (frame->info) free(frame->info);
+             free(frame);
           }
      }
    if (ie->f && !ie->flags.given_mmap) eina_file_close(ie->f);
