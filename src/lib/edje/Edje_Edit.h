@@ -271,8 +271,10 @@ EAPI int edje_edit_group_min_w_get(Evas_Object *obj);
  *
  * @param obj Object being edited.
  * @param w New minimum width for the group.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
  */
-EAPI void edje_edit_group_min_w_set(Evas_Object *obj, int w);
+EAPI Eina_Bool edje_edit_group_min_w_set(Evas_Object *obj, int w);
 
 /** Get the group minimum height.
  *
@@ -286,8 +288,10 @@ EAPI int edje_edit_group_min_h_get(Evas_Object *obj);
  *
  * @param obj Object being edited.
  * @param h New minimum height for the group.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
  */
-EAPI void edje_edit_group_min_h_set(Evas_Object *obj, int h);
+EAPI Eina_Bool edje_edit_group_min_h_set(Evas_Object *obj, int h);
 
 /** Get the group maximum width.
  *
@@ -301,8 +305,10 @@ EAPI int edje_edit_group_max_w_get(Evas_Object *obj);
  *
  * @param obj Object being edited.
  * @param w New maximum width for the group.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
  */
-EAPI void edje_edit_group_max_w_set(Evas_Object *obj, int w);
+EAPI Eina_Bool edje_edit_group_max_w_set(Evas_Object *obj, int w);
 
 /** Get the group maximum height.
  *
@@ -316,8 +322,10 @@ EAPI int edje_edit_group_max_h_get(Evas_Object *obj);
  *
  * @param obj Object being edited.
  * @param h New maximum height for the group.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
  */
-EAPI void edje_edit_group_max_h_set(Evas_Object *obj, int h);
+EAPI Eina_Bool edje_edit_group_max_h_set(Evas_Object *obj, int h);
 
 
 //@}

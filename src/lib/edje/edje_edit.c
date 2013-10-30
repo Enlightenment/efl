@@ -1115,19 +1115,22 @@ edje_edit_group_name_set(Evas_Object *obj, const char *new_name)
    return EINA_TRUE;
 }
 
-#define FUNC_GROUP_ACCESSOR(Class, Value)			\
-  EAPI int							\
-  edje_edit_group_##Class##_##Value##_get(Evas_Object *obj)	\
-  {								\
-     GET_ED_OR_RETURN(-1);					\
-     if (!ed->collection) return -1;				\
-     return ed->collection->prop.Class.Value;			\
-  }								\
-  EAPI void							\
-  edje_edit_group_##Class##_##Value##_set(Evas_Object *obj, int v)	\
-  {								\
-     GET_ED_OR_RETURN();					\
-     ed->collection->prop.Class.Value = v;			\
+#define FUNC_GROUP_ACCESSOR(Class, Value) \
+  EAPI int \
+  edje_edit_group_##Class##_##Value##_get(Evas_Object *obj) \
+  { \
+     GET_ED_OR_RETURN(-1); \
+     if (!ed->collection) return -1; \
+     return ed->collection->prop.Class.Value; \
+  } \
+  EAPI Eina_Bool \
+  edje_edit_group_##Class##_##Value##_set(Evas_Object *obj, int v) \
+  { \
+     GET_ED_OR_RETURN(EINA_FALSE); \
+     if (!ed->collection) return EINA_FALSE; \
+     if (v < 0) return EINA_FALSE; \
+     ed->collection->prop.Class.Value = v; \
+     return EINA_TRUE; \
   }
 
 FUNC_GROUP_ACCESSOR(min, w);
