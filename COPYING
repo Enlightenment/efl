@@ -20,7 +20,7 @@ evas:            licenses/COPYING.BSD
 embryo:          licenses/COPYING.SMALL
 ecore:           licenses/COPYING.BSD
 eio:             licenses/COPYING.LGPL
-eldbus:           licenses/COPYING.LGPL
+eldbus:          licenses/COPYING.LGPL
 efreet:          licenses/COPYING.BSD
 eeze:            licenses/COPYING.BSD
 ephysics:        licenses/COPYING.BSD

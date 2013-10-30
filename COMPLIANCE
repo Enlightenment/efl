@@ -16,14 +16,16 @@ The simple advice
 files as printed material with your product and/or in a dialog (e.g.
 an "about" dialog) in your product user interface.
 2. Provide a URL from which to be able to download "tar files" with
-ALL of the source of EFL exactly as it was when used to compile the
-binaries for your product that ships EFL. Keep this URL valid for the
-lifetime of the product.
+ALL of the source of this software exactly as it was when used to compile the
+binaries for your product. Keep this URL valid for the lifetime of the product.
 3. Unless you are doing PS3 (PSl1ght) development any libraries or
 applications you write that use EFL are yours and you do not need to
-make the source available.
+make the source available. That means if you link to EFL dynamically.
+If you copy in EFL source into your application or library or
+statically link, then you will need to provide full source of whatever
+statically links or copies any of this software into yours.
 4. If you made changes to EFL it would be appreciated if you
-interacted with us (see http://www.enlightenment.org ) and provided the
+interacted with us (see http://www.enlightenment.org) and provided the
 changes you made in patch form BEFORE you ship a product, so they may
 be reviewed to see if you have made any mistakes and perhaps have
 created problems you do not know of yet.
@@ -44,7 +46,7 @@ relevant.
 Q. Do I need to provide the source for EFL?
 A. Yes. In general you do. If you are shipping any of the binaries or
 libraries that are produced, you must provide the EXACT source code
-used to build those binaries. So stick to doing this and you'll be fine.
+used to build those binaries.
 
 Q. If I have to provide source, how should I do this?
 A. The best way is to provide a reference in an "about" dialog in the
@@ -69,3 +71,13 @@ source code, provide them as part of the user interface in full (e.g.
 in a dialog), or as files in the filesystem, on actual printed
 material (manuals, papers) that accompany the product or in CD, DVD
 etc. media.
+
+Q. Is there a simpler list of do's and don'ts i can use?
+A. Yes. See http://www.tldrlegal.com. specifically:
+
+http://www.tldrlegal.com/license/bsd-2-clause-license-(freebsd)
+http://www.tldrlegal.com/license/gnu-lesser-general-public-license-v2.1-(lgpl-2.1)
+http://www.tldrlegal.com/license/gnu-general-public-license-v2-(gpl-2)
+http://www.tldrlegal.com/license/zlib-libpng-license-(zlib)
+
+Then match this up with the licensing listed in COPYING.
