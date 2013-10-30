@@ -1637,12 +1637,15 @@ EAPI void edje_edit_state_align_y_set(Evas_Object *obj, const char *part, const 
 EAPI int edje_edit_state_min_w_get(Evas_Object *obj, const char *part, const char *state, double value);
 
 /** Set the minimum width value of a part state.
+ * The minimum width should be greater than 0.
  *
  * @param obj Object being edited.
  * @param part Part that contain state.
  * @param state The name of the state to set minimum width (not including the state value).
  * @param value The state value.
  * @param min_w Minimum width value.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
  */
 EAPI Eina_Bool edje_edit_state_min_w_set(Evas_Object *obj, const char *part, const char *state, double value, int min_w);
 
@@ -1658,12 +1661,15 @@ EAPI Eina_Bool edje_edit_state_min_w_set(Evas_Object *obj, const char *part, con
 EAPI int edje_edit_state_min_h_get(Evas_Object *obj, const char *part, const char *state, double value);
 
 /** Set the minimum height value of a part state.
+ * The minimum height should be greater than 0.
  *
  * @param obj Object being edited.
  * @param part Part that contain state.
  * @param state The name of the state to set minimum height (not including the state value).
  * @param value The state value.
  * @param min_h Minimum height value.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
  */
 EAPI Eina_Bool edje_edit_state_min_h_set(Evas_Object *obj, const char *part, const char *state, double value, int min_h);
 
@@ -1679,12 +1685,17 @@ EAPI Eina_Bool edje_edit_state_min_h_set(Evas_Object *obj, const char *part, con
 EAPI int edje_edit_state_max_w_get(Evas_Object *obj, const char *part, const char *state, double value);
 
 /** Set the maximum width value of a part state.
+ * The maximum width should be greater than -1.
+ * The value -1 means that state doesn't have any boundaries on width direction.
+ * (it can be any size that is bigger than it's min)
  *
  * @param obj Object being edited.
  * @param part Part that contain state.
  * @param state The name of the state to set maximum width (not including the state value).
  * @param value The state value.
  * @param max_w Maximum width value.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
  */
 EAPI Eina_Bool edje_edit_state_max_w_set(Evas_Object *obj, const char *part, const char *state, double value, int max_w);
 
@@ -1700,12 +1711,17 @@ EAPI Eina_Bool edje_edit_state_max_w_set(Evas_Object *obj, const char *part, con
 EAPI int edje_edit_state_max_h_get(Evas_Object *obj, const char *part, const char *state, double value);
 
 /** Set the maximum height value of a part state.
+ * The maximum height should be greater than -1.
+ * The value -1 means that state doesn't have any boundaries on height direction.
+ * (it can be any size that is bigger than it's min)
  *
  * @param obj Object being edited.
  * @param part Part that contain state.
  * @param state The name of the state to set maximum height (not including the state value).
  * @param value The state value.
  * @param max_h Maximum height value.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
  */
 EAPI Eina_Bool edje_edit_state_max_h_set(Evas_Object *obj, const char *part, const char *state, double value, int max_h);
 
