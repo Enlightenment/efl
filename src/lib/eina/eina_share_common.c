@@ -272,7 +272,7 @@ void
 eina_share_common_population_del(Eina_Share *share, int slen)
 {
    eina_spinlock_take(&_mutex_big);
-   eina_share_common_population_nolock_del(chare, slen);
+   eina_share_common_population_nolock_del(share, slen);
    eina_spinlock_release(&_mutex_big);
 }
 
