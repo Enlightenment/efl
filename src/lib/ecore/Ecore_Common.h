@@ -2007,12 +2007,12 @@ EAPI double ecore_animator_pos_map(double pos, Ecore_Pos_Map map, double v1, dou
  * set a custom tick source by setting the source to
  * ECORE_ANIMATOR_SOURCE_CUSTOM and then drive it yourself based on some input
  * tick source (like another application via ipc, some vertical blanking
- * interrupt interrupt etc.) using
- *ecore_animator_custom_source_tick_begin_callback_set() and
- *ecore_animator_custom_source_tick_end_callback_set() to set the functions
+ * interrupt, and etc.) using
+ * ecore_animator_custom_source_tick_begin_callback_set() and
+ * ecore_animator_custom_source_tick_end_callback_set() to set the functions
  * that will be called to start and stop the ticking source, which when it
- * gets a "tick" should call ecore_animator_custom_tick() to make the "tick" over 1
- * frame.
+ * gets a "tick" should call ecore_animator_custom_tick() to make the "tick"
+ * over 1 frame.
  */
 EAPI void ecore_animator_source_set(Ecore_Animator_Source source);
 /**
@@ -2034,7 +2034,7 @@ EAPI Ecore_Animator_Source ecore_animator_source_get(void);
  * The Ecore Animator infrastructure handles tracking if animators are needed
  * or not and which ones need to be called and when, but when the tick source
  * is custom, you have to provide a tick source by calling
- *ecore_animator_custom_tick() to indicate a frame tick happened. In order
+ * ecore_animator_custom_tick() to indicate a frame tick happened. In order
  * to allow the source of ticks to be dynamically enabled or disabled as
  * needed, the @p func when set is called to enable the tick source to
  * produce tick events that call ecore_animator_custom_tick(). If @p func
