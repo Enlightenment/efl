@@ -1608,7 +1608,7 @@ EAPI int edje_edit_state_min_w_get(Evas_Object *obj, const char *part, const cha
  * @param value The state value.
  * @param min_w Minimum width value.
  */
-EAPI void edje_edit_state_min_w_set(Evas_Object *obj, const char *part, const char *state, double value, int min_w);
+EAPI Eina_Bool edje_edit_state_min_w_set(Evas_Object *obj, const char *part, const char *state, double value, int min_w);
 
 /** Get the minimum height value of a part state.
  *
@@ -1629,7 +1629,7 @@ EAPI int edje_edit_state_min_h_get(Evas_Object *obj, const char *part, const cha
  * @param value The state value.
  * @param min_h Minimum height value.
  */
-EAPI void edje_edit_state_min_h_set(Evas_Object *obj, const char *part, const char *state, double value, int min_h);
+EAPI Eina_Bool edje_edit_state_min_h_set(Evas_Object *obj, const char *part, const char *state, double value, int min_h);
 
 /** Get the maximum width value of a part state.
  *
@@ -1650,7 +1650,7 @@ EAPI int edje_edit_state_max_w_get(Evas_Object *obj, const char *part, const cha
  * @param value The state value.
  * @param max_w Maximum width value.
  */
-EAPI void edje_edit_state_max_w_set(Evas_Object *obj, const char *part, const char *state, double value, int max_w);
+EAPI Eina_Bool edje_edit_state_max_w_set(Evas_Object *obj, const char *part, const char *state, double value, int max_w);
 
 /** Get the maximum height value of a part state.
  *
@@ -1671,7 +1671,7 @@ EAPI int edje_edit_state_max_h_get(Evas_Object *obj, const char *part, const cha
  * @param value The state value.
  * @param max_h Maximum height value.
  */
-EAPI void edje_edit_state_max_h_set(Evas_Object *obj, const char *part, const char *state, double value, int max_h);
+EAPI Eina_Bool edje_edit_state_max_h_set(Evas_Object *obj, const char *part, const char *state, double value, int max_h);
 
 /** Get the minimum aspect value of a part state.
  *
