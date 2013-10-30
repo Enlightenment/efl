@@ -3269,17 +3269,24 @@ FUNC_STATE_REL(rel2, y);
      if (b) *b = pd->Code.b;						\
      if (a) *a = pd->Code.a;						\
   }									\
-  EAPI void								\
+  EAPI Eina_Bool                                                        \
   edje_edit_state_##Code##_set(Evas_Object *obj, const char *part, const char *state, double value, int r, int g, int b, int a) \
   {									\
-     GET_PD_OR_RETURN();						\
+     if ((!obj) || (!part) || (!state))                                 \
+       return EINA_FALSE;                                               \
+     GET_PD_OR_RETURN(EINA_FALSE);					\
      									\
-     if (r > -1 && r < 256) pd->Code.r = r;				\
-     if (g > -1 && g < 256) pd->Code.g = g;				\
-     if (b > -1 && b < 256) pd->Code.b = b;				\
-     if (a > -1 && a < 256) pd->Code.a = a;				\
+     if (r > -1 && r < 256) pd->Code.r = r;                             \
+     else return EINA_FALSE;                                            \
+     if (g > -1 && g < 256) pd->Code.g = g;                             \
+     else return EINA_FALSE;                                            \
+     if (b > -1 && b < 256) pd->Code.b = b;                             \
+     else return EINA_FALSE;                                            \
+     if (a > -1 && a < 256) pd->Code.a = a;                             \
+     else return EINA_FALSE;                                            \
      									\
      edje_object_calc_force(obj);					\
+     return EINA_TRUE;                                                  \
   }
 
 FUNC_COLOR(color);
@@ -3310,25 +3317,32 @@ edje_edit_state_color3_get(Evas_Object *obj, const char *part, const char *state
    if (a) *a = txt->text.color3.a;
 }
 
-EAPI void
+EAPI Eina_Bool
 edje_edit_state_color3_set(Evas_Object *obj, const char *part, const char *state, double value, int r, int g, int b, int a)
 {
    Edje_Part_Description_Text *txt;
 
-   GET_PD_OR_RETURN();
+   if ((!obj) || (!part) || (!state))
+     return EINA_FALSE;
+   GET_PD_OR_RETURN(EINA_FALSE);
 
    if ((rp->part->type != EDJE_PART_TYPE_TEXT) &&
        (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK))
-     return;
+     return EINA_FALSE;
 
    txt = (Edje_Part_Description_Text*) pd;
 
    if (r > -1 && r < 256) txt->text.color3.r = r;
+   else return EINA_FALSE;
    if (g > -1 && g < 256) txt->text.color3.g = g;
+   else return EINA_FALSE;
    if (b > -1 && b < 256) txt->text.color3.b = b;
+   else return EINA_FALSE;
    if (a > -1 && a < 256) txt->text.color3.a = a;
+   else return EINA_FALSE;
 
    edje_object_calc_force(obj);
+   return EINA_TRUE;
 }
 
 #define FUNC_STATE_DOUBLE(Class, Value)					\

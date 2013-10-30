@@ -1518,8 +1518,10 @@ EAPI void edje_edit_state_color3_get(Evas_Object *obj, const char *part, const c
  * @param g The green value of the color.
  * @param b The blue value of the color.
  * @param a The alpha value of the color.
+ *
+ * @return EINA_TRUE If successfull, EINA_FALSE otherwise.
  */
-EAPI void edje_edit_state_color_set(Evas_Object *obj, const char *part, const char *state, double value, int r, int g, int b, int a);
+EAPI Eina_Bool edje_edit_state_color_set(Evas_Object *obj, const char *part, const char *state, double value, int r, int g, int b, int a);
 
 /** Set the color2 of a part state.
  *
@@ -1531,8 +1533,10 @@ EAPI void edje_edit_state_color_set(Evas_Object *obj, const char *part, const ch
  * @param g The green value of the color.
  * @param b The blue value of the color.
  * @param a The alpha value of the color.
+ *
+ * @return EINA_TRUE If successfull, EINA_FALSE otherwise.
  */
-EAPI void edje_edit_state_color2_set(Evas_Object *obj, const char *part, const char *state, double value, int r, int g, int b, int a);
+EAPI Eina_Bool edje_edit_state_color2_set(Evas_Object *obj, const char *part, const char *state, double value, int r, int g, int b, int a);
 
 /** Set the color3 of a part state.
  *
@@ -1544,8 +1548,10 @@ EAPI void edje_edit_state_color2_set(Evas_Object *obj, const char *part, const c
  * @param g The green value of the color.
  * @param b The blue value of the color.
  * @param a The alpha value of the color.
+ *
+ * @return EINA_TRUE If successfull, EINA_FALSE otherwise.
  */
-EAPI void edje_edit_state_color3_set(Evas_Object *obj, const char *part, const char *state, double value, int r, int g, int b, int a);
+EAPI Eina_Bool edje_edit_state_color3_set(Evas_Object *obj, const char *part, const char *state, double value, int r, int g, int b, int a);
 
 /** Get the horizontal align value of a part state.
  *
