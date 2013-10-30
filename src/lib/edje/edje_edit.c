@@ -4581,27 +4581,30 @@ edje_edit_state_image_get(Evas_Object *obj, const char *part, const char *state,
    return eina_stringshare_add(image);
 }
 
-EAPI void
+EAPI Eina_Bool
 edje_edit_state_image_set(Evas_Object *obj, const char *part, const char *state, double value, const char *image)
 {
    Edje_Part_Description_Image *img;
    int id;
 
-   GET_PD_OR_RETURN();
+   if ((!obj) || (!part) || (!state) || (!image))
+     return EINA_FALSE;
 
-   if (!image) return;
+   eina_error_set(0);
+   GET_PD_OR_RETURN(EINA_FALSE);
 
    if (rp->part->type != EDJE_PART_TYPE_IMAGE)
-     return;
+     return EINA_FALSE;
 
    id = _edje_image_id_find(eed, image);
-   //printf("SET IMAGE for %s [%s]\n", state, image);
 
    img = (Edje_Part_Description_Image *) pd;
 
    if (id > -1) img->image.id = id;
+   else return EINA_FALSE;
 
    edje_object_calc_force(obj);
+   return EINA_TRUE;
 }
 
 EAPI Eina_List *
@@ -4727,26 +4730,31 @@ edje_edit_state_image_border_get(Evas_Object *obj, const char *part, const char 
    if (b) *b = img->image.border.b;
 }
 
-EAPI void
+EAPI Eina_Bool
 edje_edit_state_image_border_set(Evas_Object *obj, const char *part, const char *state, double value, int l, int r, int t, int b)
 {
    Edje_Part_Description_Image *img;
 
-   GET_PD_OR_RETURN();
+   if ((!obj) || (!part) || (!state))
+     return EINA_FALSE;
+   if ((l < -1) || (r < -1) || (t < -1) || (b < -1))
+     return EINA_FALSE;
+
+   eina_error_set(0);
+   GET_PD_OR_RETURN(EINA_FALSE);
 
    if (rp->part->type != EDJE_PART_TYPE_IMAGE)
-     return;
+     return EINA_FALSE;
 
    img = (Edje_Part_Description_Image *) pd;
 
-   //printf("SET IMAGE_BORDER of state '%s'\n", state);
-
-   if (l > -1) img->image.border.l = l;
-   if (r > -1) img->image.border.r = r;
-   if (t > -1) img->image.border.t = t;
-   if (b > -1) img->image.border.b = b;
+   img->image.border.l = l;
+   img->image.border.r = r;
+   img->image.border.t = t;
+   img->image.border.b = b;
 
    edje_object_calc_force(obj);
+   return EINA_TRUE;
 }
 
 EAPI unsigned char
@@ -4761,29 +4769,35 @@ edje_edit_state_image_border_fill_get(Evas_Object *obj, const char *part, const 
 
    img = (Edje_Part_Description_Image *) pd;
 
-   if (img->image.border.no_fill == 0) return 1;
-   else if (img->image.border.no_fill == 1) return 0;
-   else if (img->image.border.no_fill == 2) return 2;
+   if (img->image.border.no_fill == 2) return 2;
+   else return !img->image.border.no_fill;
+
    return 0;
 }
 
-EAPI void
+EAPI Eina_Bool
 edje_edit_state_image_border_fill_set(Evas_Object *obj, const char *part, const char *state, double value, unsigned char fill)
 {
    Edje_Part_Description_Image *img;
 
-   GET_PD_OR_RETURN();
+   if ((!obj) || (!part) || (!state))
+     return EINA_FALSE;
+   if ((fill < 0) || (fill > 2))
+     return EINA_FALSE;
+
+   eina_error_set(0);
+   GET_PD_OR_RETURN(EINA_FALSE);
 
    if (rp->part->type != EDJE_PART_TYPE_IMAGE)
-     return;
+     return EINA_FALSE;
 
    img = (Edje_Part_Description_Image *) pd;
 
-   if (fill == 0) img->image.border.no_fill = 1;
-   else if (fill == 1) img->image.border.no_fill = 0;
-   else if (fill == 2) img->image.border.no_fill = 2;
+   if (fill == 2) img->image.border.no_fill = 2;
+   else img->image.border.no_fill = !fill;
 
    edje_object_calc_force(obj);
+   return EINA_TRUE;
 }
 
 /******************/

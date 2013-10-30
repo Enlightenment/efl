@@ -2598,8 +2598,10 @@ EAPI const char * edje_edit_state_image_get(Evas_Object *obj, const char *part, 
  * @param state The name of the state to set the image that will be used (not including the state value).
  * @param value The state value.
  * @param image The name of the image (must be an image contained in the edje file).
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE - otherwise.
  */
-EAPI void edje_edit_state_image_set(Evas_Object *obj, const char *part, const char *state, double value, const char *image);
+EAPI Eina_Bool edje_edit_state_image_set(Evas_Object *obj, const char *part, const char *state, double value, const char *image);
 
 /** Get image id for a given image name.
  *
@@ -2659,33 +2661,41 @@ EAPI void edje_edit_state_image_border_get(Evas_Object *obj, const char *part, c
  * @param r Right border value (or -1).
  * @param t Top border value (or -1).
  * @param b Bottom border value (or -1).
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE - otherwise.
  */
-EAPI void edje_edit_state_image_border_set(Evas_Object *obj, const char *part, const char *state, double value, int l, int r, int t, int b);
+EAPI Eina_Bool edje_edit_state_image_border_set(Evas_Object *obj, const char *part, const char *state, double value, int l, int r, int t, int b);
 
 /** Get if the image center should be draw.
  *
- * 1 means to draw the center, 0 to don't draw it.
+ * 1 or 2 means to draw the center, 0 to don't draw it.
+ * If 1 - then the center will apply alpha channel.
+ * If 2 (SOLID mode) - then the center of an image wont have alpha channel (Just black color).
  *
  * @param obj Object being edited.
  * @param part Part that contain state.
  * @param state The name of the state to get the image border fill (not including the state value).
  * @param value The state value.
  *
- * @return 1 if the center of the bordered image is draw, 0 otherwise.
+ * @return 2 if the center of the bordered image is draw without alpha, 1 dawing with alpha and 0 not drawing the center.
  */
 EAPI unsigned char edje_edit_state_image_border_fill_get(Evas_Object *obj, const char *part, const char *state, double value);
 
 /** Set if the image center should be draw.
  *
- * 1 means to draw the center, 0 to don't draw it.
+ * 1 or 2 means to draw the center, 0 to don't draw it.
+ * If 1 - then the center will apply alpha channel.
+ * If 2 (SOLID mode) - then the center of an image wont have alpha channel (Just black color).
  *
  * @param obj Object being edited.
  * @param part Part that contain state.
  * @param state The name of the state to set the image border fill (not including the state value).
  * @param value The state value.
- * @param fill Fill to be se. 1 if the center of the bordered image is draw, 0 otherwise.
+ * @param fill Fill to be set. 1 or 2 if the center of the bordered image is draw, 0 otherwise.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE - otherwise.
  */
-EAPI void edje_edit_state_image_border_fill_set(Evas_Object *obj, const char *part, const char *state, double value, unsigned char fill);
+EAPI Eina_Bool edje_edit_state_image_border_fill_set(Evas_Object *obj, const char *part, const char *state, double value, unsigned char fill);
 
 /** Get the list of all the tweens images in the given part state.
  *
