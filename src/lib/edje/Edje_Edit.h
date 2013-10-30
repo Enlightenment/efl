@@ -1260,8 +1260,10 @@ EAPI double edje_edit_state_rel2_relative_y_get(Evas_Object *obj, const char *pa
  * @param state The name of the state to set 'rel1 relative X' (not including the state value).
  * @param value The state value.
  * @param x The new 'rel1 relative X' value to set'.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
  */
-EAPI void edje_edit_state_rel1_relative_x_set(Evas_Object *obj, const char *part, const char *state, double value, double x);
+EAPI Eina_Bool edje_edit_state_rel1_relative_x_set(Evas_Object *obj, const char *part, const char *state, double value, double x);
 
 /** Set the 'rel1 relative Y' value of state.
  *
@@ -1270,8 +1272,10 @@ EAPI void edje_edit_state_rel1_relative_x_set(Evas_Object *obj, const char *part
  * @param state The name of the state to set 'rel1 relative Y' (not including the state value).
  * @param value The state value.
  * @param y The new 'rel1 relative Y' value to set'.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
  */
-EAPI void edje_edit_state_rel1_relative_y_set(Evas_Object *obj, const char *part, const char *state, double value, double y);
+EAPI Eina_Bool edje_edit_state_rel1_relative_y_set(Evas_Object *obj, const char *part, const char *state, double value, double y);
 
 /** Set the 'rel2 relative X' value of state.
  *
@@ -1280,8 +1284,10 @@ EAPI void edje_edit_state_rel1_relative_y_set(Evas_Object *obj, const char *part
  * @param state The name of the state to set 'rel2 relative X' (not including the state value).
  * @param value The state value.
  * @param x The new 'rel2 relative X' value to set'.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
  */
-EAPI void edje_edit_state_rel2_relative_x_set(Evas_Object *obj, const char *part, const char *state, double value, double x);
+EAPI Eina_Bool edje_edit_state_rel2_relative_x_set(Evas_Object *obj, const char *part, const char *state, double value, double x);
 
 /** Set the 'rel2 relative Y' value of state.
  *
@@ -1290,8 +1296,10 @@ EAPI void edje_edit_state_rel2_relative_x_set(Evas_Object *obj, const char *part
  * @param state The name of the state to set 'rel2 relative Y' (not including the state value).
  * @param value The state value.
  * @param y The new 'rel2 relative Y' value to set'.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
  */
-EAPI void edje_edit_state_rel2_relative_y_set(Evas_Object *obj, const char *part, const char *state, double value, double y);
+EAPI Eina_Bool edje_edit_state_rel2_relative_y_set(Evas_Object *obj, const char *part, const char *state, double value, double y);
 
 /** Get the 'rel1 offset X' value of state.
  *
@@ -1344,8 +1352,10 @@ EAPI int edje_edit_state_rel2_offset_y_get(Evas_Object *obj, const char *part, c
  * @param state The name of the state to set 'rel1 offset X' (not including the state value).
  * @param value The state value.
  * @param x The new 'rel1 offset X' value to set'.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
  */
-EAPI void edje_edit_state_rel1_offset_x_set(Evas_Object *obj, const char *part, const char *state, double value, double x);
+EAPI Eina_Bool edje_edit_state_rel1_offset_x_set(Evas_Object *obj, const char *part, const char *state, double value, double x);
 
 /** Set the 'rel1 offset Y' value of state.
  *
@@ -1354,8 +1364,10 @@ EAPI void edje_edit_state_rel1_offset_x_set(Evas_Object *obj, const char *part, 
  * @param state The name of the state to set 'rel1 offset Y' (not including the state value).
  * @param value The state value.
  * @param y The new 'rel1 offset Y' value to set'.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
  */
-EAPI void edje_edit_state_rel1_offset_y_set(Evas_Object *obj, const char *part, const char *state, double value, double y);
+EAPI Eina_Bool edje_edit_state_rel1_offset_y_set(Evas_Object *obj, const char *part, const char *state, double value, double y);
 
 /** Set the 'rel2 offset X' value of state.
  *
@@ -1364,8 +1376,10 @@ EAPI void edje_edit_state_rel1_offset_y_set(Evas_Object *obj, const char *part, 
  * @param state The name of the state to set 'rel2 offset X' (not including the state value).
  * @param value The state value.
  * @param x The new 'rel2 offset X' value to set'.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
  */
-EAPI void edje_edit_state_rel2_offset_x_set(Evas_Object *obj, const char *part, const char *state, double value, double x);
+EAPI Eina_Bool edje_edit_state_rel2_offset_x_set(Evas_Object *obj, const char *part, const char *state, double value, double x);
 
 /** Set the 'rel2 offset Y' value of state.
  *
@@ -1374,8 +1388,10 @@ EAPI void edje_edit_state_rel2_offset_x_set(Evas_Object *obj, const char *part, 
  * @param state The name of the state to set 'rel2 offset Y' (not including the state value).
  * @param value The state value.
  * @param y The new 'rel2 offset Y' value to set'.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
  */
-EAPI void edje_edit_state_rel2_offset_y_set(Evas_Object *obj, const char *part, const char *state, double value, double y);
+EAPI Eina_Bool edje_edit_state_rel2_offset_y_set(Evas_Object *obj, const char *part, const char *state, double value, double y);
 
 /** Get the part name rel1x is relative to.
  *
@@ -1429,9 +1445,9 @@ EAPI const char * edje_edit_state_rel2_to_y_get(Evas_Object *obj, const char *pa
  * @param value The state value.
  * @param rel_to The name of the part that is used as container/parent (NULL make the part relative to the whole interface).
  *
- * @return The part name rel1x is relative to or NULL if the part is relative to the whole interface.
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
  */
-EAPI void edje_edit_state_rel1_to_x_set(Evas_Object *obj, const char *part, const char *state, double value, const char *rel_to);
+EAPI Eina_Bool edje_edit_state_rel1_to_x_set(Evas_Object *obj, const char *part, const char *state, double value, const char *rel_to);
 
 /** Set the part rel1y is relative to.
  *
@@ -1441,9 +1457,9 @@ EAPI void edje_edit_state_rel1_to_x_set(Evas_Object *obj, const char *part, cons
  * @param value The state value.
  * @param rel_to The name of the part that is used as container/parent (NULL make the part relative to the whole interface).
  *
- * @return The part name rel1y is relative to or NULL if the part is relative to the whole interface.
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
  */
-EAPI void edje_edit_state_rel1_to_y_set(Evas_Object *obj, const char *part, const char *state, double value, const char *rel_to);
+EAPI Eina_Bool edje_edit_state_rel1_to_y_set(Evas_Object *obj, const char *part, const char *state, double value, const char *rel_to);
 
 /** Set the part rel2x is relative to.
  *
@@ -1453,9 +1469,9 @@ EAPI void edje_edit_state_rel1_to_y_set(Evas_Object *obj, const char *part, cons
  * @param value The state value.
  * @param rel_to The name of the part that is used as container/parent (NULL make the part relative to the whole interface).
  *
- * @return The part name rel2x is relative to or NULL if the part is relative to the whole interface.
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
  */
-EAPI void edje_edit_state_rel2_to_x_set(Evas_Object *obj, const char *part, const char *state, double value, const char *rel_to);
+EAPI Eina_Bool edje_edit_state_rel2_to_x_set(Evas_Object *obj, const char *part, const char *state, double value, const char *rel_to);
 
 /** Set the part rel2y is relative to.
  *
@@ -1465,9 +1481,9 @@ EAPI void edje_edit_state_rel2_to_x_set(Evas_Object *obj, const char *part, cons
  * @param value The state value.
  * @param rel_to The name of the part that is used as container/parent (NULL make the part relative to the whole interface).
  *
- * @return The part name rel2y is relative to or NULL if the part is relative to the whole interface.
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
  */
-EAPI void edje_edit_state_rel2_to_y_set(Evas_Object *obj, const char *part, const char *state, double value, const char *rel_to);
+EAPI Eina_Bool edje_edit_state_rel2_to_y_set(Evas_Object *obj, const char *part, const char *state, double value, const char *rel_to);
 
 /** Get the color of a part state.
  *

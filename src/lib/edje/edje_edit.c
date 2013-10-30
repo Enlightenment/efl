@@ -3176,19 +3176,20 @@ edje_edit_state_copy(Evas_Object *obj, const char *part, const char *from, doubl
    return EINA_TRUE;
 }
 
-#define FUNC_STATE_RELATIVE_DOUBLE(Sub, Value)				\
-  EAPI double								\
+#define FUNC_STATE_RELATIVE_DOUBLE(Sub, Value) \
+  EAPI double \
   edje_edit_state_##Sub##_relative_##Value##_get(Evas_Object *obj, const char *part, const char *state, double value) \
-  {									\
-     GET_PD_OR_RETURN(0);						\
-     return TO_DOUBLE(pd->Sub.relative_##Value);			\
-  }									\
-  EAPI void								\
+  { \
+     GET_PD_OR_RETURN(0); \
+     return TO_DOUBLE(pd->Sub.relative_##Value); \
+  } \
+  EAPI Eina_Bool \
   edje_edit_state_##Sub##_relative_##Value##_set(Evas_Object *obj, const char *part, const char *state, double value, double v) \
-  {									\
-     GET_PD_OR_RETURN();						\
-     pd->Sub.relative_##Value = FROM_DOUBLE(v);			\
-     edje_object_calc_force(obj);				\
+  { \
+     GET_PD_OR_RETURN(EINA_FALSE); \
+     pd->Sub.relative_##Value = FROM_DOUBLE(v); \
+     edje_object_calc_force(obj); \
+     return EINA_TRUE; \
   }
 
 FUNC_STATE_RELATIVE_DOUBLE(rel1, x);
@@ -3197,18 +3198,19 @@ FUNC_STATE_RELATIVE_DOUBLE(rel2, x);
 FUNC_STATE_RELATIVE_DOUBLE(rel2, y);
 
 #define FUNC_STATE_OFFSET_INT(Sub, Value)                                      \
-  EAPI int								\
+  EAPI int \
   edje_edit_state_##Sub##_offset_##Value##_get(Evas_Object *obj, const char *part, const char *state, double value) \
-  {									\
-     GET_PD_OR_RETURN(0);						\
-     return pd->Sub.offset_##Value;				\
-  }									\
-  EAPI void								\
+  { \
+     GET_PD_OR_RETURN(0); \
+     return pd->Sub.offset_##Value; \
+  } \
+  EAPI Eina_Bool \
   edje_edit_state_##Sub##_offset_##Value##_set(Evas_Object *obj, const char *part, const char *state, double value, double v) \
-  {									\
-     GET_PD_OR_RETURN();						\
-     pd->Sub.offset_##Value = TO_INT(FROM_DOUBLE(v));		\
-     edje_object_calc_force(obj);					\
+  { \
+     GET_PD_OR_RETURN(EINA_FALSE); \
+     pd->Sub.offset_##Value = TO_INT(FROM_DOUBLE(v)); \
+     edje_object_calc_force(obj); \
+     return EINA_TRUE; \
   }
 
 FUNC_STATE_OFFSET_INT(rel1, x);
@@ -3216,37 +3218,34 @@ FUNC_STATE_OFFSET_INT(rel1, y);
 FUNC_STATE_OFFSET_INT(rel2, x);
 FUNC_STATE_OFFSET_INT(rel2, y);
 
-#define FUNC_STATE_REL(Sub, Value)		\
-  EAPI const char *				\
-  edje_edit_state_##Sub##_to_##Value##_get(Evas_Object *obj, const char *part, const char *state, double value)	\
-  {									\
-     Edje_Real_Part *rel;						\
-									\
-     GET_PD_OR_RETURN(NULL);						\
-									\
-     if (pd->Sub.id_##Value == -1) return NULL;			\
-									\
+#define FUNC_STATE_REL(Sub, Value) \
+  EAPI const char * \
+  edje_edit_state_##Sub##_to_##Value##_get(Evas_Object *obj, const char *part, const char *state, double value) \
+  { \
+     Edje_Real_Part *rel; \
+     GET_PD_OR_RETURN(NULL); \
+     if (pd->Sub.id_##Value == -1) return NULL; \
      rel = ed->table_parts[pd->Sub.id_##Value % ed->table_parts_size]; \
-     									\
-     if (rel->part->name) return eina_stringshare_add(rel->part->name);	\
-     return NULL;							\
-  }									\
-  EAPI void								\
-  edje_edit_state_##Sub##_to_##Value##_set(Evas_Object *obj, const char *part, const char *state, double value, const char *to)	\
-  {									\
-     Edje_Real_Part *relp;						\
-									\
-     GET_PD_OR_RETURN();						\
-									\
-     if (to)								\
-       {								\
-	  relp = _edje_real_part_get(ed, to);				\
-	  if (!relp) return;						\
-	  pd->Sub.id_##Value = relp->part->id;			\
-       }								\
-     else								\
-       pd->Sub.id_##Value = -1;					\
-									\
+     if (rel->part->name) return eina_stringshare_add(rel->part->name); \
+     return NULL; \
+  } \
+  EAPI Eina_Bool \
+  edje_edit_state_##Sub##_to_##Value##_set(Evas_Object *obj, const char *part, const char *state, double value, const char *to) \
+  { \
+     Edje_Real_Part *relp; \
+     GET_PD_OR_RETURN(EINA_FALSE); \
+     if ((to) && (strcmp(to, ""))) \
+       { \
+         relp = _edje_real_part_get(ed, to); \
+         if (!relp) return EINA_FALSE; \
+         pd->Sub.id_##Value = relp->part->id; \
+         return EINA_TRUE; \
+       } \
+     else \
+       { \
+         pd->Sub.id_##Value = -1; \
+         return EINA_FALSE; \
+       } \
   }
 //note after this call edje_edit_part_selected_state_set() to update !! need to fix this
 //_edje_part_description_apply(ed, rp, pd->state.name, pd->state.value, "state", 0.1); //Why segfault??
