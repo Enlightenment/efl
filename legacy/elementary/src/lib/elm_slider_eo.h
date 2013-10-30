@@ -27,6 +27,8 @@ enum
    ELM_OBJ_SLIDER_SUB_ID_UNITS_FORMAT_FUNCTION_SET,
    ELM_OBJ_SLIDER_SUB_ID_INDICATOR_SHOW_SET,
    ELM_OBJ_SLIDER_SUB_ID_INDICATOR_SHOW_GET,
+   ELM_OBJ_SLIDER_SUB_ID_STEP_SET,
+   ELM_OBJ_SLIDER_SUB_ID_STEP_GET,
    ELM_OBJ_SLIDER_SUB_ID_LAST
 };
 
@@ -289,3 +291,38 @@ enum
  * @ingroup Slider
  */
 #define elm_obj_slider_indicator_show_get(ret) ELM_OBJ_SLIDER_ID(ELM_OBJ_SLIDER_SUB_ID_INDICATOR_SHOW_GET), EO_TYPECHECK(Eina_Bool *, ret)
+
+/**
+ * @def elm_obj_slider_step_set
+ * @since 1.8
+ *
+ * Set the step by which slider indicator will move.
+ *
+ * This value is used when draggable object is moved automatically i.e., in case
+ * of key event when up/down/left/right key is pressed or in case when
+ * accessibility is set and flick event is used to inc/dec slider values.
+ * By default step value is equal to 0.05.
+ *
+ * @param[in] step
+ *
+ * @see elm_slider_step_set
+ *
+ * @ingroup Slider
+ */
+
+#define elm_obj_slider_step_set(step) ELM_OBJ_SLIDER_ID(ELM_OBJ_SLIDER_SUB_ID_STEP_SET), EO_TYPECHECK(double, step)
+
+
+/**
+ * @def elm_obj_slider_step_get
+ * @since 1.8
+ *
+ * Get the step by which slider indicator moves.
+ *
+ * @param[out] ret
+ *
+ * @see elm_slider_step_get
+ *
+ * @ingroup Slider
+ */
+#define elm_obj_slider_step_get(ret) ELM_OBJ_SLIDER_ID(ELM_OBJ_SLIDER_SUB_ID_STEP_GET), EO_TYPECHECK(double *, ret)

@@ -48,10 +48,22 @@ _bt_m1(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
    elm_slider_value_set(data, elm_slider_value_get(data) - 0.1);
 }
 
+static double
+_step_size_calculate(double min, double max)
+{
+   double step = 0.0;
+   int steps = 0;
+
+   steps = max - min;
+   if (steps) step = (1.0 / steps);
+   return step;
+}
+
 void
 test_slider(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *fr, *bx, *sl, *ic, *sl1, *bx2, *bt;
+   double step;
    char buf[PATH_MAX];
 
    win = elm_win_util_standard_add("slider", "Slider");
@@ -83,6 +95,19 @@ test_slider(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    elm_slider_min_max_set(sl, 50, 150);
    elm_slider_value_set(sl, 80);
    elm_object_disabled_set(sl, EINA_TRUE);
+   evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);
+   evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
+   elm_box_pack_end(bx, sl);
+   evas_object_show(sl);
+
+   sl = elm_slider_add(bx);
+   elm_slider_unit_format_set(sl, "%1.0f units");
+   elm_slider_indicator_format_set(sl, "%1.0f");
+   elm_slider_span_size_set(sl, 120);
+   elm_slider_min_max_set(sl, 0, 9);
+   elm_object_text_set(sl, "Manual step");
+   step = _step_size_calculate(0, 9);
+   elm_slider_step_set(sl, step);
    evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);
    evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx, sl);

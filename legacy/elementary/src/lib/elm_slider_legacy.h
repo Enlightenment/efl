@@ -328,3 +328,32 @@ EAPI void                         elm_slider_indicator_show_set(Evas_Object *obj
  * @ingroup Slider
  */
 EAPI Eina_Bool                    elm_slider_indicator_show_get(const Evas_Object *obj);
+
+/**
+ * Set the step by which slider indicator will move.
+ *
+ * @param obj The slider object.
+ * @param step The step value.
+ *
+ * This value is used when draggable object is moved automatically i.e., in case
+ * of key event when up/down/left/right key is pressed or in case when
+ * accessibility is set and flick event is used to inc/dec slider values.
+ * By default step value is equal to 0.05.
+ *
+ * @see elm_slider_step_get() for more details.
+ *
+ * @ingroup Slider
+ */
+EAPI void                         elm_slider_step_set(Evas_Object *obj, double step);
+
+/**
+ * Get the step by which slider indicator moves.
+ *
+ * @param obj The slider object.
+ * @return The step value.
+ *
+ * @see elm_slider_step_set() for more details.
+ *
+ * @ingroup Slider
+ */
+EAPI double                       elm_slider_step_get(const Evas_Object *obj);

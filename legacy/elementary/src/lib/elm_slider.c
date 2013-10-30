@@ -14,6 +14,7 @@ EAPI Eo_Op ELM_OBJ_SLIDER_BASE_ID = EO_NOOP;
 
 #define MY_CLASS_NAME "elm_slider"
 #define SLIDER_DELAY_CHANGED_INTERVAL 0.2
+#define SLIDER_STEP 0.05
 
 static const Elm_Layout_Part_Alias_Description _content_aliases[] =
 {
@@ -260,7 +261,7 @@ _drag_up(void *data,
    double step;
 
    ELM_SLIDER_DATA_GET(data, sd);
-   step = 0.05;
+   step = sd->step;
 
    if (sd->inverted) step *= -1.0;
 
@@ -278,7 +279,7 @@ _drag_down(void *data,
    double step;
 
    ELM_SLIDER_DATA_GET(data, sd);
-   step = -0.05;
+   step = -sd->step;
 
    if (sd->inverted) step *= -1.0;
 
@@ -821,6 +822,7 @@ _elm_slider_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    priv->horizontal = EINA_TRUE;
    priv->indicator_show = EINA_TRUE;
    priv->val_max = 1.0;
+   priv->step = SLIDER_STEP;
 
    if (!elm_layout_theme_set
        (obj, "slider", "horizontal", elm_widget_style_get(obj)))
@@ -1343,6 +1345,43 @@ _elm_slider_indicator_show_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    *ret = sd->indicator_show;
 }
 
+EAPI void
+elm_slider_step_set(Evas_Object *obj, double step)
+{
+   ELM_SLIDER_CHECK(obj);
+   eo_do(obj, elm_obj_slider_step_set(step));
+}
+
+static void
+_elm_slider_step_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   double step = va_arg(*list, double);
+   Elm_Slider_Smart_Data *sd = _pd;
+   if (sd->step == step) return;
+
+   if (step < 0.0) step = 0.0;
+   else if (step > 1.0) step = 1.0;
+
+   sd->step = step;
+}
+
+EAPI double
+elm_slider_step_get(const Evas_Object *obj)
+{
+   ELM_SLIDER_CHECK(obj) 0.0;
+   double ret;
+   eo_do((Eo *) obj, elm_obj_slider_step_get(&ret));
+   return ret;
+}
+
+static void
+_elm_slider_step_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   double *ret = va_arg(*list, double *);
+   Elm_Slider_Smart_Data *sd = _pd;
+   *ret = sd->step;
+}
+
 static void
 _elm_slider_smart_focus_next_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
 {
@@ -1395,6 +1434,8 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_OBJ_SLIDER_ID(ELM_OBJ_SLIDER_SUB_ID_UNITS_FORMAT_FUNCTION_SET), _elm_slider_units_format_function_set),
         EO_OP_FUNC(ELM_OBJ_SLIDER_ID(ELM_OBJ_SLIDER_SUB_ID_INDICATOR_SHOW_SET), _elm_slider_indicator_show_set),
         EO_OP_FUNC(ELM_OBJ_SLIDER_ID(ELM_OBJ_SLIDER_SUB_ID_INDICATOR_SHOW_GET), _elm_slider_indicator_show_get),
+        EO_OP_FUNC(ELM_OBJ_SLIDER_ID(ELM_OBJ_SLIDER_SUB_ID_STEP_SET), _elm_slider_step_set),
+        EO_OP_FUNC(ELM_OBJ_SLIDER_ID(ELM_OBJ_SLIDER_SUB_ID_STEP_GET), _elm_slider_step_get),
         EO_OP_FUNC_SENTINEL
    };
    eo_class_funcs_set(klass, func_desc);
@@ -1421,6 +1462,8 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_OBJ_SLIDER_SUB_ID_UNITS_FORMAT_FUNCTION_SET, "Set the format function pointer for the units label."),
      EO_OP_DESCRIPTION(ELM_OBJ_SLIDER_SUB_ID_INDICATOR_SHOW_SET, "Set whether to enlarge slider indicator (augmented knob) or not."),
      EO_OP_DESCRIPTION(ELM_OBJ_SLIDER_SUB_ID_INDICATOR_SHOW_GET, "Get whether a given slider widget's enlarging indicator or not."),
+     EO_OP_DESCRIPTION(ELM_OBJ_SLIDER_SUB_ID_STEP_SET, "Set the draggable's step size."),
+     EO_OP_DESCRIPTION(ELM_OBJ_SLIDER_SUB_ID_STEP_GET, "Get the draggable's step size."),
      EO_OP_DESCRIPTION_SENTINEL
 };
 static const Eo_Class_Description class_desc = {
