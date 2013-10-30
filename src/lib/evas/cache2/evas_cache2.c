@@ -528,9 +528,17 @@ evas_cache2_shutdown(Evas_Cache2 *cache)
    EINA_INLIST_FOREACH_SAFE(cache->lru, il, im)
      _evas_cache2_image_entry_delete(cache, im);
 
+   if (cache->lru)
+     ERR("Cache2 LRU still contains %d elements after dump!",
+         eina_inlist_count(cache->lru));
+
    /* This is mad, I am about to destroy image still alive, but we need to prevent leak. */
    EINA_INLIST_FOREACH_SAFE(cache->dirty, il, im)
      _evas_cache2_image_entry_delete(cache, im);
+
+   if (cache->dirty)
+     ERR("Cache2 dirty pool still contains %d elements after dump!",
+         eina_inlist_count(cache->dirty));
 
    delete_list = NULL;
    eina_hash_foreach(cache->activ, _evas_cache2_image_free_cb, &delete_list);
@@ -539,6 +547,9 @@ evas_cache2_shutdown(Evas_Cache2 *cache)
 
    eina_hash_free(cache->activ);
    eina_hash_free(cache->inactiv);
+
+   if (cache->usage > 0)
+     WRN("Cache2 reports %d bytes used after shutdown.", cache->usage);
 
    free(cache);
 }
@@ -1128,14 +1139,20 @@ on_error:
 EAPI int
 evas_cache2_flush(Evas_Cache2 *cache)
 {
-   if (cache->limit == -1) return -1;
+   Eina_Inlist *cur, *prev;
 
-   while ((cache->lru) && (cache->limit < cache->usage))
+   if (cache->limit == -1) return -1;
+   if (!cache->lru) return cache->usage; // Should be 0
+
+   //EINA_INLIST_FOREACH_REVERSE_SAFE(cache->lru, cur, prev, im)
+   for (cur = cache->lru->last;
+        cur && (cache->limit < cache->usage);
+        cur = prev)
      {
         Image_Entry *im;
 
-        im = (Image_Entry *)cache->lru->last;
-        DBG("Remove unused entry from cache.");
+        prev = cur->prev;
+        im = EINA_INLIST_CONTAINER_GET(cur, Image_Entry);
         _evas_cache2_image_entry_delete(cache, im);
      }
 
