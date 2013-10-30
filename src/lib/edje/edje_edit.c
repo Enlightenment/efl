@@ -1645,21 +1645,21 @@ edje_edit_style_tags_list_get(Evas_Object * obj, const char* style)
    return tags;
 }
 
-EAPI void
+EAPI Eina_Bool
 edje_edit_style_tag_name_set(Evas_Object * obj, const char* style, const char* tag, const char*new_name)
 {
    Edje_Style_Tag *t;
 
-   GET_ED_OR_RETURN();
-   //printf("SET TAG NAME for '%s' FOR STYLE '%s'\n", tag, style);
+   GET_ED_OR_RETURN(EINA_FALSE);
 
    if (!ed->file || !ed->file->styles || !style || !tag)
-      return;
+      return EINA_FALSE;
 
    t = _edje_edit_style_tag_get(ed, style, tag);
-   if (!t) return;
+   if (!t) return EINA_FALSE;
    _edje_if_string_free(ed, t->key);
    t->key = eina_stringshare_add(new_name);
+   return EINA_TRUE;
 }
 
 EAPI const char*
@@ -1680,21 +1680,21 @@ edje_edit_style_tag_value_get(Evas_Object * obj, const char* style, const char* 
    return NULL;
 }
 
-EAPI void
+EAPI Eina_Bool
 edje_edit_style_tag_value_set(Evas_Object * obj, const char* style, const char* tag, const char*new_value)
 {
    Edje_Style_Tag *t;
 
-   GET_ED_OR_RETURN();
-   //printf("SET TAG VALUE for '%s' FOR STYLE '%s'\n", tag, style);
+   GET_ED_OR_RETURN(EINA_FALSE);
 
-   if (!ed->file || !ed->file->styles || !style || !tag)
-      return;
+   if (!ed->file || !ed->file->styles || !style || !tag || !new_value)
+      return EINA_FALSE;
 
    t = _edje_edit_style_tag_get(ed, style, tag);
-   if (!t) return;
+   if (!t) return EINA_FALSE;
    _edje_if_string_free(ed, t->value);
    t->value = eina_stringshare_add(new_value);
+   return EINA_TRUE;
 }
 
 EAPI Eina_Bool
@@ -1722,17 +1722,19 @@ edje_edit_style_tag_add(Evas_Object * obj, const char* style, const char* tag_na
    return EINA_TRUE;
 }
 
-EAPI void
+EAPI Eina_Bool
 edje_edit_style_tag_del(Evas_Object * obj, const char* style, const char* tag)
 {
    Edje_Style *s;
    Edje_Style_Tag *t;
 
-   GET_ED_OR_RETURN();
-   //printf("DEL TAG '%s' IN STYLE '%s'\n", tag, style);
+   GET_ED_OR_RETURN(EINA_FALSE);
+   if (!ed->file || !ed->file->styles || !style || !tag )
+      return EINA_FALSE;
 
    s = _edje_edit_style_get(ed, style);
    t = _edje_edit_style_tag_get(ed, style, tag);
+   if (!s || !t) return EINA_FALSE;
 
    s->tags = eina_list_remove(s->tags, t);
    _edje_if_string_free(ed, t->key);
@@ -1741,6 +1743,7 @@ edje_edit_style_tag_del(Evas_Object * obj, const char* style, const char* tag)
    _edje_if_string_free(ed, t->text_class);
    free(t);
    t = NULL;
+   return EINA_TRUE;
 }
 
 /*******************/

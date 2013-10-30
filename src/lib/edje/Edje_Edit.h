@@ -602,8 +602,10 @@ EAPI const char * edje_edit_style_tag_value_get(Evas_Object *obj, const char *st
  * @param style Style containing the tag to change.
  * @param tag Name of the tag to set the value for.
  * @param new_value Value for the tag.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
  */
-EAPI void edje_edit_style_tag_value_set(Evas_Object *obj, const char *style, const char *tag, const char *new_value);
+EAPI Eina_Bool edje_edit_style_tag_value_set(Evas_Object *obj, const char *style, const char *tag, const char *new_value);
 
 /** Set the name of the given tag.
  *
@@ -611,8 +613,10 @@ EAPI void edje_edit_style_tag_value_set(Evas_Object *obj, const char *style, con
  * @param style Style containing the tag to rename.
  * @param tag Tag to rename.
  * @param new_name New name for the tag.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
  */
-EAPI void edje_edit_style_tag_name_set(Evas_Object *obj, const char *style, const char *tag, const char *new_name);
+EAPI Eina_Bool edje_edit_style_tag_name_set(Evas_Object *obj, const char *style, const char *tag, const char *new_name);
 
 /** Add a new tag to the given text style.
  *
@@ -631,8 +635,10 @@ EAPI Eina_Bool edje_edit_style_tag_add(Evas_Object *obj, const char *style, cons
  * @param obj Object being edited.
  * @param style Style from where to remove the tag.
  * @param tag Tag to delete.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
  */
-EAPI void edje_edit_style_tag_del(Evas_Object *obj, const char *style, const char *tag);
+EAPI Eina_Bool edje_edit_style_tag_del(Evas_Object *obj, const char *style, const char *tag);
 
 
 //@}
