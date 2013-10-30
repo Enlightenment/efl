@@ -33,16 +33,9 @@ int          evgl_native_surface_get(EVGL_Surface *sfc, Evas_Native_Surface *ns)
 Evas_GL_API *evgl_api_get();
 int          evgl_direct_rendered();
 
-
-/*
-extern void         evgl_direct_img_obj_set(Evas_Object *img, int rot);
-extern Evas_Object *evgl_direct_img_obj_get();
-*/
-
 void         evgl_direct_info_set(int win_w, int win_h, int rot, int img_x, int img_y, int img_w, int img_h, int clip_x, int clip_y, int clip_w, int clip_h);
 void         evgl_direct_info_clear();
 
-//extern void         evgl_direct_img_clip_set(int c, int x, int y, int w, int h);
 void         evgl_direct_override_get(int *override, int *force_off);
 
 #endif //_EVAS_GL_CORE_H

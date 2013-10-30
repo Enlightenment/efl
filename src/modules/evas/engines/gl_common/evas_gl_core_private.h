@@ -212,7 +212,6 @@ struct _EVGL_Resource
    struct {
         EVGLNative_Surface   surface;
         int                  rendered;
-        //Evas_Object         *img;
 
         int                  rot;
         int                  win_w;

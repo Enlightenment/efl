@@ -1869,38 +1869,6 @@ evgl_direct_info_clear()
    rsc->direct.enabled = EINA_FALSE;
 }
 
-/*
-void
-evgl_direct_img_obj_set(Evas_Object *img, int rot)
-{
-   EVGL_Resource *rsc;
-
-   if (!(rsc=_evgl_tls_resource_get())) return;
-
-   // Normally direct rendering isn't allowed if alpha is on and
-   // rotation is not 0.  BUT, if override is on, allow it.
-   if (rot!=0)
-     {
-        if (evgl_engine->direct_override)
-           rsc->direct.img = img;
-        else
-           rsc->direct.img = NULL;
-     }
-   else
-      rsc->direct.img = img;
-}
-
-Evas_Object *
-evgl_direct_img_obj_get()
-{
-   EVGL_Resource *rsc;
-
-   if (!(rsc=_evgl_tls_resource_get())) return NULL;
-
-   return rsc->direct.img;
-}
-*/
-
 Evas_GL_API *
 evgl_api_get()
 {
@@ -1908,24 +1876,6 @@ evgl_api_get()
 
    return &gl_funcs;
 }
-
-
-/*
-void
-evgl_direct_img_clip_set(int c, int x, int y, int w, int h)
-{
-   EVGL_Resource *rsc;
-
-   if (!(rsc=_evgl_tls_resource_get())) return;
-
-   rsc->master_clip = c;
-   rsc->clip[0] = x;
-   rsc->clip[1] = y;
-   rsc->clip[2] = w;
-   rsc->clip[3] = h;
-
-}
-*/
 
 void
 evgl_direct_override_get(int *override, int *force_off)
