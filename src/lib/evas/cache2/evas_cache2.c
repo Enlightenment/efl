@@ -523,26 +523,19 @@ evas_cache2_shutdown(Evas_Cache2 *cache)
 {
    Eina_List *delete_list;
    Image_Entry *im;
+   Eina_Inlist *il;
 
-   while (cache->lru)
-     {
-        im = (Image_Entry *)cache->lru;
-        _evas_cache2_image_entry_delete(cache, im);
-     }
+   EINA_INLIST_FOREACH_SAFE(cache->lru, il, im)
+     _evas_cache2_image_entry_delete(cache, im);
+
    /* This is mad, I am about to destroy image still alive, but we need to prevent leak. */
-   while (cache->dirty)
-     {
-        im = (Image_Entry *)cache->dirty;
-        _evas_cache2_image_entry_delete(cache, im);
-     }
+   EINA_INLIST_FOREACH_SAFE(cache->dirty, il, im)
+     _evas_cache2_image_entry_delete(cache, im);
 
    delete_list = NULL;
    eina_hash_foreach(cache->activ, _evas_cache2_image_free_cb, &delete_list);
-   while (delete_list)
-     {
-        _evas_cache2_image_entry_delete(cache, eina_list_data_get(delete_list));
-        delete_list = eina_list_remove_list(delete_list, delete_list);
-     }
+   EINA_LIST_FREE(delete_list, im)
+     _evas_cache2_image_entry_delete(cache, im);
 
    eina_hash_free(cache->activ);
    eina_hash_free(cache->inactiv);
