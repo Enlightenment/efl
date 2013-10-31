@@ -148,22 +148,19 @@ _elm_ctxpopup_smart_event(Eo *obj, void *_pd, va_list *list)
      {
         if (sd->box)
           {
-             double degree = 0.0;
-
              if ((!strcmp(ev->key, "Left")) ||
                  (!strcmp(ev->key, "KP_Left")))
-               degree = 270.0;
+               elm_widget_focus_cycle(sd->box, ELM_FOCUS_LEFT);
              else if ((!strcmp(ev->key, "Right")) ||
                       (!strcmp(ev->key, "KP_Right")))
-               degree = 90.0;
+               elm_widget_focus_cycle(sd->box, ELM_FOCUS_RIGHT);
              else if ((!strcmp(ev->key, "Up")) ||
                       (!strcmp(ev->key, "KP_Up")))
-               degree = 0.0;
+               elm_widget_focus_cycle(sd->box, ELM_FOCUS_UP);
              else if ((!strcmp(ev->key, "Down")) ||
                       (!strcmp(ev->key, "KP_Down")))
-               degree = 180.0;
+               elm_widget_focus_cycle(sd->box, ELM_FOCUS_DOWN);
 
-             elm_widget_focus_direction_go(obj, degree);
              ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
              if (ret) *ret = EINA_TRUE;
              return;
