@@ -908,12 +908,17 @@ EAPI Eina_Bool edje_edit_part_source_set(Evas_Object *obj, const char *part, con
 EAPI Edje_Text_Effect edje_edit_part_effect_get(Evas_Object *obj, const char *part);
 
 /** Set the effect for a given part.
+ * Effects and shadow directions can be combined.
+ *
+ * For effect and shadow direction list please look at Edje Part Text ref page.
  *
  * @param obj Object being edited.
  * @param part Part to set the effect to. Only makes sense on type TEXT.
  * @param effect Effect to set for the part.
+ *
+ * @see Edje_Part_Text
  */
-EAPI void edje_edit_part_effect_set(Evas_Object *obj, const char *part, Edje_Text_Effect effect);
+EAPI Eina_Bool edje_edit_part_effect_set(Evas_Object *obj, const char *part, Edje_Text_Effect effect);
 
 /** Get the current selected state in part.
  *
@@ -2254,8 +2259,10 @@ EAPI const char * edje_edit_state_font_get(Evas_Object *obj, const char *part, c
  * @param state State in which the font is set.
  * @param value Value of the state.
  * @param font The font name to use.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE - otherwise.
  */
-EAPI void edje_edit_state_font_set(Evas_Object *obj, const char *part, const char *state, double value, const char *font);
+EAPI Eina_Bool edje_edit_state_font_set(Evas_Object *obj, const char *part, const char *state, double value, const char *font);
 
 /** Get the text size of a part state
  *
@@ -2560,17 +2567,6 @@ EAPI const char *edje_edit_font_path_get(Evas_Object *obj, const char *alias);
  * @return The name of the font used in the given part state.
  */
 EAPI const char * edje_edit_state_font_get(Evas_Object *obj, const char *part, const char *state, double value);
-
-/** Set font name for a given part state.
- *
- * @param obj Object being edited.
- * @param part Part that contain state.
- * @param state The name of the state to set the name of the font that will be used (not including the state value).
- * @param value The state value.
- * @param font The name of the font to use in the given part state.
- */
-EAPI void edje_edit_state_font_set(Evas_Object *obj, const char *part, const char *state, double value, const char *font);
-
 
 //@}
 /******************************************************************************/

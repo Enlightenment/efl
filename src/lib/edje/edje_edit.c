@@ -4262,16 +4262,18 @@ edje_edit_state_font_get(Evas_Object *obj, const char *part, const char *state, 
    return eina_stringshare_add(edje_string_get(&txt->text.font));
 }
 
-EAPI void
+EAPI Eina_Bool
 edje_edit_state_font_set(Evas_Object *obj, const char *part, const char *state, double value, const char *font)
 {
    Edje_Part_Description_Text *txt;
 
-   GET_PD_OR_RETURN();
+   if ((!obj) || (!part) || (!state))
+     return EINA_FALSE;
+   GET_PD_OR_RETURN(EINA_FALSE);
 
    if ((rp->part->type != EDJE_PART_TYPE_TEXT) &&
        (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK))
-     return;
+     return EINA_FALSE;
 
    txt = (Edje_Part_Description_Text*) pd;
 
@@ -4280,6 +4282,7 @@ edje_edit_state_font_set(Evas_Object *obj, const char *part, const char *state, 
    txt->text.font.id = 0;
 
    edje_object_calc_force(obj);
+   return EINA_TRUE;
 }
 
 EAPI Edje_Text_Effect
@@ -4291,15 +4294,19 @@ edje_edit_part_effect_get(Evas_Object *obj, const char *part)
    return rp->part->effect;
 }
 
-EAPI void
+EAPI Eina_Bool
 edje_edit_part_effect_set(Evas_Object *obj, const char *part, Edje_Text_Effect effect)
 {
-   GET_RP_OR_RETURN();
+   if ((!obj) || (!part)) return EINA_FALSE;
+   GET_RP_OR_RETURN(EINA_FALSE);
 
-   //printf("SET EFFECT of part: %s [%d]\n", part, effect);
+   if ((rp->part->type != EDJE_PART_TYPE_TEXT) &&
+       (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK))
+     return EINA_FALSE;
    rp->part->effect = effect;
 
    edje_object_calc_force(obj);
+   return EINA_TRUE;
 }
 
 /****************/

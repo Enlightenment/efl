@@ -1211,11 +1211,16 @@ typedef enum _Edje_Part_Type
  * @{
  */
 
-typedef enum _Edje_Text_Effect
-{
 #define EDJE_TEXT_EFFECT_MASK_BASIC 0xf
 #define EDJE_TEXT_EFFECT_BASIC_SET(x, s) \
    do { x = ((x) & ~EDJE_TEXT_EFFECT_MASK_BASIC) | (s); } while (0)
+
+#define EDJE_TEXT_EFFECT_MASK_SHADOW_DIRECTION (0x7 << 4)
+#define EDJE_TEXT_EFFECT_SHADOW_DIRECTION_SET(x, s) \
+   do { x = ((x) & ~EDJE_TEXT_EFFECT_MASK_SHADOW_DIRECTION) | (s); } while (0)
+
+typedef enum _Edje_Text_Effect
+{
    EDJE_TEXT_EFFECT_NONE                = 0,
    EDJE_TEXT_EFFECT_PLAIN               = 1,
    EDJE_TEXT_EFFECT_OUTLINE             = 2,
@@ -1230,9 +1235,6 @@ typedef enum _Edje_Text_Effect
 
    EDJE_TEXT_EFFECT_LAST                = 11,
 
-#define EDJE_TEXT_EFFECT_MASK_SHADOW_DIRECTION (0x7 << 4)
-#define EDJE_TEXT_EFFECT_SHADOW_DIRECTION_SET(x, s) \
-   do { x = ((x) & ~EDJE_TEXT_EFFECT_MASK_SHADOW_DIRECTION) | (s); } while (0)
    EDJE_TEXT_EFFECT_SHADOW_DIRECTION_BOTTOM_RIGHT = (0x0 << 4),
    EDJE_TEXT_EFFECT_SHADOW_DIRECTION_BOTTOM       = (0x1 << 4),
    EDJE_TEXT_EFFECT_SHADOW_DIRECTION_BOTTOM_LEFT  = (0x2 << 4),
