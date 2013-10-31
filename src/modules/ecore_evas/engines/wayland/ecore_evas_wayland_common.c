@@ -201,8 +201,7 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
    if ((prev_max != ee->prop.maximized) ||
        (prev_full != ee->prop.fullscreen))
      {
-        if (ee->func.fn_state_change)
-          ee->func.fn_state_change(ee);
+        _ecore_evas_wl_common_state_update(ee);
 
         if (prev_full != ee->prop.fullscreen)
           _ecore_evas_wl_common_border_update(ee);
@@ -664,6 +663,12 @@ _ecore_evas_wl_common_move(Ecore_Evas *ee, int x, int y)
      }
 }
 
+void 
+_ecore_evas_wl_common_state_update(Ecore_Evas *ee)
+{
+   if (ee->func.fn_state_change) ee->func.fn_state_change(ee);
+}
+
 /* Frame border:
  *
  * |------------------------------------------|
@@ -1063,6 +1068,7 @@ _ecore_evas_wl_common_layer_set(Ecore_Evas *ee, int layer)
    if (layer < 1) layer = 1;
    else if (layer > 255) layer = 255;
    ee->prop.layer = layer;
+   _ecore_evas_wl_common_state_update(ee);
 }
 
 void
@@ -1111,6 +1117,7 @@ _ecore_evas_wl_common_borderless_set(Ecore_Evas *ee, int borderless)
    ee->prop.borderless = borderless;
 
    _ecore_evas_wl_common_border_update(ee);
+   _ecore_evas_wl_common_state_update(ee);
 }
 
 void
@@ -1124,6 +1131,7 @@ _ecore_evas_wl_common_maximized_set(Ecore_Evas *ee, int max)
    wdata = ee->engine.data;
    if (ee->prop.maximized == max) return;
    ecore_wl_window_maximized_set(wdata->win, max);
+   _ecore_evas_wl_common_state_update(ee);
 }
 
 void
@@ -1137,6 +1145,7 @@ _ecore_evas_wl_common_fullscreen_set(Ecore_Evas *ee, int full)
    if (ee->prop.fullscreen == full) return;
    wdata = ee->engine.data;
    ecore_wl_window_fullscreen_set(wdata->win, full);
+   _ecore_evas_wl_common_state_update(ee);
 }
 
 void
