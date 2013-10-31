@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-10-17 16:33+0900\n"
+"POT-Creation-Date: 2013-11-01 08:31+0900\n"
 "PO-Revision-Date: 2010-12-26 10:05+0200\n"
 "Last-Translator: Tom Hacohen <tom.hacohen@samsung.com>\n"
 "Language-Team: General\n"
@@ -18,20 +18,20 @@ msgstr ""
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
 "&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
 
-#: src/lib/elc_fileselector.c:1153
+#: src/lib/elc_fileselector.c:1315
 msgid "Up"
 msgstr ""
 
-#: src/lib/elc_fileselector.c:1168
+#: src/lib/elc_fileselector.c:1330
 msgid "Home"
 msgstr ""
 
-#: src/lib/elc_fileselector.c:1406 src/lib/elm_entry.c:1269
-#: src/lib/elm_entry.c:1294
+#: src/lib/elc_fileselector.c:1548 src/lib/elm_entry.c:1277
+#: src/lib/elm_entry.c:1302
 msgid "Cancel"
 msgstr ""
 
-#: src/lib/elc_fileselector.c:1415
+#: src/lib/elc_fileselector.c:1557
 msgid "OK"
 msgstr ""
 
@@ -43,13 +43,13 @@ msgstr ""
 msgid "Clicked"
 msgstr ""
 
-#: src/lib/elm_button.c:281 src/lib/elm_check.c:218 src/lib/elm_gengrid.c:702
-#: src/lib/elm_genlist.c:1461 src/lib/elm_list.c:1492 src/lib/elm_radio.c:263
-#: src/lib/elm_spinner.c:542 src/lib/elm_toolbar.c:1996
+#: src/lib/elm_button.c:280 src/lib/elm_check.c:216 src/lib/elm_gengrid.c:677
+#: src/lib/elm_genlist.c:1461 src/lib/elm_list.c:1491 src/lib/elm_radio.c:260
+#: src/lib/elm_spinner.c:547 src/lib/elm_toolbar.c:1995
 msgid "State: Disabled"
 msgstr ""
 
-#: src/lib/elm_button.c:306
+#: src/lib/elm_button.c:305
 msgid "Button"
 msgstr ""
 
@@ -93,20 +93,20 @@ msgstr ""
 msgid "calendar year"
 msgstr ""
 
-#: src/lib/elm_check.c:51 src/lib/elm_check.c:231 src/lib/elm_radio.c:91
-#: src/lib/elm_radio.c:264
+#: src/lib/elm_check.c:51 src/lib/elm_check.c:229 src/lib/elm_radio.c:91
+#: src/lib/elm_radio.c:261
 msgid "State: On"
 msgstr ""
 
-#: src/lib/elm_check.c:57 src/lib/elm_check.c:243 src/lib/elm_radio.c:266
+#: src/lib/elm_check.c:57 src/lib/elm_check.c:241 src/lib/elm_radio.c:263
 msgid "State: Off"
 msgstr ""
 
-#: src/lib/elm_check.c:227 src/lib/elm_check.c:240
+#: src/lib/elm_check.c:225 src/lib/elm_check.c:238
 msgid "State"
 msgstr ""
 
-#: src/lib/elm_check.c:308
+#: src/lib/elm_check.c:306
 msgid "Check"
 msgstr ""
 
@@ -138,27 +138,27 @@ msgstr "default:RTL"
 msgid "diskselector item"
 msgstr ""
 
-#: src/lib/elm_entry.c:1262
+#: src/lib/elm_entry.c:1270
 msgid "Copy"
 msgstr ""
 
-#: src/lib/elm_entry.c:1266
+#: src/lib/elm_entry.c:1274
 msgid "Cut"
 msgstr ""
 
-#: src/lib/elm_entry.c:1281
+#: src/lib/elm_entry.c:1289
 msgid "Select"
 msgstr ""
 
-#: src/lib/elm_entry.c:1288
+#: src/lib/elm_entry.c:1296
 msgid "Paste"
 msgstr ""
 
-#: src/lib/elm_entry.c:3122
+#: src/lib/elm_entry.c:3130
 msgid "Entry"
 msgstr ""
 
-#: src/lib/elm_gengrid.c:732
+#: src/lib/elm_gengrid.c:707
 msgid "Gengrid Item"
 msgstr ""
 
@@ -190,46 +190,46 @@ msgstr ""
 msgid "progressbar"
 msgstr ""
 
-#: src/lib/elm_radio.c:294
+#: src/lib/elm_radio.c:291
 msgid "Radio"
 msgstr ""
 
-#: src/lib/elm_slider.c:868
+#: src/lib/elm_slider.c:887
 msgid "slider"
 msgstr ""
 
-#: src/lib/elm_spinner.c:631
+#: src/lib/elm_spinner.c:636
 msgid "spinner increment button"
 msgstr ""
 
-#: src/lib/elm_spinner.c:640
+#: src/lib/elm_spinner.c:645
 msgid "spinner decrement button"
 msgstr ""
 
-#: src/lib/elm_spinner.c:648
+#: src/lib/elm_spinner.c:653
 msgid "spinner"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:1467 src/lib/elm_toolbar.c:2057
+#: src/lib/elm_toolbar.c:1466 src/lib/elm_toolbar.c:2056
 msgid "Selected"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:1994
+#: src/lib/elm_toolbar.c:1993
 msgid "Separator"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:1998
+#: src/lib/elm_toolbar.c:1997
 msgid "State: Selected"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:2000
+#: src/lib/elm_toolbar.c:1999
 msgid "Has menu"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:2052
+#: src/lib/elm_toolbar.c:2051
 msgid "Unselected"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:2069
+#: src/lib/elm_toolbar.c:2068
 msgid "Toolbar Item"
 msgstr ""
