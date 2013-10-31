@@ -4,6 +4,9 @@
 
 #include <sys/mman.h>
 #include <fcntl.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <libgen.h>
 
 #include <GlobalParams.h>
 #include <PDFDoc.h>
@@ -199,6 +202,10 @@ void poppler_load_image(int size_w, int size_h)
 int
 main(int argc, char **argv)
 {
+   Eina_Tmpstr *tmpdir = NULL;
+   Eina_Tmpstr *generated = NULL;
+   char *extension;
+   char *dir;
    char *file;
    int i;
    int size_w = 0, size_h = 0;
@@ -239,12 +246,62 @@ main(int argc, char **argv)
           }
      }
 
-   D("poppler_file_init\n");
    D("dpi....: %f\n", dpi);
    D("page...: %d\n", page);
 
+   // This is a funny hack to call an external tool to generate a pdf that will then be processed by poppler
+   extension = strrchr(file, '.');
+   dir = dirname(argv[0]);
+   if (extension && dir && strcmp(extension, ".pdf"))
+     {
+        if (eina_file_mkdtemp("evas_generic_pdf_loaderXXXXXX", &tmpdir))
+          {
+             Eina_Strbuf *tmp;
+             FILE *cmd;
+
+             tmp = eina_strbuf_new();
+             eina_strbuf_append_printf(tmp, "%s/evas_generic_pdf_loader.%s '%s' %s", dir, extension + 1, file, tmpdir);
+
+             cmd = popen(eina_strbuf_string_get(tmp), "r");
+             D("running preprocessing process '%s'...\n", eina_strbuf_string_get(tmp));
+             eina_strbuf_reset(tmp);
+
+             if (cmd)
+               {
+                  struct stat st;
+                  const char *filename;
+                  char buf[1024];
+
+                  while (fgets(buf, sizeof (buf), cmd))
+                    ;
+                  pclose(cmd);
+
+                  filename = basename(file);
+                  generated = eina_tmpstr_add_length(filename, strlen(filename) - strlen(extension));
+
+                  eina_strbuf_append_printf(tmp, "%s/%s.pdf", tmpdir, generated);
+
+                  eina_tmpstr_del(generated);
+                  generated = NULL;
+
+                  if (stat(eina_strbuf_string_get(tmp), &st) == 0)
+                    {
+                       generated = eina_tmpstr_add_length(eina_strbuf_string_get(tmp),
+                                                          eina_strbuf_length_get(tmp));
+                       file = (char*) generated;
+                    }
+               }
+
+             D("generated file: '%s'\n", generated);
+             eina_strbuf_free(tmp);
+          }
+     }
+
+   // Let's force a timeout if things go wrong
    timeout_init(10);
-   
+
+   // Now process the pdf (or the generated pdf)
+   D("poppler_file_init\n");
    if (!poppler_init(file, page, size_w, size_h))
      return -1;
    D("poppler_file_init done\n");
@@ -278,6 +335,15 @@ main(int argc, char **argv)
      printf("done\n");
 
    poppler_shutdown();
+
+   if (tmpdir)
+     {
+        if (generated) unlink(generated);
+        rmdir(tmpdir);
+
+        eina_tmpstr_del(tmpdir);
+        eina_tmpstr_del(generated);
+     }
 
    return 0;
 }
