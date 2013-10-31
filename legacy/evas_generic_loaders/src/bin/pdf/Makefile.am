@@ -12,6 +12,7 @@ AM_CPPFLAGS = \
 @EINA_CFLAGS@ \
 @POPPLER_CFLAGS@
 
+bin_SCRIPTS = evas_generic_pdf_loader.libreoffice
 bin_PROGRAMS = evas_image_loader.pdf
 bindir = $(libdir)/evas/utils
 
@@ -22,3 +23,11 @@ $(top_srcdir)/src/bin/common/timeout.c
 evas_image_loader_pdf_CFLAGS =
 evas_image_loader_pdf_LDADD = @POPPLER_LIBS@ @EINA_LIBS@ @SHM_OPEN_LIBS@
 evas_image_loader_pdf_LDFLAGS =
+
+install-exec-hook:
+	ln -sf evas_image_loader.pdf $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.ppt
+	ln -sf evas_image_loader.pdf $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.pptx
+	ln -sf evas_image_loader.pdf $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.odp
+	ln -sf evas_generic_pdf_loader.libreoffice $(DESTDIR)$(libdir)/evas/utils/evas_generic_pdf_loader.ppt
+	ln -sf evas_generic_pdf_loader.libreoffice $(DESTDIR)$(libdir)/evas/utils/evas_generic_pdf_loader.pptx
+	ln -sf evas_generic_pdf_loader.libreoffice $(DESTDIR)$(libdir)/evas/utils/evas_generic_pdf_loader.odp

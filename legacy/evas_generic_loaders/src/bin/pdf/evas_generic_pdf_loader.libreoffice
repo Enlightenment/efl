@@ -1,0 +1,2 @@
+#!/bin/sh
+/usr/lib/libreoffice/program/soffice.bin --headless --convert-to pdf --outdir "$2" "$1"
