@@ -217,15 +217,14 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
 
    if ((ee->x != ev->x) || (ee->y != ev->y))
      {
-        ee->req.x = ee->x;
-        ee->req.y = ee->y;
+        ee->req.x = ev->x;
+        ee->req.y = ev->y;
         if (ee->func.fn_move) ee->func.fn_move(ee);
      }
 
    nw = ev->w;
    nh = ev->h;
-
-   if ((ee->prop.maximized) || (!ee->prop.fullscreen))
+   if ((!ee->prop.maximized) && (!ee->prop.fullscreen))
      {
         int fw = 0, fh = 0;
 
