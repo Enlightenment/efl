@@ -224,6 +224,7 @@ group { name: "e/modules/battery/main";
             color_class: "module_label";
             text { font: "Sans"; size: 6;
                min: 0 1;
+               fit: 1 1;
                text_class: "module_small";
             }
          }
@@ -242,6 +243,7 @@ group { name: "e/modules/battery/main";
             color_class: "module_label";
             text { font: "Sans"; size: 6;
                min: 0 1;
+               fit: 1 1;
                text_class: "module_small";
             }
          }
