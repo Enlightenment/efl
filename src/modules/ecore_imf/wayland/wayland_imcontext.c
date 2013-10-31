@@ -39,6 +39,7 @@ struct _WaylandIMContext
    struct wl_text_input *text_input;
 
    Ecore_Wl_Window *window;
+   Ecore_Wl_Input  *input;
    Evas            *canvas;
 
    char *preedit_text;
@@ -627,6 +628,8 @@ wayland_im_context_focus_in(Ecore_IMF_Context *ctx)
    if (!input || !input->seat)
      return;
 
+   imcontext->input = input;
+
    if (imcontext->text_input)
      {
         wl_text_input_show_input_panel(imcontext->text_input);
@@ -643,11 +646,13 @@ wayland_im_context_focus_out(Ecore_IMF_Context *ctx)
 
    EINA_LOG_DOM_INFO(_ecore_imf_wayland_log_dom, "focus-out");
 
-   if (!imcontext->window) return;
+   if (!imcontext->input) return;
 
    if (imcontext->text_input)
      wl_text_input_deactivate(imcontext->text_input,
-                              imcontext->window->display->input->seat);
+                              imcontext->input->seat);
+
+   imcontext->input = NULL;
 }
 
 EAPI void

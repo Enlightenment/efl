@@ -50,6 +50,48 @@ extern Ecore_Wl_Display *_ecore_wl_disp;
 # endif
 # define CRIT(...) EINA_LOG_DOM_CRIT(_ecore_wl_log_dom, __VA_ARGS__)
 
+
+struct _Ecore_Wl_Display
+{
+   struct
+     {
+        struct wl_display *display;
+        struct wl_registry *registry;
+        struct wl_compositor *compositor;
+        struct wl_subcompositor *subcompositor;
+        struct wl_shell *shell;
+        struct wl_shell *desktop_shell;
+        struct wl_shm *shm;
+        struct wl_data_device_manager *data_device_manager;
+     } wl;
+
+   int fd;
+   unsigned int mask;
+   unsigned int serial;
+   int sync_ref_count;
+   Ecore_Fd_Handler *fd_hdl;
+   Ecore_Idle_Enterer *idle_enterer;
+
+   struct wl_list inputs;
+   struct wl_list outputs;
+   struct wl_list globals; /** @since 1.7.6 */
+
+   Eina_Bool init_done;
+
+   struct
+     {
+        struct xkb_context *context;
+     } xkb;
+
+   struct wl_cursor_theme *cursor_theme;
+
+   Ecore_Wl_Output *output;
+   Ecore_Wl_Input *input;
+
+   void (*output_configure)(Ecore_Wl_Output *output, void *data);
+   void *data;
+};
+
 struct _Ecore_Wl_Dnd
 {
    Ecore_Wl_Display *ewd;
