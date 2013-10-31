@@ -3311,7 +3311,6 @@ _proxy_subrender(Evas *eo_e, Evas_Object *eo_source, Evas_Object *eo_proxy, Evas
    Evas_Object_Protected_Data *source;
    void *ctx;
    int w, h;
-   Eina_Bool src_redraw = EINA_FALSE;
 
    if (!eo_source) return;
    source = eo_data_scope_get(eo_source, EVAS_OBJ_CLASS);
@@ -3341,49 +3340,42 @@ _proxy_subrender(Evas *eo_e, Evas_Object *eo_source, Evas_Object *eo_proxy, Evas
              if (!proxy_write->surface) goto end;
              proxy_write->w = w;
              proxy_write->h = h;
-             src_redraw = EINA_TRUE;
           }
 
-        if (!src_redraw)
-          src_redraw = evas_object_smart_changed_get(eo_source);
+        ctx = e->engine.func->context_new(e->engine.data.output);
+        e->engine.func->context_color_set(e->engine.data.output, ctx, 0, 0,
+                                          0, 0);
+        e->engine.func->context_render_op_set(e->engine.data.output, ctx,
+                                              EVAS_RENDER_COPY);
+        e->engine.func->rectangle_draw(e->engine.data.output, ctx,
+                                       proxy_write->surface, 0, 0, w, h,
+                                       do_async);
+        e->engine.func->context_free(e->engine.data.output, ctx);
 
-        if (src_redraw)
-          {
-             ctx = e->engine.func->context_new(e->engine.data.output);
-             e->engine.func->context_color_set(e->engine.data.output, ctx, 0, 0,
-                                               0, 0);
-             e->engine.func->context_render_op_set(e->engine.data.output, ctx,
-                                                   EVAS_RENDER_COPY);
-             e->engine.func->rectangle_draw(e->engine.data.output, ctx,
-                                            proxy_write->surface, 0, 0, w, h,
-                                            do_async);
-             e->engine.func->context_free(e->engine.data.output, ctx);
+        ctx = e->engine.func->context_new(e->engine.data.output);
 
-             ctx = e->engine.func->context_new(e->engine.data.output);
+        Eina_Bool source_clip;
+        eo_do(eo_proxy, evas_obj_image_source_clip_get(&source_clip));
 
-             Eina_Bool source_clip;
-             eo_do(eo_proxy, evas_obj_image_source_clip_get(&source_clip));
-
-             Evas_Proxy_Render_Data proxy_render_data = {
-                  .eo_proxy = eo_proxy,
-                  .proxy_obj = proxy_obj,
-                  .eo_src = eo_source,
-                  .source_clip = source_clip
-             };
-             evas_render_mapped(e, eo_source, source, ctx, proxy_write->surface,
-                                -source->cur->geometry.x,
-                                -source->cur->geometry.y,
-                                1, 0, 0, e->output.w, e->output.h,
-                                &proxy_render_data
+        Evas_Proxy_Render_Data proxy_render_data = {
+             .eo_proxy = eo_proxy,
+             .proxy_obj = proxy_obj,
+             .eo_src = eo_source,
+             .source_clip = source_clip
+        };
+        evas_render_mapped(e, eo_source, source, ctx, proxy_write->surface,
+                           -source->cur->geometry.x,
+                           -source->cur->geometry.y,
+                           1, 0, 0, e->output.w, e->output.h,
+                           &proxy_render_data
 #ifdef REND_DBG
-                                , 1
+                           , 1
 #endif
-                                , do_async);
+                           , do_async);
 
-             e->engine.func->context_free(e->engine.data.output, ctx);
-          }
+        e->engine.func->context_free(e->engine.data.output, ctx);
         proxy_write->surface = e->engine.func->image_dirty_region
-          (e->engine.data.output, proxy_write->surface, 0, 0, w, h);
+           (e->engine.data.output, proxy_write->surface, 0, 0, w, h);
 /*   
    ctx = e->engine.func->context_new(e->engine.data.output);
    if (eo_isa(source, EVAS_OBJ_SMART_CLASS))
