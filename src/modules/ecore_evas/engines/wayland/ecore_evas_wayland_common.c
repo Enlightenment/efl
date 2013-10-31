@@ -224,19 +224,20 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
 
    nw = ev->w;
    nh = ev->h;
-   if ((!ee->prop.maximized) && (!ee->prop.fullscreen))
+
+   if (!ee->prop.fullscreen)
      {
         int fw = 0, fh = 0;
 
         evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
         if ((ee->rotation == 90) || (ee->rotation == 270))
           {
-             nw = ev->w - fh;
+             if (!ee->prop.maximized) nw = ev->w - fh;
              nh = ev->h - fw;
           }
         else
           {
-             nw = ev->w - fw;
+             if (!ee->prop.maximized) nw = ev->w - fw;
              nh = ev->h - fh;
           }
      }
