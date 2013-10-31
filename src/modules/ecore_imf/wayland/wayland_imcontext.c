@@ -474,8 +474,8 @@ text_input_keysym(void                 *data,
    strcpy((char *)e->key, key);
    strcpy((char *)e->string, string);
 
-   e->window = imcontext->window->id;
-   e->event_window = imcontext->window->id;
+   e->window = ecore_wl_window_id_get(imcontext->window);
+   e->event_window = ecore_wl_window_id_get(imcontext->window);
    e->timestamp = time;
 
    e->modifiers = 0;

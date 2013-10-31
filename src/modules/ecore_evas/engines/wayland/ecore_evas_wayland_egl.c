@@ -182,7 +182,7 @@ ecore_evas_wayland_egl_new_internal(const char *disp_name, unsigned int parent,
    wdata->win = 
      ecore_wl_window_new(p, x, y, w + fw, h + fh, 
                          ECORE_WL_WINDOW_BUFFER_TYPE_EGL_WINDOW);
-   ee->prop.window = wdata->win->id;
+   ee->prop.window = ecore_wl_window_id_get(wdata->win);
 
    ee->evas = evas_new();
    evas_data_attach_set(ee->evas, ee);

@@ -687,6 +687,17 @@ ecore_wl_window_rotation_get(Ecore_Wl_Window *win)
    return win->rotation;
 }
 
+/* @since 1.8 */
+EAPI int
+ecore_wl_window_id_get(Ecore_Wl_Window *win)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!win) return 0;
+   return win->id;
+}
+
+
 /* local functions */
 static void 
 _ecore_wl_window_cb_ping(void *data EINA_UNUSED, struct wl_shell_surface *shell_surface, unsigned int serial)

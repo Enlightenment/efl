@@ -626,6 +626,8 @@ EAPI void ecore_wl_window_cursor_from_name_set(Ecore_Wl_Window *win, const char 
 EAPI void ecore_wl_window_cursor_default_restore(Ecore_Wl_Window *win);
 EAPI void ecore_wl_window_parent_set(Ecore_Wl_Window *win, Ecore_Wl_Window *parent);
 
+EAPI int ecore_wl_window_id_get(Ecore_Wl_Window *win);
+
 /**
  * Returns a wl_surface with no association to any wl_shell_surface.
  *
