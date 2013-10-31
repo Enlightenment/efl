@@ -10,7 +10,7 @@ static void _ecore_wl_window_cb_configure(void *data, struct wl_shell_surface *s
 static void _ecore_wl_window_cb_popup_done(void *data, struct wl_shell_surface *shell_surface EINA_UNUSED);
 static void _ecore_wl_window_cb_surface_enter(void *data, struct wl_surface *surface, struct wl_output *output EINA_UNUSED);
 static void _ecore_wl_window_cb_surface_leave(void *data, struct wl_surface *surface, struct wl_output *output EINA_UNUSED);
-static void _ecore_wl_window_configure_send(Ecore_Wl_Window *win, int w, int h);
+static void _ecore_wl_window_configure_send(Ecore_Wl_Window *win, int w, int h, int edges);
 static char *_ecore_wl_window_id_str_get(unsigned int win_id);
 
 /* local variables */
@@ -219,17 +219,6 @@ ecore_wl_window_buffer_attach(Ecore_Wl_Window *win, struct wl_buffer *buffer, in
       case ECORE_WL_WINDOW_BUFFER_TYPE_SHM:
         if (win->surface)
           {
-             if (win->edges & 4) //  resizing from the left
-               x = win->server.w - win->allocation.w;
-             else
-               x = 0;
-
-             if (win->edges & 1) // resizing from the top
-               y = win->server.h - win->allocation.h;
-             else
-               y = 0;
-
-             win->edges = 0;
              win->has_buffer = (buffer != NULL);
 
              /* if (buffer) */
@@ -357,9 +346,8 @@ ecore_wl_window_maximized_set(Ecore_Wl_Window *win, Eina_Bool maximized)
         if (win->shell_surface) 
           wl_shell_surface_set_toplevel(win->shell_surface);
         win->type = ECORE_WL_WINDOW_TYPE_TOPLEVEL;
-        _ecore_wl_window_configure_send(win, win->saved.w, win->saved.h);
+        _ecore_wl_window_configure_send(win, win->saved.w, win->saved.h, 0);
      }
-   win->edges = 0;
 }
 
 EAPI Eina_Bool
@@ -397,9 +385,8 @@ ecore_wl_window_fullscreen_set(Ecore_Wl_Window *win, Eina_Bool fullscreen)
         if (win->shell_surface)
           wl_shell_surface_set_toplevel(win->shell_surface);
         win->type = ECORE_WL_WINDOW_TYPE_TOPLEVEL;
-        _ecore_wl_window_configure_send(win, win->saved.w, win->saved.h);
+        _ecore_wl_window_configure_send(win, win->saved.w, win->saved.h, 0);
      }
-   win->edges = 0;
 }
 
 EAPI Eina_Bool
@@ -719,10 +706,7 @@ _ecore_wl_window_cb_configure(void *data, struct wl_shell_surface *shell_surface
 
    if ((win->allocation.w != w) || (win->allocation.h != h))
      {
-        if (win->type == ECORE_WL_WINDOW_TYPE_TOPLEVEL)
-          win->edges = edges;
-
-        _ecore_wl_window_configure_send(win, w, h);
+        _ecore_wl_window_configure_send(win, w, h, edges);
      }
 }
 
@@ -761,7 +745,7 @@ _ecore_wl_window_cb_surface_leave(void *data, struct wl_surface *surface, struct
 }
 
 static void 
-_ecore_wl_window_configure_send(Ecore_Wl_Window *win, int w, int h)
+_ecore_wl_window_configure_send(Ecore_Wl_Window *win, int w, int h, int edges)
 {
    Ecore_Wl_Event_Window_Configure *ev;
 
@@ -774,6 +758,7 @@ _ecore_wl_window_configure_send(Ecore_Wl_Window *win, int w, int h)
    ev->y = win->allocation.y;
    ev->w = w;
    ev->h = h;
+   ev->edges = edges;
    ecore_event_add(ECORE_WL_EVENT_WINDOW_CONFIGURE, ev, NULL, NULL);
 }
 

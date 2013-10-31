@@ -330,9 +330,6 @@ _ecore_evas_wl_resize(Ecore_Evas *ee, int w, int h)
 
              win = wdata->win;
 
-             _ecore_evas_wayland_egl_resize_edge_set(ee, win->edges);
-             win->edges = 0;
-
              win->server.w = win->allocation.w;
              win->server.h = win->allocation.h;
              ecore_wl_window_update_size(wdata->win, w, h);

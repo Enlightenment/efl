@@ -125,7 +125,7 @@ struct _Ecore_Wl_Window
      } pointer;
 
    int id, surface_id;
-   int edges, rotation;
+   int rotation;
 
    Eina_Rectangle allocation;
 
@@ -213,6 +213,7 @@ struct _Ecore_Wl_Event_Window_Configure
    unsigned int win;
    unsigned int event_win;
    int x, y, w, h;
+   int edges;
 };
 
 struct _Ecore_Wl_Event_Dnd_Enter
