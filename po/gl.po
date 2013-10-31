@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Efl\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-06-17 14:40+0200\n"
+"POT-Creation-Date: 2013-11-01 08:28+0900\n"
 "PO-Revision-Date: 2012-11-07 22:52+0100\n"
 "Last-Translator: Aníbal Garrido <khany@member.trisquel.info>\n"
 "Language-Team: http://trasno.net/ <proxecto@trasno.net>\n"
@@ -66,140 +66,140 @@ msgstr "ERRO: opción descoñecida -%c.\n"
 msgid "ERROR: "
 msgstr "ERRO: "
 
-#: src/lib/ecore/ecore_getopt.c:935 src/lib/ecore/ecore_getopt.c:1072
-#: src/lib/ecore/ecore_getopt.c:1088 src/lib/ecore/ecore_getopt.c:1103
-#: src/lib/ecore/ecore_getopt.c:1120 src/lib/ecore/ecore_getopt.c:1167
-#: src/lib/ecore/ecore_getopt.c:1287 src/lib/ecore/ecore_getopt.c:1328
+#: src/lib/ecore/ecore_getopt.c:937 src/lib/ecore/ecore_getopt.c:1074
+#: src/lib/ecore/ecore_getopt.c:1090 src/lib/ecore/ecore_getopt.c:1105
+#: src/lib/ecore/ecore_getopt.c:1122 src/lib/ecore/ecore_getopt.c:1169
+#: src/lib/ecore/ecore_getopt.c:1289 src/lib/ecore/ecore_getopt.c:1330
 msgid "value has no pointer set.\n"
 msgstr "non se definiu o valor.\n"
 
-#: src/lib/ecore/ecore_getopt.c:967 src/lib/ecore/ecore_getopt.c:1187
+#: src/lib/ecore/ecore_getopt.c:969 src/lib/ecore/ecore_getopt.c:1189
 #, c-format
 msgid "unknown boolean value %s.\n"
 msgstr "valor booleano descoñecido %s.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1018 src/lib/ecore/ecore_getopt.c:1275
+#: src/lib/ecore/ecore_getopt.c:1020 src/lib/ecore/ecore_getopt.c:1277
 #, c-format
 msgid "invalid number format %s\n"
 msgstr "formato numérico inválido %s\n"
 
-#: src/lib/ecore/ecore_getopt.c:1133
+#: src/lib/ecore/ecore_getopt.c:1135
 #, c-format
 msgid "invalid choice \"%s\". Valid values are: "
 msgstr "Elección inválida \"%s\". Os valores válidos son:"
 
-#: src/lib/ecore/ecore_getopt.c:1161
+#: src/lib/ecore/ecore_getopt.c:1163
 msgid "missing parameter to append.\n"
 msgstr "faltan os parámetros a anexar.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1265
+#: src/lib/ecore/ecore_getopt.c:1267
 msgid "could not parse value.\n"
 msgstr "incapaz de procesar o valor.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1322
+#: src/lib/ecore/ecore_getopt.c:1324
 msgid "missing parameter.\n"
 msgstr "parámetro ausente.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1335
+#: src/lib/ecore/ecore_getopt.c:1337
 msgid "missing callback function!\n"
 msgstr "Función de invocación desaparecida!\n"
 
-#: src/lib/ecore/ecore_getopt.c:1364
+#: src/lib/ecore/ecore_getopt.c:1366
 msgid "no version was defined.\n"
 msgstr "non se definiu a versión.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1381
+#: src/lib/ecore/ecore_getopt.c:1383
 msgid "no copyright was defined.\n"
 msgstr "non se definiron os dereitos de autor.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1398
+#: src/lib/ecore/ecore_getopt.c:1400
 msgid "no license was defined.\n"
 msgstr "non se definiu a licenza.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1488
+#: src/lib/ecore/ecore_getopt.c:1490
 #, c-format
 msgid "ERROR: unknown option --%s, ignored.\n"
 msgstr "ERRO: opción descoñecida --%s, ignorada.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1521
+#: src/lib/ecore/ecore_getopt.c:1523
 #, c-format
 msgid "ERROR: option --%s requires an argument!\n"
 msgstr "ERRO: opción --%s require un argumento!\n"
 
-#: src/lib/ecore/ecore_getopt.c:1563
+#: src/lib/ecore/ecore_getopt.c:1565
 #, c-format
 msgid "ERROR: unknown option -%c, ignored.\n"
 msgstr "ERRO: opción descoñecida -%c, ignorada.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1601
+#: src/lib/ecore/ecore_getopt.c:1603
 #, c-format
 msgid "ERROR: option -%c requires an argument!\n"
 msgstr "ERRO: opción -%c require un argumento!\n"
 
-#: src/lib/ecore/ecore_getopt.c:1812
+#: src/lib/ecore/ecore_getopt.c:1814
 msgid "ERROR: no parser provided.\n"
 msgstr "ERRO: non se forneceu ningún procesador.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1817
+#: src/lib/ecore/ecore_getopt.c:1819
 msgid "ERROR: no values provided.\n"
 msgstr "ERRO: non se forneceu ningún valor.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1826
+#: src/lib/ecore/ecore_getopt.c:1828
 msgid "ERROR: no arguments provided.\n"
 msgstr "ERRO: non se forneceu ningún argumento.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1852
+#: src/lib/ecore/ecore_getopt.c:1854
 msgid "ERROR: invalid options found."
 msgstr "ERRO: atopadas opcións inválidas."
 
-#: src/lib/ecore/ecore_getopt.c:1858
+#: src/lib/ecore/ecore_getopt.c:1860
 #, c-format
 msgid " See --%s.\n"
 msgstr " Consulte --%s.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1860
+#: src/lib/ecore/ecore_getopt.c:1862
 #, c-format
 msgid " See -%c.\n"
 msgstr " Consulte  -%c.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1906
+#: src/lib/ecore/ecore_getopt.c:1908
 #, c-format
 msgid "ERROR: incorrect geometry value '%s'\n"
 msgstr "ERRO: valor xeométrico incorrecto '%s'\n"
 
-#: src/lib/ecore/ecore_getopt.c:1938
+#: src/lib/ecore/ecore_getopt.c:1940
 #, c-format
 msgid "ERROR: incorrect size value '%s'\n"
 msgstr "ERRO: valor do tamaño incorrecto '%s'\n"
 
-#: src/lib/efreet/efreet_base.c:129
+#: src/lib/efreet/efreet_base.c:119
 msgid "Desktop"
 msgstr "Escritorio"
 
-#: src/lib/efreet/efreet_base.c:137
+#: src/lib/efreet/efreet_base.c:127
 msgid "Downloads"
 msgstr "Descargas"
 
-#: src/lib/efreet/efreet_base.c:146
+#: src/lib/efreet/efreet_base.c:136
 msgid "Templates"
 msgstr "Modelos"
 
-#: src/lib/efreet/efreet_base.c:155
+#: src/lib/efreet/efreet_base.c:145
 msgid "Public"
 msgstr "Público"
 
-#: src/lib/efreet/efreet_base.c:164
+#: src/lib/efreet/efreet_base.c:154
 msgid "Documents"
 msgstr "Documentos"
 
-#: src/lib/efreet/efreet_base.c:172
+#: src/lib/efreet/efreet_base.c:162
 msgid "Music"
 msgstr "Música"
 
-#: src/lib/efreet/efreet_base.c:180
+#: src/lib/efreet/efreet_base.c:170
 msgid "Pictures"
 msgstr "Imaxes"
 
-#: src/lib/efreet/efreet_base.c:188
+#: src/lib/efreet/efreet_base.c:178
 msgid "Videos"
 msgstr "Vídeos"
