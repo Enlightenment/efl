@@ -3930,25 +3930,22 @@ edje_edit_state_text_get(Evas_Object *obj, const char *part, const char *state, 
      return NULL;
 
    txt = (Edje_Part_Description_Text *) pd;
-   //printf("GET TEXT of state: %s\n", state);
 
    return eina_stringshare_add(edje_string_get(&txt->text.text));
 }
 
-EAPI void
+EAPI Eina_Bool
 edje_edit_state_text_set(Evas_Object *obj, const char *part, const char *state, double value, const char *text)
 {
    Edje_Part_Description_Text *txt;
 
-   GET_PD_OR_RETURN();
-
-   //printf("SET TEXT of state: %s\n", state);
-
-   if (!text) return;
+   if ((!obj) || (!part) || (!state) || (!text))
+     return EINA_FALSE;
+   GET_PD_OR_RETURN(EINA_FALSE);
 
    if ((rp->part->type != EDJE_PART_TYPE_TEXT) &&
        (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK))
-     return;
+     return EINA_FALSE;
 
    txt = (Edje_Part_Description_Text *) pd;
 
@@ -3957,6 +3954,7 @@ edje_edit_state_text_set(Evas_Object *obj, const char *part, const char *state, 
    txt->text.text.id = 0;
 
    edje_object_calc_force(obj);
+   return EINA_TRUE;
 }
 
 EAPI int
@@ -3971,33 +3969,33 @@ edje_edit_state_text_size_get(Evas_Object *obj, const char *part, const char *st
      return -1;
 
    txt = (Edje_Part_Description_Text *) pd;
-   //printf("GET TEXT_SIZE of state: %s [%d]\n", state, pd->text.size);
+
    return txt->text.size;
 }
 
-EAPI void
+EAPI Eina_Bool
 edje_edit_state_text_size_set(Evas_Object *obj, const char *part, const char *state, double value, int size)
 {
    Edje_Part_Description_Text *txt;
 
-   GET_PD_OR_RETURN();
-
-   //printf("SET TEXT_SIZE of state: %s [%d]\n", state, size);
-
-   if (size < 0) return;
+   if ((!obj) || (!part) || (!state))
+     return EINA_FALSE;
+   if (size < 0) return EINA_FALSE;
+   GET_PD_OR_RETURN(EINA_FALSE);
 
    if ((rp->part->type != EDJE_PART_TYPE_TEXT) &&
        (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK))
-     return;
+     return EINA_FALSE;
 
    txt = (Edje_Part_Description_Text *) pd;
 
    txt->text.size = size;
 
    edje_object_calc_force(obj);
+   return EINA_TRUE;
 }
 
-#define FUNC_TEXT_DOUBLE(Name, Value)					\
+#define FUNC_TEXT_DOUBLE(Name, Value, Min)				\
   EAPI double								\
   edje_edit_state_text_##Name##_get(Evas_Object *obj, const char *part, const char *state, double value) \
   {									\
@@ -4012,25 +4010,30 @@ edje_edit_state_text_size_set(Evas_Object *obj, const char *part, const char *st
      txt = (Edje_Part_Description_Text *) pd;				\
      return TO_DOUBLE(txt->text.Value);					\
   }									\
-  EAPI void								\
+  EAPI Eina_Bool                                                        \
   edje_edit_state_text_##Name##_set(Evas_Object *obj, const char *part, const char *state, double value, double v) \
   {									\
      Edje_Part_Description_Text *txt;					\
+     if ((!obj) || (!part) || (!state))                                 \
+       return EINA_FALSE;                                               \
+     if ((v < Min) || (v > 1.0))                                        \
+       return EINA_FALSE;                                               \
 									\
-     GET_PD_OR_RETURN();						\
+     GET_PD_OR_RETURN(EINA_FALSE);					\
 									\
      if ((rp->part->type != EDJE_PART_TYPE_TEXT) &&                     \
          (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK))                  \
-       return;                                                          \
+       return EINA_FALSE;                                               \
                                                                         \
      txt = (Edje_Part_Description_Text *) pd;				\
      txt->text.Value = FROM_DOUBLE(v);					\
      edje_object_calc_force(obj);					\
-  }									\
+     return EINA_TRUE;                                                  \
+  }
 
-FUNC_TEXT_DOUBLE(align_x, align.x);
-FUNC_TEXT_DOUBLE(align_y, align.y);
-FUNC_TEXT_DOUBLE(elipsis, elipsis);
+FUNC_TEXT_DOUBLE(align_x, align.x, -1.0);
+FUNC_TEXT_DOUBLE(align_y, align.y, 0.0);
+FUNC_TEXT_DOUBLE(elipsis, elipsis, -1.0);
 
 #define FUNC_TEXT_BOOL(Name, Type)					\
   EAPI Eina_Bool                                                        \
@@ -4047,20 +4050,22 @@ FUNC_TEXT_DOUBLE(elipsis, elipsis);
      txt = (Edje_Part_Description_Text *) pd;				\
      return txt->text.Name##_##Type;					\
   }									\
-  EAPI void								\
+  EAPI Eina_Bool \
   edje_edit_state_text_##Name##_##Type##_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool v) \
   {									\
      Edje_Part_Description_Text *txt;					\
-									\
-     GET_PD_OR_RETURN();						\
+     if ((!obj) || (!part) || (!state))                                 \
+       return EINA_FALSE;                                               \
+     GET_PD_OR_RETURN(EINA_FALSE);					\
 									\
      if ((rp->part->type != EDJE_PART_TYPE_TEXT) &&                     \
          (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK))                  \
-       return;                                                          \
+       return EINA_FALSE;                                               \
                                                                         \
      txt = (Edje_Part_Description_Text *) pd;				\
      txt->text.Name##_##Type = v ? 1 : 0;				\
      edje_object_calc_force(obj);					\
+     return EINA_TRUE;                                                  \
   }
 
 FUNC_TEXT_BOOL(fit, x);

@@ -55,7 +55,7 @@ typedef struct _Edje_Edit_Script_Error Edje_Edit_Script_Error;
  * @brief Functions to deal with edje internal object. Don't use in standard
  * situations. The use of any of the edje_edit_* functions can break your
  * theme ability, remember that the program must be separated from the interface!
- * 
+ *
  * This was intended ONLY for use in an actual edje editor program. Unless
  * you are writing one of these, do NOT use this API here.
  *
@@ -2227,8 +2227,10 @@ EAPI const char * edje_edit_state_text_get(Evas_Object *obj, const char *part, c
  * @param state The name of the state to set text (not including the state value).
  * @param value The state value.
  * @param text The new text to assign.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE - otherwise.
  */
-EAPI void edje_edit_state_text_set(Evas_Object *obj, const char *part, const char *state, double value,const char *text);
+EAPI Eina_Bool edje_edit_state_text_set(Evas_Object *obj, const char *part, const char *state, double value,const char *text);
 
 /** Get font name for a given part state.
  *
@@ -2273,12 +2275,15 @@ EAPI int edje_edit_state_text_size_get(Evas_Object *obj, const char *part, const
  * @param state The name of the state to set text size (not including the state value).
  * @param value The state value.
  * @param size The new font size to set (in pixel)
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE - otherwise.
  */
-EAPI void edje_edit_state_text_size_set(Evas_Object *obj, const char *part, const char *state, double value, int size);
+EAPI Eina_Bool edje_edit_state_text_size_set(Evas_Object *obj, const char *part, const char *state, double value, int size);
 
 /** Get the text horizontal align of a part state.
  *
  * The value range is from 0.0(right) to 1.0(left)
+ * If the value is between -1.0 and 0.0 then it uses align automatically.
  *
  * @param obj Object being edited.
  * @param part Part that contain state.
@@ -2305,14 +2310,17 @@ EAPI double edje_edit_state_text_align_y_get(Evas_Object *obj, const char *part,
 /** Set the text horizontal align of a part state.
  *
  * The value range is from 0.0(right) to 1.0(left)
+ * If the value is between -1.0 and 0.0 then it uses align automatically.
  *
  * @param obj Object being edited.
  * @param part Part that contain state.
  * @param state The name of the state to set the text horizontal align (not including the state value).
  * @param value The state value.
  * @param align The new text horizontal align value
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE - otherwise.
  */
-EAPI void edje_edit_state_text_align_x_set(Evas_Object *obj, const char *part, const char *state, double value, double align);
+EAPI Eina_Bool edje_edit_state_text_align_x_set(Evas_Object *obj, const char *part, const char *state, double value, double align);
 
 /** Set the text vertical align of a part state.
  *
@@ -2323,12 +2331,14 @@ EAPI void edje_edit_state_text_align_x_set(Evas_Object *obj, const char *part, c
  * @param state The name of the state to set the text vertical align (not including the state value).
  * @param value The state value.
  * @param align The new text vertical align value
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE - otherwise.
  */
-EAPI void edje_edit_state_text_align_y_set(Evas_Object *obj, const char *part, const char *state, double value, double align);
+EAPI Eina_Bool edje_edit_state_text_align_y_set(Evas_Object *obj, const char *part, const char *state, double value, double align);
 
 /** Get the text elipsis of a part state.
  *
- * The value range is from 0.0(right) to 1.0(left)
+ * The value range is from 0.0(right) to 1.0(left), and -1.0 (if disabled)
  *
  * @param obj Object being edited.
  * @param part Part that contain state.
@@ -2342,14 +2352,17 @@ EAPI double edje_edit_state_text_elipsis_get(Evas_Object *obj, const char *part,
 /** Set the text vertical align of a part state.
  *
  * The value range is from 0.0(right) to 1.0(left)
+ * If the value is in range from -1.0 to 0.0 then ellipsis is disabled.
  *
  * @param obj Object being edited.
  * @param part Part that contain state.
  * @param state The name of the state to set the text elipses value (not including the state value).
  * @param value The state value.
  * @param balance The position where to cut the string
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE - otherwise.
  */
-EAPI void edje_edit_state_text_elipsis_set(Evas_Object *obj, const char *part, const char *state, double value, double balance);
+EAPI Eina_Bool edje_edit_state_text_elipsis_set(Evas_Object *obj, const char *part, const char *state, double value, double balance);
 
 /** Get if the text part fit it's container horizontally
  *
@@ -2369,8 +2382,10 @@ EAPI Eina_Bool edje_edit_state_text_fit_x_get(Evas_Object *obj, const char *part
  * @param state The name of the state to set the if the text part fit it's container horizontally (not including the state value).
  * @param value The state value.
  * @param fit EINA_TRUE to make the text fit it's container horizontally, EINA_FALSE otherwise.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE - otherwise.
  */
-EAPI void edje_edit_state_text_fit_x_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool fit);
+EAPI Eina_Bool edje_edit_state_text_fit_x_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool fit);
 
 /** Get if the text part fit it's container vertically
  *
@@ -2390,8 +2405,10 @@ EAPI Eina_Bool edje_edit_state_text_fit_y_get(Evas_Object *obj, const char *part
  * @param state The name of the state to set the if the text part fit it's container vertically (not including the state value).
  * @param value The state value.
  * @param fit EINA_TRUE to make the text fit it's container vertically, EINA_FALSE otherwise.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE - otherwise.
  */
-EAPI void edje_edit_state_text_fit_y_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool fit);
+EAPI Eina_Bool edje_edit_state_text_fit_y_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool fit);
 
 /** Get if the text part forces the minimum horizontal size of the container to be equal to the minimum horizontal size of the text part
  *
@@ -2444,8 +2461,10 @@ EAPI Eina_Bool edje_edit_state_text_max_y_get(Evas_Object *obj, const char *part
  * @param state The name of the state to set the the minimum horizontal size of the container to be equal (not including the state value).
  * @param value The state value.
  * @param v EINA_TRUE to make the text force it's forces container's minimum horizontal size, EINA_FALSE otherwise.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE - otherwise.
  */
-EAPI void edje_edit_state_text_min_x_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool v);
+EAPI Eina_Bool edje_edit_state_text_min_x_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool v);
 
 /** Set if the text part forces the maximum horizontal size of the container to be equal to the maximum horizontal size of the text part
  *
@@ -2454,8 +2473,10 @@ EAPI void edje_edit_state_text_min_x_set(Evas_Object *obj, const char *part, con
  * @param state The name of the state to set the the maximum horizontal size of the container to be equal (not including the state value).
  * @param value The state value.
  * @param v EINA_TRUE to make the text force it's forces container's maximum horizontal size, EINA_FALSE otherwise.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE - otherwise.
  */
-EAPI void edje_edit_state_text_max_x_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool v);
+EAPI Eina_Bool edje_edit_state_text_max_x_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool v);
 
 /** Set if the text part forces the minimum vertical size of the container to be equal to the minimum vertical size of the text part
  *
@@ -2464,8 +2485,10 @@ EAPI void edje_edit_state_text_max_x_set(Evas_Object *obj, const char *part, con
  * @param state The name of the state to set the the minimum vertical size of the container to be equal (not including the state value).
  * @param value The state value.
  * @param v EINA_TRUE to make the text force it's forces container's minimum vertical size, EINA_FALSE otherwise.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE - otherwise.
  */
-EAPI void edje_edit_state_text_min_y_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool v);
+EAPI Eina_Bool edje_edit_state_text_min_y_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool v);
 
 /** Set if the text part forces the maximum vertical size of the container to be equal to the maximum vertical size of the text part
  *
@@ -2474,8 +2497,10 @@ EAPI void edje_edit_state_text_min_y_set(Evas_Object *obj, const char *part, con
  * @param state The name of the state to set the the maximum vertical size of the container to be equal (not including the state value).
  * @param value The state value.
  * @param v EINA_TRUE to make the text force it's forces container's maximum vertical size, EINA_FALSE otherwise.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE - otherwise.
  */
-EAPI void edje_edit_state_text_max_y_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool v);
+EAPI Eina_Bool edje_edit_state_text_max_y_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool v);
 
 /** Get the list of all the fonts in the given edje.
  *
