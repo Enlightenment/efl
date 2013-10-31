@@ -106,6 +106,7 @@ _ecore_evas_wl_common_cb_mouse_in(void *data EINA_UNUSED, int type EINA_UNUSED, 
    if (ee->func.fn_mouse_in) ee->func.fn_mouse_in(ee);
    ecore_event_evas_modifier_lock_update(ee->evas, ev->modifiers);
    evas_event_feed_mouse_in(ee->evas, ev->timestamp, NULL);
+   _ecore_evas_mouse_move_process(ee, ev->x, ev->y, ev->timestamp);
    ee->in = EINA_TRUE;
    return ECORE_CALLBACK_PASS_ON;
 }
@@ -126,6 +127,7 @@ _ecore_evas_wl_common_cb_mouse_out(void *data EINA_UNUSED, int type EINA_UNUSED,
    if (ee->in)
      {
         ecore_event_evas_modifier_lock_update(ee->evas, ev->modifiers);
+        _ecore_evas_mouse_move_process(ee, ev->x, ev->y, ev->timestamp);
         evas_event_feed_mouse_out(ee->evas, ev->timestamp, NULL);
         if (ee->func.fn_mouse_out) ee->func.fn_mouse_out(ee);
         if (ee->prop.cursor.object) evas_object_hide(ee->prop.cursor.object);
