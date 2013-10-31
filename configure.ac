@@ -189,6 +189,7 @@ case "$host_os" in
       # TODO: check cygwin* here
       have_win32="yes"
       have_windows="yes"
+      EFL_CFLAGS="${EFL_CFLAGS} -D__MINGW_PRINTF_FORMAT"
    ;;
    darwin*)
       have_darwin="yes"
