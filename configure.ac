@@ -47,7 +47,7 @@ case "$efl_api" in
         EFL_API_LEGACY_DEF=""
         EFL_API_EO_DEF="#define EFL_EO_API_SUPPORT"
         ;;
-    *) AC_MSG_ERROR([Invalid web backend: must be eo, legacy or both]) ;;
+    *) AC_MSG_ERROR([Invalid api (${efl_api}): must be eo, legacy or both]) ;;
 esac
 
 AC_SUBST(EFL_API_LEGACY_DEF)
