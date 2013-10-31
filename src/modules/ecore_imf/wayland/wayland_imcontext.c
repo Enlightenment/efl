@@ -619,13 +619,18 @@ wayland_im_context_focus_in(Ecore_IMF_Context *ctx)
 {
    WaylandIMContext *imcontext = (WaylandIMContext *)ecore_imf_context_data_get(ctx);
    Ecore_Wl_Input *input;
+   struct wl_seat *seat;
 
    EINA_LOG_DOM_INFO(_ecore_imf_wayland_log_dom, "focus-in");
 
    if (!imcontext->window) return;
 
    input = imcontext->window->keyboard_device;
-   if (!input || !input->seat)
+   if (!input)
+     return;
+
+   seat = ecore_wl_input_seat_get(input);
+   if (!seat)
      return;
 
    imcontext->input = input;
@@ -633,8 +638,7 @@ wayland_im_context_focus_in(Ecore_IMF_Context *ctx)
    if (imcontext->text_input)
      {
         wl_text_input_show_input_panel(imcontext->text_input);
-        wl_text_input_activate(imcontext->text_input,
-                               input->seat,
+        wl_text_input_activate(imcontext->text_input, seat,
                                ecore_wl_window_surface_get(imcontext->window));
      }
 }
@@ -650,7 +654,7 @@ wayland_im_context_focus_out(Ecore_IMF_Context *ctx)
 
    if (imcontext->text_input)
      wl_text_input_deactivate(imcontext->text_input,
-                              imcontext->input->seat);
+                              ecore_wl_input_seat_get(imcontext->input));
 
    imcontext->input = NULL;
 }

@@ -287,6 +287,19 @@ ecore_wl_input_get(void)
    return _ecore_wl_disp->input;
 }
 
+/**
+ * @since 1.8
+ */
+EAPI struct wl_seat *
+ecore_wl_input_seat_get(Ecore_Wl_Input *input)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!input) return NULL;
+
+   return input->seat;
+}
+
 /* local functions */
 void 
 _ecore_wl_input_add(Ecore_Wl_Display *ewd, unsigned int id)

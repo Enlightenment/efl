@@ -109,58 +109,6 @@ struct _Ecore_Wl_Output
    void *data;
 };
 
-struct _Ecore_Wl_Input
-{
-   Ecore_Wl_Display *display;
-   struct wl_seat *seat;
-   struct wl_pointer *pointer;
-   struct wl_keyboard *keyboard;
-   struct wl_touch *touch;
-
-   const char *cursor_name;
-   struct wl_cursor *cursor;
-   struct wl_surface *cursor_surface;
-   struct wl_callback *cursor_frame_cb;
-   Ecore_Timer *cursor_timer;
-   unsigned int cursor_current_index;
-
-   struct wl_data_device *data_device;
-   struct wl_data_source *data_source;
-   struct wl_array data_types;
-
-   Ecore_Wl_Window *pointer_focus;
-   Ecore_Wl_Window *keyboard_focus;
-
-   unsigned int button;
-   unsigned int timestamp;
-   unsigned int modifiers;
-   unsigned int pointer_enter_serial;
-   int sx, sy;
-
-   struct wl_list link;
-
-   Ecore_Wl_Window *grab;
-   unsigned int grab_button;
-
-   Ecore_Wl_Dnd_Source *drag_source;
-   Ecore_Wl_Dnd_Source *selection_source;
-
-   struct
-     {
-        struct xkb_keymap *keymap;
-        struct xkb_state *state;
-        xkb_mod_mask_t control_mask;
-        xkb_mod_mask_t alt_mask;
-        xkb_mod_mask_t shift_mask;
-     } xkb;
-
-   struct 
-     {
-        Ecore_Timer *tmr;
-        unsigned int sym, key, time;
-     } repeat;
-};
-
 struct _Ecore_Wl_Window
 {
    Ecore_Wl_Display *display;
@@ -524,6 +472,7 @@ EAPI void ecore_wl_input_ungrab(Ecore_Wl_Input *input);
 EAPI void ecore_wl_input_pointer_set(Ecore_Wl_Input *input, struct wl_surface *surface, int hot_x, int hot_y);
 EAPI void ecore_wl_input_cursor_from_name_set(Ecore_Wl_Input *input, const char *cursor_name);
 EAPI void ecore_wl_input_cursor_default_restore(Ecore_Wl_Input *input);
+EAPI struct wl_seat *ecore_wl_input_seat_get(Ecore_Wl_Input *input);
 
 EAPI struct wl_list *ecore_wl_outputs_get(void);
 
