@@ -515,9 +515,9 @@ EAPI char            *_elm_access_text_get(const Elm_Access_Info *ac, int type, 
 EAPI void             _elm_access_read(Elm_Access_Info *ac, int type, const Evas_Object *obj);
 EAPI void             _elm_access_say(const char *txt);
 EAPI Elm_Access_Info *_elm_access_info_get(const Evas_Object *obj);
-EAPI void             _elm_access_object_hilight(Evas_Object *obj);
+EAPI void             _elm_access_object_highlight(Evas_Object *obj);
 EAPI void             _elm_access_object_unhilight(Evas_Object *obj);
-EAPI void             _elm_access_object_hilight_disable(Evas *e);
+EAPI void             _elm_access_object_highlight_disable(Evas *e);
 EAPI void             _elm_access_object_register(Evas_Object *obj, Evas_Object *hoverobj);
 EAPI void             _elm_access_object_unregister(Evas_Object *obj, Evas_Object *hoverobj);
 EAPI Eina_Bool        _elm_access_2nd_click_timeout(Evas_Object *obj);

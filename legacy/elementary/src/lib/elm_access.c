@@ -247,7 +247,7 @@ _access_highlight_read(Elm_Access_Info *ac, Evas_Object *obj)
    if (_elm_config->access_mode != ELM_ACCESS_MODE_OFF)
      {
         if (ac->on_highlight) ac->on_highlight(ac->on_highlight_data);
-        _elm_access_object_hilight(obj);
+        _elm_access_object_highlight(obj);
 
         for (type = ELM_ACCESS_INFO_FIRST + 1; type < ELM_ACCESS_INFO_LAST; type++)
           {
@@ -352,13 +352,13 @@ _access_2nd_click_timeout_cb(void *data)
 static void
 _access_obj_hilight_del_cb(void *data __UNUSED__, Evas *e, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   _elm_access_object_hilight_disable(e);
+   _elm_access_object_highlight_disable(e);
 }
 
 static void
 _access_obj_hilight_hide_cb(void *data __UNUSED__, Evas *e, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   _elm_access_object_hilight_disable(e);
+   _elm_access_object_highlight_disable(e);
 }
 
 static void
@@ -773,7 +773,7 @@ _elm_access_object_get(const Evas_Object *obj)
 }
 
 EAPI void
-_elm_access_object_hilight(Evas_Object *obj)
+_elm_access_object_highlight(Evas_Object *obj)
 {
    Evas_Object *o;
    Evas_Coord x, y, w, h;
@@ -975,7 +975,7 @@ _elm_access_edje_object_part_object_unregister(Evas_Object* obj __UNUSED__,
 }
 
 EAPI void
-_elm_access_object_hilight_disable(Evas *e)
+_elm_access_object_highlight_disable(Evas *e)
 {
    Evas_Object *o, *ptarget;
 
@@ -1304,7 +1304,7 @@ elm_access_action(Evas_Object *obj, const Elm_Access_Action_Type type, Elm_Acces
       case ELM_ACCESS_ACTION_UNHIGHLIGHT:
         evas = evas_object_evas_get(obj);
         if (!evas) return EINA_FALSE;
-        _elm_access_object_hilight_disable(evas);
+        _elm_access_object_highlight_disable(evas);
         break;
 
       case ELM_ACCESS_ACTION_HIGHLIGHT_NEXT:

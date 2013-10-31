@@ -875,7 +875,7 @@ _elm_win_focus_out(Ecore_Evas *ee)
      }
 
    /* access */
-   _elm_access_object_hilight_disable(evas_object_evas_get(obj));
+   _elm_access_object_highlight_disable(evas_object_evas_get(obj));
 
    /* do nothing */
    /* if (sd->img_obj) */
@@ -1950,7 +1950,7 @@ _elm_win_access(Eina_Bool is_access)
         if (!is_access)
           {
              evas = evas_object_evas_get(obj);
-            if (evas) _elm_access_object_hilight_disable(evas);
+            if (evas) _elm_access_object_highlight_disable(evas);
           }
      }
 }
