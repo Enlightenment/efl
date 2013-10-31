@@ -2439,7 +2439,7 @@ _elm_win_frame_cb_close(void *data,
 }
 
 static void 
-_elm_win_frame_obj_maximized(void *data, Evas_Object *obj, void *event)
+_elm_win_frame_obj_maximized(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    Elm_Win_Smart_Data *sd;
 
@@ -2448,7 +2448,7 @@ _elm_win_frame_obj_maximized(void *data, Evas_Object *obj, void *event)
 }
 
 static void 
-_elm_win_frame_obj_unmaximized(void *data, Evas_Object *obj, void *event)
+_elm_win_frame_obj_unmaximized(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    Elm_Win_Smart_Data *sd;
 
