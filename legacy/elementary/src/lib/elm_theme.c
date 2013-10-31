@@ -767,3 +767,122 @@ elm_theme_data_get(Elm_Theme *th, const char *key)
    if (!th) th = &(theme_default);
    return _elm_theme_data_find(th, key);
 }
+
+EAPI const char *
+elm_theme_group_path_find(Elm_Theme *th, const char *group)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(group, NULL);
+   if (!th) th = &(theme_default);
+   return _elm_theme_group_file_find(th, group);
+}
+
+static Eina_List *
+_file_find_append(Eina_List *list, const char *home, const char *f)
+{
+   char buf[PATH_MAX];
+
+   if ((f[0] == '/') || ((f[0] == '.') && (f[1] == '/')) ||
+       ((f[0] == '.') && (f[1] == '.') && (f[2] == '/')) ||
+       ((isalpha(f[0])) && (f[1] == ':')))
+     {
+        list = eina_list_append(list, eina_stringshare_add(f));
+     }
+   else if (((f[0] == '~') && (f[1] == '/')))
+     {
+        snprintf(buf, sizeof(buf), "%s/%s", home, f + 2);
+        list = eina_list_append(list, eina_stringshare_add(buf));
+     }
+   else
+     {
+        snprintf(buf, sizeof(buf), "%s/"ELEMENTARY_BASE_DIR"/themes/%s.edj", home, f);
+        list = eina_list_append(list, eina_stringshare_add(buf));
+        snprintf(buf, sizeof(buf), "%s/themes/%s.edj", _elm_data_dir, f);
+        list = eina_list_append(list, eina_stringshare_add(buf));
+     }
+   return list;
+}
+
+EAPI Eina_List *
+elm_theme_group_base_list(Elm_Theme *th, const char *base)
+{
+   Eina_List *list = NULL, *files = NULL, *coll, *l;
+   int len;
+   Eina_Stringshare *c, *c2, *f;
+   static const char *home = NULL;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(base, NULL);
+   if (!th) th = &(theme_default);
+
+   // XXX: look results up in a hash for speed
+   len = strlen(base);
+   if (!home) // get homedir once only
+     {
+        home = getenv("HOME");
+        if (!home) home = "";
+     }
+   // go through overlay, themes and extensions in that order and build list
+   EINA_LIST_FOREACH(th->overlay, l, f)
+     files = _file_find_append(files, home, f);
+   EINA_LIST_FOREACH(th->themes, l, f)
+     files = _file_find_append(files, home, f);
+   EINA_LIST_FOREACH(th->extension, l, f)
+     files = _file_find_append(files, home, f);
+   // go through all possible theme files and find collections that match
+   EINA_LIST_FREE(files, f)
+     {
+        coll = edje_file_collection_list(f);
+        EINA_LIST_FREE(coll, c)
+          {
+             if (!strncmp(c, base, len)) // if base == start of collection str
+               {
+                  EINA_LIST_FOREACH(list, l, c2) // check if already in list
+                    {
+                       if (!strcmp(c, c2)) break;
+                    }
+                  if (!l) // if not already in list append shared str to list
+                    {
+                       c2 = eina_stringshare_add(c);
+                       list = eina_list_append(list, c2);
+                    }
+               }
+             eina_stringshare_del(c);
+          }
+     }
+   // sort the list nicely at the end
+   list = eina_list_sort(list, 0, EINA_COMPARE_CB(strcmp));
+   // XXX: store results in hash for fast lookup...
+   return list;
+}
+
+EAPI const char *
+elm_theme_system_dir_get(void)
+{
+   static char *path = NULL;
+   char buf[PATH_MAX];
+   
+   if (path) return path;
+   if (!path)
+     {
+        snprintf(buf, sizeof(buf), "%s/themes", _elm_data_dir);
+        path = strdup(buf);
+     }
+   return path;
+}
+
+EAPI const char *
+elm_theme_user_dir_get(void)
+{
+   static char *path = NULL;
+   char buf[PATH_MAX];
+   
+   if (path) return path;
+   if (!path)
+     {
+        char *home = getenv("HOME");
+        if (!home) home = "";
+        
+        snprintf(buf, sizeof(buf), "%s/"ELEMENTARY_BASE_DIR"/themes", home);
+        path = strdup(buf);
+     }
+   return path;
+}
+

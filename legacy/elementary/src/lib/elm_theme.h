@@ -432,5 +432,80 @@ EAPI Elm_Theme       *elm_object_theme_get(const Evas_Object *obj);
 EAPI const char      *elm_theme_data_get(Elm_Theme *th, const char *key);
 
 /**
+ * Get the file path for an edje file for the group and theme given
+ *
+ * @param th The theme, or NULL for default theme
+ * @param group The group in the edje file to look for
+ * @return The full path to the file as a string
+ *
+ * This function looks up the given edje @p group in the set of theme edje
+ * files configured for the theme @p th (which if NULL indicates the default
+ * theme). If not found in any, NULL wil be returned. If found, the string
+ * returned is internal and should not be freed, but will only be valid
+ * until the theme is re-configured, or cache flushed, so if the string needs
+ * to be kept, duplicate it and store that. The string will be a stringshare
+ * string that is returned by functions like eina_stringshare_add() so it can
+ * be just references via stringshare functions if desired.
+ *
+ * If group is NULL, then nothing can be looked up, so it is a non-sensical
+ * request.
+ *
+ * @ingroup Theme
+ */
+EAPI const char *elm_theme_group_path_find(Elm_Theme *th, const char *group);
+
+/**
+ * Get a list of groups that match the initial base string given within all themes
+ *
+ * @param th The theme, or NULL for default theme
+ * @param base The base string group collection to look for
+ * @return A list of collection names (sorted) or NULL if none found
+ *
+ * This function will walk all theme files configured in the theme @p th (or
+ * NULL if its the default) and find all groups that BEGIN with the string
+ * @p begin and have that string as at LEAST their start, and then add the
+ * fulll group name that matches to the list and return that full group
+ * group string.
+ *
+ * The list returned must be freed by the caller, with each string being a
+ * stringshared string to be freed with eina_stringshare_del(). Not doing so
+ * may result in a leak.
+ *
+ * @ingroup Theme
+ */
+ EAPI Eina_List *elm_theme_group_base_list(Elm_Theme *th, const char *base);
+
+/**
+ * Get the file path where elementary system theme files are found
+ * 
+ * @return A string that holds the path where system themes are
+ * 
+ * This returns the location in the filesystem where the system themes are
+ * to be found that elementary looks for. This is useful for something
+ * that wishes toiterate over the files in this folder and display them, for
+ * example a theme selector.
+ * 
+ * @ingroup Theme
+ */
+EAPI const char *elm_theme_system_dir_get(void);
+
+/**
+ * Get the file path where elementary user theme files are found
+ * 
+ * @return A string that holds the path where user themes are
+ * 
+ * This returns the location in the filesystem where the user themes are
+ * to be found that elementary looks for. This is useful for something
+ * that wishes toiterate over the files in this folder and display them, for
+ * example a theme selector.
+ * 
+ * User themes are always looked for before system themes. The user theme
+ * directory is normally expected to be writable by the user.
+ * 
+ * @ingroup Theme
+ */
+EAPI const char *elm_theme_user_dir_get(void);
+
+/**
  * @}
  */
