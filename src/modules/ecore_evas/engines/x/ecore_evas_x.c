@@ -1043,7 +1043,7 @@ _fake_out(void *data)
    Ecore_Evas *ee = data;
    Ecore_Evas_Engine_Data_X11 *edata = ee->engine.data;
    Ecore_X_Event_Mouse_Out *e = &(edata->out_ev);
-   
+
    edata->outdelay = NULL;
 
    ecore_event_evas_modifier_lock_update(ee->evas, e->modifiers);
