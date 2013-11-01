@@ -86,6 +86,9 @@ ecore_wl_window_new(Ecore_Wl_Window *parent, int x, int y, int w, int h, int buf
    win->opaque.w = w;
    win->opaque.h = h;
 
+   win->title = NULL;
+   win->class_name = NULL;
+
    eina_hash_add(_windows, _ecore_wl_window_id_str_get(win->id), win);
    return win;
 }
@@ -120,6 +123,9 @@ ecore_wl_window_free(Ecore_Wl_Window *win)
    win->shell_surface = NULL;
    if (win->surface) wl_surface_destroy(win->surface);
    win->surface = NULL;
+
+   if (win->title) eina_stringshare_del(win->title);
+   if (win->class_name) eina_stringshare_del(win->class_name);
 
    /* HMMM, why was this disabled ? */
    free(win);
@@ -258,6 +264,8 @@ ecore_wl_window_show(Ecore_Wl_Window *win)
              win->shell_surface = 
                wl_shell_get_shell_surface(_ecore_wl_disp->wl.shell, 
                                           win->surface);
+             wl_shell_surface_set_title(win->shell_surface, win->title);
+             wl_shell_surface_set_class(win->shell_surface, win->class_name);
           }
 
         if (win->shell_surface)
@@ -677,6 +685,32 @@ ecore_wl_window_id_get(Ecore_Wl_Window *win)
 
    if (!win) return 0;
    return win->id;
+}
+
+/* @since 1.8 */
+EAPI void
+ecore_wl_window_title_set(Ecore_Wl_Window *win, const char *title)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!win) return;
+   eina_stringshare_replace(&win->title, title);
+
+   if (win->shell_surface)
+     wl_shell_surface_set_title(win->shell_surface, win->title);
+}
+
+/* @since 1.8 */
+EAPI void
+ecore_wl_window_class_name_set(Ecore_Wl_Window *win, const char *class_name)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!win) return;
+   eina_stringshare_replace(&win->class_name, class_name);
+
+   if (win->shell_surface)
+     wl_shell_surface_set_class(win->shell_surface, win->class_name);
 }
 
 

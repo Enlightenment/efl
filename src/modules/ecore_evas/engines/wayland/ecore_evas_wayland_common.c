@@ -920,9 +920,8 @@ _ecore_evas_wl_common_title_set(Ecore_Evas *ee, const char *title)
           evas_object_text_text_set(sd->text, ee->prop.title);
      }
 
-   if ((ee->prop.title) && (wdata->win->shell_surface))
-     wl_shell_surface_set_title(wdata->win->shell_surface,
-                                ee->prop.title);
+   if (ee->prop.title)
+     ecore_wl_window_title_set(wdata->win, ee->prop.title);
 }
 
 void
@@ -941,9 +940,8 @@ _ecore_evas_wl_common_name_class_set(Ecore_Evas *ee, const char *n, const char *
    if (n) ee->prop.name = strdup(n);
    if (c) ee->prop.clas = strdup(c);
 
-   if ((ee->prop.clas) && (wdata->win->shell_surface))
-     wl_shell_surface_set_class(wdata->win->shell_surface,
-                                ee->prop.clas);
+   if (ee->prop.clas)
+     ecore_wl_window_class_name_set(wdata->win, ee->prop.clas);
 }
 
 void

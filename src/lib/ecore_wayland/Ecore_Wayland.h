@@ -127,6 +127,9 @@ struct _Ecore_Wl_Window
    int id, surface_id;
    int rotation;
 
+   const char *title;
+   const char *class_name;
+
    Eina_Rectangle allocation;
 
    struct 
@@ -627,7 +630,10 @@ EAPI void ecore_wl_window_cursor_from_name_set(Ecore_Wl_Window *win, const char 
 EAPI void ecore_wl_window_cursor_default_restore(Ecore_Wl_Window *win);
 EAPI void ecore_wl_window_parent_set(Ecore_Wl_Window *win, Ecore_Wl_Window *parent);
 
+
 EAPI int ecore_wl_window_id_get(Ecore_Wl_Window *win);
+EAPI void ecore_wl_window_title_set(Ecore_Wl_Window *win, const char *title);
+EAPI void ecore_wl_window_class_name_set(Ecore_Wl_Window *win, const char *class_name);
 
 /**
  * Returns a wl_surface with no association to any wl_shell_surface.

@@ -389,13 +389,6 @@ _ecore_evas_wl_show(Ecore_Evas *ee)
         /*      einfo->info.surface = ecore_wl_window_surface_get(wdata->win); */
         /*      evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo); */
         /*   } */
-
-        if ((ee->prop.clas) && (wdata->win->shell_surface))
-          wl_shell_surface_set_class(wdata->win->shell_surface, 
-                                     ee->prop.clas);
-        if ((ee->prop.title) && (wdata->win->shell_surface))
-          wl_shell_surface_set_title(wdata->win->shell_surface, 
-                                     ee->prop.title);
      }
 
    if (wdata->frame)
