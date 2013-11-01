@@ -1,4 +1,5 @@
 2013-10-24  Sung W. Park (sung_)
+
         * EvasGL: Fixed direct rendering mode not clipping to its clip region.
 
 2013-10-24  Youngbok Shin
@@ -7,27 +8,27 @@
 
 2013-10-18  Youngbok Shin
 
-        * Fixed the textblock format to be drawn according to
-        the glyph's horizontal advance width.
+        * Evas: Fixed the textblock format to be drawn according to the glyph's
+	horizontal advance width.
 
 2013-10-15  ChunEon Park (Hermet)
 
-        * Fixed the map surface to be updated properly. By tranversing the 
+        * Evas: Fixed the map surface to be updated properly. By tranversing the
         whole of the map target's tree, it decides to update the map
         surface to be redrawn if one of the objects is changed except the
         clipper itself.
 
 2013-10-15  ChunEon Park (Hermet)
 
-        * Fixed memory leak in the edje map color transition.
+        * Edje: Fixed memory leak in the edje map color transition.
 
 2013-10-11  Carsten Haitzler (The Rasterman)
 
-        * deprecate/remove all the eina_error setting (and getting)
+        * Eina: deprecate/remove all the eina_error setting (and getting)
         within efl no one uses it and it frankly it much more pain
         than it's worth. the api's are still there, and efl api's still
         fail as they did before.. they just don't ALSO set eina_error.
-        
+
 2013-10-11  Cedric Bail
 
 	* Eina: add Eina_Spinlock API,
@@ -433,11 +434,11 @@
 
 2013-05-20  Carsten Haitzler (The Rasterman)
 
-        * Improve memory footpriny by only creating evasgl context on demand.
+        * Evas: Improve memory footpriny by only creating evasgl context on demand.
 
 2013-05-18  Carsten Haitzler (The Rasterman)
 
-        * Reduce waiting on gl so it cvan fully run async from cpu.
+        * Evas: Reduce waiting on gl so it cvan fully run async from cpu.
 
 2013-05-16  Tom Hacohen
 
