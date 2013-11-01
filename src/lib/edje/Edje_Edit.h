@@ -1987,8 +1987,10 @@ EAPI Eina_Bool edje_edit_state_visible_get(Evas_Object *obj, const char *part, c
  * @param state The name of the state to set visibility (not including the state value).
  * @param value The state value.
  * @param visible To set state visible (EINA_TRUE if the state is visible, EINA_FALSE otherwise)
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
  */
-EAPI void edje_edit_state_visible_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool visible);
+EAPI Eina_Bool edje_edit_state_visible_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool visible);
 
 /** Get the color class of the given part state.
  *
@@ -2010,8 +2012,10 @@ EAPI const char *edje_edit_state_color_class_get(Evas_Object *obj, const char *p
  * @param state The name of the state to set color class (not including the state value).
  * @param value The state value.
  * @param color_class The color class to assign.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
  */
-EAPI void edje_edit_state_color_class_set(Evas_Object *obj, const char *part, const char *state, double value, const char *color_class);
+EAPI Eina_Bool edje_edit_state_color_class_set(Evas_Object *obj, const char *part, const char *state, double value, const char *color_class);
 
 /** Get the list of parameters for an external part.
  *

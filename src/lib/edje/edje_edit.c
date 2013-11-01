@@ -3533,14 +3533,18 @@ edje_edit_state_visible_get(Evas_Object *obj, const char *part, const char *stat
    return pd->visible;
 }
 
-EAPI void
+EAPI Eina_Bool
 edje_edit_state_visible_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool visible)
 {
-   GET_PD_OR_RETURN();
-   //printf("Set state visible flag of part: %s state: %s to: %d\n", part, state, visible);
+   if ((!obj) || (!part) || (!state))
+     return EINA_FALSE;
+   GET_PD_OR_RETURN(EINA_FALSE);
+
    if (visible) pd->visible = 1;
    else         pd->visible = 0;
+
    edje_object_calc_force(obj);
+   return EINA_TRUE;
 }
 
 EAPI unsigned char
@@ -3569,13 +3573,17 @@ edje_edit_state_color_class_get(Evas_Object *obj, const char *part, const char *
    return eina_stringshare_add(pd->color_class);
 }
 
-EAPI void
+EAPI Eina_Bool
 edje_edit_state_color_class_set(Evas_Object *obj, const char *part, const char *state, double value, const char *color_class)
 {
-   GET_PD_OR_RETURN();
-   //printf("Set ColorClass of part: %s state: %s [to: %s]\n", part, state, color_class);
+   if ((!obj) || (!part) || (!state))
+     return EINA_FALSE;
+   GET_PD_OR_RETURN(EINA_FALSE);
+
    _edje_if_string_free(ed, pd->color_class);
-   pd->color_class = (char*)eina_stringshare_add(color_class);
+
+   pd->color_class = (char *)eina_stringshare_add(color_class);
+   return EINA_TRUE;
 }
 
 EAPI const Eina_List *
@@ -4798,7 +4806,7 @@ edje_edit_state_image_border_fill_set(Evas_Object *obj, const char *part, const 
 
    if ((!obj) || (!part) || (!state))
      return EINA_FALSE;
-   if ((fill < 0) || (fill > 2))
+   if (fill > 2)
      return EINA_FALSE;
 
    eina_error_set(0);
