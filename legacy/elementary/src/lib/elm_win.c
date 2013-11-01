@@ -2438,24 +2438,6 @@ _elm_win_frame_cb_close(void *data,
    evas_object_unref(win);
 }
 
-static void 
-_elm_win_frame_obj_maximized(void *data, Evas_Object *obj, void *event)
-{
-   Elm_Win_Smart_Data *sd;
-
-   sd = data;
-   edje_object_signal_emit(sd->frame_obj, "elm,state,maximized", "elm");
-}
-
-static void 
-_elm_win_frame_obj_unmaximized(void *data, Evas_Object *obj, void *event)
-{
-   Elm_Win_Smart_Data *sd;
-
-   sd = data;
-   edje_object_signal_emit(sd->frame_obj, "elm,state,unmaximized", "elm");
-}
-
 static void
 _elm_win_frame_add(Elm_Win_Smart_Data *sd,
                    const char *style)
@@ -2494,13 +2476,6 @@ _elm_win_frame_add(Elm_Win_Smart_Data *sd,
      (sd->frame_obj, EVAS_CALLBACK_MOVE, _elm_win_frame_obj_move, sd);
    evas_object_event_callback_add
      (sd->frame_obj, EVAS_CALLBACK_RESIZE, _elm_win_frame_obj_resize, sd);
-
-   /* FIXME: Elm Theme needs support for fullscreen state
-    * (elm,state,fullscreen/unfullscreen) */
-   evas_object_smart_callback_add(sd->obj, SIG_MAXIMIZED, 
-                                  _elm_win_frame_obj_maximized, sd);
-   evas_object_smart_callback_add(sd->obj, SIG_UNMAXIMIZED, 
-                                  _elm_win_frame_obj_unmaximized, sd);
 
    /* NB: Do NOT remove these calls !! Needed to calculate proper
     * framespace on inital show of the window */
@@ -2560,11 +2535,6 @@ _elm_win_frame_del(Elm_Win_Smart_Data *sd)
           (sd->frame_obj, EVAS_CALLBACK_MOVE, _elm_win_frame_obj_move, sd);
         evas_object_event_callback_del_full
           (sd->frame_obj, EVAS_CALLBACK_RESIZE, _elm_win_frame_obj_resize, sd);
-
-        evas_object_smart_callback_del(sd->obj, SIG_MAXIMIZED, 
-                                       _elm_win_frame_obj_maximized);
-        evas_object_smart_callback_del(sd->obj, SIG_UNMAXIMIZED, 
-                                       _elm_win_frame_obj_unmaximized);
 
         edje_object_signal_callback_del
           (sd->frame_obj, "elm,action,move,start", "elm",
