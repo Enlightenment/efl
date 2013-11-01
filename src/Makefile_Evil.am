@@ -69,9 +69,32 @@ else
 lib_evil_libevil_la_LINK = $(CXXLINK) $(lib_evil_libevil_la_LDFLAGS)
 endif
 
+# regex
+
+dist_install_evilheaders_DATA += \
+lib/evil/regex/regex.h
+
+lib_evil_libevil_la_SOURCES += \
+lib/evil/regex/regcomp.c \
+lib/evil/regex/regerror.c \
+lib/evil/regex/regexec.c \
+lib/evil/regex/regfree.c \
+lib/evil/regex/cclass.h \
+lib/evil/regex/cname.h \
+lib/evil/regex/regex2.h \
+lib/evil/regex/utils.h
+
+lib_evil_libevil_la_CPPFLAGS = \
+-I$(top_srcdir)/src/lib/evil \
+-I$(top_srcdir)/src/lib/evil/regex \
+-DPOSIX_MISTAKE
+
+#libdl
+
 lib_evil_libdl_la_SOURCES = lib/evil/dlfcn.c
 
-lib_evil_libdl_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+lib_evil_libdl_la_CPPFLAGS = \
+-I$(top_builddir)/src/lib/efl \
 @EVIL_CFLAGS@ \
 @EVIL_DLFCN_CPPFLAGS@
 lib_evil_libdl_la_LIBADD = \
@@ -121,6 +144,8 @@ bin_evil_test_evil_LDADD = @USE_EVIL_LIBS@
 
 endif
 EXTRA_DIST += \
-lib/evil/gdtoa/README \
-lib/evil/gdtoa/README.mingw \
+lib/evil/regex/regerror.ih \
+lib/evil/regex/engine.ih \
+lib/evil/regex/regcomp.ih \
+lib/evil/regex/engine.c \
 bin/evil/memcpy_glibc_i686.S
