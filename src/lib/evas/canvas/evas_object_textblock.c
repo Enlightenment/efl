@@ -10726,6 +10726,7 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
    /* render object to surface with context, and offxet by x,y */
    obj->layer->evas->engine.func->context_multiplier_unset(output,
 							   context);
+   ENFN->context_render_op_set(output, context, obj->cur->render_op);
    /* FIXME: This clipping is just until we fix inset handling correctly. */
    ENFN->context_clip_clip(output, context,
                               obj->cur->geometry.x + x,

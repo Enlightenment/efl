@@ -358,6 +358,7 @@ Fixes:
      - Evas textblock: fixed an issue with markup_get and markup_to_utf8 behaving differently (markup_get was misbehaving).
      - Fixed the map surface to be updated properly. By tranversing the whole of the map target's tree, it decides to update the map surface to be redrawn if one of the objects is changed except the clipper itself.
      - Fixed the textblock format to be drawn according to the glyph's horizontal advance width.
+     - Fixed the textblock set to context with the textblock object's render operation.
 
     * Ecore:
      - Don't leak fd on exec.
