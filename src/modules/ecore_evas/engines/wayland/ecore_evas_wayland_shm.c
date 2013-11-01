@@ -521,7 +521,6 @@ _ecore_evas_wayland_shm_resize(Ecore_Evas *ee, int location)
      {
         int fw, fh;
 
-        wdata->win->resizing = EINA_TRUE;
         evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
 
         if ((ee->rotation == 90) || (ee->rotation == 270))

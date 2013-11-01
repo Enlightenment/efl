@@ -167,6 +167,7 @@ ecore_wl_window_resize(Ecore_Wl_Window *win, int w, int h, int location)
 
    if (!win) return;
 
+   win->resizing = EINA_TRUE;
    ecore_wl_window_update_size(win, w, h);
 
    if (win->shell_surface)
