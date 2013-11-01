@@ -57,6 +57,12 @@ static const struct wl_callback_listener frame_listener =
 };
 
 /* local functions */
+static void 
+_ecore_evas_wl_common_state_update(Ecore_Evas *ee)
+{
+   if (ee->func.fn_state_change) ee->func.fn_state_change(ee);
+}
+
 static int 
 _ecore_evas_wl_common_render_updates_process(Ecore_Evas *ee, Eina_List *updates)
 {
@@ -661,12 +667,6 @@ _ecore_evas_wl_common_move(Ecore_Evas *ee, int x, int y)
           ecore_wl_window_update_location(wdata->win, x, y);
         if (ee->func.fn_move) ee->func.fn_move(ee);
      }
-}
-
-void 
-_ecore_evas_wl_common_state_update(Ecore_Evas *ee)
-{
-   if (ee->func.fn_state_change) ee->func.fn_state_change(ee);
 }
 
 /* Frame border:
