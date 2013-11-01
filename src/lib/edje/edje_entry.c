@@ -1879,7 +1879,11 @@ _edje_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
              if (shift) _sel_start(en->cursor, rp->object, en);
              else _sel_clear(ed, en->cursor, rp->object, en);
           }
-        _curs_jump_line_by(en->cursor, rp->object, en, -10);
+        if (!_curs_jump_line_by(en->cursor, rp->object, en, -10))
+          {
+             evas_textblock_cursor_line_set(en->cursor, 0);
+             _curs_lin_start(en->cursor, rp->object, en);
+          }
         if (en->select_allow)
           {
              if (shift) _sel_extend(ed, en->cursor, rp->object, en);
@@ -1897,7 +1901,12 @@ _edje_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
              if (shift) _sel_start(en->cursor, rp->object, en);
              else _sel_clear(ed, en->cursor, rp->object, en);
           }
-        _curs_jump_line_by(en->cursor, rp->object, en, 10);
+        if (!_curs_jump_line_by(en->cursor, rp->object, en, 10))
+          {
+             int last = _curs_line_last_get(en->cursor, rp->object, en);
+             evas_textblock_cursor_line_set(en->cursor, last);
+             _curs_lin_end(en->cursor, rp->object, en);
+          }
         if (en->select_allow)
           {
              if (shift) _sel_extend(ed, en->cursor, rp->object, en);
