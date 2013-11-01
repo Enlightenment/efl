@@ -1026,8 +1026,10 @@ EAPI int edje_edit_part_drag_x_get(Evas_Object *obj, const char *part);
  * @param obj Object being edited.
  * @param part Part to set if should be dragged horizontally.
  * @param drag 1 (or -1) if the part should be dragged horizontally, 0 otherwise.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
  */
-EAPI void edje_edit_part_drag_x_set(Evas_Object *obj, const char *part, int drag);
+EAPI Eina_Bool edje_edit_part_drag_x_set(Evas_Object *obj, const char *part, int drag);
 
 /** Get vertical dragable state for part.
  *
@@ -1043,8 +1045,10 @@ EAPI int edje_edit_part_drag_y_get(Evas_Object *obj, const char *part);
  * @param obj Object being edited.
  * @param part Part to set if should be dragged vertically.
  * @param drag 1 (or -1) of the part shpuld be dragged vertically, 0 otherwise.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
  */
-EAPI void edje_edit_part_drag_y_set(Evas_Object *obj, const char *part, int drag);
+EAPI Eina_Bool edje_edit_part_drag_y_set(Evas_Object *obj, const char *part, int drag);
 
 /** Get horizontal dragable step for part.
  *
@@ -1060,8 +1064,10 @@ EAPI int edje_edit_part_drag_step_x_get(Evas_Object *obj, const char *part);
  * @param obj Object being edited.
  * @param part Part to set the drag horizontal step value.
  * @param step The step the will be dragged.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
  */
-EAPI void edje_edit_part_drag_step_x_set(Evas_Object *obj, const char *part, int step);
+EAPI Eina_Bool edje_edit_part_drag_step_x_set(Evas_Object *obj, const char *part, int step);
 
 /** Get vertical dragable step for part.
  *
@@ -1077,8 +1083,10 @@ EAPI int edje_edit_part_drag_step_y_get(Evas_Object *obj, const char *part);
  * @param obj Object being edited.
  * @param part Part to set the drag vertical step value.
  * @param step The step the will be dragged.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
  */
-EAPI void edje_edit_part_drag_step_y_set(Evas_Object *obj, const char *part, int step);
+EAPI Eina_Bool edje_edit_part_drag_step_y_set(Evas_Object *obj, const char *part, int step);
 
 /** Get horizontal dragable count for part.
  *
@@ -1092,8 +1100,10 @@ EAPI int edje_edit_part_drag_count_x_get(Evas_Object *obj, const char *part);
  * @param obj Object being edited.
  * @param part Part to set the drag horizontal count value.
  * @param count The count value.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
  */
-EAPI void edje_edit_part_drag_count_x_set(Evas_Object *obj, const char *part, int count);
+EAPI Eina_Bool edje_edit_part_drag_count_x_set(Evas_Object *obj, const char *part, int count);
 
 /** Get vertical dragable count for part.
  *
@@ -1107,8 +1117,10 @@ EAPI int edje_edit_part_drag_count_y_get(Evas_Object *obj, const char *part);
  * @param obj Object being edited.
  * @param part Part to set the drag vertical count value.
  * @param count The count value.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
  */
-EAPI void edje_edit_part_drag_count_y_set(Evas_Object *obj, const char *part, int count);
+EAPI Eina_Bool edje_edit_part_drag_count_y_set(Evas_Object *obj, const char *part, int count);
 
 /** Get the name of the part that is used as 'confine' for the given draggies.
  *
@@ -1147,6 +1159,25 @@ EAPI const char * edje_edit_part_drag_event_get(Evas_Object *obj, const char *pa
  * @return EINA_TRUE if successful, EINA_FALSE otherwise.
  */
 EAPI Eina_Bool edje_edit_part_drag_event_set(Evas_Object *obj, const char *part, const char *event);
+
+/** Get the name of the part that is used as 'threshold' for the given draggies.
+ *
+ * @param obj Object being edited.
+ * @param part Part to get the name that is used as 'threshold' for the given draggies.
+ *
+ * @return The name of the threshold part or NULL (if unset).
+ */
+EAPI const char * edje_edit_part_drag_threshold_get(Evas_Object *obj, const char *part);
+
+/** Set the name of the part that is used as 'threshold' for the given draggies.
+ *
+ * @param obj Object being edited.
+ * @param part Part to set the name that is used as 'threshold' for the given draggies.
+ * @param confine The name of the threshold part or NULL to unset confine.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool edje_edit_part_drag_threshold_set(Evas_Object *obj, const char *part, const char *threshold);
 
 
 //@}

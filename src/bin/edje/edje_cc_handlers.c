@@ -4369,7 +4369,8 @@ st_collections_group_parts_part_access(void)
         enabled, 1 will set the starting point at 0.0 and -1 at 1.0. The second
         parameter takes any integer and will limit movement to values
         divisible by it, causing the part to jump from position to position.
-        The third parameter, (question from the author: What is count for?).
+        If step is set to 0 it is calculated as width of confine part divided by
+        count.
     @endproperty
 */
 static void
@@ -4394,7 +4395,8 @@ st_collections_group_parts_part_dragable_x(void)
         enabled, 1 will set the starting point at 0.0 and -1 at 1.0. The second
         parameter takes any integer and will limit movement to values
         divisibles by it, causing the part to jump from position to position.
-        The third parameter, (question from the author: What is count for?).
+        If step is set to 0 it is calculated as height of confine part divided by
+        count.
     @endproperty
 */
 static void

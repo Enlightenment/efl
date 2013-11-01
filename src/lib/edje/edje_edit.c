@@ -2506,76 +2506,75 @@ EAPI int
 edje_edit_part_drag_x_get(Evas_Object *obj, const char *part)
 {
    GET_RP_OR_RETURN(0);
-   //printf("Get dragX for part: %s\n", part);
    return rp->part->dragable.x;
 }
 
-EAPI void
+EAPI Eina_Bool
 edje_edit_part_drag_x_set(Evas_Object *obj, const char *part, int drag)
 {
-   GET_RP_OR_RETURN();
-   //printf("Set dragX for part: %s\n", part);
+   GET_RP_OR_RETURN(EINA_FALSE);
    rp->part->dragable.x = drag;
 
    if (!drag && !rp->part->dragable.y)
      {
-	free(rp->drag);
-	rp->drag = NULL;
-	return;
+        free(rp->drag);
+        rp->drag = NULL;
+        return EINA_TRUE;
      }
 
-   if (rp->drag) return;
+   if (rp->drag) return EINA_TRUE;
 
    rp->drag = _alloc(sizeof (Edje_Real_Part_Drag));
-   if (!rp->drag) return;
+   if (!rp->drag) return EINA_FALSE;
 
    rp->drag->step.x = rp->part->dragable.step_x;
    rp->drag->step.y = rp->part->dragable.step_y;
+   return EINA_TRUE;
 }
 
 EAPI int
 edje_edit_part_drag_y_get(Evas_Object *obj, const char *part)
 {
    GET_RP_OR_RETURN(0);
-   //printf("Get dragY for part: %s\n", part);
    return rp->part->dragable.y;
 }
 
-EAPI void
+EAPI Eina_Bool
 edje_edit_part_drag_y_set(Evas_Object *obj, const char *part, int drag)
 {
-   GET_RP_OR_RETURN();
-   //printf("Set dragY for part: %s\n", part);
+   GET_RP_OR_RETURN(EINA_FALSE);
    rp->part->dragable.y = drag;
 
    if (!drag && !rp->part->dragable.x)
      {
-	free(rp->drag);
-	rp->drag = NULL;
-	return;
+        free(rp->drag);
+        rp->drag = NULL;
+        return EINA_TRUE;
      }
 
-   if (rp->drag) return;
+   if (rp->drag) return EINA_TRUE;
 
    rp->drag = _alloc(sizeof (Edje_Real_Part_Drag));
-   if (!rp->drag) return;
+   if (!rp->drag) return EINA_FALSE;
 
    rp->drag->step.x = rp->part->dragable.step_x;
    rp->drag->step.y = rp->part->dragable.step_y;
+   return EINA_TRUE;
 }
 
-#define FUNC_PART_DRAG_INT(Class, Value)				\
-  EAPI int								\
+#define FUNC_PART_DRAG_INT(Class, Value) \
+  EAPI int \
   edje_edit_part_drag_##Class##_##Value##_get(Evas_Object *obj, const char *part) \
-  {									\
-     GET_RP_OR_RETURN(0);						\
-     return rp->part->dragable.Class##_##Value;				\
-  }									\
-  EAPI void								\
+  { \
+     GET_RP_OR_RETURN(0); \
+     return rp->part->dragable.Class##_##Value; \
+  } \
+  EAPI Eina_Bool \
   edje_edit_part_drag_##Class##_##Value##_set(Evas_Object *obj, const char *part, int v) \
-  {									\
-     GET_RP_OR_RETURN();						\
-     rp->part->dragable.Class##_##Value = v;				\
+  { \
+     GET_RP_OR_RETURN(EINA_FALSE); \
+     rp->part->dragable.Class##_##Value = v; \
+     return EINA_TRUE; \
   }
 
 FUNC_PART_DRAG_INT(step, x);
@@ -2620,6 +2619,7 @@ FUNC_PART_DRAG_INT(count, y);
 
 FUNC_PART_DRAG_ID(confine);
 FUNC_PART_DRAG_ID(event);
+FUNC_PART_DRAG_ID(threshold);
 
 /*********************/
 /*  PART STATES API  */
