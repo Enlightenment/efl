@@ -3357,12 +3357,13 @@ edje_edit_state_color3_set(Evas_Object *obj, const char *part, const char *state
      GET_PD_OR_RETURN(0);						\
      return TO_DOUBLE(pd->Class.Value);				\
   }									\
-  EAPI void								\
+  EAPI Eina_Bool								\
   edje_edit_state_##Class##_##Value##_set(Evas_Object *obj, const char *part, const char *state, double value, double v) \
   {									\
-     GET_PD_OR_RETURN();						\
-     pd->Class.Value = FROM_DOUBLE(v);				\
+     GET_PD_OR_RETURN(EINA_FALSE);					\
+     pd->Class.Value = FROM_DOUBLE(v);    				\
      edje_object_calc_force(obj);					\
+     return EINA_TRUE;                                                  \
   }
 
 #define FUNC_STATE_INT(Class, Value, Min)				\
@@ -3421,10 +3422,10 @@ FUNC_STATE_DOUBLE(aspect, max);
 									\
      return 0;								\
   }									\
-  EAPI void								\
+  EAPI Eina_Bool								\
   edje_edit_state_fill_##Type##_relative_##Value##_set(Evas_Object *obj, const char *part, const char *state, double value, double v) \
   {									\
-     GET_PD_OR_RETURN();						\
+     GET_PD_OR_RETURN(EINA_FALSE);					\
                                                                         \
      switch (rp->part->type)						\
        {								\
@@ -3449,10 +3450,11 @@ FUNC_STATE_DOUBLE(aspect, max);
 	   break;							\
 	 }								\
        default:								\
-	 return;							\
+	 return EINA_FALSE;						\
        }								\
 									\
      edje_object_calc_force(obj);					\
+     return EINA_TRUE;                                                  \
   }
 
 #define FUNC_STATE_INT_FILL(Class, Type, Value)				\
@@ -3482,10 +3484,10 @@ FUNC_STATE_DOUBLE(aspect, max);
        }								\
      return 0;								\
   }									\
-  EAPI void								\
+  EAPI Eina_Bool								\
   edje_edit_state_fill_##Type##_offset_##Value##_set(Evas_Object *obj, const char *part, const char *state, double value, double v) \
   {									\
-     GET_PD_OR_RETURN();						\
+     GET_PD_OR_RETURN(EINA_FALSE);					\
                                                                         \
      switch (rp->part->type)						\
        {								\
@@ -3496,7 +3498,7 @@ FUNC_STATE_DOUBLE(aspect, max);
 	   img = (Edje_Part_Description_Image*) pd;			\
 									\
 	   img->image.fill.Class##abs_##Value = FROM_DOUBLE(v);		\
-	   return;							\
+	   break;						        \
 	 }								\
        case EDJE_PART_TYPE_PROXY:					\
 	 {								\
@@ -3505,13 +3507,14 @@ FUNC_STATE_DOUBLE(aspect, max);
 	   pro = (Edje_Part_Description_Proxy*) pd;			\
 									\
 	   pro->proxy.fill.Class##abs_##Value = FROM_DOUBLE(v);		\
-	   return;							\
+	   break;						\
 	 }								\
        default:								\
-	 return;							\
+	 return EINA_FALSE;						\
        }								\
 									\
      edje_object_calc_force(obj);					\
+     return EINA_TRUE;							\
   }
 
 FUNC_STATE_DOUBLE_FILL(pos_, origin, x);
@@ -3556,13 +3559,13 @@ edje_edit_state_aspect_pref_get(Evas_Object *obj, const char *part, const char *
    return pd->aspect.prefer;
 }
 
-EAPI void
+EAPI Eina_Bool
 edje_edit_state_aspect_pref_set(Evas_Object *obj, const char *part, const char *state, double value, unsigned char pref)
 {
-   GET_PD_OR_RETURN();
-
-   //printf("SET ASPECT_PREF of state '%s' [to: %d]\n", state, pref);
+   GET_PD_OR_RETURN(EINA_FALSE);
+   if ((!pref) || (pref > 3)) return EINA_FALSE;
    pd->aspect.prefer = pref;
+   return EINA_TRUE;
 }
 
 EAPI const char*

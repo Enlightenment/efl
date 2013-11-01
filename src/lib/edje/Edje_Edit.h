@@ -1648,8 +1648,10 @@ EAPI double edje_edit_state_align_y_get(Evas_Object *obj, const char *part, cons
  * @param state The name of the state to get horizontal align (not including the state value).
  * @param value The state value.
  * @param align The new vertical align value.
+ *
+ * @return EINA_TRUE if the parameter was found, EINA_FALSE otherwise.
  */
-EAPI void edje_edit_state_align_x_set(Evas_Object *obj, const char *part, const char *state, double value,  double align);
+EAPI Eina_Bool edje_edit_state_align_x_set(Evas_Object *obj, const char *part, const char *state, double value,  double align);
 
 /** Set the vertical align value of a part state.
  *
@@ -1658,8 +1660,10 @@ EAPI void edje_edit_state_align_x_set(Evas_Object *obj, const char *part, const 
  * @param state The name of the state to get vertical align (not including the state value).
  * @param value The state value.
  * @param align The new vertical align value.
+ *
+ * @return EINA_TRUE if the parameter was found, EINA_FALSE otherwise.
  */
-EAPI void edje_edit_state_align_y_set(Evas_Object *obj, const char *part, const char *state, double value,  double align);
+EAPI Eina_Bool edje_edit_state_align_y_set(Evas_Object *obj, const char *part, const char *state, double value,  double align);
 
 /** Get the minimum width value of a part state.
  *
@@ -1790,8 +1794,10 @@ EAPI double edje_edit_state_aspect_max_get(Evas_Object *obj, const char *part, c
  * @param state The name of the state to set minimum aspect (not including the state value).
  * @param value The state value.
  * @param aspect Minimum aspect value.
+ *
+ * @return EINA_TRUE if the parameter was found, EINA_FALSE otherwise.
  */
-EAPI void edje_edit_state_aspect_min_set(Evas_Object *obj, const char *part, const char *state, double value, double aspect);
+EAPI Eina_Bool edje_edit_state_aspect_min_set(Evas_Object *obj, const char *part, const char *state, double value, double aspect);
 
 /** Set the maximum aspect value of a part state.
  *
@@ -1800,8 +1806,10 @@ EAPI void edje_edit_state_aspect_min_set(Evas_Object *obj, const char *part, con
  * @param state The name of the state to set maximum aspect (not including the state value).
  * @param value The state value.
  * @param aspect Maximum aspect value.
+ *
+ * @return EINA_TRUE if the parameter was found, EINA_FALSE otherwise.
  */
-EAPI void edje_edit_state_aspect_max_set(Evas_Object *obj, const char *part, const char *state, double value, double aspect);
+EAPI Eina_Bool edje_edit_state_aspect_max_set(Evas_Object *obj, const char *part, const char *state, double value, double aspect);
 
 /** Get the aspect preference of a part state.
  *
@@ -1823,8 +1831,10 @@ EAPI unsigned char edje_edit_state_aspect_pref_get(Evas_Object *obj, const char 
  * @param value The state value.
  * @param pref The aspect preference to set (0 = None, 1 = Vertical, 2
  *             = Horizontal, 3 = Both)
+ *
+ * @return EINA_TRUE if the parameter was found, EINA_FALSE otherwise.
  */
-EAPI void edje_edit_state_aspect_pref_set(Evas_Object *obj, const char *part, const char *state, double value, unsigned char pref);
+EAPI Eina_Bool edje_edit_state_aspect_pref_set(Evas_Object *obj, const char *part, const char *state, double value, unsigned char pref);
 
 /** Get the fill horizontal origin relative value of a part state.
  *
@@ -1877,8 +1887,10 @@ EAPI int edje_edit_state_fill_origin_offset_y_get(Evas_Object *obj, const char *
  * @param state The name of the state to set fill horizontal origin relative to area (not including the state value).
  * @param value The state value.
  * @param x The fill horizontal origin value.
+ *
+ * @return EINA_TRUE if the parameter was found, EINA_FALSE otherwise.
  */
-EAPI void edje_edit_state_fill_origin_relative_x_set(Evas_Object *obj, const char *part, const char *state, double value, double x);
+EAPI Eina_Bool edje_edit_state_fill_origin_relative_x_set(Evas_Object *obj, const char *part, const char *state, double value, double x);
 
 /** Set the fill horizontal origin relative value of a part state.
  *
@@ -1887,8 +1899,10 @@ EAPI void edje_edit_state_fill_origin_relative_x_set(Evas_Object *obj, const cha
  * @param state The name of the state to set fill vertical origin relative to area (not including the state value).
  * @param value The state value.
  * @param y The fill vertical origin value.
+ *
+ * @return EINA_TRUE if the parameter was found, EINA_FALSE otherwise.
  */
-EAPI void edje_edit_state_fill_origin_relative_y_set(Evas_Object *obj, const char *part, const char *state, double value, double y);
+EAPI Eina_Bool edje_edit_state_fill_origin_relative_y_set(Evas_Object *obj, const char *part, const char *state, double value, double y);
 
 /** Set the fill horizontal origin offset value of a part state.
  *
@@ -1897,8 +1911,10 @@ EAPI void edje_edit_state_fill_origin_relative_y_set(Evas_Object *obj, const cha
  * @param state The name of the state to set fill horizontal origin offset relative to area (not including the state value).
  * @param value The state value.
  * @param x The fill horizontal origin offset value.
+ *
+ * @return EINA_TRUE if the parameter was found, EINA_FALSE otherwise.
  */
-EAPI void edje_edit_state_fill_origin_offset_x_set(Evas_Object *obj, const char *part, const char *state, double value, double x);
+EAPI Eina_Bool edje_edit_state_fill_origin_offset_x_set(Evas_Object *obj, const char *part, const char *state, double value, double x);
 
 /** Set the fill vertical origin offset value of a part state.
  *
@@ -1907,8 +1923,10 @@ EAPI void edje_edit_state_fill_origin_offset_x_set(Evas_Object *obj, const char 
  * @param state The name of the state to set fill vertical origin offset relative to area (not including the state value).
  * @param value The state value.
  * @param y The fill vertical origin offset value.
+ *
+ * @return EINA_TRUE if the parameter was found, EINA_FALSE otherwise.
  */
-EAPI void edje_edit_state_fill_origin_offset_y_set(Evas_Object *obj, const char *part, const char *state, double value, double y);
+EAPI Eina_Bool edje_edit_state_fill_origin_offset_y_set(Evas_Object *obj, const char *part, const char *state, double value, double y);
 
 /** Get the fill horizontal size relative value of a part state.
  *
@@ -1964,8 +1982,10 @@ EAPI int edje_edit_state_fill_size_offset_y_get(Evas_Object *obj, const char *pa
  * relative value (not including the state value).
  * @param value The state value.
  * @param x The horizontal size relative value.
+ *
+ * @return EINA_TRUE if the parameter was found, EINA_FALSE otherwise.
  */
-EAPI void edje_edit_state_fill_size_relative_x_set(Evas_Object *obj, const char *part, const char *state, double value, double x);
+EAPI Eina_Bool edje_edit_state_fill_size_relative_x_set(Evas_Object *obj, const char *part, const char *state, double value, double x);
 
 /** Set the fill vertical size relative value of a part state.
  *
@@ -1975,8 +1995,10 @@ EAPI void edje_edit_state_fill_size_relative_x_set(Evas_Object *obj, const char 
  * relative value (not including the state value).
  * @param value The state value.
  * @param x The vertical size relative value.
+ *
+ * @return EINA_TRUE if the parameter was found, EINA_FALSE otherwise.
  */
-EAPI void edje_edit_state_fill_size_relative_y_set(Evas_Object *obj, const char *part, const char *state, double value, double x);
+EAPI Eina_Bool edje_edit_state_fill_size_relative_y_set(Evas_Object *obj, const char *part, const char *state, double value, double x);
 
 /** Set the fill horizontal size offset value of a part state.
  *
@@ -1986,8 +2008,10 @@ EAPI void edje_edit_state_fill_size_relative_y_set(Evas_Object *obj, const char 
  * offset relative value (not including the state value).
  * @param value The state value.
  * @param x The horizontal size offset value.
+ *
+ * @return EINA_TRUE if the parameter was found, EINA_FALSE otherwise.
  */
-EAPI void edje_edit_state_fill_size_offset_x_set(Evas_Object *obj, const char *part, const char *state, double value, double x);
+EAPI Eina_Bool edje_edit_state_fill_size_offset_x_set(Evas_Object *obj, const char *part, const char *state, double value, double x);
 
 /** Set the fill vertical size offset value of a part state.
  *
@@ -1997,8 +2021,10 @@ EAPI void edje_edit_state_fill_size_offset_x_set(Evas_Object *obj, const char *p
  * relative value (not including the state value).
  * @param value The state value.
  * @param y The vertical size offset value.
+ *
+ * @return EINA_TRUE if the parameter was found, EINA_FALSE otherwise.
  */
-EAPI void edje_edit_state_fill_size_offset_y_set(Evas_Object *obj, const char *part, const char *state, double value, double y);
+EAPI Eina_Bool edje_edit_state_fill_size_offset_y_set(Evas_Object *obj, const char *part, const char *state, double value, double y);
 
 /** Get the visibility of a part state.
  *
