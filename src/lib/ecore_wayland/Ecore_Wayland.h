@@ -109,66 +109,6 @@ struct _Ecore_Wl_Output
    void *data;
 };
 
-struct _Ecore_Wl_Window
-{
-   Ecore_Wl_Display *display;
-   Ecore_Wl_Window *parent;
-
-   struct wl_surface *surface;
-   struct wl_shell_surface *shell_surface;
-
-   struct 
-     {
-        struct wl_surface *surface;
-        int hot_x, hot_y;
-        Eina_Bool set : 1;
-     } pointer;
-
-   int id, surface_id;
-   int rotation;
-
-   const char *title;
-   const char *class_name;
-
-   Eina_Rectangle allocation;
-
-   struct 
-     {
-        int w, h;
-     } saved;
-
-   struct 
-     {
-        int x, y, w, h;
-     } opaque;
-
-   /* Eina_Bool redraw_scheduled : 1; */
-   /* Eina_Bool resize_scheduled : 1; */
-   Eina_Bool alpha : 1;
-   Eina_Bool transparent : 1;
-   Eina_Bool moving : 1;
-   Eina_Bool resizing : 1;
-   Eina_Bool has_buffer : 1;
-
-   Ecore_Wl_Window_Type type;
-   Ecore_Wl_Window_Buffer_Type buffer_type;
-
-   Ecore_Wl_Input *pointer_device;
-   Ecore_Wl_Input *keyboard_device;
-
-   /* FIXME: Shouldn't these attributes be private to the Ecore_Wl_Window? */
-
-   Eina_Bool anim_pending : 1;
-   struct wl_callback *anim_callback;
-
-   /* FIXME: Ideally we should record the cursor name for this window 
-    * so we can compare and avoid unnecessary cursor set calls to wayland */
-
-   Ecore_Wl_Subsurf *subsurfs;
-
-   void *data;
-};
-
 struct _Ecore_Wl_Event_Mouse_In
 {
    int modifiers;
