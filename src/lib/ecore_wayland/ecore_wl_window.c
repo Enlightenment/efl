@@ -714,6 +714,17 @@ ecore_wl_window_class_name_set(Ecore_Wl_Window *win, const char *class_name)
      wl_shell_surface_set_class(win->shell_surface, win->class_name);
 }
 
+/* @since 1.8 */
+/* Maybe we need an ecore_wl_window_pointer_get() too */
+EAPI Ecore_Wl_Input *
+ecore_wl_window_keyboard_get(Ecore_Wl_Window *win)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!win) return 0;
+   return win->keyboard_device;
+}
+
 
 /* local functions */
 static void 

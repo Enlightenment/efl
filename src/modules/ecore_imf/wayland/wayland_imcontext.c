@@ -625,7 +625,7 @@ wayland_im_context_focus_in(Ecore_IMF_Context *ctx)
 
    if (!imcontext->window) return;
 
-   input = imcontext->window->keyboard_device;
+   input = ecore_wl_window_keyboard_get(imcontext->window);
    if (!input)
      return;
 
