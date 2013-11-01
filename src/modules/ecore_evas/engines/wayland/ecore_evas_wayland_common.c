@@ -516,6 +516,8 @@ _ecore_evas_wl_common_free(Ecore_Evas *ee)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    wdata = ee->engine.data;
+   if (wdata->frame_callback) wl_callback_destroy(wdata->frame_callback);
+   wdata->frame_callback = NULL;
    if (wdata->win) ecore_wl_window_free(wdata->win);
    wdata->win = NULL;
    free(wdata);
@@ -1220,14 +1222,15 @@ _ecore_evas_wl_frame_complete(void *data, struct wl_callback *callback, uint32_t
    wdata = ee->engine.data;
    if (!(win = wdata->win)) return;
 
-   win->frame_callback = NULL;
-   win->frame_pending = EINA_FALSE;
+   wdata->frame_callback = NULL;
+   wdata->frame_pending = EINA_FALSE;
    wl_callback_destroy(callback);
 
-   if (win->surface)
+   if (ecore_wl_window_surface_get(win))
      {
-        win->frame_callback = wl_surface_frame(win->surface);
-        wl_callback_add_listener(win->frame_callback, &frame_listener, ee);
+        wdata->frame_callback = wl_surface_frame
+           (ecore_wl_window_surface_get(win));
+        wl_callback_add_listener(wdata->frame_callback, &frame_listener, ee);
      }
 }
 
@@ -1264,14 +1267,15 @@ _ecore_evas_wl_common_render(Ecore_Evas *ee)
 
    if (!ee->can_async_render)
      {
-        if (!win->frame_pending)
+        if (!wdata->frame_pending)
           {
              Eina_List *updates;
 
-             if (!win->frame_callback)
+             if (!wdata->frame_callback)
                {
-                  win->frame_callback = wl_surface_frame(win->surface);
-                  wl_callback_add_listener(win->frame_callback, 
+                  wdata->frame_callback = wl_surface_frame
+                     (ecore_wl_window_surface_get(win));
+                  wl_callback_add_listener(wdata->frame_callback, 
                                            &frame_listener, ee);
                }
 
@@ -1280,7 +1284,7 @@ _ecore_evas_wl_common_render(Ecore_Evas *ee)
              evas_render_updates_free(updates);
 
              if (rend) 
-               win->frame_pending = EINA_TRUE;
+               wdata->frame_pending = EINA_TRUE;
           }
      }
    else if (evas_render_async(ee->evas))

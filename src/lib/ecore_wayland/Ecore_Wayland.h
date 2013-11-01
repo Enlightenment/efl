@@ -157,8 +157,6 @@ struct _Ecore_Wl_Window
    Ecore_Wl_Input *keyboard_device;
 
    /* FIXME: Shouldn't these attributes be private to the Ecore_Wl_Window? */
-   Eina_Bool frame_pending : 1;
-   struct wl_callback *frame_callback;
 
    Eina_Bool anim_pending : 1;
    struct wl_callback *anim_callback;

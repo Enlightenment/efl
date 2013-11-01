@@ -112,8 +112,6 @@ ecore_wl_window_free(Ecore_Wl_Window *win)
           input->keyboard_focus = NULL;
      }
 
-   if (win->frame_callback) wl_callback_destroy(win->frame_callback);
-   win->frame_callback = NULL;
    if (win->anim_callback) wl_callback_destroy(win->anim_callback);
    win->anim_callback = NULL;
 
