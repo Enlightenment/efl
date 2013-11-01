@@ -450,6 +450,7 @@ EAPI const char      *elm_theme_data_get(Elm_Theme *th, const char *key);
  * If group is NULL, then nothing can be looked up, so it is a non-sensical
  * request.
  *
+ * @since 1.8
  * @ingroup Theme
  */
 EAPI const char *elm_theme_group_path_find(Elm_Theme *th, const char *group);
@@ -471,6 +472,7 @@ EAPI const char *elm_theme_group_path_find(Elm_Theme *th, const char *group);
  * stringshared string to be freed with eina_stringshare_del(). Not doing so
  * may result in a leak.
  *
+ * @since 1.8
  * @ingroup Theme
  */
  EAPI Eina_List *elm_theme_group_base_list(Elm_Theme *th, const char *base);
@@ -485,6 +487,7 @@ EAPI const char *elm_theme_group_path_find(Elm_Theme *th, const char *group);
  * that wishes toiterate over the files in this folder and display them, for
  * example a theme selector.
  * 
+ * @since 1.8
  * @ingroup Theme
  */
 EAPI const char *elm_theme_system_dir_get(void);
@@ -502,6 +505,7 @@ EAPI const char *elm_theme_system_dir_get(void);
  * User themes are always looked for before system themes. The user theme
  * directory is normally expected to be writable by the user.
  * 
+ * @since 1.8
  * @ingroup Theme
  */
 EAPI const char *elm_theme_user_dir_get(void);
