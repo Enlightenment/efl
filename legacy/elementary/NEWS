@@ -61,7 +61,6 @@ Additions:
    * Add elm_mapbuf_auto_set/get.
    * Add the API elm_scroller_single_direction_set/get.
    * Add the feature for key events.
-   * Add elm_access_action(), elm_access_action_cb_set()
    * Add elm_object_domain_part_text_translatable_set(), elm_object_item_domain_part_text_translatable_set().
    * Support language,changed callback (Fileselector_Button, Fileselector Entry, Spinner.
    * Add the config elm_scroll_smooth_start_enable.
@@ -79,9 +78,8 @@ Additions:
    * Add the elm_scrollable_interface_content_viewport_resize_cb_set.
    * added callback call "scroll", "scroll,anim,start", "scroll,anim,stop", "scroll,drag,start", "scroll,drag,stop" in toolar widget.
    * Add the configuration thumbscroll_flick_distance_tolerance.
-   * Add elm_access_highlight_next_set, export elm_widget_focus_region_show
+   * Export elm_widget_focus_region_show
    * File Selector : Support elm_object_part_text_set() for the ok, cancel part to change the OK, Cancel button label.
-   * Add _elm_access_object_get, deprecate _elm_access_info_get
    * Add elm_win_focus_highlight_animate_set/get().
    * Add selectraise feature to gengrid.
    * Add bg reset feature.
