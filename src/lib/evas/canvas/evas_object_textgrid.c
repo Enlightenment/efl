@@ -7,12 +7,14 @@ EAPI Eo_Op EVAS_OBJ_TEXTGRID_BASE_ID = EO_NOOP;
 
 #define MY_CLASS EVAS_OBJ_TEXTGRID_CLASS
 
+#define MY_CLASS_NAME "textgrid"
+
 /* save typing */
 #define ENFN obj->layer->evas->engine.func
 #define ENDT obj->layer->evas->engine.data.output
 
 /* private magic number for text objects */
-static const char o_type[] = "textgrid";
+static const char o_type[] = MY_CLASS_NAME;
 
 /* private struct for line object internal data */
 typedef struct _Evas_Object_Textgrid       Evas_Object_Textgrid;
@@ -1666,11 +1668,38 @@ _update_add(Eo *eo_obj, void *_pd, va_list *list)
 }
 
 static void
+_dbg_info_get(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
+{
+   Eo_Dbg_Info *root = (Eo_Dbg_Info *) va_arg(*list, Eo_Dbg_Info *);
+   eo_do_super(eo_obj, MY_CLASS, eo_dbg_info_get(root));
+   Eo_Dbg_Info *group = EO_DBG_INFO_LIST_APPEND(root, MY_CLASS_NAME);
+   Eo_Dbg_Info *node;
+
+   const char *text;
+   int size;
+   eo_do(eo_obj, evas_obj_textgrid_font_get(&text, &size));
+   EO_DBG_INFO_APPEND(group, "Font", EINA_VALUE_TYPE_STRING, text);
+   EO_DBG_INFO_APPEND(group, "Text size", EINA_VALUE_TYPE_INT, size);
+
+   eo_do(eo_obj, evas_obj_textgrid_font_source_get(&text));
+   EO_DBG_INFO_APPEND(group, "Font source", EINA_VALUE_TYPE_STRING, text);
+
+     {
+        int w, h;
+        eo_do(eo_obj, evas_obj_textgrid_size_get(&w, &h));
+        node = EO_DBG_INFO_LIST_APPEND(group, "Grid size");
+        EO_DBG_INFO_APPEND(node, "w", EINA_VALUE_TYPE_INT, w);
+        EO_DBG_INFO_APPEND(node, "h", EINA_VALUE_TYPE_INT, h);
+     }
+}
+
+static void
 _class_constructor(Eo_Class *klass)
 {
    const Eo_Op_Func_Description func_desc[] = {
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DESTRUCTOR), _destructor),
+        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DBG_INFO_GET), _dbg_info_get),
         EO_OP_FUNC(EVAS_OBJ_TEXTGRID_ID(EVAS_OBJ_TEXTGRID_SUB_ID_SIZE_SET), _size_set),
         EO_OP_FUNC(EVAS_OBJ_TEXTGRID_ID(EVAS_OBJ_TEXTGRID_SUB_ID_SIZE_GET), _size_get),
         EO_OP_FUNC(EVAS_OBJ_TEXTGRID_ID(EVAS_OBJ_TEXTGRID_SUB_ID_FONT_SOURCE_SET), _font_source_set),
