@@ -946,7 +946,7 @@ EAPI Eina_Bool edje_edit_part_selected_state_set(Evas_Object *obj, const char *p
  * @param obj Object being edited.
  * @param part Part to get if the mouse events is accepted.
  *
- * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ * @return EINA_TRUE if part will accept mouse events, EINA_FALSE otherwise.
  */
 EAPI Eina_Bool edje_edit_part_mouse_events_get(Evas_Object *obj, const char *part);
 
@@ -955,15 +955,17 @@ EAPI Eina_Bool edje_edit_part_mouse_events_get(Evas_Object *obj, const char *par
  * @param obj Object being edited.
  * @param part The part to set if the mouse events is accepted.
  * @param mouse_events EINA_TRUE if part will accept mouse events, EINA_FALSE otherwise.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
  */
-EAPI void edje_edit_part_mouse_events_set(Evas_Object *obj, const char *part, Eina_Bool mouse_events);
+EAPI Eina_Bool edje_edit_part_mouse_events_set(Evas_Object *obj, const char *part, Eina_Bool mouse_events);
 
 /** Get repeat_events for part.
  *
  * @param obj Object being edited.
- * @param part Part to set if will pass all events to the other parts.
+ * @param part Part to get if it will pass all events to the other parts.
  *
- * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ * @return EINA_TRUE if the events received will propagate to other parts, EINA_FALSE otherwise
  */
 EAPI Eina_Bool edje_edit_part_repeat_events_get(Evas_Object *obj, const char *part);
 
@@ -972,8 +974,10 @@ EAPI Eina_Bool edje_edit_part_repeat_events_get(Evas_Object *obj, const char *pa
  * @param obj Object being edited.
  * @param part Part to set if will repeat all the received mouse events to other parts.
  * @param repeat_events EINA_TRUE if the events received will propagate to other parts, EINA_FALSE otherwise
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
  */
-EAPI void edje_edit_part_repeat_events_set(Evas_Object *obj, const char *part, Eina_Bool repeat_events);
+EAPI Eina_Bool edje_edit_part_repeat_events_set(Evas_Object *obj, const char *part, Eina_Bool repeat_events);
 
 /** Get ignore_flags for part.
  *
@@ -989,8 +993,10 @@ EAPI Evas_Event_Flags edje_edit_part_ignore_flags_get(Evas_Object *obj, const ch
  * @param obj Object being edited.
  * @param part Part to set which event flags will be ignored.
  * @param ignore_flags The Event flags to be ignored by the part.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
  */
-EAPI void edje_edit_part_ignore_flags_set(Evas_Object *obj, const char *part, Evas_Event_Flags ignore_flags);
+EAPI Eina_Bool edje_edit_part_ignore_flags_set(Evas_Object *obj, const char *part, Evas_Event_Flags ignore_flags);
 
 /** Set scale property for the part.
  *
@@ -1000,8 +1006,10 @@ EAPI void edje_edit_part_ignore_flags_set(Evas_Object *obj, const char *part, Ev
  * @param obj Object being edited.
  * @param part Part to set scale for.
  * @param scale Scale value to set.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
  */
-EAPI void edje_edit_part_scale_set(Evas_Object *obj, const char *part, Eina_Bool scale);
+EAPI Eina_Bool edje_edit_part_scale_set(Evas_Object *obj, const char *part, Eina_Bool scale);
 
 /** Get scale for the part.
  *

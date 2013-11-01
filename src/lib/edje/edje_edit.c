@@ -2371,50 +2371,44 @@ EAPI Eina_Bool
 edje_edit_part_mouse_events_get(Evas_Object *obj, const char *part)
 {
    GET_RP_OR_RETURN(EINA_FALSE);
-   //printf("Get mouse_events for part: %s [%d]\n", part, rp->part->mouse_events);
    return rp->part->mouse_events;
 }
 
-EAPI void
+EAPI Eina_Bool
 edje_edit_part_mouse_events_set(Evas_Object *obj, const char *part, Eina_Bool mouse_events)
 {
-   GET_RP_OR_RETURN();
+   GET_RP_OR_RETURN(EINA_FALSE);
 
-   if (!rp->object) return;
-
-   //printf("Set mouse_events for part: %s [%d]\n", part, mouse_events);
+   if (!rp->object) return EINA_FALSE;
 
    rp->part->mouse_events = mouse_events ? 1 : 0;
 
    if (mouse_events)
      {
-	evas_object_pass_events_set(rp->object, 0);
-	_edje_callbacks_add(rp->object, ed, rp);
+        evas_object_pass_events_set(rp->object, 0);
+        _edje_callbacks_add(rp->object, ed, rp);
      }
    else
      {
-	evas_object_pass_events_set(rp->object, 1);
-	_edje_callbacks_del(rp->object, ed);
+        evas_object_pass_events_set(rp->object, 1);
+        _edje_callbacks_del(rp->object, ed);
      }
+   return EINA_TRUE;
 }
 
 EAPI Eina_Bool
 edje_edit_part_repeat_events_get(Evas_Object *obj, const char *part)
 {
    GET_RP_OR_RETURN(EINA_FALSE);
-
-   //printf("Get repeat_events for part: %s [%d]\n", part, rp->part->repeat_events);
    return rp->part->repeat_events;
 }
 
-EAPI void
+EAPI Eina_Bool
 edje_edit_part_repeat_events_set(Evas_Object *obj, const char *part, Eina_Bool repeat_events)
 {
-   GET_RP_OR_RETURN();
+   GET_RP_OR_RETURN(EINA_FALSE);
 
-   if (!rp->object) return;
-
-   //printf("Set repeat_events for part: %s [%d]\n", part, repeat_events);
+   if (!rp->object) return EINA_FALSE;
 
    rp->part->repeat_events = repeat_events ? 1 : 0;
 
@@ -2422,6 +2416,8 @@ edje_edit_part_repeat_events_set(Evas_Object *obj, const char *part, Eina_Bool r
      evas_object_repeat_events_set(rp->object, 1);
    else
      evas_object_repeat_events_set(rp->object, 0);
+
+   return EINA_TRUE;
 }
 
 EAPI Evas_Event_Flags
@@ -2432,24 +2428,25 @@ edje_edit_part_ignore_flags_get(Evas_Object *obj, const char *part)
    return rp->part->ignore_flags;
 }
 
-EAPI void
+EAPI Eina_Bool
 edje_edit_part_ignore_flags_set(Evas_Object *obj, const char *part, Evas_Event_Flags ignore_flags)
 {
-   GET_RP_OR_RETURN();
+   GET_RP_OR_RETURN(EINA_FALSE);
 
-   if (!rp->object) return;
-   //printf("Set ignore_flags for part: %s [%#x]\n", part, ignore_flags);
+   if (!rp->object) return EINA_FALSE;
 
    rp->part->ignore_flags = ignore_flags;
+   return EINA_TRUE;
 }
 
-EAPI void
+EAPI Eina_Bool
 edje_edit_part_scale_set(Evas_Object *obj, const char *part, Eina_Bool scale)
 {
-   GET_RP_OR_RETURN();
+   GET_RP_OR_RETURN(EINA_FALSE);
 
-   rp->part->scale = scale;
+   rp->part->scale = scale ? 1 : 0;
    edje_object_calc_force(obj);
+   return EINA_TRUE;
 }
 
 EAPI Eina_Bool
