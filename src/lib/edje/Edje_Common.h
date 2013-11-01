@@ -119,6 +119,25 @@ EAPI int		edje_shutdown			(void);
 EAPI void		edje_fontset_append_set		(const char *fonts);
 
 /**
+ * Get data from the file level data block of an edje mapped file
+ * @param file The mapped edje file
+ * @param key The data key
+ * @return The string value of the data or NULL if no key is found.
+ * Must be freed by the user when no longer needed.
+ *
+ * If an edje file test.edj is built from the following edc:
+ *
+ * data {
+ *   item: "key1" "value1";
+ *   item: "key2" "value2";
+ * }
+ * collections { ... }
+ *
+ * Then, edje_file_data_get("test.edj", "key1") will return "value1"
+ */
+EAPI char             *edje_mmap_data_get(Eina_File *f, const char *key);
+
+/**
  * Get data from the file level data block of an edje file
  * @param file The path to the .edj file
  * @param key The data key
@@ -134,6 +153,8 @@ EAPI void		edje_fontset_append_set		(const char *fonts);
  * collections { ... }
  *
  * Then, edje_file_data_get("test.edj", "key1") will return "value1"
+ *
+ * @see edje_mmap_data_get()
  */
 EAPI char        *edje_file_data_get              (const char *file, const char *key);
 
@@ -1553,14 +1574,46 @@ typedef enum _Edje_Load_Error
    EDJE_LOAD_ERROR_RECURSIVE_REFERENCE = 9 /**< The group/collection set to load from had <b>recursive references</b> on its components */
 } Edje_Load_Error; /**< Edje file loading error codes one can get - see edje_load_error_str() too. */
 
+
+/**
+ * Get a list of groups in an edje mapped file
+ * @param file The mapped file
+ *
+ * @return The Eina_List of group names (char *)
+ *
+ * Note: the list must be freed using edje_mmap_collection_list_free()
+ * when you are done with it.
+ */
+EAPI Eina_List        *edje_mmap_collection_list(Eina_File *f);
+
+/**
+ * Free file collection list
+ * @param lst The Eina_List of groups
+ *
+ * Frees the list returned by edje_mmap_collection_list().
+ */
+EAPI void              edje_mmap_collection_list_free(Eina_List *lst);
+
+/**
+ * Determine whether a group matching glob exists in an edje mapped file.
+ * @param file The mapped file
+ * @param glob A glob to match on
+ *
+ * @return 1 if a match is found, 0 otherwise
+ */
+EAPI Eina_Bool         edje_mmap_group_exists(Eina_File *f, const char *glob);
+
 /**
  * Get a list of groups in an edje file
  * @param file The path to the edje file
  *
  * @return The Eina_List of group names (char *)
+ * @see edje_mmap_collection_list()
  *
  * Note: the list must be freed using edje_file_collection_list_free()
  * when you are done with it.
+ *
+ * @see edje_mmap_group_exists()
  */
 EAPI Eina_List        *edje_file_collection_list  (const char *file);
 
