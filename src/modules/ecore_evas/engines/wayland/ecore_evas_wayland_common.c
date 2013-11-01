@@ -1391,10 +1391,7 @@ _ecore_evas_wayland_move(Ecore_Evas *ee, int x, int y)
      {
 	wdata = ee->engine.data;
         if (wdata->win)
-          {
-             wdata->win->moving = EINA_TRUE;
-             ecore_wl_window_move(wdata->win, x, y);
-          }
+          ecore_wl_window_move(wdata->win, x, y);
      }
 }
 

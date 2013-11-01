@@ -136,6 +136,8 @@ ecore_wl_window_move(Ecore_Wl_Window *win, int x, int y)
 
    if (!win) return;
 
+   win->moving = EINA_TRUE;
+
    ecore_wl_window_update_location(win, x, y);
 
    if (win->shell_surface)
