@@ -319,15 +319,7 @@ _ecore_evas_wl_resize(Ecore_Evas *ee, int w, int h)
           evas_object_resize(wdata->frame, w, h);
 
         if (wdata->win)
-          {
-             Ecore_Wl_Window *win;
-
-             win = wdata->win;
-
-             win->server.w = win->allocation.w;
-             win->server.h = win->allocation.h;
-             ecore_wl_window_update_size(wdata->win, w, h);
-          }
+          ecore_wl_window_update_size(wdata->win, w, h);
 
         if (ee->func.fn_resize) ee->func.fn_resize(ee);
      }

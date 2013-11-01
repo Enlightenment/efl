@@ -212,8 +212,6 @@ ecore_wl_window_buffer_attach(Ecore_Wl_Window *win, struct wl_buffer *buffer, in
    switch (win->buffer_type)
      {
       case ECORE_WL_WINDOW_BUFFER_TYPE_EGL_WINDOW:
-        win->server.w = win->allocation.w;
-        win->server.h = win->allocation.h;
         break;
       case ECORE_WL_WINDOW_BUFFER_TYPE_EGL_IMAGE:
       case ECORE_WL_WINDOW_BUFFER_TYPE_SHM:
@@ -226,9 +224,6 @@ ecore_wl_window_buffer_attach(Ecore_Wl_Window *win, struct wl_buffer *buffer, in
              wl_surface_damage(win->surface, 0, 0, 
                                win->allocation.w, win->allocation.h);
              wl_surface_commit(win->surface);
-
-             win->server.w = win->allocation.w;
-             win->server.h = win->allocation.h;
           }
         break;
       default:

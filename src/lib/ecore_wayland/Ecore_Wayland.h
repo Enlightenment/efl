@@ -132,7 +132,7 @@ struct _Ecore_Wl_Window
    struct 
      {
         int w, h;
-     } saved, server;
+     } saved;
 
    struct 
      {
