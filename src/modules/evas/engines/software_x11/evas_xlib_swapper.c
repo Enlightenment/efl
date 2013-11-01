@@ -698,6 +698,8 @@ evas_xlib_swapper_buffer_map(X_Swapper *swp, int *bpl, int *w, int *h)
              if ((swp->buf) && (swp->buf->pitch > 0)) *bpl = swp->buf->pitch;
              else *bpl = swp->w * 4;
           }
+        if (w) *w = swp->w;
+        if (h) *h = swp->h;
         return swp->buf_data;
      }
    swp->buf = sym_DRI2GetBuffers(swp->disp, swp->draw, 
