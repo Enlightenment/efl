@@ -238,15 +238,6 @@ _entry_hide(Evas_Object *obj)
 }
 
 static void
-_reset_value(Evas_Object *obj)
-{
-   ELM_SPINNER_DATA_GET(obj, sd);
-
-   _entry_hide(obj);
-   elm_spinner_value_set(obj, sd->orig_val);
-}
-
-static void
 _entry_value_apply(Evas_Object *obj)
 {
    const char *str;
@@ -283,7 +274,6 @@ _entry_toggle_cb(void *data,
    if (sd->entry_visible) _entry_value_apply(data);
    else
      {
-        sd->orig_val = sd->val;
         elm_layout_signal_emit(data, "elm,state,active", "elm");
         _entry_show(sd);
         elm_entry_select_all(sd->ent);
@@ -358,7 +348,7 @@ _val_dec_stop(Evas_Object *obj)
 
 static void
 _button_inc_start_cb(void *data,
-                     Evas_Object *obj __UNUSED__,
+                     Evas_Object *obj,
                      const char *emission __UNUSED__,
                      const char *source __UNUSED__)
 {
@@ -366,7 +356,8 @@ _button_inc_start_cb(void *data,
 
    if (sd->entry_visible)
      {
-        _reset_value(data);
+        _entry_value_apply(obj);
+        if ((sd->val_updated) && (sd->val == sd->val_min)) return;
         return;
      }
    _val_inc_start(data);
@@ -391,8 +382,8 @@ _button_dec_start_cb(void *data,
 
    if (sd->entry_visible)
      {
-        _reset_value(data);
-        return;
+        _entry_value_apply(obj);
+        if ((sd->val_updated) && (sd->val == sd->val_max)) return;
      }
    _val_dec_start(data);
 }
@@ -979,8 +970,17 @@ _elm_spinner_value_set(Eo *obj, void *_pd, va_list *list)
 
    if (sd->val == val) return;
    sd->val = val;
-   if (sd->val < sd->val_min) sd->val = sd->val_min;
-   if (sd->val > sd->val_max) sd->val = sd->val_max;
+   sd->val_updated = EINA_FALSE;
+   if (sd->val < sd->val_min)
+     {
+        sd->val = sd->val_min;
+        sd->val_updated = EINA_TRUE;
+     }
+   if (sd->val > sd->val_max)
+     {
+        sd->val = sd->val_max;
+        sd->val_updated = EINA_TRUE;
+     }
    _val_set(obj);
    _label_write(obj);
 }

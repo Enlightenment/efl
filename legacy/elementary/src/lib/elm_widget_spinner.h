@@ -26,7 +26,7 @@ struct _Elm_Spinner_Smart_Data
 {
    Evas_Object          *ent;
    const char           *label;
-   double                val, val_min, val_max, orig_val, val_base;
+   double                val, val_min, val_max, val_base;
    double                step; // step for the value change. 1 by default.
    double                drag_start_val; // spinner value on drag start.
                                          // this is reset to 0 when drag stops.
@@ -39,6 +39,7 @@ struct _Elm_Spinner_Smart_Data
    Eina_Bool             dragging : 1;
    Eina_Bool             editable : 1;
    Eina_Bool             wrap : 1;
+   Eina_Bool             val_updated : 1;
 };
 
 typedef struct _Elm_Spinner_Special_Value Elm_Spinner_Special_Value;
