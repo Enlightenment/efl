@@ -4,6 +4,7 @@
 #include <Elementary.h>
 #ifndef ELM_LIB_QUICKLAUNCH
 
+#if 0
 static void
 _cleanup_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
@@ -400,4 +401,6 @@ test_access3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
    evas_object_resize(win, 300, 300);
    evas_object_show(win);
 }
+#endif
+
 #endif
