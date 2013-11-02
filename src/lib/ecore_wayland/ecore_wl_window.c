@@ -689,6 +689,16 @@ ecore_wl_window_id_get(Ecore_Wl_Window *win)
 }
 
 /* @since 1.8 */
+EAPI int
+ecore_wl_window_surface_id_get(Ecore_Wl_Window *win)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!win) return 0;
+   return win->surface_id;
+}
+
+/* @since 1.8 */
 EAPI void
 ecore_wl_window_title_set(Ecore_Wl_Window *win, const char *title)
 {

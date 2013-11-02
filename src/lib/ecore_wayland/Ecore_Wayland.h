@@ -572,7 +572,8 @@ EAPI void ecore_wl_window_parent_set(Ecore_Wl_Window *win, Ecore_Wl_Window *pare
 EAPI int ecore_wl_window_id_get(Ecore_Wl_Window *win);
 EAPI void ecore_wl_window_title_set(Ecore_Wl_Window *win, const char *title);
 EAPI void ecore_wl_window_class_name_set(Ecore_Wl_Window *win, const char *class_name);
-
+EAPI int ecore_wl_window_surface_id_get(Ecore_Wl_Window *win);
+       
 EAPI Ecore_Wl_Input *ecore_wl_window_keyboard_get(Ecore_Wl_Window *win);
 
 /**
