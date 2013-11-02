@@ -2,6 +2,9 @@
  * @defgroup Access Access
  * @ingroup Elementary
  *
+ * WARNING! this API is not finalized. It is unstable. - do not use it if
+ * you want no breaks in future.
+ * 
  * TODO: description
  *
  */
