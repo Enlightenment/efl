@@ -1661,6 +1661,7 @@ evas_render_updates_internal(Evas *eo_e,
 
    if (!strncmp(e->engine.module->definition->name, "wayland", 7))
      {
+        evas_event_freeze(eo_e);
         /* check for master clip */
         if (!e->framespace.clip)
           {
@@ -1670,6 +1671,8 @@ evas_render_updates_internal(Evas *eo_e,
              evas_object_resize(e->framespace.clip, 
                                 e->viewport.w - e->framespace.w, 
                                 e->viewport.h - e->framespace.h);
+             evas_object_pass_events_set(e->framespace.clip, EINA_TRUE);
+             evas_object_layer_set(e->framespace.clip, EVAS_LAYER_MIN);
              evas_object_show(e->framespace.clip);
           }
 
@@ -1702,6 +1705,9 @@ evas_render_updates_internal(Evas *eo_e,
                   evas_object_clip_set(obj->object, e->framespace.clip);
                }
           }
+        if (!evas_object_clipees_get(e->framespace.clip))
+          evas_object_hide(e->framespace.clip);
+        evas_event_thaw(eo_e);
      }
 
    /* phase 1.5. check if the video should be inlined or stay in their overlay */
