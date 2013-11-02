@@ -799,8 +799,12 @@ EAPI Eina_Bool                     elm_gengrid_filled_get(const Evas_Object *obj
  * - ELM_OBJECT_SELECT_MODE_NONE : This will turn off the ability to select items
  *      entirely and they will neither appear selected nor call selected
  *      callback functions.
+ * - ELM_OBJECT_MULTIPLE_SELECT_MODE_WITH_CONTROL : Only one item will be selected
+ *      although multi-selection is enabled, if clicked without pressing control
+ *      key. This mode is only available with multi-selection.
  *
  * @see elm_gengrid_select_mode_get()
+ * @see elm_gengrid_multi_select_set()
  *
  * @ingroup Gengrid
  */

@@ -596,7 +596,9 @@ _item_mouse_up_cb(void *data,
           _elm_gengrid_item_unrealize(it, EINA_FALSE);
      }
    if (elm_widget_item_disabled_get(it) || (dragged)) return;
-   if (sd->multi)
+   if (sd->multi &&
+       ((sd->select_mode != ELM_OBJECT_MULTIPLE_SELECT_MODE_WITH_CONTROL) ||
+        (evas_key_modifier_is_set(ev->modifiers, "Control"))))
      {
         if (!it->selected)
           {

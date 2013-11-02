@@ -126,6 +126,7 @@ typedef enum
    ELM_OBJECT_SELECT_MODE_ALWAYS, /**< always select mode */
    ELM_OBJECT_SELECT_MODE_NONE, /**< no select mode */
    ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY, /**< no select mode with no finger size rule*/
+   ELM_OBJECT_MULTIPLE_SELECT_MODE_WITH_CONTROL, /**< disallow mutiple selection when clicked without control key pressed */
    ELM_OBJECT_SELECT_MODE_MAX
 } Elm_Object_Select_Mode;
 

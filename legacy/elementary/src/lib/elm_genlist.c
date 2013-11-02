@@ -4220,7 +4220,9 @@ _item_mouse_up_cb(void *data,
      return;
 
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
-   if (sd->multi)
+   if (sd->multi &&
+       ((sd->select_mode != ELM_OBJECT_MULTIPLE_SELECT_MODE_WITH_CONTROL) ||
+        (evas_key_modifier_is_set(ev->modifiers, "Control"))))
      {
         if (!it->selected)
           {
