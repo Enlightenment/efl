@@ -60,10 +60,13 @@ group { name: "modules/music-control/popup";
          }
       }
       part { name: "player_name"; type: TEXT;
+         effect: GLOW;
          description { state: "default" 0;
+            color: FN_COL_HIGHLIGHT;
             text.size: 12;
             text.text: "Music player";
-            text.font: FN;
+            text.font: FNBD;
+            rel1.to: "cover_bg";
             rel1.relative: 1.0 0.0;
             rel2.relative: 1.0 0.0;
             rel2.offset: 0 12;
