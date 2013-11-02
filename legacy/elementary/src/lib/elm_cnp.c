@@ -2967,7 +2967,7 @@ _wl_elm_widget_window_get(Evas_Object *obj)
         win = ecore_evas_wayland_window_get(ee);
      }
 
-   if (win) return win->id;
+   if (win) return ecore_wl_window_id_get(win);
    return 0;
 }
 
