@@ -5469,7 +5469,7 @@ _window_id_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
 #if HAVE_ELEMENTARY_WAYLAND
         if (sd->wl.win)
           {
-             *ret = (Ecore_Window)sd->wl.win->surface_id;
+             *ret = (Ecore_Window)ecore_wl_window_surface_id_get(sd->wl.win);
              return;
           }
         if (sd->parent)
@@ -5477,7 +5477,7 @@ _window_id_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
              Ecore_Wl_Window *parent;
 
              parent = elm_win_wl_window_get(sd->parent);
-             if (parent) *ret = (Ecore_Window)parent->surface_id;
+             if (parent) *ret = (Ecore_Window)ecore_wl_window_surface_id_get(parent);
              return;
           }
 #endif
