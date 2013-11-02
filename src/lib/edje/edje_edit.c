@@ -5746,10 +5746,10 @@ edje_edit_script_get(Evas_Object *obj)
    return strdup(eed->embryo_source);
 }
 
-EAPI void
+EAPI Eina_Bool
 edje_edit_script_set(Evas_Object *obj, const char *code)
 {
-   GET_EED_OR_RETURN();
+   GET_EED_OR_RETURN(EINA_FALSE);
 
    free(eed->embryo_source);
    free(eed->embryo_processed);
@@ -5763,6 +5763,7 @@ edje_edit_script_set(Evas_Object *obj, const char *code)
    eed->embryo_source_dirty = EINA_TRUE;
 
    _edje_edit_flag_script_dirty(eed, EINA_FALSE);
+   return EINA_TRUE;
 }
 
 EAPI char *
@@ -5776,27 +5777,27 @@ edje_edit_script_program_get(Evas_Object *obj, const char *prog)
    if (epr->action != EDJE_ACTION_TYPE_SCRIPT)
      return NULL;
 
-   ps = eina_hash_find(eed->program_scripts, prog);
+   ps = eina_hash_find(eed->program_scripts, &epr->id);
    if (!ps) /* mmm? it should be there, even if empty */
      return NULL;
 
    return ps->code ? strdup(ps->code) : NULL;
 }
 
-EAPI void
+EAPI Eina_Bool
 edje_edit_script_program_set(Evas_Object *obj, const char *prog, const char *code)
 {
    Program_Script *ps;
 
-   GET_EED_OR_RETURN();
-   GET_EPR_OR_RETURN();
+   GET_EED_OR_RETURN(EINA_FALSE);
+   GET_EPR_OR_RETURN(EINA_FALSE);
 
    if (epr->action != EDJE_ACTION_TYPE_SCRIPT)
-     return;
+     return EINA_FALSE;
 
-   ps = eina_hash_find(eed->program_scripts, prog);
+   ps = eina_hash_find(eed->program_scripts, &epr->id);
    if (!ps) /* ???? how so? */
-     return;
+     return EINA_FALSE;
 
    free(ps->code);
    free(ps->processed);
@@ -5809,6 +5810,7 @@ edje_edit_script_program_set(Evas_Object *obj, const char *prog, const char *cod
    ps->dirty = EINA_TRUE;
 
    _edje_edit_flag_script_dirty(eed, EINA_FALSE);
+   return EINA_TRUE;
 }
 
 static int

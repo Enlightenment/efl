@@ -3744,8 +3744,10 @@ EAPI char *edje_edit_script_get(Evas_Object *obj);
  *
  * @param obj The object being edited
  * @param code The Embryo source
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
  */
-EAPI void edje_edit_script_set(Evas_Object *obj, const char *code);
+EAPI Eina_Bool edje_edit_script_set(Evas_Object *obj, const char *code);
 
 /**
  * Get the Embryo script for the given program.
@@ -3775,8 +3777,10 @@ EAPI char *edje_edit_script_program_get(Evas_Object *obj, const char *prog);
  * @param obj The object being edited
  * @param prog The program name.
  * @param code The Embryo source
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
  */
-EAPI void edje_edit_script_program_set(Evas_Object *obj, const char *prog, const char *code);
+EAPI Eina_Bool edje_edit_script_program_set(Evas_Object *obj, const char *prog, const char *code);
 
 /**
  * Compile the Embryo script for the given object
