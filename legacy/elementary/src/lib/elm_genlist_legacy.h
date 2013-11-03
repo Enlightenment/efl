@@ -83,7 +83,7 @@ EAPI void elm_genlist_multi_select_mode_set(Evas_Object *obj, Elm_Object_Multi_S
  *
  * @param obj The genlist object
  * @return The multi select mode
- * (If getting mode if failed, it returns ELM_OBJECT_MULTI_SELECT_MODE_MAX)
+ * (If getting mode is failed, it returns ELM_OBJECT_MULTI_SELECT_MODE_MAX)
  *
  * @see elm_genlist_multi_select_set()
  * @see elm_genlist_multi_select_mode_set()
