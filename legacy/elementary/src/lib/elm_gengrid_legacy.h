@@ -69,6 +69,41 @@ EAPI void                          elm_gengrid_multi_select_set(Evas_Object *obj
 EAPI Eina_Bool                     elm_gengrid_multi_select_get(const Evas_Object *obj);
 
 /**
+ * Set the gengrid multi select mode.
+ *
+ * @param obj The gengrid object
+ * @param mode The multi select mode
+ *
+ * - ELM_OBJECT_MULTI_SELECT_MODE_DEFAULT : select/unselect items whenever each
+ *   item is clicked.
+ * - ELM_OBJECT_MULTI_SELECT_MODE_WITH_CONTROL : Only one item will be selected
+ *   although multi-selection is enabled, if clicked without pressing control
+ *   key. This mode is only available with multi-selection.
+ *
+ * @see elm_gengrid_multi_select_set()
+ * @see elm_gengrid_multi_select_mode_get()
+ *
+ * @ingroup Gengrid
+ * @since 1.8
+ */
+EAPI void elm_gengrid_multi_select_mode_set(Evas_Object *obj, Elm_Object_Multi_Select_Mode mode);
+
+/**
+ * Get the gengrid multi select mode.
+ *
+ * @param obj The gengrid object
+ * @return The multi select mode
+ * (If getting mode if failed, it returns ELM_OBJECT_MULTI_SELECT_MODE_MAX)
+ *
+ * @see elm_gengrid_multi_select_set()
+ * @see elm_gengrid_multi_select_mode_set()
+ *
+ * @ingroup Gengrid
+ * @since 1.8
+ */
+EAPI Elm_Object_Multi_Select_Mode elm_gengrid_multi_select_mode_get(const Evas_Object *obj);
+
+/**
  * Set the direction in which a given gengrid widget will expand while
  * placing its items.
  *
@@ -799,12 +834,8 @@ EAPI Eina_Bool                     elm_gengrid_filled_get(const Evas_Object *obj
  * - ELM_OBJECT_SELECT_MODE_NONE : This will turn off the ability to select items
  *      entirely and they will neither appear selected nor call selected
  *      callback functions.
- * - ELM_OBJECT_MULTIPLE_SELECT_MODE_WITH_CONTROL : Only one item will be selected
- *      although multi-selection is enabled, if clicked without pressing control
- *      key. This mode is only available with multi-selection.
  *
  * @see elm_gengrid_select_mode_get()
- * @see elm_gengrid_multi_select_set()
  *
  * @ingroup Gengrid
  */

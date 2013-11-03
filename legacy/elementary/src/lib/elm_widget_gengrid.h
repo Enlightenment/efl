@@ -49,6 +49,7 @@ struct _Elm_Gengrid_Smart_Data
    unsigned int                          item_count;
    Evas_Coord                            pan_x, pan_y;
    Elm_Object_Select_Mode                select_mode;
+   Elm_Object_Multi_Select_Mode          multi_select_mode; /**< select mode for multiple selection */
 
    Ecore_Cb                              calc_cb;
    Ecore_Cb                              clear_cb;

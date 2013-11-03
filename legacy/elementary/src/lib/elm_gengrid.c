@@ -597,7 +597,7 @@ _item_mouse_up_cb(void *data,
      }
    if (elm_widget_item_disabled_get(it) || (dragged)) return;
    if (sd->multi &&
-       ((sd->select_mode != ELM_OBJECT_MULTIPLE_SELECT_MODE_WITH_CONTROL) ||
+       ((sd->multi_select_mode != ELM_OBJECT_MULTI_SELECT_MODE_WITH_CONTROL) ||
         (evas_key_modifier_is_set(ev->modifiers, "Control"))))
      {
         if (!it->selected)
@@ -3027,6 +3027,25 @@ _multi_select_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Elm_Gengrid_Smart_Data *sd = _pd;
 
    *ret = sd->multi;
+}
+
+EAPI void
+elm_gengrid_multi_select_mode_set(Evas_Object *obj,
+                                  Elm_Object_Multi_Select_Mode mode)
+{
+   ELM_GENGRID_CHECK(obj);
+   ELM_GENGRID_DATA_GET(obj, sd);
+
+   sd->multi_select_mode = mode;
+}
+
+EAPI Elm_Object_Multi_Select_Mode
+elm_gengrid_multi_select_mode_get(const Evas_Object *obj)
+{
+   ELM_GENGRID_CHECK(obj) ELM_OBJECT_MULTI_SELECT_MODE_MAX;
+   ELM_GENGRID_DATA_GET(obj, sd);
+
+   return sd->multi_select_mode;
 }
 
 EAPI Elm_Object_Item *

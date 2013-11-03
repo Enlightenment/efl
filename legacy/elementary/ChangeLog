@@ -1736,12 +1736,10 @@
 
         * slider: Added elm_slider_step_get(), elm_slider_step_set().
 
-2013-10-02  Ryuan Choi (ryuan)
-
-        * genlist , gengrid: Add ELM_OBJECT_MULTIPLE_SELECT_MODE_WITH_CONTROL.
-        It disallow multiple selection when clicked without control pressed although
-        multiple selection is enabled.
-
 2013-10-03  Abhinandan Aryadipta (aryarockstar)
 
         * Popup - Added elm_popup_move() api.
+
+2013-10-03  Daniel Juyung Seo (SeoZ)
+
+        * Genlist/Gengrid: Added multi select mode.

@@ -126,9 +126,15 @@ typedef enum
    ELM_OBJECT_SELECT_MODE_ALWAYS, /**< always select mode */
    ELM_OBJECT_SELECT_MODE_NONE, /**< no select mode */
    ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY, /**< no select mode with no finger size rule*/
-   ELM_OBJECT_MULTIPLE_SELECT_MODE_WITH_CONTROL, /**< disallow mutiple selection when clicked without control key pressed */
    ELM_OBJECT_SELECT_MODE_MAX
 } Elm_Object_Select_Mode;
+
+typedef enum
+{
+   ELM_OBJECT_MULTI_SELECT_MODE_DEFAULT = 0, /**< default multiple select mode */
+   ELM_OBJECT_MULTI_SELECT_MODE_WITH_CONTROL, /**< disallow mutiple selection when clicked without control key pressed */
+   ELM_OBJECT_MULTI_SELECT_MODE_MAX
+} Elm_Object_Multi_Select_Mode;
 
 typedef Eina_Bool             (*Elm_Event_Cb)(void *data, Evas_Object *obj, Evas_Object *src, Evas_Callback_Type type, void *event_info); /**< Function prototype definition for callbacks on input events happening on Elementary widgets. @a data will receive the user data pointer passed to elm_object_event_callback_add(). @a src will be a pointer to the widget on which the input event took place. @a type will get the type of this event and @a event_info, the struct with details on this event. */
 
