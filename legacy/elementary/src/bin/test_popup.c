@@ -21,32 +21,30 @@ _popup_close_cb(void *data, Evas_Object *obj EINA_UNUSED,
    evas_object_del(data);
 }
 
+#define POPUP_POINT_MAX 9
+static Evas_Coord_Point _popup_point[POPUP_POINT_MAX] =
+{
+   { 40, 50 },
+   { 80, 100 },
+   { 120, 150 },
+   { 160, 200 },
+   { 500, 9999 }, // excess y
+   { 9999, 500 }, // excess x
+   { -10, 50 }, // negative x
+   { 40, -100 }, // negative y
+   { 0, 0 } // zero
+};
+
 static void
 _popup_move_cb(void *data, Evas_Object *obj EINA_UNUSED,
                void *event_info EINA_UNUSED)
 {
-   static int k=0;
+   static int k = 0;
 
-   if (k == 0)
-     elm_popup_move(data, -10, 50);//negative x
-   else if (k == 1)
-     elm_popup_move(data, 40, -100);//negative y
-   else if (k == 2)
-     elm_popup_move(data, 0, 0);//zero x zero y
-   else if (k == 3)
-     elm_popup_move(data, 40, 50);
-   else if (k == 4)
-     elm_popup_move(data, 80, 100);
-   else if (k == 5)
-     elm_popup_move(data, 120, 150);
-   else if (k == 6)
-     elm_popup_move(data, 160, 200);
-   else if (k == 7)
-     elm_popup_move(data, 500, 9999);//excess y
-   else
-     elm_popup_move(data, 9999, 500);//excess x
+   elm_popup_move(data, _popup_point[k].x, _popup_point[k].y);
+
    k++;
-   if (k > 8)
+   if (k >= POPUP_POINT_MAX)
      k = 0;
 }
 
