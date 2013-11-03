@@ -284,6 +284,8 @@ eina_thread_create(Eina_Thread *t,
    c->prio = prio;
    c->affinity = affinity;
 
+   // valgrind complains c is lost - but it's not - it is handed to the
+   // child thread to be freed when c->func returns in _eina_internal_call().
    if (_eina_thread_create(t, affinity, _eina_internal_call, c))
      return EINA_TRUE;
 
