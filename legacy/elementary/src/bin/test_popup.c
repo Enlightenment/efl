@@ -22,6 +22,35 @@ _popup_close_cb(void *data, Evas_Object *obj EINA_UNUSED,
 }
 
 static void
+_popup_move_cb(void *data, Evas_Object *obj EINA_UNUSED,
+               void *event_info EINA_UNUSED)
+{
+   static int k=0;
+
+   if (k == 0)
+     elm_popup_move(data, -10, 50);//negative x
+   else if (k == 1)
+     elm_popup_move(data, 40, -100);//negative y
+   else if (k == 2)
+     elm_popup_move(data, 0, 0);//zero x zero y
+   else if (k == 3)
+     elm_popup_move(data, 40, 50);
+   else if (k == 4)
+     elm_popup_move(data, 80, 100);
+   else if (k == 5)
+     elm_popup_move(data, 120, 150);
+   else if (k == 6)
+     elm_popup_move(data, 160, 200);
+   else if (k == 7)
+     elm_popup_move(data, 500, 9999);//excess y
+   else
+     elm_popup_move(data, 9999, 500);//excess x
+   k++;
+   if (k > 8)
+     k = 0;
+}
+
+static void
 _g_popup_response_cb(void *data, Evas_Object *obj EINA_UNUSED,
              void *event_info EINA_UNUSED)
 {
@@ -467,6 +496,33 @@ _popup_transparent_cb(void *data, Evas_Object *obj EINA_UNUSED,
 }
 
 static void
+_popup_transparent_move_cb(void *data, Evas_Object *obj EINA_UNUSED,
+                           void *event_info EINA_UNUSED)
+{
+   Evas_Object *popup;
+   Evas_Object *btn, *btn1;
+
+   popup = elm_popup_add(data);
+   elm_object_style_set(popup, "transparent");
+   elm_object_text_set(popup, "This Popup has transparent background");
+
+   // popup buttons
+   btn = elm_button_add(popup);
+   elm_object_text_set(btn, "Move");
+   elm_object_part_content_set(popup, "button1", btn);
+   evas_object_smart_callback_add(btn, "clicked", _popup_move_cb, popup);
+
+   btn1 = elm_button_add(popup);
+   elm_object_text_set(btn1, "Close");
+   elm_object_part_content_set(popup, "button2", btn1);
+   evas_object_smart_callback_add(btn1, "clicked", _popup_close_cb, popup);
+
+   // popup show should be called after adding all the contents and the buttons
+   // of popup to set the focus into popup's contents correctly.
+   evas_object_show(popup);
+}
+
+static void
 _list_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    evas_object_del(data);
@@ -543,6 +599,8 @@ test_popup(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
                         _popup_center_text_3button_add_remove_button_cb, win);
    elm_list_item_append(list, "popup-transparent", NULL, NULL,
                         _popup_transparent_cb, win);
+   elm_list_item_append(list, "popup-transparent-move", NULL, NULL,
+                        _popup_transparent_move_cb, win);
    elm_list_item_append(list, "popup-center-title + list content + 1 button",
                         NULL, NULL, _popup_center_title_list_content_1button_cb,
                         win);
