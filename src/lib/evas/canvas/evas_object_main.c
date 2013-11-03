@@ -141,6 +141,7 @@ void
 evas_object_free(Evas_Object *eo_obj, int clean_layer)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Object *eo_obj2;
    if (!obj) return;
    obj->clean_layer = clean_layer;
 
@@ -171,8 +172,21 @@ evas_object_free(Evas_Object *eo_obj, int clean_layer)
         obj->func->free(eo_obj, obj, obj->private_data);
      }
    if (!was_smart_child) evas_object_release(eo_obj, obj, obj->clean_layer);
-   if (obj->clip.clipees)
-     eina_list_free(obj->clip.clipees);
+   EINA_LIST_FREE(obj->clip.clipees, eo_obj2)
+     {
+        Evas_Object_Protected_Data *obj2 = 
+          eo_data_scope_get(eo_obj2, MY_CLASS);
+        if ((obj2) && (obj2->cur))
+          {
+             EINA_COW_STATE_WRITE_BEGIN(obj2, state_write, cur)
+               {
+                  state_write->clipper = NULL;
+               }
+             EINA_COW_STATE_WRITE_END(obj2, state_write, cur);
+          }
+     }
+//   if (obj->clip.clipees)
+//     obj->clip.clipees = eina_list_free(obj->clip.clipees);
    obj->clip.cache_clipees_answer = eina_list_free(obj->clip.cache_clipees_answer);
    evas_object_clip_changes_clean(eo_obj);
    evas_object_event_callback_all_del(eo_obj);
@@ -188,12 +202,17 @@ evas_object_free(Evas_Object *eo_obj, int clean_layer)
      }
    if (obj->size_hints)
      {
-       EVAS_MEMPOOL_FREE(_mp_sh, obj->size_hints);
+        EVAS_MEMPOOL_FREE(_mp_sh, obj->size_hints);
+        obj->size_hints = NULL;
      }
    eina_cow_free(evas_object_proxy_cow, obj->proxy);
    eina_cow_free(evas_object_map_cow, obj->map);
    eina_cow_free(evas_object_state_cow, obj->cur);
    eina_cow_free(evas_object_state_cow, obj->prev);
+   obj->cur = NULL;
+   obj->prev = NULL;
+   obj->map = NULL;
+   obj->proxy = NULL;
    eo_data_unref(eo_obj, obj->private_data);
    obj->private_data = NULL;
    eo_manual_free(eo_obj);

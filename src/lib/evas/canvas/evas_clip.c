@@ -369,6 +369,7 @@ _clip_unset(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Evas_Object_Protected_Data *obj = _pd;
 
+   if (!obj->cur) return;
    if (!obj->cur->clipper) return;
 
    obj->clip.cache_clipees_answer = eina_list_free(obj->clip.cache_clipees_answer);
@@ -386,7 +387,7 @@ _clip_unset(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
           {
              EINA_COW_STATE_WRITE_BEGIN(obj->cur->clipper, state_write, cur)
                {
-                  state_write->have_clipees = 0;
+                  if (state_write) state_write->have_clipees = 0;
                }
              EINA_COW_STATE_WRITE_END(obj->cur->clipper, state_write, cur);
 
@@ -417,14 +418,17 @@ _clip_unset(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
    if ((!obj->is_smart) &&
        (!((obj->map->cur.map) && (obj->map->cur.usemap))))
      {
-        if (evas_object_is_in_output_rect(eo_obj, obj,
+        if (obj->cur)
+          {
+             if (evas_object_is_in_output_rect(eo_obj, obj,
+                                               obj->layer->evas->pointer.x,
+                                               obj->layer->evas->pointer.y, 1, 1))
+               evas_event_feed_mouse_move(obj->layer->evas->evas,
                                           obj->layer->evas->pointer.x,
-                                          obj->layer->evas->pointer.y, 1, 1))
-          evas_event_feed_mouse_move(obj->layer->evas->evas,
-                                     obj->layer->evas->pointer.x,
-                                     obj->layer->evas->pointer.y,
-                                     obj->layer->evas->last_timestamp,
-                                     NULL);
+                                          obj->layer->evas->pointer.y,
+                                          obj->layer->evas->last_timestamp,
+                                          NULL);
+          }
      }
    evas_object_clip_across_check(eo_obj, obj);
 }
