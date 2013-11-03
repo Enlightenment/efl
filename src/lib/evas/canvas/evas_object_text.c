@@ -169,7 +169,9 @@ _evas_object_text_item_del(Evas_Object_Text *o, Evas_Object_Text_Item *it)
    else if (o->last_computed.ellipsis_end == it)
      o->last_computed.ellipsis_end = NULL;
 
-   if (EINA_INLIST_GET(it)->last)
+   if ((EINA_INLIST_GET(it)->next) ||
+       (EINA_INLIST_GET(it)->prev) ||
+       (o->items == (EINA_INLIST_GET(it))))
      o->items = (Evas_Object_Text_Item *)eina_inlist_remove
      (EINA_INLIST_GET(o->items), EINA_INLIST_GET(it));
    _evas_object_text_item_clean(it);
