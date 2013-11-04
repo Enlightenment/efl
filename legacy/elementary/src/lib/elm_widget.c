@@ -2512,7 +2512,8 @@ _elm_widget_focus_direction_get(Eo *obj, void *_pd, va_list *list)
        ((c_weight != 0.0) && (*weight != -1.0) &&
         ((int)(*weight * 1000000) <= (int)(c_weight * 1000000))))
      {
-        if ((int)(*weight * 1000000) == (int)(c_weight * 1000000))
+        if (*direction &&
+            ((int)(*weight * 1000000) == (int)(c_weight * 1000000)))
           {
              ELM_WIDGET_DATA_GET(*direction, sd1);
              if (sd1)
