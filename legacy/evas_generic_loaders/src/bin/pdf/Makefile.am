@@ -12,6 +12,8 @@ AM_CPPFLAGS = \
 @EINA_CFLAGS@ \
 @POPPLER_CFLAGS@
 
+EXTRA_DIST = evas_generic_pdf_loader.libreoffice
+
 bin_SCRIPTS = evas_generic_pdf_loader.libreoffice
 bin_PROGRAMS = evas_image_loader.pdf
 bindir = $(libdir)/evas/utils
@@ -28,6 +30,20 @@ install-exec-hook:
 	ln -sf evas_image_loader.pdf $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.ppt
 	ln -sf evas_image_loader.pdf $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.pptx
 	ln -sf evas_image_loader.pdf $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.odp
+	ln -sf evas_image_loader.pdf $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.xls
+	ln -sf evas_image_loader.pdf $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.xlsx
+	ln -sf evas_image_loader.pdf $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.ods
+	ln -sf evas_image_loader.pdf $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.doc
+	ln -sf evas_image_loader.pdf $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.docx
+	ln -sf evas_image_loader.pdf $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.odt
+	ln -sf evas_image_loader.pdf $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.rtf
 	ln -sf evas_generic_pdf_loader.libreoffice $(DESTDIR)$(libdir)/evas/utils/evas_generic_pdf_loader.ppt
 	ln -sf evas_generic_pdf_loader.libreoffice $(DESTDIR)$(libdir)/evas/utils/evas_generic_pdf_loader.pptx
 	ln -sf evas_generic_pdf_loader.libreoffice $(DESTDIR)$(libdir)/evas/utils/evas_generic_pdf_loader.odp
+	ln -sf evas_generic_pdf_loader.libreoffice $(DESTDIR)$(libdir)/evas/utils/evas_generic_pdf_loader.xls
+	ln -sf evas_generic_pdf_loader.libreoffice $(DESTDIR)$(libdir)/evas/utils/evas_generic_pdf_loader.xlsx
+	ln -sf evas_generic_pdf_loader.libreoffice $(DESTDIR)$(libdir)/evas/utils/evas_generic_pdf_loader.ods
+	ln -sf evas_generic_pdf_loader.libreoffice $(DESTDIR)$(libdir)/evas/utils/evas_generic_pdf_loader.doc
+	ln -sf evas_generic_pdf_loader.libreoffice $(DESTDIR)$(libdir)/evas/utils/evas_generic_pdf_loader.docx
+	ln -sf evas_generic_pdf_loader.libreoffice $(DESTDIR)$(libdir)/evas/utils/evas_generic_pdf_loader.odt
+	ln -sf evas_generic_pdf_loader.libreoffice $(DESTDIR)$(libdir)/evas/utils/evas_generic_pdf_loader.rtf
