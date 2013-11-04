@@ -1216,7 +1216,8 @@ EAPI const char *elm_config_indicator_service_get(int rotation);
  * Get the duration for occurring long tap event of gesture layer.
  *
  * @return Timeout for long tap event of gesture layer.
- * @ingroup glayer
+ * @ingroup Elm_Gesture_Layer
+ * @since 1.8
  */
 EAPI double   elm_config_glayer_long_tap_start_timeout_get(void);
 
@@ -1224,7 +1225,8 @@ EAPI double   elm_config_glayer_long_tap_start_timeout_get(void);
  * Set the duration for occurring long tap event of gesture layer.
  *
  * @param long_tap_timeout Timeout for long tap event of gesture layer.
- * @ingroup glayer
+ * @ingroup Elm_Gesture_Layer
+ * @since 1.8
  */
 EAPI void   elm_config_glayer_long_tap_start_timeout_set(double long_tap_timeout);
 
@@ -1232,7 +1234,8 @@ EAPI void   elm_config_glayer_long_tap_start_timeout_set(double long_tap_timeout
  * Get the duration for occurring double tap event of gesture layer.
  *
  * @return Timeout for double tap event of gesture layer.
- * @ingroup glayer
+ * @ingroup Elm_Gesture_Layer
+ * @since 1.8
  */
 EAPI double   elm_config_glayer_double_tap_timeout_get(void);
 
@@ -1240,7 +1243,8 @@ EAPI double   elm_config_glayer_double_tap_timeout_get(void);
  * Set the duration for occurring double tap event of gesture layer.
  *
  * @param long_tap_timeout Timeout for double tap event of gesture layer.
- * @ingroup glayer
+ * @ingroup Elm_Gesture_Layer
+ * @since 1.8
  */
 EAPI void   elm_config_glayer_double_tap_timeout_set(double double_tap_timeout);
 
