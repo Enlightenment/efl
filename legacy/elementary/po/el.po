@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-11-01 08:31+0900\n"
+"POT-Creation-Date: 2013-11-04 18:03+0900\n"
 "PO-Revision-Date: 2012-12-19 15:58+0200\n"
 "Last-Translator: Efstathios Iosifidis <iosifidis@opensuse.org>\n"
 "Language-Team: Ελληνικά, Σύγχρονα <opensuse-translation-el@opensuse.org>\n"
@@ -46,9 +46,9 @@ msgstr "Πλαίσιο"
 msgid "Clicked"
 msgstr "Επιλεγμένο"
 
-#: src/lib/elm_button.c:280 src/lib/elm_check.c:216 src/lib/elm_gengrid.c:677
+#: src/lib/elm_button.c:280 src/lib/elm_check.c:216 src/lib/elm_gengrid.c:679
 #: src/lib/elm_genlist.c:1461 src/lib/elm_list.c:1491 src/lib/elm_radio.c:260
-#: src/lib/elm_spinner.c:547 src/lib/elm_toolbar.c:1995
+#: src/lib/elm_spinner.c:538 src/lib/elm_toolbar.c:1995
 msgid "State: Disabled"
 msgstr "Κατάσταση: Απενεργοποιημένο"
 
@@ -168,7 +168,7 @@ msgstr "Επικόλληση"
 msgid "Entry"
 msgstr "Καταχώριση"
 
-#: src/lib/elm_gengrid.c:707
+#: src/lib/elm_gengrid.c:709
 msgid "Gengrid Item"
 msgstr "Αντικείμενο Gengrid"
 
@@ -208,17 +208,17 @@ msgstr "Επιλογή"
 msgid "slider"
 msgstr "μπάρα κύλισης"
 
-#: src/lib/elm_spinner.c:636
+#: src/lib/elm_spinner.c:627
 #, fuzzy
 msgid "spinner increment button"
 msgstr "κουμπί spinner επόμενο"
 
-#: src/lib/elm_spinner.c:645
+#: src/lib/elm_spinner.c:636
 #, fuzzy
 msgid "spinner decrement button"
 msgstr "κουμπί spinner προηγούμενο"
 
-#: src/lib/elm_spinner.c:653
+#: src/lib/elm_spinner.c:644
 #, fuzzy
 msgid "spinner"
 msgstr "spinner"

@@ -1,13 +1,13 @@
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 m4_define([v_maj], [1])
-m4_define([v_min], [7])
-m4_define([v_mic], [99])
-m4_define([v_rev], m4_esyscmd([(git rev-list --count HEAD 2>/dev/null || echo 0) | tr -d '\n']))
+m4_define([v_min], [8])
+m4_define([v_mic], [0])
+dnl m4_define([v_rev], m4_esyscmd([(git rev-list --count HEAD 2>/dev/null || echo 0) | tr -d '\n']))
 ##--   When released, remove the dnl on the below line
 dnl m4_undefine([v_rev])
 ##--   When doing snapshots - change soname. remove dnl on below line
-dnl m4_define([relname], [ver-pre-svn-09])
+dnl m4_define([relname], [alpha1])
 dnl m4_define([v_rel], [-release relname])
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 m4_ifdef([v_rev], [m4_define([v_ver], [v_maj.v_min.v_mic.v_rev])],
@@ -18,7 +18,7 @@ m4_define([lt_age], v_min)
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 
-AC_INIT([elementary], [v_ver], [enlightenment-devel@lists.sourceforge.net])
+AC_INIT([elementary], [v_ver-alpha1], [enlightenment-devel@lists.sourceforge.net])
 AC_PREREQ(2.52)
 AC_CONFIG_SRCDIR([configure.ac])
 AC_CONFIG_MACRO_DIR([m4])
@@ -71,6 +71,10 @@ VMAJ=v_maj
 VMIN=v_min
 AC_SUBST(VMAJ)
 AC_SUBST(VMIN)
+ELM_VERSION_MAJOR=v_maj
+ELM_VERSION_MINOR=v_min
+AC_SUBST(ELM_VERSION_MAJOR)
+AC_SUBST(ELM_VERSION_MINOR)
 
 # pkg-config
 PKG_PROG_PKG_CONFIG
@@ -228,30 +232,30 @@ AM_CONDITIONAL([ELEMENTARY_WINDOWS_BUILD], [test "x${have_windows}" = "xyes"])
 
 PKG_CHECK_MODULES([ELEMENTARY],
    [
-    eina >= 1.7.99
-    eet >= 1.7.99
-    evas >= 1.7.99
-    ecore >= 1.7.99
-    ecore-evas >= 1.7.99
-    ecore-file >= 1.7.99
-    ecore-input >= 1.7.99
-    edje >= 1.7.99
-    eo
+    eina >= 1.8.0
+    eet >= 1.8.0
+    evas >= 1.8.0
+    ecore >= 1.8.0
+    ecore-evas >= 1.8.0
+    ecore-file >= 1.8.0
+    ecore-input >= 1.8.0
+    edje >= 1.8.0
+    eo >= 1.8.0
    ]
 )
 
 EFL_ENABLE_EO_API_SUPPORT
 EFL_ENABLE_BETA_API_SUPPORT
 
-requirement_elm="edje >= 1.7.99 ecore-file >= 1.7.99 ecore-evas >= 1.7.99 ecore >= 1.7.99 evas >= 1.7.99 eet >= 1.7.99 eina >= 1.7.99 ${requirement_elm}"
+requirement_elm="edje >= 1.8.0 ecore-file >= 1.8.0 ecore-evas >= 1.8.0 ecore >= 1.8.0 evas >= 1.8.0 eet >= 1.8.0 eina >= 1.8.0 ${requirement_elm}"
 
 PKG_CHECK_MODULES([ELEMENTARY_ECORE_IMF],
-   [ecore-imf >= 1.7.99],
+   [ecore-imf >= 1.8.0],
    [
     ELEMENTARY_ECORE_IMF_INC="#include <Ecore_IMF.h>"
     AC_DEFINE(HAVE_ELEMENTARY_ECORE_IMF, 1, [Have Ecore_IMF support])
     have_ecore_imf="yes"
-    requirement_elm="ecore-imf >= 1.7.99 ${requirement_elm}"
+    requirement_elm="ecore-imf >= 1.8.0 ${requirement_elm}"
    ],
    [have_ecore_imf="no"])
 AC_SUBST(ELEMENTARY_ECORE_IMF_INC)
@@ -259,12 +263,12 @@ AC_SUBST(ELEMENTARY_ECORE_IMF_INC)
 AM_CONDITIONAL([HAVE_ECORE_IMF], [test "x${have_ecore_imf}" = "xyes"])
 
 PKG_CHECK_MODULES([ELEMENTARY_ECORE_CON],
-   [ecore-con >= 1.7.99],
+   [ecore-con >= 1.8.0],
    [
     ELEMENTARY_ECORE_CON_INC="#include <Ecore_Con.h>"
     AC_DEFINE(HAVE_ELEMENTARY_ECORE_CON, 1, [Have Ecore_Con support])
     have_ecore_con="yes"
-    requirement_elm="ecore-con >= 1.7.99 ${requirement_elm}"
+    requirement_elm="ecore-con >= 1.8.0 ${requirement_elm}"
    ],
    [have_ecore_con="no"])
 AC_SUBST(ELEMENTARY_ECORE_CON_INC)
@@ -309,11 +313,11 @@ AC_ARG_ENABLE([ecore-x],
 
 if test "x$want_elementary_x" != "xno"; then
    PKG_CHECK_MODULES([ELEMENTARY_X],
-      [ecore-x >= 1.7.99],
+      [ecore-x >= 1.8.0],
       [
        AC_DEFINE(HAVE_ELEMENTARY_X, 1, [X11 support for Elementary])
        have_elementary_x="yes"
-       requirement_elm="ecore-x >= 1.7.99 ${requirement_elm}"
+       requirement_elm="ecore-x >= 1.8.0 ${requirement_elm}"
       ],
       [have_elementary_x="no"]
    )
@@ -333,11 +337,11 @@ AC_ARG_ENABLE([ecore-fb],
 
 if test "x$want_elementary_fb" != "xno"; then
    PKG_CHECK_MODULES([ELEMENTARY_FB],
-      [ecore-fb >= 1.7.99],
+      [ecore-fb >= 1.8.0],
       [
        AC_DEFINE(HAVE_ELEMENTARY_FB, 1, [FB support for Elementary])
        have_elementary_fb="yes"
-       requirement_elm="ecore-fb >= 1.7.99 ${requirement_elm}"
+       requirement_elm="ecore-fb >= 1.8.0 ${requirement_elm}"
       ],
       [have_elementary_fb="no"]
    )
@@ -356,11 +360,11 @@ AC_ARG_ENABLE([ecore-psl1ght],
 
 if test "x$want_elementary_psl1ght" != "xno"; then
    PKG_CHECK_MODULES([ELEMENTARY_PSL1GHT],
-      [ecore-psl1ght >= 1.7.99],
+      [ecore-psl1ght >= 1.8.0],
       [
        AC_DEFINE(HAVE_ELEMENTARY_PSL1GHT, 1, [PSL1GHT support for Elementary])
        have_elementary_psl1ght="yes"
-       requirement_elm="ecore-psl1ght >= 1.7.99 ${requirement_elm}"
+       requirement_elm="ecore-psl1ght >= 1.8.0 ${requirement_elm}"
       ],
       [have_elementary_psl1ght="no"]
    )
@@ -379,11 +383,11 @@ AC_ARG_ENABLE([ecore-sdl],
 
 if test "x$want_elementary_sdl" != "xno"; then
    PKG_CHECK_MODULES([ELEMENTARY_SDL],
-      [ecore-sdl >= 1.7.99],
+      [ecore-sdl >= 1.8.0],
       [
        AC_DEFINE(HAVE_ELEMENTARY_SDL, 1, [SDL support for Elementary])
        have_elementary_sdl="yes"
-       requirement_elm="ecore-sdl >= 1.7.99 ${requirement_elm}"
+       requirement_elm="ecore-sdl >= 1.8.0 ${requirement_elm}"
       ],
       [have_elementary_sdl="no"]
    )
@@ -402,11 +406,11 @@ AC_ARG_ENABLE([ecore-cocoa],
 
 if test "x$want_elementary_cocoa" != "xno"; then
    PKG_CHECK_MODULES([ELEMENTARY_COCOA],
-      [ecore-cocoa >= 1.7.99],
+      [ecore-cocoa >= 1.8.0],
       [
        AC_DEFINE(HAVE_ELEMENTARY_COCOA, 1, [COCOA support for Elementary])
        have_elementary_cocoa="yes"
-       requirement_elm="ecore-cocoa >= 1.7.99 ${requirement_elm}"
+       requirement_elm="ecore-cocoa >= 1.8.0 ${requirement_elm}"
       ],
       [have_elementary_cocoa="no"]
    )
@@ -425,11 +429,11 @@ AC_ARG_ENABLE([ecore-win32],
 
 if test "x$want_elementary_win32" != "xno"; then
    PKG_CHECK_MODULES([ELEMENTARY_WIN32],
-      [ecore-win32 >= 1.7.99],
+      [ecore-win32 >= 1.8.0],
       [
        AC_DEFINE(HAVE_ELEMENTARY_WIN32, 1, [Windows XP support for Elementary])
        have_elementary_win32="yes"
-       requirement_elm="ecore-win32 >= 1.7.99 ${requirement_elm}"
+       requirement_elm="ecore-win32 >= 1.8.0 ${requirement_elm}"
       ],
       [have_elementary_win32="no"]
    )
@@ -448,11 +452,11 @@ AC_ARG_ENABLE([ecore-wince],
 
 if test "x$want_elementary_wince" != "xno"; then
    PKG_CHECK_MODULES([ELEMENTARY_WINCE],
-      [ecore-wince >= 1.7.99],
+      [ecore-wince >= 1.8.0],
       [
        AC_DEFINE(HAVE_ELEMENTARY_WINCE, 1, [Windows CE support for Elementary])
        have_elementary_wince="yes"
-       requirement_elm="ecore-wince >= 1.7.99 ${requirement_elm}"
+       requirement_elm="ecore-wince >= 1.8.0 ${requirement_elm}"
       ],
       [have_elementary_wince="no"]
    )
@@ -496,13 +500,13 @@ AC_ARG_ENABLE([eldbus],
 if test "x$want_elementary_eldbus" != "xno"; then
     PKG_CHECK_MODULES([ELEMENTARY_ELDBUS],
        [
-        eldbus >= 1.7.99
+        eldbus >= 1.8.0
        ],
        [
         AC_DEFINE(HAVE_ELEMENTARY_ELDBUS, 1, [Eldbus support for Elementary])
         have_elementary_eldbus="yes"
         ELM_ELDBUS_DEF="#define"
-        requirement_elm="eldbus >= 1.7.99 ${requirement_elm}"
+        requirement_elm="eldbus >= 1.8.0 ${requirement_elm}"
        ],
        [have_elementary_eldbus="no"]
     )
@@ -552,15 +556,15 @@ AC_ARG_ENABLE([efreet],
 if test "x$want_elementary_efreet" != "xno"; then
     PKG_CHECK_MODULES([ELEMENTARY_EFREET],
        [
-        efreet >= 1.7.99
-        efreet-mime >= 1.7.99
-        efreet-trash >= 1.7.99
+        efreet >= 1.8.0
+        efreet-mime >= 1.8.0
+        efreet-trash >= 1.8.0
        ],
        [
         AC_DEFINE(HAVE_ELEMENTARY_EFREET, 1, [Efreet support for Elementary])
         have_elementary_efreet="yes"
         ELM_EFREET_DEF="#define"
-        requirement_elm="efreet >= 1.7.99 efreet-mime >= 1.7.99 efreet-trash >= 1.7.99 ${requirement_elm}"
+        requirement_elm="efreet >= 1.8.0 efreet-mime >= 1.8.0 efreet-trash >= 1.8.0 ${requirement_elm}"
        ],
        [have_elementary_efreet="no"]
     )

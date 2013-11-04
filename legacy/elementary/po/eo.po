@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-11-01 08:31+0900\n"
+"POT-Creation-Date: 2013-11-04 18:03+0900\n"
 "PO-Revision-Date: 2013-01-23 05:24+0000\n"
 "Last-Translator: Eliovir <Unknown>\n"
 "Language-Team: Esperanto <eo@li.org>\n"
@@ -44,9 +44,9 @@ msgstr "Veziko"
 msgid "Clicked"
 msgstr "Alklakita"
 
-#: src/lib/elm_button.c:280 src/lib/elm_check.c:216 src/lib/elm_gengrid.c:677
+#: src/lib/elm_button.c:280 src/lib/elm_check.c:216 src/lib/elm_gengrid.c:679
 #: src/lib/elm_genlist.c:1461 src/lib/elm_list.c:1491 src/lib/elm_radio.c:260
-#: src/lib/elm_spinner.c:547 src/lib/elm_toolbar.c:1995
+#: src/lib/elm_spinner.c:538 src/lib/elm_toolbar.c:1995
 msgid "State: Disabled"
 msgstr "Stato: malŝaltita"
 
@@ -159,7 +159,7 @@ msgstr "Alglui"
 msgid "Entry"
 msgstr "Ero"
 
-#: src/lib/elm_gengrid.c:707
+#: src/lib/elm_gengrid.c:709
 msgid "Gengrid Item"
 msgstr "Ero de komuna krado"
 
@@ -199,15 +199,15 @@ msgstr "Radiobutono"
 msgid "slider"
 msgstr "ŝovilo"
 
-#: src/lib/elm_spinner.c:636
+#: src/lib/elm_spinner.c:627
 msgid "spinner increment button"
 msgstr "alkrementa sago-butono"
 
-#: src/lib/elm_spinner.c:645
+#: src/lib/elm_spinner.c:636
 msgid "spinner decrement button"
 msgstr "dekrementa sago-butono"
 
-#: src/lib/elm_spinner.c:653
+#: src/lib/elm_spinner.c:644
 msgid "spinner"
 msgstr "sago-butono"
 

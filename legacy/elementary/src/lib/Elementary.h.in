@@ -1,4 +1,4 @@
-/* This is the primary Elementary header file that includes all other useful
+/* This is the prmary Elementary header file that includes all other useful
  * headers.
  *
  * Elementary is distributed under the LGPLv2 license. Please see the COPYING
@@ -142,8 +142,8 @@ extern "C"
 #include <elm_getting_started.h>
 #include <elm_authors.h>
 
-#define ELM_VERSION_MAJOR 1
-#define ELM_VERSION_MINOR 8
+#define ELM_VERSION_MAJOR @ELM_VERSION_MAJOR@
+#define ELM_VERSION_MINOR @ELM_VERSION_MINOR@
 
 typedef struct _Elm_Version
 {
