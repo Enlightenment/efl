@@ -55,6 +55,16 @@ AC_SUBST(EFL_API_EO_DEF)
 
 #### Additional options to configure
 
+# string to identify the build
+AC_ARG_WITH([id],
+   [AC_HELP_STRING([--with-id=BUILD_ID],
+                   [Specify a string to identify the build (vendor, maintainer, etc).
+                     @<:@default=none@:>@])],
+   [EFL_BUILD_ID="${withval}"],
+   [EFL_BUILD_ID="none"])
+AC_SUBST(EFL_BUILD_ID)
+
+# profile
 AC_ARG_WITH([profile],
    [AC_HELP_STRING([--with-profile=PROFILE],
                    [use the predefined build profile, one of: dev, debug and release.
