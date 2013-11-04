@@ -4060,7 +4060,11 @@ eet_data_put_union(Eet_Dictionary      *ed,
                             ede->group_type);
 
           sede = &(ede->subtype->elements.set[i]);
-          data = _eet_data_descriptor_encode(ed,
+
+          if (IS_SIMPLE_TYPE(sede->type))
+            data = eet_data_put_type(ed, sede->type, data_in, &size);
+          else
+            data = _eet_data_descriptor_encode(ed,
                                              sede->subtype,
                                              data_in,
                                              &size);
@@ -4126,17 +4130,31 @@ eet_data_get_union(Eet_Free_Context     *context,
 
                /* Yeah we found it ! */
                sede = &(ede->subtype->elements.set[i]);
-               EET_ASSERT(sede->subtype, goto on_error);
 
-               data_ret = _eet_data_descriptor_decode(context,
+               if (IS_SIMPLE_TYPE(sede->type))
+                 {
+                    ret = eet_data_get_type(ed,
+                          sede->type,
+                          echnk->data,
+                          ((char *)echnk->data) + echnk->size,
+                          (char *)data);
+
+                    if (ret <= 0)
+                      return ret;
+                 }
+               else
+                 {
+                  EET_ASSERT(sede->subtype, goto on_error);
+                  data_ret = _eet_data_descriptor_decode(context,
                                                       ed,
                                                       sede->subtype,
                                                       echnk->data,
                                                       echnk->size,
                                                       data,
                                                       sede->subtype->size);
-               if (!data_ret)
-                 goto on_error;
+                  if (!data_ret)
+                    goto on_error;
+               }
 
                /* Set union type. */
                if ((!ed) || (!ede->subtype->func.str_direct_alloc))

@@ -23,7 +23,9 @@ enum _Example_Data_Type
    EET_UNKNOWN = 0,
    EET_STRUCT1,
    EET_STRUCT2,
-   EET_STRUCT3
+   EET_STRUCT3,
+   EET_BASIC_FLOAT,
+   EET_BASIC_STRING
 };
 
 struct
@@ -34,6 +36,8 @@ struct
    { EET_STRUCT1, "ST1" },
    { EET_STRUCT2, "ST2" },
    { EET_STRUCT3, "ST3" },
+   { EET_BASIC_FLOAT, "float" },
+   { EET_BASIC_STRING, "string" },
    { EET_UNKNOWN, NULL }
 };
 
@@ -63,6 +67,8 @@ struct _Example_Union
       Example_Struct1 st1;
       Example_Struct2 st2;
       Example_Struct3 st3;
+      float f;
+      const char* string;
    } u;
 };
 
@@ -288,6 +294,10 @@ _data_descriptors_init(void)
      _union_unified_descriptor, "ST2", _struct_2_descriptor);
    EET_DATA_DESCRIPTOR_ADD_MAPPING(
      _union_unified_descriptor, "ST3", _struct_3_descriptor);
+   EET_DATA_DESCRIPTOR_ADD_MAPPING_BASIC(
+     _union_unified_descriptor, "float", EET_T_FLOAT);
+   EET_DATA_DESCRIPTOR_ADD_MAPPING_BASIC(
+     _union_unified_descriptor, "string", EET_T_STRING);
 
    EET_DATA_DESCRIPTOR_ADD_UNION(
      _union_descriptor, Example_Union, "u", u, type,
@@ -400,6 +410,40 @@ _union_3_new(const char *v1)
 
    un->type = EET_STRUCT3;
    _st3_set(&(un->u.st3), atoi(v1));
+
+   return un;
+}
+
+static Example_Union *
+_union_float_new(const char *v1)
+{
+   Example_Union *un = calloc(1, sizeof(Example_Union));
+   if (!un)
+     {
+        fprintf(
+          stderr, "ERROR: could not allocate an Example_Union struct.\n");
+        return NULL;
+     }
+
+   un->type = EET_BASIC_FLOAT;
+   un->u.f = atof(v1);
+
+   return un;
+}
+
+static Example_Union *
+_union_string_new(const char *v1)
+{
+   Example_Union *un = calloc(1, sizeof(Example_Union));
+   if (!un)
+     {
+        fprintf(
+          stderr, "ERROR: could not allocate an Example_Union struct.\n");
+        return NULL;
+     }
+
+   un->type = EET_BASIC_STRING;
+   un->u.string = v1;
 
    return un;
 }
@@ -624,6 +668,14 @@ _print_union(const Example_Union *un)
         printf("\t\t  val1: %i\n", un->u.st3.body);
         break;
 
+      case EET_BASIC_FLOAT:
+        printf("\t\t  float: %f\n", un->u.f);
+        break;
+
+      case EET_BASIC_STRING:
+        printf("\t\t  string: %s\n", un->u.string);
+        break;
+
       default:
         return;
      }
@@ -712,7 +764,7 @@ main(int   argc,
                   int type = atoi(argv[4]);
                   Example_Union *un;
 
-                  if (type < EET_STRUCT1 || type > EET_STRUCT3)
+                  if (type < EET_STRUCT1 || type > EET_BASIC_STRING)
                     {
                        fprintf(stderr,
                                "ERROR: invalid type parameter (%s).\n",
@@ -775,6 +827,48 @@ main(int   argc,
                          }
 
                        un = _union_3_new(argv[5]);
+                       if (!un)
+                         {
+                            fprintf(
+                              stderr, "ERROR: could not create the "
+                                      "requested union.\n");
+                            goto cont;
+                         }
+                       data_lists->union_list =
+                         eina_list_append(data_lists->union_list, un);
+                       break;
+
+                     case EET_BASIC_FLOAT:
+                       if (argc != 6)
+                         {
+                            fprintf(
+                              stderr, "ERROR: wrong number of parameters"
+                                      " (%d).\n", argc);
+                            goto cont;
+                         }
+
+                       un = _union_float_new(argv[5]);
+                       if (!un)
+                         {
+                            fprintf(
+                              stderr, "ERROR: could not create the "
+                                      "requested union.\n");
+                            goto cont;
+                         }
+                       data_lists->union_list =
+                         eina_list_append(data_lists->union_list, un);
+                       break;
+
+                     case EET_BASIC_STRING:
+                       if (argc != 6)
+                         {
+                            fprintf(
+                              stderr, "ERROR: wrong number of parameters"
+                                      " (%d).\n", argc);
+                            goto cont;
+                         }
+
+                       un = _union_string_new(argv[5]);
                        if (!un)
                          {
                             fprintf(

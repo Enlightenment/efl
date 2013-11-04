@@ -3463,6 +3463,25 @@ eet_data_descriptor_encode(Eet_Data_Descriptor *edd,
                                   subtype)
 
 /**
+ * Add a mapping of a basic type to a data descriptor that will be used by a union type.
+ * @param unified_type The data descriptor to add the mapping to.
+ * @param name The string name to get/set type.
+ * @param basic_type The matching basic type.
+ *
+ * @since 1.8
+ * @ingroup Eet_Data_Group
+ * @see Eet_Data_Descriptor_Class
+ */
+#define EET_DATA_DESCRIPTOR_ADD_MAPPING_BASIC(unified_type, name, basic_type) \
+  eet_data_descriptor_element_add(unified_type,                               \
+                                  name,                                       \
+                                  basic_type,                                 \
+                                  EET_G_UNKNOWN,                              \
+                                  0,                                          \
+                                  0,                                          \
+                                  NULL,                                       \
+                                  NULL)
+/**
  * @defgroup Eet_Data_Cipher_Group Eet Data Serialization using A Ciphers
  *
  * Most of the @ref Eet_Data_Group have alternative versions that

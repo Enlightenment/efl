@@ -1,3 +1,7 @@
+2013-11-03  Christophe Sadoine
+
+        * Eet: Added EET_DATA_DESCRIPTOR_ADD_MAPPING_BASIC().
+
 2013-10-24  Sung W. Park (sung_)
 
         * EvasGL: Fixed direct rendering mode not clipping to its clip region.
