@@ -1209,7 +1209,7 @@ EAPI void
 elm_index_item_selected_set(Elm_Object_Item *it,
                             Eina_Bool selected)
 {
-   Elm_Index_Item *it_sel, *it_last;
+   Elm_Index_Item *it_sel, *it_last, *it_inactive, *it_active;
    Evas_Object *obj = WIDGET(it);
 
    ELM_INDEX_ITEM_CHECK_OR_RETURN(it);
@@ -1227,15 +1227,23 @@ elm_index_item_selected_set(Elm_Object_Item *it,
           {
              it_last->selected = EINA_FALSE;
              if (it_last->head)
-               edje_object_signal_emit(VIEW(it_last->head), "elm,state,inactive", "elm");
+               it_inactive = it_last->head;
              else
-               edje_object_signal_emit(VIEW(it_last), "elm,state,inactive", "elm");
+               it_inactive = it_last;
+
+             edje_object_signal_emit(VIEW(it_inactive),
+                                     "elm,state,inactive", "elm");
+             edje_object_message_signal_process(VIEW(it_inactive));
           }
+
         it_sel->selected = EINA_TRUE;
         if (it_sel->head)
-          edje_object_signal_emit(VIEW(it_sel->head), "elm,state,active", "elm");
+          it_active = it_sel->head;
         else
-          edje_object_signal_emit(VIEW(it_sel), "elm,state,active", "elm");
+          it_active = it_sel;
+
+        edje_object_signal_emit(VIEW(it_active), "elm,state,active", "elm");
+        edje_object_message_signal_process(VIEW(it_active));
 
         evas_object_smart_callback_call
            (obj, SIG_CHANGED, it);
@@ -1249,9 +1257,12 @@ elm_index_item_selected_set(Elm_Object_Item *it,
      {
         it_sel->selected = EINA_FALSE;
         if (it_sel->head)
-          edje_object_signal_emit(VIEW(it_sel->head), "elm,state,inactive", "elm");
+          it_inactive = it_sel->head;
         else
-          edje_object_signal_emit(VIEW(it_sel), "elm,state,inactive", "elm");
+          it_inactive = it_sel;
+
+        edje_object_signal_emit(VIEW(it_inactive), "elm,state,inactive", "elm");
+        edje_object_message_signal_process(VIEW(it_inactive));
      }
 }
 
