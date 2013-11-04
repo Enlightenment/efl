@@ -213,6 +213,9 @@ AC_ARG_ENABLE([quick-launch],
         [AC_HELP_STRING([--disable-quick-launch], [disable quick-launch support, @<:@default=detect@:>@])],
         [want_quicklaunch=$enableval], [])
 
+# Check if we can build binary with quicklaunch support
+ELM_QUICKLAUNCH
+
 if test "x$want_quicklaunch" != "xno"; then
    AC_CHECK_FUNCS(fork, [
         have_fork="yes"

@@ -160,11 +160,6 @@ elementary_test_LDADD = $(top_builddir)/src/lib/libelementary.la \
 elementary_test_CFLAGS =
 elementary_test_LDFLAGS =
 
-if BUILD_QUICKLAUNCH
-elementary_test_CFLAGS += -fpie
-elementary_test_LDFLAGS += -pie -rdynamic
-endif
-
 elementary_config_SOURCES = \
 config.c
 
