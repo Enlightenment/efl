@@ -96,19 +96,6 @@ struct _Ecore_Wl_Global
    struct wl_list link;
 };
 
-struct _Ecore_Wl_Output
-{
-   Ecore_Wl_Display *display;
-   struct wl_output *output;
-   Eina_Rectangle allocation;
-   int mw, mh;
-   int transform;
-   struct wl_list link;
-
-   void (*destroy) (Ecore_Wl_Output *output, void *data);
-   void *data;
-};
-
 struct _Ecore_Wl_Event_Mouse_In
 {
    int modifiers;
