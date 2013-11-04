@@ -13,7 +13,8 @@ EXTRA_DIST = \
 README \
 AUTHORS \
 COPYING \
-m4/efl_compiler_flag.m4
+m4/efl_compiler.m4 \
+m4/emotion_generic_players.m4
 
 MAINTAINERCLEANFILES = \
 aclocal.m4 \
@@ -27,9 +28,20 @@ install-sh \
 ltmain.sh \
 Makefile.in \
 missing \
-mkinstalldirs
+mkinstalldirs \
+m4/libtool.m4 \
+m4/lt~obsolete.m4 \
+m4/ltoptions.m4 \
+m4/ltsugar.m4 \
+m4/ltversion.m4
 
-emotiongenericplayersdir = $(EMOTION_GENERIC_PLAYERS_DIR)
+
+# this won't pass distcheck :(
+#emotiongenericplayersdir = $(EMOTION_GENERIC_PLAYERS_DIR)
+
+emotiongenericplayersdir = \
+$(DESTDIR)$(libdir)/emotion/generic_players/$(MODULE_ARCH)
+
 emotiongenericplayers_PROGRAMS =
 
 if HAVE_VLC

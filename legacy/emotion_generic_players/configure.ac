@@ -1,13 +1,13 @@
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 m4_define([v_maj], [1])
-m4_define([v_min], [7])
-m4_define([v_mic], [99])
-m4_define([v_rev], m4_esyscmd([(git rev-list --count HEAD 2>/dev/null || echo 0) | tr -d '\n']))
+m4_define([v_min], [8])
+m4_define([v_mic], [0])
+dnl m4_define([v_rev], m4_esyscmd([(git rev-list --count HEAD 2>/dev/null || echo 0) | tr -d '\n']))
 ##--   When released, remove the dnl on the below line
 dnl m4_undefine([v_rev])
 ##--   When doing snapshots - change soname. remove dnl on below line
-dnl m4_define([relname], [ver-pre-svn-05])
+dnl m4_define([relname], [alpha1])
 dnl m4_define([v_rel], [-release relname])
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 m4_ifdef([v_rev], [m4_define([v_ver], [v_maj.v_min.v_mic.v_rev])],
@@ -18,7 +18,7 @@ m4_define([lt_age], v_min)
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 
-AC_INIT([emotion_generic_players], [v_ver], [enlightenment-devel@lists.sourceforge.net])
+AC_INIT([emotion_generic_players], [v_ver-alpha1], [enlightenment-devel@lists.sourceforge.net])
 AC_PREREQ([2.59])
 AC_CONFIG_SRCDIR([configure.ac])
 AC_CONFIG_MACRO_DIR([m4])
@@ -107,6 +107,7 @@ EMOTION_GENERIC_PLAYERS_DIR="${EMOTION_GENERIC_PLAYERS_DIR}/${MODULE_ARCH}"
 AC_MSG_CHECKING([where to install generic players])
 AC_MSG_RESULT([${EMOTION_GENERIC_PLAYERS_DIR}])
 AC_SUBST(EMOTION_GENERIC_PLAYERS_DIR)
+AC_SUBST(MODULE_ARCH)
 
 #### Players
 EMOTION_GENERIC_PLAYER([VLC], [yes], [libvlc >= 0.9 eina >= 1.1.99 ecore >= 1.7.99])
