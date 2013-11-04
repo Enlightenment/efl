@@ -3609,14 +3609,11 @@ _evas_object_image_free(Evas_Object *obj)
 
    o = eo_data_scope_get(obj, MY_CLASS);
 
-   eina_cow_free(evas_object_image_load_opts_cow, o->load_opts);
-   o->load_opts = &default_load_opts;
-   eina_cow_free(evas_object_image_pixels_cow, o->pixels);
-   o->pixels = &default_pixels;
-   eina_cow_free(evas_object_image_state_cow, o->cur);
-   o->cur = &default_state;
-   eina_cow_free(evas_object_image_state_cow, o->prev);
-   o->prev = &default_state;
+   // eina_cow_free reset the pointer to the default read only state
+   eina_cow_free(evas_object_image_load_opts_cow, (const Eina_Cow_Data**) &o->load_opts);
+   eina_cow_free(evas_object_image_pixels_cow, (const Eina_Cow_Data**) &o->pixels);
+   eina_cow_free(evas_object_image_state_cow, (const Eina_Cow_Data**) &o->cur);
+   eina_cow_free(evas_object_image_state_cow, (const Eina_Cow_Data**) &o->prev);
 }
 
 static void

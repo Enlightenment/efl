@@ -190,10 +190,10 @@ evas_object_free(Evas_Object *eo_obj, int clean_layer)
      {
        EVAS_MEMPOOL_FREE(_mp_sh, obj->size_hints);
      }
-   eina_cow_free(evas_object_proxy_cow, obj->proxy);
-   eina_cow_free(evas_object_map_cow, obj->map);
-   eina_cow_free(evas_object_state_cow, obj->cur);
-   eina_cow_free(evas_object_state_cow, obj->prev);
+   eina_cow_free(evas_object_proxy_cow, (const Eina_Cow_Data**) &obj->proxy);
+   eina_cow_free(evas_object_map_cow, (const Eina_Cow_Data**) &obj->map);
+   eina_cow_free(evas_object_state_cow, (const Eina_Cow_Data**) &obj->cur);
+   eina_cow_free(evas_object_state_cow, (const Eina_Cow_Data**) &obj->prev);
    eo_data_unref(eo_obj, obj->private_data);
    obj->private_data = NULL;
    eo_manual_free(eo_obj);
