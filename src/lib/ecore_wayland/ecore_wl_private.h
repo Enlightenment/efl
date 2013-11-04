@@ -73,7 +73,7 @@ struct _Ecore_Wl_Display
    Ecore_Idle_Enterer *idle_enterer;
 
    struct wl_list inputs;
-   struct wl_list outputs;
+   Eina_Inlist *outputs;
    Eina_Inlist *globals; /** @since 1.7.6 */
 
    Eina_Bool init_done;
@@ -204,12 +204,12 @@ struct _Ecore_Wl_Input
 
 struct _Ecore_Wl_Output
 {
+   EINA_INLIST;
    Ecore_Wl_Display *display;
    struct wl_output *output;
    Eina_Rectangle allocation;
    int mw, mh;
    int transform;
-   struct wl_list link;
 
    void (*destroy) (Ecore_Wl_Output *output, void *data);
    void *data;

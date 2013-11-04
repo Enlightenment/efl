@@ -20,10 +20,10 @@ static const struct wl_output_listener _ecore_wl_output_listener =
 };
 
 /* @since 1.2 */
-EAPI struct wl_list *
+EAPI Eina_Inlist *
 ecore_wl_outputs_get(void)
 {
-   return &(_ecore_wl_disp->outputs);
+   return _ecore_wl_disp->outputs;
 }
 
 void 
@@ -42,7 +42,7 @@ _ecore_wl_output_add(Ecore_Wl_Display *ewd, unsigned int id)
    output->output = 
      wl_registry_bind(ewd->wl.registry, id, &wl_output_interface, 2);
 
-   wl_list_insert(ewd->outputs.prev, &output->link);
+   ewd->outputs = eina_inlist_append(ewd->outputs, EINA_INLIST_GET(output));
    wl_output_add_listener(output->output, &_ecore_wl_output_listener, output);
 }
 
@@ -52,7 +52,8 @@ _ecore_wl_output_del(Ecore_Wl_Output *output)
    if (!output) return;
    if (output->destroy) (*output->destroy)(output, output->data);
    if (output->output) wl_output_destroy(output->output);
-   wl_list_remove(&output->link);
+   _ecore_wl_disp->outputs = eina_inlist_remove
+      (_ecore_wl_disp->outputs, EINA_INLIST_GET(output));
    free(output);
 }
 
