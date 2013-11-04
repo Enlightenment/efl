@@ -1408,9 +1408,9 @@ _edje_file_del(Edje *ed)
              if (rp->param2)
                {
                   free(rp->param2->set);
-                  eina_cow_free(_edje_calc_params_map_cow, rp->param2->p.map);
+                  eina_cow_free(_edje_calc_params_map_cow, (const Eina_Cow_Data **) &rp->param2->p.map);
 #ifdef HAVE_EPHYSICS
-                  eina_cow_free(_edje_calc_params_physics_cow, rp->param2->p.physics);
+                  eina_cow_free(_edje_calc_params_physics_cow, (const Eina_Cow_Data **) &rp->param2->p.physics);
 #endif
                }
              eina_mempool_free(_edje_real_part_state_mp, rp->param2);
@@ -1418,17 +1418,17 @@ _edje_file_del(Edje *ed)
              if (rp->custom)
                {
                   free(rp->custom->set);
-                  eina_cow_free(_edje_calc_params_map_cow, rp->custom->p.map);
+                  eina_cow_free(_edje_calc_params_map_cow, (const Eina_Cow_Data **) &rp->custom->p.map);
 #ifdef HAVE_EPHYSICS
-                  eina_cow_free(_edje_calc_params_physics_cow, rp->custom->p.physics);
+                  eina_cow_free(_edje_calc_params_physics_cow, (const Eina_Cow_Data **) &rp->custom->p.physics);
 #endif
                }
              eina_mempool_free(_edje_real_part_state_mp, rp->custom);
 
              _edje_unref(ed);
-             eina_cow_free(_edje_calc_params_map_cow, rp->param1.p.map);
+             eina_cow_free(_edje_calc_params_map_cow, (const Eina_Cow_Data **) &rp->param1.p.map);
 #ifdef HAVE_EPHYSICS
-             eina_cow_free(_edje_calc_params_physics_cow, rp->param1.p.physics);
+             eina_cow_free(_edje_calc_params_physics_cow, (const Eina_Cow_Data **) &rp->param1.p.physics);
 #endif
              eina_mempool_free(_edje_real_part_mp, rp);
           }

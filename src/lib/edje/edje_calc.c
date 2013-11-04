@@ -574,9 +574,9 @@ _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, const char *d1, doubl
           if (ep->param2)
 	    {
 	      free(ep->param2->set);
-	      eina_cow_free(_edje_calc_params_map_cow, ep->param2->p.map);
+	      eina_cow_free(_edje_calc_params_map_cow, (const Eina_Cow_Data **) &ep->param2->p.map);
 #ifdef HAVE_EPHYSICS
-	      eina_cow_free(_edje_calc_params_physics_cow, ep->param2->p.physics);
+	      eina_cow_free(_edje_calc_params_physics_cow, (const Eina_Cow_Data **) &ep->param2->p.physics);
 #endif
 	    }
           eina_mempool_free(_edje_real_part_state_mp, ep->param2);
@@ -3643,9 +3643,9 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
           }
 
 #ifndef EDJE_CALC_CACHE
-        eina_cow_free(_edje_calc_params_map_cow, lp2.map);
+        eina_cow_free(_edje_calc_params_map_cow, (const Eina_Cow_Data **) &lp2.map);
 #ifdef HAVE_EPHYSICS
-        eina_cow_free(_edje_calc_params_physics_cow, lp2.physics);
+        eina_cow_free(_edje_calc_params_physics_cow, (const Eina_Cow_Data **) &lp2.physics);
 #endif
 #endif
         pf = p3;
@@ -3963,10 +3963,10 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
 
    if (pf == &lp3)
      {
-        eina_cow_free(_edje_calc_params_map_cow, lp3.map);
+        eina_cow_free(_edje_calc_params_map_cow, (const Eina_Cow_Data **) &lp3.map);
         lp3.map = NULL;
 #ifdef HAVE_EPHYSICS
-        eina_cow_free(_edje_calc_params_physics_cow, lp3.physics);
+        eina_cow_free(_edje_calc_params_physics_cow, (const Eina_Cow_Data **) &lp3.physics);
         lp3.physics = NULL;
 #endif
      }
@@ -3978,9 +3978,9 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
         ep->invalidate = 0;
      }
 #else
-   eina_cow_free(_edje_calc_params_map_cow, lp1.map);
+   eina_cow_free(_edje_calc_params_map_cow, (const Eina_Cow_Data **) &lp1.map);
 #ifdef HAVE_EPHYSICS
-   eina_cow_free(_edje_calc_params_physics_cow, lp1.physics);
+   eina_cow_free(_edje_calc_params_physics_cow, (const Eina_Cow_Data **) &lp1.physics);
 #endif
 #endif
 }

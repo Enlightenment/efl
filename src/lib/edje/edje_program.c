@@ -446,9 +446,9 @@ _edje_program_end(Edje *ed, Edje_Running_Program *runp)
 
                   if (rp->current)
                     {
-                       eina_cow_free(_edje_calc_params_map_cow, rp->current->map);
+		      eina_cow_free(_edje_calc_params_map_cow, (const Eina_Cow_Data **) &rp->current->map);
 #ifdef HAVE_EPHYSICS
-                       eina_cow_free(_edje_calc_params_physics_cow, rp->current->physics);
+                       eina_cow_free(_edje_calc_params_physics_cow, (const Eina_Cow_Data **) &rp->current->physics);
 #endif
                        free(rp->current);
                        rp->current = NULL;
@@ -573,9 +573,9 @@ _edje_program_run(Edje *ed, Edje_Program *pr, Eina_Bool force, const char *ssig,
 
                                   if (rp->current)
                                     {
-                                       eina_cow_free(_edje_calc_params_map_cow, rp->current->map);
+                                       eina_cow_free(_edje_calc_params_map_cow, (const Eina_Cow_Data **) &rp->current->map);
 #ifdef HAVE_EPHYSICS
-                                       eina_cow_free(_edje_calc_params_physics_cow, rp->current->physics);
+                                       eina_cow_free(_edje_calc_params_physics_cow, (const Eina_Cow_Data **) &rp->current->physics);
 #endif
                                        free(rp->current);
                                     }
@@ -587,9 +587,9 @@ _edje_program_run(Edje *ed, Edje_Program *pr, Eina_Bool force, const char *ssig,
 low_mem_current:
                                   if (rp->current)
                                     {
-                                       eina_cow_free(_edje_calc_params_map_cow, rp->current->map);
+                                       eina_cow_free(_edje_calc_params_map_cow, (const Eina_Cow_Data **) &rp->current->map);
 #ifdef HAVE_EPHYSICS
-                                       eina_cow_free(_edje_calc_params_physics_cow, rp->current->physics);
+                                       eina_cow_free(_edje_calc_params_physics_cow, (const Eina_Cow_Data **) &rp->current->physics);
 #endif
                                        free(rp->current);
                                     }
