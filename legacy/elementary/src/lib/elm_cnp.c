@@ -49,6 +49,7 @@ typedef struct _Tmp_Info      Tmp_Info;
 typedef struct _Saved_Type    Saved_Type;
 typedef struct _Cnp_Escape    Cnp_Escape;
 typedef struct _Dropable      Dropable;
+typedef struct _Dropable_Cbs  Dropable_Cbs;
 static Eina_Bool doaccept = EINA_FALSE;
 
 struct _Tmp_Info
@@ -74,10 +75,9 @@ struct _Cnp_Escape
    const char *value;
 };
 
-struct _Dropable
+struct _Dropable_Cbs
 {
-   Evas_Object    *obj;
-   /* FIXME: Cache window */
+   EINA_INLIST;
    Elm_Sel_Format  types;
    Elm_Drag_State  entercb;
    Elm_Drag_State  leavecb;
@@ -87,6 +87,13 @@ struct _Dropable
    void           *leavedata;
    void           *posdata;
    void           *dropdata;
+};
+
+struct _Dropable
+{
+   Evas_Object    *obj;
+   /* FIXME: Cache window */
+   Eina_Inlist    *cbs_list; /* List of Dropable_Cbs * */
    struct {
       Evas_Coord   x, y;
       Eina_Bool    in : 1;
@@ -281,7 +288,12 @@ static Eina_Bool _x11_elm_drop_target_add                (Evas_Object *obj, Elm_
                                                           Elm_Drag_State leavecb, void *leavedata,
                                                           Elm_Drag_Pos poscb, void *posdata,
                                                           Elm_Drop_Cb dropcb, void *dropdata);
-static Eina_Bool _x11_elm_drop_target_del                (Evas_Object *obj);
+static Eina_Bool _x11_elm_drop_target_del                (Evas_Object *obj, Elm_Sel_Format format,
+                                                          Elm_Drag_State entercb, void *enterdata,
+                                                          Elm_Drag_State leavecb, void *leavedata,
+                                                          Elm_Drag_Pos poscb, void *posdata,
+                                                          Elm_Drop_Cb dropcb, void *dropdata);
+static void _all_drop_targets_cbs_del(void *data, Evas *e, Evas_Object *obj, void *info);
 static Eina_Bool _x11_elm_selection_selection_has_owner  (Evas_Object *obj __UNUSED__);
 
 static X11_Cnp_Atom _x11_atoms[CNP_N_ATOMS] = {
@@ -778,13 +790,16 @@ _x11_notify_handler_text(X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify 
           }
         if (dropable)
           {
+             Dropable_Cbs *cbs;
              ddata.x = savedtypes.x;
              ddata.y = savedtypes.y;
              ddata.format = ELM_SEL_FORMAT_TEXT;
              ddata.data = data->data;
              ddata.len = data->length;
              ddata.action = sel->action;
-             dropable->dropcb(dropable->dropdata, dropable->obj, &ddata);
+             EINA_INLIST_FOREACH(dropable->cbs_list, cbs)
+                if (cbs->dropcb)
+                   cbs->dropcb(cbs->dropdata, dropable->obj, &ddata);
              goto end;
           }
      }
@@ -931,6 +946,7 @@ _x11_vcard_receive(X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notif
    cnp_debug("vcard receive\n");
    if (sel == (_x11_selections + ELM_SEL_TYPE_XDND))
      {
+        Dropable_Cbs *cbs;
         Elm_Selection_Data ddata;
 
         cnp_debug("drag & drop\n");
@@ -952,7 +968,9 @@ _x11_vcard_receive(X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notif
         ddata.data = data->data;
         ddata.len = data->length;
         ddata.action = sel->action;
-        dropable->dropcb(dropable->dropdata, dropable->obj, &ddata);
+        EINA_INLIST_FOREACH(dropable->cbs_list, cbs)
+           if (cbs->dropcb)
+              cbs->dropcb(cbs->dropdata, dropable->obj, &ddata);
         ecore_x_dnd_send_finished();
      }
    else if (sel->datacb)
@@ -1260,6 +1278,7 @@ static void
 _x11_dnd_dropable_handle(Dropable *dropable, Evas_Coord x, Evas_Coord y, Eina_Bool have_obj, Elm_Xdnd_Action action)
 {
    Dropable *dropable_last = NULL;
+   Dropable_Cbs *cbs;
 
    if (dropable->last.in)
      dropable_last = _x11_dropable_geom_find
@@ -1268,33 +1287,39 @@ _x11_dnd_dropable_handle(Dropable *dropable, Evas_Coord x, Evas_Coord y, Eina_Bo
    if ((have_obj) && (dropable_last == dropable)) // same
      {
         cnp_debug("same obj dropable %p\n", dropable);
-        if (dropable->poscb)
-          dropable->poscb(dropable->posdata, dropable->obj, x, y, action);
+        EINA_INLIST_FOREACH(dropable->cbs_list, cbs)
+           if (cbs->poscb)
+              cbs->poscb(cbs->posdata, dropable->obj, x, y, action);
      }
    else if ((have_obj) && (!dropable_last)) // enter new obj
      {
         cnp_debug("enter %p\n", dropable->obj);
-        if (dropable->entercb)
-          dropable->entercb(dropable->enterdata, dropable->obj);
-        if (dropable->poscb)
-          dropable->poscb(dropable->posdata, dropable->obj, x, y, action);
+        EINA_INLIST_FOREACH(dropable->cbs_list, cbs)
+           if (cbs->entercb)
+              cbs->entercb(cbs->enterdata, dropable->obj);
+        EINA_INLIST_FOREACH(dropable->cbs_list, cbs)
+           if (cbs->poscb)
+              cbs->poscb(cbs->posdata, dropable->obj, x, y, action);
      }
    else if ((!have_obj) && (dropable_last)) // leave last obj
      {
         cnp_debug("leave %p\n", dropable_last->obj);
-        if (dropable->leavecb)
-          dropable->leavecb(dropable->leavedata, dropable->obj);
+        EINA_INLIST_FOREACH(dropable->cbs_list, cbs)
+           if (cbs->leavecb)
+              cbs->leavecb(cbs->leavedata, dropable->obj);
      }
    else if (have_obj) // leave last obj and enter new one
      {
         cnp_debug("enter %p\n", dropable->obj);
-        if (dropable->entercb)
-          dropable->entercb(dropable->enterdata, dropable->obj);
+        EINA_INLIST_FOREACH(dropable->cbs_list, cbs)
+           if (cbs->entercb)
+              cbs->entercb(cbs->enterdata, dropable->obj);
         if (dropable_last)
           {
              dropable = dropable_last;
-             if (dropable->leavecb)
-               dropable->leavecb(dropable->leavedata, dropable->obj);
+             EINA_INLIST_FOREACH(dropable->cbs_list, cbs)
+                if (cbs->leavecb)
+                   cbs->leavecb(cbs->leavedata, dropable->obj);
              cnp_debug("leave %p\n", dropable->obj);
           }
      }
@@ -1478,41 +1503,38 @@ found:
              ddata.y = savedtypes.y;
              ddata.action = act;
 
-             /* If it's markup that also supports images */
-             if ((dropable->types & ELM_SEL_FORMAT_MARKUP) &&
-                 (dropable->types & ELM_SEL_FORMAT_IMAGE))
+             Dropable_Cbs *cbs;
+             EINA_INLIST_FOREACH(dropable->cbs_list, cbs)
                {
-                  int len;
-                  ddata.format = ELM_SEL_FORMAT_MARKUP;
+                  /* If it's markup that also supports images */
+                  if ((cbs->types & ELM_SEL_FORMAT_MARKUP) &&
+                        (cbs->types & ELM_SEL_FORMAT_IMAGE))
+                    {
+                       int len;
+                       ddata.format = ELM_SEL_FORMAT_MARKUP;
 
-                  len = strlen(tagstring) + strlen(savedtypes.imgfile);
-                  entrytag = alloca(len + 1);
-                  snprintf(entrytag, len + 1, tagstring, savedtypes.imgfile);
-                  ddata.data = entrytag;
-                  cnp_debug("Insert %s\n", (char *)ddata.data);
-                  if (dropable->dropcb) dropable->dropcb(dropable->dropdata, dropable->obj, &ddata);
-                  ecore_x_dnd_send_finished();
-                  if (savedtypes.imgfile) free(savedtypes.imgfile);
-                  savedtypes.imgfile = NULL;
-
-                  return EINA_TRUE;
+                       len = strlen(tagstring) + strlen(savedtypes.imgfile);
+                       entrytag = alloca(len + 1);
+                       snprintf(entrytag, len + 1, tagstring, savedtypes.imgfile);
+                       ddata.data = entrytag;
+                       cnp_debug("Insert %s\n", (char *)ddata.data);
+                       if (cbs->dropcb) cbs->dropcb(cbs->dropdata, dropable->obj, &ddata);
+                    }
+                  else if (cbs->types & ELM_SEL_FORMAT_IMAGE)
+                    {
+                       cnp_debug("Doing image insert (%s)\n", savedtypes.imgfile);
+                       ddata.format = ELM_SEL_FORMAT_IMAGE;
+                       ddata.data = (char *)savedtypes.imgfile;
+                       if (cbs->dropcb) cbs->dropcb(cbs->dropdata, dropable->obj, &ddata);
+                    }
+                  else
+                    {
+                       cnp_debug("Item doesn't support images... passing\n");
+                    }
                }
-             else if (dropable->types & ELM_SEL_FORMAT_IMAGE)
-               {
-                  cnp_debug("Doing image insert (%s)\n", savedtypes.imgfile);
-                  ddata.format = ELM_SEL_FORMAT_IMAGE;
-                  ddata.data = (char *)savedtypes.imgfile;
-                  dropable->dropcb(dropable->dropdata, dropable->obj, &ddata);
-                  ecore_x_dnd_send_finished();
-                  ELM_SAFE_FREE(savedtypes.imgfile, free);
-
-                  return EINA_TRUE;
-               }
-             else
-               {
-                  cnp_debug("Item doesn't support images... passing\n");
-                  return EINA_TRUE;
-               }
+             ecore_x_dnd_send_finished();
+             ELM_SAFE_FREE(savedtypes.imgfile, free);
+             return EINA_TRUE;
           }
         else if (savedtypes.textreq)
           {
@@ -1805,9 +1827,10 @@ _x11_elm_drop_target_add(Evas_Object *obj, Elm_Sel_Format format,
                          Elm_Drag_Pos poscb, void *posdata,
                          Elm_Drop_Cb dropcb, void *dropdata)
 {
-   Dropable *dropable;
+   Dropable *dropable = NULL;
+   Dropable_Cbs *cbs = NULL;
    Ecore_X_Window xwin = _x11_elm_widget_xwin_get(obj);
-   Eina_List *item, *l;
+   Eina_List *l;
    Eina_Bool first = !drops;
    Eina_Bool have_drops = EINA_FALSE;
 
@@ -1824,52 +1847,42 @@ _x11_elm_drop_target_add(Evas_Object *obj, Elm_Sel_Format format,
              break;
           }
      }
+   dropable = NULL; // In case of error, we don't want to free it
+
+   cbs = calloc(1, sizeof(*cbs));
+   if (!cbs) return EINA_FALSE;
+
+   cbs->entercb = entercb;
+   cbs->enterdata = enterdata;
+   cbs->leavecb = leavecb;
+   cbs->leavedata = leavedata;
+   cbs->poscb = poscb;
+   cbs->posdata = posdata;
+   cbs->dropcb = dropcb;
+   cbs->dropdata = dropdata;
+   cbs->types = format;
 
    eo_do(obj, eo_base_data_get("__elm_dropable", (void **)&dropable));
-   if (dropable)
+   if (!dropable)
      {
-        /* Update: Not a new one */
-        dropable->dropcb = dropcb;
-        dropable->dropdata = dropdata;
-        dropable->types = format;
-        return EINA_TRUE;
+        /* Create new drop */
+        dropable = calloc(1, sizeof(Dropable));
+        if (!dropable) goto error;
+        drops = eina_list_append(drops, dropable);
+        if (!drops) goto error;
+        dropable->obj = obj;
+        eo_do(obj, eo_base_data_set("__elm_dropable", dropable, NULL));
      }
+   dropable->cbs_list = eina_inlist_append(dropable->cbs_list, EINA_INLIST_GET(cbs));
 
-   /* Create new drop */
-   dropable = calloc(1, sizeof(Dropable));
-   if (!dropable) return EINA_FALSE;
-
-   /* FIXME: Check for eina's deranged error method */
-   drops = eina_list_append(drops, dropable);
-
-   if (!drops/* || or other error */)
-     {
-        free(dropable);
-        return EINA_FALSE;
-     }
-   dropable->entercb = entercb;
-   dropable->enterdata = enterdata;
-   dropable->leavecb = leavecb;
-   dropable->leavedata = leavedata;
-   dropable->poscb = poscb;
-   dropable->posdata = posdata;
-   dropable->dropcb = dropcb;
-   dropable->dropdata = dropdata;
-   dropable->types = format;
-   dropable->obj = obj;
-
-   eo_do(obj, eo_base_data_set("__elm_dropable", dropable, NULL));
    evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL,
-                                  /* I love C and varargs */
-                                  (Evas_Object_Event_Cb)elm_drop_target_del,
-                                  obj);
+         _all_drop_targets_cbs_del, obj);
    if (!have_drops) ecore_x_dnd_aware_set(xwin, EINA_TRUE);
 
    /* TODO BUG: should handle dnd-aware per window, not just the first
     * window that requested it! */
    /* If not the first: We're done */
    if (!first) return EINA_TRUE;
-
 
    cnp_debug("Adding drop target calls xwin=%#llx\n", (unsigned long long)xwin);
    handler_enter = ecore_event_handler_add(ECORE_X_EVENT_XDND_ENTER,
@@ -1881,10 +1894,18 @@ _x11_elm_drop_target_add(Evas_Object *obj, Elm_Sel_Format format,
    handler_drop = ecore_event_handler_add(ECORE_X_EVENT_XDND_DROP,
                                           _x11_dnd_drop, NULL);
    return EINA_TRUE;
+error:
+   free(cbs);
+   free(dropable);
+   return EINA_FALSE;
 }
 
 static Eina_Bool
-_x11_elm_drop_target_del(Evas_Object *obj)
+_x11_elm_drop_target_del(Evas_Object *obj, Elm_Sel_Format format,
+                         Elm_Drag_State entercb, void *enterdata,
+                         Elm_Drag_State leavecb, void *leavedata,
+                         Elm_Drag_Pos poscb, void *posdata,
+                         Elm_Drop_Cb dropcb, void *dropdata)
 {
    Dropable *dropable;
    Eina_List *l;
@@ -1896,15 +1917,33 @@ _x11_elm_drop_target_del(Evas_Object *obj)
    eo_do(obj, eo_base_data_get("__elm_dropable", (void **)&dropable));
    if (dropable)
      {
-        drops = eina_list_remove(drops, dropable);
-        eo_do(obj, eo_base_data_del("__elm_dropable"));
-        free(dropable);
-        dropable = NULL;
+        Eina_Inlist *itr;
+        Dropable_Cbs *cbs_info;
+        /* Look for the callback in the list */
+        EINA_INLIST_FOREACH_SAFE(dropable->cbs_list, itr, cbs_info)
+           if (cbs_info->entercb == entercb && cbs_info->enterdata == enterdata &&
+                 cbs_info->leavecb == leavecb && cbs_info->leavedata == leavedata &&
+                 cbs_info->poscb == poscb && cbs_info->posdata == posdata &&
+                 cbs_info->dropcb == dropcb && cbs_info->dropdata == dropdata &&
+                 cbs_info->types == format)
+             {
+                dropable->cbs_list = eina_inlist_remove(dropable->cbs_list,
+                      EINA_INLIST_GET(cbs_info));
+                free(cbs_info);
+             }
+        /* In case no more callbacks are listed for the object */
+        if (!dropable->cbs_list)
+          {
+             drops = eina_list_remove(drops, dropable);
+             eo_do(obj, eo_base_data_del("__elm_dropable"));
+             free(dropable);
+             dropable = NULL;
+             evas_object_event_callback_del(obj, EVAS_CALLBACK_DEL,
+                   _all_drop_targets_cbs_del);
+
+          }
      }
    else return EINA_FALSE;
-
-   evas_object_event_callback_del(obj, EVAS_CALLBACK_FREE,
-                                  (Evas_Object_Event_Cb)elm_drop_target_del);
 
    /* TODO BUG: we should handle dnd-aware per window, not just the last that reelased it */
 
@@ -1934,6 +1973,24 @@ _x11_elm_drop_target_del(Evas_Object *obj)
    ELM_SAFE_FREE(savedtypes.imgfile, free);
 
    return EINA_TRUE;
+}
+
+static void
+_all_drop_targets_cbs_del(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *info __UNUSED__)
+{
+   Dropable *dropable = NULL;
+   eo_do(obj, eo_base_data_get("__elm_dropable", (void **)&dropable));
+   if (dropable)
+     {
+        Eina_Inlist *itr;
+        Dropable_Cbs *cbs;
+        EINA_INLIST_FOREACH_SAFE(dropable->cbs_list, itr, cbs)
+          {
+             elm_drop_target_del(obj, cbs->types,
+                   cbs->entercb, cbs->enterdata, cbs->leavecb, cbs->leavedata,
+                   cbs->poscb, cbs->posdata, cbs->dropcb, cbs->dropdata);
+          }
+     }
 }
 
 static void
@@ -2964,7 +3021,7 @@ _wl_elm_widget_window_get(Evas_Object *obj)
         win = ecore_evas_wayland_window_get(ee);
      }
 
-   if (win) return ecore_wl_window_id_get(win);
+   if (win) return win->id;
    return 0;
 }
 
@@ -3399,12 +3456,17 @@ elm_drop_target_add(Evas_Object *obj, Elm_Sel_Format format,
 }
 
 EAPI Eina_Bool
-elm_drop_target_del(Evas_Object *obj)
+elm_drop_target_del(Evas_Object *obj, Elm_Sel_Format format,
+                    Elm_Drag_State entercb, void *enterdata,
+                    Elm_Drag_State leavecb, void *leavedata,
+                    Elm_Drag_Pos poscb, void *posdata,
+                    Elm_Drop_Cb dropcb, void *dropdata)
 {
    if (!_elm_cnp_init_count) _elm_cnp_init();
 #ifdef HAVE_ELEMENTARY_X
    if (_x11_elm_widget_xwin_get(obj))
-     return _x11_elm_drop_target_del(obj);
+     return _x11_elm_drop_target_del(obj, format, entercb, enterdata,
+           leavecb, leavedata, poscb, posdata, dropcb, dropdata);
 #endif
 #ifdef HAVE_ELEMENTARY_WAYLAND
    return _wl_elm_drop_target_del(obj);
@@ -3536,7 +3598,8 @@ elm_drop_item_container_del_internal(Evas_Object *obj, Eina_Bool full)
 
    if (st)
      {
-        elm_drop_target_del(obj);
+        // temp until st is stored inside data of obj.
+        _all_drop_targets_cbs_del(NULL, NULL, obj, NULL);
         st->itemgetcb= NULL;
         st->poscb = NULL;
         st->dropcb = NULL;

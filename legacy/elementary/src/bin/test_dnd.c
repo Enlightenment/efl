@@ -919,6 +919,11 @@ static Eina_Bool _drop_box_button_new_cb(void *data, Evas_Object *obj, Elm_Selec
    return EINA_TRUE;
 }
 
+void _enter_but_cb(void *data, Evas_Object *obj)
+{
+   printf("Entered %s - drop it here and I will never print this line anymore.\n", __FUNCTION__);
+}
+
 static Eina_Bool _drop_but_icon_change_cb(void *data, Evas_Object *obj, Elm_Selection_Data *ev)
 {
    Evas_Object *win = data;
@@ -932,6 +937,14 @@ static Eina_Bool _drop_but_icon_change_cb(void *data, Evas_Object *obj, Elm_Sele
    evas_object_del(elm_object_part_content_get(obj, "icon"));
    elm_object_part_content_set(obj, "icon", ic);
    evas_object_show(ic);
+   return EINA_TRUE;
+}
+
+/* Callback used to test multi-callbacks feature */
+static Eina_Bool _drop_but_cb_remove_cb(void *data, Evas_Object *obj, Elm_Selection_Data *ev)
+{
+   printf("Second callback called - removing it\n");
+   elm_drop_target_del(obj, ELM_SEL_FORMAT_TARGETS, _enter_but_cb, NULL, NULL, NULL, NULL, NULL, _drop_but_cb_remove_cb, NULL);
    return EINA_TRUE;
 }
 
@@ -1012,6 +1025,7 @@ test_dnd_overlapping(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
         bt = elm_button_add(win);
         elm_object_text_set(bt, "Drop into me to change my icon");
         elm_drop_target_add(bt, ELM_SEL_FORMAT_TARGETS, NULL, NULL, NULL, NULL, NULL, NULL, _drop_but_icon_change_cb, win);
+        elm_drop_target_add(bt, ELM_SEL_FORMAT_TARGETS, _enter_but_cb, NULL, NULL, NULL, NULL, NULL, _drop_but_cb_remove_cb, NULL);
         elm_object_part_content_set(bt, "icon", ic);
         elm_box_pack_end(vert_box, bt);
         evas_object_show(bt);
@@ -1024,7 +1038,6 @@ test_dnd_overlapping(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
         bt = elm_button_add(win);
         elm_object_text_set(bt, "No action on drop");
         elm_object_part_content_set(bt, "icon", ic);
-        elm_object_disabled_set(bt, EINA_TRUE);
         elm_box_pack_end(vert_box, bt);
         evas_object_show(bt);
         evas_object_show(ic);

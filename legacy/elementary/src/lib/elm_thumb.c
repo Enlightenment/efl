@@ -1137,7 +1137,11 @@ _editable_set(Eo *obj, void *_pd, va_list *list)
                          NULL, NULL,
                          _elm_thumb_dnd_cb, obj);
    else
-     elm_drop_target_del(obj);
+     elm_drop_target_del(obj, ELM_SEL_FORMAT_IMAGE,
+                         NULL, NULL,
+                         NULL, NULL,
+                         NULL, NULL,
+                         _elm_thumb_dnd_cb, obj);
 }
 
 EAPI Eina_Bool

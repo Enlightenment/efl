@@ -3411,7 +3411,11 @@ _password_set(Eo *obj, void *_pd, va_list *list)
      {
         sd->single_line = EINA_TRUE;
         sd->line_wrap = ELM_WRAP_NONE;
-        elm_drop_target_del(obj);
+        elm_drop_target_del(obj, ELM_SEL_FORMAT_MARKUP,
+                            NULL, NULL,
+                            NULL, NULL,
+                            NULL, NULL,
+                            _drag_drop_cb, NULL);
         _entry_selection_callbacks_unregister(obj);
      }
    else
@@ -3683,7 +3687,11 @@ _editable_set(Eo *obj, void *_pd, va_list *list)
                          _drag_drop_cb, NULL);
    else
 #endif
-     elm_drop_target_del(obj);
+     elm_drop_target_del(obj, ELM_SEL_FORMAT_MARKUP,
+                         NULL, NULL,
+                         NULL, NULL,
+                         NULL, NULL,
+                         _drag_drop_cb, NULL);
 }
 
 EAPI Eina_Bool

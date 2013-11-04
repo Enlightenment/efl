@@ -308,13 +308,26 @@ EAPI Eina_Bool elm_drop_target_add(Evas_Object *obj, Elm_Sel_Format format,
  * @brief Deletes the drop target status of an object
  *
  * @param obj The target object
+ * @param format The formats supported for dropping
+ * @param entercb The function to call when the object is entered with a drag
+ * @param enterdata The application data to pass to enterdata
+ * @param leavecb The function to call when the object is left with a drag
+ * @param leavedata The application data to pass to leavedata
+ * @param poscb The function to call when the object has a drag over it
+ * @param posdata The application data to pass to posdata
+ * @param dropcb The function to call when a drop has occurred
+ * @param dropdata The application data to pass to dropcb
  * @return Returns EINA_TRUE, if successful, or EINA_FALSE if not.
  *
  * @ingroup CopyPaste
  *
  * @since 1.8
  */
-EAPI Eina_Bool elm_drop_target_del(Evas_Object *obj);
+EAPI Eina_Bool elm_drop_target_del(Evas_Object *obj, Elm_Sel_Format format,
+                                   Elm_Drag_State entercb, void *enterdata,
+                                   Elm_Drag_State leavecb, void *leavedata,
+                                   Elm_Drag_Pos poscb, void *posdata,
+                                   Elm_Drop_Cb dropcb, void *dropdata);
 
 /**
  * @brief Begins a drag given a source object
