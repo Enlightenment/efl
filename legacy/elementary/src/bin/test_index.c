@@ -187,6 +187,8 @@ test_index(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
    win = elm_win_util_standard_add("index", "Index");
    elm_win_autodel_set(win, EINA_TRUE);
    evas_object_event_callback_add(win, EVAS_CALLBACK_FREE, _cleanup_cb, api);
+   evas_object_resize(win, 320, 270);
+   evas_object_show(win);
 
    bxx = elm_box_add(win);
    evas_object_size_hint_weight_set(bxx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -216,9 +218,6 @@ test_index(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
    elm_box_pack_end(bxx, bt);
    elm_object_disabled_set(bt, api->state == API_STATE_LAST);
    evas_object_show(bt);
-
-   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-
 
    ck = elm_check_add(win);
    elm_object_text_set(ck, "Omit mode : ");
@@ -260,8 +259,6 @@ test_index(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
    evas_object_smart_callback_add(id, "changed", _index_changed_cb, NULL);
    evas_object_smart_callback_add(id, "selected", _index_selected_cb, NULL);
    elm_index_level_go(id, 0);
-   evas_object_resize(win, 320, 480);
-   evas_object_show(win);
 }
 
 /***********/
