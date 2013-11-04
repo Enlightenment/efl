@@ -96,7 +96,7 @@ im_module_create()
      {
         Ecore_Wl_Global *global;
         struct wl_registry *registry;
-        struct wl_list *globals;
+        Eina_Inlist *globals;
 
         if (!(registry = ecore_wl_registry_get()))
           return NULL;
@@ -104,7 +104,7 @@ im_module_create()
         if (!(globals = ecore_wl_globals_get()))
           return NULL;
 
-        wl_list_for_each(global, globals, link)
+        EINA_INLIST_FOREACH(globals, global)
           {
              if (!strcmp(global->interface, "wl_text_input_manager"))
                {

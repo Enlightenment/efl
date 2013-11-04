@@ -74,7 +74,7 @@ struct _Ecore_Wl_Display
 
    struct wl_list inputs;
    struct wl_list outputs;
-   struct wl_list globals; /** @since 1.7.6 */
+   Eina_Inlist *globals; /** @since 1.7.6 */
 
    Eina_Bool init_done;
 

@@ -90,10 +90,10 @@ typedef enum _Ecore_Wl_Window_Buffer_Type Ecore_Wl_Window_Buffer_Type;
 /** @since 1.7.6 */
 struct _Ecore_Wl_Global
 {
+   EINA_INLIST;
    unsigned int id;
    char *interface;
    unsigned int version;
-   struct wl_list link;
 };
 
 struct _Ecore_Wl_Event_Mouse_In
@@ -422,7 +422,7 @@ EAPI struct wl_list *ecore_wl_outputs_get(void);
  * @ingroup Ecore_Wl_Display_Group
  * @since 1.7.6
  */
-EAPI struct wl_list *ecore_wl_globals_get(void);
+EAPI Eina_Inlist *ecore_wl_globals_get(void);
 
 /**
  * Retrieves the Wayland Registry used for the current Wayland connection.

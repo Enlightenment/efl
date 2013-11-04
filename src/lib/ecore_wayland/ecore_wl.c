@@ -182,7 +182,6 @@ ecore_wl_init(const char *name)
 
    wl_list_init(&_ecore_wl_disp->inputs);
    wl_list_init(&_ecore_wl_disp->outputs);
-   wl_list_init(&_ecore_wl_disp->globals);
 
    _ecore_wl_disp->wl.registry =
      wl_display_get_registry(_ecore_wl_disp->wl.display);
@@ -254,7 +253,7 @@ ecore_wl_display_get(void)
    return _ecore_wl_disp->wl.display;
 }
 
-EAPI struct wl_list *
+EAPI Eina_Inlist *
 ecore_wl_globals_get(void)
 {
    if ((!_ecore_wl_disp) || (!_ecore_wl_disp->wl.display)) 
@@ -262,7 +261,7 @@ ecore_wl_globals_get(void)
 
    _ecore_wl_init_wait();
 
-   return &(_ecore_wl_disp->globals);
+   return _ecore_wl_disp->globals;
 }
 
 EAPI struct wl_registry *
@@ -429,7 +428,8 @@ _ecore_wl_shutdown(Eina_Bool close)
      {
         Ecore_Wl_Output *out, *tout;
         Ecore_Wl_Input *in, *tin;
-        Ecore_Wl_Global *global, *tglobal;
+        Ecore_Wl_Global *global;
+        Eina_Inlist *tmp;
 
         wl_list_for_each_safe(out, tout, &_ecore_wl_disp->outputs, link)
           _ecore_wl_output_del(out);
@@ -437,12 +437,13 @@ _ecore_wl_shutdown(Eina_Bool close)
         wl_list_for_each_safe(in, tin, &_ecore_wl_disp->inputs, link)
           _ecore_wl_input_del(in);
 
-        wl_list_for_each_safe(global, tglobal, &_ecore_wl_disp->globals, link)
-          {
-             wl_list_remove(&global->link);
-             free(global->interface);
-             free(global);
-          }
+        EINA_INLIST_FOREACH_SAFE(_ecore_wl_disp->globals, tmp, global)
+        {
+           _ecore_wl_disp->globals = eina_inlist_remove
+              (_ecore_wl_disp->globals, EINA_INLIST_GET(global));
+           free(global->interface);
+           free(global);
+        }
 
         _ecore_wl_xkb_shutdown(_ecore_wl_disp);
 
@@ -559,14 +560,12 @@ _ecore_wl_cb_handle_global(void *data, struct wl_registry *registry, unsigned in
 
    ewd = data;
 
-   global = malloc(sizeof(Ecore_Wl_Global));
-
-   memset(global, 0, sizeof(Ecore_Wl_Global));
+   global = calloc(1, sizeof(Ecore_Wl_Global));
 
    global->id = id;
    global->interface = strdup(interface);
    global->version = version;
-   wl_list_insert(ewd->globals.prev, &global->link);
+   ewd->globals = eina_inlist_append(ewd->globals, EINA_INLIST_GET(global));
 
    if (!strcmp(interface, "wl_compositor"))
      {
@@ -624,16 +623,18 @@ static void
 _ecore_wl_cb_handle_global_remove(void *data, struct wl_registry *registry EINA_UNUSED, unsigned int id)
 {
    Ecore_Wl_Display *ewd;
-   Ecore_Wl_Global *global, *tmp;
+   Ecore_Wl_Global *global;
+   Eina_Inlist *tmp;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    ewd = data;
 
-   wl_list_for_each_safe(global, tmp, &ewd->globals, link)
+   EINA_INLIST_FOREACH_SAFE(ewd->globals, tmp, global)
      {
         if (global->id != id) continue;
-        wl_list_remove(&global->link);
+        ewd->globals = eina_inlist_remove(ewd->globals,
+                                          EINA_INLIST_GET(global));
         free(global->interface);
         free(global);
      }
