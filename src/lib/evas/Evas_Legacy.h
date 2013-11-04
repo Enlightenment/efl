@@ -3982,7 +3982,7 @@ EAPI void                          evas_object_image_file_set(Evas_Object *obj, 
  *
  * @since 1.8
  */
-EAPI void                          evas_object_image_mmap_set(Evas_Object *eo_obj, Eina_File *f, const char *key);
+EAPI void                          evas_object_image_mmap_set(Evas_Object *eo_obj, const Eina_File *f, const char *key);
 
 /**
  * Retrieve the source file from where an image object is to fetch the

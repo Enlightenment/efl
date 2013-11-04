@@ -397,7 +397,7 @@ evas_object_image_memfile_set(Evas_Object *eo_obj, void *data, int size, char *f
 }
 
 static void
-_image_init_set(Eina_File *f, const char *file, const char *key,
+_image_init_set(const Eina_File *f, const char *file, const char *key,
                 Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Object_Image *o,
                 Evas_Image_Load_Opts *lo)
 {
@@ -523,7 +523,7 @@ _image_done_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Object_Image *
 }
 
 EAPI void
-evas_object_image_mmap_set(Evas_Object *eo_obj, Eina_File *f, const char *key)
+evas_object_image_mmap_set(Evas_Object *eo_obj, const Eina_File *f, const char *key)
 {
    eo_do(eo_obj, evas_obj_image_mmap_set(f, key));
 }
@@ -535,7 +535,7 @@ _image_mmap_set(Eo *eo_obj, void *_pd, va_list *list)
    Evas_Object_Image *o = _pd;
    Evas_Image_Load_Opts lo;
 
-   Eina_File *f = va_arg(*list, Eina_File *);
+   const Eina_File *f = va_arg(*list, const Eina_File *);
    const char *key = va_arg(*list, const char*);
 
    if (o->cur->u.f == f)

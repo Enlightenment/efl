@@ -5668,7 +5668,7 @@ enum
  *
  * @see evas_obj_image_file_set
  */
-#define evas_obj_image_mmap_set(f, key) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_MMAP_SET), EO_TYPECHECK(Eina_File *, f), EO_TYPECHECK(const char*, key)
+#define evas_obj_image_mmap_set(f, key) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_MMAP_SET), EO_TYPECHECK(const Eina_File *, f), EO_TYPECHECK(const char*, key)
 
 /**
  * @def evas_obj_image_file_get
