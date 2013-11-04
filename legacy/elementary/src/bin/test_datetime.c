@@ -2,7 +2,7 @@
 #include "elementary_config.h"
 #endif
 #include <Elementary.h>
-#ifndef ELM_LIB_QUICKLAUNCH
+
 
 /* A simple test, just displaying datetime in its default format */
 
@@ -73,4 +73,3 @@ test_datetime(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
 
    evas_object_show(win);
 }
-#endif

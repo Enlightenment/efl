@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 #include <Elementary.h>
-#ifndef ELM_LIB_QUICKLAUNCH
+
 
 static void
 _menu_dismissed_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
@@ -310,4 +310,3 @@ test_menu2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
    evas_object_show(bt);
 }
 
-#endif

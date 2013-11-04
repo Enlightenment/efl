@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 #include <Elementary.h>
-#ifndef ELM_LIB_QUICKLAUNCH
+
 
 #include <Elementary.h>
 #ifndef M_PI
@@ -683,4 +683,3 @@ test_glview(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    evas_object_resize(win, 320, 480);
    evas_object_show(win);
 }
-#endif

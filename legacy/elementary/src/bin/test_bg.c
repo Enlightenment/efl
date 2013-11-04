@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 #include <Elementary.h>
-#ifndef ELM_LIB_QUICKLAUNCH
+
 
 static void
 _cb_size_radio_changed(void *data, Evas_Object *obj, void *event EINA_UNUSED)
@@ -270,4 +270,3 @@ test_bg_options(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *even
    evas_object_show(win);
 }
 
-#endif

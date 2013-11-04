@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 #include <Elementary.h>
-#ifndef ELM_LIB_QUICKLAUNCH
+
 typedef struct _Testitem
 {
    Elm_Object_Item *item;
@@ -452,4 +452,3 @@ test_win_state2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *even
    evas_object_resize(win, 320, 480);
    evas_object_show(win);
 }
-#endif

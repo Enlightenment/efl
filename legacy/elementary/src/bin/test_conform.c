@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 #include <Elementary.h>
-#ifndef ELM_LIB_QUICKLAUNCH
+
 
 void
 test_conformant(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
@@ -195,4 +195,3 @@ test_conformant2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    evas_object_show(win);
 }
 
-#endif

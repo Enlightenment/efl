@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 #include <Elementary.h>
-#ifndef ELM_LIB_QUICKLAUNCH
+
 
 void
 _sel_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
@@ -187,4 +187,3 @@ test_flipselector(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
 
    evas_object_show(win);
 }
-#endif

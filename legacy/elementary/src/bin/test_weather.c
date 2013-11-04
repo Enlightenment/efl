@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 #include <Elementary.h>
-#ifndef ELM_LIB_QUICKLAUNCH
+
 
 #ifdef HAVE_ELEMENTARY_EWEATHER
 # include "EWeather_Smart.h"
@@ -170,4 +170,3 @@ test_weather(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
     evas_object_resize(win, 244, 388);
     evas_object_show(win);
 }
-#endif

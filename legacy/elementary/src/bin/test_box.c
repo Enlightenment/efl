@@ -3,7 +3,7 @@
 # include "elementary_config.h"
 #endif
 #include <Elementary.h>
-#ifndef ELM_LIB_QUICKLAUNCH
+
 #define ICON_MAX 24
 
 typedef enum
@@ -702,4 +702,3 @@ test_box_transition(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
    elm_box_layout_set(bx, evas_object_box_layout_horizontal, NULL, NULL);
    _test_box_transition_change(tdata);
 }
-#endif

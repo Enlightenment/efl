@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 #include <Elementary.h>
-#ifndef ELM_LIB_QUICKLAUNCH
+
 
 static const char *names[] =
 {
@@ -110,4 +110,3 @@ test_anim(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info
 
    evas_object_event_callback_add(win, EVAS_CALLBACK_DEL, _del, win);
 }
-#endif

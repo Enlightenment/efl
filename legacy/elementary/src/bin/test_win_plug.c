@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 #include <Elementary.h>
-#ifndef ELM_LIB_QUICKLAUNCH
+
 
 #define MAX_TRY 40
 
@@ -181,4 +181,3 @@ test_win_plug(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    evas_object_resize(win, 400, 600);
    evas_object_show(win);
 }
-#endif

@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 #include <Elementary.h>
-#ifndef ELM_LIB_QUICKLAUNCH
+
 
 #define BUTTON_TEXT_SET(BT, TEXT) \
    elm_object_text_set((BT), (TEXT)); \
@@ -270,4 +270,3 @@ test_naviframe2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *even
    evas_object_resize(win, 400, 400);
    evas_object_show(win);
 }
-#endif

@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 #include <Elementary.h>
-#ifndef ELM_LIB_QUICKLAUNCH
+
 void
 my_bt_go_300_300(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
@@ -421,4 +421,3 @@ test_scroller2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    evas_object_resize(win, 320, 480);
    evas_object_show(win);
 }
-#endif

@@ -5,7 +5,6 @@
 #include <string.h>
 #include <Elementary.h>
 #include "test.h"
-#ifndef ELM_LIB_QUICKLAUNCH
 
 int _log_domain = -1;
 
@@ -912,7 +911,6 @@ elm_main(int argc, char **argv)
    /* exit code */
    return 0;
 }
-#endif
 /* all elementary apps should use this. but it should be placed right after
  * elm_main() */
 ELM_MAIN()

@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 #include <Elementary.h>
-#ifndef ELM_LIB_QUICKLAUNCH
+
 
 #define WEIGHT evas_object_size_hint_weight_set
 #define ALIGN_ evas_object_size_hint_align_set
@@ -362,4 +362,3 @@ test_naviframe_complex(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, voi
    evas_object_resize(win, 400, 400);
    evas_object_show(win);
 }
-#endif

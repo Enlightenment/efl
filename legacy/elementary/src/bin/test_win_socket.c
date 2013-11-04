@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 #include <Elementary.h>
-#ifndef ELM_LIB_QUICKLAUNCH
+
 
 static void
 _win_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
@@ -201,4 +201,3 @@ test_win_socket(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *even
    evas_object_event_callback_add(win, EVAS_CALLBACK_DEL, _win_del,
                                   win_socket);
 }
-#endif

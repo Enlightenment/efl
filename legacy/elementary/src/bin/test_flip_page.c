@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 #include <Elementary.h>
-#ifndef ELM_LIB_QUICKLAUNCH
+
 
 typedef struct _State State;
 typedef struct _Slice Slice;
@@ -912,4 +912,3 @@ test_flip_page(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    evas_object_resize(win, 480, 480);
    evas_object_show(win);
 }
-#endif

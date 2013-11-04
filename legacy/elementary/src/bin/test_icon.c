@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 #include <Elementary.h>
-#ifndef ELM_LIB_QUICKLAUNCH
+
 
 static void
 aspect_fixed_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
@@ -152,4 +152,3 @@ test_icon_transparent(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
 
    evas_object_show(win);
 }
-#endif

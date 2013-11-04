@@ -4,7 +4,7 @@
 #endif
 
 #include <Elementary.h>
-#ifndef ELM_LIB_QUICKLAUNCH
+
 struct _api_data
 {
    unsigned int state;  /* What state we are testing       */
@@ -258,4 +258,3 @@ test_fileselector_entry(void *data       EINA_UNUSED,
    evas_object_show(win);
 }
 
-#endif

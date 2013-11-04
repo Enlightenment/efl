@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 #include <Elementary.h>
-#ifndef ELM_LIB_QUICKLAUNCH
+
 
 static Evas_Object *rect;
 
@@ -534,4 +534,3 @@ test_photocam_remote(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
    evas_object_resize(win, 800, 800);
    evas_object_show(win);
 }
-#endif

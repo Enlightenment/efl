@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 #include <Elementary.h>
-#ifndef ELM_LIB_QUICKLAUNCH
+
 
 static void
 _item_selected_cb(void *data EINA_UNUSED,
@@ -223,4 +223,3 @@ test_multibuttonentry(void *data EINA_UNUSED,
    evas_object_show(win);
    elm_object_focus_set(sc, EINA_TRUE);
 }
-#endif

@@ -2,7 +2,7 @@
 #include "elementary_config.h"
 #endif
 #include <Elementary.h>
-#ifndef ELM_LIB_QUICKLAUNCH
+
 
 /* We zoom out to this value so we'll be able to use map and have a nice
  * resolution when zooming in. */
@@ -586,4 +586,3 @@ test_gesture_layer3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
          photo_array);
    evas_object_show(win);
 }
-#endif

@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 #include <Elementary.h>
-#ifndef ELM_LIB_QUICKLAUNCH
+
 
 static void
 fill(Evas_Object *win, Eina_Bool do_bg)
@@ -253,4 +253,3 @@ test_win_inline(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *even
    evas_object_resize(win, 400, 400);
    evas_object_show(win);
 }
-#endif

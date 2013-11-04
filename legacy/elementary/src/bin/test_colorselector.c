@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 #include <Elementary.h>
-#ifndef ELM_LIB_QUICKLAUNCH
+
 
 static void
 _colorselector_changed_cb(void *data, Evas_Object *obj,
@@ -203,4 +203,3 @@ test_colorselector(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
 
    evas_object_show(win);
 }
-#endif

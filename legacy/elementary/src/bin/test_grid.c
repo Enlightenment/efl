@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 #include <Elementary.h>
-#ifndef ELM_LIB_QUICKLAUNCH
+
 struct _Api_Data
 {
    Evas_Object *grid;
@@ -187,4 +187,3 @@ test_grid(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info
    evas_object_resize(win, 480, 480);
    evas_object_show(win);
 }
-#endif

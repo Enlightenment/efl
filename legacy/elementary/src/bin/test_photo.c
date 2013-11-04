@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 #include <Elementary.h>
-#ifndef ELM_LIB_QUICKLAUNCH
+
 
 static void
 _clicked_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
@@ -101,4 +101,3 @@ test_photo(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
 }
 
 /* vim:set ts=8 sw=3 sts=3 expandtab cino=>5n-2f0^-2{2(0W1st0 :*/
-#endif

@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 #include <Elementary.h>
-#ifndef ELM_LIB_QUICKLAUNCH
+
 
 static Evas_Object *g_popup = NULL;
 static int times = 0;
@@ -564,4 +564,3 @@ test_popup(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    evas_object_show(list);
 }
 
-#endif

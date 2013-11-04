@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 #include <Elementary.h>
-#ifndef ELM_LIB_QUICKLAUNCH
+
 
 #define LIST_ITEM_MAX 20
 
@@ -268,4 +268,3 @@ test_panel(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
 }
 
 
-#endif

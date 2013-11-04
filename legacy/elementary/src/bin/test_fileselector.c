@@ -14,7 +14,7 @@
 #endif
 
 #include <Elementary.h>
-#ifndef ELM_LIB_QUICKLAUNCH
+
 static void
 my_fileselector_done(void            *data,
                      Evas_Object *obj EINA_UNUSED,
@@ -397,4 +397,3 @@ test_fileselector(void *data       EINA_UNUSED,
    elm_box_pack_end(vbox, _mode_option_create(vbox, fs));
 }
 
-#endif

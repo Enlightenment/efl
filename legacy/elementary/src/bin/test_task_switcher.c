@@ -3,7 +3,7 @@
 #endif
 #include <Elementary.h>
 #include <Eina.h>
-#ifndef ELM_LIB_QUICKLAUNCH
+
 
 #define APPS_COL 0
 #define VIEWS_COL 1
@@ -405,4 +405,3 @@ test_task_switcher(void *data EINA_UNUSED,
    evas_object_show(win);
    evas_object_resize(win, 1024, 768);
 }
-#endif

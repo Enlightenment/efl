@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 #include <Elementary.h>
-#ifndef ELM_LIB_QUICKLAUNCH
+
 
 typedef struct _GLData GLData;
 
@@ -276,4 +276,3 @@ test_glview_simple(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
    evas_object_resize(win, 320, 480);
    evas_object_show(win);
 }
-#endif

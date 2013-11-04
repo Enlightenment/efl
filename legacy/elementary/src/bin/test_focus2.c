@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 #include <Elementary.h>
-#ifndef ELM_LIB_QUICKLAUNCH
+
 
 static void
 _focus_in(void *data EINA_UNUSED, Evas *e EINA_UNUSED, void *event_info)
@@ -148,4 +148,3 @@ test_focus2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    evas_object_resize(win, 400, 400);
    evas_object_show(win);
 }
-#endif

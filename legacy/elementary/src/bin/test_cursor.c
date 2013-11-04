@@ -3,7 +3,7 @@
 # include "elementary_config.h"
 #endif
 #include <Elementary.h>
-#ifndef ELM_LIB_QUICKLAUNCH
+
 
 // XXX: show all type of cursors in the elementary_test. this needs to be the first test
 
@@ -447,4 +447,3 @@ test_cursor4(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
    evas_object_show(win);
 }
 
-#endif

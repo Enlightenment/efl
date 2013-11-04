@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 #include <Elementary.h>
-#ifndef ELM_LIB_QUICKLAUNCH
+
 typedef struct Progressbar_Data
 {
    Evas_Object *pb1;
@@ -397,4 +397,3 @@ test_progressbar2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
    evas_object_show(bt);
    pd->btn_stop = bt;
 }
-#endif

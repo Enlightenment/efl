@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 #include <Elementary.h>
-#ifndef ELM_LIB_QUICKLAUNCH
+
 
 #define SOURCE_MAX 10
 #define MARKER_MAX 1000
@@ -1186,4 +1186,3 @@ test_map(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info 
    evas_object_resize(win, 800, 800);
    evas_object_show(win);
 }
-#endif

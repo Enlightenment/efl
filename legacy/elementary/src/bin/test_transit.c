@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 #include <Elementary.h>
-#ifndef ELM_LIB_QUICKLAUNCH
+
 
 typedef struct _Custom_Effect Custom_Effect;
 
@@ -555,4 +555,3 @@ test_transit9(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    evas_object_resize(win, 400, 400);
    evas_object_show(win);
 }
-#endif

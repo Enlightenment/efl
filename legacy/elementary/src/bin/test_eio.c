@@ -17,7 +17,7 @@
 #include <Eio.h>
 
 #include <Elementary.h>
-#ifndef ELM_LIB_QUICKLAUNCH
+
 
 static Elm_Genlist_Item_Class it_eio;
 
@@ -245,4 +245,3 @@ test_eio(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info 
    evas_object_show(win);
 }
 
-#endif

@@ -2,7 +2,7 @@
 #include "elementary_config.h"
 #endif
 #include <Elementary.h>
-#ifndef ELM_LIB_QUICKLAUNCH
+
 
 static void _changed_cb(void* data EINA_UNUSED, Evas_Object* obj, void* event_info)
 {
@@ -125,4 +125,3 @@ test_dayselector(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    evas_object_show(win);
 }
 
-#endif

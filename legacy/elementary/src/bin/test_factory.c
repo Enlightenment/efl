@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 #include <Elementary.h>
-#ifndef ELM_LIB_QUICKLAUNCH
+
 
 // 16 ^ 4 = 65k
 #define BLOK 16
@@ -180,4 +180,3 @@ test_factory(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
    evas_object_resize(win, 320, 480);
    evas_object_show(win);
 }
-#endif

@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 #include <Elementary.h>
-#ifndef ELM_LIB_QUICKLAUNCH
+
 static void
 _icon_clicked_cb(void *data , Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
@@ -54,4 +54,3 @@ test_icon_animated(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
 
    evas_object_smart_callback_add(ic, "clicked", _icon_clicked_cb, ic);
 }
-#endif

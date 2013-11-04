@@ -10,7 +10,7 @@
 # include "elementary_config.h"
 #endif
 #include <Elementary.h>
-#ifndef ELM_LIB_QUICKLAUNCH
+
 
 typedef struct _My_Item My_Item;
 
@@ -268,4 +268,3 @@ test_store(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
    evas_object_resize(win, 480, 800);
    evas_object_show(win);
 }
-#endif

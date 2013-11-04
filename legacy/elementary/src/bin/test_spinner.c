@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 #include <Elementary.h>
-#ifndef ELM_LIB_QUICKLAUNCH
+
 
 static void
 _spinner_drag_start_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
@@ -112,4 +112,3 @@ test_spinner(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
    evas_object_resize(win, 300, 300);
    evas_object_show(win);
 }
-#endif

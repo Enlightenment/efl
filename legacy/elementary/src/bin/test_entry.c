@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 #include <Elementary.h>
-#ifndef ELM_LIB_QUICKLAUNCH
+
 static void
 my_entry_bt_1(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
@@ -2340,4 +2340,3 @@ test_entry_emoticon(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    elm_object_focus_set(en, EINA_TRUE);
 }
 
-#endif

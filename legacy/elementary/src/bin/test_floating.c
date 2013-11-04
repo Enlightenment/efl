@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 #include <Elementary.h>
-#ifndef ELM_LIB_QUICKLAUNCH
+
 typedef struct _Testitem
 {
    Elm_Object_Item *item;
@@ -100,4 +100,3 @@ test_floating(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    ani = ecore_animator_add(anim, gl);
    evas_object_event_callback_add(win, EVAS_CALLBACK_DEL, _del, ani);
 }
-#endif

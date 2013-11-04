@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 #include <Elementary.h>
-#ifndef ELM_LIB_QUICKLAUNCH
+
 
 static int vis = 0;
 static int rotate_with_resize = 0;
@@ -384,4 +384,3 @@ test_conformant_indicator(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    evas_object_show(win);
 }
 
-#endif

@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 #include <Elementary.h>
-#ifndef ELM_LIB_QUICKLAUNCH
+
 
 typedef struct {
    Evas_Object *win, *label;
@@ -208,4 +208,3 @@ test_application_server_message(void *data EINA_UNUSED,
    msg_server = test_application_server_common( "org.enlightenment.message");
    eo_do(msg_server, eo_event_callback_add(EO_EV_DEL, _server_del_cb, &msg_server));
 }
-#endif

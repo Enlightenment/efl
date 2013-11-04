@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 #include <Elementary.h>
-#ifndef ELM_LIB_QUICKLAUNCH
+
 
 #define WIDTH  320
 #define HEIGHT 160
@@ -117,4 +117,3 @@ test_sys_notify(void *data EINA_UNUSED,
    evas_object_resize(win, WIDTH, HEIGHT);
    evas_object_show(win);
 }
-#endif

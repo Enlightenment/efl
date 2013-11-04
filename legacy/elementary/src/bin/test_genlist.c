@@ -4,7 +4,7 @@
 #include "elementary_config.h"
 #endif
 #include <Elementary.h>
-#ifndef ELM_LIB_QUICKLAUNCH
+
 
 #define WEIGHT evas_object_size_hint_weight_set
 #define ALIGN_ evas_object_size_hint_align_set
@@ -3502,4 +3502,3 @@ test_genlist_item_styles(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    evas_object_data_set(list, "genlist", gl);
 }
 
-#endif

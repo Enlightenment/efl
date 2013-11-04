@@ -4,7 +4,7 @@
 # include "elementary_config.h"
 #endif
 #include <Elementary.h>
-#ifndef ELM_LIB_QUICKLAUNCH
+
 struct _api_data
 {
    unsigned int state;  /* What state we are testing       */
@@ -1491,4 +1491,3 @@ test_list_separator(void        *data EINA_UNUSED,
    evas_object_show(win);
 }
 
-#endif

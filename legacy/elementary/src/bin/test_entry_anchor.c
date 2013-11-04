@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 #include <Elementary.h>
-#ifndef ELM_LIB_QUICKLAUNCH
+
 
 static void
 _print_clicked(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
@@ -236,4 +236,3 @@ test_entry_anchor(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
    elm_object_focus_set(win, EINA_TRUE);
    evas_object_show(win);
 }
-#endif

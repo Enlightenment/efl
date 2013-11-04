@@ -3,7 +3,7 @@
 # include "elementary_config.h"
 #endif
 #include <Elementary.h>
-#ifndef ELM_LIB_QUICKLAUNCH
+
 
 
 void
@@ -184,4 +184,3 @@ test_external_video(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
 }
 
 
-#endif

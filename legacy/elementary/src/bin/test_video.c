@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 #include <Elementary.h>
-#ifndef ELM_LIB_QUICKLAUNCH
+
 
 static void
 my_bt_open(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
@@ -57,4 +57,3 @@ test_video(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
    evas_object_resize(win, 800, 500);
    evas_object_show(win);
 }
-#endif

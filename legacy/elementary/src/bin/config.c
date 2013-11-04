@@ -2,7 +2,6 @@
 # include "elementary_config.h"
 #endif
 #include <Elementary.h>
-#ifndef ELM_LIB_QUICKLAUNCH
 
 typedef struct _Theme               Theme;
 typedef struct _Fonts_Data          Fonts_Data;
@@ -3671,7 +3670,5 @@ elm_main(int    argc,
    /* exit code */
    return 0;
 }
-
-#endif
 /* All elementary apps should use this. Put it right after elm_main() */
 ELM_MAIN()

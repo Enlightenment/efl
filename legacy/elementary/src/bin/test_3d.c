@@ -3,7 +3,7 @@
 # include "elementary_config.h"
 #endif
 #include <Elementary.h>
-#ifndef ELM_LIB_QUICKLAUNCH
+
 
 typedef struct _Point
 {
@@ -338,4 +338,3 @@ test_3d(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info E
    _cube_update(win, cube);
    evas_object_show(win);
 }
-#endif

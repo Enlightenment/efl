@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 #include <Elementary.h>
-#ifndef ELM_LIB_QUICKLAUNCH
+
 
 #if 0
 static void
@@ -403,4 +403,3 @@ test_access3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
 }
 #endif
 
-#endif

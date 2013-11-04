@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 #include <Elementary.h>
-#ifndef ELM_LIB_QUICKLAUNCH
+
 
 #define WIDTH (500)
 #define HEIGHT (1000)
@@ -118,4 +118,3 @@ test_prefs(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
 
    elm_prefs_data_unref(prefs_data);
 }
-#endif

@@ -1,6 +1,6 @@
 #include "elementary_config.h"
 #include <Elementary.h>
-#ifndef ELM_LIB_QUICKLAUNCH
+
 
 static void
 _dismissed_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
@@ -247,4 +247,3 @@ test_hover3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    evas_object_smart_callback_add(bt, "clicked", _dismiss_hover, hv);
 }
 
-#endif

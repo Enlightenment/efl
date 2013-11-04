@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 #include <Elementary.h>
-#ifndef ELM_LIB_QUICKLAUNCH
+
 static Elm_Genlist_Item_Class *it_desk = NULL;
 
 static char *
@@ -104,4 +104,3 @@ test_icon_desktops(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
    evas_object_resize(win, 320, 480);
    evas_object_show(win);
 }
-#endif

@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 #include <Elementary.h>
-#ifndef ELM_LIB_QUICKLAUNCH
+
 
 static void
 _rd_changed_cb(void *data EINA_UNUSED, Evas_Object *obj,
@@ -104,4 +104,3 @@ test_radio(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
 
    elm_radio_value_set(rdg, 2);
 }
-#endif

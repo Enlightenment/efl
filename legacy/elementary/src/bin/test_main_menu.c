@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 #include <Elementary.h>
-#ifndef ELM_LIB_QUICKLAUNCH
+
 
 static void
 _click_me(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
@@ -74,4 +74,3 @@ test_main_menu(void *data EINA_UNUSED,
    elm_menu_item_add(menu, menu_it1, NULL, "first item", NULL, NULL);
 }
 
-#endif

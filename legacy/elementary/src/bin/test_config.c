@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 #include <Elementary.h>
-#ifndef ELM_LIB_QUICKLAUNCH
+
 
 #ifdef MAX_PROFILES
 # undef MAX_PROFILES
@@ -533,4 +533,3 @@ test_config(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUS
    evas_object_resize(win, 400, 500);
    evas_object_show(win);
 }
-#endif

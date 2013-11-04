@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 #include <Elementary.h>
-#ifndef ELM_LIB_QUICKLAUNCH
+
 
 typedef struct
 {
@@ -497,4 +497,3 @@ test_web_mobile(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *even
 {
    test_web(data, obj, event_info, EINA_TRUE);
 }
-#endif

@@ -3,7 +3,7 @@
 # include "elementary_config.h"
 #endif
 #include <Elementary.h>
-#ifndef ELM_LIB_QUICKLAUNCH
+
 struct _Idx_Data_Type
 {
    Evas_Object *id;  /* Pointer to Index */
@@ -469,4 +469,3 @@ test_index_horizontal(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    evas_object_show(win);
 }
 
-#endif

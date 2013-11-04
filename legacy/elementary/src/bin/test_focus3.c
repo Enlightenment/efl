@@ -3,7 +3,7 @@
 # include "elementary_config.h"
 #endif
 #include <Elementary.h>
-#ifndef ELM_LIB_QUICKLAUNCH
+
 
 static Evas_Object *foc = NULL;
 
@@ -455,4 +455,3 @@ test_focus_custom(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
    elm_box_pack_end(bx2, bt);
    evas_object_show(bt);
 }
-#endif
