@@ -175,6 +175,14 @@ struct _Group_Write
    char *errstr;
 };
 
+struct _Image_Unused_Ids
+{
+   int old_id;
+   int new_id;
+};
+
+typedef struct _Image_Unused_Ids Image_Unused_Ids;
+
 static int pending_threads = 0;
 
 static void data_process_string(Edje_Part_Collection *pc, const char *prefix, char *s, void (*func)(Edje_Part_Collection *pc, char *name, char* ptr, int len));
@@ -2209,6 +2217,58 @@ data_process_part_set(Part_Lookup *target, int value)
      }
 }
 
+static void
+_data_image_id_update(Eina_List *images_unused_list)
+{
+   Image_Unused_Ids *iui;
+   Edje_Part_Collection *pc;
+   Edje_Part *part;
+   Edje_Part_Description_Image *part_desc_image;
+   Edje_Part_Image_Id *tween_id;
+   unsigned int i, j, desc_it;
+   Eina_List *l, *l2, *l3;
+
+#define PART_DESC_IMAGE_ID_UPDATE \
+   EINA_LIST_FOREACH(images_unused_list, l3, iui) \
+     { \
+        if (part_desc_image->image.id == iui->old_id) \
+          { \
+             part_desc_image->image.id = iui->new_id; \
+             break; \
+          } \
+     } \
+   for (desc_it = 0; desc_it < part_desc_image->image.tweens_count; desc_it++) \
+     { \
+        tween_id = part_desc_image->image.tweens[desc_it]; \
+        EINA_LIST_FOREACH(images_unused_list, l3, iui) \
+          { \
+             if (tween_id->id == iui->old_id) \
+               { \
+                  tween_id->id = iui->new_id; \
+                  break; \
+               } \
+          } \
+     }
+
+   EINA_LIST_FOREACH_SAFE(edje_collections, l, l2, pc)
+     {
+        for(i = 0; i < pc->parts_count; i++)
+          {
+             part = pc->parts[i];
+             if (part->type == EDJE_PART_TYPE_IMAGE)
+               {
+                  part_desc_image = (Edje_Part_Description_Image *)part->default_desc;
+                  PART_DESC_IMAGE_ID_UPDATE
+                  for (j = 0; j < part->other.desc_count; j++)
+                     {
+                        part_desc_image = (Edje_Part_Description_Image *)part->other.desc[j];
+                        PART_DESC_IMAGE_ID_UPDATE
+                     }
+               }
+          }
+     }
+}
+
 void
 data_process_lookups(void)
 {
@@ -2224,6 +2284,7 @@ data_process_lookups(void)
    void *data;
    char *group_name;
    Eina_Bool is_lua = EINA_FALSE;
+   Image_Unused_Ids *iui;
 
    /* remove all unreferenced Edje_Part_Collection */
    EINA_LIST_FOREACH_SAFE(edje_collections, l, l2, pc)
@@ -2534,8 +2595,10 @@ free_group:
 
    if (edje_file->image_dir && !is_lua)
      {
-        Edje_Image_Directory_Entry *de;
+        Edje_Image_Directory_Entry *de, *de_last, *img;
         Edje_Image_Directory_Set *set;
+        Edje_Image_Directory_Set_Entry *set_e;
+        Eina_List *images_unused_list = NULL;
         unsigned int i;
 
         for (i = 0; i < edje_file->image_dir->entries_count; ++i)
@@ -2548,7 +2611,22 @@ free_group:
              INF("Image '%s' in resource 'edje/image/%i' will not be included as it is unused.",
                  de->entry, de->id);
 
+             /* so as not to write the unused images, moved last image in the
+                list to unused image position and check it */
+             free((void *)de->entry);
              de->entry = NULL;
+             de_last = edje_file->image_dir->entries + edje_file->image_dir->entries_count - 1;
+             iui = mem_alloc(SZ(Image_Unused_Ids));
+             iui->old_id = de_last->id;
+             images_unused_list = eina_list_append(images_unused_list, iui);
+             iui->new_id = i;
+             de_last->id = i;
+             memcpy(de, de_last, sizeof (Edje_Image_Directory_Entry));
+             --i; /* need to check a moved image on this index */
+             edje_file->image_dir->entries_count--;
+             img = realloc(edje_file->image_dir->entries,
+                           sizeof (Edje_Image_Directory_Entry) * edje_file->image_dir->entries_count);
+             edje_file->image_dir->entries = img;
           }
 
         for (i = 0; i < edje_file->image_dir->sets_count; ++i)
@@ -2560,9 +2638,17 @@ free_group:
 
              INF("Set '%s' will not be included as it is unused.", set->name);
 
-             set->name = NULL;
-             set->entries = NULL;
+             free((void *)set->name);
+             EINA_LIST_FREE(set->entries, set_e)
+               {
+                  free((void *)set_e->name);
+                  free(set_e);
+               }
           }
+        /* update image id in parts */
+        if (images_unused_list) _data_image_id_update(images_unused_list);
+        EINA_LIST_FREE(images_unused_list, iui)
+           free(iui);
      }
 
    eina_hash_free(images_in_use);
