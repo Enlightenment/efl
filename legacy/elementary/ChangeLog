@@ -1735,10 +1735,3 @@
 2013-10-03  Daniel Juyung Seo (SeoZ)
 
         * Genlist/Gengrid: Added multi select mode.
-
-2013-10-02  Ryuan Choi (ryuan)
-
-        * genlist , gengrid: Add ELM_OBJECT_MULTIPLE_SELECT_MODE_WITH_CONTROL.
-        It disallow multiple selection when clicked without control pressed although
-        multiple selection is enabled.
-
