@@ -1728,10 +1728,6 @@
 
         * image: Add support for "clicked" callback on Return/space/KP_Enter key press.
 
-2013-10-30  Daniel Juyung Seo (SeoZ)
-
-        * conform: Added "virtualkeypad,size,changed" callback on virtualkeypad min size change.
-
 2013-10-30  Shilpa Onkar Singh
 
         * slider: Added elm_slider_step_get(), elm_slider_step_set().
