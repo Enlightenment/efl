@@ -843,63 +843,87 @@ static int (*qr_main)(int    argc,
 
 EAPI Eina_Bool
 elm_quicklaunch_prepare(int    argc,
-                        char **argv)
+                        char **argv,
+                        const char *cwd)
 {
 #ifdef HAVE_FORK
-   char *exe;
+   char *exe, *exe2, *p;
+   char *exename;
 
    if (argc <= 0 || argv == NULL) return EINA_FALSE;
 
-   exe = elm_quicklaunch_exe_path_get(argv[0]);
+   exe = elm_quicklaunch_exe_path_get(argv[0], cwd);
    if (!exe)
      {
         ERR("requested quicklaunch binary '%s' does not exist\n", argv[0]);
         return EINA_FALSE;
      }
-   else
-     {
-        char *exe2, *p;
-        char *exename;
 
-        exe2 = malloc(strlen(exe) + 1 + 7 + strlen(LIBEXT));
-        strcpy(exe2, exe);
-        p = strrchr(exe2, '/');
-        if (p) p++;
-        else p = exe2;
-        exename = alloca(strlen(p) + 1);
-        strcpy(exename, p);
-        *p = 0;
-        strcat(p, "../lib/");
-        strcat(p, exename);
-        strcat(p, LIBEXT);
-        if (!access(exe2, R_OK | X_OK))
-          {
-             free(exe);
-             exe = exe2;
-          }
-        else
-          free(exe2);
+   exe2 = malloc(strlen(exe) + 1 + 7 + strlen(LIBEXT));
+   strcpy(exe2, exe);
+   p = strrchr(exe2, '/');
+   if (p) p++;
+   else p = exe2;
+   exename = alloca(strlen(p) + 1);
+   strcpy(exename, p);
+   *p = 0;
+   strcat(p, "../lib/");
+   strcat(p, exename);
+   strcat(p, LIBEXT);
+   if (access(exe2, R_OK | X_OK) != 0)
+     {
+        free(exe2);
+        exe2 = NULL;
      }
+
+   /* Try linking to executable first. Works with PIE files. */
    qr_handle = dlopen(exe, RTLD_NOW | RTLD_GLOBAL);
-   if (!qr_handle)
+   if (qr_handle)
      {
-        fprintf(stderr, "dlerr: %s\n", dlerror());
-        WRN("dlopen('%s') failed: %s", exe, dlerror());
-        free(exe);
-        return EINA_FALSE;
-     }
-   INF("dlopen('%s') = %p", exe, qr_handle);
-   qr_main = dlsym(qr_handle, "elm_main");
-   INF("dlsym(%p, 'elm_main') = %p", qr_handle, qr_main);
-   if (!qr_main)
-     {
-        WRN("not quicklauncher capable: no elm_main in '%s'", exe);
+        INF("dlopen('%s') = %p", exe, qr_handle);
+        qr_main = dlsym(qr_handle, "elm_main");
+        if (qr_main)
+          {
+             INF("dlsym(%p, 'elm_main') = %p", qr_handle, qr_main);
+             free(exe2);
+             free(exe);
+             return EINA_TRUE;
+          }
         dlclose(qr_handle);
         qr_handle = NULL;
+     }
+
+   if (!exe2)
+     {
+        WRN("not quicklauncher capable: '%s'", exe);
         free(exe);
         return EINA_FALSE;
      }
    free(exe);
+
+   /* Open companion .so file.
+    * Support for legacy quicklaunch apps with separate library.
+    */
+   qr_handle = dlopen(exe2, RTLD_NOW | RTLD_GLOBAL);
+   if (!qr_handle)
+     {
+        fprintf(stderr, "dlerr: %s\n", dlerror());
+        WRN("dlopen('%s') failed: %s", exe2, dlerror());
+        free(exe2);
+        return EINA_FALSE;
+     }
+   INF("dlopen('%s') = %p", exe2, qr_handle);
+   qr_main = dlsym(qr_handle, "elm_main");
+   INF("dlsym(%p, 'elm_main') = %p", qr_handle, qr_main);
+   if (!qr_main)
+     {
+        WRN("not quicklauncher capable: no elm_main in '%s'", exe2);
+        dlclose(qr_handle);
+        qr_handle = NULL;
+        free(exe2);
+        return EINA_FALSE;
+     }
+   free(exe2);
    return EINA_TRUE;
 #else
    (void)argc;
@@ -1018,16 +1042,17 @@ elm_quicklaunch_fallback(int    argc,
                          char **argv)
 {
    int ret;
+   char cwd[PATH_MAX];
    elm_quicklaunch_init(argc, argv);
    elm_quicklaunch_sub_init(argc, argv);
-   elm_quicklaunch_prepare(argc, argv);
+   elm_quicklaunch_prepare(argc, argv, getcwd(cwd, sizeof(cwd)));
    ret = qr_main(argc, argv);
    exit(ret);
    return ret;
 }
 
 EAPI char *
-elm_quicklaunch_exe_path_get(const char *exe)
+elm_quicklaunch_exe_path_get(const char *exe, const char *cwd)
 {
    static char *path = NULL;
    static Eina_List *pathlist = NULL;
@@ -1035,8 +1060,13 @@ elm_quicklaunch_exe_path_get(const char *exe)
    const Eina_List *l;
    char buf[PATH_MAX];
    if (exe[0] == '/') return strdup(exe);
-   if ((exe[0] == '.') && (exe[1] == '/')) return strdup(exe);
-   if ((exe[0] == '.') && (exe[1] == '.') && (exe[2] == '/')) return strdup(exe);
+   if (cwd)
+     pathlist = eina_list_append(pathlist, eina_stringshare_add(cwd));
+   else
+     {
+        if ((exe[0] == '.') && (exe[1] == '/')) return strdup(exe);
+        if ((exe[0] == '.') && (exe[1] == '.') && (exe[2] == '/')) return strdup(exe);
+     }
    if (!path)
      {
         const char *p, *pp;
