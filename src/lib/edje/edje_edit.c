@@ -315,7 +315,7 @@ _edje_real_part_free(Edje *ed, Edje_Real_Part *rp)
 	evas_object_del(rp->object);
      }
 
-   if (rp->typedata.swallow->swallowed_object)
+   if ((rp->typedata.swallow) && (rp->typedata.swallow->swallowed_object))
      {
 	evas_object_smart_member_del(rp->typedata.swallow->swallowed_object);
 	evas_object_event_callback_del(rp->typedata.swallow->swallowed_object,
@@ -333,10 +333,10 @@ _edje_real_part_free(Edje *ed, Edje_Real_Part *rp)
 	rp->typedata.swallow->swallowed_object = NULL;
      }
 
-   if (rp->typedata.text->text) eina_stringshare_del(rp->typedata.text->text);
-   if (rp->typedata.text->font) eina_stringshare_del(rp->typedata.text->font);
-   if (rp->typedata.text->cache.in_str) eina_stringshare_del(rp->typedata.text->cache.in_str);
-   if (rp->typedata.text->cache.out_str) eina_stringshare_del(rp->typedata.text->cache.out_str);
+   if ((rp->typedata.text) && (rp->typedata.text->text)) eina_stringshare_del(rp->typedata.text->text);
+   if ((rp->typedata.text) && (rp->typedata.text->font)) eina_stringshare_del(rp->typedata.text->font);
+   if ((rp->typedata.text) && (rp->typedata.text->cache.in_str)) eina_stringshare_del(rp->typedata.text->cache.in_str);
+   if ((rp->typedata.text) && (rp->typedata.text->cache.out_str)) eina_stringshare_del(rp->typedata.text->cache.out_str);
 
    if (rp->custom)
      {
@@ -2092,8 +2092,10 @@ edje_edit_part_del(Evas_Object *obj, const char* part)
 	if (i == id) continue; //don't check the deleted id
 	real = ed->table_parts[i];
 
-	if (real->typedata.text->source == rp) real->typedata.text->source = NULL;
-	if (real->typedata.text->text_source == rp) real->typedata.text->text_source = NULL;
+	if ((real->typedata.text) && (real->typedata.text->source == rp))
+          real->typedata.text->source = NULL;
+	if ((real->typedata.text) && (real->typedata.text->text_source == rp))
+          real->typedata.text->text_source = NULL;
 
 	if (real->part->clip_to_id == rp->part->id)
 	  {
