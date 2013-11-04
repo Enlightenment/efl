@@ -96,9 +96,9 @@ case "${build_crypto}" in
 esac
 
 AC_ARG_WITH([tests],
-   [AC_HELP_STRING([--with-tests=none|regular|coverage],
-                   [choose testing method: regular, coverage or none.
-                    @<:@default=none@:>@])],
+   [AC_HELP_STRING([--with-tests=none|auto|regular|coverage],
+                   [choose testing method: regular, coverage or none or auto(same as regular if profile is dev).
+                    @<:@default=auto@:>@])],
    [build_tests=${withval}],
    [build_tests=auto])
 
@@ -108,6 +108,9 @@ case "${build_tests}" in
    auto)
      if test "${build_profile}" = "dev"; then
         want_tests="yes"
+        build_tests="regular"
+     else
+        build_tests="none"
      fi
      ;;
    regular)
