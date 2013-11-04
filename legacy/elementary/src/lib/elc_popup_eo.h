@@ -20,7 +20,6 @@ enum
    ELM_OBJ_POPUP_SUB_ID_ALLOW_EVENTS_SET,
    ELM_OBJ_POPUP_SUB_ID_ALLOW_EVENTS_GET,
    ELM_OBJ_POPUP_SUB_ID_ITEM_APPEND,
-   ELM_OBJ_POPUP_SUB_ID_MOVE,
    ELM_OBJ_POPUP_SUB_ID_LAST
 };
 
@@ -139,19 +138,6 @@ enum
  * @see elm_popup_item_append
  */
 #define elm_obj_popup_item_append(label, icon, func, data, ret) ELM_OBJ_POPUP_ID(ELM_OBJ_POPUP_SUB_ID_ITEM_APPEND), EO_TYPECHECK(const char *, label), EO_TYPECHECK(Evas_Object *, icon), EO_TYPECHECK(Evas_Smart_Cb, func), EO_TYPECHECK(const void *, data), EO_TYPECHECK(Elm_Object_Item **, ret)
-
-/**
- * @def elm_obj_popup_move
- * @since 1.8
- *
- * @brief Move the popup relative to its top parent
- *
- * @param[in] x
- * @param[in] y
- *
- * @see elm_popup_move
- */
-#define elm_obj_popup_move(x, y) ELM_OBJ_POPUP_ID(ELM_OBJ_POPUP_SUB_ID_MOVE), EO_TYPECHECK(Evas_Coord, x), EO_TYPECHECK(Evas_Coord, y)
 /**
  * @}
  */

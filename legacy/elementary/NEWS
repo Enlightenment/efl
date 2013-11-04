@@ -100,8 +100,9 @@ Additions:
    * Add signals "spinner,drag,start" and "spinner,drag,stop" to the spinner widget.
    * Add support for "clicked" callback on Return/space/KP_Enter key press for image.
    * Add elm_slider_step_get(), elm_slider_step_set() for slider.
-   * Add support elm_popup_move() for popup.
    * Add multi select mode for genlist/gengrid.
+   * Add ELM_OBJECT_MULTIPLE_SELECT_MODE_WITH_CONTROL select mode for genlist/gengrid.
+>>>>>>> parent of f67ecb2... popup: Added support for popup move. elm_popup_move.
 
 Improvements:
 

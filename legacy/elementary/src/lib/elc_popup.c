@@ -1755,45 +1755,6 @@ _orient_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 }
 
 EAPI void
-elm_popup_move(Evas_Object *obj,
-               Evas_Coord x, Evas_Coord y)
-{
-   ELM_POPUP_CHECK(obj);
-   eo_do(obj, elm_obj_popup_move(x, y));
-}
-
-static void
-_move(Eo *obj, void *_pd, va_list *list)
-{
-   Evas_Coord x = va_arg(*list, Evas_Coord);
-   Evas_Coord y = va_arg(*list, Evas_Coord);
-   Evas_Coord tw, th, w, h;
-   Evas_Object *top;
-   Elm_Popup_Smart_Data *sd = _pd;
-
-   top = elm_widget_top_get(obj);
-   if (!top)
-     {
-        ERR("The top parent is NULL! : popup=%p", obj);
-        return;
-     }
-
-   evas_object_geometry_get(top, NULL, NULL, &tw, &th);
-   evas_object_geometry_get(obj, NULL, NULL, &w, &h);
-
-   if (x < 0) x = 0;
-   if (y < 0) y = 0;
-   if ((x > (tw - w)) && (tw - w > 0))
-     x = tw - w;
-   if ((y > (th - h)) && (th - h > 0))
-     y = th - h;
-   if ((x > tw) || (y > th) || (w > tw) || (h > th))
-     elm_notify_align_set(sd->notify, 0.5, 0.5);
-   else
-     elm_notify_align_set(sd->notify, ((double)x/(double)tw), ((double)y/(double)th));
-}
-
-EAPI void
 elm_popup_timeout_set(Evas_Object *obj,
                       double timeout)
 {
@@ -1960,7 +1921,6 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_OBJ_POPUP_ID(ELM_OBJ_POPUP_SUB_ID_ALLOW_EVENTS_SET), _allow_events_set),
         EO_OP_FUNC(ELM_OBJ_POPUP_ID(ELM_OBJ_POPUP_SUB_ID_ALLOW_EVENTS_GET), _allow_events_get),
         EO_OP_FUNC(ELM_OBJ_POPUP_ID(ELM_OBJ_POPUP_SUB_ID_ITEM_APPEND), _item_append),
-        EO_OP_FUNC(ELM_OBJ_POPUP_ID(ELM_OBJ_POPUP_SUB_ID_MOVE), _move),
         EO_OP_FUNC_SENTINEL
   };
    eo_class_funcs_set(klass, func_desc);
@@ -1977,7 +1937,6 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_OBJ_POPUP_SUB_ID_ALLOW_EVENTS_SET, "Sets whether events should be passed to by a click outside."),
      EO_OP_DESCRIPTION(ELM_OBJ_POPUP_SUB_ID_ALLOW_EVENTS_GET, "Returns value indicating whether allow event is enabled or not."),
      EO_OP_DESCRIPTION(ELM_OBJ_POPUP_SUB_ID_ITEM_APPEND, "Add a new item to a Popup object."),
-     EO_OP_DESCRIPTION(ELM_OBJ_POPUP_SUB_ID_MOVE, "Move the popup relative to its top parent."),
      EO_OP_DESCRIPTION_SENTINEL
 };
 static const Eo_Class_Description class_desc = {

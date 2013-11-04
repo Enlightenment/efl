@@ -136,18 +136,3 @@ EAPI Eina_Bool elm_popup_allow_events_get(const Evas_Object *obj);
  * and item(s) can be there in a popup content area.
  */
 EAPI Elm_Object_Item *elm_popup_item_append(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Smart_Cb func, const void *data) EINA_ARG_NONNULL(1);
-
-/**
- * @since 1.8
- *
- * @brief Move the popup relative to its top parent
- *
- * @param obj popup object
- * @param x X position to move the popup object to, in canvas units,
- * with relative to its top parent object.
- * @param y Y position to move the popup object to, in canvas units,
- * with relative to its top parent object.
- *
- * @ingroup Popup
- */
-EAPI void elm_popup_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y);
