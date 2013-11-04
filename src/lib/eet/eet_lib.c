@@ -1431,7 +1431,7 @@ eet_file_get(Eet_File *ef)
 }
 
 EAPI Eet_File *
-eet_mmap(Eina_File *file)
+eet_mmap(const Eina_File *file)
 {
    Eet_File *ef = NULL;
    const char *path;

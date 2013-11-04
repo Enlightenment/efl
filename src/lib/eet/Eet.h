@@ -580,7 +580,7 @@ eet_open(const char *file,
  * @since 1.8.0
  */
 EAPI Eet_File *
-eet_mmap(Eina_File *file);
+eet_mmap(const Eina_File *file);
 
 /**
  * Open an eet file directly from a memory location. The data is not copied,
