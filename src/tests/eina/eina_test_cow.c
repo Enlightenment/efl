@@ -81,7 +81,7 @@ START_TEST(eina_cow_bad)
    (void) _eina_test_log;
 #endif
 
-   eina_cow_free(cow, cur);
+   eina_cow_free(cow, (const Eina_Cow_Data**) &cur);
 
    eina_cow_del(cow);
 }
@@ -137,8 +137,8 @@ START_TEST(eina_cow)
    fail_if(eina_cow_gc(cow) == EINA_FALSE);
    fail_if(cur != prev);
 
-   eina_cow_free(cow, (const Eina_Cow_Data*) cur);
-   eina_cow_free(cow, (const Eina_Cow_Data*) prev);
+   eina_cow_free(cow, (const Eina_Cow_Data**) &cur);
+   eina_cow_free(cow, (const Eina_Cow_Data**) &prev);
 
    eina_cow_del(cow);
 }
