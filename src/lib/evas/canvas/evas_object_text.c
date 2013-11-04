@@ -488,6 +488,7 @@ _text_font_set(Eo *eo_obj, void *_pd, va_list *list)
         o->max_ascent = 0;
         o->max_descent = 0;
      }
+   _evas_object_text_items_clear(o);
    _evas_object_text_recalc(eo_obj, o->cur.text);
    o->changed = 1;
    evas_object_change(eo_obj, obj);
