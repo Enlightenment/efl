@@ -78,7 +78,7 @@ struct _Eina_Cow_GC
 #endif
 
    Eina_Cow_Ptr *ref;
-   const void * const *dst;
+   const void **dst;
 };
 
 struct _Eina_Cow
@@ -228,7 +228,7 @@ _eina_cow_togc_del(Eina_Cow *cow, Eina_Cow_Ptr *ref)
 static void
 _eina_cow_togc_add(Eina_Cow *cow,
                    Eina_Cow_Ptr *ref,
-                   const Eina_Cow_Data * const * dst)
+                   const Eina_Cow_Data ** dst)
 {
    Eina_Cow_GC *gc;
 
@@ -255,7 +255,7 @@ _eina_cow_togc_add(Eina_Cow *cow,
 
 static void
 _eina_cow_gc(Eina_Cow *cow, Eina_Cow_Ptr *ref,
-             const Eina_Cow_Data * const *dst,
+             const Eina_Cow_Data **dst,
              void *data)
 {
    void *match;
@@ -270,10 +270,10 @@ _eina_cow_gc(Eina_Cow *cow, Eina_Cow_Ptr *ref,
 #ifndef NVALGRIND
         VALGRIND_MAKE_MEM_DEFINED(ref, sizeof (*ref));
 #endif
-        *((void**)dst) = match;
         ref->refcount++;
 
-        eina_cow_free(cow, data);
+        eina_cow_free(cow, dst);
+        *dst = match;
 
 #ifndef NVALGRIND
         VALGRIND_MAKE_MEM_NOACCESS(ref, sizeof (*ref));
@@ -413,7 +413,7 @@ eina_cow_alloc(Eina_Cow *cow)
 }
 
 EAPI void
-eina_cow_free(Eina_Cow *cow, const Eina_Cow_Data *data)
+eina_cow_free(Eina_Cow *cow, const Eina_Cow_Data **data)
 {
    Eina_Cow_Ptr *ref;
 
@@ -421,14 +421,16 @@ eina_cow_free(Eina_Cow *cow, const Eina_Cow_Data *data)
    EINA_COW_MAGIC_CHECK(cow);
 #endif
 
-   if (!data) return;
-   if (cow->default_value == data) return;
+   if (!data || !*data) return;
+   if (cow->default_value == *data) return;
 
-   ref = EINA_COW_PTR_GET(data);
+   ref = EINA_COW_PTR_GET(*data);
 #ifndef NVALGRIND
    VALGRIND_MAKE_MEM_DEFINED(ref, sizeof (*ref));
 #endif
    ref->refcount--;
+
+   *data = (Eina_Cow_Data*) cow->default_value;
 
    if (ref->refcount > 0)
      {
@@ -441,7 +443,7 @@ eina_cow_free(Eina_Cow *cow, const Eina_Cow_Data *data)
 #ifdef EINA_COW_MAGIC_ON
    EINA_MAGIC_SET(ref, EINA_MAGIC_NONE);
 #endif
-   _eina_cow_hash_del(cow, data, ref);
+   _eina_cow_hash_del(cow, *data, ref);
    _eina_cow_togc_del(cow, ref);
    eina_mempool_free(cow->pool, (void*) ref);
 }
@@ -558,7 +560,7 @@ eina_cow_done(Eina_Cow *cow,
    VALGRIND_MAKE_MEM_DEFINED(ref, sizeof (*ref));
 #endif
 
-   _eina_cow_togc_add(cow, ref, dst);
+   _eina_cow_togc_add(cow, ref, (const Eina_Cow_Data **) dst);
 }
 
 EAPI void
@@ -590,7 +592,7 @@ eina_cow_memcpy(Eina_Cow *cow,
 #endif
      }
 
-   eina_cow_free(cow, *dst);
+   eina_cow_free(cow, (const Eina_Cow_Data**) dst);
 
    *((const void**)dst) = src;
 }

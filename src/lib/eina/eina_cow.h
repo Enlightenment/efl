@@ -79,8 +79,12 @@ EAPI const Eina_Cow_Data *eina_cow_alloc(Eina_Cow *cow) EINA_WARN_UNUSED_RESULT;
 /**
  * @brief Free a pointer from the pool.
  * @param cow The pool to gave back memory to.
+ * @param data The data to give back.
+ *
+ * @note To simplify the caller code *data will point to the default
+ * read only state after the call to this function.
  */
-EAPI void eina_cow_free(Eina_Cow *cow, const Eina_Cow_Data *data);
+EAPI void eina_cow_free(Eina_Cow *cow, const Eina_Cow_Data **data);
 
 /**
  * @brief Get a writable pointer from a const pointer.
