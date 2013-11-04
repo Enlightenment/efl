@@ -75,6 +75,7 @@
 #endif
 #define N_(string) (string)
 
+typedef struct _Elm_Theme_Files          Elm_Theme_Files;
 typedef struct _Edje_Signal_Data         Edje_Signal_Data;
 typedef struct _Elm_Config               Elm_Config;
 typedef struct _Elm_Module               Elm_Module;
@@ -89,11 +90,22 @@ struct _Edje_Signal_Data
    void          *data;
 };
 
+struct _Elm_Theme_Files
+{
+   /*
+    * We are conserving a list of path even if that's duplicated
+    * because we expose those directly to the outside world :'(
+    */
+   Eina_List *items;
+   Eina_List *handles;
+};
+
 struct _Elm_Theme
 {
-   Eina_List  *overlay;
-   Eina_List  *themes;
-   Eina_List  *extension;
+   Elm_Theme_Files overlay;
+   Elm_Theme_Files themes;
+   Elm_Theme_Files extension;
+
    Eina_Hash  *cache;
    Eina_Hash  *cache_data;
    Elm_Theme  *ref_theme;
