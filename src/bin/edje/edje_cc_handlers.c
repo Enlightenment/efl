@@ -5043,6 +5043,7 @@ ob_collections_group_parts_part_description(void)
    if (!ep->default_desc)
      {
         current_desc = ep->default_desc = ed;
+        ed->state.name = strdup("default");
 
           {  /* Get the ptr of the part above current part in hierarchy */
              Edje_Part *node = edje_cc_handlers_hierarchy_parent_get();
@@ -5413,6 +5414,7 @@ st_collections_group_parts_part_description_state(void)
         exit(-1);
      }
 
+   free((void *)ed->state.name);
    ed->state.name = s;
    if (get_arg_count() == 1)
      ed->state.value = 0.0;
