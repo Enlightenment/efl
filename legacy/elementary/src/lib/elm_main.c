@@ -664,6 +664,7 @@ elm_quicklaunch_init(int    argc,
                    EINA_LOG_STATE_STOP,
                    EINA_LOG_STATE_INIT);
 
+   _elm_init_count++;
    return _elm_ql_init_count;
 }
 
