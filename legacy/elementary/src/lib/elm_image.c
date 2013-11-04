@@ -191,7 +191,7 @@ _elm_image_internal_sizing_eval(Evas_Object *obj, Elm_Image_Smart_Data *sd)
 static Eina_Bool
 _elm_image_edje_file_set(Evas_Object *obj,
                          const char *file,
-                         Eina_File *f,
+                         const Eina_File *f,
                          const char *group)
 {
    Evas_Object *pclip;
@@ -851,9 +851,24 @@ elm_image_file_set(Evas_Object *obj,
    return ret;
 }
 
+EAPI Eina_Bool
+elm_image_mmap_set(Evas_Object *obj,
+		   const Eina_File *file,
+		   const char *group)
+{
+   Eina_Bool ret = EINA_FALSE;
+
+   ELM_IMAGE_CHECK(obj) EINA_FALSE;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(file, EINA_FALSE);
+   eo_do(obj,
+         elm_obj_image_mmap_set(file, group, &ret),
+         elm_obj_image_sizing_eval());
+   return ret;
+}
+
 static void
 _elm_image_smart_internal_file_set(Eo *obj, Elm_Image_Smart_Data *sd,
-                                   const char *file, Eina_File *f, const char *key, Eina_Bool *ret)
+                                   const char *file, const Eina_File *f, const char *key, Eina_Bool *ret)
 {
    if (eina_str_has_extension(file, ".edj"))
      {
@@ -995,6 +1010,23 @@ _elm_image_smart_file_set(Eo *obj, void *_pd, va_list *list)
        }
 
    _elm_image_smart_internal_file_set(obj, sd, file, NULL, key, ret);
+}
+
+static void
+_elm_image_smart_mmap_set(Eo *obj, void *_pd, va_list *list)
+{
+  const Eina_File *f = va_arg(*list, const Eina_File *);
+  const char *key = va_arg(*list, const char*);
+  Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+
+  Elm_Image_Smart_Data *sd = _pd;
+
+  if (sd->remote) elm_url_cancel(sd->remote);
+  sd->remote = NULL;
+
+  _elm_image_smart_internal_file_set(obj, sd,
+				     eina_file_filename_get(f), f,
+				     key, ret);
 }
 
 EAPI void
@@ -1720,6 +1752,7 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_OBJ_IMAGE_ID(ELM_OBJ_IMAGE_SUB_ID_LOAD_SIZE_GET), _elm_image_smart_load_size_get),
 
         EO_OP_FUNC(ELM_OBJ_IMAGE_ID(ELM_OBJ_IMAGE_SUB_ID_MEMFILE_SET), _elm_image_smart_memfile_set),
+        EO_OP_FUNC(ELM_OBJ_IMAGE_ID(ELM_OBJ_IMAGE_SUB_ID_MMAP_SET), _elm_image_smart_mmap_set),
 
         EO_OP_FUNC(ELM_OBJ_IMAGE_ID(ELM_OBJ_IMAGE_SUB_ID_ORIENT_SET), _elm_image_smart_orient_set),
         EO_OP_FUNC(ELM_OBJ_IMAGE_ID(ELM_OBJ_IMAGE_SUB_ID_ORIENT_GET), _elm_image_smart_orient_get),
@@ -1788,6 +1821,7 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_OBJ_IMAGE_SUB_ID_LOAD_SIZE_GET, "'Virtual' function on retrieving the object's image loading size."),
 
      EO_OP_DESCRIPTION(ELM_OBJ_IMAGE_SUB_ID_MEMFILE_SET, "Set a location in memory to be used as an image object's source bitmap."),
+     EO_OP_DESCRIPTION(ELM_OBJ_IMAGE_SUB_ID_MMAP_SET, "Set an Eina_File to be used as an image object's source bitmap."),
 
      EO_OP_DESCRIPTION(ELM_OBJ_IMAGE_SUB_ID_ORIENT_SET, "Set the image orientation."),
      EO_OP_DESCRIPTION(ELM_OBJ_IMAGE_SUB_ID_ORIENT_GET, "Get the image orientation."),

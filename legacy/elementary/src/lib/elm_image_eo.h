@@ -37,6 +37,7 @@ enum
    ELM_OBJ_IMAGE_SUB_ID_LOAD_SIZE_GET,
 
    ELM_OBJ_IMAGE_SUB_ID_MEMFILE_SET,
+   ELM_OBJ_IMAGE_SUB_ID_MMAP_SET,
 
    ELM_OBJ_IMAGE_SUB_ID_ORIENT_SET,
    ELM_OBJ_IMAGE_SUB_ID_ORIENT_GET,
@@ -106,6 +107,20 @@ enum
  * @see elm_image_file_set
  */
 #define elm_obj_image_file_set(file, group, ret) ELM_OBJ_IMAGE_ID(ELM_OBJ_IMAGE_SUB_ID_FILE_SET), EO_TYPECHECK(const char *, file), EO_TYPECHECK(const char *, group), EO_TYPECHECK(Eina_Bool *, ret)
+
+/**
+ * @def elm_obj_image_mmap_set
+ * @since 1.8
+ *
+ * Set the file that will be used as the image's source.
+ *
+ * @param[in] file
+ * @param[in] group
+ * @param[out] ret
+ *
+ * @see elm_image_mmap_set
+ */
+#define elm_obj_image_mmap_set(file, group, ret) ELM_OBJ_IMAGE_ID(ELM_OBJ_IMAGE_SUB_ID_MMAP_SET), EO_TYPECHECK(const Eina_File *, file), EO_TYPECHECK(const char *, group), EO_TYPECHECK(Eina_Bool *, ret)
 
 /**
  * @def elm_obj_image_file_get
