@@ -460,7 +460,7 @@ EAPI unsigned int elm_gengrid_items_count(const Evas_Object *obj);
  *
  * @param obj The gengrid object.
  * @param w The items' width.
- * @param h The items' height;
+ * @param h The items' height.
  *
  * A gengrid, after creation, has still no information on the size
  * to give to each of its cells. So, you most probably will end up
@@ -495,7 +495,7 @@ EAPI void                          elm_gengrid_item_size_get(const Evas_Object *
  *
  * @param obj The gengrid object.
  * @param w The group items' width.
- * @param h The group items' height;
+ * @param h The group items' height.
  *
  * A gengrid, after creation, has still no information on the size
  * to give to each of its cells. So, you most probably will end up
