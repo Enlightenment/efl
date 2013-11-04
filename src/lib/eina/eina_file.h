@@ -507,7 +507,7 @@ EAPI Eina_Bool eina_file_refresh(Eina_File *file);
  *
  * @since 1.8
  */
-EAPI Eina_File * eina_file_dup(Eina_File *file);
+EAPI Eina_File * eina_file_dup(const Eina_File *file);
 
 /**
  * @brief Unref file handler.
@@ -528,7 +528,7 @@ EAPI void eina_file_close(Eina_File *file);
  *
  * @since 1.1
  */
-EAPI size_t eina_file_size_get(Eina_File *file);
+EAPI size_t eina_file_size_get(const Eina_File *file);
 
 /**
  * @brief Get the last modification time of an open file.
@@ -538,7 +538,7 @@ EAPI size_t eina_file_size_get(Eina_File *file);
  *
  * @since 1.1
  */
-EAPI time_t eina_file_mtime_get(Eina_File *file);
+EAPI time_t eina_file_mtime_get(const Eina_File *file);
 
 /**
  * @brief Get the filename of an open file.
@@ -548,7 +548,7 @@ EAPI time_t eina_file_mtime_get(Eina_File *file);
  *
  * @since 1.1
  */
-EAPI const char *eina_file_filename_get(Eina_File *file);
+EAPI const char *eina_file_filename_get(const Eina_File *file);
 
 /**
  * @brief Get the eXtended attribute of an open file.
