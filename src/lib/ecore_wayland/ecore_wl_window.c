@@ -104,7 +104,7 @@ ecore_wl_window_free(Ecore_Wl_Window *win)
 
    eina_hash_del(_windows, _ecore_wl_window_id_str_get(win->id), win);
 
-   wl_list_for_each(input, &_ecore_wl_disp->inputs, link)
+   EINA_INLIST_FOREACH(_ecore_wl_disp->inputs, input)
      {
         if ((input->pointer_focus) && (input->pointer_focus == win))
           input->pointer_focus = NULL;

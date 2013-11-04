@@ -72,7 +72,7 @@ struct _Ecore_Wl_Display
    Ecore_Fd_Handler *fd_hdl;
    Ecore_Idle_Enterer *idle_enterer;
 
-   struct wl_list inputs;
+   Eina_Inlist *inputs;
    Eina_Inlist *outputs;
    Eina_Inlist *globals; /** @since 1.7.6 */
 
@@ -152,6 +152,7 @@ struct _Ecore_Wl_Window
 
 struct _Ecore_Wl_Input
 {
+   EINA_INLIST;
    Ecore_Wl_Display *display;
    struct wl_seat *seat;
    struct wl_pointer *pointer;
@@ -177,8 +178,6 @@ struct _Ecore_Wl_Input
    unsigned int modifiers;
    unsigned int pointer_enter_serial;
    int sx, sy;
-
-   struct wl_list link;
 
    Ecore_Wl_Window *grab;
    unsigned int grab_button;

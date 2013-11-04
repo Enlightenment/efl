@@ -180,8 +180,6 @@ ecore_wl_init(const char *name)
    _ecore_wl_disp->idle_enterer =
      ecore_idle_enterer_add(_ecore_wl_cb_idle_enterer, _ecore_wl_disp);
 
-   wl_list_init(&_ecore_wl_disp->inputs);
-
    _ecore_wl_disp->wl.registry =
      wl_display_get_registry(_ecore_wl_disp->wl.display);
    wl_registry_add_listener(_ecore_wl_disp->wl.registry,
@@ -426,14 +424,14 @@ _ecore_wl_shutdown(Eina_Bool close)
    if ((close) && (!_ecore_wl_fatal_error))
      {
         Ecore_Wl_Output *out;
-        Ecore_Wl_Input *in, *tin;
+        Ecore_Wl_Input *in;
         Ecore_Wl_Global *global;
         Eina_Inlist *tmp;
 
         EINA_INLIST_FOREACH_SAFE(_ecore_wl_disp->outputs, tmp, out)
           _ecore_wl_output_del(out);
 
-        wl_list_for_each_safe(in, tin, &_ecore_wl_disp->inputs, link)
+        EINA_INLIST_FOREACH_SAFE(_ecore_wl_disp->inputs, tmp, in)
           _ecore_wl_input_del(in);
 
         EINA_INLIST_FOREACH_SAFE(_ecore_wl_disp->globals, tmp, global)

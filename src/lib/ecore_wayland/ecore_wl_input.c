@@ -318,7 +318,7 @@ _ecore_wl_input_add(Ecore_Wl_Display *ewd, unsigned int id)
 
    input->seat = 
      wl_registry_bind(ewd->wl.registry, id, &wl_seat_interface, 1);
-   wl_list_insert(ewd->inputs.prev, &input->link);
+   ewd->inputs = eina_inlist_append(ewd->inputs, EINA_INLIST_GET(input));
 
    wl_seat_add_listener(input->seat, 
                         &_ecore_wl_seat_listener, input);
@@ -385,7 +385,8 @@ _ecore_wl_input_del(Ecore_Wl_Input *input)
    if (input->cursor_surface)
      wl_surface_destroy(input->cursor_surface);
 
-   wl_list_remove(&input->link);
+   _ecore_wl_disp->inputs = eina_inlist_remove
+      (_ecore_wl_disp->inputs, EINA_INLIST_GET(input));
    if (input->seat) wl_seat_destroy(input->seat);
 
    if (input->repeat.tmr) ecore_timer_del(input->repeat.tmr);
