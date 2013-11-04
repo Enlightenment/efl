@@ -37,7 +37,7 @@ bin_PROGRAMS = \
 @ELM_PREFS_CC_PRG@
 
 if BUILD_QUICKLAUNCH
-bin_PROGRAMS += elementary_quicklaunch elementary_run elementary_testql
+bin_PROGRAMS += elementary_quicklaunch elementary_run
 endif
 
 EXTRA_PROGRAMS = elementary_test elementary_config elementary_codegen elm_prefs_cc
@@ -157,7 +157,13 @@ elementary_test_LDADD = $(top_builddir)/src/lib/libelementary.la \
 	@EIO_LIBS@ \
 	@ELEMENTARY_WEB_LIBS@ \
 	@my_libs@
+elementary_test_CFLAGS =
 elementary_test_LDFLAGS =
+
+if BUILD_QUICKLAUNCH
+elementary_test_CFLAGS += -fpie
+elementary_test_LDFLAGS += -pie -rdynamic
+endif
 
 elementary_config_SOURCES = \
 config.c
@@ -228,44 +234,6 @@ elementary_run_SOURCES = run.c
 elementary_run_LDADD =
 elementary_run_LDFLAGS =
 endif
-
-## This is how to build a quicklanch capable app
-# build the shared lib version - libtool produces a .a and .la file as well
-# as a .so - these get put in libdir ($PREFIX/lib) as elementary_testql.so
-# etc. - this is where elementary will expect to find the .so's for
-# quicklaunch apps.
-elementary_testqldir = $(libdir)
-elementary_testql_LTLIBRARIES = elementary_testql.la
-elementary_testql_la_SOURCES = $(elementary_test_SOURCES)
-elementary_testql_la_LIBADD = $(top_builddir)/src/lib/libelementary.la \
-        @ELEMENTARY_WAYLAND_LIBS@ \
-	@ELEMENTARY_EWEATHER_LIBS@ \
-	@ELEMENTARY_ELDBUS_LIBS@ \
-	@ELEMENTARY_EFREET_LIBS@ \
-	@ELEMENTARY_ELOCATION_LIBS@ \
-	@ELEMENTARY_EMAP_LIBS@ \
-	@ELEMENTARY_LIBS@ \
-	@EIO_LIBS@ \
-	@ELEMENTARY_WEB_LIBS@ \
-	@my_libs@
-
-elementary_testql_la_CFLAGS =
-elementary_testql_la_LDFLAGS = -module -avoid-version -no-undefined
-elementary_testql_SOURCES = $(elementary_test_SOURCES)
-elementary_testql_LDADD = $(top_builddir)/src/lib/libelementary.la \
-        @ELEMENTARY_WAYLAND_LIBS@ \
-	@ELEMENTARY_EWEATHER_LIBS@ \
-	@ELEMENTARY_ELDBUS_LIBS@ \
-	@ELEMENTARY_EFREET_LIBS@ \
-	@ELEMENTARY_ELOCATION_LIBS@ \
-	@ELEMENTARY_EMAP_LIBS@ \
-	@ELEMENTARY_LIBS@ \
-	@EIO_LIBS@ \
-	@ELEMENTARY_WEB_LIBS@ \
-	@my_libs@
-
-elementary_testql_CFLAGS = -DELM_LIB_QUICKLAUNCH=1
-elementary_testql_LDFLAGS =
 endif
 
 EXTRA_DIST = \
