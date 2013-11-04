@@ -41,7 +41,7 @@ EAPI Eina_Error EDJE_EDIT_ERROR_GROUP_DOES_NOT_EXIST = 0;
    Edje *ed; \
    if (!eo_isa(obj, EDJE_OBJ_CLASS)) \
      return RET; \
-   ed = eo_data_scope_get(obj, EDJE_OBJ_CLASS); \
+   ed = eo_data_scope_get(obj, EDJE_OBJ_CLASS);
 
 /* Get rp(Edje_Real_Part*) from obj(Evas_Object*) and part(char*) */
 #define GET_RP_OR_RETURN(RET) \
@@ -263,10 +263,10 @@ _edje_part_description_find_byname(Edje_Edit *eed, const char *part, const char 
 
    if (!eed || !part || !state) return NULL;
 
-   rp = _edje_real_part_get((Edje *)eed, part);
+   rp = _edje_real_part_get(eed->base, part);
    if (!rp) return NULL;
 
-   pd = _edje_part_description_find((Edje *)eed, rp, state, value);
+   pd = _edje_part_description_find(eed->base, rp, state, value);
 
    return pd;
 }
