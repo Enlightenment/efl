@@ -2,8 +2,8 @@
 # error You shall not include this header directly
 #endif
 
-#define EVAS_VERSION_MAJOR 1
-#define EVAS_VERSION_MINOR 8
+#define EVAS_VERSION_MAJOR EFL_VERSION_MAJOR
+#define EVAS_VERSION_MINOR EFL_VERSION_MINOR
 
 typedef struct _Evas_Version
 {

@@ -65,6 +65,7 @@
  */
 
 #include <Evas.h>
+#include <Efl_Config.h>
 
 #ifdef EAPI
 # undef EAPI
@@ -96,8 +97,8 @@
 extern "C" {
 #endif
 
-#define EPHYSICS_VERSION_MAJOR 0
-#define EPHYSICS_VERSION_MINOR 1
+#define EPHYSICS_VERSION_MAJOR EFL_VERSION_MAJOR
+#define EPHYSICS_VERSION_MINOR EFL_VERSION_MINOR
 
 /**
  * @file

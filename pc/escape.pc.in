@@ -8,4 +8,4 @@ Description: Library that ports on the PS3 some specific Unix functions.
 Version: @VERSION@
 Libs: -L${libdir} -lescape
 Libs.private: @requirements_libs_escape@
-Cflags: -I${includedir}/escape-@VMAJ@
+Cflags: -I${includedir}/efl-@VMAJ@ -I${includedir}/escape-@VMAJ@

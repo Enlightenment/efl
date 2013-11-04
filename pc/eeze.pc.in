@@ -8,4 +8,4 @@ Description: device convenience library for efl
 Requires.private: @requirements_pc_eeze@
 Version: @VERSION@
 Libs: -L${libdir} -leeze
-Cflags: -I${includedir}/eeze-@VMAJ@
+Cflags: -I${includedir}/efl-@VMAJ@ -I${includedir}/eeze-@VMAJ@

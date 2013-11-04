@@ -8,4 +8,4 @@ Description: E core library, IMF Evas module
 Version: @VERSION@
 Requires.private: @requirements_pc_ecore_imf_evas@
 Libs: -L${libdir} -lecore_imf_evas
-Cflags: -I${includedir}/ecore-imf-evas-@VMAJ@
+Cflags: -I${includedir}/efl-@VMAJ@ -I${includedir}/ecore-imf-evas-@VMAJ@

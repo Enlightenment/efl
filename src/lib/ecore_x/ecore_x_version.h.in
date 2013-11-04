@@ -1,19 +1,6 @@
 #ifndef _ECORE_X_VERSION_H_
 #define _ECORE_X_VERSION_H_ 1
 
-#define ECORE_X_VERSION_MAJOR @VMAJ@
-#define ECORE_X_VERSION_MINOR @VMIN@
-
-typedef struct _Ecore_X_Version
-{
-   int major;
-   int minor;
-   int micro;
-   int revision;
-} Ecore_X_Version;
-
-EAPI extern Ecore_X_Version *ecore_x_version;
-
 #ifndef @HAVE_ECORE_X_BACKEND@
 #define @HAVE_ECORE_X_BACKEND@ 1
 #endif

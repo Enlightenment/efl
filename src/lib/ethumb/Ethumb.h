@@ -2,6 +2,7 @@
 #define __ETHUMB_H__ 1
 
 #include <Eina.h>
+#include <Efl_Config.h>
 
 #ifdef EAPI
 # undef EAPI
@@ -33,8 +34,8 @@
 extern "C" {
 #endif
 
-#define ETHUMB_VERSION_MAJOR 1
-#define ETHUMB_VERSION_MINOR 8
+#define ETHUMB_VERSION_MAJOR EFL_VERSION_MAJOR
+#define ETHUMB_VERSION_MINOR EFL_VERSION_MINOR
    
    typedef struct _Ethumb_Version
      {

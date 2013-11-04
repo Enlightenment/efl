@@ -9,4 +9,4 @@ Requires.private: @requirements_pc_eio@
 Version: @VERSION@
 Libs: -L${libdir} -leio
 Libs.private: @requirements_libs_eio@
-Cflags: -I${includedir}/eio-@VMAJ@
+Cflags: -I${includedir}/efl-@VMAJ@ -I${includedir}/eio-@VMAJ@

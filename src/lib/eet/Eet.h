@@ -97,6 +97,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <Eina.h>
+#include <Efl_Config.h>
 
 #ifdef EAPI
 # undef EAPI
@@ -136,8 +137,8 @@ extern "C" {
  *
  */
 
-#define EET_VERSION_MAJOR 1
-#define EET_VERSION_MINOR 8
+#define EET_VERSION_MAJOR EFL_VERSION_MAJOR
+#define EET_VERSION_MINOR EFL_VERSION_MINOR
 /**
  * @typedef Eet_Version
  *

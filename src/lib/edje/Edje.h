@@ -214,6 +214,7 @@ param in edje programs
 
 #include <Evas.h>
 #include <Eo.h>
+#include <Efl_Config.h>
 
 #ifdef EAPI
 # undef EAPI
@@ -245,8 +246,8 @@ param in edje programs
 extern "C" {
 #endif
 
-#define EDJE_VERSION_MAJOR 1
-#define EDJE_VERSION_MINOR 8
+#define EDJE_VERSION_MAJOR EFL_VERSION_MAJOR
+#define EDJE_VERSION_MINOR EFL_VERSION_MINOR
 
 #include "Edje_Common.h"
 #ifndef EFL_NOLEGACY_API_SUPPORT

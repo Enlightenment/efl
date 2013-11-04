@@ -19,6 +19,8 @@
 #ifndef EINA_MAIN_H_
 #define EINA_MAIN_H_
 
+#include <Efl_Config.h>
+
 #include "eina_types.h"
 
 /**
@@ -44,13 +46,13 @@
  * @def EINA_VERSION_MAJOR
  * @brief Major version of Eina
  */
-#define EINA_VERSION_MAJOR 1
+#define EINA_VERSION_MAJOR EFL_VERSION_MAJOR
 
 /**
  * @def EINA_VERSION_MINOR
  * @brief Minor version of Eina
  */
-#define EINA_VERSION_MINOR 8
+#define EINA_VERSION_MINOR EFL_VERSION_MINOR
 
 /**
  * @typedef Eina_Version

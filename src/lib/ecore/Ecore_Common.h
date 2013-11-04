@@ -2,6 +2,8 @@
 extern "C" {
 #endif
 
+#include <Efl_Config.h>
+
 /**
  * @defgroup Ecore_Init_Group Ecore initialization, shutdown functions and reset on fork.
  * @ingroup Ecore
@@ -30,8 +32,8 @@ EAPI int ecore_shutdown(void);
  * @{
  */
 
-#define ECORE_VERSION_MAJOR 1
-#define ECORE_VERSION_MINOR 8
+#define ECORE_VERSION_MAJOR EFL_VERSION_MAJOR
+#define ECORE_VERSION_MINOR EFL_VERSION_MINOR
 
 typedef struct _Ecore_Version
 {

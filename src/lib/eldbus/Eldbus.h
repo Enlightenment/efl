@@ -78,6 +78,7 @@
 
 #include <Eina.h>
 #include <stdarg.h>
+#include <Efl_Config.h>
 
 #ifdef EAPI
 # undef EAPI
@@ -115,8 +116,8 @@ extern "C" {
  *
  * @{
  */
-#define ELDBUS_VERSION_MAJOR 1
-#define ELDBUS_VERSION_MINOR 8
+#define ELDBUS_VERSION_MAJOR EFL_VERSION_MAJOR
+#define ELDBUS_VERSION_MINOR EFL_VERSION_MINOR
 
 #define ELDBUS_FDO_BUS "org.freedesktop.DBus"
 #define ELDBUS_FDO_PATH "/org/freedesktop/DBus"

@@ -1,11 +1,7 @@
 ACLOCAL_AMFLAGS = -I m4
 AM_MAKEFLAGS = --no-print-directory
 AM_DISTCHECK_CONFIGURE_FLAGS = \
---with-tests=regular \
---enable-always-build-examples \
---enable-xine \
---enable-sdl \
---enable-harfbuzz
+--with-tests=regular
 
 SUBDIRS = src data doc
 

@@ -12,4 +12,4 @@ Version: @VERSION@
 Requires.private: @requirements_pc_embryo@
 Libs: -L${libdir} -lembryo
 Libs.private: @requirements_libs_embryo@
-Cflags: -I${includedir}/embryo-@VMAJ@
+Cflags: -I${includedir}/efl-@VMAJ@ -I${includedir}/embryo-@VMAJ@

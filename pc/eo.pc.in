@@ -9,4 +9,4 @@ Version: @PACKAGE_VERSION@
 Requires.private: @requirements_pc_eo@
 Libs: -L${libdir} -leo
 Libs.private:
-Cflags: -I${includedir}/eo-@VMAJ@
+Cflags: -I${includedir}/efl-@VMAJ@ -I${includedir}/eo-@VMAJ@

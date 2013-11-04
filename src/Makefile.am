@@ -15,7 +15,7 @@ check_PROGRAMS =
 TESTS =
 EXTRA_DIST =
 
-EFL_INSTALL_DATA_HOOK=
+EFL_INSTALL_EXEC_HOOK=
 
 include Makefile_Efl.am
 
@@ -102,9 +102,5 @@ clean-local:
 	find . -type f -name '*.gcda' -delete
 	find . -type f -name check-results.xml -delete
 
-install-data-hook:
-	$(EFL_INSTALL_DATA_HOOK)
-	for i in $(lib_LTLIBRARIES); do \
-		export file=`basename $$i`; \
-		sed -e "s/-luuid//" $(DESTDIR)${libdir}/$$file > $(DESTDIR)${libdir}/$$file.tmp && mv $(DESTDIR)${libdir}/$$file.tmp $(DESTDIR)${libdir}/$$file; \
-	done
+install-exec-hook:
+	$(EFL_INSTALL_EXEC_HOOK)

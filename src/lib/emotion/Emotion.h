@@ -92,6 +92,7 @@
  */
 
 #include <Evas.h>
+#include <Efl_Config.h>
 
 #ifdef EAPI
 # undef EAPI
@@ -262,8 +263,8 @@ typedef enum _Emotion_Aspect    Emotion_Aspect; /**< Aspect ratio option. */
 extern "C" {
 #endif
 
-#define EMOTION_VERSION_MAJOR 1
-#define EMOTION_VERSION_MINOR 8
+#define EMOTION_VERSION_MAJOR EFL_VERSION_MAJOR
+#define EMOTION_VERSION_MINOR EFL_VERSION_MINOR
    
    typedef struct _Emotion_Version
      {

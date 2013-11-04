@@ -9,4 +9,4 @@ Requires.private: @requirements_pc_ecore_x@
 Version: @VERSION@
 Libs: -L${libdir} -lecore_x
 Libs.private: @requirements_libs_ecore_x@
-Cflags: -I${includedir}/ecore-x-@VMAJ@
+Cflags: -I${includedir}/efl-@VMAJ@ -I${includedir}/ecore-x-@VMAJ@

@@ -18,4 +18,4 @@ Requires.private: @requirements_pc_edje@
 Version: @VERSION@
 Libs: -L${libdir} -ledje
 Libs.private: @requirements_libs_edje@
-Cflags: -I${includedir}/edje-@VMAJ@
+Cflags: -I${includedir}/efl-@VMAJ@ -I${includedir}/edje-@VMAJ@

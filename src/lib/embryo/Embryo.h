@@ -336,6 +336,8 @@ This is the @e only file you need to include.
 #ifndef _EMBRYO_H
 #define _EMBRYO_H
 
+#include <Efl_Config.h>
+
 #ifdef EAPI
 # undef EAPI
 #endif
@@ -366,8 +368,8 @@ This is the @e only file you need to include.
 extern "C" {
 #endif
 
-#define EMBRYO_VERSION_MAJOR 1
-#define EMBRYO_VERSION_MINOR 8
+#define EMBRYO_VERSION_MAJOR EFL_VERSION_MAJOR
+#define EMBRYO_VERSION_MINOR EFL_VERSION_MINOR
    
    typedef struct _Embryo_Version
      {

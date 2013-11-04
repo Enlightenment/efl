@@ -72,6 +72,7 @@
  */
 
 #include <Eina.h>
+#include <Efl_Config.h>
 
 #ifdef EAPI
 # undef EAPI
@@ -103,8 +104,8 @@
 extern "C" {
 #endif
 
-#define EFREET_VERSION_MAJOR 1
-#define EFREET_VERSION_MINOR 8
+#define EFREET_VERSION_MAJOR EFL_VERSION_MAJOR
+#define EFREET_VERSION_MINOR EFL_VERSION_MINOR
    
    typedef struct _Efreet_Version
      {

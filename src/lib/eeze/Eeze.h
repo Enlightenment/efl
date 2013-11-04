@@ -73,6 +73,7 @@
 #define EEZE_UDEV_H
 
 #include <Eina.h>
+#include <Efl_Config.h>
 
 #ifdef EAPI
 # undef EAPI
@@ -270,8 +271,8 @@ struct Eeze_Udev_Watch;
  */
 typedef struct Eeze_Udev_Watch Eeze_Udev_Watch;
 
-#define EEZE_VERSION_MAJOR 1
-#define EEZE_VERSION_MINOR 8
+#define EEZE_VERSION_MAJOR EFL_VERSION_MAJOR
+#define EEZE_VERSION_MINOR EFL_VERSION_MINOR
 
    typedef struct _Eeze_Version
      {

@@ -9,4 +9,4 @@ Requires.private: @requirements_pc_ecore_wince@
 Version: @VERSION@
 Libs: -L${libdir} -lecore_wince
 Libs.private: @requirements_libs_ecore_wince@
-Cflags: -I${includedir}/ecore-wince-@VMAJ@
+Cflags: -I${includedir}/efl-@VMAJ@ -I${includedir}/ecore-wince-@VMAJ@

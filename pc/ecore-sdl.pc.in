@@ -8,4 +8,4 @@ Description: E core library, SDL module
 Version: @VERSION@
 Requires.private: @requirements_pc_ecore_sdl@
 Libs: -L${libdir} -lecore_sdl
-Cflags: -I${includedir}/ecore-sdl-@VMAJ@
+Cflags: -I${includedir}/efl-@VMAJ@ -I${includedir}/ecore-sdl-@VMAJ@

@@ -8,4 +8,4 @@ Description: Freedesktop Shared Trash implementation for the EFL
 Version: @VERSION@
 Requires.private: @requirements_pc_efreet@
 Libs: -L${libdir} -lefreet_trash
-Cflags: -I${includedir}/efreet-@VMAJ@
+Cflags: -I${includedir}/efl-@VMAJ@ -I${includedir}/efreet-@VMAJ@

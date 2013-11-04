@@ -10,4 +10,4 @@ Description: Thumbnail Generator Library
 Version: @VERSION@
 Requires.private: @requirements_pc_ethumb@
 Libs: -L${libdir} -lethumb
-Cflags: -I${includedir}/ethumb-@VMAJ@
+Cflags: -I${includedir}/efl-@VMAJ@ -I${includedir}/ethumb-@VMAJ@

@@ -9,4 +9,4 @@ Requires.private: @requirements_pc_ecore_fb@
 Version: @VERSION@
 Libs: -L${libdir} -lecore_fb
 Libs.private: @requirements_libs_ecore_fb@
-Cflags: -I${includedir}/ecore-fb-@VMAJ@
+Cflags: -I${includedir}/efl-@VMAJ@ -I${includedir}/ecore-fb-@VMAJ@

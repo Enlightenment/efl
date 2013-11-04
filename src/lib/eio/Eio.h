@@ -30,6 +30,7 @@
 
 #include <Eina.h>
 #include <Eet.h>
+#include <Efl_Config.h>
 
 #ifdef EAPI
 # undef EAPI
@@ -62,8 +63,8 @@
 extern "C" {
 #endif
 
-#define EIO_VERSION_MAJOR 1
-#define EIO_VERSION_MINOR 8
+#define EIO_VERSION_MAJOR EFL_VERSION_MAJOR
+#define EIO_VERSION_MINOR EFL_VERSION_MINOR
 
     /**
     * @typedef Eio_Version

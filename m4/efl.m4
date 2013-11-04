@@ -29,7 +29,8 @@ m4_define([dev_version], m4_esyscmd([(git rev-list --count HEAD 2>/dev/null || e
 m4_define([v_rev], m4_if($4, dev, [dev_version], [0]))dnl
 m4_define([v_rel], m4_if($4, dev, [], m4_ifblank($4, [], [-release $4])))dnl
 m4_define([def_build_profile], m4_if($4, dev, [dev], [release]))dnl
-m4_define([efl_version], m4_if($4, dev, [v_maj.v_min.v_mic.v_rev], [v_maj.v_min.v_mic]))dnl
+dnl m4_define([efl_version], m4_if($4, dev, [v_maj.v_min.v_mic.v_rev], [v_maj.v_min.v_mic]))dnl
+m4_define([efl_version], [v_maj.v_min.v_mic])dnl
 ])
 
 dnl EFL_COLOR

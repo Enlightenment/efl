@@ -9,4 +9,4 @@ Requires.private: @requirements_pc_ecore_wayland@
 Version: @VERSION@
 Libs: -L${libdir} -lecore_wayland
 Libs.private: @requirements_libs_ecore_wayland@
-Cflags: -I${includedir}/ecore-wayland-@VMAJ@
+Cflags: -I${includedir}/efl-@VMAJ@ -I${includedir}/ecore-wayland-@VMAJ@

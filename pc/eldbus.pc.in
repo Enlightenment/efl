@@ -9,5 +9,5 @@ Requires.private: @requirements_pc_eldbus@
 Version: @VERSION@
 Libs: -L${libdir} -leldbus
 Libs.private: @requirements_libs_eldbus@
-Cflags: -I${includedir}/eldbus-@VMAJ@
+Cflags: -I${includedir}/efl-@VMAJ@ -I${includedir}/eldbus-@VMAJ@
 

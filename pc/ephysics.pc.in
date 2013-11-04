@@ -9,4 +9,4 @@ Description: EPhysics is a wrapper for physics engine.
 Requires.private: @requirements_pc_ephysics@
 Version: @VERSION@
 Libs: -L${libdir} -lephysics
-Cflags: -I${includedir}/ephysics-@VMAJ@
+Cflags: -I${includedir}/efl-@VMAJ@ -I${includedir}/ephysics-@VMAJ@

@@ -2,6 +2,7 @@
 #define _ECORE_X_H
 
 #include <Eina.h>
+#include <Efl_Config.h>
 
 #ifdef EAPI
 # undef EAPI
@@ -24,6 +25,19 @@
 #  define EAPI
 # endif // ifdef __GNUC__
 #endif // ifdef _MSC_VER
+
+#define ECORE_X_VERSION_MAJOR EFL_VERSION_MAJOR
+#define ECORE_X_VERSION_MINOR EFL_VERSION_MINOR
+
+typedef struct _Ecore_X_Version
+{
+      int major;
+      int minor;
+      int micro;
+      int revision;
+} Ecore_X_Version;
+
+EAPI extern Ecore_X_Version *ecore_x_version;
 
 #include "ecore_x_version.h"
 

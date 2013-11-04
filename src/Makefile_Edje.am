@@ -210,7 +210,35 @@ bin/edje/edje_convert.c \
 bin/edje/edje_data_convert.c \
 bin/edje/edje_convert_main.c \
 lib/edje/edje_convert.c \
-tests/edje/edje_tests_helpers.h
+tests/edje/edje_tests_helpers.h \
+tests/edje/data/complex_layout.edc \
+tests/edje/data/test_layout.edc \
+tests/emotion/data/theme.edc \
+tests/emotion/data/icon.edc \
+tests/emotion/data/bpause.png \
+tests/emotion/data/bplay.png \
+tests/emotion/data/bstop.png \
+tests/emotion/data/e_logo.png \
+tests/emotion/data/fr1.png \
+tests/emotion/data/fr2.png \
+tests/emotion/data/fr3.png \
+tests/emotion/data/fr4.png \
+tests/emotion/data/fr5.png \
+tests/emotion/data/fr6.png \
+tests/emotion/data/fr7.png \
+tests/emotion/data/h_slider.png \
+tests/emotion/data/knob.png \
+tests/emotion/data/orb.png \
+tests/emotion/data/pnl.png \
+tests/emotion/data/sl.png \
+tests/emotion/data/tiles.png \
+tests/emotion/data/video_frame_bottom.png \
+tests/emotion/data/video_frame_left.png \
+tests/emotion/data/video_frame_right.png \
+tests/emotion/data/video_frame_top.png \
+tests/emotion/data/whb.png \
+tests/emotion/data/window_inner_shadow.png
+
 
 bin_SCRIPTS += bin/edje/edje_recc
 

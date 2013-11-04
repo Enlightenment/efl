@@ -11,4 +11,4 @@ Description: Emotion evas based multimedia library
 Version: @VERSION@
 Requires.private: @requirements_pc_emotion@
 Libs: -L${libdir} -lemotion
-Cflags: -I${includedir}/emotion-@VMAJ@
+Cflags: -I${includedir}/efl-@VMAJ@ -I${includedir}/emotion-@VMAJ@

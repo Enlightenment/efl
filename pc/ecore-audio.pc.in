@@ -9,4 +9,4 @@ Requires.private: @requirements_pc_ecore_audio@
 Version: @VERSION@
 Libs: -L${libdir} -lecore_audio
 Libs.private: @requirements_libs_ecore_audio@
-Cflags: -I${includedir}/ecore-audio-@VMAJ@
+Cflags: -I${includedir}/efl-@VMAJ@ -I${includedir}/efl-@VMAJ@ -I${includedir}/ecore-audio-@VMAJ@

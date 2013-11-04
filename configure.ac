@@ -1,5 +1,5 @@
-EFL_VERSION([1], [7], [99], [dev])
-AC_INIT([efl], [efl_version], [enlightenment-devel@lists.sourceforge.net])
+EFL_VERSION([1], [8], [0], [dev])
+AC_INIT([efl], [efl_version-alpha1], [enlightenment-devel@lists.sourceforge.net])
 
 AC_PREREQ([2.60])
 AC_CONFIG_SRCDIR([configure.ac])
@@ -172,6 +172,11 @@ case "$host_os" in
       MODULE_EXT=".so"
    ;;
 esac
+
+EFL_VERSION_MAJOR="v_maj"
+EFL_VERSION_MINOR="v_min"
+AC_SUBST(EFL_VERSION_MAJOR)
+AC_SUBST(EFL_VERSION_MINOR)
 
 want_systemd="no"
 have_wince="no"
