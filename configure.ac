@@ -1026,7 +1026,7 @@ AC_ARG_ENABLE([wayland],
    [want_wayland="no"])
 
 if test "${want_wayland}" = "yes"; then
-   EFL_PKG_CHECK_STRICT([wayland-client])
+   EFL_PKG_CHECK_STRICT([wayland-client >= 1.3.0])
 fi
 
 # Fb
@@ -2426,7 +2426,7 @@ EFL_INTERNAL_DEPEND_PKG([ECORE_WAYLAND], [eo])
 EFL_INTERNAL_DEPEND_PKG([ECORE_WAYLAND], [eina])
 
 EFL_DEPEND_PKG([ECORE_WAYLAND], [WAYLAND],
-   [wayland-client >= 1.2.0 wayland-cursor >= 1.2.0 xkbcommon >= 0.3.0])
+   [wayland-client >= 1.3.0 wayland-cursor >= 1.3.0 xkbcommon >= 0.3.0])
 
 EFL_EVAL_PKGS([ECORE_WAYLAND])
 

@@ -519,7 +519,7 @@ have_dep="no"
 evas_engine_[]$1[]_cflags=""
 evas_engine_[]$1[]_libs=""
 
-PKG_CHECK_EXISTS([wayland-client >= 1.2.0],
+PKG_CHECK_EXISTS([wayland-client >= 1.3.0],
    [
     have_dep="yes"
     requirement="wayland-client"
@@ -560,7 +560,7 @@ else
     gl_library="gl"
 fi
 
-PKG_CHECK_EXISTS([egl >= 7.10 ${gl_library} wayland-client >= 1.2.0 wayland-egl >= 9.2.0],
+PKG_CHECK_EXISTS([egl >= 7.10 ${gl_library} wayland-client >= 1.3.0 wayland-egl >= 9.2.0],
    [
     have_dep="yes"
     requirement="egl >= 7.10 ${gl_library} wayland-client wayland-egl"
