@@ -1477,8 +1477,8 @@ eet_mmap(const Eina_File *file)
    ef->sha1_length = 0;
    ef->readfp_owned = EINA_TRUE;
 
-   ef->data_size = eina_file_size_get(file);
-   ef->data = eina_file_map_all(file, EINA_FILE_SEQUENTIAL);
+   ef->data_size = eina_file_size_get(ef->readfp);
+   ef->data = eina_file_map_all(ef->readfp, EINA_FILE_SEQUENTIAL);
    if (eet_test_close((ef->data == NULL), ef))
      goto on_error;
 
