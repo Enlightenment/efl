@@ -1,6 +1,5 @@
 #include "edje_private.h"
 
-
 static Eina_Hash   *_edje_file_hash = NULL;
 static int          _edje_file_cache_size = 16;
 static Eina_List   *_edje_file_cache = NULL;
@@ -299,7 +298,7 @@ _edje_file_change(void *data, int ev_type EINA_UNUSED, void *event)
 #endif
 
 static Edje_File *
-_edje_file_open(Eina_File *f, const char *coll, int *error_ret, Edje_Part_Collection **edc_ret, time_t mtime)
+_edje_file_open(const Eina_File *f, const char *coll, int *error_ret, Edje_Part_Collection **edc_ret, time_t mtime)
 {
    Edje_Color_Class *cc;
    Edje_File *edf;
@@ -399,7 +398,7 @@ _edje_file_dangling(Edje_File *edf)
 #endif
 
 Edje_File *
-_edje_cache_file_coll_open(Eina_File *file, const char *coll, int *error_ret, Edje_Part_Collection **edc_ret, Edje *ed)
+_edje_cache_file_coll_open(const Eina_File *file, const char *coll, int *error_ret, Edje_Part_Collection **edc_ret, Edje *ed)
 {
    Edje_File *edf;
    Eina_List *l, *hist;

@@ -1806,7 +1806,7 @@ EAPI Eina_Bool        edje_object_file_set        (Evas_Object *obj, const char 
  * @see edje_object_mmap_set()
  * @since 1.8
  */
-EAPI Eina_Bool edje_object_mmap_set(Evas_Object *obj, Eina_File *file, const char *group);
+EAPI Eina_Bool edje_object_mmap_set(Evas_Object *obj, const Eina_File *file, const char *group);
 
 
 /**

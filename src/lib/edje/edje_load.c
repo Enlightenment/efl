@@ -24,7 +24,7 @@ struct _Edje_Drag_Items
    } page;
 };
 
-void _edje_file_add(Edje *ed, Eina_File *f);
+void _edje_file_add(Edje *ed, const Eina_File *f);
 
 /* START - Nested part support */
 #define _edje_smart_nested_type "Evas_Smart_Nested"
@@ -83,7 +83,7 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *group)
 }
 
 EAPI Eina_Bool
-edje_object_mmap_set(Evas_Object *obj, Eina_File *file, const char *group)
+edje_object_mmap_set(Evas_Object *obj, const Eina_File *file, const char *group)
 {
    if (!obj) return EINA_FALSE;
    Eina_Bool ret = EINA_FALSE;
@@ -295,7 +295,7 @@ edje_file_group_exists(const char *file, const char *glob)
 }
 
 EAPI char *
-edje_mmap_data_get(Eina_File *f, const char *key)
+edje_mmap_data_get(const Eina_File *f, const char *key)
 {
    Edje_File *edf;
    char *str = NULL;
@@ -357,7 +357,7 @@ _edje_physics_world_update_cb(void *data, EPhysics_World *world EINA_UNUSED, voi
 #endif
 
 int
-_edje_object_file_set_internal(Evas_Object *obj, Eina_File *file, const char *group, const char *parent, Eina_List *group_path, Eina_Array *nested)
+_edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const char *group, const char *parent, Eina_List *group_path, Eina_Array *nested)
 {
    Edje *ed;
    Evas *tev;
@@ -1166,7 +1166,7 @@ on_error:
 }
 
 void
-_edje_file_add(Edje *ed, Eina_File *f)
+_edje_file_add(Edje *ed, const Eina_File *f)
 {
    if (!_edje_edd_edje_file) return;
    if (!f)

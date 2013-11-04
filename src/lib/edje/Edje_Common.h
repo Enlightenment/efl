@@ -135,7 +135,7 @@ EAPI void		edje_fontset_append_set		(const char *fonts);
  *
  * Then, edje_file_data_get("test.edj", "key1") will return "value1"
  */
-EAPI char             *edje_mmap_data_get(Eina_File *f, const char *key);
+EAPI char             *edje_mmap_data_get(const Eina_File *f, const char *key);
 
 /**
  * Get data from the file level data block of an edje file

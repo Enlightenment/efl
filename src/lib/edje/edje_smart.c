@@ -363,7 +363,7 @@ _edje_smart_file_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 static void
 _edje_smart_mmap_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
-   Eina_File *f = va_arg(*list, Eina_File *);
+   const Eina_File *f = va_arg(*list, Eina_File *);
    const char *group = va_arg(*list, const char *);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Eina_Array *nested;

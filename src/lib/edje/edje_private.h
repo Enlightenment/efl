@@ -1972,7 +1972,7 @@ void *_edje_signal_callback_disable(const Edje_Signal_Callback_Group *cgp,
 EAPI void _edje_edd_init(void);
 EAPI void _edje_edd_shutdown(void);
 
-int _edje_object_file_set_internal(Evas_Object *obj, Eina_File *file, const char *group, const char *parent, Eina_List *group_path, Eina_Array *nested);
+int _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const char *group, const char *parent, Eina_List *group_path, Eina_Array *nested);
 
 void  _edje_file_del(Edje *ed);
 void  _edje_file_free(Edje_File *edf);
@@ -2154,7 +2154,7 @@ void _edje_textblock_styles_del(Edje *ed);
 void _edje_textblock_style_all_update(Edje *ed);
 void _edje_textblock_style_parse_and_fix(Edje_File *edf);
 void _edje_textblock_style_cleanup(Edje_File *edf);
-Edje_File *_edje_cache_file_coll_open(Eina_File *file, const char *coll, int *error_ret, Edje_Part_Collection **edc_ret, Edje *ed);
+Edje_File *_edje_cache_file_coll_open(const Eina_File *file, const char *coll, int *error_ret, Edje_Part_Collection **edc_ret, Edje *ed);
 void _edje_cache_coll_clean(Edje_File *edf);
 void _edje_cache_coll_flush(Edje_File *edf);
 void _edje_cache_coll_unref(Edje_File *edf, Edje_Part_Collection *edc);
