@@ -1376,13 +1376,13 @@ void test_list_focus(const char *name, const char *title, Eina_Bool horiz)
    unsigned lhand, rhand, idx;
    char buf[256];
 
-   elm_config_focus_highlight_enabled_set(EINA_TRUE);
-   elm_config_focus_highlight_animate_set(EINA_TRUE);
-
    win = elm_win_util_standard_add(name, title);
    elm_win_autodel_set(win, EINA_TRUE);
    evas_object_resize(win, 320, 300);
    evas_object_show(win);
+
+   elm_win_focus_highlight_enabled_set(win, EINA_TRUE);
+   elm_win_focus_highlight_animate_set(win, EINA_TRUE);
 
    bxx = elm_box_add(win);
    evas_object_size_hint_weight_set(bxx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
