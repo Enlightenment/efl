@@ -7448,8 +7448,9 @@ extern cpp_options         options;
 void
 using_file(const char *filename, const char type)
 {
-   FILE *f;
+   FILE *f = NULL;
 
+   if (!options.watchfile) return;
    f = fopen(options.watchfile, "a");
    if (!f) return;
    if (anotate)
