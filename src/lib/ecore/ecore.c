@@ -272,7 +272,6 @@ ecore_init(void)
    _ecore_glib_init();
    _ecore_job_init();
    _ecore_time_init();
-   _ecore_coroutine_init();
 
    eina_lock_new(&_thread_mutex);
    eina_condition_new(&_thread_cond, &_thread_mutex);
@@ -385,7 +384,6 @@ ecore_shutdown(void)
 #endif
 
      if (_ecore_fps_debug) _ecore_fps_debug_shutdown();
-     _ecore_coroutine_shutdown();
      _ecore_poller_shutdown();
      _ecore_animator_shutdown();
      _ecore_glib_shutdown();

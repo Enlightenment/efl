@@ -2216,27 +2216,6 @@ typedef Eo Ecore_Job;    /**< A job handle */
  * @}
  */
 
-typedef struct _Ecore_Coroutine Ecore_Coroutine;
-typedef int (*Ecore_Coroutine_Cb)(void *data, Ecore_Coroutine *coro);
-
-typedef enum {
-  ECORE_COROUTINE_NEW,
-  ECORE_COROUTINE_RUNNING,
-  ECORE_COROUTINE_FINISHED
-} Ecore_Coroutine_State;
-
-EAPI Ecore_Coroutine *ecore_coroutine_add(int stack_size, Ecore_Coroutine_Cb func, void *data);
-EAPI void *ecore_coroutine_del(Ecore_Coroutine *coro);
-
-EAPI int ecore_coroutine_resume(Ecore_Coroutine *coro);
-EAPI void ecore_coroutine_yield(Ecore_Coroutine *coro, int value);
-
-EAPI void *ecore_coroutine_data_get(Ecore_Coroutine *coro);
-EAPI Ecore_Coroutine_State ecore_coroutine_state_get(Ecore_Coroutine *coro);
-
-EAPI void ecore_coroutine_defer(Ecore_Coroutine *coro, Eina_Free_Cb func, void *data);
-EAPI void *ecore_coroutine_alloc(Ecore_Coroutine *coro, size_t size);
-
 #ifdef __cplusplus
 }
 #endif
