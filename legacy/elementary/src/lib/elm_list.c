@@ -1914,6 +1914,44 @@ _multi_select_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 
    *ret = sd->multi;
 }
+EAPI void
+elm_list_multi_select_mode_set(Evas_Object *obj,
+                               Elm_Object_Multi_Select_Mode mode)
+{
+   ELM_LIST_CHECK(obj);
+   eo_do(obj, elm_obj_list_multi_select_mode_set(mode));
+}
+
+static void
+_multi_select_mode_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Elm_Object_Multi_Select_Mode mode = va_arg(*list, Elm_Object_Multi_Select_Mode);
+   Elm_List_Smart_Data *sd = _pd;
+
+   if (mode >= ELM_OBJECT_MULTI_SELECT_MODE_MAX)
+     return;
+
+   if (sd->multi_select_mode != mode)
+     sd->multi_select_mode = mode;
+}
+
+EAPI Elm_Object_Multi_Select_Mode
+elm_list_multi_select_mode_get(const Evas_Object *obj)
+{
+   ELM_LIST_CHECK(obj) ELM_OBJECT_MULTI_SELECT_MODE_MAX;
+   Elm_Object_Multi_Select_Mode ret = ELM_OBJECT_MULTI_SELECT_MODE_MAX;
+   eo_do((Eo *)obj, elm_obj_list_multi_select_mode_get(&ret));
+   return ret;
+}
+
+static void
+_multi_select_mode_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Elm_Object_Multi_Select_Mode *ret = va_arg(*list, Elm_Object_Multi_Select_Mode *);
+   Elm_List_Smart_Data *sd = _pd;
+
+   *ret = sd->multi_select_mode;
+}
 
 EAPI void
 elm_list_mode_set(Evas_Object *obj,
@@ -2705,6 +2743,8 @@ _class_constructor(Eo_Class *klass)
            EO_OP_FUNC(ELM_OBJ_LIST_ID(ELM_OBJ_LIST_SUB_ID_GO), _go),
            EO_OP_FUNC(ELM_OBJ_LIST_ID(ELM_OBJ_LIST_SUB_ID_MULTI_SELECT_SET), _multi_select_set),
            EO_OP_FUNC(ELM_OBJ_LIST_ID(ELM_OBJ_LIST_SUB_ID_MULTI_SELECT_GET), _multi_select_get),
+           EO_OP_FUNC(ELM_OBJ_LIST_ID(ELM_OBJ_LIST_SUB_ID_MULTI_SELECT_MODE_SET), _multi_select_mode_set),
+           EO_OP_FUNC(ELM_OBJ_LIST_ID(ELM_OBJ_LIST_SUB_ID_MULTI_SELECT_MODE_GET), _multi_select_mode_get),
            EO_OP_FUNC(ELM_OBJ_LIST_ID(ELM_OBJ_LIST_SUB_ID_MODE_SET), _mode_set),
            EO_OP_FUNC(ELM_OBJ_LIST_ID(ELM_OBJ_LIST_SUB_ID_MODE_GET), _mode_get),
            EO_OP_FUNC(ELM_OBJ_LIST_ID(ELM_OBJ_LIST_SUB_ID_HORIZONTAL_SET), _horizontal_set),
@@ -2739,6 +2779,8 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_OBJ_LIST_SUB_ID_GO, "Starts the list."),
      EO_OP_DESCRIPTION(ELM_OBJ_LIST_SUB_ID_MULTI_SELECT_SET, "Enable or disable multiple items selection on the list object."),
      EO_OP_DESCRIPTION(ELM_OBJ_LIST_SUB_ID_MULTI_SELECT_GET, "Get a value whether multiple items selection is enabled or not."),
+     EO_OP_DESCRIPTION(ELM_OBJ_LIST_SUB_ID_MULTI_SELECT_MODE_SET, "Set the list multi select mode."),
+     EO_OP_DESCRIPTION(ELM_OBJ_LIST_SUB_ID_MULTI_SELECT_MODE_GET, "Get the list multi select mode."),
      EO_OP_DESCRIPTION(ELM_OBJ_LIST_SUB_ID_MODE_SET, "Set which mode to use for the list object."),
      EO_OP_DESCRIPTION(ELM_OBJ_LIST_SUB_ID_MODE_GET, "Get the mode the list is at."),
      EO_OP_DESCRIPTION(ELM_OBJ_LIST_SUB_ID_HORIZONTAL_SET, "Enable or disable horizontal mode on the list object."),

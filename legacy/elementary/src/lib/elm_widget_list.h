@@ -29,6 +29,7 @@ struct _Elm_List_Smart_Data
    Elm_Object_Item                      *last_selected_item;
    Evas_Coord                            minw[2], minh[2];
    Elm_Object_Select_Mode                select_mode;
+   Elm_Object_Multi_Select_Mode          multi_select_mode; /**< select mode for multiple selection */
    int                                   movements;
    int                                   walking;
    Elm_List_Mode                         h_mode;

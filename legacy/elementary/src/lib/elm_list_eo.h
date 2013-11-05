@@ -14,6 +14,8 @@
    ELM_OBJ_LIST_SUB_ID_GO,
    ELM_OBJ_LIST_SUB_ID_MULTI_SELECT_SET,
    ELM_OBJ_LIST_SUB_ID_MULTI_SELECT_GET,
+   ELM_OBJ_LIST_SUB_ID_MULTI_SELECT_MODE_SET,
+   ELM_OBJ_LIST_SUB_ID_MULTI_SELECT_MODE_GET,
    ELM_OBJ_LIST_SUB_ID_MODE_SET,
    ELM_OBJ_LIST_SUB_ID_MODE_GET,
    ELM_OBJ_LIST_SUB_ID_HORIZONTAL_SET,
@@ -74,6 +76,40 @@
  * @see elm_list_multi_select_get
  */
 #define elm_obj_list_multi_select_get(ret) ELM_OBJ_LIST_ID(ELM_OBJ_LIST_SUB_ID_MULTI_SELECT_GET), EO_TYPECHECK(Eina_Bool *, ret)
+
+/**
+ * @def elm_obj_list_multi_select_mode_set
+ * @since 1.8
+ *
+ * Set the list multi select mode.
+ *
+ * @param[in] mode
+ *
+ * - ELM_OBJECT_MULTI_SELECT_MODE_DEFAULT : select/unselect items whenever each
+ *   item is clicked.
+ * - ELM_OBJECT_MULTI_SELECT_MODE_WITH_CONTROL : Only one item will be selected
+ *   although multi-selection is enabled, if clicked without pressing control
+ *   key. This mode is only available with multi-selection.
+ *
+ * @see elm_list_multi_select_set()
+ * @see elm_list_multi_select_mode_get()
+ */
+#define elm_obj_list_multi_select_mode_set(mode) ELM_OBJ_LIST_ID(ELM_OBJ_LIST_SUB_ID_MULTI_SELECT_MODE_SET), EO_TYPECHECK(Elm_Object_Multi_Select_Mode, mode)
+
+/**
+ * @def elm_obj_list_multi_select_mode_get
+ * @since 1.8
+ *
+ * Get the list multi select mode.
+ *
+ * @param[out] ret
+ *
+ * (If getting mode is failed, it returns ELM_OBJECT_MULTI_SELECT_MODE_MAX)
+ *
+ * @see elm_list_multi_select_set()
+ * @see elm_list_multi_select_mode_set()
+ */
+#define elm_obj_list_multi_select_mode_get(ret) ELM_OBJ_LIST_ID(ELM_OBJ_LIST_SUB_ID_MULTI_SELECT_MODE_GET), EO_TYPECHECK(Elm_Object_Multi_Select_Mode *, ret)
 
 /**
  * @def elm_obj_list_mode_set

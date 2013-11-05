@@ -1734,4 +1734,4 @@
 
 2013-10-03  Daniel Juyung Seo (SeoZ)
 
-        * Genlist/Gengrid: Added multi select mode.
+        * Genlist/Gengrid/List: Added multi select mode.
