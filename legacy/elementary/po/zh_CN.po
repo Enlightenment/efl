@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-11-04 18:03+0900\n"
+"POT-Creation-Date: 2013-11-05 16:52+0900\n"
 "PO-Revision-Date: 2012-12-22 03:55+0800\n"
 "Last-Translator: Aron Xu <happyaron.xu@gmail.com>\n"
 "Language-Team: Chinese (simplified)\n"
@@ -34,6 +34,38 @@ msgstr "取消"
 msgid "OK"
 msgstr "确定"
 
+#: src/lib/elc_multibuttonentry.c:578
+msgid "multi button entry label"
+msgstr ""
+
+#: src/lib/elc_multibuttonentry.c:600
+msgid "multi button entry item"
+msgstr ""
+
+#: src/lib/elc_multibuttonentry.c:1474
+msgid "multi button entry"
+msgstr ""
+
+#: src/lib/elc_naviframe.c:376
+msgid "Title"
+msgstr ""
+
+#: src/lib/elc_naviframe.c:905 src/lib/elc_naviframe.c:1129
+msgid "Back"
+msgstr ""
+
+#: src/lib/elc_naviframe.c:1208
+msgid "Next"
+msgstr ""
+
+#: src/lib/elc_popup.c:281 src/lib/elc_popup.c:907
+msgid "Popup Title"
+msgstr ""
+
+#: src/lib/elc_popup.c:291 src/lib/elc_popup.c:975
+msgid "Popup Body Text"
+msgstr ""
+
 #: src/lib/elm_bubble.c:216
 msgid "Bubble"
 msgstr "气泡"
@@ -43,8 +75,9 @@ msgid "Clicked"
 msgstr "点击"
 
 #: src/lib/elm_button.c:280 src/lib/elm_check.c:216 src/lib/elm_gengrid.c:679
-#: src/lib/elm_genlist.c:1461 src/lib/elm_list.c:1491 src/lib/elm_radio.c:260
-#: src/lib/elm_spinner.c:538 src/lib/elm_toolbar.c:1995
+#: src/lib/elm_genlist.c:1461 src/lib/elm_list.c:1546 src/lib/elm_radio.c:260
+#: src/lib/elm_segment_control.c:536 src/lib/elm_spinner.c:538
+#: src/lib/elm_toolbar.c:1995
 msgid "State: Disabled"
 msgstr "状态：已禁用"
 
@@ -139,6 +172,11 @@ msgstr "色彩选择器项目"
 msgid "default:LTR"
 msgstr "default:LTR"
 
+#: src/lib/elm_dayselector.c:421
+#, fuzzy
+msgid "day selector item"
+msgstr "磁盘选择器项目"
+
 #: src/lib/elm_diskselector.c:670
 msgid "diskselector item"
 msgstr "磁盘选择器项目"
@@ -199,6 +237,19 @@ msgstr "进度条"
 msgid "Radio"
 msgstr "无线电"
 
+#: src/lib/elm_segment_control.c:539 src/lib/elm_toolbar.c:1997
+msgid "State: Selected"
+msgstr "状态：已选择"
+
+#: src/lib/elm_segment_control.c:541
+#, fuzzy
+msgid "State: Unselected"
+msgstr "状态：已选择"
+
+#: src/lib/elm_segment_control.c:553
+msgid "Segment Control Item"
+msgstr ""
+
 #: src/lib/elm_slider.c:887
 msgid "slider"
 msgstr "滑块"
@@ -222,10 +273,6 @@ msgstr "已选择"
 #: src/lib/elm_toolbar.c:1993
 msgid "Separator"
 msgstr "分隔符"
-
-#: src/lib/elm_toolbar.c:1997
-msgid "State: Selected"
-msgstr "状态：已选择"
 
 #: src/lib/elm_toolbar.c:1999
 msgid "Has menu"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-11-04 18:03+0900\n"
+"POT-Creation-Date: 2013-11-05 16:52+0900\n"
 "PO-Revision-Date: 2013-01-04 14:42+0100\n"
 "Last-Translator: Adrián Arévalo <adri58@gmail.com>\n"
 "Language-Team: Enlightenment Team\n"
@@ -34,6 +34,38 @@ msgstr "Cancelar"
 msgid "OK"
 msgstr "Aceptar"
 
+#: src/lib/elc_multibuttonentry.c:578
+msgid "multi button entry label"
+msgstr ""
+
+#: src/lib/elc_multibuttonentry.c:600
+msgid "multi button entry item"
+msgstr ""
+
+#: src/lib/elc_multibuttonentry.c:1474
+msgid "multi button entry"
+msgstr ""
+
+#: src/lib/elc_naviframe.c:376
+msgid "Title"
+msgstr ""
+
+#: src/lib/elc_naviframe.c:905 src/lib/elc_naviframe.c:1129
+msgid "Back"
+msgstr ""
+
+#: src/lib/elc_naviframe.c:1208
+msgid "Next"
+msgstr ""
+
+#: src/lib/elc_popup.c:281 src/lib/elc_popup.c:907
+msgid "Popup Title"
+msgstr ""
+
+#: src/lib/elc_popup.c:291 src/lib/elc_popup.c:975
+msgid "Popup Body Text"
+msgstr ""
+
 #: src/lib/elm_bubble.c:216
 msgid "Bubble"
 msgstr "Burbuja"
@@ -43,8 +75,9 @@ msgid "Clicked"
 msgstr "Clickado"
 
 #: src/lib/elm_button.c:280 src/lib/elm_check.c:216 src/lib/elm_gengrid.c:679
-#: src/lib/elm_genlist.c:1461 src/lib/elm_list.c:1491 src/lib/elm_radio.c:260
-#: src/lib/elm_spinner.c:538 src/lib/elm_toolbar.c:1995
+#: src/lib/elm_genlist.c:1461 src/lib/elm_list.c:1546 src/lib/elm_radio.c:260
+#: src/lib/elm_segment_control.c:536 src/lib/elm_spinner.c:538
+#: src/lib/elm_toolbar.c:1995
 msgid "State: Disabled"
 msgstr "Estado: Desactivado"
 
@@ -133,6 +166,11 @@ msgstr "Paleta de selección de color"
 msgid "default:LTR"
 msgstr "Predeterminado: LTR"
 
+#: src/lib/elm_dayselector.c:421
+#, fuzzy
+msgid "day selector item"
+msgstr "Selector de disco"
+
 #: src/lib/elm_diskselector.c:670
 msgid "diskselector item"
 msgstr "Selector de disco"
@@ -193,6 +231,19 @@ msgstr "barra de progreso"
 msgid "Radio"
 msgstr "Radio"
 
+#: src/lib/elm_segment_control.c:539 src/lib/elm_toolbar.c:1997
+msgid "State: Selected"
+msgstr "Estado: Seleccionado"
+
+#: src/lib/elm_segment_control.c:541
+#, fuzzy
+msgid "State: Unselected"
+msgstr "Estado: Seleccionado"
+
+#: src/lib/elm_segment_control.c:553
+msgid "Segment Control Item"
+msgstr ""
+
 #: src/lib/elm_slider.c:887
 msgid "slider"
 msgstr "barra de desplazamiento"
@@ -216,10 +267,6 @@ msgstr "Seleccionado"
 #: src/lib/elm_toolbar.c:1993
 msgid "Separator"
 msgstr "Separador"
-
-#: src/lib/elm_toolbar.c:1997
-msgid "State: Selected"
-msgstr "Estado: Seleccionado"
 
 #: src/lib/elm_toolbar.c:1999
 msgid "Has menu"
