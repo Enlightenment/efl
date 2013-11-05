@@ -1569,7 +1569,7 @@ group { name: "elm/border/base/default";
          target: "min1";
          target: "min2";
       }
-      
+
       program {
          signal: "mouse,down,1"; source: "e.event.titlebar";
          action: SIGNAL_EMIT "elm,action,move,start" "elm";
