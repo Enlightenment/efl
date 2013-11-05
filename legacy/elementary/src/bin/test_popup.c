@@ -21,20 +21,6 @@ _popup_close_cb(void *data, Evas_Object *obj EINA_UNUSED,
    evas_object_del(data);
 }
 
-#define POPUP_POINT_MAX 9
-static Evas_Coord_Point _popup_point[POPUP_POINT_MAX] =
-{
-   { 40, 50 },
-   { 80, 100 },
-   { 120, 150 },
-   { 160, 200 },
-   { 500, 9999 }, // excess y
-   { 9999, 500 }, // excess x
-   { -10, 50 }, // negative x
-   { 40, -100 }, // negative y
-   { 0, 0 } // zero
-};
-
 static void
 _g_popup_response_cb(void *data, Evas_Object *obj EINA_UNUSED,
              void *event_info EINA_UNUSED)
