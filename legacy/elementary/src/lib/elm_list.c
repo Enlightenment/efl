@@ -1296,15 +1296,25 @@ _mouse_up_cb(void *data,
 
    if (sd->multi)
      {
-        if (!it->selected)
+        if (((sd->multi_select_mode != ELM_OBJECT_MULTI_SELECT_MODE_WITH_CONTROL) ||
+             (evas_key_modifier_is_set(ev->modifiers, "Control"))))
           {
-             _item_highlight(it);
-             _item_select(it);
+             if (!it->selected)
+               {
+                  _item_highlight(it);
+                  _item_select(it);
+               }
+             else
+               {
+                  _item_unhighlight(it);
+                  _item_unselect(it);
+               }
           }
         else
           {
              _item_unhighlight(it);
-             _item_unselect(it);
+             if (it->selected)
+               _item_unselect(it);
           }
      }
    else
