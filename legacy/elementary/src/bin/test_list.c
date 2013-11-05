@@ -565,14 +565,6 @@ test_list_horizontal(void        *data EINA_UNUSED,
 
 /***********/
 
-typedef struct _List2_Data List2_Data;
-struct _List2_Data
-{
-   Evas_Object *list;
-   Evas_Object *rd1;
-   Evas_Object *rd2;
-};
-
 static void
 my_li2_clear(void        *data,
              Evas_Object *obj EINA_UNUSED,
@@ -591,77 +583,6 @@ my_li2_sel(void        *data EINA_UNUSED,
    printf("item selected\n");
 }
 
-static void
-_multi_select_changed_cb(void *data, Evas_Object *obj,
-                         void *event_info EINA_UNUSED)
-{
-   Eina_Bool multi = elm_check_state_get(obj);
-   List2_Data *ld = data;
-   if (!ld) return;
-
-   elm_list_multi_select_set(ld->list, multi);
-   elm_object_disabled_set(ld->rd1, !multi);
-   elm_object_disabled_set(ld->rd2, !multi);
-}
-
-static void
-_multi_select_mode_changed_cb(void *data, Evas_Object *obj,
-                              void *event_info EINA_UNUSED)
-{
-   elm_list_multi_select_mode_set(data, elm_radio_value_get(obj));
-}
-
-static void
-_multi_select_frame_create(Evas_Object *bx, List2_Data *ld)
-{
-   Evas_Object *fr, *bx2, *bx3, *tg, *rd, *rdg;
-   if (!ld) return;
-
-   fr = elm_frame_add(bx);
-   evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, 0.5);
-   elm_object_text_set(fr, "Multi Select Option");
-   elm_box_pack_end(bx, fr);
-   evas_object_show(fr);
-
-   bx2 = elm_box_add(fr);
-   elm_object_content_set(fr, bx2);
-   evas_object_show(bx2);
-
-   tg = elm_check_add(bx2);
-   elm_object_style_set(tg, "toggle");
-   elm_object_text_set(tg, "Multi Select Mode");
-   elm_box_pack_end(bx2, tg);
-   evas_object_show(tg);
-
-   bx3 = elm_box_add(bx2);
-   elm_box_horizontal_set(bx3, EINA_TRUE);
-   elm_box_pack_end(bx2, bx3);
-   evas_object_show(bx3);
-
-   ld->rd1 = rdg = rd = elm_radio_add(bx3);
-   elm_radio_state_value_set(rd, ELM_OBJECT_MULTI_SELECT_MODE_DEFAULT);
-   elm_object_text_set(rd, "Default Mode");
-   elm_box_pack_end(bx3, rd);
-   evas_object_show(rd);
-   elm_object_disabled_set(rd, EINA_TRUE);
-   evas_object_smart_callback_add(rd, "changed",
-                                  _multi_select_mode_changed_cb, ld->list);
-
-   ld->rd2 = rd = elm_radio_add(bx3);
-   elm_radio_state_value_set(rd, ELM_OBJECT_MULTI_SELECT_MODE_WITH_CONTROL);
-   elm_radio_group_add(rd, rdg);
-   elm_object_text_set(rd, "With Control Mode");
-   elm_box_pack_end(bx3, rd);
-   evas_object_show(rd);
-   elm_object_disabled_set(rd, EINA_TRUE);
-   evas_object_smart_callback_add(rd, "changed",
-                                  _multi_select_mode_changed_cb, ld->list);
-
-   evas_object_smart_callback_add(tg, "changed",
-                                  _multi_select_changed_cb, ld);
-}
-
 void
 test_list2(void        *data EINA_UNUSED,
            Evas_Object *obj EINA_UNUSED,
@@ -670,14 +591,12 @@ test_list2(void        *data EINA_UNUSED,
    Evas_Object *win, *bg, *li, *ic, *ic2, *bx, *bx2, *bt;
    char buf[PATH_MAX];
    Elm_Object_Item *list_it;
-   List2_Data *ld = calloc(1, sizeof(List2_Data));
 
    win = elm_win_add(NULL, "list2", ELM_WIN_BASIC);
    elm_win_title_set(win, "List 2");
    elm_win_autodel_set(win, EINA_TRUE);
    evas_object_resize(win, 320, 500);
    evas_object_show(win);
-   evas_object_event_callback_add(win, EVAS_CALLBACK_FREE, _cleanup_cb, ld);
 
    bg = elm_bg_add(win);
    snprintf(buf, sizeof(buf), "%s/images/plant_01.jpg", elm_app_data_dir_get());
@@ -691,7 +610,7 @@ test_list2(void        *data EINA_UNUSED,
    elm_win_resize_object_add(win, bx);
    evas_object_show(bx);
 
-   ld->list = li = elm_list_add(bx);
+   li = elm_list_add(bx);
    evas_object_size_hint_align_set(li, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(li, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_list_mode_set(li, ELM_LIST_LIMIT);
@@ -766,8 +685,6 @@ test_list2(void        *data EINA_UNUSED,
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
-
-   _multi_select_frame_create(bx, ld);
 }
 
 /***********/
@@ -1567,3 +1484,126 @@ test_list_separator(void        *data EINA_UNUSED,
    evas_object_show(win);
 }
 
+/***********/
+
+typedef struct _List2_Data List2_Data;
+struct _List2_Data
+{
+   Evas_Object *list;
+   Evas_Object *rd1;
+   Evas_Object *rd2;
+};
+
+static void
+_multi_select_changed_cb(void *data, Evas_Object *obj,
+                         void *event_info EINA_UNUSED)
+{
+   Eina_Bool multi = elm_check_state_get(obj);
+   List2_Data *ld = data;
+   if (!ld) return;
+
+   elm_list_multi_select_set(ld->list, multi);
+   elm_object_disabled_set(ld->rd1, !multi);
+   elm_object_disabled_set(ld->rd2, !multi);
+}
+
+static void
+_multi_select_mode_changed_cb(void *data, Evas_Object *obj,
+                              void *event_info EINA_UNUSED)
+{
+   elm_list_multi_select_mode_set(data, elm_radio_value_get(obj));
+}
+
+static void
+_multi_select_frame_create(Evas_Object *bx, List2_Data *ld)
+{
+   Evas_Object *fr, *bx2, *bx3, *tg, *rd, *rdg;
+   if (!ld) return;
+
+   fr = elm_frame_add(bx);
+   evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, 0.5);
+   elm_object_text_set(fr, "Multi Select Option");
+   elm_box_pack_end(bx, fr);
+   evas_object_show(fr);
+
+   bx2 = elm_box_add(fr);
+   elm_object_content_set(fr, bx2);
+   evas_object_show(bx2);
+
+   tg = elm_check_add(bx2);
+   elm_object_style_set(tg, "toggle");
+   elm_object_text_set(tg, "Multi Select Mode");
+   elm_box_pack_end(bx2, tg);
+   evas_object_show(tg);
+
+   bx3 = elm_box_add(bx2);
+   elm_box_horizontal_set(bx3, EINA_TRUE);
+   elm_box_pack_end(bx2, bx3);
+   evas_object_show(bx3);
+
+   ld->rd1 = rdg = rd = elm_radio_add(bx3);
+   elm_radio_state_value_set(rd, ELM_OBJECT_MULTI_SELECT_MODE_DEFAULT);
+   elm_object_text_set(rd, "Default Mode");
+   elm_box_pack_end(bx3, rd);
+   evas_object_show(rd);
+   elm_object_disabled_set(rd, EINA_TRUE);
+   evas_object_smart_callback_add(rd, "changed",
+                                  _multi_select_mode_changed_cb, ld->list);
+
+   ld->rd2 = rd = elm_radio_add(bx3);
+   elm_radio_state_value_set(rd, ELM_OBJECT_MULTI_SELECT_MODE_WITH_CONTROL);
+   elm_radio_group_add(rd, rdg);
+   elm_object_text_set(rd, "With Control Mode");
+   elm_box_pack_end(bx3, rd);
+   evas_object_show(rd);
+   elm_object_disabled_set(rd, EINA_TRUE);
+   evas_object_smart_callback_add(rd, "changed",
+                                  _multi_select_mode_changed_cb, ld->list);
+
+   evas_object_smart_callback_add(tg, "changed",
+                                  _multi_select_changed_cb, ld);
+}
+
+void
+test_list_multi_select(void *data EINA_UNUSED,
+                       Evas_Object *obj EINA_UNUSED,
+                       void *event_info EINA_UNUSED)
+{
+   Evas_Object *win, *li, *bx;
+   List2_Data *ld = calloc(1, sizeof(List2_Data));
+
+   win = elm_win_util_standard_add("list-multi-select", "List Multi Select");
+   elm_win_autodel_set(win, EINA_TRUE);
+   evas_object_resize(win, 320, 500);
+   evas_object_show(win);
+   evas_object_event_callback_add(win, EVAS_CALLBACK_FREE, _cleanup_cb, ld);
+
+   bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bx);
+   evas_object_show(bx);
+
+   ld->list = li = elm_list_add(bx);
+   _multi_select_frame_create(bx, ld);
+
+   evas_object_size_hint_weight_set(li, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(li, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(bx, li);
+   evas_object_show(li);
+
+   elm_list_item_append(li, "you", NULL, NULL, NULL, NULL);
+   elm_list_item_append(li, "doing", NULL, NULL, NULL, NULL);
+   elm_list_item_append(li, "out", NULL, NULL, NULL, NULL);
+   elm_list_item_append(li, "there", NULL, NULL, NULL, NULL);
+   elm_list_item_append(li, "today", NULL, NULL, NULL, NULL);
+   elm_list_item_append(li, "?", NULL, NULL, NULL, NULL);
+   elm_list_item_append(li, "Here", NULL, NULL, NULL, NULL);
+   elm_list_item_append(li, "are", NULL, NULL, NULL, NULL);
+   elm_list_item_append(li, "some", NULL, NULL, NULL, NULL);
+   elm_list_item_append(li, "more", NULL, NULL, NULL, NULL);
+   elm_list_item_append(li, "items", NULL, NULL, NULL, NULL);
+   elm_list_item_append(li, "Longer label.", NULL, NULL, NULL, NULL);
+
+   elm_list_go(li);
+}

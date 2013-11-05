@@ -82,6 +82,7 @@ void test_list7(void *data, Evas_Object *obj, void *event_info);
 void test_list8(void *data, Evas_Object *obj, void *event_info);
 void test_list9(void *data, Evas_Object *obj, void *event_info);
 void test_list_separator(void *data, Evas_Object *obj, void *event_info);
+void test_list_multi_select(void *data, Evas_Object *obj, void *event_info);
 void test_inwin(void *data, Evas_Object *obj, void *event_info);
 void test_inwin2(void *data, Evas_Object *obj, void *event_info);
 void test_scaling(void *data, Evas_Object *obj, void *event_info);
@@ -633,6 +634,7 @@ add_tests:
    ADD_TEST(NULL, "Lists", "List Focus", test_list8);
    ADD_TEST(NULL, "Lists", "List Focus Horizontal", test_list9);
    ADD_TEST(NULL, "Lists", "List Separator", test_list_separator);
+   ADD_TEST(NULL, "Lists", "List Multi Select", test_list_multi_select);
    ADD_TEST(NULL, "Lists", "Genlist", test_genlist);
    ADD_TEST(NULL, "Lists", "Genlist 2", test_genlist2);
    ADD_TEST(NULL, "Lists", "Genlist 3", test_genlist3);
