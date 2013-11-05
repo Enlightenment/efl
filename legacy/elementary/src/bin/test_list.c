@@ -578,7 +578,7 @@ my_li2_sel(void        *data EINA_UNUSED,
            void        *event_info EINA_UNUSED)
 {
    Elm_Object_Item *list_it = elm_list_selected_item_get(obj);
-   elm_list_item_selected_set(list_it, 0);
+   elm_list_item_selected_set(list_it, EINA_FALSE);
 }
 
 void
@@ -593,6 +593,8 @@ test_list2(void        *data EINA_UNUSED,
    win = elm_win_add(NULL, "list2", ELM_WIN_BASIC);
    elm_win_title_set(win, "List 2");
    elm_win_autodel_set(win, EINA_TRUE);
+   evas_object_resize(win, 320, 400);
+   evas_object_show(win);
 
    bg = elm_bg_add(win);
    snprintf(buf, sizeof(buf), "%s/images/plant_01.jpg", elm_app_data_dir_get());
@@ -606,22 +608,23 @@ test_list2(void        *data EINA_UNUSED,
    elm_win_resize_object_add(win, bx);
    evas_object_show(bx);
 
-   li = elm_list_add(win);
+   li = elm_list_add(bx);
    evas_object_size_hint_align_set(li, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(li, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_list_mode_set(li, ELM_LIST_LIMIT);
-//   elm_list_multi_select_set(li, 1);
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_image_file_set(ic, buf, NULL);
-   list_it = elm_list_item_append(li, "Hello", ic, NULL, my_li2_sel, NULL);
-   elm_list_item_selected_set(list_it, EINA_TRUE);
+   elm_list_item_append(li, "Unselect on selected", ic, NULL, my_li2_sel, NULL);
+
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_image_resizable_set(ic, 0, 0);
    elm_image_file_set(ic, buf, NULL);
-   elm_list_item_append(li, "world", ic, NULL, NULL, NULL);
+   list_it = elm_list_item_append(li, "world", ic, NULL, NULL, NULL);
+   elm_list_item_selected_set(list_it, EINA_TRUE);
+
    ic = elm_icon_add(win);
    elm_icon_standard_set(ic, "edit");
    elm_image_resizable_set(ic, 0, 0);
@@ -673,25 +676,13 @@ test_list2(void        *data EINA_UNUSED,
    elm_box_pack_end(bx, li);
    evas_object_show(li);
 
-   bx2 = elm_box_add(win);
-   elm_box_horizontal_set(bx2, EINA_TRUE);
-   elm_box_homogeneous_set(bx2, EINA_TRUE);
-   evas_object_size_hint_weight_set(bx2, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(bx2, EVAS_HINT_FILL, EVAS_HINT_FILL);
-
-   bt = elm_button_add(win);
+   bt = elm_button_add(bx);
    elm_object_text_set(bt, "Clear");
    evas_object_smart_callback_add(bt, "clicked", my_li2_clear, li);
-   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
-   elm_box_pack_end(bx2, bt);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(bx, bt);
    evas_object_show(bt);
-
-   elm_box_pack_end(bx, bx2);
-   evas_object_show(bx2);
-
-   evas_object_resize(win, 320, 300);
-   evas_object_show(win);
 }
 
 /***********/
