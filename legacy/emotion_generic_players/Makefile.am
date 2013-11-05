@@ -40,7 +40,7 @@ m4/ltversion.m4
 #emotiongenericplayersdir = $(EMOTION_GENERIC_PLAYERS_DIR)
 
 emotiongenericplayersdir = \
-$(DESTDIR)$(libdir)/emotion/generic_players/$(MODULE_ARCH)
+$(libdir)/emotion/generic_players/$(MODULE_ARCH)
 
 emotiongenericplayers_PROGRAMS =
 
