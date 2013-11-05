@@ -1015,23 +1015,20 @@ call:
 }
 
 static void
-_item_unselect(Elm_List_Item *it)
+_item_unhighlight(Elm_List_Item *it)
 {
-   Evas_Object *obj = WIDGET(it);
-   ELM_LIST_DATA_GET(obj, sd);
+   Evas_Object *obj;
    const char *stacking, *select_raise;
 
    ELM_LIST_ITEM_CHECK_OR_RETURN(it);
-   if (!it->highlighted) return;
+   obj = WIDGET(it);
+   ELM_LIST_DATA_GET(obj, sd);
+
+   if ((!it->highlighted) || (it->base.disabled) ||
+       (sd->select_mode == ELM_OBJECT_SELECT_MODE_NONE)) return;
 
    evas_object_ref(obj);
    _elm_list_walk(sd);
-
-   if (it->sd->focus_on_selection_enabled)
-     {
-        if (it->icon) elm_object_focus_set(it->icon, EINA_FALSE);
-        if (it->end) elm_object_focus_set(it->end, EINA_FALSE);
-     }
 
    edje_object_signal_emit(VIEW(it), "elm,state,unselected", "elm");
    evas_object_smart_callback_call(obj, SIG_UNHIGHLIGHTED, it);
@@ -1043,6 +1040,32 @@ _item_unselect(Elm_List_Item *it)
           evas_object_lower(VIEW(it));
      }
    it->highlighted = EINA_FALSE;
+
+   _elm_list_unwalk(obj, sd);
+   evas_object_unref(obj);
+}
+
+static void
+_item_unselect(Elm_List_Item *it)
+{
+   Evas_Object *obj;
+
+   ELM_LIST_ITEM_CHECK_OR_RETURN(it);
+   obj = WIDGET(it);
+   ELM_LIST_DATA_GET(obj, sd);
+
+   if (it->base.disabled || (sd->select_mode == ELM_OBJECT_SELECT_MODE_NONE))
+     return;
+
+   evas_object_ref(obj);
+   _elm_list_walk(sd);
+
+   if (it->sd->focus_on_selection_enabled)
+     {
+        if (it->icon) elm_object_focus_set(it->icon, EINA_FALSE);
+        if (it->end) elm_object_focus_set(it->end, EINA_FALSE);
+     }
+
    if (it->selected)
      {
         it->selected = EINA_FALSE;
@@ -1161,7 +1184,10 @@ _mouse_move_cb(void *data,
              sd->on_hold = EINA_TRUE;
              ELM_SAFE_FREE(it->long_timer, ecore_timer_del);
              if (!sd->was_selected)
-               _item_unselect(it);
+               {
+                  _item_unhighlight(it);
+                  _item_unselect(it);
+               }
           }
         if (sd->movements == ELM_LIST_SWIPE_MOVES) sd->swipe = EINA_TRUE;
         else
@@ -1252,7 +1278,11 @@ _mouse_up_cb(void *data,
      }
    if (sd->longpressed)
      {
-        if (!sd->was_selected) _item_unselect(it);
+        if (!sd->was_selected)
+          {
+             _item_unhighlight(it);
+             _item_unselect(it);
+          }
         sd->was_selected = 0;
         return;
      }
@@ -1271,14 +1301,21 @@ _mouse_up_cb(void *data,
              _item_highlight(it);
              _item_select(it);
           }
-        else _item_unselect(it);
+        else
+          {
+             _item_unhighlight(it);
+             _item_unselect(it);
+          }
      }
    else
      {
         if (!it->selected)
           {
              while (sd->selected)
-               _item_unselect(sd->selected->data);
+               {
+                  _item_unhighlight(sd->selected->data);
+                  _item_unselect(sd->selected->data);
+               }
              _item_highlight(it);
              _item_select(it);
           }
@@ -1288,7 +1325,11 @@ _mouse_up_cb(void *data,
              Elm_List_Item *it2;
 
              EINA_LIST_FOREACH_SAFE(sd->selected, l, l_next, it2)
-               if (it2 != it) _item_unselect(it2);
+               if (it2 != it)
+                 {
+                    _item_unhighlight(it2);
+                    _item_unselect(it2);
+                 }
              _item_highlight(it);
              _item_select(it);
           }
@@ -1437,7 +1478,11 @@ _item_del_pre_hook(Elm_Object_Item *it)
 
    ELM_LIST_DATA_GET(obj, sd);
 
-   if (item->selected) _item_unselect(item);
+   if (item->selected)
+     {
+        _item_unhighlight(item);
+        _item_unselect(item);
+     }
 
    if (sd->walking > 0)
      {
@@ -1526,14 +1571,21 @@ _access_activate_cb(void *data __UNUSED__,
              _item_highlight(it);
              _item_select(it);
           }
-        else _item_unselect(it);
+        else
+          {
+             _item_unhighlight(it);
+             _item_unselect(it);
+          }
      }
    else
      {
         if (!it->selected)
           {
              while (sd->selected)
-               _item_unselect(sd->selected->data);
+               {
+                  _item_unhighlight(sd->selected->data);
+                  _item_unselect(sd->selected->data);
+               }
              _item_highlight(it);
              _item_select(it);
           }
@@ -1543,7 +1595,11 @@ _access_activate_cb(void *data __UNUSED__,
              Elm_List_Item *it2;
 
              EINA_LIST_FOREACH_SAFE(sd->selected, l, l_next, it2)
-               if (it2 != it) _item_unselect(it2);
+               if (it2 != it)
+                 {
+                    _item_unhighlight(it2);
+                    _item_unselect(it2);
+                 }
              _item_highlight(it);
              _item_select(it);
           }
@@ -2494,13 +2550,19 @@ elm_list_item_selected_set(Elm_Object_Item *it,
         if (!sd->multi)
           {
              while (sd->selected)
-               _item_unselect(sd->selected->data);
+               {
+                  _item_unhighlight(sd->selected->data);
+                  _item_unselect(sd->selected->data);
+               }
           }
         _item_highlight(item);
         _item_select(item);
      }
    else
-     _item_unselect(item);
+     {
+        _item_unhighlight(item);
+        _item_unselect(item);
+     }
 
    _elm_list_unwalk(obj, sd);
    evas_object_unref(obj);
