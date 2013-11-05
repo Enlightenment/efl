@@ -638,7 +638,9 @@ ecore_x_randr_screen_current_size_set(Ecore_X_Window root, int w, int h, int w_m
         ecore_x_randr_screen_current_size_get(root, &cw, &ch, &cwmm, &chmm);
 
         /* compare to the values passed in. if there are no changes, get out */
-        if ((w == cw) && (h == ch) && (w_mm == cwmm) && (h_mm == chmm))
+        if ((w == cw) && (h == ch) &&
+            ((w_mm == -1) || (w_mm == cwmm)) &&
+            ((h_mm == -1) || (h_mm == chmm)))
           return EINA_TRUE;
 
         /* get the current size range */
