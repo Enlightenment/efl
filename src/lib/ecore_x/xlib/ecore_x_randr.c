@@ -3105,7 +3105,7 @@ ecore_x_randr_output_connector_type_get(Ecore_X_Window root EINA_UNUSED, Ecore_X
    if (_randr_version < RANDR_VERSION_1_3) return -1;
 
    /* try to get the connector type atom */
-   if ((conn = XInternAtom(_ecore_x_disp, RR_PROPERTY_CONNECTOR_NUMBER, True)))
+   if ((conn = XInternAtom(_ecore_x_disp, RR_PROPERTY_CONNECTOR_TYPE, True)))
      XRRGetOutputProperty(_ecore_x_disp, output, conn, 0, 4, 
                           False, False, AnyPropertyType, &type, &format, 
                           &items, &bytes, &prop);
