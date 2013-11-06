@@ -110,6 +110,7 @@ void test_genlist18(void *data, Evas_Object *obj, void *event_info);
 void test_genlist19(void *data, Evas_Object *obj, void *event_info);
 void test_genlist20(void *data, Evas_Object *obj, void *event_info);
 void test_genlist_item_styles(void *data, Evas_Object *obj, void *event_info);
+void test_genlist_multi_select(void *data, Evas_Object *obj, void *event_info);
 void test_gesture_layer(void *data, Evas_Object *obj, void *event_info);
 void test_gesture_layer2(void *data, Evas_Object *obj, void *event_info);
 void test_gesture_layer3(void *data, Evas_Object *obj, void *event_info);
@@ -635,6 +636,9 @@ add_tests:
    ADD_TEST(NULL, "Lists - List", "List Focus Horizontal", test_list9);
    ADD_TEST(NULL, "Lists - List", "List Separator", test_list_separator);
    ADD_TEST(NULL, "Lists - List", "List Multi Select", test_list_multi_select);
+
+   //------------------------------//
+
    ADD_TEST(NULL, "Lists - Genlist", "Genlist", test_genlist);
    ADD_TEST(NULL, "Lists - Genlist", "Genlist 2", test_genlist2);
    ADD_TEST(NULL, "Lists - Genlist", "Genlist 3", test_genlist3);
@@ -659,6 +663,10 @@ add_tests:
    ADD_TEST(NULL, "Lists - Genlist", "Genlist Full Widget", test_genlist19);
    ADD_TEST(NULL, "Lists - Genlist", "Genlist Focus", test_genlist20);
    ADD_TEST(NULL, "Lists - Genlist", "Genlist Item Styles", test_genlist_item_styles);
+   ADD_TEST(NULL, "Lists - Genlist", "Genlist Multi Select", test_genlist_multi_select);
+
+   //------------------------------//
+
    ADD_TEST(NULL, "Lists - Gengrid", "GenGrid", test_gengrid);
    ADD_TEST(NULL, "Lists - Gengrid", "GenGrid 2", test_gengrid2);
    ADD_TEST(NULL, "Lists - Gengrid", "GenGrid Group", test_gengrid3);

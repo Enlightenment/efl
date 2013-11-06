@@ -3502,3 +3502,131 @@ test_genlist_item_styles(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    evas_object_data_set(list, "genlist", gl);
 }
 
+/***********/
+
+typedef struct _Genlist_Multi_Data Genlist_Multi_Data;
+struct _Genlist_Multi_Data
+{
+   Evas_Object *gl;
+   Evas_Object *rd1;
+   Evas_Object *rd2;
+};
+
+static void
+_multi_select_changed_cb(void *data, Evas_Object *obj,
+                         void *event_info EINA_UNUSED)
+{
+   Eina_Bool multi = elm_check_state_get(obj);
+   Genlist_Multi_Data *gd = data;
+   if (!gd) return;
+
+   elm_genlist_multi_select_set(gd->gl, multi);
+   elm_object_disabled_set(gd->rd1, !multi);
+   elm_object_disabled_set(gd->rd2, !multi);
+}
+
+static void
+_multi_select_mode_changed_cb(void *data, Evas_Object *obj,
+                              void *event_info EINA_UNUSED)
+{
+   elm_genlist_multi_select_mode_set(data, elm_radio_value_get(obj));
+}
+
+static void
+_multi_select_frame_create(Evas_Object *bx, Genlist_Multi_Data *gd)
+{
+   Evas_Object *fr, *bx2, *bx3, *tg, *rd, *rdg;
+   if (!gd) return;
+
+   fr = elm_frame_add(bx);
+   evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, 0.5);
+   elm_object_text_set(fr, "Multi Select Option");
+   elm_box_pack_end(bx, fr);
+   evas_object_show(fr);
+
+   bx2 = elm_box_add(fr);
+   elm_object_content_set(fr, bx2);
+   evas_object_show(bx2);
+
+   tg = elm_check_add(bx2);
+   elm_object_style_set(tg, "toggle");
+   elm_object_text_set(tg, "Multi Select Mode");
+   elm_box_pack_end(bx2, tg);
+   evas_object_show(tg);
+
+   bx3 = elm_box_add(bx2);
+   elm_box_horizontal_set(bx3, EINA_TRUE);
+   elm_box_pack_end(bx2, bx3);
+   evas_object_show(bx3);
+
+   gd->rd1 = rdg = rd = elm_radio_add(bx3);
+   elm_radio_state_value_set(rd, ELM_OBJECT_MULTI_SELECT_MODE_DEFAULT);
+   elm_object_text_set(rd, "Default Mode");
+   elm_box_pack_end(bx3, rd);
+   evas_object_show(rd);
+   elm_object_disabled_set(rd, EINA_TRUE);
+   evas_object_smart_callback_add(rd, "changed",
+                                  _multi_select_mode_changed_cb, gd->gl);
+
+   gd->rd2 = rd = elm_radio_add(bx3);
+   elm_radio_state_value_set(rd, ELM_OBJECT_MULTI_SELECT_MODE_WITH_CONTROL);
+   elm_radio_group_add(rd, rdg);
+   elm_object_text_set(rd, "With Control Mode");
+   elm_box_pack_end(bx3, rd);
+   evas_object_show(rd);
+   elm_object_disabled_set(rd, EINA_TRUE);
+   evas_object_smart_callback_add(rd, "changed",
+                                  _multi_select_mode_changed_cb, gd->gl);
+
+   evas_object_smart_callback_add(tg, "changed",
+                                  _multi_select_changed_cb, gd);
+}
+
+void
+test_genlist_multi_select(void *data EINA_UNUSED,
+                          Evas_Object *obj EINA_UNUSED,
+                          void *event_info EINA_UNUSED)
+{
+   Evas_Object *win, *gl, *bx;
+   Genlist_Multi_Data *gd = calloc(1, sizeof(Genlist_Multi_Data));
+   Elm_Genlist_Item_Class *itc = NULL;
+   int i = 0;
+
+   win = elm_win_util_standard_add("genlist-multi-select", "Genlist Multi Select");
+   elm_win_autodel_set(win, EINA_TRUE);
+   evas_object_resize(win, 320, 500);
+   evas_object_show(win);
+   evas_object_event_callback_add(win, EVAS_CALLBACK_FREE, _cleanup_cb, gd);
+
+   bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bx);
+   evas_object_show(bx);
+
+   gd->gl = gl = elm_genlist_add(bx);
+   _multi_select_frame_create(bx, gd);
+
+   evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(bx, gl);
+   evas_object_show(gl);
+
+   itc = elm_genlist_item_class_new();
+   itc->item_style     = "default";
+   itc->func.text_get = gl_text_get;
+   itc->func.content_get  = gl_content_get;
+   itc->func.state_get = gl_state_get;
+   itc->func.del       = NULL;
+
+   for (i = 0; i < 100; i++)
+     {
+        elm_genlist_item_append(gl, itc,
+                                (void *)(uintptr_t)i/* item data */,
+                                NULL/* parent */,
+                                ELM_GENLIST_ITEM_NONE,
+                                gl_sel/* func */,
+                                (void *)(uintptr_t)(i * 10)/* func data */);
+     }
+   elm_genlist_item_class_free(itc1);
+}
