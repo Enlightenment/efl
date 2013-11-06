@@ -3628,5 +3628,5 @@ test_genlist_multi_select(void *data EINA_UNUSED,
                                 gl_sel/* func */,
                                 (void *)(uintptr_t)(i * 10)/* func data */);
      }
-   elm_genlist_item_class_free(itc1);
+   elm_genlist_item_class_free(itc);
 }
