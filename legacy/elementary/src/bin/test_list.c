@@ -1486,8 +1486,8 @@ test_list_separator(void        *data EINA_UNUSED,
 
 /***********/
 
-typedef struct _List2_Data List2_Data;
-struct _List2_Data
+typedef struct _List_Multi_Data List_Multi_Data;
+struct _List_Multi_Data
 {
    Evas_Object *list;
    Evas_Object *rd1;
@@ -1499,7 +1499,7 @@ _multi_select_changed_cb(void *data, Evas_Object *obj,
                          void *event_info EINA_UNUSED)
 {
    Eina_Bool multi = elm_check_state_get(obj);
-   List2_Data *ld = data;
+   List_Multi_Data *ld = data;
    if (!ld) return;
 
    elm_list_multi_select_set(ld->list, multi);
@@ -1515,7 +1515,7 @@ _multi_select_mode_changed_cb(void *data, Evas_Object *obj,
 }
 
 static void
-_multi_select_frame_create(Evas_Object *bx, List2_Data *ld)
+_multi_select_frame_create(Evas_Object *bx, List_Multi_Data *ld)
 {
    Evas_Object *fr, *bx2, *bx3, *tg, *rd, *rdg;
    if (!ld) return;
@@ -1571,7 +1571,7 @@ test_list_multi_select(void *data EINA_UNUSED,
                        void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *li, *bx;
-   List2_Data *ld = calloc(1, sizeof(List2_Data));
+   List_Multi_Data *ld = calloc(1, sizeof(List_Multi_Data));
 
    win = elm_win_util_standard_add("list-multi-select", "List Multi Select");
    elm_win_autodel_set(win, EINA_TRUE);
