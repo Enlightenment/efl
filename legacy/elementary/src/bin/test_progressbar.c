@@ -259,11 +259,7 @@ _progressbar2_timer_cb(void *data)
    Progressbar_Data *pd = data;
    double progress;
 
-   if (!pd)
-     {
-        pd->timer = NULL;
-        return ECORE_CALLBACK_CANCEL;
-     }
+   if (!pd) return ECORE_CALLBACK_CANCEL;
 
    progress = elm_progressbar_value_get (pd->pb1);
 
