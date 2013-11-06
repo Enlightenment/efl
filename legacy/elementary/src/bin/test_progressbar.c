@@ -121,8 +121,8 @@ test_progressbar(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    evas_object_size_hint_weight_set(pb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(pb, EVAS_HINT_FILL, 0.5);
    elm_box_pack_end(bx, pb);
-//   elm_progressbar_horizontal_set(pb, EINA_TRUE);
-//   elm_object_text_set(pb, "Progression %");
+   //elm_progressbar_horizontal_set(pb, EINA_TRUE);
+   //elm_object_text_set(pb, "Progression %");
    elm_progressbar_unit_format_function_set(pb, my_progressbar_format_cb,
                                             (void (*)(char *)) free);
    evas_object_show(pb);
@@ -244,9 +244,9 @@ _set_progress_val(Evas_Object *pb, double inc_value, char *part_name)
    progress = elm_progressbar_part_value_get(pb, part_name);
 
    if (progress < 1.0)
-      progress += inc_value;
+     progress += inc_value;
    else
-      return EINA_TRUE;
+     return EINA_TRUE;
 
    elm_progressbar_part_value_set(pb, part_name, progress);
 
@@ -259,22 +259,22 @@ _progressbar2_timer_cb(void *data)
    Progressbar_Data *pd = data;
    double progress;
 
-   if (!pd) 
-      {
-         pd->timer = NULL;
-         return ECORE_CALLBACK_CANCEL;
-      }
+   if (!pd)
+     {
+        pd->timer = NULL;
+        return ECORE_CALLBACK_CANCEL;
+     }
 
    progress = elm_progressbar_value_get (pd->pb1);
 
    if (progress < 1.0)
-      {
-         progress += 0.0123;
-         elm_progressbar_part_value_set(pd->pb1, "elm.cur.progressbar", progress);
-         elm_progressbar_part_value_set(pd->pb2, "elm.cur.progressbar1", progress);
-         elm_progressbar_part_value_set(pd->pb3, "elm.cur.progressbar1", progress);
-         elm_progressbar_part_value_set(pd->pb4, "elm.cur.progressbar1", progress);
-      }
+     {
+        progress += 0.0123;
+        elm_progressbar_part_value_set(pd->pb1, "elm.cur.progressbar", progress);
+        elm_progressbar_part_value_set(pd->pb2, "elm.cur.progressbar1", progress);
+        elm_progressbar_part_value_set(pd->pb3, "elm.cur.progressbar1", progress);
+        elm_progressbar_part_value_set(pd->pb4, "elm.cur.progressbar1", progress);
+     }
 
    _set_progress_val(pd->pb2, 0.00723, "elm.cur.progressbar");
    _set_progress_val(pd->pb3, 0.00523, "elm.cur.progressbar");
