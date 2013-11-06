@@ -1751,7 +1751,8 @@ _ecore_con_cb_tcp_connect(void           *data,
    return;
 
 error:
-   if (errno || memerr) ecore_con_event_server_error(svr, memerr ?: strerror(errno));
+   ecore_con_event_server_error(svr,
+                                memerr ?: errno? strerror(errno) : "DNS error");
    ecore_con_ssl_server_shutdown(svr);
    _ecore_con_server_kill(svr);
 }
