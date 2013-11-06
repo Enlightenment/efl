@@ -146,6 +146,24 @@ _data(void *data, int type EINA_UNUSED, void *ev)
    return ECORE_CALLBACK_RENEW;
 }
 
+Eina_Bool
+_dns_add(void *data, int type EINA_UNUSED, void *ev EINA_UNUSED)
+{
+   Eina_Bool *err_check = data;
+   *err_check = EINA_FALSE;
+   ecore_main_loop_quit();
+   return ECORE_CALLBACK_RENEW;
+}
+
+Eina_Bool
+_dns_err(void *data, int type EINA_UNUSED, void *ev EINA_UNUSED)
+{
+   Eina_Bool *err_check = data;
+   *err_check = EINA_TRUE;
+   ecore_main_loop_quit();
+   return ECORE_CALLBACK_RENEW;
+}
+
 START_TEST(ecore_test_ecore_con_server)
 {
    Ecore_Con_Server *server;
@@ -251,8 +269,46 @@ START_TEST(ecore_test_ecore_con_init)
 }
 END_TEST
 
+START_TEST(ecore_test_ecore_con_dns)
+{
+   Ecore_Con_Server *client;
+   Ecore_Event_Handler *e_err;
+   Ecore_Event_Handler *e_add;
+   Eina_Bool err_check = EINA_FALSE;
+   int ret;
+
+   ret = eina_init();
+   fail_if(ret != 1);
+   ret = ecore_init();
+   fail_if(ret != 1);
+   ret = ecore_con_init();
+   fail_if(ret != 1);
+
+   e_add = ecore_event_handler_add(ECORE_CON_EVENT_SERVER_ADD, _dns_add, (void *) &err_check);
+   e_err = ecore_event_handler_add(ECORE_CON_EVENT_SERVER_ERROR, _dns_err, (void *) &err_check);
+
+   client = ecore_con_server_connect(ECORE_CON_REMOTE_TCP,
+                                     "wongsub.wrongdns.lan", 1234, NULL);
+   fail_if (client == NULL);
+   ecore_con_server_timeout_set(client, 5.0);
+
+   ecore_main_loop_begin();
+   fail_if (err_check == EINA_FALSE);
+   fail_if (ecore_event_handler_del(e_err) != (void *) &err_check);
+   fail_if (ecore_event_handler_del(e_add) != (void *) &err_check);
+
+   ret = ecore_con_shutdown();
+   fail_if(ret != 0);
+   ret = ecore_shutdown();
+   fail_if(ret != 0);
+   ret = eina_shutdown();
+   fail_if(ret != 0);
+}
+END_TEST
+
 void ecore_test_ecore_con(TCase *tc)
 {
    tcase_add_test(tc, ecore_test_ecore_con_init);
    tcase_add_test(tc, ecore_test_ecore_con_server);
+   tcase_add_test(tc, ecore_test_ecore_con_dns);
 }
