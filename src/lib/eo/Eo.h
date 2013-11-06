@@ -1422,11 +1422,11 @@ eo2_wref_del(Eo **wref);
 #define eo_weak_ref(wref)			\
   do {						\
     if (*wref) eo_do(*wref, eo_wref_add(wref));	\
-  } while (0);
+  } while (0)
 #define eo2_weak_ref(wref)			   \
   do {						   \
     if (*wref) eo2_do(*wref, eo2_wref_add(wref));  \
-  } while (0);
+  } while (0)
 
 /**
  * @def eo_weak_unref
@@ -1444,11 +1444,11 @@ eo2_wref_del(Eo **wref);
 #define eo_weak_unref(wref)			\
   do {						\
     if (*wref) eo_do(*wref, eo_wref_del(wref));	\
-  } while (0);
+  } while (0)
 #define eo2_weak_unref(wref)			   \
   do {						   \
     if (*wref) eo2_do(*wref, eo2_wref_del(wref));  \
-  } while (0);
+  } while (0)
 
 /**
  * @def eo_wref_del_safe
