@@ -1294,27 +1294,19 @@ _mouse_up_cb(void *data,
    evas_object_ref(obj);
    _elm_list_walk(sd);
 
-   if (sd->multi)
+   if (sd->multi &&
+       ((sd->multi_select_mode != ELM_OBJECT_MULTI_SELECT_MODE_WITH_CONTROL) ||
+        (evas_key_modifier_is_set(ev->modifiers, "Control"))))
      {
-        if (((sd->multi_select_mode != ELM_OBJECT_MULTI_SELECT_MODE_WITH_CONTROL) ||
-             (evas_key_modifier_is_set(ev->modifiers, "Control"))))
+        if (!it->selected)
           {
-             if (!it->selected)
-               {
-                  _item_highlight(it);
-                  _item_select(it);
-               }
-             else
-               {
-                  _item_unhighlight(it);
-                  _item_unselect(it);
-               }
+             _item_highlight(it);
+             _item_select(it);
           }
         else
           {
              _item_unhighlight(it);
-             if (it->selected)
-               _item_unselect(it);
+             _item_unselect(it);
           }
      }
    else
