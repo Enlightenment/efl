@@ -585,11 +585,21 @@ _ecore_wl_input_cb_keyboard_keymap(void *data, struct wl_keyboard *keyboard EINA
      }
 
    input->xkb.control_mask = 
-     1 << xkb_map_mod_get_index(input->xkb.keymap, "Control");
+     1 << xkb_map_mod_get_index(input->xkb.keymap, XKB_MOD_NAME_CTRL);
    input->xkb.alt_mask = 
-     1 << xkb_map_mod_get_index(input->xkb.keymap, "Mod1");
+     1 << xkb_map_mod_get_index(input->xkb.keymap, XKB_MOD_NAME_ALT);
    input->xkb.shift_mask = 
-     1 << xkb_map_mod_get_index(input->xkb.keymap, "Shift");
+     1 << xkb_map_mod_get_index(input->xkb.keymap, XKB_MOD_NAME_SHIFT);
+   input->xkb.win_mask = 
+     1 << xkb_map_mod_get_index(input->xkb.keymap, XKB_MOD_NAME_LOGO);
+   input->xkb.scroll_mask = 
+     1 << xkb_map_mod_get_index(input->xkb.keymap, XKB_LED_NAME_SCROLL);
+   input->xkb.num_mask = 
+     1 << xkb_map_mod_get_index(input->xkb.keymap, XKB_LED_NAME_NUM);
+   input->xkb.caps_mask = 
+     1 << xkb_map_mod_get_index(input->xkb.keymap, XKB_MOD_NAME_CAPS);
+   input->xkb.altgr_mask = 
+     1 << xkb_map_mod_get_index(input->xkb.keymap, "ISO_Level3_Shift");
 }
 
 static int
@@ -641,41 +651,35 @@ _ecore_wl_input_cb_keyboard_key(void *data, struct wl_keyboard *keyboard EINA_UN
 {
    Ecore_Wl_Input *input;
    Ecore_Wl_Window *win;
-   unsigned int code;
+   unsigned int code, nsyms;
+   const xkb_keysym_t *syms;
    xkb_keysym_t sym = XKB_KEY_NoSymbol;
-   char key[32], keyname[32], compose[32];
+   char key[256], keyname[256], compose[256];
    Ecore_Event_Key *e;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!(input = data)) return;
-   input->display->serial = serial;
-
-   /* xkb rules reflect X broken keycodes, so offset by 8 */
-   code = keycode + 8;
 
    win = input->keyboard_focus;
    if ((!win) || (win->keyboard_device != input) || (!input->xkb.state)) 
      return;
 
-   sym = xkb_state_key_get_one_sym(input->xkb.state, code);
+   input->display->serial = serial;
 
+   /* xkb rules reflect X broken keycodes, so offset by 8 */
+   code = keycode + 8;
+
+   /* get the keysym for this key code */
+   nsyms = xkb_key_get_syms(input->xkb.state, code, &syms);
+   if (nsyms == 1) sym = syms[0];
+
+   /* get the name of this keysym */
    memset(key, 0, sizeof(key));
    xkb_keysym_get_name(sym, key, sizeof(key));
 
-   xkb_state_mod_mask_remove_consumed(input->xkb.state, 
-                                      code, input->xkb.shift_mask);
-
    memset(keyname, 0, sizeof(keyname));
-   xkb_keysym_get_name(sym, keyname, sizeof(keyname));
-   if (xkb_state_mod_index_is_active(input->xkb.state, 
-                                     xkb_map_mod_get_index(input->xkb.keymap, 
-                                                           "Shift"),
-                                     XKB_STATE_MODS_EFFECTIVE))
-     {
-        if (keyname[0] != '\0')
-          keyname[0] = tolower(keyname[0]);
-     }
+   memcpy(keyname, key, sizeof(keyname));
 
    if (keyname[0] == '\0')
      snprintf(keyname, sizeof(keyname), "Keycode-%u", code);
@@ -700,6 +704,7 @@ _ecore_wl_input_cb_keyboard_key(void *data, struct wl_keyboard *keyboard EINA_UN
    e->window = win->id;
    e->event_window = win->id;
    e->timestamp = timestamp;
+
    e->modifiers = input->modifiers;
 
    if (state)
@@ -740,22 +745,30 @@ _ecore_wl_input_cb_keyboard_modifiers(void *data, struct wl_keyboard *keyboard E
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!(input = data)) return;
-   if (!input->xkb.state) return;
-
-   xkb_state_update_mask(input->xkb.state, depressed, latched, 
-                         locked, 0, 0, group);
-
-   mask = xkb_state_serialize_mods(input->xkb.state, 
-                                   XKB_STATE_DEPRESSED | XKB_STATE_LATCHED);
 
    input->modifiers = 0;
-   /* The Ecore_Event_Modifiers don't quite match the X mask bits */
+   if (!input->xkb.state) return;
+
+   xkb_state_update_mask(input->xkb.state, 
+                         depressed, latched, locked, 0, 0, group);
+   mask = xkb_state_serialize_mods(input->xkb.state, 
+                                   (XKB_STATE_DEPRESSED | XKB_STATE_LATCHED));
    if (mask & input->xkb.control_mask)
      input->modifiers |= ECORE_EVENT_MODIFIER_CTRL;
    if (mask & input->xkb.alt_mask)
      input->modifiers |= ECORE_EVENT_MODIFIER_ALT;
    if (mask & input->xkb.shift_mask)
      input->modifiers |= ECORE_EVENT_MODIFIER_SHIFT;
+   if (mask & input->xkb.win_mask)
+     input->modifiers |= ECORE_EVENT_MODIFIER_WIN;
+   if (mask & input->xkb.scroll_mask)
+     input->modifiers |= ECORE_EVENT_LOCK_SCROLL;
+   if (mask & input->xkb.num_mask)
+     input->modifiers |= ECORE_EVENT_LOCK_NUM;
+   if (mask & input->xkb.caps_mask)
+     input->modifiers |= ECORE_EVENT_LOCK_CAPS;
+   if (mask & input->xkb.altgr_mask)
+     input->modifiers |= ECORE_EVENT_MODIFIER_ALTGR;
 }
 
 static Eina_Bool 
