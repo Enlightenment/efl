@@ -11,7 +11,8 @@ EAPI Eo_Op ELM_OBJ_SLIDESHOW_BASE_ID = EO_NOOP;
 
 #define MY_CLASS ELM_OBJ_SLIDESHOW_CLASS
 
-#define MY_CLASS_NAME "elm_slideshow"
+#define MY_CLASS_NAME "Elm_Slideshow"
+#define MY_CLASS_NAME_LEGACY "elm_slideshow"
 
 static const char SIG_CHANGED[] = "changed";
 static const char SIG_TRANSITION_END[] = "transition,end";
@@ -384,7 +385,7 @@ _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
-         evas_obj_type_set(MY_CLASS_NAME),
+         evas_obj_type_set(MY_CLASS_NAME_LEGACY),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
 }
 
@@ -1011,7 +1012,7 @@ _class_constructor(Eo_Class *klass)
    };
    eo_class_funcs_set(klass, func_desc);
 
-   evas_smart_legacy_type_register(MY_CLASS_NAME, klass);
+   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_OBJ_SLIDESHOW_SUB_ID_ITEM_ADD, "Add (append) a new item in a given slideshow widget."),

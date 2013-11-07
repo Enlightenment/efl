@@ -10,7 +10,8 @@ EAPI Eo_Op ELM_OBJ_CLOCK_BASE_ID = EO_NOOP;
 
 #define MY_CLASS ELM_OBJ_CLOCK_CLASS
 
-#define MY_CLASS_NAME "elm_clock"
+#define MY_CLASS_NAME "Elm_Clock"
+#define MY_CLASS_NAME_LEGACY "elm_clock"
 
 #define DEFAULT_FIRST_INTERVAL 0.85
 static void _time_update(Evas_Object *obj);
@@ -822,7 +823,7 @@ _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
-         evas_obj_type_set(MY_CLASS_NAME),
+         evas_obj_type_set(MY_CLASS_NAME_LEGACY),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
 }
 
@@ -1115,7 +1116,7 @@ _class_constructor(Eo_Class *klass)
    };
    eo_class_funcs_set(klass, func_desc);
 
-   evas_smart_legacy_type_register(MY_CLASS_NAME, klass);
+   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 
    if (_elm_config->access_mode != ELM_ACCESS_MODE_OFF)
       _elm_clock_smart_focus_next_enable = EINA_TRUE;

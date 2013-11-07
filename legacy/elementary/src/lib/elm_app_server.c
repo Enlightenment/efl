@@ -10,7 +10,7 @@ EAPI Eo_Op ELM_APP_SERVER_BASE_ID = EO_NOOP;
 
 #define MY_CLASS ELM_APP_SERVER_CLASS
 
-#define MY_CLASS_NAME "elm_app_server"
+#define MY_CLASS_NAME "Elm_App_Server"
 
 EAPI const Eo_Event_Description _ELM_APP_SERVER_EV_TERMINATE =
          EO_EVENT_DESCRIPTION("terminate",

@@ -9,7 +9,7 @@ EAPI Eo_Op ELM_APP_SERVER_VIEW_BASE_ID = EO_NOOP;
 
 #define MY_CLASS ELM_APP_SERVER_VIEW_CLASS
 
-#define MY_CLASS_NAME "elm_app_server_view"
+#define MY_CLASS_NAME "Elm_App_Server_View"
 
 EAPI const Eo_Event_Description _ELM_APP_SERVER_VIEW_EV_RESUMED =
          EO_EVENT_DESCRIPTION("resume", "Called when view must be resumed");

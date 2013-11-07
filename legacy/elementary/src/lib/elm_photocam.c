@@ -12,13 +12,15 @@ EAPI Eo_Op ELM_OBJ_PHOTOCAM_PAN_BASE_ID = EO_NOOP;
 
 #define MY_PAN_CLASS ELM_OBJ_PHOTOCAM_PAN_CLASS
 
-#define MY_PAN_CLASS_NAME "elm_photocam_pan"
+#define MY_PAN_CLASS_NAME "Elm_Photocam_Pan"
+#define MY_PAN_CLASS_NAME_LEGACY "elm_photocam_pan"
 
 EAPI Eo_Op ELM_OBJ_PHOTOCAM_BASE_ID = EO_NOOP;
 
 #define MY_CLASS ELM_OBJ_PHOTOCAM_CLASS
 
-#define MY_CLASS_NAME "elm_photocam"
+#define MY_CLASS_NAME "Elm_Photocam"
+#define MY_CLASS_NAME_LEGACY "elm_photocam"
 
 /*
  * TODO (maybe - optional future stuff):
@@ -448,7 +450,7 @@ _photocam_pan_class_constructor(Eo_Class *klass)
       };
       eo_class_funcs_set(klass, func_desc);
 
-      evas_smart_legacy_type_register(MY_PAN_CLASS_NAME, klass);
+      evas_smart_legacy_type_register(MY_PAN_CLASS_NAME_LEGACY, klass);
 }
 
 static const Eo_Class_Description _elm_photocam_pan_class_desc = {
@@ -1473,7 +1475,7 @@ _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
-         evas_obj_type_set(MY_CLASS_NAME),
+         evas_obj_type_set(MY_CLASS_NAME_LEGACY),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
 }
 
@@ -2345,7 +2347,7 @@ _class_constructor(Eo_Class *klass)
    };
    eo_class_funcs_set(klass, func_desc);
 
-   evas_smart_legacy_type_register(MY_CLASS_NAME, klass);
+   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 
 static const Eo_Op_Description op_desc[] = {

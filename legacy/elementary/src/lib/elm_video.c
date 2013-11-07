@@ -19,7 +19,8 @@ EAPI Eo_Op ELM_OBJ_VIDEO_BASE_ID = EO_NOOP;
 
 #define MY_CLASS ELM_OBJ_VIDEO_CLASS
 
-#define MY_CLASS_NAME "elm_video"
+#define MY_CLASS_NAME "Elm_Video"
+#define MY_CLASS_NAME_LEGACY "elm_video"
 
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {"focused", ""}, /**< handled by elm_widget */
@@ -317,7 +318,7 @@ _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 #ifdef HAVE_EMOTION
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
-         evas_obj_type_set(MY_CLASS_NAME),
+         evas_obj_type_set(MY_CLASS_NAME_LEGACY),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
 #else
    eo_error_set(obj);
@@ -772,7 +773,7 @@ _class_constructor(Eo_Class *klass)
    };
    eo_class_funcs_set(klass, func_desc);
 
-   evas_smart_legacy_type_register(MY_CLASS_NAME, klass);
+   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_OBJ_VIDEO_SUB_ID_FILE_SET, "Define the file or URI that will be the video source."),

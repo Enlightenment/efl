@@ -9,7 +9,7 @@ EAPI Eo_Op ELM_APP_CLIENT_BASE_ID = EO_NOOP;
 
 #define MY_CLASS ELM_APP_CLIENT_CLASS
 
-#define MY_CLASS_NAME "elm_app_client"
+#define MY_CLASS_NAME "Elm_App_Client"
 
 EAPI const Eo_Event_Description _ELM_APP_CLIENT_EV_VIEW_CREATED =
          EO_EVENT_DESCRIPTION("view,created",

@@ -18,7 +18,8 @@ EAPI Eo_Op ELM_OBJ_FILESELECTOR_BASE_ID = EO_NOOP;
 
 #define MY_CLASS ELM_OBJ_FILESELECTOR_CLASS
 
-#define MY_CLASS_NAME "elm_fileselector"
+#define MY_CLASS_NAME "Elm_Fileselector"
+#define MY_CLASS_NAME_LEGACY "elm_fileselector"
 
 static Elm_Genlist_Item_Class *list_itc[ELM_FILE_LAST];
 static Elm_Gengrid_Item_Class *grid_itc[ELM_FILE_LAST];
@@ -1441,7 +1442,7 @@ _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
    sd->obj = obj;
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
-         evas_obj_type_set(MY_CLASS_NAME),
+         evas_obj_type_set(MY_CLASS_NAME_LEGACY),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
 }
 
@@ -2104,7 +2105,7 @@ _class_constructor(Eo_Class *klass)
    };
    eo_class_funcs_set(klass, func_desc);
 
-   evas_smart_legacy_type_register(MY_CLASS_NAME, klass);
+   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 
    for (i = 0; i < ELM_FILE_LAST; ++i)
      {

@@ -9,7 +9,7 @@ EAPI Eo_Op ELM_APP_CLIENT_VIEW_BASE_ID = EO_NOOP;
 
 #define MY_CLASS ELM_APP_CLIENT_VIEW_CLASS
 
-#define MY_CLASS_NAME "elm_app_client_view"
+#define MY_CLASS_NAME "Elm_App_Client_View"
 
 EAPI const Eo_Event_Description _ELM_APP_CLIENT_VIEW_EV_STATE_CHANGED =
          EO_EVENT_DESCRIPTION("state,changed", "State of view changed.");

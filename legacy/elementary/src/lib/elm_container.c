@@ -10,7 +10,7 @@ EAPI Eo_Op ELM_OBJ_CONTAINER_BASE_ID = EO_NOOP;
 
 #define MY_CLASS ELM_OBJ_CONTAINER_CLASS
 
-#define MY_CLASS_NAME "elm_container"
+#define MY_CLASS_NAME "Elm_Container"
 
 static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_OBJ_CONTAINER_SUB_ID_CONTENT_SET, "Set the content on part of a given container widget."),

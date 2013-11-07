@@ -11,7 +11,8 @@ EAPI Eo_Op ELM_OBJ_BG_BASE_ID = EO_NOOP;
 
 #define MY_CLASS ELM_OBJ_BG_CLASS
 
-#define MY_CLASS_NAME "elm_bg"
+#define MY_CLASS_NAME "Elm_Bg"
+#define MY_CLASS_NAME_LEGACY "elm_bg"
 
 static const Elm_Layout_Part_Alias_Description _content_aliases[] =
 {
@@ -137,7 +138,7 @@ static void
 _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
    eo_do_super(obj, MY_CLASS, eo_constructor());
-   eo_do(obj, evas_obj_type_set(MY_CLASS_NAME));
+   eo_do(obj, evas_obj_type_set(MY_CLASS_NAME_LEGACY));
 }
 
 static void
@@ -396,7 +397,7 @@ _class_constructor(Eo_Class *klass)
    };
    eo_class_funcs_set(klass, func_desc);
 
-   evas_smart_legacy_type_register(MY_CLASS_NAME, klass);
+   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 
 static const Eo_Op_Description op_desc[] = {

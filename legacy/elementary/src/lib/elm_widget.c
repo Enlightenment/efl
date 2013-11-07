@@ -12,7 +12,8 @@ EAPI Eo_Op ELM_WIDGET_BASE_ID = EO_NOOP;
 
 #define MY_CLASS ELM_OBJ_WIDGET_CLASS
 
-#define MY_CLASS_NAME "elm_widget"
+#define MY_CLASS_NAME "Elm_Widget"
+#define MY_CLASS_NAME_LEGACY "elm_widget"
 
 #define ELM_WIDGET_DATA_GET(o, wd)                             \
   Elm_Widget_Smart_Data *wd = NULL;                            \
@@ -6149,7 +6150,7 @@ _constructor(Eo *obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
    sd->on_create = EINA_TRUE;
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
-         evas_obj_type_set(MY_CLASS_NAME),
+         evas_obj_type_set(MY_CLASS_NAME_LEGACY),
          eo_parent_get(&parent));
    eo_do(obj, elm_wdg_parent_set(parent));
    sd->on_create = EINA_FALSE;
@@ -6387,7 +6388,7 @@ _class_constructor(Eo_Class *klass)
 
    eo_class_funcs_set(klass, func_desc);
 
-   evas_smart_legacy_type_register(MY_CLASS_NAME, klass);
+   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 
 static const Eo_Op_Description op_desc[] = {

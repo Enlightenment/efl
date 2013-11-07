@@ -12,7 +12,8 @@ EAPI Eo_Op ELM_OBJ_WIN_INWIN_BASE_ID = EO_NOOP;
 
 #define MY_CLASS ELM_OBJ_WIN_INWIN_CLASS
 
-#define MY_CLASS_NAME "elm_inwin"
+#define MY_CLASS_NAME "Elm_Inwin"
+#define MY_CLASS_NAME_LEGACY "elm_inwin"
 
 static const Elm_Layout_Part_Alias_Description _content_aliases[] =
 {
@@ -124,7 +125,7 @@ _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
      }
 
    eo_do_super(obj, MY_CLASS, eo_constructor());
-   eo_do(obj, evas_obj_type_set(MY_CLASS_NAME));
+   eo_do(obj, evas_obj_type_set(MY_CLASS_NAME_LEGACY));
 }
 
 EAPI void
@@ -192,7 +193,7 @@ _class_constructor(Eo_Class *klass)
    };
    eo_class_funcs_set(klass, func_desc);
 
-   evas_smart_legacy_type_register(MY_CLASS_NAME, klass);
+   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_OBJ_WIN_INWIN_SUB_ID_ACTIVATE, "Activates an inwin object, ensuring its visibility."),

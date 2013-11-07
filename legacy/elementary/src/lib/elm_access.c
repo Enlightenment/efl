@@ -7,7 +7,8 @@
 
 #define MY_CLASS ELM_OBJ_ACCESS_CLASS
 
-#define MY_CLASS_NAME "elm_access"
+#define MY_CLASS_NAME "Elm_Access"
+#define MY_CLASS_NAME_LEGACY "elm_access"
 
 struct _Func_Data
 {
@@ -1209,7 +1210,7 @@ _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
-         evas_obj_type_set(MY_CLASS_NAME));
+         evas_obj_type_set(MY_CLASS_NAME_LEGACY));
 }
 
 Evas_Object *
@@ -1424,7 +1425,7 @@ _class_constructor(Eo_Class *klass)
    };
    eo_class_funcs_set(klass, func_desc);
 
-   evas_smart_legacy_type_register(MY_CLASS_NAME, klass);
+   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 
 static const Eo_Class_Description class_desc = {

@@ -12,7 +12,8 @@ EAPI Eo_Op ELM_OBJ_WIN_BASE_ID = EO_NOOP;
 
 #define MY_CLASS ELM_OBJ_WIN_CLASS
 
-#define MY_CLASS_NAME "elm_win"
+#define MY_CLASS_NAME "Elm_Win"
+#define MY_CLASS_NAME_LEGACY "elm_win"
 
 static const Elm_Win_Trap *trap = NULL;
 
@@ -2971,7 +2972,7 @@ _win_constructor(Eo *obj, void *_pd, va_list *list)
    eo_do(obj, eo_parent_set(ecore_evas_get(tmp_sd.ee)));
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
-         evas_obj_type_set(MY_CLASS_NAME),
+         evas_obj_type_set(MY_CLASS_NAME_LEGACY),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
 
    if (getenv("ELM_FIRST_FRAME"))
@@ -5337,7 +5338,7 @@ elm_win_xwindow_get(const Evas_Object *obj)
 {
    if (!obj) return 0;
 
-   if (!evas_object_smart_type_check_ptr(obj, MY_CLASS_NAME))
+   if (!evas_object_smart_type_check_ptr(obj, MY_CLASS_NAME_LEGACY))
      {
         Ecore_Evas *ee = ecore_evas_ecore_evas_get(evas_object_evas_get(obj));
         return _elm_ee_xwin_get(ee);
@@ -5379,7 +5380,7 @@ elm_win_wl_window_get(const Evas_Object *obj)
        (!ENGINE_COMPARE(ELM_WAYLAND_EGL)))
      return NULL;
 
-   if (!evas_object_smart_type_check_ptr(obj, MY_CLASS_NAME))
+   if (!evas_object_smart_type_check_ptr(obj, MY_CLASS_NAME_LEGACY))
      {
         Ecore_Evas *ee = ecore_evas_ecore_evas_get(evas_object_evas_get(obj));
         return ecore_evas_wayland_window_get(ee);
@@ -5507,7 +5508,7 @@ elm_win_window_id_get(const Evas_Object *obj)
 {
    if (!obj) return 0;
 
-   if (!evas_object_smart_type_check_ptr(obj, MY_CLASS_NAME))
+   if (!evas_object_smart_type_check_ptr(obj, MY_CLASS_NAME_LEGACY))
      {
         Ecore_Evas *ee = ecore_evas_ecore_evas_get(evas_object_evas_get(obj));
         return ecore_evas_window_get(ee);
@@ -5638,7 +5639,7 @@ _class_constructor(Eo_Class *klass)
 
    eo_class_funcs_set(klass, func_desc);
 
-   evas_smart_legacy_type_register(MY_CLASS_NAME, klass);
+   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 
 static const Eo_Op_Description op_desc[] = {

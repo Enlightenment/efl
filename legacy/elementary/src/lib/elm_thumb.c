@@ -9,7 +9,8 @@
 
 EAPI Eo_Op ELM_OBJ_THUMB_BASE_ID = EO_NOOP;
 
-#define MY_CLASS_NAME "elm_thumb"
+#define MY_CLASS_NAME "Elm_Thumb"
+#define MY_CLASS_NAME_LEGACY "elm_thumb"
 
 #define MY_CLASS ELM_OBJ_THUMB_CLASS
 
@@ -1200,7 +1201,7 @@ _class_constructor(Eo_Class *klass)
    };
    eo_class_funcs_set(klass, func_desc);
 
-   evas_smart_legacy_type_register(MY_CLASS_NAME, klass);
+   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 
 static const Eo_Op_Description op_desc[] = {

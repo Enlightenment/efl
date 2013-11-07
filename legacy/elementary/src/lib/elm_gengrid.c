@@ -18,7 +18,8 @@ EAPI Eo_Op ELM_OBJ_GENGRID_BASE_ID = EO_NOOP;
 
 #define MY_CLASS ELM_OBJ_GENGRID_CLASS
 
-#define MY_CLASS_NAME "elm_gengrid"
+#define MY_CLASS_NAME "Elm_Gengrid"
+#define MY_CLASS_NAME_LEGACY "elm_gengrid"
 
 // internally allocated
 #define CLASS_ALLOCATED     0x3a70f00f
@@ -2507,7 +2508,7 @@ _constructor(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
-         evas_obj_type_set(MY_CLASS_NAME),
+         evas_obj_type_set(MY_CLASS_NAME_LEGACY),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
 }
 
@@ -4123,7 +4124,7 @@ _class_constructor(Eo_Class *klass)
    if (_elm_config->access_mode)
       _elm_gengrid_smart_focus_next_enable = EINA_TRUE;
 
-   evas_smart_legacy_type_register(MY_CLASS_NAME, klass);
+   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_OBJ_GENGRID_SUB_ID_ITEM_SIZE_SET, "Set the size for the items of a given gengrid widget."),

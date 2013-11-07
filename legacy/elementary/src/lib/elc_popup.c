@@ -10,7 +10,8 @@ EAPI Eo_Op ELM_OBJ_POPUP_BASE_ID = EO_NOOP;
 
 #define MY_CLASS ELM_OBJ_POPUP_CLASS
 
-#define MY_CLASS_NAME "elm_popup"
+#define MY_CLASS_NAME "Elm_Popup"
+#define MY_CLASS_NAME_LEGACY "elm_popup"
 
 #define ELM_POPUP_ACTION_BUTTON_MAX 3
 
@@ -1589,7 +1590,7 @@ _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
-         evas_obj_type_set(MY_CLASS_NAME),
+         evas_obj_type_set(MY_CLASS_NAME_LEGACY),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
 }
 
@@ -1925,7 +1926,7 @@ _class_constructor(Eo_Class *klass)
   };
    eo_class_funcs_set(klass, func_desc);
 
-   evas_smart_legacy_type_register(MY_CLASS_NAME, klass);
+   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_OBJ_POPUP_SUB_ID_CONTENT_TEXT_WRAP_TYPE_SET, "Sets the wrapping type of content text packed in content."),
