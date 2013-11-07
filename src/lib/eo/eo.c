@@ -623,7 +623,8 @@ _eo2_class_funcs_set(_Eo_Class *klass)
    qsort((void*)op_descs, klass->desc->ops.count, sizeof(Eo2_Op_Description), eo2_api_funcs_cmp);
 
    op_id = klass->base_id;
-   DBG("Set functions for class '%s'", klass->desc->name);
+   DBG("Set functions for class '%s' %p", klass->desc->name, klass);
+   if (!op_descs) return;
    for (op_desc = op_descs; op_desc->op_type != EO_OP_TYPE_INVALID; op_desc++)
      {
         if(op_desc->api_func == NULL)
