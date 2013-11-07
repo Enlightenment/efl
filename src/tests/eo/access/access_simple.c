@@ -27,7 +27,7 @@ _a_set(Eo *obj, void *class_data, int a)
    pd->protected.protected_x1 = a + 1;
    pd->protected.public.public_x2 = a + 2;
 
-   eo_do(obj, eo_event_callback_call(EV_A_CHANGED, &pd->a, NULL));
+   eo2_do(obj, eo2_event_callback_call(EV_A_CHANGED, &pd->a));
 }
 
 EAPI EO2_VOID_FUNC_BODYV(simple_a_set, EO2_FUNC_CALL(a), int a);
