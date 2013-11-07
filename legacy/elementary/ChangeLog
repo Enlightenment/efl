@@ -1732,6 +1732,6 @@
 
         * slider: Added elm_slider_step_get(), elm_slider_step_set().
 
-2013-10-03  Daniel Juyung Seo (SeoZ)
+2013-11-03  Daniel Juyung Seo (SeoZ)
 
         * Genlist/Gengrid/List: Added multi select mode.
