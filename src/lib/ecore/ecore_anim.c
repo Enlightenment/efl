@@ -12,7 +12,7 @@
 
 #define MY_CLASS ECORE_ANIMATOR_CLASS
 
-#define MY_CLASS_NAME "ecore_animator"
+#define MY_CLASS_NAME "Ecore_Animator"
 
 #define ECORE_ANIMATOR_CHECK(obj)                       \
   if (!eo_isa((obj), ECORE_ANIMATOR_CLASS)) \

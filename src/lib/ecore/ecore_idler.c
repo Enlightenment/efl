@@ -11,7 +11,7 @@
 
 #define MY_CLASS ECORE_IDLER_CLASS
 
-#define MY_CLASS_NAME "ecore_idler"
+#define MY_CLASS_NAME "Ecore_Idler"
 
 EAPI Eo_Op ECORE_IDLER_BASE_ID = EO_NOOP;
 

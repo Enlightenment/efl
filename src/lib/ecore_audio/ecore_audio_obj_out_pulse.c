@@ -23,7 +23,7 @@ extern pa_mainloop_api functable;
 EAPI Eo_Op ECORE_AUDIO_OBJ_OUT_PULSE_BASE_ID = EO_NOOP;
 
 #define MY_CLASS ECORE_AUDIO_OBJ_OUT_PULSE_CLASS
-#define MY_CLASS_NAME "ecore_audio_obj_out_pulse"
+#define MY_CLASS_NAME "Ecore_Audio_Out_Pulse"
 
 EAPI const Eo_Event_Description _ECORE_AUDIO_EV_OUT_PULSE_CONTEXT_READY =
   EO_EVENT_DESCRIPTION("context,ready", "Called when the output is ready for playback.");

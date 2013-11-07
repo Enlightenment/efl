@@ -7,7 +7,8 @@ EAPI Eo_Op EVAS_OBJ_SMART_BASE_ID = EO_NOOP;
 
 #define MY_CLASS EVAS_OBJ_SMART_CLASS
 
-#define MY_CLASS_NAME "Evas_Object_Smart"
+#define MY_CLASS_NAME "Evas_Smart"
+#define MY_CLASS_NAME_LEGACY "Evas_Object_Smart"
 
 extern Eina_Hash* signals_hash_table;
 
@@ -675,7 +676,7 @@ _constructor(Eo *eo_obj, void *class_data, va_list *list EINA_UNUSED)
    eo_do(eo_obj, eo_parent_get(&parent));
    evas_object_inject(eo_obj, obj, evas_object_evas_get(parent));
    eo_do(eo_obj,
-         evas_obj_type_set(MY_CLASS_NAME),
+         evas_obj_type_set(MY_CLASS_NAME_LEGACY),
          evas_obj_smart_add());
 }
 
@@ -1822,7 +1823,7 @@ _class_constructor(Eo_Class *klass)
 
    _evas_smart_class_names_hash_table = eina_hash_string_small_new(NULL);
 
-   evas_smart_legacy_type_register(MY_CLASS_NAME, klass);
+   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 
 static void

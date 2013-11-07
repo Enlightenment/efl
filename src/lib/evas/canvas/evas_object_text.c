@@ -7,7 +7,7 @@ EAPI Eo_Op EVAS_OBJ_TEXT_BASE_ID = EO_NOOP;
 
 #define MY_CLASS EVAS_OBJ_TEXT_CLASS
 
-#define MY_CLASS_NAME "Evas_Object_Text"
+#define MY_CLASS_NAME "Evas_Text"
 
 /* save typing */
 #define ENFN obj->layer->evas->engine.func

@@ -313,7 +313,7 @@ static const Eo_Op_Description op_desc[] = {
 
 static const Eo_Class_Description class_desc = {
      EO_VERSION,
-     "Evas_Object_Smart_Clipped",
+     "Evas_Smart_Clipped",
      EO_CLASS_TYPE_REGULAR,
      EO_CLASS_DESCRIPTION_OPS(&EVAS_OBJ_SMART_CLIPPED_BASE_ID, op_desc, EVAS_OBJ_SMART_CLIPPED_SUB_ID_LAST),
      NULL,

@@ -11,7 +11,7 @@
 
 #define MY_CLASS ECORE_POLLER_CLASS
 
-#define MY_CLASS_NAME "ecore_poller"
+#define MY_CLASS_NAME "Ecore_Poller"
 
 EAPI Eo_Op ECORE_POLLER_BASE_ID = EO_NOOP;
 

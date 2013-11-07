@@ -1066,7 +1066,7 @@ ecore_memory_state_set(Ecore_Memory_State state)
 
 static const Eo_Class_Description parent_class_desc = {
      EO_VERSION,
-     "ecore_parent",
+     "Ecore_Parent",
      EO_CLASS_TYPE_REGULAR,
      EO_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
      NULL,

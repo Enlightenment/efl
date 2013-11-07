@@ -9,7 +9,8 @@
 
 EAPI Eo_Op EVAS_OBJ_BOX_BASE_ID = EO_NOOP;
 
-#define MY_CLASS_NAME "Evas_Object_Box"
+#define MY_CLASS_NAME "Evas_Box"
+#define MY_CLASS_NAME_LEGACY "Evas_Object_Box"
 
 #define MY_CLASS EVAS_OBJ_BOX_CLASS
 
@@ -512,7 +513,7 @@ _constructor(Eo *obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_smart_callbacks_descriptions_set(_signals, NULL),
-         evas_obj_type_set(MY_CLASS_NAME));
+         evas_obj_type_set(MY_CLASS_NAME_LEGACY));
 }
 
 EAPI Evas_Object *
@@ -2352,7 +2353,7 @@ _class_constructor(Eo_Class *klass)
 
    eo_class_funcs_set(klass, func_desc);
 
-   evas_smart_legacy_type_register(MY_CLASS_NAME, klass);
+   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 
 static const Eo_Op_Description op_desc[] = {

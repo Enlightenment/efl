@@ -7,14 +7,14 @@ EAPI Eo_Op EVAS_OBJ_TEXTGRID_BASE_ID = EO_NOOP;
 
 #define MY_CLASS EVAS_OBJ_TEXTGRID_CLASS
 
-#define MY_CLASS_NAME "textgrid"
+#define MY_CLASS_NAME "Evas_Textgrid"
 
 /* save typing */
 #define ENFN obj->layer->evas->engine.func
 #define ENDT obj->layer->evas->engine.data.output
 
 /* private magic number for text objects */
-static const char o_type[] = MY_CLASS_NAME;
+static const char o_type[] = "textgrid";
 
 /* private struct for line object internal data */
 typedef struct _Evas_Object_Textgrid       Evas_Object_Textgrid;
@@ -1739,7 +1739,7 @@ static const Eo_Op_Description op_desc[] = {
 
 static const Eo_Class_Description class_desc = {
      EO_VERSION,
-     "evas_object_textgrid",
+     MY_CLASS_NAME,
      EO_CLASS_TYPE_REGULAR,
      EO_CLASS_DESCRIPTION_OPS(&EVAS_OBJ_TEXTGRID_BASE_ID, op_desc, EVAS_OBJ_TEXTGRID_SUB_ID_LAST),
      NULL,

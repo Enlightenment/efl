@@ -11,7 +11,7 @@
 
 #define MY_CLASS ECORE_IDLE_ENTERER_CLASS
 
-#define MY_CLASS_NAME "ecore_idle_enterer"
+#define MY_CLASS_NAME "Ecore_Idle_Enterer"
 
 EAPI Eo_Op ECORE_IDLE_ENTERER_BASE_ID = EO_NOOP;
 

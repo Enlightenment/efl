@@ -18,7 +18,7 @@
 EAPI Eo_Op ECORE_AUDIO_OBJ_BASE_ID = EO_NOOP;
 
 #define MY_CLASS ECORE_AUDIO_OBJ_CLASS
-#define MY_CLASS_NAME "ecore_audio_obj"
+#define MY_CLASS_NAME "Ecore_Audio"
 
 static void _name_set(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
 {

@@ -17,7 +17,7 @@
 EAPI Eo_Op ECORE_AUDIO_OBJ_OUT_BASE_ID = EO_NOOP;
 
 #define MY_CLASS ECORE_AUDIO_OBJ_OUT_CLASS
-#define MY_CLASS_NAME "ecore_audio_obj_out"
+#define MY_CLASS_NAME "Ecore_Audio_Out"
 
 static Eina_Bool _write_cb(void *data)
 {

@@ -17,7 +17,7 @@
 EAPI Eo_Op ECORE_AUDIO_OBJ_IN_SNDFILE_BASE_ID = EO_NOOP;
 
 #define MY_CLASS ECORE_AUDIO_OBJ_IN_SNDFILE_CLASS
-#define MY_CLASS_NAME "ecore_audio_obj_in_sndfile"
+#define MY_CLASS_NAME "Ecore_Audio_In_Sndfile"
 
 extern SF_VIRTUAL_IO vio_wrapper;
 

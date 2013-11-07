@@ -11,7 +11,7 @@
 #include "ecore_private.h"
 
 #define MY_CLASS ECORE_TIMER_CLASS
-#define MY_CLASS_NAME "ecore_timer"
+#define MY_CLASS_NAME "Ecore_Timer"
 
 EAPI Eo_Op ECORE_TIMER_BASE_ID = EO_NOOP;
 

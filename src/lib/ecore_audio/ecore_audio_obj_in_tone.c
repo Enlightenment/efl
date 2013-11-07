@@ -17,7 +17,7 @@
 EAPI Eo_Op ECORE_AUDIO_OBJ_IN_TONE_BASE_ID = EO_NOOP;
 
 #define MY_CLASS ECORE_AUDIO_OBJ_IN_TONE_CLASS
-#define MY_CLASS_NAME "ecore_audio_obj_in_tone"
+#define MY_CLASS_NAME "Ecore_Audio_In_Tone"
 
 struct _Ecore_Audio_Tone
 {

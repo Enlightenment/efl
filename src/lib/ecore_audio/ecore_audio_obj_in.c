@@ -24,7 +24,7 @@ EAPI const Eo_Event_Description _ECORE_AUDIO_EV_IN_SAMPLERATE_CHANGED =
          EO_EVENT_DESCRIPTION("in,samplerate,changed", "Called when the input samplerate has changed.");
 
 #define MY_CLASS ECORE_AUDIO_OBJ_IN_CLASS
-#define MY_CLASS_NAME "ecore_audio_obj_in"
+#define MY_CLASS_NAME "Ecore_Audio_In"
 
 static void _speed_set(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
 {

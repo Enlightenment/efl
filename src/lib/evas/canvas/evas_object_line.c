@@ -501,7 +501,7 @@ static const Eo_Op_Description op_desc[] = {
 
 static const Eo_Class_Description class_desc = {
      EO_VERSION,
-     "Evas_Object_Line",
+     "Evas_Line",
      EO_CLASS_TYPE_REGULAR,
      EO_CLASS_DESCRIPTION_OPS(&EVAS_OBJ_LINE_BASE_ID, op_desc, EVAS_OBJ_LINE_SUB_ID_LAST),
      NULL,

@@ -74,7 +74,7 @@ EAPI Eo_Op EVAS_OBJ_TEXTBLOCK_BASE_ID = EO_NOOP;
 
 #define MY_CLASS EVAS_OBJ_TEXTBLOCK_CLASS
 
-#define MY_CLASS_NAME "Evas_Object_Textblock"
+#define MY_CLASS_NAME "Evas_Textblock"
 
 #include "linebreak.h"
 #include "wordbreak.h"

@@ -11,7 +11,7 @@
 
 #define MY_CLASS ECORE_JOB_CLASS
 
-#define MY_CLASS_NAME "ecore_job"
+#define MY_CLASS_NAME "Ecore_Job"
 
 EAPI Eo_Op ECORE_JOB_BASE_ID = EO_NOOP;
 

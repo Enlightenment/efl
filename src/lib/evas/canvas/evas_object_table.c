@@ -8,7 +8,8 @@ EAPI Eo_Op EVAS_OBJ_TABLE_BASE_ID = EO_NOOP;
 
 #define MY_CLASS EVAS_OBJ_TABLE_CLASS
 
-#define MY_CLASS_NAME "Evas_Object_Table"
+#define MY_CLASS_NAME "Evas_Table"
+#define MY_CLASS_NAME_LEGACY "Evas_Object_Table"
 
 typedef struct _Evas_Object_Table_Data       Evas_Object_Table_Data;
 typedef struct _Evas_Object_Table_Option     Evas_Object_Table_Option;
@@ -964,7 +965,7 @@ static void
 _constructor(Eo *obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
 {
    eo_do_super(obj, MY_CLASS, eo_constructor());
-   eo_do(obj, evas_obj_type_set(MY_CLASS_NAME));
+   eo_do(obj, evas_obj_type_set(MY_CLASS_NAME_LEGACY));
 }
 
 EAPI Evas_Object *
@@ -1593,7 +1594,7 @@ _class_constructor(Eo_Class *klass)
    };
    eo_class_funcs_set(klass, func_desc);
 
-   evas_smart_legacy_type_register(MY_CLASS_NAME, klass);
+   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(EVAS_OBJ_TABLE_SUB_ID_ADD_TO, "Create a table that is child of a given element parent."),
@@ -1617,7 +1618,7 @@ static const Eo_Op_Description op_desc[] = {
 };
 static const Eo_Class_Description class_desc = {
      EO_VERSION,
-     "Evas_Object_Table",
+     MY_CLASS_NAME,
      EO_CLASS_TYPE_REGULAR,
      EO_CLASS_DESCRIPTION_OPS(&EVAS_OBJ_TABLE_BASE_ID, op_desc, EVAS_OBJ_TABLE_SUB_ID_LAST),
      NULL,
