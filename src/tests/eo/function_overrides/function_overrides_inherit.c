@@ -9,7 +9,7 @@
 #define MY_CLASS INHERIT_CLASS
 
 static const Eo_Class_Description class_desc = {
-     EO_VERSION,
+     EO2_VERSION,
      "Inherit",
      EO_CLASS_TYPE_REGULAR,
      EO_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),

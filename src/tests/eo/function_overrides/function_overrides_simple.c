@@ -7,76 +7,72 @@
 
 #include "../eunit_tests.h"
 
-EAPI Eo_Op SIMPLE_BASE_ID = 0;
-
 #define MY_CLASS SIMPLE_CLASS
 
+Eina_Bool class_print_called = EINA_FALSE;
+Eina_Bool class_print2_called = EINA_FALSE;
+
 static void
-_a_set(Eo *obj EINA_UNUSED, void *class_data, va_list *list)
+_a_set(Eo *obj EINA_UNUSED, void *class_data, int a)
 {
    Simple_Public_Data *pd = class_data;
-   int a;
-   a = va_arg(*list, int);
    printf("%s %d\n", eo_class_name_get(MY_CLASS), a);
    pd->a = a;
 }
 
 static void
-_a_print(Eo *obj EINA_UNUSED, void *class_data, va_list *list)
+_a_print(Eo *obj EINA_UNUSED, void *class_data)
 {
-   const Simple_Public_Data *pd = class_data;
-   (void) list;
+   Simple_Public_Data *pd = class_data;
    printf("Print %s %d\n", eo_class_name_get(MY_CLASS), pd->a);
+   pd->a_print_called = EINA_TRUE;
 }
 
 static void
-_class_print(Eo_Class *klass, void *data EINA_UNUSED, va_list *list)
+_class_print(Eo_Class *klass)
 {
-   (void) list;
    printf("Print %s-%s\n", eo_class_name_get(klass), eo_class_name_get(MY_CLASS));
-   fail_if(eo_do_super(klass, MY_CLASS, simple_class_print()));
-   fail_if(eo_do_super(klass, MY_CLASS, simple_class_print2()));
+   class_print_called = EINA_FALSE;
+   eo2_do_super(klass, MY_CLASS, simple_class_print());
+   fail_if(class_print_called);
+
+   class_print2_called = EINA_FALSE;
+   eo2_do_super(klass, MY_CLASS, simple_class_print2());
+   fail_if(class_print2_called);
+
+   class_print_called = EINA_TRUE;
 }
 
 static void
-_class_print2(Eo_Class *klass, void *data EINA_UNUSED, va_list *list)
+_class_print2(Eo_Class *klass)
 {
-   (void) list;
    printf("Print %s-%s\n", eo_class_name_get(klass), eo_class_name_get(MY_CLASS));
+   class_print2_called = EINA_TRUE;
 }
 
-static void
-_class_constructor(Eo_Class *klass)
-{
-   const Eo_Op_Func_Description func_desc[] = {
-        EO_OP_FUNC(SIMPLE_ID(SIMPLE_SUB_ID_A_SET), _a_set),
-        EO_OP_FUNC(SIMPLE_ID(SIMPLE_SUB_ID_A_PRINT), _a_print),
-        EO_OP_FUNC_CLASS(SIMPLE_ID(SIMPLE_SUB_ID_CLASS_PRINT), _class_print),
-        EO_OP_FUNC_CLASS(SIMPLE_ID(SIMPLE_SUB_ID_CLASS_PRINT2), _class_print2),
-        EO_OP_FUNC_SENTINEL
-   };
+EAPI EO2_VOID_FUNC_BODYV(simple_a_set, EO2_FUNC_CALL(a), int a);
+EAPI EO2_VOID_FUNC_BODY(simple_a_print);
+EAPI EO2_VOID_CLASS_FUNC_BODY(simple_class_print);
+EAPI EO2_VOID_CLASS_FUNC_BODY(simple_class_print2);
 
-   eo_class_funcs_set(klass, func_desc);
-}
-
-static const Eo_Op_Description op_desc[] = {
-     EO_OP_DESCRIPTION(SIMPLE_SUB_ID_A_SET, "Set property A"),
-     EO_OP_DESCRIPTION(SIMPLE_SUB_ID_A_PRINT, "Print property A"),
-     EO_OP_DESCRIPTION_CLASS(SIMPLE_SUB_ID_CLASS_PRINT, "Print class name."),
-     EO_OP_DESCRIPTION_CLASS(SIMPLE_SUB_ID_CLASS_PRINT2, "Print2 class name."),
-     EO_OP_DESCRIPTION_SENTINEL
+static Eo2_Op_Description op_descs[] = {
+     EO2_OP_FUNC(_a_set, simple_a_set, "Set property A"),
+     EO2_OP_FUNC(_a_print, simple_a_print, "Print property A"),
+     EO2_OP_CLASS_FUNC(_class_print, simple_class_print, "Print class name."),
+     EO2_OP_CLASS_FUNC(_class_print2, simple_class_print2, "Print2 class name."),
+     EO2_OP_SENTINEL
 };
 
 static const Eo_Class_Description class_desc = {
-     EO_VERSION,
+     EO2_VERSION,
      "Simple",
      EO_CLASS_TYPE_REGULAR,
-     EO_CLASS_DESCRIPTION_OPS(&SIMPLE_BASE_ID, op_desc, SIMPLE_SUB_ID_LAST),
+     EO2_CLASS_DESCRIPTION_OPS(op_descs),
      NULL,
      sizeof(Simple_Public_Data),
-     _class_constructor,
+     NULL,
      NULL
 };
 
-EO_DEFINE_CLASS(simple_class_get, &class_desc, EO_BASE_CLASS, NULL);
+EO_DEFINE_CLASS(simple_class_get, &class_desc, EO2_BASE_CLASS, NULL);
 

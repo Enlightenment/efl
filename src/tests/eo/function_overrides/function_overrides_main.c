@@ -17,45 +17,61 @@ main(int argc, char *argv[])
    (void) argv;
    eo_init();
 
-   Eo *obj = eo_add(INHERIT2_CLASS, NULL);
+   Eo *obj = eo2_add(INHERIT2_CLASS, NULL);
 
-   eo_do(obj, simple_a_set(1));
+   eo2_do(obj, simple_a_set(1));
    Simple_Public_Data *pd = eo_data_scope_get(obj, SIMPLE_CLASS);
    fail_if(pd->a != 2);
 
    eo_unref(obj);
 
-   obj = eo_add(INHERIT3_CLASS, NULL);
+   obj = eo2_add(INHERIT3_CLASS, NULL);
 
-   eo_do(obj, simple_a_set(1));
+   eo2_do(obj, simple_a_set(1));
    pd = eo_data_scope_get(obj, SIMPLE_CLASS);
    fail_if(pd->a != 3);
 
    eo_unref(obj);
 
-   obj = eo_add(INHERIT2_CLASS, NULL);
-   fail_if(!eo_do(obj, inherit2_print()));
-   fail_if(!eo_do(obj, inherit2_print(), inherit2_print()));
+   obj = eo2_add(INHERIT2_CLASS, NULL);
+   inherit2_print_called = EINA_FALSE;
+   eo2_do(obj, inherit2_print());
+   eo2_do(obj, inherit2_print(), inherit2_print());
+   fail_if(!inherit2_print_called);
    eo_unref(obj);
 
-   obj = eo_add(SIMPLE_CLASS, NULL);
-   fail_if(eo_do(obj, inherit2_print2()));
+   obj = eo2_add(SIMPLE_CLASS, NULL);
+   inherit2_print_called = EINA_FALSE;
+   eo2_do(obj, inherit2_print());
+   fail_if(inherit2_print_called);
 
 #ifdef EO_DEBUG
-   fail_if(eo_do(obj, simple_class_print()));
+   class_print_called = EINA_FALSE;
+   eo2_do(obj, simple_class_print());
+   fail_if(class_print_called);
 #endif
 
-   fail_if(!eo_do(SIMPLE_CLASS, simple_class_print()));
-   fail_if(!eo_do(INHERIT_CLASS, simple_class_print()));
-   fail_if(!eo_do(INHERIT2_CLASS, simple_class_print()));
-   fail_if(!eo_do(INHERIT3_CLASS, simple_class_print()));
+   class_print_called = EINA_FALSE;
+   eo2_do(SIMPLE_CLASS, simple_class_print());
+   fail_if(!class_print_called);
+   class_print_called = EINA_FALSE;
+   eo2_do(INHERIT_CLASS, simple_class_print());
+   fail_if(!class_print_called);
+   class_print_called = EINA_FALSE;
+   eo2_do(INHERIT2_CLASS, simple_class_print());
+   fail_if(!class_print_called);
+   class_print_called = EINA_FALSE;
+   eo2_do(INHERIT3_CLASS, simple_class_print());
+   fail_if(!class_print_called);
 
 #ifdef EO_DEBUG
-   fail_if(eo_do(SIMPLE_CLASS, simple_a_print()));
+   pd->a_print_called = EINA_FALSE;
+   eo2_do(SIMPLE_CLASS, simple_a_print());
+   fail_if(pd->a_print_called);
 #endif
 
-   eo_do_super(obj, SIMPLE_CLASS, eo_constructor());
-   eo_do_super(obj, SIMPLE_CLASS, eo_destructor());
+   eo2_do_super(obj, SIMPLE_CLASS, eo2_constructor());
+   eo2_do_super(obj, SIMPLE_CLASS, eo2_destructor());
 
    eo_unref(obj);
 
