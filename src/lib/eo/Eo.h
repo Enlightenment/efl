@@ -644,7 +644,7 @@ EAPI extern Eo2_Hook_Call eo2_hook_call_post;
      static Eo_Op op = EO_NOOP;                                         \
      if ( op == EO_NOOP )                                               \
         op = eo2_api_op_id_get((void*)Name, Type);                      \
-     if (!eo2_call_resolve(op, &call)) return DefRet;                   \
+     if (!eo2_call_resolve(#Name, op, &call)) return DefRet;            \
      __##Name##_func _func_ = (__##Name##_func) call.func;              \
 
 // to define an EAPI function
@@ -760,7 +760,7 @@ EAPI extern Eo2_Hook_Call eo2_hook_call_post;
 EAPI Eo_Op eo2_api_op_id_get(const void *api_func, const Eo_Op_Type);
 
 // gets the real function pointer and the object data
-EAPI Eina_Bool eo2_call_resolve(const Eo_Op op, Eo2_Op_Call_Data *call);
+EAPI Eina_Bool eo2_call_resolve(const char *func_name, const Eo_Op op, Eo2_Op_Call_Data *call);
 
 // start of eo2_do barrier, gets the object pointer and ref it, put it on the stask
 EAPI Eina_Bool eo2_do_start(const Eo *obj, const Eo_Class *cur_klass, const char *file, const char *func, int line);

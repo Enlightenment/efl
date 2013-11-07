@@ -441,7 +441,7 @@ eo2_do_end(const Eo **eo_id EINA_UNUSED)
 }
 
 EAPI Eina_Bool
-eo2_call_resolve(const Eo_Op op, Eo2_Op_Call_Data *call)
+eo2_call_resolve(const char *func_name, const Eo_Op op, Eo2_Op_Call_Data *call)
 {
    Eo2_Stack_Frame *fptr;
    const _Eo_Object * obj;
@@ -455,7 +455,7 @@ eo2_call_resolve(const Eo_Op op, Eo2_Op_Call_Data *call)
    func = _dich_func_get(klass, op);
    if (EINA_UNLIKELY(func == NULL))
      {
-        ERR("you called func %d which is unknown in class '%s'", op, klass->desc->name);
+        ERR("you called func '%s' (%d) which is unknown in class '%s'", func_name, op, klass->desc->name);
         return EINA_FALSE;
      }
 
@@ -485,7 +485,7 @@ eo2_call_resolve(const Eo_Op op, Eo2_Op_Call_Data *call)
 
    if (func->src != NULL)
      {
-        ERR("you called a pure virtual func %d", op);
+        ERR("you called a pure virtual func '%s' (%d)", func_name, op);
         return EINA_FALSE;
      }
 
@@ -515,7 +515,7 @@ eo2_call_resolve(const Eo_Op op, Eo2_Op_Call_Data *call)
           }
      }
 
-   ERR("func %d could not be resolved in class '%s'", op, klass->desc->name);
+   ERR("func '%s' (%d) could not be resolved in class '%s'", func_name, op, klass->desc->name);
 
    return EINA_FALSE;
 }
