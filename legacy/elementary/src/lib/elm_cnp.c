@@ -2147,11 +2147,31 @@ struct _Wl_Cnp_Selection
 
    Evas_Object *widget;
    Evas_Object *requestwidget;
+
+   void *udata;
+   Elm_Sel_Type seltype;
+   Elm_Sel_Format requestformat;
+   Elm_Drop_Cb datacb;
+
+   Elm_Selection_Loss_Cb loss_cb;
+   void *loss_data;
+
+   Elm_Sel_Format format;
+   Ecore_Wl_Window *win;
+   Elm_Xdnd_Action action;
+
+   Eina_Bool active : 1;
 };
 
 static Eina_Bool _wl_elm_cnp_init(void);
 
-static Wl_Cnp_Selection wl_cnp_selection = {0, 0, NULL, NULL};
+static Wl_Cnp_Selection wl_cnp_selection = 
+{
+   0, 0, NULL, NULL, 
+   NULL, 0, 0, NULL, NULL, NULL, 
+   0, NULL, 0, EINA_FALSE
+};
+
 static void _wl_sel_obj_del2(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__);
 static Eina_Bool _wl_elm_cnp_selection_set(Evas_Object *obj __UNUSED__, Elm_Sel_Type selection, Elm_Sel_Format format __UNUSED__, const void *selbuf, size_t buflen);
 static Eina_Bool _wl_elm_cnp_selection_get(Evas_Object *obj, Elm_Sel_Type selection, Elm_Sel_Format format __UNUSED__, Elm_Drop_Cb datacb __UNUSED__, void *udata __UNUSED__);
@@ -2188,6 +2208,14 @@ static Eina_Bool _wl_drops_accept(const char *type);
 static unsigned int _wl_elm_widget_window_get(Evas_Object *obj);
 
 static void
+_wl_sel_obj_del(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   Wl_Cnp_Selection *sel = data;
+   if (sel->widget == obj) sel->widget = NULL;
+   if (dragwidget == obj) dragwidget = NULL;
+}
+
+static void
 _wl_sel_obj_del2(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Wl_Cnp_Selection *sel = data;
@@ -2195,59 +2223,187 @@ _wl_sel_obj_del2(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_i
 }
 
 static Eina_Bool
-_wl_elm_cnp_selection_set(Evas_Object *obj __UNUSED__, Elm_Sel_Type selection, Elm_Sel_Format format __UNUSED__, const void *selbuf, size_t buflen)
+_wl_elm_cnp_selection_set(Evas_Object *obj, Elm_Sel_Type selection, Elm_Sel_Format format, const void *selbuf, size_t buflen)
 {
-   const char *types[10] = {0, };
+   Ecore_Wl_Window *win;
+   Wl_Cnp_Selection *sel = &wl_cnp_selection;
+
+   if ((!selbuf) && (format != ELM_SEL_FORMAT_IMAGE))
+     return elm_object_cnp_selection_clear(obj, selection);
 
    _wl_elm_cnp_init();
 
-   /* TODO: other EML_SEL_TYPE and ELM_SEL_FORMAT */
-   if (ELM_SEL_TYPE_CLIPBOARD == selection)
-     {
-        types[0] = "text/plain;charset=utf-8";
-        ecore_wl_dnd_selection_set(ecore_wl_input_get(), types);
+   win = elm_win_wl_window_get(obj);
 
-        if (wl_cnp_selection.selbuf) free(wl_cnp_selection.selbuf);
-        wl_cnp_selection.selbuf = strdup((char*)selbuf);
-        wl_cnp_selection.buflen = buflen;
-        return EINA_TRUE;
+   if (sel->loss_cb) sel->loss_cb(sel->loss_data, selection);
+
+   if (sel->widget)
+     evas_object_event_callback_del_full(sel->widget, 
+                                         EVAS_CALLBACK_DEL,
+                                         _wl_sel_obj_del, &wl_cnp_selection);
+   sel->widget = NULL;
+
+   sel->active = EINA_TRUE;
+   sel->seltype = selection;
+   sel->widget = obj;
+   sel->win = win;
+   /* sel->set(win, &selection, sizeof(Elm_Sel_Type)); */
+   sel->format = format;
+   sel->loss_cb = NULL;
+   sel->loss_data = NULL;
+
+   evas_object_event_callback_add
+     (sel->widget, EVAS_CALLBACK_DEL, _wl_sel_obj_del, 
+         &wl_cnp_selection);
+
+   if (selbuf)
+     {
+        if (format & ELM_SEL_FORMAT_IMAGE)
+          {
+             /* FIXME */
+             // selbuf is actual image data, not text/string
+             sel->selbuf = malloc(buflen + 1);
+             if (!sel->selbuf)
+               {
+                  elm_object_cnp_selection_clear(obj, selection);
+                  return EINA_FALSE;
+               }
+             memcpy(sel->selbuf, selbuf, buflen);
+             sel->selbuf[buflen] = 0;
+          }
+        else
+          {
+             const char *types[10] = {0, };
+             int i = -1;
+
+             if (format & ELM_SEL_FORMAT_TEXT)
+               {
+                  types[++i] = "text/plain";
+                  types[++i] = "text/plain;charset=utf-8";
+               }
+
+             if (format & ELM_SEL_FORMAT_MARKUP)
+               types[++i] = "application/x-elementary-markup";
+
+             if (format & ELM_SEL_FORMAT_HTML)
+               {
+                  types[++i] = "text/html";
+                  types[++i] = "text/html;charset=utf-8";
+               }
+
+             if (i < 0) return EINA_FALSE;
+
+             ecore_wl_dnd_selection_set(ecore_wl_input_get(), types);
+
+             if (sel->selbuf) free(sel->selbuf);
+             sel->buflen = buflen;
+             sel->selbuf = strdup((char*)selbuf);
+
+             return EINA_TRUE;
+          }
      }
+   else
+     sel->selbuf = NULL;
 
    return EINA_FALSE;
 }
 
 static Eina_Bool
-_wl_elm_cnp_selection_get(Evas_Object *obj, Elm_Sel_Type selection, Elm_Sel_Format format __UNUSED__, Elm_Drop_Cb datacb __UNUSED__, void *udata __UNUSED__)
+_wl_elm_cnp_selection_get(Evas_Object *obj, Elm_Sel_Type selection, Elm_Sel_Format format, Elm_Drop_Cb datacb, void *udata)
 {
+   Ecore_Wl_Window *win;
+   Wl_Cnp_Selection *sel = &wl_cnp_selection;
+
    _wl_elm_cnp_init();
 
-   /* For now, just avoid overlapped request */
-   if (wl_cnp_selection.requestwidget) return EINA_FALSE;
+   win = elm_win_wl_window_get(obj);
 
-   /* TODO: other EML_SEL_TYPE and ELM_SEL_FORMAT */
-   if (ELM_SEL_TYPE_CLIPBOARD == selection)
+   if (sel->requestwidget)
+     evas_object_event_callback_del_full(sel->requestwidget, 
+                                         EVAS_CALLBACK_DEL,
+                                         _wl_sel_obj_del2, &wl_cnp_selection);
+   sel->requestwidget = NULL;
+
+   sel->requestformat = format;
+   sel->requestwidget = obj;
+   sel->win = win;
+   /* sel->request(win, ECORE_X_SELECTION_TARGET_TARGETS); */
+   sel->datacb = datacb;
+   sel->udata = udata;
+
+   evas_object_event_callback_add(sel->requestwidget, 
+                                  EVAS_CALLBACK_DEL, _wl_sel_obj_del2, 
+                                  &wl_cnp_selection);
+
+   if (selection == ELM_SEL_TYPE_CLIPBOARD)
      {
-        wl_cnp_selection.requestwidget = obj;
-        evas_object_event_callback_add(wl_cnp_selection.requestwidget, EVAS_CALLBACK_DEL,
-                                       _wl_sel_obj_del2, &wl_cnp_selection);
-        ecore_wl_dnd_selection_get(ecore_wl_input_get(),
-                                   "text/plain;charset=utf-8");
+        const char *types[10] = {0, };
+        int i = -1;
+
+        if (format & ELM_SEL_FORMAT_TEXT)
+          {
+             types[++i] = "text/plain";
+             types[++i] = "text/plain;charset=utf-8";
+          }
+
+        if (format & ELM_SEL_FORMAT_MARKUP)
+          types[++i] = "application/x-elementary-markup";
+
+        if (format & ELM_SEL_FORMAT_HTML)
+          {
+             types[++i] = "text/html";
+             types[++i] = "text/html;charset=utf-8";
+          }
+
+        if (i < 0) return EINA_FALSE;
+
+        ecore_wl_dnd_selection_get(ecore_wl_input_get(), *types);
      }
+
    return EINA_TRUE;
 }
 
-static Eina_Bool
-_wl_elm_cnp_selection_clear(Evas_Object *obj EINA_UNUSED, Elm_Sel_Type selection)
+static void
+_wl_elm_cnp_selection_loss_callback_set(Evas_Object *obj __UNUSED__, Elm_Sel_Type selection __UNUSED__, Elm_Selection_Loss_Cb func, const void *data)
 {
+   Wl_Cnp_Selection *sel = &wl_cnp_selection;
+
    _wl_elm_cnp_init();
 
-   if (ELM_SEL_TYPE_CLIPBOARD == selection)
-     {
-        wl_cnp_selection.requestwidget = NULL;
-        if (wl_cnp_selection.selbuf) free(wl_cnp_selection.selbuf);
-        wl_cnp_selection.buflen = 0;
-        ecore_wl_dnd_selection_clear(ecore_wl_input_get());
-     }
+   sel->loss_cb = func;
+   sel->loss_data = (void *)data;
+}
+
+static Eina_Bool
+_wl_elm_cnp_selection_clear(Evas_Object *obj, Elm_Sel_Type selection __UNUSED__)
+{
+   Wl_Cnp_Selection *sel = &wl_cnp_selection;
+
+   _wl_elm_cnp_init();
+
+   if ((!sel->active) || (sel->widget != obj))
+     return EINA_TRUE;
+
+   if (sel->widget)
+     evas_object_event_callback_del_full(sel->widget, 
+                                         EVAS_CALLBACK_DEL,
+                                         _wl_sel_obj_del, &wl_cnp_selection);
+   if (sel->requestwidget)
+     evas_object_event_callback_del_full(sel->requestwidget, 
+                                         EVAS_CALLBACK_DEL,
+                                         _wl_sel_obj_del2, &wl_cnp_selection);
+
+   sel->widget = NULL;
+   sel->requestwidget = NULL;
+   sel->loss_cb = NULL;
+   sel->loss_data = NULL;
+
+   sel->active = EINA_FALSE;
+   ELM_SAFE_FREE(sel->selbuf, free);
+   sel->buflen = 0;
+   /* sel->clear(); */
+   ecore_wl_dnd_selection_clear(ecore_wl_input_get());
+
    return EINA_TRUE;
 }
 
@@ -2290,15 +2446,76 @@ _wl_selection_receive(void *udata, int type __UNUSED__, void *event)
      {
         if (!ev->done)
           {
-             /* TODO BUG: should never NEVER assume it's an elm_entry! */
-             _elm_entry_entry_paste(sel->requestwidget, ev->data);
+             if (sel->seltype == ELM_SEL_TYPE_XDND)
+               {
+                  Elm_Selection_Data sdata;
+                  Eina_List *l;
+                  Dropable *dropable;
+
+                  EINA_LIST_FOREACH(drops, l, dropable)
+                    {
+                       if (dropable->obj == sel->requestwidget) break;
+                       dropable = NULL;
+                    }
+
+                  if (dropable)
+                    {
+                       Dropable_Cbs *cbs;
+
+                       sdata.x = savedtypes.x;
+                       sdata.y = savedtypes.y;
+                       sdata.format = ELM_SEL_FORMAT_TEXT;
+                       sdata.data = ev->data;
+                       sdata.len = ev->len;
+                       sdata.action = sel->action;
+
+                       EINA_INLIST_FOREACH(dropable->cbs_list, cbs)
+                         if (cbs->dropcb)
+                           cbs->dropcb(cbs->dropdata, dropable->obj, &sdata);
+
+                       goto end;
+                    }
+               }
+
+             if (sel->datacb)
+               {
+                  Elm_Selection_Data sdata;
+
+                  sdata.x = sdata.y = 0;
+                  sdata.format = ELM_SEL_FORMAT_TEXT;
+                  sdata.data = ev->data;
+                  sdata.len = ev->len;
+                  sdata.action = sel->action;
+                  sel->datacb(sel->udata, sel->widget, &sdata);
+               }
+             else
+               {
+                  char *stripstr, *mkupstr;
+
+                  stripstr = malloc(ev->len + 1);
+                  if (!stripstr) goto end;
+                  strncpy(stripstr, (char *)ev->data, ev->len);
+                  stripstr[ev->len] = '\0';
+                  mkupstr = _elm_util_text_to_mkup((const char *)stripstr);
+                  /* TODO BUG: should never NEVER assume it's an elm_entry! */
+                  _elm_entry_entry_paste(sel->requestwidget, mkupstr);
+                  free(stripstr);
+                  free(mkupstr);
+               }
           }
         else
           {
-             evas_object_event_callback_del_full(sel->requestwidget, EVAS_CALLBACK_DEL,
+             evas_object_event_callback_del_full(sel->requestwidget, 
+                                                 EVAS_CALLBACK_DEL,
                                                  _wl_sel_obj_del2, sel);
              sel->requestwidget = NULL;
           }
+     }
+
+end:
+   if (sel->seltype == ELM_SEL_TYPE_XDND)
+     {
+        /* FIXME: Send Finished ?? */
      }
 
    return ECORE_CALLBACK_PASS_ON;
@@ -3426,6 +3643,10 @@ elm_cnp_selection_loss_callback_set(Evas_Object *obj, Elm_Sel_Type selection,
 #ifdef HAVE_ELEMENTARY_X
    if (_x11_elm_widget_xwin_get(obj))
      _x11_elm_cnp_selection_loss_callback_set(obj, selection, func, data);
+#endif
+#ifdef HAVE_ELEMENTARY_WAYLAND
+   if (elm_win_wl_window_get(obj))
+     _wl_elm_cnp_selection_loss_callback_set(obj, selection, func, data);
 #endif
    _local_elm_cnp_selection_loss_callback_set(obj, selection, func, data);
 }
