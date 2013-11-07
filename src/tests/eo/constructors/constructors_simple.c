@@ -19,24 +19,22 @@ typedef struct
 static char *class_var = NULL;
 
 #define _GET_SET_FUNC(name) \
-static void \
-_##name##_get(Eo *obj EINA_UNUSED, void *class_data, va_list *list) \
+static int \
+_##name##_get(Eo *obj EINA_UNUSED, void *class_data) \
 { \
    const Private_Data *pd = class_data; \
-   int *name; \
-   name = va_arg(*list, int *); \
-   *name = pd->name; \
    printf("%s %d\n", __func__, pd->name); \
+   return pd->name; \
 } \
 static void \
-_##name##_set(Eo *obj EINA_UNUSED, void *class_data, va_list *list) \
+_##name##_set(Eo *obj EINA_UNUSED, void *class_data, int name) \
 { \
    Private_Data *pd = class_data; \
-   int name; \
-   name = va_arg(*list, int); \
    pd->name = name; \
    printf("%s %d\n", __func__, pd->name); \
-}
+} \
+EO2_VOID_FUNC_BODYV(simple_##name##_set, EO2_FUNC_CALL(name), int name); \
+EO2_FUNC_BODY(simple_##name##_get, int, 0);
 
 _GET_SET_FUNC(a)
 _GET_SET_FUNC(b)
@@ -44,13 +42,11 @@ _GET_SET_FUNC(b)
 extern int my_init_count;
 
 static void
-_simple_constructor(Eo *obj, void *class_data, va_list *list)
+_simple_constructor(Eo *obj, void *class_data, int a)
 {
    Private_Data *pd = class_data;
-   int a;
-   a = va_arg(*list, int);
 
-   eo_do_super(obj, MY_CLASS, eo_constructor());
+   eo2_do_super(obj, MY_CLASS, eo2_constructor());
 
    pd->a = a;
    printf("%s %d\n", __func__, pd->a);
@@ -59,37 +55,24 @@ _simple_constructor(Eo *obj, void *class_data, va_list *list)
 }
 
 static void
-_constructor(Eo *obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
+_constructor(Eo *obj, void *class_data EINA_UNUSED)
 {
-   eo_do_super(obj, MY_CLASS, eo_constructor());
+   eo2_do_super(obj, MY_CLASS, eo2_constructor());
 
    my_init_count++;
 }
 
 static void
-_destructor(Eo *obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
+_destructor(Eo *obj, void *class_data EINA_UNUSED)
 {
-   eo_do_super(obj, MY_CLASS, eo_destructor());
+   eo2_do_super(obj, MY_CLASS, eo2_destructor());
 
    my_init_count--;
 }
 
 static void
-_class_constructor(Eo_Class *klass)
+_class_constructor(Eo_Class *klass EINA_UNUSED)
 {
-   const Eo_Op_Func_Description func_desc[] = {
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DESTRUCTOR), _destructor),
-        EO_OP_FUNC(SIMPLE_ID(SIMPLE_SUB_ID_CONSTRUCTOR), _simple_constructor),
-        EO_OP_FUNC(SIMPLE_ID(SIMPLE_SUB_ID_A_SET), _a_set),
-        EO_OP_FUNC(SIMPLE_ID(SIMPLE_SUB_ID_A_GET), _a_get),
-        EO_OP_FUNC(SIMPLE_ID(SIMPLE_SUB_ID_B_SET), _b_set),
-        EO_OP_FUNC(SIMPLE_ID(SIMPLE_SUB_ID_B_GET), _b_get),
-        EO_OP_FUNC_SENTINEL
-   };
-
-   eo_class_funcs_set(klass, func_desc);
-
    class_var = malloc(10);
 }
 
@@ -99,26 +82,30 @@ _class_destructor(Eo_Class *klass EINA_UNUSED)
    free(class_var);
 }
 
-static const Eo_Op_Description op_desc[] = {
-     EO_OP_DESCRIPTION(SIMPLE_SUB_ID_CONSTRUCTOR, "Construct and set A."),
-     EO_OP_DESCRIPTION(SIMPLE_SUB_ID_A_SET, "Set property A"),
-     EO_OP_DESCRIPTION(SIMPLE_SUB_ID_A_GET, "Get property A"),
-     EO_OP_DESCRIPTION(SIMPLE_SUB_ID_B_SET, "Set property B"),
-     EO_OP_DESCRIPTION(SIMPLE_SUB_ID_B_GET, "Get property B"),
-     EO_OP_DESCRIPTION_SENTINEL
+EO2_VOID_FUNC_BODYV(simple_constructor, EO2_FUNC_CALL(a), int a);
+
+static Eo2_Op_Description op_descs[] = {
+     EO2_OP_FUNC_OVERRIDE(_constructor, eo2_constructor),
+     EO2_OP_FUNC_OVERRIDE(_destructor, eo2_destructor),
+     EO2_OP_FUNC(_simple_constructor, simple_constructor, "Construct and set A."),
+     EO2_OP_FUNC(_a_set, simple_a_set, "Set property a"),
+     EO2_OP_FUNC(_a_get, simple_a_get, "Get property a"),
+     EO2_OP_FUNC(_b_set, simple_b_set, "Set property b"),
+     EO2_OP_FUNC(_b_get, simple_b_get, "Get property b"),
+     EO2_OP_SENTINEL
 };
 
 static const Eo_Class_Description class_desc = {
-     EO_VERSION,
+     EO2_VERSION,
      "Simple",
      EO_CLASS_TYPE_REGULAR,
-     EO_CLASS_DESCRIPTION_OPS(&SIMPLE_BASE_ID, op_desc, SIMPLE_SUB_ID_LAST),
+     EO2_CLASS_DESCRIPTION_OPS(op_descs),
      NULL,
      sizeof(Private_Data),
      _class_constructor,
      _class_destructor
 };
 
-EO_DEFINE_CLASS(simple_class_get, &class_desc, EO_BASE_CLASS,
+EO_DEFINE_CLASS(simple_class_get, &class_desc, EO2_BASE_CLASS,
       MIXIN_CLASS, NULL);
 

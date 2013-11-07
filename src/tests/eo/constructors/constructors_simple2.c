@@ -9,34 +9,27 @@
 #define MY_CLASS SIMPLE2_CLASS
 
 static void
-_constructor(Eo *obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
+_constructor(Eo *obj, void *class_data EINA_UNUSED)
 {
-   eo_do_super(obj, MY_CLASS, eo_constructor());
+   eo2_do_super(obj, MY_CLASS, eo2_constructor());
 
    eo_error_set(obj);
 }
 
-static void
-_class_constructor(Eo_Class *klass)
-{
-   const Eo_Op_Func_Description func_desc[] = {
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
-        EO_OP_FUNC_SENTINEL
-   };
-
-   eo_class_funcs_set(klass, func_desc);
-}
+static Eo2_Op_Description op_descs[] = {
+     EO2_OP_FUNC_OVERRIDE(_constructor, eo2_constructor),
+};
 
 static const Eo_Class_Description class_desc = {
-     EO_VERSION,
+     EO2_VERSION,
      "Simple2",
      EO_CLASS_TYPE_REGULAR,
-     EO_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
+     EO2_CLASS_DESCRIPTION_OPS(op_descs),
      NULL,
      0,
-     _class_constructor,
+     NULL,
      NULL
 };
 
-EO_DEFINE_CLASS(simple2_class_get, &class_desc, EO_BASE_CLASS, NULL);
+EO_DEFINE_CLASS(simple2_class_get, &class_desc, EO2_BASE_CLASS, NULL);
 
