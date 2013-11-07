@@ -69,7 +69,8 @@ elementary.spec.in \
 m4/ac_attribute.m4 \
 m4/efl_binary.m4 \
 m4/efl_doxygen.m4 \
-config.rpath
+config.rpath \
+pkgbuild/PKGBUILD
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = elementary.pc
