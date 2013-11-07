@@ -1097,37 +1097,21 @@ _paste_cb(void *data,
           Evas_Object *obj __UNUSED__,
           void *event_info __UNUSED__)
 {
+   Elm_Sel_Format formats = ELM_SEL_FORMAT_MARKUP;
+
    ELM_ENTRY_DATA_GET(data, sd);
 
    evas_object_smart_callback_call(data, SIG_SELECTION_PASTE, NULL);
-   if (sd->sel_notify_handler)
-     {
-#ifdef HAVE_ELEMENTARY_X
-        Elm_Sel_Format formats = ELM_SEL_FORMAT_MARKUP;
 
-        sd->selection_asked = EINA_TRUE;
+   sd->selection_asked = EINA_TRUE;
 
-        if (sd->cnp_mode == ELM_CNP_MODE_PLAINTEXT)
-          formats = ELM_SEL_FORMAT_TEXT;
-        else if (sd->cnp_mode != ELM_CNP_MODE_NO_IMAGE)
-          formats |= ELM_SEL_FORMAT_IMAGE;
+   if (sd->cnp_mode == ELM_CNP_MODE_PLAINTEXT)
+     formats = ELM_SEL_FORMAT_TEXT;
+   else if (sd->cnp_mode != ELM_CNP_MODE_NO_IMAGE)
+     formats |= ELM_SEL_FORMAT_IMAGE;
 
-        elm_cnp_selection_get
-          (data, ELM_SEL_TYPE_CLIPBOARD, formats, NULL, NULL);
-#endif
-     }
-   else
-     {
-#ifdef HAVE_ELEMENTARY_WAYLAND
-        Elm_Sel_Format formats = ELM_SEL_FORMAT_MARKUP;
-        sd->selection_asked = EINA_TRUE;
-        if (sd->cnp_mode == ELM_CNP_MODE_PLAINTEXT)
-           formats = ELM_SEL_FORMAT_TEXT;
-        else if (sd->cnp_mode != ELM_CNP_MODE_NO_IMAGE)
-           formats |= ELM_SEL_FORMAT_IMAGE;
-        elm_cnp_selection_get(data, ELM_SEL_TYPE_CLIPBOARD, formats, NULL, NULL);
-#endif
-     }
+   elm_cnp_selection_get
+     (data, ELM_SEL_TYPE_CLIPBOARD, formats, NULL, NULL);
 }
 
 static void
@@ -1746,6 +1730,8 @@ _entry_selection_start_signal_cb(void *data,
 {
    const Eina_List *l;
    Evas_Object *entry;
+   const char *txt = elm_entry_selection_get(data);
+   Evas_Object *top;
 
    ELM_ENTRY_DATA_GET(data, sd);
 
@@ -1755,18 +1741,11 @@ _entry_selection_start_signal_cb(void *data,
         if (entry != data) elm_entry_select_none(entry);
      }
    evas_object_smart_callback_call(data, SIG_SELECTION_START, NULL);
-#ifdef HAVE_ELEMENTARY_X
-   if (sd->sel_notify_handler)
-     {
-        const char *txt = elm_entry_selection_get(data);
-        Evas_Object *top;
 
-        top = elm_widget_top_get(data);
-        if (txt && top && (elm_win_xwindow_get(top)))
-          elm_cnp_selection_set(data, ELM_SEL_TYPE_PRIMARY,
-                                ELM_SEL_FORMAT_MARKUP, txt, strlen(txt));
-     }
-#endif
+   top = elm_widget_top_get(data);
+   if (txt && top && (elm_win_window_id_get(top)))
+     elm_cnp_selection_set(data, ELM_SEL_TYPE_PRIMARY,
+                           ELM_SEL_FORMAT_MARKUP, txt, strlen(txt));
 }
 
 static void
@@ -1816,27 +1795,24 @@ _entry_selection_cleared_signal_cb(void *data,
      {
         if (sd->cut_sel)
           {
-#ifdef HAVE_ELEMENTARY_X
              Evas_Object *top;
 
              top = elm_widget_top_get(data);
-             if ((top) && (elm_win_xwindow_get(top)))
+             if ((top) && (elm_win_window_id_get(top)))
                elm_cnp_selection_set
                  (data, ELM_SEL_TYPE_PRIMARY, ELM_SEL_FORMAT_MARKUP,
                  sd->cut_sel, eina_stringshare_strlen(sd->cut_sel));
-#endif
+
              eina_stringshare_del(sd->cut_sel);
              sd->cut_sel = NULL;
           }
         else
           {
-#ifdef HAVE_ELEMENTARY_X
              Evas_Object *top;
 
              top = elm_widget_top_get(data);
-             if ((top) && (elm_win_xwindow_get(top)))
+             if ((top) && (elm_win_window_id_get(top)))
                elm_object_cnp_selection_clear(data, ELM_SEL_TYPE_PRIMARY);
-#endif
           }
      }
 }
@@ -1847,35 +1823,29 @@ _entry_paste_request_signal_cb(void *data,
                                const char *emission,
                                const char *source __UNUSED__)
 {
+   Evas_Object *top;
+
    ELM_ENTRY_DATA_GET(data, sd);
 
-#ifdef HAVE_ELEMENTARY_X
    Elm_Sel_Type type = (emission[sizeof("ntry,paste,request,")] == '1') ?
      ELM_SEL_TYPE_PRIMARY : ELM_SEL_TYPE_CLIPBOARD;
-#endif
 
    if (!sd->editable) return;
    evas_object_smart_callback_call(data, SIG_SELECTION_PASTE, NULL);
-   if (sd->sel_notify_handler)
+
+   top = elm_widget_top_get(data);
+   if ((top) && (elm_win_window_id_get(top)))
      {
-#ifdef HAVE_ELEMENTARY_X
-        Evas_Object *top;
+        Elm_Sel_Format formats = ELM_SEL_FORMAT_MARKUP;
 
-        top = elm_widget_top_get(data);
-        if ((top) && (elm_win_xwindow_get(top)))
-          {
-             Elm_Sel_Format formats = ELM_SEL_FORMAT_MARKUP;
+        sd->selection_asked = EINA_TRUE;
 
-             sd->selection_asked = EINA_TRUE;
+        if (sd->cnp_mode == ELM_CNP_MODE_PLAINTEXT)
+          formats = ELM_SEL_FORMAT_TEXT;
+        else if (sd->cnp_mode != ELM_CNP_MODE_NO_IMAGE)
+          formats |= ELM_SEL_FORMAT_IMAGE;
 
-             if (sd->cnp_mode == ELM_CNP_MODE_PLAINTEXT)
-               formats = ELM_SEL_FORMAT_TEXT;
-             else if (sd->cnp_mode != ELM_CNP_MODE_NO_IMAGE)
-               formats |= ELM_SEL_FORMAT_IMAGE;
-
-             elm_cnp_selection_get(data, type, formats, NULL, NULL);
-          }
-#endif
+        elm_cnp_selection_get(data, type, formats, NULL, NULL);
      }
 }
 
@@ -2302,6 +2272,7 @@ _event_selection_clear(void *data __UNUSED__,
 
    return ECORE_CALLBACK_PASS_ON;
 }
+#endif
 
 static Eina_Bool
 _drag_drop_cb(void *data __UNUSED__,
@@ -2325,8 +2296,6 @@ _drag_drop_cb(void *data __UNUSED__,
 
    return EINA_TRUE;
 }
-
-#endif
 
 static Evas_Object *
 _item_get(void *data,
@@ -3108,13 +3077,11 @@ _elm_entry_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
           ecore_event_handler_add
             (ECORE_X_EVENT_SELECTION_CLEAR, _event_selection_clear, obj);
      }
+#endif
+
    elm_drop_target_add
      (obj, ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_IMAGE,
-         NULL, NULL,
-         NULL, NULL,
-         NULL, NULL,
-         _drag_drop_cb, NULL);
-#endif
+         NULL, NULL, NULL, NULL, NULL, NULL, _drag_drop_cb, NULL);
 
    entries = eina_list_prepend(entries, obj);
 
@@ -3421,13 +3388,11 @@ _password_set(Eo *obj, void *_pd, va_list *list)
      }
    else
      {
-#ifdef HAVE_ELEMENTARY_X
         elm_drop_target_add(obj, ELM_SEL_FORMAT_MARKUP,
                             NULL, NULL,
                             NULL, NULL,
                             NULL, NULL,
                             _drag_drop_cb, NULL);
-#endif
 
         _entry_selection_callbacks_register(obj);
      }
@@ -3679,7 +3644,6 @@ _editable_set(Eo *obj, void *_pd, va_list *list)
    sd->editable = editable;
    eo_do(obj, elm_wdg_theme(NULL));
 
-#ifdef HAVE_ELEMENTARY_X
    if (editable)
      elm_drop_target_add(obj, ELM_SEL_FORMAT_MARKUP,
                          NULL, NULL,
@@ -3687,7 +3651,6 @@ _editable_set(Eo *obj, void *_pd, va_list *list)
                          NULL, NULL,
                          _drag_drop_cb, NULL);
    else
-#endif
      elm_drop_target_del(obj, ELM_SEL_FORMAT_MARKUP,
                          NULL, NULL,
                          NULL, NULL,
@@ -4724,13 +4687,12 @@ _cnp_mode_set(Eo *obj, void *_pd, va_list *list)
      format = ELM_SEL_FORMAT_TEXT;
    else if (cnp_mode == ELM_CNP_MODE_MARKUP)
      format |= ELM_SEL_FORMAT_IMAGE;
-#ifdef HAVE_ELEMENTARY_X
+
    elm_drop_target_add(obj, format,
                        NULL, NULL,
                        NULL, NULL,
                        NULL, NULL,
                        _drag_drop_cb, NULL);
-#endif
 }
 
 EAPI Elm_Cnp_Mode
