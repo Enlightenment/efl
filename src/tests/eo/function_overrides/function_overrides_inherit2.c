@@ -9,72 +9,73 @@
 
 #include "../eunit_tests.h"
 
-EAPI Eo_Op INHERIT2_BASE_ID = 0;
-
 #define MY_CLASS INHERIT2_CLASS
 
 static void
-_a_set(Eo *obj, void *class_data EINA_UNUSED, va_list *list)
+_a_set(Eo *obj, void *class_data EINA_UNUSED, int a)
 {
-   int a;
-   a = va_arg(*list, int);
    printf("%s %d\n", eo_class_name_get(MY_CLASS), a);
-   eo_do(obj, simple_a_print());
-   eo_do_super(obj, MY_CLASS, simple_a_set(a + 1));
+   eo2_do(obj, simple_a_print());
+   eo2_do_super(obj, MY_CLASS, simple_a_set(a + 1));
 
-   fail_if(!eo_do_super(obj, MY_CLASS, simple_a_print()));
+   Simple_Public_Data *pd = eo_data_scope_get(obj, SIMPLE_CLASS);
+   pd->a_print_called = EINA_FALSE;
+   eo2_do_super(obj, MY_CLASS, simple_a_print());
+   fail_if(!pd->a_print_called);
 }
 
+Eina_Bool inherit_print_called = EINA_FALSE;
+Eina_Bool inherit2_print_called = EINA_FALSE;
+
 static void
-_print(Eo *obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
+_print(Eo *obj, void *class_data EINA_UNUSED)
 {
    printf("Hey\n");
-   fail_if(eo_do_super(obj, MY_CLASS, inherit2_print()));
+   inherit2_print_called = EINA_FALSE;
+   eo2_do_super(obj, MY_CLASS, inherit2_print());
+   fail_if(inherit2_print_called);
+   inherit_print_called = EINA_TRUE;
 }
 
 static void
-_print2(Eo *obj EINA_UNUSED, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
+_print2(Eo *obj EINA_UNUSED, void *class_data EINA_UNUSED)
 {
    printf("Hey2\n");
+   inherit2_print_called = EINA_TRUE;
 }
 
 static void
-_class_print(Eo_Class *klass, void *data EINA_UNUSED, va_list *list)
+_class_print(Eo_Class *klass, void *data EINA_UNUSED)
 {
-   (void) list;
    printf("Print %s-%s\n", eo_class_name_get(klass), eo_class_name_get(MY_CLASS));
-   fail_if(!eo_do_super(klass, MY_CLASS, simple_class_print()));
-   fail_if(!eo_do_super(klass, MY_CLASS, simple_class_print2()));
+   class_print_called = EINA_FALSE;
+   eo2_do_super(klass, MY_CLASS, simple_class_print());
+   fail_if(!class_print_called);
+
+   class_print2_called = EINA_FALSE;
+   eo2_do_super(klass, MY_CLASS, simple_class_print2());
+   fail_if(!class_print2_called);
 }
 
-static void
-_class_constructor(Eo_Class *klass)
-{
-   const Eo_Op_Func_Description func_desc[] = {
-        EO_OP_FUNC(SIMPLE_ID(SIMPLE_SUB_ID_A_SET), _a_set),
-        EO_OP_FUNC(INHERIT2_ID(INHERIT2_SUB_ID_PRINT), _print),
-        EO_OP_FUNC(INHERIT2_ID(INHERIT2_SUB_ID_PRINT2), _print2),
-        EO_OP_FUNC_CLASS(SIMPLE_ID(SIMPLE_SUB_ID_CLASS_PRINT), _class_print),
-        EO_OP_FUNC_SENTINEL
-   };
+EAPI EO2_VOID_FUNC_BODY(inherit2_print);
+EAPI EO2_VOID_FUNC_BODY(inherit2_print2);
 
-   eo_class_funcs_set(klass, func_desc);
-}
-
-static const Eo_Op_Description op_desc[] = {
-     EO_OP_DESCRIPTION(INHERIT2_SUB_ID_PRINT, "Print hey"),
-     EO_OP_DESCRIPTION(INHERIT2_SUB_ID_PRINT2, "Print hey2"),
-     EO_OP_DESCRIPTION_SENTINEL
+static Eo2_Op_Description op_descs[] = {
+     EO2_OP_FUNC(_print, inherit2_print, "Print hey"),
+     EO2_OP_FUNC(_print2, inherit2_print2, "Print hey2"),
+     EO2_OP_CLASS_FUNC_OVERRIDE(_class_print, simple_class_print),
+     EO2_OP_FUNC_OVERRIDE(_a_set, simple_a_set),
+     EO2_OP_SENTINEL
 };
 
 static const Eo_Class_Description class_desc = {
-     EO_VERSION,
+     EO2_VERSION,
      "Inherit2",
      EO_CLASS_TYPE_REGULAR,
-     EO_CLASS_DESCRIPTION_OPS(&INHERIT2_BASE_ID, op_desc, INHERIT2_SUB_ID_LAST),
+     EO2_CLASS_DESCRIPTION_OPS(op_descs),
      NULL,
      0,
-     _class_constructor,
+     NULL,
      NULL
 };
 
