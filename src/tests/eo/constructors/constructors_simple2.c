@@ -18,6 +18,7 @@ _constructor(Eo *obj, void *class_data EINA_UNUSED)
 
 static Eo2_Op_Description op_descs[] = {
      EO2_OP_FUNC_OVERRIDE(_constructor, eo2_constructor),
+     EO2_OP_SENTINEL
 };
 
 static const Eo_Class_Description class_desc = {
