@@ -193,7 +193,7 @@ _signal_interface_destructor(Eo_Class *klass EINA_UNUSED)
 
 static const Eo_Class_Description signal_interface_desc = {
      EO_VERSION,
-     "Signal_Interface",
+     "Evas_Signal_Interface",
      EO_CLASS_TYPE_INTERFACE,
      EO_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
      NULL,
@@ -206,7 +206,7 @@ EO_DEFINE_CLASS(evas_smart_signal_interface_get, &signal_interface_desc, NULL, N
 
 static const Eo_Class_Description clickable_interface_desc = {
      EO_VERSION,
-     "Clickable_Interface",
+     "Evas_Clickable_Interface",
      EO_CLASS_TYPE_INTERFACE,
      EO_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
      _clickable_events_desc,
@@ -219,7 +219,7 @@ EO_DEFINE_CLASS(evas_smart_clickable_interface_get, &clickable_interface_desc, E
 
 static const Eo_Class_Description scrollable_interface_desc = {
      EO_VERSION,
-     "Scrollable_Interface",
+     "Evas_Scrollable_Interface",
      EO_CLASS_TYPE_INTERFACE,
      EO_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
      _scrollable_events_desc,
@@ -232,7 +232,7 @@ EO_DEFINE_CLASS(evas_smart_scrollable_interface_get, &scrollable_interface_desc,
 
 static const Eo_Class_Description zoomable_interface_desc = {
      EO_VERSION,
-     "Zoomable_Interface",
+     "Evas_Zoomable_Interface",
      EO_CLASS_TYPE_INTERFACE,
      EO_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
      _zoomable_events_desc,
@@ -245,7 +245,7 @@ EO_DEFINE_CLASS(evas_smart_zoomable_interface_get, &zoomable_interface_desc, EVA
 
 static const Eo_Class_Description selectable_interface_desc = {
      EO_VERSION,
-     "Selectable_Interface",
+     "Evas_Selectable_Interface",
      EO_CLASS_TYPE_INTERFACE,
      EO_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
      _selectable_events_desc,
@@ -258,7 +258,7 @@ EO_DEFINE_CLASS(evas_smart_selectable_interface_get, &selectable_interface_desc,
 
 static const Eo_Class_Description draggable_interface_desc = {
      EO_VERSION,
-     "Draggable_Interface",
+     "Evas_Draggable_Interface",
      EO_CLASS_TYPE_INTERFACE,
      EO_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
      _draggable_events_desc,
