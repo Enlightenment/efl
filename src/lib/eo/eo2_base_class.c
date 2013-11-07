@@ -788,7 +788,7 @@ _ev_global_freeze(const Eo_Class *klass EINA_UNUSED)
 {
    event_freeze_count++;
 }
-EAPI EO2_VOID_FUNC_BODY(eo2_event_global_freeze);
+EAPI EO2_VOID_CLASS_FUNC_BODY(eo2_event_global_freeze);
 
 static void
 _ev_global_thaw(const Eo_Class *klass EINA_UNUSED)
@@ -802,14 +802,14 @@ _ev_global_thaw(const Eo_Class *klass EINA_UNUSED)
         ERR("Global events have already been thawed.");
      }
 }
-EAPI EO2_VOID_FUNC_BODY(eo2_event_global_thaw);
+EAPI EO2_VOID_CLASS_FUNC_BODY(eo2_event_global_thaw);
 
 static int
 _ev_global_freeze_get(const Eo_Class *klass EINA_UNUSED)
 {
    return event_freeze_count;
 }
-EAPI EO2_FUNC_BODY(eo2_event_global_freeze_get, int, 0);
+EAPI EO2_CLASS_FUNC_BODY(eo2_event_global_freeze_get, int, 0);
 
 /* Eo_Dbg */
 EAPI void
@@ -967,12 +967,12 @@ static Eo2_Op_Description op_descs [] = {
        EO2_OP_FUNC(_ev_cb_call, eo2_event_callback_call, "Call the event callbacks for an event."),
        EO2_OP_FUNC(_ev_cb_forwarder_add, eo2_event_callback_forwarder_add, "Add an event forwarder."),
        EO2_OP_FUNC(_ev_cb_forwarder_del, eo2_event_callback_forwarder_del, "Delete an event forwarder."),
-       EO2_OP_CLASS_FUNC(_ev_freeze, eo2_event_freeze, "Freezes events."),
-       EO2_OP_CLASS_FUNC(_ev_thaw, eo2_event_thaw, "Thaws events."),
-       EO2_OP_CLASS_FUNC(_ev_freeze_get, eo2_event_freeze_get, "Get event freeze counter."),
-       EO2_OP_FUNC(_ev_global_freeze, eo2_event_global_freeze, "Freezes events globally."),
-       EO2_OP_FUNC(_ev_global_thaw, eo2_event_global_thaw, "Thaws events globally."),
-       EO2_OP_FUNC(_ev_global_freeze_get, eo2_event_global_freeze_get, "Get global event freeze counter."),
+       EO2_OP_FUNC(_ev_freeze, eo2_event_freeze, "Freezes events."),
+       EO2_OP_FUNC(_ev_thaw, eo2_event_thaw, "Thaws events."),
+       EO2_OP_FUNC(_ev_freeze_get, eo2_event_freeze_get, "Get event freeze counter."),
+       EO2_OP_CLASS_FUNC(_ev_global_freeze, eo2_event_global_freeze, "Freezes events globally."),
+       EO2_OP_CLASS_FUNC(_ev_global_thaw, eo2_event_global_thaw, "Thaws events globally."),
+       EO2_OP_CLASS_FUNC(_ev_global_freeze_get, eo2_event_global_freeze_get, "Get global event freeze counter."),
        EO2_OP_FUNC(_dbg_info_get, eo2_dbg_info_get, "Get debug info list for obj."),
        EO2_OP_SENTINEL
 };
