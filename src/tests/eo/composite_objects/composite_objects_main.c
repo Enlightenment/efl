@@ -30,7 +30,7 @@ main(int argc, char *argv[])
    (void) argv;
    eo_init();
 
-   Eo *obj = eo_add(COMP_CLASS, NULL);
+   Eo *obj = eo2_add(COMP_CLASS, NULL);
    eo2_do(obj, eo2_event_callback_add(EV_A_CHANGED, _a_changed_cb, NULL));
 
    fail_if(!eo_isa(obj, COMP_CLASS));
