@@ -533,26 +533,29 @@ _eo2_api_desc_get(const void *api_func, const _Eo_Class *klass, const _Eo_Class 
    const Eo2_Op_Description *op_desc;
    const Eo2_Op_Description *op_descs;
 
-   for (kls_itr = klass->mro ; *kls_itr ; kls_itr++)
+   if (klass)
      {
-        cur_klass = *kls_itr;
-        imin = 0;
-        imax = cur_klass->desc->ops.count - 1;
-        op_descs = cur_klass->desc->ops.descs2;
-
-        while (imax >= imin)
+        for (kls_itr = klass->mro ; *kls_itr ; kls_itr++)
           {
-             imid = (imax + imin) / 2;
-             op_desc = op_descs + imid;
+             cur_klass = *kls_itr;
+             imin = 0;
+             imax = cur_klass->desc->ops.count - 1;
+             op_descs = cur_klass->desc->ops.descs2;
 
-             if (op_desc->api_func > api_func)
-               imin = imid + 1;
-             else if (op_desc->api_func < api_func)
-               imax = imid - 1;
-             else
-               return op_desc;
+             while (imax >= imin)
+               {
+                  imid = (imax + imin) / 2;
+                  op_desc = op_descs + imid;
+
+                  if (op_desc->api_func > api_func)
+                    imin = imid + 1;
+                  else if (op_desc->api_func < api_func)
+                    imax = imid - 1;
+                  else
+                    return op_desc;
+               }
+
           }
-
      }
 
    if (extns)
@@ -560,7 +563,8 @@ _eo2_api_desc_get(const void *api_func, const _Eo_Class *klass, const _Eo_Class 
         for (kls_itr = extns ; *kls_itr ; kls_itr++)
           {
              cur_klass = *kls_itr;
-             if (cur_klass->desc->type == EO_CLASS_TYPE_REGULAR)
+             if (cur_klass->desc->type == EO_CLASS_TYPE_REGULAR
+                 || cur_klass->desc->type == EO_CLASS_TYPE_REGULAR_NO_INSTANT)
                {
                   op_desc = _eo2_api_desc_get(api_func, cur_klass, NULL);
                   if (op_desc) return op_desc;
@@ -633,10 +637,6 @@ _eo2_class_funcs_set(_Eo_Class *klass)
           }
         else if (op_desc->op == EO2_OP_OVERRIDE)
           {
-             if (klass->parent == NULL)
-               ERR("Can't inherit from a NULL parent. Class '%s', Func index: %lu",
-                   klass->desc->name, (unsigned long) (op_desc - op_descs));
-
              api_desc = _eo2_api_desc_get(op_desc->api_func, klass->parent, klass->extensions);
 
              if (api_desc == NULL)
