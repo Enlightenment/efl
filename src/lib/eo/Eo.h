@@ -609,7 +609,8 @@ EAPI Eina_Bool eo_shutdown(void);
 // computes size of Eo2_Op_Description[]
 #define EO2_OP_DESC_SIZE(desc) (sizeof(desc)/sizeof(*desc) - 1)
 
-// An helper macro to help populating #Eo_Class_Description.
+// Helpers macro to help populating #Eo_Class_Description.
+#define EO2_CLASS_DESCRIPTION_NOOPS() { NULL, NULL, NULL, 0}
 #define EO2_CLASS_DESCRIPTION_OPS(op_descs) { NULL, NULL, op_descs, EO2_OP_DESC_SIZE(op_descs) }
 
 // to fetch internal function and object data at once
