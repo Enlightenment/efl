@@ -720,7 +720,7 @@ eo2_add_internal_end(const char *file, int line, const Eo *eo_id)
         return NULL;
      }
 
-   if (!fptr->obj->condtor_done)
+   if (!fptr->obj->condtor_done || fptr->obj->do_error)
      {
         ERR("in %s:%d: Object of class '%s' - Not all of the object constructors have been executed.",
             file, line, fptr->cur_klass->desc->name);
