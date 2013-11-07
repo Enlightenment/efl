@@ -16,3 +16,6 @@
 
 - function name from pointer
    dladdr backtrace ??
+
+
+- Change the order of EO2_OP_FUNC* functions to put the ID first?
