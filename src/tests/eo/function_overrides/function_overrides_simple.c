@@ -29,7 +29,7 @@ _a_print(Eo *obj EINA_UNUSED, void *class_data)
 }
 
 static void
-_class_print(Eo_Class *klass)
+_class_print(Eo_Class *klass, void *class_data EINA_UNUSED)
 {
    printf("Print %s-%s\n", eo_class_name_get(klass), eo_class_name_get(MY_CLASS));
    class_print_called = EINA_FALSE;
@@ -44,7 +44,7 @@ _class_print(Eo_Class *klass)
 }
 
 static void
-_class_print2(Eo_Class *klass)
+_class_print2(Eo_Class *klass, void *class_data EINA_UNUSED)
 {
    printf("Print %s-%s\n", eo_class_name_get(klass), eo_class_name_get(MY_CLASS));
    class_print2_called = EINA_TRUE;
@@ -52,14 +52,14 @@ _class_print2(Eo_Class *klass)
 
 EAPI EO2_VOID_FUNC_BODYV(simple_a_set, EO2_FUNC_CALL(a), int a);
 EAPI EO2_VOID_FUNC_BODY(simple_a_print);
-EAPI EO2_VOID_CLASS_FUNC_BODY(simple_class_print);
-EAPI EO2_VOID_CLASS_FUNC_BODY(simple_class_print2);
+EAPI EO2_VOID_FUNC_BODY(simple_class_print);
+EAPI EO2_VOID_FUNC_BODY(simple_class_print2);
 
 static Eo2_Op_Description op_descs[] = {
      EO2_OP_FUNC(_a_set, simple_a_set, "Set property A"),
      EO2_OP_FUNC(_a_print, simple_a_print, "Print property A"),
-     EO2_OP_CLASS_FUNC(_class_print, simple_class_print, "Print class name."),
-     EO2_OP_CLASS_FUNC(_class_print2, simple_class_print2, "Print2 class name."),
+     EO2_OP_FUNC(_class_print, simple_class_print, "Print class name."),
+     EO2_OP_FUNC(_class_print2, simple_class_print2, "Print2 class name."),
      EO2_OP_SENTINEL
 };
 
