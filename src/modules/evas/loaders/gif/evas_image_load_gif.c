@@ -413,7 +413,6 @@ evas_image_load_file_head_gif2(void *loader_data,
         if (IMG_TOO_BIG(prop->w, prop->h))
           LOADERR(EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED);
         LOADERR(EVAS_LOAD_ERROR_GENERIC);
-        goto on_error;
      }
    // walk through gif records in file to figure out info
    do
@@ -543,7 +542,7 @@ evas_image_load_file_data_gif2(void *loader_data,
    Evas_Image_Animated *animated = loader->animated;
    Eina_File *f = loader->f;
    Eina_Bool ret = EINA_FALSE;
-   File_Info fi;
+   File_Info fi = { NULL, 0, 0 };
    GifRecordType rec;
    GifFileType *gif = NULL;
    Image_Entry_Frame *frame;
@@ -738,7 +737,7 @@ on_ok:
    
    // if it was an animated image we need to copy the data to the
    // pixels for the image from the frame holding the data
-   if (animated->animated)
+   if (animated->animated && frame->data)
      memcpy(pixels, frame->data, prop->w * prop->h * sizeof (DATA32));
    prop->premul = EINA_TRUE;
    
