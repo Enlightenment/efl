@@ -18,8 +18,8 @@ _prot_print(Eo *obj, void *class_data EINA_UNUSED)
 
 EAPI EO2_VOID_FUNC_BODY(inherit_prot_print);
 
-static Eo2_Op_Description op_desc[] = {
-     EO2_OP_FUNC(_prot_print, inherit_prot_print, "Print protocted var x1."),
+static Eo2_Op_Description op_descs[] = {
+     EO2_OP_FUNC(_prot_print, inherit_prot_print, "Print protected var x1."),
      EO2_OP_SENTINEL
 };
 
@@ -27,7 +27,7 @@ static const Eo_Class_Description class_desc = {
      EO2_VERSION,
      "Inherit",
      EO_CLASS_TYPE_REGULAR,
-     EO2_CLASS_DESCRIPTION_OPS(op_desc),
+     EO2_CLASS_DESCRIPTION_OPS(op_descs),
      NULL,
      0,
      NULL,
