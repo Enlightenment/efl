@@ -624,7 +624,7 @@ _elm_widget_focus_region_show(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA
      {
         Evas_Coord px, py;
 
-        if (_elm_scrollable_is(o))
+        if (_elm_scrollable_is(o) && !elm_widget_disabled_get(o))
           {
              eo_do(o, elm_scrollable_interface_content_region_show(x, y, w, h));
 

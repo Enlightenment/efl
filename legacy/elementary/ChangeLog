@@ -1735,3 +1735,7 @@
 2013-11-03  Daniel Juyung Seo (SeoZ)
 
         * Genlist/Gengrid/List: Added multi select mode.
+
+2013-11-07  ChunEon Park (Hermet)
+
+        * scroller: don't focus region show if the scroller is disabled.
