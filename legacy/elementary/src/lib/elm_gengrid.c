@@ -12,7 +12,8 @@ EAPI Eo_Op ELM_OBJ_GENGRID_PAN_BASE_ID = EO_NOOP;
 
 #define MY_PAN_CLASS ELM_OBJ_GENGRID_PAN_CLASS
 
-#define MY_PAN_CLASS_NAME "elm_gengrid_pan"
+#define MY_PAN_CLASS_NAME "Elm_Gengrid_Pan"
+#define MY_PAN_CLASS_NAME_LEGACY "elm_gengrid_pan"
 
 EAPI Eo_Op ELM_OBJ_GENGRID_BASE_ID = EO_NOOP;
 
@@ -1454,7 +1455,7 @@ _gengrid_pan_class_constructor(Eo_Class *klass)
       };
       eo_class_funcs_set(klass, func_desc);
 
-      evas_smart_legacy_type_register(MY_PAN_CLASS_NAME, klass);
+      evas_smart_legacy_type_register(MY_PAN_CLASS_NAME_LEGACY, klass);
 }
 
 static const Eo_Class_Description _elm_obj_gengrid_pan_class_desc = {

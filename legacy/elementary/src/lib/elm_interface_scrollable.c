@@ -386,7 +386,8 @@ EAPI Eo_Op ELM_SCROLLABLE_INTERFACE_BASE_ID = EO_NOOP;
 
 #define MY_SCROLLABLE_INTERFACE ELM_SCROLLABLE_INTERFACE
 
-#define MY_SCROLLABLE_INTERFACE_NAME "elm_interface_scrollable"
+#define MY_SCROLLABLE_INTERFACE_NAME "Elm_Interface_Scrollable"
+#define MY_SCROLLABLE_INTERFACE_NAME_LEGACY "elm_interface_scrollable"
 
 #define ELM_SCROLL_IFACE_DATA_GET_OR_RETURN(o, ptr)     \
   Elm_Scrollable_Smart_Interface_Data *ptr =            \
@@ -4702,7 +4703,7 @@ _elm_scrollable_interface_constructor(Eo_Class *klass)
       };
       eo_class_funcs_set(klass, func_desc);
 
-      evas_smart_legacy_type_register(MY_SCROLLABLE_INTERFACE_NAME, klass);
+      evas_smart_legacy_type_register(MY_SCROLLABLE_INTERFACE_NAME_LEGACY, klass);
 }
 
 static const Eo_Op_Description op_desc[] = {

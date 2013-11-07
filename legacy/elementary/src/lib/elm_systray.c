@@ -642,7 +642,7 @@ static const Eo_Op_Description op_desc[] = {
 
 static const Eo_Class_Description class_desc = {
      EO_VERSION,
-     "elm_systray",
+     "Elm_Systray",
      EO_CLASS_TYPE_REGULAR,
      EO_CLASS_DESCRIPTION_OPS
      (&ELM_OBJ_SYSTRAY_BASE_ID, op_desc, ELM_OBJ_SYSTRAY_SUB_ID_LAST),
