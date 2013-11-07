@@ -987,7 +987,7 @@ static const Eo_Event_Description *event_desc[] = {
 
 static const Eo_Class_Description class_desc = {
      EO2_VERSION,
-     "Eo2 Base",
+     "Eo2_Base",
      EO_CLASS_TYPE_REGULAR_NO_INSTANT,
      EO2_CLASS_DESCRIPTION_OPS(op_descs),
      event_desc,
