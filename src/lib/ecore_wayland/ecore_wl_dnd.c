@@ -54,6 +54,8 @@ _ecore_wl_dnd_offer_listener =
 EINA_DEPRECATED EAPI Eina_Bool 
 ecore_wl_dnd_set_selection(Ecore_Wl_Dnd *dnd, const char **types_offered)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    return ecore_wl_dnd_selection_set(dnd->input, types_offered);
 }
 
@@ -64,6 +66,8 @@ ecore_wl_dnd_set_selection(Ecore_Wl_Dnd *dnd, const char **types_offered)
 EINA_DEPRECATED EAPI Eina_Bool 
 ecore_wl_dnd_get_selection(Ecore_Wl_Dnd *dnd, const char *type)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    return ecore_wl_dnd_selection_get(dnd->input, type);
 }
 
@@ -108,6 +112,8 @@ ecore_wl_dnd_selection_set(Ecore_Wl_Input *input, const char **types_offered)
    const char **type;
    char **t;
 
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    if (!input) return EINA_FALSE;
 
    man = input->display->wl.data_device_manager;
@@ -124,6 +130,8 @@ ecore_wl_dnd_selection_set(Ecore_Wl_Input *input, const char **types_offered)
    /* destroy any existing data source */
    if (input->data_source) wl_data_source_destroy(input->data_source);
    input->data_source = NULL;
+
+   if (!types_offered[0]) return EINA_FALSE;
 
    /* try to create a new data source */
    if (!(input->data_source = wl_data_device_manager_create_data_source(man)))
@@ -157,11 +165,15 @@ ecore_wl_dnd_selection_get(Ecore_Wl_Input *input, const char *type)
 {
    char **t;
 
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    /* check for valid input and selection source */
    if ((!input) || (!input->selection_source)) return EINA_FALSE;
 
-   wl_array_for_each(t, &input->selection_source->types)
-     if (!strcmp(type, *t)) break;
+   for (t = input->selection_source->types.data; *t; t++)
+     {
+        if (!strcmp(type, *t)) break;
+     }
 
    if (!*t) return EINA_FALSE;
 
@@ -177,6 +189,8 @@ ecore_wl_dnd_selection_get(Ecore_Wl_Input *input, const char *type)
 EAPI Eina_Bool 
 ecore_wl_dnd_selection_owner_has(Ecore_Wl_Input *input)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    if (!input) return EINA_FALSE;
    return (input->selection_source != NULL);
 }
@@ -188,6 +202,8 @@ ecore_wl_dnd_selection_owner_has(Ecore_Wl_Input *input)
 EAPI Eina_Bool 
 ecore_wl_dnd_selection_clear(Ecore_Wl_Input *input)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    /* check for valid input */
    if (!input) return EINA_FALSE;
 
@@ -206,6 +222,8 @@ EAPI void
 ecore_wl_dnd_drag_start(Ecore_Wl_Input *input, Ecore_Wl_Window *win, Ecore_Wl_Window *dragwin, int x EINA_UNUSED, int y EINA_UNUSED, int w EINA_UNUSED, int h EINA_UNUSED)
 {
    struct wl_surface *drag_surface;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    /* check for valid input. if not, get the default one */
    if (!input) input = _ecore_wl_disp->input;
@@ -258,6 +276,8 @@ ecore_wl_dnd_drag_end(Ecore_Wl_Input *input)
 {
    Ecore_Wl_Event_Dnd_End *ev;
 
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    /* check for valid input. if not, get the default one */
    if (!input) input = _ecore_wl_disp->input;
 
@@ -298,6 +318,8 @@ ecore_wl_dnd_drag_get(Ecore_Wl_Input *input, const char *type)
 {
    char **t;
 
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    /* check for valid input and drag source */
    if ((!input) || (!input->drag_source)) return EINA_FALSE;
 
@@ -321,6 +343,8 @@ ecore_wl_dnd_drag_types_set(Ecore_Wl_Input *input, const char **types_offered)
    struct wl_data_device_manager *man;
    const char **type;
    char **t;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    /* check for valid input. if not, get the default one */
    if (!input) input = _ecore_wl_disp->input;
@@ -363,6 +387,8 @@ ecore_wl_dnd_drag_types_set(Ecore_Wl_Input *input, const char **types_offered)
 EAPI struct wl_array *
 ecore_wl_dnd_drag_types_get(Ecore_Wl_Input *input)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    /* check for valid input. if not, get the default one */
    if (!input) input = _ecore_wl_disp->input;
 
@@ -374,6 +400,8 @@ void
 _ecore_wl_dnd_add(Ecore_Wl_Input *input, struct wl_data_device *data_device EINA_UNUSED, struct wl_data_offer *offer)
 {
    Ecore_Wl_Dnd_Source *source;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!(source = malloc(sizeof(Ecore_Wl_Dnd_Source))))
      return;
@@ -395,6 +423,8 @@ _ecore_wl_dnd_enter(void *data, struct wl_data_device *data_device EINA_UNUSED, 
    Ecore_Wl_Input *input;
    char **types;
    int num = 0;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!(input = data)) return;
 
@@ -440,6 +470,8 @@ _ecore_wl_dnd_leave(void *data, struct wl_data_device *data_device EINA_UNUSED)
    Ecore_Wl_Event_Dnd_Leave *ev;
    Ecore_Wl_Input *input;
 
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    if (!(input = data)) return;
 
    if (!(ev = calloc(1, sizeof(Ecore_Wl_Event_Dnd_Leave)))) return;
@@ -458,6 +490,8 @@ _ecore_wl_dnd_motion(void *data, struct wl_data_device *data_device EINA_UNUSED,
 {
    Ecore_Wl_Event_Dnd_Position *ev;
    Ecore_Wl_Input *input;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!(input = data)) return;
 
@@ -484,6 +518,8 @@ _ecore_wl_dnd_drop(void *data, struct wl_data_device *data_device EINA_UNUSED)
    Ecore_Wl_Event_Dnd_Drop *ev;
    Ecore_Wl_Input *input;
 
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    if (!(input = data)) return;
 
    if (!(ev = calloc(1, sizeof(Ecore_Wl_Event_Dnd_Drop)))) return;
@@ -507,9 +543,12 @@ _ecore_wl_dnd_selection(void *data, struct wl_data_device *data_device EINA_UNUS
 {
    Ecore_Wl_Input *input;
 
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    if (!(input = data)) return;
 
    if (input->selection_source) _ecore_wl_dnd_del(input->selection_source);
+   input->selection_source = NULL;
 
    if (offer)
      {
@@ -519,13 +558,13 @@ _ecore_wl_dnd_selection(void *data, struct wl_data_device *data_device EINA_UNUS
         t = wl_array_add(&input->selection_source->types, sizeof(*t));
         *t = NULL;
      }
-   else
-     input->selection_source = NULL;
 }
 
 void 
 _ecore_wl_dnd_del(Ecore_Wl_Dnd_Source *source)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    if (!source) return;
    source->refcount--;
    if (source->refcount == 0)
@@ -545,6 +584,8 @@ _ecore_wl_dnd_selection_data_receive(Ecore_Wl_Dnd_Source *source, const char *ty
    struct _dnd_task *task = NULL;
    struct _dnd_read_ctx *read_ctx = NULL;
    int p[2];
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (pipe2(p, O_CLOEXEC) == -1)
      return;
@@ -600,6 +641,8 @@ _ecore_wl_dnd_selection_data_read(void *data, Ecore_Fd_Handler *fd_handler EINA_
    Ecore_Wl_Dnd_Source *source;
    Ecore_Wl_Event_Selection_Data_Ready *event;
    Eina_Bool ret;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    source = data;
 
@@ -657,6 +700,8 @@ _ecore_wl_dnd_selection_cb_idle(void *data)
    struct _dnd_read_ctx *ctx;
    struct _dnd_task *task;
    int count, i;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    ctx = data;
    count = epoll_wait(ctx->epoll_fd, ctx->ep, 1, 0);
@@ -719,6 +764,8 @@ _ecore_wl_dnd_source_cb_send_free(void *data EINA_UNUSED, void *event)
 static void 
 _ecore_wl_dnd_source_cb_cancelled(void *data EINA_UNUSED, struct wl_data_source *source)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    /* FIXME: Raise an Ecore_Wl_Event here */
    wl_data_source_destroy(source);
 }
@@ -728,6 +775,8 @@ _ecore_wl_dnd_offer_cb_offer(void *data, struct wl_data_offer *data_offer EINA_U
 {
    Ecore_Wl_Dnd_Source *source;
    char **t;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!(source = data)) return;
 
