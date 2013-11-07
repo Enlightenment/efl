@@ -2276,14 +2276,13 @@ _wl_elm_cnp_selection_set(Evas_Object *obj, Elm_Sel_Type selection, Elm_Sel_Form
              const char *types[10] = {0, };
              int i = -1;
 
-             if (format & ELM_SEL_FORMAT_TEXT)
+             if ((format & ELM_SEL_FORMAT_MARKUP) || 
+                 (format & ELM_SEL_FORMAT_TEXT))
                {
+                  types[++i] = "application/x-elementary-markup";
                   types[++i] = "text/plain";
                   types[++i] = "text/plain;charset=utf-8";
                }
-
-             if (format & ELM_SEL_FORMAT_MARKUP)
-               types[++i] = "application/x-elementary-markup";
 
              if (format & ELM_SEL_FORMAT_HTML)
                {
@@ -2335,19 +2334,20 @@ _wl_elm_cnp_selection_get(Evas_Object *obj, Elm_Sel_Type selection, Elm_Sel_Form
                                   EVAS_CALLBACK_DEL, _wl_sel_obj_del2, 
                                   &wl_cnp_selection);
 
-   if (selection == ELM_SEL_TYPE_CLIPBOARD)
+   if ((selection == ELM_SEL_TYPE_CLIPBOARD) || 
+       (selection == ELM_SEL_TYPE_PRIMARY) || 
+       (selection == ELM_SEL_TYPE_SECONDARY))
      {
         const char *types[10] = {0, };
         int i = -1;
 
-        if (format & ELM_SEL_FORMAT_TEXT)
+        if ((format & ELM_SEL_FORMAT_MARKUP) || 
+            (format & ELM_SEL_FORMAT_TEXT))
           {
+             types[++i] = "application/x-elementary-markup";
              types[++i] = "text/plain";
              types[++i] = "text/plain;charset=utf-8";
           }
-
-        if (format & ELM_SEL_FORMAT_MARKUP)
-          types[++i] = "application/x-elementary-markup";
 
         if (format & ELM_SEL_FORMAT_HTML)
           {
