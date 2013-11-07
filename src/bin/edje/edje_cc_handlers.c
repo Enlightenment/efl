@@ -8893,6 +8893,7 @@ ob_collections_group_programs_program(void)
    Edje_Part_Collection *pc;
    Edje_Program *ep;
    Edje_Program_Parser *epp;
+   char *def_name;
 
    pc = eina_list_data_get(eina_list_last(edje_collections));
 
@@ -8903,6 +8904,10 @@ ob_collections_group_programs_program(void)
    epp = (Edje_Program_Parser *)ep;
    epp->can_override = EINA_FALSE;
 
+   /* generate new name */
+   def_name = alloca(strlen("program_") + strlen("0xFFFFFFFFFFFFFFFF") + 1);
+   sprintf(def_name, "program_%p", ep);
+   ep->name = strdup(def_name);
    _edje_program_insert(pc, ep);
 
    current_program = ep;
@@ -8926,6 +8931,7 @@ st_collections_group_programs_program_name(void)
    check_arg_count(1);
 
    pc = eina_list_data_get(eina_list_last(edje_collections));
+   if (current_program->name) free((void *)current_program->name);
    current_program->name = parse_str(0);
 
    _edje_program_check(current_program->name, current_program, pc->programs.fnmatch, pc->programs.fnmatch_count);
