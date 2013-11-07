@@ -32,8 +32,8 @@ _a_set(Eo *obj, void *class_data, int a)
 
 EAPI EO2_VOID_FUNC_BODYV(simple_a_set, EO2_FUNC_CALL(a), int a);
 
-static Eo2_Op_Description op_desc[] = {
-     EO2_OP_FUNC(_a_set, simple_a_set, "Set property A."),
+static Eo2_Op_Description op_descs[] = {
+     EO2_OP_FUNC(_a_set, simple_a_set, "Set property A"),
      EO2_OP_SENTINEL
 };
 
@@ -46,7 +46,7 @@ static const Eo_Class_Description class_desc = {
      EO2_VERSION,
      "Simple",
      EO_CLASS_TYPE_REGULAR,
-     EO2_CLASS_DESCRIPTION_OPS(op_desc),
+     EO2_CLASS_DESCRIPTION_OPS(op_descs),
      event_desc,
      sizeof(Private_Data),
      NULL,
