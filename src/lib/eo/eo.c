@@ -461,12 +461,12 @@ eo2_call_resolve(const char *func_name, const Eo_Op op, Eo2_Op_Call_Data *call)
 
    if (EINA_LIKELY(func->func && func->src ))
      {
-        call->obj = (Eo *)fptr->eo_id;
-        call->klass = _eo_class_id_get(klass);
         call->func = func->func;
+        call->klass = _eo_class_id_get(klass);
 
         if (obj)
           {
+             call->obj = (Eo *)fptr->eo_id;
              if (func->src == obj->klass)
                {
                   if (fptr->obj_data == EO2_INVALID_DATA)
@@ -478,7 +478,10 @@ eo2_call_resolve(const char *func_name, const Eo_Op op, Eo2_Op_Call_Data *call)
                call->data = _eo_data_scope_get(obj, func->src);
           }
         else
-          call->data = NULL;
+          {
+             call->obj = call->klass;
+             call->data = NULL;
+          }
 
         return EINA_TRUE;
      }
@@ -569,33 +572,23 @@ _eo2_api_desc_get(const void *api_func, const _Eo_Class *klass, const _Eo_Class 
 }
 
 EAPI Eo_Op
-eo2_api_op_id_get(const void *api_func, const Eo_Op_Type op_type)
+eo2_api_op_id_get(const void *api_func)
 {
     const Eo2_Op_Description *desc;
     const _Eo_Class *klass;
 
-   if (op_type == EO_OP_TYPE_REGULAR)
-      klass = eo2_call_stack.frame_ptr->obj->klass;
-   else if (op_type == EO_OP_TYPE_CLASS)
+   Eina_Bool class_ref = _eo_is_a_class(eo2_call_stack.frame_ptr->eo_id);
+
+   if (class_ref)
       klass = eo2_call_stack.frame_ptr->cur_klass;
    else
-     {
-        ERR("api func %p, unknown op type %d", api_func, op_type);
-        return EO_NOOP;
-     }
+      klass = eo2_call_stack.frame_ptr->obj->klass;
 
    desc = _eo2_api_desc_get(api_func, klass, klass->extensions);
 
    if (desc == NULL)
      {
-        ERR("unable to resolve api func %p, op type %d", api_func,op_type);
-        return EO_NOOP;
-     }
-
-   if (desc->op_type != op_type)
-     {
-        ERR("api func %p resolves to %d, op type %d instead of %d",
-            api_func, (int) desc->op, desc->op_type, op_type);
+        ERR("unable to resolve %s api func %p", (class_ref ? "class" : "regular"), api_func);
         return EO_NOOP;
      }
 
