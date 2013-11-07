@@ -714,13 +714,11 @@ EAPI extern Eo2_Hook_Call eo2_hook_call_post;
   void                                                                  \
   Name(void)                                                            \
   {                                                                     \
-     typedef Ret (*__##Name##_func)(Eo_Class *);                        \
-     Ret _r;                                                            \
+     typedef void (*__##Name##_func)(Eo_Class *);                        \
      EO2_FUNC_COMMON_OP(Name, , EO_OP_TYPE_CLASS);                      \
      EO2_HOOK_CALL_PREPARE(eo2_hook_call_pre);                          \
      _func_(call.klass);                                                \
      EO2_HOOK_CALL_PREPARE(eo2_hook_call_post);                         \
-     return _r;                                                         \
   }
 
 #define EO2_CLASS_FUNC_BODYV(Name, Ret, DefRet, Arguments, ...)   \
