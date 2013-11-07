@@ -192,6 +192,15 @@ struct _Ecore_Wl_Input
         xkb_mod_mask_t control_mask;
         xkb_mod_mask_t alt_mask;
         xkb_mod_mask_t shift_mask;
+        xkb_mod_mask_t win_mask;
+        xkb_mod_mask_t scroll_mask;
+        xkb_mod_mask_t num_mask;
+        xkb_mod_mask_t caps_mask;
+        xkb_mod_mask_t altgr_mask;
+        unsigned int mods_depressed;
+        unsigned int mods_latched;
+        unsigned int mods_locked;
+        unsigned int mods_group;
      } xkb;
 
    struct
