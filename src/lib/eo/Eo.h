@@ -722,19 +722,8 @@ EAPI int eo2_call_stack_depth(void);
 #define EO2_DO_CLEANUP __attribute__((cleanup(eo2_do_end)))
 
 // eo object method calls batch,
-#define eo2_do(eoid, ...)                                                  \
-  do                                                                       \
-    {                                                                      \
-       const Eo *_eoid_ = eoid;                                            \
-       if (eo2_do_start(_eoid_, NULL, __FILE__, __FUNCTION__, __LINE__))   \
-         {                                                                 \
-            const Eo *_id_clean_ EO2_DO_CLEANUP = _eoid_;                  \
-            __VA_ARGS__;                                                   \
-            (void) _id_clean_;                                             \
-         }                                                                 \
-    } while (0)
 
-#define eo2_do_super(eoid, clsid, ...)                                     \
+#define _eo2_do_common(eoid, clsid, ...)                                   \
   do                                                                       \
     {                                                                      \
        const Eo *_eoid_ = eoid;                                            \
@@ -745,6 +734,11 @@ EAPI int eo2_call_stack_depth(void);
             (void) _id_clean_;                                             \
          }                                                                 \
     } while (0)
+
+
+#define eo2_do(eoid, ...) _eo2_do_common(eoid, NULL, __VA_ARGS__)
+
+#define eo2_do_super(eoid, clsid, ...) _eo2_do_common(eoid, clsid, __VA_ARGS__)
 
 /*****************************************************************************/
 
