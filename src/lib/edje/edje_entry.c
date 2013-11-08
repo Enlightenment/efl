@@ -2830,8 +2830,7 @@ _edje_entry_anchor_geometry_get(Edje_Real_Part *rp, const char *anchor)
    EINA_LIST_FOREACH(en->anchors, l, an)
      {
         const char *n = an->name;
-        if (an->item) continue;
-        if (!n) n = "";
+        if ((an->item) || (!n)) continue;
         if (!strcmp(anchor, n))
           return an->sel;
      }
@@ -2854,8 +2853,7 @@ _edje_entry_anchors_list(Edje_Real_Part *rp)
         EINA_LIST_FOREACH(en->anchors, l, an)
           {
              const char *n = an->name;
-             if (an->item) continue;
-             if (!n) n = "";
+             if ((an->item) || (!n)) continue;
              anchors = eina_list_append(anchors, strdup(n));
           }
         en->anchorlist = anchors;
