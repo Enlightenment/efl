@@ -30,8 +30,6 @@
 
 - Fix return values in all the eo2_base functions, like eo2_event_freeze_get
 
-- Changing eo2_event_freeze_get and calling it wtrong in signals_main.c does *not* generate a warning~!!!!!
-
 - A bit annoying that we don't get type checks on the callbacks, fix that? That's really dangerous!
 
 - Have a way to say a class has no ops.
