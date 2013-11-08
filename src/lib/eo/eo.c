@@ -563,13 +563,8 @@ _eo2_api_desc_get(const void *api_func, const _Eo_Class *klass, const _Eo_Class 
         for (kls_itr = extns ; *kls_itr ; kls_itr++)
           {
              cur_klass = *kls_itr;
-             if (cur_klass->desc->type == EO_CLASS_TYPE_REGULAR
-                 || cur_klass->desc->type == EO_CLASS_TYPE_REGULAR_NO_INSTANT
-                 || cur_klass->desc->type == EO_CLASS_TYPE_INTERFACE)
-               {
-                  op_desc = _eo2_api_desc_get(api_func, cur_klass, NULL);
-                  if (op_desc) return op_desc;
-               }
+             op_desc = _eo2_api_desc_get(api_func, cur_klass, NULL);
+             if (op_desc) return op_desc;
           }
      }
 
