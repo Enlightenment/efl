@@ -3376,34 +3376,6 @@ _proxy_subrender(Evas *eo_e, Evas_Object *eo_source, Evas_Object *eo_proxy, Evas
         e->engine.func->context_free(e->engine.data.output, ctx);
         proxy_write->surface = e->engine.func->image_dirty_region
            (e->engine.data.output, proxy_write->surface, 0, 0, w, h);
-/*   
-   ctx = e->engine.func->context_new(e->engine.data.output);
-   if (eo_isa(source, EVAS_OBJ_SMART_CLASS))
-     {
-        clip = evas_object_smart_clipped_clipper_get(source);
-        EINA_INLIST_FOREACH(evas_object_smart_members_get_direct(source), obj2)
-          {
-             _proxy_subrender_recurse(obj2, clip, e->engine.data.output,
-                                      proxy_write->surface,
-                                      ctx,
-                                      -source->cur->geometry.x,
-                                      -source->cur->geometry.y);
-          }
-     }
-   else
-     {
-        if (!source->pre_render_done)
-           source->func->render_pre(source);
-        source->func->render(source, e->engine.data.output, ctx,
-                             proxy_write->surface,
-                             -source->cur->geometry.x,
-                             -source->cur->geometry.y);
-     }
-   
-   e->engine.func->context_free(e->engine.data.output, ctx);
-   proxy_write->surface = e->engine.func->image_dirty_region
-      (e->engine.data.output, proxy_write->surface, 0, 0, w, h);
-*/
      }
  end:
    EINA_COW_WRITE_END(evas_object_proxy_cow, source->proxy, proxy_write);
