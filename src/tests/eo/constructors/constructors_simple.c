@@ -6,8 +6,6 @@
 #include "constructors_mixin.h"
 #include "constructors_simple.h"
 
-EAPI Eo_Op SIMPLE_BASE_ID = 0;
-
 typedef struct
 {
    int a;
