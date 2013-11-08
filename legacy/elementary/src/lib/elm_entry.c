@@ -375,6 +375,77 @@ _mirrored_set(Evas_Object *obj,
      elm_widget_mirrored_set(sd->anchor_hover.hover, rtl);
 }
 
+static void
+_hide_selection_handler(Evas_Object *obj)
+{
+   ELM_ENTRY_DATA_GET(obj, sd);
+
+   edje_object_signal_emit(sd->start_handler, "elm,handler,hide", "elm");
+   sd->start_handler_shown = EINA_FALSE;
+   edje_object_signal_emit(sd->end_handler, "elm,handler,hide", "elm");
+   sd->end_handler_shown = EINA_FALSE;
+}
+
+static void
+_update_selection_handler(Evas_Object *obj)
+{
+   ELM_ENTRY_DATA_GET(obj, sd);
+
+   Evas_Coord sx, sy, sw, sh;
+   Evas_Coord ent_x, ent_y;
+   Evas_Coord ex, ey, ew, eh;
+   int start_pos, end_pos;
+
+   if (!sd->sel_handler_disabled)
+     {
+        start_pos = edje_object_part_text_cursor_pos_get
+           (sd->entry_edje, "elm.text", EDJE_CURSOR_SELECTION_BEGIN);
+        end_pos = edje_object_part_text_cursor_pos_get
+           (sd->entry_edje, "elm.text", EDJE_CURSOR_SELECTION_END);
+
+        evas_object_geometry_get(sd->entry_edje, &ent_x, &ent_y, NULL, NULL);
+        edje_object_part_text_cursor_pos_set(sd->entry_edje, "elm.text",
+                                             EDJE_CURSOR_MAIN, start_pos);
+        edje_object_part_text_cursor_geometry_get(sd->entry_edje, "elm.text",
+                                                  &sx, &sy, &sw, &sh);
+        edje_object_part_text_cursor_pos_set(sd->entry_edje, "elm.text",
+                                             EDJE_CURSOR_MAIN, end_pos);
+        edje_object_part_text_cursor_geometry_get(sd->entry_edje, "elm.text",
+                                                  &ex, &ey, &ew, &eh);
+        if (sd->start_handler_downed)
+          {
+             edje_object_part_text_cursor_pos_set(sd->entry_edje, "elm.text",
+                                                  EDJE_CURSOR_MAIN, start_pos);
+          }
+        if (!sd->start_handler_shown)
+          {
+             sd->start_handler_shown = EINA_TRUE;
+             edje_object_signal_emit(sd->start_handler, "elm,handler,show", "elm");
+          }
+        evas_object_move(sd->start_handler, ent_x + sx, ent_y + sy + sh);
+        if (!sd->end_handler_shown)
+          {
+             sd->end_handler_shown = EINA_TRUE;
+             edje_object_signal_emit(sd->end_handler, "elm,handler,show", "elm");
+          }
+        evas_object_move(sd->end_handler, ent_x + ex, ent_y + ey + eh);
+     }
+   else
+     {
+        if (sd->start_handler_shown)
+          {
+             sd->start_handler_shown = EINA_FALSE;
+             edje_object_signal_emit(sd->start_handler, "elm,hanlder,hide", "elm");
+          }
+        if (sd->end_handler_shown)
+          {
+             sd->end_handler_shown = EINA_FALSE;
+             edje_object_signal_emit(sd->end_handler, "elm,handler,hide", "elm");
+          }
+     }
+}
+
+
 static const char *
 _elm_entry_theme_group_get(Evas_Object *obj)
 {
@@ -559,6 +630,11 @@ _elm_entry_smart_theme(Eo *obj, void *_pd, va_list *list)
      elm_widget_highlight_in_theme_set(obj, EINA_TRUE);
    else
      elm_widget_highlight_in_theme_set(obj, EINA_FALSE);
+
+   elm_widget_theme_object_set
+      (obj, sd->start_handler, "entry", "handler/start", elm_widget_style_get(obj));
+   elm_widget_theme_object_set
+      (obj, sd->end_handler, "entry", "handler/end", elm_widget_style_get(obj));
 
    sd->changed = EINA_TRUE;
    elm_layout_sizing_eval(obj);
@@ -1434,56 +1510,6 @@ _long_press_cb(void *data)
 }
 
 static void
-_entry_handler_move_start_cb(void *data,
-                             Evas_Object *obj __UNUSED__,
-                             const char *emission __UNUSED__,
-                             const char *source __UNUSED__)
-{
-   ELM_ENTRY_DATA_GET(data, sd);
-   Evas_Coord x, y, cx, cy, ch;
-
-   evas_object_geometry_get(sd->entry_edje, &x, &y, NULL, NULL);
-   edje_object_part_text_cursor_geometry_get(sd->entry_edje,
-                                             "elm.text",
-                                             &cx, &cy, NULL, &ch);
-   if (_elm_config->magnifier_enable)
-     {
-        _magnifier_create(data);
-        _magnifier_show(data);
-        _magnifier_move(data, x + cx, y + cy + ch/2);
-     }
-}
-
-static void
-_entry_handler_move_end_cb(void *data,
-                           Evas_Object *obj __UNUSED__,
-                           const char *emission __UNUSED__,
-                           const char *source __UNUSED__)
-{
-   if (_elm_config->magnifier_enable)
-     _magnifier_hide(data);
-   if (!_elm_config->desktop_entry)
-     _menu_call(data);
-}
-
-static void
-_entry_handler_moving_cb(void *data,
-                         Evas_Object *obj __UNUSED__,
-                         const char *emission __UNUSED__,
-                         const char *source __UNUSED__)
-{
-   ELM_ENTRY_DATA_GET(data, sd);
-   Evas_Coord x, y, cx, cy, ch;
-
-   evas_object_geometry_get(sd->entry_edje, &x, &y, NULL, NULL);
-   edje_object_part_text_cursor_geometry_get(sd->entry_edje,
-                                             "elm.text",
-                                             &cx, &cy, NULL, &ch);
-   if (_elm_config->magnifier_enable)
-     _magnifier_move(data, x + cx, y + cy + ch/2);
-}
-
-static void
 _key_down_cb(void *data,
                Evas *evas __UNUSED__,
                Evas_Object *obj __UNUSED__,
@@ -1776,6 +1802,8 @@ _entry_selection_changed_signal_cb(void *data,
    sd->have_selection = EINA_TRUE;
    evas_object_smart_callback_call(data, SIG_SELECTION_CHANGED, NULL);
    _selection_store(ELM_SEL_TYPE_PRIMARY, data);
+
+   _update_selection_handler(data);
 }
 
 static void
@@ -1814,6 +1842,7 @@ _entry_selection_cleared_signal_cb(void *data,
                elm_object_cnp_selection_clear(data, ELM_SEL_TYPE_PRIMARY);
           }
      }
+   _hide_selection_handler(data);
 }
 
 static void
@@ -2927,6 +2956,185 @@ _resize_cb(void *data,
    if (sd->hoversel) _hoversel_position(data);
 }
 
+Evas_Coord ox, oy;
+static void
+_start_handler_mouse_down_cb(void *data,
+                             Evas *e EINA_UNUSED,
+                             Evas_Object *obj EINA_UNUSED,
+                             void *event_info)
+{
+   ELM_ENTRY_DATA_GET(data, sd);
+
+   Evas_Event_Mouse_Down *ev = event_info;
+   Evas_Coord ex, ey;
+   Evas_Coord cx, cy, cw, ch;
+   int pos, main_pos;
+
+   sd->start_handler_downed = EINA_TRUE;
+   pos = edje_object_part_text_cursor_pos_get(sd->entry_edje, "elm.text",
+                                              EDJE_CURSOR_SELECTION_BEGIN);
+   main_pos = edje_object_part_text_cursor_pos_get(sd->entry_edje, "elm.text",
+                                                   EDJE_CURSOR_MAIN);
+   if (pos != main_pos)
+     {
+        edje_object_part_text_cursor_pos_set(sd->entry_edje, "elm.text",
+                                             EDJE_CURSOR_MAIN, pos);
+     }
+   edje_object_part_text_cursor_geometry_get(sd->entry_edje, "elm.text",
+                                             &cx, &cy, &cw, &ch);
+   evas_object_geometry_get(sd->entry_edje, &ex, &ey, NULL, NULL);
+   ox = ev->canvas.x - (ex + cx + cw/2);
+   oy = ev->canvas.y - (ey + cy + ch/2);
+
+   if (_elm_config->magnifier_enable)
+     {
+        _magnifier_create(data);
+        _magnifier_show(data);
+        _magnifier_move(data, ex + cx, ey + cy + ch/2);
+     }
+}
+
+static void
+_start_handler_mouse_up_cb(void *data,
+                           Evas *e EINA_UNUSED,
+                           Evas_Object *obj EINA_UNUSED,
+                           void *event_info EINA_UNUSED)
+{
+   ELM_ENTRY_DATA_GET(data, sd);
+
+   sd->start_handler_downed = EINA_FALSE;
+   if (_elm_config->magnifier_enable)
+     _magnifier_hide(data);
+   if (!_elm_config->desktop_entry)
+     _menu_call(data);
+}
+
+static void
+_start_handler_mouse_move_cb(void *data,
+                             Evas *e EINA_UNUSED,
+                             Evas_Object *obj EINA_UNUSED,
+                             void *event_info)
+{
+   ELM_ENTRY_DATA_GET(data, sd);
+
+   if (!sd->start_handler_downed) return;
+   Evas_Event_Mouse_Move *ev = event_info;
+   Evas_Coord ex, ey;
+   Evas_Coord cx, cy, ch;
+   int spos, epos;
+
+   evas_object_geometry_get(sd->entry_edje, &ex, &ey, NULL, NULL);
+   cx = ev->cur.canvas.x - ox - ex;
+   cy = ev->cur.canvas.y - oy - ey;
+   if (cx <= 0) cx = 1;
+   edje_object_part_text_cursor_coord_set(sd->entry_edje, "elm.text",
+                                          EDJE_CURSOR_SELECTION_BEGIN, cx, cy);
+   spos = edje_object_part_text_cursor_pos_get(sd->entry_edje, "elm.text",
+                                               EDJE_CURSOR_SELECTION_BEGIN);
+   epos = edje_object_part_text_cursor_pos_get(sd->entry_edje, "elm.text",
+                                               EDJE_CURSOR_SELECTION_END);
+   if (spos >= epos)
+     {
+        edje_object_part_text_cursor_pos_set(sd->entry_edje, "elm.text",
+                                             EDJE_CURSOR_SELECTION_BEGIN, epos - 1);
+     }
+   edje_object_part_text_cursor_geometry_get(sd->entry_edje,
+                                             "elm.text",
+                                             &cx, &cy, NULL, &ch);
+   if (_elm_config->magnifier_enable)
+     _magnifier_move(data, ex + cx, ey + cy + ch/2);
+}
+
+static void
+_end_handler_mouse_down_cb(void *data,
+                           Evas *e EINA_UNUSED,
+                           Evas_Object *obj EINA_UNUSED,
+                           void *event_info)
+{
+   ELM_ENTRY_DATA_GET(data, sd);
+
+   Evas_Event_Mouse_Down *ev = event_info;
+   Evas_Coord ex, ey;
+   Evas_Coord cx, cy, cw, ch;
+   int pos, main_pos;
+
+   sd->end_handler_downed = EINA_TRUE;
+   pos = edje_object_part_text_cursor_pos_get(sd->entry_edje, "elm.text",
+                                              EDJE_CURSOR_SELECTION_END);
+   main_pos = edje_object_part_text_cursor_pos_get(sd->entry_edje, "elm.text",
+                                                   EDJE_CURSOR_MAIN);
+   if (pos != main_pos)
+     {
+        edje_object_part_text_cursor_pos_set(sd->entry_edje, "elm.text",
+                                             EDJE_CURSOR_MAIN, pos);
+     }
+
+   edje_object_part_text_cursor_geometry_get(sd->entry_edje, "elm.text",
+                                             &cx, &cy, &cw, &ch);
+   evas_object_geometry_get(sd->entry_edje, &ex, &ey, NULL, NULL);
+   ox = ev->canvas.x - (ex + cx + cw/2);
+   oy = ev->canvas.y - (ey + cy + ch/2);
+
+   if (_elm_config->magnifier_enable)
+     {
+        _magnifier_create(data);
+        _magnifier_show(data);
+        _magnifier_move(data, ex + cx, ey + cy + ch/2);
+     }
+}
+
+static void
+_end_handler_mouse_up_cb(void *data,
+                         Evas *e EINA_UNUSED,
+                         Evas_Object *obj EINA_UNUSED,
+                         void *event_info EINA_UNUSED)
+{
+   ELM_ENTRY_DATA_GET(data, sd);
+
+   sd->end_handler_downed = EINA_FALSE;
+   if (_elm_config->magnifier_enable)
+     _magnifier_hide(data);
+   if (!_elm_config->desktop_entry)
+     _menu_call(data);
+}
+
+static void
+_end_handler_mouse_move_cb(void *data,
+                           Evas *e EINA_UNUSED,
+                           Evas_Object *obj EINA_UNUSED,
+                           void *event_info)
+{
+   ELM_ENTRY_DATA_GET(data, sd);
+
+   if (!sd->end_handler_downed) return;
+   Evas_Event_Mouse_Move *ev = event_info;
+   Evas_Coord ex, ey;
+   Evas_Coord cx, cy, ch;
+   int spos, epos;
+
+   evas_object_geometry_get(sd->entry_edje, &ex, &ey, NULL, NULL);
+   cx = ev->cur.canvas.x - ox - ex;
+   cy = ev->cur.canvas.y - oy - ey;
+   if (cx <= 0) cx = 1;
+   edje_object_part_text_cursor_coord_set(sd->entry_edje, "elm.text",
+                                          EDJE_CURSOR_SELECTION_END, cx, cy);
+   spos = edje_object_part_text_cursor_pos_get(sd->entry_edje, "elm.text",
+                                               EDJE_CURSOR_SELECTION_BEGIN);
+   epos = edje_object_part_text_cursor_pos_get(sd->entry_edje, "elm.text",
+                                               EDJE_CURSOR_SELECTION_END);
+   if (epos <= spos)
+     {
+        edje_object_part_text_cursor_pos_set(sd->entry_edje, "elm.text",
+                                             EDJE_CURSOR_SELECTION_END, spos + 1);
+     }
+   edje_object_part_text_cursor_geometry_get(sd->entry_edje,
+                                             "elm.text",
+                                             &cx, &cy, NULL, &ch);
+   if (_elm_config->magnifier_enable)
+     _magnifier_move(data, ex + cx, ey + cy + ch/2);
+}
+
+
 static void
 _elm_entry_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
@@ -3040,15 +3248,6 @@ _elm_entry_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    edje_object_signal_callback_add
      (priv->entry_edje, "entry,redo,request", "elm.text",
      _entry_redo_request_signal_cb, obj);
-   edje_object_signal_callback_add
-     (priv->entry_edje, "handler,move,start", "elm.text",
-     _entry_handler_move_start_cb, obj);
-   edje_object_signal_callback_add
-     (priv->entry_edje, "handler,move,end", "elm.text",
-     _entry_handler_move_end_cb, obj);
-   edje_object_signal_callback_add
-     (priv->entry_edje, "handler,moving", "elm.text",
-     _entry_handler_moving_cb, obj);
 
    elm_layout_text_set(obj, "elm.text", "");
 
@@ -3102,6 +3301,30 @@ _elm_entry_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
      (_elm_access_info_get(obj), ELM_ACCESS_INFO, _access_info_cb, NULL);
    _elm_access_callback_set
      (_elm_access_info_get(obj), ELM_ACCESS_STATE, _access_state_cb, NULL);
+
+   priv->start_handler = edje_object_add(evas_object_evas_get(obj));
+   _elm_theme_object_set(obj, priv->start_handler,
+                         "entry", "handler/start", "default");
+   evas_object_event_callback_add(priv->start_handler, EVAS_CALLBACK_MOUSE_DOWN,
+                                  _start_handler_mouse_down_cb, obj);
+   evas_object_event_callback_add(priv->start_handler, EVAS_CALLBACK_MOUSE_MOVE,
+                                  _start_handler_mouse_move_cb, obj);
+   evas_object_event_callback_add(priv->start_handler, EVAS_CALLBACK_MOUSE_UP,
+                                  _start_handler_mouse_up_cb, obj);
+   evas_object_show(priv->start_handler);
+
+   priv->end_handler = edje_object_add(evas_object_evas_get(obj));
+   _elm_theme_object_set(obj, priv->end_handler,
+                         "entry", "handler/end", "default");
+   evas_object_event_callback_add(priv->end_handler, EVAS_CALLBACK_MOUSE_DOWN,
+                                  _end_handler_mouse_down_cb, obj);
+   evas_object_event_callback_add(priv->end_handler, EVAS_CALLBACK_MOUSE_MOVE,
+                                  _end_handler_mouse_move_cb, obj);
+   evas_object_event_callback_add(priv->end_handler, EVAS_CALLBACK_MOUSE_UP,
+                                  _end_handler_mouse_up_cb, obj);
+   evas_object_show(priv->end_handler);
+   if (_elm_config->desktop_entry)
+     priv->sel_handler_disabled = EINA_TRUE;
 }
 
 static void
@@ -3180,6 +3403,9 @@ _elm_entry_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    evas_event_thaw(evas_object_evas_get(obj));
    evas_event_thaw_eval(evas_object_evas_get(obj));
 
+   evas_object_del(sd->start_handler);
+   evas_object_del(sd->end_handler);
+
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
 
@@ -3195,6 +3421,9 @@ _elm_entry_smart_move(Eo *obj, void *_pd, va_list *list)
    evas_object_move(sd->hit_rect, x, y);
 
    if (sd->hoversel) _hoversel_position(obj);
+
+   if (edje_object_part_text_selection_get(sd->entry_edje, "elm.text"))
+     _update_selection_handler(obj);
 }
 
 static void
@@ -3572,6 +3801,42 @@ _selection_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 }
 
 EAPI void
+elm_entry_selection_handler_disabled_set(Evas_Object *obj,
+                                         Eina_Bool disabled)
+{
+   ELM_ENTRY_CHECK(obj);
+   eo_do((Eo *) obj, elm_obj_entry_selection_handler_disabled_set(disabled));
+}
+
+static void
+_selection_handler_disabled_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool disabled = va_arg(*list, int);
+   Elm_Entry_Smart_Data *sd = _pd;
+
+   if (sd->sel_handler_disabled == disabled) return;
+   sd->sel_handler_disabled = disabled;
+}
+
+EAPI Eina_Bool
+elm_entry_selection_handler_disabled_get(Evas_Object *obj)
+{
+   ELM_ENTRY_CHECK(obj) EINA_FALSE;
+   Eina_Bool ret = EINA_FALSE;
+   eo_do((Eo *) obj, elm_obj_entry_selection_handler_disabled_get(&ret));
+   return ret;
+}
+
+static void
+_selection_handler_disabled_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Elm_Entry_Smart_Data *sd = _pd;
+
+   *ret = sd->sel_handler_disabled;
+}
+
+EAPI void
 elm_entry_entry_insert(Evas_Object *obj,
                        const char *entry)
 {
@@ -3701,6 +3966,8 @@ _select_none(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
      }
    sd->have_selection = EINA_FALSE;
    edje_object_part_text_select_none(sd->entry_edje, "elm.text");
+
+   _hide_selection_handler(obj);
 }
 
 EAPI void
@@ -5506,6 +5773,8 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_TEXTBLOCK_GET), _textblock_get),
         EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_CALC_FORCE), _calc_force),
         EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_SELECTION_GET), _selection_get),
+        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_SELECTION_HANDLER_DISABLED_SET), _selection_handler_disabled_set),
+        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_SELECTION_HANDLER_DISABLED_GET), _selection_handler_disabled_get),
         EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_ENTRY_INSERT), _entry_insert),
         EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_LINE_WRAP_SET), _line_wrap_set),
         EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_LINE_WRAP_GET), _line_wrap_get),
@@ -5601,6 +5870,8 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_TEXTBLOCK_GET, "Returns the actual textblock object of the entry."),
      EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_CALC_FORCE, "Forces calculation of the entry size and text layouting."),
      EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_SELECTION_GET, "Get any selected text within the entry."),
+     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_SELECTION_HANDLER_DISABLED_SET, "This disables the entry's selection handlers."),
+     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_SELECTION_HANDLER_DISABLED_GET, "This returns whether the entry's selection handlers are disabled."),
      EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_ENTRY_INSERT, "Inserts the given text into the entry at the current cursor position."),
      EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_LINE_WRAP_SET, "Set the line wrap type to use on multi-line entries."),
      EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_LINE_WRAP_GET, "Get the wrap mode the entry was set to use."),

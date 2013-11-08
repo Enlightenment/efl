@@ -29,6 +29,8 @@ struct _Elm_Entry_Smart_Data
    Evas_Object                          *mgf_bg;
    Evas_Object                          *mgf_clip;
    Evas_Object                          *mgf_proxy;
+   Evas_Object                          *start_handler;
+   Evas_Object                          *end_handler;
    Ecore_Job                            *deferred_recalc_job;
    Ecore_Event_Handler                  *sel_notify_handler;
    Ecore_Event_Handler                  *sel_clear_handler;
@@ -73,6 +75,11 @@ struct _Elm_Entry_Smart_Data
 
    Eina_Bool                             input_panel_return_key_disabled : 1;
    Eina_Bool                             drag_selection_asked : 1;
+   Eina_Bool                             sel_handler_disabled : 1;
+   Eina_Bool                             start_handler_downed : 1;
+   Eina_Bool                             start_handler_shown : 1;
+   Eina_Bool                             end_handler_downed : 1;
+   Eina_Bool                             end_handler_shown : 1;
    Eina_Bool                             input_panel_enable : 1;
    Eina_Bool                             prediction_allow : 1;
    Eina_Bool                             selection_asked : 1;

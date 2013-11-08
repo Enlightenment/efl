@@ -477,9 +477,6 @@ group { name: "elm/entry/base/default";
          scale: 1;
          entry_mode: EDITABLE;
          select_mode: DEFAULT;
-// XXX: set BLOCK_HANDLE ONLY if in mobile mode...         
-//         select_mode: BLOCK_HANDLE;
-
 //         select_mode: EXPLICIT;
          cursor_mode: BEFORE;
          multiline: 1;
@@ -489,8 +486,6 @@ group { name: "elm/entry/base/default";
          source4: "elm/entry/cursor/default"; // cursorover
 //         source5: "elm/entry/anchor/default"; // anchor under
          source6: "elm/entry/anchor/default"; // anchor over
-         source7: "elm/entry/handler/start/default";
-         source8: "elm/entry/handler/end/default";
          description { state: "default" 0.0;
             /* we gotta use 0 0 here, because of scrolled entries */
             fixed: 0 0;
@@ -1029,13 +1024,13 @@ group { name: "elm/entry/handler/start/default";
    }
    programs {
       program {
-         signal: "edje,handler,show"; source: "edje";
+         signal: "elm,handler,show"; source: "elm";
          action: STATE_SET "visible" 0.0;
          target: "base";
          target: "event";
       }
       program {
-         signal: "edje,handler,hide"; source: "edje";
+         signal: "elm,handler,hide"; source: "elm";
          action: STATE_SET "default" 0.0;
          target: "base";
          target: "event";
@@ -1076,13 +1071,13 @@ group { name: "elm/entry/handler/end/default";
    }
    programs {
       program {
-         signal: "edje,handler,show"; source: "edje";
+         signal: "elm,handler,show"; source: "elm";
          action: STATE_SET "visible" 0.0;
          target: "base";
          target: "event";
       }
       program {
-         signal: "edje,handler,hide"; source: "edje";
+         signal: "elm,handler,hide"; source: "elm";
          action: STATE_SET "default" 0.0;
          target: "base";
          target: "event";

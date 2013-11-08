@@ -18,6 +18,8 @@ enum
    ELM_OBJ_ENTRY_SUB_ID_TEXTBLOCK_GET,
    ELM_OBJ_ENTRY_SUB_ID_CALC_FORCE,
    ELM_OBJ_ENTRY_SUB_ID_SELECTION_GET,
+   ELM_OBJ_ENTRY_SUB_ID_SELECTION_HANDLER_DISABLED_SET,
+   ELM_OBJ_ENTRY_SUB_ID_SELECTION_HANDLER_DISABLED_GET,
    ELM_OBJ_ENTRY_SUB_ID_ENTRY_INSERT,
    ELM_OBJ_ENTRY_SUB_ID_LINE_WRAP_SET,
    ELM_OBJ_ENTRY_SUB_ID_LINE_WRAP_GET,
@@ -264,6 +266,35 @@ enum
  * @ingroup Entry
  */
 #define elm_obj_entry_selection_get(ret) ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_SELECTION_GET), EO_TYPECHECK(const char **, ret)
+
+/**
+ * @def elm_obj_entry_selection_handler_disabled_set
+ * @since 1.8
+ *
+ * This disables entry's selection handlers.
+ *
+ * @param[in] disabled
+ *
+ * @see elm_entry_selection_handler_disabled_set
+ *
+ * @ingroup Entry
+ */
+#define elm_obj_entry_selection_handler_disabled_set(disbaled) ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_SELECTION_HANDLER_DISABLED_SET), EO_TYPECHECK(Eina_Bool, disabled)
+
+/**
+ * @def elm_obj_entry_selection_handler_disabled_get
+ * @since 1.8
+ *
+ * This returns whether the entry's selection handlers are disabled.
+ *
+ * @param[out] ret
+ *
+ * @see elm_entry_selection_handler_disabled_get
+ *
+ * @ingroup Entry
+ */
+#define elm_obj_entry_selection_handler_disabled_get(ret) ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_SELECTION_HANDLER_DISABLED_GET), EO_TYPECHECK(Eina_Bool *, ret)
+
 
 /**
  * @def elm_obj_entry_entry_insert

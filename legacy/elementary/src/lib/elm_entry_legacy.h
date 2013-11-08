@@ -226,6 +226,27 @@ EAPI void               elm_entry_calc_force(Evas_Object *obj);
 EAPI const char        *elm_entry_selection_get(const Evas_Object *obj);
 
 /**
+  * This disabled the entry's selection handlers.
+  *
+  * @param obj The entry object
+  * @param disabled If true, the selection handlers are disabled.
+  *
+  * @ingroup Entry
+  */
+EAPI void              elm_entry_selection_handler_disabled_set(Evas_Object *obj, Eina_Bool disabled);
+
+/**
+  * This returns whether the entry's selection handlers are disabled.
+  *
+  * @param obj The entry object
+  * @return If true, the selection handlers are disabled.
+  *
+  * @ingroup Entry
+  */
+EAPI void              elm_entry_selection_handler_disabled_set(Evas_Object *obj, Eina_Bool disabled);
+
+
+/**
  * Inserts the given text into the entry at the current cursor position.
  *
  * This inserts text at the cursor position as if it was typed
