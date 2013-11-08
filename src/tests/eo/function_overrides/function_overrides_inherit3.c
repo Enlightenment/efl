@@ -10,10 +10,8 @@
 #define MY_CLASS INHERIT3_CLASS
 
 static void
-_a_set(Eo *obj, void *class_data EINA_UNUSED, va_list *list)
+_a_set(Eo *obj, void *class_data EINA_UNUSED, int a)
 {
-   int a;
-   a = va_arg(*list, int);
    printf("%s %d\n", eo_class_name_get(MY_CLASS), a);
    eo2_do_super(obj, MY_CLASS, simple_a_set(a + 1));
 }
