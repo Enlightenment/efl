@@ -20,40 +20,41 @@ _a_set(Eo *obj EINA_UNUSED, void *class_data, int a)
    pd->a = a;
 }
 
-static void
+static Eina_Bool
 _a_print(Eo *obj EINA_UNUSED, void *class_data)
 {
    Simple_Public_Data *pd = class_data;
    printf("Print %s %d\n", eo_class_name_get(MY_CLASS), pd->a);
-   pd->a_print_called = EINA_TRUE;
+
+   return EINA_TRUE;
 }
 
-static void
+static Eina_Bool
 _class_print(Eo_Class *klass, void *class_data EINA_UNUSED)
 {
    printf("Print %s-%s\n", eo_class_name_get(klass), eo_class_name_get(MY_CLASS));
-   class_print_called = EINA_FALSE;
-   eo2_do_super(klass, MY_CLASS, simple_class_print());
-   fail_if(class_print_called);
+   Eina_Bool called = EINA_FALSE;
+   eo2_do_super(klass, MY_CLASS, called = simple_class_print());
+   fail_if(called);
 
-   class_print2_called = EINA_FALSE;
-   eo2_do_super(klass, MY_CLASS, simple_class_print2());
-   fail_if(class_print2_called);
+   eo2_do_super(klass, MY_CLASS, called = simple_class_print2());
+   fail_if(called);
 
-   class_print_called = EINA_TRUE;
+   return EINA_TRUE;
 }
 
-static void
+static Eina_Bool
 _class_print2(Eo_Class *klass, void *class_data EINA_UNUSED)
 {
    printf("Print %s-%s\n", eo_class_name_get(klass), eo_class_name_get(MY_CLASS));
-   class_print2_called = EINA_TRUE;
+
+   return EINA_TRUE;
 }
 
 EAPI EO2_VOID_FUNC_BODYV(simple_a_set, EO2_FUNC_CALL(a), int a);
-EAPI EO2_VOID_FUNC_BODY(simple_a_print);
-EAPI EO2_VOID_FUNC_BODY(simple_class_print);
-EAPI EO2_VOID_FUNC_BODY(simple_class_print2);
+EAPI EO2_FUNC_BODY(simple_a_print, Eina_Bool, EINA_FALSE);
+EAPI EO2_FUNC_BODY(simple_class_print, Eina_Bool, EINA_FALSE);
+EAPI EO2_FUNC_BODY(simple_class_print2, Eina_Bool, EINA_FALSE);
 
 static Eo2_Op_Description op_descs[] = {
      EO2_OP_FUNC(_a_set, simple_a_set, "Set property A"),

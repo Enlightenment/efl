@@ -17,6 +17,7 @@ main(int argc, char *argv[])
    (void) argv;
    eo_init();
 
+   Eina_Bool called;
    Eo *obj = eo2_add(INHERIT2_CLASS, NULL);
 
    eo2_do(obj, simple_a_set(1));
@@ -34,40 +35,36 @@ main(int argc, char *argv[])
    eo_unref(obj);
 
    obj = eo2_add(INHERIT2_CLASS, NULL);
-   inherit2_print_called = EINA_FALSE;
-   eo2_do(obj, inherit2_print());
-   eo2_do(obj, inherit2_print(), inherit2_print());
-   fail_if(!inherit2_print_called);
+   eo2_do(obj, called = inherit2_print());
+   fail_if(!called);
+   eo2_do(obj, called = inherit2_print(), called = inherit2_print());
+   fail_if(!called);
    eo_unref(obj);
 
    obj = eo2_add(SIMPLE_CLASS, NULL);
-   inherit2_print_called = EINA_FALSE;
-   eo2_do(obj, inherit2_print());
-   fail_if(inherit2_print_called);
+   eo2_do(obj, called = inherit2_print());
+   fail_if(called);
 
 #ifdef EO_DEBUG
-   class_print_called = EINA_FALSE;
-   eo2_do(obj, simple_class_print());
-   fail_if(class_print_called);
+   eo2_do(obj, called = simple_class_print());
+   fail_if(called);
 #endif
 
-   class_print_called = EINA_FALSE;
-   eo2_do(SIMPLE_CLASS, simple_class_print());
-   fail_if(!class_print_called);
-   class_print_called = EINA_FALSE;
-   eo2_do(INHERIT_CLASS, simple_class_print());
-   fail_if(!class_print_called);
-   class_print_called = EINA_FALSE;
-   eo2_do(INHERIT2_CLASS, simple_class_print());
-   fail_if(!class_print_called);
-   class_print_called = EINA_FALSE;
-   eo2_do(INHERIT3_CLASS, simple_class_print());
-   fail_if(!class_print_called);
+   eo2_do(SIMPLE_CLASS, called = simple_class_print());
+   fail_if(!called);
+
+   eo2_do(INHERIT_CLASS, called = simple_class_print());
+   fail_if(!called);
+
+   eo2_do(INHERIT2_CLASS, called = simple_class_print());
+   fail_if(!called);
+
+   eo2_do(INHERIT3_CLASS, called = simple_class_print());
+   fail_if(!called);
 
 #ifdef EO_DEBUG
-   pd->a_print_called = EINA_FALSE;
-   eo2_do(SIMPLE_CLASS, simple_a_print());
-   fail_if(pd->a_print_called);
+   eo2_do(SIMPLE_CLASS, called = simple_a_print());
+   fail_if(called);
 #endif
 
    eo2_do_super(obj, SIMPLE_CLASS, eo2_constructor());

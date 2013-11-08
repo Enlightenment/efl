@@ -18,47 +18,46 @@ _a_set(Eo *obj, void *class_data EINA_UNUSED, int a)
    eo2_do(obj, simple_a_print());
    eo2_do_super(obj, MY_CLASS, simple_a_set(a + 1));
 
-   Simple_Public_Data *pd = eo_data_scope_get(obj, SIMPLE_CLASS);
-   pd->a_print_called = EINA_FALSE;
-   eo2_do_super(obj, MY_CLASS, simple_a_print());
-   fail_if(!pd->a_print_called);
+   Eina_Bool called;
+   eo2_do_super(obj, MY_CLASS, called = simple_a_print());
+   fail_if(!called);
 }
 
-Eina_Bool inherit2_print_called = EINA_FALSE;
-Eina_Bool inherit2_print2_called = EINA_FALSE;
-
-static void
+static Eina_Bool
 _print(Eo *obj, void *class_data EINA_UNUSED)
 {
+   Eina_Bool called;
    printf("Hey\n");
-   inherit2_print_called = EINA_FALSE;
-   eo2_do_super(obj, MY_CLASS, inherit2_print());
-   // FIXME   fail_if(inherit2_print_called);
-   inherit2_print_called = EINA_TRUE;
+   eo2_do_super(obj, MY_CLASS, called = inherit2_print());
+   fail_if(called);
+
+   return EINA_TRUE;
 }
 
-static void
+static Eina_Bool
 _print2(Eo *obj EINA_UNUSED, void *class_data EINA_UNUSED)
 {
    printf("Hey2\n");
-   inherit2_print2_called = EINA_TRUE;
+
+   return EINA_TRUE;
 }
 
-static void
+static Eina_Bool
 _class_print(Eo_Class *klass, void *data EINA_UNUSED)
 {
+   Eina_Bool called;
    printf("Print %s-%s\n", eo_class_name_get(klass), eo_class_name_get(MY_CLASS));
-   class_print_called = EINA_FALSE;
-   eo2_do_super(klass, MY_CLASS, simple_class_print());
-   fail_if(!class_print_called);
+   eo2_do_super(klass, MY_CLASS, called = simple_class_print());
+   fail_if(!called);
 
-   class_print2_called = EINA_FALSE;
-   eo2_do_super(klass, MY_CLASS, simple_class_print2());
-   fail_if(!class_print2_called);
+   eo2_do_super(klass, MY_CLASS, called = simple_class_print2());
+   fail_if(!called);
+
+   return EINA_TRUE;
 }
 
-EAPI EO2_VOID_FUNC_BODY(inherit2_print);
-EAPI EO2_VOID_FUNC_BODY(inherit2_print2);
+EAPI EO2_FUNC_BODY(inherit2_print, Eina_Bool, EINA_FALSE);
+EAPI EO2_FUNC_BODY(inherit2_print2, Eina_Bool, EINA_FALSE);
 
 static Eo2_Op_Description op_descs[] = {
      EO2_OP_FUNC(_print, inherit2_print, "Print hey"),
