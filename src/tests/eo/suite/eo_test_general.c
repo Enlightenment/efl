@@ -622,7 +622,7 @@ START_TEST(eo_magic_checks)
 
         eo2_do((Eo *) buf,
 	      eo2_wref_add(&wref),
-	      eo2_parent_get(&parent));
+	      parent = eo2_parent_get());
         fail_if(wref);
         fail_if(parent);
 
