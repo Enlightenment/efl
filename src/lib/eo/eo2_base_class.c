@@ -933,7 +933,13 @@ EAPI EO2_VOID_FUNC_BODY(eo2_constructor);
 static void
 _destructor(Eo *obj, void *class_data)
 {
+   Private_Data *pd = class_data;
+   Eo *child;
+
    DBG("%p - %s.", obj, eo_class_name_get(MY_CLASS));
+
+   EINA_LIST_FREE(pd->children, child)
+      eo2_do(child, eo2_parent_set(NULL));
 
    _eo_generic_data_del_all(class_data);
    _wref_destruct(class_data);
