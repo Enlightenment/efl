@@ -595,7 +595,7 @@ START_TEST(eo_magic_checks)
         ck_assert_int_ne(i, a);
         eo2_do_super(obj, (const Eo_Class *) buf, simple_a_set(++i));
         eo2_do_super(obj, (const Eo_Class *) buf, a = simple_a_get());
-        ck_assert_int_ne(i, a);
+        ck_assert_int_ne(i, a); // FIXME Jeremy: shouldn't happen. do_super should check for class validity and fail!
         fail_if(eo_class_get((Eo *) buf));
         fail_if(eo_class_name_get((Eo_Class*) buf));
         fail_if(eo_class_get(obj) != SIMPLE_CLASS);
