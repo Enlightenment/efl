@@ -11,58 +11,54 @@
 
 #define MY_CLASS MIXIN2_CLASS
 
-static void
-_ab_sum_get(Eo *obj, void *class_data, va_list *list)
+static int
+_ab_sum_get(Eo *obj, void *class_data)
 {
    /* This cast is a hack just for the tests... */
    Mixin2_Public_Data *pd = (Mixin2_Public_Data *) class_data;
-   int *sum = va_arg(*list, int *);
+   int sum;
    printf("%s %s\n", eo_class_name_get(MY_CLASS), __func__);
-   eo_do_super(obj, MY_CLASS, mixin_ab_sum_get(sum));
+   eo2_do_super(obj, MY_CLASS, sum = mixin_ab_sum_get());
 
-   ++*sum;
+   ++sum;
    pd->count += 2;
 
      {
         int _a, _b;
-        eo_do(obj, simple_a_get(&_a), simple_b_get(&_b));
-        fail_if(*sum != _a + _b + 1);
+        eo2_do(obj, _a = simple_a_get(), _b = simple_b_get());
+        fail_if(sum != _a + _b + 1);
      }
+
+   return sum;
 }
 
 static void
 _constructor(Eo *obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   eo_do_super(obj, MY_CLASS, eo_constructor());
+   eo2_do_super(obj, MY_CLASS, eo2_constructor());
 }
 
 static void
 _destructor(Eo *obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   eo_do_super(obj, MY_CLASS, eo_destructor());
+   eo2_do_super(obj, MY_CLASS, eo2_destructor());
 }
 
-static void
-_class_constructor(Eo_Class *klass)
-{
-   const Eo_Op_Func_Description func_desc[] = {
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DESTRUCTOR), _destructor),
-        EO_OP_FUNC(MIXIN_ID(MIXIN_SUB_ID_AB_SUM_GET), _ab_sum_get),
-        EO_OP_FUNC_SENTINEL
-   };
-
-   eo_class_funcs_set(klass, func_desc);
-}
+static Eo2_Op_Description op_descs[] = {
+     EO2_OP_FUNC_OVERRIDE(_constructor, eo2_constructor),
+     EO2_OP_FUNC_OVERRIDE(_destructor, eo2_destructor),
+     EO2_OP_FUNC_OVERRIDE(_ab_sum_get, mixin_ab_sum_get),
+     EO2_OP_SENTINEL
+};
 
 static const Eo_Class_Description class_desc = {
-     EO_VERSION,
+     EO2_VERSION,
      "Mixin2",
      EO_CLASS_TYPE_MIXIN,
-     EO_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
+     EO2_CLASS_DESCRIPTION_OPS(op_descs),
      NULL,
      sizeof(Mixin2_Public_Data),
-     _class_constructor,
+     NULL,
      NULL
 };
 
