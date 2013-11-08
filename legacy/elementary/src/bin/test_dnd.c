@@ -919,7 +919,7 @@ static Eina_Bool _drop_box_button_new_cb(void *data, Evas_Object *obj, Elm_Selec
    return EINA_TRUE;
 }
 
-void _enter_but_cb(void *data, Evas_Object *obj)
+void _enter_but_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED)
 {
    printf("Entered %s - drop it here and I will never print this line anymore.\n", __FUNCTION__);
 }
@@ -941,7 +941,7 @@ static Eina_Bool _drop_but_icon_change_cb(void *data, Evas_Object *obj, Elm_Sele
 }
 
 /* Callback used to test multi-callbacks feature */
-static Eina_Bool _drop_but_cb_remove_cb(void *data, Evas_Object *obj, Elm_Selection_Data *ev)
+static Eina_Bool _drop_but_cb_remove_cb(void *data EINA_UNUSED, Evas_Object *obj, Elm_Selection_Data *ev EINA_UNUSED)
 {
    printf("Second callback called - removing it\n");
    elm_drop_target_del(obj, ELM_SEL_FORMAT_TARGETS, _enter_but_cb, NULL, NULL, NULL, NULL, NULL, _drop_but_cb_remove_cb, NULL);
