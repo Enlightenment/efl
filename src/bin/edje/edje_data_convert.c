@@ -422,8 +422,6 @@ _edje_edd_old_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_old_edje_part, Old_Edje_Part, "source4", source4, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_old_edje_part, Old_Edje_Part, "source5", source5, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_old_edje_part, Old_Edje_Part, "source6", source6, EET_T_STRING);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_old_edje_part, Old_Edje_Part, "source7", source7, EET_T_STRING);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_old_edje_part, Old_Edje_Part, "source8", source8, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_LIST(_edje_edd_old_edje_part, Old_Edje_Part, "items", items, _edje_edd_old_edje_pack_element);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_old_edje_part, Old_Edje_Part, "api.name", api.name, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_old_edje_part, Old_Edje_Part, "api.description", api.description, EET_T_STRING);
