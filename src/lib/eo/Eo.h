@@ -738,7 +738,7 @@ EAPI int eo2_call_stack_depth(void);
 
 #define eo2_do(eoid, ...) _eo2_do_common(eoid, NULL, __VA_ARGS__)
 
-#define eo2_do_super(eoid, clsid, ...) _eo2_do_common(eoid, clsid, __VA_ARGS__)
+#define eo2_do_super(eoid, clsid, func) _eo2_do_common(eoid, clsid, func)
 
 /*****************************************************************************/
 
