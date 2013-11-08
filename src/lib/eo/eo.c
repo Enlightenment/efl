@@ -655,7 +655,7 @@ _eo2_class_funcs_set(_Eo_Class *klass)
 }
 
 EAPI Eo *
-eo2_add_internal_start(const char *file, int line, const Eo_Class *klass_id, Eo *parent_id)
+_eo2_add_internal_start(const char *file, int line, const Eo_Class *klass_id, Eo *parent_id)
 {
    _Eo_Object *obj;
 
@@ -704,7 +704,7 @@ eo2_add_internal_start(const char *file, int line, const Eo_Class *klass_id, Eo 
 }
 
 EAPI Eo *
-eo2_add_internal_end(const char *file, int line, const Eo *eo_id)
+_eo2_add_internal_end(const char *file, int line, const Eo *eo_id)
 {
    Eo2_Stack_Frame *fptr;
 
@@ -720,7 +720,7 @@ eo2_add_internal_end(const char *file, int line, const Eo *eo_id)
      {
         ERR("in %s:%d: Object of class '%s' - Not all of the object constructors have been executed.",
             file, line, fptr->cur_klass->desc->name);
-        /* Unref twice, once for the ref in eo2_add_internal_start, and once for the basic object ref. */
+        /* Unref twice, once for the ref in _eo2_add_internal_start, and once for the basic object ref. */
         _eo_unref(fptr->obj);
         _eo_unref(fptr->obj);
         return NULL;

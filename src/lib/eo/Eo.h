@@ -856,11 +856,11 @@ EAPI void eo_error_set_internal(const Eo *obj, const char *file, int line);
 #define eo2_add(klass, parent, ...) \
    ({ \
     const Eo_Class *_tmp_klass = klass; \
-    Eo *_tmp_obj = eo2_add_internal_start(__FILE__, __LINE__, _tmp_klass, parent); \
+    Eo *_tmp_obj = _eo2_add_internal_start(__FILE__, __LINE__, _tmp_klass, parent); \
     eo2_do(_tmp_obj, \
            eo2_constructor(); \
            __VA_ARGS__; \
-           _tmp_obj = eo2_add_internal_end(__FILE__, __LINE__, _tmp_obj); \
+           _tmp_obj = _eo2_add_internal_end(__FILE__, __LINE__, _tmp_obj); \
           ); \
     _tmp_obj; \
     })
@@ -883,10 +883,10 @@ EAPI void eo_error_set_internal(const Eo *obj, const char *file, int line);
 #define eo2_add_custom(klass, parent, ...) \
    ({ \
     const Eo_Class *_tmp_klass = klass; \
-    Eo *_tmp_obj = eo2_add_internal_start(__FILE__, __LINE__, _tmp_klass, parent); \
+    Eo *_tmp_obj = _eo2_add_internal_start(__FILE__, __LINE__, _tmp_klass, parent); \
     eo2_do(_tmp_obj, \
            __VA_ARGS__; \
-           _tmp_obj = eo2_add_internal_end(__FILE__, __LINE__, _tmp_obj); \
+           _tmp_obj = _eo2_add_internal_end(__FILE__, __LINE__, _tmp_obj); \
           ); \
     _tmp_obj; \
     })
@@ -904,8 +904,8 @@ EAPI void eo_error_set_internal(const Eo *obj, const char *file, int line);
  * @see #eo_add
  */
 EAPI Eo *eo_add_internal(const char *file, int line, const Eo_Class *klass, Eo *parent, ...);
-EAPI Eo * eo2_add_internal_start(const char *file, int line, const Eo_Class *klass_id, Eo *parent);
-EAPI Eo * eo2_add_internal_end(const char *file, int line, const Eo *obj);
+EAPI Eo * _eo2_add_internal_start(const char *file, int line, const Eo_Class *klass_id, Eo *parent);
+EAPI Eo * _eo2_add_internal_end(const char *file, int line, const Eo *obj);
 
 /**
  * @brief Get a pointer to the data of an object for a specific class.
