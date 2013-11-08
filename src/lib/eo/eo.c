@@ -459,7 +459,7 @@ eo2_call_resolve(const char *func_name, const Eo_Op op, Eo2_Op_Call_Data *call)
         return EINA_FALSE;
      }
 
-   if (EINA_LIKELY(func->func && func->src ))
+   if (EINA_LIKELY(func->func && func->src))
      {
         call->func = func->func;
         call->klass = _eo_class_id_get(klass);
