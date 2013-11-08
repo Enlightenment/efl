@@ -139,16 +139,6 @@ _omit_calc(void *data, int num_of_items, int max_num_of_items)
    Elm_Index_Item *it;
    Eina_List *l;
 
-   EINA_LIST_FREE(sd->omit, o)
-     free(o);
-
-   EINA_LIST_FOREACH(sd->items, l, it)
-     {
-        if (it->omitted)
-          it->omitted = eina_list_free(it->omitted);
-        if (it->head) it->head = NULL;
-     }
-
    if ((max_num_of_items < 3) || (num_of_items <= max_num_of_items)) return;
 
    max_group_num = (max_num_of_items - 1) / 2;
@@ -219,6 +209,16 @@ _index_box_auto_fill(Evas_Object *obj,
    evas_object_geometry_get(wd->resize_obj, NULL, NULL, NULL, &ih);
 
    rtl = elm_widget_mirrored_get(obj);
+
+   EINA_LIST_FREE(sd->omit, om)
+     free(om);
+
+   EINA_LIST_FOREACH(sd->items, l, it)
+     {
+        if (it->omitted)
+          it->omitted = eina_list_free(it->omitted);
+        if (it->head) it->head = NULL;
+     }
 
    if (sd->omit_enabled)
      {
