@@ -32,6 +32,4 @@
 
 - A bit annoying that we don't get type checks on the callbacks, fix that? That's really dangerous!
 
-- Have a way to say a class has no ops.
-
 - Get all the optimisations cedric has been doing to Eo1? I think that's where the children thing got lost...A
