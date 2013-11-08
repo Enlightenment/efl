@@ -715,7 +715,7 @@ EAPI Eina_Bool eo2_do_start(const Eo *obj, const Eo_Class *cur_klass, const char
 // end of the eo2_do barrier, unref the obj, move the stack pointer
 EAPI void eo2_do_end(const Eo **ojb);
 
-EAPI int eo2_call_stack_depth();
+EAPI int eo2_call_stack_depth(void);
 
 #define EO2_DO_CLEANUP __attribute__((cleanup(eo2_do_end)))
 
@@ -1319,7 +1319,7 @@ eo2_parent_set(Eo *parent);
  */
 #define eo_parent_get(parent) EO_BASE_ID(EO_BASE_SUB_ID_PARENT_GET), EO_TYPECHECK(Eo **, parent)
 EAPI Eo *
-eo2_parent_get();
+eo2_parent_get(void);
 
 /**
  * @def eo_children_iterator_new
@@ -1331,7 +1331,7 @@ eo2_parent_get();
  */
 #define eo_children_iterator_new(it) EO_BASE_ID(EO_BASE_SUB_ID_CHILDREN_ITERATOR_NEW), EO_TYPECHECK(Eina_Iterator **, it)
 EAPI Eina_Iterator *
-eo2_children_iterator_new();
+eo2_children_iterator_new(void);
 
 /**
  * @def eo_wref_add
@@ -1426,7 +1426,7 @@ eo2_wref_del(Eo **wref);
  */
 #define eo_constructor() EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR)
 EAPI void
-eo2_constructor();
+eo2_constructor(void);
 
 /**
  * @def eo_destructor
@@ -1438,7 +1438,7 @@ eo2_constructor();
  */
 #define eo_destructor() EO_BASE_ID(EO_BASE_SUB_ID_DESTRUCTOR)
 EAPI void
-eo2_destructor();
+eo2_destructor(void);
 
 /**
  * @addtogroup Eo_Events Eo's Event Handling
@@ -1556,7 +1556,7 @@ eo2_event_callback_forwarder_del(const Eo_Event_Description *desc, Eo *new_obj);
  */
 #define eo_event_freeze() EO_BASE_ID(EO_BASE_SUB_ID_EVENT_FREEZE)
 EAPI void
-eo2_event_freeze();
+eo2_event_freeze(void);
 
 /**
  * @def eo_event_thaw
@@ -1568,7 +1568,7 @@ eo2_event_freeze();
  */
 #define eo_event_thaw() EO_BASE_ID(EO_BASE_SUB_ID_EVENT_THAW)
 EAPI void
-eo2_event_thaw();
+eo2_event_thaw(void);
 
 /**
  * @def eo_event_freeze_get
@@ -1583,7 +1583,7 @@ eo2_event_thaw();
  */
 #define eo_event_freeze_get(fcount) EO_BASE_ID(EO_BASE_SUB_ID_EVENT_FREEZE_GET), EO_TYPECHECK(int *, fcount)
 EAPI int
-eo2_event_freeze_get();
+eo2_event_freeze_get(void);
 
 /**
  * @def eo_event_global_freeze
@@ -1596,7 +1596,7 @@ eo2_event_freeze_get();
  */
 #define eo_event_global_freeze() EO_BASE_ID(EO_BASE_SUB_ID_EVENT_GLOBAL_FREEZE)
 EAPI void
-eo2_event_global_freeze();
+eo2_event_global_freeze(void);
 
 /**
  * @def eo_event_global_thaw
@@ -1609,7 +1609,7 @@ eo2_event_global_freeze();
  */
 #define eo_event_global_thaw() EO_BASE_ID(EO_BASE_SUB_ID_EVENT_GLOBAL_THAW)
 EAPI void
-eo2_event_global_thaw();
+eo2_event_global_thaw(void);
 
 /**
  * @def eo_event_global_freeze_get
@@ -1625,7 +1625,7 @@ eo2_event_global_thaw();
  */
 #define eo_event_global_freeze_get(fcount) EO_BASE_ID(EO_BASE_SUB_ID_EVENT_GLOBAL_FREEZE_GET), EO_TYPECHECK(int *, fcount)
 EAPI int
-eo2_event_global_freeze_get();
+eo2_event_global_freeze_get(void);
 
 /**
  * @def eo_event_callback_add(obj, desc, cb, data)
