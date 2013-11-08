@@ -1760,8 +1760,6 @@ _entry_selection_start_signal_cb(void *data,
    const char *txt = elm_entry_selection_get(data);
    Evas_Object *top;
 
-   ELM_ENTRY_DATA_GET(data, sd);
-
    if (!elm_object_focus_get(data)) elm_object_focus_set(data, EINA_TRUE);
    EINA_LIST_FOREACH(entries, l, entry)
      {
@@ -1917,7 +1915,6 @@ _entry_cursor_changed_manual_signal_cb(void *data,
                                        const char *emission __UNUSED__,
                                        const char *source __UNUSED__)
 {
-   ELM_ENTRY_DATA_GET(data, sd);
    evas_object_smart_callback_call(data, SIG_CURSOR_CHANGED_MANUAL, NULL);
 }
 
