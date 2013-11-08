@@ -76,9 +76,9 @@ struct _Elm_Entry_Smart_Data
    Eina_Bool                             input_panel_return_key_disabled : 1;
    Eina_Bool                             drag_selection_asked : 1;
    Eina_Bool                             sel_handler_disabled : 1;
-   Eina_Bool                             start_handler_downed : 1;
+   Eina_Bool                             start_handler_down : 1;
    Eina_Bool                             start_handler_shown : 1;
-   Eina_Bool                             end_handler_downed : 1;
+   Eina_Bool                             end_handler_down : 1;
    Eina_Bool                             end_handler_shown : 1;
    Eina_Bool                             input_panel_enable : 1;
    Eina_Bool                             prediction_allow : 1;
