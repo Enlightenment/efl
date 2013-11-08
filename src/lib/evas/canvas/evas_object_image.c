@@ -3264,40 +3264,6 @@ _proxy_error(Evas_Object *eo_proxy, void *context, void *output, void *surface,
    return;
 }
 
-/*
-static void
-_proxy_subrender_recurse(Evas_Object *eo_obj, Evas_Object *clip, void *output, void *surface, void *ctx, int x, int y)
-{
-   Evas_Object *eo_obj2;
-   Evas *eo_e = obj->layer->evas;
-   
-   if (obj->clip.clipees) return;
-   if (!obj->cur->visible) return;
-   if ((!clip) || (clip != obj->cur->clipper))
-     {
-        if (!obj->cur->cache.clip.visible) return;
-        if ((obj->cur->cache.clip.a == 0) &&
-            (obj->cur->render_op == EVAS_RENDER_BLEND)) return;
-     }
-   if ((obj->func->is_visible) && (!obj->func->is_visible(eo_obj))) return;
-   
-   if (!obj->pre_render_done)
-      obj->func->render_pre(eo_obj);
-   ctx = e->engine.func->context_new(output);
-   if (obj->is_smart)
-     {
-        EINA_INLIST_FOREACH(evas_object_smart_members_get_direct(eo_obj), obj2)
-          {
-             _proxy_subrender_recurse(obj2, clip, output, surface, ctx, x, y);
-          }
-     }
-   else
-     {
-        obj->func->render(eo_obj, output, ctx, surface, x, y);
-     }
-   e->engine.func->context_free(output, ctx);
-}
-*/
 
 /**
  * Render the source object when a proxy is set.
