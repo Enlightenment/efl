@@ -140,6 +140,8 @@ _elm_inwin_smart_activate(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNU
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
+   if (elm_widget_disabled_get(obj)) return;
+
    evas_object_raise(obj);
    evas_object_show(obj);
    edje_object_signal_emit

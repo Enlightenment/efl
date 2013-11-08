@@ -270,8 +270,8 @@ _elm_scroller_smart_activate(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    Evas_Coord page_x = 0;
    Evas_Coord page_y = 0;
 
-   if ((elm_widget_disabled_get(obj)) ||
-       (act == ELM_ACTIVATE_DEFAULT)) return;
+   if (elm_widget_disabled_get(obj)) return;
+   if (act != ELM_ACTIVATE_DEFAULT) return;
 
    eo_do(obj,
          elm_scrollable_interface_content_pos_get(&x, &y),
