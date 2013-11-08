@@ -7,8 +7,6 @@
 #include "interface_interface2.h"
 #include "interface_simple.h"
 
-EAPI Eo_Op SIMPLE_BASE_ID = 0;
-
 typedef struct
 {
    int a;
