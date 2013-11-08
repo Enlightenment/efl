@@ -17,8 +17,7 @@
 
 - Change the order of EO2_OP_FUNC* functions to put the ID first?
 
-- Get rid of some of the EO2_VOID_FUNC_BODY macros using different number of macro params
-    - __ is reserved, change that.
+- Get rid of some of the EO2_VOID_FUNC_BODY?
 
 - Add line number to errors (like in eo1...)
 
