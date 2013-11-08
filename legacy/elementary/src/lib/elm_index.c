@@ -136,8 +136,6 @@ _omit_calc(void *data, int num_of_items, int max_num_of_items)
    Elm_Index_Smart_Data *sd = data;
    int max_group_num, num_of_extra_items, i, g, size, sum, *group_pos, *omit_info;
    Elm_Index_Omit *o;
-   Elm_Index_Item *it;
-   Eina_List *l;
 
    if ((max_num_of_items < 3) || (num_of_items <= max_num_of_items)) return;
 
