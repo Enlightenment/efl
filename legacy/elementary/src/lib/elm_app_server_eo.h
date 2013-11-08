@@ -133,5 +133,5 @@ typedef Elm_App_Server_View *(*Elm_App_Server_Create_View_Cb)(Elm_App_Server *ap
 /**
  * Events
  */
-extern const Eo_Event_Description _ELM_APP_SERVER_EV_TERMINATE;
+extern EAPI const Eo_Event_Description _ELM_APP_SERVER_EV_TERMINATE;
 #define ELM_APP_SERVER_EV_TERMINATE (&(_ELM_APP_SERVER_EV_TERMINATE))

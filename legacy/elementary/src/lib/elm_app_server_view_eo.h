@@ -81,17 +81,17 @@ enum
 /**
  * Events
  */
-extern const Eo_Event_Description _ELM_APP_SERVER_VIEW_EV_RESUMED;
+extern EAPI const Eo_Event_Description _ELM_APP_SERVER_VIEW_EV_RESUMED;
 #define ELM_APP_SERVER_VIEW_EV_RESUMED (&(_ELM_APP_SERVER_VIEW_EV_RESUMED))
 
-extern const Eo_Event_Description _ELM_APP_SERVER_VIEW_EV_PAUSED;
+extern EAPI const Eo_Event_Description _ELM_APP_SERVER_VIEW_EV_PAUSED;
 #define ELM_APP_SERVER_VIEW_EV_PAUSED (&(_ELM_APP_SERVER_VIEW_EV_PAUSED))
 
-extern const Eo_Event_Description _ELM_APP_SERVER_VIEW_EV_CLOSED;
+extern EAPI const Eo_Event_Description _ELM_APP_SERVER_VIEW_EV_CLOSED;
 #define ELM_APP_SERVER_VIEW_EV_CLOSED (&(_ELM_APP_SERVER_VIEW_EV_CLOSED))
 
-extern const Eo_Event_Description _ELM_APP_SERVER_VIEW_EV_SHALLOW;
+extern EAPI const Eo_Event_Description _ELM_APP_SERVER_VIEW_EV_SHALLOW;
 #define ELM_APP_SERVER_VIEW_EV_SHALLOW (&(_ELM_APP_SERVER_VIEW_EV_SHALLOW))
 
-extern const Eo_Event_Description _ELM_APP_SERVER_VIEW_EV_SAVE;
+extern EAPI const Eo_Event_Description _ELM_APP_SERVER_VIEW_EV_SAVE;
 #define ELM_APP_SERVER_VIEW_EV_SAVE (&(_ELM_APP_SERVER_VIEW_EV_SAVE))

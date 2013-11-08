@@ -98,14 +98,14 @@ typedef void (*Elm_App_Client_Open_View_Cb)(void *data, Elm_App_Client_View *vie
 /**
  * Events
  */
-extern const Eo_Event_Description _ELM_APP_CLIENT_EV_VIEW_CREATED;
+extern EAPI const Eo_Event_Description _ELM_APP_CLIENT_EV_VIEW_CREATED;
 #define ELM_APP_CLIENT_EV_VIEW_CREATED (&(_ELM_APP_CLIENT_EV_VIEW_CREATED))
 
-extern const Eo_Event_Description _ELM_APP_CLIENT_EV_VIEW_DELETED;
+extern EAPI const Eo_Event_Description _ELM_APP_CLIENT_EV_VIEW_DELETED;
 #define ELM_APP_CLIENT_EV_VIEW_DELETED (&(_ELM_APP_CLIENT_EV_VIEW_DELETED))
 
-extern const Eo_Event_Description _ELM_APP_CLIENT_EV_VIEW_LIST_LOADED;
+extern EAPI const Eo_Event_Description _ELM_APP_CLIENT_EV_VIEW_LIST_LOADED;
 #define ELM_APP_CLIENT_EV_VIEW_LIST_LOADED (&(_ELM_APP_CLIENT_EV_VIEW_LIST_LOADED))
 
-extern const Eo_Event_Description _ELM_APP_CLIENT_EV_TERMINATED;
+extern EAPI const Eo_Event_Description _ELM_APP_CLIENT_EV_TERMINATED;
 #define ELM_APP_CLIENT_EV_TERMINATED (&(_ELM_APP_CLIENT_EV_TERMINATED))
