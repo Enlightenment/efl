@@ -404,7 +404,7 @@ eo2_do_start(const Eo *eo_id, const Eo_Class *cur_klass_id, const char *file EIN
         return EINA_FALSE;
      }
 
-   pfptr  = ((fptr->eo_id == eo_id) ? fptr : NULL);
+   pfptr = ((eo_id) && (fptr->eo_id == eo_id) ? fptr : NULL);
    if(_eo_is_a_class(eo_id))
      {
         if (!_eo2_class_do(eo_id, cur_klass_id, (fptr + 1), pfptr))
