@@ -101,6 +101,7 @@ _elm_check_smart_activate(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *l
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    if (ret) *ret = EINA_FALSE;
 
+   if (elm_widget_disabled_get(obj)) return;
    if (act != ELM_ACTIVATE_DEFAULT) return;
 
    _activate(obj);
