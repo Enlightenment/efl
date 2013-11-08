@@ -2829,8 +2829,10 @@ _edje_entry_anchor_geometry_get(Edje_Real_Part *rp, const char *anchor)
    if (!en) return NULL;
    EINA_LIST_FOREACH(en->anchors, l, an)
      {
+        const char *n = an->name;
         if (an->item) continue;
-        if (!strcmp(anchor, an->name))
+        if (!n) n = "";
+        if (!strcmp(anchor, n))
           return an->sel;
      }
    return NULL;
@@ -2874,8 +2876,10 @@ _edje_entry_item_geometry_get(Edje_Real_Part *rp, const char *item, Evas_Coord *
    if (!en) return EINA_FALSE;
    EINA_LIST_FOREACH(en->anchors, l, an)
      {
+        const char *n = an->name;
         if (an->item) continue;
-        if (!strcmp(item, an->name))
+        if (!n) n = "";
+        if (!strcmp(item, n))
           {
              evas_textblock_cursor_format_item_geometry_get(an->start, cx, cy, cw, ch);
              return EINA_TRUE;

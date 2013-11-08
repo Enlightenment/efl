@@ -1,3 +1,7 @@
+2013-11-05  Youngbok Shin
+
+        * Edje: Add null checking for name of anchor and item in geometry get functions.
+
 2013-11-03  Christophe Sadoine
 
         * Eet: Added EET_DATA_DESCRIPTOR_ADD_MAPPING_BASIC().
