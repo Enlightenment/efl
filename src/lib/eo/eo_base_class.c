@@ -891,11 +891,12 @@ static void
 _destructor(Eo *obj, void *class_data, va_list *list EINA_UNUSED)
 {
    Private_Data *pd = class_data;
+   Eo *child;
 
    DBG("%p - %s.", obj, eo_class_name_get(MY_CLASS));
 
-   while (pd->children)
-     eo_do(eina_list_data_get(pd->children), eo_parent_set(NULL));
+   EINA_LIST_FREE(pd->children, child)
+      eo_do(child, eo_parent_set(NULL));
 
    _eo_generic_data_del_all(class_data);
    _wref_destruct(class_data);
