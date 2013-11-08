@@ -444,8 +444,10 @@ _eet_data_save(const Elm_Prefs_Data *prefs_data,
         if (it->type == ELM_PREFS_TYPE_PAGE)
           {
              const char *n;
-             eina_value_get(&item->value, &n);
-             _eet_data_save(prefs_data, eet_file, n);
+             if (eina_value_get(&item->value, &n))
+               _eet_data_save(prefs_data, eet_file, n);
+             else
+               err = EINA_TRUE;
           }
 
         const Eina_Value_Type *t = eina_value_type_get(&(item->value));
