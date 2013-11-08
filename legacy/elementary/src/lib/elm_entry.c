@@ -1876,6 +1876,8 @@ _entry_cursor_changed_signal_cb(void *data,
    sd->cursor_pos = edje_object_part_text_cursor_pos_get
        (sd->entry_edje, "elm.text", EDJE_CURSOR_MAIN);
    sd->cur_changed = EINA_TRUE;
+   if (elm_widget_focus_get(data))
+     edje_object_signal_emit(sd->entry_edje, "elm,action,show,cursor", "elm");
    _cursor_geometry_recalc(data);
 }
 
@@ -1885,6 +1887,7 @@ _entry_cursor_changed_manual_signal_cb(void *data,
                                        const char *emission __UNUSED__,
                                        const char *source __UNUSED__)
 {
+   ELM_ENTRY_DATA_GET(data, sd);
    evas_object_smart_callback_call(data, SIG_CURSOR_CHANGED_MANUAL, NULL);
 }
 

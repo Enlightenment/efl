@@ -353,6 +353,15 @@ group { name: "elm/entry/cursor/default";
          target: "cursor_hide_timer";
          after: "cursor_hide_stop";
       }
+      program {
+         signal: "elm,action,show,cursor"; source: "elm";
+         action: ACTION_STOP;
+         target: "cursor_show";
+         target: "cursor_hide";
+         target: "cursor_show_timer";
+         target: "cursor_hide_timer";
+         after: "cursor_show";
+      }
       program { name: "cursor_hide_stop";
          action: STATE_SET "default" 0.0;
          target: "cursor";
