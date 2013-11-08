@@ -8,16 +8,12 @@
 
 - cleanup EO2_VERSION specific code in eo.c and eo_private.c
 
-- m4 __attribute__ cleanup ??? don't remember what it means
-
 - Move the Op_Descs to be set using a function inside the class_constructor
    check if it works ASIS on windows
    if it does, do nothing
 
 - function name from pointer
    dladdr backtrace ??
-
-- Merge class and object, just like eo1
 
 - Change the order of EO2_OP_FUNC* functions to put the ID first?
 
@@ -26,10 +22,7 @@
 
 - Add line number to errors (like in eo1...)
 
-- Migrate mixin and suite tests
-
-- Fix return values in all the eo2_base functions, like eo2_event_freeze_get
-
 - A bit annoying that we don't get type checks on the callbacks, fix that? That's really dangerous!
 
-- Get all the optimisations cedric has been doing to Eo1? I think that's where the children thing got lost...A
+- Get all the optimisations cedric has been doing to Eo1? I think that's where the children thing got lost...
+    - Make sure all the improvements have been migrated...
