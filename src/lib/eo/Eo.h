@@ -645,14 +645,14 @@ EAPI extern Eo2_Hook_Call eo2_hook_call_post;
      if ( op == EO_NOOP )                                               \
         op = eo2_api_op_id_get((void*)Name);                            \
      if (!eo2_call_resolve(#Name, op, &call)) return DefRet;            \
-     __##Name##_func _func_ = (__##Name##_func) call.func;              \
+     _Eo2_##Name##_func _func_ = (_Eo2_##Name##_func) call.func;        \
 
 // to define an EAPI function
 #define EO2_FUNC_BODY(Name, Ret, DefRet)                                \
   Ret                                                                   \
   Name(void)                                                            \
   {                                                                     \
-     typedef Ret (*__##Name##_func)(Eo *, void *obj_data);              \
+     typedef Ret (*_Eo2_##Name##_func)(Eo *, void *obj_data);           \
      Ret _r;                                                            \
      EO2_FUNC_COMMON_OP(Name, DefRet);                                  \
      EO2_HOOK_CALL_PREPARE(eo2_hook_call_pre);                          \
@@ -665,7 +665,7 @@ EAPI extern Eo2_Hook_Call eo2_hook_call_post;
   void									\
   Name(void)                                                            \
   {                                                                     \
-     typedef void (*__##Name##_func)(Eo *, void *obj_data);             \
+     typedef void (*_Eo2_##Name##_func)(Eo *, void *obj_data);          \
      EO2_FUNC_COMMON_OP(Name, );                                        \
      EO2_HOOK_CALL_PREPARE(eo2_hook_call_pre);                          \
      _func_(call.obj, call.data);                                       \
@@ -676,7 +676,7 @@ EAPI extern Eo2_Hook_Call eo2_hook_call_post;
   Ret                                                                   \
   Name(__VA_ARGS__)                                                     \
   {                                                                     \
-     typedef Ret (*__##Name##_func)(Eo *, void *obj_data, __VA_ARGS__); \
+     typedef Ret (*_Eo2_##Name##_func)(Eo *, void *obj_data, __VA_ARGS__); \
      Ret _r;                                                            \
      EO2_FUNC_COMMON_OP(Name, DefRet);                                  \
      EO2_HOOK_CALL_PREPAREV(eo2_hook_call_pre, Arguments);              \
@@ -689,7 +689,7 @@ EAPI extern Eo2_Hook_Call eo2_hook_call_post;
   void                                                                  \
   Name(__VA_ARGS__)                                                     \
   {                                                                     \
-     typedef void (*__##Name##_func)(Eo *, void *obj_data, __VA_ARGS__);\
+     typedef void (*_Eo2_##Name##_func)(Eo *, void *obj_data, __VA_ARGS__);\
      EO2_FUNC_COMMON_OP(Name, );                                        \
      EO2_HOOK_CALL_PREPAREV(eo2_hook_call_pre, Arguments);              \
      _func_(call.obj, call.data, Arguments);                            \
