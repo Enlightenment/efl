@@ -670,7 +670,7 @@ _method_event(const Eldbus_Service_Interface *iface,
    Elm_DBus_Menu *dbus_menu;
    Eldbus_Message *reply;
 
-   eldbus_message_method_return_new(msg);
+   reply = eldbus_message_method_return_new(msg);
    dbus_menu = eldbus_service_object_data_get(iface, DBUS_DATA_KEY);
 
    if (!_event_handle(dbus_menu, eldbus_message_iter_get(msg), NULL))
