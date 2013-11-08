@@ -2584,6 +2584,8 @@ elm_config_indicator_service_get(int rotation)
 void
 _elm_config_profile_set(const char *profile)
 {
+   if (!profile) return;
+
    if (_elm_profile)
      {
         if (!strcmp(_elm_profile, profile))
