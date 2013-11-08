@@ -1372,15 +1372,14 @@ _magnifier_move(void *data, Evas_Coord px, Evas_Coord py)
    Evas_Coord x, y, w, h;
    Evas_Coord ex, ey;
    Evas_Coord sx, sy;
-   const Evas_Object *obj_bg;
+   const Evas_Object *obj_content;
    double scale = _elm_config->magnifier_scale;
 
-   obj_bg = edje_object_part_object_get(sd->mgf_bg, "bg");
-   evas_object_geometry_get(obj_bg, NULL, NULL, &w, &h);
-   evas_object_move(sd->mgf_bg, px - w/2, py - h);
+   edje_object_parts_extends_calc(sd->mgf_bg, &x, &y, &w, &h);
+   evas_object_move(sd->mgf_bg, px - x - w/2, py - y - h);
 
-   obj_bg = edje_object_part_object_get(sd->mgf_bg, "swallow");
-   evas_object_geometry_get(obj_bg, &x, &y, &w, &h);
+   obj_content = edje_object_part_object_get(sd->mgf_bg, "elm.swallow.content");
+   evas_object_geometry_get(obj_content, &x, &y, &w, &h);
    sx = px - (x + w/2);
    sy = py - (y + h/2);
 

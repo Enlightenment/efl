@@ -957,6 +957,7 @@ group { name: "elm/entry/magnifier/default";
          scale: 1;
          description { state: "default" 0.0;
             min: 128 64;
+            align: 0 0;
             image.normal: "frame_rounded.png";
             image.border: 14 14 14 14;
             image.middle: 0;
