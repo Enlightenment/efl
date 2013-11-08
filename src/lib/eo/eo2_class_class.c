@@ -4,7 +4,9 @@
 
 #include "Eo.h"
 
-static Eo2_Op_Description op_descs [] = {};
+static Eo2_Op_Description op_descs [] = {
+     EO2_OP_SENTINEL
+};
 
 static const Eo_Class_Description class_desc = {
      EO2_VERSION,
