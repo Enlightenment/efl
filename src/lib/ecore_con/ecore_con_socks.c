@@ -70,7 +70,7 @@ static int ECORE_CON_SOCKS_V5_METHODS[] =
    ECORE_CON_SOCKS_V5_METHOD_USERPASS
 };
 
-#define ECORE_CON_SOCKS_V5_TOTAL_METHODS sizeof(ECORE_CON_SOCKS_V5_METHODS)
+#define ECORE_CON_SOCKS_V5_TOTAL_METHODS (sizeof(ECORE_CON_SOCKS_V5_METHODS) / sizeof(int))
 
 #define _ecore_con_server_kill(svr) do { \
    DBG("KILL %p", (svr)); \
