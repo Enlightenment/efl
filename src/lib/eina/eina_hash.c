@@ -804,7 +804,7 @@ eina_hash_int64_new(Eina_Free_Cb data_free_cb)
 EAPI Eina_Hash *
 eina_hash_pointer_new(Eina_Free_Cb data_free_cb)
 {
-#ifdef __LP64__
+#ifdef EFL64
    return eina_hash_new(EINA_KEY_LENGTH(_eina_int64_key_length),
                         EINA_KEY_CMP(_eina_int64_key_cmp),
                         EINA_KEY_HASH(eina_hash_int64),

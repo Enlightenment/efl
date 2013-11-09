@@ -36,7 +36,7 @@ _edje_signal_match_key_hash(const void *key, int key_length EINA_UNUSED)
    hash = eina_hash_int32(&a->matches_count, sizeof (int));
    for (i = 0; i < a->matches_count; ++i)
      {
-#ifdef __LP64__
+#ifdef EFL64
         hash ^= eina_hash_int64((const unsigned long int*) &a->matches[i].signal, sizeof (char *));
         hash ^= eina_hash_int64((const unsigned long int*) &a->matches[i].source, sizeof (char *));
         hash ^= eina_hash_int64((const unsigned long int*) &a->matches[i].func, sizeof (Edje_Signal_Cb));

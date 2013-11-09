@@ -163,7 +163,7 @@ _eina_cow_hash_gen(const void *key, int key_length,
    return r;
 }
 
-#ifdef __LP64__
+#ifdef EFL64
 static int
 _eina_cow_hash64(const void *key, int key_length)
 {
@@ -355,7 +355,7 @@ eina_cow_add(const char *name, unsigned int struct_size, unsigned int step, cons
         goto on_error;
      }
 
-#ifdef __LP64__
+#ifdef EFL64
    cow->match = eina_hash_new(_eina_cow_length,
                               _eina_cow_cmp,
                               _eina_cow_hash64,
