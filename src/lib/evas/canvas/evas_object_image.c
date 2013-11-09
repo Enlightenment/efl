@@ -3268,7 +3268,7 @@ _proxy_error(Evas_Object *eo_proxy, void *context, void *output, void *surface,
 /**
  * Render the source object when a proxy is set.
  *
- * Used to force a draw if necessary, else just makes sures it's available.
+ * Used to force a draw if necessary, else just makes sure it's available.
  */
 static void
 _proxy_subrender(Evas *eo_e, Evas_Object *eo_source, Evas_Object *eo_proxy, Evas_Object_Protected_Data *proxy_obj, Eina_Bool do_async)
