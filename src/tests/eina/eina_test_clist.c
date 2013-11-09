@@ -74,7 +74,7 @@ static void add_string_head(const char *string_to_add)
   fail_if(eina_clist_head(&string_list) != &entry_to_add->entry);
 }
 
-static void iterating_two_phase_with_add_head(int n, const char *str, int n_ent)
+static void iterating_two_phase_with_add_head(unsigned int n, const char *str, int n_ent)
 {
   int i;
   struct test_string *entries[n_ent];
