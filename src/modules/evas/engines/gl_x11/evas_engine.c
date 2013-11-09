@@ -2345,12 +2345,12 @@ eng_image_native_set(void *data, void *image, void *native)
                              {
                                 if (found == 0)
                                   {
-//                                     XVisualInfo *vi;
-//                                     
-//                                     vi = glXGetVisualFromFBConfig(re->win->disp, configs[j]);
-//                                     if (!vi) continue;
-//                                     if (vi->depth != depth) continue;
-//                                     XFree(vi);
+                                     XVisualInfo *vi;
+                                     
+                                     vi = glXGetVisualFromFBConfig(re->win->disp, configs[j]);
+                                     if (!vi) continue;
+                                     if (vi->depth != depth) continue;
+                                     XFree(vi);
                                      
                                      glXGetFBConfigAttrib(re->win->disp, configs[j],
                                                           GLX_BUFFER_SIZE, &val);
