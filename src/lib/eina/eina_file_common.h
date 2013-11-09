@@ -139,8 +139,8 @@ void eina_file_virtual_map_free(Eina_File *file, void *map);
 
 // Common hash function
 unsigned int eina_file_map_key_length(const void *key);
-int eina_file_map_key_cmp(const unsigned long int *key1, int key1_length,
-                          const unsigned long int *key2, int key2_length);
-int eina_file_map_key_hash(const unsigned long int *key, int key_length);
+int eina_file_map_key_cmp(const unsigned long long int *key1, int key1_length,
+                          const unsigned long long int *key2, int key2_length);
+int eina_file_map_key_hash(const unsigned long long int *key, int key_length);
 
 #endif /* EINA_FILE_COMMON_H_ */

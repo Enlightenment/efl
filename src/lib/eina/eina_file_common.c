@@ -142,18 +142,18 @@ eina_file_map_key_length(const void *key EINA_UNUSED)
 }
 
 int
-eina_file_map_key_cmp(const unsigned long int *key1, int key1_length EINA_UNUSED,
-                       const unsigned long int *key2, int key2_length EINA_UNUSED)
+eina_file_map_key_cmp(const unsigned long long int *key1, int key1_length EINA_UNUSED,
+                       const unsigned long long int *key2, int key2_length EINA_UNUSED)
 {
    if (key1[0] - key2[0] == 0) return key1[1] - key2[1];
    return key1[0] - key2[0];
 }
 
 int
-eina_file_map_key_hash(const unsigned long int *key, int key_length EINA_UNUSED)
+eina_file_map_key_hash(const unsigned long long int *key, int key_length EINA_UNUSED)
 {
-   return eina_hash_int64(&key[0], sizeof (unsigned long int))
-     ^ eina_hash_int64(&key[1], sizeof (unsigned long int));
+   return eina_hash_int64(&key[0], sizeof (unsigned long long int))
+     ^ eina_hash_int64(&key[1], sizeof (unsigned long long int));
 }
 
 void *

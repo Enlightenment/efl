@@ -1026,7 +1026,7 @@ static inline int eina_hash_djb2_len(const char *key,
 /* Hash function from http://www.concentric.net/~Ttwang/tech/inthash.htm */
 static inline int eina_hash_int32(const unsigned int *pkey,
                                   int                 len) EINA_ARG_NONNULL(1);
-static inline int eina_hash_int64(const unsigned long int *pkey,
+static inline int eina_hash_int64(const unsigned long long int *pkey,
                                   int                      len) EINA_ARG_NONNULL(1);
 /* http://sites.google.com/site/murmurhash/ */
 static inline int eina_hash_murmur3(const char *key,

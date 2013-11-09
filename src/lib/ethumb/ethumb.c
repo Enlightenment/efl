@@ -1893,11 +1893,11 @@ ethumb_key_cmp(const void *key1, EINA_UNUSED int key1_length,
 
 #define HASH_PARAM_I(Param) r ^= eina_hash_int32((unsigned int*) &e->Param, 0);
 #ifdef EFL64
-# define HASH_PARAM_P(Param) r ^= eina_hash_int64((unsigned long int*) &e->Param, 0);
+# define HASH_PARAM_P(Param) r ^= eina_hash_int64((unsigned long long int*) &e->Param, 0);
 #else
 # define HASH_PARAM_P(Param) r ^= eina_hash_int32((unsigned int*) &e->Param, 0);
 #endif
-#define HASH_PARAM_D(Param) r ^= eina_hash_int64((unsigned long int*)&e->Param, 0);
+#define HASH_PARAM_D(Param) r ^= eina_hash_int64((unsigned long long int*)&e->Param, 0);
 #define HASH_PARAM_F(Param) r ^= eina_hash_int32((unsigned int*) &e->Param, 0);
 
 EAPI int

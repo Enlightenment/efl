@@ -255,8 +255,8 @@ _part_lookup_key_pc_hash(const void *key, int key_length EINA_UNUSED)
    if (a->stable)
      {
 #ifdef EFL64
-        return eina_hash_int64((uintptr_t *) &a->pc, sizeof (void*)) ^
-          eina_hash_int64((uintptr_t *) &a->mem.dest, sizeof (void*));
+        return eina_hash_int64((unsigned long long int *) &a->pc, sizeof (void*)) ^
+          eina_hash_int64((unsigned long long int *) &a->mem.dest, sizeof (void*));
 #else
         return eina_hash_int32((uintptr_t *) &a->pc, sizeof (void*)) ^
           eina_hash_int32((uintptr_t *) &a->mem.dest, sizeof (void*));
@@ -265,8 +265,8 @@ _part_lookup_key_pc_hash(const void *key, int key_length EINA_UNUSED)
    else
      {
 #ifdef EFL64
-        return eina_hash_int64((uintptr_t *) &a->pc, sizeof (void*)) ^
-          eina_hash_int64((uintptr_t *) &a->mem.reallocated.base, sizeof (void*)) ^
+        return eina_hash_int64((unsigned long long int *) &a->pc, sizeof (void*)) ^
+          eina_hash_int64((unsigned long long int *) &a->mem.reallocated.base, sizeof (void*)) ^
           eina_hash_int32((unsigned int *) &a->mem.reallocated.offset, sizeof (int));
 #else
         return eina_hash_int32((uintptr_t *) &a->pc, sizeof (void*)) ^
@@ -299,7 +299,7 @@ _part_lookup_key_hash(const void *key, int key_length EINA_UNUSED)
    if (a->stable)
      {
 #ifdef EFL64
-        return eina_hash_int64((uintptr_t *) &a->mem.dest, sizeof (void*));
+        return eina_hash_int64((unsigned long long int *) &a->mem.dest, sizeof (void*));
 #else
         return eina_hash_int32((uintptr_t *) &a->mem.dest, sizeof (void*));
 #endif
@@ -307,7 +307,7 @@ _part_lookup_key_hash(const void *key, int key_length EINA_UNUSED)
    else
      {
 #ifdef EFL64
-        return eina_hash_int64((uintptr_t *) &a->mem.reallocated.base, sizeof (void*)) ^
+        return eina_hash_int64((unsigned long long int *) &a->mem.reallocated.base, sizeof (void*)) ^
           eina_hash_int32((unsigned int *) &a->mem.reallocated.offset, sizeof (int));
 #else
         return eina_hash_int32((uintptr_t *) &a->mem.reallocated.base, sizeof (void*)) ^
