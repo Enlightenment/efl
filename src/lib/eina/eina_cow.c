@@ -168,7 +168,7 @@ static int
 _eina_cow_hash64(const void *key, int key_length)
 {
    return _eina_cow_hash_gen(key, key_length,
-                             (Eina_Cow_Hash) eina_hash_int64, sizeof (unsigned long int));
+                             (Eina_Cow_Hash) eina_hash_int64, sizeof (unsigned long long int));
 }
 #else
 static int
