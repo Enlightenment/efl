@@ -17,6 +17,8 @@ Makefile.in
 tags
 .deps
 .libs
+*.trs
+*.log
 *.exe
 *.o
 *.lo
