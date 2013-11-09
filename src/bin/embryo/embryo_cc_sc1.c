@@ -681,7 +681,7 @@ setconfig(char *root)
 	  }
 
         /* Make sure we have enough space for the trailing DIRSEP_CHAR */
-        if (strlen(path) == sizeof(path) - 1)
+        if (strlen(path) == (sizeof(path) - 1 -1))
           {
              len = strlen(path);
              path[len] = DIRSEP_CHAR;
