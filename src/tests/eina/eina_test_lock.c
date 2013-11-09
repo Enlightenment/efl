@@ -144,7 +144,7 @@ START_TEST(eina_test_rwlock)
 
    counter = 42;
 
-   eina_lock_debug(&mutex);
+   eina_lock_debug(&mtcond);
 
    fail_if(eina_rwlock_take_read(&mutex) != EINA_LOCK_SUCCEED);
    fail_if(eina_lock_take(&mtcond) != EINA_LOCK_SUCCEED);
