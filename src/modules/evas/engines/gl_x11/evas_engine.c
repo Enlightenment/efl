@@ -2349,7 +2349,7 @@ eng_image_native_set(void *data, void *image, void *native)
                                      
                                      vi = glXGetVisualFromFBConfig(re->win->disp, configs[j]);
                                      if (!vi) continue;
-                                     if (vi->depth != depth) continue;
+                                     if (vi->depth != (int)depth) continue;
                                      XFree(vi);
                                      
                                      glXGetFBConfigAttrib(re->win->disp, configs[j],
