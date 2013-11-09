@@ -97,7 +97,8 @@
 #endif
 @EINA_CONFIGURE_HAVE_POSIX_SPINLOCK@
 
-#if (defined(__x86_64__) || defined(__x86_64) || defined(__amd64__) || defined(__amd64) || defined(__ppc64__) || defined(_WIN64) || defined(__LP64__) || defined(_LP64))
+/* #if (defined(__x86_64__) || defined(__x86_64) || defined(__amd64__) || defined(__amd64) || defined(__ppc64__) || defined(_WIN64) || defined(__LP64__) || defined(_LP64)) */
+#if defined(_WIN64) || defined(__LP64__)
 # define EFL64
 #endif
 
