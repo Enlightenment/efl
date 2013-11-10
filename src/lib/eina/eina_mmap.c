@@ -147,12 +147,8 @@ eina_mmap_safety_enabled_set(Eina_Bool enabled)
         struct sigaction  sa;
 
         /* find out system page size the cleanest way we can */
-#ifdef _SC_PAGESIZE
-        _eina_mmap_pagesize = sysconf(_SC_PAGESIZE);
-        if (_eina_mmap_pagesize <= 0) return EINA_FALSE;
-#else
-        _eina_mmap_pagesize = 4096;
-#endif
+        _eina_mmap_pagesize = eina_cpu_page_size();
+
         /* no zero page device - open it */
         if (_eina_mmap_zero_fd < 0)
           {
@@ -169,7 +165,6 @@ eina_mmap_safety_enabled_set(Eina_Bool enabled)
              flags |= FD_CLOEXEC;
              fcntl(_eina_mmap_zero_fd, F_SETFD, flags);
 #endif
-	     
           }
         /* set up signal handler for SIGBUS */
         sa.sa_sigaction = _eina_mmap_safe_sigbus;

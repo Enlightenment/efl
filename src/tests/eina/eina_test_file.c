@@ -266,8 +266,8 @@ START_TEST(eina_file_map_new_test)
    char *test_file_path, *test_file2_path;
    char *big_buffer;
    const char *template = "abcdefghijklmnopqrstuvwxyz";
-   int template_size = strlen (template);
-   int memory_page_size = sysconf(_SC_PAGE_SIZE);
+   int template_size = strlen(template);
+   int memory_page_size = eina_cpu_page_size();
    const int big_buffer_size = memory_page_size * 1.5;
    const int iteration_number = big_buffer_size / template_size;
    int test_string_length = strlen(eina_map_test_string);

@@ -37,7 +37,6 @@
 #include <fcntl.h>
 
 #define PATH_DELIM '/'
-#define COPY_BLOCKSIZE (4 * 1024 * 1024)
 
 #include "eina_config.h"
 #include "eina_private.h"
@@ -67,7 +66,7 @@
  * @cond LOCAL
  */
 
-#define EINA_SMALL_PAGE 4096
+#define EINA_SMALL_PAGE eina_cpu_page_size()
 #define EINA_HUGE_PAGE 16 * 1024 * 1024
 
 #ifdef HAVE_DIRENT_H
