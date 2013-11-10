@@ -8,198 +8,198 @@ msgstr ""
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
 "POT-Creation-Date: 2013-11-04 15:41+0900\n"
 "PO-Revision-Date: 2012-06-24 17:10+0900\n"
-"Last-Translator: Jerome Pinot <ngc891@gmail.com>\n"
-"Language-Team: Enlightenment Team\n"
-"Language: \n"
+"Last-Translator: Daichi Fukui<when.a.cat.sits.beside.you@gmail.com>\n"
+"Language-Team: \n"
+"Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
 #: src/lib/ecore/ecore_getopt.c:87
 msgid "Version:"
-msgstr ""
+msgstr "バージョン"
 
 #: src/lib/ecore/ecore_getopt.c:96
 msgid "Usage:"
-msgstr ""
+msgstr "使用法"
 
 #: src/lib/ecore/ecore_getopt.c:101
 #, c-format
 msgid "%s [options]\n"
-msgstr ""
+msgstr "%s [オプション]\n"
 
 #: src/lib/ecore/ecore_getopt.c:256
 msgid "Copyright:"
-msgstr ""
+msgstr "Copyright:"
 
 #: src/lib/ecore/ecore_getopt.c:268
 msgid "License:"
-msgstr ""
+msgstr "License:"
 
 #: src/lib/ecore/ecore_getopt.c:449
 msgid "Type: "
-msgstr ""
+msgstr "Type:"
 
 #: src/lib/ecore/ecore_getopt.c:525
 msgid "Default: "
-msgstr ""
+msgstr "Default:"
 
 #: src/lib/ecore/ecore_getopt.c:552
 msgid "Choices: "
-msgstr ""
+msgstr "Choices: "
 
 #: src/lib/ecore/ecore_getopt.c:653
 msgid "Options:\n"
-msgstr ""
+msgstr "オプション\n"
 
 #: src/lib/ecore/ecore_getopt.c:787
 #, c-format
 msgid "ERROR: unknown option --%s.\n"
-msgstr ""
+msgstr "エラー: 不明なオプション --%s.\n"
 
 #: src/lib/ecore/ecore_getopt.c:789
 #, c-format
 msgid "ERROR: unknown option -%c.\n"
-msgstr ""
+msgstr "エラー: 不明なオプション -%c.\n"
 
 #: src/lib/ecore/ecore_getopt.c:852
 msgid "ERROR: "
-msgstr ""
+msgstr "エラー: "
 
 #: src/lib/ecore/ecore_getopt.c:937 src/lib/ecore/ecore_getopt.c:1074
 #: src/lib/ecore/ecore_getopt.c:1090 src/lib/ecore/ecore_getopt.c:1105
 #: src/lib/ecore/ecore_getopt.c:1122 src/lib/ecore/ecore_getopt.c:1169
 #: src/lib/ecore/ecore_getopt.c:1289 src/lib/ecore/ecore_getopt.c:1330
 msgid "value has no pointer set.\n"
-msgstr ""
+msgstr "値にポインタがありません\n"
 
 #: src/lib/ecore/ecore_getopt.c:969 src/lib/ecore/ecore_getopt.c:1189
 #, c-format
 msgid "unknown boolean value %s.\n"
-msgstr ""
+msgstr "不明なboolean値 %s.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1020 src/lib/ecore/ecore_getopt.c:1277
 #, c-format
 msgid "invalid number format %s\n"
-msgstr ""
+msgstr "不正な数字フォーマット %s\n"
 
 #: src/lib/ecore/ecore_getopt.c:1135
 #, c-format
 msgid "invalid choice \"%s\". Valid values are: "
-msgstr ""
+msgstr "不正な選択 \"%s\". 有効な数字: "
 
 #: src/lib/ecore/ecore_getopt.c:1163
 msgid "missing parameter to append.\n"
-msgstr ""
+msgstr "付加すべきパラメータがありません\n"
 
 #: src/lib/ecore/ecore_getopt.c:1267
 msgid "could not parse value.\n"
-msgstr ""
+msgstr "値を探索できません.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1324
 msgid "missing parameter.\n"
-msgstr ""
+msgstr "パラメータがありません.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1337
 msgid "missing callback function!\n"
-msgstr ""
+msgstr "コールバック関数がありません\n"
 
 #: src/lib/ecore/ecore_getopt.c:1366
 msgid "no version was defined.\n"
-msgstr ""
+msgstr "バージョンが定義されていません.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1383
 msgid "no copyright was defined.\n"
-msgstr ""
+msgstr "コピーライトが定義されていません.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1400
 msgid "no license was defined.\n"
-msgstr ""
+msgstr "ライセンスが定義されていません.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1490
 #, c-format
 msgid "ERROR: unknown option --%s, ignored.\n"
-msgstr ""
+msgstr "エラー: 不明なオプション --%s, 無視.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1523
 #, c-format
 msgid "ERROR: option --%s requires an argument!\n"
-msgstr ""
+msgstr "エラー: オプション --%s には引数が必要です.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1565
 #, c-format
 msgid "ERROR: unknown option -%c, ignored.\n"
-msgstr ""
+msgstr "エラー: 不明なオプション -%c, 無視.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1603
 #, c-format
 msgid "ERROR: option -%c requires an argument!\n"
-msgstr ""
+msgstr "エラー: オプション -%c には引数が必要です.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1814
 msgid "ERROR: no parser provided.\n"
-msgstr ""
+msgstr "エラー: パーサーがありません.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1819
 msgid "ERROR: no values provided.\n"
-msgstr ""
+msgstr "エラー: 値がありません.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1828
 msgid "ERROR: no arguments provided.\n"
-msgstr ""
+msgstr "エラー: 引数がありません.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1854
 msgid "ERROR: invalid options found."
-msgstr ""
+msgstr "エラー: 不正なオプションです."
 
 #: src/lib/ecore/ecore_getopt.c:1860
 #, c-format
 msgid " See --%s.\n"
-msgstr ""
+msgstr "--%s を参照.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1862
 #, c-format
 msgid " See -%c.\n"
-msgstr ""
+msgstr "-%c を参照.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1908
 #, c-format
 msgid "ERROR: incorrect geometry value '%s'\n"
-msgstr ""
+msgstr "エラー: 不正なジオメトリ値 '%s'\n"
 
 #: src/lib/ecore/ecore_getopt.c:1940
 #, c-format
 msgid "ERROR: incorrect size value '%s'\n"
-msgstr ""
+msgstr "エラー: 不正なsize値です '%s'\n"
 
 #: src/lib/efreet/efreet_base.c:119
 msgid "Desktop"
-msgstr "デスクトップ"
+msgstr "Desktop"
 
 #: src/lib/efreet/efreet_base.c:127
 msgid "Downloads"
-msgstr ""
+msgstr "Downloads"
 
 #: src/lib/efreet/efreet_base.c:136
 msgid "Templates"
-msgstr ""
+msgstr "Templates"
 
 #: src/lib/efreet/efreet_base.c:145
 msgid "Public"
-msgstr ""
+msgstr "Public"
 
 #: src/lib/efreet/efreet_base.c:154
 msgid "Documents"
-msgstr ""
+msgstr "Documents"
 
 #: src/lib/efreet/efreet_base.c:162
 msgid "Music"
-msgstr ""
+msgstr "Music"
 
 #: src/lib/efreet/efreet_base.c:170
 msgid "Pictures"
-msgstr ""
+msgstr "Pictures"
 
 #: src/lib/efreet/efreet_base.c:178
 msgid "Videos"
-msgstr ""
+msgstr "Videos"
