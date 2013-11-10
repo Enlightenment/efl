@@ -485,6 +485,26 @@ unlock:
    _ecore_unlock();
 }
 
+EAPI Eina_Bool
+ecore_timer_freeze_get(Ecore_Timer *timer)
+{
+   int r = 0;
+
+   eo_do(timer, eo_event_freeze_get(&r));
+   return !!r;
+}
+
+static void
+_timer_freeze_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   EINA_MAIN_LOOP_CHECK_RETURN;
+
+   Ecore_Timer_Private_Data *timer = _pd;
+   int *r = va_arg(*list, int*);
+
+   if (r) *r = timer->frozen;
+}
+
 /**
  * Resumes a frozen (paused) timer.
  *
@@ -989,6 +1009,7 @@ _class_constructor(Eo_Class *klass)
 
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_EVENT_FREEZE), _timer_freeze),
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_EVENT_THAW), _timer_thaw),
+        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_EVENT_FREEZE_GET), _timer_freeze_get),
 
         EO_OP_FUNC(ECORE_TIMER_ID(ECORE_TIMER_SUB_ID_DELAY), _timer_delay),
         EO_OP_FUNC(ECORE_TIMER_ID(ECORE_TIMER_SUB_ID_RESET), _timer_reset),

@@ -2568,6 +2568,62 @@ AC_SUBST([ECORE_WIN32_LIBS])
 EFL_LIB_END_OPTIONAL([Ecore_Win32])
 #### End of Ecore_Win32
 
+#### Ecore_Avahi
+
+EFL_LIB_START([Ecore_Avahi])
+
+### Default values
+
+### Additional options to configure
+
+want_avahi="yes"
+
+AC_ARG_ENABLE([avahi],
+   [AC_HELP_STRING([--disable-avahi],
+       [disable avahi support. @<:@default=enabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_avahi="yes"
+    else
+       want_avahi="no"
+    fi
+   ], [
+    want_avahi="yes"
+   ])
+
+### Checks for programs
+
+### Checks for libraries
+EFL_INTERNAL_DEPEND_PKG([ECORE_AVAHI], [ecore])
+EFL_INTERNAL_DEPEND_PKG([ECORE_AVAHI], [eina])
+EFL_INTERNAL_DEPEND_PKG([ECORE_AVAHI], [eo])
+
+EFL_OPTIONAL_DEPEND_PKG([ECORE_AVAHI], [${want_avahi}], [AVAHI], [avahi-client])
+
+EFL_ADD_FEATURE([ECORE_AVAHI], [avahi-client], [${have_avahi}])
+
+# Needed bu example as they use avahi directly in that case
+if test "x${have_avahi}" = "xyes"; then
+   PKG_CHECK_MODULES([AVAHI_CLIENT], [avahi-client])
+fi
+
+EFL_EVAL_PKGS([Ecore_Avahi])
+
+### Checks for header files
+
+### Checks for types
+
+### Checks for structures
+
+### Checks for compiler characteristics
+
+### Checks for linker characteristics
+
+### Checks for library functions
+
+EFL_LIB_END([Ecore_Avahi])
+
+#### End of Ecore_Avahi
 
 #### Ecore_WinCE
 EFL_LIB_START_OPTIONAL([Ecore_WinCE], [test "${have_wince}" = "yes"])
@@ -3748,6 +3804,7 @@ src/examples/eet/Makefile
 src/examples/eo/Makefile
 src/examples/evas/Makefile
 src/examples/ecore/Makefile
+src/examples/ecore_avahi/Makefile
 src/examples/eio/Makefile
 src/examples/eldbus/Makefile
 src/examples/ephysics/Makefile
@@ -3795,6 +3852,7 @@ pc/ecore-evas.pc
 pc/ecore-imf.pc
 pc/ecore-imf-evas.pc
 pc/ecore-audio.pc
+pc/ecore-avahi.pc
 pc/embryo.pc
 pc/eio.pc
 pc/eldbus.pc
@@ -3914,6 +3972,7 @@ echo "Ecore_Win32.....: $have_win32"
 echo "Ecore_WinCE.....: $have_wince"
 fi
 echo "Ecore_Audio.....: ${efl_lib_optional_ecore_audio} (${features_ecore_audio})"
+echo "Ecore_Avahi.....: yes (${features_ecore_avahi})"
 echo "Ecore_Evas......: yes (${features_ecore_evas})"
 echo "Eeze............: ${efl_lib_optional_eeze} (${features_eeze})"
 echo "EPhysics........: ${efl_lib_optional_ephysics}"

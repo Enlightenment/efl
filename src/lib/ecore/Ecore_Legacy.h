@@ -179,6 +179,7 @@ EAPI void *ecore_timer_del(Ecore_Timer *timer);
 EAPI void ecore_timer_interval_set(Ecore_Timer *timer, double in);
 EAPI double ecore_timer_interval_get(Ecore_Timer *timer);
 EAPI void ecore_timer_freeze(Ecore_Timer *timer);
+EAPI Eina_Bool ecore_timer_freeze_get(Ecore_Timer *timer);
 EAPI void ecore_timer_thaw(Ecore_Timer *timer);
 EAPI void ecore_timer_delay(Ecore_Timer *timer, double add);
 EAPI void ecore_timer_reset(Ecore_Timer *timer);

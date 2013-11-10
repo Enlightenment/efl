@@ -131,6 +131,7 @@ pc/ecore-input-evas.pc \
 pc/ecore-imf.pc \
 pc/ecore-imf-evas.pc \
 pc/ecore-evas.pc \
+pc/ecore-avahi.pc \
 pc/embryo.pc \
 pc/eio.pc \
 pc/eldbus.pc \
