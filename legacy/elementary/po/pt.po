@@ -1,13 +1,12 @@
 # Portuguese translation for Elementary.
 # This file is put in the public domain.
 # Sérgio Marques <smarquespt@gmail.com>, 2011.
-#: src/lib/elm_config.c:2415
 msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
 "POT-Creation-Date: 2013-11-05 16:52+0900\n"
-"PO-Revision-Date: 2013-01-06 01:24+0100\n"
+"PO-Revision-Date: 2013-11-05 14:11-0000\n"
 "Last-Translator: Sérgio Marques <smarquespt@gmail.com>\n"
 "Language-Team: \n"
 "Language: Portuguese\n"
@@ -15,7 +14,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Launchpad-Export-Date: 2012-12-07 16:20+0000\n"
-"X-Generator: Poedit 1.5.4\n"
+"X-Generator: Poedit 1.5.7\n"
 
 #: src/lib/elc_fileselector.c:1315
 msgid "Up"
@@ -36,35 +35,35 @@ msgstr "Aceitar"
 
 #: src/lib/elc_multibuttonentry.c:578
 msgid "multi button entry label"
-msgstr ""
+msgstr "texto da entrada de botão múltiplo"
 
 #: src/lib/elc_multibuttonentry.c:600
 msgid "multi button entry item"
-msgstr ""
+msgstr "item da entrada de botão múltiplo"
 
 #: src/lib/elc_multibuttonentry.c:1474
 msgid "multi button entry"
-msgstr ""
+msgstr "entrada do botão múltiplo"
 
 #: src/lib/elc_naviframe.c:376
 msgid "Title"
-msgstr ""
+msgstr "Título"
 
 #: src/lib/elc_naviframe.c:905 src/lib/elc_naviframe.c:1129
 msgid "Back"
-msgstr ""
+msgstr "Recuar"
 
 #: src/lib/elc_naviframe.c:1208
 msgid "Next"
-msgstr ""
+msgstr "Avançar"
 
 #: src/lib/elc_popup.c:281 src/lib/elc_popup.c:907
 msgid "Popup Title"
-msgstr ""
+msgstr "Título do alerta"
 
 #: src/lib/elc_popup.c:291 src/lib/elc_popup.c:975
 msgid "Popup Body Text"
-msgstr ""
+msgstr "Texto do alerta"
 
 #: src/lib/elm_bubble.c:216
 msgid "Bubble"
@@ -167,9 +166,8 @@ msgid "default:LTR"
 msgstr "padrão: LTR"
 
 #: src/lib/elm_dayselector.c:421
-#, fuzzy
 msgid "day selector item"
-msgstr "item do seletor de disco"
+msgstr "item do seletor de dia"
 
 #: src/lib/elm_diskselector.c:670
 msgid "diskselector item"
@@ -236,13 +234,12 @@ msgid "State: Selected"
 msgstr "Estado: selecionado"
 
 #: src/lib/elm_segment_control.c:541
-#, fuzzy
 msgid "State: Unselected"
-msgstr "Estado: selecionado"
+msgstr "Estado: não selecionado"
 
 #: src/lib/elm_segment_control.c:553
 msgid "Segment Control Item"
-msgstr ""
+msgstr "Item do controlo de segmento"
 
 #: src/lib/elm_slider.c:887
 msgid "slider"
