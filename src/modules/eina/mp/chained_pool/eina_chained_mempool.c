@@ -39,6 +39,7 @@
 #include "eina_rbtree.h"
 #include "eina_lock.h"
 #include "eina_thread.h"
+#include "eina_cpu.h"
 
 #include "eina_private.h"
 

@@ -53,6 +53,7 @@
 #include "eina_private.h"
 #include "eina_log.h"
 #include "eina_mmap.h"
+#include "eina_cpu.h"
 
 /*============================================================================*
  *                                 Local                                      *
