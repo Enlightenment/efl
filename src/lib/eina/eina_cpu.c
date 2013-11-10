@@ -46,12 +46,16 @@
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
+#include <unistd.h>
 
+#include "eina_log.h"
 #include "eina_cpu.h"
 
 /*============================================================================*
 *                                  Local                                     *
 *============================================================================*/
+
+static void _eina_page_size(void);
 
 /* FIXME this ifdefs should be replaced */
 #if defined(__i386__) || defined(__x86_64__)
@@ -139,6 +143,9 @@ eina_cpu_init(void)
    _x86_simd(&eina_cpu_features);
 #endif
    // FIXME: Handle NEON and friends
+
+   // Figure out the page size for this system
+   _eina_page_size();
 
    return EINA_TRUE;
 }
@@ -235,6 +242,40 @@ _eina_cpu_count_internal(void)
 #else
    return 1;
 #endif
+}
+
+static int _page_size = 0;
+
+static void
+_eina_page_size(void)
+{
+#ifdef _WIN32
+   SYSTEM_INFO si;
+
+   GetSystemInfo(&si);
+
+   _page_size = (int)si.dwPageSize;
+#elif defined _SC_PAGESIZE
+   _page_size = (int)sysconf(_SC_PAGESIZE);
+#elif defined _SC_PAGE_SIZE
+   _page_size = (int)sysconf(_SC_PAGE_SIZE);
+#elif defined HAVE_GETPAGESIZE
+   _page_size = getpagesize();
+#else
+# warn "Falling back to a safe default page size (4K) !"
+   _page_size = 4096;
+#endif
+   if (_page_size < 1)
+     {
+        EINA_LOG_ERR("system reported weird value for PAGESIZE, assuming 4096.");
+        _page_size = 4096;
+     }
+}
+
+EAPI int eina_cpu_page_size(void)
+{
+   if (_page_size == 0) _eina_page_size();
+   return _page_size;
 }
 
 EAPI int eina_cpu_count(void)

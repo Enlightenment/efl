@@ -40,6 +40,7 @@ EAPI extern Eina_Cpu_Features eina_cpu_features;
 
 EAPI Eina_Cpu_Features eina_cpu_features_get(void);
 EAPI int               eina_cpu_count(void);
+EAPI int               eina_cpu_page_size(void);
 
 static inline unsigned short eina_swap16(unsigned short x);
 static inline unsigned int eina_swap32(unsigned int x);

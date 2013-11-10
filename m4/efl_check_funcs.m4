@@ -235,6 +235,20 @@ long ret = splice(0, 0, 1, 0, 400, 0);
 ]])
 ])
 
+dnl _EFL_CHECK_FUNC_GETPAGESIZE is for internal use
+dnl _EFL_CHECK_FUNC_GETPAGESIZE(EFL, VARIABLE)
+AC_DEFUN([_EFL_CHECK_FUNC_GETPAGESIZE],
+[EFL_FIND_LIB_FOR_CODE([$1], [], [$2], [[
+#ifdef HAVE_UNISTD_H
+# include <unistd.h>
+#endif
+]],
+[[
+long sz;
+sz = getpagesize();
+]])
+])
+
 dnl Macro that checks function availability
 dnl
 dnl EFL_CHECK_FUNC(EFL, FUNCTION)
