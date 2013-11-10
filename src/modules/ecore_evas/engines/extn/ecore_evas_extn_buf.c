@@ -18,6 +18,9 @@ _extnbuf_new(const char *base, int id, Eina_Bool sys, int num,
    Extnbuf *b;
    char file[PATH_MAX];
    mode_t mode = S_IRUSR | S_IWUSR;
+   int page_size;
+
+   page_size = eina_cpu_page_size();
 
    b = calloc(1, sizeof(Extnbuf));
    b->fd = -1;
@@ -26,7 +29,7 @@ _extnbuf_new(const char *base, int id, Eina_Bool sys, int num,
    b->w = w;
    b->h = h;
    b->stride = w * 4;
-   b->size = 4096 * (((b->stride * b->h) + (4096 - 1)) / 4096);
+   b->size = page_size * (((b->stride * b->h) + (page_size - 1)) / page_size);
    b->am_owner = owner;
 
    snprintf(file, sizeof(file), "/%s-%i.%i", base, id, num);
