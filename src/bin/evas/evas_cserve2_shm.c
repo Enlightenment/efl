@@ -40,12 +40,7 @@ cserve2_shm_size_normalize(size_t size, size_t align)
    long pagesize;
    size_t normalized;
 
-   pagesize = sysconf(_SC_PAGESIZE);
-   if (pagesize < 1)
-     {
-        ERR("sysconf() reported weird value for PAGESIZE, assuming 4096.");
-        pagesize = 4096;
-     }
+   pagesize = eina_cpu_page_size();
 
    if (align)
      align = ((align + pagesize - 1) / pagesize) * pagesize;
