@@ -282,9 +282,8 @@ static void _constructor(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list EINA_U
 
 static void _destructor(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-  eo_do_super(eo_obj, MY_CLASS, eo_destructor());
-
   class_vars.outputs = eina_list_remove(class_vars.outputs, eo_obj);
+  eo_do_super(eo_obj, MY_CLASS, eo_destructor());
 }
 
 static void _class_constructor(Eo_Class *klass)
