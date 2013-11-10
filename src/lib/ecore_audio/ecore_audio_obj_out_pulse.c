@@ -243,11 +243,20 @@ static void _state_job(void *data EINA_UNUSED)
        (class_vars.state == PA_CONTEXT_TERMINATED))
      {
         Eo *eo_obj;
-        Eina_List *out;
+        Eina_List *out, *tmp;
         
         DBG("PA context fail.");
+        //ref everything in the list to be sure...
+        EINA_LIST_FOREACH(class_vars.outputs, out, eo_obj) {
+           eo_ref(eo_obj);
+        }
+        // the callback here can delete things in the list..
         EINA_LIST_FOREACH(class_vars.outputs, out, eo_obj) {
            eo_do(eo_obj, eo_event_callback_call(ECORE_AUDIO_EV_OUT_PULSE_CONTEXT_FAIL, NULL, NULL));
+        }
+        // now unref everything safely
+        EINA_LIST_FOREACH_SAFE(class_vars.outputs, out, tmp, eo_obj) {
+           eo_unref(eo_obj);
         }
      }
    class_vars.state_job = NULL;
