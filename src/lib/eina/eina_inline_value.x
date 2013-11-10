@@ -331,6 +331,8 @@ eina_value_vset(Eina_Value *value, va_list args)
 {
    const Eina_Value_Type *type;
    void *mem;
+   va_list args_copy;
+   Eina_Bool r = EINA_FALSE;
 
    EINA_VALUE_TYPE_CHECK_RETURN_VAL(value, EINA_FALSE);
 
@@ -434,8 +436,11 @@ eina_value_vset(Eina_Value *value, va_list args)
      }
 #endif
 
-   EINA_VALUE_TYPE_DISPATCH_RETURN(value, vset, 0,
-                                   EINA_FALSE, mem, args);
+   va_copy(args_copy, args);
+   if (type->vset) r = type->vset(type, mem, args_copy);
+   va_end(args_copy);
+
+   return r;
 }
 
 static inline Eina_Bool
