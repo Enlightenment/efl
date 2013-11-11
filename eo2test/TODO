@@ -12,6 +12,8 @@
    check if it works ASIS on windows
    if it does, do nothing
 
+- Rediscuss the whole attribute cleanup thing. I'm not sure we want that as everything breaks if that isn't there. Embedded old gcc?
+
 - function name from pointer
    dladdr backtrace ??
 
@@ -25,3 +27,9 @@
 
 - Get all the optimisations cedric has been doing to Eo1? I think that's where the children thing got lost...
     - Make sure all the improvements have been migrated...
+
+- Implement runtime stack growth!!!
+- Remove the memset in do_end? Waste of cpu...
+    - Also, write functions for stack push and pop so it'll be easy to add runtime stack growth.
+
+- Fix all the FIXME
