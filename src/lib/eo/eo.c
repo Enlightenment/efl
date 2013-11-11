@@ -210,8 +210,8 @@ _eo_op_id_name_get(Eo_Op op)
    return (desc) ? desc->name : NULL;
 }
 
-static inline const _Eo_Class *
-_eo_kls_itr_next(const _Eo_Class *orig_kls, const _Eo_Class *cur_klass, Eo_Op op)
+static inline const op_type_funcs *
+_eo2_kls_itr_next(const _Eo_Class *orig_kls, const _Eo_Class *cur_klass, Eo_Op op)
 {
    const _Eo_Class **kls_itr = NULL;
 
@@ -231,11 +231,20 @@ _eo_kls_itr_next(const _Eo_Class *orig_kls, const _Eo_Class *cur_klass, Eo_Op op
                   kls_itr++;
                   continue;
                }
-             return fsrc->src;
+             return fsrc;
           }
      }
 
    return NULL;
+}
+
+static inline const _Eo_Class *
+_eo_kls_itr_next(const _Eo_Class *orig_kls, const _Eo_Class *cur_klass, Eo_Op op)
+{
+   const op_type_funcs *fsrc;
+   fsrc = _eo2_kls_itr_next(orig_kls, cur_klass, op);
+
+   return (fsrc) ? fsrc->src : NULL;
 }
 
 static inline const op_type_funcs *
@@ -259,22 +268,6 @@ _eo_kls_itr_func_get(const _Eo_Class *cur_klass, Eo_Op op)
 
 EAPI Eo2_Hook_Call eo2_hook_call_pre = NULL;
 EAPI Eo2_Hook_Call eo2_hook_call_post = NULL;
-
-static inline const _Eo_Class *
-_eo2_kls_itr_next(const _Eo_Class *orig_kls, const _Eo_Class *cur_klass)
-{
-   const _Eo_Class **kls_itr = NULL;
-
-   /* Find the kls itr. */
-   kls_itr = orig_kls->mro;
-   while (*kls_itr && (*kls_itr != cur_klass))
-     kls_itr++;
-
-   if (*kls_itr)
-     return *(++kls_itr);
-
-   return NULL;
-}
 
 // FIXME: per thread stack, grow/shrink
 #define EO2_INVALID_DATA (void *) -1
@@ -418,14 +411,18 @@ _eo2_call_resolve(const char *func_name, const Eo_Op op, Eo2_Op_Call_Data *call)
    /* If we have a current class, we need to itr to the next. */
    if (fptr->cur_klass)
      {
-        /* FIXME-2 This should actually be merged with the dich_func_get after. */
-        klass = _eo_kls_itr_next(klass, fptr->cur_klass, op);
+        func = _eo2_kls_itr_next(klass, fptr->cur_klass, op);
 
-        if (!klass)
+        if (!func)
            goto end;
+
+        klass = func->src;
+     }
+   else
+     {
+        func = _dich_func_get(klass, op);
      }
 
-   func = _dich_func_get(klass, op);
    if (EINA_UNLIKELY(func == NULL))
      {
         ERR("you called func '%s' (%d) which is unknown in class '%s'", func_name, op, klass->desc->name);
