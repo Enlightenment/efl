@@ -230,7 +230,7 @@ static const Evas_Object_Image_State default_state = {
   EVAS_TEXTURE_REPEAT,
   EVAS_COLORSPACE_ARGB8888,
 
-  EINA_TRUE, EINA_FALSE, EINA_FALSE, EINA_FALSE
+  EINA_TRUE, EINA_FALSE, EINA_FALSE, EINA_FALSE, EINA_FALSE
 };
 
 Eina_Cow *evas_object_image_load_opts_cow = NULL;
