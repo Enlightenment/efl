@@ -318,12 +318,6 @@ _eo2_call_stack_free()
      free(eo2_call_stack.stack);
 }
 
-EAPI int
-eo2_call_stack_depth()
-{
-   return (eo2_call_stack.frame_ptr - eo2_call_stack.stack);
-}
-
 static inline Eina_Bool
 _eo2_do_internal(const Eo *eo_id, const Eo_Class *cur_klass_id,
       Eina_Bool is_super, Eo2_Stack_Frame *fptr, Eo2_Stack_Frame *pfptr)

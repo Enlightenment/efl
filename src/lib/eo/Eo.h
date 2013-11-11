@@ -717,8 +717,6 @@ EAPI Eina_Bool _eo2_do_start(const Eo *obj, const Eo_Class *cur_klass, Eina_Bool
 // end of the eo2_do barrier, unref the obj, move the stack pointer
 EAPI void _eo2_do_end(const Eo **ojb);
 
-EAPI int eo2_call_stack_depth(void);
-
 #define EO2_DO_CLEANUP __attribute__((cleanup(_eo2_do_end)))
 
 // eo object method calls batch,
