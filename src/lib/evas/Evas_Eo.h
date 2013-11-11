@@ -2330,7 +2330,7 @@ enum
  *
  * @see evas_object_textblock_style_set
  */
-#define evas_obj_textblock_style_set(ts) EVAS_OBJ_TEXTBLOCK_ID(EVAS_OBJ_TEXTBLOCK_SUB_ID_STYLE_SET), EO_TYPECHECK(Evas_Textblock_Style *, ts)
+#define evas_obj_textblock_style_set(ts) EVAS_OBJ_TEXTBLOCK_ID(EVAS_OBJ_TEXTBLOCK_SUB_ID_STYLE_SET), EO_TYPECHECK(const Evas_Textblock_Style *, ts)
 
 /**
  * @def evas_obj_textblock_style_get

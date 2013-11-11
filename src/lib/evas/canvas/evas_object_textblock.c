@@ -5699,7 +5699,7 @@ _textblock_style_generic_set(Evas_Object *eo_obj, Evas_Textblock_Style *ts,
 }
 
 EAPI void
-evas_object_textblock_style_set(Evas_Object *eo_obj, Evas_Textblock_Style *ts)
+evas_object_textblock_style_set(Evas_Object *eo_obj, const Evas_Textblock_Style *ts)
 {
    eo_do(eo_obj, evas_obj_textblock_style_set(ts));
 }
@@ -5708,8 +5708,8 @@ static void
 _textblock_style_set(Eo *eo_obj, void *_pd, va_list *list)
 {
    Evas_Object_Textblock *o = _pd;
-   Evas_Textblock_Style *ts = va_arg(*list, Evas_Textblock_Style *);
-   _textblock_style_generic_set(eo_obj, ts, &(o->style));
+   const Evas_Textblock_Style *ts = va_arg(*list, const Evas_Textblock_Style *);
+   _textblock_style_generic_set(eo_obj, (Evas_Textblock_Style *) ts, &(o->style));
 }
 
 EAPI const Evas_Textblock_Style *

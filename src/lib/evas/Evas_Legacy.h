@@ -5621,7 +5621,7 @@ EAPI char                                    *evas_textblock_text_utf8_to_markup
  * @param ts  the style to set.
  * @return Returns no value.
  */
-EAPI void                                     evas_object_textblock_style_set(Evas_Object *obj, Evas_Textblock_Style *ts) EINA_ARG_NONNULL(1);
+EAPI void                                     evas_object_textblock_style_set(Evas_Object *obj, const Evas_Textblock_Style *ts) EINA_ARG_NONNULL(1);
 
 /**
  * Return the style of an object.
