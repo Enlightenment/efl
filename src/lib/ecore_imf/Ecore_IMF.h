@@ -541,6 +541,7 @@ EAPI void                          ecore_imf_module_register(const Ecore_IMF_Con
  * @return  EINA_TRUE if the input panel will be hidden
             EINA_FALSE if the input panel is already in hidden state
  * @ingroup Ecore_IMF_Lib_Group
+ * @since 1.8.0
  */
 EAPI Eina_Bool                     ecore_imf_input_panel_hide(void);
 
