@@ -326,7 +326,7 @@ eo2_call_stack_depth()
 
 static inline Eina_Bool
 _eo2_do_internal(const Eo *eo_id, const Eo_Class *cur_klass_id,
-            Eo2_Stack_Frame *fptr, Eo2_Stack_Frame *pfptr)
+      Eina_Bool is_super, Eo2_Stack_Frame *fptr, Eo2_Stack_Frame *pfptr)
 {
    /* If we are already in the same object context, we inherit info from it. */
    if (pfptr)
@@ -339,7 +339,7 @@ _eo2_do_internal(const Eo *eo_id, const Eo_Class *cur_klass_id,
         fptr->obj_data = EO2_INVALID_DATA;
      }
 
-   if (cur_klass_id)
+   if (is_super)
      {
         EO_CLASS_POINTER_RETURN_VAL(cur_klass_id, cur_klass, EINA_FALSE);
         if (fptr->cur_klass == cur_klass)
@@ -355,7 +355,7 @@ _eo2_do_internal(const Eo *eo_id, const Eo_Class *cur_klass_id,
 }
 
 EAPI Eina_Bool
-eo2_do_start(const Eo *eo_id, const Eo_Class *cur_klass_id, const char *file EINA_UNUSED, const char *func EINA_UNUSED, int line EINA_UNUSED)
+eo2_do_start(const Eo *eo_id, const Eo_Class *cur_klass_id, Eina_Bool is_super, const char *file EINA_UNUSED, const char *func EINA_UNUSED, int line EINA_UNUSED)
 {
    Eo2_Stack_Frame *fptr, *pfptr;
 
@@ -369,7 +369,7 @@ eo2_do_start(const Eo *eo_id, const Eo_Class *cur_klass_id, const char *file EIN
    pfptr = ((eo_id) && (fptr->eo_id == eo_id) ? fptr : NULL);
    fptr++;
 
-   if (!_eo2_do_internal(eo_id, cur_klass_id, fptr, pfptr))
+   if (!_eo2_do_internal(eo_id, cur_klass_id, is_super, fptr, pfptr))
       return EINA_FALSE;
 
    if(_eo_is_a_class(eo_id))

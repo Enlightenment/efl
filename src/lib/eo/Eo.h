@@ -712,7 +712,7 @@ EAPI Eo_Op eo2_api_op_id_get(const void *api_func);
 EAPI Eina_Bool eo2_call_resolve(const char *func_name, const Eo_Op op, Eo2_Op_Call_Data *call);
 
 // start of eo2_do barrier, gets the object pointer and ref it, put it on the stask
-EAPI Eina_Bool eo2_do_start(const Eo *obj, const Eo_Class *cur_klass, const char *file, const char *func, int line);
+EAPI Eina_Bool eo2_do_start(const Eo *obj, const Eo_Class *cur_klass, Eina_Bool is_super, const char *file, const char *func, int line);
 
 // end of the eo2_do barrier, unref the obj, move the stack pointer
 EAPI void eo2_do_end(const Eo **ojb);
@@ -723,11 +723,11 @@ EAPI int eo2_call_stack_depth(void);
 
 // eo object method calls batch,
 
-#define _eo2_do_common(eoid, clsid, ...)                                   \
+#define _eo2_do_common(eoid, clsid, is_super, ...)                         \
   do                                                                       \
     {                                                                      \
        const Eo *_eoid_ = eoid;                                            \
-       if (eo2_do_start(_eoid_, clsid, __FILE__, __FUNCTION__, __LINE__))  \
+       if (eo2_do_start(_eoid_, clsid, is_super, __FILE__, __FUNCTION__, __LINE__))  \
          {                                                                 \
             const Eo *_id_clean_ EO2_DO_CLEANUP = _eoid_;                  \
             __VA_ARGS__;                                                   \
@@ -736,9 +736,9 @@ EAPI int eo2_call_stack_depth(void);
     } while (0)
 
 
-#define eo2_do(eoid, ...) _eo2_do_common(eoid, NULL, __VA_ARGS__)
+#define eo2_do(eoid, ...) _eo2_do_common(eoid, NULL, EINA_FALSE, __VA_ARGS__)
 
-#define eo2_do_super(eoid, clsid, func) _eo2_do_common(eoid, clsid, func)
+#define eo2_do_super(eoid, clsid, func) _eo2_do_common(eoid, clsid, EINA_TRUE, func)
 
 /*****************************************************************************/
 
