@@ -45,9 +45,9 @@ _destructor(Eo *obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
 }
 
 static Eo2_Op_Description op_descs[] = {
-     EO2_OP_FUNC_OVERRIDE(_constructor, eo2_constructor),
-     EO2_OP_FUNC_OVERRIDE(_destructor, eo2_destructor),
-     EO2_OP_FUNC_OVERRIDE(_ab_sum_get, mixin_ab_sum_get),
+     EO2_OP_FUNC_OVERRIDE(eo2_constructor, _constructor),
+     EO2_OP_FUNC_OVERRIDE(eo2_destructor, _destructor),
+     EO2_OP_FUNC_OVERRIDE(mixin_ab_sum_get, _ab_sum_get),
      EO2_OP_SENTINEL
 };
 

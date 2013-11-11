@@ -31,8 +31,8 @@ EAPI EO2_VOID_FUNC_BODYV(simple_a_set, EO2_FUNC_CALL(a), int a);
 EAPI EO2_FUNC_BODY(simple_a_get, int, 0);
 
 static Eo2_Op_Description op_descs[] = {
-     EO2_OP_FUNC(_a_set, simple_a_set, "Set property A"),
-     EO2_OP_FUNC(_a_get, simple_a_get, "Get property A"),
+     EO2_OP_FUNC(simple_a_set, _a_set, "Set property A"),
+     EO2_OP_FUNC(simple_a_get, _a_get, "Get property A"),
      EO2_OP_SENTINEL
 };
 

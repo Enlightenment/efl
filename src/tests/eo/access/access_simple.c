@@ -33,7 +33,7 @@ _a_set(Eo *obj, void *class_data, int a)
 EAPI EO2_VOID_FUNC_BODYV(simple_a_set, EO2_FUNC_CALL(a), int a);
 
 static Eo2_Op_Description op_descs[] = {
-     EO2_OP_FUNC(_a_set, simple_a_set, "Set property A"),
+     EO2_OP_FUNC(simple_a_set, _a_set, "Set property A"),
      EO2_OP_SENTINEL
 };
 

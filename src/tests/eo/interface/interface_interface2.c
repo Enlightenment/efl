@@ -12,7 +12,7 @@
 EO2_FUNC_BODY(interface2_ab_sum_get2, int, 0);
 
 static Eo2_Op_Description op_descs[] = {
-     EO2_OP_FUNC(NULL, interface2_ab_sum_get2, "Print the sum of a and b."),
+     EO2_OP_FUNC(interface2_ab_sum_get2, NULL, "Print the sum of a and b."),
      EO2_OP_SENTINEL
 };
 
