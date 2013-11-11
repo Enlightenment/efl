@@ -595,7 +595,7 @@ START_TEST(eo_magic_checks)
         ck_assert_int_ne(i, a);
         eo2_do_super(obj, (const Eo_Class *) buf, simple_a_set(++i));
         eo2_do_super(obj, (const Eo_Class *) buf, a = simple_a_get());
-        ck_assert_int_ne(i, a); // FIXME Jeremy: shouldn't happen. do_super should check for class validity and fail!
+        ck_assert_int_ne(i, a);
         fail_if(eo_class_get((Eo *) buf));
         fail_if(eo_class_name_get((Eo_Class*) buf));
         fail_if(eo_class_get(obj) != SIMPLE_CLASS);
@@ -603,8 +603,7 @@ START_TEST(eo_magic_checks)
         eo_class_funcs_set((Eo_Class *) buf, NULL);
         eo2_do((Eo_Class *) buf, NULL);
         eo2_do_super((Eo_Class *) buf, SIMPLE_CLASS, simple_a_set(++i));
-        eo2_do_super(SIMPLE_CLASS, (Eo_Class *) buf, simple_a_set(++i)); // FIXME Jeremy: For some reason it tries to call the object function on the class!!!
-
+        eo2_do_super(SIMPLE_CLASS, (Eo_Class *) buf, simple_a_set(++i));
         fail_if(eo_class_new(NULL, (Eo_Class *) buf), NULL);
 
         eo_xref(obj, (Eo *) buf);
