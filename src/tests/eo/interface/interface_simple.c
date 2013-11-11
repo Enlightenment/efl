@@ -55,12 +55,12 @@ _ab_sum_get2(Eo *obj, void *class_data EINA_UNUSED)
 }
 
 static Eo2_Op_Description op_descs[] = {
-     EO2_OP_FUNC(_a_set, simple_a_set, "Set property a"),
-     EO2_OP_FUNC(_a_get, simple_a_get, "Get property a"),
-     EO2_OP_FUNC(_b_set, simple_b_set, "Set property b"),
-     EO2_OP_FUNC(_b_get, simple_b_get, "Get property b"),
-     EO2_OP_FUNC_OVERRIDE(_ab_sum_get, interface_ab_sum_get),
-     EO2_OP_FUNC_OVERRIDE(_ab_sum_get2, interface2_ab_sum_get2),
+     EO2_OP_FUNC(simple_a_set, _a_set, "Set property a"),
+     EO2_OP_FUNC(simple_a_get, _a_get, "Get property a"),
+     EO2_OP_FUNC(simple_b_set, _b_set, "Set property b"),
+     EO2_OP_FUNC(simple_b_get, _b_get, "Get property b"),
+     EO2_OP_FUNC_OVERRIDE(interface_ab_sum_get, _ab_sum_get),
+     EO2_OP_FUNC_OVERRIDE(interface2_ab_sum_get2, _ab_sum_get2),
      EO2_OP_SENTINEL
 };
 

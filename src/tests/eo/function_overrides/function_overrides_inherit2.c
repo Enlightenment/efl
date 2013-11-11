@@ -60,10 +60,10 @@ EAPI EO2_FUNC_BODY(inherit2_print, Eina_Bool, EINA_FALSE);
 EAPI EO2_FUNC_BODY(inherit2_print2, Eina_Bool, EINA_FALSE);
 
 static Eo2_Op_Description op_descs[] = {
-     EO2_OP_FUNC(_print, inherit2_print, "Print hey"),
-     EO2_OP_FUNC(_print2, inherit2_print2, "Print hey2"),
-     EO2_OP_CLASS_FUNC_OVERRIDE(_class_print, simple_class_print),
-     EO2_OP_FUNC_OVERRIDE(_a_set, simple_a_set),
+     EO2_OP_FUNC(inherit2_print, _print, "Print hey"),
+     EO2_OP_FUNC(inherit2_print2, _print2, "Print hey2"),
+     EO2_OP_CLASS_FUNC_OVERRIDE(simple_class_print, _class_print),
+     EO2_OP_FUNC_OVERRIDE(simple_a_set, _a_set),
      EO2_OP_SENTINEL
 };
 

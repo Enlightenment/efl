@@ -59,11 +59,11 @@ EO2_FUNC_BODY(simple_a_print, Eina_Bool, EINA_FALSE);
 EO2_FUNC_BODY(simple_class_hi_print, Eina_Bool, EINA_FALSE);
 
 static Eo2_Op_Description op_descs[] = {
-     EO2_OP_FUNC_OVERRIDE(_dbg_info_get, eo2_dbg_info_get),
-     EO2_OP_FUNC(_a_set, simple_a_set, "Set property a"),
-     EO2_OP_FUNC(_a_get, simple_a_get, "Get property a"),
-     EO2_OP_FUNC(_a_print, simple_a_print, "Print property a"),
-     EO2_OP_CLASS_FUNC(_class_hi_print, simple_class_hi_print, "Print property a"),
+     EO2_OP_FUNC_OVERRIDE(eo2_dbg_info_get, _dbg_info_get),
+     EO2_OP_FUNC(simple_a_set, _a_set, "Set property a"),
+     EO2_OP_FUNC(simple_a_get, _a_get, "Get property a"),
+     EO2_OP_FUNC(simple_a_print, _a_print, "Print property a"),
+     EO2_OP_CLASS_FUNC(simple_class_hi_print, _class_hi_print, "Print property a"),
      EO2_OP_SENTINEL
 };
 

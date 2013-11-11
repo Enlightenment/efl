@@ -74,8 +74,8 @@ _constructor(Eo *obj, void *class_data EINA_UNUSED)
 EAPI EO2_VOID_FUNC_BODYV(simple_a_set, EO2_FUNC_CALL(a), int a);
 
 static Eo2_Op_Description op_descs[] = {
-     EO2_OP_FUNC_OVERRIDE(_constructor, eo2_constructor),
-     EO2_OP_FUNC(_a_set, simple_a_set, "Set property a"),
+     EO2_OP_FUNC_OVERRIDE(eo2_constructor, _constructor),
+     EO2_OP_FUNC(simple_a_set, _a_set, "Set property a"),
      EO2_OP_SENTINEL
 };
 
