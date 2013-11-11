@@ -897,7 +897,7 @@ static Eina_Bool
 _reset_zoom_timer_cb(void *data)
 {
    ELM_WEB_DATA_GET(data, sd);
-   ELM_WIDGET_DATA_GET_OR_RETURN(data, wd);
+   ELM_WIDGET_DATA_GET_OR_RETURN(data, wd, EINA_FALSE);
 
    sd->zoom.timer = ecore_timer_add(0.0, _restore_zoom_mode_timer_cb, data);
    ewk_view_zoom_set(wd->resize_obj, 1.0, 0, 0);
