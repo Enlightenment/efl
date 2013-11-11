@@ -57,10 +57,10 @@ EAPI EO2_FUNC_BODY(simple_class_print, Eina_Bool, EINA_FALSE);
 EAPI EO2_FUNC_BODY(simple_class_print2, Eina_Bool, EINA_FALSE);
 
 static Eo2_Op_Description op_descs[] = {
-     EO2_OP_FUNC(_a_set, simple_a_set, "Set property A"),
-     EO2_OP_FUNC(_a_print, simple_a_print, "Print property A"),
-     EO2_OP_FUNC(_class_print, simple_class_print, "Print class name."),
-     EO2_OP_FUNC(_class_print2, simple_class_print2, "Print2 class name."),
+     EO2_OP_FUNC(simple_a_set, _a_set, "Set property A"),
+     EO2_OP_FUNC(simple_a_print, _a_print, "Print property A"),
+     EO2_OP_FUNC(simple_class_print, _class_print, "Print class name."),
+     EO2_OP_FUNC(simple_class_print2, _class_print2, "Print2 class name."),
      EO2_OP_SENTINEL
 };
 

@@ -450,8 +450,8 @@ typedef struct _Eo_Op_Description Eo_Op_Description;
 
 typedef struct _Eo2_Op_Description
 {
-   void *func;             /**< The static function to call for the op. */
    void *api_func;         /**< The EAPI function offering this op. */
+   void *func;             /**< The static function to call for the op. */
    Eo_Op op;               /**< The op. */
    Eo_Op_Type op_type;     /**< The type of the Op. */
    const char *doc;        /**< Explanation about the Op. */
@@ -699,10 +699,10 @@ EAPI extern Eo2_Hook_Call eo2_hook_call_post;
 // OP ID of an overriding function
 #define EO2_OP_OVERRIDE ((Eo_Op) -1)
 
-#define EO2_OP_FUNC(_private, _api, _doc) {_private, _api, EO_NOOP, EO_OP_TYPE_REGULAR, _doc}
-#define EO2_OP_CLASS_FUNC(_private, _api, _doc) {_private, _api, EO_NOOP, EO_OP_TYPE_CLASS, _doc}
-#define EO2_OP_FUNC_OVERRIDE(_private, _api) {_private, _api, EO2_OP_OVERRIDE, EO_OP_TYPE_REGULAR, NULL}
-#define EO2_OP_CLASS_FUNC_OVERRIDE(_private, _api) {_private, _api, EO2_OP_OVERRIDE, EO_OP_TYPE_CLASS, NULL}
+#define EO2_OP_FUNC(_api, _private, _doc) {_api, _private, EO_NOOP, EO_OP_TYPE_REGULAR, _doc}
+#define EO2_OP_CLASS_FUNC(_api, _private, _doc) {_api, _private, EO_NOOP, EO_OP_TYPE_CLASS, _doc}
+#define EO2_OP_FUNC_OVERRIDE(_api, _private) {_api, _private, EO2_OP_OVERRIDE, EO_OP_TYPE_REGULAR, NULL}
+#define EO2_OP_CLASS_FUNC_OVERRIDE(_api, _private) {_api, _private, EO2_OP_OVERRIDE, EO_OP_TYPE_CLASS, NULL}
 #define EO2_OP_SENTINEL { NULL, NULL, 0, EO_OP_TYPE_INVALID, NULL}
 
 // returns the OP id corresponding to the given api_func

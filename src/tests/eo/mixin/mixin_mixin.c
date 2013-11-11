@@ -32,9 +32,9 @@ _destructor(Eo *obj, void *class_data EINA_UNUSED)
 EAPI EO2_FUNC_BODY(mixin_ab_sum_get, int, 0);
 
 static Eo2_Op_Description op_descs[] = {
-     EO2_OP_FUNC_OVERRIDE(_constructor, eo2_constructor),
-     EO2_OP_FUNC_OVERRIDE(_destructor, eo2_destructor),
-     EO2_OP_FUNC(_ab_sum_get, mixin_ab_sum_get, "Get the sum of a and b."),
+     EO2_OP_FUNC_OVERRIDE(eo2_constructor, _constructor),
+     EO2_OP_FUNC_OVERRIDE(eo2_destructor, _destructor),
+     EO2_OP_FUNC(mixin_ab_sum_get, _ab_sum_get, "Get the sum of a and b."),
      EO2_OP_SENTINEL
 };
 

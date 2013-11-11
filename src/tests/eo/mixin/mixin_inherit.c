@@ -20,7 +20,7 @@ _a_get(Eo *obj, void *class_data EINA_UNUSED)
 }
 
 static Eo2_Op_Description op_descs[] = {
-     EO2_OP_FUNC_OVERRIDE(_a_get, simple_a_get),
+     EO2_OP_FUNC_OVERRIDE(simple_a_get, _a_get),
      EO2_OP_SENTINEL
 };
 

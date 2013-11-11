@@ -83,13 +83,13 @@ _class_destructor(Eo_Class *klass EINA_UNUSED)
 EO2_VOID_FUNC_BODYV(simple_constructor, EO2_FUNC_CALL(a), int a);
 
 static Eo2_Op_Description op_descs[] = {
-     EO2_OP_FUNC_OVERRIDE(_constructor, eo2_constructor),
-     EO2_OP_FUNC_OVERRIDE(_destructor, eo2_destructor),
-     EO2_OP_FUNC(_simple_constructor, simple_constructor, "Construct and set A."),
-     EO2_OP_FUNC(_a_set, simple_a_set, "Set property a"),
-     EO2_OP_FUNC(_a_get, simple_a_get, "Get property a"),
-     EO2_OP_FUNC(_b_set, simple_b_set, "Set property b"),
-     EO2_OP_FUNC(_b_get, simple_b_get, "Get property b"),
+     EO2_OP_FUNC_OVERRIDE(eo2_constructor, _constructor),
+     EO2_OP_FUNC_OVERRIDE(eo2_destructor, _destructor),
+     EO2_OP_FUNC(simple_constructor, _simple_constructor, "Construct and set A."),
+     EO2_OP_FUNC(simple_a_set, _a_set, "Set property a"),
+     EO2_OP_FUNC(simple_a_get, _a_get, "Get property a"),
+     EO2_OP_FUNC(simple_b_set, _b_set, "Set property b"),
+     EO2_OP_FUNC(simple_b_get, _b_get, "Get property b"),
      EO2_OP_SENTINEL
 };
 

@@ -15,7 +15,7 @@ _destructor(Eo *obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
 }
 
 static Eo2_Op_Description op_descs[] = {
-     EO2_OP_FUNC_OVERRIDE(_destructor, eo2_destructor),
+     EO2_OP_FUNC_OVERRIDE(eo2_destructor, _destructor),
      EO2_OP_SENTINEL
 };
 

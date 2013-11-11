@@ -17,7 +17,7 @@ _a_set(Eo *obj, void *class_data EINA_UNUSED, int a)
 }
 
 static Eo2_Op_Description op_descs[] = {
-     EO2_OP_FUNC_OVERRIDE(_a_set, simple_a_set),
+     EO2_OP_FUNC_OVERRIDE(simple_a_set, _a_set),
      EO2_OP_SENTINEL
 };
 

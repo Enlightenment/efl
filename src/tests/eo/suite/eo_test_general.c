@@ -265,8 +265,8 @@ _man_des(Eo *obj, void *data EINA_UNUSED, va_list *list EINA_UNUSED)
 }
 
 static Eo2_Op_Description op_descs[] = {
-     EO2_OP_FUNC_OVERRIDE(_man_con, eo2_constructor),
-     EO2_OP_FUNC_OVERRIDE(_man_des, eo2_destructor),
+     EO2_OP_FUNC_OVERRIDE(eo2_constructor, _man_con),
+     EO2_OP_FUNC_OVERRIDE(eo2_destructor, _man_des),
      EO2_OP_SENTINEL
 };
 
@@ -682,8 +682,8 @@ EO2_FUNC_BODY(multi_a_print, Eina_Bool, EINA_FALSE);
 EO2_FUNC_BODY(multi_class_hi_print, Eina_Bool, EINA_FALSE);
 
 static Eo2_Op_Description _multi_do_op_descs[] = {
-     EO2_OP_FUNC(_a_print, multi_a_print, "Print property a"),
-     EO2_OP_FUNC(_class_hi_print, multi_class_hi_print, "Print Hi"),
+     EO2_OP_FUNC(multi_a_print, _a_print, "Print property a"),
+     EO2_OP_FUNC(multi_class_hi_print, _class_hi_print, "Print Hi"),
      EO2_OP_SENTINEL
 };
 
