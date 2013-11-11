@@ -283,10 +283,12 @@ _eo2_kls_itr_next(const _Eo_Class *orig_kls, const _Eo_Class *cur_klass)
 typedef struct _Eo2_Stack_Frame
 {
    const Eo          *eo_id;
-   _Eo_Object        *obj;
+   union {
+        _Eo_Object        *obj;
+        const _Eo_Class   *kls;
+   } o;
    const _Eo_Class   *cur_klass;
    void              *obj_data;
-
 } Eo2_Stack_Frame;
 
 typedef struct _Eo2_Call_Stack {
@@ -323,71 +325,31 @@ eo2_call_stack_depth()
 }
 
 static inline Eina_Bool
-_eo2_obj_do(const Eo *eo_id, const Eo_Class *cur_klass_id,
+_eo2_do_internal(const Eo *eo_id, const Eo_Class *cur_klass_id,
             Eo2_Stack_Frame *fptr, Eo2_Stack_Frame *pfptr)
 {
-   _Eo_Object *obj;
-   const _Eo_Class *klass;
-
+   /* If we are already in the same object context, we inherit info from it. */
    if (pfptr)
      {
-        obj = pfptr->obj;
         memcpy(fptr, pfptr, sizeof(Eo2_Stack_Frame));
      }
    else
      {
-        EO_OBJ_POINTER_RETURN_VAL(eo_id, _obj, EINA_FALSE);
-        obj = _obj;
         fptr->eo_id = eo_id;
-        fptr->obj = _obj;
+        fptr->obj_data = EO2_INVALID_DATA;
      }
 
    if (cur_klass_id)
      {
         EO_CLASS_POINTER_RETURN_VAL(cur_klass_id, cur_klass, EINA_FALSE);
-        klass = _eo2_kls_itr_next(obj->klass, cur_klass);
-     }
-   else
-     klass = obj->klass;
-
-   if ((!pfptr) || (klass != fptr->cur_klass))
-     {
-        fptr->cur_klass = klass;
-        fptr->obj_data = EO2_INVALID_DATA;
-     }
-
-   _eo_ref(obj);
-
-   return EINA_TRUE;
-}
-
-static inline Eina_Bool
-_eo2_class_do(const Eo *eo_id, const Eo_Class *cur_klass_id,
-              Eo2_Stack_Frame *fptr, Eo2_Stack_Frame *pfptr)
-{
-   const _Eo_Class *klass;
-
-   if (pfptr)
-     {
-        klass = pfptr->cur_klass;
-        memcpy(fptr, pfptr, sizeof(Eo2_Stack_Frame));
+        if (fptr->cur_klass == cur_klass)
+           fptr->obj_data = EO2_INVALID_DATA;
+        fptr->cur_klass = cur_klass;
      }
    else
      {
-        EO_CLASS_POINTER_RETURN_VAL(eo_id, _klass, EINA_FALSE);
-        klass = _klass;
-        fptr->eo_id = eo_id;
-        fptr->obj = NULL;
-        fptr->obj_data = EO2_INVALID_DATA;
+        fptr->cur_klass = NULL;
      }
-
-   if(cur_klass_id)
-     {
-        EO_CLASS_POINTER_RETURN_VAL(cur_klass_id, cur_klass, EINA_FALSE);
-        fptr->cur_klass = _eo2_kls_itr_next(klass, cur_klass);
-     }
-   else
-     fptr->cur_klass = klass;
 
    return EINA_TRUE;
 }
@@ -405,16 +367,22 @@ eo2_do_start(const Eo *eo_id, const Eo_Class *cur_klass_id, const char *file EIN
      }
 
    pfptr = ((eo_id) && (fptr->eo_id == eo_id) ? fptr : NULL);
+   fptr++;
+
+   if (!_eo2_do_internal(eo_id, cur_klass_id, fptr, pfptr))
+      return EINA_FALSE;
+
    if(_eo_is_a_class(eo_id))
      {
-        if (!_eo2_class_do(eo_id, cur_klass_id, (fptr + 1), pfptr))
-          return EINA_FALSE;
-      }
+        EO_CLASS_POINTER_RETURN_VAL(eo_id, _klass, EINA_FALSE);
+        fptr->o.kls = _klass;
+     }
    else
      {
-        if (!_eo2_obj_do(eo_id, cur_klass_id, (fptr + 1), pfptr))
-          return EINA_FALSE;
-      }
+        EO_OBJ_POINTER_RETURN_VAL(eo_id, _obj, EINA_FALSE);
+        fptr->o.obj = _obj;
+        _eo_ref(_obj);
+     }
 
    eo2_call_stack.frame_ptr++;
 
@@ -428,8 +396,8 @@ eo2_do_end(const Eo **eo_id EINA_UNUSED)
 
    fptr = eo2_call_stack.frame_ptr;
 
-   if(fptr->obj)
-     _eo_unref(fptr->obj);
+   if(fptr->o.obj)
+     _eo_unref(fptr->o.obj);
 
    memset(fptr, 0, sizeof (Eo2_Stack_Frame));
    fptr->obj_data = EO2_INVALID_DATA;
@@ -444,13 +412,24 @@ EAPI Eina_Bool
 eo2_call_resolve(const char *func_name, const Eo_Op op, Eo2_Op_Call_Data *call)
 {
    Eo2_Stack_Frame *fptr;
-   const _Eo_Object * obj;
    const _Eo_Class *klass;
    const op_type_funcs *func;
+   Eina_Bool is_obj;
 
    fptr = eo2_call_stack.frame_ptr;
-   obj = fptr->obj;
-   klass = fptr->cur_klass;
+   is_obj = !_eo_is_a_class(fptr->eo_id);
+
+   klass = (is_obj) ? fptr->o.obj->klass : fptr->o.kls;
+
+   /* If we have a current class, we need to itr to the next. */
+   if (fptr->cur_klass)
+     {
+        /* FIXME-2 This should actually be merged with the dich_func_get after. */
+        klass = _eo_kls_itr_next(klass, fptr->cur_klass, op);
+
+        if (!klass)
+           goto end;
+     }
 
    func = _dich_func_get(klass, op);
    if (EINA_UNLIKELY(func == NULL))
@@ -464,18 +443,18 @@ eo2_call_resolve(const char *func_name, const Eo_Op op, Eo2_Op_Call_Data *call)
         call->func = func->func;
         call->klass = _eo_class_id_get(klass);
 
-        if (obj)
+        if (is_obj)
           {
              call->obj = (Eo *)fptr->eo_id;
-             if (func->src == obj->klass)
+             if (func->src == fptr->o.obj->klass)
                {
                   if (fptr->obj_data == EO2_INVALID_DATA)
-                    fptr->obj_data = _eo_data_scope_get(obj, func->src);
+                    fptr->obj_data = _eo_data_scope_get(fptr->o.obj, func->src);
 
                   call->data = fptr->obj_data;
                }
              else
-               call->data = _eo_data_scope_get(obj, func->src);
+               call->data = _eo_data_scope_get(fptr->o.obj, func->src);
           }
         else
           {
@@ -492,12 +471,14 @@ eo2_call_resolve(const char *func_name, const Eo_Op op, Eo2_Op_Call_Data *call)
         return EINA_FALSE;
      }
 
+
+end:
    /* Try composite objects */
-   if (obj)
+   if (is_obj)
      {
         Eina_List *itr;
         Eo *emb_eo_id;
-        EINA_LIST_FOREACH((obj)->composite_objects, itr, emb_eo_id)
+        EINA_LIST_FOREACH(fptr->o.obj->composite_objects, itr, emb_eo_id)
           {
              /* should never return */
              EO_OBJ_POINTER_RETURN_VAL(emb_eo_id, emb_obj, EINA_FALSE);
@@ -506,7 +487,7 @@ eo2_call_resolve(const char *func_name, const Eo_Op op, Eo2_Op_Call_Data *call)
              if (func == NULL)
                continue;
 
-             if (EINA_LIKELY(func->func && func->src ))
+             if (EINA_LIKELY(func->func && func->src))
                {
                   call->obj = _eo_id_get(emb_obj);
                   call->klass = _eo_class_id_get(emb_obj->klass);
@@ -518,7 +499,23 @@ eo2_call_resolve(const char *func_name, const Eo_Op op, Eo2_Op_Call_Data *call)
           }
      }
 
-   ERR("func '%s' (%d) could not be resolved in class '%s'", func_name, op, klass->desc->name);
+     {
+        const _Eo_Class *main_klass;
+        main_klass = (is_obj) ? fptr->o.obj->klass : fptr->o.kls;
+
+        /* If it's a do_super call. */
+        if (fptr->cur_klass)
+          {
+             ERR("func '%s' (%d) could not be resolved for class '%s' for super of '%s'",
+                   func_name, op, main_klass->desc->name,
+                   fptr->cur_klass->desc->name);
+          }
+        else
+          {
+             ERR("func '%s' (%d) could not be resolved for class '%s'",
+                   func_name, op, main_klass->desc->name);
+          }
+     }
 
    return EINA_FALSE;
 }
@@ -580,9 +577,9 @@ eo2_api_op_id_get(const void *api_func)
    Eina_Bool class_ref = _eo_is_a_class(eo2_call_stack.frame_ptr->eo_id);
 
    if (class_ref)
-      klass = eo2_call_stack.frame_ptr->cur_klass;
+      klass = eo2_call_stack.frame_ptr->o.kls;
    else
-      klass = eo2_call_stack.frame_ptr->obj->klass;
+      klass = eo2_call_stack.frame_ptr->o.obj->klass;
 
    desc = _eo2_api_desc_get(api_func, klass, klass->extensions);
 
@@ -716,17 +713,19 @@ _eo2_add_internal_end(const char *file, int line, const Eo *eo_id)
         return NULL;
      }
 
-   if (!fptr->obj->condtor_done || fptr->obj->do_error)
+   if (!fptr->o.obj->condtor_done || fptr->o.obj->do_error)
      {
+        const _Eo_Class *klass = (fptr->cur_klass) ?
+           fptr->cur_klass : fptr->o.obj->klass;
         ERR("in %s:%d: Object of class '%s' - Not all of the object constructors have been executed.",
-            file, line, fptr->cur_klass->desc->name);
+            file, line, klass->desc->name);
         /* Unref twice, once for the ref in _eo2_add_internal_start, and once for the basic object ref. */
-        _eo_unref(fptr->obj);
-        _eo_unref(fptr->obj);
+        _eo_unref(fptr->o.obj);
+        _eo_unref(fptr->o.obj);
         return NULL;
      }
 
-   _eo_unref(fptr->obj);
+   _eo_unref(fptr->o.obj);
 
    return (Eo *)eo_id;
 }
