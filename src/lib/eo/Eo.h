@@ -643,8 +643,8 @@ EAPI extern Eo2_Hook_Call eo2_hook_call_post;
      Eo2_Op_Call_Data call;                                             \
      static Eo_Op op = EO_NOOP;                                         \
      if ( op == EO_NOOP )                                               \
-        op = eo2_api_op_id_get((void*)Name);                            \
-     if (!eo2_call_resolve(#Name, op, &call)) return DefRet;            \
+        op = _eo2_api_op_id_get((void*)Name);                           \
+     if (!_eo2_call_resolve(#Name, op, &call)) return DefRet;           \
      _Eo2_##Name##_func _func_ = (_Eo2_##Name##_func) call.func;        \
 
 // to define an EAPI function
@@ -706,20 +706,20 @@ EAPI extern Eo2_Hook_Call eo2_hook_call_post;
 #define EO2_OP_SENTINEL { NULL, NULL, 0, EO_OP_TYPE_INVALID, NULL}
 
 // returns the OP id corresponding to the given api_func
-EAPI Eo_Op eo2_api_op_id_get(const void *api_func);
+EAPI Eo_Op _eo2_api_op_id_get(const void *api_func);
 
 // gets the real function pointer and the object data
-EAPI Eina_Bool eo2_call_resolve(const char *func_name, const Eo_Op op, Eo2_Op_Call_Data *call);
+EAPI Eina_Bool _eo2_call_resolve(const char *func_name, const Eo_Op op, Eo2_Op_Call_Data *call);
 
 // start of eo2_do barrier, gets the object pointer and ref it, put it on the stask
-EAPI Eina_Bool eo2_do_start(const Eo *obj, const Eo_Class *cur_klass, Eina_Bool is_super, const char *file, const char *func, int line);
+EAPI Eina_Bool _eo2_do_start(const Eo *obj, const Eo_Class *cur_klass, Eina_Bool is_super, const char *file, const char *func, int line);
 
 // end of the eo2_do barrier, unref the obj, move the stack pointer
-EAPI void eo2_do_end(const Eo **ojb);
+EAPI void _eo2_do_end(const Eo **ojb);
 
 EAPI int eo2_call_stack_depth(void);
 
-#define EO2_DO_CLEANUP __attribute__((cleanup(eo2_do_end)))
+#define EO2_DO_CLEANUP __attribute__((cleanup(_eo2_do_end)))
 
 // eo object method calls batch,
 
@@ -727,7 +727,7 @@ EAPI int eo2_call_stack_depth(void);
   do                                                                       \
     {                                                                      \
        const Eo *_eoid_ = eoid;                                            \
-       if (eo2_do_start(_eoid_, clsid, is_super, __FILE__, __FUNCTION__, __LINE__))  \
+       if (_eo2_do_start(_eoid_, clsid, is_super, __FILE__, __FUNCTION__, __LINE__))  \
          {                                                                 \
             const Eo *_id_clean_ EO2_DO_CLEANUP = _eoid_;                  \
             __VA_ARGS__;                                                   \

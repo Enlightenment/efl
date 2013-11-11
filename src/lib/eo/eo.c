@@ -355,7 +355,7 @@ _eo2_do_internal(const Eo *eo_id, const Eo_Class *cur_klass_id,
 }
 
 EAPI Eina_Bool
-eo2_do_start(const Eo *eo_id, const Eo_Class *cur_klass_id, Eina_Bool is_super, const char *file EINA_UNUSED, const char *func EINA_UNUSED, int line EINA_UNUSED)
+_eo2_do_start(const Eo *eo_id, const Eo_Class *cur_klass_id, Eina_Bool is_super, const char *file EINA_UNUSED, const char *func EINA_UNUSED, int line EINA_UNUSED)
 {
    Eo2_Stack_Frame *fptr, *pfptr;
 
@@ -390,7 +390,7 @@ eo2_do_start(const Eo *eo_id, const Eo_Class *cur_klass_id, Eina_Bool is_super, 
 }
 
 EAPI void
-eo2_do_end(const Eo **eo_id EINA_UNUSED)
+_eo2_do_end(const Eo **eo_id EINA_UNUSED)
 {
    Eo2_Stack_Frame *fptr;
 
@@ -409,7 +409,7 @@ eo2_do_end(const Eo **eo_id EINA_UNUSED)
 }
 
 EAPI Eina_Bool
-eo2_call_resolve(const char *func_name, const Eo_Op op, Eo2_Op_Call_Data *call)
+_eo2_call_resolve(const char *func_name, const Eo_Op op, Eo2_Op_Call_Data *call)
 {
    Eo2_Stack_Frame *fptr;
    const _Eo_Class *klass;
@@ -569,7 +569,7 @@ _eo2_api_desc_get(const void *api_func, const _Eo_Class *klass, const _Eo_Class 
 }
 
 EAPI Eo_Op
-eo2_api_op_id_get(const void *api_func)
+_eo2_api_op_id_get(const void *api_func)
 {
     const Eo2_Op_Description *desc;
     const _Eo_Class *klass;
