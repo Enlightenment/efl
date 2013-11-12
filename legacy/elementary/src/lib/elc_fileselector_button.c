@@ -198,8 +198,6 @@ _elm_fileselector_button_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED
 static void
 _elm_fileselector_button_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
-   Evas_Object *win;
-
    Elm_Fileselector_Button_Smart_Data *sd = _pd;
 
    if (sd->window_title) eina_stringshare_del(sd->window_title);
