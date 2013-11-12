@@ -236,7 +236,7 @@ EAPI void                        elm_fileselector_entry_inwin_mode_set(Evas_Obje
  * dedicated Elementary window.
  *
  * @param obj The file selector entry widget
- * @return @c EINA_TRUE if will use an inner window, @c EINA_TRUE
+ * @return @c EINA_TRUE if will use an inner window, @c EINA_FALSE
  * if it will use a dedicated window
  *
  * @see elm_fileselector_entry_inwin_mode_set() for more details

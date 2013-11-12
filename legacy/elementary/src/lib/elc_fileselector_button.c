@@ -108,7 +108,7 @@ _new_window_add(Elm_Fileselector_Button_Smart_Data *sd)
 static Evas_Object *
 _parent_win_get(Evas_Object *obj)
 {
-   while ((obj) && (strcmp(elm_widget_type_get(obj), "elm_win")))
+   while ((obj) && (strcmp(evas_object_type_get(obj), "elm_win")))
      obj = elm_object_parent_widget_get(obj);
 
    return obj;
