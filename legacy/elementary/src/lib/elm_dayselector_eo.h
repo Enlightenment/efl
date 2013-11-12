@@ -142,7 +142,6 @@ enum
  *
  * Set the weekdays's names
  *
- * @param[in] day
  * @param[in] weekdays
  *
  * @see elm_dayselector_weekdays_names_set
@@ -157,7 +156,6 @@ enum
  *
  * Get the weekdays' names
  *
- * @param[in] day
  * @param[out] ret
  *
  * @see elm_dayselector_weekdays_names_get

@@ -324,6 +324,9 @@
  *
  * Eval sizing, restricted to current width and/or height
  *
+ * @param[in] w   Restrict minimum size to the current width
+ * @param[in] h   Restrict minimum size ot the current height
+ *
  * @see elm_layout_sizing_restricted_eval
  */
 #define elm_obj_layout_sizing_restricted_eval(width, height) ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_SIZING_RESTRICTED_EVAL), EO_TYPECHECK(Eina_Bool, width), EO_TYPECHECK(Eina_Bool, height)

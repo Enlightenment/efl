@@ -192,7 +192,6 @@ enum
  * It is recommended to not set a too much big or little value to avoid weird
  * behaviors.
  *
- * @param[in] obj gesture-layer.
  * @param[in] fsize Finger size
  *
  * @see elm_gesture_layer_tap_finger_size_get
