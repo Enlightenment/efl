@@ -554,7 +554,7 @@ AC_SUBST(ELM_EMAP_DEF)
 ELM_WEB_DEF="#undef"
 
 elementary_web_backend="detect"
-elementary_web="none"
+elementary_web="no"
 want_elementary_web=""
 AC_ARG_WITH([elementary-web-backend],
    [AC_HELP_STRING([--with-elementary-web-backend=@<:@ewebkit/ewebkit2/detect/none@:>@], [Select the WebKit backend for Elementary to support web @<:@default=detect@:>@])],
@@ -592,10 +592,10 @@ if test "x$want_elementary_web" != "xnone"; then
         ELM_WEB_DEF="#define"
         requirement_elm="${want_elementary_web} ${requirement_elm}"
        ],
-       [elementary_web="none"]
+       [elementary_web="no"]
     )
 else
-    elementary_web="none"
+    elementary_web="no"
 fi
 
 if test "x$elementary_web_backend" = "xewebkit" -o "x$elementary_web_backend" = "xewebkit2"; then
