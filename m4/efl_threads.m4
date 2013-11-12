@@ -14,7 +14,7 @@ AC_DEFUN([EFL_CHECK_THREADS],
 
 dnl Generic thread detection
 
-EFL_PTHREAD_CFLAGS=""
+EFL_PTHREAD_CFLAGS="-D_REENTRANT"
 EFL_PTHREAD_LIBS=""
 
 _efl_have_posix_threads="no"
@@ -126,9 +126,6 @@ AC_MSG_RESULT([${efl_have_posix_threads_spinlock}])
 if test "x${efl_have_posix_threads_spinlock}" = "xyes" ; then
    AC_DEFINE([EFL_HAVE_POSIX_THREADS_SPINLOCK], [1], [Define to mention that POSIX threads spinlocks are supported])
 fi
-
-echo "_efl_have_posix_threads: ${_efl_have_posix_threads}"
-echo "_efl_have_win32_threads: ${_efl_have_win32_threads}"
 
 AS_IF([test "x$_efl_have_posix_threads" = "xyes" || test "x$_efl_have_win32_threads" = "xyes"],
    [$1],
