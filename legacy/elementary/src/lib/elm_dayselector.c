@@ -242,7 +242,7 @@ _elm_dayselector_smart_content_set(Eo *obj, void *_pd, va_list *list)
 
    Elm_Dayselector_Smart_Data *sd = _pd;
 
-   if (strcmp(elm_object_widget_type_get(content), "elm_check"))
+   if (strcmp(elm_object_widget_type_get(content), "Elm_Check"))
      return;
 
    if (!item) return;
