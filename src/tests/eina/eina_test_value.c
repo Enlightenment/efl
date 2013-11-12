@@ -26,8 +26,8 @@
 #include "eina_suite.h"
 #include "Eina.h"
 
-#define FP_ERR (0.0000001)
-#define CHECK_FP(a, b) ((a - b) < FP_ERR)
+#define FP_ERR (1)
+#define CHECK_FP(a, b) ((a - b) <= FP_ERR)
 
 START_TEST(eina_value_test_simple)
 {
