@@ -680,9 +680,9 @@ _weekdays_name_set(Eo *obj, void *_pd, va_list *list)
      sd->weekdays_names_set = EINA_TRUE;
    else
      {
-       now = time(NULL);
-       localtime_r(&now, &time_daysel);
-       sd->weekdays_names_set = EINA_FALSE;
+        now = time(NULL);
+        localtime_r(&now, &time_daysel);
+        sd->weekdays_names_set = EINA_FALSE;
      }
 
    for (idx = 0; idx < ELM_DAYSELECTOR_MAX; idx++)
@@ -692,11 +692,11 @@ _weekdays_name_set(Eo *obj, void *_pd, va_list *list)
         if (sd->weekdays_names_set)
           elm_object_text_set(VIEW(it), weekdays[idx]);
         else
-        {
-          time_daysel.tm_wday = idx;
-          strftime(buf, sizeof(buf), "%a", &time_daysel);
-          elm_object_text_set(VIEW(it), buf);
-        }
+          {
+             time_daysel.tm_wday = idx;
+             strftime(buf, sizeof(buf), "%a", &time_daysel);
+             elm_object_text_set(VIEW(it), buf);
+          }
      }
 }
 
