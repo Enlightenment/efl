@@ -2,9 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#ifdef HAVE_EMOTION
-# include <Emotion.h>
-#endif
+#include <Emotion.h>
 
 #include <Elementary.h>
 #include "elm_priv.h"
@@ -57,7 +55,6 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    { NULL, NULL }
 };
 
-#ifdef HAVE_EMOTION
 static void
 _elm_player_smart_event(Eo *obj, void *_pd, va_list *list)
 {
@@ -699,34 +696,22 @@ _elm_player_smart_del(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
 
-#endif
-
 EAPI Evas_Object *
 elm_player_add(Evas_Object *parent)
 {
-#ifdef HAVE_EMOTION
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
    Evas_Object *obj = eo_add(MY_CLASS, parent);
    eo_unref(obj);
    return obj;
-#else
-   (void) parent;
-   return NULL;
-#endif
 }
 
 static void
 _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-#ifdef HAVE_EMOTION
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME_LEGACY),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
-#else
-   eo_error_set(obj);
-#endif
-
 }
 
 static void
@@ -735,7 +720,6 @@ _class_constructor(Eo_Class *klass)
    const Eo_Op_Func_Description func_desc[] = {
 
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
-#ifdef HAVE_EMOTION
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_ADD), _elm_player_smart_add),
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_DEL), _elm_player_smart_del),
 
@@ -744,7 +728,6 @@ _class_constructor(Eo_Class *klass)
 
         EO_OP_FUNC(ELM_OBJ_CONTAINER_ID(ELM_OBJ_CONTAINER_SUB_ID_CONTENT_SET), _elm_player_smart_content_set),
         EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_SIZING_EVAL), _elm_player_smart_sizing_eval),
-#endif
         EO_OP_FUNC_SENTINEL
    };
    eo_class_funcs_set(klass, func_desc);

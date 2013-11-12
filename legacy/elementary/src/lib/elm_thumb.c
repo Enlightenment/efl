@@ -43,14 +43,11 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] =
 static struct _Ethumb_Client *_elm_ethumb_client = NULL;
 static Eina_Bool _elm_ethumb_connected = EINA_FALSE;
 
-#ifdef HAVE_ELEMENTARY_ETHUMB
 static Eina_List *retry = NULL;
 static int pending_request = 0;
-#endif
 
 EAPI int ELM_ECORE_EVENT_ETHUMB_CONNECT = 0;
 
-#ifdef HAVE_ELEMENTARY_ETHUMB
 static void
 _mouse_down_cb(void *data,
                Evas *e __UNUSED__,
@@ -468,8 +465,6 @@ _thumb_show(Elm_Thumb_Smart_Data *sd)
          (ELM_ECORE_EVENT_ETHUMB_CONNECT, _thumbnailing_available_cb, sd->obj);
 }
 
-#endif
-
 static void
 _elm_thumb_smart_show(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
@@ -477,26 +472,17 @@ _elm_thumb_smart_show(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_show());
 
-#ifdef ELM_ETHUMB
    _thumb_show(sd);
-#else
-   (void)sd;
-#endif
 }
 
 static void
 _elm_thumb_smart_hide(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
-#ifdef ELM_ETHUMB
    Elm_Thumb_Smart_Data *sd = _pd;
-#else
-   (void) _pd;
-#endif
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_hide());
 
-#ifdef ELM_ETHUMB
    if (sd->thumb.request)
      {
         ethumb_client_thumb_async_cancel(_elm_ethumb_client, sd->thumb.request);
@@ -516,13 +502,11 @@ _elm_thumb_smart_hide(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
      }
 
    ELM_SAFE_FREE(sd->eeh, ecore_event_handler_del);
-#endif
 }
 
 void
 _elm_unneed_ethumb(void)
 {
-#ifdef ELM_ETHUMB
    if (!_elm_need_ethumb) return;
    _elm_need_ethumb = EINA_FALSE;
 
@@ -533,7 +517,6 @@ _elm_unneed_ethumb(void)
      }
    ethumb_client_shutdown();
    ELM_ECORE_EVENT_ETHUMB_CONNECT = 0;
-#endif
 }
 
 static Eina_Bool
@@ -549,7 +532,6 @@ _elm_thumb_dnd_cb(void *data __UNUSED__,
 EAPI Eina_Bool
 elm_need_ethumb(void)
 {
-#ifdef ELM_ETHUMB
    if (_elm_need_ethumb) return EINA_TRUE;
    _elm_need_ethumb = EINA_TRUE;
 
@@ -557,9 +539,6 @@ elm_need_ethumb(void)
    ethumb_client_init();
 
    return EINA_TRUE;
-#else
-   return EINA_FALSE;
-#endif
 }
 
 static void
@@ -573,14 +552,10 @@ _elm_thumb_smart_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
    if (!elm_layout_theme_set(obj, "thumb", "base", elm_widget_style_get(obj)))
      CRITICAL("Failed to set layout!");
 
-#ifdef HAVE_ELEMENTARY_ETHUMB
    evas_object_event_callback_add
      (obj, EVAS_CALLBACK_MOUSE_DOWN, _mouse_down_cb, obj);
    evas_object_event_callback_add
      (obj, EVAS_CALLBACK_MOUSE_UP, _mouse_up_cb, obj);
-#else
-   (void) obj;
-#endif
 
    elm_widget_can_focus_set(obj, EINA_FALSE);
 }
@@ -590,7 +565,6 @@ _elm_thumb_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Thumb_Smart_Data *sd = _pd;
 
-#ifdef HAVE_ELEMENTARY_ETHUMB
    if (sd->thumb.request)
      {
         ethumb_client_thumb_async_cancel(_elm_ethumb_client, sd->thumb.request);
@@ -608,7 +582,6 @@ _elm_thumb_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    eina_stringshare_del(sd->thumb.thumb_path);
    eina_stringshare_del(sd->thumb.thumb_key);
-#endif
 
    eina_stringshare_del(sd->file);
    eina_stringshare_del(sd->key);
@@ -654,10 +627,8 @@ _reload(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
    eina_stringshare_replace(&(sd->thumb.file), NULL);
    eina_stringshare_replace(&(sd->thumb.key), NULL);
 
-#ifdef HAVE_ELEMENTARY_ETHUMB
    if (evas_object_visible_get(obj))
      _thumb_show(sd);
-#endif
 }
 
 EAPI void
@@ -707,12 +678,8 @@ _file_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    eina_stringshare_replace(&(sd->thumb.file), NULL);
    eina_stringshare_replace(&(sd->thumb.key), NULL);
 
-#ifdef HAVE_ELEMENTARY_ETHUMB
    if (((file_replaced) || (key_replaced)) && (evas_object_visible_get(obj)))
      _thumb_show(sd);
-#else
-   (void)key_replaced;
-#endif
 }
 
 EAPI void
@@ -1067,7 +1034,6 @@ _animate_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 
    sd->anim_setting = setting;
 
-#ifdef HAVE_ELEMENTARY_ETHUMB
    if ((sd->is_video) && (sd->thumb.format == ETHUMB_THUMB_EET))
      {
         if (setting == ELM_THUMB_ANIMATION_LOOP)
@@ -1077,7 +1043,6 @@ _animate_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
         else if (setting == ELM_THUMB_ANIMATION_STOP)
           edje_object_signal_emit(sd->view, "elm,action,animate_stop", "elm");
      }
-#endif
 }
 
 EAPI Elm_Thumb_Animation_Setting

@@ -20,7 +20,6 @@ struct _Elm_Icon_Smart_Data
    const char           *stdicon;
    Elm_Icon_Lookup_Order lookup_order;
 
-#ifdef HAVE_ELEMENTARY_ETHUMB
    struct
    {
       struct
@@ -37,15 +36,12 @@ struct _Elm_Icon_Smart_Data
 
       Eina_Bool            retry : 1;
    } thumb;
-#endif
 
-#ifdef ELM_EFREET
    struct
    {
       int       requested_size;
       Eina_Bool use : 1;
    } freedesktop;
-#endif
 
    int        in_eval;
 

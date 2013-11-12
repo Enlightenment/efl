@@ -2,9 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#ifdef HAVE_EMOTION
-# include <Emotion.h>
-#endif
+#include <Emotion.h>
 
 #include <Elementary.h>
 
@@ -39,7 +37,6 @@ _elm_video_smart_event(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    if (ret) *ret = EINA_FALSE;
    (void) src;
 
-#ifdef HAVE_EMOTION
    if (elm_widget_disabled_get(obj)) return;
    if (type != EVAS_CALLBACK_KEY_DOWN) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
@@ -98,18 +95,11 @@ _elm_video_smart_event(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
      }
 
    INF("keyname: '%s' not handled", ev->key);
-
-#else
-   (void) obj;
-   (void) type;
-   (void) ev;
-#endif
 }
 
 static void
 _elm_video_smart_sizing_eval(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
-#ifdef HAVE_EMOTION
    Elm_Video_Smart_Data *sd = _pd;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -128,14 +118,8 @@ _elm_video_smart_sizing_eval(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
      }
 
    evas_object_size_hint_aspect_set(obj, EVAS_ASPECT_CONTROL_BOTH, minw, minh);
-#else
-
-   (void) obj;
-   (void) _pd;
-#endif
 }
 
-#ifdef HAVE_EMOTION
 static void
 _on_size_hints_changed(void *data __UNUSED__,
                        Evas *e __UNUSED__,
@@ -225,20 +209,11 @@ _suspend_cb(void *data)
    return ECORE_CALLBACK_RENEW;
 }
 
-#endif
-
 Eina_Bool
 _elm_video_check(Evas_Object *video)
 {
-#ifdef HAVE_EMOTION
    ELM_VIDEO_CHECK(video) EINA_FALSE;
-
    return EINA_TRUE;
-#else
-   (void)video;
-
-   return EINA_FALSE;
-#endif
 }
 
 static void
@@ -252,7 +227,6 @@ _elm_video_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    elm_widget_sub_object_parent_add(obj);
    elm_widget_can_focus_set(obj, EINA_TRUE);
 
-#ifdef HAVE_EMOTION
    priv->emotion = emotion_object_add(evas_object_evas_get(obj));
    emotion_object_init(priv->emotion, NULL);
 
@@ -278,9 +252,6 @@ _elm_video_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
      (obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _on_size_hints_changed, NULL);
 
    priv->timer = ecore_timer_add(20.0, _suspend_cb, obj);
-#else
-   (void) priv;
-#endif
 }
 
 static void
@@ -288,12 +259,8 @@ _elm_video_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Video_Smart_Data *sd = _pd;
 
-#ifdef HAVE_EMOTION
    if (sd->timer) ecore_timer_del(sd->timer);
    if (sd->remember) emotion_object_last_position_save(sd->emotion);
-#else
-   (void) sd;
-#endif
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
@@ -301,28 +268,19 @@ _elm_video_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 EAPI Evas_Object *
 elm_video_add(Evas_Object *parent)
 {
-#ifdef HAVE_EMOTION
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
    Evas_Object *obj = eo_add(MY_CLASS, parent);
    eo_unref(obj);
    return obj;
-#else
-   (void) parent;
-   return NULL;
-#endif
 }
 
 static void
 _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-#ifdef HAVE_EMOTION
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME_LEGACY),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
-#else
-   eo_error_set(obj);
-#endif
 }
 
 EAPI Eina_Bool
@@ -341,7 +299,6 @@ _file_set(Eo *obj, void *_pd, va_list *list)
    const char *filename = va_arg(*list, const char *);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    if (ret) *ret = EINA_FALSE;
-#ifdef HAVE_EMOTION
    Elm_Video_Smart_Data *sd = _pd;
 
    if (sd->remember) emotion_object_last_position_save(sd->emotion);
@@ -354,11 +311,6 @@ _file_set(Eo *obj, void *_pd, va_list *list)
    elm_layout_signal_emit(obj, "elm,video,load", "elm");
 
    if (ret) *ret = EINA_TRUE;
-#else
-   (void) obj;
-   (void) _pd;
-   (void) filename;
-#endif
 }
 
 EAPI Evas_Object *
@@ -375,12 +327,8 @@ _emotion_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Evas_Object **ret = va_arg(*list, Evas_Object **);
    *ret = NULL;
-#ifdef HAVE_EMOTION
    Elm_Video_Smart_Data *sd = _pd;
    *ret = sd->emotion;
-#else
-   (void) _pd;
-#endif
 }
 
 EAPI void
@@ -393,7 +341,6 @@ elm_video_play(Evas_Object *obj)
 static void
 _play(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
 {
-#ifdef HAVE_EMOTION
    Elm_Video_Smart_Data *sd = _pd;
 
    if (emotion_object_play_get(sd->emotion)) return;
@@ -402,9 +349,6 @@ _play(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
    sd->stop = EINA_FALSE;
    emotion_object_play_set(sd->emotion, EINA_TRUE);
    elm_layout_signal_emit(obj, "elm,video,play", "elm");
-#else
-   (void) _pd;
-#endif
 }
 
 /* FIXME: pause will setup timer and go into sleep or
@@ -420,7 +364,6 @@ elm_video_pause(Evas_Object *obj)
 static void
 _pause(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
-#ifdef HAVE_EMOTION
    Elm_Video_Smart_Data *sd = _pd;
 
    if (!emotion_object_play_get(sd->emotion)) return;
@@ -428,10 +371,6 @@ _pause(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    if (!sd->timer) sd->timer = ecore_timer_add(20.0, _suspend_cb, obj);
    emotion_object_play_set(sd->emotion, EINA_FALSE);
    elm_layout_signal_emit(obj, "elm,video,pause", "elm");
-#else
-   (void) obj;
-   (void) _pd;
-#endif
 }
 
 /* FIXME: stop should go into hibernate state directly.
@@ -446,7 +385,6 @@ elm_video_stop(Evas_Object *obj)
 static void
 _stop(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
-#ifdef HAVE_EMOTION
    Elm_Video_Smart_Data *sd = _pd;
 
    if (!emotion_object_play_get(sd->emotion) && sd->stop) return;
@@ -457,10 +395,6 @@ _stop(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    emotion_object_play_set(sd->emotion, EINA_FALSE);
    elm_layout_signal_emit(obj, "elm,video,stop", "elm");
    emotion_object_suspend_set(sd->emotion, EMOTION_HIBERNATE);
-#else
-   (void) obj;
-   (void) _pd;
-#endif
 }
 
 EAPI Eina_Bool
@@ -477,12 +411,8 @@ _is_playing_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    *ret = EINA_FALSE;
-#ifdef HAVE_EMOTION
    Elm_Video_Smart_Data *sd = _pd;
    *ret = emotion_object_play_get(sd->emotion);
-#else
-   (void) _pd;
-#endif
 }
 
 EAPI Eina_Bool
@@ -498,13 +428,8 @@ static void
 _is_seekable_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-#ifdef HAVE_EMOTION
    Elm_Video_Smart_Data *sd = _pd;
    *ret = emotion_object_seekable_get(sd->emotion);
-#else
-   (void) _pd;
-   (void) ret;
-#endif
 }
 
 EAPI Eina_Bool
@@ -521,12 +446,8 @@ _audio_mute_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    *ret = EINA_FALSE;
-#ifdef HAVE_EMOTION
    Elm_Video_Smart_Data *sd = _pd;
    *ret = emotion_object_audio_mute_get(sd->emotion);
-#else
-   (void) _pd;
-#endif
 }
 
 EAPI void
@@ -541,13 +462,8 @@ static void
 _audio_mute_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Eina_Bool mute = va_arg(*list, int);
-#ifdef HAVE_EMOTION
    Elm_Video_Smart_Data *sd = _pd;
    emotion_object_audio_mute_set(sd->emotion, mute);
-#else
-   (void) _pd;
-   (void) mute;
-#endif
 }
 
 EAPI double
@@ -564,12 +480,8 @@ _audio_level_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    double *ret = va_arg(*list, double *);
    *ret = 0.0;
-#ifdef HAVE_EMOTION
    Elm_Video_Smart_Data *sd = _pd;
    *ret = emotion_object_audio_volume_get(sd->emotion);
-#else
-   (void) _pd;
-#endif
 }
 
 EAPI void
@@ -584,13 +496,8 @@ static void
 _audio_level_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    double volume = va_arg(*list, double);
-#ifdef HAVE_EMOTION
    Elm_Video_Smart_Data *sd = _pd;
    emotion_object_audio_volume_set(sd->emotion, volume);
-#else
-   (void) _pd;
-   (void) volume;
-#endif
 }
 
 EAPI double
@@ -607,12 +514,8 @@ _play_position_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    double *ret = va_arg(*list, double *);
    *ret = 0.0;
-#ifdef HAVE_EMOTION
    Elm_Video_Smart_Data *sd = _pd;
    *ret = emotion_object_position_get(sd->emotion);
-#else
-   (void) _pd;
-#endif
 }
 
 EAPI void
@@ -627,13 +530,8 @@ static void
 _play_position_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    double position = va_arg(*list, double);
-#ifdef HAVE_EMOTION
    Elm_Video_Smart_Data *sd = _pd;
    emotion_object_position_set(sd->emotion, position);
-#else
-   (void) _pd;
-   (void) position;
-#endif
 }
 
 EAPI double
@@ -650,12 +548,8 @@ _play_length_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    double *ret = va_arg(*list, double *);
    *ret = 0.0;
-#ifdef HAVE_EMOTION
    Elm_Video_Smart_Data *sd = _pd;
    *ret = emotion_object_play_length_get(sd->emotion);
-#else
-   (void) _pd;
-#endif
 }
 
 EAPI const char *
@@ -672,12 +566,8 @@ _title_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    const char **ret = va_arg(*list, const char **);
    *ret = NULL;
-#ifdef HAVE_EMOTION
    Elm_Video_Smart_Data *sd = _pd;
    *ret = emotion_object_title_get(sd->emotion);
-#else
-   (void) _pd;
-#endif
 }
 
 EAPI void
@@ -692,13 +582,8 @@ static void
 _remember_position_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Eina_Bool remember = va_arg(*list, int);
-#ifdef HAVE_EMOTION
    Elm_Video_Smart_Data *sd = _pd;
    sd->remember = remember;
-#else
-   (void) _pd;
-   (void) remember;
-#endif
 }
 
 EAPI Eina_Bool
@@ -715,12 +600,8 @@ _remember_position_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    *ret = EINA_FALSE;
-#ifdef HAVE_EMOTION
    Elm_Video_Smart_Data *sd = _pd;
    *ret = sd->remember;
-#else
-   (void) _pd;
-#endif
 }
 
 static void

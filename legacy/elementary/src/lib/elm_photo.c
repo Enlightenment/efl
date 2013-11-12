@@ -102,10 +102,8 @@ _icon_move_resize_cb(void *data,
           (wd->resize_obj, EDJE_MESSAGE_INT_SET, 0, msg);
      }
 
-#ifdef HAVE_ELEMENTARY_ETHUMB
    if (sd->thumb.file.path)
      elm_icon_thumb_set(sd->icon, sd->thumb.file.path, sd->thumb.file.key);
-#endif
 }
 
 static void
@@ -458,18 +456,12 @@ _thumb_set(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
    const char *file = va_arg(*list, const char *);
    const char *group = va_arg(*list, const char *);
 
-#ifdef HAVE_ELEMENTARY_ETHUMB
    Elm_Photo_Smart_Data *sd = _pd;
 
    eina_stringshare_replace(&sd->thumb.file.path, file);
    eina_stringshare_replace(&sd->thumb.file.key, group);
 
    elm_icon_thumb_set(sd->icon, file, group);
-#else
-   (void)obj;
-   (void)file;
-   (void)group;
-#endif
 }
 
 EAPI void

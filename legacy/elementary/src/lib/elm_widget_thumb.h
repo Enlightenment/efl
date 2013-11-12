@@ -33,7 +33,6 @@ struct _Elm_Thumb_Smart_Data
       /* object's thumbnail file/key pair */
       const char          *file;
       const char          *key;
-#ifdef HAVE_ELEMENTARY_ETHUMB
       const char          *thumb_path;
       const char          *thumb_key;
       Ethumb_Client_Async *request;
@@ -51,7 +50,6 @@ struct _Elm_Thumb_Smart_Data
       Ethumb_Thumb_Orientation orient;
 
       Eina_Bool            retry : 1;
-#endif
    } thumb;
 
    Ecore_Event_Handler        *eeh;

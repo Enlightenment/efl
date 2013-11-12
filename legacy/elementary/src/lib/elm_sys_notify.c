@@ -13,7 +13,6 @@
 EAPI int ELM_EVENT_SYS_NOTIFY_NOTIFICATION_CLOSED = 0;
 EAPI int ELM_EVENT_SYS_NOTIFY_ACTION_INVOKED      = 0;
 
-#ifdef ELM_ELDBUS
 static Eina_Bool _elm_need_sys_notify = EINA_FALSE;
 
 static Eldbus_Connection *_elm_sysnotif_conn  = NULL;
@@ -107,24 +106,18 @@ _close_notification_cb(void *data EINA_UNUSED,
           ERR("Eldbus Error: %s %s", errname, errmsg);
      }
 }
-#endif
 
 EAPI void
 elm_sys_notify_close(unsigned int id)
 {
-#ifdef ELM_ELDBUS
    EINA_SAFETY_ON_FALSE_RETURN(_elm_need_sys_notify);
    EINA_SAFETY_ON_NULL_RETURN(_elm_sysnotif_proxy);
 
    if (!eldbus_proxy_call(_elm_sysnotif_proxy, "CloseNotification",
                          _close_notification_cb, NULL, -1, "u", id))
      ERR("Error sending message: "INTERFACE".CloseNotification.");
-#else
-   (void) id;
-#endif
 }
 
-#ifdef ELM_ELDBUS
 static void
 _notify_cb(void *data,
            const Eldbus_Message *msg,
@@ -145,7 +138,6 @@ _notify_cb(void *data,
    if (d->cb) d->cb((void *)d->data, id);
    free(d);
 }
-#endif
 
 EAPI void
 elm_sys_notify_send(unsigned int replaces_id, const char *icon,
@@ -153,7 +145,6 @@ elm_sys_notify_send(unsigned int replaces_id, const char *icon,
                     Elm_Sys_Notify_Urgency urgency, int timeout,
                     Elm_Sys_Notify_Send_Cb cb, const void *cb_data)
 {
-#ifdef ELM_ELDBUS
    Eldbus_Message *msg;
    Eldbus_Message_Iter *iter, *actions, *hints;
    Elm_Sys_Notify_Send_Data *data;
@@ -206,18 +197,9 @@ elm_sys_notify_send(unsigned int replaces_id, const char *icon,
    return;
 
 error:
-#else
-   (void) replaces_id;
-   (void) icon;
-   (void) summary;
-   (void) body;
-   (void) urgency;
-   (void) timeout;
-#endif
    if (cb) cb((void *)cb_data, 0);
 }
 
-#ifdef ELM_ELDBUS
 static void
 _on_notification_closed(void *data EINA_UNUSED,
                         const Eldbus_Message *msg)
@@ -349,12 +331,10 @@ _name_owner_changed_cb(void *data EINA_UNUSED,
    else
      _update();
 }
-#endif
 
 EAPI Eina_Bool
 elm_need_sys_notify(void)
 {
-#ifdef ELM_ELDBUS
    if (_elm_need_sys_notify) return EINA_TRUE;
 
    if (!elm_need_eldbus()) return EINA_FALSE;
@@ -376,15 +356,11 @@ elm_need_sys_notify(void)
    _elm_need_sys_notify = EINA_TRUE;
 
    return EINA_TRUE;
-#else
-   return EINA_FALSE;
-#endif
 }
 
 void
 _elm_unneed_sys_notify(void)
 {
-#ifdef ELM_ELDBUS
    if (!_elm_need_sys_notify) return;
 
    _elm_need_sys_notify = EINA_FALSE;
@@ -393,5 +369,4 @@ _elm_unneed_sys_notify(void)
 
    eldbus_connection_unref(_elm_sysnotif_conn);
    _elm_sysnotif_conn  = NULL;
-#endif
 }

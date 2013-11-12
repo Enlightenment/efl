@@ -3,9 +3,7 @@
 
 #include "Elementary.h"
 
-#ifdef HAVE_EIO
-# include <Eio.h>
-#endif
+#include <Eio.h>
 
 /**
  * @addtogroup Widget

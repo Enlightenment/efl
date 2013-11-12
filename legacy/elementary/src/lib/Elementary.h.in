@@ -7,13 +7,14 @@
 #ifndef ELEMENTARY_H
 #define ELEMENTARY_H
 
+#define ELM_ELDBUS
+#define ELM_EFREET
+#define ELM_ETHUMB
+
 @ELM_UNIX_DEF@ ELM_UNIX
 @ELM_WIN32_DEF@ ELM_WIN32
 @ELM_WINCE_DEF@ ELM_WINCE
-@ELM_ELDBUS_DEF@ ELM_ELDBUS
-@ELM_EFREET_DEF@ ELM_EFREET
 @ELM_ELOCATION_DEF@ ELM_ELOCATION
-@ELM_ETHUMB_DEF@ ELM_ETHUMB
 @ELM_WEB_DEF@ ELM_WEB
 @ELM_EMAP_DEF@ ELM_EMAP
 @ELM_DEBUG_DEF@ ELM_DEBUG
@@ -73,26 +74,18 @@
 #include <Ecore_Evas.h>
 #include <Ecore_File.h>
 #include <Ecore_Input.h>
-@ELEMENTARY_ECORE_IMF_INC@
-@ELEMENTARY_ECORE_CON_INC@
+#include <Ecore_Input.h>
+#include <Ecore_IMF.h>
+#include <Ecore_Con.h>
 #include <Edje.h>
-
-#ifdef ELM_ELDBUS
 #include <Eldbus.h>
-#endif
-
-#ifdef ELM_EFREET
 #include <Efreet.h>
 #include <Efreet_Mime.h>
 #include <Efreet_Trash.h>
-#endif
+#include <Ethumb_Client.h>
 
 #ifdef ELM_ELOCATION
 #include <Elocation.h>
-#endif
-
-#ifdef ELM_ETHUMB
-#include <Ethumb_Client.h>
 #endif
 
 #ifdef ELM_EMAP

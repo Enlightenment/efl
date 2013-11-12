@@ -8,8 +8,6 @@
 #include "elm_widget_menu.h"
 #include "elm_widget_icon.h"
 
-#ifdef ELM_ELDBUS
-
 #define DBUS_PATH           "/com/canonical/dbusmenu"
 #define DBUS_INTERFACE      "com.canonical.dbusmenu"
 #define DBUS_MENU_VERSION   3u
@@ -19,13 +17,11 @@
 #define REGISTRAR_INTERFACE REGISTRAR_NAME
 
 #define DBUS_DATA_KEY       "_Elm_DBus_Menu"
-#endif
 
 typedef struct _Callback_Data Callback_Data;
 
 struct _Elm_DBus_Menu
 {
-#ifdef ELM_ELDBUS
    Eo                      *menu;
    Eldbus_Connection        *bus;
    Eldbus_Service_Interface *iface;
@@ -33,10 +29,8 @@ struct _Elm_DBus_Menu
    Eina_Hash               *elements;
    Ecore_Idler             *signal_idler;
    Callback_Data           *app_menu_data;
-#endif
 };
 
-#ifdef ELM_ELDBUS
 static const Eldbus_Service_Interface_Desc _interface;
 static unsigned last_object_path;
 
@@ -178,12 +172,10 @@ _freedesktop_icon_exists(Elm_Menu_Item *item)
 {
    if (!item->icon_str) return EINA_FALSE;
 
-#ifdef ELM_EFREET
    ELM_ICON_CHECK(item->content) EINA_FALSE;
 
    ELM_ICON_DATA_GET(item->content, sd);
    if (sd->freedesktop.use) return EINA_TRUE;
-#endif
 
    return EINA_FALSE;
 }
@@ -1042,46 +1034,3 @@ _elm_dbus_menu_update(Elm_DBus_Menu *dbus_menu)
 {
    _layout_signal(dbus_menu);
 }
-
-#else
-
-const char *
-_elm_dbus_menu_register(Eo *obj EINA_UNUSED)
-{
-   return NULL;
-}
-
-void
-_elm_dbus_menu_unregister(Eo *obj EINA_UNUSED)
-{
-}
-
-void
-_elm_dbus_menu_app_menu_register(Ecore_X_Window xid EINA_UNUSED, Eo *obj EINA_UNUSED,
-                                 void (*result_cb)(Eina_Bool, void *) EINA_UNUSED, void *data EINA_UNUSED)
-{
-}
-
-void
-_elm_dbus_menu_app_menu_unregister(Eo *obj EINA_UNUSED)
-{
-}
-
-int
-_elm_dbus_menu_item_add(Elm_DBus_Menu *dbus_menu EINA_UNUSED,
-                        Elm_Object_Item *item_obj EINA_UNUSED)
-{
-   return -1;
-}
-
-void
-_elm_dbus_menu_item_delete(Elm_DBus_Menu *dbus_menu EINA_UNUSED, int id EINA_UNUSED)
-{
-}
-
-void
-_elm_dbus_menu_update(Elm_DBus_Menu *dbus_menu EINA_UNUSED)
-{
-}
-
-#endif

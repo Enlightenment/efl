@@ -8,10 +8,8 @@
 #include "elm_widget_icon.h"
 #include "elm_widget_image.h"
 
-#ifdef ELM_EFREET
 #define NON_EXISTING (void *)-1
 static const char *icon_theme = NULL;
-#endif
 
 EAPI Eo_Op ELM_OBJ_ICON_BASE_ID = EO_NOOP;
 
@@ -19,10 +17,8 @@ EAPI Eo_Op ELM_OBJ_ICON_BASE_ID = EO_NOOP;
 #define MY_CLASS_NAME "Elm_Icon"
 #define MY_CLASS_NAME_LEGACY "elm_icon"
 
-#ifdef HAVE_ELEMENTARY_ETHUMB
 static Eina_List *_elm_icon_retry = NULL;
 static int _icon_pending_request = 0;
-#endif
 
 static const char SIG_THUMB_DONE[] = "thumb,done";
 static const char SIG_THUMB_ERROR[] = "thumb,error";
@@ -61,7 +57,6 @@ _icon_size_min_get(Evas_Object *icon)
    return (size < 16) ? 16 : size;
 }
 
-#ifdef HAVE_ELEMENTARY_ETHUMB
 static void
 _icon_thumb_stop(Elm_Icon_Smart_Data *sd,
                  void *ethumbd)
@@ -264,20 +259,11 @@ _icon_thumb_apply_cb(void *data,
    return ECORE_CALLBACK_RENEW;
 }
 
-#endif
-
 static Eina_Bool
-#ifdef ELM_EFREET
 _icon_freedesktop_set(Evas_Object *obj,
                       const char *name,
                       int size)
-#else
-_icon_freedesktop_set(Evas_Object * obj __UNUSED__,
-                      const char *name __UNUSED__,
-                      int size __UNUSED__)
-#endif
 {
-#ifdef ELM_EFREET
    const char *path;
 
    ELM_ICON_DATA_GET(obj, sd);
@@ -320,7 +306,6 @@ _icon_freedesktop_set(Evas_Object * obj __UNUSED__,
         elm_image_file_set(obj, path, NULL);
         return EINA_TRUE;
      }
-#endif
    return EINA_FALSE;
 }
 
@@ -336,7 +321,6 @@ _elm_icon_smart_sizing_eval(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    sd->in_eval++;
    elm_image_object_size_get(obj, &w, &h);
 
-#ifdef ELM_EFREET
    if (sd->freedesktop.use && sd->stdicon)
      {
         int size;
@@ -348,7 +332,6 @@ _elm_icon_smart_sizing_eval(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
         size = ((w / 16) + 1) * 16;
         _icon_freedesktop_set(obj, sd->stdicon, size);
      }
-#endif
 
    eo_do_super(obj, MY_CLASS, elm_obj_image_sizing_eval());
 
@@ -386,10 +369,8 @@ _elm_icon_smart_file_set(Eo *obj, void *_pd, va_list *list)
 
    _edje_signals_free(sd);
 
-#ifdef ELM_EFREET
    if (!sd->freedesktop.use)
      ELM_SAFE_FREE(sd->stdicon, eina_stringshare_del);
-#endif
 
    if (!sd->is_video)
      {
@@ -482,10 +463,8 @@ _icon_standard_set(Evas_Object *obj,
 
    if (_elm_theme_object_icon_set(obj, name, "default"))
      {
-#ifdef ELM_EFREET
         /* TODO: elm_unneed_efreet() */
         sd->freedesktop.use = EINA_FALSE;
-#endif
         return EINA_TRUE;
      }
 
@@ -493,22 +472,14 @@ _icon_standard_set(Evas_Object *obj,
 }
 
 static Eina_Bool
-#ifdef ELM_EFREET
 _icon_file_set(Elm_Icon_Smart_Data *sd,
                Evas_Object *obj,
                const char *path)
-#else
-_icon_file_set(Elm_Icon_Smart_Data * sd __UNUSED__,
-               Evas_Object * obj,
-               const char *path)
-#endif
 {
    if (elm_image_file_set(obj, path, NULL))
      {
-#ifdef ELM_EFREET
         /* TODO: elm_unneed_efreet() */
         sd->freedesktop.use = EINA_FALSE;
-#endif
         return EINA_TRUE;
      }
    return EINA_FALSE;
@@ -590,7 +561,6 @@ _elm_icon_standard_resize_cb(void *data,
    eina_stringshare_del(refup);
 }
 
-#ifdef HAVE_ELEMENTARY_ETHUMB
 static void
 _elm_icon_thumb_resize_cb(void *data,
                           Evas *e __UNUSED__,
@@ -603,8 +573,6 @@ _elm_icon_thumb_resize_cb(void *data,
      elm_icon_thumb_set(obj, sd->thumb.file.path, sd->thumb.file.key);
 }
 
-#endif
-
 static void
 _elm_icon_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
@@ -615,9 +583,7 @@ _elm_icon_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    priv->lookup_order = ELM_ICON_LOOKUP_THEME_FDO;
 
-#ifdef HAVE_ELEMENTARY_ETHUMB
    priv->thumb.request = NULL;
-#endif
 }
 
 static void
@@ -627,7 +593,6 @@ _elm_icon_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    if (sd->stdicon) eina_stringshare_del(sd->stdicon);
 
-#ifdef HAVE_ELEMENTARY_ETHUMB
    if (sd->thumb.request)
      {
         Ethumb_Client *ethumbd = elm_thumb_ethumb_client_get();
@@ -641,7 +606,6 @@ _elm_icon_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    if (sd->thumb.eeh)
      ecore_event_handler_del(sd->thumb.eeh);
-#endif
 
    _edje_signals_free(sd);
 
@@ -814,7 +778,6 @@ _thumb_set(Eo *obj, void *_pd, va_list *list)
 {
    const char *file = va_arg(*list, const char *);
    const char *group = va_arg(*list, const char *);
-#ifdef HAVE_ELEMENTARY_ETHUMB
    Elm_Icon_Smart_Data *sd = _pd;
 
    evas_object_event_callback_del_full
@@ -839,12 +802,6 @@ _thumb_set(Eo *obj, void *_pd, va_list *list)
         sd->thumb.eeh = ecore_event_handler_add
             (ELM_ECORE_EVENT_ETHUMB_CONNECT, _icon_thumb_apply_cb, obj);
      }
-#else
-   (void)obj;
-   (void)_pd;
-   (void)file;
-   (void)group;
-#endif
 }
 
 EAPI Eina_Bool

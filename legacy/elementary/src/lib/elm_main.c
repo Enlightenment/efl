@@ -12,9 +12,7 @@
 # include <Evil.h>
 #endif
 
-#ifdef HAVE_EMOTION
-# include <Emotion.h>
-#endif
+#include <Emotion.h>
 
 #include <Elementary.h>
 #include "elm_priv.h"
@@ -99,10 +97,8 @@ _elm_emotion_init(void)
 {
    if (_emotion_inited) return ;
 
-#if HAVE_EMOTION
    emotion_init();
    _emotion_inited = EINA_TRUE;
-#endif
 }
 
 void
@@ -110,10 +106,8 @@ _elm_emotion_shutdown(void)
 {
    if (!_emotion_inited) return ;
 
-#if HAVE_EMOTION
    emotion_shutdown();
    _emotion_inited = EINA_FALSE;
-#endif
 }
 
 static void *app_mainfunc = NULL;
@@ -502,30 +496,22 @@ _elm_unneed_e_dbus(void)
    e_dbus_handle = NULL;
 }
 
-#ifdef ELM_ELDBUS
 static Eina_Bool _elm_need_eldbus = EINA_FALSE;
-#endif
 EAPI Eina_Bool
 elm_need_eldbus(void)
 {
-#ifdef ELM_ELDBUS
    if (_elm_need_eldbus) return EINA_TRUE;
    _elm_need_eldbus = EINA_TRUE;
    eldbus_init();
    return EINA_TRUE;
-#else
-   return EINA_FALSE;
-#endif
 }
 
 static void
 _elm_unneed_eldbus(void)
 {
-#ifdef ELM_ELDBUS
    if (!_elm_need_eldbus) return;
    _elm_need_eldbus = EINA_FALSE;
    eldbus_shutdown();
-#endif
 }
 
 #ifdef ELM_ELOCATION
@@ -554,13 +540,11 @@ _elm_unneed_elocation(void)
 #endif
 }
 
-#ifdef ELM_EFREET
 static Eina_Bool _elm_need_efreet = EINA_FALSE;
-#endif
+
 EAPI Eina_Bool
 elm_need_efreet(void)
 {
-#ifdef ELM_EFREET
    if (_elm_need_efreet) return EINA_TRUE;
    _elm_need_efreet = EINA_TRUE;
    efreet_init();
@@ -581,21 +565,16 @@ elm_need_efreet(void)
      }
    */
    return EINA_TRUE;
-#else
-   return EINA_FALSE;
-#endif
 }
 
 static void
 _elm_unneed_efreet(void)
 {
-#ifdef ELM_EFREET
    if (!_elm_need_efreet) return;
    _elm_need_efreet = EINA_FALSE;
    efreet_trash_shutdown();
    efreet_mime_shutdown();
    efreet_shutdown();
-#endif
 }
 
 EAPI void
@@ -691,13 +670,9 @@ elm_quicklaunch_sub_init(int    argc,
         _elm_config_init();
         _elm_config_sub_init();
         ecore_evas_init(); // FIXME: check errors
-#ifdef HAVE_ELEMENTARY_ECORE_IMF
         ecore_imf_init();
-#endif
-#ifdef HAVE_ELEMENTARY_ECORE_CON
         ecore_con_init();
         ecore_con_url_init();
-#endif
         _elm_prefs_init();
         _elm_ews_wm_init();
      }
@@ -721,13 +696,9 @@ elm_quicklaunch_sub_shutdown(void)
         _elm_module_shutdown();
         _elm_prefs_shutdown();
         _elm_ews_wm_shutdown();
-#ifdef HAVE_ELEMENTARY_ECORE_CON
         ecore_con_url_shutdown();
         ecore_con_shutdown();
-#endif
-#ifdef HAVE_ELEMENTARY_ECORE_IMF
         ecore_imf_shutdown();
-#endif
         ecore_evas_shutdown();
         _elm_config_sub_shutdown();
 #define ENGINE_COMPARE(name) (!strcmp(_elm_config->engine, name))
@@ -784,9 +755,7 @@ elm_quicklaunch_shutdown(void)
 #ifdef HAVE_ELEMENTARY_EMAP
    emap_shutdown();
 #endif
-#ifdef HAVE_EMOTION
    _elm_emotion_shutdown();
-#endif
 
    ecore_shutdown();
    eet_shutdown();
@@ -1002,9 +971,7 @@ elm_quicklaunch_fork(int    argc,
 # endif
           }
         ecore_evas_init(); // FIXME: check errors
-# ifdef HAVE_ELEMENTARY_ECORE_IMF
         ecore_imf_init();
-# endif
 #endif
      }
 

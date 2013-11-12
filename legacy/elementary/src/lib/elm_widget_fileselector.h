@@ -47,11 +47,9 @@ struct _Elm_Fileselector_Smart_Data
 
    const char              *path_separator;
 
-#ifdef HAVE_EIO
    Eio_File                *current;
    Eio_Monitor             *monitor;
    Eina_List               *handlers;
-#endif
 
    Elm_Fileselector_Mode mode;
 

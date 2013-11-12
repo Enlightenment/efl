@@ -3,9 +3,7 @@
 
 #include "Elementary.h"
 
-#ifdef HAVE_EIO
-# include <Eio.h>
-#endif
+#include <Eio.h>
 
 /**
  * Base layout smart data extended with label instance data.

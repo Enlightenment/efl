@@ -8,7 +8,6 @@
 
 #include "elm_systray_watcher.h"
 
-#ifdef ELM_ELDBUS
 #define OBJ       "/StatusNotifierWatcher"
 #define BUS       "org.kde.StatusNotifierWatcher"
 #define INTERFACE "org.kde.StatusNotifierWatcher"
@@ -29,12 +28,10 @@ _status_notifier_item_register_cb(void *data EINA_UNUSED,
    if (eldbus_message_error_get(msg, &errname, &errmsg))
      ERR("Eldbus Error: %s %s", errname, errmsg);
 }
-#endif
 
 Eina_Bool
 _elm_systray_watcher_status_notifier_item_register(const char *obj)
 {
-#ifdef ELM_ELDBUS
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(_watcher_proxy, EINA_FALSE);
 
@@ -47,13 +44,8 @@ _elm_systray_watcher_status_notifier_item_register(const char *obj)
      }
 
    return EINA_TRUE;
-#else
-   (void) obj;
-   return EINA_FALSE;
-#endif
 }
 
-#ifdef ELM_ELDBUS
 static void
 _release(void)
 {
@@ -92,12 +84,10 @@ _name_owner_changed_cb(void *data EINA_UNUSED,
    else
      _update();
 }
-#endif
 
 Eina_Bool
 _elm_systray_watcher_init(void)
 {
-#ifdef ELM_ELDBUS
    if (_elm_systray_watcher) return EINA_TRUE;
 
    if (!elm_need_eldbus()) return EINA_FALSE;
@@ -110,15 +100,11 @@ _elm_systray_watcher_init(void)
 
    _elm_systray_watcher = EINA_TRUE;
    return EINA_TRUE;
-#else
-   return EINA_FALSE;
-#endif
 }
 
 void
 _elm_systray_watcher_shutdown(void)
 {
-#ifdef ELM_ELDBUS
    if (!_elm_systray_watcher) return;
 
    _elm_systray_watcher = EINA_FALSE;
@@ -127,5 +113,4 @@ _elm_systray_watcher_shutdown(void)
 
    eldbus_connection_unref(_watcher_conn);
    _watcher_conn = NULL;
-#endif
 }

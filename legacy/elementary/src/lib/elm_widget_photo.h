@@ -25,7 +25,6 @@ struct _Elm_Photo_Smart_Data
    int                   size;
    Ecore_Timer          *long_press_timer;
 
-#ifdef HAVE_ELEMENTARY_ETHUMB
    struct
    {
       struct
@@ -34,7 +33,6 @@ struct _Elm_Photo_Smart_Data
          const char *key;
       } file, thumb;
    } thumb;
-#endif
 
    Eina_Bool             fill_inside: 1;
    Eina_Bool             drag_started: 1; /*<< set true when drag started */

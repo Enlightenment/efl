@@ -16,19 +16,12 @@ AM_CPPFLAGS = \
 @ELEMENTARY_SDL_CFLAGS@ \
 @ELEMENTARY_WIN32_CFLAGS@ \
 @ELEMENTARY_WINCE_CFLAGS@ \
-@ELEMENTARY_ELDBUS_CFLAGS@ \
-@ELEMENTARY_EFREET_CFLAGS@ \
 @ELEMENTARY_ELOCATION_CFLAGS@ \
 @ELEMENTARY_EWEATHER_CFLAGS@ \
-@ELEMENTARY_ETHUMB_CFLAGS@ \
 @ELEMENTARY_WEB_CFLAGS@ \
 @ELEMENTARY_EMAP_CFLAGS@ \
-@ELEMENTARY_ECORE_CON_CFLAGS@ \
-@ELEMENTARY_ECORE_IMF_CFLAGS@ \
 @ELEMENTARY_WAYLAND_CFLAGS@ \
-@EVIL_CFLAGS@ \
-@EIO_CFLAGS@ \
-@EMOTION_CFLAGS@
+@EVIL_CFLAGS@
 
 bin_PROGRAMS = \
 @ELEMENTARY_TEST_PRG@ \
@@ -67,6 +60,7 @@ test_datetime.c \
 test_dayselector.c \
 test_diskselector.c \
 test_dnd.c \
+test_eio.c \
 test_entry.c \
 test_entry_anchor.c \
 test_entry_anchor2.c \
@@ -142,19 +136,12 @@ test_win_plug.c \
 test_win_state.c \
 test.h
 
-if HAVE_EIO
-elementary_test_SOURCES += test_eio.c
-endif
-
 elementary_test_LDADD = $(top_builddir)/src/lib/libelementary.la \
         @ELEMENTARY_WAYLAND_LIBS@ \
 	@ELEMENTARY_EWEATHER_LIBS@ \
-	@ELEMENTARY_ELDBUS_LIBS@ \
-	@ELEMENTARY_EFREET_LIBS@ \
 	@ELEMENTARY_ELOCATION_LIBS@ \
 	@ELEMENTARY_EMAP_LIBS@ \
 	@ELEMENTARY_LIBS@ \
-	@EIO_LIBS@ \
 	@ELEMENTARY_WEB_LIBS@ \
 	@my_libs@
 elementary_test_CFLAGS =
@@ -166,12 +153,9 @@ config.c
 elementary_config_LDADD = $(top_builddir)/src/lib/libelementary.la \
         @ELEMENTARY_WAYLAND_LIBS@ \
 	@ELEMENTARY_EWEATHER_LIBS@ \
-	@ELEMENTARY_ELDBUS_LIBS@ \
-	@ELEMENTARY_EFREET_LIBS@ \
 	@ELEMENTARY_ELOCATION_LIBS@ \
 	@ELEMENTARY_EMAP_LIBS@ \
 	@ELEMENTARY_LIBS@ \
-	@EIO_LIBS@ \
 	@ELEMENTARY_WEB_LIBS@ \
 	@my_libs@
 elementary_config_LDFLAGS =
@@ -183,12 +167,9 @@ elementary_codegen_LDADD = \
 	$(top_builddir)/src/lib/libelementary.la \
         @ELEMENTARY_WAYLAND_LIBS@ \
 	@ELEMENTARY_EWEATHER_LIBS@ \
-	@ELEMENTARY_ELDBUS_LIBS@ \
-	@ELEMENTARY_EFREET_LIBS@ \
 	@ELEMENTARY_ELOCATION_LIBS@ \
 	@ELEMENTARY_EMAP_LIBS@ \
 	@ELEMENTARY_LIBS@ \
-	@EIO_LIBS@ \
 	@ELEMENTARY_WEB_LIBS@ \
 	@my_libs@
 elementary_codegen_LDFLAGS =
@@ -206,7 +187,6 @@ elm_prefs_cc_handlers.c
 elm_prefs_cc_LDADD = \
 $(top_builddir)/src/lib/libelementary.la \
 @ELEMENTARY_LIBS@ \
-@EIO_LIBS@ \
 @my_libs@
 
 if BUILD_QUICKLAUNCH
@@ -214,12 +194,9 @@ elementary_quicklaunch_SOURCES = quicklaunch.c
 elementary_quicklaunch_LDADD = $(top_builddir)/src/lib/libelementary.la \
         @ELEMENTARY_WAYLAND_LIBS@ \
 	@ELEMENTARY_EWEATHER_LIBS@ \
-	@ELEMENTARY_ELDBUS_LIBS@ \
-	@ELEMENTARY_EFREET_LIBS@ \
 	@ELEMENTARY_ELOCATION_LIBS@ \
 	@ELEMENTARY_EMAP_LIBS@ \
 	@ELEMENTARY_LIBS@ \
-	@EIO_LIBS@ \
 	@ELEMENTARY_WEB_LIBS@ \
 	@my_libs@
 elementary_quicklaunch_LDFLAGS =

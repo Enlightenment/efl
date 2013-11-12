@@ -40,8 +40,6 @@ static Elm_Systray_Private_Data _item = {
    .menu_obj        = NULL
 };
 
-#ifdef ELM_ELDBUS
-
 #define OBJ_PATH  "/org/ayatana/NotificationItem/StatusNotifierItem"
 #define INTERFACE "org.kde.StatusNotifierItem"
 
@@ -296,7 +294,6 @@ static const Eldbus_Property properties[] = {
 static const Eldbus_Service_Interface_Desc _iface_desc = {
      INTERFACE, methods, signals, properties, NULL, NULL
 };
-#endif
 // =============================================================================
 
 static void
@@ -309,9 +306,7 @@ _menu_died(void *data EINA_UNUSED,
 
    eina_stringshare_replace(&(_item.menu), NULL);
 
-#ifdef ELM_ELDBUS
    eldbus_service_property_changed(_iface, "Menu");
-#endif
 }
 
 static void
@@ -322,9 +317,7 @@ _category_set(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED, va_list *args)
    if (_item.cat == cat) return;
 
    _item.cat = cat;
-#ifdef ELM_ELDBUS
    eldbus_service_property_changed(_iface, "Category");
-#endif
 }
 
 static void
@@ -343,11 +336,9 @@ _status_set(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED, va_list *args)
    if (_item.status == st) return;
 
    _item.status = st;
-#ifdef ELM_ELDBUS
    eldbus_service_property_changed(_iface, "Status");
    _elm_systray_signal_emit(ELM_SYSTRAY_SIGNAL_NEWSTATUS,
                             _Elm_Systray_Status_Str[_item.status]);
-#endif
 }
 
 static void
@@ -364,10 +355,8 @@ _att_icon_name_set(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED, va_list *args)
 
    if (!eina_stringshare_replace(&(_item.att_icon_name), att_icon_name)) return;
 
-#ifdef ELM_ELDBUS
    eldbus_service_property_changed(_iface, "AttentionIconName");
    _elm_systray_signal_emit(ELM_SYSTRAY_SIGNAL_NEWATTENTIONICON, NULL);
-#endif
 }
 
 static void
@@ -384,10 +373,8 @@ _icon_name_set(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED, va_list *args)
 
    if (!eina_stringshare_replace(&(_item.icon_name), icon_name)) return;
 
-#ifdef ELM_ELDBUS
    eldbus_service_property_changed(_iface, "IconName");
    _elm_systray_signal_emit(ELM_SYSTRAY_SIGNAL_NEWICON, NULL);
-#endif
 }
 
 static void
@@ -405,11 +392,9 @@ _icon_theme_path_set(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED, va_list *args)
    if (!eina_stringshare_replace(&(_item.icon_theme_path), icon_theme_path))
      return;
 
-#ifdef ELM_ELDBUS
    eldbus_service_property_changed(_iface, "IconThemePath");
    _elm_systray_signal_emit(ELM_SYSTRAY_SIGNAL_NEWICONTHEMEPATH,
                             _item.icon_theme_path);
-#endif
 }
 
 static void
@@ -426,9 +411,7 @@ _id_set(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED, va_list *args)
 
    if (!eina_stringshare_replace(&(_item.id), id)) return;
 
-#ifdef ELM_ELDBUS
    eldbus_service_property_changed(_iface, "Id");
-#endif
 }
 
 static void
@@ -445,10 +428,8 @@ _title_set(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED, va_list *args)
 
    if (!eina_stringshare_replace(&(_item.title), title)) return;
 
-#ifdef ELM_ELDBUS
    eldbus_service_property_changed(_iface, "Title");
    _elm_systray_signal_emit(ELM_SYSTRAY_SIGNAL_NEWTITLE, NULL);
-#endif
 }
 
 static void
@@ -481,9 +462,7 @@ _menu_set(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED, va_list *args)
 
    _item.menu_obj = menu_obj;
 
-#ifdef ELM_ELDBUS
    eldbus_service_property_changed(_iface, "Menu");
-#endif
 }
 
 static void
@@ -497,21 +476,18 @@ static void
 _register(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED, va_list *args)
 {
    Eina_Bool *ret = va_arg(*args, Eina_Bool *);
-#ifdef ELM_ELDBUS
    if (!_elm_need_systray) goto err;
 
    *ret = _elm_systray_watcher_status_notifier_item_register(OBJ_PATH);
    return;
 
 err:
-#endif
    *ret = EINA_FALSE;
 }
 
 EAPI Eina_Bool
 elm_need_systray(void)
 {
-#ifdef ELM_ELDBUS
    if (_elm_need_systray) return EINA_TRUE;
 
    if (!elm_need_eldbus()) return EINA_FALSE;
@@ -538,14 +514,12 @@ err:
      }
 
    _elm_systray_watcher_shutdown();
-#endif
    return EINA_FALSE;
 }
 
 void
 _elm_unneed_systray(void)
 {
-#ifdef ELM_ELDBUS
    if (!_elm_need_systray) return;
 
    _elm_need_systray = EINA_FALSE;
@@ -570,7 +544,6 @@ _elm_unneed_systray(void)
                                             NULL);
         _item.menu_obj = NULL;
      }
-#endif
 }
 
 // =============================================================================

@@ -345,24 +345,8 @@ elm_prefs_data_new(const char *data_file,
 
    if (data_file) prefs_data->data_file = eina_stringshare_add(data_file);
    else
-     {
-        const char *home;
-#ifdef ELM_EFREET
-        prefs_data->data_file = eina_stringshare_printf
-            ("%s/%s", efreet_config_home_get(), _elm_appname);
-        (void)home;
-#else
-# ifdef _WIN32
-        home = evil_homedir_get();
-# else
-        home = getenv("HOME");
-# endif
-        if (!home)
-          home = "/";
-        prefs_data->data_file = eina_stringshare_printf
-            ("%s/%s/%s", home, ".config", _elm_appname);
-#endif
-     }
+     prefs_data->data_file = eina_stringshare_printf
+     ("%s/%s", efreet_config_home_get(), _elm_appname);
 
    prefs_data->key = eina_stringshare_add(key ? key : "main");
 

@@ -233,80 +233,54 @@ AC_SUBST(ELM_WINCE_DEF)
 
 AM_CONDITIONAL([ELEMENTARY_WINDOWS_BUILD], [test "x${have_windows}" = "xyes"])
 
+efl_version="1.8.0"
+
 PKG_CHECK_MODULES([ELEMENTARY],
    [
-    eina >= 1.8.0
-    eet >= 1.8.0
-    evas >= 1.8.0
-    ecore >= 1.8.0
-    ecore-evas >= 1.8.0
-    ecore-file >= 1.8.0
-    ecore-input >= 1.8.0
-    edje >= 1.8.0
-    eo >= 1.8.0
+    eina >= ${efl_version}
+    eet >= ${efl_version}
+    evas >= ${efl_version}
+    ecore >= ${efl_version}
+    ecore-evas >= ${efl_version}
+    ecore-file >= ${efl_version}
+    ecore-input >= ${efl_version}
+    edje >= ${efl_version}
+    eo >= ${efl_version}
+    ethumb_client >= ${efl_version}
+    emotion >= ${efl_version}
+    ecore-imf >= ${efl_version}
+    ecore-con >= ${efl_version}
+    eio >= ${efl_version}
+    eldbus >= ${efl_version}
+    efreet >= ${efl_version}
+    efreet-mime >= ${efl_version}
+    efreet-trash >= ${efl_version}
    ]
 )
 
 EFL_ENABLE_EO_API_SUPPORT
 EFL_ENABLE_BETA_API_SUPPORT
 
-requirement_elm="edje >= 1.8.0 ecore-file >= 1.8.0 ecore-evas >= 1.8.0 ecore >= 1.8.0 evas >= 1.8.0 eet >= 1.8.0 eina >= 1.8.0 ${requirement_elm}"
-
-PKG_CHECK_MODULES([ELEMENTARY_ECORE_IMF],
-   [ecore-imf >= 1.8.0],
-   [
-    ELEMENTARY_ECORE_IMF_INC="#include <Ecore_IMF.h>"
-    AC_DEFINE(HAVE_ELEMENTARY_ECORE_IMF, 1, [Have Ecore_IMF support])
-    have_ecore_imf="yes"
-    requirement_elm="ecore-imf >= 1.8.0 ${requirement_elm}"
-   ],
-   [have_ecore_imf="no"])
-AC_SUBST(ELEMENTARY_ECORE_IMF_INC)
-
-AM_CONDITIONAL([HAVE_ECORE_IMF], [test "x${have_ecore_imf}" = "xyes"])
-
-PKG_CHECK_MODULES([ELEMENTARY_ECORE_CON],
-   [ecore-con >= 1.8.0],
-   [
-    ELEMENTARY_ECORE_CON_INC="#include <Ecore_Con.h>"
-    AC_DEFINE(HAVE_ELEMENTARY_ECORE_CON, 1, [Have Ecore_Con support])
-    have_ecore_con="yes"
-    requirement_elm="ecore-con >= 1.8.0 ${requirement_elm}"
-   ],
-   [have_ecore_con="no"])
-AC_SUBST(ELEMENTARY_ECORE_CON_INC)
-
-AM_CONDITIONAL([HAVE_ECORE_CON], [test "x${have_ecore_con}" = "xyes"])
-
-PKG_CHECK_MODULES([EIO],
-        [eio],
-        [
-         have_eio="yes"
-         AC_DEFINE(HAVE_EIO, 1, [Use EIO for asynchronous file access])
-         requirement_elm="eio ${requirement_elm}"
-        ],
-        [have_eio="no"])
-
-AM_CONDITIONAL([HAVE_EIO], [test "x${have_eio}" = "xyes"])
-
-have_emotion="no"
-want_elementary_emotion="yes"
-AC_ARG_ENABLE([emotion],
-   [AC_HELP_STRING([--disable-emotion], [disable emotion support. @<:@default=enabled@:>@])],
-   [want_elementary_emotion=$enableval], [])
-
-if test "x$want_elementary_emotion" != "xno"; then
-   PKG_CHECK_MODULES([EMOTION],
-        [emotion],
-        [
-         have_emotion="yes"
-         AC_DEFINE(HAVE_EMOTION, 1, [Use Emotion for asynchronous file access])
-         requirement_elm="emotion ${requirement_elm}"
-        ],
-        [have_emotion="no"])
-fi
-
-AM_CONDITIONAL([HAVE_EMOTION], [test "x${have_emotion}" = "xyes"])
+requirement_elm="\
+    eina >= ${efl_version} \
+    eet >= ${efl_version} \
+    evas >= ${efl_version} \
+    ecore >= ${efl_version} \
+    ecore-evas >= ${efl_version} \
+    ecore-file >= ${efl_version} \
+    ecore-input >= ${efl_version} \
+    edje >= ${efl_version} \
+    eo >= ${efl_version} \
+    ethumb_client >= ${efl_version} \
+    emotion >= ${efl_version} \
+    ecore-imf >= ${efl_version} \
+    ecore-con >= ${efl_version} \
+    eio >= ${efl_version} \
+    eldbus >= ${efl_version} \
+    efreet >= ${efl_version} \
+    efreet-mime >= ${efl_version} \
+    efreet-trash >= ${efl_version} \
+    "
 
 have_elementary_x="no"
 want_elementary_x="auto"
@@ -316,11 +290,11 @@ AC_ARG_ENABLE([ecore-x],
 
 if test "x$want_elementary_x" != "xno"; then
    PKG_CHECK_MODULES([ELEMENTARY_X],
-      [ecore-x >= 1.8.0],
+      [ecore-x >= ${efl_version}],
       [
        AC_DEFINE(HAVE_ELEMENTARY_X, 1, [X11 support for Elementary])
        have_elementary_x="yes"
-       requirement_elm="ecore-x >= 1.8.0 ${requirement_elm}"
+       requirement_elm="ecore-x >= ${efl_version} ${requirement_elm}"
       ],
       [have_elementary_x="no"]
    )
@@ -340,11 +314,11 @@ AC_ARG_ENABLE([ecore-fb],
 
 if test "x$want_elementary_fb" != "xno"; then
    PKG_CHECK_MODULES([ELEMENTARY_FB],
-      [ecore-fb >= 1.8.0],
+      [ecore-fb >= ${efl_version}],
       [
        AC_DEFINE(HAVE_ELEMENTARY_FB, 1, [FB support for Elementary])
        have_elementary_fb="yes"
-       requirement_elm="ecore-fb >= 1.8.0 ${requirement_elm}"
+       requirement_elm="ecore-fb >= ${efl_version} ${requirement_elm}"
       ],
       [have_elementary_fb="no"]
    )
@@ -363,11 +337,11 @@ AC_ARG_ENABLE([ecore-psl1ght],
 
 if test "x$want_elementary_psl1ght" != "xno"; then
    PKG_CHECK_MODULES([ELEMENTARY_PSL1GHT],
-      [ecore-psl1ght >= 1.8.0],
+      [ecore-psl1ght >= ${efl_version}],
       [
        AC_DEFINE(HAVE_ELEMENTARY_PSL1GHT, 1, [PSL1GHT support for Elementary])
        have_elementary_psl1ght="yes"
-       requirement_elm="ecore-psl1ght >= 1.8.0 ${requirement_elm}"
+       requirement_elm="ecore-psl1ght >= ${efl_version} ${requirement_elm}"
       ],
       [have_elementary_psl1ght="no"]
    )
@@ -386,11 +360,11 @@ AC_ARG_ENABLE([ecore-sdl],
 
 if test "x$want_elementary_sdl" != "xno"; then
    PKG_CHECK_MODULES([ELEMENTARY_SDL],
-      [ecore-sdl >= 1.8.0],
+      [ecore-sdl >= ${efl_version}],
       [
        AC_DEFINE(HAVE_ELEMENTARY_SDL, 1, [SDL support for Elementary])
        have_elementary_sdl="yes"
-       requirement_elm="ecore-sdl >= 1.8.0 ${requirement_elm}"
+       requirement_elm="ecore-sdl >= ${efl_version} ${requirement_elm}"
       ],
       [have_elementary_sdl="no"]
    )
@@ -409,11 +383,11 @@ AC_ARG_ENABLE([ecore-cocoa],
 
 if test "x$want_elementary_cocoa" != "xno"; then
    PKG_CHECK_MODULES([ELEMENTARY_COCOA],
-      [ecore-cocoa >= 1.8.0],
+      [ecore-cocoa >= ${efl_version}],
       [
        AC_DEFINE(HAVE_ELEMENTARY_COCOA, 1, [COCOA support for Elementary])
        have_elementary_cocoa="yes"
-       requirement_elm="ecore-cocoa >= 1.8.0 ${requirement_elm}"
+       requirement_elm="ecore-cocoa >= ${efl_version} ${requirement_elm}"
       ],
       [have_elementary_cocoa="no"]
    )
@@ -432,11 +406,11 @@ AC_ARG_ENABLE([ecore-win32],
 
 if test "x$want_elementary_win32" != "xno"; then
    PKG_CHECK_MODULES([ELEMENTARY_WIN32],
-      [ecore-win32 >= 1.8.0],
+      [ecore-win32 >= ${efl_version}],
       [
        AC_DEFINE(HAVE_ELEMENTARY_WIN32, 1, [Windows XP support for Elementary])
        have_elementary_win32="yes"
-       requirement_elm="ecore-win32 >= 1.8.0 ${requirement_elm}"
+       requirement_elm="ecore-win32 >= ${efl_version} ${requirement_elm}"
       ],
       [have_elementary_win32="no"]
    )
@@ -455,11 +429,11 @@ AC_ARG_ENABLE([ecore-wince],
 
 if test "x$want_elementary_wince" != "xno"; then
    PKG_CHECK_MODULES([ELEMENTARY_WINCE],
-      [ecore-wince >= 1.8.0],
+      [ecore-wince >= ${efl_version}],
       [
        AC_DEFINE(HAVE_ELEMENTARY_WINCE, 1, [Windows CE support for Elementary])
        have_elementary_wince="yes"
-       requirement_elm="ecore-wince >= 1.8.0 ${requirement_elm}"
+       requirement_elm="ecore-wince >= ${efl_version} ${requirement_elm}"
       ],
       [have_elementary_wince="no"]
    )
@@ -493,34 +467,6 @@ if test "x$want_elementary_wayland" = "xyes" -a "x$have_elementary_wayland" = "x
     AC_MSG_ERROR([ecore-wayland support requested, but ecore-wayland was not found by pkg-config.])
 fi
 
-ELM_ELDBUS_DEF="#undef"
-have_elementary_eldbus="no"
-want_elementary_eldbus="auto"
-AC_ARG_ENABLE([eldbus],
-   [AC_HELP_STRING([--disable-eldbus], [disable eldbus support. @<:@default=detect@:>@])],
-   [want_elementary_eldbus=$enableval], [])
-
-if test "x$want_elementary_eldbus" != "xno"; then
-    PKG_CHECK_MODULES([ELEMENTARY_ELDBUS],
-       [
-        eldbus >= 1.8.0
-       ],
-       [
-        AC_DEFINE(HAVE_ELEMENTARY_ELDBUS, 1, [Eldbus support for Elementary])
-        have_elementary_eldbus="yes"
-        ELM_ELDBUS_DEF="#define"
-        requirement_elm="eldbus >= 1.8.0 ${requirement_elm}"
-       ],
-       [have_elementary_eldbus="no"]
-    )
-else
-    have_elementary_eldbus="no"
-fi
-if test "x$want_elementary_eldbus" = "xyes" -a "x$have_elementary_eldbus" = "xno"; then
-    AC_MSG_ERROR([eldbus support requested, but eldbus was not found by pkg-config.])
-fi
-AC_SUBST(ELM_ELDBUS_DEF)
-
 ELM_ELOCATION_DEF="#undef"
 have_elementary_elocation="no"
 want_elementary_elocation="auto"
@@ -548,36 +494,6 @@ if test "x$want_elementary_elocation" = "xyes" -a "x$have_elementary_elocation" 
     AC_MSG_ERROR([elocation support requested, but elocation was not found by pkg-config.])
 fi
 AC_SUBST(ELM_ELOCATION_DEF)
-
-ELM_EFREET_DEF="#undef"
-have_elementary_efreet="no"
-want_elementary_efreet="auto"
-AC_ARG_ENABLE([efreet],
-   [AC_HELP_STRING([--disable-efreet], [disable efreet support. @<:@default=detect@:>@])],
-   [want_elementary_efreet=$enableval], [])
-
-if test "x$want_elementary_efreet" != "xno"; then
-    PKG_CHECK_MODULES([ELEMENTARY_EFREET],
-       [
-        efreet >= 1.8.0
-        efreet-mime >= 1.8.0
-        efreet-trash >= 1.8.0
-       ],
-       [
-        AC_DEFINE(HAVE_ELEMENTARY_EFREET, 1, [Efreet support for Elementary])
-        have_elementary_efreet="yes"
-        ELM_EFREET_DEF="#define"
-        requirement_elm="efreet >= 1.8.0 efreet-mime >= 1.8.0 efreet-trash >= 1.8.0 ${requirement_elm}"
-       ],
-       [have_elementary_efreet="no"]
-    )
-else
-    have_elementary_efreet="no"
-fi
-if test "x$want_elementary_efreet" = "xyes" -a "x$have_elementary_efreet" = "xno"; then
-    AC_MSG_ERROR([Efreet support requested, but efreet/efreet-mime/efreet-trash were not found by pkg-config.])
-fi
-AC_SUBST(ELM_EFREET_DEF)
 
 ELM_EWEATHER_DEF="#undef"
 have_elementary_eweather="no"
@@ -634,36 +550,6 @@ if test "x$want_elementary_emap" = "xyes" -a "x$have_elementary_emap" = "xno"; t
     AC_MSG_ERROR([Emap support requested, but emap was not found by pkg-config.])
 fi
 AC_SUBST(ELM_EMAP_DEF)
-
-
-
-ELM_ETHUMB_DEF="#undef"
-have_elementary_ethumb="no"
-want_elementary_ethumb="auto"
-AC_ARG_ENABLE([ethumb],
-   [AC_HELP_STRING([--disable-ethumb], [disable ethumb support. @<:@default=detect@:>@])],
-   [want_elementary_ethumb=$enableval], [])
-
-if test "x$want_elementary_ethumb" != "xno"; then
-    PKG_CHECK_MODULES([ELEMENTARY_ETHUMB],
-       [
-        ethumb_client
-       ],
-       [
-        AC_DEFINE(HAVE_ELEMENTARY_ETHUMB, 1, [Ethumb support for Elementary])
-        have_elementary_ethumb="yes"
-        ELM_ETHUMB_DEF="#define"
-        requirement_elm="ethumb_client ${requirement_elm}"
-       ],
-       [have_elementary_ethumb="no"]
-    )
-else
-    have_elementary_ethumb="no"
-fi
-if test "x$want_elementary_ethumb" = "xyes" -a "x$have_elementary_ethumb" = "xno"; then
-    AC_MSG_ERROR([Ethumb support requested, but ethumb was not found by pkg-config.])
-fi
-AC_SUBST(ELM_ETHUMB_DEF)
 
 ELM_WEB_DEF="#undef"
 
@@ -869,17 +755,10 @@ echo "    Windows CE.............: ${have_elementary_wince}"
 echo "    Wayland................: ${have_elementary_wayland}"
 echo
 echo "  Features:"
-echo "    Ecore_IMF..............: ${have_ecore_imf}"
-echo "    Ecore_Con..............: ${have_ecore_con}"
-echo "    Eldbus.................: ${have_elementary_eldbus}"
-echo "    EFreet.................: ${have_elementary_efreet}"
 echo "    EWeather...............: ${have_elementary_eweather}"
 echo "    EMap...................: ${have_elementary_emap}"
-echo "    Ethumb.................: ${have_elementary_ethumb}"
 echo "    Web (WebKit)...........: ${elementary_web}"
 echo "    Quick Launch...........: ${have_fork}"
-echo "    EIO....................: ${have_eio}"
-echo "    Emotion................: ${have_emotion}"
 echo "    Elocation..............: ${have_elementary_elocation}"
 echo
 echo "  eet......................: ${eet_eet}"

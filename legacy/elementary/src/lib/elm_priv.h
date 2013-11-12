@@ -13,9 +13,7 @@
 #include <Ecore_Wayland.h>
 #endif
 
-#ifdef HAVE_EIO
-# include <Eio.h>
-#endif
+#include <Eio.h>
 
 #ifdef EAPI
 # undef EAPI
