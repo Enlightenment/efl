@@ -434,7 +434,8 @@ _elm_dayselector_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
    elm_widget_sub_object_parent_add(obj);
 
-   if (!elm_layout_theme_set(obj, "dayselector", "base", "dayselector"))
+   if (!elm_layout_theme_set(obj, "dayselector", "base",
+                             elm_widget_style_get(obj)))
      CRITICAL("Failed to set layout!");
 
    priv->week_start = _elm_config->week_start;
