@@ -103,7 +103,7 @@ typedef void *(*Elm_App_Client_View_Cb)(void *data, Elm_App_Client_View *view, c
  * @param[out] has_alpha if icon have alpha channel
  * @param[out] pixels unsigned char array, with all bytes of icon
  */
-#define elm_app_client_view_icon_pixels_get(w, h, has_alpha, pixels) ELM_APP_CLIENT_VIEW_ID(ELM_APP_CLIENT_VIEW_SUB_ID_ICON_PIXELS_GET), EO_TYPECHECK(unsigned int *, h), EO_TYPECHECK(Eina_Bool *, has_alpha), EO_TYPECHECK(const unsigned char **, pixels)
+#define elm_app_client_view_icon_pixels_get(w, h, has_alpha, pixels) ELM_APP_CLIENT_VIEW_ID(ELM_APP_CLIENT_VIEW_SUB_ID_ICON_PIXELS_GET), EO_TYPECHECK(unsigned int *, w), EO_TYPECHECK(unsigned int *, h), EO_TYPECHECK(Eina_Bool *, has_alpha), EO_TYPECHECK(const unsigned char **, pixels)
 
 /**
  * @def elm_app_client_view_progress_get
