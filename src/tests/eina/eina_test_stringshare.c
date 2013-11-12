@@ -224,7 +224,7 @@ START_TEST(eina_stringshare_print)
    fail_if(strcmp(t3, "x"TEST1"y") != 0);
    fail_if(((int)strlen(TEST1) + 2) != eina_stringshare_strlen(t1));
    fail_if(((int)strlen(TEST1) + 2) != eina_stringshare_strlen(t2));
-   fail_if(10 != eina_stringshare_strlen(t3));
+   fail_if(8 != eina_stringshare_strlen(t3));
    eina_stringshare_del(t1);
    eina_stringshare_del(t2);
    eina_stringshare_del(t3);

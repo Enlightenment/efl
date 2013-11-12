@@ -680,7 +680,7 @@ eina_stringshare_nprintf(unsigned int len, const char *fmt, ...)
    if (size < 1)
      return NULL;
 
-   return eina_stringshare_add_length(tmp, len);
+   return eina_stringshare_add_length(tmp, size);
 }
 
 EAPI Eina_Stringshare *
