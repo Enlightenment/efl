@@ -1394,46 +1394,41 @@ _magnifier_create(void *data)
    ELM_ENTRY_DATA_GET(data, sd);
 
    double scale = _elm_config->magnifier_scale;
+   Evas *e;
    Evas_Coord w, h, mw, mh;
 
-   if (sd->mgf_proxy)
-     {
-        evas_object_image_source_unset(sd->mgf_proxy);
-        evas_object_clip_unset(sd->mgf_proxy);
-        evas_object_del(sd->mgf_proxy);
-     }
+   if (sd->mgf_proxy) evas_object_del(sd->mgf_proxy);
    if (sd->mgf_bg) evas_object_del(sd->mgf_bg);
    if (sd->mgf_clip) evas_object_del(sd->mgf_clip);
 
-   sd->mgf_bg = edje_object_add(evas_object_evas_get(data));
+   e = evas_object_evas_get(data);
+
+   sd->mgf_bg = edje_object_add(e);
    _elm_theme_object_set(data, sd->mgf_bg, "entry", "magnifier", "default");
    evas_object_show(sd->mgf_bg);
 
-   sd->mgf_clip = evas_object_rectangle_add(evas_object_evas_get(data));
-   evas_object_color_set(sd->mgf_clip, 255, 255, 255, 255);
+   sd->mgf_clip = evas_object_rectangle_add(e);
    edje_object_part_swallow(sd->mgf_bg, "elm.swallow.content", sd->mgf_clip);
+
+   sd->mgf_proxy = evas_object_image_add(e);
 
    if (sd->scroll)
      {
-        sd->mgf_proxy = evas_object_image_add(evas_object_evas_get(sd->scr_edje));
         evas_object_image_source_set(sd->mgf_proxy, sd->scr_edje);
         evas_object_geometry_get(sd->scr_edje, NULL, NULL, &w, &h);
      }
    else
      {
-        sd->mgf_proxy = evas_object_image_add(evas_object_evas_get(data));
         evas_object_image_source_set(sd->mgf_proxy, data);
         evas_object_geometry_get(data, NULL, NULL, &w, &h);
      }
 
    mw = (Evas_Coord)(scale * (float) w);
    mh = (Evas_Coord)(scale * (float) h);
-   if ((mw <= 0) || (mh <= 0))
-     return;
+   if ((mw <= 0) || (mh <= 0)) return;
 
    evas_object_resize(sd->mgf_proxy, mw, mh);
    evas_object_image_fill_set(sd->mgf_proxy, 0, 0, mw, mh);
-   evas_object_color_set(sd->mgf_proxy, 255, 255, 255, 255);
    evas_object_pass_events_set(sd->mgf_proxy, EINA_TRUE);
    evas_object_show(sd->mgf_proxy);
    evas_object_clip_set(sd->mgf_proxy, sd->mgf_clip);
@@ -1454,23 +1449,17 @@ _magnifier_move(void *data, Evas_Coord px, Evas_Coord py)
    double scale = _elm_config->magnifier_scale;
 
    edje_object_parts_extends_calc(sd->mgf_bg, &x, &y, &w, &h);
-   evas_object_move(sd->mgf_bg, px - x - w/2, py - y - h);
+   evas_object_move(sd->mgf_bg, px - x - (w / 2), py - y - h);
 
    obj_content = edje_object_part_object_get(sd->mgf_bg, "elm.swallow.content");
    evas_object_geometry_get(obj_content, &x, &y, &w, &h);
-   sx = px - (x + w/2);
-   sy = py - (y + h/2);
+   sx = px - (x + (w / 2));
+   sy = py - (y + (h / 2));
 
-   if (sd->scroll)
-     {
-        evas_object_geometry_get(sd->scr_edje, &ex, &ey, NULL, NULL);
-     }
-   else
-     {
-        evas_object_geometry_get(data, &ex, &ey, NULL, NULL);
-     }
-   evas_object_move(sd->mgf_proxy, ex * scale - (px * scale - px) - sx,
-                    ey * scale - (py * scale - py) - sy);
+   if (sd->scroll) evas_object_geometry_get(sd->scr_edje, &ex, &ey, NULL, NULL);
+   else evas_object_geometry_get(data, &ex, &ey, NULL, NULL);
+   evas_object_move(sd->mgf_proxy, (ex * scale) - ((px * scale) - px) - sx,
+                    (ey * scale) - ((py * scale) - py) - sy);
 }
 
 static void
@@ -3345,12 +3334,7 @@ _elm_entry_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    if ((sd->api) && (sd->api->obj_unhook))
      sd->api->obj_unhook(obj);  // module - unhook
 
-   if (sd->mgf_proxy)
-     {
-        evas_object_image_source_unset(sd->mgf_proxy);
-        evas_object_clip_unset(sd->mgf_proxy);
-        evas_object_del(sd->mgf_proxy);
-     }
+   if (sd->mgf_proxy) evas_object_del(sd->mgf_proxy);
    if (sd->mgf_bg) evas_object_del(sd->mgf_bg);
    if (sd->mgf_clip) evas_object_del(sd->mgf_clip);
 
