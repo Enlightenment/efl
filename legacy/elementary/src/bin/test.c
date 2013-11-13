@@ -69,7 +69,7 @@ void test_toolbar5(void *data, Evas_Object *obj, void *event_info);
 void test_toolbar6(void *data, Evas_Object *obj, void *event_info);
 void test_toolbar7(void *data, Evas_Object *obj, void *event_info);
 void test_toolbar8(void *data, Evas_Object *obj, void *event_info);
-void test_toolbar9(void *data, Evas_Object *obj, void *event_info);
+void test_toolbar_vertical(void *data, Evas_Object *obj, void *event_info);
 void test_hoversel(void *data, Evas_Object *obj, void *event_info);
 void test_list(void *data, Evas_Object *obj, void *event_info);
 void test_list_horizontal(void *data, Evas_Object *obj, void *event_info);
@@ -621,7 +621,7 @@ add_tests:
    ADD_TEST(NULL, "Toolbars", "Toolbar 6", test_toolbar6);
    ADD_TEST(NULL, "Toolbars", "Toolbar 7", test_toolbar7);
    ADD_TEST(NULL, "Toolbars", "Toolbar 8", test_toolbar8);
-   ADD_TEST(NULL, "Toolbars", "Toolbar 9", test_toolbar9);
+   ADD_TEST(NULL, "Toolbars", "Toolbar Vertical", test_toolbar_vertical);
 
    //------------------------------//
    ADD_TEST(NULL, "Lists - List", "List", test_list);

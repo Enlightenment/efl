@@ -611,7 +611,7 @@ test_toolbar5(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
 }
 
 void
-test_toolbar6(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+test_toolbar_vertical(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bx, *tb, *ph, *menu;
    Evas_Object *ph1, *ph2, *ph3, *ph4;
@@ -619,7 +619,7 @@ test_toolbar6(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    Elm_Object_Item *menu_it;
    char buf[PATH_MAX];
 
-   win = elm_win_util_standard_add("toolbar6", "Toolbar 6");
+   win = elm_win_util_standard_add("toolbar-vertical", "Toolbar Vertical");
    elm_win_autodel_set(win, EINA_TRUE);
 
    bx = elm_box_add(win);
@@ -715,7 +715,7 @@ test_toolbar6(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
 }
 
 void
-test_toolbar7(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+test_toolbar6(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bx, *tb, *ph, *menu;
    Evas_Object *ph1, *ph2, *ph3, *ph4;
@@ -723,7 +723,7 @@ test_toolbar7(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    Elm_Object_Item *menu_it;
    char buf[PATH_MAX];
 
-   win = elm_win_util_standard_add("toolbar7", "Toolbar 7");
+   win = elm_win_util_standard_add("toolbar6", "Toolbar 6");
    elm_win_autodel_set(win, EINA_TRUE);
 
    bx = elm_box_add(win);
@@ -820,14 +820,14 @@ test_toolbar7(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
 }
 
 void
-test_toolbar8(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+test_toolbar7(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bx, *tb, *ph, *sl;
    Evas_Object *ph1, *ph2, *ph3, *ph4;
    Elm_Object_Item *tb_it;
    char buf[PATH_MAX];
 
-   win = elm_win_util_standard_add("toolbar8", "Toolbar 8");
+   win = elm_win_util_standard_add("toolbar7", "Toolbar 7");
    elm_win_autodel_set(win, EINA_TRUE);
 
    bx = elm_box_add(win);
@@ -959,13 +959,13 @@ test_toolbar8(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
 }
 
 void
-test_toolbar9(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+test_toolbar8(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bx, *tb, *ph;
    Evas_Object *ph1, *ph2, *ph3, *ph4;
    char buf[PATH_MAX];
 
-   win = elm_win_util_standard_add("toolbar9", "Toolbar 9");
+   win = elm_win_util_standard_add("toolbar8", "Toolbar 8");
    elm_win_autodel_set(win, EINA_TRUE);
 
    bx = elm_box_add(win);
