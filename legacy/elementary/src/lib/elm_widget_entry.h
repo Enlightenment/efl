@@ -27,7 +27,6 @@ struct _Elm_Entry_Smart_Data
 
    Evas_Object                          *hoversel;
    Evas_Object                          *mgf_bg;
-   Evas_Object                          *mgf_clip;
    Evas_Object                          *mgf_proxy;
    Evas_Object                          *start_handler;
    Evas_Object                          *end_handler;
