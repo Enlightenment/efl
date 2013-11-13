@@ -71,6 +71,7 @@ void test_toolbar7(void *data, Evas_Object *obj, void *event_info);
 void test_toolbar8(void *data, Evas_Object *obj, void *event_info);
 void test_toolbar_vertical(void *data, Evas_Object *obj, void *event_info);
 void test_hoversel(void *data, Evas_Object *obj, void *event_info);
+void test_hoversel_focus(void *data, Evas_Object *obj, void *event_info);
 void test_list(void *data, Evas_Object *obj, void *event_info);
 void test_list_horizontal(void *data, Evas_Object *obj, void *event_info);
 void test_list2(void *data, Evas_Object *obj, void *event_info);
@@ -710,6 +711,7 @@ add_tests:
    ADD_TEST(NULL, "Selectors", "ColorSelector", test_colorselector);
    ADD_TEST(NULL, "Selectors", "SegmentControl", test_segment_control);
    ADD_TEST(NULL, "Selectors", "Hoversel", test_hoversel);
+   ADD_TEST(NULL, "Selectors", "Hoversel Focus", test_hoversel_focus);
    ADD_TEST(NULL, "Selectors", "Radio", test_radio);
    ADD_TEST(NULL, "Selectors", "FlipSelector", test_flipselector);
    ADD_TEST(NULL, "Selectors", "DaySelector", test_dayselector);

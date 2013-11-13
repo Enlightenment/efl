@@ -563,6 +563,90 @@ elm_hoversel_item_icon_get(const Elm_Object_Item *it,
 }
 
 static void
+_elm_hoversel_smart_focus_direction_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+{
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   if(ret) *ret = EINA_TRUE;
+}
+
+static void
+_elm_hoversel_smart_focus_direction(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+{
+   Elm_Hoversel_Smart_Data *sd = _pd;
+   Evas_Object *base = va_arg(*list, Evas_Object *);
+   double degree = va_arg(*list, double);
+   Evas_Object **direction = va_arg(*list, Evas_Object **);
+   double *weight = va_arg(*list, double *);
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   if (ret) *ret = EINA_FALSE;
+   Eina_Bool int_ret;
+   Eina_List *l = NULL;
+   void *(*list_data_get)(const Eina_List *list);
+
+   if (!sd || !sd->hover) return;
+
+   list_data_get = eina_list_data_get;
+   l = eina_list_append(l, sd->hover);
+
+   int_ret = elm_widget_focus_list_direction_get
+            (obj, base, l, list_data_get, degree, direction, weight);
+   if (ret) *ret = int_ret;
+   eina_list_free(l);
+}
+
+static void
+_elm_hoversel_smart_event(Eo *obj, void *_pd, va_list *list)
+{
+   Evas_Object *src = va_arg(*list, Evas_Object *);
+   (void) src;
+   Evas_Callback_Type type = va_arg(*list, Evas_Callback_Type);
+   void *event_info = va_arg(*list, void *);
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   if (ret) *ret = EINA_FALSE;
+   Evas_Event_Key_Down *ev = event_info;
+   Elm_Hoversel_Smart_Data *sd = _pd;
+
+   eo_do_super(obj, MY_CLASS, elm_wdg_event(src, type, event_info, ret));
+   if (*ret) return;
+
+   if (!sd || !sd->hover) return;
+   if (elm_widget_disabled_get(obj)) return;
+   if (type != EVAS_CALLBACK_KEY_DOWN) return;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
+
+   if ((!strcmp(ev->key, "Down")) ||
+       ((!strcmp(ev->key, "KP_Down")) && (!ev->string)))
+     {
+        elm_widget_focus_cycle(sd->hover, ELM_FOCUS_DOWN);
+        goto success;
+     }
+   else if ((!strcmp(ev->key, "Up")) ||
+            ((!strcmp(ev->key, "KP_Up")) && (!ev->string)))
+     {
+        elm_widget_focus_cycle(sd->hover, ELM_FOCUS_UP);
+        goto success;
+     }
+   else if ((!strcmp(ev->key, "Left")) ||
+            ((!strcmp(ev->key, "KP_Left")) && (!ev->string)))
+     {
+        elm_widget_focus_cycle(sd->hover, ELM_FOCUS_LEFT);
+        goto success;
+     }
+   else if ((!strcmp(ev->key, "Right")) ||
+            ((!strcmp(ev->key, "KP_Right")) && (!ev->string)))
+     {
+        elm_widget_focus_cycle(sd->hover, ELM_FOCUS_RIGHT);
+        goto success;
+     }
+
+   return;
+
+success:
+   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+   if (ret) *ret = EINA_TRUE;
+}
+
+static void
 _class_constructor(Eo_Class *klass)
 {
       const Eo_Op_Func_Description func_desc[] = {
@@ -576,6 +660,9 @@ _class_constructor(Eo_Class *klass)
            EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME), _elm_hoversel_smart_theme),
            EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_TRANSLATE), _elm_hoversel_smart_translate),
            EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_PARENT_SET), _elm_hoversel_smart_parent_set),
+           EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_DIRECTION_MANAGER_IS), _elm_hoversel_smart_focus_direction_manager_is),
+           EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_DIRECTION),  _elm_hoversel_smart_focus_direction),
+           EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_EVENT), _elm_hoversel_smart_event),
 
            EO_OP_FUNC(ELM_OBJ_BUTTON_ID(ELM_OBJ_BUTTON_SUB_ID_ADMITS_AUTOREPEAT_GET), _elm_hoversel_smart_admits_autorepeat_get),
 

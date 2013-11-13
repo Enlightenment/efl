@@ -156,6 +156,7 @@ Improvements:
    layout.
    * Popup: Change the behavior of adding/removing buttons dynamically. User defined button's position is kept.
    * Fileselector: Monitor and update changes of selected path automatically while EIO is working.
+   * Hoversel: Added focus support on hoversel items.
 
 Fixes:
    * Now elm_datetime_field_limit_set() can set year limits wihtout problems.

@@ -1743,3 +1743,7 @@
 2013-11-07  ChunEon Park (Hermet)
 
         * scroller: don't focus region show if the scroller is disabled.
+
+2013-11-05  Amitesh Singh (_ami_)
+
+        * hoversel: Added focus support on hoversel items.
