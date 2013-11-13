@@ -86,12 +86,10 @@ _elm_player_smart_event(Eo *obj, void *_pd, va_list *list)
              elm_video_play_position_set(sd->video, current);
           }
 
-        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-        if (ret) *ret = EINA_TRUE;
-        return;
+        goto success;
      }
-   if ((!strcmp(ev->key, "Right")) ||
-       ((!strcmp(ev->key, "KP_Right")) && (!ev->string)))
+   else if ((!strcmp(ev->key, "Right")) ||
+            ((!strcmp(ev->key, "KP_Right")) && (!ev->string)))
      {
         double current, last;
 
@@ -105,20 +103,23 @@ _elm_player_smart_event(Eo *obj, void *_pd, va_list *list)
              elm_video_play_position_set(sd->video, current);
           }
 
-        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-        if (ret) *ret = EINA_TRUE;
-        return;
+        goto success;
      }
-   if (!strcmp(ev->key, "space"))
+   else if (!strcmp(ev->key, "space"))
      {
         if (elm_video_is_playing_get(sd->video))
           elm_video_pause(sd->video);
         else
           elm_video_play(sd->video);
-        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-        if (ret) *ret = EINA_TRUE;
-        return;
+
+        goto success;
      }
+
+   return;
+
+success:
+   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+   if (ret) *ret = EINA_TRUE;
 }
 
 static void

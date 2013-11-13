@@ -138,39 +138,30 @@ _elm_ctxpopup_smart_event(Eo *obj, void *_pd, va_list *list)
         return;
      }
 
-   if (((!strcmp(ev->key, "Left")) ||
-        (!strcmp(ev->key, "KP_Left")) ||
-        (!strcmp(ev->key, "Right")) ||
-        (!strcmp(ev->key, "KP_Right")) ||
-        (!strcmp(ev->key, "Up")) ||
-        (!strcmp(ev->key, "KP_Up")) ||
-        (!strcmp(ev->key, "Down")) ||
-        (!strcmp(ev->key, "KP_Down"))) && (!ev->string))
+   if (sd->box)
      {
-        if (sd->box)
-          {
-             if ((!strcmp(ev->key, "Left")) ||
-                 (!strcmp(ev->key, "KP_Left")))
-               elm_widget_focus_cycle(sd->box, ELM_FOCUS_LEFT);
-             else if ((!strcmp(ev->key, "Right")) ||
-                      (!strcmp(ev->key, "KP_Right")))
-               elm_widget_focus_cycle(sd->box, ELM_FOCUS_RIGHT);
-             else if ((!strcmp(ev->key, "Up")) ||
-                      (!strcmp(ev->key, "KP_Up")))
-               elm_widget_focus_cycle(sd->box, ELM_FOCUS_UP);
-             else if ((!strcmp(ev->key, "Down")) ||
-                      (!strcmp(ev->key, "KP_Down")))
-               elm_widget_focus_cycle(sd->box, ELM_FOCUS_DOWN);
+        if ((!strcmp(ev->key, "Left")) ||
+            ((!strcmp(ev->key, "KP_Left")) && (!ev->string)))
+          elm_widget_focus_cycle(sd->box, ELM_FOCUS_LEFT);
+        else if ((!strcmp(ev->key, "Right")) ||
+                 ((!strcmp(ev->key, "KP_Right")) && (!ev->string)))
+          elm_widget_focus_cycle(sd->box, ELM_FOCUS_RIGHT);
+        else if ((!strcmp(ev->key, "Up")) ||
+                 ((!strcmp(ev->key, "KP_Up")) && (!ev->string)))
+          elm_widget_focus_cycle(sd->box, ELM_FOCUS_UP);
+        else if ((!strcmp(ev->key, "Down")) ||
+                 ((!strcmp(ev->key, "KP_Down")) && (!ev->string)))
+          elm_widget_focus_cycle(sd->box, ELM_FOCUS_DOWN);
 
-             ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-             if (ret) *ret = EINA_TRUE;
-             return;
-          }
+        goto success;
      }
 
-   if (strcmp(ev->key, "Escape")) return;
+   if (!strcmp(ev->key, "Escape"))
+     evas_object_hide(obj);
+   else
+     return;
 
-   evas_object_hide(obj);
+success:
    ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
    if (ret) *ret = EINA_TRUE;
 }

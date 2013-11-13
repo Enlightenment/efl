@@ -455,9 +455,8 @@ _elm_spinner_smart_event(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
           {
              _val_dec_start(obj);
              elm_layout_signal_emit(obj, "elm,left,anim,activate", "elm");
-             ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-             if (ret) *ret = EINA_TRUE;
-             return;
+
+             goto success;
           }
         else if (
            ( (!strcmp(ev->key, "Right") ||
@@ -471,9 +470,8 @@ _elm_spinner_smart_event(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
           {
              _val_inc_start(obj);
              elm_layout_signal_emit(obj, "elm,right,anim,activate", "elm");
-             ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-             if (ret) *ret = EINA_TRUE;
-             return;
+
+             goto success;
           }
      }
    else if (type == EVAS_CALLBACK_KEY_UP)
@@ -490,11 +488,14 @@ _elm_spinner_smart_event(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
           _val_dec_stop(obj);
         else return;
 
-        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-
-        if (ret) *ret = EINA_TRUE;
-        return;
+        goto success;
      }
+
+   return;
+
+success:
+   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+   if (ret) *ret = EINA_TRUE;
 }
 
 static void

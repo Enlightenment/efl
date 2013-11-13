@@ -666,13 +666,12 @@ _elm_toolbar_smart_event(Eo *obj, void *_pd, va_list *list)
    if (!sd->items) return;
 
    if ((!strcmp(ev->key, "Return")) ||
-            ((!strcmp(ev->key, "KP_Enter")) && !ev->string))
+       ((!strcmp(ev->key, "KP_Enter")) && !ev->string))
      {
         if (sd->highlighted_item)
           _item_select(sd->highlighted_item);
-        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-        if (ret) *ret = EINA_TRUE;
-        return;
+
+        goto success;
      }
    else if ((!strcmp(ev->key, "Left")) ||
             ((!strcmp(ev->key, "KP_Left")) && !ev->string))
@@ -680,10 +679,7 @@ _elm_toolbar_smart_event(Eo *obj, void *_pd, va_list *list)
         if (!sd->vertical)
           it = _highlight_next_item_get(obj, sd->bx, EINA_TRUE);
         else
-          {
-             if (ret) *ret = EINA_FALSE;
-             return;
-          }
+          return;
      }
    else if ((!strcmp(ev->key, "Right")) ||
             ((!strcmp(ev->key, "KP_Right")) && !ev->string))
@@ -691,10 +687,7 @@ _elm_toolbar_smart_event(Eo *obj, void *_pd, va_list *list)
         if (!sd->vertical)
           it = _highlight_next_item_get(obj, sd->bx, EINA_FALSE);
         else
-          {
-             if (ret) *ret = EINA_FALSE;
-             return;
-          }
+          return;
      }
    else if ((!strcmp(ev->key, "Up")) ||
             ((!strcmp(ev->key, "KP_Up")) && !ev->string))
@@ -702,10 +695,7 @@ _elm_toolbar_smart_event(Eo *obj, void *_pd, va_list *list)
         if (sd->vertical)
           it = _highlight_next_item_get(obj, sd->bx, EINA_TRUE);
         else
-          {
-             if (ret) *ret = EINA_FALSE;
-             return;
-          }
+          return;
      }
    else if ((!strcmp(ev->key, "Down")) ||
             ((!strcmp(ev->key, "KP_Down")) && !ev->string))
@@ -713,17 +703,11 @@ _elm_toolbar_smart_event(Eo *obj, void *_pd, va_list *list)
         if (sd->vertical)
           it = _highlight_next_item_get(obj, sd->bx, EINA_FALSE);
         else
-          {
-             if (ret) *ret = EINA_FALSE;
-             return;
-          }
+          return;
      }
 
    if (!it)
-     {
-        if (ret) *ret = EINA_FALSE;
-        return;
-     }
+     return;
 
    if (sd->highlighted_item)
      edje_object_signal_emit(VIEW(sd->highlighted_item), "elm,highlight,off", "elm");
@@ -734,6 +718,7 @@ _elm_toolbar_smart_event(Eo *obj, void *_pd, va_list *list)
          sd->highlighted_item, ELM_TOOLBAR_ITEM_SCROLLTO_IN, &x, &y, &w, &h))
      eo_do(obj, elm_scrollable_interface_region_bring_in(x, y, w, h));
 
+success:
    ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
    if (ret) *ret = EINA_TRUE;
 }
