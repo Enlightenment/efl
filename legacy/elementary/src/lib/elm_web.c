@@ -242,8 +242,6 @@ _view_smart_add(Evas_Object *obj)
 {
    View_Smart_Data *sd;
 
-   elm_widget_sub_object_parent_add(obj);
-
    sd = calloc(1, sizeof(View_Smart_Data));
    evas_object_smart_data_set(obj, sd);
 
@@ -1148,6 +1146,7 @@ _elm_web_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    elm_widget_resize_object_set(obj, resize_obj, EINA_TRUE);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
+   elm_widget_sub_object_parent_add(obj);
 
 #ifdef HAVE_ELEMENTARY_WEB
    ewk_view_setting_user_agent_set

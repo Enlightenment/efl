@@ -38,7 +38,6 @@ _view_smart_add(Evas_Object *obj)
 
    sd = calloc(1, sizeof(View_Smart_Data));
    evas_object_smart_data_set(obj, sd);
-   elm_widget_sub_object_parent_add(obj);
 
    _ewk_view_parent_sc.sc.add(obj);
 }
@@ -142,6 +141,7 @@ _elm_web_smart_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
    elm_widget_resize_object_set(obj, resize_obj, EINA_TRUE);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
+   elm_widget_sub_object_parent_add(obj);
 
    _view_smart_callback_proxy(resize_obj, obj);
    elm_widget_can_focus_set(obj, EINA_TRUE);
