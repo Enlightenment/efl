@@ -466,7 +466,6 @@ _elm_flipselector_smart_event(Eo *obj, void *_pd, va_list *list)
    _flipselector_unwalk(sd);
 
    ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-
    if (ret) *ret = EINA_TRUE;
 }
 

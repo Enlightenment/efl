@@ -736,7 +736,6 @@ _elm_toolbar_smart_event(Eo *obj, void *_pd, va_list *list)
 
    ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
    if (ret) *ret = EINA_TRUE;
-   return;
 }
 
 static void

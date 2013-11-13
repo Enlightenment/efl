@@ -1744,6 +1744,7 @@ _elm_colorselector_smart_event(Eo *obj, void *_pd, va_list *list)
      }
    else if (!cl && sd->focused == ELM_COLORSELECTOR_PALETTE)
      return;
+
    ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
    if (ret) *ret = EINA_TRUE;
 }

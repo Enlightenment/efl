@@ -658,8 +658,8 @@ _elm_image_smart_event(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
      return;
 
    _activate(obj);
-   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
 
+   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
    if (ret) *ret = EINA_TRUE;
 }
 
