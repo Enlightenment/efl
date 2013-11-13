@@ -23,6 +23,21 @@ _bt_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUS
    printf("clicked event on Button:%d\n", param);
 }
 
+#define NUM_LABEL 4
+const char *btn_label[NUM_LABEL] =
+{
+   "Label Only", "Label Only Test", "Label Only Test 2", "Short"
+};
+
+static void
+_bt_clicked_label_change_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   static int i = 1;
+   elm_object_text_set(obj, btn_label[i]);
+   i++;
+   if (i >= NUM_LABEL) i = 0;
+}
+
 static void
 _bt_unpressed(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
@@ -107,7 +122,8 @@ test_button(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Label Only");
-   evas_object_smart_callback_add(bt, "clicked", _bt_clicked, (void *)5);
+   evas_object_smart_callback_add(bt, "clicked",
+                                  _bt_clicked_label_change_cb, NULL);
    evas_object_smart_callback_add(bt, "unpressed", _bt_unpressed, (void *)5);
    elm_box_pack_end(bx, bt);
    evas_object_smart_callback_add(bt, "repeated", _bt_repeated, NULL);
