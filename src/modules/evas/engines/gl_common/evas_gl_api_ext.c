@@ -184,13 +184,13 @@ re->info->info.screen);
      }
 
 #define _EVASGL_EXT_CHECK_SUPPORT(name) \
-   (strstr(glexts, #name) != NULL || strstr(glueexts, #name) != NULL)
+   (strstr(glexts, name) != NULL || strstr(glueexts, name) != NULL)
 
 #define _EVASGL_EXT_DISCARD_SUPPORT() \
    *ext_support = 0;
 
 #define _EVASGL_EXT_DRVNAME(name) \
-   if (_EVASGL_EXT_CHECK_SUPPORT(name)) *ext_support = 1;
+   if (_EVASGL_EXT_CHECK_SUPPORT(#name)) *ext_support = 1;
 
 #define _EVASGL_EXT_FUNCTION_BEGIN(ret, name, param) \
      { \
