@@ -535,7 +535,7 @@ test_toolbar5(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    elm_object_item_disabled_set(tb_it, EINA_TRUE);
    elm_toolbar_item_priority_set(tb_it, 100);
 
-   snprintf(buf, sizeof(buf), "%s/images/icon_04.pngj", elm_app_data_dir_get());
+   snprintf(buf, sizeof(buf), "%s/images/icon_04.png", elm_app_data_dir_get());
    tb_it = elm_toolbar_item_append(tb, buf, "World", _tb_sel2_cb, ph1);
    elm_toolbar_item_priority_set(tb_it, -100);
 
