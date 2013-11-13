@@ -1410,7 +1410,7 @@ _magnifier_create(void *data)
    sd->mgf_clip = evas_object_rectangle_add(e);
    edje_object_part_swallow(sd->mgf_bg, "elm.swallow.content", sd->mgf_clip);
 
-   sd->mgf_proxy = evas_object_image_add(e);
+   sd->mgf_proxy = evas_object_image_filled_add(e);
 
    if (sd->scroll)
      {
@@ -1428,7 +1428,6 @@ _magnifier_create(void *data)
    if ((mw <= 0) || (mh <= 0)) return;
 
    evas_object_resize(sd->mgf_proxy, mw, mh);
-   evas_object_image_fill_set(sd->mgf_proxy, 0, 0, mw, mh);
    evas_object_pass_events_set(sd->mgf_proxy, EINA_TRUE);
    evas_object_show(sd->mgf_proxy);
    evas_object_clip_set(sd->mgf_proxy, sd->mgf_clip);
