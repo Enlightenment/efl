@@ -154,8 +154,6 @@ test_hoversel(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    elm_hoversel_item_add(hoversel, "Item 2", NULL, ELM_ICON_NONE, NULL, NULL);
    elm_hoversel_item_add(hoversel, "Item 3", NULL, ELM_ICON_NONE, NULL, NULL);
    elm_hoversel_item_add(hoversel, "Item 4 - Long Label Here", "close", ELM_ICON_STANDARD, NULL, NULL);
-   evas_object_size_hint_weight_set(hoversel, 0.0, 0.0);
-   evas_object_size_hint_align_set(hoversel, 0.5, 0.5);
    evas_object_smart_callback_add(hoversel, "clicked",
                                   _hoversel_clicked_cb, NULL);
    evas_object_smart_callback_add(hoversel, "selected",
@@ -174,8 +172,6 @@ test_hoversel(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
                          NULL);
    elm_hoversel_item_add(hoversel, "Item 4", "close", ELM_ICON_STANDARD, NULL,
                          NULL);
-   evas_object_size_hint_weight_set(hoversel, 0.0, 0.0);
-   evas_object_size_hint_align_set(hoversel, 0.5, 0.5);
    elm_box_pack_end(bx, hoversel);
    evas_object_show(hoversel);
 
@@ -190,8 +186,6 @@ test_hoversel(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
                          NULL);
    elm_hoversel_item_add(hoversel, "Item 4", "close", ELM_ICON_STANDARD, NULL,
                          NULL);
-   evas_object_size_hint_weight_set(hoversel, 0.0, 0.0);
-   evas_object_size_hint_align_set(hoversel, 0.5, 0.5);
    elm_box_pack_end(bx, hoversel);
    evas_object_show(hoversel);
 
@@ -206,8 +200,6 @@ test_hoversel(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
                          NULL);
    elm_hoversel_item_add(hoversel, "Item 4", "close", ELM_ICON_STANDARD, NULL,
                          NULL);
-   evas_object_size_hint_weight_set(hoversel, 0.0, 0.0);
-   evas_object_size_hint_align_set(hoversel, 0.5, 0.5);
    elm_box_pack_end(bx, hoversel);
    evas_object_show(hoversel);
 
@@ -219,8 +211,6 @@ test_hoversel(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    elm_hoversel_item_add(hoversel, "Item 2", "close", ELM_ICON_STANDARD, NULL,
                          NULL);
    elm_object_disabled_set(hoversel, 1);
-   evas_object_size_hint_weight_set(hoversel, 0.0, 0.0);
-   evas_object_size_hint_align_set(hoversel, 0.5, 0.5);
    elm_box_pack_end(bx, hoversel);
    evas_object_show(hoversel);
 
@@ -242,8 +232,6 @@ test_hoversel(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
                          NULL);
    elm_hoversel_item_add(hoversel, "Item 4", "close", ELM_ICON_STANDARD, NULL,
                          NULL);
-   evas_object_size_hint_weight_set(hoversel, 0.0, 0.0);
-   evas_object_size_hint_align_set(hoversel, 0.5, 0.5);
    elm_box_pack_end(bx, hoversel);
    evas_object_show(hoversel);
 
