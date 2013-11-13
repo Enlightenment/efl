@@ -1395,11 +1395,11 @@ _magnifier_create(void *data)
 
    double scale = _elm_config->magnifier_scale;
    Evas *e;
-   Evas_Object *mgf_clip;
    Evas_Coord w, h, mw, mh;
 
    if (sd->mgf_proxy) evas_object_del(sd->mgf_proxy);
    if (sd->mgf_bg) evas_object_del(sd->mgf_bg);
+   if (sd->mgf_clip) evas_object_del(sd->mgf_clip);
 
    e = evas_object_evas_get(data);
 
@@ -1407,8 +1407,8 @@ _magnifier_create(void *data)
    _elm_theme_object_set(data, sd->mgf_bg, "entry", "magnifier", "default");
    evas_object_show(sd->mgf_bg);
 
-   mgf_clip = evas_object_rectangle_add(e);
-   edje_object_part_swallow(sd->mgf_bg, "elm.swallow.content", mgf_clip);
+   sd->mgf_clip = evas_object_rectangle_add(e);
+   edje_object_part_swallow(sd->mgf_bg, "elm.swallow.content", sd->mgf_clip);
 
    sd->mgf_proxy = evas_object_image_add(e);
 
@@ -1431,7 +1431,7 @@ _magnifier_create(void *data)
    evas_object_image_fill_set(sd->mgf_proxy, 0, 0, mw, mh);
    evas_object_pass_events_set(sd->mgf_proxy, EINA_TRUE);
    evas_object_show(sd->mgf_proxy);
-   evas_object_clip_set(sd->mgf_proxy, mgf_clip);
+   evas_object_clip_set(sd->mgf_proxy, sd->mgf_clip);
 
    evas_object_layer_set(sd->mgf_bg, EVAS_LAYER_MAX);
    evas_object_layer_set(sd->mgf_proxy, EVAS_LAYER_MAX);
@@ -3336,6 +3336,7 @@ _elm_entry_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    if (sd->mgf_proxy) evas_object_del(sd->mgf_proxy);
    if (sd->mgf_bg) evas_object_del(sd->mgf_bg);
+   if (sd->mgf_clip) evas_object_del(sd->mgf_clip);
 
    entries = eina_list_remove(entries, obj);
 #ifdef HAVE_ELEMENTARY_X
