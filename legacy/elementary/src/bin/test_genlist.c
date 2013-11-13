@@ -3630,3 +3630,132 @@ test_genlist_multi_select(void *data EINA_UNUSED,
      }
    elm_genlist_item_class_free(itc);
 }
+
+/* test genlist deletion */
+
+static void _gl_del_sel(void *data, Evas_Object *obj, void *event_info);
+
+static void
+_gl_del_win_del_cb(void *data, Evas *e EINA_UNUSED,
+                   Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   if (!data) return;
+   elm_genlist_item_class_free(data);
+}
+
+static Evas_Object *
+_gl_del_genlist_add(Evas_Object *bx)
+{
+   Evas_Object *gl = NULL;
+
+   gl = elm_genlist_add(bx);
+   evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(bx, gl);
+   evas_object_show(gl);
+
+   return gl;
+}
+
+static void
+_gl_del_item_append(Evas_Object *gl, Elm_Genlist_Item_Class *itc)
+{
+   int i = 0;
+   for (i = 0; i < 1000; i++)
+     {
+        elm_genlist_item_append(gl, itc,
+                                (void *)(uintptr_t)i/* item data */,
+                                NULL/* parent */,
+                                ELM_GENLIST_ITEM_NONE,
+                                _gl_del_sel/* func */,
+                                (void *)(uintptr_t)(i)/* func data */);
+     }
+}
+
+char *_gl_del_text_get(void *data, Evas_Object *obj EINA_UNUSED,
+                      const char *part EINA_UNUSED)
+{
+   char buf[256] = { 0 };
+   int num = (int)(uintptr_t)data;
+   int num_category = num % 3;
+
+   if (num_category == 0)
+     snprintf(buf, sizeof(buf), "Item # %i - Item Del", num);
+   else if (num_category == 1)
+     snprintf(buf, sizeof(buf), "Item # %i - Genlist Clear and Item Append",
+              num);
+   else if (num_category == 2)
+     snprintf(buf, sizeof(buf), "Item # %i - Genlist Del", num);
+
+   return strdup(buf);
+}
+
+static void
+_gl_del_sel(void *data, Evas_Object *obj, void *event_info)
+{
+   int num = (int)(uintptr_t)data;
+   int num_category = num % 3;
+   Elm_Object_Item *it = event_info;
+   Elm_Genlist_Item_Class *itc =
+      (Elm_Genlist_Item_Class *)elm_genlist_item_item_class_get(it);
+
+   if (num_category == 0)
+     elm_object_item_del(it);
+   else if (num_category == 1)
+     {
+        elm_genlist_clear(obj);
+        _gl_del_item_append(elm_object_item_widget_get(it), itc);
+     }
+   else if (num_category == 2)
+     {
+        evas_object_del(obj);
+     }
+}
+
+void
+test_genlist_del(void *data EINA_UNUSED,
+                 Evas_Object *obj EINA_UNUSED,
+                 void *event_info EINA_UNUSED)
+{
+   Evas_Object *win, *bx, *fr, *lb, *gl;
+   Elm_Genlist_Item_Class *itc = NULL;
+
+   win = elm_win_util_standard_add("genlist-del", "Genlist Del");
+   elm_win_autodel_set(win, EINA_TRUE);
+   evas_object_resize(win, 320, 500);
+   evas_object_show(win);
+
+   bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bx);
+   elm_box_align_set(bx, 0.5, 0.0);
+   evas_object_show(bx);
+
+   fr = elm_frame_add(bx);
+   evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_object_text_set(fr, "Information");
+   elm_box_pack_end(bx, fr);
+   evas_object_show(fr);
+
+   lb = elm_label_add(fr);
+   elm_object_text_set(lb, "<align=left>This example tests the following cases"
+                       " on item selection.<br/>"
+                       "   1. genlist item deletion<br/>"
+                       "   2. genlist clear and item append<br/>"
+                       "   3. genlist del</align>");
+   elm_object_content_set(fr, lb);
+   evas_object_show(lb);
+
+   itc = elm_genlist_item_class_new();
+   itc->item_style     = "default";
+   itc->func.text_get = _gl_del_text_get;
+   itc->func.content_get  = gl_content_get;
+   itc->func.state_get = NULL;
+   itc->func.del       = NULL;
+   evas_object_event_callback_add(win, EVAS_CALLBACK_DEL,
+                                  _gl_del_win_del_cb, itc);
+
+   gl = _gl_del_genlist_add(bx);
+   _gl_del_item_append(gl, itc);
+}
