@@ -1207,6 +1207,8 @@ main(int argc, char **argv)
    void *n;
    int k, bytes;
 
+   ecore_app_no_system_modules();
+
    eina_init();
    eet_init();
    ecore_init();

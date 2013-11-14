@@ -142,6 +142,9 @@ main(int argc, char **argv)
    int i;
 
    setlocale(LC_NUMERIC, "C");
+
+   ecore_app_no_system_modules();
+
    if (!eina_init())
      exit(-1);
    _edje_cc_log_dom = eina_log_domain_register

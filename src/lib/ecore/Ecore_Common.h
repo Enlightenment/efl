@@ -1741,6 +1741,22 @@ EAPI void ecore_app_args_get(int *argc, char ***argv);
 EAPI void ecore_app_restart(void);
 
 /**
+ * @brief Do not load system modules for this application.
+ *
+ * Ecore will now load platform-specific system modules such as
+ * power-management, time and locate monitors.
+ *
+ * Whenever this function is called @b before ecore_init(), ecore
+ * won't load such modules.
+ *
+ * This may be useful to some command-line utilities, hardly will be
+ * useful for end-user applications.
+ *
+ * @since 1.8
+ */
+EAPI void ecore_app_no_system_modules(void);
+
+/**
  * @}
  */
 

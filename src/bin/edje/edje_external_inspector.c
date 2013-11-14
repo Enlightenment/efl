@@ -602,6 +602,8 @@ main(int argc, char **argv)
 
    setlocale(LC_NUMERIC, "C");
 
+   ecore_app_no_system_modules();
+
    ecore_init();
    eina_init();
    edje_init();

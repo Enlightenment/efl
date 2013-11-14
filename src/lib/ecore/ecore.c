@@ -52,6 +52,8 @@ static FILE *_ecore_memory_statistic_file = NULL;
 #endif
 #endif
 
+static Eina_Bool _no_system_modules = EINA_FALSE;
+
 Eo *_ecore_parent = NULL;
 
 static const char *_ecore_magic_string_get(Ecore_Magic m);
@@ -194,6 +196,12 @@ ecore_system_modules_unload(void)
      }
 }
 
+EAPI void
+ecore_app_no_system_modules(void)
+{
+   _no_system_modules = EINA_TRUE;
+}
+
 /**
  * @addtogroup Ecore_Init_Group
  *
@@ -320,7 +328,8 @@ ecore_init(void)
      }
 #endif
 
-   ecore_system_modules_load();
+   if (!_no_system_modules)
+     ecore_system_modules_load();
 
    eina_log_timing(_ecore_log_dom,
 		   EINA_LOG_STATE_STOP,
