@@ -2044,6 +2044,10 @@ _interaction_set(Eo *obj, void *_pd, va_list *list)
 
    if (sd->intmode == mode) return;
    sd->intmode = mode;
+
+   Evas *e = evas_object_evas_get(obj);
+   Evas_Object *clip = evas_object_clip_get(obj);
+
    for (i = 0; i < 4; i++)
      {
         if (sd->intmode == ELM_FLIP_INTERACTION_NONE)
@@ -2058,11 +2062,10 @@ _interaction_set(Eo *obj, void *_pd, va_list *list)
           {
              if ((sd->dir_enabled[i]) && (!sd->event[i]))
                {
-                  Evas *e = evas_object_evas_get(obj);
                   sd->event[i] = evas_object_rectangle_add(e);
 
                   evas_object_data_set(sd->event[i], "_elm_leaveme", obj);
-                  evas_object_clip_set(sd->event[i], evas_object_clip_get(obj));
+                  evas_object_clip_set(sd->event[i], clip);
                   evas_object_color_set(sd->event[i], 0, 0, 0, 0);
                   evas_object_show(sd->event[i]);
                   evas_object_smart_member_add(sd->event[i], obj);
