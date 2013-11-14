@@ -1078,7 +1078,7 @@ _ecore_evas_wl_common_border_update(Ecore_Evas *ee)
    if (!wdata->frame)
      return;
 
-   if (ee->prop.borderless || ee->prop.fullscreen)
+   if ((ee->prop.borderless) || (ee->prop.fullscreen))
      {
         evas_object_hide(wdata->frame);
         evas_output_framespace_set(ee->evas, 0, 0, 0, 0);
@@ -1115,8 +1115,8 @@ _ecore_evas_wl_common_maximized_set(Ecore_Evas *ee, int max)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!ee) return;
-   wdata = ee->engine.data;
    if (ee->prop.maximized == max) return;
+   wdata = ee->engine.data;
    ecore_wl_window_maximized_set(wdata->win, max);
    _ecore_evas_wl_common_state_update(ee);
 }
@@ -1228,8 +1228,8 @@ _ecore_evas_wl_frame_complete(void *data, struct wl_callback *callback, uint32_t
 
    if (ecore_wl_window_surface_get(win))
      {
-        wdata->frame_callback = wl_surface_frame
-           (ecore_wl_window_surface_get(win));
+        wdata->frame_callback = 
+          wl_surface_frame(ecore_wl_window_surface_get(win));
         wl_callback_add_listener(wdata->frame_callback, &frame_listener, ee);
      }
 }
@@ -1273,8 +1273,8 @@ _ecore_evas_wl_common_render(Ecore_Evas *ee)
 
              if (!wdata->frame_callback)
                {
-                  wdata->frame_callback = wl_surface_frame
-                     (ecore_wl_window_surface_get(win));
+                  wdata->frame_callback = 
+                    wl_surface_frame(ecore_wl_window_surface_get(win));
                   wl_callback_add_listener(wdata->frame_callback, 
                                            &frame_listener, ee);
                }
