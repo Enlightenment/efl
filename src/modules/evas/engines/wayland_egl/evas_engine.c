@@ -896,7 +896,6 @@ eng_output_free(void *data)
         if (re->rects_prev[2]) 
           evas_common_tilebuf_free_render_rects(re->rects_prev[2]);
 
-        
         free(re);
      }
 
