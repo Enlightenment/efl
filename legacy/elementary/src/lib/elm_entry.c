@@ -1388,6 +1388,15 @@ _menu_call(Evas_Object *obj)
      }
 }
 
+static void _magnifier_move(void *data, Evas_Coord cx, Evas_Coord cy);
+
+static void
+_magnifier_proxy_update(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   ELM_ENTRY_DATA_GET(data, sd);
+   _magnifier_move(data, sd->downx, sd->downy);
+}
+
 static void
 _magnifier_create(void *data)
 {
@@ -1403,62 +1412,73 @@ _magnifier_create(void *data)
 
    e = evas_object_evas_get(data);
 
+   //Bg
    sd->mgf_bg = edje_object_add(e);
    _elm_theme_object_set(data, sd->mgf_bg, "entry", "magnifier", "default");
    evas_object_show(sd->mgf_bg);
 
+   //Proxy
+   sd->mgf_proxy = evas_object_image_add(e);
+   evas_object_event_callback_add(sd->mgf_proxy, EVAS_CALLBACK_RESIZE,
+                                  _magnifier_proxy_update, data);
+   evas_object_event_callback_add(sd->mgf_proxy, EVAS_CALLBACK_MOVE,
+                                  _magnifier_proxy_update, data);
+   edje_object_part_swallow(sd->mgf_bg, "elm.swallow.content", sd->mgf_proxy);
+   evas_object_image_source_set(sd->mgf_proxy, data);
+   evas_object_geometry_get(data, NULL, NULL, &w, &h);
+
+   //Clipper
    sd->mgf_clip = evas_object_rectangle_add(e);
-   edje_object_part_swallow(sd->mgf_bg, "elm.swallow.content", sd->mgf_clip);
-
-   sd->mgf_proxy = evas_object_image_filled_add(e);
-
-   if (sd->scroll)
-     {
-        evas_object_image_source_set(sd->mgf_proxy, sd->scr_edje);
-        evas_object_geometry_get(sd->scr_edje, NULL, NULL, &w, &h);
-     }
-   else
-     {
-        evas_object_image_source_set(sd->mgf_proxy, data);
-        evas_object_geometry_get(data, NULL, NULL, &w, &h);
-     }
+   evas_object_show(sd->mgf_clip);
+   evas_object_clip_set(sd->mgf_proxy, sd->mgf_clip);
 
    mw = (Evas_Coord)(scale * (float) w);
    mh = (Evas_Coord)(scale * (float) h);
    if ((mw <= 0) || (mh <= 0)) return;
-
-   evas_object_resize(sd->mgf_proxy, mw, mh);
-   evas_object_pass_events_set(sd->mgf_proxy, EINA_TRUE);
-   evas_object_show(sd->mgf_proxy);
-   evas_object_clip_set(sd->mgf_proxy, sd->mgf_clip);
 
    evas_object_layer_set(sd->mgf_bg, EVAS_LAYER_MAX);
    evas_object_layer_set(sd->mgf_proxy, EVAS_LAYER_MAX);
 }
 
 static void
-_magnifier_move(void *data, Evas_Coord px, Evas_Coord py)
+_magnifier_move(void *data, Evas_Coord cx, Evas_Coord cy)
 {
    ELM_ENTRY_DATA_GET(data, sd);
 
    Evas_Coord x, y, w, h;
-   Evas_Coord ex, ey;
-   Evas_Coord sx, sy;
-   const Evas_Object *obj_content;
+   Evas_Coord px, py, pw, ph;
+   double fx, fy, fw, fh;
+   double dw, dh;
    double scale = _elm_config->magnifier_scale;
 
+   //Move the Magnifier
    edje_object_parts_extends_calc(sd->mgf_bg, &x, &y, &w, &h);
-   evas_object_move(sd->mgf_bg, px - x - (w / 2), py - y - h);
+   evas_object_move(sd->mgf_bg, cx - x - (w / 2), cy - y - h);
 
-   obj_content = edje_object_part_object_get(sd->mgf_bg, "elm.swallow.content");
-   evas_object_geometry_get(obj_content, &x, &y, &w, &h);
-   sx = px - (x + (w / 2));
-   sy = py - (y + (h / 2));
+   //Set the Proxy Render Area
+   evas_object_geometry_get(data, &x, &y, &w, &h);
+   evas_object_geometry_get(sd->mgf_proxy, &px, &py, &pw, &ph);
 
-   if (sd->scroll) evas_object_geometry_get(sd->scr_edje, &ex, &ey, NULL, NULL);
-   else evas_object_geometry_get(data, &ex, &ey, NULL, NULL);
-   evas_object_move(sd->mgf_proxy, (ex * scale) - ((px * scale) - px) - sx,
-                    (ey * scale) - ((py * scale) - py) - sy);
+   dw = w;
+   dh = h;
+
+   fx = -(((double) (cx - x) / dw) * (scale * dw)) + ((double) pw * 0.5);
+   fy = -(((double) (cy - y) / dh) * (scale * dh)) + ((double) ph * 0.5);
+   fw = dw * scale;
+   fh = dh * scale;
+   evas_object_image_fill_set(sd->mgf_proxy, fx, fy, fw, fh);
+
+   //Update Clipper Area
+   int tx = fx;
+   int ty = fy;
+   int tw = fw;
+   int th = fh;
+   if (tx > 0) px += tx;
+   if (ty > 0) py += ty;
+   if (-(tx - pw) > tw) pw -= (-((tx - pw) + tw));
+   if (-(ty - ph) > th) ph -= (-((ty - ph) + th));
+   evas_object_move(sd->mgf_clip, px, py);
+   evas_object_resize(sd->mgf_clip, pw, ph);
 }
 
 static void
@@ -1467,6 +1487,7 @@ _magnifier_hide(void *data)
    ELM_ENTRY_DATA_GET(data, sd);
    edje_object_signal_emit(sd->mgf_bg, "elm,action,hide,magnifier", "elm");
    elm_widget_scroll_freeze_pop(data);
+   evas_object_hide(sd->mgf_clip);
 }
 
 static void
@@ -1475,6 +1496,7 @@ _magnifier_show(void *data)
    ELM_ENTRY_DATA_GET(data, sd);
    edje_object_signal_emit(sd->mgf_bg, "elm,action,show,magnifier", "elm");
    elm_widget_scroll_freeze_push(data);
+   evas_object_show(sd->mgf_clip);
 }
 
 static Eina_Bool
