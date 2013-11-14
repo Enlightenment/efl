@@ -265,8 +265,12 @@ ecore_wl_window_show(Ecore_Wl_Window *win)
              win->shell_surface = 
                wl_shell_get_shell_surface(_ecore_wl_disp->wl.shell, 
                                           win->surface);
-             wl_shell_surface_set_title(win->shell_surface, win->title);
-             wl_shell_surface_set_class(win->shell_surface, win->class_name);
+             if (!win->shell_surface) return;
+
+             if (win->title)
+               wl_shell_surface_set_title(win->shell_surface, win->title);
+             if (win->class_name)
+               wl_shell_surface_set_class(win->shell_surface, win->class_name);
           }
 
         if (win->shell_surface)
@@ -707,7 +711,7 @@ ecore_wl_window_title_set(Ecore_Wl_Window *win, const char *title)
    if (!win) return;
    eina_stringshare_replace(&win->title, title);
 
-   if (win->shell_surface)
+   if ((win->shell_surface) && (win->title))
      wl_shell_surface_set_title(win->shell_surface, win->title);
 }
 
@@ -720,7 +724,7 @@ ecore_wl_window_class_name_set(Ecore_Wl_Window *win, const char *class_name)
    if (!win) return;
    eina_stringshare_replace(&win->class_name, class_name);
 
-   if (win->shell_surface)
+   if ((win->shell_surface) && (win->class_name))
      wl_shell_surface_set_class(win->shell_surface, win->class_name);
 }
 
