@@ -1508,13 +1508,13 @@ _event_anim(void *data,
 
       case ELM_FLIP_INTERACTION_ROTATE:
       case ELM_FLIP_INTERACTION_CUBE:
-      {
-         Elm_Flip_Mode m = ELM_FLIP_ROTATE_X_CENTER_AXIS;
-         int rev = 0;
-         p = _pos_get(sd->obj, sd, &rev, &m);
-         _flip_do(sd->obj, p, m, 1, rev);
-      }
-      break;
+          {
+             Elm_Flip_Mode m = ELM_FLIP_ROTATE_X_CENTER_AXIS;
+             int rev = 0;
+             p = _pos_get(sd->obj, sd, &rev, &m);
+             _flip_do(sd->obj, p, m, 1, rev);
+          }
+        break;
 
       case ELM_FLIP_INTERACTION_PAGE:
         sd->pageflip = EINA_TRUE;
