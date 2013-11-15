@@ -789,7 +789,10 @@ ecore_imf_context_input_panel_show(Ecore_IMF_Context *ctx)
      }
 
    show_req_ctx = ctx;
-   if (ctx->klass->show) ctx->klass->show(ctx);
+   if (ctx->input_panel_enabled)
+     {
+        if (ctx->klass->show) ctx->klass->show(ctx);
+     }
 }
 
 EAPI void
@@ -802,7 +805,10 @@ ecore_imf_context_input_panel_hide(Ecore_IMF_Context *ctx)
         return;
      }
 
-   if (ctx->klass->hide) ctx->klass->hide(ctx);
+   if (ctx->input_panel_enabled)
+     {
+        if (ctx->klass->hide) ctx->klass->hide(ctx);
+     }
 }
 
 EAPI void
