@@ -20,7 +20,7 @@
 typedef struct _Elm_Index_Smart_Data Elm_Index_Smart_Data;
 struct _Elm_Index_Smart_Data
 {
-   Evas_Object          *event[2];
+   Evas_Object          *event_rect[2]; /*<< rectangle objects for event handling */
    Evas_Object          *bx[2]; // 2 - for now all that's supported
    Eina_List            *items;  /* 1 list. N levels, but only 2
                                   * for now and # of items will be

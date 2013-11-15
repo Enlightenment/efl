@@ -352,7 +352,7 @@ _elm_index_smart_theme(Eo *obj, void *_pd, va_list *list)
    if (!int_ret) return;
 
    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
-   evas_object_size_hint_min_set(sd->event[0], minw, minh);
+   evas_object_size_hint_min_set(sd->event_rect[0], minw, minh);
 
    if (edje_object_part_exists
          (wd->resize_obj, "elm.swallow.index.1"))
@@ -374,20 +374,20 @@ _elm_index_smart_theme(Eo *obj, void *_pd, va_list *list)
    if (edje_object_part_exists
          (wd->resize_obj, "elm.swallow.event.1"))
      {
-        if (!sd->event[1])
+        if (!sd->event_rect[1])
           {
-             sd->event[1] =
+             sd->event_rect[1] =
                evas_object_rectangle_add(evas_object_evas_get(obj));
-             evas_object_color_set(sd->event[1], 0, 0, 0, 0);
-             elm_widget_sub_object_add(obj, sd->event[1]);
+             evas_object_color_set(sd->event_rect[1], 0, 0, 0, 0);
+             elm_widget_sub_object_add(obj, sd->event_rect[1]);
           }
-        elm_layout_content_set(obj, "elm.swallow.event.1", sd->event[1]);
-        evas_object_size_hint_min_set(sd->event[1], minw, minh);
+        elm_layout_content_set(obj, "elm.swallow.event.1", sd->event_rect[1]);
+        evas_object_size_hint_min_set(sd->event_rect[1], minw, minh);
      }
-   else if (sd->event[1])
+   else if (sd->event_rect[1])
      {
-        evas_object_del(sd->event[1]);
-        sd->event[1] = NULL;
+        evas_object_del(sd->event_rect[1]);
+        sd->event_rect[1] = NULL;
      }
    edje_object_message_signal_process(wd->resize_obj);
 
@@ -914,7 +914,7 @@ _elm_index_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    evas_object_event_callback_add
      (obj, EVAS_CALLBACK_RESIZE, _index_resize_cb, NULL);
 
-   priv->event[0] = o = evas_object_rectangle_add(evas_object_evas_get(obj));
+   priv->event_rect[0] = o = evas_object_rectangle_add(evas_object_evas_get(obj));
    evas_object_color_set(o, 0, 0, 0, 0);
    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
    evas_object_size_hint_min_set(o, minw, minh);
@@ -944,7 +944,7 @@ _elm_index_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
          (wd->resize_obj, "elm.swallow.event.1"))
      {
         o = evas_object_rectangle_add(evas_object_evas_get(obj));
-        priv->event[1] = o;
+        priv->event_rect[1] = o;
         evas_object_color_set(o, 0, 0, 0, 0);
         evas_object_size_hint_min_set(o, minw, minh);
         elm_layout_content_set(obj, "elm.swallow.event.1", o);
@@ -1071,11 +1071,11 @@ _access_obj_process(Evas_Object *obj, Eina_Bool is_access)
         _access_index_register(obj);
 
         evas_object_event_callback_add
-          (sd->event[0], EVAS_CALLBACK_MOUSE_IN, _on_mouse_in_access, obj);
+          (sd->event_rect[0], EVAS_CALLBACK_MOUSE_IN, _on_mouse_in_access, obj);
         evas_object_event_callback_add
-          (sd->event[0], EVAS_CALLBACK_MOUSE_MOVE, _on_mouse_move_access, obj);
+          (sd->event_rect[0], EVAS_CALLBACK_MOUSE_MOVE, _on_mouse_move_access, obj);
         evas_object_event_callback_add
-          (sd->event[0], EVAS_CALLBACK_MOUSE_OUT, _on_mouse_out_access, obj);
+          (sd->event_rect[0], EVAS_CALLBACK_MOUSE_OUT, _on_mouse_out_access, obj);
      }
    else
      {
@@ -1085,11 +1085,11 @@ _access_obj_process(Evas_Object *obj, Eina_Bool is_access)
              (obj, elm_layout_edje_get(obj), "access");
 
         evas_object_event_callback_del_full
-          (sd->event[0], EVAS_CALLBACK_MOUSE_IN, _on_mouse_in_access, obj);
+          (sd->event_rect[0], EVAS_CALLBACK_MOUSE_IN, _on_mouse_in_access, obj);
         evas_object_event_callback_del_full
-          (sd->event[0], EVAS_CALLBACK_MOUSE_MOVE, _on_mouse_move_access, obj);
+          (sd->event_rect[0], EVAS_CALLBACK_MOUSE_MOVE, _on_mouse_move_access, obj);
         evas_object_event_callback_del_full
-          (sd->event[0], EVAS_CALLBACK_MOUSE_OUT, _on_mouse_out_access, obj);
+          (sd->event_rect[0], EVAS_CALLBACK_MOUSE_OUT, _on_mouse_out_access, obj);
      }
 }
 
