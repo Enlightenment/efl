@@ -871,19 +871,19 @@ _on_mouse_out_access(void *data,
 }
 
 static void
-_index_resize_cb(void *data,
+_index_resize_cb(void *data __UNUSED__,
                  Evas *e __UNUSED__,
-                 Evas_Object *obj __UNUSED__,
+                 Evas_Object *obj,
                  void *event_info __UNUSED__)
 {
-   ELM_INDEX_DATA_GET_OR_RETURN(data, sd);
+   ELM_INDEX_DATA_GET_OR_RETURN(obj, sd);
 
    if (!sd->omit_enabled) return;
 
    Elm_Index_Item *it;
 
-   _index_box_clear(data, 0);
-   _index_box_auto_fill(data, 0);
+   _index_box_clear(obj, 0);
+   _index_box_auto_fill(obj, 0);
 
    it = (Elm_Index_Item *)elm_index_selected_item_get(obj, sd->level);
    if (it)
@@ -899,7 +899,7 @@ static void
 _elm_index_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Evas_Object *o;
-   Evas_Coord minw, minh;
+   Evas_Coord minw = 0, minh = 0;
 
    Elm_Index_Smart_Data *priv = _pd;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
@@ -911,17 +911,15 @@ _elm_index_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
        (obj, "index", "base/vertical", elm_widget_style_get(obj)))
      CRITICAL("Failed to set layout!");
 
-   o = evas_object_rectangle_add(evas_object_evas_get(obj));
-   priv->event[0] = o;
+   evas_object_event_callback_add
+     (obj, EVAS_CALLBACK_RESIZE, _index_resize_cb, NULL);
+
+   priv->event[0] = o = evas_object_rectangle_add(evas_object_evas_get(obj));
    evas_object_color_set(o, 0, 0, 0, 0);
-   minw = minh = 0;
    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
    evas_object_size_hint_min_set(o, minw, minh);
    elm_layout_content_set(obj, "elm.swallow.event.0", o);
-   elm_widget_sub_object_add(obj, o);
 
-   evas_object_event_callback_add
-     (obj, EVAS_CALLBACK_RESIZE, _index_resize_cb, obj);
    evas_object_event_callback_add
      (o, EVAS_CALLBACK_MOUSE_WHEEL, _on_mouse_wheel, obj);
    evas_object_event_callback_add
@@ -950,12 +948,10 @@ _elm_index_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
         evas_object_color_set(o, 0, 0, 0, 0);
         evas_object_size_hint_min_set(o, minw, minh);
         elm_layout_content_set(obj, "elm.swallow.event.1", o);
-        elm_widget_sub_object_add(obj, o);
      }
 
    priv->bx[0] = evas_object_box_add(evas_object_evas_get(obj));
    evas_object_box_layout_set(priv->bx[0], _box_custom_layout, priv, NULL);
-   elm_widget_sub_object_add(obj, priv->bx[0]);
    elm_layout_content_set(obj, "elm.swallow.index.0", priv->bx[0]);
    evas_object_show(priv->bx[0]);
 
