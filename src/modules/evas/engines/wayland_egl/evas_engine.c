@@ -2312,10 +2312,13 @@ eng_image_cache_flush(void *data)
    Render_Engine *re;
    int tmp_size;
 
+   re = (Render_Engine *)data;
+
+   if (re) eng_window_use(re->win);
+
    tmp_size = evas_common_image_get_cache();
    evas_common_image_set_cache(0);
    evas_common_rgba_image_scalecache_flush();
-   re = (Render_Engine *)data;
    evas_gl_common_image_cache_flush(re->win->gl_context);
 //   if ((re = (Render_Engine *)data))
 //     evas_gl_common_image_cache_flush(re->win->gl_context);
@@ -2327,9 +2330,12 @@ eng_image_cache_set(void *data, int bytes)
 {
    Render_Engine *re;
 
+   re = (Render_Engine *)data;
+
+   if (re) eng_window_use(re->win);
+
    evas_common_image_set_cache(bytes);
    evas_common_rgba_image_scalecache_size_set(bytes);
-   re = (Render_Engine *)data;
    evas_gl_common_image_cache_flush(re->win->gl_context);
 //   if (!(re = (Render_Engine *)data)) return;
 //   if (re->win) evas_gl_common_image_cache_flush(re->win->gl_context);
