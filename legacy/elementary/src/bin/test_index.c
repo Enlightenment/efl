@@ -323,6 +323,16 @@ _test_index2_it_add(void *data, Evas_Object *obj EINA_UNUSED, void *event_info E
 }
 
 static void
+_test_index2_clear(void *data, Evas_Object *obj EINA_UNUSED,
+                   void *event_info EINA_UNUSED)
+{
+   Test_Index2_Elements *gui = data;
+
+   elm_list_clear(gui->lst);
+   elm_index_item_clear(gui->id);
+}
+
+static void
 _test_index2_it_del(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Test_Index2_Elements *gui = data;
@@ -391,6 +401,7 @@ test_index2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    elm_entry_single_line_set(gui->entry, EINA_TRUE);
    evas_object_size_hint_weight_set(gui->entry, EVAS_HINT_EXPAND, 0);
    evas_object_size_hint_fill_set(gui->entry, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_smart_callback_add(gui->entry, "activated", _test_index2_it_add, gui);
    elm_box_pack_end(box, gui->entry);
    evas_object_show(gui->entry);
 
@@ -400,6 +411,14 @@ test_index2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    evas_object_size_hint_fill_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(box, bt);
    evas_object_smart_callback_add(bt, "clicked", _test_index2_it_add, gui);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Clear");
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0);
+   evas_object_size_hint_fill_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(box, bt);
+   evas_object_smart_callback_add(bt, "clicked", _test_index2_clear, gui);
    evas_object_show(bt);
 
    gui->lst = elm_list_add(win);
