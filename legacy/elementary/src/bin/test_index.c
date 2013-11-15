@@ -117,7 +117,8 @@ _api_bt_clicked(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 }
 
 static Elm_Genlist_Item_Class itci;
-char *gli_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNUSED)
+static char *
+_gli_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNUSED)
 {
    char buf[256];
    int j = (uintptr_t)data;
@@ -128,7 +129,7 @@ char *gli_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part EI
    return strdup(buf);
 }
 
-void
+static void
 _index_delay_changed_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    // called on a change but delayed in case multiple changes happen in a
@@ -137,14 +138,14 @@ _index_delay_changed_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, vo
                               ELM_GENLIST_ITEM_SCROLLTO_TOP);
 }
 
-void
+static void
 _index_changed_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    // this is called on every change, no matter how often
    // elm_genlist_item_bring_in(event_info);
 }
 
-void
+static void
 _index_selected_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    // called on final select
@@ -159,7 +160,7 @@ _cleanup_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
 }
 
 static void
-id_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+_id_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    printf("Current Index : %s\n", elm_index_item_letter_get((const Elm_Object_Item *)event_info));
 }
@@ -231,7 +232,7 @@ test_index(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
    evas_object_show(id);
 
    itci.item_style     = "default";
-   itci.func.text_get = gli_text_get;
+   itci.func.text_get = _gli_text_get;
    itci.func.content_get  = NULL;
    itci.func.state_get = NULL;
    itci.func.del       = NULL;
@@ -249,7 +250,7 @@ test_index(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
              char buf[32];
 
              snprintf(buf, sizeof(buf), "%c", 'A' + ((j >> 4) & 0xf));
-             elm_index_item_append(id, buf, id_cb, glit);
+             elm_index_item_append(id, buf, _id_cb, glit);
              if (*buf == 'G')  /* Just init dt->item later used in API test */
                api->dt.item = glit;
           }
@@ -268,15 +269,15 @@ typedef struct _Test_Index2_Elements
    Evas_Object *entry, *lst, *id;
 } Test_Index2_Elements;
 
-void
-test_index2_del(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+static void
+_test_index2_del(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    /* FIXME it won't be called if elm_test main window is closed */
    free(data);
 }
 
-int
-test_index2_cmp(const void *data1, const void *data2)
+static int
+_test_index2_cmp(const void *data1, const void *data2)
 {
    const char *label1, *label2;
    const Elm_Object_Item *li_it1 = data1;
@@ -288,8 +289,8 @@ test_index2_cmp(const void *data1, const void *data2)
    return strcasecmp(label1, label2);
 }
 
-int
-test_index2_icmp(const void *data1, const void *data2)
+static int
+_test_index2_icmp(const void *data1, const void *data2)
 {
    const char *label1, *label2;
    const Elm_Object_Item *index_it1 = data1;
@@ -301,8 +302,8 @@ test_index2_icmp(const void *data1, const void *data2)
    return strcasecmp(label1, label2);
 }
 
-void
-test_index2_it_add(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+static void
+_test_index2_it_add(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Test_Index2_Elements *gui = data;
    Elm_Object_Item *list_it;
@@ -312,17 +313,17 @@ test_index2_it_add(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EI
    label = elm_object_text_get(gui->entry);
    snprintf(letter, sizeof(letter), "%c", label[0]);
    list_it = elm_list_item_sorted_insert(gui->lst, label, NULL, NULL, NULL,
-                                         NULL, test_index2_cmp);
-   elm_index_item_sorted_insert(gui->id, letter, NULL, list_it, test_index2_icmp,
-                                test_index2_cmp);
+                                         NULL, _test_index2_cmp);
+   elm_index_item_sorted_insert(gui->id, letter, NULL, list_it, _test_index2_icmp,
+                                _test_index2_cmp);
    elm_index_level_go(gui->id, 0);
    elm_list_go(gui->lst);
    /* FIXME it's not showing the recently added item */
    elm_list_item_show(list_it);
 }
 
-void
-test_index2_it_del(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
+static void
+_test_index2_it_del(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Test_Index2_Elements *gui = data;
    const char *label, *label_next;
@@ -352,8 +353,8 @@ test_index2_it_del(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
    elm_object_item_del(list_it);
 }
 
-void
-test_index2_id_changed(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+static void
+_test_index2_id_changed(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    elm_list_item_show(elm_object_item_data_get(event_info));
 }
@@ -367,8 +368,10 @@ test_index2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    gui = malloc(sizeof(*gui));
 
    win = elm_win_util_standard_add("sorted-index-list", "Sorted Index and List");
-   evas_object_smart_callback_add(win, "delete,request", test_index2_del, gui);
+   evas_object_smart_callback_add(win, "delete,request", _test_index2_del, gui);
    elm_win_autodel_set(win, EINA_TRUE);
+   evas_object_resize(win, 320, 480);
+   evas_object_show(win);
 
    box = elm_box_add(win);
    evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -379,7 +382,7 @@ test_index2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    evas_object_size_hint_weight_set(gui->id, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, gui->id);
    evas_object_smart_callback_add(gui->id, "delay,changed",
-                                  test_index2_id_changed, NULL);
+                                  _test_index2_id_changed, NULL);
    evas_object_show(gui->id);
 
    gui->entry = elm_entry_add(win);
@@ -396,7 +399,7 @@ test_index2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0);
    evas_object_size_hint_fill_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(box, bt);
-   evas_object_smart_callback_add(bt, "clicked", test_index2_it_add, gui);
+   evas_object_smart_callback_add(bt, "clicked", _test_index2_it_add, gui);
    evas_object_show(bt);
 
    gui->lst = elm_list_add(win);
@@ -404,18 +407,15 @@ test_index2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    evas_object_size_hint_weight_set(gui->lst, EVAS_HINT_EXPAND,
                                     EVAS_HINT_EXPAND);
    evas_object_size_hint_fill_set(gui->lst, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_smart_callback_add(gui->lst, "selected", test_index2_it_del,
+   evas_object_smart_callback_add(gui->lst, "selected", _test_index2_it_del,
                                   gui);
    elm_list_go(gui->lst);
    evas_object_show(gui->lst);
-
-   evas_object_resize(win, 320, 480);
-   evas_object_show(win);
 }
 
 /***** Index Horizontal Mode ******/
 
-void
+static void
 _index_list_changed_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
                        void *event_info)
 {
@@ -436,6 +436,8 @@ test_index_horizontal(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    win = elm_win_util_standard_add("index-horizontal", "Index Horizontal");
    elm_win_autodel_set(win, EINA_TRUE);
    evas_object_event_callback_add(win, EVAS_CALLBACK_FREE, _cleanup_cb, api);
+   evas_object_resize(win, 480, 320);
+   evas_object_show(win);
 
    tb = elm_table_add(win);
    evas_object_size_hint_weight_set(tb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -461,11 +463,9 @@ test_index_horizontal(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
         sprintf(buf, "Item #%d", i);
         lit = elm_list_item_append(list, buf, NULL, NULL, NULL, NULL);
         sprintf(buf, "%d", i);
-        elm_index_item_append(id, buf, id_cb, lit);
+        elm_index_item_append(id, buf, _id_cb, lit);
      }
    evas_object_smart_callback_add(id, "changed", _index_list_changed_cb, NULL);
    elm_index_level_go(id, 0);
-   evas_object_resize(win, 480, 320);
-   evas_object_show(win);
 }
 
