@@ -458,7 +458,7 @@ _elm_slider_smart_activate(Eo *obj, void *_pd, va_list *list)
    Elm_Slider_Smart_Data *sd = _pd;
 
    if (elm_widget_disabled_get(obj)) return;
-   if (act != ELM_ACTIVATE_DEFAULT) return;
+   if (act == ELM_ACTIVATE_DEFAULT) return;
 
    if ((act == ELM_ACTIVATE_UP) ||
        (act == ELM_ACTIVATE_RIGHT))
