@@ -50,7 +50,6 @@ dnl check if the compiler supports POSIX threads
 if test "x${_efl_have_posix_threads}" = "xyes" ; then
 
    SAVE_LIBS=${LIBS}
-   SAVE_CFLAGS=${CFLAGS}
    LIBS="${LIBS} ${LIBMULTITHREAD}"
    AC_LINK_IFELSE(
       [AC_LANG_PROGRAM([[
@@ -73,7 +72,6 @@ pthread_attr_setaffinity_np(NULL, 0, NULL);
                        ]])],
       [efl_have_setaffinity="yes"],
       [efl_have_setaffinity="no"])
-   CFLAGS=${SAVE_CFLAGS}
    LIBS=${SAVE_LIBS}
 fi
 
@@ -102,7 +100,6 @@ efl_have_posix_threads_spinlock="no"
 
 if test "x${_efl_have_posix_threads}" = "xyes" ; then
    SAVE_LIBS=${LIBS}
-   SAVE_CFLAGS=${CFLAGS}
    LIBS="${LIBS} ${LIBMULTITHREAD}"
    AC_LINK_IFELSE(
       [AC_LANG_PROGRAM([[
@@ -117,7 +114,6 @@ sched_yield();
                        ]])],
       [efl_have_posix_threads_spinlock="yes"],
       [efl_have_posix_threads_spinlock="no"])
-   CFLAGS=${SAVE_CFLAGS}
    LIBS=${SAVE_LIBS}
 
 fi
