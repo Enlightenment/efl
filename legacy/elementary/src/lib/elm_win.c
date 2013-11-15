@@ -1691,6 +1691,32 @@ _elm_win_xwindow_get(Elm_Win_Smart_Data *sd)
 }
 #endif
 
+Ecore_Wl_Window *
+_elm_ee_wlwin_get(const Ecore_Evas *ee)
+{
+#ifdef HAVE_ELEMENTARY_WAYLAND
+   Ecore_Wl_Window *win = NULL;
+
+   if (!ee) return NULL;
+   if ((EE_ENGINE_COMPARE(ee, ELM_WAYLAND_SHM)) || 
+       (EE_ENGINE_COMPARE(ee, ELM_WAYLAND_EGL)))
+     {
+        if (ee) win = ecore_evas_wayland_window_get(ee);
+     }
+   return win;
+
+#endif
+   return NULL;
+}
+
+#ifdef HAVE_ELEMENTARY_WAYLAND
+static void
+_elm_win_wlwindow_get(Elm_Win_Smart_Data *sd)
+{
+   sd->wl.win = _elm_ee_wlwin_get(sd->ee);
+}
+#endif
+
 #ifdef HAVE_ELEMENTARY_X
 static void
 _elm_win_xwin_update(Elm_Win_Smart_Data *sd)
@@ -3028,7 +3054,7 @@ _win_constructor(Eo *obj, void *_pd, va_list *list)
 
 #ifdef HAVE_ELEMENTARY_WAYLAND
    if ((ENGINE_COMPARE(ELM_WAYLAND_SHM)) || (ENGINE_COMPARE(ELM_WAYLAND_EGL)))
-     sd->wl.win = ecore_evas_wayland_window_get(sd->ee);
+     _elm_win_wlwindow_get(sd);
 #endif
 
    if ((_elm_config->bgpixmap)
@@ -5383,7 +5409,7 @@ elm_win_wl_window_get(const Evas_Object *obj)
    if (!evas_object_smart_type_check_ptr(obj, MY_CLASS_NAME_LEGACY))
      {
         Ecore_Evas *ee = ecore_evas_ecore_evas_get(evas_object_evas_get(obj));
-        return ecore_evas_wayland_window_get(ee);
+        return _elm_ee_wlwin_get(ee);
      }
 
    ELM_WIN_CHECK(obj) NULL;
@@ -5393,7 +5419,7 @@ elm_win_wl_window_get(const Evas_Object *obj)
 }
 
 static void
-_wl_window_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+_wl_window_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Ecore_Wl_Window **ret = va_arg(*list, Ecore_Wl_Window **);
 #if HAVE_ELEMENTARY_WAYLAND
@@ -5460,7 +5486,7 @@ elm_win_floating_mode_get(const Evas_Object *obj)
 }
 
 static void
-_window_id_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+_window_id_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Ecore_Window *ret = va_arg(*list, Ecore_Window *);
    Elm_Win_Smart_Data *sd = _pd;
