@@ -2799,25 +2799,25 @@ _win_constructor(Eo *obj, void *_pd, va_list *list)
      {
       case ELM_WIN_INLINED_IMAGE:
         if (!parent) break;
-        {
-           e = evas_object_evas_get(parent);
-           Ecore_Evas *ee;
+          {
+             e = evas_object_evas_get(parent);
+             Ecore_Evas *ee;
 
-           if (!e) break;
+             if (!e) break;
 
-           ee = ecore_evas_ecore_evas_get(e);
-           if (!ee) break;
+             ee = ecore_evas_ecore_evas_get(e);
+             if (!ee) break;
 
-           tmp_sd.img_obj = ecore_evas_object_image_new(ee);
-           if (!tmp_sd.img_obj) break;
+             tmp_sd.img_obj = ecore_evas_object_image_new(ee);
+             if (!tmp_sd.img_obj) break;
 
-           tmp_sd.ee = ecore_evas_object_ecore_evas_get(tmp_sd.img_obj);
-           if (!tmp_sd.ee)
-             {
-                evas_object_del(tmp_sd.img_obj);
-                tmp_sd.img_obj = NULL;
-             }
-        }
+             tmp_sd.ee = ecore_evas_object_ecore_evas_get(tmp_sd.img_obj);
+             if (!tmp_sd.ee)
+               {
+                  evas_object_del(tmp_sd.img_obj);
+                  tmp_sd.img_obj = NULL;
+               }
+          }
         break;
 
       case ELM_WIN_SOCKET_IMAGE:
