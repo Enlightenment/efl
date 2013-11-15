@@ -9,7 +9,6 @@
 # include <sys/mman.h>
 
 /* local function prototypes */
-static void _ecore_evas_wl_resize(Ecore_Evas *ee, int w, int h);
 static void _ecore_evas_wl_move_resize(Ecore_Evas *ee, int x, int y, int w, int h);
 static void _ecore_evas_wl_show(Ecore_Evas *ee);
 static void _ecore_evas_wl_hide(Ecore_Evas *ee);
@@ -36,7 +35,7 @@ static Ecore_Evas_Engine_Func _ecore_wl_engine_func =
    NULL, // post_render_set
    _ecore_evas_wl_common_move,
    NULL, // managed_move
-   _ecore_evas_wl_resize,
+   _ecore_evas_wl_common_resize,
    _ecore_evas_wl_move_resize,
    _ecore_evas_wl_rotation_set,
    NULL, // shaped_set
@@ -245,87 +244,6 @@ ecore_evas_wayland_shm_new_internal(const char *disp_name, unsigned int parent, 
 }
 
 static void 
-_ecore_evas_wl_resize(Ecore_Evas *ee, int w, int h)
-{
-   Ecore_Evas_Engine_Wl_Data *wdata;
-   int orig_w, orig_h;
-   int ow, oh;
-
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
-
-   if (!ee) return;
-   if (w < 1) w = 1;
-   if (h < 1) h = 1;
-
-   ee->req.w = w;
-   ee->req.h = h;
-   orig_w = w;
-   orig_h = h;
-
-   wdata = ee->engine.data;
-
-   if (!ee->prop.fullscreen)
-     {
-        int fw = 0, fh = 0;
-
-        if (ee->prop.min.w > w) w = ee->prop.min.w;
-        else if (w > ee->prop.max.w) w = ee->prop.max.w;
-        if (ee->prop.min.h > h) h = ee->prop.min.h;
-        else if (h > ee->prop.max.h) h = ee->prop.max.h;
-
-        orig_w = w;
-        orig_h = h;
-
-        evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
-        if ((ee->rotation == 90) || (ee->rotation == 270))
-          {
-             w += fh;
-             h += fw;
-          }
-        else
-          {
-             w += fw;
-             h += fh;
-          }
-     }
-
-   evas_output_size_get(ee->evas, &ow, &oh);
-   if ((ow != w) || (oh != h))
-     {
-        ee->w = orig_w;
-        ee->h = orig_h;
-
-        if ((ee->rotation == 90) || (ee->rotation == 270))
-          {
-             evas_output_size_set(ee->evas, h, w);
-             evas_output_viewport_set(ee->evas, 0, 0, h, w);
-          }
-        else
-          {
-             evas_output_size_set(ee->evas, w, h);
-             evas_output_viewport_set(ee->evas, 0, 0, w, h);
-          }
-
-        if (ee->prop.avoid_damage)
-          {
-             int pdam = 0;
-
-             pdam = ecore_evas_avoid_damage_get(ee);
-             ecore_evas_avoid_damage_set(ee, 0);
-             ecore_evas_avoid_damage_set(ee, pdam);
-          }
-
-        if (wdata->frame)
-          evas_object_resize(wdata->frame, w, h);
-
-        if (wdata->win)
-          ecore_wl_window_update_size(wdata->win, w, h);
-
-        if (ee->func.fn_resize) ee->func.fn_resize(ee);
-     }
-}
-
-static void 
 _ecore_evas_wl_move_resize(Ecore_Evas *ee, int x, int y, int w, int h)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -334,7 +252,7 @@ _ecore_evas_wl_move_resize(Ecore_Evas *ee, int x, int y, int w, int h)
    if ((ee->x != x) || (ee->y != y))
      _ecore_evas_wl_common_move(ee, x, y);
    if ((ee->w != w) || (ee->h != h))
-     _ecore_evas_wl_resize(ee, w, h);
+     _ecore_evas_wl_common_resize(ee, w, h);
 }
 
 static void

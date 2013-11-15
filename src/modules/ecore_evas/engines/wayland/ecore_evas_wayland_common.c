@@ -204,30 +204,6 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
    ee->prop.maximized = ecore_wl_window_maximized_get(wdata->win);
    ee->prop.fullscreen = ecore_wl_window_fullscreen_get(wdata->win);
 
-   if ((prev_max != ee->prop.maximized) ||
-       (prev_full != ee->prop.fullscreen))
-     {
-        _ecore_evas_wl_common_state_update(ee);
-
-        if (prev_full != ee->prop.fullscreen)
-          _ecore_evas_wl_common_border_update(ee);
-     }
-
-   if (ee->prop.fullscreen)
-     {
-        _ecore_evas_wl_common_move(ee, ev->x, ev->y);
-        ee->engine.func->fn_resize(ee, ev->w, ev->h);
-
-        return ECORE_CALLBACK_PASS_ON;
-     }
-
-   if ((ee->x != ev->x) || (ee->y != ev->y))
-     {
-        ee->req.x = ev->x;
-        ee->req.y = ev->y;
-        if (ee->func.fn_move) ee->func.fn_move(ee);
-     }
-
    nw = ev->w;
    nh = ev->h;
 
@@ -238,49 +214,39 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
         evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
         if ((ee->rotation == 90) || (ee->rotation == 270))
           {
-             if (!ee->prop.maximized) nw = ev->w - fh;
+             nw = ev->w - fh;
              nh = ev->h - fw;
           }
         else
           {
-             if (!ee->prop.maximized) nw = ev->w - fw;
+             nw = ev->w - fw;
              nh = ev->h - fh;
           }
      }
 
-   if (ee->prop.min.w > nw) nw = ee->prop.min.w;
-   else if (nw > ee->prop.max.w) nw = ee->prop.max.w;
-   if (ee->prop.min.h > nh) nh = ee->prop.min.h;
-   else if (nh > ee->prop.max.h) nh = ee->prop.max.h;
+   if (prev_full != ee->prop.fullscreen)
+     _ecore_evas_wl_common_border_update(ee);
 
-   if ((ee->w != nw) || (ee->h != nh))
+   if (ee->prop.fullscreen)
      {
-        ee->req.w = nw;
-        ee->req.h = nh;
-        ee->w = nw;
-        ee->h = nh;
-        if (ee->func.fn_resize) ee->func.fn_resize(ee);
+        _ecore_evas_wl_common_move(ee, ev->x, ev->y);
+        _ecore_evas_wl_common_resize(ee, nw, nh);
 
-        if ((ee->rotation == 90) || (ee->rotation == 270))
-          {
-             evas_output_size_set(ee->evas, ev->h, ev->w);
-             evas_output_viewport_set(ee->evas, 0, 0, ev->h, ev->w);
-          }
-        else
-          {
-             evas_output_size_set(ee->evas, ev->w, ev->h);
-             evas_output_viewport_set(ee->evas, 0, 0, ev->w, ev->h);
-          }
+        if (prev_full != ee->prop.fullscreen)
+          _ecore_evas_wl_common_state_update(ee);
 
-        if (wdata->frame)
-          evas_object_resize(wdata->frame, ev->w, ev->h);
-
-        if (wdata->win)
-          {
-             _ecore_evas_wayland_resize_edge_set(ee, ev->edges);
-             ecore_wl_window_update_size(wdata->win, ev->w, ev->h);
-          }
+        return ECORE_CALLBACK_PASS_ON;
      }
+
+   if ((ee->x != ev->x) || (ee->y != ev->y))
+     _ecore_evas_wl_common_move(ee, ev->x, ev->y);
+
+   if ((ee->w != ev->w) || (ee->h != ev->h))
+     _ecore_evas_wl_common_resize(ee, nw, nh);
+
+   if ((prev_max != ee->prop.maximized) ||
+       (prev_full != ee->prop.fullscreen))
+     _ecore_evas_wl_common_state_update(ee);
 
    return ECORE_CALLBACK_PASS_ON;
 }
@@ -533,6 +499,8 @@ void
 _ecore_evas_wl_common_resize(Ecore_Evas *ee, int w, int h)
 {
    Ecore_Evas_Engine_Wl_Data *wdata = ee->engine.data;
+   int orig_w, orig_h;
+   int ow, oh;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -541,6 +509,8 @@ _ecore_evas_wl_common_resize(Ecore_Evas *ee, int w, int h)
 
    ee->req.w = w;
    ee->req.h = h;
+   orig_w = w;
+   orig_h = h;
 
    if (!ee->prop.fullscreen)
      {
@@ -551,15 +521,27 @@ _ecore_evas_wl_common_resize(Ecore_Evas *ee, int w, int h)
         if (ee->prop.min.h > h) h = ee->prop.min.h;
         else if (h > ee->prop.max.h) h = ee->prop.max.h;
 
+        orig_w = w;
+        orig_h = h;
+
         evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
-        w += fw;
-        h += fh;
+        if ((ee->rotation == 90) || (ee->rotation == 270))
+          {
+             w += fh;
+             h += fw;
+          }
+        else
+          {
+             w += fw;
+             h += fh;
+          }
      }
 
-   if ((ee->w != w) || (ee->h != h))
+   evas_output_size_get(ee->evas, &ow, &oh);
+   if ((ow != w) || (oh != h))
      {
-        ee->w = w;
-        ee->h = h;
+        ee->w = orig_w;
+        ee->h = orig_h;
 
         if ((ee->rotation == 90) || (ee->rotation == 270))
           {
@@ -583,6 +565,11 @@ _ecore_evas_wl_common_resize(Ecore_Evas *ee, int w, int h)
 
         if (wdata->frame)
           evas_object_resize(wdata->frame, w, h);
+
+        /* if (wdata->win) */
+        /*   ecore_wl_window_update_size(wdata->win, w, h); */
+
+        if (ee->func.fn_resize) ee->func.fn_resize(ee);
      }
 }
 
@@ -1118,7 +1105,7 @@ _ecore_evas_wl_common_maximized_set(Ecore_Evas *ee, int max)
    if (ee->prop.maximized == max) return;
    wdata = ee->engine.data;
    ecore_wl_window_maximized_set(wdata->win, max);
-   _ecore_evas_wl_common_state_update(ee);
+//   _ecore_evas_wl_common_state_update(ee);
 }
 
 void
@@ -1132,7 +1119,7 @@ _ecore_evas_wl_common_fullscreen_set(Ecore_Evas *ee, int full)
    if (ee->prop.fullscreen == full) return;
    wdata = ee->engine.data;
    ecore_wl_window_fullscreen_set(wdata->win, full);
-   _ecore_evas_wl_common_state_update(ee);
+//   _ecore_evas_wl_common_state_update(ee);
 }
 
 void
