@@ -1704,7 +1704,8 @@ _elm_ee_wlwin_get(const Ecore_Evas *ee)
         if (ee) win = ecore_evas_wayland_window_get(ee);
      }
    return win;
-
+#else
+   (void)ee;
 #endif
    return NULL;
 }
@@ -5434,6 +5435,8 @@ _wl_window_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
         *ret = elm_win_wl_window_get(sd->parent);
         return;
      }
+#else
+   (void)_pd;
 #endif
    *ret = NULL;
 }
