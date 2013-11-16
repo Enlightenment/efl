@@ -2,13 +2,14 @@
 # include "elementary_config.h"
 #endif
 #include <Elementary.h>
-
-
 static void
-_click_me(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
+_click_me(void *data, Evas_Object *obj EINA_UNUSED,
           void *event_info EINA_UNUSED)
 {
+   Elm_Object_Item *it = (Elm_Object_Item *)data;
    fputs(":-)\n", stderr);
+   int disabled = elm_object_item_disabled_get(it);
+   elm_object_item_disabled_set(it, !disabled);
 }
 
 void
@@ -68,7 +69,7 @@ test_main_menu(void *data EINA_UNUSED,
    menu_it1 = elm_menu_item_add(menu, menu_it, NULL, "disabled item", NULL, NULL);
    elm_object_item_disabled_set(menu_it1, EINA_TRUE);
    elm_menu_item_separator_add(menu, menu_it);
-   elm_menu_item_add(menu, menu_it, NULL, "click me :-)", _click_me, NULL);
+   elm_menu_item_add(menu, menu_it, NULL, "click me :-)", _click_me, menu_it1);
    elm_menu_item_add(menu, menu_it, "applications-email-panel", "third item", NULL, NULL);
    menu_it1 = elm_menu_item_add(menu, menu_it, NULL, "sub menu", NULL, NULL);
    elm_menu_item_add(menu, menu_it1, NULL, "first item", NULL, NULL);

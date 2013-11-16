@@ -1032,5 +1032,6 @@ _elm_dbus_menu_item_delete(Elm_DBus_Menu *dbus_menu, int id)
 void
 _elm_dbus_menu_update(Elm_DBus_Menu *dbus_menu)
 {
+   dbus_menu->timestamp++;
    _layout_signal(dbus_menu);
 }

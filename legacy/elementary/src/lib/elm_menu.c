@@ -84,6 +84,7 @@ _item_disable_hook(Elm_Object_Item *it)
    else
      elm_layout_signal_emit(VIEW(item), "elm,state,enabled", "elm");
 
+   if (item->dbus_menu) _elm_dbus_menu_update(item->dbus_menu);
    edje_object_message_signal_process(elm_layout_edje_get(VIEW(item)));
 }
 
@@ -985,8 +986,10 @@ _item_add(Eo *obj, void *_pd, va_list *list)
    _elm_menu_item_add_helper(obj, (Elm_Menu_Item *)parent, subitem, sd);
 
    if (sd->dbus_menu)
+   {
      subitem->dbus_idx = _elm_dbus_menu_item_add(sd->dbus_menu, (Elm_Object_Item *)subitem);
-
+     subitem->dbus_menu = sd->dbus_menu;
+   }
    *ret = (Elm_Object_Item *)subitem;
 }
 

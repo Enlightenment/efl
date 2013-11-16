@@ -437,6 +437,7 @@ const char          *_elm_dbus_menu_register(Eo *obj);
 void                 _elm_dbus_menu_unregister(Eo *obj);
 int                  _elm_dbus_menu_item_add(Elm_DBus_Menu *dbus_menu,
                                              Elm_Object_Item *item);
+void                 _elm_dbus_menu_update(Elm_DBus_Menu *dbus_menu);
 void                 _elm_dbus_menu_item_delete(Elm_DBus_Menu *dbus_menu,
                                                 int id);
 

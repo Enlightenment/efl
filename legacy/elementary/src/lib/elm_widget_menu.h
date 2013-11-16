@@ -40,6 +40,7 @@ struct _Elm_Menu_Item
    const char    *label;
    Evas_Smart_Cb  func;
    unsigned int   idx;
+   Elm_DBus_Menu *dbus_menu;
    int            dbus_idx;
 
    struct
