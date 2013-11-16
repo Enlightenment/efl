@@ -1025,8 +1025,9 @@ _item_unhighlight(Elm_List_Item *it)
    obj = WIDGET(it);
    ELM_LIST_DATA_GET(obj, sd);
 
-   if ((!it->highlighted) || (it->base.disabled) ||
-       (sd->select_mode == ELM_OBJECT_SELECT_MODE_NONE)) return;
+//   if ((!it->highlighted) || (it->base.disabled) ||
+//       (sd->select_mode == ELM_OBJECT_SELECT_MODE_NONE)) return;
+   if (!it->highlighted) return;
 
    evas_object_ref(obj);
    _elm_list_walk(sd);
@@ -1055,8 +1056,8 @@ _item_unselect(Elm_List_Item *it)
    obj = WIDGET(it);
    ELM_LIST_DATA_GET(obj, sd);
 
-   if (it->base.disabled || (sd->select_mode == ELM_OBJECT_SELECT_MODE_NONE))
-     return;
+//   if (it->base.disabled || (sd->select_mode == ELM_OBJECT_SELECT_MODE_NONE))
+//     return;
 
    evas_object_ref(obj);
    _elm_list_walk(sd);
@@ -1071,7 +1072,9 @@ _item_unselect(Elm_List_Item *it)
      {
         it->selected = EINA_FALSE;
         sd->selected = eina_list_remove(sd->selected, it);
-        evas_object_smart_callback_call(WIDGET(it), SIG_UNSELECTED, it);
+        if (!(it->base.disabled || 
+              (sd->select_mode == ELM_OBJECT_SELECT_MODE_NONE)))
+          evas_object_smart_callback_call(WIDGET(it), SIG_UNSELECTED, it);
      }
 
    _elm_list_unwalk(obj, sd);
@@ -1316,8 +1319,11 @@ _mouse_up_cb(void *data,
           {
              while (sd->selected)
                {
-                  _item_unhighlight(sd->selected->data);
-                  _item_unselect(sd->selected->data);
+                  Elm_List_Item *it2 = sd->selected->data;
+                  sd->selected = eina_list_remove_list
+                    (sd->selected, sd->selected);
+                  _item_unhighlight(it2);
+                  _item_unselect(it2);
                }
              _item_highlight(it);
              _item_select(it);
@@ -1347,6 +1353,8 @@ _item_disable_hook(Elm_Object_Item *it)
 {
    Elm_List_Item *item = (Elm_List_Item *)it;
 
+   _item_unhighlight(item);
+   _item_unselect(item);
    if (item->base.disabled)
      edje_object_signal_emit(VIEW(item), "elm,state,disabled", "elm");
    else
