@@ -54,7 +54,7 @@ include images.mk
 
 all-local:
 	@rm -f images.tmp; \
-	echo $(ECHO_N) 'EXTRA_DIST += ' > images.tmp; \
+	echo 'EXTRA_DIST += \\' > images.tmp; \
 	(cd $(srcdir) && find ./img -type f -print | cut -d/ -f2- | grep -v '~' | sort | tr '\n' ' ') >> images.tmp && \
 	echo >> images.tmp && \
 	if ! cmp "$(srcdir)/images.mk" images.tmp >/dev/null; then \
