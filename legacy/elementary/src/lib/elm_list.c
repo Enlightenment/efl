@@ -675,7 +675,7 @@ _items_fix(Evas_Object *obj)
              if (it->is_separator)
                elm_widget_theme_object_set
                  (obj, VIEW(it), "separator", sd->h_mode ?
-                 "horizontal" : "vertical", style);
+                     "vertical" : "horizontal", style);
              else if (sd->mode == ELM_LIST_COMPRESS)
                {
                   if (it->even)
