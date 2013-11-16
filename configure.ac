@@ -3806,6 +3806,8 @@ dbus-services/org.enlightenment.Ethumb.service
 $po_makefile_in
 cmakeconfig/EinaConfig.cmake
 cmakeconfig/EinaConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
+cmakeconfig/EezeConfig.cmake
+cmakeconfig/EezeConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
 cmakeconfig/EoConfig.cmake
 cmakeconfig/EoConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
 cmakeconfig/EetConfig.cmake

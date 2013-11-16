@@ -236,6 +236,11 @@ eina_cmakeconfig_DATA = \
 cmakeconfig/EinaConfig.cmake \
 cmakeconfig/EinaConfigVersion.cmake
 
+eeze_cmakeconfigdir = $(libdir)/cmake/Eeze/
+eeze_cmakeconfig_DATA = \
+cmakeconfig/EezeConfig.cmake \
+cmakeconfig/EezeConfigVersion.cmake
+
 eo_cmakeconfigdir = $(libdir)/cmake/Eo/
 eo_cmakeconfig_DATA = \
 cmakeconfig/EoConfig.cmake \
