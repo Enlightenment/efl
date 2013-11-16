@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elementary 1.7.99.76688\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-11-12 22:51+0900\n"
+"POT-Creation-Date: 2013-11-16 12:46+0900\n"
 "PO-Revision-Date: 2012-09-14 22:20+0300\n"
 "Last-Translator: Danny Moshnakov <dm@agent.co.il>\n"
 "Language-Team: ru <ru>\n"
@@ -80,8 +80,8 @@ msgstr "Нажато"
 
 #: src/lib/elm_button.c:279 src/lib/elm_check.c:218 src/lib/elm_gengrid.c:681
 #: src/lib/elm_genlist.c:1463 src/lib/elm_list.c:1539 src/lib/elm_radio.c:261
-#: src/lib/elm_segment_control.c:537 src/lib/elm_spinner.c:539
-#: src/lib/elm_toolbar.c:1996
+#: src/lib/elm_segment_control.c:537 src/lib/elm_spinner.c:540
+#: src/lib/elm_toolbar.c:1980
 msgid "State: Disabled"
 msgstr "Состояние: Отключено"
 
@@ -203,7 +203,7 @@ msgstr "Выбрать"
 msgid "Paste"
 msgstr "Вставить"
 
-#: src/lib/elm_entry.c:3291
+#: src/lib/elm_entry.c:3301
 msgid "Entry"
 msgstr "Запись"
 
@@ -245,7 +245,7 @@ msgstr "индикатор прогресса"
 msgid "Radio"
 msgstr "Радио флажок"
 
-#: src/lib/elm_segment_control.c:540 src/lib/elm_toolbar.c:1998
+#: src/lib/elm_segment_control.c:540 src/lib/elm_toolbar.c:1982
 msgid "State: Selected"
 msgstr "Состояние: Выбрано"
 
@@ -262,36 +262,36 @@ msgstr ""
 msgid "slider"
 msgstr "бегунок"
 
-#: src/lib/elm_spinner.c:628
+#: src/lib/elm_spinner.c:629
 msgid "spinner increment button"
 msgstr "кнопка увеличения счетчика"
 
-#: src/lib/elm_spinner.c:637
+#: src/lib/elm_spinner.c:638
 msgid "spinner decrement button"
 msgstr "кнопка уменьшения счетчика"
 
-#: src/lib/elm_spinner.c:645
+#: src/lib/elm_spinner.c:646
 msgid "spinner"
 msgstr "счетчик"
 
-#: src/lib/elm_toolbar.c:1467 src/lib/elm_toolbar.c:2057
+#: src/lib/elm_toolbar.c:1451 src/lib/elm_toolbar.c:2041
 msgid "Selected"
 msgstr "Выбрано"
 
-#: src/lib/elm_toolbar.c:1994
+#: src/lib/elm_toolbar.c:1978
 msgid "Separator"
 msgstr "Разделитель"
 
-#: src/lib/elm_toolbar.c:2000
+#: src/lib/elm_toolbar.c:1984
 msgid "Has menu"
 msgstr "С меню"
 
-#: src/lib/elm_toolbar.c:2052
+#: src/lib/elm_toolbar.c:2036
 #, fuzzy
 msgid "Unselected"
 msgstr "Выбрано"
 
-#: src/lib/elm_toolbar.c:2069
+#: src/lib/elm_toolbar.c:2053
 #, fuzzy
 msgid "Toolbar Item"
 msgstr "Элемент инструментов"

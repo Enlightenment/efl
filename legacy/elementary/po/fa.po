@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-11-12 22:51+0900\n"
+"POT-Creation-Date: 2013-11-16 12:46+0900\n"
 "PO-Revision-Date: 2010-12-26 10:05+0200\n"
 "Last-Translator: Tom Hacohen <tom.hacohen@samsung.com>\n"
 "Language-Team: General\n"
@@ -76,8 +76,8 @@ msgstr ""
 
 #: src/lib/elm_button.c:279 src/lib/elm_check.c:218 src/lib/elm_gengrid.c:681
 #: src/lib/elm_genlist.c:1463 src/lib/elm_list.c:1539 src/lib/elm_radio.c:261
-#: src/lib/elm_segment_control.c:537 src/lib/elm_spinner.c:539
-#: src/lib/elm_toolbar.c:1996
+#: src/lib/elm_segment_control.c:537 src/lib/elm_spinner.c:540
+#: src/lib/elm_toolbar.c:1980
 msgid "State: Disabled"
 msgstr ""
 
@@ -190,7 +190,7 @@ msgstr ""
 msgid "Paste"
 msgstr ""
 
-#: src/lib/elm_entry.c:3291
+#: src/lib/elm_entry.c:3301
 msgid "Entry"
 msgstr ""
 
@@ -230,7 +230,7 @@ msgstr ""
 msgid "Radio"
 msgstr ""
 
-#: src/lib/elm_segment_control.c:540 src/lib/elm_toolbar.c:1998
+#: src/lib/elm_segment_control.c:540 src/lib/elm_toolbar.c:1982
 msgid "State: Selected"
 msgstr ""
 
@@ -246,34 +246,34 @@ msgstr ""
 msgid "slider"
 msgstr ""
 
-#: src/lib/elm_spinner.c:628
+#: src/lib/elm_spinner.c:629
 msgid "spinner increment button"
 msgstr ""
 
-#: src/lib/elm_spinner.c:637
+#: src/lib/elm_spinner.c:638
 msgid "spinner decrement button"
 msgstr ""
 
-#: src/lib/elm_spinner.c:645
+#: src/lib/elm_spinner.c:646
 msgid "spinner"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:1467 src/lib/elm_toolbar.c:2057
+#: src/lib/elm_toolbar.c:1451 src/lib/elm_toolbar.c:2041
 msgid "Selected"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:1994
+#: src/lib/elm_toolbar.c:1978
 msgid "Separator"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:2000
+#: src/lib/elm_toolbar.c:1984
 msgid "Has menu"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:2052
+#: src/lib/elm_toolbar.c:2036
 msgid "Unselected"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:2069
+#: src/lib/elm_toolbar.c:2053
 msgid "Toolbar Item"
 msgstr ""

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-11-12 22:51+0900\n"
+"POT-Creation-Date: 2013-11-16 12:46+0900\n"
 "PO-Revision-Date: 2012-12-16 21:59+0100\n"
 "Last-Translator: Tomáš Čech <sleep_walker@suse.cz>\n"
 "Language-Team: Czech <kde-i18n-doc@kde.org>\n"
@@ -77,8 +77,8 @@ msgstr "Kliknuto"
 
 #: src/lib/elm_button.c:279 src/lib/elm_check.c:218 src/lib/elm_gengrid.c:681
 #: src/lib/elm_genlist.c:1463 src/lib/elm_list.c:1539 src/lib/elm_radio.c:261
-#: src/lib/elm_segment_control.c:537 src/lib/elm_spinner.c:539
-#: src/lib/elm_toolbar.c:1996
+#: src/lib/elm_segment_control.c:537 src/lib/elm_spinner.c:540
+#: src/lib/elm_toolbar.c:1980
 msgid "State: Disabled"
 msgstr "Stav: Zakázáno"
 
@@ -197,7 +197,7 @@ msgstr "Vybrat"
 msgid "Paste"
 msgstr "Vložit"
 
-#: src/lib/elm_entry.c:3291
+#: src/lib/elm_entry.c:3301
 msgid "Entry"
 msgstr "Vstup"
 
@@ -237,7 +237,7 @@ msgstr "ukazatel průběhu"
 msgid "Radio"
 msgstr "Přepínač"
 
-#: src/lib/elm_segment_control.c:540 src/lib/elm_toolbar.c:1998
+#: src/lib/elm_segment_control.c:540 src/lib/elm_toolbar.c:1982
 msgid "State: Selected"
 msgstr "Stav: Vybráno"
 
@@ -254,35 +254,35 @@ msgstr ""
 msgid "slider"
 msgstr "šoupátko"
 
-#: src/lib/elm_spinner.c:628
+#: src/lib/elm_spinner.c:629
 msgid "spinner increment button"
 msgstr "přičítací tlačítko spinneru"
 
-#: src/lib/elm_spinner.c:637
+#: src/lib/elm_spinner.c:638
 msgid "spinner decrement button"
 msgstr "odečítací tlačítko spinneru"
 
-#: src/lib/elm_spinner.c:645
+#: src/lib/elm_spinner.c:646
 msgid "spinner"
 msgstr "spinner"
 
-#: src/lib/elm_toolbar.c:1467 src/lib/elm_toolbar.c:2057
+#: src/lib/elm_toolbar.c:1451 src/lib/elm_toolbar.c:2041
 msgid "Selected"
 msgstr "Vybrané"
 
-#: src/lib/elm_toolbar.c:1994
+#: src/lib/elm_toolbar.c:1978
 msgid "Separator"
 msgstr "Oddělovač"
 
-#: src/lib/elm_toolbar.c:2000
+#: src/lib/elm_toolbar.c:1984
 msgid "Has menu"
 msgstr "Má nabídku"
 
-#: src/lib/elm_toolbar.c:2052
+#: src/lib/elm_toolbar.c:2036
 msgid "Unselected"
 msgstr "Nevybrané"
 
-#: src/lib/elm_toolbar.c:2069
+#: src/lib/elm_toolbar.c:2053
 msgid "Toolbar Item"
 msgstr "Položka panelu nástrojů"
 

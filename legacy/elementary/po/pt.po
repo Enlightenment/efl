@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-11-12 22:51+0900\n"
+"POT-Creation-Date: 2013-11-16 12:46+0900\n"
 "PO-Revision-Date: 2013-11-05 14:11-0000\n"
 "Last-Translator: Sérgio Marques <smarquespt@gmail.com>\n"
 "Language-Team: \n"
@@ -76,8 +76,8 @@ msgstr "Clicado"
 
 #: src/lib/elm_button.c:279 src/lib/elm_check.c:218 src/lib/elm_gengrid.c:681
 #: src/lib/elm_genlist.c:1463 src/lib/elm_list.c:1539 src/lib/elm_radio.c:261
-#: src/lib/elm_segment_control.c:537 src/lib/elm_spinner.c:539
-#: src/lib/elm_toolbar.c:1996
+#: src/lib/elm_segment_control.c:537 src/lib/elm_spinner.c:540
+#: src/lib/elm_toolbar.c:1980
 msgid "State: Disabled"
 msgstr "Estado: inativo"
 
@@ -190,7 +190,7 @@ msgstr "Selecionar"
 msgid "Paste"
 msgstr "Colar"
 
-#: src/lib/elm_entry.c:3291
+#: src/lib/elm_entry.c:3301
 msgid "Entry"
 msgstr "Entrada"
 
@@ -230,7 +230,7 @@ msgstr "barra de progresso"
 msgid "Radio"
 msgstr "Opção"
 
-#: src/lib/elm_segment_control.c:540 src/lib/elm_toolbar.c:1998
+#: src/lib/elm_segment_control.c:540 src/lib/elm_toolbar.c:1982
 msgid "State: Selected"
 msgstr "Estado: selecionado"
 
@@ -246,35 +246,35 @@ msgstr "Item do controlo de segmento"
 msgid "slider"
 msgstr "barra deslizante"
 
-#: src/lib/elm_spinner.c:628
+#: src/lib/elm_spinner.c:629
 msgid "spinner increment button"
 msgstr "botão de aumento do spinner"
 
-#: src/lib/elm_spinner.c:637
+#: src/lib/elm_spinner.c:638
 msgid "spinner decrement button"
 msgstr "botão de diminuição do spinner"
 
-#: src/lib/elm_spinner.c:645
+#: src/lib/elm_spinner.c:646
 msgid "spinner"
 msgstr "spinner"
 
-#: src/lib/elm_toolbar.c:1467 src/lib/elm_toolbar.c:2057
+#: src/lib/elm_toolbar.c:1451 src/lib/elm_toolbar.c:2041
 msgid "Selected"
 msgstr "Selecionado"
 
-#: src/lib/elm_toolbar.c:1994
+#: src/lib/elm_toolbar.c:1978
 msgid "Separator"
 msgstr "Separador"
 
-#: src/lib/elm_toolbar.c:2000
+#: src/lib/elm_toolbar.c:1984
 msgid "Has menu"
 msgstr "Tem menu"
 
-#: src/lib/elm_toolbar.c:2052
+#: src/lib/elm_toolbar.c:2036
 msgid "Unselected"
 msgstr "Não selecionado"
 
-#: src/lib/elm_toolbar.c:2069
+#: src/lib/elm_toolbar.c:2053
 msgid "Toolbar Item"
 msgstr "Item da barra de ferramentas"
 
