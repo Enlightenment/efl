@@ -3340,7 +3340,7 @@ _elm_entry_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    if (sd->delay_write)
      {
-        if (sd->delay_write) ecore_timer_del(sd->delay_write);
+        ELM_SAFE_FREE(sd->delay_write, ecore_timer_del);
         if (sd->auto_save) _save_do(obj);
      }
 
@@ -3393,7 +3393,7 @@ _elm_entry_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
      {
         _filter_free(tf);
      }
-   if (sd->delay_write) ecore_timer_del(sd->delay_write);
+   ELM_SAFE_FREE(sd->delay_write, ecore_timer_del);
    if (sd->input_panel_imdata) free(sd->input_panel_imdata);
    if (sd->anchor_hover.hover_style) eina_stringshare_del(sd->anchor_hover.hover_style);
 
