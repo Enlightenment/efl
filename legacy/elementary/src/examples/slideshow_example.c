@@ -11,7 +11,7 @@
 
 #include <Elementary.h>
 
-#define IMG_NUM 9
+#define IMG_NUM 8
 
 static Evas_Object *slideshow, *bt_start, *bt_stop;
 static Elm_Slideshow_Item_Class itc;
