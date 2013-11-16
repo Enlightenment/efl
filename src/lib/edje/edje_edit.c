@@ -311,39 +311,44 @@ _edje_real_part_free(Edje *ed, Edje_Real_Part *rp)
 
    if (rp->object)
      {
-	_edje_callbacks_del(rp->object, ed);
-	evas_object_del(rp->object);
+         _edje_callbacks_del(rp->object, ed);
+         evas_object_del(rp->object);
      }
 
-   if ((rp->typedata.swallow) && (rp->typedata.swallow->swallowed_object))
+   if ((rp->type == EDJE_RP_TYPE_SWALLOW) && (rp->typedata.swallow)
+      && (rp->typedata.swallow->swallowed_object))
      {
-	evas_object_smart_member_del(rp->typedata.swallow->swallowed_object);
-	evas_object_event_callback_del(rp->typedata.swallow->swallowed_object,
-				       EVAS_CALLBACK_FREE,
-				       _edje_object_part_swallow_free_cb);
-	evas_object_clip_unset(rp->typedata.swallow->swallowed_object);
-	evas_object_data_del(rp->typedata.swallow->swallowed_object, "\377 edje.swallowing_part");
-	if (rp->part->mouse_events)
-	  _edje_callbacks_del(rp->typedata.swallow->swallowed_object, ed);
+         evas_object_smart_member_del(rp->typedata.swallow->swallowed_object);
+         evas_object_event_callback_del(rp->typedata.swallow->swallowed_object,
+                        EVAS_CALLBACK_FREE, _edje_object_part_swallow_free_cb);
+         evas_object_clip_unset(rp->typedata.swallow->swallowed_object);
+         evas_object_data_del(rp->typedata.swallow->swallowed_object,
+                        "\377 edje.swallowing_part");
+         if (rp->part->mouse_events)
+            _edje_callbacks_del(rp->typedata.swallow->swallowed_object, ed);
 
-	if (rp->part->type == EDJE_PART_TYPE_GROUP ||
-	    rp->part->type == EDJE_PART_TYPE_EXTERNAL)
-	  evas_object_del(rp->typedata.swallow->swallowed_object);
+         if (rp->part->type == EDJE_PART_TYPE_GROUP ||
+          rp->part->type == EDJE_PART_TYPE_EXTERNAL)
+            evas_object_del(rp->typedata.swallow->swallowed_object);
 
-	rp->typedata.swallow->swallowed_object = NULL;
+         rp->typedata.swallow->swallowed_object = NULL;
      }
 
-   if ((rp->typedata.text) && (rp->typedata.text->text)) eina_stringshare_del(rp->typedata.text->text);
-   if ((rp->typedata.text) && (rp->typedata.text->font)) eina_stringshare_del(rp->typedata.text->font);
-   if ((rp->typedata.text) && (rp->typedata.text->cache.in_str)) eina_stringshare_del(rp->typedata.text->cache.in_str);
-   if ((rp->typedata.text) && (rp->typedata.text->cache.out_str)) eina_stringshare_del(rp->typedata.text->cache.out_str);
+   if ((rp->type == EDJE_RP_TYPE_TEXT) && (rp->typedata.text) &&
+    (rp->typedata.text->text)) eina_stringshare_del(rp->typedata.text->text);
+   if ((rp->type == EDJE_RP_TYPE_TEXT) && (rp->typedata.text) &&
+    (rp->typedata.text->font)) eina_stringshare_del(rp->typedata.text->font);
+   if ((rp->type == EDJE_RP_TYPE_TEXT) && (rp->typedata.text) &&
+    (rp->typedata.text->cache.in_str)) eina_stringshare_del(rp->typedata.text->cache.in_str);
+   if ((rp->type == EDJE_RP_TYPE_TEXT) && (rp->typedata.text) &&
+    (rp->typedata.text->cache.out_str)) eina_stringshare_del(rp->typedata.text->cache.out_str);
 
    if (rp->custom)
      {
-	_edje_collection_free_part_description_clean(rp->part->type, rp->custom->description, 0);
-        if (rp->custom) free(rp->custom->set);
-        eina_mempool_free(_edje_real_part_state_mp, rp->custom);
-	rp->custom = NULL;
+         _edje_collection_free_part_description_clean(rp->part->type, rp->custom->description, 0);
+         if (rp->custom) free(rp->custom->set);
+         eina_mempool_free(_edje_real_part_state_mp, rp->custom);
+         rp->custom = NULL;
      }
 
    free(rp->drag);
