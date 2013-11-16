@@ -211,10 +211,6 @@ img/col_sel_end_bottom.png \
 img/col_sel_end_left.png \
 img/col_sel_end_right.png \
 img/col_sel_end_top.png \
-img/ctxpopup_arrow_down.png \
-img/ctxpopup_arrow_left.png \
-img/ctxpopup_arrow_right.png \
-img/ctxpopup_arrow_up.png \
 img/darken_rounded_square_half_h.png \
 img/darken_rounded_square_half.png \
 img/darken_rounded_square.png \
