@@ -13,12 +13,7 @@ _colorselector_changed_cb(void *data, Evas_Object *obj,
 
    elm_colorselector_color_get(obj, &r, &g, &b, &a);
    printf("Changed Color [r=%d g=%d b=%d a=%d]\n", r, g, b, a);
-
-   /* Fix Alpha pre multiplication by edje */
-   r = (r * a) / 255;
-   g = (g * a) / 255;
-   b = (b * a) / 255;
-
+   evas_color_argb_premul(&a, &r, &g, &b);
    evas_object_color_set(re, r, g, b, a);
 }
 

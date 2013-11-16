@@ -27,8 +27,8 @@ static void
 _transit_color(Elm_Transit *trans)
 {
    /* changes the object color from 100, 255, 100, 255 to
-    * 200, 50, 200, 50 */
-   elm_transit_effect_color_add(trans, 100, 255, 100, 255, 200, 50, 200, 50);
+    * 40, 10, 40, 50 */
+   elm_transit_effect_color_add(trans, 100, 255, 100, 255, 40, 10, 40, 50);
 }
 
 static void

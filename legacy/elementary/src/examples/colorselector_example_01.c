@@ -67,6 +67,8 @@ _change_color(void *data, Evas_Object *obj, void *event_info)
 {
    int r, g, b, a;
    elm_colorselector_color_get(obj, &r, &g, &b, &a);
+   // ensure colors are pre-multiplied by alpha
+   evas_color_argb_premul(a, &r, &g, &b);
    evas_object_color_set(data, r, g, b, a);
 }
 
@@ -76,6 +78,8 @@ _colorpalette_clicked_cb(void *data, Evas_Object *obj, void *event_info)
    int r = 0, g = 0, b = 0 ,a = 0;
    Elm_Object_Item *color_it = (Elm_Object_Item *) event_info;
    elm_colorselector_palette_item_color_get(color_it, &r, &g, &b, &a);
+   // ensure colors are pre-multiplied by alpha
+   evas_color_argb_premul(a, &r, &g, &b);
    evas_object_color_set(data, r, g, b, a);
 }
 
