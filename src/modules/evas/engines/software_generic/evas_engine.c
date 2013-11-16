@@ -2375,11 +2375,11 @@ eng_gl_context_create(void *data EINA_UNUSED, void *share_context)
 
    ctx->share_ctx = share_ctx;
 
-   /*
+#if 0
    if (share_ctx)
-      ctx->context = OSMesaCreateContextExt( OSMESA_RGBA, 8, 0, 0, share_ctx->context );
+      ctx->context = _sym_OSMesaCreateContextExt( OSMESA_RGBA, 8, 0, 0, share_ctx->context );
    else
-      ctx->context = OSMesaCreateContextExt( OSMESA_RGBA, 8, 0, 0, NULL );
+      ctx->context = _sym_OSMesaCreateContextExt( OSMESA_RGBA, 8, 0, 0, NULL );
 
 
    if (!ctx->context)
@@ -2388,7 +2388,7 @@ eng_gl_context_create(void *data EINA_UNUSED, void *share_context)
         free(ctx);
         return NULL;
      }
-     */
+#endif
 
    ctx->initialized = 0;
 
@@ -2450,10 +2450,10 @@ eng_gl_make_current(void *data EINA_UNUSED, void *surface, void *context)
            share_ctx = NULL;
 
         ctx->context =  _sym_OSMesaCreateContextExt(sfc->internal_fmt, 
-                                               sfc->depth_bits,
-                                               sfc->stencil_bits, 
-                                               0,
-                                               share_ctx);
+                                                    sfc->depth_bits,
+                                                    sfc->stencil_bits,
+                                                    0,
+                                                    share_ctx);
         if (!ctx->context)
           {
              ERR("Error initializing context.");
@@ -2466,7 +2466,7 @@ eng_gl_make_current(void *data EINA_UNUSED, void *surface, void *context)
 
    // Call MakeCurrent
    ret = _sym_OSMesaMakeCurrent(ctx->context, sfc->buffer, GL_UNSIGNED_BYTE, 
-                           sfc->w, sfc->h);
+                                sfc->w, sfc->h);
 
    if (ret == GL_FALSE)
      {
@@ -2749,7 +2749,6 @@ gl_sym_init(void)
    if (!dst) dst = (typeof(dst))dlsym(gl_lib_handle, sym); \
    if (!dst) DBG("Symbol not found %s\n", sym);
 #define FALLBAK(dst, typ) if (!dst) dst = (typeof(dst))sym_missing;
-
 
    //------------------------------------------------------//
    // GLES 2.0 APIs...
@@ -3622,7 +3621,15 @@ gl_lib_init(void)
 {
 #ifdef EVAS_GL
    // dlopen OSMesa 
-   gl_lib_handle = dlopen("libOSMesa.so.1", RTLD_NOW);
+   gl_lib_handle = dlopen("libOSMesa.so.9", RTLD_NOW);
+   if (!gl_lib_handle) gl_lib_handle = dlopen("libOSMesa.so.8", RTLD_NOW);
+   if (!gl_lib_handle) gl_lib_handle = dlopen("libOSMesa.so.7", RTLD_NOW);
+   if (!gl_lib_handle) gl_lib_handle = dlopen("libOSMesa.so.6", RTLD_NOW);
+   if (!gl_lib_handle) gl_lib_handle = dlopen("libOSMesa.so.5", RTLD_NOW);
+   if (!gl_lib_handle) gl_lib_handle = dlopen("libOSMesa.so.4", RTLD_NOW);
+   if (!gl_lib_handle) gl_lib_handle = dlopen("libOSMesa.so.3", RTLD_NOW);
+   if (!gl_lib_handle) gl_lib_handle = dlopen("libOSMesa.so.2", RTLD_NOW);
+   if (!gl_lib_handle) gl_lib_handle = dlopen("libOSMesa.so.1", RTLD_NOW);
    if (!gl_lib_handle) gl_lib_handle = dlopen("libOSMesa.so", RTLD_NOW);
    if (!gl_lib_handle)
      {
