@@ -920,10 +920,17 @@ eng_image_native_set(void *data EINA_UNUSED, void *image, void *native)
 
    if (!im || !ns) return im;
 
-   im2 = evas_cache_image_data(evas_common_image_cache_get(), 
-                               im->w, im->h, 
-                               NULL, 1,
-                               EVAS_COLORSPACE_ARGB8888);
+   if ((ns->type == EVAS_NATIVE_SURFACE_OPENGL) &&
+       (ns->version == EVAS_NATIVE_SURFACE_VERSION))
+     im2 = evas_cache_image_data(evas_common_image_cache_get(), 
+                                 im->w, im->h, 
+                                 ns->data.x11.visual, 1,
+                                 EVAS_COLORSPACE_ARGB8888);
+   else
+     im2 = evas_cache_image_data(evas_common_image_cache_get(), 
+                                 im->w, im->h, 
+                                 NULL, 1,
+                                 EVAS_COLORSPACE_ARGB8888);
    if (im->references > 1)
      ERR("Setting native with more than one references for im=%p", im);
 
@@ -2347,6 +2354,7 @@ eng_gl_surface_destroy(void *data EINA_UNUSED, void *surface)
 
    if (!sfc) return 0;
 
+   printf("free buf %p\n", sfc->buffer);
    if (sfc->buffer) free(sfc->buffer);
 
    free(sfc);
@@ -2522,7 +2530,7 @@ eng_gl_native_surface_get(void *data EINA_UNUSED, void *surface, void *native_su
    ns->type = EVAS_NATIVE_SURFACE_OPENGL;
    ns->version = EVAS_NATIVE_SURFACE_VERSION;
    ns->data.x11.visual = sfc->buffer;
-
+   
    return 1;
 #else
    (void) surface;
