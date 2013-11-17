@@ -40,7 +40,7 @@ int
 main(void)
 {
    Evas *canvas, *sub_canvas;
-   Evas_Object *bg, *r1, *r2, *r3; /* "sub" canvas objects */
+   Evas_Object *bg, *r0, *r1, *r2, *r3; /* "sub" canvas objects */
    Evas_Object *border, *img; /* canvas objects */
    Ecore_Evas *sub_ee;
 
@@ -90,6 +90,12 @@ main(void)
    evas_object_resize(img, ((2 * WIDTH) / 3) - 6, ((2 * HEIGHT) / 3) - 6);
    ecore_evas_resize(sub_ee, ((2 * WIDTH) / 3) - 6, ((2 * HEIGHT) / 3) - 6);
 
+   r0 = evas_object_rectangle_add(sub_canvas);
+   evas_object_color_set(r0, 0, 0, 0, 255); /* 100% opaque black bg */
+   evas_object_move(r0, 0, 0);
+   evas_object_resize(r0, ((2 * WIDTH) / 3) - 6, ((2 * HEIGHT) / 3) - 6);
+   evas_object_show(r0);
+   
    r1 = evas_object_rectangle_add(sub_canvas);
    evas_object_color_set(r1, 255, 0, 0, 255); /* 100% opaque red */
    evas_object_move(r1, 10, 10);
