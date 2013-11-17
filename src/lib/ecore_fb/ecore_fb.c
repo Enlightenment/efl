@@ -108,7 +108,14 @@ _ecore_fb_size_get(int *w, int *h)
    struct fb_var_screeninfo fb_var;
    int fb;
 
-   fb = open("/dev/fb0", O_RDWR);
+   if (getenv("EVAS_FB_DEV"))
+     fb = open(getenv("EVAS_FB_DEV"), O_RDWR);
+   else
+     {
+        fb = open("/dev/fb/0", O_RDWR);
+        if (fb == -1)
+          fb = open("/dev/fb0", O_RDWR);
+     }
    if (fb < 0)
       goto exit;
 
