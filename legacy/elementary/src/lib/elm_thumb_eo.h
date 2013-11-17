@@ -20,8 +20,8 @@ enum
    ELM_OBJ_THUMB_SUB_ID_ORIENTATION_GET,
    ELM_OBJ_THUMB_SUB_ID_CROP_ALIGN_SET,
    ELM_OBJ_THUMB_SUB_ID_CROP_ALIGN_GET,
-   ELM_OBJ_THUMB_SUB_ID_THUMB_SIZE_SET,
-   ELM_OBJ_THUMB_SUB_ID_THUMB_SIZE_GET,
+   ELM_OBJ_THUMB_SUB_ID_SIZE_SET,
+   ELM_OBJ_THUMB_SUB_ID_SIZE_GET,
    ELM_OBJ_THUMB_SUB_ID_COMPRESS_SET,
    ELM_OBJ_THUMB_SUB_ID_COMPRESS_GET,
    ELM_OBJ_THUMB_SUB_ID_QUALITY_SET,
@@ -215,7 +215,7 @@ enum
  *
  * @ingroup Thumb
  */
-#define elm_obj_thumb_size_set(tw, th) ELM_OBJ_THUMB_ID(ELM_OBJ_THUMB_SUB_ID_THUMB_SIZE_SET), EO_TYPECHECK(int, tw), EO_TYPECHECK(int, th)
+#define elm_obj_thumb_size_set(tw, th) ELM_OBJ_THUMB_ID(ELM_OBJ_THUMB_SUB_ID_SIZE_SET), EO_TYPECHECK(int, tw), EO_TYPECHECK(int, th)
 
 /**
  * @def elm_obj_thumb_size_get
@@ -230,7 +230,7 @@ enum
  *
  * @ingroup Thumb
  */
-#define elm_obj_thumb_size_get(tw, th) ELM_OBJ_THUMB_ID(ELM_OBJ_THUMB_SUB_ID_THUMB_SIZE_GET), EO_TYPECHECK(int *, tw), EO_TYPECHECK(int *, th)
+#define elm_obj_thumb_size_get(tw, th) ELM_OBJ_THUMB_ID(ELM_OBJ_THUMB_SUB_ID_SIZE_GET), EO_TYPECHECK(int *, tw), EO_TYPECHECK(int *, th)
 
 /**
  * @def elm_obj_thumb_crop_align_set
