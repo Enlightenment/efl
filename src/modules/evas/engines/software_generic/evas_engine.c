@@ -2354,7 +2354,6 @@ eng_gl_surface_destroy(void *data EINA_UNUSED, void *surface)
 
    if (!sfc) return 0;
 
-   printf("free buf %p\n", sfc->buffer);
    if (sfc->buffer) free(sfc->buffer);
 
    free(sfc);
