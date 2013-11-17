@@ -63,20 +63,20 @@ init_shaders(GLData *gld)
 {
    Evas_GL_API *gl = gld->glapi;
    GLbyte vShaderStr[] =
-      "attribute vec4 vPosition;    \n"
-      "void main()                  \n"
-      "{                            \n"
-      "   gl_Position = vPosition;  \n"
-      "}                            \n";
+      "attribute vec4 vPosition;\n"
+      "void main()\n"
+      "{\n"
+      "   gl_Position = vPosition;\n"
+      "}\n";
 
    GLbyte fShaderStr[] =
-      "#ifdef GL_ES                                 \n"
-      "precision mediump float;                     \n"
-      "#endif                                       \n"
-      "void main()                                  \n"
-      "{                                            \n"
+      "#ifdef GL_ES\n"
+      "precision mediump float;\n"
+      "#endif\n"
+      "void main()\n"
+      "{\n"
       "  gl_FragColor = vec4 ( 1.0, 0.0, 0.0, 1.0 );\n"
-      "}                                            \n";
+      "}\n";
 
    GLint linked;
 
