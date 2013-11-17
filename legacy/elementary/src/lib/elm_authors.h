@@ -80,7 +80,7 @@
  * @author Arvind R <arvino55@@gmail.com>
  * @author Paulo Cavalcanti <paulo.cavalcanti@@linux.intel.com>
  * @author Stefan Schmidt <stefan@@datenfreihafen.org>
- * @author Ryuan Choi (ryuan) <ryuan.choi@samsung.com> <ryuan.choi@gmail.com>
+ * @author Ryuan Choi (ryuan) <ryuan.choi@@samsung.com> <ryuan.choi@@gmail.com>
  * @author Hosang Kim <hosang12.kim@@samsung.com>
  * @author Youngbok Shin <youngb.shin@@samsung.com>
  * @author Niraj Kumar <niraj.kr@@samsung.com> <niraj.kumar.ait@@gmail.com>
