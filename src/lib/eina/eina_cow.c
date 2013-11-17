@@ -430,6 +430,7 @@ eina_cow_free(Eina_Cow *cow, const Eina_Cow_Data **data)
 #endif
    ref->refcount--;
 
+   if (ref->refcount == 0) _eina_cow_hash_del(cow, *data, ref);
    *data = (Eina_Cow_Data*) cow->default_value;
 
    if (ref->refcount > 0)
@@ -443,7 +444,6 @@ eina_cow_free(Eina_Cow *cow, const Eina_Cow_Data **data)
 #ifdef EINA_COW_MAGIC_ON
    EINA_MAGIC_SET(ref, EINA_MAGIC_NONE);
 #endif
-   _eina_cow_hash_del(cow, *data, ref);
    _eina_cow_togc_del(cow, ref);
    eina_mempool_free(cow->pool, (void*) ref);
 }
