@@ -6312,8 +6312,8 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_SCALE_SET), _elm_widget_scale_set),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_SCALE_GET), _elm_widget_scale_get),
 
-        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_TEXT_PART_SET), _elm_widget_part_text_set),
-        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_TEXT_PART_GET), _elm_widget_part_text_get),
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_PART_TEXT_SET), _elm_widget_part_text_set),
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_PART_TEXT_GET), _elm_widget_part_text_get),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_DOMAIN_TRANSLATABLE_PART_TEXT_SET), _elm_widget_domain_translatable_part_text_set),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_TRANSLATABLE_PART_TEXT_GET), _elm_widget_translatable_part_text_get),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_DOMAIN_PART_TEXT_TRANSLATABLE_SET), _elm_widget_domain_part_text_translatable_set),
@@ -6458,8 +6458,8 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_SCROLLABLE_CHILDREN_GET, "description here"),
      EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_SCALE_SET, "description here"),
      EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_SCALE_GET, "description here"),
-     EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_TEXT_PART_SET, "description here"),
-     EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_TEXT_PART_GET, "description here"),
+     EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_PART_TEXT_SET, "description here"),
+     EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_PART_TEXT_GET, "description here"),
 
      EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_DOMAIN_TRANSLATABLE_PART_TEXT_SET, "description here"),
      EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_TRANSLATABLE_PART_TEXT_GET, "description here"),

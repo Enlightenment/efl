@@ -1143,8 +1143,8 @@ enum
    ELM_WIDGET_SUB_ID_SCALE_SET,
    ELM_WIDGET_SUB_ID_SCALE_GET,
 
-   ELM_WIDGET_SUB_ID_TEXT_PART_SET,
-   ELM_WIDGET_SUB_ID_TEXT_PART_GET,
+   ELM_WIDGET_SUB_ID_PART_TEXT_SET,
+   ELM_WIDGET_SUB_ID_PART_TEXT_GET,
    ELM_WIDGET_SUB_ID_DOMAIN_TRANSLATABLE_PART_TEXT_SET,
    ELM_WIDGET_SUB_ID_TRANSLATABLE_PART_TEXT_GET,
    ELM_WIDGET_SUB_ID_DOMAIN_PART_TEXT_TRANSLATABLE_SET,
@@ -1875,7 +1875,7 @@ typedef void * (*list_data_get_func_type)(const Eina_List * l);
  * @param[in] label
  *
  */
-#define elm_wdg_part_text_set(part, label) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_TEXT_PART_SET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(const char *, label)
+#define elm_wdg_part_text_set(part, label) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_PART_TEXT_SET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(const char *, label)
 
 /**
  * @def elm_wdg_part_text_get
@@ -1887,7 +1887,7 @@ typedef void * (*list_data_get_func_type)(const Eina_List * l);
  * @param[out] ret
  *
  */
-#define elm_wdg_part_text_get(part, ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_TEXT_PART_GET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(const char **, ret)
+#define elm_wdg_part_text_get(part, ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_PART_TEXT_GET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(const char **, ret)
 
 
 /**
