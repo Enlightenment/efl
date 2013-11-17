@@ -67,12 +67,14 @@ _activate(Evas_Object *obj)
 static void
 _icon_signal_emit(Evas_Object *obj)
 {
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    char buf[64];
 
    snprintf(buf, sizeof(buf), "elm,state,icon,%s",
             elm_layout_content_get(obj, "icon") ? "visible" : "hidden");
 
    elm_layout_signal_emit(obj, buf, "elm");
+   edje_object_message_signal_process(wd->resize_obj);
 }
 
 /* FIXME: replicated from elm_layout just because check's icon spot
@@ -92,6 +94,7 @@ _elm_check_smart_sub_object_del(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    _icon_signal_emit(obj);
 
    if (ret) *ret = EINA_TRUE;
+   eo_do(obj, elm_obj_layout_sizing_eval());
 }
 
 static void
@@ -127,6 +130,7 @@ _elm_check_smart_content_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    _icon_signal_emit(obj);
 
    if (ret) *ret = EINA_TRUE;
+   eo_do(obj, elm_obj_layout_sizing_eval());
 }
 
 static void
@@ -192,7 +196,7 @@ _elm_check_smart_theme(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
     * we can changed the theme API */
    _icon_signal_emit(obj);
 
-   elm_layout_sizing_eval(obj);
+   eo_do(obj, elm_obj_layout_sizing_eval());
 
    if (ret) *ret = EINA_TRUE;
 }
