@@ -141,7 +141,7 @@ ecore_wl_dnd_selection_set(Ecore_Wl_Input *input, const char **types_offered)
    for (type = types_offered; *type; type++)
      {
         t = wl_array_add(&input->data_types, sizeof(*t));
-        *t = strdup(*type);
+        if (t) *t = strdup(*type);
         wl_data_source_offer(input->data_source, *t);
      }
 
@@ -374,9 +374,13 @@ ecore_wl_dnd_drag_types_set(Ecore_Wl_Input *input, const char **types_offered)
    /* add these types to the data source */
    for (type = types_offered; *type; type++)
      {
+        if (!*type) continue;
         t = wl_array_add(&input->data_types, sizeof(*t));
-        *t = strdup(*type);
-        wl_data_source_offer(input->data_source, *t);
+        if (t) 
+          {
+             *t = strdup(*type);
+             wl_data_source_offer(input->data_source, *t);
+          }
      }
 }
 
@@ -563,6 +567,8 @@ _ecore_wl_dnd_selection(void *data, struct wl_data_device *data_device EINA_UNUS
 void 
 _ecore_wl_dnd_del(Ecore_Wl_Dnd_Source *source)
 {
+   char **t;
+
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!source) return;
@@ -570,6 +576,8 @@ _ecore_wl_dnd_del(Ecore_Wl_Dnd_Source *source)
    if (source->refcount == 0)
      {
         wl_data_offer_destroy(source->data_offer);
+        for (t = source->types.data; *t; t++)
+          free(*t);
         wl_array_release(&source->types);
         free(source);
      }
@@ -779,7 +787,8 @@ _ecore_wl_dnd_offer_cb_offer(void *data, struct wl_data_offer *data_offer EINA_U
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!(source = data)) return;
+   if (!type) return;
 
    t = wl_array_add(&source->types, sizeof(*t));
-   *t = strdup(type);
+   if (t) *t = strdup(type);
 }
