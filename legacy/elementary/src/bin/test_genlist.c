@@ -3643,6 +3643,14 @@ _gl_del_win_del_cb(void *data, Evas *e EINA_UNUSED,
    elm_genlist_item_class_free(data);
 }
 
+static void
+_gl_del_unrealized_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
+                      void *event_info)
+{
+   int num = (int)(uintptr_t)elm_object_item_data_get(event_info);
+   printf("unrealized item # %d\n", num);
+}
+
 static Evas_Object *
 _gl_del_genlist_add(Evas_Object *bx)
 {
@@ -3653,6 +3661,8 @@ _gl_del_genlist_add(Evas_Object *bx)
    evas_object_size_hint_align_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(bx, gl);
    evas_object_show(gl);
+   evas_object_smart_callback_add(gl, "unrealized",
+                                  _gl_del_unrealized_cb, NULL);
 
    return gl;
 }
@@ -3712,6 +3722,12 @@ _gl_del_sel(void *data, Evas_Object *obj, void *event_info)
      }
 }
 
+static void
+_gl_del_del_cb(void *data, Evas_Object *obj EINA_UNUSED)
+{
+   printf("deleted item # %d\n", (int)(uintptr_t)data);
+}
+
 void
 test_genlist_del(void *data EINA_UNUSED,
                  Evas_Object *obj EINA_UNUSED,
@@ -3752,7 +3768,7 @@ test_genlist_del(void *data EINA_UNUSED,
    itc->func.text_get = _gl_del_text_get;
    itc->func.content_get  = gl_content_get;
    itc->func.state_get = NULL;
-   itc->func.del       = NULL;
+   itc->func.del       = _gl_del_del_cb;
    evas_object_event_callback_add(win, EVAS_CALLBACK_DEL,
                                   _gl_del_win_del_cb, itc);
 
