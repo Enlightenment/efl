@@ -156,5 +156,4 @@ evas_debug_magic_string_get(DATA32 magic)
       default:
 	return "<UNKNOWN>";
      };
-   return "<UNKNOWN>";
 }
