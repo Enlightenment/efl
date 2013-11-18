@@ -3080,7 +3080,7 @@ eng_image_cache_flush(void *data)
 
    re = (Render_Engine *)data;
 
-   if (re) eng_window_use(re->win);
+   eng_window_use(re->win);
 
    tmp_size = evas_common_image_get_cache();
    evas_common_image_set_cache(0);
@@ -3096,7 +3096,7 @@ eng_image_cache_set(void *data, int bytes)
 
    re = (Render_Engine *)data;
 
-   if (re) eng_window_use(re->win);
+   eng_window_use(re->win);
 
    evas_common_image_set_cache(bytes);
    evas_common_rgba_image_scalecache_size_set(bytes);
