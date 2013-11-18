@@ -576,8 +576,6 @@ _ecore_wl_dnd_del(Ecore_Wl_Dnd_Source *source)
    if (source->refcount == 0)
      {
         wl_data_offer_destroy(source->data_offer);
-        for (t = source->types.data; *t; t++)
-          free(*t);
         wl_array_release(&source->types);
         free(source);
      }
