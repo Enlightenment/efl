@@ -28,7 +28,7 @@ group { name: "elm/tooltip/base/default";
    data.item: "pad_border_x" "1";
    data.item: "pad_border_y" "1";
    /* tooltip is hidden after this amount.
-    Keep in syn with hide animations */
+    Keep in sync with hide animations */
    data.item: "hide_timeout" "0.35";
    // if in a window... it's transparent!
    data.item: "transparent" "enabled";
