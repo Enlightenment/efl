@@ -809,15 +809,16 @@ _x11_notify_handler_text(X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify 
         if (dropable)
           {
              Dropable_Cbs *cbs;
+             Eina_Inlist *itr;
              ddata.x = savedtypes.x;
              ddata.y = savedtypes.y;
              ddata.format = ELM_SEL_FORMAT_TEXT;
              ddata.data = data->data;
              ddata.len = data->length;
              ddata.action = sel->action;
-             EINA_INLIST_FOREACH(dropable->cbs_list, cbs)
+             EINA_INLIST_FOREACH_SAFE(dropable->cbs_list, itr, cbs)
                 if (cbs->dropcb)
-                   cbs->dropcb(cbs->dropdata, dropable->obj, &ddata);
+                  cbs->dropcb(cbs->dropdata, dropable->obj, &ddata);
              goto end;
           }
      }
@@ -965,6 +966,7 @@ _x11_vcard_receive(X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notif
    if (sel == (_x11_selections + ELM_SEL_TYPE_XDND))
      {
         Dropable_Cbs *cbs;
+        Eina_Inlist *itr;
         Elm_Selection_Data ddata;
 
         cnp_debug("drag & drop\n");
@@ -986,9 +988,9 @@ _x11_vcard_receive(X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notif
         ddata.data = data->data;
         ddata.len = data->length;
         ddata.action = sel->action;
-        EINA_INLIST_FOREACH(dropable->cbs_list, cbs)
+        EINA_INLIST_FOREACH_SAFE(dropable->cbs_list, itr, cbs)
            if (cbs->dropcb)
-              cbs->dropcb(cbs->dropdata, dropable->obj, &ddata);
+             cbs->dropcb(cbs->dropdata, dropable->obj, &ddata);
         ecore_x_dnd_send_finished();
      }
    else if (sel->datacb)
@@ -1297,6 +1299,7 @@ _x11_dnd_dropable_handle(Dropable *dropable, Evas_Coord x, Evas_Coord y, Eina_Bo
 {
    Dropable *dropable_last = NULL;
    Dropable_Cbs *cbs;
+   Eina_Inlist *itr;
 
    if (dropable->last.in)
      dropable_last = _x11_dropable_geom_find
@@ -1305,39 +1308,39 @@ _x11_dnd_dropable_handle(Dropable *dropable, Evas_Coord x, Evas_Coord y, Eina_Bo
    if ((have_obj) && (dropable_last == dropable)) // same
      {
         cnp_debug("same obj dropable %p\n", dropable);
-        EINA_INLIST_FOREACH(dropable->cbs_list, cbs)
+        EINA_INLIST_FOREACH_SAFE(dropable->cbs_list, itr, cbs)
            if (cbs->poscb)
-              cbs->poscb(cbs->posdata, dropable->obj, x, y, action);
+             cbs->poscb(cbs->posdata, dropable->obj, x, y, action);
      }
    else if ((have_obj) && (!dropable_last)) // enter new obj
      {
         cnp_debug("enter %p\n", dropable->obj);
-        EINA_INLIST_FOREACH(dropable->cbs_list, cbs)
+        EINA_INLIST_FOREACH_SAFE(dropable->cbs_list, itr, cbs)
            if (cbs->entercb)
-              cbs->entercb(cbs->enterdata, dropable->obj);
-        EINA_INLIST_FOREACH(dropable->cbs_list, cbs)
+             cbs->entercb(cbs->enterdata, dropable->obj);
+        EINA_INLIST_FOREACH_SAFE(dropable->cbs_list, itr, cbs)
            if (cbs->poscb)
-              cbs->poscb(cbs->posdata, dropable->obj, x, y, action);
+             cbs->poscb(cbs->posdata, dropable->obj, x, y, action);
      }
    else if ((!have_obj) && (dropable_last)) // leave last obj
      {
         cnp_debug("leave %p\n", dropable_last->obj);
-        EINA_INLIST_FOREACH(dropable->cbs_list, cbs)
+        EINA_INLIST_FOREACH_SAFE(dropable->cbs_list, itr, cbs)
            if (cbs->leavecb)
-              cbs->leavecb(cbs->leavedata, dropable->obj);
+             cbs->leavecb(cbs->leavedata, dropable->obj);
      }
    else if (have_obj) // leave last obj and enter new one
      {
         cnp_debug("enter %p\n", dropable->obj);
-        EINA_INLIST_FOREACH(dropable->cbs_list, cbs)
+        EINA_INLIST_FOREACH_SAFE(dropable->cbs_list, itr, cbs)
            if (cbs->entercb)
-              cbs->entercb(cbs->enterdata, dropable->obj);
+             cbs->entercb(cbs->enterdata, dropable->obj);
         if (dropable_last)
           {
              dropable = dropable_last;
-             EINA_INLIST_FOREACH(dropable->cbs_list, cbs)
+             EINA_INLIST_FOREACH_SAFE(dropable->cbs_list, itr, cbs)
                 if (cbs->leavecb)
-                   cbs->leavecb(cbs->leavedata, dropable->obj);
+                  cbs->leavecb(cbs->leavedata, dropable->obj);
              cnp_debug("leave %p\n", dropable->obj);
           }
      }
@@ -1522,11 +1525,12 @@ found:
              ddata.action = act;
 
              Dropable_Cbs *cbs;
-             EINA_INLIST_FOREACH(dropable->cbs_list, cbs)
+             Eina_Inlist *itr;
+             EINA_INLIST_FOREACH_SAFE(dropable->cbs_list, itr, cbs)
                {
                   /* If it's markup that also supports images */
                   if ((cbs->types & ELM_SEL_FORMAT_MARKUP) &&
-                        (cbs->types & ELM_SEL_FORMAT_IMAGE))
+                      (cbs->types & ELM_SEL_FORMAT_IMAGE))
                     {
                        int len;
                        ddata.format = ELM_SEL_FORMAT_MARKUP;
@@ -1536,14 +1540,16 @@ found:
                        snprintf(entrytag, len + 1, tagstring, savedtypes.imgfile);
                        ddata.data = entrytag;
                        cnp_debug("Insert %s\n", (char *)ddata.data);
-                       if (cbs->dropcb) cbs->dropcb(cbs->dropdata, dropable->obj, &ddata);
+                       if (cbs->dropcb)
+                         cbs->dropcb(cbs->dropdata, dropable->obj, &ddata);
                     }
                   else if (cbs->types & ELM_SEL_FORMAT_IMAGE)
                     {
                        cnp_debug("Doing image insert (%s)\n", savedtypes.imgfile);
                        ddata.format = ELM_SEL_FORMAT_IMAGE;
                        ddata.data = (char *)savedtypes.imgfile;
-                       if (cbs->dropcb) cbs->dropcb(cbs->dropdata, dropable->obj, &ddata);
+                       if (cbs->dropcb)
+                         cbs->dropcb(cbs->dropdata, dropable->obj, &ddata);
                     }
                   else
                     {
@@ -1736,7 +1742,7 @@ _x11_elm_cnp_selection_set(Evas_Object *obj, Elm_Sel_Type selection, Elm_Sel_For
    sel->active = EINA_TRUE;
    sel->widget = obj;
    sel->xwin = xwin;
-   sel->set(xwin, &selection, sizeof(Elm_Sel_Type));
+   if (sel->set) sel->set(xwin, &selection, sizeof(Elm_Sel_Type));
    sel->format = format;
    sel->loss_cb = NULL;
    sel->loss_data = NULL;
@@ -1853,8 +1859,6 @@ _x11_elm_drop_target_add(Evas_Object *obj, Elm_Sel_Format format,
    Eina_Bool have_drops = EINA_FALSE;
 
    _x11_elm_cnp_init();
-
-   /* TODO: check if obj is already a drop target. Do not add twice! */
 
    /* Is this the first? */
    EINA_LIST_FOREACH(drops, l, dropable)
@@ -3088,7 +3092,8 @@ _wl_dropable_data_handle(Wl_Cnp_Selection *sel, char *data)
    if (!savedtypes.imgfile) return;
 
    Dropable_Cbs *cbs;
-   EINA_INLIST_FOREACH(drop->cbs_list, cbs)
+   Eina_Inlist *itr;
+   EINA_INLIST_FOREACH_SAFE(drop->cbs_list, itr, cbs)
      {
         /* If it's markup that also supports images */
         if ((cbs->types & ELM_SEL_FORMAT_MARKUP) &&
@@ -3154,6 +3159,7 @@ _wl_dropable_handle(Dropable *drop, Evas_Coord x, Evas_Coord y, Eina_Bool have_o
 {
    Dropable *last = NULL;
    Dropable_Cbs *cbs;
+   Eina_Inlist *itr;
 
 
    if (drop->last.in)
@@ -3162,34 +3168,34 @@ _wl_dropable_handle(Dropable *drop, Evas_Coord x, Evas_Coord y, Eina_Bool have_o
 
    if ((have_obj) && (last == drop))
      {
-        EINA_INLIST_FOREACH(drop->cbs_list, cbs)
+        EINA_INLIST_FOREACH_SAFE(drop->cbs_list, itr, cbs)
            if (cbs->poscb)
               cbs->poscb(cbs->posdata, drop->obj, x, y, dragaction);
      }
    else if ((have_obj) && (!last))
      {
-        EINA_INLIST_FOREACH(drop->cbs_list, cbs)
+        EINA_INLIST_FOREACH_SAFE(drop->cbs_list, itr, cbs)
            if (cbs->entercb)
               cbs->entercb(cbs->enterdata, drop->obj);
-        EINA_INLIST_FOREACH(drop->cbs_list, cbs)
+        EINA_INLIST_FOREACH_SAFE(drop->cbs_list, itr, cbs)
            if (cbs->poscb)
               cbs->poscb(cbs->posdata, drop->obj, x, y, dragaction);
      }
    else if ((!have_obj) && (last))
      {
-        EINA_INLIST_FOREACH(drop->cbs_list, cbs)
+        EINA_INLIST_FOREACH_SAFE(drop->cbs_list, itr, cbs)
            if (cbs->leavecb)
               cbs->leavecb(cbs->leavedata, drop->obj);
      }
    else if (have_obj)
      {
-        EINA_INLIST_FOREACH(drop->cbs_list, cbs)
+        EINA_INLIST_FOREACH_SAFE(drop->cbs_list, itr, cbs)
            if (cbs->entercb)
               cbs->entercb(cbs->enterdata, drop->obj);
         if (last)
           {
              drop = last;
-             EINA_INLIST_FOREACH(drop->cbs_list, cbs)
+             EINA_INLIST_FOREACH_SAFE(drop->cbs_list, itr, cbs)
                 if (cbs->leavecb)
                    cbs->leavecb(cbs->leavedata, drop->obj);
           }
@@ -3894,10 +3900,13 @@ elm_drop_item_container_add(Evas_Object *obj,
    if (elm_drop_item_container_del_internal(obj, EINA_FALSE))
      {  /* Updating info of existing obj */
         st = eina_list_search_unsorted(cont_drop_tg, _drop_item_container_cmp, obj);
+        if (!st) return EINA_FALSE;
      }
    else
      {
         st = calloc(1, sizeof(*st));
+        if (!st) return EINA_FALSE;
+
         st->obj = obj;
         cont_drop_tg = eina_list_append(cont_drop_tg, st);
      }
@@ -4207,10 +4216,13 @@ elm_drag_item_container_add(Evas_Object *obj, double anim_tm, double tm_to_drag,
    if (elm_drag_item_container_del_internal(obj, EINA_FALSE))
      {  /* Updating info of existing obj */
         st = eina_list_search_unsorted(cont_drag_tg, _drag_item_container_cmp, obj);
+        if (!st) return EINA_FALSE;
      }
    else
      {
         st = calloc(1, sizeof(*st));
+        if (!st) return EINA_FALSE;
+
         st->obj = obj;
         cont_drag_tg = eina_list_append(cont_drag_tg, st);
 
