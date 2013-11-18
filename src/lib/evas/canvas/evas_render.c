@@ -345,15 +345,22 @@ _evas_render_phase1_direct(Evas_Public_Data *e,
                _evas_render_prev_cur_clip_cache_add(e, obj);
              if (obj->proxy->proxies)
                {
-		  EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, obj->proxy, Evas_Object_Proxy_Data, proxy_write)
-		    proxy_write->redraw = EINA_TRUE;
-		  EINA_COW_WRITE_END(evas_object_proxy_cow, obj->proxy, proxy_write);
-
-                  EINA_LIST_FOREACH(obj->proxy->proxies, l, eo_proxy)
+                  if (obj->smart.smart && evas_object_smart_changed_get(eo_obj))
                     {
-                       Evas_Object_Protected_Data *proxy = eo_data_scope_get(eo_proxy, EVAS_OBJ_CLASS);
-                       proxy->func->render_pre(eo_proxy, proxy, proxy->private_data);
-                       _evas_render_prev_cur_clip_cache_add(e, proxy);
+                       EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, obj->proxy,
+                                            Evas_Object_Proxy_Data, proxy_write)
+                          proxy_write->redraw = EINA_TRUE;
+                       EINA_COW_WRITE_END(evas_object_proxy_cow, obj->proxy,
+                                          proxy_write);
+
+                       EINA_LIST_FOREACH(obj->proxy->proxies, l, eo_proxy)
+                         {
+                            Evas_Object_Protected_Data *proxy =
+                               eo_data_scope_get(eo_proxy, EVAS_OBJ_CLASS);
+                            proxy->func->render_pre(eo_proxy,
+                                                    proxy, proxy->private_data);
+                            _evas_render_prev_cur_clip_cache_add(e, proxy);
+                         }
                     }
                }
 
