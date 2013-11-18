@@ -980,10 +980,10 @@ _ecore_wl_input_cb_touch_down(void *data, struct wl_touch *touch EINA_UNUSED, un
    input->display->serial = serial;
    input->sx = wl_fixed_to_int(x);
    input->sy = wl_fixed_to_int(y);
-   _ecore_wl_input_mouse_move_send(input, input->pointer_focus, timestamp, id);
-   _ecore_wl_input_cb_pointer_enter(data, NULL, serial, surface, x, y);
+   /* _ecore_wl_input_mouse_move_send(input, input->pointer_focus, timestamp, id); */
+   /* _ecore_wl_input_cb_pointer_enter(data, NULL, serial, surface, x, y); */
    _ecore_wl_input_mouse_down_send(input, input->pointer_focus,
-                                   id, BTN_LEFT, timestamp);
+                                   id, 0, timestamp);
 }
 
 static void 
@@ -1000,7 +1000,7 @@ _ecore_wl_input_cb_touch_up(void *data, struct wl_touch *touch EINA_UNUSED, unsi
    /* input->timestamp = timestamp; */
    input->display->serial = serial;
    _ecore_wl_input_mouse_up_send(input, input->pointer_focus,
-                                 id, BTN_LEFT, timestamp);
+                                 id, 0, timestamp);
 }
 
 static void 
@@ -1017,7 +1017,6 @@ _ecore_wl_input_cb_touch_motion(void *data, struct wl_touch *touch EINA_UNUSED, 
    /* input->timestamp = timestamp; */
    input->sx = wl_fixed_to_int(x);
    input->sy = wl_fixed_to_int(y);
-
    _ecore_wl_input_mouse_move_send(input, input->pointer_focus, timestamp, id);
 }
 
