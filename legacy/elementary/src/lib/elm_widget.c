@@ -5354,7 +5354,11 @@ elm_widget_item_track(Elm_Widget_Item *item)
         return item->track_obj;
      }
 
-   if (!item->view) return NULL;
+   if (!item->view)
+     {
+        WRN("view obj of the item(%p) is invalid. Please make sure the view obj is created!", item);
+        return NULL;
+     }
 
    Evas_Object *track =
       evas_object_rectangle_add(evas_object_evas_get(item->widget));
