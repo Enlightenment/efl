@@ -97,8 +97,13 @@
 #endif
 @EINA_CONFIGURE_HAVE_POSIX_SPINLOCK@
 
-/* #if (defined(__x86_64__) || defined(__x86_64) || defined(__amd64__) || defined(__amd64) || defined(__ppc64__) || defined(_WIN64) || defined(__LP64__) || defined(_LP64)) */
-#if defined(_WIN64) || defined(__LP64__)
+/* Do not turn the following #define as meaning EFL64. We are only 
+   interested to know if sizeof (void*) == 64bits or not. Those means
+   something else.
+
+   defined(__x86_64__) || defined(__x86_64) || defined(__amd64__) || defined(__amd64)
+ */
+#if defined(_WIN64) || defined(__LP64__) || defined(_LP64) || defined(__ppc64__)
 # define EFL64
 #endif
 
