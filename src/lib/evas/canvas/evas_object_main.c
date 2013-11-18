@@ -54,10 +54,10 @@ _init_cow(void)
      {
         eina_cow_del(evas_object_proxy_cow);
         eina_cow_del(evas_object_map_cow);
-	eina_cow_del(evas_object_state_cow);
+        eina_cow_del(evas_object_state_cow);
         evas_object_proxy_cow = NULL;
         evas_object_map_cow = NULL;
-	evas_object_state_cow = NULL;
+        evas_object_state_cow = NULL;
         return EINA_FALSE;
      }
 
@@ -232,7 +232,7 @@ evas_object_change(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
      {
         obj2 = eo_data_scope_get(eo_obj2, MY_CLASS);
 
-	if (!obj2) continue;
+        if (!obj2) continue;
         evas_object_change(eo_obj2, obj2);
      }
    if (obj->smart.parent)
@@ -1838,7 +1838,7 @@ _dbg_info_get(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
    Eina_Bool clipees_has;
 
    eo_do(eo_obj,
-	 evas_obj_visibility_get(&visible),
+         evas_obj_visibility_get(&visible),
          evas_obj_layer_get(&layer),
          evas_obj_name_get(&name),
          evas_obj_position_get(&x, &y),
