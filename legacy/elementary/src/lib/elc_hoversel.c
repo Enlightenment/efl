@@ -603,11 +603,12 @@ _elm_hoversel_smart_event(Eo *obj, void *_pd, va_list *list)
    void *event_info = va_arg(*list, void *);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    if (ret) *ret = EINA_FALSE;
+   Eina_Bool int_ret = EINA_FALSE;
    Evas_Event_Key_Down *ev = event_info;
    Elm_Hoversel_Smart_Data *sd = _pd;
 
-   eo_do_super(obj, MY_CLASS, elm_wdg_event(src, type, event_info, ret));
-   if (*ret) return;
+   eo_do_super(obj, MY_CLASS, elm_wdg_event(src, type, event_info, &int_ret));
+   if (int_ret) return;
 
    if (!sd || !sd->hover) return;
    if (elm_widget_disabled_get(obj)) return;
