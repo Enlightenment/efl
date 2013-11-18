@@ -1922,9 +1922,6 @@ _edje_part_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
    if (en->select_allow && ev->button != 2) dosel = EINA_TRUE;
    if (dosel)
      {
-        evas_object_geometry_get(rp->object, &x, &y, &w, &h);
-        cx = ev->canvas.x - x;
-        cy = ev->canvas.y - y;
         if (ev->flags & EVAS_BUTTON_TRIPLE_CLICK)
           {
              if (shift)
