@@ -269,6 +269,13 @@ do_eet_insert(const char *file,
 
    fseek(f, 0, SEEK_END);
    size = ftell(f);
+   if (size < 0)
+     {
+        ERR("cannot obtain current file position %s", out);
+        fclose(f);
+        exit(-1);
+     }
+
    rewind(f);
    data = malloc(size);
    if (!data)
