@@ -1176,7 +1176,7 @@ ecore_con_event_client_data(Ecore_Con_Client *cl, unsigned char *buf, int num, E
    cl->host_server->event_count = eina_list_append(cl->host_server->event_count, e);
    _ecore_con_cl_timer_update(cl);
    e->client = cl;
-   if (duplicate)
+   if ((duplicate) && (num > 0))
      {
         e->data = malloc(num);
         if (!e->data)
