@@ -6,9 +6,9 @@ static void
 _click_me(void *data, Evas_Object *obj EINA_UNUSED,
           void *event_info EINA_UNUSED)
 {
-   Elm_Object_Item *it = (Elm_Object_Item *)data;
-   fputs(":-)\n", stderr);
-   int disabled = elm_object_item_disabled_get(it);
+   Elm_Object_Item *it = data;
+   Eina_Bool disabled = elm_object_item_disabled_get(it);
+   printf("The first item is now %s\n", disabled ? "enabled" : "disabled");
    elm_object_item_disabled_set(it, !disabled);
 }
 
