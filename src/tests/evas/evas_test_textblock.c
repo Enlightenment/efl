@@ -2450,6 +2450,16 @@ START_TEST(evas_textblock_formats)
    fail_if(strcmp(evas_textblock_cursor_content_get(cur), "<item>"));
    fail_if(!evas_textblock_cursor_format_is_visible_get(cur));
 
+   evas_object_textblock_text_markup_set(tb, "abc<br/>def");
+   evas_textblock_cursor_pos_set(cur, 3);
+   evas_object_textblock_text_markup_prepend(cur, "<b></b>");
+   ck_assert_str_eq(evas_object_textblock_text_markup_get(tb), "abc<b></b><br/>def");
+   evas_object_textblock_text_markup_set(tb, "abc<br/>def");
+   evas_textblock_cursor_pos_set(cur, 2);
+   evas_object_textblock_text_markup_prepend(cur, "<b></b>");
+   ck_assert_str_eq(evas_object_textblock_text_markup_get(tb), "ab<b></b>c<br/>def");
+
+
    END_TB_TEST();
 }
 END_TEST
