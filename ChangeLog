@@ -1,3 +1,7 @@
+2013-11-19  Tom Hacohen
+
+	* Evas textblock: Fixed order of tags inserted with markup_app/prepend.
+
 2013-11-05  Youngbok Shin
 
         * Edje: Add null checking for name of anchor and item in geometry get functions.

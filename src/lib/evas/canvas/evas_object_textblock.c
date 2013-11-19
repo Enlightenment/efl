@@ -8578,6 +8578,7 @@ evas_textblock_cursor_format_append(Evas_Textblock_Cursor *cur, const char *form
           }
         else
           {
+             fmt = _evas_textblock_node_format_last_at_off(fmt);
              if (evas_textblock_cursor_format_is_visible_get(cur))
                {
                   o->format_nodes = _NODE_FORMAT(eina_inlist_prepend_relative(
@@ -8593,7 +8594,6 @@ evas_textblock_cursor_format_append(Evas_Textblock_Cursor *cur, const char *form
                }
              else
                {
-                  fmt = _evas_textblock_node_format_last_at_off(fmt);
                   o->format_nodes = _NODE_FORMAT(eina_inlist_append_relative(
                            EINA_INLIST_GET(o->format_nodes),
                            EINA_INLIST_GET(n),
