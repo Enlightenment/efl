@@ -1072,7 +1072,7 @@ _smart_need_recalculate_set(Eo *eo_obj, void *_pd, va_list *list)
 
    if (o->recalculate_cycle > 254)
      {
-        ERR("Object %p is not stable during recalc loop", obj);
+        ERR("Object %p is not stable during recalc loop", eo_obj);
         return;
      }
    if (obj->layer->evas->in_smart_calc) o->recalculate_cycle++;
