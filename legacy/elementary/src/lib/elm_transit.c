@@ -1730,7 +1730,7 @@ _transit_effect_wipe_context_free(Elm_Transit_Effect *effect, Elm_Transit *trans
    Eina_List *elist;
    Evas_Object *obj;
    Elm_Transit_Effect_Wipe *wipe = effect;
-   Eina_Bool reverse = elm_transit_auto_reverse_get(transit);
+   Eina_Bool reverse = transit->auto_reverse;
 
    EINA_LIST_FOREACH(transit->objs, elist, obj)
      {
@@ -2166,7 +2166,7 @@ _blend_nodes_build(Elm_Transit *transit, Elm_Transit_Effect_Blend *blend)
 }
 
 void
-_transit_effect_blend_context_free(Elm_Transit_Effect *effect, Elm_Transit *transit __UNUSED__)
+_transit_effect_blend_context_free(Elm_Transit_Effect *effect, Elm_Transit *transit)
 {
    EINA_SAFETY_ON_NULL_RETURN(effect);
    Elm_Transit_Effect_Blend *blend = effect;
@@ -2182,7 +2182,7 @@ _transit_effect_blend_context_free(Elm_Transit_Effect *effect, Elm_Transit *tran
                               blend_node->to.g, blend_node->to.b,
                               blend_node->to.a);
 
-        if (elm_transit_auto_reverse_get(transit))
+        if (transit->auto_reverse)
           evas_object_hide(blend_node->after);
         else
           evas_object_hide(blend_node->before);
