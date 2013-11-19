@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-11-16 12:46+0900\n"
+"POT-Creation-Date: 2013-11-19 17:17+0900\n"
 "PO-Revision-Date: 2010-12-26 10:05+0200\n"
 "Last-Translator: Tom Hacohen <tom.hacohen@samsung.com>\n"
 "Language-Team: General\n"
@@ -74,8 +74,8 @@ msgstr ""
 msgid "Clicked"
 msgstr ""
 
-#: src/lib/elm_button.c:279 src/lib/elm_check.c:218 src/lib/elm_gengrid.c:681
-#: src/lib/elm_genlist.c:1463 src/lib/elm_list.c:1539 src/lib/elm_radio.c:261
+#: src/lib/elm_button.c:279 src/lib/elm_check.c:222 src/lib/elm_gengrid.c:681
+#: src/lib/elm_genlist.c:1463 src/lib/elm_list.c:1547 src/lib/elm_radio.c:265
 #: src/lib/elm_segment_control.c:537 src/lib/elm_spinner.c:540
 #: src/lib/elm_toolbar.c:1980
 msgid "State: Disabled"
@@ -125,20 +125,20 @@ msgstr ""
 msgid "calendar year"
 msgstr ""
 
-#: src/lib/elm_check.c:52 src/lib/elm_check.c:231 src/lib/elm_radio.c:92
-#: src/lib/elm_radio.c:262
+#: src/lib/elm_check.c:52 src/lib/elm_check.c:235 src/lib/elm_radio.c:92
+#: src/lib/elm_radio.c:266
 msgid "State: On"
 msgstr ""
 
-#: src/lib/elm_check.c:58 src/lib/elm_check.c:243 src/lib/elm_radio.c:264
+#: src/lib/elm_check.c:58 src/lib/elm_check.c:247 src/lib/elm_radio.c:268
 msgid "State: Off"
 msgstr ""
 
-#: src/lib/elm_check.c:227 src/lib/elm_check.c:240
+#: src/lib/elm_check.c:231 src/lib/elm_check.c:244
 msgid "State"
 msgstr ""
 
-#: src/lib/elm_check.c:308
+#: src/lib/elm_check.c:312
 msgid "Check"
 msgstr ""
 
@@ -226,7 +226,7 @@ msgstr ""
 msgid "progressbar"
 msgstr ""
 
-#: src/lib/elm_radio.c:292
+#: src/lib/elm_radio.c:296
 msgid "Radio"
 msgstr ""
 
