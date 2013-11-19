@@ -3815,8 +3815,14 @@ cmakeconfig/EcoreConfig.cmake
 cmakeconfig/EcoreConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
 cmakeconfig/EdjeConfig.cmake
 cmakeconfig/EdjeConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
+cmakeconfig/EldbusConfig.cmake
+cmakeconfig/EldbusConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
 cmakeconfig/EfreetConfig.cmake
 cmakeconfig/EfreetConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
+cmakeconfig/EthumbConfig.cmake
+cmakeconfig/EthumbConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
+cmakeconfig/EthumbClientConfig.cmake
+cmakeconfig/EthumbClientConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
 ])
 
 AC_OUTPUT

@@ -266,10 +266,25 @@ edje_cmakeconfig_DATA = \
 cmakeconfig/EdjeConfig.cmake \
 cmakeconfig/EdjeConfigVersion.cmake
 
+eldbus_cmakeconfigdir = $(libdir)/cmake/Eldbus/
+eldbus_cmakeconfig_DATA = \
+cmakeconfig/EldbusConfig.cmake \
+cmakeconfig/EldbusConfigVersion.cmake
+
 efreet_cmakeconfigdir =  $(libdir)/cmake/Efreet/
 efreet_cmakeconfig_DATA = \
 cmakeconfig/EfreetConfig.cmake \
 cmakeconfig/EfreetConfigVersion.cmake
+
+ethumb_cmakeconfigdir =  $(libdir)/cmake/Ethumb/
+ethumb_cmakeconfig_DATA = \
+cmakeconfig/EthumbConfig.cmake \
+cmakeconfig/EthumbConfigVersion.cmake
+
+ethumbclient_cmakeconfigdir =  $(libdir)/cmake/EthumbClient/
+ethumbclient_cmakeconfig_DATA = \
+cmakeconfig/EthumbClientConfig.cmake \
+cmakeconfig/EthumbClientConfigVersion.cmake
 
 # D-Bus services:
 
