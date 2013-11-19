@@ -38,6 +38,7 @@ elementary-*-doc.tar.bz2
 /ltmain.sh
 /missing
 /stamp-h1
+/test-driver
 core
 cscope.*
 tags

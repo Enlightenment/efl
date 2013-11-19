@@ -617,6 +617,17 @@ if test "x$want_elementary_debug" = "xyes"; then
 fi
 AC_SUBST(ELM_DEBUG_DEF)
 
+AC_ARG_WITH([tests],
+   [AC_HELP_STRING([--with-tests=none|regular],
+                   [choose elementary testing method: regular or none.(coverage will be supported)@<:@default=none@:>@])],
+   [build_tests=${withval}],
+   [build_tests=none])
+
+if test "${build_tests}" = "regular"; then
+   PKG_CHECK_MODULES([CHECK], [check >= 0.9.5])
+fi
+AM_CONDITIONAL([ENABLE_ELEMENTARY_TESTS], [test "${build_tests}" = "regular"])
+
 ELM_ALLOCA_H_DEF="#undef"
 AC_CHECK_HEADER(alloca.h, [ELM_ALLOCA_H_DEF="#define"])
 AC_SUBST(ELM_ALLOCA_H_DEF)
@@ -714,6 +725,7 @@ src/modules/test_entry/Makefile
 src/modules/test_map/Makefile
 src/edje_externals/Makefile
 src/examples/Makefile
+src/tests/Makefile
 data/Makefile
 data/themes/Makefile
 data/images/Makefile
@@ -776,6 +788,12 @@ echo "Compilation................: make (or gmake)"
 echo "  CPPFLAGS.................: $CPPFLAGS"
 echo "  CFLAGS...................: $CFLAGS"
 echo "  LDFLAGS..................: $LDFLAGS"
+echo
+if test "${build_tests}" = "none"; then
+echo "Tests......................: no"
+else
+echo "Tests......................: make check"
+fi
 echo
 echo "Installation...............: make install (as root if needed, with 'su' or 'sudo')"
 echo "  prefix...................: $prefix"

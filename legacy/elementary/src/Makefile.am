@@ -8,3 +8,7 @@ SUBDIRS += modules edje_externals
 endif
 
 SUBDIRS += examples
+
+if ENABLE_ELEMENTARY_TESTS
+SUBDIRS += tests
+endif
