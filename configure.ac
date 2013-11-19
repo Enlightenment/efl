@@ -3908,6 +3908,8 @@ echo "Ethumb..........: yes"
 echo "Ethumb_Client...: yes"
 if test "${build_tests}" = "none"; then
 echo "Tests...........: no"
+elif test "${build_tests}" = "auto"; then
+echo "Tests...........: make check (inexplicitly enabled)"
 elif test "${build_tests}" = "regular"; then
 echo "Tests...........: make check"
 elif test "${build_tests}" = "coverage"; then
