@@ -86,9 +86,9 @@ EAPI void *ecore_poller_del(Ecore_Poller *poller);
  * the @p frametime interval set by ecore_animator_frametime_set(). The
  * function will be passed the @p data pointer as its parameter.
  *
- * When the animator @p func is called, it must return a value of either 1 or
- * 0. If it returns 1 (or ECORE_CALLBACK_RENEW), it will be called again at
- * the next tick, or if it returns 0 (or ECORE_CALLBACK_CANCEL) it will be
+ * When the animator @p func is called, it must return a boolean value.
+ * If it returns EINA_TRUE (or ECORE_CALLBACK_RENEW), it will be called again at
+ * the next tick, or if it returns EINA_FALSE (or ECORE_CALLBACK_CANCEL) it will be
  * deleted automatically making any references/handles for it invalid.
  *
  * @note The default @p frametime value is 1/30th of a second.
