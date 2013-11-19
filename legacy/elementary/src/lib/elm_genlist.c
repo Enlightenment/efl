@@ -3942,7 +3942,7 @@ _queue_process(Elm_Genlist_Smart_Data *sd)
    int n;
    double t0, t;
 
-   t0 = ecore_loop_time_get();
+   t0 = ecore_time_get();
    for (n = 0; (sd->queue) && (n < 128); n++)
      {
         Elm_Gen_Item *it;
