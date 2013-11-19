@@ -567,8 +567,6 @@ _ecore_wl_dnd_selection(void *data, struct wl_data_device *data_device EINA_UNUS
 void 
 _ecore_wl_dnd_del(Ecore_Wl_Dnd_Source *source)
 {
-   char **t;
-
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!source) return;
