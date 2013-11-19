@@ -418,12 +418,18 @@ elm_hoversel_hover_end(Evas_Object *obj)
 static void
 _hover_end(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
+   Elm_Object_Item *it;
+   Eina_List *l;
    Elm_Hoversel_Smart_Data *sd = _pd;
 
    if (!sd->hover) return;
 
    sd->expanded = EINA_FALSE;
 
+   EINA_LIST_FOREACH(sd->items, l, it)
+     {
+        VIEW(it) = NULL;
+     }
    evas_object_del(sd->hover);
    sd->hover = NULL;
 
