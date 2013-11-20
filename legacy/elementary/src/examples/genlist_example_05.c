@@ -370,14 +370,14 @@ elm_main(int argc, char **argv)
 
    for (i = 0; i < N_ITEMS; i++)
      {
-        Elm_Object_Item *gli, *glg;
+        Elm_Object_Item *gli = NULL, *glg = NULL;
         Node_Data *data = malloc(sizeof(*data)); // data for this item
         data->children = NULL;
         data->value = i;
         data->favorite = EINA_FALSE;
         nitems++;
 
-        Node_Data *pdata; // data for the parent of the group
+        Node_Data *pdata = NULL; // data for the parent of the group
 
         printf("creating item: #%d\n", data->value);
         if (i % 3 == 0)
@@ -394,7 +394,8 @@ elm_main(int argc, char **argv)
              gli = elm_genlist_item_append(list, _itc, data, glg,
                                            ELM_GENLIST_ITEM_NONE,
                                            _item_sel_cb, NULL);
-             pdata->children = eina_list_append(pdata->children, data);
+             if (pdata)
+               pdata->children = eina_list_append(pdata->children, data);
              data->level = 1;
           }
      }

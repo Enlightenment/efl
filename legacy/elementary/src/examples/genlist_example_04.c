@@ -300,7 +300,7 @@ elm_main(int argc, char **argv)
 
    for (i = 0; i < N_ITEMS; i++)
      {
-        Elm_Object_Item *gli, *glg;
+        Elm_Object_Item *gli = NULL, *glg = NULL;
 
         if (i % 7 == 0)
           {
