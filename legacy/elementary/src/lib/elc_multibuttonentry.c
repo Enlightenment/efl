@@ -287,9 +287,6 @@ _elm_multibuttonentry_smart_on_focus(Eo *obj, void *_pd, va_list *list)
    if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret;
 
-   eo_do_super(obj, MY_CLASS, elm_wdg_on_focus(&int_ret));
-   if (!int_ret) return;
-
    if (elm_widget_focus_get(obj))
      {
         // ACCESS
