@@ -3,7 +3,7 @@
 #endif
 #include <Elementary.h>
 
-
+static int list_mouse_down = 0;
 
 static void
 _dismissed(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
@@ -95,13 +95,14 @@ _ctxpopup_item_new(Evas_Object *obj, const char *label, const char *icon)
    return it;
 }
 
-
 static void
 _list_item_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Object *ctxpopup;
    Elm_Object_Item *it = NULL;
    Evas_Coord x,y;
+
+   if (list_mouse_down > 0) return;
 
    ctxpopup = elm_ctxpopup_add(obj);
    evas_object_smart_callback_add(ctxpopup, "dismissed", _dismissed, NULL);
@@ -129,6 +130,8 @@ _list_item_cb2(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_U
    Elm_Object_Item *it = NULL;
    Evas_Coord x,y;
 
+   if (list_mouse_down > 0) return;
+
    ctxpopup = elm_ctxpopup_add(obj);
    evas_object_smart_callback_add(ctxpopup, "dismissed", _dismissed, NULL);
 
@@ -154,6 +157,8 @@ _list_item_cb3(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_U
    Elm_Object_Item *it = NULL;
    Evas_Coord x,y;
 
+   if (list_mouse_down > 0) return;
+
    ctxpopup = elm_ctxpopup_add(obj);
    evas_object_smart_callback_add(ctxpopup, "dismissed", _dismissed, NULL);
 
@@ -176,6 +181,8 @@ _list_item_cb4(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_U
 {
    Evas_Object *ctxpopup;
    Evas_Coord x,y;
+
+   if (list_mouse_down > 0) return;
 
    ctxpopup = elm_ctxpopup_add(obj);
    evas_object_smart_callback_add(ctxpopup, "dismissed", _dismissed, NULL);
@@ -202,6 +209,8 @@ _list_item_cb5(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_U
 {
    Evas_Object *ctxpopup, *btn, *sc, *bx;
    Evas_Coord x,y;
+
+   if (list_mouse_down > 0) return;
 
    bx = elm_box_add(obj);
    evas_object_size_hint_min_set(bx, 150, 150);
@@ -239,6 +248,8 @@ _list_item_cb6(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_U
 {
    Evas_Object *ctxpopup, *btn, *sc, *bx;
    Evas_Coord x,y;
+
+   if (list_mouse_down > 0) return;
 
    bx = elm_box_add(obj);
    evas_object_size_hint_min_set(bx, 200, 150);
@@ -295,6 +306,7 @@ _list_item_cb7(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_U
    Evas_Object *ctxpopup;
    Evas_Coord x,y;
 
+   if (list_mouse_down > 0) return;
    ctxpopup = elm_ctxpopup_add(obj);
    evas_object_smart_callback_add(ctxpopup, "dismissed", _dismissed, NULL);
 
@@ -309,9 +321,28 @@ _list_item_cb7(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_U
    _print_current_dir(ctxpopup);
 }
 
-static void _list_clicked(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+static void
+_list_clicked(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    elm_list_item_selected_set(event_info, EINA_FALSE);
+}
+
+static void
+_list_mouse_down(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   list_mouse_down++;
+}
+
+static void
+_list_mouse_up(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   list_mouse_down--;
+}
+
+static void
+_win_del(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   list_mouse_down = 0;
 }
 
 void
@@ -320,9 +351,14 @@ test_ctxpopup(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    Evas_Object *win, *list;
 
    win = elm_win_util_standard_add("contextual-popup", "Contextual Popup");
+   evas_object_smart_callback_add(win, "delete,request", _win_del, NULL);
    elm_win_autodel_set(win, EINA_TRUE);
 
    list = elm_list_add(win);
+   evas_object_event_callback_add(list, EVAS_CALLBACK_MOUSE_DOWN,
+                                  _list_mouse_down, NULL);
+   evas_object_event_callback_add(list, EVAS_CALLBACK_MOUSE_UP,
+                                  _list_mouse_up, NULL);
    evas_object_size_hint_weight_set(list, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, list);
    elm_list_mode_set(list, ELM_LIST_COMPRESS);
