@@ -174,11 +174,14 @@ efreet_desktop_get(const char *file)
 EAPI int
 efreet_desktop_ref(Efreet_Desktop *desktop)
 {
+    int ret;
+
     EINA_SAFETY_ON_NULL_RETURN_VAL(desktop, 0);
     eina_lock_take(&_lock);
     desktop->ref++;
+    ret = desktop->ref;
     eina_lock_release(&_lock);
-    return desktop->ref;
+    return ret;
 }
 
 EAPI Efreet_Desktop *
