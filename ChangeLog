@@ -1,6 +1,7 @@
 2013-11-20  Cedric Bail
 
 	* Eina: Fix a possible race condition during eina_file_close.
+	* Edje: Fix use of eina_hash_pointer to actually look at the pointer.
 
 2013-11-19  Tom Hacohen
 

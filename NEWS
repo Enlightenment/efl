@@ -435,7 +435,8 @@ Fixes:
      - Fix size calculation of flags of signal callbacks
      - Check for both Lua 5.1 and 5.2.
      - Fixed memory leak in the edje map color transition.
-	 - Add null checking for name of anchor and item in geometry get functions.
+     - Add null checking for name of anchor and item in geometry get functions.
+     - Fix use of eina_hash_pointer to actually look at the pointer value.
 
     * Efreet:
      - Fix desktop command parsing of https.
