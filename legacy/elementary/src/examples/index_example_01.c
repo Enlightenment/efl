@@ -52,6 +52,7 @@ _item_del(void *data,
            elm_object_item_data_get(iit));
 
    elm_object_item_del(iit);
+   elm_index_level_go(d.index, 0);
 }
 
 static void
@@ -60,6 +61,7 @@ _item_del_all(void *data,
               void *event_info)
 {
    elm_index_item_clear(d.index);
+   elm_index_level_go(d.index, 0);
 }
 
 static void
