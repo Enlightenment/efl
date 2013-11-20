@@ -366,6 +366,9 @@ eina_file_real_close(Eina_File *file)
 {
    Eina_File_Map *map;
 
+   eina_hash_free(file->rmap);
+   eina_hash_free(file->map);
+
    EINA_LIST_FREE(file->dead_map, map)
      {
         UnmapViewOfFile(map->map);
@@ -377,6 +380,8 @@ eina_file_real_close(Eina_File *file)
 
    if (file->fm) CloseHandle(file->fm);
    if (file->handle) CloseHandle(file->handle);
+
+   free(file);
 }
 
 static void
@@ -832,8 +837,6 @@ eina_file_open(const char *path, Eina_Bool shared)
         n->shared = shared;
         eina_lock_new(&n->lock);
         eina_hash_direct_add(_eina_file_cache, n->filename, n);
-
-	EINA_MAGIC_SET(n, EINA_FILE_MAGIC);
      }
    else
      {

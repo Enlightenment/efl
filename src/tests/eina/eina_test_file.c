@@ -441,39 +441,6 @@ START_TEST(eina_test_file_virtualize)
 }
 END_TEST
 
-static void *
-_eina_test_file_thread(void *data EINA_UNUSED, Eina_Thread t EINA_UNUSED)
-{
-   Eina_File *f;
-   unsigned int i;
-
-   for (i = 0; i < 10000; ++i)
-     {
-        f = eina_file_open("/bin/sh", EINA_FALSE);
-        fail_if(!f);
-        eina_file_close(f);
-     }
-
-   return NULL;
-}
-
-START_TEST(eina_test_file_thread)
-{
-   Eina_Thread th[4];
-   unsigned int i;
-
-   fail_if(!eina_init());
-
-   for (i = 0; i < 4; i++)
-     fail_if(!(eina_thread_create(&th[i], EINA_THREAD_NORMAL, 0, _eina_test_file_thread, NULL)));
-
-   for (i = 0; i < 4; i++)
-     fail_if(eina_thread_join(th[i]) != NULL);
-
-   eina_shutdown();
-}
-END_TEST
-
 void
 eina_test_file(TCase *tc)
 {
@@ -482,6 +449,5 @@ eina_test_file(TCase *tc)
    tcase_add_test(tc, eina_file_ls_simple);
    tcase_add_test(tc, eina_file_map_new_test);
    tcase_add_test(tc, eina_test_file_virtualize);
-   tcase_add_test(tc, eina_test_file_thread);
 }
 

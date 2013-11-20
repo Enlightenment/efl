@@ -1,7 +1,3 @@
-2013-11-20  Cedric Bail
-
-	* Eina: Fix a possible race condition during eina_file_close.
-
 2013-11-19  Tom Hacohen
 
 	* Evas textblock: Fixed order of tags inserted with markup_app/prepend.

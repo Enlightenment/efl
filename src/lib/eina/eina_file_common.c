@@ -451,26 +451,17 @@ eina_file_close(Eina_File *file)
 
    EINA_SAFETY_ON_NULL_RETURN(file);
 
-   eina_lock_take(&_eina_file_lock_cache);
-
    eina_lock_take(&file->lock);
    file->refcount--;
    if (file->refcount == 0) leave = EINA_FALSE;
    eina_lock_release(&file->lock);
-   if (leave) goto end;
+   if (leave) return;
+
+   eina_lock_take(&_eina_file_lock_cache);
 
    eina_hash_del(_eina_file_cache, file->filename, file);
-
-   // Backend specific file resource close
    eina_file_real_close(file);
 
-   // Generic destruction of the file
-   eina_hash_free(file->rmap); file->rmap = NULL;
-   eina_hash_free(file->map); file->map = NULL;
-   EINA_MAGIC_SET(file, 0);
-   free(file);
-
- end:
    eina_lock_release(&_eina_file_lock_cache);
 }
 

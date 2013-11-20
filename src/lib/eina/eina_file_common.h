@@ -24,14 +24,11 @@
 #include "eina_lock.h"
 #include "eina_list.h"
 
-#define EINA_FILE_MAGIC 0xFEEDBEEF
-
 typedef struct _Eina_File_Map Eina_File_Map;
 typedef struct _Eina_Lines_Iterator Eina_Lines_Iterator;
 
 struct _Eina_File
 {
-   EINA_MAGIC;
    const char *filename;
 
    Eina_Hash *map;
