@@ -131,22 +131,34 @@ _parent_set(Eo *obj, void *class_data, va_list *list)
         Private_Data *old_parent_pd;
 
         old_parent_pd = eo_data_scope_get(pd->parent, EO_BASE_CLASS);
-        if (old_parent_pd)
-          old_parent_pd->children = eina_list_remove(old_parent_pd->children,
-                                                     obj);
+        old_parent_pd->children = eina_list_remove(old_parent_pd->children,
+                                                   obj);
         eo_xunref(obj, pd->parent);
      }
 
-   pd->parent = parent_id;
-   if (pd->parent)
+   /* Set new parent */
+   if (parent_id)
      {
         Private_Data *parent_pd = NULL;
-
         parent_pd = eo_data_scope_get(parent_id, EO_BASE_CLASS);
-        if (parent_pd)
-          parent_pd->children = eina_list_append(parent_pd->children,
-                                                 obj);
-        eo_xref(obj, pd->parent);
+
+        if (EINA_LIKELY(parent_pd != NULL))
+          {
+             pd->parent = parent_id;
+             parent_pd->children = eina_list_append(parent_pd->children,
+                   obj);
+             eo_xref(obj, pd->parent);
+          }
+        else
+          {
+             pd->parent = NULL;
+             ERR("New parent %p for object %p is not a valid Eo object.",
+                 parent_id, obj);
+          }
+     }
+   else
+     {
+        pd->parent = NULL;
      }
 }
 
