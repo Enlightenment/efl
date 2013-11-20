@@ -765,12 +765,6 @@ _edje_recalc_do(Edje *ed)
      }
 }
 
-void
-_edje_part_recalc_1(Edje *ed, Edje_Real_Part *ep)
-{
-  _edje_part_recalc(ed, ep, FLAG_XY, NULL);
-}
-
 int
 _edje_part_dragable_calc(Edje *ed EINA_UNUSED, Edje_Real_Part *ep, FLOAT_T *x, FLOAT_T *y)
 {
