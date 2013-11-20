@@ -268,7 +268,8 @@ Fixes:
      - Fix memory leak in eina_xattr_value_ls.
      - Fix magic failure in eina_value_array_count when array has not been allocated.
      - Fix issue when wchar_t is signed and eina_unicode does negative array lookups.
-     - Eina: fix eina_file_map_lines() to not drop of one character in the last line.
+     - Fix eina_file_map_lines() to not drop of one character in the last line.
+     - Fix a possible race condition during eina_file_close().
     * Eet:
      - Fix PPC (big endian) image codec bug.
      - Fix leak in eet_pbkdf2_sha1 with OpenSSL.
