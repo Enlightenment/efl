@@ -131,8 +131,9 @@ _parent_set(Eo *obj, void *class_data, va_list *list)
         Private_Data *old_parent_pd;
 
         old_parent_pd = eo_data_scope_get(pd->parent, EO_BASE_CLASS);
-        old_parent_pd->children = eina_list_remove(old_parent_pd->children,
-                                                   obj);
+        if (old_parent_pd)
+          old_parent_pd->children = eina_list_remove(old_parent_pd->children,
+                                                     obj);
         eo_xunref(obj, pd->parent);
      }
 
@@ -142,8 +143,9 @@ _parent_set(Eo *obj, void *class_data, va_list *list)
         Private_Data *parent_pd = NULL;
 
         parent_pd = eo_data_scope_get(parent_id, EO_BASE_CLASS);
-        parent_pd->children = eina_list_append(parent_pd->children,
-                                               obj);
+        if (parent_pd)
+          parent_pd->children = eina_list_append(parent_pd->children,
+                                                 obj);
         eo_xref(obj, pd->parent);
      }
 }
