@@ -657,6 +657,7 @@ START_TEST(eo_magic_checks)
      {
         Eo *parent = NULL;
         Eo *wref = NULL;
+        Eo *obj2 = NULL;
 
         obj = eo_add((Eo_Class *) buf, NULL);
         fail_if(obj);
@@ -714,6 +715,11 @@ START_TEST(eo_magic_checks)
         eo_manual_free_set((Eo *) buf, EINA_TRUE);
         eo_manual_free((Eo *) buf);
         eo_destructed_is((Eo *) buf);
+
+        obj2 = NULL;
+        eo_do(obj, eo_parent_set((Eo *) buf));
+        eo_do(obj, eo_parent_get(&obj2));
+        fail_if(obj2 && (obj2 == (Eo *) buf));
 
         eo_unref(obj);
 
