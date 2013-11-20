@@ -650,10 +650,8 @@ _evas_object_table_calculate_hints_regular(Evas_Object *o, Evas_Object_Table_Dat
    _evas_object_table_cache_reset(priv);
 
    /* cache interesting data */
-   memset(c->expands.h, 1, priv->size.cols);
-   memset(c->expands.v, 1, priv->size.rows);
-   memset(c->weights.h, 0, priv->size.cols);
-   memset(c->weights.v, 0, priv->size.rows);
+   memset(c->expands.h, 1, priv->size.cols * sizeof(Eina_Bool));
+   memset(c->expands.v, 1, priv->size.rows * sizeof(Eina_Bool));
    EINA_LIST_FOREACH(priv->children, l, opt)
      {
         Evas_Object *child = opt->obj;
@@ -692,14 +690,14 @@ _evas_object_table_calculate_hints_regular(Evas_Object *o, Evas_Object_Table_Dat
           }
 
         if (!opt->expand_h)
-          memset(c->expands.h + opt->col, 0, opt->colspan);
+          memset(c->expands.h + opt->col, 0, opt->colspan * sizeof(Eina_Bool));
         else
           {
              for (i = opt->col; i < opt->col + opt->colspan; i++)
                c->weights.h[i] += (weightw / (double)opt->colspan);
           }
         if (!opt->expand_v)
-          memset(c->expands.v + opt->row, 0, opt->rowspan);
+          memset(c->expands.v + opt->row, 0, opt->rowspan * sizeof(Eina_Bool));
         else
           {
              for (i = opt->row; i < opt->row + opt->rowspan; i++)
@@ -1173,17 +1171,35 @@ _pack(Eo *o, void *_pd, va_list *list)
 
    Evas_Object_Table_Data *priv = _pd;
 
-   if (rowspan < 1)
-     {
-        ERR("rowspan < 1");
-        return;
-     }
    if (colspan < 1)
      {
         ERR("colspan < 1");
         return;
      }
-
+   if ((0xffff - col) < colspan)
+     {
+        ERR("col + colspan > 0xffff");
+        return;
+     }
+   if ((col + colspan) >= 0x7ffff)
+     {
+        WRN("col + colspan getting rather large (>32767)");
+     }
+   if (rowspan < 1)
+     {
+        ERR("rowspan < 1");
+        return;
+     }
+   if ((0xffff - row) < rowspan)
+     {
+        ERR("row + rowspan > 0xffff");
+        return;
+     }
+   if ((row + rowspan) >= 0x7ffff)
+     {
+        WRN("row + rowspan getting rather large (>32767)");
+     }
+   
    opt = _evas_object_table_option_get(child);
    if (!opt)
      {

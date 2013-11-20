@@ -7707,6 +7707,12 @@ EAPI Eina_Bool                          evas_object_table_pack_get(const Evas_Ob
  * @param row relative-vertical position to place child.
  * @param colspan how many relative-horizontal position to use for this child.
  * @param rowspan how many relative-vertical position to use for this child.
+ * 
+ * Note that columns and rows only guarantee 16bit unsigned values at best.
+ * That means that col + colspan AND row + rowspan must fit inside 16bit
+ * unsigned values cleanly. You will be warned once values exceed 15bit
+ * storage, and attempting to use values not able to fit in 16bits will
+ * result in failure.
  *
  * @return 1 on success, 0 on failure.
  */
