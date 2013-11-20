@@ -68,6 +68,12 @@ EAPI void      elm_table_padding_get(const Evas_Object *obj, Evas_Coord *horizon
  * a value of 0 for x and y, means the top left cell of the table, and a
  * value of 1 for w and h means @p subobj only takes that 1 cell.
  *
+ * Note that columns and rows only guarantee 16bit unsigned values at best.
+ * That means that col + colspan AND row + rowspan must fit inside 16bit
+ * unsigned values cleanly. You will be warned once values exceed 15bit
+ * storage, and attempting to use values not able to fit in 16bits will
+ * result in failure.
+ * 
  * @ingroup Table
  */
 EAPI void      elm_table_pack(Evas_Object *obj, Evas_Object *subobj, int col, int row, int colspan, int rowspan);

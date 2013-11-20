@@ -343,6 +343,45 @@ _pack(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    int rowspan = va_arg(*list, int);
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
+   if (col < 0)
+     {
+        ERR("col < 0");
+        return;
+     }
+   if (colspan < 1)
+     {
+        ERR("colspan < 1");
+        return;
+     }
+   if ((0xffff - col) < colspan)
+     {
+        ERR("col + colspan > 0xffff");
+        return;
+     }
+   if ((col + colspan) >= 0x7ffff)
+     {
+        WRN("col + colspan getting rather large (>32767)");
+     }
+   if (row < 0)
+     {
+        ERR("row < 0");
+        return;
+     }
+   if (rowspan < 1)
+     {
+        ERR("rowspan < 1");
+        return;
+     }
+   if ((0xffff - row) < rowspan)
+     {
+        ERR("row + rowspan > 0xffff");
+        return;
+     }
+   if ((row + rowspan) >= 0x7ffff)
+     {
+        WRN("row + rowspan getting rather large (>32767)");
+     }
+   
    elm_widget_sub_object_add(obj, subobj);
    evas_object_table_pack(wd->resize_obj, subobj, col, row, colspan, rowspan);
 }
