@@ -3345,24 +3345,27 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
 #ifdef EDJE_CALC_CACHE
         if (ed->all_part_change ||
             ep->invalidate ||
-            state1 >= ep->param1.state ||
-            statec >= ep->param1.state ||
-            statet >= ep->param1.state ||
-            statec1 >= ep->param1.state ||
-            statel1 >= ep->param1.state ||
-            statep1 >= ep->param1.state ||
+            (state1 >= ep->param1.state) ||
+            (statec >= ep->param1.state) ||
+            (statet >= ep->param1.state) ||
+            (statec1 >= ep->param1.state) ||
+            (statel1 >= ep->param1.state) ||
+            (statep1 >= ep->param1.state) ||
             proxy_invalidate ||
             state ||
-            ((ep->part->type == EDJE_PART_TYPE_TEXT || ep->part->type == EDJE_PART_TYPE_TEXTBLOCK) && ed->text_part_change))
+            ((ep->part->type == EDJE_PART_TYPE_TEXT ||
+              ep->part->type == EDJE_PART_TYPE_TEXTBLOCK) &&
+             ed->text_part_change))
 #endif
           {
-             _edje_part_recalc_single(ed, ep, ep->param1.description, chosen_desc, center[0], light[0], persp[0],
-                                      rp1[Rel1X], rp1[Rel1Y], rp1[Rel2X], rp1[Rel2Y],
-                                      confine_to, threshold,
-                                      p1, ep->param1.set, mmw, mmh, pos);
+             _edje_part_recalc_single(ed, ep, ep->param1.description,
+                                      chosen_desc, center[0], light[0],
+                                      persp[0], rp1[Rel1X], rp1[Rel1Y],
+                                      rp1[Rel2X], rp1[Rel2Y], confine_to,
+                                      threshold, p1, ep->param1.set, mmw, mmh,
+                                      pos);
 #ifdef EDJE_CALC_CACHE
-             if (flags == FLAG_XY)
-               ep->param1.state = ed->state;
+             if (flags == FLAG_XY) ep->param1.state = ed->state;
 #endif
           }
      }
@@ -3410,29 +3413,27 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
 
         if (ed->all_part_change ||
             ep->invalidate ||
-            state2 >= ep->param2->state ||
-            statec >= ep->param2->state ||
-            statet >= ep->param2->state ||
-            statec2 >= ep->param2->state ||
-            statel2 >= ep->param2->state ||
-            statep2 >= ep->param2->state ||
+            (state2 >= ep->param2->state) ||
+            (statec >= ep->param2->state) ||
+            (statet >= ep->param2->state) ||
+            (statec2 >= ep->param2->state) ||
+            (statel2 >= ep->param2->state) ||
+            (statep2 >= ep->param2->state) ||
             proxy_invalidate ||
             state ||
-            ((ep->part->type == EDJE_PART_TYPE_TEXT || ep->part->type == EDJE_PART_TYPE_TEXTBLOCK) && ed->text_part_change))
+            ((ep->part->type == EDJE_PART_TYPE_TEXT ||
+              ep->part->type == EDJE_PART_TYPE_TEXTBLOCK) &&
+             ed->text_part_change))
 #endif
           {
              _edje_part_recalc_single(ed, ep, ep->param2->description,
-                                      chosen_desc,
-                                      center[1], light[1], persp[1],
-                                      rp2[Rel1X],
-                                      rp2[Rel1Y],
-                                      rp2[Rel2X],
-                                      rp2[Rel2Y],
-                                      confine_to, threshold,
-                                      p2, ep->param2->set, mmw, mmh, pos);
+                                      chosen_desc, center[1], light[1],
+                                      persp[1], rp2[Rel1X], rp2[Rel1Y],
+                                      rp2[Rel2X], rp2[Rel2Y], confine_to,
+                                      threshold, p2, ep->param2->set, mmw, mmh,
+                                      pos);
 #ifdef EDJE_CALC_CACHE
-             if (flags == FLAG_XY)
-               ep->param2->state = ed->state;
+             if (flags == FLAG_XY) ep->param2->state = ed->state;
 #endif
           }
 
