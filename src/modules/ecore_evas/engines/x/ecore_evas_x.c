@@ -432,7 +432,7 @@ _ecore_evas_x_gl_window_new(Ecore_Evas *ee, Ecore_X_Window parent, int x, int y,
 
         if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
           {
-             ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
+             WRN("evas_engine_info_set() for engine '%s' failed.", ee->driver);
              ecore_x_window_free(win);
              return 0;
           }
@@ -3594,7 +3594,7 @@ ecore_evas_software_x11_new_internal(const char *disp_name, Ecore_X_Window paren
         einfo->info.debug = redraw_debug;
         if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
           {
-             ERR("evas_engine_info_set() init engine '%s' failed.", ee->driver);
+             WRN("evas_engine_info_set() init engine '%s' failed.", ee->driver);
              ecore_evas_free(ee);
              return NULL;
           }
@@ -3812,7 +3812,7 @@ ecore_evas_software_x11_pixmap_new_internal(const char *disp_name, Ecore_X_Windo
 
         if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
           {
-             ERR("evas_engine_info_set() init engine '%s' failed.", ee->driver);
+             WRN("evas_engine_info_set() init engine '%s' failed.", ee->driver);
              ecore_evas_free(ee);
              return NULL;
           }
@@ -4034,7 +4034,7 @@ ecore_evas_gl_x11_options_new_internal(const char *disp_name, Ecore_X_Window par
      (ee, edata->win_root, x, y, w, h, 0, 0, opt);
    if (!ee->prop.window)
      {
-        ERR("evas_engine_info_set() init engine '%s' failed.", ee->driver);
+        WRN("evas_engine_info_set() init engine '%s' failed.", ee->driver);
         ecore_evas_free(ee);
         return NULL;
      }
@@ -4238,7 +4238,7 @@ ecore_evas_gl_x11_pixmap_new_internal(const char *disp_name, Ecore_X_Window pare
 
         if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
           {
-             ERR("evas_engine_info_set() init engine '%s' failed.", ee->driver);
+             WRN("evas_engine_info_set() init engine '%s' failed.", ee->driver);
              ecore_evas_free(ee);
              return NULL;
           }
