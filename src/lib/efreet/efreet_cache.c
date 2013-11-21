@@ -979,6 +979,7 @@ efreet_cache_desktop_close(void)
         desktops = eina_hash_string_superfast_new(NULL);
     }
     desktop_cache = NULL;
+    IF_RELEASE(desktop_cache_file);
     eina_lock_release(&_lock);
 
     efreet_cache_array_string_free(util_cache_names);
@@ -992,10 +993,6 @@ efreet_cache_desktop_close(void)
     }
 
     util_cache = efreet_cache_close(util_cache);
-
-    eina_lock_take(&_lock);
-    IF_RELEASE(desktop_cache_file);
-    eina_lock_release(&_lock);
     IF_RELEASE(util_cache_file);
 }
 
