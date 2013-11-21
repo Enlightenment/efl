@@ -54,6 +54,7 @@ elm_main(int argc, char **argv)
    elm_object_text_set(btn3, "Close");
    // Setting this action button
    elm_object_part_content_set(popup, "button3", btn3);
+   evas_object_smart_callback_add(btn3, "clicked", _response_cb, popup);
    // Setting the orientation of popup to Top
    elm_popup_orient_set(popup, ELM_POPUP_ORIENT_TOP);
    // Display the popup object
