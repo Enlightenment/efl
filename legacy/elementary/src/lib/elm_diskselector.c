@@ -327,6 +327,8 @@ _item_del(Elm_Diskselector_Item *item)
 {
    if (!item) return;
 
+   ELM_DISKSELECTOR_DATA_GET(WIDGET(item), sd);
+   sd->item_count -= 1;
    eina_stringshare_del(item->label);
 
    if (item->icon)
@@ -371,7 +373,6 @@ _item_del_pre_hook(Elm_Object_Item *item)
      }
 
    _item_del(it);
-   sd->item_count -= 1;
 
    if (sd->round)
      {
