@@ -1,9 +1,9 @@
 #ifndef EVAS_COMMON_H
 #define EVAS_COMMON_H
 
-#ifdef HAVE_CONFIG_H
+//#ifdef HAVE_CONFIG_H
 #include "config.h"  /* so that EAPI in Evas.h is correctly defined */
-#endif
+//#endif
 
 #ifdef STDC_HEADERS
 # include <stdlib.h>
