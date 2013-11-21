@@ -7,6 +7,10 @@
 
 #include <Eo.h>
 
+#ifdef BUILD_LOADER_EET
+# include <Eet.h>
+#endif
+
 EAPI Eo_Op EVAS_CANVAS_BASE_ID = EO_NOOP;
 
 #define MY_CLASS EVAS_CLASS
