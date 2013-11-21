@@ -1594,7 +1594,6 @@ struct _Edje_Real_Part
 #ifdef EDJE_CALC_CACHE
    Eina_Bool                 invalidate : 1; // 0
 #endif
-   Eina_Bool                 map_on : 1; // 0
 }; // 128
 // WITH EDJE_CALC_CACHE: 407
 
