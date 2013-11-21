@@ -202,10 +202,10 @@ eng_window_new(Display *disp,
      blacklist = 1;
    if ((blacklist) && (!getenv("EVAS_GL_NO_BLACKLIST")))
      {
-        ERR("OpenGL Driver blacklisted:");
-        ERR("Vendor: %s", (const char *)vendor);
-        ERR("Renderer: %s", (const char *)renderer);
-        ERR("Version: %s", (const char *)version);
+        WRN("OpenGL Driver blacklisted:");
+        WRN("Vendor: %s", (const char *)vendor);
+        WRN("Renderer: %s", (const char *)renderer);
+        WRN("Version: %s", (const char *)version);
         eng_window_free(gw);
         return NULL;
      }
@@ -363,10 +363,10 @@ eng_window_new(Display *disp,
           blacklist = 1;
         if ((blacklist) && (!getenv("EVAS_GL_NO_BLACKLIST")))
           {
-             ERR("OpenGL Driver blacklisted:");
-             ERR("Vendor: %s", (const char *)vendor);
-             ERR("Renderer: %s", (const char *)renderer);
-             ERR("Version: %s", (const char *)version);
+             WRN("OpenGL Driver blacklisted:");
+             WRN("Vendor: %s", (const char *)vendor);
+             WRN("Renderer: %s", (const char *)renderer);
+             WRN("Version: %s", (const char *)version);
              eng_window_free(gw);
              return NULL;
           }
