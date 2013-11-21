@@ -1486,14 +1486,18 @@ _draw_thread_map_draw(void *data)
             (m->pts[2].col == m->pts[3].col))
           {
              DATA32 col;
+             Eina_Bool use;
 
              dx = m->pts[0 + offset].x >> FP;
              dy = m->pts[0 + offset].y >> FP;
              dw = (m->pts[2 + offset].x >> FP) - dx;
              dh = (m->pts[2 + offset].y >> FP) - dy;
 
-             col = map->image_ctx.col.col;
-             map->image_ctx.col.col = MUL4_SYM(col, m->pts[0].col);
+             col = map->image_ctx.mul.col;
+             use = map->image_ctx.mul.use;
+             if (use) map->image_ctx.mul.col = MUL4_SYM(col, m->pts[0].col);
+             else map->image_ctx.mul.col = m->pts[0].col;
+             map->image_ctx.mul.use = 1;
 
              if (map->smooth)
                evas_common_scale_rgba_in_to_out_clip_cb
@@ -1506,7 +1510,8 @@ _draw_thread_map_draw(void *data)
                   0, 0, im->cache_entry.w, im->cache_entry.h,
                   dx, dy, dw, dh, _map_image_sample_draw);
 
-             map->image_ctx.col.col = col;
+             map->image_ctx.mul.col = col;
+             map->image_ctx.mul.use = use;
           }
         else
           {
@@ -1607,10 +1612,12 @@ evas_software_image_map_draw(void *data, void *context, RGBA_Image *surface, RGB
         DATA32 col;
         int a, r, g, b;
         int dx, dy, dw, dh;
+        int mul;
 
-        eng_context_color_get(data, context, &r, &g, &b, &a);
-        col = MUL4_256(a, r, g, b, m->pts[0 + offset].col);
-        eng_context_color_set(data, context, R_VAL(&col), G_VAL(&col), B_VAL(&col), A_VAL(&col));
+        mul = eng_context_multiplier_get(data, context, &r, &g, &b, &a);
+        if (mul) col = MUL4_256(a, r, g, b, m->pts[0 + offset].col);
+        else col = m->pts[0 + offset].col;
+        eng_context_multiplier_set(data, context, R_VAL(&col), G_VAL(&col), B_VAL(&col), A_VAL(&col));
 
         dx = m->pts[0 + offset].x >> FP;
         dy = m->pts[0 + offset].y >> FP;
@@ -1622,7 +1629,8 @@ evas_software_image_map_draw(void *data, void *context, RGBA_Image *surface, RGB
            dx, dy, dw, dh, smooth,
            EINA_FALSE);
 
-        eng_context_color_set(data, context, r, g, b, a);
+        if (mul) eng_context_multiplier_set(data, context, r, g, b, a);
+        else eng_context_multiplier_unset(data, context);
      }
    else
      {
