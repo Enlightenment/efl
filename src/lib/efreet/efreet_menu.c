@@ -5,6 +5,8 @@
 #include <Ecore.h>
 #include <Ecore_File.h>
 
+/* TODO: Don't scan app dirs if they are cached, read values from cache */
+
 /* define macros and variable for using the eina logging system  */
 #define EFREET_MODULE_LOG_DOM _efreet_menu_log_dom
 static int _efreet_menu_log_dom = -1;
