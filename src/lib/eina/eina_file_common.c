@@ -463,6 +463,8 @@ EAPI void
 eina_file_close(Eina_File *file)
 {
    Eina_Bool leave = EINA_TRUE;
+   unsigned int length;
+   unsigned int key;
 
    EINA_SAFETY_ON_NULL_RETURN(file);
 
@@ -474,7 +476,14 @@ eina_file_close(Eina_File *file)
    eina_lock_release(&file->lock);
    if (leave) goto end;
 
-   eina_hash_del(_eina_file_cache, file->filename, file);
+   length = strlen(file->filename) + 1;
+   key = eina_hash_djb2(file->filename, length);
+   if (eina_hash_find_by_hash(_eina_file_cache,
+                              file->filename, length, key) == file)
+     {
+        eina_hash_del_by_key_hash(_eina_file_cache,
+                                  file->filename, length, key);
+     }
 
    eina_file_clean_close(file);
  end:

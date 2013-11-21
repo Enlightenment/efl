@@ -868,7 +868,6 @@ eina_file_open(const char *path, Eina_Bool shared)
      {
         file->delete_me = EINA_TRUE;
         eina_hash_del(_eina_file_cache, file->filename, file);
-	eina_file_clean_close(file);
         file = NULL;
      }
 
