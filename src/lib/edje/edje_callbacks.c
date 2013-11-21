@@ -151,7 +151,7 @@ _edje_mouse_down_signal_cb(void *data, Eo *obj, const Eo_Event_Description *desc
      {
 	rp->clicked_button = ev->button;
         if (!(ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD))
-         rp->still_in = 1;
+         rp->still_in = EINA_TRUE;
      }
 //   _edje_recalc_do(ed);
    _edje_thaw(ed);
@@ -209,7 +209,7 @@ _edje_mouse_up_signal_cb(void *data, Eo *obj, const Eo_Event_Description *desc E
                   ed->recalc_call = EINA_TRUE;
 		  ed->dirty = EINA_TRUE;
 #ifdef EDJE_CALC_CACHE
-		  rp->invalidate = 1;
+		  rp->invalidate = EINA_TRUE;
 #endif
 		  if (!ignored && rp->drag->started)
 		    _edje_emit(ed, "drag,stop", rp->part->name);
@@ -225,7 +225,7 @@ _edje_mouse_up_signal_cb(void *data, Eo *obj, const Eo_Event_Description *desc E
 	_edje_emit(ed, buf, rp->part->name);
      }
    rp->clicked_button = 0;
-   rp->still_in = 0;
+   rp->still_in = EINA_FALSE;
 
 //   _edje_recalc_do(ed);
    _edje_thaw(ed);
@@ -262,7 +262,7 @@ _edje_mouse_move_signal_cb(void *data, Eo *obj, const Eo_Event_Description *desc
      {
 
         if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
-          rp->still_in = 0;
+          rp->still_in = EINA_FALSE;
         else
           {
             Evas_Coord x, y, w, h;
@@ -270,7 +270,7 @@ _edje_mouse_move_signal_cb(void *data, Eo *obj, const Eo_Event_Description *desc
             evas_object_geometry_get(obj, &x, &y, &w, &h);
             if ((ev->cur.canvas.x < x) || (ev->cur.canvas.y < y) ||
                 (ev->cur.canvas.x >= (x + w)) || (ev->cur.canvas.y >= (y + h)))
-              rp->still_in = 0;
+              rp->still_in = EINA_FALSE;
           }
      }
    else
@@ -282,7 +282,7 @@ _edje_mouse_move_signal_cb(void *data, Eo *obj, const Eo_Event_Description *desc
             evas_object_geometry_get(obj, &x, &y, &w, &h);
             if ((ev->cur.canvas.x >= x) && (ev->cur.canvas.y >= y) &&
                 (ev->cur.canvas.x < (x + w)) && (ev->cur.canvas.y < (y + h)))
-              rp->still_in = 1;
+              rp->still_in = EINA_TRUE;
           }
      }
    _edje_freeze(ed);
@@ -297,7 +297,7 @@ _edje_mouse_move_signal_cb(void *data, Eo *obj, const Eo_Event_Description *desc
              ed->recalc_call = EINA_TRUE;
 	     ed->dirty = EINA_TRUE;
 #ifdef EDJE_CALC_CACHE
-	     rp->invalidate = 1;
+	     rp->invalidate = EINA_TRUE;
 #endif
 	  }
 	_edje_recalc_do(ed);
@@ -321,7 +321,7 @@ _edje_mouse_move_signal_cb(void *data, Eo *obj, const Eo_Event_Description *desc
                   ed->recalc_call = EINA_TRUE;
 		  ed->dirty = EINA_TRUE;
 #ifdef EDJE_CALC_CACHE
-		  rp->invalidate = 1;
+		  rp->invalidate = EINA_TRUE;
 #endif
 		  _edje_recalc_do(ed);
 	       }

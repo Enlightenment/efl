@@ -131,7 +131,7 @@ _edje_part_pos_set(Edje *ed, Edje_Real_Part *ep, int mode, FLOAT_T pos, FLOAT_T 
    ed->dirty = EINA_TRUE;
    ed->recalc_call = EINA_TRUE;
 #ifdef EDJE_CALC_CACHE
-   ep->invalidate = 1;
+   ep->invalidate = EINA_TRUE;
 #endif
 }
 
@@ -607,7 +607,7 @@ _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, const char *d1, doubl
    ed->dirty = EINA_TRUE;
    ed->recalc_call = EINA_TRUE;
 #ifdef EDJE_CALC_CACHE
-   ep->invalidate = 1;
+   ep->invalidate = EINA_TRUE;
 #endif
 }
 
@@ -846,7 +846,7 @@ _edje_dragable_pos_set(Edje *ed, Edje_Real_Part *ep, FLOAT_T x, FLOAT_T y)
      }
 
 #ifdef EDJE_CALC_CACHE
-   ep->invalidate = 1;
+   ep->invalidate = EINA_TRUE;
 #endif
    _edje_recalc(ed); /* won't do anything if dirty flag isn't set */
 }
@@ -3969,7 +3969,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
    if (ep->calculated == FLAG_XY)
      {
         ep->state = ed->state;
-        ep->invalidate = 0;
+        ep->invalidate = EINA_FALSE;
      }
 #else
    eina_cow_free(_edje_calc_params_map_cow, (const Eina_Cow_Data **) &lp1.map);

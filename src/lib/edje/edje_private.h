@@ -1590,9 +1590,9 @@ struct _Edje_Real_Part
    unsigned char             type; // 1
    unsigned char             calculated : 2; // 1
    unsigned char             calculating : 2; // 0
-   unsigned char             still_in   : 1; // 0
+   Eina_Bool                 still_in   : 1; // 0
 #ifdef EDJE_CALC_CACHE
-   unsigned char             invalidate : 1; // 0
+   Eina_Bool                 invalidate : 1; // 0
 #endif
 }; // 128
 // WITH EDJE_CALC_CACHE: 407

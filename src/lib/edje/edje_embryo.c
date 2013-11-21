@@ -2408,7 +2408,7 @@ _edje_embryo_fn_set_state_val(Embryo_Program *ep, Embryo_Cell *params)
      }
 
 #ifdef EDJE_CALC_CACHE
-   rp->invalidate = 1;
+   rp->invalidate = EINA_TRUE;
 #endif
    ed->dirty = EINA_TRUE;
    return 0;

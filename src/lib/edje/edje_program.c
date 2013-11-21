@@ -1728,7 +1728,7 @@ _edje_param_native_set(Edje *ed, Edje_Real_Part *rp, const char *name, const Edj
                   if (rp->drag->val.x == FROM_DOUBLE(d)) return EINA_TRUE;
                   rp->drag->val.x = FROM_DOUBLE(d);
 #ifdef EDJE_CALC_CACHE
-                  rp->invalidate = 1;
+                  rp->invalidate = EINA_TRUE;
 #endif
                   _edje_dragable_pos_set
                      (ed, rp, rp->drag->val.x, rp->drag->val.y);
@@ -1747,7 +1747,7 @@ _edje_param_native_set(Edje *ed, Edje_Real_Part *rp, const char *name, const Edj
                   if (rp->drag->val.y == FROM_DOUBLE(d)) return EINA_TRUE;
                   rp->drag->val.y = FROM_DOUBLE(d);
 #ifdef EDJE_CALC_CACHE
-                  rp->invalidate = 1;
+                  rp->invalidate = EINA_TRUE;
 #endif
                   _edje_dragable_pos_set
                      (ed, rp, rp->drag->val.x, rp->drag->val.y);
@@ -1763,7 +1763,7 @@ _edje_param_native_set(Edje *ed, Edje_Real_Part *rp, const char *name, const Edj
                   ed->recalc_call = EINA_TRUE;
                   ed->dirty = EINA_TRUE;
 #ifdef EDJE_CALC_CACHE
-                  rp->invalidate = 1;
+                  rp->invalidate = EINA_TRUE;
 #endif
                   _edje_recalc(ed);
                   return EINA_TRUE;
@@ -1776,7 +1776,7 @@ _edje_param_native_set(Edje *ed, Edje_Real_Part *rp, const char *name, const Edj
                   ed->recalc_call = EINA_TRUE;
                   ed->dirty = EINA_TRUE;
 #ifdef EDJE_CALC_CACHE
-                  rp->invalidate = 1;
+                  rp->invalidate = EINA_TRUE;
 #endif
                   _edje_recalc(ed);
                   return EINA_TRUE;
@@ -1788,7 +1788,7 @@ _edje_param_native_set(Edje *ed, Edje_Real_Part *rp, const char *name, const Edj
                     return EINA_FALSE;
                   rp->drag->step.x = FROM_DOUBLE(CLAMP(param->d, 0.0, 1.0));
 #ifdef EDJE_CALC_CACHE
-                  rp->invalidate = 1;
+                  rp->invalidate = EINA_TRUE;
 #endif
                   return EINA_TRUE;
                }
@@ -1798,7 +1798,7 @@ _edje_param_native_set(Edje *ed, Edje_Real_Part *rp, const char *name, const Edj
                     return EINA_FALSE;
                   rp->drag->step.y = FROM_DOUBLE(CLAMP(param->d, 0.0, 1.0));
 #ifdef EDJE_CALC_CACHE
-                  rp->invalidate = 1;
+                  rp->invalidate = EINA_TRUE;
 #endif
                   return EINA_TRUE;
                }
@@ -1809,7 +1809,7 @@ _edje_param_native_set(Edje *ed, Edje_Real_Part *rp, const char *name, const Edj
                     return EINA_FALSE;
                   rp->drag->page.x = FROM_DOUBLE(CLAMP(param->d, 0.0, 1.0));
 #ifdef EDJE_CALC_CACHE
-                  rp->invalidate = 1;
+                  rp->invalidate = EINA_TRUE;
 #endif
                   return EINA_TRUE;
                }
@@ -1819,7 +1819,7 @@ _edje_param_native_set(Edje *ed, Edje_Real_Part *rp, const char *name, const Edj
                     return EINA_FALSE;
                   rp->drag->page.y = FROM_DOUBLE(CLAMP(param->d, 0.0, 1.0));
 #ifdef EDJE_CALC_CACHE
-                  rp->invalidate = 1;
+                  rp->invalidate = EINA_TRUE;
 #endif
                   return EINA_TRUE;
                }

@@ -105,7 +105,7 @@ _edje_user_definition_free(Edje_User_Defined *eud)
               eud->ed->dirty = EINA_TRUE;
               eud->ed->recalc_call = EINA_TRUE;
 #ifdef EDJE_CALC_CACHE
-              rp->invalidate = 1;
+              rp->invalidate = EINA_TRUE;
 #endif
               _edje_recalc_do(eud->ed);
            }
@@ -1287,7 +1287,7 @@ _edje_object_part_text_raw_set(Edje *ed, Evas_Object *obj, Edje_Real_Part *rp, c
    ed->recalc_call = EINA_TRUE;
    ed->recalc_hints = EINA_TRUE;
 #ifdef EDJE_CALC_CACHE
-   rp->invalidate = 1;
+   rp->invalidate = EINA_TRUE;
 #endif
    _edje_recalc(ed);
    if (ed->text_change.func)
@@ -1324,7 +1324,7 @@ _edje_object_part_text_raw_append(Edje *ed, Evas_Object *obj, Edje_Real_Part *rp
    ed->dirty = EINA_TRUE;
    ed->recalc_call = 1;
 #ifdef EDJE_CALC_CACHE
-   rp->invalidate = 1;
+   rp->invalidate = EINA_TRUE;
 #endif
    _edje_recalc(ed);
    if (ed->text_change.func)
@@ -1360,7 +1360,7 @@ _part_text_style_user_push(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    evas_textblock_style_free(ts);
    ed->recalc_hints = EINA_TRUE;
 #ifdef EDJE_CALC_CACHE
-   rp->invalidate = 1;
+   rp->invalidate = EINA_TRUE;
 #endif
    _edje_recalc(ed);
 }
@@ -1387,7 +1387,7 @@ _part_text_style_user_pop(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    evas_object_textblock_style_user_pop(rp->object);
    ed->recalc_hints = EINA_TRUE;
 #ifdef EDJE_CALC_CACHE
-   rp->invalidate = 1;
+   rp->invalidate = EINA_TRUE;
 #endif
    _edje_recalc(ed);
 }
@@ -1905,7 +1905,7 @@ _part_text_insert(Eo *obj, void *_pd, va_list *list)
    ed->recalc_call = EINA_TRUE;
    ed->recalc_hints = EINA_TRUE;
 #ifdef EDJE_CALC_CACHE
-   rp->invalidate = 1;
+   rp->invalidate = EINA_TRUE;
 #endif
    _edje_recalc(ed);
    if (ed->text_change.func)
@@ -1936,7 +1936,7 @@ _part_text_append(Eo *obj, void *_pd, va_list *list)
    ed->recalc_call = EINA_TRUE;
    ed->recalc_hints = EINA_TRUE;
 #ifdef EDJE_CALC_CACHE
-   rp->invalidate = 1;
+   rp->invalidate = EINA_TRUE;
 #endif
    _edje_recalc(ed);
    if (ed->text_change.func)
@@ -3759,7 +3759,7 @@ _part_unswallow(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
         ed->dirty = EINA_TRUE;
         ed->recalc_call = EINA_TRUE;
 #ifdef EDJE_CALC_CACHE
-        rp->invalidate = 1;
+        rp->invalidate = EINA_TRUE;
 #endif
         _edje_recalc_do(ed);
         return;
@@ -4288,7 +4288,7 @@ _part_drag_value_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    rp->drag->val.x = FROM_DOUBLE(dx);
    rp->drag->val.y = FROM_DOUBLE(dy);
 #ifdef EDJE_CALC_CACHE
-   rp->invalidate = 1;
+   rp->invalidate = EINA_TRUE;
 #endif
    _edje_dragable_pos_set(ed, rp, rp->drag->val.x, rp->drag->val.y);
    _edje_emit(ed, "drag,set", rp->part->name);
@@ -4401,7 +4401,7 @@ _part_drag_size_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    ed->dirty = EINA_TRUE;
    ed->recalc_call = EINA_TRUE;
 #ifdef EDJE_CALC_CACHE
-   rp->invalidate = 1;
+   rp->invalidate = EINA_TRUE;
 #endif
    _edje_recalc(ed);
    if (ret) *ret = EINA_TRUE;
@@ -4500,7 +4500,7 @@ _part_drag_step_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    rp->drag->step.x = FROM_DOUBLE(dx);
    rp->drag->step.y = FROM_DOUBLE(dy);
 #ifdef EDJE_CALC_CACHE
-   rp->invalidate = 1;
+   rp->invalidate = EINA_TRUE;
 #endif
    if (ret) *ret = EINA_TRUE;
 }
@@ -4598,7 +4598,7 @@ _part_drag_page_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    rp->drag->page.x = FROM_DOUBLE(dx);
    rp->drag->page.y = FROM_DOUBLE(dy);
 #ifdef EDJE_CALC_CACHE
-   rp->invalidate = 1;
+   rp->invalidate = EINA_TRUE;
 #endif
    if (ret) *ret = EINA_TRUE;
 }
@@ -4705,7 +4705,7 @@ _part_drag_step(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
         return;
      }
 #ifdef EDJE_CALC_CACHE
-   rp->invalidate = 1;
+   rp->invalidate = EINA_TRUE;
 #endif
    _edje_dragable_pos_set(ed, rp, rp->drag->val.x, rp->drag->val.y);
    _edje_emit(ed, "drag,step", rp->part->name);
@@ -4770,7 +4770,7 @@ _part_drag_page(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
         return;
      }
 #ifdef EDJE_CALC_CACHE
-   rp->invalidate = 1;
+   rp->invalidate = EINA_TRUE;
 #endif
    _edje_dragable_pos_set(ed, rp, rp->drag->val.x, rp->drag->val.y);
    _edje_emit(ed, "drag,page", rp->part->name);
@@ -5141,7 +5141,7 @@ _edje_child_del_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *child, void *ei
    ed->dirty = EINA_TRUE;
    ed->recalc_call = EINA_TRUE;
 #ifdef EDJE_CALC_CACHE
-   rp->invalidate = 1;
+   rp->invalidate = EINA_TRUE;
 #endif
    _edje_recalc(ed);
 }
@@ -5155,7 +5155,7 @@ _edje_child_add(Edje *ed, Edje_Real_Part *rp, Evas_Object *child)
    ed->dirty = EINA_TRUE;
    ed->recalc_call = EINA_TRUE;
 #ifdef EDJE_CALC_CACHE
-   rp->invalidate = 1;
+   rp->invalidate = EINA_TRUE;
 #endif
    _edje_recalc(ed);
 }
@@ -5169,7 +5169,7 @@ _edje_child_remove(Edje *ed, Edje_Real_Part *rp, Evas_Object *child)
    ed->dirty = EINA_TRUE;
    ed->recalc_call = EINA_TRUE;
 #ifdef EDJE_CALC_CACHE
-   rp->invalidate = 1;
+   rp->invalidate = EINA_TRUE;
 #endif
    _edje_recalc(ed);
 }
@@ -6358,7 +6358,7 @@ _edje_real_part_swallow_hints_update(Edje_Real_Part *rp)
      }
 
 #ifdef EDJE_CALC_CACHE
-     rp->invalidate = 1;
+     rp->invalidate = EINA_TRUE;
 #endif
 }
 
@@ -6431,7 +6431,7 @@ _edje_real_part_swallow(Edje *ed,
           }
      }
 #ifdef EDJE_CALC_CACHE
-   rp->invalidate = 1;
+   rp->invalidate = EINA_TRUE;
 #endif
    if (!obj_swallow) return;
    rp->typedata.swallow->swallowed_object = obj_swallow;
