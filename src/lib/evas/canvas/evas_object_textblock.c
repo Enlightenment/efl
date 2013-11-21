@@ -11477,8 +11477,8 @@ pfnode(Evas_Object_Textblock_Node_Format *n)
 {
    printf("Format Node: %p\n", n);
    printf("next = %p, prev = %p, last = %p\n", EINA_INLIST_GET(n)->next, EINA_INLIST_GET(n)->prev, EINA_INLIST_GET(n)->last);
-   printf("text_node = %p, offset = %u, visible = %d\n", n->text_node, n->offset, n->visible);
-   printf("'%s'\n", eina_strbuf_string_get(n->format));
+   printf("text_node = %p, offset = %u, visible = %d\n", n->text_node, (unsigned int) n->offset, n->visible);
+   printf("'%s'\n", n->format);
 }
 
 EAPI void
@@ -11495,10 +11495,10 @@ pitem(Evas_Object_Textblock_Item *it)
 {
    Evas_Object_Textblock_Text_Item *ti;
    Evas_Object_Textblock_Format_Item *fi;
-   printf("Item: %p\n", it);
+   printf("Item: %p %s\n", it, (it->visually_deleted) ? "(visually deleted)" : "");
    printf("Type: %s (%d)\n", (it->type == EVAS_TEXTBLOCK_ITEM_TEXT) ?
          "TEXT" : "FORMAT", it->type);
-   printf("Text pos: %d Visual pos: %d\n", it->text_pos,
+   printf("Text pos: %u Visual pos: %u\n", (unsigned int) it->text_pos, (unsigned int)
 #ifdef BIDI_SUPPORT
          it->visual_pos
 #else
@@ -11509,8 +11509,12 @@ pitem(Evas_Object_Textblock_Item *it)
          (int) it->adv);
    if (it->type == EVAS_TEXTBLOCK_ITEM_TEXT)
      {
+        Eina_Unicode *tmp;
         ti = _ITEM_TEXT(it);
-        printf("Text: '%*ls'\n", ti->text_props.text_len, GET_ITEM_TEXT(ti));
+        tmp = eina_unicode_strdup(GET_ITEM_TEXT(ti));
+        tmp[ti->text_props.text_len] = '\0';
+        printf("Text: '%ls'\n", tmp);
+        free(tmp);
      }
    else
      {
