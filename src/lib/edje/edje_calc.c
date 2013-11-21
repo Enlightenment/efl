@@ -650,7 +650,6 @@ _edje_recalc_do(Edje *ed)
    need_calc = evas_object_smart_need_recalculate_get(ed->obj);
    evas_object_smart_need_recalculate_set(ed->obj, 0);
    if (!ed->dirty) return;
-   ed->have_mapped_part = EINA_FALSE;
    ed->dirty = EINA_FALSE;
    ed->state++;
    for (i = 0; i < ed->table_parts_size; i++)
@@ -3353,6 +3352,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
             (statep1 >= ep->param1.state) ||
             proxy_invalidate ||
             state ||
+            (ep->map_on && ed->have_mapped_part) ||
             ((ep->part->type == EDJE_PART_TYPE_TEXT ||
               ep->part->type == EDJE_PART_TYPE_TEXTBLOCK) &&
              ed->text_part_change))
@@ -3421,6 +3421,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
             (statep2 >= ep->param2->state) ||
             proxy_invalidate ||
             state ||
+            (ep->map_on && ed->have_mapped_part) ||
             ((ep->part->type == EDJE_PART_TYPE_TEXT ||
               ep->part->type == EDJE_PART_TYPE_TEXTBLOCK) &&
              ed->text_part_change))
@@ -3894,6 +3895,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
              static Evas_Map *map = NULL;
 
              ed->have_mapped_part = EINA_TRUE;
+             ep->map_on = EINA_TRUE;
              // create map and populate with part geometry
              if (!map) map = evas_map_new(4);
 
@@ -3915,6 +3917,8 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
           }
         else
           {
+             ep->map_on = EINA_FALSE;
+
              if (ep->nested_smart)
                {  /* Cancel map of smart obj holding nested parts */
                   eo_do(ep->nested_smart,

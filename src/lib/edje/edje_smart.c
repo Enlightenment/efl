@@ -151,6 +151,7 @@ _edje_smart_move(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Evas_Coord x = va_arg(*list, Evas_Coord);
    Evas_Coord y = va_arg(*list, Evas_Coord);
    Edje *ed = _pd;
+   unsigned int i;
 
    if ((ed->x == x) && (ed->y == y)) return;
    ed->x = x;
@@ -168,43 +169,41 @@ _edje_smart_move(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
         return;
      }
 
+   for (i = 0; i < ed->table_parts_size; i++)
+     {
+        Edje_Real_Part *ep;
+
+        ep = ed->table_parts[i];
+        if ((ep->type == EDJE_RP_TYPE_TEXT) && (ep->typedata.text))
+          {
+             evas_object_move(ep->object,
+                              ed->x + ep->x + ep->typedata.text->offset.x,
+                              ed->y + ep->y + ep->typedata.text->offset.y);
+          }
+        else
+          {
+             evas_object_move(ep->object, ed->x + ep->x, ed->y + ep->y);
+             if ((ep->type == EDJE_RP_TYPE_SWALLOW) &&
+                 (ep->typedata.swallow))
+               {
+                  if (ep->typedata.swallow->swallowed_object)
+                    evas_object_move
+                       (ep->typedata.swallow->swallowed_object,
+                        ed->x + ep->x,
+                        ed->y + ep->y);
+               }
+          }
+        if (ep->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+          _edje_entry_real_part_configure(ed, ep);
+     }
+
    if (ed->have_mapped_part)
      {
         ed->dirty = EINA_TRUE;
         _edje_recalc_do(ed);
+        ed->have_mapped_part = EINA_FALSE;
      }
-   else
-     {
-        unsigned int i;
 
-        for (i = 0; i < ed->table_parts_size; i++)
-          {
-             Edje_Real_Part *ep;
-
-             ep = ed->table_parts[i];
-             if ((ep->type == EDJE_RP_TYPE_TEXT) && (ep->typedata.text))
-               {
-                  evas_object_move(ep->object,
-                                   ed->x + ep->x + ep->typedata.text->offset.x,
-                                   ed->y + ep->y + ep->typedata.text->offset.y);
-               }
-             else
-               {
-                  evas_object_move(ep->object, ed->x + ep->x, ed->y + ep->y);
-                  if ((ep->type == EDJE_RP_TYPE_SWALLOW) &&
-                      (ep->typedata.swallow))
-                    {
-                       if (ep->typedata.swallow->swallowed_object)
-                         evas_object_move
-                            (ep->typedata.swallow->swallowed_object,
-                             ed->x + ep->x,
-                             ed->y + ep->y);
-                    }
-               }
-             if (ep->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
-               _edje_entry_real_part_configure(ed, ep);
-          }
-     }
 //   _edje_emit(ed, "move", NULL);
 }
 

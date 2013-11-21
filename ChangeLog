@@ -1,3 +1,7 @@
+2013-11-21  ChunEon Park (Hermet)
+
+	* Edje: Fix to update map-enabled part when the edje object is moved.
+
 2013-11-20  Cedric Bail
 
 	* Eina: Fix a possible race condition during eina_file_close.
