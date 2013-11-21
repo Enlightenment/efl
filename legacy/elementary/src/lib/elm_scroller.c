@@ -151,31 +151,22 @@ _elm_scroller_smart_event(Eo *obj, void *_pd, va_list *list)
           }
         else
           {
-             Evas_Object *tmp = NULL;
-             double degree = 0.0, weight = 0.0;
-             void *(*list_data_get)(const Eina_List *list);
-
-             list_data_get = eina_list_data_get;
+             Eina_Bool r = EINA_FALSE;
 
              if ((!strcmp(ev->key, "Left")) ||
                  (!strcmp(ev->key, "KP_Left")))
-               degree = 270.0;
+               r = elm_widget_focus_next_get(obj, ELM_FOCUS_LEFT, &new_focus);
              else if ((!strcmp(ev->key, "Right")) ||
                       (!strcmp(ev->key, "KP_Right")))
-               degree = 90.0;
+               r = elm_widget_focus_next_get(obj, ELM_FOCUS_RIGHT, &new_focus);
              else if ((!strcmp(ev->key, "Up")) ||
                       (!strcmp(ev->key, "KP_Up")))
-               degree = 0.0;
+               r = elm_widget_focus_next_get(obj, ELM_FOCUS_UP, &new_focus);
              else if ((!strcmp(ev->key, "Down")) ||
                       (!strcmp(ev->key, "KP_Down")))
-               degree = 180.0;
+               r = elm_widget_focus_next_get(obj, ELM_FOCUS_DOWN, &new_focus);
 
-             if (elm_widget_focus_list_direction_get
-                   (obj, current_focus, can_focus_list, list_data_get, degree,
-                   &tmp, &weight))
-               new_focus = tmp;
-
-             if (new_focus)
+             if (r && new_focus)
                {
                   Evas_Coord l_x = 0;
                   Evas_Coord l_y = 0;
