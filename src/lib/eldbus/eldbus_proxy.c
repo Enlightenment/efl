@@ -93,7 +93,7 @@ eldbus_proxy_shutdown(void)
 static void _eldbus_proxy_event_callback_call(Eldbus_Proxy *proxy, Eldbus_Proxy_Event_Type type, const void *event_info);
 static void _eldbus_proxy_context_event_cb_del(Eldbus_Proxy_Context_Event *ce, Eldbus_Proxy_Context_Event_Cb *ctx);
 static void _on_signal_handler_free(void *data, const void *dead_pointer);
-
+static void _props_get_all(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending);
 static void
 _eldbus_proxy_call_del(Eldbus_Proxy *proxy)
 {
@@ -143,6 +143,12 @@ _eldbus_proxy_clear(Eldbus_Proxy *proxy)
             eldbus_pending_path_get(p),
             eldbus_pending_interface_get(p),
             eldbus_pending_method_get(p));
+#warning THIS NEEDS TO BE FIXED BEFORE RELEASE
+        /* proxy is set as the callback data for this function.
+         * BAD!!!!!!!!
+         */
+        if (p->cb == _props_get_all)
+          p->cb = NULL;
         eldbus_pending_cancel(p);
      }
 
