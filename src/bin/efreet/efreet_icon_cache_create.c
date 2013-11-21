@@ -896,7 +896,7 @@ main(int argc, char **argv)
         icon_ef = eet_open(efreet_icon_cache_file(theme->theme.name.internal), EET_FILE_MODE_READ_WRITE);
         if (!icon_ef) goto on_error_efreet;
         icon_version = eet_data_read(icon_ef, efreet_version_edd(), EFREET_CACHE_VERSION);
-        if (theme->changed || (icon_version &&
+        if (theme->changed || !icon_version || (icon_version &&
             ((icon_version->major != EFREET_ICON_CACHE_MAJOR) ||
              (icon_version->minor != EFREET_ICON_CACHE_MINOR))))
         {
