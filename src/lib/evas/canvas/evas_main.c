@@ -1,11 +1,4 @@
 #include "evas_common_private.h"
-
-#include <Eo.h>
-
-#ifdef BUILD_LOADER_EET
-# include <Eet.h>
-#endif
-
 #include "evas_private.h"
 //#include "evas_cs.h"
 #ifdef EVAS_CSERVE2

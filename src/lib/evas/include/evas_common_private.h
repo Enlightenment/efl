@@ -48,6 +48,11 @@
 #endif
 
 #include <Eina.h>
+#include <Eo.h>
+
+#ifdef BUILD_LOADER_EET
+# include <Eet.h>
+#endif
 #include "Evas.h"
 //#include "Evas_GL.h"
 
