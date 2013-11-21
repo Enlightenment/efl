@@ -51,6 +51,10 @@ evas_init(void)
 
    eo_init();
 
+#ifdef BUILD_LOADER_EET
+   eet_init();
+#endif
+
    evas_module_init();
    if (!evas_async_events_init())
      goto shutdown_module;
@@ -124,6 +128,10 @@ evas_shutdown(void)
    evas_font_dir_cache_free();
    evas_common_shutdown();
    evas_module_shutdown();
+
+#ifdef BUILD_LOADER_EET
+   eet_shutdown();
+#endif
    eo_shutdown();
 
    eina_log_domain_unregister(_evas_log_dom_global);

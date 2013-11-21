@@ -194,9 +194,6 @@ evas_common_image_init(void)
    reference++;
 ////   ERR("REF++=%i", reference);
 
-#ifdef BUILD_LOADER_EET
-   eet_init();
-#endif
    evas_common_scalecache_init();
 }
 
@@ -229,9 +226,6 @@ evas_common_image_shutdown(void)
 #endif
      }
 
-#ifdef BUILD_LOADER_EET
-   eet_shutdown();
-#endif
    evas_common_scalecache_shutdown();
 }
 
