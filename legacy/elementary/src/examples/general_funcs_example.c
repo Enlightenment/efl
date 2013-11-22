@@ -112,7 +112,6 @@ elm_main(int    argc,
    b = elm_box_add(win);
    elm_box_horizontal_set(b, EINA_FALSE);
    evas_object_size_hint_weight_set(b, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, b);
    elm_box_pack_end(box, b);
    evas_object_show(b);
 
