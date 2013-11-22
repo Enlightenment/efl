@@ -56,6 +56,24 @@ _changed_size_hints_cb(void *data,
 }
 
 static void
+_elm_mapbuf_content_unset(Elm_Mapbuf_Smart_Data *sd, Evas_Object *obj,
+                          Evas_Object *content)
+{
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+
+   evas_object_data_del(content, "_elm_leaveme");
+   evas_object_smart_member_del(content);
+   evas_object_clip_unset(content);
+   evas_object_color_set(wd->resize_obj, 0, 0, 0, 0);
+   evas_object_event_callback_del_full
+      (content, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints_cb,
+       obj);
+   sd->content = NULL;
+   _sizing_eval(obj);
+   ELM_SAFE_FREE(sd->idler, ecore_idler_del);
+}
+
+static void
 _elm_mapbuf_smart_sub_object_del(Eo *obj, void *_pd, va_list *list)
 {
    Elm_Mapbuf_Smart_Data *sd = _pd;
@@ -68,17 +86,7 @@ _elm_mapbuf_smart_sub_object_del(Eo *obj, void *_pd, va_list *list)
    if (!int_ret) return;
 
    if (sobj == sd->content)
-     {
-        evas_object_data_del(sobj, "_elm_leaveme");
-        evas_object_smart_member_del(sobj);
-        evas_object_clip_unset(sobj);
-        evas_object_event_callback_del_full
-          (sobj, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints_cb,
-          obj);
-        sd->content = NULL;
-        _sizing_eval(obj);
-     }
-
+     _elm_mapbuf_content_unset(sd, (Evas_Object *)obj, sobj);
    if (ret) *ret = EINA_TRUE;
 }
 
@@ -249,19 +257,14 @@ _elm_mapbuf_smart_content_unset(Eo *obj, void *_pd, va_list *list)
    if (ret) *ret = NULL;
 
    Elm_Mapbuf_Smart_Data *sd = _pd;
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    if (part && strcmp(part, "default")) return;
    if (!sd->content) return;
 
    content = sd->content;
    elm_widget_sub_object_del(obj, content);
-   evas_object_smart_member_del(content);
-   evas_object_data_del(content, "_elm_leaveme");
-   evas_object_color_set(wd->resize_obj, 0, 0, 0, 0);
-   sd->content = NULL;
+   _elm_mapbuf_content_unset(sd, obj, content);
    if (ret) *ret = content;
-   ELM_SAFE_FREE(sd->idler, ecore_idler_del);
 }
 
 static void

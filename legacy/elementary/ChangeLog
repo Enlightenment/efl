@@ -1747,3 +1747,8 @@
 2013-11-05  Amitesh Singh (_ami_)
 
         * hoversel: Added focus support on hoversel items.
+
+2013-11-22  ChunEon Park (Hermet)
+
+        * mapbuf: reset the mapbuf internals correctly when the content is
+        removed(unset)
