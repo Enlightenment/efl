@@ -200,8 +200,10 @@ _edje_smart_move(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    if (ed->have_mapped_part)
      {
         ed->dirty = EINA_TRUE;
-        _edje_recalc_do(ed);
         ed->have_mapped_part = EINA_FALSE;
+        ed->need_map_update = EINA_TRUE;
+        _edje_recalc_do(ed);
+        ed->need_map_update = EINA_FALSE;
      }
 
 //   _edje_emit(ed, "move", NULL);

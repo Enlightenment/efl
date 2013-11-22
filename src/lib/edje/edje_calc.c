@@ -3352,7 +3352,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
             (statep1 >= ep->param1.state) ||
             proxy_invalidate ||
             state ||
-            (ed->have_mapped_part && chosen_desc->map.on) ||
+            ed->need_map_update ||
             ((ep->part->type == EDJE_PART_TYPE_TEXT ||
               ep->part->type == EDJE_PART_TYPE_TEXTBLOCK) &&
              ed->text_part_change))
@@ -3421,7 +3421,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
             (statep2 >= ep->param2->state) ||
             proxy_invalidate ||
             state ||
-            (ed->have_mapped_part && chosen_desc->map.on) ||
+            ed->need_map_update ||
             ((ep->part->type == EDJE_PART_TYPE_TEXT ||
               ep->part->type == EDJE_PART_TYPE_TEXTBLOCK) &&
              ed->text_part_change))
