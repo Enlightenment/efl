@@ -3,7 +3,17 @@
 #endif
 
 #include "ecore_wl_private.h"
-#include <subsurface-client-protocol.h>
+
+/*
+ * The subsurface protocol was moved into Wayland Core
+ * around v1.3.90 (i.e. v1.4.0).
+ * Test if subsurface protocol is part of wayland-client.h.
+ * If not, we include our own copy of the protocol header.
+ */
+#include <wayland-client.h>
+#ifndef WL_SUBSURFACE_ERROR_ENUM
+# include <subsurface-client-protocol.h>
+#endif
 
 struct _Ecore_Wl_Subsurf
 {

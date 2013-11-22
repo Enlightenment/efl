@@ -4,7 +4,17 @@
 
 #include <fcntl.h>
 #include "ecore_wl_private.h"
-#include <subsurface-client-protocol.h>
+
+/*
+ * The subsurface protocol was moved into Wayland Core
+ * around v1.3.90 (i.e. v1.4.0).
+ * Test if subsurface protocol is part of wayland-client.h.
+ * If not, we include our own copy of the protocol header.
+ */
+#include <wayland-client.h>
+#ifndef WL_SUBSURFACE_ERROR_ENUM
+# include <subsurface-client-protocol.h>
+#endif
 
 /* local function prototypes */
 static Eina_Bool _ecore_wl_shutdown(Eina_Bool close);
@@ -46,7 +56,7 @@ static const struct wl_callback_listener _ecore_wl_init_sync_listener =
    _ecore_wl_init_callback
 };
 
-static const struct wl_callback_listener _ecore_wl_anim_listener = 
+static const struct wl_callback_listener _ecore_wl_anim_listener =
 {
    _ecore_wl_animator_callback
 };
@@ -245,7 +255,7 @@ ecore_wl_shm_get(void)
 EAPI struct wl_display *
 ecore_wl_display_get(void)
 {
-   if ((!_ecore_wl_disp) || (!_ecore_wl_disp->wl.display)) 
+   if ((!_ecore_wl_disp) || (!_ecore_wl_disp->wl.display))
      return NULL;
    return _ecore_wl_disp->wl.display;
 }
@@ -253,7 +263,7 @@ ecore_wl_display_get(void)
 EAPI Eina_Inlist *
 ecore_wl_globals_get(void)
 {
-   if ((!_ecore_wl_disp) || (!_ecore_wl_disp->wl.display)) 
+   if ((!_ecore_wl_disp) || (!_ecore_wl_disp->wl.display))
      return NULL;
 
    _ecore_wl_init_wait();
@@ -264,7 +274,7 @@ ecore_wl_globals_get(void)
 EAPI struct wl_registry *
 ecore_wl_registry_get(void)
 {
-   if ((!_ecore_wl_disp) || (!_ecore_wl_disp->wl.display)) 
+   if ((!_ecore_wl_disp) || (!_ecore_wl_disp->wl.display))
      return NULL;
    return _ecore_wl_disp->wl.registry;
 }
@@ -358,7 +368,7 @@ ecore_wl_display_iterate(void)
 }
 
 /* @since 1.8 */
-EAPI Eina_Bool 
+EAPI Eina_Bool
 ecore_wl_animator_source_set(Ecore_Animator_Source source)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -398,7 +408,7 @@ ecore_wl_cursor_get(const char *cursor_name)
                                      cursor_name);
 }
 
-EAPI void 
+EAPI void
 ecore_wl_server_mode_set(Eina_Bool on)
 {
    _ecore_wl_server_mode = on;
@@ -490,7 +500,7 @@ _ecore_wl_cb_idle_enterer(void *data)
 
    ret = wl_display_flush(ewd->wl.display);
    if ((ret < 0) && (errno == EAGAIN))
-     ecore_main_fd_handler_active_set(ewd->fd_hdl, 
+     ecore_main_fd_handler_active_set(ewd->fd_hdl,
                                       (ECORE_FD_READ | ECORE_FD_WRITE));
 
    return ECORE_CALLBACK_RENEW;
@@ -616,7 +626,7 @@ _ecore_wl_cb_handle_global(void *data, struct wl_registry *registry, unsigned in
      }
 }
 
-static void 
+static void
 _ecore_wl_cb_handle_global_remove(void *data, struct wl_registry *registry EINA_UNUSED, unsigned int id)
 {
    Ecore_Wl_Display *ewd;
@@ -677,7 +687,7 @@ _ecore_wl_sync_wait(Ecore_Wl_Display *ewd)
    wl_callback_add_listener(callback, &_ecore_wl_sync_listener, ewd);
 }
 
-static void 
+static void
 _ecore_wl_animator_tick_cb_begin(void *data EINA_UNUSED)
 {
    Eina_Hash *windows;
@@ -688,13 +698,13 @@ _ecore_wl_animator_tick_cb_begin(void *data EINA_UNUSED)
    eina_hash_foreach(windows, _ecore_wl_animator_window_add, NULL);
 }
 
-static void 
+static void
 _ecore_wl_animator_tick_cb_end(void *data EINA_UNUSED)
 {
    _ecore_wl_animator_busy = EINA_FALSE;
 }
 
-static void 
+static void
 _ecore_wl_animator_callback(void *data, struct wl_callback *callback, uint32_t serial EINA_UNUSED)
 {
    Ecore_Wl_Window *win;
@@ -706,16 +716,16 @@ _ecore_wl_animator_callback(void *data, struct wl_callback *callback, uint32_t s
    wl_callback_destroy(callback);
    win->anim_callback = NULL;
 
-   if (_ecore_wl_animator_busy) 
+   if (_ecore_wl_animator_busy)
      {
         win->anim_callback = wl_surface_frame(win->surface);
-        wl_callback_add_listener(win->anim_callback, 
+        wl_callback_add_listener(win->anim_callback,
                                  &_ecore_wl_anim_listener, win);
         ecore_wl_window_commit(win);
      }
 }
 
-static Eina_Bool 
+static Eina_Bool
 _ecore_wl_animator_window_add(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, void *data, void *fdata EINA_UNUSED)
 {
    Ecore_Wl_Window *win;
@@ -731,7 +741,7 @@ _ecore_wl_animator_window_add(const Eina_Hash *hash EINA_UNUSED, const void *key
    return EINA_TRUE;
 }
 
-static void 
+static void
 _ecore_wl_signal_exit(void)
 {
    Ecore_Event_Signal_Exit *ev;
@@ -740,11 +750,11 @@ _ecore_wl_signal_exit(void)
      return;
 
    ev->quit = 1;
-   ecore_event_add(ECORE_EVENT_SIGNAL_EXIT, ev, 
+   ecore_event_add(ECORE_EVENT_SIGNAL_EXIT, ev,
                    _ecore_wl_signal_exit_free, NULL);
 }
 
-static void 
+static void
 _ecore_wl_signal_exit_free(void *data EINA_UNUSED, void *event)
 {
    free(event);
