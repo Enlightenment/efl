@@ -1,13 +1,10 @@
-#include "evas_font_ot.h"
+#include "evas_common_private.h"
 
 #ifdef USE_HARFBUZZ
 # include <hb.h>
 # include <hb-ft.h>
 #endif
 
-#include "evas_common_private.h"
-
-#include <Eina.h>
 #include "evas_font_private.h"
 
 #ifdef USE_HARFBUZZ

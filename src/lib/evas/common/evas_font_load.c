@@ -4,14 +4,12 @@
 
 #include <assert.h>
 
-#include "evas_font_ot.h" /* USE_HARFBUZZ */
+#include "evas_common_private.h"
+#include "evas_private.h"
 
 #ifdef USE_HARFBUZZ
 # include <hb.h>
 #endif
-
-#include "evas_common_private.h"
-#include "evas_private.h"
 
 #include "evas_font_private.h" /* for Frame-Queuing support */
 #include <freetype/tttables.h> /* Freetype2 OS/2 font table. */

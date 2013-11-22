@@ -3,7 +3,6 @@
 #include "evas_text_utils.h"
 #include "language/evas_bidi_utils.h"
 #include "language/evas_language_utils.h"
-#include "evas_font_ot.h"
 
 #define PROPS_CHANGE(Props) Props->changed = EINA_TRUE;
 

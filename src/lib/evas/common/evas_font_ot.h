@@ -1,10 +1,6 @@
 #ifndef _EVAS_FONT_OT_H
 # define _EVAS_FONT_OT_H
 
-# ifdef HAVE_CONFIG_H
-#  include "config.h"
-# endif
-
 # ifdef HAVE_HARFBUZZ
 #  define OT_SUPPORT
 #  define USE_HARFBUZZ
@@ -16,8 +12,6 @@ typedef struct _Evas_Font_OT_Info Evas_Font_OT_Info;
 # else
 typedef void *Evas_Font_OT_Info;
 # endif
-
-# include "Evas.h"
 
 # ifdef OT_SUPPORT
 struct _Evas_Font_OT_Info
