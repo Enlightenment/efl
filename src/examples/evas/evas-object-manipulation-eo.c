@@ -77,10 +77,13 @@ _on_keydown(void        *data EINA_UNUSED,
         int alpha, r, g, b;
 
         eo_do(d.clipper, evas_obj_color_get(&r, &g, &b, &alpha));
+        evas_color_argb_unpremul(alpha, &r, &g, &b);
+
         alpha -= 20;
         if (alpha < 0)
           alpha = 255;
 
+        evas_color_argb_premul(alpha, &r, &g, &b);
         eo_do(d.clipper, evas_obj_color_set(r, g, b, alpha));
 
         fprintf(stdout, "Changing clipper's opacity: %d%%\n",
@@ -96,6 +99,8 @@ _on_keydown(void        *data EINA_UNUSED,
         fprintf(stdout, "Changing clipper's color to");
 
         eo_do(d.clipper, evas_obj_color_get(&r, &g, &b, &alpha));
+        evas_color_argb_unpremul(alpha, &r, &g, &b);
+
         if (g > 0)
           {
              fprintf(stdout, "red\n");
@@ -107,6 +112,7 @@ _on_keydown(void        *data EINA_UNUSED,
              g = b = 255;
           }
 
+        evas_color_argb_premul(alpha, &r, &g, &b);
         eo_do(d.clipper, evas_obj_color_set(r, g, b, alpha));
         return;
      }
