@@ -259,6 +259,7 @@ _elm_mapbuf_smart_content_unset(Eo *obj, void *_pd, va_list *list)
    evas_object_smart_member_del(content);
    evas_object_data_del(content, "_elm_leaveme");
    evas_object_color_set(wd->resize_obj, 0, 0, 0, 0);
+   sd->content = NULL;
    if (ret) *ret = content;
    ELM_SAFE_FREE(sd->idler, ecore_idler_del);
 }
