@@ -449,7 +449,7 @@ typedef Eina_Bool (*Elm_Item_Container_Data_Get_Cb)(
  *
  * @param obj The container object.
  * @param tm_to_anim Time period to wait before start animation.
- * @param tm_to_drag Time period to wait before start draggind.
+ * @param tm_to_drag Time period to wait before start dragging.
  * @param itemgetcb Callback to get Evas_Object pointer for item at (x,y)
  * @param data_get  Callback to get drag info
  * @return Returns EINA_TRUE, if successful, or EINA_FALSE if not.
@@ -501,7 +501,7 @@ EAPI Eina_Bool elm_drop_item_container_add(Evas_Object *obj,
       Elm_Drop_Item_Container_Cb dropcb, void *dropdata);
 
 /**
- * @brief Removes a container from list of drop tragets.
+ * @brief Removes a container from list of drop targets.
  *
  * @param obj The container object
  * @return Returns EINA_TRUE, if successful, or EINA_FALSE if not.

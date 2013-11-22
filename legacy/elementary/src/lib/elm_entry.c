@@ -2797,7 +2797,7 @@ proceed:
         size_t tlen;
 
         tlen = strlen(text);
-        /* FIXME: need that or we do copy unitialised data */
+        /* FIXME: need that or we do copy uninitialised data */
         tmpbuf = calloc(1, tlen + sd->append_text_len -
                         sd->append_text_position + 1);
         if (!tmpbuf)
@@ -3128,7 +3128,7 @@ _end_handler_mouse_move_cb(void *data,
    if (epos <= spos)
      edje_object_part_text_cursor_pos_set(sd->entry_edje, "elm.text",
                                           EDJE_CURSOR_SELECTION_END, spos + 1);
-   
+
    edje_object_part_text_cursor_geometry_get(sd->entry_edje,
                                              "elm.text",
                                              &cx, &cy, NULL, &ch);

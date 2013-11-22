@@ -1627,7 +1627,7 @@ _item_realize(Elm_Gen_Item *it,
         _elm_genlist_item_index_update(it);
      }
 
-   /* homogenous genlist shortcut */
+   /* homogeneous genlist shortcut */
    if ((calc) && (sd->homogeneous) && (!it->item->mincalcd) &&
        ((it->group && sd->group_item_width) ||
         (!it->group && sd->item_width)))

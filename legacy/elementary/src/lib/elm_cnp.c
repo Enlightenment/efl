@@ -951,7 +951,7 @@ _x11_notify_handler_uri(X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *
 }
 
 /**
- * Just receieved an vcard, either through cut and paste, or dnd.
+ * Just received an vcard, either through cut and paste, or dnd.
  */
 static int
 _x11_vcard_receive(X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify)
@@ -1962,7 +1962,7 @@ _x11_elm_drop_target_del(Evas_Object *obj, Elm_Sel_Format format,
      }
    else return EINA_FALSE;
 
-   /* TODO BUG: we should handle dnd-aware per window, not just the last that reelased it */
+   /* TODO BUG: we should handle dnd-aware per window, not just the last that released it */
 
    /* If still drops there: All fine.. continue */
    if (drops) return EINA_TRUE;

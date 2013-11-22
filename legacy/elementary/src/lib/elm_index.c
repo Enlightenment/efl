@@ -1044,7 +1044,7 @@ _elm_index_smart_focus_next(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    int_ret = elm_widget_focus_list_next_get
             (obj, items, eina_list_data_get, dir, next);
 
-   // to hide index item, if there is nothing to focus on autohide disalbe mode
+   // to hide index item, if there is nothing to focus on autohide disable mode
    if ((!sd->autohide_disabled) && (!int_ret))
      elm_layout_signal_emit((Evas_Object *)obj, "elm,state,inactive", "elm");
 
@@ -1144,7 +1144,7 @@ _autohide_disabled_set(Eo *obj, void *_pd, va_list *list)
    else
      elm_layout_signal_emit(obj, "elm,state,inactive", "elm");
 
-   //FIXME: Should be update indicator based on the indicator visiblility
+   //FIXME: Should be update indicator based on the indicator visibility
 }
 
 EAPI Eina_Bool
@@ -1199,7 +1199,7 @@ _item_level_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    *ret = sd->level;
 }
 
-//FIXME: Should update indicator based on the autohidden status & indicator visiblility
+//FIXME: Should update indicator based on the autohidden status & indicator visibility
 EAPI void
 elm_index_item_selected_set(Elm_Object_Item *it,
                             Eina_Bool selected)
