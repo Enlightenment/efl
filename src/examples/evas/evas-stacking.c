@@ -52,13 +52,21 @@ static const char *commands = \
   "\tl - change background rectangle's layer\n"
   "\th - print help\n";
 
+static const char *
+_name_get(Evas_Object *o)
+{
+   const char *s = evas_object_name_get(o);
+   if (!s) s = "(null)";
+   return s;
+}
+
 static void
 _on_mouse_down(void        *data EINA_UNUSED,
                Evas        *evas EINA_UNUSED,
                Evas_Object *o,
                void        *einfo EINA_UNUSED)
 {
-   fprintf(stdout, "Mouse down on rectangle %s!\n", evas_object_name_get(o));
+   fprintf(stdout, "Mouse down on rectangle %s!\n", _name_get(o));
 }
 
 /* here just to keep our example's window size and background image's
@@ -81,7 +89,7 @@ _on_keydown(void        *data EINA_UNUSED,
             void        *einfo)
 {
    Evas_Event_Key_Down *ev = einfo;
-   const char *name = evas_object_name_get(d.rects[d.cur_rect]);
+   const char *name = _name_get(d.rects[d.cur_rect]);
 
    if (strcmp(ev->keyname, "h") == 0)  /* print help */
      {
@@ -98,19 +106,19 @@ _on_keydown(void        *data EINA_UNUSED,
         fprintf(stdout, "Order of stacking, from top to bottom, is: ");
 
         rect = evas_object_top_get(evas);
-        fprintf(stdout, "%s", evas_object_name_get(rect));
+        fprintf(stdout, "%s", _name_get(rect));
 
         rect = evas_object_below_get(rect);
         while (rect)
           {
-             fprintf(stdout, ", %s", evas_object_name_get(rect));
+             fprintf(stdout, ", %s", _name_get(rect));
              rect = evas_object_below_get(rect);
           }
 
         fprintf(stdout, ".\n");
 
         fprintf(stdout, "Current target rectangle is %s\n",
-                evas_object_name_get(d.rects[d.cur_rect]));
+                _name_get(d.rects[d.cur_rect]));
 
         fprintf(stdout, "Background rectangle's layer is %d\n",
                 evas_object_layer_get(d.bg));
@@ -133,7 +141,7 @@ _on_keydown(void        *data EINA_UNUSED,
         d.cur_rect = (d.cur_rect + 1) % 3;
 
         fprintf(stdout, "Changing target rectangle to the %s one\n",
-                evas_object_name_get(d.rects[d.cur_rect]));
+                _name_get(d.rects[d.cur_rect]));
         return;
      }
 
@@ -148,7 +156,7 @@ _on_keydown(void        *data EINA_UNUSED,
 
         neighbour = evas_object_below_get(d.rects[d.cur_rect]);
         fprintf(stdout, "Below of %s rect is %s\n", name,
-                neighbour ? evas_object_name_get(neighbour) : "no object");
+                neighbour ? _name_get(neighbour) : "no object");
         return;
      }
 
@@ -164,7 +172,7 @@ _on_keydown(void        *data EINA_UNUSED,
 
         neighbour = evas_object_below_get(d.rects[d.cur_rect]);
         fprintf(stdout, "Below of %s rect is %s\n", name,
-                neighbour ? evas_object_name_get(neighbour) : "no object");
+                neighbour ? _name_get(neighbour) : "no object");
         return;
      }
 
@@ -206,11 +214,11 @@ _on_keydown(void        *data EINA_UNUSED,
 
         neighbour = evas_object_above_get(d.rects[d.cur_rect]);
         fprintf(stdout, "Above of %s rect is %s\n", name,
-                neighbour ? evas_object_name_get(neighbour) : "no object");
+                neighbour ? _name_get(neighbour) : "no object");
 
         neighbour = evas_object_below_get(d.rects[d.cur_rect]);
         fprintf(stdout, "Below of %s rect is %s\n", name,
-                neighbour ? evas_object_name_get(neighbour) : "no object");
+                neighbour ? _name_get(neighbour) : "no object");
         return;
      }
 
@@ -228,12 +236,12 @@ _on_keydown(void        *data EINA_UNUSED,
 
         neighbour = evas_object_above_get(d.rects[d.cur_rect]);
         fprintf(stdout, "Above of %s rect is %s\n", name,
-                neighbour ? evas_object_name_get(neighbour) : "no object");
+                neighbour ? _name_get(neighbour) : "no object");
 
         neighbour = evas_object_below_get(d.rects[d.cur_rect]);
 
         fprintf(stdout, "Below of %s rect is %s\n", name,
-                neighbour ? evas_object_name_get(neighbour) : "no object");
+                neighbour ? _name_get(neighbour) : "no object");
         return;
      }
 }
