@@ -2689,14 +2689,13 @@ _wl_elm_drag_start(Evas_Object *obj, Elm_Sel_Format format EINA_UNUSED, const ch
    Ecore_Evas *ee;
    Evas_Object *icon = NULL;
    int x, y, x2 = 0, y2 = 0, x3, y3, w = 0, h = 0;
-   const char *types[1] = { 0, };
+   const char *types[2] = { "text/uri-list", NULL };
 
    _wl_elm_dnd_init();
 
    /* if we already have a drag, get out */
    if (dragwin) return EINA_FALSE;
 
-   types[0] = "text/uri-list";
    ecore_wl_dnd_drag_types_set(ecore_wl_input_get(), types);
 
    /* set the drag data used when a drop occurs */
