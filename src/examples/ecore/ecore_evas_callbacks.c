@@ -96,13 +96,19 @@ int
 main(void)
 {
    Ecore_Evas *ee;
-
+   Evas_Object *bg;
+   
    ecore_evas_init();
 
    ee = ecore_evas_new(NULL, 0, 0, 200, 100, NULL);
    ecore_evas_title_set(ee, "Ecore Evas Callbacks Example");
    ecore_evas_show(ee);
 
+   bg = evas_object_rectangle_add(ecore_evas_get(ee));
+   evas_object_color_set(bg, 255, 128, 0, 255);
+   evas_object_resize(bg, 9999, 9999);
+   evas_object_show(bg);
+   
    //callbacks
    ecore_evas_callback_delete_request_set(ee, _delete);
    ecore_evas_callback_destroy_set(ee, _destroy);
