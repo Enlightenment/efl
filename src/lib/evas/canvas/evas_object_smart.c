@@ -37,7 +37,7 @@ struct _Evas_Object_Smart
    int               walking_list;
    int               member_count; /** number of smart member objects */
 
-   unsigned char     recalculate_cycle;
+   unsigned short    recalculate_cycle;
 
    Eina_Bool         deletions_waiting : 1;
    Eina_Bool         need_recalculate : 1;
@@ -1070,7 +1070,7 @@ _smart_need_recalculate_set(Eo *eo_obj, void *_pd, va_list *list)
 
    if (o->need_recalculate == value) return;
 
-   if (o->recalculate_cycle > 254)
+   if (o->recalculate_cycle > 4096)
      {
         ERR("Object %p is not stable during recalc loop", eo_obj);
         return;
