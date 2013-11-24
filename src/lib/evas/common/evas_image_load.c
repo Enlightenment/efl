@@ -26,56 +26,82 @@ struct ext_loader_s
 static const struct ext_loader_s loaders[] =
 { /* map extensions to loaders to use for good first-guess tries */
    MATCHING(".png", "png"),
+   
    MATCHING(".jpg", "jpeg"),
    MATCHING(".jpeg", "jpeg"),
    MATCHING(".jfif", "jpeg"),
+   
    MATCHING(".j2k", "jp2k"),
    MATCHING(".jp2", "jp2k"),
    MATCHING(".jpx", "jp2k"),
    MATCHING(".jpf", "jp2k"),
+   
    MATCHING(".eet", "eet"),
    MATCHING(".edj", "eet"),
    MATCHING(".eap", "eet"),
+   
    MATCHING(".xpm", "xpm"),
+   
    MATCHING(".tiff", "tiff"),
    MATCHING(".tif", "tiff"),
-   MATCHING(".svg", "svg"),
-   MATCHING(".svgz", "svg"),
-   MATCHING(".svg.gz", "svg"),
+   
    MATCHING(".gif", "gif"),
+   
    MATCHING(".pbm", "pmaps"),
    MATCHING(".pgm", "pmaps"),
    MATCHING(".ppm", "pmaps"),
    MATCHING(".pnm", "pmaps"),
+   
    MATCHING(".bmp", "bmp"),
+   
    MATCHING(".tga", "tga"),
+   
    MATCHING(".wbmp", "wbmp"),
+   
    MATCHING(".webp", "webp"),
+   
    MATCHING(".ico", "ico"),
    MATCHING(".cur", "ico"),
+   
    MATCHING(".psd", "psd"),
-   MATCHING(".pdf", "generic"),
-   MATCHING(".ps", "generic"),
+   /* xcf - gefenric */
    MATCHING(".xcf", "generic"),
    MATCHING(".xcf.gz", "generic"),
+   /* docs */
+   MATCHING(".doc", "generic"),
+   MATCHING(".docx", "generic"),
+   MATCHING(".odp", "generic"),
+   MATCHING(".ods", "generic"),
+   MATCHING(".odt", "generic"),
+   MATCHING(".pdf", "generic"),
+   MATCHING(".ps", "generic"),
+   MATCHING(".ppt", "generic"),
+   MATCHING(".pptx", "generic"),
+   MATCHING(".rtf", "generic"),
+   MATCHING(".xls", "generic"),
+   MATCHING(".xlsx", "generic"),
+   /* svg - generic */
+   MATCHING(".svg", "generic"),
+   MATCHING(".svgz", "generic"),
+   MATCHING(".svg.gz", "generic"),
    /* RAW */
    MATCHING(".arw", "generic"),
    MATCHING(".cr2", "generic"),
    MATCHING(".crw", "generic"),
    MATCHING(".dcr", "generic"),
    MATCHING(".dng", "generic"),
+   MATCHING(".erf", "generic"),
    MATCHING(".k25", "generic"),
    MATCHING(".kdc", "generic"),
-   MATCHING(".erf", "generic"),
    MATCHING(".mrw", "generic"),
    MATCHING(".nef", "generic"),
    MATCHING(".nrf", "generic"),
    MATCHING(".nrw", "generic"),
    MATCHING(".orf", "generic"),
-   MATCHING(".raw", "generic"),
-   MATCHING(".rw2", "generic"),
    MATCHING(".pef", "generic"),
    MATCHING(".raf", "generic"),
+   MATCHING(".raw", "generic"),
+   MATCHING(".rw2", "generic"),
    MATCHING(".sr2", "generic"),
    MATCHING(".srf", "generic"),
    MATCHING(".x3f", "generic"),
@@ -92,12 +118,13 @@ static const struct ext_loader_s loaders[] =
    MATCHING(".bdm", "generic"),
    MATCHING(".bdmv", "generic"),
    MATCHING(".clpi", "generic"),
-   MATCHING(".clp", "generic"),
+   MATCHING(".cpi", "generic"),
+   MATCHING(".dv", "generic"),
    MATCHING(".fla", "generic"),
    MATCHING(".flv", "generic"),
    MATCHING(".m1v", "generic"),
-   MATCHING(".m2v", "generic"),
    MATCHING(".m2t", "generic"),
+   MATCHING(".m2v", "generic"),
    MATCHING(".m4v", "generic"),
    MATCHING(".mkv", "generic"),
    MATCHING(".mov", "generic"),
@@ -116,12 +143,14 @@ static const struct ext_loader_s loaders[] =
    MATCHING(".ogg", "generic"),
    MATCHING(".ogm", "generic"),
    MATCHING(".ogv", "generic"),
+   MATCHING(".qt", "generic"),
    MATCHING(".rm", "generic"),
    MATCHING(".rmj", "generic"),
    MATCHING(".rmm", "generic"),
    MATCHING(".rms", "generic"),
-   MATCHING(".rmx", "generic"),
    MATCHING(".rmvb", "generic"),
+   MATCHING(".rmx", "generic"),
+   MATCHING(".rv", "generic"),
    MATCHING(".swf", "generic"),
    MATCHING(".ts", "generic"),
    MATCHING(".weba", "generic"),
@@ -131,7 +160,8 @@ static const struct ext_loader_s loaders[] =
 
 static const char *loaders_name[] =
 { /* in order of most likely needed */
-  "png", "jpeg", "eet", "xpm", "tiff", "gif", "svg", "webp", "pmaps", "bmp", "tga", "wbmp", "ico", "psd", "generic"
+  "png", "jpeg", "eet", "xpm", "tiff", "gif", "svg", "webp", "pmaps",
+  "bmp", "tga", "wbmp", "ico", "psd", "jp2k", "generic"
 };
 
 struct evas_image_foreach_loader_data
