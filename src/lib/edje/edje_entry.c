@@ -110,7 +110,7 @@ _edje_entry_focus_in_cb(void *data, Evas_Object *o, const char *emission EINA_UN
    if (!rp->typedata.text->entry_data) return;
 
    ed = _edje_fetch(o);
-   if (ed) return;
+   if (!ed) return;
 
    en = rp->typedata.text->entry_data;
    if (!en || !en->imf_context) return;
