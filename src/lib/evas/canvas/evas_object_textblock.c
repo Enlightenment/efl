@@ -4256,7 +4256,7 @@ _layout_get_word_mixwrap_common(Ctxt *c, Evas_Object_Textblock_Format *fmt,
            the rest works on the last char of the previous string.
            If it's a whitespace, then it's ok, and no need to go back
            because we'll remove it anyway. */
-        if (!_is_white(str[wrap]))
+        if (!_is_white(str[wrap]) || (wrap + 1 == len))
            MOVE_PREV_UNTIL(line_start, wrap);
         /* If there's a breakable point inside the text, scan backwards until
          * we find it */

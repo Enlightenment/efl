@@ -363,6 +363,7 @@ Fixes:
      - Fixed the textblock set to context with the textblock object's render operation.
      - Evas textblock: Fixed order of tags inserted with markup_app/prepend.
      - Fix proxy render to update the proxies recursively. If a proxy has proxies, all the chainged proxies should be updated recursively.
+     - Evas textblock: Fixed wrapping of lines ending with whites.
 
     * Ecore:
      - Don't leak fd on exec.
