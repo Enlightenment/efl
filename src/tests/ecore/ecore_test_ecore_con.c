@@ -147,7 +147,7 @@ _data(void *data, int type EINA_UNUSED, void *ev)
 }
 
 Eina_Bool
-_dns_add(void *data, int type EINA_UNUSED, void *ev EINA_UNUSED)
+_dns_add_del(void *data, int type EINA_UNUSED, void *ev EINA_UNUSED)
 {
    Eina_Bool *err_check = data;
    *err_check = EINA_FALSE;
@@ -284,8 +284,10 @@ START_TEST(ecore_test_ecore_con_dns)
    ret = ecore_con_init();
    fail_if(ret != 1);
 
-   e_add = ecore_event_handler_add(ECORE_CON_EVENT_SERVER_ADD, _dns_add, (void *) &err_check);
+   e_add = ecore_event_handler_add(ECORE_CON_EVENT_SERVER_ADD, _dns_add_del, (void *) &err_check);
    e_err = ecore_event_handler_add(ECORE_CON_EVENT_SERVER_ERROR, _dns_err, (void *) &err_check);
+   /* For timeout */
+   e_err = ecore_event_handler_add(ECORE_CON_EVENT_SERVER_DEL, _dns_add_del, (void *) &err_check);
 
    client = ecore_con_server_connect(ECORE_CON_REMOTE_TCP,
                                      "wongsub.wrongdns.lan", 1234, NULL);
