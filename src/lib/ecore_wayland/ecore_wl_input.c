@@ -713,6 +713,16 @@ _ecore_wl_input_cb_keyboard_key(void *data, struct wl_keyboard *keyboard EINA_UN
    if (keyname[0] == '\0')
      snprintf(keyname, sizeof(keyname), "Keycode-%u", code);
 
+   /* if shift is active, we need to transform the key to lower */
+   if (xkb_state_mod_index_is_active(input->xkb.state, 
+                                     xkb_map_mod_get_index(input->xkb.keymap, 
+                                                           XKB_MOD_NAME_SHIFT),
+                                     XKB_STATE_MODS_EFFECTIVE))
+     {
+        if (keyname[0] != '\0')
+          keyname[0] = tolower(keyname[0]);
+     }
+
    memset(compose, 0, sizeof(compose));
    _ecore_wl_input_keymap_translate_keysym(sym, input->modifiers, 
                                            compose, sizeof(compose));
