@@ -1524,8 +1524,6 @@ _elm_scroll_content_pos_set(Eo *obj, void *_pd, va_list *list)
 
    Elm_Scrollable_Smart_Interface_Data *sid = _pd;
 
-   printf("pos set...\n");
-   
    if (!sid->edje_obj || !sid->pan_obj) return;
 
    // FIXME: allow for bounce outside of range
@@ -1597,8 +1595,6 @@ _elm_scroll_content_pos_set(Eo *obj, void *_pd, va_list *list)
    edje_object_part_drag_value_set
      (sid->edje_obj, "elm.dragable.hbar", vx, 0.0);
    
-   printf("pos set %i/%i[%i] %i/%i[%i]\n", x, mx + minx, minx, y, my + miny, miny);
-
    if (!sid->down.bounce_x_animator)
      {
         if (((x < minx) && (0 <= sid->down.dx)) ||
