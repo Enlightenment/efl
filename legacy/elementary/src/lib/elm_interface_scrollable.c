@@ -932,7 +932,7 @@ static void
 _elm_scroll_scroll_bar_read_and_update(
   Elm_Scrollable_Smart_Interface_Data *sid)
 {
-   Evas_Coord x, y, mx = 0, my = 0, px = 0, py = 0, minx = 0, miny = 0;
+   Evas_Coord x, y, mx = 0, my = 0, minx = 0, miny = 0;
    double vx, vy;
 
    if (!sid->edje_obj || !sid->pan_obj) return;
@@ -949,19 +949,7 @@ _elm_scroll_scroll_bar_read_and_update(
    eo_do(sid->pan_obj, elm_obj_pan_pos_min_get(&minx, &miny));
    x = _round(vx * (double)mx + minx, 1);
    y = _round(vy * (double)my + miny, 1);
-   eo_do(sid->pan_obj, elm_obj_pan_pos_get(&px, &py));
-
-   if (!sid->freeze && _paging_is_enabled(sid))
-     {
-        x = _elm_scroll_page_x_get(sid, x - px, EINA_FALSE);
-        y = _elm_scroll_page_y_get(sid, y - py, EINA_FALSE);
-     }
-
-   eo_do(sid->pan_obj, elm_obj_pan_pos_set(x, y));
-   if ((px != x) || (py != y))
-     {
-        edje_object_signal_emit(sid->edje_obj, "elm,action,scroll", "elm");
-     }
+   eo_do(sid->obj, elm_scrollable_interface_content_pos_set(x, y, EINA_TRUE));
 }
 
 static void
@@ -1536,6 +1524,8 @@ _elm_scroll_content_pos_set(Eo *obj, void *_pd, va_list *list)
 
    Elm_Scrollable_Smart_Interface_Data *sid = _pd;
 
+   printf("pos set...\n");
+   
    if (!sid->edje_obj || !sid->pan_obj) return;
 
    // FIXME: allow for bounce outside of range
@@ -1606,6 +1596,8 @@ _elm_scroll_content_pos_set(Eo *obj, void *_pd, va_list *list)
      (sid->edje_obj, "elm.dragable.vbar", 0.0, vy);
    edje_object_part_drag_value_set
      (sid->edje_obj, "elm.dragable.hbar", vx, 0.0);
+   
+   printf("pos set %i/%i[%i] %i/%i[%i]\n", x, mx + minx, minx, y, my + miny, miny);
 
    if (!sid->down.bounce_x_animator)
      {
