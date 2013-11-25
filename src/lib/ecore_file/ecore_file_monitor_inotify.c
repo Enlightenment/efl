@@ -2,6 +2,7 @@
 # include <config.h>
 #endif
 
+#include <errno.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -294,7 +295,7 @@ _ecore_file_monitor_inotify_monitor(Ecore_File_Monitor *em, const char *path)
       inotify_add_watch(ecore_main_fd_handler_fd_get(_fdh), path, mask);
    if (ECORE_FILE_MONITOR_INOTIFY(em)->wd < 0)
      {
-        INF("inotify_add_watch failed, file was deleted");
+        INF("inotify_add_watch failed, %s", strerror(errno));
         ecore_file_monitor_backend_del(em);
         return 0;
      }
