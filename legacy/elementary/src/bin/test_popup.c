@@ -48,9 +48,10 @@ _restack_popup_close_cb(void *data, Evas_Object *obj EINA_UNUSED,
 }
 
 static void
-_block_clicked_cb(void *data EINA_UNUSED, Evas_Object *obj,
-                  void *event_info EINA_UNUSED)
+_block_clicked_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
+   if (data)
+     evas_object_del(data);
    evas_object_del(obj);
 }
 
@@ -148,6 +149,36 @@ _popup_center_title_text_block_clicked_event_cb(void *data,
 
    // popup text
    elm_object_text_set(popup, "This Popup has title area and content area. "
+                       "When clicked on blocked event region, popup gets "
+                       "deleted");
+   // popup title
+   elm_object_part_text_set(popup, "title,text", "Title");
+
+   // popup show should be called after adding all the contents and the buttons
+   // of popup to set the focus into popup's contents correctly.
+   evas_object_show(popup);
+}
+
+static void
+_popup_center_title_text_block_clicked_event_with_parent_cb(void *data,
+                                                            Evas_Object *obj EINA_UNUSED,
+                                                            void *event_info EINA_UNUSED)
+{
+   Evas_Object *bg, *popup;
+
+   bg = elm_bg_add(data);
+   elm_bg_color_set(bg, 255, 0, 0);
+   evas_object_resize(bg, 350, 200);
+   evas_object_move(bg, 100, 100);
+   evas_object_show(bg);
+
+   popup = elm_popup_add(bg);
+   evas_object_smart_callback_add(popup, "block,clicked",
+                                  _block_clicked_cb, bg);
+
+   // popup text
+   elm_object_text_set(popup, "This Popup has title area and content area. "
+                       "Its blocked event region is a small rectangle. "
                        "When clicked on blocked event region, popup gets "
                        "deleted");
    // popup title
@@ -529,6 +560,10 @@ test_popup(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
                         "popup-center-title + text (block,clicked handling)",
                         NULL, NULL,
                         _popup_center_title_text_block_clicked_event_cb, win);
+   elm_list_item_append(list,
+                        "popup-center-title + text (block,clicked handling with parent)",
+                        NULL, NULL,
+                        _popup_center_title_text_block_clicked_event_with_parent_cb, win);
    elm_list_item_append(list, "popup-bottom-title + text + 3 buttons", NULL,
                         NULL, _popup_bottom_title_text_3button_cb, win);
    elm_list_item_append(list, "popup-center-title + content + 3 buttons", NULL,
