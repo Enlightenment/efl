@@ -760,7 +760,7 @@ _ecore_wl_input_cb_keyboard_key(void *data, struct wl_keyboard *keyboard EINA_UN
         if (input->repeat.tmr) ecore_timer_del(input->repeat.tmr);
         input->repeat.tmr = NULL;
      }
-   else if (state)
+   else if ((state) && (keycode != input->repeat.key))
      {
         input->repeat.sym = sym;
         input->repeat.key = keycode;
@@ -770,8 +770,8 @@ _ecore_wl_input_cb_keyboard_key(void *data, struct wl_keyboard *keyboard EINA_UN
           {
              input->repeat.tmr = 
                ecore_timer_add(0.025, _ecore_wl_input_cb_keyboard_repeat, input);
-             ecore_timer_delay(input->repeat.tmr, 0.4);
           }
+        ecore_timer_delay(input->repeat.tmr, 0.4);
      }
 }
 
