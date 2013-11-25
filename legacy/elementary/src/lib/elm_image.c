@@ -478,11 +478,8 @@ _elm_image_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    priv->resize_up = EINA_TRUE;
    priv->resize_down = EINA_TRUE;
    priv->aspect_fixed = EINA_TRUE;
-
-   priv->load_size = 64;
+   priv->load_size = 0;
    priv->scale = 1.0;
-
-   eo_do(obj, elm_obj_image_load_size_set(0));
 
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
@@ -725,6 +722,7 @@ static void
 _elm_image_file_set_do(Evas_Object *obj)
 {
    Evas_Object *pclip = NULL;
+   int w, h;
 
    ELM_IMAGE_DATA_GET(obj, sd);
 
@@ -743,8 +741,13 @@ _elm_image_file_set_do(Evas_Object *obj)
 
    sd->edje = EINA_FALSE;
 
-   if (!sd->load_size)
+   if (sd->load_size > 0)
      evas_object_image_load_size_set(sd->img, sd->load_size, sd->load_size);
+   else
+     {
+        eo_do((Eo *) obj, elm_obj_image_size_get(&w, &h));
+        evas_object_image_load_size_set(sd->img, w, h);
+     }
 }
 
 static void
@@ -1290,9 +1293,6 @@ _elm_image_smart_load_size_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    int size = va_arg(*list, int);
 
    sd->load_size = size;
-   if (!sd->img || sd->edje) return;
-
-   evas_object_image_load_size_set(sd->img, sd->load_size, sd->load_size);
 }
 
 EAPI int

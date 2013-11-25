@@ -1752,3 +1752,7 @@
 
         * mapbuf: reset the mapbuf internals correctly when the content is
         removed(unset)
+
+2013-11-25  ChunEon Park (Hermet)
+
+        * image: fix the elm_image_prescale_set() to work properly.
