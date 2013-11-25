@@ -1683,6 +1683,16 @@ START_TEST(evas_textblock_wrapping)
    evas_object_textblock_size_formatted_get(tb, &w, &h);
    fail_if(w > (nw / 2));
 
+   /* Word wrap ending with whites. */
+   evas_object_resize(tb, 322, 400);
+   evas_object_textblock_text_markup_set(tb, "<wrap=word>This is an example text that should break at the end aaa     ");
+
+   evas_textblock_cursor_paragraph_last(cur);
+   Evas_Coord cx, cy, cw, ch;
+   evas_textblock_cursor_text_prepend(cur, " ");
+   fail_if(-1 == evas_textblock_cursor_geometry_get(cur, &cx, &cy, &cw, &ch,
+            NULL, EVAS_TEXTBLOCK_CURSOR_BEFORE));
+
    END_TB_TEST();
 }
 END_TEST
