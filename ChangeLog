@@ -5,20 +5,21 @@
 
 2013-11-21  ChunEon Park (Hermet)
 
-	* Edje: Fix to update map-enabled part when the edje object is moved.
+        * Edje: Fix to update map-enabled part when the edje object is moved.
 
 2013-11-20  Cedric Bail
 
-	* Eina: Fix a possible race condition during eina_file_close.
-	* Edje: Fix use of eina_hash_pointer to actually look at the pointer.
+        * Eina: Fix a possible race condition during eina_file_close.
+        * Edje: Fix use of eina_hash_pointer to actually look at the pointer.
 
 2013-11-19  Tom Hacohen
 
-	* Evas textblock: Fixed order of tags inserted with markup_app/prepend.
+        * Evas textblock: Fixed order of tags inserted with markup_app/prepend.
 
 2013-11-05  Youngbok Shin
 
-        * Edje: Add null checking for name of anchor and item in geometry get functions.
+        * Edje: Add null checking for name of anchor and item in geometry get
+        functions.
 
 2013-11-03  Christophe Sadoine
 
@@ -30,12 +31,13 @@
 
 2013-10-24  Youngbok Shin
 
-        * Evas: Fix textblock rendering to properly set render operation on the context.
+        * Evas: Fix textblock rendering to properly set render operation on the
+        context.
 
 2013-10-18  Youngbok Shin
 
         * Evas: Fixed the textblock format to be drawn according to the glyph's
-	horizontal advance width.
+        horizontal advance width.
 
 2013-10-15  ChunEon Park (Hermet)
 
@@ -57,12 +59,13 @@
 
 2013-10-11  Cedric Bail
 
-	* Eina: add Eina_Spinlock API,
-	use Eina_Spinlock in Eina_Log, replace Eina_Lock by Eina_Spinlock in Eina_Stringshare,
-	Eina_Chained_Mempool.
-	* Eet: replace Eina_Lock by Eina_Spinlock in Eet_Dictionnary.
-	* Evas: replace Eina_Lock by Eina_Spinlock in Evas_ScaleCache, Evas_Async_Events and Image_Entry.
-	* Ecore: use Eina_Spinlock for Ecore_Thread.
+        * Eina: add Eina_Spinlock API,
+        use Eina_Spinlock in Eina_Log, replace Eina_Lock by Eina_Spinlock in
+        Eina_Stringshare, Eina_Chained_Mempool.
+        * Eet: replace Eina_Lock by Eina_Spinlock in Eet_Dictionnary.
+        * Evas: replace Eina_Lock by Eina_Spinlock in Evas_ScaleCache,
+        Evas_Async_Events and Image_Entry.
+        * Ecore: use Eina_Spinlock for Ecore_Thread.
 
 2013-10-10  Carsten Haitzler (The Rasterman)
 
@@ -71,54 +74,56 @@
 
 2013-10-10  Michael Bouchaud (yoz)
 
-	* Emotion: add two events to trigger webcam plug and unplug
+        * Emotion: add two events to trigger webcam plug and unplug
 
 2013-10-04  ChunEon Park (Hermet)
 
-	* Eina: fix eina_file_map_lines() to not drop of one character in the last line.
+        * Eina: fix eina_file_map_lines() to not drop of one character in the
+        last line.
 
 2013-10-02  Cedric Bail
 
-	* Eina: add eina_swap16(), eina_swap32(), eina_swap64().
+        * Eina: add eina_swap16(), eina_swap32(), eina_swap64().
 
 2013-10-02  Tom Hacohen
 
-	* Evas textblock: Use correct font underline properties when drawing
-	underlines.
+        * Evas textblock: Use correct font underline properties when drawing
+        underlines.
 
 2013-10-01  Vincent Torri
 
-	* Evas: add JPEG 2000 support.
+        * Evas: add JPEG 2000 support.
 
 2013-09-25  Tom Hacohen
 
-	* Evas font: Make the evas_font_path_* functions apply to fontconfig searches.
+        * Evas font: Make the evas_font_path_* functions apply to fontconfig
+        searches.
 
 2013-09-25  Tom Hacohen
 
-	* Evas font: Use our own fontconfig configuration so we don't get
-	affected by changes made to the default fontconfig configuration.
+        * Evas font: Use our own fontconfig configuration so we don't get
+        affected by changes made to the default fontconfig configuration.
 
 2013-09-06  Christophe Sadoine
 
-	* Eet: Added EET_DATA_DESCRIPTOR_ADD_SUB_NESTED().
+        * Eet: Added EET_DATA_DESCRIPTOR_ADD_SUB_NESTED().
 
 2013-09-24  Jorge Zapata
 
-	* Eina: add a substraction in rectangles and more helpers,
-	add double_from/to and helper defines in f16p16.
+        * Eina: add a substraction in rectangles and more helpers,
+        add double_from/to and helper defines in f16p16.
 
 2013-09-12  Jihoon Kim
 
-	* ecore_imf: Fix memory leak in scim immodule
+        * ecore_imf: Fix memory leak in scim immodule
 
 2013-09-06  Cedric Bail
 
-	* Edje: Add border information to Image sets.
+        * Edje: Add border information to Image sets.
 
 2013-09-05  Cedric Bail
 
-	* Evas: Add evas_object_smart_iterator_new().
+        * Evas: Add evas_object_smart_iterator_new().
 
 2013-09-04  Michael Bouchaud (yoz)
 
@@ -126,8 +131,8 @@
 
 2013-09-03  Tom Hacohen
 
-	* Evas textblock: fixed an issue with markup_get and markup_to_utf8
-	behaving differently (markup_get was misbehaving).
+        * Evas textblock: fixed an issue with markup_get and markup_to_utf8
+        behaving differently (markup_get was misbehaving).
 
 2013-09-02  Shinwoo Kim
 
@@ -135,47 +140,48 @@
 
 2013-08-29  Boris Faure
 
-	* Edje: export EFL_VERSION_MAJOR/MINOR when compiling edc files
+        * Edje: export EFL_VERSION_MAJOR/MINOR when compiling edc files
 
 2013-08-29  Cedric Bail
 
-	* Evas: add interceptor for focus_set.
+        * Evas: add interceptor for focus_set.
 
 2013-08-28  Cedric Bail
 
-	* Evas: use mmap/munmap to allocate surface.
+        * Evas: use mmap/munmap to allocate surface.
 
 2013-08-27  Jaehyun Cho
 
-	* Edje: Fix edje play sample parameter checking.
+        * Edje: Fix edje play sample parameter checking.
 
 2013-08-27  Tom Hacohen
 
-	* Evas bidi: Fixed a bug causing BiDi not to work in some cases.
+        * Evas bidi: Fixed a bug causing BiDi not to work in some cases.
 
 2013-08-20  David Seikel (onefang)
 
-	* Edje Lua: Check for both Lua 5.1 and 5.2.
+        * Edje Lua: Check for both Lua 5.1 and 5.2.
 
 2013-08-13  Jihoon Kim
 
-	* Ecore_IMF: add ecore_imf_context_input_panel_on_demand_set/get()
+        * Ecore_IMF: add ecore_imf_context_input_panel_on_demand_set/get()
 
 2013-08-09  Cedric Bail
 
-	* Edje: add edje_object_mmap_set().
+        * Edje: add edje_object_mmap_set().
 
 2013-08-08  Tom Hacohen
 
-	* Evas textblock:  Make the ellipsis format the same as the surrounding.
+        * Evas textblock:  Make the ellipsis format the same as the surrounding.
 
 2013-08-07  Tom Hacohen
 
-	* Evas textblock: Use max ascent/descent at the edges of the textblock.
+        * Evas textblock: Use max ascent/descent at the edges of the textblock.
 
 2013-08-07  Chris Michael
 
-        * EFL: Require at least version 1.2 of the various wayland libraries to build EFL with wayland support.
+        * EFL: Require at least version 1.2 of the various wayland libraries to
+        build EFL with wayland support.
 
 2013-08-02  Yury Usischev
 
@@ -188,7 +194,8 @@
 
 2013-08-01  Cedric Bail
 
-        * Edje: faster load time for Edje_Object using Evas_Object_Textblocks and many styles.
+        * Edje: faster load time for Edje_Object using Evas_Object_Textblocks
+        and many styles.
 
 2013-07-31  Carsten Haitzler (The Rasterman)
 
@@ -196,9 +203,10 @@
 
 2013-07-31  Cedric Bail
 
-	* Eina: add eina_file_refresh(), eina_file_virtualize() and eina_file_virtual().
-	* Evas: use eina_file_virtualize() for evas_object_image_memfile_set().
-	* Emotion: fix backend priority order.
+        * Eina: add eina_file_refresh(), eina_file_virtualize() and
+        eina_file_virtual().
+        * Evas: use eina_file_virtualize() for evas_object_image_memfile_set().
+        * Emotion: fix backend priority order.
 
 2013-07-25  ChunEon Park (Hermet)
 
@@ -206,7 +214,8 @@
 
 2013-07-24  Mike Blumenkrantz
 
-        * Ecore-Evas: fix usage of underlying X window after it has received a destroy event
+        * Ecore-Evas: fix usage of underlying X window after it has received a
+        destroy event
 
 2013-07-22 Jiyoun Park
 
@@ -222,7 +231,7 @@
 
 2013-07-19  Cedric Bail
 
-	* Edje: add threshold to draggable part.
+        * Edje: add threshold to draggable part.
 
 2013-07-18 José Roberto de Souza
 
@@ -235,44 +244,44 @@
 
 2013-07-18  Cedric Bail
 
-	* Edje: fix some logic in the fixed point path.
-	* Edje: improve accuracy of math part positionning.
+        * Edje: fix some logic in the fixed point path.
+        * Edje: improve accuracy of math part positionning.
 
 2013-07-17  Guillaume Friloux
 
         * Ecore_Con: fix ecore_con_server_timeout_set(). It was changing the
-          timeout value, but not the timer.
+        timeout value, but not the timer.
 
 2013-07-17  Mike Blumenkrantz
 
         * Ecore_X: add error messages for xlib, ECORE_X_ATOM_XDND_DIRECTSAVE0,
-          fix ecore_x_e_comp_pixmap_set to delete pixmap atom correctly
+        fix ecore_x_e_comp_pixmap_set to delete pixmap atom correctly
 
 2013-07-15  Mike Blumenkrantz
 
         * Ecore_X: fix BadMatch errors in ecore_x_image_get when requested
-          size was larger than XImage size
+        size was larger than XImage size
 
 2013-07-15  Cedric Bail
 
-	* Eet: Add support for EET_T_VALUE to serialize Eina_Value pointer.
+        * Eet: Add support for EET_T_VALUE to serialize Eina_Value pointer.
 
 2013-07-11  Chris Michael
 
         * Ecore_Evas: Added functions to retieve the pixmap depth, visual,
-          and colormap
+        and colormap
 
 2013-07-11  Chris Michael
 
         * Ecore_Evas: Updated doxygen comments for pixmap functions
         * Ecore_Evas: Check for valid interface pixmap_get function before
-          calling it.
-        * Ecore_Evas: Removed need for prev_front pixmap field in structure
-          and just use a temporary variable.
+        calling it.
+        * Ecore_Evas: Removed need for prev_front pixmap field in structure and
+        just use a temporary variable.
 
 2013-07-10  Cedric Bail
 
-	* Eina: Add eina_tiler_empty.
+        * Eina: Add eina_tiler_empty.
 
 2013-07-08  Chris Michael
 
@@ -281,11 +290,11 @@
 2013-07-08  Chris Michael
 
         * Ecore_Evas: Added functions got software_x11 and gl_x11 engines to
-          create new ecore_evas which uses just a pixmap (no window).
-           - add ecore_evas_software_x11_pixmap_new
-           - add ecore_evas_gl_x11_pixmap_new
-           - add ecore_evas_software_x11_pixmap_get
-           - add ecore_evas_gl_x11_pixmap_get
+        create new ecore_evas which uses just a pixmap (no window).
+        - add ecore_evas_software_x11_pixmap_new
+        - add ecore_evas_gl_x11_pixmap_new
+        - add ecore_evas_software_x11_pixmap_get
+        - add ecore_evas_gl_x11_pixmap_get
 
 2013-07-08  Mike Blumenkrantz
 
@@ -297,76 +306,76 @@
 
 2013-07-04  Cedric Bail
 
-	* Eina: add eina_tiler_area_size_set and eina_tiler_strict_set to
-          make Eina_Tiler in par with Evas_Tilebuf.
+        * Eina: add eina_tiler_area_size_set and eina_tiler_strict_set to
+        make Eina_Tiler in par with Evas_Tilebuf.
 
 2013-07-03  Shinwoo Kim
 
-	* Ecore: add atoms - enable, disable - to support accessibility
+        * Ecore: add atoms - enable, disable - to support accessibility
 
 2013-07-02  ChunEon Park (Hermet)
 
-	* Evas: optimize proxy rendering. Rendering performance is increased
-          up to 2x in some cases.
+        * Evas: optimize proxy rendering. Rendering performance is increased
+        up to 2x in some cases.
 
 2013-07-02  Cedric Bail
 
-	* Eet: force thread to always run during eet_cache_concurrency test.
+        * Eet: force thread to always run during eet_cache_concurrency test.
 
 2013-06-25  Tom Hacohen
 
-	* Evas textblock: Fixed issue when parsing formats with quotes.
+        * Evas textblock: Fixed issue when parsing formats with quotes.
 
 2013-06-28  Jiyoun Park
 
-	* Evas: Fix jpeg loader cannot deal with exif information correctly
+        * Evas: Fix jpeg loader cannot deal with exif information correctly
 
 2013-06-26  Daniel Willmann
 
-	* Evas: Fix evas_common_convert_yuv_42* functions to actually return
-	the converted data.
+        * Evas: Fix evas_common_convert_yuv_42* functions to actually return
+        the converted data.
 
 2013-06-25  Tom Hacohen
 
-	* Evas textblock: Fixed issue with textblocks without fonts
-	segfaulting.
+        * Evas textblock: Fixed issue with textblocks without fonts segfaulting.
 
 2013-06-24  Cedric Bail
 
-	* Evas: add support for asynchronously uploading GL texture.
+        * Evas: add support for asynchronously uploading GL texture.
 
 2013-06-22  Thiep Ha
 
-        * Edje: Move cursor to correct position when selection handlers are
-          pressed.
+        * Edje: Move cursor to correct position when selection handlers are pressed.
 
 2013-06-20  Christophe Sadoine
 
-	* Evil: Added strsep function.
+        * Evil: Added strsep function.
 
 2013-06-19  Cedric Bail
 
-	* Evas: optimized path for when map use the same color for all corner.
+        * Evas: optimized path for when map use the same color for all corner.
 
 2013-06-19  Christophe Sadoine
 
-	* Evil: Added evil_rename function, a wrapper around rename().
+        * Evil: Added evil_rename function, a wrapper around rename().
 
 2013-06-18  Cedric Bail
 
-	* Evas: Use Eo array of callbacks to reduce edje memory foot print of Evas_Object_Box and Evas_Object_Table.
+        * Evas: Use Eo array of callbacks to reduce edje memory foot print of
+        Evas_Object_Box and Evas_Object_Table.
 
 2013-06-17  Sung W. Park (sung_)
 
-	* Evas: add partial rendering support for Evas_GL direct rendering
+        * Evas: add partial rendering support for Evas_GL direct rendering
 
 2013-06-17  Cedric Bail
 
-	* Edje: Use Eo array of callbacks to reduce edje memory foot print.
+        * Edje: Use Eo array of callbacks to reduce edje memory foot print.
 
 2013-06-13  Jiyou Park
 
-        * Evas: Fix crash if app call image object update add after calling api like fileset.
+        * Evas: Fix crash if app call image object update add after calling api
+        like fileset.
 
 2013-06-11  Carsten Haitzler (The Rasterman)
 
@@ -382,12 +391,12 @@
 
 2013-06-04  Jean-Philippe Andre
 
-	* Evas: improve stability of Evas_Cserve2.
+        * Evas: improve stability of Evas_Cserve2.
 
 2013-06-04  Cedric Bail
 
-	* Evas: correctly detect if loader support asynchronous preloading.
-	* Eina: add eina_file_dup.
+        * Evas: correctly detect if loader support asynchronous preloading.
+        * Eina: add eina_file_dup.
 
 2013-06-03  Ederson Desouza
 
@@ -434,33 +443,36 @@
 2013-05-24  Daniel Willmann
 
         * Fix srv->start_time (initialization missing). So now 
-          ecore_con_server_uptime_get() is working for plain TCP connections.
+        ecore_con_server_uptime_get() is working for plain TCP connections.
 
 2013-05-24  Guillaume Friloux
 
         * Fix use of ecore_con_server_client_limit_set() (counter never
-          decreased).
+        decreased).
         * Fix use of ecore_con_client_timeout_set() and
-          ecore_con_server_timeout_set() that makes timeout on connections
-          even if you sent data.
+        ecore_con_server_timeout_set() that makes timeout on connections
+        even if you sent data.
         * Fix cl->start_time (initialization missing). So now 
-          ecore_con_client_uptime_get() is working.
+        ecore_con_client_uptime_get() is working.
 
 2013-05-22  David Seikel (onefang)
 
-	* Edje Lua: Stop leaking evas objects in Lua.
+        * Edje Lua: Stop leaking evas objects in Lua.
 
 2013-05-22  Daniel Juyung Seo (SeoZ)
 
-        * Fix fd handler increase issue when ecore_pipe_add/del is called repeatedly.
+        * Fix fd handler increase issue when ecore_pipe_add/del is called
+        repeatedly.
 
 2013-05-22  ChunEon Park (Hermet)
 
-        * Edje textblock: keep the text styles when new font by the text class is applied.
+        * Edje textblock: keep the text styles when new font by the text class
+        is applied.
 
 2013-05-20  Carsten Haitzler (The Rasterman)
 
-        * Evas: Improve memory footpriny by only creating evasgl context on demand.
+        * Evas: Improve memory footpriny by only creating evasgl context on
+        demand.
 
 2013-05-18  Carsten Haitzler (The Rasterman)
 
@@ -476,8 +488,10 @@
 
 2013-05-14  Jihoon Kim
 
-        * Edje entry: return surrounding string until the start position of selection
-        * ecore_imf: fix crash when ecore_imf_context_del is called in ecore_imf_context_input_panel_callback_call
+        * Edje entry: return surrounding string until the start position of
+        selection
+        * ecore_imf: fix crash when ecore_imf_context_del is called in
+        ecore_imf_context_input_panel_callback_call
 
 2013-05-13  Thiep Ha
 
@@ -497,8 +511,7 @@
 
 2013-05-10  Tom Hacohen
 
-        * Evas text: Fixed line size calculation when using multiple
-	fonts.
+        * Evas text: Fixed line size calculation when using multiple fonts.
 
 2013-05-10  ChunEon Park (Hermet)
 
@@ -520,7 +533,7 @@
         * Fix evas segv on image del if loader is NULL
         * Fix evas swapregion rect to account for rotation
         * Edje entry emtis signals on keydown/up for theme to use
-    
+
 2013-05-07  Rafael Antognolli
 
         * Evas: Added evas_event_input_multi_up/down().
@@ -540,11 +553,13 @@
 
 2013-05-05  Jiyoun Park (jypark)
 
-        * Ecore_Input_Evas: Fix ecore_input_evas didn't check the device id of mouse event
+        * Ecore_Input_Evas: Fix ecore_input_evas didn't check the device id of
+        mouse event
 
 2013-05-05  Jiyoun Park (jypark)
 
-        * Evas: Fix gif loader can't load image which has normal frames and error frames
+        * Evas: Fix gif loader can't load image which has normal frames and
+        error frames
 
 2013-05-04  Carsten Haitzler (The Rasterman)
 
@@ -581,11 +596,12 @@
 2013-04-25  Tom Hacohen
 
         * Evas textblock: Fixed line size calculation when using multiple
-	fonts.
+        fonts.
 
 2013-04-25  Jihoon Kim
 
-        * Edje entry: remove duplicated ecore_imf_context_reset in adjusting the selection
+        * Edje entry: remove duplicated ecore_imf_context_reset in adjusting
+        the selection
 
 2013-04-24  Carsten Haitzler (The Rasterman)
 
@@ -603,7 +619,7 @@
 2013-04-22  WooHyun Jung
 
         * Edje: When selected word exists, selection is cleared and cursor
-		remains on the current edje_entry by additional key input.
+        remains on the current edje_entry by additional key input.
 
 2013-04-20  Carsten Haitzler (The Rasterman)
 
@@ -622,21 +638,24 @@
 
 2013-04-19  Jihoon Kim (jihoon)
 
-        * Edje: Remove code to call ecore_imf_context_reset in case of pressing ESC, Return key
+        * Edje: Remove code to call ecore_imf_context_reset in case of pressing
+        ESC, Return key
 
 2013-04-14  Carsten Haitzler (The Rasterman)
 
         * Evas: Fix evas gl_x11 to use default depth when visual
         matching so lower depth displays work
 
-2013-04-15  ChunEon Park
+2013-04-15  ChunEon Park (Hermet)
+
         * Evas: If an object goes to be hidden without replacing the cur/prev
         state info, the object context can be corrupted at the next show time.
         Now it replaces the cur/prev in that rare case.
 
 2013-04-15 Tom Hacohen
+
         * Evas textblock: Fixed a bug with deletion of ranges that end just
-	before a visual format.
+        before a visual format.
 
 2013-04-14  Jiyoun Park
 
@@ -648,7 +667,8 @@
 
 2013-04-14  ChunEon Park
 
-        * Evas: Don't update evas update area by the clipper if the image obj visible is changed.
+        * Evas: Don't update evas update area by the clipper if the image obj
+        visible is changed.
 
 2013-04-14  Carsten Haitzler (The Rasterman)
 
@@ -656,7 +676,7 @@
         channel in NON-ARGB windows is not filled in with 0xff even if all the
         code does things right.
 
-2013-04-13  ChunEon Park
+        2013-04-13  ChunEon Park
 
         * Evas: Don't be crashed even if the map image size is 0.
 
@@ -670,6 +690,7 @@
         * Ecore: Add support for double and triple click on Wayland.
 
 2013-04-10 Tom Hacohen (Tasn) Yakov Goldberg
+
         * Evas textblock : Added split cursor for BiDi text
 
 2013-04-10  WooHyun Jung
@@ -679,9 +700,9 @@
 2013-04-10  Carsten Haitzler (The Rasterman)
 
         * Evas: Add glx buffer age support for automatic partial
-          redraw in glx.
+        redraw in glx.
         * Evas: Support GLX_MESA_release_buffers extension to release
-          unused aux buffers.
+        unused aux buffers.
 
 2013-04-09  Jérémy Zurcher (jeyzu)
 
@@ -690,7 +711,7 @@
 2013-04-08  Tom Hacohen
 
         * Evas font: Fix a bug with cluster size calculation with texts ending
-	with ligatures.
+        with ligatures.
 
 2013-04-08  Carsten Haitzler (The Rasterman)
 
@@ -707,13 +728,13 @@
 2013-04-04  Tom Hacohen
 
         * Evas font: If OS/2 table is available and the font is demi-bold,
-	  don't do runtime emboldment.
+        don't do runtime emboldment.
 
 2013-04-04  Yakov Goldberg
 
         * Evas font: char position, returned by
-          evas_common_font_query_char_at_coords(),
-          depends on left/right half of char and its direction.
+        evas_common_font_query_char_at_coords(),
+        depends on left/right half of char and its direction.
 
 2013-03-04  Cedric Bail
 
@@ -721,7 +742,7 @@
 
 2013-03-30  Cedric Bail
 
-	* Evil: Add mkdtemp.
+        * Evil: Add mkdtemp.
 
 2013-03-29  Carsten Haitzler (The Rasterman)
 
@@ -730,7 +751,7 @@
 
 2013-03-28  Cedric Bail
 
-	* Ecore: automatically turn on systemd watchdog in Ecore main loop.
+        * Ecore: automatically turn on systemd watchdog in Ecore main loop.
 
 2013-03-28  Carsten Haitzler (The Rasterman)
 
@@ -743,27 +764,27 @@
 
 2013-03-27  Cedric Bail
 
-	* Eina: Add eina_log_timing.
-	* Ecore, Ecore_Audio, Ecore_Con, Ecore_Evas,
-	Edje, Eet, Eio, Eo, Evas: use eina_log_timing.
+        * Eina: Add eina_log_timing.
+        * Ecore, Ecore_Audio, Ecore_Con, Ecore_Evas, Edje, Eet, Eio, Eo, Evas:
+        use eina_log_timing.
 
 2013-03-27  Jihoon Kim
 
-	* Add ecore_imf_context_input_panel_variation_set/get API.
-	* Add edje_object_part_text_input_panel_layout_variation_set/get API.
+        * Add ecore_imf_context_input_panel_variation_set/get API.
+        * Add edje_object_part_text_input_panel_layout_variation_set/get API.
 
 2013-03-25  Cedric Bail
 
-	* Eina: add portable eina_file_mkstemp().
-	* Embryo: use eina_file_mkstemp().
+        * Eina: add portable eina_file_mkstemp().
+        * Embryo: use eina_file_mkstemp().
 
 2013-03-22  Jiyoun Park (Jypark)
 
-	* Ecore_x: fix alpha set function not clear sync counter
+        * Ecore_x: fix alpha set function not clear sync counter
 
 2013-03-22  Cedric Bail
 
-	* Edje: Add spread width and height in TABLE part.
+        * Edje: Add spread width and height in TABLE part.
 
 2013-03-20  Jérémy Zurcher (jeyzu)
 
@@ -771,12 +792,13 @@
 
 2013-03-19  Mike Blumenkrantz
 
-        * Fix magic failure in eina_value_array_count when array has not been allocated
+        * Fix magic failure in eina_value_array_count when array has not been
+        allocated
 
 2013-03-16  Cedric Bail
 
-	* Remove Glew and Direct3d code from Ecore_Evas module.
-	* Add Eina_Log integration for systemd journal.
+        * Remove Glew and Direct3d code from Ecore_Evas module.
+        * Add Eina_Log integration for systemd journal.
 
 2013-03-15  Carsten Haitzler (The Rasterman)
 
@@ -790,7 +812,7 @@
 
 2013-03-13  Cedric Bail
 
-	* Edje: use Eina_Cow to reduce memory usage.
+        * Edje: use Eina_Cow to reduce memory usage.
 
 2013-03-12  Jiyoun Park (Jypark)
 
@@ -802,10 +824,12 @@
 
 2013-03-10  Cedric Bail
 
-	* Eeze: add a dummy implementation of libmount when it is not available.
-	* Ecore_Con: add systemd socket activation support (ECORE_CON_SOCKET_ACTIVATE).
-	* Ecore: notify systemd that we are ready as soon as the main loop is running.
-	* EFL: use HAVE_FCNTL to disable code using fcntl.
+        * Eeze: add a dummy implementation of libmount when it is not available.
+        * Ecore_Con: add systemd socket activation support
+        (ECORE_CON_SOCKET_ACTIVATE).
+        * Ecore: notify systemd that we are ready as soon as the main loop is
+        running.
+        * EFL: use HAVE_FCNTL to disable code using fcntl.
 
 2013-03-08  Igor Murzov
 
@@ -817,13 +841,13 @@
 
 2013-03-06  Jihoon Kim (jihoon)
 
-        * Edje entry: fix bug scroll works when PgDn, PgUp, Home, End key in entry is pressed in preedit state
-
+        * Edje entry: fix bug scroll works when PgDn, PgUp, Home, End key in
+        entry is pressed in preedit state
 
 2013-03-05  Jiyoun Park (Jypark)
 
         * Ecore_x: Add atom related with indicator type.
-		It can support several types of indicator
+        It can support several types of indicator
 
 2013-03-05  Jiyoun Park (Jypark)
 
@@ -837,8 +861,7 @@
 
 2013-02-28  Tom Hacohen (TAsn)
 
-        * Evas textblock: Added proper size adjustments for
-	"high" shaped texts.
+        * Evas textblock: Added proper size adjustments for "high" shaped texts.
 
 2013-02-28  Mike Blumenkrantz
 
@@ -847,8 +870,7 @@
 
 2013-02-28  Cedric Bail
 
-	* eina_strlcat work with a NULL src.
-
+        * eina_strlcat work with a NULL src.
 
 2013-02-26  Carsten Haitzler (The Rasterman)
 
@@ -863,7 +885,9 @@
 
 2013-02-23  ChunEon Park (Hermet)
 
-        * Evas cache: remove the freed worker from the pthread worker list when it's failed to create a new thread so as not to access it if a thread is working newly.
+        * Evas cache: remove the freed worker from the pthread worker list when
+        it's failed to create a new thread so as not to access it if a thread is
+        working newly.
 
 2013-02-21  Tom Hacohen (TAsn)
 
@@ -913,7 +937,8 @@
 
 2013-02-15  Jiyoun Park (jypark)
 
-        * Add infrastructure to handle message between ecore and parent ecore in Ecore_Evas.
+        * Add infrastructure to handle message between ecore and parent ecore in
+        Ecore_Evas.
 
 2013-02-14  Cedric Bail
 
@@ -921,8 +946,10 @@
 
 2013-02-14  Jihoon Kim (jihoon)
 
-        * edje entry : fix bug not to display preedit string with PREEDIT_TYPE_NONE style
-        * edje entry : Fix bug candidate word couldn't be selected with up/down key in the preedit status
+        * edje entry : fix bug not to display preedit string with
+        PREEDIT_TYPE_NONE style
+        * edje entry : Fix bug candidate word couldn't be selected with up/down
+        key in the preedit status
 
 2013-02-11  Stefan Schmidt
 
@@ -961,7 +988,8 @@
 
 2013-02-07  WooHyun Jung
 
-        * edje: Checking walking_callbacks for not removing patterns which are still used.
+        * edje: Checking walking_callbacks for not removing patterns which are
+        still used.
 
 2013-02-06  Cedric Bail
 
@@ -979,6 +1007,7 @@
         * ecore_wayland: Add ecore_wl_globals_get
 
 2013-02-04  Raphael Kubo da Costa <raphael.kubo.da.costa@intel.com>
+
         * evas: Stop initializing and shutting Fontconfig down
 
 2013-02-04  Cedric Bail
@@ -990,6 +1019,7 @@
         * edje entry : Support &, < and > in preedit string.
 
 2013-02-02  Chidambar Zinnoury (ilLogict)
+
         * Update French translation.
 
 2013-02-01  Mike Blumenkrantz
@@ -1003,7 +1033,8 @@
 
 2013-01-31  Jihoon Kim (jihoon)
 
-        * edje entry : Remove ecore_imf_context_cursor_position_set in functions related to selection.
+        * edje entry : Remove ecore_imf_context_cursor_position_set in functions
+        related to selection.
 
 2013-01-30  Christopher Michael (devilhorns)
 
@@ -1012,7 +1043,8 @@
 2013-01-30  Christopher Michael (devilhorns)
 
         * Deprecate ecore_x_randr_crtc_gamma_ramp_* functions.
-        * Added new ecore_x_randr_crtc_gamma_* functions that uses a proper structure
+        * Added new ecore_x_randr_crtc_gamma_* functions that uses a proper
+        structure
 
 2013-01-29  Christopher Michael (devilhorns)
 
@@ -1039,8 +1071,10 @@
 
 2013-01-25  Jihoon Kim (jihoon)
 
-        * edje entry : Remove ecore_imf_context_reset, cursor update in mouse move event because it's useless.
-        * edje entry : move ecore_imf_context_cursor_position_set from mouse down event to mouse up event
+        * edje entry : Remove ecore_imf_context_reset, cursor update in mouse
+        move event because it's useless.
+        * edje entry : move ecore_imf_context_cursor_position_set from mouse
+        down event to mouse up event
 
 2013-01-24  Sung W. Park (sung_)
 
@@ -1069,22 +1103,23 @@
 
 2013-01-21  Carsten Haitzler (The Rasterman)
 
-        * Fix xsync problem in ecore_x_image_get() where prior errors
-        can get caught.
+        * Fix xsync problem in ecore_x_image_get() where prior errors can get
+        caught.
 
 2013-01-18  Jihoon Kim (jihoon)
 
-        * edje entry: remove ecore_imf_context_reset in mouse up event because it's useless.
+        * edje entry: remove ecore_imf_context_reset in mouse up event because
+        it's useless.
 
 2013-01-18  Cedric Bail
 
-        * Ecore_Input_Evas: add infrastructure to handle buggy touchscreen by using
-        environment variable ECORE_INPUT_FIX and ECORE_INPUT_TIMEOUT_FIX.
+        * Ecore_Input_Evas: add infrastructure to handle buggy touchscreen by
+        using environment variable ECORE_INPUT_FIX and ECORE_INPUT_TIMEOUT_FIX.
 
 2013-01-17  Jihoon Kim (jihoon)
 
-        * Edje : cursor position and location will be passed when it's really changed
-        in case of mouse down, move, and up event
+        * Edje : cursor position and location will be passed when it's really
+        changed in case of mouse down, move, and up event
 
 2013-01-16  Carsten Haitzler (The Rasterman)
 
@@ -1203,9 +1238,10 @@
 
 2012-12-24  Mike Blumenkrantz
 
-        * eina_magic_fail() now throws error messages on NULL pointers instead of critical
-        * all efl object-freeing functions now take NULL without crashing or erroring
-        * eio functions no longer crash when passed NULL and throw errors accordingly
+        * eina_magic_fail() now throws error messages on NULL pointers instead
+        of critical all efl object-freeing functions now take NULL without
+        crashing or erroring eio functions no longer crash when passed NULL and
+        throw errors accordingly
 
 2012-12-19  Gustavo Sverzut Barbieri (k-s)
 
@@ -1276,8 +1312,8 @@
 2012-12-07 Sung W. Park (sung_)
 
         * Added EVAS_GL_LINE_NO_OFFSET_HACK to turn off the line coordinate
-          fiddling that was originally in the gl backend code. The offset
-          fiddling caused issues with some ARM target GPU drivers.
+        fiddling that was originally in the gl backend code. The offset
+        fiddling caused issues with some ARM target GPU drivers.
         * Fixed polygon rendering bug in GL backend when there are cutouts.
 
 2012-12-05  Gustavo Sverzut Barbieri (k-s)
@@ -1292,12 +1328,12 @@
         * Add window profile support:
         * Add ecore_evas and ecore_x APIs to support the window profile.
         * Implement window profile for ecore_evas_x, ecore_evas_extn_socket,
-          ecore_evas_extn_plug and ecore_evas_buffer.
+        ecore_evas_extn_plug and ecore_evas_buffer.
         * Deprecate ECORE_X_ATOM_E_PROFILE and ECORE_X_ATOM_E_PROFILE_LIST.
         * Deprecate ecore_x_e_window_profile_list_set. Use
-          ecore_x_e_window_available_profiles_set instead.
+        ecore_x_e_window_available_profiles_set instead.
         * Deprecate ecore_x_e_window_profile_list_get. Use
-          ecore_x_e_window_available_profiles_get instead.
+        ecore_x_e_window_available_profiles_get instead.
         * Add ecore_evas_sub_ecore_evas_list_get API.
 
 2012-12-05  Cedric Bail
@@ -1321,7 +1357,6 @@
         the same direct rendering path.
         * Fixed some minor Evas GL extension bugs that came from refactoring.
 
-
 2012-11-21  Carsten Haitzler (The Rasterman)
 
         * Fixed leak in textblock and text props in general that made
@@ -1336,7 +1371,6 @@
 
         * Fixed glGetIntegerv() in Direct Rendering mode for Evas GL
         to properly handle GL_SCISSOR_BOX and GL_VIEWPORT parameters.
-
 
 2012-11-13  Carsten Haitzler (The Rasterman)
 
