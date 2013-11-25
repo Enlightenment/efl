@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: а\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-11-19 17:17+0900\n"
+"POT-Creation-Date: 2013-11-25 14:35+0900\n"
 "PO-Revision-Date: 2013-04-11 16:30+0000\n"
 "Last-Translator: Саша Петровић <salepetronije@gmail.com>\n"
 "Language-Team: српски <xfce-i18n@xfce.org>\n"
@@ -34,15 +34,15 @@ msgstr "Откажи"
 msgid "OK"
 msgstr "У реду"
 
-#: src/lib/elc_multibuttonentry.c:579
+#: src/lib/elc_multibuttonentry.c:575
 msgid "multi button entry label"
 msgstr ""
 
-#: src/lib/elc_multibuttonentry.c:601
+#: src/lib/elc_multibuttonentry.c:597
 msgid "multi button entry item"
 msgstr ""
 
-#: src/lib/elc_multibuttonentry.c:1475
+#: src/lib/elc_multibuttonentry.c:1471
 msgid "multi button entry"
 msgstr ""
 
@@ -171,7 +171,7 @@ msgstr "задато:слева на десно"
 msgid "day selector item"
 msgstr "ставка одабира диска"
 
-#: src/lib/elm_diskselector.c:671
+#: src/lib/elm_diskselector.c:672
 msgid "diskselector item"
 msgstr "ставка одабира диска"
 

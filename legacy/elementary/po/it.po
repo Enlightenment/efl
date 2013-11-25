@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-11-19 17:17+0900\n"
+"POT-Creation-Date: 2013-11-25 14:35+0900\n"
 "PO-Revision-Date: 2013-11-10 13:35+0100\n"
 "Last-Translator: Massimo Maiurana <maiurana@gmail.com>\n"
 "Language-Team: none\n"
@@ -32,15 +32,15 @@ msgstr "Annulla"
 msgid "OK"
 msgstr "OK"
 
-#: src/lib/elc_multibuttonentry.c:579
+#: src/lib/elc_multibuttonentry.c:575
 msgid "multi button entry label"
 msgstr "etichetta voce multibottone"
 
-#: src/lib/elc_multibuttonentry.c:601
+#: src/lib/elc_multibuttonentry.c:597
 msgid "multi button entry item"
 msgstr "oggetto voce multibottone"
 
-#: src/lib/elc_multibuttonentry.c:1475
+#: src/lib/elc_multibuttonentry.c:1471
 msgid "multi button entry"
 msgstr "voce multibottone"
 
@@ -168,7 +168,7 @@ msgstr "predefintito: LTR"
 msgid "day selector item"
 msgstr "oggetto selettore giorno"
 
-#: src/lib/elm_diskselector.c:671
+#: src/lib/elm_diskselector.c:672
 msgid "diskselector item"
 msgstr "selettore disco"
 

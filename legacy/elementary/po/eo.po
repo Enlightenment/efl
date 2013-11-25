@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-11-19 17:17+0900\n"
+"POT-Creation-Date: 2013-11-25 14:35+0900\n"
 "PO-Revision-Date: 2013-01-23 05:24+0000\n"
 "Last-Translator: Eliovir <Unknown>\n"
 "Language-Team: Esperanto <eo@li.org>\n"
@@ -36,15 +36,15 @@ msgstr "Nuligi"
 msgid "OK"
 msgstr "Bone"
 
-#: src/lib/elc_multibuttonentry.c:579
+#: src/lib/elc_multibuttonentry.c:575
 msgid "multi button entry label"
 msgstr ""
 
-#: src/lib/elc_multibuttonentry.c:601
+#: src/lib/elc_multibuttonentry.c:597
 msgid "multi button entry item"
 msgstr ""
 
-#: src/lib/elc_multibuttonentry.c:1475
+#: src/lib/elc_multibuttonentry.c:1471
 msgid "multi button entry"
 msgstr ""
 
@@ -173,7 +173,7 @@ msgstr "default:LTR"
 msgid "day selector item"
 msgstr "ero de diskelektilo"
 
-#: src/lib/elm_diskselector.c:671
+#: src/lib/elm_diskselector.c:672
 msgid "diskselector item"
 msgstr "ero de diskelektilo"
 

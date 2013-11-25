@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-11-19 17:17+0900\n"
+"POT-Creation-Date: 2013-11-25 14:35+0900\n"
 "PO-Revision-Date: 2012-12-19 15:58+0200\n"
 "Last-Translator: Efstathios Iosifidis <iosifidis@opensuse.org>\n"
 "Language-Team: Ελληνικά, Σύγχρονα <opensuse-translation-el@opensuse.org>\n"
@@ -37,15 +37,15 @@ msgstr "Άκυρο"
 msgid "OK"
 msgstr "Εντάξει"
 
-#: src/lib/elc_multibuttonentry.c:579
+#: src/lib/elc_multibuttonentry.c:575
 msgid "multi button entry label"
 msgstr ""
 
-#: src/lib/elc_multibuttonentry.c:601
+#: src/lib/elc_multibuttonentry.c:597
 msgid "multi button entry item"
 msgstr ""
 
-#: src/lib/elc_multibuttonentry.c:1475
+#: src/lib/elc_multibuttonentry.c:1471
 msgid "multi button entry"
 msgstr ""
 
@@ -182,7 +182,7 @@ msgstr "default:LTR"
 msgid "day selector item"
 msgstr "επιλογή δίσκου"
 
-#: src/lib/elm_diskselector.c:671
+#: src/lib/elm_diskselector.c:672
 msgid "diskselector item"
 msgstr "επιλογή δίσκου"
 

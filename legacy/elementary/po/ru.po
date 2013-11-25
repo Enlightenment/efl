@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elementary 1.7.99.76688\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-11-19 17:17+0900\n"
+"POT-Creation-Date: 2013-11-25 14:35+0900\n"
 "PO-Revision-Date: 2012-09-14 22:20+0300\n"
 "Last-Translator: Danny Moshnakov <dm@agent.co.il>\n"
 "Language-Team: ru <ru>\n"
@@ -38,15 +38,15 @@ msgstr "Отмена"
 msgid "OK"
 msgstr "ОК"
 
-#: src/lib/elc_multibuttonentry.c:579
+#: src/lib/elc_multibuttonentry.c:575
 msgid "multi button entry label"
 msgstr ""
 
-#: src/lib/elc_multibuttonentry.c:601
+#: src/lib/elc_multibuttonentry.c:597
 msgid "multi button entry item"
 msgstr ""
 
-#: src/lib/elc_multibuttonentry.c:1475
+#: src/lib/elc_multibuttonentry.c:1471
 msgid "multi button entry"
 msgstr ""
 
@@ -183,7 +183,7 @@ msgstr "по умолчанию: ЛНП"
 msgid "day selector item"
 msgstr "элемент диска выбора"
 
-#: src/lib/elm_diskselector.c:671
+#: src/lib/elm_diskselector.c:672
 msgid "diskselector item"
 msgstr "элемент диска выбора"
 
