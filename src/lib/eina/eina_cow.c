@@ -80,7 +80,6 @@ struct _Eina_Cow_GC
    Eina_Cow_Ptr *ref;
    const void **dst;
 };
-
 struct _Eina_Cow
 {
 #ifdef EINA_COW_MAGIC_ON
@@ -91,7 +90,7 @@ struct _Eina_Cow
    Eina_Hash *match;
 
    Eina_Mempool *pool;
-   const void *default_value;
+   const Eina_Cow_Data *default_value;
 
    unsigned int struct_size;
    unsigned int total_size;
@@ -123,7 +122,7 @@ typedef int (*Eina_Cow_Hash)(const void *, int);
   (((Eina_Cow_Ptr *)d) - 1)
 
 #define EINA_COW_DATA_GET(d)                    \
-  ((unsigned char *)(d + 1))
+  (((Eina_Cow_Ptr *)d) + 1)
 
 static int _eina_cow_log_dom = -1;
 
@@ -142,8 +141,9 @@ static int _eina_cow_log_dom = -1;
 #endif
 #define DBG(...) EINA_LOG_DOM_DBG(_eina_cow_log_dom, __VA_ARGS__)
 
+
 static Eina_Mempool *gc_pool = NULL;
-  
+
 static inline int
 _eina_cow_hash_gen(const void *key, int key_length,
                    Eina_Cow_Hash hash,
@@ -184,7 +184,7 @@ static int current_cow_size = 0;
 static unsigned int
 _eina_cow_length(const void *key EINA_UNUSED)
 {
-   /* nasty hack, has only gc need to access the hash, he will be in charge
+   /* nasty hack, since only gc needs to access the hash, it will be in charge
       of that global. access to the hash should be considered global.
     */
    return current_cow_size;
@@ -254,26 +254,25 @@ _eina_cow_togc_add(Eina_Cow *cow,
 }
 
 static void
-_eina_cow_gc(Eina_Cow *cow, Eina_Cow_Ptr *ref,
-             const Eina_Cow_Data **dst,
-             void *data)
+_eina_cow_gc(Eina_Cow *cow, Eina_Cow_GC *gc)
 {
-   void *match;
+   Eina_Cow_Data *data;
+   Eina_Cow_Data *match;
 
-   ref->togc = EINA_FALSE;
+   data = EINA_COW_DATA_GET(gc->ref);
 
    current_cow_size = cow->struct_size;
    match = eina_hash_find(cow->match, data);
    if (match)
      {
-        ref = EINA_COW_PTR_GET(match);
+        Eina_Cow_Ptr *ref = EINA_COW_PTR_GET(match);
 #ifndef NVALGRIND
         VALGRIND_MAKE_MEM_DEFINED(ref, sizeof (*ref));
 #endif
-        ref->refcount++;
+        ref->refcount += gc->ref->refcount;
 
-        eina_cow_free(cow, dst);
-        *dst = match;
+        *gc->dst = match;
+        eina_cow_free(cow, (const Eina_Cow_Data**) &data);
 
 #ifndef NVALGRIND
         VALGRIND_MAKE_MEM_NOACCESS(ref, sizeof (*ref));
@@ -282,7 +281,9 @@ _eina_cow_gc(Eina_Cow *cow, Eina_Cow_Ptr *ref,
    else
      {
         eina_hash_direct_add(cow->match, data, data);
-        ref->hashed = EINA_TRUE;
+        gc->ref->hashed = EINA_TRUE;
+        gc->ref->togc = EINA_FALSE;
+        eina_hash_del(cow->togc, &gc->ref, gc);
      }
 }
 
@@ -366,7 +367,7 @@ eina_cow_add(const char *name, unsigned int struct_size, unsigned int step, cons
                               _eina_cow_cmp,
                               _eina_cow_hash32,
                               NULL,
-                              6);   
+                              6);
 #endif
    if (gc)
      cow->togc = eina_hash_pointer_new(_eina_cow_gc_free);
@@ -453,7 +454,7 @@ eina_cow_write(Eina_Cow *cow,
 	       const Eina_Cow_Data * const *data)
 {
    Eina_Cow_Ptr *ref;
-   void *r;
+   Eina_Cow_Data *r;
 
 #ifdef EINA_COW_MAGIC_ON
    EINA_COW_MAGIC_CHECK(cow);
@@ -484,8 +485,8 @@ eina_cow_write(Eina_Cow *cow,
           }
 #endif
 
-	if (cow->togc)
-	  _eina_cow_hash_del(cow, *data, ref);
+        if (cow->togc)
+          _eina_cow_hash_del(cow, *data, ref);
 
 #ifndef NVALGRIND
         VALGRIND_MAKE_MEM_NOACCESS(ref, sizeof (*ref));
@@ -509,7 +510,7 @@ eina_cow_write(Eina_Cow *cow,
 
    r = EINA_COW_DATA_GET(ref);
    memcpy(r, *data, cow->struct_size);
-   *((void**) data) = r;
+   *((Eina_Cow_Data**) data) = r;
 
  end:
 #ifndef NVALGRIND
@@ -602,8 +603,8 @@ eina_cow_gc(Eina_Cow *cow)
 {
    Eina_Cow_GC *gc;
    Eina_Iterator *it;
-   void *data;
    Eina_Bool r;
+   Eina_Cow_Ptr *ref;
 
    EINA_COW_MAGIC_CHECK(cow);
 
@@ -613,21 +614,19 @@ eina_cow_gc(Eina_Cow *cow)
    it = eina_hash_iterator_data_new(cow->togc);
    r = eina_iterator_next(it, (void**) &gc);
    eina_iterator_free(it);
-   
+
    if (!r) return EINA_FALSE; /* Something did go wrong here */
 
-   /* Do handle hash and all funky merge think here */
-   data = EINA_COW_DATA_GET(gc->ref);
+   /* Do handle hash and all funky merge thing here */
+   ref = gc->ref;
 
 #ifndef NVALGRIND
-   VALGRIND_MAKE_MEM_DEFINED(gc->ref, sizeof (Eina_Cow_Ptr));
+   VALGRIND_MAKE_MEM_DEFINED(ref, sizeof (*ref));
 #endif
-   _eina_cow_gc(cow, gc->ref, gc->dst, data);
+   _eina_cow_gc(cow, gc);
 #ifndef NVALGRIND
-   VALGRIND_MAKE_MEM_NOACCESS(gc->ref, sizeof (Eina_Cow_Ptr));
+   VALGRIND_MAKE_MEM_NOACCESS(ref, sizeof (*ref));
 #endif
-
-   eina_hash_del(cow->togc, &gc->ref, gc);
 
    return EINA_TRUE;
 }

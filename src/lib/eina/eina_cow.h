@@ -56,9 +56,9 @@ typedef void Eina_Cow_Data;
  *
  * @param name The name of this pool, used for debug.
  * @param struct_size The size of the object from this pool.
- * @param step How many object to allocate when the pool get empty.
+ * @param step How many objects to allocate when the pool gets empty.
  * @param default_value The default value returned by this pool.
- * @param gc Is it possible to run the garbage collection on this pool.
+ * @param gc Is it possible to run garbage collection on this pool.
  * @return a valid new Eina_Cow or @c NULL on error.
  */
 EAPI Eina_Cow *eina_cow_add(const char *name, unsigned int struct_size, unsigned int step, const void *default_value, Eina_Bool gc) EINA_WARN_UNUSED_RESULT;
@@ -71,7 +71,7 @@ EAPI Eina_Cow *eina_cow_add(const char *name, unsigned int struct_size, unsigned
 EAPI void eina_cow_del(Eina_Cow *cow);
 
 /**
- * @brief Return a initialized pointer to the pool.
+ * @brief Return an initialized pointer from the pool.
  * @param cow The pool to take things from.
  */
 EAPI const Eina_Cow_Data *eina_cow_alloc(Eina_Cow *cow) EINA_WARN_UNUSED_RESULT;
@@ -98,8 +98,8 @@ EAPI void *eina_cow_write(Eina_Cow *cow,
 /**
  * @brief Set back a pointer into read only.
  * @param cow The pool the pointer come from.
- * @param src The read only version of the pointer.
- * @param data The pointer to which data where written to.
+ * @param dst The read only version of the pointer.
+ * @param data The pointer to which data was written to.
  *
  * NOTE: this function is not thread safe, be careful.
  */
@@ -118,13 +118,13 @@ EAPI void eina_cow_memcpy(Eina_Cow *cow,
 			  const Eina_Cow_Data *src);
 
 /**
- * @brief Try to find entry that do have the same content and update them.
+ * @brief Try to find entries that have the same content and update them.
  * @param cow The cow to try to compact.
  * @return EINA_TRUE if something was compacted, EINA_FALSE if nothing was.
  *
  * There is no guaranty in the time it will require, but should remain low.
- * It does run a hash function on all possible common structure trying to
- * find the one that match and merge then into one pointer.
+ * It does run a hash function on all possible common structures trying to
+ * find the one that match and merge them into one pointer.
  */
 EAPI Eina_Bool eina_cow_gc(Eina_Cow *cow);
 
@@ -137,7 +137,7 @@ EAPI Eina_Bool eina_cow_gc(Eina_Cow *cow);
  * @param Write The name of the variable where to put the writeable pointer to.
  * @since 1.8.0
  *
- * Be careful this macro open a C scope that it expect to be closed by
+ * Be careful this macro opens a C scope that is expected to be closed by
  * EINA_COW_WRITE_END().
  */
 #define EINA_COW_WRITE_BEGIN(Cow, Read, Write_Type, Write)		\
