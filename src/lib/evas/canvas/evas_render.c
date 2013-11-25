@@ -1251,17 +1251,7 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
              changed = EINA_TRUE;
           }
 
-        if (!changed)
-          {
-             if (obj->is_smart)
-               changed = evas_object_smart_changed_get(eo_obj);
-             else if (obj->changed)
-               {
-                  if (((obj->changed_pchange) && (obj->changed_map)) ||
-                      (obj->changed_color))
-                    changed = EINA_TRUE;
-               }
-          }
+        if (!changed) changed = evas_object_smart_changed_get(eo_obj);
 
         /* mark the old map as invalid, so later we don't reuse it as a
          * cache. */
