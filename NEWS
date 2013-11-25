@@ -362,6 +362,8 @@ Fixes:
      - Fixed the textblock format to be drawn according to the glyph's horizontal advance width.
      - Fixed the textblock set to context with the textblock object's render operation.
      - Evas textblock: Fixed order of tags inserted with markup_app/prepend.
+     - Fix proxy render to update the proxies recursively. If a proxy has proxies, all the chainged proxies should be updated recursively.
+
     * Ecore:
      - Don't leak fd on exec.
      - Fix fd handler increase issue when ecore_pipe_add/del is called repeatedly.

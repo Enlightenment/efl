@@ -1,3 +1,8 @@
+2013-11-25  ChunEon Park (Hermet)
+
+        * Evas: Fix proxy render to update the proxies recursively. If a proxy
+        has proxies, all the chainged proxies should be updated recursively.
+
 2013-11-21  ChunEon Park (Hermet)
 
 	* Edje: Fix to update map-enabled part when the edje object is moved.

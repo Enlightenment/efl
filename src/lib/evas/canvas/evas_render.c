@@ -284,6 +284,35 @@ _evas_render_cur_clip_cache_del(Evas_Public_Data *e, Evas_Object_Protected_Data 
 }
 
 static void
+_evas_proxy_redraw_set(Evas_Public_Data *e, Evas_Object_Protected_Data *obj,
+                       Eina_Bool render)
+{
+   Evas_Object *eo_proxy;
+   Evas_Object_Protected_Data *proxy;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(obj->proxy->proxies, l, eo_proxy)
+     {
+        proxy = eo_data_scope_get(eo_proxy, EVAS_OBJ_CLASS);
+
+        /* Flag need redraw on proxy too */
+        EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, proxy->proxy,
+                             Evas_Object_Proxy_Data, proxy_write)
+           proxy_write->redraw = EINA_TRUE;
+        EINA_COW_WRITE_END(evas_object_proxy_cow, proxy->proxy, proxy_write);
+
+        if (render)
+          {
+             proxy->func->render_pre(eo_proxy, proxy, proxy->private_data);
+             _evas_render_prev_cur_clip_cache_add(e, proxy);
+          }
+
+        //Update the proxies recursively.
+        _evas_proxy_redraw_set(e, proxy, render);
+     }
+}
+
+static void
 _evas_render_phase1_direct(Evas_Public_Data *e,
                            Eina_Array *active_objects,
                            Eina_Array *restack_objects EINA_UNUSED,
@@ -291,8 +320,7 @@ _evas_render_phase1_direct(Evas_Public_Data *e,
                            Eina_Array *render_objects)
 {
    unsigned int i;
-   Eina_List *l;
-   Evas_Object *eo_proxy;
+   Evas_Object *eo_obj;
    Eina_Bool changed;
 
    RD("  [--- PHASE 1 DIRECT\n");
@@ -308,37 +336,23 @@ _evas_render_phase1_direct(Evas_Public_Data *e,
           changed = evas_object_smart_changed_get(obj->object);
         else changed = obj->changed;
 
-        if (changed)
-          {
-             /* Flag need redraw on proxy too */
-             EINA_LIST_FOREACH(obj->proxy->proxies, l, eo_proxy)
-               {
-                  Evas_Object_Protected_Data *proxy;
-                  proxy = eo_data_scope_get(eo_proxy, EVAS_OBJ_CLASS);
-
-                  EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, proxy->proxy,
-                                       Evas_Object_Proxy_Data, proxy_write)
-                     proxy_write->redraw = EINA_TRUE;
-                  EINA_COW_WRITE_END(evas_object_proxy_cow, proxy->proxy,
-                                     proxy_write);
-               }
-          }
+        if (changed) _evas_proxy_redraw_set(e, obj, EINA_FALSE);
      }
    for (i = 0; i < render_objects->count; i++)
      {
-        Evas_Object *eo_obj;
-
-        Evas_Object_Protected_Data *obj = eina_array_data_get(render_objects, i);
+        Evas_Object_Protected_Data *obj =
+           eina_array_data_get(render_objects, i);
         eo_obj = obj->object;
+
         RD("    OBJ [%p", obj);
         if (obj->name)
           {
              RD(":%s", obj->name);
           }
         RD("] changed %i\n", obj->changed);
+
         if (obj->changed)
           {
-             /* Flag need redraw on proxy too */
              evas_object_clip_recalc(obj);
              obj->func->render_pre(eo_obj, obj, obj->private_data);
              if (obj->proxy->redraw)
@@ -352,15 +366,7 @@ _evas_render_phase1_direct(Evas_Public_Data *e,
                           proxy_write->redraw = EINA_TRUE;
                        EINA_COW_WRITE_END(evas_object_proxy_cow, obj->proxy,
                                           proxy_write);
-
-                       EINA_LIST_FOREACH(obj->proxy->proxies, l, eo_proxy)
-                         {
-                            Evas_Object_Protected_Data *proxy =
-                               eo_data_scope_get(eo_proxy, EVAS_OBJ_CLASS);
-                            proxy->func->render_pre(eo_proxy,
-                                                    proxy, proxy->private_data);
-                            _evas_render_prev_cur_clip_cache_add(e, proxy);
-                         }
+                       _evas_proxy_redraw_set(e, obj, EINA_TRUE);
                     }
                }
 
