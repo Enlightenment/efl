@@ -228,7 +228,6 @@ Improvements:
      - Use mmap/munmap for image data allocation on system that have mmap.
      - Add iterator for walking child of smart objects, table and a box.
      - Use Eina_Spinlock for Evas_ScaleCache, Evas_Async_Events and Image_Entry.
-     - Allow fuzziness on the texture format returned by GL.
     * Ecore:
      - Use Eina_Spinlock for Ecore_Thread.
     * Ecore_Con:
