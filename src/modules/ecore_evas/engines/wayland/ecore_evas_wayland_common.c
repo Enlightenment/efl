@@ -367,8 +367,11 @@ _rotation_do(Ecore_Evas *ee, int rotation, int resize)
         ecore_evas_size_step_set(ee, steph, stepw);
 
         /* send a mouse_move process
-         * 
-         * NB: Is This Really Needed ?? */
+         *
+         * NB: Is This Really Needed ?
+         * Yes, it's required to update the mouse position, relatively to
+         * widgets. After a rotation change, e.g., the mouse might not be over
+         * a button anymore. */
         _ecore_evas_mouse_move_process(ee, ee->mouse.x, ee->mouse.y,
                                        ecore_loop_time_get());
      }
@@ -381,8 +384,9 @@ _rotation_do(Ecore_Evas *ee, int rotation, int resize)
         ee->rotation = rotation;
 
         /* send a mouse_move process
-         * 
-         * NB: Is This Really Needed ?? */
+         *
+         * NB: Is This Really Needed ? Yes, it's required to update the mouse
+         * position, relatively to widgets. */
         _ecore_evas_mouse_move_process(ee, ee->mouse.x, ee->mouse.y,
                                        ecore_loop_time_get());
 
