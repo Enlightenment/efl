@@ -45,6 +45,7 @@ _gst_init(const char *filename)
    GError              *error = NULL;
    GstFormat            format;
    GstStateChangeReturn ret;
+   int                  vidstr = 0;
 
    if (!filename || !*filename)
      return EINA_FALSE;
@@ -75,6 +76,15 @@ _gst_init(const char *filename)
      {
         D("could not construct pipeline: %s\n", error->message);
         g_error_free (error);
+        goto gst_shutdown;
+     }
+   
+   g_object_get(G_OBJECT(pipeline),
+                "n-video", &vidstr,
+                NULL);
+   if (vidstr <= 0)
+     {
+        D("no video stream\n");
         goto gst_shutdown;
      }
 
