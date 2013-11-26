@@ -840,6 +840,13 @@ _elm_scroll_scroll_bar_size_adjust(Elm_Scrollable_Smart_Interface_Data *sid)
 {
    if (!sid->pan_obj || !sid->edje_obj) return;
 
+   if (sid->size_adjust_recurse_abort) return;
+   if (sid->size_adjust_recurse > 20)
+     {
+        sid->size_adjust_recurse_abort = EINA_TRUE;
+        return;
+     }
+   sid->size_adjust_recurse++;
    if ((sid->content) || (sid->extern_pan))
      {
         Evas_Coord x, y, w, h, mx = 0, my = 0, vw = 0, vh = 0, px, py,
@@ -926,6 +933,12 @@ _elm_scroll_scroll_bar_size_adjust(Elm_Scrollable_Smart_Interface_Data *sid)
           edje_object_signal_emit(sid->edje_obj, "elm,action,scroll", "elm");
      }
    _elm_scroll_scroll_bar_visibility_adjust(sid);
+   sid->size_adjust_recurse--;
+   if (sid->size_adjust_recurse <= 0)
+     {
+        sid->size_adjust_recurse = 0;
+        sid->size_adjust_recurse_abort = EINA_FALSE;
+     }
 }
 
 static void
