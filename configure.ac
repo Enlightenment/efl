@@ -2476,6 +2476,44 @@ EFL_LIB_END_OPTIONAL([Ecore_Wayland])
 #### End of Ecore_Wayland
 
 
+#### Ecore_Drm
+EFL_LIB_START_OPTIONAL([Ecore_Drm], [test "${want_drm}" = "yes"])
+
+### Additional options to configure
+SUID_CFLAGS=-fPIE
+SUID_LDFLAGS=-pie
+AC_SUBST([SUID_CFLAGS])
+AC_SUBST([SUID_LDFLAGS])
+
+### Default values
+
+### Checks for programs
+
+### Checks for libraries
+EFL_INTERNAL_DEPEND_PKG([ECORE_DRM], [ecore])
+EFL_INTERNAL_DEPEND_PKG([ECORE_DRM], [ecore-input])
+EFL_INTERNAL_DEPEND_PKG([ECORE_DRM], [eo])
+EFL_INTERNAL_DEPEND_PKG([ECORE_DRM], [eina])
+
+EFL_DEPEND_PKG([ECORE_DRM], [DRM], [libudev >= 148 libdrm >= 2.4 libinput >= 0.0.90])
+
+EFL_EVAL_PKGS([ECORE_DRM])
+
+### Checks for header files
+
+### Checks for types
+
+### Checks for structures
+
+### Checks for compiler characteristics
+
+### Checks for linker characteristics
+
+### Checks for library functions
+
+EFL_LIB_END_OPTIONAL([Ecore_Drm])
+#### End of Ecore_Drm
+
 #### Ecore_Audio
 
 AC_ARG_ENABLE([audio],
@@ -3298,7 +3336,6 @@ AM_CONDITIONAL([BUILD_ECORE_EVAS_SDL],
 
 ECORE_EVAS_MODULE([wayland-shm], [${want_wayland}])
 ECORE_EVAS_MODULE([wayland-egl], [${want_ecore_evas_wayland_egl}])
-ECORE_EVAS_MODULE([drm], [${want_drm}])
 
 build_ecore_evas_wayland="no"
 if test "x${have_ecore_evas_wayland_shm}" = "xyes" || \
@@ -3386,6 +3423,10 @@ if test "x$have_ecore_evas_software_x11" = "xyes" || \
    build_ecore_evas_x11="yes"
 fi
 AM_CONDITIONAL([BUILD_ECORE_EVAS_X11], [test "${build_ecore_evas_x11}" = "yes"])
+
+ECORE_EVAS_MODULE([drm], [${want_drm}], 
+  [ EFL_INTERNAL_DEPEND_PKG([ECORE_EVAS], [ecore-drm]) ]
+)
 
 EFL_EVAL_PKGS([ECORE_EVAS])
 
@@ -3918,6 +3959,7 @@ pc/ecore-file.pc
 pc/ecore-input.pc
 pc/ecore-input-evas.pc
 pc/ecore-cocoa.pc
+pc/ecore-drm.pc
 pc/ecore-fb.pc
 pc/ecore-psl1ght.pc
 pc/ecore-sdl.pc
