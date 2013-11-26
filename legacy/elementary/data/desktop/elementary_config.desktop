@@ -22,4 +22,4 @@ Comment[ru]=Конфигурация для Elementary (Элементарий)
 Icon=elementary
 Exec=elementary_config
 Terminal=false
-Categories=System;Settings;DesktopSettings;
+Categories=Settings;DesktopSettings;
