@@ -276,6 +276,7 @@ _rotation_do(Ecore_Evas *ee, int rotation, int resize)
         if (!resize)
           {
              int fw, fh;
+             int ww, hh;
 
              /* grab framespace width & height */
              evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
@@ -284,14 +285,8 @@ _rotation_do(Ecore_Evas *ee, int rotation, int resize)
              if (!ee->prop.fullscreen)
                {
                   /* resize the ecore_wayland window */
-                  ecore_wl_window_resize(wdata->win, 
+                  ecore_wl_window_resize(wdata->win,
                                          ee->req.h + fw, ee->req.w + fh, 0);
-
-                  /* resize the canvas */
-                  evas_output_size_set(ee->evas, ee->req.h + fw, 
-                                       ee->req.w + fh);
-                  evas_output_viewport_set(ee->evas, 0, 0, 
-                                           ee->req.h + fw, ee->req.w + fh);
                }
              else
                {
@@ -320,14 +315,17 @@ _rotation_do(Ecore_Evas *ee, int rotation, int resize)
                     }
                }
 
-             /* call the ecore_evas' resize function */
-             if (ee->func.fn_resize) ee->func.fn_resize(ee);
-
              /* add canvas damage */
              if ((ee->rotation == 0) || (ee->rotation == 180))
                evas_damage_rectangle_add(ee->evas, 0, 0, ee->req.w, ee->req.h);
              else
                evas_damage_rectangle_add(ee->evas, 0, 0, ee->req.h, ee->req.w);
+             ww = ee->h;
+             hh = ee->w;
+             ee->w = ww;
+             ee->h = hh;
+             ee->req.w = ww;
+             ee->req.h = hh;
           }
         else
           {
