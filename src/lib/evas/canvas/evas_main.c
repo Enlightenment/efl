@@ -233,8 +233,11 @@ _destructor(Eo *eo_e, void *_pd, va_list *list EINA_UNUSED)
                {
                   if (!o->delete_me)
                     {
-                       if (o->ref > 0)
-                         ERR("obj(%p, %s) ref count(%d) is bigger than 0. This object couldn't be deleted", o, o->type, o->ref);
+                       if ((o->ref > 0) || (eo_ref_get(o->object) > 0))
+                         {
+                            ERR("obj(%p, %s) ref count(%d) is bigger than 0. This object couldn't be deleted", o, o->type, eo_ref_get(o->object));
+                            continue;
+                         }
                        del = EINA_TRUE;
                     }
                }

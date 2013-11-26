@@ -77,11 +77,10 @@ evas_layer_pre_free(Evas_Layer *lay)
 void
 evas_layer_free_objects(Evas_Layer *lay)
 {
-   while (lay->objects)
-     {
-        Evas_Object_Protected_Data *obj;
+   Evas_Object_Protected_Data *obj;
 
-        obj = (Evas_Object_Protected_Data *)lay->objects;
+   EINA_INLIST_FREE(lay->objects, obj)
+     {
         evas_object_free(obj->object, 0);
      }
 }
