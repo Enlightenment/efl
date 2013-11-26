@@ -2452,8 +2452,7 @@ _canvas_render_dump(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
      e->engine.func->output_dump(e->engine.data.output);
 
 #define GC_ALL(Cow)				\
-   while (eina_cow_gc(Cow))			\
-     ;
+   while (eina_cow_gc(Cow))
 
    GC_ALL(evas_object_proxy_cow);
    GC_ALL(evas_object_map_cow);
