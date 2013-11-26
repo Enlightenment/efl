@@ -1534,7 +1534,7 @@ eo_manual_free_set(Eo *obj_id, Eina_Bool manual_free)
 EAPI Eina_Bool
 eo_manual_free(Eo *obj_id)
 {
-   EO_OBJ_POINTER_RETURN(obj_id, obj);
+   EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, EINA_FALSE);
 
    if (EINA_FALSE == obj->manual_free)
      {
