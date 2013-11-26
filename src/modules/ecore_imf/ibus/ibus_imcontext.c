@@ -426,7 +426,11 @@ ecore_imf_context_ibus_preedit_string_get(Ecore_IMF_Context *ctx,
         if (cursor_pos)
           *cursor_pos = 0;
      }
-   EINA_LOG_DBG("str : %s, cursor_pos : %d", *str, *cursor_pos);
+
+   if (cursor_pos)
+     EINA_LOG_DBG("str : %s, cursor_pos : %d", *str, *cursor_pos);
+   else
+     EINA_LOG_DBG("str : %s", *str);
 }
 
 EAPI void
