@@ -88,23 +88,15 @@ _end_tick(void)
 {
    if (!ticking) return;
    ticking = 0;
-   switch (src)
+
+   if (timer)
      {
-      case ECORE_ANIMATOR_SOURCE_TIMER:
-        if (timer)
-          {
-             _ecore_timer_del(timer);
-             timer = NULL;
-          }
-        break;
-
-      case ECORE_ANIMATOR_SOURCE_CUSTOM:
-        if (end_tick_cb) end_tick_cb((void *)end_tick_data);
-        break;
-
-      default:
-        break;
+        _ecore_timer_del(timer);
+        timer = NULL;
      }
+
+   if ((src == ECORE_ANIMATOR_SOURCE_CUSTOM) && end_tick_cb)
+     end_tick_cb((void *)end_tick_data);
 }
 
 static Eina_Bool

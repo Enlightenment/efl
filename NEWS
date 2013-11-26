@@ -369,6 +369,7 @@ Fixes:
     * Ecore:
      - Don't leak fd on exec.
      - Fix fd handler increase issue when ecore_pipe_add/del is called repeatedly.
+     - Fixed animator not working problem when source_set is changed back and forth very fast.
     * Ecore_Con:
      - Fix a memory leak in ecore_con_dns when using ecore_con_server_connect.
      - Don't leak fd on exec.

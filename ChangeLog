@@ -1,3 +1,8 @@
+2013-11-26  Daniel Juyung Seo (SeoZ)
+
+        * ecore anim: Fixed animator not working problem when source_set is
+        changed back and forth very fast.
+
 2013-11-26  Cedric Bail
 
 	* Evas: Allow fuzziness on the texture format returned by GL.
