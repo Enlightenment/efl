@@ -4,6 +4,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 #include <Eina.h>
 #include <Ecore.h>
@@ -16,12 +17,19 @@
 
 #ifdef BUILD_ECORE_EVAS_DRM
 # include <Evas_Engine_Drm.h>
+# include <Ecore_Drm.h>
 #endif
 
-/* local structures */
-typedef struct _Ecore_Evas_Engine_Data_Drm Ecore_Evas_Engine_Data_Drm;
+#undef ERR
+#define ERR(...) fprintf(stderr, __VA_ARGS__)
 
-struct _Ecore_Evas_Engine_Data_Drm
+#undef DBG
+#define DBG(...) fprintf(stderr, __VA_ARGS__)
+
+/* local structures */
+typedef struct _Ecore_Evas_Engine_Drm_Data Ecore_Evas_Engine_Drm_Data;
+
+struct _Ecore_Evas_Engine_Drm_Data
 {
    int fd;
 };
@@ -103,6 +111,7 @@ EAPI Ecore_Evas *
 ecore_evas_drm_new_internal(const char *device, unsigned int parent, int x, int y, int w, int h)
 {
    Ecore_Evas *ee;
+   Evas_Engine_Info_Drm *einfo;
    int method;
 
    /* try to find the evas drm engine */
@@ -112,13 +121,79 @@ ecore_evas_drm_new_internal(const char *device, unsigned int parent, int x, int 
         return NULL;
      }
 
-   if (!(ee = calloc(1, sizeof(Ecore_Evas))))
+   /* try to init ecore_drm */
+   if (!ecore_drm_init())
      {
-        ERR("Failed to allocate space for new Ecore_Evas");
+        ERR("Could not initialize Ecore_Drm");
         return NULL;
      }
 
+   /* try to allocate space for Ecore_Evas structure */
+   if (!(ee = calloc(1, sizeof(Ecore_Evas))))
+     {
+        ERR("Failed to allocate space for new Ecore_Evas");
+        goto err;
+     }
+
+   ECORE_MAGIC_SET(ee, ECORE_MAGIC_EVAS);
+
+   _ecore_evas_drm_init();
+
+   ee->engine.func = (Ecore_Evas_Engine_Func *)&_ecore_evas_drm_engine_func;
+
+   /* set some engine properties */
+   ee->driver = "drm";
+   if (device) ee->name = strdup(device);
+
+   if (w < 1) w = 1;
+   if (h < 1) h = 1;
+
+   ee->x = ee->req.x = x;
+   ee->y = ee->req.y = y;
+   ee->w = ee->req.w = w;
+   ee->h = ee->req.h = h;
+
+   ee->prop.max.w = 32767;
+   ee->prop.max.h = 32767;
+   ee->prop.layer = 4;
+   ee->prop.request_pos = 0;
+   ee->prop.sticky = 0;
+
+   /* try to initialize evas */
+   ee->evas = evas_new();
+   evas_data_attach_set(ee->evas, ee);
+   evas_output_method_set(ee->evas, method);
+
+   /* FIXME: Support initial rotation ?? */
+   evas_output_size_set(ee->evas, w, h);
+   evas_output_viewport_set(ee->evas, 0, 0, w, h);
+
+   if ((einfo = (Evas_Engine_Info_Drm *)evas_engine_info_get(ee->evas)))
+     {
+        /* einfo->info. = ; */
+        if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+          {
+             ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
+             goto eng_err;
+          }
+     }
+   else
+     {
+        ERR("Failed to get Evas Engine Info for '%s'", ee->driver);
+        goto eng_err;
+     }
+
+   _ecore_evas_register(ee);
+   ecore_evas_input_event_register(ee);
+
    return ee;
+
+eng_err:
+   ecore_evas_free(ee);
+   _ecore_evas_drm_shutdown();
+err:
+   ecore_drm_shutdown();
+   return NULL;
 }
 
 /* local functions */
@@ -144,4 +219,22 @@ _ecore_evas_drm_shutdown(void)
 
    if (_ecore_evas_init_count < 0) _ecore_evas_init_count = 0;
    return _ecore_evas_init_count;
+}
+
+static Ecore_Evas_Interface_Drm *
+_ecore_evas_drm_interface_new(void)
+{
+   Ecore_Evas_Interface_Drm *iface;
+
+   if (!(iface = calloc(1, sizeof(Ecore_Evas_Interface_Drm))))
+     return NULL;
+
+   iface->base.name = "drm";
+   iface->base.version = 1;
+
+   /* iface->pixmap_visual_get; */
+   /* iface->pixmap_colormap_get; */
+   /* iface->pixmap_depth_get; */
+
+   return iface;
 }
