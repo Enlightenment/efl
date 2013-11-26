@@ -331,6 +331,13 @@ bg_key_down(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_U
 }
 
 static void
+_oe_free_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
+            void *event_info EINA_UNUSED)
+{
+   free(data);
+}
+
+static void
 video_obj_time_changed(Evas_Object *obj, Evas_Object *edje)
 {
    double pos, len, scale;
@@ -618,6 +625,7 @@ init_video_object(const char *module_filename, const char *filename)
    fd = calloc(1, sizeof(Frame_Data));
 
    oe = edje_object_add(evas);
+   evas_object_event_callback_add(oe, EVAS_CALLBACK_FREE, _oe_free_cb, NULL);
    evas_object_data_set(oe, "frame_data", fd);
    if (reflex)
      edje_object_file_set(oe, theme_get(), "video_controller/reflex");
