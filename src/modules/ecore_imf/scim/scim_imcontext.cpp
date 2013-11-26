@@ -2120,7 +2120,7 @@ open_specific_factory(EcoreIMFContextISF *ic,
      {
         // turn_off_ic comment out panel_req_update_factory_info()
         turn_off_ic(ic);
-        if (ic && ic->impl->is_on)
+        if (ic->impl->is_on)
           {
              ic->impl->is_on = false;
 
