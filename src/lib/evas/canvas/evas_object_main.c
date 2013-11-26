@@ -196,7 +196,11 @@ evas_object_free(Evas_Object *eo_obj, int clean_layer)
    eina_cow_free(evas_object_state_cow, (const Eina_Cow_Data**) &obj->prev);
    eo_data_unref(eo_obj, obj->private_data);
    obj->private_data = NULL;
-   eo_manual_free(eo_obj);
+
+   /* Try to manual free, and if it fails, unset it so the next unref will
+    * actually free the object. */
+   if (!eo_manual_free(eo_obj))
+      eo_manual_free_set(eo_obj, EINA_FALSE);
 }
 
 void
