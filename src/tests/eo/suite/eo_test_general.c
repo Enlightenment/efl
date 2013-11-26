@@ -304,7 +304,7 @@ START_TEST(eo_man_free)
 
    obj = eo_add(klass, NULL);
    fail_if(!obj);
-   eo_manual_free(obj);
+   fail_if(eo_manual_free(obj));
    eo_unref(obj);
 
    _man_should_des = EINA_FALSE;
@@ -314,17 +314,17 @@ START_TEST(eo_man_free)
 
    obj = eo_add(klass, NULL);
    fail_if(!obj);
-   eo_manual_free(obj);
+   fail_if(eo_manual_free(obj));
    fail_if(eo_destructed_is(obj));
    eo_unref(obj);
    fail_if(!eo_destructed_is(obj));
-   eo_manual_free(obj);
+   fail_if(!eo_manual_free(obj));
 
    obj = eo_add(klass, NULL);
    fail_if(!obj);
    eo_unref(obj);
    fail_if(!eo_destructed_is(obj));
-   eo_manual_free(obj);
+   fail_if(!eo_manual_free(obj));
 
    _man_should_con = EINA_FALSE;
    klass = eo_class_new(&class_desc, EO_BASE_CLASS, NULL);
@@ -333,7 +333,7 @@ START_TEST(eo_man_free)
 
    obj = eo_add(klass, NULL);
    fail_if(!obj);
-   eo_manual_free(obj);
+   fail_if(eo_manual_free(obj));
    eo_unref(obj);
 
    obj = eo_add(klass, NULL);
@@ -343,7 +343,7 @@ START_TEST(eo_man_free)
    eo_ref(obj);
    eo_unref(obj);
    eo_unref(obj);
-   eo_manual_free(obj);
+   fail_if(!eo_manual_free(obj));
 
    obj = eo_add(klass, NULL);
    fail_if(!obj);
@@ -354,7 +354,7 @@ START_TEST(eo_man_free)
    eo_unref(obj);
    eo_unref(obj);
    eo_unref(obj);
-   eo_manual_free(obj);
+   fail_if(!eo_manual_free(obj));
 
    eo_shutdown();
 }

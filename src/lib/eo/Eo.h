@@ -910,10 +910,11 @@ EAPI void eo_manual_free_set(Eo *obj, Eina_Bool manual_free);
  * eo_manual_free_set has been called before with the parameter EINA_TRUE.
  * An error will be printed if this function is called when the manual
  * free option is not set to EINA_TRUE or the number of refs is not 0.
+ * @return EINA_TRUE if successfully freed. EINA_FALSE otherwise.
  *
  * @see eo_manual_free_set()
  */
-EAPI void eo_manual_free(Eo *obj);
+EAPI Eina_Bool eo_manual_free(Eo *obj);
 
 /**
  * @brief Checks if the object was already descructed (only relevant for manual_free objects).

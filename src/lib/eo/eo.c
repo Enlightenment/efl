@@ -1531,7 +1531,7 @@ eo_manual_free_set(Eo *obj_id, Eina_Bool manual_free)
    obj->manual_free = manual_free;
 }
 
-EAPI void
+EAPI Eina_Bool
 eo_manual_free(Eo *obj_id)
 {
    EO_OBJ_POINTER_RETURN(obj_id, obj);
@@ -1539,15 +1539,17 @@ eo_manual_free(Eo *obj_id)
    if (EINA_FALSE == obj->manual_free)
      {
         ERR("Tried to manually free the object %p while the option has not been set; see eo_manual_free_set for more information.", obj);
-        return;
+        return EINA_FALSE;
      }
 
    if (!obj->del)
      {
         ERR("Tried deleting the object %p while still referenced(%d).", obj_id, obj->refcount);
-        return;
+        return EINA_FALSE;
      }
 
    _eo_free(obj);
+
+   return EINA_TRUE;
 }
 
