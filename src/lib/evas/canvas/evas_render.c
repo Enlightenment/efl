@@ -1429,6 +1429,7 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
                                                            , level + 1
 #endif
                                                            , do_async);
+                          evas_object_change_reset(obj2->object);
                        }
                }
              else
