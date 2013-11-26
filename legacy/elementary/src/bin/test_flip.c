@@ -3,7 +3,6 @@
 #endif
 #include <Elementary.h>
 
-
 void
 my_fl_1(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
@@ -492,13 +491,24 @@ test_flip3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
    evas_object_show(win);
 }
 
-
 static void
 my_fl_go(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win = data;
+
+   Evas_Object *rdg = evas_object_data_get(win, "rdg");
+   Evas_Object *rd = elm_radio_selected_object_get(rdg);
    Evas_Object *fl = evas_object_data_get(win, "fl");
-   elm_flip_go(fl, ELM_FLIP_PAGE_LEFT);
+
+   const char *text = elm_object_text_get(rd);
+   if (!text) return;
+
+   if (!strcmp(text, "Rotate"))
+     elm_flip_go(fl, ELM_FLIP_ROTATE_Y_CENTER_AXIS);
+   else if (!strcmp(text, "Cube"))
+     elm_flip_go(fl, ELM_FLIP_CUBE_RIGHT);
+   else if (!strcmp(text, "Page"))
+     elm_flip_go(fl, ELM_FLIP_PAGE_RIGHT);
 }
 
 static void
@@ -611,7 +621,7 @@ test_flip4(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
    evas_object_smart_callback_add(rd, "changed", my_fl_ch, win);
 
    bt = elm_button_add(win);
-   elm_object_text_set(bt, "Flip page");
+   elm_object_text_set(bt, "Flip Go");
    evas_object_smart_callback_add(bt, "clicked", my_fl_go, win);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
