@@ -491,7 +491,7 @@ evas_font_load(Evas *eo_evas, Evas_Font_Description *fdesc, const char *source, 
 #endif
 
    Evas_Font_Set *font = NULL;
-   Eina_List *fonts, *l;
+   Eina_List *fonts, *l, *l_next;
    Fndat *fd;
 #ifdef HAVE_FONTCONFIG
    Fndat *found_fd = NULL;
@@ -541,7 +541,7 @@ evas_font_load(Evas *eo_evas, Evas_Font_Description *fdesc, const char *source, 
      }
 #endif
 
-   EINA_LIST_FOREACH(fonts_zero, l, fd)
+   EINA_LIST_FOREACH_SAFE(fonts_zero, l, l_next, fd)
      {
         if (!evas_font_desc_cmp(fdesc, fd->fdesc))
 	  {

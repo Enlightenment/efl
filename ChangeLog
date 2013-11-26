@@ -1,3 +1,7 @@
+2013-11-26  ChunEon Park (Hermet)
+
+        * Evas: Fix the memory corruption introduced by evas fonts_zero.
+
 2013-11-26  Daniel Juyung Seo (SeoZ)
 
         * ecore anim: Fixed animator not working problem when source_set is
