@@ -132,8 +132,16 @@ _parent_set(Eo *obj, void *class_data, va_list *list)
 
         old_parent_pd = eo_data_scope_get(pd->parent, EO_BASE_CLASS);
         if (old_parent_pd)
-          old_parent_pd->children = eina_list_remove(old_parent_pd->children,
-                                                     obj);
+          {
+             old_parent_pd->children = eina_list_remove(old_parent_pd->children,
+                   obj);
+          }
+        else
+          {
+             ERR("CONTACT DEVS!!! SHOULD NEVER HAPPEN!!! Old parent %p for object %p is not a valid Eo object.",
+                 pd->parent, obj);
+          }
+
         eo_xunref(obj, pd->parent);
      }
 
