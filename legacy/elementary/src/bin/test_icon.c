@@ -54,7 +54,7 @@ bt_clicked(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
 void
 test_icon(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Evas_Object *win, *box, *content_box, *hbox, *tg, *bt;
+   Evas_Object *win, *box, *hbox, *tg, *bt;
    win = elm_win_util_standard_add("icon test", "Icon Test");
    elm_win_autodel_set(win, EINA_TRUE);
 
@@ -62,12 +62,6 @@ test_icon(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info
    evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, box);
    evas_object_show(box);
-
-   content_box = elm_box_add(win);
-   evas_object_size_hint_weight_set(content_box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, content_box);
-   elm_box_pack_end(box, content_box);
-   evas_object_show(content_box);
 
    Evas_Object *ic = elm_icon_add(win);
    char buf[PATH_MAX];
@@ -77,13 +71,12 @@ test_icon(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info
    evas_object_size_hint_weight_set(ic, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(ic, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
-   elm_box_pack_end(content_box, ic);
+   elm_box_pack_end(box, ic);
    evas_object_show(ic);
 
    hbox = elm_box_add(win);
    elm_box_horizontal_set(hbox, EINA_TRUE);
-   evas_object_size_hint_weight_set(content_box, EVAS_HINT_EXPAND,
-                                    EVAS_HINT_EXPAND);
+   evas_object_size_hint_weight_set(hbox, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(box, hbox);
    evas_object_show(hbox);
 
