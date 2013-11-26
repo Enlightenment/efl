@@ -2321,6 +2321,7 @@ COMPRESS_ODD("elm/genlist/tree_compress_odd/icon_top_text_bottom/default", "elm/
          } \
          part { name: "label5"; \
             description { state: "default" 0.0; \
+               fixed: 0 1; \
                text.min: 0 1; \
             } \
             description { state: "selected" 0.0; \
