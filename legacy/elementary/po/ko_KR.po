@@ -1,21 +1,23 @@
 # Elementary translation file for Korean languages.
 # This file is distributed under the same license as the Elementary package.
 # Daniel Juyung Seo <seojuyung2@gmail.com>, 2011.
+# Seong-ho Cho <darkcircle.0426@gmail.com>, 2013.
 #
-#: src/lib/elm_config.c:2415
 msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-11-25 14:35+0900\n"
-"PO-Revision-Date: 2013-04-04 13:05+0900\n"
-"Last-Translator: Daniel Juyung Seo <seojuyung2@gmali.com>\n"
+"POT-Creation-Date: 2013-11-19 17:17+0900\n"
+"PO-Revision-Date: 2013-11-27 11:32+0900\n"
+"Last-Translator: Seong-ho Cho <darkcircle.0426@gmail.com>\n"
 "Language-Team: General\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 1.5.5\n"
+"Language: Korean\n"
+"X-Poedit-SourceCharset: UTF-8\n"
 
 #: src/lib/elc_fileselector.c:1203
 msgid "Up"
@@ -36,35 +38,35 @@ msgstr "확인"
 
 #: src/lib/elc_multibuttonentry.c:575
 msgid "multi button entry label"
-msgstr ""
+msgstr "다중 버튼 엔트리 레이블"
 
 #: src/lib/elc_multibuttonentry.c:597
 msgid "multi button entry item"
-msgstr ""
+msgstr "다중 버튼 엔트리 항목"
 
 #: src/lib/elc_multibuttonentry.c:1471
 msgid "multi button entry"
-msgstr ""
+msgstr "다중 버튼 엔트리"
 
 #: src/lib/elc_naviframe.c:377
 msgid "Title"
-msgstr ""
+msgstr "제목"
 
 #: src/lib/elc_naviframe.c:906 src/lib/elc_naviframe.c:1130
 msgid "Back"
-msgstr ""
+msgstr "뒤로"
 
 #: src/lib/elc_naviframe.c:1209
 msgid "Next"
-msgstr ""
+msgstr "다음"
 
 #: src/lib/elc_popup.c:282 src/lib/elc_popup.c:908
 msgid "Popup Title"
-msgstr ""
+msgstr "팝업 제목"
 
 #: src/lib/elc_popup.c:292 src/lib/elc_popup.c:976
 msgid "Popup Body Text"
-msgstr ""
+msgstr "팝업 본문 텍스트"
 
 #: src/lib/elm_bubble.c:217
 msgid "Bubble"
@@ -72,7 +74,7 @@ msgstr "버블"
 
 #: src/lib/elm_button.c:58
 msgid "Clicked"
-msgstr "클릭 됨"
+msgstr "클릭함"
 
 #: src/lib/elm_button.c:279 src/lib/elm_check.c:222 src/lib/elm_gengrid.c:681
 #: src/lib/elm_genlist.c:1463 src/lib/elm_list.c:1547 src/lib/elm_radio.c:265
@@ -107,7 +109,7 @@ msgstr "달력 월 감소 버튼"
 
 #: src/lib/elm_calendar.c:305
 msgid "calendar decrement year button"
-msgstr "달력 년 감소 버튼"
+msgstr "달력 연 감소 버튼"
 
 #: src/lib/elm_calendar.c:310
 msgid "calendar increment month button"
@@ -115,7 +117,7 @@ msgstr "달력 월 증가 버튼"
 
 #: src/lib/elm_calendar.c:315
 msgid "calendar increment year button"
-msgstr "달력 년 증가 버튼"
+msgstr "달력 연 증가 버튼"
 
 #: src/lib/elm_calendar.c:320
 msgid "calendar month"
@@ -123,16 +125,16 @@ msgstr "달력 월"
 
 #: src/lib/elm_calendar.c:325
 msgid "calendar year"
-msgstr "달력 년"
+msgstr "달력 연"
 
 #: src/lib/elm_check.c:52 src/lib/elm_check.c:235 src/lib/elm_radio.c:92
 #: src/lib/elm_radio.c:266
 msgid "State: On"
-msgstr "상태 : 켬"
+msgstr "상태: 켬"
 
 #: src/lib/elm_check.c:58 src/lib/elm_check.c:247 src/lib/elm_radio.c:268
 msgid "State: Off"
-msgstr "상태 : 끔"
+msgstr "상태: 끔"
 
 #: src/lib/elm_check.c:231 src/lib/elm_check.c:244
 msgid "State"
@@ -152,7 +154,7 @@ msgstr "시계 am,pm 감소 버튼"
 
 #: src/lib/elm_clock.c:659
 msgid "State: Editable"
-msgstr "상태 : 수정 가능"
+msgstr "상태: 편집 가능"
 
 #: src/lib/elm_clock.c:695
 msgid "Clock"
@@ -167,9 +169,8 @@ msgid "default:LTR"
 msgstr "default:LTR"
 
 #: src/lib/elm_dayselector.c:422
-#, fuzzy
 msgid "day selector item"
-msgstr "디스크셀렉터 항목"
+msgstr "날짜 셀렉터 항목"
 
 #: src/lib/elm_diskselector.c:672
 msgid "diskselector item"
@@ -213,11 +214,11 @@ msgstr "레이블"
 
 #: src/lib/elm_panel.c:54
 msgid "state: opened"
-msgstr "상태 : 열림"
+msgstr "상태: 열림"
 
 #: src/lib/elm_panel.c:55
 msgid "state: closed"
-msgstr "상태 : 닫힘"
+msgstr "상태: 닫힘"
 
 #: src/lib/elm_panel.c:118
 msgid "panel button"
@@ -233,16 +234,15 @@ msgstr "라디오 버튼"
 
 #: src/lib/elm_segment_control.c:540 src/lib/elm_toolbar.c:1982
 msgid "State: Selected"
-msgstr "상태: 선택"
+msgstr "상태: 선택함"
 
 #: src/lib/elm_segment_control.c:542
-#, fuzzy
 msgid "State: Unselected"
-msgstr "상태: 선택"
+msgstr "상태: 선택 안함"
 
 #: src/lib/elm_segment_control.c:554
 msgid "Segment Control Item"
-msgstr ""
+msgstr "세그먼트 컨트롤 항목"
 
 #: src/lib/elm_slider.c:888
 msgid "slider"
