@@ -42,6 +42,55 @@
 #ifndef GL_BGRA
 # define GL_BGRA 0x80E1
 #endif
+#ifndef GL_RGBA4
+# define GL_RGBA4 0x8056
+#endif
+#ifndef GL_RGBA8
+# define GL_RGBA8 0x8058
+#endif
+#ifndef GL_RGBA12
+# define GL_RGBA12 0x805A
+#endif
+#ifndef GL_RGBA16
+# define GL_RGBA16 0x805B
+#endif
+#ifndef GL_ALPHA4
+# define GL_ALPHA4 0x803B
+#endif
+#ifndef GL_ALPHA8
+# define GL_ALPHA8 0x803C
+#endif
+#ifndef GL_ALPHA12
+# define GL_ALPHA12 0x803D
+#endif
+#ifndef GL_ALPHA16
+# define GL_ALPHA16 0x803E
+#endif
+#ifndef GL_LUMINANCE4
+# define GL_LUMINANCE4 0x803F
+#endif
+#ifndef GL_LUMINANCE8
+# define GL_LUMINANCE8 0x8040
+#endif
+#ifndef GL_LUMINANCE12
+# define GL_LUMINANCE12 0x8041
+#endif
+#ifndef GL_LUMINANCE16
+# define GL_LUMINANCE16 0x8042
+#endif
+#ifndef GL_LUMINANCE4_ALPHA4
+# define GL_LUMINANCE4_ALPHA4 0x8043
+#endif
+#ifndef GL_LUMINANCE8_ALPHA8
+# define GL_LUMINANCE8_ALPHA8 0x8045
+#endif
+#ifndef GL_LUMINANCE12_ALPHA12
+# define GL_LUMINANCE12_ALPHA12 0x8047
+#endif
+#ifndef GL_LUMINANCE16_ALPHA16
+# define GL_LUMINANCE16_ALPHA16 0x8048
+#endif
+
 #ifndef GL_UNPACK_ROW_LENGTH
 # define GL_UNPACK_ROW_LENGTH 0x0cf2
 #endif
