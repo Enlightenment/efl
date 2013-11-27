@@ -3999,7 +3999,7 @@ _edje_entry_imf_event_preedit_changed_cb(void *data, Ecore_IMF_Context *ctx EINA
           {
              EINA_LIST_FOREACH(attrs, l, attr)
                {
-                  if (attr->preedit_type <= preedit_type_size &&
+                  if (attr->preedit_type < preedit_type_size &&
                       tagname[attr->preedit_type])
                     {
                        preedit_attr_str = eina_strbuf_new();
