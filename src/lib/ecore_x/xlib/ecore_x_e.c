@@ -54,7 +54,7 @@ ecore_x_e_virtual_keyboard_set(Ecore_X_Window win,
 EAPI Eina_Bool
 ecore_x_e_virtual_keyboard_get(Ecore_X_Window win)
 {
-   unsigned int val;
+   unsigned int val = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (!ecore_x_window_prop_card32_get(win, ECORE_X_ATOM_E_VIRTUAL_KEYBOARD,
