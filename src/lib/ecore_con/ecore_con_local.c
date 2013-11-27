@@ -68,6 +68,8 @@ ecore_con_local_connect(Ecore_Con_Server *svr,
    const char *homedir;
    int socket_unix_len;
 
+   buf[0] = '\0';
+
    if ((svr->type & ECORE_CON_TYPE) == ECORE_CON_LOCAL_USER)
      {
         homedir = getenv("XDG_RUNTIME_DIR");
@@ -141,6 +143,7 @@ ecore_con_local_connect(Ecore_Con_Server *svr,
      }
    else
      {
+        socket_unix.sun_path[0] = '\0';
         strncpy(socket_unix.sun_path, buf, sizeof(socket_unix.sun_path));
         socket_unix_len = LENGTH_OF_SOCKADDR_UN(&socket_unix);
      }
