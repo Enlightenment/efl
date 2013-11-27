@@ -578,8 +578,8 @@ ecore_con_socks_init(void)
         socks = getenv("ECORE_CON_SOCKS_V5");
         v5 = EINA_TRUE;
      }
-   if ((!socks) || (!socks[0]) || (strlen(socks) > 512)) return;
-   strncpy(buf, socks, sizeof(buf));
+   if ((!socks) || (!socks[0]) || (strlen(socks) + 1 > 512)) return;
+   memcpy(buf, socks, strlen(socks) + 1);
    h = strchr(buf, '@');
    /* username */
    if (h && (h - buf > 0)) *h++ = 0, u = buf;
