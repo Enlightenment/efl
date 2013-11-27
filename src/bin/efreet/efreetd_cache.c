@@ -14,7 +14,12 @@
 #include "efreet_private.h"
 #include "efreetd_cache.h"
 
-static Eina_Hash *change_monitors = NULL;
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
+static Eina_Hash *icon_change_monitors = NULL;
+static Eina_Hash *desktop_change_monitors = NULL;
 
 static Ecore_Event_Handler *cache_exe_del_handler = NULL;
 static Ecore_Event_Handler *cache_exe_data_handler = NULL;
@@ -37,6 +42,9 @@ static Eina_Bool icon_queue = EINA_FALSE;
 
 static void desktop_changes_monitor_add(const char *path);
 
+static void icon_changes_listen(void);
+static void desktop_changes_listen(void);
+
 /* internal */
 static Eina_Bool
 icon_cache_update_cache_cb(void *data EINA_UNUSED)
@@ -52,6 +60,11 @@ icon_cache_update_cache_cb(void *data EINA_UNUSED)
      }
    icon_queue = EINA_FALSE;
    if ((!icon_flush) && (!icon_exts)) return ECORE_CALLBACK_CANCEL;
+
+   if (icon_change_monitors) eina_hash_free(icon_change_monitors);
+   icon_change_monitors = eina_hash_string_superfast_new
+     (EINA_FREE_CB(ecore_file_monitor_del));
+   icon_changes_listen();
 
    /* TODO: Queue if already running */
    snprintf(file, sizeof(file),
@@ -90,16 +103,6 @@ icon_cache_update_cache_cb(void *data EINA_UNUSED)
    return ECORE_CALLBACK_CANCEL;
 }
 
-static void
-cache_icon_update(Eina_Bool flush)
-{
-   if (icon_cache_timer)
-     ecore_timer_del(icon_cache_timer);
-   if (flush)
-     icon_flush = flush;
-   icon_cache_timer = ecore_timer_add(1.0, icon_cache_update_cache_cb, NULL);
-}
-
 static Eina_Bool
 desktop_cache_update_cache_cb(void *data EINA_UNUSED)
 {
@@ -113,6 +116,11 @@ desktop_cache_update_cache_cb(void *data EINA_UNUSED)
         return ECORE_CALLBACK_CANCEL;
      }
    desktop_queue = EINA_FALSE;
+
+   if (desktop_change_monitors) eina_hash_free(desktop_change_monitors);
+   desktop_change_monitors = eina_hash_string_superfast_new
+     (EINA_FREE_CB(ecore_file_monitor_del));
+   desktop_changes_listen();
 
    snprintf(file, sizeof(file),
             "%s/efreet/" MODULE_ARCH "/efreet_desktop_cache_create",
@@ -130,64 +138,31 @@ desktop_cache_update_cache_cb(void *data EINA_UNUSED)
           }
      }
    INF("Run desktop cache creation: %s", file);
-   desktop_cache_exe =
-      ecore_exe_pipe_run(file, ECORE_EXE_PIPE_READ|ECORE_EXE_PIPE_READ_LINE_BUFFERED, NULL);
+   desktop_cache_exe = ecore_exe_pipe_run
+     (file, ECORE_EXE_PIPE_READ | ECORE_EXE_PIPE_READ_LINE_BUFFERED, NULL);
 
    return ECORE_CALLBACK_CANCEL;
 }
 
-static Eina_Bool
-cache_exe_data_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+static void
+cache_icon_update(Eina_Bool flush)
 {
-   Ecore_Exe_Event_Data *ev;
-
-   ev = event;
-   if (ev->exe == desktop_cache_exe)
-     {
-        Eina_Bool update = EINA_FALSE;
-
-        if ((ev->lines) && (*ev->lines->line == 'c'))
-          update = EINA_TRUE;
-
-        desktop_exists = EINA_TRUE;
-        send_signal_desktop_cache_update(update);
-     }
-   else if (ev->exe == icon_cache_exe)
-     {
-        Eina_Bool update = EINA_FALSE;
-
-        if ((ev->lines) && (*ev->lines->line == 'c'))
-          update = EINA_TRUE;
-
-        send_signal_icon_cache_update(update);
-     }
-   return ECORE_CALLBACK_RENEW;
+   if (icon_cache_timer) ecore_timer_del(icon_cache_timer);
+   if (flush) icon_flush = flush;
+   icon_cache_timer = ecore_timer_add(0.2, icon_cache_update_cache_cb, NULL);
 }
 
-static Eina_Bool
-cache_exe_del_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+void
+cache_desktop_update(void)
 {
-   Ecore_Exe_Event_Del *ev;
-
-   ev = event;
-   if (ev->exe == desktop_cache_exe)
-     {
-        desktop_cache_exe = NULL;
-        if (desktop_queue) cache_desktop_update();
-     }
-   else if (ev->exe == icon_cache_exe)
-     {
-        icon_cache_exe = NULL;
-        if (icon_queue) cache_icon_update(EINA_FALSE);
-     }
-   return ECORE_CALLBACK_RENEW;
+   if (desktop_cache_timer) ecore_timer_del(desktop_cache_timer);
+   desktop_cache_timer = ecore_timer_add(0.2, desktop_cache_update_cache_cb, NULL);
 }
 
 static void
 icon_changes_cb(void *data EINA_UNUSED, Ecore_File_Monitor *em EINA_UNUSED,
-                Ecore_File_Event event, const char *path)
+                Ecore_File_Event event, const char *path EINA_UNUSED)
 {
-   /* TODO: If we get a stale symlink, we need to rerun cache creation */
    switch (event)
      {
       case ECORE_FILE_EVENT_NONE:
@@ -198,15 +173,52 @@ icon_changes_cb(void *data EINA_UNUSED, Ecore_File_Monitor *em EINA_UNUSED,
       case ECORE_FILE_EVENT_DELETED_FILE:
       case ECORE_FILE_EVENT_MODIFIED:
       case ECORE_FILE_EVENT_CLOSED:
+        // a FILE was changed, added or removed
+        cache_icon_update(EINA_FALSE);
+        break;
+
       case ECORE_FILE_EVENT_DELETED_DIRECTORY:
       case ECORE_FILE_EVENT_CREATED_DIRECTORY:
-         cache_icon_update(EINA_FALSE);
-         break;
+        // the whole tree needs re-monitoring
+        cache_icon_update(EINA_FALSE);
+        break;
 
       case ECORE_FILE_EVENT_DELETED_SELF:
-         eina_hash_del_by_key(change_monitors, path);
-         cache_icon_update(EINA_FALSE);
+        // the whole tree needs re-monitoring
+        cache_icon_update(EINA_FALSE);
+        break;
+     }
+}
+
+static void
+desktop_changes_cb(void *data EINA_UNUSED, Ecore_File_Monitor *em EINA_UNUSED,
+                   Ecore_File_Event event, const char *path EINA_UNUSED)
+{
+   /* TODO: Check for desktop*.cache, as this will be created when app is installed */
+   switch (event)
+     {
+      case ECORE_FILE_EVENT_NONE:
+         /* noop */
          break;
+
+      case ECORE_FILE_EVENT_CREATED_FILE:
+      case ECORE_FILE_EVENT_DELETED_FILE:
+      case ECORE_FILE_EVENT_MODIFIED:
+      case ECORE_FILE_EVENT_CLOSED:
+        // a FILE was changed, added or removed
+        cache_desktop_update();
+        break;
+
+      case ECORE_FILE_EVENT_DELETED_DIRECTORY:
+      case ECORE_FILE_EVENT_CREATED_DIRECTORY:
+        // the whole tree needs re-monitoring
+        cache_desktop_update();
+        break;
+
+      case ECORE_FILE_EVENT_DELETED_SELF:
+        // the whole tree needs re-monitoring
+        cache_desktop_update();
+        break;
      }
 }
 
@@ -214,21 +226,52 @@ static void
 icon_changes_monitor_add(const char *path)
 {
    Ecore_File_Monitor *mon;
+   char *realp;
 
-   if (eina_hash_find(change_monitors, path)) return;
-   /* TODO: Check for symlink and monitor the real path */
-   mon = ecore_file_monitor_add(path,
-                                icon_changes_cb,
-                                NULL);
-   if (mon)
-     eina_hash_add(change_monitors, path, mon);
+   if (eina_hash_find(icon_change_monitors, path)) return;
+   realp = ecore_file_realpath(path);
+   if (!realp) return;
+   mon = ecore_file_monitor_add(realp, icon_changes_cb, NULL);
+   free(realp);
+   if (mon) eina_hash_add(icon_change_monitors, path, mon);
 }
 
 static void
-icon_changes_listen_recursive(const char *path, Eina_Bool base)
+desktop_changes_monitor_add(const char *path)
+{
+   Ecore_File_Monitor *mon;
+
+   if (eina_hash_find(desktop_change_monitors, path)) return;
+   /* TODO: Check for symlink and monitor the real path */
+   mon = ecore_file_monitor_add(path, desktop_changes_cb, NULL);
+   if (mon)
+     eina_hash_add(desktop_change_monitors, path, mon);
+}
+
+static void
+icon_changes_listen_recursive(Eina_Inarray *stack, const char *path, Eina_Bool base)
 {
    Eina_Iterator *it;
    Eina_File_Direct_Info *info;
+   Eina_Bool free_stack = EINA_FALSE;
+   struct stat st;
+   unsigned int i;
+
+   if (!stack)
+     {
+        free_stack = EINA_TRUE;
+        stack = eina_inarray_new(sizeof(struct stat), 16);
+        if (!stack) return;
+     }
+   if (stat(path, &st) == -1) return;
+   for (i = 0; i < eina_inarray_count(stack); i++)
+     {
+        struct stat *st2 = eina_inarray_nth(stack, i);
+
+        if ((st2->st_dev == st.st_dev) && (st2->st_ino == st.st_ino))
+          return;
+     }
+   eina_inarray_push(stack, &st);
 
    if ((!ecore_file_is_dir(path)) && (base))
      {
@@ -240,16 +283,68 @@ icon_changes_listen_recursive(const char *path, Eina_Bool base)
         // monitoring the next specific child dir down until we are
         // monitoring the original path again.
      }
-   icon_changes_monitor_add(path);
+   if (ecore_file_is_dir(path)) icon_changes_monitor_add(path);
    it = eina_file_stat_ls(path);
-   if (!it) return;
+   if (!it) goto end;
    EINA_ITERATOR_FOREACH(it, info)
      {
+        if (info->path[info->name_start] == '.') continue;
         if (((info->type == EINA_FILE_LNK) && (ecore_file_is_dir(info->path))) ||
             (info->type == EINA_FILE_DIR))
-          icon_changes_monitor_add(info->path);
+          icon_changes_listen_recursive(stack, info->path, EINA_FALSE);
      }
    eina_iterator_free(it);
+end:
+   if (free_stack) eina_inarray_free(stack);
+}
+
+static void
+desktop_changes_listen_recursive(Eina_Inarray *stack, const char *path, Eina_Bool base)
+{
+   Eina_Iterator *it;
+   Eina_File_Direct_Info *info;
+   Eina_Bool free_stack = EINA_FALSE;
+   struct stat st;
+   unsigned int i;
+
+   if (!stack)
+     {
+        free_stack = EINA_TRUE;
+        stack = eina_inarray_new(sizeof(struct stat), 16);
+        if (!stack) return;
+     }
+   if (stat(path, &st) == -1) return;
+   for (i = 0; i < eina_inarray_count(stack); i++)
+     {
+        struct stat *st2 = eina_inarray_nth(stack, i);
+
+        if ((st2->st_dev == st.st_dev) && (st2->st_ino == st.st_ino))
+          return;
+     }
+   eina_inarray_push(stack, &st);
+   if ((!ecore_file_is_dir(path)) && (base))
+     {
+        // XXX: if it doesn't exist... walk the parent dirs back down
+        // to this path until we find one that doesn't exist, then
+        // monitor its parent, and treat it specially as it needs
+        // to look for JUST the creation of this specific child
+        // and when this child is created, replace this monitor with
+        // monitoring the next specific child dir down until we are
+        // monitoring the original path again.
+     }
+   if (ecore_file_is_dir(path)) desktop_changes_monitor_add(path);
+   it = eina_file_stat_ls(path);
+   if (!it) goto end;
+   EINA_ITERATOR_FOREACH(it, info)
+     {
+        if (info->path[info->name_start] == '.') continue;
+        if (((info->type == EINA_FILE_LNK) && (ecore_file_is_dir(info->path))) ||
+            (info->type == EINA_FILE_DIR))
+          desktop_changes_listen_recursive(stack, info->path, EINA_FALSE);
+     }
+   eina_iterator_free(it);
+end:
+   if (free_stack) eina_inarray_free(stack);
 }
 
 static void
@@ -260,100 +355,28 @@ icon_changes_listen(void)
    char buf[PATH_MAX];
    const char *dir;
 
-   icon_changes_listen_recursive(efreet_icon_deprecated_user_dir_get(), EINA_TRUE);
-   icon_changes_listen_recursive(efreet_icon_user_dir_get(), EINA_TRUE);
+   icon_changes_listen_recursive(NULL, efreet_icon_deprecated_user_dir_get(), EINA_TRUE);
+   icon_changes_listen_recursive(NULL, efreet_icon_user_dir_get(), EINA_TRUE);
    EINA_LIST_FOREACH(icon_extra_dirs, l, dir)
      {
-        icon_changes_listen_recursive(dir, EINA_TRUE);
+        icon_changes_listen_recursive(NULL, dir, EINA_TRUE);
      }
 
    xdg_dirs = efreet_data_dirs_get();
    EINA_LIST_FOREACH(xdg_dirs, l, dir)
      {
         snprintf(buf, sizeof(buf), "%s/icons", dir);
-        icon_changes_listen_recursive(buf, EINA_TRUE);
+        icon_changes_listen_recursive(NULL, buf, EINA_TRUE);
      }
 
 #ifndef STRICT_SPEC
    EINA_LIST_FOREACH(xdg_dirs, l, dir)
      {
         snprintf(buf, sizeof(buf), "%s/pixmaps", dir);
-        icon_changes_listen_recursive(buf, EINA_TRUE);
+        icon_changes_listen_recursive(NULL, buf, EINA_TRUE);
      }
 #endif
-
    icon_changes_monitor_add("/usr/share/pixmaps");
-}
-
-static void
-desktop_changes_cb(void *data EINA_UNUSED, Ecore_File_Monitor *em EINA_UNUSED,
-                   Ecore_File_Event event, const char *path)
-{
-   const char *ext;
-
-   /* TODO: If we get a stale symlink, we need to rerun cache creation */
-   /* TODO: Check for desktop*.cache, as this will be created when app is installed */
-   /* TODO: Do efreet_cache_icon_update() when app is installed, as it has the same
-    *       symlink problem */
-   switch (event)
-     {
-      case ECORE_FILE_EVENT_NONE:
-         /* noop */
-         break;
-
-      case ECORE_FILE_EVENT_CREATED_FILE:
-      case ECORE_FILE_EVENT_DELETED_FILE:
-      case ECORE_FILE_EVENT_MODIFIED:
-      case ECORE_FILE_EVENT_CLOSED:
-         ext = strrchr(path, '.');
-         if (ext && (!strcmp(ext, ".desktop") || !strcmp(ext, ".directory")))
-           cache_desktop_update();
-         break;
-
-      case ECORE_FILE_EVENT_DELETED_SELF:
-      case ECORE_FILE_EVENT_DELETED_DIRECTORY:
-         eina_hash_del_by_key(change_monitors, path);
-         cache_desktop_update();
-         break;
-
-      case ECORE_FILE_EVENT_CREATED_DIRECTORY:
-         desktop_changes_monitor_add(path);
-         cache_desktop_update();
-         break;
-     }
-}
-
-static void
-desktop_changes_monitor_add(const char *path)
-{
-   Ecore_File_Monitor *mon;
-
-   if (eina_hash_find(change_monitors, path)) return;
-   /* TODO: Check for symlink and monitor the real path */
-   mon = ecore_file_monitor_add(path,
-                                desktop_changes_cb,
-                                NULL);
-   if (mon)
-     eina_hash_add(change_monitors, path, mon);
-}
-
-static void
-desktop_changes_listen_recursive(const char *path)
-{
-   Eina_Iterator *it;
-   Eina_File_Direct_Info *info;
-
-   if (!ecore_file_is_dir(path)) return;
-   desktop_changes_monitor_add(path);
-   it = eina_file_stat_ls(path);
-   if (!it) return;
-   EINA_ITERATOR_FOREACH(it, info)
-     {
-        if (((info->type == EINA_FILE_LNK) && (ecore_file_is_dir(info->path))) ||
-            (info->type == EINA_FILE_DIR))
-          desktop_changes_listen_recursive(info->path);
-     }
-   eina_iterator_free(it);
 }
 
 static void
@@ -363,10 +386,9 @@ desktop_changes_listen(void)
    const char *path;
 
    EINA_LIST_FOREACH(desktop_system_dirs, l, path)
-      desktop_changes_listen_recursive(path);
-
+     desktop_changes_listen_recursive(NULL, path, EINA_TRUE);
    EINA_LIST_FOREACH(desktop_extra_dirs, l, path)
-      desktop_changes_listen_recursive(path);
+     desktop_changes_listen_recursive(NULL, path, EINA_TRUE);
 }
 
 static void
@@ -420,7 +442,48 @@ save_list(const char *file, Eina_List *l)
 static int
 strcmplen(const void *data1, const void *data2)
 {
-    return strncmp(data1, data2, eina_stringshare_strlen(data1));
+   return strncmp(data1, data2, eina_stringshare_strlen(data1));
+}
+
+static Eina_Bool
+cache_exe_data_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   Ecore_Exe_Event_Data *ev = event;
+
+   if (ev->exe == desktop_cache_exe)
+     {
+        Eina_Bool update = EINA_FALSE;
+
+        if ((ev->lines) && (*ev->lines->line == 'c')) update = EINA_TRUE;
+        desktop_exists = EINA_TRUE;
+        send_signal_desktop_cache_update(update);
+     }
+   else if (ev->exe == icon_cache_exe)
+     {
+        Eina_Bool update = EINA_FALSE;
+
+        if ((ev->lines) && (*ev->lines->line == 'c')) update = EINA_TRUE;
+        send_signal_icon_cache_update(update);
+     }
+   return ECORE_CALLBACK_RENEW;
+}
+
+static Eina_Bool
+cache_exe_del_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   Ecore_Exe_Event_Del *ev = event;
+
+   if (ev->exe == desktop_cache_exe)
+     {
+        desktop_cache_exe = NULL;
+        if (desktop_queue) cache_desktop_update();
+     }
+   else if (ev->exe == icon_cache_exe)
+     {
+        icon_cache_exe = NULL;
+        if (icon_queue) cache_icon_update(EINA_FALSE);
+     }
+   return ECORE_CALLBACK_RENEW;
 }
 
 /* external */
@@ -436,7 +499,7 @@ cache_desktop_dir_add(const char *dir)
      {
         /* Path is registered, but maybe not monitored */
         const char *path = eina_list_data_get(l);
-        if (!eina_hash_find(change_monitors, path))
+        if (!eina_hash_find(desktop_change_monitors, path))
           cache_desktop_update();
      }
    else if (!eina_list_search_unsorted_list(desktop_extra_dirs, EINA_COMPARE_CB(strcmp), san))
@@ -476,14 +539,6 @@ cache_icon_ext_add(const char *ext)
      }
 }
 
-void
-cache_desktop_update(void)
-{
-   if (desktop_cache_timer)
-     ecore_timer_del(desktop_cache_timer);
-   desktop_cache_timer = ecore_timer_add(1.0, desktop_cache_update_cache_cb, NULL);
-}
-
 Eina_Bool
 cache_desktop_exists(void)
 {
@@ -519,7 +574,10 @@ cache_init(void)
         goto error;
      }
 
-   change_monitors = eina_hash_string_superfast_new(EINA_FREE_CB(ecore_file_monitor_del));
+   icon_change_monitors = eina_hash_string_superfast_new
+     (EINA_FREE_CB(ecore_file_monitor_del));
+   desktop_change_monitors = eina_hash_string_superfast_new
+     (EINA_FREE_CB(ecore_file_monitor_del));
 
    efreet_cache_update = 0;
    if (!efreet_init()) goto error;
@@ -561,9 +619,10 @@ cache_shutdown(void)
    if (cache_exe_data_handler) ecore_event_handler_del(cache_exe_data_handler);
    cache_exe_data_handler = NULL;
 
-   if (change_monitors)
-     eina_hash_free(change_monitors);
-   change_monitors = NULL;
+   if (icon_change_monitors) eina_hash_free(icon_change_monitors);
+   icon_change_monitors = NULL;
+   if (desktop_change_monitors) eina_hash_free(desktop_change_monitors);
+   desktop_change_monitors = NULL;
    EINA_LIST_FREE(desktop_system_dirs, data)
       eina_stringshare_del(data);
    EINA_LIST_FREE(desktop_extra_dirs, data)

@@ -128,54 +128,75 @@ cache_add(const char *path, const char *file_id, int priority EINA_UNUSED, int *
 
 
 static int
-cache_scan(const char *path, const char *base_id, int priority, int recurse, int *changed)
+cache_scan(Eina_Inarray *stack, const char *path, const char *base_id,
+           int priority, int recurse, int *changed)
 {
     char *file_id = NULL;
     char id[PATH_MAX];
-    char buf[PATH_MAX];
     Eina_Iterator *it;
     Eina_File_Direct_Info *info;
+    Eina_Bool free_stack = EINA_FALSE;
+    struct stat st;
+    unsigned int i;
+    int ret = 1;
 
     if (!ecore_file_is_dir(path)) return 1;
 
-    it = eina_file_stat_ls(path);
-    if (!it) return 1;
+    if (!stack)
+    {
+        free_stack = EINA_TRUE;
+        stack = eina_inarray_new(sizeof(struct stat), 16);
+        if (!stack) goto end;
+    }
+    if (stat(path, &st) == -1) goto end;
+    for (i = 0; i < eina_inarray_count(stack); i++)
+    {
+        struct stat *st2 = eina_inarray_nth(stack, i);
 
+        if ((st2->st_dev == st.st_dev) && (st2->st_ino == st.st_ino))
+            goto end;
+    }
+    eina_inarray_push(stack, &st);
+
+    it = eina_file_stat_ls(path);
+    if (!it) goto end;
     id[0] = '\0';
     EINA_ITERATOR_FOREACH(it, info)
     {
-        const char *fname;
-       
-        fname = info->path + info->name_start;
+        const char *fname = info->path + info->name_start;
+
+        if (info->path[info->name_start] == '.') continue;
         if (base_id)
         {
-            if (*base_id)
-                snprintf(id, sizeof(id), "%s-%s", base_id, fname);
+            if (*base_id) snprintf(id, sizeof(id), "%s-%s", base_id, fname);
             else
             {
                 strncpy(id, fname, PATH_MAX);
-                id[PATH_MAX - 1] = '\0';
+                id[PATH_MAX - 1] = 0;
             }
             file_id = id;
         }
 
-        snprintf(buf, sizeof(buf), "%s/%s", path, fname);
-        if (info->type == EINA_FILE_DIR)
+        if (((info->type == EINA_FILE_LNK) && (ecore_file_is_dir(info->path))) ||
+            (info->type == EINA_FILE_DIR))
         {
             if (recurse)
-                cache_scan(buf, file_id, priority, recurse, changed);
+                cache_scan(stack, info->path, file_id, priority, recurse, changed);
         }
         else
         {
-            if (!cache_add(buf, file_id, priority, changed))
+            if (!cache_add(info->path, file_id, priority, changed))
             {
                 eina_iterator_free(it);
-                return 0;
+                ret = 0;
+                goto end;
             }
         }
     }
     eina_iterator_free(it);
-    return 1;
+end:
+    if (free_stack) eina_inarray_free(stack);
+    return ret;
 }
 
 static int
@@ -342,15 +363,16 @@ main(int argc, char **argv)
     if (!dirs) goto error;
 
     EINA_LIST_FREE(dirs, path)
-    {
+     {
         char file_id[PATH_MAX] = { '\0' };
 
-        if (!cache_scan(path, file_id, priority++, 1, &changed)) goto error;
+        if (!cache_scan(NULL, path, file_id, priority++, 1, &changed))
+          goto error;
         systemdirs = eina_list_append(systemdirs, path);
-    }
+     }
 
     EINA_LIST_FOREACH(extra_dirs, l, path)
-        if (!cache_scan(path, NULL, priority, 0, &changed)) goto error;
+      if (!cache_scan(NULL, path, NULL, priority, 0, &changed)) goto error;
 
     /* store util */
 #define STORE_HASH_ARRAY(_hash) \

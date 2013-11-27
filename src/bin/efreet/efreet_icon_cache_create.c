@@ -618,6 +618,10 @@ cache_theme_scan(const char *dir)
             (entry->type != EINA_FILE_LNK))
             continue;
 
+        if ((entry->type == EINA_FILE_LNK) &&
+            (!ecore_file_is_dir(entry->path)))
+            continue;
+
         name = entry->path + entry->name_start;
         theme = eina_hash_find(icon_themes, name);
 
