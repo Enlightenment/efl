@@ -201,6 +201,91 @@ _tt_text_replace(void *data       EINA_UNUSED,
 }
 
 static void
+_tt_orient_text_replace(void *data       EINA_UNUSED,
+                        Evas_Object     *obj,
+                        void *event_info EINA_UNUSED)
+{
+   static Elm_Tooltip_Orient orient;
+
+   orient = elm_object_tooltip_orient_get(obj);
+   orient++;
+   if (orient >= ELM_TOOLTIP_ORIENT_LAST)
+     orient = ELM_TOOLTIP_ORIENT_TOP_LEFT;
+   switch(orient)
+     {
+      case ELM_TOOLTIP_ORIENT_TOP_LEFT:
+        {
+           elm_object_tooltip_text_set(obj, "Top Left");
+           elm_object_tooltip_orient_set(obj, ELM_TOOLTIP_ORIENT_TOP_LEFT);
+           printf("elm_object_tooltip_orient_get :: Orientation: ELM_TOOLTIP_ORIENT_TOP_LEFT\n");
+           break;
+        }
+      case ELM_TOOLTIP_ORIENT_TOP:
+        {
+           elm_object_tooltip_text_set(obj, "Top");
+           elm_object_tooltip_orient_set(obj, ELM_TOOLTIP_ORIENT_TOP);
+           printf("elm_object_tooltip_orient_get :: Orientation: ELM_TOOLTIP_ORIENT_TOP\n");
+           break;
+        }
+      case ELM_TOOLTIP_ORIENT_TOP_RIGHT:
+        {
+           elm_object_tooltip_text_set(obj, "Top Right");
+           elm_object_tooltip_orient_set(obj, ELM_TOOLTIP_ORIENT_TOP_RIGHT);
+           printf("elm_object_tooltip_orient_get :: Orientation: ELM_TOOLTIP_ORIENT_TOP_RIGHT\n");
+           break;
+        }
+      case ELM_TOOLTIP_ORIENT_LEFT:
+        {
+           elm_object_tooltip_text_set(obj, "Left");
+           elm_object_tooltip_orient_set(obj, ELM_TOOLTIP_ORIENT_LEFT);
+           printf("elm_object_tooltip_orient_get :: Orientation: ELM_TOOLTIP_ORIENT_LEFT\n");
+           break;
+        }
+      case ELM_TOOLTIP_ORIENT_CENTER:
+        {
+           elm_object_tooltip_text_set(obj, "Center");
+           elm_object_tooltip_orient_set(obj, ELM_TOOLTIP_ORIENT_CENTER);
+           printf("elm_object_tooltip_orient_get :: Orientation: ELM_TOOLTIP_ORIENT_CENTER\n");
+           break;
+        }
+      case ELM_TOOLTIP_ORIENT_RIGHT:
+        {
+           elm_object_tooltip_text_set(obj, "Right");
+           elm_object_tooltip_orient_set(obj, ELM_TOOLTIP_ORIENT_RIGHT);
+           printf("elm_object_tooltip_orient_get :: Orientation: ELM_TOOLTIP_ORIENT_RIGHT\n");
+           break;
+        }
+      case ELM_TOOLTIP_ORIENT_BOTTOM_LEFT:
+        {
+           elm_object_tooltip_text_set(obj, "Bottom Left");
+           elm_object_tooltip_orient_set(obj, ELM_TOOLTIP_ORIENT_BOTTOM_LEFT);
+           printf("elm_object_tooltip_orient_get :: Orientation: ELM_TOOLTIP_ORIENT_BOTTOM_LEFT\n");
+           break;
+        }
+      case ELM_TOOLTIP_ORIENT_BOTTOM:
+        {
+           elm_object_tooltip_text_set(obj, "Bottom");
+           elm_object_tooltip_orient_set(obj, ELM_TOOLTIP_ORIENT_BOTTOM);
+           printf("elm_object_tooltip_orient_get :: Orientation: ELM_TOOLTIP_ORIENT_BOTTOM\n");
+           break;
+        }
+      case ELM_TOOLTIP_ORIENT_BOTTOM_RIGHT:
+        {
+           elm_object_tooltip_text_set(obj, "Bottom Right");
+           elm_object_tooltip_orient_set(obj, ELM_TOOLTIP_ORIENT_BOTTOM_RIGHT);
+           printf("elm_object_tooltip_orient_get :: Orientation: ELM_TOOLTIP_ORIENT_BOTTOM_RIGHT\n");
+           break;
+        }
+      default:
+        {
+           elm_object_tooltip_text_set(obj, "No Orientation");
+           elm_object_tooltip_orient_set(obj, ELM_TOOLTIP_ORIENT_NONE);
+           printf("elm_object_tooltip_orient_get :: Orientation: ELM_TOOLTIP_ORIENT_NONE\n");
+        }
+     };
+}
+
+static void
 _tt_timer_del(void *data       EINA_UNUSED,
               Evas *e          EINA_UNUSED,
               Evas_Object     *obj,
@@ -401,6 +486,14 @@ test_tooltip(void *data       EINA_UNUSED,
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Simple text tooltip");
    elm_object_tooltip_text_set(bt, "Simple text tooltip");
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Orient Tooltip, click to change");
+   elm_object_tooltip_text_set(bt, "Top Left");
+   elm_object_tooltip_orient_set(bt, ELM_TOOLTIP_ORIENT_TOP_LEFT);
+   evas_object_smart_callback_add(bt, "clicked", _tt_orient_text_replace, NULL);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
 

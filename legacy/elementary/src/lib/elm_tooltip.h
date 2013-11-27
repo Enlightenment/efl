@@ -10,6 +10,58 @@
  */
 
 /**
+ * @brief Possible orient values for tooltip.
+ *
+ * These values should be used in conjunction to elm_object_tooltip_orient_set() to
+ * set the position around which the tooltip should appear(relative to its parent)
+ *
+ * @ingroup Tooltips
+ */
+typedef enum
+{
+   ELM_TOOLTIP_ORIENT_NONE = 0, /**< Default value, Tooltip moves with mouse pointer */
+   ELM_TOOLTIP_ORIENT_TOP_LEFT, /**< Tooltip should appear at the top left of parent */
+   ELM_TOOLTIP_ORIENT_TOP, /**< Tooltip should appear at the top of parent */
+   ELM_TOOLTIP_ORIENT_TOP_RIGHT, /**< Tooltip should appear at the top right of parent */
+   ELM_TOOLTIP_ORIENT_LEFT, /**< Tooltip should appear at the left of parent */
+   ELM_TOOLTIP_ORIENT_CENTER, /**< Tooltip should appear at the center of parent */
+   ELM_TOOLTIP_ORIENT_RIGHT, /**< Tooltip should appear at the right of parent */
+   ELM_TOOLTIP_ORIENT_BOTTOM_LEFT, /**< Tooltip should appear at the bottom left of parent */
+   ELM_TOOLTIP_ORIENT_BOTTOM, /**< Tooltip should appear at the bottom of parent */
+   ELM_TOOLTIP_ORIENT_BOTTOM_RIGHT, /**< Tooltip should appear at the bottom right of parent */
+   ELM_TOOLTIP_ORIENT_LAST /**< Sentinel value, @b don't use */
+ } Elm_Tooltip_Orient;
+
+/**
+ * @def elm_object_tooltip_orient_set
+ * @since 1.9
+ *
+ * @brief Sets the orientation of the tooltip around the owner region
+ *
+ * Sets the position in which tooltip will appear around its owner. By default,
+ * #ELM_TOOLTIP_ORIENT_NONE is set.
+ *
+ * @param[in] obj owner widget.
+ * @param[in] orient orientation.
+ *
+ * @ingroup Tooltips
+ * @see @ref Elm_Tooltip_Orient for possible values.
+ */
+EAPI void elm_object_tooltip_orient_set(Evas_Object *obj, Elm_Tooltip_Orient orient);
+
+/**
+ * @brief Returns the orientation of Tooltip
+ *
+ * @param obj The owner object
+ * @return The orientation of the tooltip
+ *
+ * @ingroup Tooltips
+ * @see elm_object_tooltip_orient_set()
+ * @ref Elm_Tooltip_Orient for possible values.
+ */
+EAPI Elm_Tooltip_Orient elm_object_tooltip_orient_get(const Evas_Object *obj);
+
+/**
  * Called back when a widget's tooltip is activated and needs content.
  * @param data user-data given to elm_object_tooltip_content_cb_set()
  * @param obj owner widget.

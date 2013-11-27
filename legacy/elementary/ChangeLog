@@ -1760,3 +1760,7 @@
 2013-11-28  Daniel Juyung Seo (SeoZ)
 
         * spinner: fix mouse wheel support.
+
+2013-12-01  Abhinandan Aryadipta (aryarockstar)
+
+        * tooltip: Added elm_object_tooltip_orient_set() and elm_object_tooltip_orient_get().

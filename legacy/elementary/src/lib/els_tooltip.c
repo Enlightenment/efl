@@ -56,6 +56,7 @@ struct _Elm_Tooltip
      {
         double                x, y;
      } rel_pos;
+   Elm_Tooltip_Orient       orient; /** orientation for tooltip */
    double                   hide_timeout; /* from theme */
    Eina_Bool                visible_lock:1;
    Eina_Bool                changed_style:1;
@@ -155,8 +156,12 @@ _elm_tooltip_show(Elm_Tooltip *tt)
      (tt->eventarea, EVAS_CALLBACK_MOVE, _elm_tooltip_obj_move_cb, tt);
    evas_object_event_callback_add
      (tt->eventarea, EVAS_CALLBACK_RESIZE, _elm_tooltip_obj_resize_cb, tt);
-   evas_object_event_callback_add
-     (tt->eventarea, EVAS_CALLBACK_MOUSE_MOVE, (Evas_Object_Event_Cb)_elm_tooltip_obj_mouse_move_cb, tt);
+   //No movement of tooltip upon mouse move if orientation set
+   if ((tt->orient <= ELM_TOOLTIP_ORIENT_NONE) || (tt->orient >= ELM_TOOLTIP_ORIENT_LAST))
+     {
+        evas_object_event_callback_add
+        (tt->eventarea, EVAS_CALLBACK_MOUSE_MOVE, (Evas_Object_Event_Cb)_elm_tooltip_obj_mouse_move_cb, tt);
+     }
 
    tt->changed_style = EINA_TRUE;
    _elm_tooltip_reconfigure_job_start(tt);
@@ -520,6 +525,60 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
 
         msg = alloca(sizeof(Edje_Message_Float_Set) + sizeof(double));
         msg->count = 2;
+        //Orient calculations if orient set
+        switch(tt->orient)
+          {
+           case ELM_TOOLTIP_ORIENT_TOP_LEFT:
+             evas_object_move(tt->tooltip, ox - tw, oy - th);
+             rel_x = 1.1;
+             rel_y = 1.1;
+             break;
+           case ELM_TOOLTIP_ORIENT_TOP:
+             evas_object_move(tt->tooltip, ox + ((ow - tw) / 2), oy - th);
+             rel_x = 0.5;
+             rel_y = 1.1;
+             break;
+           case ELM_TOOLTIP_ORIENT_TOP_RIGHT:
+             evas_object_move(tt->tooltip, ox + ow, oy - th);
+             rel_x = -1.1;
+             rel_y = 1.1;
+             break;
+           case ELM_TOOLTIP_ORIENT_LEFT:
+             evas_object_move(tt->tooltip, ox - tw, oy + ((oh - th) / 2));
+             rel_x = 1.1;
+             rel_y = 0.5;
+             break;
+           case ELM_TOOLTIP_ORIENT_CENTER:
+             evas_object_move(tt->tooltip, ox + ((ow - tw) / 2), oy + ((oh - th) / 2));
+             rel_x = 0.5;
+             rel_y = 0.5;
+             break;
+           case ELM_TOOLTIP_ORIENT_RIGHT:
+             evas_object_move(tt->tooltip, ox + ow, oy + ((oh - th) / 2));
+             rel_x = -1.1;
+             rel_y = 0.5;
+             break;
+           case ELM_TOOLTIP_ORIENT_BOTTOM_LEFT:
+             evas_object_move(tt->tooltip, ox - tw, oy + oh);
+             rel_x = 1.1;
+             rel_y = -1.1;
+             break;
+           case ELM_TOOLTIP_ORIENT_BOTTOM:
+             evas_object_move(tt->tooltip, ox + ((ow - tw) / 2), oy + oh);
+             rel_x = 0.5;
+             rel_y = -1.1;
+             break;
+           case ELM_TOOLTIP_ORIENT_BOTTOM_RIGHT:
+             evas_object_move(tt->tooltip, ox + ow, oy + oh);
+             rel_x = -1.1;
+             rel_y = -1.1;
+             break;
+           default:
+             { /*Do Nothing!!*/
+             }
+          };
+        evas_object_show(tt->tooltip);
+
         msg->val[0] = rel_x;
         msg->val[1] = rel_y;
         tt->rel_pos.x = rel_x;
@@ -663,6 +722,28 @@ _elm_tooltip_data_clean(Elm_Tooltip *tt)
 
    tt->data = NULL;
    tt->del_cb = NULL;
+}
+
+EAPI void
+elm_object_tooltip_orient_set(Evas_Object *obj, Elm_Tooltip_Orient orient)
+{
+   ELM_TOOLTIP_GET_OR_RETURN(tt, obj);
+
+   if ((orient > ELM_TOOLTIP_ORIENT_NONE) && (orient < ELM_TOOLTIP_ORIENT_LAST))
+     tt->orient = orient;
+   else
+     tt->orient = ELM_TOOLTIP_ORIENT_NONE;
+}
+
+EAPI Elm_Tooltip_Orient
+elm_object_tooltip_orient_get(const Evas_Object *obj)
+{
+   ELM_TOOLTIP_GET_OR_RETURN(tt, obj, ELM_TOOLTIP_ORIENT_NONE);
+
+   Elm_Tooltip_Orient orient = ELM_TOOLTIP_ORIENT_NONE;
+
+   orient = tt->orient;
+   return orient;
 }
 
 /**
