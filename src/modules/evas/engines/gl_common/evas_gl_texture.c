@@ -54,6 +54,42 @@ static const struct {
 #endif
 };
 
+static const GLenum matching_rgba[] = { GL_RGBA4, GL_RGBA8, GL_RGBA12, GL_RGBA16, 0x0 };
+static const GLenum matching_alpha[] = { GL_ALPHA4, GL_ALPHA8, GL_ALPHA12, GL_ALPHA16, 0x0 };
+static const GLenum matching_luminance[] = { GL_LUMINANCE4, GL_LUMINANCE8, GL_LUMINANCE12, GL_LUMINANCE16, 0x0 };
+static const GLenum matching_luminance_alpha[] = { GL_LUMINANCE4_ALPHA4, GL_LUMINANCE8_ALPHA8, GL_LUMINANCE12_ALPHA12, GL_LUMINANCE16_ALPHA16, 0x0 };
+
+static const struct {
+   GLenum master;
+   const GLenum *matching;
+} matching_fmt[] = {
+  { GL_RGBA, matching_rgba },
+  { GL_ALPHA, matching_alpha },
+  { GL_LUMINANCE, matching_luminance },
+  { GL_LUMINANCE_ALPHA, matching_luminance_alpha }
+};
+
+static Eina_Bool
+_evas_gl_texture_match(GLenum intfmt, GLenum intfmtret)
+{
+   unsigned int i;
+
+   if (intfmt == intfmtret) return EINA_TRUE;
+
+   for (i = 0; i < sizeof (matching_fmt) / sizeof (matching_fmt[0]); i++)
+     if (matching_fmt[i].master == intfmt)
+       {
+          unsigned int j;
+
+          for (j = 0; matching_fmt[i].matching[j] != 0x0; j++)
+            if (matching_fmt[i].matching[j] == intfmtret)
+              return EINA_TRUE;
+          return EINA_FALSE;
+       }
+
+   return EINA_FALSE;
+}
+
 static int
 _evas_gl_texture_search_format(Eina_Bool alpha, Eina_Bool bgra)
 {
@@ -161,7 +197,7 @@ _tex_2d(Evas_Engine_GL_Context *gc, int intfmt, int w, int h, int fmt, int type)
         
         glGetTexLevelParameteriv(GL_TEXTURE_2D, 0,
                                  GL_TEXTURE_INTERNAL_FORMAT, &intfmtret);
-        if (intfmtret != intfmt)
+        if (!_evas_gl_texture_match(intfmt, intfmtret))
           {
              ERR("Fail tex alloc %ix%i", w, h);
              //        XXX send async err to evas

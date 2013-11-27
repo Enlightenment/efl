@@ -7,6 +7,10 @@
         * ecore anim: Fixed animator not working problem when source_set is
         changed back and forth very fast.
 
+2013-11-26  Cedric Bail
+
+        * Evas: Allow fuzziness on the texture format returned by GL.
+
 2013-11-25  Tom Hacohen
 
         * Evas textblock: Fixed wrapping of lines ending with whites.
