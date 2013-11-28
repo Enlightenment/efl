@@ -1210,7 +1210,7 @@ elm_scroller_movement_block_get(const Evas_Object *obj)
 {
    Elm_Scroller_Movement_Block block;
 
-   ELM_SCROLLABLE_CHECK(obj, ELM_SCROLLER_SINGLE_DIRECTION_NONE);
+   ELM_SCROLLABLE_CHECK(obj, ELM_SCROLLER_MOVEMENT_NO_BLOCK);
 
    eo_do((Eo *) obj, elm_scrollable_interface_movement_block_get(&block));
 
