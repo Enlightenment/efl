@@ -188,6 +188,15 @@ typedef void (*Elm_Drag_Accept) (void *data, Evas_Object *obj, Eina_Bool doaccep
 typedef void (*Elm_Drag_Pos) (void *data, Evas_Object *obj, Evas_Coord x, Evas_Coord y, Elm_Xdnd_Action action);
 
 /**
+ * Callback called when a drag starts from an item container
+ *
+ * @param data Application specific data
+ * @param obj The object where the drag started
+ * @since 1.8
+ */
+typedef void (*Elm_Drag_Start) (void *data, Evas_Object *obj);
+
+/**
  * @brief Set copy data for a widget.
  *
  * Set copy data and take ownership of selection. Format is used for specifying the selection type,
@@ -424,6 +433,8 @@ struct _Elm_Drag_User_Info
    Elm_Xdnd_Action action;
    Elm_Drag_Icon_Create_Cb createicon;
    void *createdata;
+   Elm_Drag_Start dragstart;
+   void *startcbdata;
    Elm_Drag_Pos dragpos;
    void *dragdata;
    Elm_Drag_Accept acceptcb;

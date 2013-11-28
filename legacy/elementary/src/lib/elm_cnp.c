@@ -3950,6 +3950,7 @@ _cont_obj_drag_start(void *data)
    Item_Container_Drag_Info *st = data;
    st->tm = NULL;
    Elm_Drag_User_Info *info = &st->user_info;
+   if (info->dragstart) info->dragstart(info->startcbdata, st->obj);
    elm_widget_scroll_freeze_push(st->obj);
    evas_object_event_callback_del_full
       (st->obj, EVAS_CALLBACK_MOUSE_MOVE, _cont_obj_mouse_move, st);
