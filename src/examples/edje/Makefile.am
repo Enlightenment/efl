@@ -131,7 +131,7 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/edje/include \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
--DPACKAGE_DATA_DIR=\"$(datadir)/edje\" \
+-DPACKAGE_DATA_DIR=\"$(datadir)/edje/examples\" \
 @EDJE_CFLAGS@
 
 CODEGEN_GENERATED = \
@@ -197,9 +197,9 @@ examples: $(EXTRA_PROGRAMS) $(EDJS)
 clean-local:
 	rm -f $(EXTRA_PROGRAMS) $(EDJS) $(CODEGEN_GENERATED)
 
-install-examples:
+install-examples: $(EDJS)
 	mkdir -p $(datadir)/edje/examples
-	$(install_sh_DATA) -c $(SRCS) $(DIST_EDCS) $(DATA_FILES) $(datadir)/edje/examples
+	$(install_sh_DATA) -c $(SRCS) $(EDJS) $(DIST_EDCS) $(DATA_FILES) $(datadir)/edje/examples
 
 uninstall-local:
 	for f in $(SRCS) $(DIST_EDCS) $(DATA_FILES); do \
