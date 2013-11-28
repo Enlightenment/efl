@@ -143,7 +143,6 @@ ecore_con_local_connect(Ecore_Con_Server *svr,
      }
    else
      {
-        socket_unix.sun_path[0] = '\0';
         strncpy(socket_unix.sun_path, buf, sizeof(socket_unix.sun_path));
         socket_unix_len = LENGTH_OF_SOCKADDR_UN(&socket_unix);
      }
