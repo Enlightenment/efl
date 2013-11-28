@@ -5658,11 +5658,15 @@ group { name: "elm/genlist/item/edit/default";
          signal: "elm,state,decorate,enabled"; source: "elm";
          action: STATE_SET "on" 0.0;
          target: "elm.swallow.decorate.content";
+         target: "elm.edit.icon.1";
+         target: "elm.edit.icon.2";
       }
       program {
          signal: "elm,state,decorate,disabled"; source: "elm";
          action: STATE_SET "default" 0.0;
          target: "elm.swallow.decorate.content";
+         target: "elm.edit.icon.1";
+         target: "elm.edit.icon.2";
       }
    }
 }
