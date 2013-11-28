@@ -1517,7 +1517,7 @@ _ecore_ipc_event_server_data(void *data EINA_UNUSED, int ev_type EINA_UNUSED, vo
         else
           {
              scroll:
-             if (buf) free(buf);
+             if (buf != svr->buf) free(buf);
              buf = malloc(svr->buf_size - offset);
              if (!buf)
                {
