@@ -4,8 +4,8 @@
 static inline Eina_Bool
 _evas_render_has_map(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 {
-   return ((!((obj->func->can_map) && (obj->func->can_map(eo_obj)))) &&
-           ((obj->map->cur.map) && (obj->map->cur.usemap)));
+   return (((obj->map->cur.map) && (obj->map->cur.usemap)) &&
+           !((obj->func->can_map) && (obj->func->can_map(eo_obj))));
    //   return ((obj->map->cur.map) && (obj->map->cur.usemap));
 }
 
