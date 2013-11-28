@@ -292,13 +292,20 @@ _resize_cb(void *data __UNUSED__,
            Evas_Object *obj,
            void *event_info __UNUSED__)
 {
-   Evas_Coord w, h;
+   Evas_Coord w, h, vw = 0, vh = 0, mw = 0, mh = 0;
    ELM_DISKSELECTOR_DATA_GET(obj, sd);
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    if ((sd->minw == -1) && (sd->minh == -1))
      elm_coords_finger_size_adjust(6, &sd->minw, 1, &sd->minh);
 
+   eo_do(obj, elm_scrollable_interface_content_viewport_size_get(&vw, &vh));
+   if (sd->items)
+     {
+        Elm_Diskselector_Item *it = sd->items->data;
+        evas_object_size_hint_min_get(VIEW(it), &mw, &mh);
+     }
+   if (sd->minh < mh) sd->minh = mh;
    edje_object_size_min_restricted_calc
      (wd->resize_obj, &sd->minw, &sd->minh, sd->minw,
      sd->minh);
@@ -458,14 +465,16 @@ _item_text_set_hook(Elm_Object_Item *item,
                     const char *label)
 {
    Elm_Diskselector_Item *it;
+   Evas_Coord mw, mh;
 
    if (part && strcmp(part, "default")) return;
 
    it = (Elm_Diskselector_Item *)item;
    eina_stringshare_replace(&it->label, label);
    edje_object_part_text_escaped_set(VIEW(it), "elm.text", it->label);
-
    _item_signal_emit(it);
+   edje_object_size_min_calc(VIEW(it), &mw, &mh);
+   evas_object_size_hint_min_set(VIEW(it), 0, mh);
 }
 
 static const char *
