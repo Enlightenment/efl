@@ -71,6 +71,7 @@ struct _Render_Engine
 static int initted = 0;
 static int gl_wins = 0;
 static int extn_have_buffer_age = 1;
+static int extn_have_y_inverted = 0;
 
 typedef void            (*_eng_fn) (void);
 typedef _eng_fn         (*glsym_func_eng_fn) ();
@@ -89,6 +90,9 @@ static Eina_Bool eng_preload_make_current(void *data, void *doit);
 #endif
 #ifndef EGL_BUFFER_AGE_EXT
 # define EGL_BUFFER_AGE_EXT 0x313d
+#endif
+#ifndef EGL_Y_INVERTED_NOK
+# define EGL_Y_INVERTED_NOK 0x307F
 #endif
 
 _eng_fn  (*glsym_eglGetProcAddress)            (const char *a) = NULL;
@@ -710,6 +714,10 @@ gl_extn_veto(Render_Engine *re)
         if (!strstr(str, "EGL_EXT_buffer_age"))
           {
              extn_have_buffer_age = 0;
+          }
+        if (strstr(str, "EGL_NOK_texture_from_pixmap"))
+          {
+             extn_have_y_inverted = 1;
           }
      }
    else
@@ -2225,6 +2233,7 @@ eng_image_native_set(void *data, void *image, void *native)
               EGLConfig egl_config;
               int config_attrs[20];
               int num_config, i = 0;
+              int yinvert = 1;
 
               eina_hash_add(re->win->gl_context->shared->native_pm_hash, &pmid, im);
 
@@ -2250,6 +2259,15 @@ eng_image_native_set(void *data, void *image, void *native)
               if (!eglChooseConfig(re->win->egl_disp, config_attrs,
                                    &egl_config, 1, &num_config))
                 ERR("eglChooseConfig() failed for pixmap 0x%x, num_config = %i", (unsigned int)pm, num_config);
+              else
+                {
+                  int val;
+                  if (extn_have_y_inverted &&
+                      eglGetConfigAttrib(re->win->egl_disp, egl_config,
+                                         EGL_Y_INVERTED_NOK, &val))
+                        yinvert = val;
+                }
+
               memcpy(&(n->ns), ns, sizeof(Evas_Native_Surface));
               n->pixmap = pm;
               n->visual = vis;
@@ -2263,7 +2281,7 @@ eng_image_native_set(void *data, void *image, void *native)
                 ERR("Try eglCreateImage on EGL with no support");
               if (!n->egl_surface)
                 ERR("eglCreatePixmapSurface() for 0x%x failed", (unsigned int)pm);
-              im->native.yinvert     = 1;
+              im->native.yinvert     = yinvert;
               im->native.loose       = 0;
               im->native.data        = n;
               im->native.func.data   = re;
