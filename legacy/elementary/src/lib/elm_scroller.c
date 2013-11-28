@@ -344,6 +344,7 @@ _elm_scroller_smart_sizing_eval(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    w = -1;
    h = -1;
+   vmw = vmh = 0;
    edje_object_size_min_calc(wd->resize_obj, &vmw, &vmh);
 
    if (sd->min_w) w = vmw + minw;
