@@ -1357,8 +1357,6 @@ _ecore_wl_input_mouse_up_send(Ecore_Wl_Input *input, Ecore_Wl_Window *win, int d
      ev->buttons = button;
 
    ev->timestamp = timestamp;
-   ev->x = input->sx;
-   ev->y = input->sy;
    ev->root.x = input->sx;
    ev->root.y = input->sy;
    ev->modifiers = input->modifiers;
@@ -1372,11 +1370,15 @@ _ecore_wl_input_mouse_up_send(Ecore_Wl_Input *input, Ecore_Wl_Window *win, int d
           ev->double_click = 1;
         if (down_info->did_triple)
           ev->triple_click = 1;
+        ev->x = down_info->sx;
+        ev->y = down_info->sy;
         ev->multi.x = down_info->sx;
         ev->multi.y = down_info->sy;
      }
    else
      {
+        ev->x = input->sx;
+        ev->y = input->sy;
         ev->multi.x = input->sx;
         ev->multi.y = input->sy;
      }
