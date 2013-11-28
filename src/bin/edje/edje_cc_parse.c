@@ -1347,7 +1347,7 @@ _betai(char *s, int *val)
 static char *
 _alphai(char *s, int *val)
 {
-   int a1, a2;
+   int a1 = 0, a2 = 0;
    char op;
 
    if (!val) return NULL;
