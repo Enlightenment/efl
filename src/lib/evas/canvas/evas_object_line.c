@@ -126,10 +126,14 @@ _line_xy_set(Eo *eo_obj, void *_pd, va_list *list)
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
-   if ((x1 == o->cur.x1) && (y1 == o->cur.y1) &&
-       (x2 == o->cur.x2) && (y2 == o->cur.y2)) return;
 
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+
+   if ((x1 == (obj->cur->geometry.x + o->cur.x1)) &&
+       (y1 == (obj->cur->geometry.y + o->cur.y1)) &&
+       (x2 == (obj->cur->geometry.x + o->cur.x2)) &&
+       (y2 == (obj->cur->geometry.y + o->cur.y2))) return;
+
    if (!(obj->layer->evas->is_frozen))
      {
         if (!evas_event_passes_through(eo_obj, obj) &&

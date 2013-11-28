@@ -366,6 +366,7 @@ Fixes:
      - Fix proxy render to update the proxies recursively. If a proxy has proxies, all the chainged proxies should be updated recursively.
      - Evas textblock: Fixed wrapping of lines ending with whites.
      - Evas: Fix the memory corruption introduced by evas fonts_zero.
+     - Evas: If the line goes to the 0, 0 then it won't be updated. Now it's fixed.
 
     * Ecore:
      - Don't leak fd on exec.

@@ -1,3 +1,8 @@
+2013-11-28  ChunEon Park (Hermet)
+
+        * Evas: If the line goes to the 0, 0 then it won't be updated. Now it's
+        fixed.
+
 2013-11-26  ChunEon Park (Hermet)
 
         * Evas: Fix the memory corruption introduced by evas fonts_zero.
