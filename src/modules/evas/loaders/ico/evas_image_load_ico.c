@@ -548,7 +548,7 @@ evas_image_load_file_data_ico(void *loader_data,
    w = chosen.w;
    h = chosen.h;
    cols = chosen.cols;
-   bpp = chosen.bpp;
+
    // changed since we loaded header?
    if (((int)prop->w != w) || ((int)prop->h != h)) goto close_file;
    
