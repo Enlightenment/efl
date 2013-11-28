@@ -48,6 +48,7 @@ _item_ptr_cmp(const void *d1, const void *d2)
 
 static Elm_Genlist_Item_Class *itc1;
 static Elm_Gengrid_Item_Class *gic;
+
 static char *
 gl_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNUSED)
 {
@@ -959,13 +960,13 @@ static Eina_Bool _drop_bg_change_cb(void *data EINA_UNUSED, Evas_Object *obj, El
 }
 
 void
-test_dnd_overlapping(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+test_dnd_multi_features(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    char buf[PATH_MAX];
    Evas_Object *win, *bxx, *bg;
    int i;
 
-   win = elm_win_util_standard_add("dnd-overlapping", "DnD-Overlapping");
+   win = elm_win_util_standard_add("dnd-multi-features", "DnD-Multi Features");
    elm_win_autodel_set(win, EINA_TRUE);
 
    bg = elm_bg_add(win);
@@ -1023,9 +1024,21 @@ test_dnd_overlapping(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
         elm_image_file_set(ic, buf, NULL);
         evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
         bt = elm_button_add(win);
-        elm_object_text_set(bt, "Drop into me to change my icon");
+        elm_object_text_set(bt, "Multi-callbacks check");
         elm_drop_target_add(bt, ELM_SEL_FORMAT_TARGETS, NULL, NULL, NULL, NULL, NULL, NULL, _drop_but_icon_change_cb, win);
         elm_drop_target_add(bt, ELM_SEL_FORMAT_TARGETS, _enter_but_cb, NULL, NULL, NULL, NULL, NULL, _drop_but_cb_remove_cb, NULL);
+        elm_object_part_content_set(bt, "icon", ic);
+        elm_box_pack_end(vert_box, bt);
+        evas_object_show(bt);
+        evas_object_show(ic);
+
+        ic = elm_icon_add(win);
+        snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
+        elm_image_file_set(ic, buf, NULL);
+        evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
+        bt = elm_button_add(win);
+        elm_object_text_set(bt, "Drop into me to change my icon");
+        elm_drop_target_add(bt, ELM_SEL_FORMAT_TARGETS, NULL, NULL, NULL, NULL, NULL, NULL, _drop_but_icon_change_cb, win);
         elm_object_part_content_set(bt, "icon", ic);
         elm_box_pack_end(vert_box, bt);
         evas_object_show(bt);
