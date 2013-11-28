@@ -4245,3 +4245,30 @@ elm_drag_item_container_add(Evas_Object *obj, double anim_tm, double tm_to_drag,
 }
 /* END   - Support elm containers for Drag */
 /* END   - Support elm containers for Drag and Drop */
+
+EAPI Eina_Bool
+elm_drag_cancel(Evas_Object *obj)
+{
+#ifdef HAVE_ELEMENTARY_X
+   Ecore_X_Window xwin = _x11_elm_widget_xwin_get(obj);
+   if (xwin)
+     {
+        ecore_x_pointer_ungrab();
+        ELM_SAFE_FREE(handler_up, ecore_event_handler_del);
+        ELM_SAFE_FREE(handler_status, ecore_event_handler_del);
+        ecore_x_dnd_abort(xwin);
+     }
+#endif
+#ifdef HAVE_ELEMENTARY_WAYLAND
+/* Have to complete here.
+ * if (elm_win_wl_window_get(obj)) ... */
+#endif
+
+   ELM_SAFE_FREE(dragwin, evas_object_del);
+   dragdonecb = NULL;
+   dragacceptcb = NULL;
+   dragposcb = NULL;
+   dragwidget = NULL;
+   doaccept = EINA_FALSE;
+   return EINA_TRUE;
+}

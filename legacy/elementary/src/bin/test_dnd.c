@@ -40,6 +40,9 @@ typedef struct _drag_anim_st drag_anim_st;
 #define DRAG_TIMEOUT 0.3
 #define ANIM_TIME 0.5
 
+static Eina_Bool _5s_cancel = EINA_FALSE;
+static Ecore_Timer *_5s_timeout = NULL;
+
 static int
 _item_ptr_cmp(const void *d1, const void *d2)
 {
@@ -378,6 +381,12 @@ _gl_dragdone(void *data, Evas_Object *obj EINA_UNUSED, Eina_Bool doaccept)
    Elm_Object_Item *it;
    Eina_List *l;
 
+   if (_5s_cancel)
+     {
+        ecore_timer_del(_5s_timeout);
+        _5s_timeout = NULL;
+     }
+
    if (doaccept)
      {  /* Remove items dragged out (accepted by target) */
         EINA_LIST_FOREACH(data, l, it)
@@ -386,6 +395,15 @@ _gl_dragdone(void *data, Evas_Object *obj EINA_UNUSED, Eina_Bool doaccept)
 
    eina_list_free(data);
    return;
+}
+
+static Eina_Bool
+_5s_timeout_gone(void *data)
+{
+   printf("Cancel DnD\n");
+   Evas_Object *obj = data;
+   elm_drag_cancel(obj);
+   return ECORE_CALLBACK_CANCEL;
 }
 
 static Evas_Object *
@@ -658,6 +676,14 @@ _grid_icons_get(void *data)
    return icons;
 }
 
+static void
+_gl_dragstart(void *data EINA_UNUSED, Evas_Object *obj)
+{
+   printf("<%s> <%d>\n", __func__, __LINE__);
+   if (_5s_cancel)
+      _5s_timeout = ecore_timer_add(5.0, _5s_timeout_gone, obj);
+}
+
 static Eina_Bool
 _grid_data_getcb(Evas_Object *obj,  /* The genlist object */
       Elm_Object_Item *it,
@@ -666,6 +692,7 @@ _grid_data_getcb(Evas_Object *obj,  /* The genlist object */
    info->format = ELM_SEL_FORMAT_TARGETS;
    info->createicon = _gl_createicon;
    info->createdata = it;
+   info->dragstart = _gl_dragstart;
    info->icons = _grid_icons_get(obj);
    info->dragdone = _gl_dragdone;
 
@@ -959,6 +986,12 @@ static Eina_Bool _drop_bg_change_cb(void *data EINA_UNUSED, Evas_Object *obj, El
    return EINA_TRUE;
 }
 
+static void
+_5s_cancel_ck_changed(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   _5s_cancel = elm_check_state_get(obj);
+}
+
 void
 test_dnd_multi_features(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
@@ -1018,6 +1051,15 @@ test_dnd_multi_features(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, vo
         elm_box_pack_end(bxx, vert_box);
         evas_object_show(vert_box);
         elm_drop_target_add(vert_box, ELM_SEL_FORMAT_TARGETS, NULL, NULL, NULL, NULL, NULL, NULL, _drop_box_button_new_cb, win);
+
+        _5s_cancel = EINA_FALSE;
+        Evas_Object *ck = elm_check_add(vert_box);
+        elm_object_style_set(ck, "toggle");
+        elm_object_text_set(ck, "Cancel after 5s:");
+        elm_check_state_set(ck, _5s_cancel);
+        evas_object_smart_callback_add(ck, "changed", _5s_cancel_ck_changed, NULL);
+        elm_box_pack_end(vert_box, ck);
+        evas_object_show(ck);
 
         ic = elm_icon_add(win);
         snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());

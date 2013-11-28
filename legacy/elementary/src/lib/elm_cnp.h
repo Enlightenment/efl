@@ -367,6 +367,21 @@ EAPI Eina_Bool elm_drag_start(Evas_Object *obj, Elm_Sel_Format format,
                               Elm_Drag_Pos dragpos, void *dragdata,
                               Elm_Drag_Accept acceptcb, void *acceptdata,
                               Elm_Drag_State dragdone, void *donecbdata);
+
+/**
+ * @brief Cancels the current drag operation
+ *
+ * It can only be initiated from the source window.
+ *
+ * @param obj The source of the current drag.
+ * @return Returns EINA_TRUE, if successful, or EINA_FALSE if not.
+ *
+ * @ingroup CopyPaste
+ *
+ * @since 1.9
+ */
+EAPI Eina_Bool elm_drag_cancel(Evas_Object *obj);
+
 /**
  * @brief Changes the current drag action
  *
