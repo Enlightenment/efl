@@ -330,87 +330,46 @@ eina_array_remove(Eina_Array *array, Eina_Bool (*keep)(void *data,
                                                        void *gdata),
                   void *gdata)
 {
-   void **tmp;
-   /* WARNING:
-      The algorithm does exit before using unitialized data. So compiler is
-      giving you a false positiv here too.
-    */
-   void *data = NULL;
-   unsigned int total = 0;
-   unsigned int limit;
-   unsigned int i;
+   unsigned int i, j, size, count;
+   void *data, **tmp;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(array, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(keep,  EINA_FALSE);
    EINA_MAGIC_CHECK_ARRAY(array);
 
-   if (array->total == 0)
-      return EINA_TRUE;
-
-   for (i = 0; i < array->count; ++i)
+   if (array->total == 0) return EINA_TRUE;
+   // 1. walk through all items and shuffle down any items on top of
+   // previously removed item slots
+   for (count = array->count, tmp = array->data, j = 0, i = 0; i < count; i++)
      {
-        data = eina_array_data_get(array, i);
-
-        if (keep(data, gdata) == EINA_FALSE)
-           break;
-     }
-   limit = i;
-   if (i < array->count)
-      ++i;
-
-   for (; i < array->count; ++i)
-     {
-        data = eina_array_data_get(array, i);
-
+        data = tmp[i];
         if (keep(data, gdata) == EINA_TRUE)
-           break;
+          {
+             // we keep it - store it (again) (and j will be <= i ALWAYS)
+             tmp[j] = data;
+             j++;
+          }
      }
-   /* Special case all objects that need to stay are at the beginning of the array. */
-   if (i == array->count)
+   array->count = j;
+   // 2. if we reduced size by more than N (block size) then realloc back down
+   if ((array->total - array->count) >= array->step)
      {
-        array->count = limit;
         if (array->count == 0)
           {
              free(array->data);
              array->total = 0;
              array->data = NULL;
           }
-
-        return EINA_TRUE;
-     }
-
-   tmp = malloc(sizeof (void *) * array->total);
-   if (!tmp) return EINA_FALSE;
-
-   memcpy(tmp, array->data, limit * sizeof(void *));
-   total = limit;
-
-   if (i < array->count)
-     {
-        tmp[total] = data;
-        total++;
-        ++i;
-     }
-
-   for (; i < array->count; ++i)
-     {
-        data = eina_array_data_get(array, i);
-
-        if (keep(data, gdata))
+        else
           {
-             tmp[total] = data;
-             total++;
+             // realloc back down - rounding up to the nearest step size
+             size = (array->count + array->step - 1) % array->step;
+             tmp = realloc(array->data, sizeof(void *) * size);
+             if (!tmp) return EINA_FALSE;
+             array->total = size;
+             array->data = tmp;
           }
      }
-
-   free(array->data);
-
-   /* If we do not keep any object in the array, we should have exited
-      earlier in test (i == array->count). */
-   assert(total != 0);
-
-   array->data = tmp;
-   array->count = total;
    return EINA_TRUE;
 }
 
