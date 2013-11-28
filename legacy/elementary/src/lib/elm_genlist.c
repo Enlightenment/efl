@@ -3137,6 +3137,7 @@ _item_del(Elm_Gen_Item *it)
    elm_genlist_item_class_unref((Elm_Genlist_Item_Class *)it->itc);
    evas_event_thaw(evas_object_evas_get(obj));
    evas_event_thaw_eval(evas_object_evas_get(obj));
+   if (!sd->queue) _item_scroll(sd);
 }
 
 static void
@@ -3959,6 +3960,7 @@ _queue_process(Elm_Genlist_Smart_Data *sd)
              if ((t - t0) > (ecore_animator_frametime_get())) break;
           }
      }
+   if (!sd->queue) _item_scroll(sd);
    return n;
 }
 
@@ -6302,10 +6304,11 @@ _elm_genlist_item_coordinates_calc(Elm_Object_Item *item,
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
 
    if (it->generation < sd->generation) return EINA_FALSE;
-   if (!((sd->homogeneous) &&
-         (sd->mode == ELM_LIST_COMPRESS)))
+   if ((sd->queue) ||
+       (!((sd->homogeneous) &&
+          (sd->mode == ELM_LIST_COMPRESS))))
      {
-        if ((it->item->queued) || (!it->item->mincalcd))
+        if ((it->item->queued) || (!it->item->mincalcd) || (sd->queue))
           {
              sd->show_item = it;
              sd->bring_in = bring_in;
