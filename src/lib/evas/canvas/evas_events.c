@@ -1212,7 +1212,8 @@ _post_up_handle(Evas *eo_e, unsigned int timestamp, const void *data)
      }
    _evas_post_event_callback_call(eo_e, e);
 
-   if (copy) copy = eina_list_free(copy);
+   eina_list_free(copy);
+
    if (e->pointer.inside)
      {
         Evas_Event_Mouse_In ev_in;
@@ -1372,7 +1373,7 @@ _canvas_event_feed_mouse_up(Eo *eo_e, void *_pd, va_list *list)
                   break;
                }
           }
-        if (copy) copy = eina_list_free(copy);
+        eina_list_free(copy);
         e->last_mouse_up_counter++;
         _evas_post_event_callback_call(eo_e, e);
         if (ev.dev) _evas_device_unref(ev.dev);
@@ -1497,7 +1498,7 @@ _canvas_event_feed_mouse_wheel(Eo *eo_e, void *_pd, va_list *list)
              if (e->delete_me || e->is_frozen) break;
           }
      }
-   if (copy) copy = eina_list_free(copy);
+   eina_list_free(copy);
    _evas_post_event_callback_call(eo_e, e);
 
    if (ev.dev) _evas_device_unref(ev.dev);
@@ -1626,7 +1627,8 @@ _canvas_event_feed_mouse_move_internal(Eo *eo_e, void *_pd, int x, int y, unsign
              ev.dev = _evas_device_top_get(eo_e);
              if (ev.dev) _evas_device_ref(ev.dev);
              
-             if (copy) eina_list_free(copy);
+             eina_list_free(copy);
+
              while (outs)
                {
                   Evas_Object *eo_obj;
@@ -1773,7 +1775,8 @@ _canvas_event_feed_mouse_move_internal(Eo *eo_e, void *_pd, int x, int y, unsign
         _evas_object_event_new();
 
         event_id2 = _evas_event_counter;
-        if (copy) copy = eina_list_free(copy);
+        eina_list_free(copy);
+
         /* go thru our current list of ins */
         EINA_LIST_FOREACH(ins, l, eo_obj)
           {
@@ -1961,7 +1964,8 @@ nogrep:
         _evas_object_event_new();
 
         event_id2 = _evas_event_counter;
-        if (copy) copy = eina_list_free(copy);
+        eina_list_free(copy);
+
         /* go thru our current list of ins */
         EINA_LIST_FOREACH(newin, l, eo_obj)
           {
@@ -2185,7 +2189,8 @@ _canvas_event_feed_mouse_out(Eo *eo_e, void *_pd, va_list *list)
           }
         obj->mouse_grabbed = 0;
      }
-   if (copy) copy = eina_list_free(copy);
+   eina_list_free(copy);
+
    /* free our old list of ins */
    e->pointer.object.in =  eina_list_free(e->pointer.object.in);
    e->pointer.mouse_grabbed = 0;
@@ -2275,7 +2280,8 @@ _canvas_event_feed_multi_down_internal(Evas *eo_e, void *_pd,
           _evas_event_source_multi_down_events(eo_obj, eo_e, &ev, event_id);
         if (e->delete_me || e->is_frozen) break;
      }
-   if (copy) eina_list_free(copy);
+   eina_list_free(copy);
+
    _evas_post_event_callback_call(eo_e, e);
    /* update touch point's state to EVAS_TOUCH_POINT_STILL */
    _evas_touch_point_update(eo_e, d, x, y, EVAS_TOUCH_POINT_STILL);
@@ -2438,7 +2444,7 @@ _canvas_event_feed_multi_up_internal(Evas *eo_e, void *_pd,
           _evas_event_source_multi_up_events(eo_obj, eo_e, &ev, event_id);
         if (e->delete_me || e->is_frozen) break;
      }
-   if (copy) copy = eina_list_free(copy);
+   eina_list_free(copy);
    if ((e->pointer.mouse_grabbed == 0) && !_post_up_handle(eo_e, timestamp, data))
       _evas_post_event_callback_call(eo_e, e);
    /* remove released touch point from the touch point list */
@@ -2681,7 +2687,7 @@ _canvas_event_feed_multi_move_internal(Eo *eo_e, void *_pd, int d, int x,
                }
              if (e->delete_me || e->is_frozen) break;
           }
-        if (copy) copy = eina_list_free(copy);
+        eina_list_free(copy);
         if (e->pointer.mouse_grabbed == 0)
           {
              /* free our old list of ins */
@@ -3049,7 +3055,7 @@ _canvas_event_feed_hold(Eo *eo_e, void *_pd, va_list *list)
           }
         if (e->delete_me || e->is_frozen) break;
      }
-   if (copy) copy = eina_list_free(copy);
+   eina_list_free(copy);
    _evas_post_event_callback_call(eo_e, e);
    if (ev.dev) _evas_device_unref(ev.dev);
    _evas_unwalk(e);
