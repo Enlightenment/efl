@@ -431,8 +431,10 @@ _elm_spinner_smart_event(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 
    Evas_Object *src = va_arg(*list, Evas_Object *);
    Evas_Callback_Type type = va_arg(*list, Evas_Callback_Type);
-   Evas_Event_Key_Down *ev = va_arg(*list, void *);
+   void *event_info = va_arg(*list, void *);
+   Evas_Event_Key_Down *ev = event_info;
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Evas_Event_Mouse_Wheel *mev;
 
    if (ret) *ret = EINA_FALSE;
    (void) src;
@@ -489,6 +491,20 @@ _elm_spinner_smart_event(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
         else return;
 
         goto success;
+     }
+   else if (type == EVAS_CALLBACK_MOUSE_WHEEL)
+     {
+        mev = event_info;
+        if (mev->z < 0)
+          {
+             _val_inc_start(obj);
+             elm_layout_signal_emit(obj, "elm,right,anim,activate", "elm");
+          }
+        else
+          {
+             _val_dec_start(obj);
+             elm_layout_signal_emit(obj, "elm,left,anim,activate", "elm");
+          }
      }
 
    return;

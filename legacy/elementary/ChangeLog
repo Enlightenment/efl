@@ -1756,3 +1756,7 @@
 2013-11-25  ChunEon Park (Hermet)
 
         * image: fix the elm_image_prescale_set() to work properly.
+
+2013-11-28  Daniel Juyung Seo (SeoZ)
+
+        * spinner: fix mouse wheel support.
