@@ -686,14 +686,6 @@ _sel_eval(Evas_Object *obj,
 }
 
 static void
-_on_mouse_wheel(void *data __UNUSED__,
-                Evas *e __UNUSED__,
-                Evas_Object *o __UNUSED__,
-                void *event_info __UNUSED__)
-{
-}
-
-static void
 _on_mouse_down(void *data,
                Evas *e __UNUSED__,
                Evas_Object *o __UNUSED__,
@@ -920,8 +912,6 @@ _elm_index_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    evas_object_size_hint_min_set(o, minw, minh);
    elm_layout_content_set(obj, "elm.swallow.event.0", o);
 
-   evas_object_event_callback_add
-     (o, EVAS_CALLBACK_MOUSE_WHEEL, _on_mouse_wheel, obj);
    evas_object_event_callback_add
      (o, EVAS_CALLBACK_MOUSE_DOWN, _on_mouse_down, obj);
    evas_object_event_callback_add
