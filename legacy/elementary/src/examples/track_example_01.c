@@ -5,7 +5,7 @@
  * See stdout/stderr for output. Compile with:
  *
  * @verbatim
- * gcc -g track_example_01.c -o list_example_01 `pkg-config --cflags --libs elementary`
+ * gcc -g track_example_01.c -o track_example_01 `pkg-config --cflags --libs elementary`
  * @endverbatim
  */
 
@@ -30,7 +30,7 @@ item_select_cb(void *data, Evas_Object *obj, void *event_info)
 EAPI_MAIN int
 elm_main(int argc, char **argv)
 {
-   Evas_Object *win, *bx, *li;
+   Evas_Object *win, *li;
    unsigned int i;
    static const char *lbl[] =
      {
@@ -45,26 +45,20 @@ elm_main(int argc, char **argv)
 
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
 
-   win = elm_win_util_standard_add("list", "List Example");
+   win = elm_win_util_standard_add("track-example", "Track Example");
    elm_win_autodel_set(win, EINA_TRUE);
-
-   bx = elm_box_add(win);
-   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, bx);
-   evas_object_show(bx);
+   evas_object_resize(win, 320, 240);
+   evas_object_show(win);
 
    li = elm_list_add(win);
    evas_object_size_hint_weight_set(li, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(li, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_box_pack_end(bx, li);
+   elm_win_resize_object_add(win, li);
+
    for (i = 0; i < sizeof(lbl) / sizeof(lbl[0]); i++)
      elm_list_item_append(li, lbl[i], NULL, NULL, item_select_cb, NULL);
 
    evas_object_show(li);
    elm_list_go(li);
-
-   evas_object_resize(win, 320, 240);
-   evas_object_show(win);
 
    elm_run();
    elm_shutdown();
