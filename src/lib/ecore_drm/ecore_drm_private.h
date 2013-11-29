@@ -88,6 +88,7 @@ struct _Ecore_Drm_Device
 {
    int fd;
    const char *devname;
+   const char *devpath;
 };
 
 #endif
