@@ -13,6 +13,8 @@
 #include <sys/types.h>
 #include <sys/signalfd.h>
 #include <poll.h>
+
+#include <Eina.h>
 #include <Ecore_Drm.h>
 
 static int _drm_read_fd = -1;
@@ -119,7 +121,7 @@ _read_msg(void)
 }
 
 int 
-main(int argc, char **argv)
+main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    fprintf(stderr, "Ecore_Drm_Launch Started\n");
 
