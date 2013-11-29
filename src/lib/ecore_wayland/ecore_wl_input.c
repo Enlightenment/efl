@@ -181,7 +181,7 @@ _ecore_wl_input_grab_release(Ecore_Wl_Input *input, Ecore_Wl_Window *win)
    if (!input) return;
    if (input->grab != win) return;
 
-   _ecore_wl_input_mouse_up_send(input, input->pointer_focus,
+   _ecore_wl_input_mouse_up_send(input, input->grab,
                                  0, input->grab_button, input->grab_timestamp);
 
    ecore_wl_input_ungrab(input);
@@ -1003,16 +1003,16 @@ _ecore_wl_input_cb_touch_down(void *data, struct wl_touch *touch EINA_UNUSED, un
    input->sx = wl_fixed_to_int(x);
    input->sy = wl_fixed_to_int(y);
 
-   _ecore_wl_input_mouse_move_send(input, input->pointer_focus, timestamp, id);
+   _ecore_wl_input_mouse_move_send(input, input->touch_focus, timestamp, id);
    _ecore_wl_input_cb_pointer_enter(data, NULL, serial, surface, x, y);
    if ((input->touch_focus) && (!input->grab))
      {
-        ecore_wl_input_grab(input, input->pointer_focus, BTN_LEFT);
+        ecore_wl_input_grab(input, input->touch_focus, BTN_LEFT);
         input->grab_timestamp = timestamp;
      }
 
    _ecore_wl_input_mouse_down_send(input, input->touch_focus,
-                                   id, 0, timestamp);
+                                   id, BTN_LEFT, timestamp);
 }
 
 static void 
@@ -1028,7 +1028,7 @@ _ecore_wl_input_cb_touch_up(void *data, struct wl_touch *touch EINA_UNUSED, unsi
    input->timestamp = timestamp;
    input->display->serial = serial;
 
-   _ecore_wl_input_mouse_up_send(input, input->touch_focus, id, 0, timestamp);
+   _ecore_wl_input_mouse_up_send(input, input->touch_focus, id, BTN_LEFT, timestamp);
    if ((input->grab) && (input->grab_button == BTN_LEFT))
      ecore_wl_input_ungrab(input);
 }
