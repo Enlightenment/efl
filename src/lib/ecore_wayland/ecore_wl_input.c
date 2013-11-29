@@ -35,13 +35,6 @@
 # define BTN_BACK 0x116
 #endif
 
-typedef struct _Ecore_Wl_Touch_Point
-{
-   int id;
-   Ecore_Wl_Window *window;
-   struct wl_list link;
-} Ecore_Wl_Touch_Point;
-
 typedef struct _Ecore_Wl_Mouse_Down_Info
 {
    EINA_INLIST;
@@ -332,7 +325,6 @@ _ecore_wl_input_add(Ecore_Wl_Display *ewd, unsigned int id)
                         &_ecore_wl_seat_listener, input);
    wl_seat_set_user_data(input->seat, input);
 
-   wl_list_init(&input->touch_points);
    wl_array_init(&input->data_types);
 
    input->data_device = 
@@ -358,11 +350,6 @@ _ecore_wl_input_del(Ecore_Wl_Input *input)
 
    if (input->touch_focus)
      {
-        Ecore_Wl_Window *win = NULL;
-
-        if ((win = input->touch_focus))
-          win->touch_device = NULL;
-
         input->touch_focus = NULL;
      }
 
@@ -1008,7 +995,6 @@ _ecore_wl_input_cb_touch_down(void *data, struct wl_touch *touch EINA_UNUSED, un
 {
    Ecore_Wl_Input *input;
    Ecore_Wl_Window *win;
-   Ecore_Wl_Touch_Point *point;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -1017,19 +1003,14 @@ _ecore_wl_input_cb_touch_down(void *data, struct wl_touch *touch EINA_UNUSED, un
 
    if (!(win = ecore_wl_window_surface_find(surface))) return;
 
-   if (!(point = malloc(sizeof(Ecore_Wl_Touch_Point))))
-     return;
-
-   point->id = id;
-   point->window = win;
-   wl_list_insert(&input->touch_points, &point->link);
-
    input->touch_focus = win;
    input->timestamp = timestamp;
    input->display->serial = serial;
    input->sx = wl_fixed_to_int(x);
    input->sy = wl_fixed_to_int(y);
 
+   _ecore_wl_input_mouse_move_send(input, input->pointer_focus, timestamp, id);
+   _ecore_wl_input_cb_pointer_enter(data, NULL, serial, surface, x, y);
    _ecore_wl_input_mouse_down_send(input, input->touch_focus,
                                    id, 0, timestamp);
 }
@@ -1038,7 +1019,6 @@ static void
 _ecore_wl_input_cb_touch_up(void *data, struct wl_touch *touch EINA_UNUSED, unsigned int serial, unsigned int timestamp, int id)
 {
    Ecore_Wl_Input *input;
-   Ecore_Wl_Touch_Point *point, *tmp;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -1048,25 +1028,13 @@ _ecore_wl_input_cb_touch_up(void *data, struct wl_touch *touch EINA_UNUSED, unsi
    input->timestamp = timestamp;
    input->display->serial = serial;
 
-   wl_list_for_each_safe(point, tmp, &input->touch_points, link)
-     {
-        if (point->id != id) continue;
-
-        _ecore_wl_input_mouse_up_send(input, input->touch_focus,
-                                      id, 0, timestamp);
-
-        wl_list_remove(&point->link);
-        free(point);
-
-        return;
-     }
+   _ecore_wl_input_mouse_up_send(input, input->touch_focus, id, 0, timestamp);
 }
 
 static void 
 _ecore_wl_input_cb_touch_motion(void *data, struct wl_touch *touch EINA_UNUSED, unsigned int timestamp, int id, wl_fixed_t x, wl_fixed_t y)
 {
    Ecore_Wl_Input *input;
-   Ecore_Wl_Touch_Point *point;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -1077,13 +1045,7 @@ _ecore_wl_input_cb_touch_motion(void *data, struct wl_touch *touch EINA_UNUSED, 
    input->sx = wl_fixed_to_int(x);
    input->sy = wl_fixed_to_int(y);
 
-   wl_list_for_each(point, &input->touch_points, link)
-     {
-        if (point->id != id) continue;
-        _ecore_wl_input_mouse_move_send(input, 
-                                        input->touch_focus, timestamp, id);
-        return;
-     }
+   _ecore_wl_input_mouse_move_send(input, input->touch_focus, timestamp, id);
 }
 
 static void 

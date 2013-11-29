@@ -138,7 +138,6 @@ struct _Ecore_Wl_Window
 
    Ecore_Wl_Input *pointer_device;
    Ecore_Wl_Input *keyboard_device;
-   Ecore_Wl_Input *touch_device;
 
    Eina_Bool anim_pending : 1;
    struct wl_callback *anim_callback;
@@ -160,8 +159,6 @@ struct _Ecore_Wl_Input
    struct wl_keyboard *keyboard;
 
    struct wl_touch *touch;
-   struct wl_list touch_points;
-   int touch_count;
 
    const char *cursor_name;
    struct wl_cursor *cursor;
