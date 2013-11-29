@@ -479,6 +479,8 @@ ecore_file_mkpath(const char *path)
    char ss[PATH_MAX];
    unsigned int i;
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(path, EINA_FALSE);
+
    if (ecore_file_is_dir(path))
      return EINA_TRUE;
 
