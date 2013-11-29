@@ -127,6 +127,10 @@ ecore_drm_device_find(const char *name, const char *seat)
              /* set device name */
              dev->devname = 
                eina_stringshare_add(udev_device_get_devnode(tmpdevice));
+
+             /* set device path */
+             dev->devpath = 
+               eina_stringshare_add(udev_device_get_syspath(tmpdevice));
           }
      }
 
@@ -154,6 +158,49 @@ ecore_drm_device_free(Ecore_Drm_Device *dev)
    /* free device name */
    if (dev->devname) eina_stringshare_del(dev->devname);
 
+   /* free device path */
+   if (dev->devpath) eina_stringshare_del(dev->devpath);
+
    /* free structure */
    free(dev);
+}
+
+/**
+ * Open an Ecore_Drm_Device
+ *
+ * This function will open an existing Ecore_Drm_Device for use.
+ * 
+ * @param dev The Ecore_Drm_Device to try and open
+ * 
+ * @return EINA_TRUE on success, EINA_FALSE on failure
+ * 
+ * @ingroup Ecore_Drm_Device_Group
+ */
+EAPI Eina_Bool 
+ecore_drm_device_open(Ecore_Drm_Device *dev)
+{
+   /* check for valid device */
+   if ((!dev) || (!dev->devpath)) return EINA_FALSE;
+
+   return EINA_TRUE;
+}
+
+/**
+ * Close an Ecore_Drm_Device
+ *
+ * This function will close a previously opened Ecore_Drm_Device
+ * 
+ * @param dev The Ecore_Drm_Device to free
+ * 
+ * @return EINA_TRUE on success, EINA_FALSE on failure
+ * 
+ * @ingroup Ecore_Drm_Device_Group
+ */
+EAPI Eina_Bool 
+ecore_drm_device_close(Ecore_Drm_Device *dev)
+{
+   /* check for valid device */
+   if (!dev) return EINA_TRUE;
+
+   return EINA_TRUE;
 }
