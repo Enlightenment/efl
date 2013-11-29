@@ -476,6 +476,7 @@ Required by default:
     libgl
     giflib
     util-linux
+    systemd / libudev
 
 Recommended requirements (highly recommended):
 
