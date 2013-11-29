@@ -728,12 +728,22 @@ _property_iter(void *data, const void *key, Eldbus_Message_Iter *var)
 }
 
 static void
-_props_get_all(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUSED)
+_on_monitored_proxy_del(void *data, Eldbus_Proxy *proxy EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Eldbus_Pending *pending = data;
+   eldbus_pending_cancel(pending);
+}
+
+static void
+_props_get_all(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)
 {
    Eldbus_Proxy *proxy = data;
    Eldbus_Message_Iter *dict;
    const char *name, *error_msg;
    Eldbus_Proxy_Event_Property_Loaded event;
+
+   eldbus_proxy_event_callback_del(proxy, ELDBUS_PROXY_EVENT_DEL,
+                                   _on_monitored_proxy_del, pending);
 
    if (eldbus_message_error_get(msg, &name, &error_msg))
      {
@@ -760,6 +770,7 @@ _props_get_all(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending EI
 EAPI Eina_Bool
 eldbus_proxy_properties_monitor(Eldbus_Proxy *proxy, Eina_Bool enable)
 {
+   Eldbus_Pending *pending;
    ELDBUS_PROXY_CHECK_RETVAL(proxy, EINA_FALSE);
    if (proxy->monitor_enabled == enable)
      return proxy->props ? !!eina_hash_population(proxy->props) : EINA_FALSE;
@@ -787,7 +798,9 @@ eldbus_proxy_properties_monitor(Eldbus_Proxy *proxy, Eina_Bool enable)
    if (!proxy->props)
      proxy->props = eina_hash_string_superfast_new(_props_cache_free);
 
-   eldbus_proxy_property_get_all(proxy, _props_get_all, proxy);
+   pending = eldbus_proxy_property_get_all(proxy, _props_get_all, proxy);
+   eldbus_proxy_event_callback_add(proxy, ELDBUS_PROXY_EVENT_DEL,
+                                   _on_monitored_proxy_del, pending);
 
    if (proxy->properties_changed)
      return !!eina_hash_population(proxy->props);
