@@ -9,6 +9,7 @@ dist_installed_ecoredrmmainheaders_DATA = \
   lib/ecore_drm/Ecore_Drm.h
 
 lib_ecore_drm_libecore_drm_la_SOURCES = \
+lib/ecore_drm/ecore_drm_device.c \
 lib/ecore_drm/ecore_drm.c \
 lib/ecore_drm/ecore_drm_private.h
 
