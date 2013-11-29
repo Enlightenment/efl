@@ -64,6 +64,7 @@ typedef struct _Ecore_Drm_Device Ecore_Drm_Device;
 EAPI int ecore_drm_init(void);
 EAPI int ecore_drm_shutdown(void);
 
-EAPI Ecore_Drm_Device *ecore_drm_device_find(const char *name);
+EAPI Ecore_Drm_Device *ecore_drm_device_find(const char *name, const char *seat);
+EAPI void ecore_drm_device_free(Ecore_Drm_Device *dev);
 
 #endif
