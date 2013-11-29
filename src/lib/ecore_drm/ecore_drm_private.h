@@ -17,6 +17,8 @@
 # include <sys/ioctl.h>
 # include <errno.h>
 
+# include <libudev.h>
+
 # include <Ecore_Drm.h>
 
 # ifndef DRM_MAJOR
@@ -79,5 +81,13 @@ extern FILE *lg;
 #  define WRN(...) EINA_LOG_DOM_WARN(_ecore_drm_log_dom, __VA_ARGS__)
 #  define CRIT(...) EINA_LOG_DOM_CRIT(_ecore_drm_log_dom, __VA_ARGS__)
 # endif
+
+extern struct udev *udev;
+
+struct _Ecore_Drm_Device
+{
+   int fd;
+   const char *devname;
+};
 
 #endif
