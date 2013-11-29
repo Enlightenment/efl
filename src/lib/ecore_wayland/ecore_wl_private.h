@@ -129,8 +129,6 @@ struct _Ecore_Wl_Window
    /* Eina_Bool resize_scheduled : 1; */
    Eina_Bool alpha : 1;
    Eina_Bool transparent : 1;
-   Eina_Bool moving : 1;
-   Eina_Bool resizing : 1;
    Eina_Bool has_buffer : 1;
 
    Ecore_Wl_Window_Type type;
@@ -183,6 +181,7 @@ struct _Ecore_Wl_Input
 
    Ecore_Wl_Window *grab;
    unsigned int grab_button;
+   unsigned int grab_timestamp;
 
    Ecore_Wl_Dnd_Source *drag_source;
    Ecore_Wl_Dnd_Source *selection_source;
@@ -258,6 +257,7 @@ void _ecore_wl_output_del(Ecore_Wl_Output *output);
 void _ecore_wl_input_add(Ecore_Wl_Display *ewd, unsigned int id);
 void _ecore_wl_input_del(Ecore_Wl_Input *input);
 void _ecore_wl_input_pointer_xy_get(int *x, int *y);
+void _ecore_wl_input_grab_release(Ecore_Wl_Input *input, Ecore_Wl_Window *win);
 
 void _ecore_wl_dnd_add(Ecore_Wl_Input *input, struct wl_data_device *data_device, struct wl_data_offer *offer);
 void _ecore_wl_dnd_enter(void *data, struct wl_data_device *data_device, unsigned int timestamp, struct wl_surface *surface, int x, int y, struct wl_data_offer *offer);

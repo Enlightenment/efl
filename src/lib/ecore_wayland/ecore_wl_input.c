@@ -165,6 +165,28 @@ ecore_wl_input_ungrab(Ecore_Wl_Input *input)
    input->grab_button = 0;
 }
 
+/* NB: This function should be called just before shell move and shell resize
+ * functions. Those requests will trigger a mouse/touch implicit grab on the
+ * compositor that will prevent the respective mouse/touch up events being
+ * released after the end of the operation. This function checks if such grab
+ * is in place for those windows and, if so, emit the respective mouse up
+ * event. It's a workaround to the fact that wayland doesn't inform the
+ * application about this move or resize grab being finished.
+ */
+void
+_ecore_wl_input_grab_release(Ecore_Wl_Input *input, Ecore_Wl_Window *win)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!input) return;
+   if (input->grab != win) return;
+
+   _ecore_wl_input_mouse_up_send(input, input->pointer_focus,
+                                 0, input->grab_button, input->grab_timestamp);
+
+   ecore_wl_input_ungrab(input);
+}
+
 static void
 _pointer_update_stop(Ecore_Wl_Input *input)
 {
@@ -497,7 +519,10 @@ _ecore_wl_input_cb_pointer_button(void *data, struct wl_pointer *pointer EINA_UN
    if (state)
      {
         if ((input->pointer_focus) && (!input->grab) && (state))
-          ecore_wl_input_grab(input, input->pointer_focus, button);
+          {
+             ecore_wl_input_grab(input, input->pointer_focus, button);
+             input->grab_timestamp = timestamp;
+          }
 
         if (input->pointer_focus)
           _ecore_wl_input_mouse_down_send(input, input->pointer_focus,
@@ -861,37 +886,6 @@ _ecore_wl_input_cb_pointer_enter(void *data, struct wl_pointer *pointer EINA_UNU
 
         _ecore_wl_input_mouse_in_send(input, win, input->timestamp);
      }
-
-   /* NB: This whole 'if' below is a major HACK due to wayland's stupidness 
-    * of not sending a mouse_up (or any notification at all for that matter) 
-    * when a move or resize grab is finished */
-   if (input->grab)
-     {
-        /* NB: This COULD mean a move has finished, or it could mean that 
-         * a 'drag' is being done to a different surface */
-
-        if ((input->grab == win) && (win->moving))
-          {
-             /* NB: 'Fake' a mouse_up for move finished */
-             win->moving = EINA_FALSE;
-             _ecore_wl_input_mouse_up_send(input, win, 0,
-                                           BTN_LEFT, input->timestamp);
-
-             if ((input->grab) && (input->grab_button == BTN_LEFT))
-               ecore_wl_input_ungrab(input);
-          }
-        else if ((input->grab == win) && (win->resizing))
-          {
-             /* NB: 'Fake' a mouse_up for resize finished */
-             win->resizing = EINA_FALSE;
-             _ecore_wl_input_mouse_up_send(input, win, 0,
-                                           BTN_LEFT, input->timestamp);
-
-             if ((input->grab) && (input->grab_button == BTN_LEFT))
-               ecore_wl_input_ungrab(input);
-          }
-        /* FIXME: Test d-n-d and potentially add needed case here */
-     }
 }
 
 static void 
@@ -1011,6 +1005,12 @@ _ecore_wl_input_cb_touch_down(void *data, struct wl_touch *touch EINA_UNUSED, un
 
    _ecore_wl_input_mouse_move_send(input, input->pointer_focus, timestamp, id);
    _ecore_wl_input_cb_pointer_enter(data, NULL, serial, surface, x, y);
+   if ((input->touch_focus) && (!input->grab))
+     {
+        ecore_wl_input_grab(input, input->pointer_focus, BTN_LEFT);
+        input->grab_timestamp = timestamp;
+     }
+
    _ecore_wl_input_mouse_down_send(input, input->touch_focus,
                                    id, 0, timestamp);
 }
@@ -1029,6 +1029,8 @@ _ecore_wl_input_cb_touch_up(void *data, struct wl_touch *touch EINA_UNUSED, unsi
    input->display->serial = serial;
 
    _ecore_wl_input_mouse_up_send(input, input->touch_focus, id, 0, timestamp);
+   if ((input->grab) && (input->grab_button == BTN_LEFT))
+     ecore_wl_input_ungrab(input);
 }
 
 static void 
