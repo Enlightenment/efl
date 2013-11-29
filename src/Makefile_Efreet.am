@@ -108,6 +108,7 @@ if EFL_ENABLE_TESTS
 
 noinst_PROGRAMS += \
 tests/efreet/efreet_test \
+tests/efreet/efreet_async_test \
 tests/efreet/efreet_spec_test \
 tests/efreet/efreet_cache_test \
 tests/efreet/efreet_icon_cache_dump \
@@ -136,6 +137,16 @@ tests/efreet/ef_mime.c \
 tests/efreet/ef_test.h \
 tests/efreet/ef_utils.c \
 tests/efreet/main.c
+
+# efreet_async_test
+tests_efreet_efreet_async_test_CPPFLAGS = -I$(top_builddir)/src/lib/efl $(EFREET_COMMON_CPPFLAGS)
+tests_efreet_efreet_async_test_LDADD = \
+@USE_EFREET_LIBS@
+tests_efreet_efreet_async_test_DEPENDENCIES = \
+@USE_EFREET_INTERNAL_LIBS@
+
+tests_efreet_efreet_async_test_SOURCES = \
+tests/efreet/efreet_async_test.c
 
 # efreet_spec_test
 tests_efreet_efreet_spec_test_CPPFLAGS = -I$(top_builddir)/src/lib/efl $(EFREET_COMMON_CPPFLAGS)
