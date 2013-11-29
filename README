@@ -7,7 +7,7 @@ EFL 1.8.0
 ******************************************************************************
 
 EFL is a collection of libraries for handling many common tasks a
-developer man have such as data structures, communication, rendering,
+developer may have such as data structures, communication, rendering,
 widgets and more.
 
 There are many components inside EFL. They also build various things
@@ -49,7 +49,7 @@ events to appropriate callbacks.
 This library provides an API for audio playback and recording. It uses
 pulse audio underneath to handle mixing and policies. The API for this
 should not be considered stable right now because it relies on EO and
-EO is not considers finalized yet.
+EO is not considered finalized yet.
 
 
 
@@ -66,7 +66,7 @@ Mac porting.
 
 //BSD 2-Clause license//
 
-This provides a completely event-based TCP/UDB and Unix domain socket
+This provides a completely event-based TCP/UDP and Unix domain socket
 API that integrates with the main-loop. This means no blocking to send
 or receive data, supporting "infinite send buffers" with storage and
 spooling being done by Ecore Con. It also supports SSL encryption
@@ -241,7 +241,7 @@ This library is a data storage, encoding and decoding library
 designed to be extremely compact, fast and easy to use. It can take
 data structures directly from memory and serialize them portably to
 disk, then de-serialize them right back to the same data structures in
-memory handling allocation and population of memory all for you in 1
+memory, handling allocation and population of memory all for you in 1
 call. It handles indirections such as pointers, linked lists, arrays
 and hash tables too, so almost any level of data structure complexity
 can be easily saved and loaded back. It is used for "edj" files by
@@ -391,7 +391,7 @@ asynchronously.
 
 //LGPL v2 license//
 
-This is the client-side part of Ethumb that provides and API for
+This is the client-side part of Ethumb that provides an API for
 clients to request the Ethumb thumbnailer to generate or find cached
 thumbnails of files.
 
@@ -586,8 +586,8 @@ owned by EFL, then valgrind won't alert on memory leaks or use of
 unused memory. EFL will use memcheck.h from valgrind to declare its
 memory pools to valgrind, producing better debugging results.
 
-However valgrind is only available to limited platforms, making us
-hard to declare it a mandatory requirement. Based on
+However valgrind is only available to limited platforms, making it 
+hard for us to declare it a mandatory requirement. Based on
 --with-profile={dev,debug} valgrind will be used if available or will
 be issued a warning. You can force valgrind with --enable-valgrind, or
 disable it and the warning with --disable-valgrind.
@@ -599,10 +599,10 @@ dependency on valgrind.
 BULLET PHYSICS DEPENDENCY
 -------------------------
 
-EFL comes with EPhysics (a physics wrapper library) enabled by default, to
-build it the user must have BulletPhysics engine installed.
+EFL comes with EPhysics (a physics wrapper library) enabled by
+default. To build it the user must have BulletPhysics engine installed.
 
-More informations about BulletPhysics can be obtained in the upstream project
+More information about BulletPhysics can be obtained in the upstream project
 web site at http://bulletphysics.org
 
 We have received many reports about BulletPhysics installation and distros
