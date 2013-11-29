@@ -325,6 +325,31 @@ _tmp_display(void *data EINA_UNUSED, void *id EINA_UNUSED)
 {
 }
 
+static unsigned
+_tmp_format(void **opaque, char *chroma,
+            unsigned *width, unsigned *height,
+            unsigned *pitches, unsigned *lines)
+{
+   App *app = *opaque;
+
+   app->tmpbuffer = realloc(app->tmpbuffer,
+                            *width * *height * 4 * sizeof (char));
+   strcpy(chroma, "RV32");
+   pitches[0] = pitches[1] = pitches[2] = *width * 4;
+   lines[0] = lines[1] = lines[2] = *height;
+
+   _send_resize(app, *width, *height);
+   
+   return 1;
+}
+
+static void
+_tmp_play(void *data EINA_UNUSED,
+          const void *samples EINA_UNUSED, unsigned count EINA_UNUSED,
+          int64_t pts EINA_UNUSED)
+{
+}
+
 static void
 _file_set(App *app)
 {
@@ -345,6 +370,13 @@ _file_set(App *app)
    app->opening = 1;
    libvlc_video_set_format(app->mp, "RV32", DEFAULTWIDTH, DEFAULTHEIGHT, DEFAULTWIDTH * 4);
    libvlc_video_set_callbacks(app->mp, _tmp_lock, _tmp_unlock, _tmp_display, app);
+   libvlc_video_set_format_callbacks(app->mp, _tmp_format, NULL);
+   /* On my system the mute below is not working and I can't find a way
+      to make it work, so the following set should help, but then it has
+      other side effect...
+   */
+   /* libvlc_audio_set_callbacks(app->mp, _tmp_play, NULL, NULL, NULL, NULL, app); */
+
    app->event_mgr = libvlc_media_player_event_manager(app->mp);
    libvlc_event_attach(app->event_mgr, libvlc_MediaPlayerPositionChanged,
                        _event_cb, app);
@@ -417,7 +449,6 @@ _file_set_done(App *app)
    app->h = app->vs->height;
    libvlc_video_set_format(app->mp, "RV32", app->w, app->h, app->w * 4);
    libvlc_video_set_callbacks(app->mp, _lock, _unlock, _display, app);
-
 
    libvlc_event_attach(app->event_mgr, libvlc_MediaPlayerPlaying,
                       _event_cb, app);
@@ -561,7 +592,6 @@ _remote_command(void *data, void *buffer, unsigned int nbyte)
 
    if (nbyte == 0)
      {
-        fprintf(stderr, "death is comming\n");                
         ecore_main_loop_quit();
         return ;
      }
