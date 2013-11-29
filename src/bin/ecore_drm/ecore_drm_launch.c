@@ -130,7 +130,7 @@ main(int argc, char **argv)
    while (1)
      {
         struct pollfd pfd[1];
-        int p = 0, n = 0;
+        int n = 0;
 
         fprintf(stderr, "\tChecking for Message...\n");
 
