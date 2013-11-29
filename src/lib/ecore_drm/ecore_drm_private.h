@@ -86,7 +86,7 @@ extern struct udev *udev;
 
 struct _Ecore_Drm_Device
 {
-   int fd;
+   int id, fd;
    const char *devname;
    const char *devpath;
 };
