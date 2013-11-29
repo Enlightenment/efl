@@ -112,6 +112,7 @@ ecore_evas_drm_new_internal(const char *device, unsigned int parent, int x, int 
 {
    Ecore_Evas *ee;
    Evas_Engine_Info_Drm *einfo;
+   Ecore_Drm_Device *dev;
    int method;
 
    /* try to find the evas drm engine */
@@ -128,11 +129,18 @@ ecore_evas_drm_new_internal(const char *device, unsigned int parent, int x, int 
         return NULL;
      }
 
+   /* try to find the device */
+   if (!(dev = ecore_drm_device_find(NULL, NULL)))
+     {
+        ERR("Could not find default drm device");
+        goto dev_err;
+     }
+
    /* try to allocate space for Ecore_Evas structure */
    if (!(ee = calloc(1, sizeof(Ecore_Evas))))
      {
         ERR("Failed to allocate space for new Ecore_Evas");
-        goto err;
+        goto ee_err;
      }
 
    ECORE_MAGIC_SET(ee, ECORE_MAGIC_EVAS);
@@ -191,7 +199,9 @@ ecore_evas_drm_new_internal(const char *device, unsigned int parent, int x, int 
 eng_err:
    ecore_evas_free(ee);
    _ecore_evas_drm_shutdown();
-err:
+ee_err:
+   ecore_drm_device_free(dev);
+dev_err:
    ecore_drm_shutdown();
    return NULL;
 }
