@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-11-25 14:35+0900\n"
+"POT-Creation-Date: 2013-11-29 19:31+0900\n"
 "PO-Revision-Date: 2013-11-07 09:25+0100\n"
 "Last-Translator: Aníbal Garrido Hermo <khanyux@gmail.com>\n"
 "Language-Team: Galician <proxecto@trasno.net>\n"
@@ -74,8 +74,8 @@ msgid "Clicked"
 msgstr "Premido"
 
 #: src/lib/elm_button.c:279 src/lib/elm_check.c:222 src/lib/elm_gengrid.c:681
-#: src/lib/elm_genlist.c:1463 src/lib/elm_list.c:1547 src/lib/elm_radio.c:265
-#: src/lib/elm_segment_control.c:537 src/lib/elm_spinner.c:540
+#: src/lib/elm_genlist.c:1464 src/lib/elm_list.c:1547 src/lib/elm_radio.c:265
+#: src/lib/elm_segment_control.c:537 src/lib/elm_spinner.c:556
 #: src/lib/elm_toolbar.c:1980
 msgid "State: Disabled"
 msgstr "Estado: Desactivado"
@@ -169,7 +169,7 @@ msgstr "Predeterminado: LTR"
 msgid "day selector item"
 msgstr "selector de día"
 
-#: src/lib/elm_diskselector.c:672
+#: src/lib/elm_diskselector.c:681
 msgid "diskselector item"
 msgstr "Selector de disco"
 
@@ -245,15 +245,15 @@ msgstr "Segmento de control"
 msgid "slider"
 msgstr "Barra de desprazamento"
 
-#: src/lib/elm_spinner.c:629
+#: src/lib/elm_spinner.c:645
 msgid "spinner increment button"
 msgstr "botón de aumento"
 
-#: src/lib/elm_spinner.c:638
+#: src/lib/elm_spinner.c:654
 msgid "spinner decrement button"
 msgstr "botón de disminución"
 
-#: src/lib/elm_spinner.c:646
+#: src/lib/elm_spinner.c:662
 msgid "spinner"
 msgstr "botón de spinner"
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-11-25 14:35+0900\n"
+"POT-Creation-Date: 2013-11-29 19:31+0900\n"
 "PO-Revision-Date: 2012-12-16 21:59+0100\n"
 "Last-Translator: Tomáš Čech <sleep_walker@suse.cz>\n"
 "Language-Team: Czech <kde-i18n-doc@kde.org>\n"
@@ -76,8 +76,8 @@ msgid "Clicked"
 msgstr "Kliknuto"
 
 #: src/lib/elm_button.c:279 src/lib/elm_check.c:222 src/lib/elm_gengrid.c:681
-#: src/lib/elm_genlist.c:1463 src/lib/elm_list.c:1547 src/lib/elm_radio.c:265
-#: src/lib/elm_segment_control.c:537 src/lib/elm_spinner.c:540
+#: src/lib/elm_genlist.c:1464 src/lib/elm_list.c:1547 src/lib/elm_radio.c:265
+#: src/lib/elm_segment_control.c:537 src/lib/elm_spinner.c:556
 #: src/lib/elm_toolbar.c:1980
 msgid "State: Disabled"
 msgstr "Stav: Zakázáno"
@@ -177,7 +177,7 @@ msgstr "výchozí:LTR"
 msgid "day selector item"
 msgstr "položka výběru disků"
 
-#: src/lib/elm_diskselector.c:672
+#: src/lib/elm_diskselector.c:681
 msgid "diskselector item"
 msgstr "položka výběru disků"
 
@@ -254,15 +254,15 @@ msgstr ""
 msgid "slider"
 msgstr "šoupátko"
 
-#: src/lib/elm_spinner.c:629
+#: src/lib/elm_spinner.c:645
 msgid "spinner increment button"
 msgstr "přičítací tlačítko spinneru"
 
-#: src/lib/elm_spinner.c:638
+#: src/lib/elm_spinner.c:654
 msgid "spinner decrement button"
 msgstr "odečítací tlačítko spinneru"
 
-#: src/lib/elm_spinner.c:646
+#: src/lib/elm_spinner.c:662
 msgid "spinner"
 msgstr "spinner"
 

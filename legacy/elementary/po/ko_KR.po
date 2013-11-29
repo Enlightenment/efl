@@ -3,20 +3,21 @@
 # Daniel Juyung Seo <seojuyung2@gmail.com>, 2011.
 # Seong-ho Cho <darkcircle.0426@gmail.com>, 2013.
 #
+#: src/lib/elm_config.c:2415
 msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-11-19 17:17+0900\n"
+"POT-Creation-Date: 2013-11-29 19:31+0900\n"
 "PO-Revision-Date: 2013-11-27 11:32+0900\n"
 "Last-Translator: Seong-ho Cho <darkcircle.0426@gmail.com>\n"
 "Language-Team: General\n"
+"Language: Korean\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Poedit 1.5.5\n"
-"Language: Korean\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 
 #: src/lib/elc_fileselector.c:1203
@@ -77,8 +78,8 @@ msgid "Clicked"
 msgstr "클릭함"
 
 #: src/lib/elm_button.c:279 src/lib/elm_check.c:222 src/lib/elm_gengrid.c:681
-#: src/lib/elm_genlist.c:1463 src/lib/elm_list.c:1547 src/lib/elm_radio.c:265
-#: src/lib/elm_segment_control.c:537 src/lib/elm_spinner.c:540
+#: src/lib/elm_genlist.c:1464 src/lib/elm_list.c:1547 src/lib/elm_radio.c:265
+#: src/lib/elm_segment_control.c:537 src/lib/elm_spinner.c:556
 #: src/lib/elm_toolbar.c:1980
 msgid "State: Disabled"
 msgstr "상태 : 비활성화"
@@ -172,7 +173,7 @@ msgstr "default:LTR"
 msgid "day selector item"
 msgstr "날짜 셀렉터 항목"
 
-#: src/lib/elm_diskselector.c:672
+#: src/lib/elm_diskselector.c:681
 msgid "diskselector item"
 msgstr "디스크셀렉터 항목"
 
@@ -248,15 +249,15 @@ msgstr "세그먼트 컨트롤 항목"
 msgid "slider"
 msgstr "슬라이더"
 
-#: src/lib/elm_spinner.c:629
+#: src/lib/elm_spinner.c:645
 msgid "spinner increment button"
 msgstr "스피너 증가 버튼"
 
-#: src/lib/elm_spinner.c:638
+#: src/lib/elm_spinner.c:654
 msgid "spinner decrement button"
 msgstr "스피너 감소 버튼"
 
-#: src/lib/elm_spinner.c:646
+#: src/lib/elm_spinner.c:662
 msgid "spinner"
 msgstr "스피너"
 
