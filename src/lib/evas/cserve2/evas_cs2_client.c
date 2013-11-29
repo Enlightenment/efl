@@ -8,6 +8,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <signal.h>
 
 #include <Eina.h>
 
@@ -600,6 +601,14 @@ _server_dispatch_until(unsigned int rid)
 {
    Eina_Bool failed;
    unsigned int rrid;
+   sigset_t sigmask;
+
+   // We want to block some signals from interrupting pselect().
+   // If the kernel implements TIF_RESTORE_SIGMASK, the
+   // signal handlers should be called right after pselect
+   // SIGCHLD: apps can have children that just terminated
+   sigprocmask(0, NULL, &sigmask);
+   sigaddset(&sigmask, SIGCHLD);
 
    while (1)
      {
@@ -609,7 +618,7 @@ _server_dispatch_until(unsigned int rid)
         else if (failed)
           {
              fd_set rfds;
-             struct timeval tv;
+             struct timespec ts;
              int sel;
 
              if (socketfd == -1)
@@ -625,9 +634,9 @@ _server_dispatch_until(unsigned int rid)
              //DBG("Waiting for request %d...", rid);
              FD_ZERO(&rfds);
              FD_SET(socketfd, &rfds);
-             tv.tv_sec = TIMEOUT / 1000;
-             tv.tv_usec = TIMEOUT * 1000;
-             sel = select(socketfd + 1, &rfds, NULL, NULL, &tv);
+             ts.tv_sec = TIMEOUT / 1000;
+             ts.tv_nsec = (TIMEOUT % 1000) * 1000000;
+             sel = pselect(socketfd + 1, &rfds, NULL, NULL, &ts, &sigmask);
              if (sel == -1)
                {
                   ERR("select() failed: [%d] %s", errno, strerror(errno));
@@ -638,6 +647,11 @@ _server_dispatch_until(unsigned int rid)
                    */
                   if (errno == EINTR)
                     {
+                       /* FIXME: Actually we might want to cancel our request
+                        * ONLY when we received a SIGINT, but at this point
+                        * there is no way we can know which signal we got.
+                        * So we assume SIGINT and abandon this request.
+                        */
                        DBG("giving up on request %d after interrupt", rid);
                        return EINA_FALSE;
                     }
