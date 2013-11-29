@@ -213,11 +213,11 @@ efreet_desktop_new(const char *file)
     tmp = eina_file_path_sanitize(file);
     if (!tmp) return NULL;
 
+    eina_lock_take(&_lock);
     desktop = efreet_cache_desktop_find(tmp);
     free(tmp);
     if (desktop)
     {
-        eina_lock_take(&_lock);
         desktop->ref++;
         eina_lock_release(&_lock);
         if (!efreet_desktop_environment_check(desktop))
@@ -227,6 +227,7 @@ efreet_desktop_new(const char *file)
         }
         return desktop;
     }
+    eina_lock_release(&_lock);
     return efreet_desktop_uncached_new(file);
 }
 
