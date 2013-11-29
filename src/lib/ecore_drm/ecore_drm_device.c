@@ -152,7 +152,7 @@ ecore_drm_device_free(Ecore_Drm_Device *dev)
    if (!dev) return;
 
    /* free device name */
-   if (dev->name) eina_stringshare_del(dev->name);
+   if (dev->devname) eina_stringshare_del(dev->devname);
 
    /* free structure */
    free(dev);
