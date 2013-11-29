@@ -136,6 +136,13 @@ ecore_evas_drm_new_internal(const char *device, unsigned int parent, int x, int 
         goto dev_err;
      }
 
+   /* try to open the graphics card */
+   if (!ecore_drm_device_open(dev))
+     {
+        ERR("Could not open drm device: %s", dev->devname);
+        goto open_err;
+     }
+
    /* try to allocate space for Ecore_Evas structure */
    if (!(ee = calloc(1, sizeof(Ecore_Evas))))
      {
@@ -200,6 +207,8 @@ eng_err:
    ecore_evas_free(ee);
    _ecore_evas_drm_shutdown();
 ee_err:
+   ecore_drm_device_close(dev);
+open_err:
    ecore_drm_device_free(dev);
 dev_err:
    ecore_drm_shutdown();
