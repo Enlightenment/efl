@@ -1255,12 +1255,13 @@ _ecore_imf_xim_ic_client_window_set(Ecore_IMF_Context *ctx,
    DBG("old_win=%#x, window=%#x", old_win, window);
    if (old_win != 0 && old_win != window)   /* XXX how do check window... */
      {
-        XIM_Im_Info *info;
-        info = imf_context_data->im_info;
-        info->ics = eina_list_remove(info->ics, imf_context_data);
-        if (imf_context_data->im_info)
-          imf_context_data->im_info->user = NULL;
-        imf_context_data->im_info = NULL;
+        XIM_Im_Info *info = imf_context_data->im_info;
+        if (info)
+          {
+             info->ics = eina_list_remove(info->ics, imf_context_data);
+             info->user = NULL;
+             info = NULL;
+          }
      }
 
    imf_context_data->win = window;
