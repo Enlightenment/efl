@@ -108,6 +108,7 @@ static void      _item_mouse_callbacks_del(Elm_Gen_Item *, Evas_Object *);
 static void      _access_activate_cb(void *data __UNUSED__,
                                      Evas_Object *part_obj __UNUSED__,
                                      Elm_Object_Item *item);
+static void _decorate_item_set(Elm_Gen_Item *);
 
 static void
 _elm_genlist_pan_smart_pos_set(Eo *obj, void *_pd, va_list *list)
@@ -1752,6 +1753,9 @@ _item_realize(Elm_Gen_Item *it,
              edje_object_message_signal_process(it->deco_all_view);
           }
      }
+     
+   if (it->decorate_it_set) _decorate_item_set(it);
+    
    edje_object_message_signal_process(VIEW(it));
 }
 
