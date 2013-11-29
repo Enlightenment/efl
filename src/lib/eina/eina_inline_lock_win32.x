@@ -43,7 +43,7 @@ struct _Eina_RWLock
 {
    SRWLOCK  mutex;
 
-  Eina_Bool is_read_mode : 1;
+   Eina_Bool is_read_mode : 1;
 };
 #else
 struct _Eina_Condition
