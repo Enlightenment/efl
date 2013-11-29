@@ -507,7 +507,7 @@ _ecore_evas_buffer_msg_send(Ecore_Evas *ee, int msg_domain, int msg_id, void *da
    Ecore_Evas *child_ee = NULL;
    child_ee = ecore_evas_data_get(ee, "child");
 
-   if (!child_ee)
+   if (child_ee)
      {
         if (child_ee->func.fn_msg_handle)
           child_ee->func.fn_msg_handle(child_ee, msg_domain, msg_id, data, size);
