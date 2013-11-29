@@ -14,6 +14,7 @@ union cmsg_data
 };
 
 /* external variables */
+struct udev *udev;
 int _ecore_drm_log_dom = -1;
 #ifdef LOG_TO_FILE
 FILE *lg;
@@ -214,12 +215,22 @@ ecore_drm_init(void)
         goto sock_err;
      }
 
+   /* create udev connection for later device handling */
+   if (!(udev = udev_new()))
+     {
+        ERR("Could not create udev handle: %m");
+        goto udev_err;
+     }
+
    /* try to run SPARTACUS !! */
    _ecore_drm_launcher_spawn();
 
    /* return init count */
    return _ecore_drm_init_count;
 
+udev_err:
+   close(_ecore_drm_socket_fd[0]);
+   close(_ecore_drm_socket_fd[1]);
 sock_err:
    eina_log_domain_unregister(_ecore_drm_log_dom);
    _ecore_drm_log_dom = -1;
@@ -247,6 +258,13 @@ ecore_drm_shutdown(void)
 {
    /* if we are still in use, decrement init count and get out */
    if (--_ecore_drm_init_count != 0) return _ecore_drm_init_count;
+
+   /* close udev handle */
+   if (udev) udev_unref(udev);
+
+   /* close sockets */
+   close(_ecore_drm_socket_fd[0]);
+   close(_ecore_drm_socket_fd[1]);
 
    /* unregsiter log domain */
    eina_log_domain_unregister(_ecore_drm_log_dom);
