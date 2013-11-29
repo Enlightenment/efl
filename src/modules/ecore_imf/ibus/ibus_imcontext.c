@@ -427,10 +427,11 @@ ecore_imf_context_ibus_preedit_string_get(Ecore_IMF_Context *ctx,
           *cursor_pos = 0;
      }
 
-   if (cursor_pos)
-     EINA_LOG_DBG("str : %s, cursor_pos : %d", *str, *cursor_pos);
-   else
+   if (str)
      EINA_LOG_DBG("str : %s", *str);
+
+   if (cursor_pos)
+     EINA_LOG_DBG("cursor_pos : %d", *cursor_pos);
 }
 
 EAPI void
@@ -458,7 +459,12 @@ ecore_imf_context_ibus_preedit_string_with_attributes_get(Ecore_IMF_Context   *c
         if (cursor_pos)
           *cursor_pos = 0;
      }
-   EINA_LOG_DBG("str : %s, cursor_pos : %d", *str, *cursor_pos);
+
+   if (str)
+     EINA_LOG_DBG("str : %s", *str);
+
+   if (cursor_pos)
+     EINA_LOG_DBG("cursor_pos : %d", *cursor_pos);
 }
 
 EAPI void
