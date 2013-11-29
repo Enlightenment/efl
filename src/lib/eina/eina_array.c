@@ -363,7 +363,7 @@ eina_array_remove(Eina_Array *array, Eina_Bool (*keep)(void *data,
         else
           {
              // realloc back down - rounding up to the nearest step size
-             size = (array->count + array->step - 1) % array->step;
+             size = ((array->count / array->step) + (array->count % array->step ? 1 : 0)) * array->step;
              tmp = realloc(array->data, sizeof(void *) * size);
              if (!tmp) return EINA_FALSE;
              array->total = size;
