@@ -1,27 +1,10 @@
-Evas generic loaders 1.8.0.
+Evas generic loaders 1.8.0
+==========================
 
 ******************************************************************************
-
  FOR ANY ISSUES PLEASE EMAIL:
  enlightenment-devel@lists.sourceforge.net
-  
 ******************************************************************************
-  
-Requirements:
--------------
-
-Must:
-  libc
-  libm
-  zlib
-
-Recommended:
-  gstreamer
-  poppler
-  libraw
-  libspectre
-  librsvg
-
 
 These are additional "generic" loaders for Evas that are stand-alone
 executables that evas may run from its generic loader module. This
@@ -31,44 +14,72 @@ affect the license of any application that uses Evas as this uses a
 completely generic execution system that allows anything to be plugged
 in as a loader.
 
+
+REQUIREMENTS
+------------
+
+Required by default:
+
+    libc
+    libm
+    zlib
+
+Highly recommended:
+
+    gstreamer (0.10) (ensure you have all the gstreamer codecs you need/want)
+    poppler
+    libraw
+    libspectre
+    librsvg
+
+Sugested:
+
+    libreoffice
+
+
+COMPONENTS
+----------
+
 Generic loaders currently provided:
 
-  XCF (.xcf .xcf.gz)
+  * **XCF** (.xcf .xcf.gz)
 
-  PDF (using poppler)
-    use -key option to specific what page to get and load options for size
-    Should we add mupdf ?
+  * **PDF** (using poppler)
+   * use -key option to specific what page to get and load options for size
+     Should we add mupdf ?
 
-  PS (using libspectre)
-    use -key option to specific what page to get and load options for size
-    Should we use directly libgs ?
+  * **PS** (using libspectre)
+   * use -key option to specific what page to get and load options for size
+     Should we use directly libgs ?
 
-  RAW (using libraw)
+  * **RAW** (using libraw)
   
-  SVG (using librsvg)
+  * **SVG** (using librsvg)
 
-  MPG/AVI/OGV/MOV/MKV/WMV etc. (using Gstreamer)
-    Should we add libxine and vlc ?
+  * **MPG/AVI/OGV/MOV/MKV/WMV** etc. (using gstreamer)
+   * Should we add libxine and vlc ?
+  
+  * **PPT/PPTX/DOC/DOCX/XLS** etc.
+   * Required PDF loader, and uses libreoffice binaries as slaves to
+     export PDFs to load
 
-Possible fun ones in future:
 
-  DVI (using DVIlib, see edvi)
+COMPILING AND INSTALLING
+------------------------
 
-  DJVU (using libdjvu)
+    ./configure
+    make
+    sudo make install
 
-  PPT/PPTX/DOC/DOCX/XLS...
-    (beats me how u can render a page from these without a whole
-     office impl - but worth a try? libopenoffice/libllibreoffice if
-     it ever happens?)
 
-------------------------------------------------------------------------------
-COMPILING AND INSTALLING:
+COMPILER FLAGS
+--------------
 
-  ./configure
-  make
-(as root unless you are installing in your users directories):
-  make install
+You may want to change the install prefix for EFL with:
 
-NOTE:
-  you should put generic loaders in the same prefix as Evas or they
-will not be found.
+    --prefix=/path/to/prefix
+
+**NOTE:**
+
+You should put generic loaders in the same prefix as EFL or they will
+not be found by EFL at runtime.
