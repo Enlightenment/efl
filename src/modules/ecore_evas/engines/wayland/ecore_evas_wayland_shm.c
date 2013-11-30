@@ -59,7 +59,7 @@ static Ecore_Evas_Engine_Func _ecore_wl_engine_func =
    _ecore_evas_wl_common_maximized_set,
    _ecore_evas_wl_common_fullscreen_set,
    NULL, // func avoid_damage set
-   NULL, // func withdrawn set
+   _ecore_evas_wl_common_withdrawn_set,
    NULL, // func sticky set
    _ecore_evas_wl_common_ignore_events_set,
    _ecore_evas_wl_alpha_set,

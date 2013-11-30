@@ -1286,6 +1286,17 @@ _ecore_evas_wl_common_render(Ecore_Evas *ee)
 }
 
 void
+_ecore_evas_wl_common_withdrawn_set(Ecore_Evas *ee, int val)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (val)
+     ecore_evas_hide(ee);
+   else
+     ecore_evas_show(ee);
+}
+
+void
 _ecore_evas_wl_common_screen_geometry_get(const Ecore_Evas *ee EINA_UNUSED, int *x, int *y, int *w, int *h)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
