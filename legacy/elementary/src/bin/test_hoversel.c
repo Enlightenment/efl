@@ -271,6 +271,7 @@ test_hoversel_focus(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
                                   _hoversel_dismissed_cb, NULL);
    elm_box_pack_end(bx, hoversel);
    evas_object_show(hoversel);
+   elm_object_focus_set(hoversel, EINA_TRUE);
 
    hoversel = elm_hoversel_add(win);
    elm_hoversel_horizontal_set(hoversel, EINA_TRUE);
