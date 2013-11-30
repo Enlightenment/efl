@@ -5217,7 +5217,10 @@ _item_text_get_hook(Elm_Gen_Item *it,
    else if (it->decorate_it_set)
      ret = edje_object_part_text_get(it->item->deco_it_view, part);
    if (!ret)
-     ret = edje_object_part_text_get(VIEW(it), part);
+     if (part)
+       ret = edje_object_part_text_get(VIEW(it), part);
+     else
+       ret = edje_object_part_text_get(VIEW(it), "elm.text");
    return ret;
 }
 
