@@ -48,34 +48,6 @@ AC_C_CONST
 AC_C___ATTRIBUTE__
 AC_FUNC_ALLOCA
 
-AC_LIBTOOL_WIN32_DLL
-define([AC_LIBTOOL_LANG_CXX_CONFIG], [:])dnl
-define([AC_LIBTOOL_LANG_F77_CONFIG], [:])dnl
-AC_PROG_LIBTOOL
-
-##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
-##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
-m4_ifdef([v_rev], , [m4_define([v_rev], [0])])
-m4_ifdef([v_rel], , [m4_define([v_rel], [])])
-AC_DEFINE_UNQUOTED(VMAJ, [v_maj], [Major version])
-AC_DEFINE_UNQUOTED(VMIN, [v_min], [Minor version])
-AC_DEFINE_UNQUOTED(VMIC, [v_mic], [Micro version])
-AC_DEFINE_UNQUOTED(VREV, [v_rev], [Revison])
-version_info="lt_rev:lt_cur:lt_age"
-release_info="v_rel"
-AC_SUBST(version_info)
-AC_SUBST(release_info)
-##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
-##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
-VMAJ=v_maj
-VMIN=v_min
-AC_SUBST(VMAJ)
-AC_SUBST(VMIN)
-ELM_VERSION_MAJOR=v_maj
-ELM_VERSION_MINOR=v_min
-AC_SUBST(ELM_VERSION_MAJOR)
-AC_SUBST(ELM_VERSION_MINOR)
-
 # pkg-config
 PKG_PROG_PKG_CONFIG
 
@@ -94,44 +66,6 @@ if test -z "$MODULE_EDJE"; then
 fi
 AC_SUBST(MODULE_EDJE)
 AC_DEFINE_UNQUOTED(MODULE_EDJE, "$MODULE_EDJE", "Edje module architecture")
-
-case "$host_os" in
-  mingw32ce* | cegcc*)
-    MODULE_ARCH="$host_os-$host_cpu"
-    ;;
-  *)
-    MODULE_ARCH="$host_os-$host_cpu-v_maj.v_min.v_mic"
-    ;;
-esac
-AC_SUBST(release_info)
-AC_SUBST(MODULE_ARCH)
-AC_DEFINE_UNQUOTED(MODULE_ARCH, "$MODULE_ARCH", "Module architecture")
-
-EFL_SHARED_EXTENSION="${shrext_cmds}"
-AC_DEFINE_UNQUOTED(EFL_SHARED_EXTENSION, "${EFL_SHARED_EXTENSION}", "Shared extension")
-
-requirement_elm=""
-
-PKG_PROG_PKG_CONFIG
-
-# Check whether pkg-config supports Requires.private
-if $PKG_CONFIG --atleast-pkgconfig-version 0.22; then
-   pkgconfig_requires_private="Requires.private"
-else
-   pkgconfig_requires_private="Requires"
-fi
-AC_SUBST(pkgconfig_requires_private)
-
-#================================================
-if test "x${prefix}" = "xNONE"; then
-  LOCALE_DIR="${ac_default_prefix}/share/locale"
-else
-  LOCALE_DIR="${prefix}/share/locale"
-fi
-AC_SUBST(LOCALE_DIR)
-#================================================
-elementary_icon_dir="${datadir}/icons"
-AC_SUBST(elementary_icon_dir)
 
 lt_enable_auto_import=""
 ELM_UNIX_DEF="#undef"
@@ -206,6 +140,77 @@ m4_ifdef([v_mic],
     EFL_COMPILER_FLAG([-Wall])
     EFL_COMPILER_FLAG([-W])
    ])
+
+if test "x${have_windows}" = "xyes" ; then
+   lt_cv_deplibs_check_method='pass_all'
+fi
+AC_LIBTOOL_WIN32_DLL
+define([AC_LIBTOOL_LANG_CXX_CONFIG], [:])dnl
+define([AC_LIBTOOL_LANG_F77_CONFIG], [:])dnl
+m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
+LT_INIT([win32-dll disable-static pic-only])
+#AC_PROG_LIBTOOL
+
+##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
+##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
+m4_ifdef([v_rev], , [m4_define([v_rev], [0])])
+m4_ifdef([v_rel], , [m4_define([v_rel], [])])
+AC_DEFINE_UNQUOTED(VMAJ, [v_maj], [Major version])
+AC_DEFINE_UNQUOTED(VMIN, [v_min], [Minor version])
+AC_DEFINE_UNQUOTED(VMIC, [v_mic], [Micro version])
+AC_DEFINE_UNQUOTED(VREV, [v_rev], [Revison])
+version_info="lt_rev:lt_cur:lt_age"
+release_info="v_rel"
+AC_SUBST(version_info)
+AC_SUBST(release_info)
+##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
+##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
+VMAJ=v_maj
+VMIN=v_min
+AC_SUBST(VMAJ)
+AC_SUBST(VMIN)
+ELM_VERSION_MAJOR=v_maj
+ELM_VERSION_MINOR=v_min
+AC_SUBST(ELM_VERSION_MAJOR)
+AC_SUBST(ELM_VERSION_MINOR)
+
+case "$host_os" in
+  mingw32ce* | cegcc*)
+    MODULE_ARCH="$host_os-$host_cpu"
+    ;;
+  *)
+    MODULE_ARCH="$host_os-$host_cpu-v_maj.v_min.v_mic"
+    ;;
+esac
+AC_SUBST(release_info)
+AC_SUBST(MODULE_ARCH)
+AC_DEFINE_UNQUOTED(MODULE_ARCH, "$MODULE_ARCH", "Module architecture")
+
+EFL_SHARED_EXTENSION="${shrext_cmds}"
+AC_DEFINE_UNQUOTED(EFL_SHARED_EXTENSION, "${EFL_SHARED_EXTENSION}", "Shared extension")
+
+requirement_elm=""
+
+PKG_PROG_PKG_CONFIG
+
+# Check whether pkg-config supports Requires.private
+if $PKG_CONFIG --atleast-pkgconfig-version 0.22; then
+   pkgconfig_requires_private="Requires.private"
+else
+   pkgconfig_requires_private="Requires"
+fi
+AC_SUBST(pkgconfig_requires_private)
+
+#================================================
+if test "x${prefix}" = "xNONE"; then
+  LOCALE_DIR="${ac_default_prefix}/share/locale"
+else
+  LOCALE_DIR="${prefix}/share/locale"
+fi
+AC_SUBST(LOCALE_DIR)
+#================================================
+elementary_icon_dir="${datadir}/icons"
+AC_SUBST(elementary_icon_dir)
 
 have_fork="no"
 want_quicklaunch="auto"
