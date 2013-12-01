@@ -712,3 +712,13 @@ _ecore_xcb_dnd_converter_copy(char         *target EINA_UNUSED,
      }
 }
 
+EAPI Eina_Bool
+ecore_x_dnd_abort(Ecore_X_Window xwin_source)
+{
+   if (xwin_source == _source->win)
+     {
+        _source->will_accept = 0;
+        return ecore_x_dnd_self_drop();
+     }
+   else return EINA_FALSE;
+}

@@ -757,4 +757,15 @@ _ecore_x_dnd_drag(Ecore_X_Window root,
    _source->dest = win;
 }
 
+EAPI Eina_Bool
+ecore_x_dnd_abort(Ecore_X_Window xwin_source)
+{
+   if (xwin_source == _source->win)
+     {
+        _source->will_accept = 0;
+        return ecore_x_dnd_self_drop();
+     }
+   else return EINA_FALSE;
+}
+
 /* vim:set ts=8 sw=3 sts=3 expandtab cino=>5n-2f0^-2{2(0W1st0 :*/
