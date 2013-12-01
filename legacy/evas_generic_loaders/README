@@ -20,21 +20,21 @@ REQUIREMENTS
 
 Required by default:
 
-    libc
-    libm
-    zlib
+  * libc
+  * libm
+  * zlib
 
 Highly recommended:
 
-    gstreamer (0.10) (ensure you have all the gstreamer codecs you need/want)
-    poppler
-    libraw
-    libspectre
-    librsvg
+  * gstreamer (0.10) (ensure you have all the gstreamer codecs you need/want)
+  * poppler
+  * libraw
+  * libspectre
+  * librsvg
 
 Sugested:
 
-    libreoffice
+  * libreoffice
 
 
 COMPONENTS
