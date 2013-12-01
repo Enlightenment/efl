@@ -12,7 +12,9 @@
 #endif
 
 #include "evas_font_private.h" /* for Frame-Queuing support */
-#include <freetype/tttables.h> /* Freetype2 OS/2 font table. */
+
+#include <ft2build.h> 
+#include FT_TRUETYPE_TABLES_H /* Freetype2 OS/2 font table. */
 
 #ifdef EVAS_CSERVE2
 # include "../cserve2/evas_cs2_private.h"
