@@ -7,7 +7,7 @@ dnl m4_define([v_rev], m4_esyscmd([(git rev-list --count HEAD 2>/dev/null || ech
 ##--   When released, remove the dnl on the below line
 dnl m4_undefine([v_rev])
 ##--   When doing snapshots - change soname. remove dnl on below line
-m4_define([relname], [beta2])
+m4_define([relname], [dev])
 dnl m4_define([v_rel], [-release relname])
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 m4_ifdef([v_rev], [m4_define([v_ver], [v_maj.v_min.v_mic.v_rev])], [m4_define([v_ver], [v_maj.v_min.v_mic])])
@@ -17,7 +17,7 @@ m4_define([lt_age], v_min)
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 
-AC_INIT([evas_generic_loaders], [v_ver-beta2], [enlightenment-devel@lists.sourceforge.net])
+AC_INIT([evas_generic_loaders], [v_ver], [enlightenment-devel@lists.sourceforge.net])
 AC_PREREQ([2.52])
 AC_CONFIG_SRCDIR([configure.ac])
 AC_CONFIG_MACRO_DIR([m4])
