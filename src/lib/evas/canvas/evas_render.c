@@ -1593,6 +1593,17 @@ _drop_image_cache_ref(const void *container EINA_UNUSED, void *data, void *fdata
    return EINA_TRUE;
 }
 
+static void
+_cb_always_call(Evas *eo_e, Evas_Callback_Type type, void *event_info)
+{
+   int freeze_num = 0, i;
+
+   eo_do(eo_e, eo_event_freeze_get(&freeze_num));
+   for (i = 0; i < freeze_num; i++) eo_do(eo_e, eo_event_thaw());
+   evas_event_callback_call(eo_e, type, event_info);
+   for (i = 0; i < freeze_num; i++) eo_do(eo_e, eo_event_freeze());
+}
+
 static Eina_Bool
 evas_render_updates_internal(Evas *eo_e,
                              unsigned char make_updates,
@@ -1648,7 +1659,7 @@ evas_render_updates_internal(Evas *eo_e,
 
    RD("[--- RENDER EVAS (size: %ix%i)\n", e->viewport.w, e->viewport.h);
 
-   evas_event_callback_call(eo_e, EVAS_CALLBACK_RENDER_PRE, NULL);
+   _cb_always_call(eo_e, EVAS_CALLBACK_RENDER_PRE, NULL);
 
    /* Check if the modified object mean recalculating every thing */
    if (!e->invalidate)
@@ -1985,10 +1996,10 @@ evas_render_updates_internal(Evas *eo_e,
                {
                   _evas_object_image_video_overlay_do(eo_obj);
                }
-             evas_event_callback_call(eo_e, EVAS_CALLBACK_RENDER_FLUSH_PRE, NULL);
+             _cb_always_call(eo_e, EVAS_CALLBACK_RENDER_FLUSH_PRE, NULL);
              e->engine.func->output_flush(e->engine.data.output,
                                           EVAS_RENDER_MODE_SYNC);
-             evas_event_callback_call(eo_e, EVAS_CALLBACK_RENDER_FLUSH_POST, NULL);
+             _cb_always_call(eo_e, EVAS_CALLBACK_RENDER_FLUSH_POST, NULL);
           }
      }
 
@@ -2121,7 +2132,7 @@ evas_render_updates_internal(Evas *eo_e,
         Evas_Event_Render_Post post;
 
         post.updated_area = e->render.updates;
-        evas_event_callback_call(eo_e, EVAS_CALLBACK_RENDER_POST, e->render.updates ? &post : NULL);
+        _cb_always_call(eo_e, EVAS_CALLBACK_RENDER_POST, e->render.updates ? &post : NULL);
      }
 
    RD("---]\n");
@@ -2180,10 +2191,10 @@ evas_render_wakeup(Evas *eo_e)
           {
              _evas_object_image_video_overlay_do(eo_obj);
           }
-        evas_event_callback_call(eo_e, EVAS_CALLBACK_RENDER_FLUSH_PRE, NULL);
+        _cb_always_call(eo_e, EVAS_CALLBACK_RENDER_FLUSH_PRE, NULL);
         e->engine.func->output_flush(e->engine.data.output,
                                      EVAS_RENDER_MODE_ASYNC_END);
-        evas_event_callback_call(eo_e, EVAS_CALLBACK_RENDER_FLUSH_POST, NULL);
+        _cb_always_call(eo_e, EVAS_CALLBACK_RENDER_FLUSH_POST, NULL);
      }
 
    /* clear redraws */
@@ -2208,7 +2219,7 @@ evas_render_wakeup(Evas *eo_e)
    e->rendering = EINA_FALSE;
 
    post.updated_area = ret_updates;
-   evas_event_callback_call(eo_e, EVAS_CALLBACK_RENDER_POST, &post);
+   _cb_always_call(eo_e, EVAS_CALLBACK_RENDER_POST, &post);
 
    evas_render_updates_free(ret_updates);
 
