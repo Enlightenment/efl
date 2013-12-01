@@ -57,9 +57,9 @@ EAPI const Eo_Event_Description _EVAS_OBJECT_EVENT_IMAGE_RESIZE=
    EO_EVENT_DESCRIPTION("Image Resize", "Image resize");
 EAPI const Eo_Event_Description _EVAS_OBJECT_EVENT_IMAGE_UNLOADED =
    EO_EVENT_DESCRIPTION("Image Unloaded", "Image data has been unloaded (by some mechanism in Evas that throw out original image data)");
-EAPI const Eo_Event_Description _EVAS_OBJECT_EVENT_RENDER_PRE =
+EAPI const Eo_Event_Description _EVAS_CANVAS_EVENT_RENDER_PRE =
    EO_EVENT_DESCRIPTION("Render Pre", "Called just before rendering starts on the canvas target @since 1.2");
-EAPI const Eo_Event_Description _EVAS_OBJECT_EVENT_RENDER_POST =
+EAPI const Eo_Event_Description _EVAS_CANVAS_EVENT_RENDER_POST =
    EO_EVENT_DESCRIPTION("Render Post", "Called just after rendering stops on the canvas target @since 1.2");
 
 EAPI const Eo_Event_Description _EVAS_CANVAS_EVENT_FOCUS_IN =
@@ -111,8 +111,8 @@ static const Eo_Event_Description *_legacy_evas_callback_table[EVAS_CALLBACK_LAS
    EVAS_CANVAS_EVENT_OBJECT_FOCUS_IN,
    EVAS_CANVAS_EVENT_OBJECT_FOCUS_OUT,
    EVAS_OBJECT_EVENT_IMAGE_UNLOADED,
-   EVAS_OBJECT_EVENT_RENDER_PRE,
-   EVAS_OBJECT_EVENT_RENDER_POST
+   EVAS_CANVAS_EVENT_RENDER_PRE,
+   EVAS_CANVAS_EVENT_RENDER_POST
 };
 
 typedef struct
