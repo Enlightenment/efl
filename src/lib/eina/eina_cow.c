@@ -604,7 +604,9 @@ eina_cow_gc(Eina_Cow *cow)
    Eina_Cow_GC *gc;
    Eina_Iterator *it;
    Eina_Bool r;
+#ifndef NVALGRIND
    Eina_Cow_Ptr *ref;
+#endif
 
    EINA_COW_MAGIC_CHECK(cow);
 
@@ -617,10 +619,10 @@ eina_cow_gc(Eina_Cow *cow)
 
    if (!r) return EINA_FALSE; /* Something did go wrong here */
 
+#ifndef NVALGRIND
    /* Do handle hash and all funky merge thing here */
    ref = gc->ref;
 
-#ifndef NVALGRIND
    VALGRIND_MAKE_MEM_DEFINED(ref, sizeof (*ref));
 #endif
    _eina_cow_gc(cow, gc);
