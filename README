@@ -442,48 +442,48 @@ and is mostly to interface to C++ libraries like Bullet.
 
 Required by default:
 
-    bullet
-    libpng
-    libjpeg
-    gstreamer (0.10) (ensure you have all the gstreamer codecs you need/want)
-    zlib
-    lua (5.1 or 5.2)
-    libtiff
-    openssl
-    curl
-    dbus
-    libc
-    fontconfig
-    freetype2
-    fribidi
-    libpulse
-    libsndfile
-    libx11
-    libxau
-    libxcomposite
-    libxdamage
-    libxdmcp
-    libxext
-    libxfixes
-    libxinerama
-    libxrandr
-    libxrender
-    libxss
-    libxtst
-    libxcursor
-    libxp
-    libxi
-    libgl (opengl/glx or opengl-es2/egl)
-    giflib
-    util-linux (limbount + libblkid)
-    systemd / libudev
+  * bullet
+  * libpng
+  * libjpeg
+  * gstreamer (0.10) (ensure you have all the gstreamer codecs you need/want)
+  * zlib
+  * lua (5.1 or 5.2)
+  * libtiff
+  * openssl
+  * curl
+  * dbus
+  * libc
+  * fontconfig
+  * freetype2
+  * fribidi
+  * libpulse
+  * libsndfile
+  * libx11
+  * libxau
+  * libxcomposite
+  * libxdamage
+  * libxdmcp
+  * libxext
+  * libxfixes
+  * libxinerama
+  * libxrandr
+  * libxrender
+  * libxss
+  * libxtst
+  * libxcursor
+  * libxp
+  * libxi
+  * libgl (opengl/glx or opengl-es2/egl)
+  * giflib
+  * util-linux (limbount + libblkid)
+  * systemd / libudev
 
 Recommended requirements (highly recommended):
 
-    harfbuzz
-    libxi (2.2 or newer)
-    systemd
-    libwebp
+  * harfbuzz
+  * libxi (2.2 or newer)
+  * systemd
+  * libwebp
 
 Enable these with configure options:
 
@@ -510,7 +510,7 @@ by setting your CFLAGS environment variable (and CXXFLAGS)
 
 Other recommendations:
 
-    scim
+  * scim
 
 Enable this with:
 
