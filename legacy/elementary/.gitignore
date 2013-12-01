@@ -18,8 +18,10 @@
 Makefile
 Makefile.in
 *.so
+*.dll
 *.edj
 *.cmake
+*.exe
 elementary-*-doc.tar.bz2
 /aclocal.m4
 /autom4te.cache/
