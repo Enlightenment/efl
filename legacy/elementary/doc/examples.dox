@@ -42,7 +42,7 @@
  * @ref dayselector_example
  *
  * @ref mapbuf_example
-
+ *
  * @ref map_example_01
  *
  * @ref map_example_02
@@ -118,6 +118,8 @@
  * @ref prefs_example_02
  *
  * @ref prefs_example_03
+ *
+ * @ref label_example_01
  */
 
 /**
@@ -3531,7 +3533,7 @@
   * them and see what changes in appearance those properties cause.
   *
   * We start with the setup code that by now you should be familiar with:
-  * @until show(bg)
+  * @until elm_win_autodel_set
   *
   * For our first label we have a moderately long text(that doesn't fit in the
   * label's width) so we will make it a sliding label. Since the text isn't
@@ -3561,7 +3563,7 @@
   * @until show(label
   *
   * And last but not least for our sixth label we set the style to "marker" and
-  * the color to red(the default color is white which would be hard to see on
+  * the color to red (the default color is white which would be hard to see on
   * our white background):
   * @until show(label
   *
