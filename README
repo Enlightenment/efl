@@ -473,9 +473,9 @@ Required by default:
     libxcursor
     libxp
     libxi
-    libgl
+    libgl (opengl/glx or opengl-es2/egl)
     giflib
-    util-linux
+    util-linux (limbount + libblkid)
     systemd / libudev
 
 Recommended requirements (highly recommended):
