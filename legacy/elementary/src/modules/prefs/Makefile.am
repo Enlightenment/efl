@@ -1,10 +1,6 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-EDJE_CC = @edje_cc@
-EDJE_FLAGS_VERBOSE_ =
-EDJE_FLAGS_VERBOSE_0 =
-EDJE_FLAGS_VERBOSE_1 = -v
-EDJE_FLAGS = $(EDJE_FLAGS_VERBOSE_$(V))
+include ../../../Makefile_Elm_Helpers.am
 
 EXTRA_DIST = \
 elm_prefs_swallow.edc
@@ -13,7 +9,7 @@ filesdir = $(libdir)/elementary/modules/prefs/$(MODULE_ARCH)
 files_DATA = elm_prefs_swallow.edj
 
 elm_prefs_swallow.edj: Makefile elm_prefs_swallow.edc
-	$(EDJE_CC) $(EDJE_FLAGS) \
+	$(AM_V_EDJ)$(EDJE_CC) $(EDJE_CC_FLAGS) \
         $(top_srcdir)/src/modules/prefs/elm_prefs_swallow.edc \
 	$(top_builddir)/src/modules/prefs/elm_prefs_swallow.edj
 

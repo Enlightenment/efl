@@ -53,6 +53,7 @@ AC_DEFUN([EFL_WITH_BIN],
 [
 
 m4_pushdef([DOWN], m4_translit([[$2]], [-A-Z], [_a-z]))dnl
+m4_pushdef([UP], m4_translit([[$2]], [-a-z], [_A-Z]))dnl
 
 dnl configure option
 
@@ -66,6 +67,7 @@ AC_MSG_NOTICE(DOWN[ set to ${_efl_with_binary}])
 
 with_binary_[]m4_defn([DOWN])=${_efl_with_binary}
 
+AM_CONDITIONAL(HAVE_[]UP, [test "x${_efl_binary_define}" = "xyes"])
 AC_SUBST(DOWN)
 
 ])

@@ -1,11 +1,9 @@
 AUTOMAKE_OPTIONS     = 1.4 foreign
 MAINTAINERCLEANFILES = Makefile.in
 
-EDJE_CC = @edje_cc@
-EDJE_FLAGS_VERBOSE_ =
-EDJE_FLAGS_VERBOSE_0 =
-EDJE_FLAGS_VERBOSE_1 = -v
-EDJE_FLAGS = $(EDJE_FLAGS_VERBOSE_$(V)) -id $(top_srcdir)/data/edje_externals -fd $(top_srcdir)/data/edje_externals
+include ../../Makefile_Elm_Helpers.am
+
+EDJE_CC_FLAGS += -id $(top_srcdir)/data/edje_externals -fd $(top_srcdir)/data/edje_externals
 
 filesdir = $(datadir)/elementary/edje_externals
 files_DATA = icons.edj
@@ -36,7 +34,7 @@ ico_thumb.png \
 ico_toolbar.png
 
 icons.edj: Makefile $(EXTRA_DIST)
-	$(EDJE_CC) $(EDJE_FLAGS) \
+	$(AM_V_EDJ)$(EDJE_CC) $(EDJE_CC_FLAGS) \
 	$(top_srcdir)/data/edje_externals/icons.edc \
 	$(top_builddir)/data/edje_externals/icons.edj
 

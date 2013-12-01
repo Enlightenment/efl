@@ -1,19 +1,16 @@
 AUTOMAKE_OPTIONS     = 1.4 foreign
 MAINTAINERCLEANFILES = Makefile.in
 
-EDJE_CC = @edje_cc@
-EDJE_FLAGS_VERBOSE_ =
-EDJE_FLAGS_VERBOSE_0 =
-EDJE_FLAGS_VERBOSE_1 = -v
-EDJE_FLAGS = $(EDJE_FLAGS_VERBOSE_$(V)) -id $(top_srcdir)/data/themes/img -fd $(top_srcdir)/data/themes/fnt -sd $(top_srcdir)/data/themes/snd
+include ../../Makefile_Elm_Helpers.am
+
+EDJE_CC_FLAGS += -id $(top_srcdir)/data/themes/img -fd $(top_srcdir)/data/themes/fnt -sd $(top_srcdir)/data/themes/snd
 
 filesdir = $(datadir)/elementary/themes
 files_DATA = default.edj
 
 default.edj: Makefile $(EXTRA_DIST)
-	$(EDJE_CC) \
-        -fastdecomp \
-        $(EDJE_FLAGS) \
+	$(AM_V_EDJ)$(EDJE_CC) \
+        $(EDJE_CC_FLAGS) \
 	$(top_srcdir)/data/themes/default.edc \
 	$(top_builddir)/data/themes/default.edj
 

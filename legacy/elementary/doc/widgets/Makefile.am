@@ -2,6 +2,8 @@ MAINTAINERCLEANFILES = Makefile.in
 
 if EFL_BUILD_DOC
 
+include ../../Makefile_Elm_Helpers.am
+
 AM_CPPFLAGS = \
 -I$(top_srcdir) \
 -I$(top_srcdir)/src/lib \
@@ -19,12 +21,10 @@ AM_CPPFLAGS = \
 @ELEMENTARY_EWEATHER_CFLAGS@ \
 @ELEMENTARY_EMAP_CFLAGS@
 
-ELM_PREFS_CC = @elm_prefs_cc@
-
 noinst_DATA = widget_preview_prefs.epb
 
 widget_preview_prefs.epb: Makefile widget_preview_prefs.epc
-	$(ELM_PREFS_CC) $(ELM_PREFS_FLAGS) \
+	$(AM_V_EPB)$(ELM_PREFS_CC) $(ELM_PREFS_FLAGS) \
 	$(top_srcdir)/doc/widgets/widget_preview_prefs.epc \
 	$(top_builddir)/doc/widgets/widget_preview_prefs.epb
 

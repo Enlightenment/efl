@@ -1,5 +1,7 @@
 MAINTAINERCLEANFILES = Makefile.in
 
+include ../../Makefile_Elm_Helpers.am
+
 .PHONY: screenshots
 
 examplesdir = $(pkgdatadir)/examples
@@ -26,14 +28,6 @@ LDADD = \
 @ELEMENTARY_EMAP_LIBS@ \
 @ELEMENTARY_X_LIBS@ \
 $(top_builddir)/src/lib/libelementary.la
-
-EDJE_CC = @edje_cc@
-EDJE_FLAGS_VERBOSE_ =
-EDJE_FLAGS_VERBOSE_0 =
-EDJE_FLAGS_VERBOSE_1 = -v
-EDJE_FLAGS = $(EDJE_FLAGS_VERBOSE_$(V))
-
-ELM_PREFS_CC = $(top_builddir)/src/bin/@ELM_PREFS_CC_PRG@
 
 ELEMENTARY_CODEGEN = $(top_builddir)/src/bin/@ELEMENTARY_CODEGEN_PRG@
 ELEMENTARY_CODEGEN_FLAGS = --prefix=codegen_example
@@ -148,10 +142,10 @@ win_example.c \
 track_example_01.c
 
 .edc.edj:
-	$(EDJE_CC) $(EDJE_FLAGS) $< $@
+	$(AM_V_EDJ)$(EDJE_CC) $(EDJE_CC_FLAGS) $< $@
 
 .epc.epb:
-	$(ELM_PREFS_CC) $< $@
+	$(AM_V_EPB)$(ELM_PREFS_CC) $< $@
 
 if EFL_INSTALL_EXAMPLES
 files_DATA += $(SRCS) \
