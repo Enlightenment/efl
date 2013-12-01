@@ -40,6 +40,7 @@ elementary-*-doc.tar.bz2
 /ltmain.sh
 /missing
 /stamp-h1
+/ar-lib
 /test-driver
 core
 cscope.*
