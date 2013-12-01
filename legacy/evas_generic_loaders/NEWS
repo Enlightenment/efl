@@ -7,6 +7,7 @@ Improvements:
 
    * All generic loader binaries have built-in timeouts in case they
    get stuck.
+   * Libreoffice support for thumbnailing office documents
 
 Changes since Evas Generic Loaders 1.2.0:
 -----------------------------------------
