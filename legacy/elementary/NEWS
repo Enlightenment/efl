@@ -9,6 +9,8 @@ Improvements:
 
 Fixes:
 
+   * fix mouse eventing on e border theme
+
 Removals:
 
 Changes since Elementary 1.7.0:

@@ -1769,3 +1769,6 @@
 
         * tooltip: Added elm_object_tooltip_orient_set() and elm_object_tooltip_orient_get().
 
+2013-12-01  Mike Blumenkrantz
+
+        * fix mouse eventing on e border theme
