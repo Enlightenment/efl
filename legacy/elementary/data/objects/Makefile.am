@@ -11,7 +11,7 @@ filesdir = $(datadir)/elementary/objects
 
 files_DATA = test.edj test_external.edj multip.edj cursors.edj font_preview.edj postit_ent.edj multibuttonentry.edj test_prefs.edj test_prefs.epb test_focus_custom.edj
 
-ELM_PREFS_CC = $(top_builddir)/src/bin/@ELM_PREFS_CC_PRG@
+ELM_PREFS_CC = @elm_prefs_cc@
 
 EXTRA_DIST = \
 test.edc \

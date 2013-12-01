@@ -19,7 +19,7 @@ AM_CPPFLAGS = \
 @ELEMENTARY_EWEATHER_CFLAGS@ \
 @ELEMENTARY_EMAP_CFLAGS@
 
-ELM_PREFS_CC = $(top_builddir)/src/bin/@ELM_PREFS_CC_PRG@
+ELM_PREFS_CC = @elm_prefs_cc@
 
 noinst_DATA = widget_preview_prefs.epb
 
