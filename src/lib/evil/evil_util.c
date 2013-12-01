@@ -88,7 +88,7 @@ evil_utf16_to_utf8(const wchar_t *text16)
    if (!text16)
      return NULL;
 
-#if _WIN32_WINNT >= 0x0600
+#if WINVER >= 0x0600
    flag = WC_ERR_INVALID_CHARS;
 #endif
 
