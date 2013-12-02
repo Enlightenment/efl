@@ -1,6 +1,12 @@
 =========
-EFL 1.8.0
+EFL 1.8.1
 =========
+
+Changes since 1.8.0:
+--------------------
+
+Fixes:
+    * Fixed build problem which named shared libs as "release".
 
 Changes since 1.7.0:
 --------------------
