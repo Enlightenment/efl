@@ -27,7 +27,7 @@ m4_define([v_min], [$2])dnl
 m4_define([v_mic], [$3])dnl
 m4_define([dev_version], m4_esyscmd([(git rev-list --count HEAD 2>/dev/null || echo 0) | tr -d '\n']))dnl
 m4_define([v_rev], m4_if($4, dev, [dev_version], [0]))dnl
-m4_define([v_rel], m4_if($4, dev, [], m4_ifblank($4, [], [-release $4])))dnl
+m4_define([v_rel], [])dnl
 m4_define([def_build_profile], m4_if($4, dev, [dev], [release]))dnl
 dnl m4_define([efl_version], m4_if($4, dev, [v_maj.v_min.v_mic.v_rev], [v_maj.v_min.v_mic]))dnl
 m4_define([efl_version], [v_maj.v_min.v_mic])dnl
