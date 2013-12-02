@@ -29,6 +29,8 @@ enum
    ELM_OBJ_SLIDER_SUB_ID_INDICATOR_SHOW_GET,
    ELM_OBJ_SLIDER_SUB_ID_STEP_SET,
    ELM_OBJ_SLIDER_SUB_ID_STEP_GET,
+   ELM_OBJ_SLIDER_SUB_ID_INDICATOR_SHOW_ON_FOCUS_SET,
+   ELM_OBJ_SLIDER_SUB_ID_INDICATOR_SHOW_ON_FOCUS_GET,
    ELM_OBJ_SLIDER_SUB_ID_LAST
 };
 
@@ -266,7 +268,7 @@ enum
 
 /**
  * @def elm_obj_slider_indicator_show_set
- * @since 1.8
+ * @since 1.9
  *
  * Set whether to enlarge slider indicator (augmented knob) or not.
  *
@@ -326,3 +328,31 @@ enum
  * @ingroup Slider
  */
 #define elm_obj_slider_step_get(ret) ELM_OBJ_SLIDER_ID(ELM_OBJ_SLIDER_SUB_ID_STEP_GET), EO_TYPECHECK(double *, ret)
+
+/**
+ * @def elm_slider_indicator_show_on_focus_set
+ * @since 1.9
+ *
+ * show indicator of slider on focus
+ *
+ * @param[in] flag
+ *
+ * @see elm_slider_indicator_show_on_focus_set
+ *
+ * @ingroup Slider
+ */
+#define elm_obj_slider_indicator_show_on_focus_set(flag) ELM_OBJ_SLIDER_ID(ELM_OBJ_SLIDER_SUB_ID_INDICATOR_SHOW_ON_FOCUS_SET), EO_TYPECHECK(Eina_Bool, flag)
+
+/**
+ * @def elm_slider_indicator_show_on_focus_get
+ * @since 1.9
+ *
+ * Get whether the indicator of the slider is set or not
+ *
+ * @param[out] ret
+ *
+ * @see elm_slider_indicator_show_on_focus_get
+ *
+ * @ingroup Slider
+ */
+#define elm_obj_slider_indicator_show_on_focus_get(ret) ELM_OBJ_SLIDER_ID(ELM_OBJ_SLIDER_SUB_ID_INDICATOR_SHOW_ON_FOCUS_GET), EO_TYPECHECK(Eina_Bool*, ret)

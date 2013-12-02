@@ -357,3 +357,24 @@ EAPI void                         elm_slider_step_set(Evas_Object *obj, double s
  * @ingroup Slider
  */
 EAPI double                       elm_slider_step_get(const Evas_Object *obj);
+
+/**
+ * Show the indicator of slider on focus
+ *
+ * @param obj The slider object.
+ * @param flag @ EINA_TRUE sets the indicator visible
+ *
+ * @ingroup Slider
+ */
+EAPI void                         elm_slider_indicator_show_on_focus_set(Evas_Object *obj, Eina_Bool flag);
+
+/**
+ * Get whether the indicator of the slider is set or not
+ *
+ * @param obj The slider object.
+ * @return @c EINA_TRUE, if indicator is set
+ *         @c EINA_FALSE otherwise.
+ *
+ * @ingroup Slider
+ */
+EAPI Eina_Bool                    elm_slider_indicator_show_on_focus_get(const Evas_Object *obj);

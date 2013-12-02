@@ -317,9 +317,12 @@ _popup_hide(void *data,
      {
         if (!sd->popup_hiding)
           {
-             edje_object_signal_emit(sd->popup, "popup,hide", "elm"); // XXX: for compat
-             edje_object_signal_emit(sd->popup, "elm,popup,hide", "elm");
-             sd->popup_hiding = EINA_TRUE;
+             if (!(elm_widget_focus_get(data) && sd->always_popup_show))
+               {
+                  edje_object_signal_emit(sd->popup, "popup,hide", "elm"); // XXX: for compat
+                  edje_object_signal_emit(sd->popup, "elm,popup,hide", "elm");
+                  sd->popup_hiding = EINA_TRUE;
+               }
           }
      }
 }
@@ -335,8 +338,11 @@ _popup_hide_done(void *data,
      {
         if (sd->popup_hiding)
           {
-             evas_object_hide(sd->popup);
-             sd->popup_hiding = EINA_FALSE;
+             if (!(elm_widget_focus_get(data) && sd->always_popup_show))
+               {
+                  evas_object_hide(sd->popup);
+                  sd->popup_hiding = EINA_FALSE;
+               }
           }
      }
 }
@@ -1383,6 +1389,44 @@ _elm_slider_step_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    *ret = sd->step;
 }
 
+EAPI void
+elm_slider_indicator_show_on_focus_set(Evas_Object *obj, Eina_Bool flag)
+{
+   ELM_SLIDER_CHECK(obj);
+   eo_do(obj, elm_obj_slider_indicator_show_on_focus_set(flag));
+}
+
+static void
+_elm_slider_indicator_show_on_focus_set(Eo *obj, void *_pd, va_list *list)
+{
+   Eina_Bool flag = va_arg(*list, int);
+   Elm_Slider_Smart_Data *sd = _pd;
+
+   if (flag)
+     sd->always_popup_show = EINA_TRUE;
+   else
+     sd->always_popup_show = EINA_FALSE;
+}
+
+EAPI Eina_Bool
+elm_slider_indicator_show_on_focus_get(const Evas_Object *obj)
+{
+   ELM_SLIDER_CHECK(obj) EINA_FALSE;
+   Eina_Bool ret;
+
+   eo_do((Eo *) obj, elm_obj_slider_indicator_show_on_focus_get(&ret));
+   return ret;
+}
+
+static void
+_elm_slider_indicator_show_on_focus_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Elm_Slider_Smart_Data *sd = _pd;
+   *ret = sd->always_popup_show;
+}
+
+
 static void
 _elm_slider_smart_focus_next_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
 {
@@ -1395,6 +1439,20 @@ _elm_slider_smart_focus_direction_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA
 {
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    *ret = EINA_FALSE;
+}
+
+static void
+_elm_slider_smart_on_focus(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+{
+   Eina_Bool int_ret;
+   Elm_Slider_Smart_Data *sd = _pd;
+
+   eo_do_super(obj, MY_CLASS, elm_wdg_on_focus(&int_ret));
+
+   if (sd->always_popup_show && elm_widget_focus_get(obj))
+     _popup_show(obj, NULL, NULL, NULL);
+   else
+     _popup_hide(obj, NULL, NULL, NULL);
 }
 
 static void
@@ -1412,6 +1470,7 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ACTIVATE), _elm_slider_smart_activate),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_NEXT_MANAGER_IS), _elm_slider_smart_focus_next_manager_is),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_DIRECTION_MANAGER_IS), _elm_slider_smart_focus_direction_manager_is),
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ON_FOCUS), _elm_slider_smart_on_focus),
 
         EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_SIZING_EVAL), _elm_slider_smart_sizing_eval),
         EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_TEXT_ALIASES_GET), _elm_slider_smart_text_aliases_get),
@@ -1437,6 +1496,8 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_OBJ_SLIDER_ID(ELM_OBJ_SLIDER_SUB_ID_INDICATOR_SHOW_GET), _elm_slider_indicator_show_get),
         EO_OP_FUNC(ELM_OBJ_SLIDER_ID(ELM_OBJ_SLIDER_SUB_ID_STEP_SET), _elm_slider_step_set),
         EO_OP_FUNC(ELM_OBJ_SLIDER_ID(ELM_OBJ_SLIDER_SUB_ID_STEP_GET), _elm_slider_step_get),
+        EO_OP_FUNC(ELM_OBJ_SLIDER_ID(ELM_OBJ_SLIDER_SUB_ID_INDICATOR_SHOW_ON_FOCUS_SET), _elm_slider_indicator_show_on_focus_set),
+        EO_OP_FUNC(ELM_OBJ_SLIDER_ID(ELM_OBJ_SLIDER_SUB_ID_INDICATOR_SHOW_ON_FOCUS_GET), _elm_slider_indicator_show_on_focus_get),
         EO_OP_FUNC_SENTINEL
    };
    eo_class_funcs_set(klass, func_desc);
@@ -1465,6 +1526,8 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_OBJ_SLIDER_SUB_ID_INDICATOR_SHOW_GET, "Get whether a given slider widget's enlarging indicator or not."),
      EO_OP_DESCRIPTION(ELM_OBJ_SLIDER_SUB_ID_STEP_SET, "Set the draggable's step size."),
      EO_OP_DESCRIPTION(ELM_OBJ_SLIDER_SUB_ID_STEP_GET, "Get the draggable's step size."),
+     EO_OP_DESCRIPTION(ELM_OBJ_SLIDER_SUB_ID_INDICATOR_SHOW_ON_FOCUS_SET, "Set the visiblity of slider indicator."),
+     EO_OP_DESCRIPTION(ELM_OBJ_SLIDER_SUB_ID_INDICATOR_SHOW_ON_FOCUS_GET, "Get the visiblity of slider indicator."),
      EO_OP_DESCRIPTION_SENTINEL
 };
 static const Eo_Class_Description class_desc = {
