@@ -285,7 +285,7 @@ _ecore_evas_wl_rotation_set(Ecore_Evas *ee, int rotation, int resize)
 static void 
 _ecore_evas_wl_show(Ecore_Evas *ee)
 {
-   /* Evas_Engine_Info_Wayland_Egl *einfo; */
+   Evas_Engine_Info_Wayland_Egl *einfo;
    Ecore_Evas_Engine_Wl_Data *wdata;
    int fw, fh;
 
@@ -300,14 +300,13 @@ _ecore_evas_wl_show(Ecore_Evas *ee)
      {
         ecore_wl_window_show(wdata->win);
         ecore_wl_window_update_size(wdata->win, ee->w + fw, ee->h + fh);
-//        ecore_wl_window_buffer_attach(wdata->win, NULL, 0, 0);
 
-        /* einfo = (Evas_Engine_Info_Wayland_Egl *)evas_engine_info_get(ee->evas); */
-        /* if (einfo) */
-        /*   { */
-        /*      einfo->info.surface = ecore_wl_window_surface_get(wdata->win); */
-        /*      evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo); */
-        /*   } */
+        einfo = (Evas_Engine_Info_Wayland_Egl *)evas_engine_info_get(ee->evas);
+        if (einfo)
+          {
+             einfo->info.surface = ecore_wl_window_surface_get(wdata->win);
+             evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+          }
      }
 
    if (wdata->frame)
