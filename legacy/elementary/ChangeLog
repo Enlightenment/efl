@@ -1660,10 +1660,6 @@
         position. This actually reduces the mapbuf calculation time muchly in
         case of complex layout.
 
-2013-09-30  Abhinandan Aryadipta (aryarockstar)
-
-        * Popup: Added elm_popup_align_set() and elm_popup_align_get() APIs.
-
 2013-10-01  Ryuan Choi (ryuan)
 
         * fileselector: Add the configuration fileselector_double_tap_navigation_enable.
