@@ -1062,6 +1062,7 @@ _transition_name_get(Edje_Tween_Mode mode)
       case EDJE_TWEEN_MODE_ACCELERATE: return "ACCELERATE";
       case EDJE_TWEEN_MODE_DECELERATE: return "DECELERATE";
       case EDJE_TWEEN_MODE_SINUSOIDAL: return "SINUSOIDAL";
+      case EDJE_TWEEN_MODE_CUBIC_BEZIER: return "CUBIC_BEZIER";
       default:
          ERR("Unknown transition mode %d", mode);
          return "???";

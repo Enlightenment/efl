@@ -26,10 +26,11 @@ static void _edje_part_recalc_single(Edje *ed, Edje_Real_Part *ep,
   EINA_COW_WRITE_END(_edje_calc_params_map_cow, Calc->map, Write);
 
 void
-_edje_part_pos_set(Edje *ed, Edje_Real_Part *ep, int mode, FLOAT_T pos, FLOAT_T v1, FLOAT_T v2)
+_edje_part_pos_set(Edje *ed, Edje_Real_Part *ep, int mode, FLOAT_T pos, FLOAT_T v1, FLOAT_T v2, FLOAT_T v3, FLOAT_T v4)
 {
    FLOAT_T fp_pos;
    FLOAT_T npos;
+   double v[4];
 
    pos = CLAMP(pos, ZERO, FROM_INT(1));
 
@@ -118,6 +119,16 @@ _edje_part_pos_set(Edje *ed, Edje_Real_Part *ep, int mode, FLOAT_T pos, FLOAT_T 
         npos = FROM_DOUBLE(ecore_animator_pos_map(TO_DOUBLE(pos),
                                                   ECORE_POS_MAP_SPRING,
                                                   TO_DOUBLE(v1), TO_DOUBLE(v2)));
+        break;
+      case EDJE_TWEEN_MODE_CUBIC_BEZIER:
+        v[0] = TO_DOUBLE(v1);
+        v[1] = TO_DOUBLE(v2);
+        v[2] = TO_DOUBLE(v3);
+        v[3] = TO_DOUBLE(v4);
+
+        npos = FROM_DOUBLE(ecore_animator_pos_map_n(TO_DOUBLE(pos),
+                                                    ECORE_POS_MAP_CUBIC_BEZIER,
+                                                    4, v));
         break;
       default:
         npos = fp_pos;

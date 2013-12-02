@@ -343,7 +343,9 @@ _edje_program_run_iterate(Edje_Running_Program *runp, double tim)
              if (rp) _edje_part_pos_set(ed, rp,
                                         runp->program->tween.mode, t,
                                         runp->program->tween.v1,
-                                        runp->program->tween.v2);
+                                        runp->program->tween.v2,
+                                        runp->program->tween.v3,
+                                        runp->program->tween.v4);
           }
      }
    if (t >= FROM_INT(1))
@@ -365,7 +367,9 @@ _edje_program_run_iterate(Edje_Running_Program *runp, double tim)
                        _edje_part_pos_set(ed, rp,
                                           runp->program->tween.mode, ZERO,
                                           runp->program->tween.v1,
-                                          runp->program->tween.v2);
+                                          runp->program->tween.v2,
+                                          runp->program->tween.v3,
+                                          runp->program->tween.v4);
                        rp->program = NULL;
                     }
                }
@@ -442,7 +446,9 @@ _edje_program_end(Edje *ed, Edje_Running_Program *runp)
                   _edje_part_pos_set(ed, rp,
                                      runp->program->tween.mode, ZERO,
                                      runp->program->tween.v1,
-                                     runp->program->tween.v2);
+                                     runp->program->tween.v2,
+                                     runp->program->tween.v3,
+                                     runp->program->tween.v4);
 
                   if (rp->current)
                     {
@@ -605,7 +611,9 @@ low_mem_current:
                                                           pr->value);
                              _edje_part_pos_set(ed, rp, pr->tween.mode, ZERO,
                                                 pr->tween.v1,
-                                                pr->tween.v2);
+                                                pr->tween.v2,
+                                                pr->tween.v3,
+                                                pr->tween.v4);
                              rp->program = runp;
                           }
                      }
@@ -644,7 +652,9 @@ low_mem_current:
                                                           0.0);
                              _edje_part_pos_set(ed, rp, pr->tween.mode, ZERO,
                                                 pr->tween.v1,
-                                                pr->tween.v2);
+                                                pr->tween.v2,
+                                                pr->tween.v3,
+                                                pr->tween.v4);
                           }
                      }
                 }

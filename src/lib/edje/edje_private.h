@@ -648,6 +648,8 @@ struct _Edje_Program /* a conditional program to be run */
       FLOAT_T  time; /* time to graduate between current and new state */
       FLOAT_T  v1; /* other value for drag actions */
       FLOAT_T  v2; /* other value for drag actions */
+      FLOAT_T  v3; /* other value for drag actions */
+      FLOAT_T  v4; /* other value for drag actions */
    } tween;
 
    Eina_List  *targets; /* list of target parts to apply the state to */
@@ -1941,7 +1943,7 @@ EAPI extern Eina_Mempool *_emp_EXTERNAL;
 EAPI extern Eina_Mempool *_emp_SPACER;
 EAPI extern Eina_Mempool *_emp_part;
 
-void  _edje_part_pos_set(Edje *ed, Edje_Real_Part *ep, int mode, FLOAT_T pos, FLOAT_T v1, FLOAT_T v2);
+void  _edje_part_pos_set(Edje *ed, Edje_Real_Part *ep, int mode, FLOAT_T pos, FLOAT_T v1, FLOAT_T v2, FLOAT_T v3, FLOAT_T v4);
 Edje_Part_Description_Common *_edje_part_description_find(Edje *ed,
 							  Edje_Real_Part *rp,
 							  const char *name, double val);

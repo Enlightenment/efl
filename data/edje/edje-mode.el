@@ -421,6 +421,7 @@
                          ; program transition (st_collections_group_programs_program_transition)
                          "LINEAR"
                          "SINUSOIDAL"
+                         "CUBIC_BEZIER"
                          "ACCELERATE"
                          "DECELERATE"
                          ) t) "\\>")

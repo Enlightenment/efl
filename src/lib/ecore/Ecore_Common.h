@@ -1899,7 +1899,8 @@ enum _Ecore_Pos_Map    /* Position mappings */
    ECORE_POS_MAP_SINUSOIDAL_FACTOR, /**< Start slow, speed up then slow down at end, v1 being a power factor, 0.0 being linear, 1.0 being normal sinusoidal, 2.0 being much more pronounced sinusoidal (squared), 3.0 being cubed, etc. */
    ECORE_POS_MAP_DIVISOR_INTERP, /**< Start at gradient * v1, interpolated via power of v2 curve */
    ECORE_POS_MAP_BOUNCE, /**< Start at 0.0 then "drop" like a ball bouncing to the ground at 1.0, and bounce v2 times, with decay factor of v1 */
-   ECORE_POS_MAP_SPRING /**< Start at 0.0 then "wobble" like a spring rest position 1.0, and wobble v2 times, with decay factor of v1 */
+   ECORE_POS_MAP_SPRING, /**< Start at 0.0 then "wobble" like a spring rest position 1.0, and wobble v2 times, with decay factor of v1 */
+   ECORE_POS_MAP_CUBIC_BEZIER /**< Follow the cubic-bezier curve calculated with the points (x1, y1), (x2, y2) */
 };
 typedef enum _Ecore_Pos_Map Ecore_Pos_Map;
 
@@ -2010,6 +2011,71 @@ EAPI double ecore_animator_frametime_get(void);
  * @since 1.1.0
  */
 EAPI double ecore_animator_pos_map(double pos, Ecore_Pos_Map map, double v1, double v2);
+
+/**
+ * @brief Maps an input position from 0.0 to 1.0 along a timeline to a
+ * position in a different curve.
+ *
+ * @param pos The input position to map
+ * @param map The mapping to use
+ * @param v_size The size of the v array.
+ * @param v An array with the double parameters to be used by the mapping.
+ * NULL if not used.
+ * @return The mapped value
+ *
+ * Takes an input position (0.0 to 1.0) and maps to a new position (normally
+ * between 0.0 and 1.0, but it may go above/below 0.0 or 1.0 to show that it
+ * has "overshot" the mark) using some interpolation (mapping) algorithm.
+ *
+ * This function useful to create non-linear animations. It offers a variety
+ * of possible animation curves to be used:
+ * @li ECORE_POS_MAP_LINEAR - Linear, returns @p pos
+ * @li ECORE_POS_MAP_ACCELERATE - Start slow then speed up
+ * @li ECORE_POS_MAP_DECELERATE - Start fast then slow down
+ * @li ECORE_POS_MAP_SINUSOIDAL - Start slow, speed up then slow down at end
+ * @li ECORE_POS_MAP_ACCELERATE_FACTOR - Start slow then speed up, v[0] being a
+ * power factor, 0.0 being linear, 1.0 being ECORE_POS_MAP_ACCELERATE, 2.0
+ * being much more pronounced accelerate (squared), 3.0 being cubed, etc.
+ * @li ECORE_POS_MAP_DECELERATE_FACTOR - Start fast then slow down, v[0] being a
+ * power factor, 0.0 being linear, 1.0 being ECORE_POS_MAP_DECELERATE, 2.0
+ * being much more pronounced decelerate (squared), 3.0 being cubed, etc.
+ * @li ECORE_POS_MAP_SINUSOIDAL_FACTOR - Start slow, speed up then slow down
+ * at end, v[0] being a power factor, 0.0 being linear, 1.0 being
+ * ECORE_POS_MAP_SINUSOIDAL, 2.0 being much more pronounced sinusoidal
+ * (squared), 3.0 being cubed, etc.
+ * @li ECORE_POS_MAP_DIVISOR_INTERP - Start at gradient * v[0], interpolated via
+ * power of v2 curve
+ * @li ECORE_POS_MAP_BOUNCE - Start at 0.0 then "drop" like a ball bouncing to
+ * the ground at 1.0, and bounce v2 times, with decay factor of v[0]
+ * @li ECORE_POS_MAP_SPRING - Start at 0.0 then "wobble" like a spring rest
+ * position 1.0, and wobble v2 times, with decay factor of v[0]
+ * @li ECORE_POS_MAP_CUBIC_BEZIER - Use an interpolated cubic-bezier curve
+ * ajusted with parameters from v[0] to v[3].
+ * @note When not listed v has no effect.
+ *
+ * @image html ecore-pos-map.png
+ * @image latex ecore-pos-map.eps width=\textwidth
+ *
+ * One way to use this would be:
+ * @code
+ * double pos; // input position in a timeline from 0.0 to 1.0
+ * double out; // output position after mapping
+ * int x1, y1, x2, y2; // x1 & y1 are start position, x2 & y2 are end position
+ * int x, y; // x & y are the calculated position
+ * double v[2] = {1.8, 7};
+ *
+ * out = ecore_animator_pos_map(pos, ECORE_POS_MAP_BOUNCE, 2, v);
+ * x = (x1 * out) + (x2 * (1.0 - out));
+ * y = (y1 * out) + (y2 * (1.0 - out));
+ * move_my_object_to(myobject, x, y);
+ * @endcode
+ * This will make an animation that bounces 7 each times diminishing by a
+ * factor of 1.8.
+ *
+ * @see _Ecore_Pos_Map
+ */
+EAPI double ecore_animator_pos_map_n(double pos, Ecore_Pos_Map map, int v_size, double v[]);
+
 /**
  * @brief Set the source of animator ticks for the mainloop
  *
