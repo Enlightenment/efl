@@ -7,6 +7,7 @@ Changes since 1.8.0:
 
 Fixes:
 
+    * Check ecore_x_window_prop_card32_get() return value correctly in ecore_x_e.
 
 =========
 EFL 1.8.0
