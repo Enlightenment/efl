@@ -1397,7 +1397,7 @@ elm_slider_indicator_show_on_focus_set(Evas_Object *obj, Eina_Bool flag)
 }
 
 static void
-_elm_slider_indicator_show_on_focus_set(Eo *obj, void *_pd, va_list *list)
+_elm_slider_indicator_show_on_focus_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Eina_Bool flag = va_arg(*list, int);
    Elm_Slider_Smart_Data *sd = _pd;
@@ -1442,7 +1442,7 @@ _elm_slider_smart_focus_direction_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA
 }
 
 static void
-_elm_slider_smart_on_focus(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+_elm_slider_smart_on_focus(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
    Eina_Bool int_ret;
    Elm_Slider_Smart_Data *sd = _pd;
