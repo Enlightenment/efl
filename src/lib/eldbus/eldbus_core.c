@@ -1536,3 +1536,10 @@ eldbus_connection_pending_del(Eldbus_Connection *conn, Eldbus_Pending *pending)
    conn->pendings = eina_inlist_remove(conn->pendings,
                                        EINA_INLIST_GET(pending));
 }
+
+const char *
+eldbus_connection_unique_name_get(Eldbus_Connection *conn)
+{
+   ELDBUS_CONNECTION_CHECK_RETVAL(conn, NULL);
+   return dbus_bus_get_unique_name(conn->dbus_conn);
+}

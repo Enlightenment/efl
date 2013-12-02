@@ -157,6 +157,16 @@ EAPI void                  eldbus_connection_event_callback_del(Eldbus_Connectio
  * ELDBUS_TIMEOUT_INFINITE for no timeout
  */
 EAPI Eldbus_Pending *eldbus_connection_send(Eldbus_Connection *conn, Eldbus_Message *msg, Eldbus_Message_Cb cb, const void *cb_data, double timeout) EINA_ARG_NONNULL(1, 2);
+
+/**
+ * @brief Gets unique name assigned by the message bus.
+ *
+ * @param conn connection object to get unique name from.
+ *
+ * @return pointer to unique name string or NULL or error. Returned value
+ * remains valid until connection is free.
+ */
+EAPI const char *eldbus_connection_unique_name_get(Eldbus_Connection *conn) EINA_ARG_NONNULL(1);
 /**
  * @}
  */
