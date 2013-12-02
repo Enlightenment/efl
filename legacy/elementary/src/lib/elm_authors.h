@@ -85,6 +85,9 @@
  * @author Youngbok Shin <youngb.shin@@samsung.com>
  * @author Niraj Kumar <niraj.kr@@samsung.com> <niraj.kumar.ait@@gmail.com>
  * @author Amitesh Singh <singh.amitesh@@gmail.com>
+ * @author Abhinandan Aryadipta <a.aryadipta@@samsung.com>
+ * @author Sanghyeon Lee <sh10233.lee@@samsung.com>
+ * @author Anil Kumar Nahak <ak.nahak@@samsung.com>
  *
  * Please contact <enlightenment-devel@lists.sourceforge.net> to get in
  * contact with the developers and maintainers.
