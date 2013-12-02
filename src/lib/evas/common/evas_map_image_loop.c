@@ -8,15 +8,21 @@
 #  endif   
 # endif
 # ifdef SCALE_USING_NEON
+   FPU_NEON;
+   VMOV_I2R_NEON(q2, #255);
 #  ifdef COLMUL
 #   ifndef COLBLACK
    // this part can be done here as c1 and c2 are constants in the cycle
    FPU_NEON;
    VMOV_M2R_NEON(d18, c1);
    VEOR_NEON(q8);
+#    ifndef COLSAME
    VMOV_M2R_NEON(d19, c2);
+#    endif
    VZIP_NEON(q9, q8);
+#    ifndef COLSAME
    VMOV_R2R_NEON(d19, d16);
+#    endif
    // here we have c1 and c2 spread through q9 register
 #   endif
 #  endif
@@ -117,10 +123,22 @@
             VMOV_R2R_NEON(d11, d2);
             // by this point we have all required data in right registers
             INTERP_256_NEON(q3, q5, q4, q2); // interpolate val1,val2 and val3,val4
+#   ifdef COLMUL
+#    ifdef COLSAME
+            INTERP_256_NEON(d14, d9, d8, d4);
+#    else
             VSWP_NEON(d9, d12); // move result of val3,val4 interpolation (and c1 if COLMUL is defined) for next step
             INTERP_256_NEON(q7, q6, q4, q2); // second stage of interpolation, also here c1 and c2 are interpolated
+#    endif
+#   else
+            INTERP_256_NEON(d14, d9, d8, d4);
+#   endif
 #   ifdef COLMUL
+#    ifdef COLSAME
+            MUL4_SYM_NEON(d8, d12, d4);
+#    else
             MUL4_SYM_NEON(d8, d9, d4); // do required multiplication
+#    endif
 #   endif
             VMOV_R2M_NEON(q4, d8, d); // save result to d
           }
@@ -154,13 +172,22 @@
 # ifdef SCALE_USING_NEON
 #  ifdef COLMUL
 #   ifndef COLBLACK
+#    ifdef COLSAME
+   FPU_NEON;
+   VMOV_I2R_NEON(q2, #255);
+   VMOV_M2R_NEON(d10, c1);
+   VEOR_NEON(d0);
+   VZIP_NEON(d10, d0);
+#    else
    // c1 and c2 are constants inside the cycle
    FPU_NEON;
+   VMOV_I2R_NEON(q2, #255);
    VMOV_M2R_NEON(d10, c1);
    VEOR_NEON(q0);
    VMOV_M2R_NEON(d11, c2);
    VZIP_NEON(q5, q0);
    VMOV_R2R_NEON(d11, d0);
+#    endif
 #   endif
 #  endif
 # endif
@@ -184,9 +211,14 @@
         val1 = *s; // col
 #   ifdef COLSAME
 #    ifdef SCALE_USING_NEON
-        *d = MUL4_SYM(c1, val1);
+        VMOV_M2R_NEON(d1, val1);
+        VEOR_NEON(d0);
+        VZIP_NEON(d1, d0);
+        VMOV_R2R_NEON(d0, d10);
+        MUL4_SYM_NEON(d0, d1, d4)
+        VMOV_R2M_NEON(q0, d0, d);
 #    else
-        *d = MUL4_SYM(c1, val1); // XXX: do this in neon
+        *d = MUL4_SYM(c1, val1);
 #    endif
 #   else
 #    ifdef SCALE_USING_NEON

@@ -19,9 +19,6 @@
 #ifdef SCALE_USING_MMX
              pxor_r2r(mm0, mm0);
              MOV_A2R(ALPHA_255, mm5)
-#elif defined SCALE_USING_NEON
-             FPU_NEON;
-             VMOV_I2R_NEON(q2, #255);
 #endif
                
              line = &(spans[y - ystart]);
