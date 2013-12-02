@@ -40,6 +40,7 @@ struct _Elm_Gengrid_Smart_Data
    Elm_Object_Item                      *last_selected_item;
    Elm_Gen_Item                         *show_it;
    Elm_Gen_Item                         *bring_in_it;
+   Elm_Gengrid_Item_Scrollto_Type        s_type;
 
    Ecore_Job                            *calc_job;
    int                                   walking;

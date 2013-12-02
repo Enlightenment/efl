@@ -97,7 +97,6 @@ _item_show_region(void *data)
    Elm_Gengrid_Smart_Data *sd = data;
    Evas_Coord cvw, cvh, it_xpos = 0, it_ypos = 0, col = 0, row = 0, minx = 0, miny = 0;
    Elm_Gen_Item *it = NULL;
-
    evas_object_geometry_get(sd->pan_obj, NULL, NULL, &cvw, &cvh);
 
    if ((cvw != 0) && (cvh != 0))
@@ -111,7 +110,6 @@ _item_show_region(void *data)
           if (!it) return;
 
           eo_do(sd->pan_obj, elm_obj_pan_pos_min_get(&minx, &miny));
-
           if (sd->horizontal && (sd->item_height > 0))
             {
                row = cvh / sd->item_height;
@@ -122,6 +120,19 @@ _item_show_region(void *data)
                it_xpos = ((x - GG_IT(it)->prev_group) * sd->item_width)
                        + (GG_IT(it)->prev_group * sd->group_item_width)
                        + minx;
+               if (sd->s_type == ELM_GENGRID_ITEM_SCROLLTO_MIDDLE)
+                 {
+                    if (it_xpos > 0) it_xpos = it_xpos + (cvw / 2) - (sd->item_width / 2);
+                    else it_xpos = it_xpos - (cvw / 2) + (sd->item_width / 2);
+                 }
+               else if (sd->s_type == ELM_GENGRID_ITEM_SCROLLTO_TOP)
+                 {
+                    if (it_xpos > 0) it_xpos = it_xpos + cvw - sd->item_width;
+                 }
+               else if (sd->s_type != ELM_GENGRID_ITEM_SCROLLTO_IN)
+                 {
+                   it_xpos = 0;
+                 }
                it_ypos = y * sd->item_height + miny;
                it->x = x;
                it->y = y;
@@ -133,10 +144,23 @@ _item_show_region(void *data)
                y = (it->position - 1) / col;
                if (y > 0)
                  x = (it->position - 1) % y;
-               it_xpos = x * sd->item_width + minx;
                it_ypos = ((y - GG_IT(it)->prev_group) * sd->item_height)
                        + (GG_IT(it)->prev_group * sd->group_item_height)
                        + miny;
+               if (sd->s_type == ELM_GENGRID_ITEM_SCROLLTO_MIDDLE)
+                 {
+                    if (it_ypos > 0) it_ypos = it_ypos + (cvh / 2) - (sd->item_height / 2);
+                    else it_ypos = it_ypos - (cvh / 2) + (sd->item_height / 2);
+                 }
+               else if (sd->s_type == ELM_GENGRID_ITEM_SCROLLTO_TOP)
+                 {
+                    if (it_ypos > 0) it_ypos = it_ypos + cvh - sd->item_height;
+                 }
+               else if (sd->s_type != ELM_GENGRID_ITEM_SCROLLTO_IN)
+                 {
+                   it_ypos = 0;
+                 }
+               it_xpos = x * sd->item_width + minx;
                it->x = x;
                it->y = y;
             }
@@ -3784,13 +3808,9 @@ elm_gengrid_item_show(Elm_Object_Item *item,
 
    if ((it->generation < sd->generation)) return;
 
-   if (type == ELM_GENGRID_ITEM_SCROLLTO_IN)
-     {
-        //TODO : type based handling like gengrid
-     }
-
    sd->show_region = EINA_TRUE;
    sd->show_it = it;
+   sd->s_type = type;
 
    _item_show_region(sd);
 }
@@ -3807,13 +3827,9 @@ elm_gengrid_item_bring_in(Elm_Object_Item *item,
 
    if (it->generation < sd->generation) return;
 
-   if (type == ELM_GENGRID_ITEM_SCROLLTO_IN)
-     {
-        //TODO : type based handling like gengrid
-     }
-
    sd->bring_in = EINA_TRUE;
    sd->bring_in_it = it;
+   sd->s_type = type;
 
    _item_show_region(sd);
 }
