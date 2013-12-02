@@ -139,12 +139,13 @@ EAPI Elm_Object_Item *elm_popup_item_append(Evas_Object *obj, const char *label,
 
 /**
  * @brief Set the alignment of the popup object
- *
  * @param obj popup object
  * @param horizontal The horizontal alignment of the popup
  * @param vertical The vertical alignment of the popup
  *
  * Sets the alignment in which the popup will appear in its parent.
+ *
+ * @see elm_popup_align_get()
  *
  * @since 1.9
  * @ingroup Popup
@@ -163,4 +164,3 @@ EAPI void elm_popup_align_set(Evas_Object *obj, double horizontal, double vertic
  * @ingroup Popup
  */
 EAPI void elm_popup_align_get(const Evas_Object *obj, double *horizontal, double *vertical);
-

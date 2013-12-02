@@ -143,7 +143,7 @@ enum
 
 /**
  * @def elm_obj_popup_align_set
- * @since 1.8
+ * @since 1.9
  *
  * @brief Set the alignment of the popup object relative to its parent
  *
@@ -156,7 +156,7 @@ enum
 
 /**
  * @def elm_obj_popup_align_get
- * @since 1.8
+ * @since 1.9
  *
  * @brief Return the alignment of the popup object relative to its parent
  *

@@ -9,7 +9,7 @@ typedef struct
 {
    double x;
    double y;
-}Evas_Rel_Coord_Point;
+} Evas_Rel_Coord_Point;
 
 static Evas_Object *g_popup = NULL;
 static int times = 0;
@@ -38,7 +38,7 @@ _popup_close_cb(void *data, Evas_Object *obj EINA_UNUSED,
 }
 
 static void
-_popup_move_cb(void *data, Evas_Object *obj EINA_UNUSED,
+_popup_align_cb(void *data, Evas_Object *obj EINA_UNUSED,
                void *event_info EINA_UNUSED)
 {
    static int k = 0;
@@ -531,8 +531,8 @@ _popup_transparent_cb(void *data, Evas_Object *obj EINA_UNUSED,
 }
 
 static void
-_popup_transparent_move_cb(void *data, Evas_Object *obj EINA_UNUSED,
-                           void *event_info EINA_UNUSED)
+_popup_transparent_align_cb(void *data, Evas_Object *obj EINA_UNUSED,
+                            void *event_info EINA_UNUSED)
 {
    Evas_Object *popup;
    Evas_Object *btn, *btn1;
@@ -545,7 +545,7 @@ _popup_transparent_move_cb(void *data, Evas_Object *obj EINA_UNUSED,
    btn = elm_button_add(popup);
    elm_object_text_set(btn, "Move");
    elm_object_part_content_set(popup, "button1", btn);
-   evas_object_smart_callback_add(btn, "clicked", _popup_move_cb, popup);
+   evas_object_smart_callback_add(btn, "clicked", _popup_align_cb, popup);
 
    btn1 = elm_button_add(popup);
    elm_object_text_set(btn1, "Close");
@@ -638,8 +638,8 @@ test_popup(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
                         _popup_center_text_3button_add_remove_button_cb, win);
    elm_list_item_append(list, "popup-transparent", NULL, NULL,
                         _popup_transparent_cb, win);
-   elm_list_item_append(list, "popup-transparent-move", NULL, NULL,
-                        _popup_transparent_move_cb, win);
+   elm_list_item_append(list, "popup-transparent-align", NULL, NULL,
+                        _popup_transparent_align_cb, win);
    elm_list_item_append(list, "popup-center-title + list content + 1 button",
                         NULL, NULL, _popup_center_title_list_content_1button_cb,
                         win);
