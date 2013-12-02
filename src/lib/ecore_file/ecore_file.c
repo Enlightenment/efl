@@ -591,7 +591,8 @@ ecore_file_mv(const char *src, const char *dst)
 
              // Make sure this is a regular file before
              // we do anything fancy.
-             stat(src, &st);
+             if (stat(src, &st) == -1)
+                 goto FAIL;
              if (S_ISREG(st.st_mode))
                {
                   char *dir;
