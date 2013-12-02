@@ -1763,7 +1763,7 @@ elm_popup_align_set(Evas_Object *obj, double horizontal, double vertical)
 }
 
 static void
-_align_set(Eo *obj, void *_pd, va_list *list)
+_align_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    double horizontal = va_arg(*list, double);
    double vertical = va_arg(*list, double);
