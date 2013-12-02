@@ -20,6 +20,8 @@ enum
    ELM_OBJ_POPUP_SUB_ID_ALLOW_EVENTS_SET,
    ELM_OBJ_POPUP_SUB_ID_ALLOW_EVENTS_GET,
    ELM_OBJ_POPUP_SUB_ID_ITEM_APPEND,
+   ELM_OBJ_POPUP_SUB_ID_ALIGN_SET,
+   ELM_OBJ_POPUP_SUB_ID_ALIGN_GET,
    ELM_OBJ_POPUP_SUB_ID_LAST
 };
 
@@ -138,6 +140,32 @@ enum
  * @see elm_popup_item_append
  */
 #define elm_obj_popup_item_append(label, icon, func, data, ret) ELM_OBJ_POPUP_ID(ELM_OBJ_POPUP_SUB_ID_ITEM_APPEND), EO_TYPECHECK(const char *, label), EO_TYPECHECK(Evas_Object *, icon), EO_TYPECHECK(Evas_Smart_Cb, func), EO_TYPECHECK(const void *, data), EO_TYPECHECK(Elm_Object_Item **, ret)
+
+/**
+ * @def elm_obj_popup_align_set
+ * @since 1.8
+ *
+ * @brief Set the alignment of the popup object relative to its parent
+ *
+ * @param[in] horizontal
+ * @param[in] vertical
+ *
+ * @see elm_popup_align_set
+ */
+#define elm_obj_popup_align_set(horizontal, vertical) ELM_OBJ_POPUP_ID(ELM_OBJ_POPUP_SUB_ID_ALIGN_SET), EO_TYPECHECK(double, horizontal), EO_TYPECHECK(double, vertical)
+
+/**
+ * @def elm_obj_popup_align_get
+ * @since 1.8
+ *
+ * @brief Return the alignment of the popup object relative to its parent
+ *
+ * @param[out] horizontal
+ * @param[out] vertical
+ *
+ * @see elm_popup_align_get
+ */
+#define elm_obj_popup_align_get(horizontal, vertical) ELM_OBJ_POPUP_ID(ELM_OBJ_POPUP_SUB_ID_ALIGN_GET), EO_TYPECHECK(double *, horizontal), EO_TYPECHECK(double *, vertical)
 /**
  * @}
  */

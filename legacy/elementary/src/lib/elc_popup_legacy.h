@@ -136,3 +136,31 @@ EAPI Eina_Bool elm_popup_allow_events_get(const Evas_Object *obj);
  * and item(s) can be there in a popup content area.
  */
 EAPI Elm_Object_Item *elm_popup_item_append(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Smart_Cb func, const void *data) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Set the alignment of the popup object
+ *
+ * @param obj popup object
+ * @param horizontal The horizontal alignment of the popup
+ * @param vertical The vertical alignment of the popup
+ *
+ * Sets the alignment in which the popup will appear in its parent.
+ *
+ * @since 1.9
+ * @ingroup Popup
+ */
+EAPI void elm_popup_align_set(Evas_Object *obj, double horizontal, double vertical);
+
+/**
+ * @brief Get the alignment of the popup object
+ * @param obj The popup object
+ * @param horizontal The horizontal alignment of the popup
+ * @param vertical The vertical alignment of the popup
+ *
+ * @see elm_popup_align_set()
+ *
+ * @since 1.9
+ * @ingroup Popup
+ */
+EAPI void elm_popup_align_get(const Evas_Object *obj, double *horizontal, double *vertical);
+
