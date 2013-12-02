@@ -79,6 +79,7 @@ _gst_init(const char *filename)
         goto gst_shutdown;
      }
 /* needs gst 1.0+
+ * also only works on playbin objects!!! this is a uridecodebin!
    g_object_get(G_OBJECT(pipeline),
                 "n-video", &vidstr,
                 NULL);
