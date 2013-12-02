@@ -1,3 +1,7 @@
+2013-12-02  Daniel Juyung Seo (SeoZ)
+
+        * Check ecore_x_window_prop_card32_get() return value correctly in ecore_x_e.
+
 2013-12-01  Carsten Haitzler (The Rasterman)
 
         * 1.8 release

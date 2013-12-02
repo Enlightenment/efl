@@ -55,10 +55,12 @@ EAPI Eina_Bool
 ecore_x_e_virtual_keyboard_get(Ecore_X_Window win)
 {
    unsigned int val = 0;
+   int ret = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   if (!ecore_x_window_prop_card32_get(win, ECORE_X_ATOM_E_VIRTUAL_KEYBOARD,
-                                       &val, 1))
+   ret = ecore_x_window_prop_card32_get(win, ECORE_X_ATOM_E_VIRTUAL_KEYBOARD,
+                                        &val, 1);
+   if ((ret == 0) || (ret == -1))
      return EINA_FALSE;
 
    return val ? EINA_TRUE : EINA_FALSE;
@@ -286,10 +288,12 @@ EAPI Eina_Bool
 ecore_x_e_illume_conformant_get(Ecore_X_Window win)
 {
    unsigned int val = 0;
+   int ret = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   if (!ecore_x_window_prop_card32_get(win, ECORE_X_ATOM_E_ILLUME_CONFORMANT,
-                                       &val, 1))
+   ret = ecore_x_window_prop_card32_get(win, ECORE_X_ATOM_E_ILLUME_CONFORMANT,
+                                        &val, 1);
+   if ((ret == 0) || (ret == -1))
      return EINA_FALSE;
 
    return val ? EINA_TRUE : EINA_FALSE;
@@ -484,9 +488,12 @@ EAPI Eina_Bool
 ecore_x_e_illume_drag_get(Ecore_X_Window win)
 {
    unsigned int val = 0;
+   int ret = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   if (!ecore_x_window_prop_card32_get(win, ECORE_X_ATOM_E_ILLUME_DRAG, &val, 1))
+   ret = ecore_x_window_prop_card32_get(win, ECORE_X_ATOM_E_ILLUME_DRAG,
+                                        &val, 1);
+   if ((ret == 0) || (ret == -1))
      return EINA_FALSE;
 
    return val ? EINA_TRUE : EINA_FALSE;
@@ -505,10 +512,12 @@ EAPI Eina_Bool
 ecore_x_e_illume_drag_locked_get(Ecore_X_Window win)
 {
    unsigned int val = 0;
+   int ret = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   if (!ecore_x_window_prop_card32_get(win, ECORE_X_ATOM_E_ILLUME_DRAG_LOCKED,
-                                       &val, 1))
+   ret = ecore_x_window_prop_card32_get(win, ECORE_X_ATOM_E_ILLUME_DRAG_LOCKED,
+                                        &val, 1);
+   if ((ret == 0) || (ret == -1))
      return EINA_FALSE;
 
    return val ? EINA_TRUE : EINA_FALSE;
@@ -727,10 +736,12 @@ EAPI Eina_Bool
 ecore_x_e_illume_quickpanel_get(Ecore_X_Window win)
 {
    unsigned int val = 0;
+   int ret = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   if (!ecore_x_window_prop_card32_get(win, ECORE_X_ATOM_E_ILLUME_QUICKPANEL,
-                                       &val, 1))
+   ret = ecore_x_window_prop_card32_get(win, ECORE_X_ATOM_E_ILLUME_QUICKPANEL,
+                                        &val, 1);
+   if ((ret == 0) || (ret == -1))
      return EINA_FALSE;
 
    return val ? EINA_TRUE : EINA_FALSE;
@@ -797,12 +808,13 @@ EAPI int
 ecore_x_e_illume_quickpanel_priority_major_get(Ecore_X_Window win)
 {
    unsigned int val = 0;
+   int ret = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   if (!ecore_x_window_prop_card32_get(win,
-                                       ECORE_X_ATOM_E_ILLUME_QUICKPANEL_PRIORITY_MAJOR,
-                                       &val, 1))
-     return 0;
+   ret = ecore_x_window_prop_card32_get(win, ECORE_X_ATOM_E_ILLUME_QUICKPANEL_PRIORITY_MAJOR,
+                                       &val, 1);
+   if ((ret == 0) || (ret == -1))
+     return EINA_FALSE;
 
    return val;
 }
@@ -821,11 +833,13 @@ EAPI int
 ecore_x_e_illume_quickpanel_priority_minor_get(Ecore_X_Window win)
 {
    unsigned int val = 0;
+   int ret = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   if (!ecore_x_window_prop_card32_get(win,
-                                       ECORE_X_ATOM_E_ILLUME_QUICKPANEL_PRIORITY_MINOR,
-                                       &val, 1))
+   ret = ecore_x_window_prop_card32_get(win,
+                                        ECORE_X_ATOM_E_ILLUME_QUICKPANEL_PRIORITY_MINOR,
+                                        &val, 1);
+   if ((ret == 0) || (ret == -1))
      return 0;
 
    return val;
@@ -845,11 +859,13 @@ EAPI int
 ecore_x_e_illume_quickpanel_zone_get(Ecore_X_Window win)
 {
    unsigned int val = 0;
+   int ret = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   if (!ecore_x_window_prop_card32_get(win,
-                                       ECORE_X_ATOM_E_ILLUME_QUICKPANEL_ZONE,
-                                       &val, 1))
+   ret = ecore_x_window_prop_card32_get(win,
+                                        ECORE_X_ATOM_E_ILLUME_QUICKPANEL_ZONE,
+                                        &val, 1);
+   if ((ret == 0) || (ret == -1))
      return 0;
 
    return val;
@@ -973,12 +989,14 @@ EAPI int
 ecore_x_e_illume_sliding_win_state_get(Ecore_X_Window win)
 {
    unsigned int is_visible = 0;
-   
+   int ret = 0;
+
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   if (!ecore_x_window_prop_card32_get(win,
-                                       ECORE_X_ATOM_E_ILLUME_SLIDING_WIN_STATE, 
-                                       &is_visible, 1))
-      return 0;
+   ret = ecore_x_window_prop_card32_get(win,
+                                        ECORE_X_ATOM_E_ILLUME_SLIDING_WIN_STATE, 
+                                        &is_visible, 1);
+   if ((ret == 0) || (ret == -1))
+     return 0;
 
    return is_visible;
 }
