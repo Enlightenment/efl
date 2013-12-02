@@ -1200,20 +1200,33 @@ _ecore_evas_wl_common_post_render(Ecore_Evas *ee)
    if (ee->func.fn_post_render) ee->func.fn_post_render(ee);
 }
 
+void
+_ecore_evas_wl_common_frame_callback_clean(Ecore_Evas *ee)
+{
+   Ecore_Evas_Engine_Wl_Data *wdata;
+
+   wdata = ee->engine.data;
+
+   if (!wdata->frame_pending)
+     return;
+   wl_callback_destroy(wdata->frame_callback);
+   wdata->frame_callback = NULL;
+   wdata->frame_pending = EINA_FALSE;
+}
+
 static void
-_ecore_evas_wl_frame_complete(void *data, struct wl_callback *callback, uint32_t tm EINA_UNUSED)
+_ecore_evas_wl_frame_complete(void *data, struct wl_callback *callback EINA_UNUSED, uint32_t tm EINA_UNUSED)
 {
    Ecore_Evas *ee = data;
    Ecore_Wl_Window *win = NULL;
    Ecore_Evas_Engine_Wl_Data *wdata;
 
    if (!ee) return;
+
+   _ecore_evas_wl_common_frame_callback_clean(ee);
+
    wdata = ee->engine.data;
    if (!(win = wdata->win)) return;
-
-   wdata->frame_callback = NULL;
-   wdata->frame_pending = EINA_FALSE;
-   wl_callback_destroy(callback);
 
    if (ecore_wl_window_surface_get(win))
      {
@@ -1283,6 +1296,17 @@ _ecore_evas_wl_common_render(Ecore_Evas *ee)
      }
 
    return rend;
+}
+
+void
+_ecore_evas_wl_common_withdrawn_set(Ecore_Evas *ee, int val)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (val)
+     ecore_evas_hide(ee);
+   else
+     ecore_evas_show(ee);
 }
 
 void

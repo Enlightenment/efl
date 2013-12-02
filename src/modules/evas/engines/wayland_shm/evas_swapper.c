@@ -29,6 +29,7 @@ struct _Wl_Buffer
 struct _Wl_Swapper
 {
    Wl_Buffer buff[3];
+   Wl_Buffer *buffer_sent;
    int in_use;
    int dx, dy, w, h, depth;
    int buff_cur, buff_num;
@@ -448,7 +449,6 @@ static void
 _evas_swapper_buffer_put(Wl_Swapper *ws, Wl_Buffer *wb, Eina_Rectangle *rects, unsigned int count)
 {
    Eina_Rectangle *rect;
-   static Wl_Buffer *sent = NULL;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -488,12 +488,12 @@ _evas_swapper_buffer_put(Wl_Swapper *ws, Wl_Buffer *wb, Eina_Rectangle *rects, u
      }
 
    /* surface attach */
-   if (sent != wb)
+   if (ws->buffer_sent != wb)
      {
         wl_surface_attach(ws->surface, wb->buffer, ws->dx, ws->dy);
         ws->dx = 0;
         ws->dy = 0;
-        sent = wb;
+        ws->buffer_sent = wb;
      }
 
    wl_surface_damage(ws->surface, rect->x, rect->y, rect->w, rect->h);

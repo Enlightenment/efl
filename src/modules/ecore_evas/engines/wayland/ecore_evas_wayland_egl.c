@@ -59,7 +59,7 @@ static Ecore_Evas_Engine_Func _ecore_wl_engine_func =
    _ecore_evas_wl_common_maximized_set,
    _ecore_evas_wl_common_fullscreen_set,
    NULL, // func avoid_damage set
-   NULL, // func withdrawn set
+   _ecore_evas_wl_common_withdrawn_set,
    NULL, // func sticky set
    _ecore_evas_wl_common_ignore_events_set,
    _ecore_evas_wl_alpha_set,
@@ -285,7 +285,7 @@ _ecore_evas_wl_rotation_set(Ecore_Evas *ee, int rotation, int resize)
 static void 
 _ecore_evas_wl_show(Ecore_Evas *ee)
 {
-   /* Evas_Engine_Info_Wayland_Egl *einfo; */
+   Evas_Engine_Info_Wayland_Egl *einfo;
    Ecore_Evas_Engine_Wl_Data *wdata;
    int fw, fh;
 
@@ -300,14 +300,13 @@ _ecore_evas_wl_show(Ecore_Evas *ee)
      {
         ecore_wl_window_show(wdata->win);
         ecore_wl_window_update_size(wdata->win, ee->w + fw, ee->h + fh);
-//        ecore_wl_window_buffer_attach(wdata->win, NULL, 0, 0);
 
-        /* einfo = (Evas_Engine_Info_Wayland_Egl *)evas_engine_info_get(ee->evas); */
-        /* if (einfo) */
-        /*   { */
-        /*      einfo->info.surface = ecore_wl_window_surface_get(wdata->win); */
-        /*      evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo); */
-        /*   } */
+        einfo = (Evas_Engine_Info_Wayland_Egl *)evas_engine_info_get(ee->evas);
+        if (einfo)
+          {
+             einfo->info.surface = ecore_wl_window_surface_get(wdata->win);
+             evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+          }
      }
 
    if (wdata->frame)
@@ -345,6 +344,7 @@ _ecore_evas_wl_hide(Ecore_Evas *ee)
 
    ee->visible = 0;
    ee->should_be_visible = 0;
+   _ecore_evas_wl_common_frame_callback_clean(ee);
 
    if (ee->func.fn_hide) ee->func.fn_hide(ee);
 }
