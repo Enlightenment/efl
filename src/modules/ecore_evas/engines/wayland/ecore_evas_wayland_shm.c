@@ -343,6 +343,7 @@ _ecore_evas_wl_hide(Ecore_Evas *ee)
 
    ee->visible = 0;
    ee->should_be_visible = 0;
+   _ecore_evas_wl_common_frame_callback_clean(ee);
 
    if (ee->func.fn_hide) ee->func.fn_hide(ee);
 }

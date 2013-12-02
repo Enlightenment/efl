@@ -78,6 +78,8 @@ void _ecore_evas_wl_common_rotation_set(Ecore_Evas *ee, int rotation, int resize
 void _ecore_evas_wl_common_borderless_set(Ecore_Evas *ee, int borderless);
 void _ecore_evas_wl_common_withdrawn_set(Ecore_Evas *ee, int val);
 
+void _ecore_evas_wl_common_frame_callback_clean(Ecore_Evas *ee);
+
 Evas_Object * _ecore_evas_wl_common_frame_add(Evas *evas);
 void _ecore_evas_wl_common_frame_border_size_set(Evas_Object *obj, int fx, int fy, int fw, int fh);
 
