@@ -2348,7 +2348,7 @@ _elm_scroll_mouse_up_event_cb(void *data,
 {
    Elm_Scrollable_Smart_Interface_Data *sid = data;
    Evas_Coord x = 0, y = 0, ox = 0, oy = 0;
-   Evas_Event_Mouse_Down *ev;
+   Evas_Event_Mouse_Up *ev;
 
    if (!sid->pan_obj) return;
 
