@@ -131,7 +131,7 @@ _item_show_region(void *data)
                  }
                else if (sd->s_type != ELM_GENGRID_ITEM_SCROLLTO_IN)
                  {
-                   it_xpos = 0;
+                    it_xpos = 0;
                  }
                it_ypos = y * sd->item_height + miny;
                it->x = x;
@@ -158,7 +158,7 @@ _item_show_region(void *data)
                  }
                else if (sd->s_type != ELM_GENGRID_ITEM_SCROLLTO_IN)
                  {
-                   it_ypos = 0;
+                    it_ypos = 0;
                  }
                it_xpos = x * sd->item_width + minx;
                it->x = x;

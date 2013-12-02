@@ -36,12 +36,12 @@ struct _api_data
 };
 typedef struct _api_data api_data;
 
-struct _show_data
+struct _Show_Data
 {
    int winmode;
    int scrollto;
 };
-typedef struct _show_data show_data;
+typedef struct _Show_Data Show_Data;
 
 enum _api_state
 {
@@ -1001,15 +1001,15 @@ test_gengrid_item_styles(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
 static void
 _rd1_changed_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
-   show_data *s_data = data;
-   s_data->winmode = elm_radio_state_value_get(obj);
+   Show_Data *sd = data;
+   sd->winmode = elm_radio_state_value_get(obj);
 }
 
 static void
 _rd2_changed_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
-   show_data *s_data = data;
-   s_data->scrollto = elm_radio_state_value_get(obj);
+   Show_Data *sd = data;
+   sd->scrollto = elm_radio_state_value_get(obj);
 }
 
 static void
@@ -1020,11 +1020,11 @@ _bring_in_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info _
    int i, n;
    char buf[PATH_MAX];
 
-   if(!data) return;
+   if (!data) return;
 
-   show_data *s_data = data;
+   Show_Data *sd = data;
 
-   if (s_data->winmode == 0)
+   if (sd->winmode == 0)
      win = elm_win_util_standard_add("horz bring_in", "Horz Bring_in");
    else
      win = elm_win_util_standard_add("vertical bring_in", "Vertical Bring_in");
@@ -1033,11 +1033,12 @@ _bring_in_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info _
    grid = elm_gengrid_add(win);
    elm_gengrid_item_size_set(grid, 150, 150);
    elm_gengrid_group_item_size_set(grid, 31, 31);
-   if (s_data->winmode == 0)
+   if (sd->winmode == 0)
      elm_gengrid_horizontal_set(grid, EINA_TRUE);
-   else if (s_data->winmode == 1)
+   else if (sd->winmode == 1)
      elm_gengrid_horizontal_set(grid, EINA_FALSE);
    evas_object_size_hint_weight_set(grid, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, grid);
    elm_gengrid_align_set(grid, 0.1, 0.1);
 
    gic = elm_gengrid_item_class_new();
@@ -1060,12 +1061,12 @@ _bring_in_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info _
      }
 
    elm_gengrid_item_class_free(gic);
-   elm_gengrid_item_bring_in(ti[1430].item, s_data->scrollto);
+   elm_gengrid_item_bring_in(ti[1430].item, sd->scrollto);
    evas_object_show(grid);
-   elm_win_resize_object_add(win, grid);
-   if (s_data->winmode == 0)
+
+   if (sd->winmode == 0)
      evas_object_resize(win, 600, 200);
-   if (s_data->winmode == 1)
+   if (sd->winmode == 1)
      evas_object_resize(win, 600, 400);
    evas_object_show(win);
 }
@@ -1077,25 +1078,27 @@ _show_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNU
    static Item_Data ti[10000];
    int i, n;
    char buf[PATH_MAX];
+   double scale = elm_config_scale_get();
 
-   if(!data) return;
+   if (!data) return;
 
-   show_data *s_data = data;
+   Show_Data *sd = data;
 
-   if (s_data->winmode == 0)
+   if (sd->winmode == 0)
      win = elm_win_util_standard_add("horz show", "Horz Show");
    else
      win = elm_win_util_standard_add("vertical show", "Vertical Show");
    elm_win_autodel_set(win, EINA_TRUE);
 
    grid = elm_gengrid_add(win);
-   elm_gengrid_item_size_set(grid, 150, 150);
-   elm_gengrid_group_item_size_set(grid, 31, 31);
-   if (s_data->winmode == 0)
+   elm_gengrid_item_size_set(grid, 150 * scale, 150 * scale);
+   elm_gengrid_group_item_size_set(grid, 31 * scale, 31 * scale);
+   if (sd->winmode == 0)
      elm_gengrid_horizontal_set(grid, EINA_TRUE);
-   else if (s_data->winmode == 1)
+   else if (sd->winmode == 1)
      elm_gengrid_horizontal_set(grid, EINA_FALSE);
    evas_object_size_hint_weight_set(grid, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, grid);
    elm_gengrid_align_set(grid, 0.1, 0.1);
 
    gic = elm_gengrid_item_class_new();
@@ -1119,25 +1122,25 @@ _show_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNU
 
    elm_gengrid_item_class_free(gic);
    evas_object_show(grid);
-   elm_gengrid_item_show(ti[2579].item, s_data->scrollto);
-   elm_win_resize_object_add(win, grid);
-   if (s_data->winmode == 0)
+   elm_gengrid_item_show(ti[2579].item, sd->scrollto);
+
+   if (sd->winmode == 0)
      evas_object_resize(win, 600, 200);
-   if (s_data->winmode == 1)
+   if (sd->winmode == 1)
      evas_object_resize(win, 600, 600);
    evas_object_show(win);
 }
 
-Evas_Object *
-_window_mode_frame_new(Evas_Object *win, Evas_Object **rdg, void *data)
+static Evas_Object *
+_window_mode_frame_new(Evas_Object *win, void *data)
 {
-   Evas_Object *fr, *bx, *rd;
-   show_data *s_data = data;
+   Evas_Object *fr, *bx, *rd, *rdg;
+   Show_Data *sd = data;
 
    fr = elm_frame_add(win);
    evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_object_text_set(fr, "Window Mode Set");
+   elm_object_text_set(fr, "Direction");
    evas_object_show(fr);
 
    bx = elm_box_add(win);
@@ -1148,33 +1151,33 @@ _window_mode_frame_new(Evas_Object *win, Evas_Object **rdg, void *data)
    evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_radio_state_value_set(rd, 0);
    elm_object_text_set(rd, "horizontal");
-   evas_object_smart_callback_add(rd, "changed", _rd1_changed_cb, s_data);
+   evas_object_smart_callback_add(rd, "changed", _rd1_changed_cb, sd);
    evas_object_show(rd);
    elm_box_pack_end(bx, rd);
-   *rdg = rd;
+   rdg = rd;
 
    rd = elm_radio_add(win);
    evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_radio_state_value_set(rd, 1);
    elm_object_text_set(rd, "vertical");
-   elm_radio_group_add(rd, *rdg);
-   evas_object_smart_callback_add(rd, "changed", _rd1_changed_cb, s_data);
+   elm_radio_group_add(rd, rdg);
+   evas_object_smart_callback_add(rd, "changed", _rd1_changed_cb, sd);
    evas_object_show(rd);
    elm_box_pack_end(bx, rd);
 
    return fr;
 }
 
-Evas_Object *
-_scrollto_mode_frame_new(Evas_Object *win, Evas_Object **rdg, void *data)
+static Evas_Object *
+_scrollto_mode_frame_new(Evas_Object *win, void *data)
 {
-   Evas_Object *fr, *bx, *rd;
-   show_data *s_data = data;
+   Evas_Object *fr, *bx, *rd, *rdg;
+   Show_Data *sd = data;
 
    fr = elm_frame_add(win);
    evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_object_text_set(fr, "Scrollto Mode Set");
+   elm_object_text_set(fr, "Scrollto Mode");
    evas_object_show(fr);
 
    bx = elm_box_add(win);
@@ -1185,17 +1188,17 @@ _scrollto_mode_frame_new(Evas_Object *win, Evas_Object **rdg, void *data)
    evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_radio_state_value_set(rd, 0);
    elm_object_text_set(rd, "SCROLLTO_NONE");
-   evas_object_smart_callback_add(rd, "changed", _rd2_changed_cb, s_data);
+   evas_object_smart_callback_add(rd, "changed", _rd2_changed_cb, sd);
    evas_object_show(rd);
    elm_box_pack_end(bx, rd);
-   *rdg = rd;
+   rdg = rd;
 
    rd = elm_radio_add(win);
    evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_radio_state_value_set(rd, 1);
    elm_object_text_set(rd, "SCROLLTO_IN");
-   elm_radio_group_add(rd, *rdg);
-   evas_object_smart_callback_add(rd, "changed", _rd2_changed_cb, s_data);
+   elm_radio_group_add(rd, rdg);
+   evas_object_smart_callback_add(rd, "changed", _rd2_changed_cb, sd);
    evas_object_show(rd);
    elm_box_pack_end(bx, rd);
 
@@ -1203,8 +1206,8 @@ _scrollto_mode_frame_new(Evas_Object *win, Evas_Object **rdg, void *data)
    evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_radio_state_value_set(rd, 2);
    elm_object_text_set(rd, "SCROLLTO_TOP");
-   elm_radio_group_add(rd, *rdg);
-   evas_object_smart_callback_add(rd, "changed", _rd2_changed_cb, s_data);
+   elm_radio_group_add(rd, rdg);
+   evas_object_smart_callback_add(rd, "changed", _rd2_changed_cb, sd);
    evas_object_show(rd);
    elm_box_pack_end(bx, rd);
 
@@ -1212,8 +1215,8 @@ _scrollto_mode_frame_new(Evas_Object *win, Evas_Object **rdg, void *data)
    evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_radio_state_value_set(rd, 4);
    elm_object_text_set(rd, "SCROLLTO_MIDDLE");
-   elm_radio_group_add(rd, *rdg);
-   evas_object_smart_callback_add(rd, "changed", _rd2_changed_cb, s_data);
+   elm_radio_group_add(rd, rdg);
+   evas_object_smart_callback_add(rd, "changed", _rd2_changed_cb, sd);
    evas_object_show(rd);
    elm_box_pack_end(bx, rd);
 
@@ -1223,45 +1226,44 @@ _scrollto_mode_frame_new(Evas_Object *win, Evas_Object **rdg, void *data)
 void
 test_gengrid4(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Evas_Object *win, *bt, *bx, *bx2, *fr1, *fr2, *rd1 = NULL, *rd2 = NULL;
-   api_data *api = calloc(1, sizeof(api_data));
-   show_data *s_data = calloc(1, sizeof(show_data));
+   Evas_Object *win, *bt, *bx, *bx2, *fr;
+   Show_Data *sd = calloc(1, sizeof(Show_Data));
 
-   win = elm_win_util_standard_add("gengrid show/scroll_in", "GenGrid Show/Bring_in");
+   win = elm_win_util_standard_add("gengrid-show-bringin", "GenGrid Show/Bring_in");
    elm_win_autodel_set(win, EINA_TRUE);
-   evas_object_event_callback_add(win, EVAS_CALLBACK_FREE, _cleanup_cb, api);
-   evas_object_event_callback_add(win, EVAS_CALLBACK_FREE, _cleanup_cb, s_data);
+   evas_object_event_callback_add(win, EVAS_CALLBACK_FREE, _cleanup_cb, sd);
+   evas_object_show(win);
 
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, bx);
-   elm_box_horizontal_set(bx, EINA_TRUE);
    evas_object_show(bx);
 
-   bx2 = elm_box_add(win);
-   evas_object_size_hint_weight_set(bx2, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_win_resize_object_add(bx, bx2);
+   bx2 = elm_box_add(bx);
    elm_box_horizontal_set(bx2, EINA_TRUE);
+   elm_box_pack_end(bx, bx2);
    evas_object_show(bx2);
 
-   fr1 = _window_mode_frame_new(win, &rd1, s_data);
-   elm_box_pack_end(bx2, fr1);
+   fr = _window_mode_frame_new(bx2, sd);
+   elm_box_pack_end(bx2, fr);
 
-   fr2 = _scrollto_mode_frame_new(win, &rd2, s_data);
-   elm_box_pack_end(bx2, fr2);
+   fr = _scrollto_mode_frame_new(bx2, sd);
+   elm_box_pack_end(bx2, fr);
 
-   bt = elm_button_add(win);
-   elm_object_text_set(bt, "Region Show");
-   evas_object_smart_callback_add(bt, "clicked", _show_clicked_cb, s_data);
-   elm_box_pack_end(bx, bt);
+   bx2 = elm_box_add(bx);
+   elm_box_horizontal_set(bx2, EINA_TRUE);
+   elm_box_pack_end(bx, bx2);
+   evas_object_show(bx2);
+
+   bt = elm_button_add(bx2);
+   elm_object_text_set(bt, "Show");
+   evas_object_smart_callback_add(bt, "clicked", _show_clicked_cb, sd);
+   elm_box_pack_end(bx2, bt);
    evas_object_show(bt);
 
-   bt = elm_button_add(win);
+   bt = elm_button_add(bx2);
    elm_object_text_set(bt, "Bring In");
-   evas_object_smart_callback_add(bt, "clicked", _bring_in_clicked_cb, s_data);
-   elm_box_pack_end(bx, bt);
+   evas_object_smart_callback_add(bt, "clicked", _bring_in_clicked_cb, sd);
+   elm_box_pack_end(bx2, bt);
    evas_object_show(bt);
-
-   evas_object_resize(win, 300, 300);
-   evas_object_show(win);
 }
