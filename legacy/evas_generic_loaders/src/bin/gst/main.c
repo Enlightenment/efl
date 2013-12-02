@@ -78,7 +78,7 @@ _gst_init(const char *filename)
         g_error_free (error);
         goto gst_shutdown;
      }
-   
+/* needs gst 1.0+
    g_object_get(G_OBJECT(pipeline),
                 "n-video", &vidstr,
                 NULL);
@@ -87,7 +87,7 @@ _gst_init(const char *filename)
         D("no video stream\n");
         goto gst_shutdown;
      }
-
+*/
    sink = gst_bin_get_by_name (GST_BIN (pipeline), "sink");
 
    ret = gst_element_set_state (pipeline, GST_STATE_PAUSED);
