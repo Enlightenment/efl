@@ -1773,6 +1773,52 @@ EAPI int edje_edit_state_max_h_get(Evas_Object *obj, const char *part, const cha
  */
 EAPI Eina_Bool edje_edit_state_max_h_set(Evas_Object *obj, const char *part, const char *state, double value, int max_h);
 
+/** Get the fixed width value of a part state.
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain state.
+ * @param state The name of the state to get fixed width value (not including the state value).
+ * @param value The state value.
+ *
+ * @return The fixed width value.
+ */
+EAPI Eina_Bool edje_edit_state_fixed_w_get(Evas_Object *obj, const char *part, const char *state, double value);
+
+/** Set the fixed width value of a part state.
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain state.
+ * @param state The name of the state to set fixed width value (not including the state value).
+ * @param value The state value.
+ * @param fixed Fixed width value.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool edje_edit_state_fixed_w_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool fixed);
+
+/** Get the fixed height value of a part state.
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain state.
+ * @param state The name of the state to get fixed height value (not including the state value).
+ * @param value The state value.
+ *
+ * @return The fixed height value.
+ */
+EAPI Eina_Bool edje_edit_state_fixed_h_get(Evas_Object *obj, const char *part, const char *state, double value);
+
+/** Set the fixed height value of a part state.
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain state.
+ * @param state The name of the state to set maximum height (not including the state value).
+ * @param value The state value.
+ * @param fixed Fixed height value.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool edje_edit_state_fixed_h_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool fixed);
+
 /** Get the minimum aspect value of a part state.
  *
  * @param obj Object being edited.

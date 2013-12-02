@@ -3387,12 +3387,32 @@ edje_edit_state_color3_set(Evas_Object *obj, const char *part, const char *state
      return EINA_TRUE;                                                  \
   }
 
+#define FUNC_STATE_BOOL(Class, Value)                                   \
+  EAPI Eina_Bool                                                        \
+  edje_edit_state_##Class##_##Value##_get(Evas_Object *obj, const char *part, const char *state, double value) \
+  {                                                                     \
+     GET_PD_OR_RETURN(0);                                               \
+     return pd->Class.Value;                                            \
+  }                                                                     \
+  EAPI Eina_Bool \
+  edje_edit_state_##Class##_##Value##_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool v) \
+  {                                                                     \
+     if ((!obj) || (!part) || (!state))                                 \
+       return EINA_FALSE;                                               \
+     GET_PD_OR_RETURN(EINA_FALSE);                                      \
+     pd->Class.Value = v;                                               \
+     edje_object_calc_force(obj);                                       \
+     return EINA_TRUE;                                                  \
+  }
+
 FUNC_STATE_DOUBLE(align, x);
 FUNC_STATE_DOUBLE(align, y);
 FUNC_STATE_INT(min, w, 0);
 FUNC_STATE_INT(min, h, 0);
 FUNC_STATE_INT(max, w, -1);
 FUNC_STATE_INT(max, h, -1);
+FUNC_STATE_BOOL(fixed, w);
+FUNC_STATE_BOOL(fixed, h);
 FUNC_STATE_DOUBLE(aspect, min);
 FUNC_STATE_DOUBLE(aspect, max);
 
