@@ -2077,7 +2077,7 @@ _palette_color_add(Eo *obj, void *_pd, va_list *list)
 
    if (sd->config_load)
      {
-        _items_del(sd); 
+        _items_del(sd);
         sd->config_load = EINA_FALSE;
      }
    item = _item_new(obj);
@@ -2142,7 +2142,7 @@ _palette_name_set(Eo *obj, void *_pd, va_list *list)
 
    if (!strcmp(sd->palette_name, palette_name)) return;
 
-   _items_del(sd); 
+   _items_del(sd);
    eina_stringshare_replace(&sd->palette_name, palette_name);
    _palette_colors_load(obj);
 }

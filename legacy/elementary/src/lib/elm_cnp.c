@@ -2169,10 +2169,10 @@ struct _Wl_Cnp_Selection
 
 static Eina_Bool _wl_elm_cnp_init(void);
 
-static Wl_Cnp_Selection wl_cnp_selection = 
+static Wl_Cnp_Selection wl_cnp_selection =
 {
-   0, 0, NULL, NULL, 
-   NULL, 0, 0, NULL, NULL, NULL, 
+   0, 0, NULL, NULL,
+   NULL, 0, 0, NULL, NULL, NULL,
    0, NULL, 0, EINA_FALSE
 };
 
@@ -2242,7 +2242,7 @@ _wl_elm_cnp_selection_set(Evas_Object *obj, Elm_Sel_Type selection, Elm_Sel_Form
    if (sel->loss_cb) sel->loss_cb(sel->loss_data, selection);
 
    if (sel->widget)
-     evas_object_event_callback_del_full(sel->widget, 
+     evas_object_event_callback_del_full(sel->widget,
                                          EVAS_CALLBACK_DEL,
                                          _wl_sel_obj_del, &wl_cnp_selection);
    sel->widget = NULL;
@@ -2257,7 +2257,7 @@ _wl_elm_cnp_selection_set(Evas_Object *obj, Elm_Sel_Type selection, Elm_Sel_Form
    sel->loss_data = NULL;
 
    evas_object_event_callback_add
-     (sel->widget, EVAS_CALLBACK_DEL, _wl_sel_obj_del, 
+     (sel->widget, EVAS_CALLBACK_DEL, _wl_sel_obj_del,
          &wl_cnp_selection);
 
    if (selbuf)
@@ -2280,7 +2280,7 @@ _wl_elm_cnp_selection_set(Evas_Object *obj, Elm_Sel_Type selection, Elm_Sel_Form
              const char *types[10] = {0, };
              int i = -1;
 
-             if ((format & ELM_SEL_FORMAT_MARKUP) || 
+             if ((format & ELM_SEL_FORMAT_MARKUP) ||
                  (format & ELM_SEL_FORMAT_TEXT))
                {
                   types[++i] = "application/x-elementary-markup";
@@ -2322,7 +2322,7 @@ _wl_elm_cnp_selection_get(Evas_Object *obj, Elm_Sel_Type selection, Elm_Sel_Form
    win = elm_win_wl_window_get(obj);
 
    if (sel->requestwidget)
-     evas_object_event_callback_del_full(sel->requestwidget, 
+     evas_object_event_callback_del_full(sel->requestwidget,
                                          EVAS_CALLBACK_DEL,
                                          _wl_sel_obj_del2, &wl_cnp_selection);
    sel->requestwidget = NULL;
@@ -2334,18 +2334,18 @@ _wl_elm_cnp_selection_get(Evas_Object *obj, Elm_Sel_Type selection, Elm_Sel_Form
    sel->datacb = datacb;
    sel->udata = udata;
 
-   evas_object_event_callback_add(sel->requestwidget, 
-                                  EVAS_CALLBACK_DEL, _wl_sel_obj_del2, 
+   evas_object_event_callback_add(sel->requestwidget,
+                                  EVAS_CALLBACK_DEL, _wl_sel_obj_del2,
                                   &wl_cnp_selection);
 
-   if ((selection == ELM_SEL_TYPE_CLIPBOARD) || 
-       (selection == ELM_SEL_TYPE_PRIMARY) || 
+   if ((selection == ELM_SEL_TYPE_CLIPBOARD) ||
+       (selection == ELM_SEL_TYPE_PRIMARY) ||
        (selection == ELM_SEL_TYPE_SECONDARY))
      {
         const char *types[10] = {0, };
         int i = -1;
 
-        if ((format & ELM_SEL_FORMAT_MARKUP) || 
+        if ((format & ELM_SEL_FORMAT_MARKUP) ||
             (format & ELM_SEL_FORMAT_TEXT))
           {
              types[++i] = "application/x-elementary-markup";
@@ -2389,11 +2389,11 @@ _wl_elm_cnp_selection_clear(Evas_Object *obj, Elm_Sel_Type selection __UNUSED__)
      return EINA_TRUE;
 
    if (sel->widget)
-     evas_object_event_callback_del_full(sel->widget, 
+     evas_object_event_callback_del_full(sel->widget,
                                          EVAS_CALLBACK_DEL,
                                          _wl_sel_obj_del, &wl_cnp_selection);
    if (sel->requestwidget)
-     evas_object_event_callback_del_full(sel->requestwidget, 
+     evas_object_event_callback_del_full(sel->requestwidget,
                                          EVAS_CALLBACK_DEL,
                                          _wl_sel_obj_del2, &wl_cnp_selection);
 
@@ -2509,7 +2509,7 @@ _wl_selection_receive(void *udata, int type __UNUSED__, void *event)
           }
         else
           {
-             evas_object_event_callback_del_full(sel->requestwidget, 
+             evas_object_event_callback_del_full(sel->requestwidget,
                                                  EVAS_CALLBACK_DEL,
                                                  _wl_sel_obj_del2, sel);
              sel->requestwidget = NULL;

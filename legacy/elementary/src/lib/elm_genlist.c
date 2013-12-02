@@ -1753,9 +1753,9 @@ _item_realize(Elm_Gen_Item *it,
              edje_object_message_signal_process(it->deco_all_view);
           }
      }
-     
+
    if (it->decorate_it_set) _decorate_item_set(it);
-    
+
    edje_object_message_signal_process(VIEW(it));
 }
 
@@ -4499,7 +4499,7 @@ _item_block_recalc(Item_Block *itb,
                   if (changed)
                     {
                        Eina_Bool doit = EINA_TRUE;
-                       
+
                        if (itb->sd->homogeneous)
                          {
                             if ((it->group) && (itb->sd->group_item_height == 0))

@@ -1698,7 +1698,7 @@ _elm_ee_wlwin_get(const Ecore_Evas *ee)
    Ecore_Wl_Window *win = NULL;
 
    if (!ee) return NULL;
-   if ((EE_ENGINE_COMPARE(ee, ELM_WAYLAND_SHM)) || 
+   if ((EE_ENGINE_COMPARE(ee, ELM_WAYLAND_SHM)) ||
        (EE_ENGINE_COMPARE(ee, ELM_WAYLAND_EGL)))
      {
         if (ee) win = ecore_evas_wayland_window_get(ee);

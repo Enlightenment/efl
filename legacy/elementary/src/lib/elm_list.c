@@ -1072,7 +1072,7 @@ _item_unselect(Elm_List_Item *it)
      {
         it->selected = EINA_FALSE;
         sd->selected = eina_list_remove(sd->selected, it);
-        if (!(it->base.disabled || 
+        if (!(it->base.disabled ||
               (sd->select_mode == ELM_OBJECT_SELECT_MODE_NONE)))
           evas_object_smart_callback_call(WIDGET(it), SIG_UNSELECTED, it);
      }

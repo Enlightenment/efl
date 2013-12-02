@@ -381,7 +381,7 @@ _pack(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
      {
         WRN("row + rowspan getting rather large (>32767)");
      }
-   
+
    elm_widget_sub_object_add(obj, subobj);
    evas_object_table_pack(wd->resize_obj, subobj, col, row, colspan, rowspan);
 }

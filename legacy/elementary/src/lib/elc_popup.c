@@ -587,7 +587,7 @@ _button_remove(Evas_Object *obj,
    else
      {
         char style[1024];
-        
+
         snprintf(style, sizeof(style), "popup/%s", elm_widget_style_get(obj));
         snprintf(buf, sizeof(buf), "buttons%i", sd->last_button_number);
         if (!elm_layout_theme_set(sd->action_area, "popup", buf, style))
@@ -619,7 +619,7 @@ static void
 _list_add(Evas_Object *obj)
 {
    char style[1024];
-   
+
    ELM_POPUP_DATA_GET(obj, sd);
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -853,7 +853,7 @@ static void
 _item_new(Elm_Popup_Item *it)
 {
    char style[1024];
-   
+
    elm_widget_item_text_set_hook_set(it, _item_text_set_hook);
    elm_widget_item_text_get_hook_set(it, _item_text_get_hook);
    elm_widget_item_content_set_hook_set(it, _item_content_set_hook);
@@ -864,7 +864,7 @@ _item_new(Elm_Popup_Item *it)
    elm_widget_item_signal_emit_hook_set(it, _item_signal_emit_hook);
 
    VIEW(it) = elm_layout_add(WIDGET(it));
-   
+
    snprintf(style, sizeof(style), "popup/%s", elm_widget_style_get(WIDGET(it)));
    if (!elm_layout_theme_set(VIEW(it), "popup", "item", style))
      CRITICAL("Failed to set layout!");
@@ -1497,7 +1497,7 @@ _elm_popup_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    Elm_Popup_Smart_Data *priv = _pd;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    char style[1024];
-   
+
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
    elm_widget_sub_object_parent_add(obj);
 
@@ -1509,7 +1509,7 @@ _elm_popup_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    snprintf(style, sizeof(style), "%s", "default");
    if (!elm_layout_theme_set(obj, "popup", "base", style))
      CRITICAL("Failed to set layout!");
-   
+
    snprintf(style, sizeof(style), "popup/%s", "default");
 
    priv->notify = elm_notify_add(obj);

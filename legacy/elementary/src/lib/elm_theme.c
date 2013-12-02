@@ -924,7 +924,7 @@ elm_theme_system_dir_get(void)
 {
    static char *path = NULL;
    char buf[PATH_MAX];
-   
+
    if (path) return path;
    if (!path)
      {
@@ -939,13 +939,13 @@ elm_theme_user_dir_get(void)
 {
    static char *path = NULL;
    char buf[PATH_MAX];
-   
+
    if (path) return path;
    if (!path)
      {
         char *home = getenv("HOME");
         if (!home) home = "";
-        
+
         snprintf(buf, sizeof(buf), "%s/"ELEMENTARY_BASE_DIR"/themes", home);
         path = strdup(buf);
      }
