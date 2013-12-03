@@ -7,11 +7,6 @@
 /* local variables */
 static int _ecore_drm_init_count = 0;
 static int _ecore_drm_socket_fd[2] = { -1, -1 };
-union cmsg_data 
-{
-   unsigned char d[4];
-   int fd;
-};
 
 /* external variables */
 struct udev *udev;
@@ -20,54 +15,54 @@ int _ecore_drm_log_dom = -1;
 FILE *lg;
 #endif
 
+#define IOVSET(_iov, _addr, _len) \
+   (_iov)->iov_base = (void *)(_addr); \
+   (_iov)->iov_len = (_len);
+
 static ssize_t 
-_ecore_drm_socket_send(int opcode, int fd, void *data)
+_ecore_drm_socket_send(int opcode, int fd, void *data, size_t bytes)
 {
-   int s = 0;
-   ssize_t size;
-   Ecore_Drm_Message *dmsg;
+   Ecore_Drm_Message dmsg;
+   struct iovec iov[2];
    struct msghdr msg;
-   struct iovec iov;
-   struct cmsghdr *cmsg;
-   union cmsg_data *cdata;
-   char ctrl[CMSG_SPACE(sizeof(cdata->fd))];
+   struct cmsghdr *cmsg = NULL;
+   char ctrl[CMSG_SPACE(sizeof(int))];
+   ssize_t size;
 
-   s = sizeof(*dmsg) + 1;
-   if (!(dmsg = malloc(s))) return -1;
+   IOVSET(iov + 0, &dmsg, sizeof(dmsg));
+   IOVSET(iov + 1, data, bytes);
 
-   /* assemble message to send */
-   dmsg->opcode = opcode;
-   dmsg->data = data;
-   dmsg->size = sizeof(data);
+   dmsg.opcode = opcode;
+   dmsg.size = bytes;
 
-   iov.iov_base = dmsg;
-   iov.iov_len = sizeof(dmsg);
+   memset(&msg, 0, sizeof(struct msghdr));
+   memset(ctrl, 0, CMSG_SPACE(sizeof(int)));
 
-   memset(&msg, 0, sizeof(msg));
-
+   /* socketpair creates 'connected' sockets so we should not need to 
+    * specify a msg_name here */
    msg.msg_name = NULL;
    msg.msg_namelen = 0;
-   msg.msg_iov = &iov;
-   msg.msg_iovlen = 1;
+   msg.msg_iov = iov;
+   msg.msg_iovlen = 2;
+   msg.msg_controllen = CMSG_SPACE(sizeof(int));
    msg.msg_control = ctrl;
-   msg.msg_controllen = sizeof(ctrl);
 
    cmsg = CMSG_FIRSTHDR(&msg);
-   cmsg->cmsg_len = CMSG_LEN(sizeof(int));
    cmsg->cmsg_level = SOL_SOCKET;
    cmsg->cmsg_type = SCM_RIGHTS;
+   cmsg->cmsg_len = CMSG_LEN(sizeof(int));
 
    *((int *)CMSG_DATA(cmsg)) = fd;
 
-   do
+   errno = 0;
+
+   size = sendmsg(_ecore_drm_socket_fd[1], &msg, 0);
+
+   if (errno != 0)
      {
-        size = sendmsg(_ecore_drm_socket_fd[1], &msg, 0);
-     } while ((size < 0) && (errno == EINTR));
-
-   free(dmsg);
-
-   if (size < 0)
-     ERR("Failed to Send Socket Message");
+        DBG("\tSend Err: %d", errno);
+        DBG("\tSend Err: %s", strerror(errno));
+     }
 
    return size;
 }
@@ -105,8 +100,8 @@ _ecore_drm_launcher_spawn(void)
    if (pid != 0)
      {
         DBG("Parent Sending Pass Fd Message");
-        _ecore_drm_socket_send(ECORE_DRM_OP_WRITE_FD_SET, 
-                               _ecore_drm_socket_fd[1], NULL);
+        _ecore_drm_message_send(ECORE_DRM_OP_WRITE_FD_SET, 
+                                &_ecore_drm_socket_fd[1], sizeof(int));
      }
    else if (pid == 0) /* child process. exec spartacus */
      {
@@ -144,6 +139,14 @@ _ecore_drm_launcher_spawn(void)
 
         /* unsetenv("ECORE_DRM_LAUNCHER_SOCKET"); */
      }
+
+   /* close(_ecore_drm_socket_fd[1]); */
+}
+
+void 
+_ecore_drm_message_send(int opcode, void *data, size_t bytes)
+{
+   _ecore_drm_socket_send(opcode, _ecore_drm_socket_fd[1], data, bytes);
 }
 
 /**
