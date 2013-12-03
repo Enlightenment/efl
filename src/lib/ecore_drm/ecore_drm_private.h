@@ -91,4 +91,6 @@ struct _Ecore_Drm_Device
    const char *devpath;
 };
 
+void _ecore_drm_message_send(int opcode, void *data, size_t bytes);
+
 #endif
