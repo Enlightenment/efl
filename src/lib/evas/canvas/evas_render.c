@@ -2048,6 +2048,21 @@ evas_render_updates_internal(Evas *eo_e,
       them from the pending list. */
    eina_array_remove(&e->pending_objects, pending_change, NULL);
 
+   /* Reinsert parent of changed object in the pending changed state */
+   for (i = 0; i < e->pending_objects.count; ++i)
+     {
+        obj = eina_array_data_get(&e->pending_objects, i);
+        eo_obj = obj->object;
+        if (obj->smart.parent)
+          {
+             Evas_Object_Protected_Data *smart_parent;
+
+             smart_parent = eo_data_scope_get(obj->smart.parent,
+                                              EVAS_OBJ_CLASS);
+             evas_object_change(obj->smart.parent, smart_parent);
+          }
+     }
+
    for (i = 0; i < e->render_objects.count; ++i)
      {
         obj = eina_array_data_get(&e->render_objects, i);
@@ -2055,7 +2070,7 @@ evas_render_updates_internal(Evas *eo_e,
         obj->pre_render_done = EINA_FALSE;
         if ((obj->changed) && (do_draw))
           {
-	    obj->func->render_post(eo_obj, obj, obj->private_data);
+             obj->func->render_post(eo_obj, obj, obj->private_data);
              obj->restack = EINA_FALSE;
              evas_object_change_reset(eo_obj);
           }
