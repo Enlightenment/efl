@@ -139,7 +139,7 @@ ecore_evas_drm_new_internal(const char *device, unsigned int parent, int x, int 
    /* try to open the graphics card */
    if (!ecore_drm_device_open(dev))
      {
-        ERR("Could not open drm device: %s", dev->devname);
+        ERR("Could not open drm device");
         goto open_err;
      }
 
