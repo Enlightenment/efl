@@ -185,12 +185,16 @@ ecore_drm_device_free(Ecore_Drm_Device *dev)
 EAPI Eina_Bool 
 ecore_drm_device_open(Ecore_Drm_Device *dev)
 {
+   char devpath[PATH_MAX];
+
    /* check for valid device */
-   if ((!dev) || (!dev->devpath)) return EINA_FALSE;
+   if ((!dev) || (!dev->devname)) return EINA_FALSE;
+
+   strcpy(devpath, dev->devname);
 
    /* send message for ecore_drm_launch to open this device */
    _ecore_drm_message_send(ECORE_DRM_OP_OPEN_FD, 
-                           dev->devname, strlen(dev->devname));
+                           devpath, strlen(devpath));
 
    return EINA_TRUE;
 }
