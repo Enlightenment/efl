@@ -17,8 +17,20 @@
 #include <Eina.h>
 #include <Ecore_Drm.h>
 
+#define IOVSET(_iov, _addr, _len) \
+   (_iov)->iov_base = (void *)(_addr); \
+   (_iov)->iov_len = (_len);
+
 static int _drm_read_fd = -1;
 static int _drm_write_fd = -1;
+
+static int 
+_open_file(const char *file)
+{
+   fprintf(stderr, "Open File: %s\n", file);
+
+   return 1;
+}
 
 static int 
 _read_fd_get(void)
@@ -44,38 +56,36 @@ static int
 _read_msg(void)
 {
    int ret = -1;
-   char buff[BUFSIZ]; // defined in stdio.h
+   Ecore_Drm_Message dmsg;
+   char data[BUFSIZ];
+   struct iovec iov[2];
    char ctrl[CMSG_SPACE(sizeof(int))];
    struct msghdr msg;
-   struct iovec iov;
    struct cmsghdr *cmsg;
    ssize_t size;
-   Ecore_Drm_Message *dmsg;
+
+   IOVSET(iov + 0, &dmsg, sizeof(dmsg));
+   IOVSET(iov + 1, &data, sizeof(data));
 
    memset(&msg, 0, sizeof(msg));
 
-   iov.iov_base = buff;
-   iov.iov_len = sizeof(buff);
-
    msg.msg_name = NULL;
    msg.msg_namelen = 0;
-   msg.msg_iov = &iov;
-   msg.msg_iovlen = 1;
+   msg.msg_iov = iov;
+   msg.msg_iovlen = 2;
+   msg.msg_controllen = CMSG_SPACE(sizeof(int));
    msg.msg_control = ctrl;
-   msg.msg_controllen = sizeof(ctrl);
 
-   do
-     {
-        size = recvmsg(_drm_read_fd, &msg, 0);
-     } while ((size < 0) && (errno == EINTR));
+   errno = 0;
 
-   if (size < 1) 
+   size = recvmsg(_drm_read_fd, &msg, MSG_CMSG_CLOEXEC);
+
+   if (errno != 0)
      {
-        fprintf(stderr, "Received Message too small\n");
-        return -1;
+        fprintf(stderr, "Recvd %li\n", size);
+        fprintf(stderr, "Recv Err: %d\n", errno);
+        fprintf(stderr, "Recv Err: %s\n", strerror(errno));
      }
-
-   fprintf(stderr, "Spartacus Received Message\n");
 
    cmsg = CMSG_FIRSTHDR(&msg);
    if ((cmsg) && (cmsg->cmsg_len == CMSG_LEN(sizeof(int))))
@@ -92,28 +102,26 @@ _read_msg(void)
           }
      }
 
-   dmsg = (void *)buff;
-   switch (dmsg->opcode)
+   switch (dmsg.opcode)
      {
       case ECORE_DRM_OP_READ_FD_SET:
         _drm_read_fd = *((int *)CMSG_DATA(cmsg));
         if (_drm_read_fd >= 0) ret = 1;
-        fprintf(stderr, "\tEcore_Drm_Operation_Read_Fd: %d\n", _drm_read_fd);
         break;
       case ECORE_DRM_OP_WRITE_FD_SET:
         _drm_write_fd = *((int *)CMSG_DATA(cmsg));
         if (_drm_write_fd >= 0) ret = 1;
-        fprintf(stderr, "\tEcore_Drm_Operation_Write_Fd: %d\n", _drm_write_fd);
         break;
       case ECORE_DRM_OP_OPEN_FD:
-        fprintf(stderr, "\tEcore_Drm_Operation_Open FD\n");
-        ret = 1; // FIXME
+        fprintf(stderr, "Ecore_Drm_Operation_Open FD: %s\n", (char *)data);
+        ret = _open_file((char *)data);
         break;
       case ECORE_DRM_OP_CLOSE_FD:
-        fprintf(stderr, "\tEcore_Drm_Operation_Close FD\n");
+        fprintf(stderr, "Ecore_Drm_Operation_Close FD\n");
         ret = 1;
         break;
       default:
+        fprintf(stderr, "Uknown operation: %d\n", dmsg.opcode);
         break;
      }
 
@@ -125,7 +133,11 @@ main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    fprintf(stderr, "Ecore_Drm_Launch Started\n");
 
-   if ((_drm_read_fd = _read_fd_get()) < 0) return EXIT_FAILURE;
+   if ((_drm_read_fd = _read_fd_get()) < 0)
+     {
+        fprintf(stderr, "\tCould not Get FD\n");
+        return EXIT_FAILURE;
+     }
 
    fprintf(stderr, "\tGot Fd: %d\n", _drm_read_fd);
 
@@ -134,7 +146,7 @@ main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
         struct pollfd pfd[1];
         int n = 0;
 
-        fprintf(stderr, "\tChecking for Message...\n");
+        fprintf(stderr, "Checking for Messages on FD %d...\n", _drm_read_fd);
 
         pfd[0].fd = _drm_read_fd;
         pfd[0].events = (POLLIN | POLLPRI | POLLNVAL);
