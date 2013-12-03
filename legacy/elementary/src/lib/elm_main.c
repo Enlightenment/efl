@@ -316,6 +316,8 @@ elm_init(int    argc,
    system_handlers[0] = ecore_event_handler_add(ECORE_EVENT_MEMORY_STATE, _sys_memory_changed, NULL);
    system_handlers[1] = ecore_event_handler_add(ECORE_EVENT_LOCALE_CHANGED, _sys_lang_changed, NULL);
 
+   _elm_atspi_bridge_init();
+
    return _elm_init_count;
 }
 
@@ -339,6 +341,7 @@ elm_shutdown(void)
    while (_elm_win_deferred_free) ecore_main_loop_iterate();
 
    _elm_clouseau_unload();
+   _elm_atspi_bridge_shutdown();
 // wrningz :(
 //   _prefix_shutdown();
    ELM_SAFE_FREE(app_name, eina_stringshare_del);

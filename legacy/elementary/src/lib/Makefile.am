@@ -7,6 +7,7 @@ AM_CPPFLAGS = \
 -I. \
 -I$(top_builddir) \
 -I$(top_srcdir) \
+-I$(top_srcdir)/src/imported \
 -I$(top_srcdir)/src/lib \
 -I$(top_builddir)/src/lib \
 -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
@@ -481,7 +482,9 @@ elm_win.c \
 els_box.c \
 els_cursor.c \
 els_tooltip.c \
-elu_ews_wm.c
+elu_ews_wm.c \
+elm_atspi_bridge.c
+
 
 libelementary_la_CFLAGS =
 libelementary_la_LIBADD = \
