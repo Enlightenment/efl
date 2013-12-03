@@ -104,7 +104,7 @@ _evas_event_object_list_raw_in_get(Evas *eo_e, Eina_List *in,
                             bounding_box.y <= y &&
                             bounding_box.y + bounding_box.h >= y) ||
                            (obj->cur->geometry.x <= x &&
-                            obj->cur->geometry.y + obj->cur->geometry.w >= x &&
+                            obj->cur->geometry.x + obj->cur->geometry.w >= x &&
                             obj->cur->geometry.y <= y &&
                             obj->cur->geometry.y + obj->cur->geometry.h >= y))
                          in = _evas_event_object_list_in_get
