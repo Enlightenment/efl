@@ -1062,6 +1062,8 @@ _ecore_imf_xim_preedit_callback_set(Ecore_IMF_Context *ctx)
 {
    Ecore_IMF_Context_Data *imf_context_data;
    imf_context_data = ecore_imf_context_data_get(ctx);
+   if (!imf_context_data)
+     return XVaCreateNestedList(0, NULL);
 
    imf_context_data->preedit_start_cb.client_data = (XPointer)ctx;
    imf_context_data->preedit_start_cb.callback = (XIMProc)_ecore_imf_xim_preedit_start_call;
