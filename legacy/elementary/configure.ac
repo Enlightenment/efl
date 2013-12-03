@@ -731,6 +731,8 @@ src/modules/test_map/Makefile
 src/edje_externals/Makefile
 src/examples/Makefile
 src/tests/Makefile
+src/imported/Makefile
+src/imported/atspi/Makefile
 data/Makefile
 data/themes/Makefile
 data/images/Makefile
