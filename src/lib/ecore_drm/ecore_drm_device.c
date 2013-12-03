@@ -124,6 +124,8 @@ ecore_drm_device_find(const char *name, const char *seat)
         /* try to allocate space for return device structure */
         if ((dev = calloc(1, sizeof(Ecore_Drm_Device))))
           {
+             const char *id;
+
              /* set device name */
              dev->devname = 
                eina_stringshare_add(udev_device_get_devnode(tmpdevice));
@@ -131,6 +133,10 @@ ecore_drm_device_find(const char *name, const char *seat)
              /* set device path */
              dev->devpath = 
                eina_stringshare_add(udev_device_get_syspath(tmpdevice));
+
+             /* store id for this device */
+             if ((id = udev_device_get_sysnum(tmpdevice)))
+               dev->id = atoi(id);
           }
      }
 
@@ -181,6 +187,10 @@ ecore_drm_device_open(Ecore_Drm_Device *dev)
 {
    /* check for valid device */
    if ((!dev) || (!dev->devpath)) return EINA_FALSE;
+
+   /* send message for ecore_drm_launch to open this device */
+   _ecore_drm_message_send(ECORE_DRM_OP_OPEN_FD, 
+                           dev->devname, strlen(dev->devname));
 
    return EINA_TRUE;
 }
