@@ -3,6 +3,6 @@
 /efreet_spec_test
 /efreet_test
 /efreet_user_dir
-
+/efreet_async_test
 /compare/efreet_alloc
 /compare/efreet_menu_alloc
