@@ -334,6 +334,85 @@ _mode_option_create(Evas_Object *parent, Evas_Object *fs)
    return frame;
 }
 
+static void
+_small_icon_clicked(void *data,
+                    Evas_Object *obj EINA_UNUSED,
+                    void *event_info EINA_UNUSED)
+{
+   Evas_Object *fs = data;
+   Evas_Coord w, h;
+
+   elm_fileselector_thumbnail_size_get(fs, &w, &h);
+
+   elm_fileselector_thumbnail_size_set(fs, 56, 56);
+   printf("Thumbnail icon was changed from %dx%d to 56x56\n", w, h);
+}
+
+static void
+_middle_icon_clicked(void *data,
+                     Evas_Object *obj EINA_UNUSED,
+                     void *event_info EINA_UNUSED)
+{
+   Evas_Object *fs = data;
+   Evas_Coord w, h;
+
+   elm_fileselector_thumbnail_size_get(fs, &w, &h);
+
+   elm_fileselector_thumbnail_size_set(fs, 78, 78);
+   printf("Thumbnail icon was changed from %dx%d to 78x78\n", w, h);
+}
+
+static void
+_big_icon_clicked(void *data,
+                  Evas_Object *obj EINA_UNUSED,
+                  void *event_info EINA_UNUSED)
+{
+   Evas_Object *fs = data;
+   Evas_Coord w, h;
+
+   elm_fileselector_thumbnail_size_get(fs, &w, &h);
+
+   elm_fileselector_thumbnail_size_set(fs, 131, 131);
+   printf("Thumbnail icon was changed from %dx%d to 131x131\n", w, h);
+}
+
+static Evas_Object *
+_thumbnail_size_option_create(Evas_Object *parent, Evas_Object *fs)
+{
+   Evas_Object *frame = NULL, *hbox = NULL, *bt = NULL;
+
+   frame = elm_frame_add(parent);
+   elm_object_text_set(frame, "Thumbnail Size");
+   evas_object_size_hint_weight_set(frame, EVAS_HINT_EXPAND, 0);
+   evas_object_size_hint_align_set(frame, EVAS_HINT_FILL, 0);
+   evas_object_show(frame);
+
+   hbox = elm_box_add(frame);
+   elm_box_horizontal_set(hbox, EINA_TRUE);
+   elm_object_content_set(frame, hbox);
+   evas_object_show(hbox);
+
+   bt = elm_button_add(hbox);
+   elm_object_text_set(bt, "Small icon");
+   evas_object_smart_callback_add(bt, "clicked", _small_icon_clicked, fs);
+   elm_box_pack_end(hbox, bt);
+   evas_object_show(bt);
+
+   bt = elm_button_add(hbox);
+   elm_object_text_set(bt, "Middle icon");
+   evas_object_smart_callback_add(bt, "clicked", _middle_icon_clicked, fs);
+   elm_box_pack_end(hbox, bt);
+   evas_object_show(bt);
+
+   bt = elm_button_add(hbox);
+   elm_object_text_set(bt, "Big icon");
+   evas_object_smart_callback_add(bt, "clicked", _big_icon_clicked, fs);
+   elm_box_pack_end(hbox, bt);
+   evas_object_show(bt);
+
+   return frame;
+}
+
 void
 test_fileselector(void *data       EINA_UNUSED,
                   Evas_Object *obj EINA_UNUSED,
@@ -395,5 +474,6 @@ test_fileselector(void *data       EINA_UNUSED,
    elm_box_pack_end(vbox, _option_create(vbox, fs));
    elm_box_pack_end(vbox, _getter_option_create(vbox, fs));
    elm_box_pack_end(vbox, _mode_option_create(vbox, fs));
+   elm_box_pack_end(vbox, _thumbnail_size_option_create(vbox, fs));
 }
 

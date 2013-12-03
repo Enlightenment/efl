@@ -362,3 +362,36 @@ EAPI void                  elm_fileselector_hidden_visible_set(Evas_Object *obj,
  * @ingroup Fileselector
  */
 EAPI Eina_Bool             elm_fileselector_hidden_visible_get(const Evas_Object *obj);
+
+/**
+ * Set the size for the thumbnail of the file selector widget's view.
+ *
+ * @param obj The file selector object
+ * @param w The thumbnail's width.
+ * @param h The thumbnail's height.
+ *
+ * @note If w or h is 0, default value will be used.
+ *
+ * @see elm_fileselector_thumbnail_size_get()
+ *
+ * @since 1.9
+ * @ingroup Fileselector
+ */
+EAPI void                  elm_fileselector_thumbnail_size_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h);
+
+/**
+ * Get the size for the thumbnail of a given file selector widget
+ *
+ * @param obj The file selector object.
+ * @param w Pointer to a variable where to store the thumbnail's width.
+ * @param h Pointer to a variable where to store the thumbnail's height.
+ *
+ * @note Use @c NULL pointers on the size values you're not
+ * interested in: they'll be ignored by the function.
+ *
+ * @see elm_fileselector_thumbnail_size_set()
+ *
+ * @since 1.9
+ * @ingroup Fileselector
+ */
+EAPI void                  elm_fileselector_thumbnail_size_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coord *h);

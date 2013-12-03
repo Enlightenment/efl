@@ -21,6 +21,9 @@ EAPI Eo_Op ELM_OBJ_FILESELECTOR_BASE_ID = EO_NOOP;
 #define MY_CLASS_NAME "Elm_Fileselector"
 #define MY_CLASS_NAME_LEGACY "elm_fileselector"
 
+/* FIXME: need a way to find a gap between the size of item and thumbnail */
+#define GENGRID_PADDING 16
+
 static Elm_Genlist_Item_Class *list_itc[ELM_FILE_LAST];
 static Elm_Gengrid_Item_Class *grid_itc[ELM_FILE_LAST];
 
@@ -150,15 +153,25 @@ _itc_icon_folder_get(void *data __UNUSED__,
                      Evas_Object *obj,
                      const char *source)
 {
-   Evas_Object *ic;
+   Evas_Object *ic, *grid, *f;
 
    if (strcmp(source, "elm.swallow.icon")) return NULL;
 
+   f = evas_object_data_get(obj, "parent");
+   ELM_FILESELECTOR_DATA_GET(f, sd);
+
    ic = elm_icon_add(obj);
    elm_icon_standard_set(ic, "folder");
-
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
-   return ic;
+   evas_object_show(ic);
+
+   grid = elm_grid_add(obj);
+   elm_grid_size_set(grid, 1, 1);
+   elm_grid_pack(grid, ic, 0, 0, 1, 1);
+   evas_object_size_hint_min_set(grid, sd->thumbnail_size.w, sd->thumbnail_size.h);
+   evas_object_show(grid);
+
+   return grid;
 }
 
 static Evas_Object *
@@ -167,16 +180,26 @@ _itc_icon_image_get(void *data,
                     const char *source)
 {
    const char *filename = data;
-   Evas_Object *ic;
+   Evas_Object *ic, *grid, *f;
 
    if (strcmp(source, "elm.swallow.icon")) return NULL;
+
+   f = evas_object_data_get(obj, "parent");
+   ELM_FILESELECTOR_DATA_GET(f, sd);
 
    ic = elm_icon_add(obj);
    elm_icon_standard_set(ic, "image");
    elm_icon_thumb_set(ic, filename, NULL);
-
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
-   return ic;
+   evas_object_show(ic);
+
+   grid = elm_grid_add(obj);
+   elm_grid_size_set(grid, 1, 1);
+   elm_grid_pack(grid, ic, 0, 0, 1, 1);
+   evas_object_size_hint_min_set(grid, sd->thumbnail_size.w, sd->thumbnail_size.h);
+   evas_object_show(grid);
+
+   return grid;
 }
 
 static Evas_Object *
@@ -184,15 +207,25 @@ _itc_icon_file_get(void *data __UNUSED__,
                    Evas_Object *obj,
                    const char *source)
 {
-   Evas_Object *ic;
+   Evas_Object *ic, *grid, *f;
 
    if (strcmp(source, "elm.swallow.icon")) return NULL;
 
+   f = evas_object_data_get(obj, "parent");
+   ELM_FILESELECTOR_DATA_GET(f, sd);
+
    ic = elm_icon_add(obj);
    elm_icon_standard_set(ic, "file");
-
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
-   return ic;
+   evas_object_show(ic);
+
+   grid = elm_grid_add(obj);
+   elm_grid_size_set(grid, 1, 1);
+   elm_grid_pack(grid, ic, 0, 0, 1, 1);
+   evas_object_size_hint_min_set(grid, sd->thumbnail_size.w, sd->thumbnail_size.h);
+   evas_object_show(grid);
+
+   return grid;
 }
 
 static Eina_Bool
@@ -1014,6 +1047,7 @@ _files_list_add(Evas_Object *obj)
    Evas_Object *li;
 
    li = elm_genlist_add(obj);
+   evas_object_data_set(li, "parent", obj);
    elm_widget_mirrored_automatic_set(li, EINA_FALSE);
    evas_object_size_hint_align_set(li, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(li, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -1039,16 +1073,17 @@ static Evas_Object *
 _files_grid_add(Evas_Object *obj)
 {
    Evas_Object *grid;
-   int s;
+
+   ELM_FILESELECTOR_DATA_GET(obj, sd);
 
    grid = elm_gengrid_add(obj);
+   evas_object_data_set(grid, "parent", obj);
    elm_widget_mirrored_automatic_set(grid, EINA_FALSE);
    evas_object_size_hint_align_set(grid, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(grid, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 
-   // XXX: will fail for dynamic finger size changing
-   s = elm_config_finger_size_get() * 2;
-   elm_gengrid_item_size_set(grid, s, s);
+   elm_gengrid_item_size_set(grid, sd->thumbnail_size.w + GENGRID_PADDING, sd->thumbnail_size.h + GENGRID_PADDING);
+
    elm_gengrid_align_set(grid, 0.0, 0.0);
 
    evas_object_smart_callback_add(grid, "selected", _on_item_selected, obj);
@@ -1226,6 +1261,10 @@ _elm_fileselector_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    pb = elm_progressbar_add(obj);
    elm_widget_sub_object_add(obj, pb);
    priv->spinner = pb;
+
+   // XXX: will fail for dynamic finger size changing
+   priv->thumbnail_size.w = elm_config_finger_size_get() * 2 - GENGRID_PADDING;
+   priv->thumbnail_size.h = priv->thumbnail_size.w;
 
    // files_view
    priv->files_view = _files_list_add(obj);
@@ -1905,6 +1944,56 @@ _hidden_visible_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
    *ret = sd->hidden_visible;
 }
 
+EAPI void
+elm_fileselector_thumbnail_size_set(Evas_Object *obj,
+                                    Evas_Coord w,
+                                    Evas_Coord h)
+{
+   ELM_FILESELECTOR_CHECK(obj);
+   eo_do(obj, elm_obj_fileselector_thumbnail_size_set(w, h));
+}
+
+static void
+_thumbnail_size_set(Eo *obj __UNUSED__, void *_pd, va_list *list EINA_UNUSED)
+{
+   Evas_Coord w = va_arg(*list, Evas_Coord);
+   Evas_Coord h = va_arg(*list, Evas_Coord);
+   Elm_Fileselector_Smart_Data *sd = _pd;
+
+   if (sd->thumbnail_size.w == w && sd->thumbnail_size.h == h) return;
+
+   if (!w || !h)
+     w = h = elm_config_finger_size_get() * 2 - GENGRID_PADDING;
+
+   sd->thumbnail_size.w = w;
+   sd->thumbnail_size.h = h;
+
+   if (sd->mode == ELM_FILESELECTOR_GRID)
+     elm_gengrid_item_size_set(sd->files_view, w + GENGRID_PADDING, h + GENGRID_PADDING);
+
+   _populate(obj, sd->path, NULL, NULL);
+}
+
+EAPI void
+elm_fileselector_thumbnail_size_get(const Evas_Object *obj,
+                                    Evas_Coord *w,
+                                    Evas_Coord *h)
+{
+   ELM_FILESELECTOR_CHECK(obj);
+   eo_do((Eo *) obj, elm_obj_fileselector_thumbnail_size_get(w, h));
+}
+
+static void
+_thumbnail_size_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
+{
+   Evas_Coord *w = va_arg(*list, Evas_Coord *);
+   Evas_Coord *h = va_arg(*list, Evas_Coord *);
+   Elm_Fileselector_Smart_Data *sd = _pd;
+
+   if (w) *w = sd->thumbnail_size.w;
+   if (h) *h = sd->thumbnail_size.h;
+}
+
 static void
 _elm_fileselector_smart_focus_next_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
 {
@@ -1987,6 +2076,8 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_FILTERS_CLEAR), _filters_clear),
         EO_OP_FUNC(ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_HIDDEN_VISIBLE_SET), _hidden_visible_set),
         EO_OP_FUNC(ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_HIDDEN_VISIBLE_GET), _hidden_visible_get),
+        EO_OP_FUNC(ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_THUMBNAIL_SIZE_SET), _thumbnail_size_set),
+        EO_OP_FUNC(ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_THUMBNAIL_SIZE_GET), _thumbnail_size_get),
         EO_OP_FUNC_SENTINEL
    };
    eo_class_funcs_set(klass, func_desc);
@@ -2049,6 +2140,8 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_OBJ_FILESELECTOR_SUB_ID_FILTERS_CLEAR, "Clear filters"),
      EO_OP_DESCRIPTION(ELM_OBJ_FILESELECTOR_SUB_ID_HIDDEN_VISIBLE_SET, "Enable or disable visibility of hidden files/directories in the file selector widget."),
      EO_OP_DESCRIPTION(ELM_OBJ_FILESELECTOR_SUB_ID_HIDDEN_VISIBLE_GET, "Get if visibility of hidden files/directories in the file selector widget is enabled or disabled."),
+     EO_OP_DESCRIPTION(ELM_OBJ_FILESELECTOR_SUB_ID_THUMBNAIL_SIZE_SET, "Set the size for the thumbnail of the file selector widget's view, if it's in #ELM_FILESELECTOR_GRID mode"),
+     EO_OP_DESCRIPTION(ELM_OBJ_FILESELECTOR_SUB_ID_THUMBNAIL_SIZE_GET, "Get the size for the thumbnails of a given file selector widget."),
      EO_OP_DESCRIPTION_SENTINEL
 };
 static const Eo_Class_Description class_desc = {

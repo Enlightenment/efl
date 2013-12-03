@@ -32,6 +32,8 @@ enum
    ELM_OBJ_FILESELECTOR_SUB_ID_FILTERS_CLEAR,
    ELM_OBJ_FILESELECTOR_SUB_ID_HIDDEN_VISIBLE_SET,
    ELM_OBJ_FILESELECTOR_SUB_ID_HIDDEN_VISIBLE_GET,
+   ELM_OBJ_FILESELECTOR_SUB_ID_THUMBNAIL_SIZE_SET,
+   ELM_OBJ_FILESELECTOR_SUB_ID_THUMBNAIL_SIZE_GET,
    ELM_OBJ_FILESELECTOR_SUB_ID_LAST
 };
 
@@ -299,6 +301,32 @@ enum
  * @see elm_fileselector_hidden_visible_set
  */
 #define elm_obj_fileselector_hidden_visible_get(ret) ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_HIDDEN_VISIBLE_GET), EO_TYPECHECK(Eina_Bool *, ret)
+
+/**
+ * @def elm_obj_fileselector_thumbnail_size_get
+ * @since 1.9
+ *
+ * Get the size for the thumbnail of a given file selector widget
+ *
+ * @param[out] w
+ * @param[out] h
+ *
+ * @see elm_fileselector_thumbnail_size_get
+ */
+#define elm_obj_fileselector_thumbnail_size_get(w, h) ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_THUMBNAIL_SIZE_GET), EO_TYPECHECK(Evas_Coord *, w), EO_TYPECHECK(Evas_Coord *, h)
+
+/**
+ * @def elm_obj_fileselector_group_thumbnail_size_set
+ * @since 1.9
+ *
+ * Set the size for the thumbnail of the file selector widget's view.
+ *
+ * @param[in] w
+ * @param[in] h
+ *
+ * @see elm_fileselector_thumbnail_size_set
+ */
+#define elm_obj_fileselector_thumbnail_size_set(w, h) ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_THUMBNAIL_SIZE_SET), EO_TYPECHECK(Evas_Coord, w), EO_TYPECHECK(Evas_Coord, h)
 
 /**
  * @}

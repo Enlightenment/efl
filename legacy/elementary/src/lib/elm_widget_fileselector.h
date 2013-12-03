@@ -51,6 +51,8 @@ struct _Elm_Fileselector_Smart_Data
    Eio_Monitor             *monitor;
    Eina_List               *handlers;
 
+   Evas_Coord_Size          thumbnail_size;
+
    Elm_Fileselector_Mode mode;
 
    Eina_Bool             only_folder : 1;
