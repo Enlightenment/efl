@@ -64,10 +64,13 @@ elm_main(int argc, char **argv)
    radio = elm_radio_add(win);
    elm_object_text_set(radio, "Radio 4");
    elm_radio_state_value_set(radio, 4);
+   elm_radio_value_pointer_set(radio, &val);
+   elm_radio_group_add(radio, group);
    elm_box_pack_end(bx, radio);
    evas_object_size_hint_weight_set(radio, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(radio, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(radio);
+   evas_object_smart_callback_add(radio, "changed", _cb, NULL);
 
    evas_object_show(win);
 
