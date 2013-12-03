@@ -61,6 +61,7 @@ group { name: "e/modules/everything/main";
          }
          description { state: "wide" 0;
             inherit: "default" 0.0;
+            rel1.relative: 0.0 0.0;
             rel2.relative: 0.5 1.0;
          }
       }
@@ -1610,7 +1611,8 @@ group { name: "e/modules/everything/thumbview/item/list";
             rel1.relative: 1.0 0.0;
             rel1.to_x: "icon0";
             rel2.offset: -3 -3;
-            rel2.relative: 1.0 1.0;
+            rel2.relative: 0.0 1.0;
+            rel2.to_x: "arrow";
             color: 255 255 255 255;
             color3: 0 0 0 128;
             color_class: "ilist_item";
