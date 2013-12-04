@@ -261,16 +261,6 @@ _eina_cow_gc(Eina_Cow *cow, Eina_Cow_GC *gc)
 
    data = EINA_COW_DATA_GET(gc->ref);
 
-   /*
-     THIS IS A TEMPORARY WORK AROUND THAT SHOULD LIMIT PROBLEM
-     UNTIL WE KNOW WHY THERE IS A PROBLEM IN EINA_HASH.
-   */
-   if (gc->ref->refcount == 0)
-     {
-        eina_hash_del(cow->togc, &gc->ref, gc);
-        return ;
-     }
-
    current_cow_size = cow->struct_size;
    match = eina_hash_find(cow->match, data);
    if (match)
