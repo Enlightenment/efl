@@ -64,7 +64,7 @@
 #define EINA_HASH_BUCKET_SIZE       8
 #define EINA_HASH_SMALL_BUCKET_SIZE 5
 
-#define EINA_HASH_RBTREE_MASK       0xFFF
+#define EINA_HASH_RBTREE_MASK       0xFFFFFF
 
 typedef struct _Eina_Hash_Head         Eina_Hash_Head;
 typedef struct _Eina_Hash_Element      Eina_Hash_Element;
