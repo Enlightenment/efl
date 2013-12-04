@@ -248,29 +248,26 @@ desktop_changes_monitor_add(const char *path)
      eina_hash_add(desktop_change_monitors, path, mon);
 }
 
+static int
+stat_cmp(const void *a, const void *b)
+{
+   const struct stat *st1 = a;
+   const struct stat *st2 = b;
+
+   if ((st2->st_dev == st1->st_dev) && (st2->st_ino == st1->st_ino))
+     return 0;
+   return 1;
+}
+
 static void
 icon_changes_listen_recursive(Eina_Inarray *stack, const char *path, Eina_Bool base)
 {
    Eina_Iterator *it;
    Eina_File_Direct_Info *info;
-   Eina_Bool free_stack = EINA_FALSE;
    struct stat st;
-   unsigned int i;
 
-   if (!stack)
-     {
-        free_stack = EINA_TRUE;
-        stack = eina_inarray_new(sizeof(struct stat), 16);
-        if (!stack) return;
-     }
    if (stat(path, &st) == -1) return;
-   for (i = 0; i < eina_inarray_count(stack); i++)
-     {
-        struct stat *st2 = eina_inarray_nth(stack, i);
-
-        if ((st2->st_dev == st.st_dev) && (st2->st_ino == st.st_ino))
-          return;
-     }
+   if (eina_inarray_search(stack, &st, stat_cmp) >= 0) return;
    eina_inarray_push(stack, &st);
 
    if ((!ecore_file_is_dir(path)) && (base))
@@ -285,7 +282,7 @@ icon_changes_listen_recursive(Eina_Inarray *stack, const char *path, Eina_Bool b
      }
    if (ecore_file_is_dir(path)) icon_changes_monitor_add(path);
    it = eina_file_stat_ls(path);
-   if (!it) goto end;
+   if (!it) return;
    EINA_ITERATOR_FOREACH(it, info)
      {
         if (info->path[info->name_start] == '.') continue;
@@ -294,8 +291,6 @@ icon_changes_listen_recursive(Eina_Inarray *stack, const char *path, Eina_Bool b
           icon_changes_listen_recursive(stack, info->path, EINA_FALSE);
      }
    eina_iterator_free(it);
-end:
-   if (free_stack) eina_inarray_free(stack);
 }
 
 static void
@@ -303,24 +298,10 @@ desktop_changes_listen_recursive(Eina_Inarray *stack, const char *path, Eina_Boo
 {
    Eina_Iterator *it;
    Eina_File_Direct_Info *info;
-   Eina_Bool free_stack = EINA_FALSE;
    struct stat st;
-   unsigned int i;
 
-   if (!stack)
-     {
-        free_stack = EINA_TRUE;
-        stack = eina_inarray_new(sizeof(struct stat), 16);
-        if (!stack) return;
-     }
    if (stat(path, &st) == -1) return;
-   for (i = 0; i < eina_inarray_count(stack); i++)
-     {
-        struct stat *st2 = eina_inarray_nth(stack, i);
-
-        if ((st2->st_dev == st.st_dev) && (st2->st_ino == st.st_ino))
-          return;
-     }
+   if (eina_inarray_search(stack, &st, stat_cmp) >= 0) return;
    eina_inarray_push(stack, &st);
    if ((!ecore_file_is_dir(path)) && (base))
      {
@@ -334,7 +315,7 @@ desktop_changes_listen_recursive(Eina_Inarray *stack, const char *path, Eina_Boo
      }
    if (ecore_file_is_dir(path)) desktop_changes_monitor_add(path);
    it = eina_file_stat_ls(path);
-   if (!it) goto end;
+   if (!it) return;
    EINA_ITERATOR_FOREACH(it, info)
      {
         if (info->path[info->name_start] == '.') continue;
@@ -343,8 +324,6 @@ desktop_changes_listen_recursive(Eina_Inarray *stack, const char *path, Eina_Boo
           desktop_changes_listen_recursive(stack, info->path, EINA_FALSE);
      }
    eina_iterator_free(it);
-end:
-   if (free_stack) eina_inarray_free(stack);
 }
 
 static void
@@ -354,29 +333,37 @@ icon_changes_listen(void)
    Eina_List *xdg_dirs;
    char buf[PATH_MAX];
    const char *dir;
+   Eina_Inarray *stack;
 
-   icon_changes_listen_recursive(NULL, efreet_icon_deprecated_user_dir_get(), EINA_TRUE);
-   icon_changes_listen_recursive(NULL, efreet_icon_user_dir_get(), EINA_TRUE);
+   stack = eina_inarray_new(sizeof(struct stat), 16);
+   if (!stack) return;
+   icon_changes_listen_recursive(stack, efreet_icon_deprecated_user_dir_get(), EINA_TRUE);
+   eina_inarray_flush(stack);
+   icon_changes_listen_recursive(stack, efreet_icon_user_dir_get(), EINA_TRUE);
    EINA_LIST_FOREACH(icon_extra_dirs, l, dir)
      {
-        icon_changes_listen_recursive(NULL, dir, EINA_TRUE);
+        eina_inarray_flush(stack);
+        icon_changes_listen_recursive(stack, dir, EINA_TRUE);
      }
 
    xdg_dirs = efreet_data_dirs_get();
    EINA_LIST_FOREACH(xdg_dirs, l, dir)
      {
         snprintf(buf, sizeof(buf), "%s/icons", dir);
-        icon_changes_listen_recursive(NULL, buf, EINA_TRUE);
+        eina_inarray_flush(stack);
+        icon_changes_listen_recursive(stack, buf, EINA_TRUE);
      }
 
 #ifndef STRICT_SPEC
    EINA_LIST_FOREACH(xdg_dirs, l, dir)
      {
         snprintf(buf, sizeof(buf), "%s/pixmaps", dir);
-        icon_changes_listen_recursive(NULL, buf, EINA_TRUE);
+        eina_inarray_flush(stack);
+        icon_changes_listen_recursive(stack, buf, EINA_TRUE);
      }
 #endif
    icon_changes_monitor_add("/usr/share/pixmaps");
+   eina_inarray_free(stack);
 }
 
 static void
@@ -384,11 +371,21 @@ desktop_changes_listen(void)
 {
    Eina_List *l;
    const char *path;
+   Eina_Inarray *stack;
 
+   stack = eina_inarray_new(sizeof(struct stat), 16);
+   if (!stack) return;
    EINA_LIST_FOREACH(desktop_system_dirs, l, path)
-     desktop_changes_listen_recursive(NULL, path, EINA_TRUE);
+     {
+        eina_inarray_flush(stack);
+        desktop_changes_listen_recursive(stack, path, EINA_TRUE);
+     }
    EINA_LIST_FOREACH(desktop_extra_dirs, l, path)
-     desktop_changes_listen_recursive(NULL, path, EINA_TRUE);
+     {
+        eina_inarray_flush(stack);
+        desktop_changes_listen_recursive(stack, path, EINA_TRUE);
+     }
+   eina_inarray_free(stack);
 }
 
 static void
