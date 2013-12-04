@@ -314,7 +314,7 @@ _ecore_glib_shutdown(void)
  *
  * @note This is only available if Ecore was compiled with GLib support.
  * @note You don't need to call this function if Ecore was compiled with
- * --enable-glib-integration-always.
+ * --with-glib=always.
  *
  * @return @c EINA_TRUE on success of @c EINA_FALSE if it failed,
  *         likely no GLib support in Ecore.
@@ -343,9 +343,9 @@ Eina_Bool _ecore_glib_always_integrate = 1;
 /**
  * Disable always integrating glib
  *
- * If ecore is compiled with --enable-glib-integration-always (to always
- * call ecore_main_loop_glib_integrate() when ecore_init() is called), then
- * calling this before calling ecore_init() will disable the integration.
+ * If ecore is compiled with --with-glib=always (to always call
+ * ecore_main_loop_glib_integrate() when ecore_init() is called), then calling
+ * this before calling ecore_init() will disable the integration.
  * This is for apps that explicitly do not want this to happen for whatever
  * reasons they may have.
  */
