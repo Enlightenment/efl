@@ -260,6 +260,70 @@ START_TEST(eina_hash_int32_fuzze)
 }
 END_TEST
 
+START_TEST(eina_hash_string_fuzze)
+{
+   Eina_Hash *hash;
+   Eina_List *added = NULL;
+   char *r;
+   unsigned int i;
+   unsigned int j;
+   unsigned int seed;
+
+   eina_init();
+
+   seed = time(NULL);
+   srand(seed);
+
+   hash = eina_hash_string_superfast_new(free);
+
+   for (i = 0; i < 10000; ++i)
+     {
+        char convert[128];
+
+        eina_convert_itoa(rand(), convert);
+        r = strdup(convert);
+        eina_hash_direct_add(hash, r, r);
+     }
+
+   for (j = 0; j < 50; ++j)
+     {
+        for (i = 0; i < 1000; ++i)
+          {
+             do
+               {
+                  char convert[128];
+
+                  eina_convert_itoa(rand(), convert);
+                  r = eina_hash_find(hash, convert);
+                  if (r)
+                    {
+                       r = NULL;
+                       continue;
+                    }
+
+                  r = strdup(convert);
+                  eina_hash_direct_add(hash, r, r);
+                  added = eina_list_append(added, r);
+               }
+             while (r == NULL);
+          }
+
+        EINA_LIST_FREE(added, r)
+          {
+             char *s;
+
+             s = eina_hash_find(hash, r);
+	     fail_if(s != r);
+             eina_hash_del(hash, r, r);
+          }
+     }
+
+   eina_hash_free(hash);
+
+   eina_shutdown();
+}
+END_TEST
+
 START_TEST(eina_hash_seed)
 {
    eina_init();
@@ -278,4 +342,5 @@ void eina_test_hash(TCase *tc)
    tcase_add_test(tc, eina_hash_all_int);
    tcase_add_test(tc, eina_hash_seed);
    tcase_add_test(tc, eina_hash_int32_fuzze);
+   tcase_add_test(tc, eina_hash_string_fuzze);
 }
