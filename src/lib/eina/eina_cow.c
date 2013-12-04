@@ -265,7 +265,7 @@ _eina_cow_gc(Eina_Cow *cow, Eina_Cow_GC *gc)
      THIS IS A TEMPORARY WORK AROUND THAT SHOULD LIMIT PROBLEM
      UNTIL WE KNOW WHY THERE IS A PROBLEM IN EINA_HASH.
    */
-   if (gc->ref->refcount == 0)
+   if (gc->ref->refcount == 0 || !gc->ref->togc)
      {
         eina_hash_del(cow->togc, &gc->ref, gc);
         return ;
