@@ -268,6 +268,8 @@ icon_changes_listen_recursive(Eina_Inarray *stack, const char *path, Eina_Bool b
 
    if (stat(path, &st) == -1) return;
    if (eina_inarray_search(stack, &st, stat_cmp) >= 0) return;
+   // protect against too deep recursion even if it's valid.
+   if (eina_inarray_count(stack) >= 8) return;
    eina_inarray_push(stack, &st);
 
    if ((!ecore_file_is_dir(path)) && (base))
@@ -302,6 +304,8 @@ desktop_changes_listen_recursive(Eina_Inarray *stack, const char *path, Eina_Boo
 
    if (stat(path, &st) == -1) return;
    if (eina_inarray_search(stack, &st, stat_cmp) >= 0) return;
+   // protect against too deep recursion even if it's valid.
+   if (eina_inarray_count(stack) >= 3) return;
    eina_inarray_push(stack, &st);
    if ((!ecore_file_is_dir(path)) && (base))
      {
