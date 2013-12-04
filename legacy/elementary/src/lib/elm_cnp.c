@@ -1104,7 +1104,7 @@ _x11_text_converter(char *target, void *data, int size, void **data_ret, int *si
        (sel->format & ELM_SEL_FORMAT_HTML))
      {
         *data_ret = _elm_util_mkup_to_text(sel->selbuf);
-        if (size_ret) *size_ret = strlen(*data_ret);
+        if (size_ret && *data_ret) *size_ret = strlen(*data_ret);
      }
    else if (sel->format & ELM_SEL_FORMAT_TEXT)
      {
@@ -1755,6 +1755,7 @@ _x11_elm_cnp_selection_set(Evas_Object *obj, Elm_Sel_Type selection, Elm_Sel_For
         if (format == ELM_SEL_FORMAT_IMAGE)
           {
              // selbuf is actual image data, not text/string
+             ELM_SAFE_FREE(sel->selbuf, free);
              sel->selbuf = malloc(buflen + 1);
              if (!sel->selbuf)
                {
@@ -3961,6 +3962,7 @@ _cont_obj_drag_start(void *data)
          info->dragpos, info->dragdata,
          info->acceptcb, info->acceptdata,
          _cont_drag_done_cb, st);
+   ELM_SAFE_FREE(info->data, free);
 
    return ECORE_CALLBACK_CANCEL;
 }
@@ -4195,6 +4197,7 @@ elm_drag_item_container_del_internal(Evas_Object *obj, Eina_Bool full)
                 (obj, EVAS_CALLBACK_MOUSE_DOWN, _cont_obj_mouse_down, st);
 
              cont_drag_tg = eina_list_remove(cont_drag_tg, st);
+             ELM_SAFE_FREE(st->user_info.data, free);
              free(st);
           }
 
