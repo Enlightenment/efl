@@ -439,6 +439,71 @@ START_TEST(eina_rbtree_simple_remove3)
 }
 END_TEST
 
+START_TEST(eina_rbtree_fuzzy)
+{
+   Eina_Rbtree_Int *child;
+   Eina_Rbtree *root = NULL;
+   Eina_List *added = NULL;
+   unsigned int i;
+   unsigned int j;
+   unsigned int seed;
+
+   eina_init();
+
+   seed = time(NULL);
+   srand(seed);
+
+   for (i = 0; i < 10000; i++)
+     {
+        child = _eina_rbtree_int_new(rand());
+        root = eina_rbtree_inline_insert(root, (Eina_Rbtree*) child,
+                                         EINA_RBTREE_CMP_NODE_CB(eina_rbtree_int_cmp), NULL);
+     }
+
+   for (j = 0; j < 20; j++)
+     {
+        for (i = 0; i < 1000; i++)
+          {
+             int r;
+
+             do
+               {
+                  r = rand();
+
+                  child = (Eina_Rbtree_Int *) eina_rbtree_inline_lookup(root, &r, sizeof (int),
+                                                                        EINA_RBTREE_CMP_KEY_CB(eina_rbtree_int_key), NULL);
+                  if (child)
+                    {
+                       child = NULL;
+                       continue ;
+                    }
+
+                  child = _eina_rbtree_int_new(r);
+                  root = eina_rbtree_inline_insert(root, (Eina_Rbtree*) child,
+                                                   EINA_RBTREE_CMP_NODE_CB(eina_rbtree_int_cmp), NULL);
+                  added = eina_list_append(added, child);
+               }
+             while (child == NULL);
+          }
+
+        EINA_LIST_FREE(added, child)
+          {
+             Eina_Rbtree *lookup;
+
+             lookup = eina_rbtree_inline_lookup(root, &child->value, sizeof (int),
+                                                EINA_RBTREE_CMP_KEY_CB(eina_rbtree_int_key), NULL);
+             fail_if(lookup == NULL);
+             fail_if(lookup != (Eina_Rbtree*) child);
+
+             root = eina_rbtree_inline_remove(root, (Eina_Rbtree*) child,
+                                              EINA_RBTREE_CMP_NODE_CB(eina_rbtree_int_cmp), NULL);
+          }
+     }
+
+   eina_shutdown();
+}
+END_TEST
+
 void
 eina_test_rbtree(TCase *tc)
 {
@@ -448,5 +513,6 @@ eina_test_rbtree(TCase *tc)
    tcase_add_test(tc, eina_rbtree_simple_remove);
    tcase_add_test(tc, eina_rbtree_simple_remove2);
    tcase_add_test(tc, eina_rbtree_simple_remove3);
+   tcase_add_test(tc, eina_rbtree_fuzzy);
 }
 
