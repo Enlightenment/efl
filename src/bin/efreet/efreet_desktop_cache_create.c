@@ -126,6 +126,16 @@ cache_add(const char *path, const char *file_id, int priority EINA_UNUSED, int *
     return 1;
 }
 
+static int
+stat_cmp(const void *a, const void *b)
+{
+   const struct stat *st1 = a;
+   const struct stat *st2 = b;
+
+   if ((st2->st_dev == st1->st_dev) && (st2->st_ino == st1->st_ino))
+     return 0;
+   return 1;
+}
 
 static int
 cache_scan(Eina_Inarray *stack, const char *path, const char *base_id,
@@ -135,31 +145,15 @@ cache_scan(Eina_Inarray *stack, const char *path, const char *base_id,
     char id[PATH_MAX];
     Eina_Iterator *it;
     Eina_File_Direct_Info *info;
-    Eina_Bool free_stack = EINA_FALSE;
     struct stat st;
-    unsigned int i;
-    int ret = 1;
 
     if (!ecore_file_is_dir(path)) return 1;
-
-    if (!stack)
-    {
-        free_stack = EINA_TRUE;
-        stack = eina_inarray_new(sizeof(struct stat), 16);
-        if (!stack) goto end;
-    }
-    if (stat(path, &st) == -1) goto end;
-    for (i = 0; i < eina_inarray_count(stack); i++)
-    {
-        struct stat *st2 = eina_inarray_nth(stack, i);
-
-        if ((st2->st_dev == st.st_dev) && (st2->st_ino == st.st_ino))
-            goto end;
-    }
+    if (stat(path, &st) == -1) return 1;
+    if (eina_inarray_search(stack, &st, stat_cmp) >= 0) return 1;
     eina_inarray_push(stack, &st);
 
     it = eina_file_stat_ls(path);
-    if (!it) goto end;
+    if (!it) return 1;
     id[0] = '\0';
     EINA_ITERATOR_FOREACH(it, info)
     {
@@ -188,15 +182,12 @@ cache_scan(Eina_Inarray *stack, const char *path, const char *base_id,
             if (!cache_add(info->path, file_id, priority, changed))
             {
                 eina_iterator_free(it);
-                ret = 0;
-                goto end;
+                return 0;
             }
         }
     }
     eina_iterator_free(it);
-end:
-    if (free_stack) eina_inarray_free(stack);
-    return ret;
+    return 1;
 }
 
 static int
@@ -238,6 +229,7 @@ main(int argc, char **argv)
     Eina_List *systemdirs = NULL;
     Eina_List *extra_dirs = NULL;
     Eina_List *l = NULL;
+    Eina_Inarray *stack = NULL;
     int priority = 0;
     char *dir = NULL;
     char *path;
@@ -361,18 +353,24 @@ main(int argc, char **argv)
     dirs = efreet_default_dirs_get(efreet_data_home_get(), efreet_data_dirs_get(),
                                                                     "applications");
     if (!dirs) goto error;
+    stack = eina_inarray_new(sizeof(struct stat), 16);
+    if (!stack) goto error;
 
     EINA_LIST_FREE(dirs, path)
      {
         char file_id[PATH_MAX] = { '\0' };
 
-        if (!cache_scan(NULL, path, file_id, priority++, 1, &changed))
+        eina_inarray_flush(stack);
+        if (!cache_scan(stack, path, file_id, priority++, 1, &changed))
           goto error;
         systemdirs = eina_list_append(systemdirs, path);
      }
 
     EINA_LIST_FOREACH(extra_dirs, l, path)
-      if (!cache_scan(NULL, path, NULL, priority, 0, &changed)) goto error;
+    {
+        eina_inarray_flush(stack);
+        if (!cache_scan(stack, path, NULL, priority, 0, &changed)) goto error;
+    }
 
     /* store util */
 #define STORE_HASH_ARRAY(_hash) \
@@ -475,6 +473,7 @@ main(int argc, char **argv)
     EINA_LIST_FREE(systemdirs, dir)
         eina_stringshare_del(dir);
     eina_list_free(extra_dirs);
+    eina_inarray_free(stack);
     efreet_shutdown();
     ecore_shutdown();
     eet_shutdown();
@@ -483,6 +482,7 @@ main(int argc, char **argv)
     close(lockfd);
     return 0;
 error:
+    if (stack) eina_inarray_free(stack);
     IF_FREE(dir);
 edd_error:
     if (old_file_ids)
