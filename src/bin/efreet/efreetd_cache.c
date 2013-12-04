@@ -271,6 +271,8 @@ icon_changes_listen_recursive(Eina_Inarray *stack, const char *path, Eina_Bool b
         if ((st2->st_dev == st.st_dev) && (st2->st_ino == st.st_ino))
           return;
      }
+   // protect against too deep recursion even if it's valid.
+   if (eina_inarray_count(stack) >= 8) return;
    eina_inarray_push(stack, &st);
 
    if ((!ecore_file_is_dir(path)) && (base))
@@ -321,7 +323,10 @@ desktop_changes_listen_recursive(Eina_Inarray *stack, const char *path, Eina_Boo
         if ((st2->st_dev == st.st_dev) && (st2->st_ino == st.st_ino))
           return;
      }
+   // protect against too deep recursion even if it's valid.
+   if (eina_inarray_count(stack) >= 3) return;
    eina_inarray_push(stack, &st);
+
    if ((!ecore_file_is_dir(path)) && (base))
      {
         // XXX: if it doesn't exist... walk the parent dirs back down
