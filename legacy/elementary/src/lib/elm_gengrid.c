@@ -803,9 +803,7 @@ _item_realize(Elm_Gen_Item *it)
             (edje_object_data_get(VIEW(it), "contents"));
         EINA_LIST_FOREACH(it->contents, l, key)
           {
-             if (it->itc->func.content_get)
-               ic = it->itc->func.content_get
-                   ((void *)it->base.data, WIDGET(it), key);
+             ic = it->itc->func.content_get((void *)it->base.data, WIDGET(it), key);
              if (ic)
                {
                   it->content_objs = eina_list_append(it->content_objs, ic);
