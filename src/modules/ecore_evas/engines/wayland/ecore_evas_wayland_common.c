@@ -544,6 +544,8 @@ _ecore_evas_wl_common_resize(Ecore_Evas *ee, int w, int h)
      {
         ee->w = orig_w;
         ee->h = orig_h;
+        ee->req.w = orig_w;
+        ee->req.h = orig_h;
 
         if ((ee->rotation == 90) || (ee->rotation == 270))
           {
