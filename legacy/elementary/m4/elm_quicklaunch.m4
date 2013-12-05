@@ -15,7 +15,7 @@ old_CFLAGS="$CFLAGS"
 LDFLAGS="$LDFLAGS -pie -rdynamic"
 CFLAGS="$CFLAGS -fpie"
 
-AC_LINK_IFELSE([AC_LANG_SOURCE([[int main(){}]])],
+AC_LINK_IFELSE([AC_LANG_SOURCE([int main(){}])],
         [AC_MSG_RESULT([yes])],
         [LDFLAGS="$old_LDFLAGS"
 	CFLAGS="$old_CFLAGS"
