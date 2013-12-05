@@ -53,20 +53,20 @@ struct _Elm_Fileselector_Smart_Data
 
    Evas_Coord_Size          thumbnail_size;
 
-   Elm_Fileselector_Mode mode;
+   Elm_Fileselector_Mode    mode;
 
-   Eina_Bool             only_folder : 1;
-   Eina_Bool             expand : 1;
-   Eina_Bool             double_tap_navigation : 1;
-   Eina_Bool             multi : 1;
+   Eina_Bool                only_folder : 1;
+   Eina_Bool                expand : 1;
+   Eina_Bool                double_tap_navigation : 1;
+   Eina_Bool                multi : 1;
 
    /* this flag is only for multi selection.
     * If this flag is set to EINA_TRUE, it means directory is selected
     * so that fileselector will clear current selection when user clicked
     * another item. */
-   Eina_Bool             dir_selected : 1;
+   Eina_Bool                dir_selected : 1;
 
-   Eina_Bool             hidden_visible : 1;
+   Eina_Bool                hidden_visible : 1;
 };
 
 struct sel_data
