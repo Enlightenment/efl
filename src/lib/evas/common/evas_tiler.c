@@ -749,14 +749,13 @@ rect_list_add_split_fuzzy_and_merge(list_t *rects,
 }
 
 static inline int
-_add_redraw(list_t *rects, int x, int y, int w, int h)
+_add_redraw(list_t *rects, int x, int y, int w, int h, int fuzz)
 {
    rect_node_t *rn;
    rn = (rect_node_t *)rect_list_node_pool_get();
    rn->_lst = list_node_zeroed;
    rect_init(&rn->rect, x, y, w, h);
-   rect_list_add_split_fuzzy_and_merge(rects, (list_node_t *)rn,
-                                       FUZZ * FUZZ, FUZZ * FUZZ);
+   rect_list_add_split_fuzzy_and_merge(rects, (list_node_t *)rn, fuzz, fuzz);
    return 1;
 }
 
@@ -821,7 +820,7 @@ evas_common_tilebuf_add_redraw(Tilebuf *tb, int x, int y, int w, int h)
    tb->prev_add.x = x; tb->prev_add.y = y;
    tb->prev_add.w = w; tb->prev_add.h = h;
    tb->prev_del.w = 0; tb->prev_del.h = 0;
-   return _add_redraw(&tb->rects, x, y, w, h);
+   return _add_redraw(&tb->rects, x, y, w, h, FUZZ * FUZZ);
 }
 
 EAPI int
@@ -868,14 +867,18 @@ evas_common_tilebuf_get_render_rects(Tilebuf *tb)
    Tilebuf_Rect *rects = NULL, *rbuf, *r;
    int bx1 = 0, bx2 = 0, by1 = 0, by2 = 0, num = 0, x1, x2, y1, y2, i;
 
+/* don't need this since the below is now always on
    if (tb->need_merge)
      {
         to_merge = tb->rects;
         tb->rects = list_zeroed;
-        rect_list_merge_rects(&tb->rects, &to_merge, FUZZ * FUZZ);
+        rect_list_merge_rects(&tb->rects, &to_merge, 0);
         tb->need_merge = 0;
      }
-   if (tb->strict_tiles)
+ */
+   if (1)
+// always fuzz merge for optimal perf
+//   if (!tb->strict_tiles)
      {
         // round up rects to tb->tile_size.w and tb->tile_size.h
         to_merge = list_zeroed;
@@ -889,11 +892,11 @@ evas_common_tilebuf_get_render_rects(Tilebuf *tb)
              y1 = tb->tile_size.h * (y1 / tb->tile_size.h);
              x2 = tb->tile_size.w * ((x2 + tb->tile_size.w - 1) / tb->tile_size.w);
              y2 = tb->tile_size.h * ((y2 + tb->tile_size.h - 1) / tb->tile_size.h);
-             _add_redraw(&to_merge, x1, y1, x2 - x1, y2 - y1);
+             _add_redraw(&to_merge, x1, y1, x2 - x1, y2 - y1, 0);
           }
-        rect_list_merge_rects(&tb->rects, &to_merge, FUZZ * FUZZ);
+        rect_list_clear(&tb->rects);
+        rect_list_merge_rects(&tb->rects, &to_merge, 0);
      }
-   
    n = tb->rects.head;
    if (n)
      {
@@ -905,6 +908,11 @@ evas_common_tilebuf_get_render_rects(Tilebuf *tb)
         n = n->next;
         for (; n; n = n->next)
           {
+             RECTS_CLIP_TO_RECT(((rect_node_t *)n)->rect.left,
+                                ((rect_node_t *)n)->rect.top,
+                                ((rect_node_t *)n)->rect.width,
+                                ((rect_node_t *)n)->rect.height,
+                                0, 0, tb->outbuf_w, tb->outbuf_h);
              x1 = ((rect_node_t *)n)->rect.left;
              if (x1 < bx1) bx1 = x1;
              x2 = x1 + ((rect_node_t *)n)->rect.width;
@@ -948,8 +956,6 @@ evas_common_tilebuf_get_render_rects(Tilebuf *tb)
         rect_t cur;
 
         cur = ((rect_node_t *)n)->rect;
-        RECTS_CLIP_TO_RECT(cur.left, cur.top, cur.width, cur.height,
-                           0, 0, tb->outbuf_w, tb->outbuf_h);
         if ((cur.width > 0) && (cur.height > 0))
           {
              r = &(rbuf[i]);
