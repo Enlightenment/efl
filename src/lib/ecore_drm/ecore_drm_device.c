@@ -193,7 +193,7 @@ ecore_drm_device_open(Ecore_Drm_Device *dev)
    strcpy(devpath, dev->devname);
 
    /* send message for ecore_drm_launch to open this device */
-   _ecore_drm_message_send(ECORE_DRM_OP_OPEN_FD, 
+   _ecore_drm_message_send(ECORE_DRM_OP_DEVICE_OPEN, 
                            devpath, strlen(devpath));
 
    return EINA_TRUE;
