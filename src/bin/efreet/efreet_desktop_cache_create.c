@@ -195,6 +195,7 @@ cache_scan(Eina_Inarray *stack, const char *path, const char *base_id,
     }
     eina_iterator_free(it);
 end:
+    eina_inarray_pop(stack);
     if (free_stack) eina_inarray_free(stack);
     return ret;
 }

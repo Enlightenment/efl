@@ -297,6 +297,7 @@ icon_changes_listen_recursive(Eina_Inarray *stack, const char *path, Eina_Bool b
      }
    eina_iterator_free(it);
 end:
+   eina_inarray_pop(stack);
    if (free_stack) eina_inarray_free(stack);
 }
 
@@ -349,6 +350,7 @@ desktop_changes_listen_recursive(Eina_Inarray *stack, const char *path, Eina_Boo
      }
    eina_iterator_free(it);
 end:
+   eina_inarray_pop(stack);
    if (free_stack) eina_inarray_free(stack);
 }
 
