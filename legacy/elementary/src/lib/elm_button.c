@@ -184,8 +184,8 @@ _elm_button_smart_event(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
        (strcmp(ev->key, "space")))
      return;
 
-   _activate(obj);
    elm_layout_signal_emit(obj, "elm,anim,activate", "elm");
+   _activate(obj);
 
    ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
    if (ret) *ret = EINA_TRUE;
