@@ -1,6 +1,24 @@
 =========
-EFL 1.8.1
+EFL 1.8.2
 =========
+
+Changes since 1.8.1:
+--------------------
+
+    * ecore_evas: Set engine aspect ratio function pointer
+    * evas - Clip mark performance improvement
+    * ecore_evas: Properly fix efl wayland elm window resize problem.
+    * evas - fix overdraw + too many rects problem found in some expedite tests
+    * efreet - fix recusrion checks need to pop as well as push.
+    * evil: use the right ifdef.
+    * efreet - protect efreetd from recursing too far to save overhead and mem
+    * ecore ecore_glib.c: fixed documentation about glib integration always configure option.
+    * eina: increase hash matching inside of Eina_Hash.
+    * evas: fix loader to properly define _XOPEN_SOURCE for Solaris.
+    * Revert "eina: check if the complete hash match before checking if the key match during
+      children walk."
+    * evas: bugfix in evas_render of not maintaining changed flags on object correctly (T539)
+    * Add: Implement withdrawn_set/unset on Wayland engines (T155)
 
 Changes since 1.8.0:
 --------------------
