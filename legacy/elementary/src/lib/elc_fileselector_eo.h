@@ -145,11 +145,11 @@ enum
  * Set, programmatically, the directory that a given file
  * selector widget will display contents from
  *
- * @param[in] _path
+ * @param[in] path
  *
  * @see elm_fileselector_path_set
  */
-#define elm_obj_fileselector_path_set(_path) ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_PATH_SET), EO_TYPECHECK(const char *, _path)
+#define elm_obj_fileselector_path_set(path) ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_PATH_SET), EO_TYPECHECK(const char *, path)
 
 /**
  * @def elm_obj_fileselector_path_get
