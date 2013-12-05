@@ -146,6 +146,7 @@ cache_scan(Eina_Inarray *stack, const char *path, const char *base_id,
     Eina_Iterator *it;
     Eina_File_Direct_Info *info;
     struct stat st;
+    int ret = 1;
 
     if (!ecore_file_is_dir(path)) return 1;
     if (stat(path, &st) == -1) return 1;
@@ -153,11 +154,7 @@ cache_scan(Eina_Inarray *stack, const char *path, const char *base_id,
     eina_inarray_push(stack, &st);
 
     it = eina_file_stat_ls(path);
-    if (!it)
-    {
-        eina_inarray_pop(stack);
-        return 1;
-    }
+    if (!it) goto end;
     id[0] = '\0';
     EINA_ITERATOR_FOREACH(it, info)
     {
@@ -178,22 +175,22 @@ cache_scan(Eina_Inarray *stack, const char *path, const char *base_id,
         if (((info->type == EINA_FILE_LNK) && (ecore_file_is_dir(info->path))) ||
             (info->type == EINA_FILE_DIR))
         {
-            if (recurse)
-                cache_scan(stack, info->path, file_id, priority, recurse, changed);
+           if (recurse)
+             {
+                ret = cache_scan(stack, info->path, file_id, priority, recurse, changed);
+                if (!ret) break;
+             }
         }
         else
         {
-            if (!cache_add(info->path, file_id, priority, changed))
-            {
-                eina_iterator_free(it);
-                eina_inarray_pop(stack);
-                return 0;
-            }
+           ret = cache_add(info->path, file_id, priority, changed);
+           if (!ret) break;
         }
     }
     eina_iterator_free(it);
+end:
     eina_inarray_pop(stack);
-    return 1;
+    return ret;
 }
 
 static int
