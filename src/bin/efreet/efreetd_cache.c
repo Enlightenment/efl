@@ -284,7 +284,7 @@ icon_changes_listen_recursive(Eina_Inarray *stack, const char *path, Eina_Bool b
      }
    if (ecore_file_is_dir(path)) icon_changes_monitor_add(path);
    it = eina_file_stat_ls(path);
-   if (!it) return;
+   if (!it) goto end;
    EINA_ITERATOR_FOREACH(it, info)
      {
         if (info->path[info->name_start] == '.') continue;
@@ -293,6 +293,8 @@ icon_changes_listen_recursive(Eina_Inarray *stack, const char *path, Eina_Bool b
           icon_changes_listen_recursive(stack, info->path, EINA_FALSE);
      }
    eina_iterator_free(it);
+end:
+   eina_inarray_pop(stack);
 }
 
 static void
@@ -319,7 +321,7 @@ desktop_changes_listen_recursive(Eina_Inarray *stack, const char *path, Eina_Boo
      }
    if (ecore_file_is_dir(path)) desktop_changes_monitor_add(path);
    it = eina_file_stat_ls(path);
-   if (!it) return;
+   if (!it) goto end;
    EINA_ITERATOR_FOREACH(it, info)
      {
         if (info->path[info->name_start] == '.') continue;
@@ -328,6 +330,8 @@ desktop_changes_listen_recursive(Eina_Inarray *stack, const char *path, Eina_Boo
           desktop_changes_listen_recursive(stack, info->path, EINA_FALSE);
      }
    eina_iterator_free(it);
+end:
+   eina_inarray_pop(stack);
 }
 
 static void

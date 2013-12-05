@@ -153,7 +153,11 @@ cache_scan(Eina_Inarray *stack, const char *path, const char *base_id,
     eina_inarray_push(stack, &st);
 
     it = eina_file_stat_ls(path);
-    if (!it) return 1;
+    if (!it)
+    {
+        eina_inarray_pop(stack);
+        return 1;
+    }
     id[0] = '\0';
     EINA_ITERATOR_FOREACH(it, info)
     {
@@ -182,11 +186,13 @@ cache_scan(Eina_Inarray *stack, const char *path, const char *base_id,
             if (!cache_add(info->path, file_id, priority, changed))
             {
                 eina_iterator_free(it);
+                eina_inarray_pop(stack);
                 return 0;
             }
         }
     }
     eina_iterator_free(it);
+    eina_inarray_pop(stack);
     return 1;
 }
 
