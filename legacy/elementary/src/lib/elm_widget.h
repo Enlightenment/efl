@@ -2555,7 +2555,7 @@ typedef void * (*list_data_get_func_type)(const Eina_List * l);
  *
  * No description supplied by the EAPI.
  *
- * @param[out] ret
+ * @param[in] disabled
  *
  */
 #define elm_wdg_orientation_mode_disabled_set(disabled) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ORIENTATION_MODE_DISABLED_SET), EO_TYPECHECK(Eina_Bool, disabled)
