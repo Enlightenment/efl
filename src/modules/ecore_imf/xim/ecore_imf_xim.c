@@ -962,6 +962,8 @@ _ecore_imf_xim_preedit_draw_call(XIC xic EINA_UNUSED,
    DBG("ctx=%p, imf_context_data=%p", ctx, imf_context_data);
    EINA_SAFETY_ON_NULL_RETURN(imf_context_data);
 
+   imf_context_data->preedit_cursor = call_data->caret;
+
    preedit_bufs = eina_ustrbuf_new();
    if (imf_context_data->preedit_chars)
      {
