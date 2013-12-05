@@ -297,7 +297,10 @@ _spin_value(void *data)
      }
 
    sd->interval = sd->interval / 1.05;
-   ecore_timer_interval_set(sd->spin_timer, sd->interval);
+
+   // spin_timer does not exist when _spin_value() is called from wheel event
+   if (sd->spin_timer)
+     ecore_timer_interval_set(sd->spin_timer, sd->interval);
    if (_value_set(data, sd->val + real_speed)) _label_write(data);
 
    return ECORE_CALLBACK_RENEW;
@@ -428,13 +431,13 @@ _elm_spinner_smart_sizing_eval(Eo *obj, void *_pd EINA_UNUSED, va_list *list EIN
 static void
 _elm_spinner_smart_event(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
-
    Evas_Object *src = va_arg(*list, Evas_Object *);
    Evas_Callback_Type type = va_arg(*list, Evas_Callback_Type);
    void *event_info = va_arg(*list, void *);
    Evas_Event_Key_Down *ev = event_info;
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Evas_Event_Mouse_Wheel *mev;
+   ELM_SPINNER_DATA_GET(obj, sd);
 
    if (ret) *ret = EINA_FALSE;
    (void) src;
@@ -495,16 +498,18 @@ _elm_spinner_smart_event(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    else if (type == EVAS_CALLBACK_MOUSE_WHEEL)
      {
         mev = event_info;
+        sd->interval = sd->first_interval;
         if (mev->z < 0)
           {
-             _val_inc_start(obj);
+             sd->spin_speed = sd->step;
              elm_layout_signal_emit(obj, "elm,right,anim,activate", "elm");
           }
         else
           {
-             _val_dec_start(obj);
+             sd->spin_speed = -sd->step;
              elm_layout_signal_emit(obj, "elm,left,anim,activate", "elm");
           }
+        _spin_value(obj);
      }
 
    return;
