@@ -971,10 +971,10 @@ enum
  *
  * No description supplied by the EAPI.
  *
- * @param[out] ret
+ * @param[in] disabled
  *
  */
-#define elm_scrollable_interface_bounce_animator_disabled_set(ret) ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_BOUNCE_ANIMATOR_DISABLED_SET), EO_TYPECHECK(Eina_Bool *, ret)
+#define elm_scrollable_interface_bounce_animator_disabled_set(ret) ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_BOUNCE_ANIMATOR_DISABLED_SET), EO_TYPECHECK(Eina_Bool, disabled)
 
 /**
  * @def elm_scrollable_interface_bounce_animator_disabled_get
