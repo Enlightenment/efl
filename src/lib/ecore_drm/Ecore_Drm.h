@@ -27,8 +27,8 @@ typedef enum _Ecore_Drm_Op
 {
    ECORE_DRM_OP_READ_FD_SET,
    ECORE_DRM_OP_WRITE_FD_SET,
-   ECORE_DRM_OP_OPEN_FD,
-   ECORE_DRM_OP_CLOSE_FD
+   ECORE_DRM_OP_DEVICE_OPEN,
+   ECORE_DRM_OP_DEVICE_CLOSE
 } Ecore_Drm_Op;
 
 typedef enum _Ecore_Drm_Op_Result 
