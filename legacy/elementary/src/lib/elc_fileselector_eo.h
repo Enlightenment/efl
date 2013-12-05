@@ -233,7 +233,7 @@ enum
  * Set, programmatically, the currently selected file/directory in
  * the given file selector widget
  *
- * @param[in] _path
+ * @param[in] path
  * @param[out] ret
  *
  * @see elm_fileselector_selected_set
