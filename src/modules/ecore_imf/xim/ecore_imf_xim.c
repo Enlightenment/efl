@@ -227,8 +227,6 @@ _ecore_imf_context_xim_preedit_string_get(Ecore_IMF_Context *ctx,
      {
         if (str)
           *str = NULL;
-        if (cursor_pos)
-          *cursor_pos = 0;
      }
 
    if (cursor_pos)
