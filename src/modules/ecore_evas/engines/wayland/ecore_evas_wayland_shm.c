@@ -67,7 +67,7 @@ static Ecore_Evas_Engine_Func _ecore_wl_engine_func =
    NULL, // func profiles set
    NULL, // func profile set
    NULL, // window group set
-   NULL, // aspect set
+   _ecore_evas_wl_common_aspect_set,
    NULL, // urgent set
    NULL, // modal set
    NULL, // demand attention set
