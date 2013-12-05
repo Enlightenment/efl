@@ -238,7 +238,7 @@ enum
  *
  * @see elm_fileselector_selected_set
  */
-#define elm_obj_fileselector_selected_set(_path, ret) ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_SELECTED_SET), EO_TYPECHECK(const char *, path), EO_TYPECHECK(Eina_Bool *, ret)
+#define elm_obj_fileselector_selected_set(path, ret) ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_SELECTED_SET), EO_TYPECHECK(const char *, path), EO_TYPECHECK(Eina_Bool *, ret)
 
 /**
  * @def elm_obj_fileselector_selected_paths_get
