@@ -83,7 +83,7 @@ evas_object_child_map_across_mark(Evas_Object *eo_obj, Evas_Object_Protected_Dat
         visited = eina_hash_pointer_new(NULL);
         clear_visited = EINA_TRUE;
      }
-   if (eina_hash_find(visited, &eo_obj) == (void *)1) return;
+   if (eina_hash_find(visited, &eo_obj) == (void *)1) goto end;
    else eina_hash_direct_add(visited, &eo_obj, (void *)1);
    
    if ((obj->map->cur.map_parent != map_obj) || force)
@@ -124,6 +124,7 @@ evas_object_child_map_across_mark(Evas_Object *eo_obj, Evas_Object_Protected_Dat
                }
           }
      }
+end:   
    if (clear_visited) eina_hash_free(visited);
 #endif
 }
