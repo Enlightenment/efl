@@ -4001,10 +4001,19 @@ _item_idle_enterer(void *data)
 }
 
 static void
+_requeue_idle_enterer(Elm_Genlist_Smart_Data *sd)
+{
+   if (sd->queue_idle_enterer) ecore_idle_enterer_del(sd->queue_idle_enterer);
+   sd->queue_idle_enterer = ecore_idle_enterer_add(_item_idle_enterer, sd->obj);
+}
+
+static void
 _item_queue(Elm_Genlist_Smart_Data *sd,
             Elm_Gen_Item *it,
             Eina_Compare_Cb cb)
 {
+   Evas_Coord w = 0;
+
    if (it->item->queued) return;
    it->item->queued = EINA_TRUE;
    if (cb && !sd->requeued)
@@ -4028,8 +4037,8 @@ _item_queue(Elm_Genlist_Smart_Data *sd,
 
 //   evas_event_thaw(evas_object_evas_get(sd->obj));
 //   evas_event_thaw_eval(evas_object_evas_get(sd->obj));
-   if (!sd->queue_idle_enterer)
-     sd->queue_idle_enterer = ecore_idle_enterer_add(_item_idle_enterer, sd->obj);
+   evas_object_geometry_get(sd->obj, NULL, NULL, &w, NULL);
+   if (w > 0) _requeue_idle_enterer(sd);
 }
 
 /* If the application wants to know the relative item, use
@@ -5003,6 +5012,8 @@ _elm_genlist_smart_resize(Eo *obj, void *_pd, va_list *list)
    eo_do_super(obj, MY_CLASS, evas_obj_smart_resize(w, h));
 
    evas_object_resize(sd->hit_rect, w, h);
+   if ((sd->queue) && (!sd->queue_idle_enterer) && (w > 0))
+     _requeue_idle_enterer(sd);
 }
 
 static void
