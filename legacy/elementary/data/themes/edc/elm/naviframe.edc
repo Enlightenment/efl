@@ -228,6 +228,7 @@ group { name: "elm/naviframe/item/basic/default";
          }
       }
       part { name: "shadow"; mouse_events: 0;
+         clip_to: "clip";
          description { state: "default" 0.0;
             image.normal: "shadow_vert.png";
             rel1.to: "top";
