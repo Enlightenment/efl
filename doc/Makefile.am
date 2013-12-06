@@ -55,7 +55,7 @@ include images.mk
 all-local:
 	@rm -f images.tmp; \
 	echo 'EXTRA_DIST += \' > images.tmp; \
-	(cd $(srcdir) && find ./img -type f -print | cut -d/ -f2- | grep -v '~' | sort | tr '\n' ' ') >> images.tmp && \
+	(cd $(srcdir) && find ./img -type f -print | cut -d/ -f2- | grep -v '~' | LANG=C LANGUAGE=C LC_ALL=C LC_CTYPE=C LC_NUMERIC=C LC_TIME=C LC_COLLATE=C LC_MONETARY=C LC_MESSAGES=C LC_PAPER=C LC_NAME=C LC_ADDRESS=C LC_TELEPHONE=C LC_MEASUREMENT=C LC_IDENTIFICATION=C sort | tr '\n' ' ') >> images.tmp && \
 	echo >> images.tmp && \
 	if ! cmp "$(srcdir)/images.mk" images.tmp >/dev/null; then \
 	   echo "warning: new images added to '$(srcdir)/images.mk'"; \
