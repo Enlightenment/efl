@@ -268,8 +268,6 @@ EAPI Elm_Object_Item             *elm_toolbar_item_find_by_label(const Evas_Obje
  *
  * The selected item always will be highlighted on toolbar.
  *
- * @see elm_toolbar_selected_items_get()
- *
  * @ingroup Toolbar
  */
 EAPI Elm_Object_Item             *elm_toolbar_selected_item_get(const Evas_Object *obj);

@@ -272,7 +272,7 @@ EAPI Eina_Bool                    elm_layout_box_remove_all(Evas_Object *obj, co
  * Once the object is inserted, it will become child of the table. Its
  * lifetime will be bound to the layout, and whenever the layout dies the
  * child will be deleted automatically. One should use
- * elm_layout_table_remove() to make this layout forget about the object.
+ * elm_layout_table_unpack() to make this layout forget about the object.
  *
  * If @p colspan or @p rowspan are bigger than 1, that object will occupy
  * more space than a single cell. For instance, the following code:

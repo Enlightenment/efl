@@ -53,9 +53,7 @@ EAPI Eina_Bool        elm_image_memfile_set(Evas_Object *obj, const void *img, s
  *
  * @note This function will trigger the Edje file case based on the
  * extension of the @a file string use to create the Eina_File (expects
- * @c ".edj", for this case). If one wants to force this type of file
- * independently of the extension, elm_image_file_edje_set() must be
- * used, instead.
+ * @c ".edj", for this case).
  *
  * @note If you use animated gif image and create multiple image objects with
  * one gif image file, you should set the @group differently for each object.
@@ -81,8 +79,7 @@ EAPI Eina_Bool        elm_image_mmap_set(Evas_Object *obj, const Eina_File *file
  *
  * @note This function will trigger the Edje file case based on the
  * extension of the @a file string (expects @c ".edj", for this
- * case). If one wants to force this type of file independently of the
- * extension, elm_image_file_edje_set() must be used, instead.
+ * case).
  *
  * @note If you use animated gif image and create multiple image objects with
  * one gif image file, you should set the @group differently for each object.
