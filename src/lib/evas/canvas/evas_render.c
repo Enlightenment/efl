@@ -313,22 +313,6 @@ _evas_proxy_redraw_set(Evas_Public_Data *e, Evas_Object_Protected_Data *obj,
 }
 
 static void
-_evas_proxy_render_pre(Evas_Object_Protected_Data *obj)
-{
-   Evas_Object_Protected_Data *obj2;
-
-   /* render_pre() won't be called if the children were the invisible
-      mapped object. So here make sure render_pre() for the children. */
-   obj->func->render_pre(obj->object, obj, obj->private_data);
-
-   EINA_INLIST_FOREACH(evas_object_smart_members_get_direct(obj->object),
-                       obj2)
-     {
-        if (obj2->changed) _evas_proxy_render_pre(obj2);
-     }
-}
-
-static void
 _evas_render_phase1_direct(Evas_Public_Data *e,
                            Eina_Array *active_objects,
                            Eina_Array *restack_objects EINA_UNUSED,
@@ -370,13 +354,9 @@ _evas_render_phase1_direct(Evas_Public_Data *e,
         if (obj->changed)
           {
              evas_object_clip_recalc(obj);
+             obj->func->render_pre(eo_obj, obj, obj->private_data);
              if (obj->proxy->redraw)
-               {
-                  _evas_proxy_render_pre(obj);
-                  _evas_render_prev_cur_clip_cache_add(e, obj);
-               }
-             else obj->func->render_pre(eo_obj, obj, obj->private_data);
-
+               _evas_render_prev_cur_clip_cache_add(e, obj);
              if (obj->proxy->proxies)
                {
                   if (obj->smart.smart && evas_object_smart_changed_get(eo_obj))
