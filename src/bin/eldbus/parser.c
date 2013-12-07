@@ -199,7 +199,7 @@ open_signal(const char *content, unsigned length, Eina_Bool is_open_empty)
    Eina_Bool r;
    char *tmp;
    int i;
-   Eina_Strbuf *buf = eina_strbuf_new();
+   Eina_Strbuf *buf;
 
    d_signal = signal_new(iface);
    EINA_SAFETY_ON_NULL_RETURN_VAL(d_signal, EINA_FALSE);
@@ -213,6 +213,7 @@ open_signal(const char *content, unsigned length, Eina_Bool is_open_empty)
         return EINA_FALSE;
      }
 
+   buf = eina_strbuf_new();
    tmp = dbus_name_to_c(d_signal->name);
    d_signal->c_name = string_build("%s_%s", iface->c_name, tmp);
    free(tmp);
