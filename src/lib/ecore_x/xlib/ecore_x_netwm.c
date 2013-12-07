@@ -137,11 +137,10 @@ ecore_x_netwm_supported_get(Ecore_X_Window root,
 {
    int num_ret;
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(supported, EINA_FALSE);
+
    if (num)
      *num = 0;
-
-   if (supported)
-     *supported = NULL;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    num_ret = ecore_x_window_prop_atom_list_get(root, ECORE_X_ATOM_NET_SUPPORTED,
