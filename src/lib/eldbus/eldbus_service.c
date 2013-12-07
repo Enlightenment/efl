@@ -1380,7 +1380,11 @@ eldbus_service_signal_emit(const Eldbus_Service_Interface *iface, unsigned int s
    va_start(ap, signal_id);
    r = eldbus_message_arguments_vappend(sig, signature, ap);
    va_end(ap);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(r, EINA_FALSE);
+   if (!r)
+     {
+        eldbus_message_unref(sig);
+        return EINA_FALSE;
+     }
 
    eldbus_service_signal_send(iface, sig);
    return EINA_TRUE;
