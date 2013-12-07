@@ -199,7 +199,10 @@ _ecore_file_monitor_inotify_events(Ecore_File_Monitor *em, char *file, int mask)
    if ((file) && (file[0]))
      snprintf(buf, sizeof(buf), "%s/%s", em->path, file);
    else
-     strcpy(buf, em->path);
+     {
+        strncpy(buf, em->path, sizeof(buf));
+        buf[PATH_MAX - 1] = 0;
+     }
    isdir = mask & IN_ISDIR;
 
 #if 0
