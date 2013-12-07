@@ -1026,8 +1026,12 @@ _idler_propschanged(void *data)
         if (!getter || prop->is_invalidate)
           continue;
 
-        EINA_SAFETY_ON_FALSE_GOTO(
-                eldbus_message_iter_arguments_append(dict, "{sv}", &entry), error);
+        if (!eldbus_message_iter_arguments_append(dict, "{sv}", &entry))
+          {
+             eldbus_message_unref(msg);
+             goto error;
+          }
+
 
         eldbus_message_iter_basic_append(entry, 's', prop->property->name);
         var = eldbus_message_iter_container_new(entry, 'v',
