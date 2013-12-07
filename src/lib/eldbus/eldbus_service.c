@@ -893,8 +893,8 @@ _eldbus_service_interface_desc_signals_signatures_get(
    Eina_Strbuf *buf = eina_strbuf_new();
    Eina_Array *signatures = eina_array_new(1);
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(buf, NULL);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(signatures, NULL);
+   EINA_SAFETY_ON_NULL_GOTO(buf, fail_signature);
+   EINA_SAFETY_ON_NULL_GOTO(signatures, fail_signature);
 
    for (sig = desc->signals; sig && sig->name; sig++)
      {
@@ -919,8 +919,8 @@ _eldbus_service_interface_desc_signals_signatures_get(
    return signatures;
 
 fail_signature:
-   eina_strbuf_free(buf);
-   eina_array_free(signatures);
+   if (buf) eina_strbuf_free(buf);
+   if (signatures) eina_array_free(signatures);
    return NULL;
 }
 
