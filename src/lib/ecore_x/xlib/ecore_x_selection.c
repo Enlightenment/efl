@@ -783,21 +783,13 @@ _ecore_x_selection_parser_files(const char *target,
              /* Isn't nul terminated */
              size++;
              t = realloc(data, size);
-             if (!t)
-               {
-                  free(sel);
-                  return NULL;
-               }
+             if (!t) goto done;
              data = t;
              data[size - 1] = 0;
           }
 
         tmp = malloc(size);
-        if (!tmp)
-          {
-             free(sel);
-             return NULL;
-          }
+        if (!tmp) goto done;
         i = 0;
         is = 0;
         while ((is < size) && (data[is]))
@@ -840,6 +832,7 @@ _ecore_x_selection_parser_files(const char *target,
 
         free(tmp);
      }
+done:
    free(data);
 
    ECORE_X_SELECTION_DATA(sel)->content = ECORE_X_SELECTION_CONTENT_FILES;
