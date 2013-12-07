@@ -372,6 +372,8 @@ _elm_layout_smart_theme(Eo *obj, void *_pd, va_list *list)
 
    _visuals_refresh(obj, sd);
 
+   eo_do(obj, elm_wdg_disable(&int_ret));
+
    if (ret) *ret = int_ret;
 }
 
