@@ -1036,7 +1036,7 @@ ecore_x_icccm_colormap_window_set(Ecore_X_Window win,
              if (oldset[i] == subwin)
                {
                   if (old_data)
-                    XFree(old_data);
+                    free(old_data);
 
                   old_data = NULL;
                   free(newset);
@@ -1048,7 +1048,7 @@ ecore_x_icccm_colormap_window_set(Ecore_X_Window win,
 
         newset[num++] = subwin;
         if (old_data)
-          XFree(old_data);
+          free(old_data);
 
         data = (unsigned char *)newset;
      }
@@ -1095,7 +1095,7 @@ ecore_x_icccm_colormap_window_unset(Ecore_X_Window win,
                                   win, ECORE_X_ATOM_WM_COLORMAP_WINDOWS);
                   if (_ecore_xlib_sync) ecore_x_sync();
                   if (old_data)
-                    XFree(old_data);
+                    free(old_data);
 
                   old_data = NULL;
                   return;
@@ -1116,7 +1116,7 @@ ecore_x_icccm_colormap_window_unset(Ecore_X_Window win,
                     data,
                     k);
                   if (old_data)
-                    XFree(old_data);
+                    free(old_data);
 
                   old_data = NULL;
                   free(newset);
@@ -1126,7 +1126,7 @@ ecore_x_icccm_colormap_window_unset(Ecore_X_Window win,
      }
 
    if (old_data)
-     XFree(old_data);
+     free(old_data);
 }
 
 /**
