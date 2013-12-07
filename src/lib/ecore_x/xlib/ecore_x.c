@@ -1967,7 +1967,8 @@ ecore_x_client_message8_send(Ecore_X_Window win,
      len = 20;
 
    memcpy(xev.xclient.data.b, data, len);
-   memset(xev.xclient.data.b + len, 0, 20 - len);
+   if (len < 20)
+     memset(xev.xclient.data.b + len, 0, 20 - len);
 
    ret = !!XSendEvent(_ecore_x_disp, win, False, NoEventMask, &xev);
    if (_ecore_xlib_sync) ecore_x_sync();
