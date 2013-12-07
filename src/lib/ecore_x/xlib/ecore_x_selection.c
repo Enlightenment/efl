@@ -760,10 +760,7 @@ _ecore_x_selection_parser_files(const char *target,
                                 int format EINA_UNUSED)
 {
    Ecore_X_Selection_Data_Files *sel;
-   char *t, *data = _data;
-   int i, is;
-   char *tmp;
-   char **t2;
+   char *data = _data;
 
    if (strcmp(target, "text/uri-list") &&
        strcmp(target, "_NETSCAPE_URL"))
@@ -773,67 +770,76 @@ _ecore_x_selection_parser_files(const char *target,
    if (!sel) return NULL;
    ECORE_X_SELECTION_DATA(sel)->free = _ecore_x_selection_data_files_free;
 
-   if (data && data[size - 1])
+   if (data && (size > 0))
      {
-        /* Isn't nul terminated */
-        size++;
-        t = realloc(data, size);
-        if (!t)
+        int i, is;
+        char *tmp;
+        char **t2;
+
+        if (data[size - 1])
+          {
+             char *t;
+
+             /* Isn't nul terminated */
+             size++;
+             t = realloc(data, size);
+             if (!t)
+               {
+                  free(sel);
+                  return NULL;
+               }
+             data = t;
+             data[size - 1] = 0;
+          }
+
+        tmp = malloc(size);
+        if (!tmp)
           {
              free(sel);
              return NULL;
           }
-        data = t;
-        data[size - 1] = 0;
-     }
-
-   tmp = malloc(size);
-   if (!tmp)
-     {
-        free(sel);
-        return NULL;
-     }
-   i = 0;
-   is = 0;
-   while ((is < size) && (data[is]))
-     {
-        if ((i == 0) && (data[is] == '#'))
-          for (; ((data[is]) && (data[is] != '\n')); is++) ;
-        else
+        i = 0;
+        is = 0;
+        while ((is < size) && (data[is]))
           {
-             if ((data[is] != '\r') &&
-                 (data[is] != '\n'))
-               tmp[i++] = data[is++];
+             if ((i == 0) && (data[is] == '#'))
+               for (; ((data[is]) && (data[is] != '\n')); is++) ;
              else
                {
-                  while ((data[is] == '\r') || (data[is] == '\n'))
-                    is++;
-                  tmp[i] = 0;
-                  sel->num_files++;
-                  t2 = realloc(sel->files, sel->num_files * sizeof(char *));
-                  if (t2)
+                  if ((data[is] != '\r') &&
+                      (data[is] != '\n'))
+                    tmp[i++] = data[is++];
+                  else
                     {
-                       sel->files = t2;
-                       sel->files[sel->num_files - 1] = strdup(tmp);
+                       while ((data[is] == '\r') || (data[is] == '\n'))
+                         is++;
+                       tmp[i] = 0;
+                       sel->num_files++;
+                       t2 = realloc(sel->files, sel->num_files * sizeof(char *));
+                       if (t2)
+                         {
+                            sel->files = t2;
+                            sel->files[sel->num_files - 1] = strdup(tmp);
+                         }
+                       tmp[0] = 0;
+                       i = 0;
                     }
-                  tmp[0] = 0;
-                  i = 0;
                }
           }
-     }
-   if (i > 0)
-     {
-        tmp[i] = 0;
-        sel->num_files++;
-        t2 = realloc(sel->files, sel->num_files * sizeof(char *));
-        if (t2)
+        if (i > 0)
           {
-             sel->files = t2;
-             sel->files[sel->num_files - 1] = strdup(tmp);
+             tmp[i] = 0;
+             sel->num_files++;
+             t2 = realloc(sel->files, sel->num_files * sizeof(char *));
+             if (t2)
+               {
+                  sel->files = t2;
+                  sel->files[sel->num_files - 1] = strdup(tmp);
+               }
           }
-     }
 
-   free(tmp);
+        free(tmp);
+     }
    free(data);
 
    ECORE_X_SELECTION_DATA(sel)->content = ECORE_X_SELECTION_CONTENT_FILES;
