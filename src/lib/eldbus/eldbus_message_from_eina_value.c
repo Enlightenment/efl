@@ -297,7 +297,8 @@ _message_iter_from_eina_value_struct(const char *signature, Eldbus_Message_Iter 
 
    EINA_SAFETY_ON_FALSE_RETURN_VAL(
             eina_value_type_get(value) == EINA_VALUE_TYPE_STRUCT, EINA_FALSE);
-   eina_value_pget(value, &st);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(
+      eina_value_pget(value, &st), EINA_FALSE);
 
    dbus_signature_iter_init(&signature_iter, signature);
    i = 0;
