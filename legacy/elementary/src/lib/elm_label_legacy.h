@@ -9,17 +9,6 @@
 EAPI Evas_Object                *elm_label_add(Evas_Object *parent);
 
 /**
- * @brief Slide only if the 
- *
- * @param obj The label object
- * @param duration The duration in seconds in moving text from slide begin position
- * to slide end position
- *
- * @ingroup Label
- */
-EAPI void                        elm_label_slide_area_limit_set(Evas_Object *obj, Eina_Bool limit);
-
-/**
  * @brief Set the wrapping behavior of the label
  *
  * @param obj The label object
