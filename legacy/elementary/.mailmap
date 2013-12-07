@@ -1,10 +1,10 @@
 # This cleans up all kind of different spellings, typos and different email
 # addresses for commit authors. It makes git shortlog statistics more meaningful.
-# 
+#
 # More people can be added following this scheme:
 # Proper Name <proper@email.xx> Commit Name <commit@email.xx>
 #
-# Please keep this fiule in sync between efl, elementary and e.
+# Please keep this file in sync between efl, elementary, e and terminology.
 
 Carsten Haitzler <raster@rasterman.com> Carsten Haitzler (Rasterman) <raster@rasterman.com>
 Cedric BAIL <cedric.bail@free.fr> Cedric Bail <cedric.bail@samsung.com>
@@ -30,6 +30,7 @@ Rafael Antognolli <antognolli@gmail.com> Rafael Antognolli <rafael.antognolli@li
 Iván Briano <sachieru@gmail.com> Ivan Briano <ivan.briano@intel.com>
 Iván Briano <sachieru@gmail.com> Ivan Briano <sachieru@gmail.com>
 Lucas De Marchi <lucas.demarchi@profusion.mobi> Lucas De Marchi <lucas.de.marchi@gmail.com>
+Lucas De Marchi <lucas.demarchi@profusion.mobi> Lucas De Marchi <lucas.demarchi@intel.com>
 Jihoon Kim <imfine98@gmail.com> Jihoon Kim <jihoon48.kim@samsung.com>
 Stefan Schmidt <stefan@datenfreihafen.org> Stefan Schmidt <s.schmidt@samsung.com>
 Jonas M. Gastal <jgastal@profusion.mobi> Jonas Gastal <jgastal@profusion.mobi>
@@ -45,3 +46,4 @@ Mike McCormack <mike@atratus.org> Mike McCormack <mj.mccormack@samsung.com>
 Mike McCormack <mike@atratus.org> Mike McCormack <mikem@ring3k.org>
 Mike McCormack <mike@atratus.org> Mike McCormack <mikem@atratus.org>
 Boris Faure <billiob@gmail.com> Boris 'billiob' Faure <billiob@gmail.com>
+Eduardo Lima <eduardo.lima@intel.com> Eduardo Lima (Etrunko) <eduardo.lima@intel.com>
