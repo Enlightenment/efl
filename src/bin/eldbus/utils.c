@@ -42,7 +42,10 @@ file_write(const char *file_name, const char *buffer)
         return EINA_FALSE;
      }
 
-   fwrite(buffer, strlen(buffer), 1, file_handler);
+   if (fwrite(buffer, strlen(buffer), 1, file_handler) < 1)
+     {
+        printf("Error writing to file: %s\n", file_name);
+     }
    fclose(file_handler);
 
    return EINA_TRUE;
