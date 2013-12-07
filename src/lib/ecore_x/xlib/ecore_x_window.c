@@ -1591,14 +1591,16 @@ _ecore_x_window_argb_internal_new(Ecore_X_Window parent,
    else
      {
         /* ewww - round trip */
-        XGetWindowAttributes(_ecore_x_disp, parent, &att);
-        if (_ecore_xlib_sync) ecore_x_sync();
-        for (i = 0; i < ScreenCount(_ecore_x_disp); i++)
+        if (XGetWindowAttributes(_ecore_x_disp, parent, &att))
           {
-             if (att.screen == ScreenOfDisplay(_ecore_x_disp, i))
+             if (_ecore_xlib_sync) ecore_x_sync();
+             for (i = 0; i < ScreenCount(_ecore_x_disp); i++)
                {
-                  scr = i;
-                  break;
+                  if (att.screen == ScreenOfDisplay(_ecore_x_disp, i))
+                    {
+                       scr = i;
+                       break;
+                    }
                }
           }
      }
