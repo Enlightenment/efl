@@ -685,33 +685,35 @@ _ecore_x_dnd_drag(Ecore_X_Window root,
              unsigned char *data;
              Ecore_X_Atom *types;
 
-             ecore_x_window_prop_property_get(_source->win,
-                                              ECORE_X_ATOM_XDND_TYPE_LIST,
-                                              XA_ATOM,
-                                              32,
-                                              &data,
-                                              &num);
-             types = (Ecore_X_Atom *)data;
+             if (ecore_x_window_prop_property_get(_source->win,
+                                                  ECORE_X_ATOM_XDND_TYPE_LIST,
+                                                  XA_ATOM,
+                                                  32,
+                                                  &data,
+                                                  &num))
+               {
+                  types = (Ecore_X_Atom *)data;
 
-             /* Entered new window, send XdndEnter */
-             xev.xclient.window = win;
-             xev.xclient.message_type = ECORE_X_ATOM_XDND_ENTER;
-             xev.xclient.data.l[0] = _source->win;
-             xev.xclient.data.l[1] = 0;
-             if (num > 3)
-               xev.xclient.data.l[1] |= 0x1UL;
-             else
-               xev.xclient.data.l[1] &= 0xfffffffeUL;
+                  /* Entered new window, send XdndEnter */
+                  xev.xclient.window = win;
+                  xev.xclient.message_type = ECORE_X_ATOM_XDND_ENTER;
+                  xev.xclient.data.l[0] = _source->win;
+                  xev.xclient.data.l[1] = 0;
+                  if (num > 3)
+                     xev.xclient.data.l[1] |= 0x1UL;
+                  else
+                     xev.xclient.data.l[1] &= 0xfffffffeUL;
 
-             xev.xclient.data.l[1] |= ((unsigned long)_source->version) << 24;
+                  xev.xclient.data.l[1] |= ((unsigned long)_source->version) << 24;
 
-             for (i = 2; i < 5; i++)
-               xev.xclient.data.l[i] = 0;
-             for (i = 0; i < MIN(num, 3); ++i)
-               xev.xclient.data.l[i + 2] = types[i];
-             XFree(data);
-             XSendEvent(_ecore_x_disp, win, False, 0, &xev);
-             if (_ecore_xlib_sync) ecore_x_sync();
+                  for (i = 2; i < 5; i++)
+                     xev.xclient.data.l[i] = 0;
+                  for (i = 0; i < MIN(num, 3); ++i)
+                     xev.xclient.data.l[i + 2] = types[i];
+                  XFree(data);
+                  XSendEvent(_ecore_x_disp, win, False, 0, &xev);
+                  if (_ecore_xlib_sync) ecore_x_sync();
+               }
              _source->await_status = 0;
              _source->will_accept = 0;
           }
