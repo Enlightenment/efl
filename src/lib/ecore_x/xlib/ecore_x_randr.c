@@ -2681,7 +2681,7 @@ ecore_x_randr_output_backlight_level_get(Ecore_X_Window root EINA_UNUSED, Ecore_
      }
 
    /* safety check */
-   if ((type != XA_INTEGER) || (items != 1) || (format != 32))
+   if ((!prop) || (type != XA_INTEGER) || (items != 1) || (format != 32))
      {
         WRN("Backlight property is not supported on this server or driver");
         return -1;
