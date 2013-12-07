@@ -259,11 +259,9 @@ ecore_x_region_invert(Ecore_X_Region dest,
 {
 #ifdef ECORE_XFIXES
    XRectangle *xbound;
-   int num = 0;
+   int num = 1;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   while (bounds + num)
-     num++;
    xbound = _ecore_x_rectangle_ecore_to_x(bounds, num);
 
    XFixesInvertRegion(_ecore_x_disp, dest, xbound, source);
