@@ -350,9 +350,9 @@ _elm_layout_smart_theme(Eo *obj, void *_pd, va_list *list)
      }
 
    /* function already prints error messages, if any */
-   int_ret = elm_widget_theme_object_set
-      (obj, wd->resize_obj, sd->klass, sd->group,
-       elm_widget_style_get(obj));
+   if (!elm_widget_theme_object_set(obj, wd->resize_obj, sd->klass, sd->group,
+                                    elm_widget_style_get(obj)))
+     return;
 
    edje_object_mirrored_set
      (wd->resize_obj, elm_widget_mirrored_get(obj));
