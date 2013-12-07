@@ -324,7 +324,7 @@ _message_iter_from_eina_value_struct(const char *signature, Eldbus_Message_Iter 
              Eldbus_Message_Iter *sub_iter;
              char *sub_sig;
              unsigned len = strlen(type+1) -1;
-             sub_sig = malloc(sizeof(char) * len);
+             sub_sig = alloca(sizeof(char) * len);
              memcpy(sub_sig, type+1, len);
              sub_sig[len-1] = 0;
              EINA_SAFETY_ON_FALSE_RETURN_VAL(
@@ -335,7 +335,6 @@ _message_iter_from_eina_value_struct(const char *signature, Eldbus_Message_Iter 
              r = _message_iter_from_eina_value_struct(sub_sig, sub_iter,
                                                       &inner_st);
              eldbus_message_iter_container_close(iter, sub_iter);
-             free(sub_sig);
           }
         else if (type[0] == 'v')
           {
