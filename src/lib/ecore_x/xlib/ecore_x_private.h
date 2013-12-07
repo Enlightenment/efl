@@ -113,18 +113,18 @@ typedef struct _Ecore_X_Selection_Converter Ecore_X_Selection_Converter;
 
 struct _Ecore_X_Selection_Converter
 {
+   EINA_INLIST;
    Ecore_X_Atom                 target;
    Eina_Bool                    (*convert)(char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *type, int *typeseize);
-   Ecore_X_Selection_Converter *next;
 };
 
 typedef struct _Ecore_X_Selection_Parser Ecore_X_Selection_Parser;
 
 struct _Ecore_X_Selection_Parser
 {
+   EINA_INLIST;
    char                     *target;
    void                     *(*parse)(const char *target, void *data, int size, int format);
-   Ecore_X_Selection_Parser *next;
 };
 
 typedef struct _Ecore_X_DND_Source

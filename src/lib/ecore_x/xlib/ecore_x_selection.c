@@ -85,29 +85,18 @@ _ecore_x_selection_shutdown(void)
 {
    Ecore_X_Selection_Converter *cnv;
    Ecore_X_Selection_Parser *prs;
+   Eina_Inlist *inlist;
 
    /* free the selection converters */
-   cnv = converters;
-   while (cnv)
-     {
-        Ecore_X_Selection_Converter *tmp;
-
-        tmp = cnv->next;
-        free(cnv);
-        cnv = tmp;
-     }
+   EINA_INLIST_FOREACH_SAFE(converters, inlist, cnv)
+      free(cnv);
    converters = NULL;
 
    /* free the selection parsers */
-   prs = parsers;
-   while (prs)
+   EINA_INLIST_FOREACH_SAFE(parsers, inlist, prs)
      {
-        Ecore_X_Selection_Parser *tmp;
-
-        tmp = prs;
-        prs = prs->next;
-        free(tmp->target);
-        free(tmp);
+        free(prs->target);
+        free(prs);
      }
    parsers = NULL;
 }
@@ -424,36 +413,21 @@ ecore_x_selection_converter_atom_add(Ecore_X_Atom target,
    Ecore_X_Selection_Converter *cnv;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   cnv = converters;
-   if (converters)
-     {
-        while (1)
-          {
-             if (cnv->target == target)
-               {
-                  cnv->convert = func;
-                  return;
-               }
 
-             if (cnv->next)
-               cnv = cnv->next;
-             else
-               break;
-          }
+   EINA_INLIST_FOREACH(converters, cnv)
+      if (cnv->target == target)
+        {
+           cnv->convert = func;
+           return;
+        }
 
-        cnv->next = calloc(1, sizeof(Ecore_X_Selection_Converter));
-        if (!cnv->next) return;
-        cnv = cnv->next;
-     }
-   else
-     {
-        converters = calloc(1, sizeof(Ecore_X_Selection_Converter));
-        if (!converters) return;
-        cnv = converters;
-     }
+   cnv = calloc(1, sizeof(Ecore_X_Selection_Converter));
+   if (!cnv) return;
 
    cnv->target = target;
    cnv->convert = func;
+   converters = (Ecore_X_Selection_Converter *)eina_inlist_append
+      (EINA_INLIST_GET(converters), EINA_INLIST_GET(cnv));
 }
 
 EAPI void
@@ -480,30 +454,19 @@ ecore_x_selection_converter_add(char *target,
 EAPI void
 ecore_x_selection_converter_atom_del(Ecore_X_Atom target)
 {
-   Ecore_X_Selection_Converter *cnv, *prev_cnv;
+   Ecore_X_Selection_Converter *cnv;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   prev_cnv = NULL;
-   cnv = converters;
 
-   while (cnv)
+   EINA_INLIST_FOREACH(converters, cnv)
      {
         if (cnv->target == target)
           {
-             if (prev_cnv)
-               prev_cnv->next = cnv->next;
-             else
-               {
-                  converters = cnv->next; /* This was the first converter */
-               }
-
+             converters = (Ecore_X_Selection_Converter *)eina_inlist_remove
+                (EINA_INLIST_GET(converters), EINA_INLIST_GET(cnv));
              free(cnv);
-
              return;
           }
-
-        prev_cnv = cnv;
-        cnv = cnv->next;
      }
 }
 
@@ -563,7 +526,7 @@ ecore_x_selection_convert(Ecore_X_Atom selection,
    sel = _ecore_x_selection_get(selection);
    tgt_str = _ecore_x_selection_target_get(target);
 
-   for (cnv = converters; cnv; cnv = cnv->next)
+   EINA_INLIST_FOREACH(converters, cnv)
      {
         if (cnv->target == target)
           {
@@ -679,66 +642,44 @@ ecore_x_selection_parser_add(const char *target,
      return;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   prs = parsers;
-   if (parsers)
-     {
-        while (prs->next)
-          {
-             if (!strcmp(prs->target, target))
-               {
-                  prs->parse = func;
-                  return;
-               }
 
-             prs = prs->next;
-          }
+   EINA_INLIST_FOREACH(parsers, prs)
+      if (!strcmp(prs->target, target))
+        {
+           prs->parse = func;
+           return;
+        }
 
-        prs->next = calloc(1, sizeof(Ecore_X_Selection_Parser));
-        if (!prs->next) return;
-        prs = prs->next;
-     }
-   else
-     {
-        parsers = calloc(1, sizeof(Ecore_X_Selection_Parser));
-        if (!parsers) return;
-        prs = parsers;
-     }
+   prs = calloc(1, sizeof(Ecore_X_Selection_Parser));
+   if (!prs) return;
 
    prs->target = strdup(target);
    prs->parse = func;
+
+   parsers = (Ecore_X_Selection_Parser *)eina_inlist_append
+      (EINA_INLIST_GET(parsers), EINA_INLIST_GET(prs));
 }
 
 EAPI void
 ecore_x_selection_parser_del(const char *target)
 {
-   Ecore_X_Selection_Parser *prs, *prev_prs;
+   Ecore_X_Selection_Parser *prs;
 
    if (!target)
      return;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   prev_prs = NULL;
-   prs = parsers;
 
-   while (prs)
+   EINA_INLIST_FOREACH(parsers, prs)
      {
         if (!strcmp(prs->target, target))
           {
-             if (prev_prs)
-               prev_prs->next = prs->next;
-             else
-               {
-                  parsers = prs->next; /* This was the first parser */
-               }
-
+             parsers = (Ecore_X_Selection_Parser *)eina_inlist_remove
+                (EINA_INLIST_GET(parsers), EINA_INLIST_GET(prs));
              free(prs->target);
              free(prs);
-
              return;
           }
-
-        prev_prs = prs;
-        prs = prs->next;
      }
 }
 
@@ -781,7 +722,7 @@ _ecore_x_selection_parse(const char *target,
    Ecore_X_Selection_Parser *prs;
    Ecore_X_Selection_Data *sel;
 
-   for (prs = parsers; prs; prs = prs->next)
+   EINA_INLIST_FOREACH(parsers, prs)
      {
         if (!strcmp(prs->target, target))
           {
