@@ -479,9 +479,12 @@ _elm_datetime_smart_disable(Eo *obj, void *_pd, va_list *list)
    Datetime_Field *field;
    unsigned int idx = 0;
    if (ret) *ret = EINA_FALSE;
+   Eina_Bool int_ret;
    Elm_Datetime_Smart_Data *sd = _pd;
 
-   eo_do_super(obj, MY_CLASS, elm_wdg_disable(ret));
+   eo_do_super(obj, MY_CLASS, elm_wdg_disable(&int_ret));
+   if (!int_ret) return;
+
    for (idx = 0; idx < ELM_DATETIME_TYPE_COUNT; idx++)
      {
         field = sd->field_list + idx;
