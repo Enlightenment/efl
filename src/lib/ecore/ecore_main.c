@@ -707,6 +707,7 @@ _ecore_main_gsource_dispatch(GSource    *source EINA_UNUSED,
 
    if (ecore_idling && events_ready)
      {
+        _ecore_animator_run_reset();
         _ecore_idle_exiter_call();
         ecore_idling = 0;
      }
@@ -723,6 +724,7 @@ _ecore_main_gsource_dispatch(GSource    *source EINA_UNUSED,
 
         if (ecore_fds_ready || events_ready || timers_ready)
           {
+             _ecore_animator_run_reset();
              _ecore_idle_exiter_call();
              ecore_idling = 0;
           }
@@ -1064,6 +1066,21 @@ ecore_main_loop_quit(void)
    if (ecore_main_loop)
      g_main_loop_quit(ecore_main_loop);
 #endif
+}
+
+/**
+ * Returns if an animator has ticked off during this loop iteration
+ *
+ * @return EINA_TRUE if an animator has been called, EINA_FALSE otherwise.
+ *
+ * There should be little need for anyone to use this - ever.
+ *
+ * @since 1.9
+ */
+EAPI Eina_Bool
+ecore_main_loop_animator_ticked_get(void)
+{
+   return _ecore_animator_run_get();
 }
 
 /**
@@ -2002,7 +2019,11 @@ start_loop: /***************************************************************/
 process_all: /***********************************************************/
 
    /* we came out of our "wait state" so idle has exited */
-   if (!once_only) _ecore_idle_exiter_call();
+   if (!once_only)
+     {
+        _ecore_animator_run_reset();
+        _ecore_idle_exiter_call();
+     }
    /* call the fd handler per fd that became alive... */
    /* this should read or write any data to the monitored fd and then */
    /* post events onto the ecore event pipe if necessary */

@@ -53,6 +53,7 @@ static Ecore_Cb begin_tick_cb = NULL;
 static const void *begin_tick_data = NULL;
 static Ecore_Cb end_tick_cb = NULL;
 static const void *end_tick_data = NULL;
+static Eina_Bool animator_ran = EINA_FALSE;
 
 static void
 _begin_tick(void)
@@ -114,6 +115,7 @@ _do_tick(void)
             (!animator->suspended) && 
             (!animator->just_added))
           {
+             animator_ran = EINA_TRUE;
              if (!_ecore_call_task_cb(animator->func, animator->data))
                {
                   animator->delete_me = EINA_TRUE;
@@ -655,6 +657,18 @@ _ecore_animator_shutdown(void)
         else
            eo_manual_free_set(animator->obj, EINA_FALSE);
      }
+}
+
+void
+_ecore_animator_run_reset(void)
+{
+   animator_ran = EINA_FALSE;
+}
+
+Eina_Bool
+_ecore_animator_run_get(void)
+{
+   return animator_ran;
 }
 
 static Eina_Bool

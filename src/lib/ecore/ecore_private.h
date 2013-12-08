@@ -219,6 +219,8 @@ void       _ecore_exe_event_del_free(void *data,
 #endif
 
 void _ecore_animator_shutdown(void);
+void _ecore_animator_run_reset(void);
+Eina_Bool _ecore_animator_run_get(void);
 
 void _ecore_poller_shutdown(void);
 

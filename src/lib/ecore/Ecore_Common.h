@@ -73,6 +73,7 @@ EAPI void ecore_main_loop_glib_always_integrate_disable(void);
 
 EAPI void ecore_main_loop_begin(void);
 EAPI void ecore_main_loop_quit(void);
+EAPI Eina_Bool ecore_main_loop_animator_ticked_get(void);
 
 /**
  * @typedef Ecore_Cb Ecore_Cb
