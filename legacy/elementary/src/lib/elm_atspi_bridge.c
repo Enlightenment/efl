@@ -35,6 +35,7 @@ _role_name_get(const Eldbus_Service_Interface *iface EINA_UNUSED, const Eldbus_M
    return ret;
 }
 
+#ifdef ENABLE_NLS
 static Eldbus_Message *
 _role_localized_name_get(const Eldbus_Service_Interface *iface EINA_UNUSED, const Eldbus_Message *msg)
 {
@@ -44,11 +45,16 @@ _role_localized_name_get(const Eldbus_Service_Interface *iface EINA_UNUSED, cons
 
    return ret;
 }
+#endif
 
 static const Eldbus_Method accessible_methods[] = {
    { "GetRole", NULL, ELDBUS_ARGS({"u", "Role"}), _role_get, 0 },
    { "GetRoleName", NULL, ELDBUS_ARGS({"s", "Name"}), _role_name_get, 0 },
+#ifdef ENABLE_NLS
    { "GetLocalizedRoleName", NULL, ELDBUS_ARGS({"s", "LocalizedName"}), _role_localized_name_get, 0},
+#else
+   { "GetLocalizedRoleName", NULL, ELDBUS_ARGS({"s", "LocalizedName"}), _role_name_get, 0},
+#endif
    { NULL, NULL, NULL, NULL, 0 }
 };
 
