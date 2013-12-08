@@ -77,7 +77,7 @@ test_prefs.edj: Makefile test_prefs.edc
 	$(top_builddir)/data/objects/test_prefs.edj
 
 test_prefs.epb: Makefile test_prefs.epc
-	$(ELM_PREFS_CC) $(ELM_PREFS_FLAGS) \
+	$(AM_V_EPB)$(ELM_PREFS_CC) $(ELM_PREFS_FLAGS) \
 	$(top_srcdir)/data/objects/test_prefs.epc \
 	$(top_builddir)/data/objects/test_prefs.epb
 

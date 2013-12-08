@@ -59,8 +59,14 @@ dnl configure option
 
 AC_ARG_WITH([$2],
    [AC_HELP_STRING([--with-$2=PATH], [specify a specific path to ]DOWN[ @<:@default=$3@:>@])],
-   [_efl_with_binary=${withval}],
-   [_efl_with_binary=$(pkg-config --variable=prefix $1)/bin/$3])
+   [
+    _efl_with_binary=${withval}
+    _efl_binary_define="yes"
+   ],
+   [
+    _efl_with_binary=$(pkg-config --variable=prefix $1)/bin/$3
+    _efl_binary_define="no"
+   ])
 
 DOWN=${_efl_with_binary}
 AC_MSG_NOTICE(DOWN[ set to ${_efl_with_binary}])
