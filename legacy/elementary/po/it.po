@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-12-01 18:58+0900\n"
+"POT-Creation-Date: 2013-12-08 18:12+0900\n"
 "PO-Revision-Date: 2013-11-10 13:35+0100\n"
 "Last-Translator: Massimo Maiurana <maiurana@gmail.com>\n"
 "Language-Team: none\n"
@@ -15,20 +15,20 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/lib/elc_fileselector.c:1203
+#: src/lib/elc_fileselector.c:1238
 msgid "Up"
 msgstr "Su"
 
-#: src/lib/elc_fileselector.c:1218
+#: src/lib/elc_fileselector.c:1253
 msgid "Home"
 msgstr "Home"
 
-#: src/lib/elc_fileselector.c:1431 src/lib/elm_entry.c:1340
+#: src/lib/elc_fileselector.c:1470 src/lib/elm_entry.c:1340
 #: src/lib/elm_entry.c:1365
 msgid "Cancel"
 msgstr "Annulla"
 
-#: src/lib/elc_fileselector.c:1440
+#: src/lib/elc_fileselector.c:1479
 msgid "OK"
 msgstr "OK"
 
@@ -72,9 +72,9 @@ msgstr "Bolla"
 msgid "Clicked"
 msgstr "Cliccato"
 
-#: src/lib/elm_button.c:279 src/lib/elm_check.c:222 src/lib/elm_gengrid.c:681
+#: src/lib/elm_button.c:279 src/lib/elm_check.c:222 src/lib/elm_gengrid.c:705
 #: src/lib/elm_genlist.c:1464 src/lib/elm_list.c:1547 src/lib/elm_radio.c:265
-#: src/lib/elm_segment_control.c:537 src/lib/elm_spinner.c:556
+#: src/lib/elm_segment_control.c:537 src/lib/elm_spinner.c:561
 #: src/lib/elm_toolbar.c:1980
 msgid "State: Disabled"
 msgstr "Stato: disabilitato"
@@ -192,7 +192,7 @@ msgstr "Incolla"
 msgid "Entry"
 msgstr "Voce"
 
-#: src/lib/elm_gengrid.c:711
+#: src/lib/elm_gengrid.c:735
 msgid "Gengrid Item"
 msgstr "oggetto griglia generica"
 
@@ -240,19 +240,19 @@ msgstr "Stato: non selezionato"
 msgid "Segment Control Item"
 msgstr "Oggetto controllo segmento"
 
-#: src/lib/elm_slider.c:888
+#: src/lib/elm_slider.c:894
 msgid "slider"
 msgstr "cursore"
 
-#: src/lib/elm_spinner.c:645
+#: src/lib/elm_spinner.c:650
 msgid "spinner increment button"
 msgstr "bottone aumento spinner"
 
-#: src/lib/elm_spinner.c:654
+#: src/lib/elm_spinner.c:659
 msgid "spinner decrement button"
 msgstr "bottone diminuzione spinner"
 
-#: src/lib/elm_spinner.c:662
+#: src/lib/elm_spinner.c:667
 msgid "spinner"
 msgstr "spinner"
 

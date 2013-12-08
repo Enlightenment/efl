@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-12-01 18:58+0900\n"
+"POT-Creation-Date: 2013-12-08 18:12+0900\n"
 "PO-Revision-Date: 2013-11-27 11:32+0900\n"
 "Last-Translator: Seong-ho Cho <darkcircle.0426@gmail.com>\n"
 "Language-Team: General\n"
@@ -20,20 +20,20 @@ msgstr ""
 "X-Generator: Poedit 1.5.5\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 
-#: src/lib/elc_fileselector.c:1203
+#: src/lib/elc_fileselector.c:1238
 msgid "Up"
 msgstr "위로"
 
-#: src/lib/elc_fileselector.c:1218
+#: src/lib/elc_fileselector.c:1253
 msgid "Home"
 msgstr "홈"
 
-#: src/lib/elc_fileselector.c:1431 src/lib/elm_entry.c:1340
+#: src/lib/elc_fileselector.c:1470 src/lib/elm_entry.c:1340
 #: src/lib/elm_entry.c:1365
 msgid "Cancel"
 msgstr "취소"
 
-#: src/lib/elc_fileselector.c:1440
+#: src/lib/elc_fileselector.c:1479
 msgid "OK"
 msgstr "확인"
 
@@ -77,9 +77,9 @@ msgstr "버블"
 msgid "Clicked"
 msgstr "클릭함"
 
-#: src/lib/elm_button.c:279 src/lib/elm_check.c:222 src/lib/elm_gengrid.c:681
+#: src/lib/elm_button.c:279 src/lib/elm_check.c:222 src/lib/elm_gengrid.c:705
 #: src/lib/elm_genlist.c:1464 src/lib/elm_list.c:1547 src/lib/elm_radio.c:265
-#: src/lib/elm_segment_control.c:537 src/lib/elm_spinner.c:556
+#: src/lib/elm_segment_control.c:537 src/lib/elm_spinner.c:561
 #: src/lib/elm_toolbar.c:1980
 msgid "State: Disabled"
 msgstr "상태 : 비활성화"
@@ -197,7 +197,7 @@ msgstr "붙여넣기"
 msgid "Entry"
 msgstr "엔트리"
 
-#: src/lib/elm_gengrid.c:711
+#: src/lib/elm_gengrid.c:735
 msgid "Gengrid Item"
 msgstr "젠그리드 항목"
 
@@ -245,19 +245,19 @@ msgstr "상태: 선택 안함"
 msgid "Segment Control Item"
 msgstr "세그먼트 컨트롤 항목"
 
-#: src/lib/elm_slider.c:888
+#: src/lib/elm_slider.c:894
 msgid "slider"
 msgstr "슬라이더"
 
-#: src/lib/elm_spinner.c:645
+#: src/lib/elm_spinner.c:650
 msgid "spinner increment button"
 msgstr "스피너 증가 버튼"
 
-#: src/lib/elm_spinner.c:654
+#: src/lib/elm_spinner.c:659
 msgid "spinner decrement button"
 msgstr "스피너 감소 버튼"
 
-#: src/lib/elm_spinner.c:662
+#: src/lib/elm_spinner.c:667
 msgid "spinner"
 msgstr "스피너"
 
