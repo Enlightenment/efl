@@ -1,6 +1,7 @@
 #ifndef ELM_WIDGET_POPUP_H
 #define ELM_WIDGET_POPUP_H
 
+#include "Elementary.h"
 #include "elm_widget_layout.h"
 
 /**
