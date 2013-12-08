@@ -43,6 +43,28 @@ static Ecore_Idle_Enterer *ecore_evas_idle_enterer = NULL;
 static Ecore_Evas *ecore_evases = NULL;
 static int _ecore_evas_fps_debug = 0;
 
+#define RENDER_SYNC 1
+
+#ifdef RENDER_SYNC
+static Ecore_Animator *ecore_evas_animator = NULL;
+static Eina_Bool ecore_evas_animator_ticked = EINA_FALSE;
+static Eina_Bool ecore_evas_first = EINA_TRUE;
+static int overtick = 0;
+
+static Eina_Bool
+_ecore_evas_animator(void *data EINA_UNUSED)
+{
+   ecore_evas_animator_ticked = EINA_TRUE;
+   overtick--;
+   if (overtick == 0)
+     {
+        ecore_evas_animator = NULL;
+        return EINA_FALSE;
+     }
+   return EINA_TRUE;
+}
+#endif
+
 static Eina_Bool
 _ecore_evas_idle_enter(void *data EINA_UNUSED)
 {
@@ -55,6 +77,25 @@ _ecore_evas_idle_enter(void *data EINA_UNUSED)
 #endif
 
    if (!ecore_evases) return ECORE_CALLBACK_RENEW;
+
+#ifdef RENDER_SYNC
+   if (!ecore_evas_first)
+     {
+        if ((!ecore_evas_animator_ticked) &&
+            (!ecore_main_loop_animator_ticked_get()))
+          {
+             if (!ecore_evas_animator)
+               {
+                  overtick = 1;
+                  ecore_evas_animator = ecore_animator_add(_ecore_evas_animator, NULL);
+               }
+             return ECORE_CALLBACK_RENEW;
+          }
+        ecore_evas_animator_ticked = EINA_FALSE;
+     }
+   ecore_evas_first = EINA_FALSE;
+#endif
+
    if (_ecore_evas_fps_debug)
      {
         t1 = ecore_time_get();
@@ -351,7 +392,10 @@ ecore_evas_shutdown(void)
    if (_ecore_evas_fps_debug) _ecore_evas_fps_debug_shutdown();
    ecore_idle_enterer_del(ecore_evas_idle_enterer);
    ecore_evas_idle_enterer = NULL;
-
+#ifdef RENDER_SYNC
+   if (ecore_evas_animator) ecore_animator_del(ecore_evas_animator);
+   ecore_evas_animator = NULL;
+#endif
 #ifdef BUILD_ECORE_EVAS_EWS
    while (_ecore_evas_ews_shutdown());
 #endif
