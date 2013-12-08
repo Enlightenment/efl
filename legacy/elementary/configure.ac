@@ -141,9 +141,6 @@ m4_ifdef([v_mic],
     EFL_COMPILER_FLAG([-W])
    ])
 
-if test "x${have_windows}" = "xyes" ; then
-   lt_cv_deplibs_check_method='pass_all'
-fi
 AC_LIBTOOL_WIN32_DLL
 define([AC_LIBTOOL_LANG_CXX_CONFIG], [:])dnl
 define([AC_LIBTOOL_LANG_F77_CONFIG], [:])dnl
