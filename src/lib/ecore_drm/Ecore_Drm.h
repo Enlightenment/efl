@@ -28,7 +28,9 @@ typedef enum _Ecore_Drm_Op
    ECORE_DRM_OP_READ_FD_SET,
    ECORE_DRM_OP_WRITE_FD_SET,
    ECORE_DRM_OP_DEVICE_OPEN,
-   ECORE_DRM_OP_DEVICE_CLOSE
+   ECORE_DRM_OP_DEVICE_CLOSE,
+   ECORE_DRM_OP_TTY_OPEN,
+   ECORE_DRM_OP_TTY_CLOSE
 } Ecore_Drm_Op;
 
 typedef enum _Ecore_Drm_Op_Result 
@@ -58,6 +60,7 @@ typedef struct _Ecore_Drm_Device Ecore_Drm_Device;
  * 
  * @li @ref Ecore_Drm_Init_Group
  * @li @ref Ecore_Drm_Device_Group
+ * @li @ref Ecore_Drm_Tty_Group
  * 
  */
 
@@ -68,5 +71,8 @@ EAPI Ecore_Drm_Device *ecore_drm_device_find(const char *name, const char *seat)
 EAPI void ecore_drm_device_free(Ecore_Drm_Device *dev);
 EAPI Eina_Bool ecore_drm_device_open(Ecore_Drm_Device *dev);
 EAPI Eina_Bool ecore_drm_device_close(Ecore_Drm_Device *dev);
+
+EAPI Eina_Bool ecore_drm_tty_open(Ecore_Drm_Device *dev, const char *name);
+EAPI Eina_Bool ecore_drm_tty_close(Ecore_Drm_Device *dev);
 
 #endif
