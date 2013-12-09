@@ -33,6 +33,13 @@ evas_common_rgba_image_from_data(Image_Entry* ie_dst, int w, int h, DATA32 *imag
 	dst->cs.data = image_data;
 	dst->cs.no_free = 1;
 	break;
+      case EVAS_COLORSPACE_GRY8:
+        dst->cache_entry.w = w;
+        dst->cache_entry.h = h;
+        dst->mask.data = (DATA8 *) image_data;
+        dst->mask.no_free = 1;
+        dst->cache_entry.flags.alpha = 1;
+        break;
       default:
 	abort();
 	break;
@@ -65,6 +72,11 @@ evas_common_rgba_image_from_copied_data(Image_Entry* ie_dst, int w, int h, DATA3
          if (image_data && (dst->cs.data))
            memcpy(dst->cs.data,  image_data, dst->cache_entry.h * sizeof(unsigned char*) * 2);
          break;
+      case EVAS_COLORSPACE_GRY8:
+        dst->cache_entry.flags.alpha = 1;
+        if (image_data)
+          memcpy(dst->mask.data, image_data, w * h * sizeof(DATA8));
+        break;
       default:
          abort();
          break;
@@ -104,17 +116,25 @@ int
 evas_common_rgba_image_colorspace_set(Image_Entry* ie_dst, int cspace)
 {
    RGBA_Image   *dst = (RGBA_Image *) ie_dst;
+   Eina_Bool change = (dst->cache_entry.space != cspace);
 
    switch (cspace)
      {
       case EVAS_COLORSPACE_ARGB8888:
+      case EVAS_COLORSPACE_GRY8:
 	if (dst->cs.data)
 	  {
 	     if (!dst->cs.no_free) free(dst->cs.data);
 	     dst->cs.data = NULL;
 	     dst->cs.no_free = 0;
 	  }
-	break;
+        if (change && dst->image.data)
+          {
+             if (!dst->image.no_free) free(dst->image.data);
+             dst->image.data = NULL;
+             dst->image.no_free = 0;
+          }
+        break;
       case EVAS_COLORSPACE_YCBCR422P601_PL:
       case EVAS_COLORSPACE_YCBCR422P709_PL:
       case EVAS_COLORSPACE_YCBCR422601_PL:
@@ -136,7 +156,7 @@ evas_common_rgba_image_colorspace_set(Image_Entry* ie_dst, int cspace)
 	  }
 	dst->cs.data = calloc(1, dst->cache_entry.h * sizeof(unsigned char *) * 2);
 	dst->cs.no_free = 0;
-	break;
+        break;
       default:
 	abort();
 	break;

@@ -424,7 +424,7 @@ typedef void (*RGBA_Gfx_Pt_Func) (DATA32 src, DATA8 mask, DATA32 col, DATA32 *ds
 typedef void (*Gfx_Func_Copy)    (DATA32 *src, DATA32 *dst, int len);
 
 typedef void (*Gfx_Func_Convert) (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
-
+typedef void (*Alpha_Gfx_Func)   (DATA8 *src, DATA8 *dst, int len);
 
 typedef void (*Evas_Render_Done_Cb)(void *);
 
@@ -801,11 +801,20 @@ struct _RGBA_Image
       Eina_Bool          dirty : 1;
    } cs;
 
-   /* RGBA stuff */
-   struct {
-      DATA32            *data;
-      Eina_Bool          no_free : 1;
-   } image;
+   union
+   {
+      /* RGBA stuff */
+      struct {
+         DATA32            *data;
+         Eina_Bool          no_free : 1;
+      } image;
+
+      /* Alpha Mask stuff */
+      struct {
+         DATA8             *data;
+         Eina_Bool          no_free : 1;
+      } mask;
+   };
 
    struct {
       SLK(lock);

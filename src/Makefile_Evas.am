@@ -127,6 +127,7 @@ lib/evas/common/evas_op_add_main_.c \
 lib/evas/common/evas_op_sub_main_.c \
 lib/evas/common/evas_op_mask_main_.c \
 lib/evas/common/evas_op_mul_main_.c \
+lib/evas/common/evas_alpha_main.c \
 lib/evas/common/evas_blend_main.c \
 lib/evas/common/evas_blit_main.c \
 lib/evas/common/evas_convert_color.c \

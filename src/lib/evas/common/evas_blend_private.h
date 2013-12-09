@@ -27,5 +27,8 @@ RGBA_Gfx_Pt_Func     evas_common_gfx_func_composite_pixel_color_pt_get   (Image_
 RGBA_Gfx_Pt_Func     evas_common_gfx_func_composite_mask_color_pt_get    (DATA32 col, RGBA_Image *dst, int op);
 RGBA_Gfx_Pt_Func     evas_common_gfx_func_composite_pixel_mask_pt_get    (Image_Entry_Flags src_flags, RGBA_Image *dst, int op);
 
+/* Alpha/mask functions */
+Alpha_Gfx_Func       evas_common_alpha_func_get (int op);
+
 
 #endif /* _EVAS_BLEND_PRIVATE_H */
