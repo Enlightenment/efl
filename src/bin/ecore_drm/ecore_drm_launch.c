@@ -188,7 +188,7 @@ _read_msg(void)
    errno = 0;
    size = recvmsg(_drm_read_fd, &msg, 0);//MSG_CMSG_CLOEXEC);
 
-//   if (errno != 0)
+   if (errno != 0)
      {
         fprintf(stderr, "Recvd %li\n", size);
         fprintf(stderr, "Recv Err: %d\n", errno);
