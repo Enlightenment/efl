@@ -92,5 +92,6 @@ struct _Ecore_Drm_Device
 };
 
 void _ecore_drm_message_send(int opcode, void *data, size_t bytes);
+Eina_Bool _ecore_drm_message_receive(int opcode, void **data, size_t bytes);
 
 #endif
