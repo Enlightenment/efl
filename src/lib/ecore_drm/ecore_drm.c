@@ -126,8 +126,9 @@ _ecore_drm_socket_receive(int opcode, int fd EINA_UNUSED, void **data, size_t by
    switch (dmsg.opcode)
      {
       case ECORE_DRM_OP_DEVICE_OPEN:
+      case ECORE_DRM_OP_TTY_OPEN:
         if (rfd >= 0) ret = 1;
-        if (data) *data = rfd;
+        if (data) *data = &rfd;
         break;
       case ECORE_DRM_OP_DEVICE_CLOSE:
         ret = -1;
@@ -265,6 +266,7 @@ ecore_drm_init(void)
    eina_log_level_set(EINA_LOG_LEVEL_DBG);
 
    setvbuf(stdout, NULL, _IONBF, 0);
+   setvbuf(stderr, NULL, _IONBF, 0);
 
    /* optionally log output to a file */
 #ifdef LOG_TO_FILE
