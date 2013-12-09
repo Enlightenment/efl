@@ -136,11 +136,18 @@ ecore_evas_drm_new_internal(const char *device, unsigned int parent, int x, int 
         goto dev_err;
      }
 
+   /* try to open the tty */
+   if (!ecore_drm_tty_open(dev, "/dev/tty0"))
+     {
+        ERR("Could not open tty");
+        goto tty_open_err;
+     }
+
    /* try to open the graphics card */
    if (!ecore_drm_device_open(dev))
      {
         ERR("Could not open drm device");
-        goto open_err;
+        goto dev_open_err;
      }
 
    /* try to allocate space for Ecore_Evas structure */
@@ -208,7 +215,9 @@ eng_err:
    _ecore_evas_drm_shutdown();
 ee_err:
    ecore_drm_device_close(dev);
-open_err:
+dev_open_err:
+   /* close tty */
+tty_open_err:
    ecore_drm_device_free(dev);
 dev_err:
    ecore_drm_shutdown();
