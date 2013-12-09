@@ -188,7 +188,6 @@ ecore_drm_device_open(Ecore_Drm_Device *dev)
    char devpath[PATH_MAX];
    Eina_Bool ret = EINA_FALSE;
    void *data;
-   int fd = -1;
 
    /* check for valid device */
    if ((!dev) || (!dev->devname)) return EINA_FALSE;
@@ -201,20 +200,10 @@ ecore_drm_device_open(Ecore_Drm_Device *dev)
 
    /* receive the reply from our slave */
    ret = _ecore_drm_message_receive(ECORE_DRM_OP_DEVICE_OPEN, &data, sizeof(int));
-
-   fd = *((int *)data);
-
-   if (ret) 
-     {
-        DBG("SUCCESS !!!: %d", fd);
-     }
-   else 
-     {
-        DBG("FAILURE !!!");
-     }
+   if (!ret) return EINA_FALSE;
 
    /* set device fd */
-   dev->fd = fd;
+   dev->fd = *((int *)data);
 
    return EINA_TRUE;
 }
