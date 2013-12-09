@@ -103,5 +103,5 @@ clean-local:
 	find . -type f -name check-results.xml -delete
 
 install-exec-hook:
-	for i in $(lib_LTLIBRARIES); do sed -i "s/-luuid//" $(libdir)/`echo $$i | sed "s#lib/.*/##"`; done
+	for i in $(lib_LTLIBRARIES); do sed -i "s/-luuid//" $(DESTDIR)$(libdir)/`echo $$i | sed "s#lib/.*/##"`; done
 	$(EFL_INSTALL_EXEC_HOOK)
