@@ -2886,13 +2886,11 @@ _paragraph_free(const Evas_Object *eo_obj, Evas_Object_Textblock_Paragraph *par)
    _paragraph_clear(eo_obj, par);
 
      {
-        Eina_List *i, *i_prev;
         Evas_Object_Textblock_Item *it;
-        EINA_LIST_FOREACH_SAFE(par->logical_items, i, i_prev, it)
+        EINA_LIST_FREE(par->logical_items, it)
           {
              _item_free(eo_obj, NULL, it);
           }
-        eina_list_free(par->logical_items);
      }
 #ifdef BIDI_SUPPORT
    if (par->bidi_props)
