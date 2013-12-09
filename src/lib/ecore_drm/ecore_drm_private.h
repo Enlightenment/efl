@@ -89,6 +89,13 @@ struct _Ecore_Drm_Device
    int id, fd;
    const char *devname;
    const char *devpath;
+
+   struct 
+     {
+        int fd;
+        const char *name;
+        Ecore_Event_Handler *event_hdlr;
+     } tty;
 };
 
 void _ecore_drm_message_send(int opcode, void *data, size_t bytes);
