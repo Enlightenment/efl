@@ -24,11 +24,9 @@
 EAPI Eina_Bool 
 ecore_drm_tty_open(Ecore_Drm_Device *dev, const char *name)
 {
-   char tty[32] = "<stdin>";
-   struct stat st;
-   void *data;
-   int fd = -1;
    Eina_Bool ret = EINA_FALSE;
+   char tty[32] = "<stdin>";
+   void *data;
 
    /* check for valid device */
    if ((!dev) || (!dev->devname)) return EINA_FALSE;
@@ -43,10 +41,7 @@ ecore_drm_tty_open(Ecore_Drm_Device *dev, const char *name)
         if ((env = getenv("ECORE_DRM_TTY")))
           snprintf(tty, sizeof(tty), "%s", env);
         else
-          {
-             snprintf(tty, sizeof(tty), "%s", "/dev/tty0");
-//             dev->tty.fd = dup(0);
-          }
+          snprintf(tty, sizeof(tty), "%s", "/dev/tty0");
      }
    else // FIXME: NB: This should Really check for format of name (/dev/xyz)
      snprintf(tty, sizeof(tty), "%s", name);
@@ -58,17 +53,9 @@ ecore_drm_tty_open(Ecore_Drm_Device *dev, const char *name)
 
         /* get the result of the open operation */
         ret = _ecore_drm_message_receive(ECORE_DRM_OP_TTY_OPEN, &data, sizeof(int));
+        if (!ret) return EINA_FALSE;
 
-        fd = *((int *)data);
-
-        if (ret)
-          {
-             DBG("SUCCESS !!!: %d", fd);
-          }
-        else
-          {
-             DBG("FAILURE !!!: %d", fd);
-          }
+        dev->tty.fd = *((int *)data);
      }
 
    return EINA_TRUE;
