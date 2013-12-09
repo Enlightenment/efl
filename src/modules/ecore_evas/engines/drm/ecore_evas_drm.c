@@ -216,7 +216,7 @@ eng_err:
 ee_err:
    ecore_drm_device_close(dev);
 dev_open_err:
-   /* close tty */
+   ecore_drm_tty_close(dev);
 tty_open_err:
    ecore_drm_device_free(dev);
 dev_err:
