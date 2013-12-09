@@ -88,6 +88,25 @@ _open_device(const char *file)
 }
 
 static int 
+_open_tty(const char *file)
+{
+   int fd = -1;
+   int ret = ECORE_DRM_OP_SUCCESS;
+
+   fprintf(stderr, "Open Tty: %s\n", file);
+
+   if ((fd = open(file, (O_RDWR | O_CLOEXEC))) < 0)
+     {
+        fprintf(stderr, "\tFailed to open: %m\n");
+        ret = ECORE_DRM_OP_FAILURE;
+     }
+
+   _send_msg(ECORE_DRM_OP_TTY_OPEN, fd, &ret, sizeof(int));
+
+   return ret;
+}
+
+static int 
 _read_fd_get(void)
 {
    char *ev, *end;
@@ -152,7 +171,6 @@ _read_msg(void)
    msg.msg_control = ctrl;
 
    errno = 0;
-
    size = recvmsg(_drm_read_fd, &msg, 0);//MSG_CMSG_CLOEXEC);
 
 //   if (errno != 0)
@@ -196,6 +214,14 @@ _read_msg(void)
         break;
       case ECORE_DRM_OP_DEVICE_CLOSE:
         fprintf(stderr, "Ecore_Drm_Operation_Device_Close\n");
+        ret = 1;
+        break;
+      case ECORE_DRM_OP_TTY_OPEN:
+        fprintf(stderr, "Ecore_Drm_Operation_Tty_Open: %s\n", (char *)data);
+        ret = _open_tty((char *)data);
+        break;
+      case ECORE_DRM_OP_TTY_CLOSE:
+        fprintf(stderr, "Ecore_Drm_Operation_Tty_Close\n");
         ret = 1;
         break;
       default:
