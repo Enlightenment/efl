@@ -283,7 +283,11 @@ AM_PROG_CC_C_O
 if test "x${ac_cv_prog_cc_c99}" = "xno" ; then
    AC_MSG_ERROR([efl requires a c99-capable compiler])
 fi
-if test "x${CXX}" = "x"; then
+# We should be using ${CXX} here, but there is a bug in
+# autotools macro and CXX is always set to g++ even if
+# it's not found. So we are using an internal variable
+# that does the work for now, may get broken in the future.
+if test "x${ac_ct_CXX}" = "x"; then
    AC_MSG_ERROR([efl requires a C++ compiler])
 fi
 
