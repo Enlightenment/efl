@@ -9,9 +9,11 @@
 #include <limits.h>
 #include <fcntl.h>
 #include <errno.h>
+#include <linux/major.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <sys/signalfd.h>
+#include <sys/stat.h>
 #include <poll.h>
 
 #include <Eina.h>
@@ -92,13 +94,26 @@ _open_tty(const char *file)
 {
    int fd = -1;
    int ret = ECORE_DRM_OP_SUCCESS;
+   struct stat st;
 
    fprintf(stderr, "Open Tty: %s\n", file);
 
-   if ((fd = open(file, (O_RDWR | O_CLOEXEC))) < 0)
+   if (!strncmp(file, "/dev/tty0", 9))
+     fd = dup(0);
+   else if ((fd = open(file, (O_RDWR | O_CLOEXEC))) < 0)
      {
         fprintf(stderr, "\tFailed to open: %m\n");
         ret = ECORE_DRM_OP_FAILURE;
+     }
+
+   if ((fstat(fd, &st) < 0) || 
+       (major(st.st_rdev) != TTY_MAJOR) || 
+       (minor(st.st_rdev) == 0))
+     {
+        fprintf(stderr, "\t%s not a tty\n", file);
+        ret = ECORE_DRM_OP_FAILURE;
+        close(fd);
+        fd = -1;
      }
 
    _send_msg(ECORE_DRM_OP_TTY_OPEN, fd, &ret, sizeof(int));
