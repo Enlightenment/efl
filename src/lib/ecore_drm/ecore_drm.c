@@ -67,6 +67,79 @@ _ecore_drm_socket_send(int opcode, int fd, void *data, size_t bytes)
    return size;
 }
 
+static int 
+_ecore_drm_socket_receive(int opcode, int fd EINA_UNUSED, void **data, size_t bytes EINA_UNUSED)
+{
+   int ret = -1, rfd;
+   Ecore_Drm_Message dmsg;
+   char buff[BUFSIZ];
+   struct iovec iov[2];
+   char ctrl[CMSG_SPACE(sizeof(int))];
+   struct msghdr msg;
+   struct cmsghdr *cmsg = NULL;
+   ssize_t size;
+
+   IOVSET(iov + 0, &dmsg, sizeof(dmsg));
+   IOVSET(iov + 1, &buff, sizeof(buff));
+
+   memset(&msg, 0, sizeof(msg));
+
+   /* socketpair creates 'connected' sockets so we should not need to 
+    * specify a msg_name here */
+   msg.msg_name = NULL;
+   msg.msg_namelen = 0;
+   msg.msg_iov = iov;
+   msg.msg_iovlen = 2;
+   msg.msg_controllen = CMSG_SPACE(sizeof(int));
+   msg.msg_control = ctrl;
+
+   errno = 0;
+   size = recvmsg(_ecore_drm_socket_fd[0], &msg, 0); // MSG_CMSG_CLOEXEC);
+
+   if (errno != 0)
+     {
+        DBG("\tRecv %li", size);
+        DBG("\tRecv Err: %d", errno);
+        DBG("\tRecv Err: %s", strerror(errno));
+     }
+
+   cmsg = CMSG_FIRSTHDR(&msg);
+   if ((cmsg) && (cmsg->cmsg_len == CMSG_LEN(sizeof(int))))
+     {
+        if (cmsg->cmsg_level != SOL_SOCKET)
+          {
+             DBG("Invalid cmsg level");
+             return -1;
+          }
+        if (cmsg->cmsg_type != SCM_RIGHTS)
+          {
+             DBG("Invalid cmsg type");
+             return -1;
+          }
+     }
+
+   rfd = *((int *)CMSG_DATA(cmsg));
+   DBG("\tRecv FD: %d", rfd);
+
+   if (dmsg.opcode != opcode) return -1;
+
+   switch (dmsg.opcode)
+     {
+      case ECORE_DRM_OP_DEVICE_OPEN:
+        if (rfd >= 0) ret = 1;
+        if (data) *data = rfd;
+        break;
+      case ECORE_DRM_OP_DEVICE_CLOSE:
+        ret = -1;
+        break;
+      default:
+        ret = -1;
+        break;
+     }
+
+   return ret;
+}
+
 static Eina_Bool 
 _ecore_drm_socket_create(void)
 {
@@ -97,13 +170,13 @@ _ecore_drm_launcher_spawn(void)
    if ((pid = vfork()) < 0)
      CRIT("Failed to fork: %m");
 
-   if (pid != 0)
-     {
-        DBG("Parent Sending Pass Fd Message");
-        _ecore_drm_message_send(ECORE_DRM_OP_WRITE_FD_SET, 
-                                &_ecore_drm_socket_fd[1], sizeof(int));
-     }
-   else if (pid == 0) /* child process. exec spartacus */
+   /* if (pid != 0) */
+   /*   { */
+   /*      DBG("Parent Sending Pass Fd Message"); */
+   /*      _ecore_drm_message_send(ECORE_DRM_OP_WRITE_FD_SET,  */
+   /*                              &_ecore_drm_socket_fd[0], sizeof(int)); */
+   /*   } */
+   if (pid == 0) /* child process. exec spartacus */
      {
         char buff[PATH_MAX], env[32];
         char *args[1] = { NULL };
@@ -118,7 +191,11 @@ _ecore_drm_launcher_spawn(void)
 
         /* set to read socket for launch process to read from */
         snprintf(env, sizeof(env), "%d", _ecore_drm_socket_fd[0]);
-        setenv("ECORE_DRM_LAUNCHER_SOCKET", env, 1);
+        setenv("ECORE_DRM_LAUNCHER_WRITE_SOCKET", env, 1);
+
+        /* set to read socket for launch process to read from */
+        snprintf(env, sizeof(env), "%d", _ecore_drm_socket_fd[1]);
+        setenv("ECORE_DRM_LAUNCHER_READ_SOCKET", env, 1);
 
         sigemptyset(&mask);
         sigaddset(&mask, SIGTERM);
@@ -147,6 +224,18 @@ void
 _ecore_drm_message_send(int opcode, void *data, size_t bytes)
 {
    _ecore_drm_socket_send(opcode, _ecore_drm_socket_fd[1], data, bytes);
+}
+
+Eina_Bool 
+_ecore_drm_message_receive(int opcode, void **data, size_t bytes)
+{
+   int ret;
+
+   ret = _ecore_drm_socket_receive(opcode, _ecore_drm_socket_fd[0], 
+                                   data, bytes);
+   if (ret < 0) return EINA_FALSE;
+
+   return EINA_TRUE;
 }
 
 /**
