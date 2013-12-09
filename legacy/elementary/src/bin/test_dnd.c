@@ -401,8 +401,8 @@ static Eina_Bool
 _5s_timeout_gone(void *data)
 {
    printf("Cancel DnD\n");
-   Evas_Object *obj = data;
-   elm_drag_cancel(obj);
+   elm_drag_cancel(data);
+   _5s_timeout = NULL;
    return ECORE_CALLBACK_CANCEL;
 }
 
@@ -681,14 +681,15 @@ _gl_dragstart(void *data EINA_UNUSED, Evas_Object *obj)
 {
    printf("<%s> <%d>\n", __func__, __LINE__);
    if (_5s_cancel)
-      _5s_timeout = ecore_timer_add(5.0, _5s_timeout_gone, obj);
+     _5s_timeout = ecore_timer_add(5.0, _5s_timeout_gone, obj);
 }
 
 static Eina_Bool
 _grid_data_getcb(Evas_Object *obj,  /* The genlist object */
-      Elm_Object_Item *it,
-      Elm_Drag_User_Info *info)
-{  /* This called before starting to drag, mouse-down was on it */
+                 Elm_Object_Item *it,
+                 Elm_Drag_User_Info *info)
+{
+   /* This called before starting to drag, mouse-down was on it */
    info->format = ELM_SEL_FORMAT_TARGETS;
    info->createicon = _gl_createicon;
    info->createdata = it;
@@ -905,7 +906,7 @@ test_dnd_genlist_gengrid(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, v
               NULL, NULL, NULL, NULL, _grid_dropcb, NULL);
 
         elm_drag_item_container_add(grid, ANIM_TIME, DRAG_TIMEOUT,
-              _grid_item_getcb, _grid_data_getcb);
+                                    _grid_item_getcb, _grid_data_getcb);
         for (i = 0; i < 20; i++)
           {
              snprintf(buf, sizeof(buf), "%s/images/%s", elm_app_data_dir_get(), img[(i % 9)]);
