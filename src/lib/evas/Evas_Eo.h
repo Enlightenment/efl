@@ -1846,6 +1846,8 @@ enum
    EVAS_OBJ_TEXT_SUB_ID_STYLE_PAD_GET,
    EVAS_OBJ_TEXT_SUB_ID_ELLIPSIS_SET,
    EVAS_OBJ_TEXT_SUB_ID_ELLIPSIS_GET,
+   EVAS_OBJ_TEXT_SUB_ID_FILTER_PROGRAM_SET,
+   EVAS_OBJ_TEXT_SUB_ID_FILTER_OBJECT_BIND,
    EVAS_OBJ_TEXT_SUB_ID_LAST
 };
 
@@ -2270,6 +2272,20 @@ enum
  * @see evas_object_text_ellipsis_set
  */
 #define evas_obj_text_ellipsis_get(ellipsis) EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_ELLIPSIS_GET), EO_TYPECHECK(double *, ellipsis)
+
+/**
+ * @def evas_obj_text_filter_program_set
+ * @since 1.9
+ * @note EXPERIMENTAL code
+ */
+#define evas_obj_text_filter_program_set(str) EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_FILTER_PROGRAM_SET), EO_TYPECHECK(const char *, str)
+
+/**
+ * @def evas_obj_text_filter_object_bind
+ * @since 1.9
+ * @note EXPERIMENTAL code
+ */
+#define evas_obj_text_filter_object_bind(str, prxy) EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_FILTER_OBJECT_BIND), EO_TYPECHECK(const char *, str), EO_TYPECHECK(Eo *, prxy)
 
 /**
  * @}
