@@ -292,6 +292,7 @@ _ecore_evas_wl_show(Ecore_Evas *ee)
    if (wdata->win)
      {
         ecore_wl_window_show(wdata->win);
+        ecore_wl_window_alpha_set(wdata->win, ee->alpha);
         ecore_wl_window_update_size(wdata->win, ee->w + fw, ee->h + fh);
 
         einfo = (Evas_Engine_Info_Wayland_Shm *)evas_engine_info_get(ee->evas);
@@ -304,6 +305,7 @@ _ecore_evas_wl_show(Ecore_Evas *ee)
                {
                   einfo->info.wl_surface = surf;
                   evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+                  evas_damage_rectangle_add(ee->evas, 0, 0, ee->w + fw, ee->h + fh);
                }
           }
      }
