@@ -512,9 +512,6 @@ text_input_leave(void                 *data,
 {
    WaylandIMContext *imcontext = (WaylandIMContext *)data;
 
-   if (text_input)
-     wl_text_input_hide_input_panel(text_input);
-
    /* clear preedit */
    commit_preedit(imcontext);
    clear_preedit(imcontext);
