@@ -25,11 +25,66 @@ static int _drm_read_fd = -1;
 static int _drm_write_fd = -1;
 
 static int 
-_open_file(const char *file)
+_send_msg(int opcode, int fd, void *data, size_t bytes)
 {
-   fprintf(stderr, "Open File: %s\n", file);
+   Ecore_Drm_Message dmsg;
+   struct iovec iov[2];
+   char ctrl[CMSG_SPACE(sizeof(int))];
+   struct msghdr msg;
+   struct cmsghdr *cmsg;
+   ssize_t size;
 
-   return 1;
+   IOVSET(iov + 0, &dmsg, sizeof(dmsg));
+   IOVSET(iov + 1, data, bytes);
+
+   dmsg.opcode = opcode;
+   dmsg.size = bytes;
+
+   memset(&msg, 0, sizeof(struct msghdr));
+   memset(ctrl, 0, CMSG_SPACE(sizeof(int)));
+
+   msg.msg_name = NULL;
+   msg.msg_namelen = 0;
+   msg.msg_iov = iov;
+   msg.msg_iovlen = 2;
+   msg.msg_controllen = CMSG_SPACE(sizeof(int));
+   msg.msg_control = ctrl;
+
+   cmsg = CMSG_FIRSTHDR(&msg);
+   cmsg->cmsg_level = SOL_SOCKET;
+   cmsg->cmsg_type = SCM_RIGHTS;
+   cmsg->cmsg_len = CMSG_LEN(sizeof(int));
+
+   *((int *)CMSG_DATA(cmsg)) = fd;
+
+   errno = 0;
+   size = sendmsg(_drm_write_fd, &msg, 0);
+   if (errno != 0)
+     {
+        fprintf(stderr, "Failed to send message: %d\n", errno);
+        fprintf(stderr, "\t%s\n", strerror(errno));
+     }
+
+   return size;
+}
+
+static int 
+_open_device(const char *file)
+{
+   int fd = -1;
+   int ret = ECORE_DRM_OP_SUCCESS;
+
+   fprintf(stderr, "Open Device: %s\n", file);
+
+   if ((fd = open(file, O_RDWR)) < 0)
+     {
+        fprintf(stderr, "\tFailed to open: %m\n");
+        ret = ECORE_DRM_OP_FAILURE;
+     }
+
+   _send_msg(ECORE_DRM_OP_DEVICE_OPEN, fd, &ret, sizeof(int));
+
+   return ret;
 }
 
 static int 
@@ -38,7 +93,7 @@ _read_fd_get(void)
    char *ev, *end;
    int fd = -1, flags = -1;
 
-   if (!(ev = getenv("ECORE_DRM_LAUNCHER_SOCKET")))
+   if (!(ev = getenv("ECORE_DRM_LAUNCHER_READ_SOCKET")))
      return -1;
 
    fd = strtol(ev, &end, 0);
@@ -47,7 +102,27 @@ _read_fd_get(void)
    flags = fcntl(fd, F_GETFD);
    if (flags == -1) return -1;
 
-   fcntl(fd, F_SETFD, flags | FD_CLOEXEC);
+   /* fcntl(fd, F_SETFD, flags | FD_CLOEXEC); */
+
+   return fd;
+}
+
+static int 
+_write_fd_get(void)
+{
+   char *ev, *end;
+   int fd = -1, flags = -1;
+
+   if (!(ev = getenv("ECORE_DRM_LAUNCHER_WRITE_SOCKET")))
+     return -1;
+
+   fd = strtol(ev, &end, 0);
+   if (*end != '\0') return -1;
+
+   flags = fcntl(fd, F_GETFD);
+   if (flags == -1) return -1;
+
+   /* fcntl(fd, F_SETFD, flags | FD_CLOEXEC); */
 
    return fd;
 }
@@ -78,9 +153,9 @@ _read_msg(void)
 
    errno = 0;
 
-   size = recvmsg(_drm_read_fd, &msg, MSG_CMSG_CLOEXEC);
+   size = recvmsg(_drm_read_fd, &msg, 0);//MSG_CMSG_CLOEXEC);
 
-   if (errno != 0)
+//   if (errno != 0)
      {
         fprintf(stderr, "Recvd %li\n", size);
         fprintf(stderr, "Recv Err: %d\n", errno);
@@ -105,19 +180,22 @@ _read_msg(void)
    switch (dmsg.opcode)
      {
       case ECORE_DRM_OP_READ_FD_SET:
+        fprintf(stderr, "Ecore_Drm_Operation_Read_FD_Set\n");
         _drm_read_fd = *((int *)CMSG_DATA(cmsg));
         if (_drm_read_fd >= 0) ret = 1;
         break;
       case ECORE_DRM_OP_WRITE_FD_SET:
+        fprintf(stderr, "Ecore_Drm_Operation_Write_FD_Set\n");
         _drm_write_fd = *((int *)CMSG_DATA(cmsg));
         if (_drm_write_fd >= 0) ret = 1;
+        fprintf(stderr, "\tWrite FD: %d\n", _drm_write_fd);
         break;
-      case ECORE_DRM_OP_OPEN_FD:
-        fprintf(stderr, "Ecore_Drm_Operation_Open FD: %s\n", (char *)data);
-        ret = _open_file((char *)data);
+      case ECORE_DRM_OP_DEVICE_OPEN:
+        fprintf(stderr, "Ecore_Drm_Operation_Device_Open: %s\n", (char *)data);
+        ret = _open_device((char *)data);
         break;
-      case ECORE_DRM_OP_CLOSE_FD:
-        fprintf(stderr, "Ecore_Drm_Operation_Close FD\n");
+      case ECORE_DRM_OP_DEVICE_CLOSE:
+        fprintf(stderr, "Ecore_Drm_Operation_Device_Close\n");
         ret = 1;
         break;
       default:
@@ -140,6 +218,14 @@ main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
      }
 
    fprintf(stderr, "\tGot Fd: %d\n", _drm_read_fd);
+
+   if ((_drm_write_fd = _write_fd_get()) < 0)
+     {
+        fprintf(stderr, "\tCould not Get FD\n");
+        return EXIT_FAILURE;
+     }
+
+   fprintf(stderr, "\tGot Fd: %d\n", _drm_write_fd);
 
    while (1)
      {
