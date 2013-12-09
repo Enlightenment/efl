@@ -690,8 +690,9 @@ _image_opened_cb(void *data, const void *msg_received, int size)
      }
    ie->open_rid = 0;
 
-   if (answer->type != CSERVE2_OPENED)
+   if ((answer->type != CSERVE2_OPENED) || (size < (int) sizeof(*msg)))
      {
+        File_Entry *fentry = ie->data1;
         if (answer->type == CSERVE2_ERROR)
           {
              const Msg_Error *msg_error = msg_received;
@@ -700,15 +701,9 @@ _image_opened_cb(void *data, const void *msg_received, int size)
           }
         else
           ERR("Invalid message type received: %d (%s)", answer->type, __FUNCTION__);
-        free(ie->data1);
-        ie->data1 = NULL;
-        return EINA_TRUE;
-     }
-   else if (size < (int) sizeof(*msg))
-     {
-        ERR("Received message is too small");
-        free(ie->data1);
-        ie->data1 = NULL;
+        fentry = ie->data1;
+        EINA_REFCOUNT_UNREF(fentry)
+          eina_hash_del(_file_entries, fentry->hkey, fentry);
         return EINA_TRUE;
      }
 
