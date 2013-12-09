@@ -119,7 +119,6 @@ _ecore_drm_socket_receive(int opcode, int fd EINA_UNUSED, void **data, size_t by
      }
 
    rfd = *((int *)CMSG_DATA(cmsg));
-   DBG("\tRecv FD: %d", rfd);
 
    if (dmsg.opcode != opcode) return -1;
 
