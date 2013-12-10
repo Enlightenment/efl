@@ -2362,6 +2362,7 @@ _format_param_parse(const char *item, const char **key, Eina_Tmpstr **val)
    else len = strlen(start);
 
    tmp = (char*) eina_tmpstr_add_length(start, len);
+   if (!tmp) goto end;
 
    for (d = tmp, s = tmp; *s; s++)
      {
@@ -2373,6 +2374,7 @@ _format_param_parse(const char *item, const char **key, Eina_Tmpstr **val)
      }
    *d = '\0';
 
+end:
    *val = tmp;
 }
 
@@ -2450,7 +2452,7 @@ _format_fill(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const char 
              Eina_Tmpstr *val = NULL;
 
              _format_param_parse(item, &key, &val);
-             _format_command(eo_obj, fmt, key, val);
+             if ((key) && (val)) _format_command(eo_obj, fmt, key, val);
              eina_stringshare_del(key);
              eina_tmpstr_del(val);
           }
