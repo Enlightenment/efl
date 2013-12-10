@@ -222,8 +222,95 @@ ecore_drm_device_open(Ecore_Drm_Device *dev)
 EAPI Eina_Bool 
 ecore_drm_device_close(Ecore_Drm_Device *dev)
 {
+   Eina_Bool ret = EINA_FALSE;
+   void *data;
+
    /* check for valid device */
-   if (!dev) return EINA_TRUE;
+   if (!dev) return EINA_FALSE;
+
+   /* try to close the device */
+   _ecore_drm_message_send(ECORE_DRM_OP_DEVICE_CLOSE, &dev->fd, sizeof(int));
+
+   /* get the result of the close operation */
+   ret = _ecore_drm_message_receive(ECORE_DRM_OP_DEVICE_CLOSE, &data, sizeof(int));
+   if (!ret) return EINA_FALSE;
+
+   /* reset device fd */
+   dev->fd = -1;
 
    return EINA_TRUE;
+}
+
+/**
+ * Get if a given Ecore_Drm_Device is master
+ * 
+ * This function will check if the given drm device is set to master
+ * 
+ * @param dev The Ecore_Drm_Device to check
+ * 
+ * @return EINA_TRUE if device is master, EINA_FALSE otherwise
+ * 
+ * @ingroup Ecore_Drm_Device_Group
+ */
+EAPI Eina_Bool 
+ecore_drm_device_master_get(Ecore_Drm_Device *dev)
+{
+   drm_magic_t mag;
+   int gret = 0, aret = 0;
+
+   /* check for valid device */
+   if ((!dev) || (dev->fd < 0)) return EINA_FALSE;
+
+   /* get if we are master or not */
+   if ((drmGetMagic(dev->fd, &mag) == 0) && 
+       (drmAuthMagic(dev->fd, msg) == 0))
+     return EINA_TRUE;
+
+   return EINA_FALSE;
+}
+
+/**
+ * Set a given Ecore_Drm_Device to master
+ * 
+ * This function will attempt to set a given drm device to be master
+ * 
+ * @param dev The Ecore_Drm_Device to set
+ * 
+ * @return EINA_TRUE on success, EINA_FALSE on failure
+ * 
+ * @ingroup Ecore_Drm_Device_Group
+ */
+EAPI Eina_Bool 
+ecore_drm_device_master_set(Ecore_Drm_Device *dev)
+{
+   /* check for valid device */
+   if ((!dev) || (dev->fd < 0)) return EINA_FALSE;
+
+   /* try to set master */
+   if (drmSetMaster(dev->fd) == 0) return EINA_TRUE;
+
+   return EINA_FALSE;
+}
+
+/**
+ * Tell a given Ecore_Drm_Device to stop being master
+ * 
+ * This function will attempt to ask a drm device to stop being master
+ * 
+ * @param dev The Ecore_Drm_Device to set
+ * 
+ * @return EINA_TRUE on success, EINA_FALSE on failure
+ * 
+ * @ingroup Ecore_Drm_Device_Group
+ */
+EAPI Eina_Bool 
+ecore_drm_device_master_drop(Ecore_Drm_Device *dev)
+{
+   /* check for valid device */
+   if ((!dev) || (dev->fd < 0)) return EINA_FALSE;
+
+   /* try to drop being master */
+   if (drmDropMaster(dev->fd) == 0) return EINA_TRUE;
+
+   return EINA_FALSE;
 }
