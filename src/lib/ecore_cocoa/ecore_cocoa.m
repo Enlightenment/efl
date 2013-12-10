@@ -169,6 +169,7 @@ ecore_cocoa_feed_events(void)
       {
          Ecore_Event_Key *ev;
          unsigned int     i;
+         EcoreCocoaWindow *window = (EcoreCocoaWindow *)[event window];
 
          ev = calloc(1, sizeof (Ecore_Event_Key));
          if (!ev) return;
@@ -178,10 +179,12 @@ ecore_cocoa_feed_events(void)
          {
             if (keystable[i].code == tolower([[event charactersIgnoringModifiers] characterAtIndex:0]))
             {
-	      printf("Key pressed : %s\n", keystable[i].name);
+               printf("Key pressed : %s\n", keystable[i].name);
                ev->keyname = keystable[i].name;
+               ev->key = keystable[i].name;
                ev->string = keystable[i].compose;
-
+               ev->window = window.ecore_window_data;
+               ev->event_window = ev->window;
                ecore_event_add(ECORE_EVENT_KEY_DOWN, ev, NULL, NULL);
                return;
             }
@@ -193,6 +196,9 @@ ecore_cocoa_feed_events(void)
       {
          Ecore_Event_Key *ev;
          unsigned int     i;
+         EcoreCocoaWindow *window = (EcoreCocoaWindow *)[event window];
+
+         printf("Key Up\n");
 
          ev = calloc(1, sizeof (Ecore_Event_Key));
          if (!ev) return;
@@ -203,8 +209,10 @@ ecore_cocoa_feed_events(void)
             if (keystable[i].code == tolower([[event charactersIgnoringModifiers] characterAtIndex:0]))
             {
                ev->keyname = keystable[i].name;
+               ev->key = keystable[i].name;
                ev->string = keystable[i].compose;
-
+               ev->window = window.ecore_window_data;
+               ev->event_window = ev->window;
                ecore_event_add(ECORE_EVENT_KEY_UP, ev, NULL, NULL);
                return;
             }
