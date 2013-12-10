@@ -292,7 +292,10 @@ group { name: "e/fileman/default/list/variable";
          description { state: "default" 0.0;
             color: 0 0 0 0;
             rel1.to: "e.text.label";
+            rel1.relative: 0.0 0.2;
+            rel1.offset: -3 0;
             rel2.to: "e.text.label";
+            rel2.relative: 1.0 0.8;
          }
       }
       part { name: "e.swallow.entry"; type: SWALLOW;
@@ -705,6 +708,9 @@ group { name: "e/fileman/default/icon/fixed";
             color: 0 0 0 0;
             rel1.to: "icon0";
             rel2.to: "icon0";
+            rel1.relative: 0.1 0.1;
+            rel2.relative: 0.9 1.0;
+            rel2.offset: 0 5;
          }
       }
       part { name: "label_event"; type: RECT;
