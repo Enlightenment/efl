@@ -10,12 +10,22 @@
 
 typedef struct _Frame_Info Frame_Info;
 typedef struct _Loader_Info Loader_Info;
+typedef struct _File_Info File_Info;
+
+struct _File_Info
+{
+   unsigned char *map;
+   int pos, len; // yes - gif uses ints for file sizes.
+};
 
 struct _Loader_Info
 {
    Eina_File *f;
    Evas_Image_Load_Opts *opts;
    Evas_Image_Animated *animated;
+   GifFileType *gif;
+   int imgnum;
+   File_Info fi;
 };
 
 struct _Frame_Info
@@ -345,15 +355,6 @@ _flush_older_frames(Evas_Image_Animated *animated,
      }
 }
                     
-
-// file access info/funcs
-typedef struct _File_Info File_Info;
-struct _File_Info
-{
-   unsigned char *map;
-   int pos, len; // yes - gif uses ints for file sizes.
-};
-
 static int
 _file_read(GifFileType *gft, GifByteType *buf, int len)
 {
@@ -542,7 +543,6 @@ evas_image_load_file_data_gif2(void *loader_data,
    Evas_Image_Animated *animated = loader->animated;
    Eina_File *f = loader->f;
    Eina_Bool ret = EINA_FALSE;
-   File_Info fi = { NULL, 0, 0 };
    GifRecordType rec;
    GifFileType *gif = NULL;
    Image_Entry_Frame *frame;
@@ -573,21 +573,51 @@ evas_image_load_file_data_gif2(void *loader_data,
    else
      LOADERR(EVAS_LOAD_ERROR_CORRUPT_FILE);
 
-   // map the file and store/track info
-   fi.map = eina_file_map_all(f, EINA_FILE_RANDOM);
-   if (!fi.map) LOADERR(EVAS_LOAD_ERROR_CORRUPT_FILE);
-   fi.len = eina_file_size_get(f);
-   fi.pos = 0;
-
+open_file:
    // actually ask libgif to open the file
-#if GIFLIB_MAJOR >= 5
-   gif = DGifOpen(&fi, _file_read, NULL);
-#else
-   gif = DGifOpen(&fi, _file_read);
-#endif
-   if (!gif) LOADERR(EVAS_LOAD_ERROR_UNKNOWN_FORMAT);
+   gif = loader->gif;
+   if (!gif)
+     {
+        // there was no file previously opened
+        // map the file and store/track info
+        loader->fi.map = eina_file_map_all(f, EINA_FILE_RANDOM);
+        if (!loader->fi.map) LOADERR(EVAS_LOAD_ERROR_CORRUPT_FILE);
+        loader->fi.len = eina_file_size_get(f);
+        loader->fi.pos = 0;
 
-   imgnum = 1;
+#if GIFLIB_MAJOR >= 5
+        gif = DGifOpen(&(loader->fi), _file_read, NULL);
+#else
+        gif = DGifOpen(&(loader->fi), _file_read);
+#endif
+        // if gif open failed... get out of here
+        if (!gif)
+          {
+             if ((loader->fi.map) && (loader->f))
+               eina_file_map_free(loader->f, loader->fi.map);
+             loader->fi.map = NULL;
+             LOADERR(EVAS_LOAD_ERROR_UNKNOWN_FORMAT);
+          }
+        loader->gif = gif;
+        loader->imgnum = 1;
+     }
+
+   // if we want to go backwards, we likely need/want to re-decode from the
+   // start as we have nothnig to build on
+   if ((index > 0) && (index < loader->imgnum) && (loader->animated))
+     {
+        if (loader->gif) DGifCloseFile(loader->gif);
+        if ((loader->fi.map) && (loader->f))
+          eina_file_map_free(loader->f, loader->fi.map);
+        loader->gif = NULL;
+        loader->fi.map = NULL;
+        loader->imgnum = 0;
+        goto open_file;
+     }
+
+   // our current position is the previous frame we decoded from the file
+   imgnum = loader->imgnum;
+
    // walk through gif records in file to figure out info
    do
      {
@@ -625,7 +655,7 @@ evas_image_load_file_data_gif2(void *loader_data,
              if ((thisframe) && (!thisframe->data) && (animated->animated))
                {
                   Eina_Bool first = EINA_FALSE;
-                  
+
                   // allocate it
                   thisframe->data =
                     malloc(prop->w * prop->h * sizeof(DATA32));
@@ -723,12 +753,25 @@ evas_image_load_file_data_gif2(void *loader_data,
                        DGifGetCodeNext(gif, &img);
                     }
                }
-             // if we found the image we wanted - get out of here
-             if (imgnum == index) break;
              imgnum++;
+             // if we found the image we wanted - get out of here
+             if (imgnum >= index) break;
           }
      }
    while (rec != TERMINATE_RECORD_TYPE);
+
+   // if we are at the end of the animation or not animated, close file
+   loader->imgnum = imgnum;
+   if ((!loader->animated) ||
+       ((loader->animated) && (rec == TERMINATE_RECORD_TYPE)))
+     {
+        if (loader->gif) DGifCloseFile(loader->gif);
+        if ((loader->fi.map) && (loader->f))
+          eina_file_map_free(loader->f, loader->fi.map);
+        loader->gif = NULL;
+        loader->fi.map = NULL;
+        loader->imgnum = 0;
+     }
    
 on_ok:   
    // no errors in header scan etc. so set err and return value
@@ -742,8 +785,6 @@ on_ok:
    prop->premul = EINA_TRUE;
    
 on_error: // jump here on any errors to clean up
-   if (gif) DGifCloseFile(gif);
-   if (fi.map) eina_file_map_free(f, fi.map);
    return ret;
 }
 
@@ -808,6 +849,9 @@ static void
 evas_image_load_file_close_gif2(void *loader_data)
 {
    Loader_Info *loader = loader_data;
+   if (loader->gif) DGifCloseFile(loader->gif);
+   if ((loader->fi.map) && (loader->f))
+     eina_file_map_free(loader->f, loader->fi.map);
    free(loader);
 }
 
