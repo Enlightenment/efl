@@ -33,7 +33,7 @@
 #include "ecore_evas_extn.h"
 #include "ecore_evas_win32.h"
 
-EAPI Eina_Bool _ecore_evas_app_comp_sync = 1;
+EAPI Eina_Bool _ecore_evas_app_comp_sync = EINA_FALSE;
 EAPI int _ecore_evas_log_dom = -1;
 static int _ecore_evas_init_count = 0;
 static Ecore_Fd_Handler *_ecore_evas_async_events_fd = NULL;
@@ -366,7 +366,9 @@ ecore_evas_init(void)
 		   EINA_LOG_STATE_INIT);
 
    if (getenv("ECORE_EVAS_COMP_NOSYNC"))
-      _ecore_evas_app_comp_sync = 0;
+     _ecore_evas_app_comp_sync = EINA_FALSE;
+   else if (getenv("ECORE_EVAS_COMP_SYNC"))
+     _ecore_evas_app_comp_sync = EINA_TRUE;
    return _ecore_evas_init_count;
 
  shutdown_ecore:
