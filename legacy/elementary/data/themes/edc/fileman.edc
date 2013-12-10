@@ -709,7 +709,7 @@ group { name: "e/fileman/default/icon/fixed";
             rel1.to: "icon0";
             rel2.to: "icon0";
             rel1.relative: 0.1 0.1;
-            rel2.relative: 0.9 1.0;
+            rel2.relative: 0.9 0.9;
             rel2.offset: 0 5;
          }
       }
@@ -719,6 +719,8 @@ group { name: "e/fileman/default/icon/fixed";
             color: 0 0 0 0;
             rel1.to: "e.text.label";
             rel2.to: "e.text.label";
+            rel1.relative: 0.1 0.0;
+            rel2.relative: 0.9 0.9;
          }
       }
       part { name: "e.swallow.entry"; type: SWALLOW;
