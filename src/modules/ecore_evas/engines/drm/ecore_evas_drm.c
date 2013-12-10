@@ -41,6 +41,7 @@ static Ecore_Evas_Interface_Drm *_ecore_evas_drm_interface_new(void);
 
 /* local variables */
 static int _ecore_evas_init_count = 0;
+static Ecore_Drm_Device *dev = NULL;
 
 static Ecore_Evas_Engine_Func _ecore_evas_drm_engine_func = 
 {
@@ -112,7 +113,6 @@ ecore_evas_drm_new_internal(const char *device, unsigned int parent, int x, int 
 {
    Ecore_Evas *ee;
    Evas_Engine_Info_Drm *einfo;
-   Ecore_Drm_Device *dev;
    int method;
 
    /* try to find the evas drm engine */
@@ -122,33 +122,8 @@ ecore_evas_drm_new_internal(const char *device, unsigned int parent, int x, int 
         return NULL;
      }
 
-   /* try to init ecore_drm */
-   if (!ecore_drm_init())
-     {
-        ERR("Could not initialize Ecore_Drm");
-        return NULL;
-     }
-
-   /* try to find the device */
-   if (!(dev = ecore_drm_device_find(NULL, NULL)))
-     {
-        ERR("Could not find default drm device");
-        goto dev_err;
-     }
-
-   /* try to open the tty */
-   if (!ecore_drm_tty_open(dev, "/dev/tty0"))
-     {
-        ERR("Could not open tty");
-        goto tty_open_err;
-     }
-
-   /* try to open the graphics card */
-   if (!ecore_drm_device_open(dev))
-     {
-        ERR("Could not open drm device");
-        goto dev_open_err;
-     }
+   /* try to init drm and company */
+   if (_ecore_evas_drm_init() < 1) return NULL;
 
    /* try to allocate space for Ecore_Evas structure */
    if (!(ee = calloc(1, sizeof(Ecore_Evas))))
@@ -157,9 +132,9 @@ ecore_evas_drm_new_internal(const char *device, unsigned int parent, int x, int 
         goto ee_err;
      }
 
-   ECORE_MAGIC_SET(ee, ECORE_MAGIC_EVAS);
+   /* FIXME: STORE Ecore_Drm_Dev in engine somewhere ?? */
 
-   _ecore_evas_drm_init();
+   ECORE_MAGIC_SET(ee, ECORE_MAGIC_EVAS);
 
    ee->engine.func = (Ecore_Evas_Engine_Func *)&_ecore_evas_drm_engine_func;
 
@@ -212,15 +187,8 @@ ecore_evas_drm_new_internal(const char *device, unsigned int parent, int x, int 
 
 eng_err:
    ecore_evas_free(ee);
-   _ecore_evas_drm_shutdown();
 ee_err:
-   ecore_drm_device_close(dev);
-dev_open_err:
-   ecore_drm_tty_close(dev);
-tty_open_err:
-   ecore_drm_device_free(dev);
-dev_err:
-   ecore_drm_shutdown();
+   _ecore_evas_drm_shutdown();
    return NULL;
 }
 
@@ -228,24 +196,64 @@ dev_err:
 static int 
 _ecore_evas_drm_init(void)
 {
-   _ecore_evas_init_count++;
-   if (_ecore_evas_init_count > 1) return _ecore_evas_init_count;
+   if (++_ecore_evas_init_count != 1) 
+     return _ecore_evas_init_count;
+
+   /* try to init ecore_drm */
+   if (!ecore_drm_init())
+     {
+        ERR("Could not initialize Ecore_Drm");
+        return --_ecore_evas_init_count;
+     }
+
+   /* try to find the device */
+   if (!(dev = ecore_drm_device_find(NULL, NULL)))
+     {
+        ERR("Could not find default drm device");
+        goto dev_err;
+     }
+
+   /* try to open the tty */
+   if (!ecore_drm_tty_open(dev, "/dev/tty2"))
+     {
+        ERR("Could not open tty: %m");
+        goto tty_open_err;
+     }
+
+   /* try to open the graphics card */
+   if (!ecore_drm_device_open(dev))
+     {
+        ERR("Could not open drm device");
+        goto dev_open_err;
+     }
 
    ecore_event_evas_init();
 
    return _ecore_evas_init_count;
+
+//   ecore_drm_device_close(dev);
+dev_open_err:
+   ecore_drm_tty_close(dev);
+tty_open_err:
+   ecore_drm_device_free(dev);
+dev_err:
+   ecore_drm_shutdown();
+   return --_ecore_evas_init_count;
 }
 
 static int 
 _ecore_evas_drm_shutdown(void)
 {
-   _ecore_evas_init_count--;
-   if (_ecore_evas_init_count == 0)
-     {
-        ecore_event_evas_shutdown();
-     }
+   if (--_ecore_evas_init_count != 0)
+     return _ecore_evas_init_count;
 
-   if (_ecore_evas_init_count < 0) _ecore_evas_init_count = 0;
+   ecore_drm_device_close(dev);
+   ecore_drm_tty_close(dev);
+   ecore_drm_device_free(dev);
+   ecore_drm_shutdown();
+
+   ecore_event_evas_shutdown();
+
    return _ecore_evas_init_count;
 }
 
