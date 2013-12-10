@@ -1057,6 +1057,9 @@ evas_filter_program_parse(Evas_Filter_Program *pgm, const char *str)
              break;
           }
 
+        // Empty command
+        if (next == token + 1) continue;
+
         // Parse "instrname(options)"
         options = token;
         instrname = strsep(&options, "(");
