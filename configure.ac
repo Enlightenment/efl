@@ -288,7 +288,7 @@ fi
 # it's not found. So we are using an internal variable
 # that does the work for now, may get broken in the future.
 if test "x${ac_ct_CXX}" = "x"; then
-   AC_MSG_ERROR([efl requires a C++ compiler])
+   AC_MSG_ERROR([efl requires a C++ compiler got ${ac_ct_CXX} and ${CXX}.])
 fi
 
 AC_SYS_LARGEFILE
