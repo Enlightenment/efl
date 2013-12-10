@@ -1036,8 +1036,6 @@ ecore_x_icccm_colormap_window_set(Ecore_X_Window win,
              if (oldset[i] == subwin)
                {
                   free(old_data);
-
-                  old_data = NULL;
                   free(newset);
                   return;
                }
@@ -1046,9 +1044,6 @@ ecore_x_icccm_colormap_window_set(Ecore_X_Window win,
           }
 
         newset[num++] = subwin;
-        if (old_data)
-          free(old_data);
-
         data = (unsigned char *)newset;
      }
 
