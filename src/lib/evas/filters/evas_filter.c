@@ -745,6 +745,8 @@ evas_filter_command_blend_add(Evas_Filter_Context *ctx, void *drawctx,
    cmd->draw.ox = ox;
    cmd->draw.oy = oy;
    cmd->draw.render_op = ENFN->context_render_op_get(ENDT, drawctx);
+   ENFN->context_clip_get(ENDT, drawctx, &cmd->draw.clipx, &cmd->draw.clipy,
+                          &cmd->draw.clipw, &cmd->draw.cliph);
 
    return cmd->id;
 }

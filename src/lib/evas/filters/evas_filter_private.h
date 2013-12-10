@@ -100,7 +100,7 @@ struct _Evas_Filter_Command
       int render_op;
       int R, G, B, A;
       int ox, oy;
-      // TODO: Add clip
+      int clipx, clipy, clipw, cliph;
    } draw;
 };
 
