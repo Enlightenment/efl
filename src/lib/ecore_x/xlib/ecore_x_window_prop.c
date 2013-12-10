@@ -545,7 +545,7 @@ ecore_x_window_prop_property_get(Ecore_X_Window win,
    if (_ecore_xlib_sync) ecore_x_sync();
    if (ret != Success)
      return 0;
-   if (!num_ret)
+   if ((!num_ret) || (size_ret <= 0))
      {
         XFree(prop_ret);
         return 0;
