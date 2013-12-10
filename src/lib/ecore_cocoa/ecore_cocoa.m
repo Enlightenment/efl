@@ -81,8 +81,13 @@ ecore_cocoa_feed_events(void)
       {
          Ecore_Event_Mouse_Move * ev = calloc(1, sizeof(Ecore_Event_Mouse_Move));
          if (!ev) return;
-         ev->x = [event locationInWindow].x;
-         ev->y = [event locationInWindow].y;
+
+         EcoreCocoaWindow *window = (EcoreCocoaWindow *)[event window];
+         NSView *view = [window contentView];
+         NSPoint pt = [event locationInWindow];
+
+         ev->x = pt.x;
+         ev->y = [view frame].size.height - pt.y;
          ev->root.x = ev->x;
          ev->root.y = ev->y;
          ev->timestamp = time;
@@ -100,8 +105,13 @@ ecore_cocoa_feed_events(void)
       {
          Ecore_Event_Mouse_Button * ev = calloc(1, sizeof(Ecore_Event_Mouse_Button));
          if (!ev) return;
-         ev->x = [event locationInWindow].x;
-         ev->y = [event locationInWindow].y;
+
+         EcoreCocoaWindow *window = (EcoreCocoaWindow *)[event window];
+         NSView *view = [window contentView];
+         NSPoint pt = [event locationInWindow];
+
+         ev->x = pt.x;
+         ev->y = [view frame].size.height - pt.y;
          ev->root.x = ev->x;
          ev->root.y = ev->y;
          ev->timestamp = time;
@@ -128,8 +138,13 @@ ecore_cocoa_feed_events(void)
       {
          Ecore_Event_Mouse_Button * ev = calloc(1, sizeof(Ecore_Event_Mouse_Button));
          if (!ev) return;
-         ev->x = [event locationInWindow].x;
-         ev->y = [event locationInWindow].y;
+
+         EcoreCocoaWindow *window = (EcoreCocoaWindow *)[event window];
+         NSView *view = [window contentView];
+         NSPoint pt = [event locationInWindow];
+
+         ev->x = pt.x;
+         ev->y = [view frame].size.height - pt.y;
          ev->root.x = ev->x;
          ev->root.y = ev->y;
          ev->timestamp = time;
@@ -163,6 +178,7 @@ ecore_cocoa_feed_events(void)
          {
             if (keystable[i].code == tolower([[event charactersIgnoringModifiers] characterAtIndex:0]))
             {
+	      printf("Key pressed : %s\n", keystable[i].name);
                ev->keyname = keystable[i].name;
                ev->string = keystable[i].compose;
 
