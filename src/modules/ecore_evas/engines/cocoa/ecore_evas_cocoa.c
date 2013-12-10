@@ -97,7 +97,7 @@ static Ecore_Evas *
 _ecore_evas_cocoa_match(void)
 {
   DBG("Match");
-  return ecore_evases;
+  return eina_list_nth(ecore_evases, 0);
 }
 
 static int
@@ -174,12 +174,13 @@ static int
 _ecore_evas_idle_enter(void *data EINA_UNUSED)
 {
   Ecore_Evas  *ee;
+  Eina_List *l;
   double       t1 = 0.;
   double       t2 = 0.;
 
   DBG("Idle enter");
 
-  EINA_INLIST_FOREACH(ecore_evases, ee)
+  EINA_LIST_FOREACH(ecore_evases, l, ee)
     {
       if (ee->visible)
 	evas_render(ee->evas);
@@ -220,13 +221,15 @@ _ecore_evas_cocoa_init(void)
 static int
 _ecore_evas_cocoa_shutdown(void)
 {
+    Ecore_Evas *ee;
   DBG("Cocoa SHutodwn");
   _ecore_evas_init_count--;
   if (_ecore_evas_init_count == 0)
     {
       int i;
 
-      while (ecore_evases) _ecore_evas_free(ecore_evases);
+      EINA_LIST_FREE(ecore_evases, ee)
+         _ecore_evas_free(ee);
 
       for (i = 0; i < sizeof (ecore_evas_event_handlers) / sizeof (Ecore_Event_Handler*); i++)
 	ecore_event_handler_del(ecore_evas_event_handlers[i]);
@@ -246,7 +249,7 @@ static void
 _ecore_evas_cocoa_free(Ecore_Evas *ee)
 {
   DBG("Cocoa Free");
-  ecore_evases = (Ecore_Evas *) eina_inlist_remove(EINA_INLIST_GET(ecore_evases), EINA_INLIST_GET(ee));
+  ecore_evases = eina_list_remove(ecore_evases, ee);
   ecore_event_window_unregister(0);
   _ecore_evas_cocoa_shutdown();
   ecore_cocoa_shutdown();
@@ -576,6 +579,9 @@ ecore_evas_cocoa_new_internal(Ecore_Cocoa_Window *parent, int x, int y, int w, i
   
   evas_event_feed_mouse_in(ee->evas, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff), NULL);
   printf("Ecore Evas returned : %p\n", ee);
+
+  ecore_evases = eina_list_append(ecore_evases, ee);
+
   return ee;
   
  free_window:
