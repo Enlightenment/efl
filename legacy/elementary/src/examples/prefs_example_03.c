@@ -30,6 +30,7 @@ _update_animation_time(Evas_Object *prefs, Evas_Object *layout)
 
    elm_prefs_item_value_get(prefs, "main:config:options:animation_time", &value);
    eina_value_get(&value, &animation_time);
+   if (animation_time < 0.01) animation_time = 0.01;
    msg.val = animation_time;
    edje_object_message_send(elm_layout_edje_get(layout), EDJE_MESSAGE_FLOAT,
                             MSG_ID_VEL, &msg);
