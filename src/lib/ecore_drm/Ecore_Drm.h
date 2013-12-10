@@ -71,6 +71,9 @@ EAPI Ecore_Drm_Device *ecore_drm_device_find(const char *name, const char *seat)
 EAPI void ecore_drm_device_free(Ecore_Drm_Device *dev);
 EAPI Eina_Bool ecore_drm_device_open(Ecore_Drm_Device *dev);
 EAPI Eina_Bool ecore_drm_device_close(Ecore_Drm_Device *dev);
+EAPI Eina_Bool ecore_drm_device_master_get(Ecore_Drm_Device *dev);
+EAPI Eina_Bool ecore_drm_device_master_set(Ecore_Drm_Device *dev);
+EAPI Eina_Bool ecore_drm_device_master_drop(Ecore_Drm_Device *dev);
 
 EAPI Eina_Bool ecore_drm_tty_open(Ecore_Drm_Device *dev, const char *name);
 EAPI Eina_Bool ecore_drm_tty_close(Ecore_Drm_Device *dev);
