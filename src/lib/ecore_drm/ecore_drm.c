@@ -120,6 +120,10 @@ _ecore_drm_socket_receive(int opcode, int fd EINA_UNUSED, void **data, size_t by
 
    rfd = *((int *)CMSG_DATA(cmsg));
 
+   DBG("\tFD: %d", rfd);
+   DBG("\tDmsg Opcode: %d", dmsg.opcode);
+   DBG("\tOpcode: %d", opcode);
+
    if (dmsg.opcode != opcode) return -1;
 
    switch (dmsg.opcode)
@@ -130,6 +134,7 @@ _ecore_drm_socket_receive(int opcode, int fd EINA_UNUSED, void **data, size_t by
         if (data) *data = &rfd;
         break;
       case ECORE_DRM_OP_DEVICE_CLOSE:
+      case ECORE_DRM_OP_TTY_CLOSE:
         ret = -1;
         break;
       default:
@@ -159,7 +164,7 @@ _ecore_drm_socket_create(void)
    return EINA_TRUE;
 }
 
-static void 
+static Eina_Bool 
 _ecore_drm_launcher_spawn(void)
 {
    pid_t pid;
@@ -170,13 +175,9 @@ _ecore_drm_launcher_spawn(void)
    if ((pid = vfork()) < 0)
      CRIT("Failed to fork: %m");
 
-   /* if (pid != 0) */
-   /*   { */
-   /*      DBG("Parent Sending Pass Fd Message"); */
-   /*      _ecore_drm_message_send(ECORE_DRM_OP_WRITE_FD_SET,  */
-   /*                              &_ecore_drm_socket_fd[0], sizeof(int)); */
-   /*   } */
-   if (pid == 0) /* child process. exec spartacus */
+   if (pid != 0)
+     return EINA_TRUE;
+   else if (pid == 0) /* child process. exec spartacus */
      {
         char buff[PATH_MAX], env[32];
         char *args[1] = { NULL };
@@ -218,6 +219,8 @@ _ecore_drm_launcher_spawn(void)
      }
 
    /* close(_ecore_drm_socket_fd[1]); */
+
+   return EINA_FALSE;
 }
 
 void 
@@ -316,11 +319,17 @@ ecore_drm_init(void)
      }
 
    /* try to run SPARTACUS !! */
-   _ecore_drm_launcher_spawn();
+   if (!_ecore_drm_launcher_spawn())
+     {
+        ERR("Could not spawn Spartacus !!");
+        goto spawn_err;
+     }
 
    /* return init count */
    return _ecore_drm_init_count;
 
+spawn_err:
+   if (udev) udev_unref(udev);
 udev_err:
    close(_ecore_drm_socket_fd[0]);
    close(_ecore_drm_socket_fd[1]);
