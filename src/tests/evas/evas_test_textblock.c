@@ -1179,6 +1179,19 @@ START_TEST(evas_textblock_format_removal)
    fnode = evas_textblock_node_format_first_get(tb);
    fail_if(fnode);
 
+   /* The first one below used to crash: empty value.
+    * Test some invalid stuff doesn't segv. We force relayout as this will
+    * trigger the parser. */
+   evas_object_textblock_text_markup_set(tb, "A<a=>");
+   evas_object_textblock_size_formatted_get(tb, NULL, NULL);
+   evas_object_textblock_text_markup_set(tb, "A<=b>");
+   evas_object_textblock_size_formatted_get(tb, NULL, NULL);
+   evas_object_textblock_text_markup_set(tb, "A<=>");
+   evas_object_textblock_size_formatted_get(tb, NULL, NULL);
+   evas_object_textblock_text_markup_set(tb, "A<a='>");
+   evas_object_textblock_size_formatted_get(tb, NULL, NULL);
+   evas_object_textblock_text_markup_set(tb, "A<a='");
+   evas_object_textblock_size_formatted_get(tb, NULL, NULL);
 
    /* Deleting a range with just one char and surrounded by formats, that
     * deletes a paragraph. */
