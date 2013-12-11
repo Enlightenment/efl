@@ -2165,6 +2165,7 @@ _ethumb_client_thumb_generate_idler(void *data EINA_UNUSED)
              async->error(async->client, (void *)async->data);
              async->client->ethumb = tmp;
              _ethumb_client_async_free(async);
+             async = NULL;
           }
         else
           {
