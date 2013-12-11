@@ -386,6 +386,8 @@ evas_image_load_file_head_gif2(void *loader_data,
    Frame_Info *finfo = NULL;
    Eina_Bool full = EINA_TRUE;
 
+   if (!loader) return EINA_FALSE;
+   
    // init prop struct with some default null values
    prop->w = 0;
    prop->h = 0;
@@ -549,6 +551,8 @@ evas_image_load_file_data_gif2(void *loader_data,
    int index = 0, imgnum = 0;
    Frame_Info *finfo;
 
+   if (!loader) return EINA_FALSE;
+   
    // XXX: this is so wrong - storing current frame IN the image
    // so we have to load multiple times to animate. what if the
    // same image is shared/loaded in 2 ore more places AND animated
