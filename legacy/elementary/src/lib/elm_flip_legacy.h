@@ -188,6 +188,10 @@ EAPI Elm_Flip_Interaction elm_flip_interaction_get(const Evas_Object *obj);
  * desired directions for flipping if you need interactive flipping. You must
  * call this function once for each direction that should be enabled.
  *
+ * You can also set the appropriate hit area size by calling
+ * @c elm_flip_interaction_direction_hitsize_set(). By default, a minimum
+ * hit area will be created on the opposite edge of the flip.
+ *
  * @see elm_flip_interaction_set()
  *
  * @ingroup Flip
@@ -213,13 +217,21 @@ EAPI Eina_Bool            elm_flip_interaction_direction_enabled_get(Evas_Object
  * @brief Set the amount of the flip that is sensitive to interactive flip
  *
  * @param obj The flip object
- * @param dir The direction to modify
+ * @param dir The hit area to set
  * @param hitsize The amount of that dimension (0.0 to 1.0) to use
  *
  * Set the amount of the flip that is sensitive to interactive flip, with 0
  * representing no area in the flip and 1 representing the entire flip. There
  * is however a consideration to be made in that the area will never be
- * smaller than the finger size set(as set in your Elementary configuration).
+ * smaller than the finger size set (as set in your Elementary configuration),
+ * and dragging must always start from the opposite half of the flip (eg. right
+ * half of the flip when dragging to the left).
+ *
+ * Note that the @c dir parameter is not actually related to the direction of
+ * the drag, it only refers to the area in the flip where interaction can
+ * occur (top, bottom, left, right).
+ *
+ * Negative values of @c hitsize will disable this hit area.
  *
  * @see elm_flip_interaction_set()
  *

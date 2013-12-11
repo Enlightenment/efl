@@ -1689,7 +1689,6 @@ _move_cb(void *data,
         if (((dx * dx) + (dy * dy)) >
             (_elm_config->finger_size * _elm_config->finger_size / 4))
           {
-             sd->dir = ELM_FLIP_DIRECTION_LEFT;
              if ((sd->x > (w / 2)) &&
                  (dx < 0) && (abs(dx) > abs(dy)))
                {
@@ -1712,6 +1711,7 @@ _move_cb(void *data,
                   sd->dir = ELM_FLIP_DIRECTION_DOWN;
                   if (!sd->dir_enabled[ELM_FLIP_DIRECTION_DOWN]) return;
                }
+             else return;
 
              sd->started = EINA_TRUE;
              if (sd->intmode == ELM_FLIP_INTERACTION_PAGE)
@@ -2035,6 +2035,31 @@ elm_flip_interaction_set(Evas_Object *obj,
 }
 
 static void
+_event_rect_create(Eo *obj, Elm_Flip_Smart_Data *sd, int i)
+{
+   Evas_Object *clip;
+   Evas *e;
+
+   if (sd->event[i]) return;
+
+   e = evas_object_evas_get(obj);
+   sd->event[i] = evas_object_rectangle_add(e);
+
+   clip = evas_object_clip_get(obj);
+   evas_object_data_set(sd->event[i], "_elm_leaveme", obj);
+   evas_object_clip_set(sd->event[i], clip);
+   evas_object_color_set(sd->event[i], 0, 0, 0, 0);
+   evas_object_show(sd->event[i]);
+   evas_object_smart_member_add(sd->event[i], obj);
+   evas_object_event_callback_add
+     (sd->event[i], EVAS_CALLBACK_MOUSE_DOWN, _down_cb, obj);
+   evas_object_event_callback_add
+     (sd->event[i], EVAS_CALLBACK_MOUSE_UP, _up_cb, obj);
+   evas_object_event_callback_add
+     (sd->event[i], EVAS_CALLBACK_MOUSE_MOVE, _move_cb, obj);
+}
+
+static void
 _interaction_set(Eo *obj, void *_pd, va_list *list)
 {
    Elm_Flip_Interaction mode = va_arg(*list, Elm_Flip_Interaction);
@@ -2045,37 +2070,15 @@ _interaction_set(Eo *obj, void *_pd, va_list *list)
    if (sd->intmode == mode) return;
    sd->intmode = mode;
 
-   Evas *e = evas_object_evas_get(obj);
-   Evas_Object *clip = evas_object_clip_get(obj);
-
    for (i = 0; i < 4; i++)
      {
         if (sd->intmode == ELM_FLIP_INTERACTION_NONE)
+          ELM_SAFE_FREE(sd->event[i], evas_object_del);
+        else if (sd->dir_enabled[i])
           {
-             if (sd->event[i])
-               {
-                  evas_object_del(sd->event[i]);
-                  sd->event[i] = NULL;
-               }
-          }
-        else
-          {
-             if ((sd->dir_enabled[i]) && (!sd->event[i]))
-               {
-                  sd->event[i] = evas_object_rectangle_add(e);
-
-                  evas_object_data_set(sd->event[i], "_elm_leaveme", obj);
-                  evas_object_clip_set(sd->event[i], clip);
-                  evas_object_color_set(sd->event[i], 0, 0, 0, 0);
-                  evas_object_show(sd->event[i]);
-                  evas_object_smart_member_add(sd->event[i], obj);
-                  evas_object_event_callback_add
-                    (sd->event[i], EVAS_CALLBACK_MOUSE_DOWN, _down_cb, obj);
-                  evas_object_event_callback_add
-                    (sd->event[i], EVAS_CALLBACK_MOUSE_UP, _up_cb, obj);
-                  evas_object_event_callback_add
-                    (sd->event[i], EVAS_CALLBACK_MOUSE_MOVE, _move_cb, obj);
-               }
+             int area = (i & 0x2) | (i ^ 0x1);
+             if (sd->dir_hitsize[area] >= 0.0)
+               _event_rect_create(obj, sd, area);
           }
      }
 
@@ -2115,6 +2118,7 @@ _interaction_direction_enabled_set(Eo *obj, void *_pd, va_list *list)
    Elm_Flip_Direction dir = va_arg(*list, Elm_Flip_Direction);
    Eina_Bool enabled = va_arg(*list, int);
    int i = (int) dir;
+   int area;
 
    Elm_Flip_Smart_Data *sd = _pd;
 
@@ -2122,27 +2126,14 @@ _interaction_direction_enabled_set(Eo *obj, void *_pd, va_list *list)
    if (sd->dir_enabled[i] == enabled) return;
    sd->dir_enabled[i] = enabled;
    if (sd->intmode == ELM_FLIP_INTERACTION_NONE) return;
-   if ((sd->dir_enabled[i]) && (!sd->event[i]))
-     {
-        sd->event[i] = evas_object_rectangle_add(evas_object_evas_get(obj));
 
-        evas_object_data_set(sd->event[i], "_elm_leaveme", obj);
-        evas_object_clip_set(sd->event[i], evas_object_clip_get(obj));
-        evas_object_color_set(sd->event[i], 0, 0, 0, 0);
-        evas_object_show(sd->event[i]);
-        evas_object_smart_member_add(sd->event[i], obj);
-        evas_object_event_callback_add(sd->event[i], EVAS_CALLBACK_MOUSE_DOWN,
-                                       _down_cb, obj);
-        evas_object_event_callback_add(sd->event[i], EVAS_CALLBACK_MOUSE_UP,
-                                       _up_cb, obj);
-        evas_object_event_callback_add(sd->event[i], EVAS_CALLBACK_MOUSE_MOVE,
-                                       _move_cb, obj);
-     }
-   else if (!(sd->dir_enabled[i]) && (sd->event[i]))
-     {
-        evas_object_del(sd->event[i]);
-        sd->event[i] = NULL;
-     }
+   area = (i & 0x2) | (i ^ 0x1); // up <-> down, left <-> right
+   if (enabled && (sd->dir_hitsize[area] >= 0.0))
+     _event_rect_create(obj, sd, area);
+   else if (!enabled && (sd->dir_hitsize[area] <= 0.0))
+     // Delete this hit area as it has the default hitsize (0)
+     ELM_SAFE_FREE(sd->event[area], evas_object_del);
+
    _sizing_eval(obj);
    _configure(obj);
 }
@@ -2186,12 +2177,19 @@ _interaction_direction_hitsize_set(Eo *obj, void *_pd, va_list *list)
 
    Elm_Flip_Smart_Data *sd = _pd;
 
-   if (hitsize < 0.0) hitsize = 0.0;
+   if (hitsize < 0.0)
+     hitsize = -1.0;
    else if (hitsize > 1.0)
      hitsize = 1.0;
 
    if (sd->dir_hitsize[i] == hitsize) return;
    sd->dir_hitsize[i] = hitsize;
+
+   if (hitsize >= 0.0)
+     _event_rect_create(obj, sd, i);
+   else
+     ELM_SAFE_FREE(sd->event[i], evas_object_del);
+
    _sizing_eval(obj);
    _configure(obj);
 }
