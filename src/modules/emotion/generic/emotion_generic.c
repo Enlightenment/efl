@@ -997,11 +997,10 @@ _delayed_munmap(void *data, Evas *e, void *event_info EINA_UNUSED)
 {
    Delay_Munmap *dm = data;
 
+   evas_event_callback_del_full(e, EVAS_CALLBACK_RENDER_POST, _delayed_munmap, data);
    fprintf(stderr, "munmapping !\n");
    munmap(dm->map, dm->size);
    free(dm);
-
-   evas_event_callback_del_full(e, EVAS_CALLBACK_RENDER_POST, _delayed_munmap, data);
 }
 
 static void
