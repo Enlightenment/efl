@@ -2137,10 +2137,17 @@ do_eglShaderPatch(const char *source, int length, int *patched_len)
              int new_len = strlen(p);
              if (*patched_len + new_len > patched_size)
                {
-                  patched_size *= 2;
-                  patched = realloc(patched, patched_size + 1);
+                  char *tmp;
 
-                  if (!patched) return NULL;
+                  patched_size *= 2;
+                  tmp = realloc(patched, patched_size + 1);
+                  if (!tmp)
+                    {
+                       free(patched);
+                       free(p);
+                       return NULL;
+                    }
+                  patched = tmp;
                }
 
              memcpy(patched + *patched_len, p, new_len);
