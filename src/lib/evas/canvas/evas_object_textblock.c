@@ -10611,6 +10611,7 @@ _dbg_info_get(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
 {
    Eo_Dbg_Info *root = (Eo_Dbg_Info *) va_arg(*list, Eo_Dbg_Info *);
    eo_do_super(eo_obj, MY_CLASS, eo_dbg_info_get(root));
+   if (!root) return;
    Eo_Dbg_Info *group = EO_DBG_INFO_LIST_APPEND(root, MY_CLASS_NAME);
    Eo_Dbg_Info *node;
 
