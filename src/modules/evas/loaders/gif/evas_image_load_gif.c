@@ -386,8 +386,6 @@ evas_image_load_file_head_gif2(void *loader_data,
    Frame_Info *finfo = NULL;
    Eina_Bool full = EINA_TRUE;
 
-   if (!loader) return EINA_FALSE;
-   
    // init prop struct with some default null values
    prop->w = 0;
    prop->h = 0;
@@ -551,8 +549,6 @@ evas_image_load_file_data_gif2(void *loader_data,
    int index = 0, imgnum = 0;
    Frame_Info *finfo;
 
-   if (!loader) return EINA_FALSE;
-   
    // XXX: this is so wrong - storing current frame IN the image
    // so we have to load multiple times to animate. what if the
    // same image is shared/loaded in 2 ore more places AND animated
@@ -608,7 +604,8 @@ open_file:
 
    // if we want to go backwards, we likely need/want to re-decode from the
    // start as we have nothnig to build on
-   if ((index > 0) && (index < loader->imgnum) && (loader->animated))
+   if ((index > 0) && (index < loader->imgnum) &&
+       (loader->animated->frame_count > 1))
      {
         if (loader->gif) DGifCloseFile(loader->gif);
         if ((loader->fi.map) && (loader->f))
@@ -766,8 +763,7 @@ open_file:
 
    // if we are at the end of the animation or not animated, close file
    loader->imgnum = imgnum;
-   if ((!loader->animated) ||
-       ((loader->animated) && (rec == TERMINATE_RECORD_TYPE)))
+   if ((animated->frame_count <= 1) || (rec == TERMINATE_RECORD_TYPE))
      {
         if (loader->gif) DGifCloseFile(loader->gif);
         if ((loader->fi.map) && (loader->f))
