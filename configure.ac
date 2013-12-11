@@ -351,13 +351,6 @@ esac
 AM_CONDITIONAL([HAVE_CRYPTO_GNUTLS], [test "${build_crypto}" = "gnutls"])
 AM_CONDITIONAL([HAVE_CRYPTO_OPENSSL], [test "${build_crypto}" = "openssl"])
 
-# check for systemd library if requested
-if test "x{want_systemd}" = "xyes"; then
-   PKG_CHECK_MODULES([SYSTEMD], [libsystemd-daemon >= 192 libsystemd-journal >= 192],
-   		[want_systemd="yes"],
-		[want_systemd="no"])
-fi
-
 #### Checks for header files
 
 # Common Checks (keep names sorted for ease of use):
@@ -575,9 +568,16 @@ AC_ARG_ENABLE([systemd],
        want_systemd="no"
     fi
    ],
-   [want_systemd="no"])
-AM_CONDITIONAL([WANT_SYSTEMD], [test "${want_systemd}" = "yes"])
+   [want_systemd="auto"])
 
+# check for systemd library if requested
+if test "x${want_systemd}" = "xyes" -o "x${want_systemd}" = "xauto"; then
+   PKG_CHECK_MODULES([SYSTEMD], [libsystemd-daemon >= 192 libsystemd-journal >= 192],
+   		[want_systemd="yes"],
+		[want_systemd="no"])
+fi
+
+AM_CONDITIONAL([WANT_SYSTEMD], [test "${want_systemd}" = "yes"])
 
 #### Platform-dependent
 DL_LIBS=""
