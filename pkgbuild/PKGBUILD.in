@@ -19,9 +19,9 @@ depends=('bullet' 'libpng' 'libjpeg-turbo' 'gstreamer0.10'
 provides=("ecore=$pkgver" "eldbus=$pkgver" "edje=$pkgver"
           "eet=$pkgver" "eeze=$pkgver" "efreet=$pkgver"
           "eina=$pkgver" "eio=$pkgver" "embryo=$pkgver" "emotion=$pkgver"
-          "ephysics=$pkgver" "ethumb=$pkgver" "evas=$pkgver")
+          "ephysics=$pkgver" "ethumb=$pkgver" "evas=$pkgver" "efl-git")
 conflicts=('ecore' 'edje' 'eet' 'eeze' 'efreet' 'eina' 'eio' 'embryo' 'emotion'
-           'ethumb' 'evas')
+           'ethumb' 'evas' 'efl-git')
 options=('!libtool' 'debug')
 install=efl.install
 
