@@ -4623,6 +4623,7 @@ static void st_collections_group_parts_part_box_items_item_name(void)
                        ep->items = realloc(ep->items, ep->items_count * sizeof (Edje_Pack_Element *));
                        current_item = ep->items[i];
                        pitem->can_override = EINA_FALSE;
+                       break;
                     }
                }
           }
