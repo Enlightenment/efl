@@ -211,6 +211,7 @@ case "$host_os" in
    ;;
    linux*)
       have_linux="yes"
+      want_systemd="auto"
    ;;
 esac
 
@@ -567,8 +568,7 @@ AC_ARG_ENABLE([systemd],
     else
        want_systemd="no"
     fi
-   ],
-   [want_systemd="auto"])
+   ])
 
 # check for systemd library if requested
 if test "x${want_systemd}" = "xyes" -o "x${want_systemd}" = "xauto"; then
