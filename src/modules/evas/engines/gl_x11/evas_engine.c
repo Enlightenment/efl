@@ -71,7 +71,9 @@ struct _Render_Engine
 static int initted = 0;
 static int gl_wins = 0;
 static int extn_have_buffer_age = 1;
+#ifdef GL_GLES
 static int extn_have_y_inverted = 0;
+#endif
 
 typedef void            (*_eng_fn) (void);
 typedef _eng_fn         (*glsym_func_eng_fn) ();
