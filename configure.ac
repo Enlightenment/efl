@@ -287,8 +287,8 @@ fi
 # autotools macro and CXX is always set to g++ even if
 # it's not found. So we are using an internal variable
 # that does the work for now, may get broken in the future.
-if test "x${ac_ct_CXX}" = "x"; then
-   AC_MSG_ERROR([efl requires a C++ compiler])
+if test "x${ac_ct_CXX}" = "x" -a "x${CXX}" = "xg++"; then
+   AC_MSG_ERROR([efl requires a C++ compiler got ${ac_ct_CXX} and ${CXX}.])
 fi
 
 AC_SYS_LARGEFILE
