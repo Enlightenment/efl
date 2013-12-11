@@ -2120,15 +2120,18 @@ do_eglShaderPatch(const char *source, int length, int *patched_len)
           {
              if (!strncmp(p, "gl_MaxVertexUniformVectors", 26))
                {
-                  p = "(gl_MaxVertexUniformComponents / 4)";
+                  free(p);
+                  p = strdup("(gl_MaxVertexUniformComponents / 4)");
                }
              else if (!strncmp(p, "gl_MaxFragmentUniformVectors", 28))
                {
-                  p = "(gl_MaxFragmentUniformComponents / 4)";
+                  free(p);
+                  p = strdup("(gl_MaxFragmentUniformComponents / 4)");
                }
              else if (!strncmp(p, "gl_MaxVaryingVectors", 20))
                {
-                  p = "(gl_MaxVaryingFloats / 4)";
+                  free(p);
+                  p = strdup("(gl_MaxVaryingFloats / 4)");
                }
 
              int new_len = strlen(p);
