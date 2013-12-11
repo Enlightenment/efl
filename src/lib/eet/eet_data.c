@@ -2857,7 +2857,8 @@ eet_data_encode(Eet_Dictionary  *ed,
                 const char      *name,
                 int              size,
                 int              type,
-                int              group_type)
+                int              group_type,
+                Eina_Bool        free_data)
 {
    Eet_Data_Chunk *echnk;
 
@@ -2871,7 +2872,7 @@ eet_data_encode(Eet_Dictionary  *ed,
    echnk = eet_data_chunk_new(data, size, name, type, group_type);
    eet_data_chunk_put(ed, echnk, ds);
    eet_data_chunk_free(echnk);
-   free(data);
+   if (free_data) free(data);
 }
 
 static void *
@@ -2941,7 +2942,8 @@ _eet_data_dump_encode(int             parent_type,
                         node->name,
                         size,
                         child_type,
-                        node->type);
+                        node->type,
+                        EINA_TRUE);
 
         count = node->count;
 
@@ -2964,7 +2966,8 @@ _eet_data_dump_encode(int             parent_type,
                                     node->name,
                                     size,
                                     n->type,
-                                    node->type);
+                                    node->type,
+                                    EINA_TRUE);
 
                   break;
 
@@ -2980,7 +2983,8 @@ _eet_data_dump_encode(int             parent_type,
                                   node->name,
                                   size,
                                   n->type,
-                                  node->type);
+                                  node->type,
+                                  EINA_TRUE);
                   break;
                }  /* switch */
              if (ds->pos != pos)
@@ -2995,7 +2999,8 @@ _eet_data_dump_encode(int             parent_type,
                              node->name,
                              0,
                              EET_T_NULL,
-                             node->type);
+                             node->type,
+                             EINA_TRUE);
           }
 
         /* Array is somekind of special case, so we should embed it inside another chunk. */
@@ -3027,7 +3032,8 @@ _eet_data_dump_encode(int             parent_type,
                                     node->name,
                                     size,
                                     n->type,
-                                    node->type);
+                                    node->type,
+                                    EINA_TRUE);
 
                   break;
 
@@ -3043,7 +3049,8 @@ _eet_data_dump_encode(int             parent_type,
                                   node->name,
                                   size,
                                   n->type,
-                                  node->type);
+                                  node->type,
+                                  EINA_TRUE);
                }  /* switch */
           }
 
@@ -3071,7 +3078,8 @@ _eet_data_dump_encode(int             parent_type,
                              node->name,
                              size,
                              node->type,
-                             node->type);
+                             node->type,
+                             EINA_TRUE);
           }
         else
           {
@@ -3101,7 +3109,8 @@ _eet_data_dump_encode(int             parent_type,
                                     node->name,
                                     size,
                                     n->type,
-                                    node->type);
+                                    node->type,
+                                    EINA_TRUE);
 
                   break;
 
@@ -3117,7 +3126,8 @@ _eet_data_dump_encode(int             parent_type,
                                   node->name,
                                   size,
                                   n->type,
-                                  node->type);
+                                  node->type,
+                                  EINA_TRUE);
                }  /* switch */
           }
 
@@ -3144,7 +3154,8 @@ case Eet_Type:                                                               \
                        node->name,                                           \
                        size,                                                 \
                        node->type,                                           \
-                       parent_type);                                         \
+                       parent_type,                                          \
+                       EINA_TRUE);                                           \
        cdata = ds->data;                                                     \
        *size_ret = ds->pos;                                                  \
        eet_data_stream_flush(ds);                                            \
@@ -4057,7 +4068,8 @@ eet_data_put_union(Eet_Dictionary      *ed,
                             ede->name,
                             size,
                             ede->type,
-                            ede->group_type);
+                            ede->group_type,
+                            EINA_TRUE);
 
           sede = &(ede->subtype->elements.set[i]);
 
@@ -4075,7 +4087,8 @@ eet_data_put_union(Eet_Dictionary      *ed,
                             ede->name,
                             size,
                             ede->type,
-                            ede->group_type);
+                            ede->group_type,
+                            EINA_TRUE);
 
           break;
        }
@@ -4228,7 +4241,8 @@ eet_data_put_variant(Eet_Dictionary      *ed,
                            ede->name,
                            size,
                            ede->type,
-                           ede->group_type);
+                           ede->group_type,
+                           EINA_TRUE);
 
          evu = (Eet_Variant_Unknow *)data_in;
          if (evu && EINA_MAGIC_CHECK(evu, EET_MAGIC_VARIANT))
@@ -4238,7 +4252,8 @@ eet_data_put_variant(Eet_Dictionary      *ed,
                            ede->name,
                            evu->size,
                            ede->type,
-                           ede->group_type);
+                           ede->group_type,
+                           EINA_FALSE);
      }
    else
      /* Search the structure of the union to encode. */
@@ -4256,7 +4271,8 @@ eet_data_put_variant(Eet_Dictionary      *ed,
                               ede->name,
                               size,
                               ede->type,
-                              ede->group_type);
+                              ede->group_type,
+                              EINA_TRUE);
 
             sede = &(ede->subtype->elements.set[i]);
 
@@ -4273,14 +4289,16 @@ eet_data_put_variant(Eet_Dictionary      *ed,
                  if (lds->size != 0)
                    {
                       eet_data_encode(ed, ds, lds->data, ede->name, lds->pos,
-                                      ede->type, ede->group_type);
+                                      ede->type, ede->group_type,
+                                      EINA_TRUE);
 
                       lds->data = NULL;
                       lds->size = 0;
                    }
                  else
                    eet_data_encode(ed, ds, NULL, ede->name, 0,
-                                   EET_T_NULL, ede->group_type);
+                                   EET_T_NULL, ede->group_type,
+                                   EINA_TRUE);
 
                  eet_data_stream_free(lds);
               }
@@ -4297,7 +4315,8 @@ eet_data_put_variant(Eet_Dictionary      *ed,
                                    ede->name,
                                    size,
                                    ede->type,
-                                   ede->group_type);
+                                   ede->group_type,
+                                   EINA_TRUE);
               }
 
             break;
@@ -4650,7 +4669,7 @@ eet_data_put_array(Eet_Dictionary      *ed,
 
    data = eet_data_put_type(ed, EET_T_INT, &count, &size);
    if (data)
-     eet_data_encode(ed, ds, data, ede->name, size, ede->type, ede->group_type);
+     eet_data_encode(ed, ds, data, ede->name, size, ede->type, ede->group_type, EINA_TRUE);
 
    if (IS_POINTER_TYPE(ede->type))
      subsize = eet_basic_codec[ede->type - 1].size;
@@ -4682,7 +4701,8 @@ eet_data_put_array(Eet_Dictionary      *ed,
                                ede->name,
                                size,
                                ede->type,
-                               ede->group_type);
+                               ede->group_type,
+                               EINA_TRUE);
           }
 
         if (pos == ds->pos)
@@ -4693,7 +4713,8 @@ eet_data_put_array(Eet_Dictionary      *ed,
                           ede->name,
                           0,
                           EET_T_NULL,
-                          ede->group_type);
+                          ede->group_type,
+                          EINA_TRUE);
 
         offset += subsize;
      }
@@ -4732,7 +4753,8 @@ eet_data_put_unknown(Eet_Dictionary      *ed,
                      ede->name,
                      size,
                      ede->type,
-                     ede->group_type);
+                     ede->group_type,
+                     EINA_TRUE);
 }
 
 static void
@@ -4771,7 +4793,8 @@ eet_data_put_list(Eet_Dictionary      *ed,
                                ede->name,
                                size,
                                ede->type,
-                               ede->group_type);
+                               ede->group_type,
+                               EINA_TRUE);
           }
      }
 }
