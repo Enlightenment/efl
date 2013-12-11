@@ -403,10 +403,12 @@ ephysics_constraint_del(EPhysics_Constraint *constraint)
         return;
      }
 
-   ephysics_world_lock_take(constraint->world);
+   // technically at this point locking and unlocking is pointless because
+   // if another thread is accessing this constraint, after this point it
+   // will be broken locks or not. this removes a segv in locking something
+   // we freed in _ephysics_constraint_del() by not locking.
    _ephysics_constraint_del(constraint);
    INF("Constraint deleted.");
-   ephysics_world_lock_release(constraint->world);
 }
 
 
