@@ -125,7 +125,6 @@ static void _locale_get(void *data EINA_UNUSED, const Eldbus_Message *msg,
 {
    Eldbus_Message_Iter *variant, *array;
    const char *errname, *errmsg, *val;
-   unsigned int i;
 
    if (eldbus_message_error_get(msg, &errname, &errmsg))
      {
