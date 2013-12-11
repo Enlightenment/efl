@@ -623,7 +623,8 @@ init_video_object(const char *module_filename, const char *filename)
    w = iw; h = ih;
 
    fd = calloc(1, sizeof(Frame_Data));
-
+   if (!fd) exit(1);
+   
    oe = edje_object_add(evas);
    evas_object_event_callback_add(oe, EVAS_CALLBACK_FREE, _oe_free_cb, NULL);
    evas_object_data_set(oe, "frame_data", fd);
