@@ -592,7 +592,8 @@ parseoptions(int argc, char **argv, char *iname, char *oname,
       {
 	 /* include directory */
 	 i++;
-	 strncpy(str, argv[i], sizeof(str));
+	 strncpy(str, argv[i], sizeof(str) - 1);
+         str[sizeof(str) - 1] = '\0';
 
 	 len = strlen(str);
 	 if (str[len - 1] != DIRSEP_CHAR)
