@@ -945,8 +945,11 @@ data_write_images(Eet_File *ef, int *image_num)
                          data_image_preload_done(iw, evas, im, NULL);
                     }
                   else
-                    error_and_abort_image_load_error
-                    (ef, img->entry, load_err);
+                    {
+                       error_and_abort_image_load_error
+                         (ef, img->entry, load_err);
+                       exit(1); // ensure static analysis tools know we exit
+                    }
                }
 	  }
      }
