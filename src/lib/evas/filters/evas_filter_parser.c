@@ -100,7 +100,7 @@ _instruction_new(const char *name)
 
 static Eina_Bool
 _instruction_param_addv(Evas_Filter_Instruction *instr, const char *name,
-                    Value_Type format, Eina_Bool sequential, va_list args)
+                        Value_Type format, Eina_Bool sequential, va_list args)
 {
    const Eina_Value_Type *type = NULL;
    Instruction_Param *param;
@@ -139,8 +139,8 @@ _instruction_param_addv(Evas_Filter_Instruction *instr, const char *name,
 
 static Eina_Bool
 _instruction_param_adda(Evas_Filter_Instruction *instr, const char *name,
-                    Value_Type format, Eina_Bool sequential,
-                    /* default value */ ...)
+                        Value_Type format, Eina_Bool sequential,
+                        /* default value */ ...)
 {
    Eina_Bool ok;
    va_list args;
@@ -179,7 +179,7 @@ _instruction_param_geti(Evas_Filter_Instruction *instr, const char *name,
    int i = 0;
 
    EINA_INLIST_FOREACH(instr->params, param)
-     if (!strcmp(name, param->name))
+     if (!strcasecmp(name, param->name))
        {
           if (eina_value_get(param->value, &i))
             {
@@ -201,7 +201,7 @@ _instruction_param_getd(Evas_Filter_Instruction *instr, const char *name,
    double i = 0;
 
    EINA_INLIST_FOREACH(instr->params, param)
-     if (!strcmp(name, param->name))
+     if (!strcasecmp(name, param->name))
        {
           if (eina_value_get(param->value, &i))
             {
@@ -223,7 +223,7 @@ _instruction_param_getc(Evas_Filter_Instruction *instr, const char *name,
    DATA32 i = 0;
 
    EINA_INLIST_FOREACH(instr->params, param)
-     if (!strcmp(name, param->name))
+     if (!strcasecmp(name, param->name))
        {
           if (eina_value_get(param->value, &i))
             {
@@ -245,7 +245,7 @@ _instruction_param_gets(Evas_Filter_Instruction *instr, const char *name,
    const char *str = NULL;
 
    EINA_INLIST_FOREACH(instr->params, param)
-     if (!strcmp(name, param->name))
+     if (!strcasecmp(name, param->name))
        {
           if (eina_value_get(param->value, &str))
             {
@@ -668,7 +668,7 @@ _buffer_instruction_prepare(Evas_Filter_Instruction *instr)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(instr, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(instr->name, EINA_FALSE);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(!strcmp(instr->name, "buffer"), EINA_FALSE);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(!strcasecmp(instr->name, "buffer"), EINA_FALSE);
 
    /*
    * buffer [name=]NAME (alpha=BOOL) (src=OBJECT)
@@ -688,7 +688,7 @@ _blend_instruction_prepare(Evas_Filter_Instruction *instr)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(instr, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(instr->name, EINA_FALSE);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(!strcmp(instr->name, "blend"), EINA_FALSE);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(!strcasecmp(instr->name, "blend"), EINA_FALSE);
 
    /*
    * blend [src=BUFFER] [dst=BUFFER] [ox=INT] [oy=INT] (color=COLOR)
@@ -746,7 +746,7 @@ _blur_instruction_prepare(Evas_Filter_Instruction *instr)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(instr, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(instr->name, EINA_FALSE);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(!strcmp(instr->name, "blur"), EINA_FALSE);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(!strcasecmp(instr->name, "blur"), EINA_FALSE);
 
    /*
    * blur [rx=]REAL [ry=REAL] [type=STRING] [ox=INT] [oy=INT] \
@@ -772,7 +772,7 @@ _bump_instruction_prepare(Evas_Filter_Instruction *instr)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(instr, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(instr->name, EINA_FALSE);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(!strcmp(instr->name, "bump"), EINA_FALSE);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(!strcasecmp(instr->name, "bump"), EINA_FALSE);
 
    /*
    * bump [map=]ABUFFER [azimuth=REAL] [elevation=REAL] [depth=REAL] \
@@ -801,7 +801,7 @@ _curve_instruction_prepare(Evas_Filter_Instruction *instr)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(instr, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(instr->name, EINA_FALSE);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(!strcmp(instr->name, "curve"), EINA_FALSE);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(!strcasecmp(instr->name, "curve"), EINA_FALSE);
 
    /*
    * curve TODO
@@ -837,7 +837,7 @@ _displace_instruction_prepare(Evas_Filter_Instruction *instr)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(instr, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(instr->name, EINA_FALSE);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(!strcmp(instr->name, "displace"), EINA_FALSE);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(!strcasecmp(instr->name, "displace"), EINA_FALSE);
 
    /*
    * displace [map=]BUFFER [intensity=]INT [flags=]STRING \
@@ -885,7 +885,7 @@ _grow_instruction_prepare(Evas_Filter_Instruction *instr)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(instr, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(instr->name, EINA_FALSE);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(!strcmp(instr->name, "grow"), EINA_FALSE);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(!strcasecmp(instr->name, "grow"), EINA_FALSE);
 
    /*
    * grow [radius=]INT (smooth=BOOL) (src=BUFFER) (dst=BUFFER)
@@ -906,7 +906,7 @@ _mask_instruction_prepare(Evas_Filter_Instruction *instr)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(instr, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(instr->name, EINA_FALSE);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(!strcmp(instr->name, "mask"), EINA_FALSE);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(!strcasecmp(instr->name, "mask"), EINA_FALSE);
 
    /*
    * mask [mask=]BUFFER [input=BUFFER] [output=BUFFER] [color=COLOR]
@@ -1001,17 +1001,17 @@ _instruction_buffer_parse(Evas_Filter_Program *pgm,
 
    EINA_INLIST_FOREACH(instr->params, param)
      {
-        if (!bufname && !strcmp(param->name, "name"))
+        if (!bufname && !strcasecmp(param->name, "name"))
           {
              PARSE_CHECK(eina_value_get(param->value, &bufname));
              found++;
           }
-        else if ((alpha == -1) && !strcmp(param->name, "alpha"))
+        else if ((alpha == -1) && !strcasecmp(param->name, "alpha"))
           {
              PARSE_CHECK(eina_value_get(param->value, &alpha));
              found++;
           }
-        else if (param->set && !strcmp(param->name, "src"))
+        else if (param->set && !strcasecmp(param->name, "src"))
           {
              PARSE_CHECK(eina_value_get(param->value, &src));
              found++;
@@ -1072,7 +1072,7 @@ evas_filter_program_parse(Evas_Filter_Program *pgm, const char *str)
         ok = _instruction_parse(instr, token);
         PARSE_CHECK(ok);
 
-        if (!strcmp(instr->name, "buffer"))
+        if (!strcasecmp(instr->name, "buffer"))
           PARSE_CHECK(_instruction_buffer_parse(pgm, instr));
         else
           {
@@ -1260,7 +1260,7 @@ _instr2cmd_blur(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
 
 static int
 _instr2cmd_bump(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
-                 Evas_Filter_Instruction *instr, void *dc)
+                Evas_Filter_Instruction *instr, void *dc)
 {
    Evas_Filter_Bump_Flags flags = EVAS_FILTER_BUMP_NORMAL;
    const char *src, *dst, *map;
@@ -1295,7 +1295,7 @@ _instr2cmd_bump(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
 
 static int
 _instr2cmd_displace(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
-                 Evas_Filter_Instruction *instr, void *dc)
+                    Evas_Filter_Instruction *instr, void *dc)
 {
    //Evas_Filter_Displacement_Flags flags = EVAS_FILTER_DISPLACE_RG;
    const char *src, *dst, *map;
