@@ -1527,7 +1527,7 @@ eng_output_flush(void *data, Evas_Render_Mode render_mode)
           {
              char fname[100];
              int ret = 0;
-             sprintf(fname, "%p", (void*)re->win);
+             snprintf(fname, sizeof(fname), "%p", (void*)re->win);
 
              ret = evas_gl_common_buffer_dump(re->win->gl_context,
                                               (const char*)dname,
