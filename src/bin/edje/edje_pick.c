@@ -564,8 +564,6 @@ _edje_pick_header_make(Edje_File *out_file , Edje_File *edf, Eina_List *ifs)
    char *name1 = NULL;
 
 
-   _edje_cache_file_unref(edf);
-
    /* Build file header */
    if (context.current_file->append)
      {
@@ -633,6 +631,8 @@ _edje_pick_header_make(Edje_File *out_file , Edje_File *edf, Eina_List *ifs)
                }
           }
      }
+
+   _edje_cache_file_unref(edf);
 
    return status;
 }
