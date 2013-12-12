@@ -599,11 +599,11 @@ ecore_x_selection_converter_text(char *target,
                                    &text_prop) == Success)
      {
         int bufsize = strlen((char *)text_prop.value);
-        char *s = malloc(bufsize + 1);
-        if (!s) return EINA_FALSE;
-        *data_ret = s;
-        memcpy(s, text_prop.value, bufsize);
-        s[bufsize] = 0;
+        char *str = malloc(bufsize + 1);
+        if (!str) return EINA_FALSE;
+        *data_ret = str;
+        memcpy(str, text_prop.value, bufsize);
+        str[bufsize] = 0;
         *size_ret = bufsize;
         XFree(text_prop.value);
         return EINA_TRUE;
