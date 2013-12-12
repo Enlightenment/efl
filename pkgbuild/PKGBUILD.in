@@ -15,7 +15,8 @@ depends=('bullet' 'libpng' 'libjpeg-turbo' 'gstreamer0.10'
          'libsndfile' 'systemd' 'libx11' 'libxau' 'libxcomposite'
          'libxdamage' 'libxdmcp' 'libxext' 'libxfixes' 'libxinerama'
          'libxi' 'libxrandr' 'libxrender' 'libxss' 'libxtst'
-         'libxcursor' 'libxp' 'libgl' 'giflib' 'libwebp' 'harfbuzz')
+         'libxcursor' 'libxp' 'libgl' 'giflib' 'libwebp' 'harfbuzz'
+	 'wayland' 'sdl')
 provides=("ecore=$pkgver" "eldbus=$pkgver" "edje=$pkgver"
           "eet=$pkgver" "eeze=$pkgver" "efreet=$pkgver"
           "eina=$pkgver" "eio=$pkgver" "embryo=$pkgver" "emotion=$pkgver"
@@ -37,7 +38,8 @@ build() {
   ./configure --prefix=/usr \
   --disable-static --disable-tslib --enable-fb \
   --enable-xinput22 --enable-multisense --enable-systemd \
-  --enable-image-loader-webp --enable-harfbuzz
+  --enable-image-loader-webp --enable-harfbuzz \
+  --enable-wayland --enable-drm --enable-sdl
   make
   make -j1 doc
 }
