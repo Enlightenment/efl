@@ -605,7 +605,7 @@ open_file:
    // if we want to go backwards, we likely need/want to re-decode from the
    // start as we have nothnig to build on
    if ((index > 0) && (index < loader->imgnum) &&
-       (loader->animated->frame_count > 1))
+       (animated->animated > 1))
      {
         if (loader->gif) DGifCloseFile(loader->gif);
         if ((loader->fi.map) && (loader->f))
@@ -723,7 +723,7 @@ open_file:
                       (!animated->animated))
                {
                   // if we don't have the data decoded yet - decode it
-                  if (!thisframe->loaded)
+                  if ((!thisframe->loaded) || (!thisframe->data))
                     {
                        // use frame info but we WONT allocate frame pixels
                        finfo = thisframe->info;
@@ -781,7 +781,7 @@ on_ok:
    // if it was an animated image we need to copy the data to the
    // pixels for the image from the frame holding the data
    if (animated->animated && frame->data)
-     memcpy(pixels, frame->data, prop->w * prop->h * sizeof (DATA32));
+     memcpy(pixels, frame->data, prop->w * prop->h * sizeof(DATA32));
    prop->premul = EINA_TRUE;
    
 on_error: // jump here on any errors to clean up
