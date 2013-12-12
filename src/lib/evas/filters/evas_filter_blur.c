@@ -63,13 +63,15 @@ _box_blur_step_rgba(DATA32 *src, DATA32 *dst, int radius, int len, int step)
    DATA8 *d, *rs, *ls;
    int x, k;
    int divider;
+   int left = MIN(radius, len);
+   int right = MIN(radius, (len - radius));
 
    d = (DATA8 *) dst;
    ls = (DATA8 *) src;
    rs = (DATA8 *) src;
 
    // Read-ahead
-   for (x = radius; x; x--)
+   for (x = left; x; x--)
      {
         for (k = 0; k < 4; k++)
           acc[k] += rs[k];
@@ -77,13 +79,13 @@ _box_blur_step_rgba(DATA32 *src, DATA32 *dst, int radius, int len, int step)
      }
 
    // Left
-   for (x = 0; x < radius; x++)
+   for (x = 0; x < left; x++)
      {
         for (k = 0; k < 4; k++)
           acc[k] += rs[k];
         rs += step;
 
-        divider = x + radius + 1;
+        divider = x + left + 1;
         d[ALPHA] = acc[ALPHA] / divider;
         d[RED]   = acc[RED]   / divider;
         d[GREEN] = acc[GREEN] / divider;
@@ -110,9 +112,9 @@ _box_blur_step_rgba(DATA32 *src, DATA32 *dst, int radius, int len, int step)
      }
 
    // Right part
-   for (x = radius; x; x--)
+   for (x = right; x; x--)
      {
-        divider = x + radius;
+        divider = x + right;
         d[ALPHA] = acc[ALPHA] / divider;
         d[RED]   = acc[RED]   / divider;
         d[GREEN] = acc[GREEN] / divider;
@@ -165,18 +167,21 @@ static Eina_Bool
 _box_blur_horiz_apply_rgba(Evas_Filter_Command *cmd)
 {
    RGBA_Image *in, *out;
+   unsigned int r;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->input->backing, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->output->backing, EINA_FALSE);
 
+   r = abs(cmd->blur.dx);
    in = cmd->input->backing;
    out = cmd->output->backing;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(in->image.data, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(out->image.data, EINA_FALSE);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(out->cache_entry.w >= (2*r + 1), EINA_FALSE);
 
-   _box_blur_horiz_rgba(in->image.data, out->image.data, cmd->blur.dx,
+   _box_blur_horiz_rgba(in->image.data, out->image.data, r,
                         in->cache_entry.w, in->cache_entry.h);
 
    return EINA_TRUE;
@@ -186,18 +191,21 @@ static Eina_Bool
 _box_blur_vert_apply_rgba(Evas_Filter_Command *cmd)
 {
    RGBA_Image *in, *out;
+   unsigned int r;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->input->backing, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->output->backing, EINA_FALSE);
 
+   r = abs(cmd->blur.dy);
    in = cmd->input->backing;
    out = cmd->output->backing;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(in->image.data, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(out->image.data, EINA_FALSE);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(out->cache_entry.h >= (2*r + 1), EINA_FALSE);
 
-   _box_blur_vert_rgba(in->image.data, out->image.data, cmd->blur.dy,
+   _box_blur_vert_rgba(in->image.data, out->image.data, r,
                        in->cache_entry.w, in->cache_entry.h);
 
    return EINA_TRUE;
@@ -214,17 +222,19 @@ _box_blur_step_alpha(DATA8 *src, DATA8 *dst, int radius, int len, int step)
    int acc = 0;
    DATA8 *sr = src, *sl = src, *d = dst;
    DEFINE_DIAMETER(radius);
+   int left = MIN(radius, len);
+   int right = MIN(radius, (len - radius));
 
-   for (k = radius; k; k--)
+   for (k = left; k; k--)
      {
         acc += *sr;
         sr += step;
      }
 
-   for (k = 0; k < radius; k++)
+   for (k = 0; k < left; k++)
      {
         acc += *sr;
-        *d = acc / (k + radius + 1);
+        *d = acc / (k + left + 1);
         sr += step;
         d += step;
      }
@@ -239,9 +249,9 @@ _box_blur_step_alpha(DATA8 *src, DATA8 *dst, int radius, int len, int step)
         d += step;
      }
 
-   for (k = radius; k; k--)
+   for (k = right; k; k--)
      {
-        *d = acc / (k + radius);
+        *d = acc / (k + right);
         acc -= *sl;
         d += step;
         sl += step;
@@ -286,18 +296,21 @@ static Eina_Bool
 _box_blur_horiz_apply_alpha(Evas_Filter_Command *cmd)
 {
    RGBA_Image *in, *out;
+   unsigned int r;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->input->backing, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->output->backing, EINA_FALSE);
 
+   r = abs(cmd->blur.dx);
    in = cmd->input->backing;
    out = cmd->output->backing;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(in->mask.data, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(out->mask.data, EINA_FALSE);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(out->cache_entry.w >= (2*r + 1), EINA_FALSE);
 
-   _box_blur_horiz_alpha(in->mask.data, out->mask.data, cmd->blur.dx,
+   _box_blur_horiz_alpha(in->mask.data, out->mask.data, r,
                          in->cache_entry.w, in->cache_entry.h);
 
    return EINA_TRUE;
@@ -307,18 +320,21 @@ static Eina_Bool
 _box_blur_vert_apply_alpha(Evas_Filter_Command *cmd)
 {
    RGBA_Image *in, *out;
+   unsigned int r;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->input->backing, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->output->backing, EINA_FALSE);
 
+   r = abs(cmd->blur.dy);
    in = cmd->input->backing;
    out = cmd->output->backing;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(in->mask.data, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(out->mask.data, EINA_FALSE);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(out->cache_entry.h >= (2*r + 1), EINA_FALSE);
 
-   _box_blur_vert_alpha(in->mask.data, out->mask.data, cmd->blur.dy,
+   _box_blur_vert_alpha(in->mask.data, out->mask.data, r,
                         in->cache_entry.w, in->cache_entry.h);
 
    return EINA_TRUE;
@@ -415,9 +431,11 @@ _gaussian_blur_step_alpha(DATA8 *src, DATA8 *dst, int radius, int len, int step,
    int j, k, acc, divider;
    DATA8 *s = src;
    const int diameter = 2 * radius + 1;
+   int left = MIN(radius, len);
+   int right = MIN(radius, (len - radius));
 
    // left
-   for (k = 0; k < radius; k++, dst += step)
+   for (k = 0; k < left; k++, dst += step)
      {
         acc = 0;
         divider = 0;
@@ -441,7 +459,7 @@ _gaussian_blur_step_alpha(DATA8 *src, DATA8 *dst, int radius, int len, int step,
      }
 
    // right
-   for (k = 0; k < radius; k++, dst += step, src += step)
+   for (k = 0; k < right; k++, dst += step, src += step)
      {
         acc = 0;
         divider = 0;
@@ -460,10 +478,12 @@ _gaussian_blur_step_rgba(DATA32 *src, DATA32 *dst, int radius, int len, int step
                          int *weights, int pow2_divider)
 {
    const int diameter = 2 * radius + 1;
+   int left = MIN(radius, len);
+   int right = MIN(radius, (len - radius));
    int j, k;
 
    // left
-   for (k = 0; k < radius; k++, dst += step)
+   for (k = 0; k < left; k++, dst += step)
      {
         int acc[4] = {0};
         int divider = 0;
@@ -502,7 +522,7 @@ _gaussian_blur_step_rgba(DATA32 *src, DATA32 *dst, int radius, int len, int step
      }
 
    // right
-   for (k = 0; k < radius; k++, dst += step, src += step)
+   for (k = 0; k < right; k++, dst += step, src += step)
      {
         int acc[4] = {0};
         int divider = 0;
@@ -610,18 +630,21 @@ static Eina_Bool
 _gaussian_blur_horiz_apply_alpha(Evas_Filter_Command *cmd)
 {
    RGBA_Image *in, *out;
+   unsigned int r;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->input->backing, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->output->backing, EINA_FALSE);
 
+   r = abs(cmd->blur.dx);
    in = cmd->input->backing;
    out = cmd->output->backing;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(in->mask.data, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(out->mask.data, EINA_FALSE);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(out->cache_entry.w >= (2*r + 1), EINA_FALSE);
 
-   _gaussian_blur_horiz_alpha(in->mask.data, out->mask.data, cmd->blur.dx,
+   _gaussian_blur_horiz_alpha(in->mask.data, out->mask.data, r,
                               in->cache_entry.w, in->cache_entry.h);
 
    return EINA_TRUE;
@@ -631,18 +654,21 @@ static Eina_Bool
 _gaussian_blur_vert_apply_alpha(Evas_Filter_Command *cmd)
 {
    RGBA_Image *in, *out;
+   unsigned int r;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->input->backing, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->output->backing, EINA_FALSE);
 
+   r = abs(cmd->blur.dy);
    in = cmd->input->backing;
    out = cmd->output->backing;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(in->mask.data, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(out->mask.data, EINA_FALSE);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(out->cache_entry.h >= (2*r + 1), EINA_FALSE);
 
-   _gaussian_blur_vert_alpha(in->mask.data, out->mask.data, cmd->blur.dy,
+   _gaussian_blur_vert_alpha(in->mask.data, out->mask.data, r,
                              in->cache_entry.w, in->cache_entry.h);
 
    return EINA_TRUE;
@@ -652,18 +678,21 @@ static Eina_Bool
 _gaussian_blur_horiz_apply_rgba(Evas_Filter_Command *cmd)
 {
    RGBA_Image *in, *out;
+   unsigned int r;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->input->backing, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->output->backing, EINA_FALSE);
 
+   r = abs(cmd->blur.dx);
    in = cmd->input->backing;
    out = cmd->output->backing;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(in->image.data, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(out->image.data, EINA_FALSE);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(out->cache_entry.w >= (2*r + 1), EINA_FALSE);
 
-   _gaussian_blur_horiz_rgba(in->image.data, out->image.data, cmd->blur.dx,
+   _gaussian_blur_horiz_rgba(in->image.data, out->image.data, r,
                              in->cache_entry.w, in->cache_entry.h);
 
    return EINA_TRUE;
@@ -673,18 +702,21 @@ static Eina_Bool
 _gaussian_blur_vert_apply_rgba(Evas_Filter_Command *cmd)
 {
    RGBA_Image *in, *out;
+   unsigned int r;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->input->backing, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->output->backing, EINA_FALSE);
 
+   r = abs(cmd->blur.dy);
    in = cmd->input->backing;
    out = cmd->output->backing;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(in->image.data, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(out->image.data, EINA_FALSE);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(out->cache_entry.h >= (2*r + 1), EINA_FALSE);
 
-   _gaussian_blur_vert_rgba(in->image.data, out->image.data, cmd->blur.dy,
+   _gaussian_blur_vert_rgba(in->image.data, out->image.data, r,
                             in->cache_entry.w, in->cache_entry.h);
 
    return EINA_TRUE;
