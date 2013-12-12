@@ -268,11 +268,30 @@ _buffer_new(Evas_Filter_Context *ctx, int w, int h, Eina_Bool alpha_only)
    return fb;
 }
 
+static RGBA_Image *
+_rgba_image_alloc(Evas_Filter_Buffer const *fb)
+{
+   Evas_Colorspace cspace;
+   RGBA_Image *image;
+   size_t sz;
+
+   cspace = fb->alpha_only ? EVAS_COLORSPACE_GRY8 : EVAS_COLORSPACE_ARGB8888;
+   image = fb->ENFN->image_new_from_copied_data
+     (fb->ENDT, fb->w, fb->h, NULL, EINA_TRUE, cspace);
+   if (!image) return EINA_FALSE;
+
+   if (fb->alpha_only)
+     sz = image->cache_entry.w * image->cache_entry.h * sizeof(DATA8);
+   else
+     sz = image->cache_entry.w * image->cache_entry.h * sizeof(DATA32);
+   memset(image->image.data, 0, sz);
+
+   return image;
+}
+
 Eina_Bool
 evas_filter_buffer_alloc(Evas_Filter_Buffer *fb, int w, int h)
 {
-   Evas_Colorspace cspace;
-
    if (!fb) return EINA_FALSE;
    if (fb->backing)
      {
@@ -301,14 +320,9 @@ evas_filter_buffer_alloc(Evas_Filter_Buffer *fb, int w, int h)
    fb->w = w;
    fb->h = h;
 
-   cspace = fb->alpha_only ? EVAS_COLORSPACE_GRY8 : EVAS_COLORSPACE_ARGB8888;
-
-   fb->backing = fb->ENFN->image_new_from_copied_data
-     (fb->ENDT, fb->w, fb->h, NULL, EINA_TRUE, cspace);
-   if (!fb->backing) return EINA_FALSE;
-
-   fb->allocated = EINA_TRUE;
-   return EINA_TRUE;
+   fb->backing = _rgba_image_alloc(fb);
+   fb->allocated = (fb->backing != NULL);
+   return fb->allocated;
 }
 
 int
@@ -331,8 +345,6 @@ evas_filter_buffer_data_set(Evas_Filter_Context *ctx, int bufid, void *data,
                             int w, int h, Eina_Bool alpha_only)
 {
    Evas_Filter_Buffer *fb;
-   Evas_Colorspace cs;
-   void *image;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, EINA_FALSE);
 
@@ -355,15 +367,9 @@ evas_filter_buffer_data_set(Evas_Filter_Context *ctx, int bufid, void *data,
    fb->w = w;
    fb->h = h;
 
-   cs = alpha_only ? EVAS_COLORSPACE_GRY8 : EVAS_COLORSPACE_ARGB8888;
-   if (data)
-     image = ENFN->image_new_from_data(ENDT, w, h, data, EINA_TRUE, cs);
-   else
-     image = ENFN->image_new_from_copied_data(ENDT, w, h, NULL, EINA_TRUE, cs);
-   if (!image) return EINA_FALSE;
-
-   fb->backing = image;
-   return EINA_TRUE;
+   fb->backing = _rgba_image_alloc(fb);
+   fb->allocated = (fb->backing != NULL);
+   return fb->allocated;
 }
 
 int
