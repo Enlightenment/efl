@@ -1,6 +1,7 @@
 # Maintainer: Enlightenment Developers <enlightenment-devel@enlightenment.org>
-pkgname=('efl' 'efl_doc')
-pkgver=@VERSION@
+pkgname=('efl-git' 'efl_doc-git')
+_pkgname=${pkgname%-*}
+pkgver=1.8.99.23938.7299d55
 pkgrel=1
 pkgdesc="Enlightenment Foundation Libraries - GIT development snapshot (Ecore, Eldbus, Edje, Eet, Eeze, Efreet, Eina, Eio, Embryo, Emotion, Eo, Ephysics, Ethumb, & Evas)"
 arch=('i686' 'x86_64' 'arm')
@@ -17,14 +18,25 @@ depends=('bullet' 'libpng' 'libjpeg-turbo' 'gstreamer0.10'
          'libxi' 'libxrandr' 'libxrender' 'libxss' 'libxtst'
          'libxcursor' 'libxp' 'libgl' 'giflib' 'libwebp' 'harfbuzz'
 	 'wayland' 'sdl')
+[[ ! $(pacman -T "openjpeg") ]] && depends+=('openjpeg') #jpeg2k loader is autodetected at build time
+makedepends=('git')
 provides=("ecore=$pkgver" "eldbus=$pkgver" "edje=$pkgver"
           "eet=$pkgver" "eeze=$pkgver" "efreet=$pkgver"
           "eina=$pkgver" "eio=$pkgver" "embryo=$pkgver" "emotion=$pkgver"
-          "ephysics=$pkgver" "ethumb=$pkgver" "evas=$pkgver" "efl-git")
+          "ephysics=$pkgver" "ethumb=$pkgver" "evas=$pkgver" "$_pkgname=$pkgver")
 conflicts=('ecore' 'edje' 'eet' 'eeze' 'efreet' 'eina' 'eio' 'embryo' 'emotion'
-           'ethumb' 'evas' 'efl-git')
+           'ethumb' 'evas' "$_pkgname")
 options=('!libtool' 'debug')
 install=efl.install
+
+pkgver() {
+  cd "../.."
+
+  local efl_version=$(grep -m 1 EFL_VERSION configure.ac | grep -o "[[:digit:]]*" | tr '\n' '.')
+  efl_version=$(awk -F , -v efl_version=${efl_version%.} '/^AC_INIT/ {gsub(/efl_version/, efl_version); gsub(/[\[\] -]/, ""); print $2}' configure.ac)
+
+  printf "$efl_version.$(git rev-list --count HEAD).$(git rev-parse --short HEAD)"
+}
 
 prepare() {
   sed -i 's/env python$/&2/' "../../src/scripts/eina/eina-bench-cmp"
@@ -49,7 +61,7 @@ build() {
 #  make -k check
 #}
 
-package_efl() {
+package_efl-git() {
   cd "../.."
   make -j1 DESTDIR="$pkgdir/" install
   install -Dm644 README "$pkgdir/usr/share/$pkgname/README"
@@ -67,7 +79,7 @@ package_efl() {
   ln -s "../licenses/$pkgname/COPYING.SMALL" "$pkgdir/usr/share/$pkgname/COPYING.SMALL"
 }
 
-package_efl_doc() {
+package_efl_doc-git() {
   pkgdesc="Documentation for the Enlightenment Foundation Libraries"
   arch=('any')
   unset license depends provides conflicts install
