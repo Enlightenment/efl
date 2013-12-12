@@ -860,6 +860,25 @@ _displace_instruction_prepare(Evas_Filter_Instruction *instr)
    return EINA_TRUE;
 }
 
+static Eina_Bool
+_fill_instruction_prepare(Evas_Filter_Instruction *instr)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(instr, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(instr->name, EINA_FALSE);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(!strcasecmp(instr->name, "fill"), EINA_FALSE);
+
+   /*
+   * fill [dst=]BUFFER [color=COLOR]
+   * Works with both Alpha and RGBA.
+   */
+
+   instr->type = EVAS_FILTER_MODE_BUFFER;
+   _instruction_param_seq_add(instr, "dst", VT_BUFFER, NULL);
+   _instruction_param_seq_add(instr, "color", VT_COLOR, 0x0);
+
+   return EINA_TRUE;
+}
+
 static void
 _grow_padding_update(Evas_Filter_Instruction *instr,
                      int *l, int *r, int *t, int *b)
@@ -941,6 +960,8 @@ _instruction_create(const char *name)
      prepare = _curve_instruction_prepare;
    else if (!strcasecmp(name, "displace"))
      prepare = _displace_instruction_prepare;
+   else if (!strcasecmp(name, "fill"))
+     prepare = _fill_instruction_prepare;
    else if (!strcasecmp(name, "grow"))
      prepare = _grow_instruction_prepare;
    else if (!strcasecmp(name, "mask"))
@@ -1319,6 +1340,30 @@ _instr2cmd_displace(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
 }
 
 static int
+_instr2cmd_fill(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
+                Evas_Filter_Instruction *instr, void *dc)
+{
+   const char *bufname;
+   Buffer *buf;
+   int R, G, B, A;
+   DATA32 color;
+   int cmdid;
+
+   bufname = _instruction_param_gets(instr, "dst", NULL);
+   color = _instruction_param_getc(instr, "color", NULL);
+   // TODO/FIXME: Add clip info
+
+   buf = _buffer_get(pgm, bufname);
+
+   ENFN->context_color_get(ENDT, dc, &R, &G, &B, &A);
+   ENFN->context_color_set(ENDT, dc, R_VAL(&color), G_VAL(&color), B_VAL(&color), A_VAL(&color));
+   cmdid = evas_filter_command_fill_add(ctx, dc, buf->cid);
+   ENFN->context_color_set(ENDT, dc, R, G, B, A);
+
+   return cmdid;
+}
+
+static int
 _instr2cmd_grow(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
                 Evas_Filter_Instruction *instr, void *dc)
 {
@@ -1388,6 +1433,9 @@ _command_from_instruction(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
         break;
       case EVAS_FILTER_MODE_DISPLACE:
         instr2cmd = _instr2cmd_displace;
+        break;
+      case EVAS_FILTER_MODE_FILL:
+        instr2cmd = _instr2cmd_fill;
         break;
       case EVAS_FILTER_MODE_GROW:
         instr2cmd = _instr2cmd_grow;

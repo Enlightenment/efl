@@ -18,7 +18,13 @@
 static void _buffer_free(Evas_Filter_Buffer *fb);
 static void _command_del(Evas_Filter_Context *ctx, Evas_Filter_Command *cmd);
 
+#ifdef CLAMP
+# undef CLAMP
+#endif
+#define CLAMP(a,b,c) MIN(MAX((b),(a)),(c))
+
 #define DRAW_COLOR_SET(r, g, b, a) do { cmd->draw.R = r; cmd->draw.G = g; cmd->draw.B = b; cmd->draw.A = a; } while (0)
+#define DRAW_CLIP_SET(x, y, w, h) do { cmd->draw.clipx = x; cmd->draw.clipy = y; cmd->draw.clipw = w; cmd->draw.cliph = h; } while (0)
 
 typedef struct _Evas_Filter_Thread_Command Evas_Filter_Thread_Command;
 struct _Evas_Filter_Thread_Command
@@ -538,6 +544,36 @@ _filter_buffer_unlock_all(Evas_Filter_Context *ctx)
 }
 
 int
+evas_filter_command_fill_add(Evas_Filter_Context *ctx, void *draw_context,
+                             int bufid)
+{
+   Evas_Filter_Command *cmd;
+   Evas_Filter_Buffer *buf = NULL;
+   int R, G, B, A, cx, cy, cw, ch;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, -1);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(draw_context, -1);
+
+   buf = _filter_buffer_get(ctx, bufid);
+   if (!buf)
+     {
+        ERR("Buffer %d does not exist.", bufid);
+        return -1;
+     }
+
+   cmd = _command_new(ctx, EVAS_FILTER_MODE_FILL, buf, NULL, NULL);
+   if (!cmd) return -1;
+
+   ENFN->context_color_get(ENDT, draw_context, &R, &G, &B, &A);
+   DRAW_COLOR_SET(R, G, B, A);
+
+   ENFN->context_clip_get(ENDT, draw_context, &cx, &cy, &cw, &ch);
+   DRAW_CLIP_SET(cx, cy, cw, ch);
+
+   return cmd->id;
+}
+
+int
 evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
                              int inbuf, int outbuf, Evas_Filter_Blur_Type type,
                              int dx, int dy, int ox, int oy)
@@ -551,6 +587,7 @@ evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
    int ret = 0, id;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, -1);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(drawctx, -1);
 
    switch (type)
      {
@@ -1005,6 +1042,61 @@ end:
    return cmdid;
 }
 
+static Eina_Bool
+_fill_cpu(Evas_Filter_Command *cmd)
+{
+   Evas_Filter_Buffer *fb = cmd->input;
+   int step = fb->alpha_only ? sizeof(DATA8) : sizeof(DATA32);
+   int x = MAX(0, cmd->draw.clipx);
+   int y = MAX(0, cmd->draw.clipy);
+   DATA8 *ptr = ((RGBA_Image *) fb->backing)->mask.data;
+   int w, h, k, j;
+
+   if (cmd->draw.clipw)
+     w = MIN(cmd->draw.clipw, fb->w);
+   else
+     w = fb->w - x;
+   if (cmd->draw.cliph)
+     h = MIN(cmd->draw.cliph, fb->h);
+   else
+     h = fb->h - y;
+
+   ptr += y * step * fb->w;
+   if ((fb->alpha_only)
+       || (!cmd->draw.R && !cmd->draw.G && !cmd->draw.B && !cmd->draw.A)
+       || ((cmd->draw.R == 0xff) && (cmd->draw.G == 0xff)
+           && (cmd->draw.B == 0xff) && (cmd->draw.A == 0xff)))
+     {
+        for (k = 0; k < h; k++)
+          {
+             memset(ptr + (x * step), cmd->draw.A, step * w);
+             ptr += step * fb->w;
+          }
+     }
+   else
+     {
+        DATA32 *dst = ((DATA32 *) ptr) + x;
+        DATA32 color = ARGB_JOIN(cmd->draw.A, cmd->draw.R, cmd->draw.G, cmd->draw.B);
+        for (k = 0; k < h; k++)
+          {
+             for (j = 0; j < w; j++)
+               *dst++ = color;
+             dst += fb->w;
+          }
+     }
+
+   return EINA_TRUE;
+}
+
+Evas_Filter_Apply_Func
+evas_filter_fill_cpu_func_get(Evas_Filter_Command *cmd)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(cmd, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->input, NULL);
+   return _fill_cpu;
+}
+
+
 /* Clip full input rect (0, 0, sw, sh) to target (dx, dy, dw, dh)
  * and get source's clipped sx, sy as well as destination x, y, cols and rows */
 void
@@ -1129,6 +1221,9 @@ _filter_command_run(Evas_Filter_Command *cmd)
         break;
       case EVAS_FILTER_MODE_DISPLACE:
         func = evas_filter_displace_cpu_func_get(cmd);
+        break;
+      case EVAS_FILTER_MODE_FILL:
+        func = evas_filter_fill_cpu_func_get(cmd);
         break;
       case EVAS_FILTER_MODE_MASK:
         func = evas_filter_mask_cpu_func_get(cmd);

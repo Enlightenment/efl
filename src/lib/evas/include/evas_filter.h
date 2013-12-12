@@ -26,6 +26,7 @@ enum _Evas_Filter_Mode
    EVAS_FILTER_MODE_BLUR,         /**< @see Evas_Filter_Blur_Type */
    EVAS_FILTER_MODE_CURVE,        /**< Apply color curve */
    EVAS_FILTER_MODE_DISPLACE,     /**< Apply XY displacement based on RG mask */
+   EVAS_FILTER_MODE_FILL,         /**< Fill a buffer with a solid color */
    EVAS_FILTER_MODE_MASK,         /**< Apply Alpha or RGBA texture on image */
    EVAS_FILTER_MODE_BUMP,         /**< Apply bump mapping (light effect) */
    EVAS_FILTER_MODE_LAST
@@ -126,6 +127,17 @@ int                      evas_filter_command_blend_add(Evas_Filter_Context *ctx,
 int                      evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *draw_context, int inbuf, int outbuf, Evas_Filter_Blur_Type type, int dx, int dy, int ox, int oy);
 
 /**
+ * @brief Fill a buffer with the current color
+ * @param ctx            Current filter chain
+ * @param draw_context   Current Evas draw context. Current color is used when buf is RGBA, and clip is used to specify the fill area.
+ * @param buf            Buffer: ALPHA or RGBA
+ * @return               Filter command ID or -1 in case of error
+ * @note The current draw context's render operation is ignored (always uses COPY mode).
+ */
+int                      evas_filter_command_fill_add(Evas_Filter_Context *ctx, void *draw_context, int buf);
+int                      evas_filter_command_curve_add(Evas_Filter_Context *ctx, void *draw_context, int inbuf, int outbuf, DATA8 *curve /* 256 elements */, Evas_Filter_Channel channel);
+
+/**
  * @brief Grow/Shrink an image, as defined in image processing (this is not a scale algorithm!)
  * @param ctx            Current filter chain
  * @param draw_context   Current Evas draw context. Current color is used when inbuf is ALPHA and outbuf is RGBA.
@@ -136,7 +148,6 @@ int                      evas_filter_command_blur_add(Evas_Filter_Context *ctx, 
  * @return               Filter command ID or -1 in case of error
  */
 int                      evas_filter_command_grow_add(Evas_Filter_Context *ctx, void *draw_context, int inbuf, int outbuf, int radius, Eina_Bool smooth);
-int                      evas_filter_command_curve_add(Evas_Filter_Context *ctx, void *draw_context, int inbuf, int outbuf, DATA8 *curve /* 256 elements */, Evas_Filter_Channel channel);
 
 /**
  * @brief Apply a displacement map to a buffer. This will move pixels from the source to the destination based on pixel per pixel offset, as defined in the displacement map
