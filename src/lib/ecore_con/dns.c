@@ -1,7 +1,7 @@
 /* ==========================================================================
  * dns.c - Recursive, Reentrant DNS Resolver.
  * --------------------------------------------------------------------------
- * Copyright (c) 2008, 2009, 2010  William Ahern
+ * Copyright (c) 2008, 2009, 2010, 2012, 2013  William Ahern
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
@@ -431,7 +431,7 @@ static inline unsigned dns_k_permutor_powof(unsigned n) {
 	unsigned m, i = 0;
 
 	for (m = 1; m < n; m <<= 1, i++)
-		;
+		;;
 
 	return i;
 } /* dns_k_permutor_powof() */
@@ -630,8 +630,6 @@ static size_t dns_af_len(int af) {
 	return table[af];
 } /* dns_af_len() */
 
-#define dns_sa_family(sa)	(((struct sockaddr *)(sa))->sa_family)
-
 #define dns_sa_len(sa)		dns_af_len(dns_sa_family(sa))
 
 
@@ -685,7 +683,7 @@ static int dns_inet_pton(int af, const void *src, void *dst) {
 	}
 } /* dns_inet_pton() */
 
-static const char *dns_inet_ntop(int af, const void *src, void *dst, unsigned long lim) {
+const char *dns_inet_ntop(int af, const void *src, void *dst, unsigned long lim) {
 	union { struct sockaddr_in sin; struct sockaddr_in6 sin6; } u;
 
 	/* NOTE: WSAAddressToString will print .sin_port unless zeroed. */
@@ -710,9 +708,6 @@ static const char *dns_inet_ntop(int af, const void *src, void *dst, unsigned lo
 
 	return dst;
 } /* dns_inet_ntop() */
-#else
-#define dns_inet_pton(...)	inet_pton(__VA_ARGS__)
-#define dns_inet_ntop(...)	inet_ntop(__VA_ARGS__)
 #endif
 
 
@@ -748,7 +743,7 @@ size_t dns_strlcpy(char *dst, const char *src, size_t lim) {
 	}
 
 	while (*s++ != '\0')
-		;
+		;;
 
 	return s - src - 1;
 } /* dns_strlcpy() */
@@ -772,7 +767,7 @@ size_t dns_strlcat(char *dst, const char *src, size_t lim) {
 	p = s;
 
 	while (*s++ != '\0')
-		;
+		;;
 
 	return lim + (s - p - 1);
 } /* dns_strlcat() */
@@ -875,7 +870,7 @@ static long dns_send(int fd, const void *src, size_t lim, int flags) {
 
 		if (count == -1 && errno == EPIPE) {
 			while (-1 == sigtimedwait(&piped, NULL, &(struct timespec){ 0, 0 }) && errno == EINTR)
-				;
+				;;
 		}
 
 		if ((error = dns_sigmask(SIG_SETMASK, &blocked, NULL)))
@@ -1114,7 +1109,6 @@ void dns_p_dictadd(struct dns_packet *P, unsigned short dn) {
 int dns_p_push(struct dns_packet *P, enum dns_section section, const void *dn, size_t dnlen, enum dns_type type, enum dns_class class, unsigned ttl, const void *any) {
 	size_t end = P->end;
 	int error;
-	uint16_t v;
 
 	if ((error = dns_d_push(P, dn, dnlen)))
 		goto error;
@@ -1151,8 +1145,7 @@ update:
 		if (!P->qd.base && (error = dns_p_study(P)))
 			goto error;
 
-		v = ntohs(dns_header(P)->qdcount);
-		dns_header(P)->qdcount = htons(v + 1);
+		dns_header(P)->qdcount = htons(ntohs(dns_header(P)->qdcount) + 1);
 
 		P->qd.end  = P->end;
 		P->an.base = P->end;
@@ -1170,8 +1163,7 @@ update:
 		if (!P->an.base && (error = dns_p_study(P)))
 			goto error;
 
-		v = ntohs(dns_header(P)->ancount);
-		dns_header(P)->ancount = htons(v + 1);
+		dns_header(P)->ancount = htons(ntohs(dns_header(P)->ancount) + 1);
 
 		P->an.end  = P->end;
 		P->ns.base = P->end;
@@ -1187,8 +1179,7 @@ update:
 		if (!P->ns.base && (error = dns_p_study(P)))
 			goto error;
 
-		v = ntohs(dns_header(P)->nscount);
-		dns_header(P)->nscount = htons(v + 1);
+		dns_header(P)->nscount = htons(ntohs(dns_header(P)->nscount) + 1);
 
 		P->ns.end  = P->end;
 		P->ar.base = P->end;
@@ -1199,8 +1190,7 @@ update:
 		if (!P->ar.base && (error = dns_p_study(P)))
 			goto error;
 
-		v = ntohs(dns_header(P)->arcount);
-		dns_header(P)->arcount = htons(v + 1);
+		dns_header(P)->arcount = htons(ntohs(dns_header(P)->arcount) + 1);
 
 		P->ar.end = P->end;
 
@@ -1406,16 +1396,15 @@ size_t dns_d_trim(void *dst_, size_t lim, const void *src_, size_t len, int flag
 	while (sp < len && src[sp] == '.')
 		sp++;
 
-	for (lc = 0; sp < len; lc = src[sp]) {
+	for (lc = 0; sp < len; lc = src[sp++]) {
+		/* trim extra dot(s) */
+		if (src[sp] == '.' && lc == '.')
+			continue;
+
 		if (dp < lim)
 			dst[dp] = src[sp];
 
-		sp++;
 		dp++;
-
-		/* trim extra dot(s) */
-		while (sp < len && src[sp] == '.')
-			sp++;
 	}
 
 	if ((flags & DNS_D_ANCHOR) && lc != '.') {
@@ -1492,7 +1481,7 @@ size_t dns_d_cleave(void *dst, size_t lim, const void *src, size_t len) {
 } /* dns_d_cleave() */
 
 
-size_t dns_d_comp(void *dst_, size_t lim, const void *src_, size_t len, struct dns_packet *P, int *error) {
+size_t dns_d_comp(void *dst_, size_t lim, const void *src_, size_t len, struct dns_packet *P, int *error DNS_NOTUSED) {
 	struct { unsigned char *b; size_t p, x; } dst, src;
 	unsigned char ch	= '.';
 
@@ -1867,7 +1856,7 @@ unsigned short dns_rr_skip(unsigned short src, struct dns_packet *P) {
 
 static enum dns_section dns_rr_section(unsigned short src, struct dns_packet *P) {
 	enum dns_section section;
-	unsigned count, index;
+	unsigned count, ind;
 	unsigned short rp;
 
 	if (src >= P->qd.base && src < P->qd.end)
@@ -1881,13 +1870,13 @@ static enum dns_section dns_rr_section(unsigned short src, struct dns_packet *P)
 
 	/* NOTE: Possibly bad memoization. Try it the hard-way. */
 
-	for (rp = 12, index = 0; rp < src && rp < P->end; index++)
+	for (rp = 12, ind = 0; rp < src && rp < P->end; ind++)
 		rp = dns_rr_skip(rp, P);
 
 	section = DNS_S_QD;
 	count   = dns_p_count(P, section);
 
-	while (index >= count && section <= DNS_S_AR) {
+	while (ind >= count && section <= DNS_S_AR) {
 		section <<= 1;
 		count += dns_p_count(P, section);
 	}
@@ -2113,12 +2102,12 @@ lower:
 } /* dns_rr_i_skip() */
 
 
-int dns_rr_i_packet(struct dns_rr *a, struct dns_rr *b, struct dns_rr_i *i, struct dns_packet *P) {
+int dns_rr_i_packet(struct dns_rr *a, struct dns_rr *b, struct dns_rr_i *i DNS_NOTUSED, struct dns_packet *P DNS_NOTUSED) {
 	return (int)a->dn.p - (int)b->dn.p;
 } /* dns_rr_i_packet() */
 
 
-int dns_rr_i_order(struct dns_rr *a, struct dns_rr *b, struct dns_rr_i *i, struct dns_packet *P) {
+int dns_rr_i_order(struct dns_rr *a, struct dns_rr *b, struct dns_rr_i *i DNS_NOTUSED, struct dns_packet *P) {
 	int cmp;
 
 	if ((cmp = a->section - b->section))
@@ -2131,7 +2120,7 @@ int dns_rr_i_order(struct dns_rr *a, struct dns_rr *b, struct dns_rr_i *i, struc
 } /* dns_rr_i_order() */
 
 
-int dns_rr_i_shuffle(struct dns_rr *a, struct dns_rr *b, struct dns_rr_i *i, struct dns_packet *P) {
+int dns_rr_i_shuffle(struct dns_rr *a, struct dns_rr *b, struct dns_rr_i *i, struct dns_packet *P DNS_NOTUSED) {
 	int cmp;
 
 	while (!i->state.regs[0])
@@ -2144,7 +2133,7 @@ int dns_rr_i_shuffle(struct dns_rr *a, struct dns_rr *b, struct dns_rr_i *i, str
 } /* dns_rr_i_shuffle() */
 
 
-struct dns_rr_i *dns_rr_i_init(struct dns_rr_i *i, struct dns_packet *P) {
+struct dns_rr_i *dns_rr_i_init(struct dns_rr_i *i, struct dns_packet *P DNS_NOTUSED) {
 	static const struct dns_rr_i i_initializer;
 
 	i->state	= i_initializer.state;
@@ -3182,7 +3171,7 @@ int dns_txt_push(struct dns_packet *P, struct dns_txt *txt) {
 } /* dns_txt_push() */
 
 
-int dns_txt_cmp(const struct dns_txt *a, const struct dns_txt *b) {
+int dns_txt_cmp(const struct dns_txt *a DNS_NOTUSED, const struct dns_txt *b DNS_NOTUSED) {
 	return -1;
 } /* dns_txt_cmp() */
 
@@ -4404,7 +4393,7 @@ int dns_nssconf_loadfile(struct dns_resolv_conf *resconf, FILE *fp) {
 				dns_anyconf_skip("] \t", fp);
 			}
 
-			if ((unsigned)(endof(lookup) - lp) < cf.count + 1) /* +1 for '\0' */
+			if (endof(lookup) - lp < cf.count + 1) /* +1 for '\0' */ 
 				goto nextsrc;
 
 			source = dns_nssconf_keyword(cf.token[0]);
@@ -4785,7 +4774,7 @@ struct dns_hints {
 }; /* struct dns_hints */
 
 
-struct dns_hints *dns_hints_open(struct dns_resolv_conf *resconf, int *error) {
+struct dns_hints *dns_hints_open(struct dns_resolv_conf *resconf DNS_NOTUSED, int *error) {
 	static const struct dns_hints H_initializer;
 	struct dns_hints *H;
 
@@ -5181,47 +5170,47 @@ int dns_hints_dump(struct dns_hints *hints, FILE *fp) {
  *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-static dns_atomic_t dns_cache_acquire(struct dns_cache *cache) {
+static dns_atomic_t dns_cache_acquire(struct dns_cache *cache DNS_NOTUSED) {
 	return 0;
 } /* dns_cache_acquire() */
 
 
-static dns_atomic_t dns_cache_release(struct dns_cache *cache) {
+static dns_atomic_t dns_cache_release(struct dns_cache *cache DNS_NOTUSED) {
 	return 0;
 } /* dns_cache_release() */
 
 
-static struct dns_packet *dns_cache_query(struct dns_packet *query, struct dns_cache *cache, int *error) {
+static struct dns_packet *dns_cache_query(struct dns_packet *query DNS_NOTUSED, struct dns_cache *cache DNS_NOTUSED, int *error DNS_NOTUSED) {
 	return 0;
 } /* dns_cache_submit() */
 
 
-static int dns_cache_submit(struct dns_packet *query, struct dns_cache *cache) {
+static int dns_cache_submit(struct dns_packet *query DNS_NOTUSED, struct dns_cache *cache DNS_NOTUSED) {
 	return 0;
 } /* dns_cache_submit() */
 
 
-static int dns_cache_check(struct dns_cache *cache) {
+static int dns_cache_check(struct dns_cache *cache DNS_NOTUSED) {
 	return 0;
 } /* dns_cache_check() */
 
 
-static struct dns_packet *dns_cache_fetch(struct dns_cache *cache, int *error) {
+static struct dns_packet *dns_cache_fetch(struct dns_cache *cache DNS_NOTUSED, int *error DNS_NOTUSED) {
 	return 0;
 } /* dns_cache_fetch() */
 
 
-static int dns_cache_pollfd(struct dns_cache *cache) {
+static int dns_cache_pollfd(struct dns_cache *cache DNS_NOTUSED) {
 	return -1;
 } /* dns_cache_pollfd() */
 
 
-static short dns_cache_events(struct dns_cache *cache) {
+static short dns_cache_events(struct dns_cache *cache DNS_NOTUSED) {
 	return 0;
 } /* dns_cache_events() */
 
 
-static void dns_cache_clear(struct dns_cache *cache) {
+static void dns_cache_clear(struct dns_cache *cache DNS_NOTUSED) {
 	return;
 } /* dns_cache_clear() */
 
@@ -5400,7 +5389,7 @@ struct dns_socket {
 
 	struct dns_packet *answer;
 	size_t alen, apos;
-}; /* struct dns_socket() */
+}; /* struct dns_socket */
 
 
 /*
@@ -5525,8 +5514,7 @@ void dns_so_close(struct dns_socket *so) {
 
 
 void dns_so_reset(struct dns_socket *so) {
-	if (so->answer) free(so->answer);
-	so->answer = NULL;
+	free(so->answer);
 
 	memset(&so->state, '\0', sizeof *so - offsetof(struct dns_socket, state));
 } /* dns_so_reset() */
@@ -6107,7 +6095,7 @@ epilog:
 } /* dns_res_stub() */
 
 
-static void dns_res_reset_frame(struct dns_resolver *R, struct dns_res_frame *frame) {
+static void dns_res_reset_frame(struct dns_resolver *R DNS_NOTUSED, struct dns_res_frame *frame) {
 	free(frame->query);
 	free(frame->answer);
 	free(frame->hints);
@@ -7933,6 +7921,18 @@ static int parse_domain(int argc, char *argv[]) {
 } /* parse_domain() */
 
 
+static int trim_domain(int argc, char *argv[]) {
+	const char *name = (argv[1])? argv[1] : "";
+	char namebuf[DNS_D_MAXNAME + 1];
+
+	dns_d_trim(namebuf, sizeof namebuf, name, strlen(name), DNS_D_ANCHOR);
+
+	puts(namebuf);
+
+	return 0;
+} /* trim_domain() */
+
+
 static int expand_domain(int argc, char *argv[]) {
 	unsigned short rp = 0;
 	unsigned char *src = NULL;
@@ -8509,6 +8509,7 @@ static int sizes(int argc, char *argv[]) {
 static const struct { const char *cmd; int (*run)(); const char *help; } cmds[] = {
 	{ "parse-packet",	&parse_packet,		"parse binary packet from stdin" },
 	{ "parse-domain",	&parse_domain,		"anchor and iteratively cleave domain" },
+	{ "trim-domain",	&trim_domain,		"trim and anchor domain name" },
 	{ "expand-domain",	&expand_domain,		"expand domain at offset NN in packet from stdin" },
 	{ "show-resconf",	&show_resconf,		"show resolv.conf data" },
 	{ "show-hosts",		&show_hosts,		"show hosts data" },
