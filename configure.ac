@@ -188,7 +188,7 @@ EFL_VERSION_MINOR="v_min"
 AC_SUBST(EFL_VERSION_MAJOR)
 AC_SUBST(EFL_VERSION_MINOR)
 
-want_systemd="no"
+have_systemd_pkg="no"
 have_wince="no"
 have_win32="no"
 have_windows="no"
@@ -211,7 +211,7 @@ case "$host_os" in
    ;;
    linux*)
       have_linux="yes"
-      want_systemd="auto"
+      have_systemd_pkg="auto"
    ;;
 esac
 
@@ -568,13 +568,19 @@ AC_ARG_ENABLE([systemd],
     else
        want_systemd="no"
     fi
+   ], [
+    want_systemd="no"
    ])
 
-# check for systemd library if requested
-if test "x${want_systemd}" = "xyes" -o "x${want_systemd}" = "xauto"; then
+if test "x${have_systemd_pkg}" = "xauto" -o "x${have_systemd_pkg}" = "xyes"; then
    PKG_CHECK_MODULES([SYSTEMD], [libsystemd-daemon >= 192 libsystemd-journal >= 192],
-   		[want_systemd="yes"],
-		[want_systemd="no"])
+	[have_systemd_pkg="yes"],
+	[have_systemd_pkg="no"])
+fi
+
+# check for systemd library if requested
+if test "x${want_systemd}" = "xyes" -a "x${have_systemd_pkg}" = "xno"; then
+   AC_MSG_ERROR([Systemd dependencie requested but not found])
 fi
 
 AM_CONDITIONAL([WANT_SYSTEMD], [test "${want_systemd}" = "yes"])
@@ -854,7 +860,7 @@ EINA_CHECK_MODULE([chained-pool], [static], [chained pool])
 EINA_CHECK_MODULE([pass-through], [static], [pass through])
 EINA_CHECK_MODULE([one-big],      [static], [one big])
 
-EFL_ADD_FEATURE([EINA], [systemd-journal], [${have_systemd}])
+EFL_ADD_FEATURE([EINA], [systemd-journal], [${want_systemd}])
 
 EFL_LIB_END([Eina])
 #### End of Eina
@@ -1861,7 +1867,7 @@ fi
 
 EFL_OPTIONAL_DEPEND_PKG([ECORE], [${want_systemd}], [SYSTEMD], [libsystemd-daemon])
 
-EFL_ADD_FEATURE([ECORE], [systemd-daemon], [${have_systemd}])
+EFL_ADD_FEATURE([ECORE], [systemd-daemon], [${want_systemd}])
 EFL_ADD_FEATURE([ECORE], [glib])
 EFL_ADD_FEATURE([ECORE], [g-main-loop])
 
@@ -2064,7 +2070,7 @@ EFL_ADD_FEATURE([ECORE_CON], [cares])
 EFL_ADD_FEATURE([ECORE_CON], [local-sockets], [${want_ecore_con_local_sockets}])
 EFL_ADD_FEATURE([ECORE_CON], [abstract-sockets], [${want_ecore_con_abstract_sockets}])
 EFL_ADD_FEATURE([ECORE_CON], [resolver], [${ecore_con_resolver}])
-EFL_ADD_FEATURE([ECORE_CON], [systemd-daemon], [${have_systemd}])
+EFL_ADD_FEATURE([ECORE_CON], [systemd-daemon], [${want_systemd}])
 
 EFL_EVAL_PKGS([ECORE_CON])
 
@@ -3939,3 +3945,18 @@ echo "  LDFLAGS.......: $LDFLAGS"
 echo "Installation....: make install (as root if needed, with 'su' or 'sudo')"
 echo "  prefix........: $prefix"
 echo
+
+if test "x${have_systemd_pkg}" = "xyes" -a "x${want_systemd}" = "xno"; then
+   echo " _________________________________________"
+   echo "/ Systemd dependency is available on your \\"
+   echo "| system, but you are building without    |"
+   echo "| systemd support. Don't forget to        |"
+   echo "| --enable-systemd if you want systemd    |"
+   echo "\\ integration for EFL.                    /"
+   echo " -----------------------------------------"
+   echo "        \\   ^__^"
+   echo "         \\  (oo)\\_______"
+   echo "            (__)\\       )\\/\\"
+   echo "                ||----w |"
+   echo "                ||     ||"
+fi
