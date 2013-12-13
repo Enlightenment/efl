@@ -228,7 +228,6 @@ _edje_get_description_by_orientation(Edje *ed, Edje_Part_Description_Common *src
               Edje_Part_Description_##Type *Name;                       \
               Name = eina_mempool_malloc(ce->mp_rtl.Short,              \
                     sizeof (Edje_Part_Description_##Type));             \
-              memset(Name, 0, sizeof(Edje_Part_Description_##Type));    \
               desc_rtl = &Name->common;                                 \
               memsize = sizeof(Edje_Part_Description_##Type);           \
               break;                                                    \
