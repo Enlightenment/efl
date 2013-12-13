@@ -1109,8 +1109,10 @@ _elm_ctxpopup_smart_disable(Eo *obj, void *_pd, va_list *list)
 
    eo_do_super(obj, MY_CLASS, elm_wdg_disable(&int_ret));
    if (!int_ret) return;
-
-   elm_object_disabled_set(sd->list, elm_widget_disabled_get(obj));
+   if (sd->list)
+     elm_object_disabled_set(sd->list, elm_widget_disabled_get(obj));
+   else if (sd->content)
+     elm_object_disabled_set(sd->list, elm_widget_disabled_get(obj));
 
    if (ret) *ret = EINA_TRUE;
 }
