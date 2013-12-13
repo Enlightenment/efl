@@ -561,7 +561,7 @@ evas_filter_command_fill_add(Evas_Filter_Context *ctx, void *draw_context,
         return -1;
      }
 
-   cmd = _command_new(ctx, EVAS_FILTER_MODE_FILL, buf, NULL, NULL);
+   cmd = _command_new(ctx, EVAS_FILTER_MODE_FILL, buf, NULL, buf);
    if (!cmd) return -1;
 
    ENFN->context_color_get(ENDT, draw_context, &R, &G, &B, &A);
@@ -1045,7 +1045,7 @@ end:
 static Eina_Bool
 _fill_cpu(Evas_Filter_Command *cmd)
 {
-   Evas_Filter_Buffer *fb = cmd->input;
+   Evas_Filter_Buffer *fb = cmd->output;
    int step = fb->alpha_only ? sizeof(DATA8) : sizeof(DATA32);
    int x = MAX(0, cmd->draw.clipx);
    int y = MAX(0, cmd->draw.clipy);
@@ -1092,7 +1092,7 @@ Evas_Filter_Apply_Func
 evas_filter_fill_cpu_func_get(Evas_Filter_Command *cmd)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd, NULL);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->input, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->output, NULL);
    return _fill_cpu;
 }
 
@@ -1158,6 +1158,7 @@ _filter_name_get(int mode)
       FNAME(DISPLACE);
       FNAME(MASK);
       FNAME(BUMP);
+      FNAME(FILL);
       default: return "INVALID";
      }
 #undef FNAME
