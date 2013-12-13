@@ -16,6 +16,7 @@
 @ELM_WINCE_DEF@ ELM_WINCE
 @ELM_ELOCATION_DEF@ ELM_ELOCATION
 @ELM_WEB_DEF@ ELM_WEB
+@ELM_WEB2_DEF@ ELM_WEB2
 @ELM_EMAP_DEF@ ELM_EMAP
 @ELM_DEBUG_DEF@ ELM_DEBUG
 @ELM_ALLOCA_H_DEF@ ELM_ALLOCA_H
@@ -90,6 +91,14 @@
 
 #ifdef ELM_EMAP
 #include <EMap.h>
+#endif
+
+#ifdef ELM_WEB
+#include <EWebKit.h>
+#endif
+
+#ifdef ELM_WEB2
+#include <EWebKit2.h>
 #endif
 
 #ifdef EAPI

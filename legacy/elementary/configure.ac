@@ -554,6 +554,7 @@ fi
 AC_SUBST(ELM_EMAP_DEF)
 
 ELM_WEB_DEF="#undef"
+ELM_WEB2_DEF="#undef"
 
 elementary_web_backend="detect"
 elementary_web="no"
@@ -588,10 +589,12 @@ if test "x$want_elementary_web" != "xnone"; then
                            "WebKit's data dir")
         if test "x$elementary_web_backend" = "xewebkit2"; then
             AC_DEFINE(USE_WEBKIT2, 1, [Use ewebkit2 as Elementary web backend])
+            ELM_WEB2_DEF="#define"
+        else
+            ELM_WEB_DEF="#define"
         fi
 
         elementary_web=$want_elementary_web
-        ELM_WEB_DEF="#define"
         requirement_elm="${want_elementary_web} ${requirement_elm}"
        ],
        [elementary_web="no"]
@@ -606,6 +609,7 @@ if test "x$elementary_web_backend" = "xewebkit" -o "x$elementary_web_backend" = 
     fi
 fi
 AC_SUBST(ELM_WEB_DEF)
+AC_SUBST(ELM_WEB2_DEF)
 
 ELM_DEBUG_DEF="#undef"
 want_elementary_debug="no"

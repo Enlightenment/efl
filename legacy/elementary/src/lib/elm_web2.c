@@ -8,7 +8,6 @@
 #include "elm_widget_web.h"
 
 #if defined(HAVE_ELEMENTARY_WEB) && defined(USE_WEBKIT2)
-#include <EWebKit2.h>
 
 EAPI Eo_Op ELM_OBJ_WEB_BASE_ID = EO_NOOP;
 
