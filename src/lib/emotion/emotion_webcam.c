@@ -226,8 +226,13 @@ _emotion_eeze_events(const char *syspath,
         Emotion_Webcam *test;
 
         test = _emotion_webcam_new(syspath);
-        if ((test) && (_emotion_check_device(test)))
-            ecore_event_add(EMOTION_WEBCAM_ADD, test, NULL, NULL);
+        if (test)
+	  {
+	     if (_emotion_check_device(test))
+	       ecore_event_add(EMOTION_WEBCAM_ADD, test, NULL, NULL);
+	     else
+	       _emotion_webcam_remove_cb(test, NULL);
+	  }
      }
    ecore_event_add(EMOTION_WEBCAM_UPDATE, NULL, NULL, NULL);
 }
