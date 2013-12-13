@@ -443,28 +443,15 @@ ecore_imf_context_ibus_preedit_string_with_attributes_get(Ecore_IMF_Context   *c
    IBusIMContext *ibusimcontext = (IBusIMContext*)ecore_imf_context_data_get(ctx);
    EINA_SAFETY_ON_NULL_RETURN(ibusimcontext);
 
-   if (ibusimcontext->enable && ibusimcontext->preedit_visible)
+   ecore_imf_context_ibus_preedit_string_get(ctx, str, cursor_pos);
+
+   if (attr)
      {
-        if (str)
-          *str = strdup(ibusimcontext->preedit_string ? ibusimcontext->preedit_string: "");
-
-        if (cursor_pos)
-          *cursor_pos = ibusimcontext->preedit_cursor_pos;
+        if (ibusimcontext->preedit_attrs)
+          *attr = ibusimcontext->preedit_attrs;
+        else
+          *attr = NULL;
      }
-   else
-     {
-        if (str)
-          *str = strdup("");
-
-        if (cursor_pos)
-          *cursor_pos = 0;
-     }
-
-   if (str)
-     EINA_LOG_DBG("str : %s", *str);
-
-   if (cursor_pos)
-     EINA_LOG_DBG("cursor_pos : %d", *cursor_pos);
 }
 
 EAPI void
@@ -628,6 +615,32 @@ _ecore_imf_context_ibus_forward_key_event_cb(IBusInputContext  *ibuscontext EINA
    _ecore_imf_ibus_key_event_put(keyval, state);
 }
 
+static unsigned int
+utf8_offset_to_index(const char *str, int offset)
+{
+   int index = 0;
+   int i;
+   for (i = 0; i < offset; i++)
+     eina_unicode_utf8_next_get(str, &index);
+
+   return index;
+}
+
+static int
+sort_cb(const void *d1, const void *d2)
+{
+    const Ecore_IMF_Preedit_Attr *attr1 = d1;
+    const Ecore_IMF_Preedit_Attr *attr2 = d2;
+
+    if (!attr1) return 1;
+    if (!attr2) return -1;
+
+    if (attr1->start_index < attr2->start_index)
+      return -1;
+    else
+      return 1;
+}
+
 static void
 _ecore_imf_context_ibus_update_preedit_text_cb(IBusInputContext  *ibuscontext EINA_UNUSED,
                                                IBusText          *text,
@@ -640,9 +653,12 @@ _ecore_imf_context_ibus_update_preedit_text_cb(IBusInputContext  *ibuscontext EI
 
    const char *str;
    gboolean flag;
+   Ecore_IMF_Preedit_Attr *attr = NULL;
 
    if (ibusimcontext->preedit_string)
-     free (ibusimcontext->preedit_string);
+     free(ibusimcontext->preedit_string);
+
+   ibusimcontext->preedit_attrs = NULL;
 
    str = text->text;
 
@@ -650,6 +666,74 @@ _ecore_imf_context_ibus_update_preedit_text_cb(IBusInputContext  *ibuscontext EI
      ibusimcontext->preedit_string = strdup(str);
    else
      ibusimcontext->preedit_string = strdup("");
+
+   if (text->attrs)
+     {
+        unsigned int i;
+        unsigned int pos;
+        unsigned int preedit_length;
+        preedit_length = strlen(ibusimcontext->preedit_string);
+        Eina_Bool *attrs_flag = calloc(1, sizeof(Eina_Bool)*preedit_length);
+
+        for (i = 0; ; i++)
+          {
+             attr = NULL;
+             IBusAttribute *ibus_attr = ibus_attr_list_get (text->attrs, i);
+             if (ibus_attr == NULL)
+               break;
+
+             attr = (Ecore_IMF_Preedit_Attr *)calloc(1, sizeof(Ecore_IMF_Preedit_Attr));
+             if (attr == NULL)
+               continue;
+
+             attr->start_index = utf8_offset_to_index(str, ibus_attr->start_index);
+             attr->end_index = utf8_offset_to_index(str, ibus_attr->end_index);
+
+             switch (ibus_attr->type)
+               {
+                case IBUS_ATTR_TYPE_FOREGROUND:
+                   attr->preedit_type = ECORE_IMF_PREEDIT_TYPE_SUB2;
+                   for (pos = attr->start_index; pos < attr->end_index; ++pos)
+                     attrs_flag[pos] = 1;
+                   break;
+                default:
+                   if (attr)
+                     {
+                        free(attr);
+                        attr = NULL;
+                     }
+                   continue;
+               }
+
+             if (attr)
+               ibusimcontext->preedit_attrs = eina_list_append(ibusimcontext->preedit_attrs, (void *)attr);
+          }
+
+        // Add underline for all characters which don't have attribute.
+        for (unsigned int pos = 0; pos < preedit_length; ++pos)
+          {
+             if (!attrs_flag[pos])
+               {
+                  int begin_pos = pos;
+
+                  while (pos < preedit_length && !attrs_flag[pos])
+                    ++pos;
+
+                  attr = (Ecore_IMF_Preedit_Attr *)calloc(1, sizeof(Ecore_IMF_Preedit_Attr));
+                  if (attr == NULL)
+                    continue;
+                  attr->preedit_type = ECORE_IMF_PREEDIT_TYPE_SUB1;
+                  attr->start_index = begin_pos;
+                  attr->end_index = pos;
+                  ibusimcontext->preedit_attrs = eina_list_append(ibusimcontext->preedit_attrs, (void *)attr);
+               }
+          }
+
+        if (attrs_flag)
+          free(attrs_flag);
+
+        ibusimcontext->preedit_attrs = eina_list_sort(ibusimcontext->preedit_attrs, eina_list_count(ibusimcontext->preedit_attrs), sort_cb);
+     }
 
    ibusimcontext->preedit_cursor_pos = cursor_pos;
 
