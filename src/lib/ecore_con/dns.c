@@ -5514,8 +5514,8 @@ void dns_so_close(struct dns_socket *so) {
 
 
 void dns_so_reset(struct dns_socket *so) {
-	free(so->answer);
-
+	if (so->answer) free(so->answer);
+	so->answer = NULL;
 	memset(&so->state, '\0', sizeof *so - offsetof(struct dns_socket, state));
 } /* dns_so_reset() */
 
