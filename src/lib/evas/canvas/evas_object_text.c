@@ -43,6 +43,7 @@ struct _Evas_Object_Text
 
       // special effects. VERY EXPERIMENTAL for now.
       Evas_Filter_Program *filter_chain;
+      Eina_Hash           *proxy_sources;
    } cur, prev;
 
    struct {
@@ -2647,6 +2648,7 @@ _filter_program_set(Eo *eo_obj, void *_pd, va_list *list)
    if (arg)
      {
         pgm = evas_filter_program_new("Evas_Text: Filter Program");
+        evas_filter_program_proxy_source_bind_all(pgm, o->cur.proxy_sources);
         if (!evas_filter_program_parse(pgm, arg))
           {
              ERR("Parsing failed!");
@@ -2677,7 +2679,18 @@ _filter_object_bind(Eo *eo_obj, void *_pd, va_list *list)
    Evas_Object *proxy = va_arg(list, Evas_Object *);
 
    pgm = o->cur.filter_chain;
-   if (!pgm) return;
+   if (!pgm)
+     {
+        if (!proxy) return;
+        if (!o->cur.proxy_sources)
+          {
+             o->cur.proxy_sources = eina_hash_string_small_new
+                   (EINA_FREE_CB(evas_object_unref));
+          }
+        evas_object_ref(proxy);
+        eina_hash_add(o->cur.proxy_sources, name, proxy);
+        return;
+     }
 
    evas_filter_program_proxy_source_bind(pgm, name, proxy);
 
