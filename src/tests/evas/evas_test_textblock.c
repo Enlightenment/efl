@@ -1232,6 +1232,20 @@ START_TEST(evas_textblock_format_removal)
    evas_textblock_cursor_range_delete(cur, main_cur);
    ck_assert_str_eq(evas_object_textblock_text_markup_get(tb), "<ps/><ps/><ps/><ps/>");
 
+   /* Range delete with item formats, TEST_CASE#1 */
+   evas_object_textblock_text_markup_set(tb, "The <b>Multiline</b><item size=50x50 href=abc></item> text!");
+   evas_textblock_cursor_pos_set(cur, 4);
+   evas_textblock_cursor_pos_set(main_cur, 14);
+   evas_textblock_cursor_range_delete(cur, main_cur);
+   ck_assert_str_eq(evas_object_textblock_text_markup_get(tb), "The  text!");
+
+   /* Range delete with item formats, TEST_CASE#2 */
+   evas_object_textblock_text_markup_set(tb, "The <b>Multiline</b><item size=50x50 href=abc></item> text!");
+   evas_textblock_cursor_pos_set(cur, 14);
+   evas_textblock_cursor_pos_set(main_cur, 15);
+   evas_textblock_cursor_range_delete(cur, main_cur);
+   ck_assert_str_eq(evas_object_textblock_text_markup_get(tb), "The <b>Multiline</b><item size=50x50 href=abc></item>text!");
+
    /* Verify fmt position and REP_CHAR positions are the same */
    evas_object_textblock_text_markup_set(tb,
          "This is<ps/>an <item absize=93x152 vsize=ascent></>a.");
