@@ -27,6 +27,11 @@ typedef struct _Emotion_Webcams Emotion_Webcams;
 struct _Emotion_Webcams
 {
    Eina_List *webcams;
+
+   Ecore_Idler *idler;
+   Eina_List *check_list;
+
+   Eina_Bool init;
 };
 
 struct _Emotion_Webcam
@@ -62,6 +67,7 @@ _emotion_webcams_edds_new(void)
    EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Emotion_Webcams);
    _webcams_edd = eet_data_descriptor_file_new(&eddc);
    EET_DATA_DESCRIPTOR_ADD_LIST(_webcams_edd, Emotion_Webcams, "webcams", webcams, _webcam_edd);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_webcam_edd, Emotion_Webcams, "init", init, EET_T_CHAR);
 
    return _webcams_edd;
 }
@@ -167,25 +173,6 @@ _emotion_webcam_new(const char *syspath)
 }
 
 static void
-_emotion_enumerate_all_webcams(void)
-{
-   Eina_List *devices;
-   const char *syspath;
-
-   devices = eeze_udev_find_by_type(EEZE_UDEV_TYPE_V4L, NULL);
-
-   EINA_LIST_FREE(devices, syspath)
-     {
-        Emotion_Webcam *test;
-
-        test = _emotion_webcam_new(syspath);
-        if (test) _emotion_check_device(test);
-
-        eina_stringshare_del(syspath);
-     }
-}
-
-static void
 _emotion_webcam_remove_cb(void *user_data, void *func_data EINA_UNUSED)
 {
    Emotion_Webcam *webcam;
@@ -198,6 +185,52 @@ _emotion_webcam_remove_cb(void *user_data, void *func_data EINA_UNUSED)
 
    EINA_REFCOUNT_UNREF(webcam)
       emotion_webcam_destroy(webcam);
+}
+
+static Eina_Bool
+_emotion_process_webcam(void *data)
+{
+   Emotion_Webcams *webcams;
+   Emotion_Webcam *test;
+   const char *syspath;
+
+   webcams = data;
+   syspath = eina_list_data_get(webcams->check_list);
+   if (!syspath)
+     {
+	webcams->idler = NULL;
+	webcams->init = EINA_TRUE;
+	return EINA_FALSE;
+     }
+
+   webcams->check_list = eina_list_remove_list(webcams->check_list,
+					       webcams->check_list);
+
+   test = _emotion_webcam_new(syspath);
+   if (test)
+     {
+	if (_emotion_check_device(test))
+	  ecore_event_add(EMOTION_WEBCAM_ADD, test, NULL, NULL);
+	else
+	  _emotion_webcam_remove_cb(test, NULL);
+     }
+
+   eina_stringshare_del(syspath);
+
+   return EINA_TRUE;
+}
+
+static void
+_emotion_enumerate_all_webcams(void)
+{
+   Eina_List *devices;
+
+   if (_emotion_webcams->init) return ;
+   devices = eeze_udev_find_by_type(EEZE_UDEV_TYPE_V4L, NULL);
+
+   _emotion_webcams->check_list = devices;
+   _emotion_webcams->idler = ecore_idler_add(_emotion_process_webcam,
+					     _emotion_webcams);
 }
 
 static void
@@ -257,8 +290,6 @@ Eina_Bool emotion_webcam_init(void)
 #ifdef HAVE_EEZE
    eeze_init();
 
-   _emotion_enumerate_all_webcams();
-
    eeze_watcher = eeze_udev_watch_add(EEZE_UDEV_TYPE_V4L,
                                       (EEZE_UDEV_EVENT_ADD | EEZE_UDEV_EVENT_REMOVE),
                                       _emotion_eeze_events, NULL);
@@ -271,6 +302,18 @@ void
 emotion_webcam_shutdown(void)
 {
    Emotion_Webcam *ew;
+   const char *syspath;
+
+   if (_emotion_webcams->idler)
+     {
+	ecore_idler_del(_emotion_webcams->idler);
+	_emotion_webcams->idler = NULL;
+     }
+
+   EINA_LIST_FREE(_emotion_webcams->check_list, syspath)
+     eina_stringshare_del(syspath);
+
+   _emotion_webcams->init = EINA_FALSE;
 
    EINA_LIST_FREE(_emotion_webcams->webcams, ew)
      {
@@ -329,6 +372,9 @@ EAPI const Eina_List *
 emotion_webcams_get(void)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(_emotion_webcams, NULL);
+
+   _emotion_enumerate_all_webcams();
+
    return _emotion_webcams->webcams;
 }
 
@@ -353,6 +399,8 @@ emotion_webcam_custom_get(const char *device)
    const Eina_List *l;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(_emotion_webcams, NULL);
+
+   _emotion_enumerate_all_webcams();
 
    EINA_LIST_FOREACH(_emotion_webcams->webcams, l, ew)
      if (ew->device && strcmp(device, ew->device) == 0)
