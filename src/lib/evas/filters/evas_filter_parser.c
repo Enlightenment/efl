@@ -50,6 +50,9 @@ typedef struct _Buffer
    Eina_Stringshare *name;
    Eina_Stringshare *proxy;
    int cid; // Transient value
+   struct {
+      int l, r, t, b; // Used for padding calculation. Can change over time.
+   } pad;
    Eina_Bool alpha : 1;
 } Buffer;
 
@@ -71,8 +74,7 @@ struct _Evas_Filter_Instruction
    Eina_Inlist /* Instruction_Param */ *params;
    struct
    {
-      void (* update) (Evas_Filter_Instruction *, int *, int *, int *, int *);
-      int l, r, t, b;
+      void (* update) (Evas_Filter_Program *, Evas_Filter_Instruction *, int *, int *, int *, int *);
    } pad;
    Eina_Bool valid : 1;
 };
@@ -705,23 +707,35 @@ _blend_instruction_prepare(Evas_Filter_Instruction *instr)
 }
 
 static void
-_blur_padding_update(Evas_Filter_Instruction *instr,
-                     int *l, int *r, int *t, int *b)
+_blur_padding_update(Evas_Filter_Program *pgm, Evas_Filter_Instruction *instr,
+                     int *padl, int *padr, int *padt, int *padb)
 {
    Eina_Bool yset;
-   int rx = 0, ry = 0;
-   const char *typestr;
+   int rx, ry, l, r, t, b;
+   const char *typestr, *inbuf, *outbuf;
+   Buffer *in, *out;
 
+   // TODO/FIXME: Add ox, oy support
    rx = _instruction_param_geti(instr, "rx", NULL);
    ry = _instruction_param_geti(instr, "ry", &yset);
    typestr = _instruction_param_gets(instr, "type", NULL);
+   inbuf = _instruction_param_gets(instr, "src", NULL);
+   outbuf = _instruction_param_gets(instr, "dst", NULL);
+
+   in = _buffer_get(pgm, inbuf);
+   out = _buffer_get(pgm, outbuf);
+   EINA_SAFETY_ON_NULL_RETURN(in);
+   EINA_SAFETY_ON_NULL_RETURN(out);
 
    if (typestr && !strcasecmp(typestr, "motion"))
      {
+        CRIT("Motion blur not implemented yet!");
+        /*
         instr->pad.l = (rx < 0) ? (-rx) : 0;
         instr->pad.r = (rx > 0) ? (rx) : 0;
         instr->pad.t = (ry < 0) ? (-ry) : 0;
         instr->pad.b = (ry > 0) ? (ry) : 0;
+        */
      }
    else
      {
@@ -729,15 +743,20 @@ _blur_padding_update(Evas_Filter_Instruction *instr,
         if (rx < 0) rx = 0;
         if (ry < 0) ry = 0;
 
-        instr->pad.l = rx;
-        instr->pad.r = rx;
-        instr->pad.t = ry;
-        instr->pad.b = ry;
+        l = rx + in->pad.l;
+        r = rx + in->pad.r;
+        t = ry + in->pad.t;
+        b = ry + in->pad.b;
 
-        if (l) *l += rx;
-        if (r) *r += rx;
-        if (t) *t += ry;
-        if (b) *b += ry;
+        if (out->pad.l < l) out->pad.l = l;
+        if (out->pad.r < r) out->pad.r = r;
+        if (out->pad.t < t) out->pad.t = t;
+        if (out->pad.b < b) out->pad.b = b;
+
+        if (padl) *padl = rx;
+        if (padr) *padr = rx;
+        if (padt) *padt = ry;
+        if (padb) *padb = ry;
      }
 }
 
@@ -815,21 +834,38 @@ _curve_instruction_prepare(Evas_Filter_Instruction *instr)
 }
 
 static void
-_displace_padding_update(Evas_Filter_Instruction *instr,
-                         int *l, int *r, int *t, int *b)
+_displace_padding_update(Evas_Filter_Program *pgm,
+                         Evas_Filter_Instruction *instr,
+                         int *padl, int *padr, int *padt, int *padb)
 {
    int intensity = 0;
+   int l, r, t, b;
+   const char *inbuf, *outbuf;
+   Buffer *in, *out;
 
    intensity = _instruction_param_geti(instr, "intensity", NULL);
-   instr->pad.l = intensity;
-   instr->pad.r = intensity;
-   instr->pad.t = intensity;
-   instr->pad.b = intensity;
+   inbuf = _instruction_param_gets(instr, "src", NULL);
+   outbuf = _instruction_param_gets(instr, "dst", NULL);
 
-   if (l) *l += intensity;
-   if (r) *r += intensity;
-   if (t) *t += intensity;
-   if (b) *b += intensity;
+   in = _buffer_get(pgm, inbuf);
+   out = _buffer_get(pgm, outbuf);
+   EINA_SAFETY_ON_NULL_RETURN(in);
+   EINA_SAFETY_ON_NULL_RETURN(out);
+
+   l = intensity + in->pad.l;
+   r = intensity + in->pad.r;
+   t = intensity + in->pad.t;
+   b = intensity + in->pad.b;
+
+   if (out->pad.l < l) out->pad.l = l;
+   if (out->pad.r < r) out->pad.r = r;
+   if (out->pad.t < t) out->pad.t = t;
+   if (out->pad.b < b) out->pad.b = b;
+
+   if (padl) *padl = l;
+   if (padr) *padr = r;
+   if (padt) *padt = t;
+   if (padb) *padb = b;
 }
 
 static Eina_Bool
@@ -880,23 +916,39 @@ _fill_instruction_prepare(Evas_Filter_Instruction *instr)
 }
 
 static void
-_grow_padding_update(Evas_Filter_Instruction *instr,
-                     int *l, int *r, int *t, int *b)
+_grow_padding_update(Evas_Filter_Program *pgm, Evas_Filter_Instruction *instr,
+                     int *padl, int *padr, int *padt, int *padb)
 {
-   int radius = 0;
+   const char *inbuf, *outbuf;
+   Buffer *in, *out;
+   int l, r, t, b;
+   int radius;
 
    radius = _instruction_param_geti(instr, "radius", NULL);
+   inbuf = _instruction_param_gets(instr, "src", NULL);
+   outbuf = _instruction_param_gets(instr, "dst", NULL);
+
+   in = _buffer_get(pgm, inbuf);
+   out = _buffer_get(pgm, outbuf);
+   EINA_SAFETY_ON_NULL_RETURN(in);
+   EINA_SAFETY_ON_NULL_RETURN(out);
+
    if (radius < 0) radius = 0;
 
-   instr->pad.l = radius;
-   instr->pad.r = radius;
-   instr->pad.t = radius;
-   instr->pad.b = radius;
+   l = radius + in->pad.l;
+   r = radius + in->pad.r;
+   t = radius + in->pad.t;
+   b = radius + in->pad.b;
 
-   if (l) *l += radius;
-   if (r) *r += radius;
-   if (t) *t += radius;
-   if (b) *b += radius;
+   if (padl) *padl = l;
+   if (padr) *padr = r;
+   if (padt) *padt = t;
+   if (padb) *padb = b;
+
+   if (out->pad.l < l) out->pad.l = l;
+   if (out->pad.r < r) out->pad.r = r;
+   if (out->pad.t < t) out->pad.t = t;
+   if (out->pad.b < b) out->pad.b = b;
 }
 
 static Eina_Bool
@@ -1142,17 +1194,30 @@ evas_filter_program_padding_get(Evas_Filter_Program *pgm,
 {
    Evas_Filter_Instruction *instr;
    int pl = 0, pr = 0, pt = 0, pb = 0;
+   int maxl = 0, maxr = 0, maxt = 0, maxb = 0;
+   Buffer *buf;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(pgm, EINA_FALSE);
 
+   // Reset all paddings
+   EINA_INLIST_FOREACH(pgm->buffers, buf)
+     buf->pad.l = buf->pad.r = buf->pad.t = buf->pad.b = 0;
+
+   // Accumulate paddings
    EINA_INLIST_FOREACH(pgm->instructions, instr)
      if (instr->pad.update)
-       instr->pad.update(instr, &pl, &pr, &pt, &pb);
+       {
+          instr->pad.update(pgm, instr, &pl, &pr, &pt, &pb);
+          if (pl > maxl) maxl = pl;
+          if (pr > maxr) maxr = pr;
+          if (pt > maxt) maxt = pt;
+          if (pb > maxb) maxb = pb;
+       }
 
-   if (l) *l = pl;
-   if (r) *r = pr;
-   if (t) *t = pt;
-   if (b) *b = pb;
+   if (l) *l = maxl;
+   if (r) *r = maxr;
+   if (t) *t = maxt;
+   if (b) *b = maxb;
 
    return EINA_TRUE;
 }
