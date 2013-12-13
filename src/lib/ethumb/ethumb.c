@@ -698,13 +698,17 @@ _ethumb_build_absolute_path(const char *path, char buf[PATH_MAX])
    p = buf;
 
    if (path[0] == '/')
-     strcpy(p, path);
+     {
+        strncpy(p, path, PATH_MAX - 1);
+        p[PATH_MAX - 1] = 0;
+     }
    else if (path[0] == '~')
      {
         const char *home = getenv("HOME");
         if (!home)
           return NULL;
-        strcpy(p, home);
+        strncpy(p, home, PATH_MAX - 1);
+        p[PATH_MAX - 1] = 0;
         len = strlen(p);
         p += len;
         p[0] = '/';
@@ -719,7 +723,8 @@ _ethumb_build_absolute_path(const char *path, char buf[PATH_MAX])
         p += len;
         p[0] = '/';
         p++;
-        strcpy(p, path);
+        strncpy(p, path, PATH_MAX - 1 - len - 1);
+        p[PATH_MAX - 1 - len - 1] = 0;
      }
 
    return buf;
