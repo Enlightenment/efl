@@ -7830,7 +7830,7 @@ _evas_textblock_node_text_adjust_offsets_to_start(Evas_Object_Textblock *o,
              last_node->offset -= delta;
              break;
           }
-        else if (use_end && itr && (pos + itr->offset >= (size_t) end) &&
+        else if (use_end && itr && (pos + itr->offset > (size_t) end) &&
               itr->visible)
           {
              break;
