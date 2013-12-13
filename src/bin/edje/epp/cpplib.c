@@ -981,7 +981,8 @@ cpp_skip_hspace(cpp_reader * pfile)
 	     FORWARD(2);
 	  }
 	else if (c == '@' && CPP_BUFFER(pfile)->has_escapes
-		 && is_hor_space[PEEKN(1)])
+		 && (PEEKN(1) != EOF) && (PEEKN(1) >= 0)
+		 && (PEEKN(1) < 256) && is_hor_space[PEEKN(1)])
           {
              FORWARD(1);
           }
