@@ -811,6 +811,12 @@ _ethumb_table_append(Ethumbd *ed)
 	  break;
      }
 
+   if (i >= q->max_count)
+     {
+        CRIT("cannot find free table slot in table of %i", q->max_count);
+        return -1;
+     }
+
    snprintf(buf, sizeof(buf), "%s/%d", _ethumb_dbus_path, i);
    q->table[i].used = 1;
    q->table[i].path = eina_stringshare_add(buf);
