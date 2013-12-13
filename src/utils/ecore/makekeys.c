@@ -59,9 +59,9 @@ main(int argc, char **argv)
    long unsigned int val;
    char key[128], prefix[128];
    char tab[TBLNUM];
-   unsigned short offsets[TBLNUM];
-   unsigned short indexes[TBLNUM];
-   long unsigned int values[TBLNUM];
+   unsigned short offsets[TBLNUM] = { 0 };
+   unsigned short indexes[TBLNUM] = { 0 };
+   long unsigned int values[TBLNUM] = { 0 };
    char buf[1024];
 
    for (l = 1; l < argc; l++) 
