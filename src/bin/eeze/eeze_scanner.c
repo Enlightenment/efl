@@ -397,7 +397,7 @@ static void
 sigs_setup(void)
 {
    sigset_t sigs = {{0}};
-   struct sigaction s;
+   struct sigaction s = {{0}};
 
    sigfillset(&sigs);
    sigdelset(&sigs, SIGSEGV);
