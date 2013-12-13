@@ -143,7 +143,7 @@ _emotion_check_device(Emotion_Webcam *ew)
    eina_stringshare_del(ew->name);
    free(ew);
 #ifdef HAVE_V4L2
-   if (fd > 0) close(fd);
+   if (fd >= 0) close(fd);
 #endif
    return EINA_FALSE;
 }
