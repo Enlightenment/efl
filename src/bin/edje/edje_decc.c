@@ -447,6 +447,9 @@ output(void)
                   fprintf(f, "%s $@ -id . -fd . %s -o %s.edj\n", 
                           edje_file->compiler, sf->name, outdir);
                   fclose(f);
+                  chmod(out,
+                        S_IRUSR | S_IWUSR | S_IXUSR |
+                        S_IRGRP | S_IWGRP | S_IXGRP);
                }
 
 	     WRN("*** CAUTION ***\n"
@@ -462,8 +465,6 @@ output(void)
                   ERR("symlink %s -> %s failed", sf->name, out);
                }
 	  }
-
-	chmod(out, S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IWGRP | S_IXGRP);
 
      }
 
