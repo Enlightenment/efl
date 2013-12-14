@@ -563,7 +563,7 @@ evas_common_map_rgba_prepare(RGBA_Image *src, RGBA_Image *dst,
                              RGBA_Map *m)
 {
    RGBA_Map_Cutout *spans;
-   Cutout_Rects *rects;
+   Cutout_Rects *rects = NULL;
    Cutout_Rect *r;
    int i;
 
