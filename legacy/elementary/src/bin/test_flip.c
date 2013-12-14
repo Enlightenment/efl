@@ -521,7 +521,8 @@ my_fl_ch(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 }
 
 void
-test_flip4(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+test_flip_interactive(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
+                      void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bx, *fl, *im, *li, *bt, *rd, *rdg;
    char buf[PATH_MAX];
@@ -633,12 +634,12 @@ test_flip4(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
 }
 
 void
-test_flip5(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+test_flip_to(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bx, *bx2, *fl, *o, *bt, *ly;
    char buf[PATH_MAX];
 
-   win = elm_win_util_standard_add("flip4", "Flip 4");
+   win = elm_win_util_standard_add("flip-to", "Flip To");
    elm_win_autodel_set(win, EINA_TRUE);
 
    bx = elm_box_add(win);
