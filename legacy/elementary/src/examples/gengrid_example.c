@@ -289,7 +289,6 @@ _long_pressed(void        *data,
    fprintf(stdout, "Long press on item with handle %p\n", event_info);
 }
 
-
 /* label fetching callback */
 static char *
 _grid_label_get(void        *data,

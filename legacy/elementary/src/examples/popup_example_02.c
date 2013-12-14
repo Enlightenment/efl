@@ -76,4 +76,3 @@ _response_cb(void *data, Evas_Object *obj,
 {
    evas_object_del(data);
 }
-

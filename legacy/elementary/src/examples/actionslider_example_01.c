@@ -100,7 +100,6 @@ elm_main(int argc, char **argv)
    evas_object_show(as);
    elm_box_pack_end(bx, as);
 
-
    as = elm_actionslider_add(win);
    evas_object_size_hint_weight_set(as, EVAS_HINT_EXPAND, 0);
    evas_object_size_hint_align_set(as, EVAS_HINT_FILL, 0);

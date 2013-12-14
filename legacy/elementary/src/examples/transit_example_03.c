@@ -61,7 +61,6 @@ _transit_resizing(Elm_Transit *trans)
    elm_transit_effect_resizing_add(trans, 250, 100, 400, 160);
 }
 
-
 /* helper structure that will hold the transit checkboxes string, callbacks
  * and checked statuses */
 static struct {

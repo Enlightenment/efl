@@ -122,8 +122,6 @@ init_shaders(GLData *gld)
    return 1;
 }
 
-
-
 // Callbacks
 // intialize callback that gets called once for intialization
 static void
@@ -183,7 +181,6 @@ _resize_gl(Evas_Object *obj)
    gl->glViewport(0, 0, w, h);
 }
 
-
 // draw callback is where all the main GL rendering happens
 static void
 _draw_gl(Evas_Object *obj)
@@ -239,7 +236,6 @@ _del(void *data, Evas *evas, Evas_Object *obj, void *event_info)
    Ecore_Animator *ani = evas_object_data_get(obj, "ani");
    ecore_animator_del(ani);
 }
-
 
 EAPI_MAIN int
 elm_main(int argc, char **argv)
