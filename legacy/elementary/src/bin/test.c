@@ -9,9 +9,9 @@
 int _log_domain = -1;
 
 /* all tests prototypes */
-//void test_access(void *data, Evas_Object *obj, void *event_info);
-//void test_access2(void *data, Evas_Object *obj, void *event_info);
-//void test_access3(void *data, Evas_Object *obj, void *event_info);
+void test_access(void *data, Evas_Object *obj, void *event_info);
+void test_access2(void *data, Evas_Object *obj, void *event_info);
+void test_access3(void *data, Evas_Object *obj, void *event_info);
 void test_bg_plain(void *data, Evas_Object *obj, void *event_info);
 void test_bg_image(void *data, Evas_Object *obj, void *event_info);
 void test_bg_options(void *data, Evas_Object *obj, void *event_info);
@@ -450,7 +450,7 @@ my_win_main(const char *autorun, Eina_Bool test_win_only)
    evas_object_show(lb);
 
    /* This label will not be read out */
-//   elm_access_object_unregister(lb);
+   elm_access_object_unregister(lb);
 
    tg = elm_check_add(win);
    elm_object_style_set(tg, "toggle");
@@ -795,9 +795,9 @@ add_tests:
    ADD_TEST(NULL, "Miscellaneous", "Icon Desktops", test_icon_desktops);
    ADD_TEST(NULL, "Miscellaneous", "Floating Objects", test_floating);
    ADD_TEST(NULL, "Miscellaneous", "Configuration", test_config);
-//   ADD_TEST(NULL, "Miscellaneous", "Accessibility", test_access);
-//   ADD_TEST(NULL, "Miscellaneous", "Accessibility2", test_access2);
-//   ADD_TEST(NULL, "Miscellaneous", "Accessibility3", test_access3);
+   ADD_TEST(NULL, "Miscellaneous", "Accessibility", test_access);
+   ADD_TEST(NULL, "Miscellaneous", "Accessibility2", test_access2);
+   ADD_TEST(NULL, "Miscellaneous", "Accessibility3", test_access3);
 
    //------------------------------//
    ADD_TEST(NULL, "Application client/server", "Task switcher", test_task_switcher);
