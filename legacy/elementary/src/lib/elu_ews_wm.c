@@ -487,7 +487,6 @@ _elm_ews_wm_init(void)
      _ews_bg = o;
    ecore_evas_ews_background_set(o);
 
-
 #define ADD_EH(ev, cb)                                          \
    _ews_ev_handlers = eina_list_append                          \
      (_ews_ev_handlers, ecore_event_handler_add(ev, cb, NULL))

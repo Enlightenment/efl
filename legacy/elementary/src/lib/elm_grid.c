@@ -238,7 +238,6 @@ elm_grid_pack(Evas_Object *obj,
    eo_do(obj, elm_obj_grid_pack(subobj, x, y, w, h));
 }
 
-
 static void
 _pack(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
@@ -340,7 +339,6 @@ elm_grid_children_get(const Evas_Object *obj)
    eo_do((Eo *) obj, elm_obj_grid_children_get(&ret));
    return ret;
 }
-
 
 static void
 _children_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)

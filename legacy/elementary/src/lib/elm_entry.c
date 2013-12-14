@@ -447,7 +447,6 @@ _update_selection_handler(Evas_Object *obj)
      }
 }
 
-
 static const char *
 _elm_entry_theme_group_get(Evas_Object *obj)
 {
@@ -3135,7 +3134,6 @@ _end_handler_mouse_move_cb(void *data,
    if (_elm_config->magnifier_enable)
      _magnifier_move(data, ex + cx, ey + cy + (ch / 2));
 }
-
 
 static void
 _elm_entry_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)

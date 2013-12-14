@@ -29,7 +29,6 @@ static char CONFORMANT_KEY[] = "_elm_conform_key";
 static char *sub_type[SUB_TYPE_COUNT] = { "elm_scroller", "elm_genlist" };
 #endif
 
-
 static const char INDICATOR_PART[] = "elm.swallow.indicator";
 static const char VIRTUALKEYPAD_PART[] = "elm.swallow.virtualkeypad";
 static const char CLIPBOARD_PART[] = "elm.swallow.clipboard";
@@ -319,7 +318,6 @@ _port_indicator_connect_cb(void *data)
    return ECORE_CALLBACK_RENEW;
 }
 
-
 static Eina_Bool
 _land_indicator_connect_cb(void *data)
 {
@@ -373,7 +371,6 @@ _port_indicator_disconnected(void *data,
 
    sd->port_indi_timer = ecore_timer_add(1, _port_indicator_connect_cb, conform);
 }
-
 
 static Evas_Object *
 _create_portrait_indicator(Evas_Object *obj)
@@ -675,7 +672,6 @@ _show_region_job(void *data)
         Evas_Coord x, y, w, h;
 
         elm_widget_show_region_get(focus_obj, &x, &y, &w, &h);
-
 
         if (h < _elm_config->finger_size)
           h = _elm_config->finger_size;

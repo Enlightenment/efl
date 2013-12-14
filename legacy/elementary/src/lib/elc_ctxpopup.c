@@ -111,7 +111,6 @@ _elm_ctxpopup_smart_focus_direction(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, 
    eina_list_free(l);
 }
 
-
 static void
 _elm_ctxpopup_smart_event(Eo *obj, void *_pd, va_list *list)
 {

@@ -682,4 +682,3 @@ static const Eo_Class_Description class_desc = {
 };
 
 EO_DEFINE_CLASS(elm_obj_hoversel_class_get, &class_desc, ELM_OBJ_BUTTON_CLASS, EVAS_SMART_SELECTABLE_INTERFACE, NULL);
-

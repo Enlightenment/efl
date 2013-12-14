@@ -578,7 +578,6 @@ _access_multibuttonentry_label_register(Evas_Object *obj, Eina_Bool is_access)
      _elm_access_edje_object_part_object_unregister
                       (obj, sd->label, "elm.text");
 
-
    evas_object_pass_events_set(po, !is_access);
    evas_object_propagate_events_set(sd->label, !is_access);
 }

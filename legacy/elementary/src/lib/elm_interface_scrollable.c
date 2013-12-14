@@ -1257,7 +1257,6 @@ _elm_scroll_x_mirrored_get(const Evas_Object *obj,
 
    if (!sid->pan_obj) return 0;
 
-
    eo_do((Eo *)obj, elm_scrollable_interface_content_viewport_size_get(&w, NULL));
    eo_do(sid->pan_obj, elm_obj_pan_content_size_get(&cw, &ch));
    ret = (cw - (x + w));
@@ -3754,7 +3753,6 @@ _elm_scroll_content_set(Eo *obj, void *_pd, va_list *list)
    Elm_Scrollable_Smart_Interface_Data *sid = _pd;
    Evas_Object *content = va_arg(*list, Evas_Object *);
 
-
    if (!sid->edje_obj) return;
 
    if (sid->content)
@@ -3799,7 +3797,6 @@ _elm_scroll_extern_pan_set(Eo *obj, void *_pd, va_list *list)
 {
    Elm_Scrollable_Smart_Interface_Data *sid = _pd;
    Evas_Object *pan = va_arg(*list, Evas_Object *);
-
 
    if (!sid->edje_obj) return;
 
@@ -4804,4 +4801,3 @@ static const Eo_Class_Description _elm_scrollable_interface_desc = {
 };
 
 EO_DEFINE_CLASS(elm_scrollable_interface_get, &_elm_scrollable_interface_desc, NULL, EVAS_SMART_SCROLLABLE_INTERFACE, NULL);
-

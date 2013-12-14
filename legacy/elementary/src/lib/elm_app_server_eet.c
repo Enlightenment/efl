@@ -139,7 +139,6 @@ elm_app_server_view_props_progress_set(Elm_App_Server_View_Props *elm_app_server
     elm_app_server_view_props->progress = progress;
 }
 
-
 static inline void
 _elm_app_server_views_eet_init(void)
 {

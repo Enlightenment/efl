@@ -153,7 +153,6 @@ _color_picker_init(Elm_Colorselector_Smart_Data *sd)
    evas_object_image_data_update_add(sd->picker_display, 0, 0, w, h);
 }
 
-
 static void
 _rgb_to_hsl(Elm_Colorselector_Smart_Data *sd)
 {
@@ -1871,7 +1870,6 @@ _color_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    int a = va_arg(*list, int);
    _colors_set(obj, r, g, b, a);
 }
-
 
 EAPI void
 elm_colorselector_color_get(const Evas_Object *obj,

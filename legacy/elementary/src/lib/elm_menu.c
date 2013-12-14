@@ -1353,4 +1353,3 @@ static const Eo_Class_Description class_desc = {
      NULL
 };
 EO_DEFINE_CLASS(elm_obj_menu_class_get, &class_desc, ELM_OBJ_WIDGET_CLASS, EVAS_SMART_CLICKABLE_INTERFACE, NULL);
-

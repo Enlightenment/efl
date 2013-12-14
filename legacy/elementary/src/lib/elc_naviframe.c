@@ -1235,7 +1235,6 @@ _on_obj_size_hints_changed(void *data __UNUSED__, Evas *e __UNUSED__,
      _item_dispmode_set(it, dispmode);
 }
 
-
 static void
 _elm_naviframe_smart_focus_next(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {

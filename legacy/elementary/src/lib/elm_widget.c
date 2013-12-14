@@ -4996,7 +4996,6 @@ _elm_widget_item_signal_callback_list_get(Elm_Widget_Item *item, Eina_List *posi
    return data;
 }
 
-
 /**
  * @internal
  *
@@ -6551,4 +6550,3 @@ static const Eo_Class_Description class_desc = {
 };
 
 EO_DEFINE_CLASS(elm_widget_class_get, &class_desc, EVAS_OBJ_SMART_CLASS, NULL);
-

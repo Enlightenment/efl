@@ -3625,7 +3625,6 @@ _first_item_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    *ret = (Elm_Object_Item *)it;
 }
 
-
 EAPI Elm_Object_Item *
 elm_gengrid_at_xy_item_get(const Evas_Object *obj,
                            Evas_Coord x,
@@ -4194,4 +4193,3 @@ static const Eo_Class_Description class_desc = {
 };
 
 EO_DEFINE_CLASS(elm_obj_gengrid_class_get, &class_desc, ELM_OBJ_LAYOUT_CLASS, ELM_SCROLLABLE_INTERFACE, EVAS_SMART_CLICKABLE_INTERFACE, NULL);
-

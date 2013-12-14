@@ -560,4 +560,3 @@ static const Eo_Class_Description class_desc = {
 };
 
 EO_DEFINE_CLASS(elm_obj_button_class_get, &class_desc, ELM_OBJ_LAYOUT_CLASS, EVAS_SMART_CLICKABLE_INTERFACE, NULL);
-

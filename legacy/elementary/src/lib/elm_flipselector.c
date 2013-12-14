@@ -815,7 +815,6 @@ _last_item_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 
    Elm_Flipselector_Smart_Data *sd = _pd;
 
-
    if (!sd->items) return;
 
    EINA_LIST_REVERSE_FOREACH(sd->items, l, it)

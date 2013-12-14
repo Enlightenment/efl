@@ -2483,7 +2483,6 @@ _elm_genlist_smart_event(Eo *obj, void *_pd, va_list *list)
    Elm_Object_Item *it = NULL;
    Evas_Coord pan_max_x = 0, pan_max_y = 0;
 
-
    if (elm_widget_disabled_get(obj)) return;
    if (type != EVAS_CALLBACK_KEY_DOWN) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
@@ -7698,4 +7697,3 @@ static const Eo_Class_Description class_desc = {
 };
 
 EO_DEFINE_CLASS(elm_obj_genlist_class_get, &class_desc, ELM_OBJ_LAYOUT_CLASS, ELM_SCROLLABLE_INTERFACE, EVAS_SMART_CLICKABLE_INTERFACE, NULL);
-

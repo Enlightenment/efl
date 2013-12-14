@@ -626,4 +626,3 @@ static const Eo_Class_Description class_desc = {
 };
 
 EO_DEFINE_CLASS(elm_obj_glview_class_get, &class_desc, ELM_OBJ_WIDGET_CLASS, NULL);
-

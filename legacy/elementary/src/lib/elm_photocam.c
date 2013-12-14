@@ -1595,7 +1595,6 @@ _elm_photocam_download_cancel(void *data, Elm_Url *url EINA_UNUSED, int error)
    sd->remote = NULL;
 }
 
-
 static void
 _elm_photocam_download_progress(void *data, Elm_Url *url EINA_UNUSED, double now, double total)
 {
@@ -1606,7 +1605,6 @@ _elm_photocam_download_progress(void *data, Elm_Url *url EINA_UNUSED, double now
    progress.total = total;
    evas_object_smart_callback_call(obj, SIG_DOWNLOAD_PROGRESS, &progress);
 }
-
 
 static const char *remote_uri[] = {
   "http://", "https://", "ftp://"
@@ -1656,7 +1654,6 @@ _file_set(Eo *obj, void *_pd, va_list *list)
             }
           break;
        }
-
 
    _internal_file_set(obj, sd, file, NULL, ret);
 }
@@ -2380,4 +2377,3 @@ static const Eo_Class_Description class_desc = {
 };
 
 EO_DEFINE_CLASS(elm_obj_photocam_class_get, &class_desc, ELM_OBJ_WIDGET_CLASS, ELM_SCROLLABLE_INTERFACE, NULL);
-

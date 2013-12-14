@@ -184,7 +184,6 @@ _elm_tooltip_content_del(Elm_Tooltip *tt)
    tt->content = NULL;
 }
 
-
 static void
 _elm_tooltip_hide(Elm_Tooltip *tt)
 {
@@ -757,7 +756,6 @@ elm_tooltip_theme(Elm_Tooltip *tt)
    tt->changed_style = EINA_TRUE;
    _elm_tooltip_reconfigure_job_start(tt);
 }
-
 
 /**
  * Set the content to be shown in the tooltip object for specific event area.

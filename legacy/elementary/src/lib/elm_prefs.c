@@ -1603,7 +1603,6 @@ _elm_prefs_item_visible_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    if (it->visible == visible) return;
    it->visible = visible;
 
-
    if (!it->available)
      {
         ERR("widget of item %s has been deleted, we can't act on it",

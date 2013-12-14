@@ -551,4 +551,3 @@ static const Eo_Class_Description class_desc = {
 };
 
 EO_DEFINE_CLASS(elm_obj_photo_class_get, &class_desc, ELM_OBJ_WIDGET_CLASS, EVAS_SMART_CLICKABLE_INTERFACE, EVAS_SMART_DRAGGABLE_INTERFACE, NULL);
-

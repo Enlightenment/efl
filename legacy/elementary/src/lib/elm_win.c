@@ -1011,7 +1011,6 @@ _elm_win_state_change(Ecore_Evas *ee)
         ch_maximized = EINA_TRUE;
      }
 
-
    profile = ecore_evas_window_profile_get(sd->ee);
    ch_profile = _elm_win_profile_set(sd, profile);
 

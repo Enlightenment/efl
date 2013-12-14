@@ -239,4 +239,3 @@ EAPI void elm_gesture_layer_tap_longpress_cb_del(Evas_Object *obj, Elm_Gesture_S
         _object_delete(NULL, NULL, obj, NULL);
      }
 }
-

@@ -951,4 +951,3 @@ elm_theme_user_dir_get(void)
      }
    return path;
 }
-

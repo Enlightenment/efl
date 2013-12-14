@@ -2790,7 +2790,6 @@ _xml_name_dump_list_cb(void *data,
    return EINA_TRUE;
 }
 
-
 static void
 _kml_parse(Elm_Map_Route *r)
 {
@@ -3075,7 +3074,6 @@ _name_list_cb(void *data,
    free(name_list);
 }
 
-
 static char *
 _prepare_download()
 {
@@ -3086,7 +3084,6 @@ _prepare_download()
    if (!ecore_file_exists(fname)) ecore_file_mkpath(fname);
    return strdup(fname);
 }
-
 
 static Elm_Map_Name *
 _name_request(const Evas_Object *obj,
@@ -3151,7 +3148,6 @@ _name_request(const Evas_Object *obj,
    return name;
 }
 
-
 static Eina_List *
 _name_list_request(const Evas_Object *obj,
               int method,
@@ -3204,7 +3200,6 @@ _name_list_request(const Evas_Object *obj,
                            "elm,state,busy,start", "elm");
    return name_list->names;
 }
-
 
 static Evas_Event_Flags
 _pinch_zoom_start_cb(void *data,
@@ -6102,4 +6097,3 @@ static const Eo_Class_Description class_desc = {
 };
 
 EO_DEFINE_CLASS(elm_obj_map_class_get, &class_desc, ELM_OBJ_WIDGET_CLASS, ELM_SCROLLABLE_INTERFACE, NULL);
-

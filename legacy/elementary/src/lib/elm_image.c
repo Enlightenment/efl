@@ -1229,7 +1229,6 @@ _elm_image_smart_fill_outside_set(Eo *obj, void *_pd, va_list *list)
    eo_do(obj, elm_obj_image_sizing_eval());
 }
 
-
 EAPI Eina_Bool
 elm_image_fill_outside_get(const Evas_Object *obj)
 {

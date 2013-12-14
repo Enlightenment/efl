@@ -318,7 +318,6 @@ _destructor(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    eo_do_super(obj, MY_CLASS, eo_destructor());
 }
 
-
 EAPI void
 elm_mapbuf_enabled_set(Evas_Object *obj,
                        Eina_Bool enabled)

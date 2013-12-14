@@ -3162,7 +3162,6 @@ _wl_dropable_handle(Dropable *drop, Evas_Coord x, Evas_Coord y, Eina_Bool have_o
    Dropable_Cbs *cbs;
    Eina_Inlist *itr;
 
-
    if (drop->last.in)
      last = _wl_dropable_find_geom(_wl_elm_widget_window_get(drop->obj),
                                    drop->last.x, drop->last.y);
@@ -3286,11 +3285,6 @@ _wl_elm_widget_window_get(Evas_Object *obj)
 }
 
 #endif
-
-
-
-
-
 
 ////////////////////////////////////////////////////////////////////////////
 // for local (Within 1 app/process) cnp (used by fb as fallback
@@ -3494,11 +3488,6 @@ _local_elm_selection_selection_has_owner(Evas_Object *obj __UNUSED__)
    return EINA_FALSE;
 }
 #endif
-
-
-
-
-
 
 // common internal funcs
 ////////////////////////////////////////////////////////////////////////////
@@ -3924,7 +3913,6 @@ elm_drop_item_container_add(Evas_Object *obj,
    return EINA_TRUE;
 }
 /* END   - Support elm containers for Drop */
-
 
 /* START - Support elm containers for Drag */
 static int

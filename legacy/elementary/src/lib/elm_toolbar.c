@@ -643,7 +643,6 @@ _highlight_next_item_get(Evas_Object *obj, Evas_Object *box, Eina_Bool reverse)
    return it;
 }
 
-
 static void
 _elm_toolbar_smart_event(Eo *obj, void *_pd, va_list *list)
 {

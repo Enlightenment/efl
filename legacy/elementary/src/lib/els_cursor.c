@@ -526,7 +526,6 @@ elm_object_cursor_theme_search_enabled_set(Evas_Object *obj, Eina_Bool theme_sea
    _elm_cursor_cur_set(cur);
 }
 
-
 EAPI Eina_Bool
 elm_object_cursor_theme_search_enabled_get(const Evas_Object *obj)
 {

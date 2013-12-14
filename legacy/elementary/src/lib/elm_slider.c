@@ -1426,7 +1426,6 @@ _elm_slider_indicator_show_on_focus_get(Eo *obj EINA_UNUSED, void *_pd, va_list 
    *ret = sd->always_popup_show;
 }
 
-
 static void
 _elm_slider_smart_focus_next_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
 {

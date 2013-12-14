@@ -22,7 +22,6 @@
       } \
    } while (0)
 
-
 #define _TRANSIT_FOCAL 2000
 
 struct _Elm_Transit

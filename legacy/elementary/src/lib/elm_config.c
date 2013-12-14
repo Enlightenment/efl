@@ -2630,4 +2630,3 @@ _elm_config_shutdown(void)
 #endif
    _desc_shutdown();
 }
-

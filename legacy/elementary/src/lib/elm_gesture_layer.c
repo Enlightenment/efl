@@ -1673,7 +1673,6 @@ _tap_gesture_check_finish(Gesture_Info *gesture, Evas_Coord tap_finger_size)
    if (!tap_finger_size)  /* Use system default if not set by user */
      tap_finger_size = elm_config_finger_size_get();
 
-
    if (!st->l) return EINA_FALSE;
    EINA_LIST_FOREACH(st->l, l, pe_list)
      {
@@ -3812,7 +3811,6 @@ _elm_gesture_layer_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    if (!elm_widget_disabled_get(obj))
      _callbacks_unregister(obj);
 
-
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
 
@@ -4105,7 +4103,6 @@ elm_gesture_layer_line_min_length_set(Evas_Object *obj, int line_min_length)
    ELM_GESTURE_LAYER_DATA_GET(obj, sd);
    sd->line_min_length = line_min_length;
 }
-
 
 EAPI int
 elm_gesture_layer_line_min_length_get(const Evas_Object *obj)

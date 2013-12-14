@@ -900,7 +900,6 @@ _elm_layout_smart_theme_set(Eo *obj, void *_pd, va_list *list)
    if (ret) *ret = int_ret;
 }
 
-
 EAPI void
 elm_layout_signal_emit(Evas_Object *obj,
                        const char *emission,
@@ -2325,7 +2324,6 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_OBJ_LAYOUT_SUB_ID_THAW, "Thaws the Elementary layout object."),
      EO_OP_DESCRIPTION(ELM_OBJ_LAYOUT_SUB_ID_SIZING_RESTRICTED_EVAL, "Eval sizing, restricted to current width/height size."),
 
-
      EO_OP_DESCRIPTION_SENTINEL
 };
 
@@ -2341,4 +2339,3 @@ static const Eo_Class_Description class_desc = {
 };
 
 EO_DEFINE_CLASS(elm_obj_layout_class_get, &class_desc, ELM_OBJ_CONTAINER_CLASS, NULL);
-
