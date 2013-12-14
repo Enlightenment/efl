@@ -431,8 +431,6 @@ test_fileselector(void *data       EINA_UNUSED,
 
    win = elm_win_util_standard_add("fileselector", "File Selector");
    elm_win_autodel_set(win, EINA_TRUE);
-   evas_object_resize(win, 320, 700);
-   evas_object_show(win);
 
    vbox = elm_box_add(win);
    evas_object_size_hint_weight_set(vbox, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -475,5 +473,8 @@ test_fileselector(void *data       EINA_UNUSED,
    elm_box_pack_end(vbox, _getter_option_create(vbox, fs));
    elm_box_pack_end(vbox, _mode_option_create(vbox, fs));
    elm_box_pack_end(vbox, _thumbnail_size_option_create(vbox, fs));
+
+   evas_object_resize(win, 320, 700);
+   evas_object_show(win);
 }
 

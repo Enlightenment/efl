@@ -695,10 +695,11 @@ test_box_transition(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
    tdata->transitions = eina_list_append(tdata->transitions,
          evas_object_box_layout_stack);
 
-   evas_object_resize(win, 300, 300);
    evas_object_resize(bx, 300, 300);
    evas_object_smart_callback_add(win, "delete,request", _win_del, tdata);
-   evas_object_show(win);
    elm_box_layout_set(bx, evas_object_box_layout_horizontal, NULL, NULL);
    _test_box_transition_change(tdata);
+
+   evas_object_resize(win, 300, 300);
+   evas_object_show(win);
 }

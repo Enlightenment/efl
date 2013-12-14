@@ -595,8 +595,6 @@ test_list2(void        *data EINA_UNUSED,
    win = elm_win_add(NULL, "list2", ELM_WIN_BASIC);
    elm_win_title_set(win, "List 2");
    elm_win_autodel_set(win, EINA_TRUE);
-   evas_object_resize(win, 320, 500);
-   evas_object_show(win);
 
    bg = elm_bg_add(win);
    snprintf(buf, sizeof(buf), "%s/images/plant_01.jpg", elm_app_data_dir_get());
@@ -685,6 +683,9 @@ test_list2(void        *data EINA_UNUSED,
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
+
+   evas_object_resize(win, 320, 500);
+   evas_object_show(win);
 }
 
 /***********/
@@ -1295,8 +1296,6 @@ void test_list_focus(const char *name, const char *title, Eina_Bool horiz)
 
    win = elm_win_util_standard_add(name, title);
    elm_win_autodel_set(win, EINA_TRUE);
-   evas_object_resize(win, 320, 300);
-   evas_object_show(win);
 
    elm_win_focus_highlight_enabled_set(win, EINA_TRUE);
    elm_win_focus_highlight_animate_set(win, EINA_TRUE);
@@ -1356,6 +1355,9 @@ void test_list_focus(const char *name, const char *title, Eina_Bool horiz)
 
    elm_list_go(li);
    evas_object_show(li);
+
+   evas_object_resize(win, 320, 300);
+   evas_object_show(win);
 }
 
 void
@@ -1575,8 +1577,6 @@ test_list_multi_select(void *data EINA_UNUSED,
 
    win = elm_win_util_standard_add("list-multi-select", "List Multi Select");
    elm_win_autodel_set(win, EINA_TRUE);
-   evas_object_resize(win, 320, 500);
-   evas_object_show(win);
    evas_object_event_callback_add(win, EVAS_CALLBACK_FREE, _cleanup_cb, ld);
 
    bx = elm_box_add(win);
@@ -1606,4 +1606,7 @@ test_list_multi_select(void *data EINA_UNUSED,
    elm_list_item_append(li, "Longer label.", NULL, NULL, NULL, NULL);
 
    elm_list_go(li);
+
+   evas_object_resize(win, 320, 500);
+   evas_object_show(win);
 }

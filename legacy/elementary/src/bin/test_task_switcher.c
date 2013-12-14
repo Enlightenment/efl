@@ -402,6 +402,6 @@ test_task_switcher(void *data EINA_UNUSED,
    _apps_list_update();
 
    evas_object_show(table);
-   evas_object_show(win);
    evas_object_resize(win, 1024, 768);
+   evas_object_show(win);
 }

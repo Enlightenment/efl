@@ -109,8 +109,6 @@ test_menu(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
 
    win = elm_win_util_standard_add("menu", "Menu");
    elm_win_autodel_set(win, EINA_TRUE);
-   evas_object_resize(win, 350, 200);
-   evas_object_show(win);
 
    lbl = elm_label_add(win);
    elm_object_text_set(lbl, "Click background to populate menu!");
@@ -137,6 +135,9 @@ test_menu(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
 
    evas_object_event_callback_add(rect, EVAS_CALLBACK_MOUSE_DOWN,
                                   _menu_show_cb, menu);
+
+   evas_object_resize(win, 350, 200);
+   evas_object_show(win);
 }
 
 static void
@@ -230,8 +231,6 @@ test_menu2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
 
    win = elm_win_util_standard_add("menu2", "Menu 2");
    elm_win_autodel_set(win, EINA_TRUE);
-   evas_object_resize(win, 320, 320);
-   evas_object_show(win);
 
    bx = elm_box_add(win);
    elm_box_horizontal_set(bx, EINA_TRUE);
@@ -308,5 +307,8 @@ test_menu2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
    elm_box_pack_end(vbx, bt);
    evas_object_smart_callback_add(bt, "clicked", _close_bt_clicked, mn);
    evas_object_show(bt);
+
+   evas_object_resize(win, 320, 320);
+   evas_object_show(win);
 }
 

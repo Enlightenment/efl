@@ -59,8 +59,6 @@ test_icon(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info
 
    win = elm_win_util_standard_add("icon-test", "Icon Test");
    elm_win_autodel_set(win, EINA_TRUE);
-   evas_object_resize(win, 400, 400);
-   evas_object_show(win);
 
    box = elm_box_add(win);
    evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -111,6 +109,9 @@ test_icon(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info
    evas_object_smart_callback_add(bt, "clicked", bt_clicked, NULL);
    elm_box_pack_end(hbox, bt);
    evas_object_show(bt);
+
+   evas_object_resize(win, 400, 400);
+   evas_object_show(win);
 }
 
 static void

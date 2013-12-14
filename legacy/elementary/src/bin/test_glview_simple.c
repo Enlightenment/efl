@@ -234,8 +234,6 @@ test_glview_simple(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
 
    win = elm_win_util_standard_add("glview-simple", "GLView Simple");
    elm_win_autodel_set(win, EINA_TRUE);
-   evas_object_resize(win, 320, 480);
-   evas_object_show(win);
    evas_object_event_callback_add(win, EVAS_CALLBACK_FREE, _win_free_cb, gld);
 
    bx = elm_box_add(win);
@@ -270,4 +268,7 @@ test_glview_simple(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
    evas_object_smart_callback_add(bt, "clicked", _close_cb, NULL);
+
+   evas_object_resize(win, 320, 480);
+   evas_object_show(win);
 }

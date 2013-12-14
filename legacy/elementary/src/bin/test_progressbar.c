@@ -325,7 +325,6 @@ test_progressbar2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
    win = elm_win_util_standard_add("progressbar", "Progressbar2");
    evas_object_smart_callback_add(win, "delete,request",
                                   _progressbar_destroy_cb, pd);
-   evas_object_show(win);
 
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -392,4 +391,6 @@ test_progressbar2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
    elm_box_pack_end(bt_bx, bt);
    evas_object_show(bt);
    pd->btn_stop = bt;
+
+   evas_object_show(win);
 }

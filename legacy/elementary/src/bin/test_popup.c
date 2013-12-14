@@ -600,8 +600,6 @@ test_popup(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
 
    win = elm_win_util_standard_add("popup", "Popup");
    elm_win_autodel_set(win, EINA_TRUE);
-   evas_object_resize(win, 480, 400);
-   evas_object_show(win);
 
    list = elm_list_add(win);
    evas_object_size_hint_weight_set(list, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -645,5 +643,8 @@ test_popup(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
                         win);
    elm_list_go(list);
    evas_object_show(list);
+
+   evas_object_resize(win, 480, 400);
+   evas_object_show(win);
 }
 

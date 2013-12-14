@@ -280,7 +280,6 @@ test_calendar2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    evas_object_show(en);
    elm_box_pack_end(bx, en);
    elm_entry_editable_set(en, EINA_FALSE);
-   evas_object_show(win);
 
    elm_calendar_min_max_year_set(cal3, -1, -1);
 
@@ -316,6 +315,8 @@ test_calendar2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
 
    _print_cal_info(cal, en);
    evas_object_smart_callback_add(cal, "changed", _print_cal_info_cb, en);
+
+   evas_object_show(win);
 }
 
 

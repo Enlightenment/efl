@@ -208,6 +208,7 @@ test_button(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
    evas_object_show(ic);
+
    evas_object_resize(win, 320, 480);
    evas_object_show(win);
 }

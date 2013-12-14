@@ -3317,8 +3317,6 @@ test_genlist20(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
 
    win = elm_win_util_standard_add("genlist-focus", "Genlist Focus");
    elm_win_autodel_set(win, EINA_TRUE);
-   evas_object_resize(win, 300, 500);
-   evas_object_show(win);
 
    bxx = elm_box_add(win);
    evas_object_size_hint_weight_set(bxx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -3390,6 +3388,9 @@ test_genlist20(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
 
    elm_genlist_item_class_free(itc1);
    elm_genlist_item_class_free(itc4);
+
+   evas_object_resize(win, 300, 500);
+   evas_object_show(win);
 }
 
 
@@ -3469,8 +3470,6 @@ test_genlist_item_styles(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
 
    win = elm_win_util_standard_add("genlist-item-styles", "Gengrid Item Styles");
    elm_win_autodel_set(win, EINA_TRUE);
-   evas_object_resize(win, 600, 600);
-   evas_object_show(win);
 
    box = elm_box_add(win);
    elm_box_horizontal_set(box, EINA_TRUE);
@@ -3500,6 +3499,9 @@ test_genlist_item_styles(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    evas_object_data_set(gl, "check", check);
 
    evas_object_data_set(list, "genlist", gl);
+
+   evas_object_resize(win, 600, 600);
+   evas_object_show(win);
 }
 
 /***********/
@@ -3595,8 +3597,6 @@ test_genlist_multi_select(void *data EINA_UNUSED,
 
    win = elm_win_util_standard_add("genlist-multi-select", "Genlist Multi Select");
    elm_win_autodel_set(win, EINA_TRUE);
-   evas_object_resize(win, 320, 500);
-   evas_object_show(win);
    evas_object_event_callback_add(win, EVAS_CALLBACK_FREE, _cleanup_cb, gd);
 
    bx = elm_box_add(win);
@@ -3629,6 +3629,9 @@ test_genlist_multi_select(void *data EINA_UNUSED,
                                 (void *)(uintptr_t)(i * 10)/* func data */);
      }
    elm_genlist_item_class_free(itc);
+
+   evas_object_resize(win, 320, 500);
+   evas_object_show(win);
 }
 
 /* test genlist deletion */
@@ -3738,8 +3741,6 @@ test_genlist_del(void *data EINA_UNUSED,
 
    win = elm_win_util_standard_add("genlist-del", "Genlist Del");
    elm_win_autodel_set(win, EINA_TRUE);
-   evas_object_resize(win, 320, 500);
-   evas_object_show(win);
 
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -3774,4 +3775,7 @@ test_genlist_del(void *data EINA_UNUSED,
 
    gl = _gl_del_genlist_add(bx);
    _gl_del_item_append(gl, itc);
+
+   evas_object_resize(win, 320, 500);
+   evas_object_show(win);
 }

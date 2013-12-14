@@ -384,8 +384,6 @@ filled_bt_clicked(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
 
    win = elm_win_util_standard_add("test filled", "Test Filled");
    elm_win_autodel_set(win, EINA_TRUE);
-   evas_object_resize(win, 450, 200);
-   evas_object_show(win);
 
    box = elm_box_add(win);
    evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -407,6 +405,9 @@ filled_bt_clicked(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
    evas_object_smart_callback_add(tg, "changed", filled_cb, content_box);
    elm_box_pack_end(box, tg);
    evas_object_show(tg);
+
+   evas_object_resize(win, 450, 200);
+   evas_object_show(win);
 }
 
 static void
@@ -438,8 +439,6 @@ cursor_bt_clicked(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
 
    win = elm_win_util_standard_add("test cursor", "Test Cursor");
    elm_win_autodel_set(win, EINA_TRUE);
-   evas_object_resize(win, 450, 450);
-   evas_object_show(win);
 
    box = elm_box_add(win);
    evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -467,6 +466,9 @@ cursor_bt_clicked(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
 
    elm_box_pack_end(box, hbox);
    evas_object_show(hbox);
+
+   evas_object_resize(win, 450, 450);
+   evas_object_show(win);
 }
 
 static void
@@ -496,8 +498,6 @@ test_gengrid(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
    win = elm_win_util_standard_add("gengrid", "GenGrid");
    elm_win_autodel_set(win, EINA_TRUE);
    evas_object_event_callback_add(win, EVAS_CALLBACK_FREE, _cleanup_cb, api);
-   evas_object_resize(win, 600, 600);
-   evas_object_show(win);
 
    api->box = bxx = elm_box_add(win);
    evas_object_size_hint_weight_set(bxx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -583,6 +583,9 @@ test_gengrid(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
    evas_object_smart_callback_add(bt, "clicked", _btn_show_clicked_cb, api->grid);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
+
+   evas_object_resize(win, 600, 600);
+   evas_object_show(win);
 }
 
 static void
@@ -709,8 +712,6 @@ test_gengrid2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
 
    win = elm_win_util_standard_add("gengrid2", "GenGrid 2");
    elm_win_autodel_set(win, EINA_TRUE);
-   evas_object_resize(win, 600, 600);
-   evas_object_show(win);
 
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -795,6 +796,9 @@ test_gengrid2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    /* item_class_ref is needed for gic. some items can be added in callbacks */
    elm_gengrid_item_class_ref(gic);
    elm_gengrid_item_class_free(gic);
+
+   evas_object_resize(win, 600, 600);
+   evas_object_show(win);
 }
 
 void
@@ -807,8 +811,6 @@ test_gengrid3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
 
    win = elm_win_util_standard_add("gengrid_group", "GenGrid Group");
    elm_win_autodel_set(win, EINA_TRUE);
-   evas_object_resize(win, 600, 600);
-   evas_object_show(win);
 
    grid = elm_gengrid_add(win);
    evas_object_size_hint_weight_set(grid, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -864,6 +866,9 @@ test_gengrid3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    elm_gengrid_item_class_free(ggic);
 
    evas_object_show(grid);
+
+   evas_object_resize(win, 600, 600);
+   evas_object_show(win);
 }
 
 /* test gengrid item styles */
@@ -975,8 +980,6 @@ test_gengrid_item_styles(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
 
    win = elm_win_util_standard_add("gengrid-styles", "Gengrid Item Styles");
    elm_win_autodel_set(win, EINA_TRUE);
-   evas_object_resize(win, 600, 600);
-   evas_object_show(win);
 
    box = elm_box_add(win);
    elm_box_horizontal_set(box, EINA_TRUE);
@@ -996,6 +999,9 @@ test_gengrid_item_styles(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    gengrid = _gengrid_create(win, (12 * 12), NULL);
    elm_box_pack_end(box, gengrid);
    evas_object_show(gengrid);
+
+   evas_object_resize(win, 600, 600);
+   evas_object_show(win);
 }
 
 static void
@@ -1232,7 +1238,6 @@ test_gengrid4(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    win = elm_win_util_standard_add("gengrid-show-bringin", "GenGrid Show/Bring_in");
    elm_win_autodel_set(win, EINA_TRUE);
    evas_object_event_callback_add(win, EVAS_CALLBACK_FREE, _cleanup_cb, sd);
-   evas_object_show(win);
 
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -1266,4 +1271,6 @@ test_gengrid4(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    evas_object_smart_callback_add(bt, "clicked", _bring_in_clicked_cb, sd);
    elm_box_pack_end(bx2, bt);
    evas_object_show(bt);
+
+   evas_object_show(win);
 }

@@ -34,8 +34,6 @@ test_hover(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
 
    win = elm_win_util_standard_add("hover", "Hover");
    elm_win_autodel_set(win, EINA_TRUE);
-   evas_object_resize(win, 440, 440);
-   evas_object_show(win);
 
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -98,6 +96,9 @@ test_hover(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
    elm_object_text_set(bt, "Right");
    elm_object_part_content_set(hv, "right", bt);
    evas_object_show(bt);
+
+   evas_object_resize(win, 440, 440);
+   evas_object_show(win);
 }
 
 void
@@ -108,8 +109,6 @@ test_hover2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
 
    win = elm_win_util_standard_add("hover2", "Hover 2");
    elm_win_autodel_set(win, EINA_TRUE);
-   evas_object_resize(win, 440, 440);
-   evas_object_show(win);
 
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -169,6 +168,9 @@ test_hover2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    elm_object_text_set(bt, "Right");
    elm_object_part_content_set(hv, "right", bt);
    evas_object_show(bt);
+
+   evas_object_resize(win, 440, 440);
+   evas_object_show(win);
 }
 
 static void
@@ -201,8 +203,6 @@ test_hover3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    win = elm_win_util_standard_add("hover3", "Hover 3");
    elm_win_focus_highlight_enabled_set(win, EINA_TRUE);
    elm_win_autodel_set(win, EINA_TRUE);
-   evas_object_resize(win, 440, 440);
-   evas_object_show(win);
 
    rect = evas_object_rectangle_add(evas_object_evas_get(win));
    evas_object_size_hint_weight_set(rect, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -245,5 +245,8 @@ test_hover3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
    evas_object_smart_callback_add(bt, "clicked", _dismiss_hover, hv);
+
+   evas_object_resize(win, 440, 440);
+   evas_object_show(win);
 }
 

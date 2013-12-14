@@ -68,7 +68,6 @@ test_slider(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
 
    win = elm_win_util_standard_add("slider", "Slider");
    elm_win_autodel_set(win, EINA_TRUE);
-   evas_object_show(win);
 
    fr = elm_frame_add(win);
    evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -308,4 +307,6 @@ test_slider(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    evas_object_smart_callback_add(bt, "clicked", _bt_m1, sl);
    evas_object_show(bt);
    elm_box_pack_end(bx2, bt);
+
+   evas_object_show(win);
 }

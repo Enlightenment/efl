@@ -25,7 +25,6 @@ test_icon_animated(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
    win = elm_win_add(NULL, "icon-animated-gif", ELM_WIN_BASIC);
    elm_win_title_set(win, "Icon Animated Gif");
    elm_win_autodel_set(win, EINA_TRUE);
-   evas_object_show(win);
 
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -53,4 +52,6 @@ test_icon_animated(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
    evas_object_show(ic);
 
    evas_object_smart_callback_add(ic, "clicked", _icon_clicked_cb, ic);
+
+   evas_object_show(win);
 }

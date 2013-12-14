@@ -188,8 +188,6 @@ test_index(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
    win = elm_win_util_standard_add("index", "Index");
    elm_win_autodel_set(win, EINA_TRUE);
    evas_object_event_callback_add(win, EVAS_CALLBACK_FREE, _cleanup_cb, api);
-   evas_object_resize(win, 320, 270);
-   evas_object_show(win);
 
    bxx = elm_box_add(win);
    evas_object_size_hint_weight_set(bxx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -260,6 +258,9 @@ test_index(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
    evas_object_smart_callback_add(id, "changed", _index_changed_cb, NULL);
    evas_object_smart_callback_add(id, "selected", _index_selected_cb, NULL);
    elm_index_level_go(id, 0);
+
+   evas_object_resize(win, 320, 270);
+   evas_object_show(win);
 }
 
 /***********/
@@ -380,8 +381,6 @@ test_index2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    win = elm_win_util_standard_add("sorted-index-list", "Sorted Index and List");
    evas_object_smart_callback_add(win, "delete,request", _test_index2_del, gui);
    elm_win_autodel_set(win, EINA_TRUE);
-   evas_object_resize(win, 320, 480);
-   evas_object_show(win);
 
    box = elm_box_add(win);
    evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -430,6 +429,9 @@ test_index2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
                                   gui);
    elm_list_go(gui->lst);
    evas_object_show(gui->lst);
+
+   evas_object_resize(win, 320, 480);
+   evas_object_show(win);
 }
 
 /***** Index Horizontal Mode ******/
@@ -455,8 +457,6 @@ test_index_horizontal(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    win = elm_win_util_standard_add("index-horizontal", "Index Horizontal");
    elm_win_autodel_set(win, EINA_TRUE);
    evas_object_event_callback_add(win, EVAS_CALLBACK_FREE, _cleanup_cb, api);
-   evas_object_resize(win, 480, 320);
-   evas_object_show(win);
 
    tb = elm_table_add(win);
    evas_object_size_hint_weight_set(tb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -486,5 +486,8 @@ test_index_horizontal(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
      }
    evas_object_smart_callback_add(id, "changed", _index_list_changed_cb, NULL);
    elm_index_level_go(id, 0);
+
+   evas_object_resize(win, 480, 320);
+   evas_object_show(win);
 }
 

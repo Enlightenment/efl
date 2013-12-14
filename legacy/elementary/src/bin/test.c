@@ -865,9 +865,6 @@ add_tests:
    if (tests)
      _menu_create(NULL);
 
-   /* set an initial window size */
-   evas_object_resize(win, 480, 480);
-   evas_object_show(win);
    /* bring in autorun frame */
    if (autorun)
      {
@@ -875,6 +872,10 @@ add_tests:
         evas_object_geometry_get(tt, &x, &y, NULL, NULL);
         elm_scroller_region_bring_in(sc, x, y, 0, 0);
      }
+
+   /* set an initial window size */
+   evas_object_resize(win, 480, 480);
+   evas_object_show(win);
 }
 
 /* this is your elementary main function - it MUST be called IMMEDIATELY

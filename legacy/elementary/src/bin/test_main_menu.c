@@ -26,8 +26,6 @@ test_main_menu(void *data EINA_UNUSED,
 
    win = elm_win_util_standard_add("menu", "Menu");
    elm_win_autodel_set(win, EINA_TRUE);
-   evas_object_resize(win, 250, 350);
-   evas_object_show(win);
 
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -73,5 +71,8 @@ test_main_menu(void *data EINA_UNUSED,
    elm_menu_item_add(menu, menu_it, "applications-email-panel", "third item", NULL, NULL);
    menu_it1 = elm_menu_item_add(menu, menu_it, NULL, "sub menu", NULL, NULL);
    elm_menu_item_add(menu, menu_it1, NULL, "first item", NULL, NULL);
+
+   evas_object_resize(win, 250, 350);
+   evas_object_show(win);
 }
 

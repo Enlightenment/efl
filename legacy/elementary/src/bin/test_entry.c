@@ -2290,8 +2290,6 @@ test_entry_emoticon(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
 
    win = elm_win_util_standard_add("entry-emoticon", "Entry Emoticon");
    elm_win_autodel_set(win, EINA_TRUE);
-   evas_object_resize(win, 400, 500);
-   evas_object_show(win);
 
    en = elm_entry_add(win);
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -2338,5 +2336,8 @@ test_entry_emoticon(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
                       );
    evas_object_show(en);
    elm_object_focus_set(en, EINA_TRUE);
+
+   evas_object_resize(win, 400, 500);
+   evas_object_show(win);
 }
 

@@ -20,7 +20,6 @@ test_radio(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
 
    win = elm_win_util_standard_add("radios", "Radios");
    elm_win_autodel_set(win, EINA_TRUE);
-   evas_object_show(win);
 
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -103,4 +102,6 @@ test_radio(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    evas_object_smart_callback_add(rd, "changed", _rd_changed_cb, NULL);
 
    elm_radio_value_set(rdg, 2);
+
+   evas_object_show(win);
 }
