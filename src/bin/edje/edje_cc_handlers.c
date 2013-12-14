@@ -2993,6 +2993,7 @@ st_collections_group_alias(void)
    alias = mem_alloc(SZ(Edje_Part_Collection_Directory_Entry));
    alias->id = current_de->id;
    alias->entry = parse_str(0);
+   alias->group_alias = EINA_TRUE;
 
    EINA_LIST_FOREACH(aliases, l, tmp)
      if (strcmp(alias->entry, tmp->entry) == 0)

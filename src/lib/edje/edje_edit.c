@@ -1008,7 +1008,7 @@ edje_edit_group_add(Evas_Object *obj, const char *name)
 EAPI Eina_Bool
 edje_edit_group_del(Evas_Object *obj, const char *group_name)
 {
-   Edje_Part_Collection_Directory_Entry *e;
+   Edje_Part_Collection_Directory_Entry *e, *e_del;
    Edje_Part_Collection *die = NULL;
    Edje_Part_Collection *g;
    Eina_List *l;
@@ -1017,9 +1017,6 @@ edje_edit_group_del(Evas_Object *obj, const char *group_name)
    int count;
 
    GET_ED_OR_RETURN(EINA_FALSE);
-
-   /* if (eina_hash_find(ed->file->collection_hash, group_name)) */
-   /*   return EINA_FALSE; */
 
    if (strcmp(ed->group, group_name) == 0) return EINA_FALSE;
    e = eina_hash_find(ed->file->collection, group_name);
@@ -1030,13 +1027,15 @@ edje_edit_group_del(Evas_Object *obj, const char *group_name)
    _edje_edit_group_references_update(obj, group_name, NULL);
 
    EINA_LIST_FOREACH(ed->file->collection_cache, l, g)
-     if (g->id == e->id)
-       {
-	  ed->file->collection_cache =
-	    eina_list_remove_list(ed->file->collection_cache, l);
-	  die = g;
-	  break;
-       }
+     {
+        if (strcmp(g->part, e->entry) == 0)
+          {
+             ed->file->collection_cache =
+                eina_list_remove_list(ed->file->collection_cache, l);
+             die = g;
+             break;
+          }
+     }
 
    /* Remove collection/id from eet file */
    eetf = eet_open(ed->file->path, EET_FILE_MODE_READ_WRITE);
@@ -1066,7 +1065,22 @@ edje_edit_group_del(Evas_Object *obj, const char *group_name)
      }
    eet_close(eetf);
 
-   /* Free Group */
+   l = NULL; g = NULL;
+   /* Free Group and all it's Aliases */
+   if (!e->group_alias)
+     {
+        EINA_LIST_FOREACH(ed->file->collection_cache, l, g)
+          {
+             if (e->id == g->id)
+               {
+                  ed->file->collection_cache =
+                     eina_list_remove_list(ed->file->collection_cache, l);
+                  e_del = eina_hash_find(ed->file->collection, g->part);
+                  _edje_collection_free(ed->file, g, e_del);
+                  eina_hash_del(ed->file->collection, g->part, e_del);
+               }
+          }
+     }
    if (die) _edje_collection_free(ed->file, die, e);
    eina_hash_del(ed->file->collection, group_name, e);
 
@@ -1142,6 +1156,128 @@ FUNC_GROUP_ACCESSOR(min, w);
 FUNC_GROUP_ACCESSOR(min, h);
 FUNC_GROUP_ACCESSOR(max, w);
 FUNC_GROUP_ACCESSOR(max, h);
+
+/****************/
+/*  ALIAS  API  */
+/****************/
+
+EAPI Eina_List *
+edje_edit_group_aliases_get(Evas_Object *obj, const char *group_name)
+{
+   Eina_Iterator *i;
+   Edje_Part_Collection_Directory_Entry *e;
+   Edje_Part_Collection_Directory_Entry *d;
+   Eina_List *alias_list = NULL;
+
+   GET_ED_OR_RETURN(NULL);
+   if (!ed->file || !ed->file->collection)
+     return NULL;
+
+   e = eina_hash_find(ed->file->collection, group_name);
+   if (!e) return NULL;
+
+   i = eina_hash_iterator_data_new(ed->file->collection);
+   EINA_ITERATOR_FOREACH(i, d)
+     {
+        if ((e->id == d->id) && (d->group_alias))
+          alias_list = eina_list_append(alias_list, eina_stringshare_add(d->entry));
+     }
+   eina_iterator_free(i);
+
+   return alias_list;
+}
+
+EAPI Eina_Bool
+edje_edit_group_alias_is(Evas_Object *obj, const char *alias_name)
+{
+   Edje_Part_Collection_Directory_Entry *e;
+
+   GET_ED_OR_RETURN(EINA_FALSE);
+   if (!ed->file || !ed->file->collection)
+     return EINA_FALSE;
+
+   e = eina_hash_find(ed->file->collection, alias_name);
+   if (!e) return EINA_FALSE;
+
+   return e->group_alias;
+}
+
+EAPI const char *
+edje_edit_group_aliased_get(Evas_Object *obj, const char *alias_name)
+{
+   Eina_Iterator *i;
+   Edje_Part_Collection_Directory_Entry *e;
+   Edje_Part_Collection_Directory_Entry *d;
+   const char *group_name = NULL;
+
+   GET_ED_OR_RETURN(NULL);
+   if (!ed->file || !ed->file->collection)
+     return NULL;
+
+   e = eina_hash_find(ed->file->collection, alias_name);
+   if (!e) return NULL;
+   if (!e->group_alias) return eina_stringshare_add(alias_name);
+
+   i = eina_hash_iterator_data_new(ed->file->collection);
+   EINA_ITERATOR_FOREACH(i, d)
+     {
+        if ((e->id == d->id) && (!d->group_alias))
+          {
+             group_name = d->entry;
+             break;
+          }
+     }
+   eina_iterator_free(i);
+
+   return eina_stringshare_add(group_name);
+}
+
+EAPI Eina_Bool
+edje_edit_group_alias_add(Evas_Object *obj, const char *group_name, const char *alias_name)
+{
+   Edje_Part_Collection_Directory_Entry *e;
+   Edje_Part_Collection_Directory_Entry *de;
+
+   GET_ED_OR_RETURN(EINA_FALSE);
+
+   if (!ed->file || !ed->file->collection)
+     return EINA_FALSE;
+
+   /* check if a group with the same alias already exists */
+   if (eina_hash_find(ed->file->collection, alias_name))
+     return EINA_FALSE;
+   /* check if a group that is being aliased is really exists */
+   e = eina_hash_find(ed->file->collection, group_name);
+   if (!e) return EINA_FALSE;
+   /* check that a group that is being aliased is not an alias */
+   if (e->group_alias) return EINA_FALSE;
+
+   /* Create structs */
+   de = _alloc(sizeof(Edje_Part_Collection_Directory_Entry));
+   if (!de) return EINA_FALSE;
+
+   /* Init Edje_Part_Collection_Directory_Entry */
+   de->id = e->id;
+   de->entry = eina_stringshare_add(alias_name);
+   de->group_alias = EINA_TRUE;
+
+   memcpy(&de->count, &e->count, sizeof (de->count));
+   eina_hash_direct_add(ed->file->collection, de->entry, de);
+
+   EDIT_EMN(RECTANGLE, Edje_Part_Description_Common, de);
+   EDIT_EMN(TEXT, Edje_Part_Description_Text, de);
+   EDIT_EMN(IMAGE, Edje_Part_Description_Image, de);
+   EDIT_EMN(SWALLOW, Edje_Part_Description_Common, de);
+   EDIT_EMN(TEXTBLOCK, Edje_Part_Description_Text, de);
+   EDIT_EMN(GROUP, Edje_Part_Description_Common, de);
+   EDIT_EMN(BOX, Edje_Part_Description_Box, de);
+   EDIT_EMN(TABLE, Edje_Part_Description_Table, de);
+   EDIT_EMN(EXTERNAL, Edje_Part_Description_External, de);
+   EDIT_EMN(SPACER, Edje_Part_Description_Common, de);
+   EDIT_EMN(part, Edje_Part, de);
+
+   return EINA_TRUE;
+}
 
 /***************/
 /*  DATA API   */

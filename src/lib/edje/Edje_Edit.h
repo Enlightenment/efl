@@ -181,17 +181,6 @@ EAPI void edje_edit_print_internal_status(Evas_Object *obj);
  *  Functions to deal with groups property (see @ref edcref).
  */ //@{
 
-/** Create a new empty group in the given edje.
- *
- * If a group with the same name exist none is created.
- *
- * @param obj Object being edited.
- * @param name Name of the new group.
- *
- * @return EINA_TRUE if successfully added the group, EINA_FALSE if an error
- * occurred or if a group with the same name exists.
- */
-
 /**
  * @brief Add an edje (empty) group to an edje object's group set.
  *
@@ -211,18 +200,6 @@ EAPI void edje_edit_print_internal_status(Evas_Object *obj);
  */
 EAPI Eina_Bool edje_edit_group_add(Evas_Object *obj, const char *name);
 
-/** Delete the specified group from the given edje.
- *
- * You can only delete a currently unused group.
- * All the parts and the programs inside the group will be deleted as well,
- * but not image or font embedded in the edje.
- *
- * @param obj Object being edited.
- * @param group_name Name of group to delete.
- *
- * @return EINA_TRUE if successful, EINA_FALSE otherwise.
- */
-
 /**
  * @brief Delete the specified group from the edje file.
  *
@@ -235,6 +212,9 @@ EAPI Eina_Bool edje_edit_group_add(Evas_Object *obj, const char *name);
  * operation can't be undone as all references to the group are removed from
  * the file.
  * This function may fail if the group to be deleted is currently in use.
+ *
+ * @attention be carefull, if you deleting group, it will delete all it's aliases also,
+ * if you deleting alias, then it will delete alias only.
  *
  */
 EAPI Eina_Bool edje_edit_group_del(Evas_Object *obj, const char *group_name);
@@ -327,6 +307,61 @@ EAPI int edje_edit_group_max_h_get(Evas_Object *obj);
  */
 EAPI Eina_Bool edje_edit_group_max_h_set(Evas_Object *obj, int h);
 
+//@}
+/******************************************************************************/
+/**************************   ALIAS API   **************************************/
+/******************************************************************************/
+/** @name Alias API
+ *  Functions to deal with aliases that just another names of the group in the edje (see @ref edcref).
+ */ //@{
+
+/**
+ * Retrieves a list of aliases for this group.
+ * If given group name is an alias name then this function will return NULL.
+ *
+ * @attention After you done using returned list, please use edje_edit_string_list_free to free this list.
+ *
+ * @param obj Object being edited.
+ * @param group_name Group name or alias.
+ *
+ * @return List of strings, each being a name of alias of given group or alias name.
+ */
+EAPI Eina_List * edje_edit_group_aliases_get(Evas_Object *obj, const char *group_name);
+
+/**
+ * Check if this group is an alias name.
+ *
+ * @param obj Object being edited.
+ * @param alias_name Group name that is alias.
+ *
+ * @return EINA_TRUE if alias, EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool edje_edit_group_alias_is(Evas_Object *obj, const char *alias_name);
+
+/**
+ * Return the main group name that is aliased by given alias name.
+ *
+ * @attention After you done using this string, please use edje_edit_string_free to free this string.
+ *
+ * @param obj Object being edited.
+ * @param alias_name Group name that is alias.
+ *
+ * @return name of the main group that is being aliased.
+ */
+EAPI const char * edje_edit_group_aliased_get(Evas_Object *obj, const char *alias_name);
+
+/**
+ * Add new alias to the given group.
+ *
+ * @attention when aliasing a group, be sure that the given group_name is no an alias.
+ *
+ * @param obj Object being edited.
+ * @param group_name Group name that is being aliased.
+ * @param alias_name Group name that is alias.
+ *
+ * @return EINA_TRUE if success, EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool edje_edit_group_alias_add(Evas_Object *obj, const char *group_name, const char *alias_name);
 
 //@}
 /******************************************************************************/

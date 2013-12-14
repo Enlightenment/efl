@@ -734,6 +734,7 @@ struct _Edje_Part_Collection_Directory_Entry
    } mp_rtl; /* For Right To Left interface */
 
    Edje_Part_Collection *ref;
+   Eina_Bool group_alias;
 };
 
 /*----------*/
