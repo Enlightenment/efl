@@ -182,6 +182,7 @@ test_click_image(void *data EINA_UNUSED, Evas_Object *obj  EINA_UNUSED, void *ev
    evas_object_smart_callback_add(im, "clicked", _img_clicked_cb, im);
    elm_box_pack_end(box, im);
    evas_object_show(im);
+   elm_object_focus_set(im, EINA_TRUE);
 
    label = elm_label_add(win);
    elm_object_text_set(label, "<b>Press Return/Space/KP_Return key on image to transit.</b>");
@@ -189,8 +190,6 @@ test_click_image(void *data EINA_UNUSED, Evas_Object *obj  EINA_UNUSED, void *ev
    evas_object_size_hint_align_set(label, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(box, label);
    evas_object_show(label);
-
-   elm_object_focus_set(im, EINA_TRUE);
 
    evas_object_resize(win, 320, 480);
    evas_object_show(win);

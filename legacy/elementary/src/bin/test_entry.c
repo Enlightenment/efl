@@ -126,6 +126,7 @@ test_entry(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(bx, en);
    evas_object_show(en);
+   elm_object_focus_set(en, EINA_TRUE);
 
    bx2 = elm_box_add(win);
    elm_box_horizontal_set(bx2, EINA_TRUE);
@@ -195,7 +196,6 @@ test_entry(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
    elm_box_pack_end(bx, bx2);
    evas_object_show(bx2);
 
-   elm_object_focus_set(en, EINA_TRUE);
    evas_object_show(win);
 }
 
@@ -536,9 +536,8 @@ test_entry_scrolled(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
    elm_box_pack_end(bx, bx2);
    evas_object_show(bx2);
 
-   evas_object_resize(win, 320, 300);
-
    elm_object_focus_set(win, EINA_TRUE);
+   evas_object_resize(win, 320, 300);
    evas_object_show(win);
 }
 
@@ -757,15 +756,14 @@ test_entry_style_user(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
 
    en = elm_entry_add(win);
    elm_entry_line_wrap_set(en, ELM_WRAP_MIXED);
-
    elm_entry_text_style_user_push(en, "DEFAULT='font_size=40 color=#FF0000'");
    elm_object_text_set(en, "Testing Text");
-
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(bx, en);
    evas_object_resize(en, 200, 200);
    evas_object_show(en);
+   elm_object_focus_set(en, EINA_TRUE);
 
    bt = elm_button_add(win);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -789,7 +787,6 @@ test_entry_style_user(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
    elm_object_focus_allow_set(bt2, 0);
    evas_object_show(bt2);
 
-   elm_object_focus_set(en, EINA_TRUE);
    evas_object_show(win);
 }
 

@@ -220,5 +220,4 @@ test_multibuttonentry(void *data EINA_UNUSED,
 
    evas_object_resize(win, 320, 480);
    evas_object_show(win);
-   elm_object_focus_set(sc, EINA_TRUE);
 }
