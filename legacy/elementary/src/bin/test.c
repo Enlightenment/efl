@@ -348,16 +348,6 @@ _entry_changed_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EIN
    _menu_create(str);
 }
 
-#if 0
-static void
-_btn_clicked_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
-{
-   const char *str = elm_entry_entry_get(data);
-   if (!str) return;
-   _menu_create(str);
-}
-#endif
-
 static char *
 _space_removed_string_get(const char *name)
 {
@@ -385,7 +375,6 @@ my_win_main(const char *autorun, Eina_Bool test_win_only)
 {
    Evas_Object *bg = NULL, *bx0 = NULL, *bx1 = NULL, *lb = NULL;
    Evas_Object *fr = NULL, *tg = NULL, *sc = NULL, *en = NULL;
-   //Evas_Object *btn = NULL;
    Eina_List *l = NULL;
    struct elm_test *t = NULL;
 
@@ -495,14 +484,6 @@ my_win_main(const char *autorun, Eina_Bool test_win_only)
    elm_box_pack_end(bx1, en);
    evas_object_show(en);
    elm_object_focus_set(en, EINA_TRUE);
-
-#if 0
-   btn = elm_button_add(win);
-   elm_object_text_set(btn, "Go");
-   evas_object_smart_callback_add(btn, "clicked", _btn_clicked_cb, en);
-   elm_box_pack_end(bx1, btn);
-   evas_object_show(btn);
- #endif
 
    sc = elm_scroller_add(win);
    elm_scroller_bounce_set(sc, EINA_FALSE, EINA_TRUE);
