@@ -56,8 +56,6 @@ elm_main(int argc, char *argv[])
 
    win = elm_win_util_standard_add("elocation", "Elocation example");
    elm_win_autodel_set(win, EINA_TRUE);
-   evas_object_resize(win, 600, 480);
-   evas_object_show(win);
 
    label = elm_label_add(win);
    elm_label_line_wrap_set(label, ELM_WRAP_CHAR);
@@ -77,6 +75,9 @@ elm_main(int argc, char *argv[])
    elocation_position_get(position);
    _print_position(position);
 #endif
+
+   evas_object_resize(win, 600, 480);
+   evas_object_show(win);
 
    elm_run();
 

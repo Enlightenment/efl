@@ -23,8 +23,6 @@ elm_main(int argc, char **argv)
 
    win = elm_win_util_standard_add("hoversel", "Hoversel");
    elm_win_autodel_set(win, EINA_TRUE);
-   evas_object_resize(win, 200, 300);
-   evas_object_show(win);
 
    rect = evas_object_rectangle_add(evas_object_evas_get(win));
    evas_object_color_set(rect, 255, 0, 0, 255);
@@ -51,6 +49,9 @@ elm_main(int argc, char **argv)
    evas_object_resize(btn, 180, 30);
    evas_object_move(btn, 10, 50);
    evas_object_show(btn);
+
+   evas_object_resize(win, 200, 300);
+   evas_object_show(win);
 
    elm_run();
    elm_shutdown();

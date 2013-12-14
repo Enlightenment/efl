@@ -106,8 +106,6 @@ elm_main(int argc, char *argv[])
 
    win = elm_win_util_standard_add("Button example", "Button example");
    elm_win_autodel_set(win, EINA_TRUE);
-   evas_object_resize(win, 300, 320);
-   evas_object_show(win);
 
    box = elm_box_add(win);
    evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -251,6 +249,9 @@ elm_main(int argc, char *argv[])
    elm_object_part_content_set(btn, "icon", icon);
 
    data.cursors.down = btn;
+
+   evas_object_resize(win, 300, 320);
+   evas_object_show(win);
 
    elm_run();
    elm_shutdown();

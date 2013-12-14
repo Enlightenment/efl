@@ -13,8 +13,6 @@ elm_main(int argc, char **argv)
 
    win = elm_win_util_standard_add("transit9", "Transit 9");
    elm_win_autodel_set(win, EINA_TRUE);
-   evas_object_resize(win, 400, 400);
-   evas_object_show(win);
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Chain 1");
@@ -71,6 +69,9 @@ elm_main(int argc, char **argv)
    elm_transit_duration_set(trans4, 1);
    elm_transit_objects_final_state_keep_set(trans4, EINA_TRUE);
    elm_transit_chain_transit_add(trans3, trans4);
+
+   evas_object_resize(win, 400, 400);
+   evas_object_show(win);
 
    elm_run();
    elm_shutdown();

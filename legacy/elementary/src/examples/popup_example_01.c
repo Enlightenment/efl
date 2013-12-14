@@ -29,8 +29,8 @@ elm_main(int argc, char **argv)
    evas_object_show(popup);
    evas_object_smart_callback_add(popup, "block,clicked", _block_clicked, NULL);
 
-   evas_object_show(win);
    evas_object_resize(win, 480, 800);
+   evas_object_show(win);
 
    elm_run();
    elm_shutdown();

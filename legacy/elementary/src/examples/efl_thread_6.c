@@ -127,8 +127,6 @@ elm_main(int argc, char **argv)
 
    win = elm_win_util_standard_add("efl-thread-6", "EFL Thread 6");
    elm_win_autodel_set(win, EINA_TRUE);
-   evas_object_resize(win, 400, 400);
-   evas_object_show(win);
 
    // queue up 64 mandel generation thread jobs
    for (i = 0; i < 64; i++)
@@ -151,6 +149,9 @@ elm_main(int argc, char **argv)
              ecore_animator_add(anim, o);
           }
      }
+
+   evas_object_resize(win, 400, 400);
+   evas_object_show(win);
 
    elm_run();
    elm_shutdown();

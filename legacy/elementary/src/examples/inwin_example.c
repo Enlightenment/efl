@@ -117,8 +117,6 @@ elm_main(int argc, char *argv[])
 
    win = elm_win_util_standard_add("inwin-example", "Inwin Example");
    elm_win_autodel_set(win, EINA_TRUE);
-   evas_object_resize(win, 400, 400);
-   evas_object_show(win);
 
    evas_object_smart_callback_add(win, "delete,request", _win_del_cb, NULL);
 
@@ -138,6 +136,9 @@ elm_main(int argc, char *argv[])
 
    if (!strncmp(elm_config_engine_get(), "shot", 4))
      ecore_timer_add(0.1, _screenshot_hack_cb, o);
+
+   evas_object_resize(win, 400, 400);
+   evas_object_show(win);
 
    elm_run();
    elm_shutdown();

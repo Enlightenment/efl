@@ -13,15 +13,12 @@ elm_main(int argc, char **argv)
 
    win = elm_win_util_standard_add("transit-basic", "Transit - Basic");
    elm_win_autodel_set(win, EINA_TRUE);
-   evas_object_resize(win, 400, 400);
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Resizing Effect");
    evas_object_show(bt);
    evas_object_move(bt, 50, 100);
    evas_object_resize(bt, 100, 50);
-
-   evas_object_show(win);
 
    trans = elm_transit_add();
    elm_transit_object_add(trans, bt);
@@ -30,6 +27,9 @@ elm_main(int argc, char **argv)
 
    elm_transit_duration_set(trans, 5.0);
    elm_transit_go(trans);
+
+   evas_object_resize(win, 400, 400);
+   evas_object_show(win);
 
    elm_run();
    elm_shutdown();

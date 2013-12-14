@@ -24,8 +24,6 @@ elm_main(int argc, char **argv)
 
    win = elm_win_util_standard_add("bubble", "Bubble");
    elm_win_autodel_set(win, EINA_TRUE);
-   evas_object_resize(win, 300, 200);
-   evas_object_show(win);
 
    label = elm_label_add(win);
    elm_object_text_set(label, "This is the CONTENT of our bubble");
@@ -54,6 +52,9 @@ elm_main(int argc, char **argv)
    evas_object_resize(bubble, 200, 50);
    evas_object_move(bubble, 0, 110);
    evas_object_show(bubble);
+
+   evas_object_resize(win, 300, 200);
+   evas_object_show(win);
 
    elm_run();
    elm_shutdown();

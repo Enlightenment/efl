@@ -178,8 +178,6 @@ elm_main(int argc, char *argv[])
 
    win = elm_win_util_standard_add("win-example", "Elm_Win Example");
    elm_win_focus_highlight_enabled_set(win, EINA_TRUE);
-   evas_object_resize(win, 400, 400);
-   evas_object_show(win);
 
    evas_object_smart_callback_add(win, "focus,in", _win_focused_cb, "mainwin");
 
@@ -307,6 +305,9 @@ elm_main(int argc, char *argv[])
    WIN_ACTION(rotation);
    WIN_ACTION(rotation_resize);
    WIN_ACTION(sticky);
+
+   evas_object_resize(win, 400, 400);
+   evas_object_show(win);
 
    elm_run();
    elm_shutdown();

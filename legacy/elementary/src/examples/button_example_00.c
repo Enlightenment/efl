@@ -21,8 +21,6 @@ elm_main(int argc, char **argv)
    /* turn it visible on WM (Window Manager).       */
    win = elm_win_util_standard_add("Greetings", "Hello, World!");
    elm_win_autodel_set(win, EINA_TRUE);
-   evas_object_resize(win, 240, 60);
-   evas_object_show(win);
 
    /* Create a btn, associate to a function, associate */
    /* to win,  give a dimension and position.          */
@@ -32,6 +30,9 @@ elm_main(int argc, char **argv)
    evas_object_resize(btn, 120, 30);
    evas_object_move(btn, 60, 15);
    evas_object_show(btn);
+
+   evas_object_resize(win, 240, 60);
+   evas_object_show(win);
 
    elm_run();
    elm_shutdown();

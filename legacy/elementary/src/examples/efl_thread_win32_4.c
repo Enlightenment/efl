@@ -98,8 +98,6 @@ elm_main(int argc, char **argv)
 
    win = elm_win_util_standard_add("efl-thread-4", "EFL Thread 4");
    elm_win_autodel_set(win, EINA_TRUE);
-   evas_object_resize(win, 400, 400);
-   evas_object_show(win);
 
    o = evas_object_rectangle_add(evas_object_evas_get(win));
    evas_object_color_set(o, 50, 80, 180, 255);
@@ -112,6 +110,9 @@ elm_main(int argc, char **argv)
 
    // create custom thread to do some "work on the side"
    my_thread_new();
+
+   evas_object_resize(win, 400, 400);
+   evas_object_show(win);
 
    elm_run();
    elm_shutdown();

@@ -91,8 +91,6 @@ elm_main(int argc, char **argv)
 
    win = elm_win_util_standard_add("index", "Index Example");
    elm_win_autodel_set(win, EINA_TRUE);
-   evas_object_resize(win, 320, 600);
-   evas_object_show(win);
 
    vbox = elm_box_add(win);
    evas_object_size_hint_weight_set(vbox, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -168,6 +166,9 @@ elm_main(int argc, char **argv)
    evas_object_smart_callback_add(bt, "clicked", _item_del_all, id);
    elm_box_pack_end(hbox, bt);
    evas_object_show(bt);
+
+   evas_object_resize(win, 320, 600);
+   evas_object_show(win);
 
    elm_run();
    elm_shutdown();

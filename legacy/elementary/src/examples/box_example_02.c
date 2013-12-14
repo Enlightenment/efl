@@ -80,8 +80,6 @@ elm_main(int argc, char *argv[])
 
    win = elm_win_util_standard_add("box-transition", "Box Transition");
    elm_win_autodel_set(win, EINA_TRUE);
-   evas_object_resize(win, 300, 320);
-   evas_object_show(win);
 
    bigbox = elm_box_add(win);
    evas_object_size_hint_weight_set(bigbox, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -154,6 +152,9 @@ elm_main(int argc, char *argv[])
 
    elm_box_layout_set(bx, evas_object_box_layout_horizontal, NULL, NULL);
    _test_box_transition_change(&tdata);
+
+   evas_object_resize(win, 300, 320);
+   evas_object_show(win);
 
    elm_run();
    elm_shutdown();

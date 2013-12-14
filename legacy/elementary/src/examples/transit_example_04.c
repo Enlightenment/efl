@@ -92,8 +92,6 @@ elm_main(int argc, char **argv)
    /* add a window */
    win = elm_win_util_standard_add("transit", "Transit Example");
    elm_win_autodel_set(win, EINA_TRUE);
-   evas_object_resize(win, 300, 100);
-   evas_object_show(win);
 
    box = elm_box_add(win);
    evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -153,6 +151,9 @@ elm_main(int argc, char **argv)
    evas_object_size_hint_align_set(rect, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(box, rect);
    evas_object_show(rect);
+
+   evas_object_resize(win, 300, 100);
+   evas_object_show(win);
 
    elm_run();
    elm_shutdown();

@@ -109,8 +109,6 @@ elm_main(int argc, char **argv)
    win = elm_win_util_standard_add("Contextual Popup", "Contextual Popup");
    evas_object_smart_callback_add(win, "delete,request", _win_del, NULL);
    elm_win_autodel_set(win, EINA_TRUE);
-   evas_object_resize(win, 400, 400);
-   evas_object_show(win);
 
    list = elm_list_add(win);
    evas_object_event_callback_add(list, EVAS_CALLBACK_MOUSE_DOWN,
@@ -127,6 +125,9 @@ elm_main(int argc, char **argv)
                         _list_item_cb2, NULL);
    evas_object_show(list);
    elm_list_go(list);
+
+   evas_object_resize(win, 400, 400);
+   evas_object_show(win);
 
    elm_run();
    elm_shutdown();

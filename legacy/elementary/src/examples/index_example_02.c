@@ -126,11 +126,11 @@ elm_main(int    argc,
 
    evas_object_smart_callback_add(idx, "delay,changed", _index_changed, NULL);
 
-   evas_object_resize(win, 320, 300);
-   evas_object_show(win);
-
    elm_index_autohide_disabled_set(idx, EINA_FALSE);
    elm_index_level_go(idx, 0);
+
+   evas_object_resize(win, 320, 300);
+   evas_object_show(win);
 
    elm_run();
    elm_shutdown();

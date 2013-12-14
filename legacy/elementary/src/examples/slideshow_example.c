@@ -154,8 +154,6 @@ elm_main(int argc, char **argv)
 
    win = elm_win_util_standard_add("slideshow", "Slideshow example");
    elm_win_autodel_set(win, EINA_TRUE);
-   evas_object_resize(win, 600, 400);
-   evas_object_show(win);
 
    slideshow = elm_slideshow_add(win);
    elm_slideshow_loop_set(slideshow, EINA_TRUE);
@@ -267,6 +265,9 @@ elm_main(int argc, char **argv)
                                   _notify_show, notify);
    evas_object_event_callback_add(slideshow, EVAS_CALLBACK_MOUSE_MOVE,
                                   _notify_show, notify);
+
+   evas_object_resize(win, 600, 400);
+   evas_object_show(win);
 
    elm_run();
    elm_shutdown();
