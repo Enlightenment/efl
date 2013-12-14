@@ -89,6 +89,11 @@
  * @li "focused" : When the win has received focus. (since 1.8)
  * @li "unfocused" : When the win has lost focus. (since 1.8)
  *
+ * Note that calling evas_object_show() after window contents creation is
+ * recommended. It will trigger evas_smart_objects_calculate() and some backend
+ * calls directly. For example, XMapWindow is called directly during
+ * evas_object_show() in X11 engine.
+ *
  * Examples:
  * @li @ref win_example_01
  *
