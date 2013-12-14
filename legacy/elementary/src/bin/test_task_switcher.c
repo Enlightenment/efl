@@ -4,7 +4,6 @@
 #include <Elementary.h>
 #include <Eina.h>
 
-
 #define APPS_COL 0
 #define VIEWS_COL 1
 #define PROPS_VIEW_COL 2

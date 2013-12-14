@@ -3,7 +3,6 @@
 #endif
 #include <Elementary.h>
 
-
 #define TAP_NAME "tap"
 #define DOUBLE_TAP_NAME "double_tap"
 #define TRIPLE_TAP_NAME "triple_tap"
@@ -117,7 +116,6 @@ _icon_color_set(icon_properties *i, int r, int g, int b, int a)
    evas_object_color_set(i->icon, i->r,  i->g,  i->b,  i->a);
 }
 
-
 static Eina_Bool
 _icon_color_set_cb(void *data)
 {
@@ -148,7 +146,6 @@ _icon_color_set_cb(void *data)
 
    return ECORE_CALLBACK_RENEW;
 }
-
 
 void
 _color_and_icon_set(infra_data *infra, char *name, int n, int max,
@@ -338,7 +335,6 @@ triple_click_abort(void *data , void *event_info)
    printf("Triple click abort\n");
    return EVAS_EVENT_FLAG_ON_HOLD;
 }
-
 
 static Evas_Event_Flags
 momentum_start(void *data , void *event_info)
@@ -610,7 +606,6 @@ test_gesture_layer2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    bx = create_gesture_box(win, infra->icons, 8, ROTATE_NAME, "Rotate");
    elm_table_pack(tb, bx, 1, 3, 1, 1);
 
-
    /* Legend of gestures - states */
    lb = elm_label_add(win);
    elm_object_text_set(lb, "<b>Gesture States</b>");
@@ -692,7 +687,6 @@ test_gesture_layer2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    evas_object_size_hint_weight_set(lb, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(lb, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_table_pack(tb, lb, 1, 11, 3, 1);
-
 
    elm_table_padding_set(tb, TB_PADDING_X, TB_PADDING_Y);
    evas_object_show(lb);

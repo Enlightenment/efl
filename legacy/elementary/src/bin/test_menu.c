@@ -3,7 +3,6 @@
 #endif
 #include <Elementary.h>
 
-
 static void
 _menu_dismissed_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
                    void *event_info EINA_UNUSED)
@@ -311,4 +310,3 @@ test_menu2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
    evas_object_resize(win, 320, 320);
    evas_object_show(win);
 }
-

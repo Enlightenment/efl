@@ -5,12 +5,10 @@
           http://www.enlightenment.org/~raster/store.tar.gz
  */
 
-
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #endif
 #include <Elementary.h>
-
 
 typedef struct _My_Item My_Item;
 
@@ -79,7 +77,6 @@ static const Elm_Store_Item_Mapping it1_mapping[] =
       } } },
   ELM_STORE_ITEM_MAPPING_END
 };
-
 
 ////// **** WARNING ***********************************************************
 ////   * This function runs inside a thread outside efl mainloop. Be careful! *

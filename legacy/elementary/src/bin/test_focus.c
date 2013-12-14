@@ -4,7 +4,6 @@
 #endif
 #include <Elementary.h>
 
-
 static Eina_Bool
 _event(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, Evas_Object *src EINA_UNUSED, Evas_Callback_Type type, void *event_info)
 {

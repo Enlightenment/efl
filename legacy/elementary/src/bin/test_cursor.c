@@ -4,7 +4,6 @@
 #endif
 #include <Elementary.h>
 
-
 // XXX: show all type of cursors in the elementary_test. this needs to be the first test
 
 typedef struct _Testitem
@@ -446,4 +445,3 @@ test_cursor4(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
    evas_object_resize(win, 320, 480);
    evas_object_show(win);
 }
-

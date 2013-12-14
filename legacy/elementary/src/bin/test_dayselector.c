@@ -3,7 +3,6 @@
 #endif
 #include <Elementary.h>
 
-
 static void _changed_cb(void* data EINA_UNUSED, Evas_Object* obj, void* event_info)
 {
    char buf[256];
@@ -124,4 +123,3 @@ test_dayselector(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    evas_object_resize(win, 350, 150);
    evas_object_show(win);
 }
-

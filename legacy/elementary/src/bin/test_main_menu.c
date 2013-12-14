@@ -75,4 +75,3 @@ test_main_menu(void *data EINA_UNUSED,
    evas_object_resize(win, 250, 350);
    evas_object_show(win);
 }
-

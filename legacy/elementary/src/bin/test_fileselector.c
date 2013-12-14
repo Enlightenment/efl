@@ -2,7 +2,6 @@
 # include "elementary_config.h"
 #endif
 
-
 #include <Elementary.h>
 #ifndef ENABLE_NLS
 # ifndef setlocale
@@ -477,4 +476,3 @@ test_fileselector(void *data       EINA_UNUSED,
    evas_object_resize(win, 320, 700);
    evas_object_show(win);
 }
-

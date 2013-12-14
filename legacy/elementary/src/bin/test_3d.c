@@ -4,7 +4,6 @@
 #endif
 #include <Elementary.h>
 
-
 typedef struct _Point
 {
    Evas_Coord x, y, z, u, v;

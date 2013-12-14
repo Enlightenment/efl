@@ -107,4 +107,3 @@ test_entry_anchor2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
    elm_object_focus_set(win, EINA_TRUE);
    evas_object_show(win);
 }
-

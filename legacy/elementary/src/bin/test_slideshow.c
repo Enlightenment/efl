@@ -1,7 +1,6 @@
 #include "elementary_config.h"
 #include <Elementary.h>
 
-
 static Evas_Object *slideshow, *bt_start, *bt_stop;
 static Elm_Slideshow_Item_Class itc;
 static const char *img1 = PACKAGE_DATA_DIR"/images/logo.png";
@@ -38,7 +37,6 @@ _mouse_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
    elm_notify_timeout_set(data, 0.0);
    evas_object_show(data);
 }
-
 
 static void
 _mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
@@ -214,4 +212,3 @@ test_slideshow(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    evas_object_resize(win, 500, 400);
    evas_object_show(win);
 }
-

@@ -3,7 +3,6 @@
 #endif
 #include <Elementary.h>
 
-
 #define BUTTON_TEXT_SET(BT, TEXT) \
    elm_object_text_set((BT), (TEXT)); \
    elm_object_tooltip_text_set((BT), (TEXT)); \
@@ -259,7 +258,6 @@ test_naviframe2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *even
    ico = elm_icon_add(btn);
    elm_icon_standard_set(ico, "refresh");
    elm_layout_content_set(btn, "icon", ico);
-
 
    content = _content_new(nf, img1);
    it = elm_naviframe_item_push(nf, NULL, NULL, btn, content, NULL);

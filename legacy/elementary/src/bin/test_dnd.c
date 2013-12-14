@@ -1101,4 +1101,3 @@ test_dnd_multi_features(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, vo
    evas_object_resize(win, 680, 800);
    evas_object_show(win);
 }
-

@@ -3,7 +3,6 @@
 #endif
 #include <Elementary.h>
 
-
 typedef struct _Testitem
 {
    Elm_Object_Item  *item;
@@ -692,4 +691,3 @@ test_tooltip2(void *data       EINA_UNUSED,
    evas_object_resize(win, 320, 480);
    evas_object_show(win);
 }
-

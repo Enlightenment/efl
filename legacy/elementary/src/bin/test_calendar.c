@@ -319,7 +319,6 @@ test_calendar2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    evas_object_show(win);
 }
 
-
 void
 test_calendar3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
@@ -361,4 +360,3 @@ test_calendar3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
 
    evas_object_show(win);
 }
-

@@ -3,7 +3,6 @@
 #endif
 #include <Elementary.h>
 
-
 #ifdef MAX_PROFILES
 # undef MAX_PROFILES
 #endif

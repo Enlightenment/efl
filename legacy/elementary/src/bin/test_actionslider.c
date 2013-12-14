@@ -3,7 +3,6 @@
 #endif
 #include <Elementary.h>
 
-
 static void _pos_selected_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info)
 {
    Elm_Actionslider_Pos ipos, mpos, epos;
@@ -177,7 +176,6 @@ test_actionslider(void *data EINA_UNUSED, Evas_Object * obj EINA_UNUSED, void *e
    evas_object_smart_callback_add(as, "selected", _pos_selected_cb, NULL);
    evas_object_show(as);
    elm_box_pack_end(bx, as);
-
 
    as = elm_actionslider_add(win);
    evas_object_size_hint_weight_set(as, EVAS_HINT_EXPAND, 0);

@@ -1,7 +1,6 @@
 #include "elementary_config.h"
 #include <Elementary.h>
 
-
 static void
 _dismissed_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
               void *event_info EINA_UNUSED)
@@ -249,4 +248,3 @@ test_hover3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    evas_object_resize(win, 440, 440);
    evas_object_show(win);
 }
-

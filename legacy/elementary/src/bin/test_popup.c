@@ -647,4 +647,3 @@ test_popup(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    evas_object_resize(win, 480, 400);
    evas_object_show(win);
 }
-

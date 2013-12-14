@@ -3,7 +3,6 @@
 #endif
 #include <Elementary.h>
 
-
 void
 test_conformant(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
@@ -194,4 +193,3 @@ test_conformant2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    evas_object_resize(win, 240, 480);
    evas_object_show(win);
 }
-

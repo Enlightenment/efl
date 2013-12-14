@@ -3,7 +3,6 @@
 #endif
 #include <Elementary.h>
 
-
 static void
 fill(Evas_Object *win, Eina_Bool do_bg)
 {

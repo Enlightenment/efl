@@ -3,7 +3,6 @@
 #endif
 #include <Elementary.h>
 
-
 // 16 ^ 4 = 65k
 #define BLOK 16
 // homogenous layout

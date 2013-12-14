@@ -3,7 +3,6 @@
 #endif
 #include <Elementary.h>
 
-
 #define LIST_ITEM_MAX 20
 
 static Elm_Genlist_Item_Class itc;
@@ -266,5 +265,3 @@ test_panel(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
    evas_object_resize(win, 320, 400);
    evas_object_show(win);
 }
-
-

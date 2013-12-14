@@ -3,7 +3,6 @@
 #endif
 #include <Elementary.h>
 
-
 void
 _delay_change_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {

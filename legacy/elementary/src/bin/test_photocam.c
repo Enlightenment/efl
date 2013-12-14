@@ -3,7 +3,6 @@
 #endif
 #include <Elementary.h>
 
-
 static Evas_Object *rect;
 
 static void

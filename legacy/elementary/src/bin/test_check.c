@@ -3,7 +3,6 @@
 #endif
 #include <Elementary.h>
 
-
 static Eina_Bool eb;
 
 static void

@@ -3,7 +3,6 @@
 #endif
 #include <Elementary.h>
 
-
 static const char *names[] =
 {
      "bub1", "sh1",

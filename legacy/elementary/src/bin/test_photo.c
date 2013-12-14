@@ -3,7 +3,6 @@
 #endif
 #include <Elementary.h>
 
-
 static void
 _clicked_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
             void *event_info EINA_UNUSED)
@@ -99,5 +98,3 @@ test_photo(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
    evas_object_resize(win, 300, 300);
    evas_object_show(win);
 }
-
-/* vim:set ts=8 sw=3 sts=3 expandtab cino=>5n-2f0^-2{2(0W1st0 :*/

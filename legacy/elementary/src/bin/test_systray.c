@@ -3,7 +3,6 @@
 #endif
 #include <Elementary.h>
 
-
 #define WIDTH  320
 #define HEIGHT 160
 

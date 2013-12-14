@@ -3,7 +3,6 @@
 #endif
 #include <Elementary.h>
 
-
 typedef struct _State State;
 typedef struct _Slice Slice;
 
@@ -867,7 +866,6 @@ test_flip_page(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    evas_object_show(im);
 
    evas_object_data_set(im, "im2", im2);
-
 
    rc = evas_object_rectangle_add(evas_object_evas_get(win));
    evas_object_color_set(rc, 0, 0, 0, 0);

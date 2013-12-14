@@ -490,4 +490,3 @@ test_index_horizontal(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    evas_object_resize(win, 480, 320);
    evas_object_show(win);
 }
-

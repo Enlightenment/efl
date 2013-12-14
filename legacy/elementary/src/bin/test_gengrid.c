@@ -5,7 +5,6 @@
 #endif
 #include <Elementary.h>
 
-
 #define WEIGHT evas_object_size_hint_weight_set
 #define ALIGN_ evas_object_size_hint_align_set
 #define EXPAND(X) WEIGHT((X), EVAS_HINT_EXPAND, EVAS_HINT_EXPAND)

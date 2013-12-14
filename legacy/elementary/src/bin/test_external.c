@@ -4,8 +4,6 @@
 #endif
 #include <Elementary.h>
 
-
-
 void
 test_external_button(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
@@ -182,5 +180,3 @@ test_external_video(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
    evas_object_resize(win, 320, 400);
    evas_object_show(win);
 }
-
-

@@ -3,7 +3,6 @@
 #endif
 #include <Elementary.h>
 
-
 /* We zoom out to this value so we'll be able to use map and have a nice
  * resolution when zooming in. */
 #define BASE_ZOOM 0.8
@@ -52,7 +51,6 @@ struct _Photo_Object {
      double shadow_zoom;
 };
 typedef struct _Photo_Object Photo_Object;
-
 
 /* This function applies the information from the Photo_Object to the actual
  * evas objects. Zoom/rotate factors and etc. */
@@ -467,7 +465,6 @@ _win_del_req(void *data, Evas_Object *obj EINA_UNUSED,
 
    free(data);
 }
-
 
 static Photo_Object *
 photo_object_add(Evas_Object *parent, Evas_Object *ic, const char *icon,

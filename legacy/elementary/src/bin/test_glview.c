@@ -3,7 +3,6 @@
 #endif
 #include <Elementary.h>
 
-
 #include <Elementary.h>
 #ifndef M_PI
 #define M_PI 3.14159265
@@ -173,7 +172,6 @@ make_gear(GLData *gld, GLfloat inner_radius, GLfloat outer_radius, GLfloat width
    gl->glBindBuffer(GL_ARRAY_BUFFER, gear->vbo);
    gl->glBufferData(GL_ARRAY_BUFFER, gear->count * 6 * 4,
                     gear->vertices, GL_STATIC_DRAW);
-
 
    return gear;
 }
@@ -403,7 +401,6 @@ gldata_init(GLData *gld)
    gld->light[1] = 1.0;
    gld->light[2] = -5.0;
 }
-
 
 //-------------------------//
 

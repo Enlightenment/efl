@@ -388,4 +388,3 @@ test_table7(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
 
    evas_object_show(win);
 }
-

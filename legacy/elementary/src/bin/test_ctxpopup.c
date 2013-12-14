@@ -203,7 +203,6 @@ _list_item_cb4(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_U
    _print_current_dir(ctxpopup);
 }
 
-
 static void
 _list_item_cb5(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {

@@ -3,7 +3,6 @@
 #endif
 #include <Elementary.h>
 
-
 static void
 _spinner_drag_start_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
                        void *event EINA_UNUSED)

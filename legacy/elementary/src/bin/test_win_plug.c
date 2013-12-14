@@ -3,7 +3,6 @@
 #endif
 #include <Elementary.h>
 
-
 #define MAX_TRY 40
 
 static int try_num = 0;

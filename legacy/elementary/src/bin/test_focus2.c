@@ -3,7 +3,6 @@
 #endif
 #include <Elementary.h>
 
-
 static void
 _focus_in(void *data EINA_UNUSED, Evas *e EINA_UNUSED, void *event_info)
 {
@@ -43,7 +42,6 @@ _focus_layout_part(void *data, Evas_Object *o EINA_UNUSED, void *event_info EINA
    printf("evas_object_focus_set(%p, EINA_TRUE) %s\n", newfocus, type);
    evas_object_focus_set(newfocus, EINA_TRUE);;
 }
-
 
 void
 test_focus2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)

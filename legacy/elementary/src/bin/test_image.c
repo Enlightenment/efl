@@ -3,7 +3,6 @@
 #endif
 #include <Elementary.h>
 
-
 static const struct {
    Elm_Image_Orient orient;
    const char *name;

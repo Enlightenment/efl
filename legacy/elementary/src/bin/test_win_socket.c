@@ -3,7 +3,6 @@
 #endif
 #include <Elementary.h>
 
-
 static void
 _win_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {

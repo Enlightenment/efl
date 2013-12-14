@@ -3,7 +3,6 @@
 #endif
 #include <Elementary.h>
 
-
 static void
 _item_selected_cb(void *data EINA_UNUSED,
                   Evas_Object *obj EINA_UNUSED,

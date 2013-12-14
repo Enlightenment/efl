@@ -10,7 +10,6 @@ typedef struct _Testitem
    int onoff;
 } Testitem;
 
-
 static Elm_Genlist_Item_Class itc1;
 static char *glf_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNUSED)
 {

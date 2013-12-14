@@ -3,7 +3,6 @@
 #endif
 #include <Elementary.h>
 
-
 void
 _sel_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {

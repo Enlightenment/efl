@@ -3,7 +3,6 @@
 #endif
 #include <Elementary.h>
 
-
 #define SOURCE_MAX 10
 #define MARKER_MAX 1000
 #define NAME_ENTRY_TEXT "Enter freeform address"

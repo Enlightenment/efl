@@ -3,7 +3,6 @@
 #endif
 #include <Elementary.h>
 
-
 static int vis = 0;
 static int rotate_with_resize = 0;
 static Evas_Object *win_port = NULL;
@@ -197,7 +196,6 @@ _mouse_move_cb(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    evas_object_move(sub_obj, ev->cur.canvas.x, ev->cur.canvas.y);
 }
 
-
 static void
 _fill_portrait(Evas_Object *win)
 {
@@ -383,4 +381,3 @@ test_conformant_indicator(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    evas_object_resize(win, 200, 200);
    evas_object_show(win);
 }
-

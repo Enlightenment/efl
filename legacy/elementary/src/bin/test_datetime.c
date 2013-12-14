@@ -3,7 +3,6 @@
 #endif
 #include <Elementary.h>
 
-
 /* A simple test, just displaying datetime in its default format */
 
 static void

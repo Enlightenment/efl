@@ -3,7 +3,6 @@
 #endif
 #include <Elementary.h>
 
-
 enum _slide_style
 {
    SLIDE_SHORT,
@@ -68,7 +67,6 @@ test_label(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
    evas_object_size_hint_align_set(lb, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(bx, lb);
    evas_object_show(lb);
-
 
    evas_object_resize(win, 320, 300);
 

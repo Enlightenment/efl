@@ -755,7 +755,6 @@ test_entry_style_user(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
    elm_win_resize_object_add(win, bx);
    evas_object_show(bx);
 
-
    en = elm_entry_add(win);
    elm_entry_line_wrap_set(en, ELM_WRAP_MIXED);
 
@@ -2340,4 +2339,3 @@ test_entry_emoticon(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    evas_object_resize(win, 400, 500);
    evas_object_show(win);
 }
-

@@ -3,7 +3,6 @@
 #endif
 #include <Elementary.h>
 
-
 static void
 mode_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {

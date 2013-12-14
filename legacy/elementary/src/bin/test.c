@@ -717,7 +717,6 @@ add_tests:
    ADD_TEST(NULL, "Selectors", "DaySelector", test_dayselector);
    ADD_TEST(NULL, "Selectors", "Main menu", test_main_menu);
 
-
    //------------------------------//
    ADD_TEST(NULL, "Cursors", "Cursor", test_cursor);
    ADD_TEST(NULL, "Cursors", "Cursor 2", test_cursor2);

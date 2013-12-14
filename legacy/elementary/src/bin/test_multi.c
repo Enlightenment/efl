@@ -3,7 +3,6 @@
 #endif
 #include <Elementary.h>
 
-
 #define IND_NUM 20
 
 static Evas_Object *indicator[IND_NUM];
@@ -131,4 +130,3 @@ test_multi(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
 
    evas_object_show(win);
 }
-

@@ -3,7 +3,6 @@
 #endif
 #include <Elementary.h>
 
-
 static void
 _print_clicked(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {

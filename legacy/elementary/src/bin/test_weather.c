@@ -3,7 +3,6 @@
 #endif
 #include <Elementary.h>
 
-
 #ifdef HAVE_ELEMENTARY_EWEATHER
 # include "EWeather_Smart.h"
 #endif
@@ -154,9 +153,6 @@ test_weather(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
    evas_object_show(bt);
    elm_box_pack_end(bx0, bt);
    evas_object_smart_callback_add(bt, "clicked", _apply_cb, NULL);
-   //
-
-
 #else
     Evas_Object *lbl;
 

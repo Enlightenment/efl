@@ -3,7 +3,6 @@
 #endif
 #include <Elementary.h>
 
-
 #define WIDTH (500)
 #define HEIGHT (1000)
 #define MSG_ID_VEL (1)

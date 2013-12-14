@@ -3,7 +3,6 @@
 #endif
 #include <Elementary.h>
 
-
 static void
 changed_cb(void *data EINA_UNUSED, Evas_Object *o EINA_UNUSED, void *event)
 {

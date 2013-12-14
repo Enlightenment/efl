@@ -3,7 +3,6 @@
 #endif
 #include <Elementary.h>
 
-
 static void
 my_bt_open(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {

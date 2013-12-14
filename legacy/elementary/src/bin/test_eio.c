@@ -18,7 +18,6 @@
 
 #include <Elementary.h>
 
-
 static Elm_Genlist_Item_Class it_eio;
 
 #ifdef _WIN32
@@ -244,4 +243,3 @@ test_eio(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info 
    evas_object_resize(win, 300, 500);
    evas_object_show(win);
 }
-

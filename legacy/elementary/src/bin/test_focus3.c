@@ -4,7 +4,6 @@
 #endif
 #include <Elementary.h>
 
-
 static Evas_Object *foc = NULL;
 
 static void

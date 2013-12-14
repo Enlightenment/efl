@@ -3,7 +3,6 @@
 #endif
 #include <Elementary.h>
 
-
 #if 0
 static void
 _cleanup_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
@@ -124,7 +123,6 @@ static void _realized(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
 
    if (!ei) return;
    Elm_Object_Item *item = ei;
-
 
    const Elm_Genlist_Item_Class *itc = elm_genlist_item_item_class_get(item);
 
@@ -402,4 +400,3 @@ test_access3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
    evas_object_show(win);
 }
 #endif
-

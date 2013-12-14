@@ -3,7 +3,6 @@
 #endif
 #include <Elementary.h>
 
-
 typedef struct {
    Evas_Object *win, *label;
    Eina_Stringshare *view_name;

@@ -3,7 +3,6 @@
 #endif
 #include <Elementary.h>
 
-
 typedef struct _Custom_Effect Custom_Effect;
 
 struct _Custom_Effect

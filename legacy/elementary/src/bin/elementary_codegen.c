@@ -36,7 +36,6 @@ static char *prefix = NULL;
 static FILE *source_fd = NULL;
 static FILE *header_fd = NULL;
 
-
 #define H_HEADER                       \
   "#ifndef _%s\n"                      \
   "#define _%s\n\n"                    \
@@ -257,7 +256,6 @@ static FILE *header_fd = NULL;
 
 #define H_CODEGEN_PROGRAM_CALLBACK_DEL                              \
   "void %s_%s_callback_del(Evas_Object *o, Edje_Signal_Cb func);\n"
-
 
 const Ecore_Getopt optdesc =
 {
