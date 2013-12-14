@@ -1112,7 +1112,7 @@ _elm_ctxpopup_smart_disable(Eo *obj, void *_pd, va_list *list)
    if (sd->list)
      elm_object_disabled_set(sd->list, elm_widget_disabled_get(obj));
    else if (sd->content)
-     elm_object_disabled_set(sd->list, elm_widget_disabled_get(obj));
+     elm_object_disabled_set(sd->content, elm_widget_disabled_get(obj));
 
    if (ret) *ret = EINA_TRUE;
 }
