@@ -213,12 +213,10 @@ _format_month_year(struct tm *stm)
    return strdup(buf);
 }
 
-/* A test intended to cover all the calendar api and much use cases as
-   possible */
-void
-test_calendar2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+static Evas_Object *
+_calendar_create(Evas_Object *parent)
 {
-   Evas_Object *win, *bx, *bxh, *cal, *cal2, *cal3, *en;
+   Evas_Object *cal;
    Elm_Calendar_Mark *mark;
    struct tm selected_time;
    time_t current_time;
@@ -228,62 +226,8 @@ test_calendar2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
       "Thursday", "Friday", "Saturday"
    };
 
-   win = elm_win_util_standard_add("calendar2", "Calendar 2");
-   elm_win_autodel_set(win, EINA_TRUE);
-
-   bx = elm_box_add(win);
-   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, bx);
-   evas_object_show(bx);
-
-   bxh = elm_box_add(win);
-   elm_box_horizontal_set(bxh, EINA_TRUE);
-   evas_object_size_hint_weight_set(bxh, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(bxh, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_show(bxh);
-   elm_box_pack_end(bx, bxh);
-
-   cal = elm_calendar_add(win);
-   evas_object_size_hint_weight_set(cal, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(cal, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_show(cal);
-   elm_box_pack_end(bx, cal);
-
-   cal2 = elm_calendar_add(win);
-   evas_object_size_hint_weight_set(cal2, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(cal2, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_calendar_select_mode_set(cal2, ELM_CALENDAR_SELECT_MODE_NONE);
-   evas_object_show(cal2);
-   elm_box_pack_end(bxh, cal2);
-
-   cal3 = elm_calendar_add(win);
-   evas_object_size_hint_weight_set(cal3, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(cal3, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   current_time = time(NULL) + 34 * SEC_PER_DAY;
-   localtime_r(&current_time, &selected_time);
-   elm_calendar_selected_time_set(cal3, &selected_time);
-   current_time = time(NULL) + 1 * SEC_PER_DAY;
-   localtime_r(&current_time, &selected_time);
-   elm_calendar_mark_add(cal3, "checked", &selected_time, ELM_CALENDAR_UNIQUE);
-   elm_calendar_marks_clear(cal3);
-   current_time = time(NULL);
-   localtime_r(&current_time, &selected_time);
-   elm_calendar_mark_add(cal3, "checked", &selected_time, ELM_CALENDAR_DAILY);
-   elm_calendar_mark_add(cal3, "holiday", &selected_time, ELM_CALENDAR_DAILY);
-   elm_calendar_marks_draw(cal3);
-   evas_object_show(cal3);
-   elm_box_pack_end(bxh, cal3);
-
-   en = elm_entry_add(win);
-   evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_show(en);
-   elm_box_pack_end(bx, en);
-   elm_entry_editable_set(en, EINA_FALSE);
-
-   elm_calendar_min_max_year_set(cal3, -1, -1);
-
-   elm_calendar_weekdays_names_set(cal, weekdays);
+   cal = elm_calendar_add(parent);
+   elm_calendar_weekdays_names_set(cal, weekdays); // FIXME: this causes smart cal recalc loop error
    elm_calendar_first_day_of_week_set(cal, ELM_DAY_SATURDAY);
    elm_calendar_interval_set(cal, 0.4);
    elm_calendar_format_function_set(cal, _format_month_year);
@@ -313,8 +257,77 @@ test_calendar2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    elm_calendar_mark_del(mark);
    elm_calendar_marks_draw(cal);
 
+   return cal;
+}
+
+/* A test intended to cover all the calendar api and much use cases as
+   possible */
+void
+test_calendar2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *win, *bx, *bxh, *cal, *cal2, *cal3, *en;
+   struct tm selected_time;
+   time_t current_time;
+
+   win = elm_win_util_standard_add("calendar2", "Calendar 2");
+   elm_win_autodel_set(win, EINA_TRUE);
+
+   bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bx);
+   evas_object_show(bx);
+
+   bxh = elm_box_add(win);
+   elm_box_horizontal_set(bxh, EINA_TRUE);
+   evas_object_size_hint_weight_set(bxh, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(bxh, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_show(bxh);
+   elm_box_pack_end(bx, bxh);
+
+   // calendar 1
+   cal = _calendar_create(win);
+   evas_object_size_hint_weight_set(cal, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(cal, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_show(cal);
+   elm_box_pack_end(bx, cal);
+
+   en = elm_entry_add(win);
+   evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_show(en);
+   elm_box_pack_end(bx, en);
+   elm_entry_editable_set(en, EINA_FALSE);
+
    _print_cal_info(cal, en);
    evas_object_smart_callback_add(cal, "changed", _print_cal_info_cb, en);
+
+   // calendar 2
+   cal2 = elm_calendar_add(win);
+   evas_object_size_hint_weight_set(cal2, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(cal2, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_calendar_select_mode_set(cal2, ELM_CALENDAR_SELECT_MODE_NONE);
+   evas_object_show(cal2);
+   elm_box_pack_end(bxh, cal2);
+
+   // calendar 3
+   cal3 = elm_calendar_add(win);
+   evas_object_size_hint_weight_set(cal3, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(cal3, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   current_time = time(NULL) + 34 * SEC_PER_DAY;
+   localtime_r(&current_time, &selected_time);
+   elm_calendar_selected_time_set(cal3, &selected_time);
+   current_time = time(NULL) + 1 * SEC_PER_DAY;
+   localtime_r(&current_time, &selected_time);
+   elm_calendar_mark_add(cal3, "checked", &selected_time, ELM_CALENDAR_UNIQUE);
+   elm_calendar_marks_clear(cal3);
+   current_time = time(NULL);
+   localtime_r(&current_time, &selected_time);
+   elm_calendar_mark_add(cal3, "checked", &selected_time, ELM_CALENDAR_DAILY);
+   elm_calendar_mark_add(cal3, "holiday", &selected_time, ELM_CALENDAR_DAILY);
+   elm_calendar_marks_draw(cal3);
+   evas_object_show(cal3);
+   elm_box_pack_end(bxh, cal3);
+   elm_calendar_min_max_year_set(cal3, -1, -1);
 
    evas_object_show(win);
 }
