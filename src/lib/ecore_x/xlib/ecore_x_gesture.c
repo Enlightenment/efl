@@ -112,7 +112,6 @@ ecore_x_gesture_event_ungrab(Ecore_X_Window win,
                              int num_fingers)
 {
 #ifdef ECORE_XGESTURE
-   Ecore_X_Gesture_Event_Mask mask;
    Eina_Bool ret;
 
    if (!_gesture_available)
