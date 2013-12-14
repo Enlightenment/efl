@@ -3252,7 +3252,7 @@ FUNC_STATE_OFFSET_INT(rel2, y);
      else \
        { \
          pd->Sub.id_##Value = -1; \
-         return EINA_FALSE; \
+         return EINA_TRUE; \
        } \
   }
 //note after this call edje_edit_part_selected_state_set() to update !! need to fix this
