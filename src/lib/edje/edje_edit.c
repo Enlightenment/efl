@@ -1076,8 +1076,8 @@ edje_edit_group_del(Evas_Object *obj, const char *group_name)
                   ed->file->collection_cache =
                      eina_list_remove_list(ed->file->collection_cache, l);
                   e_del = eina_hash_find(ed->file->collection, g->part);
-                  _edje_collection_free(ed->file, g, e_del);
                   eina_hash_del(ed->file->collection, g->part, e_del);
+                  _edje_collection_free(ed->file, g, e_del);
                }
           }
      }
