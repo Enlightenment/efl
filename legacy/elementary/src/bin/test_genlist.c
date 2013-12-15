@@ -3149,7 +3149,7 @@ test_genlist19(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    int i;
    api_data *api = calloc(1, sizeof(api_data));
 
-   win = elm_win_util_standard_add("genlist-full", "Genlist Full");
+   win = elm_win_util_standard_add("genlist-full", "Genlist Full Widget");
    elm_win_autodel_set(win, EINA_TRUE);
    evas_object_event_callback_add(win, EVAS_CALLBACK_FREE, _cleanup_cb, api);
 
