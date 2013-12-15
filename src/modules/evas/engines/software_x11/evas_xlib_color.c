@@ -71,6 +71,8 @@ x_color_alloc_rgb(int nr, int ng, int nb, Display *d, Colormap cmap, Visual *v)
 		  val = (val << 8) | val;
 		  xcl.blue = (unsigned short)(val);
                   xcl.pixel = 0;
+                  xcl.flags = 0;
+                  xcl.pad = 0;
 		  xcl_in = xcl;
 		  ret = XAllocColor(d, cmap, &xcl);
 		  dr = (int)xcl_in.red - (int)xcl.red;
@@ -141,6 +143,8 @@ x_color_alloc_gray(int ng, Display *d, Colormap cmap, Visual *v)
 	xcl.green = (unsigned short)(val);
 	xcl.blue = (unsigned short)(val);
         xcl.pixel = 0;
+        xcl.flags = 0;
+        xcl.pad = 0;
 	xcl_in = xcl;
 	ret = XAllocColor(d, cmap, &xcl);
 	if ((ret == 0) ||
