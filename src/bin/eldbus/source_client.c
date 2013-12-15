@@ -348,7 +348,7 @@ jump_simple_stuff:
    eina_strbuf_append_printf(c_code, "\nstatic void\n%s(void *user_data EINA_UNUSED, void *func_data)\n{\n", sig->free_function);
    eina_strbuf_append_printf(c_code, "   %s *s_data = func_data;\n", sig->struct_name);
    if (sig->complex)
-     eina_strbuf_append(c_code, "   eina_value_free(s_data->proxy);\n");
+     eina_strbuf_append(c_code, "   eina_value_free(s_data->value);\n");
    else
      eina_strbuf_append(c_code, eina_strbuf_string_get(string_free));
    eina_strbuf_append_printf(c_code, "   free(s_data);\n");
