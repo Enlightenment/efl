@@ -450,7 +450,8 @@ my_win_main(const char *autorun, Eina_Bool test_win_only)
    evas_object_show(lb);
 
    /* This label will not be read out */
-   elm_access_object_unregister(lb);
+// this is not an exported api! don't use! (no EAPI)
+//   elm_access_object_unregister(lb);
 
    tg = elm_check_add(win);
    elm_object_style_set(tg, "toggle");
