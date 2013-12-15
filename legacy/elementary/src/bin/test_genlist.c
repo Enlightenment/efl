@@ -3467,7 +3467,7 @@ test_genlist_item_styles(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
 {
    Evas_Object *win, *box, *gl, *list, *table, *check;
 
-   win = elm_win_util_standard_add("genlist-item-styles", "Gengrid Item Styles");
+   win = elm_win_util_standard_add("genlist-item-styles", "Genlist Item Styles");
    elm_win_autodel_set(win, EINA_TRUE);
 
    box = elm_box_add(win);
