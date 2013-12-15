@@ -74,6 +74,7 @@ _server_connect(void)
    len = strlen(remote.sun_path) + sizeof(remote.sun_family);
    if (connect(s, (struct sockaddr *)&remote, len) == -1)
      {
+        close(s);
         ERR("connect");
         return EINA_FALSE;
      }

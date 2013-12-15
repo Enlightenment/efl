@@ -322,6 +322,7 @@ fb_getmode(void)
    if (ioctl(fb, FBIOGET_VSCREENINFO, &mode->fb_var) == -1)
      {
         perror("ioctl FBIOGET_VSCREENINFO");
+        free(mode);
         return NULL;
      }
    
