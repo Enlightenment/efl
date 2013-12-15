@@ -7653,9 +7653,11 @@ edje_edit_print_internal_status(Evas_Object *obj)
    unsigned int i;
    int j;
 */
+   Eina_Strbuf *source_file;
    GET_EED_OR_RETURN();
 
-   _edje_generate_source(obj);
+   source_file =_edje_generate_source(obj);
+   if (source_file) eina_strbuf_free(source_file);
 /*
    INF("****** CHECKIN' INTERNAL STRUCTS STATUS *********");
 
