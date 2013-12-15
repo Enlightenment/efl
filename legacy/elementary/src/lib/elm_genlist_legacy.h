@@ -685,9 +685,9 @@ elm_genlist_nth_item_get(const Evas_Object *obj, unsigned int nth);
  * @param enabled The tree effect status
  * (EINA_TRUE = enabled, EINA_FALSE = disabled)
  *
- * When enabled, every selection of an item inside the genlist will automatically set focus to 
+ * When enabled, every selection of an item inside the genlist will automatically set focus to
  * its first focusable widget from the left. This is true of course if the selection was made by
- * clicking an unfocusable area in an item or selecting it with a key movement. Clicking on a 
+ * clicking an unfocusable area in an item or selecting it with a key movement. Clicking on a
  * focusable widget inside an item will couse this particular item to get focus as usual.
  *
  * @ingroup Genlist

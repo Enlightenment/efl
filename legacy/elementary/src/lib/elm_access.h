@@ -4,7 +4,7 @@
  *
  * WARNING! this API is not finalized. It is unstable. - do not use it if
  * you want no breaks in future.
- * 
+ *
  * TODO: description
  *
  */
@@ -208,7 +208,7 @@ void elm_access_activate_cb_set(Evas_Object *obj, Elm_Access_Activate_Cb func, v
  *
  * @param text The text information that will be read
  *
- * This function will not free the @p text internally. 
+ * This function will not free the @p text internally.
  *
  * @ingroup Access
  */

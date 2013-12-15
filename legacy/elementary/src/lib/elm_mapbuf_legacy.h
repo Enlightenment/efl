@@ -117,7 +117,7 @@ EAPI Eina_Bool                    elm_mapbuf_alpha_get(const Evas_Object *obj);
  * @param obj The mapbuf object.
  * @param on @c EINA_TRUE to enable auto mode or @c EINA_FALSE
  * to disable it.
- * 
+ *
  * When a ampbuf object has "auto mode" enabled, then it will enable and
  * disable map mode based on current visibility. Mapbuf will track if you show
  * or hide it AND if the object is inside the canvas viewport or not when it

@@ -549,14 +549,14 @@ EAPI const char *elm_theme_group_path_find(Elm_Theme *th, const char *group);
 
 /**
  * Get the file path where elementary system theme files are found
- * 
+ *
  * @return A string that holds the path where system themes are
- * 
+ *
  * This returns the location in the filesystem where the system themes are
  * to be found that elementary looks for. This is useful for something
  * that wishes toiterate over the files in this folder and display them, for
  * example a theme selector.
- * 
+ *
  * @since 1.8
  * @ingroup Theme
  */
@@ -564,17 +564,17 @@ EAPI const char *elm_theme_system_dir_get(void);
 
 /**
  * Get the file path where elementary user theme files are found
- * 
+ *
  * @return A string that holds the path where user themes are
- * 
+ *
  * This returns the location in the filesystem where the user themes are
  * to be found that elementary looks for. This is useful for something
  * that wishes toiterate over the files in this folder and display them, for
  * example a theme selector.
- * 
+ *
  * User themes are always looked for before system themes. The user theme
  * directory is normally expected to be writable by the user.
- * 
+ *
  * @since 1.8
  * @ingroup Theme
  */

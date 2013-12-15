@@ -73,7 +73,7 @@ EAPI void      elm_table_padding_get(const Evas_Object *obj, Evas_Coord *horizon
  * unsigned values cleanly. You will be warned once values exceed 15bit
  * storage, and attempting to use values not able to fit in 16bits will
  * result in failure.
- * 
+ *
  * @ingroup Table
  */
 EAPI void      elm_table_pack(Evas_Object *obj, Evas_Object *subobj, int col, int row, int colspan, int rowspan);

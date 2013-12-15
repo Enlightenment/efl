@@ -149,7 +149,7 @@ typedef Evas_Object *(*Elm_Drag_Icon_Create_Cb) (void *data, Evas_Object *win, E
 
 /**
  * Callback called when a drag is finished, enters, or leaves an object
- * 
+ *
  * @param data Application specific data
  * @param obj The object where the drag started
  * @since 1.8
@@ -178,7 +178,7 @@ typedef void (*Elm_Drag_Accept) (void *data, Evas_Object *obj, Eina_Bool doaccep
 
 /**
  * Callback called when a drag is over an object, and gives object-relative coordinates
- * 
+ *
  * @param data Application specific data
  * @param obj The object where the drag started
  * @param x The X coordinate relative to the top-left of the object
@@ -265,11 +265,11 @@ EAPI Eina_Bool elm_object_cnp_selection_clear(Evas_Object *obj,
  * is NULL then it is not called. @p data is passed as the data parameter to
  * the callback functions and selection is passed in as the selection that
  * has been lost.
- * 
+ *
  * elm_cnp_selection_set() and elm_object_cnp_selection_clear() automatically
  * set this los callback to NULL when called. If you wish to take the selection
  * and then be notified of loss please do this (for example):
- * 
+ *
  * @code
  * elm_cnp_selection_set(obj, ELM_SEL_TYPE_PRIMARY, ELM_SEL_FORMAT_TEXT, "hello", strlen(hello));
  * elm_cnp_selection_loss_callback_set(obj, ELM_SEL_TYPE_PRIMARY, loss_cb, NULL);
@@ -307,7 +307,7 @@ EAPI void elm_cnp_selection_loss_callback_set(Evas_Object *obj, Elm_Sel_Type sel
  *
  * @since 1.8
  */
-EAPI Eina_Bool elm_drop_target_add(Evas_Object *obj, Elm_Sel_Format format, 
+EAPI Eina_Bool elm_drop_target_add(Evas_Object *obj, Elm_Sel_Format format,
                                    Elm_Drag_State entercb, void *enterdata,
                                    Elm_Drag_State leavecb, void *leavedata,
                                    Elm_Drag_Pos poscb, void *posdata,

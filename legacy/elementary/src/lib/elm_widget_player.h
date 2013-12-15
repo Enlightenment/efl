@@ -22,7 +22,7 @@ struct _Elm_Player_Smart_Data
 {
    Evas_Object          *video;
    Evas_Object          *emotion;
-   
+
    /* tracking those to ease disabling/enabling them back */
    Evas_Object          *forward;
    Evas_Object          *info;
@@ -37,7 +37,7 @@ struct _Elm_Player_Smart_Data
    Evas_Object          *mute;
    Evas_Object          *slider;
    Evas_Object          *vslider;
-   
+
    Eina_Bool             dragging : 1;
 };
 

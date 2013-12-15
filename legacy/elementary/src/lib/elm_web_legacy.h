@@ -283,7 +283,7 @@ EAPI void              elm_web_bg_color_get(const Evas_Object *obj, int *r, int 
  * @param obj The web object
  * @return A newly allocated string, or @c NULL if nothing is selected or an
  * error occurred
- * 
+ *
  * @ingroup Web
  */
 EAPI const char       *elm_web_selection_get(const Evas_Object *obj);
@@ -299,7 +299,7 @@ EAPI const char       *elm_web_selection_get(const Evas_Object *obj);
  * @param index The index selected
  *
  * @see elm_web_popup_destroy()
- * 
+ *
  * @ingroup Web
  */
 EAPI void              elm_web_popup_selected_set(Evas_Object *obj, int index);
@@ -315,7 +315,7 @@ EAPI void              elm_web_popup_selected_set(Evas_Object *obj, int index);
  * @param obj The web object
  * @return @c EINA_TRUE if the menu was successfully destroyed, or @c EINA_FALSE
  * if there was no menu to destroy
- * 
+ *
  * @ingroup Web
  */
 EAPI Eina_Bool         elm_web_popup_destroy(Evas_Object *obj);
@@ -331,7 +331,7 @@ EAPI Eina_Bool         elm_web_popup_destroy(Evas_Object *obj);
  *
  * @return @c EINA_TRUE if the given string was found, @c EINA_FALSE if not
  * or failure
- * 
+ *
  * @ingroup Web
  */
 EAPI Eina_Bool         elm_web_text_search(const Evas_Object *obj, const char *string, Eina_Bool case_sensitive, Eina_Bool forward, Eina_Bool wrap);
@@ -346,7 +346,7 @@ EAPI Eina_Bool         elm_web_text_search(const Evas_Object *obj, const char *s
  * @param limit Maximum amount of matches, or zero to unlimited
  *
  * @return number of matched @a string
- * 
+ *
  * @ingroup Web
  */
 EAPI unsigned int      elm_web_text_matches_mark(Evas_Object *obj, const char *string, Eina_Bool case_sensitive, Eina_Bool highlight, unsigned int limit);
@@ -357,7 +357,7 @@ EAPI unsigned int      elm_web_text_matches_mark(Evas_Object *obj, const char *s
  * @param obj The web object
  *
  * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise
- * 
+ *
  * @ingroup Web
  */
 EAPI Eina_Bool         elm_web_text_matches_unmark_all(Evas_Object *obj);
@@ -372,7 +372,7 @@ EAPI Eina_Bool         elm_web_text_matches_unmark_all(Evas_Object *obj);
  * @param highlight Whether to highlight the marks or not
  *
  * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise
- * 
+ *
  * @ingroup Web
  */
 EAPI Eina_Bool         elm_web_text_matches_highlight_set(Evas_Object *obj, Eina_Bool highlight);
@@ -384,7 +384,7 @@ EAPI Eina_Bool         elm_web_text_matches_highlight_set(Evas_Object *obj, Eina
  *
  * @return @c EINA_TRUE is marks are set to be highlighted, @c EINA_FALSE
  * otherwise
- * 
+ *
  * @ingroup Web
  */
 EAPI Eina_Bool         elm_web_text_matches_highlight_get(const Evas_Object *obj);
@@ -400,7 +400,7 @@ EAPI Eina_Bool         elm_web_text_matches_highlight_get(const Evas_Object *obj
  *
  * @return A value between 0.0 and 1.0 indicating the progress, or -1.0 on
  * failure
- * 
+ *
  * @ingroup Web
  */
 EAPI double            elm_web_load_progress_get(const Evas_Object *obj);
@@ -415,7 +415,7 @@ EAPI double            elm_web_load_progress_get(const Evas_Object *obj);
  * @param obj The web object
  *
  * @return @c EINA_TRUE if the cancel was successful, @c EINA_FALSE otherwise
- * 
+ *
  * @ingroup Web
  */
 EAPI Eina_Bool         elm_web_stop(Evas_Object *obj);
@@ -426,7 +426,7 @@ EAPI Eina_Bool         elm_web_stop(Evas_Object *obj);
  * @param obj The web object
  *
  * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise
- * 
+ *
  * @ingroup Web
  */
 EAPI Eina_Bool         elm_web_reload(Evas_Object *obj);
@@ -437,7 +437,7 @@ EAPI Eina_Bool         elm_web_reload(Evas_Object *obj);
  * @param obj The web object
  *
  * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise
- * 
+ *
  * @ingroup Web
  */
 EAPI Eina_Bool         elm_web_reload_full(Evas_Object *obj);
@@ -455,7 +455,7 @@ EAPI Eina_Bool         elm_web_reload_full(Evas_Object *obj);
  * @see elm_web_back_possible()
  * @see elm_web_forward()
  * @see elm_web_navigate()
- * 
+ *
  * @ingroup Web
  */
 EAPI Eina_Bool         elm_web_back(Evas_Object *obj);
