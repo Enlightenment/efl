@@ -138,6 +138,7 @@ _emotion_check_device(Emotion_Webcam *ew)
  on_error:
 #endif
    INF("'%s' is not a webcam ['%s']", ew->name, strerror(errno));
+   _emotion_webcams->webcams = eina_list_remove(_emotion_webcams->webcams, ew);
    eina_stringshare_del(ew->syspath);
    eina_stringshare_del(ew->device);
    eina_stringshare_del(ew->name);
@@ -211,8 +212,6 @@ _emotion_process_webcam(void *data)
      {
 	if (_emotion_check_device(test))
 	  ecore_event_add(EMOTION_WEBCAM_ADD, test, NULL, NULL);
-	else
-	  _emotion_webcam_remove_cb(test, NULL);
      }
 
    eina_stringshare_del(syspath);
@@ -263,8 +262,6 @@ _emotion_eeze_events(const char *syspath,
 	  {
 	     if (_emotion_check_device(test))
 	       ecore_event_add(EMOTION_WEBCAM_ADD, test, NULL, NULL);
-	     else
-	       _emotion_webcam_remove_cb(test, NULL);
 	  }
      }
    ecore_event_add(EMOTION_WEBCAM_UPDATE, NULL, NULL, NULL);
