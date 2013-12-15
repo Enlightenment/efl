@@ -711,7 +711,7 @@ EAPI void                  elm_win_layer_set(Evas_Object *obj, int layer);
 EAPI int                   elm_win_layer_get(const Evas_Object *obj);
 
 /**
- * This pushes (incriments) the norender counter on the window
+ * This pushes (increments) the norender counter on the window
  *
  * @param obj The window object
  *
