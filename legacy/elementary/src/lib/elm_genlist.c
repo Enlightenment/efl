@@ -1654,6 +1654,9 @@ _item_realize(Elm_Gen_Item *it,
         _item_text_realize(it, VIEW(it), &it->texts, NULL);
         it->content_objs =
           _item_content_realize(it, VIEW(it), &it->contents, NULL);
+        if (it->has_contents != (!!it->content_objs))
+          it->item->mincalcd = EINA_FALSE;
+        it->has_contents = !!it->content_objs;
         _item_state_realize(it, VIEW(it), &it->states, NULL);
         if (it->flipped)
           {
@@ -6485,7 +6488,9 @@ elm_genlist_item_fields_update(Elm_Object_Item *item,
                                                    &it->contents, parts);
         it->content_objs = _item_content_realize(it, VIEW(it),
                                                  &it->contents, parts);
-
+        if (it->has_contents != (!!it->content_objs))
+          it->item->mincalcd = EINA_FALSE;
+        it->has_contents = !!it->content_objs;
         if (it->item->type == ELM_GENLIST_ITEM_NONE)
           {
              Evas_Object* eobj;
@@ -6534,6 +6539,8 @@ elm_genlist_item_fields_update(Elm_Object_Item *item,
 
    if ((!itf) || (itf & ELM_GENLIST_ITEM_FIELD_STATE))
      _item_state_realize(it, VIEW(it), &it->states, parts);
+   if (!it->item->mincalcd)
+     elm_genlist_item_update(item);
 }
 
 EAPI void
