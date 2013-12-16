@@ -220,19 +220,6 @@ _emotion_process_webcam(void *data)
 }
 
 static void
-_emotion_enumerate_all_webcams(void)
-{
-   Eina_List *devices;
-
-   if (_emotion_webcams->init) return ;
-   devices = eeze_udev_find_by_type(EEZE_UDEV_TYPE_V4L, NULL);
-
-   _emotion_webcams->check_list = devices;
-   _emotion_webcams->idler = ecore_idler_add(_emotion_process_webcam,
-					     _emotion_webcams);
-}
-
-static void
 _emotion_eeze_events(const char *syspath,
                      Eeze_Udev_Event ev,
                      void *data EINA_UNUSED,
@@ -268,6 +255,22 @@ _emotion_eeze_events(const char *syspath,
 }
 
 #endif
+
+static void
+_emotion_enumerate_all_webcams(void)
+{
+   Eina_List *devices;
+
+#ifdef HAVE_EEZE
+   if (_emotion_webcams->init) return ;
+   devices = eeze_udev_find_by_type(EEZE_UDEV_TYPE_V4L, NULL);
+
+   _emotion_webcams->check_list = devices;
+   _emotion_webcams->idler = ecore_idler_add(_emotion_process_webcam,
+					     _emotion_webcams);
+#endif
+}
+
 
 Eina_Bool emotion_webcam_init(void)
 {
