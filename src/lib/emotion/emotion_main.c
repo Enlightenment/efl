@@ -146,7 +146,7 @@ emotion_init(void)
    _emotion_log_domain = eina_log_domain_register("emotion", EINA_COLOR_LIGHTCYAN);
    if (_emotion_log_domain < 0)
      {
-        CRITICAL("Could not register log domain 'emotion'");
+        EINA_LOG_CRIT("Could not register log domain 'emotion'");
         eina_shutdown();
         return EINA_FALSE;
      }
