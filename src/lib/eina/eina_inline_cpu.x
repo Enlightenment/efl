@@ -84,7 +84,7 @@ eina_swap64(unsigned long long x)
           ((x & 0x00000000ff000000ull) << 8)  |
           ((x & 0x0000000000ff0000ull) << 24) |
           ((x & 0x000000000000ff00ull) << 40) |
-          ((x & 0x00000000000000ffull) << 56)));
+          ((x & 0x00000000000000ffull) << 56));
 #endif
 }
 
