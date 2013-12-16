@@ -1213,44 +1213,44 @@ _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
          evas_obj_type_set(MY_CLASS_NAME_LEGACY));
 }
 
-Evas_Object *
+EAPI Evas_Object *
 elm_access_object_register(Evas_Object *obj, Evas_Object *parent)
 {
    return _access_object_register(obj, parent);
 }
 
-void
+EAPI void
 elm_access_object_unregister(Evas_Object *obj)
 {
    _access_object_unregister(obj);
 }
 
-Evas_Object *
+EAPI Evas_Object *
 elm_access_object_get(const Evas_Object *obj)
 {
    return evas_object_data_get(obj, "_part_access_obj");
 }
 
-void
+EAPI void
 elm_access_info_set(Evas_Object *obj, int type, const char *text)
 {
    _elm_access_text_set(_elm_access_info_get(obj), type, text);
 }
 
-char *
+EAPI char *
 elm_access_info_get(const Evas_Object *obj, int type)
 {
    return _elm_access_text_get(_elm_access_info_get(obj), type, obj);
 }
 
-void
+EAPI void
 elm_access_info_cb_set(Evas_Object *obj, int type,
                           Elm_Access_Info_Cb func, const void *data)
 {
    _elm_access_callback_set(_elm_access_info_get(obj), type, func, data);
 }
 
-void
+EAPI void
 elm_access_activate_cb_set(Evas_Object *obj,
                            Elm_Access_Activate_Cb  func, void *data)
 {
@@ -1263,7 +1263,7 @@ elm_access_activate_cb_set(Evas_Object *obj,
    ac->activate_data = data;
 }
 
-void
+EAPI void
 elm_access_say(const char *text)
 {
    if (!text) return;
@@ -1271,13 +1271,13 @@ elm_access_say(const char *text)
    _elm_access_say(text);
 }
 
-void
+EAPI void
 elm_access_highlight_set(Evas_Object* obj)
 {
    _elm_access_highlight_set(obj);
 }
 
-Eina_Bool
+EAPI Eina_Bool
 elm_access_action(Evas_Object *obj, const Elm_Access_Action_Type type, Elm_Access_Action_Info *action_info)
 {
    Evas *evas;
@@ -1348,7 +1348,7 @@ elm_access_action(Evas_Object *obj, const Elm_Access_Action_Type type, Elm_Acces
    return EINA_TRUE;
 }
 
-void
+EAPI void
 elm_access_action_cb_set(Evas_Object *obj, const Elm_Access_Action_Type type, const Elm_Access_Action_Cb cb, const void *data)
 {
    Action_Info *a;
@@ -1364,7 +1364,6 @@ elm_access_action_cb_set(Evas_Object *obj, const Elm_Access_Action_Type type, co
    a->fn[type].cb = cb;
    a->fn[type].user_data = (void *)data;
 }
-
 EAPI void
 elm_access_external_info_set(Evas_Object *obj, const char *text)
 {
@@ -1381,7 +1380,7 @@ elm_access_external_info_get(const Evas_Object *obj)
    return _elm_access_text_get(ac, ELM_ACCESS_CONTEXT_INFO, obj);
 }
 
-void
+EAPI void
 elm_access_highlight_next_set(Evas_Object *obj, Elm_Highlight_Direction dir, Evas_Object *next)
 {
    EINA_SAFETY_ON_FALSE_RETURN(obj);

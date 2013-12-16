@@ -27,7 +27,7 @@ enum _Elm_Access_Info_Type
 };
 
 /**
- * @since 1.9
+ * @since 1.8
  * @typedef Elm_Access_Info_Type
  */
 typedef enum _Elm_Access_Info_Type Elm_Access_Info_Type;
@@ -57,7 +57,7 @@ enum _Elm_Access_Action_Type
 };
 
 /**
- * @since 1.9
+ * @since 1.8
  * @typedef Elm_Access_Action_Type
  */
 typedef enum _Elm_Access_Action_Type Elm_Access_Action_Type;
@@ -76,7 +76,7 @@ struct _Elm_Access_Action_Info
 };
 
 /**
- * @since 1.9
+ * @since 1.8
  * @typedef Elm_Access_Action_Info
  */
 typedef struct _Elm_Access_Action_Info Elm_Access_Action_Info;
@@ -89,13 +89,13 @@ enum _Elm_Highlight_Direction
 };
 
 /**
- * @since 1.9
+ * @since 1.8
  * @typedef Elm_Highlight_Direction
  */
 typedef enum _Elm_Highlight_Direction Elm_Highlight_Direction;
 
 /**
- * @since 1.9
+ * @since 1.8
  * @typedef Elm_Access_Action_Cb
  *
  * User callback to make access object do specific action
@@ -113,7 +113,7 @@ typedef void (*Elm_Access_Activate_Cb)(void *data, Evas_Object *part_obj, Elm_Ob
 
 /**
  * @brief Register evas object as an accessible object.
- * @since 1.9
+ * @since 1.8
  *
  * @param obj The evas object to register as an accessible object.
  * @param parent The elementary object which is used for creating
@@ -121,32 +121,32 @@ typedef void (*Elm_Access_Activate_Cb)(void *data, Evas_Object *part_obj, Elm_Ob
  *
  * @ingroup Access
  */
-Evas_Object *elm_access_object_register(Evas_Object *obj, Evas_Object *parent);
+EAPI Evas_Object *elm_access_object_register(Evas_Object *obj, Evas_Object *parent);
 
 /**
  * @brief Unregister accessible object.
- * @since 1.9
+ * @since 1.8
  *
  * @param obj The Evas object to unregister accessible object.
  *
  * @ingroup Access
  */
-void elm_access_object_unregister(Evas_Object *obj);
+EAPI void elm_access_object_unregister(Evas_Object *obj);
 
 /**
  * @brief Get an accessible object of the evas object.
- * @since 1.9
+ * @since 1.8
  *
  * @param obj The evas object.
  * @return Accessible object of the evas object or NULL for any error
  *
  * @ingroup Access
  */
-Evas_Object *elm_access_object_get(const Evas_Object *obj);
+EAPI Evas_Object *elm_access_object_get(const Evas_Object *obj);
 
 /**
  * @brief Set text to give information for specific type.
- * @since 1.9
+ * @since 1.8
  *
  * @param obj Accessible object.
  * @param type The type of content that will be read
@@ -155,11 +155,11 @@ Evas_Object *elm_access_object_get(const Evas_Object *obj);
  * @see elm_access_info_cb_set
  * @ingroup Access
  */
-void elm_access_info_set(Evas_Object *obj, int type, const char *text);
+EAPI void elm_access_info_set(Evas_Object *obj, int type, const char *text);
 
 /**
  * @brief Set text to give information for specific type.
- * @since 1.9
+ * @since 1.8
  *
  * @param obj Accessible object.
  * @param type The type of content that will be read
@@ -167,11 +167,11 @@ void elm_access_info_set(Evas_Object *obj, int type, const char *text);
  * @see elm_access_info_cb_set
  * @ingroup Access
  */
-char *elm_access_info_get(const Evas_Object *obj, int type);
+EAPI char *elm_access_info_get(const Evas_Object *obj, int type);
 
 /**
  * @brief Set content callback to give information for specific type.
- * @since 1.9
+ * @since 1.8
  *
  * @param obj Accessible object.
  * @param type The type of content that will be read
@@ -188,11 +188,11 @@ char *elm_access_info_get(const Evas_Object *obj, int type);
  *
  * @ingroup Access
  */
-void elm_access_info_cb_set(Evas_Object *obj, int type, Elm_Access_Info_Cb func, const void *data);
+EAPI void elm_access_info_cb_set(Evas_Object *obj, int type, Elm_Access_Info_Cb func, const void *data);
 
 /**
  * @brief Set activate callback to activate highlight object.
- * @since 1.9
+ * @since 1.8
  *
  * @param obj Accessible object.
  * @param func The function to be called when the activate gesture is detected
@@ -200,11 +200,11 @@ void elm_access_info_cb_set(Evas_Object *obj, int type, Elm_Access_Info_Cb func,
  *
  * @ingroup Access
  */
-void elm_access_activate_cb_set(Evas_Object *obj, Elm_Access_Activate_Cb func, void *data);
+EAPI void elm_access_activate_cb_set(Evas_Object *obj, Elm_Access_Activate_Cb func, void *data);
 
 /**
  * @brief Read out text information directly.
- * @since 1.9
+ * @since 1.8
  *
  * @param text The text information that will be read
  *
@@ -212,11 +212,11 @@ void elm_access_activate_cb_set(Evas_Object *obj, Elm_Access_Activate_Cb func, v
  *
  * @ingroup Access
  */
-void elm_access_say(const char *text);
+EAPI void elm_access_say(const char *text);
 
 /**
  * @brief Give the highlight to the object directly.
- * @since 1.9
+ * @since 1.8
  *
  * @param obj The object that will have the highlight and its information be read.
  *
@@ -225,11 +225,11 @@ void elm_access_say(const char *text);
  * @see elm_access_object_get
  * @ingroup Access
  */
-void elm_access_highlight_set(Evas_Object* obj);
+EAPI void elm_access_highlight_set(Evas_Object* obj);
 
 /**
  * @brief Do the accessibility action base on given object.
- * @since 1.9
+ * @since 1.8
  *
  * @param obj The object that could be an any object. it would be useful to use a container widget.
  * @param type The type of accessibility action.
@@ -243,11 +243,11 @@ void elm_access_highlight_set(Evas_Object* obj);
  *
  * @ingroup Access
  */
-Eina_Bool elm_access_action(Evas_Object *obj, const Elm_Access_Action_Type type, Elm_Access_Action_Info *action_info);
+EAPI Eina_Bool elm_access_action(Evas_Object *obj, const Elm_Access_Action_Type type, Elm_Access_Action_Info *action_info);
 
 /**
  * @brief Set a callback function to a given accessibility action type
- * @since 1.9
+ * @since 1.8
  *
  * @param obj The object to attach a callback to
  * @param type The type of accessibility action.
@@ -256,11 +256,11 @@ Eina_Bool elm_access_action(Evas_Object *obj, const Elm_Access_Action_Type type,
  *
  * @ingroup Access
  */
-void elm_access_action_cb_set(Evas_Object *obj, const Elm_Access_Action_Type type, const Elm_Access_Action_Cb cb, const void *data);
+EAPI void elm_access_action_cb_set(Evas_Object *obj, const Elm_Access_Action_Type type, const Elm_Access_Action_Cb cb, const void *data);
 
 /**
  * @brief Set the next access object for highlight.
- * @since 1.9
+ * @since 1.8
  *
  * @param obj  The object is previous access object of next for hilight.
  * @param dir  Access direction same as Focus direction
@@ -273,5 +273,5 @@ void elm_access_action_cb_set(Evas_Object *obj, const Elm_Access_Action_Type typ
  *
  * @ingroup Access
  */
-void
+EAPI void
 elm_access_highlight_next_set(Evas_Object *obj, Elm_Highlight_Direction dir, Evas_Object *next);
