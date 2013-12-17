@@ -2314,7 +2314,8 @@ _alpha_do(Ecore_Evas *ee, int alpha)
                                (Ecore_Event_Multi_Up_Cb)_ecore_evas_mouse_multi_up_process);
    if (ee->prop.borderless)
      ecore_x_mwm_borderless_set(ee->prop.window, ee->prop.borderless);
-   if (ee->visible) ecore_x_window_show(ee->prop.window);
+   if (ee->visible || ee->should_be_visible)
+     ecore_x_window_show(ee->prop.window);
    if (ee->prop.focused) ecore_x_window_focus(ee->prop.window);
    if (ee->prop.title)
      {
@@ -2461,7 +2462,8 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
                                     (Ecore_Event_Multi_Up_Cb)_ecore_evas_mouse_multi_up_process);
         if (ee->prop.borderless)
           ecore_x_mwm_borderless_set(ee->prop.window, ee->prop.borderless);
-        if (ee->visible) ecore_x_window_show(ee->prop.window);
+        if (ee->visible || ee->should_be_visible)
+          ecore_x_window_show(ee->prop.window);
         if (ee->prop.focused) ecore_x_window_focus(ee->prop.window);
         if (ee->prop.title)
           {
