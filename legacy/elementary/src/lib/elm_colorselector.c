@@ -1245,9 +1245,31 @@ _elm_colorselector_smart_sizing_eval(Eo *obj, void *_pd, va_list *list EINA_UNUS
         return;
      }
 
+   evas_object_resize(sd->palette_box, minw, minh);
+   evas_object_smart_calculate(sd->palette_box);
    edje_object_size_min_calc(wd->resize_obj, &minw, &minh);
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, -1, -1);
+}
+
+static void
+_on_resize(void *data EINA_UNUSED, Evas *e EINA_UNUSED,
+           Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   ELM_COLORSELECTOR_DATA_GET(obj, sd);
+
+   if ((sd->mode == ELM_COLORSELECTOR_PALETTE) ||
+       (sd->mode == ELM_COLORSELECTOR_BOTH))
+     {
+        Evas_Coord w = 0, h = 0, minw = -1;
+
+        evas_object_size_hint_min_get(obj, &minw, NULL);
+        evas_object_geometry_get(obj, NULL, NULL, &w, &h);
+        if ((w != sd->_w) && (w < minw))
+          elm_layout_sizing_eval(obj);
+        sd->_w = w;
+        sd->_h = h;
+     }
 }
 
 static Eina_Bool
@@ -1503,6 +1525,8 @@ _elm_colorselector_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
      elm_layout_content_set(obj, "palette", priv->palette_box);
    priv->palette_name = eina_stringshare_add("default");
    _palette_colors_load(obj);
+
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE, _on_resize, NULL);
 
    /* load background edj */
    priv->col_bars_area = edje_object_add(evas_object_evas_get(obj));
