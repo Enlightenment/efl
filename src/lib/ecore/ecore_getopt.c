@@ -43,6 +43,12 @@ static int _argc = 0;
 static int cols = 80;
 static int helpcol = 80 / 3;
 
+
+static Eina_Bool _ecore_getopt_desc_is_sentinel(const Ecore_Getopt_Desc *desc);
+static Ecore_Getopt_Desc_Arg_Requirement _ecore_getopt_desc_arg_requirement(const Ecore_Getopt_Desc *desc);
+static void _ecore_getopt_help_desc_setup_metavar(const Ecore_Getopt_Desc *desc, char *metavar, int *metavarlen, int maxsize);
+
+
 static void
 _ecore_getopt_help_print_replace_program(FILE               *fp,
                                          const Ecore_Getopt *parser EINA_UNUSED,
@@ -98,7 +104,42 @@ _ecore_getopt_help_usage(FILE               *fp,
 
    if (!parser->usage)
      {
-        fprintf(fp, _("%s [options]\n"), prog);
+        const Ecore_Getopt_Desc *d;
+
+        fprintf(fp, _("%s [options]"), prog);
+
+        for (d = parser->descs; !_ecore_getopt_desc_is_sentinel(d); d++);
+
+        if (d->metavar)
+          {
+             for (; d->metavar != NULL; d++)
+               {
+                  Ecore_Getopt_Desc_Arg_Requirement ar;
+                  char metavar[32];
+                  int metavarlen = 0;
+
+                  ar = _ecore_getopt_desc_arg_requirement(d);
+                  _ecore_getopt_help_desc_setup_metavar(d, metavar,
+                                                        &metavarlen,
+                                                        sizeof(metavar));
+
+                  fputc(' ', fp);
+                  if (ar != ECORE_GETOPT_DESC_ARG_REQUIREMENT_YES)
+                    fputc('[', fp);
+                  fputs(metavar, fp);
+
+                  if (ar != ECORE_GETOPT_DESC_ARG_REQUIREMENT_YES)
+                    fputc(']', fp);
+
+                  if (d->action == ECORE_GETOPT_ACTION_APPEND)
+                    {
+                       fprintf(fp, " [%s] ...", metavar);
+                       break;
+                    }
+               }
+          }
+
+        fputc('\n', fp);
         return;
      }
 
@@ -358,7 +399,8 @@ static int
 _ecore_getopt_help_desc_show_arg(FILE                             *fp,
                                  Ecore_Getopt_Desc_Arg_Requirement requirement,
                                  const char                       *metavar,
-                                 int                               metavarlen)
+                                 int                               metavarlen,
+                                 Eina_Bool                         show_attr)
 {
    int used;
 
@@ -375,9 +417,13 @@ _ecore_getopt_help_desc_show_arg(FILE                             *fp,
 
    if (requirement != ECORE_GETOPT_DESC_ARG_REQUIREMENT_NO)
      {
-        fputc('=', fp);
+        if (show_attr)
+          {
+             fputc('=', fp);
+             used++;
+          }
         fputs(metavar, fp);
-        used += metavarlen + 1;
+        used += metavarlen;
      }
 
    if (requirement == ECORE_GETOPT_DESC_ARG_REQUIREMENT_OPTIONAL)
@@ -597,7 +643,7 @@ _ecore_getopt_help_desc(FILE                    *fp,
         fputc(desc->shortname, fp);
         used += 2;
         used += _ecore_getopt_help_desc_show_arg
-            (fp, arg_req, metavar, metavarlen);
+          (fp, arg_req, metavar, metavarlen, EINA_TRUE);
      }
 
    if (desc->shortname && desc->longname)
@@ -614,7 +660,12 @@ _ecore_getopt_help_desc(FILE                    *fp,
         fputs(desc->longname, fp);
         used += 2 + namelen;
         used += _ecore_getopt_help_desc_show_arg
-            (fp, arg_req, metavar, metavarlen);
+          (fp, arg_req, metavar, metavarlen, EINA_TRUE);
+     }
+   else if ((!desc->shortname) && (desc->metavar))
+     {
+        used += _ecore_getopt_help_desc_show_arg
+          (fp, arg_req, metavar, metavarlen, EINA_FALSE);
      }
 
    if (!desc->help)
@@ -665,6 +716,14 @@ _ecore_getopt_help_options(FILE               *fp,
    fputs(_("Options:\n"), fp);
 
    for (desc = parser->descs; !_ecore_getopt_desc_is_sentinel(desc); desc++)
+     _ecore_getopt_help_desc(fp, desc);
+
+   fputc('\n', fp);
+
+   if (!desc->metavar) return;
+
+   fputs(_("Positional arguments:\n"), fp);
+   for (; desc->metavar != NULL; desc++)
      _ecore_getopt_help_desc(fp, desc);
 
    fputc('\n', fp);
@@ -876,6 +935,14 @@ _ecore_getopt_desc_print_error(const Ecore_Getopt_Desc *desc,
      {
         fputs("--", stderr);
         fputs(desc->longname, stderr);
+     }
+   else if ((!desc->shortname) && (desc->metavar))
+     {
+        char metavar[32];
+        int metavarlen = 0;
+        _ecore_getopt_help_desc_setup_metavar(desc, metavar, &metavarlen,
+                                              sizeof(metavar));
+        fputs(metavar, stderr);
      }
 
    fputs(": ", stderr);
@@ -1667,6 +1734,98 @@ _ecore_getopt_parse_arg(const Ecore_Getopt *parser,
      return _ecore_getopt_parse_arg_short(parser, values, argc, argv, idx, nonargs, arg + 1);
 }
 
+static Eina_Bool
+_ecore_getopt_parse_pos(const Ecore_Getopt *parser,
+                        const Ecore_Getopt_Desc **p_desc,
+                        Ecore_Getopt_Value *values,
+                        int                 argc,
+                        char              **argv,
+                        int                *idx,
+                        int                *nonargs)
+{
+   const Ecore_Getopt_Desc *desc = *p_desc;
+   Ecore_Getopt_Desc_Arg_Requirement arg_req;
+   char metavar[32];
+   int metavarlen = 0;
+   const char *arg_val;
+   int desc_idx;
+   Ecore_Getopt_Value *value;
+   Eina_Bool ret;
+
+   _ecore_getopt_help_desc_setup_metavar
+     (desc, metavar, &metavarlen, sizeof(metavar));
+
+   desc_idx = desc - parser->descs;
+   value = values + desc_idx;
+
+   arg_req = _ecore_getopt_desc_arg_requirement(desc);
+   if (*idx >= argc)
+     {
+        (*p_desc)++;
+        if (arg_req == ECORE_GETOPT_DESC_ARG_REQUIREMENT_YES)
+          {
+             /* TODO: should we consider callback here as well? */
+             if ((desc->action == ECORE_GETOPT_ACTION_APPEND) &&
+                 (value->listp) && (*value->listp))
+               {
+                  printf("append desc: %s (%d), value: %p\n",
+                         desc->metavar, desc_idx, value->listp);
+                  return EINA_TRUE;
+               }
+
+             fprintf(stderr,
+                     _("ERROR: missing required positional argument %s.\n"),
+                     metavar);
+             return EINA_FALSE;
+          }
+        return EINA_TRUE;
+     }
+
+   arg_val = argv[*idx];
+
+   switch (desc->action)
+     {
+      case ECORE_GETOPT_ACTION_STORE:
+         ret = _ecore_getopt_parse_store(parser, desc, value, arg_val);
+         (*p_desc)++;
+         break;
+
+      case ECORE_GETOPT_ACTION_CHOICE:
+         ret = _ecore_getopt_parse_choice(parser, desc, value, arg_val);
+         (*p_desc)++;
+         break;
+
+      case ECORE_GETOPT_ACTION_APPEND:
+         ret = _ecore_getopt_parse_append(parser, desc, value, arg_val);
+         /* no changes to p_desc, we keep appending until the end */
+         break;
+
+      case ECORE_GETOPT_ACTION_CALLBACK:
+         ret = _ecore_getopt_parse_callback(parser, desc, value, arg_val);
+         (*p_desc)++;
+         break;
+
+      default:
+         fprintf(stderr, _("ERROR: unsupported action type %d "
+                           "for positional argument %s\n"),
+                 desc->action, metavar);
+         (*p_desc)++;
+         ret = EINA_FALSE;
+         break;
+     }
+
+   if (ret)
+     {
+        (*idx)++;
+        (*nonargs)++;
+     }
+
+   if ((!ret) && parser->strict)
+     return EINA_FALSE;
+
+   return EINA_TRUE;
+}
+
 static const Ecore_Getopt_Desc *
 _ecore_getopt_parse_find_short_other(const Ecore_Getopt      *parser,
                                      const Ecore_Getopt_Desc *orig)
@@ -1803,6 +1962,15 @@ _ecore_getopt_find_help(const Ecore_Getopt *parser)
  * and copyright may be translated, standard/global gettext() call
  * will be applied on them if ecore was compiled with such support.
  *
+ * This function will @b not parse positional arguments! If these are
+ * declared (metavar is defined with both shortname and longname being
+ * empty), then you must call ecore_getopt_parse_positional() with the
+ * last argument (@c start) being the result of this function. This is
+ * done so you can have "quit options", those that once called you
+ * want to exit without doing further parsing, as is the case with
+ * help, license, copyright, version and eventually others you may
+ * define.
+ *
  * @param parser description of how to work.
  * @param values where to store values, it is assumed that this is a vector
  *        of the same size as @c parser->descs. Values should be previously
@@ -1812,6 +1980,8 @@ _ecore_getopt_find_help(const Ecore_Getopt *parser)
  * @param argv command line parameters.
  *
  * @return index of first non-option parameter or -1 on error.
+ *
+ * @see ecore_getopt_parse_positional()
  */
 EAPI int
 ecore_getopt_parse(const Ecore_Getopt *parser,
@@ -1864,6 +2034,123 @@ error:
    {
       const Ecore_Getopt_Desc *help;
       fputs(_("ERROR: invalid options found."), stderr);
+
+      help = _ecore_getopt_find_help(parser);
+      if (!help)
+        fputc('\n', stderr);
+      else if (help->longname)
+        fprintf(stderr, _(" See --%s.\n"), help->longname);
+      else
+        fprintf(stderr, _(" See -%c.\n"), help->shortname);
+   }
+
+   return -1;
+}
+
+/**
+ * Parse command line positional parameters.
+ *
+ * Walks the command line positional parameters (those that do not
+ * start with "-" or "--") and parse them based on @a parser
+ * description, doing actions based on @c parser->descs->action, like
+ * storing values of some type.
+ *
+ * It is expected that @a values is of the same size than @c
+ * parser->descs, same as with ecore_getopt_parse().
+ *
+ * All values are expected to be initialized before use.
+ *
+ * Unlike the ecore_getopt_parse(), only the following options are
+ * supported:
+ *  - @c ECORE_GETOPT_ACTION_STORE
+ *  - @c ECORE_GETOPT_ACTION_CHOICE
+ *  - @c ECORE_GETOPT_ACTION_APPEND
+ *  - @c ECORE_GETOPT_ACTION_CALLBACK
+ *
+ * There is a special case for @c ECORE_GETOPT_ACTION_APPEND as it
+ * will consume all remaining elements. It is also special in the
+ * sense that it will allocate memory and thus need to be freed. For
+ * consistency between all of appended subtypes, @c eina_list->data
+ * will contain an allocated memory with the value, that is, for @c
+ * ECORE_GETOPT_TYPE_STR it will contain a copy of the argument, @c
+ * ECORE_GETOPT_TYPE_INT a pointer to an allocated integer and so on.
+ *
+ * If parser is in strict mode (see @c Ecore_Getopt->strict), then any
+ * error will abort parsing and @c -1 is returned. Otherwise it will try
+ * to continue as far as possible.
+ *
+ * Translation of help strings (description) and metavar may be done,
+ * standard/global gettext() call will be applied on them if ecore was
+ * compiled with such support.
+ *
+ * @param parser description of how to work.
+ * @param values where to store values, it is assumed that this is a vector
+ *        of the same size as @c parser->descs. Values should be previously
+ *        initialized.
+ * @param argc how many elements in @a argv. If not provided it will be
+ *        retrieved with ecore_app_args_get().
+ * @param argv command line parameters.
+ * @param start the initial position argument to look at, usually the
+ *        return of ecore_getopt_parse(). If less than 1, will try to
+ *        find it automatically.
+ *
+ * @return index of first non-option parameter or -1 on error. If the
+ *         last positional argument is of action @c
+ *         ECORE_GETOPT_ACTION_APPEND then it will be the same as @a argc.
+ */
+EAPI int
+ecore_getopt_parse_positional(const Ecore_Getopt *parser,
+                              Ecore_Getopt_Value *values,
+                              int argc,
+                              char **argv,
+                              int start)
+{
+   const Ecore_Getopt_Desc *desc;
+   int nonargs;
+
+   if (!parser)
+     {
+        fputs(_("ERROR: no parser provided.\n"), stderr);
+        return -1;
+     }
+   if (!values)
+     {
+        fputs(_("ERROR: no values provided.\n"), stderr);
+        return -1;
+     }
+
+   if ((argc < 1) || (!argv))
+     ecore_app_args_get(&argc, &argv);
+
+   if (argc < 1)
+     {
+        fputs(_("ERROR: no arguments provided.\n"), stderr);
+        return -1;
+     }
+
+   if (argv[0])
+     prog = argv[0];
+   else
+     prog = parser->prog;
+
+   if (start > argc)
+     start = argc;
+   else if (start < 1)
+     start = _ecore_getopt_parse_find_nonargs_base(parser, argc, argv);
+
+   nonargs = start;
+   for (desc = parser->descs; !_ecore_getopt_desc_is_sentinel(desc); desc++);
+   while (desc->metavar)
+     if (!_ecore_getopt_parse_pos
+         (parser, &desc, values, argc, argv, &start, &nonargs))
+       goto error;
+
+   return nonargs;
+
+error:
+   {
+      const Ecore_Getopt_Desc *help;
+      fputs(_("ERROR: invalid positional arguments found."), stderr);
 
       help = _ecore_getopt_find_help(parser);
       if (!help)

@@ -5,6 +5,17 @@
 #include <Ecore_Getopt.h>
 #include <assert.h>
 
+/* if defined will end the positional arguments with the special
+ * action ECORE_GETOPT_ACTION_APPEND that will require at least one
+ * trailing argument and will also consume the remaining arguments
+ * until the end.
+ *
+ * if not defined unhandled positional arguments start at the index
+ * returned by ecore_getopt_parse_positional(), that will be less or
+ * equal to argc.
+ */
+#define END_WITH_POS_APPEND 1
+
 static const char * available_choices[] = {
   "banana",
   "apple",
@@ -15,8 +26,8 @@ static const char * available_choices[] = {
 static const Ecore_Getopt options = {
   /* program name, usually a macro PACKAGE_NAME */
   "ecore_getopt_example",
-  /* usage line */
-  "%prog [options]",
+  /* usage line, leave empty to generate one with positional arguments */
+  NULL,
   /* program version, usually a macro PACKAGE_VERSION */
   "0.1",
   /* copyright string */
@@ -136,6 +147,25 @@ static const Ecore_Getopt options = {
     ECORE_GETOPT_LICENSE('L', "license"),
     ECORE_GETOPT_HELP('h', "help"),
 
+    /* positional arguments can be handled as well, add their
+     * description after the last option was specified. They should
+     * have empty short and long options, but have the metavar
+     * defined.
+     */
+    ECORE_GETOPT_STORE_METAVAR_STR(0, NULL, "Positional string.", "STRING"),
+    ECORE_GETOPT_STORE_METAVAR_INT(0, NULL, "Positional integer.", "INT"),
+    ECORE_GETOPT_CHOICE_METAVAR(0, NULL, "Positional choice.", "CHOICE",
+                                available_choices),
+
+#ifdef END_WITH_POS_APPEND
+    /* this will consume until the end of the command line, forcing
+     * ecore_getopt_parse() to return args == argc on succes.
+     * It will require at least one argument in the end of the command line.
+     */
+    ECORE_GETOPT_APPEND_METAVAR(0, NULL, "Extra options.", "ARG",
+                                ECORE_GETOPT_TYPE_STR),
+#endif
+
     /* the sentinel is required to notify end of descriptions */
     ECORE_GETOPT_SENTINEL
   }
@@ -172,6 +202,12 @@ main(int argc, char **argv)
    Eina_List *lst_ints = NULL;
    Eina_Bool break_given = EINA_FALSE;
    Eina_Bool quit_option = EINA_FALSE;
+   char *pos_str = NULL;
+   int pos_int = 0;
+   char *pos_choice = NULL;
+#ifdef END_WITH_POS_APPEND
+   Eina_List *pos_args = NULL;
+#endif
    Ecore_Getopt_Value values[] = {
      /* block of options that store a single value in a variable of type */
      ECORE_GETOPT_VALUE_STR(str_value),
@@ -218,6 +254,15 @@ main(int argc, char **argv)
      ECORE_GETOPT_VALUE_BOOL(quit_option), /* -L/--license quits */
      ECORE_GETOPT_VALUE_BOOL(quit_option), /* -h/--help quits */
 
+     /* example of positiona argument */
+     ECORE_GETOPT_VALUE_STR(pos_str),
+     ECORE_GETOPT_VALUE_INT(pos_int),
+     ECORE_GETOPT_VALUE_STR(pos_choice),
+
+#ifdef END_WITH_POS_APPEND
+     ECORE_GETOPT_VALUE_LIST(pos_args),
+#endif
+
      ECORE_GETOPT_VALUE_NONE /* sentinel */
    };
    int args, retval = EXIT_SUCCESS;
@@ -239,6 +284,14 @@ main(int argc, char **argv)
 
    /* options that set 'quit_option' to true requires us to exit. */
    if (quit_option) goto end;
+
+   args = ecore_getopt_parse_positional(&options, values, argc, argv, args);
+   if (args < 0)
+     {
+        fputs("ERROR: Could not parse positional arguments.\n", stderr);
+        retval = EXIT_FAILURE;
+        goto end;
+     }
 
    printf("given values:\n"
           "string = %s\n"
@@ -269,6 +322,10 @@ main(int argc, char **argv)
           "choice = %s\n"
           "\n"
           "--break = %s\n"
+          "\nDeclared Positional:\n"
+          "STRING = %s\n"
+          "INT = %d\n"
+          "CHOICE = %s\n"
           "\n",
           str_value,
           bool_value ? "true" : "false",
@@ -294,7 +351,10 @@ main(int argc, char **argv)
           use_z,
           count,
           choice,
-          break_given ? "given" : "omitted");
+          break_given ? "given" : "omitted",
+          pos_str,
+          pos_int,
+          pos_choice);
 
    if (!lst_strs)
      puts("no --append-string=VALUE was given.");
@@ -324,14 +384,30 @@ main(int argc, char **argv)
           }
      }
 
+#ifdef END_WITH_POS_APPEND
+   assert(pos_args != NULL);
+   assert(args == argc);
+   if (1)
+     {
+        char *str;
+        printf("%u extra arguments:\n",
+               eina_list_count(pos_args));
+        EINA_LIST_FREE(pos_args, str)
+          {
+             printf("\t%s\n", str);
+             free(str);
+          }
+     }
+#else
    if (args == argc)
-     puts("no positional arguments were given.");
+     puts("no extra positional arguments were given.");
    else
      {
         printf("%d positional arguments were given:\n", argc - args);
         for (; args < argc; args++)
           printf("\t%s\n", argv[args]);
      }
+#endif
 
  end:
    ecore_shutdown();

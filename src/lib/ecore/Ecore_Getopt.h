@@ -409,6 +409,9 @@ EAPI void       ecore_getopt_help(FILE *fp, const Ecore_Getopt *info);
 EAPI Eina_Bool  ecore_getopt_parser_has_duplicates(const Ecore_Getopt *parser);
 EAPI int        ecore_getopt_parse(const Ecore_Getopt *parser, Ecore_Getopt_Value *values, int argc, char **argv);
 
+EAPI int        ecore_getopt_parse_positional(const Ecore_Getopt *parser, Ecore_Getopt_Value *values, int argc, char **argv, int start);
+
+
 EAPI Eina_List *ecore_getopt_list_free(Eina_List *list);
 
 /* helper functions to be used with ECORE_GETOPT_CALLBACK_*() */
