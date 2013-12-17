@@ -39,7 +39,8 @@ EXAMPLES= ecore_animator_example \
           ecore_server_bench \
           ecore_thread_example \
           ecore_time_functions_example \
-          ecore_timer_example
+          ecore_timer_example \
+          ecore_getopt_example
 
 all: examples
 examples: $(EXAMPLES)
