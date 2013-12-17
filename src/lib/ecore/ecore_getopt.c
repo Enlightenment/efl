@@ -141,7 +141,11 @@ _ecore_getopt_help_line(FILE       *fp,
                    len -= i;
                    used += i;
 
-                   if (linebreak)
+                   /* if we start the line (linebreak is true) with a space
+                    * other than newline or tab, ignore it.
+                    */
+                   if ((linebreak) && (i == 1) &&
+                       (space[0] != '\n') && (space[0] != '\t'))
                      {
                         linebreak = 0;
                         continue;
@@ -169,6 +173,14 @@ _ecore_getopt_help_line(FILE       *fp,
                      }
                    else if (used < total)
                      fputc(space[0], fp);
+                }
+              else if ((!linebreak) && (todo < len))
+                {
+                   /* if not start of line and not last line, wrap line
+                    * and try again. This avoids spliting words unless they
+                    * are bigger than the available line width.
+                    */
+                   break;
                 }
               else
                 {
