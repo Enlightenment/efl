@@ -1,6 +1,33 @@
 =========
-EFL 1.8.2
+EFL 1.8.3
 =========
+
+Changes since 1.8.2:
+--------------------
+
+    * Evas textblock: Fixed range_deletion bug with multiple visible formats.
+    * Evas test textblock: Added a test for a broken range_delete case.
+    * emotion: revert to fast sed to use the right eina log domain.
+    * eldbus: code generator struct members named "proxy" should not be passed to eina_value_free.
+    * eldbus: make eldbus generated code not crash on every single generated event
+    * Evas textblock: Fixed deletion of ranges ending with visual formats.
+    * Evas textblock: Added more range_delete tests.
+    * emotion: use emotion log domain instead of eina one.
+    * emotion: fix potential memory leak when webcam register fail.
+    * emotion: lower warning on webcam access error to information (Not critical anyway).
+    * evas - fix gif loader drop of image data sometimes (image dump/flush)
+    * evas gif loader - address animated always being true
+    * gif loader - handle theoretical NULL loader_data case
+    * autotools: let's try this variant for detecting c++ compiler availability.
+    * Evas tests: Add invalid markup test
+    * Evas textblock: Fix crash with empty markups values
+    * evas - fix gif loader cpu overuse - used too much cpu to decode anims
+    * ecore_imf/wayland: Only call hide_input_panel on im_context_hide(). (T237)
+    * autotools: work around buggy macro to force C++ compiler detection.
+    * ecore_evas/wayland: Update withdrawn property, and inform state_changed.
+    * Evas/cserve2: Fix crash during shutdown
+    * Evas: Fix crash in GL engine(s) during preload cancel
+    * Fix opaque windows becoming transparent after hide() then show(). (T611)
 
 Changes since 1.8.1:
 --------------------
