@@ -2593,6 +2593,9 @@ AC_ARG_ENABLE([avahi],
 
 ### Checks for programs
 
+## Compatibility layers
+EFL_PLATFORM_DEPEND([ECORE_AVAHI], [evil])
+
 ### Checks for libraries
 EFL_INTERNAL_DEPEND_PKG([ECORE_AVAHI], [ecore])
 EFL_INTERNAL_DEPEND_PKG([ECORE_AVAHI], [eina])
