@@ -900,6 +900,11 @@ evas_common_tilebuf_get_render_rects(Tilebuf *tb)
    n = tb->rects.head;
    if (n)
      {
+        RECTS_CLIP_TO_RECT(((rect_node_t *)n)->rect.left,
+                           ((rect_node_t *)n)->rect.top,
+                           ((rect_node_t *)n)->rect.width,
+                           ((rect_node_t *)n)->rect.height,
+                           0, 0, tb->outbuf_w, tb->outbuf_h);
         num = 1;
         bx1 = ((rect_node_t *)n)->rect.left;
         bx2 = bx1 + ((rect_node_t *)n)->rect.width;
