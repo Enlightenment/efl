@@ -231,12 +231,12 @@ _pause_resume_bt_clicked(void *data, Evas_Object *obj, void *event_info EINA_UNU
 }
 
 void
-test_clock2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+test_clock_edit(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bx, *hbx, *ck, *bt, *bxx;
    api_data *api = calloc(1, sizeof(api_data));
 
-   win = elm_win_util_standard_add("clock2", "Clock 2");
+   win = elm_win_util_standard_add("clock-edit", "Clock Edit");
    elm_win_autodel_set(win, EINA_TRUE);
    evas_object_event_callback_add(win, EVAS_CALLBACK_FREE, _cleanup_cb, api);
 
@@ -289,11 +289,11 @@ test_clock2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
 }
 
 void
-test_clock3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+test_clock_edit2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bx, *ck, *lb;
 
-   win = elm_win_util_standard_add("clock3", "Clock 3");
+   win = elm_win_util_standard_add("clock-edit2", "Clock Edit 2");
    elm_win_autodel_set(win, EINA_TRUE);
 
    bx = elm_box_add(win);
@@ -335,7 +335,7 @@ test_clock3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
 }
 
 void
-test_clock4(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+test_clock_pause(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bx, *ck, *bt;
 

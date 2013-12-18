@@ -37,9 +37,9 @@ void test_transit9(void *data, Evas_Object *obj, void *event_info);
 void test_fileselector_button(void *data, Evas_Object *obj, void *event_info);
 void test_fileselector_entry(void *data, Evas_Object *obj, void *event_info);
 void test_clock(void *data, Evas_Object *obj, void *event_info);
-void test_clock2(void *data, Evas_Object *obj, void *event_info);
-void test_clock3(void *data, Evas_Object *obj, void *event_info);
-void test_clock4(void *data, Evas_Object *obj, void *event_info);
+void test_clock_edit(void *data, Evas_Object *obj, void *event_info);
+void test_clock_edit2(void *data, Evas_Object *obj, void *event_info);
+void test_clock_pause(void *data, Evas_Object *obj, void *event_info);
 void test_check(void *data, Evas_Object *obj, void *event_info);
 void test_check_toggle(void *data, Evas_Object *obj, void *event_info);
 void test_radio(void *data, Evas_Object *obj, void *event_info);
@@ -739,9 +739,9 @@ add_tests:
    ADD_TEST(NULL, "Times & Dates", "Calendar 2", test_calendar2);
    ADD_TEST(NULL, "Times & Dates", "Calendar 3", test_calendar3);
    ADD_TEST(NULL, "Times & Dates", "Clock", test_clock);
-   ADD_TEST(NULL, "Times & Dates", "Clock 2", test_clock2);
-   ADD_TEST(NULL, "Times & Dates", "Clock 3", test_clock3);
-   ADD_TEST(NULL, "Times & Dates", "Clock 4", test_clock4);
+   ADD_TEST(NULL, "Times & Dates", "Clock Edit", test_clock_edit);
+   ADD_TEST(NULL, "Times & Dates", "Clock Edit 2", test_clock_edit2);
+   ADD_TEST(NULL, "Times & Dates", "Clock Pause", test_clock_pause);
    ADD_TEST(NULL, "Times & Dates", "Datetime", test_datetime);
 
    //------------------------------//
