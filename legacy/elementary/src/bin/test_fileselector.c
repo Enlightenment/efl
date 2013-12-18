@@ -334,6 +334,68 @@ _mode_option_create(Evas_Object *parent, Evas_Object *fs)
 }
 
 static void
+_sort_selected_cb(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *fs = evas_object_data_get(obj, "fileselector");
+   const char *selected = elm_object_item_text_get(event_info);
+
+   printf("selected sort method : %s\n", selected);
+   elm_object_text_set(obj, selected);
+   elm_fileselector_sort_method_set(fs, (Elm_Fileselector_Sort)data);
+}
+
+static Evas_Object *
+_sort_option_create(Evas_Object *parent, Evas_Object *fs)
+{
+   Evas_Object *frame = NULL, *hbox = NULL, *hoversel;
+
+   frame = elm_frame_add(parent);
+   evas_object_size_hint_weight_set(frame, EVAS_HINT_EXPAND, 0);
+   evas_object_size_hint_align_set(frame, EVAS_HINT_FILL, 0);
+   elm_object_text_set(frame, "Sort Option");
+   evas_object_show(frame);
+
+   hbox = elm_box_add(frame);
+   elm_box_horizontal_set(hbox, EINA_TRUE);
+   elm_object_content_set(frame, hbox);
+   evas_object_show(hbox);
+
+   hoversel = elm_hoversel_add(parent);
+   evas_object_data_set(hoversel, "fileselector", fs);
+   elm_object_text_set(hoversel, "Choose sort method");
+
+   elm_hoversel_item_add(hoversel, "File Name(asc)", NULL, ELM_ICON_NONE,
+                         _sort_selected_cb,
+                         (const void *)ELM_FILESELECTOR_SORT_BY_FILENAME_ASC);
+   elm_hoversel_item_add(hoversel, "File Name(desc)", NULL, ELM_ICON_NONE,
+                         _sort_selected_cb,
+                         (const void *) ELM_FILESELECTOR_SORT_BY_FILENAME_DESC);
+   elm_hoversel_item_add(hoversel, "Type(asc)", NULL, ELM_ICON_NONE,
+                         _sort_selected_cb,
+                         (const void *) ELM_FILESELECTOR_SORT_BY_TYPE_ASC);
+   elm_hoversel_item_add(hoversel, "Type(desc)", NULL, ELM_ICON_NONE,
+                         _sort_selected_cb,
+                         (const void *) ELM_FILESELECTOR_SORT_BY_TYPE_DESC);
+   elm_hoversel_item_add(hoversel, "Size(asc)", NULL, ELM_ICON_NONE,
+                         _sort_selected_cb,
+                         (const void *) ELM_FILESELECTOR_SORT_BY_SIZE_ASC);
+   elm_hoversel_item_add(hoversel, "Size(desc)", NULL, ELM_ICON_NONE,
+                         _sort_selected_cb,
+                         (const void *) ELM_FILESELECTOR_SORT_BY_SIZE_DESC);
+   elm_hoversel_item_add(hoversel, "Modified time(asc)", NULL, ELM_ICON_NONE,
+                         _sort_selected_cb,
+                         (const void *) ELM_FILESELECTOR_SORT_BY_MODIFIED_ASC);
+   elm_hoversel_item_add(hoversel, "Modified time(desc)", NULL, ELM_ICON_NONE,
+                         _sort_selected_cb,
+                         (const void *) ELM_FILESELECTOR_SORT_BY_MODIFIED_DESC);
+
+   elm_box_pack_end(hbox, hoversel);
+   evas_object_show(hoversel);
+
+   return frame;
+}
+
+static void
 _small_icon_clicked(void *data,
                     Evas_Object *obj EINA_UNUSED,
                     void *event_info EINA_UNUSED)
@@ -471,6 +533,7 @@ test_fileselector(void *data       EINA_UNUSED,
    elm_box_pack_end(vbox, _option_create(vbox, fs));
    elm_box_pack_end(vbox, _getter_option_create(vbox, fs));
    elm_box_pack_end(vbox, _mode_option_create(vbox, fs));
+   elm_box_pack_end(vbox, _sort_option_create(vbox, fs));
    elm_box_pack_end(vbox, _thumbnail_size_option_create(vbox, fs));
 
    evas_object_resize(win, 320, 700);

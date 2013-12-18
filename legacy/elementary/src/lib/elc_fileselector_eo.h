@@ -34,6 +34,8 @@ enum
    ELM_OBJ_FILESELECTOR_SUB_ID_HIDDEN_VISIBLE_GET,
    ELM_OBJ_FILESELECTOR_SUB_ID_THUMBNAIL_SIZE_SET,
    ELM_OBJ_FILESELECTOR_SUB_ID_THUMBNAIL_SIZE_GET,
+   ELM_OBJ_FILESELECTOR_SUB_ID_SORT_METHOD_SET,
+   ELM_OBJ_FILESELECTOR_SUB_ID_SORT_METHOD_GET,
    ELM_OBJ_FILESELECTOR_SUB_ID_LAST
 };
 
@@ -327,6 +329,30 @@ enum
  * @see elm_fileselector_thumbnail_size_set
  */
 #define elm_obj_fileselector_thumbnail_size_set(w, h) ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_THUMBNAIL_SIZE_SET), EO_TYPECHECK(Evas_Coord, w), EO_TYPECHECK(Evas_Coord, h)
+
+/**
+ * @def elm_obj_fileselector_sort_method_get
+ * @since 1.9
+ *
+ * Get the sort method of the file selector widget.
+ *
+ * @param[out] ret
+ *
+ * @see elm_fileselector_sort_method_get
+ */
+#define elm_obj_fileselector_sort_method_get(ret) ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_SORT_METHOD_GET), EO_TYPECHECK(Elm_Fileselector_Sort *, ret)
+
+/**
+ * @def elm_obj_fileselector_sort_method_set
+ * @since 1.9
+ *
+ * Set the sort method of the file selector widget.
+ *
+ * @param[in] sort
+ *
+ * @see elm_fileselector_sort_method_set
+ */
+#define elm_obj_fileselector_sort_method_set(sort) ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_SORT_METHOD_SET), EO_TYPECHECK(Elm_Fileselector_Sort, sort)
 
 /**
  * @}

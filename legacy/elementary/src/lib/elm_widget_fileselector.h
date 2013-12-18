@@ -53,7 +53,11 @@ struct _Elm_Fileselector_Smart_Data
 
    Evas_Coord_Size          thumbnail_size;
 
+   /* a sort method to decide orders of files/directories */
+   int                    (*sort_method)(const char *, const char *);
+
    Elm_Fileselector_Mode    mode;
+   Elm_Fileselector_Sort    sort_type;
 
    Eina_Bool                only_folder : 1;
    Eina_Bool                expand : 1;

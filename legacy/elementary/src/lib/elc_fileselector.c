@@ -342,10 +342,65 @@ _ls_filter_cb(void *data,
    return EINA_TRUE;
 }
 
-static int
-_file_grid_cmp(const void *a,
-               const void *b)
+static const char *
+_file_type(const char *a)
 {
+   char *p = strrchr(a, '.');
+   if (!p) return "";
+
+   return p;
+}
+
+static int
+_strcoll_rev(const char *a, const char *b)
+{
+   return strcoll(b, a);
+}
+
+static int
+_strcoll_type(const char *a, const char *b)
+{
+   return strcoll(_file_type(a), _file_type(b));
+}
+
+static int
+_strcoll_type_rev(const char *a, const char *b)
+{
+   return _strcoll_type(b, a);
+}
+
+static int
+_size_cmp(const char *a, const char *b)
+{
+   return ecore_file_size(a) - ecore_file_size(b);
+}
+
+static int
+_size_cmp_rev(const char *a, const char *b)
+{
+   return _size_cmp(b, a);
+}
+
+static int
+_modified_cmp(const char *a, const char *b)
+{
+   if (ecore_file_mod_time(a) > ecore_file_mod_time(b))
+     return 1;
+
+   return -1;
+}
+
+static int
+_modified_cmp_rev(const char *a, const char *b)
+{
+   return _modified_cmp(b, a);
+}
+
+static int
+_file_grid_cmp(const void *a, const void *b)
+{
+   Evas_Object *f;
+
    const Elm_Object_Item *ga = a;
    const Elm_Object_Item *gb = b;
    const Elm_Gengrid_Item_Class *ca = elm_gengrid_item_item_class_get(ga);
@@ -361,13 +416,17 @@ _file_grid_cmp(const void *a,
         return 1;
      }
 
-   return strcoll(elm_object_item_data_get(ga), elm_object_item_data_get(gb));
+   f = evas_object_data_get(elm_object_item_widget_get(ga), "parent");
+   ELM_FILESELECTOR_DATA_GET(f, sd);
+   return sd->sort_method(elm_object_item_data_get(ga),
+                          elm_object_item_data_get(gb));
 }
 
 static int
-_file_list_cmp(const void *a,
-               const void *b)
+_file_list_cmp(const void *a, const void *b)
 {
+   Evas_Object *f;
+
    const Elm_Object_Item *la = a;
    const Elm_Object_Item *lb = b;
    const Elm_Genlist_Item_Class *ca = elm_genlist_item_item_class_get(la);
@@ -383,7 +442,10 @@ _file_list_cmp(const void *a,
         return 1;
      }
 
-   return strcoll(elm_object_item_data_get(la), elm_object_item_data_get(lb));
+   f = evas_object_data_get(elm_object_item_widget_get(la), "parent");
+   ELM_FILESELECTOR_DATA_GET(f, sd);
+   return sd->sort_method(elm_object_item_data_get(la),
+                          elm_object_item_data_get(lb));
 }
 
 static void
@@ -1266,6 +1328,9 @@ _elm_fileselector_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    priv->thumbnail_size.w = elm_config_finger_size_get() * 2 - GENGRID_PADDING;
    priv->thumbnail_size.h = priv->thumbnail_size.w;
 
+   priv->sort_type = ELM_FILESELECTOR_SORT_BY_FILENAME_ASC;
+   priv->sort_method = strcoll;
+
    // files_view
    priv->files_view = _files_list_add(obj);
 
@@ -1994,6 +2059,75 @@ _thumbnail_size_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
    if (h) *h = sd->thumbnail_size.h;
 }
 
+EAPI void
+elm_fileselector_sort_method_set(Evas_Object *obj, Elm_Fileselector_Sort sort)
+{
+   ELM_FILESELECTOR_CHECK(obj);
+   eo_do(obj, elm_obj_fileselector_sort_method_set(sort));
+}
+
+static void
+_sort_method_set(Eo *obj __UNUSED__, void *_pd, va_list *list EINA_UNUSED)
+{
+   Elm_Fileselector_Sort sort = va_arg(*list, Elm_Fileselector_Sort);
+   Elm_Fileselector_Smart_Data *sd = _pd;
+
+   if (sd->sort_type == sort) return;
+   sd->sort_type = sort;
+
+   switch (sd->sort_type)
+     {
+      case ELM_FILESELECTOR_SORT_BY_FILENAME_ASC:
+         sd->sort_method = strcoll;
+         break;
+      case ELM_FILESELECTOR_SORT_BY_FILENAME_DESC:
+         sd->sort_method = _strcoll_rev;
+         break;
+      case ELM_FILESELECTOR_SORT_BY_TYPE_ASC:
+         sd->sort_method = _strcoll_type;
+         break;
+      case ELM_FILESELECTOR_SORT_BY_TYPE_DESC:
+         sd->sort_method = _strcoll_type_rev;
+         break;
+      case ELM_FILESELECTOR_SORT_BY_SIZE_ASC:
+         sd->sort_method = _size_cmp;
+         break;
+      case ELM_FILESELECTOR_SORT_BY_SIZE_DESC:
+         sd->sort_method = _size_cmp_rev;
+         break;
+      case ELM_FILESELECTOR_SORT_BY_MODIFIED_ASC:
+         sd->sort_method = _modified_cmp;
+         break;
+      case ELM_FILESELECTOR_SORT_BY_MODIFIED_DESC:
+         sd->sort_method = _modified_cmp_rev;
+         break;
+      case ELM_FILESELECTOR_SORT_LAST:
+      default:
+         sd->sort_method = strcoll;
+     }
+
+   _populate(obj, sd->path, NULL, NULL);
+}
+
+EAPI Elm_Fileselector_Sort
+elm_fileselector_sort_method_get(const Evas_Object *obj)
+{
+   ELM_FILESELECTOR_CHECK(obj) ELM_FILESELECTOR_SORT_LAST;
+   Elm_Fileselector_Sort ret = ELM_FILESELECTOR_SORT_LAST;
+   eo_do((Eo *) obj, elm_obj_fileselector_sort_method_get(&ret));
+
+   return ret;
+}
+
+static void
+_sort_method_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
+{
+   Elm_Fileselector_Sort *ret = va_arg(*list, Elm_Fileselector_Sort *);
+   Elm_Fileselector_Smart_Data *sd = _pd;
+
+   if (ret) *ret = sd->sort_type;
+}
+
 static void
 _elm_fileselector_smart_focus_next_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
 {
@@ -2078,6 +2212,8 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_HIDDEN_VISIBLE_GET), _hidden_visible_get),
         EO_OP_FUNC(ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_THUMBNAIL_SIZE_SET), _thumbnail_size_set),
         EO_OP_FUNC(ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_THUMBNAIL_SIZE_GET), _thumbnail_size_get),
+        EO_OP_FUNC(ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_SORT_METHOD_SET), _sort_method_set),
+        EO_OP_FUNC(ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_SORT_METHOD_GET), _sort_method_get),
         EO_OP_FUNC_SENTINEL
    };
    eo_class_funcs_set(klass, func_desc);
@@ -2142,6 +2278,8 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_OBJ_FILESELECTOR_SUB_ID_HIDDEN_VISIBLE_GET, "Get if visibility of hidden files/directories in the file selector widget is enabled or disabled."),
      EO_OP_DESCRIPTION(ELM_OBJ_FILESELECTOR_SUB_ID_THUMBNAIL_SIZE_SET, "Set the size for the thumbnail of the file selector widget's view, if it's in #ELM_FILESELECTOR_GRID mode"),
      EO_OP_DESCRIPTION(ELM_OBJ_FILESELECTOR_SUB_ID_THUMBNAIL_SIZE_GET, "Get the size for the thumbnails of a given file selector widget."),
+     EO_OP_DESCRIPTION(ELM_OBJ_FILESELECTOR_SUB_ID_SORT_METHOD_SET, "Set the sort method of the file selector widget."),
+     EO_OP_DESCRIPTION(ELM_OBJ_FILESELECTOR_SUB_ID_SORT_METHOD_GET, "Get the sort method of the file selector widget."),
      EO_OP_DESCRIPTION_SENTINEL
 };
 static const Eo_Class_Description class_desc = {

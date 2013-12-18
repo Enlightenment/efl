@@ -395,3 +395,29 @@ EAPI void                  elm_fileselector_thumbnail_size_set(Evas_Object *obj,
  * @ingroup Fileselector
  */
 EAPI void                  elm_fileselector_thumbnail_size_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coord *h);
+
+/**
+ * Get the sort method of the file selector widget.
+ *
+ * @param obj The file selector object
+ * @return The sort method
+ *
+ * @see elm_fileselector_sort_method_set()
+ *
+ * @since 1.9
+ * @ingroup Fileselector
+ */
+EAPI Elm_Fileselector_Sort elm_fileselector_sort_method_get(const Evas_Object *obj);
+
+/**
+ * Set the sort method of the file selector widget.
+ *
+ * @param obj The file selector object
+ * @param sort The sort method
+ *
+ * @see elm_fileselector_sort_method_get()
+ *
+ * @since 1.9
+ * @ingroup Fileselector
+ */
+EAPI void                  elm_fileselector_sort_method_set(Evas_Object *obj, Elm_Fileselector_Sort method);
