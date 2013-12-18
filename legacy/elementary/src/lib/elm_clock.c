@@ -1078,6 +1078,49 @@ _first_interval_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    *ret = sd->first_interval;
 }
 
+EAPI void
+elm_clock_pause_set(Evas_Object *obj, Eina_Bool pause)
+{
+   ELM_CLOCK_CHECK(obj);
+   eo_do(obj, elm_obj_clock_pause_set(pause));
+}
+
+static void
+_pause_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool pause = va_arg(*list, int);
+   Elm_Clock_Smart_Data *sd = _pd;
+   pause = !!pause;
+   if (sd->paused == pause)
+     return;
+   sd->paused = pause;
+   if (pause)
+     ecore_timer_freeze(sd->ticker);
+   else
+     {
+        _timediff_set(sd);
+        ecore_timer_thaw(sd->ticker);
+     }
+}
+
+EAPI Eina_Bool
+elm_clock_pause_get(const Evas_Object *obj)
+{
+   ELM_CLOCK_CHECK(obj) EINA_FALSE;
+   Eina_Bool ret = EINA_FALSE;
+   eo_do(obj, elm_obj_clock_pause_get(&ret));
+   return ret;
+}
+
+static void
+_pause_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Elm_Clock_Smart_Data *sd = _pd;
+
+   *ret = sd->paused;
+}
+
 static void
 _elm_clock_smart_focus_direction_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
 {
@@ -1112,6 +1155,8 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_OBJ_CLOCK_ID(ELM_OBJ_CLOCK_SUB_ID_SHOW_SECONDS_GET), _show_seconds_get),
         EO_OP_FUNC(ELM_OBJ_CLOCK_ID(ELM_OBJ_CLOCK_SUB_ID_FIRST_INTERVAL_SET), _first_interval_set),
         EO_OP_FUNC(ELM_OBJ_CLOCK_ID(ELM_OBJ_CLOCK_SUB_ID_FIRST_INTERVAL_GET), _first_interval_get),
+        EO_OP_FUNC(ELM_OBJ_CLOCK_ID(ELM_OBJ_CLOCK_SUB_ID_PAUSE_SET), _pause_set),
+        EO_OP_FUNC(ELM_OBJ_CLOCK_ID(ELM_OBJ_CLOCK_SUB_ID_PAUSE_GET), _pause_get),
         EO_OP_FUNC_SENTINEL
    };
    eo_class_funcs_set(klass, func_desc);
@@ -1134,6 +1179,8 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_OBJ_CLOCK_SUB_ID_SHOW_SECONDS_GET, "Get whether the given clock widget is showing time with seconds."),
      EO_OP_DESCRIPTION(ELM_OBJ_CLOCK_SUB_ID_FIRST_INTERVAL_SET, "Set the first interval on time updates for a user mouse button hold."),
      EO_OP_DESCRIPTION(ELM_OBJ_CLOCK_SUB_ID_FIRST_INTERVAL_GET, "Get the first interval on time updates for a user mouse button hold."),
+     EO_OP_DESCRIPTION(ELM_OBJ_CLOCK_SUB_ID_PAUSE_SET, "Set whether the given clock widget should be paused or not."),
+     EO_OP_DESCRIPTION(ELM_OBJ_CLOCK_SUB_ID_PAUSE_GET, "Get if the given clock widget is paused."),
      EO_OP_DESCRIPTION_SENTINEL
 };
 static const Eo_Class_Description class_desc = {

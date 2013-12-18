@@ -215,6 +215,21 @@ _hmode_bt_clicked(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
    elm_clock_show_am_pm_set(ck, EINA_FALSE);
 }
 
+static void
+_pause_resume_bt_clicked(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   Evas_Object *ck = data;
+
+   if (!elm_clock_pause_get(ck))
+     {
+        elm_object_text_set(obj, "Resume");
+        elm_clock_pause_set(ck, EINA_TRUE);
+        return;
+     }
+   elm_object_text_set(obj, "Pause");
+   elm_clock_pause_set(ck, EINA_FALSE);
+}
+
 void
 test_clock2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
@@ -315,6 +330,34 @@ test_clock3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    elm_clock_first_interval_set(ck, 2.0);
    elm_box_pack_end(bx, ck);
    evas_object_show(ck);
+
+   evas_object_show(win);
+}
+
+void
+test_clock4(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *win, *bx, *ck, *bt;
+
+   win = elm_win_util_standard_add("clock4", "Clock4");
+   elm_win_autodel_set(win, EINA_TRUE);
+
+   bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bx);
+   evas_object_show(bx);
+
+   ck = elm_clock_add(win);
+   elm_clock_show_seconds_set(ck, EINA_TRUE);
+   elm_clock_time_set(ck, 0, 0, 0);
+   elm_box_pack_end(bx, ck);
+   evas_object_show(ck);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Pause");
+   evas_object_smart_callback_add(bt, "clicked", _pause_resume_bt_clicked, ck);
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
 
    evas_object_show(win);
 }

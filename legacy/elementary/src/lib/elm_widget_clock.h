@@ -41,6 +41,7 @@ struct _Elm_Clock_Smart_Data
       Eina_Bool           edit : 1;
    } cur;
 
+   Eina_Bool paused : 1; /**< a flag whether clock is paused or not */
    Eina_Bool seconds : 1;
    Eina_Bool am_pm : 1;
    Eina_Bool edit : 1;

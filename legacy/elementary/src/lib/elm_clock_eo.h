@@ -18,7 +18,9 @@ enum
    ELM_OBJ_CLOCK_SUB_ID_SHOW_SECONDS_GET,
    ELM_OBJ_CLOCK_SUB_ID_FIRST_INTERVAL_SET,
    ELM_OBJ_CLOCK_SUB_ID_FIRST_INTERVAL_GET,
-   ELM_OBJ_CLOCK_SUB_ID_LAST
+   ELM_OBJ_CLOCK_SUB_ID_PAUSE_SET,
+   ELM_OBJ_CLOCK_SUB_ID_PAUSE_GET,
+   ELM_OBJ_CLOCK_SUB_ID_LAST,
 };
 
 #define ELM_OBJ_CLOCK_ID(sub_id) (ELM_OBJ_CLOCK_BASE_ID + sub_id)
@@ -200,3 +202,31 @@ enum
  * @ingroup Clock
  */
 #define elm_obj_clock_first_interval_get(ret) ELM_OBJ_CLOCK_ID(ELM_OBJ_CLOCK_SUB_ID_FIRST_INTERVAL_GET), EO_TYPECHECK(double *, ret)
+
+/**
+ * @def elm_obj_clock_pause_set
+ * @since 1.9
+ *
+ * Set whether the given clock widget should be paused or not.
+ *
+ * @param[in] pause
+ *
+ * @see elm_clock_pause_set
+ *
+ * @ingroup Clock
+ */
+#define elm_obj_clock_pause_set(pause) ELM_OBJ_CLOCK_ID(ELM_OBJ_CLOCK_SUB_ID_PAUSE_SET), EO_TYPECHECK(Eina_Bool, pause)
+
+/**
+ * @def elm_obj_clock_pause_get
+ * @since 1.9
+ *
+ * Get whether the given clock widget is paused.
+ *
+ * @param[out] ret
+ *
+ * @see elm_clock_pause_get
+ *
+ * @ingroup Clock
+ */
+#define elm_obj_clock_pause_get(ret) ELM_OBJ_CLOCK_ID(ELM_OBJ_CLOCK_SUB_ID_PAUSE_GET), EO_TYPECHECK(Eina_Bool *, ret)
