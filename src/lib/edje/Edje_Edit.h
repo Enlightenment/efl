@@ -50,6 +50,17 @@ struct _Edje_Edit_Script_Error
 };
 typedef struct _Edje_Edit_Script_Error Edje_Edit_Script_Error;
 
+struct _Edje_Part_Image_Use
+{
+   const char *group;
+   const char *part;
+   struct {
+      const char     *name;
+      double         value;
+   } state;
+};
+typedef struct _Edje_Part_Image_Use Edje_Part_Image_Use;
+
 /**
  * @file
  * @brief Functions to deal with edje internal object. Don't use in standard
@@ -2830,14 +2841,45 @@ EAPI Eina_Bool edje_edit_image_add(Evas_Object *obj, const char *path);
 /** Delete an image from the image collection
  *
  * It actually write directly to the file so you don't have to save.
+ * Can't delete image if it is used by any part.
  *
  * @param obj Object being edited.
  * @param name The name of the image file to include in the edje.
  *
  * @return EINA_TRUE if successful, EINA_FALSE otherwise (including the
- * case when the name is not valid).
+ * case when the name is not valid or image is in use).
  */
 EAPI Eina_Bool edje_edit_image_del(Evas_Object *obj, const char *name);
+
+/** Replace one image in all descriptions
+ *
+ * @param obj Object being edited.
+ * @param name The name of the image to replace.
+ * @param name The new_name of the image to replace with.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise (including the
+ * case when one of the names is not valid)
+ */
+EAPI Eina_Bool edje_edit_image_replace(Evas_Object *obj, const char *name, const char *new_name);
+
+/** Get list of (Edje_Part_Image_Use *) - group-part-state triplets where given
+ * image is used
+ *
+ * Use edje_edit_image_usage_list_free() when you don't need it anymore.
+ *
+ * @param obj Object being edited.
+ * @param name The name of the image.
+ * @param first_only If EINA_TRUE, return only one triplete.
+ *
+ * @return Eina_List containing Edje_Part_Image_Use if successful, NULL otherwise
+ */
+EAPI Eina_List* edje_edit_image_usage_list_get(Evas_Object *obj, const char *name, Eina_Bool first_only);
+
+/** Free an Eina_List of (Edje_Part_Image_Use *) allocated by an edje_edit_image_usage_list_get() function.
+ *
+ * @param lst List of strings to free.
+ */
+EAPI void edje_edit_image_usage_list_free(Eina_List *lst);
 
 /** Add an image entry to the image collection
  *
