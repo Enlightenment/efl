@@ -2411,13 +2411,15 @@ static void
 _translation_init()
 {
 #ifdef ENABLE_NLS
-   const char *cur_dom = textdomain(NULL);
-   const char *trans_comment = gettext("");
-   const char *msg_locale = setlocale(LC_MESSAGES, NULL);
 
    /* How does it decide translation with current domain??
       Application could use their own text domain.
-      This is insane to me. */
+      This is insane to me.
+
+   const char *cur_dom = textdomain(NULL);
+   const char *trans_comment = gettext("");
+   const char *msg_locale = setlocale(LC_MESSAGES, NULL);
+   */
 
    /* Same concept as what glib does:
     * We shouldn't translate if there are no translations for the
