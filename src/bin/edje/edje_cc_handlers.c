@@ -6339,6 +6339,7 @@ st_collections_group_parts_part_description_image_scale_hint(void)
         description {
             ..
             fill {
+                type: SCALE;
                 smooth: 0-1;
                 origin {
                     relative: X-axis Y-axis;
@@ -6358,6 +6359,20 @@ st_collections_group_parts_part_description_image_scale_hint(void)
         part of an image. See @ref evas_object_image_fill_set() documentation
         for more details.
     @endblock
+
+    @property
+        type
+    @parameters
+        SCALE, TILE.
+    @effect
+        Sets the image fill type. SCALE - image will be scaled accordingly params
+        value 'relative' and 'offset' from 'origin' and 'size' blocks.
+        TILE - image will be tiled accordingly params value 'relative' and
+        'offset' from 'origin' and 'size' blocks. Important: the part parameter
+        'min' must be setted, it's size of tiled image. If parameter 'max' setted
+        tiled area will has the size accordingly 'max' values.
+        SCALE is default type.
+    @endproperty
 
     @property
         smooth
@@ -6455,17 +6470,6 @@ st_collections_group_parts_part_description_fill_spread(void)
 #endif
 }
 
-/**
-    @page edcref
-
-    @property
-        type
-    @parameters
-        TODO
-    @effect
-        TODO
-    @endproperty
-*/
 static void
 st_collections_group_parts_part_description_fill_type(void)
 {
