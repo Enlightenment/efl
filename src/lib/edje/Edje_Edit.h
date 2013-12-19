@@ -1978,6 +1978,32 @@ EAPI unsigned char edje_edit_state_aspect_pref_get(Evas_Object *obj, const char 
  */
 EAPI Eina_Bool edje_edit_state_aspect_pref_set(Evas_Object *obj, const char *part, const char *state, double value, unsigned char pref);
 
+/** Get the smooth property for given part state.
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain state.
+ * @param state The name of the state to get the fill horizontal origin relative to area (not including the state value).
+ * @param value The state value.
+ *
+ * @return The smooth value.
+ */
+EAPI Eina_Bool
+edje_edit_state_fill_smooth_get(Evas_Object *obj, const char *part, const char *state, double value);
+
+
+/** Set the smooth property for given part state.
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain state.
+ * @param state The name of the state to set fill horizontal origin relative to area (not including the state value).
+ * @param value The state value.
+ * @param smooth The smooth value.
+ *
+ * @return EINA_TRUE if the parameter was found, EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool
+edje_edit_state_fill_smooth_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool smooth);
+
 /** Get the fill horizontal origin relative value of a part state.
  *
  * @param obj Object being edited.
