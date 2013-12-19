@@ -7200,6 +7200,7 @@ _edje_generate_source_of_group(Edje *ed, Edje_Part_Collection_Directory_Entry *p
    const char *group = pce->entry;
    Edje_Part_Collection *pc;
    Eina_Bool ret = EINA_TRUE;
+   Eina_List *alias_list = NULL;
 
    obj = edje_edit_object_add(ed->base->evas);
    if (!edje_object_file_set(obj, ed->file->path, group)) return EINA_FALSE;
@@ -7213,9 +7214,13 @@ _edje_generate_source_of_group(Edje *ed, Edje_Part_Collection_Directory_Entry *p
 
    eed = eo_data_scope_get(obj, MY_CLASS);
    pc = eed->base->collection;
+   alias_list = edje_edit_group_aliases_get(obj, group);
 
    BUF_APPENDF(I1"group { name: \"%s\";\n", group);
-   //TODO Support alias:
+   EINA_LIST_FOREACH(alias_list, l, data)
+      BUF_APPENDF(I2"alias: \"%s\";\n", data);
+   edje_edit_string_list_free(alias_list);
+
    w = edje_edit_group_min_w_get(obj);
    h = edje_edit_group_min_h_get(obj);
    if ((w > 0) || (h > 0))
@@ -7466,7 +7471,8 @@ _edje_generate_source(Evas_Object *obj)
 
         EINA_ITERATOR_FOREACH(it, pce)
           {
-             ret &= _edje_generate_source_of_group(ed, pce, buf);
+             if (!pce->group_alias)
+               ret &= _edje_generate_source_of_group(ed, pce, buf);
           }
 
         eina_iterator_free(it);
