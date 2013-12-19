@@ -79,6 +79,10 @@ _evas_render2_begin(Eo *eo_e, Eina_Bool make_updates,
    // we have to calculate smare objects before render so do that here
    evas_call_smarts_calculate(eo_e);
 
+   // XXX:
+   // XXX: process all objects figuring out update regions
+   // XXX:
+        
    // if the output size changed, add a full redraw
    if ((e->output.changed) || (e->framespace.changed))
      {
@@ -104,10 +108,6 @@ _evas_render2_begin(Eo *eo_e, Eina_Bool make_updates,
    // we are actually asked to draw not just go through the motions for gc
    if (do_draw)
      {
-        // XXX:
-        // XXX: process all objects figuring out update regions
-        // XXX:
-        
         // XXX:
         // XXX: RENDER HERE!
         if (do_async)
