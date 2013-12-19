@@ -10,6 +10,17 @@
 #include <sys/time.h>
 #endif
 
+Eina_Bool
+_evas_render2_begin(Eo *eo_e, Eina_Bool make_updates,
+                    Eina_Bool do_draw, Eina_Bool do_async);
+void
+_evas_render2_idle_flush(Eo *eo_e);
+void
+_evas_render2_dump(Eo *eo_e);
+void
+_evas_render2_wait(Eo *eo_e);
+
+
 /* debug rendering
  * NOTE: Define REND_DBG 1 in evas_private.h to enable debugging. Don't define
  * it here since the flag is used on other places too. */
@@ -2279,9 +2290,18 @@ _canvas_render_async(Eo *eo_e, void *_pd, va_list *list)
 {
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Evas_Public_Data *e = _pd;
+   static int render_2 = -1;
 
-   *ret = evas_render_updates_internal(eo_e, 1, 1, evas_render_pipe_wakeup,
-                                       e, EINA_TRUE);
+   if (render_2 == -1)
+     {
+        if (getenv("EVAS_RENDER2")) render_2 = 1;
+        else render_2 = 0;
+     }
+   if (render_2)
+     *ret = _evas_render2_begin(eo_e, EINA_TRUE, EINA_TRUE, EINA_TRUE);
+   else
+     *ret = evas_render_updates_internal(eo_e, 1, 1, evas_render_pipe_wakeup,
+                                         e, EINA_TRUE);
 }
 
 EAPI Eina_List *
@@ -2302,10 +2322,24 @@ evas_render_updates_internal_wait(Evas *eo_e,
 {
    Eina_List *ret = NULL;
    Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CLASS);
+   static int render_2 = -1;
 
-   if (!evas_render_updates_internal(eo_e, make_updates, do_draw, NULL,
-                                     NULL, EINA_FALSE))
-      return NULL;
+   if (render_2 == -1)
+     {
+        if (getenv("EVAS_RENDER2")) render_2 = 1;
+        else render_2 = 0;
+     }
+   if (render_2)
+     {
+        if (!_evas_render2_begin(eo_e, make_updates, do_draw, EINA_FALSE))
+          return NULL;
+     }
+   else
+     {
+        if (!evas_render_updates_internal(eo_e, make_updates, do_draw, NULL,
+                                          NULL, EINA_FALSE))
+          return NULL;
+     }
 
    ret = e->render.updates;
    e->render.updates = NULL;
@@ -2374,26 +2408,40 @@ evas_render_idle_flush(Evas *eo_e)
 void
 _canvas_render_idle_flush(Eo *eo_e, void *_pd, va_list *list EINA_UNUSED)
 {
-   Evas_Public_Data *e = _pd;
+   static int render_2 = -1;
 
-   evas_render_rendering_wait(e);
-   
-   evas_fonts_zero_pressure(eo_e);
+   if (render_2 == -1)
+     {
+        if (getenv("EVAS_RENDER2")) render_2 = 1;
+        else render_2 = 0;
+     }
+   if (render_2)
+     {
+        _evas_render2_idle_flush(eo_e);
+     }
+   else
+     {
+        Evas_Public_Data *e = _pd;
 
-   if ((e->engine.func) && (e->engine.func->output_idle_flush) &&
-       (e->engine.data.output))
-     e->engine.func->output_idle_flush(e->engine.data.output);
-
-   OBJS_ARRAY_FLUSH(&e->active_objects);
-   OBJS_ARRAY_FLUSH(&e->render_objects);
-   OBJS_ARRAY_FLUSH(&e->restack_objects);
-   OBJS_ARRAY_FLUSH(&e->delete_objects);
-   OBJS_ARRAY_FLUSH(&e->obscuring_objects);
-   OBJS_ARRAY_FLUSH(&e->temporary_objects);
-   eina_array_foreach(&e->clip_changes, _evas_clip_changes_free, NULL);
-   eina_array_clean(&e->clip_changes);
-
-   e->invalidate = EINA_TRUE;
+        evas_render_rendering_wait(e);
+        
+        evas_fonts_zero_pressure(eo_e);
+        
+        if ((e->engine.func) && (e->engine.func->output_idle_flush) &&
+            (e->engine.data.output))
+          e->engine.func->output_idle_flush(e->engine.data.output);
+        
+        OBJS_ARRAY_FLUSH(&e->active_objects);
+        OBJS_ARRAY_FLUSH(&e->render_objects);
+        OBJS_ARRAY_FLUSH(&e->restack_objects);
+        OBJS_ARRAY_FLUSH(&e->delete_objects);
+        OBJS_ARRAY_FLUSH(&e->obscuring_objects);
+        OBJS_ARRAY_FLUSH(&e->temporary_objects);
+        eina_array_foreach(&e->clip_changes, _evas_clip_changes_free, NULL);
+        eina_array_clean(&e->clip_changes);
+        
+        e->invalidate = EINA_TRUE;
+     }
 }
 
 EAPI void
@@ -2406,7 +2454,17 @@ void
 _canvas_sync(Eo *eo_e, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
    Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CLASS);
-   evas_render_rendering_wait(e);
+   static int render_2 = -1;
+
+   if (render_2 == -1)
+     {
+        if (getenv("EVAS_RENDER2")) render_2 = 1;
+        else render_2 = 0;
+     }
+   if (render_2)
+     _evas_render2_wait(eo_e);
+   else
+     evas_render_rendering_wait(e);
 }
 
 void
@@ -2444,66 +2502,80 @@ void
 _canvas_render_dump(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
 {
    Evas_Public_Data *e = _pd;
-   Evas_Layer *lay;
+   static int render_2 = -1;
 
-   evas_all_sync();
-   evas_cache_async_freeze();
-
-   EINA_INLIST_FOREACH(e->layers, lay)
+   if (render_2 == -1)
      {
-        Evas_Object_Protected_Data *obj;
-
-        EINA_INLIST_FOREACH(lay->objects, obj)
-          {
-             if (obj->proxy)
-               {
-                  EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, obj->proxy, Evas_Object_Proxy_Data, proxy_write)
-                    {
-                       if (proxy_write->surface)
-                         {
-                            e->engine.func->image_map_surface_free(e->engine.data.output,
-                                                                   proxy_write->surface);
-                            proxy_write->surface = NULL;
-                         }
-                    }
-                  EINA_COW_WRITE_END(evas_object_proxy_cow, obj->proxy, proxy_write);
-               }
-             if ((obj->type) && (!strcmp(obj->type, "image")))
-               evas_object_inform_call_image_unloaded(obj->object);
-             _evas_render_dump_map_surfaces(obj->object);
-          }
+        if (getenv("EVAS_RENDER2")) render_2 = 1;
+        else render_2 = 0;
      }
-   if ((e->engine.func) && (e->engine.func->output_dump) &&
-       (e->engine.data.output))
-     e->engine.func->output_dump(e->engine.data.output);
+   if (render_2)
+     {
+        _evas_render2_dump(eo_e);
+     }
+   else
+     {
+        Evas_Layer *lay;
+        
+        evas_all_sync();
+        evas_cache_async_freeze();
+        
+        EINA_INLIST_FOREACH(e->layers, lay)
+          {
+             Evas_Object_Protected_Data *obj;
+             
+             EINA_INLIST_FOREACH(lay->objects, obj)
+               {
+                  if (obj->proxy)
+                    {
+                       EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, obj->proxy, Evas_Object_Proxy_Data, proxy_write)
+                         {
+                            if (proxy_write->surface)
+                              {
+                                 e->engine.func->image_map_surface_free(e->engine.data.output,
+                                                                        proxy_write->surface);
+                                 proxy_write->surface = NULL;
+                              }
+                         }
+                       EINA_COW_WRITE_END(evas_object_proxy_cow, obj->proxy, proxy_write);
+                    }
+                  if ((obj->type) && (!strcmp(obj->type, "image")))
+                    evas_object_inform_call_image_unloaded(obj->object);
+                  _evas_render_dump_map_surfaces(obj->object);
+               }
+          }
+        if ((e->engine.func) && (e->engine.func->output_dump) &&
+            (e->engine.data.output))
+          e->engine.func->output_dump(e->engine.data.output);
 
-#define GC_ALL(Cow)				\
+#define GC_ALL(Cow) \
    while (eina_cow_gc(Cow))
 
-   GC_ALL(evas_object_proxy_cow);
-   GC_ALL(evas_object_map_cow);
-   GC_ALL(evas_object_image_pixels_cow);
-   GC_ALL(evas_object_image_load_opts_cow);
-   GC_ALL(evas_object_image_state_cow);
+        GC_ALL(evas_object_proxy_cow);
+        GC_ALL(evas_object_map_cow);
+        GC_ALL(evas_object_image_pixels_cow);
+        GC_ALL(evas_object_image_load_opts_cow);
+        GC_ALL(evas_object_image_state_cow);
+        
+        evas_fonts_zero_pressure(eo_e);
    
-   evas_fonts_zero_pressure(eo_e);
+        if ((e->engine.func) && (e->engine.func->output_idle_flush) &&
+            (e->engine.data.output))
+          e->engine.func->output_idle_flush(e->engine.data.output);
    
-   if ((e->engine.func) && (e->engine.func->output_idle_flush) &&
-       (e->engine.data.output))
-     e->engine.func->output_idle_flush(e->engine.data.output);
-   
-   OBJS_ARRAY_FLUSH(&e->active_objects);
-   OBJS_ARRAY_FLUSH(&e->render_objects);
-   OBJS_ARRAY_FLUSH(&e->restack_objects);
-   OBJS_ARRAY_FLUSH(&e->delete_objects);
-   OBJS_ARRAY_FLUSH(&e->obscuring_objects);
-   OBJS_ARRAY_FLUSH(&e->temporary_objects);
-   eina_array_foreach(&e->clip_changes, _evas_clip_changes_free, NULL);
-   eina_array_clean(&e->clip_changes);
-   
-   e->invalidate = EINA_TRUE;
-   
-   evas_cache_async_thaw();
+        OBJS_ARRAY_FLUSH(&e->active_objects);
+        OBJS_ARRAY_FLUSH(&e->render_objects);
+        OBJS_ARRAY_FLUSH(&e->restack_objects);
+        OBJS_ARRAY_FLUSH(&e->delete_objects);
+        OBJS_ARRAY_FLUSH(&e->obscuring_objects);
+        OBJS_ARRAY_FLUSH(&e->temporary_objects);
+        eina_array_foreach(&e->clip_changes, _evas_clip_changes_free, NULL);
+        eina_array_clean(&e->clip_changes);
+        
+        e->invalidate = EINA_TRUE;
+        
+        evas_cache_async_thaw();
+     }
 }
 
 void
