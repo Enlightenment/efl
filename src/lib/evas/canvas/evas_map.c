@@ -1317,4 +1317,6 @@ evas_object_map_update(Evas_Object *eo_obj,
      }
 
    // Request engine to update it's point
+
+   obj->changed_map = EINA_FALSE;
 }
