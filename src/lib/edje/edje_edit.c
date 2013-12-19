@@ -3877,14 +3877,40 @@ edje_edit_state_color_class_get(Evas_Object *obj, const char *part, const char *
 EAPI Eina_Bool
 edje_edit_state_color_class_set(Evas_Object *obj, const char *part, const char *state, double value, const char *color_class)
 {
-   if ((!obj) || (!part) || (!state))
-     return EINA_FALSE;
+   Eina_List *l;
+   Edje_Color_Class *cc;
+
+   if ((!obj) || (!part) || (!state)) return EINA_FALSE;
    GET_PD_OR_RETURN(EINA_FALSE);
 
-   _edje_if_string_free(ed, pd->color_class);
-
-   pd->color_class = (char *)eina_stringshare_add(color_class);
-   return EINA_TRUE;
+   if (!ed->file->color_classes) return EINA_FALSE;
+   EINA_LIST_FOREACH(ed->file->color_classes, l, cc)
+     {
+        if (strcmp(cc->name, color_class) == 0)
+          {
+            pd->color.r = cc->r;
+            pd->color.g = cc->g;
+            pd->color.b = cc->b;
+            pd->color.a = cc->a;
+            pd->color2.r = cc->r2;
+            pd->color2.g = cc->g2;
+            pd->color2.b = cc->b2;
+            pd->color2.a = cc->a2;
+            if ((rp->type == EDJE_PART_TYPE_TEXT) || (rp->type == EDJE_PART_TYPE_TEXTBLOCK))
+              {
+                 Edje_Part_Description_Text *txt = (Edje_Part_Description_Text *)pd;
+                 txt->text.color3.r = cc->r3;
+                 txt->text.color3.g = cc->g3;
+                 txt->text.color3.b = cc->b3;
+                 txt->text.color3.a = cc->a3;
+              }
+            pd->color_class = (char *)eina_stringshare_add(color_class);
+            edje_object_calc_force(obj);
+            return EINA_TRUE;
+          }
+     }
+   pd->color_class = NULL;
+   return EINA_FALSE;
 }
 
 EAPI const Eina_List *
