@@ -187,7 +187,7 @@ EAPI void edje_edit_print_internal_status(Evas_Object *obj);
  * @param obj The pointer to edje object.
  * @param name The name of the group.
  *
- * @return 1 If it could allocate memory to the part group added
+ * @return EINA_TRUE If it could allocate memory to the part group added
  * or zero if not.
  *
  * This function adds, at run time, one more group, which will reside
@@ -199,6 +199,26 @@ EAPI void edje_edit_print_internal_status(Evas_Object *obj);
  *
  */
 EAPI Eina_Bool edje_edit_group_add(Evas_Object *obj, const char *name);
+
+/**
+ * @brief Copy whole group and all it's data into separate group.
+ *
+ * @param obj The pointer to edje object.
+ * @param group_name The name of the group.
+ * @param copy_name The name of the new group that is a copy.
+ *
+ * @return @c EINA_TRUE on success, @c EINA_FALSE on failure.
+ *
+ * This function copy, at run time, a whole group, which will reside
+ * in memory, to the group set found in the .edj file which @a obj was
+ * loaded with. This group can be manipulated by other API functions,
+ * like @c edje_edit_part_add(), for example.
+ *
+ * @attention This group will copy the whole group and this operation can't be undone as all references to the group will be added to the file.
+ * (for example all scripts will be written to the file directly)
+ *
+ */
+EAPI Eina_Bool edje_edit_group_copy(Evas_Object *obj, const char *group_name, const char *copy_name);
 
 /**
  * @brief Delete the specified group from the edje file.

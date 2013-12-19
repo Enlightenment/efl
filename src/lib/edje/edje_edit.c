@@ -913,6 +913,148 @@ edje_edit_compiler_get(Evas_Object *obj)
 /****************/
 
 EAPI Eina_Bool
+edje_edit_group_copy(Evas_Object *obj, const char *group_name, const char *copy_name)
+{
+   Edje_Part_Collection_Directory_Entry *e;
+   Edje_Part_Collection_Directory_Entry *de;
+   Edje_Part_Collection_Directory_Entry *d;
+   Edje_Part_Collection *epc;
+   int id;
+   int search;
+   Eet_File *eetf;
+   char buf[64];
+   int count, script_count;
+   void *data;
+   char **keys, **c;
+
+   GET_ED_OR_RETURN(EINA_FALSE);
+   if (!ed->file || !ed->file->collection)
+     return EINA_FALSE;
+
+   e = eina_hash_find(ed->file->collection, group_name);
+   if (!e) return EINA_FALSE;
+   if (eina_hash_find(ed->file->collection, copy_name))
+     return EINA_FALSE;
+
+   eetf = eet_open(ed->file->path, EET_FILE_MODE_READ_WRITE);
+   if (!eetf)
+     {
+	ERR("Edje_Edit: Error. unable to open \"%s\" "
+	    "for writing output", ed->file->path);
+	return EINA_FALSE;
+     }
+   snprintf(buf, sizeof(buf), "edje/collections/%d", e->id);
+   epc = eet_data_read(eetf, _edje_edd_edje_part_collection, buf);
+
+   /* Search first free id */
+   id = -1;
+   search = 0;
+   while (id == -1)
+     {
+	Eina_Iterator *i;
+	Eina_Bool found = 0;
+
+	i = eina_hash_iterator_data_new(ed->file->collection);
+
+	EINA_ITERATOR_FOREACH(i, d)
+	  {
+	     if (search == d->id)
+	       {
+		  found = 1;
+		  break;
+	       }
+	  }
+
+	eina_iterator_free(i);
+
+	if (!found) id = search;
+        else search++;
+     }
+
+   /* Create structs */
+   de = _alloc(sizeof(Edje_Part_Collection_Directory_Entry));
+   if (!de) return EINA_FALSE;
+
+   /* Init Edje_Part_Collection_Directory_Entry */
+   de->id = id;
+   de->entry = eina_stringshare_add(copy_name);
+   memcpy(&de->count, &e->count, sizeof (de->count));
+
+#define EDIT_EMN(Tp, Sz, Ce)							\
+   Ce->mp.Tp = eina_mempool_add("chained_mempool", #Tp, NULL, sizeof (Sz), 8);
+#define EDIT_EMNP(Tp, Sz, Ce)							\
+   Ce->mp_rtl.Tp = eina_mempool_add("chained_mempool", #Tp, NULL, sizeof (Sz), 8);
+
+   eina_hash_direct_add(ed->file->collection, de->entry, de);
+
+   EDIT_EMN(RECTANGLE, Edje_Part_Description_Common, de);
+   EDIT_EMN(TEXT, Edje_Part_Description_Text, de);
+   EDIT_EMN(IMAGE, Edje_Part_Description_Image, de);
+   EDIT_EMN(PROXY, Edje_Part_Description_Proxy, de);
+   EDIT_EMN(SWALLOW, Edje_Part_Description_Common, de);
+   EDIT_EMN(TEXTBLOCK, Edje_Part_Description_Text, de);
+   EDIT_EMN(GROUP, Edje_Part_Description_Common, de);
+   EDIT_EMN(BOX, Edje_Part_Description_Box, de);
+   EDIT_EMN(TABLE, Edje_Part_Description_Table, de);
+   EDIT_EMN(EXTERNAL, Edje_Part_Description_External, de);
+   EDIT_EMN(SPACER, Edje_Part_Description_Common, de);
+   EDIT_EMN(part, Edje_Part, de);
+
+   EDIT_EMNP(RECTANGLE, Edje_Part_Description_Common, de);
+   EDIT_EMNP(TEXT, Edje_Part_Description_Text, de);
+   EDIT_EMNP(IMAGE, Edje_Part_Description_Image, de);
+   EDIT_EMNP(PROXY, Edje_Part_Description_Proxy, de);
+   EDIT_EMNP(SWALLOW, Edje_Part_Description_Common, de);
+   EDIT_EMNP(TEXTBLOCK, Edje_Part_Description_Text, de);
+   EDIT_EMNP(GROUP, Edje_Part_Description_Common, de);
+   EDIT_EMNP(BOX, Edje_Part_Description_Box, de);
+   EDIT_EMNP(TABLE, Edje_Part_Description_Table, de);
+   EDIT_EMNP(EXTERNAL, Edje_Part_Description_External, de);
+   EDIT_EMNP(SPACER, Edje_Part_Description_Common, de);
+
+   epc->id = id;
+   epc->part = eina_stringshare_add(copy_name);
+   ed->file->collection_cache = eina_list_prepend(ed->file->collection_cache, epc);
+
+   /* Copying Scripts */
+   snprintf(buf, sizeof(buf), "edje/scripts/embryo/compiled/%d", e->id);
+   data = eet_read(eetf, buf, &count);
+   snprintf(buf, sizeof(buf), "edje/scripts/embryo/compiled/%d", epc->id);
+   eet_write(eetf, buf, data, count, 1);
+
+   snprintf(buf, sizeof(buf), "edje/scripts/embryo/source/%d", e->id);
+   data = eet_read(eetf, buf, &count);
+   snprintf(buf, sizeof(buf), "edje/scripts/embryo/source/%d", epc->id);
+   eet_write(eetf, buf, data, count, 0);
+
+   snprintf(buf, sizeof(buf), "edje/scripts/embryo/source/%d/*", e->id);
+   keys = eet_list(eetf, buf, &count);
+   if (keys)
+     {
+        while(count)
+          {
+             count--;
+             data = eet_read(eetf, keys[count], &script_count);
+             /* we need to save id of every script we are going to copy. */
+             c = eina_str_split(keys[count], "/", 6);
+             snprintf(buf, sizeof(buf), "edje/scripts/embryo/source/%d/%s", epc->id, c[5]);
+             eet_write(eetf, buf, data, script_count, 0);
+          }
+        free(keys);
+        free(c[0]);
+        free(c);
+     }
+
+   eet_close(eetf);
+
+   /* we need to save everything to make sure the file won't have broken
+    * references the next time is loaded */
+   edje_edit_save_all(obj);
+
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
 edje_edit_group_add(Evas_Object *obj, const char *name)
 {
    Edje_Part_Collection_Directory_Entry *de;
@@ -984,8 +1126,6 @@ edje_edit_group_add(Evas_Object *obj, const char *name)
 
    //cd = _alloc(sizeof(Code));
    //codes = eina_list_append(codes, cd);
-#define EDIT_EMN(Tp, Sz, Ce)							\
-   Ce->mp.Tp = eina_mempool_add("chained_mempool", #Tp, NULL, sizeof (Sz), 8);
 
    EDIT_EMN(RECTANGLE, Edje_Part_Description_Common, de);
    EDIT_EMN(TEXT, Edje_Part_Description_Text, de);
@@ -7585,7 +7725,7 @@ _edje_edit_internal_save(Evas_Object *obj, int current_only)
              snprintf(buf, sizeof(buf), "edje/scripts/embryo/source/%i",
                       ed->collection->id);
              eet_write(eetf, buf, eed->embryo_source,
-                       strlen(eed->embryo_source) +1, 1);
+                       strlen(eed->embryo_source) + 1, 1);
              eed->embryo_source_dirty = EINA_FALSE;
           }
 
