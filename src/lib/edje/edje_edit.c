@@ -2502,6 +2502,45 @@ edje_edit_part_restack_below(Evas_Object *obj, const char* part)
 }
 
 EAPI Eina_Bool
+edje_edit_part_restack_part_below(Evas_Object *obj, const char* part, const char *below)
+{
+   Edje_Part_Collection *group;
+   Edje_Real_Part *rp, *rp_below, *prev;
+   Edje_Part *swap;
+
+   GET_EED_OR_RETURN(EINA_FALSE);
+   GET_ED_OR_RETURN(EINA_FALSE);
+   rp = _edje_real_part_get(ed, part);
+   if (!rp) return EINA_FALSE;
+   rp_below = _edje_real_part_get(ed, below);
+   if (!rp_below) return EINA_FALSE;
+
+   if (rp->part->id < 1) return EINA_FALSE;
+   if (rp_below->part->id < 1) return EINA_FALSE;
+   group = ed->collection;
+
+   while (rp->part->id != (rp_below->part->id - 1))
+     {
+        if (rp->part->id > rp_below->part->id)
+          prev = ed->table_parts[(rp->part->id - 1) % ed->table_parts_size];
+        else
+          prev = ed->table_parts[(rp->part->id + 1) % ed->table_parts_size];
+        swap = group->parts[rp->part->id];
+        group->parts[rp->part->id] = group->parts[prev->part->id];
+        group->parts[prev->part->id] = swap;
+        _edje_parts_id_switch(ed, rp, prev);
+     }
+
+   evas_object_stack_below(rp->object, rp_below->object);
+   if ((rp->typedata.swallow) && (rp->typedata.swallow->swallowed_object))
+     evas_object_stack_above(rp->typedata.swallow->swallowed_object, rp->object);
+
+   _edje_edit_flag_script_dirty(eed, EINA_TRUE);
+
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
 edje_edit_part_restack_above(Evas_Object *obj, const char* part)
 {
    Edje_Part_Collection *group;
@@ -2528,6 +2567,45 @@ edje_edit_part_restack_above(Evas_Object *obj, const char* part)
    _edje_parts_id_switch(ed, rp, next);
 
    evas_object_stack_above(rp->object, next->object);
+   if ((rp->typedata.swallow) && (rp->typedata.swallow->swallowed_object))
+     evas_object_stack_above(rp->typedata.swallow->swallowed_object, rp->object);
+
+   _edje_edit_flag_script_dirty(eed, EINA_TRUE);
+
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
+edje_edit_part_restack_part_above(Evas_Object *obj, const char* part, const char *above)
+{
+   Edje_Part_Collection *group;
+   Edje_Real_Part *rp, *rp_above, *next;
+   Edje_Part *swap;
+
+   GET_EED_OR_RETURN(EINA_FALSE);
+   GET_ED_OR_RETURN(EINA_FALSE);
+   rp = _edje_real_part_get(ed, part);
+   if (!rp) return EINA_FALSE;
+   rp_above = _edje_real_part_get(ed, above);
+   if (!rp_above) return EINA_FALSE;
+
+   if (rp->part->id < 1) return EINA_FALSE;
+   if (rp_above->part->id < 1) return EINA_FALSE;
+   group = ed->collection;
+
+   while (rp->part->id != rp_above->part->id + 1)
+     {
+        if (rp->part->id > rp_above->part->id)
+          next = ed->table_parts[(rp->part->id - 1) % ed->table_parts_size];
+        else
+          next = ed->table_parts[(rp->part->id + 1) % ed->table_parts_size];
+        swap = group->parts[rp->part->id];
+        group->parts[rp->part->id] = group->parts[next->part->id];
+        group->parts[next->part->id] = swap;
+        _edje_parts_id_switch(ed, rp, next);
+     }
+
+   evas_object_stack_above(rp->object, rp_above->object);
    if ((rp->typedata.swallow) && (rp->typedata.swallow->swallowed_object))
      evas_object_stack_above(rp->typedata.swallow->swallowed_object, rp->object);
 

@@ -841,6 +841,17 @@ EAPI const char * edje_edit_part_below_get(Evas_Object *obj, const char *part);
  */
 EAPI Eina_Bool edje_edit_part_restack_below(Evas_Object *obj, const char *part);
 
+/** Move the given part below the part named below.
+ *
+ * @param obj Object being edited.
+ * @param part Name of part which will be moved.
+ * @param below Name of part for which will be moved 'part'.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool
+edje_edit_part_restack_part_below(Evas_Object *obj, const char* part, const char *below);
+
 /** Move the given part above the next one.
  *
  * @param obj Object being edited.
@@ -849,6 +860,17 @@ EAPI Eina_Bool edje_edit_part_restack_below(Evas_Object *obj, const char *part);
  * @return EINA_TRUE if successful, EINA_FALSE otherwise.
  */
 EAPI Eina_Bool edje_edit_part_restack_above(Evas_Object *obj, const char *part);
+
+/** Move the given part above the part named above.
+ *
+ * @param obj Object being edited.
+ * @param part Name of part which will be moved.
+ * @param above Name of part for which will be moved 'part'.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool
+edje_edit_part_restack_part_above(Evas_Object *obj, const char* part, const char *below);
 
 /** Set a new name for part.
  *
