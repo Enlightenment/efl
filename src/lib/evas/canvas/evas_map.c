@@ -1228,9 +1228,6 @@ evas_object_map_update(Evas_Object *eo_obj,
    RGBA_Map_Point *pts, *pt;
 
    if (!obj) return;
-
-//This compare looks useless.
-/*
    if (obj->map->spans)
      {
         if (obj->map->spans->x != x || obj->map->spans->y != y ||
@@ -1244,7 +1241,7 @@ evas_object_map_update(Evas_Object *eo_obj,
      }
 
    if (!obj->changed_map) return;
-*/
+
    if (obj->map->cur.map && obj->map->spans && obj->map->cur.map->count != obj->map->spans->count)
      {
         EINA_COW_WRITE_BEGIN(evas_object_map_cow, obj->map, Evas_Object_Map_Data, map_write)
