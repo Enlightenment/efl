@@ -45,7 +45,7 @@ test_radio(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_image_file_set(ic, buf, NULL);
-   elm_image_resizable_set(ic, 0, 0);
+   elm_image_resizable_set(ic, EINA_FALSE, EINA_FALSE);
 
    rd = elm_radio_add(win);
    elm_radio_state_value_set(rd, 1);
@@ -76,7 +76,7 @@ test_radio(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_image_file_set(ic, buf, NULL);
-   elm_image_resizable_set(ic, 0, 0);
+   elm_image_resizable_set(ic, EINA_FALSE, EINA_FALSE);
 
    rd = elm_radio_add(win);
    elm_radio_state_value_set(rd, 4);
@@ -89,7 +89,7 @@ test_radio(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_image_file_set(ic, buf, NULL);
-   elm_image_resizable_set(ic, 0, 0);
+   elm_image_resizable_set(ic, EINA_FALSE, EINA_FALSE);
 
    rd = elm_radio_add(win);
    elm_radio_state_value_set(rd, 5);

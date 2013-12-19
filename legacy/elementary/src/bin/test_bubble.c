@@ -61,7 +61,7 @@ set_api_state(api_data *api)
 
               snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
               elm_image_file_set(ic, buf, NULL);
-              elm_image_resizable_set(ic, 0, 0);
+              elm_image_resizable_set(ic, EINA_FALSE, EINA_FALSE);
               elm_object_content_set(eina_list_nth(items, 0), ic);
               ct = elm_label_add(api->win);
               elm_object_text_set(ct, "Using icon as top-bubble content");
@@ -134,7 +134,7 @@ test_bubble(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_image_file_set(ic, buf, NULL);
-   elm_image_resizable_set(ic, 0, 0);
+   elm_image_resizable_set(ic, EINA_FALSE, EINA_FALSE);
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_HORIZONTAL, 1, 1);
 
    bb = elm_bubble_add(win);

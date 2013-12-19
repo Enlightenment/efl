@@ -60,7 +60,7 @@ test_hover(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_image_file_set(ic, buf, NULL);
-   elm_image_resizable_set(ic, 0, 0);
+   elm_image_resizable_set(ic, EINA_FALSE, EINA_FALSE);
    elm_box_pack_end(bx, ic);
    evas_object_show(ic);
 
@@ -135,7 +135,7 @@ test_hover2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_image_file_set(ic, buf, NULL);
-   elm_image_resizable_set(ic, 0, 0);
+   elm_image_resizable_set(ic, EINA_FALSE, EINA_FALSE);
    elm_box_pack_end(bx, ic);
    evas_object_show(ic);
    bt = elm_button_add(win);
@@ -235,7 +235,7 @@ test_hover3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png",
             elm_app_data_dir_get());
    elm_image_file_set(ic, buf, NULL);
-   elm_image_resizable_set(ic, 0, 0);
+   elm_image_resizable_set(ic, EINA_FALSE, EINA_FALSE);
    elm_box_pack_end(bx, ic);
    evas_object_show(ic);
 

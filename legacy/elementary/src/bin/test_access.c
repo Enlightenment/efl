@@ -68,7 +68,7 @@ grid_access_content_get(void *data, Evas_Object *obj, const char *part)
         elm_object_scale_set(ic, 0.5);
         snprintf(buf, sizeof(buf), "%s/images/icon_%02i.png", elm_app_data_dir_get(), (id->index % 4));
         elm_image_file_set(ic, buf, NULL);
-        elm_image_resizable_set(ic, 0, 0);
+        elm_image_resizable_set(ic, EINA_FALSE, EINA_FALSE);
         evas_object_size_hint_weight_set(ic, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
         evas_object_size_hint_align_set(ic, 0.5, 0.5);
         evas_object_show(ic);
@@ -277,7 +277,7 @@ test_access2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
                   elm_object_scale_set(ic, 0.5);
                   snprintf(buf, sizeof(buf), "%s/images/icon_%02i.png", elm_app_data_dir_get(), (i + (k * 3)));
                   elm_image_file_set(ic, buf, NULL);
-                  elm_image_resizable_set(ic, 0, 0);
+                  elm_image_resizable_set(ic, EINA_FALSE, EINA_FALSE);
                   evas_object_size_hint_weight_set(ic, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
                   evas_object_size_hint_align_set(ic, 0.5, 0.5);
                   elm_object_part_content_set(ly2, "slot", ic);

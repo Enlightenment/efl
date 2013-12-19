@@ -116,7 +116,7 @@ _tt_item_icon(void *data   EINA_UNUSED,
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png",
             elm_app_data_dir_get());
    elm_image_file_set(ic, buf, NULL);
-   elm_image_resizable_set(ic, 0, 0);
+   elm_image_resizable_set(ic, EINA_FALSE, EINA_FALSE);
    evas_object_resize(ic, 64, 64);
    return ic;
 }
@@ -131,7 +131,7 @@ _tt_item_icon2(void *data   EINA_UNUSED,
    char buf[PATH_MAX];
    snprintf(buf, sizeof(buf), "%s/images/logo.png", elm_app_data_dir_get());
    elm_image_file_set(ic, buf, NULL);
-   elm_image_resizable_set(ic, 0, 0);
+   elm_image_resizable_set(ic, EINA_FALSE, EINA_FALSE);
    return ic;
 }
 
@@ -148,7 +148,7 @@ _tt_item_icon3(void *data   EINA_UNUSED,
    snprintf(buf, sizeof(buf), "%s/images/insanely_huge_test_image.jpg", elm_app_data_dir_get());
    elm_image_file_set(ic, buf, NULL);
    elm_image_object_size_get(ic, &w, &h);
-   elm_image_resizable_set(ic, 0, 0);
+   elm_image_resizable_set(ic, EINA_FALSE, EINA_FALSE);
    elm_win_screen_size_get(tt, NULL, NULL, &sw, &sh);
    if ((w > sw) || (h > sh))
      {
@@ -333,7 +333,7 @@ _tt_icon(void *data   EINA_UNUSED,
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png",
             elm_app_data_dir_get());
    elm_image_file_set(ic, buf, NULL);
-   elm_image_resizable_set(ic, 0, 0);
+   elm_image_resizable_set(ic, EINA_FALSE, EINA_FALSE);
    evas_object_resize(ic, 64, 64);
    return ic;
 }
@@ -347,7 +347,7 @@ _tt_icon2(void *data   EINA_UNUSED,
    char buf[PATH_MAX];
    snprintf(buf, sizeof(buf), "%s/images/icon_00.png", elm_app_data_dir_get());
    elm_image_file_set(ic, buf, NULL);
-   elm_image_resizable_set(ic, 0, 0);
+   elm_image_resizable_set(ic, EINA_FALSE, EINA_FALSE);
    evas_object_resize(ic, 64, 64);
    return ic;
 }
