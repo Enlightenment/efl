@@ -1484,6 +1484,10 @@ st_externals_external(void)
 static void
 st_images_image(void)
 {
+   /* NOTE: if you implement any changes with image_id mechanic don't forget
+    * to update following functions: edje_edit_image_replace,
+    * edje_edit_image_usage_list_get, edje_edit_image_del, _data_image_id_update
+    */
    Edje_Image_Directory_Entry *img;
    const char *tmp;
    unsigned int i;
