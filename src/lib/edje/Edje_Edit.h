@@ -2706,6 +2706,33 @@ edje_edit_state_text_style_get(Evas_Object *obj, const char *part, const char *s
 EAPI Eina_Bool
 edje_edit_state_text_style_set(Evas_Object *obj, const char *part, const char *state, double value, const char *style);
 
+/** Get part name, which used as text source.
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain state.
+ * @param state The name of the state to set the the maximum vertical size of
+ * the container to be equal (not including the state value).
+ *
+ * @return The name of part or NULL, if text_source param not a setted.
+ */
+EAPI const char *
+edje_edit_state_text_source_get(Evas_Object *obj, const char *part, const char *state, double value);
+
+/** Set the source text part for a given part.
+ * Causes the part to display the text content of another part and update them
+ * as they change.
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain state.
+ * @param state The name of the state to set the the maximum vertical size of
+ * the container to be equal (not including the state value).
+ * @param source The text source part name.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE - otherwise.
+ */
+EAPI Eina_Bool
+edje_edit_state_text_source_set(Evas_Object *obj, const char *part, const char *state, double value, const char *source);
+
 /** Get the list of all the fonts in the given edje.
  *
  * Use edje_edit_string_list_free() when you don't need the list anymore.
