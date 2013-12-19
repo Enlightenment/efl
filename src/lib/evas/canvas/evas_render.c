@@ -825,6 +825,12 @@ pending_change(void *data, void *gdata EINA_UNUSED)
         obj->pre_render_done = EINA_FALSE;
         evas_object_change_reset(eo_obj);
      }
+   else if (!_evas_render_can_render(eo_obj, obj) &&
+            (!obj->is_active) && (!obj->render_pre) &&
+            (!obj->rect_del))
+     {
+        evas_object_change_reset(eo_obj);
+     }
    if (!obj->changed) eo_data_unref(eo_obj, obj);
    return obj->changed ? EINA_TRUE : EINA_FALSE;
 }
