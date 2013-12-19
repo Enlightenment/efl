@@ -686,8 +686,8 @@ _ecore_imf_context_ibus_update_preedit_text_cb(IBusInputContext  *ibuscontext EI
              if (attr == NULL)
                continue;
 
-             attr->start_index = utf8_offset_to_index(str, ibus_attr->start_index);
-             attr->end_index = utf8_offset_to_index(str, ibus_attr->end_index);
+             attr->start_index = utf8_offset_to_index(ibusimcontext->preedit_string, ibus_attr->start_index);
+             attr->end_index = utf8_offset_to_index(ibusimcontext->preedit_string, ibus_attr->end_index);
 
              switch (ibus_attr->type)
                {
