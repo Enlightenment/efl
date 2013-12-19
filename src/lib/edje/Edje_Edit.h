@@ -2679,6 +2679,33 @@ EAPI Eina_Bool edje_edit_state_text_min_y_set(Evas_Object *obj, const char *part
  */
 EAPI Eina_Bool edje_edit_state_text_max_y_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool v);
 
+/** Get style name for a given part state.
+ *
+ * @param obj Object being edited.
+ * @param part The name of the part to get the style of.
+ * @param state The state of the part to get the style of.
+ * @param value Value of the state.
+ *
+ * @return Style used by the part or NULL if error or nothing is set.
+ */
+EAPI const char *
+edje_edit_state_text_style_get(Evas_Object *obj, const char *part, const char *state, double value);
+
+/** Set style name for a given part state.
+ *
+ * Causes the part to use the default style and tags defined in the "style" block with the specified name.
+ *
+ * @param obj Object being edited.
+ * @param part Part to set the style of.
+ * @param state State in which the style is set.
+ * @param value Value of the state.
+ * @param style The style name to use.
+ *
+ * @return EINA_TRUE if successful, EINA_FALSE - otherwise.
+ */
+EAPI Eina_Bool
+edje_edit_state_text_style_set(Evas_Object *obj, const char *part, const char *state, double value, const char *style);
+
 /** Get the list of all the fonts in the given edje.
  *
  * Use edje_edit_string_list_free() when you don't need the list anymore.

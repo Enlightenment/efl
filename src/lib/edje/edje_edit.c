@@ -4384,6 +4384,40 @@ FUNC_TEXT_BOOL(min, y);
 FUNC_TEXT_BOOL(max, x);
 FUNC_TEXT_BOOL(max, y);
 
+EAPI const char *
+edje_edit_state_text_style_get(Evas_Object *obj, const char *part, const char *state, double value)
+{
+   Edje_Part_Description_Text *txt;
+
+   GET_PD_OR_RETURN(NULL);
+
+   if ((rp->part->type != EDJE_PART_TYPE_TEXT) &&
+       (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK))
+     return NULL;
+
+   txt = (Edje_Part_Description_Text *)pd;
+   return eina_stringshare_add(txt->text.style.str);
+}
+
+EAPI Eina_Bool
+edje_edit_state_text_style_set(Evas_Object *obj, const char *part, const char *state, double value, const char *style)
+{
+   Edje_Part_Description_Text *txt;
+
+   GET_PD_OR_RETURN(EINA_FALSE);
+   if (!style) return EINA_FALSE;
+
+   if ((rp->part->type != EDJE_PART_TYPE_TEXT) &&
+       (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK))
+     return EINA_FALSE;
+
+   txt = (Edje_Part_Description_Text *)pd;
+   txt->text.style.str = eina_stringshare_add(style);
+
+   edje_object_calc_force(obj);
+   return EINA_TRUE;
+}
+
 EAPI Eina_List *
 edje_edit_fonts_list_get(Evas_Object *obj)
 {
