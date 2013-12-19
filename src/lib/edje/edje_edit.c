@@ -1039,10 +1039,10 @@ edje_edit_group_copy(Evas_Object *obj, const char *group_name, const char *copy_
              c = eina_str_split(keys[count], "/", 6);
              snprintf(buf, sizeof(buf), "edje/scripts/embryo/source/%d/%s", epc->id, c[5]);
              eet_write(eetf, buf, data, script_count, 0);
+             free(c[0]);
+             free(c);
           }
         free(keys);
-        free(c[0]);
-        free(c);
      }
 
    eet_close(eetf);
