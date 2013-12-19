@@ -337,8 +337,9 @@ _get_orientation(void *map, size_t length)
 
 static Eina_Bool
 evas_image_load_file_head_jpeg_internal(unsigned int *w, unsigned int *h,
-					unsigned char *scale, unsigned char *rotated,
-					Evas_Image_Load_Opts *opts,
+                                        unsigned char *scale,
+                                        unsigned char *rotated,
+                                        Evas_Image_Load_Opts *opts,
                                         void *map, size_t length,
                                         int *error)
 {
@@ -506,7 +507,7 @@ evas_image_load_file_head_jpeg_internal(unsigned int *w, unsigned int *h,
 
    *w = cinfo.output_width;
    *h = cinfo.output_height;
-   
+
    // be nice and clip region to image. if its totally outside, fail load
    if ((opts->region.w > 0) && (opts->region.h > 0))
      {
@@ -583,7 +584,7 @@ static double
 get_time(void)
 {
    struct timeval      timev;
-   
+
    gettimeofday(&timev, NULL);
    return (double)timev.tv_sec + (((double)timev.tv_usec) / 1000000);
 }
@@ -591,8 +592,8 @@ get_time(void)
 
 static Eina_Bool
 evas_image_load_file_data_jpeg_internal(Evas_Image_Load_Opts *opts,
-					Evas_Image_Property *prop,
-					void *pixels,
+                                        Evas_Image_Property *prop,
+                                        void *pixels,
                                         void *map, size_t size,
                                         int *error)
 {
@@ -870,7 +871,7 @@ evas_image_load_file_data_jpeg_internal(Evas_Image_Load_Opts *opts,
                         return EINA_FALSE;*/
                     }
                   // els if scan block intersects region start or later
-                  else if ((l + scans) > 
+                  else if ((l + scans) >
                            (opts->region.y))
                     {
                        for (y = 0; y < scans; y++)
@@ -932,7 +933,7 @@ evas_image_load_file_data_jpeg_internal(Evas_Image_Load_Opts *opts,
    /* We handle then RGB with 3 components */
    else if (cinfo.output_components == 3)
      {
-/*        
+/*
         double t;
         if (region)
           {
@@ -979,7 +980,7 @@ evas_image_load_file_data_jpeg_internal(Evas_Image_Load_Opts *opts,
                        goto done;
                     }
                   // else if scan block intersects region start or later
-                  else if ((l + scans) > 
+                  else if ((l + scans) >
                            (opts->region.y))
                     {
                        for (y = 0; y < scans; y++)
@@ -1002,7 +1003,7 @@ evas_image_load_file_data_jpeg_internal(Evas_Image_Load_Opts *opts,
                     }
                }
 	  }
-/*        
+/*
         t = get_time() - t;
         printf("%3.3f\n", t);
  */
@@ -1044,7 +1045,7 @@ evas_image_load_file_data_jpeg_internal(Evas_Image_Load_Opts *opts,
                         return EINA_TRUE;*/
                     }
                   // els if scan block intersects region start or later
-                  else if ((l + scans) > 
+                  else if ((l + scans) >
                            (opts->region.y))
                     {
                        for (y = 0; y < scans; y++)
@@ -1096,7 +1097,7 @@ done:
                   data2--;
                }
           }
-        else 
+        else
           {
              data2 = NULL;
              to = NULL;
@@ -1327,8 +1328,8 @@ evas_image_load_file_head_jpeg(void *loader_data,
 static Eina_Bool
 evas_image_load_file_data_jpeg(void *loader_data,
                                Evas_Image_Property *prop,
-			       void *pixels,
-			       int *error)
+                               void *pixels,
+                               int *error)
 {
    Evas_Loader_Internal *loader = loader_data;
    Evas_Image_Load_Opts *opts;
