@@ -102,12 +102,19 @@ _configure(Evas_Object *obj)
    if (sd->enabled && !evas_object_visible_get(obj)) return;
 
    Evas_Coord x, y, w, h;
+   int i;
    evas_object_geometry_get(wd->resize_obj, &x, &y, &w, &h);
 
    if (sd->enabled)
      {
         if (!m) m = evas_map_new(4);
         evas_map_util_points_populate_from_geometry(m, x, y, w, h, 0);
+        for (i = 0; i < (int)(sizeof(sd->colors)/sizeof(sd->colors[0])); i++)
+          {
+             evas_map_point_color_set(m, i, sd->colors[i].r, sd->colors[i].g,
+                                      sd->colors[i].b, sd->colors[i].a);
+          }
+
         evas_map_smooth_set(m, sd->smooth);
         evas_map_alpha_set(m, sd->alpha);
         evas_object_map_set(sd->content, m);
@@ -273,6 +280,8 @@ _elm_mapbuf_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Mapbuf_Smart_Data *priv = _pd;
    Evas_Object *rect = evas_object_rectangle_add(evas_object_evas_get(obj));
+   int i;
+
    elm_widget_resize_object_set(obj, rect, EINA_TRUE);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
@@ -281,6 +290,14 @@ _elm_mapbuf_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    evas_object_static_clip_set(rect, EINA_TRUE);
    evas_object_pass_events_set(rect, EINA_TRUE);
    evas_object_color_set(rect, 0, 0, 0, 0);
+
+   for (i = 0; i < (int)(sizeof(priv->colors)/sizeof(priv->colors[0])); i++)
+     {
+        priv->colors[i].r = 255;
+        priv->colors[i].g = 255;
+        priv->colors[i].b = 255;
+        priv->colors[i].a = 255;
+     }
 
    priv->self = obj;
    priv->alpha = EINA_TRUE;
@@ -489,6 +506,76 @@ _auto_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 }
 
 static void
+_point_color_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   int idx = va_arg(*list, int);
+   int *r = va_arg(*list, int *);
+   int *g = va_arg(*list, int *);
+   int *b = va_arg(*list, int *);
+   int *a = va_arg(*list, int *);
+
+   Elm_Mapbuf_Smart_Data *sd = _pd;
+
+   *r = sd->colors[idx].r;
+   *g = sd->colors[idx].g;
+   *b = sd->colors[idx].b;
+   *a =sd->colors[idx].a;
+}
+
+EAPI void
+elm_mapbuf_point_color_get(Evas_Object *obj, int idx,
+                           int *r, int *g, int *b, int *a)
+{
+   ELM_MAPBUF_CHECK(obj);
+   ELM_MAPBUF_DATA_GET(obj, sd);
+
+   if ((idx < 0) || (idx >= (int)(sizeof(sd->colors)/sizeof(sd->colors[0]))))
+     {
+        ERR("idx value should be 0 ~ %d, mapbuf(%p)",
+            ((sizeof(sd->colors)/sizeof(sd->colors[0])) - 1), obj);
+        return;
+     }
+
+   eo_do(obj, elm_obj_mapbuf_point_color_get(idx, r, g, b, a));
+}
+
+static void
+_point_color_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   int idx = va_arg(*list, int);
+   int r = va_arg(*list, int);
+   int g = va_arg(*list, int);
+   int b = va_arg(*list, int);
+   int a = va_arg(*list, int);
+
+   Elm_Mapbuf_Smart_Data *sd = _pd;
+
+   sd->colors[idx].r = r;
+   sd->colors[idx].g = g;
+   sd->colors[idx].b = b;
+   sd->colors[idx].a = a;
+
+   _configure(obj);
+}
+
+EAPI void
+elm_mapbuf_point_color_set(Evas_Object *obj, int idx,
+                           int r, int g, int b, int a)
+{
+   ELM_MAPBUF_CHECK(obj);
+   ELM_MAPBUF_DATA_GET(obj, sd);
+
+   if ((idx < 0) || (idx >= (int)(sizeof(sd->colors)/sizeof(sd->colors[0]))))
+     {
+        ERR("idx value should be 0 ~ %d, mapbuf(%p)",
+            ((sizeof(sd->colors)/sizeof(sd->colors[0])) - 1), obj);
+        return;
+     }
+
+   eo_do(obj, elm_obj_mapbuf_point_color_set(idx, r, g, b, a));
+}
+
+static void
 _class_constructor(Eo_Class *klass)
 {
    const Eo_Op_Func_Description func_desc[] = {
@@ -516,6 +603,8 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_OBJ_MAPBUF_ID(ELM_OBJ_MAPBUF_SUB_ID_ALPHA_GET), _alpha_get),
         EO_OP_FUNC(ELM_OBJ_MAPBUF_ID(ELM_OBJ_MAPBUF_SUB_ID_AUTO_SET), _auto_set),
         EO_OP_FUNC(ELM_OBJ_MAPBUF_ID(ELM_OBJ_MAPBUF_SUB_ID_AUTO_GET), _auto_get),
+        EO_OP_FUNC(ELM_OBJ_MAPBUF_ID(ELM_OBJ_MAPBUF_SUB_ID_POINT_COLOR_SET), _point_color_set),
+        EO_OP_FUNC(ELM_OBJ_MAPBUF_ID(ELM_OBJ_MAPBUF_SUB_ID_POINT_COLOR_GET), _point_color_get),
         EO_OP_FUNC_SENTINEL
    };
    eo_class_funcs_set(klass, func_desc);
@@ -531,6 +620,8 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_OBJ_MAPBUF_SUB_ID_ALPHA_GET, "Get a value whether alpha blending is enabled or not."),
      EO_OP_DESCRIPTION(ELM_OBJ_MAPBUF_SUB_ID_AUTO_SET, "Turn map on or off automatically based on object visibility."),
      EO_OP_DESCRIPTION(ELM_OBJ_MAPBUF_SUB_ID_AUTO_GET, "Get automatic mode state."),
+     EO_OP_DESCRIPTION(ELM_OBJ_MAPBUF_SUB_ID_POINT_COLOR_SET, "Set a vertex color of the mapbuf"),
+     EO_OP_DESCRIPTION(ELM_OBJ_MAPBUF_SUB_ID_POINT_COLOR_GET, "Get a vertex color of the mapbuf"),
      EO_OP_DESCRIPTION_SENTINEL
 };
 static const Eo_Class_Description class_desc = {

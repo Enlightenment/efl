@@ -22,8 +22,11 @@ struct _Elm_Mapbuf_Smart_Data
 {
    Evas_Object          *self;
    Evas_Object          *content;
-
    Ecore_Idler          *idler;
+   struct
+     {
+        int r, g, b, a;
+     } colors[4];
 
    Eina_Bool             enabled : 1;
    Eina_Bool             smooth_saved : 1;

@@ -19,6 +19,8 @@ enum
    ELM_OBJ_MAPBUF_SUB_ID_ALPHA_GET,
    ELM_OBJ_MAPBUF_SUB_ID_AUTO_SET,
    ELM_OBJ_MAPBUF_SUB_ID_AUTO_GET,
+   ELM_OBJ_MAPBUF_SUB_ID_POINT_COLOR_SET,
+   ELM_OBJ_MAPBUF_SUB_ID_POINT_COLOR_GET,
    ELM_OBJ_MAPBUF_SUB_ID_LAST
 };
 
@@ -120,6 +122,38 @@ enum
  * @see elm_mapbuf_auto_get
  */
 #define elm_obj_mapbuf_auto_get(ret) ELM_OBJ_MAPBUF_ID(ELM_OBJ_MAPBUF_SUB_ID_AUTO_GET), EO_TYPECHECK(Eina_Bool *, ret)
+
+/**
+ * @def elm_obj_mapbuf_point_color_set
+ * @since 1.9
+ *
+ * Set a vertex color of the mapbuf
+ *
+ * @param[in] idx
+ * @param[in] r
+ * @param[in] g 
+ * @param[in] b
+ * @param[in] a
+ *
+ * @see elm_mapbuf_point_color_set
+ */
+#define elm_obj_mapbuf_point_color_set(idx, r, g, b, a) ELM_OBJ_MAPBUF_ID(ELM_OBJ_MAPBUF_SUB_ID_POINT_COLOR_SET), EO_TYPECHECK(int, idx), EO_TYPECHECK(int, r), EO_TYPECHECK(int, g), EO_TYPECHECK(int, b), EO_TYPECHECK(int, a)
+
+/**
+ * @def elm_obj_mapbuf_point_color_get
+ * @since 1.9
+ *
+ * get a vertex color of the mapbuf
+ *
+ * @param[in] idx
+ * @param[out] r
+ * @param[out] g 
+ * @param[out] b
+ * @param[out] a
+ *
+ * @see elm_mapbuf_point_color_get
+ */
+#define elm_obj_mapbuf_point_color_get(idx, r, g, b, a) ELM_OBJ_MAPBUF_ID(ELM_OBJ_MAPBUF_SUB_ID_POINT_COLOR_GET), EO_TYPECHECK(int, idx), EO_TYPECHECK(int *, r), EO_TYPECHECK(int *, g), EO_TYPECHECK(int *, b), EO_TYPECHECK(int *, a)
 
 /**
  * @}

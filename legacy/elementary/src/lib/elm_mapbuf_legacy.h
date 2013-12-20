@@ -145,3 +145,42 @@ EAPI void                         elm_mapbuf_auto_set(Evas_Object *obj, Eina_Boo
  */
 EAPI Eina_Bool                    elm_mapbuf_auto_get(const Evas_Object *obj);
 
+/**
+ * Set the color of a vertex in the mapbuf
+ *
+ * This sets the color of the vertex in the mapbuf. Colors will be linearly
+ * interpolated between vertex points through the mapbuf. Color will multiply
+ * the "texture" pixels (like GL_MODULATE in OpenGL). The default color of
+ * a vertex in a mapbuf is white solid (255, 255, 255, 255) which means it will
+ * have no affect on modifying the texture pixels.
+ *
+ * @param obj The mapbuf object.
+ * @param idx index of point to change. Must be smaller than mapbuf size.
+ * @param r red (0 - 255)
+ * @param g green (0 - 255)
+ * @param b blue (0 - 255)
+ * @param a alpha (0 - 255)
+ *
+ * @see evas_object_map_set()
+ * @since 1.9
+ */
+EAPI void                         elm_mapbuf_point_color_set(Evas_Object *obj, int idx, int r, int g, int b, int a);
+
+/**
+ * Get the color set on a vertex in the mapbuf
+ *
+ * This gets the color set by elm_mapbuf_point_color_set() on the given vertex
+ * of the mapbuf.
+ *
+ * @param obj The mapbuf object.
+ * @param idx index of point get. Must be smaller than map size.
+ * @param r pointer to red return
+ * @param g pointer to green return
+ * @param b pointer to blue return
+ * @param a pointer to alpha return
+ *
+ * @see elm_mapbuf_point_color_set()
+ *
+ * @since 1.9
+ */
+EAPI void                         elm_mapbuf_point_color_get(Evas_Object *obj, int idx, int *r, int *g, int *b, int *a);
