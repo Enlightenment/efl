@@ -3,10 +3,33 @@
 #endif
 
 #include "ecore_drm_private.h"
+#include <sys/wait.h>
+/* #include <fcntl.h> */
+/* #include <sys/ioctl.h> */
+
+#if defined(SCM_CREDS) // Bsd
+# define CRED_STRUCT cmsgcred
+# define CRED_UID cmcred_uid
+# define SCM_CREDTYPE SCM_CREDS
+#elif defined(SCM_CREDENTIALS) // Linux (3.2.0 ?)
+# define CRED_STRUCT ucred
+# define CRED_UID uid;
+# define CRED_OPT SO_PASSCRED
+# define SCM_CREDTYPE SCM_CREDENTIALS
+#endif
+
+#define RIGHTS_LEN CMSG_LEN(sizeof(int))
+#define CREDS_LEN CMSG_LEN(sizeof(struct CRED_STRUCT))
+#define CONTROL_LEN (RIGHTS_LEN + CREDS_LEN)
+
+#define IOVSET(_iov, _addr, _len) \
+   (_iov)->iov_base = (void *)(_addr); \
+   (_iov)->iov_len = (_len);
 
 /* local variables */
 static int _ecore_drm_init_count = 0;
-static int _ecore_drm_socket_fd[2] = { -1, -1 };
+static int _ecore_drm_sockets[2] = { -1, -1 };
+static struct cmsghdr *cmsgptr = NULL;
 
 /* external variables */
 struct udev *udev;
@@ -15,151 +38,32 @@ int _ecore_drm_log_dom = -1;
 FILE *lg;
 #endif
 
-#define IOVSET(_iov, _addr, _len) \
-   (_iov)->iov_base = (void *)(_addr); \
-   (_iov)->iov_len = (_len);
-
-static ssize_t 
-_ecore_drm_socket_send(int opcode, int fd, void *data, size_t bytes)
-{
-   Ecore_Drm_Message dmsg;
-   struct iovec iov[2];
-   struct msghdr msg;
-   struct cmsghdr *cmsg = NULL;
-   char ctrl[CMSG_SPACE(sizeof(int))];
-   ssize_t size;
-
-   IOVSET(iov + 0, &dmsg, sizeof(dmsg));
-   IOVSET(iov + 1, data, bytes);
-
-   dmsg.opcode = opcode;
-   dmsg.size = bytes;
-
-   memset(&msg, 0, sizeof(struct msghdr));
-   memset(ctrl, 0, CMSG_SPACE(sizeof(int)));
-
-   /* socketpair creates 'connected' sockets so we should not need to 
-    * specify a msg_name here */
-   msg.msg_name = NULL;
-   msg.msg_namelen = 0;
-   msg.msg_iov = iov;
-   msg.msg_iovlen = 2;
-   msg.msg_controllen = CMSG_SPACE(sizeof(int));
-   msg.msg_control = ctrl;
-
-   cmsg = CMSG_FIRSTHDR(&msg);
-   cmsg->cmsg_level = SOL_SOCKET;
-   cmsg->cmsg_type = SCM_RIGHTS;
-   cmsg->cmsg_len = CMSG_LEN(sizeof(int));
-
-   *((int *)CMSG_DATA(cmsg)) = fd;
-
-   errno = 0;
-
-   size = sendmsg(_ecore_drm_socket_fd[1], &msg, 0);
-
-   if (errno != 0)
-     {
-        DBG("\tSend Err: %d", errno);
-        DBG("\tSend Err: %s", strerror(errno));
-     }
-
-   return size;
-}
-
-static int 
-_ecore_drm_socket_receive(int opcode, int fd EINA_UNUSED, void **data, size_t bytes EINA_UNUSED)
-{
-   int ret = -1, rfd;
-   Ecore_Drm_Message dmsg;
-   char buff[BUFSIZ];
-   struct iovec iov[2];
-   char ctrl[CMSG_SPACE(sizeof(int))];
-   struct msghdr msg;
-   struct cmsghdr *cmsg = NULL;
-   ssize_t size;
-
-   IOVSET(iov + 0, &dmsg, sizeof(dmsg));
-   IOVSET(iov + 1, &buff, sizeof(buff));
-
-   memset(&msg, 0, sizeof(msg));
-
-   /* socketpair creates 'connected' sockets so we should not need to 
-    * specify a msg_name here */
-   msg.msg_name = NULL;
-   msg.msg_namelen = 0;
-   msg.msg_iov = iov;
-   msg.msg_iovlen = 2;
-   msg.msg_controllen = CMSG_SPACE(sizeof(int));
-   msg.msg_control = ctrl;
-
-   errno = 0;
-   size = recvmsg(_ecore_drm_socket_fd[0], &msg, 0); // MSG_CMSG_CLOEXEC);
-
-   if (errno != 0)
-     {
-        DBG("\tRecv %li", size);
-        DBG("\tRecv Err: %d", errno);
-        DBG("\tRecv Err: %s", strerror(errno));
-     }
-
-   cmsg = CMSG_FIRSTHDR(&msg);
-   if ((cmsg) && (cmsg->cmsg_len == CMSG_LEN(sizeof(int))))
-     {
-        if (cmsg->cmsg_level != SOL_SOCKET)
-          {
-             DBG("Invalid cmsg level");
-             return -1;
-          }
-        if (cmsg->cmsg_type != SCM_RIGHTS)
-          {
-             DBG("Invalid cmsg type");
-             return -1;
-          }
-     }
-
-   rfd = *((int *)CMSG_DATA(cmsg));
-
-   DBG("\tFD: %d", rfd);
-   DBG("\tDmsg Opcode: %d", dmsg.opcode);
-   DBG("\tOpcode: %d", opcode);
-
-   if (dmsg.opcode != opcode) return -1;
-
-   switch (dmsg.opcode)
-     {
-      case ECORE_DRM_OP_DEVICE_OPEN:
-      case ECORE_DRM_OP_TTY_OPEN:
-        if (rfd >= 0) ret = 1;
-        if (data) *data = &rfd;
-        break;
-      case ECORE_DRM_OP_DEVICE_CLOSE:
-      case ECORE_DRM_OP_TTY_CLOSE:
-        ret = -1;
-        break;
-      default:
-        ret = -1;
-        break;
-     }
-
-   return ret;
-}
-
 static Eina_Bool 
-_ecore_drm_socket_create(void)
+_ecore_drm_sockets_create(void)
 {
-   /* test if we have already opened the socketpair */
-   if (_ecore_drm_socket_fd[0] > -1) return EINA_TRUE;
+   if (_ecore_drm_sockets[0] > -1) return EINA_TRUE;
 
-   /* setup socketpair */
-   if (socketpair(AF_LOCAL, SOCK_SEQPACKET, 0, _ecore_drm_socket_fd) < 0)
+   /* create a pair of sequenced sockets (fixed-length)
+    * NB: when reading from one of these, it is required that we read 
+    * an entire packet with each read() call */
+   if (socketpair(AF_LOCAL, SOCK_SEQPACKET | SOCK_NONBLOCK, 
+                  0, _ecore_drm_sockets) < 0)
      {
         ERR("Socketpair Failed: %m");
         return EINA_FALSE;
      }
 
-   DBG("Parent Socket: %d", _ecore_drm_socket_fd[0]);
-   DBG("Child Socket: %d", _ecore_drm_socket_fd[1]);
+   /* NB: We don't want cloexec for the sockets. That would cause them to be 
+    * closed when we exec the child process but we need them open so that 
+    * we can pass messages */
+   /* if (fcntl(_ecore_drm_sockets[0], F_SETFD, FD_CLOEXEC) < 0) */
+   /*   { */
+   /*      ERR("Failed to set CLOEXEC: %m"); */
+   /*      return EINA_FALSE; */
+   /*   } */
+
+   DBG("Parent Socket: %d", _ecore_drm_sockets[0]);
+   DBG("Child Socket: %d", _ecore_drm_sockets[1]);
 
    return EINA_TRUE;
 }
@@ -169,64 +73,184 @@ _ecore_drm_launcher_spawn(void)
 {
    pid_t pid;
 
-   /* TODO: test if spartacus is still alive */
+   if ((pid = fork()) < 0) return EINA_FALSE;
 
-   /* fork */
-   if ((pid = vfork()) < 0)
-     CRIT("Failed to fork: %m");
-
-   if (pid != 0)
-     return EINA_TRUE;
-   else if (pid == 0) /* child process. exec spartacus */
+   if (pid == 0)
      {
-        char buff[PATH_MAX], env[32];
+        char env[64], buff[PATH_MAX];
         char *args[1] = { NULL };
         sigset_t mask;
 
-        /* if we are the child, start a rebellion */
-        DBG("Start Spartacus");
+        /* read socket for slave is 0 */
+        snprintf(env, sizeof(env), "%d", _ecore_drm_sockets[0]);
+        setenv("ECORE_DRM_LAUNCHER_SOCKET_READ", env, 1);
 
-        /* drop privileges */
-        if (setuid(getuid()) < 0)
-          WRN("Failed to drop privileges");
-
-        /* set to read socket for launch process to read from */
-        snprintf(env, sizeof(env), "%d", _ecore_drm_socket_fd[0]);
-        setenv("ECORE_DRM_LAUNCHER_WRITE_SOCKET", env, 1);
-
-        /* set to read socket for launch process to read from */
-        snprintf(env, sizeof(env), "%d", _ecore_drm_socket_fd[1]);
-        setenv("ECORE_DRM_LAUNCHER_READ_SOCKET", env, 1);
-
-        sigemptyset(&mask);
-        sigaddset(&mask, SIGTERM);
-        sigaddset(&mask, SIGCHLD);
-        sigaddset(&mask, SIGINT);
-        sigprocmask(SIG_UNBLOCK, &mask, NULL);
+        /* write socket for slave is 1 */
+        snprintf(env, sizeof(env), "%d", _ecore_drm_sockets[1]);
+        setenv("ECORE_DRM_LAUNCHER_SOCKET_WRITE", env, 1);
 
         /* assemble exec path */
         snprintf(buff, sizeof(buff), 
                  "%s/ecore_drm/bin/%s/ecore_drm_launch", 
                  PACKAGE_LIB_DIR, MODULE_ARCH);
 
-        /* try to start a rebellion */
+        /* don't give our signal mask to the child */
+        sigemptyset(&mask);
+        sigaddset(&mask, SIGTERM);
+        sigaddset(&mask, SIGCHLD);
+        sigaddset(&mask, SIGINT);
+        sigprocmask(SIG_UNBLOCK, &mask, NULL);
+
         execv(buff, args);
+        _exit(127);
 
-        /* execv does not return unless there is a problem, spew the error */
-        ERR("Spartacus failed to start a rebellion: %m");
+        /* NB: We need to use execve here so that capabilities are inherited.
+         * Also, this should set Our (ecore_drm) effective uid to be the 
+         * owner of the launched process (setuid in this case) */
+        /* char *ev[3] = { strdup(renv), strdup(wenv), NULL }; */
+        /* execve(buff, args, ev); */
+     }
+   else
+     {
+        int status;
 
-        /* unsetenv("ECORE_DRM_LAUNCHER_SOCKET"); */
+        while (waitpid(pid, &status, WNOHANG) < 0)
+          if (errno != EINTR) break;
+
+        return EINA_TRUE;
      }
 
-   /* close(_ecore_drm_socket_fd[1]); */
-
    return EINA_FALSE;
+}
+
+static ssize_t 
+_ecore_drm_socket_send(int opcode, int fd, void *data, size_t bytes)
+{
+   Ecore_Drm_Message dmsg;
+   struct iovec iov[2];
+   struct msghdr msg;
+   struct cmsghdr *cmsg = NULL;
+   char buff[CMSG_SPACE(sizeof(int))];
+   ssize_t size;
+
+   /* Simplified version of sending messages. We don't need to send any 
+    * 'credentials' with this as it is just basically an IPC to send over 
+    * our request to the slave process */
+
+   /* NB: Hmm, don't think we need to set any socket options here */
+
+   IOVSET(iov + 0, &dmsg, sizeof(dmsg));
+   IOVSET(iov + 1, data, sizeof(data)); //bytes);
+
+   dmsg.opcode = opcode;
+   dmsg.size = bytes;
+
+   memset(buff, 0, CMSG_SPACE(sizeof(int)));
+
+   msg.msg_name = NULL;
+   msg.msg_namelen = 0;
+   msg.msg_iov = iov;
+   msg.msg_iovlen = 2;
+   msg.msg_flags = 0;
+   msg.msg_controllen = CMSG_LEN(sizeof(int));
+   msg.msg_control = buff;
+
+   cmsg = CMSG_FIRSTHDR(&msg);
+   cmsg->cmsg_level = SOL_SOCKET;
+   cmsg->cmsg_type = SCM_RIGHTS;
+   cmsg->cmsg_len = CMSG_LEN(sizeof(int));
+
+   *((int *)CMSG_DATA(cmsg)) = fd;
+
+   /* DBG("Dmsg Size: %d", dmsg.size); */
+   /* DBG("Message Size: %li", sizeof(msg)); */
+   /* DBG("Message Len: %d", (int)msg.msg_controllen); */
+   /* DBG("Control Size: %li", sizeof(cmsg)); */
+   /* DBG("Control Len: %d", (int)cmsg->cmsg_len); */
+
+   errno = 0;
+   size = sendmsg(_ecore_drm_sockets[1], &msg, MSG_NOSIGNAL);
+   if (errno != 0)
+     {
+        DBG("Error Sending Message: %m");
+     }
+
+   DBG("Sent %d bytes to Socket %d", (int)size, _ecore_drm_sockets[1]);
+
+   return size;
+}
+
+static int 
+_ecore_drm_socket_receive(int opcode, int fd, void **data, size_t bytes EINA_UNUSED)
+{
+   int ret = -1, rfd;
+   Ecore_Drm_Message dmsg;
+   struct cmsghdr *cmsg;
+   struct CRED_STRUCT *creds;
+   struct iovec iov[2];
+   struct msghdr msg;
+   char buff[BUFSIZ];
+   ssize_t size;
+
+#if defined(CRED_OPT)
+   const int on = 1;
+
+   if (setsockopt(fd, SOL_SOCKET, CRED_OPT, &on, sizeof(int)) < 0)
+     {
+        ERR("Failed to set socket option: %m");
+        return -1;
+     }
+#endif
+
+   IOVSET(iov + 0, &dmsg, sizeof(dmsg));
+   IOVSET(iov + 1, &buff, sizeof(buff));
+
+   msg.msg_iov = iov;
+   msg.msg_iovlen = 2;
+   msg.msg_name = NULL;
+   msg.msg_namelen = 0;
+
+   if ((!cmsgptr) && (!(cmsgptr = malloc(CONTROL_LEN)))) 
+     return -1;
+
+   msg.msg_control = cmsgptr;
+   msg.msg_controllen = CONTROL_LEN;
+
+   errno = 0;
+   size = recvmsg(fd, &msg, 0);
+   if (errno != 0)
+     {
+        ERR("Failed to receive message: %m");
+        return -1;
+     }
+
+   for (cmsg = CMSG_FIRSTHDR(&msg); cmsg != NULL; 
+        cmsg = CMSG_NXTHDR(&msg, cmsg))
+     {
+        if (cmsg->cmsg_level != SOL_SOCKET)
+          continue;
+
+        switch (cmsg->cmsg_type)
+          {
+           case SCM_RIGHTS:
+             rfd = *((int *)CMSG_DATA(cmsg));
+             break;
+           case SCM_CREDTYPE:
+             creds = (struct CRED_STRUCT *)CMSG_DATA(cmsg);
+             /* uid = creds->CR_UID; */
+             break;
+          }
+     }
+
+   DBG("Received FD: %d", rfd);
+
+   return size;
 }
 
 void 
 _ecore_drm_message_send(int opcode, void *data, size_t bytes)
 {
-   _ecore_drm_socket_send(opcode, _ecore_drm_socket_fd[1], data, bytes);
+   _ecore_drm_socket_send(opcode, _ecore_drm_sockets[1], data, bytes);
 }
 
 Eina_Bool 
@@ -234,7 +258,7 @@ _ecore_drm_message_receive(int opcode, void **data, size_t bytes)
 {
    int ret;
 
-   ret = _ecore_drm_socket_receive(opcode, _ecore_drm_socket_fd[0], 
+   ret = _ecore_drm_socket_receive(opcode, _ecore_drm_sockets[0], 
                                    data, bytes);
    if (ret < 0) return EINA_FALSE;
 
@@ -264,11 +288,16 @@ ecore_drm_init(void)
    /* try to init eina */
    if (!eina_init()) return --_ecore_drm_init_count;
 
+   if (!ecore_init()) 
+     {
+        eina_shutdown();
+        return --_ecore_drm_init_count;
+     }
+
    /* set logging level */
    eina_log_level_set(EINA_LOG_LEVEL_DBG);
 
    setvbuf(stdout, NULL, _IONBF, 0);
-   setvbuf(stderr, NULL, _IONBF, 0);
 
    /* optionally log output to a file */
 #ifdef LOG_TO_FILE
@@ -304,26 +333,17 @@ ecore_drm_init(void)
    if (!eina_log_domain_level_check(_ecore_drm_log_dom, EINA_LOG_LEVEL_DBG))
      eina_log_domain_level_set("ecore_drm", EINA_LOG_LEVEL_DBG);
 
-   /* try to create socketpair */
-   if (!_ecore_drm_socket_create())
-     {
-        ERR("Could not create socketpair");
-        goto sock_err;
-     }
+   /* try to create the socketpair */
+   if (!_ecore_drm_sockets_create())
+     goto sock_err;
 
-   /* create udev connection for later device handling */
-   if (!(udev = udev_new()))
-     {
-        ERR("Could not create udev handle: %m");
-        goto udev_err;
-     }
-
-   /* try to run SPARTACUS !! */
+   /* try to run Spartacus */
    if (!_ecore_drm_launcher_spawn())
-     {
-        ERR("Could not spawn Spartacus !!");
-        goto spawn_err;
-     }
+     goto spawn_err;
+
+   /* try to init udev */
+   if (!(udev = udev_new()))
+     goto udev_err;
 
    /* return init count */
    return _ecore_drm_init_count;
@@ -331,9 +351,10 @@ ecore_drm_init(void)
 spawn_err:
    if (udev) udev_unref(udev);
 udev_err:
-   close(_ecore_drm_socket_fd[0]);
-   close(_ecore_drm_socket_fd[1]);
+   close(_ecore_drm_sockets[0]);
+   close(_ecore_drm_sockets[1]);
 sock_err:
+   ecore_shutdown();
    eina_log_domain_unregister(_ecore_drm_log_dom);
    _ecore_drm_log_dom = -1;
 log_err:
@@ -365,8 +386,10 @@ ecore_drm_shutdown(void)
    if (udev) udev_unref(udev);
 
    /* close sockets */
-   close(_ecore_drm_socket_fd[0]);
-   close(_ecore_drm_socket_fd[1]);
+   close(_ecore_drm_sockets[0]);
+   close(_ecore_drm_sockets[1]);
+
+   ecore_shutdown();
 
    /* unregsiter log domain */
    eina_log_domain_unregister(_ecore_drm_log_dom);
