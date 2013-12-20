@@ -17,7 +17,6 @@ struct _Extn
       Ecore_Ipc_Server *server;
       Eina_List *clients;
       Eina_List *handlers;
-      Eina_Bool am_server : 1;
    } ipc;
    struct {
       const char *name;
@@ -2161,7 +2160,6 @@ _ecore_evas_extn_socket_listen(Ecore_Evas *ee, const char *svcname, int svcnum, 
           }
         
         if (extn->svc.sys) ipctype = ECORE_IPC_LOCAL_SYSTEM;
-        extn->ipc.am_server = EINA_TRUE;
         extn->ipc.server = ecore_ipc_server_add(ipctype,
                                                 (char *)extn->svc.name,
                                                 extn->svc.num, ee);
