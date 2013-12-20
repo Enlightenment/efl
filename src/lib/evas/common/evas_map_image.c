@@ -641,6 +641,19 @@ evas_common_map_rgba_prepare(RGBA_Image *src, RGBA_Image *dst,
 #undef SCALE_USING_MMX
 #include "evas_map_image_internal.c"
 
+# ifdef BUILD_NEON
+#  undef FUNC_NAME
+#  undef FUNC_NAME_DO
+#  define FUNC_NAME _evas_common_map_rgba_internal_neon
+#  define FUNC_NAME_DO evas_common_map_rgba_internal_neon_do
+#  undef SCALE_USING_NEON
+#  define SCALE_USING_NEON
+#  undef SCALE_USING_MMX
+#  include "evas_map_image_internal.c"
+#  undef SCALE_USING_NEON
+#endif
+
+
 #ifdef BUILD_MMX
 void evas_common_map_rgba_internal_mmx(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Map_Point *p, int smooth, int level)
 {
@@ -692,6 +705,34 @@ void evas_common_map_rgba_internal(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_C
    mul_col = dc->mul.use ? dc->mul.col : 0xffffffff;
 
    _evas_common_map_rgba_internal(src, dst,
+                                  clip_x, clip_y, clip_w, clip_h,
+                                  mul_col, dc->render_op,
+                                  p, smooth, level);
+}
+
+
+void evas_common_map_rgba_internal_neon(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Map_Point *p, int smooth, int level)
+{
+   int clip_x, clip_y, clip_w, clip_h;
+   DATA32 mul_col;
+
+   if (dc->clip.use)
+     {
+	clip_x = dc->clip.x;
+	clip_y = dc->clip.y;
+	clip_w = dc->clip.w;
+	clip_h = dc->clip.h;
+     }
+   else
+     {
+	clip_x = clip_y = 0;
+	clip_w = dst->cache_entry.w;
+	clip_h = dst->cache_entry.h;
+     }
+
+   mul_col = dc->mul.use ? dc->mul.col : 0xffffffff;
+
+   _evas_common_map_rgba_internal_neon(src, dst,
                                   clip_x, clip_y, clip_w, clip_h,
                                   mul_col, dc->render_op,
                                   p, smooth, level);
@@ -814,6 +855,11 @@ evas_common_map_rgba(RGBA_Image *src, RGBA_Image *dst,
      cb = evas_common_map_rgba_internal_mmx;
    else
 #endif
+#ifdef BUILD_NEON
+   if (evas_common_cpu_has_feature(CPU_FEATURE_NEON))
+     cb = evas_common_map_rgba_internal_neon;
+   else
+#endif
      cb = evas_common_map_rgba_internal;
 
    evas_common_map_rgba_cb(src, dst, dc, npoints, p, smooth, level, cb);
@@ -831,6 +877,14 @@ evas_common_map_rgba_draw(RGBA_Image *src, RGBA_Image *dst, int clip_x, int clip
                                         clip_x, clip_y, clip_w, clip_h,
                                         mul_col, render_op,
                                         p, smooth, level);
+   else
+#endif
+#ifdef BUILD_NEON
+   if (evas_common_cpu_has_feature(CPU_FEATURE_NEON))
+     _evas_common_map_rgba_internal_neon(src, dst,
+                                    clip_x, clip_y, clip_w, clip_h,
+                                    mul_col, render_op,
+                                    p, smooth, level);
    else
 #endif
      _evas_common_map_rgba_internal(src, dst,
@@ -871,6 +925,12 @@ evas_common_map_rgba_do(const Eina_Rectangle *clip,
                                                &spans->spans[0], smooth, level);
         else
 #endif
+#ifdef BUILD_NEON
+        if (evas_common_cpu_has_feature(CPU_FEATURE_NEON))
+          evas_common_map_rgba_internal_neon_do(src, dst, dc,
+                                           &spans->spans[0], smooth, level);
+        else
+#endif
           evas_common_map_rgba_internal_do(src, dst, dc,
                                            &spans->spans[0], smooth, level);
         return;
@@ -886,6 +946,12 @@ evas_common_map_rgba_do(const Eina_Rectangle *clip,
 #ifdef BUILD_MMX
         if (mmx)
           evas_common_map_rgba_internal_mmx_do(src, dst, dc,
+                                               &spans->spans[i], smooth, level);
+        else
+#endif
+#ifdef BUILD_NEON
+        if (evas_common_cpu_has_feature(CPU_FEATURE_NEON))
+          evas_common_map_rgba_internal_neon_do(src, dst, dc,
                                                &spans->spans[i], smooth, level);
         else
 #endif
