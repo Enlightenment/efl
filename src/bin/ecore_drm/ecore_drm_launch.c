@@ -21,7 +21,6 @@
 static struct cmsghdr *cmsgptr = NULL;
 static int _read_fd = -1;
 static int _write_fd = -1;
-static int _epoll_fd = -1;
 
 #if defined(SCM_CREDS) // Bsd
 # define CRED_STRUCT cmsgcred
@@ -217,7 +216,7 @@ int
 main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    struct epoll_event ev, events[1];
-   int ret, i;
+   int ret, i, _epoll_fd = -1;
 
    fprintf(stderr, "Spartacus Is Alive\n");
 
