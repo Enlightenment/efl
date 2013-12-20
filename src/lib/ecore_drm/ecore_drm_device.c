@@ -256,14 +256,13 @@ EAPI Eina_Bool
 ecore_drm_device_master_get(Ecore_Drm_Device *dev)
 {
    drm_magic_t mag;
-   int gret = 0, aret = 0;
 
    /* check for valid device */
    if ((!dev) || (dev->fd < 0)) return EINA_FALSE;
 
    /* get if we are master or not */
    if ((drmGetMagic(dev->fd, &mag) == 0) && 
-       (drmAuthMagic(dev->fd, msg) == 0))
+       (drmAuthMagic(dev->fd, mag) == 0))
      return EINA_TRUE;
 
    return EINA_FALSE;
