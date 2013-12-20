@@ -18,10 +18,12 @@ _ecore_drm_tty_cb_signal(void *data, int type EINA_UNUSED, void *event)
    if (ev->number == 1)
      {
         DBG("Release VT");
+        /* ecore_drm_device_master_drop(dev); */
      }
    else if (ev->number == 2)
      {
         DBG("Acquire VT");
+        /* ecore_drm_device_master_set(dev); */
      }
 
    return EINA_TRUE;
@@ -98,9 +100,9 @@ ecore_drm_tty_open(Ecore_Drm_Device *dev, const char *name)
    dev->tty.name = eina_stringshare_add(tty);
 
    /* setup handler for signals */
-   dev->tty.event_hdlr = 
-     ecore_event_handler_add(ECORE_EVENT_SIGNAL_USER, 
-                             _ecore_drm_tty_cb_signal, dev);
+   /* dev->tty.event_hdlr =  */
+   /*   ecore_event_handler_add(ECORE_EVENT_SIGNAL_USER,  */
+   /*                           _ecore_drm_tty_cb_signal, dev); */
 
    /* set current tty into env */
    setenv("ECORE_DRM_TTY", tty, 1);
@@ -136,8 +138,8 @@ ecore_drm_tty_close(Ecore_Drm_Device *dev)
    dev->tty.fd = -1;
 
    /* destroy the event handler */
-   if (dev->tty.event_hdlr) ecore_event_handler_del(dev->tty.event_hdlr);
-   dev->tty.event_hdlr = NULL;
+   /* if (dev->tty.event_hdlr) ecore_event_handler_del(dev->tty.event_hdlr); */
+   /* dev->tty.event_hdlr = NULL; */
 
    /* clear the tty name */
    if (dev->tty.name) eina_stringshare_del(dev->tty.name);
