@@ -88,6 +88,8 @@
  * @author Abhinandan Aryadipta <a.aryadipta@@samsung.com>
  * @author Sanghyeon Lee <sh10233.lee@@samsung.com>
  * @author Anil Kumar Nahak <ak.nahak@@samsung.com>
+ * @author Michal Jagiello <m.jagiello@@samsung.com>
+
  *
  * Please contact <enlightenment-devel@lists.sourceforge.net> to get in
  * contact with the developers and maintainers.
