@@ -2601,7 +2601,7 @@ EFL_INTERNAL_DEPEND_PKG([ECORE_AVAHI], [ecore])
 EFL_INTERNAL_DEPEND_PKG([ECORE_AVAHI], [eina])
 EFL_INTERNAL_DEPEND_PKG([ECORE_AVAHI], [eo])
 
-EFL_OPTIONAL_DEPEND_PKG([ECORE_AVAHI], [${want_avahi}], [AVAHI], [avahi-client])
+EFL_OPTIONAL_DEPEND_PKG([ECORE_AVAHI], [${want_avahi}], [AVAHI], [avahi-client], [have_avahi=yes], [have_avahi=no])
 
 EFL_ADD_FEATURE([ECORE_AVAHI], [avahi-client], [${have_avahi}])
 
