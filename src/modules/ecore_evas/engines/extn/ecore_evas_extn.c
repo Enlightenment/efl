@@ -1874,7 +1874,7 @@ _ecore_evas_extn_socket_alpha_set(Ecore_Evas *ee, int alpha)
                   ecore_ipc_client_send(client, MAJOR, OP_SHM_REF1,
                                         ee->w, ee->h, i,
                                         lock, strlen(lock) + 1);
-                  ecore_ipc_client_send(client, MAJOR, OP_SHM_REF1,
+                  ecore_ipc_client_send(client, MAJOR, OP_SHM_REF2,
                                         ee->alpha, extn->svc.sys, i,
                                         NULL, 0);
                }
