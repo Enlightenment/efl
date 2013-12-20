@@ -24,7 +24,6 @@ struct _Extn
       Eina_Bool   sys : 1;
    } svc;
    struct {
-      int         w, h;
       Eina_List  *updates;
    } file;
    struct {
