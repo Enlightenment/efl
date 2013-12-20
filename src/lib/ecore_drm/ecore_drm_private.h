@@ -14,16 +14,17 @@
 # include <signal.h>
 # include <sys/mman.h>
 # include <sys/socket.h>
+/* # include <sys/un.h> */
 
 # include <libudev.h>
 
-/* # include <xf86drm.h> */
-/* # include <xf86drmMode.h> */
-/* # include <drm_fourcc.h> */
+# include <xf86drm.h>
+# include <xf86drmMode.h>
+# include <drm_fourcc.h>
 
-/* # ifdef BUILD_ECORE_DRM_HW_ACCEL */
-/* #  include <gbm.h> */
-/* # endif */
+# ifdef BUILD_ECORE_DRM_HW_ACCEL
+#  include <gbm.h>
+# endif
 
 # include <Ecore_Drm.h>
 
