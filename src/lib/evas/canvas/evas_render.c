@@ -10,15 +10,12 @@
 #include <sys/time.h>
 #endif
 
-Eina_Bool
-_evas_render2_begin(Eo *eo_e, Eina_Bool make_updates,
-                    Eina_Bool do_draw, Eina_Bool do_async);
-void
-_evas_render2_idle_flush(Eo *eo_e);
-void
-_evas_render2_dump(Eo *eo_e);
-void
-_evas_render2_wait(Eo *eo_e);
+// symbols of funcs from evas_render2 which is a next-gen replacement of
+// the current evas render code. see evas_render2.c for more.
+Eina_Bool _evas_render2_begin(Eo *eo_e, Eina_Bool make_updates, Eina_Bool do_draw, Eina_Bool do_async);
+void _evas_render2_idle_flush(Eo *eo_e);
+void _evas_render2_dump(Eo *eo_e);
+void _evas_render2_wait(Eo *eo_e);
 
 
 /* debug rendering
