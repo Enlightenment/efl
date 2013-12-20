@@ -5,6 +5,8 @@ EFL 1.8.3
 Changes since 1.8.2:
 --------------------
 
+    * evas: no loader should ever close an Eina_File anymore. (T674 and T668)
+    * evas - tiler - fix missing clip of first rect to outbuf size
     * Evas textblock: Fixed range_deletion bug with multiple visible formats.
     * Evas test textblock: Added a test for a broken range_delete case.
     * emotion: revert to fast sed to use the right eina log domain.
