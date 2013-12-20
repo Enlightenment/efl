@@ -2433,7 +2433,7 @@ EAPI void            evas_map_point_color_set(Evas_Map *m, int idx, int r, int g
  * @param r pointer to red return
  * @param g pointer to green return
  * @param b pointer to blue return
- * @param a pointer to alpha return (0 - 255)
+ * @param a pointer to alpha return
  *
  * @see evas_map_point_coord_set()
  * @see evas_object_map_set()
