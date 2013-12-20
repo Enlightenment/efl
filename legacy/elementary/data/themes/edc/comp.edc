@@ -289,6 +289,10 @@ group { name: "e/comp/frame/default";
             rel1.relative: 0.0  0.0;
             rel2.relative: 1.0  1.0;
          }
+         description { state: "iconic";
+            rel1.relative: 0.0 1.0;
+            rel2.relative: 0.0 1.0;
+         }
       }
       part { name: "focus-clipper";
          type: RECT;
@@ -312,6 +316,10 @@ group { name: "e/comp/frame/default";
             rel2.to: "shower";
          }
       }
+   }
+   script {
+      public iconifying;
+      public uniconifying;
    }
    programs {
       program {
@@ -394,6 +402,48 @@ group { name: "e/comp/frame/default";
          action: STATE_SET "default" 0.0;
          transition: SINUSOIDAL 0.6 CURRENT;
          target: "glow";
+      }
+      program { name: "iconify_defer";
+         action: SIGNAL_EMIT "e,action,iconify,done" "e";
+      }
+      program { name: "uniconify_defer";
+         action: SIGNAL_EMIT "e,action,uniconify,done" "e";
+      }
+      program { name: "iconify";
+         action: STATE_SET "iconic" 0.0;
+         transition: DECELERATE 0.4 CURRENT;
+         target: "shower";
+         after: "iconify_defer";
+      }
+      program { name: "uniconify";
+         action: STATE_SET "visible" 0.0;
+         transition: DECELERATE 0.4 CURRENT;
+         target: "shower";
+         after: "uniconify_defer";
+      }
+      program {
+         signal: "e,action,uniconify"; source: "e";
+         script {
+            if (iconifying==1) {
+               stop_program(get_program_id("iconify"));
+               iconifying=0;
+               run_program(get_program_id("iconify_defer"));
+            }
+            uniconifying=1;
+            run_program(get_program_id("uniconify"));
+         }
+      }
+      program {
+         signal: "e,action,iconify"; source: "e";
+         script {
+            if (uniconifying==1) {
+               stop_program(get_program_id("uniconify"));
+               uniconifying=0;
+               run_program(get_program_id("uniconify_defer"));
+            }
+            iconifying=1;
+            run_program(get_program_id("iconify"));
+         }
       }
    }
 }
@@ -588,6 +638,14 @@ group { name: "e/comp/frame/none";
       program {
          signal: "e,state,hidden"; source: "e";
          action: SIGNAL_EMIT "e,action,hide,done" "e";
+      }
+      program {
+         signal: "e,action,iconify"; source: "e";
+         action: SIGNAL_EMIT "e,action,iconify,done" "e";
+      }
+      program {
+         signal: "e,action,uniconify"; source: "e";
+         action: SIGNAL_EMIT "e,action,uniconify,done" "e";
       }
    }
 }
