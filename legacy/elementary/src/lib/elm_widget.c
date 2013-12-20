@@ -953,6 +953,13 @@ _elm_widget_on_show_region_hook_set(Eo *obj EINA_UNUSED, void *_pd, va_list *lis
    sd->on_show_region_data = data;
 }
 
+/*
+ * @internal
+ *
+ * Add myself as a sub object of parent object
+ *
+ * @see elm_widget_sub_object_add()
+ */
 EAPI Eina_Bool
 elm_widget_sub_object_parent_add(Evas_Object *sobj)
 {
@@ -965,6 +972,19 @@ elm_widget_sub_object_parent_add(Evas_Object *sobj)
    return ret;
 }
 
+/*
+ * @internal
+ *
+ * Add sobj to obj's sub object.
+ *
+ * What does elementary sub object mean? This is unique in elementary, it
+ * handles overall elementary policies between parent and sub objects.
+ *   focus, access, deletion, theme, scale, mirror, scrollable child get,
+ *   translate, name find, display mode set, orientation set, tree dump
+ *   AUTOMATICALLY.
+ *
+ * @see elm_widget_sub_object_parent_add()
+ */
 EAPI Eina_Bool
 elm_widget_sub_object_add(Evas_Object *obj,
                           Evas_Object *sobj)
