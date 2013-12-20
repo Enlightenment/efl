@@ -117,7 +117,6 @@ _edje_entry_focus_in_cb(void *data, Evas_Object *o, const char *emission EINA_UN
 
    if (evas_object_focus_get(ed->obj))
      {
-        ecore_imf_context_reset(en->imf_context);
         ecore_imf_context_focus_in(en->imf_context);
         _edje_entry_imf_cursor_info_set(en);
      }
@@ -164,7 +163,6 @@ _edje_focus_in_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
 
    if (!en->imf_context) return;
 
-   ecore_imf_context_reset(en->imf_context);
    ecore_imf_context_focus_in(en->imf_context);
    _edje_entry_imf_cursor_info_set(en);
 #endif
