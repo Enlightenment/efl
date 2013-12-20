@@ -884,7 +884,11 @@ static const Ecore_Evas_Engine_Func _ecore_extn_plug_engine_func =
    NULL, // screen_geometry_get
    NULL, // screen_dpi_get
    _ecore_evas_extn_plug_msg_parent_send,
-   NULL   // msg_send
+   NULL,   // msg_send
+
+   /* 1.8 abstractions */
+   NULL, // pointer_xy_get
+   NULL // pointer_warp
 };
 
 static Eina_Bool
@@ -2000,7 +2004,11 @@ static const Ecore_Evas_Engine_Func _ecore_extn_socket_engine_func =
    NULL,  // screen_geometry_get
    NULL,  // screen_dpi_get
    NULL,
-   _ecore_evas_extn_socket_msg_send
+   _ecore_evas_extn_socket_msg_send,
+
+   /* 1.8 abstractions */
+   NULL, // pointer_xy_get
+   NULL // pointer_warp
 };
 
 EAPI Ecore_Evas *
