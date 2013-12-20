@@ -68,6 +68,7 @@ collections {
 // desktop in general
 #include "edc/wallpaper.edc"
 #include "edc/comp.edc"
+#include "edc/comp_compat.edc"
 #include "edc/comp_effects.edc"
 #include "edc/background.edc"
 #include "edc/shelf.edc"

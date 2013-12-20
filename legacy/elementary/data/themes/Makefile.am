@@ -39,6 +39,7 @@ edc/clock.edc \
 edc/colors.edc \
 edc/colorwell.edc \
 edc/comp.edc \
+edc/comp_compat.edc \
 edc/comp_effects.edc \
 edc/conf.edc \
 edc/connman.edc \

@@ -1,247 +1,5 @@
-group { name: "e/comp/preview";
-   parts {
-      part { name: "e.swallow.preview"; type: SWALLOW; mouse_events: 0;
-         description { state: "default" 0.0;
-         }
-      }
-      part { name: "e.text.label"; type: TEXT; mouse_events: 0;
-         scale: 1;
-         effect: SHADOW BOTTOM;
-         description { state: "default" 0.0;
-            color: 255 255 255 255;
-            color3: 0 0 0 128;
-            text { font: FNBD; size: 10;
-               text_class: "fileman_icon";
-               align: 0.5 0.5;
-               min: 1 1;
-            }
-            fixed: 0 1;
-         }
-      }
-   }
-}
-
-group { name: "e/comp/screen/base/default";
-   alias: "e/comp/screen/base/noeffects";
-   parts {
-      part { name: "clip"; type: RECT; mouse_events: 0;
-         description { state: "default" 0.0;
-         }
-      }
-      part { name: "e.swallow.background"; type: SWALLOW; mouse_events: 0;
-         clip_to: "clip";
-         description { state: "default" 0.0;
-         }
-      }
-   }
-}
-
-group { name: "e/comp/screen/overlay/default";
-   images.image: "screen_circular_shadow.png" COMP;
-   parts {
-      part { name: "clip"; type: RECT; mouse_events: 0;
-         description { state: "default" 0.0;
-         }
-      }
-      part { name: "shadow"; mouse_events: 0;
-         clip_to: "clip";
-         description { state: "default" 0.0;
-            rel1.relative: -1.0 -1.0;
-            rel2.relative: 2.0 2.0;
-            image.normal: "screen_circular_shadow.png";
-            fill.smooth: 0;
-            color: 255 255 255 0;
-            visible: 0;
-         }
-         description { state: "visible" 0.0;
-            inherit: "default" 0.0;
-            rel1.relative: 0.0 0.0;
-            rel2.relative: 1.0 1.0;
-            color: 255 255 255 255;
-            visible: 1;
-         }
-      }
-      part { name: "blanker"; type: RECT; mouse_events: 0;
-         description { state: "default" 0.0;
-            color: 0 0 0 0;
-            visible: 0;
-         }
-         description { state: "visible" 0.0;
-            inherit: "default" 0.0;
-            color: 0 0 0 255;
-            visible: 1;
-         }
-      }
-      part { name: "suspender"; type: RECT; mouse_events: 0;
-         description { state: "default" 0.0;
-            color: 0 0 0 0;
-            visible: 0;
-         }
-         description { state: "visible" 0.0;
-            inherit: "default" 0.0;
-            color: 0 0 0 255;
-            visible: 1;
-         }
-      }
-   }
-   programs {
-         program {
-            name: "screensaver_on";
-            signal: "e,state,screensaver,on"; source: "e";
-            action: STATE_SET "visible" 0.0;
-            transition: ACCELERATE 3.0 CURRENT;
-            target: "blanker";
-         }
-         program {
-            name: "screensaver_on2";
-            signal: "e,state,screensaver,on"; source: "e";
-            action: STATE_SET "visible" 0.0;
-            transition: DECELERATE 1.5 CURRENT;
-            target: "shadow";
-         }
-         program {
-            name: "screensaver_off";
-            signal: "e,state,screensaver,off"; source: "e";
-            action: STATE_SET "default" 0.0;
-            transition: ACCELERATE 0.5 CURRENT;
-            target: "blanker";
-         }
-         program {
-            name: "screensaver_off2";
-            signal: "e,state,screensaver,off"; source: "e";
-            action: STATE_SET "default" 0.0;
-            transition: ACCELERATE 0.25 CURRENT;
-            target: "shadow";
-         }
-         program {
-            name: "suspend";
-            signal: "e,state,sys,suspend"; source: "e";
-            action: STATE_SET "visible" 0.0;
-            transition: ACCELERATE 0.5 CURRENT;
-            target: "suspender";
-            after: "suspend_done";
-         }
-         program { name: "suspend_done";
-            action: SIGNAL_EMIT "e,state,sys,suspend,done" "e";
-         }
-         program {
-            name: "hibernate";
-            signal: "e,state,sys,hibernate"; source: "e";
-            action: STATE_SET "visible" 0.0;
-            transition: ACCELERATE 0.5 CURRENT;
-            target: "suspender";
-            after: "hibernate_done";
-         }
-         program { name: "hibernate_done";
-            action: SIGNAL_EMIT "e,state,sys,hibernate,done" "e";
-         }
-         program {
-            name: "resume";
-            signal: "e,state,sys,resume"; source: "e";
-            action: STATE_SET "default" 0.0;
-            transition: DECELERATE 1.0 CURRENT;
-            target: "suspender";
-         }
-         program {
-            name: "reboot";
-            signal: "e,state,sys,reboot"; source: "e";
-            action: STATE_SET "visible" 0.0;
-            transition: ACCELERATE 0.5 CURRENT;
-            target: "suspender";
-            after: "reboot_done";
-         }
-         program { name: "reboot_done";
-            action: SIGNAL_EMIT "e,state,sys,reboot,done" "e";
-         }
-         program {
-            name: "halt";
-            signal: "e,state,sys,halt"; source: "e";
-            action: STATE_SET "visible" 0.0;
-            transition: ACCELERATE 0.5 CURRENT;
-            target: "suspender";
-            after: "halt_done";
-         }
-         program { name: "halt_done";
-            action: SIGNAL_EMIT "e,state,sys,halt,done" "e";
-         }
-         program {
-            name: "logout";
-            signal: "e,state,sys,logout"; source: "e";
-            action: STATE_SET "visible" 0.0;
-            transition: ACCELERATE 0.5 CURRENT;
-            target: "suspender";
-            after: "logout_done";
-         }
-         program { name: "logout_done";
-            action: SIGNAL_EMIT "e,state,sys,logout,done" "e";
-         }
-   }
-}
-
-
-group { name: "e/comp/screen/overlay/noeffects";
-   inherit: "e/comp/screen/overlay/default";
-   programs {
-         program {
-            name: "screensaver_on";
-            transition: ACCELERATE 0 CURRENT;
-         }
-         program {
-            name: "screensaver_on2";
-            transition: DECELERATE 0 CURRENT;
-         }
-         program {
-            name: "screensaver_off";
-            transition: ACCELERATE 0 CURRENT;
-         }
-         program {
-            name: "screensaver_off2";
-            transition: ACCELERATE 0 CURRENT;
-         }
-         program {
-            name: "suspend";
-            signal: "e,state,sys,suspend"; source: "e";
-            action: SIGNAL_EMIT "e,state,sys,suspend,done" "e";
-            after: "action_done";
-         }
-         program {
-            name: "action_done";
-            action: STATE_SET "visible" 0.0;
-            transition: ACCELERATE 0 CURRENT;
-            target: "suspender";
-         }
-         program {
-            name: "hibernate";
-            signal: "e,state,sys,hibernate"; source: "e";
-            action: SIGNAL_EMIT "e,state,sys,hibernate,done" "e";
-            after: "action_done";
-         }
-         program {
-            name: "resume";
-            transition: DECELERATE 1 CURRENT;
-         }
-         program {
-            name: "reboot";
-            signal: "e,state,sys,reboot"; source: "e";
-            action: SIGNAL_EMIT "e,state,sys,reboot,done" "e";
-            after: "action_done";
-         }
-         program {
-            name: "halt";
-            signal: "e,state,sys,halt"; source: "e";
-            action: SIGNAL_EMIT "e,state,sys,halt,done" "e";
-            after: "action_done";
-         }
-         program {
-            name: "logout";
-            signal: "e,state,sys,logout"; source: "e";
-            action: SIGNAL_EMIT "e,state,sys,logout,done" "e";
-            after: "action_done";
-         }
-   }
-}
-
-group { name: "e/comp/frame/default";
+group { name: "e/comp/border/default";
+   images.image: "win_shadow.png" COMP;
    images.image: "win_glow.png" COMP;
    parts {
       part { name: "clipper"; type: RECT;
@@ -257,6 +15,23 @@ group { name: "e/comp/frame/default";
             inherit: "default" 0.0;
             color: 255 255 255 255;
             visible: 1;
+         }
+      }
+      part { name: "shadow"; mouse_events: 0;
+         clip_to: "clipper";
+         description { state: "default" 0.0;
+            image.normal: "win_shadow.png";
+            image.border: 14 14 14 14;
+            image.middle: 0;
+            rel1.to: "e.swallow.content";
+            rel1.offset: -7  -3;
+            rel2.to: "e.swallow.content";
+            rel2.offset: 6 11;
+            fill.smooth: 0;
+         }
+         description { state: "hidden" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
          }
       }
       part { name: "glow"; mouse_events: 0;
@@ -290,9 +65,19 @@ group { name: "e/comp/frame/default";
             rel2.relative: 1.0  1.0;
          }
       }
-      part { name: "focus-clipper";
+      part { name: "trans-clipper";
          type: RECT;
          clip_to: "clipper";
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            color_class: "comp_alpha";
+            rel1.to: "clipper";
+            rel2.to: "clipper";
+         }
+      }
+      part { name: "focus-clipper";
+         type: RECT;
+         clip_to: "trans-clipper";
          mouse_events: 0;
          description { state: "default" 0.0;
             color_class: "comp_focus-out_color";
@@ -315,8 +100,18 @@ group { name: "e/comp/frame/default";
    }
    programs {
       program {
+         signal: "e,state,shadow,on"; source: "e";
+         action: STATE_SET "default" 0.0;
+         target: "shadow";
+      }
+      program {
+         signal: "e,state,shadow,off"; source: "e";
+         action: STATE_SET "hidden" 0.0;
+         target: "shadow";
+      }
+      program {
          name: "visible_on";
-         signal: "e,state,visible"; source: "e";
+         signal: "e,state,visible,on"; source: "e";
          action: STATE_SET "visible" 0.0;
          transition: DECELERATE 0.15;
          target: "clipper";
@@ -327,18 +122,8 @@ group { name: "e/comp/frame/default";
          action: SIGNAL_EMIT "e,action,show,done" "e";
       }
       program {
-         signal: "e,state,visible"; source: "e";
-         action: ACTION_STOP;
-         target: "visible_off";
-      }
-      program {
-         signal: "e,state,hidden"; source: "e";
-         action: ACTION_STOP;
-         target: "visible_on";
-      }
-      program {
          name: "visible_off";
-         signal: "e,state,hidden"; source: "e";
+         signal: "e,state,visible,off"; source: "e";
          action: STATE_SET "default" 0.0;
          transition: DECELERATE 0.30;
          target: "clipper";
@@ -350,7 +135,7 @@ group { name: "e/comp/frame/default";
       }
       program {
          name: "focus_on";
-         signal: "e,state,focused"; source: "e";
+         signal: "e,state,focus,on"; source: "e";
          action: STATE_SET "focused" 0.0;
          transition: SINUSOIDAL 0.1;
          target: "glow";
@@ -364,7 +149,7 @@ group { name: "e/comp/frame/default";
       }
       program {
          name: "focus_off";
-         signal: "e,state,unfocused"; source: "e";
+         signal: "e,state,focus,off"; source: "e";
          action: STATE_SET "default" 0.0;
          transition: SINUSOIDAL 0.1;
          target: "focus-clipper";
@@ -377,7 +162,7 @@ group { name: "e/comp/frame/default";
          target: "glow";
       }
       program { name: "urgent1";
-         signal: "e,state,urgent"; source: "e";
+         signal: "e,state,urgent,on"; source: "e";
          action: STATE_SET "focused" 0.0;
          transition: SINUSOIDAL 0.3;
          target: "glow";
@@ -390,7 +175,7 @@ group { name: "e/comp/frame/default";
          after: "urgent1";
       }
       program {
-         signal: "e,state,not_urgent"; source: "e";
+         signal: "e,state,urgent,off"; source: "e";
          action: STATE_SET "default" 0.0;
          transition: SINUSOIDAL 0.6 CURRENT;
          target: "glow";
@@ -398,8 +183,8 @@ group { name: "e/comp/frame/default";
    }
 }
 
-group { name: "e/comp/frame/rotate";
-   inherit: "e/comp/frame/default";
+group { name: "e/comp/border/rotate";
+   inherit: "e/comp/border/default";
    parts {
       part { name: "e.swallow.content";
          description { state: "default";
@@ -425,13 +210,13 @@ group { name: "e/comp/frame/rotate";
    }
    programs {
       program { name: "focus3";
-         signal: "e,state,focused"; source: "e";
+         signal: "e,state,focus,on"; source: "e";
          action: STATE_SET "default" 0.0;
          target: "e.swallow.content";
          transition: LINEAR 0.3;
       }
       program { name: "focus_off3";
-         signal: "e,state,unfocused"; source: "e";
+         signal: "e,state,focus,off"; source: "e";
          action: STATE_SET "focus-out" 0.0;
          target: "e.swallow.content";
          transition: LINEAR 0.3;
@@ -439,8 +224,8 @@ group { name: "e/comp/frame/rotate";
    }
 }
 
-group { name: "e/comp/frame/rotate/fast";
-   inherit: "e/comp/frame/rotate";
+group { name: "e/comp/border/rotate/fast";
+   inherit: "e/comp/border/rotate";
    programs {
       program { name: "focus3";
          transition: LINEAR 0;
@@ -451,8 +236,8 @@ group { name: "e/comp/frame/rotate/fast";
    }
 }
 
-group { name: "e/comp/frame/flip";
-   inherit: "e/comp/frame/rotate";
+group { name: "e/comp/border/flip";
+   inherit: "e/comp/border/rotate";
    parts {
       part { name: "e.swallow.content";
          description { state: "default";
@@ -476,8 +261,8 @@ group { name: "e/comp/frame/flip";
    }
 }
 
-group { name: "e/comp/frame/flip/fast";
-   inherit: "e/comp/frame/flip";
+group { name: "e/comp/border/flip/fast";
+   inherit: "e/comp/border/flip";
    programs {
       program { name: "focus3";
          transition: LINEAR 0;
@@ -488,49 +273,19 @@ group { name: "e/comp/frame/flip/fast";
    }
 }
 
-group { name: "e/comp/frame/popup";
-   inherit: "e/comp/frame/default";
-   images.image: "win_shadow.png" COMP;
+group { name: "e/comp/border/popup";
+   inherit: "e/comp/border/default";
    parts {
       part { name: "focus-clipper";
          description { state: "default";
             color_class: "";
          }
       }
-      part { name: "shadow"; mouse_events: 0; insert_before: "glow";
-         clip_to: "clipper";
-         description { state: "default" 0.0;
-            image.normal: "win_shadow.png";
-            image.border: 14 14 14 14;
-            image.middle: 0;
-            rel1.to: "e.swallow.content";
-            rel1.offset: -7  -3;
-            rel2.to: "e.swallow.content";
-            rel2.offset: 6 11;
-            fill.smooth: 0;
-         }
-         description { state: "hidden" 0.0;
-            inherit: "default" 0.0;
-            visible: 0;
-         }
-      }
-   }
-   programs {
-       program {
-         signal: "e,state,shadow,on"; source: "e";
-         action: STATE_SET "default" 0.0;
-         target: "shadow";
-      }
-      program {
-         signal: "e,state,shadow,off"; source: "e";
-         action: STATE_SET "hidden" 0.0;
-         target: "shadow";
-      }
    }
 }
 
-group { name: "e/comp/frame/default/fast";
-   inherit: "e/comp/frame/default";
+group { name: "e/comp/border/default/fast";
+   inherit: "e/comp/border/default";
    programs {
       program {
          name: "visible_on";
@@ -561,9 +316,8 @@ group { name: "e/comp/frame/default/fast";
    }
 }
 
-group { name: "e/comp/frame/popup/fast";
-   inherit: "e/comp/frame/default/fast";
-   images.image: "win_shadow.png" COMP;
+group { name: "e/comp/border/popup/fast";
+   inherit: "e/comp/border/default/fast";
    parts {
       part { name: "focus-clipper";
          description { state: "default";
@@ -573,7 +327,7 @@ group { name: "e/comp/frame/popup/fast";
    }
 }
 
-group { name: "e/comp/frame/none";
+group { name: "e/comp/border/none";
    parts {
       part { name: "e.swallow.content"; type: SWALLOW;
          description { state: "default" 0.0;
@@ -582,18 +336,18 @@ group { name: "e/comp/frame/none";
    }
    programs {
       program {
-         signal: "e,state,visible"; source: "e";
+         signal: "e,state,visible,on"; source: "e";
          action: SIGNAL_EMIT "e,action,show,done" "e";
       }
       program {
-         signal: "e,state,hidden"; source: "e";
+         signal: "e,state,visible,off"; source: "e";
          action: SIGNAL_EMIT "e,action,hide,done" "e";
       }
    }
 }
 
-group { name: "e/comp/frame/still";
-   inherit: "e/comp/frame/default";
+group { name: "e/comp/border/still";
+   inherit: "e/comp/border/default";
    parts {
       part { name: "shower";
          description { state: "default" 0.0;
@@ -604,8 +358,8 @@ group { name: "e/comp/frame/still";
    }
 }
 
-group { name: "e/comp/frame/still/fast";
-   inherit: "e/comp/frame/default/fast";
+group { name: "e/comp/border/still/fast";
+   inherit: "e/comp/border/default/fast";
    parts {
       part { name: "shower";
          description { state: "default" 0.0;
@@ -616,8 +370,8 @@ group { name: "e/comp/frame/still/fast";
    }
 }
 
-group { name: "e/comp/frame/menu";
-   inherit: "e/comp/frame/popup";
+group { name: "e/comp/border/menu";
+   inherit: "e/comp/border/popup";
    parts {
       part { name: "shower";
          description { state: "default" 0.0;
@@ -628,8 +382,8 @@ group { name: "e/comp/frame/menu";
    }
 }
 
-group { name: "e/comp/frame/menu/fast";
-   inherit: "e/comp/frame/popup/fast";
+group { name: "e/comp/border/menu/fast";
+   inherit: "e/comp/border/popup/fast";
    parts {
       part { name: "shower";
          description { state: "default" 0.0;
@@ -640,8 +394,8 @@ group { name: "e/comp/frame/menu/fast";
    }
 }
 
-group { name: "e/comp/frame/everything";
-   inherit: "e/comp/frame/popup";
+group { name: "e/comp/border/everything";
+   inherit: "e/comp/border/popup";
    parts {
       part { name: "shower";
          description { state: "default" 0.0;
@@ -652,8 +406,8 @@ group { name: "e/comp/frame/everything";
    }
 }
 
-group { name: "e/comp/frame/everything/fast";
-   inherit: "e/comp/frame/popup/fast";
+group { name: "e/comp/border/everything/fast";
+   inherit: "e/comp/border/popup/fast";
    parts {
       part { name: "shower";
          description { state: "default" 0.0;
@@ -664,7 +418,7 @@ group { name: "e/comp/frame/everything/fast";
    }
 }
 
-group { name: "e/comp/frame/fullscreen";
+group { name: "e/comp/border/fullscreen";
    images.image: "screen_circular_shadow.png" COMP;
    data.item: "screen.bg" "fullscreen.bg";
    parts {
@@ -768,7 +522,7 @@ group { name: "e/comp/frame/fullscreen";
    programs {
       program {
          name: "visible_on";
-         signal: "e,state,visible"; source: "e";
+         signal: "e,state,visible,on"; source: "e";
          action: STATE_SET "visible" 0.0;
          transition: DECELERATE 0.25;
          target: "scr_shadow";
@@ -776,7 +530,7 @@ group { name: "e/comp/frame/fullscreen";
       }
       program {
          name: "visible_on2";
-         signal: "e,state,visible"; source: "e";
+         signal: "e,state,visible,on"; source: "e";
          action: STATE_SET "visible1" 0.0;
          transition: DECELERATE 0.05;
          target: "clipper";
@@ -796,20 +550,8 @@ group { name: "e/comp/frame/fullscreen";
          action: SIGNAL_EMIT "e,action,show,done" "e";
       }
       program {
-         signal: "e,state,visible"; source: "e";
-         action: ACTION_STOP;
-         target: "visible_off";
-         target: "visible_off2";
-      }
-      program {
-         signal: "e,state,hidden"; source: "e";
-         action: ACTION_STOP;
-         target: "visible_on";
-         target: "visible_on2";
-      }
-      program {
          name: "visible_off";
-         signal: "e,state,hidden"; source: "e";
+         signal: "e,state,visible,off"; source: "e";
          action: STATE_SET "default" 0.0;
          transition: DECELERATE 0.25;
          target: "scr_shadow";
@@ -817,7 +559,7 @@ group { name: "e/comp/frame/fullscreen";
       }
       program {
          name: "visible_off2";
-         signal: "e,state,hidden"; source: "e";
+         signal: "e,state,visible,off"; source: "e";
          action: STATE_SET "visible1" 0.0;
          transition: DECELERATE 0.2;
          target: "clipper";
@@ -839,8 +581,8 @@ group { name: "e/comp/frame/fullscreen";
    }
 }
 
-group { name: "e/comp/frame/fullscreen/fast";
-   inherit: "e/comp/frame/fullscreen";
+group { name: "e/comp/border/fullscreen/fast";
+   inherit: "e/comp/border/fullscreen";
    programs {
       program {
          name: "visible_on";
