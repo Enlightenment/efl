@@ -67,6 +67,7 @@ edc/mixer.edc \
 edc/music_control.edc \
 edc/notification.edc \
 edc/pager.edc \
+edc/pager16.edc \
 edc/pointer.edc \
 edc/preview.edc \
 edc/radio.edc \
