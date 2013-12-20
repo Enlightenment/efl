@@ -169,7 +169,7 @@ _ecore_drm_socket_send(int opcode, int fd, void *data, size_t bytes)
    /* DBG("Control Len: %d", (int)cmsg->cmsg_len); */
 
    errno = 0;
-   size = sendmsg(_ecore_drm_sockets[1], &msg, MSG_NOSIGNAL);
+   size = sendmsg(_ecore_drm_sockets[1], &msg, 0);
    if (errno != 0)
      {
         DBG("Error Sending Message: %m");
