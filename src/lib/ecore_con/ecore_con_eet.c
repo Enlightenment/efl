@@ -17,54 +17,54 @@
 
 #define ECORE_CON_EET_RAW_MAGIC 0xDEAD007
 
-typedef struct _Ecore_Con_Eet_Data Ecore_Con_Eet_Data;
+typedef struct _Ecore_Con_Eet_Data     Ecore_Con_Eet_Data;
 typedef struct _Ecore_Con_Eet_Raw_Data Ecore_Con_Eet_Raw_Data;
-typedef struct _Ecore_Con_Eet_Client Ecore_Con_Eet_Client;
-typedef struct _Ecore_Con_Eet_Server Ecore_Con_Eet_Server;
+typedef struct _Ecore_Con_Eet_Client   Ecore_Con_Eet_Client;
+typedef struct _Ecore_Con_Eet_Server   Ecore_Con_Eet_Server;
 
 struct _Ecore_Con_Reply
 {
-   Ecore_Con_Eet *ece;
-   Ecore_Con_Client *client;
+   Ecore_Con_Eet          *ece;
+   Ecore_Con_Client       *client;
 
-   Eet_Connection *econn;
+   Eet_Connection         *econn;
 
-   char *buffer_section;
-   unsigned char *buffer;
-   unsigned int buffer_length;
-   unsigned int buffer_current;
+   char                   *buffer_section;
+   unsigned char          *buffer;
+   unsigned int            buffer_length;
+   unsigned int            buffer_current;
    Ecore_Con_Eet_Raw_Data *buffer_handler;
 };
 
 struct _Ecore_Con_Eet_Data
 {
    Ecore_Con_Eet_Data_Cb func;
-   const char *name;
-   const void *data;
+   const char           *name;
+   const void           *data;
 };
 
 struct _Ecore_Con_Eet_Raw_Data
 {
    Ecore_Con_Eet_Raw_Data_Cb func;
-   const char *name;
-   const void *data;
+   const char               *name;
+   const void               *data;
 };
 
 struct _Ecore_Con_Eet_Client
 {
    Ecore_Con_Eet_Client_Cb func;
-   const void *data;
+   const void             *data;
 };
 
 struct _Ecore_Con_Eet_Server
 {
    Ecore_Con_Eet_Server_Cb func;
-   const void *data;
+   const void             *data;
 };
 
 struct _Ecore_Con_Eet
 {
-   Ecore_Con_Server *server;
+   Ecore_Con_Server    *server;
 
    Ecore_Event_Handler *handler_add;
    Ecore_Event_Handler *handler_del;
@@ -73,25 +73,28 @@ struct _Ecore_Con_Eet
    Eet_Data_Descriptor *edd;
    Eet_Data_Descriptor *matching;
 
-   Eina_Hash *data_callbacks;
-   Eina_Hash *raw_data_callbacks;
+   Eina_Hash           *data_callbacks;
+   Eina_Hash           *raw_data_callbacks;
 
-   union {
-      struct {
+   union
+   {
+      struct
+      {
          Eina_List *connections;
          Eina_List *client_connect_callbacks;
          Eina_List *client_disconnect_callbacks;
       } server;
-      struct {
+      struct
+      {
          Ecore_Con_Reply *r;
-         Eina_List *server_connect_callbacks;
-         Eina_List *server_disconnect_callbacks;
+         Eina_List       *server_connect_callbacks;
+         Eina_List       *server_disconnect_callbacks;
       } client;
    } u;
 
    const void *data;
 
-   Eina_Bool client : 1;
+   Eina_Bool   client : 1;
 };
 
 static void
@@ -111,6 +114,7 @@ _ecore_con_eet_raw_data_free(void *data)
    eina_stringshare_del(eced->name);
    free(eced);
 }
+
 static void
 _ecore_con_eet_reply_cleanup(Ecore_Con_Reply *n)
 {
@@ -122,9 +126,10 @@ _ecore_con_eet_reply_cleanup(Ecore_Con_Reply *n)
 }
 
 typedef struct _Ecore_Con_Eet_Protocol Ecore_Con_Eet_Protocol;
-struct _Ecore_Con_Eet_Protocol {
+struct _Ecore_Con_Eet_Protocol
+{
    const char *type;
-   void *data;
+   void       *data;
 };
 
 static const char *
@@ -172,9 +177,9 @@ _ecore_con_eet_read_cb(const void *eet_data, size_t size, void *user_data)
    if (!protocol) return EINA_TRUE;
 
    cb = eina_hash_find(n->ece->data_callbacks, protocol->type);
-   if (!cb) return EINA_TRUE; /* Should I report unknow protocol communication ? */
+   if (!cb) return EINA_TRUE;  /* Should I report unknow protocol communication ? */
 
-   cb->func((void*)cb->data, n, cb->name, protocol->data);
+   cb->func((void *)cb->data, n, cb->name, protocol->data);
 
    eina_stringshare_del(protocol->type);
    free(protocol);
@@ -187,7 +192,7 @@ _ecore_con_eet_server_write_cb(const void *data, size_t size, void *user_data)
 {
    Ecore_Con_Reply *n = user_data;
 
-   if (ecore_con_client_send(n->client, data, size) != (int) size)
+   if (ecore_con_client_send(n->client, data, size) != (int)size)
      return EINA_FALSE;
    return EINA_TRUE;
 }
@@ -197,7 +202,7 @@ _ecore_con_eet_client_write_cb(const void *data, size_t size, void *user_data)
 {
    Ecore_Con_Reply *n = user_data;
 
-   if (ecore_con_server_send(n->ece->server, data, size) != (int) size)
+   if (ecore_con_server_send(n->ece->server, data, size) != (int)size)
      return EINA_FALSE;
    return EINA_TRUE;
 }
@@ -222,7 +227,7 @@ _ecore_con_eet_server_connected(void *data, int type EINA_UNUSED, Ecore_Con_Even
    ecore_con_client_data_set(n->client, n);
 
    EINA_LIST_FOREACH(r->u.server.client_connect_callbacks, ll, ecec)
-     if (!ecec->func((void*) ecec->data, n, n->client))
+     if (!ecec->func((void *)ecec->data, n, n->client))
        {
           eet_connection_close(n->econn, NULL);
           free(n);
@@ -251,7 +256,7 @@ _ecore_con_eet_server_disconnected(void *data, int type EINA_UNUSED, Ecore_Con_E
           Eina_List *ll;
 
           EINA_LIST_FOREACH(r->u.server.client_disconnect_callbacks, ll, ecec)
-            ecec->func((void*) ecec->data, n, n->client);
+            ecec->func((void *)ecec->data, n, n->client);
 
           eet_connection_close(n->econn, NULL);
           free(n);
@@ -272,7 +277,7 @@ _ecore_con_eet_raw_data_push(Ecore_Con_Reply *n, void *data, int size)
    if (n->buffer_current == n->buffer_length)
      {
         if (n->buffer_handler)
-          n->buffer_handler->func((void*) n->buffer_handler->data, n, n->buffer_handler->name, n->buffer_section, n->buffer, n->buffer_length);
+          n->buffer_handler->func((void *)n->buffer_handler->data, n, n->buffer_handler->name, n->buffer_section, n->buffer, n->buffer_length);
         _ecore_con_eet_reply_cleanup(n);
      }
 }
@@ -292,7 +297,7 @@ _ecore_con_eet_data(Ecore_Con_Reply *n, void *data, unsigned int size)
         _ecore_con_eet_raw_data_push(n, data, size);
         return;
      }
-   else if (eet_connection_empty(n->econn) && size > (int) (4 * sizeof (unsigned int) + 2))
+   else if (eet_connection_empty(n->econn) && size > (int)(4 * sizeof (unsigned int) + 2))
      {
         unsigned int *tmp = data;
         size -= 4 * sizeof (unsigned int);
@@ -305,7 +310,7 @@ _ecore_con_eet_data(Ecore_Con_Reply *n, void *data, unsigned int size)
 
              if (protocol_length > 1 && section_length > 1 && protocol_length + section_length <= size && data_length < 10 * 1024 * 1024)
                {
-                  char *buffer = (char*) &tmp[4];
+                  char *buffer = (char *)&tmp[4];
                   char *protocol;
                   char *section;
 
@@ -325,7 +330,7 @@ _ecore_con_eet_data(Ecore_Con_Reply *n, void *data, unsigned int size)
                        if (n->buffer_handler)
                          n->buffer = malloc(sizeof (unsigned char) * data_length);
                        else
-                         n->buffer = (void*) 1;
+                         n->buffer = (void *)1;
                        if (n->buffer)
                          {
                             _ecore_con_eet_raw_data_push(n, buffer, size);
@@ -382,7 +387,7 @@ _ecore_con_eet_client_connected(void *data, int type EINA_UNUSED, Ecore_Con_Even
    n->econn = eet_connection_new(_ecore_con_eet_read_cb, _ecore_con_eet_client_write_cb, n);
 
    EINA_LIST_FOREACH(r->u.client.server_connect_callbacks, ll, eces)
-     if (!eces->func((void*) eces->data, n, n->ece->server))
+     if (!eces->func((void *)eces->data, n, n->ece->server))
        {
           eet_connection_close(n->econn, NULL);
           free(n);
@@ -406,7 +411,7 @@ _ecore_con_eet_client_disconnected(void *data, int type EINA_UNUSED, Ecore_Con_E
 
    /* Client disconnected */
    EINA_LIST_FOREACH(r->u.client.server_disconnect_callbacks, ll, eces)
-     eces->func((void*) eces->data, r->u.client.r, r->server);
+     eces->func((void *)eces->data, r->u.client.r, r->server);
 
    eet_connection_close(r->u.client.r->econn, NULL);
    free(r->u.client.r);
@@ -430,8 +435,8 @@ _ecore_con_eet_client_data(void *data, int type EINA_UNUSED, Ecore_Con_Event_Ser
 }
 
 /**************
- * Global API *
- **************/
+* Global API *
+**************/
 
 EAPI Ecore_Con_Eet *
 ecore_con_eet_server_new(Ecore_Con_Server *server)
@@ -578,7 +583,7 @@ ecore_con_eet_raw_data_callback_add(Ecore_Con_Eet *ece, const char *name, Ecore_
    eced->data = data;
    eced->name = eina_stringshare_add(name);
 
-   eina_hash_direct_add(ece->raw_data_callbacks, eced->name, eced);   
+   eina_hash_direct_add(ece->raw_data_callbacks, eced->name, eced);
 }
 
 EAPI void
@@ -590,7 +595,7 @@ ecore_con_eet_raw_data_callback_del(Ecore_Con_Eet *ece, const char *name)
      {
         ece->u.client.r->buffer_handler = NULL;
         free(ece->u.client.r->buffer);
-        ece->u.client.r->buffer = (void*) 1;
+        ece->u.client.r->buffer = (void *)1;
      }
    eina_hash_del(ece->raw_data_callbacks, name, NULL);
 }
@@ -740,7 +745,7 @@ EAPI void *
 ecore_con_eet_data_get(Ecore_Con_Eet *ece)
 {
    if (!ece) return NULL;
-   return (void*) ece->data;
+   return (void *)ece->data;
 }
 
 EAPI Ecore_Con_Eet *

@@ -33,11 +33,13 @@
 // all the types, defines, enums etc. from curl that we actuall USE.
 // we have to add to this if we use more things from curl not already
 // defined here. see culr headers to get them from
-typedef enum {
+typedef enum
+{
    CURLM_CALL_MULTI_PERFORM = -1,
    CURLM_OK = 0
 } CURLMcode;
-typedef enum {
+typedef enum
+{
    CURLE_OK = 0,
    CURLE_OPERATION_TIMEDOUT = 28
 } CURLcode;
@@ -45,10 +47,11 @@ typedef enum {
 #define CURLOPTTYPE_OBJECTPOINT   10000
 #define CURLOPTTYPE_FUNCTIONPOINT 20000
 #define CURLOPTTYPE_OFF_T         30000
-#define CINIT(na,t,nu) CURLOPT_ ## na = CURLOPTTYPE_ ## t + nu
-typedef enum {
+#define CINIT(na, t, nu) CURLOPT_ ## na = CURLOPTTYPE_ ## t + nu
+typedef enum
+{
    CINIT(FILE, OBJECTPOINT, 1),
-   CINIT(URL,  OBJECTPOINT, 2),
+   CINIT(URL, OBJECTPOINT, 2),
    CINIT(PROXY, OBJECTPOINT, 4),
    CINIT(USERPWD, OBJECTPOINT, 5),
    CINIT(INFILE, OBJECTPOINT, 9),
@@ -91,30 +94,37 @@ typedef enum {
 #define CURLINFO_SLIST    0x400000
 #define CURLINFO_MASK     0x0fffff
 #define CURLINFO_TYPEMASK 0xf00000
-typedef enum {
-     CURLINFO_RESPONSE_CODE = CURLINFO_LONG   + 2,
+typedef enum
+{
+   CURLINFO_RESPONSE_CODE = CURLINFO_LONG + 2,
 } CURLINFO;
-typedef enum {
+typedef enum
+{
    CURLVERSION_FOURTH = 3
 } CURLversion;
-typedef enum {
+typedef enum
+{
    CURLMSG_DONE = 1
 } CURLMSG;
 #undef CINIT
-#define CINIT(name,type,num) CURLMOPT_ ## name = CURLOPTTYPE_ ## type + num
-typedef enum {
+#define CINIT(name, type, num) CURLMOPT_ ## name = CURLOPTTYPE_ ## type + num
+typedef enum
+{
    CINIT(PIPELINING, LONG, 3)
 } CURLMoption;
-typedef enum {
+typedef enum
+{
    CURL_TIMECOND_NONE = 0,
    CURL_TIMECOND_IFMODSINCE = 1,
    CURL_TIMECOND_IFUNMODSINCE = 2
 } curl_TimeCond;
-enum {
+enum
+{
    CURL_HTTP_VERSION_1_0 = 1,
    CURL_HTTP_VERSION_1_1 = 2,
 };
-typedef enum {
+typedef enum
+{
    CURLPROXY_HTTP = 0,
    CURLPROXY_SOCKS4 = 4,
    CURLPROXY_SOCKS5 = 5,
@@ -122,90 +132,93 @@ typedef enum {
    CURLPROXY_SOCKS5_HOSTNAME = 7
 } curl_proxytype;
 
-#define CURL_GLOBAL_SSL (1<<0)
-#define CURL_GLOBAL_WIN32 (1<<1)
-#define CURL_GLOBAL_ALL (CURL_GLOBAL_SSL|CURL_GLOBAL_WIN32)
-#define CURLOPT_ENCODING CURLOPT_ACCEPT_ENCODING
-#define CURLOPT_WRITEDATA CURLOPT_FILE
-#define CURLOPT_READDATA  CURLOPT_INFILE
-#define CURLOPT_HEADERDATA CURLOPT_WRITEHEADER
-#define CURLVERSION_NOW CURLVERSION_FOURTH
-#define CURLAUTH_BASIC (((unsigned long)1)<<0)
-#define CURLAUTH_DIGEST_IE (((unsigned long)1)<<4)
-#define CURLAUTH_ANY (~CURLAUTH_DIGEST_IE)
-#define CURLAUTH_ANYSAFE (~(CURLAUTH_BASIC|CURLAUTH_DIGEST_IE))
+#define CURL_GLOBAL_SSL     (1 << 0)
+#define CURL_GLOBAL_WIN32   (1 << 1)
+#define CURL_GLOBAL_ALL     (CURL_GLOBAL_SSL | CURL_GLOBAL_WIN32)
+#define CURLOPT_ENCODING    CURLOPT_ACCEPT_ENCODING
+#define CURLOPT_WRITEDATA   CURLOPT_FILE
+#define CURLOPT_READDATA    CURLOPT_INFILE
+#define CURLOPT_HEADERDATA  CURLOPT_WRITEHEADER
+#define CURLVERSION_NOW     CURLVERSION_FOURTH
+#define CURLAUTH_BASIC      (((unsigned long)1) << 0)
+#define CURLAUTH_DIGEST_IE  (((unsigned long)1) << 4)
+#define CURLAUTH_ANY        (~CURLAUTH_DIGEST_IE)
+#define CURLAUTH_ANYSAFE    (~(CURLAUTH_BASIC | CURLAUTH_DIGEST_IE))
 #define CURL_READFUNC_ABORT 0x10000000
 
 typedef void CURLM;
 typedef void CURL;
-struct curl_slist {
-   char *data;
+struct curl_slist
+{
+   char              *data;
    struct curl_slist *next;
 };
-typedef struct {
-   CURLversion age;
-   const char *version;
-   unsigned int version_num;
-   const char *host;
-   int features;
-   const char *ssl_version;
-   long ssl_version_num;
-   const char *libz_version;
-   const char * const *protocols;
-   const char *ares;
-   int ares_num;
-   const char *libidn;
-   int iconv_ver_num;
-   const char *libssh_version;
+typedef struct
+{
+   CURLversion        age;
+   const char        *version;
+   unsigned int       version_num;
+   const char        *host;
+   int                features;
+   const char        *ssl_version;
+   long               ssl_version_num;
+   const char        *libz_version;
+   const char *const *protocols;
+   const char        *ares;
+   int                ares_num;
+   const char        *libidn;
+   int                iconv_ver_num;
+   const char        *libssh_version;
 } curl_version_info_data;
-typedef struct {
+typedef struct
+{
    CURLMSG msg;
-   CURL *easy_handle;
-   union {
-      void *whatever;
+   CURL   *easy_handle;
+   union
+   {
+      void    *whatever;
       CURLcode result;
    } data;
 } CURLMsg;
-
 
 typedef struct _Ecore_Con_Curl Ecore_Con_Curl;
 
 struct _Ecore_Con_Curl
 {
-   Eina_Module *mod;
-   
-   CURLM *_curlm;
-   
-   CURLcode (*curl_global_init) (long flags);
-   void (*curl_global_cleanup)(void);
-   CURLM *(*curl_multi_init)(void);
-   CURLMcode (*curl_multi_timeout)(CURLM *multi_handle,
-                                   long *milliseconds);
-   CURLMcode (*curl_multi_cleanup)(CURLM *multi_handle);
-   CURLMcode (*curl_multi_remove_handle)(CURLM *multi_handle,
-                                         CURL *curl_handle);
-   const char *(*curl_multi_strerror)(CURLMcode);
-   CURLMsg *(*curl_multi_info_read)(CURLM *multi_handle,
-                                    int *msgs_in_queue);
-   CURLMcode (*curl_multi_fdset)(CURLM *multi_handle,
-                                 fd_set *read_fd_set,
-                                 fd_set *write_fd_set,
-                                 fd_set *exc_fd_set,
-                                 int *max_fd);
-   CURLMcode (*curl_multi_perform)(CURLM *multi_handle,
-                                   int *running_handles);
-   CURLMcode (*curl_multi_add_handle)(CURLM *multi_handle,
-                                      CURL *curl_handle);
-   CURLMcode (*curl_multi_setopt)(CURLM *multi_handle,
-                                  CURLMoption option, ...);
-   CURL *(*curl_easy_init)(void);
-   CURLcode (*curl_easy_setopt)(CURL *curl, CURLoption option, ...);
-   const char *(*curl_easy_strerror)(CURLcode);
-   void (*curl_easy_cleanup)(CURL *curl);
-   CURLcode (*curl_easy_getinfo)(CURL *curl, CURLINFO info, ...);
-   void (*curl_slist_free_all)(struct curl_slist *);
-   struct curl_slist *(*curl_slist_append)(struct curl_slist *list,
-                                           const char *string);
+   Eina_Module            *mod;
+
+   CURLM                  *_curlm;
+
+   CURLcode                (*curl_global_init)(long flags);
+   void                    (*curl_global_cleanup)(void);
+   CURLM                  *(*curl_multi_init)(void);
+   CURLMcode               (*curl_multi_timeout)(CURLM *multi_handle,
+                                                 long *milliseconds);
+   CURLMcode               (*curl_multi_cleanup)(CURLM *multi_handle);
+   CURLMcode               (*curl_multi_remove_handle)(CURLM *multi_handle,
+                                                       CURL *curl_handle);
+   const char             *(*curl_multi_strerror)(CURLMcode);
+   CURLMsg                *(*curl_multi_info_read)(CURLM * multi_handle,
+                                                   int *msgs_in_queue);
+   CURLMcode               (*curl_multi_fdset)(CURLM *multi_handle,
+                                               fd_set *read_fd_set,
+                                               fd_set *write_fd_set,
+                                               fd_set *exc_fd_set,
+                                               int *max_fd);
+   CURLMcode               (*curl_multi_perform)(CURLM *multi_handle,
+                                                 int *running_handles);
+   CURLMcode               (*curl_multi_add_handle)(CURLM *multi_handle,
+                                                    CURL *curl_handle);
+   CURLMcode               (*curl_multi_setopt)(CURLM *multi_handle,
+                                                CURLMoption option, ...);
+   CURL                   *(*curl_easy_init)(void);
+   CURLcode                (*curl_easy_setopt)(CURL *curl, CURLoption option, ...);
+   const char             *(*curl_easy_strerror)(CURLcode);
+   void                    (*curl_easy_cleanup)(CURL *curl);
+   CURLcode                (*curl_easy_getinfo)(CURL *curl, CURLINFO info, ...);
+   void                    (*curl_slist_free_all)(struct curl_slist *);
+   struct curl_slist      *(*curl_slist_append)(struct curl_slist *list,
+                                                const char *string);
    curl_version_info_data *(*curl_version_info)(CURLversion);
 };
 
@@ -242,33 +255,34 @@ static Eina_Bool
 _c_init(void)
 {
    long ms = 0;
-   
+
    if (_c) return EINA_TRUE;
    if (_c_fail) return EINA_FALSE;
    _c = calloc(1, sizeof(Ecore_Con_Curl));
    if (!_c) goto error;
 
-#define LOAD(x) \
-   if (!_c->mod) { \
-      if ((_c->mod = eina_module_new(x))) { \
-         if (!eina_module_load(_c->mod)) { \
-            eina_module_free(_c->mod); \
-            _c->mod = NULL; \
-         } \
-      } \
-   }
+#define LOAD(x)                               \
+  if (!_c->mod) {                             \
+       if ((_c->mod = eina_module_new(x))) {  \
+            if (!eina_module_load(_c->mod)) { \
+                 eina_module_free(_c->mod);   \
+                 _c->mod = NULL;              \
+              }                               \
+         }                                    \
+    }
 #if defined(_WIN32) || defined(__CYGWIN__)
    LOAD("libcurl.dll"); // try 1
    LOAD("curllib.dll"); // if fail try 2
 #elif defined(__APPLE__) && defined(__MACH__)
    LOAD("libcurl.4.dylib"); // try 1
    LOAD("libcurl.so.4"); // if fail try 2
-#else   
+#else
    LOAD("libcurl.so.4"); // try only
-#endif   
+#endif
    if (!_c->mod) goto error;
 
-#define SYM(x) if (!(_c->x = eina_module_symbol_get(_c->mod, #x))) goto error
+#define SYM(x) if (!(_c->x = eina_module_symbol_get(_c->mod, #x))) \
+    goto error
    SYM(curl_global_init);
    SYM(curl_global_cleanup);
    SYM(curl_multi_init);
@@ -289,7 +303,7 @@ _c_init(void)
    SYM(curl_slist_free_all);
    SYM(curl_slist_append);
    SYM(curl_version_info);
-   
+
    // curl_global_init() is not thread safe!
    if (_c->curl_global_init(CURL_GLOBAL_ALL)) goto error;
    _c->_curlm = _c->curl_multi_init();
@@ -396,7 +410,7 @@ ecore_con_url_new(const char *url)
 
    if (!_init_count) return NULL;
    if (!_c_init()) return NULL;
-   
+
    url_con = calloc(1, sizeof(Ecore_Con_Url));
    if (!url_con) return NULL;
 
@@ -429,24 +443,26 @@ ecore_con_url_new(const char *url)
         if (_ecore_con_proxy_global->version == 5)
           {
              if (_ecore_con_proxy_global->lookup)
-                snprintf(host, sizeof(host), "socks5h://%s",
-                         _ecore_con_proxy_global->ip);
-             else snprintf(host, sizeof(host), "socks5://%s",
-                           _ecore_con_proxy_global->ip);
+               snprintf(host, sizeof(host), "socks5h://%s",
+                        _ecore_con_proxy_global->ip);
+             else
+               snprintf(host, sizeof(host), "socks5://%s",
+                        _ecore_con_proxy_global->ip);
           }
         else if (_ecore_con_proxy_global->version == 4)
           {
              if (_ecore_con_proxy_global->lookup)
-                snprintf(host, sizeof(host), "socks4a://%s",
-                         _ecore_con_proxy_global->ip);
-             else snprintf(host, sizeof(host), "socks4://%s",
-                           _ecore_con_proxy_global->ip);
+               snprintf(host, sizeof(host), "socks4a://%s",
+                        _ecore_con_proxy_global->ip);
+             else
+               snprintf(host, sizeof(host), "socks4://%s",
+                        _ecore_con_proxy_global->ip);
           }
 
         if (_ecore_con_proxy_global->port > 0 &&
             _ecore_con_proxy_global->port <= 65535)
-           snprintf(proxy, sizeof(proxy), "%s:%d", host,
-                    _ecore_con_proxy_global->port);
+          snprintf(proxy, sizeof(proxy), "%s:%d", host,
+                   _ecore_con_proxy_global->port);
         else snprintf(proxy, sizeof(proxy), "%s", host);
 
         ecore_con_url_proxy_set(url_con, proxy);
@@ -467,12 +483,12 @@ ecore_con_url_new(const char *url)
    _c->curl_easy_setopt(url_con->curl_easy, CURLOPT_WRITEFUNCTION,
                         _ecore_con_url_data_cb);
    _c->curl_easy_setopt(url_con->curl_easy, CURLOPT_WRITEDATA, url_con);
-   
+
    _c->curl_easy_setopt(url_con->curl_easy, CURLOPT_PROGRESSFUNCTION,
                         _ecore_con_url_progress_cb);
    _c->curl_easy_setopt(url_con->curl_easy, CURLOPT_PROGRESSDATA, url_con);
    _c->curl_easy_setopt(url_con->curl_easy, CURLOPT_NOPROGRESS, EINA_FALSE);
-   
+
    _c->curl_easy_setopt(url_con->curl_easy, CURLOPT_HEADERFUNCTION,
                         _ecore_con_url_header_cb);
    _c->curl_easy_setopt(url_con->curl_easy, CURLOPT_HEADERDATA, url_con);
@@ -549,8 +565,10 @@ ecore_con_url_free(Ecore_Con_Url *url_con)
    ECORE_MAGIC_SET(url_con, ECORE_MAGIC_NONE);
 
    _c->curl_slist_free_all(url_con->headers);
-   EINA_LIST_FREE(url_con->additional_headers, s) free(s);
-   EINA_LIST_FREE(url_con->response_headers, s) free(s);
+   EINA_LIST_FREE(url_con->additional_headers, s)
+     free(s);
+   EINA_LIST_FREE(url_con->response_headers, s)
+     free(s);
    eina_stringshare_del(url_con->url);
    if (url_con->post_data) free(url_con->post_data);
    free(url_con);
@@ -639,7 +657,8 @@ ecore_con_url_additional_headers_clear(Ecore_Con_Url *url_con)
         ECORE_MAGIC_FAIL(url_con, ECORE_MAGIC_CON_URL, __func__);
         return;
      }
-   EINA_LIST_FREE(url_con->additional_headers, s) free(s);
+   EINA_LIST_FREE(url_con->additional_headers, s)
+     free(s);
 }
 
 EAPI void *
@@ -720,11 +739,11 @@ ecore_con_url_httpauth_set(Ecore_Con_Url *url_con, const char *username, const c
           {
              if (safe)
                _c->curl_easy_setopt(url_con->curl_easy, CURLOPT_HTTPAUTH,
-                                CURLAUTH_ANYSAFE);
+                                    CURLAUTH_ANYSAFE);
              else
                _c->curl_easy_setopt(url_con->curl_easy, CURLOPT_HTTPAUTH,
                                     CURLAUTH_ANY);
-             
+
              ret = _c->curl_easy_setopt(url_con->curl_easy, CURLOPT_USERNAME,
                                         username);
              if (ret != CURLE_OK)
@@ -733,7 +752,7 @@ ecore_con_url_httpauth_set(Ecore_Con_Url *url_con, const char *username, const c
                       _c->curl_easy_strerror(ret));
                   return EINA_FALSE;
                }
-             
+
              ret = _c->curl_easy_setopt(url_con->curl_easy, CURLOPT_PASSWORD,
                                         password);
              if (ret != CURLE_OK)
@@ -770,7 +789,8 @@ _ecore_con_url_send(Ecore_Con_Url *url_con, int mode, const void *data, long len
    if (url_con->dead) return EINA_FALSE;
 
    /* Free response headers from previous send() calls */
-   EINA_LIST_FREE(url_con->response_headers, s) free((char *)s);
+   EINA_LIST_FREE(url_con->response_headers, s)
+     free((char *)s);
    url_con->response_headers = NULL;
    url_con->status = 0;
 
@@ -801,8 +821,9 @@ _ecore_con_url_send(Ecore_Con_Url *url_con, int mode, const void *data, long len
              else
                return EINA_FALSE;
           }
-        else _c->curl_easy_setopt(url_con->curl_easy,
-                                  CURLOPT_POSTFIELDSIZE, 0);
+        else
+          _c->curl_easy_setopt(url_con->curl_easy,
+                               CURLOPT_POSTFIELDSIZE, 0);
         if (mode == MODE_POST)
           _c->curl_easy_setopt(url_con->curl_easy, CURLOPT_POST, 1);
      }
@@ -811,19 +832,21 @@ _ecore_con_url_send(Ecore_Con_Url *url_con, int mode, const void *data, long len
      {
       case ECORE_CON_URL_TIME_NONE:
         _c->curl_easy_setopt(url_con->curl_easy, CURLOPT_TIMECONDITION,
-                         CURL_TIMECOND_NONE);
+                             CURL_TIMECOND_NONE);
         break;
+
       case ECORE_CON_URL_TIME_IFMODSINCE:
         _c->curl_easy_setopt(url_con->curl_easy, CURLOPT_TIMECONDITION,
-                         CURL_TIMECOND_IFMODSINCE);
+                             CURL_TIMECOND_IFMODSINCE);
         _c->curl_easy_setopt(url_con->curl_easy, CURLOPT_TIMEVALUE,
-                         (long)url_con->timestamp);
+                             (long)url_con->timestamp);
         break;
+
       case ECORE_CON_URL_TIME_IFUNMODSINCE:
         _c->curl_easy_setopt(url_con->curl_easy, CURLOPT_TIMECONDITION,
-                         CURL_TIMECOND_IFUNMODSINCE);
+                             CURL_TIMECOND_IFUNMODSINCE);
         _c->curl_easy_setopt(url_con->curl_easy, CURLOPT_TIMEVALUE,
-                         (long)url_con->timestamp);
+                             (long)url_con->timestamp);
         break;
      }
    /* Additional headers */
@@ -1112,7 +1135,7 @@ EAPI Eina_Bool
 ecore_con_url_http_version_set(Ecore_Con_Url *url_con, Ecore_Con_Url_Http_Version version)
 {
    int res = -1;
-   
+
    if (!_c) return EINA_FALSE;
    if (!ECORE_MAGIC_CHECK(url_con, ECORE_MAGIC_CON_URL))
      {
@@ -1127,11 +1150,13 @@ ecore_con_url_http_version_set(Ecore_Con_Url *url_con, Ecore_Con_Url_Http_Versio
                                    CURLOPT_HTTP_VERSION,
                                    CURL_HTTP_VERSION_1_0);
         break;
+
       case ECORE_CON_URL_HTTP_VERSION_1_1:
         res = _c->curl_easy_setopt(url_con->curl_easy,
                                    CURLOPT_HTTP_VERSION,
                                    CURL_HTTP_VERSION_1_1);
         break;
+
       default:
         break;
      }
@@ -1157,8 +1182,9 @@ ecore_con_url_proxy_set(Ecore_Con_Url *url_con, const char *proxy)
      }
    if (!url_con->url) return EINA_FALSE;
    if (url_con->dead) return EINA_FALSE;
-   if (!proxy) res = _c->curl_easy_setopt(url_con->curl_easy,
-                                          CURLOPT_PROXY, "");
+   if (!proxy)
+     res = _c->curl_easy_setopt(url_con->curl_easy,
+                                CURLOPT_PROXY, "");
    else
      {
         // before curl version 7.21.7, socks protocol:// prefix is not supported
@@ -1215,7 +1241,7 @@ EAPI Eina_Bool
 ecore_con_url_proxy_username_set(Ecore_Con_Url *url_con, const char *username)
 {
    int res = -1;
-   
+
    if (!_c) return EINA_FALSE;
    if (!ECORE_MAGIC_CHECK(url_con, ECORE_MAGIC_CON_URL))
      {
@@ -1245,7 +1271,7 @@ EAPI Eina_Bool
 ecore_con_url_proxy_password_set(Ecore_Con_Url *url_con, const char *password)
 {
    int res = -1;
-   
+
    if (!_c) return EINA_FALSE;
    if (!ECORE_MAGIC_CHECK(url_con, ECORE_MAGIC_CON_URL))
      {
@@ -1277,7 +1303,7 @@ static void
 _ecore_con_url_status_get(Ecore_Con_Url *url_con)
 {
    long status = 0;
-   
+
    if (!_c) return;
    if (!url_con->curl_easy) return;
    if (!_c->curl_easy_getinfo(url_con->curl_easy, CURLINFO_RESPONSE_CODE,
@@ -1317,7 +1343,7 @@ _ecore_con_url_event_url_complete(Ecore_Con_Url *url_con, CURLMsg *curlmsg)
    else
      {
         ERR("Curl message have errors: %d (%s)",
-          curlmsg->data.result, _c->curl_easy_strerror(curlmsg->data.result));
+            curlmsg->data.result, _c->curl_easy_strerror(curlmsg->data.result));
      }
    e->status = status;
    e->url_con = url_con;
@@ -1451,7 +1477,7 @@ _ecore_con_url_progress_cb(void *clientp, double dltotal, double dlnow, double u
         e->up.total = ultotal;
         e->up.now = ulnow;
         url_con->event_count++;
-        ecore_event_add(ECORE_CON_EVENT_URL_PROGRESS, e, 
+        ecore_event_add(ECORE_CON_EVENT_URL_PROGRESS, e,
                         (Ecore_End_Cb)_ecore_con_event_url_free, url_con);
      }
    return 0;
@@ -1491,7 +1517,7 @@ _ecore_con_url_info_read(void)
      {
         Eina_List *l, *ll;
         Ecore_Con_Url *url_con = NULL;
-        
+
         DBG("Curl message: %d", curlmsg->msg);
         if (curlmsg->msg == CURLMSG_DONE)
           {
@@ -1500,7 +1526,7 @@ _ecore_con_url_info_read(void)
                   if (curlmsg->easy_handle == url_con->curl_easy)
                     _ecore_con_url_event_url_complete(url_con, curlmsg);
                }
-        }
+          }
      }
 }
 
@@ -1510,8 +1536,10 @@ _ecore_con_url_curl_clear(void)
    Ecore_Fd_Handler *fdh;
    Ecore_Con_Url *url_con;
 
-   EINA_LIST_FREE(_fd_hd_list, fdh) ecore_main_fd_handler_del(fdh);
-   EINA_LIST_FREE(_url_con_list, url_con) _ecore_con_url_multi_remove(url_con);
+   EINA_LIST_FREE(_fd_hd_list, fdh)
+     ecore_main_fd_handler_del(fdh);
+   EINA_LIST_FREE(_url_con_list, url_con)
+     _ecore_con_url_multi_remove(url_con);
 }
 
 static Eina_Bool
@@ -1521,7 +1549,8 @@ _ecore_con_url_fd_handler(void *data EINA_UNUSED, Ecore_Fd_Handler *fd_handler E
    long ms;
 
    if (!_c) return ECORE_CALLBACK_CANCEL;
-   EINA_LIST_FREE(_fd_hd_list, fdh) ecore_main_fd_handler_del(fdh);
+   EINA_LIST_FREE(_fd_hd_list, fdh)
+     ecore_main_fd_handler_del(fdh);
    _c->curl_multi_timeout(_c->_curlm, &ms);
    if ((ms >= CURL_MIN_TIMEOUT) || (ms <= 0)) ms = CURL_MIN_TIMEOUT;
    ecore_timer_interval_set(_curl_timer, (double)ms / 1000.0);
@@ -1537,7 +1566,7 @@ _ecore_con_url_fdset(void)
    int fd, fd_max;
 
    if (!_c) return;
-   
+
    FD_ZERO(&read_set);
    FD_ZERO(&write_set);
    FD_ZERO(&exc_set);
@@ -1566,7 +1595,7 @@ _ecore_con_url_fdset(void)
                                                     _ecore_con_url_fd_handler,
                                                     NULL, NULL, NULL);
              if (fd_handler)
-                _fd_hd_list = eina_list_append(_fd_hd_list, fd_handler);
+               _fd_hd_list = eina_list_append(_fd_hd_list, fd_handler);
           }
      }
 }
@@ -1578,7 +1607,8 @@ _ecore_con_url_timer(void *data EINA_UNUSED)
    int still_running;
    CURLMcode ret;
 
-   EINA_LIST_FREE(_fd_hd_list, fdh) ecore_main_fd_handler_del(fdh);
+   EINA_LIST_FREE(_fd_hd_list, fdh)
+     ecore_main_fd_handler_del(fdh);
    _ecore_con_url_info_read();
    if (!_c) return ECORE_CALLBACK_RENEW;
    ret = _c->curl_multi_perform(_c->_curlm, &still_running);
@@ -1601,7 +1631,7 @@ _ecore_con_url_timer(void *data EINA_UNUSED)
    if (still_running)
      {
         long ms;
-        
+
         _ecore_con_url_fdset();
         _c->curl_multi_timeout(_c->_curlm, &ms);
         DBG("multiperform is still running: %d, timeout: %ld",
@@ -1650,3 +1680,4 @@ _ecore_con_event_url_free(Ecore_Con_Url *url_con, void *ev)
    url_con->event_count--;
    if (url_con->dead && (!url_con->event_count)) ecore_con_url_free(url_con);
 }
+

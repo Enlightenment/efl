@@ -48,7 +48,7 @@
 #include "ecore_con_private.h"
 
 #if defined(_WIN32) && !defined(IF_NAMESIZE)
-#define IF_NAMESIZE 16
+#define IF_NAMESIZE                        16
 #endif
 
 /* http://tools.ietf.org/html/rfc1928
@@ -58,9 +58,9 @@
           o  X'03' to X'7F' IANA ASSIGNED
           o  X'80' to X'FE' RESERVED FOR PRIVATE METHODS
           o  X'FF' NO ACCEPTABLE METHODS
-*/
-#define ECORE_CON_SOCKS_V5_METHOD_NONE 0
-#define ECORE_CON_SOCKS_V5_METHOD_GSSAPI 1
+ */
+#define ECORE_CON_SOCKS_V5_METHOD_NONE     0
+#define ECORE_CON_SOCKS_V5_METHOD_GSSAPI   1
 #define ECORE_CON_SOCKS_V5_METHOD_USERPASS 2
 
 static int ECORE_CON_SOCKS_V5_METHODS[] =
@@ -72,27 +72,27 @@ static int ECORE_CON_SOCKS_V5_METHODS[] =
 
 #define ECORE_CON_SOCKS_V5_TOTAL_METHODS (sizeof(ECORE_CON_SOCKS_V5_METHODS) / sizeof(int))
 
-#define _ecore_con_server_kill(svr) do { \
-   DBG("KILL %p", (svr)); \
-   _ecore_con_server_kill((svr)); \
-} while (0)
+#define _ecore_con_server_kill(svr)                  do { \
+       DBG("KILL %p", (svr));                             \
+       _ecore_con_server_kill((svr));                     \
+  } while (0)
 
-#define ECORE_CON_SOCKS_VERSION_CHECK(X) do { \
-   if (!(X) || ((X)->version < 4) || ((X)->version > 5)) \
-     return; \
-} while (0)
-#define ECORE_CON_SOCKS_VERSION_CHECK_RETURN(X, ret) do { \
-   if (!(X) || ((X)->version < 4) || ((X)->version > 5)) \
-     return (ret); \
-} while (0)
+#define ECORE_CON_SOCKS_VERSION_CHECK(X)             do {    \
+       if (!(X) || ((X)->version < 4) || ((X)->version > 5)) \
+         return;                                             \
+  } while (0)
+#define ECORE_CON_SOCKS_VERSION_CHECK_RETURN(X, ret) do {    \
+       if (!(X) || ((X)->version < 4) || ((X)->version > 5)) \
+         return (ret);                                       \
+  } while (0)
 
-#define ECORE_CON_SOCKS_CAST(X) \
-   Ecore_Con_Socks_v4 *v4 = NULL; \
-   Ecore_Con_Socks_v5 *v5 = NULL; \
-   if ((X) && ((X)->version == 4)) \
-     v4 = (Ecore_Con_Socks_v4 *)(X); \
-   else if ((X) && ((X)->version == 5)) \
-     v5 = (Ecore_Con_Socks_v5 *)(X);
+#define ECORE_CON_SOCKS_CAST(X)        \
+  Ecore_Con_Socks_v4 * v4 = NULL;      \
+  Ecore_Con_Socks_v5 *v5 = NULL;       \
+  if ((X) && ((X)->version == 4))      \
+    v4 = (Ecore_Con_Socks_v4 *)(X);    \
+  else if ((X) && ((X)->version == 5)) \
+    v5 = (Ecore_Con_Socks_v5 *)(X);
 
 Eina_List *ecore_con_socks_proxies = NULL;
 
@@ -116,7 +116,7 @@ _ecore_con_socks_find(unsigned char version, const char *ip, int port, const cha
              if (plen != ecs->plen) continue;
              if (password && strcmp(ecs->password, password)) continue;
           }
-        return (Ecore_Con_Socks*)ecs;
+        return (Ecore_Con_Socks *)ecs;
      }
    return NULL;
 }
@@ -141,7 +141,7 @@ _ecore_con_socks_svr_init_v4(Ecore_Con_Server *svr, Ecore_Con_Socks_v4 *v4)
 
    addrlen = v4->lookup ? strlen(svr->name) + 1 : 0;
    if (v4->username) ulen += v4->ulen;
-   buflen = sizeof(char) * (8  + ulen + addrlen);
+   buflen = sizeof(char) * (8 + ulen + addrlen);
    sbuf = malloc(buflen);
    if (!sbuf)
      {
@@ -180,7 +180,7 @@ _ecore_con_socks_svr_init_v5(Ecore_Con_Server *svr, Ecore_Con_Socks_v5 *v5)
    unsigned char *sbuf;
 
    if (v5->username)
-     buflen = sizeof(char) * (2  + ECORE_CON_SOCKS_V5_TOTAL_METHODS);
+     buflen = sizeof(char) * (2 + ECORE_CON_SOCKS_V5_TOTAL_METHODS);
    else
      buflen = 3;
    sbuf = malloc(buflen);
@@ -196,9 +196,9 @@ _ecore_con_socks_svr_init_v5(Ecore_Con_Server *svr, Ecore_Con_Socks_v5 *v5)
    sbuf[0] = 5;
    if (v5->username)
      {
-       sbuf[1] = ECORE_CON_SOCKS_V5_TOTAL_METHODS;
-       for (x = 2; x < 2 + ECORE_CON_SOCKS_V5_TOTAL_METHODS; x++)
-         sbuf[x] = ECORE_CON_SOCKS_V5_METHODS[x - 2];
+        sbuf[1] = ECORE_CON_SOCKS_V5_TOTAL_METHODS;
+        for (x = 2; x < 2 + ECORE_CON_SOCKS_V5_TOTAL_METHODS; x++)
+          sbuf[x] = ECORE_CON_SOCKS_V5_METHODS[x - 2];
      }
    else
      {
@@ -210,19 +210,20 @@ _ecore_con_socks_svr_init_v5(Ecore_Con_Server *svr, Ecore_Con_Socks_v5 *v5)
    return EINA_TRUE;
 }
 
-#define ECORE_CON_SOCKS_READ(EXACT) \
-          if (num < EXACT) \
-            { \
-               if (!svr->ecs_recvbuf) svr->ecs_recvbuf = eina_binbuf_new(); \
-               if (!svr->ecs_recvbuf) goto error; \
-               eina_binbuf_append_length(svr->ecs_recvbuf, buf, num); \
-               /* the slowest connection on earth */ \
-               if (eina_binbuf_length_get(svr->ecs_recvbuf) != EXACT) return; \
-               data = eina_binbuf_string_get(svr->ecs_recvbuf); \
-            } \
-          else if (num > EXACT) goto error; \
-          else \
-            data = buf
+#define ECORE_CON_SOCKS_READ(EXACT)                                    \
+  if (num < EXACT)                                                     \
+    {                                                                  \
+       if (!svr->ecs_recvbuf) svr->ecs_recvbuf = eina_binbuf_new();    \
+       if (!svr->ecs_recvbuf) goto error;                              \
+       eina_binbuf_append_length(svr->ecs_recvbuf, buf, num);          \
+       /* the slowest connection on earth */                           \
+       if (eina_binbuf_length_get(svr->ecs_recvbuf) != EXACT) return;  \
+       data = eina_binbuf_string_get(svr->ecs_recvbuf);                \
+    }                                                                  \
+  else if (num > EXACT)                                                \
+    goto error;                                                        \
+  else                                                                 \
+    data = buf
 
 static void
 _ecore_con_socks_read_v4(Ecore_Con_Server *svr, Ecore_Con_Socks_v4 *v4 EINA_UNUSED, const unsigned char *buf, unsigned int num)
@@ -238,15 +239,19 @@ _ecore_con_socks_read_v4(Ecore_Con_Server *svr, Ecore_Con_Socks_v4 *v4 EINA_UNUS
       case 90:
         /* success! */
         break;
+
       case 91:
         ecore_con_event_server_error(svr, "proxy request rejected or failed");
         goto error;
+
       case 92:
         ecore_con_event_server_error(svr, "proxying SOCKS server could not perform authentication");
         goto error;
+
       case 93:
         ecore_con_event_server_error(svr, "proxy request authentication rejected");
         goto error;
+
       default:
         ecore_con_event_server_error(svr, "garbage data from proxy");
         goto error;
@@ -285,30 +290,33 @@ _ecore_con_socks_auth_v5(Ecore_Con_Server *svr, Ecore_Con_Socks_v5 *v5)
    unsigned char *data;
    switch (v5->method)
      {
-        case ECORE_CON_SOCKS_V5_METHOD_NONE:
-          svr->ecs_state = ECORE_CON_PROXY_STATE_REQUEST;
-          return EINA_TRUE;
-        case ECORE_CON_SOCKS_V5_METHOD_GSSAPI:
-          return EINA_TRUE;
-        case ECORE_CON_SOCKS_V5_METHOD_USERPASS:
-          if (!v5->username) return EINA_FALSE;
-          if (!v5->password) v5->plen = 1;
-          /* http://tools.ietf.org/html/rfc1929 */
-          size = sizeof(char) * (3 + v5->ulen + v5->plen);
-          data = malloc(size);
-          if (!data) break;
-          data[0] = 1;
-          data[1] = v5->ulen;
-          memcpy(&data[2], v5->username, v5->ulen);
-          data[1 + v5->ulen] = v5->plen;
-          if (v5->password)
-            memcpy(&data[2 + v5->ulen], v5->password, v5->plen);
-          else
-            data[2 + v5->ulen] = 0;
-          svr->ecs_buf = eina_binbuf_manage_new_length(data, size);
-          return EINA_TRUE;
-        default:
-          break;
+      case ECORE_CON_SOCKS_V5_METHOD_NONE:
+        svr->ecs_state = ECORE_CON_PROXY_STATE_REQUEST;
+        return EINA_TRUE;
+
+      case ECORE_CON_SOCKS_V5_METHOD_GSSAPI:
+        return EINA_TRUE;
+
+      case ECORE_CON_SOCKS_V5_METHOD_USERPASS:
+        if (!v5->username) return EINA_FALSE;
+        if (!v5->password) v5->plen = 1;
+        /* http://tools.ietf.org/html/rfc1929 */
+        size = sizeof(char) * (3 + v5->ulen + v5->plen);
+        data = malloc(size);
+        if (!data) break;
+        data[0] = 1;
+        data[1] = v5->ulen;
+        memcpy(&data[2], v5->username, v5->ulen);
+        data[1 + v5->ulen] = v5->plen;
+        if (v5->password)
+          memcpy(&data[2 + v5->ulen], v5->password, v5->plen);
+        else
+          data[2 + v5->ulen] = 0;
+        svr->ecs_buf = eina_binbuf_manage_new_length(data, size);
+        return EINA_TRUE;
+
+      default:
+        break;
      }
    return EINA_FALSE;
 }
@@ -321,179 +329,197 @@ _ecore_con_socks_read_v5(Ecore_Con_Server *svr, Ecore_Con_Socks_v5 *v5, const un
    DBG("SOCKS: %d bytes", num);
    switch (svr->ecs_state)
      {
-
-        case ECORE_CON_PROXY_STATE_READ:
-          ECORE_CON_SOCKS_READ(2);
-          /* http://en.wikipedia.org/wiki/SOCKS */
-          if (data[0] != 5) goto error;
-          if (data[1] == 0xFF)
-            {
-               ecore_con_event_server_error(svr, "proxy authentication methods rejected");
-               goto error;
-            }
-          v5->method = data[1];
-          if (!_ecore_con_socks_auth_v5(svr, v5)) goto error;
-          if (svr->ecs_state == ECORE_CON_PROXY_STATE_REQUEST)
-            {
-               /* run again to skip auth reading */
-               _ecore_con_socks_read_v5(svr, v5, NULL, 0);
-               return;
-            }
-          ecore_main_fd_handler_active_set(svr->fd_handler, ECORE_FD_WRITE);
-          svr->ecs_state = ECORE_CON_PROXY_STATE_AUTH;
-          break;
-        case ECORE_CON_PROXY_STATE_AUTH:
-          ECORE_CON_SOCKS_READ(2);
-          switch (v5->method)
-            {
-             case ECORE_CON_SOCKS_V5_METHOD_NONE:
-               CRIT("HOW DID THIS HAPPEN?????????");
-               goto error;
-             case ECORE_CON_SOCKS_V5_METHOD_GSSAPI:
-               /* TODO: this */
-               break;
-             case ECORE_CON_SOCKS_V5_METHOD_USERPASS:
-               if (data[0] != 1)
-                 {
-                    ecore_con_event_server_error(svr, "protocol error");
-                    goto error; /* wrong version */
-                 }
-               if (data[1])
-                 {
-                    ecore_con_event_server_error(svr, "proxy request authentication rejected");
-                    goto error;
-                 }
-             default:
-               break;
-            }
-        case ECORE_CON_PROXY_STATE_REQUEST:
+      case ECORE_CON_PROXY_STATE_READ:
+        ECORE_CON_SOCKS_READ(2);
+        /* http://en.wikipedia.org/wiki/SOCKS */
+        if (data[0] != 5) goto error;
+        if (data[1] == 0xFF)
           {
-             size_t addrlen, buflen;
-             unsigned char *sbuf;
-             addrlen = v5->lookup ? strlen(svr->name) + 1 : (unsigned int)svr->ecs_addrlen;
-             buflen = sizeof(char) * (6 + addrlen);
-             sbuf = malloc(buflen);
-             if (!sbuf)
-               {
-                  ecore_con_event_server_error(svr, "Memory allocation failure!");
-                  goto error;
-               }
-              sbuf[0] = 5;
-              sbuf[1] = v5->bind ? 2 : 1; /* TODO: 0x03 for UDP port association */
-              sbuf[2] = 0;
-              if (v5->lookup) /* domain name */
-                {
-                   sbuf[3] = 3;
-                   sbuf[4] = addrlen - 1;
-                   memcpy(sbuf + 5, svr->name, addrlen - 1);
-                }
-              else
-                {
-                   sbuf[3] = (svr->ecs_addrlen == 4) ? 1 : 4;
-                   memcpy(sbuf + 4, svr->ecs_addr, addrlen);
-                }
-              sbuf[addrlen + 4] = svr->port >> 8;
-              sbuf[addrlen + 5] = svr->port & 0xff;
-
-              svr->ecs_buf = eina_binbuf_manage_new_length(sbuf, buflen);
-              ecore_main_fd_handler_active_set(svr->fd_handler, ECORE_FD_WRITE);
-              break;
+             ecore_con_event_server_error(svr, "proxy authentication methods rejected");
+             goto error;
           }
-        case ECORE_CON_PROXY_STATE_CONFIRM:
+        v5->method = data[1];
+        if (!_ecore_con_socks_auth_v5(svr, v5)) goto error;
+        if (svr->ecs_state == ECORE_CON_PROXY_STATE_REQUEST)
           {
-             /* this is ugly because we have to read an exact number of bytes,
-              * but we don't know what that number is until we've already read
-              * at least 5 bytes to determine the length of the unknown stream.
-              * yep.
-              */
-             size_t to_read, len = svr->ecs_recvbuf ? eina_binbuf_length_get(svr->ecs_recvbuf) : 0;
-             if (num + len < 5)
-               {
-                  /* guarantees we get called again */
-                  ECORE_CON_SOCKS_READ(5);
-               }
-             if (len >= 5)
-               {
-                  data = eina_binbuf_string_get(svr->ecs_recvbuf);
-                  data += 3;
-               }
-             else
-               data = buf + 3 - len;
-             switch (data[0])
-               {
-                  case 1:
-                    to_read = 4;
-                    break;
-                  case 3:
-                    to_read = data[1] + 1;
-                    break;
-                  case 4:
-                    to_read = 16;
-                    /* lazy debugging stub comment */
-                    break;
-                  default:
-                    ecore_con_event_server_error(svr, "protocol error");
-                    goto error;
-               }
-             /* at this point, we finally know exactly how much we need to read */
-             ECORE_CON_SOCKS_READ(6 + to_read);
+             /* run again to skip auth reading */
+             _ecore_con_socks_read_v5(svr, v5, NULL, 0);
+             return;
+          }
+        ecore_main_fd_handler_active_set(svr->fd_handler, ECORE_FD_WRITE);
+        svr->ecs_state = ECORE_CON_PROXY_STATE_AUTH;
+        break;
 
-             if (data[0] != 5)
+      case ECORE_CON_PROXY_STATE_AUTH:
+        ECORE_CON_SOCKS_READ(2);
+        switch (v5->method)
+          {
+           case ECORE_CON_SOCKS_V5_METHOD_NONE:
+             CRIT("HOW DID THIS HAPPEN?????????");
+             goto error;
+
+           case ECORE_CON_SOCKS_V5_METHOD_GSSAPI:
+             /* TODO: this */
+             break;
+
+           case ECORE_CON_SOCKS_V5_METHOD_USERPASS:
+             if (data[0] != 1)
                {
                   ecore_con_event_server_error(svr, "protocol error");
-                  goto error; /* wrong version */
+                  goto error;   /* wrong version */
                }
-             switch (data[1])
+             if (data[1])
                {
-                  case 0:
-                    break;
-                  case 1:
-                    ecore_con_event_server_error(svr, "general proxy failure");
-                    goto error;
-                  case 2:
-                    ecore_con_event_server_error(svr, "connection not allowed by ruleset");
-                    goto error;
-                  case 3:
-                    ecore_con_event_server_error(svr, "network unreachable");
-                    goto error;
-                  case 4:
-                    ecore_con_event_server_error(svr, "host unreachable");
-                    goto error;
-                  case 5:
-                    ecore_con_event_server_error(svr, "connection refused by destination host");
-                    goto error;
-                  case 6:
-                    ecore_con_event_server_error(svr, "TTL expired");
-                    goto error;
-                  case 7:
-                    ecore_con_event_server_error(svr, "command not supported / protocol error");
-                    goto error;
-                  case 8:
-                    ecore_con_event_server_error(svr, "address type not supported");
-                  default:
-                    goto error;
-               }
-             if (data[2])
-               {
-                  ecore_con_event_server_error(svr, "protocol error");
+                  ecore_con_event_server_error(svr, "proxy request authentication rejected");
                   goto error;
                }
-             memset(svr->ecs_addr, 0, sizeof(svr->ecs_addr));
-             if (!svr->ssl_state)
-               ecore_con_event_server_add(svr);
-             if (svr->ssl_state || (svr->buf && eina_binbuf_length_get(svr->buf)))
-               ecore_main_fd_handler_active_set(svr->fd_handler, ECORE_FD_READ | ECORE_FD_WRITE);
-             svr->ecs_buf_offset = svr->ecs_addrlen = 0;
-             svr->ecs_state = ECORE_CON_PROXY_STATE_DONE;
-             INF("PROXY CONNECTED");
+
+           default:
              break;
           }
+
+      case ECORE_CON_PROXY_STATE_REQUEST:
+      {
+         size_t addrlen, buflen;
+         unsigned char *sbuf;
+         addrlen = v5->lookup ? strlen(svr->name) + 1 : (unsigned int)svr->ecs_addrlen;
+         buflen = sizeof(char) * (6 + addrlen);
+         sbuf = malloc(buflen);
+         if (!sbuf)
+           {
+              ecore_con_event_server_error(svr, "Memory allocation failure!");
+              goto error;
+           }
+         sbuf[0] = 5;
+         sbuf[1] = v5->bind ? 2 : 1;      /* TODO: 0x03 for UDP port association */
+         sbuf[2] = 0;
+         if (v5->lookup)      /* domain name */
+           {
+              sbuf[3] = 3;
+              sbuf[4] = addrlen - 1;
+              memcpy(sbuf + 5, svr->name, addrlen - 1);
+           }
+         else
+           {
+              sbuf[3] = (svr->ecs_addrlen == 4) ? 1 : 4;
+              memcpy(sbuf + 4, svr->ecs_addr, addrlen);
+           }
+         sbuf[addrlen + 4] = svr->port >> 8;
+         sbuf[addrlen + 5] = svr->port & 0xff;
+
+         svr->ecs_buf = eina_binbuf_manage_new_length(sbuf, buflen);
+         ecore_main_fd_handler_active_set(svr->fd_handler, ECORE_FD_WRITE);
+         break;
+      }
+
+      case ECORE_CON_PROXY_STATE_CONFIRM:
+      {
+         /* this is ugly because we have to read an exact number of bytes,
+          * but we don't know what that number is until we've already read
+          * at least 5 bytes to determine the length of the unknown stream.
+          * yep.
+          */
+         size_t to_read, len = svr->ecs_recvbuf ? eina_binbuf_length_get(svr->ecs_recvbuf) : 0;
+         if (num + len < 5)
+           {
+              /* guarantees we get called again */
+              ECORE_CON_SOCKS_READ(5);
+           }
+         if (len >= 5)
+           {
+              data = eina_binbuf_string_get(svr->ecs_recvbuf);
+              data += 3;
+           }
+         else
+           data = buf + 3 - len;
+         switch (data[0])
+           {
+            case 1:
+              to_read = 4;
+              break;
+
+            case 3:
+              to_read = data[1] + 1;
+              break;
+
+            case 4:
+              to_read = 16;
+              /* lazy debugging stub comment */
+              break;
+
+            default:
+              ecore_con_event_server_error(svr, "protocol error");
+              goto error;
+           }
+         /* at this point, we finally know exactly how much we need to read */
+         ECORE_CON_SOCKS_READ(6 + to_read);
+
+         if (data[0] != 5)
+           {
+              ecore_con_event_server_error(svr, "protocol error");
+              goto error;     /* wrong version */
+           }
+         switch (data[1])
+           {
+            case 0:
+              break;
+
+            case 1:
+              ecore_con_event_server_error(svr, "general proxy failure");
+              goto error;
+
+            case 2:
+              ecore_con_event_server_error(svr, "connection not allowed by ruleset");
+              goto error;
+
+            case 3:
+              ecore_con_event_server_error(svr, "network unreachable");
+              goto error;
+
+            case 4:
+              ecore_con_event_server_error(svr, "host unreachable");
+              goto error;
+
+            case 5:
+              ecore_con_event_server_error(svr, "connection refused by destination host");
+              goto error;
+
+            case 6:
+              ecore_con_event_server_error(svr, "TTL expired");
+              goto error;
+
+            case 7:
+              ecore_con_event_server_error(svr, "command not supported / protocol error");
+              goto error;
+
+            case 8:
+              ecore_con_event_server_error(svr, "address type not supported");
+
+            default:
+              goto error;
+           }
+         if (data[2])
+           {
+              ecore_con_event_server_error(svr, "protocol error");
+              goto error;
+           }
+         memset(svr->ecs_addr, 0, sizeof(svr->ecs_addr));
+         if (!svr->ssl_state)
+           ecore_con_event_server_add(svr);
+         if (svr->ssl_state || (svr->buf && eina_binbuf_length_get(svr->buf)))
+           ecore_main_fd_handler_active_set(svr->fd_handler, ECORE_FD_READ | ECORE_FD_WRITE);
+         svr->ecs_buf_offset = svr->ecs_addrlen = 0;
+         svr->ecs_state = ECORE_CON_PROXY_STATE_DONE;
+         INF("PROXY CONNECTED");
+         break;
+      }
+
       default:
         break;
      }
    if (svr->ecs_recvbuf) eina_binbuf_free(svr->ecs_recvbuf);
    svr->ecs_recvbuf = NULL;
-   
+
    return;
 error:
    _ecore_con_server_kill(svr);
@@ -613,7 +639,7 @@ ecore_con_socks_init(void)
    ecore_con_socks_lookup_set(ecs, lookup);
    ecore_con_socks_apply_always(ecs);
    INF("Added global proxy server %s%s%s:%d - DNS lookup %s",
-       u ?: "", u ? "@" : "", h, port, lookup ? "ENABLED" : "DISABLED");
+       u ? : "", u ? "@" : "", h, port, lookup ? "ENABLED" : "DISABLED");
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -706,11 +732,12 @@ ecore_con_socks4_remote_del(const char *ip, int port, const char *username)
    if ((!ip) || (!ip[0]) || (port < -1) || (port > 65535) || (username && (!username[0]))) return;
    if (!ecore_con_socks_proxies) return;
 
-   v4 = (Ecore_Con_Socks_v4*)_ecore_con_socks_find(4, ip, port, username, username ? strlen(username) : 0, NULL, 0);
+   v4 = (Ecore_Con_Socks_v4 *)_ecore_con_socks_find(4, ip, port, username, username ? strlen(username) : 0, NULL, 0);
    if (!v4) return;
    ecore_con_socks_proxies = eina_list_remove(ecore_con_socks_proxies, v4);
-   _ecore_con_socks_free((Ecore_Con_Socks*)v4);
+   _ecore_con_socks_free((Ecore_Con_Socks *)v4);
 }
+
 /**
  * Add a SOCKS v5 proxy to the proxy list
  *
@@ -744,8 +771,8 @@ ecore_con_socks5_remote_add(const char *ip, int port, const char *username, cons
         /* max length for protocol */
         if ((!plen) || (plen > 255)) return NULL;
      }
-   ecs5 = (Ecore_Con_Socks_v5*)_ecore_con_socks_find(5, ip, port, username, ulen, password, plen);
-   if (ecs5) return (Ecore_Con_Socks*)ecs5;
+   ecs5 = (Ecore_Con_Socks_v5 *)_ecore_con_socks_find(5, ip, port, username, ulen, password, plen);
+   if (ecs5) return (Ecore_Con_Socks *)ecs5;
 
    ecs5 = calloc(1, sizeof(Ecore_Con_Socks_v5));
    if (!ecs5) return NULL;
@@ -758,7 +785,7 @@ ecore_con_socks5_remote_add(const char *ip, int port, const char *username, cons
    ecs5->password = eina_stringshare_add(password);
    ecs5->plen = plen;
    ecore_con_socks_proxies = eina_list_append(ecore_con_socks_proxies, ecs5);
-   return (Ecore_Con_Socks*)ecs5;
+   return (Ecore_Con_Socks *)ecs5;
 }
 
 /**
@@ -805,10 +832,10 @@ ecore_con_socks5_remote_del(const char *ip, int port, const char *username, cons
      return;
    if (!ecore_con_socks_proxies) return;
 
-   v5 = (Ecore_Con_Socks_v5*)_ecore_con_socks_find(5, ip, port, username, username ? strlen(username) : 0, password, password ? strlen(password) : 0);
+   v5 = (Ecore_Con_Socks_v5 *)_ecore_con_socks_find(5, ip, port, username, username ? strlen(username) : 0, password, password ? strlen(password) : 0);
    if (!v5) return;
    ecore_con_socks_proxies = eina_list_remove(ecore_con_socks_proxies, v5);
-   _ecore_con_socks_free((Ecore_Con_Socks*)v5);
+   _ecore_con_socks_free((Ecore_Con_Socks *)v5);
 }
 
 /**
@@ -954,4 +981,5 @@ ecore_con_socks_apply_always(Ecore_Con_Socks *ecs)
 {
    _ecore_con_proxy_global = ecs;
 }
+
 /** @} */

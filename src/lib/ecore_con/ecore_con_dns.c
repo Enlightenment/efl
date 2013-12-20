@@ -21,12 +21,12 @@
 #include "Ecore_Con.h"
 #include "ecore_con_private.h"
 
-typedef struct dns_addrinfo dns_addrinfo;
+typedef struct dns_addrinfo    dns_addrinfo;
 typedef struct dns_resolv_conf dns_resolv_conf;
-typedef struct dns_resolver dns_resolver;
+typedef struct dns_resolver    dns_resolver;
 typedef struct dns_hosts       dns_hosts;
 
-typedef struct _Ecore_Con_DNS Ecore_Con_DNS;
+typedef struct _Ecore_Con_DNS  Ecore_Con_DNS;
 
 struct _Ecore_Con_DNS
 {
@@ -71,15 +71,17 @@ _ecore_con_dns_check(Ecore_Con_DNS *dns)
 {
    struct addrinfo *ent = NULL;
    int error = 0;
- 
+
    error = dns_ai_nextent(&ent, dns->ai);
 
    switch (error)
      {
       case 0:
         break;
+
       case EAGAIN:
         return 1;
+
       default:
         ERR("resolve failed: %s", dns_strerror(error));
         goto error;
@@ -298,7 +300,6 @@ ecore_con_info_get(Ecore_Con_Server *svr,
      {
         ERR("res_open: %s", dns_strerror(error));
         goto reserr;
-
      }
 
    error = _dns_addrinfo_get(dns, svr->ecs ? svr->ecs->ip : svr->name, dns->svr->ecs ? dns->svr->ecs->port : dns->svr->port);
@@ -312,11 +313,13 @@ ecore_con_info_get(Ecore_Con_Server *svr,
      {
       case 0:
         break;
+
       case 1:
         dns->fdh = ecore_main_fd_handler_add(dns_ai_pollfd(dns->ai), dns_ai_events(dns->ai), (Ecore_Fd_Cb)_dns_fd_cb, dns, NULL, NULL);
         svr->infos = eina_list_append(svr->infos, dns);
         dns->timer = ecore_timer_add(5.0, (Ecore_Task_Cb)_dns_timer_cb, dns);
         break;
+
       default:
         return 0;
      }

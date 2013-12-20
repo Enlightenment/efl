@@ -45,7 +45,7 @@ typedef struct _CB_Data CB_Data;
 
 struct _CB_Data
 {
-                        EINA_INLIST;
+   EINA_INLIST;
    Ecore_Con_Info_Cb    cb_done;
    void                *data;
    Ecore_Fd_Handler    *fdh;
@@ -56,11 +56,11 @@ struct _CB_Data
 
 static void      _ecore_con_info_readdata(CB_Data *cbdata);
 static void      _ecore_con_info_slave_free(CB_Data *cbdata);
-static Eina_Bool _ecore_con_info_data_handler(void             *data,
+static Eina_Bool _ecore_con_info_data_handler(void *data,
                                               Ecore_Fd_Handler *fd_handler);
-static Eina_Bool _ecore_con_info_exit_handler(void    *data,
+static Eina_Bool _ecore_con_info_exit_handler(void *data,
                                               int type EINA_UNUSED,
-                                              void    *event);
+                                              void *event);
 
 static int info_init = 0;
 static CB_Data *info_slaves = NULL;
@@ -77,7 +77,8 @@ ecore_con_info_shutdown(void)
 {
    info_init--;
    if (info_init == 0)
-     while (info_slaves) _ecore_con_info_slave_free(info_slaves);
+     while (info_slaves)
+       _ecore_con_info_slave_free(info_slaves);
 
    return info_init;
 }
@@ -85,7 +86,7 @@ ecore_con_info_shutdown(void)
 int
 ecore_con_info_tcp_connect(Ecore_Con_Server *svr,
                            Ecore_Con_Info_Cb done_cb,
-                           void             *data)
+                           void *data)
 {
    struct addrinfo hints;
 
@@ -104,7 +105,7 @@ ecore_con_info_tcp_connect(Ecore_Con_Server *svr,
 int
 ecore_con_info_tcp_listen(Ecore_Con_Server *svr,
                           Ecore_Con_Info_Cb done_cb,
-                          void             *data)
+                          void *data)
 {
    struct addrinfo hints;
 
@@ -123,7 +124,7 @@ ecore_con_info_tcp_listen(Ecore_Con_Server *svr,
 int
 ecore_con_info_udp_connect(Ecore_Con_Server *svr,
                            Ecore_Con_Info_Cb done_cb,
-                           void             *data)
+                           void *data)
 {
    struct addrinfo hints;
 
@@ -142,7 +143,7 @@ ecore_con_info_udp_connect(Ecore_Con_Server *svr,
 int
 ecore_con_info_udp_listen(Ecore_Con_Server *svr,
                           Ecore_Con_Info_Cb done_cb,
-                          void             *data)
+                          void *data)
 {
    struct addrinfo hints;
 
@@ -161,7 +162,7 @@ ecore_con_info_udp_listen(Ecore_Con_Server *svr,
 int
 ecore_con_info_mcast_listen(Ecore_Con_Server *svr,
                             Ecore_Con_Info_Cb done_cb,
-                            void             *data)
+                            void *data)
 {
    struct addrinfo hints;
 
@@ -192,7 +193,7 @@ _ecore_fd_close_on_exec(int fd)
      return EINA_FALSE;
    return EINA_TRUE;
 #else
-   (void) fd;
+   (void)fd;
    return EINA_FALSE;
 #endif
 }
@@ -200,8 +201,8 @@ _ecore_fd_close_on_exec(int fd)
 EAPI int
 ecore_con_info_get(Ecore_Con_Server *svr,
                    Ecore_Con_Info_Cb done_cb,
-                   void             *data,
-                   struct addrinfo  *hints)
+                   void *data,
+                   struct addrinfo *hints)
 {
    CB_Data *cbdata;
    int fd[2];
@@ -407,7 +408,7 @@ _ecore_con_info_slave_free(CB_Data *cbdata)
 }
 
 static Eina_Bool
-_ecore_con_info_data_handler(void             *data,
+_ecore_con_info_data_handler(void *data,
                              Ecore_Fd_Handler *fd_handler)
 {
    CB_Data *cbdata;
@@ -434,9 +435,9 @@ _ecore_con_info_data_handler(void             *data,
 }
 
 static Eina_Bool
-_ecore_con_info_exit_handler(void    *data,
+_ecore_con_info_exit_handler(void *data,
                              int type EINA_UNUSED,
-                             void    *event)
+                             void *event)
 {
    CB_Data *cbdata;
    Ecore_Exe_Event_Del *ev;

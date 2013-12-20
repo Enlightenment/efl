@@ -12,7 +12,6 @@
 
 #define BUFSIZE 512
 
-
 static int _ecore_con_local_init_count = 0;
 
 int
@@ -33,58 +32,57 @@ ecore_con_local_shutdown(void)
    return _ecore_con_local_init_count;
 }
 
-
 static Eina_Bool
 _ecore_con_local_win32_server_read_client_handler(void *data, Ecore_Win32_Handler *wh)
 {
-  Ecore_Con_Client *cl;
-  void *buf;
-  DWORD n;
-  Eina_Bool broken_pipe = EINA_FALSE;
+   Ecore_Con_Client *cl;
+   void *buf;
+   DWORD n;
+   Eina_Bool broken_pipe = EINA_FALSE;
 
-  cl = (Ecore_Con_Client *)data;
+   cl = (Ecore_Con_Client *)data;
 
-  if (!ResetEvent(cl->host_server->event_read))
-    return ECORE_CALLBACK_RENEW;
+   if (!ResetEvent(cl->host_server->event_read))
+     return ECORE_CALLBACK_RENEW;
 
-  buf = malloc(cl->host_server->nbr_bytes);
-  if (!buf)
-    return ECORE_CALLBACK_RENEW;
+   buf = malloc(cl->host_server->nbr_bytes);
+   if (!buf)
+     return ECORE_CALLBACK_RENEW;
 
-  if (ReadFile(cl->host_server->pipe, buf, cl->host_server->nbr_bytes, &n, NULL))
-    {
-       if (!cl->delete_me)
-         ecore_con_event_client_data(cl, buf, cl->host_server->nbr_bytes, EINA_FALSE);
-       cl->host_server->want_write = 1;
-    }
-  else
-    {
-      if (GetLastError() == ERROR_BROKEN_PIPE)
-        broken_pipe = EINA_TRUE;
-    }
+   if (ReadFile(cl->host_server->pipe, buf, cl->host_server->nbr_bytes, &n, NULL))
+     {
+        if (!cl->delete_me)
+          ecore_con_event_client_data(cl, buf, cl->host_server->nbr_bytes, EINA_FALSE);
+        cl->host_server->want_write = 1;
+     }
+   else
+     {
+        if (GetLastError() == ERROR_BROKEN_PIPE)
+          broken_pipe = EINA_TRUE;
+     }
 
-  if (broken_pipe)
-    {
+   if (broken_pipe)
+     {
 #if 0
-       char *msg;
+        char *msg;
 
-       msg = evil_last_error_get();
-       if (msg)
-         {
-            ecore_con_event_client_error(cl, msg);
-            free(msg);
-         }
+        msg = evil_last_error_get();
+        if (msg)
+          {
+             ecore_con_event_client_error(cl, msg);
+             free(msg);
+          }
 #endif
-       _ecore_con_client_kill(cl);
-       return ECORE_CALLBACK_CANCEL;
-    }
+        _ecore_con_client_kill(cl);
+        return ECORE_CALLBACK_CANCEL;
+     }
 
-  if (cl->host_server->want_write)
-    ecore_con_local_win32_client_flush(cl);
+   if (cl->host_server->want_write)
+     ecore_con_local_win32_client_flush(cl);
 
    ecore_main_win32_handler_del(wh);
 
-  return ECORE_CALLBACK_DONE;
+   return ECORE_CALLBACK_DONE;
 }
 
 static Eina_Bool
@@ -147,54 +145,54 @@ _ecore_con_local_win32_client_peek_server_handler(void *data, Ecore_Win32_Handle
 static Eina_Bool
 _ecore_con_local_win32_client_read_server_handler(void *data, Ecore_Win32_Handler *wh)
 {
-  Ecore_Con_Server *svr;
-  void *buf;
-  DWORD n;
-  Eina_Bool broken_pipe = EINA_FALSE;
+   Ecore_Con_Server *svr;
+   void *buf;
+   DWORD n;
+   Eina_Bool broken_pipe = EINA_FALSE;
 
-  svr = (Ecore_Con_Server *)data;
+   svr = (Ecore_Con_Server *)data;
 
-  if (!ResetEvent(svr->event_read))
-    return ECORE_CALLBACK_RENEW;
+   if (!ResetEvent(svr->event_read))
+     return ECORE_CALLBACK_RENEW;
 
-  buf = malloc(svr->nbr_bytes);
-  if (!buf)
-    return ECORE_CALLBACK_RENEW;
+   buf = malloc(svr->nbr_bytes);
+   if (!buf)
+     return ECORE_CALLBACK_RENEW;
 
-  if (ReadFile(svr->pipe, buf, svr->nbr_bytes, &n, NULL))
-    {
-       if (!svr->delete_me)
-         ecore_con_event_server_data(svr, buf, svr->nbr_bytes, EINA_FALSE);
-       svr->want_write = 1;
-    }
-  else
-    {
-      if (GetLastError() == ERROR_BROKEN_PIPE)
-        broken_pipe = EINA_TRUE;
-    }
+   if (ReadFile(svr->pipe, buf, svr->nbr_bytes, &n, NULL))
+     {
+        if (!svr->delete_me)
+          ecore_con_event_server_data(svr, buf, svr->nbr_bytes, EINA_FALSE);
+        svr->want_write = 1;
+     }
+   else
+     {
+        if (GetLastError() == ERROR_BROKEN_PIPE)
+          broken_pipe = EINA_TRUE;
+     }
 
-  if (broken_pipe)
-    {
+   if (broken_pipe)
+     {
 #if 0
-       char *msg;
+        char *msg;
 
-       msg = evil_last_error_get();
-       if (msg)
-         {
-            ecore_con_event_server_error(svr, msg);
-            free(msg);
-         }
+        msg = evil_last_error_get();
+        if (msg)
+          {
+             ecore_con_event_server_error(svr, msg);
+             free(msg);
+          }
 #endif
-       _ecore_con_server_kill(svr);
-       return ECORE_CALLBACK_CANCEL;
-    }
+        _ecore_con_server_kill(svr);
+        return ECORE_CALLBACK_CANCEL;
+     }
 
-  if (svr->want_write)
-    ecore_con_local_win32_server_flush(svr);
+   if (svr->want_write)
+     ecore_con_local_win32_server_flush(svr);
 
    ecore_main_win32_handler_del(wh);
 
-  return ECORE_CALLBACK_DONE;
+   return ECORE_CALLBACK_DONE;
 }
 
 /* thread to read data sent by the server to the client */
@@ -356,15 +354,15 @@ _ecore_con_local_win32_client_add(void *data, Ecore_Win32_Handler *wh)
    ResumeThread(cl->host_server->thread_read);
    return ECORE_CALLBACK_DONE;
 
- del_handler_peek:
+del_handler_peek:
    ecore_main_win32_handler_del(handler_peek);
- close_event_peek:
+close_event_peek:
    CloseHandle(cl->host_server->event_peek);
- del_handler_read:
+del_handler_read:
    ecore_main_win32_handler_del(handler_read);
- close_event_read:
+close_event_read:
    CloseHandle(cl->host_server->event_read);
- free_cl:
+free_cl:
    free(cl);
 
    return ECORE_CALLBACK_CANCEL;
@@ -472,11 +470,11 @@ ecore_con_local_listen(Ecore_Con_Server *svr)
 
    return EINA_TRUE;
 
- del_handler:
+del_handler:
    ecore_main_win32_handler_del(handler);
- close_pipe:
+close_pipe:
    CloseHandle(svr->pipe);
- free_path:
+free_path:
    free(svr->path);
    svr->path = NULL;
 
@@ -579,7 +577,7 @@ ecore_con_local_connect(Ecore_Con_Server *svr,
           {
              ERR("Connection to a server failed");
              return EINA_FALSE;
-        }
+          }
 
         /* pipe busy, so we wait for it */
         if (!WaitNamedPipe(buf, NMPWAIT_WAIT_FOREVER))
@@ -641,18 +639,18 @@ ecore_con_local_connect(Ecore_Con_Server *svr,
 
    return EINA_TRUE;
 
- del_handler_peek:
+del_handler_peek:
    ecore_main_win32_handler_del(handler_peek);
- close_event_peek:
+close_event_peek:
    CloseHandle(svr->event_peek);
- del_handler_read:
+del_handler_read:
    ecore_main_win32_handler_del(handler_read);
- close_event_read:
+close_event_read:
    CloseHandle(svr->event_read);
- free_path:
+free_path:
    free(svr->path);
    svr->path = NULL;
- close_pipe:
+close_pipe:
    CloseHandle(svr->pipe);
 
    return EINA_FALSE;
@@ -752,3 +750,4 @@ ecore_con_local_win32_client_flush(Ecore_Con_Client *cl)
 
    return EINA_TRUE;
 }
+

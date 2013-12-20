@@ -10,24 +10,24 @@
 typedef struct _Ecore_Con_Mempool Ecore_Con_Mempool;
 struct _Ecore_Con_Mempool
 {
-   const char *name;
+   const char   *name;
    Eina_Mempool *mp;
-   size_t size;
+   size_t        size;
 };
 
-#define GENERIC_ALLOC_FREE(TYPE, Type)                                  \
-  Ecore_Con_Mempool Type##_mp = { #TYPE,  NULL, sizeof (TYPE) };        \
-                                                                        \
-  TYPE *                                                                \
-  Type##_alloc(void)                                                    \
-  {                                                                     \
-     return eina_mempool_malloc(Type##_mp.mp, sizeof (TYPE));           \
-  }                                                                     \
-                                                                        \
-  void                                                                  \
-  Type##_free(TYPE *e)                                                  \
-  {                                                                     \
-     eina_mempool_free(Type##_mp.mp, e);                                \
+#define GENERIC_ALLOC_FREE(TYPE, Type)                          \
+  Ecore_Con_Mempool Type##_mp = { #TYPE, NULL, sizeof (TYPE) }; \
+                                                                \
+  TYPE *                                                        \
+  Type##_alloc(void)                                            \
+  {                                                             \
+     return eina_mempool_malloc(Type##_mp.mp, sizeof (TYPE));   \
+  }                                                             \
+                                                                \
+  void                                                          \
+    Type##_free(TYPE * e)                                       \
+  {                                                             \
+     eina_mempool_free(Type##_mp.mp, e);                        \
   }
 
 GENERIC_ALLOC_FREE(Ecore_Con_Event_Client_Add, ecore_con_event_client_add);
@@ -43,17 +43,17 @@ GENERIC_ALLOC_FREE(Ecore_Con_Event_Server_Data, ecore_con_event_server_data);
 GENERIC_ALLOC_FREE(Ecore_Con_Event_Proxy_Bind, ecore_con_event_proxy_bind);
 
 static Ecore_Con_Mempool *mempool_array[] = {
-  &ecore_con_event_client_add_mp,
-  &ecore_con_event_client_del_mp,
-  &ecore_con_event_client_write_mp,
-  &ecore_con_event_client_data_mp,
-  &ecore_con_event_server_error_mp,
-  &ecore_con_event_client_error_mp,
-  &ecore_con_event_server_add_mp,
-  &ecore_con_event_server_del_mp,
-  &ecore_con_event_server_write_mp,
-  &ecore_con_event_server_data_mp,
-  &ecore_con_event_proxy_bind_mp
+   &ecore_con_event_client_add_mp,
+   &ecore_con_event_client_del_mp,
+   &ecore_con_event_client_write_mp,
+   &ecore_con_event_client_data_mp,
+   &ecore_con_event_server_error_mp,
+   &ecore_con_event_client_error_mp,
+   &ecore_con_event_server_add_mp,
+   &ecore_con_event_server_del_mp,
+   &ecore_con_event_server_write_mp,
+   &ecore_con_event_server_data_mp,
+   &ecore_con_event_proxy_bind_mp
 };
 
 void
@@ -68,7 +68,7 @@ ecore_con_mempool_init(void)
 
    for (i = 0; i < sizeof (mempool_array) / sizeof (mempool_array[0]); ++i)
      {
-     retry:
+retry:
         mempool_array[i]->mp = eina_mempool_add(choice, mempool_array[i]->name, NULL, mempool_array[i]->size, 16);
         if (!mempool_array[i]->mp)
           {

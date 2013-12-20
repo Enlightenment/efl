@@ -181,10 +181,10 @@ ecore_con_local_connect(Ecore_Con_Server *svr,
 int
 ecore_con_local_listen(
   Ecore_Con_Server *svr,
-  Eina_Bool         (*
-                     cb_listen)(void *data,
-                                Ecore_Fd_Handler *
-                                fd_handler),
+  Eina_Bool (*
+             cb_listen)(void *data,
+                        Ecore_Fd_Handler *
+                        fd_handler),
   void *data
   EINA_UNUSED)
 {
@@ -291,28 +291,28 @@ start:
    if (svr->type & ECORE_CON_SOCKET_ACTIVATE && sd_fd_index < sd_fd_max)
      {
         if (sd_is_socket_unix(SD_LISTEN_FDS_START + sd_fd_index,
-			      SOCK_STREAM, 1,
-			      socket_unix.sun_path,
-			      abstract_socket ? socket_unix_len : 0) <= 0)
-	  {
-	     ERR("Your systemd unit seems to provide fd in the wrong order for Socket activation.");
-	     goto error_umask;
-	  }
-	svr->fd = SD_LISTEN_FDS_START + sd_fd_index++;
+                              SOCK_STREAM, 1,
+                              socket_unix.sun_path,
+                              abstract_socket ? socket_unix_len : 0) <= 0)
+          {
+             ERR("Your systemd unit seems to provide fd in the wrong order for Socket activation.");
+             goto error_umask;
+          }
+        svr->fd = SD_LISTEN_FDS_START + sd_fd_index++;
 
-	if (fcntl(svr->fd, F_SETFL, O_NONBLOCK) < 0)
-	  goto error_umask;
+        if (fcntl(svr->fd, F_SETFL, O_NONBLOCK) < 0)
+          goto error_umask;
 
-	lin.l_onoff = 1;
-	lin.l_linger = 0;
-	if (setsockopt(svr->fd, SOL_SOCKET, SO_LINGER, (const void *)&lin,
-		       sizeof(struct linger)) < 0)
-	  goto error_umask;
+        lin.l_onoff = 1;
+        lin.l_linger = 0;
+        if (setsockopt(svr->fd, SOL_SOCKET, SO_LINGER, (const void *)&lin,
+                       sizeof(struct linger)) < 0)
+          goto error_umask;
 
-	goto fd_ready;
+        goto fd_ready;
      }
 #else
-   (void) abstract_socket;
+   (void)abstract_socket;
 #endif
    svr->fd = socket(AF_UNIX, SOCK_STREAM, 0);
    if (svr->fd < 0)
@@ -346,7 +346,7 @@ start:
      goto error_umask;
 
 #ifdef HAVE_SYSTEMD
- fd_ready:
+fd_ready:
 #endif
    svr->path = strdup(buf);
    if (!svr->path)

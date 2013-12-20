@@ -44,41 +44,42 @@ struct _Ecore_Con_CAres
    struct addrinfo   hints;
    Ecore_Con_Info   *result;
 
-   union {
+   union
+   {
       struct in_addr  v4;
 #ifdef HAVE_IPV6
       struct in6_addr v6;
 #endif
    } addr;
 
-   Eina_Bool byaddr : 1;
-   Eina_Bool isv6 : 1;
+   Eina_Bool         byaddr : 1;
+   Eina_Bool         isv6 : 1;
 };
 
 static ares_channel info_channel;
 static int info_init = 0;
 static Eina_List *info_fds = NULL;
 
-static void _ecore_con_info_ares_nameinfo(Ecore_Con_CAres *arg,
-                                          int              status,
-                                          int              timeouts,
-                                          char            *node,
-                                          char            *service);
-static void _ecore_con_info_ares_host_cb(Ecore_Con_CAres *arg,
-                                         int              status,
-                                         int              timeouts,
-                                         struct hostent  *hostent);
-static Eina_Bool _ecore_con_info_cares_fd_cb(Ecore_Con_FD     *ecf,
-                            Ecore_Fd_Handler *fd_handler);
+static void      _ecore_con_info_ares_nameinfo(Ecore_Con_CAres *arg,
+                                                int status,
+                                                int timeouts,
+                                                char *node,
+                                                char *service);
+static void      _ecore_con_info_ares_host_cb(Ecore_Con_CAres *arg,
+                                               int status,
+                                               int timeouts,
+                                               struct hostent *hostent);
+static Eina_Bool _ecore_con_info_cares_fd_cb(Ecore_Con_FD *ecf,
+                                              Ecore_Fd_Handler *fd_handler);
 static Eina_Bool _ecore_con_info_cares_timeout_cb(void *data);
 
 static void
-_ecore_con_info_cares_state_cb(void *data,
+                 _ecore_con_info_cares_state_cb(void *data,
                                ares_socket_t fd,
                                int readable,
                                int writable);
 static int
-_ecore_con_info_fds_search(const Ecore_Con_FD *fd1,
+                 _ecore_con_info_fds_search(const Ecore_Con_FD *fd1,
                            const Ecore_Con_FD *fd2);
 
 int
@@ -95,7 +96,7 @@ ecore_con_info_init(void)
         opts.sock_state_cb = _ecore_con_info_cares_state_cb;
 
         if (ares_init_options(&info_channel, &opts,
-            ARES_OPT_LOOKUPS | ARES_OPT_SOCK_STATE_CB) != ARES_SUCCESS)
+                              ARES_OPT_LOOKUPS | ARES_OPT_SOCK_STATE_CB) != ARES_SUCCESS)
           {
              ares_library_cleanup();
              return 0;
@@ -113,11 +114,11 @@ ecore_con_info_shutdown(void)
    if (info_init == 0)
      {
         /* Cancel all ongoing request */
-         ares_cancel(info_channel);
-         ares_destroy(info_channel);
+        ares_cancel(info_channel);
+        ares_destroy(info_channel);
 
-         /* Shutdown ares */
-         ares_library_cleanup();
+        /* Shutdown ares */
+        ares_library_cleanup();
      }
 
    return info_init;
@@ -126,7 +127,7 @@ ecore_con_info_shutdown(void)
 int
 ecore_con_info_tcp_connect(Ecore_Con_Server *svr,
                            Ecore_Con_Info_Cb done_cb,
-                           void             *data)
+                           void *data)
 {
    struct addrinfo hints;
 
@@ -149,7 +150,7 @@ ecore_con_info_tcp_connect(Ecore_Con_Server *svr,
 int
 ecore_con_info_tcp_listen(Ecore_Con_Server *svr,
                           Ecore_Con_Info_Cb done_cb,
-                          void             *data)
+                          void *data)
 {
    struct addrinfo hints;
 
@@ -172,7 +173,7 @@ ecore_con_info_tcp_listen(Ecore_Con_Server *svr,
 int
 ecore_con_info_udp_connect(Ecore_Con_Server *svr,
                            Ecore_Con_Info_Cb done_cb,
-                           void             *data)
+                           void *data)
 {
    struct addrinfo hints;
 
@@ -195,7 +196,7 @@ ecore_con_info_udp_connect(Ecore_Con_Server *svr,
 int
 ecore_con_info_udp_listen(Ecore_Con_Server *svr,
                           Ecore_Con_Info_Cb done_cb,
-                          void             *data)
+                          void *data)
 {
    struct addrinfo hints;
 
@@ -218,7 +219,7 @@ ecore_con_info_udp_listen(Ecore_Con_Server *svr,
 int
 ecore_con_info_mcast_listen(Ecore_Con_Server *svr,
                             Ecore_Con_Info_Cb done_cb,
-                            void             *data)
+                            void *data)
 {
    struct addrinfo hints;
 
@@ -240,10 +241,10 @@ ecore_con_info_mcast_listen(Ecore_Con_Server *svr,
 
 static Eina_Bool
 _ecore_con_info_ares_getnameinfo(Ecore_Con_CAres *arg,
-                                 int              addrtype,
-                                 const char      *name,
+                                 int addrtype,
+                                 const char *name,
                                  struct sockaddr *addr,
-                                 int              addrlen)
+                                 int addrlen)
 {
    int length = 0;
 
@@ -285,8 +286,8 @@ _ecore_con_info_ares_getnameinfo(Ecore_Con_CAres *arg,
 EAPI int
 ecore_con_info_get(Ecore_Con_Server *svr,
                    Ecore_Con_Info_Cb done_cb,
-                   void             *data,
-                   struct addrinfo  *hints)
+                   void *data,
+                   struct addrinfo *hints)
 {
    Ecore_Con_CAres *cares;
 #ifdef HAVE_IPV6
@@ -358,7 +359,7 @@ _ecore_con_info_cares_timeout_cb(void *data EINA_UNUSED)
 }
 
 static Eina_Bool
-_ecore_con_info_cares_fd_cb(Ecore_Con_FD     *ecf,
+_ecore_con_info_cares_fd_cb(Ecore_Con_FD *ecf,
                             Ecore_Fd_Handler *fd_handler)
 {
    ares_socket_t read_fd, write_fd;
@@ -392,7 +393,7 @@ _ecore_con_info_cares_state_cb(void *data EINA_UNUSED,
    Ecore_Con_FD *search = NULL, *ecf = NULL;
 
    search = eina_list_search_unsorted(info_fds,
-            (Eina_Compare_Cb)_ecore_con_info_fds_search, &ecf);
+                                      (Eina_Compare_Cb)_ecore_con_info_fds_search, &ecf);
 
    if (!(readable | writable))
      {
@@ -414,7 +415,7 @@ _ecore_con_info_cares_state_cb(void *data EINA_UNUSED,
 
         search->fd = fd;
         search->handler = ecore_main_fd_handler_add(fd, ECORE_FD_WRITE | ECORE_FD_READ,
-            (Ecore_Fd_Cb)_ecore_con_info_cares_fd_cb, search, NULL, NULL);
+                                                    (Ecore_Fd_Cb)_ecore_con_info_cares_fd_cb, search, NULL, NULL);
         /* c-ares default timeout is 5 seconds */
         search->timer = ecore_timer_add(5, _ecore_con_info_cares_timeout_cb, NULL);
         info_fds = eina_list_append(info_fds, search);
@@ -427,9 +428,9 @@ _ecore_con_info_cares_state_cb(void *data EINA_UNUSED,
 
 static void
 _ecore_con_info_ares_host_cb(Ecore_Con_CAres *arg,
-                             int              status,
-                             int              timeouts  EINA_UNUSED,
-                             struct hostent  *hostent)
+                             int status,
+                             int timeouts EINA_UNUSED,
+                             struct hostent *hostent)
 {
    struct sockaddr *addr;
    int addrlen;
@@ -465,6 +466,7 @@ _ecore_con_info_ares_host_cb(Ecore_Con_CAres *arg,
               addr = (struct sockaddr *)addri;
               break;
            }
+
 #ifdef HAVE_IPV6
            case AF_INET6:
            {
@@ -487,6 +489,7 @@ _ecore_con_info_ares_host_cb(Ecore_Con_CAres *arg,
               addr = (struct sockaddr *)addri6;
               break;
            }
+
 #endif
            default:
              ERR("Unknown addrtype %i", hostent->h_addrtype);
@@ -505,56 +508,56 @@ _ecore_con_info_ares_host_cb(Ecore_Con_CAres *arg,
           {
 #ifdef HAVE_IPV6
              /* This happen when host doesn't have a reverse. */
-              if (arg->isv6)
-                {
-                   struct sockaddr_in6 *addri6;
+             if (arg->isv6)
+               {
+                  struct sockaddr_in6 *addri6;
 
-                   addrlen = sizeof(struct sockaddr_in6);
-                   addri6 = malloc(addrlen);
+                  addrlen = sizeof(struct sockaddr_in6);
+                  addri6 = malloc(addrlen);
 
-                   if (!addri6)
-                     goto on_mem_error;
+                  if (!addri6)
+                    goto on_mem_error;
 
-                   addri6->sin6_family = AF_INET6;
-                   addri6->sin6_port = htons(arg->svr->ecs ? arg->svr->ecs->port : arg->svr->port);
-                   addri6->sin6_flowinfo = 0;
-                   addri6->sin6_scope_id = 0;
+                  addri6->sin6_family = AF_INET6;
+                  addri6->sin6_port = htons(arg->svr->ecs ? arg->svr->ecs->port : arg->svr->port);
+                  addri6->sin6_flowinfo = 0;
+                  addri6->sin6_scope_id = 0;
 
-                   memcpy(&addri6->sin6_addr.s6_addr,
-                          &arg->addr.v6, sizeof(struct in6_addr));
+                  memcpy(&addri6->sin6_addr.s6_addr,
+                         &arg->addr.v6, sizeof(struct in6_addr));
 
-                   addr = (struct sockaddr *)addri6;
-                }
-              else
+                  addr = (struct sockaddr *)addri6;
+               }
+             else
 #endif
-                {
-                   struct sockaddr_in *addri;
+             {
+                struct sockaddr_in *addri;
 
-                   addrlen = sizeof(struct sockaddr_in);
-                   addri = malloc(addrlen);
+                addrlen = sizeof(struct sockaddr_in);
+                addri = malloc(addrlen);
 
-                   if (!addri)
-                     goto on_mem_error;
+                if (!addri)
+                  goto on_mem_error;
 
-                   addri->sin_family = AF_INET;
-                   addri->sin_port = htons(arg->svr->ecs ? arg->svr->ecs->port : arg->svr->port);
+                addri->sin_family = AF_INET;
+                addri->sin_port = htons(arg->svr->ecs ? arg->svr->ecs->port : arg->svr->port);
 
-                   memcpy(&addri->sin_addr.s_addr,
-                          &arg->addr.v4, sizeof(struct in_addr));
+                memcpy(&addri->sin_addr.s_addr,
+                       &arg->addr.v4, sizeof(struct in_addr));
 
-                   addr = (struct sockaddr *)addri;
-                }
+                addr = (struct sockaddr *)addri;
+             }
 
-              if (!_ecore_con_info_ares_getnameinfo(arg,
+             if (!_ecore_con_info_ares_getnameinfo(arg,
 #ifdef HAVE_IPV6
-                                                    arg->isv6 ? AF_INET6 :
+                                                   arg->isv6 ? AF_INET6 :
 #endif
-                                                    AF_INET,
-                                                    NULL, addr,
-                                                    addrlen))
-                goto on_error;
+                                                   AF_INET,
+                                                   NULL, addr,
+                                                   addrlen))
+               goto on_error;
 
-              break;
+             break;
           }
 
       case ARES_ENOTIMP: /* unknown family */
@@ -589,10 +592,10 @@ on_error:
 
 static void
 _ecore_con_info_ares_nameinfo(Ecore_Con_CAres *arg,
-                              int              status,
-                              int              timeouts EINA_UNUSED,
-                              char            *node,
-                              char            *service)
+                              int status,
+                              int timeouts EINA_UNUSED,
+                              char *node,
+                              char *service)
 {
    switch (status)
      {
