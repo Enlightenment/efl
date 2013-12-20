@@ -170,8 +170,6 @@ pmaps_buffer_open(Pmaps_Buffer *b, Eina_File *f, Eina_Bool header, int *error)
    if (!b->map)
      {
         *error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
-        eina_file_close(b->file);
-        b->file = NULL;
         return EINA_FALSE;
      }
 
@@ -187,9 +185,7 @@ pmaps_buffer_open(Pmaps_Buffer *b, Eina_File *f, Eina_Bool header, int *error)
      {
 	*error = EVAS_LOAD_ERROR_CORRUPT_FILE;
         eina_file_map_free(b->file, b->map);
-        eina_file_close(b->file);
         b->map = NULL;
-        b->file = NULL;
 	return EINA_FALSE;
      }
 
