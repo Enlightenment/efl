@@ -99,6 +99,7 @@ _configure(Evas_Object *obj)
    static Evas_Map *m = NULL;
 
    if (!sd->content) return;
+   if (sd->enabled && !evas_object_visible_get(obj)) return;
 
    Evas_Coord x, y, w, h;
    evas_object_geometry_get(wd->resize_obj, &x, &y, &w, &h);
