@@ -18,6 +18,8 @@
 #include <Eina.h>
 #include <Ecore_Drm.h>
 
+static int _send_msg(int opcode, int fd, void *data, size_t bytes);
+
 static struct cmsghdr *cmsgptr = NULL;
 static int _read_fd = -1;
 static int _write_fd = -1;
@@ -38,6 +40,20 @@ static int _write_fd = -1;
 #define IOVSET(_iov, _addr, _len) \
    (_iov)->iov_base = (void *)(_addr); \
    (_iov)->iov_len = (_len);
+
+static int 
+_open_device(const char *device)
+{
+   int fd = -1, ret = ECORE_DRM_OP_SUCCESS;
+
+   if ((fd = open(device, O_RDWR)) < 0)
+     {
+        fprintf(stderr, "Failed to open device: %s: %m\n", device);
+        ret = ECORE_DRM_OP_FAILURE;
+     }
+
+   return ret;
+}
 
 static int 
 _read_fd_get(void)
@@ -139,7 +155,7 @@ _send_msg(int opcode, int fd, void *data, size_t bytes)
 static int 
 _recv_msg(void)
 {
-   /* int ret = -1; */
+   int ret = -1;
    Ecore_Drm_Message dmsg;
    struct iovec iov[2];
    struct msghdr msg;
@@ -193,6 +209,7 @@ _recv_msg(void)
                {
                 case ECORE_DRM_OP_DEVICE_OPEN:
                   fprintf(stderr, "Open Device: %s\n", (char *)data);
+                  ret = _open_device((char *)data);
                   break;
                 default:
                   fprintf(stderr, "Unhandled Opcode: %d\n", dmsg.opcode);
