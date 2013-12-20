@@ -710,7 +710,7 @@ void evas_common_map_rgba_internal(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_C
                                   p, smooth, level);
 }
 
-
+#ifdef BUILD_NEON
 void evas_common_map_rgba_internal_neon(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Map_Point *p, int smooth, int level)
 {
    int clip_x, clip_y, clip_w, clip_h;
@@ -737,6 +737,7 @@ void evas_common_map_rgba_internal_neon(RGBA_Image *src, RGBA_Image *dst, RGBA_D
                                   mul_col, dc->render_op,
                                   p, smooth, level);
 }
+#endif
 
 EAPI void
 evas_common_map_rgba_cb(RGBA_Image *src, RGBA_Image *dst,
