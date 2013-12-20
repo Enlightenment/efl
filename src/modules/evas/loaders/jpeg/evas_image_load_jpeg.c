@@ -382,6 +382,7 @@ evas_image_load_file_head_jpeg_internal(unsigned int *w, unsigned int *h,
    cinfo.do_block_smoothing = FALSE;
    cinfo.dct_method = JDCT_ISLOW; // JDCT_FLOAT JDCT_IFAST(quality loss)
    cinfo.dither_mode = JDITHER_ORDERED;
+   cinfo.buffered_image = TRUE; // buffered mode in case jpg is progressive
    jpeg_start_decompress(&cinfo);
 
    /* rotation decoding */
@@ -501,6 +502,7 @@ evas_image_load_file_head_jpeg_internal(unsigned int *w, unsigned int *h,
 	cinfo.do_block_smoothing = FALSE;
 	cinfo.scale_num = 1;
 	cinfo.scale_denom = *scale;
+        cinfo.buffered_image = TRUE; // buffered mode in case jpg is progressive
 	jpeg_calc_output_dimensions(&(cinfo));
 	jpeg_start_decompress(&cinfo);
      }
