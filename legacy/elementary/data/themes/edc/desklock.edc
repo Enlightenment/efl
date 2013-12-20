@@ -299,3 +299,124 @@ group { name: "e/desklock/login_box";
       }
    }
 }
+
+group { name: "e/desklock/pin_box";
+   parts {
+      part { name: "e.text.title"; type: TEXT;
+         effect: SHADOW BOTTOM;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.offset: 3 3;
+            rel1.relative: 0.0 1.0;
+            rel1.to_y: "e.swallow.buttons";
+            rel2.offset: -4 -3;
+            color: 255 255 255 255;
+            color3: 0 0 0 128;
+            align: 0.5 0.0;
+            text { font: "Sans:style=Bold"; size: 10;
+               min: 0 1;
+               align: 0.5 0.5;
+               text_class: "desklock_title";
+               text: "Please enter your PIN";
+            }
+            fixed: 0 1;
+         }
+      }
+      part { name: "selection"; type: RECT; mouse_events: 0;
+         description { state: "default" 0.0;
+            rel1.to: "e.text.password";
+            rel2.to: "e.text.password";
+            color: 51 153 255 255;
+            visible: 0;
+         }
+         description { state: "active" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+      part { name: "e.text.password"; type: TEXT;
+         effect: SHADOW BOTTOM;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.relative: 0.5 0.0;
+            rel1.offset: 3 2;
+            rel2.relative: 0.5 0.0;
+            rel2.offset: 3 -2;
+            color: 255 255 255 255;
+            color3: 0 0 0 128;
+            color_class: "desklock_passwd";
+            text { font: "Sans"; size: 10;
+               min: 1 1;
+               align: 1.0 0.5;
+               text_class: "desklock_passwd";
+            }
+            fixed: 1 1;
+         }
+      }
+      part { name: "cursor"; mouse_events: 0;
+         description { state: "default" 0.0;
+            rel1.to: "e.text.password";
+            rel1.relative: 1.0 0.0;
+            rel1.offset: -4 -4;
+            rel2.to: "e.text.password";
+            rel2.offset: 3 3;
+            image.normal: "white_bar_vert_glow.png";
+            image.border: 4 4 4 4;
+            fill.smooth: 0;
+            color: 255 255 255 0;
+            min: 9 10;
+            fixed: 1 1;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            color: 255 255 255 255;
+         }
+      }
+      part { name: "button_clip"; type: RECT;
+         description { state: "default";
+            color: 255 255 255 255;
+         }
+      }
+      part { name: "e.swallow.buttons"; type: SWALLOW;
+        clip_to: "button_clip";
+        description { state: "default";
+           rel1.relative: 0 1.0;
+           rel1.to_y: "e.text.password";
+           rel1.offset: 0 2;
+           align: 0.5 1.0;
+        }
+      }
+   }
+   programs {
+      program { name: "cursor_show";
+         signal: "show"; source: "";
+         action: STATE_SET "visible" 0.0;
+         target: "cursor";
+         after: "cursor_show_timer";
+      }
+      program { name: "cursor_hide";
+         action: STATE_SET "default" 0.0;
+         target: "cursor";
+         transition: SINUSOIDAL 0.2;
+         after: "cursor_hide_timer";
+      }
+      program { name: "cursor_show_timer";
+         in: 0.5 0.0;
+         after: "cursor_hide";
+      }
+      program { name: "cursor_hide_timer";
+         in: 0.2 0.0;
+         after: "cursor_show";
+      }
+      program {
+         signal: "e,state,selected"; source: "e";
+         action: STATE_SET "active" 0.0;
+         target: "selection";
+      }
+      program {
+         signal: "e,state,unselected"; source: "e";
+         action: STATE_SET "default" 0.0;
+         target: "selection";
+      }
+   }
+}

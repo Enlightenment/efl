@@ -116,6 +116,7 @@ group { name: "e/widgets/syscon/main";
 }
         
 group { name: "e/widgets/syscon/item/button";
+   alias: "e/desklock/pin_button";
    images.image: "button_normal.png" COMP;
    images.image: "button_clicked.png" COMP;
    parts {
