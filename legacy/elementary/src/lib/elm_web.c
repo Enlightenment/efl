@@ -968,11 +968,13 @@ _ewk_view_popup_create_cb(void *data,
                           void *event_info)
 {
    ELM_WEB_DATA_GET(data, sd);
-   Evas_Object *notify, *list;
+   Evas_Object *notify, *list, *grid, *win;
    Ewk_Menu *m = event_info;
    Ewk_Menu_Item *it;
    Elm_Web_Menu m2;
    Eina_List *itr;
+
+   int h, ww, wh;
 
    m2.items = m->items;
    m2.x = m->x;
@@ -984,7 +986,9 @@ _ewk_view_popup_create_cb(void *data,
      (sd->obj, "popup,create", &m2);
    if (m2.handled) return;
 
-   notify = elm_notify_add(data);
+   win = elm_widget_top_get(data);
+
+   notify = elm_notify_add(win);
    elm_notify_allow_events_set(notify, EINA_FALSE);
    elm_notify_align_set(notify, 0.5, 1.0);
 
@@ -994,13 +998,22 @@ _ewk_view_popup_create_cb(void *data,
    elm_list_mode_set(list, ELM_LIST_EXPAND);
    evas_object_size_hint_weight_set(list, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(list, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_object_content_set(notify, list);
    evas_object_show(list);
 
    EINA_LIST_FOREACH(m->items, itr, it)
      elm_list_item_append(list, it->text, NULL, NULL, _popup_item_selected,
                           obj);
    elm_list_go(list);
+
+   grid = elm_grid_add(data);
+   elm_grid_size_set(grid, 1, 1);
+   elm_grid_pack(grid, list, 0, 0, 1, 1);
+   evas_object_geometry_get(win, NULL, NULL, &ww, &wh);
+   //FIXME: it should be the real height of items in the list.
+   h = m->height * eina_list_count(m->items);
+   evas_object_size_hint_min_set(grid, ww, h < wh / 2 ? h : wh / 2);
+   elm_object_content_set(notify, grid);
+   evas_object_show(grid);
 
    evas_object_show(notify);
 
