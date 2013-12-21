@@ -76,7 +76,7 @@ struct _Emotion_Generic_Video_Shared
    /**
     * - "emotion" is the frame from where the Emotion process is reading pixels.
     *   The player shouldn't touch this frame.
-    * - "player" is the frame where the slayer process is writing pixels.
+    * - "player" is the frame where the slave process is writing pixels.
     *   The emotion process shouldn't touch this frame.
     * - "last" is the last frame that was rendered by the player. Emotion will
     *   use this frame the next time it will fetch pixels to Evas.
@@ -105,16 +105,17 @@ emotion_generic_shm_get(const char *shmname, Emotion_Generic_Video_Shared **vs, 
    shmfd = shm_open(shmname, O_RDWR, 0777);
    if (shmfd == -1)
      {
-        fprintf(stderr, "player: could not open shm: %s\n", shmname);
-        fprintf(stderr, "player: %s\n", strerror(errno));
+        fprintf(stderr, "player: could not open shm: %s: %s\n",
+                shmname, strerror(errno));
         return 0;
      }
 
    t_vs = mmap(NULL, sizeof(*t_vs), PROT_READ|PROT_WRITE, MAP_SHARED, shmfd, 0);
    if (t_vs == MAP_FAILED)
      {
-        fprintf(stderr, "player: could not map shared memory.\n");
-        fprintf(stderr, "player: %s\n", strerror(errno));
+        fprintf(stderr, "player: could not map shared memory: %s\n",
+                strerror(errno));
+        close(shmfd);
         return 0;
      }
    size = t_vs->size;
@@ -122,10 +123,12 @@ emotion_generic_shm_get(const char *shmname, Emotion_Generic_Video_Shared **vs, 
    t_vs = mmap(NULL, size, PROT_READ|PROT_WRITE, MAP_SHARED, shmfd, 0);
    if (t_vs == MAP_FAILED)
      {
-        fprintf(stderr, "player: could not map shared memory.\n");
-        fprintf(stderr, "player: %s\n", strerror(errno));
+        fprintf(stderr, "player: could not map shared memory: %s\n",
+                strerror(errno));
+        close(shmfd);
         return 0;
      }
+   close(shmfd);
 
    vf->frames[0] = (unsigned char *)t_vs + sizeof(*t_vs);
    vf->frames[1] = (unsigned char *)t_vs + sizeof(*t_vs) + t_vs->height * t_vs->width * t_vs->pitch;
