@@ -46,6 +46,7 @@ edc/connman.edc \
 edc/cpufreq.edc \
 edc/cslider.edc \
 edc/desklock.edc \
+edc/deskmirror.edc \
 edc/deskpreview.edc \
 edc/dialog.edc \
 edc/edgebindings.edc \

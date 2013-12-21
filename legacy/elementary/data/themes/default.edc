@@ -81,6 +81,7 @@ collections {
 #include "edc/sys.edc"
 #include "edc/winlist.edc"
 #include "edc/desklock.edc"
+#include "edc/deskmirror.edc"
 #include "edc/wizard.edc"
 #include "edc/init.edc"
 #include "edc/about-e.edc"
