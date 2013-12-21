@@ -47,12 +47,18 @@ static dns_hosts *hosts = NULL;
 static void
 _ecore_con_dns_free(Ecore_Con_DNS *dns)
 {
-   if (dns->svr->infos) dns->svr->infos = eina_list_remove(dns->svr->infos, dns);
    if (dns->timer) ecore_timer_del(dns->timer);
    if (dns->fdh) ecore_main_fd_handler_del(dns->fdh);
    if (dns->ai) dns_ai_close(dns->ai);
    dns_res_close(dns_res_mortal(dns->resolv));
    free(dns);
+}
+
+static void
+_ecore_con_dns_del(Ecore_Con_DNS *dns)
+{
+   if (dns->svr && dns->svr->infos) dns->svr->infos = eina_list_remove(dns->svr->infos, dns);
+   _ecore_con_dns_free(dns);
 }
 
 static Eina_Bool
@@ -100,13 +106,13 @@ _ecore_con_dns_check(Ecore_Con_DNS *dns)
       dns->fdh = NULL;
       dns->done_cb(dns->data, &result);
       free(ent);
-      _ecore_con_dns_free(dns);
+      _ecore_con_dns_del(dns);
    }
 
    return 0;
 error:
    dns->done_cb(dns->data, NULL);
-   _ecore_con_dns_free(dns);
+   _ecore_con_dns_del(dns);
    return -1;
 }
 
@@ -128,7 +134,7 @@ static Eina_Bool
 _dns_timer_cb(Ecore_Con_DNS *dns)
 {
    dns->done_cb(dns->data, NULL);
-   _ecore_con_dns_free(dns);
+   _ecore_con_dns_del(dns);
    return EINA_FALSE;
 }
 
