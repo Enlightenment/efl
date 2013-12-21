@@ -1671,6 +1671,7 @@ _ecore_con_cb_tcp_connect(void *data,
    const char *memerr = NULL;
 
    svr = data;
+   if (!svr) return;
 
    errno = 0;
    if (!net_info) /* error message has already been handled */
