@@ -180,8 +180,8 @@ ecore_con_info_shutdown(void)
 void
 ecore_con_info_data_clear(void *info)
 {
-   Ecore_Con_DNS *dns = info;
-   if (dns) dns->data = NULL;
+   if (info)
+     _ecore_con_dns_free(info);
 }
 
 int
