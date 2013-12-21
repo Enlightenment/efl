@@ -102,7 +102,7 @@ emotion_generic_shm_get(const char *shmname, Emotion_Generic_Video_Shared **vs, 
    int size;
    Emotion_Generic_Video_Shared *t_vs;
 
-   shmfd = shm_open(shmname, O_RDWR, 0777);
+   shmfd = shm_open(shmname, O_RDWR, 0700);
    if (shmfd == -1)
      {
         fprintf(stderr, "player: could not open shm: %s: %s\n",

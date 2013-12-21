@@ -121,11 +121,10 @@ _create_shm_data(Emotion_Generic_Video *ev, const char *shmname)
    size_t size;
    Emotion_Generic_Video_Shared *vs;
 
-   shmfd = shm_open(shmname, O_CREAT | O_RDWR | O_TRUNC, 0777);
+   shmfd = shm_open(shmname, O_CREAT | O_RDWR | O_TRUNC, 0700);
    if (shmfd == -1)
      {
-        ERR("player: could not open shm: %s", shmname);
-        ERR("player: %s", strerror(errno));
+        ERR("player: could not create shm %s: %s", shmname,  strerror(errno));
         return 0;
      }
    size = 3 * (ev->w * ev->h * DEFAULTPITCH) + sizeof(*vs);
@@ -137,15 +136,19 @@ _create_shm_data(Emotion_Generic_Video *ev, const char *shmname)
      {
         ERR("error when allocating shared memory (size = %zd): "
             "%s", size, strerror(errno));
+        close(shmfd);
         shm_unlink(shmname);
         return EINA_FALSE;
      }
    vs = mmap(NULL, size, PROT_READ|PROT_WRITE, MAP_SHARED, shmfd, 0);
    if (vs == MAP_FAILED)
      {
-        ERR("error when mapping shared memory");
+        ERR("error when mapping shared memory: %s", strerror(errno));
+        close(shmfd);
+        shm_unlink(shmname);
         return EINA_FALSE;
      }
+   close(shmfd);
 
    vs->size = size;
    vs->width = ev->w;
@@ -159,6 +162,8 @@ _create_shm_data(Emotion_Generic_Video *ev, const char *shmname)
    if (!eina_semaphore_new(&vs->lock, 1))
      {
         ERR("can not create semaphore");
+        munmap(vs, size);
+        shm_unlink(shmname);
         return EINA_FALSE;
      }
    ev->frame.frames[0] = (unsigned char *)vs + sizeof(*vs);
@@ -896,16 +901,12 @@ _player_exec(Emotion_Generic_Video *ev)
         return EINA_FALSE;
      }
 
-   snprintf(buf, sizeof(buf), "%s %d %d\n", ev->engine->path,
+   snprintf(buf, sizeof(buf), "%s %d %d", ev->engine->path,
             ecore_pipe_read_fd(out),
             ecore_pipe_write_fd(in));
 
    ev->player.exe = ecore_exe_pipe_run(
-      buf,
-      ECORE_EXE_PIPE_READ | ECORE_EXE_PIPE_WRITE |
-      ECORE_EXE_PIPE_READ_LINE_BUFFERED | ECORE_EXE_NOT_LEADER |
-      ECORE_EXE_TERM_WITH_PARENT,
-      ev);
+      buf, ECORE_EXE_NOT_LEADER | ECORE_EXE_TERM_WITH_PARENT, ev);
 
    INF("created pipe emotion -> player: %d -> %d",
        ecore_pipe_write_fd(out), ecore_pipe_read_fd(out));
@@ -932,11 +933,9 @@ static Eina_Bool
 _fork_and_exec(Emotion_Generic_Video *ev)
 {
    char shmname[256];
-   struct timeval tv;
 
-   gettimeofday(&tv, NULL);
-   snprintf(shmname, sizeof(shmname), "/em-generic-shm_%d_%d",
-            (int)tv.tv_sec, (int)tv.tv_usec);
+   snprintf(shmname, sizeof(shmname), "/em-generic-shm_%d_%p_%f",
+            getpid(), ev->obj, ecore_time_get());
 
    ev->shmname = eina_stringshare_add(shmname);
 
