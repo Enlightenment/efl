@@ -1230,14 +1230,11 @@ evas_object_smart_changed_get(Evas_Object *eo_obj)
 
    if (!obj->clip.clipees)
      {
-        if (obj->changed)
+        if (obj->changed && !obj->is_smart) return EINA_TRUE;
+        if (_evas_render_has_map(eo_obj, obj))
           {
-             if (_evas_render_has_map(eo_obj, obj))
-               {
-                  if (((obj->changed_pchange) && (obj->changed_map)) ||
-                      (obj->changed_color)) return EINA_TRUE;
-               }
-             else if (!obj->is_smart) return EINA_TRUE;
+             if (((obj->changed_pchange) && (obj->changed_map)) ||
+                 (obj->changed_color)) return EINA_TRUE;
           }
      }
 
