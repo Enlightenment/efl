@@ -22,6 +22,7 @@ int _edje_cc_log_dom = -1;
 static const char *progname = NULL;
 char *file_in = NULL;
 char *file_out = NULL;
+char *outdir = NULL;
 int compress_mode = EET_COMPRESSION_DEFAULT;
 
 Edje_File *edje_file = NULL;
@@ -123,10 +124,11 @@ main_help(void)
 {
    printf
      ("Usage:\n"
-      "\t%s input_file.edj [-main-out file.edc] [-no-build-sh] [-current-dir]\n"
+      "\t%s input_file.edj [-main-out file.edc] [-no-build-sh] [-current-dir | -output path_to_dir]\n"
       "\n"
       " -main-out\tCreate a symbolic link to the main edc \n"
       " -no-build-sh\tDon't output build.sh \n"
+      " -output, -o\tOutput to specified directory \n"
       " -current-dir\tOutput to current directory \n"
       " -quiet\t\tProduce less output\n"
       "\n"
@@ -179,6 +181,11 @@ main(int argc, char **argv)
 	  new_dir = 0;
         else if (!strcmp(argv[i], "-quiet"))
           eina_log_domain_level_set("edje_decc", EINA_LOG_LEVEL_WARN);
+        else if ((!strcmp(argv[i], "-o") || !strcmp(argv[i], "-output")) && (i < (argc - 1)))
+         {
+            i++;
+            outdir = strdup(argv[i]);
+         }
      }
    if (!file_in)
      {
@@ -257,20 +264,23 @@ output(void)
    Eina_List *l;
    Eet_File *tef;
    SrcFile *sf;
-   char *outdir, *p;
+   char *p;
 
-   if (!new_dir)
-     outdir = strdup(".");
-   else
+   if (!outdir)
      {
-	p = strrchr(file_in, '/');
-	if (p)
-	  outdir = strdup(p + 1);
-	else
-	  outdir = strdup(file_in);
-	p = strrchr(outdir, '.');
-	if (p) *p = 0;
-	ecore_file_mkpath(outdir);
+         if (!new_dir)
+            outdir = strdup(".");
+         else
+           {
+               p = strrchr(file_in, '/');
+               if (p)
+                  outdir = strdup(p + 1);
+               else
+                  outdir = strdup(file_in);
+               p = strrchr(outdir, '.');
+               if (p) *p = 0;
+               ecore_file_mkpath(outdir);
+           }
      }
 
 
