@@ -39,10 +39,9 @@ START_TEST(ecore_test_ecore_init)
    int ret;
 
    ret = ecore_init();
-   fail_if(ret != 1);
+   fail_if(ret < 1);
 
    ret = ecore_shutdown();
-   fail_if(ret != 0);
 }
 END_TEST
 
@@ -53,7 +52,7 @@ START_TEST(ecore_test_ecore_main_loop)
    int ret;
 
    ret = ecore_init();
-   fail_if(ret != 1);
+   fail_if(ret < 1);
 
    timer = ecore_timer_add(0.0, _quit_cb, &did);
    fail_if(timer == NULL);
@@ -63,7 +62,6 @@ START_TEST(ecore_test_ecore_main_loop)
    fail_if(did == EINA_FALSE);
 
    ret = ecore_shutdown();
-   fail_if(ret != 0);
 }
 END_TEST
 
@@ -74,7 +72,7 @@ START_TEST(ecore_test_ecore_main_loop_idler)
    int ret;
 
    ret = ecore_init();
-   fail_if(ret != 1);
+   fail_if(ret < 1);
 
    idler = ecore_idler_add(_quit_cb, &did);
    fail_if(idler == NULL);
@@ -84,7 +82,6 @@ START_TEST(ecore_test_ecore_main_loop_idler)
    fail_if(did == EINA_FALSE);
 
    ret = ecore_shutdown();
-   fail_if(ret != 0);
 }
 END_TEST
 
@@ -95,7 +92,7 @@ START_TEST(ecore_test_ecore_main_loop_idle_enterer)
    int ret;
 
    ret = ecore_init();
-   fail_if(ret != 1);
+   fail_if(ret < 1);
 
    idle_enterer = ecore_idle_enterer_add(_quit_cb, &did);
    fail_if(idle_enterer == NULL);
@@ -105,7 +102,6 @@ START_TEST(ecore_test_ecore_main_loop_idle_enterer)
    fail_if(did == EINA_FALSE);
 
    ret = ecore_shutdown();
-   fail_if(ret != 0);
 }
 END_TEST
 
@@ -117,7 +113,7 @@ START_TEST(ecore_test_ecore_main_loop_idle_exiter)
    int ret;
 
    ret = ecore_init();
-   fail_if(ret != 1);
+   fail_if(ret < 1);
 
    /* make system exit idle */
    timer = ecore_timer_add(0.0, _dummy_cb, (void *)(long)0);
@@ -131,7 +127,6 @@ START_TEST(ecore_test_ecore_main_loop_idle_exiter)
    fail_if(did == EINA_FALSE);
 
    ret = ecore_shutdown();
-   fail_if(ret != 0);
 }
 END_TEST
 
@@ -143,7 +138,7 @@ START_TEST(ecore_test_ecore_main_loop_timer)
    int ret;
 
    ret = ecore_init();
-   fail_if(ret != 1);
+   fail_if(ret < 1);
 
    timer = ecore_timer_add(2.0, _quit_cb, &did);
    fail_if(timer == NULL);
@@ -158,7 +153,6 @@ START_TEST(ecore_test_ecore_main_loop_timer)
    fail_if(elapsed > 3.0); /* 1 second "error margin" */
 
    ret = ecore_shutdown();
-   fail_if(ret != 0);
 }
 END_TEST
 
@@ -197,7 +191,7 @@ START_TEST(ecore_test_ecore_main_loop_timer_inner)
    int times = 0;
 
    ret = ecore_init();
-   fail_if(ret != 1);
+   fail_if(ret < 1);
 
    timer = ecore_timer_add(1.0, _timer1, &times);
    fail_if(timer == NULL);
@@ -229,7 +223,7 @@ START_TEST(ecore_test_ecore_main_loop_fd_handler)
    int ret;
 
    ret = ecore_init();
-   fail_if(ret != 1);
+   fail_if(ret < 1);
 
    ret = pipe(comm);
    fail_if(ret != 0);
@@ -249,7 +243,6 @@ START_TEST(ecore_test_ecore_main_loop_fd_handler)
    fail_if(did == EINA_FALSE);
 
    ret = ecore_shutdown();
-   fail_if(ret != 0);
 }
 END_TEST
 
@@ -371,7 +364,7 @@ START_TEST(ecore_test_ecore_main_loop_event)
    int filter = 0;
 
    res_counter = ecore_init();
-   fail_if(res_counter != 1);
+   fail_if(res_counter < 1);
 
    /* Create 2 new event types */
    type = ecore_event_type_new();
@@ -457,7 +450,6 @@ START_TEST(ecore_test_ecore_main_loop_event)
    fail_if(filter != 0); // 0
 
    res_counter = ecore_shutdown();
-   fail_if(res_counter != 0);
 }
 END_TEST
 
@@ -510,7 +502,7 @@ START_TEST(ecore_test_ecore_main_loop_event_recursive)
 
    INF("main: begin");
    ret = ecore_init();
-   fail_if(ret != 1);
+   fail_if(ret < 1);
 
 
    type = ecore_event_type_new();
@@ -537,7 +529,7 @@ START_TEST(ecore_test_ecore_app)
    char **argv_out = NULL;
 
    ret = ecore_init();
-   fail_if(ret != 1);
+   fail_if(ret < 1);
 
    ecore_app_args_set(argc_in, argv_in);
    ecore_app_args_get(&argc_out, &argv_out);
@@ -545,12 +537,11 @@ START_TEST(ecore_test_ecore_app)
    fail_if(argc_in != argc_out);
    int i;
    for (i = 0; i < argc_out; i++)
-   {
-	   fail_if( 0 != strcmp(argv_in[i], argv_out[i]) );
-   }
+     {
+        fail_if( 0 != strcmp(argv_in[i], argv_out[i]) );
+     }
 
    ret = ecore_shutdown();
-   fail_if(ret != 0);
 }
 END_TEST
 
@@ -580,7 +571,7 @@ START_TEST(ecore_test_ecore_main_loop_poller)
    Eina_Bool did = EINA_FALSE;
 
    ret = ecore_init();
-   fail_if(ret != 1);
+   fail_if(ret < 1);
 
    /* Check ECORE_POLLER_CORE poll interval */
    double interval = 1.0;
@@ -616,7 +607,6 @@ START_TEST(ecore_test_ecore_main_loop_poller)
    fail_if(did == EINA_FALSE);
 
    ret = ecore_shutdown();
-   fail_if(ret != 0);
 }
 END_TEST
 
@@ -660,7 +650,7 @@ START_TEST(ecore_test_ecore_main_loop_poller_add_del)
    Eina_Bool did = EINA_FALSE;
 
    ret = ecore_init();
-   fail_if(ret != 1);
+   fail_if(ret < 1);
 
    /* Create renewable main poller */
    Ecore_Poller *poll_ptr = ecore_poller_add(ECORE_POLLER_CORE, 1, _poller_loop, &count_res);
@@ -681,7 +671,6 @@ START_TEST(ecore_test_ecore_main_loop_poller_add_del)
    fail_if(did == EINA_FALSE);
 
    ret = ecore_shutdown();
-   fail_if(ret != 0);
 }
 END_TEST
 
