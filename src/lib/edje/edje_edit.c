@@ -7015,7 +7015,7 @@ edje_edit_script_error_list_get(Evas_Object *obj)
 #define BUF_APPENDF(FMT, ...) \
    ret &= eina_strbuf_append_printf(buf, FMT, ##__VA_ARGS__)
 
-static const char *types[] = {"NONE", "RECT", "TEXT", "IMAGE", "SWALLOW", "TEXTBLOCK", "GRADIENT", "GROUP", "BOX", "TABLE", "EXTERNAL", "SPACER"};
+static const char *types[] = {"NONE", "RECT", "TEXT", "IMAGE", "SWALLOW", "TEXTBLOCK", "GRADIENT", "GROUP", "BOX", "TABLE", "EXTERNAL", "PROXY", "SPACER"};
 static const char *effects[] = {"NONE", "PLAIN", "OUTLINE", "SOFT_OUTLINE", "SHADOW", "SOFT_SHADOW", "OUTLINE_SHADOW", "OUTLINE_SOFT_SHADOW ", "FAR_SHADOW ", "FAR_SOFT_SHADOW", "GLOW"};
 static const char *prefers[] = {"NONE", "VERTICAL", "HORIZONTAL", "BOTH"};
 
@@ -7046,21 +7046,57 @@ _edje_generate_source_of_style(Edje * ed, const char *name, Eina_Strbuf *buf)
    Edje_Style_Tag *t;
    Eina_Bool ret = EINA_TRUE;
 
+   int len, i;
+   #define ESCAPE_VAL(VAL) \
+   for (i = 0, len = strlen(VAL); i < len; i++) \
+      switch(VAL[i]) \
+      { \
+       case '\n': \
+         { \
+            BUF_APPENDF("%s", "\\n"); \
+            break; \
+         } \
+       case '\t': \
+         { \
+            BUF_APPENDF("%s", "\\t"); \
+            break; \
+         } \
+       case '"': \
+         { \
+            BUF_APPENDF("%s", "\\\""); \
+            break; \
+         } \
+       case '\\': \
+         { \
+            BUF_APPENDF("%s", "\\\\"); \
+            break; \
+         } \
+       default: BUF_APPENDF("%c", VAL[i]); \
+      }
+
    EINA_LIST_FOREACH(ed->file->styles, l, s)
      if (!strcmp(s->name, name))
        {
 	 t = s->tags ? s->tags->data : NULL;
 	 BUF_APPENDF(I1 "style { name:\"%s\";\n", s->name);
 	 if (t && t->value)
-	   BUF_APPENDF(I2 "base: \"%s\";\n", t->value);
+      {
+         BUF_APPEND(I2 "base: \"");
+         ESCAPE_VAL(t->value);
+         BUF_APPEND("\";\n");
+      }
 
 	 EINA_LIST_FOREACH(s->tags, ll, t)
 	   if (ll->prev && t && t->value)
-	     BUF_APPENDF(I2 "tag: \"%s\" \"%s\";\n", t->key,
-			        t->value);
+        {
+           BUF_APPENDF(I2 "tag: \"%s\" \"", t->key);
+           ESCAPE_VAL(t->value);
+           BUF_APPEND("\";\n");
+        }
 	 BUF_APPEND(I1 "}\n");
 	 return ret;
        }
+   #undef ESCAPE_VAL
    return EINA_FALSE;
 }
 
@@ -7352,34 +7388,41 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
 
 	//Fill
 
-	BUF_APPEND(I5"fill {\n");
-	if (!img->image.fill.smooth)
-	  BUF_APPEND(I6"smooth: 0;\n");
-        //TODO Support spread
+   if (!img->image.fill.smooth || img->image.fill.pos_rel_x ||
+       img->image.fill.pos_rel_y || img->image.fill.pos_abs_x ||
+       img->image.fill.pos_abs_y || TO_DOUBLE(img->image.fill.rel_x) != 1.0 ||
+       TO_DOUBLE(img->image.fill.rel_y) != 1.0 ||
+       img->image.fill.abs_x || img->image.fill.abs_y)
+      {
+         BUF_APPEND(I5"fill {\n");
+         if (!img->image.fill.smooth)
+           BUF_APPEND(I6"smooth: 0;\n");
+              //TODO Support spread
 
-	if (img->image.fill.pos_rel_x || img->image.fill.pos_rel_y ||
-            img->image.fill.pos_abs_x || img->image.fill.pos_abs_y)
-	  {
-		BUF_APPEND(I6"origin {\n");
-		if (img->image.fill.pos_rel_x || img->image.fill.pos_rel_y)
-		  BUF_APPENDF(I7"relative: %g %g;\n", TO_DOUBLE(img->image.fill.pos_rel_x), TO_DOUBLE(img->image.fill.pos_rel_y));
-		if (img->image.fill.pos_abs_x || img->image.fill.pos_abs_y)
-		  BUF_APPENDF(I7"offset: %d %d;\n", img->image.fill.pos_abs_x, img->image.fill.pos_abs_y);
-		BUF_APPEND(I6"}\n");
-          }
+         if (img->image.fill.pos_rel_x || img->image.fill.pos_rel_y ||
+                  img->image.fill.pos_abs_x || img->image.fill.pos_abs_y)
+           {
+               BUF_APPEND(I6"origin {\n");
+               if (img->image.fill.pos_rel_x || img->image.fill.pos_rel_y)
+                 BUF_APPENDF(I7"relative: %g %g;\n", TO_DOUBLE(img->image.fill.pos_rel_x), TO_DOUBLE(img->image.fill.pos_rel_y));
+               if (img->image.fill.pos_abs_x || img->image.fill.pos_abs_y)
+                 BUF_APPENDF(I7"offset: %d %d;\n", img->image.fill.pos_abs_x, img->image.fill.pos_abs_y);
+               BUF_APPEND(I6"}\n");
+           }
 
-	if (TO_DOUBLE(img->image.fill.rel_x) != 1.0 || TO_DOUBLE(img->image.fill.rel_y) != 1.0 ||
-            img->image.fill.abs_x || img->image.fill.abs_y)
-	  {
-		BUF_APPEND(I6"size {\n");
-		if (img->image.fill.rel_x != 1.0 || img->image.fill.rel_y != 1.0)
-		  BUF_APPENDF(I7"relative: %g %g;\n", TO_DOUBLE(img->image.fill.rel_x), TO_DOUBLE(img->image.fill.rel_y));
-		if (img->image.fill.abs_x || img->image.fill.abs_y)
-		  BUF_APPENDF(I7"offset: %d %d;\n", img->image.fill.abs_x, img->image.fill.abs_y);
-		BUF_APPEND(I6"}\n");
-          }
+         if (TO_DOUBLE(img->image.fill.rel_x) != 1.0 || TO_DOUBLE(img->image.fill.rel_y) != 1.0 ||
+                  img->image.fill.abs_x || img->image.fill.abs_y)
+           {
+               BUF_APPEND(I6"size {\n");
+               if (img->image.fill.rel_x != 1.0 || img->image.fill.rel_y != 1.0)
+                 BUF_APPENDF(I7"relative: %g %g;\n", TO_DOUBLE(img->image.fill.rel_x), TO_DOUBLE(img->image.fill.rel_y));
+               if (img->image.fill.abs_x || img->image.fill.abs_y)
+                 BUF_APPENDF(I7"offset: %d %d;\n", img->image.fill.abs_x, img->image.fill.abs_y);
+               BUF_APPEND(I6"}\n");
+           }
 
-	BUF_APPEND(I5"}\n");
+         BUF_APPEND(I5"}\n");
+      }
      }
 
    if (rp->part->type == EDJE_PART_TYPE_PROXY)

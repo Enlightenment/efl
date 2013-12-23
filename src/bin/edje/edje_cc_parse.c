@@ -380,6 +380,9 @@ next_token(char *p, char *end, char **new_p, int *delim)
         is_escaped = 0;
         p = tok;
 
+        /* Note: if you change special chars list here make the same changes in
+         * _edje_generate_source_of_style function
+         */
         while (*p)
           {
              if ((*p == '\"') && (!is_escaped))
