@@ -8,9 +8,9 @@ arch=('i686' 'x86_64' 'arm')
 url="http://www.enlightenment.org"
 license=('BSD' 'LGPL2.1' 'GPL2' 'custom')
 makedepends=('doxygen' 'check')
-depends=('bullet' 'libpng' 'libjpeg-turbo' 'gstreamer0.10'
-         'gstreamer0.10-base' 'gstreamer0.10-good'
-         'gstreamer0.10-bad' 'gstreamer0.10-ugly' 'gstreamer0.10-ffmpeg'
+depends=('bullet' 'libpng' 'libjpeg-turbo'
+         'gstreamer' 'gst-plugins-base-libs' 'gst-plugins-base'
+         'gst-plugins-good' 'gst-plugins-bad'
          'zlib' 'lua' 'libtiff' 'openssl' 'util-linux' 'curl' 'dbus'
          'glibc' 'fontconfig' 'freetype2' 'fribidi' 'libpulse'
          'libsndfile' 'systemd' 'libx11' 'libxau' 'libxcomposite'
