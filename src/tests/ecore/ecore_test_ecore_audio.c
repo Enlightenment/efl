@@ -822,7 +822,7 @@ void setup(void)
    ck_assert_int_eq(ret, 1);
 
    ret = ecore_init();
-   ck_assert_int_eq(ret, 1);
+   fail_if(ret < 1);
 
    ret = ecore_audio_init();
    ck_assert_int_eq(ret, 1);
