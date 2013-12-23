@@ -10,7 +10,6 @@ typedef struct
    Evas_Object *btn_fwd;
    Evas_Object *url_entry;
    Eina_List *sub_wins;
-   const char* user_agent;
    Eina_Bool js_hooks : 1;
 } Web_Test;
 
@@ -86,7 +85,7 @@ _web_win_close_request_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_
 }
 
 static Evas_Object *
-_new_window_hook(void *data, Evas_Object *obj EINA_UNUSED, Eina_Bool js EINA_UNUSED, const Elm_Web_Window_Features *wf EINA_UNUSED)
+_new_window_hook(void *data, Evas_Object *obj, Eina_Bool js EINA_UNUSED, const Elm_Web_Window_Features *wf EINA_UNUSED)
 {
    Web_Test *wt = data;
    Evas_Object *new_win, *new_web;
@@ -97,7 +96,7 @@ _new_window_hook(void *data, Evas_Object *obj EINA_UNUSED, Eina_Bool js EINA_UNU
    evas_object_show(new_win);
 
    new_web = elm_web_add(new_win);
-   elm_web_useragent_set(new_web, wt->user_agent);
+   elm_web_useragent_set(new_web, elm_web_useragent_get(obj));
    evas_object_size_hint_weight_set(new_web, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(new_win, new_web);
    evas_object_show(new_web);
@@ -314,6 +313,37 @@ _bring_in_region_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info E
    elm_web_region_bring_in(wt->web, 50, 0, 1, 1);
 }
 
+typedef struct
+{
+   const char* name;
+   const char* useragent;
+} User_Agent;
+
+static User_Agent ua[] = {
+    {"Default", NULL},
+    {"Mobile/Iphone", "Mozilla/5.0 (iPhone; CPU iPhone OS 6_1 like Mac OS X) AppleWebKit/536.26 (KHTML, like Gecko) Version/6.0 Mobile/10B142 Safari/8536.25"},
+    {"Mobile/Android(Chrome)", "Mozilla/5.0 (Linux; Android 4.0.4; Galaxy Nexus Build/IMM76B) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.133 Mobile Safari/535.19"},
+    {"Mobile/Android", "Mozilla/5.0 (Linux; U; Android 4.0.2; en-us; Galaxy Nexus Build/ICL53F) AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30"},
+    {"Desktop/Firefox", "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:25.0) Gecko/20100101 Firefox/25.0"},
+    {"Desktop/Chrome", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.57 Safari/537.17"}
+};
+
+static void
+_useragent_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+   Web_Test *wt = data;
+   Elm_Object_Item *hoversel_it = event_info;
+   const char *lbl = elm_object_item_text_get(hoversel_it);
+   unsigned i;
+
+   for (i = 0; i < sizeof(ua) / sizeof(ua[0]); ++i)
+     if (!strcmp(lbl, ua[i].name))
+       {
+           printf("New user agent : %s\n", ua[i].useragent ? ua[i].useragent : "Default");
+           elm_web_useragent_set(wt->web, ua[i].useragent);
+       }
+}
+
 static void
 _main_web_del_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
@@ -327,27 +357,18 @@ _main_web_del_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, 
 }
 
 void
-test_web(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED, Eina_Bool mobile)
+test_web(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    const char user_agent_firefox[] = "Mozilla/5.0 (X11; Linux x86_64; rv:9.0.1) Gecko/20100101 Firefox/9.0.1";
    const char user_agent_mobile[] = "Mozilla/5.0 (iPhone; U; CPU like Mac OS X; en) AppleWebKit/420+ (KHTML, like Gecko) Version/3.0 Mobile/1A543a Safari/419.3";
    Evas_Object *win, *bx, *bx2, *bt, *web, *url;
    Web_Test *wt;
+   unsigned i;
 
    elm_need_web();
 
    wt = calloc(1, sizeof(*wt));
-
-   if (mobile == EINA_TRUE)
-     {
-        win = elm_win_util_standard_add("web-mobile", "Web Mobile");
-        wt->user_agent = user_agent_mobile;
-     }
-   else
-     {
-        win = elm_win_util_standard_add("web", "Web");
-        wt->user_agent = user_agent_firefox;
-     }
+   win = elm_win_util_standard_add("web", "Web");
 
    elm_win_autodel_set(win, EINA_TRUE);
 
@@ -364,8 +385,6 @@ test_web(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info 
    evas_object_show(bx2);
 
    web = elm_web_add(win);
-   elm_web_useragent_set(web, wt->user_agent);
-   printf("elm_web useragent: %s\n", elm_web_useragent_get(web));
    evas_object_size_hint_weight_set(web, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(web, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(bx, web);
@@ -470,6 +489,14 @@ test_web(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info 
 
    evas_object_smart_callback_add(bt, "clicked", _bring_in_region_cb, wt);
 
+   bt = elm_hoversel_add(win);
+   elm_object_text_set(bt, "User agent");
+   elm_box_pack_end(bx2, bt);
+   evas_object_show(bt);
+
+   for (i = 0; i < sizeof(ua) / sizeof(ua[0]); ++i)
+     elm_hoversel_item_add(bt, ua[i].name, NULL, ELM_ICON_NONE, _useragent_cb, wt);
+
    evas_object_smart_callback_add(web, "title,changed", _title_changed_cb, win);
    evas_object_smart_callback_add(web, "url,changed", _url_changed_cb, wt);
 
@@ -483,16 +510,4 @@ test_web(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info 
 
    evas_object_resize(win, 320, 480);
    evas_object_show(win);
-}
-
-void
-test_web_normal(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
-{
-   test_web(data, obj, event_info, EINA_FALSE);
-}
-
-void
-test_web_mobile(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
-{
-   test_web(data, obj, event_info, EINA_TRUE);
 }
