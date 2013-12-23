@@ -1945,9 +1945,16 @@ EAPI extern Eina_Mempool *_emp_SPACER;
 EAPI extern Eina_Mempool *_emp_part;
 
 void  _edje_part_pos_set(Edje *ed, Edje_Real_Part *ep, int mode, FLOAT_T pos, FLOAT_T v1, FLOAT_T v2, FLOAT_T v3, FLOAT_T v4);
+
+/** Find the description of the part by state name and state value.
+ * The param 'approximate' on the approximate calculation of the state value,
+ * it used for amination calculate, when used transition from 0.0 to 1.0.
+ * If need exact matching state name and value set EINA_FALSE to 'approximate'.
+ */
 Edje_Part_Description_Common *_edje_part_description_find(Edje *ed,
-							  Edje_Real_Part *rp,
-							  const char *name, double val);
+                                                          Edje_Real_Part *rp,
+                                                          const char *state_name, double val,
+                                                          Eina_Bool approximate);
 void  _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, const char  *d1, double v1, const char *d2, double v2);
 void  _edje_recalc(Edje *ed);
 void  _edje_recalc_do(Edje *ed);

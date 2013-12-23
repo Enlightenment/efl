@@ -266,7 +266,7 @@ _edje_part_description_find_byname(Edje_Edit *eed, const char *part, const char 
    rp = _edje_real_part_get(eed->base, part);
    if (!rp) return NULL;
 
-   pd = _edje_part_description_find(eed->base, rp, state, value);
+   pd = _edje_part_description_find(eed->base, rp, state, value, EINA_FALSE);
 
    return pd;
 }

@@ -3916,7 +3916,7 @@ _edje_lua_part_fn_custom_state(lua_State *L)
 
    name = (char *)luaL_checkstring(L, 2);	// state name
    val = luaL_checknumber(L, 3);	// state val
-   if (!(parent = _edje_part_description_find(obj->ed, obj->rp, name, val)))
+   if (!(parent = _edje_part_description_find(obj->ed, obj->rp, name, val, EINA_TRUE)))
      {
 	lua_pushnil(L);
 	return 1;

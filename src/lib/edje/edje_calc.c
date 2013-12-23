@@ -280,8 +280,8 @@ _edje_get_description_by_orientation(Edje *ed, Edje_Part_Description_Common *src
 }
 
 Edje_Part_Description_Common *
-_edje_part_description_find(Edje *ed, Edje_Real_Part *rp, const char *name,
-                            double val)
+_edje_part_description_find(Edje *ed, Edje_Real_Part *rp, const char *state_name,
+                            double state_val, Eina_Bool approximate)
 {
    Edje_Part *ep = rp->part;
    Edje_Part_Description_Common *ret = NULL;
@@ -297,39 +297,47 @@ _edje_part_description_find(Edje *ed, Edje_Real_Part *rp, const char *name,
           calloc(ep->other.desc_count,
                 sizeof (Edje_Part_Description_Common *));
 
-   if (!strcmp(name, "default") && val == 0.0)
+   if (!strcmp(state_name, "default") && state_val == 0.0)
      return _edje_get_description_by_orientation(ed,
            ep->default_desc, &ep->default_desc_rtl, ep->type);
 
-   if (!strcmp(name, "custom"))
+   if (!strcmp(state_name, "custom"))
      return rp->custom ?
         _edje_get_description_by_orientation(ed, rp->custom->description,
               &rp->custom->description_rtl, ep->type) : NULL;
 
-   if (!strcmp(name, "default"))
+   if (!strcmp(state_name, "default") && approximate)
      {
         ret = _edje_get_description_by_orientation(ed, ep->default_desc,
                                                    &ep->default_desc_rtl,
                                                    ep->type);
 
-        min_dst = ABS(ep->default_desc->state.value - val);
+        min_dst = ABS(ep->default_desc->state.value - state_val);
      }
 
    for (i = 0; i < ep->other.desc_count; ++i)
      {
         d = ep->other.desc[i];
 
-        if (d->state.name && (d->state.name == name ||
-                              !strcmp(d->state.name, name)))
+        if (d->state.name && (d->state.name == state_name ||
+                              !strcmp(d->state.name, state_name)))
           {
-             double dst;
-
-             dst = ABS(d->state.value - val);
-             if (dst < min_dst)
+             if (!approximate && d->state.value == state_val)
                {
-                  ret = _edje_get_description_by_orientation(ed, d,
-                                                             &ep->other.desc_rtl[i], ep->type);
-                  min_dst = dst;
+                  return _edje_get_description_by_orientation(ed, d,
+                                                              &ep->other.desc_rtl[i], ep->type);
+               }
+             else
+               {
+                  double dst;
+
+                  dst = ABS(d->state.value - state_val);
+                  if (dst < min_dst)
+                    {
+                       ret = _edje_get_description_by_orientation(ed, d,
+                                                                  &ep->other.desc_rtl[i], ep->type);
+                       min_dst = dst;
+                    }
                }
           }
      }
@@ -540,12 +548,12 @@ _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, const char *d1, doubl
 
    if (!d1) d1 = "default";
 
-   epd1 = _edje_part_description_find(ed, ep, d1, v1);
+   epd1 = _edje_part_description_find(ed, ep, d1, v1, EINA_TRUE);
    if (!epd1)
      epd1 = ep->part->default_desc; /* never NULL */
 
    if (d2)
-     epd2 = _edje_part_description_find(ed, ep, d2, v2);
+     epd2 = _edje_part_description_find(ed, ep, d2, v2, EINA_TRUE);
 
    epdi = (Edje_Part_Description_Image*) epd2;
 

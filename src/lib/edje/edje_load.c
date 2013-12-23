@@ -579,8 +579,8 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                     _edje_ref(ed);
                     rp->part = ep;
                     eina_array_push(&parts, rp);
-                    rp->param1.description = 
-                       _edje_part_description_find(ed, rp, "default", 0.0);
+                    rp->param1.description =
+                       _edje_part_description_find(ed, rp, "default", 0.0, EINA_TRUE);
                     rp->chosen_description = rp->param1.description;
                     if (!rp->param1.description)
                       ERR("no default part description for '%s'!",

@@ -1718,7 +1718,7 @@ _edje_embryo_fn_custom_state(Embryo_Program *ep, Embryo_Cell *params)
 
    val = EMBRYO_CELL_TO_FLOAT(params[3]);
 
-   if (!(parent = _edje_part_description_find(ed, rp, name, val)))
+   if (!(parent = _edje_part_description_find(ed, rp, name, val, EINA_TRUE)))
      return 0;
 
    /* now create the custom state */
