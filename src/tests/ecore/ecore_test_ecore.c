@@ -42,6 +42,7 @@ START_TEST(ecore_test_ecore_init)
    fail_if(ret < 1);
 
    ret = ecore_shutdown();
+   fail_if(ret != 0);
 }
 END_TEST
 

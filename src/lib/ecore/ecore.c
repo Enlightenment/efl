@@ -58,6 +58,7 @@ Eo *_ecore_parent = NULL;
 
 static const char *_ecore_magic_string_get(Ecore_Magic m);
 static int _ecore_init_count = 0;
+static int _ecore_init_count_threshold = 0;
 int _ecore_log_dom = -1;
 int _ecore_fps_debug = 0;
 
@@ -331,6 +332,8 @@ ecore_init(void)
    if (!_no_system_modules)
      ecore_system_modules_load();
 
+   _ecore_init_count_threshold = _ecore_init_count;
+
    eina_log_timing(_ecore_log_dom,
 		   EINA_LOG_STATE_STOP,
 		   EINA_LOG_STATE_INIT);
@@ -375,7 +378,7 @@ ecore_shutdown(void)
           _ecore_unlock();
           return 0;
        }
-     if (--_ecore_init_count != 0)
+     if (_ecore_init_count-- != _ecore_init_count_threshold)
        goto unlock;
 
      ecore_system_modules_unload();
