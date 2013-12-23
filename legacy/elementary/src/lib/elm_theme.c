@@ -856,8 +856,13 @@ EAPI const char *
 elm_theme_group_path_find(Elm_Theme *th, const char *group)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(group, NULL);
+   Eina_File *th_file = NULL;
    if (!th) th = &(theme_default);
-   return eina_file_filename_get(_elm_theme_group_file_find(th, group));
+
+   th_file = _elm_theme_group_file_find(th, group);
+   if (th_file)
+     return eina_file_filename_get(th_file);
+   return NULL;
 }
 
 static Eina_List *
