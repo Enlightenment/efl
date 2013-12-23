@@ -226,7 +226,7 @@ _gl_del_cb(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, voi
 void
 test_glview_simple(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Evas_Object *win, *bx, *bt, *gl;
+   Evas_Object *win, *bx, *bt, *gl, *lb;
    Ecore_Animator *ani;
    GL_Data *gld = NULL;
 
@@ -242,24 +242,36 @@ test_glview_simple(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
    evas_object_show(bx);
 
    gl = elm_glview_add(win);
-   evas_object_size_hint_align_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_glview_mode_set(gl, ELM_GLVIEW_ALPHA | ELM_GLVIEW_DEPTH);
-   elm_glview_resize_policy_set(gl, ELM_GLVIEW_RESIZE_POLICY_RECREATE);
-   elm_glview_render_policy_set(gl, ELM_GLVIEW_RENDER_POLICY_ON_DEMAND);
-   elm_glview_init_func_set(gl, _init_gl);
-   elm_glview_del_func_set(gl, _del_gl);
-   elm_glview_resize_func_set(gl, _resize_gl);
-   elm_glview_render_func_set(gl, _draw_gl);
-   elm_box_pack_end(bx, gl);
-   evas_object_show(gl);
+   if (gl)
+     {
+        evas_object_size_hint_align_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);
+        evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        elm_glview_mode_set(gl, ELM_GLVIEW_ALPHA | ELM_GLVIEW_DEPTH);
+        elm_glview_resize_policy_set(gl, ELM_GLVIEW_RESIZE_POLICY_RECREATE);
+        elm_glview_render_policy_set(gl, ELM_GLVIEW_RENDER_POLICY_ON_DEMAND);
+        elm_glview_init_func_set(gl, _init_gl);
+        elm_glview_del_func_set(gl, _del_gl);
+        elm_glview_resize_func_set(gl, _resize_gl);
+        elm_glview_render_func_set(gl, _draw_gl);
+        elm_box_pack_end(bx, gl);
+        evas_object_show(gl);
 
-   elm_object_focus_set(gl, EINA_TRUE);
+        elm_object_focus_set(gl, EINA_TRUE);
 
-   ani = ecore_animator_add(_anim, gl);
-   gld->glapi = elm_glview_gl_api_get(gl);
-   evas_object_data_set(gl, "gld", gld);
-   evas_object_event_callback_add(gl, EVAS_CALLBACK_DEL, _gl_del_cb, ani);
+        ani = ecore_animator_add(_anim, gl);
+        gld->glapi = elm_glview_gl_api_get(gl);
+        evas_object_data_set(gl, "gld", gld);
+        evas_object_event_callback_add(gl, EVAS_CALLBACK_DEL, _gl_del_cb, ani);
+     }
+   else
+     {
+        lb = elm_label_add(bx);
+        elm_object_text_set(lb, "GL backend engine is not supported.");
+        evas_object_size_hint_weight_set(lb, EVAS_HINT_EXPAND, 0.0);
+        evas_object_size_hint_align_set(lb, EVAS_HINT_FILL, EVAS_HINT_FILL);
+        elm_box_pack_end(bx, lb);
+        evas_object_show(lb);
+     }
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Close");
