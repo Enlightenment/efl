@@ -1,4 +1,6 @@
 //Compile with:
+// gcc -o ecore_pipe_gstreamer_example ecore_pipe_gstreamer_example.c `pkg-config --libs --cflags ecore gstreamer-1.0`
+// or
 // gcc -o ecore_pipe_gstreamer_example ecore_pipe_gstreamer_example.c `pkg-config --libs --cflags ecore gstreamer-0.10`
 
 #include <gst/gst.h>
@@ -98,23 +100,33 @@ new_decoded_pad_cb(GstElement *demuxer,
    GstElement *decoder;
    GstPad *pad;
    GstCaps *caps;
-   gchar *str;
+   GstStructure *s;
+   const gchar *str;
 
+#if GST_CHECK_VERSION(1,0,0)
+   caps = gst_pad_get_current_caps(new_pad);
+#else
    caps = gst_pad_get_caps(new_pad);
-   str = gst_caps_to_string(caps);
+#endif
+   s = gst_caps_get_structure(caps, 0);
+   str = gst_structure_get_name(s);
 
    if (g_str_has_prefix(str, "video/"))
      {
         decoder = GST_ELEMENT(user_data);
 
+#if GST_CHECK_VERSION(1,0,0)
+        pad = gst_element_get_static_pad(decoder, "sink");
+#else
         pad = gst_element_get_pad(decoder, "sink");
+#endif
         if (GST_PAD_LINK_FAILED(gst_pad_link(new_pad, pad)))
           {
              g_warning("Failed to link %s:%s to %s:%s", GST_DEBUG_PAD_NAME(new_pad),
                        GST_DEBUG_PAD_NAME(pad));
           }
+        gst_object_unref(pad);
      }
-   g_free(str);
    gst_caps_unref(caps);
 }
 

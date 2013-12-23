@@ -52,7 +52,7 @@ modules_emotion_xine_module_la_LIBTOOLFLAGS = --tag=disable-static
 endif
 endif
 
-# Gstreamer
+# Gstreamer 0.10
 EMOTION_GSTREAMER_SOURCES = \
 modules/emotion/gstreamer/emotion_gstreamer.h \
 modules/emotion/gstreamer/emotion_gstreamer.c \
@@ -81,6 +81,39 @@ if HAVE_ECORE_X
 modules_emotion_gstreamer_module_la_CPPFLAGS += @ECORE_X_CFLAGS@ @ECORE_EVAS_CFLAGS@
 modules_emotion_gstreamer_module_la_LIBADD += @USE_ECORE_X_LIBS@ @USE_ECORE_EVAS_LIBS@
 modules_emotion_gstreamer_module_la_DEPENDENCIES += @USE_ECORE_X_INTERNAL_LIBS@ @USE_ECORE_EVAS_INTERNAL_LIBS@
+endif
+endif
+endif
+
+# Gstreamer 1.0
+EMOTION_GSTREAMER1_SOURCES = \
+modules/emotion/gstreamer1/emotion_gstreamer.h \
+modules/emotion/gstreamer1/emotion_gstreamer.c \
+modules/emotion/gstreamer1/emotion_alloc.c \
+modules/emotion/gstreamer1/emotion_convert.c \
+modules/emotion/gstreamer1/emotion_fakeeos.c \
+modules/emotion/gstreamer1/emotion_sink.c
+
+if EMOTION_STATIC_BUILD_GSTREAMER1
+lib_emotion_libemotion_la_SOURCES += $(EMOTION_GSTREAMER1_SOURCES)
+else
+if EMOTION_BUILD_GSTREAMER1
+emotionmodulegstreamer1dir = $(libdir)/emotion/modules/gstreamer1/$(MODULE_ARCH)
+emotionmodulegstreamer1_LTLIBRARIES = modules/emotion/gstreamer1/module.la
+modules_emotion_gstreamer1_module_la_SOURCES = $(EMOTION_GSTREAMER1_SOURCES)
+modules_emotion_gstreamer1_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+@EMOTION_CFLAGS@ \
+@EMOTION_MODULE_GSTREAMER1_CFLAGS@
+modules_emotion_gstreamer1_module_la_LIBADD = \
+@USE_EMOTION_LIBS@ \
+@EMOTION_MODULE_GSTREAMER1_LIBS@
+modules_emotion_gstreamer1_module_la_DEPENDENCIES = @USE_EMOTION_INTERNAL_LIBS@
+modules_emotion_gstreamer1_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
+modules_emotion_gstreamer1_module_la_LIBTOOLFLAGS = --tag=disable-static
+if HAVE_ECORE_X
+modules_emotion_gstreamer1_module_la_CPPFLAGS += @ECORE_X_CFLAGS@ @ECORE_EVAS_CFLAGS@
+modules_emotion_gstreamer1_module_la_LIBADD += @USE_ECORE_X_LIBS@ @USE_ECORE_EVAS_LIBS@
+modules_emotion_gstreamer1_module_la_DEPENDENCIES += @USE_ECORE_X_INTERNAL_LIBS@ @USE_ECORE_EVAS_INTERNAL_LIBS@
 endif
 endif
 endif

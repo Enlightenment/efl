@@ -1796,8 +1796,8 @@ AC_ARG_ENABLE([g-main-loop],
    [want_g_main_loop="no"])
 
 AC_ARG_ENABLE([gstreamer],
-   [AC_HELP_STRING([--disable-gstreamer],
-                   [disable gstreamer support. @<:@default=enabled@:>@])],
+   [AC_HELP_STRING([--enable-gstreamer],
+                   [enable gstreamer 0.10 support. @<:@default=disabled@:>@])],
    [
     if test "x${enableval}" = "xyes" ; then
        want_gstreamer="yes"
@@ -1805,7 +1805,19 @@ AC_ARG_ENABLE([gstreamer],
        want_gstreamer="no"
     fi
    ],
-   [want_gstreamer="yes"])
+   [want_gstreamer="no"])
+
+AC_ARG_ENABLE([gstreamer1],
+   [AC_HELP_STRING([--disable-gstreamer1],
+                   [disable gstreamer 1.0 support. @<:@default=enabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_gstreamer1="yes"
+    else
+       want_gstreamer1="no"
+    fi
+   ],
+   [want_gstreamer1="yes"])
 
 AC_ARG_ENABLE([tizen],
    [AC_HELP_STRING([--enable-tizen],
@@ -1882,10 +1894,17 @@ if test "x${want_g_main_loop}" = "xyes" ; then
 fi
 
 # not EFL_OPTIONAL_DEPEND_PKG() because it's only used for ecore examples
+if test "${want_gstreamer1}" = "yes" -a "${want_gstreamer}" = "yes"; then
+   AC_MSG_ERROR([You can only enable either GStreamer 1.0 or GStreamer 0.10 support])
+fi
+
+if test "${want_gstreamer1}" = "yes"; then
+  PKG_CHECK_MODULES([GSTREAMER], [gstreamer-1.0])
+fi
 if test "${want_gstreamer}" = "yes"; then
   PKG_CHECK_MODULES([GSTREAMER], [gstreamer-0.10])
 fi
-AM_CONDITIONAL([HAVE_GSTREAMER], [test "${want_gstreamer}" = "yes"])
+AM_CONDITIONAL([HAVE_GSTREAMER], [test "${want_gstreamer}" = "yes" -o "${want_gstreamer1}" = "yes"])
 
 EFL_EVAL_PKGS([ECORE])
 
@@ -3663,10 +3682,12 @@ have_gst_xoverlay="no"
 
 EMOTION_MODULE([xine], [${want_xine}])
 EMOTION_MODULE([gstreamer], [${want_gstreamer}])
+EMOTION_MODULE([gstreamer1], [${want_gstreamer1}])
 EMOTION_MODULE([generic], [${want_emotion_generic}])
 
 EFL_ADD_FEATURE([EMOTION], [xine])
 EFL_ADD_FEATURE([EMOTION], [gstreamer])
+EFL_ADD_FEATURE([EMOTION], [gstreamer1])
 EFL_ADD_FEATURE([EMOTION], [generic], [${want_emotion_generic}])
 
 EFL_EVAL_PKGS([EMOTION])
