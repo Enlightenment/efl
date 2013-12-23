@@ -179,7 +179,7 @@ START_TEST(ecore_test_ecore_con_server)
    ret = eina_init();
    fail_if(ret != 1);
    ret = ecore_init();
-   fail_if(ret != 1);
+   fail_if(ret < 1);
    ret = ecore_con_init();
    fail_if(ret != 1);
 
@@ -251,9 +251,7 @@ START_TEST(ecore_test_ecore_con_server)
    ret = ecore_con_shutdown();
    fail_if(ret != 0);
    ret = ecore_shutdown();
-   fail_if(ret != 0);
    ret = eina_shutdown();
-   fail_if(ret != 0);
 }
 END_TEST
 
@@ -280,7 +278,7 @@ START_TEST(ecore_test_ecore_con_dns)
    ret = eina_init();
    fail_if(ret != 1);
    ret = ecore_init();
-   fail_if(ret != 1);
+   fail_if(ret < 1);
    ret = ecore_con_init();
    fail_if(ret != 1);
 
@@ -302,9 +300,7 @@ START_TEST(ecore_test_ecore_con_dns)
    ret = ecore_con_shutdown();
    fail_if(ret != 0);
    ret = ecore_shutdown();
-   fail_if(ret != 0);
    ret = eina_shutdown();
-   fail_if(ret != 0);
 }
 END_TEST
 
