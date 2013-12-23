@@ -23,10 +23,9 @@ START_TEST(eldbus_test_eldbus)
    int ret;
 
    ret = eldbus_init();
-   fail_if(ret != 1);
+   fail_if(ret < 1);
 
    ret = eldbus_shutdown();
-   fail_if(ret != 0);
 }
 END_TEST
 
@@ -37,7 +36,7 @@ START_TEST(eldbus_test_eldbus_main_loop)
 
    ecore_init();
    ret = eldbus_init();
-   fail_if(ret != 1);
+   fail_if(ret < 1);
 
    timer = ecore_timer_add(0.1, _quit_cb, NULL);
    fail_if(timer == NULL);
@@ -45,7 +44,6 @@ START_TEST(eldbus_test_eldbus_main_loop)
    ecore_main_loop_begin();
 
    ret = eldbus_shutdown();
-   fail_if(ret != 0);
 
    ecore_shutdown();
 
@@ -67,7 +65,7 @@ START_TEST(eldbus_test_eldbus_conn)
    ecore_init();
 
    ret = eldbus_init();
-   fail_if(ret != 1);
+   fail_if(ret < 1);
 
    /*
     * let's use connection type == system, so it works without a session,
@@ -80,7 +78,6 @@ START_TEST(eldbus_test_eldbus_conn)
    eldbus_connection_unref(conn);
 
    ret = eldbus_shutdown();
-   fail_if(ret != 0);
 
    ecore_shutdown();
 
@@ -96,7 +93,7 @@ START_TEST(eldbus_test_eldbus_conn_object)
    ecore_init();
 
    ret = eldbus_init();
-   fail_if(ret != 1);
+   fail_if(ret < 1);
 
    /*
     * let's use connection type == system, so it works without a D-Bus session.
@@ -114,7 +111,6 @@ START_TEST(eldbus_test_eldbus_conn_object)
    eldbus_connection_unref(conn);
 
    ret = eldbus_shutdown();
-   fail_if(ret != 0);
 
    ecore_shutdown();
 
