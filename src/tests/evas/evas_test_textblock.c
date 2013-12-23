@@ -2241,6 +2241,16 @@ START_TEST(evas_textblock_text_getters)
         ck_assert_str_eq(text, evas_object_textblock_text_markup_get(tb));
      }
 
+   /* complex markup range get */
+     {
+        const char *text = "Break tag tes<item size=40x40 href=a></item>t <br/>Next<br/> line with it<item size=40x40 href=i></item>em tag";
+        evas_object_textblock_text_markup_set(tb, text);
+        evas_textblock_cursor_pos_set(main_cur, 14);
+        evas_textblock_cursor_pos_set(cur, 37);
+        fail_if(strcmp(evas_textblock_cursor_range_text_get(main_cur, cur,
+                 EVAS_TEXTBLOCK_TEXT_MARKUP), "</item>t <br/>Next<br/> line with it<item size=40x40 href=i></item>e"));
+     }
+
    END_TB_TEST();
 }
 END_TEST
