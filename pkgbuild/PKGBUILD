@@ -1,7 +1,7 @@
 # Maintainer: Enlightenment Developers <enlightenment-devel@enlightenment.org>
 pkgname=('efl-git' 'efl_doc-git')
 _pkgname=${pkgname%-*}
-pkgver=1.8.99.24004.0b86e51
+pkgver=1.8.99.24060.a30d82c
 pkgrel=1
 pkgdesc="Enlightenment Foundation Libraries - GIT development snapshot (Ecore, Eldbus, Edje, Eet, Eeze, Efreet, Eina, Eio, Embryo, Emotion, Eo, Ephysics, Ethumb, & Evas)"
 arch=('i686' 'x86_64' 'arm')
@@ -17,7 +17,7 @@ depends=('bullet' 'libpng' 'libjpeg-turbo'
          'libxdamage' 'libxdmcp' 'libxext' 'libxfixes' 'libxinerama'
          'libxi' 'libxrandr' 'libxrender' 'libxss' 'libxtst'
          'libxcursor' 'libxp' 'libgl' 'giflib' 'libwebp' 'harfbuzz'
-	 'wayland' 'sdl' 'avahi')
+	 'wayland' 'avahi' 'scim')
 [[ ! $(pacman -T "openjpeg") ]] && depends+=('openjpeg') #jpeg2k loader is autodetected at build time
 makedepends=('git')
 provides=("ecore=$pkgver" "eldbus=$pkgver" "edje=$pkgver"
@@ -51,7 +51,8 @@ build() {
   --disable-static --disable-tslib --enable-fb \
   --enable-xinput22 --enable-multisense --enable-systemd \
   --enable-image-loader-webp --enable-harfbuzz \
-  --enable-wayland --enable-drm --enable-sdl
+  --enable-wayland --enable-drm \
+  --enable-scim
   make
   make -j1 doc
 }
