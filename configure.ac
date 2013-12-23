@@ -1899,7 +1899,12 @@ if test "${want_gstreamer1}" = "yes" -a "${want_gstreamer}" = "yes"; then
 fi
 
 if test "${want_gstreamer1}" = "yes"; then
-  PKG_CHECK_MODULES([GSTREAMER], [gstreamer-1.0])
+  PKG_CHECK_MODULES([GSTREAMER], [gstreamer-1.0],,
+                    [
+                     AC_MSG_WARN([Asked for GStreamer 1.0, but only 0.10 is available])
+                     want_gstreamer1="no"
+                     want_gstreamer="yes"
+                    ])
 fi
 if test "${want_gstreamer}" = "yes"; then
   PKG_CHECK_MODULES([GSTREAMER], [gstreamer-0.10])
