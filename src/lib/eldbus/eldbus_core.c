@@ -87,8 +87,8 @@ static void _eldbus_connection_free(Eldbus_Connection *conn);
 EAPI int
 eldbus_init(void)
 {
-   if (_eldbus_init_count > 0)
-     return ++_eldbus_init_count;
+   if (_eldbus_init_count++ > 0)
+     return _eldbus_init_count;
 
    if (!eina_init())
      {
@@ -130,7 +130,7 @@ eldbus_init(void)
    if (!eldbus_proxy_init()) goto proxy_failed;
    if (!eldbus_service_init()) goto service_failed;
 
-   return ++_eldbus_init_count;
+   return _eldbus_init_count;
 
 service_failed:
    eldbus_proxy_shutdown();
