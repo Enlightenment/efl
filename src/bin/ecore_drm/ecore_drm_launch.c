@@ -18,19 +18,20 @@
 #include <Eina.h>
 #include <Ecore_Drm.h>
 
-static int _send_msg(int opcode, int fd, void *data, size_t bytes);
-
-static struct cmsghdr *cmsgptr = NULL;
-static int _read_fd = -1;
-static int _write_fd = -1;
-
 #if defined(SCM_CREDS) // Bsd
 # define CRED_STRUCT cmsgcred
+# define CRED_UID cmcred_uid
+# define CRED_PID cmcred_pid
+# define CRED_EUID cmcred_euid
+# define CRED_GID cmcred_gid
 # define SCM_CREDTYPE SCM_CREDS
 #elif defined(SCM_CREDENTIALS) // Linux (3.2.0 ?)
 # define CRED_STRUCT ucred
-# define SCM_CREDTYPE SCM_CREDENTIALS
+# define CRED_UID uid
+# define CRED_PID pid
+# define CRED_GID gid
 # define CRED_OPT SO_PASSCRED
+# define SCM_CREDTYPE SCM_CREDENTIALS
 #endif
 
 #define RIGHTS_LEN CMSG_LEN(sizeof(int))
@@ -41,17 +42,75 @@ static int _write_fd = -1;
    (_iov)->iov_base = (void *)(_addr); \
    (_iov)->iov_len = (_len);
 
+/* local prototypes */
+static int _send_msg(int opcode, int fd, void *data, size_t bytes);
+
+/* local variables */
+static struct cmsghdr *cmsgptr = NULL;
+static int _read_fd = -1;
+static int _write_fd = -1;
+
 static int 
 _open_device(const char *device)
 {
    int fd = -1, ret = ECORE_DRM_OP_SUCCESS;
 
-   if ((fd = open(device, O_RDWR)) < 0)
+   if (!device) 
      {
-        fprintf(stderr, "Failed to open device: %s: %m\n", device);
         ret = ECORE_DRM_OP_FAILURE;
+        _send_msg(ECORE_DRM_OP_DEVICE_OPEN, fd, &ret, sizeof(int));
+        return ret;
      }
 
+   fprintf(stderr, "Launcher Trying to Open Device: %s\n", device);
+
+   if ((fd = open(device, O_RDWR)) < 0)
+     {
+        fprintf(stderr, "Failed to Open Device: %s: %m\n", device);
+        ret = ECORE_DRM_OP_FAILURE;
+     }
+   else
+     fprintf(stderr, "Launcher Opened Device: %s %d\n", device, fd);
+
+   _send_msg(ECORE_DRM_OP_DEVICE_OPEN, fd, &ret, sizeof(int));
+
+   return ret;
+}
+
+static int 
+_open_tty(const char *name)
+{
+   int fd = -1, ret = ECORE_DRM_OP_SUCCESS;
+   /* struct stat st; */
+
+   if (!name) goto fail;
+
+   fprintf(stderr, "Launcher Trying to Open Tty: %s\n", name);
+
+   if ((fd = open(name, O_RDWR | O_NOCTTY)) < 0)
+     {
+        fprintf(stderr, "Failed to Open Tty: %s: %m\n", name);
+        goto fail;
+     }
+   else
+     fprintf(stderr, "Launcher Opened Tty: %s %d\n", name, fd);
+
+   /* if ((fstat(fd, &st) == -1) ||  */
+   /*     (major(st.st_rdev) != TTY_MAJOR) || (minor(st.st_rdev) == 0)) */
+   /*   { */
+   /*      fprintf(stderr, "%d is Not a Tty\n", fd); */
+   /*      goto fail; */
+   /*   } */
+
+   _send_msg(ECORE_DRM_OP_TTY_OPEN, fd, &ret, sizeof(int));
+
+   return ret;
+
+fail:
+   if (fd > -1) close(fd);
+   fd = -1;
+   ret = ECORE_DRM_OP_FAILURE;
+   _send_msg(ECORE_DRM_OP_DEVICE_OPEN, fd, &ret, sizeof(int));
    return ret;
 }
 
@@ -69,6 +128,8 @@ _read_fd_get(void)
 
    flags = fcntl(fd, F_GETFD);
    if (flags < 0) return -1;
+
+   fprintf(stderr, "Got Read FD: %d\n", fd);
 
    return fd;
 }
@@ -88,6 +149,8 @@ _write_fd_get(void)
    flags = fcntl(fd, F_GETFD);
    if (flags < 0) return -1;
 
+   fprintf(stderr, "Got Write FD: %d\n", fd);
+
    return fd;
 }
 
@@ -95,8 +158,6 @@ static int
 _send_msg(int opcode, int fd, void *data, size_t bytes)
 {
    Ecore_Drm_Message dmsg;
-   struct CRED_STRUCT *creds;
-   struct cmsghdr *cmsg;
    struct iovec iov[2];
    struct msghdr msg;
    ssize_t size;
@@ -104,50 +165,45 @@ _send_msg(int opcode, int fd, void *data, size_t bytes)
    /* send a message to the calling process */
    /* 'fd' is the fd to send */
 
+   memset(&dmsg, 0, sizeof(dmsg));
+
    IOVSET(iov + 0, &dmsg, sizeof(dmsg));
    IOVSET(iov + 1, data, bytes);
 
    dmsg.opcode = opcode;
    dmsg.size = bytes;
 
-   msg.msg_iov = iov;
-   msg.msg_iovlen = 2;
+   /* memset(&msg, 0, sizeof(struct msghdr)); */
+
    msg.msg_name = NULL;
    msg.msg_namelen = 0;
+   msg.msg_iov = iov;
+   msg.msg_iovlen = 2;
    msg.msg_flags = 0;
 
-   if ((!cmsgptr) && (!(cmsgptr = malloc(CONTROL_LEN))))
+   if ((!cmsgptr) && (!(cmsgptr = malloc(RIGHTS_LEN))))
      return -1;
 
+   cmsgptr->cmsg_level = SOL_SOCKET;
+   cmsgptr->cmsg_type = SCM_RIGHTS;
+   cmsgptr->cmsg_len = RIGHTS_LEN;
+
    msg.msg_control = cmsgptr;
-   msg.msg_controllen = CONTROL_LEN;
+   msg.msg_controllen = RIGHTS_LEN;
 
-   cmsg = cmsgptr;
+   fprintf(stderr, "Launcher Sending FD: %d\n", fd);
 
-   cmsg->cmsg_level = SOL_SOCKET;
-   cmsg->cmsg_type = SCM_RIGHTS;
-   cmsg->cmsg_len = RIGHTS_LEN;
-   *((int *)CMSG_DATA(cmsg)) = fd;
-
-   cmsg = CMSG_NXTHDR(&msg, cmsg);
-   cmsg->cmsg_level = SOL_SOCKET;
-   cmsg->cmsg_type = SCM_CREDTYPE;
-   cmsg->cmsg_len = CREDS_LEN;
-   creds = (struct CRED_STRUCT *)CMSG_DATA(cmsg);
-
-#if defined(SCM_CREDENTIALS)
-   creds->uid = geteuid();
-   creds->gid = getegid();
-   creds->pid = getpid();
-#endif
+   *((int *)CMSG_DATA(cmsgptr)) = fd;
 
    errno = 0;
-   size = sendmsg(_write_fd, &msg, MSG_EOR);
+   size = sendmsg(_write_fd, &msg, MSG_EOR); // read_fd
    if (errno != 0)
      {
         fprintf(stderr, "Failed to send message: %s", strerror(errno));
         return -1;
      }
+
+   fprintf(stderr, "Launcher Wrote %li to %d\n", size, _write_fd);
 
    return size;
 }
@@ -159,42 +215,39 @@ _recv_msg(void)
    Ecore_Drm_Message dmsg;
    struct iovec iov[2];
    struct msghdr msg;
-   struct cmsghdr *cmsg;
+   struct cmsghdr *cmsg = NULL;
    char data[BUFSIZ];
    ssize_t size;
 
-/* #if defined(CRED_OPT) */
-/*    struct CRED_STRUCT *creds; */
-/*    if (getsockopt(_read_fd, SOL_SOCKET, CRED_OPT,  */
-/*                   &creds, sizeof(struct CRED_STRUCT)) < 0) */
-/*      return -1; */
-/* #endif */
-
    fprintf(stderr, "Received Message\n");
+
+   memset(&dmsg, 0, sizeof(dmsg));
+   memset(&data, 0, sizeof(data));
 
    IOVSET(iov + 0, &dmsg, sizeof(dmsg));
    IOVSET(iov + 1, &data, sizeof(data));
 
-   msg.msg_iov = iov;
-   msg.msg_iovlen = 2;
    msg.msg_name = NULL;
    msg.msg_namelen = 0;
+   msg.msg_iov = iov;
+   msg.msg_iovlen = 2;
+   msg.msg_flags = 0;
 
-   if ((!cmsgptr) && (!(cmsgptr = malloc(CONTROL_LEN))))
+   if ((!cmsgptr) && (!(cmsgptr = malloc(RIGHTS_LEN))))
      return -1;
 
    msg.msg_control = cmsgptr;
-   msg.msg_controllen = CONTROL_LEN;
+   msg.msg_controllen = RIGHTS_LEN;
 
    errno = 0;
-   size = recvmsg(_read_fd, &msg, MSG_ERRQUEUE);
+   size = recvmsg(_read_fd, &msg, 0);
    if (errno != 0)
      {
         fprintf(stderr, "Failed to receive message: %m\n");
         return -1;
      }
 
-   fprintf(stderr, "\tReceived %d bytes\n", (int)size);
+   fprintf(stderr, "\tReceived %li bytes from %d\n", size, _read_fd);
 
    for (cmsg = CMSG_FIRSTHDR(&msg); cmsg != NULL; 
         cmsg = CMSG_NXTHDR(&msg, cmsg))
@@ -211,14 +264,15 @@ _recv_msg(void)
                   fprintf(stderr, "Open Device: %s\n", (char *)data);
                   ret = _open_device((char *)data);
                   break;
+                case ECORE_DRM_OP_TTY_OPEN:
+                  fprintf(stderr, "Open Tty: %s\n", (char *)data);
+                  ret = _open_tty((char *)data);
+                  break;
                 default:
                   fprintf(stderr, "Unhandled Opcode: %d\n", dmsg.opcode);
                   break;
                }
              break;
-           /* case SCM_CREDTYPE: */
-           /*   creds = (struct CRED_STRUCT *)CMSG_DATA(cmsg); */
-           /*   break; */
            default:
              fprintf(stderr, "Unhandled message type: %d\n", cmsg->cmsg_type);
              return -1;
@@ -234,6 +288,9 @@ main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    struct epoll_event ev, events[1];
    int ret, i, _epoll_fd = -1;
+   int size;
+
+   setvbuf(stderr, NULL, _IONBF, 0);
 
    fprintf(stderr, "Spartacus Is Alive\n");
 
@@ -256,7 +313,7 @@ main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 
    memset(&events, 0, sizeof(events));
 
-   for (;;)
+   while (1)
      {
         ret = epoll_wait(_epoll_fd, events, sizeof(events) / sizeof(struct epoll_event), 0);
         if (ret < 0)
@@ -267,12 +324,13 @@ main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 
         for (i = 0; i < ret; i++)
           {
+             fprintf(stderr, "Epoll Event on: %d\n", events[i].data.fd);
              if (events[i].data.fd != _read_fd) continue;
 
              if (events[i].events & EPOLLIN)
                {
                   fprintf(stderr, "Epoll Data In\n");
-                  _recv_msg();
+                  size = _recv_msg();
                }
              else if (events[i].events & EPOLLERR)
                {
