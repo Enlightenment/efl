@@ -213,13 +213,6 @@ _ecore_evas_drm_init(void)
         goto dev_err;
      }
 
-   /* try to open the tty */
-   if (!ecore_drm_tty_open(dev, "/dev/tty2"))
-     {
-        ERR("Could not open tty: %m");
-        goto tty_open_err;
-     }
-
    /* try to open the graphics card */
    if (!ecore_drm_device_open(dev))
      {
@@ -227,14 +220,20 @@ _ecore_evas_drm_init(void)
         goto dev_open_err;
      }
 
+   /* try to open the tty */
+   if (!ecore_drm_tty_open(dev, NULL))
+     {
+        ERR("Could not open tty: %m");
+        goto tty_open_err;
+     }
+
    ecore_event_evas_init();
 
    return _ecore_evas_init_count;
 
-//   ecore_drm_device_close(dev);
-dev_open_err:
-   ecore_drm_tty_close(dev);
 tty_open_err:
+   ecore_drm_device_close(dev);
+dev_open_err:
    ecore_drm_device_free(dev);
 dev_err:
    ecore_drm_shutdown();
@@ -247,8 +246,8 @@ _ecore_evas_drm_shutdown(void)
    if (--_ecore_evas_init_count != 0)
      return _ecore_evas_init_count;
 
+   /* ecore_drm_tty_close(dev); */
    ecore_drm_device_close(dev);
-   ecore_drm_tty_close(dev);
    ecore_drm_device_free(dev);
    ecore_drm_shutdown();
 
