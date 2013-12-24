@@ -187,23 +187,30 @@ ecore_drm_device_open(Ecore_Drm_Device *dev)
 {
    char devpath[PATH_MAX];
    Eina_Bool ret = EINA_FALSE;
-   void *data;
+   void *data = malloc(sizeof(int));
 
    /* check for valid device */
    if ((!dev) || (!dev->devname)) return EINA_FALSE;
 
    strcpy(devpath, dev->devname);
 
+   DBG("Try to open device: %s", devpath);
+
    /* send message for ecore_drm_launch to open this device */
    _ecore_drm_message_send(ECORE_DRM_OP_DEVICE_OPEN, 
                            devpath, strlen(devpath));
 
    /* receive the reply from our slave */
-   ret = _ecore_drm_message_receive(ECORE_DRM_OP_DEVICE_OPEN, &data, sizeof(int));
+   ret = _ecore_drm_message_receive(ECORE_DRM_OP_DEVICE_OPEN, 
+                                    &data, sizeof(data));
    if (!ret) return EINA_FALSE;
 
    /* set device fd */
    dev->fd = *((int *)data);
+
+   DBG("Opened Device %s : %d", devpath, dev->fd);
+
+   free(data);
 
    return EINA_TRUE;
 }
