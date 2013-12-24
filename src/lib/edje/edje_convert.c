@@ -32,12 +32,12 @@ _edje_collection_string_free(void *data)
 
    if (ce->ref)
      {
-	Edje_File *edf;
+        Edje_File *edf;
 
-	edf = (Edje_File*) _edje_file_get();
+        edf = (Edje_File*) _edje_file_get();
 
-	if (!edf->warning)
-	  CRITICAL("This program as probably called edje_shutdown() with "
+        if (!edf->warning)
+          CRITICAL("This program as probably called edje_shutdown() with "
                    "active Edje objects still around. "
                    "This can cause problems as both Evas and Edje retain "
                    "references to the objects. "
@@ -47,12 +47,12 @@ _edje_collection_string_free(void *data)
                    "parts that are still hanging around, with their reference "
                    "counts");
 
-	edf->warning = 1;
-	ERR("file: '%s', references: %i, part: '%s', references: %i",
-	    edf->path, edf->references,
-	    ce->ref->part, ce->ref->references);
+        edf->warning = 1;
+        ERR("file: '%s', references: %i, part: '%s', references: %i",
+            edf->path, edf->references,
+            ce->ref->part, ce->ref->references);
 
-	_edje_collection_free(edf, ce->ref, ce);
+        _edje_collection_free(edf, ce->ref, ce);
      }
 
    free(ce);
