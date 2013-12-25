@@ -812,6 +812,11 @@ EAPI void eo_error_set_internal(const Eo *obj, const char *file, int line);
     const Eo_Class *_tmp_klass = klass; \
     eo_add_internal(__FILE__, __LINE__, _tmp_klass, parent, eo_constructor(), ## __VA_ARGS__, EO_NOOP); \
     })
+#define eo2_add(klass, parent, ...) \
+   ({ \
+    const Eo_Class *_tmp_klass = klass; \
+    eo_add_internal(__FILE__, __LINE__, _tmp_klass, parent, ## __VA_ARGS__, EO_NOOP); \
+    })
 
 /**
  * @def eo_add_custom
