@@ -471,13 +471,13 @@ struct _Eo_Class_Description
    struct {
         Eo_Op *base_op_id;
         const Eo_Op_Description *descs;
+        Eo2_Op_Description *descs2;       /**< EO2 */
         size_t count;
    } ops; /**< The ops description, should be filled using #EO_CLASS_DESCRIPTION_OPS */
    const Eo_Event_Description **events; /**< The event descriptions for this class. */
    size_t data_size; /**< The size of data (private + protected + public) this class needs per object. */
    void (*class_constructor)(Eo_Class *klass); /**< The constructor of the class. */
    void (*class_destructor)(Eo_Class *klass); /**< The destructor of the class. */
-   Eo2_Op_Description *op_descs; /**< should replace ops.descs */
 };
 
 /**
@@ -493,7 +493,7 @@ typedef struct _Eo_Class_Description Eo_Class_Description;
  * @param op_descs the op descriptions array.
  * @param count the number of ops in the op descriptions array.
  */
-#define EO_CLASS_DESCRIPTION_OPS(base_op_id, op_descs, count) { base_op_id, op_descs, count }
+#define EO_CLASS_DESCRIPTION_OPS(base_op_id, op_descs, count) { base_op_id, op_descs, NULL, count }
 
 /**
  * @def EO_OP_DESCRIPTION(op, doc)
@@ -603,6 +603,12 @@ EAPI Eina_Bool eo_init(void);
 EAPI Eina_Bool eo_shutdown(void);
 
 /************************************ EO2 ************************************/
+
+// computes size of Eo2_Op_Description[]
+#define OP_DESC_SIZE(desc) (sizeof(desc)/sizeof(Eo2_Op_Description) -1 )
+
+// An helper macro to help populating #Eo_Class_Description.
+#define EO2_CLASS_DESCRIPTION_OPS(op_descs, count) { NULL, NULL, op_descs, count }
 
 // sort Eo2_Op_Description[] by eapi_func then attribute OP ids
 EAPI void
