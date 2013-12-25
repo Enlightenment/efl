@@ -614,48 +614,40 @@ EAPI Eina_Bool eo_shutdown(void);
 EAPI void
 eo2_class_funcs_set(Eo_Class *klass_id);
 
-// opaque type used to pass object pointer to EAPI calls
-typedef struct _Eo_Internal _Eo;
-
 // to fetch internal function and object data at once
 typedef struct _Eo2_Op_Call_Data
 {
-   void *func;
-   void *data;
+   Eo    *obj_id;
+   void  *func;
+   void  *data;
 } Eo2_Op_Call_Data;
 
-// EAPI function declaration first argument
-#define eo2_a _Eo *obj, Eo *objid
-// EAPI function call first argument
-#define eo2_o _obj_, _objid_
-
 // to pass the internal function call to EO2_FUNC_BODY (as Func parameter)
-#define EO2_FUNC_CALL(...) _func_(objid, call.data, __VA_ARGS__)
+#define EO2_FUNC_CALL(...) _func_(call.obj_id, call.data, __VA_ARGS__)
 
 // cache OP id, get real fct and object data then do the call
 #define _EO2_FUNC_COMMON(Name, Ret, Func, DefRet)                       \
      static Eo_Op op = EO_NOOP;                                         \
-     if ( op == EO_NOOP ) op = eo2_get_op_id(obj, (void*)Name);         \
+     if ( op == EO_NOOP ) op = eo2_get_op_id((void*)Name);              \
      Eo2_Op_Call_Data call;                                             \
-     if (!eo2_call_resolve(obj, op, &call)) return DefRet;              \
+     if (!eo2_call_resolve(op, &call)) return DefRet;                   \
      __##Name##_func _func_ = (__##Name##_func) call.func;              \
      return Func;                                                       \
 
-/* XXX: Essential, because we need to adjust objid for comp objects. */
 // to define an EAPI function
 #define EO2_FUNC_BODY(Name, Ret, DefRet)                                \
   Ret                                                                   \
-  Name(_Eo *obj, Eo *objid)                                             \
+  Name()                                                                \
   {                                                                     \
      typedef Ret (*__##Name##_func)(Eo *, void *obj_data);              \
-     _EO2_FUNC_COMMON(Name, Ret, _func_(objid, call.data), DefRet)      \
+     _EO2_FUNC_COMMON(Name, Ret, _func_(call.obj_id, call.data), DefRet)\
   }
 
 #define EO2_VOID_FUNC_BODY(Name) EO2_FUNC_BODY(Name, void, )
 
 #define EO2_FUNC_BODYV(Name, Ret, Func, DefRet, ...)                    \
   Ret                                                                   \
-  Name(_Eo *obj, Eo *objid, __VA_ARGS__)                                \
+  Name(__VA_ARGS__)                                                     \
   {                                                                     \
      typedef Ret (*__##Name##_func)(Eo *, void *obj_data, __VA_ARGS__); \
      _EO2_FUNC_COMMON(Name, Ret, Func, DefRet)                          \
@@ -670,21 +662,17 @@ typedef struct _Eo2_Op_Call_Data
 #define EO2_OP_SENTINEL { NULL, NULL, 0, EO_OP_TYPE_INVALID, NULL}
 
 // returns the OP id corresponding to the given api_func
-EAPI Eo_Op eo2_get_op_id(_Eo *obj, void *api_func);
+EAPI Eo_Op eo2_get_op_id(void *api_func);
 
 // gets the real function pointer and the object data
-#define eo2_call_resolve(obj_id, op, call) eo2_call_resolve_internal(obj_id, NULL, op, call)
-EAPI Eina_Bool eo2_call_resolve_internal(_Eo *obj, const Eo_Class *klass, Eo_Op op, Eo2_Op_Call_Data *call);
+#define eo2_call_resolve(op, call) eo2_call_resolve_internal(NULL, op, call)
+EAPI Eina_Bool eo2_call_resolve_internal(const Eo_Class *klass, Eo_Op op, Eo2_Op_Call_Data *call);
 
-// start of eo2_do barrier, gets the object pointer and ref it
-EAPI _Eo * eo2_do_start(Eo *obj_id);
+// start of eo2_do barrier, gets the object pointer and ref it, put it on the stask
+EAPI Eina_Bool eo2_do_start(Eo *obj_id);
 
-// end of the eo2_do barrier, unref the obj
-EAPI void eo2_do_end(_Eo *obj);
-
-// optional helper
-#define eo2_call(api_func) api_func(eo2_o)
-#define eo2_callv(api_func, ...) api_func(eo2_o, __VA_ARGS__)
+// end of the eo2_do barrier, unref the obj, move the stack pointer
+EAPI void eo2_do_end();
 
 // eo object method calls batch,
 // DO NOT use return statement in it, use break if necessary
@@ -692,11 +680,9 @@ EAPI void eo2_do_end(_Eo *obj);
   do                                            \
     {                                           \
        Eo *_objid_ = objid;                     \
-       _Eo *_obj_ = eo2_do_start(_objid_);      \
-       if (!_obj_) break;                       \
+       if (!eo2_do_start(_objid_)) break;       \
        do { __VA_ARGS__ ; } while (0);          \
-       eo2_do_end(_obj_);                       \
-       _obj_ = NULL;                            \
+       eo2_do_end();                            \
     } while (0)
 
 // FIXME

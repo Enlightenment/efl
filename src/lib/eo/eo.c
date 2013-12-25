@@ -257,25 +257,77 @@ _eo_kls_itr_func_get(const _Eo_Class *cur_klass, Eo_Op op)
 
 /************************************ EO2 ************************************/
 
-EAPI _Eo *
+// FIXME: per thread stack, grow/shrink
+#define EO2_INVALID_DATA (void *) -1
+#define EO2_CALL_STACK_SIZE 5
+typedef struct _Eo2_Stack_Frame
+{
+   Eo               *obj_id;
+   _Eo              *obj;
+   void             *obj_data;
+
+} Eo2_Stack_Frame;
+
+typedef struct _Eo2_Call_Stack {
+     Eo2_Stack_Frame stack[EO2_CALL_STACK_SIZE];
+     Eo2_Stack_Frame *frame_ptr;
+} Eo2_Call_Stack;
+
+static Eo2_Call_Stack eo2_call_stack = {
+       {
+            { NULL, NULL, EO2_INVALID_DATA },
+            { NULL, NULL, EO2_INVALID_DATA },
+            { NULL, NULL, EO2_INVALID_DATA },
+            { NULL, NULL, EO2_INVALID_DATA },
+            { NULL, NULL, EO2_INVALID_DATA },
+       },
+       NULL };
+
+EAPI Eina_Bool
 eo2_do_start(Eo *obj_id)
 {
-   EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, NULL);
+   EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, EINA_FALSE);
    _eo_ref(obj);
-   return obj;
+
+   if (eo2_call_stack.frame_ptr == NULL)
+     eo2_call_stack.frame_ptr = &eo2_call_stack.stack[0];
+   else
+     eo2_call_stack.frame_ptr++;
+
+   if (eo2_call_stack.frame_ptr->obj_id != NULL)
+     ERR("eo2 call stack is not clear, you must have used a return statement in a eo2_do macro");
+
+   if ((eo2_call_stack.frame_ptr - eo2_call_stack.stack) >= EO2_CALL_STACK_SIZE)
+     ERR("eo2 call stack overflow !!!");
+
+   eo2_call_stack.frame_ptr->obj = obj;
+   eo2_call_stack.frame_ptr->obj_id = obj_id;
+   eo2_call_stack.frame_ptr->obj_data = EO2_INVALID_DATA;
+
+   return EINA_TRUE;
 }
 
 EAPI void
-eo2_do_end(_Eo *obj)
+eo2_do_end()
 {
-   _eo_unref(obj);
+   _eo_unref(eo2_call_stack.frame_ptr->obj);
+
+   eo2_call_stack.frame_ptr->obj = NULL;
+   eo2_call_stack.frame_ptr->obj_id = NULL;
+   eo2_call_stack.frame_ptr->obj_data = EO2_INVALID_DATA;
+
+   if (eo2_call_stack.frame_ptr == &eo2_call_stack.stack[0])
+     eo2_call_stack.frame_ptr = NULL;
+   else
+     eo2_call_stack.frame_ptr--;
 }
 
 EAPI Eina_Bool
-eo2_call_resolve_internal(_Eo *obj, const Eo_Class *klass_id, Eo_Op op, Eo2_Op_Call_Data *call)
+eo2_call_resolve_internal(const Eo_Class *klass_id, Eo_Op op, Eo2_Op_Call_Data *call)
 {
    const _Eo_Class *klass;
    const op_type_funcs *func;
+   const _Eo * obj = eo2_call_stack.frame_ptr->obj;
 
    if (klass_id)
       klass = _eo_class_pointer_get(klass_id);
@@ -285,8 +337,19 @@ eo2_call_resolve_internal(_Eo *obj, const Eo_Class *klass_id, Eo_Op op, Eo2_Op_C
    func = _eo_kls_itr_func_get(klass, op);
    if (EINA_LIKELY(func != NULL))
      {
+        call->obj_id = eo2_call_stack.frame_ptr->obj_id;
         call->func = func->func;
-        call->data = _eo_data_scope_get(obj, func->src);
+
+        if (func->src == obj->klass)
+          {
+             if (eo2_call_stack.frame_ptr->obj_data == EO2_INVALID_DATA)
+               eo2_call_stack.frame_ptr->obj_data = _eo_data_scope_get(obj, func->src);
+
+             call->data = eo2_call_stack.frame_ptr->obj_data;
+          }
+        else
+          call->data = _eo_data_scope_get(obj, func->src);
+
         return EINA_TRUE;
      }
 
@@ -297,11 +360,12 @@ eo2_call_resolve_internal(_Eo *obj, const Eo_Class *klass_id, Eo_Op op, Eo2_Op_C
 
 
 EAPI Eo_Op
-eo2_get_op_id(_Eo *obj, void *api_func)
+eo2_get_op_id(void *api_func)
 {
    int imin, imax, imid;
    Eo2_Op_Description *op_desc;
    Eo2_Op_Description *op_descs;
+   const _Eo * obj = eo2_call_stack.frame_ptr->obj;
 
    imin = 0;
    imax = obj->klass->desc->ops.count - 1;
