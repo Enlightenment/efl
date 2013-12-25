@@ -669,6 +669,10 @@ EAPI _Eo * eo2_do_start(Eo *obj_id);
 // end of the eo2_do barrier, unref the obj
 EAPI void eo2_do_end(_Eo *obj);
 
+// optional helper
+#define eo2_call(api_func) api_func(eo2_o)
+#define eo2_callv(api_func, ...) api_func(eo2_o, __VA_ARGS__)
+
 // eo object method calls batch,
 // DO NOT use return statement in it, use break if necessary
 #define eo2_do(objid, ...)                      \
