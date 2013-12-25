@@ -448,6 +448,15 @@ typedef struct _Eo_Op_Description Eo_Op_Description;
  */
 #define EO_VERSION 1
 
+typedef struct _Eo2_Op_Description
+{
+   void *func;             /**< The static function to call for the op. */
+   void *api_func;         /**< The EAPI function offering this op. */
+   Eo_Op op;               /**< The op. */
+   Eo_Op_Type op_type;     /**< The type of the Op. */
+   const char *doc;        /**< Explanation about the Op. */
+} Eo2_Op_Description;
+
 /**
  * @struct _Eo_Class_Description
  * This struct holds the description of a class.
@@ -604,31 +613,43 @@ typedef struct _Eo2_Op_Call_Data
 #define EO_FUNC_CALLV(...) func(objid, call.data, __VA_ARGS__)
 
 /* XXX: Essential, because we need to adjust objid for comp objects. */
-#define EO_FUNC_BODY(Name, Ret, Id, Func, DefRet)                       \
+#define EO_FUNC_BODY(Name, Ret, Func, DefRet, OpDescs)                  \
   Ret                                                                   \
   Name(_Eo *obj, Eo *objid)                                             \
   {                                                                     \
+     static Eo_Op op = EO_NOOP;                                         \
+     if ( op == EO_NOOP ) op = eo2_get_op_id(OpDescs, (void*)Name);     \
      typedef Ret (*__##Name##_func)(Eo *, void *obj_data);              \
      Eo2_Op_Call_Data call;                                             \
-     if (!eo2_call_resolve(obj, Id(Name), &call)) return DefRet;        \
-     __##Name##_func func = (__##Name##_func) call.func;		\
+     if (!eo2_call_resolve(obj, op, &call)) return DefRet;              \
+     __##Name##_func func = (__##Name##_func) call.func;                \
      return Func;                                                       \
   }
 
-#define EO_FUNC_BODYV(Name, Ret, Id, Func, DefRet, ...)			\
-  Ret									\
-  Name(_Eo *obj, Eo *objid, __VA_ARGS__)				\
-  {									\
-     typedef Ret (*__##Name##_func)(Eo *, void *obj_data, __VA_ARGS__);	\
-     Eo2_Op_Call_Data call;						\
-     if (!eo2_call_resolve(obj, Id(Name), &call)) return DefRet;        \
-     __##Name##_func func = (__##Name##_func) call.func;		\
-     return Func;							\
+#define EO_FUNC_BODYV(Name, Ret, Func, DefRet, OpDescs, ...)            \
+  Ret                                                                   \
+  Name(_Eo *obj, Eo *objid, __VA_ARGS__)                                \
+  {                                                                     \
+     static Eo_Op op = EO_NOOP;                                         \
+     if ( op == EO_NOOP ) op = eo2_get_op_id(OpDescs, (void*)Name);     \
+     typedef Ret (*__##Name##_func)(Eo *, void *obj_data, __VA_ARGS__); \
+     Eo2_Op_Call_Data call;                                             \
+     if (!eo2_call_resolve(obj, op, &call)) return DefRet;              \
+     __##Name##_func func = (__##Name##_func) call.func;                \
+     return Func;                                                       \
   }
 
 EAPI _Eo * eo2_do_start(Eo *obj_id);
+
 #define eo2_call_resolve(obj_id, op, call) eo2_call_resolve_internal(obj_id, NULL, op, call)
 EAPI Eina_Bool eo2_call_resolve_internal(_Eo *obj, const Eo_Class *klass, Eo_Op op, Eo2_Op_Call_Data *call);
+
+EAPI Eo_Op eo2_get_op_id(Eo2_Op_Description *op_descs, void *api_func);
+
+#define OP_DESC_SIZE(desc) (sizeof(desc)/sizeof(Eo2_Op_Description) -1 )
+
+EAPI void
+eo2_class_funcs_set(Eo_Class *klass_id, Eo2_Op_Description *op_descs, int n);
 
 /* FIXME: Don't use this unref, use an internal one. Reduce id resolution. */
 

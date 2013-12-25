@@ -287,6 +287,65 @@ eo2_call_resolve_internal(_Eo *obj, const Eo_Class *klass_id, Eo_Op op, Eo2_Op_C
    return EINA_FALSE;
 }
 
+
+EAPI Eo_Op
+eo2_get_op_id(Eo2_Op_Description *op_descs, void *api_func)
+{
+   Eo2_Op_Description *op_desc;
+
+   /* should do a binary search */
+   for (op_desc = op_descs; op_desc->op != EO_NOOP; op_desc++)
+     {
+        if (op_desc->api_func == api_func)
+          return op_desc->op;
+     }
+
+   return EO_NOOP;
+}
+
+static int
+eo2_fct_cmp(const void *p1, const void *p2)
+{
+   const Eo2_Op_Description *op1, *op2;
+   op1 = (Eo2_Op_Description *) p1;
+   op2 = (Eo2_Op_Description *) p2;
+   if (op1->api_func > op2->api_func) return -1;
+   else if (op1->api_func < op2->api_func) return 1;
+   else return 0;
+}
+
+EAPI void
+eo2_class_funcs_set(Eo_Class *klass_id, Eo2_Op_Description *op_descs, int n)
+{
+   int i, base_op_id;
+   _Eo_Class *klass;
+   Eo2_Op_Description *op_desc;
+
+   klass = _eo_class_pointer_get(klass_id);
+   EO_MAGIC_RETURN(klass, EO_CLASS_EINA_MAGIC);
+
+   base_op_id = *klass->desc->ops.base_op_id;
+
+   /* so that eo2_get_op_id can do a binary search to get the OP from the api_func */
+   qsort((void*)op_descs, n, sizeof(Eo2_Op_Description), eo2_fct_cmp);
+
+   i = 0;
+   for (op_desc = op_descs; op_desc->op_type != EO_OP_TYPE_INVALID; op_desc++)
+     {
+        // take care of overriding, maybe ok ??
+        if (op_desc->op == EO_NOOP)
+          {
+            op_desc->op = base_op_id + i;
+            i++;
+          }
+        /* printf("%d %p %p\n", op_desc->op, op_desc->api_func, op_desc->func); */
+        // no need to check func->op_type != op_desc->op_type
+        // as op_descs wourd replace op_desc
+        // what about func->op == EO_NOOP ??
+        _dich_func_set(klass, op_desc->op, op_desc->func);
+     }
+}
+
 #define _EO_OP_ERR_NO_OP_PRINT(file, line, op, klass) \
    do \
       { \
