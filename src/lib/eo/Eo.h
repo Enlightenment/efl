@@ -623,11 +623,11 @@ typedef struct _Eo2_Op_Call_Data
 // EAPI function call first argument
 #define eo2_o _obj_, _objid_
 
-// to pass the internal function call to EO_FUNC_BODY (as Func parameter)
-#define EO_FUNC_CALL(...) _func_(objid, call.data, __VA_ARGS__)
+// to pass the internal function call to EO2_FUNC_BODY (as Func parameter)
+#define EO2_FUNC_CALL(...) _func_(objid, call.data, __VA_ARGS__)
 
 // cache OP id, get real fct and object data then do the call
-#define _EO_FUNC_COMMON(Name, Ret, Func, DefRet)                        \
+#define _EO2_FUNC_COMMON(Name, Ret, Func, DefRet)                       \
      static Eo_Op op = EO_NOOP;                                         \
      if ( op == EO_NOOP ) op = eo2_get_op_id(obj, (void*)Name);         \
      Eo2_Op_Call_Data call;                                             \
@@ -637,25 +637,25 @@ typedef struct _Eo2_Op_Call_Data
 
 /* XXX: Essential, because we need to adjust objid for comp objects. */
 // to define an EAPI function
-#define EO_FUNC_BODY(Name, Ret, DefRet)                                 \
+#define EO2_FUNC_BODY(Name, Ret, DefRet)                                \
   Ret                                                                   \
   Name(_Eo *obj, Eo *objid)                                             \
   {                                                                     \
      typedef Ret (*__##Name##_func)(Eo *, void *obj_data);              \
-     _EO_FUNC_COMMON(Name, Ret, _func_(objid, call.data), DefRet)       \
+     _EO2_FUNC_COMMON(Name, Ret, _func_(objid, call.data), DefRet)      \
   }
 
-#define EO_FUNC_BODY_VOID(Name) EO_FUNC_BODY(Name, void, )
+#define EO2_VOID_FUNC_BODY(Name) EO2_FUNC_BODY(Name, void, )
 
-#define EO_FUNC_BODYV(Name, Ret, Func, DefRet, ...)                     \
+#define EO2_FUNC_BODYV(Name, Ret, Func, DefRet, ...)                    \
   Ret                                                                   \
   Name(_Eo *obj, Eo *objid, __VA_ARGS__)                                \
   {                                                                     \
      typedef Ret (*__##Name##_func)(Eo *, void *obj_data, __VA_ARGS__); \
-     _EO_FUNC_COMMON(Name, Ret, Func, DefRet)                           \
+     _EO2_FUNC_COMMON(Name, Ret, Func, DefRet)                          \
   }
 
-#define EO_FUNC_BODY_VOIDV(Name, Func, ...) EO_FUNC_BODYV(Name, void, Func, , __VA_ARGS__)
+#define EO2_VOID_FUNC_BODYV(Name, Func, ...) EO2_FUNC_BODYV(Name, void, Func, , __VA_ARGS__)
 
 // FIXME: OP ID
 #define EO2_OP_CONSTRUCTOR(_private) { _private, NULL, 1, EO_OP_TYPE_REGULAR, "Constructor"}
