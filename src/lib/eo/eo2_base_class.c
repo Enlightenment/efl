@@ -4,7 +4,7 @@
 
 #include <Eina.h>
 
-#include "eo2_base_class.h"
+#include "Eo.h"
 #include "eo_ptr_indirection.h"
 #include "eo_private.h"
 
@@ -740,6 +740,7 @@ EAPI const Eina_Value_Type *EO2_DBG_INFO_TYPE = &_EO2_DBG_INFO_TYPE;
 #define MY_CLASS EO_BASE_CLASS
 
 /* FIXME: Set proper type descriptions. */
+// FIXME: eo2 multiple definition
 /* EAPI const Eo_Event_Description _EO_EV_CALLBACK_ADD = */
 /*    EO_EVENT_DESCRIPTION("callback,add", "A callback was added."); */
 /* EAPI const Eo_Event_Description _EO_EV_CALLBACK_DEL = */
@@ -799,7 +800,7 @@ Eo2_Op_Description op_descs [] = {
        EO2_OP_SENTINEL
 };
 
-// FIXME
+// FIXME: eo2
 static const Eo_Event_Description *event_desc[] = {
      EO_EV_CALLBACK_ADD,
      EO_EV_CALLBACK_DEL,

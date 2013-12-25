@@ -1119,11 +1119,13 @@ enum {
  * The class type for the Eo base class.
  */
 #define EO_BASE_CLASS eo_base_class_get()
+#define EO2_BASE_CLASS eo2_base_class_get()
 /**
  * @brief Use #EO_BASE_CLASS
  * @internal
  * */
 EAPI const Eo_Class *eo_base_class_get(void);
+EAPI const Eo_Class *eo2_base_class_get(void);
 
 /**
  * @typedef eo_base_data_free_func
@@ -1183,6 +1185,8 @@ enum {
  * @see #eo_base_data_del
  */
 #define eo_base_data_set(key, data, free_func) EO_BASE_ID(EO_BASE_SUB_ID_DATA_SET), EO_TYPECHECK(const char *, key), EO_TYPECHECK(const void *, data), EO_TYPECHECK(eo_base_data_free_func, free_func)
+EAPI void
+eo2_base_data_set(const char *key, const void *data, eo_base_data_free_func free_func);
 
 /**
  * @def eo_base_data_get(key, data)
@@ -1194,6 +1198,8 @@ enum {
  * @see #eo_base_data_del
  */
 #define eo_base_data_get(key, data) EO_BASE_ID(EO_BASE_SUB_ID_DATA_GET), EO_TYPECHECK(const char *, key), EO_TYPECHECK(void **, data)
+EAPI void
+eo2_base_data_get(const char *key);
 
 /**
  * @def eo_dbg_info_get(root_node)
@@ -1201,6 +1207,8 @@ enum {
  * @param[in] root node of the tree
  */
 #define eo_dbg_info_get(root_node) EO_BASE_ID(EO_BASE_SUB_ID_DBG_INFO_GET), EO_TYPECHECK(Eo_Dbg_Info *, root_node)
+EAPI void
+eo2_dbg_info_get();
 
 /**
  * @def eo_base_data_del(key)
@@ -1211,6 +1219,8 @@ enum {
  * @see #eo_base_data_get
  */
 #define eo_base_data_del(key) EO_BASE_ID(EO_BASE_SUB_ID_DATA_DEL), EO_TYPECHECK(const char *, key)
+EAPI void
+eo2_base_data_del(const char *key);
 
 /**
  * @def eo_parent_set
@@ -1258,6 +1268,8 @@ enum {
  * @see #eo_wref_del
  */
 #define eo_wref_add(wref) EO_BASE_ID(EO_BASE_SUB_ID_WREF_ADD), EO_TYPECHECK(Eo **, wref)
+EAPI void
+eo2_wref_add(Eo **wref);
 
 /**
  * @def eo_wref_del
@@ -1267,6 +1279,8 @@ enum {
  * @see #eo_wref_add
  */
 #define eo_wref_del(wref) EO_BASE_ID(EO_BASE_SUB_ID_WREF_DEL), EO_TYPECHECK(Eo **, wref)
+EAPI void
+eo2_wref_del(Eo **wref);
 
 /**
  * @def eo_weak_ref
@@ -1284,6 +1298,10 @@ enum {
   do {						\
     if (*wref) eo_do(*wref, eo_wref_add(wref));	\
   } while (0)
+#define eo2_weak_ref(wref)			   \
+  do {						   \
+    if (*wref) eo2_do(*wref, eo2_wref_add(wref));  \
+  } while (0);
 
 /**
  * @def eo_weak_unref
@@ -1302,6 +1320,10 @@ enum {
   do {						\
     if (*wref) eo_do(*wref, eo_wref_del(wref));	\
   } while (0)
+#define eo2_weak_unref(wref)			   \
+  do {						   \
+    if (*wref) eo2_do(*wref, eo2_wref_del(wref));  \
+  } while (0);
 
 /**
  * @def eo_wref_del_safe
@@ -1314,6 +1336,7 @@ enum {
  * @see #eo_wref_del
  */
 #define eo_wref_del_safe(wref) eo_weak_unref(wref)
+#define eo2_wref_del_safe(wref) eo2_weak_unref(wref)
 
 /**
  * @def eo_constructor
@@ -1324,6 +1347,7 @@ enum {
  * @see #eo_destructor
  */
 #define eo_constructor() EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR)
+// FIXME: eo2
 
 /**
  * @def eo_destructor
@@ -1334,6 +1358,7 @@ enum {
  * @see #eo_constructor
  */
 #define eo_destructor() EO_BASE_ID(EO_BASE_SUB_ID_DESTRUCTOR)
+// FIXME: eo2
 
 /**
  * @addtogroup Eo_Events Eo's Event Handling
@@ -1426,6 +1451,8 @@ struct _Eo_Callback_Array_Item
  * @see eo_event_callback_forwarder_del()
  */
 #define eo_event_callback_forwarder_add(desc, new_obj) EO_BASE_ID(EO_BASE_SUB_ID_EVENT_CALLBACK_FORWARDER_ADD), EO_TYPECHECK(const Eo_Event_Description *, desc), EO_TYPECHECK(Eo *, new_obj)
+EAPI void
+eo2_event_callback_forwarder_add(const Eo_Event_Description *desc, Eo *new_obj);
 
 /**
  * @def eo_event_callback_forwarder_del
@@ -1436,6 +1463,8 @@ struct _Eo_Callback_Array_Item
  * @see eo_event_callback_forwarder_add()
  */
 #define eo_event_callback_forwarder_del(desc, new_obj) EO_BASE_ID(EO_BASE_SUB_ID_EVENT_CALLBACK_FORWARDER_DEL), EO_TYPECHECK(const Eo_Event_Description *, desc), EO_TYPECHECK(Eo *, new_obj)
+EAPI void
+eo2_event_callback_forwarder_del(const Eo_Event_Description *desc, Eo *new_obj);
 
 /**
  * @def eo_event_freeze
@@ -1446,6 +1475,8 @@ struct _Eo_Callback_Array_Item
  * @see #eo_event_thaw
  */
 #define eo_event_freeze() EO_BASE_ID(EO_BASE_SUB_ID_EVENT_FREEZE)
+EAPI void
+eo2_event_freeze();
 
 /**
  * @def eo_event_thaw
@@ -1456,6 +1487,8 @@ struct _Eo_Callback_Array_Item
  * @see #eo_event_freeze
  */
 #define eo_event_thaw() EO_BASE_ID(EO_BASE_SUB_ID_EVENT_THAW)
+EAPI void
+eo2_event_thaw();
 
 /**
  * @def eo_event_freeze_get
@@ -1469,6 +1502,8 @@ struct _Eo_Callback_Array_Item
  * @see #eo_event_thaw
  */
 #define eo_event_freeze_get(fcount) EO_BASE_ID(EO_BASE_SUB_ID_EVENT_FREEZE_GET), EO_TYPECHECK(int *, fcount)
+EAPI int
+eo2_event_freeze_get();
 
 /**
  * @def eo_event_global_freeze
@@ -1480,6 +1515,8 @@ struct _Eo_Callback_Array_Item
  * @see #eo_event_global_thaw
  */
 #define eo_event_global_freeze() EO_BASE_ID(EO_BASE_SUB_ID_EVENT_GLOBAL_FREEZE)
+EAPI void
+eo2_event_global_freeze();
 
 /**
  * @def eo_event_global_thaw
@@ -1491,6 +1528,8 @@ struct _Eo_Callback_Array_Item
  * @see #eo_event_global_freeze
  */
 #define eo_event_global_thaw() EO_BASE_ID(EO_BASE_SUB_ID_EVENT_GLOBAL_THAW)
+EAPI void
+eo2_event_global_thaw();
 
 /**
  * @def eo_event_global_freeze_get
@@ -1505,6 +1544,8 @@ struct _Eo_Callback_Array_Item
  * @see #eo_event_global_thaw
  */
 #define eo_event_global_freeze_get(fcount) EO_BASE_ID(EO_BASE_SUB_ID_EVENT_GLOBAL_FREEZE_GET), EO_TYPECHECK(int *, fcount)
+EAPI int
+eo2_event_global_freeze_get();
 
 /**
  * @def eo_event_callback_add(obj, desc, cb, data)
@@ -1520,6 +1561,9 @@ struct _Eo_Callback_Array_Item
 #define eo_event_callback_add(desc, cb, data) \
    eo_event_callback_priority_add(desc, \
          EO_CALLBACK_PRIORITY_DEFAULT, cb, data)
+#define eo2_event_callback_add(desc, cb, data) \
+   eo2_event_callback_priority_add(desc, \
+         EO_CALLBACK_PRIORITY_DEFAULT, cb, data)
 
 /**
  * @def eo_event_callback_priority_add
@@ -1534,6 +1578,11 @@ struct _Eo_Callback_Array_Item
  * @see #eo_event_callback_add
  */
 #define eo_event_callback_priority_add(desc, priority, cb, data) EO_BASE_ID(EO_BASE_SUB_ID_EVENT_CALLBACK_PRIORITY_ADD), EO_TYPECHECK(const Eo_Event_Description *, desc), EO_TYPECHECK(Eo_Callback_Priority, priority), EO_TYPECHECK(Eo_Event_Cb, cb), EO_TYPECHECK(const void *, data)
+EAPI void
+eo2_event_callback_priority_add(const Eo_Event_Description *desc,
+                                Eo_Callback_Priority priority,
+                                Eo_Event_Cb func,
+                                const void *user_data);
 
 /**
  * @def eo_event_callback_del
@@ -1544,6 +1593,10 @@ struct _Eo_Callback_Array_Item
  *
  */
 #define eo_event_callback_del(desc, func, user_data) EO_BASE_ID(EO_BASE_SUB_ID_EVENT_CALLBACK_DEL), EO_TYPECHECK(const Eo_Event_Description *, desc), EO_TYPECHECK(Eo_Event_Cb, func), EO_TYPECHECK(const void *, user_data)
+EAPI void
+eo2_event_callback_del(const Eo_Event_Description *desc,
+                       Eo_Event_Cb func,
+                       const void *user_data);
 
 /**
  * @def eo_event_callback_array_add(obj, desc, cb, data)
@@ -1558,6 +1611,9 @@ struct _Eo_Callback_Array_Item
 #define eo_event_callback_array_add(array, data) \
    eo_event_callback_array_priority_add(array, \
          EO_CALLBACK_PRIORITY_DEFAULT, data)
+#define eo2_event_callback_array_add(array, data) \
+   eo2_event_callback_array_priority_add(array, \
+         EO_CALLBACK_PRIORITY_DEFAULT, data)
 
 /**
  * @def eo_event_callback_array_priority_add
@@ -1571,6 +1627,10 @@ struct _Eo_Callback_Array_Item
  * @see #eo_event_callback_add
  */
 #define eo_event_callback_array_priority_add(array, priority, data) EO_BASE_ID(EO_BASE_SUB_ID_EVENT_CALLBACK_ARRAY_PRIORITY_ADD), EO_TYPECHECK(const Eo_Callback_Array_Item *, array), EO_TYPECHECK(Eo_Callback_Priority, priority), EO_TYPECHECK(const void *, data)
+EAPI void
+eo2_event_callback_array_priority_add(const Eo_Callback_Array_Item *array,
+                                      Eo_Callback_Priority priority,
+                                      const void *user_data);
 
 /**
  * @def eo_event_callback_array_del
@@ -1580,6 +1640,9 @@ struct _Eo_Callback_Array_Item
  *
  */
 #define eo_event_callback_array_del(array, user_data) EO_BASE_ID(EO_BASE_SUB_ID_EVENT_CALLBACK_ARRAY_DEL), EO_TYPECHECK(const Eo_Callback_Array_Item *, array), EO_TYPECHECK(const void *, user_data)
+EAPI void
+eo2_event_callback_array_del(const Eo_Callback_Array_Item *array,
+                             const void *user_data);
 
 /**
  * @def eo_event_callback_call
@@ -1589,6 +1652,8 @@ struct _Eo_Callback_Array_Item
  * @param[out] aborted @c EINA_TRUE if one of the callbacks aborted the call, @c EINA_FALSE otherwise.
  */
 #define eo_event_callback_call(desc, event_info, aborted) EO_BASE_ID(EO_BASE_SUB_ID_EVENT_CALLBACK_CALL), EO_TYPECHECK(const Eo_Event_Description *, desc), EO_TYPECHECK(const void *, event_info), EO_TYPECHECK(Eina_Bool *, aborted)
+EAPI Eina_Bool
+eo2_event_callback_call(const Eo_Event_Description *desc, void *event_info);
 
 /**
  * @}
