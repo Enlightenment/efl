@@ -354,7 +354,7 @@ eo2_do_start(Eo *obj_id, Eina_Bool do_super)
 }
 
 EAPI void
-eo2_do_end()
+eo2_do_end(Eo **objid EINA_UNUSED)
 {
    Eo2_Stack_Frame *fptr;
 

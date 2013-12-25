@@ -678,28 +678,28 @@ EAPI Eina_Bool eo2_call_resolve_internal(const Eo_Class *klass, Eo_Op op, Eo2_Op
 EAPI Eina_Bool eo2_do_start(Eo *obj_id, Eina_Bool do_super);
 
 // end of the eo2_do barrier, unref the obj, move the stack pointer
-EAPI void eo2_do_end();
+EAPI void eo2_do_end(Eo **ojb);
 
 EAPI int eo2_call_stack_depth();
+
+#define EO2_DO_CLEANUP __attribute__((cleanup(eo2_do_end)))
 
 // eo object method calls batch,
 // DO NOT use return statement in it, use break if necessary
 #define eo2_do(objid, ...)                            \
   do                                                  \
     {                                                 \
-       Eo *_objid_ = objid;                           \
+       Eo *_objid_ EO2_DO_CLEANUP = objid;            \
        if (!eo2_do_start(_objid_, EINA_FALSE)) break; \
-       do { __VA_ARGS__ ; } while (0);                \
-       eo2_do_end();                                  \
+       __VA_ARGS__;                                   \
     } while (0)
 
 #define eo2_do_super(objid, ...)                      \
   do                                                  \
     {                                                 \
-       Eo *_objid_ = objid;                           \
+       Eo *_objid_ EO2_DO_CLEANUP = objid;            \
        if (!eo2_do_start(_objid_, EINA_TRUE)) break;  \
-       do { __VA_ARGS__ ; } while (0);                \
-       eo2_do_end();                                  \
+       __VA_ARGS__;                                   \
     } while (0)
 
 // FIXME
