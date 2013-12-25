@@ -10,66 +10,66 @@
 /* #include "eo_private.h" */
 
 EAPI void
-data_set(eo2_a, const char *key, const void *data, eo_base_data_free_func free_func);
+data_set(const char *key, const void *data, eo_base_data_free_func free_func);
 
 EAPI void
-data_get(eo2_a, const char *key);
+data_get(const char *key);
 
 EAPI void
-data_del(eo2_a, const char *key);
+data_del(const char *key);
 
 EAPI void
-wref_add(eo2_a, Eo **wref);
+wref_add(Eo **wref);
 
 EAPI void
-wref_del(eo2_a, Eo **wref);
+wref_del(Eo **wref);
 
 EAPI void
-ev_cb_priority_add(eo2_a, const Eo_Event_Description *desc,
+ev_cb_priority_add(const Eo_Event_Description *desc,
                    Eo_Callback_Priority priority, Eo_Event_Cb func,
                    const void *user_data);
 
 EAPI void
-ev_cb_del(eo2_a, const Eo_Event_Description *desc, Eo_Event_Cb func,
+ev_cb_del(const Eo_Event_Description *desc, Eo_Event_Cb func,
           const void *user_data);
 
 EAPI void
-ev_cb_array_priority_add(eo2_a, const Eo_Callback_Array_Item *array,
+ev_cb_array_priority_add(const Eo_Callback_Array_Item *array,
                          Eo_Callback_Priority priority, const void *user_data);
 
 EAPI void
-ev_cb_array_del(eo2_a, const Eo_Callback_Array_Item *array,
+ev_cb_array_del(const Eo_Callback_Array_Item *array,
                 const void *user_data);
 
 EAPI Eina_Bool
-ev_cb_call(eo2_a, const Eo_Event_Description *desc, void *event_info);
+ev_cb_call(const Eo_Event_Description *desc, void *event_info);
 
 EAPI void
-ev_cb_forwarder_add(eo2_a, const Eo_Event_Description *desc, Eo *new_obj);
+ev_cb_forwarder_add(const Eo_Event_Description *desc, Eo *new_obj);
 
 EAPI void
-ev_cb_forwarder_del(eo2_a, const Eo_Event_Description *desc, Eo *new_obj);
+ev_cb_forwarder_del(const Eo_Event_Description *desc, Eo *new_obj);
 
 EAPI void
-ev_freeze(eo2_a);
+ev_freeze();
 
 EAPI void
-ev_thaw(eo2_a);
+ev_thaw();
 
 EAPI int
-ev_freeze_get(eo2_a);
+ev_freeze_get();
 
 EAPI void
-ev_global_freeze(eo2_a);
+ev_global_freeze();
 
 EAPI void
-ev_global_thaw(eo2_a);
+ev_global_thaw();
 
 EAPI int
-ev_global_freeze_get(eo2_a);
+ev_global_freeze_get();
 
 EAPI void
-dbg_info_get(eo2_a);
+dbg_info_get();
 
 EAPI void
 eo2_dbg_info_free(Eo_Dbg_Info *info);
