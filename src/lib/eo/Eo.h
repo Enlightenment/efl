@@ -654,6 +654,12 @@ typedef struct _Eo2_Op_Call_Data
      _EO_FUNC_COMMON(Name, Ret, Func, DefRet)                           \
   }
 
+// FIXME: OP ID
+#define EO2_OP_CONSTRUCTOR(_private) { _private, NULL, 1, EO_OP_TYPE_REGULAR, "Constructor"}
+#define EO2_OP_DESTRUCTOR(_private) { _private, NULL, 2, EO_OP_TYPE_REGULAR, "Destructor"}
+#define EO2_OP_FUNC(_private, _api, _doc) {_private, _api, EO_NOOP, EO_OP_TYPE_REGULAR, _doc}
+#define EO2_OP_SENTINEL { NULL, NULL, 0, EO_OP_TYPE_INVALID, NULL}
+
 // returns the OP id corresponding to the given api_func
 EAPI Eo_Op eo2_get_op_id(_Eo *obj, void *api_func);
 
