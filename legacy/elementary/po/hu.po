@@ -1,0 +1,301 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Enlightenment development team
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: elementary 1.8.2\n"
+"Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
+"POT-Creation-Date: 2013-12-18 09:35+0100\n"
+"PO-Revision-Date: 2013-12-25 17:31+0100\n"
+"Last-Translator: rezso <rezso@rezso.net>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.5.5\n"
+"Language: hu\n"
+
+#: src/lib/elc_fileselector.c:1203
+msgid "Up"
+msgstr "Fel"
+
+#: src/lib/elc_fileselector.c:1218
+msgid "Home"
+msgstr "Kezdőlap"
+
+#: src/lib/elc_fileselector.c:1431 src/lib/elm_entry.c:1340
+#: src/lib/elm_entry.c:1365
+msgid "Cancel"
+msgstr "Mégsem"
+
+#: src/lib/elc_fileselector.c:1440
+msgid "OK"
+msgstr "OK"
+
+#: src/lib/elc_multibuttonentry.c:575
+#, fuzzy
+msgid "multi button entry label"
+msgstr "A Mégse gomb feliratának beállítása"
+
+#: src/lib/elc_multibuttonentry.c:597
+#, fuzzy
+msgid "multi button entry item"
+msgstr "Az Új gomb előnyben részesített eleme"
+
+#: src/lib/elc_multibuttonentry.c:1471
+#, fuzzy
+msgid "multi button entry"
+msgstr "Új gyorslista-bejegyzés"
+
+#: src/lib/elc_naviframe.c:377
+msgid "Title"
+msgstr "Cím"
+
+#: src/lib/elc_naviframe.c:906 src/lib/elc_naviframe.c:1130
+msgid "Back"
+msgstr "Vissza"
+
+#: src/lib/elc_naviframe.c:1209
+msgid "Next"
+msgstr "Következő"
+
+#: src/lib/elc_popup.c:282 src/lib/elc_popup.c:908
+msgid "Popup Title"
+msgstr "Popup címsora"
+
+#: src/lib/elc_popup.c:292 src/lib/elc_popup.c:976
+msgid "Popup Body Text"
+msgstr "Popup szövege"
+
+#: src/lib/elm_bubble.c:217
+msgid "Bubble"
+msgstr "Buborék"
+
+#: src/lib/elm_button.c:58
+#, fuzzy
+msgid "Clicked"
+msgstr "Gombra kattintás"
+
+#: src/lib/elm_button.c:279 src/lib/elm_check.c:222 src/lib/elm_gengrid.c:705
+#: src/lib/elm_genlist.c:1464 src/lib/elm_list.c:1547 src/lib/elm_radio.c:265
+#: src/lib/elm_segment_control.c:537 src/lib/elm_spinner.c:556
+#: src/lib/elm_toolbar.c:1980
+msgid "State: Disabled"
+msgstr "Állapot: letiltva"
+
+#: src/lib/elm_button.c:304
+msgid "Button"
+msgstr "Gomb"
+
+#: src/lib/elm_calendar.c:142
+msgid "%B %Y"
+msgstr "%Y. %B"
+
+#: src/lib/elm_calendar.c:151
+msgid "%B"
+msgstr "%B"
+
+#: src/lib/elm_calendar.c:160
+msgid "%Y"
+msgstr "%Y"
+
+#: src/lib/elm_calendar.c:274
+msgid "calendar item"
+msgstr "naptárelem"
+
+#: src/lib/elm_calendar.c:300
+#, fuzzy
+msgid "calendar decrement month button"
+msgstr "naptárnézet egy hónaphoz"
+
+#: src/lib/elm_calendar.c:305
+#, fuzzy
+msgid "calendar decrement year button"
+msgstr "Kattintson erre a gombra a naptár mutatásához"
+
+#: src/lib/elm_calendar.c:310
+#, fuzzy
+msgid "calendar increment month button"
+msgstr "naptárnézet egy hónaphoz"
+
+#: src/lib/elm_calendar.c:315
+#, fuzzy
+msgid "calendar increment year button"
+msgstr "Kattintson erre a gombra a naptár mutatásához"
+
+#: src/lib/elm_calendar.c:320
+#, fuzzy
+msgid "calendar month"
+msgstr "Hónap naptár"
+
+#: src/lib/elm_calendar.c:325
+#, fuzzy
+msgid "calendar year"
+msgstr "Naptár évének beállítása"
+
+#: src/lib/elm_check.c:52 src/lib/elm_check.c:235 src/lib/elm_radio.c:92
+#: src/lib/elm_radio.c:266
+msgid "State: On"
+msgstr "Állapot: be"
+
+#: src/lib/elm_check.c:58 src/lib/elm_check.c:247 src/lib/elm_radio.c:268
+msgid "State: Off"
+msgstr "Állapot: ki"
+
+#: src/lib/elm_check.c:231 src/lib/elm_check.c:244
+msgid "State"
+msgstr "Állapot"
+
+#: src/lib/elm_check.c:312
+msgid "Check"
+msgstr "Ellenőrzés"
+
+#: src/lib/elm_clock.c:301
+msgid "clock increment button for am,pm"
+msgstr ""
+
+#: src/lib/elm_clock.c:309
+msgid "clock decrement button for am,pm"
+msgstr ""
+
+#: src/lib/elm_clock.c:659
+msgid "State: Editable"
+msgstr "Állapot: szerkeszthető"
+
+#: src/lib/elm_clock.c:695
+msgid "Clock"
+msgstr "Óra"
+
+#: src/lib/elm_colorselector.c:1349
+#, fuzzy
+msgid "color selector palette item"
+msgstr "A színválasztóban használandó paletta"
+
+#: src/lib/elm_config.c:2431
+msgid "default:LTR"
+msgstr "default:LTR"
+
+#: src/lib/elm_dayselector.c:422
+#, fuzzy
+msgid "day selector item"
+msgstr "Menüelem kiválasztása"
+
+#: src/lib/elm_diskselector.c:681
+#, fuzzy
+msgid "diskselector item"
+msgstr "%5d elem"
+
+#: src/lib/elm_entry.c:1333
+msgid "Copy"
+msgstr "Másolás"
+
+#: src/lib/elm_entry.c:1337
+msgid "Cut"
+msgstr "Kivágás"
+
+#: src/lib/elm_entry.c:1352
+msgid "Select"
+msgstr "Kiválaszt"
+
+#: src/lib/elm_entry.c:1359
+msgid "Paste"
+msgstr "Beillesztés"
+
+#: src/lib/elm_entry.c:3301
+#, fuzzy
+msgid "Entry"
+msgstr "Üres"
+
+#: src/lib/elm_gengrid.c:735
+#, fuzzy
+msgid "Gengrid Item"
+msgstr "%5d elem"
+
+#: src/lib/elm_index.c:102
+#, fuzzy
+msgid "Index"
+msgstr "Tárgymutató"
+
+#: src/lib/elm_index.c:129
+#, fuzzy
+msgid "Index Item"
+msgstr "Aktív elem indexe"
+
+#: src/lib/elm_label.c:408
+msgid "Label"
+msgstr "Címke"
+
+#: src/lib/elm_panel.c:54
+msgid "state: opened"
+msgstr "állapot: nyitott"
+
+#: src/lib/elm_panel.c:55
+msgid "state: closed"
+msgstr "állapot: zárt"
+
+#: src/lib/elm_panel.c:118
+msgid "panel button"
+msgstr "panelgomb"
+
+#: src/lib/elm_progressbar.c:296
+msgid "progressbar"
+msgstr "folyamatjelző"
+
+#: src/lib/elm_radio.c:296
+msgid "Radio"
+msgstr "Rádió"
+
+#: src/lib/elm_segment_control.c:540 src/lib/elm_toolbar.c:1982
+msgid "State: Selected"
+msgstr "Állapot: kijelölve"
+
+#: src/lib/elm_segment_control.c:542
+msgid "State: Unselected"
+msgstr "Állapot: nincs kijelölve"
+
+#: src/lib/elm_segment_control.c:554
+#, fuzzy
+msgid "Segment Control Item"
+msgstr "Menüelem kiválasztása"
+
+#: src/lib/elm_slider.c:888
+msgid "slider"
+msgstr "csúszka"
+
+#: src/lib/elm_spinner.c:645
+#, fuzzy
+msgid "spinner increment button"
+msgstr "Egérgomb elhelyezkedése"
+
+#: src/lib/elm_spinner.c:654
+#, fuzzy
+msgid "spinner decrement button"
+msgstr "Egérgomb elhelyezkedése"
+
+#: src/lib/elm_spinner.c:662
+#, fuzzy
+msgid "spinner"
+msgstr "Forgó"
+
+#: src/lib/elm_toolbar.c:1451 src/lib/elm_toolbar.c:2041
+msgid "Selected"
+msgstr "Kiválasztva"
+
+#: src/lib/elm_toolbar.c:1978
+msgid "Separator"
+msgstr "Elválasztó"
+
+#: src/lib/elm_toolbar.c:1984
+#, fuzzy
+msgid "Has menu"
+msgstr "Me&nüfájl szerkesztése"
+
+#: src/lib/elm_toolbar.c:2036
+msgid "Unselected"
+msgstr "Nincs kijelölve"
+
+#: src/lib/elm_toolbar.c:2053
+msgid "Toolbar Item"
+msgstr "Eszköztár elem"
