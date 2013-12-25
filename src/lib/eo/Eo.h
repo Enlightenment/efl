@@ -604,26 +604,27 @@ typedef struct _Eo2_Op_Call_Data
 #define EO_FUNC_CALLV(...) func(objid, call.data, __VA_ARGS__)
 
 /* XXX: Essential, because we need to adjust objid for comp objects. */
-#define EO_FUNC_BODY(Name, Ret, Id, Func, DefRet) \
-Ret \
-Name(_Eo *obj, Eo *objid) \
-{ \
-   Eo2_Op_Call_Data call; \
-   if (!eo2_call_resolve(obj, Id(Name), &call)) return DefRet; \
-   Ret (*func)(Eo *, void *obj_data) = call.func; \
-   return Func; \
-}
+#define EO_FUNC_BODY(Name, Ret, Id, Func, DefRet)                       \
+  Ret                                                                   \
+  Name(_Eo *obj, Eo *objid)                                             \
+  {                                                                     \
+     typedef Ret (*__##Name##_func)(Eo *, void *obj_data);              \
+     Eo2_Op_Call_Data call;                                             \
+     if (!eo2_call_resolve(obj, Id(Name), &call)) return DefRet;        \
+     __##Name##_func func = (__##Name##_func) call.func;		\
+     return Func;                                                       \
+  }
 
-#define EO_FUNC_BODYV(Name, Ret, Id, Func, DefRet, ...) \
-Ret \
-Name(_Eo *obj, Eo *objid, __VA_ARGS__) \
-{ \
-   Eo2_Op_Call_Data call; \
-   if (!eo2_call_resolve(obj, Id(Name), &call)) return DefRet; \
-   Ret (*func)(Eo *, void *obj_data, __VA_ARGS__) = call.func; \
-   return Func; \
-}
-
+#define EO_FUNC_BODYV(Name, Ret, Id, Func, DefRet, ...)			\
+  Ret									\
+  Name(_Eo *obj, Eo *objid, __VA_ARGS__)				\
+  {									\
+     typedef Ret (*__##Name##_func)(Eo *, void *obj_data, __VA_ARGS__);	\
+     Eo2_Op_Call_Data call;						\
+     if (!eo2_call_resolve(obj, Id(Name), &call)) return DefRet;        \
+     __##Name##_func func = (__##Name##_func) call.func;		\
+     return Func;							\
+  }
 
 EAPI _Eo * eo2_do_start(Eo *obj_id);
 #define eo2_call_resolve(obj_id, op, call) eo2_call_resolve_internal(obj_id, NULL, op, call)
@@ -636,20 +637,20 @@ EAPI Eina_Bool eo2_call_resolve_internal(_Eo *obj, const Eo_Class *klass, Eo_Op 
 #define eo2_o _obj_, _objid_
 #define eo2_a _Eo *obj, Eo *objid
 
-#define eo2_do(objid, ...) \
-do \
-{ \
-   Eo *_objid_ = objid; \
-   _Eo *_obj_ = eo2_do_start(_objid_); \
-   do { __VA_ARGS__ ; } while (0); \
-   eo2_do_end(_objid_); \
-} while (0)
+#define eo2_do(objid, ...)			\
+  do						\
+    {						\
+       Eo *_objid_ = objid;			\
+       _Eo *_obj_ = eo2_do_start(_objid_);      \
+       do { __VA_ARGS__ ; } while (0);		\
+       eo2_do_end(_objid_);			\
+    } while (0)
 
-#define eo2_class_do(clsid, ...) \
-do \
-{ \
-   do { __VA_ARGS__ ; } while (0); \
-} while (0)
+#define eo2_class_do(clsid, ...)                \
+  do                                            \
+    {                                           \
+       do { __VA_ARGS__ ; } while (0);          \
+    } while (0)
 
 /**
  * @def eo_do
