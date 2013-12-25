@@ -477,6 +477,7 @@ struct _Eo_Class_Description
    size_t data_size; /**< The size of data (private + protected + public) this class needs per object. */
    void (*class_constructor)(Eo_Class *klass); /**< The constructor of the class. */
    void (*class_destructor)(Eo_Class *klass); /**< The destructor of the class. */
+   Eo2_Op_Description *op_descs; /**< should replace ops.descs */
 };
 
 /**
@@ -603,12 +604,9 @@ EAPI Eina_Bool eo_shutdown(void);
 
 /************************************ EO2 ************************************/
 
-// computes size of Eo2_Op_Description[]
-#define OP_DESC_SIZE(desc) (sizeof(desc)/sizeof(Eo2_Op_Description) -1 )
-
 // sort Eo2_Op_Description[] by eapi_func then attribute OP ids
 EAPI void
-eo2_class_funcs_set(Eo_Class *klass_id, Eo2_Op_Description *op_descs, int n);
+eo2_class_funcs_set(Eo_Class *klass_id);
 
 // opaque type used to pass object pointer to EAPI calls
 typedef struct _Eo_Internal _Eo;
@@ -630,9 +628,9 @@ typedef struct _Eo2_Op_Call_Data
 #define EO_FUNC_CALLV(...) func(objid, call.data, __VA_ARGS__)
 
 // cache OP id, get real fct and object data then do the call
-#define _EO_FUNC_COMMON(Name, Ret, Func, DefRet, OpDescs)               \
+#define _EO_FUNC_COMMON(Name, Ret, Func, DefRet)                        \
      static Eo_Op op = EO_NOOP;                                         \
-     if ( op == EO_NOOP ) op = eo2_get_op_id(OpDescs, (void*)Name);     \
+     if ( op == EO_NOOP ) op = eo2_get_op_id(obj, (void*)Name);         \
      Eo2_Op_Call_Data call;                                             \
      if (!eo2_call_resolve(obj, op, &call)) return DefRet;              \
      __##Name##_func func = (__##Name##_func) call.func;                \
@@ -640,24 +638,24 @@ typedef struct _Eo2_Op_Call_Data
 
 /* XXX: Essential, because we need to adjust objid for comp objects. */
 // to define an EAPI function
-#define EO_FUNC_BODY(Name, Ret, Func, DefRet, OpDescs)                  \
+#define EO_FUNC_BODY(Name, Ret, Func, DefRet)                           \
   Ret                                                                   \
   Name(_Eo *obj, Eo *objid)                                             \
   {                                                                     \
      typedef Ret (*__##Name##_func)(Eo *, void *obj_data);              \
-     _EO_FUNC_COMMON(Name, Ret, Func, DefRet, OpDescs)                  \
+     _EO_FUNC_COMMON(Name, Ret, Func, DefRet)                           \
   }
 
-#define EO_FUNC_BODYV(Name, Ret, Func, DefRet, OpDescs, ...)            \
+#define EO_FUNC_BODYV(Name, Ret, Func, DefRet, ...)                     \
   Ret                                                                   \
   Name(_Eo *obj, Eo *objid, __VA_ARGS__)                                \
   {                                                                     \
      typedef Ret (*__##Name##_func)(Eo *, void *obj_data, __VA_ARGS__); \
-     _EO_FUNC_COMMON(Name, Ret, Func, DefRet, OpDescs)                  \
+     _EO_FUNC_COMMON(Name, Ret, Func, DefRet)                           \
   }
 
 // returns the OP id corresponding to the given api_func
-EAPI Eo_Op eo2_get_op_id(Eo2_Op_Description *op_descs, void *api_func);
+EAPI Eo_Op eo2_get_op_id(_Eo *obj, void *api_func);
 
 // gets the real function pointer and the object data
 #define eo2_call_resolve(obj_id, op, call) eo2_call_resolve_internal(obj_id, NULL, op, call)

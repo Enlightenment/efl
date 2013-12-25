@@ -297,14 +297,26 @@ eo2_call_resolve_internal(_Eo *obj, const Eo_Class *klass_id, Eo_Op op, Eo2_Op_C
 
 
 EAPI Eo_Op
-eo2_get_op_id(Eo2_Op_Description *op_descs, void *api_func)
+eo2_get_op_id(_Eo *obj, void *api_func)
 {
+   int imin, imax, imid;
    Eo2_Op_Description *op_desc;
+   Eo2_Op_Description *op_descs;
 
-   /* do a binary search, when it's swallowed by _Eo_Class_Description */
-   for (op_desc = op_descs; op_desc->op != EO_NOOP; op_desc++)
+   imin = 0;
+   imax = obj->klass->desc->ops.count - 1;
+   op_descs = obj->klass->desc->op_descs;
+
+   while (imax >= imin)
      {
-        if (op_desc->api_func == api_func)
+        imid = (imax + imin) / 2;
+        op_desc = op_descs + imid;
+
+        if (op_desc->api_func > api_func)
+          imin = imid + 1;
+        else if (op_desc->api_func < api_func)
+          imax = imid - 1;
+        else
           return op_desc->op;
      }
 
@@ -323,9 +335,9 @@ eo2_api_funcs_cmp(const void *p1, const void *p2)
 }
 
 EAPI void
-eo2_class_funcs_set(Eo_Class *klass_id, Eo2_Op_Description *op_descs, int n)
+eo2_class_funcs_set(Eo_Class *klass_id)
 {
-   int i, base_op_id;
+   int i, base_op_id, n;
    _Eo_Class *klass;
    Eo2_Op_Description *op_desc;
 
@@ -334,15 +346,21 @@ eo2_class_funcs_set(Eo_Class *klass_id, Eo2_Op_Description *op_descs, int n)
 
    base_op_id = *klass->desc->ops.base_op_id;
 
-   /* to speed up eo2_get_op_id */
-   qsort((void*)op_descs, n, sizeof(Eo2_Op_Description), eo2_api_funcs_cmp);
+   // klass->desc->ops.count only counts class OP, not _constructor or _destructor
+   for (op_desc = klass->desc->op_descs; op_desc->op_type != EO_OP_TYPE_INVALID; op_desc++);
+   n = op_desc - klass->desc->op_descs;
+
+   qsort((void*)klass->desc->op_descs, n, sizeof(Eo2_Op_Description), eo2_api_funcs_cmp);
 
    i = 0;
-   for (op_desc = op_descs; op_desc->op_type != EO_OP_TYPE_INVALID; op_desc++)
+   for (op_desc = klass->desc->op_descs; op_desc->op_type != EO_OP_TYPE_INVALID; op_desc++)
      {
-        // take care of overriding, maybe ok ??
         if (op_desc->op == EO_NOOP)
           {
+             if(op_desc->api_func == NULL)
+               ERR("Setting implementation for NULL EAPI for class '%s'. Func index: %lu",
+                   klass->desc->name, (unsigned long) (op_desc - klass->desc->op_descs));
+
             op_desc->op = base_op_id + i;
             i++;
           }
