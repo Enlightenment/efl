@@ -14,6 +14,8 @@ typedef struct _Elm_Params_Progressbar
    Eina_Bool inverted_exists:1;
    Eina_Bool horizontal:1;
    Eina_Bool horizontal_exists:1;
+   Eina_Bool pulse:1;
+   Eina_Bool pulse_exists:1;
 } Elm_Params_Progressbar;
 
 static void
@@ -39,6 +41,8 @@ external_progressbar_state_set(void *data __UNUSED__, Evas_Object *obj, const vo
      elm_progressbar_horizontal_set(obj, p->horizontal);
    if (p->unit)
      elm_progressbar_unit_format_set(obj, p->unit);
+   if (p->pulse_exists)
+     elm_progressbar_pulse(obj, p->pulse);
 }
 
 static Eina_Bool
@@ -75,6 +79,14 @@ external_progressbar_param_set(void *data __UNUSED__, Evas_Object *obj, const Ed
 	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
 	  {
 	     elm_progressbar_horizontal_set(obj, param->i);
+	     return EINA_TRUE;
+	  }
+     }
+   else if (!strcmp(param->name, "pulse"))
+     {
+	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
+	  {
+	     elm_progressbar_pulse(obj, param->i);
 	     return EINA_TRUE;
 	  }
      }
@@ -138,6 +150,14 @@ external_progressbar_param_get(void *data __UNUSED__, const Evas_Object *obj, Ed
 	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
 	  {
 	     param->i = elm_progressbar_horizontal_get(obj);
+	     return EINA_TRUE;
+	  }
+     }
+   else if (!strcmp(param->name, "pulse"))
+     {
+	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
+	  {
+	     param->i = elm_progressbar_pulse_get(obj);
 	     return EINA_TRUE;
 	  }
      }
@@ -207,6 +227,11 @@ external_progressbar_params_parse(void *data __UNUSED__, Evas_Object *obj __UNUS
 	      mem->horizontal = !!param->i;
 	      mem->horizontal_exists = EINA_TRUE;
 	  }
+	else if (!strcmp(param->name, "pulse"))
+	  {
+	      mem->pulse = !!param->i;
+	      mem->pulse_exists = EINA_TRUE;
+	  }
 	else if (!strcmp(param->name, "unit format"))
 	  mem->unit = eina_stringshare_add(param->s);
 	else if (!strcmp(param->name, "label"))
@@ -241,6 +266,7 @@ static Edje_External_Param_Info external_progressbar_params[] = {
    EDJE_EXTERNAL_PARAM_INFO_STRING("icon"),
    EDJE_EXTERNAL_PARAM_INFO_DOUBLE("value"),
    EDJE_EXTERNAL_PARAM_INFO_BOOL("horizontal"),
+   EDJE_EXTERNAL_PARAM_INFO_BOOL("pulse"),
    EDJE_EXTERNAL_PARAM_INFO_BOOL("inverted"),
    EDJE_EXTERNAL_PARAM_INFO_INT("span"),
    EDJE_EXTERNAL_PARAM_INFO_STRING_DEFAULT("unit format", "%1.2f"),
