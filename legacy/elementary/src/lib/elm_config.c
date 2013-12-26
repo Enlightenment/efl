@@ -81,17 +81,19 @@ static size_t      _elm_data_dir_snprintf(char       *dst,
 #ifdef HAVE_ELEMENTARY_X
 static Ecore_Event_Handler *_prop_change_handler = NULL;
 static Ecore_Timer *_prop_change_delay_timer = NULL;
-static Ecore_X_Window _root_1st = 0;
-#define ATOM_COUNT 2
+static Ecore_X_Window _config_win = 0;
+#define ATOM_COUNT 3
 static Ecore_X_Atom _atom[ATOM_COUNT];
 static Ecore_X_Atom _atom_config = 0;
 static const char *_atom_names[ATOM_COUNT] =
 {
    "ELM_PROFILE",
-   "ELM_CONFIG"
+   "ELM_CONFIG",
+   "ELM_CONFIG_WIN"
 };
-#define ATOM_E_PROFILE                              0
-#define ATOM_E_CONFIG                               1
+#define ATOM_E_PROFILE    0
+#define ATOM_E_CONFIG     1
+#define ATOM_E_CONFIG_WIN 2
 
 static Eina_Bool _prop_config_get(void);
 static void      _prop_config_set(void);
@@ -130,11 +132,11 @@ _prop_config_get(void)
    snprintf(buf, sizeof(buf), "ELM_CONFIG_%s", _elm_profile);
    atom = ecore_x_atom_get(buf);
    _atom_config = atom;
-   if (!ecore_x_window_prop_property_get(_root_1st,
+   if (!ecore_x_window_prop_property_get(_config_win,
                                          atom, _atom[ATOM_E_CONFIG],
                                          8, &data, &size))
      {
-        if (!ecore_x_window_prop_property_get(_root_1st,
+        if (!ecore_x_window_prop_property_get(_config_win,
                                               _atom[ATOM_E_CONFIG],
                                               _atom[ATOM_E_CONFIG],
                                               8, &data, &size))
@@ -193,7 +195,7 @@ _prop_config_set(void)
         atom = ecore_x_atom_get(buf);
         _atom_config = atom;
 
-        ecore_x_window_prop_property_set(_root_1st, _atom_config,
+        ecore_x_window_prop_property_set(_config_win, _atom_config,
                                          _atom[ATOM_E_CONFIG], 8,
                                          config_data, size);
         free(config_data);
@@ -207,7 +209,7 @@ _prop_change_delay_cb(void *data __UNUSED__)
 
    if (!getenv("ELM_PROFILE"))
      {
-        s = ecore_x_window_prop_string_get(_root_1st, _atom[ATOM_E_PROFILE]);
+        s = ecore_x_window_prop_string_get(_config_win, _atom[ATOM_E_PROFILE]);
         if (s)
           {
              if (_elm_profile) free(_elm_profile);
@@ -227,7 +229,7 @@ _prop_change(void *data  __UNUSED__,
 {
    Ecore_X_Event_Window_Property *event = ev;
 
-   if (event->win == _root_1st)
+   if (event->win == _config_win)
      {
         if (event->atom == _atom[ATOM_E_PROFILE])
           {
@@ -2402,7 +2404,7 @@ elm_config_all_flush(void)
 {
 #ifdef HAVE_ELEMENTARY_X
    _prop_config_set();
-   ecore_x_window_prop_string_set(_root_1st, _atom[ATOM_E_PROFILE],
+   ecore_x_window_prop_string_set(_config_win, _atom[ATOM_E_PROFILE],
                                   _elm_profile);
 #endif
 }
@@ -2494,13 +2496,28 @@ _elm_config_sub_init(void)
 #ifdef HAVE_ELEMENTARY_X
         if (ecore_x_init(NULL))
           {
-             _root_1st = ecore_x_window_root_first_get();
+             Ecore_X_Window win = 0, win2 = 0, root;
 
              if (!ecore_x_screen_is_composited(0))
                _elm_config->compositing = 0;
-
              ecore_x_atoms_get(_atom_names, ATOM_COUNT, _atom);
-             ecore_x_event_mask_set(_root_1st,
+             root = ecore_x_window_root_first_get();
+             if (ecore_x_window_prop_window_get(root,
+                                                _atom[ATOM_E_CONFIG_WIN],
+                                                &win, 1) == 1)
+               {
+                  if (ecore_x_window_prop_window_get(win,
+                                                     _atom[ATOM_E_CONFIG_WIN],
+                                                     &win2, 1) == 1)
+                    {
+                       if (win2 == win) _config_win = win;
+                    }
+               }
+             if (_config_win == 0)
+               _config_win = ecore_x_window_permanent_create
+                             (root, _atom[ATOM_E_CONFIG_WIN]);
+
+             ecore_x_event_mask_set(_config_win,
                                     ECORE_X_EVENT_MASK_WINDOW_PROPERTY);
              _prop_change_handler = ecore_event_handler_add
                (ECORE_X_EVENT_WINDOW_PROPERTY, _prop_change, NULL);
@@ -2508,7 +2525,7 @@ _elm_config_sub_init(void)
                {
                   char *s;
 
-                  s = ecore_x_window_prop_string_get(_root_1st,
+                  s = ecore_x_window_prop_string_get(_config_win,
                                                      _atom[ATOM_E_PROFILE]);
                   if (s)
                     {

@@ -235,7 +235,7 @@ AC_SUBST(ELM_WINCE_DEF)
 
 AM_CONDITIONAL([ELEMENTARY_WINDOWS_BUILD], [test "x${have_windows}" = "xyes"])
 
-efl_version="1.8.0"
+efl_version="1.8.99"
 
 PKG_CHECK_MODULES([ELEMENTARY],
    [
