@@ -685,21 +685,22 @@ EAPI int eo2_call_stack_depth();
 #define EO2_DO_CLEANUP __attribute__((cleanup(eo2_do_end)))
 
 // eo object method calls batch,
-// DO NOT use return statement in it, use break if necessary
 #define eo2_do(objid, ...)                            \
   do                                                  \
     {                                                 \
+       if (!eo2_do_start(objid, EINA_FALSE)) break;   \
        Eo *_objid_ EO2_DO_CLEANUP = objid;            \
-       if (!eo2_do_start(_objid_, EINA_FALSE)) break; \
        __VA_ARGS__;                                   \
+       (void) _objid_;                                \
     } while (0)
 
 #define eo2_do_super(objid, ...)                      \
   do                                                  \
     {                                                 \
+       if (!eo2_do_start(objid, EINA_TRUE)) break;    \
        Eo *_objid_ EO2_DO_CLEANUP = objid;            \
-       if (!eo2_do_start(_objid_, EINA_TRUE)) break;  \
        __VA_ARGS__;                                   \
+       (void) _objid_;                                \
     } while (0)
 
 // FIXME
