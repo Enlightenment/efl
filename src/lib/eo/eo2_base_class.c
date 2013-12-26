@@ -68,6 +68,7 @@ _data_set(Eo *obj, void *class_data,
    eo2_do(obj, eo2_base_data_del(key); );
 
    node = malloc(sizeof(Eo_Generic_Data_Node));
+   if (!node) return;
    node->key = eina_stringshare_add(key);
    node->data = (void *) data;
    node->free_func = free_func;
@@ -149,11 +150,14 @@ _wref_add(Eo *obj, void *class_data, Eo **wref)
 {
    Private_Data *pd = (Private_Data *) class_data;
    size_t count;
+   Eo ***tmp;
 
    count = _wref_count(pd);
    count += 1; /* New wref. */
 
-   pd->wrefs= realloc(pd->wrefs, sizeof(*pd->wrefs) * (count + 1));
+   tmp = realloc(pd->wrefs, sizeof(*pd->wrefs) * (count + 1));
+   if (!tmp) return;
+   pd->wrefs = tmp;
 
    pd->wrefs[count - 1] = wref;
    pd->wrefs[count] = NULL;
@@ -205,8 +209,11 @@ _wref_del(Eo *obj, void *class_data, Eo **wref)
 
    if (count > 1)
      {
+        Eo ***tmp;
         // No count--; because of the NULL that is not included in the count. */
-        pd->wrefs = realloc(pd->wrefs, sizeof(*pd->wrefs) * count);
+        tmp = realloc(pd->wrefs, sizeof(*pd->wrefs) * count);
+        if (!tmp) return;
+        pd->wrefs = tmp;
         pd->wrefs[count - 1] = NULL;
      }
    else
@@ -359,6 +366,7 @@ _ev_cb_priority_add(Eo *obj, void *class_data,
    Private_Data *pd = (Private_Data *) class_data;
 
    cb = calloc(1, sizeof(*cb));
+   if (!cb) return;
    cb->items.item.desc = desc;
    cb->items.item.func = func;
    cb->func_data = (void *) user_data;
@@ -419,6 +427,7 @@ _ev_cb_array_priority_add(Eo *obj, void *class_data,
    Private_Data *pd = (Private_Data *) class_data;
 
    cb = calloc(1, sizeof(*cb));
+   if (!cb) return;
    cb->func_data = (void *) user_data;
    cb->priority = priority;
    cb->items.item_array = array;
@@ -670,7 +679,9 @@ _eo_dbg_info_copy(const Eina_Value_Type *type EINA_UNUSED, const void *_src, voi
 {
    const Eo_Dbg_Info **src = (const Eo_Dbg_Info **) _src;
    Eo_Dbg_Info **dst = _dst;
+
    *dst = calloc(1, sizeof(Eo_Dbg_Info));
+   if (!*dst) return EINA_FALSE;
    (*dst)->name = eina_stringshare_ref((*src)->name);
    eina_value_copy(&((*src)->value), &((*dst)->value));
    return EINA_TRUE;
