@@ -539,12 +539,15 @@ _item_text_set_hook(Elm_Object_Item *it,
                     const char *label)
 {
    Elm_Multibuttonentry_Item *item;
+   const char *dest_part = NULL;
 
-   if (part && strcmp(part, "default")) return;
-   if (!label) return;
+   if (!part || !strcmp(part, "elm.text"))
+     dest_part = "elm.btn.text";
+   else
+     dest_part = part;
 
    item = (Elm_Multibuttonentry_Item *)it;
-   edje_object_part_text_escaped_set(item->button, "elm.btn.text", label);
+   edje_object_part_text_escaped_set(item->button, dest_part, label);
    _button_resize(item->base.widget, item->button, &item->rw, &item->vw);
 }
 
@@ -553,10 +556,15 @@ _item_text_get_hook(const Elm_Object_Item *it,
                     const char *part)
 {
    Elm_Multibuttonentry_Item *item;
+   const char *src_part = NULL;
 
-   if (part && strcmp(part, "default")) return NULL;
+   if (!part || !strcmp(part, "elm.text"))
+     src_part = "elm.btn.text";
+   else
+     src_part = part;
+
    item = (Elm_Multibuttonentry_Item *)it;
-   return edje_object_part_text_get(item->button, "elm.btn.text");
+   return edje_object_part_text_get(item->button, src_part);
 }
 
 static Eina_Bool
