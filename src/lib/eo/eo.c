@@ -634,6 +634,8 @@ _eo2_class_funcs_set(_Eo_Class *klass)
 EAPI Eo *
 eo2_add_internal_start(const char *file, int line, const Eo_Class *klass_id, Eo *parent_id)
 {
+   _Eo_Object *obj;
+
    EO_CLASS_POINTER_RETURN_VAL(klass_id, klass, NULL);
 
    if (parent_id)
@@ -647,21 +649,35 @@ eo2_add_internal_start(const char *file, int line, const Eo_Class *klass_id, Eo 
         return NULL;
      }
 
-   _Eo_Object *obj = calloc(1, klass->obj_size);
+   eina_spinlock_take(&klass->objects.trash_lock);
+   obj = eina_trash_pop(&klass->objects.trash);
+   if (obj)
+     {
+        memset(obj, 0, klass->obj_size);
+        klass->objects.trash_count--;
+     }
+   else
+     {
+        obj = calloc(1, klass->obj_size);
+     }
+   eina_spinlock_release(&klass->objects.trash_lock);
+
    obj->refcount++;
    obj->klass = klass;
 
 #ifndef HAVE_EO_ID
-   EINA_MAGIC_SET(obj, EO_EINA_MAGIC);
+   EINA_MAGIC_SET((Eo_Base *) obj, EO_EINA_MAGIC);
 #endif
    Eo_Id eo_id = _eo_id_allocate(obj);
    obj->header.id = eo_id;
 
    _eo_condtor_reset(obj);
 
-   eo2_do((Eo *)eo_id, eo2_parent_set(parent_id));
+   _eo_ref(obj);
 
-   return (Eo *)eo_id;
+   eo2_do(_eo_id_get(obj), eo2_parent_set(parent_id));
+
+   return _eo_id_get(obj);
 }
 
 EAPI Eo *
@@ -681,12 +697,15 @@ eo2_add_internal_end(const char *file, int line, const Eo *eo_id)
      {
         ERR("in %s:%d: Object of class '%s' - Not all of the object constructors have been executed.",
             file, line, fptr->cur_klass->desc->name);
-        /* for the for the basic object ref. */
+        /* Unref twice, once for the ref in eo2_add_internal_start, and once for the basic object ref. */
+        _eo_unref((_Eo_Object *)fptr->base);
         _eo_unref((_Eo_Object *)fptr->base);
         return NULL;
      }
 
-   return (Eo *)fptr->eo_id;
+   _eo_unref((_Eo_Object *)fptr->base);
+
+   return (Eo *)eo_id;
 }
 
 /*****************************************************************************/
