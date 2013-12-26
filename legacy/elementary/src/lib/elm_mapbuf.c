@@ -531,7 +531,7 @@ elm_mapbuf_point_color_get(Evas_Object *obj, int idx,
 
    if ((idx < 0) || (idx >= (int)(sizeof(sd->colors)/sizeof(sd->colors[0]))))
      {
-        ERR("idx value should be 0 ~ %d, mapbuf(%p)",
+        ERR("idx value should be 0 ~ %zd, mapbuf(%p)",
             ((sizeof(sd->colors)/sizeof(sd->colors[0])) - 1), obj);
         return;
      }
@@ -567,7 +567,7 @@ elm_mapbuf_point_color_set(Evas_Object *obj, int idx,
 
    if ((idx < 0) || (idx >= (int)(sizeof(sd->colors)/sizeof(sd->colors[0]))))
      {
-        ERR("idx value should be 0 ~ %d, mapbuf(%p)",
+        ERR("idx value should be 0 ~ %zd, mapbuf(%p)",
             ((sizeof(sd->colors)/sizeof(sd->colors[0])) - 1), obj);
         return;
      }
