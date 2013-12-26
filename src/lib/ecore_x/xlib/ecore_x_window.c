@@ -1786,3 +1786,71 @@ ecore_x_window_override_argb_new(Ecore_X_Window parent,
 #endif /* ifdef ECORE_XRENDER */
 }
 
+EAPI Ecore_X_Window
+ecore_x_window_permanent_create(Ecore_X_Window parent,
+                                Ecore_X_Atom unique_atom)
+{
+   Display *disp;
+   Window win, win2, realwin = 0;
+   Atom type_ret;
+   int format_ret;
+   unsigned long ldata, bytes_after, num_ret, *datap;
+   unsigned char *prop_ret;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   disp = XOpenDisplay(DisplayString(_ecore_x_disp));
+   if (!disp) return 0;
+
+   XGrabServer(disp);
+   if (XGetWindowProperty(disp, parent, unique_atom, 0, 0x7fffffff,
+                          False, XA_WINDOW, &type_ret, &format_ret,
+                          &num_ret, &bytes_after, &prop_ret))
+     {
+        if (prop_ret)
+          {
+             if ((format_ret == 32) && (type_ret == XA_WINDOW) &&
+                 (num_ret == 1))
+               {
+                  datap = (unsigned long *)prop_ret;
+                  win = (Window)(*datap);
+                  XFree(prop_ret);
+                  if (XGetWindowProperty(disp, win, unique_atom, 0, 0x7fffffff,
+                                         False, XA_WINDOW, &type_ret, &format_ret,
+                                         &num_ret, &bytes_after, &prop_ret))
+                    {
+                       if (prop_ret)
+                         {
+                            if ((format_ret == 32) && (type_ret == XA_WINDOW) &&
+                                (num_ret == 1))
+                              {
+                                 datap = (unsigned long *)prop_ret;
+                                 win2 = (Window)(*datap);
+                                 XFree(prop_ret);
+                                 if (win2 == win) realwin = win;
+                              }
+                            else XFree(prop_ret);
+                         }
+                    }
+               }
+             else XFree(prop_ret);
+          }
+     }
+   if (realwin != 0)
+     {
+        XUngrabServer(disp);
+        XFlush(disp);
+        XCloseDisplay(disp);
+        return realwin;
+     }
+   win = XCreateSimpleWindow(disp, parent, -77, -77, 7, 7, 0, 0, 0);
+   ldata = (unsigned long)win;
+   XChangeProperty(disp, win, unique_atom, XA_WINDOW, 32,
+                   PropModeReplace, (unsigned char *)(&ldata), 1);
+   XChangeProperty(disp, parent, unique_atom, XA_WINDOW, 32,
+                   PropModeReplace, (unsigned char *)(&ldata), 1);
+   XSetCloseDownMode(disp, RetainPermanent);
+   XUngrabServer(disp);
+   XFlush(disp);
+   XCloseDisplay(disp);
+   return win;
+}

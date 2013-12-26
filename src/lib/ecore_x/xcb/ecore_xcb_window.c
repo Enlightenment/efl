@@ -310,6 +310,88 @@ ecore_x_window_override_argb_new(Ecore_X_Window parent,
    return win;
 }
 
+EAPI Ecore_X_Window
+ecore_x_window_permanent_create(Ecore_X_Window parent,
+                                Ecore_X_Atom unique_atom)
+{
+   xcb_connection_t *conn;
+   Ecore_X_Window win, win2, realwin;
+   uint32_t mask, mask_list[9];
+   xcb_get_property_reply_t *reply;
+   xcb_get_property_cookie_t cookie;
+   unsigned long ldata, *datap;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   conn = xcb_connect(name, NULL);
+   if (!conn) return 0;
+
+   xcb_grab_server(conn);
+   cookie = xcb_get_property_unchecked(conn, 0, parent, unique_atom,
+                                       ECORE_X_ATOM_WINDOW, 0, 0x7fffffff);
+   reply = xcb_get_property_reply(conn, cookie, NULL);
+   if (reply)
+     {
+        if ((reply->type == ECORE_X_ATOM_WINDOW) && (reply->format == 32) &&
+            (reply->value_len == 1) &&
+            ((datap = (unsigned long *)xcb_get_property_value(reply))))
+          {
+             win = (Ecore_X_Window)(*datap);
+             free(reply);
+             cookie = xcb_get_property_unchecked(conn, 0, win, unique_atom,
+                                                 ECORE_X_ATOM_WINDOW, 0, 0x7fffffff);
+             reply = xcb_get_property_reply(conn, cookie, NULL);
+             if (reply)
+               {
+                  if ((reply->type == ECORE_X_ATOM_WINDOW) && (reply->format == 32) &&
+                      (reply->value_len == 1) &&
+                      ((datap = (unsigned long *)xcb_get_property_value(reply))))
+                    {
+                       win2 = (Ecore_X_Window)(*datap);
+                       free(reply);
+                       if (win2 == win) realwin = win;
+                    }
+                  else free(reply);
+               }
+          }
+        else free(reply);
+     }
+   if (realwin != 0)
+     {
+        xcb_ungrab_server(conn);
+        xcb_flush(conn);
+        xcb_disconnect(conn);
+        return realwin;
+     }
+   mask = (XCB_CW_BACK_PIXMAP | XCB_CW_BORDER_PIXEL | XCB_CW_BIT_GRAVITY |
+           XCB_CW_WIN_GRAVITY | XCB_CW_BACKING_STORE |
+           XCB_CW_OVERRIDE_REDIRECT | XCB_CW_SAVE_UNDER | XCB_CW_EVENT_MASK |
+           XCB_CW_DONT_PROPAGATE);
+   mask_list[0] = XCB_BACK_PIXMAP_NONE;
+   mask_list[1] = 0;
+   mask_list[2] = XCB_GRAVITY_NORTH_WEST;
+   mask_list[3] = XCB_GRAVITY_NORTH_WEST;
+   mask_list[4] = XCB_BACKING_STORE_NOT_USEFUL;
+   mask_list[5] = 1;
+   mask_list[6] = 0;
+   mask_list[7] = XCB_EVENT_MASK_NO_EVENT;
+   mask_list[8] = XCB_EVENT_MASK_NO_EVENT;
+   win = xcb_generate_id(conn);
+   xcb_create_window(conn, XCB_COPY_FROM_PARENT,
+                     win, parent, -77, -77, 7, 7, 0,
+                     XCB_WINDOW_CLASS_INPUT_OUTPUT,
+                     XCB_COPY_FROM_PARENT, mask, mask_list);
+   ldata = (unsigned long)win;
+   xcb_change_property(conn, XCB_PROP_MODE_REPLACE, win, unique_atom,
+                       ECORE_X_ATOM_WINDOW, 32, 1, (unsigned char *)ldata);
+   xcb_change_property(conn, XCB_PROP_MODE_REPLACE, parent, unique_atom,
+                       ECORE_X_ATOM_WINDOW, 32, 1, (unsigned char *)ldata);
+   xcb_set_close_down_mode(conn, XCB_CLOSE_DOWN_RETAIN_PERMANENT);
+   xcb_ungrab_server(conn);
+   xcb_flush(conn);
+   xcb_disconnect(conn);
+   return win;
+}
+
 /**
  * @defgroup Ecore_X_Window_Destroy_Group X Window Destroy Functions
  * @ingroup Ecore_X_Group
