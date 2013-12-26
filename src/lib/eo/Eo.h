@@ -700,11 +700,11 @@ EAPI Eo_Op eo2_api_op_id_get(const void *api_func, const Eo_Op_Type);
 
 // gets the real function pointer and the object data
 #define eo2_call_resolve(op, call) eo2_call_resolve_internal(NULL, op, call)
-EAPI Eina_Bool eo2_call_resolve_internal(const Eo_Class *klass, Eo_Op op, Eo2_Op_Call_Data *call);
+EAPI Eina_Bool eo2_call_resolve_internal(const Eo_Class *klass, const Eo_Op op, Eo2_Op_Call_Data *call);
 
 // start of eo2_do barrier, gets the object pointer and ref it, put it on the stask
-EAPI Eina_Bool eo2_do_start(Eo *obj_id, Eina_Bool do_super);
-EAPI Eina_Bool eo2_class_do_start(const Eo_Class *klass_id, Eina_Bool do_super);
+EAPI Eina_Bool eo2_do_start(Eo *obj_id, const Eina_Bool do_super);
+EAPI Eina_Bool eo2_class_do_start(const Eo_Class *klass_id, const Eina_Bool do_super);
 
 // end of the eo2_do barrier, unref the obj, move the stack pointer
 EAPI void eo2_do_end(Eo **ojb);

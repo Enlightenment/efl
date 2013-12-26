@@ -308,7 +308,7 @@ eo2_call_stack_depth()
 }
 
 EAPI Eina_Bool
-eo2_do_start(Eo *obj_id, Eina_Bool do_super)
+eo2_do_start(Eo *obj_id, const Eina_Bool do_super)
 {
    _Eo * obj;
    const _Eo_Class *klass;
@@ -354,7 +354,7 @@ eo2_do_start(Eo *obj_id, Eina_Bool do_super)
 }
 
 EAPI Eina_Bool
-eo2_class_do_start(const Eo_Class *klass_id, Eina_Bool do_super EINA_UNUSED)
+eo2_class_do_start(const Eo_Class *klass_id, const Eina_Bool do_super)
 {
    Eo2_Stack_Frame *fptr;
    const _Eo_Class *klass;
@@ -394,7 +394,7 @@ eo2_class_do_start(const Eo_Class *klass_id, Eina_Bool do_super EINA_UNUSED)
 }
 
 static inline void
-_eo2_do_end(Eina_Bool obj_do)
+_eo2_do_end(const Eina_Bool obj_do)
 {
    Eo2_Stack_Frame *fptr;
 
@@ -427,7 +427,7 @@ eo2_class_do_end(const Eo_Class **klass_id EINA_UNUSED)
 }
 
 EAPI Eina_Bool
-eo2_call_resolve_internal(const Eo_Class *klass_id, Eo_Op op, Eo2_Op_Call_Data *call)
+eo2_call_resolve_internal(const Eo_Class *klass_id, const Eo_Op op, Eo2_Op_Call_Data *call)
 {
    Eo2_Stack_Frame *fptr;
    const _Eo * obj;
