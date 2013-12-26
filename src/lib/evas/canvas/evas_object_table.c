@@ -207,6 +207,7 @@ _evas_object_table_cache_reset(Evas_Object_Table_Data *priv)
    Evas_Object_Table_Cache *c = priv->cache;
    int size;
 
+   if (!c) return;
    c->total.expands.v = 0;
    c->total.expands.h = 0;
    c->total.min.w = 0;
@@ -784,8 +785,10 @@ _evas_object_table_calculate_layout_regular(Evas_Object *o, Evas_Object_Table_Da
    Evas_Coord *cols = NULL, *rows = NULL;
    Evas_Coord x, y, w, h;
 
-   evas_object_geometry_get(o, &x, &y, &w, &h);
    c = priv->cache;
+   if (!c) return;
+
+   evas_object_geometry_get(o, &x, &y, &w, &h);
 
    /* handle horizontal */
    if ((c->total.expands.h <= 0) || (c->total.min.w >= w))
