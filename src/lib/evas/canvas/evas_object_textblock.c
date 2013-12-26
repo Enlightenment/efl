@@ -10718,6 +10718,9 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
 	  {1, 3, 4, 3, 1},
 	  {0, 1, 2, 1, 0}
      };
+   Eina_Bool have_shadow = EINA_FALSE;
+   Eina_Bool have_glow = EINA_FALSE;
+   Eina_Bool have_outline = EINA_FALSE;
 
    /* render object to surface with context, and offxet by x,y */
    obj->layer->evas->engine.func->context_multiplier_unset(output,
@@ -10889,6 +10892,39 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
 
    ITEM_WALK()
      {
+        /* Check which other pass are necessary to avoid useless WALK */
+        if (!have_shadow && !have_glow && !have_outline)
+          {
+             Evas_Object_Textblock_Text_Item *ti;
+
+             ti = (itr->type == EVAS_TEXTBLOCK_ITEM_TEXT) ? _ITEM_TEXT(itr) : NULL;
+             if (ti)
+               {
+                  if (ti->parent.format->style & (EVAS_TEXT_STYLE_SHADOW |
+                                                  EVAS_TEXT_STYLE_OUTLINE_SOFT_SHADOW |
+                                                  EVAS_TEXT_STYLE_OUTLINE_SHADOW |
+                                                  EVAS_TEXT_STYLE_FAR_SHADOW |
+                                                  EVAS_TEXT_STYLE_FAR_SOFT_SHADOW |
+                                                  EVAS_TEXT_STYLE_SOFT_SHADOW))
+                    {
+                       have_shadow = EINA_TRUE;
+                    }
+                  if ((ti->parent.format->style & EVAS_TEXT_STYLE_MASK_BASIC) ==
+                      EVAS_TEXT_STYLE_GLOW)
+                    {
+                       have_glow = EINA_TRUE;
+                    }
+                  if (((ti->parent.format->style & EVAS_TEXT_STYLE_MASK_BASIC) == EVAS_TEXT_STYLE_OUTLINE) ||
+                      ((ti->parent.format->style & EVAS_TEXT_STYLE_MASK_BASIC) == EVAS_TEXT_STYLE_OUTLINE_SHADOW) ||
+                      ((ti->parent.format->style & EVAS_TEXT_STYLE_MASK_BASIC) == EVAS_TEXT_STYLE_OUTLINE_SOFT_SHADOW) ||
+                      (ti->parent.format->style == EVAS_TEXT_STYLE_SOFT_OUTLINE))
+                    {
+                       have_outline = EINA_TRUE;
+                    }
+               }
+
+          }
+
         DRAW_FORMAT(backing, 0, ln->h);
      }
    ITEM_WALK_END();
@@ -10899,174 +10935,183 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
    /* prepare everything for text draw */
 
    /* shadows */
-   ITEM_WALK()
+   if (have_shadow)
      {
-        int shad_dst, shad_sz, dx, dy, haveshad;
-        Evas_Object_Textblock_Text_Item *ti;
-        ti = (itr->type == EVAS_TEXTBLOCK_ITEM_TEXT) ? _ITEM_TEXT(itr) : NULL;
-        if (!ti) continue;
+        ITEM_WALK()
+          {
+             int shad_dst, shad_sz, dx, dy, haveshad;
+             Evas_Object_Textblock_Text_Item *ti;
+             ti = (itr->type == EVAS_TEXTBLOCK_ITEM_TEXT) ? _ITEM_TEXT(itr) : NULL;
+             if (!ti) continue;
 
-        shad_dst = shad_sz = dx = dy = haveshad = 0;
-        switch (ti->parent.format->style & EVAS_TEXT_STYLE_MASK_BASIC)
-          {
-           case EVAS_TEXT_STYLE_SHADOW:
-             shad_dst = 1;
-             haveshad = 1;
-             break;
-           case EVAS_TEXT_STYLE_OUTLINE_SOFT_SHADOW:
-             shad_dst = 1;
-             shad_sz = 2;
-             haveshad = 1;
-             break;
-           case EVAS_TEXT_STYLE_OUTLINE_SHADOW:
-           case EVAS_TEXT_STYLE_FAR_SHADOW:
-             shad_dst = 2;
-             haveshad = 1;
-             break;
-           case EVAS_TEXT_STYLE_FAR_SOFT_SHADOW:
-             shad_dst = 2;
-             shad_sz = 2;
-             haveshad = 1;
-             break;
-           case EVAS_TEXT_STYLE_SOFT_SHADOW:
-             shad_dst = 1;
-             shad_sz = 2;
-             haveshad = 1;
-             break;
-           default:
-             break;
-          }
-        if (haveshad)
-          {
-             if (shad_dst > 0)
+             shad_dst = shad_sz = dx = dy = haveshad = 0;
+             switch (ti->parent.format->style & EVAS_TEXT_STYLE_MASK_BASIC)
                {
-                  switch (ti->parent.format->style & EVAS_TEXT_STYLE_MASK_SHADOW_DIRECTION)
-                    {
-                     case EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_RIGHT:
-                       dx = 1;
-                       dy = 1;
-                       break;
-                     case EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM:
-                       dx = 0;
-                       dy = 1;
-                       break;
-                     case EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_LEFT:
-                       dx = -1;
-                       dy = 1;
-                       break;
-                     case EVAS_TEXT_STYLE_SHADOW_DIRECTION_LEFT:
-                       dx = -1;
-                       dy = 0;
-                       break;
-                     case EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP_LEFT:
-                       dx = -1;
-                       dy = -1;
-                       break;
-                     case EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP:
-                       dx = 0;
-                       dy = -1;
-                       break;
-                     case EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP_RIGHT:
-                       dx = 1;
-                       dy = -1;
-                       break;
-                     case EVAS_TEXT_STYLE_SHADOW_DIRECTION_RIGHT:
-                       dx = 1;
-                       dy = 0;
-                     default:
-                       break;
-                    }
-                  dx *= shad_dst;
-                  dy *= shad_dst;
+                case EVAS_TEXT_STYLE_SHADOW:
+                   shad_dst = 1;
+                   haveshad = 1;
+                   break;
+                case EVAS_TEXT_STYLE_OUTLINE_SOFT_SHADOW:
+                   shad_dst = 1;
+                   shad_sz = 2;
+                   haveshad = 1;
+                   break;
+                case EVAS_TEXT_STYLE_OUTLINE_SHADOW:
+                case EVAS_TEXT_STYLE_FAR_SHADOW:
+                   shad_dst = 2;
+                   haveshad = 1;
+                   break;
+                case EVAS_TEXT_STYLE_FAR_SOFT_SHADOW:
+                   shad_dst = 2;
+                   shad_sz = 2;
+                   haveshad = 1;
+                   break;
+                case EVAS_TEXT_STYLE_SOFT_SHADOW:
+                   shad_dst = 1;
+                   shad_sz = 2;
+                   haveshad = 1;
+                   break;
+                default:
+                   break;
                }
-             switch (shad_sz)
+             if (haveshad)
                {
-                case 0:
-                  COLOR_SET(shadow);
-                  DRAW_TEXT(dx, dy);
-                  break;
-                case 2:
+                  if (shad_dst > 0)
+                    {
+                       switch (ti->parent.format->style & EVAS_TEXT_STYLE_MASK_SHADOW_DIRECTION)
+                         {
+                          case EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_RIGHT:
+                             dx = 1;
+                             dy = 1;
+                             break;
+                          case EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM:
+                             dx = 0;
+                             dy = 1;
+                             break;
+                          case EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_LEFT:
+                             dx = -1;
+                             dy = 1;
+                             break;
+                          case EVAS_TEXT_STYLE_SHADOW_DIRECTION_LEFT:
+                             dx = -1;
+                             dy = 0;
+                             break;
+                          case EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP_LEFT:
+                             dx = -1;
+                             dy = -1;
+                             break;
+                          case EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP:
+                             dx = 0;
+                             dy = -1;
+                             break;
+                          case EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP_RIGHT:
+                             dx = 1;
+                             dy = -1;
+                             break;
+                          case EVAS_TEXT_STYLE_SHADOW_DIRECTION_RIGHT:
+                             dx = 1;
+                             dy = 0;
+                          default:
+                             break;
+                         }
+                       dx *= shad_dst;
+                       dy *= shad_dst;
+                    }
+                  switch (shad_sz)
+                    {
+                     case 0:
+                        COLOR_SET(shadow);
+                        DRAW_TEXT(dx, dy);
+                        break;
+                     case 2:
+                        for (j = 0; j < 5; j++)
+                          {
+                             for (i = 0; i < 5; i++)
+                               {
+                                  if (vals[i][j] != 0)
+                                    {
+                                       COLOR_SET_AMUL(shadow, vals[i][j] * 50);
+                                       DRAW_TEXT(i - 2 + dx, j - 2 + dy);
+                                    }
+                               }
+                          }
+                        break;
+                     default:
+                        break;
+                    }
+               }
+          }
+        ITEM_WALK_END();
+     }
+
+   /* glows */
+   if (have_glow)
+     {
+        ITEM_WALK()
+          {
+             Evas_Object_Textblock_Text_Item *ti;
+             ti = (itr->type == EVAS_TEXTBLOCK_ITEM_TEXT) ? _ITEM_TEXT(itr) : NULL;
+             if (!ti) continue;
+
+             if ((ti->parent.format->style & EVAS_TEXT_STYLE_MASK_BASIC) == EVAS_TEXT_STYLE_GLOW)
+               {
                   for (j = 0; j < 5; j++)
                     {
                        for (i = 0; i < 5; i++)
                          {
                             if (vals[i][j] != 0)
                               {
-                                 COLOR_SET_AMUL(shadow, vals[i][j] * 50);
-                                 DRAW_TEXT(i - 2 + dx, j - 2 + dy);
+                                 COLOR_SET_AMUL(glow, vals[i][j] * 50);
+                                 DRAW_TEXT(i - 2, j - 2);
                               }
                          }
                     }
-                  break;
-                default:
-                  break;
+                  COLOR_SET(glow2);
+                  DRAW_TEXT(-1, 0);
+                  DRAW_TEXT(1, 0);
+                  DRAW_TEXT(0, -1);
+                  DRAW_TEXT(0, 1);
                }
           }
+        ITEM_WALK_END();
      }
-   ITEM_WALK_END();
-
-   /* glows */
-   ITEM_WALK()
-     {
-        Evas_Object_Textblock_Text_Item *ti;
-        ti = (itr->type == EVAS_TEXTBLOCK_ITEM_TEXT) ? _ITEM_TEXT(itr) : NULL;
-        if (!ti) continue;
-
-        if ((ti->parent.format->style & EVAS_TEXT_STYLE_MASK_BASIC) == EVAS_TEXT_STYLE_GLOW)
-          {
-             for (j = 0; j < 5; j++)
-               {
-                  for (i = 0; i < 5; i++)
-                    {
-                       if (vals[i][j] != 0)
-                         {
-                            COLOR_SET_AMUL(glow, vals[i][j] * 50);
-                            DRAW_TEXT(i - 2, j - 2);
-                         }
-                    }
-               }
-             COLOR_SET(glow2);
-             DRAW_TEXT(-1, 0);
-             DRAW_TEXT(1, 0);
-             DRAW_TEXT(0, -1);
-             DRAW_TEXT(0, 1);
-          }
-     }
-   ITEM_WALK_END();
 
    /* outlines */
-   ITEM_WALK()
+   if (have_outline)
      {
-        Evas_Object_Textblock_Text_Item *ti;
-        ti = (itr->type == EVAS_TEXTBLOCK_ITEM_TEXT) ? _ITEM_TEXT(itr) : NULL;
-        if (!ti) continue;
+        ITEM_WALK()
+          {
+             Evas_Object_Textblock_Text_Item *ti;
+             ti = (itr->type == EVAS_TEXTBLOCK_ITEM_TEXT) ? _ITEM_TEXT(itr) : NULL;
+             if (!ti) continue;
 
-        if (((ti->parent.format->style & EVAS_TEXT_STYLE_MASK_BASIC) == EVAS_TEXT_STYLE_OUTLINE) ||
-            ((ti->parent.format->style & EVAS_TEXT_STYLE_MASK_BASIC) == EVAS_TEXT_STYLE_OUTLINE_SHADOW) ||
-            ((ti->parent.format->style & EVAS_TEXT_STYLE_MASK_BASIC) == EVAS_TEXT_STYLE_OUTLINE_SOFT_SHADOW))
-          {
-             COLOR_SET(outline);
-             DRAW_TEXT(-1, 0);
-             DRAW_TEXT(1, 0);
-             DRAW_TEXT(0, -1);
-             DRAW_TEXT(0, 1);
-          }
-        else if (ti->parent.format->style == EVAS_TEXT_STYLE_SOFT_OUTLINE)
-          {
-             for (j = 0; j < 5; j++)
+             if (((ti->parent.format->style & EVAS_TEXT_STYLE_MASK_BASIC) == EVAS_TEXT_STYLE_OUTLINE) ||
+                 ((ti->parent.format->style & EVAS_TEXT_STYLE_MASK_BASIC) == EVAS_TEXT_STYLE_OUTLINE_SHADOW) ||
+                 ((ti->parent.format->style & EVAS_TEXT_STYLE_MASK_BASIC) == EVAS_TEXT_STYLE_OUTLINE_SOFT_SHADOW))
                {
-                  for (i = 0; i < 5; i++)
+                  COLOR_SET(outline);
+                  DRAW_TEXT(-1, 0);
+                  DRAW_TEXT(1, 0);
+                  DRAW_TEXT(0, -1);
+                  DRAW_TEXT(0, 1);
+               }
+             else if (ti->parent.format->style == EVAS_TEXT_STYLE_SOFT_OUTLINE)
+               {
+                  for (j = 0; j < 5; j++)
                     {
-                       if (((i != 2) || (j != 2)) && (vals[i][j] != 0))
+                       for (i = 0; i < 5; i++)
                          {
-                            COLOR_SET_AMUL(outline, vals[i][j] * 50);
-                            DRAW_TEXT(i - 2, j - 2);
+                            if (((i != 2) || (j != 2)) && (vals[i][j] != 0))
+                              {
+                                 COLOR_SET_AMUL(outline, vals[i][j] * 50);
+                                 DRAW_TEXT(i - 2, j - 2);
+                              }
                          }
                     }
                }
           }
+        ITEM_WALK_END();
      }
-   ITEM_WALK_END();
 
    /* normal text and lines */
    /* Get the thickness and position, and save them for non-text items. */
