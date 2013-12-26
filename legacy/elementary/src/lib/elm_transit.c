@@ -9,7 +9,7 @@
 #define ELM_TRANSIT_CHECK_OR_RETURN(transit, ...) \
    do { \
       if (!transit) { \
-         CRITICAL("Elm_Transit " # transit " is NULL!"); \
+         CRI("Elm_Transit " # transit " is NULL!"); \
          return __VA_ARGS__; \
       } \
       if (!EINA_MAGIC_CHECK(transit, ELM_TRANSIT_MAGIC)) { \

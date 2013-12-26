@@ -72,7 +72,7 @@ struct _Elm_Thumb_Smart_Data
   ELM_THUMB_DATA_GET(o, ptr);                        \
   if (!ptr)                                          \
     {                                                \
-       CRITICAL("No widget data for object %p (%s)", \
+       CRI("No widget data for object %p (%s)", \
                 o, evas_object_type_get(o));         \
        return;                                       \
     }
@@ -81,7 +81,7 @@ struct _Elm_Thumb_Smart_Data
   ELM_THUMB_DATA_GET(o, ptr);                         \
   if (!ptr)                                           \
     {                                                 \
-       CRITICAL("No widget data for object %p (%s)",  \
+       CRI("No widget data for object %p (%s)",  \
                 o, evas_object_type_get(o));          \
        return val;                                    \
     }

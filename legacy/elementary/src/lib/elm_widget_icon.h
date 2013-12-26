@@ -62,7 +62,7 @@ struct _Elm_Icon_Smart_Data
   ELM_ICON_DATA_GET(o, ptr);                         \
   if (!ptr)                                          \
     {                                                \
-       CRITICAL("No widget data for object %p (%s)", \
+       CRI("No widget data for object %p (%s)", \
                 o, evas_object_type_get(o));         \
        return;                                       \
     }
@@ -71,7 +71,7 @@ struct _Elm_Icon_Smart_Data
   ELM_ICON_DATA_GET(o, ptr);                         \
   if (!ptr)                                          \
     {                                                \
-       CRITICAL("No widget data for object %p (%s)", \
+       CRI("No widget data for object %p (%s)", \
                 o, evas_object_type_get(o));         \
        return val;                                   \
     }

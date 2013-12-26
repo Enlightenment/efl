@@ -68,13 +68,13 @@ _orient_set_do(Evas_Object *obj)
       case ELM_PANEL_ORIENT_TOP:
         if (!elm_layout_theme_set
               (obj, "panel", "top", elm_widget_style_get(obj)))
-          CRITICAL("Failed to set layout!");
+          CRI("Failed to set layout!");
         break;
 
       case ELM_PANEL_ORIENT_BOTTOM:
         if (!elm_layout_theme_set
               (obj, "panel", "bottom", elm_widget_style_get(obj)))
-          CRITICAL("Failed to set layout!");
+          CRI("Failed to set layout!");
         break;
 
       case ELM_PANEL_ORIENT_LEFT:
@@ -82,13 +82,13 @@ _orient_set_do(Evas_Object *obj)
           {
              if (!elm_layout_theme_set
                    (obj, "panel", "left", elm_widget_style_get(obj)))
-               CRITICAL("Failed to set layout!");
+               CRI("Failed to set layout!");
           }
         else
           {
              if (!elm_layout_theme_set
                    (obj, "panel", "right", elm_widget_style_get(obj)))
-               CRITICAL("Failed to set layout!");
+               CRI("Failed to set layout!");
           }
         break;
 
@@ -97,13 +97,13 @@ _orient_set_do(Evas_Object *obj)
           {
              if (!elm_layout_theme_set
                    (obj, "panel", "right", elm_widget_style_get(obj)))
-               CRITICAL("Failed to set layout!");
+               CRI("Failed to set layout!");
           }
         else
           {
              if (!elm_layout_theme_set
                    (obj, "panel", "left", elm_widget_style_get(obj)))
-               CRITICAL("Failed to set layout!");
+               CRI("Failed to set layout!");
           }
         break;
      }
@@ -361,7 +361,7 @@ _elm_panel_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    /* just to bootstrap and have theme hook to work */
    if (!elm_layout_theme_set(obj, "panel", "top", elm_widget_style_get(obj)))
-     CRITICAL("Failed to set layout!");
+     CRI("Failed to set layout!");
 
    eo_do(obj, elm_wdg_theme(NULL));
 

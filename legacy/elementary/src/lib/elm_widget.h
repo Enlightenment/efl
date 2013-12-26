@@ -799,7 +799,7 @@ EAPI void             elm_widget_tree_dot_dump(const Evas_Object *top, FILE *out
 	 NULL);					     \
   if (!ptr)					     \
     {                                                \
-       CRITICAL("no widget data for object %p (%s)", \
+       CRI("no widget data for object %p (%s)", \
                 o, evas_object_type_get(o));	     \
        return __VA_ARGS__;                           \
     }
@@ -1042,7 +1042,7 @@ EAPI void             elm_widget_tree_dot_dump(const Evas_Object *top, FILE *out
 #define ELM_WIDGET_ITEM_CHECK_OR_RETURN(item, ...)              \
    do {                                                         \
         if (!item) {                                            \
-             CRITICAL("Elm_Widget_Item " # item " is NULL");    \
+             CRI("Elm_Widget_Item " # item " is NULL");    \
              return __VA_ARGS__;                                \
         }                                                       \
        if (!EINA_MAGIC_CHECK(item, ELM_WIDGET_ITEM_MAGIC)) {    \
@@ -1054,7 +1054,7 @@ EAPI void             elm_widget_tree_dot_dump(const Evas_Object *top, FILE *out
 #define ELM_WIDGET_ITEM_CHECK_OR_GOTO(item, label)              \
   do {                                                          \
         if (!item) {                                            \
-             CRITICAL("Elm_Widget_Item " # item " is NULL");    \
+             CRI("Elm_Widget_Item " # item " is NULL");    \
              goto label;                                        \
         }                                                       \
        if (!EINA_MAGIC_CHECK(item, ELM_WIDGET_ITEM_MAGIC)) {    \

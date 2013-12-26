@@ -309,7 +309,7 @@ _elm_button_smart_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 
    elm_widget_can_focus_set(obj, EINA_TRUE);
    if (!elm_layout_theme_set(obj, "button", "base", elm_widget_style_get(obj)))
-     CRITICAL("Failed to set layout!");
+     CRI("Failed to set layout!");
 }
 
 static void

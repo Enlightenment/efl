@@ -317,7 +317,7 @@ _elm_slideshow_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    if (!elm_layout_theme_set
        (obj, "slideshow", "base", elm_widget_style_get(obj)))
-     CRITICAL("Failed to set layout!");
+     CRI("Failed to set layout!");
 
    priv->transitions = elm_widget_stringlist_get
        (edje_object_data_get(wd->resize_obj,

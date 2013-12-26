@@ -219,7 +219,7 @@ _elm_bubble_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
      (_elm_access_info_get(obj), ELM_ACCESS_INFO, _access_info_cb, NULL);
 
    if (!elm_layout_theme_set(obj, "bubble", "base", elm_widget_style_get(obj)))
-     CRITICAL("Failed to set layout!");
+     CRI("Failed to set layout!");
 
    elm_layout_sizing_eval(obj);
 

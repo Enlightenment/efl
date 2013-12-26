@@ -76,7 +76,7 @@ struct _Action_Area_Data
   ELM_POPUP_DATA_GET(o, ptr);                        \
   if (!ptr)                                          \
     {                                                \
-       CRITICAL("No widget data for object %p (%s)", \
+       CRI("No widget data for object %p (%s)", \
                 o, evas_object_type_get(o));         \
        return;                                       \
     }
@@ -85,7 +85,7 @@ struct _Action_Area_Data
   ELM_POPUP_DATA_GET(o, ptr);                         \
   if (!ptr)                                           \
     {                                                 \
-       CRITICAL("No widget data for object %p (%s)",  \
+       CRI("No widget data for object %p (%s)",  \
                 o, evas_object_type_get(o));          \
        return val;                                    \
     }

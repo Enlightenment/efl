@@ -707,7 +707,7 @@ elm_widget_api_check(int ver)
 {
    if (ver != ELM_INTERNAL_API_VERSION)
      {
-        CRITICAL("Elementary widget api versions do not match");
+        CRI("Elementary widget api versions do not match");
         return EINA_FALSE;
      }
    return EINA_TRUE;

@@ -34,7 +34,7 @@ static const Elm_Win_Trap *trap = NULL;
   ELM_WIN_DATA_GET(o, ptr);                          \
   if (!ptr)                                          \
     {                                                \
-       CRITICAL("No widget data for object %p (%s)", \
+       CRI("No widget data for object %p (%s)", \
                 o, evas_object_type_get(o));         \
        return;                                       \
     }
@@ -43,7 +43,7 @@ static const Elm_Win_Trap *trap = NULL;
   ELM_WIN_DATA_GET(o, ptr);                          \
   if (!ptr)                                          \
     {                                                \
-       CRITICAL("No widget data for object %p (%s)", \
+       CRI("No widget data for object %p (%s)", \
                 o, evas_object_type_get(o));         \
        return val;                                   \
     }
@@ -2812,12 +2812,12 @@ _win_constructor(Eo *obj, void *_pd, va_list *list)
 
 #define FALLBACK_TRY(engine)                                      \
   if (!tmp_sd.ee) {                                               \
-     CRITICAL(engine " engine creation failed. Trying default."); \
+     CRI(engine " engine creation failed. Trying default."); \
   } while (0)
 #define FALLBACK_STORE(engine)                               \
    if (tmp_sd.ee)                                            \
    {                                                         \
-      CRITICAL(engine "Fallback to %s successful.", engine); \
+      CRI(engine "Fallback to %s successful.", engine); \
       fallback = engine;                                     \
    }
 
@@ -5448,7 +5448,7 @@ elm_win_trap_set(const Elm_Win_Trap *t)
 
    if ((t) && (t->version != ELM_WIN_TRAP_VERSION))
      {
-        CRITICAL("trying to set a trap version %lu while %lu was expected!",
+        CRI("trying to set a trap version %lu while %lu was expected!",
                  t->version, ELM_WIN_TRAP_VERSION);
         return EINA_FALSE;
      }

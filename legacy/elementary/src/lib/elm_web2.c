@@ -81,7 +81,7 @@ _view_add(Evas_Object *parent)
         smart = evas_smart_class_new(&api.sc);
         if (!smart)
           {
-             CRITICAL("Could not create smart class");
+             CRI("Could not create smart class");
              return NULL;
           }
      }

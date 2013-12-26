@@ -550,7 +550,7 @@ _elm_thumb_smart_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
    elm_widget_sub_object_parent_add(obj);
 
    if (!elm_layout_theme_set(obj, "thumb", "base", elm_widget_style_get(obj)))
-     CRITICAL("Failed to set layout!");
+     CRI("Failed to set layout!");
 
    evas_object_event_callback_add
      (obj, EVAS_CALLBACK_MOUSE_DOWN, _mouse_down_cb, obj);

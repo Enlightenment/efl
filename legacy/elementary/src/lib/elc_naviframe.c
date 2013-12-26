@@ -293,7 +293,7 @@ _item_style_set(Elm_Naviframe_Item *it,
 
    if (!elm_layout_theme_set(VIEW(it), "naviframe", buf,
                              elm_widget_style_get(WIDGET(it))))
-     CRITICAL("Failed to set layout!");
+     CRI("Failed to set layout!");
 
    if (sd->freeze_events)
      evas_object_freeze_events_set(VIEW(it), EINA_FALSE);

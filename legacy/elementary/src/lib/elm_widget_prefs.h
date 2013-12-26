@@ -96,7 +96,7 @@ extern const Elm_Prefs_Item_Iface *elm_prefs_item_default_widget;
 #define ELM_PREFS_ENTRY(o, sd)                                              \
   if (!sd->data_file || !sd->page)                                          \
     {                                                                       \
-       CRITICAL("You must issue elm_prefs_file_set() on this widget before" \
+       CRI("You must issue elm_prefs_file_set() on this widget before" \
                 " you make this call");                                     \
     }                                                                       \
   return
@@ -105,7 +105,7 @@ extern const Elm_Prefs_Item_Iface *elm_prefs_item_default_widget;
   ELM_PREFS_DATA_GET(o, ptr);                        \
   if (!ptr)                                          \
     {                                                \
-       CRITICAL("No widget data for object %p (%s)", \
+       CRI("No widget data for object %p (%s)", \
                 o, evas_object_type_get(o));         \
        return;                                       \
     }
@@ -114,7 +114,7 @@ extern const Elm_Prefs_Item_Iface *elm_prefs_item_default_widget;
   ELM_PREFS_DATA_GET(o, ptr);                         \
   if (!ptr)                                           \
     {                                                 \
-       CRITICAL("No widget data for object %p (%s)",  \
+       CRI("No widget data for object %p (%s)",  \
                 o, evas_object_type_get(o));          \
        return val;                                    \
     }

@@ -368,22 +368,22 @@ _time_update(Evas_Object *obj)
         if ((sd->seconds) && (sd->am_pm))
           {
              if (!elm_layout_theme_set(obj, "clock", "base-all", style))
-               CRITICAL("Failed to set layout!");
+               CRI("Failed to set layout!");
           }
         else if (sd->seconds)
           {
              if (!elm_layout_theme_set(obj, "clock", "base-seconds", style))
-               CRITICAL("Failed to set layout!");
+               CRI("Failed to set layout!");
           }
         else if (sd->am_pm)
           {
              if (!elm_layout_theme_set(obj, "clock", "base-am_pm", style))
-               CRITICAL("Failed to set layout!");
+               CRI("Failed to set layout!");
           }
         else
           {
              if (!elm_layout_theme_set(obj, "clock", "base", style))
-               CRITICAL("Failed to set layout!");
+               CRI("Failed to set layout!");
           }
 
         edje_object_scale_set

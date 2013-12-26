@@ -20,7 +20,7 @@
 
 extern int _log_domain;
 
-#define CRITICAL(...) EINA_LOG_DOM_CRIT(_log_domain, _VA_ARGS__)
+#define CRI(...) EINA_LOG_DOM_CRIT(_log_domain, _VA_ARGS__)
 #define ERR(...)      EINA_LOG_DOM_ERR(_log_domain, __VA_ARGS__)
 #define WRN(...)      EINA_LOG_DOM_WARN(_log_domain, __VA_ARGS__)
 #define INF(...)      EINA_LOG_DOM_INFO(_log_domain, __VA_ARGS__)

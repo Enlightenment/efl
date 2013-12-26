@@ -86,7 +86,7 @@ struct _Elm_Naviframe_Text_Item_Pair
   ELM_NAVIFRAME_DATA_GET(o, ptr);                    \
   if (!ptr)                                          \
     {                                                \
-       CRITICAL("No widget data for object %p (%s)", \
+       CRI("No widget data for object %p (%s)", \
                 o, evas_object_type_get(o));         \
        return;                                       \
     }
@@ -95,7 +95,7 @@ struct _Elm_Naviframe_Text_Item_Pair
   ELM_NAVIFRAME_DATA_GET(o, ptr);                         \
   if (!ptr)                                               \
     {                                                     \
-       CRITICAL("No widget data for object %p (%s)",      \
+       CRI("No widget data for object %p (%s)",      \
                 o, evas_object_type_get(o));              \
        return val;                                        \
     }

@@ -22,7 +22,7 @@ static const char _tooltip_key[] = "_elm_tooltip";
     {                                                   \
        if (!(obj))                                      \
          {                                              \
-            CRITICAL("Null pointer: " #obj);            \
+            CRI("Null pointer: " #obj);            \
             return __VA_ARGS__;                         \
          }                                              \
        tt = evas_object_data_get((obj), _tooltip_key);  \

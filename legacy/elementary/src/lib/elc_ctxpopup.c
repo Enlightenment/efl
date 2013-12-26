@@ -1126,7 +1126,7 @@ _elm_ctxpopup_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    if (!elm_layout_theme_set
        (obj, "ctxpopup", "base", elm_widget_style_get(obj)))
-     CRITICAL("Failed to set layout!");
+     CRI("Failed to set layout!");
 
    elm_layout_signal_callback_add
      (obj, "elm,action,hide,finished", "*", _hide_finished_cb, obj);

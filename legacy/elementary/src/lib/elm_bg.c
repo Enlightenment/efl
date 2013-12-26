@@ -115,7 +115,7 @@ _elm_bg_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE, _on_resize, obj);
 
    if (!elm_layout_theme_set(obj, "bg", "base", elm_widget_style_get(obj)))
-     CRITICAL("Failed to set layout!");
+     CRI("Failed to set layout!");
 }
 
 static void

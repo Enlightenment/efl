@@ -18,7 +18,7 @@ EAPI Eo_Op ELM_OBJ_PAN_BASE_ID = EO_NOOP;
   Elm_Pan_Smart_Data *ptr = eo_data_scope_get(o, MY_PAN_CLASS);       \
   if (!ptr)                                                     \
     {                                                           \
-       CRITICAL("No smart data for object %p (%s)",             \
+       CRI("No smart data for object %p (%s)",             \
                 o, evas_object_type_get(o));                    \
        return;                                                  \
     }
@@ -27,7 +27,7 @@ EAPI Eo_Op ELM_OBJ_PAN_BASE_ID = EO_NOOP;
   Elm_Pan_Smart_Data *ptr = eo_data_scope_get(o, MY_PAN_CLASS);       \
   if (!ptr)                                                     \
     {                                                           \
-       CRITICAL("No smart data for object %p (%s)",             \
+       CRI("No smart data for object %p (%s)",             \
                 o, evas_object_type_get(o));                    \
        return val;                                              \
     }
@@ -395,7 +395,7 @@ EAPI Eo_Op ELM_SCROLLABLE_INTERFACE_BASE_ID = EO_NOOP;
      eo_data_scope_get(o, MY_SCROLLABLE_INTERFACE));    \
   if (!ptr)                                             \
     {                                                   \
-       CRITICAL("No interface data for object %p (%s)", \
+       CRI("No interface data for object %p (%s)", \
                 o, evas_object_type_get(o));            \
        return;                                          \
     }
@@ -406,7 +406,7 @@ EAPI Eo_Op ELM_SCROLLABLE_INTERFACE_BASE_ID = EO_NOOP;
      eo_data_scope_get(o, MY_SCROLLABLE_INTERFACE));         \
   if (!ptr)                                                  \
     {                                                        \
-       CRITICAL("No interface data for object %p (%s)",      \
+       CRI("No interface data for object %p (%s)",      \
                 o, evas_object_type_get(o));                 \
        return val;                                           \
     }

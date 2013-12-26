@@ -215,7 +215,7 @@ _elm_menu_smart_theme(Eo *obj, void *_pd, va_list *list)
                {
                   if (!elm_layout_theme_set(VIEW(item), "menu", "separator",
                                             elm_widget_style_get(obj)))
-                    CRITICAL("Failed to set layout!");
+                    CRI("Failed to set layout!");
                }
              else if (item->submenu.bx)
                {
@@ -224,7 +224,7 @@ _elm_menu_smart_theme(Eo *obj, void *_pd, va_list *list)
 
                   if (!elm_layout_theme_set(VIEW(item), "menu", s,
                                             elm_widget_style_get(obj)))
-                    CRITICAL("Failed to set layout!");
+                    CRI("Failed to set layout!");
 
                   elm_object_item_text_set((Elm_Object_Item *)item,
                                            item->label);
@@ -236,7 +236,7 @@ _elm_menu_smart_theme(Eo *obj, void *_pd, va_list *list)
                {
                   if (!elm_layout_theme_set(VIEW(item), "menu", "item",
                                             elm_widget_style_get(obj)))
-                    CRITICAL("Failed to set layout!");
+                    CRI("Failed to set layout!");
 
                   elm_object_item_text_set((Elm_Object_Item *)item,
                                            item->label);
@@ -495,7 +495,7 @@ _item_obj_create(Elm_Menu_Item *item)
    evas_object_size_hint_fill_set(VIEW(item), EVAS_HINT_FILL, EVAS_HINT_FILL);
    if (!elm_layout_theme_set(VIEW(item), "menu", "item",
                         elm_widget_style_get(WIDGET(item))))
-     CRITICAL("Failed to set layout!");
+     CRI("Failed to set layout!");
    else
      {
         elm_layout_signal_callback_add(VIEW(item), "elm,action,click", "*",
@@ -518,7 +518,7 @@ _item_separator_obj_create(Elm_Menu_Item *item)
    evas_object_size_hint_fill_set(VIEW(item), EVAS_HINT_FILL, EVAS_HINT_FILL);
    if (!elm_layout_theme_set(VIEW(item), "menu", "separator",
                              elm_widget_style_get(WIDGET(item))))
-     CRITICAL("Failed to set layout!");
+     CRI("Failed to set layout!");
    else
      {
         elm_layout_signal_callback_add
@@ -561,14 +561,14 @@ _item_submenu_obj_create(Elm_Menu_Item *item)
         if (!elm_layout_theme_set(VIEW(item), "menu",
                                   "main_menu_submenu",
                                   elm_widget_style_get(WIDGET(item))))
-          CRITICAL("Failed to set layout!");
+          CRI("Failed to set layout!");
      }
    else
      {
         if (!elm_layout_theme_set(VIEW(item), "menu",
                                   "item_with_submenu",
                                   elm_widget_style_get(WIDGET(item))))
-          CRITICAL("Failed to set layout!");
+          CRI("Failed to set layout!");
      }
 
    elm_object_item_text_set((Elm_Object_Item *)item, item->label);

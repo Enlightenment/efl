@@ -149,7 +149,7 @@ typedef enum _Length_Unit
   ELM_ENTRY_DATA_GET(o, ptr);                        \
   if (!ptr)                                          \
     {                                                \
-       CRITICAL("No widget data for object %p (%s)", \
+       CRI("No widget data for object %p (%s)", \
                 o, evas_object_type_get(o));         \
        return;                                       \
     }
@@ -158,7 +158,7 @@ typedef enum _Length_Unit
   ELM_ENTRY_DATA_GET(o, ptr);                         \
   if (!ptr)                                           \
     {                                                 \
-       CRITICAL("No widget data for object %p (%s)",  \
+       CRI("No widget data for object %p (%s)",  \
                 o, evas_object_type_get(o));          \
        return val;                                    \
     }

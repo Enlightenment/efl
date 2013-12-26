@@ -70,7 +70,7 @@ struct _Transition_Animation_Data
   ELM_BOX_DATA_GET(o, ptr);                          \
   if (!ptr)                                          \
     {                                                \
-       CRITICAL("No widget data for object %p (%s)", \
+       CRI("No widget data for object %p (%s)", \
                 o, evas_object_type_get(o));         \
        return;                                       \
     }
@@ -79,7 +79,7 @@ struct _Transition_Animation_Data
   ELM_BOX_DATA_GET(o, ptr);                          \
   if (!ptr)                                          \
     {                                                \
-       CRITICAL("No widget data for object %p (%s)", \
+       CRI("No widget data for object %p (%s)", \
                 o, evas_object_type_get(o));         \
        return val;                                   \
     }

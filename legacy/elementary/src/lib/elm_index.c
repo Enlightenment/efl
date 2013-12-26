@@ -901,7 +901,7 @@ _elm_index_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    if (!elm_layout_theme_set
        (obj, "index", "base/vertical", elm_widget_style_get(obj)))
-     CRITICAL("Failed to set layout!");
+     CRI("Failed to set layout!");
 
    evas_object_event_callback_add
      (obj, EVAS_CALLBACK_RESIZE, _index_resize_cb, NULL);

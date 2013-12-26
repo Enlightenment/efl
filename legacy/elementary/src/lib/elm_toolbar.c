@@ -1167,7 +1167,7 @@ _elm_toolbar_smart_theme(Eo *obj, void *_pd, va_list *list)
 
    if (!elm_layout_theme_set
        (sd->more, "toolbar", "more", elm_widget_style_get(obj)))
-     CRITICAL("Failed to set layout!");
+     CRI("Failed to set layout!");
    if (sd->vertical)
      edje_object_signal_emit(sd->more, "elm,orient,vertical", "elm");
    else
@@ -2535,7 +2535,7 @@ _elm_toolbar_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    priv->more = elm_layout_add(obj);
    if (!elm_layout_theme_set(priv->more, "toolbar", "more", "default"))
-     CRITICAL("Failed to set layout!");
+     CRI("Failed to set layout!");
    if (priv->vertical)
      edje_object_signal_emit(priv->more, "elm,orient,vertical", "elm");
    else

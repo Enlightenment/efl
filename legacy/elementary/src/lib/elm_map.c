@@ -1524,7 +1524,7 @@ _overlay_default_layout_update(Overlay_Default *ovl)
         if (!elm_layout_theme_set
             (ovl->layout, "map/marker", "empty",
              elm_widget_style_get((ovl->wsd)->obj)))
-          CRITICAL("Failed to set layout!");
+          CRI("Failed to set layout!");
 
         elm_object_part_content_set(ovl->layout, "elm.icon", ovl->icon);
      }
@@ -1534,7 +1534,7 @@ _overlay_default_layout_update(Overlay_Default *ovl)
         if (!elm_layout_theme_set
             (ovl->layout, "map/marker", "empty",
              elm_widget_style_get((ovl->wsd)->obj)))
-          CRITICAL("Failed to set layout!");
+          CRI("Failed to set layout!");
 
         elm_object_part_content_set(ovl->layout, "elm.icon", ovl->clas_icon);
      }
@@ -1545,7 +1545,7 @@ _overlay_default_layout_update(Overlay_Default *ovl)
         if (!elm_layout_theme_set
             (ovl->layout, "map/marker", "radio",
              elm_widget_style_get((ovl->wsd)->obj)))
-          CRITICAL("Failed to set layout!");
+          CRI("Failed to set layout!");
      }
 }
 
@@ -1629,7 +1629,7 @@ _overlay_default_new(Elm_Map_Overlay *overlay,
    evas_object_stack_above(ovl->layout, ovl->wsd->sep_maps_overlays);
    if (!elm_layout_theme_set(ovl->layout, "map/marker", "radio",
                              elm_widget_style_get((ovl->wsd)->obj)))
-     CRITICAL("Failed to set layout!");
+     CRI("Failed to set layout!");
 
    evas_object_event_callback_add(ovl->layout, EVAS_CALLBACK_MOUSE_DOWN,
                                   _overlay_clicked_cb, overlay);
@@ -2322,7 +2322,7 @@ _overlay_circle_new(Elm_Map_Smart_Data *sd,
    evas_object_stack_above(ovl->obj, sd->sep_maps_overlays);
    if (!elm_layout_theme_set(ovl->obj, "map/circle", "base",
                              elm_widget_style_get(sd->obj)))
-     CRITICAL("Failed to set layout!");
+     CRI("Failed to set layout!");
 
    _overlay_circle_color_update(ovl, c);
 
@@ -2408,7 +2408,7 @@ _overlay_scale_new(Elm_Map_Smart_Data *sd,
    evas_object_stack_above(ovl->obj, sd->sep_maps_overlays);
    if (!elm_layout_theme_set(ovl->obj, "map/scale", "base",
                              elm_widget_style_get(sd->obj)))
-     CRITICAL("Failed to set layout!");
+     CRI("Failed to set layout!");
 
    s = edje_object_data_get(elm_layout_edje_get(ovl->obj), "size_w");
 

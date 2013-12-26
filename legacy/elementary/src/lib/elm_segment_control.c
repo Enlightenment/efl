@@ -613,7 +613,7 @@ _elm_segment_control_smart_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list EIN
 
    if (!elm_layout_theme_set
        (obj, "segment_control", "base", elm_widget_style_get(obj)))
-     CRITICAL("Failed to set layout!");
+     CRI("Failed to set layout!");
 
    evas_object_event_callback_add
      (obj, EVAS_CALLBACK_RESIZE, _on_move_resize, obj);

@@ -119,7 +119,7 @@ static const int _cursors_count = sizeof(_cursors)/sizeof(struct _Cursor_Id);
     {                                                   \
        if (!(obj))                                      \
          {                                              \
-            CRITICAL("Null pointer: " #obj);            \
+            CRI("Null pointer: " #obj);            \
             return __VA_ARGS__;                         \
          }                                              \
        cur = evas_object_data_get((obj), _cursor_key);  \

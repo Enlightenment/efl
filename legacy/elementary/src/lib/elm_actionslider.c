@@ -420,7 +420,7 @@ _elm_actionslider_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    if (!elm_layout_theme_set
        (obj, "actionslider", "base", elm_widget_style_get(obj)))
-     CRITICAL("Failed to set layout!");
+     CRI("Failed to set layout!");
 
    elm_layout_content_set(obj, "elm.drag_button_base", priv->drag_button_base);
 

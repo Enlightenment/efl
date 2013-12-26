@@ -42,7 +42,7 @@ static struct sigaction old_sigbus;
 static struct sigaction old_sigabrt;
 static int _log_dom = -1;
 
-#define CRITICAL(...) EINA_LOG_DOM_CRIT(_log_dom, __VA_ARGS__)
+#define CRI(...) EINA_LOG_DOM_CRIT(_log_dom, __VA_ARGS__)
 #define ERR(...) EINA_LOG_DOM_ERR(_log_dom, __VA_ARGS__)
 #define WRN(...) EINA_LOG_DOM_WARN(_log_dom, __VA_ARGS__)
 #define INF(...) EINA_LOG_DOM_INFO(_log_dom, __VA_ARGS__)
@@ -87,7 +87,7 @@ crash_handler(int x EINA_UNUSED, siginfo_t *info EINA_UNUSED, void *data EINA_UN
    t = ecore_time_get();
    if ((t - restart_time) <= 2.0)
      {
-        CRITICAL("crash too fast - less than 2 seconds. abort restart");
+        CRI("crash too fast - less than 2 seconds. abort restart");
         exit(-1);
      }
    ecore_app_restart();
@@ -109,7 +109,7 @@ handle_run(int fd, unsigned long bytes)
    buf = alloca(bytes);
    if (read(fd, buf, bytes) != (int)bytes)
      {
-        CRITICAL("cannot read %i bytes of args and environment data", (int)bytes);
+        CRI("cannot read %i bytes of args and environment data", (int)bytes);
         close(fd);
         return;
      }
@@ -120,7 +120,7 @@ handle_run(int fd, unsigned long bytes)
 
    if (argc <= 0)
      {
-        CRITICAL("no executable specified");
+        CRI("no executable specified");
         return;
      }
 
@@ -188,7 +188,7 @@ main(int argc, char **argv)
         ret = mkdir(buf, S_IRUSR | S_IWUSR | S_IXUSR);
         if (ret < 0)
           {
-             CRITICAL("cannot create directory '%s'", buf);
+             CRI("cannot create directory '%s'", buf);
              exit(-1);
           }
      }
@@ -197,13 +197,13 @@ main(int argc, char **argv)
    sock = socket(AF_UNIX, SOCK_STREAM, 0);
    if (sock < 0)
      {
-        CRITICAL("cannot create socket for socket for '%s': %s",
+        CRI("cannot create socket for socket for '%s': %s",
                  buf, strerror(errno));
         exit(-1);
      }
    if (fcntl(sock, F_SETFD, FD_CLOEXEC) < 0)
      {
-        CRITICAL("cannot set close on exec socket for '%s' (fd=%d): %s",
+        CRI("cannot set close on exec socket for '%s' (fd=%d): %s",
                  buf, sock, strerror(errno));
         exit(-1);
      }
@@ -211,7 +211,7 @@ main(int argc, char **argv)
    lin.l_linger = 0;
    if (setsockopt(sock, SOL_SOCKET, SO_LINGER, &lin, sizeof(struct linger)) < 0)
      {
-        CRITICAL("cannot set linger for socket for '%s' (fd=%d): %s",
+        CRI("cannot set linger for socket for '%s' (fd=%d): %s",
                  buf, sock, strerror(errno));
         exit(-1);
      }
@@ -220,13 +220,13 @@ main(int argc, char **argv)
    socket_unix_len = LENGTH_OF_SOCKADDR_UN(&socket_unix);
    if (bind(sock, (struct sockaddr *)&socket_unix, socket_unix_len) < 0)
      {
-        CRITICAL("cannot bind socket for '%s' (fd=%d): %s",
+        CRI("cannot bind socket for '%s' (fd=%d): %s",
                  buf, sock, strerror(errno));
         exit(-1);
      }
    if (listen(sock, 4096) < 0)
      {
-        CRITICAL("listen(sock=%d, 4096): %s", sock, strerror(errno));
+        CRI("listen(sock=%d, 4096): %s", sock, strerror(errno));
         exit(-1);
      }
    elm_quicklaunch_mode_set(EINA_TRUE);

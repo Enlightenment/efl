@@ -436,7 +436,7 @@ _elm_dayselector_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    if (!elm_layout_theme_set(obj, "dayselector", "base",
                              elm_widget_style_get(obj)))
-     CRITICAL("Failed to set layout!");
+     CRI("Failed to set layout!");
 
    priv->week_start = _elm_config->week_start;
    priv->weekend_start = _elm_config->weekend_start;
