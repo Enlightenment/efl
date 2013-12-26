@@ -5463,6 +5463,7 @@ elm_win_floating_mode_set(Evas_Object *obj, Eina_Bool floating)
    ELM_WIN_CHECK(obj);
    ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
 
+   floating = !!floating;
    if (floating == sd->floating) return;
    sd->floating = floating;
 #ifdef HAVE_ELEMENTARY_X
