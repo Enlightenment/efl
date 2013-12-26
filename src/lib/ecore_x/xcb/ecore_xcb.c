@@ -203,7 +203,7 @@ ecore_x_init(const char *name)
 
    if (xcb_connection_has_error(_ecore_xcb_conn))
      {
-        CRIT("XCB Connection has error");
+        CRI("XCB Connection has error");
         eina_log_domain_unregister(_ecore_xcb_log_dom);
         _ecore_xcb_log_dom = -1;
         ecore_event_shutdown();

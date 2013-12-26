@@ -168,7 +168,7 @@ _eldbus_proxy_free(Eldbus_Proxy *proxy)
      }
 
    if (proxy->pendings)
-     CRITICAL("Proxy %p released with live pending calls!", proxy);
+     CRI("Proxy %p released with live pending calls!", proxy);
 
    for (i = 0; i < ELDBUS_PROXY_EVENT_LAST; i++)
      {

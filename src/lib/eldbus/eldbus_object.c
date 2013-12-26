@@ -146,7 +146,7 @@ _eldbus_object_free(Eldbus_Object *obj)
      }
 
    if (obj->pendings)
-     CRITICAL("Object %p released with live pending calls!", obj);
+     CRI("Object %p released with live pending calls!", obj);
 
    for (i = 0; i < ELDBUS_OBJECT_EVENT_LAST; i++)
      {

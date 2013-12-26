@@ -507,7 +507,7 @@ evas_cserve2_shutdown(void)
 
    if (cserve2_init <= 0)
      {
-        CRIT("cserve2 is already shutdown");
+        CRI("cserve2 is already shutdown");
         return -1;
      }
 
@@ -2515,8 +2515,8 @@ _server_index_list_set(Msg_Base *data, int size)
 
    if (size != sizeof(*msg) || msg->base.type != CSERVE2_INDEX_LIST)
      {
-        CRIT("Invalid message! type: %d, size: %d (expected %d)",
-             msg->base.type, size, (int) sizeof(*msg));
+        CRI("Invalid message! type: %d, size: %d (expected %d)",
+            msg->base.type, size, (int) sizeof(*msg));
         return -1;
      }
 
@@ -2582,7 +2582,7 @@ _shared_string_internal_get(int id, Eina_Bool safe)
 
    if (!_index.strings_entries.data)
      {
-        CRIT("Strings table is not valid: no data");
+        CRI("Strings table is not valid: no data");
         return NULL;
      }
 
@@ -2622,7 +2622,7 @@ _shared_string_get(int id)
 
 #define SHARED_INDEX_CHECK(si, typ) \
    do { if (!_shared_index_remap_check(&(si), sizeof(typ))) { \
-   CRIT("Failed to remap index"); return NULL; } } while (0)
+   CRI("Failed to remap index"); return NULL; } } while (0)
 
 static const File_Data *
 _shared_image_entry_file_data_find(Image_Entry *ie)
@@ -2959,7 +2959,7 @@ _shared_image_entry_image_data_find(Image_Entry *ie)
 
    if (!ie->cache_key)
      {
-        CRIT("Looking for an image in remote cache without hash key?");
+        CRI("Looking for an image in remote cache without hash key?");
         return NULL;
      }
 

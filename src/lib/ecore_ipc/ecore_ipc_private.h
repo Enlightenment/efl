@@ -29,10 +29,10 @@ extern int _ecore_ipc_log_dom;
 #endif
 #define WRN(...) EINA_LOG_DOM_WARN(_ecore_ipc_log_dom, __VA_ARGS__)
 
-#ifdef CRIT
-# undef CRIT
+#ifdef CRI
+# undef CRI
 #endif
-#define CRIT(...) EINA_LOG_DOM_CRIT(_ecore_ipc_log_dom, __VA_ARGS__)
+#define CRI(...) EINA_LOG_DOM_CRIT(_ecore_ipc_log_dom, __VA_ARGS__)
 
 #define ECORE_MAGIC_IPC_SERVER             0x87786556
 #define ECORE_MAGIC_IPC_CLIENT             0x78875665

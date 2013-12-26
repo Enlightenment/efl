@@ -99,10 +99,10 @@ extern int _eio_log_dom_global;
 # undef WRN
 #endif /* ifdef WRN */
 #define WRN(...)  EINA_LOG_DOM_WARN(_eio_log_dom_global, __VA_ARGS__)
-#ifdef CRIT
-# undef CRIT
-#endif /* ifdef CRIT */
-#define CRIT(...) EINA_LOG_DOM_CRIT(_eio_log_dom_global, __VA_ARGS__)
+#ifdef CRI
+# undef CRI
+#endif /* ifdef CRI */
+#define CRI(...) EINA_LOG_DOM_CRIT(_eio_log_dom_global, __VA_ARGS__)
 
 typedef struct _Eio_Eet_Open Eio_Eet_Open;
 typedef struct _Eio_Eet_Simple Eio_Eet_Simple;

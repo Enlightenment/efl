@@ -417,7 +417,7 @@ fb_setvt(int vtno)
      }
    if (access(vtname,R_OK | W_OK) == -1)
      {
-        CRIT("Access %s: %s",vtname,strerror(errno));
+        CRI("Access %s: %s",vtname,strerror(errno));
         return;
      }
    vtfd = open(vtname,O_RDWR);
@@ -472,7 +472,7 @@ fb_init(int vt EINA_UNUSED, int device)
      }
    if (fb == -1)
      {
-	CRIT("open %s: %s", dev, strerror(errno));
+	CRI("open %s: %s", dev, strerror(errno));
 	fb_cleanup();
         return;
      }
@@ -533,7 +533,7 @@ fb_postinit(FB_Mode *mode)
    
    if (fb_fix.type != FB_TYPE_PACKED_PIXELS)
      {
-        CRIT("can handle only packed pixel frame buffers");
+        CRI("can handle only packed pixel frame buffers");
         fb_cleanup();
         return 0;
      }

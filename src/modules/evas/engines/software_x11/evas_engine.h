@@ -40,10 +40,10 @@ extern int _evas_engine_soft_x11_log_dom;
 # endif
 # define WRN(...) EINA_LOG_DOM_WARN(_evas_engine_soft_x11_log_dom, __VA_ARGS__)
 
-# ifdef CRIT
-#  undef CRIT
+# ifdef CRI
+#  undef CRI
 # endif
-# define CRIT(...) \
+# define CRI(...) \
    EINA_LOG_DOM_CRIT(_evas_engine_soft_x11_log_dom, __VA_ARGS__)
 
 typedef enum _Outbuf_Depth Outbuf_Depth;

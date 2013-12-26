@@ -43,10 +43,10 @@
  * @cond LOCAL
  */
 
-#ifdef CRITICAL
-#undef CRITICAL
+#ifdef CRI
+#undef CRI
 #endif
-#define CRITICAL(...) EINA_LOG_DOM_CRIT(_eina_share_binshare_log_dom, __VA_ARGS__)
+#define CRI(...) EINA_LOG_DOM_CRIT(_eina_share_binshare_log_dom, __VA_ARGS__)
 
 #ifdef ERR
 #undef ERR
@@ -151,7 +151,7 @@ eina_binshare_del(const void *obj)
       return;
 
    if (!eina_share_common_del(binshare_share, obj))
-     CRITICAL("EEEK trying to del non-shared binshare %p", obj);
+     CRI("EEEK trying to del non-shared binshare %p", obj);
 }
 
 EAPI const void *

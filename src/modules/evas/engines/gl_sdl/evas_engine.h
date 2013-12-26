@@ -44,10 +44,10 @@ extern int _evas_engine_GL_SDL_log_dom ;
 #endif
 #define WRN(...) EINA_LOG_DOM_WARN(_evas_engine_GL_SDL_log_dom, __VA_ARGS__)
 
-#ifdef CRIT
-# undef CRIT
+#ifdef CRI
+# undef CRI
 #endif
-#define CRIT(...) EINA_LOG_DOM_CRIT(_evas_engine_GL_SDL_log_dom, __VA_ARGS__)
+#define CRI(...) EINA_LOG_DOM_CRIT(_evas_engine_GL_SDL_log_dom, __VA_ARGS__)
 
 typedef struct _Render_Engine Render_Engine;
 struct _Render_Engine

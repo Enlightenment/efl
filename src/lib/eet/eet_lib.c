@@ -234,7 +234,7 @@ eet_cache_add(Eet_File   *ef,
         new_cache = realloc(new_cache, new_cache_alloc * sizeof(Eet_File *));
         if (!new_cache)
           {
-             CRIT("BAD ERROR! Eet realloc of cache list failed. Abort");
+             CRI("BAD ERROR! Eet realloc of cache list failed. Abort");
              abort();
           }
      }
@@ -284,7 +284,7 @@ eet_cache_del(Eet_File   *ef,
              new_cache = realloc(new_cache, new_cache_alloc * sizeof(Eet_File *));
              if (!new_cache)
                {
-                  CRIT("BAD ERROR! Eet realloc of cache list failed. Abort");
+                  CRI("BAD ERROR! Eet realloc of cache list failed. Abort");
                   abort();
                }
           }
@@ -2825,7 +2825,7 @@ _eet_entries_iterator_free(Eet_Entries_Iterator *it)
 {
    if (it->locked)
      {
-        CRIT("Iterator still LOCKED !");
+        CRI("Iterator still LOCKED !");
         UNLOCK_FILE(it->ef);
      }
 }
@@ -2835,7 +2835,7 @@ _eet_entries_iterator_lock(Eet_Entries_Iterator *it)
 {
    if (it->locked)
      {
-        CRIT("Iterator already LOCKED !");
+        CRI("Iterator already LOCKED !");
         return EINA_TRUE;
      }
 
@@ -2849,7 +2849,7 @@ _eet_entries_iterator_unlock(Eet_Entries_Iterator *it)
 {
    if (!it->locked)
      {
-        CRIT("Iterator already UNLOCKED !");
+        CRI("Iterator already UNLOCKED !");
         return EINA_TRUE;
      }
 

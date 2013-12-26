@@ -204,17 +204,17 @@ eldbus_shutdown(void)
 
    if (shared_connections[ELDBUS_CONNECTION_TYPE_SESSION - 1])
      {
-        CRITICAL("Alive TYPE_SESSION connection");
+        CRI("Alive TYPE_SESSION connection");
         print_live_connection(shared_connections[ELDBUS_CONNECTION_TYPE_SESSION - 1]);
      }
    if (shared_connections[ELDBUS_CONNECTION_TYPE_SYSTEM - 1])
      {
-        CRITICAL("Alive TYPE_SYSTEM connection");
+        CRI("Alive TYPE_SYSTEM connection");
         print_live_connection(shared_connections[ELDBUS_CONNECTION_TYPE_SYSTEM - 1]);
      }
    if (shared_connections[ELDBUS_CONNECTION_TYPE_STARTER - 1])
      {
-        CRITICAL("Alive TYPE_STARTER connection");
+        CRI("Alive TYPE_STARTER connection");
         print_live_connection(shared_connections[ELDBUS_CONNECTION_TYPE_STARTER - 1]);
      }
    if (shared_connections[ELDBUS_CONNECTION_TYPE_ADDRESS - 1])
@@ -227,7 +227,7 @@ eldbus_shutdown(void)
              it = eina_hash_iterator_tuple_new(address_connections);
              EINA_ITERATOR_FOREACH(it, tuple)
                {
-                  CRITICAL("Alive TYPE_ADDRESS connection: %s", (char*)tuple->key);
+                  CRI("Alive TYPE_ADDRESS connection: %s", (char*)tuple->key);
                   print_live_connection(tuple->data);
                }
              eina_iterator_free(it);
@@ -1180,7 +1180,7 @@ _eldbus_connection_free(Eldbus_Connection *conn)
 
    if (conn->pendings)
      {
-        CRITICAL("Connection %p released with live pending calls!",
+        CRI("Connection %p released with live pending calls!",
                  conn);
         EINA_INLIST_FOREACH(conn->pendings, p)
           ERR("conn=%p alive pending call=%p dest=%s path=%s %s.%s()", conn, p,
@@ -1192,7 +1192,7 @@ _eldbus_connection_free(Eldbus_Connection *conn)
 
    if (conn->signal_handlers)
      {
-        CRITICAL("Connection %p released with live signal handlers!", conn);
+        CRI("Connection %p released with live signal handlers!", conn);
         EINA_INLIST_FOREACH(conn->signal_handlers, h)
           ERR("conn=%p alive signal=%p %s.%s path=%s", conn, h, h->interface,
               h->member, h->path);

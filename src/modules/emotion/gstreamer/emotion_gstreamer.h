@@ -216,10 +216,10 @@ extern Eina_Bool _ecore_x_available;
 #endif
 #define ERR(...) EINA_LOG_DOM_ERR(_emotion_gstreamer_log_domain, __VA_ARGS__)
 
-#ifdef CRITICAL
-#undef CRITICAL
+#ifdef CRI
+#undef CRI
 #endif
-#define CRITICAL(...) EINA_LOG_DOM_CRIT(_emotion_gstreamer_log_domain, __VA_ARGS__)
+#define CRI(...) EINA_LOG_DOM_CRIT(_emotion_gstreamer_log_domain, __VA_ARGS__)
 
 #define EVAS_TYPE_VIDEO_SINK evas_video_sink_get_type()
 

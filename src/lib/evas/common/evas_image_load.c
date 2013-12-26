@@ -274,7 +274,7 @@ evas_common_load_rgba_image_module_from_file(Image_Entry *ie)
 
 #ifdef EVAS_CSERVE2
    if (evas_cserve2_use_get() && evas_cache2_image_cached(ie))
-     CRIT("This function shouldn't be called anymore!");
+     CRI("This function shouldn't be called anymore!");
 #endif
 
    if (ie->f)
@@ -391,7 +391,7 @@ evas_common_load_rgba_image_data_from_file(Image_Entry *ie)
 
 #ifdef EVAS_CSERVE2
    if (evas_cserve2_use_get() && evas_cache2_image_cached(ie))
-     CRIT("This function shouldn't be called anymore!");
+     CRI("This function shouldn't be called anymore!");
 #endif
 
    if (!ie->info.module) return EVAS_LOAD_ERROR_GENERIC;

@@ -53,7 +53,7 @@ static void _sizing_eval(Evas_Object *obj);
    EVAS_OBJECT_BOX_DATA_GET(o, ptr);                                    \
 if (!ptr)                                                               \
 {                                                                       \
-   CRIT("no widget data for object %p (%s)",                            \
+   CRI("no widget data for object %p (%s)",                            \
         o, evas_object_type_get(o));                                    \
    fflush(stderr);                                                      \
    return;                                                              \
@@ -63,7 +63,7 @@ if (!ptr)                                                               \
    EVAS_OBJECT_BOX_DATA_GET(o, ptr);                                    \
 if (!ptr)                                                               \
 {                                                                       \
-   CRIT("no widget data for object %p (%s)",                            \
+   CRI("no widget data for object %p (%s)",                            \
         o, evas_object_type_get(o));                                    \
    fflush(stderr);                                                      \
    return val;                                                          \

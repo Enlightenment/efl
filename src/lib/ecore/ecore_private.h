@@ -34,10 +34,10 @@ extern int _ecore_log_dom;
 #endif
 #define WRN(...) EINA_LOG_DOM_WARN(_ECORE_DEFAULT_LOG_DOM, __VA_ARGS__)
 
-#ifdef CRIT
-# undef CRIT
+#ifdef CRI
+# undef CRI
 #endif
-#define CRIT(...) EINA_LOG_DOM_CRIT(_ECORE_DEFAULT_LOG_DOM, __VA_ARGS__)
+#define CRI(...) EINA_LOG_DOM_CRIT(_ECORE_DEFAULT_LOG_DOM, __VA_ARGS__)
 
 #ifndef PATH_MAX
 # define PATH_MAX 4096

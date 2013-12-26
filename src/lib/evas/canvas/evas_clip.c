@@ -224,28 +224,28 @@ _clip_set(Eo *eo_obj, void *_pd, va_list *list)
    if (obj->cur->clipper && obj->cur->clipper->object == eo_clip) return;
    if (eo_obj == eo_clip)
      {
-        CRIT("Setting clip %p on itself", eo_obj);
+        CRI("Setting clip %p on itself", eo_obj);
         return;
      }
    if (clip->delete_me)
      {
-        CRIT("Setting deleted object %p as clip obj %p", eo_clip, eo_obj);
+        CRI("Setting deleted object %p as clip obj %p", eo_clip, eo_obj);
         return;
      }
    if (obj->delete_me)
      {
-        CRIT("Setting object %p as clip to deleted obj %p", eo_clip, eo_obj);
+        CRI("Setting object %p as clip to deleted obj %p", eo_clip, eo_obj);
         return;
      }
    if (!obj->layer)
      {
-        CRIT("No evas surface associated with object (%p)", eo_obj);
+        CRI("No evas surface associated with object (%p)", eo_obj);
         return;
      }
    if ((obj->layer && clip->layer) &&
        (obj->layer->evas != clip->layer->evas))
      {
-        CRIT("Setting object %p from Evas (%p) to another Evas (%p)", obj, obj->layer->evas, clip->layer->evas);
+        CRI("Setting object %p from Evas (%p) to another Evas (%p)", obj, obj->layer->evas, clip->layer->evas);
         return;
      }
 

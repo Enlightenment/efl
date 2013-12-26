@@ -820,7 +820,7 @@ _shared_mempool_buffer_del(Shared_Mempool *sm, int bufferid)
    ie = _shared_index_entry_get_by_id(sm->index, bufferid);
    if (!ie || ie->refcount <= 0)
      {
-        CRIT("Tried to delete invalid buffer or with refcount 0");
+        CRI("Tried to delete invalid buffer or with refcount 0");
         return NULL;
      }
 
@@ -857,7 +857,7 @@ cserve2_shared_mempool_buffer_get(Shared_Mempool *sm, int bufferid)
    ie = _shared_index_entry_get_by_id(sm->index, bufferid);
    if (!ie || ie->refcount <= 0)
      {
-        CRIT("Tried to access invalid buffer or with refcount 0");
+        CRI("Tried to access invalid buffer or with refcount 0");
         return NULL;
      }
 
@@ -874,7 +874,7 @@ cserve2_shared_mempool_buffer_offset_get(Shared_Mempool *sm, int bufferid)
    ie = _shared_index_entry_get_by_id(sm->index, bufferid);
    if (!ie || ie->refcount <= 0)
      {
-        CRIT("Tried to access invalid buffer or with refcount 0");
+        CRI("Tried to access invalid buffer or with refcount 0");
         return -1;
      }
 
@@ -1000,7 +1000,7 @@ cserve2_shared_string_del(int id)
         if (!eina_hash_del_by_key(_string_entries, data))
           {
              if (!eina_hash_del_by_data(_string_entries, (void *) (intptr_t) id))
-               CRIT("Invalid free");
+               CRI("Invalid free");
           }
      }
    _shared_strings_unref_items++;

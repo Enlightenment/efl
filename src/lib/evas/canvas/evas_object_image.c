@@ -654,18 +654,18 @@ _image_source_set(Eo *eo_obj, void *_pd, va_list *list)
           }
         if (!src->layer)
           {
-             CRIT("No evas surface associated with source object (%p)", eo_obj);
+             CRI("No evas surface associated with source object (%p)", eo_obj);
              return;
           }
         if ((obj->layer && src->layer) &&
             (obj->layer->evas != src->layer->evas))
           {
-             CRIT("Setting object %p from Evas (%p) from another Evas (%p)", eo_src, src->layer->evas, obj->layer->evas);
+             CRI("Setting object %p from Evas (%p) from another Evas (%p)", eo_src, src->layer->evas, obj->layer->evas);
              return;
           }
         if (eo_src == eo_obj)
           {
-             CRIT("Setting object %p as a source for itself", obj);
+             CRI("Setting object %p as a source for itself", obj);
              return;
           }
      }
@@ -3724,7 +3724,7 @@ evas_process_dirty_pixels(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, 
                    obj->cur->geometry.y == y &&
                    obj->cur->geometry.w == w &&
                    obj->cur->geometry.h == h))
-               CRIT("Evas_Object_Image geometry did change during pixels get callback !");
+               CRI("Evas_Object_Image geometry did change during pixels get callback !");
 
              o->engine_data = obj->layer->evas->engine.func->image_dirty_region
                (obj->layer->evas->engine.data.output, o->engine_data,

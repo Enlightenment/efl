@@ -355,7 +355,7 @@ _ecore_con_socks_read_v5(Ecore_Con_Server *svr, Ecore_Con_Socks_v5 *v5, const un
         switch (v5->method)
           {
            case ECORE_CON_SOCKS_V5_METHOD_NONE:
-             CRIT("HOW DID THIS HAPPEN?????????");
+             CRI("HOW DID THIS HAPPEN?????????");
              goto error;
 
            case ECORE_CON_SOCKS_V5_METHOD_GSSAPI:

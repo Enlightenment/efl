@@ -808,7 +808,7 @@ compile(void)
    fd = mkstemp(tmpn);
    if (fd < 0)
      {
-        CRIT("Unable to open temp file \"%s\" for pre-processor.", tmpn);
+        CRI("Unable to open temp file \"%s\" for pre-processor.", tmpn);
         exit(-1);
      }
 

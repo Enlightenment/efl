@@ -2133,30 +2133,30 @@ eet_data_descriptor_element_add(Eet_Data_Descriptor *edd,
    if (type < EET_T_UNKNOW ||
        type >= EET_T_LAST)
      {
-        CRIT("Preventing later bug due to unknow type: %i", type);
+        CRI("Preventing later bug due to unknow type: %i", type);
         return;
      }
    if (offset < 0)
      {
-        CRIT("Preventing later buffer underrun : offset = %i", offset);
+        CRI("Preventing later buffer underrun : offset = %i", offset);
         return;
      }
    if (offset > edd->size)
      {
-        CRIT("Preventing later buffer overrun : offset = %i in a structure of %i bytes", offset, edd->size);
+        CRI("Preventing later buffer overrun : offset = %i in a structure of %i bytes", offset, edd->size);
         return;
      }
    if (group_type == EET_G_UNKNOWN && type != EET_T_UNKNOW)
      {
         if (offset + eet_basic_codec[type - 1].size > edd->size)
           {
-             CRIT("Preventing later buffer overrun : offset = %i, size = %i in a structure of %i bytes", offset, eet_basic_codec[type - 1].size, edd->size);
+             CRI("Preventing later buffer overrun : offset = %i, size = %i in a structure of %i bytes", offset, eet_basic_codec[type - 1].size, edd->size);
              return;
           }
      }
    else if ((offset + sizeof (void*)) > (unsigned int) edd->size)
      {
-        CRIT("Preventing later buffer overrun : offset = %i, estimated size = %zu in a structure of %i bytes", offset, sizeof (void*), edd->size);
+        CRI("Preventing later buffer overrun : offset = %i, estimated size = %zu in a structure of %i bytes", offset, sizeof (void*), edd->size);
         return;
      }
 

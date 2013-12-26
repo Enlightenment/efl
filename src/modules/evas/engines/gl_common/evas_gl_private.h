@@ -24,9 +24,9 @@ extern int _evas_engine_GL_common_log_dom;
 #endif
 #define WRN(...) EINA_LOG_DOM_WARN(_evas_engine_GL_common_log_dom, __VA_ARGS__)
 
-#ifdef CRIT
-# undef CRIT
+#ifdef CRI
+# undef CRI
 #endif
-#define CRIT(...) EINA_LOG_DOM_CRIT(_evas_engine_GL_common_log_dom, __VA_ARGS__)
+#define CRI(...) EINA_LOG_DOM_CRIT(_evas_engine_GL_common_log_dom, __VA_ARGS__)
 
 #endif

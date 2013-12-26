@@ -42,10 +42,10 @@
 #include "eina_ustringshare.h"
 
 
-#ifdef CRITICAL
-#undef CRITICAL
+#ifdef CRI
+#undef CRI
 #endif
-#define CRITICAL(...) EINA_LOG_DOM_CRIT(_eina_share_ustringshare_log_dom, __VA_ARGS__)
+#define CRI(...) EINA_LOG_DOM_CRIT(_eina_share_ustringshare_log_dom, __VA_ARGS__)
 
 #ifdef ERR
 #undef ERR
@@ -145,7 +145,7 @@ eina_ustringshare_del(const Eina_Unicode *str)
       return;
 
    if (!eina_share_common_del(ustringshare_share, (const char *)str))
-     CRITICAL("EEEK trying to del non-shared ustringshare \"%s\"", (const char *)str);
+     CRI("EEEK trying to del non-shared ustringshare \"%s\"", (const char *)str);
 }
 
 EAPI const Eina_Unicode *

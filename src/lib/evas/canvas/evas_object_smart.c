@@ -253,26 +253,26 @@ _smart_member_add(Eo *smart_obj, void *_pd, va_list *list)
 
    if (obj->delete_me)
      {
-        CRIT("Adding deleted object %p to smart obj %p", eo_obj, smart_obj);
+        CRI("Adding deleted object %p to smart obj %p", eo_obj, smart_obj);
         abort();
         return;
      }
    if (smart->delete_me)
      {
-        CRIT("Adding object %p to deleted smart obj %p", eo_obj, smart_obj);
+        CRI("Adding object %p to deleted smart obj %p", eo_obj, smart_obj);
         abort();
         return;
      }
    if (!smart->layer)
      {
-        CRIT("No evas surface associated with smart object (%p)", smart_obj);
+        CRI("No evas surface associated with smart object (%p)", smart_obj);
         abort();
         return;
      }
    if ((obj->layer && smart->layer) &&
        (obj->layer->evas != smart->layer->evas))
      {
-        CRIT("Adding object %p from Evas (%p) from another Evas (%p)", eo_obj, obj->layer->evas, smart->layer->evas);
+        CRI("Adding object %p from Evas (%p) from another Evas (%p)", eo_obj, obj->layer->evas, smart->layer->evas);
         abort();
         return;
      }

@@ -76,10 +76,10 @@ static const char _eina_model_str_properties_unloaded[] = "properties,unloaded";
 static const char _eina_model_str_children_loaded[] = "children,loaded";
 static const char _eina_model_str_children_unloaded[] = "children,unloaded";
 
-#ifdef CRITICAL
-#undef CRITICAL
+#ifdef CRI
+#undef CRI
 #endif
-#define CRITICAL(...) EINA_LOG_DOM_CRIT(_eina_model_log_dom, __VA_ARGS__)
+#define CRI(...) EINA_LOG_DOM_CRIT(_eina_model_log_dom, __VA_ARGS__)
 
 #ifdef ERR
 #undef ERR
@@ -362,25 +362,25 @@ _eina_model_description_type_fill(Eina_Model_Description *desc, const Eina_Model
      {
         if (itr->version != EINA_MODEL_TYPE_VERSION)
           {
-             CRITICAL("Type %p version is %u, expected %u instead.",
+             CRI("Type %p version is %u, expected %u instead.",
                       itr, itr->version, EINA_MODEL_TYPE_VERSION);
              return EINA_FALSE;
           }
         if (!itr->name)
           {
-             CRITICAL("Type %p provides no name!", itr);
+             CRI("Type %p provides no name!", itr);
              return EINA_FALSE;
           }
         if (itr->type_size < sizeof(Eina_Model_Type))
           {
-             CRITICAL("Type %p %s size must be >= sizeof(Eina_Model_Type)!",
+             CRI("Type %p %s size must be >= sizeof(Eina_Model_Type)!",
                       itr, itr->name);
              return EINA_FALSE;
           }
         if (child_size == 0) child_size = itr->type_size;
         else if (child_size < itr->type_size)
           {
-             CRITICAL("Type %p %s size is bigger than its child type %p %s!",
+             CRI("Type %p %s size is bigger than its child type %p %s!",
                       itr, itr->name, last_itr, last_itr->name);
              return EINA_FALSE;
           }
@@ -418,7 +418,7 @@ _eina_model_description_type_fill(Eina_Model_Description *desc, const Eina_Model
 
         if ((!itr->parent) && (itr != EINA_MODEL_TYPE_BASE))
           {
-             CRITICAL("Type %p (%s) does not inherit from EINA_MODEL_TYPE_BASE!",
+             CRI("Type %p (%s) does not inherit from EINA_MODEL_TYPE_BASE!",
                       type, type->name);
              return EINA_FALSE;
           }
@@ -427,7 +427,7 @@ _eina_model_description_type_fill(Eina_Model_Description *desc, const Eina_Model
 #define CK_METH(meth)                                           \
    if (!desc->ops.type.meth)                                    \
      {                                                          \
-        CRITICAL("Mandatory method "#meth                       \
+        CRI("Mandatory method "#meth                       \
                  "() was not provided by type %p (%s).",        \
                  type, type->name);                             \
         return EINA_FALSE;                                      \
@@ -448,7 +448,7 @@ _eina_model_description_type_fill(Eina_Model_Description *desc, const Eina_Model
 
         if (ext_size % sizeof(void *) != 0)
           {
-             CRITICAL("Extension size %u is not multiple of sizeof(void*)",
+             CRI("Extension size %u is not multiple of sizeof(void*)",
                       ext_size);
              return EINA_FALSE;
           }
@@ -632,7 +632,7 @@ _eina_model_description_ifaces_fix(Eina_Model_Description *desc)
         for (i = 0; i < n_pending; i++)
           ERR("%p (%s) is part of dependency loop!",
               pending[i]->iface, pending[i]->iface->name);
-        CRITICAL("Cannot use type %p (%s) with broken interfaces!",
+        CRI("Cannot use type %p (%s) with broken interfaces!",
                  desc->cache.types[0], desc->cache.types[0]->name);
         free(desc->cache.ifaces);
         ret = EINA_FALSE;
@@ -650,14 +650,14 @@ _eina_model_description_ifaces_validate_and_count(const Eina_Model_Interface *if
 {
    if (iface->version != EINA_MODEL_INTERFACE_VERSION)
      {
-        CRITICAL("Interface %p version is %u, expected %u instead.",
+        CRI("Interface %p version is %u, expected %u instead.",
                  iface, iface->version, EINA_MODEL_INTERFACE_VERSION);
         return EINA_FALSE;
      }
 
    if (!iface->name)
      {
-        CRITICAL("Interface %p provides no name!", iface);
+        CRI("Interface %p provides no name!", iface);
         return EINA_FALSE;
      }
 
@@ -3444,7 +3444,7 @@ _eina_model_unref(Eina_Model *model)
     {                                                                   \
        if (model->desc->ops.type.method)                                \
          return model->desc->ops.type.method(model, ## __VA_ARGS__);    \
-       CRITICAL("Mandatory method" # method "() not implemented for model %p (%s)", \
+       CRI("Mandatory method" # method "() not implemented for model %p (%s)", \
                 model, model->desc->cache.types[0]->name);              \
        return def_retval;                                               \
     }                                                                   \
@@ -3457,7 +3457,7 @@ _eina_model_unref(Eina_Model *model)
          model->desc->ops.type.method(model, ## __VA_ARGS__);           \
        else                                                             \
          {                                                              \
-            CRITICAL("Mandatory method" # method "() not implemented for model %p (%s)", \
+            CRI("Mandatory method" # method "() not implemented for model %p (%s)", \
                      model, model->desc->cache.types[0]->name);         \
          }                                                              \
     }                                                                   \
@@ -4899,7 +4899,7 @@ eina_model_type_private_data_get(const Eina_Model *model, const Eina_Model_Type 
      if (desc->cache.types[i] == type)
        return model->privates[i];
 
-   CRITICAL("Model %p (%s) is not an instance of type %p (%s)",
+   CRI("Model %p (%s) is not an instance of type %p (%s)",
             model, desc->cache.types[0]->name,
             type, type->name);
    return NULL;
@@ -4964,7 +4964,7 @@ eina_model_interface_private_data_get(const Eina_Model *model, const Eina_Model_
      if (desc->cache.ifaces[i] == iface)
        return model->privates[desc->total.types + i];
 
-   CRITICAL("Model %p (%s) does not implement interface %p (%s)",
+   CRI("Model %p (%s) does not implement interface %p (%s)",
             model, desc->cache.types[0]->name,
             iface, iface->name);
    return NULL;

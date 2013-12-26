@@ -93,10 +93,10 @@ extern Eina_Bool _ecore_xlib_sync;
 #endif /* ifdef WRN */
 #define WRN(...) EINA_LOG_DOM_WARN(_ecore_xlib_log_dom, __VA_ARGS__)
 
-#ifdef CRIT
-# undef CRIT
-#endif /* ifdef CRIT */
-#define CRIT(...) EINA_LOG_DOM_CRIT(_ecore_xlib_log_dom, __VA_ARGS__)
+#ifdef CRI
+# undef CRI
+#endif /* ifdef CRI */
+#define CRI(...) EINA_LOG_DOM_CRIT(_ecore_xlib_log_dom, __VA_ARGS__)
 
 typedef struct _Ecore_X_Selection_Intern Ecore_X_Selection_Intern;
 

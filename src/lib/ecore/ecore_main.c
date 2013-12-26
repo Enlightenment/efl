@@ -858,7 +858,7 @@ _ecore_main_loop_init(void)
 #ifdef USE_G_MAIN_LOOP
    ecore_glib_source = g_source_new(&ecore_gsource_funcs, sizeof (GSource));
    if (!ecore_glib_source)
-     CRIT("Failed to create glib source for epoll!");
+     CRI("Failed to create glib source for epoll!");
    else
      {
         g_source_set_priority(ecore_glib_source, G_PRIORITY_HIGH_IDLE + 20);

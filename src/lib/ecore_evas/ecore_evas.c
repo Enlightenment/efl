@@ -171,7 +171,7 @@ _ecore_evas_interface_get(const Ecore_Evas *ee, const char *iname)
 	  return i;
      }
 
-   CRIT("Ecore_Evas %p (engine: %s) does not have interface '%s'",
+   CRI("Ecore_Evas %p (engine: %s) does not have interface '%s'",
         ee, ee->driver, iname);
 
    return NULL;

@@ -57,10 +57,10 @@ extern int _ecore_audio_log_dom;
 #endif
 #define WRN(...) EINA_LOG_DOM_WARN(_ecore_audio_log_dom, __VA_ARGS__)
 
-#ifdef CRIT
-#undef CRIT
+#ifdef CRI
+#undef CRI
 #endif
-#define CRIT(...) EINA_LOG_DOM_CRIT(_ecore_audio_log_dom, __VA_ARGS__)
+#define CRI(...) EINA_LOG_DOM_CRIT(_ecore_audio_log_dom, __VA_ARGS__)
 
 /**
  * @defgroup Ecore_Audio_Module_API_Group Ecore_Audio_Module_API - API for modules

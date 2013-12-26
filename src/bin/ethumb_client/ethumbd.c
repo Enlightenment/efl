@@ -51,7 +51,7 @@
 #define INF(...) EINA_LOG_DOM_INFO(_log_domain, __VA_ARGS__)
 #define WRN(...) EINA_LOG_DOM_WARN(_log_domain, __VA_ARGS__)
 #define ERR(...) EINA_LOG_DOM_ERR(_log_domain, __VA_ARGS__)
-#define CRIT(...) EINA_LOG_DOM_CRIT(_log_domain, __VA_ARGS__)
+#define CRI(...) EINA_LOG_DOM_CRIT(_log_domain, __VA_ARGS__)
 
 static const char _ethumb_dbus_bus_name[] = "org.enlightenment.Ethumb";
 static const char _ethumb_dbus_interface[] = "org.enlightenment.Ethumb";
@@ -786,7 +786,7 @@ _ethumb_table_append(Ethumbd *ed)
 	tmp = realloc(q->table, new_max * sizeof(Ethumbd_Object));
 	if (!tmp)
 	  {
-	     CRIT("could not realloc q->table to %zd bytes: %s",
+	     CRI("could not realloc q->table to %zd bytes: %s",
 		  new_max * sizeof(Ethumbd_Object), strerror(errno));
 	     return -1;
 	  }
@@ -796,7 +796,7 @@ _ethumb_table_append(Ethumbd *ed)
 	tmp = realloc(q->list, new_max * sizeof(int));
 	if (!tmp)
 	  {
-	     CRIT("could not realloc q->list to %zd bytes: %s",
+	     CRI("could not realloc q->list to %zd bytes: %s",
 		  new_max * sizeof(int), strerror(errno));
 	     return -1;
 	  }
@@ -813,7 +813,7 @@ _ethumb_table_append(Ethumbd *ed)
 
    if (i >= q->max_count)
      {
-        CRIT("cannot find free table slot in table of %i", q->max_count);
+        CRI("cannot find free table slot in table of %i", q->max_count);
         return -1;
      }
 

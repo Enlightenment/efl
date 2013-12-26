@@ -324,20 +324,20 @@ efreet_dirs_init(void)
         {
             if (chmod(xdg_runtime_dir, 0700) < 0)
             {
-                CRITICAL("Cannot set XDG_RUNTIME_DIR=%s to mode 0700: %s",
+                CRI("Cannot set XDG_RUNTIME_DIR=%s to mode 0700: %s",
                          xdg_runtime_dir, strerror(errno));
                 eina_stringshare_replace(&xdg_runtime_dir, NULL);
             }
         }
         else
         {
-            CRITICAL("Failed to create XDG_RUNTIME_DIR=%s", xdg_runtime_dir);
+            CRI("Failed to create XDG_RUNTIME_DIR=%s", xdg_runtime_dir);
             eina_stringshare_replace(&xdg_runtime_dir, NULL);
         }
     }
     else if (!S_ISDIR(st.st_mode))
     {
-        CRITICAL("XDG_RUNTIME_DIR=%s is not a directory!", xdg_runtime_dir);
+        CRI("XDG_RUNTIME_DIR=%s is not a directory!", xdg_runtime_dir);
         eina_stringshare_replace(&xdg_runtime_dir, NULL);
     }
     else if ((st.st_mode & 0777) != 0700)
@@ -350,7 +350,7 @@ efreet_dirs_init(void)
                 xdg_runtime_dir, st.st_mode & 0777);
             if (chmod(xdg_runtime_dir, 0700) != 0)
             {
-                CRITICAL("Cannot fix XDG_RUNTIME_DIR=%s incorrect mode %o: %s",
+                CRI("Cannot fix XDG_RUNTIME_DIR=%s incorrect mode %o: %s",
                          xdg_runtime_dir, st.st_mode & 0777, strerror(errno));
                 eina_stringshare_replace(&xdg_runtime_dir, NULL);
             }

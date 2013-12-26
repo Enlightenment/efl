@@ -19,10 +19,10 @@ extern int _edje_cc_log_dom ;
 # undef WRN
 #endif
 #define WRN(...) EINA_LOG_DOM_WARN(_edje_cc_log_dom, __VA_ARGS__)
-#ifdef CRIT
-# undef CRIT
+#ifdef CRI
+# undef CRI
 #endif
-#define CRIT(...) EINA_LOG_DOM_CRIT(_edje_cc_log_dom, __VA_ARGS__)
+#define CRI(...) EINA_LOG_DOM_CRIT(_edje_cc_log_dom, __VA_ARGS__)
 #ifdef DBG
 # undef DBG
 #endif

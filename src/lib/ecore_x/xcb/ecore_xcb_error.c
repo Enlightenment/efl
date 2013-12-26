@@ -100,11 +100,11 @@ _ecore_xcb_error_handle(xcb_generic_error_t *err)
 int
 _ecore_xcb_io_error_handle(xcb_generic_error_t *err)
 {
-   CRIT("IO Error:");
+   CRI("IO Error:");
    if (err)
      {
-        CRIT("\tRequest: %d", err->sequence);
-        CRIT("\tCode: %d", err->error_code);
+        CRI("\tRequest: %d", err->sequence);
+        CRI("\tCode: %d", err->error_code);
      }
    if (_io_error_func)
      _io_error_func(_io_error_data);

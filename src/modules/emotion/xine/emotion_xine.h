@@ -108,10 +108,10 @@ struct _Emotion_Xine_Event
 #endif
 #define ERR(...) EINA_LOG_DOM_ERR(_emotion_xine_log_domain, __VA_ARGS__)
 
-#ifdef CRITICAL
-#undef CRITICAL
+#ifdef CRI
+#undef CRI
 #endif
-#define CRITICAL(...) EINA_LOG_DOM_CRIT(_emotion_xine_log_domain, __VA_ARGS__)
+#define CRI(...) EINA_LOG_DOM_CRIT(_emotion_xine_log_domain, __VA_ARGS__)
 
 extern int _emotion_xine_log_domain;
 

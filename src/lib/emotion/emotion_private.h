@@ -19,7 +19,7 @@ extern Eina_Prefix *_emotion_pfx;
 #define INF(...) EINA_LOG_DOM_INFO(_emotion_log_domain, __VA_ARGS__)
 #define WRN(...) EINA_LOG_DOM_WARN(_emotion_log_domain, __VA_ARGS__)
 #define ERR(...) EINA_LOG_DOM_ERR(_emotion_log_domain, __VA_ARGS__)
-#define CRITICAL(...) EINA_LOG_DOM_CRIT(_emotion_log_domain, __VA_ARGS__)
+#define CRI(...) EINA_LOG_DOM_CRIT(_emotion_log_domain, __VA_ARGS__)
 
 #include "emotion_modules.h"
 

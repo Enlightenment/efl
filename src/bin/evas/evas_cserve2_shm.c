@@ -168,13 +168,13 @@ cserve2_shm_resize(Shm_Handle *shm, size_t newsize)
 
    if (shm->map_offset || shm->image_offset)
      {
-        CRIT("Can not resize shm with non-zero offset");
+        CRI("Can not resize shm with non-zero offset");
         return NULL;
      }
 
    if (eina_inlist_count(shm->mapping->segments) > 1)
      {
-        CRIT("Can not resize shm with more than one segment");
+        CRI("Can not resize shm with more than one segment");
         return NULL;
      }
 

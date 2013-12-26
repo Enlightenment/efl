@@ -1054,7 +1054,7 @@ _image_entry_free(Image_Entry *ientry)
    idata = _image_data_find(ENTRYID(ientry));
    if (!idata || !idata->refcount)
      {
-        CRIT("Trying to free already freed object: %u", ENTRYID(ientry));
+        CRI("Trying to free already freed object: %u", ENTRYID(ientry));
         return;
      }
 
@@ -2795,7 +2795,7 @@ do_scaling:
      {
         if (orig_entry->base.id != image_id)
           {
-             CRIT("Entry IDs mismatch");
+             CRI("Entry IDs mismatch");
              return -1;
           }
         orig_entry->base.request = cserve2_request_add(

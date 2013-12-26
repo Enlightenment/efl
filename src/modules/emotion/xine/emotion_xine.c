@@ -1562,7 +1562,7 @@ xine_module_init(void)
 
    if (!_emotion_module_register(&em_engine))
      {
-        CRITICAL("Could not register module %p", &em_engine);
+        CRI("Could not register module %p", &em_engine);
         eina_log_domain_unregister(_emotion_xine_log_domain);
         _emotion_xine_log_domain = -1;
         return EINA_FALSE;

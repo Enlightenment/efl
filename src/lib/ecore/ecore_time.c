@@ -57,7 +57,7 @@ ecore_time_get(void)
 
    if (EINA_UNLIKELY(clock_gettime(_ecore_time_clock_id, &t)))
      {
-        CRIT("Cannot get current time.");
+        CRI("Cannot get current time.");
         /* Try to at least return the latest value retrieved*/
         return _ecore_time_loop_time;
      }
@@ -152,7 +152,7 @@ _ecore_time_init(void)
    else
      {
         _ecore_time_clock_id = -2;
-        CRIT("Cannot get a valid clock_gettime() clock id! "
+        CRI("Cannot get a valid clock_gettime() clock id! "
              "Fallback to unix time.");
      }
 #else
@@ -170,8 +170,8 @@ _ecore_time_init(void)
      }
 #  else
 #  warning "Your platform isn't supported yet"
-   CRIT("Platform does not support clock_gettime. "
-        "Fallback to unix time.");
+   CRI("Platform does not support clock_gettime. "
+       "Fallback to unix time.");
 #  endif
 # endif
 #endif

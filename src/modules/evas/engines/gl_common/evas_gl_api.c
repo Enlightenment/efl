@@ -20,7 +20,7 @@ void _make_current_check(const char* api)
 
    if (!ctx)
      {
-        CRIT("\e[1;33m%s\e[m: Current Context NOT SET: GL Call Should NOT Be Called without MakeCurrent!!!", api);
+        CRI("\e[1;33m%s\e[m: Current Context NOT SET: GL Call Should NOT Be Called without MakeCurrent!!!", api);
      }
 }
 
@@ -38,7 +38,7 @@ void _direct_rendering_check(const char *api)
 
    if (_evgl_not_in_pixel_get())
      {
-        CRIT("\e[1;33m%s\e[m: This API is being called outside Pixel Get Callback Function.", api);
+        CRI("\e[1;33m%s\e[m: This API is being called outside Pixel Get Callback Function.", api);
      }
 }
 

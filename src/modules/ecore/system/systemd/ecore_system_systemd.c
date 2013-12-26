@@ -12,10 +12,10 @@ static Eldbus_Connection *_conn = NULL;
 static Eina_List *_objs = NULL;
 static Eina_List *_proxies = NULL;
 
-#ifdef CRITICAL
-#undef CRITICAL
+#ifdef CRI
+#undef CRI
 #endif
-#define CRITICAL(...) EINA_LOG_DOM_CRIT(_log_dom, __VA_ARGS__)
+#define CRI(...) EINA_LOG_DOM_CRIT(_log_dom, __VA_ARGS__)
 
 #ifdef ERR
 #undef ERR

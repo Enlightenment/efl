@@ -120,7 +120,7 @@ jmp_buf _edje_lua_panic_jmp;
 static int
 _edje_lua_custom_panic(EINA_UNUSED lua_State *L)
 {
-   CRITICAL("PANIC");
+   CRI("PANIC");
    longjmp(_edje_lua_panic_jmp, 1);
    return 1; /* longjmp() never returns, but this keep gcc happy */
 }

@@ -296,7 +296,7 @@ cserve2_request_dependents_drop(Slave_Request *req, Slave_Request_Type type)
 
    if (type != CSERVE2_REQ_IMAGE_SPEC_LOAD)
      {
-        CRIT("Only CSERVE2_REQ_IMAGE_SPEC_LOAD is supported.");
+        CRI("Only CSERVE2_REQ_IMAGE_SPEC_LOAD is supported.");
         return;
      }
 

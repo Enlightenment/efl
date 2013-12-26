@@ -35,10 +35,10 @@ static int _eet_main_log_dom = -1;
 #undef WRN
 #endif /* ifdef WRN */
 #define WRN(...)  EINA_LOG_DOM_WARN(_eet_main_log_dom, __VA_ARGS__)
-#ifdef CRIT
-#undef CRIT
-#endif /* ifdef CRIT */
-#define CRIT(...) EINA_LOG_DOM_CRIT(_eet_main_log_dom, __VA_ARGS__)
+#ifdef CRI
+#undef CRI
+#endif /* ifdef CRI */
+#define CRI(...) EINA_LOG_DOM_CRIT(_eet_main_log_dom, __VA_ARGS__)
 
 static void
 do_eet_list(const char *file, Eina_Bool verbose)

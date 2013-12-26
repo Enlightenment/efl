@@ -8,10 +8,10 @@
 
 extern int efreetd_log_dom;
 
-#ifdef CRITICAL
-#undef CRITICAL
+#ifdef CRI
+#undef CRI
 #endif
-#define CRITICAL(...) EINA_LOG_DOM_CRIT(efreetd_log_dom, __VA_ARGS__)
+#define CRI(...) EINA_LOG_DOM_CRIT(efreetd_log_dom, __VA_ARGS__)
 #ifdef ERR
 #undef ERR
 #endif

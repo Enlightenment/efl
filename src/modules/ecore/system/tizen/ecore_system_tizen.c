@@ -8,10 +8,10 @@
 
 static int _log_dom = -1;
 
-#ifdef CRITICAL
-#undef CRITICAL
+#ifdef CRI
+#undef CRI
 #endif
-#define CRITICAL(...) EINA_LOG_DOM_CRIT(_log_dom, __VA_ARGS__)
+#define CRI(...) EINA_LOG_DOM_CRIT(_log_dom, __VA_ARGS__)
 
 #ifdef ERR
 #undef ERR

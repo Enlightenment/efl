@@ -102,10 +102,10 @@ static const char o_type[] = "textblock";
     ((ch) == _TAB) || \
     ((ch) == _PARAGRAPH_SEPARATOR))
 
-#ifdef CRITICAL
-#undef CRITICAL
+#ifdef CRI
+#undef CRI
 #endif
-#define CRITICAL(...) EINA_LOG_DOM_CRIT(EINA_LOG_DOMAIN_DEFAULT, __VA_ARGS__)
+#define CRI(...) EINA_LOG_DOM_CRIT(EINA_LOG_DOMAIN_DEFAULT, __VA_ARGS__)
 
 #ifdef ERR
 #undef ERR

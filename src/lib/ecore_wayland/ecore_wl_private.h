@@ -45,10 +45,10 @@ extern Ecore_Wl_Display *_ecore_wl_disp;
 # endif
 # define WRN(...) EINA_LOG_DOM_WARN(_ecore_wl_log_dom, __VA_ARGS__)
 
-# ifdef CRIT
-#  undef CRIT
+# ifdef CRI
+#  undef CRI
 # endif
-# define CRIT(...) EINA_LOG_DOM_CRIT(_ecore_wl_log_dom, __VA_ARGS__)
+# define CRI(...) EINA_LOG_DOM_CRIT(_ecore_wl_log_dom, __VA_ARGS__)
 
 
 struct _Ecore_Wl_Display

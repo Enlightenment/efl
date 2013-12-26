@@ -93,7 +93,7 @@ static int _log_dom = -1;
 #define INF(...)      EINA_LOG_DOM_INFO(_log_dom, __VA_ARGS__)
 #define WRN(...)      EINA_LOG_DOM_WARN(_log_dom, __VA_ARGS__)
 #define ERR(...)      EINA_LOG_DOM_ERR(_log_dom, __VA_ARGS__)
-#define CRITICAL(...) EINA_LOG_DOM_CRIT(_log_dom, __VA_ARGS__)
+#define CRI(...)      EINA_LOG_DOM_CRIT(_log_dom, __VA_ARGS__)
 
 struct _Ethumb_Client
 {

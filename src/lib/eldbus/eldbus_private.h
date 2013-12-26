@@ -13,7 +13,7 @@ extern int _eldbus_log_dom;
 #define INF(...)      EINA_LOG_DOM_INFO(_eldbus_log_dom, __VA_ARGS__)
 #define WRN(...)      EINA_LOG_DOM_WARN(_eldbus_log_dom, __VA_ARGS__)
 #define ERR(...)      EINA_LOG_DOM_ERR(_eldbus_log_dom, __VA_ARGS__)
-#define CRITICAL(...) EINA_LOG_DOM_CRIT(_eldbus_log_dom, __VA_ARGS__)
+#define CRI(...)      EINA_LOG_DOM_CRIT(_eldbus_log_dom, __VA_ARGS__)
 
 #define ELDBUS_CONNECTION_MAGIC        (0xdb050001)
 #define ELDBUS_MESSAGE_MAGIC           (0xdb050002)

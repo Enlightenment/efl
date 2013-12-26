@@ -93,7 +93,7 @@ _ecore_file_download(const char *url,
 {
    if (!url)
      {
-        CRIT("Download URL is null");
+        CRI("Download URL is null");
         return EINA_FALSE;
      }
 

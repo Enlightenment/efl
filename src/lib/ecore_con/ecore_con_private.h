@@ -47,10 +47,10 @@ extern int _ecore_con_log_dom;
 #endif
 #define WRN(...) EINA_LOG_DOM_WARN(_ecore_con_log_dom, __VA_ARGS__)
 
-#ifdef CRIT
-# undef CRIT
+#ifdef CRI
+# undef CRI
 #endif
-#define CRIT(...) EINA_LOG_DOM_CRIT(_ecore_con_log_dom, __VA_ARGS__)
+#define CRI(...) EINA_LOG_DOM_CRIT(_ecore_con_log_dom, __VA_ARGS__)
 
 typedef struct _Ecore_Con_Lookup Ecore_Con_Lookup;
 typedef struct _Ecore_Con_Info Ecore_Con_Info;

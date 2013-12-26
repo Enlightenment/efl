@@ -1049,7 +1049,7 @@ _sdl_output_setup		(int w, int h, int fullscreen, int noframe)
 
    if (!surface)
      {
-        CRIT("SDL_SetVideoMode [ %i x %i x 32 ] failed. %s", w, h, SDL_GetError());
+        CRI("SDL_SetVideoMode [ %i x %i x 32 ] failed. %s", w, h, SDL_GetError());
 	SDL_Quit();
         exit(-1);
      }

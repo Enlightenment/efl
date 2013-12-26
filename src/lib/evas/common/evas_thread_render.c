@@ -127,12 +127,12 @@ evas_thread_init(void)
     eina_inarray_step_set(&evas_thread_queue, sizeof (Eina_Inarray), sizeof (Evas_Thread_Command), 128);
 
     if (!eina_lock_new(&evas_thread_queue_lock))
-      CRIT("Could not create draw thread lock");
+      CRI("Could not create draw thread lock");
     if (!eina_condition_new(&evas_thread_queue_condition, &evas_thread_queue_lock))
-      CRIT("Could not create draw thread condition");
+      CRI("Could not create draw thread condition");
     if (!eina_thread_create(&evas_thread_worker, EINA_THREAD_NORMAL, 0,
           evas_thread_worker_func, NULL))
-      CRIT("Could not create draw thread");
+      CRI("Could not create draw thread");
 }
 
 void

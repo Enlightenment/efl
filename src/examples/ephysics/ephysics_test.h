@@ -33,10 +33,10 @@
 #endif
 #define WRN(...) EINA_LOG_DOM_WARN(_ephysics_test_log_dom, __VA_ARGS__)
 
-#ifdef CRIT
-# undef CRIT
+#ifdef CRI
+# undef CRI
 #endif
-#define CRIT(...) EINA_LOG_DOM_CRIT(_ephysics_test_log_dom, __VA_ARGS__)
+#define CRI(...) EINA_LOG_DOM_CRIT(_ephysics_test_log_dom, __VA_ARGS__)
 
 #define EPHYSICS_TEST_THEME "ephysics_test"
 #define WIDTH (512)

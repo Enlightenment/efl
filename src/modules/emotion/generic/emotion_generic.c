@@ -42,10 +42,10 @@ static int _emotion_generic_log_domain = -1;
 #endif
 #define ERR(...) EINA_LOG_DOM_ERR(_emotion_generic_log_domain, __VA_ARGS__)
 
-#ifdef CRITICAL
-#undef CRITICAL
+#ifdef CRI
+#undef CRI
 #endif
-#define CRITICAL(...) EINA_LOG_DOM_CRIT(_emotion_generic_log_domain, __VA_ARGS__)
+#define CRI(...) EINA_LOG_DOM_CRIT(_emotion_generic_log_domain, __VA_ARGS__)
 
 
 static Eina_Bool _fork_and_exec(Emotion_Generic_Video *ev);
@@ -1867,7 +1867,7 @@ generic_module_init(void)
                          PACKAGE_DATA_DIR, PACKAGE_DATA_DIR);
    if (!pfx)
      {
-        CRITICAL("Could not get prefix for emotion");
+        CRI("Could not get prefix for emotion");
         eina_log_domain_unregister(_emotion_generic_log_domain);
         _emotion_generic_log_domain = -1;
         return EINA_FALSE;

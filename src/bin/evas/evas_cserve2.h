@@ -8,13 +8,13 @@
 #define CSERVE2_LOG_LEVEL 4
 #endif
 
-#ifdef CRIT
-#undef CRIT
+#ifdef CRI
+#undef CRI
 #endif
 #if CSERVE2_LOG_LEVEL >= 0
-#define CRIT(...) EINA_LOG_DOM_CRIT(_evas_cserve2_bin_log_dom, __VA_ARGS__)
+#define CRI(...) EINA_LOG_DOM_CRIT(_evas_cserve2_bin_log_dom, __VA_ARGS__)
 #else
-#define CRIT(...) do {} while(0)
+#define CRI(...) do {} while(0)
 #endif
 
 #ifdef ERR

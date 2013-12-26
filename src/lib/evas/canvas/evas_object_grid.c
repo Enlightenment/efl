@@ -53,7 +53,7 @@ struct _Evas_Object_Grid_Accessor
   EVAS_OBJECT_GRID_DATA_GET(o, ptr);					\
   if (!ptr)								\
     {									\
-      CRIT("no widget data for object %p (%s)",				\
+      CRI("no widget data for object %p (%s)",				\
 	   o, evas_object_type_get(o));					\
        abort();								\
        return;								\
@@ -63,7 +63,7 @@ struct _Evas_Object_Grid_Accessor
   EVAS_OBJECT_GRID_DATA_GET(o, ptr);					\
   if (!ptr)								\
     {									\
-       CRIT("No widget data for object %p (%s)",	                \
+       CRI("No widget data for object %p (%s)",	                \
 	       o, evas_object_type_get(o));				\
        abort();								\
        return val;							\
