@@ -950,7 +950,10 @@ eo_class_get(const Eo *eo_id)
    if (_eo_is_a_class(eo_id))
      {
         EO_CLASS_POINTER_RETURN_VAL(eo_id, _klass, NULL);
-        return eo_class_class_get();
+        if (_klass->desc->version == EO2_VERSION)
+          return eo2_class_class_get();
+        else
+          return eo_class_class_get();
      }
 
    EO_OBJ_POINTER_RETURN_VAL(eo_id, obj, NULL);

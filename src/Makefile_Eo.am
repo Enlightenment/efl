@@ -13,6 +13,7 @@ lib/eo/eo_ptr_indirection.h \
 lib/eo/eo_class_class.c \
 lib/eo/eo_base_class.c \
 lib/eo/eo2_base_class.c \
+lib/eo/eo2_class_class.c \
 lib/eo/eo_private.h
 
 lib_eo_libeo_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EO_CFLAGS@
