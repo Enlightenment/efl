@@ -373,14 +373,17 @@ typedef enum _Evas_Textblock_Item_Type
 struct _Evas_Object_Textblock_Item
 {
    EINA_INLIST;
-   Evas_Textblock_Item_Type             type;
    Evas_Object_Textblock_Node_Text     *text_node;
    Evas_Object_Textblock_Format        *format;
+   Evas_Object_Textblock_Line          *ln;
    size_t                               text_pos;
 #ifdef BIDI_SUPPORT
    size_t                               visual_pos;
 #endif
+   Evas_Textblock_Item_Type             type;
+
    Evas_Coord                           adv, x, w, h;
+   Evas_Coord                           yoff;
    Eina_Bool                            merge : 1; /* Indicates whether this
                                                       item should merge to the
                                                       previous item or not */
@@ -4439,6 +4442,7 @@ _layout_handle_ellipsis(Ctxt *c, Evas_Object_Textblock_Item *it, Eina_List *i)
         c->ln->items = (Evas_Object_Textblock_Item *)
            eina_inlist_append(EINA_INLIST_GET(c->ln->items),
                  EINA_INLIST_GET(it));
+        it->ln = c->ln;
         if (it->type == EVAS_TEXTBLOCK_ITEM_FORMAT)
           {
              Evas_Object_Textblock_Format_Item *fi;
@@ -4449,6 +4453,7 @@ _layout_handle_ellipsis(Ctxt *c, Evas_Object_Textblock_Item *it, Eina_List *i)
    c->ln->items = (Evas_Object_Textblock_Item *)
       eina_inlist_append(EINA_INLIST_GET(c->ln->items),
             EINA_INLIST_GET(_ITEM(ellip_ti)));
+   _ITEM(ellip_ti)->ln = c->ln;
 
    c->position = (c->position == TEXTBLOCK_POSITION_START) ?
       TEXTBLOCK_POSITION_SINGLE : TEXTBLOCK_POSITION_END;
@@ -4468,7 +4473,7 @@ _layout_paragraph_reorder_lines(Evas_Object_Textblock_Paragraph *par)
 }
 #endif
 
-static void
+static inline void
 _layout_paragraph_render(Evas_Object_Textblock *o,
 			 Evas_Object_Textblock_Paragraph *par)
 {
@@ -4700,6 +4705,7 @@ _layout_par(Ctxt *c)
                                        eina_inlist_remove(
                                           EINA_INLIST_GET(c->ln->items),
                                           EINA_INLIST_GET(it)));
+                                 it->ln = c->ln;
                                  i = eina_list_prev(i);
                                  it = eina_list_data_get(i);
                               }
@@ -4769,6 +4775,7 @@ _layout_par(Ctxt *c)
              c->ln->items = (Evas_Object_Textblock_Item *)
                 eina_inlist_append(EINA_INLIST_GET(c->ln->items),
                       EINA_INLIST_GET(it));
+             it->ln = c->ln;
              if (it->type == EVAS_TEXTBLOCK_ITEM_FORMAT)
                {
                   Evas_Object_Textblock_Format_Item *fi;
@@ -10706,10 +10713,16 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
 			     int x, int y, Eina_Bool do_async)
 {
    Evas_Object_Textblock_Paragraph *par, *start = NULL;
+   Evas_Object_Textblock_Item *itr;
    Evas_Object_Textblock_Line *ln;
    Evas_Object_Textblock *o = type_private_data;
+   Eina_List *shadows = NULL;
+   Eina_List *glows = NULL;
+   Eina_List *outlines = NULL;
    int i, j;
    int cx, cy, cw, ch, clip;
+   int ca, cr, cg, cb;
+   int na, nr, ng, nb;
    const char vals[5][5] =
      {
 	  {0, 1, 2, 1, 0},
@@ -10718,9 +10731,6 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
 	  {1, 3, 4, 3, 1},
 	  {0, 1, 2, 1, 0}
      };
-   Eina_Bool have_shadow = EINA_FALSE;
-   Eina_Bool have_glow = EINA_FALSE;
-   Eina_Bool have_outline = EINA_FALSE;
 
    /* render object to surface with context, and offxet by x,y */
    obj->layer->evas->engine.func->context_multiplier_unset(output,
@@ -10737,6 +10747,9 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
     * there's nothing left to do. */
    if (!o->paragraphs) return;
 
+   ENFN->context_color_set(output, context, 0, 0, 0, 0);
+   ca = cr = cg = cb = 0;
+
 #define ITEM_WALK() \
    EINA_INLIST_FOREACH(start, par) \
      { \
@@ -10751,8 +10764,6 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
         _layout_paragraph_render(o, par); \
         EINA_INLIST_FOREACH(par->lines, ln) \
           { \
-             Evas_Object_Textblock_Item *itr; \
-             \
              if (clip) \
                { \
                   if ((obj->cur->geometry.y + y + par->y + ln->y + ln->h) < (cy - 20)) \
@@ -10767,6 +10778,7 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
                   if (itr->format->valign != -1.0) \
                     { \
                        yoff += itr->format->valign * (ln->h - itr->h); \
+                       itr->yoff = yoff;                               \
                     } \
                   if (clip) \
                     { \
@@ -10785,18 +10797,28 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
           } \
      } \
    do {} while(0)
-#define COLOR_SET(col) \
-   ENFN->context_color_set(output, context, \
-         (obj->cur->cache.clip.r * ti->parent.format->color.col.r) / 255, \
-         (obj->cur->cache.clip.g * ti->parent.format->color.col.g) / 255, \
-         (obj->cur->cache.clip.b * ti->parent.format->color.col.b) / 255, \
-         (obj->cur->cache.clip.a * ti->parent.format->color.col.a) / 255);
-#define COLOR_SET_AMUL(col, amul) \
-   ENFN->context_color_set(output, context, \
-         (obj->cur->cache.clip.r * ti->parent.format->color.col.r * (amul)) / 65025, \
-         (obj->cur->cache.clip.g * ti->parent.format->color.col.g * (amul)) / 65025, \
-         (obj->cur->cache.clip.b * ti->parent.format->color.col.b * (amul)) / 65025, \
-         (obj->cur->cache.clip.a * ti->parent.format->color.col.a * (amul)) / 65025);
+#define COLOR_SET(col)                                                  \
+   nr = obj->cur->cache.clip.r * ti->parent.format->color.col.r;        \
+   ng = obj->cur->cache.clip.g * ti->parent.format->color.col.g;        \
+   nb = obj->cur->cache.clip.b * ti->parent.format->color.col.b;        \
+   na = obj->cur->cache.clip.a * ti->parent.format->color.col.a;        \
+   if (na != ca || nb != cb || ng != cg || nr != cr)                    \
+     {                                                                  \
+        ENFN->context_color_set(output, context,                        \
+                                nr / 255, ng / 255, nb / 255, na / 255); \
+        cr = nr; cg = ng; cb = nb; ca = na;                             \
+     }
+#define COLOR_SET_AMUL(col, amul)                                       \
+   nr = obj->cur->cache.clip.r * ti->parent.format->color.col.r * (amul); \
+   ng = obj->cur->cache.clip.g * ti->parent.format->color.col.g * (amul); \
+   nb = obj->cur->cache.clip.b * ti->parent.format->color.col.b * (amul); \
+   na = obj->cur->cache.clip.a * ti->parent.format->color.col.a * (amul); \
+   if (na != ca || nb != cb || ng != cg || nr != cr)                    \
+     {                                                                  \
+        ENFN->context_color_set(output, context,                        \
+                                nr / 65025, ng / 65025, nb / 65025, na / 65025); \
+        cr = nr; cg = ng; cb = nb; ca = na;                             \
+     }
 #define DRAW_TEXT(ox, oy)                                               \
    if (ti->parent.format->font.font)                                    \
      evas_font_draw_async_check(obj, output, context, surface,          \
@@ -10807,24 +10829,28 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
         &ti->text_props, do_async);
 
    /* backing */
-#define DRAW_RECT(ox, oy, ow, oh, or, og, ob, oa) \
-   do \
-     { \
-        ENFN->context_color_set(output, \
-              context, \
-              (obj->cur->cache.clip.r * or) / 255, \
-              (obj->cur->cache.clip.g * og) / 255, \
-              (obj->cur->cache.clip.b * ob) / 255, \
-              (obj->cur->cache.clip.a * oa) / 255); \
-        ENFN->rectangle_draw(output, \
-              context, \
-              surface, \
-              obj->cur->geometry.x + ln->x + x + (ox), \
-              obj->cur->geometry.y + ln->par->y + ln->y + y + (oy), \
-              (ow), \
-              (oh), \
-              do_async); \
-     } \
+#define DRAW_RECT(ox, oy, ow, oh, or, og, ob, oa)                       \
+   do                                                                   \
+     {                                                                  \
+        nr = obj->cur->cache.clip.r * or;                               \
+        ng = obj->cur->cache.clip.g * og;                               \
+        nb = obj->cur->cache.clip.b * ob;                               \
+        na = obj->cur->cache.clip.a * oa;                               \
+        if (na != ca || nb != cb || ng != cg || nr != cr)               \
+          {                                                             \
+             ENFN->context_color_set(output, context,                   \
+                                     cr / 255, cg / 255, cb / 255, ca / 255); \
+             cr = nr; cg = ng; cb = nb; ca = na;                        \
+          }                                                             \
+        ENFN->rectangle_draw(output,                                    \
+                             context,                                   \
+                             surface,                                   \
+                             obj->cur->geometry.x + ln->x + x + (ox),   \
+                             obj->cur->geometry.y + ln->par->y + ln->y + y + (oy), \
+                             (ow),                                      \
+                             (oh),                                      \
+                             do_async);                                 \
+     }                                                                  \
    while (0)
 
 #define DRAW_FORMAT_DASHED(oname, oy, oh, dw, dp) \
@@ -10893,38 +10919,35 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
    ITEM_WALK()
      {
         /* Check which other pass are necessary to avoid useless WALK */
-        if (!have_shadow && !have_glow && !have_outline)
+        Evas_Object_Textblock_Text_Item *ti;
+
+        ti = (itr->type == EVAS_TEXTBLOCK_ITEM_TEXT) ? _ITEM_TEXT(itr) : NULL;
+        if (ti)
           {
-             Evas_Object_Textblock_Text_Item *ti;
-
-             ti = (itr->type == EVAS_TEXTBLOCK_ITEM_TEXT) ? _ITEM_TEXT(itr) : NULL;
-             if (ti)
+             if (ti->parent.format->style & (EVAS_TEXT_STYLE_SHADOW |
+                                             EVAS_TEXT_STYLE_OUTLINE_SOFT_SHADOW |
+                                             EVAS_TEXT_STYLE_OUTLINE_SHADOW |
+                                             EVAS_TEXT_STYLE_FAR_SHADOW |
+                                             EVAS_TEXT_STYLE_FAR_SOFT_SHADOW |
+                                             EVAS_TEXT_STYLE_SOFT_SHADOW))
                {
-                  if (ti->parent.format->style & (EVAS_TEXT_STYLE_SHADOW |
-                                                  EVAS_TEXT_STYLE_OUTLINE_SOFT_SHADOW |
-                                                  EVAS_TEXT_STYLE_OUTLINE_SHADOW |
-                                                  EVAS_TEXT_STYLE_FAR_SHADOW |
-                                                  EVAS_TEXT_STYLE_FAR_SOFT_SHADOW |
-                                                  EVAS_TEXT_STYLE_SOFT_SHADOW))
-                    {
-                       have_shadow = EINA_TRUE;
-                    }
-                  if ((ti->parent.format->style & EVAS_TEXT_STYLE_MASK_BASIC) ==
-                      EVAS_TEXT_STYLE_GLOW)
-                    {
-                       have_glow = EINA_TRUE;
-                    }
-                  if (((ti->parent.format->style & EVAS_TEXT_STYLE_MASK_BASIC) == EVAS_TEXT_STYLE_OUTLINE) ||
-                      ((ti->parent.format->style & EVAS_TEXT_STYLE_MASK_BASIC) == EVAS_TEXT_STYLE_OUTLINE_SHADOW) ||
-                      ((ti->parent.format->style & EVAS_TEXT_STYLE_MASK_BASIC) == EVAS_TEXT_STYLE_OUTLINE_SOFT_SHADOW) ||
-                      (ti->parent.format->style == EVAS_TEXT_STYLE_SOFT_OUTLINE))
-                    {
-                       have_outline = EINA_TRUE;
-                    }
+                  shadows = eina_list_append(shadows, itr);
                }
-
+             if ((ti->parent.format->style & EVAS_TEXT_STYLE_MASK_BASIC) ==
+                 EVAS_TEXT_STYLE_GLOW)
+               {
+                  glows = eina_list_append(glows, itr);
+               }
+             if (((ti->parent.format->style & EVAS_TEXT_STYLE_MASK_BASIC) == EVAS_TEXT_STYLE_OUTLINE) ||
+                 ((ti->parent.format->style & EVAS_TEXT_STYLE_MASK_BASIC) == EVAS_TEXT_STYLE_OUTLINE_SHADOW) ||
+                 ((ti->parent.format->style & EVAS_TEXT_STYLE_MASK_BASIC) == EVAS_TEXT_STYLE_OUTLINE_SOFT_SHADOW) ||
+                 (ti->parent.format->style == EVAS_TEXT_STYLE_SOFT_OUTLINE))
+               {
+                  outlines = eina_list_append(outlines, itr);
+               }
           }
 
+        /* Draw background */
         DRAW_FORMAT(backing, 0, ln->h);
      }
    ITEM_WALK_END();
@@ -10935,182 +10958,185 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
    /* prepare everything for text draw */
 
    /* shadows */
-   if (have_shadow)
+   EINA_LIST_FREE(shadows, itr)
      {
-        ITEM_WALK()
-          {
-             int shad_dst, shad_sz, dx, dy, haveshad;
-             Evas_Object_Textblock_Text_Item *ti;
-             ti = (itr->type == EVAS_TEXTBLOCK_ITEM_TEXT) ? _ITEM_TEXT(itr) : NULL;
-             if (!ti) continue;
+        int shad_dst, shad_sz, dx, dy, haveshad;
+        Evas_Object_Textblock_Text_Item *ti;
+        Evas_Coord yoff;
 
-             shad_dst = shad_sz = dx = dy = haveshad = 0;
-             switch (ti->parent.format->style & EVAS_TEXT_STYLE_MASK_BASIC)
+        ti = (itr->type == EVAS_TEXTBLOCK_ITEM_TEXT) ? _ITEM_TEXT(itr) : NULL;
+        if (!ti) continue;
+
+        yoff = itr->yoff;
+        ln = itr->ln;
+
+        shad_dst = shad_sz = dx = dy = haveshad = 0;
+        switch (ti->parent.format->style & EVAS_TEXT_STYLE_MASK_BASIC)
+          {
+           case EVAS_TEXT_STYLE_SHADOW:
+              shad_dst = 1;
+              haveshad = 1;
+              break;
+           case EVAS_TEXT_STYLE_OUTLINE_SOFT_SHADOW:
+              shad_dst = 1;
+              shad_sz = 2;
+              haveshad = 1;
+              break;
+           case EVAS_TEXT_STYLE_OUTLINE_SHADOW:
+           case EVAS_TEXT_STYLE_FAR_SHADOW:
+              shad_dst = 2;
+              haveshad = 1;
+              break;
+           case EVAS_TEXT_STYLE_FAR_SOFT_SHADOW:
+              shad_dst = 2;
+              shad_sz = 2;
+              haveshad = 1;
+              break;
+           case EVAS_TEXT_STYLE_SOFT_SHADOW:
+              shad_dst = 1;
+              shad_sz = 2;
+              haveshad = 1;
+              break;
+           default:
+              break;
+          }
+        if (haveshad)
+          {
+             if (shad_dst > 0)
                {
-                case EVAS_TEXT_STYLE_SHADOW:
-                   shad_dst = 1;
-                   haveshad = 1;
+                  switch (ti->parent.format->style & EVAS_TEXT_STYLE_MASK_SHADOW_DIRECTION)
+                    {
+                     case EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_RIGHT:
+                        dx = 1;
+                        dy = 1;
+                        break;
+                     case EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM:
+                        dx = 0;
+                        dy = 1;
+                        break;
+                     case EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_LEFT:
+                        dx = -1;
+                        dy = 1;
+                        break;
+                     case EVAS_TEXT_STYLE_SHADOW_DIRECTION_LEFT:
+                        dx = -1;
+                        dy = 0;
+                        break;
+                     case EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP_LEFT:
+                        dx = -1;
+                        dy = -1;
+                        break;
+                     case EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP:
+                        dx = 0;
+                        dy = -1;
+                        break;
+                     case EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP_RIGHT:
+                        dx = 1;
+                        dy = -1;
+                        break;
+                     case EVAS_TEXT_STYLE_SHADOW_DIRECTION_RIGHT:
+                        dx = 1;
+                        dy = 0;
+                     default:
+                        break;
+                    }
+                  dx *= shad_dst;
+                  dy *= shad_dst;
+               }
+             switch (shad_sz)
+               {
+                case 0:
+                   COLOR_SET(shadow);
+                   DRAW_TEXT(dx, dy);
                    break;
-                case EVAS_TEXT_STYLE_OUTLINE_SOFT_SHADOW:
-                   shad_dst = 1;
-                   shad_sz = 2;
-                   haveshad = 1;
-                   break;
-                case EVAS_TEXT_STYLE_OUTLINE_SHADOW:
-                case EVAS_TEXT_STYLE_FAR_SHADOW:
-                   shad_dst = 2;
-                   haveshad = 1;
-                   break;
-                case EVAS_TEXT_STYLE_FAR_SOFT_SHADOW:
-                   shad_dst = 2;
-                   shad_sz = 2;
-                   haveshad = 1;
-                   break;
-                case EVAS_TEXT_STYLE_SOFT_SHADOW:
-                   shad_dst = 1;
-                   shad_sz = 2;
-                   haveshad = 1;
+                case 2:
+                   for (j = 0; j < 5; j++)
+                     {
+                        for (i = 0; i < 5; i++)
+                          {
+                             if (vals[i][j] != 0)
+                               {
+                                  COLOR_SET_AMUL(shadow, vals[i][j] * 50);
+                                  DRAW_TEXT(i - 2 + dx, j - 2 + dy);
+                               }
+                          }
+                     }
                    break;
                 default:
                    break;
                }
-             if (haveshad)
-               {
-                  if (shad_dst > 0)
-                    {
-                       switch (ti->parent.format->style & EVAS_TEXT_STYLE_MASK_SHADOW_DIRECTION)
-                         {
-                          case EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_RIGHT:
-                             dx = 1;
-                             dy = 1;
-                             break;
-                          case EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM:
-                             dx = 0;
-                             dy = 1;
-                             break;
-                          case EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_LEFT:
-                             dx = -1;
-                             dy = 1;
-                             break;
-                          case EVAS_TEXT_STYLE_SHADOW_DIRECTION_LEFT:
-                             dx = -1;
-                             dy = 0;
-                             break;
-                          case EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP_LEFT:
-                             dx = -1;
-                             dy = -1;
-                             break;
-                          case EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP:
-                             dx = 0;
-                             dy = -1;
-                             break;
-                          case EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP_RIGHT:
-                             dx = 1;
-                             dy = -1;
-                             break;
-                          case EVAS_TEXT_STYLE_SHADOW_DIRECTION_RIGHT:
-                             dx = 1;
-                             dy = 0;
-                          default:
-                             break;
-                         }
-                       dx *= shad_dst;
-                       dy *= shad_dst;
-                    }
-                  switch (shad_sz)
-                    {
-                     case 0:
-                        COLOR_SET(shadow);
-                        DRAW_TEXT(dx, dy);
-                        break;
-                     case 2:
-                        for (j = 0; j < 5; j++)
-                          {
-                             for (i = 0; i < 5; i++)
-                               {
-                                  if (vals[i][j] != 0)
-                                    {
-                                       COLOR_SET_AMUL(shadow, vals[i][j] * 50);
-                                       DRAW_TEXT(i - 2 + dx, j - 2 + dy);
-                                    }
-                               }
-                          }
-                        break;
-                     default:
-                        break;
-                    }
-               }
           }
-        ITEM_WALK_END();
      }
 
    /* glows */
-   if (have_glow)
+   EINA_LIST_FREE(glows, itr)
      {
-        ITEM_WALK()
-          {
-             Evas_Object_Textblock_Text_Item *ti;
-             ti = (itr->type == EVAS_TEXTBLOCK_ITEM_TEXT) ? _ITEM_TEXT(itr) : NULL;
-             if (!ti) continue;
+        Evas_Object_Textblock_Text_Item *ti;
+        Evas_Coord yoff;
 
-             if ((ti->parent.format->style & EVAS_TEXT_STYLE_MASK_BASIC) == EVAS_TEXT_STYLE_GLOW)
+        ti = (itr->type == EVAS_TEXTBLOCK_ITEM_TEXT) ? _ITEM_TEXT(itr) : NULL;
+        if (!ti) continue;
+
+        yoff = itr->yoff;
+        ln = itr->ln;
+
+        if ((ti->parent.format->style & EVAS_TEXT_STYLE_MASK_BASIC) == EVAS_TEXT_STYLE_GLOW)
+          {
+             for (j = 0; j < 5; j++)
                {
-                  for (j = 0; j < 5; j++)
+                  for (i = 0; i < 5; i++)
                     {
-                       for (i = 0; i < 5; i++)
+                       if (vals[i][j] != 0)
                          {
-                            if (vals[i][j] != 0)
-                              {
-                                 COLOR_SET_AMUL(glow, vals[i][j] * 50);
-                                 DRAW_TEXT(i - 2, j - 2);
-                              }
+                            COLOR_SET_AMUL(glow, vals[i][j] * 50);
+                            DRAW_TEXT(i - 2, j - 2);
                          }
                     }
-                  COLOR_SET(glow2);
-                  DRAW_TEXT(-1, 0);
-                  DRAW_TEXT(1, 0);
-                  DRAW_TEXT(0, -1);
-                  DRAW_TEXT(0, 1);
                }
+             COLOR_SET(glow2);
+             DRAW_TEXT(-1, 0);
+             DRAW_TEXT(1, 0);
+             DRAW_TEXT(0, -1);
+             DRAW_TEXT(0, 1);
           }
-        ITEM_WALK_END();
      }
 
    /* outlines */
-   if (have_outline)
+   EINA_LIST_FREE(outlines, itr)
      {
-        ITEM_WALK()
-          {
-             Evas_Object_Textblock_Text_Item *ti;
-             ti = (itr->type == EVAS_TEXTBLOCK_ITEM_TEXT) ? _ITEM_TEXT(itr) : NULL;
-             if (!ti) continue;
+        Evas_Object_Textblock_Text_Item *ti;
+        Evas_Coord yoff;
 
-             if (((ti->parent.format->style & EVAS_TEXT_STYLE_MASK_BASIC) == EVAS_TEXT_STYLE_OUTLINE) ||
-                 ((ti->parent.format->style & EVAS_TEXT_STYLE_MASK_BASIC) == EVAS_TEXT_STYLE_OUTLINE_SHADOW) ||
-                 ((ti->parent.format->style & EVAS_TEXT_STYLE_MASK_BASIC) == EVAS_TEXT_STYLE_OUTLINE_SOFT_SHADOW))
+        ti = (itr->type == EVAS_TEXTBLOCK_ITEM_TEXT) ? _ITEM_TEXT(itr) : NULL;
+        if (!ti) continue;
+
+        yoff = itr->yoff;
+        ln = itr->ln;
+
+        if (((ti->parent.format->style & EVAS_TEXT_STYLE_MASK_BASIC) == EVAS_TEXT_STYLE_OUTLINE) ||
+            ((ti->parent.format->style & EVAS_TEXT_STYLE_MASK_BASIC) == EVAS_TEXT_STYLE_OUTLINE_SHADOW) ||
+            ((ti->parent.format->style & EVAS_TEXT_STYLE_MASK_BASIC) == EVAS_TEXT_STYLE_OUTLINE_SOFT_SHADOW))
+          {
+             COLOR_SET(outline);
+             DRAW_TEXT(-1, 0);
+             DRAW_TEXT(1, 0);
+             DRAW_TEXT(0, -1);
+             DRAW_TEXT(0, 1);
+          }
+        else if (ti->parent.format->style == EVAS_TEXT_STYLE_SOFT_OUTLINE)
+          {
+             for (j = 0; j < 5; j++)
                {
-                  COLOR_SET(outline);
-                  DRAW_TEXT(-1, 0);
-                  DRAW_TEXT(1, 0);
-                  DRAW_TEXT(0, -1);
-                  DRAW_TEXT(0, 1);
-               }
-             else if (ti->parent.format->style == EVAS_TEXT_STYLE_SOFT_OUTLINE)
-               {
-                  for (j = 0; j < 5; j++)
+                  for (i = 0; i < 5; i++)
                     {
-                       for (i = 0; i < 5; i++)
+                       if (((i != 2) || (j != 2)) && (vals[i][j] != 0))
                          {
-                            if (((i != 2) || (j != 2)) && (vals[i][j] != 0))
-                              {
-                                 COLOR_SET_AMUL(outline, vals[i][j] * 50);
-                                 DRAW_TEXT(i - 2, j - 2);
-                              }
+                            COLOR_SET_AMUL(outline, vals[i][j] * 50);
+                            DRAW_TEXT(i - 2, j - 2);
                          }
                     }
                }
           }
-        ITEM_WALK_END();
      }
 
    /* normal text and lines */
