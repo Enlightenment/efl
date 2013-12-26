@@ -650,9 +650,10 @@ eo2_add_internal_start(const char *file, int line, const Eo_Class *klass_id, Eo 
 #endif
    Eo_Id obj_id = _eo_id_allocate(obj);
    obj->header.id = obj_id;
-   eo_parent_set((Eo *)obj_id, parent_id);
 
    _eo_condtor_reset(obj);
+
+   eo2_do((Eo *)obj_id, eo2_parent_set(parent_id));
 
    return (Eo *)obj_id;
 }
@@ -1655,7 +1656,11 @@ eo_unref(const Eo *obj_id)
 EAPI void
 eo_del(const Eo *obj)
 {
-   eo_do((Eo *) obj, eo_parent_set(NULL));
+   EO_OBJ_POINTER_RETURN(obj, _obj);
+   if (_obj->klass->desc->version == EO2_VERSION)
+     eo2_do((Eo *) obj, eo2_parent_set(NULL));
+   else
+     eo_do((Eo *) obj, eo_parent_set(NULL));
    eo_unref(obj);
 }
 

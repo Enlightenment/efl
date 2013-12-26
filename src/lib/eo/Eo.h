@@ -1391,6 +1391,8 @@ eo2_base_data_del(const char *key);
  * @see eo_parent_get()
  */
 #define eo_parent_set(parent) EO_BASE_ID(EO_BASE_SUB_ID_PARENT_SET), EO_TYPECHECK(Eo *, parent)
+EAPI void
+eo2_parent_set(Eo *parent_id);
 
 /**
  * @def eo_parent_get
@@ -1400,6 +1402,8 @@ eo2_base_data_del(const char *key);
  * @see eo_parent_set()
  */
 #define eo_parent_get(parent) EO_BASE_ID(EO_BASE_SUB_ID_PARENT_GET), EO_TYPECHECK(Eo **, parent)
+EAPI Eo *
+eo2_parent_get();
 
 /**
  * @def eo_children_iterator_new
@@ -1410,6 +1414,8 @@ eo2_base_data_del(const char *key);
  * @see eo_parent_set()
  */
 #define eo_children_iterator_new(it) EO_BASE_ID(EO_BASE_SUB_ID_CHILDREN_ITERATOR_NEW), EO_TYPECHECK(Eina_Iterator **, it)
+EAPI Eina_Iterator *
+eo2_children_iterator_new();
 
 /**
  * @def eo_wref_add
