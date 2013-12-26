@@ -61,6 +61,7 @@ typedef struct _Eo_Class _Eo_Class;
 typedef struct _Eo_Object _Eo_Object;
 typedef struct _Eo_Base Eo_Base;
 typedef struct _Eo_Internal _Eo;
+typedef void (*eo2_constructor_type)(void);
 
 /* Retrieves the pointer to the object from the id */
 static inline _Eo_Object *_eo_obj_pointer_get(const Eo_Id obj_id);
