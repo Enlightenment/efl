@@ -526,6 +526,14 @@ _button_resize(Evas_Object *obj,
 }
 
 static void
+_item_signal_emit_hook(Elm_Object_Item *it,
+                       const char *emission,
+                       const char *source)
+{
+   elm_layout_signal_emit(VIEW(it), emission, source);
+}
+
+static void
 _item_text_set_hook(Elm_Object_Item *it,
                     const char *part,
                     const char *label)
@@ -661,6 +669,8 @@ _button_item_add(Elm_Multibuttonentry_Smart_Data *sd,
    elm_widget_item_del_pre_hook_set(item, _item_del_pre_hook);
    elm_widget_item_text_set_hook_set(item, _item_text_set_hook);
    elm_widget_item_text_get_hook_set(item, _item_text_get_hook);
+   elm_widget_item_signal_emit_hook_set(item, _item_signal_emit_hook);
+
    elm_widget_item_data_set(item, data);
    _button_resize(obj, btn, &rw, &vw);
 
