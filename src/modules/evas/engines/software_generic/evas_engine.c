@@ -2127,6 +2127,7 @@ _draw_thread_font_draw(void *data)
 {
    Evas_Thread_Command_Font *font = data;
    RGBA_Draw_Context dc;
+   memset(&dc, 0, sizeof(dc));
 
    dc.font_ext.data = font->font_ext_data;
    dc.font_ext.func.gl_new = font->gl_new;
