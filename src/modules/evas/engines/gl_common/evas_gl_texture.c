@@ -765,6 +765,8 @@ evas_gl_texture_pool_empty(Evas_GL_Texture_Pool *pt)
 
    glDeleteTextures(1, &(pt->texture));
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   if (pt->gc->pipe[0].shader.cur_tex == pt->texture)
+     pt->gc->pipe[0].shader.cur_tex = 0;
    if (pt->fb)
      {
         glsym_glDeleteFramebuffers(1, &(pt->fb));
