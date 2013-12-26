@@ -139,7 +139,7 @@ _wref_count(Private_Data *pd)
       return 0;
 
    Eo ***itr;
-   for (itr = pd->wrefs ; *itr ; itr++)
+   for (itr = pd->wrefs; *itr; itr++)
       count++;
 
    return count;
@@ -190,7 +190,7 @@ _wref_del(Eo *obj, void *class_data, Eo **wref)
 
      {
         Eo ***itr;
-        for (itr = pd->wrefs ; *itr ; itr++)
+        for (itr = pd->wrefs; *itr; itr++)
           {
              if (*itr == wref)
                {
@@ -233,7 +233,7 @@ _wref_destruct(Private_Data *pd)
    if (!pd->wrefs)
       return;
 
-   for (itr = pd->wrefs ; *itr ; itr++)
+   for (itr = pd->wrefs; *itr; itr++)
      {
         **itr = NULL;
      }
@@ -274,7 +274,7 @@ _eo_callback_remove(Private_Data *pd, Eo_Callback_Description *cb)
    if (pd->callbacks == cb)
       pd->callbacks = cb->next;
 
-   for ( ; itr ; )
+   for ( ; itr; )
      {
         Eo_Callback_Description *titr = itr;
         itr = itr->next;
@@ -321,7 +321,7 @@ _eo_callbacks_clear(Private_Data *pd)
 
    pd->deletions_waiting = EINA_FALSE;
 
-   for (cb = pd->callbacks ; cb ; )
+   for (cb = pd->callbacks; cb; )
      {
         Eo_Callback_Description *titr = cb;
         cb = cb->next;
@@ -337,7 +337,7 @@ static void
 _eo_callbacks_sorted_insert(Private_Data *pd, Eo_Callback_Description *cb)
 {
    Eo_Callback_Description *itr, *itrp = NULL;
-   for (itr = pd->callbacks ; itr && (itr->priority < cb->priority) ;
+   for (itr = pd->callbacks; itr && (itr->priority < cb->priority);
          itr = itr->next)
      {
         itrp = itr;
@@ -394,7 +394,7 @@ _ev_cb_del(Eo *obj, void *class_data,
    Eo_Callback_Description *cb;
    Private_Data *pd = (Private_Data *) class_data;
 
-   for (cb = pd->callbacks ; cb ; cb = cb->next)
+   for (cb = pd->callbacks; cb; cb = cb->next)
      {
         if ((cb->items.item.desc == desc) && (cb->items.item.func == func) &&
               (cb->func_data == user_data))
@@ -452,7 +452,7 @@ _ev_cb_array_del(Eo *obj, void *class_data,
    Eo_Callback_Description *cb;
    Private_Data *pd = (Private_Data *) class_data;
 
-   for (cb = pd->callbacks ; cb ; cb = cb->next)
+   for (cb = pd->callbacks; cb; cb = cb->next)
      {
         if ((cb->items.item_array == array) && (cb->func_data == user_data))
           {
@@ -488,7 +488,7 @@ _ev_cb_call(Eo *obj_id, void *class_data,
    _eo_ref(obj);
    pd->walking_list++;
 
-   for (cb = pd->callbacks ; cb ; cb = cb->next)
+   for (cb = pd->callbacks; cb; cb = cb->next)
      {
         if (!cb->delete_me)
           {
@@ -496,7 +496,7 @@ _ev_cb_call(Eo *obj_id, void *class_data,
                {
                   const Eo_Callback_Array_Item *it;
 
-                  for (it = cb->items.item_array ; it->func ; it++)
+                  for (it = cb->items.item_array; it->func; it++)
                     {
                        if (it->desc != desc)
                           continue;
