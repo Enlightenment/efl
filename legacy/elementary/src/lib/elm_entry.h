@@ -207,30 +207,11 @@
  *
  * This widget emits the following signals, besides the ones sent from
  * @ref Layout:
- * @li "changed": The text within the entry was changed.
- * @li "changed,user": The text within the entry was changed because of user interaction.
- * @li "activated": The enter key was pressed on a single line entry.
  * @li "aborted": The escape key was pressed on a single line entry. (since 1.7)
- * @li "press": A mouse button has been pressed on the entry.
- * @li "longpressed": A mouse button has been pressed and held for a couple
- * seconds.
- * @li "clicked": The entry has been clicked (mouse press and release).
- * @li "clicked,double": The entry has been double clicked.
- * @li "clicked,triple": The entry has been triple clicked.
- * @li "focused": The entry has received focus.
- * @li "unfocused": The entry has lost focus.
- * @li "selection,paste": A paste of the clipboard contents was requested.
- * @li "selection,copy": A copy of the selected text into the clipboard was
- * requested.
- * @li "selection,cut": A cut of the selected text into the clipboard was
- * requested.
- * @li "selection,start": A selection has begun and no previous selection
- * existed.
- * @li "selection,changed": The current selection has changed.
- * @li "selection,cleared": The current selection has been cleared.
- * @li "cursor,changed": The cursor has changed position.
- * @li "cursor,changed,manual": The cursor has changed position manually.
+ * @li "activated": The enter key was pressed on a single line entry.
  * @li "anchor,clicked": An anchor has been clicked. The event_info
+ * parameter for the callback will be an #Elm_Entry_Anchor_Info.
+ * @li "anchor,down": Mouse button has been pressed on an anchor. The event_info
  * parameter for the callback will be an #Elm_Entry_Anchor_Info.
  * @li "anchor,in": Mouse cursor has moved into an anchor. The event_info
  * parameter for the callback will be an #Elm_Entry_Anchor_Info.
@@ -238,10 +219,29 @@
  * parameter for the callback will be an #Elm_Entry_Anchor_Info.
  * @li "anchor,up": Mouse button has been unpressed on an anchor. The event_info
  * parameter for the callback will be an #Elm_Entry_Anchor_Info.
- * @li "anchor,down": Mouse button has been pressed on an anchor. The event_info
- * parameter for the callback will be an #Elm_Entry_Anchor_Info.
- * @li "preedit,changed": The preedit string has changed.
+ * @li "changed": The text within the entry was changed.
+ * @li "changed,user": The text within the entry was changed because of user interaction.
+ * @li "clicked": The entry has been clicked (mouse press and release).
+ * @li "clicked,double": The entry has been double clicked.
+ * @li "clicked,triple": The entry has been triple clicked.
+ * @li "cursor,changed": The cursor has changed position.
+ * @li "cursor,changed,manual": The cursor has changed position manually.
+ * @li "focused": The entry has received focus.
+ * @li "unfocused": The entry has lost focus.
  * @li "language,changed": Program language changed.
+ * @li "longpressed": A mouse button has been pressed and held for a couple
+ * @li "preedit,changed": The preedit string has changed.
+ * @li "press": A mouse button has been pressed on the entry.
+ * seconds.
+ * @li "selection,changed": The current selection has changed.
+ * @li "selection,cleared": The current selection has been cleared.
+ * @li "selection,copy": A copy of the selected text into the clipboard was
+ * requested.
+ * @li "selection,cut": A cut of the selected text into the clipboard was
+ * requested.
+ * @li "selection,paste": A paste of the clipboard contents was requested.
+ * @li "selection,start": A selection has begun and no previous selection
+ * existed.
  * @li "text,set,done": Whole text has been set to the entry.
  *
  * Default content parts of the entry items that you can use for are:
