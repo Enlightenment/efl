@@ -314,7 +314,6 @@ EAPI Ecore_X_Window
 ecore_x_window_permanent_create(Ecore_X_Window parent,
                                 Ecore_X_Atom unique_atom)
 {
-   xcb_connection_t *conn;
    Ecore_X_Window win, win2, realwin;
    uint32_t mask, mask_list[9];
    xcb_get_property_reply_t *reply;
@@ -322,13 +321,16 @@ ecore_x_window_permanent_create(Ecore_X_Window parent,
    unsigned long ldata, *datap;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   conn = xcb_connect(name, NULL);
-   if (!conn) return 0;
 
-   xcb_grab_server(conn);
-   cookie = xcb_get_property_unchecked(conn, 0, parent, unique_atom,
-                                       ECORE_X_ATOM_WINDOW, 0, 0x7fffffff);
-   reply = xcb_get_property_reply(conn, cookie, NULL);
+   if (!_ecore_xcb_conn) return 0;
+
+   CHECK_XCB_CONN;
+
+   xcb_grab_server(_ecore_xcb_conn);
+   cookie = 
+     xcb_get_property_unchecked(_ecore_xcb_conn, 0, parent, unique_atom,
+                                ECORE_X_ATOM_WINDOW, 0, 0x7fffffff);
+   reply = xcb_get_property_reply(_ecore_xcb_conn, cookie, NULL);
    if (reply)
      {
         if ((reply->type == ECORE_X_ATOM_WINDOW) && (reply->format == 32) &&
@@ -337,13 +339,14 @@ ecore_x_window_permanent_create(Ecore_X_Window parent,
           {
              win = (Ecore_X_Window)(*datap);
              free(reply);
-             cookie = xcb_get_property_unchecked(conn, 0, win, unique_atom,
-                                                 ECORE_X_ATOM_WINDOW, 0, 0x7fffffff);
-             reply = xcb_get_property_reply(conn, cookie, NULL);
+             cookie = 
+               xcb_get_property_unchecked(_ecore_xcb_conn, 0, win, unique_atom,
+                                          ECORE_X_ATOM_WINDOW, 0, 0x7fffffff);
+             reply = xcb_get_property_reply(_ecore_xcb_conn, cookie, NULL);
              if (reply)
                {
-                  if ((reply->type == ECORE_X_ATOM_WINDOW) && (reply->format == 32) &&
-                      (reply->value_len == 1) &&
+                  if ((reply->type == ECORE_X_ATOM_WINDOW) && 
+                      (reply->format == 32) && (reply->value_len == 1) &&
                       ((datap = (unsigned long *)xcb_get_property_value(reply))))
                     {
                        win2 = (Ecore_X_Window)(*datap);
@@ -357,9 +360,8 @@ ecore_x_window_permanent_create(Ecore_X_Window parent,
      }
    if (realwin != 0)
      {
-        xcb_ungrab_server(conn);
-        xcb_flush(conn);
-        xcb_disconnect(conn);
+        xcb_ungrab_server(_ecore_xcb_conn);
+        xcb_flush(_ecore_xcb_conn);
         return realwin;
      }
    mask = (XCB_CW_BACK_PIXMAP | XCB_CW_BORDER_PIXEL | XCB_CW_BIT_GRAVITY |
@@ -375,20 +377,22 @@ ecore_x_window_permanent_create(Ecore_X_Window parent,
    mask_list[6] = 0;
    mask_list[7] = XCB_EVENT_MASK_NO_EVENT;
    mask_list[8] = XCB_EVENT_MASK_NO_EVENT;
-   win = xcb_generate_id(conn);
-   xcb_create_window(conn, XCB_COPY_FROM_PARENT,
+   win = xcb_generate_id(_ecore_xcb_conn);
+   xcb_create_window(_ecore_xcb_conn, XCB_COPY_FROM_PARENT,
                      win, parent, -77, -77, 7, 7, 0,
                      XCB_WINDOW_CLASS_INPUT_OUTPUT,
                      XCB_COPY_FROM_PARENT, mask, mask_list);
    ldata = (unsigned long)win;
-   xcb_change_property(conn, XCB_PROP_MODE_REPLACE, win, unique_atom,
+   xcb_change_property(_ecore_xcb_conn, XCB_PROP_MODE_REPLACE, 
+                       win, unique_atom,ECORE_X_ATOM_WINDOW, 32, 1, 
+                       (unsigned char *)ldata);
+   xcb_change_property(_ecore_xcb_conn, XCB_PROP_MODE_REPLACE, 
+                       parent, unique_atom,
                        ECORE_X_ATOM_WINDOW, 32, 1, (unsigned char *)ldata);
-   xcb_change_property(conn, XCB_PROP_MODE_REPLACE, parent, unique_atom,
-                       ECORE_X_ATOM_WINDOW, 32, 1, (unsigned char *)ldata);
-   xcb_set_close_down_mode(conn, XCB_CLOSE_DOWN_RETAIN_PERMANENT);
-   xcb_ungrab_server(conn);
-   xcb_flush(conn);
-   xcb_disconnect(conn);
+   xcb_set_close_down_mode(_ecore_xcb_conn, XCB_CLOSE_DOWN_RETAIN_PERMANENT);
+   xcb_ungrab_server(_ecore_xcb_conn);
+   xcb_flush(_ecore_xcb_conn);
+
    return win;
 }
 
