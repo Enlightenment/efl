@@ -212,14 +212,12 @@ _eo_del_internal(const char *file, int line, _Eo_Object *obj)
    /* We need that for the event callbacks that may ref/unref. */
    obj->refcount++;
 
-   eo_do(_eo_id_get(obj), eo_event_callback_call(EO_EV_DEL, NULL, NULL));
-
    const _Eo_Class *klass = obj->klass;
 
    if (klass->desc->version == EO2_VERSION)
-     eo2_do((Eo *)obj->obj_id, eo2_event_callback_call(EO_EV_DEL, NULL););
+     eo2_do(_eo_id_get(obj), eo2_event_callback_call(EO_EV_DEL, NULL));
    else
-     eo_do((Eo *) obj->obj_id, eo_event_callback_call(EO_EV_DEL, NULL, NULL));
+     eo_do(_eo_id_get(obj), eo_event_callback_call(EO_EV_DEL, NULL, NULL));
 
    _eo_condtor_reset(obj);
 
@@ -227,10 +225,10 @@ _eo_del_internal(const char *file, int line, _Eo_Object *obj)
      {
         // FIXME: eo2
         do_err = EINA_FALSE;
-        eo2_do((Eo *)obj->obj_id, eo2_destructor(););
+        eo2_do(_eo_id_get(obj), eo2_destructor(););
      }
    else
-     do_err = !eo_do((Eo *)obj->obj_id, eo_destructor());
+     do_err = !eo_do(_eo_id_get(obj), eo_destructor());
 
    if (EINA_UNLIKELY(do_err))
      {

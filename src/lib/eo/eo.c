@@ -268,10 +268,10 @@ _eo2_kls_itr_next(const _Eo_Class *orig_kls, const _Eo_Class *cur_klass)
    /* Find the kls itr. */
    kls_itr = orig_kls->mro;
    while (*kls_itr && (*kls_itr != cur_klass))
-      kls_itr++;
+     kls_itr++;
 
    if (*kls_itr)
-        return *(++kls_itr);
+     return *(++kls_itr);
 
    return NULL;
 }
@@ -281,8 +281,8 @@ _eo2_kls_itr_next(const _Eo_Class *orig_kls, const _Eo_Class *cur_klass)
 #define EO2_CALL_STACK_DEPTH 5
 typedef struct _Eo2_Stack_Frame
 {
-    Eo               *obj_id;
-   _Eo               *obj;
+   Eo                *obj_id;
+   _Eo_Object        *obj;
    const _Eo_Class   *klass;
    void              *obj_data;
 
@@ -306,14 +306,16 @@ static Eo2_Call_Stack eo2_call_stack = {
 EAPI int
 eo2_call_stack_depth()
 {
-   return ((eo2_call_stack.frame_ptr == NULL) ? 0 :
-           1 + (eo2_call_stack.frame_ptr - eo2_call_stack.stack));
+   if (eo2_call_stack.frame_ptr == NULL)
+     return 0;
+   else
+     return (1 + (eo2_call_stack.frame_ptr - eo2_call_stack.stack));
 }
 
 EAPI Eina_Bool
 eo2_do_start(Eo *obj_id, const Eina_Bool do_super, const char *file EINA_UNUSED, const char *func EINA_UNUSED, int line EINA_UNUSED)
 {
-   _Eo * obj;
+   _Eo_Object * obj;
    const _Eo_Class *klass;
    Eo2_Stack_Frame *fptr;
 
@@ -363,8 +365,10 @@ eo2_class_do_start(const Eo_Class *klass_id, const Eina_Bool do_super, const cha
    Eo2_Stack_Frame *fptr;
    const _Eo_Class *klass;
 
+   klass = NULL;
    fptr = eo2_call_stack.frame_ptr;
-   if ((fptr != NULL) && (fptr->klass->class_id == (Eo_Class_Id) klass_id))
+
+   if ((fptr != NULL) && (_eo_class_id_get(fptr->klass) == (Eo *)klass_id))
      {
         if (do_super)
           klass = _eo2_kls_itr_next(fptr->klass, fptr->klass);
@@ -374,10 +378,11 @@ eo2_class_do_start(const Eo_Class *klass_id, const Eina_Bool do_super, const cha
      }
    else
      {
-        klass = _eo_class_pointer_get(klass_id);
-        EO_MAGIC_RETURN_VAL(klass, EO_CLASS_EINA_MAGIC, EINA_FALSE);
+        EO_CLASS_POINTER_RETURN_VAL(klass_id, _klass, EINA_FALSE);
         if (do_super)
-          klass = _eo2_kls_itr_next(klass, klass);
+          klass = _eo2_kls_itr_next(_klass, _klass);
+        else
+          klass = _klass;
         if (fptr == NULL)
           eo2_call_stack.frame_ptr = &eo2_call_stack.stack[0];
         else
@@ -432,17 +437,18 @@ EAPI Eina_Bool
 eo2_call_resolve_internal(const Eo_Class *klass_id, const Eo_Op op, Eo2_Op_Call_Data *call)
 {
    Eo2_Stack_Frame *fptr;
-   const _Eo * obj;
+   const _Eo_Object * obj;
    const _Eo_Class *klass;
    const op_type_funcs *func;
 
    fptr = eo2_call_stack.frame_ptr;
    obj = fptr->obj;
+   klass = NULL;
 
    if (klass_id)
      {
-        klass = _eo_class_pointer_get(klass_id);
-        EO_MAGIC_RETURN_VAL(klass, EO_CLASS_EINA_MAGIC, EINA_FALSE);
+        EO_CLASS_POINTER_RETURN_VAL(klass_id, _klass, EINA_FALSE);
+        klass = _klass;
      }
    else
      {
@@ -622,8 +628,7 @@ _eo2_class_funcs_set(_Eo_Class *klass)
 EAPI Eo *
 eo2_add_internal_start(const char *file, int line, const Eo_Class *klass_id, Eo *parent_id)
 {
-   _Eo_Class *klass = _eo_class_pointer_get(klass_id);
-   EO_MAGIC_RETURN_VAL(klass, EO_CLASS_EINA_MAGIC, NULL);
+   EO_CLASS_POINTER_RETURN_VAL(klass_id, klass, NULL);
 
    if (parent_id)
      {
@@ -636,7 +641,7 @@ eo2_add_internal_start(const char *file, int line, const Eo_Class *klass_id, Eo 
         return NULL;
      }
 
-   _Eo *obj = calloc(1, klass->obj_size);
+   _Eo_Object *obj = calloc(1, klass->obj_size);
    obj->refcount++;
    obj->klass = klass;
 
@@ -644,7 +649,7 @@ eo2_add_internal_start(const char *file, int line, const Eo_Class *klass_id, Eo 
    EINA_MAGIC_SET(obj, EO_EINA_MAGIC);
 #endif
    Eo_Id obj_id = _eo_id_allocate(obj);
-   obj->obj_id = obj_id;
+   obj->header.id = obj_id;
    eo_parent_set((Eo *)obj_id, parent_id);
 
    _eo_condtor_reset(obj);
