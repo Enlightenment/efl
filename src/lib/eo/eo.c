@@ -283,7 +283,7 @@ _eo2_kls_itr_next(const _Eo_Class *orig_kls, const _Eo_Class *cur_klass)
 typedef struct _Eo2_Stack_Frame
 {
    const Eo          *eo_id;
-   Eo_Base           *base;
+   _Eo_Object        *obj;
    const _Eo_Class   *cur_klass;
    void              *obj_data;
 
@@ -331,7 +331,7 @@ _eo2_obj_do(const Eo *eo_id, const Eo_Class *cur_klass_id,
 
    if (pfptr)
      {
-        obj = (_Eo_Object *)pfptr->base;
+        obj = pfptr->obj;
         memcpy(fptr, pfptr, sizeof(Eo2_Stack_Frame));
      }
    else
@@ -339,7 +339,7 @@ _eo2_obj_do(const Eo *eo_id, const Eo_Class *cur_klass_id,
         EO_OBJ_POINTER_RETURN_VAL(eo_id, _obj, EINA_FALSE);
         obj = _obj;
         fptr->eo_id = eo_id;
-        fptr->base = (Eo_Base *)_obj;
+        fptr->obj = _obj;
      }
 
    if (cur_klass_id)
@@ -350,7 +350,7 @@ _eo2_obj_do(const Eo *eo_id, const Eo_Class *cur_klass_id,
    else
      klass = obj->klass;
 
-   if (klass != fptr->cur_klass)
+   if ((!pfptr) || (klass != fptr->cur_klass))
      {
         fptr->cur_klass = klass;
         fptr->obj_data = EO2_INVALID_DATA;
@@ -369,7 +369,7 @@ _eo2_class_do(const Eo *eo_id, const Eo_Class *cur_klass_id,
 
    if (pfptr)
      {
-        klass = (_Eo_Class *)pfptr->base;
+        klass = pfptr->cur_klass;
         memcpy(fptr, pfptr, sizeof(Eo2_Stack_Frame));
      }
    else
@@ -377,7 +377,8 @@ _eo2_class_do(const Eo *eo_id, const Eo_Class *cur_klass_id,
         EO_CLASS_POINTER_RETURN_VAL(eo_id, _klass, EINA_FALSE);
         klass = _klass;
         fptr->eo_id = eo_id;
-        fptr->base = (Eo_Base *)_klass;
+        fptr->obj = NULL;
+        fptr->obj_data = EO2_INVALID_DATA;
      }
 
    if(cur_klass_id)
@@ -387,8 +388,6 @@ _eo2_class_do(const Eo *eo_id, const Eo_Class *cur_klass_id,
      }
    else
      fptr->cur_klass = klass;
-
-   fptr->obj_data = EO2_INVALID_DATA;
 
    return EINA_TRUE;
 }
@@ -423,14 +422,14 @@ eo2_do_start(const Eo *eo_id, const Eo_Class *cur_klass_id, const char *file EIN
 }
 
 EAPI void
-eo2_do_end(const Eo **eo_id)
+eo2_do_end(const Eo **eo_id EINA_UNUSED)
 {
    Eo2_Stack_Frame *fptr;
 
    fptr = eo2_call_stack.frame_ptr;
 
-   if(!_eo_is_a_class(*eo_id))
-     _eo_unref((_Eo_Object *)fptr->base);
+   if(fptr->obj)
+     _eo_unref(fptr->obj);
 
    memset(fptr, 0, sizeof (Eo2_Stack_Frame));
    fptr->obj_data = EO2_INVALID_DATA;
@@ -442,7 +441,7 @@ eo2_do_end(const Eo **eo_id)
 }
 
 EAPI Eina_Bool
-eo2_call_resolve_internal(const Eo_Class *klass_id, const Eo_Op op, Eo2_Op_Call_Data *call)
+eo2_call_resolve(const Eo_Op op, Eo2_Op_Call_Data *call)
 {
    Eo2_Stack_Frame *fptr;
    const _Eo_Object * obj;
@@ -450,31 +449,20 @@ eo2_call_resolve_internal(const Eo_Class *klass_id, const Eo_Op op, Eo2_Op_Call_
    const op_type_funcs *func;
 
    fptr = eo2_call_stack.frame_ptr;
-   obj = (_Eo_Object *)fptr->base;
-   klass = NULL;
-
-   if (klass_id)
-     {
-        EO_CLASS_POINTER_RETURN_VAL(klass_id, _klass, EINA_FALSE);
-        klass = _klass;
-     }
-   else
-     {
-        klass = fptr->cur_klass;
-        if (!klass)
-          return EINA_FALSE;
-     }
+   obj = fptr->obj;
+   klass = fptr->cur_klass;
 
    func = _dich_func_get(klass, op);
-   if (EINA_LIKELY(func != NULL))
+   if (EINA_UNLIKELY(func == NULL))
      {
-        if (func->func == NULL)
-          {
-             ERR("you called a pure virtual func");
-             return EINA_FALSE;
-          }
-        call->klass = _eo_class_id_get(klass);
+        ERR("you called func %d which is unknown in class '%s'", op, klass->desc->name);
+        return EINA_FALSE;
+     }
+
+   if (EINA_LIKELY(func->func && func->src ))
+     {
         call->obj = (Eo *)fptr->eo_id;
+        call->klass = _eo_class_id_get(klass);
         call->func = func->func;
 
         if (obj)
@@ -493,6 +481,12 @@ eo2_call_resolve_internal(const Eo_Class *klass_id, const Eo_Op op, Eo2_Op_Call_
           call->data = NULL;
 
         return EINA_TRUE;
+     }
+
+   if (func->src != NULL)
+     {
+        ERR("you called a pure virtual func %d", op);
+        return EINA_FALSE;
      }
 
    /* Try composite objects */
@@ -544,7 +538,7 @@ eo2_api_op_id_get(const void *api_func, const Eo_Op_Type op_type)
     const _Eo_Class *klass;
 
    if (op_type == EO_OP_TYPE_REGULAR)
-      klass = ((_Eo_Object *)eo2_call_stack.frame_ptr->base)->klass;
+      klass = eo2_call_stack.frame_ptr->obj->klass;
    else if (op_type == EO_OP_TYPE_CLASS)
       klass = eo2_call_stack.frame_ptr->cur_klass;
    else
@@ -695,17 +689,17 @@ eo2_add_internal_end(const char *file, int line, const Eo *eo_id)
         return NULL;
      }
 
-   if (!((_Eo_Object *)fptr->base)->condtor_done)
+   if (!fptr->obj->condtor_done)
      {
         ERR("in %s:%d: Object of class '%s' - Not all of the object constructors have been executed.",
             file, line, fptr->cur_klass->desc->name);
         /* Unref twice, once for the ref in eo2_add_internal_start, and once for the basic object ref. */
-        _eo_unref((_Eo_Object *)fptr->base);
-        _eo_unref((_Eo_Object *)fptr->base);
+        _eo_unref(fptr->obj);
+        _eo_unref(fptr->obj);
         return NULL;
      }
 
-   _eo_unref((_Eo_Object *)fptr->base);
+   _eo_unref(fptr->obj);
 
    return (Eo *)eo_id;
 }
