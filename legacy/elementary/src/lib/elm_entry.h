@@ -213,6 +213,7 @@
  * parameter for the callback will be an #Elm_Entry_Anchor_Info.
  * @li "anchor,down": Mouse button has been pressed on an anchor. The event_info
  * parameter for the callback will be an #Elm_Entry_Anchor_Info.
+ * @li "anchor,hover,opened": The anchor is clicked.
  * @li "anchor,in": Mouse cursor has moved into an anchor. The event_info
  * parameter for the callback will be an #Elm_Entry_Anchor_Info.
  * @li "anchor,out": Mouse cursor has moved out of an anchor. The event_info
@@ -230,9 +231,11 @@
  * @li "unfocused": The entry has lost focus.
  * @li "language,changed": Program language changed.
  * @li "longpressed": A mouse button has been pressed and held for a couple
+ * @li "maxlength,reached": Called when a maximum length is reached.
  * @li "preedit,changed": The preedit string has changed.
  * @li "press": A mouse button has been pressed on the entry.
  * seconds.
+ * @li "redo,request": Called on redo request.
  * @li "selection,changed": The current selection has changed.
  * @li "selection,cleared": The current selection has been cleared.
  * @li "selection,copy": A copy of the selected text into the clipboard was
@@ -243,6 +246,8 @@
  * @li "selection,start": A selection has begun and no previous selection
  * existed.
  * @li "text,set,done": Whole text has been set to the entry.
+ * @li "theme,changed": Called when the theme is changed.
+ * @li "undo,request": Called on undo request.
  *
  * Default content parts of the entry items that you can use for are:
  * @li "icon" - An icon in the entry
