@@ -615,13 +615,13 @@ EAPI Eina_Bool eo_shutdown(void);
 // to fetch internal function and object data at once
 typedef struct _Eo2_Op_Call_Data
 {
-   Eo       *obj_id;
-   Eo_Class *klass_id;
+   Eo       *obj;
+   Eo_Class *klass;
    void     *func;
    void     *data;
 } Eo2_Op_Call_Data;
 
-typedef void (*Eo2_Hook_Call)(const Eo_Class *klass_id, const Eo *obj_id, void *func, ...);
+typedef void (*Eo2_Hook_Call)(const Eo_Class *klass_id, const Eo *obj, void *func, ...);
 
 EAPI extern Eo2_Hook_Call eo2_hook_call_pre;
 EAPI extern Eo2_Hook_Call eo2_hook_call_post;
@@ -632,11 +632,11 @@ EAPI extern Eo2_Hook_Call eo2_hook_call_post;
 
 #define EO2_HOOK_CALL_PREPARE(Hook)                                     \
      if (Hook)                                                          \
-       Hook(call.klass_id, call.obj_id, call.func);
+       Hook(call.klass, call.obj, call.func);
 
 #define EO2_HOOK_CALL_PREPAREV(Hook, ...)                               \
      if (Hook)                                                          \
-       Hook(call.klass_id, call.obj_id, call.func, __VA_ARGS__);
+       Hook(call.klass, call.obj, call.func, __VA_ARGS__);
 
 // cache OP id, get real fct and object data then do the call
 #define EO2_FUNC_COMMON_OP(Name, DefRet, Type)                          \
@@ -653,10 +653,10 @@ EAPI extern Eo2_Hook_Call eo2_hook_call_post;
   Name(void)                                                            \
   {                                                                     \
      typedef Ret (*__##Name##_func)(Eo *, void *obj_data);              \
-     Ret _r;								\
+     Ret _r;                                                            \
      EO2_FUNC_COMMON_OP(Name, DefRet, EO_OP_TYPE_REGULAR);              \
      EO2_HOOK_CALL_PREPARE(eo2_hook_call_pre);                          \
-     _r = _func_(call.obj_id, call.data);                               \
+     _r = _func_(call.obj, call.data);                                  \
      EO2_HOOK_CALL_PREPARE(eo2_hook_call_post);                         \
      return _r;                                                         \
   }
@@ -668,7 +668,7 @@ EAPI extern Eo2_Hook_Call eo2_hook_call_post;
      typedef void (*__##Name##_func)(Eo *, void *obj_data);             \
      EO2_FUNC_COMMON_OP(Name, , EO_OP_TYPE_REGULAR);                    \
      EO2_HOOK_CALL_PREPARE(eo2_hook_call_pre);                          \
-     _func_(call.obj_id, call.data);                                    \
+     _func_(call.obj, call.data);                                       \
      EO2_HOOK_CALL_PREPARE(eo2_hook_call_post);                         \
   }
 
@@ -677,10 +677,10 @@ EAPI extern Eo2_Hook_Call eo2_hook_call_post;
   Name(__VA_ARGS__)                                                     \
   {                                                                     \
      typedef Ret (*__##Name##_func)(Eo *, void *obj_data, __VA_ARGS__); \
-     Ret _r;								\
+     Ret _r;                                                            \
      EO2_FUNC_COMMON_OP(Name, DefRet, EO_OP_TYPE_REGULAR);              \
      EO2_HOOK_CALL_PREPAREV(eo2_hook_call_pre, Arguments);              \
-     _r = _func_(call.obj_id, call.data, Arguments);                    \
+     _r = _func_(call.obj, call.data, Arguments);                       \
      EO2_HOOK_CALL_PREPAREV(eo2_hook_call_post, Arguments);             \
      return _r;                                                         \
   }
@@ -692,7 +692,7 @@ EAPI extern Eo2_Hook_Call eo2_hook_call_post;
      typedef void (*__##Name##_func)(Eo *, void *obj_data, __VA_ARGS__);\
      EO2_FUNC_COMMON_OP(Name, , EO_OP_TYPE_REGULAR);                    \
      EO2_HOOK_CALL_PREPAREV(eo2_hook_call_pre, Arguments);              \
-     _func_(call.obj_id, call.data, Arguments);                         \
+     _func_(call.obj, call.data, Arguments);                            \
      EO2_HOOK_CALL_PREPAREV(eo2_hook_call_post, Arguments);             \
   }
 
@@ -705,7 +705,7 @@ EAPI extern Eo2_Hook_Call eo2_hook_call_post;
      Ret _r;                                                            \
      EO2_FUNC_COMMON_OP(Name, DefRet, EO_OP_TYPE_CLASS);                \
      EO2_HOOK_CALL_PREPARE(eo2_hook_call_pre);                          \
-     _r = _func_(call.klass_id);                                        \
+     _r = _func_(call.klass);                                           \
      EO2_HOOK_CALL_PREPARE(eo2_hook_call_post);                         \
      return _r;                                                         \
   }
@@ -718,7 +718,7 @@ EAPI extern Eo2_Hook_Call eo2_hook_call_post;
      Ret _r;                                                            \
      EO2_FUNC_COMMON_OP(Name, , EO_OP_TYPE_CLASS);                      \
      EO2_HOOK_CALL_PREPARE(eo2_hook_call_pre);                          \
-     _func_(call.klass_id);                                             \
+     _func_(call.klass);                                                \
      EO2_HOOK_CALL_PREPARE(eo2_hook_call_post);                         \
      return _r;                                                         \
   }
@@ -731,7 +731,7 @@ EAPI extern Eo2_Hook_Call eo2_hook_call_post;
      Ret _r;                                                      \
      EO2_FUNC_COMMON_OP(Name, DefRet, EO_OP_TYPE_CLASS);          \
      EO2_HOOK_CALL_PREPAREV(eo2_hook_call_pre, Arguments);        \
-     _r = _func_(call.klass_id, Arguments);                       \
+     _r = _func_(call.klass, Arguments);                          \
      EO2_HOOK_CALL_PREPAREV(eo2_hook_call_post, Arguments);       \
      return _r;                                                   \
   }
@@ -743,7 +743,7 @@ EAPI extern Eo2_Hook_Call eo2_hook_call_post;
      typedef void (*__##Name##_func)(Eo_Class *, __VA_ARGS__);    \
      EO2_FUNC_COMMON_OP(Name, , EO_OP_TYPE_CLASS);                \
      EO2_HOOK_CALL_PREPAREV(eo2_hook_call_pre, Arguments);        \
-     _func_(call.klass_id, Arguments);                            \
+     _func_(call.klass, Arguments);                               \
      EO2_HOOK_CALL_PREPAREV(eo2_hook_call_post, Arguments);       \
   }
 
@@ -764,7 +764,7 @@ EAPI Eo_Op eo2_api_op_id_get(const void *api_func, const Eo_Op_Type);
 EAPI Eina_Bool eo2_call_resolve_internal(const Eo_Class *klass, const Eo_Op op, Eo2_Op_Call_Data *call);
 
 // start of eo2_do barrier, gets the object pointer and ref it, put it on the stask
-EAPI Eina_Bool eo2_do_start(Eo *obj_id, const Eina_Bool do_super, const char *file, const char *func, int line);
+EAPI Eina_Bool eo2_do_start(Eo *obj, const Eina_Bool do_super, const char *file, const char *func, int line);
 EAPI Eina_Bool eo2_class_do_start(const Eo_Class *klass_id, const Eina_Bool do_super, const char *file, const char *func, int line);
 
 // end of the eo2_do barrier, unref the obj, move the stack pointer
@@ -983,7 +983,7 @@ EAPI void eo_error_set_internal(const Eo *obj, const char *file, int line);
  * @see #eo_add
  */
 EAPI Eo *eo_add_internal(const char *file, int line, const Eo_Class *klass, Eo *parent, ...);
-EAPI Eo * eo2_add_internal_start(const char *file, int line, const Eo_Class *klass_id, Eo *parent_id);
+EAPI Eo * eo2_add_internal_start(const char *file, int line, const Eo_Class *klass_id, Eo *parent);
 EAPI Eo * eo2_add_internal_end(const char *file, int line, const Eo *obj);
 
 /**
@@ -1392,7 +1392,7 @@ eo2_base_data_del(const char *key);
  */
 #define eo_parent_set(parent) EO_BASE_ID(EO_BASE_SUB_ID_PARENT_SET), EO_TYPECHECK(Eo *, parent)
 EAPI void
-eo2_parent_set(Eo *parent_id);
+eo2_parent_set(Eo *parent);
 
 /**
  * @def eo_parent_get
