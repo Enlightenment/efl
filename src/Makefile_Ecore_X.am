@@ -92,6 +92,10 @@ lib/ecore_x/xlib/ecore_x_private.h
 endif
 
 lib_ecore_x_libecore_x_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @ECORE_X_CFLAGS@
+if HAVE_ECORE_X_XCB
+lib_ecore_x_libecore_x_la_CPPFLAGS += -I$(top_builddir)/src/lib/ecore_x/xcb
+endif
+
 lib_ecore_x_libecore_x_la_LIBADD = @ECORE_X_LIBS@
 lib_ecore_x_libecore_x_la_DEPENDENCIES = @ECORE_X_INTERNAL_LIBS@
 lib_ecore_x_libecore_x_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
@@ -111,6 +115,7 @@ BUILT_SOURCES += \
 $(top_builddir)/src/lib/ecore_x/xcb/ecore_xcb_keysym_table.h
 
 $(top_builddir)/src/lib/ecore_x/xcb/ecore_xcb_keysym_table.h: $(KEYSYMDEFS) utils/ecore/makekeys$(EXEEXT)
+	$(MKDIR_P) $(top_builddir)/src/lib/ecore_x/xcb
 	$(top_builddir)/src/utils/ecore/makekeys $(KEYSYMDEFS) > $(top_builddir)/src/lib/ecore_x/xcb/ecore_xcb_keysym_table_h
 	mv -f $(top_builddir)/src/lib/ecore_x/xcb/ecore_xcb_keysym_table_h $(top_builddir)/src/lib/ecore_x/xcb/ecore_xcb_keysym_table.h
 endif
