@@ -3,6 +3,17 @@
 #endif
 #include <Elementary.h>
 
+static Elm_Multibuttonentry_Format_Cb format_func = NULL;
+
+static char *
+_custom_format(int count, void *data EINA_UNUSED)
+{
+   char buf[32];
+
+   if (!snprintf(buf, sizeof(buf), "+ %d rabbits", count)) return NULL;
+   return strdup(buf);
+}
+
 static void
 _item_selected_cb(void *data EINA_UNUSED,
                   Evas_Object *obj EINA_UNUSED,
@@ -122,11 +133,32 @@ _item_filter_cb(Evas_Object *obj EINA_UNUSED,
 }
 
 static void
-_button_clicked_cb(void *data EINA_UNUSED,
+_format_change_cb(void *data,
                    Evas_Object *obj EINA_UNUSED,
                    void *event_info EINA_UNUSED)
 {
-   printf("%s button is clicked\n", __func__);
+   Evas_Object *mbe = data;
+
+   if (format_func) format_func = NULL;
+   else format_func = _custom_format;
+
+   elm_multibuttonentry_format_function_set(mbe, format_func, NULL);
+
+   printf("Changing format function to %p\n", format_func);
+}
+
+static Evas_Object*
+_format_change_btn_add(Evas_Object *mbe)
+{
+   Evas_Object *btn;
+
+   btn = elm_button_add(mbe);
+   evas_object_smart_callback_add(btn, "clicked", _format_change_cb, mbe);
+   elm_object_text_set(btn, "Change format function");
+   evas_object_size_hint_weight_set(btn, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(btn, EVAS_HINT_FILL, EVAS_HINT_FILL);
+
+   return btn;
 }
 
 static Evas_Object*
@@ -134,6 +166,7 @@ _add_multibuttonentry(Evas_Object *parent)
 {
    Evas_Object *scr = NULL;
    Evas_Object *mbe = NULL;
+   Evas_Object *btn = NULL;
    void *data = NULL;
 
    scr = elm_scroller_add(parent);
@@ -166,31 +199,13 @@ _add_multibuttonentry(Evas_Object *parent)
    evas_object_smart_callback_add(mbe, "contracted", _contracted_cb, NULL);
    evas_object_smart_callback_add(mbe, "shrink,state,changed", _shrink_state_changed_cb, NULL);
 
+   btn = _format_change_btn_add(mbe);
+   elm_object_part_content_set(parent, "box", btn);
+
    evas_object_resize(mbe, 220, 300);
    elm_object_focus_set(mbe, EINA_TRUE);
 
    return scr;
-}
-
-static Evas_Object*
-_add_buttons(Evas_Object *parent)
-{
-   Evas_Object *bx = NULL;
-   Evas_Object *btn;
-
-   bx = elm_box_add(parent);
-   elm_box_horizontal_set(bx, EINA_TRUE);
-   elm_box_homogeneous_set(bx, EINA_TRUE);
-
-   btn = elm_button_add(parent);
-   evas_object_smart_callback_add(btn, "clicked", _button_clicked_cb, NULL);
-   elm_object_text_set(btn, "click");
-   evas_object_size_hint_weight_set(btn, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(btn, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_box_pack_end(bx, btn);
-   evas_object_show(btn);
-
-   return bx;
 }
 
 void
@@ -198,7 +213,7 @@ test_multibuttonentry(void *data EINA_UNUSED,
                       Evas_Object *obj EINA_UNUSED,
                       void *event_info EINA_UNUSED)
 {
-   Evas_Object *win, *sc, *bx;
+   Evas_Object *win, *sc;
    Evas_Object *ly;
    char buf[PATH_MAX];
 
@@ -214,9 +229,6 @@ test_multibuttonentry(void *data EINA_UNUSED,
 
    sc = _add_multibuttonentry(ly);
    elm_object_part_content_set(ly, "multibuttonentry", sc);
-
-   bx = _add_buttons(ly);
-   elm_object_part_content_set(ly, "box", bx);
 
    evas_object_resize(win, 320, 480);
    evas_object_show(win);

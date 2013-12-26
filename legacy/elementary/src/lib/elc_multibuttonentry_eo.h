@@ -23,6 +23,7 @@ enum
    ELM_OBJ_MULTIBUTTONENTRY_SUB_ID_ITEM_FILTER_APPEND,
    ELM_OBJ_MULTIBUTTONENTRY_SUB_ID_ITEM_FILTER_PREPEND,
    ELM_OBJ_MULTIBUTTONENTRY_SUB_ID_ITEM_FILTER_REMOVE,
+   ELM_OBJ_MULTIBUTTONENTRY_SUB_ID_FORMAT_FUNCTION_SET,
    ELM_OBJ_MULTIBUTTONENTRY_SUB_ID_LAST
 };
 
@@ -282,3 +283,22 @@ enum
  * @ingroup Multibuttonentry
  */
 #define elm_obj_multibuttonentry_item_filter_remove(func, data) ELM_OBJ_MULTIBUTTONENTRY_ID(ELM_OBJ_MULTIBUTTONENTRY_SUB_ID_ITEM_FILTER_REMOVE), EO_TYPECHECK(Elm_Multibuttonentry_Item_Filter_Cb, func), EO_TYPECHECK(void *, data)
+
+/**
+ * @def elm_obj_multibuttonentry_format_function_set
+ * @since 1.9
+ *
+ * Set a function to format the string that will be used to display
+ * the hidden items counter.
+ *
+ * @param[in] format_function The actual format function
+ * @param[in] data User data to passed to @a format_function
+ *
+ * If @a format_function is @c NULL, the default format will be used,
+ * which is @c "... + %d".
+ *
+ * @see elm_multibuttonentry_format_function_set
+ *
+ * @ingroup Multibuttonentry
+ */
+#define elm_obj_multibuttonentry_format_function_set(format_function, data) ELM_OBJ_MULTIBUTTONENTRY_ID(ELM_OBJ_MULTIBUTTONENTRY_SUB_ID_FORMAT_FUNCTION_SET), EO_TYPECHECK(Elm_Multibuttonentry_Format_Cb, format_function), EO_TYPECHECK(const void *, data)

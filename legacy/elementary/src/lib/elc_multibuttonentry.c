@@ -55,6 +55,15 @@ _elm_multibuttonentry_smart_translate(Eo *obj EINA_UNUSED, void *_pd, va_list *l
    if (ret) *ret = EINA_TRUE;
 }
 
+static char *
+_format_count(int count, void *data EINA_UNUSED)
+{
+   char buf[32];
+
+   if (!snprintf(buf, sizeof(buf), "... + %d", count)) return NULL;
+   return strdup(buf);
+}
+
 static void
 _elm_multibuttonentry_smart_theme(Eo *obj, void *_pd, va_list *list)
 {
@@ -173,7 +182,7 @@ _shrink_mode_set(Evas_Object *obj,
         EINA_LIST_FOREACH(sd->items, l, item)
           {
              Evas_Coord w_label_count = 0, h = 0;
-             char buf[MAX_STR];
+             char *buf;
 
              elm_box_pack_end(sd->box, item->button);
              evas_object_show(item->button);
@@ -185,8 +194,14 @@ _shrink_mode_set(Evas_Object *obj,
 
              if (count > 0)
                {
-                  snprintf(buf, sizeof(buf), "... + %i", count);
-                  edje_object_part_text_escaped_set(sd->end, "elm.text", buf);
+                  buf = sd->format_func(count, (void *)sd->format_func_data);
+                  if (buf)
+                    {
+                       edje_object_part_text_escaped_set
+                           (sd->end, "elm.text", buf);
+                       free(buf);
+                    }
+
                   edje_object_size_min_calc(sd->end, &w_label_count, NULL);
                   elm_coords_finger_size_adjust(1, &w_label_count, 1, NULL);
                }
@@ -196,10 +211,16 @@ _shrink_mode_set(Evas_Object *obj,
                   elm_box_unpack(sd->box, item->button);
                   evas_object_hide(item->button);
                   item->visible = EINA_FALSE;
-
                   count++;
-                  snprintf(buf, sizeof(buf), "... + %d", count);
-                  edje_object_part_text_escaped_set(sd->end, "elm.text", buf);
+
+                  buf = sd->format_func(count, (void *)sd->format_func_data);
+                  if (buf)
+                    {
+                       edje_object_part_text_escaped_set
+                           (sd->end, "elm.text", buf);
+                       free(buf);
+                    }
+
                   edje_object_size_min_calc(sd->end, &w_label_count, &h);
                   elm_coords_finger_size_adjust(1, &w_label_count, 1, &h);
                   evas_object_size_hint_min_set
@@ -1478,6 +1499,7 @@ _elm_multibuttonentry_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    priv->last_btn_select = EINA_TRUE;
    priv->editable = EINA_TRUE;
    priv->parent = obj;
+   priv->format_func = _format_count;
 
    _view_init(obj, priv);
    _callbacks_register(obj);
@@ -1663,6 +1685,32 @@ _expanded_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 
    *ret = sd->view_state == MULTIBUTTONENTRY_VIEW_SHRINK ?
           EINA_FALSE : EINA_TRUE;
+}
+
+EAPI void
+elm_multibuttonentry_format_function_set(Evas_Object *obj,
+                                         Elm_Multibuttonentry_Format_Cb f_func,
+                                         const void *data)
+{
+   ELM_MULTIBUTTONENTRY_CHECK(obj);
+
+   eo_do((Eo *) obj, elm_obj_multibuttonentry_format_function_set
+         (f_func, data));
+
+}
+
+static void
+_format_function_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Elm_Multibuttonentry_Smart_Data *sd = _pd;
+
+   sd->format_func = va_arg(*list, Elm_Multibuttonentry_Format_Cb);
+
+   if (!sd->format_func) sd->format_func = _format_count;
+
+   sd->format_func_data = va_arg(*list, void *);
+
+   _view_update(sd);
 }
 
 EAPI void
@@ -2158,6 +2206,7 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_OBJ_MULTIBUTTONENTRY_ID(ELM_OBJ_MULTIBUTTONENTRY_SUB_ID_ITEM_FILTER_APPEND), _item_filter_append),
         EO_OP_FUNC(ELM_OBJ_MULTIBUTTONENTRY_ID(ELM_OBJ_MULTIBUTTONENTRY_SUB_ID_ITEM_FILTER_PREPEND), _item_filter_prepend),
         EO_OP_FUNC(ELM_OBJ_MULTIBUTTONENTRY_ID(ELM_OBJ_MULTIBUTTONENTRY_SUB_ID_ITEM_FILTER_REMOVE), _item_filter_remove),
+        EO_OP_FUNC(ELM_OBJ_MULTIBUTTONENTRY_ID(ELM_OBJ_MULTIBUTTONENTRY_SUB_ID_FORMAT_FUNCTION_SET), _format_function_set),
         EO_OP_FUNC_SENTINEL
    };
    eo_class_funcs_set(klass, func_desc);
@@ -2185,6 +2234,7 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_OBJ_MULTIBUTTONENTRY_SUB_ID_ITEM_FILTER_APPEND, "Append an item filter function for text inserted in the Multibuttonentry."),
      EO_OP_DESCRIPTION(ELM_OBJ_MULTIBUTTONENTRY_SUB_ID_ITEM_FILTER_PREPEND, "Prepend a filter function for text inserted in the Multibuttonentry."),
      EO_OP_DESCRIPTION(ELM_OBJ_MULTIBUTTONENTRY_SUB_ID_ITEM_FILTER_REMOVE, "Remove a filter from the list."),
+     EO_OP_DESCRIPTION(ELM_OBJ_MULTIBUTTONENTRY_SUB_ID_FORMAT_FUNCTION_SET, "Set a function to format the string that will be used to display the hidden items counter."),
      EO_OP_DESCRIPTION_SENTINEL
 };
 static const Eo_Class_Description class_desc = {

@@ -246,6 +246,27 @@ EAPI void                       elm_multibuttonentry_item_filter_prepend(Evas_Ob
 EAPI void                       elm_multibuttonentry_item_filter_remove(Evas_Object *obj, Elm_Multibuttonentry_Item_Filter_Cb func, void *data);
 
 /**
+ * Set a function to format the string that will be used to display
+ * the hidden items counter.
+ *
+ * @param[in] obj The multi button entry to get format function changed
+ * @param[in] format_function The actual format function
+ * @param[in] data User data to passed to @a format_function
+ *
+ * If @a format_function is @c NULL, the default format will be used,
+ * which is @c "... + %d".
+ *
+ * @see elm_multibuttonentry_format_function_set
+ * @since 1.9
+ *
+ * @ingroup Multibuttonentry
+ */
+EAPI void
+elm_multibuttonentry_format_function_set(Evas_Object *obj,
+                                         Elm_Multibuttonentry_Format_Cb f_func,
+                                         const void *data);
+
+/**
  * Sets if the multibuttonentry is to be editable or not.
  *
  * @param obj The multibuttonentry object

@@ -82,6 +82,9 @@ struct _Elm_Multibuttonentry_Smart_Data
    Eina_List                          *filter_list;
    Elm_Object_Item                    *selected_it; /* selected item */
 
+   Elm_Multibuttonentry_Format_Cb      format_func;
+   const void                         *format_func_data;
+
    const char                         *label_str, *guide_text_str;
 
    int                                 n_str;
