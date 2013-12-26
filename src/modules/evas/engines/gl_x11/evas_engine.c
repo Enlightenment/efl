@@ -910,8 +910,7 @@ eng_setup(Evas *eo_e, void *in)
                  (re->info->info.visual != re->win->visual) ||
                  (re->info->info.colormap != re->win->colormap) ||
                  (re->info->info.depth != re->win->depth) ||
-                 (re->info->info.destination_alpha != re->win->alpha) ||
-                 (re->info->info.rotation != re->win->rot))
+                 (re->info->info.destination_alpha != re->win->alpha))
                {
                   int inc = 0;
 
@@ -941,12 +940,14 @@ eng_setup(Evas *eo_e, void *in)
                      re->win->gl_context->references--;
                }
              else if ((re->win->w != e->output.w) ||
-                      (re->win->h != e->output.h))
+                      (re->win->h != e->output.h) ||
+                      (re->info->info.rotation != re->win->rot))
                {
                   re->w = e->output.w;
                   re->h = e->output.h;
                   re->win->w = e->output.w;
                   re->win->h = e->output.h;
+                  re->win->rot = re->info->info.rotation;
                   eng_window_use(re->win);
                   evas_gl_common_context_resize(re->win->gl_context, re->win->w, re->win->h, re->win->rot);
                }
