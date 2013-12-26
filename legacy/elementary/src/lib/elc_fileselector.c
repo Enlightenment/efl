@@ -925,9 +925,9 @@ _home(void *data,
 }
 
 static void
-_current_filer_changed(void *data,
-                       Evas_Object *obj,
-                       void *event_info __UNUSED__)
+_current_filter_changed(void *data,
+                        Evas_Object *obj,
+                        void *event_info __UNUSED__)
 {
    Elm_Fileselector_Filter *filter = data;
 
@@ -1936,7 +1936,7 @@ _mime_types_filter_append(Eo *obj, void *_pd, va_list *list)
         elm_object_text_set(sd->filter_hoversel, ff->filter_name);
         need_theme = EINA_TRUE;
      }
-   elm_hoversel_item_add(sd->filter_hoversel, ff->filter_name, NULL, ELM_ICON_NONE, _current_filer_changed, ff);
+   elm_hoversel_item_add(sd->filter_hoversel, ff->filter_name, NULL, ELM_ICON_NONE, _current_filter_changed, ff);
 
    sd->filter_list = eina_list_append(sd->filter_list, ff);
 
