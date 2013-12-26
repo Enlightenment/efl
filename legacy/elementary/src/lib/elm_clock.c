@@ -1079,22 +1079,22 @@ _first_interval_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 }
 
 EAPI void
-elm_clock_pause_set(Evas_Object *obj, Eina_Bool pause)
+elm_clock_pause_set(Evas_Object *obj, Eina_Bool paused)
 {
    ELM_CLOCK_CHECK(obj);
-   eo_do(obj, elm_obj_clock_pause_set(pause));
+   eo_do(obj, elm_obj_clock_pause_set(paused));
 }
 
 static void
 _pause_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
-   Eina_Bool pause = va_arg(*list, int);
+   Eina_Bool paused = va_arg(*list, int);
    Elm_Clock_Smart_Data *sd = _pd;
-   pause = !!pause;
-   if (sd->paused == pause)
+   paused = !!paused;
+   if (sd->paused == paused)
      return;
-   sd->paused = pause;
-   if (pause)
+   sd->paused = paused;
+   if (paused)
      ecore_timer_freeze(sd->ticker);
    else
      {
