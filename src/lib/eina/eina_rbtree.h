@@ -82,7 +82,7 @@ struct _Eina_Rbtree
 {
    Eina_Rbtree      *son[2];
 
-   Eina_Rbtree_Color color : 1;
+   unsigned int color : 1;
 };
 
 /**
