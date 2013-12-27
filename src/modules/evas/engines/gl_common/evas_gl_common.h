@@ -831,7 +831,7 @@ void evas_gl_preload_target_unregister(Evas_GL_Texture *tex, Eo *target);
 
 void pt_unref(Evas_GL_Texture_Pool *pt);
 
-#define GL_ERRORS 1
+//#define GL_ERRORS 1
 
 #ifdef GL_ERRORS
 # define GLERR(fn, fl, ln, op) \
