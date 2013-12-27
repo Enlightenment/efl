@@ -5140,7 +5140,39 @@ _elm_widget_item_del_pre_hook_set(Elm_Widget_Item *item,
    ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
    item->del_pre_func = func;
 }
+/**
+ * @internal
+ *
+ * Set the function to set the style of item
+ *
+ * @param item a valid #Elm_Widget_Item to be notified
+ * @see elm_widget_item_style_set_hook_set() convenience macro.
+ * @ingroup Widget
+ */
+EAPI void
+_elm_widget_item_style_set_hook_set(Elm_Widget_Item *item,
+                                  Elm_Widget_Style_Set_Cb func)
+{
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
+   item->style_set_func = func;
+}
 
+/**
+ * @internal
+ *
+ * Set the function to get the style of item
+ *
+ * @param item a valid #Elm_Widget_Item to be notified
+ * @see elm_widget_item_style_get_hook_set() convenience macro.
+ * @ingroup Widget
+ */
+EAPI void
+_elm_widget_item_style_get_hook_set(Elm_Widget_Item *item,
+                                  Elm_Widget_Style_Get_Cb func)
+{
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
+   item->style_get_func = func;
+}
 /**
  * @internal
  *
@@ -5266,6 +5298,20 @@ _elm_widget_item_disabled_get(const Elm_Widget_Item *item)
 {
    ELM_WIDGET_ITEM_CHECK_OR_RETURN(item, EINA_FALSE);
    return item->disabled;
+}
+
+EAPI void
+_elm_widget_item_style_set(Elm_Widget_Item *item, const char *style)
+{
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
+   item->style_set_func(item, style);
+}
+
+EAPI const char *
+_elm_widget_item_style_get(Elm_Widget_Item *item)
+{
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN(item, NULL);
+   return item->style_get_func(item);
 }
 
 EAPI void

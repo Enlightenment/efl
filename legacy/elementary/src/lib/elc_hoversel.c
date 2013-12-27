@@ -214,6 +214,22 @@ _item_signal_emit_hook(Elm_Object_Item *it,
      elm_object_signal_emit(VIEW(it), emission, source);
 }
 
+static void
+_item_style_set_hook(Elm_Object_Item *it,
+                     const char *style)
+{
+   if (VIEW(it))
+     elm_object_style_set(VIEW(it), style);
+}
+
+static const char *
+_item_style_get_hook(Elm_Object_Item *it)
+{
+   if (VIEW(it))
+     return elm_object_style_get(VIEW(it));
+   return NULL;
+}
+
 static Eina_Bool
 _item_del_pre_hook(Elm_Object_Item *it)
 {
@@ -525,6 +541,8 @@ _item_add(Eo *obj, void *_pd, va_list *list)
    elm_widget_item_del_pre_hook_set(item, _item_del_pre_hook);
    elm_widget_item_text_get_hook_set(item, _item_text_get_hook);
    elm_widget_item_signal_emit_hook_set(item, _item_signal_emit_hook);
+   elm_widget_item_style_set_hook_set(item, _item_style_set_hook);
+   elm_widget_item_style_get_hook_set(item, _item_style_get_hook);
 
    item->label = eina_stringshare_add(label);
    item->icon_file = eina_stringshare_add(icon_file);

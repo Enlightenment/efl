@@ -44,6 +44,8 @@
  * @li elm_object_item_del
  * @li elm_object_item_part_text_get
  * @li elm_object_item_signal_emit - this works only when the item is created.
+ * @li elm_object_item_style_set - this works only when the item is created.
+ * @li elm_object_item_style_get - this works only when the item is created.
  *
  * See @ref tutorial_hoversel for an example.
  * @{

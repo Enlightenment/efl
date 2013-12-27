@@ -464,6 +464,8 @@ typedef void                  (*Elm_Widget_Signal_Emit_Cb)(void *data, const cha
 typedef void                  (*Elm_Widget_Disable_Cb)(void *data);
 typedef Eina_Bool             (*Elm_Widget_Del_Pre_Cb)(void *data);
 typedef void                  (*Elm_Widget_Item_Signal_Cb)(void *data, Elm_Widget_Item *item, const char *emission, const char *source);
+typedef void                  (*Elm_Widget_Style_Set_Cb)(void *data, const char *style);
+typedef const char           *(*Elm_Widget_Style_Get_Cb)(const void *data);
 
 #define ELM_ACCESS_DONE          -1   /* sentence done - send done event here */
 #define ELM_ACCESS_CANCEL        -2   /* stop reading immediately */
@@ -573,6 +575,8 @@ struct _Elm_Widget_Item
    Elm_Widget_Text_Get_Cb         text_get_func;
    Elm_Widget_Signal_Emit_Cb      signal_emit_func;
    Elm_Widget_Disable_Cb          disable_func;
+   Elm_Widget_Style_Set_Cb        style_set_func;
+   Elm_Widget_Style_Get_Cb        style_get_func;
    Evas_Object                   *access_obj;
    const char                    *access_info;
    Eina_List                     *access_order;
@@ -758,6 +762,9 @@ EAPI void             _elm_widget_item_part_text_custom_set(Elm_Widget_Item *ite
 EAPI const char      *_elm_widget_item_part_text_custom_get(Elm_Widget_Item *item, const char *part);
 EAPI void             _elm_widget_item_part_text_custom_update(Elm_Widget_Item *item);
 
+EAPI void            _elm_widget_item_style_set(Elm_Widget_Item *item, const char *style);
+EAPI const char      *_elm_widget_item_style_get(Elm_Widget_Item *item);
+
 EAPI void             _elm_widget_item_signal_callback_add(Elm_Widget_Item *item, const char *emission, const char *source, Elm_Widget_Item_Signal_Cb func, void *data);
 EAPI void            *_elm_widget_item_signal_callback_del(Elm_Widget_Item *it, const char *emission, const char *source, Elm_Widget_Item_Signal_Cb func);
 EAPI void             _elm_widget_item_signal_emit(Elm_Widget_Item *item, const char *emission, const char *source);
@@ -772,6 +779,8 @@ EAPI void             _elm_widget_item_disabled_set(Elm_Widget_Item *item, Eina_
 EAPI Eina_Bool        _elm_widget_item_disabled_get(const Elm_Widget_Item *item);
 EAPI void             _elm_widget_item_disable_hook_set(Elm_Widget_Item *item, Elm_Widget_Disable_Cb func);
 EAPI void             _elm_widget_item_del_pre_hook_set(Elm_Widget_Item *item, Elm_Widget_Del_Pre_Cb func);
+EAPI void             _elm_widget_item_style_set_hook_set(Elm_Widget_Item *item, Elm_Widget_Style_Set_Cb func);
+EAPI void             _elm_widget_item_style_get_hook_set(Elm_Widget_Item *item, Elm_Widget_Style_Get_Cb func);
 EAPI void             _elm_widget_item_domain_translatable_part_text_set(Elm_Widget_Item *item, const char *part, const char *domain, const char *label);
 EAPI const char *     _elm_widget_item_translatable_part_text_get(const Elm_Widget_Item *item, const char *part);
 EAPI void             _elm_widget_item_translate(Elm_Widget_Item *item);
@@ -1003,7 +1012,31 @@ EAPI void             elm_widget_tree_dot_dump(const Evas_Object *top, FILE *out
  */
 #define elm_widget_item_del_pre_hook_set(item, func) \
   _elm_widget_item_del_pre_hook_set((Elm_Widget_Item *)item, (Elm_Widget_Del_Pre_Cb)func)
+/**
+ * Convenience function to query style set hook.
+ * @see _elm_widget_item_style_set_hook_set()
+ */
+#define elm_widget_item_style_set_hook_set(item, func) \
+  _elm_widget_item_style_set_hook_set((Elm_Widget_Item *)item, (Elm_Widget_Style_Set_Cb)func)
+/**
+ * Convenience function to query style get hook.
+ * @see _elm_widget_item_style_get_hook_set()
+ */
+#define elm_widget_item_style_get_hook_set(item, func) \
+  _elm_widget_item_style_get_hook_set((Elm_Widget_Item *)item, (Elm_Widget_Style_Get_Cb)func)
 
+/**
+ * Convenience function to set style .
+ * @see _elm_widget_item_style_set()
+ */
+#define elm_widget_item_style_set(item, style) \
+  _elm_widget_item_style_set((Elm_Widget_Item *)item, style)
+/**
+ * Convenience function to get style .
+ * @see _elm_widget_item_style_get()
+ */
+#define elm_widget_item_style_get(item) \
+  _elm_widget_item_style_get((Elm_Widget_Item *)item)
 /**
  * Convenience function to query track_cancel.
  * @see _elm_widget_item_del_pre_hook_set()
