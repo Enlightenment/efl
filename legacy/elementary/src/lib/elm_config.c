@@ -2514,7 +2514,7 @@ _elm_config_sub_init(void)
                     }
                }
              if (_config_win == 0)
-               _config_win = ecore_x_window_permanent_create
+               _config_win = ecore_x_window_permanent_new
                              (root, _atom[ATOM_E_CONFIG_WIN]);
 
              ecore_x_event_mask_set(_config_win,
