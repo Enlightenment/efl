@@ -105,7 +105,7 @@ group { name: "e/init/splash";
             color2: 51 153 255 24;
             color3: 51 153 255 18;
             text { font: FN; size: 8;
-               text: "0.17.0";
+               text: "0.19";
                min: 1 1;
                align: 1.0 1.0;
                text_class: "init_version";
