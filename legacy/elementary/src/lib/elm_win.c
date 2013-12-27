@@ -4457,6 +4457,10 @@ _win_rotation_degree_check(int rotation)
    return rotation;
 }
 
+/*
+ * This API resizes the internal window(ex: X window) and evas_output.
+ * But this does not resize the elm window object and its contents.
+ */
 EAPI void
 elm_win_rotation_set(Evas_Object *obj,
                      int rotation)
@@ -4492,6 +4496,10 @@ _rotation_set(Eo *obj, void *_pd, va_list *list)
    _win_rotate(obj, sd, rotation, EINA_FALSE);
 }
 
+/*
+ * This API does not resize the internal window (ex: X window).
+ * But this resizes evas_output, elm window, and its contents.
+ */
 EAPI void
 elm_win_rotation_with_resize_set(Evas_Object *obj,
                                  int rotation)
