@@ -18,14 +18,6 @@
 #include <gst/audio/audio.h>
 #include <gst/tag/tag.h>
 
-// forcibly disable x overlay window.. broken badly.
-#undef HAVE_ECORE_X
-
-#ifdef HAVE_ECORE_X
-# include <Ecore_X.h>
-# include <gst/video/videooverlay.h>
-#endif
-
 typedef void (*Evas_Video_Convert_Cb)(unsigned char *evas_data,
                                       const unsigned char *gst_data,
                                       unsigned int w,
@@ -75,13 +67,8 @@ struct _Emotion_Gstreamer_Video
    GstElement       *pipeline;
    GstElement       *sink;
    GstElement       *esink;
-   GstElement       *xvsink;
-   GstElement       *tee;
    GstElement       *convert;
 
-   GstPad           *eteepad;
-   GstPad           *xvteepad;
-   GstPad           *xvpad;
    Eina_List        *threads;
 
    /* eos */
@@ -109,10 +96,6 @@ struct _Emotion_Gstreamer_Video
    volatile int      get_poslen;
 
    Emotion_Gstreamer_Metadata *metadata;
-
-#ifdef HAVE_ECORE_X
-   Ecore_X_Window    win;
-#endif
 
    const char       *uri;
 
@@ -144,7 +127,6 @@ struct _Emotion_Gstreamer_Video
    Eina_Bool         delete_me    : 1;
    Eina_Bool         kill_buffer  : 1;
    Eina_Bool         stream       : 1;
-   Eina_Bool         priority     : 1;
 
    int src_width;
    int src_height;
@@ -162,8 +144,6 @@ struct _EvasVideoSinkClass {
 };
 
 struct _EvasVideoSinkPrivate {
-   EINA_REFCOUNT;
-
    Evas_Object *o;
 
    Emotion_Gstreamer_Video *ev;
@@ -206,10 +186,8 @@ struct _Emotion_Gstreamer_Message
    GstMessage *msg;
 };
 
-extern Eina_Bool window_manager_video;
-extern Eina_Bool debug_fps;
 extern int _emotion_gstreamer_log_domain;
-extern Eina_Bool _ecore_x_available;
+extern Eina_Bool debug_fps;
 
 #ifdef DBG
 #undef DBG
@@ -238,8 +216,6 @@ extern Eina_Bool _ecore_x_available;
 
 #define EVAS_TYPE_VIDEO_SINK evas_video_sink_get_type()
 
-GType fakeeos_bin_get_type(void);
-
 #define EVAS_VIDEO_SINK(obj) \
     (G_TYPE_CHECK_INSTANCE_CAST((obj), \
     EVAS_TYPE_VIDEO_SINK, EvasVideoSink))
@@ -259,8 +235,6 @@ GType fakeeos_bin_get_type(void);
 #define EVAS_VIDEO_SINK_GET_CLASS(obj) \
     (G_TYPE_INSTANCE_GET_CLASS((obj), \
     EVAS_TYPE_VIDEO_SINK, EvasVideoSinkClass))
-
-#define GST_TYPE_FAKEEOS_BIN fakeeos_bin_get_type()
 
 GstElement *gstreamer_video_sink_new(Emotion_Gstreamer_Video *ev,
                                      Evas_Object *obj,

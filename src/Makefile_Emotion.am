@@ -91,7 +91,6 @@ modules/emotion/gstreamer1/emotion_gstreamer.h \
 modules/emotion/gstreamer1/emotion_gstreamer.c \
 modules/emotion/gstreamer1/emotion_alloc.c \
 modules/emotion/gstreamer1/emotion_convert.c \
-modules/emotion/gstreamer1/emotion_fakeeos.c \
 modules/emotion/gstreamer1/emotion_sink.c
 
 if EMOTION_STATIC_BUILD_GSTREAMER1
@@ -110,11 +109,6 @@ modules_emotion_gstreamer1_module_la_LIBADD = \
 modules_emotion_gstreamer1_module_la_DEPENDENCIES = @USE_EMOTION_INTERNAL_LIBS@
 modules_emotion_gstreamer1_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
 modules_emotion_gstreamer1_module_la_LIBTOOLFLAGS = --tag=disable-static
-if HAVE_ECORE_X
-modules_emotion_gstreamer1_module_la_CPPFLAGS += @ECORE_X_CFLAGS@ @ECORE_EVAS_CFLAGS@
-modules_emotion_gstreamer1_module_la_LIBADD += @USE_ECORE_X_LIBS@ @USE_ECORE_EVAS_LIBS@
-modules_emotion_gstreamer1_module_la_DEPENDENCIES += @USE_ECORE_X_INTERNAL_LIBS@ @USE_ECORE_EVAS_INTERNAL_LIBS@
-endif
 endif
 endif
 

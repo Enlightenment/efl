@@ -4,12 +4,9 @@
 
 #include "emotion_gstreamer.h"
 
-Eina_Bool window_manager_video = EINA_FALSE;
 int _emotion_gstreamer_log_domain = -1;
 Eina_Bool debug_fps = EINA_FALSE;
-Eina_Bool _ecore_x_available = EINA_FALSE;
 
-static Ecore_Idler *restart_idler;
 static int _emotion_init_count = 0;
 
 /* Callbacks to get the eos */
@@ -20,12 +17,7 @@ static GstBusSyncReply _eos_sync_fct(GstBus *bus,
 				     GstMessage *message,
 				     gpointer data);
 
-static Eina_Bool _em_restart_stream(void *data);
-
 /* Module interface */
-
-
-static int priority_overide = 0;
 
 static Emotion_Video_Stream *
 emotion_video_stream_new(Emotion_Gstreamer_Video *ev)
@@ -137,27 +129,8 @@ em_cleanup(Emotion_Gstreamer_Video *ev)
        ev->pipeline = NULL;
        ev->sink = NULL;
 
-       if (ev->eteepad) gst_object_unref(ev->eteepad);
-       ev->eteepad = NULL;
-       if (ev->xvteepad) gst_object_unref(ev->xvteepad);
-       ev->xvteepad = NULL;
-       if (ev->xvpad) gst_object_unref(ev->xvpad);
-       ev->xvpad = NULL;
-
        ev->src_width = 0;
        ev->src_height = 0;
-
-#ifdef HAVE_ECORE_X
-       INF("destroying window: %i", ev->win);
-       if (ev->win) ecore_x_window_free(ev->win);
-       ev->win = 0;
-#endif
-     }
-
-   if (restart_idler)
-     {
-        ecore_idler_del(restart_idler);
-        restart_idler = NULL;
      }
 
    EINA_LIST_FREE(ev->audio_streams, astream)
@@ -1065,106 +1038,6 @@ em_meta_get(void *video, int meta)
    return str;
 }
 
-static void
-em_priority_set(void *video, Eina_Bool pri)
-{
-   Emotion_Gstreamer_Video *ev;
-
-   ev = video;
-   if (priority_overide > 3) return; /* If we failed to much to create that pipeline, let's don't wast our time anymore */
-
-   if (ev->priority != pri && ev->pipeline)
-     {
-        if (ev->threads)
-          {
-             Ecore_Thread *t;
-
-             EINA_LIST_FREE(ev->threads, t)
-                ecore_thread_cancel(t);
-          }
-        em_cleanup(ev);
-        restart_idler = ecore_idler_add(_em_restart_stream, ev);
-     }
-   ev->priority = pri;
-}
-
-static Eina_Bool
-em_priority_get(void *video)
-{
-   Emotion_Gstreamer_Video *ev;
-
-   ev = video;
-   return !ev->stream;
-}
-
-#ifdef HAVE_ECORE_X
-static Eina_Bool
-_ecore_event_x_destroy(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
-{
-   Ecore_X_Event_Window_Destroy *ev = event;
-
-   INF("killed window: %x (%x).", ev->win, ev->event_win);
-
-   return EINA_TRUE;
-}
-
-static void
-gstreamer_ecore_x_check(void)
-{
-   Ecore_X_Window *roots;
-   int num;
-
-   ecore_event_handler_add(ECORE_X_EVENT_WINDOW_DESTROY, _ecore_event_x_destroy, NULL);
-
-   /* Check if the window manager is able to handle our special Xv window. */
-   roots = ecore_x_window_root_list(&num);
-   if (roots && num > 0)
-     {
-        Ecore_X_Window  win, twin;
-        int nwins;
-
-        nwins = ecore_x_window_prop_window_get(roots[0],
-                                               ECORE_X_ATOM_NET_SUPPORTING_WM_CHECK,
-                                               &win, 1);
-        if (nwins > 0)
-          {
-             nwins = ecore_x_window_prop_window_get(win,
-                                                    ECORE_X_ATOM_NET_SUPPORTING_WM_CHECK,
-                                                    &twin, 1);
-             if (nwins > 0 && twin == win)
-               {
-                  Ecore_X_Atom *supported;
-                  int supported_num;
-                  int i;
-
-                  if (ecore_x_netwm_supported_get(roots[0], &supported, &supported_num))
-                    {
-                       Eina_Bool parent = EINA_FALSE;
-                       Eina_Bool video_position = EINA_FALSE;
-
-                       for (i = 0; i < supported_num; ++i)
-                         {
-                            if (supported[i] == ECORE_X_ATOM_E_VIDEO_PARENT)
-                              parent = EINA_TRUE;
-                            else if (supported[i] == ECORE_X_ATOM_E_VIDEO_POSITION)
-                              video_position = EINA_TRUE;
-                            if (parent && video_position)
-                              break;
-                         }
-
-                       if (parent && video_position)
-                         {
-                            window_manager_video = EINA_TRUE;
-                         }
-                    }
-                  free(supported);
-               }
-          }
-     }
-   free(roots);
-}
-#endif
-
 static void *
 em_add(const Emotion_Engine *api,
        Evas_Object *obj,
@@ -1253,8 +1126,8 @@ static const Emotion_Engine em_engine =
    em_speed_get, /* speed_get */
    em_eject, /* eject */
    em_meta_get, /* meta_get */
-   em_priority_set, /* priority_set */
-   em_priority_get /* priority_get */
+   NULL, /* priority_set */
+   NULL /* priority_get */
 };
 
 Eina_Bool
@@ -1286,14 +1159,6 @@ gstreamer_module_init(void)
         goto error_gst_init;
      }
 
-#ifdef HAVE_ECORE_X
-   if (ecore_x_init(NULL) > 0)
-     {
-        _ecore_x_available = EINA_TRUE;
-        gstreamer_ecore_x_check();
-     }
-#endif
-
    if (gst_plugin_register_static(GST_VERSION_MAJOR, GST_VERSION_MINOR,
                                   "emotion-sink",
                                   "video sink plugin for Emotion",
@@ -1319,14 +1184,6 @@ gstreamer_module_init(void)
 
  error_register:
  error_gst_plugin:
-#ifdef HAVE_ECORE_X
-   if (_ecore_x_available)
-     {
-        ecore_x_shutdown();
-        _ecore_x_available = EINA_FALSE;
-        window_manager_video = EINA_FALSE;
-     }
-#endif
 
    gst_deinit();
 
@@ -1353,15 +1210,6 @@ gstreamer_module_shutdown(void)
    _emotion_init_count = 0;
 
    _emotion_module_unregister(&em_engine);
-
-#ifdef HAVE_ECORE_X
-   if (_ecore_x_available)
-     {
-        ecore_x_shutdown();
-        _ecore_x_available = EINA_FALSE;
-        window_manager_video = EINA_FALSE;
-     }
-#endif
 
    eina_log_domain_unregister(_emotion_gstreamer_log_domain);
    _emotion_gstreamer_log_domain = -1;
@@ -1505,32 +1353,6 @@ _free_metadata(Emotion_Gstreamer_Metadata *m)
   g_free(m->disc_id);
 
   free(m);
-}
-
-static Eina_Bool
-_em_restart_stream(void *data)
-{
-   Emotion_Gstreamer_Video *ev;
-
-   ev = data;
-
-   ev->pipeline = gstreamer_video_sink_new(ev, ev->obj, ev->uri);
-
-   if (ev->pipeline)
-     {
-        ev->eos_bus = gst_pipeline_get_bus(GST_PIPELINE(ev->pipeline));
-        if (!ev->eos_bus)
-          {
-             ERR("could not get the bus");
-             return EINA_FALSE;
-          }
-
-        gst_bus_set_sync_handler(ev->eos_bus, _eos_sync_fct, ev, NULL);
-     }
-
-   restart_idler = NULL;
-
-   return ECORE_CALLBACK_CANCEL;
 }
 
 static Eina_Bool
@@ -1687,15 +1509,6 @@ _eos_main_fct(void *data)
          break;
       case GST_MESSAGE_ERROR:
          em_cleanup(ev);
-
-	 if (ev->priority)
-	   {
-	     ERR("Switching back to canvas rendering.");
-	     ev->priority = EINA_FALSE;
-	     priority_overide++;
-
-	     restart_idler = ecore_idler_add(_em_restart_stream, ev);
-	   }
          break;
       default:
          ERR("bus say: %s [%i - %s]",
@@ -1769,16 +1582,12 @@ _eos_sync_fct(GstBus *bus EINA_UNUSED, GstMessage *msg, gpointer data)
 	   g_error_free(error);
 	   g_free(debug);
 
-           /* FIXME: This is broken */
-           if (strncmp(GST_OBJECT_NAME(msg->src), "xvimagesink", 11) == 0)
-             {
-                send = emotion_gstreamer_message_alloc(ev, msg);
+           send = emotion_gstreamer_message_alloc(ev, msg);
 
-                if (send)
-                  {
-                     _emotion_pending_ecore_begin();
-                     ecore_main_loop_thread_safe_call_async(_eos_main_fct, send);
-                  }
+           if (send)
+             {
+                _emotion_pending_ecore_begin();
+                ecore_main_loop_thread_safe_call_async(_eos_main_fct, send);
              }
 	   break;
 	}
