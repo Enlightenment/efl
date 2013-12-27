@@ -1583,6 +1583,57 @@ _url_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 #endif
 }
 
+EAPI Eina_Bool
+elm_web_html_string_load(Evas_Object *obj, const char *html, const char *base_url, const char *unreachable_url)
+{
+#ifdef HAVE_ELEMENTARY_WEB
+   ELM_WEB_CHECK(obj) EINA_FALSE;
+   Eina_Bool ret = EINA_FALSE;
+   eo_do(obj, elm_obj_web_html_string_load(html, base_url, unreachable_url, &ret));
+   return ret;
+#else
+   (void)obj;
+   (void)html;
+   (void)base_url;
+   (void)unreachable_url;
+   return EINA_FALSE;
+#endif
+}
+
+static void
+_html_string_load(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+{
+   const char *html = va_arg(*list, const char *);
+   const char *base_url = va_arg(*list, const char *);
+   const char *unreachable_url = va_arg(*list, const char *);
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   if (ret) *ret = EINA_FALSE;
+
+#ifdef HAVE_ELEMENTARY_WEB
+   Eina_Bool int_ret;
+
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+
+   if (!unreachable_url)
+     int_ret = ewk_frame_contents_set(
+                  ewk_view_frame_main_get(wd->resize_obj),
+                  html, 0, NULL, NULL,
+                  base_url);
+   else
+     int_ret = ewk_frame_contents_alternate_set(
+                  ewk_view_frame_main_get(wd->resize_obj),
+                  html, 0, NULL, NULL,
+                  base_url, unreachable_url);
+
+   if (ret) *ret = int_ret;
+#else
+   (void)obj;
+   (void)html;
+   (void)base_url;
+   (void)unreachable_url;
+#endif
+}
+
 EAPI const char *
 elm_web_title_get(const Evas_Object *obj)
 {
@@ -2671,6 +2722,7 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_OBJ_WEB_ID(ELM_OBJ_WEB_SUB_ID_TAB_PROPAGATE_SET), _tab_propagate_set),
         EO_OP_FUNC(ELM_OBJ_WEB_ID(ELM_OBJ_WEB_SUB_ID_URL_SET), _url_set),
         EO_OP_FUNC(ELM_OBJ_WEB_ID(ELM_OBJ_WEB_SUB_ID_URL_GET), _url_get),
+        EO_OP_FUNC(ELM_OBJ_WEB_ID(ELM_OBJ_WEB_SUB_ID_HTML_STRING_LOAD), _html_string_load),
         EO_OP_FUNC(ELM_OBJ_WEB_ID(ELM_OBJ_WEB_SUB_ID_TITLE_GET), _title_get),
         EO_OP_FUNC(ELM_OBJ_WEB_ID(ELM_OBJ_WEB_SUB_ID_BG_COLOR_SET), _bg_color_set),
         EO_OP_FUNC(ELM_OBJ_WEB_ID(ELM_OBJ_WEB_SUB_ID_BG_COLOR_GET), _bg_color_get),
@@ -2722,6 +2774,7 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_OBJ_WEB_SUB_ID_TAB_PROPAGATE_SET, "Sets whether to use tab propagation."),
      EO_OP_DESCRIPTION(ELM_OBJ_WEB_SUB_ID_URL_SET, "Sets the URL for the web object."),
      EO_OP_DESCRIPTION(ELM_OBJ_WEB_SUB_ID_URL_GET, "Get the current URL for the object."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WEB_SUB_ID_HTML_STRING_LOAD, "Loads the specified html string as the content of the object."),
      EO_OP_DESCRIPTION(ELM_OBJ_WEB_SUB_ID_TITLE_GET, "Get the current title."),
      EO_OP_DESCRIPTION(ELM_OBJ_WEB_SUB_ID_BG_COLOR_SET, "Sets the background color to be used by the web object."),
      EO_OP_DESCRIPTION(ELM_OBJ_WEB_SUB_ID_BG_COLOR_GET, "Get the background color to be used by the web object."),

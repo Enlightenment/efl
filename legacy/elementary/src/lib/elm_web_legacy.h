@@ -180,6 +180,28 @@ EAPI void              elm_web_tab_propagate_set(Evas_Object *obj, Eina_Bool pro
 EAPI Eina_Bool         elm_web_url_set(Evas_Object *obj, const char *url);
 
 /**
+ * Loads the specified @a html string as the content of the web object
+ *
+ * @param obj The web object
+ * @param html HTML data to load
+ * @param base_url Base URL used for relative paths to external objects (optional)
+ * @param unreachable_url URL that could not be reached (optional)
+ *
+ * @return @c EINA_TRUE if it the HTML was successfully loaded, @c EINA_FALSE otherwise
+ *
+ * External objects such as stylesheets or images referenced in the HTML
+ * document are located relative to @a base_url.
+ *
+ * If an @a unreachable_url is passed it is used as the url for the loaded
+ * content. This is typically used to display error pages for a failed
+ * load.
+ *
+ * @since 1.9
+ * @ingroup Web
+ */
+EAPI Eina_Bool         elm_web_html_string_load(Evas_Object *obj, const char *html, const char *base_url, const char *unreachable_url);
+
+/**
  * Get the current URL for the object
  *
  * The returned string must not be freed and is guaranteed to be

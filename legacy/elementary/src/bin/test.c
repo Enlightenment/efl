@@ -228,6 +228,7 @@ void test_eio(void *data, Evas_Object *obj, void *event_info);
 #endif
 #ifdef HAVE_ELEMENTARY_WEB
 void test_web(void *data, Evas_Object *obj, void *event_info);
+void test_web_ui(void *data, Evas_Object *obj, void *event_info);
 #endif
 void test_dnd_genlist_default_anim(void *data, Evas_Object *obj, void *event_info);
 void test_dnd_genlist_user_anim(void *data, Evas_Object *obj, void *event_info);
@@ -669,6 +670,7 @@ add_tests:
    //------------------------------//
 #ifdef HAVE_ELEMENTARY_WEB
    ADD_TEST(NULL, "Web", "Web", test_web);
+   ADD_TEST(NULL, "Web", "Web UI", test_web_ui);
 #endif
 
    //------------------------------//

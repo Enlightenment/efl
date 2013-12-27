@@ -19,6 +19,7 @@ enum
    ELM_OBJ_WEB_SUB_ID_TAB_PROPAGATE_SET,
    ELM_OBJ_WEB_SUB_ID_URL_SET,
    ELM_OBJ_WEB_SUB_ID_URL_GET,
+   ELM_OBJ_WEB_SUB_ID_HTML_STRING_LOAD,
    ELM_OBJ_WEB_SUB_ID_TITLE_GET,
    ELM_OBJ_WEB_SUB_ID_BG_COLOR_SET,
    ELM_OBJ_WEB_SUB_ID_BG_COLOR_GET,
@@ -244,6 +245,23 @@ enum
  * @ingroup Web
  */
 #define elm_obj_web_url_get(ret) ELM_OBJ_WEB_ID(ELM_OBJ_WEB_SUB_ID_URL_GET), EO_TYPECHECK(const char **, ret)
+
+/**
+ * @def elm_obj_web_html_string_load
+ * @since 1.9
+ *
+ * Loads the specified @a html string as the content of the web object
+ *
+ * @param[in] html
+ * @param[in] base_url
+ * @param[in] unreachable_url
+ * @param[out] ret
+ *
+ * @see elm_web_html_string_load
+ *
+ * @ingroup Web
+ */
+#define elm_obj_web_html_string_load(html, base_url, unreachable_url, ret) ELM_OBJ_WEB_ID(ELM_OBJ_WEB_SUB_ID_HTML_STRING_LOAD), EO_TYPECHECK(const char *, html), EO_TYPECHECK(const char *, base_url), EO_TYPECHECK(const char *, unreachable_url), EO_TYPECHECK(Eina_Bool *, ret)
 
 /**
  * @def elm_obj_web_title_get

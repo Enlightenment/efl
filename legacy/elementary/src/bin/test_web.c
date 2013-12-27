@@ -509,3 +509,38 @@ test_web(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info 
    evas_object_resize(win, 320, 480);
    evas_object_show(win);
 }
+
+void
+test_web_ui(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *win, *bx, *web;
+   Web_Test *wt;
+
+   elm_need_web();
+
+   wt = calloc(1, sizeof(*wt));
+   win = elm_win_util_standard_add("web", "Web");
+
+   elm_win_autodel_set(win, EINA_TRUE);
+
+   bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bx);
+   evas_object_show(bx);
+
+   web = elm_web_add(win);
+   evas_object_size_hint_weight_set(web, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(web, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(bx, web);
+   evas_object_show(web);
+
+   evas_object_event_callback_add(web, EVAS_CALLBACK_DEL, _main_web_del_cb, wt);
+   wt->web = web;
+
+   elm_web_html_string_load(wt->web,
+                            "<!doctype html><body>Hello, WebKit/Efl</body>",
+                            NULL, NULL);
+
+   evas_object_resize(win, 320, 480);
+   evas_object_show(win);
+}
