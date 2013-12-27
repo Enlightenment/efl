@@ -524,7 +524,6 @@ eina_module_find(const Eina_Array *array, const char *module)
         if (len <= 0)
            continue;
 
-        printf("cmp %s %s %i\n", file_m, module, len);
         if (!strncmp(module, file_m, len))
 	   return m;
      }
