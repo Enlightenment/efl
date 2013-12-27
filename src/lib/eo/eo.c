@@ -1577,9 +1577,6 @@ eo_add_internal(const char *file, int line, const Eo_Class *klass_id, Eo *parent
    _eo_parent_internal_set(obj, parent_id);
 
    /* Run the relevant do stuff. */
-   if (klass->desc->version == EO2_VERSION)
-     eo2_do((Eo *)obj_id, eo2_constructor());
-   /* Run the relevant do stuff. */
      {
         va_list p_list;
         va_start(p_list, parent_id);
