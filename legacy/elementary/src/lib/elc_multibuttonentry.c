@@ -551,9 +551,9 @@ _item_signal_emit_hook(Elm_Object_Item *it,
                        const char *emission,
                        const char *source)
 {
-   Elm_Multibuttonentry_Item *item = it;
+   Elm_Multibuttonentry_Item *item = (Elm_Multibuttonentry_Item *)it;
 
-   edje_object_signal_emit(item, emission, source);
+   edje_object_signal_emit(item->button, emission, source);
 }
 
 static void
