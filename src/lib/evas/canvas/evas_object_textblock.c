@@ -8924,26 +8924,18 @@ _evas_textblock_cursor_range_text_markup_get(const Evas_Textblock_Cursor *cur1, 
      {
         Evas_Object_Textblock_Node_Format *fnode;
         Eina_Unicode *text_base, *text;
+        int cur1_pos = 0, cur2_pos = -1;
         int off = 0;
 
         text_base = text =
            eina_unicode_strndup(eina_ustrbuf_string_get(tnode->unicode),
                                 eina_ustrbuf_length_get(tnode->unicode));
         if (tnode == cur2->node)
-          {
-             fnode = _evas_textblock_node_text_get_first_format_between(tnode,
-                   cur1->pos, cur2->pos);
-          }
-        else if (tnode == cur1->node)
-          {
-             fnode = _evas_textblock_node_text_get_first_format_between(tnode,
-                   cur1->pos, -1);
-          }
-        else
-          {
-             fnode = _evas_textblock_node_text_get_first_format_between(tnode,
-                   0, -1);
-          }
+          cur2_pos = cur2->pos;
+        if (tnode == cur1->node)
+          cur1_pos = cur1->pos;
+        fnode = _evas_textblock_node_text_get_first_format_between(tnode,
+                cur1_pos, cur2_pos);
         /* Init the offset so the first one will count starting from cur1->pos
          * and not the previous format node */
         if (tnode == cur1->node)
