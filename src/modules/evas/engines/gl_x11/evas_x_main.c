@@ -849,3 +849,93 @@ eng_best_depth_get(Evas_Engine_Info_GL_X11 *einfo)
      }
    return _evas_gl_x11_vi->depth;
 }
+
+Evas_GL_X11_Context *
+eng_gl_context_new(Evas_GL_X11_Window *win)
+{
+   Evas_GL_X11_Context *ctx;
+#if GL_GLES
+   int context_attrs[3] = { EGL_CONTEXT_CLIENT_VERSION, 2, EGL_NONE };
+#endif
+
+   if (!win) return NULL;
+
+   ctx = calloc(1, sizeof(Evas_GL_X11_Context));
+   if (!ctx) return NULL;
+
+#if GL_GLES
+   ctx->context = eglCreateContext(win->egl_disp, win->egl_config,
+                                   win->egl_context[0], context_attrs);
+
+   if (!ctx->context)
+     {
+        ERR("EGL context creation failed.");
+        goto error;
+     }
+
+   ctx->display = win->egl_disp;
+   ctx->surface = win->egl_surface[0];
+#else
+   ctx->context = glXCreateContext(win->disp, win->visualinfo, win->context, 1);
+
+   if (!ctx->context)
+     {
+        ERR("GLX context creation failed.");
+        goto error;
+     }
+
+   ctx->display = win->disp;
+   ctx->glxwin = win->glxwin;
+   ctx->win = win->win;
+#endif
+
+   return ctx;
+
+error:
+   free(ctx);
+   return NULL;
+}
+
+void
+eng_gl_context_free(Evas_GL_X11_Context *ctx)
+{
+#if GL_GLES
+   eglDestroyContext(ctx->display, ctx->context);
+#else
+   glXDestroyContext(ctx->display, ctx->context);
+#endif
+
+   free(ctx);
+}
+
+void
+eng_gl_context_use(Evas_GL_X11_Context *ctx)
+{
+#if GL_GLES
+   if (eglMakeCurrent(ctx->display, ctx->surface,
+                      ctx->surface, ctx->context) == EGL_FALSE)
+     {
+        ERR("eglMakeCurrent() failed.");
+     }
+#else
+   if (ctx->glxwin)
+     {
+        if (!glXMakeContextCurrent(ctx->display, ctx->glxwin,
+                                   ctx->glxwin, ctx->context))
+          {
+             ERR("glXMakeContextCurrent(%p, %p, %p, %p) faild.",
+                 (void *)ctx->display, (void *)ctx->glxwin,
+                 (void *)ctx->glxwin, (void *)ctx->context);
+          }
+     }
+   else
+     {
+        if (!glXMakeCurrent(ctx->display, ctx->win, ctx->context))
+          {
+             ERR("glXMakeCurrent(%p, %p, %p) failed.",
+                 (void *)ctx->display, (void *)ctx->win,
+                 (void *)ctx->context);
+          }
+     }
+#endif
+}

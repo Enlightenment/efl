@@ -1811,6 +1811,22 @@ AC_DEFINE_IF([EVAS_CSERVE2],
    [1], [Shared cache server.])
 AM_CONDITIONAL([EVAS_CSERVE2], [test "x${want_evas_cserve2}" = "xyes"])
 
+# Evas 3D
+AC_ARG_ENABLE([evas-3d],
+              [AC_HELP_STRING([--enable-evas-3d],
+                              [enable 3D scene graph features on evas. @<:default=disabled@:>@])],
+              [
+               if test "x${enableval}" = "xyes" ; then
+                  want_evas_3d="yes"
+               else
+                  want_evas_3d="no"
+               fi
+              ],
+              [want_evas_3d="no"])
+
+AC_DEFINE_IF([EVAS_3D], [test "x${want_evas_3d}" = "xyes"], [1], [3D scene graph rendering.])
+AM_CONDITIONAL([EVAS_3D], [test "x${want_evas_3d}" = "xyes"])
+
 ### Configuration
 
 ## Tile rotation
@@ -1852,6 +1868,7 @@ EFL_ADD_FEATURE([EVAS], [harfbuzz])
 EFL_ADD_FEATURE([EVAS], [cserve], [${want_evas_cserve2}])
 EFL_ADD_FEATURE([EVAS], [tile-rotate])
 EFL_ADD_FEATURE([EVAS], [dither-mask], [${build_evas_dither_mask}])
+EFL_ADD_FEATURE([EVAS], [evas-3d], [${want_evas_3d}])
 
 EFL_LIB_END([Evas])
 #### End of Evas

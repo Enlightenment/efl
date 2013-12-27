@@ -27,6 +27,7 @@ class Evas_Image (Evas_Object)
             double dpi; /*@ The new DPI resolution. */
          }
       }
+
       source_clip {
          set {
             /*@
@@ -994,6 +995,32 @@ class Evas_Image (Evas_Object)
             @see evas_object_image_animated_frame_set()
             @since 1.1 */
             return int;
+         }
+      }
+
+      t3d_scene {
+         set {
+            /*
+              @def evas_obj_image_3d_scene_set
+              @since 1.8
+             
+              Set the 3D scene on an image object.
+             
+              @see evas_object_image_3d_scene_set
+             */
+         }
+         get {
+            /*
+              @def evas_obj_image_3d_scene_get
+              @since 1.8
+             
+              Get the 3D scene on an image object.
+             
+              @see evas_object_image_3d_scene_get
+             */
+         }
+         values {
+            Evas_3D_Scene *scene; /*@ 3D scene on an image object. */
          }
       }
    }

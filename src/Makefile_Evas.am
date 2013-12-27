@@ -251,6 +251,24 @@ lib/evas/file/evas_path.h
 lib_evas_libevas_la_SOURCES += \
 $(lib_evas_file_SOURCES)
 
+# 3D
+dist_installed_evasmainheaders_DATA += lib/evas/Evas_3D.h
+
+noinst_HEADERS += \
+lib/evas/include/evas_3d_utils.h \
+lib/evas/include/evas_3d_private.h
+
+lib_evas_libevas_la_SOURCES += \
+lib/evas/canvas/evas_3d_object.c \
+lib/evas/canvas/evas_3d_scene.c \
+lib/evas/canvas/evas_3d_node.c \
+lib/evas/canvas/evas_3d_camera.c \
+lib/evas/canvas/evas_3d_light.c \
+lib/evas/canvas/evas_3d_mesh.c \
+lib/evas/canvas/evas_3d_texture.c \
+lib/evas/canvas/evas_3d_material.c \
+lib/evas/canvas/evas_3d_mesh_loader_md2.c
+
 # Engine
 lib_evas_libevas_la_SOURCES += \
 lib/evas/common/evas_op_copy_main_.c \
@@ -712,6 +730,14 @@ modules/evas/engines/gl_common/shader/yuy2_frag.h \
 modules/evas/engines/gl_common/shader/yuy2_nomul_frag.h \
 modules/evas/engines/gl_common/shader/yuy2_nomul_vert.h \
 modules/evas/engines/gl_common/shader/yuy2_vert.h
+
+# 3D
+GL_COMMON_SOURCES += \
+modules/evas/engines/gl_common/evas_gl_3d_common.h \
+modules/evas/engines/gl_common/evas_gl_3d_private.h \
+modules/evas/engines/gl_common/evas_gl_3d.c \
+modules/evas/engines/gl_common/evas_gl_3d_renderer.c \
+modules/evas/engines/gl_common/evas_gl_3d_shader.c
 
 EXTRA_DIST += \
 modules/evas/engines/gl_common/shader/compile.sh \

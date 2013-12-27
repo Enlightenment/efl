@@ -67,6 +67,9 @@ struct _Render_Engine
       void                            *get_pixels_data;
       Evas_Object                     *obj;
    } func;
+
+   Evas_GL_X11_Context     *context_3d;
+   E3D_Renderer            *renderer_3d;
 };
 
 static int initted = 0;
@@ -3701,6 +3704,185 @@ eng_context_flush(void *data)
    }
 }
 
+static void
+eng_context_3d_use(void *data)
+{
+   Render_Engine *re = (Render_Engine *)data;
+
+   if (re->context_3d == NULL)
+     {
+        re->context_3d = eng_gl_context_new(re->win);
+
+        if (re->context_3d == NULL)
+          {
+             ERR("Failed to create OpenGL context for 3D.");
+             return;
+          }
+     }
+
+   eng_gl_context_use(re->context_3d);
+}
+
+static E3D_Renderer *
+eng_renderer_3d_get(void *data)
+{
+   Render_Engine *re = (Render_Engine *)data;
+
+   if (re->renderer_3d == NULL)
+     {
+        re->renderer_3d = e3d_renderer_new();
+
+        if (re->renderer_3d == NULL)
+          {
+             ERR("Failed to create 3D renderer.");
+             return NULL;
+          }
+     }
+
+   return re->renderer_3d;
+}
+
+static void *
+eng_drawable_new(void *data, int w, int h, int alpha)
+{
+   eng_context_3d_use(data);
+#ifdef GL_GLES
+   return e3d_drawable_new(w, h, alpha, GL_DEPTH_STENCIL_OES, GL_NONE);
+#else
+   return e3d_drawable_new(w, h, alpha, GL_DEPTH24_STENCIL8, GL_NONE);
+#endif
+}
+
+static void
+eng_drawable_free(void *data, void *drawable)
+{
+   eng_context_3d_use(data);
+   e3d_drawable_free(drawable);
+}
+
+static void
+eng_drawable_size_get(void *data EINA_UNUSED, void *drawable, int *w, int *h)
+{
+   e3d_drawable_size_get((E3D_Drawable *)drawable, w, h);
+}
+
+static void *
+eng_image_drawable_set(void *data, void *image, void *drawable)
+{
+   E3D_Drawable *d = (E3D_Drawable *)drawable;
+   Evas_Native_Surface ns;
+   int w, h;
+
+   ns.type = EVAS_NATIVE_SURFACE_OPENGL;
+   ns.data.opengl.texture_id = e3d_drawable_texture_id_get(d);
+   ns.data.opengl.framebuffer_id = 0;
+   ns.data.opengl.internal_format = e3d_drawable_format_get(d);
+   ns.data.opengl.format = e3d_drawable_format_get(d);
+   ns.data.opengl.x = 0;
+   ns.data.opengl.y = 0;
+   e3d_drawable_size_get(d, &w, &h);
+   ns.data.opengl.w = w;
+   ns.data.opengl.h = h;
+
+   return eng_image_native_set(data, image, &ns);
+}
+
+static void
+eng_drawable_scene_render(void *data, void *drawable, void *scene_data)
+{
+   Render_Engine *re = (Render_Engine *)data;
+   E3D_Renderer *renderer = NULL;
+
+   eng_window_use(re->win);
+   evas_gl_common_context_flush(re->win->gl_context);
+
+   eng_context_3d_use(data);
+   renderer = eng_renderer_3d_get(data);
+   e3d_drawable_scene_render(drawable, renderer, scene_data);
+}
+
+static void *
+eng_texture_new(void *data EINA_UNUSED)
+{
+   return e3d_texture_new();
+}
+
+static void
+eng_texture_free(void *data EINA_UNUSED, void *texture)
+{
+   e3d_texture_free((E3D_Texture *)texture);
+}
+
+static void
+eng_texture_data_set(void *data, void *texture, Evas_3D_Color_Format color_format,
+                     Evas_3D_Pixel_Format pixel_format, int w, int h, const void *pixels)
+{
+   Render_Engine *re = (Render_Engine *)data;
+   eng_window_use(re->win);
+   evas_gl_common_context_flush(re->win->gl_context);
+   eng_context_3d_use(data);
+
+   e3d_texture_data_set((E3D_Texture *)texture, color_format, pixel_format, w, h, pixels);
+}
+
+static void
+eng_texture_file_set(void *data, void *texture, const char *file, const char *key)
+{
+   Render_Engine *re = (Render_Engine *)data;
+   eng_window_use(re->win);
+   evas_gl_common_context_flush(re->win->gl_context);
+   eng_context_3d_use(data);
+
+   e3d_texture_file_set((E3D_Texture *)texture, file, key);
+}
+
+static void
+eng_texture_color_format_get(void *data EINA_UNUSED, void *texture, Evas_3D_Color_Format *format)
+{
+   *format = e3d_texture_color_format_get((E3D_Texture *)texture);
+}
+
+static void
+eng_texture_size_get(void *data EINA_UNUSED, void *texture, int *w, int *h)
+{
+   e3d_texture_size_get((E3D_Texture *)texture, w, h);
+}
+
+static void
+eng_texture_wrap_set(void *data EINA_UNUSED, void *texture,
+                     Evas_3D_Wrap_Mode s, Evas_3D_Wrap_Mode t)
+{
+   e3d_texture_wrap_set((E3D_Texture *)texture, s, t);
+}
+
+static void
+eng_texture_wrap_get(void *data EINA_UNUSED, void *texture,
+                     Evas_3D_Wrap_Mode *s, Evas_3D_Wrap_Mode *t)
+{
+   e3d_texture_wrap_get((E3D_Texture *)texture, s, t);
+}
+
+static void
+eng_texture_filter_set(void *data EINA_UNUSED, void *texture,
+                       Evas_3D_Texture_Filter min, Evas_3D_Texture_Filter mag)
+{
+   e3d_texture_filter_set((E3D_Texture *)texture, min, mag);
+}
+
+static void
+eng_texture_filter_get(void *data EINA_UNUSED, void *texture,
+                       Evas_3D_Texture_Filter *min, Evas_3D_Texture_Filter *mag)
+{
+   e3d_texture_filter_get((E3D_Texture *)texture, min, mag);
+}
+
+static void
+eng_texture_image_set(void *data EINA_UNUSED, void *texture, void *image)
+{
+   Evas_GL_Image *im = (Evas_GL_Image *)image;
+   e3d_texture_import((E3D_Texture *)texture, im->tex->pt->texture);
+}
+
 static int
 module_open(Evas_Module *em)
 {
@@ -3824,6 +4006,26 @@ module_open(Evas_Module *em)
    ORD(pixel_alpha_get);
 
    ORD(context_flush);
+
+   /* 3D features */
+   ORD(drawable_new);
+   ORD(drawable_free);
+   ORD(drawable_size_get);
+   ORD(image_drawable_set);
+
+   ORD(drawable_scene_render);
+
+   ORD(texture_new);
+   ORD(texture_free);
+   ORD(texture_data_set);
+   ORD(texture_file_set);
+   ORD(texture_color_format_get);
+   ORD(texture_size_get);
+   ORD(texture_wrap_set);
+   ORD(texture_wrap_get);
+   ORD(texture_filter_set);
+   ORD(texture_filter_get);
+   ORD(texture_image_set);
 
    /* now advertise out own api */
    em->functions = (void *)(&func);

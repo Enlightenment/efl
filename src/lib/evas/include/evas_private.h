@@ -16,6 +16,7 @@
 #include "../common/language/evas_bidi_utils.h"
 #include "../common/language/evas_language_utils.h"
 
+#include "evas_3d_private.h"
 
 #define RENDER_METHOD_INVALID            0x00000000
 
@@ -46,6 +47,7 @@ typedef struct _Evas_Coord_Touch_Point      Evas_Coord_Touch_Point;
 typedef struct _Evas_Object_Proxy_Data      Evas_Object_Proxy_Data;
 typedef struct _Evas_Object_Map_Data        Evas_Object_Map_Data;
 typedef struct _Evas_Proxy_Render_Data      Evas_Proxy_Render_Data;
+typedef struct _Evas_Object_3D_Data         Evas_Object_3D_Data;
 
 typedef struct _Evas_Object_Protected_State Evas_Object_Protected_State;
 typedef struct _Evas_Object_Protected_Data  Evas_Object_Protected_Data;
@@ -512,6 +514,7 @@ struct _Evas_Map
 struct _Evas_Object_Proxy_Data
 {
    Eina_List               *proxies;
+   Eina_List               *proxy_textures;
    void                    *surface;
    int                      w,h;
    Eina_List               *src_event_in;
@@ -535,6 +538,12 @@ struct _Evas_Object_Map_Data
 
    Evas_Map             *cache_map;
    RGBA_Map             *spans;
+};
+
+struct _Evas_Object_3D_Data
+{
+   void          *surface;
+   int            w, h;
 };
 
 struct _Evas_Object_Protected_State
@@ -603,6 +612,7 @@ struct _Evas_Object_Protected_Data
    // Eina_Cow pointer be careful when writing to it
    const Evas_Object_Proxy_Data *proxy;
    const Evas_Object_Map_Data *map;
+   const Evas_Object_3D_Data  *data_3d;
 
    // Pointer to the Evas_Object itself
    Evas_Object                *object;
@@ -923,6 +933,26 @@ struct _Evas_Func
    Eina_Bool (*pixel_alpha_get)          (void *image, int x, int y, DATA8 *alpha, int src_region_x, int src_region_y, int src_region_w, int src_region_h, int dst_region_x, int dst_region_y, int dst_region_w, int dst_region_h);
 
    void (*context_flush)                 (void *data);
+
+   /* 3D features */
+   void *(*drawable_new)                 (void *data, int w, int h, int alpha);
+   void  (*drawable_free)                (void *data, void *drawable);
+   void  (*drawable_size_get)            (void *data, void *drawable, int *w, int *h);
+   void *(*image_drawable_set)           (void *data, void *image, void *drawable);
+
+   void  (*drawable_scene_render)        (void *data, void *drawable, void *scene_data);
+
+   void *(*texture_new)                  (void *data);
+   void  (*texture_free)                 (void *data, void *texture);
+   void  (*texture_data_set)             (void *data, void *texture, Evas_3D_Color_Format format, Evas_3D_Pixel_Format pixel_format, int w, int h, const void *pixels);
+   void  (*texture_file_set)             (void *data, void *texture, const char *file, const char *key);
+   void  (*texture_color_format_get)     (void *data, void *texture, Evas_3D_Color_Format *format);
+   void  (*texture_size_get)             (void *data, void *texture, int *w, int *h);
+   void  (*texture_wrap_set)             (void *data, void *texture, Evas_3D_Wrap_Mode s, Evas_3D_Wrap_Mode t);
+   void  (*texture_wrap_get)             (void *data, void *texture, Evas_3D_Wrap_Mode *s, Evas_3D_Wrap_Mode *t);
+   void  (*texture_filter_set)           (void *data, void *texture, Evas_3D_Texture_Filter min, Evas_3D_Texture_Filter mag);
+   void  (*texture_filter_get)           (void *data, void *texture, Evas_3D_Texture_Filter *min, Evas_3D_Texture_Filter *mag);
+   void  (*texture_image_set)            (void *data, void *texture, void *image);
 };
 
 struct _Evas_Image_Save_Func
@@ -1284,6 +1314,8 @@ void _evas_device_unref(Evas_Device *dev);
 extern Eina_Cow *evas_object_proxy_cow;
 extern Eina_Cow *evas_object_map_cow;
 extern Eina_Cow *evas_object_state_cow;
+
+extern Eina_Cow *evas_object_3d_cow;
 
 extern Eina_Cow *evas_object_image_pixels_cow;
 extern Eina_Cow *evas_object_image_load_opts_cow;

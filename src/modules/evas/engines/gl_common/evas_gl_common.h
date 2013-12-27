@@ -897,4 +897,6 @@ _tex_sub_2d(Evas_Engine_GL_Context *gc, int x, int y, int w, int h, int fmt, int
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 }
 
+#include "evas_gl_3d_common.h"
+
 #endif

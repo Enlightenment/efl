@@ -58,6 +58,7 @@ extern int _evas_engine_GL_X11_log_dom ;
 #define CRI(...) EINA_LOG_DOM_CRIT(_evas_engine_GL_X11_log_dom, __VA_ARGS__)
 
 typedef struct _Evas_GL_X11_Window Evas_GL_X11_Window;
+typedef struct _Evas_GL_X11_Context Evas_GL_X11_Context;
 
 struct _Evas_GL_X11_Window
 {
@@ -91,6 +92,20 @@ struct _Evas_GL_X11_Window
    int             surf : 1;
 };
 
+struct _Evas_GL_X11_Context
+{
+#ifdef GL_GLES
+   EGLDisplay      display;
+   EGLContext      context;
+   EGLSurface      surface;
+#else
+   Display        *display;
+   GLXContext      context;
+   GLXWindow       glxwin;
+   Window          win;
+#endif
+};
+
 Evas_GL_X11_Window *eng_window_new(Display *disp, Window win, int screen,
                                    Visual *vis, Colormap cmap,
                                    int depth, int w, int h, int indirect,
@@ -103,5 +118,9 @@ void      eng_window_resurf(Evas_GL_X11_Window *gw);
 void     *eng_best_visual_get(Evas_Engine_Info_GL_X11 *einfo);
 Colormap  eng_best_colormap_get(Evas_Engine_Info_GL_X11 *einfo);
 int       eng_best_depth_get(Evas_Engine_Info_GL_X11 *einfo);
+
+Evas_GL_X11_Context *eng_gl_context_new(Evas_GL_X11_Window *win);
+void      eng_gl_context_free(Evas_GL_X11_Context *context);
+void      eng_gl_context_use(Evas_GL_X11_Context *context);
 
 #endif

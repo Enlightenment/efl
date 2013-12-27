@@ -292,7 +292,6 @@ extern "C" {
 #ifdef EFL_EO_API_SUPPORT
 #include <Evas_Eo.h>
 #endif
-
 #ifdef __cplusplus
 }
 #endif

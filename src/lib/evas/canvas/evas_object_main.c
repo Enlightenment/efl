@@ -23,7 +23,7 @@ get_layer_objects(Evas_Layer *l)
 
 /* evas internal stuff */
 static const Evas_Object_Proxy_Data default_proxy = {
-  NULL, NULL, 0, 0, NULL, 0, 0, 0, 0
+  NULL, NULL, NULL, 0, 0, NULL, 0, 0, 0, 0
 };
 static const Evas_Object_Map_Data default_map = {
   { NULL, NULL, 0, 0 }, { NULL, NULL, 0, 0 }, NULL, 0, 0, NULL, NULL
@@ -39,16 +39,20 @@ Eina_Cow *evas_object_proxy_cow = NULL;
 Eina_Cow *evas_object_map_cow = NULL;
 Eina_Cow *evas_object_state_cow = NULL;
 
+Eina_Cow *evas_object_3d_cow = NULL;
+
 static Eina_Bool
 _init_cow(void)
 {
-   if (evas_object_map_cow && evas_object_proxy_cow && evas_object_state_cow) return EINA_TRUE;
+   if (evas_object_map_cow && evas_object_proxy_cow && evas_object_state_cow && evas_object_3d_cow) return EINA_TRUE;
 
    evas_object_proxy_cow = eina_cow_add("Evas Object Proxy", sizeof (Evas_Object_Proxy_Data), 8, &default_proxy, EINA_TRUE);
    evas_object_map_cow = eina_cow_add("Evas Object Map", sizeof (Evas_Object_Map_Data), 8, &default_map, EINA_TRUE);
    evas_object_state_cow = eina_cow_add("Evas Object State", sizeof (Evas_Object_Protected_State), 64, &default_state, EINA_FALSE);
 
-   if (!(evas_object_map_cow && evas_object_proxy_cow && evas_object_state_cow))
+   evas_object_3d_cow = eina_cow_add("Evas Object 3D", sizeof (Evas_Object_3D_Data), 8, &default_proxy, EINA_TRUE);
+
+   if (!(evas_object_map_cow && evas_object_proxy_cow && evas_object_state_cow && evas_object_3d_cow))
      {
         eina_cow_del(evas_object_proxy_cow);
         eina_cow_del(evas_object_map_cow);
@@ -56,6 +60,10 @@ _init_cow(void)
         evas_object_proxy_cow = NULL;
         evas_object_map_cow = NULL;
         evas_object_state_cow = NULL;
+
+        eina_cow_del(evas_object_3d_cow);
+        evas_object_3d_cow = NULL;
+
         return EINA_FALSE;
      }
 
@@ -81,6 +89,7 @@ _evas_object_eo_base_constructor(Eo *eo_obj, Evas_Object_Protected_Data *obj)
    obj->map = eina_cow_alloc(evas_object_map_cow);
    obj->cur = eina_cow_alloc(evas_object_state_cow);
    obj->prev = eina_cow_alloc(evas_object_state_cow);
+   obj->data_3d = eina_cow_alloc(evas_object_3d_cow);
 }
 
 void
@@ -188,6 +197,7 @@ evas_object_free(Evas_Object *eo_obj, int clean_layer)
    eina_cow_free(evas_object_map_cow, (const Eina_Cow_Data**) &obj->map);
    eina_cow_free(evas_object_state_cow, (const Eina_Cow_Data**) &obj->cur);
    eina_cow_free(evas_object_state_cow, (const Eina_Cow_Data**) &obj->prev);
+   eina_cow_free(evas_object_3d_cow, (const Eina_Cow_Data**) &obj->data_3d);
    eo_data_unref(eo_obj, obj->private_data);
    obj->private_data = NULL;
 
@@ -204,6 +214,7 @@ evas_object_change(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
    Evas_Object_Protected_Data *obj2;
    Evas_Object *eo_obj2;
    Eina_Bool movch = EINA_FALSE;
+   Evas_3D_Texture *texture;
 
    if (!obj->layer) return;
    if (obj->layer->evas->nochange) return;
@@ -232,6 +243,10 @@ evas_object_change(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 
         if (!obj2) continue;
         evas_object_change(eo_obj2, obj2);
+     }
+   EINA_LIST_FOREACH(obj->proxy->proxy_textures, l, texture)
+     {
+        evas_3d_object_change(&texture->base, EVAS_3D_STATE_TEXTURE_DATA, NULL);
      }
    if (obj->smart.parent)
      {
