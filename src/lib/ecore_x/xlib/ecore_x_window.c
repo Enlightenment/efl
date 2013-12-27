@@ -1787,8 +1787,7 @@ ecore_x_window_override_argb_new(Ecore_X_Window parent,
 }
 
 EAPI Ecore_X_Window
-ecore_x_window_permanent_create(Ecore_X_Window parent,
-                                Ecore_X_Atom unique_atom)
+ecore_x_window_permanent_new(Ecore_X_Window parent, Ecore_X_Atom unique_atom)
 {
    Display *disp;
    Window win, win2, realwin = 0;

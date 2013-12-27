@@ -1409,7 +1409,7 @@ EAPI int                       ecore_x_window_argb_get(Ecore_X_Window win);
 EAPI Ecore_X_Window            ecore_x_window_manager_argb_new(Ecore_X_Window parent, int x, int y, int w, int h);
 EAPI Ecore_X_Window            ecore_x_window_argb_new(Ecore_X_Window parent, int x, int y, int w, int h);
 EAPI Ecore_X_Window            ecore_x_window_override_argb_new(Ecore_X_Window parent, int x, int y, int w, int h);
-EAPI Ecore_X_Window            ecore_x_window_permanent_create(Ecore_X_Window parent, Ecore_X_Atom unique_atom); /* @since 1.9 */
+EAPI Ecore_X_Window            ecore_x_window_permanent_new(Ecore_X_Window parent, Ecore_X_Atom unique_atom); /* @since 1.9 */
 EAPI Ecore_X_Window            ecore_x_window_input_new(Ecore_X_Window parent, int x, int y, int w, int h);
 EAPI void                      ecore_x_window_configure(Ecore_X_Window win, Ecore_X_Window_Configure_Mask mask, int x, int y, int w, int h, int border_width, Ecore_X_Window sibling, int stack_mode);
 EAPI void                      ecore_x_window_cursor_set(Ecore_X_Window win, Ecore_X_Cursor c);
