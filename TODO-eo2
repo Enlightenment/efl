@@ -1,0 +1,32 @@
+
+- eo_composite_attach
+   maybe check that the class of comp_obj is part of parent extensions
+
+- Eo2_Call_Stack
+   grow/shrink
+   stack push and pop functions
+   per thread stack
+
+- Remove the memset in do_end? Waste of cpu...
+
+- cleanup EO2_VERSION specific code in eo.c and eo_private.c
+
+- Move the Op_Descs to be set using a function inside the class_constructor
+   check if it works ASIS on windows
+   if it does, do nothing
+
+- Rediscuss the whole attribute cleanup thing. I'm not sure we want that as everything breaks if that isn't there. Embedded old gcc?
+
+- function name from pointer
+   dladdr backtrace ??
+
+- Get rid of some of the EO2_VOID_FUNC_BODY?
+
+- Add line number to errors (like in eo1...)
+
+- A bit annoying that we don't get type checks on the callbacks, fix that? That's really dangerous!
+
+- Get all the optimisations cedric has been doing to Eo1? I think that's where the children thing got lost...
+    - Make sure all the improvements have been migrated...
+
+- Fix all the FIXME
