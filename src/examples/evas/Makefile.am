@@ -170,6 +170,11 @@ evas_multi_touch_SOURCES = evas-multi-touch.c
 evas_multi_touch_LDADD = $(ECORE_EVAS_COMMON_LDADD)
 evas_multi_touch_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
 
+EXTRA_PROGRAMS += evas_3d_cube
+evas_3d_cube_SOURCES = evas-3d-cube.c
+evas_3d_cube_LDADD = $(ECORE_EVAS_COMMON_LDADD)
+evas_3d_cube_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
+
 .edc.edj:
 	$(AM_V_EDJ)$(EDJE_CC) $(EDJE_CC_FLAGS) $< $(builddir)/$(@F)
 
