@@ -83,8 +83,7 @@ _emotion_modules_load(void)
                   _emotion_modules = eina_module_list_get(_emotion_modules, buf,
                                                           EINA_FALSE, NULL, NULL);
                }
-
-             goto load;
+             return;
           }
      }
 
@@ -105,13 +104,16 @@ _emotion_modules_load(void)
 
    snprintf(buf, sizeof(buf), "%s/emotion/modules", eina_prefix_lib_get(_emotion_pfx));
    _emotion_modules = eina_module_arch_list_get(_emotion_modules, buf, MODULE_ARCH);
-
- load:
-   if (_emotion_modules)
-     eina_module_list_load(_emotion_modules);
-
-   if (!_emotion_engine_registry)
-     ERR("Couldn't find any emotion engine.");
+// no - this is dumb. load ALL modules we find - force ALL the code pages of
+// every lib a module MAY depend on and need to execute some init code into
+// memory even if we never use it? not a good idea! the point of modules was
+// to avoid such cost until a module is EXPLICITLY asked for.
+//load:
+//   if (_emotion_modules)
+//     eina_module_list_load(_emotion_modules);
+//
+//   if (!_emotion_engine_registry)
+//     ERR("Couldn't find any emotion engine.");
 }
 
 Eina_Bool
@@ -291,6 +293,57 @@ _emotion_engine_instance_new(const Emotion_Engine *engine, Evas_Object *obj, voi
    return NULL;
 }
 
+static Eina_Module *
+_find_mod(const char *name)
+{
+   Eina_Array_Iterator iterator;
+   Eina_Module *m;
+   unsigned int i;
+   int inlen;
+
+   if (!name) return NULL;
+   inlen = strlen(name);
+   EINA_ARRAY_ITER_NEXT(_emotion_modules, i, m, iterator)
+     {
+        const char *path = eina_module_file_get(m);
+        const char *p, *p1, *p2;
+        int found, len;
+
+        if ((!path) || (!path[0])) continue;
+        // path is /*/modulename/ARCH/module.* - we want "modulename"
+        found = 0;
+        p1 = p2 = NULL;
+        for (p = path + strlen(path) - 1;
+             p > path;
+             p--)
+          {
+             if (*p == '/')
+               {
+                  found++;
+                  // found == 1 -> p = /module.*
+                  // found == 2 -> p = /ARCH/module.*
+                  // found == 3 -> p = /modulename/ARCH/module.*
+                  if (found == 2) p2 = p;
+                  if (found == 3)
+                    {
+                       p1 = p;
+                       break;
+                    }
+               }
+          }
+        if (p1)
+          {
+             p1++;
+             len = p2 - p1;
+             if (len == inlen)
+               {
+                  if (!strncmp(p1, name, len)) return m;
+               }
+          }
+     }
+   return NULL;
+}
+
 Emotion_Engine_Instance *
 emotion_engine_instance_new(const char *name, Evas_Object *obj, Emotion_Module_Options *opts)
 {
@@ -298,6 +351,7 @@ emotion_engine_instance_new(const char *name, Evas_Object *obj, Emotion_Module_O
    const Emotion_Engine_Registry_Entry *re;
    const Emotion_Engine *engine;
    void *data;
+   Eina_Module *m;
 
    _emotion_modules_load();
 
@@ -305,6 +359,23 @@ emotion_engine_instance_new(const char *name, Evas_Object *obj, Emotion_Module_O
      {
         name = getenv("EMOTION_ENGINE");
         DBG("using EMOTION_ENGINE=%s", name);
+     }
+
+   if (name)
+     {
+        m = _find_mod(name);
+        if (m) eina_module_load(m);
+     }
+   else
+     {
+        if (!_emotion_engine_registry)
+          {
+             m = _find_mod("generic");
+             if (!m) m = _find_mod("xine");
+             if (!m) m = _find_mod("gstreamer");
+             if (!m) m = _find_mod("gstreamer1");
+             if (m) eina_module_load(m);
+          }
      }
 
    if (name)
