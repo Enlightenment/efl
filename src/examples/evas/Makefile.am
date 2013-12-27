@@ -175,6 +175,11 @@ evas_3d_cube_SOURCES = evas-3d-cube.c
 evas_3d_cube_LDADD = $(ECORE_EVAS_COMMON_LDADD)
 evas_3d_cube_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
 
+EXTRA_PROGRAMS += evas_3d_cube2
+evas_3d_cube2_SOURCES = evas-3d-cube2.c
+evas_3d_cube2_LDADD = $(ECORE_EVAS_COMMON_LDADD)
+evas_3d_cube2_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
+
 .edc.edj:
 	$(AM_V_EDJ)$(EDJE_CC) $(EDJE_CC_FLAGS) $< $(builddir)/$(@F)
 
