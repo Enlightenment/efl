@@ -185,6 +185,11 @@ evas_3d_proxy_SOURCES = evas-3d-proxy.c
 evas_3d_proxy_LDADD = $(ECORE_EVAS_COMMON_LDADD)
 evas_3d_proxy_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
 
+EXTRA_PROGRAMS += evas_3d_pick
+evas_3d_pick_SOURCES = evas-3d-pick.c
+evas_3d_pick_LDADD = $(ECORE_EVAS_COMMON_LDADD)
+evas_3d_pick_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
+
 .edc.edj:
 	$(AM_V_EDJ)$(EDJE_CC) $(EDJE_CC_FLAGS) $< $(builddir)/$(@F)
 
