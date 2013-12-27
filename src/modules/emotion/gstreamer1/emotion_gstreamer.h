@@ -28,24 +28,9 @@ typedef struct _EvasVideoSinkPrivate EvasVideoSinkPrivate;
 typedef struct _EvasVideoSink        EvasVideoSink;
 typedef struct _EvasVideoSinkClass   EvasVideoSinkClass;
 typedef struct _Emotion_Gstreamer_Video Emotion_Gstreamer_Video;
-typedef struct _Emotion_Audio_Stream Emotion_Audio_Stream;
 typedef struct _Emotion_Gstreamer_Metadata Emotion_Gstreamer_Metadata;
 typedef struct _Emotion_Gstreamer_Buffer Emotion_Gstreamer_Buffer;
 typedef struct _Emotion_Gstreamer_Message Emotion_Gstreamer_Message;
-typedef struct _Emotion_Video_Stream Emotion_Video_Stream;
-
-struct _Emotion_Video_Stream
-{
-   gdouble     length_time;
-   GstVideoInfo info;
-   int         index;
-};
-
-struct _Emotion_Audio_Stream
-{
-   gdouble     length_time;
-   GstAudioInfo info;
-};
 
 struct _Emotion_Gstreamer_Metadata
 {
@@ -74,13 +59,6 @@ struct _Emotion_Gstreamer_Video
    /* eos */
    GstBus           *eos_bus;
 
-   /* Strams */
-   Eina_List        *video_streams;
-   Eina_List        *audio_streams;
-
-   int               video_stream_nbr;
-   int               audio_stream_nbr;
-
     /* We need to keep a copy of the last inserted buffer as evas doesn't copy YUV data around */
    GstBuffer        *last_buffer;
 
@@ -89,7 +67,6 @@ struct _Emotion_Gstreamer_Video
 
    /* Characteristics of stream */
    double            position;
-   double            ratio;
    double            volume;
 
    volatile int      seek_to;
@@ -127,9 +104,6 @@ struct _Emotion_Gstreamer_Video
    Eina_Bool         delete_me    : 1;
    Eina_Bool         kill_buffer  : 1;
    Eina_Bool         stream       : 1;
-
-   int src_width;
-   int src_height;
 };
 
 struct _EvasVideoSink {
@@ -265,5 +239,20 @@ struct _ColorSpace_Format_Convertion
 };
 
 extern const ColorSpace_Format_Convertion colorspace_format_convertion[];
+
+/* From gst-plugins-base/gst/playback */
+typedef enum {
+  GST_PLAY_FLAG_VIDEO         = (1 << 0),
+  GST_PLAY_FLAG_AUDIO         = (1 << 1),
+  GST_PLAY_FLAG_TEXT          = (1 << 2),
+  GST_PLAY_FLAG_VIS           = (1 << 3),
+  GST_PLAY_FLAG_SOFT_VOLUME   = (1 << 4),
+  GST_PLAY_FLAG_NATIVE_AUDIO  = (1 << 5),
+  GST_PLAY_FLAG_NATIVE_VIDEO  = (1 << 6),
+  GST_PLAY_FLAG_DOWNLOAD      = (1 << 7),
+  GST_PLAY_FLAG_BUFFERING     = (1 << 8),
+  GST_PLAY_FLAG_DEINTERLACE   = (1 << 9),
+  GST_PLAY_FLAG_SOFT_COLORBALANCE = (1 << 10)
+} GstPlayFlags;
 
 #endif /* __EMOTION_GSTREAMER_H__ */

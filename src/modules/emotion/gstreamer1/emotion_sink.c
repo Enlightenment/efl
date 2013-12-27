@@ -363,13 +363,12 @@ evas_video_sink_main_render(void *data)
 {
    Emotion_Gstreamer_Buffer *send;
    Emotion_Gstreamer_Video *ev = NULL;
-   Emotion_Video_Stream *vstream;
    EvasVideoSinkPrivate *priv = NULL;
    GstBuffer *buffer;
    GstMapInfo map;
    unsigned char *evas_data;
-   gint64 pos;
    Eina_Bool preroll = EINA_FALSE;
+   double ratio;
 
    send = data;
 
@@ -407,8 +406,6 @@ evas_video_sink_main_render(void *data)
    if (!gst_buffer_map(buffer, &map, GST_MAP_READ))
      goto exit_stream;
 
-   _emotion_gstreamer_video_pipeline_parse(ev, EINA_TRUE);
-
    INF("sink main render [%i, %i] (source height: %i)", priv->info.width, priv->eheight, priv->info.height);
 
    evas_object_image_alpha_set(priv->o, 0);
@@ -430,6 +427,17 @@ evas_video_sink_main_render(void *data)
 
    _update_emotion_fps(ev);
 
+   ratio = (double) priv->info.width / (double) priv->eheight;
+   ratio *= (double) priv->info.par_n / (double) priv->info.par_d;
+
+   _emotion_frame_resize(ev->obj, priv->info.width, priv->eheight, ratio);
+
+   buffer = gst_buffer_ref(buffer);
+   if (ev->last_buffer) gst_buffer_unref(ev->last_buffer);
+   ev->last_buffer = buffer;
+
+   _emotion_gstreamer_video_pipeline_parse(ev, EINA_TRUE);
+
    if (!preroll && ev->play_started)
      {
         _emotion_playback_started(ev->obj);
@@ -440,27 +448,6 @@ evas_video_sink_main_render(void *data)
      {
         _emotion_frame_new(ev->obj);
      }
-
-   gst_element_query_position(ev->pipeline, GST_FORMAT_TIME, &pos);
-   ev->position = (double)pos / (double)GST_SECOND;
-
-   vstream = eina_list_nth(ev->video_streams, ev->video_stream_nbr - 1);
-
-   if (vstream)
-     {
-       vstream->info.width = priv->info.width;
-       vstream->info.height = priv->eheight;
-       _emotion_video_pos_update(ev->obj, ev->position, vstream->length_time);
-     }
-
-   ev->ratio = (double) priv->info.width / (double) priv->eheight;
-   ev->ratio *= (double) priv->info.par_n / (double) priv->info.par_d;
-
-   _emotion_frame_resize(ev->obj, priv->info.width, priv->eheight, ev->ratio);
-
-   buffer = gst_buffer_ref(buffer);
-   if (ev->last_buffer) gst_buffer_unref(ev->last_buffer);
-   ev->last_buffer = buffer;
 
  exit_point:
    if (send) emotion_gstreamer_buffer_free(send);
@@ -599,6 +586,49 @@ _emotion_gstreamer_end(void *data, Ecore_Thread *thread)
      _emotion_gstreamer_video_pipeline_parse(data, EINA_TRUE);
 }
 
+static void
+_main_frame_resize(void *data)
+{
+   Emotion_Gstreamer_Video *ev;
+   gint cur;
+   GstPad *pad;
+   GstCaps *caps;
+   GstVideoInfo info;
+   double ratio;
+
+   ev = (Emotion_Gstreamer_Video *)data;
+
+   g_object_get(ev->pipeline, "current-video", &cur, NULL);
+   g_signal_emit_by_name (ev->pipeline, "get-video-pad", cur, &pad);
+   if (!pad)
+     goto on_error;
+
+   caps = gst_pad_get_current_caps(pad);
+   gst_object_unref(pad);
+   if (!caps)
+     goto on_error;
+
+   gst_video_info_from_caps (&info, caps);
+   gst_caps_unref(caps);
+
+   ratio = (double)info.width / (double)info.height;
+   ratio *= (double)info.par_n / (double)info.par_d;
+
+   _emotion_frame_resize(ev->obj, info.width, info.height, ratio);
+
+ on_error:
+   _emotion_pending_ecore_end();
+}
+
+static void
+_video_changed(GstElement *playbin EINA_UNUSED, gpointer data)
+{
+   Emotion_Gstreamer_Video *ev = data;
+
+   _emotion_pending_ecore_begin();
+   ecore_main_loop_thread_safe_call_async(_main_frame_resize, ev);
+}
+
 GstElement *
 gstreamer_video_sink_new(Emotion_Gstreamer_Video *ev,
 			 Evas_Object *o,
@@ -649,6 +679,7 @@ gstreamer_video_sink_new(Emotion_Gstreamer_Video *ev,
              ERR("Unable to create 'playbin' GstElement.");
              return NULL;
           }
+        g_signal_connect(playbin, "video-changed", G_CALLBACK(_video_changed), ev);
      }
 
    bin = gst_bin_new(NULL);
@@ -685,11 +716,6 @@ gstreamer_video_sink_new(Emotion_Gstreamer_Video *ev,
    pad = gst_element_get_static_pad(queue, "sink");
    gst_element_add_pad(bin, gst_ghost_pad_new("sink", pad));
    gst_object_unref(pad);
-
-#define GST_PLAY_FLAG_NATIVE_VIDEO  (1 << 6)
-#define GST_PLAY_FLAG_DOWNLOAD      (1 << 7)
-#define GST_PLAY_FLAG_AUDIO         (1 << 1)
-#define GST_PLAY_FLAG_NATIVE_AUDIO  (1 << 5)
 
    if (launch)
      {
