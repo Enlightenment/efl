@@ -6,7 +6,7 @@
 
 static const Eo_Class_Description class_desc = {
      EO2_VERSION,
-     "Eo_Abstract_Class",
+     "Eo2_Abstract_Class",
      EO_CLASS_TYPE_REGULAR_NO_INSTANT,
      EO2_CLASS_DESCRIPTION_NOOPS(),
      NULL,
