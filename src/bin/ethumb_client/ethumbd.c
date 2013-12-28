@@ -161,7 +161,7 @@ struct _Ethumbd_Slave
 struct _Ethumbd
 {
    Eldbus_Connection *conn;
-   Ecore_Idler *idler;
+   Ecore_Idle_Enterer *idle_enterer;
    Ethumbd_Request *processing;
    Ethumbd_Queue queue;
    double timeout;
@@ -768,9 +768,9 @@ _process_queue_cb(void *data)
 
    if (!queue->nqueue)
      {
-	ed->idler = NULL;
+	ed->idle_enterer = NULL;
         _ethumbd_timeout_redo(ed);
-	ed->idler = NULL;
+	ed->idle_enterer = NULL;
 	return 0;
      }
 
@@ -802,17 +802,17 @@ _process_queue_cb(void *data)
 static void
 _process_queue_start(Ethumbd *ed)
 {
-   if (!ed->idler)
-     ed->idler = ecore_idler_add(_process_queue_cb, ed);
+   if (!ed->idle_enterer)
+     ed->idle_enterer = ecore_idle_enterer_add(_process_queue_cb, ed);
 }
 
 static void
 _process_queue_stop(Ethumbd *ed)
 {
-   if (ed->idler)
+   if (ed->idle_enterer)
      {
-	ecore_idler_del(ed->idler);
-	ed->idler = NULL;
+	ecore_idle_enterer_del(ed->idle_enterer);
+	ed->idle_enterer = NULL;
      }
 }
 
