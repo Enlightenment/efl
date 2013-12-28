@@ -488,12 +488,6 @@ _player_open_done(Emotion_Generic_Video *ev)
 
    _emotion_open_done(ev->obj);
 
-   if (ev->play)
-     {
-        _player_send_cmd(ev, EM_CMD_PLAY);
-        _player_send_float(ev, ev->pos);
-     }
-
    _player_send_cmd(ev, EM_CMD_VOLUME_SET);
    _player_send_float(ev, ev->volume);
 
@@ -511,6 +505,12 @@ _player_open_done(Emotion_Generic_Video *ev)
    mute = ev->spu_mute;
    _player_send_cmd(ev, EM_CMD_SPU_MUTE_SET);
    _player_send_int(ev, mute);
+
+   if (ev->play)
+     {
+        _player_send_cmd(ev, EM_CMD_PLAY);
+        _player_send_float(ev, ev->pos);
+     }
 
    INF("Open done");
 }
@@ -968,7 +968,7 @@ em_add(const Emotion_Engine *api, Evas_Object *obj, const Emotion_Module_Options
    ev->fd_read = NULL;
    ev->fd_write = NULL;
    ev->speed = 1.0;
-   ev->volume = 0.5;
+   ev->volume = 1.0;
    ev->audio_mute = EINA_FALSE;
    ev->cmd.type = -1;
 
