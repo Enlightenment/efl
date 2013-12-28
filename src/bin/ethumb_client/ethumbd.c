@@ -166,6 +166,7 @@ struct _Ethumbd
    Ethumbd_Queue queue;
    double timeout;
    Ecore_Timer *timeout_timer;
+   Ecore_Timer *hang_timer;
    Ethumbd_Slave slave;
 
    Ecore_Event_Handler *data_cb;
@@ -248,19 +249,16 @@ static Eina_Bool
 _ethumbd_timeout_cb(void *data)
 {
    Ethumbd *ed = data;
-
+   
    ecore_main_loop_quit();
    ed->timeout_timer = NULL;
-
-   return 0;
+   return EINA_FALSE;
 }
 
 static void
 _ethumbd_timeout_start(Ethumbd *ed)
 {
-   if (ed->timeout < 0)
-     return;
-
+   if (ed->timeout < 0) return;
    if (!ed->timeout_timer)
      ed->timeout_timer = ecore_timer_add(ed->timeout, _ethumbd_timeout_cb, ed);
 }
@@ -268,9 +266,7 @@ _ethumbd_timeout_start(Ethumbd *ed)
 static void
 _ethumbd_timeout_stop(Ethumbd *ed)
 {
-   if (!ed->timeout_timer)
-     return;
-
+   if (!ed->timeout_timer) return;
    ecore_timer_del(ed->timeout_timer);
    ed->timeout_timer = NULL;
 }
@@ -278,9 +274,52 @@ _ethumbd_timeout_stop(Ethumbd *ed)
 static void
 _ethumbd_timeout_redo(Ethumbd *ed)
 {
-   //if (!ed->queue.count)
    _ethumbd_timeout_stop(ed);
    _ethumbd_timeout_start(ed);
+}
+
+static Eina_Bool
+_ethumbd_hang_cb(void *data)
+{
+   Ethumbd *ed = data;
+   
+   ed->hang_timer = NULL;
+   if (ed->processing)
+     {
+        ERR("timout while processing thumb");
+        if (ed->slave.exe) ecore_exe_kill(ed->slave.exe);
+     }
+   return EINA_FALSE;
+}
+
+static void
+_ethumbd_hang_start(Ethumbd *ed)
+{
+   double tim = ed->timeout;
+   
+   if (tim < 0) tim = 10.0;
+   else
+     {
+        tim = tim / 3.0;
+        if (tim > 10.0) tim = 10.0;
+     }
+   if (!ed->hang_timer)
+     ed->hang_timer = ecore_timer_add(tim, _ethumbd_hang_cb, ed);
+}
+
+static void
+_ethumbd_hang_stop(Ethumbd *ed)
+{
+   if (!ed->hang_timer) return;
+   ecore_timer_del(ed->hang_timer);
+   ed->hang_timer = NULL;
+}
+
+static void
+_ethumbd_hang_redo(Ethumbd *ed)
+{
+   _ethumbd_hang_stop(ed);
+   _ethumbd_hang_start(ed);
 }
 
 static int
@@ -408,6 +447,7 @@ _generated_cb(Ethumbd *ed, Eina_Bool success, const char *thumb_path, const char
    free(ed->processing);
    ed->processing = NULL;
    _ethumbd_timeout_redo(ed);
+   _ethumbd_hang_stop(ed);
 }
 
 static void
@@ -524,6 +564,8 @@ _ethumbd_slave_del_cb(void *data, int type EINA_UNUSED, void *event)
 
    if (ev->exe != ed->slave.exe)
      return 1;
+
+   _ethumbd_hang_stop(ed);
 
    if (ev->exited)
      ERR("slave exited with code: %d", ev->exit_code);
@@ -682,6 +724,7 @@ _process_setup(Ethumbd *ed)
 static void
 _process_file(Ethumbd *ed)
 {
+   _ethumbd_hang_redo(ed);
    _ethumbd_child_write_op_generate
      (&ed->slave, ed->queue.current, ed->processing->file,
       ed->processing->key, ed->processing->thumb, ed->processing->thumb_key);
@@ -961,6 +1004,7 @@ _ethumb_dbus_ethumb_new_cb(const Eldbus_Service_Interface *interface, const Eldb
                                          EINA_TRUE);
    _ethumbd_child_write_op_new(&ed->slave, i);
    _ethumbd_timeout_redo(ed);
+   _ethumbd_hang_redo(ed);
 
  end_new:
    reply = eldbus_message_method_return_new(msg);
