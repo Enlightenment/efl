@@ -160,8 +160,8 @@ test_button(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    elm_object_style_set(bt, "anchor");
    elm_object_text_set(bt, "Icon sized to button");
    elm_object_part_content_set(bt, "icon", ic);
-   evas_object_smart_callback_add(bt, "clicked", _bt_clicked, (void *)1);
-   evas_object_smart_callback_add(bt, "unpressed", _bt_unpressed, (void *)1);
+   evas_object_smart_callback_add(bt, "clicked", _bt_clicked, (void *)8);
+   evas_object_smart_callback_add(bt, "unpressed", _bt_unpressed, (void *)8);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
    evas_object_show(ic);
@@ -174,8 +174,8 @@ test_button(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    elm_object_style_set(bt, "anchor");
    elm_object_text_set(bt, "Icon no scale");
    elm_object_part_content_set(bt, "icon", ic);
-   evas_object_smart_callback_add(bt, "clicked", _bt_clicked, (void *)2);
-   evas_object_smart_callback_add(bt, "unpressed", _bt_unpressed, (void *)2);
+   evas_object_smart_callback_add(bt, "clicked", _bt_clicked, (void *)9);
+   evas_object_smart_callback_add(bt, "unpressed", _bt_unpressed, (void *)9);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
    evas_object_show(ic);
@@ -187,8 +187,8 @@ test_button(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    bt = elm_button_add(win);
    elm_object_style_set(bt, "anchor");
    elm_object_part_content_set(bt, "icon", ic);
-   evas_object_smart_callback_add(bt, "clicked", _bt_clicked, (void *)8);
-   evas_object_smart_callback_add(bt, "unpressed", _bt_unpressed, (void *)8);
+   evas_object_smart_callback_add(bt, "clicked", _bt_clicked, (void *)10);
+   evas_object_smart_callback_add(bt, "unpressed", _bt_unpressed, (void *)10);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
    evas_object_show(ic);
@@ -203,8 +203,8 @@ test_button(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    elm_object_text_set(bt, "Disabled");
    elm_object_part_content_set(bt, "icon", ic);
    elm_object_disabled_set(bt, EINA_TRUE);
-   evas_object_smart_callback_add(bt, "clicked", _bt_clicked, (void *)9);
-   evas_object_smart_callback_add(bt, "unpressed", _bt_unpressed, (void *)9);
+   evas_object_smart_callback_add(bt, "clicked", _bt_clicked, (void *)11);
+   evas_object_smart_callback_add(bt, "unpressed", _bt_unpressed, (void *)11);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
    evas_object_show(ic);
