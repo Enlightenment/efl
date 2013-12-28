@@ -586,6 +586,18 @@ elm_hoversel_item_icon_get(const Elm_Object_Item *it,
    if (icon_type) *icon_type = item->icon_type;
 }
 
+static Elm_Hoversel_Item * 
+item_focused_get(Elm_Hoversel_Smart_Data *sd)
+{
+   Elm_Hoversel_Item *item;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(sd->items, l, item)
+     if (elm_object_focus_get(VIEW(item)))
+       return item;
+   return NULL;
+}
+
 static void
 _elm_hoversel_smart_event(Eo *obj, void *_pd, va_list *list)
 {
@@ -599,6 +611,8 @@ _elm_hoversel_smart_event(Eo *obj, void *_pd, va_list *list)
    Evas_Event_Key_Down *ev = event_info;
    Elm_Hoversel_Smart_Data *sd = _pd;
 
+   Elm_Hoversel_Item  *litem, *fitem;
+
    eo_do_super(obj, MY_CLASS, elm_wdg_event(src, type, event_info, &int_ret));
    if (int_ret) return;
 
@@ -607,34 +621,57 @@ _elm_hoversel_smart_event(Eo *obj, void *_pd, va_list *list)
    if (type != EVAS_CALLBACK_KEY_DOWN) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
 
+   litem = eina_list_last_data_get(sd->items);
+   fitem = eina_list_data_get(sd->items);
+
    if ((!strcmp(ev->key, "Down")) ||
-       ((!strcmp(ev->key, "KP_Down")) && (!ev->string)))
+      ((!strcmp(ev->key, "KP_Down")) && (!ev->string)))
      {
+        if (item_focused_get(sd) == litem)
+          {
+            elm_object_focus_set(VIEW(fitem), EINA_TRUE);
+            goto success;
+          }
         elm_widget_focus_cycle(sd->hover, ELM_FOCUS_DOWN);
         goto success;
      }
    else if ((!strcmp(ev->key, "Up")) ||
-            ((!strcmp(ev->key, "KP_Up")) && (!ev->string)))
+           ((!strcmp(ev->key, "KP_Up")) && (!ev->string)))
      {
+        if (item_focused_get(sd) == fitem)
+          {
+            elm_object_focus_set(VIEW(litem), EINA_TRUE);
+            goto success;
+          }
         elm_widget_focus_cycle(sd->hover, ELM_FOCUS_UP);
         goto success;
      }
    else if ((!strcmp(ev->key, "Left")) ||
-            ((!strcmp(ev->key, "KP_Left")) && (!ev->string)))
+           ((!strcmp(ev->key, "KP_Left")) && (!ev->string)))
      {
+        if (item_focused_get(sd) == fitem)
+          {
+            elm_object_focus_set(VIEW(litem), EINA_TRUE);
+            goto success;
+          }
         elm_widget_focus_cycle(sd->hover, ELM_FOCUS_LEFT);
         goto success;
      }
    else if ((!strcmp(ev->key, "Right")) ||
-            ((!strcmp(ev->key, "KP_Right")) && (!ev->string)))
+           ((!strcmp(ev->key, "KP_Right")) && (!ev->string)))
      {
+        if (item_focused_get(sd) == litem)
+          {
+            elm_object_focus_set(VIEW(fitem), EINA_TRUE);
+            goto success;
+          }
         elm_widget_focus_cycle(sd->hover, ELM_FOCUS_RIGHT);
         goto success;
      }
 
    return;
 
-success:
+   success:
    ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
    if (ret) *ret = EINA_TRUE;
 }
