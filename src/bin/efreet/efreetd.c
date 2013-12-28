@@ -31,8 +31,14 @@ main(int argc, char *argv[])
    int fd;
    mode_t um;
 
+#ifdef HAVE_SYS_RESOURCE_H
+   setpriority(PRIO_PROCESS, 0, 19);
+#elif _WIN32
+   SetPriorityClass(GetCurrentProcess(), IDLE_PRIORITY_CLASS);
+#endif
+
    strcpy(path, "/tmp/efreetd_XXXXXX");
-   um = umask(S_IRWXG|S_IRWXO);
+   um = umask(S_IRWXG | S_IRWXO);
    fd = mkstemp(path);
    umask(um);
    if (fd < 0)
@@ -40,31 +46,23 @@ main(int argc, char *argv[])
         perror("mkstemp");
         return 1;
      }
-
    log = fdopen(fd, "wb");
    if (!log) return 1;
 
    if (!eina_init()) return 1;
    eina_log_print_cb_set(eina_log_print_cb_file, log);
-
    efreetd_log_dom = eina_log_domain_register("efreetd", EFREETD_DEFAULT_LOG_COLOR);
    if (efreetd_log_dom < 0)
      {
         EINA_LOG_ERR("Efreet: Could not create a log domain for efreetd.");
         goto ecore_error;
      }
+
    if (!ecore_init()) goto ecore_error;
    ecore_app_args_set(argc, (const char **)argv);
    if (!ecore_file_init()) goto ecore_file_error;
-
    if (!dbus_init()) goto dbus_error;
    if (!cache_init()) goto cache_error;
-
-#ifdef HAVE_SYS_RESOURCE_H
-   setpriority(PRIO_PROCESS, 0, 19);
-#elif _WIN32
-    SetPriorityClass(GetCurrentProcess(), IDLE_PRIORITY_CLASS);
-#endif
 
    ecore_main_loop_begin();
 
@@ -84,8 +82,7 @@ dbus_error:
 ecore_file_error:
    ecore_shutdown();
 ecore_error:
-   if (efreetd_log_dom >= 0)
-     eina_log_domain_unregister(efreetd_log_dom);
+   if (efreetd_log_dom >= 0) eina_log_domain_unregister(efreetd_log_dom);
    efreetd_log_dom = -1;
    eina_shutdown();
    return 1;
