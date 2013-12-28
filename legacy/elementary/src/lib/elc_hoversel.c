@@ -15,9 +15,11 @@ EAPI Eo_Op ELM_OBJ_HOVERSEL_BASE_ID = EO_NOOP;
 
 static const char SIG_SELECTED[] = "selected";
 static const char SIG_DISMISSED[] = "dismissed";
+static const char SIG_EXPANDED[] = "expanded";
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_SELECTED, ""},
    {SIG_DISMISSED, ""},
+   {SIG_EXPANDED, ""},
    {"clicked", ""}, /**< handled by parent button class */
    {NULL, NULL}
 };
@@ -177,6 +179,7 @@ _activate(Evas_Object *obj)
      elm_object_part_content_set(sd->hover, elm_hover_best_content_location_get
                                    (sd->hover, ELM_HOVER_AXIS_VERTICAL), bx);
 
+   evas_object_smart_callback_call(obj, SIG_EXPANDED, NULL);
    evas_object_show(sd->hover);
 }
 

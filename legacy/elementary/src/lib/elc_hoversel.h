@@ -25,6 +25,7 @@
  * - @c "selected" - an item in the hoversel list is selected. event_info
  *   is the selected item
  * - @c "dismissed" - the hover is dismissed
+ * - @c "expanded" - This is called on clicking hoversel and elm_hoversel_hover_begin().
  *
  * Default content parts of the hoversel widget that you can use for are:
  * @li "icon" - An icon of the hoversel
