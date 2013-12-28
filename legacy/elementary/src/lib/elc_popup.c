@@ -1262,6 +1262,12 @@ _elm_popup_smart_content_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
         content = _action_button_get(obj, i);
      }
    else
+     {
+        eo_do_super(obj, MY_CLASS,
+                    elm_obj_container_content_get(part, &content));
+     }
+
+   if (!content)
      goto err;
 
    *ret = content;
@@ -1355,6 +1361,7 @@ _elm_popup_smart_focus_next(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Evas_Object *ao;
    Eina_List *items = NULL;
+   Eina_List *base_items = NULL;
 
    Elm_Popup_Smart_Data *sd = _pd;
 
@@ -1382,8 +1389,14 @@ _elm_popup_smart_focus_next(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    /* action area */
    if (sd->action_area) items = eina_list_append(items, sd->action_area);
 
+   /* base */
+   eo_do_super(obj, MY_CLASS, elm_obj_container_content_swallow_list_get(&base_items));
+
+   items = eina_list_merge(items, base_items);
+
    if (!elm_widget_focus_list_next_get(obj, items, eina_list_data_get, dir, next))
      *next = obj;
+   eina_list_free(items);
 
    return;
 }
@@ -1400,7 +1413,7 @@ _elm_popup_smart_focus_direction(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Evas_Object *ao;
    Eina_List *items = NULL;
-
+   Eina_List *base_items = NULL;
    Elm_Popup_Smart_Data *sd = _pd;
 
    Evas_Object *base = va_arg(*list, Evas_Object *);
@@ -1429,8 +1442,14 @@ _elm_popup_smart_focus_direction(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    /* action area */
    if (sd->action_area) items = eina_list_append(items, sd->action_area);
 
+   /* base*/
+   eo_do_super(obj, MY_CLASS, elm_obj_container_content_swallow_list_get(&base_items));
+
+   items = eina_list_merge(items, base_items);
+
    elm_widget_focus_list_direction_get
      (obj, base, items, eina_list_data_get, degree, direction, weight);
+   eina_list_free(items);
 
    return;
 }

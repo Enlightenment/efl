@@ -16,6 +16,7 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_OBJ_CONTAINER_SUB_ID_CONTENT_SET, "Set the content on part of a given container widget."),
      EO_OP_DESCRIPTION(ELM_OBJ_CONTAINER_SUB_ID_CONTENT_GET, "Get the content on a part of a given container widget"),
      EO_OP_DESCRIPTION(ELM_OBJ_CONTAINER_SUB_ID_CONTENT_UNSET, "Unset the content on a part of a given container widget"),
+     EO_OP_DESCRIPTION(ELM_OBJ_CONTAINER_SUB_ID_CONTENT_SWALLOW_LIST_GET, "Get the list of swallow parts of a given container widget"),
      EO_OP_DESCRIPTION_SENTINEL
 };
 

@@ -638,3 +638,15 @@ EAPI Eina_Bool                    elm_layout_text_set(Evas_Object *obj, const ch
  */
 EAPI const char                  *elm_layout_text_get(const Evas_Object *obj, const char *part);
 
+/**
+ * Get the list of swallow parts of a given container widget
+ *
+ * @param obj The layout object
+ *
+ * @return list of swallow parts which should be freed by the user program with elm_list_free()
+ *
+ * @since 1.9
+ *
+ * @ingroup Layout
+ */
+EAPI Eina_List                   *elm_layout_content_swallow_list_get(const Evas_Object *obj);

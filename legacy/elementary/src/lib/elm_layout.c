@@ -1170,6 +1170,33 @@ _elm_layout_smart_content_unset(Eo *obj, void *_pd, va_list *list)
      }
 }
 
+EAPI Eina_List *
+elm_layout_content_swallow_list_get(const Evas_Object *obj)
+{
+   ELM_LAYOUT_CHECK(obj) NULL;
+   Eina_List *ret = NULL;
+   eo_do(obj, elm_obj_container_content_swallow_list_get(&ret));
+   return ret;
+}
+
+static void
+_elm_layout_smart_content_swallow_list_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Elm_Layout_Smart_Data *sd = _pd;
+
+   Eina_List **ret = va_arg(*list, Eina_List **);
+   if (ret) *ret = NULL;
+
+   Elm_Layout_Sub_Object_Data *sub_d = NULL;
+   Eina_List *l = NULL;
+
+   EINA_LIST_FOREACH(sd->subs, l, sub_d)
+     {
+        if (sub_d->type == SWALLOW)
+          *ret = eina_list_append(*ret, sub_d->obj);
+     }
+}
+
 EAPI Eina_Bool
 elm_layout_text_set(Evas_Object *obj,
                     const char *part,
@@ -2243,6 +2270,7 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_OBJ_CONTAINER_ID(ELM_OBJ_CONTAINER_SUB_ID_CONTENT_SET), _elm_layout_smart_content_set),
         EO_OP_FUNC(ELM_OBJ_CONTAINER_ID(ELM_OBJ_CONTAINER_SUB_ID_CONTENT_GET), _elm_layout_smart_content_get),
         EO_OP_FUNC(ELM_OBJ_CONTAINER_ID(ELM_OBJ_CONTAINER_SUB_ID_CONTENT_UNSET), _elm_layout_smart_content_unset),
+        EO_OP_FUNC(ELM_OBJ_CONTAINER_ID(ELM_OBJ_CONTAINER_SUB_ID_CONTENT_SWALLOW_LIST_GET), _elm_layout_smart_content_swallow_list_get),
 
         EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_FILE_SET), _elm_layout_smart_file_set),
         EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_THEME_SET), _elm_layout_smart_theme_set),

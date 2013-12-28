@@ -453,3 +453,46 @@ group { name: "elm/popup/item/popup/default";
       }
    }
 }
+
+group { name: "elm/popup/base/subpopup";
+   inherit: "elm/popup/base/default";
+   parts {
+      part { name: "pad.closebtn"; type: SPACER;
+         description { state: "default" 0.0;
+            rel1.to: "base";
+            rel1.relative: 1 0;
+            rel2.to: "base";
+            rel2.relative: 1 0;
+            min: 2 2;
+            max: 2 2;
+            fixed: 1 1;
+            align: 0 1;
+         }
+      }
+      part { name: "elm.swallow.closebtn"; type: SWALLOW;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.to: "pad.closebtn";
+            rel1.relative: 1 0;
+            rel2.to: "pad.closebtn";
+            rel2.relative: 1 0;
+            align: 0 1;
+            fixed: 1 1;
+         }
+      }
+   }
+}
+
+group { name: "elm/popup/content/popup/subpopup";
+   inherit: "elm/popup/content/popup/default";
+}
+
+group { name: "elm/popup/buttons1/popup/subpopup";
+   inherit: "elm/popup/buttons1/popup/default";
+}
+group { name: "elm/popup/buttons2/popup/subpopup";
+   inherit: "elm/popup/buttons2/popup/default";
+}
+group { name: "elm/popup/buttons3/popup/subpopup";
+   inherit: "elm/popup/buttons3/popup/default";
+}

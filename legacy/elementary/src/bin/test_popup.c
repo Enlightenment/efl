@@ -592,6 +592,40 @@ _popup_center_title_list_content_1button_cb(void *data, Evas_Object *obj EINA_UN
    evas_object_show(popup);
 }
 
+static void
+_subpopup_cb(void *data, Evas_Object *obj EINA_UNUSED,
+                                            void *event_info EINA_UNUSED)
+{
+   Evas_Object *popup;
+   Evas_Object *btn, *btnclose;
+
+   popup = elm_popup_add(data);
+   elm_object_style_set(popup, "subpopup");
+   elm_object_part_text_set(popup, "title,text", "Title");
+
+   // button as a popup content
+   btn = elm_button_add(popup);
+   elm_object_text_set(btn, "content");
+   elm_object_part_content_set(popup, "elm.swallow.content", btn);
+
+   // popup buttons
+   btn = elm_button_add(popup);
+   elm_object_text_set(btn, "OK");
+   elm_object_part_content_set(popup, "button1", btn);
+   evas_object_smart_callback_add(btn, "clicked", _popup_close_cb, popup);
+
+   //popup-base close button
+   btnclose = elm_button_add(popup);
+   //TODO: write a X style button theme
+   elm_object_text_set(btnclose, "x");
+   elm_object_part_content_set(popup, "elm.swallow.closebtn", btnclose);
+   evas_object_smart_callback_add(btnclose, "clicked", _popup_close_cb, popup);
+
+   // popup show should be called after adding all the contents and the buttons
+   // of popup to set the focus into popup's contents correctly.
+   evas_object_show(popup);
+}
+
 void
 test_popup(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
            void *event_info EINA_UNUSED)
@@ -599,6 +633,8 @@ test_popup(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    Evas_Object *win, *list;
 
    win = elm_win_util_standard_add("popup", "Popup");
+   elm_win_focus_highlight_enabled_set(win, EINA_TRUE);
+   elm_win_focus_highlight_animate_set(win, EINA_TRUE);
    elm_win_autodel_set(win, EINA_TRUE);
 
    list = elm_list_add(win);
@@ -640,6 +676,9 @@ test_popup(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
                         _popup_transparent_align_cb, win);
    elm_list_item_append(list, "popup-center-title + list content + 1 button",
                         NULL, NULL, _popup_center_title_list_content_1button_cb,
+                        win);
+   elm_list_item_append(list, "subpopup + X button",
+                        NULL, NULL, _subpopup_cb,
                         win);
    elm_list_go(list);
    evas_object_show(list);
