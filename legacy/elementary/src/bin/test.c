@@ -220,12 +220,8 @@ void test_external_scroller(void *data, Evas_Object *obj, void *event_info);
 void test_external_pbar(void *data, Evas_Object *obj, void *event_info);
 void test_external_video(void *data, Evas_Object *obj, void *event_info);
 void test_config(void *data, Evas_Object *obj, void *event_info);
-#ifdef HAVE_EMOTION
 void test_video(void *data, Evas_Object *obj, void *event_info);
-#endif
-#ifdef HAVE_EIO
 void test_eio(void *data, Evas_Object *obj, void *event_info);
-#endif
 #ifdef HAVE_ELEMENTARY_WEB
 void test_web(void *data, Evas_Object *obj, void *event_info);
 void test_web_ui(void *data, Evas_Object *obj, void *event_info);
@@ -527,9 +523,7 @@ add_tests:
    ADD_TEST(NULL, "Images", "Image Remote", test_remote_image);
    ADD_TEST(NULL, "Images", "Image Click", test_click_image);
    ADD_TEST(NULL, "Images", "Slideshow", test_slideshow);
-#ifdef HAVE_EMOTION
    ADD_TEST(NULL, "Images", "Video", test_video);
-#endif
 
    //------------------------------//
    ADD_TEST(NULL, "Containers", "Box Vert", test_box_vert);
