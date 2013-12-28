@@ -30,6 +30,12 @@
 #include <unistd.h>
 #include <errno.h>
 
+#include <stdlib.h>
+#ifdef HAVE_SYS_RESOURCE_H
+#include <sys/time.h>
+#include <sys/resource.h>
+#endif
+
 #include <Eina.h>
 #include <Ecore_Getopt.h>
 #include <Ecore.h>
@@ -1705,6 +1711,12 @@ main(int argc, char *argv[])
    int child;
    double timeout = 30.0;
 
+#ifdef HAVE_SYS_RESOURCE_H
+   setpriority(PRIO_PROCESS, 0, 19);
+#elif _WIN32
+   SetPriorityClass(GetCurrentProcess(), IDLE_PRIORITY_CLASS);
+#endif
+   
    memset(&ed, 0, sizeof(ed));
    ecore_init();
    eina_init();
