@@ -482,6 +482,18 @@ _all_filter(const char *path  EINA_UNUSED,
    return EINA_TRUE;
 }
 
+static Eina_Bool
+_edje_filter(const char *path, Eina_Bool dir,
+             void *data EINA_UNUSED)
+{
+   if (dir) return EINA_TRUE;
+
+   if (eina_str_has_extension(path, ".edc") ||
+       eina_str_has_extension(path, ".edj"))
+     return EINA_TRUE;
+   return EINA_FALSE;
+}
+
 void
 test_fileselector(void *data       EINA_UNUSED,
                   Evas_Object *obj EINA_UNUSED,
@@ -523,6 +535,7 @@ test_fileselector(void *data       EINA_UNUSED,
    elm_fileselector_mime_types_filter_append(fs, "text/*", "Text Files");
    elm_fileselector_mime_types_filter_append(fs, "image/*", "Image Files");
    elm_fileselector_custom_filter_append(fs, _all_filter, NULL, "All Files");
+   elm_fileselector_custom_filter_append(fs, _edje_filter, NULL, "Edje Files");
 
    evas_object_smart_callback_add(fs, "done", my_fileselector_done, win);
    evas_object_smart_callback_add(fs, "selected", my_fileselector_selected,
