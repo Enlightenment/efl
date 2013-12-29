@@ -19,111 +19,129 @@
 #ifdef BUILD_NEON
 static void
 _op_blend_mas_c_dp_neon(DATA32 *s EINA_UNUSED, DATA8 *m, DATA32 c, DATA32 *d, int l) {
-   // main loop process data in pairs, so we need count to be even
-   DATA32 *e = d + l - (l % 2);
+   DATA32 *e = d + l;
 
    // everything we can do only once per cycle
    // loading of 'c', initialization of some registers
-   __asm__ __volatile__
-   (
-       ".fpu neon                                      \n\t"
-       "       vmov.32         d30[0], %[c]            \n\t"
-       "       vmov.i16        q10,    #255            \n\t"
-       "       vmov.i16        q11,    #256            \n\t"
-       "       veor            d29,    d29, d29        \n\t"
-       "       vzip.8          d30,    d29             \n\t"
-       "       vmov            d31,    d30             \n\t"
-     :
-     : [c] "r" (c)
-     : "q10", "q11", "q15", "d29"
+   asm volatile (
+        "       .fpu neon                                               \n\t"
+        "       vdup.i32        q15,    %[c]                            \n\t"
+        "       vmov.i8         q14,    #1                              \n\t"
+        "       vmov.i16        q12,    #255                            \n\t"
+
+                :
+                : [c] "r" (c)
+                : "q12", "q14", "q15"
    );
+   //here we do unaligned part of 'd'
+   while (((int)d & 0xf) && (d < e))
+     {
+        asm volatile (
+                "       vld1.8          d0[0],  [%[m]]!                 \n\t"
+                "       vld1.32         d4[0],  [%[d]]                  \n\t"
+                "       vdup.u8         d0,     d0[0]                   \n\t"
+                "       vmull.u8        q4,     d0, d30                 \n\t"
+                "       vadd.u16        q4,     q4, q12                 \n\t"
+                "       vshrn.u16       d12,    q4, #8                  \n\t"
+                "       vmvn.u16        d14,    d12                     \n\t"
+                "       vshr.u32        d16,    d14, #24                \n\t"
+                "       vmul.u32        d16,    d16, d28                \n\t"
+                "       vmovl.u8        q9,     d4                      \n\t"
+                "       vmull.u8        q7,     d16, d4                 \n\t"
+                "       vadd.u16        q7,     q9, q7                  \n\t"
+                "       vshrn.u16       d0,     q7, #8                  \n\t"
+                "       vadd.u8 d0,     d0,     d12                     \n\t"
+                "       vst1.32         d0[0],  [%[d]]!                 \n\t"
+
+                        : [d] "+r" (d), [m] "+r" (m)
+                        : [c] "r" (c)
+                        : "q0", "q2", "q4", "q5", "q6", "q7", "q8", "q9",
+                                "q10", "q15", "q14", "memory"
+        );
+     }
+   //here e - d should be divisible by 4
+   while((unsigned int)d < ((unsigned int)e & 0xfffffff0))
+     {
+        //check if all 4 *m values are zeros
+        int k = *((int *)m);
+        if (k == 0)
+          {
+             m+=4;
+             d+=4;
+             continue;
+          }
+
+        asm volatile (
+                        // load pair '*d' and '*(d+1)' into vector register
+                "       vld1.32         d0[0],  [%[m]]!                 \n\t"
+                "       vldm            %[d],   {q2}                    \n\t"
+                "       vmovl.u8        q0,     d0                      \n\t"
+                "       vmovl.u8        q0,     d0                      \n\t"
+                "       vmul.u32        q0,     q14                     \n\t"
+
+                        // Multiply     a * c
+                "       vmull.u8        q4,     d0, d30                 \n\t"
+                "       vadd.u16        q4,     q4, q12                 \n\t"
+                "       vmull.u8        q5,     d1, d31                 \n\t"
+                "       vadd.u16        q5,     q5, q12                 \n\t"
+
+                        // Shorten
+                "       vshrn.u16       d12,    q4, #8                  \n\t"
+                "       vshrn.u16       d13,    q5, #8                  \n\t"
+
+                        // extract negated alpha
+                "       vmvn.u16        q7,     q6                      \n\t"
+                "       vshr.u32        q8,     q7, #24                 \n\t"
+                "       vmul.u32        q8,     q8, q14                 \n\t"
+
+                        // Multiply
+                "       vmovl.u8        q9,     d4                      \n\t"
+                "       vmull.u8        q7,     d16, d4                 \n\t"
+                "       vadd.u16        q7,     q9, q7                  \n\t"
+                "       vmovl.u8        q10,    d5                      \n\t"
+                "       vmull.u8        q8,     d17, d5                 \n\t"
+                "       vadd.u16        q8,     q10, q8                 \n\t"
+
+                "       vshrn.u16       d0,     q7, #8                  \n\t"
+                "       vshrn.u16       d1,     q8, #8                  \n\t"
+
+                        // Add
+                "       vadd.u8 q0,     q0,     q6                      \n\t"
+
+                "       vstm            %[d]!,  {d0,d1}                 \n\t"
+
+                        : [d] "+r" (d), [m] "+r" (m)
+                        : [c] "r" (c), [x] "r" (42)
+                        : "q0", "q2", "q4", "q5", "q6", "q7", "q8", "q9",
+                                "q10", "q15", "q14", "memory"
+        );
+     }
+   //do the remaining part
    while (d < e)
      {
-        // main cycle
-        __asm__ __volatile__
-        (
-            // load pair '*d' and '*(d+1)' into vector register
-            "       vldm            %[d],   {d4}            \n\t"
+        asm volatile (
+                "       vld1.8          d0[0],  [%[m]]!                 \n\t"
+                "       vld1.32         d4[0],  [%[d]]                  \n\t"
+                "       vdup.u8         d0,     d0[0]                   \n\t"
+                "       vmull.u8        q4,     d0, d30                 \n\t"
+                "       vadd.u16        q4,     q4, q12                 \n\t"
+                "       vshrn.u16       d12,    q4, #8                  \n\t"
+                "       vmvn.u16        d14,    d12                     \n\t"
+                "       vshr.u32        d16,    d14, #24                \n\t"
+                "       vmul.u32        d16,    d16, d28                \n\t"
+                "       vmovl.u8        q9,     d4                      \n\t"
+                "       vmull.u8        q7,     d16, d4                 \n\t"
+                "       vadd.u16        q7,     q9, q7                  \n\t"
+                "       vshrn.u16       d0,     q7, #8                  \n\t"
+                "       vadd.u8 d0,     d0,     d12                     \n\t"
+                "       vst1.32         d0[0],  [%[d]]!                 \n\t"
 
-            // load '*m' and '*(m+1)'
-            "       veor            q0,     q0, q0          \n\t"
-            "       vld1.8          d0[0],  [%[m]]!         \n\t"
-            "       vld1.8          d1[0],  [%[m]]!         \n\t"
-
-            // spread values from d in vector registers so for each
-            // 8 bit channel data we have 8 bit of zeros
-            // so each 32bit value occupies now one 64 bit register
-            "       veor            d5,     d5, d5          \n\t"
-            "       vzip.8          d4,     d5              \n\t"
-
-            // copy *m values in corresponding registers
-            "       vdup.u16        d0,     d0[0]           \n\t"
-            "       vdup.u16        d1,     d1[0]           \n\t"
-
-            // multiply a * c
-            "       vmul.u16        q13,    q0, q15         \n\t"
-            "       vadd.i16        q13,    q13, q10        \n\t"
-            "       vsri.16         q13,    q13, #8         \n\t"
-            "       vand            q13,    q13, q10        \n\t"
-
-            // extract negated alpha
-            "       vdup.u16        d24,    d26[3]          \n\t"
-            "       vdup.u16        d25,    d27[3]          \n\t"
-            "       vsub.i16        q12,    q11, q12        \n\t"
-
-            // multiply alpha * (*d) and add a*c
-            "       vmul.u16        q2,     q2, q12         \n\t"
-            "       vsri.16         q2,     q2, #8          \n\t"
-            "       vand            q2,     q2, q10         \n\t"
-            "       vadd.i16        q2,     q2, q13         \n\t"
-            "       vand            q2,     q2, q10         \n\t"
-
-            // save results
-            "       vqmovn.u16      d4,     q2              \n\t"
-            "       vstm            %[d]!,  {d4}            \n\t"
-          : [d] "+r" (d), [m] "+r" (m)
-          : [c] "r" (c)
-          : "q0", "q2", "q15", "q13", "q12", "q11", "q10",
-            "memory"
+                        : [d] "+r" (d), [m] "+r" (m)
+                        : [c] "r" (c)
+                        : "q0", "q2", "q4", "q5", "q6", "q7", "q8", "q9",
+                                "q10", "q15", "q14", "memory"
         );
-     }
-   if (l % 2)
-     {
-        // do analogue of main loop for last element, if needed
-        __asm__ __volatile__
-        (
-            "       vld1.32         d4[0],  [%[d]]          \n\t"
-
-            "       veor            d0,     d0, d0          \n\t"
-            "       vld1.8          d0[0],  [%[m]]!         \n\t"
-
-            "       veor            d5,     d5, d5          \n\t"
-            "       vzip.8          d4,     d5              \n\t"
-
-            "       vdup.u16        d0,     d0[0]           \n\t"
-
-            "       vmul.u16        d26,    d0, d30         \n\t"
-            "       vadd.i16        d26,    d26, d20        \n\t"
-            "       vsri.16         d26,    d26, #8         \n\t"
-            "       vand            d26,    d26, d20        \n\t"
-
-            "       vdup.u16        d24,    d26[3]          \n\t"
-
-            "       vsub.i16        d24,    d22, d24        \n\t"
-            "       vmul.u16        d4,     d4, d24         \n\t"
-            "       vsri.16         d4,     d4, #8          \n\t"
-            "       vand            d4,     d4, d20         \n\t"
-            "       vadd.i16        d4,     d4, d26         \n\t"
-            "       vand            d4,     d4, d20         \n\t"
-
-            "       vqmovn.u16      d4,     q2              \n\t"
-            "       vst1.32         {d4[0]}, [%[d]]!        \n\t"
-          : [d] "+r" (d), [m] "+r" (m)
-          : [c] "r" (c)
-          : "q0", "q2", "q15", "q13", "q12", "q11", "q10",
-            "memory"
-        );
-     }
+    }
 }
 #endif
 
