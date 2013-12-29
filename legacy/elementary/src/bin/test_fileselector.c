@@ -188,7 +188,7 @@ _path_get_clicked(void            *data,
 static Evas_Object *
 _option_create(Evas_Object *parent, Evas_Object *fs)
 {
-   Evas_Object *frame = NULL, *hbox = NULL, *bt = NULL;
+   Evas_Object *frame = NULL, *box = NULL, *hbox = NULL, *bt = NULL;
 
    frame = elm_frame_add(parent);
    evas_object_size_hint_weight_set(frame, EVAS_HINT_EXPAND, 0);
@@ -196,9 +196,17 @@ _option_create(Evas_Object *parent, Evas_Object *fs)
    elm_object_text_set(frame, "Options");
    evas_object_show(frame);
 
+   // outer vertical box
+   box = elm_box_add(frame);
+   elm_object_content_set(frame, box);
+   evas_object_show(box);
+
+   // first horizontal box
    hbox = elm_box_add(frame);
+   evas_object_size_hint_weight_set(hbox, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(hbox, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_horizontal_set(hbox, EINA_TRUE);
-   elm_object_content_set(frame, hbox);
+   elm_box_pack_end(box, hbox);
    evas_object_show(hbox);
 
    bt = elm_check_add(hbox);
@@ -221,6 +229,14 @@ _option_create(Evas_Object *parent, Evas_Object *fs)
    evas_object_smart_callback_add(bt, "changed", _expandable_clicked, fs);
    elm_box_pack_end(hbox, bt);
    evas_object_show(bt);
+
+   // second horizontal box
+   hbox = elm_box_add(frame);
+   evas_object_size_hint_weight_set(hbox, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(hbox, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_horizontal_set(hbox, EINA_TRUE);
+   elm_box_pack_end(box, hbox);
+   evas_object_show(hbox);
 
    bt = elm_check_add(hbox);
    elm_object_text_set(bt, "multiple selection");
@@ -499,7 +515,7 @@ test_fileselector(void *data       EINA_UNUSED,
                   Evas_Object *obj EINA_UNUSED,
                   void *event_info EINA_UNUSED)
 {
-   Evas_Object *win, *fs, *vbox, *sep;
+   Evas_Object *win, *fs, *box, *vbox, *sep;
 
    /* Set the locale according to the system pref.
     * If you don't do so the file selector will order the files list in
@@ -513,15 +529,16 @@ test_fileselector(void *data       EINA_UNUSED,
    win = elm_win_util_standard_add("fileselector", "File Selector");
    elm_win_autodel_set(win, EINA_TRUE);
 
-   vbox = elm_box_add(win);
-   evas_object_size_hint_weight_set(vbox, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, vbox);
-   evas_object_show(vbox);
+   box = elm_box_add(win);
+   elm_box_horizontal_set(box, EINA_TRUE);
+   evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, box);
+   evas_object_show(box);
 
-   fs = elm_fileselector_add(win);
+   fs = elm_fileselector_add(box);
    evas_object_size_hint_weight_set(fs, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(fs, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_box_pack_end(vbox, fs);
+   elm_box_pack_end(box, fs);
    evas_object_show(fs);
 
    /* enable the fs file name entry */
@@ -545,10 +562,13 @@ test_fileselector(void *data       EINA_UNUSED,
    evas_object_smart_callback_add(fs, "activated", my_fileselector_activated,
                                   win);
 
-   sep = elm_separator_add(win);
-   elm_separator_horizontal_set(sep, EINA_TRUE);
-   elm_box_pack_end(vbox, sep);
+   sep = elm_separator_add(box);
+   elm_box_pack_end(box, sep);
    evas_object_show(sep);
+
+   vbox = elm_box_add(box);
+   elm_box_pack_end(box, vbox);
+   evas_object_show(vbox);
 
    /* test options */
    elm_box_pack_end(vbox, _option_create(vbox, fs));
@@ -557,6 +577,6 @@ test_fileselector(void *data       EINA_UNUSED,
    elm_box_pack_end(vbox, _sort_option_create(vbox, fs));
    elm_box_pack_end(vbox, _thumbnail_size_option_create(vbox, fs));
 
-   evas_object_resize(win, 320, 700);
+   evas_object_resize(win, 550, 500);
    evas_object_show(win);
 }
