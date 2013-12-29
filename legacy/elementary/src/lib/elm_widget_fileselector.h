@@ -98,12 +98,30 @@ typedef enum {
    ELM_FILE_LAST
 } Elm_Fileselector_Type;
 
+typedef enum {
+   ELM_FILESELECTOR_MIME_FILTER = 0,
+   ELM_FILESELECTOR_CUSTOM_FILTER,
+   ELM_FILESELECTOR_FILTER_LAST
+} Elm_Fileselector_Filter_Type;
+
+typedef struct _Elm_Fileselector_Custom_Filter Elm_Fileselector_Custom_Filter;
+struct _Elm_Fileselector_Custom_Filter
+{
+   Elm_Fileselector_Filter_Func  func;
+   void                         *data;
+};
+
 struct _Elm_Fileselector_Filter
 {
-   const char                   *filter_name;
-   Elm_Fileselector_Smart_Data  *sd;
+   const char                         *filter_name;
+   Elm_Fileselector_Smart_Data        *sd;
 
-   char                        **mime_types;
+   union {
+      char                           **mime_types;
+      Elm_Fileselector_Custom_Filter  *custom;
+   } filter;
+
+   Elm_Fileselector_Filter_Type        filter_type;
 };
 
 /**

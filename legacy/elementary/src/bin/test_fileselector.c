@@ -474,6 +474,14 @@ _thumbnail_size_option_create(Evas_Object *parent, Evas_Object *fs)
    return frame;
 }
 
+static Eina_Bool
+_all_filter(const char *path  EINA_UNUSED,
+            Eina_Bool dir     EINA_UNUSED,
+            void *data        EINA_UNUSED)
+{
+   return EINA_TRUE;
+}
+
 void
 test_fileselector(void *data       EINA_UNUSED,
                   Evas_Object *obj EINA_UNUSED,
@@ -507,6 +515,7 @@ test_fileselector(void *data       EINA_UNUSED,
    elm_fileselector_path_set(fs, getenv("HOME"));
    elm_fileselector_mime_types_filter_append(fs, "text/*", "Text Files");
    elm_fileselector_mime_types_filter_append(fs, "image/*", "Image Files");
+   elm_fileselector_custom_filter_append(fs, _all_filter, NULL, "All Files");
 
    /* allow fs to expand in x & y */
    evas_object_size_hint_weight_set(fs, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

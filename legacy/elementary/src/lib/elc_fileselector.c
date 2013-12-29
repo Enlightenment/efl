@@ -4,7 +4,6 @@
  *  - user defined icon/label cb
  *  - show/hide/add buttons ???
  *  - Pattern Filter support
- *  - Custom Filter support
  */
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
@@ -304,20 +303,19 @@ _mime_type_matched(const char *mime_filter, const char *mime_type)
 }
 
 static Eina_Bool
-_check_filters(const Elm_Fileselector_Filter *filter, const char *file_name)
+_check_mime_type_filter(const Elm_Fileselector_Filter *filter,
+                        const char *file_name)
 {
    const char *mime_type = NULL;
    int i;
-
-   if (!filter) return EINA_TRUE;
 
    mime_type = efreet_mime_type_get(file_name);
 
    if (!mime_type) return EINA_FALSE;
 
-   for (i = 0; filter->mime_types[i]; ++i)
+   for (i = 0; filter->filter.mime_types[i]; ++i)
      {
-        if (_mime_type_matched(filter->mime_types[i], mime_type))
+        if (_mime_type_matched(filter->filter.mime_types[i], mime_type))
           return EINA_TRUE;
      }
    return EINA_FALSE;
@@ -329,17 +327,34 @@ _ls_filter_cb(void *data,
               const Eina_File_Direct_Info *info)
 {
    Listing_Request *lreq = data;
+   Elm_Fileselector_Filter *cf;
+   Eina_Bool dir = EINA_FALSE;
 
    if (!lreq->sd->hidden_visible && info->path[info->name_start] == '.')
      return EINA_FALSE;
 
-   if (lreq->sd->only_folder && info->type != EINA_FILE_DIR)
+   if (info->type == EINA_FILE_DIR)
+     dir = EINA_TRUE;
+
+   if (lreq->sd->only_folder && dir)
      return EINA_FALSE;
 
-   if (info->type != EINA_FILE_DIR && !_check_filters(lreq->sd->current_filter, info->path))
-     return EINA_FALSE;
+   cf = lreq->sd->current_filter;
+   if (!cf)
+     return EINA_TRUE;
 
-   return EINA_TRUE;
+   switch (cf->filter_type)
+     {
+      case ELM_FILESELECTOR_MIME_FILTER:
+         return dir || _check_mime_type_filter(cf, info->path);
+      case ELM_FILESELECTOR_CUSTOM_FILTER:
+         return cf->filter.custom->func(info->path, dir,
+                                        cf->filter.custom->data);
+      default:
+         return EINA_FALSE;
+     }
+
+   return EINA_FALSE;
 }
 
 static const char *
@@ -1164,16 +1179,35 @@ _resource_created(void *data, int type, void *ev)
    Evas_Object *obj = data;
    Eio_Monitor_Event *event = ev;
    int itcn = ELM_FILE_UNKNOW;
+   Eina_Bool dir = EINA_FALSE;
 
    ELM_FILESELECTOR_DATA_GET(obj, sd);
 
    if (type == EIO_MONITOR_DIRECTORY_CREATED)
+     dir = EINA_TRUE;
+
+   Elm_Fileselector_Filter *cf = sd->current_filter;
+   if (cf)
+     {
+        switch (cf->filter_type)
+          {
+           case ELM_FILESELECTOR_MIME_FILTER:
+              if (!dir && !_check_mime_type_filter(cf, event->filename))
+                return ECORE_CALLBACK_PASS_ON;
+              break;
+           case ELM_FILESELECTOR_CUSTOM_FILTER:
+              if (!cf->filter.custom->func(event->filename, dir, cf->filter.custom->data))
+                return ECORE_CALLBACK_PASS_ON;
+              break;
+           default:
+              break;
+          }
+     }
+
+   if (dir)
      itcn = ELM_DIRECTORY;
    else
      {
-        if (!_check_filters(sd->current_filter, event->filename))
-          return ECORE_CALLBACK_PASS_ON;
-
         if (evas_object_image_extension_can_load_get(event->filename))
           itcn = ELM_FILE_IMAGE;
      }
@@ -1410,8 +1444,13 @@ _elm_fileselector_smart_del(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_U
      {
         eina_stringshare_del(filter->filter_name);
 
-        free(filter->mime_types[0]);
-        free(filter->mime_types);
+        if (filter->filter_type == ELM_FILESELECTOR_MIME_FILTER)
+          {
+             free(filter->filter.mime_types[0]);
+             free(filter->filter.mime_types);
+          }
+        else
+          free(filter->filter.custom);
 
         free(filter);
      }
@@ -1892,6 +1931,18 @@ _selected_paths_get(Eo *obj __UNUSED__, void *_pd, va_list *list)
      *ret = NULL;
 }
 
+static Elm_Fileselector_Filter *
+_filter_add(Elm_Fileselector_Smart_Data *sd, const char *filter_name)
+{
+   Elm_Fileselector_Filter *ff;
+   ff = malloc(sizeof(Elm_Fileselector_Filter));
+
+   ff->filter_name = eina_stringshare_add(filter_name);
+   ff->sd = sd;
+
+   return ff;
+}
+
 EAPI Eina_Bool
 elm_fileselector_mime_types_filter_append(Evas_Object *obj, const char *mime_type, const char *filter_name)
 {
@@ -1917,17 +1968,10 @@ _mime_types_filter_append(Eo *obj, void *_pd, va_list *list)
 
    sd = _pd;
 
-   ff = malloc(sizeof(Elm_Fileselector_Filter));
-   if (!ff) goto end;
+   ff = _filter_add(sd, filter_name ? filter_name : mime_types);
+   ff->filter_type = ELM_FILESELECTOR_MIME_FILTER;
 
-   if (filter_name)
-     ff->filter_name = eina_stringshare_add(filter_name);
-   else
-     ff->filter_name = eina_stringshare_add(mime_types);
-
-   ff->sd = sd;
-
-   ff->mime_types = eina_str_split(mime_types, ",", 0);
+   ff->filter.mime_types = eina_str_split(mime_types, ",", 0);
 
    if (!sd->filter_list)
      {
@@ -1951,6 +1995,60 @@ end:
    if (ret) *ret = int_ret;
 }
 
+EAPI Eina_Bool
+elm_fileselector_custom_filter_append(Evas_Object *obj, Elm_Fileselector_Filter_Func func, void *data, const char *filter_name)
+{
+   ELM_FILESELECTOR_CHECK(obj) EINA_FALSE;
+   Eina_Bool ret = EINA_FALSE;
+   eo_do(obj, elm_obj_fileselector_custom_filter_append(func, data, filter_name, &ret));
+   return ret;
+}
+
+static void
+_custom_filter_append(Eo *obj, void *_pd, va_list *list)
+{
+   Elm_Fileselector_Filter_Func func = va_arg(*list, Elm_Fileselector_Filter_Func);
+   void *data = va_arg(*list, void *);
+   const char *filter_name = va_arg(*list, const char *);
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+
+   Elm_Fileselector_Smart_Data *sd;
+   Elm_Fileselector_Filter *ff;
+   Eina_Bool int_ret = EINA_FALSE;
+   Eina_Bool need_theme = EINA_FALSE;
+
+   if (!func) goto end;
+
+   sd = _pd;
+
+   ff = _filter_add(sd, filter_name ? filter_name : "custom");
+   ff->filter_type = ELM_FILESELECTOR_CUSTOM_FILTER;
+
+   ff->filter.custom = malloc(sizeof(Elm_Fileselector_Filter_Func));
+   ff->filter.custom->func = func;
+   ff->filter.custom->data = data;
+
+   if (!sd->filter_list)
+     {
+        sd->current_filter = ff;
+        sd->filter_hoversel = elm_hoversel_add(obj);
+        elm_object_text_set(sd->filter_hoversel, ff->filter_name);
+        need_theme = EINA_TRUE;
+     }
+   elm_hoversel_item_add(sd->filter_hoversel, ff->filter_name, NULL, ELM_ICON_NONE, _current_filter_changed, ff);
+
+   sd->filter_list = eina_list_append(sd->filter_list, ff);
+
+   _populate(obj, sd->path, NULL, NULL);
+
+   if (need_theme)
+     eo_do(obj, elm_wdg_theme(NULL));
+
+   int_ret = EINA_TRUE;
+end:
+   if (ret) *ret = int_ret;
+}
+
 EAPI void
 elm_fileselector_filters_clear(Evas_Object *obj)
 {
@@ -1968,8 +2066,13 @@ _filters_clear(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
      {
         eina_stringshare_del(filter->filter_name);
 
-        free(filter->mime_types[0]);
-        free(filter->mime_types);
+        if (filter->filter_type == ELM_FILESELECTOR_MIME_FILTER)
+          {
+             free(filter->filter.mime_types[0]);
+             free(filter->filter.mime_types);
+          }
+        else
+          free(filter->filter.custom);
 
         free(filter);
      }
@@ -2216,6 +2319,7 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_SELECTED_SET), _selected_set),
         EO_OP_FUNC(ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_SELECTED_PATHS_GET), _selected_paths_get),
         EO_OP_FUNC(ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_MIME_TYPES_FILTER_APPEND), _mime_types_filter_append),
+        EO_OP_FUNC(ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_CUSTOM_FILTER_APPEND), _custom_filter_append),
         EO_OP_FUNC(ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_FILTERS_CLEAR), _filters_clear),
         EO_OP_FUNC(ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_HIDDEN_VISIBLE_SET), _hidden_visible_set),
         EO_OP_FUNC(ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_HIDDEN_VISIBLE_GET), _hidden_visible_get),
@@ -2282,6 +2386,7 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_OBJ_FILESELECTOR_SUB_ID_SELECTED_SET, "Set, programmatically, the currently selected file/directory in the given file selector widget."),
      EO_OP_DESCRIPTION(ELM_OBJ_FILESELECTOR_SUB_ID_SELECTED_PATHS_GET, "Get the currently selected item's (full) path, in the given file selector widget."),
      EO_OP_DESCRIPTION(ELM_OBJ_FILESELECTOR_SUB_ID_MIME_TYPES_FILTER_APPEND, "Append mime type filter"),
+     EO_OP_DESCRIPTION(ELM_OBJ_FILESELECTOR_SUB_ID_CUSTOM_FILTER_APPEND, "Append custom filter"),
      EO_OP_DESCRIPTION(ELM_OBJ_FILESELECTOR_SUB_ID_FILTERS_CLEAR, "Clear filters"),
      EO_OP_DESCRIPTION(ELM_OBJ_FILESELECTOR_SUB_ID_HIDDEN_VISIBLE_SET, "Enable or disable visibility of hidden files/directories in the file selector widget."),
      EO_OP_DESCRIPTION(ELM_OBJ_FILESELECTOR_SUB_ID_HIDDEN_VISIBLE_GET, "Get if visibility of hidden files/directories in the file selector widget is enabled or disabled."),

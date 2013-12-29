@@ -320,6 +320,22 @@ EAPI const Eina_List      *elm_fileselector_selected_paths_get(const Evas_Object
 EAPI Eina_Bool             elm_fileselector_mime_types_filter_append(Evas_Object *obj, const char *mime_types, const char *filter_name);
 
 /**
+ * Append custom filter into filter list
+ *
+ * @param obj The file selector object
+ * @param func The function to call when manipulating files and directories.
+ * @param data The data to be passed to this @p func call.
+ * @param filter_name The name to be displayed, "custom" will be displayed if NULL
+ * @return @c EINA_TRUE on success, @c EINA_FALSE on failure.
+ *
+ * @note first added filter will be the default filter at the moment.
+ *
+ * @since 1.9
+ * @ingroup Fileselector
+ */
+EAPI Eina_Bool             elm_fileselector_custom_filter_append(Evas_Object *obj, Elm_Fileselector_Filter_Func func, void *data, const char *filter_name);
+
+/**
  * Clear all filters registered
  *
  * @param obj The file selector object

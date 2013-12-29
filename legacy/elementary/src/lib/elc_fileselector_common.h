@@ -21,3 +21,5 @@ typedef enum
    ELM_FILESELECTOR_SORT_BY_MODIFIED_DESC,
    ELM_FILESELECTOR_SORT_LAST /**< sentinel (helper) value, not used */
 } Elm_Fileselector_Sort;
+
+typedef Eina_Bool (*Elm_Fileselector_Filter_Func)(const char *path, Eina_Bool dir, void *data);

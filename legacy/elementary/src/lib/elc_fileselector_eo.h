@@ -29,6 +29,7 @@ enum
    ELM_OBJ_FILESELECTOR_SUB_ID_SELECTED_SET,
    ELM_OBJ_FILESELECTOR_SUB_ID_SELECTED_PATHS_GET,
    ELM_OBJ_FILESELECTOR_SUB_ID_MIME_TYPES_FILTER_APPEND,
+   ELM_OBJ_FILESELECTOR_SUB_ID_CUSTOM_FILTER_APPEND,
    ELM_OBJ_FILESELECTOR_SUB_ID_FILTERS_CLEAR,
    ELM_OBJ_FILESELECTOR_SUB_ID_HIDDEN_VISIBLE_SET,
    ELM_OBJ_FILESELECTOR_SUB_ID_HIDDEN_VISIBLE_GET,
@@ -267,6 +268,20 @@ enum
  * @see elm_fileselector_mime_types_filter_append
  */
 #define elm_obj_fileselector_mime_types_filter_append(mime_types, filter_name, ret) ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_MIME_TYPES_FILTER_APPEND), EO_TYPECHECK(const char *, mime_types), EO_TYPECHECK(const char *, filter_name), EO_TYPECHECK(Eina_Bool *, ret)
+
+/**
+ * @def elm_obj_fileselector_custom_filter_append
+ * @since 1.9
+ *
+ * Append custom filter into filter list
+ *
+ * @param[in] mime_types
+ * @param[in] filter_name
+ * @param[out] ret
+ *
+ * @see elm_fileselector_custom_filter_append
+ */
+#define elm_obj_fileselector_custom_filter_append(func, data, filter_name, ret) ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_CUSTOM_FILTER_APPEND), EO_TYPECHECK(Elm_Fileselector_Filter_Func, func), EO_TYPECHECK(void *, data), EO_TYPECHECK(const char *, filter_name), EO_TYPECHECK(Eina_Bool *, ret)
 
 /**
  * @def elm_obj_fileselector_filters_clear
