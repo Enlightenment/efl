@@ -580,6 +580,12 @@ _elm_thumb_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
       (sd->view, EVAS_CALLBACK_IMAGE_PRELOADED, _on_thumb_preloaded,
        sd);
 
+   if (sd->view)
+     {
+        evas_object_del(sd->view);
+        sd->view = NULL;
+     }
+
    eina_stringshare_del(sd->thumb.thumb_path);
    eina_stringshare_del(sd->thumb.thumb_key);
 
