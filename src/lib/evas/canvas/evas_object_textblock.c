@@ -6335,7 +6335,7 @@ _markup_get_text_utf8_append(Eina_Strbuf *sbuf, const char *text)
    for (;;)
      {
         pos = pos2;
-        pos2 = evas_string_char_next_get(text, pos2, &ch);
+        ch = eina_unicode_utf8_next_get(text, &pos2);
         if ((ch <= 0) || (pos2 <= 0)) break;
 
         if (ch == _NEWLINE)
@@ -6370,6 +6370,8 @@ static void
 _markup_get_text_append(Eina_Strbuf *txt, const Eina_Unicode *text)
 {
    char *base = eina_unicode_unicode_to_utf8(text, NULL);
+
+   if (!base) return;
 
    _markup_get_text_utf8_append(txt, base);
 
