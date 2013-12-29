@@ -490,7 +490,7 @@ test_fileselector(void *data       EINA_UNUSED,
    Evas_Object *win, *fs, *vbox, *sep;
 
    /* Set the locale according to the system pref.
-    * If you dont do so the file selector will order the files list in
+    * If you don't do so the file selector will order the files list in
     * a case sensitive manner
     */
    setlocale(LC_ALL, "");
@@ -507,25 +507,24 @@ test_fileselector(void *data       EINA_UNUSED,
    evas_object_show(vbox);
 
    fs = elm_fileselector_add(win);
+   evas_object_size_hint_weight_set(fs, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(fs, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(vbox, fs);
+   evas_object_show(fs);
+
    /* enable the fs file name entry */
    elm_fileselector_is_save_set(fs, EINA_TRUE);
    /* make the file list a tree with dir expandable in place */
    elm_fileselector_expandable_set(fs, EINA_FALSE);
    /* start the fileselector in the home dir */
    elm_fileselector_path_set(fs, getenv("HOME"));
+
+   /* add filesters */
    elm_fileselector_mime_types_filter_append(fs, "text/*", "Text Files");
    elm_fileselector_mime_types_filter_append(fs, "image/*", "Image Files");
    elm_fileselector_custom_filter_append(fs, _all_filter, NULL, "All Files");
 
-   /* allow fs to expand in x & y */
-   evas_object_size_hint_weight_set(fs, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(fs, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_box_pack_end(vbox, fs);
-   evas_object_show(fs); // TODO fix this is the widget
-
-   /* the 'done' cb is called when the user press ok/cancel */
    evas_object_smart_callback_add(fs, "done", my_fileselector_done, win);
-   /* the 'selected' cb is called when the user click on a file/dir */
    evas_object_smart_callback_add(fs, "selected", my_fileselector_selected,
                                   win);
    evas_object_smart_callback_add(fs, "selected,invalid",
@@ -533,12 +532,12 @@ test_fileselector(void *data       EINA_UNUSED,
    evas_object_smart_callback_add(fs, "activated", my_fileselector_activated,
                                   win);
 
-   /* test buttons */
    sep = elm_separator_add(win);
    elm_separator_horizontal_set(sep, EINA_TRUE);
    elm_box_pack_end(vbox, sep);
    evas_object_show(sep);
 
+   /* test options */
    elm_box_pack_end(vbox, _option_create(vbox, fs));
    elm_box_pack_end(vbox, _getter_option_create(vbox, fs));
    elm_box_pack_end(vbox, _mode_option_create(vbox, fs));
