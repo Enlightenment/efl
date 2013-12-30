@@ -24,6 +24,20 @@ START_TEST(eo_simple)
 }
 END_TEST
 
+START_TEST(eo_stack)
+{
+   eo_init();
+   Eo *obj = eo2_add(SIMPLE_CLASS, NULL);
+   fail_if(!obj);
+
+   eo2_do(obj, simple_recursive(123));
+
+   eo_unref(obj);
+
+   eo_shutdown();
+}
+END_TEST
+
 static int _eo_signals_cb_curent = 0;
 static int _eo_signals_cb_flag = 0;
 
@@ -835,6 +849,7 @@ END_TEST
 void eo_test_general(TCase *tc)
 {
    tcase_add_test(tc, eo_simple);
+   tcase_add_test(tc, eo_stack);
    tcase_add_test(tc, eo_signals);
    tcase_add_test(tc, eo_data_fetch);
    tcase_add_test(tc, eo_isa_tests);

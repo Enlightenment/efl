@@ -45,6 +45,22 @@ _class_hi_print(Eo_Class *klass, void *data EINA_UNUSED)
    return EINA_TRUE;
 }
 
+EO2_VOID_FUNC_BODYV(simple_recursive, EO2_FUNC_CALL(n), int n);
+
+static void
+_recursive(Eo *obj, void *class_data EINA_UNUSED, int n)
+{
+   static int count = 0;
+
+   if (count < n)
+     {
+        count++;
+        eo2_do(obj, simple_recursive(n));
+     }
+   else
+     count = 0;
+}
+
 static void
 _dbg_info_get(Eo *eo_obj, void *_pd EINA_UNUSED, Eo_Dbg_Info *root)
 {
@@ -64,6 +80,7 @@ static Eo2_Op_Description op_descs[] = {
      EO2_OP_FUNC(simple_a_get, _a_get, "Get property a"),
      EO2_OP_FUNC(simple_a_print, _a_print, "Print property a"),
      EO2_OP_CLASS_FUNC(simple_class_hi_print, _class_hi_print, "Print property a"),
+     EO2_OP_FUNC(simple_recursive, _recursive, "Recursive function"),
      EO2_OP_SENTINEL
 };
 
