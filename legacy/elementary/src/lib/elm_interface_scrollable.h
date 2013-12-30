@@ -686,7 +686,7 @@ enum
  * @param[in] single_dir
  *
  */
-#define elm_scrollable_interface_single_direction_set(single_dir) ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_SINGLE_DIRECTION_SET), EO_TYPECHECK(Eina_Bool, single_dir)
+#define elm_scrollable_interface_single_direction_set(single_dir) ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_SINGLE_DIRECTION_SET), EO_TYPECHECK(Elm_Scroller_Single_Direction, single_dir)
 
 /**
  * @def elm_scrollable_interface_single_direction_get
