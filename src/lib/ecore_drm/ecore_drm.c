@@ -86,8 +86,6 @@ _ecore_drm_launcher_spawn(void)
         char *args[1] = { NULL };
         sigset_t mask;
 
-        /* setsid(); */
-
         /* read socket for slave is 1 */
         snprintf(env, sizeof(env), "%d", _ecore_drm_sockets[1]);
         setenv("ECORE_DRM_LAUNCHER_SOCKET_READ", env, 1);
@@ -106,6 +104,8 @@ _ecore_drm_launcher_spawn(void)
         sigaddset(&mask, SIGTERM);
         sigaddset(&mask, SIGCHLD);
         sigaddset(&mask, SIGINT);
+        sigaddset(&mask, SIGTTIN);
+        sigaddset(&mask, SIGTTOU);
         sigprocmask(SIG_UNBLOCK, &mask, NULL);
 
         execv(buff, args);
@@ -170,37 +170,44 @@ _ecore_drm_socket_send(int opcode, int fd, void *data, size_t bytes)
    msg.msg_control = cmsgptr;
    msg.msg_controllen = RIGHTS_LEN;
 
-   *((int *)CMSG_DATA(cmsgptr)) = fd;
+   if ((opcode == ECORE_DRM_OP_DEVICE_MASTER_DROP) || 
+       (opcode == ECORE_DRM_OP_DEVICE_MASTER_SET))
+     DBG("Sending Fd: %d", fd);
+
+   if (fd > -1)
+     *((int *)CMSG_DATA(cmsgptr)) = fd;
+   else
+     *((int *)CMSG_DATA(cmsgptr)) = _ecore_drm_sockets[1];
 
    /* cmsg = CMSG_FIRSTHDR(&msg); */
    /* cmsg->cmsg_level = SOL_SOCKET; */
    /* cmsg->cmsg_type = SCM_RIGHTS; */
    /* cmsg->cmsg_len = CMSG_LEN(sizeof(int)); */
 
-   DBG("Dmsg Size: %d", dmsg.size);
-   DBG("Message Size: %li", sizeof(msg));
-   DBG("Message Len: %d", (int)msg.msg_controllen);
-   DBG("Control Size: %li", sizeof(cmsgptr));
-   DBG("Control Len: %d", (int)cmsgptr->cmsg_len);
-   DBG("Data Size: %li", sizeof(data));
-   DBG("Data Len: %li", bytes);
+   /* DBG("Dmsg Size: %d", dmsg.size); */
+   /* DBG("Message Size: %li", sizeof(msg)); */
+   /* DBG("Message Len: %d", (int)msg.msg_controllen); */
+   /* DBG("Control Size: %li", sizeof(cmsgptr)); */
+   /* DBG("Control Len: %d", (int)cmsgptr->cmsg_len); */
+   /* DBG("Data Size: %li", sizeof(data)); */
+   /* DBG("Data Len: %li", bytes); */
 
    errno = 0;
-   size = sendmsg(fd, &msg, MSG_EOR);
+   size = sendmsg(_ecore_drm_sockets[1], &msg, MSG_EOR);
    if (errno != 0)
      {
         DBG("Error Sending Message: %m");
      }
 
-   DBG("Sent %li bytes to Socket %d", size, fd);
+   DBG("Sent %li bytes to Socket %d", size, _ecore_drm_sockets[1]);
 
    return size;
 }
 
 static int 
-_ecore_drm_socket_receive(int opcode, int fd, void **data, size_t bytes)
+_ecore_drm_socket_receive(int opcode, int *fd, void **data, size_t bytes)
 {
-   int ret = -1, rfd;
+   int rfd, ret = ECORE_DRM_OP_FAILURE;
    Ecore_Drm_Message dmsg;
    struct cmsghdr *cmsg;
    struct iovec iov[2];
@@ -223,22 +230,18 @@ _ecore_drm_socket_receive(int opcode, int fd, void **data, size_t bytes)
    if ((!cmsgptr) && (!(cmsgptr = malloc(RIGHTS_LEN))))
      return -1;
 
-   /* cmsgptr->cmsg_level = SOL_SOCKET; */
-   /* cmsgptr->cmsg_type = SCM_RIGHTS; */
-   /* cmsgptr->cmsg_len = RIGHTS_LEN; */
-
    msg.msg_control = cmsgptr;
    msg.msg_controllen = RIGHTS_LEN;
 
    errno = 0;
-   size = recvmsg(fd, &msg, 0);
+   size = recvmsg(_ecore_drm_sockets[0], &msg, 0);
    if (errno != 0)
      {
         ERR("Failed to receive message: %m");
         return -1;
      }
 
-   DBG("Received %li bytes from %d", size, fd);
+   DBG("Received %li bytes from %d", size, _ecore_drm_sockets[0]);
 
    for (cmsg = CMSG_FIRSTHDR(&msg); cmsg != NULL; 
         cmsg = CMSG_NXTHDR(&msg, cmsg))
@@ -249,17 +252,17 @@ _ecore_drm_socket_receive(int opcode, int fd, void **data, size_t bytes)
         switch (cmsg->cmsg_type)
           {
            case SCM_RIGHTS:
-             rfd = *((int *)CMSG_DATA(cmsg));
+             if (fd) *fd = *((int *)CMSG_DATA(cmsg));
              switch (dmsg.opcode)
                {
                 case ECORE_DRM_OP_DEVICE_OPEN:
                 case ECORE_DRM_OP_TTY_OPEN:
-                  if (rfd >= 0) ret = 1;
-                  if (data) memcpy(*data, CMSG_DATA(cmsg), sizeof(int));
-                  /* if (data) *data = &rfd; */
+                case ECORE_DRM_OP_DEVICE_MASTER_DROP:
+                case ECORE_DRM_OP_DEVICE_MASTER_SET:
+                  if (*fd >= 0) ret = ECORE_DRM_OP_SUCCESS;
+                  if (data) memcpy(*data, buff, bytes);
                   break;
                 default:
-                  ret = -1;
                   break;
                }
              break;
@@ -268,31 +271,27 @@ _ecore_drm_socket_receive(int opcode, int fd, void **data, size_t bytes)
           }
      }
 
-   DBG("Received FD: %d", rfd);
+   DBG("Received FD: %d", *fd);
    DBG("Opcode: %d", opcode);
    DBG("DMsg Opcode: %d", dmsg.opcode);
 
-   /* if (dmsg.opcode != opcode) return -1; */
-
    DBG("Returning %d", ret);
-
    return ret;
 }
 
 void 
-_ecore_drm_message_send(int opcode, void *data, size_t bytes)
+_ecore_drm_message_send(int opcode, int fd, void *data, size_t bytes)
 {
-   _ecore_drm_socket_send(opcode, _ecore_drm_sockets[1], data, bytes);
+   _ecore_drm_socket_send(opcode, fd, data, bytes);
 }
 
 Eina_Bool 
-_ecore_drm_message_receive(int opcode, void **data, size_t bytes)
+_ecore_drm_message_receive(int opcode, int *fd, void **data, size_t bytes)
 {
-   int ret;
+   int ret = ECORE_DRM_OP_FAILURE;
 
-   ret = _ecore_drm_socket_receive(opcode, _ecore_drm_sockets[0], 
-                                   data, bytes);
-   if (ret < 0) return EINA_FALSE;
+   ret = _ecore_drm_socket_receive(opcode, fd, data, bytes);
+   if (ret != ECORE_DRM_OP_SUCCESS) return EINA_FALSE;
 
    return EINA_TRUE;
 }
@@ -330,6 +329,7 @@ ecore_drm_init(void)
    eina_log_level_set(EINA_LOG_LEVEL_DBG);
 
    setvbuf(stdout, NULL, _IONBF, 0);
+   setvbuf(stderr, NULL, _IONBF, 0);
 
    /* optionally log output to a file */
 #ifdef LOG_TO_FILE
