@@ -361,7 +361,7 @@ _sort_selected_cb(void *data, Evas_Object *obj, void *event_info)
 }
 
 static Evas_Object *
-_sort_option_create(Evas_Object *parent, Evas_Object *fs)
+_sort_option_create(Evas_Object *win, Evas_Object *parent, Evas_Object *fs)
 {
    Evas_Object *frame = NULL, *hbox = NULL, *hoversel;
 
@@ -376,7 +376,8 @@ _sort_option_create(Evas_Object *parent, Evas_Object *fs)
    elm_object_content_set(frame, hbox);
    evas_object_show(hbox);
 
-   hoversel = elm_hoversel_add(parent);
+   hoversel = elm_hoversel_add(hbox);
+   elm_hoversel_hover_parent_set(hoversel, win);
    evas_object_data_set(hoversel, "fileselector", fs);
    elm_object_text_set(hoversel, "Choose sort method");
 
@@ -574,7 +575,7 @@ test_fileselector(void *data       EINA_UNUSED,
    elm_box_pack_end(vbox, _option_create(vbox, fs));
    elm_box_pack_end(vbox, _getter_option_create(vbox, fs));
    elm_box_pack_end(vbox, _mode_option_create(vbox, fs));
-   elm_box_pack_end(vbox, _sort_option_create(vbox, fs));
+   elm_box_pack_end(vbox, _sort_option_create(win, vbox, fs));
    elm_box_pack_end(vbox, _thumbnail_size_option_create(vbox, fs));
 
    evas_object_resize(win, 550, 500);
