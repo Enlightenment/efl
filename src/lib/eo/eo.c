@@ -353,15 +353,30 @@ static inline Eina_Bool
 _eo2_do_internal(const Eo *eo_id, const Eo_Class *cur_klass_id,
       Eina_Bool is_super, Eo2_Stack_Frame *fptr, Eo2_Stack_Frame *pfptr)
 {
+   Eina_Bool is_klass = _eo_is_a_class(eo_id);
+
    /* If we are already in the same object context, we inherit info from it. */
    if (pfptr)
      {
         memcpy(fptr, pfptr, sizeof(Eo2_Stack_Frame));
+        if (!is_klass)
+          _eo_ref(fptr->o.obj);
      }
    else
      {
         fptr->eo_id = eo_id;
         fptr->obj_data = EO2_INVALID_DATA;
+        if (is_klass)
+          {
+             EO_CLASS_POINTER_RETURN_VAL(eo_id, _klass, EINA_FALSE);
+             fptr->o.kls = _klass;
+          }
+        else
+          {
+             EO_OBJ_POINTER_RETURN_VAL(eo_id, _obj, EINA_FALSE);
+             fptr->o.obj = _obj;
+             _eo_ref(_obj);
+          }
      }
 
    if (is_super)
@@ -394,18 +409,6 @@ _eo2_do_start(const Eo *eo_id, const Eo_Class *cur_klass_id, Eina_Bool is_super,
 
    if (!_eo2_do_internal(eo_id, cur_klass_id, is_super, fptr, pfptr))
      return EINA_FALSE;
-
-   if(_eo_is_a_class(eo_id))
-     {
-        EO_CLASS_POINTER_RETURN_VAL(eo_id, _klass, EINA_FALSE);
-        fptr->o.kls = _klass;
-     }
-   else
-     {
-        EO_OBJ_POINTER_RETURN_VAL(eo_id, _obj, EINA_FALSE);
-        fptr->o.obj = _obj;
-        _eo_ref(_obj);
-     }
 
    eo2_call_stack.frame_ptr++;
 
